@@ -280,7 +280,7 @@ public:
   /// \name Construction
   /// @{
   /*!
-   * @brief Initializes internal data for the approximation.
+   * @brief initializes internal data for the approximation.
    * @param tm `CGAL TriangleMesh` on which approximation operates
    * @param vpoint_map vertex point map of the mesh
    * @param error_metric an `ErrorMetricProxy` object
@@ -309,7 +309,7 @@ public:
   /// \name Approximation
   /// @{
   /*!
-   * @brief Initializes the seeds with both maximum number of proxies and minimum error drop stop criteria.
+   * @brief initializes the seeds with both maximum number of proxies and minimum error drop stop criteria.
    * The first criterion met stops the seeding.
    * Parameters out of range are ignored.
    * @tparam NamedParameters a sequence of \ref vsa_namedparameters
@@ -395,7 +395,7 @@ public:
   }
 
   /*!
-   * @brief Runs the partitioning and fitting processes on the whole surface.
+   * @brief runs the partitioning and fitting processes on the whole surface.
    * @param nb_iterations number of iterations.
    * @return total fitting error
    */
@@ -413,7 +413,7 @@ public:
   }
 
   /*!
-   * @brief Calls `run` while error decrease is greater than `cvg_threshold`.
+   * @brief calls `run` while error decrease is greater than `cvg_threshold`.
    * @param cvg_threshold the percentage of error change between two successive runs,
    * should be in range (0, 1).
    * @param max_iterations maximum number of iterations allowed
@@ -451,7 +451,7 @@ public:
   }
 
   /*!
-   * @brief Computes fitting error of current partition to the proxies.
+   * @brief computes fitting error of current partition to the proxies.
    * @return total fitting error
    */
   FT compute_total_error() {
@@ -468,7 +468,7 @@ public:
   }
 
   /*!
-   * @brief Adds proxies to the worst regions one by one.
+   * @brief adds proxies to the worst regions one by one.
    * The re-fitting is performed after each proxy is inserted.
    * @param nb_proxies number of proxies to be added
    * @param nb_iterations number of re-fitting iterations
@@ -487,7 +487,7 @@ public:
   }
 
   /*!
-   * @brief Adds proxies by diffusing fitting error into current partition.
+   * @brief adds proxies by diffusing fitting error into current partition.
    * Each partition is added with the number of proxies in proportion to its fitting error.
    * @param nb_proxies number of proxies to be added
    * @return number of proxies successfully added
@@ -571,7 +571,7 @@ public:
   /// \name Refinement Operations
   /// @{
   /*!
-   * @brief Teleports the local minimum to the worst region by combining the merging and adding processes.
+   * @brief teleports the local minimum to the worst region by combining the merging and adding processes.
    * The re-fitting is performed after each teleportation.
    * Here if we specify more than one proxy this means we teleport in a naive iterative fashion.
    * @param nb_proxies number of proxies requested to teleport.
@@ -641,7 +641,7 @@ public:
   }
 
   /*!
-   * @brief Merges two specified adjacent regions.
+   * @brief merges two specified adjacent regions.
    * The overall re-fitting is not performed and the proxy index map is maintained.
    * @pre two proxies must be adjacent, and 0 <= px0 < px1 < proxies.size()
    * @param px0 the kept proxy index
@@ -680,7 +680,7 @@ public:
   }
 
   /*!
-   * @brief Simulates merging and local re-fitting of all pairs of adjacent proxies
+   * @brief simulates merging and local re-fitting of all pairs of adjacent proxies
    * and finds the best pair to merge.
    * @note The <b>best</b> is defined as the minimum merged sum error
    * <b>change</b> (increase or decrease) among all pairs.
@@ -748,7 +748,7 @@ public:
   }
 
   /*!
-   * @brief Splits within a specified proxy area via N-section (by default bisection),
+   * @brief splits within a specified proxy area via N-section (by default bisection),
    * other regions are not affected.
    * @param px_idx proxy index.
    * @param n number of split sections.
@@ -808,7 +808,7 @@ public:
   /// \name Meshing
   /// @{
   /*!
-   * @brief Extracts the output mesh in the form of an indexed triangle set.
+   * @brief extracts the output mesh in the form of an indexed triangle set.
    * @tparam NamedParameters a sequence of \ref vsa_namedparameters
    *
    * @param np optional sequence of \ref vsa_namedparameters among the ones listed below
@@ -873,7 +873,7 @@ public:
   /// \name Output
   /// @{
   /*!
-   * @brief Outputs approximation results.
+   * @brief outputs approximation results.
    * @tparam NamedParameters a sequence of \ref vsa_namedparameters
 
    * @param np optional sequence of \ref vsa_namedparameters among the ones listed below
@@ -916,7 +916,7 @@ public:
 
   /// @cond CGAL_DOCUMENT_INTERNAL
   /*!
-   * @brief Gets the face-proxy index map.
+   * @brief gets the face-proxy index map.
    * @tparam FaceProxyMap `WritablePropertyMap` with
    * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type
    * @param[out] face_proxy_map face proxy index map
@@ -930,7 +930,7 @@ public:
   void proxy_map(boost::param_not_found) const {}
 
   /*!
-   * @brief Gets the face region of the specified proxy.
+   * @brief gets the face region of the specified proxy.
    * @tparam OutputIterator output iterator with `boost::graph_traits<TriangleMesh>::%face_descriptor` as value type
    * @param px_idx proxy index
    * @param out output iterator
@@ -946,7 +946,7 @@ public:
   }
 
   /*!
-   * @brief Gets the proxies.
+   * @brief gets the proxies.
    * @tparam OutputIterator output iterator with Proxy as value type
    * @param out output iterator
    */
@@ -960,7 +960,7 @@ public:
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
   /*!
-   * @brief Gets the wrapped proxies.
+   * @brief gets the wrapped proxies.
    * @tparam OutputIterator output iterator with Proxy_wrapper as value type
    * @param out output iterator
    */
@@ -972,7 +972,7 @@ public:
 #endif
 
   /*!
-   * @brief Gets the anchor points, which have the area-averaged position of the projected anchor vertex points on the incident proxies.
+   * @brief gets the anchor points, which have the area-averaged position of the projected anchor vertex points on the incident proxies.
    * @tparam OutputIterator output iterator with Point_3 as value type
    * @param out output iterator
    */
@@ -985,7 +985,7 @@ public:
   void anchor_points(boost::param_not_found) const {}
 
   /*!
-   * @brief Gets the anchor vertices.
+   * @brief gets the anchor vertices.
    * @tparam OutputIterator output iterator with vertex_descriptor as value type
    * @param out output iterator
    */
@@ -996,7 +996,7 @@ public:
   }
 
   /*!
-   * @brief Gets the indexed triangles, with
+   * @brief gets the indexed triangles, with
    * one triplet of integers per triangles, which refers to the anchor point indices.
    * @tparam OutputIterator output iterator with Indexed_triangle as value type
    * @param out output iterator
@@ -1010,7 +1010,7 @@ public:
   void indexed_triangles(boost::param_not_found) const {}
 
   /*!
-   * @brief Gets the indexed boundary polygon approximation.
+   * @brief gets the indexed boundary polygon approximation.
    * @tparam OutputIterator output iterator with std::vector<std::size_t> as value type
    * @param out output iterator
    */
@@ -1033,7 +1033,7 @@ public:
 // private member functions
 private:
   /*!
-   * @brief Randomly initializes proxies to target number of proxies.
+   * @brief randomly initializes proxies to target number of proxies.
    * @note To ensure the randomness, call `std::srand()` beforehand.
    * @param max_nb_proxies maximum number of proxies,
    * should be in range (nb_connected_components, num_faces(*m_ptm))
@@ -1054,7 +1054,7 @@ private:
   }
 
   /*!
-   * @brief Incrementally initializes proxies to target number of proxies.
+   * @brief incrementally initializes proxies to target number of proxies.
    * @param max_nb_proxies maximum number of proxies,
    * should be in range (nb_connected_components, num_faces(*m_ptm))
    * @param nb_iterations number of re-fitting iterations
@@ -1070,7 +1070,7 @@ private:
   }
 
   /*!
-   * @brief Hierarchically initializes proxies to target number of proxies.
+   * @brief hierarchically initializes proxies to target number of proxies.
    * @param max_nb_proxies maximum number of proxies,
    * should be in range (nb_connected_components, num_faces(*m_ptm))
    * @param nb_iterations number of re-fitting iterations
@@ -1095,7 +1095,7 @@ private:
   }
 
   /*!
-   * @brief Randomly initializes proxies
+   * @brief randomly initializes proxies
    * with both maximum number of proxies and minimum error drop stop criteria,
    * where the first criterion met stops the seeding.
    * @note To ensure the randomness, call `std::srand()` beforehand.
@@ -1131,7 +1131,7 @@ private:
   }
 
   /*!
-   * @brief Incrementally initializes proxies
+   * @brief incrementally initializes proxies
    * with both maximum number of proxies and minimum error drop stop criteria,
    * The first criterion met stops the seeding.
    * @param max_nb_proxies maximum number of proxies, should be in range (nb_connected_components, num_faces(tm) / 3)
@@ -1154,7 +1154,7 @@ private:
   }
 
   /*!
-   * @brief Hierarchically initializes proxies
+   * @brief hierarchically initializes proxies
    * with both maximum number of proxies and minimum error drop stop criteria,
    * where the first criterion met stops the seeding.
    * @param max_nb_proxies maximum number of proxies, should be in range (nb_connected_components, num_faces(tm) / 3)
@@ -1183,7 +1183,7 @@ private:
   }
 
   /*!
-   * @brief Partitions the area tagged with CGAL_VSA_INVALID_TAG with proxies, global face proxy map is updated.
+   * @brief partitions the area tagged with CGAL_VSA_INVALID_TAG with proxies, global face proxy map is updated.
    * Propagates the proxy seed faces and floods the tagged area to minimize the fitting error.
    * @tparam ProxyWrapperIterator forward iterator with Proxy_wrapper as value type
    * @param beg iterator point to the first element
@@ -1222,7 +1222,7 @@ private:
   }
 
   /*!
-   * @brief Refits and updates input range of proxies, sequential.
+   * @brief refits and updates input range of proxies, sequential.
    * @tparam ProxyWrapperIterator forward iterator with Proxy_wrapper as value type
    * @param beg iterator point to the first element
    * @param end iterator point to the one past the last element
@@ -1243,7 +1243,7 @@ private:
 
 #ifdef CGAL_LINKED_WITH_TBB
   /*!
-   * @brief Refits and updates input range of proxies, parallel.
+   * @brief refits and updates input range of proxies, parallel.
    * @tparam ProxyWrapperIterator forward iterator with Proxy_wrapper as value type
    * @param beg iterator point to the first element
    * @param end iterator point to the one past the last element
@@ -1267,7 +1267,7 @@ private:
 #endif // CGAL_LINKED_WITH_TBB
 
   /*!
-   * @brief Adds a proxy seed at the face with the maximum fitting error.
+   * @brief adds a proxy seed at the face with the maximum fitting error.
    * @return `true` if add is successfully, and `false` otherwise
    */
   bool add_to_furthest_proxy() {
@@ -1307,7 +1307,7 @@ private:
   }
 
   /*!
-   * @brief Fits a new (wrapped) proxy from a region patch.
+   * @brief fits a new (wrapped) proxy from a region patch.
    * 1. Compute proxy parameters from a list of faces.
    * 2. Find proxy seed face.
    * 3. Sum the proxy error.
@@ -1340,7 +1340,7 @@ private:
   }
 
   /*!
-   * @brief Adds a proxy at face f.
+   * @brief adds a proxy at face f.
    * @param f where to the proxy is initialized from
    */
   void add_one_proxy_at(const face_descriptor f) {
@@ -1348,7 +1348,7 @@ private:
   }
 
   /*!
-   * @brief Fits a new (wrapped) proxy from a face.
+   * @brief fits a new (wrapped) proxy from a face.
    * 1. Compute proxy parameters from the face.
    * 2. Set seed to this face.
    * 3. Update the proxy error.
@@ -1375,7 +1375,7 @@ private:
   }
 
   /*!
-   * @brief Picks a number of non-seed faces into an empty vector randomly.
+   * @brief picks a number of non-seed faces into an empty vector randomly.
    * @param nb_requested requested number of faces
    * @param[out] picked_faces shuffled faces vector
    * @return `true` if the requested number of faces are selected, and `false` otherwise
@@ -1414,7 +1414,7 @@ private:
   }
 
   /*!
-   * @brief Initializes proxies from each connected component of the input mesh.
+   * @brief initializes proxies from each connected component of the input mesh.
    * @note This function clears proxy vector and sets face proxy map to initial state,
    * intended only for bootstrapping initialization.
    * Coarse approximation iteration is not performed, because it is inaccurate anyway
@@ -1472,7 +1472,7 @@ private:
   }
 
   /*!
-   * @brief Computes proxy planes.
+   * @brief computes proxy planes.
    * The proxy may not contain the plane related properties, so we need these internal planes,
    * used in the chord subdivision and anchor location.
    * @param if_pca_plane set `true` to use the PCA plane fitting
@@ -1508,7 +1508,7 @@ private:
   }
 
   /*!
-   * @brief Finds the anchors.
+   * @brief finds the anchors.
    */
   void find_anchors() {
     BOOST_FOREACH(vertex_descriptor vtx, vertices(*m_ptm)) {
@@ -1526,7 +1526,7 @@ private:
   }
 
   /*!
-   * @brief Finds and approximates the chord connecting the anchors.
+   * @brief finds and approximates the chord connecting the anchors.
    * @param subdivision_ratio boundary chord approximation recursive split creterion
    * @param relative_to_chord set `true` if the subdivision_ratio is relative to the chord length (relative sense),
    * otherwise it's relative to the average edge length (absolute sense).
@@ -1577,7 +1577,7 @@ private:
   }
 
   /*!
-   * @brief Adds anchors to the boundary cycles with only 2 anchors.
+   * @brief adds anchors to the boundary cycles with only 2 anchors.
    */
   void add_anchors() {
     BOOST_FOREACH(const Boundary_cycle &bcycle, m_bcycles) {
@@ -1632,7 +1632,7 @@ private:
   }
 
   /*!
-   * @brief Runs the pseudo Constrained Delaunay Triangulation at each proxy region,
+   * @brief runs the pseudo Constrained Delaunay Triangulation at each proxy region,
    * and stores the extracted indexed triangles in @a tris.
    * @pre all anchors are found, i.e. all boundary cycles have been visited
    * and attached with at least 3 anchors.
@@ -1775,7 +1775,7 @@ private:
   }
 
   /*!
-   * @brief Walks along the region boundary cycle to the first halfedge
+   * @brief walks along the region boundary cycle to the first halfedge
    * pointing to a vertex associated with an anchor.
    * @param[in/out] he_start region boundary halfedge
    */
@@ -1790,7 +1790,7 @@ private:
   }
 
   /*!
-   * @brief Walks along the region boundary cycle to the next anchor
+   * @brief walks along the region boundary cycle to the next anchor
    * and records the path as a `Boundary_chord`.
    * @param[in/out] he_start starting region boundary halfedge
    * pointing to a vertex associated with an anchor
@@ -1804,7 +1804,7 @@ private:
   }
 
   /*!
-   * @brief Walks to the next boundary cycle halfedge.
+   * @brief walks to the next boundary cycle halfedge.
    * @param[in/out] he_start region boundary halfedge
    */
   void walk_to_next_border_halfedge(halfedge_descriptor &he_start) const {
@@ -1818,7 +1818,7 @@ private:
   }
 
   /*!
-   * @brief Subdivides a chord recursively in range [@a chord_begin, @a chord_end).
+   * @brief subdivides a chord recursively in range [@a chord_begin, @a chord_end).
    * @param chord_begin begin iterator of the chord
    * @param chord_end end iterator of the chord
    * @param subdivision_ratio the chord recursive split error threshold
@@ -1920,7 +1920,7 @@ private:
   }
 
   /*!
-   * @brief Tests if the target vertex of a halfedge is attached with an anchor.
+   * @brief tests if the target vertex of a halfedge is attached with an anchor.
    * @param he a halfedge descriptor
    * @return `true` is attached with an anchor, and `false` otherwise.
    */
@@ -1929,7 +1929,7 @@ private:
   }
 
   /*!
-   * @brief Checks if a vertex is attached with an anchor.
+   * @brief checks if a vertex is attached with an anchor.
    * @tparam VertexAnchorIndexMap `WritablePropertyMap`
    * with `boost::graph_traights<TriangleMesh>::vertex_descriptor` as key and `std::size_t` as value type
    * @param vtx a vertex descriptor
@@ -1943,7 +1943,7 @@ private:
   }
 
   /*!
-   * @brief Attaches an anchor to the vertex.
+   * @brief attaches an anchor to the vertex.
    * @param vtx vertex
    */
   void attach_anchor(const vertex_descriptor &vtx) {
@@ -1953,7 +1953,7 @@ private:
   }
 
   /*!
-   * @brief Attaches an anchor to the target vertex of the halfedge.
+   * @brief attaches an anchor to the target vertex of the halfedge.
    * @param he halfedge
    */
   void attach_anchor(const halfedge_descriptor &he) {
@@ -1961,7 +1961,7 @@ private:
   }
 
   /*!
-   * @brief Optimizes the anchor location by averaging the projection points of
+   * @brief optimizes the anchor location by averaging the projection points of
    * the anchor vertex to the incident proxy plane.
    */
   void optimize_anchor_location() {
@@ -1992,7 +1992,7 @@ private:
   }
 
   /*!
-   * @brief Calculates the averaged edge length of a triangle mesh.
+   * @brief calculates the averaged edge length of a triangle mesh.
    * @param tm the input triangle mesh
    * @param vpoint_map vertex point map
    * @return averaged edge length
@@ -2010,7 +2010,7 @@ private:
   }
 
   /*!
-   * @brief Uses an incremental builder to build and tests
+   * @brief uses an incremental builder to build and tests
    * if the indexed triangle surface is manifold.
    * @tparam PolyhedronSurface should be `CGAL::Polyhedron_3`
    * @param[out] poly input polyhedorn mesh
@@ -2030,7 +2030,7 @@ private:
   }
 
   /*!
-   * @brief Fits an area averaged plane from a range of faces.
+   * @brief fits an area averaged plane from a range of faces.
    * @tparam FaceIterator face_descriptor container iterator
    * @param beg container begin
    * @param end container end
@@ -2065,7 +2065,7 @@ private:
   }
 
   /*!
-   * @brief Fits a plane from a range of faces with PCA algorithm.
+   * @brief fits a plane from a range of faces with PCA algorithm.
    * @tparam FaceIterator face_descriptor container iterator
    * @param beg container begin
    * @param end container end

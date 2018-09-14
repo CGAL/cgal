@@ -44,7 +44,7 @@ unspecified_type all_default();
 
 /*!
  * \ingroup PkgTSMA
- * @brief Approximates the input mesh with plane proxies.
+ * @brief approximates the input mesh with plane proxies.
  * This function uses the Variational Shape Approximation algorithm described in \cgalCite{cgal:cad-vsa-04}
  * to approximate a triangle surface mesh, with indexed triangles as output.
  *

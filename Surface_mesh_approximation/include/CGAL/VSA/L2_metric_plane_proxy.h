@@ -68,7 +68,7 @@ public:
   /// @}
 
   /*!
-   * @brief Computes the L21 error from a face to a proxy, 
+   * @brief computes the L21 error from a face to a proxy, 
    * using integral (closed-form) computation.
    * @param tm input triangle mesh
    * @param f face_descriptor of a face
@@ -93,7 +93,7 @@ public:
   }
 
   /*!
-   * @brief Fits a proxy from a range of faces, in the L2 sense, with an 
+   * @brief fits a proxy from a range of faces, in the L2 sense, with an 
    * integral (closed-form) formulation. The best-fit plane passes
    * through the center of mass and is defined by the two principal
    * components of the integral covariance matrix.

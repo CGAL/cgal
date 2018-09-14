@@ -78,7 +78,7 @@ public:
   /// @}
 
   /*!
-   * @brief Computes the L2,1 error from a facet to a proxy. 
+   * @brief computes the L2,1 error from a facet to a proxy. 
    * @param tm input triangle mesh
    * @param f face_descriptor of a face
    * @param px proxy
@@ -91,7 +91,7 @@ public:
   }
 
   /*!
-   * @brief Fits a proxy to a range of faces.
+   * @brief fits a proxy to a range of faces.
    * @tparam FaceRange range of face descriptors, model of Range.
    * @param faces the range of faces to be fitted
    * @param tm input triangle mesh
