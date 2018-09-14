@@ -26,7 +26,7 @@ together with the result of the soft clustering. The computation of the SDF valu
 This allows an alternative implementation of the SDF to be directly plugged into the segmentation algorithm,
 and also to reuse the SDF values several times with different parameters for the segmentation algorithm.
 
-- The second one in an implementation of the approximate convex segmentation algorithm proposed by
+- The second one is an implementation of the approximate convex segmentation algorithm proposed by
 Mamou and Ghorbel \cgalCite{mamou2009simple}. It is based on an iterative edge collapsed in the
 dual graph of the input triangle mesh, so as to minimize the concavity value and aspect ratio of each segment
 at each collapse. The computation of the concavity value and the approximate convex segmentation

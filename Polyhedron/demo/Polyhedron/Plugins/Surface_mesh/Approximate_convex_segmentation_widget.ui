@@ -246,9 +246,9 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="segmentize_button">
+       <widget class="QPushButton" name="segment_button">
         <property name="text">
-         <string>Segmentize</string>
+         <string>Segment</string>
         </property>
        </widget>
       </item>

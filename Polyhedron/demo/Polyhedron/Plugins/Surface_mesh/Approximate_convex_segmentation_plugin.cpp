@@ -79,7 +79,7 @@ public:
     this->mw->addDockWidget(Qt::LeftDockWidgetArea, m_segmentation_widget);
 
     // signal-slot bindings
-    connect(m_segmentation_ui.segmentize_button, SIGNAL(clicked()), this, SLOT(on_segmentize_button_clicked()));
+    connect(m_segmentation_ui.segment_button, SIGNAL(clicked()), this, SLOT(on_segment_button_clicked()));
     connect(m_segmentation_ui.concavity_values_button, SIGNAL(clicked()), this, SLOT(on_concavity_values_button_clicked()));
   }
 
@@ -94,7 +94,7 @@ public Q_SLOTS:
     m_segmentation_widget->show();
   }
 
-  void on_segmentize_button_clicked()
+  void on_segment_button_clicked()
   {
     std::cout << "Segmenting..." << std::endl;
     
@@ -103,14 +103,14 @@ public Q_SLOTS:
     Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
     if (item)
     {
-      segmentize(item);
+      segment(item);
       return;
     }
     
     Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
     if (sm_item)
     {
-      segmentize(sm_item);
+      segment(sm_item);
       return;
     }
   }
@@ -144,11 +144,10 @@ private:
   std::vector<QColor> m_gradient_colors;
 
   template <class FacegraphItem>
-  void segmentize(FacegraphItem* item)
+  void segment(FacegraphItem* item)
   {
     typedef typename FacegraphItem::Face_graph Facegraph;
     typedef typename boost::graph_traits<Facegraph>::face_descriptor face_descriptor;
-    typedef typename boost::graph_traits<Facegraph>::vertex_descriptor vertex_descriptor;
     
     typedef typename boost::property_map<Facegraph, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
     
@@ -192,7 +191,6 @@ private:
                                                              CGAL::parameters::min_number_of_segments(min_number_of_segments).
                                                              convex_hulls_of_segments(convex_hulls_pmap).
                                                              use_closest_point(use_shortest_method).
-                                                             postprocess_segments(enable_postprocessing_segments).
                                                              segment_size_threshold(segment_size_threshold));
     timer.stop();
     
@@ -229,59 +227,26 @@ private:
     // extract convex hulls if the corresponding flag is set 
     if (extract_convex_hulls)
     {
-      FacegraphItem* convex_hulls_item = new FacegraphItem();
-      
-      convex_hulls_item->setFlatPlusEdgesMode();
-      Facegraph& convex_hulls_mesh = *convex_hulls_item->face_graph();
-
-      typedef CGAL::Face_filtered_graph<Facegraph> Filtered_graph;
-
+      Scene_group_item *group = new Scene_group_item(tr("%1-convex-hulls-[%2,%3]").arg(segments_num).arg(concavity_threshold).arg(min_number_of_segments));
+      scene->addItem(group);
       // add convex hulls
       for (std::size_t i = 0; i < segments_num; ++i)
       {
-        Facegraph& convex_hull = convex_hulls_pmap[i];
-
-        boost::unordered_map<face_descriptor, face_descriptor> f2f;
-        typedef std::pair<face_descriptor, face_descriptor> Faces_pair;
-
-        // add the convex hull
-        CGAL::copy_face_graph(convex_hull, convex_hulls_mesh, CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(), std::inserter(f2f, f2f.end()));
-        
-        // assign patch id to the convex hull
-        Patch_id_pmap patch_pmap = get(CGAL::face_patch_id_t<int>(), convex_hulls_mesh);
-
-        BOOST_FOREACH(Faces_pair faces_pair, f2f)
-        {
-          put(patch_pmap, faces_pair.second, static_cast<int>(i));
-        }
-      }
-     
-      set_color_read_only(convex_hulls_item);
-      if (use_concavity_colors)
-      {
-        std::vector<QColor>& colors = convex_hulls_item->color_vector();
-        for (std::size_t i = 0; i < segments_num; ++i)
+        FacegraphItem* new_item=new FacegraphItem();
+        new_item->setName(tr("Convex_hull %1").arg(i));
+        if (use_concavity_colors)
         {
           double concavity = CGAL::concavity_values<Concurrency_tag>(segmentation_mesh, segments_pmap, i);
           int step = std::min(255, int(concavity / concavity_threshold * 255));
-          colors.push_back(m_gradient_colors[step]);
-        } 
+          new_item->setColor(m_gradient_colors[step]);
+        }
+        else
+          new_item->setColor(colors[i]);
+        CGAL::copy_face_graph(convex_hulls_pmap[i], *new_item->face_graph());
+        scene->addItem(new_item);
+        scene->changeGroup(new_item, group);
       }
-      else
-      {
-        convex_hulls_item->color_vector() = colors;
-      }
-      convex_hulls_item->setItemIsMulticolor(true);
-      convex_hulls_item->setName(tr("%1-convex-hulls-[%2,%3]").arg(segments_num).arg(concavity_threshold).arg(min_number_of_segments));
-
-      // add to the scene
-      scene->addItem(convex_hulls_item);
-      convex_hulls_item->setVisible(false);
-      convex_hulls_item->setFlatPlusEdgesMode();
-        
-      // refresh item
-      convex_hulls_item->invalidateOpenGLBuffers();
-      scene->itemChanged(scene->item_id(convex_hulls_item));
+      item->setVisible(false);
     }
 
     // setup default view
