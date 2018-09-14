@@ -15,25 +15,25 @@ public:
   /// Number type model of `Field` and `RealEmbeddable`
   typedef unspecified_type FT;
   /// Triangle mesh
-  typedef unspecified_type TriangleMesh;
+  typedef unspecified_type Triangle_mesh;
   /// Triangle mesh face descriptor
   typedef unspecified_type face_descriptor;
-  /// Parameterized shape proxy
+  /// Shape proxy type
   typedef unspecified_type Proxy;
 
   /// @name Operations
   /// A model of this concept must provide:
   /// @{
 
-  /// Computes and returns fitting error from face f to proxy.
-  FT compute_error(const face_descriptor f, const TriangleMesh &tm, const Proxy &proxy) const;
+  /// returns fitting error from face f to proxy.
+  FT compute_error(const face_descriptor f, const Triangle_mesh &tm, const Proxy &proxy) const;
 
-  /// Computes and returns fitted proxy from a range of faces.
+  /// returns a fitted proxy to a range of faces.
   /// @tparam FaceRange a range of
   ///   `boost::graph_traits<TriangleMesh>::%face_descriptor` model of `ConstRange`
   ///   with iterator type being model of `InputIterator`.
   template <typename FaceRange>
-  Proxy fit_proxy(const FaceRange &faces, const TriangleMesh &tm) const;
+  Proxy fit_proxy(const FaceRange &faces, const Triangle_mesh &tm) const;
 
   /// }
 

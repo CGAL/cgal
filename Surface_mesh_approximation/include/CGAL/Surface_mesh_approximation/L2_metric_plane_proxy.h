@@ -63,6 +63,8 @@ class L2_metric_plane_proxy {
   typedef CGAL::dynamic_face_property_t<FT> Face_area_tag;
   typedef typename boost::property_map<TriangleMesh, Face_area_tag>::type Face_area_map;
 
+  typedef TriangleMesh Triangle_mesh;
+
 public:
   /// \name Types
   /// @{

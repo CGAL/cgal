@@ -65,6 +65,8 @@ class L21_metric_plane_proxy {
   typedef typename boost::property_map<TriangleMesh, Face_normal_tag>::type Face_normal_map;
   typedef typename boost::property_map<TriangleMesh, Face_area_tag>::type Face_area_map;
 
+  typedef TriangleMesh Triangle_mesh;
+
 public:
   /// \name Types
   /// @{

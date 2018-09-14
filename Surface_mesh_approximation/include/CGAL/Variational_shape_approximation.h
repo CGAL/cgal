@@ -404,7 +404,7 @@ public:
   /*!
    * @brief calls `run` while error decrease is greater than `cvg_threshold`.
    * @param cvg_threshold the percentage of error change between two successive runs,
-   * should be in range (0, 1).
+   * should be in range `(0, 1)`.
    * @param max_iterations maximum number of iterations allowed
    * @param avg_interval size of error average interval to have smoother convergence curve,
    * if 0 is assigned, 1 is used instead.
@@ -870,7 +870,7 @@ public:
    *  \cgalParamBegin{face_proxy_map} a ReadWritePropertyMap with
    * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type.
    * A proxy is a set of connected faces which are placed under the same proxy patch (see \cgalFigureRef{iterations}).
-   * The proxy-ids are contiguous in range [0, number_of_proxies() - 1].
+   * The proxy-ids are contiguous in range `[0, number_of_proxies() - 1]`.
    *  \cgalParamEnd
    *  \cgalParamBegin{proxies} output iterator over proxies.
    *  \cgalParamEnd
@@ -1024,7 +1024,7 @@ private:
    * @brief randomly initializes proxies to target number of proxies.
    * @note To ensure the randomness, call `std::srand()` beforehand.
    * @param max_nb_proxies maximum number of proxies,
-   * should be in range (nb_connected_components, num_faces(*m_ptm))
+   * should be in range `(nb_connected_components, num_faces(*m_ptm))`
    * @param nb_iterations number of re-fitting iterations
    * @return number of proxies initialized
    */
@@ -1044,7 +1044,7 @@ private:
   /*!
    * @brief incrementally initializes proxies to target number of proxies.
    * @param max_nb_proxies maximum number of proxies,
-   * should be in range (nb_connected_components, num_faces(*m_ptm))
+   * should be in range `(nb_connected_components, num_faces(*m_ptm))`
    * @param nb_iterations number of re-fitting iterations
    * before each incremental proxy insertion
    * @return number of proxies initialized
@@ -1060,7 +1060,7 @@ private:
   /*!
    * @brief hierarchically initializes proxies to target number of proxies.
    * @param max_nb_proxies maximum number of proxies,
-   * should be in range (nb_connected_components, num_faces(*m_ptm))
+   * should be in range `(nb_connected_components, num_faces(*m_ptm))`
    * @param nb_iterations number of re-fitting iterations
    * before each hierarchical proxy insertion
    * @return number of proxies initialized
@@ -1087,8 +1087,8 @@ private:
    * with both maximum number of proxies and minimum error drop stop criteria,
    * where the first criterion met stops the seeding.
    * @note To ensure the randomness, call `std::srand()` beforehand.
-   * @param max_nb_proxies maximum number of proxies, should be in range (nb_connected_components, num_faces(tm) / 3)
-   * @param min_error_drop minimum error drop, should be in range (0.0, 1.0)
+   * @param max_nb_proxies maximum number of proxies, should be in range `(nb_connected_components, num_faces(tm) / 3)`
+   * @param min_error_drop minimum error drop, should be in range `(0.0, 1.0)`
    * @param nb_iterations number of re-fitting iterations
    * @return number of proxies initialized
    */
@@ -1122,8 +1122,8 @@ private:
    * @brief incrementally initializes proxies
    * with both maximum number of proxies and minimum error drop stop criteria,
    * The first criterion met stops the seeding.
-   * @param max_nb_proxies maximum number of proxies, should be in range (nb_connected_components, num_faces(tm) / 3)
-   * @param min_error_drop minimum error drop, should be in range (0.0, 1.0)
+   * @param max_nb_proxies maximum number of proxies, should be in range `(nb_connected_components, num_faces(tm) / 3)`
+   * @param min_error_drop minimum error drop, should be in range `(0.0, 1.0)`
    * @param nb_iterations number of re-fitting iterations
    * @return number of proxies initialized
    */
@@ -1145,8 +1145,8 @@ private:
    * @brief hierarchically initializes proxies
    * with both maximum number of proxies and minimum error drop stop criteria,
    * where the first criterion met stops the seeding.
-   * @param max_nb_proxies maximum number of proxies, should be in range (nb_connected_components, num_faces(tm) / 3)
-   * @param min_error_drop minimum error drop, should be in range (0.0, 1.0)
+   * @param max_nb_proxies maximum number of proxies, should be in range `(nb_connected_components, num_faces(tm) / 3)`
+   * @param min_error_drop minimum error drop, should be in range `(0.0, 1.0)`
    * @param nb_iterations number of re-fitting iterations
    * @return number of proxies initialized
    */
@@ -1806,7 +1806,7 @@ private:
   }
 
   /*!
-   * @brief subdivides a chord recursively in range [@a chord_begin, @a chord_end).
+   * @brief subdivides a chord recursively in range `[@a chord_begin, @a chord_end).`
    * @param chord_begin begin iterator of the chord
    * @param chord_end end iterator of the chord
    * @param subdivision_ratio the chord recursive split error threshold
