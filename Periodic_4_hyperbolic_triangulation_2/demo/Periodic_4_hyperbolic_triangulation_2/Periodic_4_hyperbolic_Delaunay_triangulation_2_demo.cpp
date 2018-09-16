@@ -3,7 +3,6 @@
 // CGAL headers 
 
 #include <CGAL/point_generators_2.h>
-#include <CGAL/Hyperbolic_random_points_in_disc_2.h>
 #include <internal/Qt/HyperbolicPainterOstream.h>
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
@@ -377,34 +376,27 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
 
-  // typedef CGAL::Creator_uniform_2<double, Point> Creator;
-  // CGAL::Random_points_in_disc_2<Point, Creator> g( 1.0 );
-  typedef CGAL::Cartesian<double>::Point_2  Point_d;
-  std::vector<Point_d> v;
-  Hyperbolic_random_points_in_disc_2_double(v, 5*number_of_points, -1, 0.159);
+  typedef CGAL::Cartesian<double>::Point_2                   Point_double;
+  typedef CGAL::Creator_uniform_2<double, Point_double >     Creator;
 
+  CGAL::Random_points_in_disc_2<Point_double, Creator> g(0.85);
+  
   Traits::Side_of_original_octagon pred;
-
   std::vector<Point> pts;
   int cnt = 0;
-  for (int i = 0; cnt < number_of_points && i < v.size(); i++) {
-    if (pred(v[i]) != CGAL::ON_UNBOUNDED_SIDE) {
-      pts.push_back(Point(v[i].x(), v[i].y()));
-      cnt++;
-    }
-  } 
-  
-  if (pts.size() < number_of_points) {
-    cout << "Creation of random points failed! Please try again..." << endl;
-    return;
-  }
+  do {    
+      Point_double pd = *(++g);
+      if (pred(pd) != CGAL::ON_UNBOUNDED_SIDE) {
+          Point pt = Point(pd.x(), pd.y());
+          pts.push_back(pt);
+          cnt++;
+      } 
+  } while (cnt < number_of_points);
+
 
   CGAL::Timer tt;
   tt.start();
   dt.insert(pts.begin(), pts.end());
-  // for (int i = 0; i < pts.size(); i++) {
-  //   dt.insert(pts[i]);
-  // }
   tt.stop();
 
   cout << "Time elapsed for the insertion of " << number_of_points << " points: " << tt.time() << " secs." << endl;
