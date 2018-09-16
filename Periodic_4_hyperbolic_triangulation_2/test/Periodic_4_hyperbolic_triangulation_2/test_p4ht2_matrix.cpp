@@ -22,7 +22,7 @@ int main(void) {
     cout << "Identity matrix: " << m << endl;
 
     vector<Matrix> gens;
-    get_generators(gens);
+    Matrix::generators(gens);
     for (int i = 0; i < gens.size(); i++) {
         cout << "g[" << i << "] = " << gens[i] << endl;
     }

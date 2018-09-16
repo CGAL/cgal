@@ -7,7 +7,6 @@
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <CGAL/point_generators_2.h>
-#include <CGAL/Hyperbolic_random_points_in_disc_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Hyperbolic_octagon_translation.h>
@@ -21,11 +20,7 @@
 #include <CGAL/Algebraic_kernel_for_circles_2_2.h>
 
 typedef CORE::Expr                                                              NT;
-
 typedef CGAL::Cartesian<NT>                                                     Kernel;
-
-//typedef CGAL::Circular_kernel_2<K, CGAL::Algebraic_kernel_for_circles_2_2<K> >  Kernel;
-
 
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel,
                                     CGAL::Hyperbolic_octagon_translation>       Traits;
@@ -74,26 +69,20 @@ int main(int argc, char** argv) {
     double extime = 0.0;
 
     for (int exec = 1; exec <= iters; exec++) {
-        std::vector<Point_double> v;
+        
         std::vector<Point> pts;
         // We can consider points only in the circle circumscribing the fundamental domain 
-        Hyperbolic_random_points_in_disc_2_double(v, 5*N, -1, 0.159);
+        CGAL::Random_points_in_disc_2<Point_double, Creator> g(0.85);
 
         int cnt = 0;
-        int idx = 0;
-        do {    
-            Point pt = Point(v[idx].x(), v[idx].y());
-            if (pred(pt) != CGAL::ON_UNBOUNDED_SIDE) {
+        do {
+            Point_double pd = *(++g);    
+            if (pred(pd) != CGAL::ON_UNBOUNDED_SIDE) {
+                Point pt = Point(pd.x(), pd.y());
                 pts.push_back(pt);
                 cnt++;
             } 
-            idx++;
-        } while (cnt < N && idx < v.size());
-
-        if (cnt < N) {
-            cout << "I failed at the generation of random points! Exiting..." << endl;
-            return -1;
-        }
+        } while (cnt < N);
 
         cout << "iteration " << exec << ": inserting into triangulation (rational dummy points)... "; cout.flush();
         Triangulation tr;

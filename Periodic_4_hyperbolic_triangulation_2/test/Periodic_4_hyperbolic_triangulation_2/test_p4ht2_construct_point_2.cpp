@@ -14,7 +14,7 @@ typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel,
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<Traits>            Triangulation;
 typedef Kernel::Point_2                                                         Point;
 
-typedef Traits::Construct_point_2                                               CP2;
+typedef Traits::Construct_hyperbolic_point_2                                    CP2;
 typedef Traits::Hyperbolic_translation                                          Trans;
 
 using namespace std;
@@ -23,7 +23,7 @@ using namespace CGAL;
 int main(int argc, char** argv) {    
 
     std::vector<Trans> gens;
-    get_generators(gens);
+    Trans::generators(gens);
 
     Point O(0,0);
     for (int i = 0; i < gens.size(); i++) {
