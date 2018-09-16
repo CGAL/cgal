@@ -59,30 +59,8 @@ private:
 
 	static std::map<std::string, Matrix> 	init_gmap() {
 
-		// Create matrix coefficients
-		FT sq2 = CGAL::sqrt(FT(2));
-		FT xi  = FT(1) + sq2;
-		FT rxi = CGAL::sqrt(xi);
-
-		// All matrices have the same _alpha
-		ECplx alpha(xi,FT(0));			
-
-		// This vector holds the different _betas
-		std::vector< ECplx > beta;
-
-		beta.push_back( ECplx( sq2 * rxi, 	 0 			) );
-		beta.push_back( ECplx( rxi, 		 rxi 		) );
-		beta.push_back( ECplx( 0, 			 sq2 * rxi 	) );
-		beta.push_back( ECplx( -rxi, 		 rxi 		) );
-		beta.push_back( ECplx( -sq2 * rxi, 	 0 			) );
-		beta.push_back( ECplx( -rxi, 		-rxi 		) );
-		beta.push_back( ECplx( 0, 			-sq2 * rxi 	) );
-		beta.push_back( ECplx( rxi, 		-rxi 		) );
-
 		std::vector<Matrix> g;
-		for (int i = 0; i < 8; i++) {
-			g.push_back(Matrix(alpha, beta[i]));
-		}
+		Matrix::generators(g);
 		
 		std::map<std::string, Matrix> m;
   		m["_"] 		= Matrix();
