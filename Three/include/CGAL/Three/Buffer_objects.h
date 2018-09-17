@@ -111,7 +111,8 @@ struct Vbo
   enum Flag{
     GEOMETRY=0,
     COLORS,
-    NORMALS
+    NORMALS,
+    NOT_INSTANCED
   };
   QOpenGLBuffer vbo;
   const char* attribute;

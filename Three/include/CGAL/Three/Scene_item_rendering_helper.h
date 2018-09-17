@@ -69,7 +69,8 @@ public:
     GEOMETRY = 0x1,                     //!< Invalidates the vertices, edges and faces.
     COLORS   = 0x2,                     //!< Invalidates the color of each vertex
     NORMALS  = 0x4,                     //!< Invalidate the normal of each vertex.
-    ALL      = GEOMETRY|COLORS|NORMALS  //!< Invalidate everything
+    NOT_INSTANCED = 0x8,                //!< Invalidate the centers/radius of each sphere.
+    ALL      = GEOMETRY|COLORS|NORMALS|NOT_INSTANCED  //!< Invalidate everything
   };
 #ifdef DOXYGEN_RUNNING
   //! \brief Flag interface for Scene_item::Gl_data_name.

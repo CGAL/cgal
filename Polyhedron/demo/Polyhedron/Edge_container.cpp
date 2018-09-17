@@ -84,7 +84,7 @@ void Edge_container::initGL(Viewer_interface *viewer)
         if(!getVbo(Radius))
           setVbo(Radius,
                  new Vbo("radius",
-                         Vbo::GEOMETRY,
+                         Vbo::NOT_INSTANCED,
                          QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1));
         getVao(viewer)->addVbo(getVbo(Radius));
       }
@@ -92,8 +92,10 @@ void Edge_container::initGL(Viewer_interface *viewer)
       {
         if(!getVbo(Centers))
           setVbo(Centers,
-                 new Vbo("Center",
-                         Vbo::GEOMETRY));
+                 new Vbo("center",
+                  viewer->getShaderProgram(getProgram())->property("isInstanced").toBool() 
+                  ? Vbo::NOT_INSTANCED
+                  : Vbo::GEOMETRY));
         getVao(viewer)->addVbo(getVbo(Centers));
       }
       

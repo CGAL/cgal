@@ -262,6 +262,7 @@ Scene_polylines_item_private::computeSpheres()
                     "</ul></p>"
                     "<p>Tip: To erase this item, set its radius to 0 or less. </p>")
                             );
+      spheres->computeElements();
       QApplication::restoreOverrideCursor();
 }
 
@@ -557,13 +558,22 @@ void Scene_polylines_item::change_corner_radii(double r) {
           scene->addItem(d->spheres);
           scene->changeGroup(d->spheres, this);
           lockChild(d->spheres);
-          d->computeSpheres();
+          Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+          {
+            d->spheres->gl_initialization(qobject_cast<Viewer_interface*>(v));
+          }
           d->spheres->invalidateOpenGLBuffers();
+          d->computeSpheres();
+          
         }
         else if(r>0 && d->spheres)
         {
-          d->computeSpheres();
+//          Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+//          {
+//            d->spheres->gl_initialization(qobject_cast<Viewer_interface*>(v));
+//          }
           d->spheres->invalidateOpenGLBuffers();
+          d->computeSpheres();
         }
         else if (r<=0 && d->spheres!=NULL)
         {

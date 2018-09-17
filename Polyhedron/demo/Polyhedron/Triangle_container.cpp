@@ -99,7 +99,9 @@ void Triangle_container::initGL( Viewer_interface* viewer)
         if(!getVbo(Facet_centers))
           setVbo(Facet_centers,
                  new Vbo("center",
-                         Vbo::GEOMETRY));
+                  viewer->getShaderProgram(getProgram())->property("isInstanced").toBool() 
+                         ? Vbo::NOT_INSTANCED
+                         : Vbo::GEOMETRY));
         getVao(viewer)->addVbo(getVbo(Facet_centers));
       }
       
@@ -108,7 +110,7 @@ void Triangle_container::initGL( Viewer_interface* viewer)
         if(!getVbo(Radius))
           setVbo(Radius,
                  new Vbo("radius",
-                         Vbo::GEOMETRY,
+                         Vbo::NOT_INSTANCED,
                          QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1));
         getVao(viewer)->addVbo(getVbo(Radius));
         
@@ -197,9 +199,7 @@ void Triangle_container::initializeBuffers(Viewer_interface *viewer)
   if(getVao(viewer)->program->property("isInstanced").toBool())
   {
     getVao(viewer)->bind();
-    if(
-       //getVao(viewer)->program->property("isInstanced").toBool() &&
-       getVao(viewer)->program->property("hasCenter").toBool())
+    if(getVao(viewer)->program->property("hasCenter").toBool())
       viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("center"), 1);
     if(getVao(viewer)->program->property("hasRadius").toBool())
       viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("radius"), 1);

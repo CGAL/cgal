@@ -1194,6 +1194,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     program->setProperty("hasCenter", true);
     program->setProperty("hasRadius", true);
     program->setProperty("isInstanced", true);
+    program->setProperty("hasCutPlane", true);
     return program;
   }
   case PROGRAM_SPHERES:

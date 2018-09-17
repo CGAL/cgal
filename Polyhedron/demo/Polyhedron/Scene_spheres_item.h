@@ -38,7 +38,7 @@ public:
   void add_sphere(const CGAL::Sphere_3<Kernel> &sphere, CGAL::Color = CGAL::Color(120,120,120));
   void clear_spheres();
   void setPrecision(int prec);
-
+  void gl_initialization(CGAL::Three::Viewer_interface* viewer);
   void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
   void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
   void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
