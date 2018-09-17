@@ -26,6 +26,8 @@
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 
+#include <CGAL/Polygon_2.h>
+
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include "triangulate_primitive.h"
 #include <CGAL/array.h>
@@ -253,11 +255,12 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
 
     // The three first vertices may be aligned, we need to test other
     // combinations
+    Point_3 pa, pb, pc;
     for (std::size_t i = 0; i < pit->size() - 2; ++ i)
     {
-       const Point_3& pa = soup->points[pit->at(i)];
-       const Point_3& pb = soup->points[pit->at(i+1)];
-       const Point_3& pc = soup->points[pit->at(i+2)];
+       pa = soup->points[pit->at(i)];
+       pb = soup->points[pit->at(i+1)];
+       pc = soup->points[pit->at(i+2)];
        if (!CGAL::collinear (pa, pb, pc))
        {
           normal = CGAL::cross_product(pb-pa, pc -pa);
@@ -267,6 +270,23 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
 
     if (normal == CGAL::NULL_VECTOR) // No normal could be computed, return
       return;
+
+    normal = normal / std::sqrt (normal * normal);
+
+    // If the 3 points used to estimate the normal form a concavity,
+    // then the normal is wrongly oriented. To address this, we
+    // compute the resulting projected 2D polygon and check if it
+    // correctly oriented (counterclockwise). If it's not, we invert
+    // the normal.
+    {
+        Kernel::Plane_3 plane (pa, normal);
+        CGAL::Polygon_2<Kernel> poly;
+        for (std::size_t i = 0; i < pit->size(); ++ i)
+            poly.push_back (plane.to_2d(soup->points[pit->at(i)]));
+
+        if (poly.is_clockwise_oriented())
+            normal = -normal;
+    }
 
     typedef FacetTriangulator<Polyhedron, Kernel, std::size_t> FT;
 
@@ -327,20 +347,14 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
         positions_poly.push_back(1.0);
 
 
-        const Point_3& pa = soup->points[pit->at(0)];
-        const Point_3& pb = soup->points[pit->at(1)];
-        const Point_3& pc = soup->points[pit->at(2)];
-
-        Kernel::Vector_3 n = CGAL::cross_product(pb-pa, pc -pa);
-        n = n / std::sqrt(n * n);
         CGAL::Color color;
         if(!soup->fcolors.empty())
           color = soup->fcolors[polygon_id];
         for(int i=0; i<3; i++)
         {
-          normals.push_back(n.x());
-          normals.push_back(n.y());
-          normals.push_back(n.z());
+          normals.push_back(normal.x());
+          normals.push_back(normal.y());
+          normals.push_back(normal.z());
           if(!soup->fcolors.empty())
           {
             f_colors.push_back((float)color.red()/255);
