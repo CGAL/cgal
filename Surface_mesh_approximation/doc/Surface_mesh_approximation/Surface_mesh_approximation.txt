@@ -36,7 +36,7 @@ The package contains 3 main components: approximation algorithm, pliant operator
 
 Figure \cgalFigureRef{workflow} depicts the workflow of the approximation algorithm in the free function APIs. The main steps of the workflow are described below.
 
-\cgalFigureBegin{workflow, workflow.png}
+\cgalFigureBegin{workflow, workflow.svg}
 Workflow of the approximation process in the free function.
 \cgalFigureEnd
 
