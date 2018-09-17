@@ -13,7 +13,7 @@
 
 # SET PARAMETERS FOR cgal_test
 
-
+set -- -cmake
 ERRORFILE=error.txt
 DO_RUN=y
 if [ -z "${MAKE_CMD}" ]; then
