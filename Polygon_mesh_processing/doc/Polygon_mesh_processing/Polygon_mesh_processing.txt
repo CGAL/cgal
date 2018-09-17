@@ -574,8 +574,6 @@ is output.
 \cgalExample{Polygon_mesh_processing/remove_degeneracies_example.cpp}
 \endif
 
-\endcond
-
 \subsection PMPManifoldness Polygon Mesh Manifoldness
 
 Non-manifold vertices can be detected using the function `CGAL::Polygon_mesh_processing::is_non_manifold_vertex()`.
