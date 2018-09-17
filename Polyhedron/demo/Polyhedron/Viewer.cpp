@@ -1085,6 +1085,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     program->setProperty("hasCutPlane", true);
     program->setProperty("hasTransparency", true);
     program->setProperty("hasCenter", true);
+    program->setProperty("hasSurfaceMode", true);
     return program;
   }
   case PROGRAM_C3T3_EDGES:
@@ -1094,6 +1095,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
         : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_c3t3_edges.v" , 
                           ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_c3t3_edges.f");
     program->setProperty("hasCutPlane", true);
+    program->setProperty("hasSurfaceMode", true);
     return program;
   }
   case PROGRAM_WITH_LIGHT:

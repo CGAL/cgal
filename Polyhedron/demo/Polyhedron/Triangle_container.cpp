@@ -154,8 +154,10 @@ void Triangle_container::draw(Viewer_interface* viewer,
     getVao(viewer)->bind();
     if(getVao(viewer)->program->property("hasCutPlane").toBool())
       getVao(viewer)->program->setUniformValue("cutplane", d->plane);
-    if(getVao(viewer)->program->property("hasSurfaceMode").toBool())
+    if(getVao(viewer)->program->property("hasSurfaceMode").toBool()){
       getVao(viewer)->program->setUniformValue("is_surface", d->is_surface);
+      getVao(viewer)->program->setUniformValue("shrink_factor", d->shrink_factor);
+    }
     if(is_color_uniform)
       getVao(viewer)->program->setAttributeValue("colors", getColor());
     if(getVao(viewer)->program->property("hasFMatrix").toBool())
@@ -195,7 +197,8 @@ void Triangle_container::initializeBuffers(Viewer_interface *viewer)
   if(getVao(viewer)->program->property("isInstanced").toBool())
   {
     getVao(viewer)->bind();
-    if(getVao(viewer)->program->property("isInstanced").toBool() &&
+    if(
+       //getVao(viewer)->program->property("isInstanced").toBool() &&
        getVao(viewer)->program->property("hasCenter").toBool())
       viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("center"), 1);
     if(getVao(viewer)->program->property("hasRadius").toBool())

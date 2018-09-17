@@ -111,7 +111,9 @@ public :
   }
   void computeElements() const Q_DECL_OVERRIDE
   {
-    return;
+    getTriangleContainer(0)->reset_vbos(ALL);
+    getEdgeContainer(0)->reset_vbos(ALL);
+    
     getTriangleContainer(0)->allocate(Tc::Flat_vertices,
           vertices->data(), static_cast<int>(vertices->size()*sizeof(float)));
     getTriangleContainer(0)->allocate(Tc::Flat_normals, normals->data(),
@@ -126,7 +128,6 @@ public :
   }
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const Q_DECL_OVERRIDE
   {
-    return;
     //vao containing the data for the facets
     {
       getTriangleContainer(0)->initializeBuffers(viewer);
@@ -141,7 +142,6 @@ public :
   //Displays the item
   void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE
   {
-    return;
     if(is_fast)
       return;
     if(!alphaSlider)
@@ -152,7 +152,6 @@ public :
        alphaSlider->setValue(255);
      }
     const EPICK::Plane_3& plane = qobject_cast<Scene_c3t3_item*>(this->parent())->plane();
-    
     float shrink_factor = qobject_cast<Scene_c3t3_item*>(this->parent())->getShrinkFactor();
     QVector4D cp(-plane.a(), -plane.b(), -plane.c(), -plane.d());
     getTriangleContainer(0)->setPlane(cp);
@@ -164,7 +163,6 @@ public :
   }
   void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE
   {
-    return;
     if(is_fast)
       return;
     const EPICK::Plane_3& plane = qobject_cast<Scene_c3t3_item*>(this->parent())->plane();
@@ -533,7 +531,7 @@ void Scene_c3t3_item::common_constructor(bool is_surface)
   
   d->is_surface = is_surface;
   d->is_grid_shown = !is_surface;
-  d->show_tetrahedra = is_surface;
+  d->show_tetrahedra = !is_surface;
   
   setTriangleContainer(C3t3_faces, new Tc(Vi::PROGRAM_C3T3, false));
   
@@ -957,7 +955,7 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
         d->intersection->gl_initialization(viewer);
         ncthis->d->computeIntersections();
         
-        d->intersection->initializeBuffers(viewer);
+        ncthis->d->intersection->initializeBuffers(viewer);
         d->are_intersection_buffers_filled = true;
         ncthis->show_intersection(true);
       }
@@ -1030,7 +1028,7 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
       {
         d->intersection->gl_initialization(viewer);
         ncthis->d->computeIntersections();
-        d->intersection->initializeBuffers(viewer);
+        ncthis->d->intersection->initializeBuffers(viewer);
         d->are_intersection_buffers_filled = true;
       }
     }
@@ -1312,9 +1310,6 @@ void Scene_c3t3_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *view
     item->getEdgeContainer(Scene_c3t3_item::C3t3_edges)->initializeBuffers(viewer);
     item->getEdgeContainer(Scene_c3t3_item::C3t3_edges)->setFlatDataSize(
           positions_lines_size);
-    
-    positions_lines.clear();
-    positions_lines.shrink_to_fit();
   }
   //vao containing the data for the points
   {
@@ -1419,6 +1414,7 @@ void Scene_c3t3_item_priv::computeIntersections()
   tree.all_intersected_primitives(plane,
         boost::make_function_output_iterator(ComputeIntersection(*this)));
   intersected_cells.clear();
+  
   intersection->computeElements();
 }
 
@@ -2053,13 +2049,13 @@ QSlider* Scene_c3t3_item::alphaSlider() { return d->alphaSlider; }
 
 void Scene_c3t3_item::initializeBuffers(Viewer_interface *v) const
 {
-  d->initializeBuffers(v);
+  const_cast<Scene_c3t3_item*>(this)->d->initializeBuffers(v);
 }
 
 void Scene_c3t3_item::computeElements()const
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  d->computeElements();
+  const_cast<Scene_c3t3_item*>(this)->d->computeElements();
   
   getTriangleContainer(C3t3_faces)->allocate(
         Tc::Flat_vertices, d->positions_poly.data(),
