@@ -136,7 +136,7 @@ Similar to the functor `Compute_cone_boundaries_2`, the template parameter `Trai
 determines whether the Theta graph will constructed exactly or inexactly.
 The template parameter `Graph` specifies the graph type used to store the constructed graph.
 Our package requires it to be
-<a href="http://www.boost.org/libs/graph/doc/adjacency_list.html">boost::adjacency_list</a>
+<a href="https://www.boost.org/libs/graph/doc/adjacency_list.html">boost::adjacency_list</a>
 from the Boost Graph Library (BGL).
 The advantage of using `boost::adjacency_list` is that it provides convenience
 to the further processing of the constructed graphs, since BGL includes most common graph algorithms.
@@ -151,7 +151,7 @@ Note that there are seven template parameters for `boost::adjacency_list` in BGL
 of which we require `VertexProperties` to be `Traits::Point_2`,
 and other parameters can be chosen freely.
 Also note that, here we pass `Point_2` directly as
-<a href="http://www.boost.org/doc/libs/release/libs/graph/doc/bundles.html"><i>bundled properties</i></a>
+<a href="https://www.boost.org/doc/libs/release/libs/graph/doc/bundles.html"><i>bundled properties</i></a>
 to `boost::adjacency_list`, because this makes our implementation more straightforward than using a property map.
 If you want more properties other than `Point_2` for vertices, you can still
 construct external properties by using property maps.
