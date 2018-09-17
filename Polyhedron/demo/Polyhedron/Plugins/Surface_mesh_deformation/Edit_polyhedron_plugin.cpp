@@ -9,6 +9,7 @@
 #include "Scene_edit_polyhedron_item.h"
 #include "Scene_polyhedron_selection_item.h"
 #include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 #include <QAction>
 #include <QMainWindow>
 #include <QFileDialog>
@@ -421,10 +422,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool
         bool is_valid = true;
         BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor fd, faces(*poly_item->face_graph()))
         {
-          if (CGAL::is_degenerate_triangle_face(fd,
-                                 *poly_item->face_graph(),
-                                 get(boost::vertex_point,
-                                     *poly_item->face_graph()), Kernel()))
+          if (CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(fd, *poly_item->face_graph()))
           {
             is_valid = false;
             break;

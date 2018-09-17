@@ -174,10 +174,10 @@ void random_perturbation(VertexRange vertices
   typedef typename boost::lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
       NamedParameters,
-      internal::No_constraint_pmap<vertex_descriptor>//default
+      Constant_property_map<vertex_descriptor, bool> // default
     > ::type VCMap;
   VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
-                             internal::No_constraint_pmap<vertex_descriptor>());
+                             Constant_property_map<vertex_descriptor, bool>(false));
 
   unsigned int seed = choose_param(get_param(np, internal_np::random_seed), -1);
   bool do_project = choose_param(get_param(np, internal_np::do_project), true);
