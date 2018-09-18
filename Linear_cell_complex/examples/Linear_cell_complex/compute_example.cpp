@@ -18,7 +18,7 @@ typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3> LCC_3_cmap;
 typedef CGAL::Linear_cell_complex_for_generalized_map<2,3> LCC_3_gmap;
 
 #define NB_TESTS 25 // 0 ... 24
-int nbtests=0;
+static int nbtests=0;
 
 enum Transformation // enum for the type of transformations
 {
@@ -27,7 +27,7 @@ enum Transformation // enum for the type of transformations
   FULL_SIMPLIFICATION
 };
 
-unsigned int starting_seed;
+static unsigned int starting_seed;
 
 ///////////////////////////////////////////////////////////////////////////////
 void transform_path(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
@@ -164,7 +164,7 @@ bool unit_test_canonize(std::vector<CGAL::Path_on_surface<LCC_3_cmap> >& paths,
     std::cout<<"."<<std::flush;
 #endif
 
-    for (int i=0; i<paths.size(); ++i)
+    for (unsigned int i=0; i<paths.size(); ++i)
     {
       if (draw)
       {
@@ -524,7 +524,7 @@ bool test_double_torus_quad(bool draw, int testtorun)
   std::vector<CGAL::Path_on_surface<LCC_3_cmap> > transformed_paths;
 
   // Test 23 (3 g1 cycles)
-  for (int i=0; i<3; ++i)
+  for (unsigned int i=0; i<3; ++i)
   {
     paths.push_back(CGAL::Path_on_surface<LCC_3_cmap>(lcc));
     CGAL::generate_g1_double_torus(paths[i], i);
@@ -559,11 +559,11 @@ bool test_double_torus_quad(bool draw, int testtorun)
     generate_random_closed_path(p, random.get_int(5, 20), random); // random path, length between 30 and 500
     // p.close();
     paths.push_back(p);
-    /* update_path_randomly(p, random);
-    paths.push_back(p);
     update_path_randomly(p, random);
+    paths.push_back(p);
+    /* update_path_randomly(p, random);
     paths.push_back(p);  */
-    for (int i=0; i<paths.size(); ++i)
+    for (unsigned int i=0; i<paths.size(); ++i)
     {
       transformed_paths.push_back
           (cmt2.transform_original_path_into_quad_surface(paths[i]));
@@ -672,7 +672,7 @@ int main(int argc, char** argv)
   CGAL::Random r; // Used when user do not provide its own seed.
   starting_seed=r.get_int(0,INT_MAX);
 
-  for (int i=1; i<argc; ++i)
+  for (unsigned int i=1; i<(unsigned int)argc; ++i)
   {
     arg=argv[i];
     if (arg=="-draw")

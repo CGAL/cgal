@@ -152,6 +152,10 @@ namespace CGAL {
       m_map.free_mark(marktemp);
       m_map.display_darts(std::cout);
 #endif
+
+      m_map.display_darts(std::cout);
+
+      assert(are_paths_valid());
     }
     
     ~Combinatorial_map_tools()
@@ -168,10 +172,12 @@ namespace CGAL {
       {
         if (!m_original_map.is_marked(path[i], m_mark_T))
         {
-          res.push_back(get_first_dart_of_the_path(path[i]));
-          res.push_back(get_second_dart_of_the_path(path[i]));
+          res.push_back(get_first_dart_of_the_path(path[i]), false);
+          res.push_back(get_second_dart_of_the_path(path[i]), false);
         }
       }
+      res.update_is_closed();
+      assert(res.is_closed());
       assert(res.is_valid());
       return res;
     }
@@ -402,20 +408,20 @@ namespace CGAL {
           //         <<m_map.darts().index(p.second)<<": "<<std::flush;
 
           //std::cout<<m_map.darts().index(p.first)<<"; "<<std::flush;
-          p.first=m_map.template beta<0>(p.first);
+          // p.first=m_map.template beta<0>(p.first);
           Dart_const_handle initdart=p.first;
           while (m_map.is_marked(p.first, toremove))
           {
-            p.first=m_map.template beta<2, 0>(p.first);
+            p.first=m_map.template beta<2, 1>(p.first);
             //std::cout<<m_map.darts().index(p.first)<<"; "<<std::flush;
             assert(p.first!=initdart);
           }
           //std::cout<<std::endl;
-          p.second=m_map.template beta<0>(p.second);
+          // p.second=m_map.template beta<0>(p.second);
           initdart=p.second;
           while (m_map.is_marked(p.second, toremove))
           {
-            p.second=m_map.template beta<2, 0>(p.second);
+            p.second=m_map.template beta<2, 1>(p.second);
             //std::cout<<m_map.darts().index(p.second)<<"; "<<std::flush;
             assert(p.second!=initdart);
           }
@@ -465,8 +471,8 @@ namespace CGAL {
         std::pair<Dart_const_handle, Dart_const_handle>& p=itp->second;
         //std::cout<<"Pair: "<<m_map.darts().index(p.first)<<", "
         //         <<m_map.darts().index(p.second)<<std::flush;
-        p.first=m_map.template beta<1>(p.first);
-        p.second=m_map.template beta<1,2>(p.second);
+        p.first=m_map.template beta<0, 2>(p.first);
+        p.second=m_map.template beta<0>(p.second);
         //std::cout<<" -> "<<m_map.darts().index(p.first)<<", "
         //         <<m_map.darts().index(p.second)<<std::endl;
         // WRONG ASSERTS assert(p.first!=p.second);

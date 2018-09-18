@@ -439,6 +439,10 @@ public:
   {
     if (is_empty()) return false;
 
+#ifndef NDEBUG
+    bool is_even=length()%2;
+#endif // NDEBUG
+
     Self new_path(m_map);
     bool positive=false;
     std::size_t begin, end;
@@ -471,6 +475,9 @@ public:
           { copy_rest_of_path(end+1, length(), new_path); }
 
           swap(new_path);
+
+          assert(length()%2==is_even); // bracket flattening is supposed to preserve length parity
+
           return true;
         }
       }
@@ -495,25 +502,43 @@ public:
     bool res=false;
     std::size_t i;
     std::size_t lastturn=m_path.size()-(is_closed()?0:1);
-    Self new_path(m_map);
-    for (i=0; i<lastturn; )
+    for (i=0; !res && i<lastturn; ++i)
     {
       if (m_path[i]==m_map.template beta<2>(m_path[next_index(i)]))
-      {
-        i+=2;
-        res=true;
-      }
-      else
-      {
-        new_path.push_back(m_path[i]); // We copy this dart
-        ++i;
-      }
+      { res=true; }
     }
-    if (i==m_path.size()-1)
-    { new_path.push_back(m_path[m_path.size()-1]); } // we copy the last dart
+
+    if (!res)
+    { return false; }
+
+#ifndef NDEBUG
+    bool is_even=length()%2;
+#endif // NDEBUG
+
+    --i; // Because we did a ++ before to leave the loop
+    // Here there is a spur at position i in the path
+    Self new_path(m_map);
+
+    // Special case, the spur is between last dart of the path and the first dart
+    if (is_closed() && i==m_path.size()-1)
+    {
+      copy_rest_of_path(1, m_path.size()-1, new_path); // copy path between 1 and m_path.size()-2
+    }
+    else
+    { // Otherwise copy darts before the spur
+      if (i>0)
+      { copy_rest_of_path(0, i, new_path); } // copy path between 0 and i-1
+
+      // and the darts after
+      if (i+2<m_path.size())
+      { copy_rest_of_path(i+2, m_path.size(), new_path); } // copy path between 0 and m_path.size()-1
+    }
 
     swap(new_path);
-    return res;
+
+    assert(length()%2==is_even); // spur rremoval is supposed to preserve length parity
+
+    return true;
   }
 
   // Simplify the path by removing all spurs
@@ -615,6 +640,7 @@ public:
       /* else
       { assert(false); } // We think (?) that this case is not possible */
     }
+
   }
 
   void push_l_shape_cycle_2()
@@ -650,6 +676,10 @@ public:
 
     if (length()==2)
     { return push_l_shape_2darts(); }
+
+#ifndef NDEBUG
+    bool is_even=length()%2;
+#endif // NDEBUG
 
     std::size_t begin, middle, end;
     std::size_t lastturn=m_path.size()-(is_closed()?0:1);
@@ -728,6 +758,9 @@ public:
           { copy_rest_of_path(end+1, length(), new_path); }
 
           swap(new_path);
+
+          assert(length()%2==is_even); // push lshape is supposed to preserve length parity (maybe preserve length ?? TODO check)
+
           return true;
 
         }
@@ -743,7 +776,7 @@ public:
     while(right_push_one_step())
     { res=true;
       
-      std::cout<<"RP "; display();  display_pos_and_neg_turns();
+      std::cout<<"PUSH "; display();  display_pos_and_neg_turns();
       std::cout<<std::endl;
     }
     return res;

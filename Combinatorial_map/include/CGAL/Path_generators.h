@@ -475,6 +475,9 @@ void generate_random_closed_path(Path& p, std::size_t nb,
   { CGAL::unmark_cell<typename Path::Map, 2>(p.get_map(), *it, amark); }
 
   p.get_map().free_mark(amark);
+
+  p.update_is_closed(); // TODO we can avoid that because we know that we generated a closed path (to do so, we need a method that put p.is_closed to true)
+  assert(p.is_closed());
 }
 
 } // namespace CGAL
