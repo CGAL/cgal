@@ -22,6 +22,7 @@
 #ifndef CGAL_POLYHEDRON_3_TO_LCC_H
 #define CGAL_POLYHEDRON_3_TO_LCC_H
 
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/assertions.h>
 #include <iostream>
 #include <map>

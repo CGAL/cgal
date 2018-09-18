@@ -559,8 +559,8 @@ bool test_double_torus_quad(bool draw, int testtorun)
     generate_random_closed_path(p, random.get_int(5, 20), random); // random path, length between 30 and 500
     // p.close();
     paths.push_back(p);
-    update_path_randomly(p, random);
-    paths.push_back(p);
+    /* update_path_randomly(p, random);
+    paths.push_back(p); */
     /* update_path_randomly(p, random);
     paths.push_back(p);  */
     for (unsigned int i=0; i<paths.size(); ++i)
