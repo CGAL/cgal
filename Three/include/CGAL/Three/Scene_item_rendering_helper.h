@@ -229,7 +229,7 @@ protected:
   void setBbox(Bbox b)const ;
   
   virtual void computeElements()const{}
-private:
+protected:
   friend struct PRIV;
   mutable PRIV* priv;
 };//end Scene_item_rendering_helper
