@@ -32,6 +32,7 @@
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
 
+#include <CGAL/atomic.h>
 #include <CGAL/Mesh_3/Worksharing_data_structures.h>
 
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
@@ -684,6 +685,9 @@ public:
   // Useless here
   void set_lock_ds(Lock_data_structure *) {}
   void set_worksharing_ds(WorksharingDataStructureType *) {}
+#ifndef CGAL_NO_ATOMIC
+  void set_stop_pointer(CGAL::cpp11::atomic<bool>*) {}
+#endif
 
 protected:
 };
