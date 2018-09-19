@@ -148,7 +148,9 @@ public:
     Index operator-- (int) { Index tmp(*this); -- value; return tmp; }
     /// \endcond
   };
-  
+
+  typedef Point Point_3; ///< The point type
+  typedef Vector Vector_3; ///< The vector type
 
 #ifdef DOXYGEN_RUNNING
   typedef unspecified_type iterator; ///< Iterator type of the point set with value type `Index` \cgalModels RandomAccessIterator
