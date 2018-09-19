@@ -66,6 +66,7 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
   //! \param indexed must be `true` if the data is indexed, `false` otherwise. If `true`, `VBOs`[`Vertex_indices`] must be filled.
   //!
   Triangle_container(int program, bool indexed);
+  ~Triangle_container();
 
   //!
   //! \brief initGL creates the Vbos and Vaos of this `Triangle_container`.

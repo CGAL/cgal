@@ -1,7 +1,7 @@
 #ifndef CGAL_VOLUME_PLANE_H
 #define CGAL_VOLUME_PLANE_H
 
-#include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_item_rendering_helper.h>
 
 #include <vector>
 #include <cassert>

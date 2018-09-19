@@ -1,7 +1,7 @@
 #ifndef CGAL_VOLUME_PLANE_INTERSECTION_H_
 #define CGAL_VOLUME_PLANE_INTERSECTION_H_
 
-#include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_item_rendering_helper.h>
 
 #include <QColor>
 #include <QString>
@@ -14,7 +14,7 @@ using namespace CGAL::Three;
 class Volume_plane_interface;
 struct Volume_plane_intersection_priv;
 class Volume_plane_intersection
-  : public Scene_item {
+  : public Scene_item_rendering_helper {
   typedef std::pair<Volume_plane_interface*, Volume_plane_interface*> Interface_pair;
 Q_OBJECT
 public:
@@ -27,6 +27,7 @@ public:
   Volume_plane_intersection* clone() const { return 0; }
   bool supportsRenderingMode(RenderingMode) const { return true; }
   QString toolTip() const { return "Tooling"; }
+  void compute_bbox() const{}
 
   void draw(Viewer_interface*)const;
 

@@ -153,7 +153,7 @@ void Primitive_container::setCenterSize(std::size_t s)
 
 void Primitive_container::setIdxSize(std::size_t s)
 {
-  d->idx_size = s;
+   d->idx_size = s;
 }
 
 void Primitive_container::setColor(QColor c)

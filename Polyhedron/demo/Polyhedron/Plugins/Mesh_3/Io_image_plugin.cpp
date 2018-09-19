@@ -18,6 +18,8 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_group_item.h>
+#include <CGAL/Three/Three.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/config.h>
 #include <CGAL/use.h>
@@ -44,7 +46,6 @@
 
 #include <boost/type_traits.hpp>
 #include <boost/optional.hpp>
-#include "Scene.h"
 
 #include <QSettings>
 #include <QUrl>
@@ -221,11 +222,10 @@ public:
       planeSwitch->setProperty("subMenuName", "3D Mesh Generation");
       connect(planeSwitch, SIGNAL(triggered()),
               this, SLOT(selectPlanes()));
-      Scene* true_scene = dynamic_cast<Scene*>(scene);
-      connect(true_scene,SIGNAL(itemIndexSelected(int)),
+      connect(CGAL::Three::Three::connectableScene(),SIGNAL(itemIndexSelected(int)),
               this, SLOT(connect_controls(int)));
     }
-    Viewer_interface* v = mw->findChild<Viewer_interface*>("viewer");
+    Viewer_interface* v = CGAL::Three::Three::mainViewer();
     CGAL_assertion(v != 0);
     pxr_.setViewer(v);
     connect(v, SIGNAL(pointSelected(const QMouseEvent *)), &pxr_, SLOT(update(const QMouseEvent *)));
@@ -740,7 +740,6 @@ private:
 private Q_SLOTS:
   void select_plane(CGAL::Three::Scene_item* item)
   {
-    //Scene* true_scene = dynamic_cast<Scene*>(scene);
     Scene_image_item* img = (Scene_image_item*)item->property("img").value<void*>();
     if(img)
       scene->setSelectedItem(scene->item_id(img));

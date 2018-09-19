@@ -85,8 +85,7 @@ void Triangle_container::initGL( Viewer_interface* viewer)
       if(!getVbo(VColors))
         setVbo(VColors,
                new Vbo("colors",
-                       Vbo::COLORS,
-                       QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 4));
+                       Vbo::COLORS));
       getVao(viewer)->addVbo(getVbo(VColors));
     }
     else
@@ -177,8 +176,14 @@ void Triangle_container::draw(Viewer_interface* viewer,
       if( fbo)
         viewer->glBindTexture(GL_TEXTURE_2D, fbo->texture());
     }
-    viewer->glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(getIdxSize()),
-                           GL_UNSIGNED_INT, 0 );
+    if(getVao(viewer)->program->property("drawLinesAdjacency").toBool())
+    {
+      viewer->glDrawElements(GL_LINES_ADJACENCY, static_cast<unsigned int>(getIdxSize()),
+                             GL_UNSIGNED_INT, 0 );
+    }
+    else
+      viewer->glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(getIdxSize()),
+                             GL_UNSIGNED_INT, 0 );
     getVbo(Vertex_indices)->release();
     getVao(viewer)->release();
   }
@@ -292,4 +297,9 @@ void Triangle_container::setTextureData(int i, int j, int r, int g, int b)
 QSize Triangle_container::getTextureSize() const
 {
   return QSize(d->texture->Width, d->texture->Height);
+}
+
+Triangle_container::~Triangle_container()
+{
+  delete d;
 }

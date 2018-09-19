@@ -873,7 +873,6 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_WITH_LIGHT:
     case PROGRAM_SPHERES:
     case PROGRAM_CUTPLANE_SPHERES:
-      
       program->setUniformValue("alpha", 1.0f); //overriden in item draw() if necessary
     }
 
@@ -888,6 +887,7 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_SPHERES:
     case PROGRAM_OLD_FLAT:
     case PROGRAM_FLAT:
+    case PROGRAM_NO_INTERPOLATION:
         program->setUniformValue("light_pos", light_pos);
         program->setUniformValue("light_diff",d->diffuse);
         program->setUniformValue("light_spec", d->specular);
@@ -906,6 +906,7 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_SPHERES:
     case PROGRAM_OLD_FLAT:
     case PROGRAM_FLAT:
+    case PROGRAM_NO_INTERPOLATION:
       program->setUniformValue("mv_matrix", mv_mat);
       break;
     case PROGRAM_WITHOUT_LIGHT:
@@ -1059,6 +1060,13 @@ QOpenGLShaderProgram* Viewer::declare_program(int name,
       if(strcmp(f_shader,":/cgal/Polyhedron_3/resources/solid_wireframe_shader.f" ) == 0)
       {
         if(!program->addShaderFromSourceFile(QOpenGLShader::Geometry,":/cgal/Polyhedron_3/resources/solid_wireframe_shader.g" ))
+        {
+          std::cerr<<"adding geometry shader FAILED"<<std::endl;
+        }
+      }
+      if(strcmp(f_shader,":/cgal/Polyhedron_3/resources/no_interpolation_shader.f" ) == 0)
+      {
+        if(!program->addShaderFromSourceFile(QOpenGLShader::Geometry,":/cgal/Polyhedron_3/resources/no_interpolation_shader.g" ))
         {
           std::cerr<<"adding geometry shader FAILED"<<std::endl;
         }
@@ -1246,6 +1254,21 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
                                                     ":/cgal/Polyhedron_3/resources/solid_wireframe_shader.f");
     program->setProperty("hasViewport", true);
     program->setProperty("hasWidth", true);
+    return program;
+  }
+  case PROGRAM_NO_INTERPOLATION:
+  {
+    if(!isOpenGL_4_3())
+    {
+      std::cerr<<"An OpenGL context of version 4.3 is required for the program ("<<name<<")."<<std::endl;
+      return 0;
+    }
+    QOpenGLShaderProgram* program = declare_program(name,
+                                                    ":/cgal/Polyhedron_3/resources/no_interpolation_shader.v", 
+                                                    ":/cgal/Polyhedron_3/resources/no_interpolation_shader.f");
+    program->setProperty("hasLight", true);
+    program->setProperty("hasNormals", true);
+    program->setProperty("drawLinesAdjacency", true);
     return program;
   }
   default:

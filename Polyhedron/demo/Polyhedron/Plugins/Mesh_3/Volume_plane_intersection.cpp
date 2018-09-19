@@ -225,8 +225,7 @@ void Volume_plane_intersection::draw(Viewer_interface* viewer) const {
 
 Volume_plane_intersection::Volume_plane_intersection(float x, float y, float z,
                                                      float tx, float ty, float tz)
-  :Scene_item(Volume_plane_intersection_priv::NumberOfVbos, Volume_plane_intersection_priv::NumberOfVaos),
-    d(new Volume_plane_intersection_priv(x,y,z,tx,ty,tz,this))
+  :d(new Volume_plane_intersection_priv(x,y,z,tx,ty,tz,this))
 {
   setColor(QColor(255, 128, 0));
   setName("Volume plane intersection");
