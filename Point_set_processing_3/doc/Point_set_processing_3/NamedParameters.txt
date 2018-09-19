@@ -182,6 +182,15 @@ give better result if the distribution of the input points is highly non-uniform
 <b>Default value</b>: `false`
 \cgalNPEnd
 
+\cgalNPBegin{point_is_constrained_map} \anchor PSP_point_is_constrained_map
+is the property map containing information about points being constrained or not.
+Constrained points are left unaltered and are used as seeds in `mst_orient_normals()`.\n
+\b Type: a class model of `ReadablePropertyMap` with
+`PointRange::iterator::value_type` as key type and
+`bool` as value type. \n
+<b>Default value</b>: a property map with only the highest point constrained.
+\cgalNPEnd
+
 \cgalNPTableEnd
 
 */

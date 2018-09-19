@@ -598,7 +598,7 @@ create_mst_graph(
      \cgalParamBegin{point_is_constrained_map} a model of `ReadablePropertyMap` with value type
      `bool`. Points with a `true` value will be used as seed points: their normal will be considered as already
      oriented, it won't be altered and it will be propagated to its neighbors. If this parameter is omitted, 
-     the heighest point (heightest Z coordinate) will be used as the unique seed with an upward oriented
+     the highest point (hightest Z coordinate) will be used as the unique seed with an upward oriented
      normal\cgalParamEnd
      \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
    \cgalNamedParamsEnd
