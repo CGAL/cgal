@@ -1,6 +1,27 @@
 Release History
 ===============
 
+Release 4.14
+------------
+
+Release date: March 2019
+
+### 2D Arrangements
+
+-   Fixed a bug in the surface-sweep framework (`Surface_sweep_2`) that ensures
+    that an event is never left without (left or right) curves.
+
+-   Fixed a constructor of `Arr_counting_traits.h`. (In particular, added missing
+    const of a parameter).
+
+-   Fixed zone computation of a curve in cases where the lexicographic smallest
+    end of the curve lies on the parameter space.
+
+-   Implemented missing function object `Compare_x_near_boundary` of
+    `Arr_polyline_traits_2`, `Arr_polycurve_traits_2`, and
+    `Arr_polycurve_basic_traits_2`.
+
+
 Release 4.13
 ------------
 
@@ -251,22 +272,6 @@ g
 
 -   Added a read-write property map to convert on-the-fly geometric
     objects from Cartesian kernels.
-
-### 2D Arrangements
-
--   Fixed a bug in the surface-sweep framework (Surface_sweep_2) that ensures
-    that an event is never left without (left or right) curves.
-
--   Fixed a constructor of Arr_counting_traits.h. (In particular, added missing
-    const of a parameter).
-
--   Fixed zone computation of a curve in cases where the lexicographic smallest
-    end of the curve lies on the parameter space.
-
--   Implemented missing function object Compare_x_near_boundary of
-    Arr_polyline_traits_2, Arr_polycurve_traits_2, and
-    Arr_polycurve_basic_traits_2.
-
 
 Release 4.12
 ------------
