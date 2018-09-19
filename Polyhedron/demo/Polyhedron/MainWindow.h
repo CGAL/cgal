@@ -98,6 +98,10 @@ Q_SIGNALS:
   void expanded(QModelIndex);
   //! Is emitted when a group is collapsed.
   void collapsed(QModelIndex);
+  //! Is emitted when a subviewer is created
+  void newViewerCreated(QObject*);
+  //! Is emitted when a subviewer is destroyed
+  void viewerDestroyed(QObject*);
 
 
 public Q_SLOTS:

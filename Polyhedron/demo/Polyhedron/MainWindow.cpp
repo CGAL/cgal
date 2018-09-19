@@ -2538,6 +2538,7 @@ void MainWindow::on_actionAdd_Viewer_triggered()
   connect(viewer2, &Viewer::destroyed,
           this, [this, viewer2](){
     scene->removeViewer(viewer2);
+    viewerDestroyed(viewer2);
   });
   SubViewer* subviewer = new SubViewer(this, viewer2);
   setupViewer(viewer2, subviewer);
@@ -2550,6 +2551,7 @@ void MainWindow::on_actionAdd_Viewer_triggered()
   viewer_window->resize(subviewer->size());
   subviewer->move(pos);
   subviewer->resize(size);
+  newViewerCreated(viewer2);
 }
 
 void MainWindow::recenterViewer()

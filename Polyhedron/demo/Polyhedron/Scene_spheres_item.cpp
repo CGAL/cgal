@@ -253,5 +253,4 @@ void Scene_spheres_item::gl_initialization(Vi* viewer)
     setBuffersInit(viewer, true);
     setBuffersFilled(true);
   }
-  
 }

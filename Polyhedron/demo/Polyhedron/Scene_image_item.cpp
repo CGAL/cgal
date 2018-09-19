@@ -726,7 +726,10 @@ void Scene_image_item::initializeBuffers(Viewer_interface *v) const
   d->v_box.clear();
   d->v_box.shrink_to_fit();
   if(d->helper)
+  {
     delete d->helper;
+    d->helper = nullptr;
+  }
 }
 
 void Scene_image_item::computeElements() const

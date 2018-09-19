@@ -875,7 +875,8 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_CUTPLANE_SPHERES:
       program->setUniformValue("alpha", 1.0f); //overriden in item draw() if necessary
     }
-
+    if(program_name == PROGRAM_SPHERES)
+      program->setUniformValue("f_matrix",f_mat);
     switch(program_name)
     {
     case PROGRAM_WITH_LIGHT:
@@ -911,7 +912,6 @@ void Viewer::attribBuffers(int program_name) const {
       break;
     case PROGRAM_WITHOUT_LIGHT:
     case PROGRAM_SOLID_WIREFRAME:
-      program->setUniformValue("f_matrix",f_mat);
       break;
     case PROGRAM_WITH_TEXTURE:
       program->setUniformValue("mv_matrix", mv_mat);
@@ -1217,6 +1217,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     program->setProperty("hasRadius", true);
     program->setProperty("hasTransparency", true);
     program->setProperty("isInstanced", true);
+    program->setProperty("hasFMatrix", true);
     return program;
   }
   case PROGRAM_FLAT:
@@ -1254,6 +1255,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
                                                     ":/cgal/Polyhedron_3/resources/solid_wireframe_shader.f");
     program->setProperty("hasViewport", true);
     program->setProperty("hasWidth", true);
+    program->setProperty("hasFMatrix", true);
     return program;
   }
   case PROGRAM_NO_INTERPOLATION:

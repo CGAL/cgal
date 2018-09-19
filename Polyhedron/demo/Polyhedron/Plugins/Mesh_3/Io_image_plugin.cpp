@@ -95,7 +95,6 @@ public Q_SLOTS:
   }
 Q_SIGNALS:
   void x(QString);
-
 public:
   void setIC(const IntConverter& x) { ic = x; fc = boost::optional<DoubleConverter>(); }
   void setFC(const DoubleConverter& x) { fc = x; ic = boost::optional<IntConverter>(); }
@@ -142,7 +141,7 @@ public Q_SLOTS:
   {
     if(!ready_to_move)
       return;
-    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
     CGAL::qglviewer::Vec v2 = v * (this->value() / scale);
     v2+=offset;
     frame->setTranslationWithConstraint(v2);
@@ -157,7 +156,7 @@ public Q_SLOTS:
     typedef qreal qglviewer_real;
     qglviewer_real a, b, c;
     frame->getPosition(a, b, c);
-    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
     a-=offset.x;
     b-=offset.y;
     c-=offset.z;
@@ -369,7 +368,7 @@ public Q_SLOTS:
 
   void addVP(Volume_plane_thread* thread) {
     Volume_plane_interface* plane = thread->getItem();
-    plane->init(static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first()));
+    plane->init(Three::mainViewer());
     // add the interface for this Volume_plane
     int id = scene->addItem(plane);
     scene->changeGroup(plane, group);
@@ -477,6 +476,16 @@ public Q_SLOTS:
       }
     }
 
+  }
+
+  void connectNewViewer(QObject* o)
+  {
+    Q_FOREACH(Controls c, group_map.values())
+    {
+      o->installEventFilter(c.x_item);
+      o->installEventFilter(c.y_item);
+      o->installEventFilter(c.z_item);
+    }
   }
 private:
   CGAL::qglviewer::Vec first_offset;
@@ -680,10 +689,15 @@ private:
     x_item->setColor(QColor("red"));
     y_item->setColor(QColor("green"));
     z_item->setColor(QColor("blue"));
-    CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first());
-    viewer->installEventFilter(x_item);
-    viewer->installEventFilter(y_item);
-    viewer->installEventFilter(z_item);
+    Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
+    {
+      viewer->installEventFilter(x_item);
+      viewer->installEventFilter(y_item);
+      viewer->installEventFilter(z_item);
+    }
+    connect(mw, SIGNAL(newViewerCreated(QObject*)),
+            this, SLOT(connectNewViewer(QObject*)));
+    
     connect(x_item, SIGNAL(selected(CGAL::Three::Scene_item*)), this, SLOT(select_plane(CGAL::Three::Scene_item*)));
     connect(y_item, SIGNAL(selected(CGAL::Three::Scene_item*)), this, SLOT(select_plane(CGAL::Three::Scene_item*)));
     connect(z_item, SIGNAL(selected(CGAL::Three::Scene_item*)), this, SLOT(select_plane(CGAL::Three::Scene_item*)));
@@ -717,7 +731,7 @@ private:
     connect(threads.back(), SIGNAL(finished(Volume_plane_thread*)), this, SLOT(addVP(Volume_plane_thread*)));
     threads.back()->start();
 
-    first_offset = viewer->offset();
+    first_offset = Three::mainViewer()->offset();
 
   }
   template<typename T>
@@ -752,7 +766,7 @@ private Q_SLOTS:
     msgBox.setText(QString("Planes created : %1/3").arg(nbPlanes));
     if(nbPlanes == 3)
     {
-      const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+      const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
       if(offset != first_offset)
       {
         for(int i=0; i<scene->numberOfEntries(); ++i)
