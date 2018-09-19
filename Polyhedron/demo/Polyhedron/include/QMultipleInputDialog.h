@@ -9,6 +9,7 @@
 #include <QDialog>
 #include <QFormLayout>
 #include <QDialogButtonBox>
+#include <QRadioButton>
 
 class QMultipleInputDialog
 {
@@ -32,10 +33,22 @@ public:
   template <typename QObjectType>
   QObjectType* add (const char* name, const char* key = NULL)
   {
-    QObjectType* out = new QObjectType (dialog);
-    form->addRow (QString(name), out);
+    QObjectType* out = NULL;
+        
+    if (boost::is_same<QObjectType, QRadioButton>::value)
+    {
+      out = dynamic_cast<QObjectType*>(new QRadioButton (QString(name), dialog));
+      form->addRow (out);
+    }
+    else
+    {
+      out = new QObjectType (dialog);
+      form->addRow (QString(name), out);
+    }
+    
     if (key != NULL)
       map_widgets.insert (std::make_pair (key, out));
+
     return out;
   }
 
