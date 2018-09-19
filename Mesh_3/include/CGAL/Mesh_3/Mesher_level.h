@@ -754,6 +754,9 @@ public:
     , m_lock_ds(0)
     , m_worksharing_ds(0)
     , m_empty_root_task(0)
+#ifndef CGAL_NO_ATOMIC
+    , m_stop_ptr(0)
+#endif
   {
   }
 
@@ -1145,6 +1148,26 @@ public:
     m_worksharing_ds = p;
   }
 
+#ifndef CGAL_NO_ATOMIC
+  void set_stop_pointer(CGAL::cpp11::atomic<bool>* stop_ptr)
+  {
+    m_stop_ptr = stop_ptr;
+  }
+#endif
+
+  bool forced_stop() const {
+#ifndef CGAL_NO_ATOMIC
+    if(m_stop_ptr != 0 &&
+       m_stop_ptr->load(CGAL::cpp11::memory_order_acquire) == true)
+    {
+      CGAL_assertion(m_empty_root_task != 0);
+      m_empty_root_task->cancel_group_execution();
+      return true;
+    }
+#endif // not defined CGAL_NO_ATOMIC
+    return false;
+  }
+
 protected:
 
   // Member variables
@@ -1155,6 +1178,9 @@ protected:
   WorksharingDataStructureType *m_worksharing_ds;
 
   tbb::task *m_empty_root_task;
+#ifndef CGAL_NO_ATOMIC
+  CGAL::cpp11::atomic<bool>* m_stop_ptr;
+#endif
 
 private:
 
@@ -1189,6 +1215,10 @@ private:
       Mesher_level_conflict_status status;
       do
       {
+        if(m_mesher_level.forced_stop()) {
+          return;
+        }
+
         status = m_mesher_level.try_lock_and_refine_element(m_container_element, 
                                                             m_visitor);
       }
