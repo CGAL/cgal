@@ -313,7 +313,6 @@ line_project_pointC2(const FT &la, const FT &lb, const FT &lc,
 		     const FT &px, const FT &py,
 		     FT &x, FT &y)
 {
-  std::cout << la << " "<< lb << " "<< lc << " "<< px << " " << py << std::endl;
   if (CGAL_NTS is_zero(la)) // horizontal line
   {
     x = px;
