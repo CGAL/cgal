@@ -759,7 +759,7 @@ public Q_SLOTS:
         QMessageBox::warning(mw,
                              tr("Degenerated Face_graph"),
                              tr("Degenerated faces have been detected. Problems may occur "
-                                "for operations other tha \"Move point\". "));
+                                "for operations other than \"Move point\". "));
       }
       //remove lasso mode
       selection_item->set_lasso_mode(false);
