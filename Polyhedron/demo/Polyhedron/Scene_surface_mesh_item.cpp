@@ -756,7 +756,7 @@ void Scene_surface_mesh_item::drawEdges(CGAL::Three::Viewer_interface *viewer) c
     setBuffersInit(viewer, true);
   }
   getEdgeContainer(0)->setSelected(is_selected);
-  getEdgeContainer(0)->setColor(color().lighter(50));
+  getEdgeContainer(0)->setColor(QColor(Qt::black));
   getEdgeContainer(0)->draw( viewer, true);
   if(d->has_feature_edges)
   {
