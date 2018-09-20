@@ -4,39 +4,20 @@
 
 typedef Viewer_interface VI;
 using namespace CGAL::Three;
-struct Texture{
-  Texture(){}
-     int Width;
-     int Height;
-     int size;
-    GLubyte *data;
-    void setData(int i, int j, int r, int g, int b){
-      data[j*Width*3 +i*3] = GLubyte(r);
-      data[j*Width*3 +i*3+1] = GLubyte(g);
-      data[j*Width*3 +i*3+2] = GLubyte(b);
-    }
-};
+
 struct Tri_d{
 
   Tri_d():
     shrink_factor(1.0f),
     plane(QVector4D()),
-    alpha(1.0f),
-    textureId(-1),
-    texture(nullptr)
+    alpha(1.0f)
   {}
-  ~Tri_d(){
-    if(texture)
-      delete texture;
-  }
   Triangle_container* container;
   float shrink_factor;
   QVector4D plane;
   bool is_surface;
   float alpha;
   QMatrix4x4 f_matrix;
-  GLuint textureId;
-  Texture *texture;
 };
 
 Triangle_container::Triangle_container(int program, bool indexed)
@@ -142,8 +123,8 @@ void Triangle_container::initGL( Viewer_interface* viewer)
                          QOpenGLBuffer::VertexBuffer,
                          GL_FLOAT, 0, 2));
         getVao(viewer)->addVbo(getVbo(Texture_map));
-        if(!d->texture)
-          d->texture = new Texture();
+        if(!getTexture())
+          setTexture(new Texture());
       }
     }
   }
@@ -192,7 +173,7 @@ void Triangle_container::draw(Viewer_interface* viewer,
     getVao(viewer)->bind();
     if(getVao(viewer)->program->property("hasTexture").toBool()){
       viewer->glActiveTexture(GL_TEXTURE0);
-      viewer->glBindTexture(GL_TEXTURE_2D, d->textureId);
+      viewer->glBindTexture(GL_TEXTURE_2D, getTextureId());
     }
     if(getVao(viewer)->program->property("hasCutPlane").toBool())
       getVao(viewer)->program->setUniformValue("cutplane", d->plane);
@@ -245,29 +226,6 @@ void Triangle_container::initializeBuffers(Viewer_interface *viewer)
     viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("colors"), 1);
     getVao(viewer)->release();
   }
-  if(getVao(viewer)->program->property("hasTexture").toBool())
-  {
-    getVao(viewer)->bind();
-    if(GLuint(-1) == d->textureId) {
-      viewer->glGenTextures(1, &d->textureId);
-    }
-    viewer->glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    viewer->glBindTexture(GL_TEXTURE_2D, d->textureId);
-    viewer->glTexImage2D(GL_TEXTURE_2D,
-                         0,
-                         GL_RGB,
-                         d->texture->Width,
-                         d->texture->Height,
-                         0,
-                         GL_RGB,
-                         GL_UNSIGNED_BYTE,
-                         d->texture->data);
-    viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE );
-    viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE );
-    getVao(viewer)->release();
-  }
 }
 
 float     Triangle_container::getShrinkFactor() { return d->shrink_factor ; }
@@ -280,25 +238,6 @@ void Triangle_container::setAlpha       (const float& f)        { d->alpha = f ;
 void Triangle_container::setFrameMatrix(const QMatrix4x4& m) { d->f_matrix = m; }
 void Triangle_container::setPlane(const QVector4D& p) { d->plane = p; }
 void Triangle_container::setIsSurface  (const bool b) { d->is_surface = b; }
-void Triangle_container::setTextureSize(const QSize &size) {
-  if(!d->texture)
-    d->texture = new Texture();
-  d->texture->Width = size.width();
-  d->texture->Height = size.height();
-  d->texture->size = 3 * size.width()*size.height(); 
-  d->texture->data = new GLubyte[d->texture->size];
-}
-
-void Triangle_container::setTextureData(int i, int j, int r, int g, int b)
-{
-  d->texture->setData(i,j,r,g,b);
-}
-
-QSize Triangle_container::getTextureSize() const
-{
-  return QSize(d->texture->Width, d->texture->Height);
-}
-
 Triangle_container::~Triangle_container()
 {
   delete d;

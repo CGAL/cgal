@@ -409,11 +409,11 @@ public Q_SLOTS:
 
   void replacePolyline()
   {
-    bool is_ogl_4_3 = 
-        static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->isOpenGL_4_3();
-    if(current_uv_item)
-      qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item))->add_border_edges(std::vector<float>(0),
-                                                                                                       is_ogl_4_3);
+    if(current_uv_item){
+      Scene_textured_facegraph_item* t_item = 
+          qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item));
+     t_item->add_border_edges(std::vector<float>(0));
+    }
 
     int id = scene->mainSelectionIndex();
 
@@ -436,11 +436,17 @@ public Q_SLOTS:
         graphics_scene->removeItem(graphics_scene->items().first());
 
       graphics_scene->addItem(current_uv_item);
-      ui_widget.graphicsView->fitInView(current_uv_item->boundingRect(), Qt::KeepAspectRatio);
-      ui_widget.component_numberLabel->setText(QString("Component : %1/%2").arg(current_uv_item->current_component()+1).arg(current_uv_item->number_of_components()));
-      dock_widget->setWindowTitle(tr("UVMapping for %1").arg(current_uv_item->item_name()));
-      qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item))->add_border_edges(current_uv_item->concatenated_borders(),
-                                                                                                       is_ogl_4_3);
+      ui_widget.graphicsView->fitInView(current_uv_item->boundingRect(), 
+                                        Qt::KeepAspectRatio);
+      ui_widget.component_numberLabel->setText(
+            QString("Component : %1/%2").arg(current_uv_item->current_component()+1)
+            .arg(current_uv_item->number_of_components()));
+      dock_widget->setWindowTitle(tr("UVMapping for %1")
+                                  .arg(current_uv_item->item_name()));
+      Scene_textured_facegraph_item* t_item = 
+          qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item));
+     t_item->add_border_edges(
+            current_uv_item->concatenated_borders());
     }
   }
 
@@ -940,14 +946,22 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     graphics_scene->removeItem(graphics_scene->items().first());
   graphics_scene->addItem(projection);
   projections[new_item] = projection;
-  bool is_ogl_4_3 = 
-      static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->isOpenGL_4_3();
-  if(current_uv_item)
-    qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item))->add_border_edges(std::vector<float>(0),
-                                                                                                     is_ogl_4_3);
+  if(current_uv_item){
+    Scene_textured_facegraph_item* t_item = 
+        qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item));
+    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())\
+      if(v)
+        t_item->gl_initialization(qobject_cast<CGAL::Three::Viewer_interface*>(v));
+   t_item->add_border_edges(std::vector<float>(0));
+  }
   current_uv_item = projection;
-  qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item))->add_border_edges(current_uv_item->concatenated_borders(),
-                                                                                                   is_ogl_4_3);
+  Scene_textured_facegraph_item* t_item = 
+      qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item));
+  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+    if(v)
+      t_item->gl_initialization(qobject_cast<CGAL::Three::Viewer_interface*>(v));
+  t_item->add_border_edges(
+        current_uv_item->concatenated_borders());
   if(dock_widget->isHidden())
     dock_widget->setVisible(true);
   dock_widget->setWindowTitle(tr("UVMapping for %1").arg(new_item->name()));

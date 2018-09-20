@@ -91,14 +91,9 @@ See the project main page for details on the project and installation steps. */
 
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::defaultConstructor() {
-  
-  int poolIndex = CGAL::QGLViewer::QGLViewerPool().indexOf(NULL);
   setFocusPolicy(::Qt::StrongFocus);
 
-  if (poolIndex >= 0)
-    CGAL::QGLViewer::QGLViewerPool().replace(poolIndex, this);
-  else
-    CGAL::QGLViewer::QGLViewerPool().append(this);
+  CGAL::QGLViewer::QGLViewerPool().append(this);
   camera_ = new qglviewer::Camera(this);
   setCamera(camera());
 
@@ -195,8 +190,7 @@ CGAL::QGLViewer::~QGLViewer() {
   // if virtual domElement() has been overloaded ! if (parent())
   // saveStateToFileForAllViewers();
 
-  CGAL::QGLViewer::QGLViewerPool().replace(CGAL::QGLViewer::QGLViewerPool().indexOf(this),
-                                    NULL);
+  CGAL::QGLViewer::QGLViewerPool().removeAll(this);
 
   camera()->deleteLater();
   delete[] selectBuffer_;

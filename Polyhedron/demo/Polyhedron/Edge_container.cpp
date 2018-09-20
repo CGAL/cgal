@@ -98,7 +98,18 @@ void Edge_container::initGL(Viewer_interface *viewer)
                   : Vbo::GEOMETRY));
         getVao(viewer)->addVbo(getVbo(Centers));
       }
-      
+      if(viewer->getShaderProgram(getProgram())->property("hasTexture").toBool())
+      {
+        if(!getVbo(Texture_map))
+          setVbo(Texture_map,
+                 new Vbo("v_texCoord",
+                         Vbo::GEOMETRY,
+                         QOpenGLBuffer::VertexBuffer,
+                         GL_FLOAT, 0, 2));
+        getVao(viewer)->addVbo(getVbo(Texture_map));
+        if(!getTexture())
+          setTexture(new Texture());
+      }
     }
   }
   setGLInit(viewer, true);
@@ -140,6 +151,10 @@ void Edge_container::draw(Viewer_interface *viewer,
   else
   {
     getVao(viewer)->bind();
+    if(getVao(viewer)->program->property("hasTexture").toBool()){
+      viewer->glActiveTexture(GL_TEXTURE0);
+      viewer->glBindTexture(GL_TEXTURE_2D, getTextureId());
+    }
     if(is_color_uniform)
       getVao(viewer)->program->setAttributeValue("colors", getColor());
     if(viewer->getShaderProgram(getProgram())->property("hasCutPlane").toBool())

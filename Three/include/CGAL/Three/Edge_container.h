@@ -56,6 +56,7 @@ struct DEMO_FRAMEWORK_EXPORT Edge_container :public Primitive_container
     Colors,       //!< Designates the buffer that contains the color components.
     Radius,       //!< Designates the buffer that contains the radius of wire spheres.
     Centers,  //!< Designates the buffer that contains the center of c3t3 facets or the center of wire spheres, for example.
+    Texture_map,        //!< Designates the buffer that contains the UV map for the texture.
     NbOfVbos      //!< Designates the size of the VBOs vector for `Edge_container`s
   };
 

@@ -99,8 +99,6 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
   float getAlpha();
   //! getter for the "f_matrix" parameter
   QMatrix4x4 getFrameMatrix()const;
-  //! getter for the size of the texture.
-  QSize getTextureSize() const;
 //! setter for the "shrink_factor" parameter
   void setShrinkFactor(const float&);
   //! setter for the "plane" parameter
@@ -111,10 +109,6 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
   void setFrameMatrix(const QMatrix4x4&);
   //! setter for the "is_surface" attribute. Used in PROGRAM_C3T3
   void setIsSurface  (const bool);
-  //! setter for the texture size.
-  void setTextureSize  (const QSize& size);
-  //! setter for the texture data at UV coordinates (`i`,`j`).
-  void setTextureData  (int i, int j, int r, int g, int b);
   ///@}
 
   //drawing variables

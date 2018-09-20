@@ -207,6 +207,7 @@ public:
 
   typedef Scene_facegraph_item_k_ring_selection::Active_handle Active_handle;
 
+  void common_constructor();
   Scene_polyhedron_selection_item() ;
   Scene_polyhedron_selection_item(Scene_face_graph_item* poly_item, QMainWindow* mw);
   ~Scene_polyhedron_selection_item();
@@ -226,6 +227,8 @@ public:
     res.remove(" (selection)");
     return res;      
   }
+  void initializeBuffers(CGAL::Three::Viewer_interface *) const;
+  void computeElements() const;
 
 protected: 
   void init(Scene_face_graph_item* poly_item, QMainWindow* mw);
@@ -312,14 +315,14 @@ public:
     
       }
     }
-
+    
     if(!item_bbox)
     {
-      _bbox = this->poly_item->bbox();
+      setBbox(this->poly_item->bbox());
       return;
     }
-    _bbox = Bbox(item_bbox->xmin(),item_bbox->ymin(),item_bbox->zmin(),
-                item_bbox->xmax(),item_bbox->ymax(),item_bbox->zmax());
+    setBbox(Bbox(item_bbox->xmin(),item_bbox->ymin(),item_bbox->zmin(),
+                 item_bbox->xmax(),item_bbox->ymax(),item_bbox->zmax()));
   }
 
   bool save(const std::string& file_name) const {
