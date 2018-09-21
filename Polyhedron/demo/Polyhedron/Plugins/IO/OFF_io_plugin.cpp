@@ -145,6 +145,7 @@ Polyhedron_demo_off_plugin::load_obj(QFileInfo fileinfo) {
     return NULL;
   }
   Scene_surface_mesh_item* item = new Scene_surface_mesh_item();
+  item->setName(fileinfo.baseName());
   if(item->load_obj(in))
     return item;
   return 0;
