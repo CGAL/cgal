@@ -48,7 +48,7 @@ public :
   {
     this->scene = scene_interface;
     this->mw = mainWindow;
-    for(int i=0; i<POLYLINE; ++i)
+    for(int i=0; i<=POLYLINE; ++i)
       nbs[i]=0;
 
 
