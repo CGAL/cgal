@@ -7,7 +7,7 @@
 #include <boost/foreach.hpp>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <vector>
-#define POINT_SIZE 12
+#define POINT_SIZE 11
 template<class Mesh>
 struct VKRingPMAP{
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor key_type;
