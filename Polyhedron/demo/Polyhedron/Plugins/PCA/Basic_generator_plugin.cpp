@@ -53,8 +53,14 @@ public :
 
 
     QMenu* menuFile = mw->findChild<QMenu*>("menuFile");
-    QMenu* menu = new QMenu(tr("&Objet Generator Widget"), menuFile);
-    QAction* actionLoad = mw->findChild<QAction*>("actionLoadPlugin");
+    
+    QMenu* menu = menuFile->findChild<QMenu*>("menuGenerateObject");
+    if(!menu){
+      QAction* actionLoad = mw->findChild<QAction*>("actionLoadPlugin");
+      menu = new QMenu(tr("Generate &Objet"), menuFile);
+      menu->setObjectName("menuGenerateObject");
+      menuFile->insertMenu(actionLoad, menu);
+    }
 
 
     QAction* actionPrism       = new QAction("P&rism", mw);
@@ -101,12 +107,10 @@ public :
             this, SLOT(on_actionPolyline_triggered()));
     _actions << actionPolyline;
 
-    menu->clear();
     Q_FOREACH(QAction* action, _actions)
     {
       menu->addAction(action);
     }
-    menuFile->insertMenu(actionLoad, menu);
     dock_widget = new GeneratorWidget("Basic Objets", mw);
     dock_widget->setVisible(false); // do not show at the beginning
     addDockWidget(dock_widget);

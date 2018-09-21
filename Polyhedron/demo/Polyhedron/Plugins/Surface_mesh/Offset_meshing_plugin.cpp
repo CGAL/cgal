@@ -316,7 +316,7 @@ public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     this->scene = scene_interface;
     this->mw = mainWindow;
-    actionOffsetMeshing = new QAction(tr("Offset meshing"), mw);
+    actionOffsetMeshing = new QAction(tr("Offset Meshing"), mw);
     actionOffsetMeshing->setProperty("subMenuName", "3D Surface Mesh Generation");
     if(actionOffsetMeshing) {
       connect(actionOffsetMeshing, SIGNAL(triggered()),

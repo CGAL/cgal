@@ -1850,6 +1850,12 @@ void Scene_surface_mesh_item::zoomToPosition(const QPoint &point, CGAL::Three::V
 void Scene_surface_mesh_item::resetColors()
 {
   setItemIsMulticolor(false);
+  if(d->has_feature_edges){
+    BOOST_FOREACH(boost::graph_traits<SMesh>::edge_descriptor e, edges(*d->smesh_)){
+      put(d->e_is_feature_map, e, false);
+    }
+    d->has_feature_edges = false;
+  }
   invalidate(COLORS);
   itemChanged();
 }

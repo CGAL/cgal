@@ -404,12 +404,12 @@
   </action>
   <action name="actionSetPolyhedronA">
    <property name="text">
-    <string>Set Polyhedron A</string>
+    <string>Set FacegraphA</string>
    </property>
   </action>
   <action name="actionSetPolyhedronB">
    <property name="text">
-    <string>Set Polyhedron B</string>
+    <string>Set Facegraph B</string>
    </property>
   </action>
   <action name="actionDrawTwoSides">
