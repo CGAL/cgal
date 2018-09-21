@@ -7,7 +7,7 @@
 #include <boost/foreach.hpp>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <vector>
-
+#define POINT_SIZE 12
 template<class Mesh>
 struct VKRingPMAP{
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor key_type;
@@ -206,6 +206,7 @@ void compute_displayed_ids(Mesh& mesh,
 
   QFont font;
   font.setBold(true);
+  font.setPointSize(POINT_SIZE);
   std::vector<vertex_descriptor> displayed_vertices;
   std::vector<edge_descriptor> displayed_edges;
   std::vector<face_descriptor> displayed_faces;
@@ -414,6 +415,7 @@ bool printVertexIds(const Mesh& mesh,
   const CGAL::qglviewer::Vec offset = viewer->offset();
   QFont font;
   font.setBold(true);
+  font.setPointSize(POINT_SIZE);
 
   //fills textItems
   BOOST_FOREACH(typename boost::graph_traits<Mesh>::vertex_descriptor vh, vertices(mesh))
@@ -449,7 +451,8 @@ bool printEdgeIds(const Mesh& mesh,
   const CGAL::qglviewer::Vec offset = viewer->offset();
   QFont font;
   font.setBold(true);
-
+  font.setPointSize(POINT_SIZE);
+  
   BOOST_FOREACH(typename boost::graph_traits<Mesh>::edge_descriptor e, edges(mesh))
   {
     const Point& p1 = get(ppmap, source(e, mesh));
@@ -482,6 +485,7 @@ bool printFaceIds(const Mesh& mesh,
   const CGAL::qglviewer::Vec offset = viewer->offset();
   QFont font;
   font.setBold(true);
+  font.setPointSize(POINT_SIZE);
   BOOST_FOREACH(typename boost::graph_traits<Mesh>::face_descriptor fh, faces(mesh))
   {
     double x(0), y(0), z(0);
