@@ -381,6 +381,10 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
   facets_mesher_.set_worksharing_ds(this->get_worksharing_data_structure());
   cells_mesher_.set_lock_ds(this->get_lock_data_structure());
   cells_mesher_.set_worksharing_ds(this->get_worksharing_data_structure());
+#ifndef CGAL_NO_ATOMIC
+  cells_mesher_.set_stop_pointer(stop_ptr);
+  facets_mesher_.set_stop_pointer(stop_ptr);
+#endif
 }
 
 
@@ -749,6 +753,10 @@ one_step()
 
     if ( facets_mesher_.is_algorithm_done() )
     {
+      if(forced_stop()) {
+        return;
+      }
+
       switch(refinement_stage) {
       case REFINE_FACETS:
         facets_mesher_.scan_edges();
