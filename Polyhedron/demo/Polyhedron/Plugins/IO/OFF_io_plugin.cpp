@@ -111,6 +111,7 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
       delete soup_item;
       return 0;
     }
+    QApplication::restoreOverrideCursor();
     QMessageBox::information(
           CGAL::Three::Three::mainWindow(),
           "Cannot Open File",

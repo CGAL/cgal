@@ -173,11 +173,11 @@ namespace CGAL {
   }
 
   template < class LCC >
-  void load_off(LCC& alcc, std::istream& in)
+  bool load_off(LCC& alcc, std::istream& in)
   {
     File_header_OFF  m_file_header;
     File_scanner_OFF scanner( in, m_file_header.verbose());
-    if (!in) return;
+    if (!in) return false;
     m_file_header = scanner;  // Remember file header after return.
 
     Linear_cell_complex_incremental_builder_3<LCC> B(alcc);
@@ -252,26 +252,30 @@ namespace CGAL {
        }
        }*/
     B.end_surface();
+
+    return true;
   }
 
   template < class LCC >
-  void load_off(LCC& alcc, const char* filename)
+  bool load_off(LCC& alcc, const char* filename)
   {
     std::ifstream input(filename);
-    if (input.is_open())
-      load_off(alcc, input);
+    if (!input.is_open())
+    { return false; }
+
+    return load_off(alcc, input);
   }
 
   /** Export the alcc in off file format. If dimension>2, export all faces but only once.
    *  @pre all faces are closed (i.e. form by closed cycles of edges)
    */
   template < class LCC >
-  void write_off(LCC& alcc, std::ostream& out)
+  bool write_off(LCC& alcc, std::ostream& out)
   {
     if (!alcc.are_all_faces_closed())
     {
       std::cerr<<"Impossible to write in off a map having open faces."<<std::endl;
-      return;
+      return false;
     }
 
     File_header_OFF header(false);
@@ -338,14 +342,17 @@ namespace CGAL {
     }
     writer.write_footer();
     alcc.free_mark(m);
+    return true;
   }
 
   template < class LCC >
-  void write_off(LCC& alcc, const char* filename)
+  bool write_off(LCC& alcc, const char* filename)
   {
     std::ofstream output(filename);
-    if (output.is_open())
-      write_off(alcc, output);
+    if (!output.is_open())
+    { return false; }
+    
+    return write_off(alcc, output);
   }
 
 } // namespace CGAL

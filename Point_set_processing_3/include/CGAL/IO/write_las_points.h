@@ -92,41 +92,41 @@ namespace internal {
 
   namespace LAS {
 
-  void output_value(LASpoint& r, unsigned short& v, LAS_property::Intensity&)
+  void output_value(LASpoint& r, const unsigned short& v, LAS_property::Intensity&)
   { r.set_intensity(v); }
-  void output_value(LASpoint& r, unsigned char& v, LAS_property::Return_number&)
+  void output_value(LASpoint& r, const unsigned char& v, LAS_property::Return_number&)
   { r.set_return_number(v); }
-  void output_value(LASpoint& r, unsigned char& v, LAS_property::Number_of_returns&)
+  void output_value(LASpoint& r, const unsigned char& v, LAS_property::Number_of_returns&)
   { r.set_number_of_returns(v); }
-  void output_value(LASpoint& r, unsigned char& v, LAS_property::Scan_direction_flag&)
+  void output_value(LASpoint& r, const unsigned char& v, LAS_property::Scan_direction_flag&)
   { r.set_scan_direction_flag(v); }
-  void output_value(LASpoint& r, unsigned char& v, LAS_property::Edge_of_flight_line&)
+  void output_value(LASpoint& r, const unsigned char& v, LAS_property::Edge_of_flight_line&)
   { r.set_edge_of_flight_line(v); }
-  void output_value(LASpoint& r, unsigned char& v, LAS_property::Classification&)
+  void output_value(LASpoint& r, const unsigned char& v, LAS_property::Classification&)
   { r.set_classification(v); }
-  void output_value(LASpoint& r, unsigned char& v, LAS_property::Synthetic_flag&)
+  void output_value(LASpoint& r, const unsigned char& v, LAS_property::Synthetic_flag&)
   { r.set_synthetic_flag(v); }
-  void output_value(LASpoint& r, unsigned char& v, LAS_property::Keypoint_flag&)
+  void output_value(LASpoint& r, const unsigned char& v, LAS_property::Keypoint_flag&)
   { r.set_keypoint_flag(v); }
-  void output_value(LASpoint& r, unsigned char& v, LAS_property::Withheld_flag&)
+  void output_value(LASpoint& r, const unsigned char& v, LAS_property::Withheld_flag&)
   { r.set_withheld_flag(v); }
-  void output_value(LASpoint& r, float& v, LAS_property::Scan_angle&)
+  void output_value(LASpoint& r, const float& v, LAS_property::Scan_angle&)
   { r.set_scan_angle_rank(char(v)); }
-  void output_value(LASpoint& r, unsigned char& v, LAS_property::User_data&)
+  void output_value(LASpoint& r, const unsigned char& v, LAS_property::User_data&)
   { r.set_user_data(v); }
-  void output_value(LASpoint& r, unsigned short& v, LAS_property::Point_source_ID&)
+  void output_value(LASpoint& r, const unsigned short& v, LAS_property::Point_source_ID&)
   { r.set_point_source_ID(v); }
-  void output_value(LASpoint& r, unsigned int& v, LAS_property::Deleted_flag&)
+  void output_value(LASpoint& r, const unsigned int& v, LAS_property::Deleted_flag&)
   { r.set_deleted_flag(v); }
-  void output_value(LASpoint& r, double& v, LAS_property::GPS_time&)
+  void output_value(LASpoint& r, const double& v, LAS_property::GPS_time&)
   { r.set_gps_time(v); }
-  void output_value(LASpoint& r, unsigned short& v, LAS_property::R&)
+  void output_value(LASpoint& r, const unsigned short& v, LAS_property::R&)
   { r.set_R(v); }
-  void output_value(LASpoint& r, unsigned short& v, LAS_property::G&)
+  void output_value(LASpoint& r, const unsigned short& v, LAS_property::G&)
   { r.set_G(v); }
-  void output_value(LASpoint& r, unsigned short& v, LAS_property::B&)
+  void output_value(LASpoint& r, const unsigned short& v, LAS_property::B&)
   { r.set_B(v); }
-  void output_value(LASpoint& r, unsigned short& v, LAS_property::I&)
+  void output_value(LASpoint& r, const unsigned short& v, LAS_property::I&)
   { r.set_I(v); }
   
   template <typename ForwardIterator>

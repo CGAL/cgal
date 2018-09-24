@@ -761,7 +761,7 @@ namespace CGAL {
      * @return a dart handle to the new vertex containing p.
      */
     Dart_handle insert_point_in_cell_1(Dart_handle dh, const Point& p,
-                                       bool update_attributes)
+                                       bool update_attributes=true)
     {
       return this->insert_cell_0_in_cell_1(dh,
                                            create_vertex_attribute(p),
@@ -775,7 +775,7 @@ namespace CGAL {
      * @return a dart handle to the new vertex containing p.
      */
     Dart_handle insert_point_in_cell_2(Dart_handle dh, const Point& p,
-                                       bool update_attributes)
+                                       bool update_attributes=true)
     {
       Vertex_attribute_handle v = create_vertex_attribute(p);
 
@@ -799,7 +799,7 @@ namespace CGAL {
      */
     template <unsigned int i>
     Dart_handle insert_point_in_cell(Dart_handle dh, const Point& p,
-                                     bool update_attributes = true)
+                                     bool update_attributes=true)
     {
       CGAL_static_assertion(1<=i && i<=2);
       if (i==1) return insert_point_in_cell_1(dh, p, update_attributes);
@@ -814,7 +814,7 @@ namespace CGAL {
      */
     Dart_handle insert_dangling_cell_1_in_cell_2(Dart_handle dh,
                                                  const Point& p,
-                                                 bool update_attributes = true)
+                                                 bool update_attributes=true)
     {
       return this->insert_dangling_cell_1_in_cell_2
           (dh, create_vertex_attribute(p), update_attributes);
@@ -827,7 +827,7 @@ namespace CGAL {
      * @return a dart handle to the new vertex containing p.
      */
     template <unsigned int i>
-    Dart_handle insert_barycenter_in_cell(Dart_handle dh, bool update_attributes = true)
+    Dart_handle insert_barycenter_in_cell(Dart_handle dh, bool update_attributes=true)
     { return insert_point_in_cell<i>(dh, barycenter<i>(dh), update_attributes); }
 
     /** Compute the dual of a Linear_cell_complex.

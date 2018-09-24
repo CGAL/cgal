@@ -347,7 +347,7 @@ public:
     this->mw = mainWindow;
     oliver_queen = NULL;
     target = NULL;
-    actionCreateItem = new QAction(QString("Extrude Item"), mw);
+    actionCreateItem = new QAction(QString("Extrude FaceGraph (or selection)"), mw);
     actionCreateItem->setProperty("submenuName", "Polygon Mesh Processing");
     connect(actionCreateItem, SIGNAL(triggered()),
             this, SLOT(createItem()));

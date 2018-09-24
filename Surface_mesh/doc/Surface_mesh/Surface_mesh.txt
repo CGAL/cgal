@@ -114,7 +114,7 @@ The connectivity does not allow to represent faces with holes.
 `Surface_mesh` provides iterator ranges to enumerate all vertices,
 halfedges, edges, and faces. It provides member functions
 returning ranges of elements which are compatible with the
-<a href="http://www.boost.org/libs/range/doc/html/index.html">Boost.Range</a>
+<a href="https://www.boost.org/libs/range/doc/html/index.html">Boost.Range</a>
 library. 
 
 \subsection iterators_example Example
@@ -227,8 +227,8 @@ face of `h`, and for all vertices of the surface mesh, respectively.
 The class `Surface_mesh` is a model of the concept `IncidenceGraph`
 defined in the Boost Graph Library.  This enables to apply algorithms such
 as 
-[Dijkstra shortest path](http://www.boost.org/libs/graph/doc/dijkstra_shortest_paths.html), or
-[Kruskal minimum spanning tree](http://www.boost.org/libs/graph/doc/kruskal_min_spanning_tree.html)
+[Dijkstra shortest path](https://www.boost.org/libs/graph/doc/dijkstra_shortest_paths.html), or
+[Kruskal minimum spanning tree](https://www.boost.org/libs/graph/doc/kruskal_min_spanning_tree.html)
 directly on a surface mesh.
 
 The types and free functions of the BGL API have each a similar type or member function,
