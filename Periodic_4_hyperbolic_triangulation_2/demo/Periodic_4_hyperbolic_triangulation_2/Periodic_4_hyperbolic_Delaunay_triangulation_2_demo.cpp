@@ -137,7 +137,7 @@ signals:
 };
 
 
-#include <internal/hyperbolic_billiards_animation.h>
+#include <internal/hyperbolic_free_motion_animation.h>
 
 
 MainWindow::MainWindow()
