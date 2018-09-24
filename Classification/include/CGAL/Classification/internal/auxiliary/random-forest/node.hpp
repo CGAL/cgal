@@ -249,8 +249,11 @@ public:
         ar & BOOST_SERIALIZATION_NVP(params);
         ar & BOOST_SERIALIZATION_NVP(splitter);
         ar & BOOST_SERIALIZATION_NVP(node_dist);
-        ar & BOOST_SERIALIZATION_NVP(left);
-        ar & BOOST_SERIALIZATION_NVP(right);
+        if (!is_leaf)
+        {
+          ar & BOOST_SERIALIZATION_NVP(left);
+          ar & BOOST_SERIALIZATION_NVP(right);
+        }
     }
 };
 
