@@ -20,7 +20,7 @@ int main()
 {
   // reads input surface triangle mesh
   Polyhedron input;
-  std::ifstream file("data/mask.off");
+  std::ifstream file("data/bear.off");
   if (!file || !(file >> input) || input.empty()) {
     std::cerr << "Invalid off file." << std::endl;
     return EXIT_FAILURE;

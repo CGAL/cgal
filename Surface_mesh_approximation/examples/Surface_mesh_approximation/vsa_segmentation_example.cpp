@@ -17,7 +17,7 @@ int main()
 {
   // reads input mesh
   Polyhedron input;
-  std::ifstream file("data/mask.off");
+  std::ifstream file("data/bear.off");
   file >> input;
 
   Face_index_map fidx_map;

@@ -14,7 +14,7 @@ int main()
 {
   // read input surface triangle mesh
   Polyhedron input;
-  std::ifstream file("data/mask.off");
+  std::ifstream file("data/bear.off");
   file >> input;
 
   // The output will be an indexed triangle mesh

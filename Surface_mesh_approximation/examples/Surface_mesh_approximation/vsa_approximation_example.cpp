@@ -18,7 +18,7 @@ int main()
 {
   // read input surface triangle mesh
   Polyhedron input;
-  std::ifstream file("data/mask.off");
+  std::ifstream file("data/bear.off");
   file >> input;
 
   // output indexed triangles
@@ -46,7 +46,7 @@ int main()
     if (CGAL::is_closed(mesh) && (!CGAL::Polygon_mesh_processing::is_outward_oriented(mesh)))
       CGAL::Polygon_mesh_processing::reverse_face_orientations(mesh);
 
-    std::ofstream out("mask-dump.off");
+    std::ofstream out("dump.off");
     out << mesh;
     out.close();
   }
