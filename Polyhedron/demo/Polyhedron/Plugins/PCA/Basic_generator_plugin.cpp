@@ -717,8 +717,9 @@ void Basic_generator_plugin::generateLines()
     if(ok)
     {
         dock_widget->line_textEdit->clear();
-        Scene_polylines_item* item = new Scene_polylines_item;
+        Scene_polylines_item* item = new Scene_polylines_item();
         item->polylines = polylines;
+        item->invalidateOpenGLBuffers();
         item->setName(dock_widget->name_lineEdit->text());
         item->setColor(Qt::black);
         item->setProperty("polylines metadata", polylines_metadata);

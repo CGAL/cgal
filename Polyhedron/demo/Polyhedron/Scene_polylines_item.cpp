@@ -43,15 +43,6 @@ struct Scene_polylines_item_private {
       computed_stats = false;
     }
 
-    enum VAOs {
-        Edges=0,
-        NbOfVaos
-    };
-    enum VBOs {
-        Edges_Vertices = 0,
-        NbOfVbos
-    };
-
     mutable Scene_spheres_item *spheres;
     mutable std::vector<float> positions_lines;
     mutable std::size_t nb_lines;
@@ -90,6 +81,9 @@ Scene_polylines_item_private::initializeBuffers(CGAL::Three::Viewer_interface *v
   item->getEdgeContainer(0)->setFlatDataSize(nb_lines);
   item->getPointContainer(0)->initializeBuffers(viewer);
   item->getPointContainer(0)->setFlatDataSize(nb_lines);  
+  
+  positions_lines.clear();
+  positions_lines.shrink_to_fit();
 }
 
 void
@@ -149,8 +143,6 @@ Scene_polylines_item_private::computeElements() const
     
     item->setBuffersFilled(true);
     nb_lines = positions_lines.size();
-    positions_lines.clear();
-    positions_lines.shrink_to_fit();
     QApplication::restoreOverrideCursor();
 }
 
@@ -300,7 +292,7 @@ Scene_polylines_item::compute_bbox() const {
 
     if(isEmpty())
     {
-        _bbox =Bbox();
+        setBbox(Bbox());
         return;
     }
     std::list<Point_3> boxes;
@@ -318,20 +310,17 @@ Scene_polylines_item::compute_bbox() const {
                 CGAL::bounding_box(boxes.begin(), boxes.end()) :
                 Iso_cuboid_3();
 
-    _bbox = Bbox(bbox.xmin(),
+    setBbox(Bbox(bbox.xmin(),
                 bbox.ymin(),
                 bbox.zmin(),
                 bbox.xmax(),
                 bbox.ymax(),
-                bbox.zmax());
-    is_bbox_computed = true;
+                bbox.zmax()));
 }
 
 Scene_item::Bbox Scene_polylines_item::bbox() const
 {
-  if(!is_bbox_computed)
-    compute_bbox();
-  return _bbox;
+  return Scene_item_rendering_helper::bbox();
 }
 Scene_polylines_item* 
 Scene_polylines_item::clone() const {

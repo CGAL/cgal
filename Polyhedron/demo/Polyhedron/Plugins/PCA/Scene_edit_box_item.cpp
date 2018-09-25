@@ -748,8 +748,8 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
 {
   if(!visible())
     return false;
-  Viewer_interface* viewer = Three::mainViewer();
-  if(!viewer)
+  Viewer_interface* test_viewer = qobject_cast<Vi*>(obj);
+  if(!test_viewer)
     return false;
   if(event->type() == QEvent::MouseButtonPress)
   {

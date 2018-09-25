@@ -74,7 +74,7 @@ public:
   };
   
 public:
-
+  void common_constructor();
   Scene_polyhedron_shortest_path_item();
   Scene_polyhedron_shortest_path_item(Scene_face_graph_item* polyhedronItem, CGAL::Three::Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow);
   ~Scene_polyhedron_shortest_path_item();
@@ -95,7 +95,8 @@ public:
   bool deferred_load(Scene_face_graph_item* polyhedronItem, CGAL::Three::Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow);
   virtual bool load(const std::string& file_name);
   virtual bool save(const std::string& file_name) const;
-  
+  void initializeBuffers(CGAL::Three::Viewer_interface *) const;
+  void computeElements() const;
 protected:
   void initialize(Scene_face_graph_item* polyhedronItem, CGAL::Three::Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow);
   void deinitialize();
