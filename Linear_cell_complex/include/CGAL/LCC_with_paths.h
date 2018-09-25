@@ -86,15 +86,18 @@ public:
   ///        usefull for very big object where this time could be long)
   LCC_with_path_viewer(const LCC& alcc,
                        const std::vector<const Path_on_surface<LCC>*>& paths,
+                       std::size_t amark=LCC::INVALID_MARK,
                        const char* title="", bool anofaces=false,
                        const ColorFunctor& fcolor=ColorFunctor()) :
     Base(title),
     lcc(alcc),
+    m_nofaces(anofaces),
+    m_fcolor(fcolor),
     m_paths(paths),
     m_current_path(m_paths.size()),
     m_current_dart(alcc.number_of_darts()),
-    m_nofaces(anofaces),
-    m_fcolor(fcolor)
+    m_draw_marked_darts(true),
+    m_amark(amark)
   { compute_elements(); }
 
 protected:
@@ -137,10 +140,8 @@ protected:
         for (unsigned int i=0; i<m_paths.size(); ++i)
         { compute_path(i, markedges); }
       }
-      else
-      {
-        compute_path(m_current_path, markedges);
-      }
+      else if (m_current_path!=m_paths.size()+1)
+      { compute_path(m_current_path, markedges); }
 
       for (typename LCC::Dart_range::const_iterator it=lcc.darts().begin(),
            itend=lcc.darts().end(); it!=itend; ++it )
@@ -203,7 +204,13 @@ protected:
     Point p1 = lcc.point(dh);
     Dart_const_handle d2 = lcc.other_extremity(dh);
     if (d2!=NULL)
-    { add_segment(p1, lcc.point(d2)); }
+    {
+      if (m_draw_marked_darts && m_amark!=LCC::INVALID_MARK &&
+          (lcc.is_marked(dh, m_amark) || lcc.is_marked(lcc.beta(dh, 2), m_amark)))
+      { add_segment(p1, lcc.point(d2), CGAL::Color(0, 0, 255)); }
+      else
+      { add_segment(p1, lcc.point(d2)); }
+    }
   }
 
   void compute_edge(Dart_const_handle dh, const CGAL::Color& color)
@@ -220,23 +227,8 @@ protected:
   virtual void keyPressEvent(QKeyEvent *e)
   {
     const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-    if ((e->key()==::Qt::Key_N) && (modifiers==::Qt::NoButton))
-    {
-      m_current_path=(m_current_path+1)%(m_paths.size()+1);
-      if (m_current_path==m_paths.size())
-      {
-        displayMessage(QString("Draw all paths."));
-      }
-      else
-      {
-        displayMessage(QString("Draw path=%1.").arg((m_current_path)));
-      }
-      compute_elements();
-      initialize_buffers();
-      compile_shaders();
-      updateGL();
-    }
-    else if ((e->key()==::Qt::Key_D) && (modifiers==::Qt::NoButton))
+
+    if ((e->key()==::Qt::Key_D) && (modifiers==::Qt::NoButton))
     {
       m_current_dart=(m_current_dart+1)%(lcc.number_of_darts()+1);
       if (m_current_dart==lcc.number_of_darts())
@@ -247,6 +239,35 @@ protected:
       {
         displayMessage(QString("Draw dart=%1.").arg((m_current_dart)));
       }
+      compute_elements();
+      initialize_buffers();
+      compile_shaders();
+      updateGL();
+    }
+    else if ((e->key()==::Qt::Key_M) && (modifiers==::Qt::NoButton))
+    {
+      m_draw_marked_darts=!m_draw_marked_darts;
+
+      if (m_draw_marked_darts)
+      { displayMessage(QString("Draw marked darts in blue.")); }
+      else
+      {
+        displayMessage(QString("Do not draw marked darts in different color."));
+      }
+      compute_elements();
+      initialize_buffers();
+      compile_shaders();
+      updateGL();
+    }
+    else if ((e->key()==::Qt::Key_N) && (modifiers==::Qt::NoButton))
+    {
+      m_current_path=(m_current_path+1)%(m_paths.size()+2);
+      if (m_current_path==m_paths.size())
+      { displayMessage(QString("Draw all paths.")); }
+      else if (m_current_path==m_paths.size()+1)
+      { displayMessage(QString("Do not draw paths.")); }
+      else
+      { displayMessage(QString("Draw path=%1.").arg((m_current_path))); }
       compute_elements();
       initialize_buffers();
       compile_shaders();
@@ -298,12 +319,15 @@ protected:
   const std::vector<const Path_on_surface<LCC>*>& m_paths;
   unsigned int m_current_path;
   unsigned int m_current_dart;
+  bool m_draw_marked_darts;
+  std::size_t m_amark; // If !=INVALID_MARK, show darts marked with this mark
 };
   
 template<class LCC, class ColorFunctor>
 void display(const LCC& alcc,
              std::vector<const Path_on_surface<LCC>*> paths,
              const char* title="LCC Viewer",
+             std::size_t amark=LCC::INVALID_MARK,
              bool nofill=false,
              const ColorFunctor& fcolor=ColorFunctor())
 {
@@ -312,7 +336,8 @@ void display(const LCC& alcc,
   const char* argv[2]={"lccviewer","\0"};
   QApplication app(argc,const_cast<char**>(argv));
 
-  LCC_with_path_viewer<LCC, ColorFunctor> mainwindow(alcc, paths, title, nofill, fcolor);
+  LCC_with_path_viewer<LCC, ColorFunctor> mainwindow(alcc, paths, amark,
+                                                     title, nofill, fcolor);
   mainwindow.show();
 
   app.exec();
@@ -322,8 +347,9 @@ template<class LCC>
 void display(const LCC& alcc,
              std::vector<const Path_on_surface<LCC>*> paths,
              const char* title="LCC Viewer",
+             std::size_t amark=LCC::INVALID_MARK,
              bool nofill=false)
-{ return display<LCC, DefaultColorFunctor>(alcc, paths, title, nofill); }
+{ return display<LCC, DefaultColorFunctor>(alcc, paths, title, amark, nofill); }
 
 } // End namespace CGAL
 
