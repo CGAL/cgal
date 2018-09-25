@@ -3,6 +3,9 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/algorithm.h>
+#include <CGAL/Three/Scene_item_rendering_helper.h>
+#include <CGAL/Three/Three.h>
+#include <CGAL/Three/Point_container.h>
 #include "Scene_surface_mesh_item.h"
 
 #include "Scene_facegraph_transform_item.h"
@@ -19,27 +22,29 @@
 #include <QMessageBox>
 
 #include "ui_Transformation_widget.h"
+using namespace CGAL::Three;
+typedef Viewer_interface Vi;
+typedef Point_container Pc;
+
 typedef Scene_surface_mesh_item Facegraph_item;
 
 
-class Scene_transform_point_set_item : public Scene_item
+class Scene_transform_point_set_item : public Scene_item_rendering_helper
 {
   Q_OBJECT
   typedef Point_set_3<Kernel> Point_set;
 public:
   Scene_transform_point_set_item(Scene_points_with_normal_item *item, const CGAL::qglviewer::Vec& pos)
-    :Scene_item(1,1),
-      base(item),
+    : base(item),
       center_(pos),
       frame(new CGAL::Three::Scene_item::ManipulatedFrame())
   {
-    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
     frame->setPosition(pos+offset);
     Point_set ps= *item->point_set();
     const Kernel::Point_3& p = ps.point(*(ps.begin()));
     CGAL::Bbox_3 bbox(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
     CGAL::cpp98::random_shuffle (ps.begin(), ps.end());
-    std::vector<float> points;
     points.reserve(3*ps.size());
     for (Point_set::const_iterator it = ps.begin(); it != ps.first_selected(); it++)
     {
@@ -49,25 +54,28 @@ public:
       points.push_back(p.y()-center_.y);
       points.push_back(p.z()-center_.z);
     }
-    _bbox = Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
-                 bbox.xmax(),bbox.ymax(),bbox.zmax());
+    setPointContainer(0, new Pc(Vi::PROGRAM_NO_SELECTION, false));
+    setBbox(Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
+                 bbox.xmax(),bbox.ymax(),bbox.zmax()));
+    
     nb_points = points.size();
-    CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(*CGAL::QGLViewer::QGLViewerPool().begin());
-    program = getShaderProgram(Scene_facegraph_transform_item::PROGRAM_WITHOUT_LIGHT, viewer);
-    program->bind();
-
-    vaos[0]->bind();
-    buffers[0].bind();
-    buffers[0].allocate(points.data(),
-                        static_cast<int>(points.size()*sizeof(float)));
-    program->enableAttributeArray("vertex");
-    program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    buffers[0].release();
-    vaos[0]->release();
-
-    program->release();
+    initGL();
+    Pc* pc = getPointContainer(0);
+    pc->allocate(Pc::Vertices,
+                 points.data(),
+                 static_cast<int>(points.size()*sizeof(float)));
+    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+      initializeBuffers(qobject_cast<Vi*>(v));
   }
-
+  
+  void initializeBuffers(Viewer_interface *v) const
+  {
+    Pc* pc = getPointContainer(0);
+    pc->initializeBuffers(v);
+    pc->setFlatDataSize(nb_points);
+    points.clear();
+    points.shrink_to_fit();
+  }
   bool manipulatable() const { return true; }
 
   Scene_item* clone()const{ return NULL; }
@@ -98,17 +106,10 @@ public:
         (nb_points /3 > 300000)) // arbitrary large value
       ratio_displayed = 3 * 300000. / (double)nb_points;
 
-    vaos[0]->bind();
-    program=getShaderProgram(PROGRAM_NO_SELECTION);
-    attribBuffers(viewer,PROGRAM_NO_SELECTION);
-    program->bind();
-    program->setAttributeValue("colors", QColor(Qt::green));
-    program->setUniformValue("f_matrix", f_matrix);
-    program->setUniformValue("is_selected", false);
-    viewer->glDrawArrays(GL_POINTS, 0,
-                         static_cast<GLsizei>(((std::size_t)(ratio_displayed * nb_points)/3)));
-    vaos[0]->release();
-    program->release();
+    Pc* pc = getPointContainer(0);
+    pc->setColor(QColor(Qt::green));
+    pc->setFrameMatrix(f_matrix);
+    pc->draw(viewer, true);
   }
   bool keyPressEvent(QKeyEvent* e){
     if (e->key()==Qt::Key_S){
@@ -133,8 +134,8 @@ public:
     CGAL::qglviewer::Vec min(bbox.xmin(),bbox.ymin(),bbox.zmin());
     CGAL::qglviewer::Vec max(bbox.xmax(),bbox.ymax(),bbox.zmax());
 
-    _bbox = Bbox(min.x,min.y,min.z,
-                 max.x,max.y,max.z);
+    setBbox(Bbox(min.x,min.y,min.z,
+                 max.x,max.y,max.z));
   }
   bool isEmpty() const{return false;}
 Q_SIGNALS:
@@ -144,7 +145,7 @@ private:
   const Scene_points_with_normal_item* base;
   CGAL::qglviewer::Vec center_;
   CGAL::Three::Scene_item::ManipulatedFrame* frame;
-  mutable QOpenGLShaderProgram *program;
+  mutable std::vector<float> points;
   std::size_t nb_points;
   QMatrix4x4 f_matrix;
 
