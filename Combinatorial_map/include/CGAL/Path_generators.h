@@ -278,7 +278,26 @@ template<typename Path>
 void push_around_face(Path& p, std::size_t i, bool update_isclosed=true)
 {
   std::size_t begin=i, end=i;
-  while (p.get_map().template beta<1>(p.get_prev_dart(begin))==
+
+  Path p2(p.get_map());
+  typename Path::Dart_const_handle
+      dh=p.get_map().template beta<0>(p.get_ith_dart(begin));
+  do
+  {
+    p2.push_back(p.get_map().template beta<2>(dh));
+    dh=p.get_map().template beta<0>(dh);
+  }
+  while(dh!=p.get_ith_dart(begin));
+  for (std::size_t i=begin+1; i<p.length(); ++i)
+  { p2.push_back(p.get_ith_dart(i), false); }
+
+  p.cut(begin, false);
+  for (std::size_t i=0; i<p2.length(); ++i)
+  { p.push_back(p2[i], false); }
+
+  if (update_isclosed) { p.update_is_closed(); }
+
+  /*while (p.get_map().template beta<1>(p.get_prev_dart(begin))==
          p.get_ith_dart(begin))
   {
     begin=p.prev_index(begin);
@@ -308,14 +327,15 @@ void push_around_face(Path& p, std::size_t i, bool update_isclosed=true)
   p.cut(begin, false);
   for (std::size_t i=0; i<p2.length(); ++i)
   { p.push_back(p2[i], false); }
-
-  if (update_isclosed) { p.update_is_closed(); }
+*/
 }
 
 template<typename Path>
 void update_path_randomly(Path& p, std::size_t nb, CGAL::Random& random,
                           bool update_isclosed=true)
 {
+  if (p.is_empty()) return;
+
   for (unsigned int i=0; i<nb; ++i)
   {
     push_around_face(p, random.get_int(0, p.length()), false);
@@ -326,7 +346,7 @@ void update_path_randomly(Path& p, std::size_t nb, CGAL::Random& random,
 template<typename Path>
 void update_path_randomly(Path& p, CGAL::Random& random,
                           bool update_isclosed=true)
-{ update_path_randomly(p, random.get_int(0, 10000), random, update_isclosed); }
+{ update_path_randomly(p, random.get_int(1, 100), random, update_isclosed); }
 
 template<typename Path>
 void update_path_randomly(Path& p, std::size_t nb, bool update_isclosed=true)
