@@ -17,7 +17,7 @@
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3> LCC_3_cmap;
 typedef CGAL::Linear_cell_complex_for_generalized_map<2,3> LCC_3_gmap;
 
-#define NB_TESTS 25 // 0 ... 24
+#define NB_TESTS 26 // 0 ... 25
 static int nbtests=0;
 
 enum Transformation // enum for the type of transformations
@@ -557,10 +557,17 @@ bool test_double_torus_quad(bool draw, int testtorun)
     CGAL::Random random(starting_seed+nbtests);
     CGAL::Path_on_surface<LCC_3_cmap> p(lcc2);
     generate_random_closed_path(p, random.get_int(5, 20), random); // random path, length between 30 and 500
+
     // p.close();
     paths.push_back(p);
-    /* update_path_randomly(p, random);
-    paths.push_back(p); */
+
+    std::cout<<"Path1 size: "<<p.length()<<"; ";
+
+    update_path_randomly(p, random);
+    paths.push_back(p);
+
+    std::cout<<"Path2 size: "<<p.length()<<"; ";
+
     /* update_path_randomly(p, random);
     paths.push_back(p);  */
     for (unsigned int i=0; i<paths.size(); ++i)
@@ -571,7 +578,53 @@ bool test_double_torus_quad(bool draw, int testtorun)
       v.push_back(&paths[i]);
     }
 
-    display(paths[0].get_map(), v);
+    // display(paths[0].get_map(), v, "LCC Viewer", cmt2.m_mark_T);
+  }
+
+  if (!unit_test_canonize(paths, transformed_paths,
+                          "random canonize paths on double torus",
+                          draw, testtorun))
+  { res=false; }
+
+  // Test 25 (one random path, deformed randomly)
+  LCC_3_cmap lcc3;
+  if (!CGAL::load_off(lcc3, "./data/3torus-smooth.off")) // 3torus.off
+  {
+    std::cout<<"PROBLEM reading file ./data/3torus-smooth.off"<<std::endl; // 3torus.off
+    exit(EXIT_FAILURE);
+  }
+
+  CGAL::Combinatorial_map_tools<LCC_3_cmap> cmt3(lcc3);
+
+  paths.clear();
+  transformed_paths.clear();
+  if (testtorun==-1 || nbtests==testtorun)
+  {
+    CGAL::Random random(starting_seed+nbtests);
+    CGAL::Path_on_surface<LCC_3_cmap> p(lcc3);
+    generate_random_closed_path(p, random.get_int(5, 200), random); // random path, length between 30 and 500
+
+    // p.close();
+    paths.push_back(p);
+
+    std::cout<<"Path1 size: "<<p.length()<<"; ";
+
+    update_path_randomly(p, random);
+    paths.push_back(p);
+
+    std::cout<<"Path2 size: "<<p.length()<<"; ";
+
+    /* update_path_randomly(p, random);
+    paths.push_back(p);  */
+    for (unsigned int i=0; i<paths.size(); ++i)
+    {
+      transformed_paths.push_back
+          (cmt3.transform_original_path_into_quad_surface(paths[i]));
+
+      v.push_back(&paths[i]);
+    }
+
+    // display(paths[0].get_map(), v, "LCC Viewer", cmt2.m_mark_T);
   }
 
   if (!unit_test_canonize(paths, transformed_paths,
