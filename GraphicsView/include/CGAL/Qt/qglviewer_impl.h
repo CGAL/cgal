@@ -4097,9 +4097,15 @@ QImage* CGAL::QGLViewer::takeSnapshot( CGAL::qglviewer::SnapShotBackground  back
 }
 
 CGAL_INLINE_FUNCTION
-QOpenGLFramebufferObject* CGAL::QGLViewer::getStoredFrameBuffer()
+QOpenGLFramebufferObject* CGAL::QGLViewer::getStoredFrameBuffer() const
 {
   return stored_fbo;
+}
+
+CGAL_INLINE_FUNCTION
+void CGAL::QGLViewer::setStoredFrameBuffer(QOpenGLFramebufferObject *fbo)
+{
+  stored_fbo = fbo;
 }
 
 CGAL_INLINE_FUNCTION

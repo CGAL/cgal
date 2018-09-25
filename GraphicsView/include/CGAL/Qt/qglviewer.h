@@ -991,7 +991,8 @@ public:
 public:
   virtual void setVisualHintsMask(int mask, int delay = 2000);
   virtual void drawVisualHints();
-  QOpenGLFramebufferObject* getStoredFrameBuffer();
+  QOpenGLFramebufferObject* getStoredFrameBuffer() const;
+  void setStoredFrameBuffer(QOpenGLFramebufferObject*);
 
 public Q_SLOTS:
   virtual void resetVisualHints();

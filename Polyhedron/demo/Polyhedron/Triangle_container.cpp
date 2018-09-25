@@ -18,6 +18,7 @@ struct Tri_d{
   bool is_surface;
   float alpha;
   QMatrix4x4 f_matrix;
+  QMatrix4x4 mv_matrix;
 };
 
 Triangle_container::Triangle_container(int program, bool indexed)
@@ -145,6 +146,8 @@ void Triangle_container::draw(Viewer_interface* viewer,
     getVbo(Vertex_indices)->bind();
     if(getVao(viewer)->program->property("hasFMatrix").toBool())
       getVao(viewer)->program->setUniformValue("f_matrix", getFrameMatrix());
+    if(d->mv_matrix != QMatrix4x4())
+      getVao(viewer)->program->setUniformValue("mv_matrix", getMvMatrix());
     if(getVao(viewer)->program->property("hasTransparency").toBool())
     {
       getVao(viewer)->program->setUniformValue("comparing", viewer->currentPass() > 0);
@@ -232,10 +235,12 @@ float     Triangle_container::getShrinkFactor() { return d->shrink_factor ; }
 QVector4D Triangle_container::getPlane()        { return d->plane; }
 float     Triangle_container::getAlpha()        { return d->alpha; }
 QMatrix4x4 Triangle_container::getFrameMatrix() const { return d->f_matrix; }
+QMatrix4x4 Triangle_container::getMvMatrix() const { return d->mv_matrix; }
 
 void Triangle_container::setShrinkFactor(const float& f) { d->shrink_factor = f; }
 void Triangle_container::setAlpha       (const float& f)        { d->alpha = f ; }
 void Triangle_container::setFrameMatrix(const QMatrix4x4& m) { d->f_matrix = m; }
+void Triangle_container::setMvMatrix(const QMatrix4x4& m) { d->mv_matrix = m; }
 void Triangle_container::setPlane(const QVector4D& p) { d->plane = p; }
 void Triangle_container::setIsSurface  (const bool b) { d->is_surface = b; }
 Triangle_container::~Triangle_container()

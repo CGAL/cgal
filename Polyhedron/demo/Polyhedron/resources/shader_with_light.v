@@ -4,6 +4,7 @@ in vec3 normals;
 in vec4 colors;
 uniform mat4 mvp_matrix;
 uniform mat4 mv_matrix; 
+uniform mat4 f_matrix; 
 out vec4 fP; 
 out vec3 fN; 
 out vec4 color;
@@ -44,5 +45,5 @@ void main(void)
    mv_matrix_3[1] = mv_matrix[1].xyz;
    mv_matrix_3[2] = mv_matrix[2].xyz;
    fN = mv_matrix_3* normals; 
-   gl_Position = mvp_matrix * vertex;
+   gl_Position = mvp_matrix * f_matrix * vertex;
 }

@@ -875,8 +875,16 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_CUTPLANE_SPHERES:
       program->setUniformValue("alpha", 1.0f); //overriden in item draw() if necessary
     }
-    if(program_name == PROGRAM_SPHERES)
+    switch(program_name)
+    {
+    case PROGRAM_SPHERES:
+    case PROGRAM_DARK_SPHERES:
+    case PROGRAM_WITH_LIGHT: 
       program->setUniformValue("f_matrix",f_mat);
+    default: 
+      break;
+    }
+    
     switch(program_name)
     {
     case PROGRAM_WITH_LIGHT:
@@ -1115,6 +1123,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     program->setProperty("hasLight", true);
     program->setProperty("hasNormals", true);
     program->setProperty("hasTransparency", true);
+    program->setProperty("hasFMatrix", true);
     return program;
   }
   case PROGRAM_WITHOUT_LIGHT:
@@ -1216,6 +1225,18 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     program->setProperty("hasCenter", true);
     program->setProperty("hasRadius", true);
     program->setProperty("hasTransparency", true);
+    program->setProperty("isInstanced", true);
+    program->setProperty("hasFMatrix", true);
+    return program;
+  }
+  case PROGRAM_DARK_SPHERES:
+  {
+    QOpenGLShaderProgram* program = isOpenGL_4_3() 
+        ?declare_program(name, ":/cgal/Polyhedron_3/resources/shader_dark_spheres.v" , ":/cgal/Polyhedron_3/resources/shader_no_light_no_selection.f")
+       : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_dark_spheres.v" ,
+                         ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_no_light_no_selection.f");
+    program->setProperty("hasCenter", true);
+    program->setProperty("hasRadius", true);
     program->setProperty("isInstanced", true);
     program->setProperty("hasFMatrix", true);
     return program;
