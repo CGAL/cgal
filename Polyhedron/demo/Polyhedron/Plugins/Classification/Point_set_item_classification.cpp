@@ -442,8 +442,13 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales)
   std::cerr << "Computing features with " << nb_scales << " scale(s)" << std::endl;
   m_features.clear();
 
+  Point_set::Vector_map normal_map;
   bool normals = m_points->point_set()->has_normal_map();
+  if (normals)
+    normal_map = m_points->point_set()->normal_map();
+  
   bool colors = (m_color != Point_set::Property_map<Color>());
+  
   Point_set::Property_map<boost::uint8_t> echo_map;
   bool echo;
   boost::tie (echo_map, echo) = m_points->point_set()->template property_map<boost::uint8_t>("echo");
@@ -461,7 +466,7 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales)
 
   m_generator->generate_point_based_features(m_features);
   if (normals)
-    m_generator->generate_normal_based_features (m_features, m_points->point_set()->normal_map());
+    m_generator->generate_normal_based_features (m_features, normal_map);
   if (colors)
     m_generator->generate_color_based_features (m_features, m_color);
   if (echo)
