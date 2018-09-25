@@ -153,8 +153,6 @@ namespace CGAL {
       m_map.display_darts(std::cout);
 #endif
 
-      m_map.display_darts(std::cout);
-
       assert(are_paths_valid());
     }
     
@@ -168,6 +166,8 @@ namespace CGAL {
     (const Path_on_surface<Map>& path)
     {
       Path_on_surface<Map> res(m_map);
+      if (path.is_empty()) return res;
+
       for (std::size_t i=0; i<path.length(); ++i)
       {
         if (!m_original_map.is_marked(path[i], m_mark_T))
@@ -410,24 +410,38 @@ namespace CGAL {
           //std::cout<<m_map.darts().index(p.first)<<"; "<<std::flush;
           // p.first=m_map.template beta<0>(p.first);
           Dart_const_handle initdart=p.first;
-          while (m_map.is_marked(p.first, toremove))
+
+          if (!m_map.is_marked(p.first, toremove))
           {
-            p.first=m_map.template beta<2, 1>(p.first);
-            //std::cout<<m_map.darts().index(p.first)<<"; "<<std::flush;
-            assert(p.first!=initdart);
+            p.second=m_map.template beta<1>(p.first);
+            initdart=p.second;
+            while (m_map.is_marked(p.second, toremove))
+            {
+              p.second=m_map.template beta<2, 1>(p.second);
+              assert(p.second!=initdart);
+            }
           }
-          //std::cout<<std::endl;
-          // p.second=m_map.template beta<0>(p.second);
-          initdart=p.second;
-          while (m_map.is_marked(p.second, toremove))
+          else
           {
-            p.second=m_map.template beta<2, 1>(p.second);
-            //std::cout<<m_map.darts().index(p.second)<<"; "<<std::flush;
-            assert(p.second!=initdart);
+            while (m_map.is_marked(p.first, toremove))
+            {
+              p.first=m_map.template beta<2, 1>(p.first);
+              //std::cout<<m_map.darts().index(p.first)<<"; "<<std::flush;
+              assert(p.first!=initdart);
+            }
+            //std::cout<<std::endl;
+            // p.second=m_map.template beta<0>(p.second);
+            initdart=p.second;
+            while (m_map.is_marked(p.second, toremove))
+            {
+              p.second=m_map.template beta<2, 1>(p.second);
+              //std::cout<<m_map.darts().index(p.second)<<"; "<<std::flush;
+              assert(p.second!=initdart);
+            }
+            //std::cout<<std::endl;
+            //std::cout<<" -> "<<m_map.darts().index(p.first)<<", "
+            //         <<m_map.darts().index(p.second)<<std::endl;
           }
-          //std::cout<<std::endl;
-          //std::cout<<" -> "<<m_map.darts().index(p.first)<<", "
-          //         <<m_map.darts().index(p.second)<<std::endl;
         }
       }
 
@@ -676,6 +690,7 @@ namespace CGAL {
     Map m_map; // the transformed map
     TPaths paths; // Pair of edges associated with each edge of m_original_map
                   // (except the edges that belong to the spanning tree T).
+  public: //TODO TEMPO POUR DEBUG; REMOVE PUBLIC
     std::size_t m_mark_T; // mark each edge of m_original_map that belong to the spanning tree T
     std::size_t m_mark_L; // mark each edge of m_original_map that belong to the dual spanning tree L
   };
