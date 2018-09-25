@@ -776,8 +776,8 @@ public:
     while(right_push_one_step())
     { res=true;
       
-      std::cout<<"PUSH "; display();  display_pos_and_neg_turns();
-      std::cout<<std::endl;
+      /*std::cout<<"PUSH "; display();  display_pos_and_neg_turns();
+      std::cout<<std::endl; */
     }
     return res;
   }
@@ -788,18 +788,18 @@ public:
     if (!is_closed())
     { return; }
 
-    std::cout<<"##########################################"<<std::endl;
+    /* std::cout<<"##########################################"<<std::endl;
     std::cout<<"Init "; display();
     std::cout<<std::endl;
     display_pos_and_neg_turns();
-    std::cout<<std::endl;
+    std::cout<<std::endl; */
 
     bool modified=false;
-    std::cout<<"RS ";
+    // std::cout<<"RS ";
     remove_spurs_one_step();
 
-    display(); display_pos_and_neg_turns();
-    std::cout<<std::endl;
+    /* display(); display_pos_and_neg_turns();
+    std::cout<<std::endl; */
 
     do
     {
@@ -807,13 +807,13 @@ public:
       {
         modified=bracket_flattening_one_step();
 
-        std::cout<<"BF "; display(); display_pos_and_neg_turns();
-        std::cout<<std::endl;
+        /* std::cout<<"BF "; display(); display_pos_and_neg_turns();
+        std::cout<<std::endl; */
 
         modified=modified || remove_spurs_one_step();
 
-        std::cout<<"RS "; display(); display_pos_and_neg_turns();
-        std::cout<<std::endl;
+        /* std::cout<<"RS "; display(); display_pos_and_neg_turns();
+        std::cout<<std::endl; */
       }
       while(modified);
 
