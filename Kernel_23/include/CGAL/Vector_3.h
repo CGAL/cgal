@@ -35,6 +35,7 @@
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/result_of.h>
+#include <CGAL/make_zero.h>
 #include <CGAL/IO/io.h>
 
 namespace CGAL {
@@ -371,6 +372,16 @@ operator>>(std::istream& is, Vector_3<R>& v)
   return extract(is, v, typename R::Kernel_tag() );
 }
 
+
+template <class R>
+struct Make_zero<Vector_3<R> >
+{
+  Vector_3<R> operator()() const
+  {
+    return CGAL::NULL_VECTOR;
+  }
+};
+  
 } //namespace CGAL
 
 #endif // CGAL_VECTOR_3_H
