@@ -4,22 +4,27 @@ namespace CGAL {
 \mainpage User Manual
 \anchor Chapter_HeatMethod
 \cgalAutoToc
-\author Keenan Crane, Christina Vaz, Andreas Fabri
+\author Christina Vaz, Keenan Crane, Andreas Fabri
 
 \image html octopus.png
 
 \section sec_HM_introduction Introduction
 
-The <em>Heat Method</em> is an algorithm that solves the multiple-source
-shortest path problem by returning the geodesic distance for all vertices
-of a triangle mesh to the closest vertex in a given set of source vertices.
-The Heat Method is more efficient and more robust than previous geodesic
-distance computations, as the algorithm boils down to two standard, numerical
-linear algebra problems.
+The <em>heat method</em> is an algorithm that solves the single- or
+multiple-source shortest path problem by returning the geodesic distance
+for all vertices of a triangle mesh to the closest vertex in a given set of
+source vertices.  The heat method is highly efficient, since the algorithm
+boils down to two standard sparse linear algebra problems.  It is especially
+useful in situations where one wishes to evaluate repeated distance queries
+on a fixed domain, since precomputation done for the first query can be re-used.
 
-The method works well on triangle meshes with....     For triangle meshes
-that do not fulfill these requirements, applying edge flips to obtain an
-<em>Intrinsic Delaunay Triangulation</em> also gives good results.
+As a rule of thumb, the method works well on triangle meshes which are
+Delaunay, though in practice may also work fine for meshes that are far from
+Delaunay.  In order to ensure good behavior, one can optionally apply enable a
+preprocessing step that constructs an <em>intrinsic Delaunay triangulation
+(iDT)</em>; this triangulation will not change the input geometry, but
+generally improves the quality of the solution.  The cost of this preprocessing
+step will roughly double the overall preprocessing cost.
 
 \cgalFigureBegin{landscape_meshes, landscape.jpg}
   Isolines placed on a mesh without and with iDT remeshing.
@@ -59,10 +64,10 @@ in the following example create a `boost::unordered_map` and pass it to the func
 \subsection HM_example_Class Using the Heat Method Class
 
 The following example shows the heat method class. It can be used
-when one adds and removes source vertices. It precomputes matrices
-which depend only on the mesh and not the set of source vertices
-only once.  In the example we compute the distances to one source,
-and then add the farthest vertex as a second source vertex, to compute
+when one adds and removes source vertices. It precomputes matrix
+factorization which depend only on the input mesh and not the particular
+set of source vertices.  In the example we compute the distances to one
+source, add the farthest vertex as a second source vertex, then compute
 the distances to these two sources. 
 
 \cgalExample{Heat_method_3/heat_method_surface_mesh.cpp}
@@ -70,9 +75,13 @@ the distances to these two sources.
 
 \subsection HM_example_Intrinsic Using the Intrinsic Delaunay Triangulation Class
 
-The following example shows the heat method on a triangle mesh using
-the intrinsic Delaunay triangulation algorithm. This should be done when the
-triangles have small angles or  .....................
+The following example shows the heat method on a triangle mesh using the
+intrinsic Delaunay triangulation (iDT) algorithm. The iDT should triangulation
+should be built when the input mesh has poor quality, or when results of
+distance computation appear to be highly inaccurate.  (Poor quality in this
+case means that the input is far from Delaunay, though even in this case
+one may still get good results without iDT, depending on the specific
+geometry of the surface.)
 
 \cgalExample{Heat_method_3/heat_method_surface_mesh_intrinsic.cpp}
 
@@ -108,8 +117,8 @@ The heat equation can be discretized in time using a single backward Euler step.
 \f$(id-t\Delta)u_t = \delta(x) \f$ where \f$\delta(x)\f$ is a Dirac delta encoding an 'infinite' spike of heat (1 if x is in the source set, 0 otherwise)
         over the entire domain M, where id is the identity operator.
 
-The heat equation is discretized in space depending on the
-structure. For this package, we use triangle meshes exclusively.
+The spatial discretization depends on the choice of discrete surface representation.
+For this package, we use triangle meshes exclusively.
 Let \f$ u \in \R^{|V|}\f$ specify a piecewise linear function on a
 triangulated surface with vertices \f$V\f$, edges \f$E\f$ and faces
 \f$F\f$.  A standard discretization of the Laplacian at vertex \f$i\f$
@@ -143,25 +152,20 @@ Thus, solving the symmetric Poisson problem \f$ L_c \phi = b\f$ computes the fin
 \subsection Subsection_HM_IDT_Definitions Intrinsic Delaunay Triangulation
 
 The standard discretization of the cotan Laplace operator uses the cotangents of the angles in the triangle mesh.
-The intrinsic Delaunay triangulation is used to address extreme angles in the mesh.
-    - An edge of a mesh is locally Delaunay if the sum of the cotangents of the opposing angles is greater than or equal to 0. A mesh is Delaunay if all of its edges are locally Delaunay.
+The intrinsic Delaunay algorithm constructs an alternative triangulation of the same polyhedral surface, which
+in turn yields a different (typically more accurate) cotan Laplace operator.  Conceptually, the edges of the iDT
+still connect pairs of vertices from the original (input) surface, but are now allowed to be geodesic paths along
+the polyhedron and do not have to correspond to edges of the input triangulation.  These paths are not stored
+explicitly; instead, we simply keep track of their lengths as the triangulation is updated.  These lengths are
+sufficient to determine areas and angles of the intrinsic triangles, and in turn, the new cotan Laplace matrix.
+
+    - An edge of a mesh is locally Delaunay if the sum of opposite angles is no smaller than pi, or equivalently, if the cotangents of the opposing angles is nonnegative. A mesh is Delaunay if all of its edges are locally Delaunay.
 
 A standard algorithm to convert a given planar triangulation into a Delaunay triangulation is
 to flip non-Delaunay edges in a mesh until the mesh is Delaunay.
-Similarly, the intrinsic Delaunay triangulation of a simplicial \f$R^3\f$ surface
+Similarly, the intrinsic Delaunay triangulation of a simplicial surface
 is constructed by performing intrinsic edge flips.
 
-  - An intrinsic property is a byproduct of only the topology of the mesh.
-  That is, the property does not change if the way the mesh is represented changes.
-  For example, edge lengths and angles are intrinsic whereas vertex coordinates and orientation are extrinsic.
-
-The intrinsic Delaunay triangulation thus relies on edge lengths and angles,
-as does the Heat method. The intrinsic Delaunay triangulation does not actually flip the edge.
-Instead, the edge flips are intrinsic and so the shape of the original embedded mesh does not change.
-Instead, the IDT mesh is considered as an abstract surface with a locally Euclidean metric.
-Instead of actually flipping an edge, the algorithm performs a combinatorial flip on it and updates its length.
-Thus, there is no change to the intrinsic geometry of the input mesh.
-  
 Let \f$ K = (V,E,T) \f$ be a 2-manifold triangle mesh, where \f$V\f$ is the vertex set,
 \f$ E \f$ is the edge set and \f$ T \f$ is the face set (triangle set).
 Let \f$ L \f$ be the set of Euclidean distances, where \f$ L(e_{ij}) = l_{ij} = || p_i - p_j || \f$ ,
@@ -188,10 +192,10 @@ The algorithm is as follows:
             \endcode
 
 
-  The new \f$(\tilde K, \tilde L)\f$ are then used in the Heat Method distance computation.
+  The new \f$(\tilde K, \tilde L)\f$ are then used to implement the heat method as usual.
 
   We already in the beginning gave an example where the intrinsic Delaunay triangulation improves the results.
-  The mesh was obtained by giving elevation to a 2D triangulation, which lead to elongated triangles.
+  The mesh was obtained by giving elevation to a 2D triangulation, which lead to highly elongated triangles.
 
   The situation is similar for any triangle mesh that has faces with very small angles as can be seen in the figures  below.
 
