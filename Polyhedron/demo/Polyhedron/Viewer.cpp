@@ -873,6 +873,7 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_WITH_LIGHT:
     case PROGRAM_SPHERES:
     case PROGRAM_CUTPLANE_SPHERES:
+    case PROGRAM_NO_SELECTION:
       program->setUniformValue("alpha", 1.0f); //overriden in item draw() if necessary
     }
     switch(program_name)
@@ -1142,6 +1143,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
         : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_without_light.v" , 
                           ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_no_light_no_selection.f");
     program->setProperty("hasFMatrix", true);
+    program->setProperty("hasTransparency", true);
     return program;
   }
   case PROGRAM_WITH_TEXTURE:
