@@ -416,6 +416,12 @@ compatible with the function.
 
 \cgalExample{Interpolation/linear_interpolation_2.cpp}
 
+The next example shows the interpolation of non-scalar values, namely `Vector_3`.
+It may be any type `T` which provides a  multiplication operator with a scalar, and
+the addition operator for `T`.
+
+\cgalExample{Interpolation/linear_interpolation_of_vector_3.cpp}
+
 \subsection InterpolationExampleSibson Example for Sibson's C^1 Interpolation Scheme with Gradient Estimation
 
 \cgalExample{Interpolation/sibson_interpolation_2.cpp}

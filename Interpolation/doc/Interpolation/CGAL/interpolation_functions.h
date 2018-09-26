@@ -72,8 +72,8 @@ types of a triangulation, to a (non-normalized) barycentric coordinate.
 \tparam ValueFunctor must be a functor where `ValueFunctor::argument_type` must be equivalent to
 `std::iterator_traits<CoordinateInputIterator>::%value_type::first_type` and
 `ValueFunctor::result_type` is a pair of the function value type and a Boolean.
-The function value type must provide a multiplication and addition operation with the type
-`Traits::FT` as well as a constructor with argument `0`.
+The function value type `VT` must provide an addition operator, and a multiplication operator with the type
+`Traits::FT`.
 
 A model of the functor `ValueFunctor` is provided by the struct `CGAL::Data_access` instantiated
 with an associative container (e.g. `std::map`) and having:

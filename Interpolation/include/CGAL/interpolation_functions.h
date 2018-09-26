@@ -26,7 +26,6 @@
 #include <CGAL/Interpolation/internal/helpers.h>
 #include <CGAL/double.h>
 #include <CGAL/use.h>
-#include <CGAL/make_zero.h>
 
 #include <boost/utility/result_of.hpp>
 #include <iterator>
@@ -73,13 +72,14 @@ linear_interpolation(ForwardIterator first, ForwardIterator beyond,
   typedef typename boost::result_of<ValueFunctor(arg_type)>::type                 result_type;
   typedef typename result_type::first_type                                        Value_type;
 
-  Value_type result = make_zero<Value_type>();
-  result_type val;
+  result_type val = value_function(first->first);
+  CGAL_assertion(val.second);
+  Value_type result = (first->second / norm) * val.first;
+  ++first;
   for(; first!=beyond; ++first)
   {
     val = value_function(first->first);
-    CGAL_assertion(val.second);
-    result += (first->second / norm) * val.first;
+    result = result + (first->second / norm) * val.first;
   }
   return result;
 }
