@@ -395,67 +395,25 @@ namespace CGAL {
       {
         // Case of sphere; all darts are removed.
         paths.clear();
+        m_map.clear();
       }
       else
       {
-        // std::cout<<"************************************************"<<std::endl;
-        // We update the pair of darts
-        for (typename TPaths::iterator itp=paths.begin(), itpend=paths.end();
-             itp!=itpend; ++itp)
+        // update_length_two_paths_before_edge_removals_v1(toremove);
+        update_length_two_paths_before_edge_removals_v2(toremove, copy_to_origin);
+
+        // We remove all the edges to remove.
+        for (typename Map::Dart_range::iterator it=m_map.darts().begin(),
+             itend=m_map.darts().end();
+             it!=itend; ++it)
         {
-          std::pair<Dart_const_handle, Dart_const_handle>& p=itp->second;
-          //std::cout<<"Pair: "<<m_map.darts().index(p.first)<<", "
-          //         <<m_map.darts().index(p.second)<<": "<<std::flush;
-
-          //std::cout<<m_map.darts().index(p.first)<<"; "<<std::flush;
-          // p.first=m_map.template beta<0>(p.first);
-          Dart_const_handle initdart=p.first;
-
-          if (!m_map.is_marked(p.first, toremove))
+          if (m_map.is_dart_used(it) && m_map.is_marked(it, toremove))
           {
-            p.second=m_map.template beta<1>(p.first);
-            initdart=p.second;
-            while (m_map.is_marked(p.second, toremove))
-            {
-              p.second=m_map.template beta<2, 1>(p.second);
-              assert(p.second!=initdart);
-            }
+            erase_edge_from_associative_arrays(it, origin_to_copy, copy_to_origin);
+            // TODO LATER (?) OPTIMIZE AND REPLACE THE REMOVE_CELL CALL BY THE MODIFICATION BY HAND
+            // OR DEVELOP A SPECIALIZED VERSION OF REMOVE_CELL
+            m_map.template remove_cell<1>(it);
           }
-          else
-          {
-            while (m_map.is_marked(p.first, toremove))
-            {
-              p.first=m_map.template beta<2, 1>(p.first);
-              //std::cout<<m_map.darts().index(p.first)<<"; "<<std::flush;
-              assert(p.first!=initdart);
-            }
-            //std::cout<<std::endl;
-            // p.second=m_map.template beta<0>(p.second);
-            initdart=p.second;
-            while (m_map.is_marked(p.second, toremove))
-            {
-              p.second=m_map.template beta<2, 1>(p.second);
-              //std::cout<<m_map.darts().index(p.second)<<"; "<<std::flush;
-              assert(p.second!=initdart);
-            }
-            //std::cout<<std::endl;
-            //std::cout<<" -> "<<m_map.darts().index(p.first)<<", "
-            //         <<m_map.darts().index(p.second)<<std::endl;
-          }
-        }
-      }
-
-      // We remove all the edges to remove.
-      for (typename Map::Dart_range::iterator it=m_map.darts().begin(),
-           itend=m_map.darts().end();
-           it!=itend; ++it)
-      {
-        if (m_map.is_dart_used(it) && m_map.is_marked(it, toremove))
-        {
-          erase_edge_from_associative_arrays(it, origin_to_copy, copy_to_origin);
-          // TODO LATER (?) OPTIMIZE AND REPLACE THE REMOVE_CELL CALL BY THE MODIFICATION BY HAND
-          // OR DEVELOP A SPECIALIZED VERSION OF REMOVE_CELL
-          m_map.template remove_cell<1>(it);
         }
       }
 
@@ -505,6 +463,119 @@ namespace CGAL {
       m_map.free_mark(oldedges);
     }
 
+    /// Version1: quadratic in number of darts in the pathes
+    void update_length_two_paths_before_edge_removals_v1(typename Map::size_type toremove)
+    {
+      // std::cout<<"************************************************"<<std::endl;
+      // We update the pair of darts
+      for (typename TPaths::iterator itp=paths.begin(), itpend=paths.end();
+           itp!=itpend; ++itp)
+      {
+        std::pair<Dart_const_handle, Dart_const_handle>& p=itp->second;
+        //std::cout<<"Pair: "<<m_map.darts().index(p.first)<<", "
+        //         <<m_map.darts().index(p.second)<<": "<<std::flush;
+
+        //std::cout<<m_map.darts().index(p.first)<<"; "<<std::flush;
+        // p.first=m_map.template beta<0>(p.first);
+        Dart_const_handle initdart=p.first;
+
+        if (!m_map.is_marked(p.first, toremove))
+        {
+          p.second=m_map.template beta<1>(p.first);
+          initdart=p.second;
+          while (m_map.is_marked(p.second, toremove))
+          {
+            p.second=m_map.template beta<2, 1>(p.second);
+            assert(p.second!=initdart);
+          }
+        }
+        else
+        {
+          while (m_map.is_marked(p.first, toremove))
+          {
+            p.first=m_map.template beta<2, 1>(p.first);
+            //std::cout<<m_map.darts().index(p.first)<<"; "<<std::flush;
+            assert(p.first!=initdart);
+          }
+          //std::cout<<std::endl;
+          // p.second=m_map.template beta<0>(p.second);
+          initdart=p.second;
+          while (m_map.is_marked(p.second, toremove))
+          {
+            p.second=m_map.template beta<2, 1>(p.second);
+            //std::cout<<m_map.darts().index(p.second)<<"; "<<std::flush;
+            assert(p.second!=initdart);
+          }
+          //std::cout<<std::endl;
+          //std::cout<<" -> "<<m_map.darts().index(p.first)<<", "
+          //         <<m_map.darts().index(p.second)<<std::endl;
+        }
+      }
+    }
+
+  /// Version2: linear in number of darts in the pathes
+   void update_length_two_paths_before_edge_removals_v2(typename Map::size_type toremove,
+                                                        const boost::unordered_map<Dart_handle, Dart_const_handle>& copy_to_origin)
+   {
+     // std::cout<<"************************************************"<<std::endl;
+     // We update the pair of darts
+     /* for (typename TPaths::iterator itp=paths.begin(), itpend=paths.end();
+          itp!=itpend; ++itp)
+     {
+       std::pair<Dart_const_handle, Dart_const_handle>& p=itp->second;
+
+       // We only start from non marked darts; marked darts are updated in
+       // a loop starting from a non-marked dart.
+       if (!m_map.is_marked(p.first, toremove))
+       { // Here p.first belongs to the "border" of the face
+         Dart_handle initdart=m_map.darts().iterator_to(const_cast<typename Map::Dart &>(*(p.first)));
+
+         // 1) We update the dart associated with p.second
+         p.second=m_map.template beta<1>(initdart);
+         while (m_map.is_marked(p.second, toremove))
+         { p.second=m_map.template beta<2, 1>(p.second); }
+
+         // 2) We do the same loop, linking all the inner darts with p.second
+         initdart=m_map.template beta<1>(initdart);
+         while (m_map.is_marked(initdart, toremove))
+         {
+           Dart_const_handle d1=copy_to_origin.find(initdart)->second;
+           Dart_const_handle d2=m_original_map.template beta<2>(d1);
+           if (d1<d2) { paths[d1].first=p.second; }
+           else       { paths[d2].second=p.second; }
+           initdart=m_map.template beta<2, 1>(initdart);
+         }
+       }
+     }*/
+
+     for (auto it=m_original_map.darts().begin(); it!=m_original_map.darts().end(); ++it)
+     {
+       if (!m_original_map.is_marked(it, m_mark_T) &&
+           !m_original_map.is_marked(it, m_mark_L))
+       { // Surviving dart => belongs to the border of the face
+         std::pair<Dart_const_handle, Dart_const_handle>& p=paths[it];
+
+         Dart_handle initdart=m_map.darts().iterator_to(const_cast<typename Map::Dart &>(*(p.first)));
+         assert(!m_map.is_marked(initdart, toremove));
+
+         // 1) We update the dart associated with p.second
+         p.second=m_map.template beta<1>(initdart);
+         while (m_map.is_marked(p.second, toremove))
+         { p.second=m_map.template beta<2, 1>(p.second); }
+
+         // 2) We do the same loop, linking all the inner darts with p.second
+         initdart=m_map.template beta<1>(initdart);
+         while (m_map.is_marked(initdart, toremove))
+         {
+           Dart_const_handle d1=copy_to_origin.find(initdart)->second;
+           Dart_const_handle d2=m_original_map.template beta<2>(d1);
+           if (d1<d2) { paths[d1].first=p.second; }
+           else       { paths[d2].second=p.second; }
+           initdart=m_map.template beta<2, 1>(initdart);
+         }
+       }
+     }
+   }
     /// @return true iff the edge containing adart is associated with a path.
     ///         (used for debug purpose because we are suppose to be able to
     ///          test this by using directly the mark m_mark_T).
