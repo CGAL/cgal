@@ -234,6 +234,7 @@ void Volume_plane_intersection::planeRemoved(Volume_plane_interface* i) {
 void Volume_plane_intersection::invalidateOpenGLBuffers()
 {
   setBuffersFilled(false);
+  
   for(int i=0; i<3; ++i)
     getEdgeContainer(i)->reset_vbos(ALL);
 }

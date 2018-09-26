@@ -281,7 +281,7 @@ public:
   void draw_bbox(const CGAL::Three::Scene_interface::Bbox&) const;
   void draw_ROI_and_control_vertices(CGAL::Three::Viewer_interface *viewer) const;
   template<typename Mesh>
-  void draw_frame_plane(CGAL::QGLViewer *, Mesh *mesh) const;
+  void draw_frame_plane(Mesh *mesh) const;
   // Get wrapped Surface_mesh
   SMesh*       surface_mesh();
   const SMesh* surface_mesh() const;
