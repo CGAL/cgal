@@ -373,6 +373,8 @@ public Q_SLOTS:
     int id = scene->addItem(plane);
     scene->changeGroup(plane, group);
     group->lockChild(plane);
+    //connect(plane->manipulatedFrame(), &CGAL::qglviewer::ManipulatedFrame::manipulated,
+    //        plane, &Volume_plane_interface::redraw);
     switch(thread->type())
     {
     case 'x':

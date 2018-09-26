@@ -526,18 +526,13 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   f.translate(QVector3D(tx, ty, tz));
   getEdgeContainer(0)->setFrameMatrix(f);
   printGlError(viewer, __LINE__);
-  
-  //if(!viewer->isOpenGL_4_3())
-  //{
-  //  viewer->glDrawArrays(GL_LINE_LOOP, 0, static_cast<GLsizei>(v_rec.size()/3));
-  //}
-    QVector2D vp(viewer->width(), viewer->height());
-    getEdgeContainer(0)->setViewport(vp);
-    getEdgeContainer(0)->setWidth(4.0f);
-    getEdgeContainer(0)->setColor(QColor(Qt::black));
-    viewer->glDepthRangef(0.00005f, 0.99995f);
-    getEdgeContainer(0)->draw(viewer, true);
-    viewer->glDepthRangef(0.0,1.0);
+  QVector2D vp(viewer->width(), viewer->height());
+  getEdgeContainer(0)->setViewport(vp);
+  getEdgeContainer(0)->setWidth(4.0f);
+  getEdgeContainer(0)->setColor(QColor(Qt::black));
+  viewer->glDepthRangef(0.00005f, 0.99995f);
+  getEdgeContainer(0)->draw(viewer, true);
+  viewer->glDepthRangef(0.0,1.0);
   
   
   getTriangleContainer(0)->setFrameMatrix(f);
@@ -618,6 +613,7 @@ bool Volume_plane<T>::eventFilter(QObject *sender, QEvent *event)
                     Qt::LeftButton,
                     CGAL::qglviewer::CAMERA,
                     CGAL::qglviewer::ROTATE);
+        redraw();
     }
     return false;
 }
