@@ -1730,3 +1730,10 @@ void Scene::initGL(Viewer_interface *viewer)
   vaos[viewer]->release();
   program.release();
 }
+
+void Scene::callDraw(){  
+  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  {
+    qobject_cast<Viewer_interface*>(v)->update();
+  }
+}
