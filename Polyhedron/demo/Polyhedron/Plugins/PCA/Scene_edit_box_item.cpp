@@ -317,8 +317,8 @@ void Scene_edit_box_item::drawSpheres(Viewer_interface *viewer, const QMatrix4x4
   Tc* tc = getTriangleContainer(Priv::Spheres);
   tc->setFrameMatrix(f_matrix);
   tc->setMvMatrix(mv_mat);
+  tc->setClipping(false);
   tc->getVao(viewer)->bind();
-  tc->getVao(viewer)->program->setUniformValue("is_clipbox_on", false);
   tc->getVao(viewer)->program->setAttributeValue("radius",radius);
   tc->getVao(viewer)->release();
   tc->setColor(QColor(Qt::red));
@@ -375,9 +375,7 @@ void Scene_edit_box_item::drawEdges(Viewer_interface* viewer) const
     ec->setViewport(vp);
     ec->setWidth(6.0f);
   }
-  ec->getVao(viewer)->bind();
-  ec->getVao(viewer)->program->setUniformValue("is_clipbox_on", false);
-  ec->getVao(viewer)->release();
+  ec->setClipping(false);
   ec->setFrameMatrix(f_matrix);
   ec->setColor(QColor(Qt::black));
   ec->draw(viewer, true);
@@ -906,9 +904,7 @@ void Scene_edit_box_item_priv::draw_picking(Viewer_interface* viewer)
   {
     Tc* tc = item->getTriangleContainer(P_Faces);
     tc->setFrameMatrix(f_matrix);
-    tc->getVao(viewer)->bind();
-    tc->getVao(viewer)->program->setUniformValue("is_clipbox_on", false);
-    tc->getVao(viewer)->release();
+    tc->setClipping(false);
     tc->draw(viewer, false);
   }
   double radius =std::sqrt(
@@ -917,8 +913,8 @@ void Scene_edit_box_item_priv::draw_picking(Viewer_interface* viewer)
       (item->point(6,2) - item->point(0,2)) * (item->point(6,2) - item->point(0,2))) *0.02 ;
   Tc* tc = item->getTriangleContainer(P_Spheres);
   tc->setFrameMatrix(f_matrix);
+  tc->setClipping(false);
   tc->getVao(viewer)->bind();
-  tc->getVao(viewer)->program->setUniformValue("is_clipbox_on", false);
   tc->getVao(viewer)->program->setAttributeValue("radius", (float)radius);
   tc->getVao(viewer)->release();
   tc->draw(viewer, false);
@@ -932,9 +928,7 @@ void Scene_edit_box_item_priv::draw_picking(Viewer_interface* viewer)
     ec->setWidth(6.0f);
   }
   ec->setFrameMatrix(f_matrix);
-  ec->getVao(viewer)->bind();
-  ec->getVao(viewer)->program->setUniformValue("is_clipbox_on", false);
-  ec->getVao(viewer)->release();
+  ec->setClipping(false);
   ec->draw(viewer, false);
 }
 
@@ -1117,9 +1111,9 @@ void Scene_edit_box_item::drawHl(Viewer_interface* viewer)const
         (point(6,0) - point(0,0)) * (point(6,0) - point(0,0)) +
         (point(6,1) - point(0,1)) * (point(6,1) - point(0,1)) +
         (point(6,2) - point(0,2)) * (point(6,2) - point(0,2))) *0.02 ;
+    tc->setClipping(false);
     tc->getVao(viewer)->bind();
     tc->getVao(viewer)->program->setUniformValue("radius", (float)radius);
-    tc->getVao(viewer)->program->setUniformValue("is_clipbox_on", false);
     tc->getVao(viewer)->release();
     tc->draw(viewer, true);
   }
@@ -1132,9 +1126,7 @@ void Scene_edit_box_item::drawHl(Viewer_interface* viewer)const
       ec->setViewport(vp);
       ec->setWidth(6.0f);
     }
-    ec->getVao(viewer)->bind();
-    ec->getVao(viewer)->program->setUniformValue("is_clipbox_on", false);
-    ec->getVao(viewer)->release();
+    ec->setClipping(false);
     ec->setFrameMatrix(f_matrix);
     ec->setColor(QColor(Qt::yellow));
     ec->draw(viewer, true);
@@ -1149,9 +1141,7 @@ void Scene_edit_box_item::drawHl(Viewer_interface* viewer)const
     Tc* tc = getTriangleContainer(Priv::S_Faces);
     tc->setMvMatrix(mv_mat);
     tc->setFrameMatrix(f_matrix);
-    tc->getVao(viewer)->bind();
-    tc->getVao(viewer)->program->setUniformValue("is_clipbox_on", false);
-    tc->getVao(viewer)->release();
+    tc->setClipping(false);
     
     tc->setColor(QColor(Qt::yellow));
     tc->setAlpha(0.5);
@@ -1194,9 +1184,7 @@ void Scene_edit_box_item::drawTransparent(CGAL::Three::Viewer_interface*viewer)c
   Tc* tc = getTriangleContainer(Priv::Faces);
   tc->setMvMatrix(mv_mat);
   tc->setFrameMatrix(f_matrix);
-  tc->getVao(viewer)->bind();
-  tc->getVao(viewer)->program->setUniformValue("is_clipbox_on", false);
-  tc->getVao(viewer)->release();
+  tc->setClipping(false);
   tc->setColor(QColor(128,128,128,128));
   tc->setAlpha(0.5);
   tc->draw(viewer, true);

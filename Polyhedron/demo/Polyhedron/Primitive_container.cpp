@@ -7,6 +7,7 @@ struct D
       program_id(program),
       indexed(indexed),
       is_selected(false),
+      clipping(true),
       flat_size(0),
       idx_size(0),
       tuple_size(3),
@@ -26,6 +27,7 @@ struct D
   QMap<CGAL::Three::Viewer_interface*, bool> is_init;
   QMap<CGAL::Three::Viewer_interface*, bool> is_gl_init;
   bool is_selected;
+  bool clipping;
   std::size_t flat_size;
   std::size_t center_size;
   std::size_t idx_size;
@@ -58,6 +60,9 @@ void Primitive_container::bindUniformValues(CGAL::Three::Viewer_interface* viewe
     viewer->getShaderProgram(d->program_id)->setUniformValue("is_selected", true);
   else
     viewer->getShaderProgram(d->program_id)->setUniformValue("is_selected", false);
+  //override clipping if necessary
+  if(!d->clipping)
+    viewer->getShaderProgram(d->program_id)->setUniformValue("is_clipbox_on", false);
   viewer->getShaderProgram(d->program_id)->release();
 }
 
@@ -263,4 +268,14 @@ void Primitive_container::setTextureData(int i, int j, int r, int g, int b)
 QSize Primitive_container::getTextureSize() const
 {
   return QSize(d->texture->Width, d->texture->Height);
+}
+
+bool Primitive_container::getClipping() const
+{
+  return d->clipping;
+}
+
+void Primitive_container::setClipping(bool b)
+{
+  d->clipping = b;
 }

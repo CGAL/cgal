@@ -170,6 +170,9 @@ public:
   void setOffset(std::size_t id, int offset);
   //!setter for the tuple size: the number of coordinates of one vertex.
   void setTupleSize(int ts);
+  //!setter for the clipping. If `b` is `false`, then the clipping box will have no effect.
+  void setClipping(bool b);
+  
   //!@}
 
   //!
@@ -220,6 +223,8 @@ public:
   GLuint getTextureId() const;
   //! getter for the size of the texture.
   QSize getTextureSize() const;
+  //! getter for the clipping. Default is `true`.
+  bool getClipping() const;
 
   //!
   //!Use this to specify if the container `Vbo`s are filled for `viewer`.
