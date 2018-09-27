@@ -51,7 +51,7 @@ template <typename TriangleMesh,
   typename VertexPointMap
     = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   typename GeomTraits
-    = typename TriangleMesh::Traits>
+    = typename Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::Kernel>
 class L2_metric_plane_proxy {
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point_3;
