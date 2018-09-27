@@ -29,11 +29,11 @@ Scene_plane_item::~Scene_plane_item() {
 void Scene_plane_item::initializeBuffers(Viewer_interface *viewer) const
 {
   getTriangleContainer(0)->initializeBuffers(viewer);
-  getTriangleContainer(0)->setFlatDataSize(positions_quad.size());
+  getTriangleContainer(0)->setFlatDataSize(nb_quads);
   positions_quad.resize(0);
   positions_quad.shrink_to_fit();
   getEdgeContainer(0)->initializeBuffers(viewer);
-  getEdgeContainer(0)->setFlatDataSize(positions_lines.size());
+  getEdgeContainer(0)->setFlatDataSize(nb_lines);
   positions_lines.resize(0);
   positions_lines.shrink_to_fit();
 }
@@ -102,6 +102,8 @@ void Scene_plane_item::computeElements() const
                                           static_cast<int>(positions_lines.size() 
                                                            * sizeof(float)));
     }
+    nb_quads = positions_quad.size();
+    nb_lines = positions_lines.size();
     setBuffersFilled(true);
     QApplication::restoreOverrideCursor();
 }

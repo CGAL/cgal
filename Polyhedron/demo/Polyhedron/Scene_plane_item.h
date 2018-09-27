@@ -113,6 +113,8 @@ protected:
 
   mutable std::vector<float> positions_lines;
   mutable std::vector<float> positions_quad;
+  mutable std::size_t nb_quads;
+  mutable std::size_t nb_lines;
   mutable GLint sampler_location;
   mutable bool smooth_shading;
   mutable QOpenGLShaderProgram *program;

@@ -8,6 +8,8 @@
 #include "Scene_polyhedron_selection_item.h"
 #include "Scene.h"
 
+#include <CGAL/Three/Three.h>
+#include <CGAL/Three/Scene_item_rendering_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include "ui_Hole_filling_widget.h"
 
@@ -40,6 +42,8 @@
 #include <QMap>
 #include <QVector>
 
+using namespace CGAL::Three;
+
 typedef Scene_surface_mesh_item Scene_face_graph_item;
 
 void normalize_border(Scene_face_graph_item::Face_graph&)
@@ -55,7 +59,7 @@ typedef Kernel::Point_3 Point_3;
 
 // Class for visualizing holes in a polyhedron
 // provides mouse selection functionality
-class Q_DECL_EXPORT Scene_hole_visualizer : public CGAL::Three::Scene_item
+class Q_DECL_EXPORT Scene_hole_visualizer : public CGAL::Three::Scene_item_rendering_helper
 {
   Q_OBJECT
 public:
@@ -85,8 +89,10 @@ public:
     get_holes();
     active_hole = polyline_data_list.end();
 
-    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
-    viewer->installEventFilter(this);
+    Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
+    {
+      viewer->installEventFilter(this);
+    }
     mainWindow->installEventFilter(this);
 
     connect(poly_item, SIGNAL(item_is_about_to_be_changed()), this, SLOT(poly_item_changed()));
@@ -99,12 +105,12 @@ public:
   bool isFinite() const { return true; }
   bool isEmpty() const { return polyline_data_list.empty(); }
   void compute_bbox() const {
-    if(polyline_data_list.empty()) { _bbox = Bbox(); return;}
+    if(polyline_data_list.empty()) { setBbox(Bbox()); return;}
     Bbox bbox = polyline_data_list.begin()->polyline->bbox();
     for(Polyline_data_list::const_iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it) {
       bbox = bbox + it->polyline->bbox();
     }
-    _bbox = bbox;
+    setBbox(bbox);
   }
 
   Scene_hole_visualizer* clone() const {
@@ -117,7 +123,6 @@ public:
   bool supportsRenderingMode(RenderingMode m) const {
     return (m == Wireframe);
   }
-  void draw() const {}
   void drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     
     for(Polyline_data_list::const_iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it) {
@@ -143,10 +148,24 @@ public:
     }
     Q_EMIT itemChanged();
   }
-
+void newViewer(Viewer_interface *viewer)
+{
+  for(Polyline_data_list::const_iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it) {
+    it->polyline->newViewer(viewer);
+  }
+  Scene_item_rendering_helper::newViewer(viewer);
+}
+void removeViewer(Viewer_interface *viewer)
+{
+  for(Polyline_data_list::const_iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it) {
+    it->polyline->removeViewer(viewer);
+  }
+  Scene_item_rendering_helper::removeViewer(viewer);
+}
   // filter events for selecting / activating holes with mouse input
-  bool eventFilter(QObject* /*target*/, QEvent *event)
+  bool eventFilter(QObject* target, QEvent *event)
   {
+    Viewer_interface* viewer = qobject_cast<Viewer_interface*>(target);
     // This filter is both filtering events from 'viewer' and 'main window'
     Mouse_keyboard_state old_state = state;
     // key events
@@ -169,7 +188,6 @@ public:
     // activate closest hole
     if(event->type() == QEvent::HoverMove)
     {
-      CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
       const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
       bool need_repaint = activate_closest_hole(p.x(), p.y());
       if(need_repaint) { Q_EMIT itemChanged(); }
@@ -244,7 +262,7 @@ private:
 
     Face_graph& poly = *poly_item->polyhedron();
 
-    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
+    CGAL::QGLViewer* viewer = Three::mainViewer();
     CGAL::qglviewer::Camera* camera = viewer->camera();
 
     Polyline_data_list::const_iterator min_it;

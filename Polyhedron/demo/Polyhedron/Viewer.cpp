@@ -875,12 +875,15 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_CUTPLANE_SPHERES:
     case PROGRAM_NO_SELECTION:
       program->setUniformValue("alpha", 1.0f); //overriden in item draw() if necessary
+    default: 
+      break;
     }
     switch(program_name)
     {
     case PROGRAM_SPHERES:
     case PROGRAM_DARK_SPHERES:
     case PROGRAM_WITH_LIGHT: 
+    case PROGRAM_OLD_FLAT: 
       program->setUniformValue("f_matrix",f_mat);
     default: 
       break;

@@ -165,9 +165,9 @@ void Triangle_container::draw(Viewer_interface* viewer,
       viewer->glDrawElements(GL_LINES_ADJACENCY, static_cast<unsigned int>(getIdxSize()),
                              GL_UNSIGNED_INT, 0 );
     }
-    else
+    else{
       viewer->glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(getIdxSize()),
-                             GL_UNSIGNED_INT, 0 );
+                             GL_UNSIGNED_INT, 0 );}
     getVbo(Vertex_indices)->release();
     getVao(viewer)->release();
   }
