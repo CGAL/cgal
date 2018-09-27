@@ -1166,6 +1166,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
                          ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_plane_two_faces.f");
     program->setProperty("hasLight", true);
     program->setProperty("hasNormals", true);
+    program->setProperty("hasFMatrix", true);
     return program;
   }
   case PROGRAM_WITH_TEXTURED_EDGES:

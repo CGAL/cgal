@@ -197,8 +197,10 @@ void Scene_item_rendering_helper::setTriangleContainer(std::size_t id,
 {
   if(priv->triangle_containers.size() <= id)
   {
-    priv->triangle_containers.resize(id+1);
+    priv->triangle_containers.resize(id+1, nullptr);
   }
+  if(priv->triangle_containers[id])
+    delete priv->triangle_containers[id];
   priv->triangle_containers[id] = tc;
 }
 
@@ -207,8 +209,10 @@ void Scene_item_rendering_helper::setEdgeContainer(std::size_t id,
 {
   if(priv->edge_containers.size() <= id)
   {
-    priv->edge_containers.resize(id+1);
+    priv->edge_containers.resize(id+1, nullptr);
   }
+  if(priv->edge_containers[id])
+    delete priv->edge_containers[id];
   priv->edge_containers[id] = ec;
 }
 
@@ -217,8 +221,10 @@ void Scene_item_rendering_helper::setPointContainer(std::size_t id,
 {
   if(priv->point_containers.size() <= id)
   {
-    priv->point_containers.resize(id+1);
+    priv->point_containers.resize(id+1, nullptr);
   }
+  if(priv->point_containers[id])
+    delete priv->point_containers[id];
   priv->point_containers[id] = pc;
 }
 

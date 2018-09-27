@@ -6,6 +6,8 @@
 #include "Scene_surface_mesh_item.h"
 #include "Scene_plane_item.h"
 #include <CGAL/Three/Viewer_interface.h>
+#include <CGAL/Three/Triangle_container.h>
+#include <CGAL/Three/Three.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Polygon_mesh_processing/clip.h>
 
@@ -14,6 +16,9 @@
 
 
 using namespace CGAL::Three;
+typedef Triangle_container Tc;
+typedef Viewer_interface Vi;
+
 // The special 2 faces plane
 class Scene_clipping_plane_item : public Scene_plane_item
 {
@@ -23,66 +28,48 @@ public:
   Scene_clipping_plane_item(const CGAL::Three::Scene_interface* scene_interface)
     :Scene_plane_item(scene_interface)
   {
+    setTriangleContainer(0, new Tc(Vi::PROGRAM_PLANE_TWO_FACES,
+                                   false));
   }
 
   void draw(CGAL::Three::Viewer_interface* viewer)const
   {
-    if(!are_buffers_filled)
+    if(!isInit())
+      initGL();
+    if ( getBuffersFilled() &&
+         ! getBuffersInit(viewer))
+    {
       initializeBuffers(viewer);
-    vaos[Facets]->bind();
-    program = getShaderProgram(PROGRAM_PLANE_TWO_FACES);
-    attribBuffers(viewer, PROGRAM_PLANE_TWO_FACES);
+      setBuffersInit(viewer, true);
+    }
+    if(!getBuffersFilled())
+    {
+      computeElements();
+      initializeBuffers(viewer);
+    }
+    
     QMatrix4x4 f_matrix;
     for(int i=0; i<16; i++)
       f_matrix.data()[i] = (float)frame->matrix()[i];
-    program->bind();
-    program->setUniformValue("f_matrix", f_matrix);
-    program->setAttributeValue("colors",this->color());
+    Tc* tc = getTriangleContainer(0);
+    tc->setFrameMatrix(f_matrix);
+    tc->setColor(this->color());
     QVector3D normal;
     normal.setX(plane().orthogonal_vector().x());normal.setY(plane().orthogonal_vector().y());normal.setZ(plane().orthogonal_vector().z());
-    program->setUniformValue("plane_normal", normal);
     QVector3D vd;
     vd.setX(viewer->camera()->position().x); vd.setY(viewer->camera()->position().y); vd.setZ(viewer->camera()->position().z);
-    program->setUniformValue("dirView", vd);
     QVector3D pp;
     pp.setX(plane().point().x());pp.setY(plane().point().y());pp.setZ(plane().point().z());
-    program->setUniformValue("plane_pos", pp);
-
-    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_quad.size()/3));
-    program->release();
-    vaos[Facets]->release();
+    tc->getVao(viewer)->bind();
+    tc->getVao(viewer)->program->setUniformValue("dirView", vd);
+    tc->getVao(viewer)->program->setUniformValue("plane_normal", normal);
+    tc->getVao(viewer)->program->setUniformValue("plane_pos", pp);
+    tc->getVao(viewer)->release();
+    tc->draw(viewer, true);
   }
   void selection_changed(bool b){is_selected = b;}
 
-private:
-  void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
-  {
-    program = getShaderProgram(PROGRAM_PLANE_TWO_FACES, viewer);
-    program->bind();
-    vaos[Facets]->bind();
-
-    buffers[Facets_vertices].bind();
-    buffers[Facets_vertices].allocate(positions_quad.data(),
-                                      static_cast<int>(positions_quad.size()*sizeof(float)));
-    program->enableAttributeArray("vertex");
-    program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    buffers[Facets_vertices].release();
-    vaos[Facets]->release();
-
-
-    vaos[Edges]->bind();
-    buffers[Edges_vertices].bind();
-    buffers[Edges_vertices].allocate(positions_lines.data(),
-                                     static_cast<int>(positions_lines.size()*sizeof(float)));
-    program->enableAttributeArray("vertex");
-    program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    buffers[Edges_vertices].release();
-    vaos[Edges]->release();
-
-    program->release();
-    are_buffers_filled = true;
-
-  }
+//no need for initializeBuffers() and computeElements(), they are inherited well.
 }; //end of class Scene_triangle_item
 
 
