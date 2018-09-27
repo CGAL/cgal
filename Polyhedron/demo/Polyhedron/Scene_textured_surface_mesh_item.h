@@ -55,7 +55,6 @@ public:
   void add_border_edges(std::vector<float> border_edges);
   void initializeBuffers(CGAL::Three::Viewer_interface *) const;
   void computeElements() const;
-  void gl_initialization(CGAL::Three::Viewer_interface* viewer);
 
 Q_SIGNALS:
   void selectionChanged();

@@ -949,17 +949,11 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   if(current_uv_item){
     Scene_textured_facegraph_item* t_item = 
         qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item));
-    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())\
-      if(v)
-        t_item->gl_initialization(qobject_cast<CGAL::Three::Viewer_interface*>(v));
    t_item->add_border_edges(std::vector<float>(0));
   }
   current_uv_item = projection;
   Scene_textured_facegraph_item* t_item = 
       qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item));
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
-    if(v)
-      t_item->gl_initialization(qobject_cast<CGAL::Three::Viewer_interface*>(v));
   t_item->add_border_edges(
         current_uv_item->concatenated_borders());
   if(dock_widget->isHidden())

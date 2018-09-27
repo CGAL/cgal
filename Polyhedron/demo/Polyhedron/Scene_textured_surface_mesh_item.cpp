@@ -162,6 +162,7 @@ void Scene_textured_surface_mesh_item::common_constructor()
   setEdgeContainer(0, new Ec(Vi::PROGRAM_WITH_TEXTURED_EDGES, false));//edges
   getTriangleContainer(0)->setTextureSize(QSize(d->texture.GetWidth(), d->texture.GetHeight()));
   getEdgeContainer(0)->setTextureSize(QSize(d->texture.GetWidth(), d->texture.GetHeight()));
+  initGL();
   d->nb_face_verts = 0; 
   d->nb_edge_verts = 0; 
   d->nb_border_verts = 0;
@@ -415,15 +416,3 @@ void Scene_textured_surface_mesh_item::computeElements() const
   QApplication::restoreOverrideCursor();  
 }
 
-void Scene_textured_surface_mesh_item::gl_initialization(Vi* viewer)
-{
-  if(!isInit())
-    initGL();
-  if ( getBuffersFilled() &&
-       ! getBuffersInit(viewer))
-  {
-    initializeBuffers(viewer);
-    setBuffersInit(viewer, true);
-    setBuffersFilled(true);
-  }
-}
