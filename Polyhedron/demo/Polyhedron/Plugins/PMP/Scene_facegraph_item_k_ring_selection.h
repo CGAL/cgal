@@ -2,6 +2,7 @@
 #define SCENE_FACEGRAPH_ITEM_K_RING_SELECTION_H
 #include "Scene_facegraph_item_k_ring_selection_config.h"
 #include "Scene_surface_mesh_item.h"
+#include <CGAL/Three/Three.h>
 #include <CGAL/iterator.h>
 #include <set>
 #include <CGAL/Qt/qglviewer.h>
@@ -21,6 +22,7 @@
 
 #include <CGAL/Polygon_2.h>
 
+using namespace CGAL::Three;
 typedef Scene_surface_mesh_item Scene_facegraph_item;
 typedef EPICK FG_Traits;
 
@@ -96,15 +98,29 @@ public:
     init(poly_item, mw, aht, k_ring);
   }
 
+  CGAL::QGLViewer* getActiveViewer()
+  {
+    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+    {
+      if(v->hasFocus())
+      {
+        return v;
+      }
+    }
+    return Three::mainViewer();
+  }
+  
   void setEditMode(bool b)
   {
     is_edit_mode = b;
-    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
-    //for highlighting
-    viewer->setMouseTracking(true);
+    Q_FOREACH(CGAL::QGLViewer* viewer,CGAL::QGLViewer::QGLViewerPool()){
+      //for highlighting
+      viewer->setMouseTracking(true);
+    }
   }
 
-  void init(Scene_facegraph_item* poly_item, QMainWindow* mw, Active_handle::Type aht, int k_ring) {
+  void init(Scene_facegraph_item* poly_item, QMainWindow* mw, Active_handle::Type aht, 
+            int k_ring) {
     this->poly_item = poly_item;
     this->active_handle_type = aht;
     this->k_ring = k_ring;
@@ -115,11 +131,14 @@ public:
     is_ready_to_highlight = true;
     is_ready_to_paint_select = true;
     is_lasso_active = false;
-
-    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
-    viewer->installEventFilter(this);
+    
+    Q_FOREACH(CGAL::QGLViewer* viewer,CGAL::QGLViewer::QGLViewerPool()){
+      viewer->installEventFilter(this);
+      viewer->setMouseBindingDescription(Qt::Key_D, Qt::ShiftModifier, Qt::LeftButton, "(When in selection plugin) Removes the clicked primitive from the selection. ");
+    }
     mw->installEventFilter(this);
-    viewer->setMouseBindingDescription(Qt::Key_D, Qt::ShiftModifier, Qt::LeftButton, "(When in selection plugin) Removes the clicked primitive from the selection. ");
+    connect(mw, SIGNAL(newViewerCreated(QObject*)),
+            this, SLOT(connectNewViewer(QObject*)));
     connect(poly_item, SIGNAL(selected_vertex(void*)), this, SLOT(vertex_has_been_selected(void*)));
     connect(poly_item, SIGNAL(selected_facet(void*)), this, SLOT(facet_has_been_selected(void*)));
     connect(poly_item, SIGNAL(selected_edge(void*)), this, SLOT(edge_has_been_selected(void*)));
@@ -132,6 +151,10 @@ public:
 
 public Q_SLOTS:
   // slots are called by signals of polyhedron_item
+  void connectNewViewer(QObject* o)
+  {
+    o->installEventFilter(this);
+  }
   void vertex_has_been_selected(void* void_ptr) 
   {
     is_active=true;
@@ -171,9 +194,9 @@ public Q_SLOTS:
   {
     if(is_ready_to_paint_select)
     {
-      const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+      const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
       // paint with mouse move event
-      CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
+      CGAL::QGLViewer* viewer = getActiveViewer();
       CGAL::qglviewer::Camera* camera = viewer->camera();
       viewer->makeCurrent();
       bool found = false;
@@ -204,8 +227,8 @@ public Q_SLOTS:
 
   void lasso_selection()
   {
-    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
-    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
+    CGAL::QGLViewer* viewer = getActiveViewer();
+    const CGAL::qglviewer::Vec offset =Three::mainViewer()->offset();
 
     CGAL::qglviewer::Camera* camera = viewer->camera();
     const FaceGraph& poly = *poly_item->polyhedron();
@@ -355,11 +378,11 @@ public Q_SLOTS:
 
   void highlight()
   {
-    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
     if(is_ready_to_highlight)
     {
       // highlight with mouse move event
-      CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
+      CGAL::QGLViewer* viewer = getActiveViewer();
       CGAL::qglviewer::Camera* camera = viewer->camera();
       viewer->makeCurrent();
       bool found = false;
@@ -556,7 +579,7 @@ protected:
         return false;
       if(target == mainwindow)
       {
-        CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
+        CGAL::QGLViewer* viewer = getActiveViewer();
         viewer->setFocus();
         return false;
       }
@@ -575,7 +598,8 @@ protected:
         if (event->type() != QEvent::MouseMove)
         {
           //Create a QImage of the screen and paint the lasso on top of it
-          background = static_cast<CGAL::Three::Viewer_interface*>(*CGAL::QGLViewer::QGLViewerPool().begin())->grabFramebuffer();
+          CGAL::QGLViewer* viewer = getActiveViewer();
+          background = static_cast<Viewer_interface*>(viewer)->grabFramebuffer();
         }
         sample_mouse_path(background);
       }
@@ -586,7 +610,7 @@ protected:
     {
       if(target == mainwindow)
       {
-        CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
+        CGAL::QGLViewer* viewer = getActiveViewer();
         viewer->setFocus();
         return false;
       }
@@ -629,7 +653,7 @@ protected:
 
   void sample_mouse_path(QImage& background)
   {
-    CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(*CGAL::QGLViewer::QGLViewerPool().begin());
+    Viewer_interface* viewer = qobject_cast<Viewer_interface*>(getActiveViewer());
     viewer->makeCurrent();
     const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
     contour_2d.push_back (FG_Traits::Point_2 (p.x(), p.y()));
@@ -664,7 +688,6 @@ protected:
       viewer->set2DSelectionMode(true);
       viewer->setStaticImage(temp);
       viewer->update();
-
     }
   }
 

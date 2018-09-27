@@ -798,7 +798,7 @@ public:
     poly_item->setItemIsMulticolor(b);
   }
 
-  void selection_changed(bool b);
+  void selection_changed(bool);
 
 Q_SIGNALS:
   void updateInstructions(QString);
@@ -807,7 +807,10 @@ Q_SIGNALS:
   void printMessage(QString);
 
 public Q_SLOTS:
-
+  void connectNewViewer(QObject* o)
+  {
+      o->installEventFilter(this);
+  }
   void update_poly();
   void on_Ctrlz_pressed();
   void emitTempInstruct();
