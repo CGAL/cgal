@@ -198,7 +198,7 @@ public Q_SLOTS:
     else
     {
       QApplication::setOverrideCursor(Qt::WaitCursor);
-      CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
+      CGAL::QGLViewer* viewer = Three::mainViewer();
       QList<Scene_item*> polyhedra;
 
       //Fills the list of target polyhedra and the cutting plane

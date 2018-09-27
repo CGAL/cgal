@@ -312,14 +312,14 @@ public Q_SLOTS:
 
     if(!is_point_set)
     {
-      const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+      const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
       transform_item->manipulatedFrame()->setFromMatrix(matrix);
       transform_item->manipulatedFrame()->translate(offset);
       transform_item->itemChanged();
     }
     else
     {
-      const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+      const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
       transform_points_item->manipulatedFrame()->setFromMatrix(matrix);
       transform_points_item->manipulatedFrame()->translate(offset);
       transform_points_item->itemChanged();
@@ -458,7 +458,7 @@ void Polyhedron_demo_affine_transform_plugin::end(){
   QApplication::restoreOverrideCursor();
   double matrix[16];
   transformMatrix(&matrix[0]);
-  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
   matrix[12]-=offset.x;
   matrix[13]-=offset.y;
   matrix[14]-=offset.z;
@@ -548,7 +548,7 @@ void Polyhedron_demo_affine_transform_plugin::updateUiMatrix()
     matrix(1,3) -= transform_points_item->center().y;
     matrix(2,3) -= transform_points_item->center().z;
   }
-  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
   matrix.data()[12]-=offset.x;
   matrix.data()[13]-=offset.y;
   matrix.data()[14]-=offset.z;

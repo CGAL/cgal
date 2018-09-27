@@ -229,6 +229,8 @@ public:
     pxr_.setViewer(v);
     connect(v, SIGNAL(pointSelected(const QMouseEvent *)), &pxr_, SLOT(update(const QMouseEvent *)));
     createOrGetDockLayout();
+    connect(mw, SIGNAL(newViewerCreated(QObject*)),
+            this, SLOT(connectNewViewer(QObject*)));
 
     QMenu* menuFile = mw->findChild<QMenu*>("menuFile");
     if ( NULL != menuFile )
@@ -697,8 +699,6 @@ private:
       viewer->installEventFilter(y_item);
       viewer->installEventFilter(z_item);
     }
-    connect(mw, SIGNAL(newViewerCreated(QObject*)),
-            this, SLOT(connectNewViewer(QObject*)));
     
     connect(x_item, SIGNAL(selected(CGAL::Three::Scene_item*)), this, SLOT(select_plane(CGAL::Three::Scene_item*)));
     connect(y_item, SIGNAL(selected(CGAL::Three::Scene_item*)), this, SLOT(select_plane(CGAL::Three::Scene_item*)));

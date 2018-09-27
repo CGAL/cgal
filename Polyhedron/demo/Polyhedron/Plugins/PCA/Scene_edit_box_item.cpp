@@ -619,11 +619,16 @@ void Scene_edit_box_item::highlight(Viewer_interface *viewer)
             d->hl_vertex.data(),
             static_cast<int>(d->hl_vertex.size()*sizeof(float)));
       
-      tc->initializeBuffers(viewer);
       tc->setFlatDataSize(d->vertex_spheres.size());
       tc->setCenterSize(d->hl_vertex.size());
       //draw
       d->hl_type = Scene_edit_box_item_priv::VERTEX;
+      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+      {
+        CGAL::Three::Viewer_interface* viewer = 
+            static_cast<CGAL::Three::Viewer_interface*>(v);
+        tc->initializeBuffers(viewer);
+      }
       break;
     }
     case 1:
@@ -644,10 +649,15 @@ void Scene_edit_box_item::highlight(Viewer_interface *viewer)
             Ec::Vertices,
             d->hl_vertex.data(),
             static_cast<GLsizei>(d->hl_vertex.size()*sizeof(float)));
-      ec->initializeBuffers(viewer);
       ec->setFlatDataSize(d->hl_vertex.size());
       //draw
       d->hl_type = Scene_edit_box_item_priv::EDGE;
+      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+      {
+        CGAL::Three::Viewer_interface* viewer = 
+            static_cast<CGAL::Three::Viewer_interface*>(v);
+        ec->initializeBuffers(viewer);
+      }
       break;
     }
     case 2:
@@ -677,10 +687,15 @@ void Scene_edit_box_item::highlight(Viewer_interface *viewer)
             Tc::Flat_normals,
             d->hl_normal.data(),
             static_cast<int>(d->hl_normal.size()*sizeof(float)));
-      tc->initializeBuffers(viewer);
       tc->setFlatDataSize(d->hl_vertex.size());
       //draw
       d->hl_type = Scene_edit_box_item_priv::FACE;
+      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+      {
+        CGAL::Three::Viewer_interface* viewer = 
+            static_cast<CGAL::Three::Viewer_interface*>(v);
+        tc->initializeBuffers(viewer);
+      }
       break;
     }
     default:
@@ -748,8 +763,8 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
 {
   if(!visible())
     return false;
-  Viewer_interface* test_viewer = qobject_cast<Vi*>(obj);
-  if(!test_viewer)
+  Viewer_interface* viewer = qobject_cast<Vi*>(obj);
+  if(!viewer)
     return false;
   if(event->type() == QEvent::MouseButtonPress)
   {
