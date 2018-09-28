@@ -61,11 +61,16 @@ if ( CGAL_FOUND )
   target_link_libraries(compute_example ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES}
     ${BASIC_VIEWER_LIBRARIES})
   
+  add_executable("path_isotopy" "path_isotopy.cpp")
+  target_link_libraries(path_isotopy ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES}
+    ${BASIC_VIEWER_LIBRARIES})
+
   if (USE_BASIC_VIEWER)
     qt5_use_modules(voronoi_2 ${BASIC_VIEWER_MODULES})
     qt5_use_modules(voronoi_3 ${BASIC_VIEWER_MODULES})
     qt5_use_modules(linear_cell_complex_3_operations ${BASIC_VIEWER_MODULES})
     qt5_use_modules(compute_example ${BASIC_VIEWER_MODULES})
+    qt5_use_modules(path_isotopy ${BASIC_VIEWER_MODULES})
   endif(USE_BASIC_VIEWER)
   
 else()
