@@ -20,7 +20,6 @@
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
 #include <CGAL/property_map.h>
 #include <boost/container/flat_map.hpp>
-
 using namespace CGAL::Three;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -32,19 +31,16 @@ template <class AABB_tree, class Point_3>
 struct Distance_computation{
   const AABB_tree& tree;
   const std::vector<Point_3>& sample_points;
-  Point_3 initial_hint;
-  tbb::atomic<double>* distance;
+  const Point_3 initial_hint;
   std::vector<double>& output;
 
   Distance_computation(const AABB_tree& tree,
                        const Point_3 p,
                        const std::vector<Point_3>& sample_points,
-                       tbb::atomic<double>* d,
                        std::vector<double>& out )
     : tree(tree)
     , sample_points(sample_points)
     , initial_hint(p)
-    , distance(d)
     , output(out)
   {
   }
@@ -52,18 +48,13 @@ struct Distance_computation{
   operator()(const tbb::blocked_range<std::size_t>& range) const
   {
     Point_3 hint = initial_hint;
-    double hdist = 0;
     for( std::size_t i = range.begin(); i != range.end(); ++i)
     {
       hint = tree.closest_point(sample_points[i], hint);
       Kernel::FT dist = squared_distance(hint,sample_points[i]);
       double d = CGAL::sqrt(dist);
       output[i] = d;
-      if (d>hdist) hdist=d;
     }
-
-    if (hdist > distance->load())
-      distance->store(hdist);
   }
 };
 #endif
@@ -165,7 +156,7 @@ private:
     tree.accelerate_distance_queries();
     tree.build();
     boost::graph_traits<Face_graph>::vertex_descriptor vd = *(vertices(m).first);
-    Traits::Point_3 hint = get(CGAL::vertex_point,*poly, vd);
+    Traits::Point_3 hint = get(CGAL::vertex_point,m, vd);
 
 #if !defined(CGAL_LINKED_WITH_TBB)
     double hdist = 0;
@@ -179,10 +170,13 @@ private:
     }
       return hdist;
 #else
-    tbb::atomic<double> distance;
-    distance.store(0);
-    Distance_computation<Tree, Kernel::Point_3> f(tree, hint, sample_points, &distance, out);
+    double distance=0;
+    Distance_computation<Tree, Kernel::Point_3> f(tree, hint, sample_points, out);
     tbb::parallel_for(tbb::blocked_range<std::size_t>(0, sample_points.size()), f);
+    for(std::size_t i = 0; i< out.size(); ++i){
+      if(out[i] > distance)
+        distance = out[i];
+    }
     return distance;
 #endif
   }
