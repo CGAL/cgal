@@ -231,7 +231,7 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_
   d = new Scene_points_with_normal_item_priv(toCopy, this);
   if (has_normals())
     {
-        setRenderingMode(PointsPlusNormals);
+        setRenderingMode(ShadedPoints);
         is_selected = true;
     }
   else
@@ -254,7 +254,7 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const SMesh& input_
   // Converts Polyhedron vertices to point set.
   // Computes vertices normal from connectivity.
   d = new Scene_points_with_normal_item_priv(input_mesh, this);
-  setRenderingMode(PointsPlusNormals);
+  setRenderingMode(ShadedPoints);
   is_selected = true;
   if(d->m_points->number_of_points() < 30 )
     d->point_Slider->setValue(5);
@@ -269,7 +269,7 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Polyhedron& i
   // Converts Polyhedron vertices to point set.
   // Computes vertices normal from connectivity.
   d = new Scene_points_with_normal_item_priv(input_mesh, this);
-  setRenderingMode(PointsPlusNormals);
+  setRenderingMode(ShadedPoints);
   is_selected = true;
   if(d->m_points->number_of_points() < 30 )
     d->point_Slider->setValue(5);
@@ -616,7 +616,7 @@ bool Scene_points_with_normal_item::read_las_point_set(std::istream& stream)
   std::cerr << d->m_points->info();
 
   if (d->m_points->has_normal_map())
-    setRenderingMode(PointsPlusNormals);
+    setRenderingMode(ShadedPoints);
   if (d->m_points->check_colors())
     std::cerr << "-> Point set has colors" << std::endl;
   
@@ -654,7 +654,7 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
   std::cerr << d->m_points->info();
 
   if (d->m_points->has_normal_map())
-    setRenderingMode(PointsPlusNormals);
+    setRenderingMode(ShadedPoints);
   if (d->m_points->check_colors())
     std::cerr << "-> Point set has colors" << std::endl;
 

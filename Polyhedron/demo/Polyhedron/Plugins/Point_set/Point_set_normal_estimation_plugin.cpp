@@ -276,7 +276,7 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
                                                   << std::endl;
     }
     item->resetMenu();
-    item->setRenderingMode(PointsPlusNormals);
+    item->setRenderingMode(ShadedPoints);
 
     //***************************************
     // normal orientation
