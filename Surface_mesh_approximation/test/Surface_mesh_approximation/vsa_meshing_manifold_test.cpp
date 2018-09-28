@@ -2,35 +2,50 @@
 #include <fstream>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Surface_mesh.h>
 
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/Polygon_mesh_processing/remesh.h>
+
 #include <CGAL/Variational_shape_approximation.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
-typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
+typedef CGAL::Surface_mesh<Kernel::Point_3> Mesh;
+typedef boost::property_map<Mesh, boost::vertex_point_t>::type Vertex_point_map;
 
-typedef CGAL::Variational_shape_approximation<Polyhedron, Vertex_point_map> L21_approx;
+typedef CGAL::Variational_shape_approximation<Mesh, Vertex_point_map> L21_approx;
 typedef L21_approx::Error_metric L21_metric;
+
+namespace PMP = CGAL::Polygon_mesh_processing;
 
 bool test_manifold(const char *file_name, const FT drop = FT(1e-8))
 {
-  Polyhedron mesh;
+  Mesh mesh;
   std::ifstream input(file_name);
-  if (!input || !(input >> mesh) || mesh.empty()) {
-    std::cout << "Invalid off file." << std::endl;
+  if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
+    std::cout << "Invalid input file." << std::endl;
     return false;
   }
+
+  const double target_edge_length = 0.05;
+  const unsigned int nb_iter = 3;
+
+  std::cout << "Start remeshing. "
+    << " (" << num_faces(mesh) << " faces)..." << std::endl;
+  PMP::isotropic_remeshing(
+    faces(mesh),
+    target_edge_length,
+    mesh,
+    PMP::parameters::number_of_iterations(nb_iter));
+  std::cout << "Remeshing done. "
+    << " (" << num_faces(mesh) << " faces)..." << std::endl;
 
   std::cout << "Testing \"" << file_name << '\"' << std::endl;
   // algorithm instance
   L21_metric error_metric(mesh,
-    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
+    get(boost::vertex_point, const_cast<Mesh &>(mesh)));
   L21_approx approx(mesh,
-    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)),
+    get(boost::vertex_point, const_cast<Mesh &>(mesh)),
     error_metric);
 
   // approximation, seeding from error, drop to the target error incrementally
@@ -59,13 +74,13 @@ bool test_manifold(const char *file_name, const FT drop = FT(1e-8))
 int main()
 {
   std::cout << "Meshing manifold test." << std::endl;
-  if (!test_manifold("./data/cube_meshed.off"))
+  if (!test_manifold("./data/cube.off"))
     return EXIT_FAILURE;
 
-  if (!test_manifold("./data/cube_meshed_open.off"))
+  if (!test_manifold("./data/cube-ouvert.off"))
     return EXIT_FAILURE;
 
-  if (!test_manifold("./data/sphere_iso.off", FT(1e-2)))
+  if (!test_manifold("./data/sphere.off", FT(1e-2)))
     return EXIT_FAILURE;
 
   return EXIT_SUCCESS;

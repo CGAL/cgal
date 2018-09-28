@@ -2,25 +2,26 @@
 #include <fstream>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Surface_mesh.h>
 
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/Polygon_mesh_processing/remesh.h>
+
 #include <CGAL/Variational_shape_approximation.h>
 #include <CGAL/Surface_mesh_approximation/L2_metric_plane_proxy.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::FT FT;
-typedef Kernel::Point_3 Point;
+typedef CGAL::Surface_mesh<Kernel::Point_3> Mesh;
+typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
+typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
-typedef Polyhedron::Facet_handle Facet_handle;
-typedef boost::associative_property_map<std::map<Facet_handle, std::size_t> > Face_proxy_map;
-typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
+typedef boost::associative_property_map<std::map<face_descriptor, std::size_t> > Face_proxy_map;
+typedef boost::property_map<Mesh, boost::vertex_point_t>::type Vertex_point_map;
 
-typedef CGAL::Surface_mesh_approximation::L2_metric_plane_proxy<Polyhedron> L2_metric_plane_proxy;
-typedef CGAL::Variational_shape_approximation<Polyhedron, Vertex_point_map, L2_metric_plane_proxy> L2_approx;
+typedef CGAL::Surface_mesh_approximation::L2_metric_plane_proxy<Mesh> L2_metric_plane_proxy;
+typedef CGAL::Variational_shape_approximation<Mesh, Vertex_point_map, L2_metric_plane_proxy> L2_approx;
 typedef L2_approx::Proxy Plane_proxy;
+
+namespace PMP = CGAL::Polygon_mesh_processing;
 
 /**
  * This file tests the main class API and the L2 metric.
@@ -28,26 +29,38 @@ typedef L2_approx::Proxy Plane_proxy;
  */
 int main()
 {
-  Polyhedron mesh;
-  std::ifstream input("./data/sphere_iso.off");
-  if (!input || !(input >> mesh) || mesh.empty()) {
-    std::cerr << "Invalid off file." << std::endl;
+  Mesh mesh;
+  std::ifstream input("./data/sphere.off");
+  if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
+    std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;
   }
 
+  const double target_edge_length = 0.05;
+  const unsigned int nb_iter = 3;
+
+  std::cout << "Start remeshing. "
+    << " (" << num_faces(mesh) << " faces)..." << std::endl;
+  PMP::isotropic_remeshing(
+    faces(mesh),
+    target_edge_length,
+    mesh,
+    PMP::parameters::number_of_iterations(nb_iter));
+  std::cout << "Remeshing done. "
+    << " (" << num_faces(mesh) << " faces)..." << std::endl;
+
   // face area map
-  std::map<Facet_handle, std::size_t> face_index;
-  for (Polyhedron::Facet_iterator fitr = mesh.facets_begin();
-    fitr != mesh.facets_end(); ++fitr)
-    face_index.insert(std::pair<Facet_handle, std::size_t>(fitr, 0));
+  std::map<face_descriptor, std::size_t> face_index;
+  BOOST_FOREACH(face_descriptor f, faces(mesh))
+    face_index.insert(std::pair<face_descriptor, std::size_t>(f, 0));
   Face_proxy_map proxy_pmap(face_index);
 
   // create L2_approx L2 metric approximation algorithm instance
   std::cout << "setup algorithm instance" << std::endl;
   L2_metric_plane_proxy error_metric(mesh,
-    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
+    get(boost::vertex_point, const_cast<Mesh &>(mesh)));
   L2_approx approx(mesh,
-    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)),
+    get(boost::vertex_point, const_cast<Mesh &>(mesh)),
     error_metric);
 
   // random seeding and run
@@ -87,7 +100,7 @@ int main()
   if (approx.number_of_proxies() != 17)
     return EXIT_FAILURE;
 
-  // extract the approximation polyhedron
+  // extract the approximation Mesh
   std::cout << "meshing" << std::endl;
   if (approx.extract_mesh(CGAL::parameters::subdivision_ratio(1.0)))
     std::cout << "manifold." << std::endl;
@@ -99,17 +112,17 @@ int main()
   approx.proxy_map(proxy_pmap);
 
   for (std::size_t i = 0; i < approx.number_of_proxies(); ++i) {
-    std::list<Facet_handle> patch;
+    std::list<face_descriptor> patch;
     approx.proxy_region(i, std::back_inserter(patch));
   }
 
   std::vector<Plane_proxy> proxies;
   approx.proxies(std::back_inserter(proxies));
 
-  std::vector<Point> anchor_pos;
+  std::vector<Kernel::Point_3> anchor_pos;
   approx.anchor_points(std::back_inserter(anchor_pos));
 
-  std::vector<Polyhedron::Vertex_handle> anchor_vtx;
+  std::vector<vertex_descriptor> anchor_vtx;
   approx.anchor_vertices(std::back_inserter(anchor_vtx));
 
   std::vector<CGAL::cpp11::array<std::size_t, 3> > tris;
@@ -118,7 +131,7 @@ int main()
   std::vector<std::vector<std::size_t> > boundary;
   approx.indexed_boundary_polygons(std::back_inserter(boundary));
 
-  const FT drop(0.001);
+  const Kernel::FT drop(0.001);
   const std::size_t iterations = 5;
   std::cout << "re-initialize and hierarchical seeding" << std::endl;
   approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::Surface_mesh_approximation::HIERARCHICAL)
@@ -134,7 +147,7 @@ int main()
   approx.run(10);
   std::cout << "#proxies " << approx.number_of_proxies() << std::endl;
 
-  // extract the approximation polyhedron
+  // extract the approximation Mesh
   std::cout << "meshing" << std::endl;
   if (approx.extract_mesh(CGAL::parameters::subdivision_ratio(1.0)))
     std::cout << "manifold." << std::endl;

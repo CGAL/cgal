@@ -3,27 +3,27 @@
 #include <ctime>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Surface_mesh.h>
 #include <CGAL/Bbox_3.h>
 
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/Polygon_mesh_processing/remesh.h>
+
 #include <CGAL/Variational_shape_approximation.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
-typedef Kernel::Point_3 Point;
-typedef Kernel::Vector_3 Vector;
+typedef Kernel::Point_3 Point_3;
+typedef Kernel::Vector_3 Vector_3;
 
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
-typedef Polyhedron::Facet_handle Facet_handle;
-typedef Polyhedron::Facet_iterator Facet_iterator;
-typedef Polyhedron::Halfedge_handle Halfedge_handle;
+typedef CGAL::Surface_mesh<Kernel::Point_3> Mesh;
+typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
+typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
+typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
 
-typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
-typedef boost::associative_property_map<std::map<Facet_handle, std::size_t> > Face_proxy_map;
+typedef boost::property_map<Mesh, boost::vertex_point_t>::type Vertex_point_map;
+typedef Mesh::Property_map<face_descriptor, std::size_t> Face_proxy_map;
 
-typedef CGAL::Variational_shape_approximation<Polyhedron, Vertex_point_map> L21_approx;
+typedef CGAL::Variational_shape_approximation<Mesh, Vertex_point_map> L21_approx;
 typedef L21_approx::Error_metric L21_metric;
 typedef L21_approx::Proxy Plane_proxies;
 
@@ -35,10 +35,12 @@ bool check_strict_ordering(const std::vector<FT> &error)
     std::cout << "Empty error sequence." << std::endl;
     return false;
   }
+
   FT pre = error.front();
-  for (std::vector<FT>::const_iterator itr = error.begin(); itr != error.end(); ++itr)
-    if (pre < *itr)
+  BOOST_FOREACH(const FT &e, error) {
+    if (pre < e)
       return false;
+  }
 
   return true;
 }
@@ -50,20 +52,18 @@ bool check_strict_ordering(const std::vector<FT> &error)
  */
 int main()
 {
-  Polyhedron mesh;
+  Mesh mesh;
   std::ifstream input("./data/plane-sphere-high.off");
-  if (!input || !(input >> mesh) || mesh.empty()) {
-    std::cerr << "Invalid off file." << std::endl;
+  if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
+    std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;
   }
   std::cout << "Teleportation test." << std::endl;
 
   // algorithm instance
-  L21_metric error_metric(mesh,
-    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
-  L21_approx approx(mesh,
-    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)),
-    error_metric);
+  Vertex_point_map vpmap = get(boost::vertex_point, const_cast<Mesh &>(mesh));
+  L21_metric error_metric(mesh, vpmap);
+  L21_approx approx(mesh, vpmap, error_metric);
 
   std::cout << "Random seeding by number." << std::endl;
   std::srand(static_cast<unsigned int>(std::time(0)));
@@ -92,15 +92,16 @@ int main()
 
   // test partition placement
   std::cout << "Test partition placement." << std::endl;
-  std::map<Facet_handle, std::size_t> internal_fidxmap;
-  for (Facet_iterator fitr = mesh.facets_begin(); fitr != mesh.facets_end(); ++fitr)
-    internal_fidxmap[fitr] = 0;
-  Face_proxy_map fproxymap(internal_fidxmap);
+  Face_proxy_map fproxymap =
+    mesh.add_property_map<face_descriptor, std::size_t>("f:porxy_id", 0).first;
   approx.proxy_map(fproxymap);
   std::vector<Plane_proxies> proxies;
   approx.proxies(std::back_inserter(proxies));
 
-  CGAL::Bbox_3 bbox = CGAL::bbox_3(mesh.points_begin(), mesh.points_end());
+
+  CGAL::Bbox_3 bbox;
+  BOOST_FOREACH(const vertex_descriptor v, vertices(mesh))
+    bbox += vpmap[v].bbox();
   const FT ymin = bbox.ymin(), ymax = bbox.ymax(), yrange = ymax - ymin;
   std::cout << "Range along y axis: [" << ymin << ", " << ymax << "]" << std::endl;
 
@@ -108,21 +109,20 @@ int main()
   std::size_t planar_pxidx = static_cast<std::size_t>(-1);
   std::size_t num_planar_faces = 0;
   bool first = true;
-  for (Facet_iterator fitr = mesh.facets_begin(); fitr != mesh.facets_end(); ++fitr) {
-    Halfedge_handle he = fitr->halfedge();
-    const Point &p0 = he->opposite()->vertex()->point();
-    const Point &p1 = he->vertex()->point();
-    const Point &p2 = he->next()->vertex()->point();
-    const Point fcenter = CGAL::centroid(p0, p1, p2);
-    Vector fnormal = CGAL::normal(p0, p1, p2);
-    fnormal = fnormal / FT(std::sqrt(CGAL::to_double(fnormal.squared_length())));
+  BOOST_FOREACH(const face_descriptor f, faces(mesh)) {
+    const halfedge_descriptor he = halfedge(f, mesh);
+    const Point_3 &p0 = vpmap[source(he, mesh)];
+    const Point_3 &p1 = vpmap[target(he, mesh)];
+    const Point_3 &p2 = vpmap[target(next(he, mesh), mesh)];
+    const Point_3 fcenter = CGAL::centroid(p0, p1, p2);
+    const Vector_3 fnormal = CGAL::unit_normal(p0, p1, p2);
 
     // check the face center and normal to see if it is on the planar part of the geometry
     double dis_var = std::abs(CGAL::to_double((fcenter.y() - ymin) / yrange));
     double dir_var = std::abs(CGAL::to_double(fnormal.y()) - 1.0);
     if (dis_var < CGAL_VSA_TEST_TOLERANCE && dir_var < CGAL_VSA_TEST_TOLERANCE) {
       ++num_planar_faces;
-      const std::size_t pxidx = fproxymap[fitr];
+      const std::size_t pxidx = fproxymap[f];
       if (first) {
         first = false;
         planar_pxidx = pxidx;

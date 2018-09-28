@@ -2,19 +2,22 @@
 #include <fstream>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Surface_mesh.h>
 
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/Polygon_mesh_processing/remesh.h>
+
 #include <CGAL/Variational_shape_approximation.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
-typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
 
-typedef CGAL::Variational_shape_approximation<Polyhedron, Vertex_point_map> L21_approx;
+typedef CGAL::Surface_mesh<Kernel::Point_3> Mesh;
+typedef boost::property_map<Mesh, boost::vertex_point_t>::type Vertex_point_map;
+
+typedef CGAL::Variational_shape_approximation<Mesh, Vertex_point_map> L21_approx;
 typedef L21_approx::Error_metric L21_metric;
+
+namespace PMP = CGAL::Polygon_mesh_processing;
 
 bool check_strict_ordering(const std::vector<FT> &error)
 {
@@ -35,18 +38,31 @@ bool check_strict_ordering(const std::vector<FT> &error)
  */
 int main()
 {
-  Polyhedron mesh;
-  std::ifstream input("./data/sphere_iso.off");
-  if (!input || !(input >> mesh) || mesh.empty()) {
-    std::cerr << "Invalid off file." << std::endl;
+  Mesh mesh;
+  std::ifstream input("./data/sphere.off");
+  if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
+    std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;
   }
 
+  const double target_edge_length = 0.05;
+  const unsigned int nb_iter = 3;
+
+  std::cout << "Start remeshing. "
+    << " (" << num_faces(mesh) << " faces)..." << std::endl;
+  PMP::isotropic_remeshing(
+    faces(mesh),
+    target_edge_length,
+    mesh,
+    PMP::parameters::number_of_iterations(nb_iter));
+  std::cout << "Remeshing done. "
+    << " (" << num_faces(mesh) << " faces)..." << std::endl;
+
   // algorithm instance
   L21_metric error_metric(mesh,
-    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
+    get(boost::vertex_point, const_cast<Mesh &>(mesh)));
   L21_approx approx(mesh,
-    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)),
+    get(boost::vertex_point, const_cast<Mesh &>(mesh)),
     error_metric);
 
   approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::Surface_mesh_approximation::RANDOM)

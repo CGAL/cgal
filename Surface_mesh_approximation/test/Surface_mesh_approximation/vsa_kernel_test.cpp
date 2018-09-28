@@ -10,33 +10,93 @@
 
 #include <CGAL/Surface_mesh.h>
 
+#include <CGAL/Polygon_mesh_processing/remesh.h>
+
 #include <CGAL/Surface_mesh_approximation/approximate_triangle_mesh.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
 typedef CGAL::Simple_cartesian<double> Sckernel;
 
-template <typename K, typename TM>
-int test() {
-  TM tm;
-  std::ifstream input("./data/cube_meshed.off");
-  if (!input || !(input >> tm) || num_vertices(tm) == 0) {
-    std::cerr << "Invalid off file." << std::endl;
+namespace PMP = CGAL::Polygon_mesh_processing;
+
+template <typename TM>
+int load_and_remesh_sm(TM &mesh) {
+  std::ifstream input("./data/cube.off");
+  if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
+    std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;
   }
 
-  typedef CGAL::Polyhedron_3<K> Polyhedron;
-  Polyhedron out_mesh;
+  const double target_edge_length = 0.05;
+  const unsigned int nb_iter = 3;
+
+  std::cout << "Start remeshing. "
+    << " (" << num_faces(mesh) << " faces)..." << std::endl;
+  PMP::isotropic_remeshing(
+    faces(mesh),
+    target_edge_length,
+    mesh,
+    PMP::parameters::number_of_iterations(nb_iter));
+  std::cout << "Remeshing done. "
+    << " (" << num_faces(mesh) << " faces)..." << std::endl;
+
+  return EXIT_SUCCESS;
+}
+
+template <typename TM>
+int load_and_remesh_poly(TM &mesh) {
+  std::ifstream input("./data/cube.off");
+  if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
+    std::cerr << "Invalid input file." << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  const double target_edge_length = 0.05;
+  const unsigned int nb_iter = 3;
+
+  std::cout << "Start remeshing. "
+    << " (" << num_faces(mesh) << " faces)..." << std::endl;
+  PMP::isotropic_remeshing(
+    faces(mesh),
+    target_edge_length,
+    mesh,
+    PMP::parameters::number_of_iterations(nb_iter).
+    face_index_map(get(boost::face_external_index, mesh)));
+  std::cout << "Remeshing done. "
+    << " (" << num_faces(mesh) << " faces)..." << std::endl;
+
+  return EXIT_SUCCESS;
+}
+
+template <typename K, typename TM>
+void run_approximation(const TM &mesh) {
   std::vector<typename K::Point_3> points;
   std::vector<CGAL::cpp11::array<std::size_t, 3> > triangles;
 
-  CGAL::Surface_mesh_approximation::approximate_triangle_mesh(tm,
+  CGAL::Surface_mesh_approximation::approximate_triangle_mesh(mesh,
     CGAL::parameters::max_number_of_proxies(6).
       number_of_iterations(30).
       number_of_relaxations(5).
       subdivision_ratio(0.5).
       anchors(std::back_inserter(points)).
       triangles(std::back_inserter(triangles)));
+}
 
+template <typename K, typename TM>
+int test_sm() {
+  TM mesh;
+  if (load_and_remesh_sm(mesh) == EXIT_FAILURE)
+    return EXIT_FAILURE;
+  run_approximation<K, TM>(mesh);
+  return EXIT_SUCCESS;
+}
+
+template <typename K, typename TM>
+int test_poly() {
+  TM mesh;
+  if (load_and_remesh_poly(mesh) == EXIT_FAILURE)
+    return EXIT_FAILURE;
+  run_approximation<K, TM>(mesh);
   return EXIT_SUCCESS;
 }
 
@@ -45,16 +105,16 @@ int test() {
  */
 int main()
 {
-  if (test<Epic, CGAL::Polyhedron_3<Epic> >() == EXIT_FAILURE)
+  if (test_poly<Epic, CGAL::Polyhedron_3<Epic> >() == EXIT_FAILURE)
     return EXIT_FAILURE;
 
-  if (test<Epic, CGAL::Surface_mesh<Epic::Point_3> >() == EXIT_FAILURE)
+  if (test_sm<Epic, CGAL::Surface_mesh<Epic::Point_3> >() == EXIT_FAILURE)
     return EXIT_FAILURE;
 
-  if (test<Sckernel, CGAL::Polyhedron_3<Sckernel> >() == EXIT_FAILURE)
+  if (test_poly<Sckernel, CGAL::Polyhedron_3<Sckernel> >() == EXIT_FAILURE)
     return EXIT_FAILURE;
 
-  if (test<Sckernel, CGAL::Surface_mesh<Sckernel::Point_3> >() == EXIT_FAILURE)
+  if (test_sm<Sckernel, CGAL::Surface_mesh<Sckernel::Point_3> >() == EXIT_FAILURE)
     return EXIT_FAILURE;
 
   return EXIT_SUCCESS;
