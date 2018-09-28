@@ -27,6 +27,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/Path_on_surface.h>
 #include <CGAL/Combinatorial_map_basic_operations.h>
+#include <CGAL/Timer.h>
 
 namespace CGAL {
   
@@ -162,6 +163,9 @@ namespace CGAL {
       m_original_map.free_mark(m_mark_L);
     }
 
+    const Map& get_map() const
+    { return m_map; }
+    
     Path_on_surface<Map> transform_original_path_into_quad_surface
     (const Path_on_surface<Map>& path)
     {
@@ -399,8 +403,13 @@ namespace CGAL {
       }
       else
       {
+        CGAL::Timer t; t.start();
+
         // update_length_two_paths_before_edge_removals_v1(toremove);
         update_length_two_paths_before_edge_removals_v2(toremove, copy_to_origin);
+
+        t.stop();
+        std::cout<<"Update length two paths: "<<t.time()<<" seconds"<<std::endl;
 
         // We remove all the edges to remove.
         for (typename Map::Dart_range::iterator it=m_map.darts().begin(),
@@ -513,166 +522,69 @@ namespace CGAL {
       }
     }
 
-  /// Version2: linear in number of darts in the pathes
-   void update_length_two_paths_before_edge_removals_v2(typename Map::size_type toremove,
-                                                        const boost::unordered_map<Dart_handle, Dart_const_handle>& copy_to_origin)
-   {
-     // std::cout<<"************************************************"<<std::endl;
-     for (typename TPaths::iterator itp=paths.begin(), itpend=paths.end();
-          itp!=itpend; ++itp)
-     {
-       std::pair<Dart_const_handle, Dart_const_handle>& p=itp->second;
-       assert(m_map.template beta<2>(p.first)==p.second);
-       assert(m_map.is_marked(p.first, toremove)==m_map.is_marked(p.second, toremove));
-       Dart_handle initdart=m_map.darts().iterator_to(const_cast<typename Map::Dart &>(*(p.first)));
-       assert(initdart==p.first);
-     }
+    /// Version2: linear in number of darts in the pathes
+    void update_length_two_paths_before_edge_removals_v2(typename Map::size_type toremove,
+                                                         const boost::unordered_map<Dart_handle, Dart_const_handle>& copy_to_origin)
+    {
+      // std::cout<<"************************************************"<<std::endl;
+      for (auto it=m_original_map.darts().begin(); it!=m_original_map.darts().end(); ++it)
+      {
+        if (!m_original_map.is_marked(it, m_mark_T) &&
+            !m_original_map.is_marked(it, m_mark_L) &&
+            it<m_original_map.template beta<2>(it))
+        { // Surviving dart => belongs to the border of the face
+          std::pair<Dart_const_handle, Dart_const_handle>& p=paths[it];
 
-    /*  typename Map::size_type modified=m_map.get_new_mark();
+          Dart_handle initdart=m_map.darts().iterator_to(const_cast<typename Map::Dart &>(*(p.first)));
+          Dart_handle initdart2=m_map.template beta<2>(initdart);
 
-     // We update the pair of darts
-    for (typename TPaths::iterator itp=paths.begin(), itpend=paths.end();
-          itp!=itpend; ++itp)
-     {
-       std::pair<Dart_const_handle, Dart_const_handle>& p=itp->second;
+          assert(!m_map.is_marked(initdart, toremove));
+          assert(!m_map.is_marked(initdart2, toremove));
 
-       // We only start from non marked darts; marked darts are updated in
-       // a loop starting from a non-marked dart.
-       if (!m_map.is_marked(p.first, toremove) && !m_map.is_marked(p.first, modified))
-       { // Here p.first belongs to the "border" of the face
-         Dart_handle initdart=m_map.darts().iterator_to(const_cast<typename Map::Dart &>(*(p.first)));
-         Dart_handle initdart2=m_map.template beta<2>(initdart);
+          // 1) We update the dart associated with p.second
+          p.second=m_map.template beta<1>(initdart);
+          while (m_map.is_marked(p.second, toremove))
+          { p.second=m_map.template beta<2, 1>(p.second); }
 
-         assert(!m_map.is_marked(p.second, toremove));
-         assert(Dart_const_handle(initdart2)==p.second);
+          // 2) We do the same loop, linking all the inner darts with p.second
+          initdart=m_map.template beta<1>(initdart);
+          while (m_map.is_marked(initdart, toremove))
+          {
+            assert(copy_to_origin.count(initdart)==1);
+            Dart_const_handle d1=copy_to_origin.find(initdart)->second;
+            Dart_const_handle d2=m_original_map.template beta<2>(d1);
+            if (d1<d2) { paths[d1].first=p.second; }
+            else       { paths[d2].second=p.second; }
+            initdart=m_map.template beta<2, 1>(initdart);
+          }
 
-         m_map.mark(p.first, modified);
-         m_map.mark(p.second, modified);
+          // 3) We do the same loop but starting from initdart2
+          initdart2=m_map.template beta<1>(initdart2);
+          Dart_handle enddart2=initdart2;
+          while (m_map.is_marked(enddart2, toremove))
+          { enddart2=m_map.template beta<2, 1>(enddart2); }
 
-         // 1) We update the dart associated with p.second         
-         p.second=m_map.template beta<1>(initdart);
-         while (m_map.is_marked(p.second, toremove))
-         {
-           p.second=m_map.template beta<2, 1>(p.second);
-         }
-         assert(!m_map.is_marked(p.second, toremove));
+          while (m_map.is_marked(initdart2, toremove))
+          {
+            assert(copy_to_origin.count(initdart2)==1);
+            Dart_const_handle d1=copy_to_origin.find(initdart2)->second;
+            Dart_const_handle d2=m_original_map.template beta<2>(d1);
+            if (d1<d2) {
+              assert(paths.count(d1)==1);
+              paths[d1].first=enddart2;
+              assert(!m_map.is_marked(enddart2, toremove));
+            }
+            else       {
+              assert(paths.count(d2)==1);
+              paths[d2].second=enddart2;
+              assert(!m_map.is_marked(enddart2, toremove));
+            }
+            initdart2=m_map.template beta<2, 1>(initdart2);
+          }
+        }
+      }
+    }
 
-         // 2) We do the same loop, linking all the inner darts with p.second
-         initdart=m_map.template beta<1>(initdart);
-         while (m_map.is_marked(initdart, toremove))
-         {
-           assert(copy_to_origin.count(initdart)==1);
-           Dart_const_handle d1=copy_to_origin.find(initdart)->second;
-           Dart_const_handle d2=m_original_map.template beta<2>(d1);
-
-           m_map.mark(initdart, modified);
-           m_map.mark(m_map.template beta<2>(initdart), modified);
-
-           if (d1<d2) {
-             assert(paths.count(d1)==1);
-             paths[d1].first=p.second;
-             assert(!m_map.is_marked(p.second, toremove));
-           }
-           else       {
-             assert(paths.count(d2)==1);
-             paths[d2].second=p.second;
-             assert(!m_map.is_marked(p.second, toremove));
-           }
-           initdart=m_map.template beta<2, 1>(initdart);
-         }
-
-         // 3) We do the same loop but starting from initdart2
-         initdart2=m_map.template beta<1>(initdart2);
-         Dart_handle enddart2=initdart2;
-         while (m_map.is_marked(enddart2, toremove))
-         { enddart2=m_map.template beta<2, 1>(enddart2); }
-
-         while (m_map.is_marked(initdart2, toremove))
-         {
-           assert(copy_to_origin.count(initdart2)==1);
-           Dart_const_handle d1=copy_to_origin.find(initdart2)->second;
-           Dart_const_handle d2=m_original_map.template beta<2>(d1);
-
-           m_map.mark(initdart2, modified);
-           m_map.mark(m_map.template beta<2>(initdart2), modified);
-
-           if (d1<d2) {
-             assert(paths.count(d1)==1);
-             paths[d1].first=enddart2;
-             assert(!m_map.is_marked(enddart2, toremove));
-           }
-           else       {
-             assert(paths.count(d2)==1);
-             paths[d2].second=enddart2;
-             assert(!m_map.is_marked(enddart2, toremove));
-           }
-           initdart2=m_map.template beta<2, 1>(initdart2);
-         }
-         m_map.mark(initdart2, modified);
-       }
-     }
-
-     assert(m_map.is_whole_map_marked(modified));
-     m_map.free_mark(modified);
-*/
-
-     for (auto it=m_original_map.darts().begin(); it!=m_original_map.darts().end(); ++it)
-     {
-       if (!m_original_map.is_marked(it, m_mark_T) &&
-           !m_original_map.is_marked(it, m_mark_L) &&
-           it<m_original_map.template beta<2>(it))
-       { // Surviving dart => belongs to the border of the face
-         std::pair<Dart_const_handle, Dart_const_handle>& p=paths[it];
-
-         Dart_handle initdart=m_map.darts().iterator_to(const_cast<typename Map::Dart &>(*(p.first)));
-         Dart_handle initdart2=m_map.template beta<2>(initdart);
-
-         assert(!m_map.is_marked(initdart, toremove));
-         assert(!m_map.is_marked(initdart2, toremove));
-
-         // 1) We update the dart associated with p.second
-         p.second=m_map.template beta<1>(initdart);
-         while (m_map.is_marked(p.second, toremove))
-         { p.second=m_map.template beta<2, 1>(p.second); }
-
-         // 2) We do the same loop, linking all the inner darts with p.second
-         initdart=m_map.template beta<1>(initdart);
-         while (m_map.is_marked(initdart, toremove))
-         {
-           assert(copy_to_origin.count(initdart)==1);
-           Dart_const_handle d1=copy_to_origin.find(initdart)->second;
-           Dart_const_handle d2=m_original_map.template beta<2>(d1);
-           if (d1<d2) { paths[d1].first=p.second; }
-           else       { paths[d2].second=p.second; }
-           initdart=m_map.template beta<2, 1>(initdart);
-         }
-
-         // 3) We do the same loop but starting from initdart2
-         initdart2=m_map.template beta<1>(initdart2);
-         Dart_handle enddart2=initdart2;
-         while (m_map.is_marked(enddart2, toremove))
-         { enddart2=m_map.template beta<2, 1>(enddart2); }
-
-         while (m_map.is_marked(initdart2, toremove))
-         {
-           assert(copy_to_origin.count(initdart2)==1);
-           Dart_const_handle d1=copy_to_origin.find(initdart2)->second;
-           Dart_const_handle d2=m_original_map.template beta<2>(d1);
-           if (d1<d2) {
-             assert(paths.count(d1)==1);
-             paths[d1].first=enddart2;
-             assert(!m_map.is_marked(enddart2, toremove));
-           }
-           else       {
-             assert(paths.count(d2)==1);
-             paths[d2].second=enddart2;
-             assert(!m_map.is_marked(enddart2, toremove));
-           }
-           initdart2=m_map.template beta<2, 1>(initdart2);
-         }
-       }
-     }
-   }
     /// @return true iff the edge containing adart is associated with a path.
     ///         (used for debug purpose because we are suppose to be able to
     ///          test this by using directly the mark m_mark_T).
