@@ -275,7 +275,7 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
                                                   << (memory>>20) << " Mb allocated"
                                                   << std::endl;
     }
-
+    item->resetMenu();
     item->setRenderingMode(PointsPlusNormals);
 
     //***************************************
