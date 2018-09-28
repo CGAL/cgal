@@ -98,7 +98,6 @@ Meshing_thread* cgal_code_mesh_3_templated(const Mesh* pMesh,
   std::cerr << " done (" << timer.time() * 1000 << " ms)" << std::endl;
 
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item(surface_only);
-  p_new_item->setScene(scene);
 
   QString tooltip = QString("<div>From \"") + filename +
     QString("\" with the following mesh parameters"
@@ -199,8 +198,6 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
                              );
 
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
-  p_new_item->setScene(scene);
-
   Mesh_parameters param;
   param.protect_features = false;
   param.facet_angle = facet_angle;
@@ -260,7 +257,6 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   param.manifold = manifold;
   param.image_3_ptr = pImage;
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
-  p_new_item->setScene(scene);
   if(!is_gray)
   {
     namespace p = CGAL::parameters;

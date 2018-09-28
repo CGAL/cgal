@@ -159,6 +159,7 @@ public:
 
   void initializeBuffers(Viewer_interface *) const Q_DECL_OVERRIDE;
   void computeElements() const Q_DECL_OVERRIDE;
+  void newViewer(Viewer_interface *viewer) Q_DECL_OVERRIDE;
   
   protected:
     friend struct Scene_c3t3_item_priv;

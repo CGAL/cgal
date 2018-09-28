@@ -28,7 +28,7 @@ Viewer_interface* Three::mainViewer()
 Viewer_interface* Three::activeViewer()
 {
   QMdiArea *mdi = mainWindow()->findChild<QMdiArea*>();
-  if(!mdi)
+  if(!mdi || !mdi->activeSubWindow())
     return mainViewer();
   Viewer_interface* v = qobject_cast<Viewer_interface*>(mdi->activeSubWindow()->widget());
   if(!v)
