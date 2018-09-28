@@ -17,6 +17,18 @@ using namespace CGAL::Three;
 typedef Viewer_interface Vi;
 typedef Point_container Pc;
 
+CGAL::QGLViewer* getActiveViewer()
+{
+  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  {
+    if(v->hasFocus())
+    {
+      return v;
+    }
+  }
+  return Three::mainViewer();
+}
+
 typedef Scene_polyhedron_shortest_path_item It;
 struct Scene_polyhedron_shortest_path_item_priv
 {
@@ -267,12 +279,19 @@ void Scene_polyhedron_shortest_path_item::invalidateOpenGLBuffers()
   compute_bbox();
   setBuffersFilled(false);
   getPointContainer(0)->reset_vbos(ALL);
+  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  {
+    CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
+    if(viewer == NULL)
+      continue;
+    setBuffersInit(viewer, false);
+  }
 }
 
 bool Scene_polyhedron_shortest_path_item_priv::get_mouse_ray(
     QMouseEvent* mouseEvent, Kernel::Ray_3& outRay)
 {
-  CGAL::QGLViewer* viewer = Three::mainViewer();
+  CGAL::QGLViewer* viewer = getActiveViewer();
   viewer->makeCurrent();
   const CGAL::qglviewer::Vec offset = viewer->offset();
   CGAL::qglviewer::Camera* camera = viewer->camera();
@@ -494,6 +513,7 @@ bool Scene_polyhedron_shortest_path_item_priv::run_point_select(const Ray_3& ray
       break;
     }
     item->invalidateOpenGLBuffers();
+    item->redraw();
     QApplication::restoreOverrideCursor();
     return true;
   }
@@ -615,8 +635,10 @@ void Scene_polyhedron_shortest_path_item::initialize(
   d->m_sceneInterface = sceneInterface;
   connect(polyhedronItem, SIGNAL(item_is_about_to_be_changed()), this, 
           SLOT(poly_item_changed()));
-  CGAL::QGLViewer* viewer = Three::mainViewer();
-  viewer->installEventFilter(this);
+  Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
+    viewer->installEventFilter(this);
+  connect(d->m_mainWindow, SIGNAL(newViewerCreated(QObject*)),
+          this, SLOT(connectNewViewer(QObject*)));
   d->m_mainWindow->installEventFilter(this);
   d->recreate_shortest_path_object();
 }
@@ -664,4 +686,9 @@ void Scene_polyhedron_shortest_path_item::initializeBuffers(Viewer_interface *v)
   getPointContainer(0)->setFlatDataSize(d->nb_vertices);
   d->vertices.clear();
   d->vertices.shrink_to_fit();
+}
+
+void Scene_polyhedron_shortest_path_item::connectNewViewer(QObject* o)
+{
+  o->installEventFilter(this);
 }
