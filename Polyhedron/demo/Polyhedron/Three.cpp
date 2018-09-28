@@ -3,6 +3,8 @@
 #include <QMetaMethod>
 #include <QAction>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <QMdiArea>
+#include <QMdiSubWindow>
 using namespace CGAL::Three;
 
 QMainWindow* Three::s_mainwindow = NULL;
@@ -21,6 +23,17 @@ QMainWindow* Three::mainWindow()
 Viewer_interface* Three::mainViewer()
 {
   return s_mainviewer;
+}
+
+Viewer_interface* Three::activeViewer()
+{
+  QMdiArea *mdi = mainWindow()->findChild<QMdiArea*>();
+  if(!mdi)
+    return mainViewer();
+  Viewer_interface* v = qobject_cast<Viewer_interface*>(mdi->activeSubWindow()->widget());
+  if(!v)
+    return mainViewer();
+  return v;
 }
 
 Scene_interface* Three::scene()

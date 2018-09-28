@@ -1,4 +1,5 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 #include <QApplication>
 #include <QObject>
 #include <QAction>
@@ -33,7 +34,7 @@ public:
 
 typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
 typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
-
+CGAL::Three::Viewer_interface* (&getActiveViewer)() = CGAL::Three::Three::activeViewer;
 class DisplayPropertyPlugin :
     public QObject,
     public CGAL::Three::Polyhedron_demo_plugin_helper
@@ -530,19 +531,19 @@ private Q_SLOTS:
     case 0:
     {
       ::zoomToId(*item->face_graph(),
-                     QString("f%1").arg(angles_min[item].second),
-                     qobject_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first()),
-                     dummy_fd,
-                     dummy_p);
+                 QString("f%1").arg(angles_min[item].second),
+                 getActiveViewer(),
+                 dummy_fd,
+                 dummy_p);
     }
       break;
     case 1:
     {
       ::zoomToId(*item->face_graph(),
-                     QString("f%1").arg(jacobian_min[item].second),
-                     qobject_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first()),
-                     dummy_fd,
-                     dummy_p);
+                 QString("f%1").arg(jacobian_min[item].second),
+                 getActiveViewer(),
+                 dummy_fd,
+                 dummy_p);
     }
       break;
     default:
@@ -564,7 +565,7 @@ private Q_SLOTS:
     {
       ::zoomToId(*item->face_graph(),
                  QString("f%1").arg(angles_max[item].second),
-                 qobject_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first()),
+                 getActiveViewer(),
                  dummy_fd,
                  dummy_p);
     }
@@ -573,7 +574,7 @@ private Q_SLOTS:
     {
       ::zoomToId(*item->face_graph(),
                  QString("f%1").arg(jacobian_max[item].second),
-                 qobject_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first()),
+                 getActiveViewer(),
                  dummy_fd,
                  dummy_p);
     }

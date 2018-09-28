@@ -21,8 +21,6 @@
 #include <CGAL/iterator.h>
 
 #include <CGAL/Polygon_2.h>
-
-using namespace CGAL::Three;
 typedef Scene_surface_mesh_item Scene_facegraph_item;
 typedef EPICK FG_Traits;
 
@@ -96,18 +94,6 @@ public:
       :is_active(false),is_current_selection(true), is_edit_mode(false)
   {
     init(poly_item, mw, aht, k_ring);
-  }
-
-  CGAL::QGLViewer* getActiveViewer()
-  {
-    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
-    {
-      if(v->hasFocus())
-      {
-        return v;
-      }
-    }
-    return Three::mainViewer();
   }
   
   void setEditMode(bool b)
@@ -194,9 +180,9 @@ public Q_SLOTS:
   {
     if(is_ready_to_paint_select)
     {
-      const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
+      const CGAL::qglviewer::Vec offset = CGAL::Three::Three::mainViewer()->offset();
       // paint with mouse move event
-      CGAL::QGLViewer* viewer = getActiveViewer();
+      CGAL::QGLViewer* viewer = CGAL::Three::Three::activeViewer();
       CGAL::qglviewer::Camera* camera = viewer->camera();
       viewer->makeCurrent();
       bool found = false;
@@ -227,8 +213,8 @@ public Q_SLOTS:
 
   void lasso_selection()
   {
-    CGAL::QGLViewer* viewer = getActiveViewer();
-    const CGAL::qglviewer::Vec offset =Three::mainViewer()->offset();
+    CGAL::QGLViewer* viewer = CGAL::Three::Three::activeViewer();
+    const CGAL::qglviewer::Vec offset = CGAL::Three::Three::mainViewer()->offset();
 
     CGAL::qglviewer::Camera* camera = viewer->camera();
     const FaceGraph& poly = *poly_item->polyhedron();
@@ -378,11 +364,11 @@ public Q_SLOTS:
 
   void highlight()
   {
-    const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
+    const CGAL::qglviewer::Vec offset = CGAL::Three::Three::mainViewer()->offset();
     if(is_ready_to_highlight)
     {
       // highlight with mouse move event
-      CGAL::QGLViewer* viewer = getActiveViewer();
+      CGAL::QGLViewer* viewer = CGAL::Three::Three::activeViewer();
       CGAL::qglviewer::Camera* camera = viewer->camera();
       viewer->makeCurrent();
       bool found = false;
@@ -579,7 +565,7 @@ protected:
         return false;
       if(target == mainwindow)
       {
-        CGAL::QGLViewer* viewer = getActiveViewer();
+        CGAL::QGLViewer* viewer = CGAL::Three::Three::activeViewer();
         viewer->setFocus();
         return false;
       }
@@ -598,8 +584,8 @@ protected:
         if (event->type() != QEvent::MouseMove)
         {
           //Create a QImage of the screen and paint the lasso on top of it
-          CGAL::QGLViewer* viewer = getActiveViewer();
-          background = static_cast<Viewer_interface*>(viewer)->grabFramebuffer();
+          CGAL::QGLViewer* viewer = CGAL::Three::Three::activeViewer();
+          background = static_cast<CGAL::Three::Viewer_interface*>(viewer)->grabFramebuffer();
         }
         sample_mouse_path(background);
       }
@@ -610,7 +596,7 @@ protected:
     {
       if(target == mainwindow)
       {
-        CGAL::QGLViewer* viewer = getActiveViewer();
+        CGAL::QGLViewer* viewer = CGAL::Three::Three::activeViewer();
         viewer->setFocus();
         return false;
       }
@@ -653,7 +639,8 @@ protected:
 
   void sample_mouse_path(QImage& background)
   {
-    Viewer_interface* viewer = qobject_cast<Viewer_interface*>(getActiveViewer());
+    CGAL::Three::Viewer_interface* viewer =
+        qobject_cast<CGAL::Three::Viewer_interface*>(CGAL::Three::Three::activeViewer());
     viewer->makeCurrent();
     const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
     contour_2d.push_back (FG_Traits::Point_2 (p.x(), p.y()));

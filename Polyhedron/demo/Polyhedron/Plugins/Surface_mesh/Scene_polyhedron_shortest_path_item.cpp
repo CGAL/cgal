@@ -17,18 +17,7 @@ using namespace CGAL::Three;
 typedef Viewer_interface Vi;
 typedef Point_container Pc;
 
-CGAL::QGLViewer* getActiveViewer()
-{
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
-  {
-    if(v->hasFocus())
-    {
-      return v;
-    }
-  }
-  return Three::mainViewer();
-}
-
+Viewer_interface* (&getActiveViewer)() = Three::activeViewer;
 typedef Scene_polyhedron_shortest_path_item It;
 struct Scene_polyhedron_shortest_path_item_priv
 {

@@ -47,6 +47,7 @@ public:
   virtual ~Three(){}
   static QMainWindow* mainWindow();
   static Viewer_interface* mainViewer();
+  static Viewer_interface* activeViewer();
   static Scene_interface* scene();
   static QObject* connectableScene();
   static Three* messages();
