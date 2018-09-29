@@ -147,15 +147,8 @@ public:
       const Point_3& hp = h.p();
       const Point_3& hq = h.q();
       const Point_3& hr = h.r();
-      //typename OldK::Less_signed_distance_to_plane_3 
-      //	less_signed_distance_to_plane_3;
-      // return less_signed_distance_to_plane_3(hp, hq, hr, p, q);
-      return has_smaller_signed_dist_to_planeC3(hp.x(), hp.y(), hp.z(),
-                                                hq.x(), hq.y(), hq.z(),
-                                                hr.x(), hr.y(), hr.z(),
-                                                p.x(), p.y(), p.z(),
-                                                q.x(), q.y(), q.z());
-      
+      typename K::Less_signed_distance_to_plane_3 less_signed_distance_to_plane_3;
+      return less_signed_distance_to_plane_3(hp, hq, hr, p, q);
     }
   };
 
@@ -164,35 +157,10 @@ struct GT3_for_CH3 {
   typedef typename GT::Point_3 Point_2;
 };
 
-template <class R_, class Has_filtered_predicates_tag /* = Tag_false */>
-struct Convex_hull_traits_base_3 {
-  typedef Point_triple_has_on_positive_side_3<R_>     Has_on_positive_side_3;
-
-  typedef  Point_triple_less_signed_distance_to_plane_3<R_>
-                                                  Less_signed_distance_to_plane_3;
-};
-
-template <class R_>
-struct Convex_hull_traits_base_3<R_, Tag_true>{
-  typedef Filtered_predicate<
-      Point_triple_has_on_positive_side_3< typename R_::Exact_kernel_rt >,
-      Point_triple_has_on_positive_side_3< typename R_::Approximate_kernel >,
-      Point_triple_converter<R_,typename R_::Exact_kernel_rt>,
-      Point_triple_converter<R_,typename R_::Approximate_kernel>
-  > Has_on_positive_side_3;
-
-  typedef Filtered_predicate<
-      Point_triple_less_signed_distance_to_plane_3< typename R_::Exact_kernel_rt >,
-      Point_triple_less_signed_distance_to_plane_3< typename R_::Approximate_kernel >,
-      Point_triple_converter<R_,typename R_::Exact_kernel_rt>,
-      Point_triple_converter<R_,typename R_::Approximate_kernel>
-  > Less_signed_distance_to_plane_3;
-};
 
 
   template <class R_, class Polyhedron = Default, class Has_filtered_predicates_tag = Tag_false>
-class Convex_hull_traits_3 :
-  public Convex_hull_traits_base_3<R_, Has_filtered_predicates_tag>
+class Convex_hull_traits_3 
 {
  public:  
   typedef R_                                     R;
@@ -228,11 +196,12 @@ class Convex_hull_traits_3 :
   typedef typename R::Coplanar_3                 Coplanar_3;
   typedef typename R::Less_distance_to_point_3   Less_distance_to_point_3;
 
-  typedef typename Convex_hull_traits_base_3<R_, Has_filtered_predicates_tag>
-    ::Has_on_positive_side_3 Has_on_positive_side_3;
+  typedef Point_triple_has_on_positive_side_3<R> Has_on_positive_side_3;
 
-  typedef typename Convex_hull_traits_base_3<R_, Has_filtered_predicates_tag>
-    ::Less_signed_distance_to_plane_3 Less_signed_distance_to_plane_3;
+  typedef  Point_triple_less_signed_distance_to_plane_3<R>
+                                                 Less_signed_distance_to_plane_3;
+  
+  
 
   // required for degenerate case of all points coplanar
   typedef CGAL::Projection_traits_xy_3<R>         Traits_xy_3;
