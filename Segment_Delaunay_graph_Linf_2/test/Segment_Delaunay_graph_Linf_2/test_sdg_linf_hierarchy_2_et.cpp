@@ -10,28 +10,19 @@
 #include <fstream>
 #include <cassert>
 
-// choose number type
-#ifdef CGAL_USE_GMP
+#include <CGAL/Exact_rational.h>
+#include <CGAL/Exact_integer.h>
 
-#  include <CGAL/Gmpq.h>
-typedef CGAL::Gmpq                     exact_ring_t;
-typedef CGAL::Gmpq                     exact_field_t;
+// choose number type
+typedef CGAL::Exact_integer exact_ring_t;
+typedef CGAL::Exact_rational exact_field_t;
 
 namespace CGAL {
 // needed for the drawing methods
-Gmpq sqrt(const Gmpq& x) {
-  return Gmpq(  sqrt( to_double(x) )  );
+exact_ring_t sqrt(const exact_ring_t& x) {
+  return exact_ring_t(  sqrt( to_double(x) )  );
 }
-
-} //namespace CGAL
-#else
-
-#  include <CGAL/MP_Float.h>
-#  include <CGAL/Quotient.h>
-typedef CGAL::MP_Float                 exact_ring_t;
-typedef CGAL::Quotient<exact_ring_t>   exact_field_t;
-
-#endif
+}
 
 typedef exact_ring_t   ring_number_t;
 typedef exact_field_t  field_number_t;
