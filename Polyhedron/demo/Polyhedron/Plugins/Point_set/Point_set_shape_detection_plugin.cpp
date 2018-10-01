@@ -358,6 +358,7 @@ private:
           ++ nb_colored_pts;
           colored_item->point_set()->set_color(*it, r, g, b);
         }
+        colored_item->invalidateOpenGLBuffers();
       }
       
       // Providing a useful name consisting of the order of detection, name of type and number of inliers
@@ -418,7 +419,7 @@ private:
                 poly_item->setName(QString("%1%2_alpha_shape").arg(QString::fromStdString(ss.str()))
                                    .arg (QString::number (shape->indices_of_assigned_points().size())));
                 poly_item->setRenderingMode (Flat);
-                
+                poly_item->invalidateOpenGLBuffers();
                 scene->addItem(poly_item);
                 if(scene->item_id(groups[0]) == -1)
                   scene->addItem(groups[0]);
@@ -452,6 +453,7 @@ private:
       point_item->setRenderingMode(item->renderingMode());
 
       if (dialog.generate_subset()){
+        point_item->invalidateOpenGLBuffers();
         scene->addItem(point_item);
         if (dynamic_cast<CGAL::Shape_detection_3::Cylinder<Traits> *>(shape.get()))
         {
@@ -469,6 +471,7 @@ private:
 
           if(scene->item_id(groups[0]) == -1)
              scene->addItem(groups[0]);
+          point_item->invalidateOpenGLBuffers();
           scene->changeGroup(point_item, groups[0]);
         }
         else if (dynamic_cast<CGAL::Shape_detection_3::Cone<Traits> *>(shape.get()))
@@ -523,6 +526,7 @@ private:
             pts_full->setName(tr("%1 (structured)").arg(item->name()));
             pts_full->setRenderingMode(PointsPlusNormals);
             pts_full->setColor(Qt::blue);
+            pts_full->invalidateOpenGLBuffers();
             scene->addItem (pts_full);
           }
         std::cerr << "done" << std::endl;
