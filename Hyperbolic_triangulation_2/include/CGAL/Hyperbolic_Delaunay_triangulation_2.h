@@ -582,9 +582,6 @@ private:
     // put the element whose neighbors we are going to explore.
     backtrack.push(current);
     
-    // test whether a face is finite non_hyperbolic or not
-    //Mark_face test(*this);
-    
     Face_handle next;
     
     while(!backtrack.empty()) {
@@ -602,7 +599,6 @@ private:
         }
         
         visited_faces.insert(next);
-        //mark_face(next, test);
         mark_face(next);
 
         // go deeper if the neighbor is non_hyperbolic
@@ -656,9 +652,7 @@ private:
   {
     // TODO: think of it
     if(this->dimension() <= 1) return;
-    
-    //Mark_face test(*this);
-    
+        
     Face_handle f = v->face();
     Face_handle start(f), next;
     int i;
@@ -667,25 +661,12 @@ private:
       next = f->neighbor(ccw(i));  // turn ccw around v
       
       mark_face(f);
-      //mark_face(f, test);
       
       f = next;
     } while(next != start);
     return;
   }
   
-  // template<class Mark_face_test>
-  // void mark_face(const Face_handle& f, const Mark_face_test& test) const
-  // {
-  //   std::cout << "marking face!" << std::endl;
-  //   Is_Delaunay_hyperbolic del;
-  //   int idx = -1;
-  //   bool flag = del(f->vertex(0)->point(),f->vertex(1)->point(),f->vertex(2)->point(),idx);
-  //   Face_data fd;
-  //   fd.set_is_finite_non_hyperbolic(flag);
-  //   fd.set_non_hyperbolic_edge(idx);
-  //   f->tds_data() = make_object(fd);
-  // }
   
   void mark_face(const Face_handle& f) const
   {
@@ -699,49 +680,6 @@ private:
     }
     f->tds_data() = make_object(fd);
   }
-    
-  class Mark_face
-  {
-  public:
-    Mark_face(const Self& tr) :
-      _tr(tr)
-    {}
-    
-    bool operator()(const Face_handle& f) const
-    {
-      typedef typename Gt::Is_Delaunay_hyperbolic Is_Delaunay_hyperbolic;
-      
-      if(Base::is_infinite(f)) {
-	     return false; 
-      }
-      
-      Point p0 = f->vertex(0)->point();
-      Point p1 = f->vertex(1)->point();
-      Point p2 = f->vertex(2)->point();
-      int ind = 0;
-      
-      Is_Delaunay_hyperbolic is_Delaunay_hyperbolic = _tr.geom_traits().is_Delaunay_hyperbolic_object();
-      if(is_Delaunay_hyperbolic(p0, p1, p2, ind) == false) {
-      	//f->set_flag(true); // MT should not be necessary, return true should be enough (?)
-      	//f->set_char(ind);
-        Face_data fd;
-        fd.set_is_Delaunay_hyperbolic(false);
-        fd.set_non_hyperbolic_edge(ind);
-        f->tds_data() = make_object(fd);
-        return true; 
-      }
-      
-      // the face is finite and hyperbolic
-      return false; 
-    }
-    
-  private:
-  
-    Mark_face(const Mark_face&);
-    Mark_face& operator= (const Mark_face&);
-    
-    const Self& _tr;
-  }; 
   
 public:
 
