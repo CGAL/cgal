@@ -4,7 +4,7 @@ Release History
 Release 4.13
 ------------
 
-Release date: September 2018
+Release date: October 2018
 
 ### 3D Periodic Mesh Generation (new package)
 
