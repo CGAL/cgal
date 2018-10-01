@@ -6,6 +6,11 @@ Release 4.13
 
 Release date: October 2018
 
+### Installation
+-   When running a CGAL demo on MacOS Mojave, it is advised not to use
+    the Dark mode as Qt might use a white font with a white background
+    for editable text which as a result makes the demo hard to use.
+
 ### 3D Periodic Mesh Generation (new package)
 
 -   This package generates 3-dimensional periodic meshes. It computes
