@@ -50,8 +50,6 @@ public:
 protected :
   friend struct Scene_image_item_priv;
   Scene_image_item_priv* d;
-public Q_SLOTS:
-    void changed();
 };
 
 #endif // SCENE_IMAGE_ITEM_H
