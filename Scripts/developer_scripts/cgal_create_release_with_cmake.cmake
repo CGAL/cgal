@@ -1,4 +1,5 @@
 #option :
+# GIT_REPO the path to the Git repository, default is the current working directory
 # DESTINATION the path where the release is created, default is /tmp
 # PUBLIC=[ON/OFF] indicates if a public release should be built, default is OFF
 # VERBOSE=[ON/OFF] makes the script more verbose, default is OFF
@@ -7,11 +8,15 @@
 # CGAL_VERSION_NR=release string used to update version.h. Must be something like 1041200033 , or 10412009<beta number>0
 # TESTSUITE=indicate if the release is meant to be used by the testsuite, default if OFF
 
-if (NOT EXISTS ${CMAKE_BINARY_DIR}/Installation/include/CGAL/version.h)
+if (NOT GIT_REPO)
+  set(GIT_REPO ${CMAKE_BINARY_DIR})
+endif()
+
+if (NOT EXISTS ${GIT_REPO}/Installation/include/CGAL/version.h)
   message(FATAL_ERROR "Cannot find Installation/include/CGAL/version.h. Make sure you are at the root of a CGAL branch")
 endif()
 
-file(READ "${CMAKE_BINARY_DIR}/Installation/include/CGAL/version.h" version_file_content)
+file(READ "${GIT_REPO}/Installation/include/CGAL/version.h" version_file_content)
 string(REGEX MATCH "define CGAL_VERSION (.*)\n#define CGAL_VERSION_NR" CGAL_VERSION_FOUND "${version_file_content}")
 
 if (CGAL_VERSION_FOUND)
@@ -41,10 +46,10 @@ else()
 endif()
 
 file(MAKE_DIRECTORY "${release_dir}")
-file(GLOB files RELATIVE ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/*)
+file(GLOB files RELATIVE ${GIT_REPO} ${GIT_REPO}/*)
 
 foreach(pkg ${files})
-  set(pkg_dir ${CMAKE_BINARY_DIR}/${pkg}) # use absolute path
+  set(pkg_dir ${GIT_REPO}/${pkg}) # use absolute path
   if(IS_DIRECTORY ${pkg_dir} AND (NOT "${pkg}" STREQUAL "Maintenance")
       AND (EXISTS ${pkg_dir}/package_info
            OR "${pkg}" STREQUAL "Documentation"
@@ -73,9 +78,9 @@ foreach(pkg ${files})
         if ("${fext}" STREQUAL ".h" OR "${fext}" STREQUAL ".hpp")
           file(READ "${pkg_dir}/${f}" file_content)
           string(REPLACE "$URL$" "$URL: ${GITHUB_PREFIX}/${pkg}/${f} $" file_content "${file_content}")
-          if(EXISTS ${CMAKE_BINARY_DIR}/.git)
+          if(EXISTS ${GIT_REPO}/.git)
             execute_process(
-              COMMAND git --git-dir=${CMAKE_BINARY_DIR}/.git --work-tree=${CMAKE_BINARY_DIR} log -n1 "--format=format:%h %aI %an" -- "${pkg}/${f}"
+              COMMAND git --git-dir=${GIT_REPO}/.git --work-tree=${GIT_REPO} log -n1 "--format=format:%h %aI %an" -- "${pkg}/${f}"
               RESULT_VARIABLE RESULT_VAR
               OUTPUT_VARIABLE OUT_VAR
               )
@@ -91,7 +96,7 @@ foreach(pkg ${files})
     endforeach()
     if (EXISTS "${release_dir}/doc/${pkg}")
       #generate filelist.txt used by doxygen ran on a release
-      file(GLOB_RECURSE includes LIST_DIRECTORIES false RELATIVE "${CMAKE_BINARY_DIR}/${pkg}/include" "${CMAKE_BINARY_DIR}/${pkg}/include/CGAL/*.h")
+      file(GLOB_RECURSE includes LIST_DIRECTORIES false RELATIVE "${GIT_REPO}/${pkg}/include" "${GIT_REPO}/${pkg}/include/CGAL/*.h")
       foreach(f ${includes})
         file(APPEND "${release_dir}/doc/${pkg}/filelist.txt" "${f}\n")
       endforeach()
@@ -109,7 +114,7 @@ file(WRITE ${release_dir}/VERSION "${CGAL_VERSION}")
 #edit include/CGAL/version.h
 file(READ "${release_dir}/include/CGAL/version.h" file_content)
 #  update CGAL_GIT_HASH
-if(EXISTS ${CMAKE_BINARY_DIR}/.git)
+if(EXISTS ${GIT_REPO}/.git)
   execute_process(
     COMMAND git rev-parse HEAD
     RESULT_VARIABLE RESULT_VAR
@@ -136,7 +141,7 @@ if (TESTSUITE)
     if(IS_DIRECTORY "${release_dir}/test/${d}")
       if(NOT EXISTS "${release_dir}/test/${d}/cgal_test_with_cmake")
         execute_process(
-          COMMAND ${CMAKE_BINARY_DIR}/Scripts/developer_scripts/create_cgal_test_with_cmake
+          COMMAND ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake
           WORKING_DIRECTORY "${release_dir}/test/${d}"
           RESULT_VARIABLE RESULT_VAR
           OUTPUT_VARIABLE OUT_VAR
@@ -162,7 +167,7 @@ if (TESTSUITE)
         file(RENAME "${release_dir}/tmp/${d}" "${release_dir}/test/${d}_Demo")
         if(NOT EXISTS "${release_dir}/test/${d}_Demo/cgal_test_with_cmake")
           execute_process(
-            COMMAND ${CMAKE_BINARY_DIR}/Scripts/developer_scripts/create_cgal_test_with_cmake --no-run
+            COMMAND ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake --no-run
             WORKING_DIRECTORY "${release_dir}/test/${d}_Demo"
             RESULT_VARIABLE RESULT_VAR
             OUTPUT_VARIABLE OUT_VAR
@@ -183,7 +188,7 @@ if (TESTSUITE)
       file(RENAME "${release_dir}/tmp/${d}" "${release_dir}/test/${d}_Examples")
       if(NOT EXISTS "${release_dir}/test/${d}_Examples/cgal_test_with_cmake")
         execute_process(
-          COMMAND ${CMAKE_BINARY_DIR}/Scripts/developer_scripts/create_cgal_test_with_cmake
+          COMMAND ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake
           WORKING_DIRECTORY "${release_dir}/test/${d}_Examples"
           RESULT_VARIABLE RESULT_VAR
           OUTPUT_VARIABLE OUT_VAR

@@ -251,8 +251,7 @@ function cleanup() {
 trap cleanup EXIT
 
 # Create the release
-cd ${SOURCES_DIR}
-cmake -DPUBLIC=NO -DTESTSUITE=ON -DDESTINATION="${DESTINATION}" -DCGAL_VERSION="${release_version}" -DCGAL_VERSION_NR="${release_number}" -DVERBOSE="${VERBOSE}" -P ${SOURCES_DIR}/Scripts/developer_scripts/cgal_create_release_with_cmake.cmake
+cmake -DGIT_REPO=${SOURCES_DIR} -DPUBLIC=NO -DTESTSUITE=ON -DDESTINATION="${DESTINATION}" -DCGAL_VERSION="${release_version}" -DCGAL_VERSION_NR="${release_number}" -DVERBOSE="${VERBOSE}" -P ${SOURCES_DIR}/Scripts/developer_scripts/cgal_create_release_with_cmake.cmake
 pushd "${DESTINATION}/${release_name}"
 sed -i -e "s/define CGAL_GIT_HASH .*/define CGAL_GIT_HASH $CGAL_GIT_HASH/" include/CGAL/version.h
 cd ..
@@ -299,11 +298,12 @@ if [ -n "$DO_PUBLIC" ]; then
     fi
     if [ -r "${NUMBERS_DIR}/public_release_name" ]; then
 	public_release_name=`cat "${NUMBERS_DIR}/public_release_name"`
+        public_release_version=${public_release_name#CGAL-}
     else
 	public_release_name="CGAL-${public_release_version}"
     fi
 
-    cmake -DPUBLIC="ON" -DDESTINATION="${DESTINATION}" -DCGAL_VERSION="${public_release_version}" -DCGAL_VERSION_NR="${release_number}" -DVERBOSE="${VERBOSE}" -P ${SOURCES_DIR}/Scripts/developer_scripts/cgal_create_release_with_cmake.cmake
+    cmake -DGIT_REPO=${SOURCES_DIR} -DPUBLIC="ON" -DDESTINATION="${DESTINATION}" -DCGAL_VERSION="${public_release_version}" -DCGAL_VERSION_NR="${release_number}" -DVERBOSE="${VERBOSE}" -P ${SOURCES_DIR}/Scripts/developer_scripts/cgal_create_release_with_cmake.cmake
     pushd "${DESTINATION}/${public_release_name}"
 
     # Modify the version numbers in <CGAL/version.h>
@@ -333,7 +333,7 @@ if [ -n "$DO_PUBLIC" ]; then
   if docker version > /dev/null; then
     # Build the Windows installer
     docker pull cgal/cgal-nsis-dockerfile
-    docker create -v `realpath ${public_release_name}`:/mnt/cgal_release:ro,z \
+    docker create -v `realpath ${DESTINATION}/${public_release_name}`:/mnt/cgal_release:ro,z \
                   -v ${SOURCES_DIR}:/mnt/cgal_sources:ro,z                    \
                   cgal/cgal-nsis-dockerfile
     container_id=`docker ps -q -l`
