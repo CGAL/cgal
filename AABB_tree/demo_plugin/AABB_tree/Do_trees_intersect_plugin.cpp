@@ -90,7 +90,6 @@ private Q_SLOTS:
     connect(group_item, &Scene_group_item::aboutToBeDestroyed,
             this, [this](){
       items.clear();
-      meshes.clear();
       if(col_det)
         delete col_det;
       col_det = nullptr;
@@ -131,15 +130,11 @@ private Q_SLOTS:
     scene->setSelectedItem(group_item->getChildren().last());
     connect(static_cast<Scene*>(scene), &Scene::itemIndexSelected,
             this, &DoTreesIntersectplugin::update_trees);
+    col_det = new CGAL::Rigid_mesh_collision_detection<SMesh>();
+    col_det->reserve(items.size());
     Q_FOREACH(Scene_movable_sm_item* item, items)
     {
-      meshes.push_back(*item->getFaceGraph());
-    }
-    col_det = new CGAL::Rigid_mesh_collision_detection<SMesh>();
-    col_det->reserve(meshes.size());
-    Q_FOREACH(const SMesh& sm, meshes)
-    {
-      col_det->add_mesh(sm);
+      col_det->add_mesh(*item->getFaceGraph());
     }
     init_trees();
     static_cast<CGAL::Three::Viewer_interface*>(
@@ -317,7 +312,6 @@ public Q_SLOTS:
     scene->erase(scene->item_id(group_item));
     group_item = nullptr;
     items.clear();
-    meshes.clear();
     prev_ids.clear();
     delete col_det;
     col_det = nullptr;
@@ -349,7 +343,6 @@ private:
   std::vector<Scene_movable_sm_item*> items;
   std::vector<std::size_t> prev_ids;
   Scene_group_item* group_item;
-  std::vector<SMesh> meshes;
   bool do_transparency;
 };
 #include "Do_trees_intersect_plugin.moc"
