@@ -2528,7 +2528,8 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer=NULL)
 
 void MainWindow::on_actionAdd_Viewer_triggered()
 {
-  Viewer *viewer2 = new Viewer(ui->centralwidget, viewer);
+  SubViewer* subviewer = new SubViewer(ui->mdiArea, this, viewer);
+  Viewer* viewer2 = subviewer->viewer;
   viewer2->setManipulatedFrame(viewer->manipulatedFrame());
   CGAL::qglviewer::Vec min, max;
   computeViewerBBox(min, max);
@@ -2541,10 +2542,8 @@ void MainWindow::on_actionAdd_Viewer_triggered()
     scene->removeViewer(viewer2);
     viewerDestroyed(viewer2);
   });
-  SubViewer* subviewer = new SubViewer(this, viewer2);
   setupViewer(viewer2, subviewer);
   viewer2->camera()->interpolateToFitScene();
-  ui->mdiArea->addSubWindow(subviewer)->show();
   ui->mdiArea->tileSubWindows();
   QPoint pos = viewer_window->pos();
   QSize size = viewer_window->size();
@@ -2617,13 +2616,14 @@ void MainWindow::on_action_Organize_Viewers_triggered()
   }
 }
 
-SubViewer::SubViewer(MainWindow* mw, Viewer* viewer)
-  :QMdiSubWindow (mw),
+SubViewer::SubViewer(QWidget *parent, MainWindow* mw, Viewer* mainviewer)
+  :QMdiSubWindow (parent),
     mw(mw),
-    viewer(viewer),
     viewMenu(new QMenu(this))
 {
+  viewer = new Viewer(this, mainviewer);
   setWidget(viewer);
+  show();
   QAction* actionRecenter = new QAction("Re&center Scene",this);
   actionRecenter->setObjectName("actionRecenter");
   viewMenu->addAction(actionRecenter);

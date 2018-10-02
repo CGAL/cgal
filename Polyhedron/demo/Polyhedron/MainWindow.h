@@ -469,7 +469,7 @@ public:
   Viewer* viewer;
   QMenu* viewMenu;
 
-  SubViewer(MainWindow* mw, Viewer* viewer);
+  SubViewer(QWidget *parent, MainWindow* mw, Viewer *mainviewer);
   ~SubViewer();
 public Q_SLOTS:
   void recenter();
