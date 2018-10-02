@@ -45,22 +45,38 @@
 
 namespace CGAL {
 
-//TODO handle vertex point point in the API
 template <class TriangleMesh,
-          class Kernel,
+          class VertexPointMap = Default,
+          class Kernel_ = Default,
           class HAS_ROTATION = CGAL::Tag_true,
           class AABBTree_type = Default>
 class Rigid_mesh_collision_detection
 {
-  // AABB-tree type
-  typedef AABB_face_graph_triangle_primitive<TriangleMesh>    Default_primitive;
+// Vertex point map type
+  typedef typename property_map_selector<TriangleMesh, boost::vertex_point_t
+    >::const_type                                                   Default_vpm;
+  typedef typename Default::Get<VertexPointMap, Default_vpm>::type          Vpm;
+
+// Kernel type
+  typedef typename Kernel_traits<
+    typename boost::property_traits<Vpm>::value_type>::Kernel    Default_kernel;
+  typedef typename Default::Get<Kernel_, Default_kernel>::type           Kernel;
+
+// AABB-tree type
+  typedef AABB_face_graph_triangle_primitive<TriangleMesh,
+                                             Vpm>             Default_primitive;
   typedef AABB_traits<Kernel, Default_primitive>            Default_tree_traits;
   typedef CGAL::AABB_tree<Default_tree_traits>                     Default_tree;
   typedef typename Default::Get<AABBTree_type, Default_tree>::type         Tree;
   typedef typename Tree::AABB_traits                                Tree_traits;
 
-  typedef Do_intersect_traversal_traits_with_transformation<Tree_traits, Kernel, HAS_ROTATION> Traversal_traits;
+// Transformed Tree traversal traits
+  typedef Do_intersect_traversal_traits_with_transformation<Tree_traits,
+                                                            Kernel,
+                                                            HAS_ROTATION>
+                                                               Traversal_traits;
 
+// Data members
   std::vector<bool> m_own_aabb_trees;
   std::vector<Tree*> m_aabb_trees;
   std::vector<bool> m_is_closed;
@@ -82,8 +98,14 @@ class Rigid_mesh_collision_detection
   }
 
 public:
+  typedef Tree AABB_tree;
+  typedef Vpm Vertex_point_map;
+
   static
-  void get_one_point_per_cc(const TriangleMesh& tm, std::vector<typename Kernel::Point_3>& points, bool assume_one_CC=false)
+  void get_one_point_per_cc(const TriangleMesh& tm,
+                                  Vertex_point_map vpm,
+                                  std::vector<typename Kernel::Point_3>& points,
+                            const bool assume_one_CC=false)
   {
     if (!assume_one_CC)
     {
@@ -98,15 +120,15 @@ public:
           tm, bind_property_maps(fid_map, make_property_map(CC_ids)) );
       if (nb_cc != 1)
       {
-        typedef boost::graph_traits<TriangleMesh> GrT;
-        std::vector<typename GrT::vertex_descriptor> vertex_per_cc(nb_cc, GrT::null_vertex());
+        typedef boost::graph_traits<TriangleMesh> GrTr;
+        std::vector<typename GrTr::vertex_descriptor> vertex_per_cc(nb_cc, GrTr::null_vertex());
 
-        BOOST_FOREACH(typename GrT::face_descriptor f, faces(tm))
+        BOOST_FOREACH(typename GrTr::face_descriptor f, faces(tm))
         {
-          if  (vertex_per_cc[get(fid_map, f)]!=GrT::null_vertex())
+          if  (vertex_per_cc[get(fid_map, f)]!=GrTr::null_vertex())
           {
             points.push_back(
-              get(boost::vertex_point, tm, target( halfedge(f, tm), tm)) );
+              get(vpm, target( halfedge(f, tm), tm)) );
           }
         }
         return;
@@ -114,6 +136,14 @@ public:
     }
     // only one CC
     points.push_back( get(boost::vertex_point, tm, *boost::begin(vertices(tm))) );
+  }
+
+  static
+  void get_one_point_per_cc(const TriangleMesh& tm,
+                                  std::vector<typename Kernel::Point_3>& points,
+                            const bool assume_one_CC=false)
+  {
+    get_one_point_per_cc(tm, get(boost::vertex_point, tm), points, assume_one_CC);
   }
 
 private:
@@ -143,8 +173,8 @@ private:
   }
 
 public:
-  typedef Tree AABB_tree;
 
+  // TODO: document that the default vertex point map will be used
   template <class MeshRange>
   Rigid_mesh_collision_detection(const MeshRange& triangle_meshes, bool assume_one_CC_per_mesh = false)
   {
@@ -155,6 +185,8 @@ public:
   {
     clear_trees();
   }
+
+  // TODO: document that the default vertex point map will be used
   template <class MeshRange>
   void init(const MeshRange& triangle_meshes, bool assume_one_CC)
   {
@@ -186,12 +218,26 @@ public:
     }
   }
 
-  std::size_t add_mesh(const TriangleMesh& tm, bool assume_one_CC_per_mesh = false)
+  void reserve(std::size_t size)
+  {
+    m_own_aabb_trees.reserve(size);
+    m_aabb_trees.reserve(size);
+    m_is_closed.reserve(size);
+    m_points_per_cc.reserve(size);
+    m_traversal_traits.reserve(size);
+#if CGAL_RMCD_CACHE_BOXES
+    m_bboxes.reserve(size);
+#endif
+  }
+
+  std::size_t add_mesh(const TriangleMesh& tm,
+                             Vertex_point_map vpm,
+                       const bool assume_one_CC_per_mesh = false)
   {
     std::size_t id = m_aabb_trees.size();
     m_is_closed.push_back(is_closed(tm));
     m_own_aabb_trees.push_back( true );
-    Tree* t = new Tree(faces(tm).begin(), faces(tm).end(), tm);
+    Tree* t = new Tree(faces(tm).begin(), faces(tm).end(), tm, vpm);
     m_aabb_trees.push_back(t);
     m_traversal_traits.push_back( Traversal_traits(m_aabb_trees.back()->traits()) );
 #if CGAL_RMCD_CACHE_BOXES
@@ -203,7 +249,13 @@ public:
     return id;
   }
 
-  std::size_t add_mesh(const Tree& tree,
+  std::size_t add_mesh(const TriangleMesh& tm,
+                       const bool assume_one_CC_per_mesh = false)
+  {
+    return add_mesh(tm, get(boost::vertex_point, tm), assume_one_CC_per_mesh);
+  }
+
+  std::size_t add_mesh(const AABB_tree& tree,
                        bool is_closed,
                        const std::vector<typename Kernel::Point_3>& points_per_cc)
   {
@@ -301,7 +353,7 @@ public:
     return get_all_intersections(mesh_id);
   }
 
-  // TODO: document that is a model is composed of several CC on one of them is not closed,
+  // TODO: document that if a model is composed of several CC on one of them is not closed,
   // no inclusion test will be made
   // TODO: document that the inclusion can be partial in case there are several CC
   template <class MeshRangeIds>

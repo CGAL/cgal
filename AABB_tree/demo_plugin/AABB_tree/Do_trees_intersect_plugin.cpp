@@ -135,7 +135,7 @@ private Q_SLOTS:
     {
       meshes.push_back(*item->getFaceGraph());
     }
-    col_det = new CGAL::Rigid_mesh_collision_detection<SMesh, EPICK>(meshes);
+    col_det = new CGAL::Rigid_mesh_collision_detection<SMesh>(meshes);
     init_trees();
     static_cast<CGAL::Three::Viewer_interface*>(
           CGAL::QGLViewer::QGLViewerPool().first())->installEventFilter(this);
@@ -340,7 +340,7 @@ private:
   Messages_interface* messageInterface;
   CGAL::Three::Scene_interface* scene;
   QMainWindow* mw;
-  CGAL::Rigid_mesh_collision_detection<SMesh, EPICK> *col_det;
+  CGAL::Rigid_mesh_collision_detection<SMesh> *col_det;
   std::vector<Scene_movable_sm_item*> items;
   std::vector<std::size_t> prev_ids;
   Scene_group_item* group_item;
