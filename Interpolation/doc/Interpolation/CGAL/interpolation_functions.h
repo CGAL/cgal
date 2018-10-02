@@ -99,6 +99,7 @@ the interpolated function value as the weighted sum of the values
 corresponding to each entry of the entity/coordinate pairs in the range `[first, beyond)`.
 
 \pre `norm` \f$ \neq0\f$.
+\pre `first != beyond`.
 \pre `value_function(p.first).second == true` for all pairs `p` in the range `[first, beyond)`.
 
 \sa `CGAL::quadratic_interpolation()`
@@ -163,6 +164,7 @@ the function returns a pair where the Boolean is set to `false`.
 \param traits is an instance of the traits class.
 
 \pre `norm` \f$ \neq0\f$.
+\pre `first != beyond`.
 \pre `value_function(p.first).second == true` for pairs `p` in the range `[first, beyond)`
 
 \sa `CGAL::linear_interpolation()`
@@ -229,6 +231,7 @@ the function returns a pair where the Boolean is set to `false`.
 \param traits is an instance of the traits class.
 
 \pre `norm` \f$ \neq0\f$.
+\pre `first != beyond`.
 \pre `value_function(q).second == true` for all points `q` of the point/coordinate pairs in the range `[first, beyond)`
 
 \sa `CGAL::Interpolation_traits_2<K>`
