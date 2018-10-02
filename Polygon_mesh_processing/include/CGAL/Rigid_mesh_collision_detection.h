@@ -45,6 +45,7 @@
 
 namespace CGAL {
 
+// TODO mention thread-safety issues (const_cast and internal bool in stored traversal traits)
 template <class TriangleMesh,
           class VertexPointMap = Default,
           class Kernel_ = Default,
@@ -197,7 +198,7 @@ private:
   }
 
   // precondition A and B does not intersect
-  bool does_A_contains_a_CC_of_B(std::size_t id_A, std::size_t id_B)
+  bool does_A_contains_a_CC_of_B(std::size_t id_A, std::size_t id_B) const
   {
     typename Kernel::Construct_ray_3     ray_functor;
     typename Kernel::Construct_vector_3  vector_functor;
@@ -213,6 +214,19 @@ private:
       }
     }
     return false;
+  }
+
+  // this function expects a protector was initialized
+  bool does_A_intersect_B(std::size_t id_A, std::size_t id_B) const
+  {
+#if CGAL_RMCD_CACHE_BOXES
+    if (!do_overlap(m_bboxes[id_B], m_bboxes[id_A])) continue;
+#endif
+
+    Do_intersect_traversal_traits_for_two_trees<Tree_traits, Kernel, HAS_ROTATION> traversal_traits(
+      m_aabb_trees[id_B]->traits(), m_traversal_traits[id_B].transformation(), m_traversal_traits[id_A]);
+    m_aabb_trees[id_B]->traversal(*m_aabb_trees[id_A], traversal_traits);
+    return traversal_traits.is_intersection_found();
   }
 
 public:
@@ -326,7 +340,7 @@ public:
 
   template <class MeshRangeIds>
   std::vector<std::size_t>
-  get_all_intersections(std::size_t mesh_id, const MeshRangeIds& ids)
+  get_all_intersections(std::size_t mesh_id, const MeshRangeIds& ids) const
   {
     CGAL::Interval_nt_advanced::Protector protector;
 #if CGAL_RMCD_CACHE_BOXES
@@ -338,21 +352,15 @@ public:
     BOOST_FOREACH(std::size_t k, ids)
     {
       if(k==mesh_id) continue;
-#if CGAL_RMCD_CACHE_BOXES
-      if (!do_overlap(m_bboxes[k], m_bboxes[mesh_id])) continue;
-#endif
 
-      Do_intersect_traversal_traits_for_two_trees<Tree_traits, Kernel, HAS_ROTATION> traversal_traits(
-        m_aabb_trees[k]->traits(), m_traversal_traits[k].transformation(), m_traversal_traits[mesh_id]);
-      m_aabb_trees[k]->traversal(*m_aabb_trees[mesh_id], traversal_traits);
-      if (traversal_traits.is_intersection_found())
+      if (does_A_intersect_B(mesh_id, k))
         res.push_back(k);
     }
     return res;
   }
 
   std::vector<std::size_t>
-  get_all_intersections(std::size_t mesh_id)
+  get_all_intersections(std::size_t mesh_id) const
   {
     return get_all_intersections(
       mesh_id,
@@ -374,7 +382,7 @@ public:
   // TODO: document that the inclusion can be partial in case there are several CC
   template <class MeshRangeIds>
   std::vector<std::pair<std::size_t, bool> >
-  get_all_intersections_and_inclusions(std::size_t mesh_id, const MeshRangeIds& ids)
+  get_all_intersections_and_inclusions(std::size_t mesh_id, const MeshRangeIds& ids) const
   {
     CGAL::Interval_nt_advanced::Protector protector;
 #if CGAL_RMCD_CACHE_BOXES
@@ -386,14 +394,8 @@ public:
     BOOST_FOREACH(std::size_t k, ids)
     {
       if(k==mesh_id) continue;
-#if CGAL_RMCD_CACHE_BOXES
-      if (!do_overlap(m_bboxes[k], m_bboxes[mesh_id])) continue;
-#endif
 
-      Do_intersect_traversal_traits_for_two_trees<Tree_traits, Kernel, HAS_ROTATION> traversal_traits(
-        m_aabb_trees[k]->traits(), m_traversal_traits[k].transformation(), m_traversal_traits[mesh_id]);
-      m_aabb_trees[k]->traversal(*m_aabb_trees[mesh_id], traversal_traits);
-      if (traversal_traits.is_intersection_found())
+      if (does_A_intersect_B(mesh_id, k))
         res.push_back(std::make_pair(k, false));
       else{
         if (m_is_closed[mesh_id])
@@ -418,7 +420,7 @@ public:
   }
 
   std::vector<std::pair<std::size_t, bool> >
-  get_all_intersections_and_inclusions(std::size_t mesh_id)
+  get_all_intersections_and_inclusions(std::size_t mesh_id) const
   {
     return get_all_intersections_and_inclusions(
       mesh_id,

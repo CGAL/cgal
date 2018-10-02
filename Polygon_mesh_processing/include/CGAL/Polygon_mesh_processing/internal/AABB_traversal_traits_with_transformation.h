@@ -238,6 +238,7 @@ class Do_intersect_traversal_traits_for_two_trees
   typedef typename AABBTraits::Primitive Primitive;
   typedef ::CGAL::AABB_node<AABBTraits> Node;
   typedef Traversal_traits_with_transformation_helper<AABBTraits, Kernel, SUPPORTS_ROTATION> Base;
+  typedef Do_intersect_traversal_traits_with_transformation<AABBTraits, Kernel, SUPPORTS_ROTATION> Query_traversal_traits;
 
   void register_transformation(CGAL::Tag_true)
   {
@@ -256,12 +257,12 @@ class Do_intersect_traversal_traits_for_two_trees
 public:
   Do_intersect_traversal_traits_for_two_trees(const AABBTraits& traits,
                                     const Aff_transformation_3<Kernel>& transfo,
-                                    Do_intersect_traversal_traits_with_transformation<AABBTraits, Kernel, SUPPORTS_ROTATION>& query_traversal_traits)
+                                    const Query_traversal_traits& query_traversal_traits)
     : m_is_found(false)
     , m_traits(traits)
     , m_transfo(transfo)
     , m_has_rotation(false)
-    , m_query_traversal_traits(query_traversal_traits)
+    , m_query_traversal_traits(const_cast<Query_traversal_traits&>(query_traversal_traits))
 
   {
     register_transformation(SUPPORTS_ROTATION());
