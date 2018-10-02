@@ -68,13 +68,21 @@ The class expects two template parameters.
 	/// @{
 	 	
 	 	/*!
-			Computes recursively the conflict zone induced by `p`.
+	 		\cgalModifBegin
+			Computes the conflict zone induced by `p`.
 			The output iterator `it` contains all faces in conflict with `p`.
+			The optional parameters `start` and `ltr`, if given, must be such 
+			that `start` translated by `ltr` is in conflict with `p`. If `start` 
+			is omitted, then `p` is located internally to obtain a starting 
+			face and a location translation.
+			\cgalModifEnd
 	 	*/
 	 	template<class OutputFaceIterator>
 		void
 		find_conflicts(	const Point& p,
-						OutputFaceIterator it) const;
+						OutputFaceIterator it,
+						Face_handle start = Face_handle(),
+						Hyperbolic_translation ltr = Hyperbolic_translation()) const;
  
 
 		/*!
