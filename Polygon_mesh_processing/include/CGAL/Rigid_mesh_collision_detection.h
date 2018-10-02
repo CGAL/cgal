@@ -135,7 +135,7 @@ public:
       }
     }
     // only one CC
-    points.push_back( get(boost::vertex_point, tm, *boost::begin(vertices(tm))) );
+    points.push_back( get(vpm, *boost::begin(vertices(tm))) );
   }
 
   static
