@@ -251,6 +251,7 @@ function cleanup() {
 trap cleanup EXIT
 
 # Create the release
+cd ${SOURCES_DIR}
 cmake -DPUBLIC=NO -DTESTSUITE=ON -DDESTINATION="${DESTINATION}" -DCGAL_VERSION="${release_version}" -DCGAL_VERSION_NR="${release_number}" -DVERBOSE="${VERBOSE}" -P ${SOURCES_DIR}/Scripts/developer_scripts/cgal_create_release_with_cmake.cmake
 pushd "${DESTINATION}/${release_name}"
 sed -i -e "s/define CGAL_GIT_HASH .*/define CGAL_GIT_HASH $CGAL_GIT_HASH/" include/CGAL/version.h
