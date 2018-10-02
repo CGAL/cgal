@@ -109,7 +109,7 @@ Release date: October 2018
 
 -   The concept `MeshEdgeCriteria_3` no longer requires the function
     `operator()(const Edge& e)`.
-g
+
 -   The concept `MeshComplexWithFeatures_3InTriangulation_3` no longer
     requires the functions `number_of_edges(Curve_index index)` and
     `number_of_corners(Corner_index index)`.
