@@ -35,11 +35,11 @@
 
 #include <boost/iterator/counting_iterator.hpp>
 
-#ifndef CGAL_CACHE_BOXES
-#define CGAL_CACHE_BOXES 0
+#ifndef CGAL_RMCD_CACHE_BOXES
+#define CGAL_RMCD_CACHE_BOXES 0
 #endif
 
-#if CGAL_CACHE_BOXES
+#if CGAL_RMCD_CACHE_BOXES
 #include <boost/dynamic_bitset.hpp>
 #endif
 
@@ -66,7 +66,7 @@ class Rigid_mesh_collision_detection
   std::vector<bool> m_is_closed;
   std::vector< std::vector<typename Kernel::Point_3> > m_points_per_cc;
   std::vector<Traversal_traits> m_traversal_traits;
-#if CGAL_CACHE_BOXES
+#if CGAL_RMCD_CACHE_BOXES
   boost::dynamic_bitset<> m_bboxes_is_invalid;
   std::vector<Bbox_3> m_bboxes;
 #endif
@@ -168,7 +168,7 @@ public:
     m_is_closed.clear();
     m_is_closed.resize(nb_meshes, false);
     m_traversal_traits.reserve(m_aabb_trees.size());
-#if CGAL_CACHE_BOXES
+#if CGAL_RMCD_CACHE_BOXES
     m_bboxes_is_invalid.clear();
     m_bboxes_is_invalid.resize(nb_meshes, true);
     m_bboxes.clear();
@@ -194,7 +194,7 @@ public:
     Tree* t = new Tree(faces(tm).begin(), faces(tm).end(), tm);
     m_aabb_trees.push_back(t);
     m_traversal_traits.push_back( Traversal_traits(m_aabb_trees.back()->traits()) );
-#if CGAL_CACHE_BOXES
+#if CGAL_RMCD_CACHE_BOXES
     m_bboxes.push_back(Bbox_3());
     m_bboxes_is_invalid.resize(id+1, true);
 #endif
@@ -212,7 +212,7 @@ public:
     m_own_aabb_trees.push_back( false );
     m_aabb_trees.push_back( const_cast<Tree*>(&tree));
     m_traversal_traits.push_back( Traversal_traits(m_aabb_trees.back()->traits()) );
-#if CGAL_CACHE_BOXES
+#if CGAL_RMCD_CACHE_BOXES
     m_bboxes.push_back(Bbox_3());
     m_bboxes_is_invalid.resize(id+1, true);
 #endif
@@ -230,7 +230,7 @@ public:
     m_is_closed.erase(m_is_closed.begin()+mesh_id);
     m_points_per_cc.erase(m_points_per_cc.begin()+mesh_id);
     m_traversal_traits.erase(m_traversal_traits.begin()+mesh_id);
-#if CGAL_CACHE_BOXES
+#if CGAL_RMCD_CACHE_BOXES
     // TODO this is a lazy approach that is not optimal
     m_bboxes.pop_back();
     m_bboxes_is_invalid.set();
@@ -241,12 +241,12 @@ public:
   void set_transformation(std::size_t mesh_id, const Aff_transformation_3<Kernel>& aff_trans)
   {
     m_traversal_traits[mesh_id].set_transformation(aff_trans);
-#if CGAL_CACHE_BOXES
+#if CGAL_RMCD_CACHE_BOXES
     m_bboxes_is_invalid.set(mesh_id);
 #endif
   }
 
-#if CGAL_CACHE_BOXES
+#if CGAL_RMCD_CACHE_BOXES
   void update_bboxes()
   {
     // protector is supposed to have been set
@@ -265,7 +265,7 @@ public:
   get_all_intersections(std::size_t mesh_id, const MeshRangeIds& ids)
   {
     CGAL::Interval_nt_advanced::Protector protector;
-#if CGAL_CACHE_BOXES
+#if CGAL_RMCD_CACHE_BOXES
     update_bboxes();
 #endif
     std::vector<std::size_t> res;
@@ -273,7 +273,7 @@ public:
     BOOST_FOREACH(std::size_t k, ids)
     {
       if(k==mesh_id) continue;
-#if CGAL_CACHE_BOXES
+#if CGAL_RMCD_CACHE_BOXES
        if (!do_overlap(m_bboxes[k], m_bboxes[mesh_id])) continue;
 #endif
       // TODO: think about an alternative that is using a traversal traits
@@ -309,7 +309,7 @@ public:
   get_all_intersections_and_inclusions(std::size_t mesh_id, const MeshRangeIds& ids)
   {
     CGAL::Interval_nt_advanced::Protector protector;
-#if CGAL_CACHE_BOXES
+#if CGAL_RMCD_CACHE_BOXES
     update_bboxes();
 #endif
     std::vector<std::pair<std::size_t, bool> > res;
@@ -318,7 +318,7 @@ public:
     BOOST_FOREACH(std::size_t k, ids)
     {
       if(k==mesh_id) continue;
-#if CGAL_CACHE_BOXES
+#if CGAL_RMCD_CACHE_BOXES
       if (!do_overlap(m_bboxes[k], m_bboxes[mesh_id])) continue;
 #endif
 
@@ -370,5 +370,6 @@ public:
 
 } // end of CGAL namespace
 
+#undef CGAL_RMCD_CACHE_BOXES
 
 #endif // CGAL_RIGID_MESH_COLLISION_DETECTION_H
