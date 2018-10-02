@@ -101,19 +101,59 @@ public:
   typedef Tree AABB_tree;
   typedef Vpm Vertex_point_map;
 
+ /*
+  * \cgalNamedParamsBegin
+  *   \cgalParamBegin{vertex_point_map}
+  *     the property map with the points associated to the vertices of `tm`.
+  *     If this parameter is omitted, an internal property map for
+  *     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+  *   \cgalParamEnd
+  *   \cgalParamBegin{face_index_map}
+  *      a property map containing the index of each face of `tm`.
+  *   \cgalParamEnd
+  *   \cgalParamBegin{apply_per_connected_component}
+  *     if `false`, `tm` is supposed to have only one connected component and might have several connected components otherwise.
+  *     Default is `true`.
+  *   \cgalParamEnd
+  * \cgalNamedParamsEnd
+  */
+  template <class NamedParameters>
   static
   void get_one_point_per_cc(const TriangleMesh& tm,
-                                  Vertex_point_map vpm,
                                   std::vector<typename Kernel::Point_3>& points,
-                            const bool assume_one_CC=false)
+                            const NamedParameters& np)
   {
-    if (!assume_one_CC)
+    using Polygon_mesh_processing::GetVertexPointMap;
+    using Polygon_mesh_processing::GetFaceIndexMap;
+
+    const bool maybe_several_cc =
+      boost::choose_param(
+        boost::get_param(np, internal_np::apply_per_connected_component), true);
+
+    typedef typename GetVertexPointMap<TriangleMesh,
+                                       NamedParameters>::type Local_vpm;
+    CGAL_USE_TYPE(Local_vpm);
+
+    CGAL_assertion_code(
+      static const bool same_vpm = (boost::is_same<Local_vpm,Vpm>::value); )
+    CGAL_static_assertion(same_vpm);
+
+    Vpm vpm =
+      boost::choose_param(boost::get_param(np, internal_np::vertex_point),
+                          get_const_property_map(boost::vertex_point, tm) );
+
+    if (maybe_several_cc)
     {
+      // used for face cc id map
       std::vector<std::size_t> cc_ids(num_faces(tm));
 
-      // TODO use dynamic property if no defaut fid is available
-      typename boost::property_map<TriangleMesh, boost::face_index_t>::type fid_map
-        = get(boost::face_index, tm);
+      // face index map
+      typedef typename GetFaceIndexMap<TriangleMesh,
+                                       NamedParameters>::type Fid_map;
+
+      Fid_map fid_map =
+        boost::choose_param(boost::get_param(np, internal_np::face_index),
+                            get_const_property_map(boost::face_index, tm));
 
       std::size_t nb_cc =
         Polygon_mesh_processing::connected_components(
@@ -122,7 +162,8 @@ public:
       if (nb_cc != 1)
       {
         typedef boost::graph_traits<TriangleMesh> GrTr;
-        std::vector<typename GrTr::vertex_descriptor> vertex_per_cc(nb_cc, GrTr::null_vertex());
+        std::vector<typename GrTr::vertex_descriptor>
+          vertex_per_cc(nb_cc, GrTr::null_vertex());
 
         BOOST_FOREACH(typename GrTr::face_descriptor f, faces(tm))
         {
@@ -142,17 +183,17 @@ public:
 
   static
   void get_one_point_per_cc(const TriangleMesh& tm,
-                                  std::vector<typename Kernel::Point_3>& points,
-                            const bool assume_one_CC=false)
+                                  std::vector<typename Kernel::Point_3>& points)
   {
-    get_one_point_per_cc(tm, get(boost::vertex_point, tm), points, assume_one_CC);
+    get_one_point_per_cc(tm, points, parameters::all_default());
   }
 
 private:
-  void add_cc_points(const TriangleMesh& tm, bool assume_one_CC)
+  template <class NamedParameters>
+  void add_cc_points(const TriangleMesh& tm, const NamedParameters& np)
   {
     m_points_per_cc.resize(m_points_per_cc.size()+1);
-    get_one_point_per_cc(tm, m_points_per_cc.back(), assume_one_CC);
+    get_one_point_per_cc(tm, m_points_per_cc.back(), np);
   }
 
   // precondition A and B does not intersect
@@ -176,50 +217,6 @@ private:
 
 public:
 
-  // TODO: document that the default vertex point map will be used
-  template <class MeshRange>
-  Rigid_mesh_collision_detection(const MeshRange& triangle_meshes, bool assume_one_CC_per_mesh = false)
-  {
-    init(triangle_meshes, assume_one_CC_per_mesh);
-  }
-
-  ~Rigid_mesh_collision_detection()
-  {
-    clear_trees();
-  }
-
-  // TODO: document that the default vertex point map will be used
-  template <class MeshRange>
-  void init(const MeshRange& triangle_meshes, bool assume_one_CC)
-  {
-    std::size_t nb_meshes = triangle_meshes.size();
-    m_own_aabb_trees.clear();
-    m_own_aabb_trees.reserve(nb_meshes);
-    m_points_per_cc.clear();
-    m_points_per_cc.reserve(nb_meshes);
-    clear_trees();
-    m_aabb_trees.reserve(nb_meshes);
-    m_is_closed.clear();
-    m_is_closed.resize(nb_meshes, false);
-    m_traversal_traits.reserve(m_aabb_trees.size());
-#if CGAL_RMCD_CACHE_BOXES
-    m_bboxes_is_invalid.clear();
-    m_bboxes_is_invalid.resize(nb_meshes, true);
-    m_bboxes.clear();
-    m_bboxes.resize(nb_meshes);
-#endif
-    BOOST_FOREACH(const TriangleMesh& tm, triangle_meshes)
-    {
-      if (is_closed(tm))
-        m_is_closed[m_aabb_trees.size()]=true;
-      m_own_aabb_trees.push_back( true );
-      Tree* t = new Tree(faces(tm).begin(), faces(tm).end(), tm);
-      m_aabb_trees.push_back(t);
-      m_traversal_traits.push_back( Traversal_traits(m_aabb_trees.back()->traits()) );
-      add_cc_points(tm, assume_one_CC);
-    }
-  }
-
   void reserve(std::size_t size)
   {
     m_own_aabb_trees.reserve(size);
@@ -232,10 +229,24 @@ public:
 #endif
   }
 
+  // TODO: copy NP doc from get_one_point_per_cc
+  template <class NamedParameters>
   std::size_t add_mesh(const TriangleMesh& tm,
-                             Vertex_point_map vpm,
-                       const bool assume_one_CC_per_mesh = false)
+                       const NamedParameters& np)
   {
+  // handle vpm
+    using Polygon_mesh_processing::GetVertexPointMap;
+    typedef typename GetVertexPointMap<TriangleMesh,
+                                       NamedParameters>::type Local_vpm;
+    CGAL_USE_TYPE(Local_vpm);
+    CGAL_assertion_code(
+      static const bool same_vpm = (boost::is_same<Local_vpm,Vpm>::value); )
+    CGAL_static_assertion(same_vpm);
+
+    Vpm vpm =
+      boost::choose_param(boost::get_param(np, internal_np::vertex_point),
+                          get_const_property_map(boost::vertex_point, tm) );
+  // now add the mesh
     std::size_t id = m_aabb_trees.size();
     m_is_closed.push_back(is_closed(tm));
     m_own_aabb_trees.push_back( true );
@@ -246,15 +257,14 @@ public:
     m_bboxes.push_back(Bbox_3());
     m_bboxes_is_invalid.resize(id+1, true);
 #endif
-    add_cc_points(tm, assume_one_CC_per_mesh);
+    add_cc_points(tm, np);
 
     return id;
   }
 
-  std::size_t add_mesh(const TriangleMesh& tm,
-                       const bool assume_one_CC_per_mesh = false)
+  std::size_t add_mesh(const TriangleMesh& tm)
   {
-    return add_mesh(tm, get(boost::vertex_point, tm), assume_one_CC_per_mesh);
+    return add_mesh(tm, parameters::all_default());
   }
 
   std::size_t add_mesh(const AABB_tree& tree,

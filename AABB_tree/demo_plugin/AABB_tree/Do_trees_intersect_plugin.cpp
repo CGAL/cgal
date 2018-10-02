@@ -135,7 +135,12 @@ private Q_SLOTS:
     {
       meshes.push_back(*item->getFaceGraph());
     }
-    col_det = new CGAL::Rigid_mesh_collision_detection<SMesh>(meshes);
+    col_det = new CGAL::Rigid_mesh_collision_detection<SMesh>();
+    col_det->reserve(meshes.size());
+    Q_FOREACH(const SMesh& sm, meshes)
+    {
+      col_det->add_mesh(sm);
+    }
     init_trees();
     static_cast<CGAL::Three::Viewer_interface*>(
           CGAL::QGLViewer::QGLViewerPool().first())->installEventFilter(this);
