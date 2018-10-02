@@ -46,13 +46,20 @@
 namespace CGAL {
 
 //TODO handle vertex point point in the API
-template <class TriangleMesh, class Kernel, class HAS_ROTATION = CGAL::Tag_true>
+template <class TriangleMesh,
+          class Kernel,
+          class HAS_ROTATION = CGAL::Tag_true,
+          class AABBTree_type = Default>
 class Rigid_mesh_collision_detection
 {
-  typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh> Primitive;
-  typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
-  typedef CGAL::AABB_tree<Traits> Tree;
-  typedef Do_intersect_traversal_traits_with_transformation<Traits, Kernel, HAS_ROTATION> Traversal_traits;
+  // AABB-tree type
+  typedef AABB_face_graph_triangle_primitive<TriangleMesh>    Default_primitive;
+  typedef AABB_traits<Kernel, Default_primitive>            Default_tree_traits;
+  typedef CGAL::AABB_tree<Default_tree_traits>                     Default_tree;
+  typedef typename Default::Get<AABBTree_type, Default_tree>::type         Tree;
+  typedef typename Tree::AABB_traits                                Tree_traits;
+
+  typedef Do_intersect_traversal_traits_with_transformation<Tree_traits, Kernel, HAS_ROTATION> Traversal_traits;
 
   std::vector<bool> m_own_aabb_trees;
   std::vector<Tree*> m_aabb_trees;
@@ -314,9 +321,8 @@ public:
 #if CGAL_CACHE_BOXES
       if (!do_overlap(m_bboxes[k], m_bboxes[mesh_id])) continue;
 #endif
-      // TODO: think about an alternative that is using a traversal traits
 
-      Do_intersect_traversal_traits_for_two_trees<Traits, Kernel, HAS_ROTATION> traversal_traits(
+      Do_intersect_traversal_traits_for_two_trees<Tree_traits, Kernel, HAS_ROTATION> traversal_traits(
         m_aabb_trees[k]->traits(), m_traversal_traits[k].transformation(), m_traversal_traits[mesh_id]);
       m_aabb_trees[k]->traversal(*m_aabb_trees[mesh_id], traversal_traits);
       if (traversal_traits.is_intersection_found())
