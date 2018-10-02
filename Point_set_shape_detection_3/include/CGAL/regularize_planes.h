@@ -781,7 +781,7 @@ void regularize_planes (const PointRange& points,
 
 /// \cond SKIP_IN_MANUAL
 
-#ifdef _MSC_VER
+#if _MSC_VER == 1915
 #define CGAL_TYPENAME_FOR_MSC
 #else
 #define CGAL_TYPENAME_FOR_MSC typename
@@ -830,7 +830,9 @@ void regularize_planes (const PointRange& points,
                      tolerance_angle, tolerance_coplanarity, symmetry_direction);
 }
 
+#ifdef CGAL_TYPENAME_FOR_MSC
 #undef CGAL_TYPENAME_FOR_MSC
+#endif
 
 
 /// \endcond
