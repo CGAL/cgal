@@ -45,7 +45,6 @@
 
 namespace CGAL {
 
-// TODO mention thread-safety issues (const_cast and internal bool in stored traversal traits)
 template <class TriangleMesh,
           class VertexPointMap = Default,
           class Kernel_ = Default,

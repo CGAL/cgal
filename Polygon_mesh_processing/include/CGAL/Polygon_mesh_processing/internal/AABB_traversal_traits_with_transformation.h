@@ -262,7 +262,7 @@ public:
     , m_traits(traits)
     , m_transfo(transfo)
     , m_has_rotation(false)
-    , m_query_traversal_traits(const_cast<Query_traversal_traits&>(query_traversal_traits))
+    , m_query_traversal_traits(query_traversal_traits)
 
   {
     register_transformation(SUPPORTS_ROTATION());
@@ -277,7 +277,7 @@ public:
     m_query_traversal_traits.reset();
   }
 
-  bool do_intersect(const AABB_tree<AABBTraits>& query, const Node& node) const
+  bool do_intersect(const AABB_tree<AABBTraits>& query, const Node& node)
   {
     query.traversal( compute_transformed_bbox(node.bbox()), m_query_traversal_traits );
     bool res = m_query_traversal_traits.is_intersection_found();
@@ -292,7 +292,7 @@ private:
   const AABBTraits& m_traits;
   const Aff_transformation_3<Kernel>& m_transfo;
   bool m_has_rotation;
-  Do_intersect_traversal_traits_with_transformation<AABBTraits, Kernel, SUPPORTS_ROTATION>& m_query_traversal_traits;
+  Do_intersect_traversal_traits_with_transformation<AABBTraits, Kernel, SUPPORTS_ROTATION> m_query_traversal_traits;
 };
 
 }//end CGAL
