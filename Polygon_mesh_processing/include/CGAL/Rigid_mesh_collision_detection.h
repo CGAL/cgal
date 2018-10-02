@@ -322,14 +322,18 @@ public:
 #endif
     std::vector<std::size_t> res;
 
+    // TODO: use a non-naive version
     BOOST_FOREACH(std::size_t k, ids)
     {
       if(k==mesh_id) continue;
 #if CGAL_RMCD_CACHE_BOXES
-       if (!do_overlap(m_bboxes[k], m_bboxes[mesh_id])) continue;
+      if (!do_overlap(m_bboxes[k], m_bboxes[mesh_id])) continue;
 #endif
-      // TODO: think about an alternative that is using a traversal traits
-      if ( m_aabb_trees[k]->do_intersect( *m_aabb_trees[mesh_id] ) )
+
+      Do_intersect_traversal_traits_for_two_trees<Tree_traits, Kernel, HAS_ROTATION> traversal_traits(
+        m_aabb_trees[k]->traits(), m_traversal_traits[k].transformation(), m_traversal_traits[mesh_id]);
+      m_aabb_trees[k]->traversal(*m_aabb_trees[mesh_id], traversal_traits);
+      if (traversal_traits.is_intersection_found())
         res.push_back(k);
     }
     return res;
