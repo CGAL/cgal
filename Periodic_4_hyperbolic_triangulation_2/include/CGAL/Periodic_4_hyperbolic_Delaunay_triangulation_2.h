@@ -206,57 +206,57 @@ namespace CGAL {
 	void
 	find_conflicts(	const Point& p,
 					OutputFaceIterator it,
+					Face_handle start = Face_handle(),
+					Hyperbolic_translation ltr = Hyperbolic_translation(), 
 					bool store_translations = false) const {
 
-		Hyperbolic_translation ltr;
-		Face_handle first = this->euclidean_locate(p, ltr);
-		if (first != Face_handle()) {
-			std::set<Face_handle> visited;
-			find_conflicts(p, first, ltr, visited, it);
-		}
+		// If no starting face is given, locate p here and obtain also the location translation
+		if (start == Face_handle()) {
+			start = this->euclidean_locate(p, ltr);
+		} 
 
-	}
+		// If start is Face_handle() here, it means p has not been located in the triangulation. 
+		// Nothing can be done at this point, so just return an empty set.
+		if (start != Face_handle()) {
+			std::set< Face_handle > visited; 	// faces that have already been visited; avoid visiting faces again (also avoid infinite loops)
+			std::set< Face_handle > to_visit; 	// faces to visit; should contain only new faces
+			std::map< Face_handle, Hyperbolic_translation > trans; 	// Combination of location translation and neighbor translation for each face to examine 
+			typedef std::pair<Face_handle, Hyperbolic_translation> FTPair; 	// useful typedef for inserting elements into the map
+			
+			// insert first face in set of faces to visit...
+			to_visit.insert(start); 
+			// ...and associate location translation with it
+			trans.insert( FTPair(start, ltr) );
+			
+			// repeat until there are still faces to check
+			while (!to_visit.empty()) {
+				typename std::set<Face_handle>::iterator itf;
+				itf = to_visit.begin(); 	// get an iterator to the face
+				Face_handle face = *itf;	// and the face itself (avoids dereferencing everywhere)
+				Hyperbolic_translation tr = trans[face]; // get the translation associated with the face
 
+				visited.insert(face); 	// the face has now been visited; it will NOT be visited again
+				to_visit.erase(itf); 	// erase the face from the list of faces to visit (amortized constant time)
 
-	/*!
-		This function returns the faces in conflict with `p` in the output iterator `it`. 
-		This is the recursive version of the function.
-		Note that the optional parameter `store_translations` is _not_ documented. This 
-		flag indicates whether the translations in the faces in conflict with `p` should
-		be stored in their incident vertices. The flag is `false` by default, and is set
-		to `true` only when the point `p` is going to be inserted in the triangulation.
-	*/
-	template<class OutputFaceIterator>
-	void
-	find_conflicts(	const Point& p,
-					const Face_handle cf,
-					Hyperbolic_translation tr,
-					std::set<Face_handle>& visited,
-					OutputFaceIterator it,
-					bool store_translations = false) const {
-
-		// If the insertion of the face into the set is successful, then we examine the face. 
-		// Otherwise, we have already examined it in a previous call. This costs log(n) where
-		// n is the number of faces of the triangulation.
-		if (visited.insert(cf).second) {
-			if (_side_of_circle(cf, p, tr) == ON_BOUNDED_SIDE) {
-
-				it++ = cf;
-
-				if (store_translations) {
+				if (_side_of_circle(face, p, tr) == ON_BOUNDED_SIDE) {
+					if (store_translations) {
+						for (int i = 0; i < 3; i++) {
+							face->vertex(i)->set_translation(tr * face->translation(i));
+						}
+					}
+					it++ = face;
 					for (int i = 0; i < 3; i++) {
-						cf->vertex(i)->set_translation(tr * cf->translation(i));
+						if (visited.find(face->neighbor(i)) == visited.end()){
+							to_visit.insert( face->neighbor(i) );
+							trans.insert( FTPair(face->neighbor(i), tr*neighbor_translation(face,i)) );
+						}
 					}
 				}
+			} // end of while
+		} // end if (start != Face_handle())
 
-				// Recursive call for the neighbors of `cf`
-				for (int jj = 0; jj < 3; jj++) {
-					find_conflicts(p, cf->neighbor(jj), tr * neighbor_translation(cf, jj), visited, it, store_translations);
-				}
-			}
-		}
+	} // end of function
 
-	}
 
 
 	int clean_dummy_points() {
@@ -477,7 +477,7 @@ insert(const Point  &p,  Face_handle hint) {
 		std::set<Face_handle> visited;
 
 
-		find_conflicts(p, start, loff, visited, std::back_inserter(faces), true);
+		find_conflicts(p, std::back_inserter(faces), start, loff, true);
 
 
 		Vertex_handle v = this->_tds.insert_in_hole(faces.begin(), faces.end());
