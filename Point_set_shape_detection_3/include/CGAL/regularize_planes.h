@@ -781,6 +781,8 @@ void regularize_planes (const PointRange& points,
 
 /// \cond SKIP_IN_MANUAL
 
+// Workaround for bug reported here:
+// https://developercommunity.visualstudio.com/content/problem/340310/unaccepted-typename-that-other-compilers-require.html
 #if _MSC_VER == 1915
 #define CGAL_TYPENAME_FOR_MSC
 #else
