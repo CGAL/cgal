@@ -109,7 +109,7 @@ public:
   {
     if (!assume_one_CC)
     {
-      std::vector<std::size_t> CC_ids(num_faces(tm));
+      std::vector<std::size_t> cc_ids(num_faces(tm));
 
       // TODO use dynamic property if no defaut fid is available
       typename boost::property_map<TriangleMesh, boost::face_index_t>::type fid_map
@@ -117,7 +117,8 @@ public:
 
       std::size_t nb_cc =
         Polygon_mesh_processing::connected_components(
-          tm, bind_property_maps(fid_map, make_property_map(CC_ids)) );
+          tm, bind_property_maps(fid_map, make_property_map(cc_ids)),
+          parameters::face_index_map(fid_map));
       if (nb_cc != 1)
       {
         typedef boost::graph_traits<TriangleMesh> GrTr;
@@ -125,10 +126,11 @@ public:
 
         BOOST_FOREACH(typename GrTr::face_descriptor f, faces(tm))
         {
-          if  (vertex_per_cc[get(fid_map, f)]!=GrTr::null_vertex())
+          std::size_t cc_id = cc_ids[get(fid_map, f)];
+          if  (vertex_per_cc[cc_id] == GrTr::null_vertex())
           {
-            points.push_back(
-              get(vpm, target( halfedge(f, tm), tm)) );
+            vertex_per_cc[cc_id] = target( halfedge(f, tm), tm);
+            points.push_back( get(vpm, vertex_per_cc[cc_id]) );
           }
         }
         return;
