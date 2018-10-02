@@ -297,7 +297,11 @@ if [ -n "$DO_PUBLIC" ]; then
     if [ -n "$BETA" ]; then
         public_release_version="${public_release_version}-beta${BETA}"
     fi
-    public_release_name="CGAL-${public_release_version}"
+    if [ -r "${NUMBERS_DIR}/public_release_name" ]; then
+	public_release_name=`cat "${NUMBERS_DIR}/public_release_name"`
+    else
+	public_release_name="CGAL-${public_release_version}"
+    fi
 
     cmake -DPUBLIC="ON" -DDESTINATION="${DESTINATION}" -DCGAL_VERSION="${public_release_version}" -DCGAL_VERSION_NR="${release_number}" -DVERBOSE="${VERBOSE}" -P ${SOURCES_DIR}/Scripts/developer_scripts/cgal_create_release_with_cmake.cmake
     pushd "${DESTINATION}/${public_release_name}"
