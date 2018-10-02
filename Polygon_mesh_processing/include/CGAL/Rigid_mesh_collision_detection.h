@@ -87,7 +87,12 @@ class Rigid_mesh_collision_detection
   std::vector<Bbox_3> m_bboxes;
 #endif
 
-  void clear_trees()
+
+public:
+  typedef Tree AABB_tree;
+  typedef Vpm Vertex_point_map;
+
+  ~Rigid_mesh_collision_detection()
   {
     int i=0;
     BOOST_FOREACH(Tree* tree, m_aabb_trees){
@@ -96,10 +101,6 @@ class Rigid_mesh_collision_detection
     }
     m_aabb_trees.clear();
   }
-
-public:
-  typedef Tree AABB_tree;
-  typedef Vpm Vertex_point_map;
 
  /*
   * \cgalNamedParamsBegin
