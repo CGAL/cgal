@@ -370,7 +370,7 @@ operator>>(std::istream& is, Vector_3<R>& v)
 {
   return extract(is, v, typename R::Kernel_tag() );
 }
-  
+
 } //namespace CGAL
 
 #endif // CGAL_VECTOR_3_H
