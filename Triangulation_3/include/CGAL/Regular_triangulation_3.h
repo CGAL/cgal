@@ -2453,40 +2453,96 @@ namespace CGAL {
 
   template < class Gt, class Tds, class Lds >
   bool
-    Regular_triangulation_3<Gt,Tds,Lds>::
-    remove(Vertex_handle v, bool *could_lock_zone)
+  Regular_triangulation_3<Gt,Tds,Lds>::
+  remove(Vertex_handle v, bool *could_lock_zone)
   {
     bool removed = true;
 
     // Locking vertex v...
-    if (!this->try_lock_vertex(v))
+    if(!this->try_lock_vertex(v))
     {
       *could_lock_zone = false;
     }
     else
     {
-      Vertex_handle hint = (v->cell()->vertex(0) == v ?
-        v->cell()->vertex(1) : v->cell()->vertex(0));
+      // Check that the vertex hasn't be deleted from the TDS while we were locking it
+#ifdef CGAL_RT3_IGNORE_TDS_CONCEPT
+      if(!tds().vertices().is_used(v))
+#else
+      if(!tds().is_vertex(v))
+#endif
+        return true; // vertex is already gone from the TDS, nothing to do
+
+      Vertex_handle hint = v->cell()->vertex(0) == v ? v->cell()->vertex(1) : v->cell()->vertex(0);
 
       Self tmp;
       Vertex_remover<Self> remover(tmp);
       removed = Tr_Base::remove(v, remover, could_lock_zone);
 
-      if (*could_lock_zone && removed)
+      if(*could_lock_zone && removed)
       {
-        // Re-insert the points that v was hiding.
-        for (typename Vertex_remover<Self>::Hidden_points_iterator
-          hi = remover.hidden_points_begin();
-          hi != remover.hidden_points_end(); ++hi)
+        // The vertex has been removed, try to re-insert the points that 'v' was hiding
+
+        // Start by unlocking the area of the removed vertex to avoid deadlocks
+        this->unlock_all_elements();
+
+        for(typename Vertex_remover<Self>::Hidden_points_iterator
+              hi = remover.hidden_points_begin();
+              hi != remover.hidden_points_end(); ++hi)
         {
-          bool could_lock_zone = false;
-          Vertex_handle hv;
-          while (!could_lock_zone)
+          const Weighted_point& wp = *hi;
+
+          // try to lock the positions of the hint and the hidden point
+          bool success = false;
+          while(!success)
           {
-            hv = insert (*hi, hint, &could_lock_zone);
+            // The 'hint' is unsafe to use immediately because we are in a regular triangulation,
+            // and the insertion of a (weighted) point in another thread might have hidden (deleted)
+            // the hint.
+#ifdef CGAL_RT3_IGNORE_TDS_CONCEPT
+            if(!tds().vertices().is_used(hint))
+#else
+            if(!tds().is_vertex(hint))
+#endif
+            {
+              hint = finite_vertices_begin();
+              continue;
+            }
+
+            // We need to make sure that while are locking the position P1 := hint->point(), 'hint'
+            // does not get its position changed to P2 != P1.
+            const Weighted_point hint_point_mem = hint->point();
+
+            if(this->try_lock_point(hint_point_mem) && this->try_lock_point(wp))
+            {
+              // Make sure that the hint is still valid (so that we can safely take hint->cell()) and
+              // that its position hasn't changed to ensure that we will start the locate from where
+              // we have locked.
+#ifdef CGAL_RT3_IGNORE_TDS_CONCEPT
+              if(!tds().vertices().is_used(hint) ||
+#else
+              if(!tds().is_vertex(hint) ||
+#endif
+                 hint->point() != hint_point_mem)
+              {
+                hint = finite_vertices_begin();
+                this->unlock_all_elements();
+                continue;
+              }
+
+              Vertex_handle hv = insert(wp, hint, could_lock_zone);
+
+              if(*could_lock_zone)
+              {
+                success = true;
+                if(hv != Vertex_handle())
+                  hint = hv;
+              }
+            }
+
+            // This unlocks everything in all cases: partial lock failure, failed insertion, successful insertion
+            this->unlock_all_elements();
           }
-          if (hv != Vertex_handle())
-            hint = hv;
         }
         CGAL_triangulation_expensive_postcondition (is_valid());
       }
