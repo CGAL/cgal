@@ -21,6 +21,7 @@
 #define CGAL_WRAPPER_POINT_D_H
 
 #include <ostream>
+#include <istream>
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/representation_tags.h>
@@ -246,8 +247,6 @@ public:
 template <class R_> Point_d<R_>::Point_d(Point_d &)=default;
 #endif
 
-//TODO: IO
-
 template <class R_>
 std::ostream& operator <<(std::ostream& os, const Point_d<R_>& p)
 {
@@ -269,26 +268,20 @@ std::ostream& operator <<(std::ostream& os, const Point_d<R_>& p)
 // TODO: test if the stream is binary or text?
 template<typename K>
 std::istream &
-operator>>(std::istream &is, typename Point_d<K> & p)
+operator>>(std::istream &is, Point_d<K> & p)
 {
-  typedef typename Point_d<K> P;
+  typedef Point_d<K> P;
   typedef typename K::FT FT;
-  std::vector<FT> coords;
+  int dim;
+  is >> dim;
+  if(!is) return is;
 
-  std::string line;
-  for(;;)
-  {
-    if (!std::getline(is, line))
-      return is;
-    if (line != "")
-      break;
-  }
-  std::stringstream line_sstr(line);
-  FT temp;
-  while (line_sstr >> temp)
-    coords.push_back(temp);
+  std::vector<FT> coords(dim);
+  for(int i=0;i<dim;++i)
+    is >> coords[i];
 
-  p = P(coords.begin(), coords.end());
+  if(is)
+    p = P(coords.begin(), coords.end());
   return is;
 }
 

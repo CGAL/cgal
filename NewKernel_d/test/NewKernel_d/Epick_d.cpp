@@ -622,6 +622,9 @@ void test3(){
   std::ostringstream output;
   output << showit;
   assert(output.str()=="3 1 2 4");
+  std::istringstream input("3 5 6 9");
+  input >> showit;
+  assert(ed(showit,cp(5,6,9)));
   P t1[]={cp(1,2,3),cp(3,2,1),cp(2,4,2)};
   assert(sbds(t1+0,t1+2,cp(2,2,3.414)) == CGAL::ON_BOUNDED_SIDE);
   assert(sbds(t1+0,t1+2,cp(1,2,3)) == CGAL::ON_BOUNDARY);
