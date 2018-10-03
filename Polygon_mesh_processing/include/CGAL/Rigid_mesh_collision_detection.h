@@ -45,11 +45,30 @@
 
 namespace CGAL {
 
+/*!
+ * \ingroup PkgPolygonMeshProcessing
+ * This class provides methods to perform some intersection tests between triangle meshes
+ * that undergo affine transformations (rotation, translation, and scaling).
+ * Meshes are added to an internal pool and are referenced using an id assigned when added to the pool.
+ * Note that the exact predicate framework applies on the meshes after having applied the transformation
+ * to the coordinates of the points of the vertices of each mesh.
+ *
+ * @tparam TriangleMesh a model of `HalfedgeListGraph` and `FaceListGraph`
+ * @tparam VertexPointMap a model of `ReadablePropertyMap` with the vertex descriptor of `TriangleMesh` as key type,
+ *                        and a point from a CGAL Kernel as value type. %Default is the internal point property map
+ *                        of `TriangleMesh` if it exists.
+ * @tparam Kernel a model of CGAL Kernel. %Default is the Kernel of the value type of `VertexPointMap` retrieved using
+ *                `Kernel_traits`.
+ * @tparam AABBTree_type a `AABB_tree` that can containing faces of `TriangleMesh`. %Default is using `AABB_traits` with
+ *                       `AABB_face_graph_triangle_primitive` as primitive type.
+ * @tparam HAS_ROTATION tag indicating whether the transformations applied to meshes may contain a rotation (`Tag_true`)
+ *                      or if only translation and scaling are applied (`Tag_false`).
+ */
 template <class TriangleMesh,
           class VertexPointMap = Default,
           class Kernel_ = Default,
-          class HAS_ROTATION = CGAL::Tag_true,
-          class AABBTree_type = Default>
+          class AABBTree_type = Default,
+          class HAS_ROTATION = CGAL::Tag_true>
 class Rigid_mesh_collision_detection
 {
 // Vertex point map type
@@ -87,10 +106,18 @@ class Rigid_mesh_collision_detection
   std::vector<Bbox_3> m_bboxes;
 #endif
 
-
 public:
+#ifdef DOXYGEN_RUNNING
+  /// The AABB_tree type representing the triangles of each input mesh
+  typedef unspecified_type AABB_tree;
+  /// The vertex point map type used with `TriangleMesh`
+  typedef unspecified_type Vertex_point_map;
+#else
   typedef Tree AABB_tree;
   typedef Vpm Vertex_point_map;
+#endif
+  /// Point type
+  typedef typename boost::property_traits<Vertex_point_map>::value_type Point_3;
 
   ~Rigid_mesh_collision_detection()
   {
@@ -102,7 +129,17 @@ public:
     m_aabb_trees.clear();
   }
 
- /*
+ /*!
+  * fills `points` with one point per connected component of `tm`. This is a helper function
+  * intended to be used before calling `add_mesh()` overload taking an AABB-tree instead of a mesh
+  * as input parameter.
+  *
+  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  *
+  * @param tm input triangulated surface mesh
+  * @param [out] points will contain one point per connected component of `tm`
+  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  *
   * \cgalNamedParamsBegin
   *   \cgalParamBegin{vertex_point_map}
   *     the property map with the points associated to the vertices of `tm`.
@@ -110,19 +147,21 @@ public:
   *     `CGAL::vertex_point_t` should be available in `TriangleMesh`
   *   \cgalParamEnd
   *   \cgalParamBegin{face_index_map}
-  *      a property map containing the index of each face of `tm`.
+  *      a property map containing the index of each face of `tm`. It must be initialized
+  *      and the value should be unique per face and in the range `[0, num_faces(tm)[`.
   *   \cgalParamEnd
   *   \cgalParamBegin{apply_per_connected_component}
-  *     if `false`, `tm` is supposed to have only one connected component and might have several connected components otherwise.
-  *     Default is `true`.
+  *     if `false`, `tm` is assumed to have only one connected component, avoiding and
+  *     the extraction of connected components. %Default is `true`.
   *   \cgalParamEnd
   * \cgalNamedParamsEnd
   */
   template <class NamedParameters>
   static
-  void get_one_point_per_cc(const TriangleMesh& tm,
-                                  std::vector<typename Kernel::Point_3>& points,
-                            const NamedParameters& np)
+  void collect_one_point_per_connected_component(
+    const TriangleMesh& tm,
+          std::vector<Point_3>& points,
+    const NamedParameters& np)
   {
     using Polygon_mesh_processing::GetVertexPointMap;
     using Polygon_mesh_processing::GetFaceIndexMap;
@@ -182,19 +221,12 @@ public:
     points.push_back( get(vpm, *boost::begin(vertices(tm))) );
   }
 
-  static
-  void get_one_point_per_cc(const TriangleMesh& tm,
-                                  std::vector<typename Kernel::Point_3>& points)
-  {
-    get_one_point_per_cc(tm, points, parameters::all_default());
-  }
-
 private:
   template <class NamedParameters>
   void add_cc_points(const TriangleMesh& tm, const NamedParameters& np)
   {
     m_points_per_cc.resize(m_points_per_cc.size()+1);
-    get_one_point_per_cc(tm, m_points_per_cc.back(), np);
+    collect_one_point_per_connected_component(tm, m_points_per_cc.back(), np);
   }
 
   // precondition A and B does not intersect
@@ -231,19 +263,32 @@ private:
 
 public:
 
-  void reserve(std::size_t size)
-  {
-    m_own_aabb_trees.reserve(size);
-    m_aabb_trees.reserve(size);
-    m_is_closed.reserve(size);
-    m_points_per_cc.reserve(size);
-    m_traversal_traits.reserve(size);
-#if CGAL_RMCD_CACHE_BOXES
-    m_bboxes.reserve(size);
-#endif
-  }
-
-  // TODO: copy NP doc from get_one_point_per_cc
+ /*!
+  * adds mesh `tm` in the pool of meshes to be considered for intersection.
+  *
+  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  *
+  * \return the id of `tm` used to refer to that mesh.
+  *
+  * @param tm triangulated surface mesh to add
+  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  *
+  * \cgalNamedParamsBegin
+  *   \cgalParamBegin{vertex_point_map}
+  *     the property map with the points associated to the vertices of `tm`.
+  *     If this parameter is omitted, an internal property map for
+  *     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+  *   \cgalParamEnd
+  *   \cgalParamBegin{face_index_map}
+  *      a property map containing the index of each face of `tm`. It must be initialized
+  *      and the value should be unique per face and in the range `[0, num_faces(tm)[`.
+  *   \cgalParamEnd
+  *   \cgalParamBegin{apply_per_connected_component}
+  *     if `false`, `tm` is assumed to have only one connected component, avoiding and
+  *     the extraction of connected components. Default is `true`.
+  *   \cgalParamEnd
+  * \cgalNamedParamsEnd
+  */
   template <class NamedParameters>
   std::size_t add_mesh(const TriangleMesh& tm,
                        const NamedParameters& np)
@@ -276,14 +321,22 @@ public:
     return id;
   }
 
-  std::size_t add_mesh(const TriangleMesh& tm)
-  {
-    return add_mesh(tm, parameters::all_default());
-  }
-
+ /*!
+  * adds an instance of a triangulated surface mesh using an external tree of its faces.
+  * Note that the tree is not copied and the lifetime of `tree` must be longer than
+  * that of this class.
+  *
+  * \return the id of the instance used to refer to that mesh.
+  *
+  * @param tree an AABB-tree of faces of a mesh
+  * @param is_closed `true` is the mesh in `tree` is closed, and `false` otherwise.
+  *                  \link is_closed() `CGAL::is_closed()` \endlink can be used for that purpose.
+  * @param points_per_cc a vector containing one point of a vertex for each connected
+  *                      component of the triangle surface mesh in `tree`
+  */
   std::size_t add_mesh(const AABB_tree& tree,
                        bool is_closed,
-                       const std::vector<typename Kernel::Point_3>& points_per_cc)
+                       const std::vector<Point_3>& points_per_cc)
   {
     std::size_t id = m_aabb_trees.size();
     m_is_closed.push_back(is_closed);
@@ -299,23 +352,24 @@ public:
     return id;
   }
 
-  void remove_mesh(std::size_t mesh_id)
+ /*!
+  * increases the capacity of data structures used internally, `size` being the number of meshes expected to be added.
+  */
+  void reserve(std::size_t size)
   {
-    if(mesh_id >= m_aabb_trees.size()) return;
-    if (m_own_aabb_trees[mesh_id]) delete m_aabb_trees[mesh_id];
-    m_own_aabb_trees.erase( m_own_aabb_trees.begin()+mesh_id );
-    m_aabb_trees.erase( m_aabb_trees.begin()+mesh_id);
-    m_is_closed.erase(m_is_closed.begin()+mesh_id);
-    m_points_per_cc.erase(m_points_per_cc.begin()+mesh_id);
-    m_traversal_traits.erase(m_traversal_traits.begin()+mesh_id);
+    m_own_aabb_trees.reserve(size);
+    m_aabb_trees.reserve(size);
+    m_is_closed.reserve(size);
+    m_points_per_cc.reserve(size);
+    m_traversal_traits.reserve(size);
 #if CGAL_RMCD_CACHE_BOXES
-    // TODO this is a lazy approach that is not optimal
-    m_bboxes.pop_back();
-    m_bboxes_is_invalid.set();
-    m_bboxes_is_invalid.resize(m_aabb_trees.size());
+    m_bboxes.reserve(size);
 #endif
   }
 
+  /*!
+   * sets the transformation associated to a mesh identified by its id in the pool.
+   */
   void set_transformation(std::size_t mesh_id, const Aff_transformation_3<Kernel>& aff_trans)
   {
     m_traversal_traits[mesh_id].set_transformation(aff_trans);
@@ -338,6 +392,12 @@ public:
   }
 #endif
 
+ /*!
+  * returns a vector of ids of meshes within `ids` that have at least a triangle face
+  * intersecting a triangle face of the mesh with id `mesh_id`.
+  * If `mesh_id` is in `ids` it is not reported.
+  * \tparam MeshRangeIds a range of ids convertible to `std::size_t`.
+  */
   template <class MeshRangeIds>
   std::vector<std::size_t>
   get_all_intersections(std::size_t mesh_id, const MeshRangeIds& ids) const
@@ -359,6 +419,10 @@ public:
     return res;
   }
 
+ /*!
+  * returns a vector of ids of meshes in the pool that have at least a triangle face
+  * intersecting a triangle face of the mesh with id `mesh_id`
+  */
   std::vector<std::size_t>
   get_all_intersections(std::size_t mesh_id) const
   {
@@ -368,18 +432,25 @@ public:
                  boost::make_counting_iterator<std::size_t>(m_aabb_trees.size())));
   }
 
-  std::vector<std::size_t>
-  set_transformation_and_get_all_intersections(std::size_t mesh_id,
-                                               const Aff_transformation_3<Kernel>& aff_trans)
-  {
-    CGAL::Interval_nt_advanced::Protector protector;
-    set_transformation(mesh_id, aff_trans);
-    return get_all_intersections(mesh_id);
-  }
-
-  // TODO: document that if a model is composed of several CC on one of them is not closed,
-  // no inclusion test will be made
-  // TODO: document that the inclusion can be partial in case there are several CC
+ /*!
+  * returns a vector of ids of meshes within `ids` that are intersecting with the mesh with id `mesh_id`,
+  * considering volume inclusions for closed meshes.
+  * More precisely, if at least one triangle face of a mesh with id `i` intersects a triangle face
+  * of the mesh with id `mesh_id`, the pair `(i, false)` is put in the output vector.
+  * If there is no triangle face intersection, but at least one of the meshes with ids `i` and `mesh_id` is closed,
+  * and at least one connected component is included in the bounded volume defined by a closed mesh then the pair
+  * `(i, true)` is put in the output vector (independently of mesh `i` or `mesh_id` being the one including the other).
+  * The inclusion test is done using `Side_of_triangle_mesh`, in particular surface orientation is ignored and only the
+  * nesting level of connected components defines a bounded volume. If a mesh has some self-intersection the inclusion
+  * test may return incorrect results.
+  * If `mesh_id` is in `ids` it is not reported.
+  *
+  * \tparam MeshRangeIds a range of ids convertible to `std::size_t`.
+  *
+  * \note If a mesh is made of several connected components and at least component which is not closed,
+  *       then no inclusion test will be made even if some components are closed.
+  *
+  */
   template <class MeshRangeIds>
   std::vector<std::pair<std::size_t, bool> >
   get_all_intersections_and_inclusions(std::size_t mesh_id, const MeshRangeIds& ids) const
@@ -419,6 +490,11 @@ public:
     return res;
   }
 
+ /*!
+  * returns a vector of ids of meshes in the pool that are intersecting with the mesh with id `mesh_id`,
+  * considering volume inclusions for closed meshes.
+  * See the previous overload for details.
+  */
   std::vector<std::pair<std::size_t, bool> >
   get_all_intersections_and_inclusions(std::size_t mesh_id) const
   {
@@ -428,14 +504,38 @@ public:
                  boost::make_counting_iterator<std::size_t>(m_aabb_trees.size())));
   }
 
-  std::vector<std::pair<std::size_t, bool> >
-  set_transformation_and_get_all_intersections_and_inclusions(std::size_t mesh_id,
-                                           const Aff_transformation_3<Kernel>& aff_trans)
+/// \cond SKIP_IN_MANUAL
+  // versions without NP
+  static
+  void collect_one_point_per_connected_component(
+    const TriangleMesh& tm,
+          std::vector<typename Kernel::Point_3>& points)
   {
-    CGAL::Interval_nt_advanced::Protector protector;
-    set_transformation(mesh_id, aff_trans);
-    return get_all_intersections_and_inclusions(mesh_id);
+    collect_one_point_per_connected_component(tm, points, parameters::all_default());
   }
+
+  std::size_t add_mesh(const TriangleMesh& tm)
+  {
+    return add_mesh(tm, parameters::all_default());
+  }
+
+  void remove_mesh(std::size_t mesh_id)
+  {
+    if(mesh_id >= m_aabb_trees.size()) return;
+    if (m_own_aabb_trees[mesh_id]) delete m_aabb_trees[mesh_id];
+    m_own_aabb_trees.erase( m_own_aabb_trees.begin()+mesh_id );
+    m_aabb_trees.erase( m_aabb_trees.begin()+mesh_id);
+    m_is_closed.erase(m_is_closed.begin()+mesh_id);
+    m_points_per_cc.erase(m_points_per_cc.begin()+mesh_id);
+    m_traversal_traits.erase(m_traversal_traits.begin()+mesh_id);
+#if CGAL_RMCD_CACHE_BOXES
+    // TODO this is a lazy approach that is not optimal
+    m_bboxes.pop_back();
+    m_bboxes_is_invalid.set();
+    m_bboxes_is_invalid.resize(m_aabb_trees.size());
+#endif
+  }
+/// \endcond
 };
 
 } // end of CGAL namespace

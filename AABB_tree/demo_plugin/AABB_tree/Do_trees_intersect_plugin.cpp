@@ -214,9 +214,9 @@ public Q_SLOTS:
         matrix[2], matrix[6], matrix[10],matrix[14]);
     EPICK::Aff_transformation_3 transfo = 
         rota*translation;
+    col_det->set_transformation(sel_id, transfo);
     std::vector<std::pair<std::size_t, bool> > inter_and_incl
-        = col_det->
-        set_transformation_and_get_all_intersections_and_inclusions(sel_id, transfo);
+        = col_det->get_all_intersections_and_inclusions(sel_id);
     for(std::size_t i=0; i<inter_and_incl.size(); ++i)
     {
       std::size_t id = inter_and_incl[i].first;
@@ -287,9 +287,9 @@ public Q_SLOTS:
         matrix[2], matrix[6], matrix[10],matrix[14]);
     EPICK::Aff_transformation_3 transfo = 
         rota*translation;
+    col_det->set_transformation(sel_id, transfo);
     std::vector<std::pair<std::size_t, bool> > inter_and_incl
-        = col_det->
-        set_transformation_and_get_all_intersections_and_inclusions(sel_id, transfo);
+        = col_det->get_all_intersections_and_inclusions(sel_id);
     for(std::size_t i=0; i<inter_and_incl.size(); ++i)
     {
       std::size_t id = inter_and_incl[i].first;
