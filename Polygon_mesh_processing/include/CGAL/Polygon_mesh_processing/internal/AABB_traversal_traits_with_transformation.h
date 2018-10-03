@@ -139,6 +139,9 @@ class Do_intersect_traversal_traits_with_transformation
   {}
 
 public:
+  Do_intersect_traversal_traits_with_transformation():
+    m_traits_ptr(NULL)
+  {}
 
   Do_intersect_traversal_traits_with_transformation(const AABBTraits& traits)
     : m_is_found(false), m_traits_ptr(&traits), m_has_rotation(false)
