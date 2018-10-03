@@ -2481,7 +2481,7 @@ namespace CGAL {
 
       if(*could_lock_zone && removed)
       {
-        // The vertex has been removed, try to re-insert the points that 'v' was hiding
+        // The vertex has been removed, re-insert the points that 'v' was hiding
 
         // Start by unlocking the area of the removed vertex to avoid deadlocks
         this->unlock_all_elements();
