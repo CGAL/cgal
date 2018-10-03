@@ -266,6 +266,32 @@ std::ostream& operator <<(std::ostream& os, const Point_d<R_>& p)
   return os;
 }
 
+// TODO: test if the stream is binary or text?
+template<typename K>
+std::istream &
+operator>>(std::istream &is, typename Point_d<K> & p)
+{
+  typedef typename Point_d<K> P;
+  typedef typename K::FT FT;
+  std::vector<FT> coords;
+
+  std::string line;
+  for(;;)
+  {
+    if (!std::getline(is, line))
+      return is;
+    if (line != "")
+      break;
+  }
+  std::stringstream line_sstr(line);
+  FT temp;
+  while (line_sstr >> temp)
+    coords.push_back(temp);
+
+  p = P(coords.begin(), coords.end());
+  return is;
+}
+
 //template <class R_>
 //Vector_d<R_> operator+(const Vector_d<R_>& v,const Vector_d<R_>& w) const
 //{

@@ -122,32 +122,6 @@ input_point(std::istream & is, const Traits &traits, P & p)
 // TODO: test if the stream is binary or text?
 template<typename K>
 std::istream &
-operator>>(std::istream &is, typename Wrap::Point_d<K> & p)
-{
-  typedef typename Wrap::Point_d<K> P;
-  typedef typename K::FT FT;
-  std::vector<FT> coords;
-
-  std::string line;
-  for(;;)
-  {
-    if (!std::getline(is, line))
-      return is;
-    if (line != "")
-      break;
-  }
-  std::stringstream line_sstr(line);
-  FT temp;
-  while (line_sstr >> temp)
-    coords.push_back(temp);
-
-  p = P(coords.begin(), coords.end());
-  return is;
-}
-
-// TODO: test if the stream is binary or text?
-template<typename K>
-std::istream &
 operator>>(std::istream &is, typename Wrap::Weighted_point_d<K> & wp)
 {
   typedef typename Wrap::Point_d<K>           P;
