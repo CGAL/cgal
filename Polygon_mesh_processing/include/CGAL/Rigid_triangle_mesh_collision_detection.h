@@ -59,10 +59,11 @@ namespace CGAL {
  *                        of `TriangleMesh` if it exists.
  * @tparam Kernel a model of CGAL Kernel. %Default is the Kernel of the value type of `VertexPointMap` retrieved using
  *                `Kernel_traits`.
- * @tparam AABBTree_type a `AABB_tree` that can containing faces of `TriangleMesh`. %Default is using `AABB_traits` with
+ * @tparam AABBTree_type an `AABB_tree` that can containing faces of `TriangleMesh`. %Default is using `AABB_traits` with
  *                       `AABB_face_graph_triangle_primitive` as primitive type.
- * @tparam HAS_ROTATION tag indicating whether the transformations applied to meshes may contain a rotation (`Tag_true`)
- *                      or if only translation and scaling are applied (`Tag_false`).
+ * @tparam HAS_ROTATION tag indicating whether the transformations applied to meshes may contain rotations (`Tag_true`)
+ *                      or if only translations and scalings are applied (`Tag_false`). Some optimizations are
+ *                      switch on in case there are no rotations.
  */
 template <class TriangleMesh,
           class VertexPointMap = Default,
@@ -131,7 +132,7 @@ public:
 
  /*!
   * fills `points` with one point per connected component of `tm`. This is a helper function
-  * intended to be used before calling `add_mesh()` overload taking an AABB-tree instead of a mesh
+  * intended to be used before calling the `add_mesh()` overload taking an AABB-tree instead of a mesh
   * as input parameter.
   *
   * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
@@ -144,14 +145,14 @@ public:
   *   \cgalParamBegin{vertex_point_map}
   *     the property map with the points associated to the vertices of `tm`.
   *     If this parameter is omitted, an internal property map for
-  *     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+  *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
   *   \cgalParamEnd
   *   \cgalParamBegin{face_index_map}
   *      a property map containing the index of each face of `tm`. It must be initialized
-  *      and the value should be unique per face and in the range `[0, num_faces(tm)[`.
+  *      and the value must be unique per face and in the range `[0, num_faces(tm)[`.
   *   \cgalParamEnd
   *   \cgalParamBegin{apply_per_connected_component}
-  *     if `false`, `tm` is assumed to have only one connected component, avoiding and
+  *     if `false`, `tm` is assumed to have only one connected component, avoiding
   *     the extraction of connected components. %Default is `true`.
   *   \cgalParamEnd
   * \cgalNamedParamsEnd
@@ -277,14 +278,14 @@ public:
   *   \cgalParamBegin{vertex_point_map}
   *     the property map with the points associated to the vertices of `tm`.
   *     If this parameter is omitted, an internal property map for
-  *     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+  *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
   *   \cgalParamEnd
   *   \cgalParamBegin{face_index_map}
   *      a property map containing the index of each face of `tm`. It must be initialized
-  *      and the value should be unique per face and in the range `[0, num_faces(tm)[`.
+  *      and the value must be unique per face and in the range `[0, num_faces(tm)[`.
   *   \cgalParamEnd
   *   \cgalParamBegin{apply_per_connected_component}
-  *     if `false`, `tm` is assumed to have only one connected component, avoiding and
+  *     if `false`, `tm` is assumed to have only one connected component, avoiding
   *     the extraction of connected components. Default is `true`.
   *   \cgalParamEnd
   * \cgalNamedParamsEnd
@@ -393,8 +394,8 @@ public:
 #endif
 
  /*!
-  * returns a vector of ids of meshes within `ids` that have at least a triangle face
-  * intersecting a triangle face of the mesh with id `mesh_id`.
+  * returns a vector of the ids of meshes within `ids` that have at least a face
+  * intersecting a face of the mesh with id `mesh_id`.
   * If `mesh_id` is in `ids` it is not reported.
   * \tparam MeshRangeIds a range of ids convertible to `std::size_t`.
   */
@@ -420,8 +421,8 @@ public:
   }
 
  /*!
-  * returns a vector of ids of meshes in the pool that have at least a triangle face
-  * intersecting a triangle face of the mesh with id `mesh_id`
+  * returns a vector of the ids of meshes in the pool that have at least a face
+  * intersecting a face of the mesh with id `mesh_id`
   */
   std::vector<std::size_t>
   get_all_intersections(std::size_t mesh_id) const
@@ -433,11 +434,11 @@ public:
   }
 
  /*!
-  * returns a vector of ids of meshes within `ids` that are intersecting with the mesh with id `mesh_id`,
+  * returns a vector of the ids of meshes within `ids` that are intersecting with the mesh with id `mesh_id`,
   * considering volume inclusions for closed meshes.
-  * More precisely, if at least one triangle face of a mesh with id `i` intersects a triangle face
+  * More precisely, if at least one face of a mesh with id `i` intersects a face
   * of the mesh with id `mesh_id`, the pair `(i, false)` is put in the output vector.
-  * If there is no triangle face intersection, but at least one of the meshes with ids `i` and `mesh_id` is closed,
+  * If there is no face intersection, but at least one of the meshes with ids `i` and `mesh_id` is closed,
   * and at least one connected component is included in the bounded volume defined by a closed mesh then the pair
   * `(i, true)` is put in the output vector (independently of mesh `i` or `mesh_id` being the one including the other).
   * The inclusion test is done using `Side_of_triangle_mesh`, in particular surface orientation is ignored and only the
@@ -447,7 +448,7 @@ public:
   *
   * \tparam MeshRangeIds a range of ids convertible to `std::size_t`.
   *
-  * \note If a mesh is made of several connected components and at least component which is not closed,
+  * \note If a mesh is made of several connected components and at least one component is not closed,
   *       then no inclusion test will be made even if some components are closed.
   *
   */
@@ -491,7 +492,7 @@ public:
   }
 
  /*!
-  * returns a vector of ids of meshes in the pool that are intersecting with the mesh with id `mesh_id`,
+  * returns a vector of the ids of meshes in the pool that are intersecting with the mesh with id `mesh_id`,
   * considering volume inclusions for closed meshes.
   * See the previous overload for details.
   */
