@@ -22,6 +22,7 @@
 
 #include <ostream>
 #include <istream>
+#include <CGAL/IO/io.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/representation_tags.h>
@@ -278,7 +279,7 @@ operator>>(std::istream &is, Point_d<K> & p)
 
   std::vector<FT> coords(dim);
   for(int i=0;i<dim;++i)
-    is >> coords[i];
+    is >> iformat(coords[i]);
 
   if(is)
     p = P(coords.begin(), coords.end());

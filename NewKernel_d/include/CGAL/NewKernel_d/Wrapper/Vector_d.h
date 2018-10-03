@@ -20,6 +20,9 @@
 #ifndef CGAL_WRAPPER_VECTOR_D_H
 #define CGAL_WRAPPER_VECTOR_D_H
 
+#include <istream>
+#include <ostream>
+#include <CGAL/IO/io.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/representation_tags.h>
@@ -282,7 +285,7 @@ operator>>(std::istream &is, Vector_d<K> & v)
 
   std::vector<FT> coords(dim);
   for(int i=0;i<dim;++i)
-    is >> coords[i];
+    is >> iformat(coords[i]);
 
   if(is)
     v = V(coords.begin(), coords.end());
