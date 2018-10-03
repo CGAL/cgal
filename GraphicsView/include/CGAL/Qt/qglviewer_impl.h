@@ -252,6 +252,8 @@ void CGAL::QGLViewer::initializeGL() {
     context()->create();
     makeCurrent();
   }
+  connect(context(), &QOpenGLContext::aboutToBeDestroyed,
+          this, &CGAL::QGLViewer::contextIsDestroyed);
   QOpenGLFunctions::initializeOpenGLFunctions();
   glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
   // Default colors

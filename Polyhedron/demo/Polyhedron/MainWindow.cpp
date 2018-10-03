@@ -2537,13 +2537,15 @@ void MainWindow::on_actionAdd_Viewer_triggered()
   viewer2->setObjectName("viewer2");
   connect(viewer2, SIGNAL(doneInitGL(CGAL::Three::Viewer_interface*)),
           scene, SLOT(newViewer(CGAL::Three::Viewer_interface*)));
-  connect(viewer2, &Viewer::destroyed,
+  connect(viewer2, &Viewer::contextIsDestroyed,
           this, [this, viewer2](){
     scene->removeViewer(viewer2);
     viewerDestroyed(viewer2);
   });
+  
   setupViewer(viewer2, subviewer);
   viewer2->camera()->interpolateToFitScene();
+  subviewer->show();
   ui->mdiArea->tileSubWindows();
   QPoint pos = viewer_window->pos();
   QSize size = viewer_window->size();
@@ -2623,7 +2625,6 @@ SubViewer::SubViewer(QWidget *parent, MainWindow* mw, Viewer* mainviewer)
 {
   viewer = new Viewer(this, mainviewer);
   setWidget(viewer);
-  show();
   QAction* actionRecenter = new QAction("Re&center Scene",this);
   actionRecenter->setObjectName("actionRecenter");
   viewMenu->addAction(actionRecenter);

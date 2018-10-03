@@ -625,6 +625,8 @@ Q_SIGNALS:
   mouse. */
   void mouseGrabberChanged(qglviewer::MouseGrabber *mouseGrabber);
 
+  //! Signal emitted by the viewer when its OpenGL context is destroyed.
+  void contextIsDestroyed();
   /*! @name Help window */
   //@{
 public:
