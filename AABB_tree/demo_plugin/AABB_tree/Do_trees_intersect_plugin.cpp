@@ -1,5 +1,4 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
-#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <QApplication>
 #include <QObject>
 #include <QAction>
@@ -14,7 +13,7 @@
 #include <CGAL/Three/Triangle_container.h>
 #include <CGAL/Three/Edge_container.h>
 #include <CGAL/Three/Point_container.h>
-#include <CGAL/Rigid_mesh_collision_detection.h>
+#include <CGAL/Rigid_triangle_mesh_collision_detection.h>
 #include "Scene.h"
 
 class DoTreesIntersectplugin:
@@ -130,7 +129,7 @@ private Q_SLOTS:
     scene->setSelectedItem(group_item->getChildren().last());
     connect(static_cast<Scene*>(scene), &Scene::itemIndexSelected,
             this, &DoTreesIntersectplugin::update_trees);
-    col_det = new CGAL::Rigid_mesh_collision_detection<SMesh>();
+    col_det = new CGAL::Rigid_triangle_mesh_collision_detection<SMesh>();
     col_det->reserve(items.size());
     Q_FOREACH(Scene_movable_sm_item* item, items)
     {
@@ -339,7 +338,7 @@ private:
   Messages_interface* messageInterface;
   CGAL::Three::Scene_interface* scene;
   QMainWindow* mw;
-  CGAL::Rigid_mesh_collision_detection<SMesh> *col_det;
+  CGAL::Rigid_triangle_mesh_collision_detection<SMesh> *col_det;
   std::vector<Scene_movable_sm_item*> items;
   std::vector<std::size_t> prev_ids;
   Scene_group_item* group_item;

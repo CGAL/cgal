@@ -20,8 +20,8 @@
 // Author(s)     : Maxime Gimeno and Sebastien Loriot
 
 
-#ifndef CGAL_RIGID_MESH_COLLISION_DETECTION_H
-#define CGAL_RIGID_MESH_COLLISION_DETECTION_H
+#ifndef CGAL_RIGID_TRIANGLE_MESH_COLLISION_DETECTION_H
+#define CGAL_RIGID_TRIANGLE_MESH_COLLISION_DETECTION_H
 
 #include <CGAL/license/Polygon_mesh_processing/collision_detection.h>
 
@@ -69,7 +69,7 @@ template <class TriangleMesh,
           class Kernel_ = Default,
           class AABBTree_type = Default,
           class HAS_ROTATION = CGAL::Tag_true>
-class Rigid_mesh_collision_detection
+class Rigid_triangle_mesh_collision_detection
 {
 // Vertex point map type
   typedef typename property_map_selector<TriangleMesh, boost::vertex_point_t
@@ -119,7 +119,7 @@ public:
   /// Point type
   typedef typename boost::property_traits<Vertex_point_map>::value_type Point_3;
 
-  ~Rigid_mesh_collision_detection()
+  ~Rigid_triangle_mesh_collision_detection()
   {
     int i=0;
     BOOST_FOREACH(Tree* tree, m_aabb_trees){
@@ -542,4 +542,4 @@ public:
 
 #undef CGAL_RMCD_CACHE_BOXES
 
-#endif // CGAL_RIGID_MESH_COLLISION_DETECTION_H
+#endif // CGAL_RIGID_TRIANGLE_MESH_COLLISION_DETECTION_H
