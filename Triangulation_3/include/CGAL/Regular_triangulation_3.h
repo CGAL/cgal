@@ -1324,14 +1324,48 @@ namespace CGAL {
 #endif
 
       Vertex_handle &hint = m_tls_hint.local();
+
       for( size_t i_point = r.begin() ; i_point != r.end() ; ++i_point)
       {
         bool success = false;
         const Weighted_point &p = m_points[i_point];
         while(!success)
         {
-          if (m_rt.try_lock_vertex(hint) && m_rt.try_lock_point(p))
+          // The 'hint' is unsafe to use immediately because we are in a regular triangulation,
+          // and the insertion of a (weighted) point in another thread might have hidden (deleted)
+          // the hint.
+#define CGAL_RT3_IGNORE_TDS_CONCEPT
+#ifdef CGAL_RT3_IGNORE_TDS_CONCEPT
+          if(!m_rt.tds().vertices().is_used(hint))
+#else
+          if(!m_rt.tds().is_vertex(hint))
+#endif
           {
+            hint = m_rt.finite_vertices_begin();
+            continue;
+          }
+
+          // We need to make sure that while are locking the position P1 := hint->point(), 'hint'
+          // does not get its position changed to P2 != P1.
+          const Weighted_point hint_point_mem = hint->point();
+
+          if(m_rt.try_lock_point(hint_point_mem) && m_rt.try_lock_point(p))
+          {
+            // Make sure that the hint is still valid (so that we can safely take hint->cell()) and
+            // that its position hasn't changed to ensure that we will start the locate from where
+            // we have locked.
+#ifdef CGAL_RT3_IGNORE_TDS_CONCEPT
+            if(!m_rt.tds().vertices().is_used(hint) ||
+#else
+            if(!m_rt.tds().is_vertex(hint) ||
+#endif
+               hint->point() != hint_point_mem)
+            {
+              hint = m_rt.finite_vertices_begin();
+              m_rt.unlock_all_elements();
+              continue;
+            }
+
             bool could_lock_zone;
             Locate_type lt;
             int li, lj;
@@ -1418,14 +1452,46 @@ namespace CGAL {
         const Weighted_point &p = m_points[i_point];
         while (!success)
         {
-          if (m_rt.try_lock_vertex(hint) && m_rt.try_lock_point(p))
+          // The 'hint' is unsafe to use immediately because we are in a regular triangulation,
+          // and the insertion of a (weighted) point in another thread might have hidden (deleted)
+          // the hint.
+#define CGAL_RT3_IGNORE_TDS_CONCEPT
+#ifdef CGAL_RT3_IGNORE_TDS_CONCEPT
+          if(!m_rt.tds().vertices().is_used(hint))
+#else
+          if(!m_rt.tds().is_vertex(hint))
+#endif
           {
+            hint = m_rt.finite_vertices_begin();
+            continue;
+          }
+
+          // We need to make sure that while are locking the position P1 := hint->point(), 'hint'
+          // does not get its position changed to P2 != P1.
+          const Weighted_point hint_point_mem = hint->point();
+
+          if(m_rt.try_lock_point(hint_point_mem) && m_rt.try_lock_point(p))
+          {
+            // Make sure that the hint is still valid (so that we can safely take hint->cell()) and
+            // that its position hasn't changed to ensure that we will start the locate from where
+            // we have locked.
+#ifdef CGAL_RT3_IGNORE_TDS_CONCEPT
+            if(!m_rt.tds().vertices().is_used(hint) ||
+#else
+            if(!m_rt.tds().is_vertex(hint) ||
+#endif
+               hint->point() != hint_point_mem)
+            {
+              hint = m_rt.finite_vertices_begin();
+              m_rt.unlock_all_elements();
+              continue;
+            }
+
             bool could_lock_zone;
             Locate_type lt;
             int li, lj;
 
-            Cell_handle c = m_rt.locate(p, lt, li, lj, hint->cell(),
-              &could_lock_zone);
+            Cell_handle c = m_rt.locate(p, lt, li, lj, hint->cell(), &could_lock_zone);
             Vertex_handle v;
             if (could_lock_zone)
               v = m_rt.insert(p, lt, c, li, lj, &could_lock_zone);
@@ -1504,8 +1570,7 @@ namespace CGAL {
         bool could_lock_zone, needs_to_be_done_sequentially;
         do
         {
-          needs_to_be_done_sequentially =
-            !m_rt.remove(v, &could_lock_zone);
+          needs_to_be_done_sequentially = !m_rt.remove(v, &could_lock_zone);
           m_rt.unlock_all_elements();
         } while (!could_lock_zone);
 
