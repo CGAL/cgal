@@ -82,7 +82,6 @@ public:
   //! Decides if the distance between APoint and BPoint must be drawn;
   bool distance_is_displayed;
   bool i_is_pressed;
-  bool initialized;
   bool z_is_pressed;
   QImage static_image;
   //!Draws the distance between two selected points.
@@ -249,7 +248,6 @@ void Viewer::doBindings()
   d->spec_power = viewer_settings.value("spec_power", 51.8).toFloat();
   d->scene = 0;
   d->projection_is_ortho = false;
-  d->initialized = false;
   d->twosides = false;
   this->setProperty("draw_two_sides", false);
   d->macro_mode = false;
@@ -460,91 +458,91 @@ void Viewer::init()
   d->buffer.create();
   
   //setting the program used for the distance
-     {
-         //Vertex source code
-         const char vertex_source_dist[] =
-         {
-             "#version 150  \n"
-             "in vec4 vertex;\n"
-             "uniform mat4 mvp_matrix;\n"
-             "uniform float point_size;\n"
-             "void main(void)\n"
-             "{\n"
-             "   gl_PointSize = point_size; \n"
-             "   gl_Position = mvp_matrix * vertex; \n"
-             "} \n"
-             "\n"
-         };
-         const char vertex_source_comp_dist[] =
-         {
-             "attribute highp vec4 vertex;\n"
-             "uniform highp mat4 mvp_matrix;\n"
-             "uniform highp float point_size;\n"
-             "void main(void)\n"
-             "{\n"
-             "   gl_PointSize = point_size; \n"
-             "   gl_Position = mvp_matrix * vertex; \n"
-             "} \n"
-             "\n"
-         };
-         //Fragment source code
-         const char fragment_source_dist[] =
-         {
-             "#version 150  \n"
-             "out vec4 out_color; \n"
-             "void main(void) { \n"
-             "out_color = vec4(0.0,0.0,0.0,1.0); \n"
-             "} \n"
-             "\n"
-         };
-         const char fragment_source_comp_dist[] =
-         {
-             "void main(void) { \n"
-             "gl_FragColor = vec4(0.0,0.0,0.0,1.0); \n"
-             "} \n"
-             "\n"
-         };
-         QOpenGLShader vertex_shader(QOpenGLShader::Vertex);
-         QOpenGLShader fragment_shader(QOpenGLShader::Fragment);
-         if(isOpenGL_4_3())
-         {
-           if(!vertex_shader.compileSourceCode(vertex_source_dist))
-           {
-             std::cerr<<"Compiling vertex source FAILED"<<std::endl;
-           }
-           
-           if(!fragment_shader.compileSourceCode(fragment_source_dist))
-           {
-             std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
-           }
-         }
-         else
-         {
-           if(!vertex_shader.compileSourceCode(vertex_source_comp_dist))
-           {
-             std::cerr<<"Compiling vertex source FAILED"<<std::endl;
-           }
-           
-           if(!fragment_shader.compileSourceCode(fragment_source_comp_dist))
-           {
-             std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
-           }
-         }
-         if(!d->rendering_program_dist.addShader(&vertex_shader))
-         {
-             std::cerr<<"adding vertex shader FAILED"<<std::endl;
-         }
-         if(!d->rendering_program_dist.addShader(&fragment_shader))
-         {
-             std::cerr<<"adding fragment shader FAILED"<<std::endl;
-         }
-         if(!d->rendering_program_dist.link())
-         {
-             qDebug() << d->rendering_program_dist.log();
-         }
-     }
+  if(!is_linked)
+  {
+    //Vertex source code
+    const char vertex_source_dist[] =
+    {
+      "#version 150  \n"
+      "in vec4 vertex;\n"
+      "uniform mat4 mvp_matrix;\n"
+      "uniform float point_size;\n"
+      "void main(void)\n"
+      "{\n"
+      "   gl_PointSize = point_size; \n"
+      "   gl_Position = mvp_matrix * vertex; \n"
+      "} \n"
+      "\n"
+    };
+    const char vertex_source_comp_dist[] =
+    {
+      "attribute highp vec4 vertex;\n"
+      "uniform highp mat4 mvp_matrix;\n"
+      "uniform highp float point_size;\n"
+      "void main(void)\n"
+      "{\n"
+      "   gl_PointSize = point_size; \n"
+      "   gl_Position = mvp_matrix * vertex; \n"
+      "} \n"
+      "\n"
+    };
+    //Fragment source code
+    const char fragment_source_dist[] =
+    {
+      "#version 150  \n"
+      "out vec4 out_color; \n"
+      "void main(void) { \n"
+      "out_color = vec4(0.0,0.0,0.0,1.0); \n"
+      "} \n"
+      "\n"
+    };
+    const char fragment_source_comp_dist[] =
+    {
+      "void main(void) { \n"
+      "gl_FragColor = vec4(0.0,0.0,0.0,1.0); \n"
+      "} \n"
+      "\n"
+    };
+    QOpenGLShader vertex_shader(QOpenGLShader::Vertex);
+    QOpenGLShader fragment_shader(QOpenGLShader::Fragment);
+    if(isOpenGL_4_3())
+    {
+      if(!vertex_shader.compileSourceCode(vertex_source_dist))
+      {
+        std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+      }
+
+      if(!fragment_shader.compileSourceCode(fragment_source_dist))
+      {
+        std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+      }
+    }
+    else
+    {
+      if(!vertex_shader.compileSourceCode(vertex_source_comp_dist))
+      {
+        std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+      }
+
+      if(!fragment_shader.compileSourceCode(fragment_source_comp_dist))
+      {
+        std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+      }
+    }
+    if(!d->rendering_program_dist.addShader(&vertex_shader))
+    {
+      std::cerr<<"adding vertex shader FAILED"<<std::endl;
+    }
+    if(!d->rendering_program_dist.addShader(&fragment_shader))
+    {
+      std::cerr<<"adding fragment shader FAILED"<<std::endl;
+    }
+    if(!d->rendering_program_dist.link())
+    {
+      qDebug() << d->rendering_program_dist.log();
+    }
+  }
   d->painter = new QPainter();
-  d->initialized = true;
 }
 
 #include <QMouseEvent>
@@ -1332,8 +1330,6 @@ QPainter* Viewer::getPainter(){return d->painter;}
 
 void Viewer::paintEvent(QPaintEvent *)
 {
-  if(!d->initialized)
-    initializeGL();
   paintGL();
 }
 

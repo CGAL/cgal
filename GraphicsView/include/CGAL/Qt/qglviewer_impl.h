@@ -160,6 +160,7 @@ void CGAL::QGLViewer::defaultConstructor() {
   _offset = CGAL::qglviewer::Vec(0,0,0);
   stored_fbo = NULL;
   is_sharing = false;
+  is_linked = false;
   shared_context = nullptr;
 }
 
@@ -275,7 +276,7 @@ void CGAL::QGLViewer::initializeGL() {
   {
     vbos[i].create();
   }
-  //program without light
+  if(!is_linked)
   {
     //Vertex source code
     const char v_s[] =
@@ -361,9 +362,6 @@ void CGAL::QGLViewer::initializeGL() {
     {
       qDebug() << rendering_program.log();
     }
-  }
-  //program with light
-  {
     //Vertex source code
     const char vertex_source[] =
     {
@@ -476,8 +474,6 @@ void CGAL::QGLViewer::initializeGL() {
     //It is said in the doc that a QOpenGLShader is 
     // only destroyed with the QOpenGLShaderProgram 
     //it has been linked with.
-    QOpenGLShader vertex_shader(QOpenGLShader::Vertex);
-    QOpenGLShader fragment_shader(QOpenGLShader::Fragment);
     if(is_ogl_4_3)
     {
       if(!vertex_shader.compileSourceCode(vertex_source))
@@ -516,7 +512,7 @@ void CGAL::QGLViewer::initializeGL() {
       qDebug() << rendering_program_light.log();
     }
   }
-
+  is_linked = true;
   // Give time to glInit to finish and then call setFullScreen().
   if (isFullScreen())
     QTimer::singleShot(100, this, SLOT(delayedFullScreen()));

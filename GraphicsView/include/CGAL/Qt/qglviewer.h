@@ -1217,6 +1217,7 @@ protected:
   //C o n t e x t
   bool is_ogl_4_3;
   bool is_sharing;
+  bool is_linked;
   QOpenGLContext* shared_context;
 public:
   //! Is used to know if the openGL context is 4.3 or ES 2.0.
