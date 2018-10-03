@@ -116,7 +116,7 @@ file(READ "${release_dir}/include/CGAL/version.h" file_content)
 #  update CGAL_GIT_HASH
 if(EXISTS ${GIT_REPO}/.git)
   execute_process(
-    COMMAND git rev-parse HEAD
+    COMMAND git --git-dir=${GIT_REPO}/.git rev-parse HEAD
     RESULT_VARIABLE RESULT_VAR
     OUTPUT_VARIABLE OUT_VAR
     )
@@ -217,7 +217,7 @@ if (TESTSUITE)
     endif()
   endforeach()
   file(REMOVE_RECURSE "${release_dir}/tmp")
-endif() //TESTSUITE
+endif() #TESTSUITE
 
 # removal of extra directories and files
 file(REMOVE_RECURSE ${release_dir}/benchmark)
