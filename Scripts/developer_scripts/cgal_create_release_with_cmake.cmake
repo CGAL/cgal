@@ -136,6 +136,23 @@ file(WRITE ${release_dir}/include/CGAL/version.h "${file_content}")
 # make an extra copy of examples and demos for the testsuite and generate
 # create_cgal_test_with_cmake for tests, demos, and examples
 if (TESTSUITE)
+  SET(FMT_ARG "format:SCM branch:%n%H %d%n%nShort log from master:%n")
+  execute_process(
+            COMMAND git --git-dir=${GIT_REPO}/.git --work-tree=${GIT_REPO} log -n1 --format=${FMT_ARG}
+            WORKING_DIRECTORY "${release_dir}"
+            OUTPUT_VARIABLE OUT_VAR
+          )
+#write result in .scm-branch
+  file(WRITE ${release_dir}/.scm-branch "${OUT_VAR}")
+  SET(FMT_ARG "%h %s%n  parents: %p%n")
+  execute_process(
+            COMMAND git --git-dir=${GIT_REPO}/.git --work-tree=${GIT_REPO} log --first-parent --format=${FMT_ARG} cgal/master..
+            WORKING_DIRECTORY "${release_dir}"
+            OUTPUT_VARIABLE OUT_VAR
+          )
+#append result in .scm-branch
+  file(APPEND ${release_dir}/.scm-branch "${OUT_VAR}")
+
   file(GLOB tests RELATIVE "${release_dir}/test" "${release_dir}/test/*")
   foreach(d ${tests})
     if(IS_DIRECTORY "${release_dir}/test/${d}")
@@ -200,7 +217,7 @@ if (TESTSUITE)
     endif()
   endforeach()
   file(REMOVE_RECURSE "${release_dir}/tmp")
-endif()
+endif() //TESTSUITE
 
 # removal of extra directories and files
 file(REMOVE_RECURSE ${release_dir}/benchmark)
