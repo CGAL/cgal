@@ -101,7 +101,6 @@ endif()
   create_single_source_cgal_program("test_orient_cc.cpp")
   create_single_source_cgal_program("test_pmp_transform.cpp")
   create_single_source_cgal_program("extrude_test.cpp")
-  create_single_source_cgal_program("remove_degeneracies_test.cpp")
   create_single_source_cgal_program("test_merging_border_vertices.cpp")
   create_single_source_cgal_program("test_shape_predicates.cpp")
 
