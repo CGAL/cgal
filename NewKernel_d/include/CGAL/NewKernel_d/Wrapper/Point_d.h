@@ -270,8 +270,8 @@ template<typename K>
 std::istream &
 operator>>(std::istream &is, Point_d<K> & p)
 {
-  typedef Point_d<K> P;
-  typedef typename K::FT FT;
+  typedef typename Get_type<K, Point_tag>::type P;
+  typedef typename Get_type<K, FT_tag>::type   FT;
   int dim;
   is >> dim;
   if(!is) return is;

@@ -123,7 +123,24 @@ public:
 
 };
 
+template <class R_>
+std::ostream& operator<<(std::ostream& os, const Weighted_point_d<R_>& p)
+{
+  return os << p.point() << ' ' << p.weight();
+}
+
+template <class R_>
+std::istream& operator>>(std::istream& is, Weighted_point_d<R_>& p)
+{
+  typedef typename Get_type<R_, FT_tag>::type		FT_;
+  typedef typename Get_type<R_, Point_tag>::type	Point_;
+  typedef typename Get_functor<R_, Construct_ttag<Weighted_point_tag> >::type	CWP;
+  Point_ q; FT_ w;
+  if(is >> q >> w) p=CWP()(q,w);
+  return is;
+}
+
 } //namespace Wrap
 } //namespace CGAL
 
-#endif // CGAL_WRAPPER_SPHERE_D_H
+#endif // CGAL_WRAPPER_WEIGHTED_POINT_D_H
