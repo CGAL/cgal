@@ -22,7 +22,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Timer.h>
-#include <CGAL/IO/vtk_io.h>
+#include <CGAL/IO/vtk_io_2.h>
 
 // Qt headers
 #include <QtGui>

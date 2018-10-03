@@ -58,6 +58,7 @@
 #include <vtkPolyDataWriter.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkXMLUnstructuredGridReader.h>
+#include <vtkXMLUnstructuredGridWriter.h>
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkPolyData.h>
 #include <vtkIdTypeArray.h>
@@ -172,6 +173,7 @@ namespace CGAL{
       vtkCell* cell_ptr = poly_data->GetCell(i);
 
       vtkIdType nb_vertices = cell_ptr->GetNumberOfPoints();
+      std::cout<<nb_vertices<<std::endl;
       if (nb_vertices < 3)
         return false;
       std::vector<vertex_descriptor> vr(nb_vertices);
@@ -254,13 +256,13 @@ namespace CGAL{
       cell->Delete();
     }
 
-    vtkSmartPointer<vtkPolyData> polydata =
-      vtkSmartPointer<vtkPolyData>::New();
+    vtkSmartPointer<vtkUnstructuredGrid> usg =
+      vtkSmartPointer<vtkUnstructuredGrid>::New();
 
-    polydata->SetPoints(vtk_points);
+    usg->SetPoints(vtk_points);
     vtk_points->Delete();
 
-    polydata->SetPolys(vtk_cells);
+    usg->SetCells(5,vtk_cells);
     vtk_cells->Delete();
 
     // Combine the two data sets
@@ -277,7 +279,7 @@ namespace CGAL{
     vtkSmartPointer<VtkWriter> writer =
       vtkSmartPointer<VtkWriter>::New();
     writer->SetFileName(filename);
-    writer->SetInputData(polydata);
+    writer->SetInputData(usg);
     writer->Write();
   }
 }//end namespace CGAL
@@ -325,9 +327,18 @@ public:
     if (poly_item)
     {
       if (extension != "vtp")
-        CGAL::polygon_mesh_to_vtkUnstructured<vtkPolyDataWriter>(
+      {
+        if(!CGAL::is_triangle_mesh(*poly_item->polyhedron()))
+        {
+          QMessageBox::warning(0, "Error",
+                               "Cannot save a mesh in vtu format if "
+                               "it is not pure triangle.");
+          return false;
+        }
+        CGAL::polygon_mesh_to_vtkUnstructured<vtkXMLUnstructuredGridWriter>(
           *poly_item->polyhedron(),
           output_filename.data());
+      }
       else
       {
         const FaceGraph* mesh = poly_item->face_graph();
