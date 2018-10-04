@@ -33,33 +33,47 @@
 
 namespace CGAL {
 namespace internal_primitive_id{
-//helper struct for creating the right Id: just a face_descriptor if OneFaceGraphPerTree
+//helper base class for creating the right Id: just a face_descriptor if OneFaceGraphPerTree
 // is true,else : a pair with the corresponding graph.
 template<class FaceGraph,
          class OneFaceGraphPerTree>
-struct Primitive_id;
+class Primitive_wrapper;
 
 template<class FaceGraph>
-struct Primitive_id<FaceGraph, Tag_true>
+class Primitive_wrapper<FaceGraph, Tag_true>
 {
-  typedef typename boost::graph_traits<FaceGraph>::face_descriptor Id_;
+  public:
+  typedef typename boost::graph_traits<FaceGraph>::face_descriptor Id;
+  
+  Primitive_wrapper(const FaceGraph*)
+  {}
+  
   template<class T>
-  static Id_ from_id(const T& id, const FaceGraph&)
+  Id from_id(const T& id)const
   {
-    return Id_(id);
+    return Id(id);
   }
 };
 
 template<class FaceGraph>
-struct Primitive_id<FaceGraph, Tag_false>
+class Primitive_wrapper<FaceGraph, Tag_false>
 {
+public:
   typedef std::pair<typename boost::graph_traits<FaceGraph>::face_descriptor,
-  FaceGraph> Id_;
+  FaceGraph> Id;
+  
+  Primitive_wrapper(const FaceGraph* graph)
+    :this_graph(graph)
+  {}
+  
   template<class T>
-  static Id_ from_id(const T& id, const FaceGraph& f)
+  Id from_id(const T& id)const
   {
-    return std::make_pair(id, f);
+    return std::make_pair(id, *this_graph);
   }
+  
+private:
+  const FaceGraph* this_graph;
 };
 }//end internal
 
@@ -107,7 +121,8 @@ class AABB_face_graph_triangle_primitive
                                                 typename boost::property_map< FaceGraph,
                                                                               vertex_point_t>::type >::type>,
                         OneFaceGraphPerTree,
-                        CacheDatum >
+                        CacheDatum >,
+    public internal_primitive_id::Primitive_wrapper<FaceGraph, OneFaceGraphPerTree>
 #endif
 {
   typedef typename Default::Get<VertexPointPMap, typename boost::property_map< FaceGraph, vertex_point_t>::type >::type VertexPointPMap_;
@@ -120,10 +135,11 @@ class AABB_face_graph_triangle_primitive
                           Point_property_map,
                           OneFaceGraphPerTree,
                           CacheDatum > Base;
+  
+  typedef internal_primitive_id::Primitive_wrapper<FaceGraph, OneFaceGraphPerTree> Base_2;
+  
 public:
-  typedef typename internal_primitive_id::Primitive_id<FaceGraph, OneFaceGraphPerTree>::Id_ Id;
-protected:
-  const FaceGraph* this_graph;
+  typedef typename Base_2::Id Id;
 public:
   #ifdef DOXYGEN_RUNNING
   /// \name Types
@@ -151,8 +167,7 @@ public:
   static unspecified_type construct_shared_data( FaceGraph& graph );
   #endif
   Id id() const {
-    return internal_primitive_id::Primitive_id<FaceGraph, OneFaceGraphPerTree>::from_id(Base::id(), 
-                                                                           *this_graph);
+    return Base_2::from_id(Base::id());
   }
   // constructors
   /*!
@@ -166,7 +181,7 @@ public:
     : Base( it,
             Triangle_property_map(const_cast<FaceGraph*>(&graph),vppm),
             Point_property_map(const_cast<FaceGraph*>(&graph),vppm) ),
-      this_graph(&graph)
+      Base_2(&graph)
   {}
 
   /*!
@@ -180,7 +195,7 @@ public:
     : Base( Id_(id),
             Triangle_property_map(const_cast<FaceGraph*>(&graph),vppm),
             Point_property_map(const_cast<FaceGraph*>(&graph),vppm) ),
-      this_graph(&graph)
+      Base_2(&graph)
   {}
 
 #ifndef DOXYGEN_RUNNING
@@ -189,7 +204,7 @@ public:
     : Base( Id_(*it),
             Triangle_property_map(const_cast<FaceGraph*>(&graph)),
             Point_property_map(const_cast<FaceGraph*>(&graph)) ),
-      this_graph(&graph)
+      Base_2(&graph)
   {}
 
   AABB_face_graph_triangle_primitive(
@@ -197,7 +212,7 @@ public:
     : Base( Id_(id),
             Triangle_property_map(const_cast<FaceGraph*>(&graph)),
             Point_property_map(const_cast<FaceGraph*>(&graph)) ),
-      this_graph(&graph)
+      Base_2(&graph)
   {}
 #endif
 

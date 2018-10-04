@@ -40,33 +40,47 @@
 
 namespace CGAL {
 namespace internal_primitive_id{
-//helper struct for creating the right Id: just an edge_descriptor if OneHalfedgeGraphPerTree
+//helper base class for creating the right Id: just a face_descriptor if OneFaceGraphPerTree
 // is true,else : a pair with the corresponding graph.
-template<class HalfedgeGraph,
-         class OneHalfedgeGraphPerTree>
-struct EPrimitive_id;
+template<class Graph,
+         class OneGraphPerTree>
+class EPrimitive_wrapper;
 
-template<class HalfedgeGraph>
-struct EPrimitive_id<HalfedgeGraph, Tag_true>
+template<class Graph>
+class EPrimitive_wrapper<Graph, Tag_true>
 {
-  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor Id_;
+  public:
+  typedef typename boost::graph_traits<Graph>::edge_descriptor Id;
+  
+  EPrimitive_wrapper(const Graph*)
+  {}
+  
   template<class T>
-  static Id_ from_id(const T& id, const HalfedgeGraph&)
+  Id from_id(const T& id)const
   {
-    return Id_(id);
+    return Id(id);
   }
 };
 
-template<class HalfedgeGraph>
-struct EPrimitive_id<HalfedgeGraph, Tag_false>
+template<class Graph>
+class EPrimitive_wrapper<Graph, Tag_false>
 {
-  typedef std::pair<typename boost::graph_traits<HalfedgeGraph>::edge_descriptor,
-  HalfedgeGraph> Id_;
+public:
+  typedef std::pair<typename boost::graph_traits<Graph>::edge_descriptor,
+  Graph> Id;
+  
+  EPrimitive_wrapper(const Graph* graph)
+    :this_graph(graph)
+  {}
+  
   template<class T>
-  static Id_ from_id(const T& id, const HalfedgeGraph& f)
+  Id from_id(const T& id)const
   {
-    return std::make_pair(id, f);
+    return std::make_pair(id, *this_graph);
   }
+  
+private:
+  const Graph* this_graph;
 };
 }//end internal
 
@@ -120,7 +134,8 @@ class AABB_halfedge_graph_segment_primitive
                                                     typename boost::property_map< HalfedgeGraph,
                                                                                   vertex_point_t>::type >::type >,
                             OneHalfedgeGraphPerTree,
-                            CacheDatum >
+                            CacheDatum >,
+    public internal_primitive_id::EPrimitive_wrapper<HalfedgeGraph, OneHalfedgeGraphPerTree>
 #endif
 {
   typedef typename Default::Get<VertexPointPMap,typename boost::property_map< HalfedgeGraph,vertex_point_t>::type >::type  VertexPointPMap_;
@@ -134,11 +149,12 @@ class AABB_halfedge_graph_segment_primitive
                           Point_property_map,
                           OneHalfedgeGraphPerTree,
                           CacheDatum > Base;
+  
+  typedef internal_primitive_id::EPrimitive_wrapper<HalfedgeGraph, OneHalfedgeGraphPerTree> Base_2;
 
 public:
-  typedef typename internal_primitive_id::EPrimitive_id<HalfedgeGraph, OneHalfedgeGraphPerTree>::Id_ Id;
-protected:
-  const HalfedgeGraph* this_graph;
+  typedef typename Base_2::Id Id;
+
 public:
 #ifdef DOXYGEN_RUNNING
  /// \name Types
@@ -165,9 +181,7 @@ public:
   static unspecified_type construct_shared_data( HalfedgeGraph& graph );
 #endif
   Id id() const {
-    return internal_primitive_id::EPrimitive_id<HalfedgeGraph, 
-        OneHalfedgeGraphPerTree>::from_id(Base::id(), 
-                                          *this_graph);
+    return Base_2::from_id(Base::id());
   }
 
   /*!
@@ -183,7 +197,7 @@ public:
     : Base( Id_(*it),
             Segment_property_map(const_cast<HalfedgeGraph*>(&graph), vppm),
             Point_property_map(const_cast<HalfedgeGraph*>(&graph), vppm) ),
-      this_graph(&graph)
+      Base_2(&graph)
   {}
 
   /*!
@@ -196,7 +210,7 @@ public:
     : Base( Id_(id),
             Segment_property_map(const_cast<HalfedgeGraph*>(&graph), vppm),
             Point_property_map(const_cast<HalfedgeGraph*>(&graph), vppm) ),
-      this_graph(&graph)
+      Base_2(&graph)
   {}
 
   #ifndef DOXYGEN_RUNNING
@@ -205,7 +219,7 @@ public:
     : Base( Id_(*it),
             Segment_property_map(const_cast<HalfedgeGraph*>(&graph)),
             Point_property_map(const_cast<HalfedgeGraph*>(&graph)) ),
-      this_graph(&graph)
+      Base_2(&graph)
   {}
 
   AABB_halfedge_graph_segment_primitive(
@@ -213,7 +227,7 @@ public:
     : Base( Id_(id),
             Segment_property_map(const_cast<HalfedgeGraph*>(&graph)),
             Point_property_map(const_cast<HalfedgeGraph*>(&graph)) ),
-      this_graph(&graph)
+      Base_2(&graph)
   {}
   #endif
 
