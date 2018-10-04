@@ -32,7 +32,36 @@
 #include <CGAL/Default.h>
 
 namespace CGAL {
+namespace internal{
+//helper struct for creating the right Id: just a face_descriptor if OneFaceGraphPerTree
+// is true,else : a pair with the corresponding graph.
+template<class FaceGraph,
+         class OneFaceGraphPerTree>
+struct Primitive_id;
 
+template<class FaceGraph>
+struct Primitive_id<FaceGraph, Tag_true>
+{
+  typedef typename boost::graph_traits<FaceGraph>::face_descriptor Id_;
+  template<class Iterator>
+  static Id_ from_iterator(Iterator it, const FaceGraph&)
+  {
+    return Id_(*it);
+  }
+};
+
+template<class FaceGraph>
+struct Primitive_id<FaceGraph, Tag_false>
+{
+  typedef std::pair<typename boost::graph_traits<FaceGraph>::face_descriptor,
+  FaceGraph> Id_;
+  template<class Iterator>
+  static Id_ from_iterator(Iterator it, const FaceGraph& f)
+  {
+    return std::make_pair(*it, f);
+  }
+};
+}
 /*!
  * \ingroup PkgAABB_tree
  * Primitive type for a facet of a polyhedral surface.
@@ -81,7 +110,6 @@ class AABB_face_graph_triangle_primitive
 #endif
 {
   typedef typename Default::Get<VertexPointPMap, typename boost::property_map< FaceGraph, vertex_point_t>::type >::type VertexPointPMap_;
-
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor Id_;
   typedef Triangle_from_face_descriptor_map<FaceGraph,VertexPointPMap_>  Triangle_property_map;
   typedef One_point_from_face_descriptor_map<FaceGraph,VertexPointPMap_> Point_property_map;
@@ -91,7 +119,10 @@ class AABB_face_graph_triangle_primitive
                           Point_property_map,
                           OneFaceGraphPerTree,
                           CacheDatum > Base;
-
+public:
+  typedef typename internal::Primitive_id<FaceGraph, OneFaceGraphPerTree>::Id_ Id;
+protected:
+  Id this_id;
 public:
   #ifdef DOXYGEN_RUNNING
   /// \name Types
@@ -105,19 +136,24 @@ public:
   */
   typedef Kernel_traits<Point>::Kernel::Triangle_3 Datum;
   /*!
-  Id type.
+  Id type:
+  - boost::graph_traits<FaceGraph>::face_descriptor Id if OneFaceGraphPerTree is `CGAL::Tag_true
+  - std::pair<boost::graph_traits<FaceGraph>::face_descriptor, FaceGraph> Id if OneFaceGraphPerTree is `CGAL::Tag_false`
   */
-  typedef boost::graph_traits<FaceGraph>::face_descriptor Id;
+  Unspecified_type Id;
+  /*!
+  Id type of the Base:
+  */
+  typedef typename boost::graph_traits<FaceGraph>::face_descriptor Id_;
+  
   /// @}
 
   /*!
   If `OneFaceGraphPerTree` is CGAL::Tag_true, constructs a `Shared_data` object from a reference to the polyhedon `graph`.
   */
   static unspecified_type construct_shared_data( FaceGraph& graph );
-  #else
-  typedef typename Base::Id Id;
   #endif
-
+  Id id() const {return this_id;}
   // constructors
   /*!
     \tparam Iterator an input iterator with `Id` as value type.
@@ -127,21 +163,27 @@ public:
   */
   template <class Iterator>
   AABB_face_graph_triangle_primitive(Iterator it, const FaceGraph& graph, VertexPointPMap_ vppm)
-    : Base( Id_(*it),
+    : Base( it,
             Triangle_property_map(const_cast<FaceGraph*>(&graph),vppm),
             Point_property_map(const_cast<FaceGraph*>(&graph),vppm) )
-  {}
+  {
+    this_id = 
+        internal::Primitive_id<FaceGraph, OneFaceGraphPerTree>::from_iterator(it, graph);
+  }
 
   /*!
     Constructs a primitive.
     If `VertexPointPMap` is the default of the class, an additional constructor
     is available with `vppm` set to `get(vertex_point, graph)`.
   */
-  AABB_face_graph_triangle_primitive(Id id, const FaceGraph& graph, VertexPointPMap_ vppm)
+  AABB_face_graph_triangle_primitive(Id_ id, const FaceGraph& graph, VertexPointPMap_ vppm)
     : Base( Id_(id),
             Triangle_property_map(const_cast<FaceGraph*>(&graph),vppm),
             Point_property_map(const_cast<FaceGraph*>(&graph),vppm) )
-  {}
+  {
+    this_id = 
+        internal::Primitive_id<FaceGraph, OneFaceGraphPerTree>::from_iterator(id, graph);
+  }
 
 #ifndef DOXYGEN_RUNNING
   template <class Iterator>
@@ -149,13 +191,17 @@ public:
     : Base( Id_(*it),
             Triangle_property_map(const_cast<FaceGraph*>(&graph)),
             Point_property_map(const_cast<FaceGraph*>(&graph)) )
-  {}
+  {
+    this_id = 
+        internal::Primitive_id<FaceGraph, OneFaceGraphPerTree>::from_iterator(it, graph);}
 
   AABB_face_graph_triangle_primitive(Id id, const FaceGraph& graph)
     : Base( Id_(id),
             Triangle_property_map(const_cast<FaceGraph*>(&graph)),
             Point_property_map(const_cast<FaceGraph*>(&graph)) )
-  {}
+  {
+    this_id = 
+        internal::Primitive_id<FaceGraph, OneFaceGraphPerTree>::from_iterator(id, graph);}
 #endif
 
   /// \internal
