@@ -68,7 +68,6 @@ int main()
   Ray ray(bbox_center+Vector(3,-0.25,0),bbox_center+Vector(-3,+0.25,0));
   tree.all_intersected_primitives(ray,
                                   std::back_inserter(intersections));
-  
   E_Tree e_tree(edges(m1).first, edges(m1).second, m1);
   e_tree.insert(edges(m2).first, edges(m2).second, m2);
   e_tree.build();
