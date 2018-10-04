@@ -61,7 +61,7 @@ namespace CGAL {
  *                `Kernel_traits`.
  * @tparam AABBTree an `AABB_tree` that can containing faces of `TriangleMesh`. %Default is using `AABB_traits` with
  *                       `AABB_face_graph_triangle_primitive` as primitive type.
- * @tparam HAS_ROTATION tag indicating whether the transformations applied to meshes may contain rotations (`Tag_true`)
+ * @tparam Has_rotation tag indicating whether the transformations applied to meshes may contain rotations (`Tag_true`)
  *                      or if only translations and scalings are applied (`Tag_false`). Some optimizations are
  *                      switch on in case there are no rotations.
  */
@@ -69,7 +69,7 @@ template <class TriangleMesh,
           class VertexPointMap = Default,
           class Kernel = Default,
           class AABBTree = Default,
-          class HAS_ROTATION = CGAL::Tag_true>
+          class Has_rotation = CGAL::Tag_true>
 class Rigid_triangle_mesh_collision_detection
 {
 // Vertex point map type
@@ -93,7 +93,7 @@ class Rigid_triangle_mesh_collision_detection
 // Transformed Tree traversal traits
   typedef Do_intersect_traversal_traits_with_transformation<Tree_traits,
                                                             K,
-                                                            HAS_ROTATION>
+                                                            Has_rotation>
                                                                Traversal_traits;
 
 // Data members
@@ -163,7 +163,7 @@ class Rigid_triangle_mesh_collision_detection
     if (!do_overlap(m_bboxes[id_B], m_bboxes[id_A])) continue;
 #endif
 
-    Do_intersect_traversal_traits_for_two_trees<Tree_traits, K, HAS_ROTATION> traversal_traits(
+    Do_intersect_traversal_traits_for_two_trees<Tree_traits, K, Has_rotation> traversal_traits(
       m_aabb_trees[id_B]->traits(), m_traversal_traits[id_B].transformation(), m_traversal_traits[id_A]);
     m_aabb_trees[id_B]->traversal(*m_aabb_trees[id_A], traversal_traits);
     return traversal_traits.is_intersection_found();
