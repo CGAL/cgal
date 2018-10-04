@@ -124,7 +124,7 @@ std::ostream &
 operator<<(std::ostream & os, const Triangulation_vertex<A, Data, B> & v)
 {
     os << v.point();
-    os << v.data();
+    os << v.data() << "\n";
     return os;
 }
 
