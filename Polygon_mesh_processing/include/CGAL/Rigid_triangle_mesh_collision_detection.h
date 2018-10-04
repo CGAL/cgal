@@ -49,7 +49,7 @@ namespace CGAL {
  * \ingroup PkgPolygonMeshProcessing
  * This class provides methods to perform some intersection tests between triangle meshes
  * that undergo affine transformations (rotation, translation, and scaling).
- * Meshes are added to an internal pool and are referenced using an id assigned when added to the pool.
+ * Meshes are added to an internal set and are referenced using an id assigned when added to the set.
  * Note that the exact predicate framework applies on the meshes after having applied the transformation
  * to the coordinates of the points of the vertices of each mesh.
  *
@@ -57,9 +57,9 @@ namespace CGAL {
  * @tparam VertexPointMap a model of `ReadablePropertyMap` with the vertex descriptor of `TriangleMesh` as key type,
  *                        and a point from a CGAL Kernel as value type. %Default is the internal point property map
  *                        of `TriangleMesh` if it exists.
- * @tparam KernelType a model of CGAL Kernel. %Default is the Kernel of the value type of `VertexPointMap` retrieved using
+ * @tparam Kernel a model of CGAL Kernel. %Default is the kernel of the value type of `VertexPointMap` retrieved using
  *                `Kernel_traits`.
- * @tparam AABBTreeType an `AABB_tree` that can containing faces of `TriangleMesh`. %Default is using `AABB_traits` with
+ * @tparam AABBTree an `AABB_tree` that can containing faces of `TriangleMesh`. %Default is using `AABB_traits` with
  *                       `AABB_face_graph_triangle_primitive` as primitive type.
  * @tparam HAS_ROTATION tag indicating whether the transformations applied to meshes may contain rotations (`Tag_true`)
  *                      or if only translations and scalings are applied (`Tag_false`). Some optimizations are
@@ -67,8 +67,8 @@ namespace CGAL {
  */
 template <class TriangleMesh,
           class VertexPointMap = Default,
-          class KernelType = Default,
-          class AABBTreeType = Default,
+          class Kernel = Default,
+          class AABBTree = Default,
           class HAS_ROTATION = CGAL::Tag_true>
 class Rigid_triangle_mesh_collision_detection
 {
@@ -80,19 +80,19 @@ class Rigid_triangle_mesh_collision_detection
 // Kernel type
   typedef typename Kernel_traits<
     typename boost::property_traits<Vpm>::value_type>::Kernel    Default_kernel;
-  typedef typename Default::Get<KernelType, Default_kernel>::type        Kernel;
+  typedef typename Default::Get<Kernel, Default_kernel>::type                 K;
 
 // AABB-tree type
   typedef AABB_face_graph_triangle_primitive<TriangleMesh,
                                              Vpm>             Default_primitive;
-  typedef AABB_traits<Kernel, Default_primitive>            Default_tree_traits;
+  typedef AABB_traits<K, Default_primitive>                 Default_tree_traits;
   typedef CGAL::AABB_tree<Default_tree_traits>                     Default_tree;
-  typedef typename Default::Get<AABBTreeType, Default_tree>::type          Tree;
+  typedef typename Default::Get<AABBTree, Default_tree>::type              Tree;
   typedef typename Tree::AABB_traits                                Tree_traits;
 
 // Transformed Tree traversal traits
   typedef Do_intersect_traversal_traits_with_transformation<Tree_traits,
-                                                            Kernel,
+                                                            K,
                                                             HAS_ROTATION>
                                                                Traversal_traits;
 
@@ -100,7 +100,7 @@ class Rigid_triangle_mesh_collision_detection
   std::vector<bool> m_own_aabb_trees;
   std::vector<Tree*> m_aabb_trees;
   std::vector<bool> m_is_closed;
-  std::vector< std::vector<typename Kernel::Point_3> > m_points_per_cc;
+  std::vector< std::vector<typename K::Point_3> > m_points_per_cc;
   std::vector<Traversal_traits> m_traversal_traits;
   std::size_t m_free_id; // position in m_id_pool of the first free element
   std::vector<std::size_t> m_id_pool; // 0-> m_id_pool-1 are valid mesh ids
@@ -140,13 +140,13 @@ class Rigid_triangle_mesh_collision_detection
   // precondition A and B does not intersect
   bool does_A_contains_a_CC_of_B(std::size_t id_A, std::size_t id_B) const
   {
-    typename Kernel::Construct_ray_3     ray_functor;
-    typename Kernel::Construct_vector_3  vector_functor;
+    typename K::Construct_ray_3     ray_functor;
+    typename K::Construct_vector_3  vector_functor;
     typedef typename Traversal_traits::Transformed_tree_helper Helper;
 
-    BOOST_FOREACH(const typename Kernel::Point_3& q, m_points_per_cc[id_B])
+    BOOST_FOREACH(const typename K::Point_3& q, m_points_per_cc[id_B])
     {
-      if( internal::Point_inside_vertical_ray_cast<Kernel, Tree, Helper>(m_traversal_traits[id_A].get_helper())(
+      if( internal::Point_inside_vertical_ray_cast<K, Tree, Helper>(m_traversal_traits[id_A].get_helper())(
             m_traversal_traits[id_B].transformation()( q ), *m_aabb_trees[id_A],
             ray_functor, vector_functor) == CGAL::ON_BOUNDED_SIDE)
       {
@@ -163,7 +163,7 @@ class Rigid_triangle_mesh_collision_detection
     if (!do_overlap(m_bboxes[id_B], m_bboxes[id_A])) continue;
 #endif
 
-    Do_intersect_traversal_traits_for_two_trees<Tree_traits, Kernel, HAS_ROTATION> traversal_traits(
+    Do_intersect_traversal_traits_for_two_trees<Tree_traits, K, HAS_ROTATION> traversal_traits(
       m_aabb_trees[id_B]->traits(), m_traversal_traits[id_B].transformation(), m_traversal_traits[id_A]);
     m_aabb_trees[id_B]->traversal(*m_aabb_trees[id_A], traversal_traits);
     return traversal_traits.is_intersection_found();
@@ -196,7 +196,7 @@ public:
   }
 
  /*!
-  * adds mesh `tm` in the pool of meshes to be considered for intersection.
+  * adds mesh `tm` to the set of meshes to be considered for intersection.
   *
   * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
   *
@@ -292,9 +292,9 @@ public:
   }
 
   /*!
-   * sets the transformation associated to a mesh identified by its id in the pool.
+   * sets the transformation associated to a mesh identified by its id in the set.
    */
-  void set_transformation(std::size_t mesh_id, const Aff_transformation_3<Kernel>& aff_trans)
+  void set_transformation(std::size_t mesh_id, const Aff_transformation_3<K>& aff_trans)
   {
     CGAL_assertion(m_aabb_trees[mesh_id] != NULL);
     m_traversal_traits[mesh_id].set_transformation(aff_trans);
@@ -347,7 +347,7 @@ public:
   }
 
  /*!
-  * returns a vector of the ids of meshes in the pool that have at least a face
+  * returns a vector of the ids of meshes in the set that have at least a face
   * intersecting a face of the mesh with id `mesh_id`
   */
   std::vector<std::size_t>
@@ -419,7 +419,7 @@ public:
   }
 
  /*!
-  * returns a vector of the ids of meshes in the pool that are intersecting with the mesh with id `mesh_id`,
+  * returns a vector of the ids of meshes in the set that are intersecting with the mesh with id `mesh_id`,
   * considering volume inclusions for closed meshes.
   * See the previous overload for details.
   */
@@ -447,7 +447,7 @@ public:
   }
 
  /*!
-  * removes the mesh with id `mesh_id` from the pool, the indices of other meshes are kept unchanged.
+  * removes the mesh with id `mesh_id` from the set, the indices of other meshes are kept unchanged.
   */
   void remove_mesh(std::size_t mesh_id)
   {
@@ -463,13 +463,15 @@ public:
   }
 
  /*!
-  * returns the number of meshes in the pool
+  * returns the number of meshes in the set
   */
   std::size_t size() const
   {
     return m_free_id;
   }
 
+
+#ifndef DOXYGEN_RUNNING
  /*!
   * returns the number of times `add_mesh()` was called minus the number of times `remove_mesh()` (with a valid mesh id) was called
   */
@@ -487,7 +489,6 @@ public:
     return m_aabb_trees[mesh_id] != NULL;
   }
 
-#ifndef DOXYGEN_RUNNING
 /// \name Helper Static Function
 
  /*!
@@ -613,7 +614,7 @@ public:
   static
   void collect_one_point_per_connected_component(
     const TriangleMesh& tm,
-          std::vector<typename Kernel::Point_3>& points)
+          std::vector<typename K::Point_3>& points)
   {
     collect_one_point_per_connected_component(tm, points, parameters::all_default());
   }
