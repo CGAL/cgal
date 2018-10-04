@@ -37,7 +37,7 @@ namespace CGAL{
       pt = Point_3(x, y, z);
     }
 
-    void fill_point(double x, double y, double z, CGAL::cpp11::array<double,3>& p)
+    inline void fill_point(double x, double y, double z, CGAL::cpp11::array<double,3>& p)
     {
       p = CGAL::make_array(x,y,z);
     }
