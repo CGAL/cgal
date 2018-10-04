@@ -228,7 +228,7 @@ public:
   // handle vpm
     using Polygon_mesh_processing::GetVertexPointMap;
     typedef typename GetVertexPointMap<TriangleMesh,
-                                       NamedParameters>::type Local_vpm;
+                                       NamedParameters>::const_type Local_vpm;
     CGAL_USE_TYPE(Local_vpm);
     CGAL_assertion_code(
       static const bool same_vpm = (boost::is_same<Local_vpm,Vpm>::value); )
@@ -242,7 +242,7 @@ public:
     CGAL_assertion( m_aabb_trees[id] == NULL );
     m_is_closed[id] = is_closed(tm);
     m_own_aabb_trees[id] = true;
-    Tree* t = new Tree(faces(tm).begin(), faces(tm).end(), tm, vpm);
+    Tree* t = new Tree(boost::begin(faces(tm)), boost::end(faces(tm)), tm, vpm);
     m_aabb_trees[id] = t;
     m_traversal_traits[id] = Traversal_traits(m_aabb_trees.back()->traits());
     add_cc_points(tm, id, np);
@@ -271,7 +271,7 @@ public:
     CGAL_assertion( m_aabb_trees[id] == NULL );
     m_is_closed[id] = is_closed;
     m_own_aabb_trees[id] = false ;
-    m_aabb_trees = const_cast<Tree*>(&tree);
+    m_aabb_trees[id] = const_cast<Tree*>(&tree);
     m_traversal_traits[id] = Traversal_traits(m_aabb_trees.back()->traits());
     m_points_per_cc[id] = points_per_cc;
 
@@ -518,7 +518,7 @@ public:
         boost::get_param(np, internal_np::apply_per_connected_component), true);
 
     typedef typename GetVertexPointMap<TriangleMesh,
-                                       NamedParameters>::type Local_vpm;
+                                       NamedParameters>::const_type Local_vpm;
     CGAL_USE_TYPE(Local_vpm);
 
     CGAL_assertion_code(
