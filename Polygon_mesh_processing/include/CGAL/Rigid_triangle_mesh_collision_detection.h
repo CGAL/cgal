@@ -57,9 +57,9 @@ namespace CGAL {
  * @tparam VertexPointMap a model of `ReadablePropertyMap` with the vertex descriptor of `TriangleMesh` as key type,
  *                        and a point from a CGAL Kernel as value type. %Default is the internal point property map
  *                        of `TriangleMesh` if it exists.
- * @tparam Kernel a model of CGAL Kernel. %Default is the Kernel of the value type of `VertexPointMap` retrieved using
+ * @tparam KernelType a model of CGAL Kernel. %Default is the Kernel of the value type of `VertexPointMap` retrieved using
  *                `Kernel_traits`.
- * @tparam AABBTree_type an `AABB_tree` that can containing faces of `TriangleMesh`. %Default is using `AABB_traits` with
+ * @tparam AABBTreeType an `AABB_tree` that can containing faces of `TriangleMesh`. %Default is using `AABB_traits` with
  *                       `AABB_face_graph_triangle_primitive` as primitive type.
  * @tparam HAS_ROTATION tag indicating whether the transformations applied to meshes may contain rotations (`Tag_true`)
  *                      or if only translations and scalings are applied (`Tag_false`). Some optimizations are
@@ -67,8 +67,8 @@ namespace CGAL {
  */
 template <class TriangleMesh,
           class VertexPointMap = Default,
-          class Kernel_ = Default,
-          class AABBTree_type = Default,
+          class KernelType = Default,
+          class AABBTreeType = Default,
           class HAS_ROTATION = CGAL::Tag_true>
 class Rigid_triangle_mesh_collision_detection
 {
@@ -80,14 +80,14 @@ class Rigid_triangle_mesh_collision_detection
 // Kernel type
   typedef typename Kernel_traits<
     typename boost::property_traits<Vpm>::value_type>::Kernel    Default_kernel;
-  typedef typename Default::Get<Kernel_, Default_kernel>::type           Kernel;
+  typedef typename Default::Get<KernelType, Default_kernel>::type        Kernel;
 
 // AABB-tree type
   typedef AABB_face_graph_triangle_primitive<TriangleMesh,
                                              Vpm>             Default_primitive;
   typedef AABB_traits<Kernel, Default_primitive>            Default_tree_traits;
   typedef CGAL::AABB_tree<Default_tree_traits>                     Default_tree;
-  typedef typename Default::Get<AABBTree_type, Default_tree>::type         Tree;
+  typedef typename Default::Get<AABBTreeType, Default_tree>::type          Tree;
   typedef typename Tree::AABB_traits                                Tree_traits;
 
 // Transformed Tree traversal traits
@@ -252,29 +252,42 @@ public:
 
  /*!
   * adds an instance of a triangulated surface mesh using an external tree of its faces.
-  * Note that the tree is not copied and the lifetime of `tree` must be longer than
-  * that of this class.
+  * \warning The tree is not copied and the lifetime of `tree` must be longer than that of this class.
   *
-  * \return the id of the instance used to refer to that mesh.
+  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  *
+  * \return the id of `tm` used to refer to that mesh.
   *
   * @param tree an AABB-tree of faces of a mesh
-  * @param is_closed `true` is the mesh in `tree` is closed, and `false` otherwise.
-  *                  \link is_closed() `CGAL::is_closed()` \endlink can be used for that purpose.
-  * @param points_per_cc a vector containing one point of a vertex for each connected
-  *                      component of the triangle surface mesh in `tree`
+  * @param tm triangulated surface mesh
+  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  *
+  * \cgalNamedParamsBegin
+  *   \cgalParamBegin{vertex_point_map}
+  *     the property map with the points associated to the vertices of `tm`.
+  *     If this parameter is omitted, an internal property map for
+  *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
+  *   \cgalParamEnd
+  *   \cgalParamBegin{face_index_map}
+  *      a property map containing the index of each face of `tm`. It must be initialized
+  *      and the value must be unique per face and in the range `[0, num_faces(tm)[`.
+  *   \cgalParamEnd
+  *   \cgalParamBegin{apply_per_connected_component}
+  *     if `false`, `tm` is assumed to have only one connected component, avoiding
+  *     the extraction of connected components. Default is `true`.
+  *   \cgalParamEnd
+  * \cgalNamedParamsEnd
   */
-  std::size_t add_mesh(const AABB_tree& tree,
-                       bool is_closed,
-                       const std::vector<Point_3>& points_per_cc)
+  template <class NamedParameters>
+  std::size_t add_mesh(const AABB_tree& tree, const TriangleMesh& tm, const NamedParameters& np)
   {
     std::size_t id = get_id_for_new_mesh();
     CGAL_assertion( m_aabb_trees[id] == NULL );
-    m_is_closed[id] = is_closed;
+    m_is_closed[id] = is_closed(tm);
     m_own_aabb_trees[id] = false ;
     m_aabb_trees[id] = const_cast<Tree*>(&tree);
     m_traversal_traits[id] = Traversal_traits(m_aabb_trees.back()->traits());
-    m_points_per_cc[id] = points_per_cc;
-
+    collect_one_point_per_connected_component(tm, m_points_per_cc[id], np);
     return id;
   }
 
@@ -308,11 +321,11 @@ public:
   * returns a vector of the ids of meshes within `ids` that have at least a face
   * intersecting a face of the mesh with id `mesh_id`.
   * If `mesh_id` is in `ids` it is not reported.
-  * \tparam MeshRangeIds a range of ids convertible to `std::size_t`.
+  * \tparam MeshIdRange a range of ids convertible to `std::size_t`.
   */
-  template <class MeshRangeIds>
+  template <class MeshIdRange>
   std::vector<std::size_t>
-  get_all_intersections(std::size_t mesh_id, const MeshRangeIds& ids) const
+  get_all_intersections(std::size_t mesh_id, const MeshIdRange& ids) const
   {
     CGAL_assertion(m_aabb_trees[mesh_id] != NULL);
     CGAL::Interval_nt_advanced::Protector protector;
@@ -358,15 +371,15 @@ public:
   * test may return incorrect results.
   * If `mesh_id` is in `ids` it is not reported.
   *
-  * \tparam MeshRangeIds a range of ids convertible to `std::size_t`.
+  * \tparam MeshIdRange a range of ids convertible to `std::size_t`.
   *
   * \note If a mesh is made of several connected components and at least one component is not closed,
   *       then no inclusion test will be made even if some components are closed.
   *
   */
-  template <class MeshRangeIds>
+  template <class MeshIdRange>
   std::vector<std::pair<std::size_t, bool> >
-  get_all_intersections_and_inclusions(std::size_t mesh_id, const MeshRangeIds& ids) const
+  get_all_intersections_and_inclusions(std::size_t mesh_id, const MeshIdRange& ids) const
   {
     CGAL_assertion(m_aabb_trees[mesh_id] != NULL);
     CGAL::Interval_nt_advanced::Protector protector;
@@ -474,6 +487,7 @@ public:
     return m_aabb_trees[mesh_id] != NULL;
   }
 
+#ifndef DOXYGEN_RUNNING
 /// \name Helper Static Function
 
  /*!
@@ -568,7 +582,33 @@ public:
     points.push_back( get(vpm, *boost::begin(vertices(tm))) );
   }
 
-/// \cond SKIP_IN_MANUAL
+ /*!
+  * adds an instance of a triangulated surface mesh using an external tree of its faces.
+  * \warning The tree is not copied and the lifetime of `tree` must be longer than that of this class.
+  *
+  * \return the id of the instance used to refer to that mesh.
+  *
+  * @param tree an AABB-tree of faces of a mesh
+  * @param is_closed `true` is the mesh in `tree` is closed, and `false` otherwise.
+  *                  \link is_closed() `CGAL::is_closed()` \endlink can be used for that purpose.
+  * @param points_per_cc a vector containing one point of a vertex for each connected
+  *                      component of the triangle surface mesh in `tree`
+  */
+  std::size_t add_mesh(const AABB_tree& tree,
+                       bool is_closed,
+                       const std::vector<Point_3>& points_per_cc)
+  {
+    std::size_t id = get_id_for_new_mesh();
+    CGAL_assertion( m_aabb_trees[id] == NULL );
+    m_is_closed[id] = is_closed;
+    m_own_aabb_trees[id] = false ;
+    m_aabb_trees[id] = const_cast<Tree*>(&tree);
+    m_traversal_traits[id] = Traversal_traits(m_aabb_trees.back()->traits());
+    m_points_per_cc[id] = points_per_cc;
+
+    return id;
+  }
+
   // versions without NP
   static
   void collect_one_point_per_connected_component(
@@ -582,7 +622,7 @@ public:
   {
     return add_mesh(tm, parameters::all_default());
   }
-/// \endcond
+#endif
 };
 
 } // end of CGAL namespace

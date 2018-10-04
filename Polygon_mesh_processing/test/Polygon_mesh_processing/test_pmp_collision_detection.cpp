@@ -94,10 +94,7 @@ void test_intersections(Index index, const char* type)
   // add tm1 using an external tree
   typename CGAL::Rigid_triangle_mesh_collision_detection<TriangleMesh>::AABB_tree
     tm1_tree(boost::begin(faces(tm1)), boost::end(faces(tm1)), tm1, get(boost::vertex_point, tm1));
-  std::vector<K::Point_3> points_per_cc;
-  collision_detection.collect_one_point_per_connected_component(
-    tm1, points_per_cc, params::face_index_map(get(index, tm1)));
-  collision_detection.add_mesh(tm1_tree, true, points_per_cc); // 1 small_spheres
+  collision_detection.add_mesh(tm1_tree, tm1, params::face_index_map(get(index, tm1))); // 1 small_spheres
   collision_detection.add_mesh(tm2, params::face_index_map(get(index, tm2))); // 2 blobby
   collision_detection.add_mesh(tm3, params::face_index_map(get(index, tm3))); // 3 large_cube_coplanar
   // pool is 0 1 2 3
