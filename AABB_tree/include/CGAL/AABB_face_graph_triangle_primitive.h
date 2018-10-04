@@ -43,10 +43,10 @@ template<class FaceGraph>
 struct Primitive_id<FaceGraph, Tag_true>
 {
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor Id_;
-  template<class Iterator>
-  static Id_ from_iterator(Iterator it, const FaceGraph&)
+  template<class T>
+  static Id_ from_id(const T& id, const FaceGraph&)
   {
-    return Id_(*it);
+    return Id_(id);
   }
 };
 
@@ -55,13 +55,14 @@ struct Primitive_id<FaceGraph, Tag_false>
 {
   typedef std::pair<typename boost::graph_traits<FaceGraph>::face_descriptor,
   FaceGraph> Id_;
-  template<class Iterator>
-  static Id_ from_iterator(Iterator it, const FaceGraph& f)
+  template<class T>
+  static Id_ from_id(const T& id, const FaceGraph& f)
   {
-    return std::make_pair(*it, f);
+    return std::make_pair(id, f);
   }
 };
-}
+}//end internal
+
 /*!
  * \ingroup PkgAABB_tree
  * Primitive type for a facet of a polyhedral surface.
@@ -168,7 +169,7 @@ public:
             Point_property_map(const_cast<FaceGraph*>(&graph),vppm) )
   {
     this_id = 
-        internal::Primitive_id<FaceGraph, OneFaceGraphPerTree>::from_iterator(it, graph);
+        internal::Primitive_id<FaceGraph, OneFaceGraphPerTree>::from_id(*it, graph);
   }
 
   /*!
@@ -182,7 +183,7 @@ public:
             Point_property_map(const_cast<FaceGraph*>(&graph),vppm) )
   {
     this_id = 
-        internal::Primitive_id<FaceGraph, OneFaceGraphPerTree>::from_iterator(id, graph);
+        internal::Primitive_id<FaceGraph, OneFaceGraphPerTree>::from_id(id, graph);
   }
 
 #ifndef DOXYGEN_RUNNING
@@ -193,7 +194,8 @@ public:
             Point_property_map(const_cast<FaceGraph*>(&graph)) )
   {
     this_id = 
-        internal::Primitive_id<FaceGraph, OneFaceGraphPerTree>::from_iterator(it, graph);}
+        internal::Primitive_id<FaceGraph, OneFaceGraphPerTree>::from_id(*it, graph);
+  }
 
   AABB_face_graph_triangle_primitive(Id id, const FaceGraph& graph)
     : Base( Id_(id),
@@ -201,7 +203,8 @@ public:
             Point_property_map(const_cast<FaceGraph*>(&graph)) )
   {
     this_id = 
-        internal::Primitive_id<FaceGraph, OneFaceGraphPerTree>::from_iterator(id, graph);}
+        internal::Primitive_id<FaceGraph, OneFaceGraphPerTree>::from_id(id, graph);
+  }
 #endif
 
   /// \internal

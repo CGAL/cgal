@@ -39,6 +39,36 @@
 #include <CGAL/Default.h>
 
 namespace CGAL {
+namespace internal{
+//helper struct for creating the right Id: just an edge_descriptor if OneHalfedgeGraphPerTree
+// is true,else : a pair with the corresponding graph.
+template<class HalfedgeGraph,
+         class OneHalfedgeGraphPerTree>
+struct EPrimitive_id;
+
+template<class HalfedgeGraph>
+struct EPrimitive_id<HalfedgeGraph, Tag_true>
+{
+  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor Id_;
+  template<class T>
+  static Id_ from_id(const T& id, const HalfedgeGraph&)
+  {
+    return Id_(id);
+  }
+};
+
+template<class HalfedgeGraph>
+struct EPrimitive_id<HalfedgeGraph, Tag_false>
+{
+  typedef std::pair<typename boost::graph_traits<HalfedgeGraph>::edge_descriptor,
+  HalfedgeGraph> Id_;
+  template<class T>
+  static Id_ from_id(const T& id, const HalfedgeGraph& f)
+  {
+    return std::make_pair(id, f);
+  }
+};
+}//end internal
 
 
 /*!
@@ -106,7 +136,10 @@ class AABB_halfedge_graph_segment_primitive
                           CacheDatum > Base;
 
 public:
-
+  typedef typename internal::EPrimitive_id<HalfedgeGraph, OneHalfedgeGraphPerTree>::Id_ Id;
+protected:
+  Id this_id;
+public:
 #ifdef DOXYGEN_RUNNING
  /// \name Types
   /// @{
@@ -119,18 +152,24 @@ public:
   */
   typedef Kernel_traits<Point>::Kernel::Segment_3 Datum;
   /*!
-  Id type.
+  Id type:
+  - boost::graph_traits<HalfegdeGraph>::edge_descriptor Id if OneHalfegdeGraphPerTree is `CGAL::Tag_true
+  - std::pair<boost::graph_traits<HalfegdeGraph>::edge_descriptor, HalfegdeGraph> Id if OneHalfegdeGraphPerTree is `CGAL::Tag_false`
   */
-  typedef boost::graph_traits<HalfedgeGraph>::edge_descriptor Id;
+  Unspecified_type Id;
+  /*!
+  Id type of the Base:
+  */
+  typedef typename boost::graph_traits<HalfegdeGraph>::edge_descriptor Id_;
+  
   /// @}
 
   /*!
   If `OneHalfedgeGraphPerTreeGraphPerTree` is CGAL::Tag_true, constructs a `Shared_data` object from a reference to the halfedge graph.
   */
   static unspecified_type construct_shared_data( HalfedgeGraph& graph );
-#else
-  typedef typename Base::Id Id;
 #endif
+  Id id() const {return this_id;}
 
   /*!
   Constructs a primitive.
@@ -145,30 +184,42 @@ public:
     : Base( Id_(*it),
             Segment_property_map(const_cast<HalfedgeGraph*>(&graph), vppm),
             Point_property_map(const_cast<HalfedgeGraph*>(&graph), vppm) )
-  {}
+  {
+    this_id = 
+        internal::EPrimitive_id<HalfedgeGraph, OneHalfedgeGraphPerTree>::from_id(*it, graph);
+  }
 
   /*!
   Constructs a primitive.
   If `VertexPointPMap` is the default of the class, an additional constructor
   is available with `vppm` set to `boost::get(vertex_point, graph)`.
   */
-  AABB_halfedge_graph_segment_primitive(Id id, const HalfedgeGraph& graph, VertexPointPMap_ vppm)
+  AABB_halfedge_graph_segment_primitive(Id_ id, const HalfedgeGraph& graph, VertexPointPMap_ vppm)
     : Base( Id_(id),
             Segment_property_map(const_cast<HalfedgeGraph*>(&graph), vppm),
             Point_property_map(const_cast<HalfedgeGraph*>(&graph), vppm) )
-  {}
+  {
+    this_id = 
+        internal::EPrimitive_id<HalfedgeGraph, OneHalfedgeGraphPerTree>::from_id(id, graph);
+  }
 
   #ifndef DOXYGEN_RUNNING
   template <class Iterator>
   AABB_halfedge_graph_segment_primitive(Iterator it, const HalfedgeGraph& graph)
     : Base( Id_(*it),
             Segment_property_map(const_cast<HalfedgeGraph*>(&graph)),
-            Point_property_map(const_cast<HalfedgeGraph*>(&graph)) ){}
+            Point_property_map(const_cast<HalfedgeGraph*>(&graph)) ){
+    this_id = 
+        internal::EPrimitive_id<HalfedgeGraph, OneHalfedgeGraphPerTree>::from_id(*it, graph);
+  }
 
-  AABB_halfedge_graph_segment_primitive(Id id, const HalfedgeGraph& graph)
+  AABB_halfedge_graph_segment_primitive(Id_ id, const HalfedgeGraph& graph)
     : Base( Id_(id),
             Segment_property_map(const_cast<HalfedgeGraph*>(&graph)),
-            Point_property_map(const_cast<HalfedgeGraph*>(&graph)) ){}
+            Point_property_map(const_cast<HalfedgeGraph*>(&graph)) ){
+    this_id = 
+        internal::EPrimitive_id<HalfedgeGraph, OneHalfedgeGraphPerTree>::from_id(id, graph);
+  }
   #endif
 
   /// \internal
