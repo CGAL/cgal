@@ -568,12 +568,12 @@ void Cluster_classification::compute_features (std::size_t nb_scales)
   if (echo)
     generator.generate_echo_based_features (pointwise_features, echo_map);
   
-  add_remaining_point_set_properties_as_features(pointwise_features);
-
 #ifdef CGAL_LINKED_WITH_TBB
   pointwise_features.end_parallel_additions();
 #endif
   
+  add_remaining_point_set_properties_as_features(pointwise_features);
+
   t.stop();
   std::cerr << pointwise_features.size() << " feature(s) computed in " << t.time() << " second(s)" << std::endl;
   t.reset();

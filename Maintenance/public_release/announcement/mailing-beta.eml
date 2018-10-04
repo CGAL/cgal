@@ -1,12 +1,12 @@
-Subject: CGAL 4.13 Beta 1 Released, Computational Geometry Algorithms Library
+Subject: CGAL 4.13 Beta 2 Released, Computational Geometry Algorithms Library
 Content-Type: text/plain; charset="utf-8"
 Body: 
 
-The CGAL Open Source Project is pleased to announce the release 4.13 Beta 1
+The CGAL Open Source Project is pleased to announce the release 4.13 Beta 2
 of CGAL, the Computational Geometry Algorithms Library.
 
 
-CGAL version 4.13 Beta 1 is a public testing release. It should provide
+CGAL version 4.13 Beta 2 is a public testing release. It should provide
 a solid ground to report bugs that need to be tackled before the
 release of the final version of CGAL 4.13 in September.
 
@@ -33,7 +33,7 @@ has changed since CGAL 4.12:
 
 
 
-See https://www.cgal.org/2018/08/01/cgal413-beta1/ for a complete list of
+See https://www.cgal.org/2018/09/11/cgal413-beta2/ for a complete list of
 changes.
 
 

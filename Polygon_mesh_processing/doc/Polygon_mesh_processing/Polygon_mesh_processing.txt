@@ -491,7 +491,7 @@ with duplicated border edges.
 \cgalExample{Polygon_mesh_processing/stitch_borders_example.cpp}
 
 *******************
-\cond
+\if READY_TO_PUBLISH
 \subsection DegenerateFaces Removing Degenerate Faces
 
 Some degenerate faces may be part of a given triangle mesh.
@@ -511,8 +511,7 @@ are removed, the connectivity is fixed, and the number of removed faces
 is output.
 
 \cgalExample{Polygon_mesh_processing/remove_degeneracies_example.cpp}
-\endcond
-
+\endif
 *******************
 \subsection PolygonSoups Polygon Soups
 
