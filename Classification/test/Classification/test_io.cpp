@@ -54,7 +54,9 @@ int main (int, char**)
   
   Planimetric_grid grid (points, points.point_map(), bbox, grid_resolution);
   Neighborhood neighborhood (points, points.point_map());
-  Local_eigen_analysis eigen (points, points.point_map(), neighborhood.k_neighbor_query(6));
+  Local_eigen_analysis eigen
+    = Local_eigen_analysis::create_from_point_set
+    (points, points.point_map(), neighborhood.k_neighbor_query(6));
 
   Feature_set features;
   Feature_handle distance_to_plane = features.add<Distance_to_plane> (points, points.point_map(), eigen);
