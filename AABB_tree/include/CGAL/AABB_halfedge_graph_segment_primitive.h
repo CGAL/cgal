@@ -153,7 +153,7 @@ public:
   typedef Kernel_traits<Point>::Kernel::Segment_3 Datum;
   /*!
   Id type:
-  - boost::graph_traits<HalfegdeGraph>::edge_descriptor Id if OneHalfegdeGraphPerTree is `CGAL::Tag_true
+  - boost::graph_traits<HalfegdeGraph>::edge_descriptor Id if OneHalfegdeGraphPerTree is `CGAL::Tag_true`
   - std::pair<boost::graph_traits<HalfegdeGraph>::edge_descriptor, HalfegdeGraph> Id if OneHalfegdeGraphPerTree is `CGAL::Tag_false`
   */
   Unspecified_type Id;
