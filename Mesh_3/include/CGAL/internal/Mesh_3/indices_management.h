@@ -33,6 +33,7 @@
 #include <boost/type_traits/is_same.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/variant.hpp>
+#include <boost/mpl/set/set10.hpp>
 #include <CGAL/Mesh_3/Has_features.h>
 #include <CGAL/IO/io.h>
 
@@ -48,7 +49,7 @@ template < typename Subdomain_index, typename Surface_patch_index >
 struct Index_generator
 {
   typedef boost::variant<Subdomain_index,Surface_patch_index> Index;
-  typedef Index                                         type;
+  typedef Index                                               type;
 };
 
 template < typename T >
@@ -56,6 +57,27 @@ struct Index_generator<T, T>
 {
   typedef T       Index;
   typedef Index   type;
+};
+
+template < typename Subdomain_index,
+           typename Surface_patch_index,
+           typename Curves_index,
+           typename Corner_index>
+struct Index_generator_with_features
+{
+  typedef boost::mpl::set4<Subdomain_index,
+                           Surface_patch_index,
+                           Curves_index,
+                           Corner_index>               Set;
+  typedef typename boost::make_variant_over<Set>::type Index;
+  typedef Index                                        type;
+};
+
+template < typename T>
+struct Index_generator_with_features<T, T, T, T>
+{
+  typedef T Index;
+  typedef Index                                         type;
 };
 
 template <typename T, typename Boost_variant>
