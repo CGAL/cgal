@@ -31,10 +31,12 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
+#include <CGAL/utility.h>
 
 #include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
@@ -716,11 +718,253 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
                                                          is_parent_outward_oriented);
 }
 
+// doc: non-closed connected components are reported as isolated volumes
+// doc: connected components with at least one non-triangle face are reported as isolated volumes
+// doc: self-intersecting connect components are reported as isolated volumes.
+// TODO return a vector with info on the volume? non-triangle/open/SI/regular/...
+template <class TriangleMesh, class FaceIndexMap, class NamedParameters>
+std::size_t
+volume_connected_components(const TriangleMesh& tm,
+                                  FaceIndexMap volume_id_map,
+                            const NamedParameters& np)
+{
+  typedef boost::graph_traits<TriangleMesh> GT;
+  typedef typename GT::vertex_descriptor vertex_descriptor;
+  typedef typename GT::face_descriptor face_descriptor;
+  typedef typename GT::halfedge_descriptor halfedge_descriptor;
+  typedef typename GetVertexPointMap<TriangleMesh,
+                                     NamedParameters>::const_type Vpm;
+  typedef typename GetFaceIndexMap<TriangleMesh,
+                                   NamedParameters>::const_type Fid_map;
+  typedef typename Kernel_traits<
+    typename boost::property_traits<Vpm>::value_type >::Kernel Kernel;
+
+  Vpm vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
+                                get_const_property_map(boost::vertex_point, tm));
+
+  // TODO handle user provided CC map ?
+  Fid_map fid_map = boost::choose_param(boost::get_param(np, internal_np::face_index),
+                                        get_const_property_map(boost::face_index, tm));
+
+  std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
+
+  // set the connected component id of each face
+  std::size_t nb_cc = connected_components(tm,
+                                bind_property_maps(fid_map,make_property_map(face_cc)),
+                                parameters::face_index_map(fid_map));
+
+  if (nb_cc == 1)
+  {
+    BOOST_FOREACH(face_descriptor fd, faces(tm))
+      put(volume_id_map, fd, 0);
+    return 1;
+  }
+
+  boost::dynamic_bitset<> cc_handled(nb_cc, 0);
+  std::vector<std::size_t> cc_volume_ids(nb_cc, -1);
+
+  std::size_t next_volume_id = 0;
+  // First handle non-pure triangle meshes
+  BOOST_FOREACH(face_descriptor fd, faces(tm))
+  {
+    if (!is_triangle(halfedge(fd, tm), tm))
+    {
+      std::size_t cc_id = face_cc[ get(fid_map, fd) ];
+      if ( !cc_handled.test(cc_id) )
+      {
+        cc_handled.set(cc_id);
+        cc_volume_ids[cc_id]=next_volume_id++;
+      }
+    }
+  }
+
+  // Handle open connected components
+  BOOST_FOREACH(halfedge_descriptor h, halfedges(tm))
+  {
+    if (is_border(h, tm))
+    {
+      face_descriptor fd = face( opposite(h, tm), tm );
+      std::size_t cc_id = face_cc[ get(fid_map, fd) ];
+      if ( !cc_handled.test(cc_id) )
+      {
+        cc_handled.set(cc_id);
+        cc_volume_ids[cc_id]=next_volume_id++;
+      }
+    }
+  }
+
+  // Handle self-intersecting connected components
+  // TODO add an option for self-intersection handling (optional if known to be free from self-intersections
+  typedef std::pair<face_descriptor, face_descriptor> Face_pair;
+  std::vector<Face_pair> si_faces;
+  std::set< std::pair<std::size_t, std::size_t> > inclusion_test_to_skip; // due to self-intersections TODO USE ME
+  self_intersections(tm, std::back_inserter(si_faces));
+  BOOST_FOREACH(const Face_pair& fp, si_faces)
+  {
+    std::size_t first_cc_id = face_cc[ get(fid_map, fp.first) ];
+    std::size_t second_cc_id = face_cc[ get(fid_map, fp.second) ];
+
+    if (first_cc_id==second_cc_id)
+    {
+      if ( !cc_handled.test(first_cc_id) )
+      {
+        cc_handled.set(first_cc_id);
+        cc_volume_ids[first_cc_id]=next_volume_id++;
+      }
+    }
+    else
+      inclusion_test_to_skip.insert( make_sorted_pair(first_cc_id, second_cc_id) );
+  }
+
+  if (!cc_handled.all())
+  {
+    // extract a vertex with max z coordinate for each connected component
+    std::vector<vertex_descriptor> xtrm_vertices(nb_cc, GT::null_vertex());
+    BOOST_FOREACH(vertex_descriptor vd, vertices(tm))
+    {
+      std::size_t cc_id = face_cc[get(fid_map, face(halfedge(vd, tm), tm))];
+      if (cc_handled.test(cc_id)) continue;
+      if (xtrm_vertices[cc_id]==GT::null_vertex())
+        xtrm_vertices[cc_id]=vd;
+      else
+        if (get(vpm, vd).z()>get(vpm,xtrm_vertices[cc_id]).z())
+          xtrm_vertices[cc_id]=vd;
+    }
+
+    const bool ignore_orientation_of_cc = false; // TODO add an option
+
+    boost::dynamic_bitset<> is_cc_outward_oriented;
+    if (!ignore_orientation_of_cc)
+    {
+      is_cc_outward_oriented.resize(nb_cc);
+      for(std::size_t cc_id=0; cc_id<nb_cc; ++cc_id)
+      {
+        if (cc_handled.test(cc_id)) continue;
+        is_cc_outward_oriented[cc_id] = internal::is_outward_oriented(xtrm_vertices[cc_id], tm, np);
+      }
+    }
+
+    //collect faces per CC
+    std::vector< std::vector<face_descriptor> > faces_per_cc(nb_cc);
+    std::vector< std::size_t > nb_faces_per_cc(nb_cc, 0);
+    BOOST_FOREACH(face_descriptor fd, faces(tm))
+    {
+      std::size_t cc_id = face_cc[ get(fid_map, fd) ];
+      ++nb_faces_per_cc[ cc_id ];
+    }
+    for (std::size_t i=0; i<nb_cc; ++i)
+      faces_per_cc[i].reserve( nb_faces_per_cc[i] );
+    BOOST_FOREACH(face_descriptor fd, faces(tm))
+    {
+      std::size_t cc_id = face_cc[ get(fid_map, fd) ];
+      faces_per_cc[ cc_id ].push_back(fd);
+    }
+
+    // init the main loop
+    std::size_t k = 0;
+    std::vector<std::vector<std::size_t> > nested_cc_per_cc(nb_cc); // contains for each CC the CC that are in its bounded side
+    std::vector < std::size_t > nesting_levels(nb_cc, 0); // indicates for each CC its nesting level
+    std::vector < boost::dynamic_bitset<> > level_k_nestings; // container containing CCs in the same volume (one bitset per volume) at level k
+    level_k_nestings.push_back( ~cc_handled );
+
+    // the following loop is exploring the nesting level by level (0 -> max_level)
+    while (!level_k_nestings.empty())
+    {
+      std::vector < boost::dynamic_bitset<> > level_k_plus_1_nestings;
+      BOOST_FOREACH(boost::dynamic_bitset<> cc_to_handle, level_k_nestings)
+      {
+        CGAL_assertion( cc_to_handle.any() );
+        while(cc_to_handle.any())
+        {
+          //extract a vertex with max z amongst all components
+          std::size_t xtrm_cc_id=cc_to_handle.find_first();
+          for(std::size_t id  = cc_to_handle.find_next(xtrm_cc_id);
+                          id != cc_to_handle.npos;
+                          id  = cc_to_handle.find_next(id))
+          {
+            if (get(vpm, xtrm_vertices[id]).z()>get(vpm,xtrm_vertices[xtrm_cc_id]).z())
+              xtrm_cc_id=id;
+          }
+          cc_to_handle.reset(xtrm_cc_id);
+          nesting_levels[xtrm_cc_id] = k;
+
+          // collect id inside xtrm_cc_id CC
+          typedef Side_of_triangle_mesh<TriangleMesh, Kernel, Vpm> Side_of_tm;
+          typename Side_of_tm::AABB_tree aabb_tree(faces_per_cc[xtrm_cc_id].begin(),
+                                                   faces_per_cc[xtrm_cc_id].end(),
+                                                   tm, vpm);
+          Side_of_tm side_of_cc(aabb_tree);
+
+          boost::dynamic_bitset<> nested_cc_to_handle(nb_cc, 0);
+          for(std::size_t id  = cc_to_handle.find_first();
+                          id != cc_to_handle.npos;
+                          id  = cc_to_handle.find_next(id))
+          {
+            if (side_of_cc(get(vpm,xtrm_vertices[id]))==ON_BOUNDED_SIDE)
+            {
+              nested_cc_per_cc[xtrm_cc_id].push_back(id);
+              // mark nested CC as handle and collect them for the handling of the next level
+              nested_cc_to_handle.set(id);
+              cc_to_handle.reset(id);
+            }
+          }
+
+          if ( nested_cc_per_cc[xtrm_cc_id].empty() ) continue;
+          level_k_plus_1_nestings.push_back(nested_cc_to_handle);
+        }
+      }
+      ++k;
+      level_k_nestings.swap(level_k_plus_1_nestings);
+    }
+
+    if (!ignore_orientation_of_cc)
+    {
+      //TODO correct inclusion and nesting levels
+    }
+
+    // apply volume classification using level 0 nesting
+    for(std::size_t cc_id=0; cc_id<nb_cc; ++cc_id)
+    {
+      if (cc_handled.test(cc_id)) continue;
+      if ( nesting_levels[cc_id]==0 )
+      {
+        cc_volume_ids[cc_id] = next_volume_id;
+        BOOST_FOREACH(std::size_t ncc_id, nested_cc_per_cc[cc_id])
+          cc_volume_ids[ncc_id] = next_volume_id;
+        ++next_volume_id;
+      }
+    }
+
+    // update volume id map
+    for(std::size_t cc_id=0; cc_id<nb_cc; ++cc_id)
+    {
+      BOOST_FOREACH(face_descriptor fd, faces_per_cc[cc_id])
+      put(volume_id_map, fd, cc_volume_ids[cc_id]);
+    }
+  }
+  else
+  {
+    BOOST_FOREACH(face_descriptor fd, faces(tm))
+    {
+      std::size_t cc_id = face_cc[ get(fid_map, fd) ];
+      put(volume_id_map, fd, cc_volume_ids[cc_id]);
+    }
+  }
+
+  return next_volume_id;
+}
+
 /// \cond SKIP_IN_MANUAL
 template <class TriangleMesh>
 bool does_bound_a_volume(const TriangleMesh& tm)
 {
   return does_bound_a_volume(tm, parameters::all_default());
+}
+
+template <class TriangleMesh, class FaceIndexMap>
+std::size_t volume_connected_components(const TriangleMesh& tm, FaceIndexMap volume_id_map)
+{
+  return volume_connected_components(tm, volume_id_map, parameters::all_default());
 }
 /// \endcond
 
