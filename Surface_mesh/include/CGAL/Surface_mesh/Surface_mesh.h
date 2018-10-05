@@ -1112,7 +1112,7 @@ public:
   
   bool join(const Surface_mesh& other)
   {
-    size_type nv = num_vertices(), nh = num_halfedges(), nf = num_faces();
+    const size_type nv = num_vertices(), nh = num_halfedges(), nf = num_faces();
     resize(num_vertices()+  other.num_vertices(),
             num_edges()+  other.num_edges(),
             num_faces()+  other.num_faces());
@@ -1150,38 +1150,50 @@ public:
       }
     }
     size_type inf_value = (std::numeric_limits<size_type>::max)();
-    if(other.vertices_freelist_ != inf_value){
-      if(vertices_freelist_ != inf_value){
-        Vertex_index vi(nv+other.vertices_freelist_);
+    if (vertices_freelist_ != inf_value) {
+        Vertex_index vi(vertices_freelist_);
         Halfedge_index inf((std::numeric_limits<size_type>::max)());
-        while(vconn_[vi].halfedge_ != inf){
-          vi = Vertex_index(size_type(vconn_[vi].halfedge_));
+        while (vconn_[vi].halfedge_ != inf) {
+            vi = Vertex_index(size_type(vconn_[vi].halfedge_));
         }
-        vconn_[vi].halfedge_ = Halfedge_index(vertices_freelist_);
-      }
-      vertices_freelist_ = nv + other.vertices_freelist_; 
+        if (other.vertices_freelist_ != inf_value) {
+            vconn_[vi].halfedge_ = Halfedge_index(nv + other.vertices_freelist_);
+        }
     }
-    if(other.faces_freelist_ != inf_value){
-      if(faces_freelist_ != inf_value){
-        Face_index fi(nf+other.faces_freelist_);
-        Halfedge_index inf((std::numeric_limits<size_type>::max)());
-        while(fconn_[fi].halfedge_ != inf){
-          fi = Face_index(size_type(fconn_[fi].halfedge_));
+    else {
+        if (other.vertices_freelist_ != inf_value) {
+            vertices_freelist_ = nv + other.vertices_freelist_;
         }
-        fconn_[fi].halfedge_ = Halfedge_index(faces_freelist_);
-      }
-      faces_freelist_ = nf + other.faces_freelist_; 
     }
-    if(other.edges_freelist_ != inf_value){
-      if(edges_freelist_ != inf_value){
-        Halfedge_index hi((nh>>1)+other.edges_freelist_);
+    if (faces_freelist_ != inf_value) {
+        Face_index fi(faces_freelist_);
         Halfedge_index inf((std::numeric_limits<size_type>::max)());
-        while(hconn_[hi].next_halfedge_ != inf){
-          hi = hconn_[hi].next_halfedge_;
+        while (fconn_[fi].halfedge_ != inf) {
+            fi = Face_index(size_type(fconn_[fi].halfedge_));
         }
-        hconn_[hi].next_halfedge_ = Halfedge_index(edges_freelist_);
-      }
-      edges_freelist_ = (nh>>1) + other.edges_freelist_; 
+        if (other.faces_freelist_ != inf_value) {
+            fconn_[fi].halfedge_ = Halfedge_index(nf + other.faces_freelist_);
+        }
+    }
+    else {
+        if (other.faces_freelist_ != inf_value) {
+            faces_freelist_ = nf + other.faces_freelist_;
+        }
+    }
+    if (edges_freelist_ != inf_value) {
+        Halfedge_index hi(edges_freelist_);
+        Halfedge_index inf((std::numeric_limits<size_type>::max)());
+        while (hconn_[hi].next_halfedge_ != inf) {
+            hi = hconn_[hi].next_halfedge_;
+        }
+        if (other.edges_freelist_ != inf_value) {
+            hconn_[hi].next_halfedge_ = Halfedge_index((nh >> 1) + other.edges_freelist_);
+        }
+    }
+    else {
+        if (other.edges_freelist_ != inf_value) {
+            edges_freelist_ = Halfedge_index((nh >> 1) + other.edges_freelist_);
+        }
     }
     garbage_ = garbage_ || other.garbage_;
     removed_vertices_ += other.removed_vertices_;
