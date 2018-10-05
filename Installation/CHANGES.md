@@ -20,6 +20,13 @@ Release date: March 2019
     - `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycle()`
     - `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycles()`
 
+### 3D Fast Intersection and Distance Computation
+
+-   The primitives AABB_face_graph_triangle_primitive and 
+    AABB_halfedge_graph_segment_primitive now use a pair of id and 
+    graph if they are parameterized to deal with several graphs in
+    per tree (with the template tag.)
+
 Release 4.13
 ------------
 
