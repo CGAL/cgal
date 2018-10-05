@@ -23,6 +23,9 @@
 #ifndef CGAL_VTK_IO_H
 #define CGAL_VTK_IO_H
 
+#include <CGAL/license/Mesh_3.h>
+
+
 #include <fstream>
 #include <vector>
 

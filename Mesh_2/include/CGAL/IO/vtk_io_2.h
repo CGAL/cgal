@@ -27,6 +27,9 @@
 #include <fstream>
 #include <vector>
 
+#include <CGAL/license/Mesh_2.h>
+
+
 //todo try to factorize with functors
 namespace CGAL{
 // writes the appended data into the .vtu file
