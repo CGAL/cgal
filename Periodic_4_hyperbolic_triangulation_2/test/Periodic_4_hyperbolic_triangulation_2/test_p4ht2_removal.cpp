@@ -1,0 +1,87 @@
+
+
+#include <boost/tuple/tuple.hpp>
+#include <boost/random/linear_congruential.hpp>
+#include <boost/random/uniform_smallint.hpp>
+#include <boost/random/variate_generator.hpp>
+#include <CGAL/point_generators_2.h>
+#include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h>
+#include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
+#include <CGAL/Hyperbolic_octagon_translation.h>
+#include <CGAL/CORE_Expr.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/determinant.h>
+#include <CGAL/Point_2.h>
+
+typedef CORE::Expr                                                                  NT;
+typedef CGAL::Cartesian<NT>                                                         Kernel;
+typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel,
+                                      CGAL::Hyperbolic_octagon_translation>         Traits;
+typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<Traits>                Triangulation;
+typedef Triangulation::Face_iterator                                                Face_iterator;
+typedef Triangulation::Vertex_handle 												Vertex_handle;
+typedef Triangulation::Point 														Point;
+typedef Triangulation::Vertex_iterator                                              Iter;
+typedef Traits::Side_of_original_octagon                                            Side_of_original_octagon;
+
+typedef CGAL::Cartesian<double>                                                     DKernel;
+typedef DKernel::Point_2                                                            DPoint;
+typedef CGAL::Creator_uniform_2<double, DPoint >                                    Creator;
+
+using std::cout;
+using std::endl;
+
+int main(int argc, char** argv) {
+
+    int N;
+    if (argc < 2) {
+        cout << "usage: " << argv[0] << " [number of points]" << endl;
+        cout << "generating 1000 points (default)!" << endl;
+        N = 1000;
+    } else {
+        N = atoi(argv[1]);
+    } 
+
+    int iters = 1;
+    if (argc == 3) {
+        iters = atoi(argv[2]);
+    }
+
+    for (int itr = 0; itr < iters; itr++) {
+        Triangulation tr;    
+    
+        CGAL::Random_points_in_disc_2<DPoint, Creator> g( 0.85 );
+        Side_of_original_octagon pred;
+
+        //std::vector<Vertex_handle> new_v;
+        int cnt = 0;
+        do {
+            DPoint pt = *g;
+            ++g;
+            if (pred(pt) != CGAL::ON_UNBOUNDED_SIDE) {
+                //new_v.push_back(tr.insert(pt));
+                tr.insert(Point(pt.x(), pt.y()));
+                cnt++;
+            }
+        } while (cnt < N);
+
+        tr.clean_dummy_points();
+        assert(tr.is_valid());
+        assert(tr.number_of_dummy_points() == 0);
+
+        bool again;
+        do {
+            again = false;
+            for (Iter it = tr.vertices_begin(); it != tr.vertices_end(); it++) {
+                if (tr.remove(it)) {
+                    again = true;
+                }
+            }
+        } while (again);
+
+        cout << "Final count of vertices: " << tr.number_of_vertices() << endl;
+        assert(tr.is_valid());
+    }
+    
+    return 0;
+}
