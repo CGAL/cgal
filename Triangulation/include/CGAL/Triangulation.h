@@ -1408,12 +1408,19 @@ operator<<(std::ostream & os, const Triangulation<TT, TDS> & tr)
 
     // infinite vertex has index 0 (among all the vertices)
     index_of_vertex[tr.infinite_vertex()] = i++;
-    os << *tr.infinite_vertex() <<"\n";
+    if(is_ascii(os))
+      os << *tr.infinite_vertex() <<"\n";
+    else
+      write(os, *tr.infinite_vertex(), io_Read_write());
+       
     for( Vertex_iterator it = tr.vertices_begin(); it != tr.vertices_end(); ++it )
     {
         if( tr.is_infinite(it) )
             continue;
-        os << *it <<"\n"; // write the vertex
+        if(is_ascii(os))
+          os << *it <<"\n"; // write the vertex
+        else
+          write(os, *it, io_Read_write());
         index_of_vertex[it] = i++;
     }
     CGAL_assertion( i == n+1 );
