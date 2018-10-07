@@ -14,7 +14,7 @@ typedef CGAL::Surface_mesh<Kernel::Point_3> Mesh;
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 
-typedef boost::associative_property_map<std::map<face_descriptor, std::size_t> > Face_proxy_map;
+typedef Mesh::Property_map<face_descriptor, std::size_t> Face_proxy_map;
 typedef boost::property_map<Mesh, boost::vertex_point_t>::type Vertex_point_map;
 
 typedef CGAL::Surface_mesh_approximation::L2_metric_plane_proxy<Mesh> L2_metric_plane_proxy;
@@ -49,11 +49,9 @@ int main()
   std::cout << "Remeshing done. ("
     << std::distance(faces(mesh).first, faces(mesh).second) << " faces)..." << std::endl;
 
-  // face area map
-  std::map<face_descriptor, std::size_t> face_index;
-  BOOST_FOREACH(face_descriptor f, faces(mesh))
-    face_index.insert(std::pair<face_descriptor, std::size_t>(f, 0));
-  Face_proxy_map proxy_pmap(face_index);
+  // face proxy index map
+  Face_proxy_map fpxmap =
+    mesh.add_property_map<face_descriptor, std::size_t>("f:proxy_id", 0).first;
 
   // create L2_approx L2 metric approximation algorithm instance
   std::cout << "setup algorithm instance" << std::endl;
@@ -109,7 +107,7 @@ int main()
 
   // get outputs
   std::cout << "get outputs" << std::endl;
-  approx.proxy_map(proxy_pmap);
+  approx.proxy_map(fpxmap);
 
   for (std::size_t i = 0; i < approx.number_of_proxies(); ++i) {
     std::list<face_descriptor> patch;
@@ -159,7 +157,7 @@ int main()
   proxies.clear();
   anchor_pos.clear();
   tris.clear();
-  approx.output(CGAL::parameters::face_proxy_map(proxy_pmap).
+  approx.output(CGAL::parameters::face_proxy_map(fpxmap).
     proxies(std::back_inserter(proxies)).
     anchors(std::back_inserter(anchor_pos)).
     triangles(std::back_inserter(tris)));

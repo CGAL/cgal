@@ -29,19 +29,18 @@ int main()
   const double target_edge_length = 0.05;
   const unsigned int nb_iter = 3;
 
-  std::cout << "Start remeshing. "
-    << " (" << num_faces(mesh) << " faces)..." << std::endl;
+  std::cout << "Start remeshing. ("
+    << std::distance(faces(mesh).first, faces(mesh).second) << " faces)..." << std::endl;
   PMP::isotropic_remeshing(
     faces(mesh),
     target_edge_length,
     mesh,
     PMP::parameters::number_of_iterations(nb_iter));
-  std::cout << "Remeshing done. "
-    << " (" << num_faces(mesh) << " faces)..." << std::endl;
+  std::cout << "Remeshing done. ("
+    << std::distance(faces(mesh).first, faces(mesh).second) << " faces)..." << std::endl;
 
-  Mesh out_mesh;
-  std::map<face_descriptor, std::size_t> fidxmap;
-  boost::associative_property_map<std::map<face_descriptor, std::size_t> > fpxmap(fidxmap);
+  Mesh::Property_map<face_descriptor, std::size_t> fpxmap =
+    mesh.add_property_map<face_descriptor, std::size_t>("f:proxy_id", 0).first;
   std::vector<Kernel::Vector_3> proxies;
   std::vector<Kernel::Point_3> points;
   std::vector<CGAL::cpp11::array<std::size_t, 3> > triangles;
@@ -57,7 +56,6 @@ int main()
       anchors(std::back_inserter(points)).
       triangles(std::back_inserter(triangles)));
 
-  std::cout << "#fpxmap " << fidxmap.size() << std::endl;
   std::cout << "#proxies " << proxies.size() << std::endl;
   std::cout << "#vertices " << points.size() << std::endl;
   std::cout << "#triangles " << triangles.size() << std::endl;

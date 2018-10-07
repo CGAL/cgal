@@ -29,8 +29,8 @@ struct Compact_metric_point_proxy {
   typedef Point_3 Proxy;
 
   // we keep a precomputed property map to speed up computations
-  Compact_metric_point_proxy(const Face_center_map &_center_pmap, const Face_area_map &_area_pmap)
-    : center_pmap(_center_pmap), area_pmap(_area_pmap) {}
+  Compact_metric_point_proxy(const Face_center_map &center_pmap_, const Face_area_map &area_pmap_)
+    : center_pmap(center_pmap_), area_pmap(area_pmap_) {}
 
   // compute and return error from a face to a proxy,
   // defined as the Euclidean distance between
