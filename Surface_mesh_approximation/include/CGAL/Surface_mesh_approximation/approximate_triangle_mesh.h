@@ -144,10 +144,13 @@ bool approximate_triangle_mesh(const TriangleMesh &tm, const NamedParameters &np
   const Verbose_level vl = choose_param(
     get_param(np, internal_np::verbose_level), SILENT);
 
+  const std::size_t number_of_faces = std::distance(faces(tm).first, faces(tm).second);
+  const std::size_t number_of_vertices = std::distance(vertices(tm).first, vertices(tm).second);
+
   if (vl == MAIN_STEPS || vl == VERBOSE) {
     std::cout << "Variational shape approximation:"
-      << "\n#f " << num_faces(tm)
-      << "\n#v " << num_vertices(tm) << std::endl;
+      << "\n#f " << number_of_faces
+      << "\n#v " << number_of_vertices << std::endl;
   }
 
   L21_metric metric(tm, point_pmap);
@@ -176,7 +179,7 @@ bool approximate_triangle_mesh(const TriangleMesh &tm, const NamedParameters &np
     std::cout << "Seeding done." << std::endl;
 
   // default number of iterations
-  std::size_t nb_of_iterations_default = max_nb_of_proxies ? num_faces(tm) / *max_nb_of_proxies : 30;
+  std::size_t nb_of_iterations_default = max_nb_of_proxies ? number_of_faces / *max_nb_of_proxies : 30;
   nb_of_iterations_default = (std::min)((std::max)(
     nb_of_iterations_default, static_cast<std::size_t>(20)), static_cast<std::size_t>(60));
   const std::size_t nb_of_iterations = choose_param(

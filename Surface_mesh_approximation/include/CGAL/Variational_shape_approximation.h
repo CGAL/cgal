@@ -232,6 +232,8 @@ private:
   // member variables
   // The triangle mesh.
   const TriangleMesh *m_ptm;
+  // The exact number of faces
+  const std::size_t m_nb_of_faces;
   // The mesh vertex point map.
   VertexPointMap m_vpoint_map;
   // The approximation object.
@@ -278,6 +280,7 @@ public:
     const VertexPointMap &vpoint_map,
     const Error_metric &error_metric) :
     m_ptm(&tm),
+    m_nb_of_faces(std::distance(faces(tm).first, faces(tm).second)),
     m_vpoint_map(vpoint_map),
     m_metric(&error_metric),
     m_average_edge_length(0.0),
@@ -331,7 +334,7 @@ public:
     const std::size_t nb_relaxations = choose_param(get_param(np, internal_np::number_of_relaxations), 5);
 
     // maximum number of proxies internally, maybe better choice?
-    const std::size_t nb_px = num_faces(*m_ptm) / 3;
+    const std::size_t nb_px = m_nb_of_faces / 3;
 
     // initialize proxies and the proxy map to prepare for insertion
     bootstrap_from_connected_components();
@@ -497,7 +500,7 @@ public:
       std::cerr << "zero error, diffuse w.r.t. number of faces" << std::endl;
 #endif
       const double avg_face =
-        static_cast<double>(num_faces(*m_ptm)) / static_cast<double>(nb_proxies);
+        static_cast<double>(m_nb_of_faces) / static_cast<double>(nb_proxies);
       std::vector<double> px_size(m_proxies.size(), 0.0);
       BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
         px_size[get(m_fproxy_map, f)] += 1.0;
@@ -1024,7 +1027,7 @@ private:
    * @brief randomly initializes proxies to target number of proxies.
    * @note To ensure the randomness, call `std::srand()` beforehand.
    * @param max_nb_proxies maximum number of proxies,
-   * should be in range `(nb_connected_components, num_faces(*m_ptm))`
+   * should be in range `(nb_connected_components, nb_faces)`
    * @param nb_iterations number of re-fitting iterations
    * @return number of proxies initialized
    */
@@ -1044,7 +1047,7 @@ private:
   /*!
    * @brief incrementally initializes proxies to target number of proxies.
    * @param max_nb_proxies maximum number of proxies,
-   * should be in range `(nb_connected_components, num_faces(*m_ptm))`
+   * should be in range `(nb_connected_components, nb_faces)`
    * @param nb_iterations number of re-fitting iterations
    * before each incremental proxy insertion
    * @return number of proxies initialized
@@ -1060,7 +1063,7 @@ private:
   /*!
    * @brief hierarchically initializes proxies to target number of proxies.
    * @param max_nb_proxies maximum number of proxies,
-   * should be in range `(nb_connected_components, num_faces(*m_ptm))`
+   * should be in range `(nb_connected_components, nb_faces)`
    * @param nb_iterations number of re-fitting iterations
    * before each hierarchical proxy insertion
    * @return number of proxies initialized
@@ -1087,7 +1090,7 @@ private:
    * with both maximum number of proxies and minimum error drop stop criteria,
    * where the first criterion met stops the seeding.
    * @note To ensure the randomness, call `std::srand()` beforehand.
-   * @param max_nb_proxies maximum number of proxies, should be in range `(nb_connected_components, num_faces(tm) / 3)`
+   * @param max_nb_proxies maximum number of proxies, should be in range `(nb_connected_components, nb_faces / 3)`
    * @param min_error_drop minimum error drop, should be in range `(0.0, 1.0)`
    * @param nb_iterations number of re-fitting iterations
    * @return number of proxies initialized
@@ -1122,7 +1125,7 @@ private:
    * @brief incrementally initializes proxies
    * with both maximum number of proxies and minimum error drop stop criteria,
    * The first criterion met stops the seeding.
-   * @param max_nb_proxies maximum number of proxies, should be in range `(nb_connected_components, num_faces(tm) / 3)`
+   * @param max_nb_proxies maximum number of proxies, should be in range `(nb_connected_components, nb_faces / 3)`
    * @param min_error_drop minimum error drop, should be in range `(0.0, 1.0)`
    * @param nb_iterations number of re-fitting iterations
    * @return number of proxies initialized
@@ -1145,7 +1148,7 @@ private:
    * @brief hierarchically initializes proxies
    * with both maximum number of proxies and minimum error drop stop criteria,
    * where the first criterion met stops the seeding.
-   * @param max_nb_proxies maximum number of proxies, should be in range `(nb_connected_components, num_faces(tm) / 3)`
+   * @param max_nb_proxies maximum number of proxies, should be in range `(nb_connected_components, nb_faces / 3)`
    * @param min_error_drop minimum error drop, should be in range `(0.0, 1.0)`
    * @param nb_iterations number of re-fitting iterations
    * @return number of proxies initialized
@@ -1370,14 +1373,14 @@ private:
    */
   bool random_pick_non_seed_faces(const std::size_t nb_requested,
     std::vector<face_descriptor> &picked_faces) {
-    if (nb_requested + m_proxies.size() >= num_faces(*m_ptm))
+    if (nb_requested + m_proxies.size() >= m_nb_of_faces)
       return false;
 
     std::set<face_descriptor> seed_faces_set;
     BOOST_FOREACH(const Proxy_wrapper &pxw, m_proxies)
       seed_faces_set.insert(pxw.seed);
 
-    const std::size_t nb_nsf = num_faces(*m_ptm) - m_proxies.size();
+    const std::size_t nb_nsf = m_nb_of_faces - m_proxies.size();
     std::vector<face_descriptor> non_seed_faces;
     non_seed_faces.reserve(nb_nsf);
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm)) {
