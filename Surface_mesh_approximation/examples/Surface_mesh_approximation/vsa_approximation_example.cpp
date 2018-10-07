@@ -2,7 +2,7 @@
 #include <fstream>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Surface_mesh.h>
 #include <CGAL/Surface_mesh_approximation/approximate_triangle_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
@@ -10,23 +10,24 @@
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
+typedef CGAL::Surface_mesh<Kernel::Point_3> Mesh;
 
 namespace VSA = CGAL::Surface_mesh_approximation;
+namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main()
 {
   // read input surface triangle mesh
-  Polyhedron input;
+  Mesh mesh;
   std::ifstream file("data/bear.off");
-  file >> input;
+  file >> mesh;
 
   // output indexed triangles
   std::vector<Kernel::Point_3> anchors;
   std::vector<CGAL::cpp11::array<std::size_t, 3> > triangles; // triplets of indices
 
   // free function interface with named parameters
-  bool is_manifold = VSA::approximate_triangle_mesh(input,
+  bool is_manifold = VSA::approximate_triangle_mesh(mesh,
     CGAL::parameters::seeding_method(VSA::HIERARCHICAL). // hierarchical seeding
     max_number_of_proxies(200). // seeding with maximum number of proxies
     number_of_iterations(30). // number of clustering iterations after seeding
@@ -39,15 +40,15 @@ int main()
   if (is_manifold) {
     std::cout << "oriented, 2-manifold output." << std::endl;
 
-    // convert from soup to polyhedron mesh
-    CGAL::Polygon_mesh_processing::orient_polygon_soup(anchors, triangles);
-    Polyhedron mesh;
-    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(anchors, triangles, mesh);
-    if (CGAL::is_closed(mesh) && (!CGAL::Polygon_mesh_processing::is_outward_oriented(mesh)))
-      CGAL::Polygon_mesh_processing::reverse_face_orientations(mesh);
+    // convert from soup to surface mesh
+    PMP::orient_polygon_soup(anchors, triangles);
+    Mesh output;
+    PMP::polygon_soup_to_polygon_mesh(anchors, triangles, output);
+    if (CGAL::is_closed(output) && (!PMP::is_outward_oriented(output)))
+      PMP::reverse_face_orientations(output);
 
     std::ofstream out("dump.off");
-    out << mesh;
+    out << output;
     out.close();
   }
 

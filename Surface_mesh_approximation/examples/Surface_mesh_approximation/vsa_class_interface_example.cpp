@@ -2,16 +2,16 @@
 #include <fstream>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Surface_mesh.h>
 #include <CGAL/Variational_shape_approximation.h>
 
 namespace VSA = CGAL::Surface_mesh_approximation;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
+typedef CGAL::Surface_mesh<Kernel::Point_3> Mesh;
 
-typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
-typedef CGAL::Variational_shape_approximation<Polyhedron, Vertex_point_map> Mesh_approximation;
+typedef boost::property_map<Mesh, boost::vertex_point_t>::type Vertex_point_map;
+typedef CGAL::Variational_shape_approximation<Mesh, Vertex_point_map> Mesh_approximation;
 
 // L21 error metric
 typedef Mesh_approximation::Error_metric L21_metric;
@@ -19,21 +19,20 @@ typedef Mesh_approximation::Error_metric L21_metric;
 int main()
 {
   // reads input surface triangle mesh
-  Polyhedron input;
+  Mesh mesh;
   std::ifstream file("data/bear.off");
-  if (!file || !(file >> input) || input.empty()) {
+  if (!file || !(file >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
     std::cerr << "Invalid off file." << std::endl;
     return EXIT_FAILURE;
   }
 
+  Vertex_point_map vpmap = get(boost::vertex_point, const_cast<Mesh &>(mesh));
+
   // error metric and fitting function
-  L21_metric error_metric(input,
-    get(boost::vertex_point, const_cast<Polyhedron &>(input)));
+  L21_metric error_metric(mesh, vpmap);
 
   // creates VSA algorithm instance
-  Mesh_approximation approx(input,
-    get(boost::vertex_point, const_cast<Polyhedron &>(input)),
-    error_metric);
+  Mesh_approximation approx(mesh, vpmap, error_metric);
 
   // seeds 100 random proxies
   approx.initialize_seeds(CGAL::parameters::seeding_method(VSA::RANDOM)
