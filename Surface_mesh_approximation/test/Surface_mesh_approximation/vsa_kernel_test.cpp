@@ -30,15 +30,15 @@ int load_and_remesh_sm(TM &mesh) {
   const double target_edge_length = 0.05;
   const unsigned int nb_iter = 3;
 
-  std::cout << "Start remeshing. "
-    << " (" << num_faces(mesh) << " faces)..." << std::endl;
+  std::cout << "Start remeshing. ("
+    << std::distance(faces(mesh).first, faces(mesh).second) << " faces)..." << std::endl;
   PMP::isotropic_remeshing(
     faces(mesh),
     target_edge_length,
     mesh,
     PMP::parameters::number_of_iterations(nb_iter));
-  std::cout << "Remeshing done. "
-    << " (" << num_faces(mesh) << " faces)..." << std::endl;
+  std::cout << "Remeshing done. ("
+    << std::distance(faces(mesh).first, faces(mesh).second) << " faces)..." << std::endl;
 
   return EXIT_SUCCESS;
 }
@@ -54,16 +54,16 @@ int load_and_remesh_poly(TM &mesh) {
   const double target_edge_length = 0.05;
   const unsigned int nb_iter = 3;
 
-  std::cout << "Start remeshing. "
-    << " (" << num_faces(mesh) << " faces)..." << std::endl;
+  std::cout << "Start remeshing. ("
+    << std::distance(faces(mesh).first, faces(mesh).second) << " faces)..." << std::endl;
   PMP::isotropic_remeshing(
     faces(mesh),
     target_edge_length,
     mesh,
     PMP::parameters::number_of_iterations(nb_iter).
     face_index_map(get(boost::face_external_index, mesh)));
-  std::cout << "Remeshing done. "
-    << " (" << num_faces(mesh) << " faces)..." << std::endl;
+  std::cout << "Remeshing done. ("
+    << std::distance(faces(mesh).first, faces(mesh).second) << " faces)..." << std::endl;
 
   return EXIT_SUCCESS;
 }

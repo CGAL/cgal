@@ -68,11 +68,24 @@ typedef CGAL::Variational_shape_approximation<
 int main()
 {
   Mesh mesh;
-  std::ifstream input("./data/cube-ouvert.off");
+  std::ifstream input("./data/sphere.off");
   if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
     std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;
   }
+
+  const double target_edge_length = 0.05;
+  const unsigned int nb_iter = 3;
+
+  std::cout << "Start remeshing. ("
+    << std::distance(faces(mesh).first, faces(mesh).second) << " faces)..." << std::endl;
+  PMP::isotropic_remeshing(
+    faces(mesh),
+    target_edge_length,
+    mesh,
+    PMP::parameters::number_of_iterations(nb_iter));
+  std::cout << "Remeshing done. ("
+    << std::distance(faces(mesh).first, faces(mesh).second) << " faces)..." << std::endl;
 
   // construct face normal and area map
   Vertex_point_map vpmap = get(boost::vertex_point, const_cast<Mesh &>(mesh));
@@ -96,7 +109,8 @@ int main()
   Compact_approx approx(mesh, vpmap, error_metric);
 
   std::cout << "random seeding and run" << std::endl;
-  approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::Surface_mesh_approximation::RANDOM)
+  approx.initialize_seeds(
+    CGAL::parameters::seeding_method(CGAL::Surface_mesh_approximation::RANDOM)
     .max_number_of_proxies(20));
   approx.run(20);
   if (approx.number_of_proxies() != 20)

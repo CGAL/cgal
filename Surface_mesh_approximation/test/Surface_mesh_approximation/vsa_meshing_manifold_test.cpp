@@ -5,6 +5,7 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/remesh.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
 
 #include <CGAL/Variational_shape_approximation.h>
 
@@ -18,7 +19,7 @@ typedef L21_approx::Error_metric L21_metric;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-bool test_manifold(const char *file_name, const FT drop = FT(1e-8))
+bool test_manifold(const char *file_name, const FT drop = FT(1e-2))
 {
   Mesh mesh;
   std::ifstream input(file_name);
@@ -27,18 +28,22 @@ bool test_manifold(const char *file_name, const FT drop = FT(1e-8))
     return false;
   }
 
+  const std::size_t nb_removed = PMP::remove_isolated_vertices(mesh);
+  if (nb_removed > 0)
+    std::cout << nb_removed << " isolated vertices are removed." << std::endl;
+
   const double target_edge_length = 0.05;
   const unsigned int nb_iter = 3;
 
-  std::cout << "Start remeshing. "
-    << " (" << num_faces(mesh) << " faces)..." << std::endl;
+  std::cout << "Start remeshing. ("
+    << std::distance(faces(mesh).first, faces(mesh).second) << " faces)..." << std::endl;
   PMP::isotropic_remeshing(
     faces(mesh),
     target_edge_length,
     mesh,
     PMP::parameters::number_of_iterations(nb_iter));
-  std::cout << "Remeshing done. "
-    << " (" << num_faces(mesh) << " faces)..." << std::endl;
+  std::cout << "Remeshing done. ("
+    << std::distance(faces(mesh).first, faces(mesh).second) << " faces)..." << std::endl;
 
   std::cout << "Testing \"" << file_name << '\"' << std::endl;
   // algorithm instance
@@ -51,7 +56,8 @@ bool test_manifold(const char *file_name, const FT drop = FT(1e-8))
   // approximation, seeding from error, drop to the target error incrementally
   const std::size_t num_iterations = 20;
   const std::size_t inner_iterations = 5;
-  approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::Surface_mesh_approximation::INCREMENTAL)
+  approx.initialize_seeds(
+    CGAL::parameters::seeding_method(CGAL::Surface_mesh_approximation::INCREMENTAL)
     .min_error_drop(drop)
     .number_of_relaxations(inner_iterations));
   approx.run(num_iterations);
@@ -80,7 +86,7 @@ int main()
   if (!test_manifold("./data/cube-ouvert.off"))
     return EXIT_FAILURE;
 
-  if (!test_manifold("./data/sphere.off", FT(1e-2)))
+  if (!test_manifold("./data/sphere.off"))
     return EXIT_FAILURE;
 
   return EXIT_SUCCESS;

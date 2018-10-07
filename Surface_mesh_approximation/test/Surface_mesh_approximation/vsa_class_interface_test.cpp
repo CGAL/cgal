@@ -39,15 +39,15 @@ int main()
   const double target_edge_length = 0.05;
   const unsigned int nb_iter = 3;
 
-  std::cout << "Start remeshing. "
-    << " (" << num_faces(mesh) << " faces)..." << std::endl;
+  std::cout << "Start remeshing. ("
+    << std::distance(faces(mesh).first, faces(mesh).second) << " faces)..." << std::endl;
   PMP::isotropic_remeshing(
     faces(mesh),
     target_edge_length,
     mesh,
     PMP::parameters::number_of_iterations(nb_iter));
-  std::cout << "Remeshing done. "
-    << " (" << num_faces(mesh) << " faces)..." << std::endl;
+  std::cout << "Remeshing done. ("
+    << std::distance(faces(mesh).first, faces(mesh).second) << " faces)..." << std::endl;
 
   // face area map
   std::map<face_descriptor, std::size_t> face_index;
