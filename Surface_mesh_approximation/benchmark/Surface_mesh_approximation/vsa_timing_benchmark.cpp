@@ -2,18 +2,16 @@
 #include <fstream>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Surface_mesh.h>
 
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Variational_shape_approximation.h>
 #include <CGAL/Timer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
-typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
+typedef CGAL::Surface_mesh<Kernel::Point_3> Mesh;
+typedef boost::property_map<Mesh, boost::vertex_point_t>::type Vertex_point_map;
 
-typedef CGAL::Variational_shape_approximation<Polyhedron, Vertex_point_map> L21_approx;
+typedef CGAL::Variational_shape_approximation<Mesh, Vertex_point_map> L21_approx;
 typedef L21_approx::Error_metric L21_metric;
 
 typedef CGAL::Timer Timer;
@@ -31,22 +29,22 @@ int main(int argc, char *argv[])
   if (argc < 5)
     return EXIT_FAILURE;
 
-  Polyhedron mesh;
+  Mesh mesh;
   std::ifstream input(argv[1]);
-  if (!input || !(input >> mesh) || mesh.empty()) {
-    std::cout << "Invalid off file." << std::endl;
+  if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
+    std::cout << "Invalid input file." << std::endl;
     return EXIT_FAILURE;
   }
-  std::cout << "#triangles " << mesh.size_of_facets() << std::endl;
+  std::cout << "#faces "
+    << std::distance(faces(mesh).first, faces(mesh).second) << std::endl;
+
+  Vertex_point_map vpmap = get(boost::vertex_point, const_cast<Mesh &>(mesh));
 
   // error metric and fitting functors
-  L21_metric error_metric(mesh,
-    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
+  L21_metric error_metric(mesh, vpmap);
 
   // algorithm instance
-  L21_approx approx(mesh,
-    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)),
-    error_metric);
+  L21_approx approx(mesh, vpmap, error_metric);
 
   int method = std::atoi(argv[2]);
   if (method < 0 || method > 2)
@@ -64,8 +62,8 @@ int main(int argc, char *argv[])
   t0.reset();
   t0.start();
   approx.initialize_seeds(
-    CGAL::parameters::seeding_method(static_cast<CGAL::VSA::Seeding_method>(method))
-      .max_number_of_proxies(nb_proxies));
+    CGAL::parameters::seeding_method(static_cast<CGAL::Surface_mesh_approximation::Seeding_method>(method))
+    .max_number_of_proxies(nb_proxies));
   t0.stop();
   std::cout << "seeding time " << t0.time() << " sec." << std::endl;
 
