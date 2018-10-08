@@ -122,7 +122,7 @@ class SequenceContainer {};
 /// \cgalConcept
 /// This container concept refines
 /// <a href="https://en.cppreference.com/w/cpp/named_req/ReversibleContainer"><tt>ReversibleContainer</tt></a> and its iterator type is a model of
-/// <a href="https://en.cppreference.com/w/cpp/named_req/RandomAccessIterator"><tt>RandomAccessIterator</tt></a>./// \cgalConcept
+/// <a href="https://en.cppreference.com/w/cpp/named_req/RandomAccessIterator"><tt>RandomAccessIterator</tt></a>.
 class RandomAccessContainer {};
 
 /// \cgalConcept

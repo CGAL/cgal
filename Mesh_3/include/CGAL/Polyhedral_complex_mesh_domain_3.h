@@ -416,7 +416,7 @@ public:
     }
 
     // Then a second path to fill `several_vertices_on_patch`...
-    // The algorithm is adapted from SGI `random_sample_n`:
+    // The algorithm is adapted from SGI `random_sample_n`
     BOOST_FOREACH(const Polyhedron& p, this->stored_polyhedra)
     {
       for (typename Polyhedron::Vertex_const_iterator
