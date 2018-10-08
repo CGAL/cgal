@@ -258,10 +258,20 @@ std::ostream& operator <<(std::ostream& os, const Point_d<R_>& p)
         CPI(typename Point_d<R_>::Rep,Begin_tag)
       >::type>::type
     b = p.cartesian_begin(),
-    e = p.cartesian_end();
-  os << p.dimension();
-  for(; b != e; ++b){
-    os << " " << *b;
+      e = p.cartesian_end();
+  if(is_ascii(os))
+  {
+    os << p.dimension();
+    for(; b != e; ++b){
+      os << " " << *b;
+    }
+  }
+  else
+  {
+    write(os, p.dimension());
+    for(; b != e; ++b){
+      write(os, *b);
+    }
   }
   return os;
 }
@@ -274,13 +284,26 @@ operator>>(std::istream &is, Point_d<K> & p)
   typedef typename Get_type<K, Point_tag>::type P;
   typedef typename Get_type<K, FT_tag>::type   FT;
   int dim;
-  is >> dim;
+  if( is_ascii(is) )
+    is >> dim;
+  else
+  {
+    read(is, dim);
+  }
+  
   if(!is) return is;
-
   std::vector<FT> coords(dim);
-  for(int i=0;i<dim;++i)
-    is >> iformat(coords[i]);
-
+  if(is_ascii(is))
+  {
+    for(int i=0;i<dim;++i)
+      is >> iformat(coords[i]);
+  }
+  else
+  {
+    for(int i=0;i<dim;++i)
+      read(is, coords[i]);
+  }
+  
   if(is)
     p = P(coords.begin(), coords.end());
   return is;

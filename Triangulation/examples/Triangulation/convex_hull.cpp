@@ -4,10 +4,8 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/Timer.h>
 #include <CGAL/assertions.h>
-#include <CGAL/NewKernel_d/Wrapper/Point_d.h>
 
 #include <iostream>
-#include <fstream>
 #include <iterator>
 #include <vector>
 
@@ -60,17 +58,5 @@ int main(int argc, char **argv)
   }
 
   std::cout << c << " points were actually inserted.\n";
-  std::ofstream ofs("/home/gimeno/test.txt");
-  //CGAL::set_binary_mode(ofs);
-  ofs << t;
-  ofs.close();
-  T t2(D);
-  std::ifstream ifs("/home/gimeno/test.txt");
-  //CGAL::set_binary_mode(ifs);
-  ifs >> t2;
-  ifs.close();
-  if(t.number_of_vertices() != t2.number_of_vertices())
-    return 1;
-  
   return 0;
 }

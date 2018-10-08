@@ -129,7 +129,15 @@ public:
 template <class R_>
 std::ostream& operator<<(std::ostream& os, const Weighted_point_d<R_>& p)
 {
-  return os << p.point() << ' ' << p.weight();
+  if(is_ascii(os))
+  {
+    return os << p.point() << ' ' << p.weight();
+  }
+  else
+  {
+    write(os, p.point());
+    write(os, p.weight());
+  }
 }
 
 template <class R_>
@@ -139,7 +147,16 @@ std::istream& operator>>(std::istream& is, Weighted_point_d<R_>& p)
   typedef typename Get_type<R_, Point_tag>::type	Point_;
   typedef typename Get_functor<R_, Construct_ttag<Weighted_point_tag> >::type	CWP;
   Point_ q; FT_ w;
-  if(is >> q >> iformat(w)) p=CWP()(q,w);
+  if(is_ascii(is))
+  {
+    if(is >> q >> iformat(w)) p=CWP()(q,w);
+  }
+  else
+  {
+    read(is, q);
+    read(is, w);
+    p=CWP()(q,w);
+  }
   return is;
 }
 

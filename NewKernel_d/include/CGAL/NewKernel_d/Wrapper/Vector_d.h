@@ -265,10 +265,21 @@ std::ostream& operator <<(std::ostream& os, const Vector_d<R_>& v)
       >::type>::type
     b = v.cartesian_begin(),
     e = v.cartesian_end();
-  os << v.dimension();
-  for(; b != e; ++b){
-    os << " " << *b;
+  if(is_ascii(os))
+  {
+    os << v.dimension();
+    for(; b != e; ++b){
+      os << " " << *b;
+    }
   }
+  else
+  {
+    write(os, os << v.dimension());
+    for(; b != e; ++b){
+      write(os, *b);
+    }
+  }
+  
   return os;
 }
 
@@ -280,12 +291,25 @@ operator>>(std::istream &is, Vector_d<K> & v)
   typedef typename Get_type<K, Vector_tag>::type V;
   typedef typename Get_type<K, FT_tag>::type   FT;
   int dim;
-  is >> dim;
+  if( is_ascii(is) )
+    is >> dim;
+  else
+  {
+    read(is, dim);
+  }
   if(!is) return is;
 
   std::vector<FT> coords(dim);
-  for(int i=0;i<dim;++i)
-    is >> iformat(coords[i]);
+  if(is_ascii(is))
+  {
+    for(int i=0;i<dim;++i)
+      is >> iformat(coords[i]);
+  }
+  else
+  {
+    for(int i=0;i<dim;++i)
+      read(is, coords[i]);
+  }
 
   if(is)
     v = V(coords.begin(), coords.end());
