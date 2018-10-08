@@ -2,7 +2,7 @@
 set -e
 [ -n "$CGAL_DEBUG_TRAVIS" ] && set -x
 
-CXX_FLAGS="-DCGAL_NDEBUG"
+CXX_FLAGS="-DCGAL_NDEBUG -ftemplate-backtrace-limit=0"
 
 function build_examples {
   mkdir -p build-travis
