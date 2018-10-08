@@ -329,15 +329,15 @@ Parameter used in `isotropic_remeshing()` to specify an alternative vertex proje
 \cgalNPBegin{apply_per_connected_component} \anchor PMP_apply_per_connected_component
 Parameter used to indicate whether an algorithm should consider each connected component 
 of a mesh independently.\n
-\b Type : `bool` \n
-\b Default value is `false`
+<b>Type:</b> `bool` \n
+<b>Default:</b> `false`
 \cgalNPEnd
 
 \cgalNPBegin{visitor} \anchor PMP_visitor
 Parameter used to pass a visitor class to a function. Its type and behavior depend on the visited function.
 \n
-\b Type : `A class` \n
-\b Default : Specific to the function visited
+<b>Type:</b> `A class` \n
+<b>Default:</b> Specific to the function visited
 \cgalNPEnd
 
 \cgalNPBegin{throw_on_self_intersection} \anchor PMP_throw_on_self_intersection
@@ -345,23 +345,23 @@ Parameter used in corefinement-related functions to make the functions throw an 
 case some faces involved in the intersection of the input are self-intersecting
 and make the operation impossible with the current version of the code.
 \n
-\b Type : `bool` \n
-\b Default value is `false`
+<b>Type:</b> `bool` \n
+<b>Default:</b> `false`
 \cgalNPEnd
 
 \cgalNPBegin{clip_volume} \anchor PMP_clip_volume
 Parameter used in `clip()` functions to clip a volume rather than a surface.
 \n
-\b Type : `bool` \n
-\b Default value is `false`
+<b>Type:</b> `bool` \n
+<b>Default:</b> `false`
 \cgalNPEnd
 
 \cgalNPBegin{use_compact_clipper} \anchor PMP_use_compact_clipper
 Parameter used in `clip()` functions to indicate whether the boundary of the clipper
 should be considered as part of the clipping volume or not.
 \n
-\b Type : `bool` \n
-\b Default value is `true`
+<b>Type:</b> `bool` \n
+<b>Default:</b> `true`
 \cgalNPEnd
 
 \cgalNPBegin{output_iterator} \anchor PMP_output_iterator
@@ -369,6 +369,23 @@ Parameter to pass an output iterator.
 \n
 \b Type : a model of `OutputIterator` \n
 \b Default : `Emptyset_iterator`
+\cgalNPEnd
+
+\cgalNPBegin{erase_all_duplicates} \anchor PMP_erase_all_duplicates
+Parameter used in the function `merge_duplicate_polygons_in_polygon_soup()` to indicate,
+when multiple faces are duplicates, whether all the duplicate faces should be removed
+or if one (arbitrarily chosen) face should be kept.
+\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `false`
+\cgalNPEnd
+
+\cgalNPBegin{require_same_orientation} \anchor PMP_require_same_orientation
+Parameter used in the function `merge_duplicate_polygons_in_polygon_soup()` to indicate
+if orientation should matter when determining whether two faces are duplicates.
+\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `false`
 \cgalNPEnd
 
 \cgalNPTableEnd

@@ -22,4 +22,5 @@
 \example Polygon_mesh_processing/corefinement_consecutive_bool_op.cpp
 \example Polygon_mesh_processing/detect_features_example.cpp
 \example Polygon_mesh_processing/manifoldness_repair_example.cpp
+\example Polygon_mesh_processing/repair_polygon_soup_example.cpp
 */

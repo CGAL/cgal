@@ -531,7 +531,20 @@ Section \ref PMPOrientation.
 
 ****************************************
 \section PMPRepairing Combinatorial Repairing
+
 *******************
+\subsection PSRepairing Polygon Soup Repairing
+To ensure that a polygon soup can be oriented (see Section \ref PolygonSoups) and transformed
+into a workable polygon mesh, it might be necessary to preprocess the data to remove combinatorial
+and geometrical errors. This package offers the following functions:
+- `CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup()`,
+- `CGAL::Polygon_mesh_processing::merge_duplicate_polygons_in_polygon_soup()`,
+- `CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup()`,
+
+as well as the function `CGAL::Polygon_mesh_processing::repair_polygon_soup()`,
+which bundles the previous functions and an additional handful of repairing techniques
+to obtain an as-clean-as-possible polygon soup.
+
 \subsection Stitching
 
 It happens that a polygon mesh has several edges and vertices that are duplicated.
@@ -575,6 +588,8 @@ is output.
 \endif
 
 \subsection PMPManifoldness Polygon Mesh Manifoldness
+This package offers repairing methods to clean ill-formed polygon soups,
+see Section \ref PMPRepairing.
 
 Non-manifold vertices can be detected using the function `CGAL::Polygon_mesh_processing::is_non_manifold_vertex()`.
 The function `CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices()` can be used

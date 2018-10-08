@@ -95,10 +95,36 @@ class RandomAccessIterator {};
 class BidirectionalIterator {};
 
 /// \cgalConcept
+/// Concept from the \cpp standard.
+/// See https://en.cppreference.com/w/cpp/named_req/Swappable
+class Swappable {};
+
+/// \cgalConcept
+/// Concept from the \cpp standard.
+/// See https://en.cppreference.com/w/cpp/named_req/Container
+class Container {};
+
+/// \cgalConcept
+/// Concept from the \cpp standard.
+/// See https://en.cppreference.com/w/cpp/named_req/ReversibleContainer
+class ReversibleContainer {};
+
+/// \cgalConcept
+/// Concept from the \cpp standard.
+/// See https://en.cppreference.com/w/cpp/named_req/AssociativeContainer
+class AssociativeContainer {};
+
+/// \cgalConcept
+/// Concept from the \cpp standard.
+/// See https://en.cppreference.com/w/cpp/named_req/SequenceContainer
+class SequenceContainer {};
+
+/// \cgalConcept
 /// This container concept refines
 /// <a href="https://en.cppreference.com/w/cpp/named_req/ReversibleContainer"><tt>ReversibleContainer</tt></a> and its iterator type is a model of
-/// <a href="https://en.cppreference.com/w/cpp/named_req/RandomAccessIterator"><tt>RandomAccessIterator</tt></a>.
+/// <a href="https://en.cppreference.com/w/cpp/named_req/RandomAccessIterator"><tt>RandomAccessIterator</tt></a>./// \cgalConcept
 class RandomAccessContainer {};
+
 /// \cgalConcept
 /// This container concepts refines
 /// <a href="https://en.cppreference.com/w/cpp/named_req/SequenceContainer"><tt>SequenceContainer</tt></a> and

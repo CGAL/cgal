@@ -36,7 +36,7 @@
 /// \ingroup PkgPolygonMeshProcessing
 
 /// \defgroup PMP_repairing_grp Combinatorial Repairing
-/// Functions to orient polygon soups  and to stitch geometrically identical boundaries.
+/// Functions to repair polygon soups and polygon meshes.
 /// \ingroup PkgPolygonMeshProcessing
 
 /// \defgroup PMP_distance_grp Distance Functions
@@ -128,7 +128,11 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::reverse_face_orientations()`
 
 ## Combinatorial Repairing Functions ##
-- \link PMP_repairing_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
+- `CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup()`
+- `CGAL::Polygon_mesh_processing::merge_duplicate_polygons_in_polygon_soup()`
+- `CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup()`
+- `CGAL::Polygon_mesh_processing::repair_polygon_soup()`
+- `CGAL::Polygon_mesh_processing::stitch_borders()`
 - `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()`
 - `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
 - `CGAL::Polygon_mesh_processing::remove_isolated_vertices()`
