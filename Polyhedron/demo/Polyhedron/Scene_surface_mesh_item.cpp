@@ -1263,24 +1263,18 @@ void Scene_surface_mesh_item::invalidate(Gl_data_names name)
     d->killIds();
   else
   {
-    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+    d->killIds();
+    if(d->vertices_displayed)
     {
-      CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
-      if(viewer == NULL)
-        continue;
-      d->killIds();
-      if(d->vertices_displayed)
-      {
-        printVertexIds(viewer);
-      }
-      if(d->edges_displayed)
-      {
-        printEdgeIds(viewer);
-      }
-      if(d->faces_displayed)
-      {
-        printFaceIds(viewer);
-      }
+      printVertexIds();
+    }
+    if(d->edges_displayed)
+    {
+      printEdgeIds();
+    }
+    if(d->faces_displayed)
+    {
+      printFaceIds();
     }
   }
 }
@@ -1973,38 +1967,35 @@ void Scene_surface_mesh_item_priv::fillTargetedIds(const face_descriptor &select
 
 }
 
-bool Scene_surface_mesh_item::printVertexIds(CGAL::Three::Viewer_interface *viewer) const
+bool Scene_surface_mesh_item::printVertexIds() const
 {
   if(d->vertices_displayed)
   {
     d->all_displayed = true;
     return ::printVertexIds(*d->smesh_,
-                            d->textVItems,
-                            viewer);
+                            d->textVItems);
   }
   return true;
 }
 
-bool Scene_surface_mesh_item::printEdgeIds(CGAL::Three::Viewer_interface *viewer) const
+bool Scene_surface_mesh_item::printEdgeIds() const
 {
   if(d->edges_displayed)
   {
     d->all_displayed = true;
     return ::printEdgeIds(*d->smesh_,
-                            d->textEItems,
-                            viewer);
+                            d->textEItems);
   }
   return true;
 }
 
-bool Scene_surface_mesh_item::printFaceIds(CGAL::Three::Viewer_interface *viewer) const
+bool Scene_surface_mesh_item::printFaceIds() const
 {
   if(d->faces_displayed)
   {
     d->all_displayed = true;
     return ::printFaceIds(*d->smesh_,
-                            d->textFItems,
-                            viewer);
+                            d->textFItems);
   }
   return true;
 }
@@ -2021,21 +2012,23 @@ void Scene_surface_mesh_item_priv::killIds()
   all_displayed = false;
 }
 
-void Scene_surface_mesh_item::printAllIds(CGAL::Three::Viewer_interface *viewer)
+void Scene_surface_mesh_item::printAllIds()
 {
   static bool all_ids_displayed = false;
 
   all_ids_displayed = !all_ids_displayed;
   if(all_ids_displayed )
   {
-    bool s1(printVertexIds(viewer)),
-        s2(printEdgeIds(viewer)),
-        s3(printFaceIds(viewer));
+    bool s1(printVertexIds()),
+        s2(printEdgeIds()),
+        s3(printFaceIds());
     if((s1 && s2 && s3))
     {
-      viewer->update();
+      Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool()){
+        viewer->update();
+      }
+      return;
     }
-    return;
   }
   d->killIds();
 }
@@ -2067,71 +2060,101 @@ bool Scene_surface_mesh_item::testDisplayId(double x, double y, double z, CGAL::
 
 void Scene_surface_mesh_item::showVertices(bool b)
 {
-  CGAL::Three::Viewer_interface* viewer =
-      qobject_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first());
-  TextRenderer *renderer = viewer->textRenderer();
+
   if(b)
     if(d->textVItems->isEmpty())
     {
       d->vertices_displayed = b;
-      printVertexIds(viewer);
+      printVertexIds();
     }
     else
-      renderer->addTextList(d->textVItems);
+    {
+      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+        CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
+        TextRenderer *renderer = viewer->textRenderer();
+        renderer->addTextList(d->textVItems);
+        viewer->update();
+      }
+    }
   else
-    renderer->removeTextList(d->textVItems);
-  viewer->update();
+  {
+    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+      CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
+      TextRenderer *renderer = viewer->textRenderer();
+      renderer->removeTextList(d->textVItems);
+      viewer->update();
+    }
+  }
   d->vertices_displayed = b;
 }
 
 void Scene_surface_mesh_item::showEdges(bool b)
 {
-  CGAL::Three::Viewer_interface* viewer =
-      qobject_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first());
-  TextRenderer *renderer = viewer->textRenderer();
   if(b)
   {
     if(d->textEItems->isEmpty())
     {
       d->edges_displayed = b;
-      printEdgeIds(viewer);
+      printEdgeIds();
     }
     else
-      renderer->addTextList(d->textEItems);
+    {
+      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+        CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
+        TextRenderer *renderer = viewer->textRenderer();
+        renderer->addTextList(d->textEItems);
+        viewer->update();
+      }
+    }
   }
   else
-    renderer->removeTextList(d->textEItems);
-  viewer->update();
+  {
+    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+      CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
+      TextRenderer *renderer = viewer->textRenderer();
+      renderer->removeTextList(d->textEItems);
+      viewer->update();
+    }
+  }
   d->edges_displayed = b;
 }
 
 void Scene_surface_mesh_item::showFaces(bool b)
 {
-  CGAL::Three::Viewer_interface* viewer =
-      qobject_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first());
-  TextRenderer *renderer = viewer->textRenderer();
   if(b)
   {
     if(d->textFItems->isEmpty())
     {
       d->faces_displayed = b;
-      printFaceIds(viewer);
+      printFaceIds();
     }
     else
-      renderer->addTextList(d->textFItems);
+    {
+      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+        CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
+        TextRenderer *renderer = viewer->textRenderer();
+        renderer->addTextList(d->textFItems);
+        viewer->update();
+      }
+    }
   }
   else
-    renderer->removeTextList(d->textFItems);
-  viewer->update();
+  {
+    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+      CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
+      TextRenderer *renderer = viewer->textRenderer();
+      renderer->removeTextList(d->textFItems);
+      viewer->update();
+    }
+  }
   d->faces_displayed = b;
 }
 
 void Scene_surface_mesh_item::showPrimitives(bool)
 {
-  CGAL::Three::Viewer_interface* viewer =
-      qobject_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first());
-  printAllIds(viewer);
+  printAllIds();
 }
+
 void Scene_surface_mesh_item::zoomToId()
 {
   face_descriptor selected_fh;
@@ -2142,8 +2165,7 @@ void Scene_surface_mesh_item::zoomToId()
   if(!ok)
     return;
 
-  CGAL::Three::Viewer_interface* viewer =
-      qobject_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first());
+  CGAL::Three::Viewer_interface* viewer = CGAL::Three::Three::activeViewer();
   Point_3 p;
   QString id = text.right(text.length()-1);
   int return_value = ::zoomToId(*d->smesh_, text, viewer, selected_fh, p);

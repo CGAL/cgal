@@ -215,9 +215,9 @@ public:
   void setPathSelection(bool b);
   //For ID printing
   void printPrimitiveId(QPoint, CGAL::Three::Viewer_interface*);
-  bool printVertexIds(CGAL::Three::Viewer_interface*) const;
-  bool printEdgeIds(CGAL::Three::Viewer_interface*) const;
-  bool printFaceIds(CGAL::Three::Viewer_interface*) const;
+  bool printVertexIds() const;
+  bool printEdgeIds() const;
+  bool printFaceIds() const;
   void printAllIds(CGAL::Three::Viewer_interface*);
   bool testDisplayId(double, double, double, CGAL::Three::Viewer_interface*)const;
   bool shouldDisplayIds(CGAL::Three::Scene_item *current_item) const;

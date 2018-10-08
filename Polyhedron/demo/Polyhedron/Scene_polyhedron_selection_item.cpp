@@ -2061,24 +2061,24 @@ void Scene_polyhedron_selection_item::printPrimitiveId(QPoint p, CGAL::Three::Vi
 {
   d->item->polyhedron_item()->printPrimitiveId(p, viewer);
 }
-bool Scene_polyhedron_selection_item::printVertexIds(CGAL::Three::Viewer_interface* viewer) const
+bool Scene_polyhedron_selection_item::printVertexIds() const
 {
-  return d->item->polyhedron_item()->printVertexIds(viewer);
+  return d->item->polyhedron_item()->printVertexIds();
   return false;
 }
-bool Scene_polyhedron_selection_item::printEdgeIds(CGAL::Three::Viewer_interface* viewer) const
+bool Scene_polyhedron_selection_item::printEdgeIds() const
 {
-  d->item->polyhedron_item()->printEdgeIds(viewer);
+  d->item->polyhedron_item()->printEdgeIds();
   return false;
 }
-bool Scene_polyhedron_selection_item::printFaceIds(CGAL::Three::Viewer_interface* viewer) const
+bool Scene_polyhedron_selection_item::printFaceIds() const
 {
-  return d->item->polyhedron_item()->printFaceIds(viewer);
+  return d->item->polyhedron_item()->printFaceIds();
   return false;
 }
-void Scene_polyhedron_selection_item::printAllIds(CGAL::Three::Viewer_interface* viewer)
+void Scene_polyhedron_selection_item::printAllIds()
 {
-  d->item->polyhedron_item()->printAllIds(viewer);
+  d->item->polyhedron_item()->printAllIds();
 }
 bool Scene_polyhedron_selection_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)const
 {

@@ -648,7 +648,7 @@ void Viewer::keyPressEvent(QKeyEvent* e)
         }
   }
   else if(e->key() == Qt::Key_I && e->modifiers() & Qt::ControlModifier){
-    d->scene->printAllIds(this);
+    d->scene->printAllIds();
     update();
     return;
   }
@@ -1498,8 +1498,8 @@ void Viewer::updateIds(CGAL::Three::Scene_item * item)
   //all ids are computed when they are displayed the first time.
   //Calling printPrimitiveIds twice hides and show the ids again, so they are re-computed.
 
-  d->scene->updatePrimitiveIds(this, item);
-  d->scene->updatePrimitiveIds(this, item);
+  d->scene->updatePrimitiveIds(item);
+  d->scene->updatePrimitiveIds(item);
 }
 
 

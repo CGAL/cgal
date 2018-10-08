@@ -129,10 +129,10 @@ public:
   void zoomToPosition(const QPoint &point, CGAL::Three::Viewer_interface *)const Q_DECL_OVERRIDE;
  //print_interface
   void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*viewer)Q_DECL_OVERRIDE;
-  bool printVertexIds(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
-  bool printEdgeIds(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
-  bool printFaceIds(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
-  void printAllIds(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
+  bool printVertexIds()const Q_DECL_OVERRIDE;
+  bool printEdgeIds()const Q_DECL_OVERRIDE;
+  bool printFaceIds()const Q_DECL_OVERRIDE;
+  void printAllIds() Q_DECL_OVERRIDE;
   bool shouldDisplayIds(CGAL::Three::Scene_item *current_item) const Q_DECL_OVERRIDE;
   bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
   float alpha() const Q_DECL_OVERRIDE;

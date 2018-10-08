@@ -1449,18 +1449,18 @@ void Scene::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface* viewer
       item->printPrimitiveId(point, viewer);
   }
 }
-void Scene::printVertexIds(CGAL::Three::Viewer_interface* viewer)
+void Scene::printVertexIds()
 {
   Scene_item *it = item(mainSelectionIndex());
   if(it)
   {
     Scene_print_item_interface* item= qobject_cast<Scene_print_item_interface*>(it);
     if(item)
-      item->printVertexIds(viewer);
+      item->printVertexIds();
   }
 }
 
-void Scene::printEdgeIds(CGAL::Three::Viewer_interface* viewer)
+void Scene::printEdgeIds()
 {
   Scene_item *it = item(mainSelectionIndex());
   if(it)
@@ -1468,11 +1468,11 @@ void Scene::printEdgeIds(CGAL::Three::Viewer_interface* viewer)
     //Only call printEdgeIds if the item is a Scene_print_item_interface
     Scene_print_item_interface* item= qobject_cast<Scene_print_item_interface*>(it);
     if(item)
-      item->printEdgeIds(viewer);
+      item->printEdgeIds();
   }
 }
 
-void Scene::printFaceIds(CGAL::Three::Viewer_interface* viewer)
+void Scene::printFaceIds()
 {
   Scene_item *it = item(mainSelectionIndex());
   if(it)
@@ -1480,11 +1480,11 @@ void Scene::printFaceIds(CGAL::Three::Viewer_interface* viewer)
     //Only call printFaceIds if the item is a Scene_print_item_interface
     Scene_print_item_interface* item= qobject_cast<Scene_print_item_interface*>(it);
     if(item)
-      item->printFaceIds(viewer);
+      item->printFaceIds();
   }
 }
 
-void Scene::printAllIds(CGAL::Three::Viewer_interface* viewer)
+void Scene::printAllIds()
 {
   Scene_item *it = item(mainSelectionIndex());
   if(it)
@@ -1492,10 +1492,10 @@ void Scene::printAllIds(CGAL::Three::Viewer_interface* viewer)
     //Only call printFaceIds if the item is a Scene_print_item_interface
     Scene_print_item_interface* item= qobject_cast<Scene_print_item_interface*>(it);
     if(item)
-      item->printAllIds(viewer);
+      item->printAllIds();
   }
 }
-void Scene::updatePrimitiveIds(CGAL::Three::Viewer_interface* viewer, CGAL::Three::Scene_item* it)
+void Scene::updatePrimitiveIds(CGAL::Three::Scene_item* it)
 {
   if(it)
   {
@@ -1504,14 +1504,14 @@ void Scene::updatePrimitiveIds(CGAL::Three::Viewer_interface* viewer, CGAL::Thre
     {
       //As this function works as a toggle, the first call hides the ids and the second one shows them again,
       //thereby triggering their re-computation.
-      item->printVertexIds(viewer);
-      item->printVertexIds(viewer);
+      item->printVertexIds();
+      item->printVertexIds();
 
-      item->printEdgeIds(viewer);
-      item->printEdgeIds(viewer);
+      item->printEdgeIds();
+      item->printEdgeIds();
 
-      item->printFaceIds(viewer);
-      item->printFaceIds(viewer);
+      item->printFaceIds();
+      item->printFaceIds();
     }
   }
 }

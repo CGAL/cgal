@@ -86,12 +86,12 @@ public:
   bool keyPressEvent(QKeyEvent* e) Q_DECL_OVERRIDE;
   void printPrimitiveId(QPoint point,
                         CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
-  void printVertexIds(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
-  void printEdgeIds(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
-  void printFaceIds(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
-  void printAllIds(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
+  void printVertexIds() Q_DECL_OVERRIDE;
+  void printEdgeIds() Q_DECL_OVERRIDE;
+  void printFaceIds() Q_DECL_OVERRIDE;
+  void printAllIds() Q_DECL_OVERRIDE;
   //!Re-computes the primitiveIds for `item`
-  void updatePrimitiveIds(Viewer_interface *, Scene_item *item) Q_DECL_OVERRIDE;
+  void updatePrimitiveIds(Scene_item *item) Q_DECL_OVERRIDE;
   bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer) Q_DECL_OVERRIDE;
   Bbox bbox() const Q_DECL_OVERRIDE;
   void computeBbox();
