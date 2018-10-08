@@ -33,7 +33,6 @@
 #include <boost/type_traits/is_same.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/variant.hpp>
-#include <boost/mpl/set/set10.hpp>
 #include <CGAL/Mesh_3/Has_features.h>
 #include <CGAL/IO/io.h>
 
@@ -59,17 +58,66 @@ struct Index_generator<T, T>
   typedef Index   type;
 };
 
+// Nasty meta-programming to get a boost::variant of four types that
+// may not be all different.
+template <typename T0> struct seq1 {
+  typedef T0 type;
+};
+template <typename T0, typename T1> struct seq2 {
+  typedef boost::variant<T0, T1> type;
+};
+template <typename T0, typename T1, typename T2> struct seq3 {
+  typedef boost::variant<T0, T1, T2> type;
+};
+template <typename T0, typename T1, typename T2, typename T3> struct seq4 {
+  typedef boost::variant<T0, T1, T2, T3> type;
+};
+
+template <typename T, typename U> struct insert;
+template <typename T, typename U> struct insert<seq1<T>, U> {
+  typedef seq2<T, U> type;
+};
+template <typename T, typename U, typename V> struct insert<seq2<T, U>, V> {
+  typedef seq3<T, U, V> type;
+};
+template <typename T, typename U, typename V, typename W>
+struct insert<seq3<T, U, V>, W> {
+  typedef seq4<T, U, V, W> type;
+};
+template <typename T> struct insert<seq1<T>, T> {
+  typedef seq1<T> type;
+};
+template <typename T, typename U> struct insert<seq2<T, U>, T> {
+  typedef seq2<T, U> type;
+};
+template <typename T, typename U> struct insert<seq2<T, U>, U> {
+  typedef seq2<T, U> type;
+};
+template <typename T, typename U, typename V> struct insert<seq3<T, U, V>, T> {
+  typedef seq3<T, U, V> type;
+};
+template <typename T, typename U, typename V> struct insert<seq3<T, U, V>, U> {
+  typedef seq3<T, U, V> type;
+};
+template <typename T, typename U, typename V> struct insert<seq3<T, U, V>, V> {
+  typedef seq3<T, U, V> type;
+};
+
 template < typename Subdomain_index,
            typename Surface_patch_index,
            typename Curves_index,
            typename Corner_index>
 struct Index_generator_with_features
 {
-  typedef boost::mpl::set4<Subdomain_index,
-                           Surface_patch_index,
-                           Curves_index,
-                           Corner_index>               Set;
-  typedef typename boost::make_variant_over<Set>::type Index;
+  typedef typename insert<
+    typename insert<
+      typename insert<seq1<Subdomain_index>,
+                      Surface_patch_index
+                      >::type,
+      Curves_index
+      >::type,
+    Corner_index>::type seq;
+  typedef typename seq::type Index;
   typedef Index                                        type;
 };
 
