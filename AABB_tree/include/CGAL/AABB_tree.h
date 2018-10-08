@@ -145,7 +145,7 @@ namespace CGAL {
     template<typename InputIterator, typename T1, typename T2, typename T3, typename T4>
 		AABB_tree(InputIterator first, InputIterator beyond,T1&,T2&,T3&,T4&);
     template<typename InputIterator, typename T1, typename T2, typename T3, typename T4, typename T5>
-                AABB_tree(InputIterator first, InputIterator beyond,T1&,T2&,T3&,T4&,T5&);
+		AABB_tree(InputIterator first, InputIterator beyond,T1&,T2&,T3&,T4&,T5&);
     #endif
 
     /// After one or more calls to `insert()` the internal data
@@ -752,7 +752,7 @@ public:
                              ConstPrimitiveIterator beyond,
                              T&& ... t)
 	{
-        set_shared_data(std::forward<T>(t)...);
+		set_shared_data(std::forward<T>(t)...);
 		while(first != beyond)
 		{
 			m_primitives.push_back(Primitive(first,std::forward<T>(t)...));
@@ -778,9 +778,9 @@ public:
 	}  
         
         template<typename Tr>
-	template<typename ... T>
-	void AABB_tree<Tr>::build(T&& ... t)
-	{
+        template<typename ... T>
+        void AABB_tree<Tr>::build(T&& ... t)
+        {
           set_shared_data(std::forward<T>(t)...);
           build();
         }
@@ -1068,40 +1068,40 @@ public:
         //overloads calling set_shared_data()
         template<typename Tr>
         template<typename T1>
-	void AABB_tree<Tr>::build(T1& t1)
-	{
+        void AABB_tree<Tr>::build(T1& t1)
+        {
           set_shared_data(t1);
           build();
         }
         template<typename Tr>
         template<typename T1, typename T2>
-	void AABB_tree<Tr>::build(T1& t1, T2& t2)
-	{
+        void AABB_tree<Tr>::build(T1& t1, T2& t2)
+        {
           set_shared_data(t1, t2);
           build();
         }
         template<typename Tr>
         template<typename T1, typename T2, typename T3>
-	void AABB_tree<Tr>::build(T1& t1, T2& t2, T3& t3)
-	{
+        void AABB_tree<Tr>::build(T1& t1, T2& t2, T3& t3)
+        {
           set_shared_data(t1, t2, t3);
           build();
         }
         template<typename Tr>
         template<typename T1, typename T2, typename T3, typename T4>
-	void AABB_tree<Tr>::build(T1& t1, T2& t2, T3& t3, T4& t4)
-	{
+        void AABB_tree<Tr>::build(T1& t1, T2& t2, T3& t3, T4& t4)
+        {
           set_shared_data(t1, t2, t3, t4);
           build();
         }
         template<typename Tr>
         template<typename T1, typename T2, typename T3, typename T4, typename T5>
-	void AABB_tree<Tr>::build(T1& t1, T2& t2, T3& t3, T4& t4, T5& t5)
-	{
+        void AABB_tree<Tr>::build(T1& t1, T2& t2, T3& t3, T4& t4, T5& t5)
+        {
           set_shared_data(t1, t2, t3, t4, t5);
           build();
         }
-  #endif
+#endif
 
 	template<typename Tr>
 	void AABB_tree<Tr>::insert(const Primitive& p)
