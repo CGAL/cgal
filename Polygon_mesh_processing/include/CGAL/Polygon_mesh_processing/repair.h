@@ -24,12 +24,9 @@
 
 #include <CGAL/license/Polygon_mesh_processing/repair.h>
 
-
-#include <set>
-#include <vector>
-#include <boost/algorithm/minmax_element.hpp>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/Union_find.h>
+#include <CGAL/property_map.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/array.h>
 
@@ -40,21 +37,33 @@
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
+#include <boost/range/has_range_iterator.hpp>
+
 #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/IO/OFF_reader.h>
-#include <iostream>
-#include <fstream>
 #endif
+
+#include <boost/algorithm/minmax_element.hpp>
+#include <boost/type_traits/is_same.hpp>
+#include <boost/utility/enable_if.hpp>
+
+#include <fstream>
+#include <iostream>
+#include <map>
+#include <set>
+#include <utility>
+#include <vector>
 
 namespace CGAL{
 namespace Polygon_mesh_processing {
-
 namespace debug{
+
   template <class TriangleMesh, class VertexPointMap>
   std::ostream& dump_edge_neighborhood(
     typename boost::graph_traits<TriangleMesh>::edge_descriptor ed,
@@ -142,7 +151,10 @@ namespace debug{
              << vids[ target(next(next(halfedge(f, tm), tm), tm), tm) ] << "\n";
     }
   }
+
 } //end of namespace debug
+
+namespace internal {
 
 template <class HalfedgeGraph, class VertexPointMap, class Traits>
 struct Less_vertex_point{
@@ -157,33 +169,158 @@ struct Less_vertex_point{
   }
 };
 
-///\cond SKIP_IN_MANUAL
+} // end namespace internal
 
-template <class Traits, class TriangleMesh, class VertexPointMap, class OutputIterator>
-OutputIterator
-degenerate_faces(const TriangleMesh& tm,
-                 const VertexPointMap& vpmap,
-                 const Traits& traits,
-                 OutputIterator out)
+/// \ingroup PMP_repairing_grp
+/// collects the degenerate edges within a given range of edges.
+///
+/// @tparam EdgeRange a model of `Range` with value type `boost::graph_traits<TriangleMesh>::%edge_descriptor`
+/// @tparam TriangleMesh a model of `HalfedgeGraph`
+/// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+///
+/// @param edges a subset of edges of `tm`
+/// @param tm a triangle mesh
+/// @param out an output iterator in which the degenerate edges are written
+/// @param np optional \ref pmp_namedparameters "Named Parameters" described below
+///
+/// \cgalNamedParamsBegin
+///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`.
+///                                      The type of this map is model of `ReadWritePropertyMap`.
+///                                      If this parameter is omitted, an internal property map for
+///                                      `CGAL::vertex_point_t` should be available in `TriangleMesh`
+///    \cgalParamEnd
+///    \cgalParamBegin{geom_traits} a geometric traits class instance.
+///                                The traits class must provide the nested type `Point_3`,
+///                                and the nested functor `Equal_3` to check whether two points are identical.
+///    \cgalParamEnd
+/// \cgalNamedParamsEnd
+template <class EdgeRange, class TriangleMesh, class OutputIterator, class NamedParameters>
+OutputIterator degenerate_edges(const EdgeRange& edges,
+                                const TriangleMesh& tm,
+                                OutputIterator out,
+                                const NamedParameters& np)
 {
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
-  BOOST_FOREACH(face_descriptor fd, faces(tm))
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor edge_descriptor;
+
+  BOOST_FOREACH(edge_descriptor ed, edges)
   {
-    if ( is_degenerate_triangle_face(fd, tm, vpmap, traits) )
-      *out++=fd;
+    if(is_degenerate_edge(ed, tm, np))
+      *out++ = ed;
   }
   return out;
 }
 
+template <class EdgeRange, class TriangleMesh, class OutputIterator>
+OutputIterator degenerate_edges(const EdgeRange& edges,
+                                const TriangleMesh& tm,
+                                OutputIterator out,
+                                typename boost::enable_if<
+                                  typename boost::has_range_iterator<EdgeRange>
+                                         >::type* = 0)
+{
+  return degenerate_edges(edges, tm, out, CGAL::parameters::all_default());
+}
+
+/// \ingroup PMP_repairing_grp
+/// calls the function `degenerate_edges()` with the range: `edges(tm)`.
+///
+/// See above for the comprehensive description of the parameters.
+///
+template <class TriangleMesh, class OutputIterator, class NamedParameters>
+OutputIterator degenerate_edges(const TriangleMesh& tm,
+                                OutputIterator out,
+                                const NamedParameters& np
+#ifndef DOXYGEN_RUNNING
+                                , typename boost::disable_if<
+                                    boost::has_range_iterator<TriangleMesh>
+                                      >::type* = 0
+#endif
+                                                     )
+{
+  return degenerate_edges(edges(tm), tm, out, np);
+}
+
 template <class TriangleMesh, class OutputIterator>
 OutputIterator
-degenerate_faces(const TriangleMesh& tm, OutputIterator out)
+degenerate_edges(const TriangleMesh& tm, OutputIterator out)
 {
-  typedef typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type Vpm;
-  typedef typename boost::property_traits<Vpm>::value_type Point;
-  typedef typename Kernel_traits<Point>::Kernel Kernel;
+  return degenerate_edges(edges(tm), tm, out, CGAL::parameters::all_default());
+}
 
-  return degenerate_faces(tm, get(vertex_point, tm), Kernel(), out);
+/// \ingroup PMP_repairing_grp
+/// collects the degenerate faces within a given range of faces.
+///
+/// @tparam FaceRange a model of `Range` with value type `boost::graph_traits<TriangleMesh>::%face_descriptor`
+/// @tparam TriangleMesh a model of `FaceGraph`
+/// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+///
+/// @param faces a subset of faces of `tm`
+/// @param tm a triangle mesh
+/// @param out an output iterator in which the degenerate faces are put
+/// @param np optional \ref pmp_namedparameters "Named Parameters" described below
+///
+/// \cgalNamedParamsBegin
+///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`.
+///                                      The type of this map is model of `ReadWritePropertyMap`.
+///                                      If this parameter is omitted, an internal property map for
+///                                      `CGAL::vertex_point_t` should be available in `TriangleMesh`
+///    \cgalParamEnd
+///    \cgalParamBegin{geom_traits} a geometric traits class instance.
+///                                 The traits class must provide the nested functor `Collinear_3`
+///                                 to check whether three points are collinear.
+///    \cgalParamEnd
+/// \cgalNamedParamsEnd
+///
+template <class FaceRange, class TriangleMesh, class OutputIterator, class NamedParameters>
+OutputIterator degenerate_faces(const FaceRange& faces,
+                                const TriangleMesh& tm,
+                                OutputIterator out,
+                                const NamedParameters& np)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+
+  BOOST_FOREACH(face_descriptor fd, faces)
+  {
+    if(is_degenerate_triangle_face(fd, tm, np))
+      *out++ = fd;
+  }
+  return out;
+}
+
+template <class FaceRange, class TriangleMesh, class OutputIterator>
+OutputIterator degenerate_faces(const FaceRange& faces,
+                                const TriangleMesh& tm,
+                                OutputIterator out,
+                                typename boost::enable_if<
+                                  boost::has_range_iterator<FaceRange>
+                                    >::type* = 0)
+{
+  return degenerate_faces(faces, tm, out, CGAL::parameters::all_default());
+}
+
+/// \ingroup PMP_repairing_grp
+/// calls the function `degenerate_faces()` with the range: `faces(tm)`.
+///
+/// See above for the comprehensive description of the parameters.
+///
+template <class TriangleMesh, class OutputIterator, class NamedParameters>
+OutputIterator degenerate_faces(const TriangleMesh& tm,
+                                OutputIterator out,
+                                const NamedParameters& np
+#ifndef DOXYGEN_RUNNING
+                                , typename boost::disable_if<
+                                    boost::has_range_iterator<TriangleMesh>
+                                      >::type* = 0
+#endif
+                                                     )
+{
+  return degenerate_faces(faces(tm), tm, out, np);
+}
+
+template <class TriangleMesh, class OutputIterator>
+OutputIterator degenerate_faces(const TriangleMesh& tm, OutputIterator out)
+{
+  return degenerate_faces(faces(tm), tm, out, CGAL::parameters::all_default());
 }
 
 // this function remove a border edge even if it does not satisfy the link condition.
@@ -365,10 +502,9 @@ remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor
 }
 
 template <class EdgeRange, class TriangleMesh, class NamedParameters>
-std::size_t remove_null_edges(
-                       const EdgeRange& edge_range,
-                       TriangleMesh& tmesh,
-                       const NamedParameters& np)
+bool remove_degenerate_edges(const EdgeRange& edge_range,
+                                    TriangleMesh& tmesh,
+                                    const NamedParameters& np)
 {
   CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
 
@@ -385,27 +521,25 @@ std::size_t remove_null_edges(
   typedef typename GetVertexPointMap<TM, NamedParameters>::type VertexPointMap;
   VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                       get_property_map(vertex_point, tmesh));
+
   typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
-  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
 
   std::size_t nb_deg_faces = 0;
+  bool all_removed=true;
 
   // collect edges of length 0
-  std::set<edge_descriptor> null_edges_to_remove;
-  BOOST_FOREACH(edge_descriptor ed, edge_range)
-  {
-    if ( traits.equal_3_object()(get(vpmap, target(ed, tmesh)), get(vpmap, source(ed, tmesh))) )
-      null_edges_to_remove.insert(ed);
-  }
+  std::set<edge_descriptor> degenerate_edges_to_remove;
+  degenerate_edges(edge_range, tmesh, std::inserter(degenerate_edges_to_remove,
+                                                    degenerate_edges_to_remove.end()));
 
-  #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
-  std::cout << "Found " << null_edges_to_remove.size() << " null edges.\n";
-  #endif
+#ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+  std::cout << "Found " << degenerate_edges_to_remove.size() << " null edges.\n";
+#endif
 
-  while (!null_edges_to_remove.empty())
+  while (!degenerate_edges_to_remove.empty())
   {
-    edge_descriptor ed = *null_edges_to_remove.begin();
-    null_edges_to_remove.erase(null_edges_to_remove.begin());
+    edge_descriptor ed = *degenerate_edges_to_remove.begin();
+    degenerate_edges_to_remove.erase(degenerate_edges_to_remove.begin());
 
     halfedge_descriptor h = halfedge(ed, tmesh);
 
@@ -415,12 +549,12 @@ std::size_t remove_null_edges(
       if ( face(h, tmesh)!=GT::null_face() )
       {
         ++nb_deg_faces;
-        null_edges_to_remove.erase(edge(prev(h, tmesh), tmesh));
+        degenerate_edges_to_remove.erase(edge(prev(h, tmesh), tmesh));
       }
       if (face(opposite(h, tmesh), tmesh)!=GT::null_face())
       {
         ++nb_deg_faces;
-        null_edges_to_remove.erase(edge(prev(opposite(h, tmesh), tmesh), tmesh));
+        degenerate_edges_to_remove.erase(edge(prev(opposite(h, tmesh), tmesh), tmesh));
       }
       //now remove the edge
       CGAL::Euler::collapse_edge(ed, tmesh);
@@ -435,8 +569,38 @@ std::size_t remove_null_edges(
         if (is_triangle(hd, tmesh))
         {
           Euler::fill_hole(hd, tmesh);
-          null_edges_to_remove.insert(ed);
+          degenerate_edges_to_remove.insert(ed);
           continue;
+        }
+      }
+      else
+      {
+        halfedge_descriptor hd = halfedge(ed,tmesh);
+        // if both vertices are boundary vertices we can't do anything
+        bool impossible = false;
+        BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(hd, tmesh))
+        {
+          if (is_border(h, tmesh))
+          {
+            impossible = true;
+            break;
+          }
+        }
+        if (impossible)
+        {
+          BOOST_FOREACH(halfedge_descriptor h, halfedges_around_source(hd, tmesh))
+          {
+            if (is_border(h, tmesh))
+            {
+              impossible = true;
+              break;
+            }
+          }
+          if (impossible)
+          {
+            all_removed=false;
+            continue;
+          }
         }
       }
 
@@ -621,7 +785,7 @@ std::size_t remove_null_edges(
       // remove edges
       BOOST_FOREACH(edge_descriptor ed, edges_to_remove)
       {
-        null_edges_to_remove.erase(ed);
+        degenerate_edges_to_remove.erase(ed);
         remove_edge(ed, tmesh);
       }
 
@@ -641,61 +805,60 @@ std::size_t remove_null_edges(
       put(vpmap, target(new_hd, tmesh), pt);
 
       BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(new_hd, tmesh))
-        if ( traits.equal_3_object()(get(vpmap, target(hd, tmesh)), get(vpmap, source(hd, tmesh))) )
-          null_edges_to_remove.insert(edge(hd, tmesh));
+        if(is_degenerate_edge(edge(hd, tmesh), tmesh, np))
+          degenerate_edges_to_remove.insert(edge(hd, tmesh));
 
       CGAL_assertion( is_valid_polygon_mesh(tmesh) );
     }
   }
 
-  return nb_deg_faces;
+  return all_removed;
 }
 
 template <class EdgeRange, class TriangleMesh>
-std::size_t remove_null_edges(
-                       const EdgeRange& edge_range,
-                       TriangleMesh& tmesh)
+bool remove_degenerate_edges(const EdgeRange& edge_range,
+                                    TriangleMesh& tmesh)
 {
-  return remove_null_edges(edge_range, tmesh,
-                           parameters::all_default());
+  return remove_degenerate_edges(edge_range, tmesh, parameters::all_default());
 }
 
-/// \ingroup PMP_repairing_grp
-/// removes the degenerate faces from a triangulated surface mesh.
-/// A face is considered degenerate if two of its vertices share the same location,
-/// or more generally if all its vertices are collinear.
-///
-/// @pre `CGAL::is_triangle_mesh(tmesh)`
-///
-/// @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
-/// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
-///
-/// @param tmesh the  triangulated surface mesh to be repaired
-/// @param np optional \ref pmp_namedparameters "Named Parameters" described below
-///
-/// \cgalNamedParamsBegin
-///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap`.
-/// If this parameter is omitted, an internal property map for
-/// `CGAL::vertex_point_t` must be available in `TriangleMesh`
-/// \cgalParamEnd
-///    \cgalParamBegin{geom_traits} a geometric traits class instance.
-///       The traits class must provide the nested type `Point_3`,
-///       and the nested functors :
-///         - `Compare_distance_3` to compute the distance between 2 points
-///         - `Collinear_are_ordered_along_line_3` to check whether 3 collinear points are ordered
-///         - `Collinear_3` to check whether 3 points are collinear
-///         - `Less_xyz_3` to compare lexicographically two points
-///         - `Equal_3` to check whether 2 points are identical
-///         -  for each functor Foo, a function `Foo foo_object()`
-///   \cgalParamEnd
-/// \cgalNamedParamsEnd
-///
-/// \todo the function might not be able to remove all degenerate faces.
-///       We should probably do something with the return type.
-/// \return number of removed degenerate faces
+// \ingroup PMP_repairing_grp
+// removes the degenerate faces from a triangulated surface mesh.
+// A face is considered degenerate if two of its vertices share the same location,
+// or more generally if all its vertices are collinear.
+//
+// @pre `CGAL::is_triangle_mesh(tmesh)`
+//
+// @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
+// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+//
+// @param tmesh the  triangulated surface mesh to be repaired
+// @param np optional \ref pmp_namedparameters "Named Parameters" described below
+//
+// \cgalNamedParamsBegin
+//    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+//                                      The type of this map is model of `ReadWritePropertyMap`.
+//                                      If this parameter is omitted, an internal property map for
+//                                      `CGAL::vertex_point_t` must be available in `TriangleMesh`
+//    \cgalParamEnd
+//    \cgalParamBegin{geom_traits} a geometric traits class instance.
+//       The traits class must provide the nested type `Point_3`,
+//       and the nested functors :
+//         - `Compare_distance_3` to compute the distance between 2 points
+//         - `Collinear_3` to check whether 3 points are collinear
+//         - `Less_xyz_3` to compare lexicographically two points
+//         - `Equal_3` to check whether 2 points are identical
+//       For each functor `Foo`, a function `Foo foo_object()`
+//   \cgalParamEnd
+// \cgalNamedParamsEnd
+//
+// \todo the function might not be able to remove all degenerate faces.
+//       We should probably do something with the return type.
+//
+/// \return `true` if all degenerate faces were successfully removed, and `false` otherwise.
 template <class TriangleMesh, class NamedParameters>
-std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
-                                    const NamedParameters& np)
+bool remove_degenerate_faces(      TriangleMesh& tmesh,
+                             const NamedParameters& np)
 {
   CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
 
@@ -717,8 +880,9 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
 
   typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
   typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
+
 // First remove edges of length 0
-  std::size_t nb_deg_faces = remove_null_edges(edges(tmesh), tmesh, np);
+  bool all_removed = remove_degenerate_edges(edges(tmesh), tmesh, np);
 
   #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
   {
@@ -731,10 +895,21 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
 
 // Then, remove triangles made of 3 collinear points
   std::set<face_descriptor> degenerate_face_set;
-  BOOST_FOREACH(face_descriptor fd, faces(tmesh))
-    if ( is_degenerate_triangle_face(fd, tmesh, vpmap, traits) )
-      degenerate_face_set.insert(fd);
-  nb_deg_faces+=degenerate_face_set.size();
+  degenerate_faces(tmesh, std::inserter(degenerate_face_set, degenerate_face_set.begin()), np);
+// Ignore faces with null edges
+  if (!all_removed)
+  {
+    BOOST_FOREACH(edge_descriptor ed, edges(tmesh))
+    {
+      if ( traits.equal_3_object()(get(vpmap, target(ed, tmesh)), get(vpmap, source(ed, tmesh))) )
+      {
+        halfedge_descriptor h = halfedge(ed, tmesh);
+        if (!is_border(h, tmesh)) degenerate_face_set.erase(face(h, tmesh));
+        h=opposite(h, tmesh);
+        if (!is_border(h, tmesh)) degenerate_face_set.erase(face(h, tmesh));
+      }
+    }
+  }
 
   // first remove degree 3 vertices that are part of a cap
   // (only the vertex in the middle of the opposite edge)
@@ -747,7 +922,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
       BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, tmesh), tmesh))
       {
         vertex_descriptor vd = target(hd, tmesh);
-        if (degree(vd, tmesh) == 3)
+        if (degree(vd, tmesh) == 3 && is_border(vd, tmesh)==GT::null_halfedge())
         {
           vertices_to_remove.insert(vd);
           break;
@@ -763,7 +938,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
           degenerate_face_set.erase( face(hd2, tmesh) );
       // remove the central vertex and check if the new face is degenerated
       hd=CGAL::Euler::remove_center_vertex(hd, tmesh);
-      if (is_degenerate_triangle_face(face(hd, tmesh), tmesh, vpmap, traits))
+      if (is_degenerate_triangle_face(face(hd, tmesh), tmesh, np))
       {
         degenerate_face_set.insert( face(hd, tmesh) );
       }
@@ -855,15 +1030,17 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
         {
           Euler::flip_edge(edge_to_flip, tmesh);
         }
+        else
+        {
+          all_removed=false;
         #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
-        else{
           std::cout << "  WARNING: flip is not possible\n";
           // \todo Let p and q be the vertices opposite to `edge_to_flip`, and let
           //       r be the vertex of `edge_to_flip` that is the furthest away from
           //       the edge `pq`. In that case I think we should remove all the triangles
           //       so that the triangle pqr is in the mesh.
-        }
         #endif
+        }
       }
     }
     else
@@ -964,7 +1141,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
     // preliminary step to check if the operation is possible
       // sort the boundary points along the common supporting line
       //    we first need a reference point
-      typedef Less_vertex_point<TriangleMesh, VertexPointMap, Traits> Less_vertex;
+      typedef internal::Less_vertex_point<TriangleMesh, VertexPointMap, Traits> Less_vertex;
       std::pair<
         typename std::set<vertex_descriptor>::iterator,
         typename std::set<vertex_descriptor>::iterator > ref_vertices =
@@ -1278,9 +1455,8 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
     }
   }
 
-  return nb_deg_faces;
+  return all_removed;
 }
-
 
 template<class TriangleMesh>
 std::size_t remove_degenerate_faces(TriangleMesh& tmesh)
@@ -1289,52 +1465,207 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh)
     CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
-template <class TriangleMesh, class Vpm>
-std::size_t duplicate_non_manifold_vertices(TriangleMesh& tm, Vpm vpm)
+namespace internal {
+
+template <typename G, typename OutputIterator>
+struct Vertex_collector
 {
+  typedef typename boost::graph_traits<G>::vertex_descriptor      vertex_descriptor;
+
+  void collect_vertices(vertex_descriptor v1, vertex_descriptor v2)
+  {
+    std::vector<vertex_descriptor>& verts = collections[v1];
+    if(verts.empty())
+      verts.push_back(v1);
+    verts.push_back(v2);
+  }
+
+  void dump(OutputIterator out)
+  {
+    typedef std::pair<const vertex_descriptor, std::vector<vertex_descriptor> > Pair_type;
+    BOOST_FOREACH(const Pair_type& p, collections) {
+      *out++ = p.second;
+    }
+  }
+
+  std::map<vertex_descriptor, std::vector<vertex_descriptor> > collections;
+};
+
+template <typename G>
+struct Vertex_collector<G, Emptyset_iterator>
+{
+  typedef typename boost::graph_traits<G>::vertex_descriptor vertex_descriptor;
+  void collect_vertices(vertex_descriptor, vertex_descriptor)
+  {}
+
+  void dump(Emptyset_iterator)
+  {}
+};
+
+} // end namespace internal
+
+/// \ingroup PMP_repairing_grp
+/// checks whether a vertex of a polygon mesh is non-manifold.
+///
+/// @tparam PolygonMesh a model of `HalfedgeListGraph`
+///
+/// @param v a vertex of `pm`
+/// @param pm a triangle mesh containing `v`
+///
+/// \sa `duplicate_non_manifold_vertices()`
+///
+/// \return `true` if the vertex is non-manifold, `false` otherwise.
+template <typename PolygonMesh>
+bool is_non_manifold_vertex(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
+                            const PolygonMesh& pm)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  boost::unordered_set<halfedge_descriptor> halfedges_handled;
+
+  std::size_t incident_null_faces_counter = 0;
+  BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, pm))
+  {
+    halfedges_handled.insert(h);
+    if(CGAL::is_border(h, pm))
+      ++incident_null_faces_counter;
+  }
+
+  if(incident_null_faces_counter > 1)
+  {
+    // The vertex is the sole connection between two connected components --> non-manifold
+    return true;
+  }
+
+  BOOST_FOREACH(halfedge_descriptor h, halfedges(pm))
+  {
+    if(v == target(h, pm))
+    {
+      // More than one umbrella incident to 'v' --> non-manifold
+      if(halfedges_handled.count(h) == 0)
+        return true;
+    }
+  }
+
+  return false;
+}
+
+/// \ingroup PMP_repairing_grp
+/// duplicates all the non-manifold vertices of the input mesh.
+///
+/// @tparam TriangleMesh a model of `HalfedgeListGraph` and `MutableHalfedgeGraph`
+/// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+///
+/// @param tm the triangulated surface mesh to be repaired
+/// @param np optional \ref pmp_namedparameters "Named Parameters" described below
+///
+/// \cgalNamedParamsBegin
+///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+///       The type of this map is model of `ReadWritePropertyMap`.
+///       If this parameter is omitted, an internal property map for
+///       `CGAL::vertex_point_t` should be available in `TriangleMesh`
+///    \cgalParamEnd
+///   \cgalParamBegin{vertex_is_constrained_map} a writable property map with `vertex_descriptor`
+///     as key and `bool` as `value_type`. `put(pmap, v, true)` will be called for each duplicated
+///     vertices, as well as the original non-manifold vertex in the input mesh.
+///  \cgalParamEnd
+///   \cgalParamBegin{output_iterator} a model of `OutputIterator` with value type
+///      `std::vector<vertex_descriptor>`. The first vertex of each vector is a non-manifold vertex
+///       of the input mesh, followed by the new vertices that were created to fix this precise
+///       non-manifold configuration.
+///  \cgalParamEnd
+/// \cgalNamedParamsEnd
+///
+/// \return the number of vertices created.
+template <typename TriangleMesh, typename NamedParameters>
+std::size_t duplicate_non_manifold_vertices(TriangleMesh& tm,
+                                            const NamedParameters& np)
+{
+  CGAL_assertion(CGAL::is_triangle_mesh(tm));
+
+  using boost::get_param;
+  using boost::choose_param;
+
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::vertex_descriptor vertex_descriptor;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
 
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VertexPointMap;
+  VertexPointMap vpm = choose_param(get_param(np, internal_np::vertex_point),
+                                    get_property_map(vertex_point, tm));
+
+  typedef typename boost::lookup_named_param_def <
+    internal_np::vertex_is_constrained_t,
+    NamedParameters,
+    Constant_property_map<vertex_descriptor, bool> // default (no constraint pmap)
+  > ::type VerticesMap;
+  VerticesMap cmap
+    = choose_param(get_param(np, internal_np::vertex_is_constrained),
+                   Constant_property_map<vertex_descriptor, bool>(false));
+
+  typedef typename boost::lookup_named_param_def <
+    internal_np::output_iterator_t,
+    NamedParameters,
+    Emptyset_iterator
+  > ::type Output_iterator;
+  Output_iterator out
+    = choose_param(get_param(np, internal_np::output_iterator),
+                   Emptyset_iterator());
+
+  internal::Vertex_collector<TriangleMesh, Output_iterator> dmap;
   boost::unordered_set<vertex_descriptor> vertices_handled;
   boost::unordered_set<halfedge_descriptor> halfedges_handled;
 
-  std::size_t nb_new_vertices=0;
+  std::size_t nb_new_vertices = 0;
 
   std::vector<halfedge_descriptor> non_manifold_cones;
   BOOST_FOREACH(halfedge_descriptor h, halfedges(tm))
   {
-    if (halfedges_handled.insert(h).second)
+    // If 'h' is not visited yet, we walk around the target of 'h' and mark these
+    // halfedges as visited. Thus, if we are here and the target is already marked as visited,
+    // it means that the vertex is non manifold.
+    if(halfedges_handled.insert(h).second)
     {
       vertex_descriptor vd = target(h, tm);
-      if ( !vertices_handled.insert(vd).second )
+      if(!vertices_handled.insert(vd).second)
       {
+        put(cmap, vd, true); // store the originals
         non_manifold_cones.push_back(h);
       }
       else
+      {
         set_halfedge(vd, h, tm);
-      halfedge_descriptor start=opposite(next(h, tm), tm);
-      h=start;
-      do{
+      }
+
+      halfedge_descriptor start = opposite(next(h, tm), tm);
+      h = start;
+      do
+      {
         halfedges_handled.insert(h);
-        h=opposite(next(h, tm), tm);
-      }while(h!=start);
+        h = opposite(next(h, tm), tm);
+      }
+      while(h != start);
     }
   }
 
-  if (!non_manifold_cones.empty())  {
+  if(!non_manifold_cones.empty())
+  {
     BOOST_FOREACH(halfedge_descriptor h, non_manifold_cones)
     {
       halfedge_descriptor start = h;
       vertex_descriptor new_vd = add_vertex(tm);
       ++nb_new_vertices;
+      put(cmap, new_vd, true); // store the duplicates
+      dmap.collect_vertices(target(h, tm), new_vd);
       put(vpm, new_vd, get(vpm, target(h, tm)));
       set_halfedge(new_vd, h, tm);
-      do{
+      do
+      {
         set_target(h, new_vd, tm);
-        h=opposite(next(h, tm), tm);
-      } while(h!=start);
+        h = opposite(next(h, tm), tm);
+      }
+      while(h != start);
     }
+    dmap.dump(out);
   }
 
   return nb_new_vertices;
@@ -1343,11 +1674,8 @@ std::size_t duplicate_non_manifold_vertices(TriangleMesh& tm, Vpm vpm)
 template <class TriangleMesh>
 std::size_t duplicate_non_manifold_vertices(TriangleMesh& tm)
 {
-  return duplicate_non_manifold_vertices(tm, get(vertex_point, tm));
+  return duplicate_non_manifold_vertices(tm, parameters::all_default());
 }
-
-/// \endcond
-
 
 /// \ingroup PMP_repairing_grp
 /// removes the isolated vertices from any polygon mesh.

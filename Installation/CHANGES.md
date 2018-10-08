@@ -1,6 +1,25 @@
 Release History
 ===============
 
+Release 4.14
+------------
+
+Release date: March 2019
+
+### Polygon Mesh Processing package
+-   Added the following new functions to detect and repair mesh degeneracies:
+    - `CGAL::Polygon_mesh_processing::degenerate_edges()`
+    - `CGAL::Polygon_mesh_processing::degenerate_faces()`
+    - `CGAL::Polygon_mesh_processing::is_non_manifold_vertex()`
+    - `CGAL::Polygon_mesh_processing::is_degenerate_triangle_face()`
+    - `CGAL::Polygon_mesh_processing::is_degenerate_edge()`
+    - `CGAL::Polygon_mesh_processing::is_needle_triangle_face()`
+    - `CGAL::Polygon_mesh_processing::is_cap_triangle_face()`
+    - `CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices()`
+    - `CGAL::Polygon_mesh_processing::extract_boundary_cycles()`
+    - `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycle()`
+    - `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycles()`
+
 Release 4.13
 ------------
 
