@@ -161,7 +161,7 @@ void CGAL::QGLViewer::defaultConstructor() {
   stored_fbo = NULL;
   is_sharing = false;
   is_linked = false;
-  shared_context = nullptr;
+  shared_context = NULL;
 }
 
 CGAL_INLINE_FUNCTION
