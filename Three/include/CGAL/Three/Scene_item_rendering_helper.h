@@ -25,7 +25,6 @@
 
 
 #include <CGAL/Three/Scene_item.h>
-#include <QRunnable>
 
 
 #ifdef demo_framework_EXPORTS
