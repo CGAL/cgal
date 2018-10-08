@@ -831,9 +831,6 @@ void Scene_surface_mesh_item_priv::triangulate_convex_facet(face_descriptor fd,
                                                             Scene_item_rendering_helper::Gl_data_names name,
                                                             bool index) const
 {
-  const CGAL::qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
-  EPICK::Vector_3 offset = EPICK::Vector_3(v_offset.x, v_offset.y, v_offset.z);
-  
   Point p0,p1,p2;
   SMesh::Halfedge_around_face_circulator he(halfedge(fd, *smesh_), *smesh_);
   SMesh::Halfedge_around_face_circulator he_end = he;
@@ -844,9 +841,9 @@ void Scene_surface_mesh_item_priv::triangulate_convex_facet(face_descriptor fd,
     vertex_descriptor v0(target(*he_end, *smesh_)),
         v1(target(*he, *smesh_)),
         v2(target(next(*he, *smesh_), *smesh_));
-    p0 = smesh_->point(v0) + offset;
-    p1 = smesh_->point(v1) + offset;
-    p2 = smesh_->point(v2) + offset;
+    p0 = smesh_->point(v0);
+    p1 = smesh_->point(v1);
+    p2 = smesh_->point(v2);
     if(!index)
     {
       CGAL::Color* color;
