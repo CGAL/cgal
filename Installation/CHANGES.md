@@ -22,10 +22,10 @@ Release date: March 2019
 
 ### 3D Fast Intersection and Distance Computation
 
--   The primitives AABB_face_graph_triangle_primitive and 
-    AABB_halfedge_graph_segment_primitive now use a pair of id and 
-    graph if they are parameterized to deal with several graphs in
-    per tree (with the template tag.)
+-   The primitives `AABB_face_graph_triangle_primitive` and
+    `AABB_halfedge_graph_segment_primitive` now use as `Id` a pair of descriptor and
+    graph pointer in the case they are configured to deal with a possible different
+    graph per primitive (configuration set using a template tag).
 
 Release 4.13
 ------------
