@@ -275,12 +275,14 @@ void Scene::remove_item_from_groups(Scene_item* item)
 }
 Scene::~Scene()
 {
-    Q_FOREACH(CGAL::Three::Scene_item* item_ptr, m_entries)
-    {
-         item_ptr->deleteLater();
-    }
-    m_entries.clear();
-
+  Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
+    removeViewer(static_cast<CGAL::Three::Viewer_interface*>(viewer));
+  
+  Q_FOREACH(CGAL::Three::Scene_item* item_ptr, m_entries)
+  {
+    item_ptr->deleteLater();
+  }
+  m_entries.clear();
 }
 
 CGAL::Three::Scene_item*
@@ -1700,6 +1702,10 @@ void Scene::newViewer(Viewer_interface *viewer)
 
 void Scene::removeViewer(Viewer_interface *viewer)
 {
+  //already destroyed;
+  if(viewer->property("is_destroyed").toBool())
+    return;
+  
   vaos[viewer]->destroy();
   vaos[viewer]->deleteLater();
   vaos.remove(viewer);
@@ -1707,6 +1713,7 @@ void Scene::removeViewer(Viewer_interface *viewer)
   {
     item->removeViewer(viewer);
   }
+  viewer->setProperty("is_destroyed", true);
 }
 
 void Scene::initGL(Viewer_interface *viewer)
