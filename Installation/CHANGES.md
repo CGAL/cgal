@@ -19,6 +19,8 @@ Release date: March 2019
     - `CGAL::Polygon_mesh_processing::extract_boundary_cycles()`
     - `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycle()`
     - `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycles()`
+-   Added the class `CGAL::Rigid_triangle_mesh_collision_detection` to detect intersections between meshes
+    and volumes undergoing affine transformations.
 
 Release 4.13
 ------------
