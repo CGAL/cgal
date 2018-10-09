@@ -313,12 +313,12 @@ line_project_pointC2(const FT &la, const FT &lb, const FT &lc,
 		     const FT &px, const FT &py,
 		     FT &x, FT &y)
 {
-  if (CGAL_NTS is_zero(la)) // horizontal line
+  if (certainly(is_zero(la))) // horizontal line
   {
     x = px;
     y = -lc/lb;
   }
-  else if (CGAL_NTS is_zero(lb)) // vertical line
+  else if (certainly(is_zero(lb))) // vertical line
   {
     x = -lc/la;
     y = py;
