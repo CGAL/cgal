@@ -30,52 +30,9 @@
 #include <CGAL/AABB_primitive.h>
 #include <CGAL/boost/graph/property_maps.h>
 #include <CGAL/Default.h>
+#include <boost/mpl/if.hpp>
 
 namespace CGAL {
-namespace internal_primitive_id{
-//helper base class for creating the right Id: just a face_descriptor if OneFaceGraphPerTree
-// is true,else : a pair with the corresponding graph.
-template<class FaceGraph,
-         class OneFaceGraphPerTree>
-class Primitive_wrapper;
-
-template<class FaceGraph>
-class Primitive_wrapper<FaceGraph, Tag_true>
-{
-  public:
-  typedef typename boost::graph_traits<FaceGraph>::face_descriptor Id;
-  
-  Primitive_wrapper(const FaceGraph*)
-  {}
-  
-  template<class T>
-  Id from_id(const T& id)const
-  {
-    return Id(id);
-  }
-};
-
-template<class FaceGraph>
-class Primitive_wrapper<FaceGraph, Tag_false>
-{
-public:
-  typedef std::pair<typename boost::graph_traits<FaceGraph>::face_descriptor,
-  FaceGraph> Id;
-  
-  Primitive_wrapper(const FaceGraph* graph)
-    :this_graph(graph)
-  {}
-  
-  template<class T>
-  Id from_id(const T& id)const
-  {
-    return std::make_pair(id, *this_graph);
-  }
-  
-private:
-  const FaceGraph* this_graph;
-};
-}//end internal
 
 /*!
  * \ingroup PkgAABB_tree
@@ -109,7 +66,9 @@ template < class FaceGraph,
            class CacheDatum=Tag_false >
 class AABB_face_graph_triangle_primitive
 #ifndef DOXYGEN_RUNNING
-  : public AABB_primitive<typename boost::graph_traits<FaceGraph>::face_descriptor,
+  : public AABB_primitive<typename boost::mpl::if_<OneFaceGraphPerTree,
+                                                   typename boost::graph_traits<FaceGraph>::face_descriptor,
+                                                   std::pair<typename boost::graph_traits<FaceGraph>::face_descriptor, const FaceGraph*> >::type,
                         Triangle_from_face_descriptor_map<
                           FaceGraph,
                           typename Default::Get<VertexPointPMap,
@@ -121,12 +80,13 @@ class AABB_face_graph_triangle_primitive
                                                 typename boost::property_map< FaceGraph,
                                                                               vertex_point_t>::type >::type>,
                         OneFaceGraphPerTree,
-                        CacheDatum >,
-    public internal_primitive_id::Primitive_wrapper<FaceGraph, OneFaceGraphPerTree>
+                        CacheDatum >
 #endif
 {
   typedef typename Default::Get<VertexPointPMap, typename boost::property_map< FaceGraph, vertex_point_t>::type >::type VertexPointPMap_;
-  typedef typename boost::graph_traits<FaceGraph>::face_descriptor Id_;
+  typedef typename boost::graph_traits<FaceGraph>::face_descriptor FD;
+  typedef typename boost::mpl::if_<OneFaceGraphPerTree, FD, std::pair<FD, const FaceGraph*> >::type Id_;
+
   typedef Triangle_from_face_descriptor_map<FaceGraph,VertexPointPMap_>  Triangle_property_map;
   typedef One_point_from_face_descriptor_map<FaceGraph,VertexPointPMap_> Point_property_map;
 
@@ -135,11 +95,17 @@ class AABB_face_graph_triangle_primitive
                           Point_property_map,
                           OneFaceGraphPerTree,
                           CacheDatum > Base;
+
+  FD make_id(FD fd, const FaceGraph&, Tag_true)
+  {
+    return fd;
+  }
+
+  std::pair<FD, const FaceGraph*> make_id(FD fd, const FaceGraph& fg, Tag_false)
+  {
+    return std::make_pair(fd, &fg);
+  }
   
-  typedef internal_primitive_id::Primitive_wrapper<FaceGraph, OneFaceGraphPerTree> Base_2;
-  
-public:
-  typedef typename Base_2::Id Id;
 public:
   #ifdef DOXYGEN_RUNNING
   /// \name Types
@@ -154,10 +120,10 @@ public:
   typedef Kernel_traits<Point>::Kernel::Triangle_3 Datum;
   /*!
   Id type:
-  - boost::graph_traits<FaceGraph>::face_descriptor Id if OneFaceGraphPerTree is `CGAL::Tag_true`
-  - std::pair<boost::graph_traits<FaceGraph>::face_descriptor, FaceGraph> Id if OneFaceGraphPerTree is `CGAL::Tag_false`
+  - `boost::graph_traits<FaceGraph>::face_descriptor` if `OneFaceGraphPerTree` is `CGAL::Tag_true`
+  - `std::pair<boost::graph_traits<FaceGraph>::face_descriptor, FaceGraph>` if `OneFaceGraphPerTree` is `CGAL::Tag_false`
   */
-  Unspecified_type Id;
+  unspecified_type Id;
   
   /// @}
 
@@ -165,10 +131,11 @@ public:
   If `OneFaceGraphPerTree` is CGAL::Tag_true, constructs a `Shared_data` object from a reference to the polyhedon `graph`.
   */
   static unspecified_type construct_shared_data( FaceGraph& graph );
+  #else
+  typedef typename Base::Id Id;
   #endif
-  Id id() const {
-    return Base_2::from_id(Base::id());
-  }
+  typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
+
   // constructors
   /*!
     \tparam Iterator an input iterator with `Id` as value type.
@@ -178,10 +145,9 @@ public:
   */
   template <class Iterator>
   AABB_face_graph_triangle_primitive(Iterator it, const FaceGraph& graph, VertexPointPMap_ vppm)
-    : Base( it,
+    : Base( Id_(make_id(*it, graph, OneFaceGraphPerTree())),
             Triangle_property_map(const_cast<FaceGraph*>(&graph),vppm),
-            Point_property_map(const_cast<FaceGraph*>(&graph),vppm) ),
-      Base_2(&graph)
+            Point_property_map(const_cast<FaceGraph*>(&graph),vppm) )
   {}
 
   /*!
@@ -189,30 +155,24 @@ public:
     If `VertexPointPMap` is the default of the class, an additional constructor
     is available with `vppm` set to `get(vertex_point, graph)`.
   */
-  AABB_face_graph_triangle_primitive(
-      typename boost::graph_traits<FaceGraph>::face_descriptor id, const FaceGraph& graph, 
-      VertexPointPMap_ vppm)
-    : Base( Id_(id),
+  AABB_face_graph_triangle_primitive(face_descriptor fd, const FaceGraph& graph, VertexPointPMap_ vppm)
+    : Base( Id_(make_id(fd, graph, OneFaceGraphPerTree())),
             Triangle_property_map(const_cast<FaceGraph*>(&graph),vppm),
-            Point_property_map(const_cast<FaceGraph*>(&graph),vppm) ),
-      Base_2(&graph)
+            Point_property_map(const_cast<FaceGraph*>(&graph),vppm) )
   {}
 
 #ifndef DOXYGEN_RUNNING
   template <class Iterator>
   AABB_face_graph_triangle_primitive(Iterator it, const FaceGraph& graph)
-    : Base( Id_(*it),
+    : Base( Id_(make_id(*it, graph, OneFaceGraphPerTree())),
             Triangle_property_map(const_cast<FaceGraph*>(&graph)),
-            Point_property_map(const_cast<FaceGraph*>(&graph)) ),
-      Base_2(&graph)
+            Point_property_map(const_cast<FaceGraph*>(&graph)) )
   {}
 
-  AABB_face_graph_triangle_primitive(
-      typename boost::graph_traits<FaceGraph>::face_descriptor id, const FaceGraph& graph)
-    : Base( Id_(id),
+  AABB_face_graph_triangle_primitive(face_descriptor fd, const FaceGraph& graph)
+    : Base( Id_(make_id(fd, graph, OneFaceGraphPerTree())),
             Triangle_property_map(const_cast<FaceGraph*>(&graph)),
-            Point_property_map(const_cast<FaceGraph*>(&graph)) ),
-      Base_2(&graph)
+            Point_property_map(const_cast<FaceGraph*>(&graph)) )
   {}
 #endif
 

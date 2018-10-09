@@ -35,54 +35,11 @@
 #include <CGAL/is_iterator.h>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/utility/enable_if.hpp>
+#include <boost/mpl/if.hpp>
 
 #include <CGAL/Default.h>
 
 namespace CGAL {
-namespace internal_primitive_id{
-//helper base class for creating the right Id: just a face_descriptor if OneFaceGraphPerTree
-// is true,else : a pair with the corresponding graph.
-template<class Graph,
-         class OneGraphPerTree>
-class EPrimitive_wrapper;
-
-template<class Graph>
-class EPrimitive_wrapper<Graph, Tag_true>
-{
-  public:
-  typedef typename boost::graph_traits<Graph>::edge_descriptor Id;
-  
-  EPrimitive_wrapper(const Graph*)
-  {}
-  
-  template<class T>
-  Id from_id(const T& id)const
-  {
-    return Id(id);
-  }
-};
-
-template<class Graph>
-class EPrimitive_wrapper<Graph, Tag_false>
-{
-public:
-  typedef std::pair<typename boost::graph_traits<Graph>::edge_descriptor,
-  Graph> Id;
-  
-  EPrimitive_wrapper(const Graph* graph)
-    :this_graph(graph)
-  {}
-  
-  template<class T>
-  Id from_id(const T& id)const
-  {
-    return std::make_pair(id, *this_graph);
-  }
-  
-private:
-  const Graph* this_graph;
-};
-}//end internal
 
 
 /*!
@@ -122,7 +79,9 @@ template < class HalfedgeGraph,
            class CacheDatum = Tag_false >
 class AABB_halfedge_graph_segment_primitive
 #ifndef DOXYGEN_RUNNING
-  : public AABB_primitive<  typename boost::graph_traits<HalfedgeGraph>::edge_descriptor,
+  : public AABB_primitive<  typename boost::mpl::if_<OneHalfedgeGraphPerTree,
+                                                     typename boost::graph_traits<HalfedgeGraph>::edge_descriptor,
+                                                     std::pair<typename boost::graph_traits<HalfedgeGraph>::edge_descriptor, const HalfedgeGraph*> >::type,
                             Segment_from_edge_descriptor_map<
                               HalfedgeGraph,
                               typename Default::Get<VertexPointPMap,
@@ -134,13 +93,13 @@ class AABB_halfedge_graph_segment_primitive
                                                     typename boost::property_map< HalfedgeGraph,
                                                                                   vertex_point_t>::type >::type >,
                             OneHalfedgeGraphPerTree,
-                            CacheDatum >,
-    public internal_primitive_id::EPrimitive_wrapper<HalfedgeGraph, OneHalfedgeGraphPerTree>
+                            CacheDatum >
 #endif
 {
   typedef typename Default::Get<VertexPointPMap,typename boost::property_map< HalfedgeGraph,vertex_point_t>::type >::type  VertexPointPMap_;
+  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor ED;
+  typedef typename boost::mpl::if_<OneHalfedgeGraphPerTree, ED, std::pair<ED, const HalfedgeGraph*> >::type Id_;
 
-  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor Id_;
   typedef Segment_from_edge_descriptor_map<HalfedgeGraph,VertexPointPMap_>  Segment_property_map;
   typedef Source_point_from_edge_descriptor_map<HalfedgeGraph,VertexPointPMap_> Point_property_map;
 
@@ -149,13 +108,19 @@ class AABB_halfedge_graph_segment_primitive
                           Point_property_map,
                           OneHalfedgeGraphPerTree,
                           CacheDatum > Base;
-  
-  typedef internal_primitive_id::EPrimitive_wrapper<HalfedgeGraph, OneHalfedgeGraphPerTree> Base_2;
+
+  ED make_id(ED ed, const HalfedgeGraph&, Tag_true)
+  {
+    return ed;
+  }
+
+  std::pair<ED, const HalfedgeGraph*> make_id(ED ed, const HalfedgeGraph& fg, Tag_false)
+  {
+    return std::make_pair(ed, &fg);
+  }
 
 public:
-  typedef typename Base_2::Id Id;
 
-public:
 #ifdef DOXYGEN_RUNNING
  /// \name Types
   /// @{
@@ -169,20 +134,20 @@ public:
   typedef Kernel_traits<Point>::Kernel::Segment_3 Datum;
   /*!
   Id type:
-  - boost::graph_traits<HalfegdeGraph>::edge_descriptor Id if OneHalfegdeGraphPerTree is `CGAL::Tag_true`
-  - std::pair<boost::graph_traits<HalfegdeGraph>::edge_descriptor, HalfegdeGraph> Id if OneHalfegdeGraphPerTree is `CGAL::Tag_false`
+  - `boost::graph_traits<HalfedgeGraph>::edge_descriptor if `OneHalfedgeGraphPerTree` is `Tag_true`
+  - `std::pair<boost::graph_traits<HalfedgeGraph>::edge_descriptor`, HalfedgeGraph>` if `OneHalfedgeGraphPerTree` is `Tag_false`
   */
-  Unspecified_type Id;
+  unspecified_type Id;
   /// @}
 
   /*!
-  If `OneHalfedgeGraphPerTreeGraphPerTree` is CGAL::Tag_true, constructs a `Shared_data` object from a reference to the halfedge graph.
+  If `OneHalfedgeGraphPerTree` is CGAL::Tag_true, constructs a `Shared_data` object from a reference to the halfedge graph.
   */
   static unspecified_type construct_shared_data( HalfedgeGraph& graph );
+#else
+  typedef typename Base::Id Id;
 #endif
-  Id id() const {
-    return Base_2::from_id(Base::id());
-  }
+  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor edge_descriptor;
 
   /*!
   Constructs a primitive.
@@ -194,10 +159,9 @@ public:
   */
   template <class Iterator>
   AABB_halfedge_graph_segment_primitive(Iterator it, const HalfedgeGraph& graph, VertexPointPMap_ vppm)
-    : Base( Id_(*it),
+    : Base( Id_(make_id(*it, graph, OneHalfedgeGraphPerTree())),
             Segment_property_map(const_cast<HalfedgeGraph*>(&graph), vppm),
-            Point_property_map(const_cast<HalfedgeGraph*>(&graph), vppm) ),
-      Base_2(&graph)
+            Point_property_map(const_cast<HalfedgeGraph*>(&graph), vppm) )
   {}
 
   /*!
@@ -205,30 +169,23 @@ public:
   If `VertexPointPMap` is the default of the class, an additional constructor
   is available with `vppm` set to `boost::get(vertex_point, graph)`.
   */
-  AABB_halfedge_graph_segment_primitive(
-      typename boost::graph_traits<HalfedgeGraph>::edge_descriptor id, const HalfedgeGraph& graph, VertexPointPMap_ vppm)
-    : Base( Id_(id),
+  AABB_halfedge_graph_segment_primitive(edge_descriptor ed, const HalfedgeGraph& graph, VertexPointPMap_ vppm)
+    : Base( Id_(make_id(ed, graph, OneHalfedgeGraphPerTree())),
             Segment_property_map(const_cast<HalfedgeGraph*>(&graph), vppm),
-            Point_property_map(const_cast<HalfedgeGraph*>(&graph), vppm) ),
-      Base_2(&graph)
+            Point_property_map(const_cast<HalfedgeGraph*>(&graph), vppm) )
   {}
 
   #ifndef DOXYGEN_RUNNING
   template <class Iterator>
   AABB_halfedge_graph_segment_primitive(Iterator it, const HalfedgeGraph& graph)
-    : Base( Id_(*it),
+    : Base( Id_(make_id(*it, graph, OneHalfedgeGraphPerTree())),
             Segment_property_map(const_cast<HalfedgeGraph*>(&graph)),
-            Point_property_map(const_cast<HalfedgeGraph*>(&graph)) ),
-      Base_2(&graph)
-  {}
+            Point_property_map(const_cast<HalfedgeGraph*>(&graph)) ){}
 
-  AABB_halfedge_graph_segment_primitive(
-      typename boost::graph_traits<HalfedgeGraph>::edge_descriptor id, const HalfedgeGraph& graph)
-    : Base( Id_(id),
+  AABB_halfedge_graph_segment_primitive(edge_descriptor ed, const HalfedgeGraph& graph)
+    : Base( Id_(make_id(ed, graph, OneHalfedgeGraphPerTree())),
             Segment_property_map(const_cast<HalfedgeGraph*>(&graph)),
-            Point_property_map(const_cast<HalfedgeGraph*>(&graph)) ),
-      Base_2(&graph)
-  {}
+            Point_property_map(const_cast<HalfedgeGraph*>(&graph)) ){}
   #endif
 
   /// \internal
