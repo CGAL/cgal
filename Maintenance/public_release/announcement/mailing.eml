@@ -1,75 +1,35 @@
-Subject: CGAL 4.12 Released, Computational Geometry Algorithms Library
+Subject: CGAL 4.13 Released, Computational Geometry Algorithms Library
 Content-Type: text/plain; charset="utf-8"
 Body: 
 
-The CGAL Open Source Project is pleased to announce the release 4.12
+The CGAL Open Source Project is pleased to announce the release 4.13
 of CGAL, the Computational Geometry Algorithms Library.
 
 
-*WARNING*: This release features an important change of the CMake scripts
-used to configure the CGAL libraries and examples. Developers using
-makefiles or the Ninja build-system should set the `CMAKE_BUILD_TYPE` to
-`Release` manually, to avoid using CGAL libraries without any compile-time
-optimization. Please read the first paragraph of the release notes
-carefully.
-
-
 Besides fixes and general enhancement to existing packages, the following
-has changed since CGAL 4.11:
+has changed since CGAL 4.12:
 
 
-Using CGAL Header-only
+### 3D Periodic Mesh Generation (new package)
 
-- It is now possible to use CGAL without configuring it with CMake, as a
-  header-only library. Note that, even if CGAL is header-only, its
-  dependencies (such as GMP and MPFR) are not all header-only.
-
-
-Compiler Support
-
-- The Microsoft Visual C++ 2017 version 15.3 has introduced support for
-  C++17, with the compilation flag `/std:c++17`. CGAL 4.12 has an initial
-  support for that flag: the code will compile, but a lot of deprecation
-  warnings will remain. Note that Boost version 1.67 is the first version
-  of Boost supporting `/std:c++17`.
-
-- The compilation flag `/permissive-` of Visual C++ is now supported.
+-   This package generates 3-dimensional periodic meshes. It computes
+    isotropic simplicial meshes for domains described through implicit
+    functional boundaries over the flat torus (which can also seen in
+    the Euclidean space as a periodic cube). The output is a periodic
+    3D mesh of the domain volume and conformal surface meshes for all
+    the boundary and subdividing surfaces.  The package is closely
+    related to the 3D Mesh Generation package, with similar concepts,
+    classes, and API.
 
 
-2D Movable Separability of Sets (new package)
+### Classification 
 
--   A new package called "2D Movable Separability of Sets" has been
-    introduced. It handles a class of problems that deal with moving
-    sets of objects in the plane; the challenge is to avoid collisions
-    between the objects while considering different kinds of motions and
-    various definitions of separation.
-
-    At this point this package consists of the implementations of
-    various predicates and constructions related to castings of
-    polygonal objects. In particular, it can be used to determine
-    whether a feasible mold for a polygonal object does exist. If a mold
-    exists, the package can also be used to compute all possible
-    orientations of the feasible molds and the corresponding motions
-    needed to remove the casted object from the mold.
+-   This package can now handle classification of surface meshes and
+    clusters, and can compute features in parallel.
 
 
-Classification (new package)
 
--   This package offers an algorithm that classifies a data set into a
-    user-defined set of labels (such as ground, vegetation, buildings,
-    etc.). A flexible API is provided so that users can classify any
-    type of data, compute their own local features on the input data
-    set, and define their own labels.
-
-
-Kinetic Data Structures (removed package)
-
--   This package has been removed from CGAL-4.12. Users of the package
-    will have to keep using the source code available in CGAL-4.11 or
-    earlier.
-
-
-See https://www.cgal.org/2018/04/25/cgal412/ for a complete list of
+See https://www.cgal.org/2018/10/01/cgal413 / for a complete list of
 changes.
 
 

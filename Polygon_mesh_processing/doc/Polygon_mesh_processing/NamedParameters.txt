@@ -337,7 +337,7 @@ of a mesh independently.\n
 Parameter used to pass a visitor class to a function. Its type and behavior depend on the visited function.
 \n
 \b Type : `A class` \n
-\b Default Specific to the function visited
+\b Default : Specific to the function visited
 \cgalNPEnd
 
 \cgalNPBegin{throw_on_self_intersection} \anchor PMP_throw_on_self_intersection
@@ -364,6 +364,12 @@ should be considered as part of the clipping volume or not.
 \b Default value is `true`
 \cgalNPEnd
 
+\cgalNPBegin{output_iterator} \anchor PMP_output_iterator
+Parameter to pass an output iterator.
+\n
+\b Type : a model of `OutputIterator` \n
+\b Default : `Emptyset_iterator`
+\cgalNPEnd
 
 \cgalNPTableEnd
 

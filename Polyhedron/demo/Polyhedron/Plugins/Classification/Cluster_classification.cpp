@@ -541,8 +541,13 @@ void Cluster_classification::compute_features (std::size_t nb_scales)
   std::cerr << "Computing pointwise features with " << nb_scales << " scale(s)" << std::endl;
   m_features.clear();
 
+  Point_set::Vector_map normal_map;
   bool normals = m_points->point_set()->has_normal_map();
+  if (normals)
+    normal_map = m_points->point_set()->normal_map();
+  
   bool colors = (m_color != Point_set::Property_map<Color>());
+  
   Point_set::Property_map<boost::uint8_t> echo_map;
   bool echo;
   boost::tie (echo_map, echo) = m_points->point_set()->template property_map<boost::uint8_t>("echo");
@@ -562,7 +567,7 @@ void Cluster_classification::compute_features (std::size_t nb_scales)
 
   generator.generate_point_based_features(pointwise_features);
   if (normals)
-    generator.generate_normal_based_features (pointwise_features, m_points->point_set()->normal_map());
+    generator.generate_normal_based_features (pointwise_features, normal_map);
   if (colors)
     generator.generate_color_based_features (pointwise_features, m_color);
   if (echo)

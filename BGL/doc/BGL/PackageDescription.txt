@@ -122,12 +122,12 @@ and adds the requirement for traversal of all edges in a graph.
   <td>An upper bound of the number of edges of the graph</td>
  </tr>
  <tr>
-  <td>`source(g)`</td>
+  <td>`source(e, g)`</td>
   <td>`vertex_descriptor`</td>
   <td>The source vertex of `e`</td>
  </tr>
  <tr>
-  <td>`target(g)`</td>
+  <td>`target(e, g)`</td>
   <td>`vertex_descriptor`</td>
   <td>The target vertex of `e`</td>
  </tr>

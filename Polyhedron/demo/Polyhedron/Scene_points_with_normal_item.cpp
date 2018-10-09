@@ -213,6 +213,7 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_
 {
 
   d = new Scene_points_with_normal_item_priv(toCopy, this);
+
   if (!has_normals())
   {
     setRenderingMode(Points);
@@ -222,6 +223,7 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_
     setRenderingMode(CGAL::Three::Three::defaultPointSetRenderingMode());
     is_selected = true;
   }
+  
   if(d->m_points->number_of_points() < 30 )
     d->point_Slider->setValue(5);
   else
@@ -245,7 +247,6 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const SMesh& input_
     d->point_Slider->setValue(2);
   invalidateOpenGLBuffers();
 }
-
 
 Scene_points_with_normal_item::~Scene_points_with_normal_item()
 {
