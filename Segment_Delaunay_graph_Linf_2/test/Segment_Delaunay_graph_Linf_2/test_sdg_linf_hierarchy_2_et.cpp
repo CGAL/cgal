@@ -11,10 +11,9 @@
 #include <cassert>
 
 #include <CGAL/Exact_rational.h>
-#include <CGAL/Exact_integer.h>
 
 // choose number type
-typedef CGAL::Exact_integer exact_ring_t;
+typedef CGAL::Exact_rational exact_ring_t;
 typedef CGAL::Exact_rational exact_field_t;
 
 namespace CGAL {
