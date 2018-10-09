@@ -101,6 +101,7 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::verbosity_level).v == 41);
   assert(get_param(np, CGAL::internal_np::projection_functor).v == 42);
   assert(get_param(np, CGAL::internal_np::apply_per_connected_component).v == 46);
+  assert(get_param(np, CGAL::internal_np::output_iterator).v == 47);
 
 
   // Test types
@@ -177,6 +178,7 @@ void test(const NamedParameters& np)
   check_same_type<41>(get_param(np, CGAL::internal_np::verbosity_level));
   check_same_type<42>(get_param(np, CGAL::internal_np::projection_functor));
   check_same_type<46>(get_param(np, CGAL::internal_np::apply_per_connected_component));
+  check_same_type<47>(get_param(np, CGAL::internal_np::output_iterator));
 }
 
 int main()
@@ -238,6 +240,7 @@ int main()
                          .clip_volume(A<44>(44))
                          .use_compact_clipper(A<45>(45))
                          .apply_per_connected_component(A<46>(46))
+                         .output_iterator(A<47>(47))
        );
 
   return EXIT_SUCCESS;

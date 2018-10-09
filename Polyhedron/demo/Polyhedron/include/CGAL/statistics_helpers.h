@@ -1,7 +1,8 @@
 #ifndef POLYHEDRON_DEMO_STATISTICS_HELPERS_H
 #define POLYHEDRON_DEMO_STATISTICS_HELPERS_H
 
-#include <cmath>
+#include <CGAL/squared_distance_3_0.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
 
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
@@ -9,10 +10,13 @@
 #include <boost/accumulators/statistics/min.hpp>
 #include <boost/accumulators/statistics/max.hpp>
 #include <boost/accumulators/statistics/median.hpp>
-#include <CGAL/squared_distance_3_0.h>
-#include <map>
 #include <boost/property_map/property_map.hpp>
 
+#include <cmath>
+#include <iterator>
+#include <limits>
+#include <map>
+#include <vector>
 
 template<typename Mesh>
 void angles(Mesh* poly, double& mini, double& maxi, double& ave)
@@ -81,19 +85,15 @@ void edges_length(Mesh* poly,
   mid =  extract_result< tag::median >(acc);
 }
 
-template<typename Mesh, typename VPmap>
-unsigned int nb_degenerate_faces(Mesh* poly, VPmap vpmap)
+template<typename Mesh>
+unsigned int nb_degenerate_faces(Mesh* poly)
 {
   typedef typename boost::graph_traits<Mesh>::face_descriptor face_descriptor;
-  typedef typename CGAL::Kernel_traits< typename boost::property_traits<VPmap>::value_type >::Kernel Traits;
 
-  unsigned int nb = 0;
-  BOOST_FOREACH(face_descriptor f, faces(*poly))
-  {
-    if (CGAL::is_degenerate_triangle_face(f, *poly, vpmap, Traits()))
-      ++nb;
-  }
-  return nb;
+  std::vector<face_descriptor> degenerate_faces;
+  CGAL::Polygon_mesh_processing::degenerate_faces(*poly, std::back_inserter(degenerate_faces));
+
+  return static_cast<unsigned int>(degenerate_faces.size());
 }
 
 template<typename Mesh>

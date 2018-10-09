@@ -251,7 +251,6 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const SMesh& input_
   invalidateOpenGLBuffers();
 }
 
-
 Scene_points_with_normal_item::~Scene_points_with_normal_item()
 {
   delete d;
@@ -558,7 +557,7 @@ bool Scene_points_with_normal_item::read_las_point_set(std::istream& stream)
             !isEmpty();
 
   std::cerr << d->m_points->info();
-
+  
   if (!d->m_points->has_normal_map())
   {
     setRenderingMode(Points);

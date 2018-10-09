@@ -28,6 +28,7 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include "triangulate_primitive.h"
@@ -838,9 +839,6 @@ void Scene_surface_mesh_item_priv::triangulate_convex_facet(face_descriptor fd,
                                                             Scene_item_rendering_helper::Gl_data_names name,
                                                             bool index) const
 {
-  const CGAL::qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
-  EPICK::Vector_3 offset = EPICK::Vector_3(v_offset.x, v_offset.y, v_offset.z);
-  
   Point p0,p1,p2;
   SMesh::Halfedge_around_face_circulator he(halfedge(fd, *smesh_), *smesh_);
   SMesh::Halfedge_around_face_circulator he_end = he;
@@ -851,9 +849,9 @@ void Scene_surface_mesh_item_priv::triangulate_convex_facet(face_descriptor fd,
     vertex_descriptor v0(target(*he_end, *smesh_)),
         v1(target(*he, *smesh_)),
         v2(target(next(*he, *smesh_), *smesh_));
-    p0 = smesh_->point(v0) + offset;
-    p1 = smesh_->point(v1) + offset;
-    p2 = smesh_->point(v2) + offset;
+    p0 = smesh_->point(v0);
+    p1 = smesh_->point(v1);
+    p2 = smesh_->point(v2);
     if(!index)
     {
       CGAL::Color* color;
@@ -1076,7 +1074,7 @@ void* Scene_surface_mesh_item_priv::get_aabb_tree()
       BOOST_FOREACH( face_descriptor f, faces(*sm))
       {
         //if face is degenerate, skip it
-        if (CGAL::is_degenerate_triangle_face(f, *sm, get(CGAL::vertex_point, *sm), EPICK()))
+        if (CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, *sm))
           continue;
         //if face not triangle, triangulate corresponding primitive before adding it to the tree
         if(!CGAL::is_triangle(halfedge(f, *sm), *sm))
@@ -1562,7 +1560,7 @@ QString Scene_surface_mesh_item::computeStats(int type)
     if(is_triangle_mesh(*d->smesh_))
     {
       if (d->number_of_degenerated_faces == (unsigned int)(-1))
-        d->number_of_degenerated_faces = nb_degenerate_faces(d->smesh_, get(CGAL::vertex_point, *(d->smesh_)));
+        d->number_of_degenerated_faces = nb_degenerate_faces(d->smesh_);
       return QString::number(d->number_of_degenerated_faces);
     }
     else

@@ -248,6 +248,9 @@ public:
   //!
   int getId()const;
 
+  //! invalidates the context menu. Call it when supportsRenderingMode() changes, 
+  //! for example.
+  void resetMenu();
   //!Handles key press events.
   virtual bool keyPressEvent(QKeyEvent*){return false;}
 

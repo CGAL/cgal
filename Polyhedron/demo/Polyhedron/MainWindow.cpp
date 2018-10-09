@@ -1468,7 +1468,7 @@ void MainWindow::readSettings()
   CGAL::Three::Three::s_defaultSMRM = CGAL::Three::Three::modeFromName(
         settings.value("default_sm_rm", "flat+edges").toString());
   CGAL::Three::Three::s_defaultPSRM = CGAL::Three::Three::modeFromName(
-        settings.value("default_ps_rm", "points").toString());
+        settings.value("default_ps_rm", "shaded points").toString());
   // read plugin blacklist
   QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
   Q_FOREACH(QString name,blacklist){ plugin_blacklist.insert(name); }

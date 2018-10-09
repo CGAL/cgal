@@ -680,6 +680,7 @@ protected:
     // mouse events
     if(shift_pressing && event->type() == QEvent::MouseButtonPress)
       {
+      background = static_cast<CGAL::Three::Viewer_interface*>(*CGAL::QGLViewer::QGLViewerPool().begin())->grabFramebuffer();
 	QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
         Viewer_interface* viewer = qobject_cast<Viewer_interface*>(
               Three::mainWindow()->childAt(QCursor::pos()));

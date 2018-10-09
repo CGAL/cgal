@@ -2,7 +2,7 @@ include( polyhedron_demo_macros )
 polyhedron_demo_plugin(pca_plugin Pca_plugin)
 target_link_libraries(pca_plugin PUBLIC scene_surface_mesh_item scene_points_with_normal_item scene_basic_objects)
 
-qt5_wrap_ui( transformUI_FILES Transformation_widget.ui )
+qt5_wrap_ui( transformUI_FILES Transformation_widget.ui MeshOnGrid_dialog.ui)
 
 polyhedron_demo_plugin(affine_transform_plugin Affine_transform_plugin ${transformUI_FILES})
 target_link_libraries(affine_transform_plugin PUBLIC scene_surface_mesh_item scene_transform_item scene_points_with_normal_item)

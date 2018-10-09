@@ -218,7 +218,7 @@ public:
   bool printVertexIds() const;
   bool printEdgeIds() const;
   bool printFaceIds() const;
-  void printAllIds(CGAL::Three::Viewer_interface*);
+  void printAllIds();
   bool testDisplayId(double, double, double, CGAL::Three::Viewer_interface*)const;
   bool shouldDisplayIds(CGAL::Three::Scene_item *current_item) const;
   QString defaultSaveName() const 
