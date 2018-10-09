@@ -73,8 +73,11 @@ write_cells_tag_2(std::ostream& os,
   
   if (binary) { // if binary output, just write the xml tag
     os << " offset=\"" << offset << "\"/>\n";
+    // 3 indices (size_t) per triangle + length of the encoded data (size_t)
     offset += (3 * number_of_triangles + 1) * sizeof(std::size_t); 
-    // 3 indices (size_t) per cell + length of the encoded data (size_t)
+    // 2 indices (size_t) per edge (size_t)
+    offset += (2 * std::distance(tr.constrained_edges_begin(),
+                                 tr.constrained_edges_end())) * sizeof(std::size_t); 
   }
   else {
     os << "\">\n";   
@@ -99,7 +102,9 @@ write_cells_tag_2(std::ostream& os,
   
   if (binary) {  // if binary output, just write the xml tag
     os << " offset=\"" << offset << "\"/>\n";
-    offset += (number_of_triangles + 1) * sizeof(std::size_t);
+    offset += (number_of_triangles +std::distance(tr.constrained_edges_begin(),
+                                                  tr.constrained_edges_end()) + 1)
+        * sizeof(std::size_t);
     // 1 offset (size_t) per cell + length of the encoded data (size_t)
   }
   else {
@@ -125,7 +130,10 @@ write_cells_tag_2(std::ostream& os,
 
   if (binary) {
     os << " offset=\"" << offset << "\"/>\n";
-    offset += number_of_triangles + sizeof(std::size_t);
+    offset += number_of_triangles
+        + std::distance(tr.constrained_edges_begin(),
+                        tr.constrained_edges_end()) 
+        + sizeof(std::size_t);
     // 1 unsigned char per cell + length of the encoded data (size_t)
   }
   else {
@@ -156,6 +164,8 @@ write_cells_2(std::ostream& os,
   std::vector<std::size_t> connectivity_table;
   std::vector<std::size_t> offsets;
   std::vector<unsigned char> cell_type(number_of_triangles,5);  // triangles == 5
+  cell_type.resize(cell_type.size() + std::distance(tr.constrained_edges_begin(),
+                                                     tr.constrained_edges_end()), 3);  // line == 3
   
   std::size_t off = 0;
   for(typename CDT::Finite_faces_iterator 
@@ -170,6 +180,19 @@ write_cells_2(std::ostream& os,
       connectivity_table.push_back(V[fit->vertex(0)]);
       connectivity_table.push_back(V[fit->vertex(2)]);
       connectivity_table.push_back(V[fit->vertex(1)]);
+    }
+  }
+  for(typename CDT::Constrained_edges_iterator
+      cei = tr.constrained_edges_begin(),
+      end = tr.constrained_edges_end();
+      cei != end; ++cei)
+  {
+    off += 2;
+    offsets.push_back(off);
+    for(int i=0; i<3; ++i)
+    {
+      if(i != cei->second)
+        connectivity_table.push_back(V[cei->first->vertex(i)]);
     }
   }
   write_vector<std::size_t>(os,connectivity_table);
@@ -294,7 +317,7 @@ void write_unstructured_grid_2(std::ostream& os,
     if(fit->is_in_domain()) ++number_of_triangles;
   }
   os << "  <Piece NumberOfPoints=\"" << tr.number_of_vertices() 
-     << "\" NumberOfCells=\"" << number_of_triangles << "\">\n";
+     << "\" NumberOfCells=\"" << number_of_triangles + std::distance(tr.constrained_edges_begin(), tr.constrained_edges_end()) << "\">\n";
   std::size_t offset = 0;
   write_points_tag(os,tr,V,binary,offset);
   write_cells_tag_2(os,tr,number_of_triangles, V,binary,offset);

@@ -80,12 +80,12 @@ write_cells_tag(std::ostream& os,
   else {
     os << "\">\n";   
     for( Cell_iterator cit = c3t3.cells_in_complex_begin() ;
-	 cit != c3t3.cells_in_complex_end() ;
-	 ++cit )
-      {
-	for (int i=0; i<4; i++)
-	  os << V[cit->vertex(i)] << " ";
-      }
+         cit != c3t3.cells_in_complex_end() ;
+         ++cit )
+    {
+      for (int i=0; i<4; i++)
+        os << V[cit->vertex(i)] << " ";
+    }
     os << "      </DataArray>\n";
   }
   
