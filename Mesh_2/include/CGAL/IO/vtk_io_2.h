@@ -275,7 +275,9 @@ write_points(std::ostream& os,
 
 //!
 //! \brief write_unstructured_grid_2 writes the content of a `CDT` in the .vtu
-//! XML format.
+//! XML format. 
+//! 
+//! The triangles inside the domain and the constrained edges will be outputted.
 //! 
 //! \tparam CDT a `Constrained_Delaunay_triangulation_2`.
 //! 
