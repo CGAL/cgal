@@ -346,7 +346,7 @@ protected Q_SLOTS:
    * with viewerShow.
    *@see viewerShow(float, float, float, float, float, float)
    */
-  void on_actionLookAt_triggered();
+  void actionLookAt_triggered();
   //!Returns the position and orientation of the current camera frame.
     QString cameraString(CGAL::Three::Viewer_interface *v) const;
   /*! Prints the position and orientation of the current camera frame.

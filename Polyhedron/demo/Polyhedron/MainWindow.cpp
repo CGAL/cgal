@@ -1964,7 +1964,7 @@ void MainWindow::setLighting_triggered()
   viewer->setLighting();
 }
 
-void MainWindow::on_actionLookAt_triggered()
+void MainWindow::actionLookAt_triggered()
 {
   Show_point_dialog dialog(this);
   dialog.setWindowTitle(tr("Look at..."));
@@ -2440,7 +2440,7 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer=NULL)
     connect(ui->actionRecenterScene, SIGNAL(triggered()),
             this, SLOT(on_actionRecenterScene_triggered()));
     connect(ui->actionLookAt, SIGNAL(triggered()),
-            this, SLOT(on_actionLookAt_triggered()));
+            this, SLOT(actionLookAt_triggered()));
     connect(ui->actionDumpCamera, SIGNAL(triggered()),
             this, SLOT(on_actionDumpCamera_triggered()));
     connect(ui->actionCopyCamera, SIGNAL(triggered()),
