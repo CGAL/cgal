@@ -1921,6 +1921,22 @@ private: //--------------------------------------------------- property handling
   }
   /// @}
 
+#if defined(CGAL_TEST_SUITE)
+  Vertex_index vertex_freelist() const
+  {
+    return Vertex_index(vertices_freelist_);
+  }
+  
+  Face_index face_freelist() const
+  {
+    return Face_index(faces_freelist_);
+  }
+  
+  Edge_index edge_freelist() const
+  {
+    return Edge_index(edges_freelist_>>1);
+  }
+#endif
   
 private: //--------------------------------------------------- helper functions
 
