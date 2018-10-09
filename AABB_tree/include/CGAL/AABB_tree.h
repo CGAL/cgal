@@ -156,9 +156,7 @@ namespace CGAL {
     /// `build()` explicitly to ensure that the next call to
     /// query functions will not trigger the reconstruction of the
     /// data structure.
-    /// The parameter pack `T` is of any types
-    /// such that `Primitive` has a constructor with the following signature:
-    /// `Primitive(%InputIterator, T...)`. A call to `AABBTraits::set_shared_data(t...)`
+    /// A call to `AABBTraits::set_shared_data(t...)`
     /// is made using the internally stored traits.
     /// For compilers that do not support variadic templates,
     /// overloads up to 5 template arguments are provided.
@@ -1130,7 +1128,7 @@ public:
 
 			// constructs the tree
 			m_p_root_node->expand(m_primitives.begin(), m_primitives.end(),
-			m_primitives.size(), m_traits);
+					      m_primitives.size(), m_traits);
 		}
 
 
