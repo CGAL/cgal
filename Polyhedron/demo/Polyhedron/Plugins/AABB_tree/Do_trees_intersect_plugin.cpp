@@ -61,7 +61,7 @@ public:
     this->messageInterface = mi;
     this->scene = sc;
     this->mw = mw;
-    QAction *actionCreateTrees= new QAction(QString("Collision Detection Mode"), mw);
+    QAction *actionCreateTrees= new QAction(QString("Collision Detection"), mw);
     actionCreateTrees->setProperty("subMenuName", "Polygon Mesh Processing");
     actionCreateTrees->setProperty("submenuName", "AABB_tree");
     if(actionCreateTrees) {
