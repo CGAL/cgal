@@ -370,7 +370,7 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
       nb_points = positions_lines.size()/2;
     else
       nb_points = positions_lines.size();
-    nb_selected_points = positions_selected_normals.size();
+    nb_selected_points = m_points->nb_selected_points() * 3;
     //edges
     if(item->has_normals())
     {
@@ -794,15 +794,15 @@ drawPoints(CGAL::Three::Viewer_interface* viewer) const
     std::size_t real_size =
         getPointContainer(Priv::Points)->getFlatDataSize();
     getPointContainer(Priv::Points)->setFlatDataSize(ratio_displayed * real_size);
-    getPointContainer(Priv::Points)->draw( viewer, !d->m_points->has_colors());
     getPointContainer(Priv::Points)->setFlatDataSize(real_size);
+    getPointContainer(Priv::Points)->draw( viewer, !d->m_points->has_colors());
 
     real_size =
         getPointContainer(Priv::Selected_points)->getFlatDataSize();
     getPointContainer(Priv::Selected_points)->setColor(QColor(Qt::red));
     getPointContainer(Priv::Selected_points)->setFlatDataSize(ratio_displayed * real_size);
-    getPointContainer(Priv::Selected_points)->draw( viewer, true);
     getPointContainer(Priv::Selected_points)->setFlatDataSize(real_size);
+    getPointContainer(Priv::Selected_points)->draw( viewer, true);
   }
 
   viewer->setGlPointSize(point_size);
