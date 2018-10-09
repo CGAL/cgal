@@ -171,7 +171,7 @@ been implemented yet.
 \section Preliminaries_functor Functor Return Types
 
 \cgal functors support the
-<a href="http://www.boost.org/doc/libs/release/libs/utility/utility.htm#result_of">result_of</a>
+<a href="https://www.boost.org/doc/libs/release/libs/utility/utility.htm#result_of">result_of</a>
 protocol. If a functor `F` has the same return type across all
 overloads of `operator()`, the nested type
 `F::result_type` is defined to be that type. Otherwise the

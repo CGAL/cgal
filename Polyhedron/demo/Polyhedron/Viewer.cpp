@@ -3,6 +3,7 @@
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <QDebug>
+#include <QSettings>
 #include <QOpenGLShader>
 #include <QFileDialog>
 #include <QOpenGLShaderProgram>
@@ -14,11 +15,14 @@
 #include <QApplication>
 #include <QOpenGLDebugLogger>
 
+#include "ui_LightingDialog.h"
+
 #if defined(_WIN32)
 #include <QMimeData>
 #include <QByteArray>
 #include <QBuffer>
 #endif
+
 
 class Viewer_impl {
 public:
@@ -34,6 +38,14 @@ public:
   GLfloat gl_point_size;
   QVector4D clipbox[6];
   QPainter *painter;
+
+  // L i g h t i n g
+  QVector4D position;
+  QVector4D ambient;
+  QVector4D diffuse;
+  QVector4D specular;
+  float spec_power;
+  
   // M e s s a g e s
   QString message;
   bool _displayMessage;
@@ -88,10 +100,147 @@ public:
   QMatrix4x4 projectionMatrix;
   void sendSnapshotToClipboard(Viewer*);
 };
+
+class LightingDialog :
+    public QDialog,
+    public Ui::LightingDialog
+{
+  Q_OBJECT
+public: 
+  QColor ambient, diffuse, specular;
+  LightingDialog(Viewer_impl* d)
+  {
+    setupUi(this);
+    position_lineEdit->setText(QString("%1,%2,%3")
+                               .arg(d->position.x())
+                               .arg(d->position.y())
+                               .arg(d->position.z()));    
+    QPalette palette;
+    ambient=QColor(255*d->ambient.x(), 
+                   255*d->ambient.y(), 
+                   255*d->ambient.z());
+    palette.setColor(QPalette::Button,ambient);
+    ambientButton->setPalette(palette);
+    
+    diffuse=QColor(255*d->diffuse.x(), 
+                   255*d->diffuse.y(), 
+                   255*d->diffuse.z());
+    palette.setColor(QPalette::Button,diffuse);
+    diffuseButton->setPalette(palette);
+    
+    specular=QColor(255*d->specular.x(), 
+                    255*d->specular.y(), 
+                    255*d->specular.z());
+    palette.setColor(QPalette::Button,specular);
+    specularButton->setPalette(palette);
+    spec_powrSlider->setValue(static_cast<int>(d->spec_power));
+    
+    connect(&ambient_dial, &QColorDialog::currentColorChanged, this, &LightingDialog::ambient_changed );
+    connect(&diffuse_dial, &QColorDialog::currentColorChanged, this, &LightingDialog::diffuse_changed );
+    connect(&spec_dial, &QColorDialog::currentColorChanged, this,    &LightingDialog::specular_changed);
+    
+    connect(ambientButton, &QPushButton::clicked, 
+            [this](){
+      ambient_dial.setCurrentColor(ambient);
+      ambient_dial.exec();
+      ambient = ambient_dial.selectedColor();
+      QPalette palette;
+      palette.setColor(QPalette::Button, ambient);
+      ambientButton->setPalette(palette);
+    });
+    connect(diffuseButton, &QPushButton::clicked, 
+            [this](){
+      diffuse_dial.setCurrentColor(diffuse);
+      diffuse_dial.exec();
+      diffuse = diffuse_dial.selectedColor();
+      QPalette palette;
+      palette.setColor(QPalette::Button, diffuse);
+      diffuseButton->setPalette(palette);
+    });
+    connect(specularButton, &QPushButton::clicked, 
+            [this](){
+      spec_dial.setCurrentColor(specular);
+      spec_dial.exec();
+      specular = spec_dial.selectedColor();
+      QPalette palette;
+      palette.setColor(QPalette::Button, specular);
+      specularButton->setPalette(palette);
+    });
+    
+    //D e f a u l t - S e t t i n g s
+    connect(buttonBox->button(QDialogButtonBox::StandardButton::RestoreDefaults), &QPushButton::clicked,
+            [this](){
+      position_lineEdit->setText(QString("0,0,1"));
+      ambient=QColor(77,77,77);
+      diffuse=QColor(204,204,204);
+      specular=QColor(0,0,0);
+      spec_powrSlider->setValue(51);
+      QPalette palette;
+      palette.setColor(QPalette::Button, ambient);
+      ambientButton->setPalette(palette);
+      palette.setColor(QPalette::Button, diffuse);
+      diffuseButton->setPalette(palette);
+      palette.setColor(QPalette::Button, specular);
+      specularButton->setPalette(palette);
+    });
+  }
+private Q_SLOTS:
+  void diffuse_changed()
+  {
+    diffuse = diffuse_dial.currentColor();
+    s_diffuse_changed(); 
+  }
+  void ambient_changed()
+  {
+    ambient = ambient_dial.currentColor();
+    s_ambient_changed(); 
+  }
+  void specular_changed()
+  {
+    specular = spec_dial.currentColor();
+    s_specular_changed();
+  }
+Q_SIGNALS:
+  void s_diffuse_changed();
+  void s_ambient_changed();
+  void s_specular_changed();
+private:
+  QColorDialog diffuse_dial;
+  QColorDialog ambient_dial;
+  QColorDialog spec_dial;
+};
+
 Viewer::Viewer(QWidget* parent, bool antialiasing)
   : CGAL::Three::Viewer_interface(parent)
 {
   d = new Viewer_impl;
+  QSettings viewer_settings;
+  // enable anti-aliasing
+  QString cam_pos = viewer_settings.value("cam_pos", QString("0.0,0.0,1.0")).toString();
+  d->position = QVector4D(cam_pos.split(",").at(0).toFloat(),
+                          cam_pos.split(",").at(1).toFloat(),
+                          cam_pos.split(",").at(2).toFloat(),
+                          1.0f);
+  
+  QString ambient = viewer_settings.value("ambient", QString("0.4,0.4,0.4")).toString();
+  d->ambient = QVector4D(ambient.split(",").at(0).toFloat(),
+                         ambient.split(",").at(1).toFloat(),
+                         ambient.split(",").at(2).toFloat(),
+                         1.0f);
+  
+  QString diffuse = viewer_settings.value("diffuse", QString("1.0,1.0,1.0")).toString();
+  d->diffuse = QVector4D(diffuse.split(",").at(0).toFloat(),
+                         diffuse.split(",").at(1).toFloat(),
+                         diffuse.split(",").at(2).toFloat(),
+                         1.0f);
+  
+  QString specular = viewer_settings.value("specular", QString("0.0,0.0,0.0")).toString();
+  d->specular = QVector4D(specular.split(",").at(0).toFloat(),
+                          specular.split(",").at(1).toFloat(),
+                          specular.split(",").at(2).toFloat(),
+                          1.0f);
+  
+  d->spec_power = viewer_settings.value("spec_power", 51.8).toFloat();
   d->scene = 0;
   d->projection_is_ortho = false;
   d->initialized = false;
@@ -155,6 +304,29 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
 
 Viewer::~Viewer()
 {
+    QSettings viewer_settings;
+    viewer_settings.setValue("cam_pos",
+                             QString("%1,%2,%3")
+                             .arg(d->position.x())
+                             .arg(d->position.y())
+                             .arg(d->position.z()));
+    viewer_settings.setValue("ambient",
+                             QString("%1,%2,%3")
+                             .arg(d->ambient.x())
+                             .arg(d->ambient.y())
+                             .arg(d->ambient.z()));
+    viewer_settings.setValue("diffuse",
+                             QString("%1,%2,%3")
+                             .arg(d->diffuse.x())
+                             .arg(d->diffuse.y())
+                             .arg(d->diffuse.z()));
+    viewer_settings.setValue("specular",
+                             QString("%1,%2,%3")
+                             .arg(d->specular.x())
+                             .arg(d->specular.y())
+                             .arg(d->specular.z()));
+    viewer_settings.setValue("spec_power",
+                             d->spec_power);
   delete d;
 }
 
@@ -639,12 +811,6 @@ void Viewer::attribBuffers(int program_name) const {
     for (int i=0; i<16; ++i)
         mvp_mat.data()[i] = GLfloat(d_mat[i]);
    
-    QVector4D position(0.0f,0.0f,1.0f, 1.0f );
-    QVector4D ambient(0.4f, 0.4f, 0.4f, 0.4f);
-    // Diffuse
-    QVector4D diffuse(1.0f, 1.0f, 1.0f, 1.0f);
-    // Specular
-    QVector4D specular(0.0f, 0.0f, 0.0f, 1.0f);
     QOpenGLShaderProgram* program = getShaderProgram(program_name);
     program->bind();
     program->setUniformValue("point_size", getGlPointSize());
@@ -662,6 +828,10 @@ void Viewer::attribBuffers(int program_name) const {
       program->setUniformValue("clipbox1", clipbox1);
       program->setUniformValue("clipbox2", clipbox2);
     }
+    QVector4D light_pos(d->position.x(),
+                        d->position.y(),
+                        d->position.z(),
+                        1.0f);
     switch(program_name)
     {
     case PROGRAM_WITH_LIGHT:
@@ -670,6 +840,7 @@ void Viewer::attribBuffers(int program_name) const {
       
       program->setUniformValue("alpha", 1.0f); //overriden in item draw() if necessary
     }
+
     switch(program_name)
     {
     case PROGRAM_WITH_LIGHT:
@@ -681,11 +852,11 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_SPHERES:
     case PROGRAM_OLD_FLAT:
     case PROGRAM_FLAT:
-        program->setUniformValue("light_pos", position);
-        program->setUniformValue("light_diff",diffuse);
-        program->setUniformValue("light_spec", specular);
-        program->setUniformValue("light_amb", ambient);
-        program->setUniformValue("spec_power", 51.8f);
+        program->setUniformValue("light_pos", light_pos);
+        program->setUniformValue("light_diff",d->diffuse);
+        program->setUniformValue("light_spec", d->specular);
+        program->setUniformValue("light_amb", d->ambient);
+        program->setUniformValue("spec_power", d->spec_power);
         program->setUniformValue("is_two_side", d->twosides);
         break;
     }
@@ -1365,7 +1536,112 @@ void Viewer::messageLogged(QOpenGLDebugMessage msg)
   qDebug() << qPrintable(error) << "\n" << qPrintable(msg.message()) << "\n";
 }
 
+void Viewer::setLighting()
+{
+  
+  //save current settings;
+  float prev_spec = d->spec_power;
+  QVector4D prev_pos = d->position;
+  QVector4D prev_ambient = d->ambient;
+  QVector4D prev_diffuse = d->diffuse;
+  QVector4D prev_spec_color = d->specular;
+  //open dialog
+  LightingDialog* dialog = new LightingDialog(d);
+  //set specular
+  connect(dialog->spec_powrSlider, &QSlider::valueChanged,
+          [this, dialog]()
+  {
+    d->spec_power = dialog->spec_powrSlider->value();
+    update();
+  });
+  //set position
+  connect(dialog->position_lineEdit, &QLineEdit::editingFinished,
+          [this, dialog]()
+  {
+    QStringList list = dialog->position_lineEdit->text().split(QRegExp(","), QString::SkipEmptyParts);
+    if (list.isEmpty()) return;
+    if (list.size()!=3){
+      QMessageBox *msgBox = new QMessageBox;
+      msgBox->setWindowTitle("Error");
+      msgBox->setText("ERROR : Input should consists of 3 floats.");
+      msgBox->exec();
+      return;
+    }
+    double coords[3];
+    for(int j=0; j<3; ++j)
+    {
+      bool ok;
+      coords[j] = list.at(j).toFloat(&ok);
+      if(!ok)
+      {
+          QMessageBox *msgBox = new QMessageBox;
+          msgBox->setWindowTitle("Error");
+          msgBox->setText("ERROR : Coordinates are invalid.");
+          msgBox->exec();
+          return;
+      }
+    }
+    d->position = QVector4D(coords[0], coords[1], coords[2], 1.0f);
+    update();
+  });
+  
+
+  //set ambient
+  connect(dialog, &LightingDialog::s_ambient_changed,
+          [this, dialog](){
+    d->ambient=QVector4D(dialog->ambient.redF(), 
+                         dialog->ambient.greenF(), 
+                         dialog->ambient.blueF(), 
+                         1.0f);
+    update();
+  });
+          
+  //set diffuse
+  connect(dialog, &LightingDialog::s_diffuse_changed,
+          [this, dialog](){
+    d->diffuse=QVector4D(dialog->diffuse.redF(), 
+                         dialog->diffuse.greenF(), 
+                         dialog->diffuse.blueF(), 
+                         1.0f);
+    update();
+  });
+  //set specular
+  connect(dialog, &LightingDialog::s_specular_changed,
+          [this, dialog](){
+    d->specular=QVector4D(dialog->specular.redF() , 
+                         dialog->specular.greenF(), 
+                         dialog->specular.blueF() , 
+                         1.0f);
+    update();
+    
+  });
+  
+  //reset default
+  connect(dialog->buttonBox->button(QDialogButtonBox::StandardButton::RestoreDefaults), &QPushButton::clicked,
+          [this](){
+    d->position = QVector4D(0,0,1,1);
+    d->ambient=QVector4D(77.0/255,77.0/255,77.0/255, 1.0);
+    d->diffuse=QVector4D(204.0/255,204.0/255,204.0/255,1.0);
+    d->specular=QVector4D(0,0,0,1.0);
+    d->spec_power = 51;    
+    update();
+    
+  });
+  if(!dialog->exec())
+  {
+    //restore previous settings
+    d->spec_power = prev_spec;
+    d->position = prev_pos;
+    d->ambient = prev_ambient;
+    d->diffuse = prev_diffuse;
+    d->specular = prev_spec_color;
+    return;
+  }
+}
+
 void Viewer::setGlPointSize(const GLfloat &p) { d->gl_point_size = p; }
 
 const GLfloat& Viewer::getGlPointSize() const { return d->gl_point_size; }
+
+#include "Viewer.moc"
 

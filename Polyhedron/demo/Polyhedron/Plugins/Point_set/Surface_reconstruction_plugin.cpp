@@ -893,6 +893,7 @@ private:
         reco_item->setName(tr("%1 (RANSAC-based reconstruction)").arg(scene->item(index)->name()));
         reco_item->setColor(Qt::magenta);
         reco_item->setRenderingMode(FlatPlusEdges);
+        reco_item->invalidateOpenGLBuffers();
         scene->addItem(reco_item);
       }
       else
@@ -1090,6 +1091,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
                 reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
                 reco_item->setColor(Qt::lightGray);
                 reco_item->setRenderingMode(FlatPlusEdges);
+                reco_item->invalidateOpenGLBuffers();
                 scene->addItem(reco_item);
               }
               else
@@ -1122,6 +1124,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
                 reco_item->setColor(Qt::lightGray);
                 reco_item->setRenderingMode(FlatPlusEdges);
                 scene->addItem(reco_item);
+                reco_item->invalidateOpenGLBuffers();
               }
               else
               {
@@ -1173,6 +1176,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
                 Scene_polyhedron_item* reco_item = new Scene_polyhedron_item(pRemesh);
                 reco_item->setName(tr("%1 (poisson)").arg(pts_item->name()));
                 reco_item->setColor(Qt::lightGray);
+                reco_item->invalidateOpenGLBuffers();
                 scene->addItem(reco_item);
               }
               else if(smRemesh)
@@ -1232,6 +1236,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::advancing_front_reconstructi
         reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
         reco_item->setColor(Qt::lightGray);
         reco_item->setRenderingMode(FlatPlusEdges);
+        reco_item->invalidateOpenGLBuffers();
         scene->addItem(reco_item);
       }
       else

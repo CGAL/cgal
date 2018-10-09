@@ -268,7 +268,7 @@ public:
   {
     // protects against inserting a zero length constraint
     if(va == vb){
-    return Constraint_id(NULL);
+      return Constraint_id(NULL);
     }
     // protects against inserting twice the same constraint
     Constraint_id cid = hierarchy.insert_constraint(va, vb);

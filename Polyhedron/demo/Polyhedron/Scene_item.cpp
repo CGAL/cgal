@@ -135,6 +135,11 @@ QMenu* CGAL::Three::Scene_item::contextMenu()
     return defaultContextMenu;
 }
 
+void CGAL::Three::Scene_item::resetMenu()
+{
+  delete defaultContextMenu;
+  defaultContextMenu = nullptr;
+}
 CGAL::Three::Scene_group_item* CGAL::Three::Scene_item::parentGroup() const {
   return parent_group;
 }

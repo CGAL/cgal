@@ -460,9 +460,9 @@ public:
 
     Facet_iterator facets_begin() { return tds().facets_begin(); }
     Facet_iterator facets_end() { return tds().facets_end(); }
-    Facet_iterator finite_facets_begin()
+    Finite_facet_iterator finite_facets_begin()
     { return Finite_facet_iterator(Finiteness_predicate(*this), facets_begin(), facets_end()); }
-    Facet_iterator finite_facets_end()
+    Finite_facet_iterator finite_facets_end()
     { return Finite_facet_iterator(Finiteness_predicate(*this), facets_end(), facets_end()); }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - SOME PREDICATE FUNCTORS

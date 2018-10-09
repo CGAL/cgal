@@ -120,6 +120,9 @@ public Q_SLOTS:
   {
     setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, CGAL::qglviewer::NO_CLICK_ACTION);
   }
+
+  void setLighting();
+
   void messageLogged(QOpenGLDebugMessage);
 
 protected:

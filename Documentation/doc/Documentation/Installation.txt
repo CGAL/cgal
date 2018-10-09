@@ -593,6 +593,18 @@ In \cgal, \sc{OpenCV} is used by the \ref PkgClassification package.
 
 The \sc{OpenCV} web site is <A HREF="http://opencv.org/">`http://opencv.org/`</A>.
 
+\subsection thirdpartyMETIS METIS
+
+\sc{METIS} is a library developed by the <A HREF="http://glaros.dtc.umn.edu/gkhome/">Karypis Lab</A>
+and designed to partition graphs and produce fill-reducing matrix orderings.
+
+\cgal offers wrappers around some of the methods of the \sc{METIS} library
+to allow the partitioning of graphs that are models of the concepts of the
+<A HREF="http://www.boost.org/libs/graph/doc/index.html">Boost Graph Library</A>,
+and, by extension, of surface meshes (see Section \ref BGLPartitioning of the package \ref PkgBGLSummary).
+
+More information is available on the METIS library
+at <A HREF="http://glaros.dtc.umn.edu/gkhome/metis/metis/overview">`http://glaros.dtc.umn.edu/gkhome/metis/metis/overview`</A>.
 
 \section secbuilding Building CGAL 
 

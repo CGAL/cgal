@@ -781,6 +781,13 @@ void regularize_planes (const PointRange& points,
 
 /// \cond SKIP_IN_MANUAL
 
+// Workaround for bug reported here:
+// https://developercommunity.visualstudio.com/content/problem/340310/unaccepted-typename-that-other-compilers-require.html
+#if _MSC_VER == 1915
+#define CGAL_TYPENAME_FOR_MSC
+#else
+#define CGAL_TYPENAME_FOR_MSC typename
+#endif
 
 // This variant deduces the kernel from the point property map.
 template <typename PointRange,
@@ -802,16 +809,17 @@ void regularize_planes (const PointRange& points,
                         typename Kernel_traits
                         <typename boost::property_traits
                         <PointMap>::value_type>::Kernel::Vector_3 symmetry_direction
-                        = typename Kernel_traits
+                        = CGAL_TYPENAME_FOR_MSC Kernel_traits
                           <typename boost::property_traits
                           <PointMap>::value_type>::Kernel::Vector_3
-                        (typename Kernel_traits
+                        (
+                         CGAL_TYPENAME_FOR_MSC Kernel_traits
                          <typename boost::property_traits
                          <PointMap>::value_type>::Kernel::FT(0.),
-                         typename Kernel_traits
+                         CGAL_TYPENAME_FOR_MSC Kernel_traits
                          <typename boost::property_traits
                          <PointMap>::value_type>::Kernel::FT(0.),
-                         typename Kernel_traits
+                         CGAL_TYPENAME_FOR_MSC Kernel_traits
                          <typename boost::property_traits
                          <PointMap>::value_type>::Kernel::FT(1.)))
 {
@@ -823,6 +831,10 @@ void regularize_planes (const PointRange& points,
                      regularize_coplanarity, regularize_axis_symmetry,
                      tolerance_angle, tolerance_coplanarity, symmetry_direction);
 }
+
+#ifdef CGAL_TYPENAME_FOR_MSC
+#undef CGAL_TYPENAME_FOR_MSC
+#endif
 
 
 /// \endcond
