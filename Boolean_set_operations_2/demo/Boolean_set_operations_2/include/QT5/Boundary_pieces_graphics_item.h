@@ -16,83 +16,75 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s)     : Apurva Bhatt <response2apurva@gmail.com>
+// Author(s) : Apurva Bhatt <response2apurva@gmail.com>
+//             Efi Fogel <efifogel@gmain.com>
 
 #ifndef CGAL_QT_BOUNDARY_PIECES_GRAPHICS_ITEM_H
 #define CGAL_QT_BOUNDARY_PIECES_GRAPHICS_ITEM_H
 
-#include <QT5/Piecewise_graphics_item_base.h>
 #include <iostream>
 
-using namespace std;
-//This class is used by Graphics_view_circular_polygon and Graphics_view_linear_polygon. It helps them in drawing the outer boundary of a set of polygon_with_holes. It helps in GUI 
-namespace CGAL {
+#include "QT5/Piecewise_graphics_item_base.h"
 
+using namespace std;
+//This class is used by Graphics_view_circular_polygon and Graphics_view_linear_polygon. It helps them in drawing the outer boundary of a set of polygon_with_holes. It helps in GUI
+
+namespace CGAL {
 namespace Qt {
 
-template <class Boundary_pieces_, class Draw_piece_, class Piece_bbox_>
-class Boundary_pieces_graphics_item : public Piecewise_graphics_item_base
-{
+template <typename Boundary_pieces_, typename Draw_piece_, typename Piece_bbox_>
+class Boundary_pieces_graphics_item : public Piecewise_graphics_item_base {
   //vector of Gps_traits::Curves_2
-  typedef Boundary_pieces_ Boundary_pieces ;
-  
-  typedef Draw_piece_      Draw_piece ;
-  typedef Piece_bbox_      Piece_bbox ;
-  
-  typedef typename Boundary_pieces::const_iterator Piece_const_iterator ;
+  typedef Boundary_pieces_ Boundary_pieces;
+
+  typedef Draw_piece_      Draw_piece;
+  typedef Piece_bbox_      Piece_bbox;
+
+  typedef typename Boundary_pieces::const_iterator Piece_const_iterator;
 
 public:
-
   //constructor
-  Boundary_pieces_graphics_item( Boundary_pieces*    aBoundary,
-                                 Draw_piece const& aPieceDrawer = Draw_piece(),
-                                 Piece_bbox const& aPieceBBox   = Piece_bbox()
-                               )
-    :
-     m_boundary   (aBoundary)
-    ,m_piece_drawer(aPieceDrawer)
-    ,m_piece_BBox  (aPieceBBox)
-  {}  
+  Boundary_pieces_graphics_item(Boundary_pieces* aBoundary,
+                                Draw_piece const& aPieceDrawer = Draw_piece(),
+                                Piece_bbox const& aPieceBBox = Piece_bbox()) :
+    m_boundary(aBoundary),
+    m_piece_drawer(aPieceDrawer),
+    m_piece_BBox(aPieceBBox)
+  {}
 
 public:
+  virtual bool isModelEmpty() const
+  { return !m_boundary || (m_boundary->size() == 0); }
 
-  virtual bool isModelEmpty() const 
-  { 
-    return !m_boundary || m_boundary->size() == 0 ; 
-  }
-  
 protected:
-  
+
   //for updating the bbox
   virtual void update_bbox( Bbox_builder& aBboxBuilder)
   {
-    if ( m_boundary ) 
-    {
+    if (m_boundary) {
       //cout<<"update bbox of bgi"<<endl;
-      for( Piece_const_iterator pit = m_boundary->begin(); pit != m_boundary->end(); ++ pit )
+      for (auto pit = m_boundary->begin(); pit != m_boundary->end(); ++ pit)
         aBboxBuilder.add(m_piece_BBox(*pit));
-    }  
-  }    
+    }
+  }
 
   //for drawing the polygon
-  virtual void draw_model ( QPainterPath& aPath ) 
+  virtual void draw_model ( QPainterPath& aPath )
   {
-    if ( m_boundary )
-    {
-      int c = 0 ;
+    if (m_boundary) {
+      int c = 0;
       //cout<<"draw model of bgi"<<endl;
-      for( Piece_const_iterator pit = m_boundary->begin(); pit != m_boundary->end(); ++ pit, ++c )
-        m_piece_drawer(*pit,aPath,c);
-    }  
+      for (auto pit = m_boundary->begin(); pit != m_boundary->end(); ++ pit, ++c)
+        m_piece_drawer(*pit, aPath, c);
+    }
   }
 
 protected:
-
   //vector of Gps_traits::Curves_2
   Boundary_pieces* m_boundary;
-  
-  Draw_piece       m_piece_drawer ;
-  Piece_bbox       m_piece_BBox ;    
+
+  Draw_piece m_piece_drawer;
+  Piece_bbox m_piece_BBox;
 };
 
 

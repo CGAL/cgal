@@ -16,112 +16,111 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s)     : Apurva Bhatt <response2apurva@gmail.com>
+// Author(s) : Apurva Bhatt <response2apurva@gmail.com>
+//             Efi Fogel <efifogel@gmain.com>
 
 #ifndef CGAL_QT_PIECEWISE_SET_GRAPHICS_ITEM_H
 #define CGAL_QT_PIECEWISE_SET_GRAPHICS_ITEM_H
 
-#include <QT5/Piecewise_region_graphics_item.h>
-//#include <iostream>
-
-//using namespace std;
+#include "QT5/Piecewise_region_graphics_item.h"
 
 //This class contains the implementaion of setting the classes which draws the polygons
 namespace CGAL {
-
 namespace Qt {
 
-template <class Piecewise_set_, class Gps_traits,class Draw_piece_, class Piece_bbox_>
-class Piecewise_set_graphics_item : public Piecewise_region_graphics_item< Gps_traits, Draw_piece_, Piece_bbox_> 
+template <typename Piecewise_set_, typename Gps_traits, typename Draw_piece_,
+          typename Piece_bbox_>
+class Piecewise_set_graphics_item :
+    public Piecewise_region_graphics_item< Gps_traits, Draw_piece_, Piece_bbox_>
 {
-  //Gps_traits class contains traits on which the operations are going to be conducted
-  
+  //Gps_traits class contains traits on which the operations are going to be
+  // conducted
+
   //general polygon set
-  typedef Piecewise_set_ Piecewise_set ;
-  
-  typedef Draw_piece_    Draw_piece ;
-  typedef Piece_bbox_    Piece_bbox ;
-  
+  typedef Piecewise_set_        Piecewise_set;
+
+  typedef Draw_piece_           Draw_piece;
+  typedef Piece_bbox_           Piece_bbox;
+
   //polygon with holes
-  typedef typename Gps_traits::Polygon_with_holes_2 Region ;
-  
-  // base is just used for initializing Piecewise_region_graphics_item no use of it in the current class
-  typedef Piecewise_region_graphics_item<Gps_traits, Draw_piece, Piece_bbox> Base ;
- 
+  typedef typename Gps_traits::Polygon_with_holes_2 Region;
+
+  // base is just used for initializing Piecewise_region_graphics_item no use
+  // of it in the current class
+  typedef Piecewise_region_graphics_item<Gps_traits, Draw_piece, Piece_bbox>
+                                Base;
+
   //a container for polygon with holes
-  typedef std::vector<Region> Region_vector ;
+  typedef std::vector<Region> Region_vector;
 
   //an itertor for polygon with holes container
-  typedef typename Region_vector::const_iterator Region_const_iterator ;
-  
-public:
+  typedef typename Region_vector::const_iterator Region_const_iterator;
 
+public:
   //constructor
-  Piecewise_set_graphics_item( Piecewise_set* aSet,Gps_traits Traits, Draw_piece const& aPieceDrawer = Draw_piece(), Piece_bbox const& aPieceBBox = Piece_bbox())
-    :    Base(aPieceDrawer,aPieceBBox) ,m_set(aSet), m_traits(Traits)
-  {
-  //cout<<"in psgi"<<endl;
-  
-  }  
+  Piecewise_set_graphics_item(Piecewise_set* aSet, Gps_traits Traits,
+                              Draw_piece const& aPieceDrawer = Draw_piece(),
+                              Piece_bbox const& aPieceBBox = Piece_bbox())
+    :
+    Base(aPieceDrawer,aPieceBBox),
+    m_set(aSet),
+    m_traits(Traits)
+  {}
 
 public:
+  virtual bool isModelEmpty() const { return !m_set || m_set->is_empty(); }
 
-  virtual bool isModelEmpty() const { return !m_set || m_set->is_empty() ; }
-  
 protected:
-  
   //updating the boundary of bbox
-  virtual void update_bbox( Piecewise_graphics_item_base::Bbox_builder& aBboxBuilder)
+  virtual void update_bbox(Piecewise_graphics_item_base::Bbox_builder& aBboxBuilder)
   {
-    if ( m_set ) 
-      update_set_bbox(*m_set, aBboxBuilder ) ;
-  }    
-
-  //for drawing polygon with holes set
-  virtual void draw_model ( QPainterPath& aPath ) 
-  {
-    if ( m_set )
-      draw_set(*m_set,aPath);  
+    if (m_set)
+      update_set_bbox(*m_set, aBboxBuilder);
   }
 
-  void update_set_bbox(Piecewise_set const& aSet, Piecewise_graphics_item_base::Bbox_builder& aBboxBuilder);
-  void draw_set( Piecewise_set const& aSet, QPainterPath& aPath ) ;
-  
-protected:
+  //for drawing polygon with holes set
+  virtual void draw_model (QPainterPath& aPath)
+  {
+    if (m_set) draw_set(*m_set,aPath);
+  }
 
+  void update_set_bbox(Piecewise_set const& aSet,
+                       Piecewise_graphics_item_base::Bbox_builder& aBboxBuilder);
+  void draw_set(Piecewise_set const& aSet, QPainterPath& aPath);
+
+protected:
   //general polygon set
   Piecewise_set* m_set;
   //Gps_traits
   Gps_traits m_traits;
-  
 };
 
 //updating the boundary of bbox
-template <class S, class P, class D,class F>
-void Piecewise_set_graphics_item<S,P,D,F>::update_set_bbox( Piecewise_set const& aSet, Piecewise_graphics_item_base::Bbox_builder& aBboxBuilder )
+template <typename S, typename P, typename D, typename F>
+void Piecewise_set_graphics_item<S, P, D, F>::
+update_set_bbox(Piecewise_set const& aSet,
+                Piecewise_graphics_item_base::Bbox_builder& aBboxBuilder)
 {
-  Region_vector vec ;
-  
-  aSet.polygons_with_holes( std::back_inserter(vec) ) ;
-  
+  Region_vector vec;
+
+  aSet.polygons_with_holes(std::back_inserter(vec));
+
   //cout<<"inside update_set_bbox"<<endl;
-  for( Region_const_iterator rit = vec.begin(); rit != vec.end() ; ++ rit )
-  {
+  for (auto rit = vec.begin(); rit != vec.end(); ++rit)
     this->update_region_bbox(*rit,aBboxBuilder);
-    //cout<<"updated region bbox ";
-  }
 }
 
 //for drawing polygon with holes set
-template <class S, class P, class D, class F>
-void Piecewise_set_graphics_item<S,P,D,F>::draw_set( Piecewise_set const& aSet, QPainterPath& aPath )
+template <typename S, typename P, typename D, typename F>
+void Piecewise_set_graphics_item<S, P, D, F>::
+draw_set(Piecewise_set const& aSet, QPainterPath& aPath)
 {
-  Region_vector vec ;
-  
-  aSet.polygons_with_holes( std::back_inserter(vec) ) ;
-  
+  Region_vector vec;
+
+  aSet.polygons_with_holes(std::back_inserter(vec));
+
   //cout<<"inside draw_set of psr"<<endl;
-  for( Region_const_iterator rit = vec.begin(); rit != vec.end() ; ++ rit )
+  for (auto rit = vec.begin(); rit != vec.end(); ++rit)
     this->draw_region(*rit,aPath);
 }
 

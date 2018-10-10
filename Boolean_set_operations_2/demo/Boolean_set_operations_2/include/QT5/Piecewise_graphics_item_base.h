@@ -16,7 +16,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s)     : Apurva Bhatt <response2apurva@gmail.com>
+// Author(s) : Apurva Bhatt <response2apurva@gmail.com>
+//             Efi Fogel <efifogel@gmain.com>
 
 #ifndef CGAL_QT_PIECEWISE_GRAPHICS_ITEM_BASE_H
 #define CGAL_QT_PIECEWISE_GRAPHICS_ITEM_BASE_H
@@ -28,27 +29,25 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Qt/GraphicsItem.h>
 #include <CGAL/Qt/Converter.h>
-#include "Typedefs.h"
 
 #include <QPainter>
 #include <QBrush>
 #include <QPen>
 
+#include "Typedefs.h"
+
 //This class contains all the necessary drawing tools needed by the demo
 namespace CGAL {
-
 namespace Qt {
 
-class Piecewise_graphics_item_base : public GraphicsItem
-{
+class Piecewise_graphics_item_base : public GraphicsItem {
 protected:
   //constructor
   Piecewise_graphics_item_base() {}
-  
-public:
 
+public:
   void updateBoundingBox();
-  
+
   //updating the box
   void modelChanged()
   {
@@ -56,62 +55,59 @@ public:
     //updates the widget
     update();
   }
-  
-  QRectF boundingRect() const { return m_bounding_rect ; }
-  
-  void paint(QPainter* aPainter, const QStyleOptionGraphicsItem* aOption, QWidget* aWidget);
-  
+
+  QRectF boundingRect() const { return m_bounding_rect; }
+
+  void paint(QPainter* aPainter, const QStyleOptionGraphicsItem* aOption,
+             QWidget* aWidget);
+
   const QBrush& brush() const { return m_brush; }
-  
-  void setBrush(const QBrush& aBrush ) { m_brush = aBrush; }
+
+  void setBrush(const QBrush& aBrush) { m_brush = aBrush; }
 
   const QPen& pen() const{ return m_pen; }
 
   void setPen(const QPen& aPen) { m_pen = aPen; }
 
 protected:
-
   //a converter
-  typedef Converter< Kernel > ToQtConverter;
-  
-  //for adding 2 bbox and initializing if its null
-  struct Bbox_builder
-  {
-    void add ( Bbox_2 const& aBbox ) 
-    {
-      if ( bbox )
-           bbox = *bbox + aBbox;
-      else bbox =         aBbox;
-    }
-    boost::optional<Bbox_2> bbox ;
-  } ;
+  typedef Converter<Kernel> ToQtConverter;
 
-  virtual bool isModelEmpty() const = 0 ;
-  
-  virtual void draw_model ( QPainterPath& aPath ) = 0 ;
-  
-  virtual void update_bbox( Bbox_builder& aBBoxBuilder ) = 0 ;
+  //for adding 2 bbox and initializing if its null
+  struct Bbox_builder {
+    void add (Bbox_2 const& aBbox)
+    {
+      if (bbox) bbox = *bbox + aBbox;
+      else bbox = aBbox;
+    }
+    boost::optional<Bbox_2> bbox;
+  };
+
+  virtual bool isModelEmpty() const = 0;
+
+  virtual void draw_model (QPainterPath& aPath) = 0;
+
+  virtual void update_bbox(Bbox_builder& aBBoxBuilder) = 0;
 
 protected:
-
   //qt5 drawing tools
   QRectF m_bounding_rect;
   QBrush m_brush;
-  QPen   m_pen;
+  QPen m_pen;
 };
 
 //
-void Piecewise_graphics_item_base::paint( QPainter* aPainter, const QStyleOptionGraphicsItem* aOption, QWidget* aWidget )
+void Piecewise_graphics_item_base::paint(QPainter* aPainter,
+                                         const QStyleOptionGraphicsItem* aOption,
+                                         QWidget* aWidget)
 {
   //if there is any data to draw
-  if(!isModelEmpty())
-  {
-    QPainterPath l_path ;
-    
+  if (!isModelEmpty()) {
+    QPainterPath l_path;
     draw_model(l_path);
-    
+
     //setting drawing tools
-    aPainter->setPen  (m_pen );
+    aPainter->setPen(m_pen);
     aPainter->setBrush(m_brush);
     //drawing l_path
     aPainter->drawPath(l_path);
@@ -123,25 +119,22 @@ void Piecewise_graphics_item_base::paint( QPainter* aPainter, const QStyleOption
 void Piecewise_graphics_item_base::updateBoundingBox()
 {
   //if there is any data to draw
-  if(!isModelEmpty())
-  {
+  if (!isModelEmpty()) {
     //"Prepares the item for a geometry change
     prepareGeometryChange();
     //update();
-    
-    Bbox_builder l_bbox_builder ;
-    
+
+    Bbox_builder l_bbox_builder;
+
     update_bbox(l_bbox_builder);
-    
+
     //if bbox exits convert it to qt applicable
-    if ( l_bbox_builder.bbox ) 
-    {
-      ToQtConverter to_Qt ;
+    if (l_bbox_builder.bbox) {
+      ToQtConverter to_Qt;
       m_bounding_rect = to_Qt(*l_bbox_builder.bbox);
-    }  
+    }
   }
 }
-
 
 } // namespace Qt
 } // namespace CGAL

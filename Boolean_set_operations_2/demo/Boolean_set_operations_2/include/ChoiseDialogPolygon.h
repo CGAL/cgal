@@ -13,6 +13,7 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // Author(s) : Saar Katz <kats.saar@gmail.com>
+//             Efi Fogel <efifogel@gmain.com>
 
 #ifndef CGAL_CHOISEDIALOGPOLYGON_H
 #define CGAL_CHOISEDIALOGPOLYGON_H
@@ -22,7 +23,7 @@
 #include "PolygonTableModel.h"
 
 namespace Ui {
-class ChoiseDialogPolygon;
+  class ChoiseDialogPolygon;
 }
 
 class ChoiseDialogPolygon : public QDialog
