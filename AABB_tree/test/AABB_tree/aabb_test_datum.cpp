@@ -16,7 +16,7 @@ typedef K::Triangle_3 Triangle;
 typedef CGAL::Surface_mesh<Point> Mesh;
 typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> Primitive;
 typedef CGAL::AABB_face_graph_triangle_primitive<Mesh,
-    CGAL::Default, CGAL::Tag_true, CGAL::Tag_true> Primitive_cached;
+    CGAL::Default, CGAL::Tag_false, CGAL::Tag_true> Primitive_cached;
 
 typedef CGAL::AABB_traits<K, Primitive> Traits;
 typedef CGAL::AABB_traits<K, Primitive_cached> Traits_cached;
