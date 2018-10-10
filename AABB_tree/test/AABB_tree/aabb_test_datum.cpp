@@ -15,15 +15,23 @@ typedef K::Point_3 Point;
 typedef K::Triangle_3 Triangle;
 typedef CGAL::Surface_mesh<Point> Mesh;
 typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> Primitive;
-typedef CGAL::AABB_face_graph_triangle_primitive<Mesh,
-    CGAL::Default, CGAL::Tag_false, CGAL::Tag_true> Primitive_cached;
-
 typedef CGAL::AABB_traits<K, Primitive> Traits;
-typedef CGAL::AABB_traits<K, Primitive_cached> Traits_cached;
 typedef CGAL::AABB_tree<Traits> Tree;
-typedef CGAL::AABB_tree<Traits_cached> Tree_cached;
-typedef Tree::Primitive_id Primitive_id;
-typedef Tree_cached::Primitive_id Primitive_id_cached;
+
+typedef CGAL::AABB_face_graph_triangle_primitive<Mesh,
+    CGAL::Default, CGAL::Tag_true, CGAL::Tag_true> Primitive2;
+typedef CGAL::AABB_traits<K, Primitive2> Traits2;
+typedef CGAL::AABB_tree<Traits2> Tree2;
+
+typedef CGAL::AABB_face_graph_triangle_primitive<Mesh,
+    CGAL::Default, CGAL::Tag_false, CGAL::Tag_true> Primitive3;
+typedef CGAL::AABB_traits<K, Primitive3> Traits3;
+typedef CGAL::AABB_tree<Traits3> Tree3;
+
+typedef CGAL::AABB_face_graph_triangle_primitive<Mesh,
+    CGAL::Default, CGAL::Tag_false, CGAL::Tag_false> Primitive4;
+typedef CGAL::AABB_traits<K, Primitive4> Traits4;
+typedef CGAL::AABB_tree<Traits4> Tree4;
 
 int main(void)
 {
@@ -37,15 +45,29 @@ int main(void)
   }
   
   Tree t1(faces(m).begin(), faces(m).end(), m);
-  Tree_cached t2(faces(m).begin(), faces(m).end(), m);
+  Tree2 t2(faces(m).begin(), faces(m).end(), m);
+  Tree3 t3(faces(m).begin(), faces(m).end(), m);
+  Tree4 t4(faces(m).begin(), faces(m).end(), m);
   
   t1.build();
   t2.build();
+  t3.build();
+  t4.build();
+  
   Primitive p1(faces(m).begin(), m);
-  Primitive_cached p2(faces(m).begin(), m);
+  Primitive2 p2(faces(m).begin(), m);
+  Primitive3 p3(faces(m).begin(), m);
+  Primitive4 p4(faces(m).begin(), m);
   Triangle tr1 = t1.datum(p1);
   Triangle tr2 = t2.datum(p2);
-  if(tr1 != tr2)
+  Triangle tr3 = t3.datum(p3);
+  Triangle tr4 = t4.datum(p4);
+  if(tr1 != tr2
+     || tr1 != tr3
+     || tr1 != tr4
+     || tr2 != tr3
+     || tr2 != tr4
+     || tr3 != tr4)
     return 1;
   return 0;
 }
