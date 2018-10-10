@@ -646,6 +646,18 @@ public:
 			else
 				return this->any_reference_point_and_id();
 		}
+		
+		//!
+		//! \brief datum
+		//! \param p
+		//! \return 
+		//!
+		typename internal::Primitive_helper<AABBTraits>::Datum_type 
+		datum(Primitive& p)const
+		{
+		  return internal::Primitive_helper<AABBTraits>::
+		      get_datum(p, this->traits());
+		}
 
 	private:
     //Traits class
