@@ -647,12 +647,16 @@ public:
 				return this->any_reference_point_and_id();
 		}
 		
-		//!
-		//! \brief datum
-		//! \param p
-		//! \return 
-		//!
+		//! Returns the datum (geometric object) represented `p`. 
+		//! The return type is 
+		//! - typename `Primitive::Datum_reference` if `Primitive` defines that type.
+		//! - typename `Primitive::Datum` if it doesn't.
+#ifndef DOXYGEN_RUNNING
 		typename internal::Primitive_helper<AABBTraits>::Datum_type 
+#else
+		unspecified_type
+#endif
+		
 		datum(Primitive& p)const
 		{
 		  return internal::Primitive_helper<AABBTraits>::
