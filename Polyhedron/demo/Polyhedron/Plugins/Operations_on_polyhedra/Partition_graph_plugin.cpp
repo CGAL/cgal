@@ -18,7 +18,6 @@
 #include <QAction>
 #include <QMenu>
 #include <QMainWindow>
-#include <QDockWidget>
 #include <QApplication>
 #include <QTime>
 #include <QMessageBox>

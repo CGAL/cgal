@@ -83,7 +83,8 @@ void Clipping_box_plugin::clipbox()
       return;
   }
   QApplication::setOverrideCursor(Qt::WaitCursor);
-dock_widget->show();
+  dock_widget->show();
+  dock_widget->raise();
   if(!item)
     item = new Scene_edit_box_item(scene);
   connect(item, SIGNAL(destroyed()),

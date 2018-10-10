@@ -142,7 +142,10 @@ private Q_SLOTS:
   void openDialog()
   {
     if(dock_widget->isVisible()) { dock_widget->hide(); }
-    else                         { replaceRamp(); dock_widget->show(); }
+    else{
+      replaceRamp(); 
+      dock_widget->show();
+      dock_widget->raise(); }
   }
 
   void colorize()

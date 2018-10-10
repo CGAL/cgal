@@ -493,6 +493,7 @@ void Polyhedron_demo_affine_transform_plugin::go(){
         return;
     }
     dock_widget->show();
+    dock_widget->raise();
     started=true;
     actionTransformPolyhedron->setText("Apply affine transformation");
     if(poly_item)

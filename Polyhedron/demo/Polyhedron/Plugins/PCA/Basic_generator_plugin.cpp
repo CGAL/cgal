@@ -179,42 +179,42 @@ private:
 //show the widget
 void Basic_generator_plugin::on_actionPrism_triggered()
 {
-  dock_widget->show();
+  dock_widget->show(); dock_widget->raise();
   dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(PRISM);
 }
 void Basic_generator_plugin::on_actionSphere_triggered()
 {
-  dock_widget->show();
+  dock_widget->show(); dock_widget->raise();
   dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(SPHERE);
 }
 void Basic_generator_plugin::on_actionPyramid_triggered()
 {
-  dock_widget->show();
+  dock_widget->show(); dock_widget->raise();
   dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(PYRAMID);
 }
 void Basic_generator_plugin::on_actionHexahedron_triggered()
 {
-  dock_widget->show();
+  dock_widget->show(); dock_widget->raise();
   dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(HEXAHEDRON);
 }
 void Basic_generator_plugin::on_actionTetrahedron_triggered()
 {
-  dock_widget->show();
+  dock_widget->show(); dock_widget->raise();
   dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(TETRAHEDRON);
 }
 void Basic_generator_plugin::on_actionGrid_triggered()
 {
-  dock_widget->show();
+  dock_widget->show(); dock_widget->raise();
   dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(GRID);
 }
 void Basic_generator_plugin::on_actionPointSet_triggered()
 {
-  dock_widget->show();
+  dock_widget->show(); dock_widget->raise();
   dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(POINT_SET);
 }
 void Basic_generator_plugin::on_actionPolyline_triggered()
 {
-  dock_widget->show();
+  dock_widget->show(); dock_widget->raise();
   dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(POLYLINE);
 }
 void Basic_generator_plugin::on_tab_changed()
