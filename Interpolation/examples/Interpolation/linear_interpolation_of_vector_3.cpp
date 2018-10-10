@@ -19,7 +19,6 @@ int main()
   typedef CGAL::Data_access<Coord_map>                      Value_access;
 
   Coord_map value_function;
-  double a(0.25), bx(1.3), by(-0.7);
 
   for (int y=0 ; y<255 ; y++){
     for (int x=0 ; x<255 ; x++){
