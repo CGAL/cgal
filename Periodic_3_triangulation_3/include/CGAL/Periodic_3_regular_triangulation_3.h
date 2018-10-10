@@ -519,8 +519,6 @@ public:
       is_large_point_set = false;
 
     std::vector<Weighted_point> points(first, last);
-    CGAL::cpp98::random_shuffle(points.begin(), points.end());
-    Cell_handle hint;
     std::vector<Vertex_handle> dummy_points_vhs, double_vertices;
     std::vector<Weighted_point> dummy_points;
     typename std::vector<Weighted_point>::iterator pbegin = points.begin();
@@ -533,6 +531,8 @@ public:
     }
     else
     {
+      CGAL::cpp98::random_shuffle(points.begin(), points.end());
+      pbegin = points.begin();
       while(!is_1_cover())
       {
         insert(*pbegin);
@@ -541,6 +541,8 @@ public:
           return number_of_vertices() - n;
       }
     }
+
+    CGAL_postcondition(is_1_cover());
 
     // Spatial sorting can only be applied to bare points, so we need an adaptor
     typedef typename Geom_traits::Construct_point_3 Construct_point_3;
@@ -553,6 +555,7 @@ public:
                    CGAL::internal::boost_::make_function_property_map<Weighted_point, Ret, Construct_point_3>(
                        geom_traits().construct_point_3_object()), geom_traits()));
 
+    Cell_handle hint;
     Conflict_tester tester(*pbegin, this);
     Point_hider hider(this);
     Cover_manager cover_manager(*this);

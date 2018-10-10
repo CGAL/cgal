@@ -490,21 +490,27 @@ public:
       is_large_point_set = false;
 
     std::vector<Point> points(first, last);
-    CGAL::cpp98::random_shuffle (points.begin(), points.end());
-    Cell_handle hint;
     std::vector<Vertex_handle> dummy_points, double_vertices;
     typename std::vector<Point>::iterator pbegin = points.begin();
     if(is_large_point_set)
+    {
       dummy_points = insert_dummy_points();
-    else while(!is_1_cover()) {
-      insert(*pbegin);
-      ++pbegin;
-      if(pbegin == points.end())
-        return number_of_vertices() - n;
+    } else {
+      CGAL::cpp98::random_shuffle(points.begin(), points.end());
+      pbegin = points.begin();
+      while(!is_1_cover()) {
+        insert(*pbegin);
+        ++pbegin;
+        if(pbegin == points.end())
+          return number_of_vertices() - n;
+      }
     }
+
+    CGAL_postcondition(is_1_cover());
 
     spatial_sort (pbegin, points.end(), this->geom_traits());
 
+    Cell_handle hint;
     Conflict_tester tester(*pbegin,this);
     Point_hider hider;
     Cover_manager cover_manager(*this);
