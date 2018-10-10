@@ -23,7 +23,6 @@
 
 #include <CGAL/license/Surface_mesh_segmentation.h>
 
-#include <CGAL/Surface_mesh.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/boost/graph/Dual.h>
