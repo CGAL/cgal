@@ -36,11 +36,13 @@ endif()
 # Activate concurrency option
 option(ACTIVATE_CONCURRENCY "Enable concurrency" ON)
 if ( ACTIVATE_CONCURRENCY )
-    find_package( TBB REQUIRED )
+    find_package( TBB )
 
     if ( TBB_FOUND )
         include(${TBB_USE_FILE})
         list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
+    else()
+      message(STATUS "TBB not found, benchmark of approximate convex decomposition will use the sequential version of the code.")
     endif()
 endif()
 
