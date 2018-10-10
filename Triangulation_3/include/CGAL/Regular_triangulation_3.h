@@ -1291,6 +1291,25 @@ namespace CGAL {
       }
     };
 
+    // In parallel operations, we need to be able to check the health of the 'hint' vertex handle,
+    // which might be invalided by other threads. One way to do that is the 'is_vertex()' function
+    // of the TDS, but it runs in O(sqrt(n)) complexity. When we are using our TDS, we can use
+    // a lower level function from the compact container, which runs in constant time.
+    template <typename TDS_>
+    struct Vertex_validity_checker
+    {
+      bool operator()(const typename TDS_::Vertex_handle vh_, const TDS_& tds_) { return tds_.is_vertex(vh_); }
+    };
+
+    template <typename T1, typename T2, typename T3>
+    struct Vertex_validity_checker<CGAL::Triangulation_data_structure_3<T1, T2, T3> >
+    {
+      typedef CGAL::Triangulation_data_structure_3<T1, T2, T3>   TDS_;
+
+      bool operator()(const typename TDS_::Vertex_handle vh_, const TDS_& tds_) {
+        return tds_.vertices().is_used(vh_); }
+    };
+
   // Functor for parallel insert(begin, end) function
   template <typename RT>
   class Insert_point
@@ -1324,6 +1343,7 @@ namespace CGAL {
 #endif
 
       Vertex_handle &hint = m_tls_hint.local();
+      Vertex_validity_checker<typename RT::Triangulation_data_structure> vertex_validity_check;
 
       for( size_t i_point = r.begin() ; i_point != r.end() ; ++i_point)
       {
@@ -1334,12 +1354,7 @@ namespace CGAL {
           // The 'hint' is unsafe to use immediately because we are in a regular triangulation,
           // and the insertion of a (weighted) point in another thread might have hidden (deleted)
           // the hint.
-#define CGAL_RT3_IGNORE_TDS_CONCEPT
-#ifdef CGAL_RT3_IGNORE_TDS_CONCEPT
-          if(!m_rt.tds().vertices().is_used(hint))
-#else
-          if(!m_rt.tds().is_vertex(hint))
-#endif
+          if(!vertex_validity_check(hint, m_rt.tds()))
           {
             hint = m_rt.finite_vertices_begin();
             continue;
@@ -1354,11 +1369,7 @@ namespace CGAL {
             // Make sure that the hint is still valid (so that we can safely take hint->cell()) and
             // that its position hasn't changed to ensure that we will start the locate from where
             // we have locked.
-#ifdef CGAL_RT3_IGNORE_TDS_CONCEPT
-            if(!m_rt.tds().vertices().is_used(hint) ||
-#else
-            if(!m_rt.tds().is_vertex(hint) ||
-#endif
+            if(!vertex_validity_check(hint, m_rt.tds()) ||
                hint->point() != hint_point_mem)
             {
               hint = m_rt.finite_vertices_begin();
@@ -1445,6 +1456,8 @@ namespace CGAL {
 #endif
 
       Vertex_handle &hint = m_tls_hint.local();
+      Vertex_validity_checker<typename RT::Triangulation_data_structure> vertex_validity_check;
+
       for (size_t i_idx = r.begin() ; i_idx != r.end() ; ++i_idx)
       {
         bool success = false;
@@ -1455,12 +1468,7 @@ namespace CGAL {
           // The 'hint' is unsafe to use immediately because we are in a regular triangulation,
           // and the insertion of a (weighted) point in another thread might have hidden (deleted)
           // the hint.
-#define CGAL_RT3_IGNORE_TDS_CONCEPT
-#ifdef CGAL_RT3_IGNORE_TDS_CONCEPT
-          if(!m_rt.tds().vertices().is_used(hint))
-#else
-          if(!m_rt.tds().is_vertex(hint))
-#endif
+          if(!vertex_validity_check(hint, m_rt.tds()))
           {
             hint = m_rt.finite_vertices_begin();
             continue;
@@ -1475,11 +1483,7 @@ namespace CGAL {
             // Make sure that the hint is still valid (so that we can safely take hint->cell()) and
             // that its position hasn't changed to ensure that we will start the locate from where
             // we have locked.
-#ifdef CGAL_RT3_IGNORE_TDS_CONCEPT
-            if(!m_rt.tds().vertices().is_used(hint) ||
-#else
-            if(!m_rt.tds().is_vertex(hint) ||
-#endif
+            if(!vertex_validity_check(hint, m_rt.tds()) ||
                hint->point() != hint_point_mem)
             {
               hint = m_rt.finite_vertices_begin();
@@ -2465,12 +2469,10 @@ namespace CGAL {
     }
     else
     {
+      Vertex_validity_checker<Tds> vertex_validity_check;
+
       // Check that the vertex hasn't be deleted from the TDS while we were locking it
-#ifdef CGAL_RT3_IGNORE_TDS_CONCEPT
-      if(!tds().vertices().is_used(v))
-#else
-      if(!tds().is_vertex(v))
-#endif
+      if(!vertex_validity_check(v, tds()))
         return true; // vertex is already gone from the TDS, nothing to do
 
       Vertex_handle hint = v->cell()->vertex(0) == v ? v->cell()->vertex(1) : v->cell()->vertex(0);
@@ -2499,11 +2501,7 @@ namespace CGAL {
             // The 'hint' is unsafe to use immediately because we are in a regular triangulation,
             // and the insertion of a (weighted) point in another thread might have hidden (deleted)
             // the hint.
-#ifdef CGAL_RT3_IGNORE_TDS_CONCEPT
-            if(!tds().vertices().is_used(hint))
-#else
-            if(!tds().is_vertex(hint))
-#endif
+            if(!vertex_validity_check(hint, tds()))
             {
               hint = finite_vertices_begin();
               continue;
@@ -2518,11 +2516,7 @@ namespace CGAL {
               // Make sure that the hint is still valid (so that we can safely take hint->cell()) and
               // that its position hasn't changed to ensure that we will start the locate from where
               // we have locked.
-#ifdef CGAL_RT3_IGNORE_TDS_CONCEPT
-              if(!tds().vertices().is_used(hint) ||
-#else
-              if(!tds().is_vertex(hint) ||
-#endif
+              if(!vertex_validity_check(hint, tds()) ||
                  hint->point() != hint_point_mem)
               {
                 hint = finite_vertices_begin();
