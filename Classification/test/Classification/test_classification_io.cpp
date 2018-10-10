@@ -78,13 +78,13 @@ int main (int, char**)
   Classifier classifier (labels, features);
   classifier.train (training_set);
 
-  std::ofstream outf ("output_config.gz");
+  std::ofstream outf ("output_config.gz", std::ios::binary);
   outf.precision(18);
   classifier.save_configuration(outf);
   outf.close();
 
   Classifier classifier2 (labels, features);
-  std::ifstream inf ("output_config.gz");
+  std::ifstream inf ("output_config.gz", std::ios::binary);
   classifier2.load_configuration(inf);
 
   std::vector<std::size_t> label_indices;
