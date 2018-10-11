@@ -648,16 +648,7 @@ public:
 		}
 		
 		//! Returns the datum (geometric object) represented `p`. 
-		//! The return type is 
-		//! - typename `Primitive::Datum_reference` if `Primitive` defines that type.
-		//! - typename `Primitive::Datum` if it doesn't.
-#ifndef DOXYGEN_RUNNING
-		typename internal::Primitive_helper<AABBTraits>::Datum_type 
-#else
-		unspecified_type
-#endif
-		
-		datum(Primitive& p)const
+		typename AABBTraits::Primitive::Datum_reference datum(Primitive& p)const
 		{
 		  return internal::Primitive_helper<AABBTraits>::
 		      get_datum(p, this->traits());
