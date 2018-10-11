@@ -926,11 +926,14 @@ volume_connected_components(const TriangleMesh& tm,
     for(std::size_t cc_id=0; cc_id<nb_cc; ++cc_id)
     {
       if (cc_handled.test(cc_id)) continue;
-      if ( nesting_levels[cc_id]==0 )
+      if ( nesting_levels[cc_id]%2==0 )
       {
         cc_volume_ids[cc_id] = next_volume_id;
         BOOST_FOREACH(std::size_t ncc_id, nested_cc_per_cc[cc_id])
-          cc_volume_ids[ncc_id] = next_volume_id;
+        {
+          if ( nesting_levels[ncc_id]==nesting_levels[cc_id]+1 )
+            cc_volume_ids[ncc_id] = next_volume_id;
+        }
         ++next_volume_id;
       }
     }
