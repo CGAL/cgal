@@ -763,6 +763,25 @@ namespace CGAL {
       return std::copy(vertices.begin(), vertices.end(), res);
     }
 
+    // In parallel operations, we need to be able to check the health of the 'hint' vertex handle,
+    // which might be invalided by other threads. One way to do that is the 'is_vertex()' function
+    // of the TDS, but it runs in O(sqrt(n)) complexity. When we are using our TDS, we can use
+    // a lower level function from the compact container, which runs in constant time.
+    template <typename TDS_>
+    struct Vertex_validity_checker
+    {
+      bool operator()(const typename TDS_::Vertex_handle vh_, const TDS_& tds_) { return tds_.is_vertex(vh_); }
+    };
+
+    template <typename T1, typename T2, typename T3>
+    struct Vertex_validity_checker<CGAL::Triangulation_data_structure_3<T1, T2, T3> >
+    {
+      typedef CGAL::Triangulation_data_structure_3<T1, T2, T3>   TDS_;
+
+      bool operator()(const typename TDS_::Vertex_handle vh_, const TDS_& tds_) {
+        return tds_.vertices().is_used(vh_); }
+    };
+
     void remove (Vertex_handle v);
     // Concurrency-safe
     // See Triangulation_3::remove for more information
@@ -1289,25 +1308,6 @@ namespace CGAL {
       void hide_point(Cell_handle c, const Weighted_point &p) {
         c->hide_point(p);
       }
-    };
-
-    // In parallel operations, we need to be able to check the health of the 'hint' vertex handle,
-    // which might be invalided by other threads. One way to do that is the 'is_vertex()' function
-    // of the TDS, but it runs in O(sqrt(n)) complexity. When we are using our TDS, we can use
-    // a lower level function from the compact container, which runs in constant time.
-    template <typename TDS_>
-    struct Vertex_validity_checker
-    {
-      bool operator()(const typename TDS_::Vertex_handle vh_, const TDS_& tds_) { return tds_.is_vertex(vh_); }
-    };
-
-    template <typename T1, typename T2, typename T3>
-    struct Vertex_validity_checker<CGAL::Triangulation_data_structure_3<T1, T2, T3> >
-    {
-      typedef CGAL::Triangulation_data_structure_3<T1, T2, T3>   TDS_;
-
-      bool operator()(const typename TDS_::Vertex_handle vh_, const TDS_& tds_) {
-        return tds_.vertices().is_used(vh_); }
     };
 
   // Functor for parallel insert(begin, end) function
