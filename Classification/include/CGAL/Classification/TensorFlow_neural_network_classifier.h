@@ -106,6 +106,10 @@ class TensorFlow_neural_network_classifier
 
   
 public:
+
+  /// \cond SKIP_IN_MANUAL
+  const Feature_set& features() const { return m_features; }
+  /// \endcond
   
   /// \name Constructor
   /// @{
@@ -417,6 +421,34 @@ public:
 
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
       out[i] = output_data[i];
+  }
+
+  
+  void operator() (const std::vector<std::size_t>& item_indices,
+                   std::vector<std::vector<float> >& out) const
+  {
+    out.resize (item_indices.size(), std::vector<float>(m_labels.size(), 0.));
+    
+    TF::Tensor ft
+      (TF::DataTypeToEnum<float>::v(), 
+       TF::TensorShape {(long long)(item_indices.size()), (long long)(m_features.size())});
+
+    float* ft_data = ft.flat<float>().data();
+
+    // Fill input tensor
+    for (std::size_t i = 0; i < item_indices.size(); ++ i)
+      for (std::size_t f = 0; f < m_features.size(); ++ f)
+        ft_data[i * m_features.size() + f]
+          = (m_features[f]->value(item_indices[i]) - m_feature_means[f]) / m_feature_sd[f];
+    
+    std::vector<TF::Tensor> outputs;
+    TF_CHECK_OK(m_session->Run({{*m_ph_ft, ft}}, {m_layers.back()}, &outputs));
+
+    float* output_data = outputs[0].flat<float>().data();
+
+    for (std::size_t i = 0; i < item_indices.size(); ++ i)
+      for (std::size_t l = 0; l < m_labels.size(); ++ l)
+        out[i][l] = output_data[i * m_labels.size() + l];
   }
   /// \endcond
   
@@ -976,8 +1008,8 @@ private:
     // options.config.mutable_gpu_options()->set_operation_timeout_in_ms(15000);
 
 //    options.config.mutable_gpu_options()->set_visible_device_list("");
-    options.config.mutable_gpu_options()->set_per_process_gpu_memory_fraction(0.3);
     options.config.mutable_gpu_options()->set_allow_growth(true);
+    options.config.mutable_gpu_options()->set_per_process_gpu_memory_fraction(0.8);
     options.config.mutable_gpu_options()->set_force_gpu_compatible(true);
 
     m_session = new TF::ClientSession (*m_root, options);
@@ -1004,6 +1036,110 @@ private:
 
 };
 
+
+#if 1
+// Specialization to use GPU parallelization
+template <typename ConcurrencyTag,
+          typename ItemRange,
+          typename LabelIndexRange,
+          typename ProbabilitiesRanges>
+void classify (const ItemRange& input,
+               const Label_set& labels,
+               const TensorFlow_neural_network_classifier& classifier,
+               LabelIndexRange& output,
+               ProbabilitiesRanges& probabilities)
+{
+  std::cerr << "Classify with TensorFlow classifier" << std::endl;
+  
+  output.resize(input.size());
+  probabilities.resize (labels.size());
+  for (std::size_t i = 0; i < probabilities.size(); ++ i)
+    probabilities[i].resize (input.size());
+
+  const std::size_t mem_allocated = sizeof(float) * input.size() * (labels.size() + classifier.features().size());
+  const std::size_t size_max = 1024 * 1024 * 1024;
+  const std::size_t nb_subdivisions = (mem_allocated / size_max) + 1;
+  std::cerr << nb_subdivisions << " subdivision(s) for GPU processing" << std::endl;
+
+  std::size_t idx = 0;
+  for (std::size_t n = 0; n < nb_subdivisions; ++ n)
+  {
+    std::vector<std::size_t> indices;
+    indices.reserve (input.size() / nb_subdivisions);
+    for (std::size_t i = 0; i < input.size() / nb_subdivisions && idx < input.size(); ++ i)
+      indices.push_back(idx ++);
+    
+    std::vector<std::vector<float> > values;
+    classifier (indices, values);
+    for(std::size_t i = 0; i < indices.size(); ++ i)
+    {
+      std::size_t nb_class_best = 0;
+      float val_class_best = 0.f;
+
+      for (std::size_t j = 0; j < labels.size(); ++ j)
+      {
+        probabilities[j][indices[i]] = values[i][j];
+        
+        if(val_class_best < values[i][j])
+        {
+          val_class_best = values[i][j];
+          nb_class_best = j;
+        }
+      }
+
+      output[indices[i]] = nb_class_best;
+    }
+  }
+}
+
+// Specialization to use GPU parallelization
+template <typename ConcurrencyTag,
+          typename ItemRange,
+          typename LabelIndexRange>
+void classify (const ItemRange& input,
+               const Label_set& labels,
+               const TensorFlow_neural_network_classifier& classifier,
+               LabelIndexRange& output)
+{
+  std::cerr << "Classify with TensorFlow classifier" << std::endl;
+  
+  output.resize(input.size());
+
+  const std::size_t mem_allocated = sizeof(float) * input.size() * (labels.size() + classifier.features().size());
+  const std::size_t size_max = 1024 * 1024 * 1024;
+  const std::size_t nb_subdivisions = (mem_allocated / size_max) + 1;
+  std::cerr << nb_subdivisions << " subdivision(s) for GPU processing" << std::endl;
+
+  std::size_t idx = 0;
+  for (std::size_t n = 0; n < nb_subdivisions; ++ n)
+  {
+    std::vector<std::size_t> indices;
+    indices.reserve (input.size() / nb_subdivisions);
+    for (std::size_t i = 0; i < input.size() / nb_subdivisions && idx < input.size(); ++ i)
+      indices.push_back(idx ++);
+    
+    std::vector<std::vector<float> > values;
+    classifier (indices, values);
+
+    for(std::size_t i = 0; i < indices.size(); ++ i)
+    {
+      std::size_t nb_class_best = 0;
+      float val_class_best = 0.f;
+
+      for (std::size_t j = 0; j < labels.size(); ++ j)
+      {
+        if(val_class_best < values[i][j])
+        {
+          val_class_best = values[i][j];
+          nb_class_best = j;
+        }
+      }
+
+      output[indices[i]] = nb_class_best;
+    }
+  }
+}
+#endif  
 }
 
 }
