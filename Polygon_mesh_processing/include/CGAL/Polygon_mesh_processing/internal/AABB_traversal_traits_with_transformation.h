@@ -33,6 +33,7 @@
 #include <CGAL/internal/AABB_tree/Is_ray_intersection_geomtraits.h>
 #include <CGAL/internal/AABB_tree/Primitive_helper.h>
 #include <CGAL/Filtered_predicate.h>
+#include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Box_intersection_d/Box_with_info_d.h>
 #include <CGAL/Aff_transformation_3.h>
