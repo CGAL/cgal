@@ -39,6 +39,7 @@
 #include <QTreeWidget>
 #include <QDockWidget>
 #include <stdexcept>
+#include <fstream>
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptValue>
 #  ifdef QT_SCRIPTTOOLS_LIB
@@ -2302,4 +2303,76 @@ void MainWindow::propagate_action()
       }
     }
   }
+}
+
+void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
+{
+  QString filename =
+      QFileDialog::getSaveFileName(this,
+                                   "Save the Scene as a Script File",
+                                   last_saved_dir,
+                                   "*.js");
+  std::ofstream os(filename.toUtf8());
+  if(!os)
+    return;
+  std::vector<QString> names;
+  std::vector<QString> loaders;
+  std::vector<QColor> colors;
+  std::vector<int> rendering_modes;
+  for(int i = 0; i < scene->numberOfEntries(); ++i)
+  {
+    Scene_item* item = scene->item(i);
+    QString loader = item->property("loader_name").toString();
+    QString source = item->property("source filename").toString();
+    if(loader.isEmpty())
+      continue;
+    names.push_back(source);
+    loaders.push_back(loader);
+    colors.push_back(item->color());
+    rendering_modes.push_back(item->renderingMode());
+  }
+  //path
+  os << "var camera = \""<<viewer->dumpCameraCoordinates().toStdString()<<"\";\n";
+  os << "var items = [";
+  for(std::size_t i = 0; i< names.size() -1; ++i)
+  {
+    os << "\'" << names[i].toStdString() << "\', ";
+  }
+  os<<"\'"<<names.back().toStdString()<<"\'];\n";
+  
+  //plugin
+  os << "var loaders = [";
+  for(std::size_t i = 0; i< names.size() -1; ++i)
+  {
+    os << "\'" << loaders[i].toStdString() << "\', ";
+  }
+  os<<"\'"<<loaders.back().toStdString()<<"\'];\n";
+  
+  //color
+  os << "var colors = [";
+  for(std::size_t i = 0; i< names.size() -1; ++i)
+  {
+    os << "[" << colors[i].red() <<", "<< colors[i].green() <<", "<< colors[i].blue() <<"], ";
+  }
+  os<<"[" << colors.back().red() <<", "<< colors.back().green() <<", "<< colors.back().blue() <<"]];\n";
+  
+  //rendering mode
+  os << "var rendering_modes = [";
+  for(std::size_t i = 0; i< names.size() -1; ++i)
+  {
+    os << rendering_modes[i] << ", ";
+  }
+  os << rendering_modes.back()<<"];\n";
+  os <<"var initial_scene_size = scene.numberOfEntries;\n";
+  os << "items.forEach(function(item, index, array){\n";
+  os << "        main_window.open(item, loaders[index]);\n";
+  os << "        var it = scene.item(initial_scene_size+index);\n";
+  os << "        var r = colors[index][0];\n";
+  os << "        var g = colors[index][1];\n";
+  os << "        var b = colors[index][2];\n";
+  os << "        it.setRgbColor(r,g,b);\n";
+  os << "        it.setRenderingMode(rendering_modes[index]);\n";
+  os << "});\n";
+  os << "viewer.moveCameraToCoordinates(camera, 0.05);\n";
+  os.close();
 }

@@ -439,6 +439,7 @@ public:
 #endif
 private Q_SLOTS:
   void set_facegraph_mode_adapter(bool is_polyhedron);
+  void on_actionSa_ve_Scene_as_Script_triggered();
 };
 
 #endif // ifndef MAINWINDOW_H
