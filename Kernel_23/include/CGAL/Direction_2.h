@@ -32,7 +32,6 @@
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/Dimension.h>
-#include <CGAL/result_of.h>
 #include <CGAL/IO/io.h>
 
 namespace CGAL {
@@ -102,19 +101,19 @@ public:
     return R().construct_perpendicular_direction_2_object()(*this,o);
   }
 
-  typename cpp11::result_of<typename R::Compute_dx_2( Direction_2)>::type
+  decltype(auto)
   dx() const
   {
     return R().compute_dx_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_dy_2( Direction_2)>::type
+  decltype(auto)
   dy() const
   {
     return R().compute_dy_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_dx_2( Direction_2)>::type
+  decltype(auto)
   delta(int i) const
   {
     CGAL_kernel_precondition( ( i == 0 ) || ( i == 1 ) );

@@ -32,7 +32,6 @@
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/Dimension.h>
-#include <CGAL/result_of.h>
 #include <CGAL/IO/io.h>
 
 namespace CGAL {
@@ -108,25 +107,25 @@ public:
   Vector_3 vector() const { return to_vector(); }
 
 
-  typename cpp11::result_of<typename R::Compute_dx_3(Direction_3)>::type
+  decltype(auto)
   dx() const
   {
     return R().compute_dx_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_dy_3(Direction_3)>::type
+  decltype(auto)
   dy() const
   {
     return R().compute_dy_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_dz_3(Direction_3)>::type
+  decltype(auto)
   dz() const
   {
     return R().compute_dz_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_dx_3(Direction_3)>::type
+  decltype(auto)
   delta(int i) const
   {
     CGAL_kernel_precondition( i >= 0 && i <= 2 );

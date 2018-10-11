@@ -99,6 +99,9 @@ BOOST_PP_REPEAT_FROM_TO(1, 10, CGAL_VARIANT_TYPEMAP, _)
 #define CGAL_Kernel_obj(X) \
   template < typename K1, typename K2 > \
   struct Type_mapper_impl < typename K1::X, K1, K2 > \
+  { typedef typename K2::X type; }; \
+  template < typename K1, typename K2 > \
+  struct Type_mapper_impl < typename K1::X::Rep, K1, K2 > \
   { typedef typename K2::X type; };
 
 #include <CGAL/Kernel/interface_macros.h>

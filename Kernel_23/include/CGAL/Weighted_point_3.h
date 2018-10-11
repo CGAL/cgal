@@ -93,62 +93,62 @@ public:
     : Rep(typename R::Construct_weighted_point_3()(Return_base_tag(), x, y, z))
   {}
 
-  typename cpp11::result_of<typename R::Construct_point_3(Weighted_point_3)>::type
+  decltype(auto)
   point() const
   {
     return typename R::Construct_point_3()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_weight_3(Weighted_point_3)>::type
+  decltype(auto)
   weight() const
   {
     return typename R::Compute_weight_3()(*this);
   }
 
 
-  typename cpp11::result_of<typename R::Compute_x_3(Point_3)>::type
+  decltype(auto)
   x() const
   {
     return typename R::Compute_x_3()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_y_3(Point_3)>::type
+  decltype(auto)
   y() const
   {
     return typename R::Compute_y_3()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_z_3(Point_3)>::type
+  decltype(auto)
   z() const
   {
     return typename R::Compute_z_3()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_hx_3(Point_3)>::type
+  decltype(auto)
   hx() const
   {
     return R().compute_hx_3_object()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_hy_3(Point_3)>::type
+  decltype(auto)
   hy() const
   {
     return R().compute_hy_3_object()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_hz_3(Point_3)>::type
+  decltype(auto)
   hz() const
   {
     return R().compute_hz_3_object()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_hw_3(Point_3)>::type
+  decltype(auto)
   hw() const
   {
     return R().compute_hw_3_object()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_x_3(Point_3)>::type
+  decltype(auto)
   cartesian(int i) const
   {
     CGAL_kernel_precondition( (i == 0) || (i == 1) || (i == 2) );
@@ -167,7 +167,7 @@ public:
     return hw();
   }
 
-  typename cpp11::result_of<typename R::Compute_x_3(Point_3)>::type
+  decltype(auto)
   operator[](int i) const
   {
       return cartesian(i);

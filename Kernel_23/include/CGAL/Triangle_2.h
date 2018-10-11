@@ -31,7 +31,6 @@
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Dimension.h>
-#include <CGAL/result_of.h>
 #include <CGAL/IO/io.h>
 
 namespace CGAL {
@@ -110,13 +109,13 @@ public:
     return !(*this == t);
   }
 
-  typename cpp11::result_of<typename R::Construct_vertex_2( Triangle_2, int)>::type
+  decltype(auto)
   vertex(int i) const
   {
     return R().construct_vertex_2_object()(*this,i);
   }
 
-  typename cpp11::result_of<typename R::Construct_vertex_2( Triangle_2, int)>::type
+  decltype(auto)
   operator[](int i) const
   {
     return vertex(i);

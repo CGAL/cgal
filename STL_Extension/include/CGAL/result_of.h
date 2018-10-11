@@ -50,17 +50,7 @@ namespace CGAL{
 // namespace since in the future, that's the decltype version that will be used
 namespace cpp11{
 
-template<typename F>
-struct result_of
-{
-  // from boost 1.44 release note http://www.boost.org/users/history/version_1_44_0.html :
-  //    New template boost::tr1_result_of that implements the TR1 ResultOf protocol even if boost::result_of uses the C++0x decltype-based implementation.
-  #if BOOST_VERSION < 104400
-  typedef typename boost::result_of<F>::type type;
-  #else
-  typedef typename boost::tr1_result_of<F>::type type;
-  #endif
-};
+using std::result_of;
 
 }
 

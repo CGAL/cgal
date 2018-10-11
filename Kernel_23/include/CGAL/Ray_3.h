@@ -108,25 +108,25 @@ public:
   bool        collinear_has_on(const Point_3 &p) const;
 */
 
-  typename cpp11::result_of<typename R::Construct_point_on_3(Ray_3, int)>::type
+  decltype(auto)
   point(int i) const // TODO : use Qrt
   {
     return R().construct_point_on_3_object()(*this, i);
   }
 
-  typename cpp11::result_of<typename R::Construct_source_3(Ray_3)>::type
+  decltype(auto)
   source() const
   {
     return R().construct_source_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Construct_second_point_3(Ray_3)>::type
+  decltype(auto)
   second_point() const
   {
     return R().construct_second_point_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Construct_source_3(Ray_3)>::type
+  decltype(auto)
   start() const
   {
     return source();

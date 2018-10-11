@@ -89,12 +89,11 @@ public:
   { }
 
   template <class A1>
-  typename Pairify<typename CGAL::cpp11::result_of<P1(const A1&)>::type,
-                   typename CGAL::cpp11::result_of<P2(const A1&)>::type>::result_type
+  decltype(auto)
   operator()(const A1 &a1) const
   {
-    typedef typename CGAL::cpp11::result_of<P1(const A1&)>::type result_type_1;
-    typedef typename CGAL::cpp11::result_of<P2(const A1&)>::type result_type_2;
+    typedef typename CGAL::cpp11::result_of<P1(const typename A1::first_type&)>::type result_type_1;
+    typedef typename CGAL::cpp11::result_of<P2(const typename A1::second_type&)>::type result_type_2;
     result_type_1 res1 = p1(a1.first);
     result_type_2 res2 = p2(a1.second);
     if (! cmp(res1, res2))
@@ -114,12 +113,11 @@ public:
   }
 
   template <class A1, class A2>
-  typename Pairify<typename CGAL::cpp11::result_of<P1(const A1&, const A2&)>::type,
-                   typename CGAL::cpp11::result_of<P2(const A1&, const A2&)>::type>::result_type
+  decltype(auto)
   operator()(const A1 &a1, const A2 &a2) const
   {
-    typedef typename CGAL::cpp11::result_of<P1(const A1&, const A2&)>::type result_type_1;
-    typedef typename CGAL::cpp11::result_of<P2(const A1&, const A2&)>::type result_type_2;
+    typedef typename CGAL::cpp11::result_of<P1(const typename A1::first_type&, const typename A2::first_type&)>::type result_type_1;
+    typedef typename CGAL::cpp11::result_of<P2(const typename A1::second_type&, const typename A2::second_type&)>::type result_type_2;
     result_type_1 res1 = p1(a1.first, a2.first);
     result_type_2 res2 = p2(a1.second, a2.second);
     if (! cmp(res1, res2))
@@ -141,14 +139,11 @@ public:
   }
 
   template <class A1, class A2, class A3>
-  typename Pairify<typename CGAL::cpp11::result_of<P1(
-                     const A1&, const A2&, const A3&)>::type,
-                   typename CGAL::cpp11::result_of<P2(
-                     const A1&, const A2&, const A3&)>::type>::result_type
+  decltype(auto)
   operator()(const A1 &a1, const A2 &a2, const A3 &a3) const
   {
-    typedef typename CGAL::cpp11::result_of<P1(const A1&, const A2&, const A3&)>::type result_type_1;
-    typedef typename CGAL::cpp11::result_of<P2(const A1&, const A2&, const A3&)>::type result_type_2;
+    typedef typename CGAL::cpp11::result_of<P1(const typename A1::first_type&, const typename A2::first_type&, const typename A3::first_type&)>::type result_type_1;
+    typedef typename CGAL::cpp11::result_of<P2(const typename A1::second_type&, const typename A2::second_type&, const typename A3::second_type&)>::type result_type_2;
     result_type_1 res1 = p1(a1.first, a2.first, a3.first);
     result_type_2 res2 = p2(a1.second, a2.second, a3.second);
     if (! cmp(res1, res2))
@@ -172,16 +167,11 @@ public:
   }
 
   template <class A1, class A2, class A3, class A4>
-  typename Pairify<typename CGAL::cpp11::result_of<P1(
-                     const A1&, const A2&, const A3&, const A4&)>::type,
-                   typename CGAL::cpp11::result_of<P2(
-                     const A1&, const A2&, const A3&, const A4&)>::type>::result_type
+  decltype(auto)
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4) const
   {
-    typedef typename CGAL::cpp11::result_of<P1(
-                       const A1&, const A2&, const A3&, const A4&)>::type result_type_1;
-    typedef typename CGAL::cpp11::result_of<P2(
-                       const A1&, const A2&, const A3&, const A4&)>::type result_type_2;
+    typedef typename CGAL::cpp11::result_of<P1(const typename A1::first_type&, const typename A2::first_type&, const typename A3::first_type&, const typename A4::first_type&)>::type result_type_1;
+    typedef typename CGAL::cpp11::result_of<P2(const typename A1::second_type&, const typename A2::second_type&, const typename A3::second_type&, const typename A4::second_type&)>::type result_type_2;
 
     result_type_1 res1 = p1(a1.first, a2.first, a3.first, a4.first);
     result_type_2 res2 = p2(a1.second, a2.second, a3.second, a4.second);
@@ -208,16 +198,11 @@ public:
   }
 
   template <class A1, class A2, class A3, class A4, class A5>
-  typename Pairify<typename CGAL::cpp11::result_of<P1(
-                     const A1&, const A2&, const A3&, const A4&, const A5&)>::type,
-                   typename CGAL::cpp11::result_of<P2(
-                     const A1&, const A2&, const A3&, const A4&, const A5&)>::type>::result_type
+  decltype(auto)
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4, const A5 &a5) const
   {
-    typedef typename CGAL::cpp11::result_of<P1(
-      const A1&, const A2&, const A3&, const A4&, const A5&)>::type result_type_1;
-    typedef typename CGAL::cpp11::result_of<P2(
-      const A1&, const A2&, const A3&, const A4&, const A5&)>::type result_type_2;
+    typedef typename CGAL::cpp11::result_of<P1(const typename A1::first_type&, const typename A2::first_type&, const typename A3::first_type&, const typename A4::first_type&, const typename A5::first_type&)>::type result_type_1;
+    typedef typename CGAL::cpp11::result_of<P2(const typename A1::second_type&, const typename A2::second_type&, const typename A3::second_type&, const typename A4::second_type&, const typename A5::second_type&)>::type result_type_2;
 
     result_type_1 res1 = p1(a1.first, a2.first, a3.first, a4.first, a5.first);
     result_type_2 res2 = p2(a1.second, a2.second, a3.second, a4.second, a5.second);

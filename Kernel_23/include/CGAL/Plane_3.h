@@ -30,7 +30,6 @@
 #include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
-#include <CGAL/result_of.h>
 #include <CGAL/IO/io.h>
 
 namespace CGAL {
@@ -116,25 +115,25 @@ public:
     return Direction_3(a(), b(), c());
   }
 
-  typename cpp11::result_of<typename R::Compute_a_3( Plane_3)>::type
+  decltype(auto)
   a() const
   {
     return R().compute_a_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_b_3( Plane_3)>::type
+  decltype(auto)
   b() const
   {
     return R().compute_b_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_c_3( Plane_3)>::type
+  decltype(auto)
   c() const
   {
     return R().compute_c_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_d_3( Plane_3)>::type
+  decltype(auto)
   d() const
   {
     return R().compute_d_3_object()(*this);

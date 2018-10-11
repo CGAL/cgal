@@ -95,67 +95,67 @@ public:
    : Rep(typename R::Construct_iso_cuboid_3()(Return_base_tag(), bbox.xmin(), bbox.ymin(), bbox.zmin(),
 				                                 bbox.xmax(), bbox.ymax(), bbox.zmax())) {}
 
-  typename cpp11::result_of<typename R::Construct_min_vertex_3( Iso_cuboid_3 )>::type
+  decltype(auto)
   min BOOST_PREVENT_MACRO_SUBSTITUTION () const
   {
     return R().construct_min_vertex_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Construct_max_vertex_3( Iso_cuboid_3 )>::type
+  decltype(auto)
   max BOOST_PREVENT_MACRO_SUBSTITUTION () const
   {
     return R().construct_max_vertex_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Construct_vertex_3( Iso_cuboid_3, int )>::type
+  decltype(auto)
   vertex(int i) const
   {
     return R().construct_vertex_3_object()(*this,i);
   }
 
-  typename cpp11::result_of<typename R::Construct_vertex_3( Iso_cuboid_3, int )>::type
+  decltype(auto)
   operator[](int i) const
   {
     return R().construct_vertex_3_object()(*this,i);
   }
 
-  typename cpp11::result_of<typename R::Compute_xmin_3( Iso_cuboid_3 )>::type
+  decltype(auto)
   xmin() const
   {
     return R().compute_xmin_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_xmax_3( Iso_cuboid_3 )>::type
+  decltype(auto)
   xmax() const
   {
     return R().compute_xmax_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_ymin_3( Iso_cuboid_3 )>::type
+  decltype(auto)
   ymin() const
   {
     return R().compute_ymin_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_ymax_3( Iso_cuboid_3 )>::type
+  decltype(auto)
   ymax() const
   {
     return R().compute_ymax_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_zmin_3( Iso_cuboid_3 )>::type
+  decltype(auto)
   zmin() const
   {
     return R().compute_zmin_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_zmax_3( Iso_cuboid_3 )>::type
+  decltype(auto)
   zmax() const
   {
     return R().compute_zmax_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_xmin_3( Iso_cuboid_3 )>::type
+  decltype(auto)
   min_coord(int i) const
   {
     CGAL_kernel_precondition( i == 0 || i == 1 || i == 2 );
@@ -167,7 +167,7 @@ public:
        return zmin();
   }
 
-  typename cpp11::result_of<typename R::Compute_xmax_3( Iso_cuboid_3 )>::type
+  decltype(auto)
   max_coord(int i) const
   {
     CGAL_kernel_precondition( i == 0 || i == 1 || i == 2 );
@@ -215,7 +215,7 @@ public:
     return R().is_degenerate_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_volume_3( Iso_cuboid_3 )>::type
+  decltype(auto)
   volume() const
   {
     return R().compute_volume_3_object()(*this);

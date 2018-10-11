@@ -33,7 +33,6 @@
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/Dimension.h>
-#include <CGAL/result_of.h>
 
 namespace CGAL {
 
@@ -93,26 +92,26 @@ public:
     : RPoint_2(typename R::Construct_point_2()(Return_base_tag(), hx, hy, hw))
   {}
 
-  typename cpp11::result_of<typename R::Compute_x_2(Point_2)>::type
+  decltype(auto)
   x() const
   {
     return typename R::Compute_x_2()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_y_2(Point_2)>::type
+  decltype(auto)
   y() const
   {
     return typename R::Compute_y_2()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_x_2(Point_2)>::type
+  decltype(auto)
   cartesian(int i) const
   {
     CGAL_kernel_precondition( (i == 0) || (i == 1) );
     return (i==0) ?  x() : y();
   }
 
-  typename cpp11::result_of<typename R::Compute_x_2(Point_2)>::type
+  decltype(auto)
   operator[](int i) const
   {
       return cartesian(i);
@@ -129,19 +128,19 @@ public:
   }
 
 
-  typename cpp11::result_of<typename R::Compute_hx_2(Point_2)>::type
+  decltype(auto)
   hx() const
   {
     return typename R::Compute_hx_2()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_hy_2(Point_2)>::type
+  decltype(auto)
   hy() const
   {
     return typename R::Compute_hy_2()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_hw_2(Point_2)>::type
+  decltype(auto)
   hw() const
   {
     return typename R::Compute_hw_2()(*this);
@@ -152,7 +151,7 @@ public:
       return 2;
   }
 
-  typename cpp11::result_of<typename R::Compute_hx_2(Point_2)>::type
+  decltype(auto)
   homogeneous(int i) const
   {
     CGAL_kernel_precondition( (i >= 0) || (i <= 2) );

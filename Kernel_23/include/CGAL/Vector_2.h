@@ -34,7 +34,6 @@
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/Dimension.h>
-#include <CGAL/result_of.h>
 #include <CGAL/IO/io.h>
 
 namespace CGAL {
@@ -103,26 +102,26 @@ public:
       : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), x,y,w)) {}
 
 
-  typename cpp11::result_of<typename R::Compute_x_2(Vector_2)>::type
+  decltype(auto)
   x() const
   {
     return R().compute_x_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_y_2(Vector_2)>::type
+  decltype(auto)
   y() const
   {
     return R().compute_y_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_y_2(Vector_2)>::type
+  decltype(auto)
   cartesian(int i) const
   {
     CGAL_kernel_precondition( (i == 0) || (i == 1) );
     return (i==0) ?  x() : y();
   }
 
-  typename cpp11::result_of<typename R::Compute_x_2(Vector_2)>::type
+  decltype(auto)
   operator[](int i) const
   {
       return cartesian(i);
@@ -138,26 +137,26 @@ public:
     return typename R::Construct_cartesian_const_iterator_2()(*this,2);
   }
 
-  typename cpp11::result_of<typename R::Compute_hx_2(Vector_2)>::type
+  decltype(auto)
   hx() const
   {
     return R().compute_hx_2_object()(*this);
   }
 
 
-  typename cpp11::result_of<typename R::Compute_hy_2(Vector_2)>::type
+  decltype(auto)
   hy() const
   {
     return R().compute_hy_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_hw_2(Vector_2)>::type
+  decltype(auto)
   hw() const
   {
     return R().compute_hw_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_hx_2(Vector_2)>::type
+  decltype(auto)
   homogeneous(int i) const
   {
     CGAL_kernel_precondition( (i >= 0) || (i <= 2) );

@@ -3527,7 +3527,7 @@ namespace CommonKernelFunctors {
 
     // n possibilities, so I keep the template.
     template <class T1, class T2>
-    typename cpp11::result_of< Intersect_3(T1, T2) >::type
+    decltype(auto)
     operator()(const T1& t1, const T2& t2) const
     { return internal::intersection(t1, t2, K() ); }
 
