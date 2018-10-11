@@ -316,7 +316,7 @@ public Q_SLOTS:
   virtual void setColor(QColor c) { color_ = c;}
   //!Setter for the RGB color of the item. Calls setColor(QColor).
   //!@see setColor(QColor c)
-  virtual void setRgbColor(int r, int g, int b) { setColor(QColor(r, g, b)); }
+  void setRgbColor(int r, int g, int b) { setColor(QColor(r, g, b)); }
   //!Sets the name of the item.
   virtual void setName(QString n) { name_ = n; }
     //!Sets the visibility of the item.
