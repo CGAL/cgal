@@ -268,7 +268,7 @@ void Viewer::doBindings()
                     tr("Toggle macro mode: useful to view details very near from the camera, "
                        "but decrease the z-buffer precision"));
   setKeyDescription(Qt::Key_I + Qt::CTRL,
-                      tr("Toggle the primitive IDs visibility of the selected Item."));
+                      tr("Toggle the primitive IDs visibility of the selected Item, for the types selected in the context menu of the said item."));
   setKeyDescription(Qt::Key_D,
                       tr("Disable the distance between two points  visibility."));
   setKeyDescription(Qt::Key_F5,
@@ -286,7 +286,7 @@ void Viewer::doBindings()
                              tr("Selects and display context "
                                 "menu of the selected item"));
   setMouseBindingDescription(Qt::Key_I, Qt::NoModifier, Qt::LeftButton,
-                             tr("Show/hide the primitive ID."));
+                             tr("Show/hide the primitive ID of the types selected in the context menu of the picked item."));
   setMouseBindingDescription(Qt::Key_D, Qt::NoModifier, Qt::LeftButton,
                              tr("Selects a point. When the second point is selected,  "
                                 "displays the two points and the distance between them."));
