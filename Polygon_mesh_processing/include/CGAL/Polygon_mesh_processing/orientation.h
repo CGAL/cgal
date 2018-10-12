@@ -958,16 +958,59 @@ volume_connected_components(const TriangleMesh& tm,
       ++k;
       level_k_nestings.swap(level_k_plus_1_nestings);
     }
+  // detect inconsistencies of the orientation at the level 0
+  // and check if all CC at level 0 are in the same volume
+    std::size_t ref_cc_id = nb_cc;
+    std::size_t FIRST_LEVEL = 0; // used to know if even or odd nesting is the top level
+    if(!ignore_orientation_of_cc)
+    {
+      for(std::size_t cc_id=0; cc_id<nb_cc; ++cc_id)
+      {
+        if (cc_handled.test(cc_id)) continue;
+        if( nesting_levels[cc_id]==0 )
+        {
+          if(ref_cc_id==nb_cc)
+            ref_cc_id=cc_id;
+          else
+            if( is_cc_outward_oriented[cc_id] != is_cc_outward_oriented[ref_cc_id] )
+            {
+              // all is indefinite
+              for(std::size_t id=0; id<nb_cc; ++id)
+              {
+                if (cc_handled.test(cc_id)) continue;
+                cc_volume_ids[id] = next_volume_id++;
+              }
+              cc_handled.set();
+              break;
+            }
+        }
+      }
+
+      if (!cc_handled.all() && !is_cc_outward_oriented[ref_cc_id])
+      {
+        // all level 0 CC are in the same volume
+        for(std::size_t cc_id=0; cc_id<nb_cc; ++cc_id)
+        {
+          if (cc_handled.test(cc_id)) continue;
+          if( nesting_levels[cc_id]==0 )
+          {
+            cc_handled.set(cc_id);
+            cc_volume_ids[cc_id]=next_volume_id;
+          }
+        }
+        ++next_volume_id;
+        FIRST_LEVEL = 1;
+      }
+    }
 
   // apply volume classification using level 0 nesting
-    for(std::size_t cc_id=0; cc_id<nb_cc; ++cc_id)
+    for(std::size_t cc_id=0; (!cc_handled.all()) && cc_id<nb_cc; ++cc_id)
     {
-
       if (cc_handled.test(cc_id)) continue;
       // TODO handle orientation of level 0 that will also change the way
       // volume are build
       CGAL_assertion( nesting_levels[cc_id]!=0 || is_cc_outward_oriented[cc_id] );
-      if( nesting_levels[cc_id]%2==1 ) continue;
+      if( nesting_levels[cc_id]%2 != FIRST_LEVEL ) continue;
       cc_handled.set(cc_id);
       cc_volume_ids[cc_id] = next_volume_id++;
 
