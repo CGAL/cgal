@@ -718,6 +718,14 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
                                                          is_parent_outward_oriented);
 }
 
+//TODO  Add documentation
+enum Volume_error_code { VALID_VOLUME,
+                         SURFACE_SELF_INTERSECTION,
+                         VOLUME_INTERSECTION,
+                         NON_TRIANGULATED_SURFACE,
+                         INCONSISTENT_ORIENTATION };
+
+//TODO Add documentation
 // doc: non-closed connected components are reported as isolated volumes
 // doc: connected components with at least one non-triangle face are reported as isolated volumes
 // doc: self-intersecting connect components are reported as isolated volumes.
@@ -760,8 +768,19 @@ volume_connected_components(const TriangleMesh& tm,
                               bind_property_maps(fid_map,make_property_map(face_cc)),
                               parameters::face_index_map(fid_map));
 
+  const bool do_self_intersection_tests =
+        boost::choose_param(boost::get_param(np, internal_np::do_self_intersection_tests),
+                            false);
+
+  std::vector<Volume_error_code> error_codes;
+
   if (nb_cc == 1)
   {
+    if (do_self_intersection_tests && does_self_intersect(tm, np))
+      error_codes.push_back(SURFACE_SELF_INTERSECTION);
+    else
+      error_codes.push_back(VALID_VOLUME);
+
     BOOST_FOREACH(face_descriptor fd, faces(tm))
       put(volume_id_map, fd, 0);
     return 1;
@@ -781,6 +800,7 @@ volume_connected_components(const TriangleMesh& tm,
       {
         cc_handled.set(cc_id);
         cc_volume_ids[cc_id]=next_volume_id++;
+        error_codes.push_back(NON_TRIANGULATED_SURFACE);
       }
     }
   }
@@ -801,9 +821,6 @@ volume_connected_components(const TriangleMesh& tm,
   }
 
 // Handle self-intersecting connected components
-  const bool do_self_intersection_tests =
-        boost::choose_param(boost::get_param(np, internal_np::do_self_intersection_tests),
-                            false);
   typedef std::pair<face_descriptor, face_descriptor> Face_pair;
   std::vector<Face_pair> si_faces;
   std::set< std::pair<std::size_t, std::size_t> > self_intersecting_cc; // due to self-intersections
@@ -821,6 +838,7 @@ volume_connected_components(const TriangleMesh& tm,
       {
         cc_handled.set(first_cc_id);
         cc_volume_ids[first_cc_id]=next_volume_id++;
+        error_codes.push_back(SURFACE_SELF_INTERSECTION);
       }
     }
     else
@@ -986,6 +1004,7 @@ volume_connected_components(const TriangleMesh& tm,
               {
                 if (cc_handled.test(cc_id)) continue;
                 cc_volume_ids[id] = next_volume_id++;
+                error_codes.push_back(INCONSISTENT_ORIENTATION);
               }
               cc_handled.set();
               break;
@@ -1006,6 +1025,7 @@ volume_connected_components(const TriangleMesh& tm,
           }
         }
         ++next_volume_id;
+        error_codes.push_back(VALID_VOLUME);
         FIRST_LEVEL = 1;
       }
     }
@@ -1018,6 +1038,7 @@ volume_connected_components(const TriangleMesh& tm,
       if( nesting_levels[cc_id]%2 != FIRST_LEVEL ) continue;
       cc_handled.set(cc_id);
       cc_volume_ids[cc_id] = next_volume_id++;
+      error_codes.push_back(VALID_VOLUME);
 
       //if the CC is involved in a self-intersection all nested CC are put in a seperate volumes
       if (is_involved_in_self_intersection[cc_id])
@@ -1026,6 +1047,7 @@ volume_connected_components(const TriangleMesh& tm,
         {
           cc_handled.set(ncc_id);
           cc_volume_ids[ncc_id] = next_volume_id++;
+          error_codes.push_back(VOLUME_INTERSECTION);
         }
         continue;
       }
@@ -1042,10 +1064,12 @@ volume_connected_components(const TriangleMesh& tm,
               // the surface component has an incorrect orientation wrt to its parent:
               // we dump it and all included surface components as independant volumes.
               cc_volume_ids[ncc_id] = next_volume_id++;
+              error_codes.push_back(INCONSISTENT_ORIENTATION);
               BOOST_FOREACH(std::size_t nncc_id, nested_cc_per_cc[ncc_id])
               {
                 cc_handled.set(nncc_id);
                 cc_volume_ids[nncc_id] = next_volume_id++;
+                error_codes.push_back(INCONSISTENT_ORIENTATION);
               }
               continue;
             }
@@ -1094,6 +1118,7 @@ volume_connected_components(const TriangleMesh& tm,
     }
   }
 
+  CGAL_assertion(next_volume_id == error_codes.size());
   return next_volume_id;
 }
 
