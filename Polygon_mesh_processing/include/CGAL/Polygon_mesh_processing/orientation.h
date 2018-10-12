@@ -753,9 +753,9 @@ volume_connected_components(const TriangleMesh& tm,
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
 
   // set the connected component id of each face
-  std::size_t nb_cc = connected_components(tm,
-                                bind_property_maps(fid_map,make_property_map(face_cc)),
-                                parameters::face_index_map(fid_map));
+  const std::size_t nb_cc = connected_components(tm,
+                              bind_property_maps(fid_map,make_property_map(face_cc)),
+                              parameters::face_index_map(fid_map));
 
   if (nb_cc == 1)
   {
@@ -950,6 +950,19 @@ volume_connected_components(const TriangleMesh& tm,
           }
           cc_volume_ids[ncc_id] = cc_volume_ids[cc_id];
         }
+      }
+    }
+
+    // TODO: add nesting_parent as an optional output parameter
+    //       note that this will require to also output the cc_id map
+    // extract direct nested parent (more than one in case of self-intersection)
+    std::vector< std::vector<std::size_t> > nesting_parent(nb_cc, nb_cc+1);
+    for(std::size_t cc_id=0; cc_id<nb_cc; ++cc_id)
+    {
+      BOOST_FOREACH(std::size_t ncc_id, nested_cc_per_cc[cc_id])
+      {
+        if (nesting_levels[cc_id]+1 == nesting_levels[ncc_id])
+          nesting_parent[ncc_id].push_back(cc_id);
       }
     }
 
