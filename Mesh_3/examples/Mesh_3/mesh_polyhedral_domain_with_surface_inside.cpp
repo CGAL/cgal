@@ -7,7 +7,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 
 
 // Domain 
@@ -45,7 +45,7 @@ int main(int argc, char*argv[])
     std::cerr << "Error: Cannot read file " <<  fname << std::endl;
     return EXIT_FAILURE;
   }
-  CGAL::Timer t;
+  CGAL::Real_timer t;
   t.start();
   // Create domain
   Mesh_domain domain(sm, smbounding);

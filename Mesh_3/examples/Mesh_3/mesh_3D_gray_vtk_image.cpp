@@ -46,7 +46,7 @@ public:
 
 int main(int argc, char* argv[])
 {
-  CGAL::Timer timer; timer.start();
+  CGAL::Real_timer  timer; timer.start();
   // Loads image
   if(argc == 1){
     std::cerr << "Usage:  " << argv[0] << " <directory with dicom data> iso_level=1  facet_size=1  facet_distance=0.1  cell_size=1\n";

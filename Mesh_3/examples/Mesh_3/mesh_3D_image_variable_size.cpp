@@ -10,7 +10,7 @@
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/Image_3.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Labeled_mesh_domain_3<K> Mesh_domain;
@@ -36,7 +36,7 @@ using namespace CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
-  CGAL::Timer timer; timer.start();
+  CGAL::Real_timer timer; timer.start();
   const char* fname = (argc>1)?argv[1]:"data/liver.inr.gz";
   // Loads image
   CGAL::Image_3 image;

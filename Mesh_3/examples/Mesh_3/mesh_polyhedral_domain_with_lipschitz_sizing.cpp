@@ -8,7 +8,7 @@
 #include <CGAL/make_mesh_3.h>
 
 #include <CGAL/Mesh_3/experimental/Lipschitz_sizing_polyhedron.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 
 //Kernel
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -40,7 +40,7 @@ using namespace CGAL::parameters;
 
 int main(int argc, char*argv[])
 {
-  CGAL::Timer timer; timer.start();
+  CGAL::Real_timer timer; timer.start();
   const char* fname = (argc>1) ? argv[1] : "data/fandisk.off";
   std::ifstream input(fname);
   Polyhedron polyhedron;

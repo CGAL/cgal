@@ -16,7 +16,7 @@
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/make_mesh_3.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 
 // IO
 #include <CGAL/IO/File_medit.h>
@@ -146,7 +146,7 @@ void create_polylines (Polylines& polylines)
 
 int main()
 {
-  CGAL::Timer timer; timer.start();
+  CGAL::Real_timer timer; timer.start();
   // Define functions
   Function f1 = cube_function_1;
   Function f2 = cube_function_2;

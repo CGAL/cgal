@@ -6,7 +6,7 @@
 
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 
 // Domain 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -28,7 +28,7 @@ using namespace CGAL::parameters;
 
 int main()
 {
-  CGAL::Timer timer; timer.start();
+  CGAL::Real_timer timer; timer.start();
   // Load a polyhedron
   Polyhedron poly;
   std::ifstream input("data/lion-head.off");

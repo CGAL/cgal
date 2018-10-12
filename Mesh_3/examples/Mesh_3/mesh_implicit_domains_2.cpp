@@ -8,7 +8,7 @@
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 #include "implicit_functions.h"
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 
 // IO
 #include <CGAL/IO/File_medit.h>
@@ -35,7 +35,7 @@ typedef Mesh_criteria::Cell_criteria     Cell_criteria;
 
 int main()
 {
-  CGAL::Timer timer; timer.start();
+  CGAL::Real_timer timer; timer.start();
   // Define functions
   Function f1(&torus_function);
   Function f2(&sphere_function<3>);

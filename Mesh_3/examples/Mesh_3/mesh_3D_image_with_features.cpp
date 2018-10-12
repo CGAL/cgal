@@ -12,7 +12,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/Labeled_mesh_domain_3.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Labeled_mesh_domain_3<K> Image_domain;
@@ -73,7 +73,7 @@ bool add_1D_features(const CGAL::Image_3& image,
 
 int main(int argc, char* argv[])
 {
-  CGAL::Timer timer; timer.start();
+  CGAL::Real_timer timer; timer.start();
   const char* fname = (argc>1)?argv[1]:"data/420.inr";
   // Loads image
   CGAL::Image_3 image;

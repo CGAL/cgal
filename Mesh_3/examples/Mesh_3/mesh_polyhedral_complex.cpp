@@ -6,7 +6,7 @@
 
 #include <CGAL/Polyhedral_complex_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 
 #include <cstdlib>
 
@@ -54,7 +54,7 @@ const std::pair<int, int> incident_subdomains[] = {
 
 int main()
 {
-  CGAL::Timer timer; timer.start();
+  CGAL::Real_timer timer; timer.start();
   const std::size_t nb_patches = sizeof(filenames) / sizeof(const char*);
   CGAL_assertion(sizeof(incident_subdomains) ==
                  nb_patches * sizeof(std::pair<int, int>));

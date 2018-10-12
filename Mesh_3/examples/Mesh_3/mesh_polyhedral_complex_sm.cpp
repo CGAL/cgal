@@ -9,7 +9,7 @@
 #include <CGAL/Polyhedral_complex_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <cstdlib>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -56,7 +56,7 @@ const std::pair<int, int> incident_subdomains[] = {
 
 int main()
 {
-  CGAL::Timer timer; timer.start();
+  CGAL::Real_timer timer; timer.start();
 #ifdef CGAL_MESHING_STEPS_WITH_CIN
   char in_char;
   std::cout << "Ready for loading the data ? (y or n)";

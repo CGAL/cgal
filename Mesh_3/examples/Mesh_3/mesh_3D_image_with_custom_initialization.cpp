@@ -12,7 +12,7 @@
 #include <CGAL/Image_3.h>
 
 #include <CGAL/Mesh_3/Dump_c3t3.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Labeled_mesh_domain_3<K> Mesh_domain;
@@ -36,7 +36,7 @@ using namespace CGAL::parameters;
 
 int main()
 {
-  CGAL::Timer timer; timer.start();
+  CGAL::Real_timer timer; timer.start();
   /// [Create the image]
   CGAL::Image_3 image = random_labeled_image();
   /// [Create the image]

@@ -9,7 +9,7 @@
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/Image_3.h>
 #include <functional>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 
 typedef float Image_word_type;
 
@@ -29,7 +29,7 @@ using namespace CGAL::parameters;
 
 int main(int argc, char*argv[])
 {
-  CGAL::Timer timer; timer.start();
+  CGAL::Real_timer timer; timer.start();
   const char* fname = (argc>1)?argv[1]:"data/skull_2.9.inr";
   // Load image
   CGAL::Image_3 image;

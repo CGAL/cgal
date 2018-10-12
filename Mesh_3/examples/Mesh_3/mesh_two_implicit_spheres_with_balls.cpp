@@ -7,7 +7,7 @@
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/make_mesh_3.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 
 // Kernel
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -60,7 +60,7 @@ FT sphere_function (const Point& p)
 
 int main()
 {
-  CGAL::Timer timer; timer.start();
+  CGAL::Real_timer timer; timer.start();
   // Domain (Warning: Sphere_3 constructor uses squared radius !)
   Mesh_domain domain =
     Mesh_domain::create_implicit_mesh_domain(sphere_function,
