@@ -721,6 +721,7 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
 // doc: non-closed connected components are reported as isolated volumes
 // doc: connected components with at least one non-triangle face are reported as isolated volumes
 // doc: self-intersecting connect components are reported as isolated volumes.
+// doc: CC intersecting another CC is reported as a seperate volume and so are its nested CCs
 // doc: add option ignore_orientation_of_cc to control whether the inward/outward orientation of
 //      component must be taken into account rather than only the nesting. In case of incompatible
 //      orientation of a cc X with its parent, all other CC included in X (as well as X) are reported
@@ -752,7 +753,7 @@ volume_connected_components(const TriangleMesh& tm,
 
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
 
-  // set the connected component id of each face
+// set the connected component id of each face
   const std::size_t nb_cc = connected_components(tm,
                               bind_property_maps(fid_map,make_property_map(face_cc)),
                               parameters::face_index_map(fid_map));
@@ -768,7 +769,7 @@ volume_connected_components(const TriangleMesh& tm,
   std::vector<std::size_t> cc_volume_ids(nb_cc, -1);
 
   std::size_t next_volume_id = 0;
-  // First handle non-pure triangle meshes
+// First handle non-pure triangle meshes
   BOOST_FOREACH(face_descriptor fd, faces(tm))
   {
     if (!is_triangle(halfedge(fd, tm), tm))
@@ -782,7 +783,7 @@ volume_connected_components(const TriangleMesh& tm,
     }
   }
 
-  // Handle open connected components
+// Handle open connected components
   BOOST_FOREACH(halfedge_descriptor h, halfedges(tm))
   {
     if (is_border(h, tm))
@@ -797,12 +798,13 @@ volume_connected_components(const TriangleMesh& tm,
     }
   }
 
-  // Handle self-intersecting connected components
+// Handle self-intersecting connected components
   // TODO add an option for self-intersection handling (optional if known to be free from self-intersections
   typedef std::pair<face_descriptor, face_descriptor> Face_pair;
   std::vector<Face_pair> si_faces;
-  std::set< std::pair<std::size_t, std::size_t> > inclusion_test_to_skip; // due to self-intersections TODO USE ME
+  std::set< std::pair<std::size_t, std::size_t> > self_intersecting_cc; // due to self-intersections
   self_intersections(tm, std::back_inserter(si_faces));
+  std::vector<bool> is_involved_in_self_intersection(nb_cc, false);
   BOOST_FOREACH(const Face_pair& fp, si_faces)
   {
     std::size_t first_cc_id = face_cc[ get(fid_map, fp.first) ];
@@ -817,12 +819,16 @@ volume_connected_components(const TriangleMesh& tm,
       }
     }
     else
-      inclusion_test_to_skip.insert( make_sorted_pair(first_cc_id, second_cc_id) );
+    {
+      is_involved_in_self_intersection[first_cc_id] = true;
+      is_involved_in_self_intersection[second_cc_id] = true;
+      self_intersecting_cc.insert( make_sorted_pair(first_cc_id, second_cc_id) );
+    }
   }
 
   if (!cc_handled.all())
   {
-    // extract a vertex with max z coordinate for each connected component
+  // extract a vertex with max z coordinate for each connected component
     std::vector<vertex_descriptor> xtrm_vertices(nb_cc, GT::null_vertex());
     BOOST_FOREACH(vertex_descriptor vd, vertices(tm))
     {
@@ -837,6 +843,7 @@ volume_connected_components(const TriangleMesh& tm,
 
     const bool ignore_orientation_of_cc = false; // TODO add an option
 
+  // fill orientation vector for each surface CC
     boost::dynamic_bitset<> is_cc_outward_oriented;
     if (!ignore_orientation_of_cc)
     {
@@ -848,7 +855,7 @@ volume_connected_components(const TriangleMesh& tm,
       }
     }
 
-    //collect faces per CC
+  //collect faces per CC
     std::vector< std::vector<face_descriptor> > faces_per_cc(nb_cc);
     std::vector< std::size_t > nb_faces_per_cc(nb_cc, 0);
     BOOST_FOREACH(face_descriptor fd, faces(tm))
@@ -864,14 +871,20 @@ volume_connected_components(const TriangleMesh& tm,
       faces_per_cc[ cc_id ].push_back(fd);
     }
 
-    // init the main loop
+  // init the main loop
     std::size_t k = 0;
-    std::vector<std::vector<std::size_t> > nested_cc_per_cc(nb_cc); // contains for each CC the CC that are in its bounded side
+    // contains for each CC the CC that are in its bounded side
+    std::vector<std::vector<std::size_t> > nested_cc_per_cc(nb_cc);
+    // similar as above but exclusively contains cc ids included by more that one CC.
+    // The result will be then merged with nested_cc_per_cc but temporarilly we need
+    // another container to not more than once the inclusion testing (in case a CC is
+    // included by more than 2 CC) + associate such CC to only one volume
+    std::vector<std::vector<std::size_t> > nested_cc_per_cc_shared(nb_cc);
     std::vector < std::size_t > nesting_levels(nb_cc, 0); // indicates for each CC its nesting level
     std::vector < boost::dynamic_bitset<> > level_k_nestings; // container containing CCs in the same volume (one bitset per volume) at level k
     level_k_nestings.push_back( ~cc_handled );
 
-    // the following loop is exploring the nesting level by level (0 -> max_level)
+  // the following loop is exploring the nesting level by level (0 -> max_level)
     while (!level_k_nestings.empty())
     {
       std::vector < boost::dynamic_bitset<> > level_k_plus_1_nestings;
@@ -880,7 +893,7 @@ volume_connected_components(const TriangleMesh& tm,
         CGAL_assertion( cc_to_handle.any() );
         while(cc_to_handle.any())
         {
-          //extract a vertex with max z amongst all components
+        //extract a vertex with max z amongst all components
           std::size_t xtrm_cc_id=cc_to_handle.find_first();
           for(std::size_t id  = cc_to_handle.find_next(xtrm_cc_id);
                           id != cc_to_handle.npos;
@@ -892,24 +905,49 @@ volume_connected_components(const TriangleMesh& tm,
           cc_to_handle.reset(xtrm_cc_id);
           nesting_levels[xtrm_cc_id] = k;
 
-          // collect id inside xtrm_cc_id CC
+        // collect id inside xtrm_cc_id CC
           typedef Side_of_triangle_mesh<TriangleMesh, Kernel, Vpm> Side_of_tm;
           typename Side_of_tm::AABB_tree aabb_tree(faces_per_cc[xtrm_cc_id].begin(),
                                                    faces_per_cc[xtrm_cc_id].end(),
                                                    tm, vpm);
           Side_of_tm side_of_cc(aabb_tree);
 
+          std::vector<std::size_t> cc_intersecting; // contains id of CC intersecting xtrm_cc_id
+
           boost::dynamic_bitset<> nested_cc_to_handle(nb_cc, 0);
           for(std::size_t id  = cc_to_handle.find_first();
                           id != cc_to_handle.npos;
                           id  = cc_to_handle.find_next(id))
           {
+            if (self_intersecting_cc.count( make_sorted_pair(xtrm_cc_id, id) )!= 0)
+            {
+              cc_intersecting.push_back(id);
+              nesting_levels[id] = k; // same level as xtrm_cc_id
+              continue; // to not dot inclusion test for intersecting CCs
+            }
+
             if (side_of_cc(get(vpm,xtrm_vertices[id]))==ON_BOUNDED_SIDE)
             {
               nested_cc_per_cc[xtrm_cc_id].push_back(id);
               // mark nested CC as handle and collect them for the handling of the next level
               nested_cc_to_handle.set(id);
               cc_to_handle.reset(id);
+            }
+          }
+
+        //for each CC intersecting xtrm_cc_id, find the CCs included in both
+          BOOST_FOREACH(std::size_t id, cc_intersecting)
+          {
+            typename Side_of_tm::AABB_tree aabb_tree(faces_per_cc[id].begin(),
+                                                     faces_per_cc[id].end(),
+                                                     tm, vpm);
+            Side_of_tm side_of_cc(aabb_tree);
+            BOOST_FOREACH(std::size_t ncc_id, nested_cc_per_cc[xtrm_cc_id])
+            {
+              if (self_intersecting_cc.count( make_sorted_pair(ncc_id, id) )!= 0)
+                continue;
+              if (side_of_cc(get(vpm,xtrm_vertices[ncc_id]))==ON_BOUNDED_SIDE)
+                nested_cc_per_cc_shared[id].push_back(ncc_id);
             }
           }
 
@@ -921,13 +959,29 @@ volume_connected_components(const TriangleMesh& tm,
       level_k_nestings.swap(level_k_plus_1_nestings);
     }
 
-    // apply volume classification using level 0 nesting
+  // apply volume classification using level 0 nesting
     for(std::size_t cc_id=0; cc_id<nb_cc; ++cc_id)
     {
+
       if (cc_handled.test(cc_id)) continue;
-      CGAL_assertion( nesting_levels[cc_id]%2==0 );
+      // TODO handle orientation of level 0 that will also change the way
+      // volume are build
+      CGAL_assertion( nesting_levels[cc_id]!=0 || is_cc_outward_oriented[cc_id] );
+      if( nesting_levels[cc_id]%2==1 ) continue;
       cc_handled.set(cc_id);
       cc_volume_ids[cc_id] = next_volume_id++;
+
+      //if the CC is involved in a self-intersection all nested CC are put in a seperate volumes
+      if (is_involved_in_self_intersection[cc_id])
+      {
+        BOOST_FOREACH(std::size_t ncc_id, nested_cc_per_cc[cc_id])
+        {
+          cc_handled.set(ncc_id);
+          cc_volume_ids[ncc_id] = next_volume_id++;
+        }
+        continue;
+      }
+
       BOOST_FOREACH(std::size_t ncc_id, nested_cc_per_cc[cc_id])
       {
         if ( nesting_levels[ncc_id]==nesting_levels[cc_id]+1 )
@@ -953,10 +1007,20 @@ volume_connected_components(const TriangleMesh& tm,
       }
     }
 
+  // merge nested_cc_per_cc and nested_cc_per_cc_shared
+  // (done after the volume creation to assign a CC to a unique volume)
+    for(std::size_t id=0; id<nb_cc; ++id)
+    {
+      if (!nested_cc_per_cc_shared[id].empty())
+        nested_cc_per_cc[id].insert(nested_cc_per_cc[id].end(),
+                                    nested_cc_per_cc_shared[id].begin(),
+                                    nested_cc_per_cc_shared[id].end());
+    }
+
     // TODO: add nesting_parent as an optional output parameter
     //       note that this will require to also output the cc_id map
-    // extract direct nested parent (more than one in case of self-intersection)
-    std::vector< std::vector<std::size_t> > nesting_parent(nb_cc, nb_cc+1);
+  // extract direct nested parent (more than one in case of self-intersection)
+    std::vector< std::vector<std::size_t> > nesting_parent(nb_cc);
     for(std::size_t cc_id=0; cc_id<nb_cc; ++cc_id)
     {
       BOOST_FOREACH(std::size_t ncc_id, nested_cc_per_cc[cc_id])
@@ -966,7 +1030,7 @@ volume_connected_components(const TriangleMesh& tm,
       }
     }
 
-    // update volume id map
+  // update volume id map
     for(std::size_t cc_id=0; cc_id<nb_cc; ++cc_id)
     {
       BOOST_FOREACH(face_descriptor fd, faces_per_cc[cc_id])
