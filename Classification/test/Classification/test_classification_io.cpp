@@ -49,7 +49,6 @@ int main (int, char**)
   Iso_cuboid_3 bbox = CGAL::bounding_box (points.points().begin(), points.points().end());
 
   float grid_resolution = 0.34f;
-  float radius_neighbors = 1.7f;
   float radius_dtm = 15.0f;
   
   Planimetric_grid grid (points, points.point_map(), bbox, grid_resolution);
