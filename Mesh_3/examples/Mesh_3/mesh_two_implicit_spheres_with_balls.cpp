@@ -102,6 +102,6 @@ int main()
   c3t3.output_to_medit(medit_file);
   medit_file.close();
 
-  CGAL::Timer timer; timer.start();
+  std::cout << timer.time() << "sec" << std::endl;
   return 0;
 }

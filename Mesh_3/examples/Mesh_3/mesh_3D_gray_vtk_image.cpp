@@ -6,7 +6,6 @@
 #include <vtkDemandDrivenPipeline.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-  std::cout << timer.time() << "sec" << std::endl;
 
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
@@ -19,6 +18,8 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/functional.hpp>
+
+#include <iostream>
 
 typedef short Image_word_type;
 
