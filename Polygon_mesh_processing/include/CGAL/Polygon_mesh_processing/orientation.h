@@ -726,6 +726,8 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
 //      component must be taken into account rather than only the nesting. In case of incompatible
 //      orientation of a cc X with its parent, all other CC included in X (as well as X) are reported
 //      as independant volumes
+// NP do_orientation_tests
+// NP do_self_intersection_tests
 // TODO return a vector with info on the volume? non-triangle/open/SI/regular/...
 template <class TriangleMesh, class FaceIndexMap, class NamedParameters>
 std::size_t
@@ -799,11 +801,14 @@ volume_connected_components(const TriangleMesh& tm,
   }
 
 // Handle self-intersecting connected components
-  // TODO add an option for self-intersection handling (optional if known to be free from self-intersections
+  const bool do_self_intersection_tests =
+        boost::choose_param(boost::get_param(np, internal_np::do_self_intersection_tests),
+                            false);
   typedef std::pair<face_descriptor, face_descriptor> Face_pair;
   std::vector<Face_pair> si_faces;
   std::set< std::pair<std::size_t, std::size_t> > self_intersecting_cc; // due to self-intersections
-  self_intersections(tm, std::back_inserter(si_faces));
+  if (do_self_intersection_tests)
+    self_intersections(tm, std::back_inserter(si_faces));
   std::vector<bool> is_involved_in_self_intersection(nb_cc, false);
   BOOST_FOREACH(const Face_pair& fp, si_faces)
   {
@@ -841,7 +846,9 @@ volume_connected_components(const TriangleMesh& tm,
           xtrm_vertices[cc_id]=vd;
     }
 
-    const bool ignore_orientation_of_cc = false; // TODO add an option
+    const bool ignore_orientation_of_cc =
+      !boost::choose_param(boost::get_param(np, internal_np::do_orientation_tests),
+                           true);
 
   // fill orientation vector for each surface CC
     boost::dynamic_bitset<> is_cc_outward_oriented;
@@ -1007,8 +1014,6 @@ volume_connected_components(const TriangleMesh& tm,
     for(std::size_t cc_id=0; (!cc_handled.all()) && cc_id<nb_cc; ++cc_id)
     {
       if (cc_handled.test(cc_id)) continue;
-      // TODO handle orientation of level 0 that will also change the way
-      // volume are build
       CGAL_assertion( nesting_levels[cc_id]!=0 || is_cc_outward_oriented[cc_id] );
       if( nesting_levels[cc_id]%2 != FIRST_LEVEL ) continue;
       cc_handled.set(cc_id);

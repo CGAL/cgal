@@ -161,6 +161,8 @@ void test(const NamedParameters& np)
   check_same_type<43>(get_param(np, CGAL::internal_np::throw_on_self_intersection));
   check_same_type<44>(get_param(np, CGAL::internal_np::clip_volume));
   check_same_type<45>(get_param(np, CGAL::internal_np::use_compact_clipper));
+  check_same_type<47>(get_param(np, CGAL::internal_np::do_self_intersection_tests));
+  check_same_type<48>(get_param(np, CGAL::internal_np::do_orientation_tests));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<34>(get_param(np, CGAL::internal_np::get_cost_policy));
@@ -238,6 +240,8 @@ int main()
                          .clip_volume(A<44>(44))
                          .use_compact_clipper(A<45>(45))
                          .apply_per_connected_component(A<46>(46))
+                         .do_self_intersection_tests(A<47>(47))
+                         .do_orientation_tests(A<48>(48))
        );
 
   return EXIT_SUCCESS;
