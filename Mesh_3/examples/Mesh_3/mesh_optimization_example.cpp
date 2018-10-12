@@ -7,6 +7,7 @@
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/Image_3.h>
+#include <CGAL/Timer.h>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -31,6 +32,7 @@ using namespace CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
+  CGAL::Timer timer; timer.start();
   const char* fname = (argc>1)?argv[1]:"data/liver.inr.gz";
   // Domain
   CGAL::Image_3 image;
@@ -64,5 +66,6 @@ int main(int argc, char* argv[])
   std::ofstream medit_file_bis("out_bis.mesh");
   c3t3_bis.output_to_medit(medit_file_bis);
 
+  std::cout << timer.time() << "sec" << std::endl;
   return 0;
 }

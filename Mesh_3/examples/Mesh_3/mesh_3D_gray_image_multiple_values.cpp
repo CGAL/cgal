@@ -1,5 +1,6 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Timer.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
@@ -42,6 +43,7 @@ struct Image_to_multiple_iso_level_sets {
 
 int main(int argc, char*argv[])
 {
+  CGAL::Timer timer; timer.start();
   const char* fname = (argc>1)?argv[1]:"data/skull_2.9.inr";
   // Load image
   CGAL::Image_3 image;
@@ -81,5 +83,6 @@ int main(int argc, char*argv[])
   std::ofstream medit_file("out.mesh");
   c3t3.output_to_medit(medit_file);
 
+  std::cout << timer.time() << "sec" << std::endl;
   return 0;
 }

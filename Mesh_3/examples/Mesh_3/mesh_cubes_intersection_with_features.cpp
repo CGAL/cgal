@@ -16,6 +16,7 @@
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/make_mesh_3.h>
+#include <CGAL/Timer.h>
 
 // IO
 #include <CGAL/IO/File_medit.h>
@@ -145,6 +146,7 @@ void create_polylines (Polylines& polylines)
 
 int main()
 {
+  CGAL::Timer timer; timer.start();
   // Define functions
   Function f1 = cube_function_1;
   Function f2 = cube_function_2;
@@ -180,5 +182,6 @@ int main()
   std::ofstream medit_file("out_cubes_intersection_with_features.mesh");
   CGAL::output_to_medit(medit_file, c3t3);
 
+  std::cout << timer.time() << "sec" << std::endl;
   return 0;
 }

@@ -8,6 +8,7 @@
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/perturb_mesh_3.h>
 #include <CGAL/exude_mesh_3.h>
+#include <CGAL/Timer.h>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -40,6 +41,7 @@ using namespace CGAL::parameters;
 
 int main()
 {
+  CGAL::Timer timer; timer.start();
   // Domain (Warning: Sphere_3 constructor uses square radius !)
   Mesh_domain domain =
     Mesh_domain::create_implicit_mesh_domain(ellipsoid_function,
@@ -68,6 +70,7 @@ int main()
   medit_file.open("out_optimized.mesh");
   c3t3.output_to_medit(medit_file);
   
+  std::cout << timer.time() << "sec" << std::endl;
   return 0;
 }
 

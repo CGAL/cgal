@@ -6,6 +6,7 @@
 
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
+#include <CGAL/Timer.h>
 
 // Domain 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -33,6 +34,7 @@ using namespace CGAL::parameters;
 
 int main(int argc, char*argv[])
 {
+  CGAL::Timer timer; timer.start();
   const char* fname = (argc>1)?argv[1]:"data/fandisk.off";
   std::ifstream input(fname);
   Polyhedron polyhedron;
@@ -65,5 +67,6 @@ int main(int argc, char*argv[])
   std::ofstream medit_file("out.mesh");
   c3t3.output_to_medit(medit_file);
 
+  std::cout << timer.time() << "sec" << std::endl;
   return EXIT_SUCCESS;
 }

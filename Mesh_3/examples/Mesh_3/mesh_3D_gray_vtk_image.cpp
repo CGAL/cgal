@@ -6,6 +6,7 @@
 #include <vtkDemandDrivenPipeline.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+  std::cout << timer.time() << "sec" << std::endl;
 
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
@@ -45,6 +46,7 @@ public:
 
 int main(int argc, char* argv[])
 {
+  CGAL::Timer timer; timer.start();
   // Loads image
   if(argc == 1){
     std::cerr << "Usage:  " << argv[0] << " <directory with dicom data> iso_level=1  facet_size=1  facet_distance=0.1  cell_size=1\n";
@@ -99,5 +101,6 @@ int main(int argc, char* argv[])
   std::ofstream medit_file("out.mesh");
   c3t3.output_to_medit(medit_file);
   
+  std::cout << timer.time() << "sec" << std::endl;
   return 0;
 }

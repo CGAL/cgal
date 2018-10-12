@@ -8,6 +8,7 @@
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/refine_mesh_3.h>
+#include <CGAL/Timer.h>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -33,6 +34,7 @@ using namespace CGAL::parameters;
 
 int main(int argc, char*argv[])
 {
+  CGAL::Timer timer; timer.start();
   const char* fname = (argc>1)?argv[1]:"data/elephant.off";
   // Create input polyhedron
   Polyhedron polyhedron;
@@ -74,5 +76,6 @@ int main(int argc, char*argv[])
   medit_file.open("out_2.mesh");
   c3t3.output_to_medit(medit_file);
 
+  std::cout << timer.time() << "sec" << std::endl;
   return EXIT_SUCCESS;
 }

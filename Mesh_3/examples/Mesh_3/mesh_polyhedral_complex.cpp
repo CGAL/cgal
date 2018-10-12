@@ -6,6 +6,7 @@
 
 #include <CGAL/Polyhedral_complex_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
+#include <CGAL/Timer.h>
 
 #include <cstdlib>
 
@@ -53,6 +54,7 @@ const std::pair<int, int> incident_subdomains[] = {
 
 int main()
 {
+  CGAL::Timer timer; timer.start();
   const std::size_t nb_patches = sizeof(filenames) / sizeof(const char*);
   CGAL_assertion(sizeof(incident_subdomains) ==
                  nb_patches * sizeof(std::pair<int, int>));
@@ -82,5 +84,6 @@ int main()
   std::ofstream medit_file("out.mesh");
   c3t3.output_to_medit(medit_file);
 
+  std::cout << timer.time() << "sec" << std::endl;
   return EXIT_SUCCESS;
 }

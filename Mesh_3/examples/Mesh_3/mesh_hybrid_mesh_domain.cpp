@@ -12,6 +12,7 @@
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/make_mesh_3.h>
 
+#include <CGAL/Timer.h>
 // Ouput
 #include <CGAL/Mesh_3/Dump_c3t3.h>
 
@@ -195,6 +196,7 @@ using namespace CGAL::parameters;
 
 int main()
 {
+  CGAL::Timer timer; timer.start();
   const char* fname = "data/cube.off";
   // Create input polyhedron
   Polyhedron polyhedron;
@@ -245,5 +247,6 @@ int main()
   // Output
   dump_c3t3(c3t3, "out");
 
+  std::cout << timer.time() << "sec" << std::endl;
   return EXIT_SUCCESS;
 }
