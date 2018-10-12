@@ -721,6 +721,10 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
 // doc: non-closed connected components are reported as isolated volumes
 // doc: connected components with at least one non-triangle face are reported as isolated volumes
 // doc: self-intersecting connect components are reported as isolated volumes.
+// doc: add option ignore_orientation_of_cc to control whether the inward/outward orientation of
+//      component must be taken into account rather than only the nesting. In case of incompatible
+//      orientation of a cc X with its parent, all other CC included in X (as well as X) are reported
+//      as independant volumes
 // TODO return a vector with info on the volume? non-triangle/open/SI/regular/...
 template <class TriangleMesh, class FaceIndexMap, class NamedParameters>
 std::size_t
@@ -917,24 +921,35 @@ volume_connected_components(const TriangleMesh& tm,
       level_k_nestings.swap(level_k_plus_1_nestings);
     }
 
-    if (!ignore_orientation_of_cc)
-    {
-      //TODO correct inclusion and nesting levels
-    }
-
     // apply volume classification using level 0 nesting
     for(std::size_t cc_id=0; cc_id<nb_cc; ++cc_id)
     {
       if (cc_handled.test(cc_id)) continue;
-      if ( nesting_levels[cc_id]%2==0 )
+      CGAL_assertion( nesting_levels[cc_id]%2==0 );
+      cc_handled.set(cc_id);
+      cc_volume_ids[cc_id] = next_volume_id++;
+      BOOST_FOREACH(std::size_t ncc_id, nested_cc_per_cc[cc_id])
       {
-        cc_volume_ids[cc_id] = next_volume_id;
-        BOOST_FOREACH(std::size_t ncc_id, nested_cc_per_cc[cc_id])
+        if ( nesting_levels[ncc_id]==nesting_levels[cc_id]+1 )
         {
-          if ( nesting_levels[ncc_id]==nesting_levels[cc_id]+1 )
-            cc_volume_ids[ncc_id] = next_volume_id;
+          cc_handled.set(ncc_id);
+          if (!ignore_orientation_of_cc)
+          {
+            if (is_cc_outward_oriented[cc_id]==is_cc_outward_oriented[ncc_id])
+            {
+              // the surface component has an incorrect orientation wrt to its parent:
+              // we dump it and all included surface components as independant volumes.
+              cc_volume_ids[ncc_id] = next_volume_id++;
+              BOOST_FOREACH(std::size_t nncc_id, nested_cc_per_cc[ncc_id])
+              {
+                cc_handled.set(nncc_id);
+                cc_volume_ids[nncc_id] = next_volume_id++;
+              }
+              continue;
+            }
+          }
+          cc_volume_ids[ncc_id] = cc_volume_ids[cc_id];
         }
-        ++next_volume_id;
       }
     }
 
