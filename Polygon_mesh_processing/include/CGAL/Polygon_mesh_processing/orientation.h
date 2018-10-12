@@ -1091,6 +1091,8 @@ volume_connected_components(const TriangleMesh& tm,
 
     // TODO: add nesting_parent as an optional output parameter
     //       note that this will require to also output the cc_id map
+    //       except if we restrict it to invalid volume and index the
+    //       nesting using volume ids
   // extract direct nested parent (more than one in case of self-intersection)
     std::vector< std::vector<std::size_t> > nesting_parent(nb_cc);
     for(std::size_t cc_id=0; cc_id<nb_cc; ++cc_id)
@@ -1118,6 +1120,7 @@ volume_connected_components(const TriangleMesh& tm,
     }
   }
 
+  //TODO add a NP to output it
   CGAL_assertion(next_volume_id == error_codes.size());
   return next_volume_id;
 }
