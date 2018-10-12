@@ -1,3 +1,4 @@
+#define CGAL_SURFACE_MESH_TEST_SUITE 1  // so that we can access the freelists
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Simple_cartesian.h>

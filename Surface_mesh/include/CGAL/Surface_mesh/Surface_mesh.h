@@ -1921,7 +1921,7 @@ private: //--------------------------------------------------- property handling
   }
   /// @}
 
-#if defined(CGAL_TEST_SUITE)
+#if defined(CGAL_SURFACE_MESH_TEST_SUITE)
   Vertex_index vertex_freelist() const
   {
     return Vertex_index(vertices_freelist_);
