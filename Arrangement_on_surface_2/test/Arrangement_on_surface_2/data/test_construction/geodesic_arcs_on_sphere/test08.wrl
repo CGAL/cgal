@@ -97,16 +97,13 @@ Transform {
 		aosMarkedEdgeIndex 100
 		aosMarkedVertexIndex 0
 		coord DEF COORD EpecCoordinate {
-		  exactPoint [-1  0 -1,
-                              -2 -1  0,
-                              0  0  1,
-                              -2  1  0,
-                              0 1 0
-                              -1 1  0
+		  exactPoint [0  0 -1, 0 -1 -1,
+                              0 -1  1, 0 -1 -1,
+                              0  0 -1, 0 -1  0
 			   ]
 		}
 		# Pointindex [6 7]
-		curveIndex [0 1 1 2 2 3 3 0 4 5]
+		curveIndex [0 1 2 3 4 5]
 	      }
 	    }
 	   ]

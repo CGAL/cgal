@@ -18,15 +18,16 @@
 // $Date$
 //
 //
-// Author(s)     : Ron Wein             <wein@post.tau.ac.il>s
-//                 Efi Fogel            <efif@post.tau.ac.il>
-//                 Eric Berberich       <eric@mpi-inf.mpg.de>
-//                 (based on old version by Iddo Hanniel
-//                                          Eyal Flato
-//                                          Oren Nechushtan
-//                                          Efi Fogel
-//                                          Ron Wein
-//                                          Idit Haran)
+// Author(s): Ron Wein             <wein@post.tau.ac.il>s
+//            Efi Fogel            <efif@post.tau.ac.il>
+//            Eric Berberich       <eric@mpi-inf.mpg.de>
+//            (based on old version by Iddo Hanniel
+//                                     Eyal Flato
+//                                     Oren Nechushtan
+//                                     Efi Fogel
+//                                     Ron Wein
+//                                     Idit Haran)
+
 #ifndef CGAL_ARR_TRAITS_ADAPTOR_2_H
 #define CGAL_ARR_TRAITS_ADAPTOR_2_H
 
@@ -73,6 +74,12 @@ public:
                                                     Right_side_category;
 
 protected:
+  // All sides
+  typedef typename Arr_are_all_sides_oblivious_tag<Left_side_category,
+                                                   Bottom_side_category,
+                                                   Top_side_category,
+                                                   Right_side_category>::result
+    Are_all_sides_oblivious_category;
 
   // left-right dispatch
   typedef CGAL::internal::Arr_left_right_implementation_dispatch<
@@ -2270,10 +2277,10 @@ class Arr_traits_adaptor_2 :
   public Arr_traits_basic_adaptor_2<ArrangementTraits_>
 {
 public:
-
   // Traits-class geometric types.
-  typedef ArrangementTraits_                             Base_traits_2;
-  typedef Arr_traits_basic_adaptor_2<ArrangementTraits_> Base;
+  typedef ArrangementTraits_                           Base_traits_2;
+  typedef Arr_traits_basic_adaptor_2<Base_traits_2>    Base;
+  typedef Arr_traits_adaptor_2<Base_traits_2>          Self;
 
   typedef typename Base_traits_2::Curve_2              Curve_2;
   typedef typename Base::X_monotone_curve_2            X_monotone_curve_2;
@@ -2289,6 +2296,9 @@ public:
   typedef typename Base::Top_side_category             Top_side_category;
   typedef typename Base::Right_side_category           Right_side_category;
 
+  typedef typename Base::Are_all_sides_oblivious_category
+    Are_all_sides_oblivious_category;
+
   /// \name Construction.
   //@{
   /*! Default constructor. */
@@ -2300,7 +2310,7 @@ public:
 
   // Inherited functors:
   typedef typename Base::Compare_x_2            Compare_x_2;
-  typedef typename Base::Compare_xy_2           Compare_xy_2;
+  // typedef typename Base::Compare_xy_2           Compare_xy_2;
   typedef typename Base::Construct_min_vertex_2 Construct_min_vertex_2;
   typedef typename Base::Construct_max_vertex_2 Construct_max_vertex_2;
   typedef typename Base::Is_vertical_2          Is_vertical_2;
@@ -2316,6 +2326,499 @@ public:
 
   /// \name Overriden functors.
   //@{
+
+  /*! A functor that compares two points or two x-monotone curves
+   * lexigoraphically. Twp points are compared firest by their x-coordinates,
+   * then by their y-coordinates. Two curves are compared first their left-most
+   * endpoint, then by the graphs, and finally by their right-most endpoint.
+   */
+  class Compare_xy_2 {
+  public:
+    /*! Compare two points lexigoraphically: by x, then by y.
+     * \param p1 the first point.
+     * \param p2 the second point.
+     * \return SMALLER - x(p1) < x(p2);
+     *         SMALLER - x(p1) = x(p2) and y(p1) < y(p2);
+     *         EQUAL   - x(p1) = x(p2) and y(p1) = y(p2);
+     *         LARGER  - x(p1) = x(p2) and y(p1) > y(p2);
+     *         LARGER  - x(p1) > x(p2).
+     * \pre p1 does not lie on the boundary.
+     * \pre p2 does not lie on the boundary.
+     */
+    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
+    {
+      Base base(m_self);
+      return base.compare_xy_2_object()(p1, p2);
+    }
+
+    /*! Compare two x-monotone curves lexigoraphically.
+     * Input: C1, C2, intersections = empty
+     * compare(C1, C2, intersections)
+     *   Compare the left-most points of C1 and C2.
+     *   If not equal return the comparison result.
+     *   Otherwise (the left-most points are equal)
+     *     Compare C1 and C2 to the right of the point.
+     *     If not equal return the comparison result.
+     *     Otherwise (they overlap)
+     *       If intersection is empty, compute the intersections,
+     *       Remove the first overlapping section from c1, c2, and intersections.
+     *       If intersections is empty
+     *         Compare the right-most point and return the result.
+     *       return compare(C1, C2, intersections).
+     */
+    Comparison_result operator()(const X_monotone_curve_2& c1,
+                                 const X_monotone_curve_2& c2) const
+    {
+      std::list<CGAL::Object> intersections;
+      return operator()(c1, c2, intersections,
+                        Are_all_sides_oblivious_category());
+    }
+
+  protected:
+    //! The base traits.
+    const Self& m_self;
+
+    /*! Constructor.
+     * \param trait The base traits class. It must be passed, to handle non
+     *              stateless traits objects, (which stores data).
+     * The constructor is declared private to allow only the functor
+     * obtaining function, which is a member of the nesting class,
+     * constructing it.
+     */
+    Compare_xy_2(const Self& self) : m_self(self) {}
+
+    //! Allow its functor obtaining function calling the private constructor.
+    friend class Arr_traits_adaptor_2<Base_traits_2>;
+
+    /// Point-curve
+    //@{
+    /*! Compare a point and a curve end.
+     * Dispatch calls to traits that handle open and close boundaries, resp.
+     * The only reason for this dispatcher is the poor choice of different
+     * names for the Traits functors that handle close and open boundaries:
+     * Open boundary traits use: Compare_x_at_limit_2
+     * Close boundary traits use: Compare_x_on_boundary_2
+     */
+    Comparison_result cmp_x_on_bnd(const Point_2& p,
+                                   const X_monotone_curve_2& c,
+                                   Arr_curve_end ce) const
+    {
+      // The complete code would need to check whether ce is bottom or top and
+      // use the corresponding dispatching criterion, but
+      //  (i) in all out traits if bottom is open, so is top, and
+      // (ii) this is going to change soon....
+      return cmp_x_on_bnd(p, c, ce, Bottom_side_category());
+    }
+
+    // Open
+    Comparison_result cmp_x_on_bnd(const Point_2& p,
+                                   const X_monotone_curve_2& c,
+                                   Arr_curve_end ce,
+                                   Arr_open_side_tag) const
+    { return m_self.compare_x_at_limit_2_object()(p, c, ce); }
+
+    // Close
+    Comparison_result cmp_x_on_bnd(const Point_2& p,
+                                   const X_monotone_curve_2& c,
+                                   Arr_curve_end ce,
+                                   Arr_oblivious_side_tag)  const
+    { return m_self.compare_x_on_boundary_2_object()(p, c, ce); }
+    //@}
+
+    /// curve-curve
+    //@{
+    /*! Compare a curve end and a curve end.
+     * Dispatch calls to traits that handle open and close boundaries, resp.
+     * The only reason for this dispatcher is the poor choice of different
+     * names for the Traits functors that handle close and open boundaries:
+     * Open boundary traits use: Compare_x_at_limit_2
+     * Close boundary traits use: Compare_x_on_boundary_2
+     */
+    Comparison_result cmp_x_on_bnd(const X_monotone_curve_2& c1,
+                                   Arr_curve_end ce1,
+                                   const X_monotone_curve_2& c2,
+                                   Arr_curve_end ce2) const
+    {
+      // The complete code would need to check the combination of ce1 and ce2,
+      // whther they are (booton,bottom), (bottom,top), (top,bottom) or
+      // (top,top) and use the corresponding dispatching criteria, but we don't
+      // even have the interface to handle mixed (e.g., open bottom and
+      // closed top. Anyway, this is going to change soon....
+      return cmp_x_on_bnd(c1, ce1, c2, ce2, Bottom_side_category());
+    }
+
+    // Open
+    Comparison_result cmp_x_on_bnd(const X_monotone_curve_2& c1,
+                                   Arr_curve_end ce1,
+                                   const X_monotone_curve_2& c2,
+                                   Arr_curve_end ce2,
+                                   Arr_open_side_tag) const
+    { return m_self.compare_x_at_limit_2_object()(c1, ce1, c2, ce2); }
+
+    // Close
+    Comparison_result cmp_x_on_bnd(const X_monotone_curve_2& c1,
+                                   Arr_curve_end ce1,
+                                   const X_monotone_curve_2& c2,
+                                   Arr_curve_end ce2,
+                                   Arr_oblivious_side_tag)  const
+    { return m_self.compare_x_on_boundary_2_object()(c1, ce1, c2, ce2); }
+    //@}
+
+    /*! Compare the max end of two x-monotone curves lexigoraphically.
+     */
+    Comparison_result compare_max_end(const X_monotone_curve_2& c1,
+                                      const X_monotone_curve_2& c2,
+                                      Arr_all_sides_oblivious_tag tag) const
+    {
+      typedef typename Self::Construct_max_vertex_2 Construct_max_vertex_2;
+      Construct_max_vertex_2 ctr_max =
+        m_self.construct_max_vertex_2_object();
+      const Point_2& p1 = ctr_max(c1);
+      const Point_2& p2 = ctr_max(c2);
+      return operator()(p1, p2);
+    }
+
+    /*! Compare the max (right) end of two x-monotone curves lexigoraphically.
+     * \pre the curve overlap
+     */
+    Comparison_result compare_max_end(const X_monotone_curve_2& c1,
+                                      const X_monotone_curve_2& c2,
+                                      Arr_not_all_sides_oblivious_tag tag) const
+    {
+      typedef typename Base::Parameter_space_in_x_2     Parameter_space_in_x_2;
+      typedef typename Base::Parameter_space_in_y_2     Parameter_space_in_y_2;
+      Parameter_space_in_x_2 psx = m_self.parameter_space_in_x_2_object();
+      Parameter_space_in_y_2 psy = m_self.parameter_space_in_y_2_object();
+
+      Arr_parameter_space px1 = psx(c1, ARR_MAX_END);
+      Arr_parameter_space py1 = psy(c1, ARR_MAX_END);
+
+      Arr_parameter_space px2 = psx(c2, ARR_MAX_END);
+      Arr_parameter_space py2 = psy(c2, ARR_MAX_END);
+
+      // Handle the trivial cases:
+      if ((px1 == ARR_LEFT_BOUNDARY) && (px2 != ARR_LEFT_BOUNDARY))
+        return SMALLER;
+
+      if ((px2 == ARR_LEFT_BOUNDARY) && (px1 != ARR_LEFT_BOUNDARY))
+        return LARGER;
+
+      if ((px1 == ARR_RIGHT_BOUNDARY) && (px2 != ARR_RIGHT_BOUNDARY))
+        return LARGER;
+
+      if ((px2 == ARR_RIGHT_BOUNDARY) && (px1 != ARR_RIGHT_BOUNDARY))
+        return SMALLER;
+
+      // The only casese left are px1,px2 = (I,I), (L,L), and (R,R)
+
+      if (px1 == ARR_INTERIOR) {
+        CGAL_assertion(px2 == ARR_INTERIOR);
+
+        if ((py1 == ARR_INTERIOR) && (py2 == ARR_INTERIOR))
+          return compare_max_end(c1, c2, Arr_all_sides_oblivious_tag());
+
+        // px1, px2, py1 are interior
+        if (py1 == ARR_INTERIOR) {
+          CGAL_assertion(py2 != ARR_INTERIOR);
+#if 0
+          // This code is retained (commented out) because in the future, when
+          // Compare_x_at_limit_2 and Compare_x_on_boundary will be consolidated,
+          // say, to Compare_x_on_boundary, it will replace the call below.
+          typedef typename Self::Compare_x_on_boundary_2 Compare_x_on_boundary_2;
+          Compare_x_on_boundary_2 cmp_x_on_bnd =
+            m_self.compare_x_on_boundary_2_object();
+#endif
+          const Point_2& c1_max = m_self.construct_max_vertex_2_object()(c1);
+          Comparison_result res = cmp_x_on_bnd(c1_max, c2, ARR_MAX_END);
+          if (res != EQUAL) return res;
+
+          return (py2 == ARR_TOP_BOUNDARY) ? SMALLER : LARGER;
+        }
+
+        // px1, px2, py2 are interior
+        if (py2 == ARR_INTERIOR) {
+          CGAL_assertion(py1 != ARR_INTERIOR);
+#if 0
+          // This code is retained (commented out) because in the future, when
+          // Compare_x_at_limit_2 and Compare_x_on_boundary will be consolidated,
+          // say, to Compare_x_on_boundary, it will replace the call below.
+          typedef typename Self::Compare_x_on_boundary_2 Compare_x_on_boundary_2;
+          Compare_x_on_boundary_2 cmp_x_on_bnd =
+            m_self.compare_x_on_boundary_2_object();
+#endif
+          const Point_2& c2_max = m_self.construct_max_vertex_2_object()(c2);
+          Comparison_result res = cmp_x_on_bnd(c2_max, c1, ARR_MAX_END);
+          if (res != EQUAL) return CGAL::opposite(res);
+
+          return (py1 == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER;
+        }
+
+        // Both py1 and py2 not interior
+#if 0
+        // This code is retained (commented out) because in the future, when
+        // Compare_x_at_limit_2 and Compare_x_on_boundary will be consolidated,
+        // say, to Compare_x_on_boundary, it will replace the call below.
+        typedef typename Self::Compare_x_on_boundary_2 Compare_x_on_boundary_2;
+        Compare_x_on_boundary_2 cmp_x_on_bnd =
+            m_self.compare_x_on_boundary_2_object();
+#endif
+        Comparison_result res = cmp_x_on_bnd(c1, ARR_MAX_END, c2, ARR_MAX_END);
+        if (res != EQUAL) return res;
+
+        if ((py1 == ARR_BOTTOM_BOUNDARY) && (py2 != ARR_BOTTOM_BOUNDARY))
+          return SMALLER;
+        if ((py1 == ARR_TOP_BOUNDARY) && (py2 != ARR_TOP_BOUNDARY))
+          return LARGER;
+        return EQUAL;
+      }
+
+      // Both endpoints lie either on the left boundary or on the right
+      // boundary, which means that their x-coordinates are equal.
+      // Handle the trivial cases:
+      if ((py1 == ARR_BOTTOM_BOUNDARY) && (py2 != ARR_BOTTOM_BOUNDARY))
+        return SMALLER;
+      if ((py1 == ARR_TOP_BOUNDARY) && (py2 != ARR_TOP_BOUNDARY))
+        return LARGER;
+
+      typedef typename Self::Compare_y_on_boundary_2  Compare_y_on_boundary_2;
+      Compare_y_on_boundary_2 cmp_y_on_bnd =
+        m_self.compare_y_on_boundary_2_object();
+      const Point_2& c1_max = m_self.construct_max_vertex_2_object()(c1);
+      const Point_2& c2_max = m_self.construct_max_vertex_2_object()(c2);
+      Comparison_result res = cmp_y_on_bnd(c1_max, c2_max);
+      return res;
+    }
+
+    /*! Split 2 given curves that overlap and have a common sub-curve on their
+     * right. Then compare the remaining portions of the curves, respectively.
+     */
+    Comparison_result
+    compare_remainder(const X_monotone_curve_2& c1,
+                      const X_monotone_curve_2& c2,
+                      std::list<CGAL::Object>& intersections) const
+    {
+      // Right-most sections are equal.
+      // Advance to the next respective sections:
+      if (intersections.empty()) {
+        typedef typename Self::Intersect_2          Intersect_2;
+        Intersect_2 intersect = m_self.intersect_2_object();
+        intersect(c1, c2, std::back_inserter(intersections));
+      }
+      // Verify the first intersection is an overlap, remove it, and
+      // recursively call.
+      CGAL::Object first = intersections.front();
+      X_monotone_curve_2 xcv;
+      if (!assign(xcv, first)) {
+        CGAL_error_msg("The first intersection is not an overlap!");
+        return SMALLER;
+      }
+      intersections.pop_front();
+      if (intersections.empty())
+        return compare_max_end(c1, c2, Are_all_sides_oblivious_category());
+
+      // Otherwise, split and continue.
+      typedef typename Self::Split_2        Split_2;
+      Split_2 split = m_self.split_2_object();
+      X_monotone_curve_2 c11, c12, c21, c22;
+      Construct_max_vertex_2 ctr_max =
+        m_self.construct_max_vertex_2_object();
+      const Point_2& p1 = ctr_max(xcv);
+      const Point_2& p2 = ctr_max(xcv);
+      split(c1, p1, c11, c12);
+      split(c2, p2, c21, c22);
+      return operator()(c12, c22, intersections,
+                        Are_all_sides_oblivious_category());
+    }
+
+    /*! Compare two x-monotone curves lexigoraphically.
+     */
+    Comparison_result operator()(const X_monotone_curve_2& c1,
+                                 const X_monotone_curve_2& c2,
+                                 std::list<CGAL::Object>& intersections,
+                                 Arr_all_sides_oblivious_tag tag) const
+    {
+      const Point_2& c1_min = m_self.construct_min_vertex_2_object()(c1);
+      const Point_2& c2_min = m_self.construct_min_vertex_2_object()(c2);
+
+      Comparison_result res = operator()(c1_min, c2_min);
+      if (res != EQUAL) return res;
+
+      // Left-most points are equal.
+      // Compare their y-coordinates to their right:
+      res = m_self.compare_y_at_x_right_2_object()(c1, c2, c1_min);
+      if (res != EQUAL) return res;
+
+      return compare_remainder(c1, c2, intersections);
+    }
+
+    /*! Compare two x-monotone curves lexigoraphically.
+     */
+    Comparison_result operator()(const X_monotone_curve_2& c1,
+                                 const X_monotone_curve_2& c2,
+                                 std::list<CGAL::Object>& intersections,
+                                 Arr_not_all_sides_oblivious_tag) const
+    {
+      typedef typename Base::Parameter_space_in_x_2     Parameter_space_in_x_2;
+      typedef typename Base::Parameter_space_in_y_2     Parameter_space_in_y_2;
+      Parameter_space_in_x_2 psx = m_self.parameter_space_in_x_2_object();
+      Parameter_space_in_y_2 psy = m_self.parameter_space_in_y_2_object();
+
+      Arr_parameter_space min_px1 = psx(c1, ARR_MIN_END);
+      Arr_parameter_space min_py1 = psy(c1, ARR_MIN_END);
+
+      Arr_parameter_space min_px2 = psx(c2, ARR_MIN_END);
+      Arr_parameter_space min_py2 = psy(c2, ARR_MIN_END);
+
+      // Handle the trivial cases:
+      if ((min_px1 == ARR_LEFT_BOUNDARY) && (min_px2 != ARR_LEFT_BOUNDARY))
+        return SMALLER;
+
+      if ((min_px2 == ARR_LEFT_BOUNDARY) && (min_px1 != ARR_LEFT_BOUNDARY))
+        return LARGER;
+
+      if ((min_px1 == ARR_RIGHT_BOUNDARY) && (min_px2 != ARR_RIGHT_BOUNDARY))
+        return LARGER;
+
+      if ((min_px2 == ARR_RIGHT_BOUNDARY) && (min_px1 != ARR_RIGHT_BOUNDARY))
+        return SMALLER;
+
+      // The only casese left are px1,px2 = (I,I), (L,L), and (R,R)
+
+      if (min_px1 == ARR_INTERIOR) {
+        CGAL_assertion(min_px2 == ARR_INTERIOR);
+
+        if ((min_py1 == ARR_INTERIOR) && (min_py2 == ARR_INTERIOR)) {
+          return operator()(c1, c2, intersections,
+                            Arr_all_sides_oblivious_tag());
+        }
+
+        //
+        if (min_py1 == ARR_INTERIOR) {
+          CGAL_assertion(min_py2 != ARR_INTERIOR);
+#if 0
+          // This code is retained (commented out) because in the future, when
+          // Compare_x_at_limit_2 and Compare_x_on_boundary will be consolidated,
+          // say, to Compare_x_on_boundary, it will replace the call below.
+          typedef typename Self::Compare_x_on_boundary_2 Compare_x_on_boundary_2;
+          Compare_x_on_boundary_2 cmp_x_on_bnd =
+            m_self.compare_x_on_boundary_2_object();
+#endif
+          const Point_2& c1_min = m_self.construct_min_vertex_2_object()(c1);
+          Comparison_result res = cmp_x_on_bnd(c1_min, c2, ARR_MIN_END);
+          if (res != EQUAL) return res;
+
+          return (min_py2 == ARR_TOP_BOUNDARY) ? SMALLER : LARGER;
+        }
+
+        if (min_py2 == ARR_INTERIOR) {
+          CGAL_assertion(min_py1 != ARR_INTERIOR);
+#if 0
+          // This code is retained (commented out) because in the future, when
+          // Compare_x_at_limit_2 and Compare_x_on_boundary will be consolidated,
+          // say, to Compare_x_on_boundary, it will replace the call below.
+          typedef typename Self::Compare_x_on_boundary_2 Compare_x_on_boundary_2;
+          Compare_x_on_boundary_2 cmp_x_on_bnd =
+            m_self.compare_x_on_boundary_2_object();
+#endif
+          const Point_2& c2_min = m_self.construct_min_vertex_2_object()(c2);
+
+          Comparison_result res = cmp_x_on_bnd(c2_min, c1, ARR_MIN_END);
+          if (res != EQUAL) return CGAL::opposite(res);
+
+          return (min_py1 == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER;
+        }
+
+        // Both min_py1 and min_py2 not interior
+#if 0
+        // This code is retained (commented out) because in the future, when
+        // Compare_x_at_limit_2 and Compare_x_on_boundary will be consolidated,
+        // say, to Compare_x_on_boundary, it will replace the call below.
+        typedef typename Self::Compare_x_on_boundary_2 Compare_x_on_boundary_2;
+        Compare_x_on_boundary_2 cmp_x_on_bnd =
+            m_self.compare_x_on_boundary_2_object();
+#endif
+        Comparison_result res = cmp_x_on_bnd(c1, ARR_MIN_END, c2, ARR_MIN_END);
+        if (res != EQUAL) return res;
+
+        if ((min_py1 == ARR_BOTTOM_BOUNDARY) && (min_py2 == ARR_TOP_BOUNDARY))
+          return SMALLER;
+        if ((min_py1 == ARR_TOP_BOUNDARY) && (min_py2 == ARR_BOTTOM_BOUNDARY))
+          return LARGER;
+
+        // Left-most points are equal.
+        // Compare their x-coordinates near the common left endpoint.
+        res = m_self.compare_x_near_boundary_2_object()(c1, c2, ARR_MIN_END);
+        if (res != EQUAL) return res;
+
+        return compare_remainder(c1, c2, intersections);
+      }
+
+
+      if ((min_py1 == ARR_BOTTOM_BOUNDARY) && (min_py2 != ARR_BOTTOM_BOUNDARY))
+        return SMALLER;
+      if ((min_py1 == ARR_TOP_BOUNDARY) && (min_py2 != ARR_TOP_BOUNDARY))
+        return LARGER;
+
+      if (min_px1 == ARR_LEFT_BOUNDARY) {
+        // The min points of the two curves lie on the left boundary.
+        CGAL_assertion(min_px2 == ARR_LEFT_BOUNDARY);
+        typedef typename Self::Compare_y_on_boundary_2  Compare_y_on_boundary_2;
+        Compare_y_on_boundary_2 cmp_y_on_bnd =
+          m_self.compare_y_on_boundary_2_object();
+        const Point_2& c1_min = m_self.construct_min_vertex_2_object()(c1);
+        const Point_2& c2_min = m_self.construct_min_vertex_2_object()(c2);
+        Comparison_result res = cmp_y_on_bnd(c1_min, c2_min);
+        if (res != EQUAL) return res;
+
+        typedef typename Self::Is_vertical_2    Is_vertical_2;
+        Is_vertical_2 is_vert = m_self.is_vertical_2_object();
+        bool vert1 = is_vert(c1);
+        bool vert2 = is_vert(c2);
+        if (vert1 && ! vert2) return SMALLER;
+        if (vert2 && ! vert1) return LARGER;
+        if (vert1 && vert2) {
+          const Point_2& c1_max = m_self.construct_max_vertex_2_object()(c1);
+          const Point_2& c2_max = m_self.construct_max_vertex_2_object()(c2);
+          res = cmp_y_on_bnd(c1_max, c2_max);
+          if (res == SMALLER) return SMALLER;
+        }
+        // Compare slightly to the right near the boundary.
+        typedef typename Self::Compare_y_near_boundary_2
+          Compare_y_near_boundary_2;
+        Compare_y_near_boundary_2 cmp_y_near_bnd =
+          m_self.compare_y_near_boundary_2_object();
+        res = cmp_y_near_bnd(c1, c2, CGAL::ARR_MIN_END);
+        if (res != EQUAL) return res;
+
+        // The two curves overlap on their right.
+        // Intersect them, and recursively compare the remaining portions,
+        // respectively.
+        return compare_remainder(c1, c2, intersections);
+      }
+
+      CGAL_assertion(min_px1 == ARR_RIGHT_BOUNDARY);
+      CGAL_assertion(min_px2 == ARR_RIGHT_BOUNDARY);
+      // The min points of the two curves lie on the right boundary.
+      // It implies that the entire curves lie on the right boundary, and
+      // thus both are vertical.
+
+      typedef typename Self::Compare_y_on_boundary_2  Compare_y_on_boundary_2;
+      Compare_y_on_boundary_2 cmp_y_on_bnd =
+        m_self.compare_y_on_boundary_2_object();
+      const Point_2& c1_min = m_self.construct_min_vertex_2_object()(c1);
+      const Point_2& c2_min = m_self.construct_min_vertex_2_object()(c2);
+      Comparison_result res = cmp_y_on_bnd(c1_min, c2_min);
+      if (res != EQUAL) return res;
+
+      const Point_2& c1_max = m_self.construct_max_vertex_2_object()(c1);
+      const Point_2& c2_max = m_self.construct_max_vertex_2_object()(c2);
+      res = cmp_y_on_bnd(c1_max, c2_max);
+      return res;
+    }
+  };
+
+  /*! Obtain a Compare_xy_2 function object */
+  Compare_xy_2 compare_xy_2_object() const { return Compare_xy_2(*this); }
 
   /*! A functor that tests whether two x-monotone curves can be merged. */
   class Are_mergeable_2 {
