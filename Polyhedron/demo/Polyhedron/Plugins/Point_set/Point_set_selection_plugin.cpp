@@ -670,10 +670,7 @@ protected:
 
       shift_pressing = modifiers.testFlag(Qt::ShiftModifier);
       ctrl_pressing = modifiers.testFlag(Qt::ControlModifier);
-      Viewer_interface* viewer = qobject_cast<Viewer_interface*>(
-            Three::mainWindow()->childAt(QCursor::pos()));
-      if(!viewer)
-        viewer= getActiveViewer();
+      Viewer_interface* viewer = getActiveViewer();
       background = viewer->grabFramebuffer();
     }
 
@@ -682,10 +679,8 @@ protected:
       {
       background = static_cast<CGAL::Three::Viewer_interface*>(*CGAL::QGLViewer::QGLViewerPool().begin())->grabFramebuffer();
 	QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
-        Viewer_interface* viewer = qobject_cast<Viewer_interface*>(
-              Three::mainWindow()->childAt(QCursor::pos()));
-        if(!viewer)
-          viewer= getActiveViewer();
+        Viewer_interface* viewer = getActiveViewer();
+        background = viewer->grabFramebuffer();
 	// Start selection
 	if (mouseEvent->button() == Qt::LeftButton)
         {
