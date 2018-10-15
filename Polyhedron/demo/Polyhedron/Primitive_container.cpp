@@ -144,8 +144,10 @@ void Primitive_container::reset_vbos(Scene_item_rendering_helper::Gl_data_names 
        (name.testFlag(Scene_item_rendering_helper::GEOMETRY) && vbo->flag == Vbo::GEOMETRY)
        || (name.testFlag(Scene_item_rendering_helper::NORMALS) && vbo->flag == Vbo::NORMALS)
        || (name.testFlag(Scene_item_rendering_helper::COLORS) && vbo->flag == Vbo::COLORS)
-       || (name.testFlag(Scene_item_rendering_helper::NOT_INSTANCED) && vbo->flag == Vbo::NOT_INSTANCED))
+       || (name.testFlag(Scene_item_rendering_helper::NOT_INSTANCED) && vbo->flag == Vbo::NOT_INSTANCED)){
        vbo->allocated = false;
+       vbo->dataSize=0;
+    }
   }
 }
 
