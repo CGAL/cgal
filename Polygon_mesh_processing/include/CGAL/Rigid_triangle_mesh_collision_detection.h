@@ -623,6 +623,11 @@ public:
   {
     return add_mesh(tm, parameters::all_default());
   }
+
+  std::size_t add_mesh(const AABB_tree& tree, const TriangleMesh& tm)
+  {
+    return add_mesh(tree, tm, parameters::all_default());
+  }
 #endif
 };
 
