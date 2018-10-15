@@ -172,6 +172,13 @@ namespace QP_from_mps_detail {
     typedef CGAL::Quotient<CGAL::MP_Float> ET;
   };
 
+#if defined CGAL_USE_BOOST_MP && !defined CGAL_USE_GMP && !defined CGAL_USE_LEDA
+  // Last chance for int
+  template<>
+  struct IT_to_ET<int> {
+    typedef boost::multiprecision::cpp_int ET;
+  };
+#endif
 } // QP_from_mps_detail
 
 template<typename QP>
