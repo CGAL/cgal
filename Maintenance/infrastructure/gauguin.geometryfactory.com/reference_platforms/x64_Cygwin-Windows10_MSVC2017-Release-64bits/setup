@@ -5,8 +5,9 @@ export ARCH="64"
 export QT_VERSION="5.9.1"
 export PLATFORM_REFERENCE="/cygdrive/c/CGAL/reference_platforms"
 export BOOST_VERSION="1_65_1"
-export TBB_ARCH="intel64"
-export EIGEN3_DIR="C:/3rdPartyLibs/eigen-master" 
+export TBB_ARCH_PLATFORM="intel64/vc14"
+export EIGEN3_DIR="C:/3rdPartyLibs/eigen-master-4-19-2018" 
+export INIT_FILE="C:\\CGAL\\reference_platforms\\x64_Cygwin-Windows10_MSVC2017-Release-64bits\\init.cmake"
 source "${PLATFORM_REFERENCE}/setup_common"
 
 COLLECT_DEMOS_BINARIES=y
