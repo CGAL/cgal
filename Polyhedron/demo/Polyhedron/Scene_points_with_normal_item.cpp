@@ -777,7 +777,7 @@ drawPoints(CGAL::Three::Viewer_interface* viewer) const
     std::size_t real_size =
         getPointContainer(Priv::Shaded_points)->getFlatDataSize();
     getPointContainer(Priv::Shaded_points)->setFlatDataSize(ratio_displayed * real_size);
-    getPointContainer(Priv::Shaded_points)->draw( viewer, !d->m_points->has_colors());
+    getPointContainer(Priv::Shaded_points)->draw( viewer, true);
     getPointContainer(Priv::Shaded_points)->setFlatDataSize(real_size);
 
     real_size =
