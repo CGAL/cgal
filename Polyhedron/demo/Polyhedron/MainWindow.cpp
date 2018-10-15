@@ -2672,8 +2672,9 @@ SubViewer::SubViewer(QWidget *parent, MainWindow* mw, Viewer* mainviewer)
   QAction* actionTotalPass = new QAction("Set Transparency Pass &Number...",this);
   actionTotalPass->setObjectName("actionTotalPass");
   viewMenu->addAction(actionTotalPass);
-  setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowSystemMenuHint | Qt::WindowMaximizeButtonHint | Qt::WindowMinimizeButtonHint );
+  /*setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowSystemMenuHint | Qt::WindowMaximizeButtonHint | Qt::WindowMinimizeButtonHint );*/
   setAttribute(Qt::WA_DeleteOnClose);
+  setWindowIcon(QIcon(":/cgal/icons/resources/menu.png"));
   setSystemMenu(viewMenu);
 }
 
