@@ -1606,11 +1606,11 @@ ratio_test_1__q_x_S( Tag_false)
 					 A_by_index_accessor( *(qp_A + j))),
 		    q_x_S.begin(),
 		    boost::bind(std::minus<ET>(),
-				boost::placeholders::_1,
+				_1,
 				boost::bind(std::multiplies<ET>(), d,
 				  boost::bind(
 				    typename Coercion_traits<ET,RT>::Cast(),
-				    boost::placeholders::_2))));
+				    _2))));
   }
 
   // q_x_S = -+ ( A_S_BxB_O * q_x_O - A_S_Bxj)

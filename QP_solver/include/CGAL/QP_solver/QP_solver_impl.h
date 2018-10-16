@@ -74,7 +74,7 @@ transition( )
                     minus_c_B.begin(),
 		    boost::bind(
 		      typename Coercion_traits<ET,RT>::Cast(),
-		      boost::bind(std::negate<RT>(), boost::placeholders::_1)));
+		      boost::bind(std::negate<RT>(), _1)));
     
     // compute initial solution of phase II
     compute_solution(Is_nonnegative());
