@@ -18,7 +18,10 @@
 #ifndef CGAL_BOOST_MP_H
 #define CGAL_BOOST_MP_H
 
-#if BOOST_VERSION >= 105300 && !defined CGAL_DO_NOT_USE_BOOST_MP
+// This could check BOOST_VERSION >= 105300, but before 1.56 there is no
+// implicit conversion from double, which makes it hard to use in CGAL.
+// It is easier to disable this number type completely for old versions.
+#if BOOST_VERSION >= 105600 && !defined CGAL_DO_NOT_USE_BOOST_MP
 #define CGAL_USE_BOOST_MP 1
 
 #include <CGAL/number_type_basic.h>
