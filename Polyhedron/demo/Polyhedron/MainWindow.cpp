@@ -1479,8 +1479,6 @@ void MainWindow::readSettings()
           settings.value("default_sm_rm", "flat+edges").toString());
     CGAL::Three::Three::s_defaultPSRM = CGAL::Three::Three::modeFromName(
           settings.value("default_ps_rm", "points").toString());
-    // enable anti-aliasing
-    ui->actionAntiAliasing->setChecked(settings.value("antialiasing", false).toBool());
     // read plugin blacklist
     QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
     Q_FOREACH(QString name,blacklist){ plugin_blacklist.insert(name); }
@@ -1492,8 +1490,6 @@ void MainWindow::writeSettings()
   this->writeState("MainWindow");
   {
     QSettings settings;
-    settings.setValue("antialiasing",
-                      ui->actionAntiAliasing->isChecked());
     //setting plugin blacklist
     QStringList blacklist;
     Q_FOREACH(QString name,plugin_blacklist){ blacklist << name; }
