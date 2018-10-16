@@ -38,6 +38,7 @@ therefore do not appear in the constructors.
 \sa `Rotation`
 \sa `Scaling`
 \sa `Translation` 
+\sa `Reflection` 
 \sa `rational_rotation_approximation_grp` 
 
 \cgalHeading{Example}
@@ -126,6 +127,15 @@ introduces a scaling by a scale factor \f$ s/hw\f$.
 Aff_transformation_2(const Scaling, 
 const Kernel::RT &s, 
 const Kernel::RT &hw = RT(1)); 
+
+/*!
+introduces a reflection by a line `l`. 
+\attention Angles manipulation restrain this operation to FTs for which sqrt is defined.
+
+\todo find a better formulation
+*/ 
+Aff_transformation_2(const Reflection, 
+const Line_2<Kernel>& l); 
 
 /*!
 introduces a general affine transformation in the 

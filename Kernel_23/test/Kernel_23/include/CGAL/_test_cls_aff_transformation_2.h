@@ -116,7 +116,7 @@ _test_cls_aff_transformation_2(const R& )
  CGAL::Aff_transformation_2<R> xrefl(-n4,  n0, n0,
                                       n0,  n4, n0,
                                                n4 );
-
+ 
  CGAL::Aff_transformation_2<R> gat4( gat3);
 
  CGAL::Aff_transformation_2<R> gat5( n7,  n9,
@@ -551,6 +551,7 @@ _test_cls_aff_transformation_2(const R& )
  assert( FT( ident.hm(2,1) ) / FT( ident.hm(2,2) ) == FTzero );
  assert( FT( ident.hm(2,2) ) / FT( ident.hm(2,2) ) == FTone );
 
+ 
  // samples
  // cartesian == m
  assert( gat1.cartesian(1,2) == gat1.m(1,2) );
@@ -577,6 +578,47 @@ _test_cls_aff_transformation_2(const R& )
  assert( ident.homogeneous(1,2) == ident.hm(1,2) );
  assert( gscale.homogeneous(1,1) == gscale.hm(1,1) );
 
+ //tests for reflection
+ CGAL::Aff_transformation_2<R> refl(CGAL::REFLECTION, CGAL::Line_2<R>(
+                                      CGAL::Point_2<R>(1,3),
+                                      CGAL::Point_2<R>(2,1))); 
+ CGAL::Point_2<R> p(4,2);
+ assert(p.transform(refl) == CGAL::Point_2<R>(0,0));
+ 
+ 
+ //with translation
+ CGAL::Aff_transformation_2<R> trans(CGAL::TRANSLATION, CGAL::Vector_2<R>(1,-2)); 
+ CGAL::Aff_transformation_2<R> comp1(refl*trans),
+     comp2(trans*refl);
+ p1 = p.transform(trans);
+ p1 = p1.transform(refl);
+ assert(p1 == CGAL::Point_2<R>(1,-2));
+ assert(p1 == p.transform(comp1));
+ p1 = p.transform(refl);
+ p1 = p1.transform(trans);
+ assert(p1 == p.transform(comp2));
+ //with scaling
+ CGAL::Aff_transformation_2<R> scal(CGAL::SCALING, 2); 
+ comp1 = refl*scal;
+ comp2 = scal*refl;
+ p1 = p.transform(scal);
+ p1 = p1.transform(refl);
+ assert(p1 == p.transform(comp1));
+ p1 = p.transform(refl);
+ p1 = p1.transform(scal);
+ assert(p1 == p.transform(comp2)); 
+ //with rotation
+ CGAL::Aff_transformation_2<R> rot(CGAL::ROTATION, 1, 0); 
+ comp1 = refl*rot;
+ comp2 = rot*refl;
+ p1 = p.transform(rot);
+ p1 = p1.transform(refl);
+ assert(p1 == p.transform(comp1));
+ p1 = p.transform(refl);
+ p1 = p1.transform(rot);
+ assert(p1 == p.transform(comp2));
+ //with reflection
+ //with transformation
  std::cout << "done" << std::endl;
  return true;
 }
