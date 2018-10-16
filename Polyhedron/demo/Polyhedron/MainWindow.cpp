@@ -40,6 +40,7 @@
 #include <QDockWidget>
 #include <QSpinBox>
 #include <stdexcept>
+#include <QTime>
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptValue>
 #  ifdef QT_SCRIPTTOOLS_LIB
@@ -1056,7 +1057,6 @@ void MainWindow::open(QString filename)
     default:
       load_pair = File_loader_dialog::getItem(fileinfo.fileName(), selected_items, &ok);
   }
-
   viewer->makeCurrent();
   if(!ok || load_pair.first.isEmpty()) { return; }
 
@@ -1069,14 +1069,13 @@ void MainWindow::open(QString filename)
   }
 
 
-  QSettings settings;
   settings.setValue("OFF open directory",
                     fileinfo.absoluteDir().absolutePath());
   CGAL::Three::Scene_item* scene_item = loadItem(fileinfo, findLoader(load_pair.first));
+ 
   if(!scene_item)
     return;
   this->addToRecentFiles(fileinfo.absoluteFilePath());
-
   selectSceneItem(scene->addItem(scene_item));
 
   CGAL::Three::Scene_group_item* group =
@@ -1480,6 +1479,8 @@ void MainWindow::readSettings()
           settings.value("default_sm_rm", "flat+edges").toString());
     CGAL::Three::Three::s_defaultPSRM = CGAL::Three::Three::modeFromName(
           settings.value("default_ps_rm", "points").toString());
+    // enable anti-aliasing
+    ui->actionAntiAliasing->setChecked(settings.value("antialiasing", false).toBool());
     // read plugin blacklist
     QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
     Q_FOREACH(QString name,blacklist){ plugin_blacklist.insert(name); }
@@ -1491,6 +1492,8 @@ void MainWindow::writeSettings()
   this->writeState("MainWindow");
   {
     QSettings settings;
+    settings.setValue("antialiasing",
+                      ui->actionAntiAliasing->isChecked());
     //setting plugin blacklist
     QStringList blacklist;
     Q_FOREACH(QString name,plugin_blacklist){ blacklist << name; }
@@ -1596,7 +1599,7 @@ void MainWindow::on_actionLoad_triggered()
       filters << filter;
     }
   }
-  QSettings settings;
+  
   QString directory = settings.value("OFF open directory",
                                      QDir::current().dirName()).toString();
 
@@ -1623,7 +1626,9 @@ void MainWindow::on_actionLoad_triggered()
                     static_cast<unsigned>(nb_files),
                     std::back_inserter(colors_));
   std::size_t nb_item = -1;
+  
   Q_FOREACH(const QString& filename, dialog.selectedFiles()) {
+    
     CGAL::Three::Scene_item* item = NULL;
     if(selectedPlugin) {
       QFileInfo info(filename);
