@@ -85,7 +85,7 @@ fi
 
 #check cmake scripts of tests, examples are present
 echo '.. Checking if all CMakeLists.txt are present...'
-for i in `ls -d ^build*/examples/*/ ^build*/test/*/`; do
+for i in `ls -d ^build*/examples/*/ ^build*/test/*/ ^build*/demo/^(icons|resources)/`; do
   if ! [ -f $i/CMakeLists.txt ]; then
     echo "Error: $i/CMakeLists.txt does not exist!"
     exit 1

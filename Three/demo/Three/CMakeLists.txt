@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Three_test )
+project( Three_Demo )
 
 cmake_minimum_required(VERSION 2.8.10)
 
