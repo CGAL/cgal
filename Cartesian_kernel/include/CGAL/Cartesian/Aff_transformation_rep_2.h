@@ -263,13 +263,9 @@ typename Aff_transformation_repC2<R>::Aff_transformation_2
 Aff_transformation_repC2<R>::
 compose(const Reflection_repC2<R> &r) const
 {
-   return Aff_transformation_2(
-         t11*r.cosinus_+t12*r.sinus_,
-         t11*r.sinus_-t12*r.cosinus_,
-         t11*r.t13()+t12*r.t23()+t13,
-         t21*r.cosinus_+t22*r.sinus_,
-         t21*r.sinus_-t22*r.cosinus_,
-         t21*r.t13()+t22*r.t23()+t23);
+  return Aff_transformation_2(
+        r.cosinus_*t11+r.sinus_*t21, r.cosinus_*t12+r.sinus_*t22, r.cosinus_*(t13-r.t.x())+r.sinus_*(t23-r.t.y())+r.t.x(),
+        r.sinus_*(t11)-r.cosinus_*(t21), r.sinus_*(t12)-r.cosinus_*(t22), r.sinus_*(t13-r.t.x())-r.cosinus_*(t23-r.t.y())+r.t.y());
 }
 
 } //namespace CGAL

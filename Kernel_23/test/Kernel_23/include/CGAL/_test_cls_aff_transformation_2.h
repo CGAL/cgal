@@ -618,7 +618,27 @@ _test_cls_aff_transformation_2(const R& )
  p1 = p1.transform(rot);
  assert(p1 == p.transform(comp2));
  //with reflection
+ CGAL::Aff_transformation_2<R> refl2(CGAL::REFLECTION, CGAL::Line_2<R>(
+                                      CGAL::Point_2<R>(0,0),
+                                      CGAL::Point_2<R>(1,1))); 
+ comp1 = refl*refl2;
+ comp2 = refl2*refl;
+ p1 = p.transform(refl2);
+ p1 = p1.transform(refl);
+ assert(p1 == p.transform(comp1));
+ p1 = p.transform(refl);
+ p1 = p1.transform(refl2);
+ assert(p1 == p.transform(comp2));
  //with transformation
+ CGAL::Aff_transformation_2<R> afft(1,2,3,4,5,6); 
+ comp1 = refl*afft;
+ comp2 = afft*refl;
+ p1 = p.transform(afft);
+ p1 = p1.transform(refl);
+ assert(p1 == p.transform(comp1));
+ p1 = p.transform(refl);
+ p1 = p1.transform(afft);
+ assert(p1 == p.transform(comp2));
  std::cout << "done" << std::endl;
  return true;
 }

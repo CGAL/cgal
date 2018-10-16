@@ -115,8 +115,12 @@ typedef typename CGAL::Line_2<R>                 Line_2;
   Aff_transformation_2 compose(const Transformation &tr) const
   {
     return Aff_transformation_2(
-          cosinus_*tr.t11+sinus_*tr.t21, cosinus_*tr.t12+sinus_*tr.t22, cosinus_*(tr.t13-t.x())+sinus_*(tr.t23-t.y())+t.x(),
-          sinus_*(tr.t11)-cosinus_*(tr.t21), sinus_*(tr.t12)-cosinus_*(tr.t22), sinus_*(tr.t13-t.x())-cosinus_*(tr.t23-t.y())+t.y());
+          tr.t11*cosinus_+tr.t12*sinus_,
+          tr.t11*sinus_-tr.t12*cosinus_,
+          tr.t11*t13()+tr.t12*t23()+tr.t13,
+          tr.t21*cosinus_+tr.t22*sinus_,
+          tr.t21*sinus_-tr.t22*cosinus_,
+          tr.t21*t13()+tr.t22*t23()+tr.t23);
   }
   
   Aff_transformation_2 compose(const Rotation &r) const
@@ -136,12 +140,12 @@ typedef typename CGAL::Line_2<R>                 Line_2;
   {
     return Aff_transformation_2(
           cosinus_*r.cosinus_+sinus_*r.sinus_, 
-          cosinus_*r.sinus_-r.cosinus_*sinus_, 
-          sinus_*(-r.cosinus_*r.t.x()-r.sinus_*r.t.y()+r.t.x()-t.x())-cosinus_*(-r.sinus_*r.t.x()+r.cosinus_*r.t.y()+r.t.y()-t.y()) + t.x(),
-          sinus_*r.cosinus_-cosinus_*r.sinus_, 
-          sinus_*r.sinus_+cosinus_*r.cosinus_, 
-          sinus_*(-r.cosinus_*r.t.x()-r.sinus_*r.t.y()+r.t.x()-t.x())-cosinus_*(-r.sinus_*r.t.x()+r.cosinus_*r.t.y()+r.t.y()-t.y())+t.y()
-          );
+          r.cosinus_*sinus_-r.sinus_*cosinus_, 
+          r.cosinus_*(t13()-r.t.x()) + r.sinus_*(t23()-r.t.y())+r.t.x(),
+          
+          r.sinus_*cosinus_ - r.cosinus_*sinus_, 
+          r.sinus_*sinus_+r.cosinus_*cosinus_, 
+          r.sinus_*(t13()-r.t.x()) -r.cosinus_*(t23()-r.t.y())+r.t.y());
   }
   
   Aff_transformation_2  inverse() const
