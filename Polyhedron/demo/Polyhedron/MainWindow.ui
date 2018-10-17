@@ -90,22 +90,10 @@
      </property>
      <addaction name="dummyAction"/>
     </widget>
-    <widget class="QMenu" name="menuCamera">
-     <property name="title">
-      <string>Ca&amp;mera</string>
-     </property>
-     <addaction name="actionDumpCamera"/>
-     <addaction name="actionCopyCamera"/>
-     <addaction name="actionPasteCamera"/>
-    </widget>
-    <addaction name="actionRecenterScene"/>
-    <addaction name="actionLookAt"/>
-    <addaction name="actionDrawTwoSides"/>
-    <addaction name="actionSwitchProjection"/>
     <addaction name="actionAdd_Viewer"/>
     <addaction name="action_Organize_Viewers"/>
+    <addaction name="actionRecenterScene"/>
     <addaction name="menuDockWindows"/>
-    <addaction name="menuCamera"/>
     <addaction name="separator"/>
    </widget>
    <addaction name="menuFile"/>
@@ -421,48 +409,9 @@
     <string>Set Polyhedron B</string>
    </property>
   </action>
-  <action name="actionDrawTwoSides">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Draw &amp;Two Sides</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+T</string>
-   </property>
-  </action>
-  <action name="actionRecenterScene">
-   <property name="text">
-    <string>Re&amp;center Scene</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+R</string>
-   </property>
-  </action>
-  <action name="actionLookAt">
-   <property name="text">
-    <string>&amp;Look at...</string>
-   </property>
-  </action>
   <action name="actionSaveSnapshot">
    <property name="text">
     <string>Save Snapshot</string>
-   </property>
-  </action>
-  <action name="actionDumpCamera">
-   <property name="text">
-    <string>&amp;Dump Camera Coordinates</string>
-   </property>
-  </action>
-  <action name="actionCopyCamera">
-   <property name="text">
-    <string>&amp;Copy Camera</string>
-   </property>
-  </action>
-  <action name="actionPasteCamera">
-   <property name="text">
-    <string>&amp;Paste Camera</string>
    </property>
   </action>
   <action name="actionSelectAllItems">
@@ -488,14 +437,6 @@
     <string>Load Plugin</string>
    </property>
   </action>
-  <action name="actionSwitchProjection">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Orthographic Projection</string>
-   </property>
-  </action>
   <action name="actionColorItems">
    <property name="text">
     <string>Set Different Colors for Selected Items</string>
@@ -509,6 +450,11 @@
   <action name="action_Organize_Viewers">
    <property name="text">
     <string>&amp;Organize Viewers</string>
+   </property>
+  </action>
+  <action name="actionRecenterScene">
+   <property name="text">
+    <string>Recenter Scene</string>
    </property>
   </action>
  </widget>

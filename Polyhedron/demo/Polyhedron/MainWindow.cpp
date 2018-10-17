@@ -148,12 +148,18 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
 #endif
   // Save some pointers from ui, for latter use.
   sceneView = ui->sceneView;
-  viewer = new Viewer(ui->mdiArea);
+  viewer_window = new SubViewer(ui->mdiArea, this, nullptr);
+  viewer = viewer_window->viewer;
   CGAL::Three::Three::s_mainviewer = viewer;
   viewer->setObjectName("mainViewer");
-  viewer_window = ui->mdiArea->addSubWindow(viewer);
-  viewer_window->setWindowFlags( Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowMaximizeButtonHint);
   viewer_window->showMaximized();
+  viewer_window->setWindowFlags( 
+        Qt::SubWindow
+        | Qt::CustomizeWindowHint 
+        | Qt::WindowMaximizeButtonHint
+        | Qt::WindowSystemMenuHint
+        | Qt::WindowTitleHint
+        );
   viewer_window->setWindowTitle("Main Viewer");
   // setup scene
   scene = new Scene(this);
@@ -241,7 +247,7 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
   connect(scene, SIGNAL(restoreCollapsedState()),
           this, SLOT(restoreCollapseState()));
 
-  setupViewer(viewer, nullptr);
+  setupViewer(viewer, viewer_window);
 
   // add the "About CGAL..." and "About demo..." entries
   this->addAboutCGAL();
@@ -2015,43 +2021,6 @@ QString MainWindow::cameraString(CGAL::Three::Viewer_interface* v) const
   return v->dumpCameraCoordinates();
 }
 
-void MainWindow::on_actionDumpCamera_triggered()
-{
-  //remove offset
-  information(QString("Camera: %1")
-              .arg(cameraString(viewer)));
-}
-
-void MainWindow::on_actionCopyCamera_triggered()
-{
-  //remove offset
-  qApp->clipboard()->setText(this->cameraString(viewer));
-}
-
-/* to check
-void MainWindow::on_actionPasteCamera_triggered()
-{
-  //add offset
-  QString s = qApp->clipboard()->text();
-  QStringList list = s.split(' ');
-  QString new_s[7];
-  
-  new_s[0] = QString("%1").arg(list.at(0).toFloat() + viewer->offset().x);
-  new_s[1] = QString("%1").arg(list.at(1).toFloat() + viewer->offset().y);
-  new_s[2] = QString("%1").arg(list.at(2).toFloat() + viewer->offset().z);
-  for(int i=3; i<7; ++i)
-    new_s[i] = list.at(i);
-  s = QString();
-  for(int i=0; i<7; ++i)
-    s.append(new_s[i]).append(" ");
-  viewer->moveCameraToCoordinates(s, 0.5f);
-}*/
-void MainWindow::on_actionPasteCamera_triggered()
-{
-  QString s = qApp->clipboard()->text();
-  viewer->moveCameraToCoordinates(s, 0.5f);
-}
-
 void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
 {
   viewer->setAddKeyFrameKeyboardModifiers(m);
@@ -2421,7 +2390,7 @@ void MainWindow::setDefaultSaveDir()
   QSettings settings;
   settings.setValue("default_saveas_dir", def_save_dir);
 }
-void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer=NULL)
+void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer)
 {
   // do not save the state of the viewer (anoying)
   viewer->setStateFileName(QString::null);
@@ -2431,99 +2400,74 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer=NULL)
           viewer, SLOT(update()));
   connect(scene, SIGNAL(updated()),
           viewer, SLOT(update()));
-
-  if(subviewer == nullptr)
-  {
-    connect(ui->actionRecenterScene, SIGNAL(triggered()),
-            viewer, SLOT(update()));
-
-    connect(ui->actionRecenterScene, SIGNAL(triggered()),
-            this, SLOT(on_actionRecenterScene_triggered()));
-    connect(ui->actionLookAt, SIGNAL(triggered()),
-            this, SLOT(actionLookAt_triggered()));
-    connect(ui->actionDumpCamera, SIGNAL(triggered()),
-            this, SLOT(on_actionDumpCamera_triggered()));
-    connect(ui->actionCopyCamera, SIGNAL(triggered()),
-            this, SLOT(on_actionCopyCamera_triggered()));
-    connect(ui->actionPasteCamera, SIGNAL(triggered()),
-            this, SLOT(on_actionPasteCamera_triggered()));
-    connect(ui->actionDrawTwoSides, SIGNAL(toggled(bool)),
-            viewer, SLOT(setTwoSides(bool)));
-    connect(ui->actionSwitchProjection, SIGNAL(toggled(bool)),
-            viewer, SLOT(SetOrthoProjection(bool)));
-  }
-  else
-  {
-    QAction* action = subviewer->findChild<QAction*>("actionRecenter");
-    connect(action, SIGNAL(triggered()),
-            viewer, SLOT(update()));
-    connect(action, &QAction::triggered,
-            subviewer, &SubViewer::recenter);
-    action= subviewer->findChild<QAction*>("actionLookat");
-    connect(action, SIGNAL(triggered()),
-            subviewer, SLOT(lookat()));
-    action= subviewer->findChild<QAction*>("actionColor");
-    connect(action, &QAction::triggered,
-            subviewer, &SubViewer::color);
-    action= subviewer->findChild<QAction*>("actionDumpCamera");
-    connect(action, &QAction::triggered,
-            [this, viewer](){
-      information(QString("Camera: %1")
-                  .arg(cameraString(viewer)));
-    });
-    action= subviewer->findChild<QAction*>("actionCopyCamera");
-    connect(action, &QAction::triggered,
-            [this, viewer](){
-      qApp->clipboard()->setText(cameraString(viewer));
-    });
-    action= subviewer->findChild<QAction*>("actionPasteCamera");
-    connect(action, &QAction::triggered,
-            this, [viewer](){
-      QString s = qApp->clipboard()->text();
-      viewer->moveCameraToCoordinates(s, 0.5f);
-    });
-    action= subviewer->findChild<QAction*>("actionAntiAliasing");
-    connect(action, SIGNAL(toggled(bool)),
-            viewer, SLOT(setAntiAliasing(bool)));
-    action= subviewer->findChild<QAction*>("actionDrawTwoSide");
-    connect(action, SIGNAL(toggled(bool)),
-            viewer, SLOT(setTwoSides(bool)));
-    action= subviewer->findChild<QAction*>("actionQuick");
-    connect(action, SIGNAL(toggled(bool)),
-            viewer, SLOT(setFastDrawing(bool)));
-    action= subviewer->findChild<QAction*>("actionOrtho");
-    connect(action, SIGNAL(toggled(bool)),
-            viewer, SLOT(SetOrthoProjection(bool)));
-    action= subviewer->findChild<QAction*>("actionTotalPass");
-    connect(action, &QAction::triggered,
-            this, [this, viewer]() {
-      bool ok;
-      int nb = QInputDialog::getInt(this, "Set Maximum Number of Passes",
-                                    "Enter number of transparency passes:",
-                                    4, 4, 99, 1, &ok);
-      if (!ok){
-        return;
-      }
-      viewer->setTotalPass(nb);
-    });
-  }
-
-
+  
+  QAction* action = subviewer->findChild<QAction*>("actionRecenter");
+  connect(action, SIGNAL(triggered()),
+          viewer, SLOT(update()));
+  connect(action, &QAction::triggered,
+          subviewer, &SubViewer::recenter);
+  action= subviewer->findChild<QAction*>("actionLookat");
+  connect(action, SIGNAL(triggered()),
+          subviewer, SLOT(lookat()));
+  action= subviewer->findChild<QAction*>("actionColor");
+  connect(action, &QAction::triggered,
+          subviewer, &SubViewer::color);
+  action= subviewer->findChild<QAction*>("actionDumpCamera");
+  connect(action, &QAction::triggered,
+          [this, viewer](){
+    information(QString("Camera: %1")
+                .arg(cameraString(viewer)));
+  });
+  action= subviewer->findChild<QAction*>("actionCopyCamera");
+  connect(action, &QAction::triggered,
+          [this, viewer](){
+    qApp->clipboard()->setText(cameraString(viewer));
+  });
+  action= subviewer->findChild<QAction*>("actionPasteCamera");
+  connect(action, &QAction::triggered,
+          this, [viewer](){
+    QString s = qApp->clipboard()->text();
+    viewer->moveCameraToCoordinates(s, 0.5f);
+  });
+  action= subviewer->findChild<QAction*>("actionAntiAliasing");
+  connect(action, SIGNAL(toggled(bool)),
+          viewer, SLOT(setAntiAliasing(bool)));
+  action= subviewer->findChild<QAction*>("actionDrawTwoSide");
+  connect(action, SIGNAL(toggled(bool)),
+          viewer, SLOT(setTwoSides(bool)));
+  action= subviewer->findChild<QAction*>("actionQuick");
+  connect(action, SIGNAL(toggled(bool)),
+          viewer, SLOT(setFastDrawing(bool)));
+  action= subviewer->findChild<QAction*>("actionOrtho");
+  connect(action, SIGNAL(toggled(bool)),
+          viewer, SLOT(SetOrthoProjection(bool)));
+  action= subviewer->findChild<QAction*>("actionTotalPass");
+  connect(action, &QAction::triggered,
+          this, [this, viewer]() {
+    bool ok;
+    int nb = QInputDialog::getInt(this, "Set Maximum Number of Passes",
+                                  "Enter number of transparency passes:",
+                                  4, 4, 99, 1, &ok);
+    if (!ok){
+      return;
+    }
+    viewer->setTotalPass(nb);
+  });
   connect(viewer, SIGNAL(requestContextMenu(QPoint)),
           this, SLOT(contextMenuRequested(QPoint)));
   connect(viewer, SIGNAL(selected(int)),
           this, SLOT(selectSceneItem(int)));
   connect(viewer, SIGNAL(selectedPoint(double, double, double)),
           this, SLOT(showSelectedPoint(double, double, double)));
-
+  
   connect(viewer, SIGNAL(selectionRay(double, double, double,
                                       double, double, double)),
           scene, SIGNAL(selectionRay(double, double, double,
                                      double, double, double)));
-
+  
   connect(viewer, SIGNAL(sendMessage(QString)),
           this, SLOT(information(QString)));
-
+  
 }
 
 void MainWindow::on_actionAdd_Viewer_triggered()
@@ -2621,9 +2565,16 @@ void MainWindow::on_action_Organize_Viewers_triggered()
 SubViewer::SubViewer(QWidget *parent, MainWindow* mw, Viewer* mainviewer)
   :QMdiSubWindow (parent),
     mw(mw),
-    viewMenu(new QMenu(this))
+    viewMenu(new QMenu(this)),
+    is_main(false)
 {
-  viewer = new Viewer(this, mainviewer);
+  if(mainviewer)
+    viewer = new Viewer(this, mainviewer);
+  else
+  {
+    viewer = new Viewer(this);
+    is_main = true;
+  }
   setWidget(viewer);
   QAction* actionRecenter = new QAction("Re&center Scene",this);
   actionRecenter->setObjectName("actionRecenter");
@@ -2672,8 +2623,8 @@ SubViewer::SubViewer(QWidget *parent, MainWindow* mw, Viewer* mainviewer)
   QAction* actionTotalPass = new QAction("Set Transparency Pass &Number...",this);
   actionTotalPass->setObjectName("actionTotalPass");
   viewMenu->addAction(actionTotalPass);
-  /*setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowSystemMenuHint | Qt::WindowMaximizeButtonHint | Qt::WindowMinimizeButtonHint );*/
-  setAttribute(Qt::WA_DeleteOnClose);
+  if(mainviewer)
+    setAttribute(Qt::WA_DeleteOnClose);
   setWindowIcon(QIcon(":/cgal/icons/resources/menu.png"));
   setSystemMenu(viewMenu);
 }
@@ -2715,3 +2666,51 @@ void SubViewer::color()
   }
 }
 
+void SubViewer::closeEvent(QCloseEvent *closeEvent)
+{
+  
+  if(is_main)
+  {
+    QMessageBox::information(mw, "", "This is the main viewer. It cannot be closed.");
+    closeEvent->ignore();
+  }
+  else
+    QWidget::closeEvent(closeEvent);
+}
+void SubViewer::changeEvent(QEvent *event)
+{
+  QMdiSubWindow::changeEvent(event);
+  if(event->type() == QEvent::WindowStateChange)
+  {
+    if(isMaximized())
+    {
+      QMenu* menu = mw->findChild<QMenu*>("menuView");
+      Q_FOREACH(QAction* action, viewMenu->actions())
+      {
+        menu->addAction(action);
+      }
+      setWindowFlags( 
+              Qt::SubWindow
+              | Qt::CustomizeWindowHint 
+              | Qt::WindowMaximizeButtonHint
+              //| Qt::WindowSystemMenuHint
+              | Qt::WindowTitleHint
+              );
+    }
+    else
+    {
+      QMenu* menu = mw->findChild<QMenu*>("menuView");
+      Q_FOREACH(QAction* action, viewMenu->actions())
+      {
+        menu->removeAction(action);
+      }
+      setWindowFlags( 
+              Qt::SubWindow
+              | Qt::CustomizeWindowHint 
+              | Qt::WindowMaximizeButtonHint
+              | Qt::WindowSystemMenuHint
+              | Qt::WindowTitleHint
+              );
+    }
+  }
+}

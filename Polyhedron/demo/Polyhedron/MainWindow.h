@@ -349,15 +349,6 @@ protected Q_SLOTS:
   void actionLookAt_triggered();
   //!Returns the position and orientation of the current camera frame.
     QString cameraString(CGAL::Three::Viewer_interface *v) const;
-  /*! Prints the position and orientation of the current camera frame.
-   * @see cameraString()
-   */
-  void on_actionDumpCamera_triggered();
-  //!Sets the coordinates of the camera in the clipboard text.
-  void on_actionCopyCamera_triggered();
-  //!Gets coordinates from the clipboard and sets them as the current ones for
-  //!the camera.
-  void on_actionPasteCamera_triggered();
   //!Hides not available operations and show available operations in all the
   //!menus.
   void filterOperations();
@@ -449,7 +440,7 @@ public Q_SLOTS:
   void toggleFullScreen();
   void setDefaultSaveDir();
 private:
-  QMdiSubWindow* viewer_window;
+  SubViewer* viewer_window;
   QList<QDockWidget *> visibleDockWidgets;
   QLineEdit operationSearchBar;
   QWidgetAction* searchAction;
@@ -475,5 +466,10 @@ public Q_SLOTS:
   void recenter();
   void lookat();
   void color();
+protected:
+  void closeEvent(QCloseEvent *closeEvent)Q_DECL_OVERRIDE;
+  void changeEvent(QEvent *event) Q_DECL_OVERRIDE;
+private:
+  bool is_main;
 };
 #endif // ifndef MAINWINDOW_H
