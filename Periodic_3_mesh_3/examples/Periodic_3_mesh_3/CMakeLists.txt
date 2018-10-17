@@ -13,9 +13,6 @@ if ( NOT CGAL_FOUND )
   return()
 endif()
 
-# include helper file
-include( ${CGAL_USE_FILE} )
-
 # include for local package
 
 # Use Eigen
@@ -37,8 +34,6 @@ endif()
 
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
-
-include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "mesh_implicit_shape.cpp" )
 create_single_source_cgal_program( "mesh_implicit_multi_domain.cpp" )

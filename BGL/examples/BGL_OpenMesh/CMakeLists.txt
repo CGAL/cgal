@@ -16,10 +16,6 @@ if ( NOT CGAL_FOUND )
 
 endif()
 
-# include helper file
-include( ${CGAL_USE_FILE} )
-
-
 # Boost and its components
 find_package( Boost REQUIRED )
 
@@ -48,8 +44,6 @@ endif()
 
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
-
-include( CGAL_CreateSingleSourceCGALProgram )
 
 if(OpenMesh_FOUND)
   create_single_source_cgal_program( "TriMesh.cpp" )

@@ -19,10 +19,6 @@ endif()
 
 if ( CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
   create_single_source_cgal_program( "sm_derivation.cpp" )
   create_single_source_cgal_program( "sm_join.cpp" )
   create_single_source_cgal_program( "sm_aabbtree.cpp" )

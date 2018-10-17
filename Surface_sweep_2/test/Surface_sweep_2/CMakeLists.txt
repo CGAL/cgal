@@ -19,10 +19,6 @@ set(WALK 3)
 
 if ( CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
   function(compile name source_file point_location traits)
 #    message(compile ${source_file})
     add_executable(${name} ${source_file})

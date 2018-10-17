@@ -16,10 +16,6 @@ find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
   find_package(Eigen3)
   if (EIGEN3_FOUND)
     include( ${EIGEN3_USE_FILE} )

@@ -7,7 +7,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/)
 add_subdirectory(surface_mesh)
 
 find_package(CGAL REQUIRED)
-include(${CGAL_USE_FILE})
 
 include_directories(BEFORE "./surface_mesh")
 include_directories(BEFORE "./cgogn" "./cgogn/include")

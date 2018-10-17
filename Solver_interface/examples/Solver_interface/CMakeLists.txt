@@ -10,10 +10,6 @@ find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
   include_directories (BEFORE "../include")
   
   # Use Eigen

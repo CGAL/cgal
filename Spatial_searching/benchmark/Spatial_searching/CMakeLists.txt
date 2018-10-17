@@ -6,19 +6,14 @@ project( Spatial_searching_ )
 
 cmake_minimum_required(VERSION 2.8.11)
 
-
 find_package(CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
-          
 find_package(Eigen3 3.1.91) #(requires 3.2.0 or greater)
 if (EIGEN3_FOUND)
   include( ${EIGEN3_USE_FILE} )
 endif()
-
-  include( CGAL_CreateSingleSourceCGALProgram )
 
   include_directories (BEFORE "include")
 

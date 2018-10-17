@@ -9,11 +9,10 @@ if(NOT POLICY CMP0070 AND POLICY CMP0053)
 endif()
 
 # Include this package's headers first
-include_directories( BEFORE ./ ./include ../../include )
+include_directories( BEFORE ./ ./include )
 
 # Find CGAL and CGAL Qt5
 find_package(CGAL COMPONENTS Qt5)
-include( ${CGAL_USE_FILE} )
 
 # Find Qt5 itself
 find_package(Qt5 5.4 QUIET COMPONENTS OpenGL)

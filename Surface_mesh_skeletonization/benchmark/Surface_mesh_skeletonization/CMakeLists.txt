@@ -10,7 +10,6 @@ project( Mean_curvature_skeleton )
 cmake_minimum_required(VERSION 2.8.11)
 
 
-
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS  )
 
@@ -20,10 +19,6 @@ if ( NOT CGAL_FOUND )
   return()  
 
 endif()
-
-# include helper file
-include( ${CGAL_USE_FILE} )
-
 
 # Boost and its components
 find_package( Boost REQUIRED )
@@ -50,8 +45,6 @@ endif(NOT EIGEN3_FOUND)
 
 # Creating entries for all .cpp/.C files with "main" routine
 # ##########################################################
-
-include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "solver_benchmark.cpp" )
 create_single_source_cgal_program( "mcf_scale_invariance.cpp" )

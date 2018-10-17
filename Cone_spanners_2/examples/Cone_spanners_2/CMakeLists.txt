@@ -10,10 +10,6 @@ find_package(CGAL QUIET COMPONENTS Core)
 
 if ( CGAL_FOUND AND CGAL_Core_FOUND)
 
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
   if (MSVC)
     # Turn off a boost related warning that appears with VC2015
     SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4172")

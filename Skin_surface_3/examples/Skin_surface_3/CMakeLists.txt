@@ -12,9 +12,6 @@ find_package(CGAL)
 
 
 if (CGAL_FOUND)
-  include( ${CGAL_USE_FILE} )
-  include( CGAL_CreateSingleSourceCGALProgram )
-
   include_directories (BEFORE include)
 
   if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/NGHK_skin_surface_simple.cpp")

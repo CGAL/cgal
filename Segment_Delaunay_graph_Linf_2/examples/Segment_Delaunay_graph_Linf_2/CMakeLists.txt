@@ -11,10 +11,6 @@ find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
   create_single_source_cgal_program( "sdg-count-sites-linf.cpp" )
   create_single_source_cgal_program( "sdg-fast-sp-linf.cpp" )
   create_single_source_cgal_program( "sdg-fast-sp-polygon-linf.cpp" )

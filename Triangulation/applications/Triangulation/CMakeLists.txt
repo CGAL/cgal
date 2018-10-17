@@ -26,10 +26,6 @@ if ( NOT CGAL_FOUND )
 
 endif()
 
-# include helper file
-include( ${CGAL_USE_FILE} )
-
-
 # Boost and its components
 find_package( Boost REQUIRED )
 
@@ -53,8 +49,6 @@ include_directories( BEFORE include )
 
 # Creating entries for all .cpp/.C files with "main" routine
 # ##########################################################
-
-include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "points_to_RT_to_off.cpp" )
 create_single_source_cgal_program( "points_to_DT_to_off.cpp" )

@@ -16,10 +16,6 @@ if ( NOT CGAL_FOUND )
 
 endif()
 
-# include helper file
-include( ${CGAL_USE_FILE} )
-
-
 # Boost and its components
 find_package( Boost REQUIRED )
 
@@ -52,8 +48,6 @@ include_directories( BEFORE include )
 
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
-
-include( CGAL_CreateSingleSourceCGALProgram )
 
 #add_definitions("-DCGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE")
 

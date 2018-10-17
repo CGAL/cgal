@@ -35,7 +35,6 @@ if(MSVC AND ACTIVATE_MSVC_PRECOMPILED_HEADERS AND NOT(MSVC_VERSION LESS 1310))
   set(CGAL_CXX_FLAGS "${CGAL_CXX_FLAGS} /Zm1000")
 endif()
 
-include_directories(../../include)
 include_directories(../../../Triangulation_3/include)
 include_directories(../../../STL_Extension/include)
 include_directories(../../../AABB_tree/include)
@@ -49,8 +48,6 @@ endif()
 find_package(CGAL COMPONENTS ImageIO)
 
 if ( CGAL_FOUND )
-  include( ${CGAL_USE_FILE} )
-
   # Activate concurrency ? (turned OFF by default)
   option(CGAL_ACTIVATE_CONCURRENT_MESH_3
     "Activate parallelism in Mesh_3"
@@ -82,8 +79,6 @@ if ( CGAL_FOUND )
   endif()
 
   if ( Boost_FOUND AND Boost_VERSION GREATER 103400 )
-    include( CGAL_CreateSingleSourceCGALProgram )
-
     # Compilable benchmark
     set (BENCHMARK_SOURCE_FILES "concurrency.cpp")
     if(TBB_FOUND)

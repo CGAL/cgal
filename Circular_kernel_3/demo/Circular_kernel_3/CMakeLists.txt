@@ -7,12 +7,10 @@ if(NOT POLICY CMP0070 AND POLICY CMP0053)
 endif()
 
 find_package(CGAL COMPONENTS Qt5)
-include(${CGAL_USE_FILE})
 
 find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL)
 
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
-
 
   add_executable (Circular_kernel_3 Circular_kernel_3.cpp Viewer.cpp ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 

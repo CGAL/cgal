@@ -11,8 +11,6 @@ endif()
 
 find_package(CGAL COMPONENTS Qt5 Core)
 
-include(${CGAL_USE_FILE})
-
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
 if (EIGEN3_FOUND)
   include( ${EIGEN3_USE_FILE} )

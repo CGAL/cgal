@@ -24,10 +24,6 @@ if ( NOT CGAL_FOUND )
 
 endif()
 
-# include helper file
-include( ${CGAL_USE_FILE} )
-
-
 # Boost and its components
 find_package( Boost REQUIRED )
 
@@ -56,8 +52,6 @@ find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 
 # Creating entries for all .cpp/.C files with "main" routine
 # ##########################################################
-
-include( CGAL_CreateSingleSourceCGALProgram )
 
 find_package( TBB )
 create_single_source_cgal_program( "hausdorff_distance_remeshing_example.cpp")

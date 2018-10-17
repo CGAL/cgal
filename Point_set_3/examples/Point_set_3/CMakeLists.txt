@@ -16,10 +16,6 @@ if ( NOT CGAL_FOUND )
 
 endif()
 
-# include helper file
-include( ${CGAL_USE_FILE} )
-
-
 # Boost and its components
 find_package( Boost REQUIRED )
 
@@ -35,13 +31,9 @@ endif()
 include_directories( BEFORE include )
 
 # include for local package
-include_directories( BEFORE ../../include )
-
 
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
-
-include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "point_set.cpp" )
 create_single_source_cgal_program( "point_set_property.cpp" )

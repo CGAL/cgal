@@ -10,9 +10,6 @@ find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
-  include( CGAL_CreateSingleSourceCGALProgram )
-
   find_package(Boost QUIET)
 
   # VisualC++ optimization for applications dealing with large data
@@ -42,7 +39,7 @@ if ( CGAL_FOUND )
   endif()
 
   # Executables that do *not* require EIGEN or LAPACK
-    create_single_source_cgal_program( "average_spacing_example.cpp" )
+  create_single_source_cgal_program( "average_spacing_example.cpp" )
   create_single_source_cgal_program( "bilateral_smooth_point_set_example.cpp" )
   create_single_source_cgal_program( "grid_simplification_example.cpp" )
   create_single_source_cgal_program( "grid_simplify_indices.cpp" )

@@ -14,9 +14,6 @@ find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
-  include( CGAL_CreateSingleSourceCGALProgram )
-
   # VisualC++ optimization for applications dealing with large data
   if (MSVC)
 

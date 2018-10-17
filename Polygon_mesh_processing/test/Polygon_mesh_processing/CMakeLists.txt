@@ -24,10 +24,6 @@ if ( NOT CGAL_FOUND )
 
 endif()
 
-# include helper file
-include( ${CGAL_USE_FILE} )
-
-
 # Boost and its components
 find_package( Boost REQUIRED )
 
@@ -46,7 +42,6 @@ find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 
 find_package( TBB )
 
-include( CGAL_CreateSingleSourceCGALProgram )
 if (EIGEN3_FOUND)
   include( ${EIGEN3_USE_FILE} )
 

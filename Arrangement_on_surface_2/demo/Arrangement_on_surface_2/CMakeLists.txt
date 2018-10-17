@@ -9,7 +9,6 @@ if(NOT POLICY CMP0070 AND POLICY CMP0053)
 endif()
 
 find_package(CGAL COMPONENTS Core Qt5 )
-include( ${CGAL_USE_FILE} )
 
 find_package( Qt5 QUIET COMPONENTS Gui Widgets)
 

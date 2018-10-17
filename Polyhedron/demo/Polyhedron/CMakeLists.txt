@@ -56,7 +56,6 @@ option( POLYHEDRON_QTSCRIPT_DEBUGGER
 
 # Find Qt5 itself
 find_package(CGAL COMPONENTS Qt5 ImageIO)
-include( ${CGAL_USE_FILE} )
 
 find_package(Qt5
              QUIET

@@ -12,10 +12,6 @@ find_package(CGAL QUIET COMPONENTS Core)
 
 if ( CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
   if(COMMAND target_compile_options)
     # Since CMake-2.8.12: New CMake script, that defines the targets and
     # the CTest test cases.

@@ -12,7 +12,6 @@ endif()
 
 # Find CGAL
 find_package(CGAL COMPONENTS Qt5)
-include( ${CGAL_USE_FILE} )
 
 # Find Qt5 itself
 find_package(Qt5 QUIET COMPONENTS Xml OpenGL Help Core)
@@ -51,7 +50,6 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND TARGET Qt5::qcollectiongener
   # Make sure the compiler can find generated .moc files
   include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
   include_directories( ${QT_INCLUDE_DIR} )
-  include_directories( ../../include .)
 
   # The executable itself
   add_executable  ( periodic_3_triangulation_3_demo

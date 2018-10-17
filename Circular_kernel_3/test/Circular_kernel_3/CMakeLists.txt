@@ -10,10 +10,6 @@ find_package(CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
 include_directories (BEFORE include)
 include_directories (BEFORE ../../../Kernel_23/test/Kernel_23/include)
 include_directories (BEFORE ../Kernel_23/include)

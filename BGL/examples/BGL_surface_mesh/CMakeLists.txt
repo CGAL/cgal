@@ -9,11 +9,7 @@ if ( NOT CGAL_FOUND )
   return()
 endif()
 
-include( ${CGAL_USE_FILE} )
-
 # include for local package
-
-include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "prim.cpp" )
 create_single_source_cgal_program( "gwdwg.cpp" )

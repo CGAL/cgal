@@ -7,7 +7,6 @@ if(NOT POLICY CMP0070 AND POLICY CMP0053)
 endif()
 
 find_package(CGAL REQUIRED)
-include(${CGAL_USE_FILE})
 
 find_package(Boost 1.43.0)
 if(Boost_FOUND)

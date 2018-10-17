@@ -10,10 +10,6 @@ find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
   create_single_source_cgal_program( "test_segment_tree_set_2.cpp" )
 
 else()
