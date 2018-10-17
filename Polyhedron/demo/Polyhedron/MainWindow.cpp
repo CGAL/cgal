@@ -562,8 +562,26 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
         qdebug << "### Loading \"" << fileName.toUtf8().data() << "\"... ";
       QPluginLoader loader;
       loader.setFileName(fileinfo.absoluteFilePath());
+      QJsonArray keywords = loader.metaData().value("MetaData").toObject().value("Keywords").toArray();
+      QStringList s_keywords;
+      for(int i = 0; i < keywords.size(); ++i)
+      {
+        s_keywords.append(keywords[i].toString());
+      }
       QObject *obj = loader.instance();
-      if(obj) {
+      
+      QStringList accepted_keywords;
+      accepted_keywords << "Test1";
+      bool do_load = false;
+      Q_FOREACH(QString k, s_keywords)
+      {
+        if(accepted_keywords.contains(k))
+        {
+          do_load = true;
+          break;
+        }
+      }
+      if(do_load && obj) {
         obj->setObjectName(name);
         bool init1 = initPlugin(obj);
         bool init2 = initIOPlugin(obj);
