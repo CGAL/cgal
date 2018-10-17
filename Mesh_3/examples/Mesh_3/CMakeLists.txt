@@ -17,6 +17,8 @@ endif()
 find_package(CGAL COMPONENTS ImageIO)
 
 if ( CGAL_FOUND )
+  include( ${CGAL_USE_FILE} )
+
   find_package(Boost)
 
   # Activate concurrency ? (turned OFF by default)

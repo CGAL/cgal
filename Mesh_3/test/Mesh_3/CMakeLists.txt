@@ -10,6 +10,8 @@ cmake_minimum_required(VERSION 2.8.11)
 find_package(CGAL QUIET COMPONENTS ImageIO)
 
 if ( CGAL_FOUND )
+  include( ${CGAL_USE_FILE} )
+
   find_package( TBB QUIET )
 
   include_directories (BEFORE ../../../AABB_tree/include)
