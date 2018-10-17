@@ -36,8 +36,6 @@ endif()
 # include for local directory
 
 # include for local package
-include_directories( BEFORE ../../include )
-
 
 # Creating entries for all .cpp/.C files with "main" routine
 # ##########################################################

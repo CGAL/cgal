@@ -46,7 +46,7 @@ endif()
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 # Include this package's headers first
-include_directories( BEFORE ./ ./include ../../include ./CGAL_demo )
+include_directories( BEFORE ./ ./include ./CGAL_demo )
 list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}")
 
 # Find CGAL

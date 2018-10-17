@@ -15,7 +15,6 @@ if ( CGAL_FOUND )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  include_directories (BEFORE "../../include")
   find_package(Eigen3 3.1.91) #(requires 3.2.0 or greater)
   if (EIGEN3_FOUND)
     include( ${EIGEN3_USE_FILE} )

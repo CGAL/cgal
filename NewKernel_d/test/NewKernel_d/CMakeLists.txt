@@ -24,8 +24,6 @@ if ( CGAL_FOUND )
   if (EIGEN3_FOUND)
     include( ${EIGEN3_USE_FILE} )
 
-    include_directories (BEFORE "../../include")
-
     create_single_source_cgal_program( "Epick_d.cpp" )
 
   else()

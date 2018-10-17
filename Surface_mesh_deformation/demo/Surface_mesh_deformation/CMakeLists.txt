@@ -23,7 +23,6 @@ if ( CGAL_FOUND )
     include( ${EIGEN3_USE_FILE} )
     include( CGAL_CreateSingleSourceCGALProgram )
 
-    include_directories (BEFORE "../../include")
     create_single_source_cgal_program( "deform_mesh_for_botsch08_format.cpp" )
 
   else()

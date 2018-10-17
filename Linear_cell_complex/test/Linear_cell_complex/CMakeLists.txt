@@ -14,8 +14,6 @@ if ( CGAL_FOUND )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  include_directories (BEFORE "../../include")
-
   file(GLOB hfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 

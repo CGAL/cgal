@@ -16,8 +16,6 @@ if ( CGAL_FOUND )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  include_directories (BEFORE "../../include")
-
   create_single_source_cgal_program( "shortest_path_sequence.cpp" )
   create_single_source_cgal_program( "shortest_paths_multiple_sources.cpp" )
   create_single_source_cgal_program( "shortest_paths_no_id.cpp" )

@@ -14,8 +14,6 @@ if ( CGAL_FOUND )
     include( ${EIGEN3_USE_FILE} )
     include( CGAL_CreateSingleSourceCGALProgram )
 
-    include_directories (BEFORE "../../include")
-
     create_single_source_cgal_program( "benchmark_for_concept_models.cpp" )
 
   else()

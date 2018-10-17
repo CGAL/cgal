@@ -15,8 +15,6 @@ if ( CGAL_FOUND )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  include_directories (BEFORE "../../include")
-
   create_single_source_cgal_program( "sdg-count-sites-linf.cpp" )
   create_single_source_cgal_program( "sdg-fast-sp-linf.cpp" )
   create_single_source_cgal_program( "sdg-fast-sp-polygon-linf.cpp" )

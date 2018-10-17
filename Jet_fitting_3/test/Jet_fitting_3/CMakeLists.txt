@@ -29,8 +29,6 @@ if ( CGAL_FOUND )
 
   if(EIGEN3_FOUND OR LAPACK_FOUND)
 
-    include_directories (BEFORE ../../include)
-
     create_single_source_cgal_program( "blind_1pt.cpp" )
 
   else(EIGEN3_FOUND OR LAPACK_FOUND)

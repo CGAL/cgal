@@ -15,7 +15,6 @@ include(${CGAL_USE_FILE})
 
 find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
 
-include_directories (BEFORE ../../include)
 include_directories (BEFORE ../../../Spatial_searching/include)
 
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )

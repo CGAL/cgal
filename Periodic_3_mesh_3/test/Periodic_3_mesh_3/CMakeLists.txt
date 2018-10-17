@@ -11,8 +11,6 @@ if ( CGAL_FOUND )
 
   include( ${CGAL_USE_FILE} )
 
-  include_directories( BEFORE ../../include )
-
   # Use Eigen
   find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
   if (NOT EIGEN3_FOUND)

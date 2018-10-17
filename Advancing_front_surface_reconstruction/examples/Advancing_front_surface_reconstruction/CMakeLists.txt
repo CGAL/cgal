@@ -18,8 +18,6 @@ if ( CGAL_FOUND )
      SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4244")
   endif()
 
-  include_directories (BEFORE "../../include")
-
   # create a target per cppfile
   file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
   foreach(cppfile ${cppfiles})

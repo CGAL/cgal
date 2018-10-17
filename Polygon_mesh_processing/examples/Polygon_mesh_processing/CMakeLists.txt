@@ -51,8 +51,6 @@ endif()
 # include for local directory
 
 # include for local package
-include_directories( BEFORE ../../include )
-
 find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 
 

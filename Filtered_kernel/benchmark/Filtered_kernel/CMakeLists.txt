@@ -17,8 +17,6 @@ if ( CGAL_FOUND )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  include_directories (BEFORE ../../include)
-
   add_executable( bench_orientation_3 "orientation_3.cpp" )
   target_link_libraries(bench_orientation_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 

@@ -12,7 +12,6 @@ endif()
 include( ${CGAL_USE_FILE} )
 
 # include for local package
-include_directories( BEFORE "../../include" )
 
 include( CGAL_CreateSingleSourceCGALProgram )
 

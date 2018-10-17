@@ -17,7 +17,6 @@ endif()
 include( ${CGAL_USE_FILE} )
 
 # include for local package
-include_directories( BEFORE ../../include )
 
 # Use Eigen
 find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)

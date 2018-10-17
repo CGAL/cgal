@@ -6,8 +6,6 @@ project( Surface_mesher_Examples )
 cmake_minimum_required(VERSION 2.8.11)
 
 
-include_directories(../../include)
-
 find_package(CGAL QUIET COMPONENTS ImageIO)
 
 if ( CGAL_FOUND AND CGAL_ImageIO_FOUND )

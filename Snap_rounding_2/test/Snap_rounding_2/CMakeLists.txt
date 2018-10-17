@@ -14,8 +14,6 @@ if ( CGAL_FOUND )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  include_directories (BEFORE "../../include")
-
   create_single_source_cgal_program( test_snap_rounding_2.cpp NO_TESTING)
 
   function(add_Snap_rounding_tests name)

@@ -20,8 +20,6 @@ if ( CGAL_FOUND )
  
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  include_directories (BEFORE ../../include)
-
   create_single_source_cgal_program( "random_grid.cpp" )
   create_single_source_cgal_program( "random_disc_2.cpp" )
 

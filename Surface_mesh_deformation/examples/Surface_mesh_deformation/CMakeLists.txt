@@ -18,8 +18,6 @@ if ( CGAL_FOUND )
     include( ${EIGEN3_USE_FILE} )
     include( CGAL_CreateSingleSourceCGALProgram )
 
-    include_directories (BEFORE "../../include")
-
     create_single_source_cgal_program( "all_roi_assign_example.cpp" )
     create_single_source_cgal_program( "all_roi_assign_example_custom_polyhedron.cpp" )
     create_single_source_cgal_program( "all_roi_assign_example_Surface_mesh.cpp" )

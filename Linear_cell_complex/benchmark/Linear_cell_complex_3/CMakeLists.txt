@@ -19,7 +19,6 @@ endif()
 add_subdirectory(openvolumemesh)
 
 include_directories(BEFORE openvolumemesh/src)
-include_directories(BEFORE "../../include")
 include_directories(BEFORE "./cgogn" "./cgogn/include")
 include_directories(BEFORE "/usr/include/libxml2/")
 include_directories(BEFORE "/usr/include/eigen3/")

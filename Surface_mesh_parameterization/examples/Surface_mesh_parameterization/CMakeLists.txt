@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 2.8.11)
 
 
 # Include this package's headers first
-include_directories (BEFORE . include ../../include)
+include_directories (BEFORE . include)
 
 # Find CGAL
 find_package(CGAL QUIET)

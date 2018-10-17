@@ -22,8 +22,6 @@ if ( CGAL_FOUND )
 
     include( CGAL_CreateSingleSourceCGALProgram )
 
-    include_directories (BEFORE "../../include")
-
     create_single_source_cgal_program( "simple_mcfskel_example.cpp" )
     create_single_source_cgal_program( "simple_mcfskel_sm_example.cpp" )
     create_single_source_cgal_program( "simple_mcfskel_LCC_example.cpp" )

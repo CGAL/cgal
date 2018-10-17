@@ -23,8 +23,6 @@ if ( CGAL_FOUND )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  include_directories (BEFORE "../../include")
-
   function(compile name source_file point_location traits)
 #    message(compile ${source_file})
     add_executable(${name} ${source_file})

@@ -53,8 +53,6 @@ endif()
 include_directories( BEFORE include )
 
 # include for local package
-include_directories( BEFORE ../../include )
-
 
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
