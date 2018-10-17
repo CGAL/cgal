@@ -44,7 +44,6 @@ public:
   QList<QAction*> actions() const;
 
 public Q_SLOTS:
-  void orientPoly();
   void orientSM();
   void shuffle();
   void displayNonManifoldEdges();
@@ -60,7 +59,6 @@ private:
   CGAL::Three::Scene_interface* scene;
   Messages_interface* messages;
   QMainWindow* mw;
-  QAction* actionOrientPoly;
   QAction* actionOrientSM;
   QAction* actionShuffle;
   QAction* actionNMToPolyline;
