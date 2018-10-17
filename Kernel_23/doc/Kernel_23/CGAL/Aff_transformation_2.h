@@ -130,9 +130,6 @@ const Kernel::RT &hw = RT(1));
 
 /*!
 introduces a reflection by a line `l`. 
-\attention Angles manipulation restrain this operation to FTs for which sqrt is defined.
-
-\todo find a better formulation
 */ 
 Aff_transformation_2(const Reflection, 
 const Line_2<Kernel>& l); 
