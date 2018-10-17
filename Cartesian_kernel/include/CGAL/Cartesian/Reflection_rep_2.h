@@ -51,17 +51,15 @@ typedef typename CGAL::Line_2<R>                 Line_2;
   typedef Rotation_repC2<R>                Rotation;
   typedef Translation_repC2<R>             Translation;
 
-  Reflection_repC2(const Line_2 &l) :
-    line(l)
+  Reflection_repC2(const Line_2 &l)
   {
     if(l.a() == 0) 
       t = -Vector_2(0, l.c()/l.b());
     else
       t = -Vector_2(l.c()/l.a(),0);
     
-    Vector_2 l_to_v = l.to_vector(),
-        Ox = Vector_2(1,0);
-    FT scal = l_to_v * Ox; //= |L|*cos(a)
+    Vector_2 l_to_v = l.to_vector();
+    FT scal = l_to_v.x(); //Projection of l_to_v on Ox. = |L|*cos(a) 
     FT det = l_to_v.y();// = |L|*sin(a)
     sinus_ = 2*det*scal/l_to_v.squared_length(); //sin(2a) = 2*sin(a)*cos(a)
     FT sq_cos = scal*scal/l_to_v.squared_length(); //cos(a)*cos(a)
@@ -150,7 +148,8 @@ typedef typename CGAL::Line_2<R>                 Line_2;
   
   Aff_transformation_2  inverse() const
   {
-    return Aff_transformation_2(REFLECTION, line);
+    return Aff_transformation_2(cartesian(0,0), cartesian(0,1), cartesian(0,2),
+                                cartesian(1,0), cartesian(1,1), cartesian(1,2));
   }
 
   bool is_even() const
@@ -201,7 +200,6 @@ typedef typename CGAL::Line_2<R>                 Line_2;
   }
 
 private:
-  const Line_2& line;
   Vector_2 t;
   FT sinus_, cosinus_;
 };
