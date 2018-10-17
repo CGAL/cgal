@@ -96,7 +96,7 @@ _test_cls_parallel_triangulation_3(const Parallel_triangulation &)
 
   for(int i=0 ; i<num_remove; ++i) {
     vertices_to_remove.push_back(vit++);
-}
+  }
 
   // Parallel remove
   tr.remove(vertices_to_remove.begin(), vertices_to_remove.end());
