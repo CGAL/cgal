@@ -16,6 +16,7 @@
 #include <QFileInfo>
 #include <QStringList>
 #include <QSet>
+#include <QMap>
 #include <QModelIndex>
 class Scene;
 class Viewer;
@@ -394,7 +395,7 @@ private:
   void setMenus(QString, QString, QAction *a);
   /// plugin black-list
   QSet<QString> plugin_blacklist;
-  QMap<QString, std::vector<QString> > PathNames_map; //For each non-empty plugin directory, contains a vector of plugin names
+  QMap<QString, QString > PathNames_map; //For each non-empty plugin directory, contains a vector of plugin names
   QMap<QString, QString > pluginsStatus_map; //For each non-empty plugin directory, contains a vector of plugin names
   Scene* scene;
   Viewer* viewer;
@@ -440,6 +441,8 @@ private:
   QLineEdit operationSearchBar;
   QWidgetAction* searchAction;
   QString def_save_dir;
+  QMap<QString, QPair<QStringList, QString> >plugin_metadata_map;
+  QMap<QString, bool> ignored_map;
 };
 
 #endif // ifndef MAINWINDOW_H

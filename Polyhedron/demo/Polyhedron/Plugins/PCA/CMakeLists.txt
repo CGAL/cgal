@@ -18,5 +18,5 @@ polyhedron_demo_plugin(create_bbox_mesh_plugin Create_bbox_mesh_plugin)
 target_link_libraries(create_bbox_mesh_plugin PUBLIC scene_surface_mesh_item)
 
 qt5_wrap_ui( volumesUI_FILES Basic_generator_widget.ui)
-polyhedron_demo_plugin(basic_generator_plugin Basic_generator_plugin ${volumesUI_FILES})
+polyhedron_demo_plugin(basic_generator_plugin Basic_generator_plugin ${volumesUI_FILES} KEYWORDS PolygonMesh)
 target_link_libraries(basic_generator_plugin PUBLIC scene_surface_mesh_item scene_points_with_normal_item scene_polylines_item)

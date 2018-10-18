@@ -31,8 +31,6 @@
 #include <QInputDialog>
 #include <QTreeView>
 #include <QSortFilterProxyModel>
-#include <QMap>
-#include <QSet>
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <QTreeWidgetItem>
@@ -55,6 +53,7 @@
 #include <CGAL/Three/Scene_item_with_properties.h>
 #include "ui_MainWindow.h"
 #include "ui_Preferences.h"
+#include "ui_Details.h"
 #include "ui_Statistics_on_item_dialog.h"
 #include "Show_point_dialog.h"
 #include "File_loader_dialog.h"
@@ -551,9 +550,10 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
       if(blacklisted)
       {
         if ( plugin_blacklist.contains(name) ){
-          pluginsStatus_map[name] = QString("ignored");
+          pluginsStatus_map[name] = QString("Blacklisted.");
+          ignored_map[name] = true;
           //qDebug("### Ignoring plugin \"%s\".", qPrintable(fileName));
-          PathNames_map[fileinfo.absoluteDir().absolutePath()].push_back(name);
+          PathNames_map[name].push_back(fileinfo.absoluteDir().absolutePath());
           return true;
         }
       }
@@ -563,15 +563,17 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
       QPluginLoader loader;
       loader.setFileName(fileinfo.absoluteFilePath());
       QJsonArray keywords = loader.metaData().value("MetaData").toObject().value("Keywords").toArray();
+      QString date = loader.metaData().value("MetaData").toObject().value("ConfigDate").toString();
       QStringList s_keywords;
       for(int i = 0; i < keywords.size(); ++i)
       {
         s_keywords.append(keywords[i].toString());
       }
+      plugin_metadata_map[name] = qMakePair(s_keywords, date);
       QObject *obj = loader.instance();
       
       QStringList accepted_keywords;
-      accepted_keywords << "Test1";
+      accepted_keywords << "PolygonMesh";
       bool do_load = false;
       Q_FOREACH(QString k, s_keywords)
       {
@@ -594,12 +596,17 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
           //qdebug << "success";
           pluginsStatus_map[name] = QString("success");
       }
-      else {
+      else if(!do_load)
+      {
+        pluginsStatus_map[name]="Wrong Keywords.";
+        ignored_map[name] = true;
+      }
+      else{
         //qdebug << "error: " << qPrintable(loader.errorString());
         pluginsStatus_map[name] = loader.errorString();
 
       }
-      PathNames_map[fileinfo.absoluteDir().absolutePath()].push_back(name);
+      PathNames_map[name].push_back(fileinfo.absoluteDir().absolutePath());
       return true;
     }
     return false;
@@ -1906,43 +1913,68 @@ void MainWindow::on_actionPreferences_triggered()
           this, [](const QString& text){
     CGAL::Three::Three::s_defaultPSRM = CGAL::Three::Three::modeFromName(text);
   });
+  
   std::vector<QTreeWidgetItem*> items;
   QBrush successBrush(Qt::green),
       errorBrush(Qt::red),
       ignoredBrush(Qt::lightGray);
 
   //add blacklisted plugins
-  Q_FOREACH (QString path, PathNames_map.keys())
+  Q_FOREACH (QString name, PathNames_map.keys())
   {
-    QTreeWidgetItem* pluginItem = new QTreeWidgetItem(prefdiag.treeWidget);
-    pluginItem->setText(1, path);
-    prefdiag.treeWidget->setItemExpanded(pluginItem, true);
-    QFont boldFont = pluginItem->font(1);
-    boldFont.setBold(true);
-    pluginItem->setFont(1, boldFont);
-    Q_FOREACH(QString name, PathNames_map[path])
-    {
-      QTreeWidgetItem *item = new QTreeWidgetItem(pluginItem);
-      item->setText(1, name);
-      if(plugin_blacklist.contains(name)){
-        item->setCheckState(0, Qt::Checked);
-      }
-      else{
-        item->setCheckState(0, Qt::Unchecked);
-      }
-      if(pluginsStatus_map[name] == QString("success"))
-        item->setBackground(1, successBrush);
-      else if(pluginsStatus_map[name] == QString("ignored")){
-        item->setBackground(1, ignoredBrush);
-        item->setToolTip(1, QString("This plugin is currently blacklisted, so it has been ignored."));
-      }
-      else{
-        item->setBackground(1, errorBrush);
-        item->setToolTip(1, pluginsStatus_map[name]);
-      }
-      items.push_back(item);
+    QTreeWidgetItem *item = new QTreeWidgetItem(prefdiag.treeWidget);
+    item->setText(1, name);
+    if(plugin_blacklist.contains(name)){
+      item->setCheckState(0, Qt::Checked);
     }
+    else{
+      item->setCheckState(0, Qt::Unchecked);
+    }
+    if(pluginsStatus_map[name] == QString("success"))
+      item->setBackground(1, successBrush);
+    else if(ignored_map[name]){
+      item->setBackground(1, ignoredBrush);
+    }
+    else{
+      item->setBackground(1, errorBrush);
+    }
+    items.push_back(item);
   }
+  connect(prefdiag.detailsPushButton, &QPushButton::clicked,
+          this, [this, prefdiag](){
+    QStringList titles;
+    titles << "Name" << "Keywords" << "ConfigDate";
+    QDialog dialog(this);
+    Ui::DetailsDialog detdiag;
+    detdiag.setupUi(&dialog);
+    QTreeWidgetItem *header = new QTreeWidgetItem(titles);
+    detdiag.treeWidget->setHeaderItem(header);
+    Q_FOREACH(QTreeWidgetItem* plugin_item, prefdiag.treeWidget->selectedItems())
+    {
+      QString name = plugin_item->text(1);
+      QString keywords = plugin_metadata_map[name].first.join(", ");
+      QString date = plugin_metadata_map[name].second;
+      QStringList values;
+      values << name << keywords << date;
+      new QTreeWidgetItem(detdiag.treeWidget, values);
+    }
+    for(int i=0; i<3; ++i)
+    {
+      detdiag.treeWidget->resizeColumnToContents(i);
+    }
+    connect(detdiag.treeWidget, &QTreeWidget::clicked,
+            this, [this, detdiag](){
+      if(detdiag.treeWidget->selectedItems().isEmpty())
+        detdiag.textBrowser->setText("");
+      else {
+        QString name = detdiag.treeWidget->selectedItems().first()->text(0);
+        QString status = pluginsStatus_map[name];
+        QString path = PathNames_map[name];
+        detdiag.textBrowser->setText(QString("Path: %1 \nStatus: %2").arg(path).arg(status));
+      }
+    });
+    dialog.exec();
+  });
   dialog.exec();
 
   if ( dialog.result() )
