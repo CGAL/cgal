@@ -131,8 +131,9 @@ MainWindow::~MainWindow()
   delete ui;
   delete statistics_ui;
 }
-MainWindow::MainWindow(bool verbose, QWidget* parent)
-  : CGAL::Qt::DemosMainWindow(parent)
+MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* parent)
+  : CGAL::Qt::DemosMainWindow(parent),
+    accepted_keywords(keywords)
 {
   ui = new Ui::MainWindow;
   ui->setupUi(this);
@@ -571,16 +572,16 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
       }
       plugin_metadata_map[name] = qMakePair(s_keywords, date);
       QObject *obj = loader.instance();
-      
-      QStringList accepted_keywords;
-      accepted_keywords << "PolygonMesh";
-      bool do_load = false;
-      Q_FOREACH(QString k, s_keywords)
+      bool do_load = accepted_keywords.empty();
+      if(!do_load)
       {
-        if(accepted_keywords.contains(k))
+        Q_FOREACH(QString k, s_keywords)
         {
-          do_load = true;
-          break;
+          if(accepted_keywords.contains(k))
+          {
+            do_load = true;
+            break;
+          }
         }
       }
       if(do_load && obj) {
