@@ -5,7 +5,7 @@
 
 project( Surface_mesh_shortest_path_Examples )
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
 
 find_package(CGAL QUIET)

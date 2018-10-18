@@ -2,7 +2,7 @@
 
 project( Poisson_surface_reconstruction_3_Tests )
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
 # Find CGAL
 find_package(CGAL QUIET)

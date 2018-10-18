@@ -4,7 +4,7 @@
 
 project( Mesh_3_Examples )
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
 
 add_definitions(-DCGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX

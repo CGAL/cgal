@@ -2,7 +2,7 @@
 
 project( Point_set_processing_3_Examples )
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
 
 # Find CGAL

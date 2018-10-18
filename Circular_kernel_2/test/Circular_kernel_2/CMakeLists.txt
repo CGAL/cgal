@@ -4,7 +4,7 @@
 
 project( Circular_kernel_2_Tests )
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.11)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
 
 find_package(CGAL QUIET)
 

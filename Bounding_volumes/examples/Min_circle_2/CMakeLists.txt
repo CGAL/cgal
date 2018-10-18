@@ -1,6 +1,6 @@
 project( Min_circle_2_Examples )
 
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 3.1)
 
 find_package(CGAL QUIET)
 

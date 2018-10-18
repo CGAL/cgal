@@ -4,7 +4,7 @@
 project( Hash_map )
 
 
-cmake_minimum_required(VERSION 2.6.2)
+cmake_minimum_required(VERSION 3.1)
 if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
   if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
     cmake_policy(VERSION 2.8.4)
