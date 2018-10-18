@@ -13,6 +13,7 @@ if(CGAL_BUILDING_LIBS)
       list(APPEND CGAL_LIBRARIES CGAL_${comp})
     endif()
   endforeach()
+  include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
   return()
 endif()
 
@@ -30,6 +31,7 @@ foreach(cgal_lib ${CGAL_LIBRARIES})
   endif()
 endforeach()
 if(CGALConfig_all_targets_are_defined)
+  include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
   return()
 endif()
 
@@ -132,7 +134,6 @@ endforeach()
 #
 #
 
-include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 
 # Temporary? Change the CMAKE module path
