@@ -38,10 +38,10 @@ struct Source {
   }
 };
 
-int main(int, char** argv)
+int main(int argc, char** argv)
 {
   LCC lcc;
-  CGAL::read_off(argv[1], lcc);
+  CGAL::read_off((argc>1)?argv[1]:"cube.off", lcc);
   GraphTraits::vertex_descriptor vd = *(vertices(lcc).first);
 
   typedef boost::transform_iterator<Source<LCC>,halfedge_around_target_iterator> adjacent_vertex_iterator; 

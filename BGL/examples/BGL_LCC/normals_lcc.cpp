@@ -63,13 +63,13 @@ void calculate_face_normals(const HalfedgeGraph& g,
   }
 }
 
-int main(int, char** argv)
+int main(int argc, char** argv)
 {
   typedef boost::property_map<LCC, CGAL::face_index_t>::const_type
                  Face_index_map;
 
   LCC lcc;
-  CGAL::read_off(argv[1], lcc);
+  CGAL::read_off((argc>1)?argv[1]:"cube.off", lcc);
   
   // Ad hoc property_map to store normals. Face_index_map is used to
   // map face_descriptors to a contiguous range of indices. See
