@@ -9,6 +9,8 @@ find_package(CGAL QUIET COMPONENTS ImageIO)
 
 if ( CGAL_FOUND AND CGAL_ImageIO_FOUND )
 
+  include(${CGAL_USE_FILE})
+
   create_single_source_cgal_program( "mesh_a_3d_gray_image.cpp" )
   create_single_source_cgal_program( "mesh_an_implicit_function.cpp" )
 

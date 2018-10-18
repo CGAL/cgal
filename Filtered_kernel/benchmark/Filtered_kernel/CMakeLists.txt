@@ -13,6 +13,8 @@ find_package(CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
 
+  include(${CGAL_USE_FILE})
+
   add_executable( bench_orientation_3 "orientation_3.cpp" )
   target_link_libraries(bench_orientation_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 

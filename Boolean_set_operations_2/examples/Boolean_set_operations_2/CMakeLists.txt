@@ -6,9 +6,11 @@ project( Boolean_set_operations_2_Examples )
 
 cmake_minimum_required(VERSION 2.8.10)
 
-find_package(CGAL QUIET COMPONENTS Core )
+find_package(CGAL QUIET COMPONENTS Core)
 
 if ( CGAL_FOUND )
+
+  include(${CGAL_USE_FILE})
 
   # create a target per cppfile
   file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)

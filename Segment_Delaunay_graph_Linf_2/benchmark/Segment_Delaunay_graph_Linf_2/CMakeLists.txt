@@ -11,6 +11,8 @@ find_package(CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
 
+  include(${CGAL_USE_FILE})
+
   create_single_source_cgal_program( "sdg-creation-time.cpp" )
   create_single_source_cgal_program( "benchmark-gen.cpp" )
   create_single_source_cgal_program( "incirc.cpp" )

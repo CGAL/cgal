@@ -9,7 +9,7 @@ cmake_minimum_required(VERSION 2.8.10)
 find_package(CGAL QUIET COMPONENTS Core)
 
 if ( CGAL_FOUND AND CGAL_Core_FOUND)
-
+  include(${CGAL_USE_FILE})
   include_directories (BEFORE "include")
 
   # create a target per cppfile

@@ -12,6 +12,7 @@ find_package( CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
 
+  include(${CGAL_USE_FILE})
   include( CGAL_VersionUtils )
 
   include_directories( BEFORE include )

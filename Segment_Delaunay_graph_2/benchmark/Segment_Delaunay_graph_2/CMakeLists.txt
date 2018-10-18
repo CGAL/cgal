@@ -11,6 +11,8 @@ find_package(CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
 
+  include(${CGAL_USE_FILE})
+
   create_single_source_cgal_program( "benchmark.cpp" )
   create_single_source_cgal_program( "benchmark_nox.cpp" )
   create_single_source_cgal_program( "double.cpp" )

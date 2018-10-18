@@ -11,6 +11,8 @@ find_package(CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
 
+  include(${CGAL_USE_FILE})
+
   find_package(Boost REQUIRED program_options)
   include_directories(${Boost_PROGRAM_OPTIONS_INCLUDE_DIR})
   add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )

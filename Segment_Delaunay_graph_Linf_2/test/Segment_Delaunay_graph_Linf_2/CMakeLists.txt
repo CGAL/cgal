@@ -10,6 +10,7 @@ find_package(CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
 
+  include(${CGAL_USE_FILE})
   include_directories (BEFORE "include")
 
   # create a target per cppfile
