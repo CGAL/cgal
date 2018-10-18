@@ -11,7 +11,7 @@ endif()
 
 if( CGAL_FOUND AND MPFI_FOUND)
 
-  include(${CGAL_USE_FILE})
+  include( ${CGAL_USE_FILE} )
   include( ${MPFI_USE_FILE} )
   include( CGAL_VersionUtils )
 
