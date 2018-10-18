@@ -41,6 +41,7 @@
 #include <QSpinBox>
 #include <stdexcept>
 #include <QTime>
+#include <QLineEdit>
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptValue>
 #  ifdef QT_SCRIPTTOOLS_LIB

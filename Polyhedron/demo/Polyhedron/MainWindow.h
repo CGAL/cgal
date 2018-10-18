@@ -21,6 +21,8 @@ class Scene;
 class Viewer;
 class QTreeView;
 class QMenu;
+class QLineEdit;
+class QWidgetAction;
 namespace CGAL {
 namespace Three{
 class Polyhedron_demo_io_plugin_interface;
