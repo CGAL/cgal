@@ -36,8 +36,7 @@ endif()
 # include for local directory
 include_directories( BEFORE include )
 
-# include for local package
-  include(${CGAL_USE_FILE})
+include( ${CGAL_USE_FILE} )
 
 # Creating entries for all .cpp/.C files with "main" routine
 # ##########################################################
