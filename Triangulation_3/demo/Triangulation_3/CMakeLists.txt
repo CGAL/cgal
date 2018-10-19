@@ -21,10 +21,11 @@ set(CMAKE_AUTOMOC ON)
 find_package(CGAL  COMPONENTS Qt5)
 
 
-find_package(Qt5 QUIET COMPONENTS OpenGL)
+find_package(Qt5 QUIET COMPONENTS OpenGL Xml)
 
 if(Qt5_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
 endif(Qt5_FOUND)
 
 # Activate concurrency ? (turned OFF by default)
@@ -64,8 +65,8 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS T3_demo )
 
-  target_link_libraries( T3_demo PRIVATE ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
-  target_link_libraries( T3_demo PRIVATE Qt5::OpenGL)
+  target_link_libraries( T3_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt5)
+  target_link_libraries( T3_demo PRIVATE Qt5::OpenGL Qt5::Xml)
   if(TBB_FOUND)
     CGAL_target_use_TBB(T3_demo)
   endif()

@@ -32,6 +32,7 @@ find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL)
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND )
 
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
   qt5_wrap_ui( UI_FILES MainWindow.ui )
 
   include(AddFileDependencies)
