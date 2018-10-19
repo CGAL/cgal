@@ -41,6 +41,8 @@ int main()
     ++index;
   }
 
+  std::size_t nb_input_faces = sm.number_of_faces();
+
   expand_face_selection_for_removal(faces_to_remove,
                                     sm,
                                     boost::make_assoc_property_map(is_selected_map));
@@ -55,8 +57,10 @@ int main()
     }
   }
 
-  assert(index == 52);
+  CGAL_USE(nb_input_faces);
+  assert( sm.number_of_faces()+30 < nb_input_faces);
   assert(is_valid_polygon_mesh(sm));
+
   return 0;
 }
 
