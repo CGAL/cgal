@@ -17,11 +17,12 @@
 #include <QStringList>
 #include <QSet>
 #include <QModelIndex>
+#include <QLineEdit>
+
 class Scene;
 class Viewer;
 class QTreeView;
 class QMenu;
-class QLineEdit;
 class QWidgetAction;
 namespace CGAL {
 namespace Three{

@@ -17,7 +17,6 @@
 #include <QMenuBar>
 #include <QChar>
 #include <QAction>
-#include <QWidgetAction>
 #include <QShortcut>
 #include <QKeySequence>
 #include <QLibrary>
@@ -41,7 +40,7 @@
 #include <QSpinBox>
 #include <stdexcept>
 #include <QTime>
-#include <QLineEdit>
+#include <QWidgetAction>
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptValue>
 #  ifdef QT_SCRIPTTOOLS_LIB
