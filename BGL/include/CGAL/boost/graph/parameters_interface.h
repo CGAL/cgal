@@ -80,7 +80,9 @@ CGAL_add_named_parameter(clip_volume_t, clip_volume, clip_volume)
 CGAL_add_named_parameter(use_compact_clipper_t, use_compact_clipper, use_compact_clipper)
 CGAL_add_named_parameter(do_orientation_tests_t, do_orientation_tests, do_orientation_tests)
 CGAL_add_named_parameter(do_self_intersection_tests_t, do_self_intersection_tests, do_self_intersection_tests)
-
+CGAL_add_named_parameter(error_codes_t, error_codes, error_codes)
+CGAL_add_named_parameter(volume_inclusions_t, volume_inclusions, volume_inclusions)
+CGAL_add_named_parameter(face_cc_map_t, face_connected_component_map, face_connected_component_map)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)

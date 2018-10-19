@@ -723,7 +723,53 @@ enum Volume_error_code { VALID_VOLUME,
                          SURFACE_SELF_INTERSECTION,
                          VOLUME_INTERSECTION,
                          NON_TRIANGULATED_SURFACE,
-                         INCONSISTENT_ORIENTATION };
+                         INCONSISTENT_ORIENTATION,
+                         SINGLE_CONNECTED_COMPONENT};
+namespace internal {
+template<class RefToVector>
+void copy_error_codes(std::vector<Volume_error_code>& error_codes_in,
+                      RefToVector ref_wrapper)
+{
+  error_codes_in.swap(ref_wrapper.get());
+}
+
+inline void copy_error_codes(std::vector<Volume_error_code>&,
+                             boost::param_not_found)
+{}
+
+template <class RefToVector>
+void copy_nested_cc_per_cc(
+  std::vector< std::vector<std::size_t> >& nested_cc_per_cc,
+  RefToVector ref_to_vector)
+{
+  ref_to_vector.get().swap( nested_cc_per_cc);
+}
+
+inline void copy_nested_cc_per_cc(
+  std::vector< std::vector<std::size_t> >&,
+  boost::param_not_found)
+{}
+
+template <class TriangleMesh, class FaceIndexMap, class FaceCCIdMap>
+void set_f_cc_id(const std::vector<std::size_t>& f_cc,
+                 FaceIndexMap face_index_map,
+                 FaceCCIdMap face_cc_map,
+                 const TriangleMesh& tm)
+{
+  BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::face_descriptor fd, faces(tm))
+  {
+    put(face_cc_map, fd, f_cc[ get(face_index_map, fd) ]);
+  }
+}
+
+template <class TriangleMesh, class FaceIndexMap>
+void set_f_cc_id(const std::vector<std::size_t>&,
+                 FaceIndexMap,
+                 boost::param_not_found,
+                 const TriangleMesh&)
+{}
+
+} // internal
 
 //TODO Add documentation
 // doc: non-closed connected components are reported as isolated volumes
@@ -734,9 +780,14 @@ enum Volume_error_code { VALID_VOLUME,
 //      component must be taken into account rather than only the nesting. In case of incompatible
 //      orientation of a cc X with its parent, all other CC included in X (as well as X) are reported
 //      as independant volumes
+// doc: in case there is only one CC, no extra test is performed
 // NP do_orientation_tests
 // NP do_self_intersection_tests
-// TODO return a vector with info on the volume? non-triangle/open/SI/regular/...
+// NP error_codes
+// NP face_index
+// NP vertex_point_map
+// NP volume_inclusions (must be a reference_wrapper)
+// NP face_connected_component_map
 template <class TriangleMesh, class FaceIndexMap, class NamedParameters>
 std::size_t
 volume_connected_components(const TriangleMesh& tm,
@@ -768,6 +819,12 @@ volume_connected_components(const TriangleMesh& tm,
                               bind_property_maps(fid_map,make_property_map(face_cc)),
                               parameters::face_index_map(fid_map));
 
+  // contains for each CC the CC that are in its bounded side
+  std::vector<std::vector<std::size_t> > nested_cc_per_cc(nb_cc);
+
+  // copy cc-id info
+  internal::set_f_cc_id(face_cc, fid_map, boost::get_param(np, internal_np::face_connected_component_map), tm);
+
   const bool do_self_intersection_tests =
         boost::choose_param(boost::get_param(np, internal_np::do_self_intersection_tests),
                             false);
@@ -776,13 +833,13 @@ volume_connected_components(const TriangleMesh& tm,
 
   if (nb_cc == 1)
   {
-    if (do_self_intersection_tests && does_self_intersect(tm, np))
-      error_codes.push_back(SURFACE_SELF_INTERSECTION);
-    else
-      error_codes.push_back(VALID_VOLUME);
+    error_codes.push_back(SINGLE_CONNECTED_COMPONENT);
 
     BOOST_FOREACH(face_descriptor fd, faces(tm))
       put(volume_id_map, fd, 0);
+
+    internal::copy_error_codes(error_codes, boost::get_param(np, internal_np::error_codes));
+    internal::copy_nested_cc_per_cc(nested_cc_per_cc, boost::get_param(np, internal_np::volume_inclusions));
     return 1;
   }
 
@@ -898,8 +955,6 @@ volume_connected_components(const TriangleMesh& tm,
 
   // init the main loop
     std::size_t k = 0;
-    // contains for each CC the CC that are in its bounded side
-    std::vector<std::vector<std::size_t> > nested_cc_per_cc(nb_cc);
     // similar as above but exclusively contains cc ids included by more that one CC.
     // The result will be then merged with nested_cc_per_cc but temporarilly we need
     // another container to not more than once the inclusion testing (in case a CC is
@@ -1120,8 +1175,9 @@ volume_connected_components(const TriangleMesh& tm,
     }
   }
 
-  //TODO add a NP to output it
   CGAL_assertion(next_volume_id == error_codes.size());
+  internal::copy_error_codes(error_codes, boost::get_param(np, internal_np::error_codes));
+  internal::copy_nested_cc_per_cc(nested_cc_per_cc, boost::get_param(np, internal_np::volume_inclusions));
   return next_volume_id;
 }
 
