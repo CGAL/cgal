@@ -89,6 +89,7 @@ public:
   int getNormalSliderValue();
   int getPointSliderValue();
   void computeElements() const Q_DECL_OVERRIDE;
+  void initializeBuffers(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
 
 public Q_SLOTS:
   // Delete selection

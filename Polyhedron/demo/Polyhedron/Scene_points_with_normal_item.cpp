@@ -273,6 +273,7 @@ initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
   item->getPointContainer(Priv::Selected_points)->setFlatDataSize(nb_selected_points);
   item->getPointContainer(Priv::Selected_shaded_points)->setFlatDataSize(nb_selected_points);
   item->getEdgeContainer(0)->setFlatDataSize(nb_lines);
+
   positions_lines             .resize(0);
   normals                     .resize(0);
   positions_normals           .resize(0);
@@ -1090,4 +1091,9 @@ void Scene_points_with_normal_item::computeElements()const
   d->compute_normals_and_vertices();
   setBuffersFilled(true);
 
+}
+
+void Scene_points_with_normal_item::initializeBuffers(Viewer_interface * v) const
+{
+  d->initializeBuffers(v);
 }
