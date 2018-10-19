@@ -97,7 +97,7 @@ struct ForestParams {
         max_depth(42),
         n_trees(100),
         min_samples_per_node(5),
-        sample_reduction(0)
+        sample_reduction(0.368f)
     {}
     template <typename Archive>
     void serialize(Archive& ar, unsigned /*version*/)

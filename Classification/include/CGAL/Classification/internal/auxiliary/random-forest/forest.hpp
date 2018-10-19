@@ -93,9 +93,6 @@ public:
         size_t n_idxes = sample_idxes.size();
         params.n_in_bag_samples = n_idxes * (1 - params.sample_reduction);
 
-        // Random distribution over indexes
-        UniformIntDist dist(0, n_idxes - 1);
-
         // Store for each sample and each tree if sample was used for tree
         if (register_oob) {
             was_oob_data.assign(n_idxes*params.n_trees, 1);
@@ -103,6 +100,8 @@ public:
         }
 
         std::size_t nb_trees = trees.size();
+        std::vector<int> in_bag_samples = sample_idxes;
+        
         for (size_t i_tree = nb_trees; i_tree < nb_trees + params.n_trees; ++i_tree) {
 #if VERBOSE_TREE_PROGRESS
             std::printf("Training tree %zu/%zu, max depth %zu\n", i_tree+1, nb_trees + params.n_trees, params.max_depth);
@@ -112,20 +111,18 @@ public:
             // initialize random generator with sequential seeds (one for each
             // tree)
             RandomGen gen(seed_start + i_tree);
+            
             // Bagging: draw random sample indexes used for this tree
-            std::vector<int> in_bag_samples(params.n_in_bag_samples);
-            for (size_t i_sample = 0; i_sample < in_bag_samples.size(); ++i_sample) {
-                int random_idx = dist(gen);
-                in_bag_samples[i_sample] = sample_idxes[random_idx];
-                if (register_oob && was_oob(random_idx, i_tree)) {
-                    was_oob(random_idx, i_tree) = 0;
-                }
-            }
+            std::random_shuffle (in_bag_samples.begin(),in_bag_samples.end());
+            if (register_oob)
+              for (std::size_t i = 0; i < params.n_in_bag_samples; ++ i)
+                was_oob(in_bag_samples[i], i_tree) = 0;
+
 #ifdef TREE_GRAPHVIZ_STREAM
             TREE_GRAPHVIZ_STREAM << "digraph Tree {" << std::endl;
 #endif
             // Train the tree
-            trees.back().train(samples, labels, &in_bag_samples[0], in_bag_samples.size(), split_generator, gen);
+            trees.back().train(samples, labels, &in_bag_samples[0], params.n_in_bag_samples, split_generator, gen);
 #ifdef TREE_GRAPHVIZ_STREAM
             TREE_GRAPHVIZ_STREAM << "}" << std::endl << std::endl;
 #endif
