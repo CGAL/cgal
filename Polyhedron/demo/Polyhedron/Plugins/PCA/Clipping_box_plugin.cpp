@@ -95,6 +95,21 @@ void Clipping_box_plugin::clipbox()
     clip(false);
     dock_widget->pushButton->setChecked(false);
   });
+  connect(dock_widget->clip_inside_button, &QRadioButton::toggled,
+          this, [this]()
+  {
+    dock_widget->clip_outside_button->setChecked(false);
+  });
+  connect(dock_widget->clip_outside_button, &QRadioButton::toggled,
+          this, [this]()
+  {
+    dock_widget->clip_inside_button->setChecked(false);
+  });
+  connect(dock_widget->tabWidget, &QTabWidget::currentChanged
+          this, [this](int index)
+  {
+    
+  });
   item->setName("Clipping box");
   item->setRenderingMode(FlatPlusEdges);
   CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
