@@ -35,6 +35,8 @@ if(CGALConfig_all_targets_are_defined)
   return()
 endif()
 
+include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
+
 message(STATUS "Using header-only CGAL")
 
 get_filename_component(CGAL_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
