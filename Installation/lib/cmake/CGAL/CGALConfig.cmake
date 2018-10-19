@@ -13,7 +13,7 @@ if(CGAL_BUILDING_LIBS)
       list(APPEND CGAL_LIBRARIES CGAL_${comp})
     endif()
   endforeach()
-  include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
+  # We don't know yet CGAL_MODULES_DIR: include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
   return()
 endif()
 
@@ -31,11 +31,9 @@ foreach(cgal_lib ${CGAL_LIBRARIES})
   endif()
 endforeach()
 if(CGALConfig_all_targets_are_defined)
-  include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
+  # We don't know yet CGAL_MODULES_DIR: include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
   return()
 endif()
-
-include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
 
 message(STATUS "Using header-only CGAL")
 
@@ -137,6 +135,7 @@ endforeach()
 #
 
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
+include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
 
 # Temporary? Change the CMAKE module path
 cgal_setup_module_path()
