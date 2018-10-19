@@ -22,7 +22,7 @@ endif()
 find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
 
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
-
+  include(${CGAL_USE_FILE})
   add_definitions(-DQT_NO_KEYWORDS)
 
   if( CGAL_Core_FOUND)

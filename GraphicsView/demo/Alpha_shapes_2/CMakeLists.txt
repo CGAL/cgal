@@ -16,6 +16,7 @@ include_directories (BEFORE ./include)
 
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
 add_definitions(-DQT_NO_KEYWORDS)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 #--------------------------------
 # The "Delaunay" demo: Alpha_shapes_2

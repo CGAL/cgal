@@ -18,6 +18,7 @@ find_package(CGAL COMPONENTS Qt5)
 find_package(Qt5 5.4 QUIET COMPONENTS OpenGL)
 if(Qt5_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
 endif(Qt5_FOUND)
 
 # Find CImg

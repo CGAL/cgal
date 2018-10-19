@@ -23,6 +23,7 @@ include_directories (BEFORE ./include)
 
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
 
+include(${CGAL_USE_FILE})
 add_definitions(-DQT_NO_KEYWORDS)
 
 #--------------------------------

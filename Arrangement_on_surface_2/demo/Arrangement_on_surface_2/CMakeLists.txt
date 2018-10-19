@@ -13,6 +13,8 @@ find_package(CGAL COMPONENTS Core Qt5 )
 find_package( Qt5 QUIET COMPONENTS Gui Widgets)
 
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
+  include(${CGAL_USE_FILE})
+  
   include_directories( ./ )
   # Arrangement package includes
   add_definitions(-DQT_NO_KEYWORDS)

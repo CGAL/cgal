@@ -18,6 +18,7 @@ include_directories (BEFORE ../../../Matrix_search/include)
 
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_definitions(-DQT_NO_KEYWORDS)
 
 #----------------------------------------------

@@ -56,6 +56,7 @@ option( POLYHEDRON_QTSCRIPT_DEBUGGER
 
 # Find Qt5 itself
 find_package(CGAL COMPONENTS Qt5 ImageIO)
+include(${CGAL_USE_FILE})
 
 find_package(Qt5
              QUIET
@@ -123,6 +124,7 @@ endif()
 
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
+  include(${CGAL_USE_FILE})
 
   set(Boost_USE_MULTITHREADED      ON)
   find_package(Boost COMPONENTS thread system filesystem)

@@ -15,6 +15,7 @@ include_directories(BEFORE ../../../Triangulation_2/include)
 
 
 if ( CGAL_FOUND )
+  include(${CGAL_USE_FILE})
 
   # conform target
   add_executable  (conform conform.cpp)
