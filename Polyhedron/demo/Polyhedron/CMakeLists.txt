@@ -344,7 +344,13 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
 
   add_subdirectory( implicit_functions )
 
-
+#
+# EXECUTABLES
+#
+add_executable  ( CGAL_Mesh_3 Mesh_3.cpp )
+add_dependencies(CGAL_Mesh_3 Mesh_3)
+target_link_libraries( CGAL_Mesh_3 PRIVATE polyhedron_demo )
+add_to_cached_list( CGAL_EXECUTABLE_TARGETS CGAL_Mesh_3 )
 #
 # Exporting
 #

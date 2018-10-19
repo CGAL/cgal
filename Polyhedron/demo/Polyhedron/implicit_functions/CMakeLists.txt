@@ -39,9 +39,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(AddFileDependencies)
   remove_definitions(-DQT_STATICPLUGIN)
 
-  polyhedron_demo_plugin(p_sphere_function_plugin Sphere_implicit_function)
-  polyhedron_demo_plugin(p_tanglecube_function_plugin Tanglecube_implicit_function)
-  polyhedron_demo_plugin(p_klein_function_plugin Klein_implicit_function)
+  polyhedron_demo_plugin(p_sphere_function_plugin Sphere_implicit_function KEYWORDS Mesh_3)
+  polyhedron_demo_plugin(p_tanglecube_function_plugin Tanglecube_implicit_function KEYWORDS Mesh_3)
+  polyhedron_demo_plugin(p_klein_function_plugin Klein_implicit_function KEYWORDS Mesh_3)
 
 else (CGAL_Qt5_FOUND AND Qt5_FOUND)
 

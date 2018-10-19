@@ -4,19 +4,19 @@ polyhedron_demo_plugin(gocad_plugin GOCAD_io_plugin KEYWORDS IO)
 target_link_libraries(gocad_plugin PUBLIC scene_surface_mesh_item)
 
 qt5_wrap_ui( funcUI_FILES Function_dialog.ui )
-polyhedron_demo_plugin(io_implicit_function_plugin Implicit_function_io_plugin ${funcUI_FILES} KEYWORDS IO)
+polyhedron_demo_plugin(io_implicit_function_plugin Implicit_function_io_plugin ${funcUI_FILES} KEYWORDS IO Mesh_3)
 target_link_libraries(io_implicit_function_plugin PUBLIC scene_implicit_function_item)
 
 polyhedron_demo_plugin(nef_io_plugin Nef_io_plugin KEYWORDS IO)
 target_link_libraries(nef_io_plugin PUBLIC scene_nef_polyhedron_item)
 
-polyhedron_demo_plugin(off_plugin OFF_io_plugin KEYWORDS IO)
+polyhedron_demo_plugin(off_plugin OFF_io_plugin KEYWORDS IO Mesh_3)
 target_link_libraries(off_plugin PUBLIC scene_polygon_soup_item scene_points_with_normal_item scene_surface_mesh_item)
 
 polyhedron_demo_plugin(off_to_nef_plugin OFF_to_nef_io_plugin KEYWORDS IO)
 target_link_libraries(off_to_nef_plugin PUBLIC scene_nef_polyhedron_item)
 
-polyhedron_demo_plugin(polylines_io_plugin Polylines_io_plugin KEYWORDS IO)
+polyhedron_demo_plugin(polylines_io_plugin Polylines_io_plugin KEYWORDS IO Mesh_3)
 target_link_libraries(polylines_io_plugin PUBLIC scene_polylines_item)
 
 polyhedron_demo_plugin(stl_plugin STL_io_plugin KEYWORDS IO)
@@ -34,7 +34,7 @@ if (VTK_FOUND)
   include(${VTK_USE_FILE})
   if ("${VTK_VERSION_MAJOR}" GREATER "5")
     if(VTK_LIBRARIES)
-      polyhedron_demo_plugin(vtk_plugin VTK_io_plugin KEYWORDS IO)
+      polyhedron_demo_plugin(vtk_plugin VTK_io_plugin KEYWORDS IO Mesh_3)
       target_link_libraries(vtk_plugin PUBLIC scene_surface_mesh_item scene_polylines_item scene_c3t3_item
                                        vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML
                                        vtkFiltersCore vtkFiltersSources)
