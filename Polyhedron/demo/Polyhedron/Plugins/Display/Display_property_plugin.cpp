@@ -7,6 +7,7 @@
 #include <QColorDialog>
 #include <QPalette>
 #include <QColor>
+#include <QMessageBox>
 #include "Messages_interface.h"
 #include "Scene_surface_mesh_item.h"
 #include "Color_ramp.h"

@@ -1855,12 +1855,12 @@ void MainWindow::on_actionPreferences_triggered()
           viewer, SLOT(setFastDrawing(bool)));
   prefdiag.max_itemsSpinBox->setValue(viewer->textRenderer()->getMax_textItems());
   
-  connect(prefdiag.max_itemsSpinBox, QOverload<int>::of(&QSpinBox::valueChanged),
+  connect(prefdiag.max_itemsSpinBox,static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
           this, [this](int i){
     setMaxTextItemsDisplayed(i);
   });
   prefdiag.transpSpinBox->setValue(viewer->total_pass());
-  connect(prefdiag.transpSpinBox, QOverload<int>::of(&QSpinBox::valueChanged),
+  connect(prefdiag.transpSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
               this, [this](int i)
   {
     setTransparencyPasses(i);
@@ -1877,14 +1877,14 @@ void MainWindow::on_actionPreferences_triggered()
   prefdiag.surface_meshComboBox->setCurrentText(CGAL::Three::Three::modeName(
                                                   CGAL::Three::Three::s_defaultSMRM));
   connect(prefdiag.surface_meshComboBox, &QComboBox::currentTextChanged,
-          this, [](const QString& text){
+          this, [this](const QString& text){
     CGAL::Three::Three::s_defaultSMRM = CGAL::Three::Three::modeFromName(text);
   });
   
   prefdiag.point_setComboBox->setCurrentText(CGAL::Three::Three::modeName(
                                                CGAL::Three::Three::s_defaultPSRM));
   connect(prefdiag.point_setComboBox, &QComboBox::currentTextChanged,
-          this, [](const QString& text){
+          this, [this](const QString& text){
     CGAL::Three::Three::s_defaultPSRM = CGAL::Three::Three::modeFromName(text);
   });
   std::vector<QTreeWidgetItem*> items;
