@@ -7,36 +7,6 @@ set( CGAL_REQUESTED_COMPONENTS ${CGAL_FIND_COMPONENTS} )
 
 set(CGAL_LIBRARIES CGAL)
 
-if(CGAL_BUILDING_LIBS)
-  foreach(comp ${CGAL_FIND_COMPONENTS})
-    if(CGAL_${comp}_FOUND)
-      list(APPEND CGAL_LIBRARIES CGAL_${comp})
-    endif()
-  endforeach()
-  # We don't know yet CGAL_MODULES_DIR: include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
-  return()
-endif()
-
-foreach(comp ${CGAL_FIND_COMPONENTS})
-  if(NOT comp MATCHES "Core|ImageIO|Qt5")
-    message(FATAL_ERROR "The requested CGAL component ${comp} does not exist!")
-  endif()
-  list(APPEND CGAL_LIBRARIES CGAL_${comp})
-endforeach()
-
-set(CGALConfig_all_targets_are_defined TRUE)
-foreach(cgal_lib ${CGAL_LIBRARIES})
-  if(NOT WITH_${cgal_lib})
-    set(CGALConfig_all_targets_are_defined FALSE)
-  endif()
-endforeach()
-if(CGALConfig_all_targets_are_defined)
-  # We don't know yet CGAL_MODULES_DIR: include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
-  return()
-endif()
-
-message(STATUS "Using header-only CGAL")
-
 get_filename_component(CGAL_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 set(CGAL_HEADER_ONLY TRUE)
@@ -92,6 +62,36 @@ else()
   endif()
 endif()
 
+include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
+
+if(CGAL_BUILDING_LIBS)
+  foreach(comp ${CGAL_FIND_COMPONENTS})
+    if(CGAL_${comp}_FOUND)
+      list(APPEND CGAL_LIBRARIES CGAL_${comp})
+    endif()
+  endforeach()
+  return()
+endif()
+
+foreach(comp ${CGAL_FIND_COMPONENTS})
+  if(NOT comp MATCHES "Core|ImageIO|Qt5")
+    message(FATAL_ERROR "The requested CGAL component ${comp} does not exist!")
+  endif()
+  list(APPEND CGAL_LIBRARIES CGAL_${comp})
+endforeach()
+
+set(CGALConfig_all_targets_are_defined TRUE)
+foreach(cgal_lib ${CGAL_LIBRARIES})
+  if(NOT WITH_${cgal_lib})
+    set(CGALConfig_all_targets_are_defined FALSE)
+  endif()
+endforeach()
+if(CGALConfig_all_targets_are_defined)
+  return()
+endif()
+
+message(STATUS "Using header-only CGAL")
+
 if(NOT CGAL_FOUND)
   return()
 endif()
@@ -135,7 +135,6 @@ endforeach()
 #
 
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
-include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
 
 # Temporary? Change the CMAKE module path
 cgal_setup_module_path()
