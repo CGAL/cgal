@@ -21,7 +21,7 @@
 #include <QtGui>
 #include <QtWidgets>
 #include "ui_Surface_mesh_approximation_dialog.h"
-#include <CGAL/VSA/approximate_mesh.h>
+#include <CGAL/Surface_mesh_approximation/approximate_triangle_mesh.h>
 #include "VSA_approximation_wrapper.h"
 
 using namespace CGAL::Three;
@@ -359,14 +359,14 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionSurfaceMeshAppr
     SMesh *pResult  = new SMesh;
     if (poly_item) {
       Polyhedron *pMesh = poly_item->polyhedron();
-      CGAL::VSA::approximate_mesh(*pMesh, CGAL::parameters::max_number_of_proxies(30).
+      VSA::approximate_triangle_mesh(*pMesh, CGAL::parameters::max_number_of_proxies(30).
         number_of_iterations(20).
         subdivision_ratio(3).
         relative_to_chord(false));
     }
     else {
       SMesh *pMesh = sm_item->polyhedron();
-      CGAL::VSA::approximate_mesh(*pMesh, CGAL::parameters::max_number_of_proxies(30).
+      VSA::approximate_triangle_mesh(*pMesh, CGAL::parameters::max_number_of_proxies(30).
         number_of_iterations(20).
         subdivision_ratio(3).
         relative_to_chord(false));
@@ -445,8 +445,8 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionApproximation_t
   if (dial.exec() == QDialog::Accepted) {
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    const CGAL::VSA::Seeding_method method = dial.method_random->isChecked() ? CGAL::VSA::RANDOM : (
-      dial.method_incremental->isChecked() ? CGAL::VSA::INCREMENTAL : CGAL::VSA::HIERARCHICAL);
+    const VSA::Seeding_method method = dial.method_random->isChecked() ? VSA::RANDOM : (
+      dial.method_incremental->isChecked() ? VSA::INCREMENTAL : VSA::HIERARCHICAL);
     m_approx.initialize_seeds(method,
       (dial.cb_nb_proxies->isChecked() ? boost::optional<std::size_t>(dial.nb_proxies->value()) : boost::none),
       (dial.cb_error_drop->isChecked() ? boost::optional<FT>(dial.error_drop->value()) : boost::none),
@@ -460,7 +460,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionApproximation_t
 #endif
     // generate proxy color map
     m_px_color.clear();
-    for (std::size_t i = 0; i < m_approx.proxies_size(); i++)
+    for (std::size_t i = 0; i < m_approx.number_of_proxies(); i++)
       m_px_color.push_back(rand_0_255());
 
     m_tris.clear();
@@ -495,8 +495,8 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionSeeding_trigger
   if (dial.exec() == QDialog::Accepted) {
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    const CGAL::VSA::Seeding_method method = dial.method_random->isChecked() ? CGAL::VSA::RANDOM : (
-      dial.method_incremental->isChecked() ? CGAL::VSA::INCREMENTAL : CGAL::VSA::HIERARCHICAL);
+    const VSA::Seeding_method method = dial.method_random->isChecked() ? VSA::RANDOM : (
+      dial.method_incremental->isChecked() ? VSA::INCREMENTAL : VSA::HIERARCHICAL);
     m_approx.initialize_seeds(method,
       (dial.cb_nb_proxies->isChecked() ? boost::optional<std::size_t>(dial.nb_proxies->value()) : boost::none),
       (dial.cb_error_drop->isChecked() ? boost::optional<FT>(dial.error_drop->value()) : boost::none),
@@ -510,7 +510,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionSeeding_trigger
 #endif
     // generate proxy color map
     m_px_color.clear();
-    for (std::size_t i = 0; i < m_approx.proxies_size(); i++)
+    for (std::size_t i = 0; i < m_approx.number_of_proxies(); i++)
       m_px_color.push_back(rand_0_255());
 
     m_view_polyhedron = true;

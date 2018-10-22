@@ -2,8 +2,10 @@
 #define VSA_APPROXIMAITON_WRAPPER_H
 
 #include <CGAL/Variational_shape_approximation.h>
-#include <CGAL/VSA/L2_metric_plane_proxy.h>
+#include <CGAL/Surface_mesh_approximation/L2_metric_plane_proxy.h>
 #include <CGAL/property_map.h>
+
+namespace VSA = CGAL::Surface_mesh_approximation;
 
 template <typename TriangleMesh, typename GeomTraits>
 class VSA_approximation_wrapper {
@@ -27,7 +29,7 @@ class VSA_approximation_wrapper {
 #endif
   typedef typename L21_approx::Error_metric L21_metric;
 
-  typedef CGAL::VSA::L2_metric_plane_proxy<TriangleMesh> L2_metric;
+  typedef VSA::L2_metric_plane_proxy<TriangleMesh> L2_metric;
 #ifdef CGAL_LINKED_WITH_TBB
   typedef CGAL::Variational_shape_approximation<TriangleMesh, Vertex_point_map,
     L2_metric, GeomTraits, CGAL::Parallel_tag> L2_approx;
@@ -44,15 +46,13 @@ class VSA_approximation_wrapper {
       const Face_area_map &_area_pmap)
       : center_pmap(_center_pmap), area_pmap(_area_pmap) {}
 
-    FT compute_error(const TriangleMesh &tm, const face_descriptor f, const Proxy &px) const {
-      (void)(tm);
+    FT compute_error(const face_descriptor f, const TriangleMesh &, const Proxy &px) const {
       return FT(std::sqrt(CGAL::to_double(
         CGAL::squared_distance(center_pmap[f], px))));
     }
 
     template <typename FaceRange>
-    Proxy fit_proxy(const FaceRange &faces, const TriangleMesh &tm) const {
-      (void)(tm);
+    Proxy fit_proxy(const FaceRange &faces, const TriangleMesh &) const {
       CGAL_assertion(!faces.empty());
 
       // fitting center
@@ -157,7 +157,7 @@ public:
 
   void set_metric(const Metric &m) { m_metric = m; }
 
-  std::size_t initialize_seeds(const CGAL::VSA::Seeding_method method,
+  std::size_t initialize_seeds(const VSA::Seeding_method method,
     const boost::optional<std::size_t> max_nb_of_proxies,
     const boost::optional<FT> min_error_drop,
     const std::size_t nb_relaxations) {
@@ -266,14 +266,14 @@ public:
     return false;
   }
 
-  std::size_t proxies_size() {
+  std::size_t number_of_proxies() {
     switch (m_metric) {
       case L21:
-        return m_l21_approx->proxies_size();
+        return m_l21_approx->number_of_proxies();
       case L2:
-        return m_l2_approx->proxies_size();
+        return m_l2_approx->number_of_proxies();
       case Compact:
-        return m_iso_approx->proxies_size();
+        return m_iso_approx->number_of_proxies();
     }
     return 0;
   }
