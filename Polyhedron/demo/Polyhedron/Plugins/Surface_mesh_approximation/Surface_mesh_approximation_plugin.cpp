@@ -1,9 +1,9 @@
-#include <QTime>
 #include <QApplication>
-#include <QAction>
 #include <QMainWindow>
-#include <QStringList>
-
+#include <QTime>
+#include <QAction>
+#include <QObject>
+#include <QDockWidget>
 
 #include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
@@ -12,115 +12,18 @@
 #include "Scene_polyhedron_selection_item.h"
 #include "Polyhedron_type.h"
 
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
-#include <QtGui>
-#include <QtWidgets>
-#include "ui_Surface_mesh_approximation_dialog.h"
+#include "ui_Surface_mesh_approximation_dockwidget.h"
 #include <CGAL/Surface_mesh_approximation/approximate_triangle_mesh.h>
 #include "VSA_approximation_wrapper.h"
 
 using namespace CGAL::Three;
-
-class Setting_dialog :
-  public QDialog,
-  public Ui_Surface_mesh_approximation_dialog
-{
-  Q_OBJECT
-
-public:
-  Setting_dialog(QWidget *parent = 0) {
-    setupUi(this);
-    loadFromSettings();
-  }
-
-  void accept() {
-    saveToSettings();
-    QDialog::accept();
-  }
-
-private Q_SLOTS:
-  void loadFromSettings() {
-    QSettings settings("settings.ini", QSettings::IniFormat);
-    settings.beginGroup("PkgTSMA");
-
-    if (settings.contains("method_random"))
-      method_random->setChecked(settings.value("method_random").toBool());
-    if (settings.contains("method_incremental"))
-      method_incremental->setChecked(settings.value("method_incremental").toBool());
-    if (settings.contains("method_hierarchical"))
-      method_hierarchical->setChecked(settings.value("method_hierarchical").toBool());
-
-    if (settings.contains("cb_nb_proxies"))
-      cb_nb_proxies->setChecked(settings.value("cb_nb_proxies").toBool());
-    if (settings.contains("nb_proxies"))
-      nb_proxies->setValue(settings.value("nb_proxies").toInt());
-    nb_proxies->setEnabled(cb_nb_proxies->isChecked());
-    if (settings.contains("cb_error_drop"))
-      cb_error_drop->setChecked(settings.value("cb_error_drop").toBool());
-    if (settings.contains("error_drop"))
-      error_drop->setValue(settings.value("error_drop").toDouble());
-    error_drop->setEnabled(cb_error_drop->isChecked());
-
-    if (settings.contains("nb_relaxations"))
-      nb_relaxations->setValue(settings.value("nb_relaxations").toInt());
-    if (settings.contains("nb_iterations"))
-      nb_iterations->setValue(settings.value("nb_iterations").toInt());
-
-    if (settings.contains("is_relative_to_chord"))
-      is_relative_to_chord->setChecked(settings.value("is_relative_to_chord").toBool());
-    if (settings.contains("with_dihedral_angle"))
-      with_dihedral_angle->setChecked(settings.value("with_dihedral_angle").toBool());
-    if (settings.contains("if_optimize_anchor_location"))
-      if_optimize_anchor_location->setChecked(settings.value("if_optimize_anchor_location").toBool());
-    if (settings.contains("pca_plane"))
-      pca_plane->setChecked(settings.value("pca_plane").toBool());
-    if (settings.contains("chord_error"))
-      chord_error->setValue(settings.value("chord_error").toDouble());
-
-    if (settings.contains("split_proxy_idx"))
-      split_proxy_idx->setValue(settings.value("split_proxy_idx").toInt());
-    if (settings.contains("split_nb_sections"))
-      split_nb_sections->setValue(settings.value("split_nb_sections").toInt());
-    if (settings.contains("split_nb_relaxations"))
-      split_nb_relaxations->setValue(settings.value("split_nb_relaxations").toInt());
-
-    settings.endGroup();
-  }
-
-  void saveToSettings() {
-    QSettings settings("settings.ini", QSettings::IniFormat);
-    settings.beginGroup("PkgTSMA");
-
-    settings.setValue("method_random", method_random->isChecked());
-    settings.setValue("method_incremental", method_incremental->isChecked());
-    settings.setValue("method_hierarchical", method_hierarchical->isChecked());
-
-    settings.setValue("cb_nb_proxies", cb_nb_proxies->isChecked());
-    settings.setValue("nb_proxies", nb_proxies->value());
-    settings.setValue("cb_error_drop", cb_error_drop->isChecked());
-    settings.setValue("error_drop", error_drop->value());
-
-    settings.setValue("nb_relaxations", nb_relaxations->value());
-    settings.setValue("nb_iterations", nb_iterations->value());
-
-    settings.setValue("is_relative_to_chord", is_relative_to_chord->isChecked());
-    settings.setValue("with_dihedral_angle", with_dihedral_angle->isChecked());
-    settings.setValue("if_optimize_anchor_location", if_optimize_anchor_location->isChecked());
-    settings.setValue("pca_plane", pca_plane->isChecked());
-    settings.setValue("chord_error", chord_error->value());
-
-    settings.setValue("split_proxy_idx", split_proxy_idx->value());
-    settings.setValue("split_nb_sections", split_nb_sections->value());
-    settings.setValue("split_nb_relaxations", split_nb_relaxations->value());
-
-    settings.endGroup();
-  }
-};
 
 typedef VSA_approximation_wrapper<Polyhedron, Kernel> Approximation_wrapper;
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
@@ -135,7 +38,7 @@ typedef Polyhedron::Vertex_handle Vertex_handle;
 
 class Polyhedron_demo_surface_mesh_approximation_plugin : 
   public QObject,
-  public Polyhedron_demo_plugin_interface
+  public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
@@ -144,8 +47,7 @@ class Polyhedron_demo_surface_mesh_approximation_plugin :
 public:
   void init(QMainWindow *main_window,
     Scene_interface *scene_interface,
-    Messages_interface *message_interface)
-  {
+    Messages_interface *message_interface) {
     mw = main_window;
     scene = scene_interface;
     mi = message_interface;
@@ -227,6 +129,15 @@ public:
              << actionSplit
              // << NULL
              << actionViewPolyhedron;
+
+    dock_widget = new QDockWidget("Mesh approximation parameters", mw);
+    dock_widget->setVisible(true);
+    ui_widget.setupUi(dock_widget);
+    mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
+  }
+
+  void closure() {
+    // dock_widget->hide();
   }
 
   QList<QAction *> actions() const { return _actions; }
@@ -306,6 +217,10 @@ private:
   QAction *actionViewAnchors;
   QAction *actionViewApproximation;
   QList<QAction *> _actions;
+
+  Ui::Surface_mesh_approximation ui_widget;
+  QDockWidget *dock_widget;
+
   QMainWindow *mw;
   Scene_interface *scene;
   Messages_interface *mi;
@@ -339,6 +254,9 @@ private:
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionSurfaceMeshApproximation_triggered()
 {
+  dock_widget->show();
+  return;
+
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   
   Scene_polyhedron_item* poly_item = 
@@ -439,85 +357,79 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionCompact_trigger
 }
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionApproximation_triggered() {
-  Setting_dialog dial;
-  dial.seeding->setEnabled(true);
-  dial.mesh_extraction->setEnabled(true);
-  if (dial.exec() == QDialog::Accepted) {
-    QApplication::setOverrideCursor(Qt::WaitCursor);
+  ui_widget.seeding->setEnabled(true);
+  ui_widget.mesh_extraction->setEnabled(true);
+  QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    const VSA::Seeding_method method = dial.method_random->isChecked() ? VSA::RANDOM : (
-      dial.method_incremental->isChecked() ? VSA::INCREMENTAL : VSA::HIERARCHICAL);
-    m_approx.initialize_seeds(method,
-      (dial.cb_nb_proxies->isChecked() ? boost::optional<std::size_t>(dial.nb_proxies->value()) : boost::none),
-      (dial.cb_error_drop->isChecked() ? boost::optional<FT>(dial.error_drop->value()) : boost::none),
-      dial.nb_relaxations->value());
-    m_approx.run(dial.nb_iterations->value());
+  const VSA::Seeding_method method = ui_widget.method_random->isChecked() ? VSA::RANDOM : (
+    ui_widget.method_incremental->isChecked() ? VSA::INCREMENTAL : VSA::HIERARCHICAL);
+  m_approx.initialize_seeds(method,
+    (ui_widget.cb_nb_proxies->isChecked() ? boost::optional<std::size_t>(ui_widget.nb_proxies->value()) : boost::none),
+    (ui_widget.cb_error_drop->isChecked() ? boost::optional<FT>(ui_widget.error_drop->value()) : boost::none),
+    ui_widget.nb_relaxations->value());
+  m_approx.run(ui_widget.nb_iterations->value());
 
-    m_approx.proxy_map(m_fidx_pmap);
+  m_approx.proxy_map(m_fidx_pmap);
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-    m_proxies.clear();
-    m_approx.get_l21_proxies(std::back_inserter(m_proxies));
+  m_proxies.clear();
+  m_approx.get_l21_proxies(std::back_inserter(m_proxies));
 #endif
-    // generate proxy color map
-    m_px_color.clear();
-    for (std::size_t i = 0; i < m_approx.number_of_proxies(); i++)
-      m_px_color.push_back(rand_0_255());
+  // generate proxy color map
+  m_px_color.clear();
+  for (std::size_t i = 0; i < m_approx.number_of_proxies(); i++)
+    m_px_color.push_back(rand_0_255());
 
-    m_tris.clear();
-    m_anchor_pos.clear();
-    m_anchor_vtx.clear();
-    m_bdrs.clear();
-    m_approx.extract_mesh(dial.chord_error->value(),
-      dial.is_relative_to_chord->isChecked(),
-      dial.with_dihedral_angle->isChecked(),
-      dial.if_optimize_anchor_location->isChecked(),
-      dial.pca_plane->isChecked());
-    m_approx.indexed_triangles(std::back_inserter(m_tris));
-    m_approx.anchor_points(std::back_inserter(m_anchor_pos));
-    m_approx.anchor_vertices(std::back_inserter(m_anchor_vtx));
-    m_approx.indexed_boundary_polygons(std::back_inserter(m_bdrs));
+  m_tris.clear();
+  m_anchor_pos.clear();
+  m_anchor_vtx.clear();
+  m_bdrs.clear();
+  m_approx.extract_mesh(ui_widget.chord_error->value(),
+    ui_widget.is_relative_to_chord->isChecked(),
+    ui_widget.with_dihedral_angle->isChecked(),
+    ui_widget.if_optimize_anchor_location->isChecked(),
+    ui_widget.pca_plane->isChecked());
+  m_approx.indexed_triangles(std::back_inserter(m_tris));
+  m_approx.anchor_points(std::back_inserter(m_anchor_pos));
+  m_approx.anchor_vertices(std::back_inserter(m_anchor_vtx));
+  m_approx.indexed_boundary_polygons(std::back_inserter(m_bdrs));
 
-    // update display options
-    m_view_boundary = true;
-    m_view_anchors = true;
-    m_view_approximation = true;
-    actionViewBoundary->setChecked(true);
-    actionViewAnchors->setChecked(true);
-    actionViewApproximation->setChecked(true);
+  // update display options
+  m_view_boundary = true;
+  m_view_anchors = true;
+  m_view_approximation = true;
+  actionViewBoundary->setChecked(true);
+  actionViewAnchors->setChecked(true);
+  actionViewApproximation->setChecked(true);
 
-    QApplication::restoreOverrideCursor();
-  }
+  QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionSeeding_triggered() {
-  Setting_dialog dial;
-  dial.seeding->setEnabled(true);
-  if (dial.exec() == QDialog::Accepted) {
-    QApplication::setOverrideCursor(Qt::WaitCursor);
+  ui_widget.seeding->setEnabled(true);
+  QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    const VSA::Seeding_method method = dial.method_random->isChecked() ? VSA::RANDOM : (
-      dial.method_incremental->isChecked() ? VSA::INCREMENTAL : VSA::HIERARCHICAL);
-    m_approx.initialize_seeds(method,
-      (dial.cb_nb_proxies->isChecked() ? boost::optional<std::size_t>(dial.nb_proxies->value()) : boost::none),
-      (dial.cb_error_drop->isChecked() ? boost::optional<FT>(dial.error_drop->value()) : boost::none),
-      dial.nb_relaxations->value());
-    m_approx.run(dial.nb_iterations->value());
+  const VSA::Seeding_method method = ui_widget.method_random->isChecked() ? VSA::RANDOM : (
+    ui_widget.method_incremental->isChecked() ? VSA::INCREMENTAL : VSA::HIERARCHICAL);
+  m_approx.initialize_seeds(method,
+    (ui_widget.cb_nb_proxies->isChecked() ? boost::optional<std::size_t>(ui_widget.nb_proxies->value()) : boost::none),
+    (ui_widget.cb_error_drop->isChecked() ? boost::optional<FT>(ui_widget.error_drop->value()) : boost::none),
+    ui_widget.nb_relaxations->value());
+  m_approx.run(ui_widget.nb_iterations->value());
 
-    m_approx.proxy_map(m_fidx_pmap);
+  m_approx.proxy_map(m_fidx_pmap);
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-    m_proxies.clear();
-    m_approx.get_l21_proxies(std::back_inserter(m_proxies));
+  m_proxies.clear();
+  m_approx.get_l21_proxies(std::back_inserter(m_proxies));
 #endif
-    // generate proxy color map
-    m_px_color.clear();
-    for (std::size_t i = 0; i < m_approx.number_of_proxies(); i++)
-      m_px_color.push_back(rand_0_255());
+  // generate proxy color map
+  m_px_color.clear();
+  for (std::size_t i = 0; i < m_approx.number_of_proxies(); i++)
+    m_px_color.push_back(rand_0_255());
 
-    m_view_polyhedron = true;
-    actionViewBoundary->setChecked(true);
+  m_view_polyhedron = true;
+  actionViewBoundary->setChecked(true);
 
-    QApplication::restoreOverrideCursor();
-  }
+  QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionFit_triggered() {
@@ -534,34 +446,31 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionFit_triggered()
 }
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionMeshing_triggered() {
-  Setting_dialog dial;
-  dial.mesh_extraction->setEnabled(true);
-  if (dial.exec() == QDialog::Accepted) {
-    QApplication::setOverrideCursor(Qt::WaitCursor);
+  ui_widget.mesh_extraction->setEnabled(true);
+  QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    m_tris.clear();
-    m_anchor_pos.clear();
-    m_anchor_vtx.clear();
-    m_bdrs.clear();
+  m_tris.clear();
+  m_anchor_pos.clear();
+  m_anchor_vtx.clear();
+  m_bdrs.clear();
 
-    m_approx.extract_mesh(dial.chord_error->value(),
-      dial.is_relative_to_chord->isChecked(),
-      dial.with_dihedral_angle->isChecked(),
-      dial.if_optimize_anchor_location->isChecked(),
-      dial.pca_plane->isChecked());
+  m_approx.extract_mesh(ui_widget.chord_error->value(),
+    ui_widget.is_relative_to_chord->isChecked(),
+    ui_widget.with_dihedral_angle->isChecked(),
+    ui_widget.if_optimize_anchor_location->isChecked(),
+    ui_widget.pca_plane->isChecked());
 
-    m_approx.indexed_triangles(std::back_inserter(m_tris));
-    m_approx.anchor_points(std::back_inserter(m_anchor_pos));
-    m_approx.anchor_vertices(std::back_inserter(m_anchor_vtx));
-    m_approx.indexed_boundary_polygons(std::back_inserter(m_bdrs));
+  m_approx.indexed_triangles(std::back_inserter(m_tris));
+  m_approx.anchor_points(std::back_inserter(m_anchor_pos));
+  m_approx.anchor_vertices(std::back_inserter(m_anchor_vtx));
+  m_approx.indexed_boundary_polygons(std::back_inserter(m_bdrs));
 
-    m_view_anchors = true;
-    m_view_approximation = true;
-    actionViewAnchors->setChecked(true);
-    actionViewApproximation->setChecked(true);
+  m_view_anchors = true;
+  m_view_approximation = true;
+  actionViewAnchors->setChecked(true);
+  actionViewApproximation->setChecked(true);
 
-    QApplication::restoreOverrideCursor();
-  }
+  QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionAdd_triggered() {
@@ -596,30 +505,27 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionTeleport_trigge
 }
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionSplit_triggered() {
-  Setting_dialog dial;
-  dial.operations->setEnabled(true);
-  dial.operations->setCurrentIndex(0);
-  if (dial.exec() == QDialog::Accepted) {
-    QApplication::setOverrideCursor(Qt::WaitCursor);
+  ui_widget.operations->setEnabled(true);
+  ui_widget.operations->setCurrentIndex(0);
+  QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    if (m_approx.split(dial.split_proxy_idx->value(),
-      dial.split_nb_sections->value(),
-      dial.split_nb_relaxations->value())) {
-      // add colors
-      for (std::size_t i = 1; i < dial.split_nb_sections->value(); ++i)
-        m_px_color.push_back(rand_0_255());
-    }
-    else
-      std::cout << "split failed" << std::endl;
+  if (m_approx.split(ui_widget.split_proxy_idx->value(),
+    ui_widget.split_nb_sections->value(),
+    ui_widget.split_nb_relaxations->value())) {
+    // add colors
+    for (std::size_t i = 1; i < ui_widget.split_nb_sections->value(); ++i)
+      m_px_color.push_back(rand_0_255());
+  }
+  else
+    std::cout << "split failed" << std::endl;
 
-    m_approx.proxy_map(m_fidx_pmap);
+  m_approx.proxy_map(m_fidx_pmap);
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-    m_proxies.clear();
-    m_approx.get_l21_proxies(std::back_inserter(m_proxies));
+  m_proxies.clear();
+  m_approx.get_l21_proxies(std::back_inserter(m_proxies));
 #endif
 
-    QApplication::restoreOverrideCursor();
-  }
+  QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::set_metric(const int m) {
