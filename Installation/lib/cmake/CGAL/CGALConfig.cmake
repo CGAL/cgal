@@ -133,7 +133,6 @@ endforeach()
 #
 #
 #
-
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 
 # Temporary? Change the CMAKE module path
