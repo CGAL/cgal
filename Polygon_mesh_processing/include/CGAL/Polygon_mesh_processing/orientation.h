@@ -718,13 +718,21 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
                                                          is_parent_outward_oriented);
 }
 
-//TODO  Add documentation
-enum Volume_error_code { VALID_VOLUME,
-                         SURFACE_SELF_INTERSECTION,
-                         VOLUME_INTERSECTION,
-                         NON_TRIANGULATED_SURFACE,
-                         INCONSISTENT_ORIENTATION,
-                         SINGLE_CONNECTED_COMPONENT};
+/*!
+ * \ingroup PMP_orientation_grp
+ * Enumeration type used to indicate the status of a set of faces
+ * classified by the function `volume_connected_components()`.
+ * The set of faces defines either a volumic connected connected component
+ * in the case of `VALID_VOLUME` or a surfacic connected component otherwise.
+ */
+enum Volume_error_code { VALID_VOLUME, ///< The set of faces bounds a volume
+                         SURFACE_SELF_INTERSECTION, ///< The set of faces are self-intersecting
+                         VOLUME_INTERSECTION, ///< The set of faces intersect another surface connected component
+                         OPEN_SURFACE, ///< The set of faces does not defined a close surface
+                         NON_TRIANGULATED_SURFACE, ///< The set of faces contains at least a non-triangular face
+                         INCONSISTENT_ORIENTATION, ///< The set of faces is included in a volume but has an incompatible orientation
+                         SINGLE_CONNECTED_COMPONENT ///< The set of faces consists of all the faces of the mesh and no further test were done.
+                       };
 namespace internal {
 template<class RefToVector>
 void copy_error_codes(std::vector<Volume_error_code>& error_codes_in,
@@ -771,23 +779,101 @@ void set_f_cc_id(const std::vector<std::size_t>&,
 
 } // internal
 
-//TODO Add documentation
-// doc: non-closed connected components are reported as isolated volumes
-// doc: connected components with at least one non-triangle face are reported as isolated volumes
-// doc: self-intersecting connect components are reported as isolated volumes.
-// doc: CC intersecting another CC is reported as a seperate volume and so are its nested CCs
-// doc: add option ignore_orientation_of_cc to control whether the inward/outward orientation of
-//      component must be taken into account rather than only the nesting. In case of incompatible
-//      orientation of a cc X with its parent, all other CC included in X (as well as X) are reported
-//      as independant volumes
-// doc: in case there is only one CC, no extra test is performed
-// NP do_orientation_tests
-// NP do_self_intersection_tests
-// NP error_codes
-// NP face_index
-// NP vertex_point_map
-// NP volume_inclusions (must be a reference_wrapper)
-// NP face_connected_component_map
+
+/*!
+ * \ingroup PMP_orientation_grp
+ * assigns to each face of `tm` an id corresponding to the volume connected component
+ * it contributes to define.
+ *
+ * Using the adjacency relation of two faces along an edge, a triangle mesh can be split
+ * into connected components (*surface components* in the following).
+ * A surface component without boundary separates the 3D space into an infinite and
+ * a finite volume. We say that the finite volume is <i>enclosed</i> by this surface
+ * component.
+ *
+ * The volume connected components (*volume components* in the following) are defines as follow:
+ * Each surface component `S` that is outside any volume enclosed by
+ * another surface component defines the *outer boundary* of a volume component.
+ * Each surface component that is inside the volume enclosed by `S`
+ * defines a *hole* if it is included in no other volume enclosed by a surface components
+ * but `S`. Ignoring the identified volume component, the same procedure is recursively
+ * repeated for all surface components in each hole.
+ *
+ * There are some special cases:
+ * - a non-closed surface component is reported as an isolated volume
+ * - a surface component with at least one non-triangle face is reported as an isolated volume
+ * - a self-intersecting surface component is reported as an isolated volume
+ * - a surface component intersecting another surface component
+ *   is reported as an isolated volume, and so are all the surface components inside its
+ *   enclosed volume.
+ * - if `do_orientation_tests` is `true`, if the holes are not all equally oriented
+ *   (all inward or all outward) or if the holes and the outer boundary are equally
+ *   oriented, each surface component is reported as an isolated volume,
+ *   and so are all the surface components inside the corresponding enclosed volumes.
+ * - If all the faces of `tm` are part of the same surface component, then
+ *   no further test (open/closed, self-intersecting) is done and all faces
+ *   are assigned to the same volume components.
+ * - If `do_orientation_tests` is set to `true` and the surface components that are
+ *   outside all enclosed volumes are inward oriented, they are then considered as holes
+ *   of the unbounded volume (that has no outer boundary)
+ *
+ * A property map for each of `CGAL::face_index_t` and `CGAL::vertex_point_t`
+ * must be either available as an internal property map
+ * of `tm` or provided as one of the \ref pmp_namedparameters "Named Parameters".
+ *
+ * @tparam TriangleMesh a model of `FaceListGraph`
+ * @tparam FaceIndexMap a model of `WritablePropertyMap` with
+ *                      `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
+ *                      `boost::graph_traits<PolygonMesh>::%faces_size_type` as value type.
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ *
+ * @param tm the input triangle mesh
+ * @param volume_id_map the property map filled by this function with indices of volume components associated to the faces of `tm`
+ * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamBegin{vertex_point_map}
+ *     the property map with the points associated to the vertices of `tm`.
+ *   \cgalParamEnd
+ *   \cgalParamBegin{face_index_map}
+ *     a property map containing a unique id per face of `tm`, in the range `[0, num_faces(tm)[`.
+ *   \cgalParamEnd
+ *   \cgalParamBegin{face_connected_component_map}
+ *     a property map filled by this function and that will contain for each face the id
+ *     of its surface component in the range `[0, number of surface components - 1[`.
+ *   \cgalParamEnd
+ *   \cgalParamBegin{volume_inclusions}
+ *     a `reference_wrapper` (either from `boost` or the standard library) containing
+ *     a reference to an object of type `std::vector< std::vector<std::size_t> >`
+ *     The size of the vector is exactly the number of surface components of `tm`.
+ *     The vector at position `k` contains the ids of all the
+ *     surface components that are the first intersected by any ray with source on
+ *     the surface component `k` and directed outside the volume enclosed by the
+ *     surface component `k`. There is only one such id but when some surface components intersect.
+ *   \cgalParamEnd
+ *   \cgalParamBegin{do_orientation_tests}
+ *     if `true` (the default value), the orientation of the faces of
+ *     each surface components will be taken into account for the definition of the volume.
+ *     If `false`, the face orientation is ignored and the volumes are defined only by the
+ *     nesting of surface components.
+ *   \cgalParamEnd
+ *   \cgalParamBegin{error_codes}
+ *     a `reference_wrapper` (either from `boost` or the standard library) containing
+ *     a reference to an object of type `std::vector< Volume_error_code >`.
+ *     The size of the vector is exactly the number of volume components.
+ *     The vector indicates the status of a volume assigned to a set of faces.
+ *     The description of the value type is given in the documentation of the enumeration type.
+ *   \cgalParamEnd
+ *   \cgalParamBegin{do_self_intersection_tests}
+ *     If `false` (the default value), it is assumed that `tm` does not contains any self-intersections.
+ *     if `true`, the input might contain some self-intersections and a test is done
+ *     prior to the volume decomposition.
+ *   \cgalParamEnd
+ * \cgalNamedParamsEnd
+ *
+ * \return the number of volume components defined by `tm`
+ *
+ */
 template <class TriangleMesh, class FaceIndexMap, class NamedParameters>
 std::size_t
 volume_connected_components(const TriangleMesh& tm,
@@ -808,7 +894,6 @@ volume_connected_components(const TriangleMesh& tm,
   Vpm vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
                                 get_const_property_map(boost::vertex_point, tm));
 
-  // TODO handle user provided CC map ?
   Fid_map fid_map = boost::choose_param(boost::get_param(np, internal_np::face_index),
                                         get_const_property_map(boost::face_index, tm));
 
@@ -873,6 +958,7 @@ volume_connected_components(const TriangleMesh& tm,
       {
         cc_handled.set(cc_id);
         cc_volume_ids[cc_id]=next_volume_id++;
+        error_codes.push_back(OPEN_SURFACE);
       }
     }
   }

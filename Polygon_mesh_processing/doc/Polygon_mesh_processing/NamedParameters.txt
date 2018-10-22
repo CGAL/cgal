@@ -327,7 +327,7 @@ Parameter used in `isotropic_remeshing()` to specify an alternative vertex proje
 \cgalNPEnd
 
 \cgalNPBegin{apply_per_connected_component} \anchor PMP_apply_per_connected_component
-Parameter used to indicate whether an algorithm should consider each connected component 
+Parameter used to indicate whether an algorithm should consider each connected component
 of a mesh independently.\n
 \b Type : `bool` \n
 \b Default value is `false`
@@ -364,6 +364,55 @@ should be considered as part of the clipping volume or not.
 \b Default value is `true`
 \cgalNPEnd
 
+\cgalNPBegin{do_orientation_tests} \anchor PMP_do_orientation_tests
+Parameter used in `volume_connected_components()` to indicate if surface orientation test
+must be done to decide of the belonging of a surface connected component to a volume.
+\n
+\b Type : `bool` \n
+\b Default value is `true`
+\cgalNPEnd
+
+\cgalNPBegin{do_self_intersection_tests} \anchor PMP_do_self_intersection_tests
+Parameter used in `volume_connected_components()` to indicate if the input triangle mesh
+might contains self-intersections that must be taken into account while detecting volume
+connected components.
+\n
+\b Type : `bool` \n
+\b Default value is `false`
+\cgalNPEnd
+
+\cgalNPBegin{error_codes} \anchor PMP_error_codes
+a reference to a vector holding the classification of a volume connected component identified by its id.
+The size of the vector is exactly the number of volume connected components and the
+object at position `k` in the vector correspond to the classification of the volume connected component
+assigned the id `k`.
+\n
+\b Type: a `reference_wrapper` (either from `boost` or the standard library)
+         over an object of type `std::vector<Volume_error_code>` \n
+\b Default: None
+\cgalNPEnd
+
+\cgalNPBegin{face_connected_component_map} \anchor PMP_face_connected_component_map
+a property map that will contain for each face the id
+of its surface connected component in the range
+`[0, number of connected components - 1[`.
+\n
+<b>Type:</b> a class model of `WritablePropertyMap` with
+`boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and `std::size_t` as value type\n
+\b Default: None
+\cgalNPEnd
+
+\cgalNPBegin{volume_inclusions} \anchor PMP_volume_inclusions
+a reference to a vector holding vector of id of surface connected components.
+The size of the vector is exactly the number of surface connected components of the triangle mesh considered
+The vector at position `k` contains the id of each surface connected components
+that is the first intersected by a ray with source on the surface connected component `k`
+and directed outside the finite volume enclosed by the surface connected component `k`.
+\n
+\b Type: a `reference_wrapper` (either from `boost` or the standard library)
+         over an object of type `std::vector< std::vector<std::size_t> >` \n
+\b Default: None
+\cgalNPEnd
 
 \cgalNPTableEnd
 

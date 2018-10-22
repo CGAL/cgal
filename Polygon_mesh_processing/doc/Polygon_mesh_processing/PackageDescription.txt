@@ -121,6 +121,7 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::orient()`
 - `CGAL::Polygon_mesh_processing::does_bound_a_volume()`
 - `CGAL::Polygon_mesh_processing::orient_to_bound_a_volume()`
+- `CGAL::Polygon_mesh_processing::volume_connected_components()`
 
 ## Combinatorial Repairing Functions ##
 - \link PMP_repairing_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
