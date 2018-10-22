@@ -52,95 +52,33 @@ public:
     scene = scene_interface;
     mi = message_interface;
 
-    QAction *actionSurfaceMeshApproximation = new QAction("Surface Mesh Approximation", mw);
+    actionSurfaceMeshApproximation = new QAction("Surface Mesh Approximation", mw);
     actionSurfaceMeshApproximation->setProperty("subMenuName", "Triangulated Surface Mesh Approximation");
     connect(actionSurfaceMeshApproximation, SIGNAL(triggered()), this, SLOT(on_actionSurfaceMeshApproximation_triggered()));
-
-    // set metric menu
-    // QAction *actionL21 = new QAction("L21 metric", mw);
-    actionL21 = new QAction("L21 metric", mw);
-    actionL21->setProperty("subMenuName", "Triangulated Surface Mesh Approximation");
-    connect(actionL21, SIGNAL(triggered()), this, SLOT(on_actionL21_triggered()));
-
-    // QAction *actionL2 = new QAction("L2 metric", mw);
-    actionL2 = new QAction("L2 metric", mw);
-    actionL2->setProperty("subMenuName", "Triangulated Surface Mesh Approximation");
-    connect(actionL2, SIGNAL(triggered()), this, SLOT(on_actionL2_triggered()));
-
-    // QAction *actionCompact = new QAction("Compact metric", mw);
-    actionCompact = new QAction("Compact metric", mw);
-    actionCompact->setProperty("subMenuName", "Triangulated Surface Mesh Approximation");
-    connect(actionCompact, SIGNAL(triggered()), this, SLOT(on_actionL21_triggered()));
-
-    // operations menu
-    // QAction *actionApproximation = new QAction("Approximation", mw);
-    actionApproximation = new QAction("Approximation", mw);
-    actionApproximation->setProperty("subMenuName", "Triangulated Surface Mesh Approximation");
-    connect(actionApproximation, SIGNAL(triggered()), this, SLOT(on_actionApproximation_triggered()));
-
-    // QAction *actionSeeding = new QAction("Seeding", mw);
-    actionSeeding = new QAction("Seeding", mw);
-    actionSeeding->setProperty("subMenuName", "Triangulated Surface Mesh Approximation");
-    connect(actionSeeding, SIGNAL(triggered()), this, SLOT(on_actionSeeding_triggered()));
-
-    // QAction *actionFit = new QAction("Fit", mw);
-    actionFit = new QAction("Fit", mw);
-    actionFit->setProperty("subMenuName", "Triangulated Surface Mesh Approximation");
-    connect(actionFit, SIGNAL(triggered()), this, SLOT(on_actionFit_triggered()));
-
-    // QAction *actionMeshing = new QAction("Meshing", mw);
-    actionMeshing = new QAction("Meshing", mw);
-    actionMeshing->setProperty("subMenuName", "Triangulated Surface Mesh Approximation");
-    connect(actionMeshing, SIGNAL(triggered()), this, SLOT(on_actionMeshing_triggered()));
-
-    // QAction *actionAdd = new QAction("Add proxy", mw);
-    actionAdd = new QAction("Add proxy", mw);
-    actionAdd->setProperty("subMenuName", "Triangulated Surface Mesh Approximation");
-    connect(actionAdd, SIGNAL(triggered()), this, SLOT(on_actionAdd_triggered()));
-
-    // QAction *actionTeleport = new QAction("Teleport proxy", mw);
-    actionTeleport = new QAction("Teleport proxy", mw);
-    actionTeleport->setProperty("subMenuName", "Triangulated Surface Mesh Approximation");
-    connect(actionTeleport, SIGNAL(triggered()), this, SLOT(on_actionTeleport_triggered()));
-
-    // QAction *actionSplit = new QAction("Split proxy", mw);
-    actionSplit = new QAction("Split proxy", mw);
-    actionSplit->setProperty("subMenuName", "Triangulated Surface Mesh Approximation");
-    connect(actionSplit, SIGNAL(triggered()), this, SLOT(on_actionSplit_triggered()));
-
-    // view menu
-    // QAction *actionViewPolyhedron = new QAction("View polyhedron", mw);
-    actionViewPolyhedron = new QAction("View polyhedron", mw);
-    actionViewPolyhedron->setProperty("subMenuName", "Triangulated Surface Mesh Approximation");
-    connect(actionViewPolyhedron, SIGNAL(triggered()), this, SLOT(on_actionViewPolyhedron_triggered()));
-
-    _actions << actionSurfaceMeshApproximation
-             // << NULL
-             << actionL21
-             << actionL2
-             << actionCompact
-             // << NULL
-             << actionApproximation
-             << actionSeeding
-             << actionFit
-             << actionMeshing
-             << actionAdd
-             << actionTeleport
-             << actionSplit
-             // << NULL
-             << actionViewPolyhedron;
 
     dock_widget = new QDockWidget("Mesh approximation parameters", mw);
     dock_widget->setVisible(true);
     ui_widget.setupUi(dock_widget);
     mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
+
+    // connect ui actions
+    connect(ui_widget.comboMetric, SIGNAL(currentIndexChanged(int)), this, SLOT(on_comboMetric_currentIndexChanged(const int)));
+    connect(ui_widget.buttonSeeding, SIGNAL(clicked()), this, SLOT(on_buttonSeeding_clicked()));
+    connect(ui_widget.buttonAdd, SIGNAL(clicked()), this, SLOT(on_buttonAdd_clicked()));
+    connect(ui_widget.buttonFit, SIGNAL(clicked()), this, SLOT(on_buttonFit_clicked()));
+    connect(ui_widget.buttonMeshing, SIGNAL(clicked()), this, SLOT(on_buttonMeshing_clicked()));
+    connect(ui_widget.buttonTeleport, SIGNAL(clicked()), this, SLOT(on_buttonTeleport_clicked()));
+    connect(ui_widget.buttonSplit, SIGNAL(clicked()), this, SLOT(on_buttonSplit_clicked()));
+    // connect(actionApproximation, SIGNAL(clicked()), this, SLOT(on_actionApproximation_clicked()));
   }
 
   void closure() {
     // dock_widget->hide();
   }
 
-  QList<QAction *> actions() const { return _actions; }
+  QList<QAction *> actions() const {
+    return QList<QAction*>() << actionSurfaceMeshApproximation;
+  }
 
   bool applicable(QAction *) const {
     return 
@@ -151,73 +89,28 @@ public:
 public Q_SLOTS:
   void on_actionSurfaceMeshApproximation_triggered();
 
+  void on_comboMetric_currentIndexChanged(const int init);
+  void on_buttonSeeding_clicked();
+  void on_buttonAdd_clicked();
+  void on_buttonFit_clicked();
+  void on_buttonMeshing_clicked();
+  void on_buttonTeleport_clicked();
+  void on_buttonSplit_clicked();
+  void on_actionApproximation_clicked();
+
   // settings
   // void quit();
   // void readSettings();
   // void writeSettings();
 
-  // set metric menu
-  void on_actionL21_triggered();
-  void on_actionL2_triggered();
-  void on_actionCompact_triggered();
-
-  // operations menu
-  void on_actionApproximation_triggered();
-  void on_actionSeeding_triggered();
-  void on_actionFit_triggered();
-  void on_actionMeshing_triggered();
-  void on_actionAdd_triggered();
-  void on_actionTeleport_triggered();
-  void on_actionSplit_triggered();
-
-  // view menu
-  void on_actionViewPolyhedron_triggered() {
-    m_view_polyhedron = !m_view_polyhedron;
-  }
-  void on_actionViewWireframe_triggered() {
-    m_view_wireframe = !m_view_wireframe;
-  }
-  void on_actionViewBoundary_triggered() {
-    m_view_boundary = !m_view_boundary;
-  }
-  void on_actionViewProxies_triggered() {
-    m_view_proxies = !m_view_proxies;
-  }
-  void on_actionViewAnchors_triggered() {
-    m_view_anchors = !m_view_anchors;
-  }
-  void on_actionViewApproximation_triggered() {
-    m_view_approximation = !m_view_approximation;
-  }
-
 private:
-  // set metric algorithms
-  void set_metric(const int init);
-
   // pseudorandom number for proxy color mapping
   std::size_t rand_0_255() {
     return static_cast<std::size_t>(std::rand() % 255);
   }
 
 private:
-  QAction *actionL21;
-  QAction *actionL2;
-  QAction *actionCompact;
-  QAction *actionApproximation;
-  QAction *actionSeeding;
-  QAction *actionFit;
-  QAction *actionMeshing;
-  QAction *actionAdd;
-  QAction *actionTeleport;
-  QAction *actionSplit;
-  QAction *actionViewPolyhedron;
-  QAction *actionViewWireframe;
-  QAction *actionViewBoundary;
-  QAction *actionViewProxies;
-  QAction *actionViewAnchors;
-  QAction *actionViewApproximation;
-  QList<QAction *> _actions;
-
+  QAction *actionSurfaceMeshApproximation;
   Ui::Surface_mesh_approximation ui_widget;
   QDockWidget *dock_widget;
 
@@ -242,14 +135,6 @@ private:
   std::vector<Polyhedron::Vertex_handle> m_anchor_vtx;
   std::vector<std::vector<std::size_t> > m_bdrs; // anchor borders
   std::vector<Indexed_triangle> m_tris;
-
-  // view options
-  bool m_view_polyhedron;
-  bool m_view_wireframe;
-  bool m_view_boundary;
-  bool m_view_proxies;
-  bool m_view_anchors;
-  bool m_view_approximation;
 }; // end Polyhedron_demo_surface_mesh_approximation_plugin
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionSurfaceMeshApproximation_triggered()
@@ -314,49 +199,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionSurfaceMeshAppr
   }
 }
 
-void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionL21_triggered() {
-  actionL2->setChecked(false);
-  actionCompact->setChecked(false);
-
-  actionViewPolyhedron->setChecked(true);
-  actionViewWireframe->setChecked(false);
-  actionViewBoundary->setChecked(false);
-  actionViewProxies->setChecked(false);
-  actionViewAnchors->setChecked(false);
-  actionViewApproximation->setChecked(false);
-
-  set_metric(0);
-}
-
-void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionL2_triggered() {
-  actionL21->setChecked(false);
-  actionCompact->setChecked(false);
-
-  actionViewPolyhedron->setChecked(true);
-  actionViewWireframe->setChecked(false);
-  actionViewBoundary->setChecked(false);
-  actionViewProxies->setChecked(false);
-  actionViewAnchors->setChecked(false);
-  actionViewApproximation->setChecked(false);
-
-  set_metric(1);
-}
-
-void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionCompact_triggered() {
-  actionL21->setChecked(false);
-  actionL2->setChecked(false);
-
-  actionViewPolyhedron->setChecked(true);
-  actionViewWireframe->setChecked(false);
-  actionViewBoundary->setChecked(false);
-  actionViewProxies->setChecked(false);
-  actionViewAnchors->setChecked(false);
-  actionViewApproximation->setChecked(false);
-
-  set_metric(2);
-}
-
-void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionApproximation_triggered() {
+void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionApproximation_clicked() {
   ui_widget.seeding->setEnabled(true);
   ui_widget.mesh_extraction->setEnabled(true);
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -393,18 +236,10 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionApproximation_t
   m_approx.anchor_vertices(std::back_inserter(m_anchor_vtx));
   m_approx.indexed_boundary_polygons(std::back_inserter(m_bdrs));
 
-  // update display options
-  m_view_boundary = true;
-  m_view_anchors = true;
-  m_view_approximation = true;
-  actionViewBoundary->setChecked(true);
-  actionViewAnchors->setChecked(true);
-  actionViewApproximation->setChecked(true);
-
   QApplication::restoreOverrideCursor();
 }
 
-void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionSeeding_triggered() {
+void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked() {
   ui_widget.seeding->setEnabled(true);
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -426,13 +261,10 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionSeeding_trigger
   for (std::size_t i = 0; i < m_approx.number_of_proxies(); i++)
     m_px_color.push_back(rand_0_255());
 
-  m_view_polyhedron = true;
-  actionViewBoundary->setChecked(true);
-
   QApplication::restoreOverrideCursor();
 }
 
-void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionFit_triggered() {
+void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonFit_clicked() {
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   m_approx.run(1);
@@ -441,11 +273,11 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionFit_triggered()
   m_proxies.clear();
   m_approx.get_l21_proxies(std::back_inserter(m_proxies));
 #endif
-  
+
   QApplication::restoreOverrideCursor();
 }
 
-void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionMeshing_triggered() {
+void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked() {
   ui_widget.mesh_extraction->setEnabled(true);
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -465,15 +297,10 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionMeshing_trigger
   m_approx.anchor_vertices(std::back_inserter(m_anchor_vtx));
   m_approx.indexed_boundary_polygons(std::back_inserter(m_bdrs));
 
-  m_view_anchors = true;
-  m_view_approximation = true;
-  actionViewAnchors->setChecked(true);
-  actionViewApproximation->setChecked(true);
-
   QApplication::restoreOverrideCursor();
 }
 
-void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionAdd_triggered() {
+void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonAdd_clicked() {
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   if (m_approx.add_one_proxy() == 0)
@@ -491,7 +318,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionAdd_triggered()
   QApplication::restoreOverrideCursor();
 }
 
-void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionTeleport_triggered() {
+void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonTeleport_clicked() {
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   m_approx.teleport_one_proxy();
@@ -504,9 +331,8 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionTeleport_trigge
   QApplication::restoreOverrideCursor();
 }
 
-void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionSplit_triggered() {
+void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSplit_clicked() {
   ui_widget.operations->setEnabled(true);
-  ui_widget.operations->setCurrentIndex(0);
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   if (m_approx.split(ui_widget.split_proxy_idx->value(),
@@ -528,7 +354,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionSplit_triggered
   QApplication::restoreOverrideCursor();
 }
 
-void Polyhedron_demo_surface_mesh_approximation_plugin::set_metric(const int m) {
+void Polyhedron_demo_surface_mesh_approximation_plugin::on_comboMetric_currentIndexChanged(const int m) {
   for (Facet_iterator fitr = m_pmesh->facets_begin(); fitr != m_pmesh->facets_end(); ++fitr)
     m_fidx_map[fitr] = 0;
 
@@ -540,13 +366,6 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::set_metric(const int m) 
   m_anchor_vtx.clear();
   m_bdrs.clear();
   m_tris.clear();
-
-  m_view_polyhedron = true;
-  m_view_wireframe = false;
-  m_view_boundary = false;
-  m_view_proxies = false;
-  m_view_anchors = false;
-  m_view_approximation = false;
 
   switch (m) {
     case 0: return m_approx.set_metric(Approximation_wrapper::L21);
