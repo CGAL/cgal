@@ -253,6 +253,10 @@ public Q_SLOTS:
 //! \param animation_duration is the duration of the animation of the movement.
   virtual bool moveCameraToCoordinates(QString target,
                                        float animation_duration = 0.5f) = 0;
+  //!
+  //! Setter for the orthogonal projection of the viewer.
+  //!
+  virtual void SetOrthoProjection( bool b) =0;
 public:
   
   //! Gives acces to recent openGL(4.3) features, allowing use of things like
