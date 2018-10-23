@@ -8,6 +8,8 @@
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/internal/Snapping/snap.h>
 
+#include <CGAL/property_map.h>
+
 #include <iostream>
 #include <fstream>
 #include <set>
@@ -28,6 +30,7 @@ void test()
 {
   typedef typename Kernel::FT                                         FT;
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor       vertex_descriptor;
+  typedef typename boost::graph_traits<Mesh>::halfedge_descriptor     halfedge_descriptor;
 
   Mesh fg_source, fg_target;
 
@@ -42,15 +45,15 @@ void test()
     return;
   }
 
-  std::vector<vertex_descriptor> border_vertices_range;
-  PMP::internal::border_vertices(fg_source, std::back_inserter(border_vertices_range));
-  std::cout << border_vertices_range.size() << " border vertices" << std::endl;
+  std::vector<halfedge_descriptor> border_vertices;
+  PMP::border_halfedges(fg_source, std::back_inserter(border_vertices));
+  std::cout << border_vertices.size() << " border vertices" << std::endl;
 
   // one empty mesh
   res = PMP::internal::snap_border_vertices_onto_vertex_range(fg_source, fg_target);
   assert(res == 0);
 
-  res = PMP::internal::snap_border_vertices_onto_vertex_range(fg_target, vertices(fg_source), fg_source);
+  res = PMP::internal::snap_border_vertices_onto_vertex_range(fg_target, halfedges(fg_source), fg_source);
   assert(res == 0);
 
   std::ifstream target_input("data_snapping/border_snapping_target.off");
@@ -66,7 +69,7 @@ void test()
   std::cout << "*********************** EPS = 0.000000001 *************** " << std::endl;
   CGAL::Constant_property_map<vertex_descriptor, FT> tol_map_small(0.000000001);
   res = PMP::internal::snap_border_vertices_onto_vertex_range(fg_source_cpy, fg_target, tol_map_small);
-  res = PMP::internal::snap_border_vertices_onto_vertex_range(fg_source_cpy, vertices(fg_target), fg_target, tol_map_small);
+  res = PMP::internal::snap_border_vertices_onto_vertex_range(fg_source_cpy, halfedges(fg_target), fg_target, tol_map_small);
   std::cout << "Moved: " << res << " vertices" << std::endl;
   assert(res == 0);
 
@@ -75,11 +78,11 @@ void test()
   CGAL::Constant_property_map<vertex_descriptor, FT> tol_map_big(0.1);
   fg_source_cpy = fg_source;
 
-  border_vertices_range.clear();
-  PMP::internal::border_vertices(fg_source_cpy, std::back_inserter(border_vertices_range));
+  border_vertices.clear();
+  PMP::border_halfedges(fg_source_cpy, std::back_inserter(border_vertices));
 
-  res = PMP::internal::snap_vertex_range_onto_vertex_range(border_vertices_range, fg_source_cpy,
-                                                           vertices(fg_target), fg_target, tol_map_big,
+  res = PMP::internal::snap_vertex_range_onto_vertex_range(border_vertices, fg_source_cpy,
+                                                           halfedges(fg_target), fg_target, tol_map_big,
                                                            params::geom_traits(Kernel()), params::all_default());
   std::cout << "Moved: " << res << " vertices" << std::endl;
   assert(res == 2);
@@ -90,11 +93,11 @@ void test()
   CGAL::Constant_property_map<vertex_descriptor, FT> tol_map_good(0.001);
   fg_source_cpy = fg_source;
 
-  border_vertices_range.clear();
-  PMP::internal::border_vertices(fg_source_cpy, std::back_inserter(border_vertices_range));
+  border_vertices.clear();
+  PMP::border_halfedges(fg_source_cpy, std::back_inserter(border_vertices));
 
-  res = PMP::internal::snap_vertex_range_onto_vertex_range(border_vertices_range, fg_source_cpy,
-                                                           vertices(fg_target), fg_target, tol_map_good);
+  res = PMP::internal::snap_vertex_range_onto_vertex_range(border_vertices, fg_source_cpy,
+                                                           halfedges(fg_target), fg_target, tol_map_good);
   std::cout << "Moved: " << res << " vertices" << std::endl;
   assert(res == 76);
 
