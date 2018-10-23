@@ -22,6 +22,7 @@
 #include "ui_Surface_mesh_approximation_dockwidget.h"
 #include <CGAL/Surface_mesh_approximation/approximate_triangle_mesh.h>
 #include "VSA_approximation_wrapper.h"
+#include "Color_cheat_sheet.h"
 
 using namespace CGAL::Three;
 
@@ -288,12 +289,36 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
 #endif
 
   // generate proxy color map
-  m_px_color.clear();
   for (std::size_t i = 0; i < m_approx.number_of_proxies(); i++)
     m_px_color.push_back(rand_0_255());
 
   std::cout << "#proxies " << m_approx.number_of_proxies() << std::endl;
   std::cout << "Done. (" << time.elapsed() << " ms)" << std::endl;
+
+  // face color
+  poly_item->set_color_vector_read_only(true);
+  m_approx.proxy_map(m_fidx_pmap);
+  typedef typename boost::property_map<Polyhedron, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
+  Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *poly_item->face_graph());
+  // std::size_t face_id = 0;
+  for(Facet_iterator fitr = m_pmesh->facets_begin(); fitr != m_pmesh->facets_end(); ++fitr)
+    // fitr->id() = face_id++;
+    put(pidmap, fitr, int(m_fidx_pmap[fitr]));
+  std::vector<QColor> &color_vector = poly_item->color_vector();
+  color_vector.clear();
+  // if (!m_px_color.empty()) {
+  //   for (Facet_iterator fitr = m_pmesh->facets_begin(); fitr != m_pmesh->facets_end(); ++fitr) {
+  //     const std::size_t cidx = m_px_color[m_fidx_pmap[fitr]];
+  //     color_vector.push_back(QColor::fromRgb(
+  //       Color_cheat_sheet::r(cidx), Color_cheat_sheet::g(cidx), Color_cheat_sheet::b(cidx)));
+  //   }
+  // }
+  BOOST_FOREACH(const std::size_t &cidx, m_px_color)
+    color_vector.push_back(QColor::fromRgb(
+      Color_cheat_sheet::r(cidx), Color_cheat_sheet::g(cidx), Color_cheat_sheet::b(cidx)));
+  poly_item->setItemIsMulticolor(true);
+  poly_item->invalidateOpenGLBuffers();
+  scene->itemChanged(scene->item_id(poly_item));
 
   QApplication::restoreOverrideCursor();
 }
