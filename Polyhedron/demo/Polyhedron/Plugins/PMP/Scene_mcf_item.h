@@ -3,7 +3,7 @@
 
 
 
-#if defined( scene_mcf_poly_item_EXPORTS ) || defined( scene_mcf_sm_item_EXPORTS )
+#if defined( scene_mcf_item_EXPORTS )
 #  define SCENE_MCF_ITEM_EXPORT Q_DECL_EXPORT
 #else
 #  define SCENE_MCF_ITEM_EXPORT Q_DECL_IMPORT

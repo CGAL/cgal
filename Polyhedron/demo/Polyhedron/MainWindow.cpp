@@ -1878,14 +1878,14 @@ void MainWindow::on_actionPreferences_triggered()
                                                   CGAL::Three::Three::s_defaultSMRM));
   connect(prefdiag.surface_meshComboBox, &QComboBox::currentTextChanged,
           this, [this](const QString& text){
-    CGAL::Three::Three::s_defaultSMRM = CGAL::Three::Three::modeFromName(text);
+    this->s_defaultSMRM = CGAL::Three::Three::modeFromName(text);
   });
   
   prefdiag.point_setComboBox->setCurrentText(CGAL::Three::Three::modeName(
                                                CGAL::Three::Three::s_defaultPSRM));
   connect(prefdiag.point_setComboBox, &QComboBox::currentTextChanged,
           this, [this](const QString& text){
-    CGAL::Three::Three::s_defaultPSRM = CGAL::Three::Three::modeFromName(text);
+    this->s_defaultPSRM = CGAL::Three::Three::modeFromName(text);
   });
   std::vector<QTreeWidgetItem*> items;
   QBrush successBrush(Qt::green),
