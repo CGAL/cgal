@@ -7,6 +7,7 @@
 
 #include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
+#include "Scene_polygon_soup_item.h"
 #include "Scene_points_with_normal_item.h"
 #include "Scene_polylines_item.h"
 #include "Scene_polyhedron_selection_item.h"
@@ -26,17 +27,6 @@
 
 using namespace CGAL::Three;
 
-typedef VSA_approximation_wrapper<Polyhedron, Kernel> Approximation_wrapper;
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-typedef Approximation_wrapper::L21_proxy_wrapper L21_proxy_wrapper;
-#endif
-typedef Approximation_wrapper::Indexed_triangle Indexed_triangle;
-
-typedef Kernel::FT FT;
-typedef Polyhedron::Facet_iterator Facet_iterator;
-typedef Polyhedron::Facet_handle Facet_handle;
-typedef Polyhedron::Vertex_handle Vertex_handle;
-
 class Polyhedron_demo_surface_mesh_approximation_plugin : 
   public QObject,
   public Polyhedron_demo_plugin_helper
@@ -44,6 +34,18 @@ class Polyhedron_demo_surface_mesh_approximation_plugin :
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+
+  typedef VSA_approximation_wrapper<Polyhedron, Kernel> Approximation_wrapper;
+  #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
+  typedef Approximation_wrapper::L21_proxy_wrapper L21_proxy_wrapper;
+  #endif
+  typedef Approximation_wrapper::Indexed_triangle Indexed_triangle;
+
+  // typedef Kernel::Point_3 Point_3;
+  typedef Kernel::FT FT;
+  typedef Polyhedron::Facet_iterator Facet_iterator;
+  typedef Polyhedron::Facet_handle Facet_handle;
+  typedef Polyhedron::Vertex_handle Vertex_handle;
 
 public:
   Polyhedron_demo_surface_mesh_approximation_plugin() :
@@ -85,9 +87,9 @@ public:
   }
 
   bool applicable(QAction *) const {
-    return 
-      qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())) ||
-      qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+    return
+      qobject_cast<Scene_polyhedron_item *>(scene->item(scene->mainSelectionIndex()))
+        || qobject_cast<Scene_surface_mesh_item *>(scene->item(scene->mainSelectionIndex()));
   }
 
 public Q_SLOTS:
@@ -135,7 +137,7 @@ private:
   std::vector<L21_proxy_wrapper> m_proxies;
 #endif
   std::vector<std::size_t> m_px_color;
-  std::vector<Point_3> m_anchor_pos;
+  std::vector<Polyhedron::Vertex::Point> m_anchor_pos;
   std::vector<Polyhedron::Vertex_handle> m_anchor_vtx;
   std::vector<std::vector<std::size_t> > m_bdrs; // anchor borders
   std::vector<Indexed_triangle> m_tris;
@@ -145,62 +147,6 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionSurfaceMeshAppr
 {
   dock_widget->show();
   return;
-
-  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
-  Scene_polyhedron_item* poly_item = 
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-
-  Scene_surface_mesh_item* sm_item = 
-    qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
-
-  if (poly_item || sm_item) {
-    // wait cursor
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    
-    QTime time;
-    time.start();
-    std::cout << "Surface mesh approximation...";
-
-    // add surface mesh approximation output as new polyhedron
-    SMesh *pResult  = new SMesh;
-    if (poly_item) {
-      Polyhedron *pMesh = poly_item->polyhedron();
-      VSA::approximate_triangle_mesh(*pMesh, CGAL::parameters::max_number_of_proxies(30).
-        number_of_iterations(20).
-        subdivision_ratio(3).
-        relative_to_chord(false));
-    }
-    else {
-      SMesh *pMesh = sm_item->polyhedron();
-      VSA::approximate_triangle_mesh(*pMesh, CGAL::parameters::max_number_of_proxies(30).
-        number_of_iterations(20).
-        subdivision_ratio(3).
-        relative_to_chord(false));
-    }
-    std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
-
-    if(mw->property("is_polyhedron_mode").toBool()){
-      Polyhedron *poly = new Polyhedron;
-      CGAL::copy_face_graph(*pResult,*poly);
-      delete pResult;
-
-      Scene_polyhedron_item* new_item = new Scene_polyhedron_item(poly);
-      new_item->setName(tr("%1 (surface mesh approximation)").arg(scene->item(index)->name()));
-      new_item->setColor(Qt::magenta);
-      new_item->setRenderingMode(FlatPlusEdges);
-      scene->addItem(new_item);
-    } else {
-       Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(pResult);
-       new_item->setName(tr("%1 (surface mesh approximation)").arg(scene->item(index)->name()));
-       new_item->setColor(Qt::magenta);
-       new_item->setRenderingMode(FlatPlusEdges);
-       scene->addItem(new_item);
-    }
-
-    // default cursor
-    QApplication::restoreOverrideCursor();
-  }
 }
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionApproximation_clicked() {
@@ -355,6 +301,23 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
   m_approx.anchor_points(std::back_inserter(m_anchor_pos));
   m_approx.anchor_vertices(std::back_inserter(m_anchor_vtx));
   m_approx.indexed_boundary_polygons(std::back_inserter(m_bdrs));
+
+  Scene_polygon_soup_item *psoup_item = new Scene_polygon_soup_item();
+  // limited template function specialization of load function in Scene_polygon_soup_item.cpp
+  std::vector<std::vector<std::size_t> > polygons;
+  BOOST_FOREACH(const Indexed_triangle &t, m_tris) {
+    std::vector<std::size_t> polygon;
+    polygon.push_back(t[0]);
+    polygon.push_back(t[1]);
+    polygon.push_back(t[2]);
+    polygons.push_back(polygon);
+  }
+  psoup_item->load(m_anchor_pos, polygons);
+  psoup_item->setName(tr("%1 (Approximated triangle soup)").arg(
+    scene->item(scene->mainSelectionIndex())->name()));
+  psoup_item->setColor(Qt::magenta);
+  psoup_item->setRenderingMode(FlatPlusEdges);
+  scene->addItem(psoup_item);
 
   QApplication::restoreOverrideCursor();
 }
