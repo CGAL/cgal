@@ -62,6 +62,8 @@ else()
   endif()
 endif()
 
+message(STATUS "******************************************** CGAL Config.cmake")
+
 include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
 
 if(CGAL_BUILDING_LIBS)
