@@ -45,6 +45,9 @@ class Polyhedron_demo_surface_mesh_approximation_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
+  Polyhedron_demo_surface_mesh_approximation_plugin() :
+    m_fidx_pmap(m_fidx_map) {}
+
   void init(QMainWindow *main_window,
     Scene_interface *scene_interface,
     Messages_interface *message_interface) {
@@ -243,6 +246,33 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
   ui_widget.seeding->setEnabled(true);
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
+  // set mesh
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  Scene_polyhedron_item *poly_item = qobject_cast<Scene_polyhedron_item *>(scene->item(index));
+  if (!poly_item) {
+    std::cerr << "The selected should be a polyhedron item" << std::endl;
+    return;
+  }
+
+  m_pmesh = poly_item->polyhedron();
+  m_fidx_map.clear();
+  for (Facet_iterator fitr = m_pmesh->facets_begin(); fitr != m_pmesh->facets_end(); ++fitr)
+    m_fidx_map.insert(std::pair<Facet_handle, std::size_t>(fitr, 0));
+
+  m_approx.set_mesh(*m_pmesh);
+  m_approx.set_metric(Approximation_wrapper::L21);
+
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
+  m_proxies.clear();
+#endif
+  m_px_color.clear();
+  m_anchor_pos.clear();
+  m_anchor_vtx.clear();
+  m_bdrs.clear();
+  m_tris.clear();
+
+  QTime time;
+  time.start();
   const VSA::Seeding_method method = ui_widget.method_random->isChecked() ? VSA::RANDOM : (
     ui_widget.method_incremental->isChecked() ? VSA::INCREMENTAL : VSA::HIERARCHICAL);
   m_approx.initialize_seeds(method,
@@ -256,10 +286,14 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
   m_proxies.clear();
   m_approx.get_l21_proxies(std::back_inserter(m_proxies));
 #endif
+
   // generate proxy color map
   m_px_color.clear();
   for (std::size_t i = 0; i < m_approx.number_of_proxies(); i++)
     m_px_color.push_back(rand_0_255());
+
+  std::cout << "#proxies " << m_approx.number_of_proxies() << std::endl;
+  std::cout << "Done. (" << time.elapsed() << " ms)" << std::endl;
 
   QApplication::restoreOverrideCursor();
 }
