@@ -70,15 +70,6 @@ set(classification_linked_libraries)
 set(classification_compile_definitions)
 
 
-# Use Eigen or BLAS and LAPACK (optional)
-find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-if (EIGEN3_FOUND)
-  include( ${EIGEN3_USE_FILE} )
-else()
-  message(STATUS "NOTICE: This project requires the Eigen library, and will not be compiled.")
-  return()
-endif()
-
 if (Boost_SERIALIZATION_FOUND AND Boost_IOSTREAMS_FOUND)
   set(classification_linked_libraries ${classification_linked_libraries}
     ${Boost_SERIALIZATION_LIBRARY}

@@ -62,9 +62,9 @@ else()
   endif()
 endif()
 
-message(STATUS "******************************************** CGAL Config.cmake")
-
 include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
+include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
+include(${CGAL_MODULES_DIR}/CGAL_Common.cmake)
 
 if(CGAL_BUILDING_LIBS)
   foreach(comp ${CGAL_FIND_COMPONENTS})
@@ -135,7 +135,6 @@ endforeach()
 #
 #
 #
-include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 
 # Temporary? Change the CMAKE module path
 cgal_setup_module_path()
