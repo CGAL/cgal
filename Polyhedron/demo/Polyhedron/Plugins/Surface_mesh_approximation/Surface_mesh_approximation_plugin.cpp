@@ -8,8 +8,8 @@
 #include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polygon_soup_item.h"
-#include "Scene_points_with_normal_item.h"
 #include "Scene_polylines_item.h"
+#include "Scene_points_with_normal_item.h"
 #include "Scene_polyhedron_selection_item.h"
 #include "Polyhedron_type.h"
 
@@ -320,8 +320,8 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
   m_approx.anchor_vertices(std::back_inserter(m_anchor_vtx));
   m_approx.indexed_boundary_polygons(std::back_inserter(m_bdrs));
 
+  // add triangle soup item
   Scene_polygon_soup_item *psoup_item = new Scene_polygon_soup_item();
-  // limited template function specialization of load function in Scene_polygon_soup_item.cpp
   std::vector<std::vector<std::size_t> > polygons;
   BOOST_FOREACH(const Indexed_triangle &t, m_tris) {
     std::vector<std::size_t> polygon;
@@ -331,11 +331,39 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
     polygons.push_back(polygon);
   }
   psoup_item->load(m_anchor_pos, polygons);
-  psoup_item->setName(tr("%1 (Approximated triangle soup)").arg(
+  psoup_item->setName(tr("Approximated triangle soup of %1").arg(
     scene->item(scene->mainSelectionIndex())->name()));
-  psoup_item->setColor(Qt::magenta);
+  psoup_item->setColor(Qt::lightGray);
   psoup_item->setRenderingMode(FlatPlusEdges);
   scene->addItem(psoup_item);
+
+  // add patch border item
+  Scene_polylines_item *borders_item = new Scene_polylines_item();
+  BOOST_FOREACH(const std::vector<std::size_t> &border, m_bdrs) {
+    std::vector<Kernel::Point_3> polyline;
+    for (std::size_t i = 0; i <= border.size(); ++i)
+      polyline.push_back(m_anchor_pos[border[i % border.size()]]);
+    borders_item->polylines.push_back(polyline);
+  }
+  borders_item->setName(tr("Patch boundary of %1").arg(
+    scene->item(scene->mainSelectionIndex())->name()));
+  borders_item->setColor(Qt::red);
+  borders_item->invalidateOpenGLBuffers();
+  scene->addItem(borders_item);
+
+  // add anchor vertex and anchor point correspondence item
+  Scene_polylines_item *corres_item = new Scene_polylines_item();
+  for (std::size_t i = 0; i < m_anchor_vtx.size(); ++i) {
+    std::vector<Kernel::Point_3> polyline;
+    polyline.push_back(m_anchor_vtx[i]->point());
+    polyline.push_back(m_anchor_pos[i]);
+    corres_item->polylines.push_back(polyline);
+  }
+  corres_item->setName(tr("Anchor vertex correspondence of %1").arg(
+    scene->item(scene->mainSelectionIndex())->name()));
+  corres_item->setColor(Qt::blue);
+  corres_item->invalidateOpenGLBuffers();
+  scene->addItem(corres_item);
 
   QApplication::restoreOverrideCursor();
 }

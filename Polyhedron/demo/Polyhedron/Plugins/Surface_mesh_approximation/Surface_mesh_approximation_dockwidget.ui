@@ -345,7 +345,6 @@
           </item>
          </layout>
          <zorder></zorder>
-         <zorder></zorder>
          <zorder>buttonSplit</zorder>
         </widget>
        </item>
@@ -379,6 +378,9 @@
         <widget class="QCheckBox" name="if_optimize_anchor_location">
          <property name="text">
           <string>Optimize anchor location</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
