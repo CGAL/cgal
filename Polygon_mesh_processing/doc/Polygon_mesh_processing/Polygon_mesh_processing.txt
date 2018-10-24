@@ -651,11 +651,14 @@ enable the user to keep and remove only a selection of connected components,
 provided either as a range of faces that belong to the desired connected components
 or as a range of connected component ids (one or more per connected component).
 
-Finally, `CGAL::Polygon_mesh_processing::keep_largest_connected_components()`
+`CGAL::Polygon_mesh_processing::keep_largest_connected_components()`
 enables the user to keep only the largest connected components. This feature can
 for example be useful for noisy data were small connected components
 should be discarded in favour of major connected components.
 
+When a triangle mesh has no boundary a notion the 3D space is partition is different volumes.
+The function `CGAL::Polygon_mesh_processing::volume_connected_components()` can be used to assign to
+each face an id per volume defined by the surface connected components.
 
 \subsection CCExample Connected Components Example
 
@@ -672,7 +675,6 @@ The second example shows how to use the class template `Face_filtered_graph`
 which enables to treat one or several connected components as a face graph.
 
 \cgalExample{Polygon_mesh_processing/face_filtered_graph_example.cpp}
-
 
 \section PMPDistance Approximate Hausdorff Distance
 

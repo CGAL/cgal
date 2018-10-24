@@ -21,4 +21,5 @@
 \example Polygon_mesh_processing/corefinement_mesh_union_and_intersection.cpp
 \example Polygon_mesh_processing/corefinement_consecutive_bool_op.cpp
 \example Polygon_mesh_processing/detect_features_example.cpp
+\example Polygon_mesh_processing/volume_connected_components.cpp
 */
