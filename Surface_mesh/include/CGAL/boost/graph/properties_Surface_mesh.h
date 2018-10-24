@@ -360,7 +360,7 @@ get(dynamic_vertex_property_t<T>, Surface_mesh<Point>& sm)
 
 template <typename Point, typename T>
 typename boost::property_map<CGAL::Surface_mesh<Point>, dynamic_vertex_property_t<T> >::const_type
-get(dynamic_vertex_property_t<T>, const Surface_mesh<Point>& sm)
+get(dynamic_vertex_property_t<T>, const Surface_mesh<Point>&)
 {
   return internal::Dynamic_property_map<typename Surface_mesh<Point>::Vertex_index,T>();
 }
@@ -376,7 +376,7 @@ get(dynamic_face_property_t<T>, Surface_mesh<Point>& sm)
 
 template <typename Point, typename T>
 typename boost::property_map<CGAL::Surface_mesh<Point>, dynamic_face_property_t<T> >::const_type
-get(dynamic_face_property_t<T>, const Surface_mesh<Point>& sm)
+get(dynamic_face_property_t<T>, const Surface_mesh<Point>&)
 {
   return internal::Dynamic_property_map<typename Surface_mesh<Point>::Face_index,T>();
 }

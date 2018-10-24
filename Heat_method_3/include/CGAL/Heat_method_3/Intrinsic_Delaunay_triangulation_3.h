@@ -1,4 +1,3 @@
-
 // Copyright (c) 2018  Carnegie Mellon University (USA), GeometryFactory (France)
 // All rights reserved.
 //
@@ -358,7 +357,7 @@ private:
                           vertex_descriptor> > pairs;
     copy_face_graph(tmref,tm, std::back_inserter(pairs));
 
-    for(int i=0; i < pairs.size(); i++) {
+    for(std::size_t i=0; i < pairs.size(); i++) {
       v2v[pairs[i].second] = pairs[i].first;
       vtov[pairs[i].first] = pairs[i].second;
     }
@@ -551,7 +550,6 @@ vertices(const Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>& idt)
    std::pair<typename boost::graph_traits<TM>::vertex_iterator,
              typename boost::graph_traits<TM>::vertex_iterator> p = vertices(idt.triangle_mesh());
 
-  typedef typename boost::graph_traits<TM>::vertex_iterator vertex_iterator;
   typedef typename Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>::Vertex_iterator_functor Fct;
   Fct fct(idt.triangle_mesh());
   return std::make_pair(boost::make_transform_iterator(p.first, fct),
@@ -686,7 +684,7 @@ template <typename TM,
           typename VPM>
 typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM> >::vertex_descriptor
 target(typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM> >::halfedge_descriptor hd,
-       const Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>& idt)
+       const Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>&)
 {
   typedef typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM> >::vertex_descriptor vertex_descriptor;
 
@@ -953,7 +951,7 @@ typename boost::property_map<Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>, C
 get(CGAL::dynamic_vertex_property_t<dT> dvp,
     Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>& idt)
 {
-  typedef Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>< IDT;
+  typedef Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM> IDT;
   typedef IDT_dynamic_vertex_property_map<IDT,
                                           typename boost::property_map<TM, CGAL::dynamic_vertex_property_t<dT> >::type,
                                           typename boost::graph_traits<IDT>::vertex_descriptor,

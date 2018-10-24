@@ -451,7 +451,7 @@ private:
         Index current_Index;
         current = sources.begin();
         //go through the distances to the sources and leave the minimum distance;
-        for(int j = 0; j<sources.size(); j++) {
+        for(std::size_t j = 0; j<sources.size(); j++) {
           current_Index = get(vertex_id_map, *current);
           double new_d = CGAL::abs(-phi.coeff(current_Index,0)+phi.coeff(i,0));
           if(phi.coeff(current_Index,0)==phi.coeff(i,0)) {

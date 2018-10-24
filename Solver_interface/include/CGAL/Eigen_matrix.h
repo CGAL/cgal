@@ -62,7 +62,7 @@ public:
   {}
 
   Eigen_sparse_matrix(const EigenType& et)
-    : m_matrix(et), m_is_symmetric(false), m_is_already_built(true)
+    : m_is_already_built(true), m_matrix(et), m_is_symmetric(false)
   {}
 
   
