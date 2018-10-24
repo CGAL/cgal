@@ -1,7 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Heat_method_3/Heat_method_3.h>
-#include <CGAL/Heat_method_3/Intrinsic_Delaunay_Triangulation_3.h>
+#include <CGAL/Heat_method_3/Intrinsic_Delaunay_triangulation_3.h>
 
 #include <iostream>
 #include <fstream>
@@ -18,7 +18,7 @@ typedef CGAL::Surface_mesh<Point>                            Surface_mesh;
 typedef boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
 typedef Surface_mesh::Property_map<vertex_descriptor,double> Vertex_distance_map;
 
-typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<Surface_mesh,Kernel, Vertex_distance_map> Idt;
+typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<Surface_mesh,Kernel, Vertex_distance_map> Idt;
 
 typedef CGAL::Heat_method_3::Heat_method_3<Surface_mesh,Kernel, Vertex_distance_map> Heat_method;
 typedef CGAL::Heat_method_3::Heat_method_3<Idt,Kernel, Idt::Vertex_distance_map> Heat_method_idt;
@@ -75,7 +75,7 @@ int validate(char* fname)
   Idt idt(sm, vdm_idt);
 
   Heat_method_idt hm_idt(idt, idt.vertex_distance_map());
-  for(int i=0; i < sources.size(); i++){
+  for(std::size_t i=0; i < sources.size(); i++){
     hm_idt.add_source(vertex_descriptor(index));
   }
   hm_idt.update();
@@ -96,7 +96,7 @@ int main(int argc, char*argv[])
   int res = 0;
   for(int i=1; i < argc; i++){
     std::cout << "validate("<< argv[i] << ")"<< std::endl;
-    int r = validate(argv[i]);
+    validate(argv[i]);
     res++;
   }
   return res;
