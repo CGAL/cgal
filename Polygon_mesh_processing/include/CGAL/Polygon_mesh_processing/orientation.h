@@ -729,7 +729,6 @@ enum Volume_error_code { VALID_VOLUME, ///< The set of faces bounds a volume
                          SURFACE_SELF_INTERSECTION, ///< The set of faces are self-intersecting
                          VOLUME_INTERSECTION, ///< The set of faces intersect another surface connected component
                          OPEN_SURFACE, ///< The set of faces does not defined a close surface
-                         NON_TRIANGULATED_SURFACE, ///< The set of faces contains at least a non-triangular face
                          INCONSISTENT_ORIENTATION, ///< The set of faces is included in a volume but has an incompatible orientation
                          SINGLE_CONNECTED_COMPONENT ///< The set of faces consists of all the faces of the mesh and no further test were done.
                        };
@@ -746,14 +745,14 @@ inline void copy_error_codes(std::vector<Volume_error_code>&,
 {}
 
 template <class RefToVector>
-void copy_nested_cc_per_cc(
-  std::vector< std::vector<std::size_t> >& nested_cc_per_cc,
+void copy_nested_parents(
+  std::vector< std::vector<std::size_t> >& nested_parents,
   RefToVector ref_to_vector)
 {
-  ref_to_vector.get().swap( nested_cc_per_cc);
+  ref_to_vector.get().swap( nested_parents );
 }
 
-inline void copy_nested_cc_per_cc(
+inline void copy_nested_parents(
   std::vector< std::vector<std::size_t> >&,
   boost::param_not_found)
 {}
@@ -800,9 +799,8 @@ void set_f_cc_id(const std::vector<std::size_t>&,
  * repeated for all surface components in each hole.
  *
  * There are some special cases:
- * - a non-closed surface component is reported as an isolated volume
- * - a surface component with at least one non-triangle face is reported as an isolated volume
- * - a self-intersecting surface component is reported as an isolated volume
+ * - a non-closed surface component is reported as an isolated volume ignoring any inclusion test
+ * - a self-intersecting surface component is reported as an isolated volume ignoring any inclusion test
  * - a surface component intersecting another surface component
  *   is reported as an isolated volume, and so are all the surface components inside its
  *   enclosed volume.
@@ -880,6 +878,8 @@ volume_connected_components(const TriangleMesh& tm,
                                   FaceIndexMap volume_id_map,
                             const NamedParameters& np)
 {
+  CGAL_precondition( is_triangle_mesh(tm) );
+
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::vertex_descriptor vertex_descriptor;
   typedef typename GT::face_descriptor face_descriptor;
@@ -924,7 +924,8 @@ volume_connected_components(const TriangleMesh& tm,
       put(volume_id_map, fd, 0);
 
     internal::copy_error_codes(error_codes, boost::get_param(np, internal_np::error_codes));
-    internal::copy_nested_cc_per_cc(nested_cc_per_cc, boost::get_param(np, internal_np::volume_inclusions));
+    // nested_cc_per_cc is empty and used to clear the vector passed in case it was not empty
+    internal::copy_nested_parents(nested_cc_per_cc, boost::get_param(np, internal_np::volume_inclusions));
     return 1;
   }
 
@@ -932,21 +933,6 @@ volume_connected_components(const TriangleMesh& tm,
   std::vector<std::size_t> cc_volume_ids(nb_cc, -1);
 
   std::size_t next_volume_id = 0;
-// First handle non-pure triangle meshes
-  BOOST_FOREACH(face_descriptor fd, faces(tm))
-  {
-    if (!is_triangle(halfedge(fd, tm), tm))
-    {
-      std::size_t cc_id = face_cc[ get(fid_map, fd) ];
-      if ( !cc_handled.test(cc_id) )
-      {
-        cc_handled.set(cc_id);
-        cc_volume_ids[cc_id]=next_volume_id++;
-        error_codes.push_back(NON_TRIANGULATED_SURFACE);
-      }
-    }
-  }
-
 // Handle open connected components
   BOOST_FOREACH(halfedge_descriptor h, halfedges(tm))
   {
@@ -992,6 +978,7 @@ volume_connected_components(const TriangleMesh& tm,
     }
   }
 
+  std::vector< std::vector<std::size_t> > nesting_parents(nb_cc);
   if (!cc_handled.all())
   {
   // extract a vertex with max z coordinate for each connected component
@@ -1040,7 +1027,6 @@ volume_connected_components(const TriangleMesh& tm,
     }
 
   // init the main loop
-    std::size_t k = 0;
     // similar as above but exclusively contains cc ids included by more that one CC.
     // The result will be then merged with nested_cc_per_cc but temporarilly we need
     // another container to not more than once the inclusion testing (in case a CC is
@@ -1051,6 +1037,7 @@ volume_connected_components(const TriangleMesh& tm,
     level_k_nestings.push_back( ~cc_handled );
 
   // the following loop is exploring the nesting level by level (0 -> max_level)
+    std::size_t k = 0;
     while (!level_k_nestings.empty())
     {
       std::vector < boost::dynamic_bitset<> > level_k_plus_1_nestings;
@@ -1088,7 +1075,6 @@ volume_connected_components(const TriangleMesh& tm,
             if (self_intersecting_cc.count( make_sorted_pair(xtrm_cc_id, id) )!= 0)
             {
               cc_intersecting.push_back(id);
-              nesting_levels[id] = k; // same level as xtrm_cc_id
               continue; // to not dot inclusion test for intersecting CCs
             }
 
@@ -1175,15 +1161,15 @@ volume_connected_components(const TriangleMesh& tm,
     for(std::size_t cc_id=0; (!cc_handled.all()) && cc_id<nb_cc; ++cc_id)
     {
       if (cc_handled.test(cc_id)) continue;
-      CGAL_assertion( nesting_levels[cc_id]!=0 || is_cc_outward_oriented[cc_id] );
+      CGAL_assertion( nesting_levels[cc_id]!=0 || ignore_orientation_of_cc || is_cc_outward_oriented[cc_id] );
       if( nesting_levels[cc_id]%2 != FIRST_LEVEL ) continue;
       cc_handled.set(cc_id);
       cc_volume_ids[cc_id] = next_volume_id++;
-      error_codes.push_back(VALID_VOLUME);
 
-      //if the CC is involved in a self-intersection all nested CC are put in a seperate volumes
+      //if the CC is involved in a self-intersection all nested CC are put in a separate volumes
       if (is_involved_in_self_intersection[cc_id])
       {
+        error_codes.push_back(VOLUME_INTERSECTION);
         BOOST_FOREACH(std::size_t ncc_id, nested_cc_per_cc[cc_id])
         {
           cc_handled.set(ncc_id);
@@ -1192,6 +1178,8 @@ volume_connected_components(const TriangleMesh& tm,
         }
         continue;
       }
+      else
+        error_codes.push_back(VALID_VOLUME);
 
       BOOST_FOREACH(std::size_t ncc_id, nested_cc_per_cc[cc_id])
       {
@@ -1215,6 +1203,23 @@ volume_connected_components(const TriangleMesh& tm,
               continue;
             }
           }
+          if (is_involved_in_self_intersection[ncc_id])
+          {
+              cc_volume_ids[ncc_id] = next_volume_id++;
+              error_codes.push_back(VOLUME_INTERSECTION);
+              BOOST_FOREACH(std::size_t nncc_id, nested_cc_per_cc[ncc_id])
+              {
+                if (cc_handled.test(nncc_id))
+                {
+                  error_codes[ cc_volume_ids[nncc_id] ] = VOLUME_INTERSECTION;
+                  continue;
+                }
+                cc_handled.set(nncc_id);
+                cc_volume_ids[nncc_id] = next_volume_id++;
+                error_codes.push_back(VOLUME_INTERSECTION);
+              }
+              continue;
+          }
           cc_volume_ids[ncc_id] = cc_volume_ids[cc_id];
         }
       }
@@ -1230,18 +1235,14 @@ volume_connected_components(const TriangleMesh& tm,
                                     nested_cc_per_cc_shared[id].end());
     }
 
-    // TODO: add nesting_parent as an optional output parameter
-    //       note that this will require to also output the cc_id map
-    //       except if we restrict it to invalid volume and index the
-    //       nesting using volume ids
+
   // extract direct nested parent (more than one in case of self-intersection)
-    std::vector< std::vector<std::size_t> > nesting_parent(nb_cc);
     for(std::size_t cc_id=0; cc_id<nb_cc; ++cc_id)
     {
       BOOST_FOREACH(std::size_t ncc_id, nested_cc_per_cc[cc_id])
       {
         if (nesting_levels[cc_id]+1 == nesting_levels[ncc_id])
-          nesting_parent[ncc_id].push_back(cc_id);
+          nesting_parents[ncc_id].push_back(cc_id);
       }
     }
 
@@ -1263,7 +1264,7 @@ volume_connected_components(const TriangleMesh& tm,
 
   CGAL_assertion(next_volume_id == error_codes.size());
   internal::copy_error_codes(error_codes, boost::get_param(np, internal_np::error_codes));
-  internal::copy_nested_cc_per_cc(nested_cc_per_cc, boost::get_param(np, internal_np::volume_inclusions));
+  internal::copy_nested_parents(nesting_parents, boost::get_param(np, internal_np::volume_inclusions));
   return next_volume_id;
 }
 
