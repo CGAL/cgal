@@ -5,7 +5,6 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Heat_method_3/Heat_method_3.h>
-#include <CGAL/Heat_method_3/Intrinsic_Delaunay_triangulation_3.h>
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -23,12 +22,7 @@ typedef CGAL::Surface_mesh<Point>                            Surface_mesh;
 typedef CGAL::dynamic_vertex_property_t<double> Vertex_distance_tag;
 typedef boost::property_map<Surface_mesh, Vertex_distance_tag >::type Vertex_distance_map;
 
-typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<Surface_mesh,Kernel, Vertex_distance_map> Idt;
-
-
-typedef boost::graph_traits<Idt>::vertex_descriptor vertex_descriptor;
-
-typedef CGAL::Heat_method_3::Heat_method_3<Idt,Kernel, Idt::Vertex_distance_map> Heat_method;
+typedef CGAL::Heat_method_3::Heat_method_3<Surface_mesh,Kernel, Vertex_distance_map, CGAL::Tag_true> Heat_method;
 typedef CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT<CGAL::Eigen_sparse_matrix<double>::EigenType > > Solver_traits;
 typedef Solver_traits::Matrix SparseMatrix;
 
@@ -128,11 +122,8 @@ int main()
   }
   Vertex_distance_map vdm = get(Vertex_distance_tag(),sm);
 
-  Idt idt(sm, vdm);
-
-
   //source set tests
-  Heat_method hm(idt, idt.vertex_distance_map());
+  Heat_method hm(sm, vdm);
 
   hm.add_source(* vertices(sm).first);
 

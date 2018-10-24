@@ -35,8 +35,6 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/number_utils.h>
 #ifdef CGAL_EIGEN3_ENABLED
-#include <CGAL/Eigen_matrix.h>
-#include <CGAL/Eigen_vector.h>
 #include <CGAL/Eigen_solver_traits.h>
 #endif
 
@@ -52,35 +50,15 @@ struct Heat_method_3_private_tests;
 namespace CGAL {
 namespace Heat_method_3 {
 
-
-/**
- * \ingroup PkgHeatMethod
- * 
- * Class `Heat_method_3` computes geodesic distances for a set of source vertices where sources can be added and removed.
- * The class performs a preprocessing step that does only depend on the mesh, so that the distance computation takes less
- * time after changes of the set of sources.
- *
- * \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
- * \tparam Traits a model of HeatMethodTraits_3
- * \tparam LA a model of `SparseLinearAlgebraWithFactorTraits_d`.
-
- * \tparam VertexPointMap a model of `ReadablePropertyMap` with
- *        `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
- *        `Traits::Point_3` as value type.
- *        The default is `typename boost::property_map<TriangleMesh, vertex_point_t>::%type`.
- *
- */
+namespace internal {
 template <typename TriangleMesh,
           typename Traits,
           typename VertexDistanceMap,
-#ifdef CGAL_EIGEN3_ENABLED
-          typename LA = Eigen_solver_traits<Eigen::SimplicialLDLT<typename Eigen_sparse_matrix<double>::EigenType > >,
-#else
           typename LA,
-#endif
-          typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::const_type>
+          typename VertexPointMap>
 class Heat_method_3
 {
+protected:
 #ifdef CGAL_TESTSUITE
   friend Heat_method_3_private_tests;
 #endif
@@ -126,7 +104,7 @@ public:
     build();
   }
 
-  
+
   /*!
     \brief Constructor
   */
@@ -136,7 +114,7 @@ public:
     build();
   }
 
-  
+
   /**
    * returns the triangle mesh the algorithm is running on.
    */
@@ -146,35 +124,35 @@ public:
 
 
 private:
-  
+
   const VertexDistanceMap&
   vertex_distance_map() const
   {
     return vdm;
   }
 
-  
+
   const Matrix&
   mass_matrix() const
   {
     return m_mass_matrix;
   }
 
-  
+
   const Matrix&
   cotan_matrix() const
   {
     return m_cotan_matrix;
   }
 
-  
+
   const VertexPointMap&
   vertex_point_map() const
   {
     return vpm;
   }
 
-  
+
   const Vertex_id_map&
   get_vertex_id_map() const
   {
@@ -194,7 +172,7 @@ public:
     return sources.insert(v2v(vd)).second;
   }
 
-  
+
   /**
    * removes vd` from the source set, returning 'true' if `vd` was in the set.
    */
@@ -233,23 +211,23 @@ public:
    * returns an iterator to the first vertex in the source set.
    */
   vertex_iterator
-  sources_begin()
+  sources_begin() const
   {
     return sources.begin();
   }
 
-  
+
   /**
    * returns past-the-end iterator of the source set.
    */
   vertex_iterator
-  sources_end()
+  sources_end() const
   {
     return sources.end();
   }
 
 private:
-  
+
   double
   summation_of_edges() const
   {
@@ -274,14 +252,14 @@ private:
     return edge_sum;
   }
 
-  
+
   double
   time_step() const
   {
     return m_time_step;
   }
 
-  
+
   void
   update_kronecker_delta()
   {
@@ -312,7 +290,7 @@ private:
     return kronecker;
   }
 
-  
+
   void solve_cotan_laplace()
   {
     Matrix A, A0;
@@ -320,19 +298,19 @@ private:
     A = m_mass_matrix + A0;
 
     double d=0;
-    
+
     if(! la.factor(A,d)) {
       // decomposition failed
       CGAL_error_msg("Eigen Decomposition in cotan failed");
     }
-         
+
     if(! la.linear_solver(kronecker, solved_u)) {
       // solving failed
       CGAL_error_msg("Eigen Solving in cotan failed");
     }
   }
 
-  
+
   void
   compute_unit_gradient()
   {
@@ -432,7 +410,7 @@ private:
     indexD.swap(m_index_divergence);
   }
 
-    
+
   void
   value_at_source_set(const Vector& phi)
   {
@@ -457,7 +435,7 @@ private:
           }
           if(new_d < min_val) {
             min_val = new_d;
-          }  
+          }
           current = ++current;
         }
         source_set_val(i,0) = min_val;
@@ -476,15 +454,15 @@ private:
       // decomposition failed
       CGAL_error_msg("Eigen Decomposition in phi failed");
     }
-      
+
     if(! la.linear_solver(m_index_divergence, phi)) {
       // solving failed
       CGAL_error_msg("Eigen Solving in phi failed");
-    }  
+    }
     value_at_source_set(phi);
   }
 
-  
+
   // this function returns a (number of vertices)x1 vector where
   // the ith index has the distance from the first vertex to the ith vertex
   const Vector&
@@ -496,7 +474,7 @@ private:
 public:
 
   /**
-   *  Updates the distance property map after changes in the source set. 
+   *  Updates the distance property map after changes in the source set.
    **/
   void update()
   {
@@ -622,14 +600,237 @@ private:
   bool source_change_flag;
 };
 
+template <typename TriangleMesh,
+          typename Traits,
+          typename VertexDistanceMap,
+          typename UseIntrinsicDelaunay,
+          typename LA,
+          typename VertexPointMap>
+struct Base_helper
+  : public Heat_method_3<TriangleMesh, Traits, VertexDistanceMap, LA, VertexPointMap>
+{
+  typedef Heat_method_3<TriangleMesh, Traits, VertexDistanceMap, LA, VertexPointMap> type;
 
-  /*! \addtogroup PkgHeatMethod
-   *
-   * @{
+  Base_helper(const TriangleMesh& tm, VertexDistanceMap vdm, VertexPointMap vpm)
+    : type(tm, vdm, vpm)
+  {}
+
+  Base_helper(const TriangleMesh& tm, VertexDistanceMap vdm)
+    : type(tm, vdm)
+  {}
+
+  type& base()
+  {
+    return static_cast<type&>(*this);
+  }
+
+  const type& base() const
+  {
+    return static_cast<const type&>(*this);
+  }
+};
+
+template<class TriangleMesh,
+         class Traits,
+         class VertexDistanceMap,
+         class VertexPointMap>
+struct Idt_storage
+{
+  Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits, VertexDistanceMap, VertexPointMap> m_idt;
+
+  Idt_storage(const TriangleMesh& tm, VertexDistanceMap vdm, VertexPointMap vpm)
+    : m_idt(const_cast<TriangleMesh&>(tm), vdm, vpm)
+  {}
+
+  Idt_storage(const TriangleMesh& tm, VertexDistanceMap vdm)
+    : m_idt(const_cast<TriangleMesh&>(tm), vdm)
+  {}
+};
+
+template <typename TriangleMesh,
+          typename Traits,
+          typename VertexDistanceMap,
+          typename LA,
+          typename VertexPointMap>
+struct Base_helper<TriangleMesh, Traits, VertexDistanceMap, Tag_true, LA, VertexPointMap>
+  : public Idt_storage<TriangleMesh, Traits, VertexDistanceMap, VertexPointMap>
+  , public Heat_method_3<Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits, VertexDistanceMap, VertexPointMap>,
+                         Traits,
+                         typename Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits, VertexDistanceMap, VertexPointMap>::Vertex_distance_map,
+                         LA,
+                         typename Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits, VertexDistanceMap, VertexPointMap>::Vertex_point_map>
+{
+  typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits, VertexDistanceMap, VertexPointMap> Idt;
+  typedef Idt_storage<TriangleMesh, Traits, VertexDistanceMap, VertexPointMap> Idt_wrapper;
+
+  typedef Heat_method_3<Idt, Traits, typename Idt::Vertex_distance_map, LA, typename Idt::Vertex_point_map> type;
+
+  Base_helper(const TriangleMesh& tm, VertexDistanceMap vdm, VertexPointMap vpm)
+    : Idt_wrapper(tm, vdm, vpm)
+    , type(this->m_idt, this->m_idt.vertex_distance_map(), this->m_idt.vertex_point_map())
+  {}
+
+  Base_helper(const TriangleMesh& tm, VertexDistanceMap vdm)
+    :  Idt_wrapper(tm, vdm)
+    , type(this->m_idt, this->m_idt.vertex_distance_map())
+  {}
+
+  type& base()
+  {
+    return static_cast<type&>(*this);
+  }
+
+  const type& base() const
+  {
+    return static_cast<const type&>(*this);
+  }
+};
+
+} // namespace internal
+
+/**
+ * \ingroup PkgHeatMethod
+ *
+ * Class `Heat_method_3` computes geodesic distances for a set of source vertices where sources can be added and removed.
+ * The class performs a preprocessing step that does only depend on the mesh, so that the distance computation takes less
+ * time after changes of the set of sources.
+ *
+ * \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
+ * \tparam Traits a model of HeatMethodTraits_3
+ * \tparam LA a model of `SparseLinearAlgebraWithFactorTraits_d`.
+
+ * \tparam VertexPointMap a model of `ReadablePropertyMap` with
+ *        `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
+ *        `Traits::Point_3` as value type.
+ *        The default is `typename boost::property_map<TriangleMesh, vertex_point_t>::%type`.
+ *
+ */
+template <typename TriangleMesh,
+          typename Traits,
+          typename VertexDistanceMap,
+          typename UseIntrinsicDelaunay = Tag_false,
+#ifdef CGAL_EIGEN3_ENABLED
+          typename LA = Eigen_solver_traits<Eigen::SimplicialLDLT<typename Eigen_sparse_matrix<double>::EigenType > >,
+#else
+          typename LA = Default,
+#endif
+          typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::const_type>
+class Heat_method_3
+#ifndef DOXYGEN_RUNNING
+  : public internal::Base_helper<TriangleMesh, Traits, VertexDistanceMap, UseIntrinsicDelaunay, LA, VertexPointMap>
+#endif
+{
+  typedef internal::Base_helper<TriangleMesh, Traits, VertexDistanceMap, UseIntrinsicDelaunay, LA, VertexPointMap> Base_helper;
+
+  const typename Base_helper::type& base() const
+  {
+    return Base_helper::base();
+  }
+
+  typename Base_helper::type& base()
+  {
+    return Base_helper::base();
+  }
+
+public:
+
+  /// Vertex descriptor type
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+  #ifndef DOXYGEN_RUNNING
+  /// Source vertex iterator type
+  typedef typename Base_helper::type::vertex_iterator Source_vertex_iterator;
+  #else
+  typedef unspecified_type Source_vertex_iterator;
+  #endif
+
+  /*!
+    \brief Constructor
+  */
+  Heat_method_3(const TriangleMesh& tm, VertexDistanceMap vdm)
+    : Base_helper(tm, vdm)
+  {}
+
+  /*!
+    \brief Constructor
+  */
+  Heat_method_3(const TriangleMesh& tm, VertexDistanceMap vdm, VertexPointMap vpm)
+    : Base_helper(tm, vdm, vpm)
+  {}
+
+  /**
+   * returns the triangle mesh the algorithm is running on.
    */
+  const TriangleMesh& triangle_mesh() const
+  {
+    return base().triangle_mesh();
+  }
+
+  /**
+   * adds `vd` to the source set, returning `false` if `vd` is already in the set.
+   */
+  bool
+  add_source(vertex_descriptor vd)
+  {
+    return base().add_source(vd);
+  }
+
+  /**
+   * removes vd` from the source set, returning 'true' if `vd` was in the set.
+   */
+  bool
+  remove_source(vertex_descriptor vd)
+  {
+    return base().remove_source(vd);
+  }
+
+  /**
+   * clears the current source set.
+   */
+  void
+  clear_sources()
+  {
+    base().clear_sources();
+  }
+
+  /**
+   * get distance from the current source set to a vertex `vd`.
+   */
+  double
+  distance(vertex_descriptor vd) const
+  {
+    return base().distance(vd);
+  }
+
+  /**
+   * returns an iterator to the first vertex in the source set.
+   */
+  Source_vertex_iterator
+  sources_begin() const
+  {
+    return base().sources_begin();
+  }
+
+  /**
+   * returns past-the-end iterator of the source set.
+   */
+  Source_vertex_iterator
+  sources_end() const
+  {
+    return base().sources_end();
+  }
+
+  /**
+   *  Updates the distance property map after changes in the source set.
+   **/
+  void update()
+  {
+    base().update();
+  }
+};
+
 
 /// \ingroup PkgHeatMethod
-/// computes for each vertex  of the triangle mesh `tm` the geodesic distance to a given source vertex. 
+/// computes for each vertex  of the triangle mesh `tm` the geodesic distance to a given source vertex.
 /// \sa CGAL::Heat_method_3::Heat_method_3
 template <typename TriangleMesh, typename VertexDistanceMap>
 void
@@ -641,7 +842,7 @@ geodesic_distances_3(const TriangleMesh& tm,
   typedef typename boost::property_traits<PPM>::value_type Point_3;
   typedef typename CGAL::Kernel_traits<Point_3>::Kernel Kernel;
   typedef CGAL::Heat_method_3::Heat_method_3<TriangleMesh,Kernel,VertexDistanceMap> Heat_method;
-  
+
   Heat_method hm(tm,vdm);
   hm.add_source(source);
   hm.update();
@@ -661,17 +862,13 @@ geodesic_distances_with_intrinsic_Delaunay_triangulation_3(const TriangleMesh& t
   typedef typename boost::property_map<TriangleMesh, vertex_point_t>::type PPM;
   typedef typename boost::property_traits<PPM>::value_type Point_3;
   typedef typename CGAL::Kernel_traits<Point_3>::Kernel Kernel;
-  typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TriangleMesh,Kernel, VertexDistanceMap> Idt;
-  typedef CGAL::Heat_method_3::Heat_method_3<Idt,Kernel,typename Idt::Vertex_distance_map> Heat_method;
-  
-  Idt idt(tm, vdm);
-  Heat_method hm(idt,idt.vertex_distance_map());
+  typedef CGAL::Heat_method_3::Heat_method_3<TriangleMesh, Kernel, VertexDistanceMap, CGAL::Tag_true> Heat_method;
+
+  Heat_method hm(tm,vdm);
   hm.add_source(source);
   hm.update();
 }
-  
 
- /*! @} */
 
 } // namespace Heat_method_3
 } // namespace CGAL

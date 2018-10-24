@@ -63,7 +63,46 @@ template <typename IDT, typename PM>
 struct IDT_vertex_distance_property_map;
 
 #endif
-  
+
+template <class TriangleMesh>
+struct Intrinsic_Delaunay_triangulation_3_vertex_descriptor {
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+  halfedge_descriptor hd;
+
+  bool operator<(const Intrinsic_Delaunay_triangulation_3_vertex_descriptor& other) const
+  {
+    return hd < other.hd;
+  }
+
+  Intrinsic_Delaunay_triangulation_3_vertex_descriptor(const halfedge_descriptor& hd)
+    : hd(hd)
+  {}
+
+  explicit Intrinsic_Delaunay_triangulation_3_vertex_descriptor(const vertex_descriptor vd, const TriangleMesh& tm)
+    : hd(halfedge(vd,tm))
+  {}
+};
+
+template <class TriangleMesh>
+struct Intrinsic_Delaunay_triangulation_3_vertex_iterator_functor
+{
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+  typedef vertex_descriptor argument_type;
+  typedef Intrinsic_Delaunay_triangulation_3_vertex_descriptor<TriangleMesh> result_type;
+  const TriangleMesh& tm;
+
+  Intrinsic_Delaunay_triangulation_3_vertex_iterator_functor(const TriangleMesh& tm)
+    :tm(tm)
+  {}
+
+  result_type
+  operator()(vertex_descriptor vd) const
+  {
+    return result_type(halfedge(vd, tm));
+  }
+};
+
 /**
  * \ingroup PkgHeatMethod
  *
@@ -92,7 +131,7 @@ class Intrinsic_Delaunay_triangulation_3
 {
   typedef Intrinsic_Delaunay_triangulation_3<TriangleMesh,Traits,VertexDistanceMap,VertexPointMap> Self;
 
-  typedef typename boost::graph_traits<TriangleMesh>               graph_traits;
+  typedef boost::graph_traits<TriangleMesh>                        graph_traits;
   typedef typename graph_traits::vertex_descriptor            vertex_descriptor;
   typedef typename graph_traits::edge_descriptor                edge_descriptor;
   typedef typename graph_traits::halfedge_descriptor        halfedge_descriptor;
@@ -107,8 +146,6 @@ class Intrinsic_Delaunay_triangulation_3
   typedef typename Traits::Point_2                                     Point_2;
 
   typedef int Index;
-
-  typedef typename boost::property_traits<VertexPointMap>::reference VertexPointMap_reference;
 
   typedef CGAL::dynamic_halfedge_property_t<Point_2> Halfedge_coordinate_tag;
   typedef typename boost::property_map<TriangleMesh, Halfedge_coordinate_tag >::type HalfedgeCoordinateMap;
@@ -136,43 +173,11 @@ private:
 public: // for the BGL functions below. They should maybe become friend?
 
   typedef IDT_vertex_distance_property_map<Self,VertexDistanceMap> Vertex_distance_map;
+  typedef CGAL::Heat_method_3::IDT_vertex_point_property_map<Self> Vertex_point_map;
 
 
-  struct Vertex_descriptor {
-    halfedge_descriptor hd;
-
-    bool operator<(const Vertex_descriptor& other) const
-    {
-      return hd < other.hd;
-    }
-
-    Vertex_descriptor(const halfedge_descriptor& hd)
-      : hd(hd)
-    {}
-
-    explicit Vertex_descriptor(const vertex_descriptor vd, const TriangleMesh& tm)
-      : hd(halfedge(vd,tm))
-    {}
-
-  };
-
-  
-  struct Vertex_iterator_functor
-  {
-    typedef vertex_descriptor argument_type;
-    typedef Vertex_descriptor result_type;
-    const TriangleMesh& tm;
-
-    Vertex_iterator_functor(const TriangleMesh& tm)
-      :tm(tm)
-    {}
-
-    result_type
-    operator()(vertex_descriptor vd) const
-    {
-      return Vertex_descriptor(halfedge(vd, tm));
-    }
-  };
+  typedef Intrinsic_Delaunay_triangulation_3_vertex_descriptor<TriangleMesh> Vertex_descriptor;
+  typedef Intrinsic_Delaunay_triangulation_3_vertex_iterator_functor<TriangleMesh> Vertex_iterator_functor;
 #endif // DOXYGEN_RUNNING
   
 public:
@@ -180,7 +185,13 @@ public:
   /// \param tm the triangle mesh
   /// \param vdm the vertex distance map where one later can retrieve the vertex distances.
   Intrinsic_Delaunay_triangulation_3(TriangleMesh& tm, VertexDistanceMap vdm)
-    : tm(), tmref(tm), vdm(*this,vdm), hcm(get(Halfedge_coordinate_tag(), this->tm))
+    : tm(), tmref(tm), vdm(*this,vdm), m_vpm(*this), hcm(get(Halfedge_coordinate_tag(), this->tm))
+  {
+    build();
+  }
+
+  Intrinsic_Delaunay_triangulation_3(TriangleMesh& tm, VertexDistanceMap vdm, VertexPointMap)
+    : tm(), tmref(tm), vdm(*this,vdm), m_vpm(*this), hcm(get(Halfedge_coordinate_tag(), this->tm))
   {
     build();
   }
@@ -215,6 +226,11 @@ public:
     return vdm;
   }
 
+  Vertex_point_map
+  vertex_point_map() const
+  {
+    return m_vpm;
+  }
   
 private:
 
@@ -417,7 +433,7 @@ private:
   TriangleMesh tm; // this is the copy where edges get flipped
   const TriangleMesh& tmref; // this is the reference to the original
   Vertex_distance_map vdm;
-  VertexPointMap vpm;
+  Vertex_point_map m_vpm;
   HalfedgeCoordinateMap hcm;
   Edge_id_map edge_id_map;
 
@@ -482,10 +498,9 @@ template <typename TM,
           typename VPM>
 struct graph_traits<CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM> > {
 
-  typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM> Mesh;
-  typedef typename Mesh::Vertex_descriptor vertex_descriptor;
+  typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3_vertex_descriptor<TM> vertex_descriptor;
   typedef boost::transform_iterator<
-    typename Mesh::Vertex_iterator_functor,
+    CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3_vertex_iterator_functor<TM>,
     typename boost::graph_traits<TM>::vertex_iterator> vertex_iterator;
 
   typedef typename boost::graph_traits<TM>::halfedge_descriptor halfedge_descriptor;
