@@ -43,8 +43,8 @@ int main()
   // test using orientation
   std::vector<PMP::Volume_error_code> expected_result;
   expected_result.push_back(PMP::VALID_VOLUME);
-  expected_result.push_back(PMP::INCONSISTENT_ORIENTATION);
-  expected_result.push_back(PMP::INCONSISTENT_ORIENTATION);
+  expected_result.push_back(PMP::INCOMPATIBLE_ORIENTATION);
+  expected_result.push_back(PMP::INCOMPATIBLE_ORIENTATION);
   std::vector<PMP::Volume_error_code>  error_codes;
   std::size_t nb_vol = PMP::volume_connected_components(input_mesh, vol_id_map,
                                                         params::error_codes(boost::ref(error_codes)));

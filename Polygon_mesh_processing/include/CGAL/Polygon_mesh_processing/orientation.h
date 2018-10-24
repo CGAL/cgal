@@ -722,15 +722,15 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
  * \ingroup PMP_orientation_grp
  * Enumeration type used to indicate the status of a set of faces
  * classified by the function `volume_connected_components()`.
- * The set of faces defines either a volumic connected connected component
- * in the case of `VALID_VOLUME` or a surfacic connected component otherwise.
+ * The set of faces defines either a volume connected connected component
+ * in the case of `VALID_VOLUME` or a surface connected component otherwise.
  */
 enum Volume_error_code { VALID_VOLUME, ///< The set of faces bounds a volume
-                         SURFACE_SELF_INTERSECTION, ///< The set of faces are self-intersecting
-                         VOLUME_INTERSECTION, ///< The set of faces intersect another surface connected component
-                         OPEN_SURFACE, ///< The set of faces does not defined a close surface
-                         INCONSISTENT_ORIENTATION, ///< The set of faces is included in a volume but has an incompatible orientation
-                         SINGLE_CONNECTED_COMPONENT ///< The set of faces consists of all the faces of the mesh and no further test were done.
+                         SURFACE_SELF_INTERSECTION, ///< The set of faces is self-intersecting
+                         VOLUME_INTERSECTION, ///< The set of faces intersects another surface connected component
+                         OPEN_SURFACE, ///< The set of faces does not define a close surface
+                         INCOMPATIBLE_ORIENTATION, ///< The set of faces is included in a volume but has an incompatible orientation
+                         SINGLE_CONNECTED_COMPONENT ///< The set of faces consists of all the faces of the mesh and no further test was done.
                        };
 namespace internal {
 template<class RefToVector>
@@ -1131,7 +1131,7 @@ volume_connected_components(const TriangleMesh& tm,
               {
                 if (cc_handled.test(cc_id)) continue;
                 cc_volume_ids[id] = next_volume_id++;
-                error_codes.push_back(INCONSISTENT_ORIENTATION);
+                error_codes.push_back(INCOMPATIBLE_ORIENTATION);
               }
               cc_handled.set();
               break;
@@ -1193,12 +1193,12 @@ volume_connected_components(const TriangleMesh& tm,
               // the surface component has an incorrect orientation wrt to its parent:
               // we dump it and all included surface components as independant volumes.
               cc_volume_ids[ncc_id] = next_volume_id++;
-              error_codes.push_back(INCONSISTENT_ORIENTATION);
+              error_codes.push_back(INCOMPATIBLE_ORIENTATION);
               BOOST_FOREACH(std::size_t nncc_id, nested_cc_per_cc[ncc_id])
               {
                 cc_handled.set(nncc_id);
                 cc_volume_ids[nncc_id] = next_volume_id++;
-                error_codes.push_back(INCONSISTENT_ORIENTATION);
+                error_codes.push_back(INCOMPATIBLE_ORIENTATION);
               }
               continue;
             }
