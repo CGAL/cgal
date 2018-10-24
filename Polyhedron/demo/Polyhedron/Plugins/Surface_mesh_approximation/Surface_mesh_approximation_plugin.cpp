@@ -234,6 +234,8 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
   m_approx.get_l21_proxies(std::back_inserter(m_proxies));
 #endif
 
+  std::cout << "========" << std::endl;
+
   // generate proxy color map
   for (std::size_t i = 0; i < m_approx.number_of_proxies(); i++)
     m_px_color.push_back(rand_0_255());
@@ -242,29 +244,45 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
   std::cout << "Done. (" << time.elapsed() << " ms)" << std::endl;
 
   // face color
-  poly_item->set_color_vector_read_only(true);
   m_approx.proxy_map(m_fidx_pmap);
+
+  // set face ids
+  std::size_t face_id = 0;
+  for (Facet_iterator fitr = m_pmesh->facets_begin(); fitr != m_pmesh->facets_end(); ++fitr)
+    fitr->id() = face_id++;
+
+  std::cout << "is multi color " << poly_item->isItemMulticolor() << std::endl;
+
+  poly_item->set_color_vector_read_only(true);
+
   typedef typename boost::property_map<Polyhedron, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
   Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *poly_item->face_graph());
-  // std::size_t face_id = 0;
   for(Facet_iterator fitr = m_pmesh->facets_begin(); fitr != m_pmesh->facets_end(); ++fitr)
-    // fitr->id() = face_id++;
     put(pidmap, fitr, int(m_fidx_pmap[fitr]));
   std::vector<QColor> &color_vector = poly_item->color_vector();
+  std::cout << "#color_vector " << color_vector.size() << std::endl;
   color_vector.clear();
-  // if (!m_px_color.empty()) {
-  //   for (Facet_iterator fitr = m_pmesh->facets_begin(); fitr != m_pmesh->facets_end(); ++fitr) {
-  //     const std::size_t cidx = m_px_color[m_fidx_pmap[fitr]];
-  //     color_vector.push_back(QColor::fromRgb(
-  //       Color_cheat_sheet::r(cidx), Color_cheat_sheet::g(cidx), Color_cheat_sheet::b(cidx)));
-  //   }
-  // }
   BOOST_FOREACH(const std::size_t &cidx, m_px_color)
     color_vector.push_back(QColor::fromRgb(
       Color_cheat_sheet::r(cidx), Color_cheat_sheet::g(cidx), Color_cheat_sheet::b(cidx)));
+  // std::vector<QColor> &color_vector = poly_item->color_vector();
+  // std::cout << "#color_vector " << color_vector.size() << std::endl;
+  // color_vector.clear();
+  // for(Facet_iterator fitr = m_pmesh->facets_begin(); fitr != m_pmesh->facets_end(); ++fitr) {
+  //   put(pidmap, fitr, int(m_fidx_pmap[fitr]));
+  //   const std::size_t cidx = m_px_color[m_fidx_pmap[fitr]];
+  //   color_vector.push_back(QColor::fromRgb(
+  //     Color_cheat_sheet::r(cidx), Color_cheat_sheet::g(cidx), Color_cheat_sheet::b(cidx)));
+  // }
+  std::cout << "color done." << std::endl;
+  std::cout << "#color_vector " << color_vector.size() << std::endl;
+
   poly_item->setItemIsMulticolor(true);
   poly_item->invalidateOpenGLBuffers();
   scene->itemChanged(scene->item_id(poly_item));
+
+  std::cout << "is multi color " << poly_item->isItemMulticolor() << std::endl;
+  std::cout << "========" << std::endl;
 
   QApplication::restoreOverrideCursor();
 }
