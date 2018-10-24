@@ -35,7 +35,6 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/number_utils.h>
 #ifdef CGAL_EIGEN3_ENABLED
-#include <Eigen/Cholesky>
 #include <CGAL/Eigen_matrix.h>
 #include <CGAL/Eigen_vector.h>
 #include <CGAL/Eigen_solver_traits.h>
@@ -383,7 +382,6 @@ private:
     }
   }
 
-  
   double
   dot_eigen_vector(const Vector_3& a, const Vector_3& b) const
   {
@@ -630,8 +628,9 @@ private:
    * @{
    */
 
-/// \sa CGAL::Heat_method_3::Heat_method_3
+/// \ingroup PkgHeatMethod
 /// computes for each vertex  of the triangle mesh `tm` the geodesic distance to a given source vertex. 
+/// \sa CGAL::Heat_method_3::Heat_method_3
 template <typename TriangleMesh, typename VertexDistanceMap>
 void
 geodesic_distances_3(const TriangleMesh& tm,
@@ -649,8 +648,10 @@ geodesic_distances_3(const TriangleMesh& tm,
 }
 
 
+/// \ingroup PkgHeatMethod
+/// computes for each vertex of the triangle mesh `tm` the geodesic distance to a given source vertex.
+/// This version computes better results when `tm` has triangles with small angles.
 /// \sa CGAL::Heat_method_3::Heat_method_3
-/// computes for each vertex of the triangle mesh `tm` the geodesic distance to a given source vertex. This version computes better results when `tm` has triangles with small angles. 
 template <typename TriangleMesh, typename VertexDistanceMap>
 void
 geodesic_distances_with_intrinsic_Delaunay_triangulation_3(const TriangleMesh& tm,
