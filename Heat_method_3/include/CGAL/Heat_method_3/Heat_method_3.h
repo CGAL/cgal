@@ -624,11 +624,11 @@ struct Idt_storage
   Intrinsic_Delaunay_triangulation_3<TriangleMesh, VertexPointMap, Traits> m_idt;
 
   Idt_storage(const TriangleMesh& tm, VertexPointMap vpm)
-    : m_idt(const_cast<TriangleMesh&>(tm), vpm)
+    : m_idt(tm, vpm)
   {}
 
   Idt_storage(const TriangleMesh& tm)
-    : m_idt(const_cast<TriangleMesh&>(tm))
+    : m_idt(tm)
   {}
 };
 

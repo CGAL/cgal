@@ -172,13 +172,13 @@ public: // for the BGL functions below. They should maybe become friend?
 public:
   /// Constructor
   /// \param tm the triangle mesh
-  Intrinsic_Delaunay_triangulation_3(TriangleMesh& tm)
+  Intrinsic_Delaunay_triangulation_3(const TriangleMesh& tm)
     : tm(), tmref(tm), m_vpm(*this), hcm(get(Halfedge_coordinate_tag(), this->tm))
   {
     build();
   }
 
-  Intrinsic_Delaunay_triangulation_3(TriangleMesh& tm, VertexPointMap)
+  Intrinsic_Delaunay_triangulation_3(const TriangleMesh& tm, VertexPointMap)
     : tm(), tmref(tm), m_vpm(*this), hcm(get(Halfedge_coordinate_tag(), this->tm))
   {
     build();
