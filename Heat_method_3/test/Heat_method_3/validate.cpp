@@ -17,8 +17,8 @@ typedef CGAL::Surface_mesh<Point>                            Surface_mesh;
 typedef boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
 typedef Surface_mesh::Property_map<vertex_descriptor,double> Vertex_distance_map;
 
-typedef CGAL::Heat_method_3::Heat_method_3<Surface_mesh, Kernel, Vertex_distance_map> Heat_method;
-typedef CGAL::Heat_method_3::Heat_method_3<Surface_mesh, Kernel, Vertex_distance_map, CGAL::Tag_true> Heat_method_idt;
+typedef CGAL::Heat_method_3::Heat_method_3<Surface_mesh, Kernel> Heat_method;
+typedef CGAL::Heat_method_3::Heat_method_3<Surface_mesh, Kernel, CGAL::Tag_true> Heat_method_idt;
 
 
 
@@ -61,19 +61,19 @@ int validate(char* fname)
 
   Vertex_distance_map vdm = sm.add_property_map<vertex_descriptor,double>("v:dist",0).first;
 
-  Heat_method hm(sm,vdm);
+  Heat_method hm(sm);
   for(int index : sources){
     hm.add_source(vertex_descriptor(index));
   }
-  hm.update();
+  hm.fill_distance_map(vdm);
 
   Vertex_distance_map vdm_idt = sm.add_property_map<vertex_descriptor,double>("v:idt",0).first;
 
-  Heat_method_idt hm_idt(sm, vdm_idt);
+  Heat_method_idt hm_idt(sm);
   for(std::size_t i=0; i < sources.size(); i++){
     hm_idt.add_source(vertex_descriptor(index));
   }
-  hm_idt.update();
+  hm_idt.fill_distance_map(vdm_idt);
 
   std::cout.precision(17);
   int i = 0;

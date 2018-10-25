@@ -22,7 +22,7 @@ typedef CGAL::Surface_mesh<Point>                            Surface_mesh;
 typedef CGAL::dynamic_vertex_property_t<double> Vertex_distance_tag;
 typedef boost::property_map<Surface_mesh, Vertex_distance_tag >::type Vertex_distance_map;
 
-typedef CGAL::Heat_method_3::Heat_method_3<Surface_mesh,Kernel, Vertex_distance_map, CGAL::Tag_true> Heat_method;
+typedef CGAL::Heat_method_3::Heat_method_3<Surface_mesh,Kernel, CGAL::Tag_true> Heat_method;
 typedef CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT<CGAL::Eigen_sparse_matrix<double>::EigenType > > Solver_traits;
 typedef Solver_traits::Matrix SparseMatrix;
 
@@ -123,11 +123,11 @@ int main()
   Vertex_distance_map vdm = get(Vertex_distance_tag(),sm);
 
   //source set tests
-  Heat_method hm(sm, vdm);
+  Heat_method hm(sm);
 
   hm.add_source(* vertices(sm).first);
 
-  hm.update();
+  hm.fill_distance_map(vdm);
 
   BOOST_FOREACH(boost::graph_traits<Surface_mesh>::vertex_descriptor vd, vertices(sm)){
     std::cout << get(vdm,vd) << std::endl;

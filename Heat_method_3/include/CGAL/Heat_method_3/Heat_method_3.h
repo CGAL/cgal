@@ -53,7 +53,6 @@ namespace Heat_method_3 {
 namespace internal {
 template <typename TriangleMesh,
           typename Traits,
-          typename VertexDistanceMap,
           typename LA,
           typename VertexPointMap>
 class Heat_method_3
@@ -98,8 +97,8 @@ public:
   /*!
     \brief Constructor
   */
-  Heat_method_3(const TriangleMesh& tm, VertexDistanceMap vdm)
-    : vertex_id_map(get(Vertex_property_tag(),tm)), face_id_map(get(Face_property_tag(),tm)), v2v(tm), tm(tm), vdm(vdm), vpm(get(vertex_point,tm))
+  Heat_method_3(const TriangleMesh& tm)
+    : vertex_id_map(get(Vertex_property_tag(),tm)), face_id_map(get(Face_property_tag(),tm)), v2v(tm), tm(tm), vpm(get(vertex_point,tm))
   {
     build();
   }
@@ -108,8 +107,8 @@ public:
   /*!
     \brief Constructor
   */
-  Heat_method_3(const TriangleMesh& tm, VertexDistanceMap vdm, VertexPointMap vpm)
-    : v2v(tm), tm(tm), vdm(vdm), vpm(vpm)
+  Heat_method_3(const TriangleMesh& tm, VertexPointMap vpm)
+    : v2v(tm), tm(tm), vpm(vpm)
   {
     build();
   }
@@ -124,13 +123,6 @@ public:
 
 
 private:
-
-  const VertexDistanceMap&
-  vertex_distance_map() const
-  {
-    return vdm;
-  }
-
 
   const Matrix&
   mass_matrix() const
@@ -195,17 +187,6 @@ public:
     sources.clear();
     return;
   }
-
-
-  /**
-   * get distance from the current source set to a vertex `vd`.
-   */
-  double
-  distance(vertex_descriptor vd) const
-  {
-    return get(vdm,vd);
-  }
-
 
   /**
    * returns an iterator to the first vertex in the source set.
@@ -476,7 +457,8 @@ public:
   /**
    *  Updates the distance property map after changes in the source set.
    **/
-  void update()
+  template<class VertexDistanceMap>
+  void fill_distance_map(VertexDistanceMap vdm)
   {
     double d=0;
     if(source_change_flag) {
@@ -586,7 +568,6 @@ private:
   int dimension;
   V2V<TriangleMesh> v2v;
   const TriangleMesh& tm;
-  VertexDistanceMap vdm;
   VertexPointMap vpm;
   std::set<vertex_descriptor> sources;
   double m_time_step;
@@ -602,21 +583,20 @@ private:
 
 template <typename TriangleMesh,
           typename Traits,
-          typename VertexDistanceMap,
           typename UseIntrinsicDelaunay,
           typename LA,
           typename VertexPointMap>
 struct Base_helper
-  : public Heat_method_3<TriangleMesh, Traits, VertexDistanceMap, LA, VertexPointMap>
+  : public Heat_method_3<TriangleMesh, Traits, LA, VertexPointMap>
 {
-  typedef Heat_method_3<TriangleMesh, Traits, VertexDistanceMap, LA, VertexPointMap> type;
+  typedef Heat_method_3<TriangleMesh, Traits, LA, VertexPointMap> type;
 
-  Base_helper(const TriangleMesh& tm, VertexDistanceMap vdm, VertexPointMap vpm)
-    : type(tm, vdm, vpm)
+  Base_helper(const TriangleMesh& tm, VertexPointMap vpm)
+    : type(tm, vpm)
   {}
 
-  Base_helper(const TriangleMesh& tm, VertexDistanceMap vdm)
-    : type(tm, vdm)
+  Base_helper(const TriangleMesh& tm)
+    : type(tm)
   {}
 
   type& base()
@@ -627,52 +607,55 @@ struct Base_helper
   const type& base() const
   {
     return static_cast<const type&>(*this);
+  }
+
+  template <class VertexDistanceMap>
+  void fill_distance_map(VertexDistanceMap vdm)
+  {
+    base().fill_distance_map(vdm);
   }
 };
 
 template<class TriangleMesh,
          class Traits,
-         class VertexDistanceMap,
          class VertexPointMap>
 struct Idt_storage
 {
-  Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits, VertexDistanceMap, VertexPointMap> m_idt;
+  Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits, VertexPointMap> m_idt;
 
-  Idt_storage(const TriangleMesh& tm, VertexDistanceMap vdm, VertexPointMap vpm)
-    : m_idt(const_cast<TriangleMesh&>(tm), vdm, vpm)
+  Idt_storage(const TriangleMesh& tm, VertexPointMap vpm)
+    : m_idt(const_cast<TriangleMesh&>(tm), vpm)
   {}
 
-  Idt_storage(const TriangleMesh& tm, VertexDistanceMap vdm)
-    : m_idt(const_cast<TriangleMesh&>(tm), vdm)
+  Idt_storage(const TriangleMesh& tm)
+    : m_idt(const_cast<TriangleMesh&>(tm))
   {}
 };
 
 template <typename TriangleMesh,
           typename Traits,
-          typename VertexDistanceMap,
           typename LA,
           typename VertexPointMap>
-struct Base_helper<TriangleMesh, Traits, VertexDistanceMap, Tag_true, LA, VertexPointMap>
-  : public Idt_storage<TriangleMesh, Traits, VertexDistanceMap, VertexPointMap>
-  , public Heat_method_3<Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits, VertexDistanceMap, VertexPointMap>,
+struct Base_helper<TriangleMesh, Traits, Tag_true, LA, VertexPointMap>
+  : public Idt_storage<TriangleMesh, Traits, VertexPointMap>
+  , public Heat_method_3<Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits, VertexPointMap>,
                          Traits,
-                         typename Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits, VertexDistanceMap, VertexPointMap>::Vertex_distance_map,
                          LA,
-                         typename Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits, VertexDistanceMap, VertexPointMap>::Vertex_point_map>
+                         typename Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits, VertexPointMap>::Vertex_point_map>
 {
-  typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits, VertexDistanceMap, VertexPointMap> Idt;
-  typedef Idt_storage<TriangleMesh, Traits, VertexDistanceMap, VertexPointMap> Idt_wrapper;
+  typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits, VertexPointMap> Idt;
+  typedef Idt_storage<TriangleMesh, Traits, VertexPointMap> Idt_wrapper;
 
-  typedef Heat_method_3<Idt, Traits, typename Idt::Vertex_distance_map, LA, typename Idt::Vertex_point_map> type;
+  typedef Heat_method_3<Idt, Traits, LA, typename Idt::Vertex_point_map> type;
 
-  Base_helper(const TriangleMesh& tm, VertexDistanceMap vdm, VertexPointMap vpm)
-    : Idt_wrapper(tm, vdm, vpm)
-    , type(this->m_idt, this->m_idt.vertex_distance_map(), this->m_idt.vertex_point_map())
+  Base_helper(const TriangleMesh& tm, VertexPointMap vpm)
+    : Idt_wrapper(tm, vpm)
+    , type(this->m_idt)
   {}
 
-  Base_helper(const TriangleMesh& tm, VertexDistanceMap vdm)
-    :  Idt_wrapper(tm, vdm)
-    , type(this->m_idt, this->m_idt.vertex_distance_map())
+  Base_helper(const TriangleMesh& tm)
+    :  Idt_wrapper(tm)
+    , type(this->m_idt)
   {}
 
   type& base()
@@ -683,6 +666,12 @@ struct Base_helper<TriangleMesh, Traits, VertexDistanceMap, Tag_true, LA, Vertex
   const type& base() const
   {
     return static_cast<const type&>(*this);
+  }
+
+  template <class VertexDistanceMap>
+  void fill_distance_map(VertexDistanceMap vdm)
+  {
+    base().fill_distance_map(this->m_idt.vertex_distance_map(vdm));
   }
 };
 
@@ -707,7 +696,6 @@ struct Base_helper<TriangleMesh, Traits, VertexDistanceMap, Tag_true, LA, Vertex
  */
 template <typename TriangleMesh,
           typename Traits,
-          typename VertexDistanceMap,
           typename UseIntrinsicDelaunay = Tag_false,
 #ifdef CGAL_EIGEN3_ENABLED
           typename LA = Eigen_solver_traits<Eigen::SimplicialLDLT<typename Eigen_sparse_matrix<double>::EigenType > >,
@@ -717,10 +705,10 @@ template <typename TriangleMesh,
           typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::const_type>
 class Heat_method_3
 #ifndef DOXYGEN_RUNNING
-  : public internal::Base_helper<TriangleMesh, Traits, VertexDistanceMap, UseIntrinsicDelaunay, LA, VertexPointMap>
+  : public internal::Base_helper<TriangleMesh, Traits, UseIntrinsicDelaunay, LA, VertexPointMap>
 #endif
 {
-  typedef internal::Base_helper<TriangleMesh, Traits, VertexDistanceMap, UseIntrinsicDelaunay, LA, VertexPointMap> Base_helper;
+  typedef internal::Base_helper<TriangleMesh, Traits, UseIntrinsicDelaunay, LA, VertexPointMap> Base_helper;
 
   const typename Base_helper::type& base() const
   {
@@ -746,15 +734,15 @@ public:
   /*!
     \brief Constructor
   */
-  Heat_method_3(const TriangleMesh& tm, VertexDistanceMap vdm)
-    : Base_helper(tm, vdm)
+  Heat_method_3(const TriangleMesh& tm)
+    : Base_helper(tm)
   {}
 
   /*!
     \brief Constructor
   */
-  Heat_method_3(const TriangleMesh& tm, VertexDistanceMap vdm, VertexPointMap vpm)
-    : Base_helper(tm, vdm, vpm)
+  Heat_method_3(const TriangleMesh& tm, VertexPointMap vpm)
+    : Base_helper(tm, vpm)
   {}
 
   /**
@@ -820,11 +808,15 @@ public:
   }
 
   /**
-   *  Updates the distance property map after changes in the source set.
+   * \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
+   * with `vertex_descriptor` as key type and `double` as value type.
+   * \param vdm the vertex distance map to be filled
+   * fills the distance property map with the geodesic distance of each vertex to the closest source vertex.
    **/
-  void update()
+  template <class VertexDistanceMap>
+  void fill_distance_map(VertexDistanceMap vdm)
   {
-    base().update();
+    Base_helper::fill_distance_map(vdm);
   }
 };
 
@@ -841,11 +833,11 @@ geodesic_distances_3(const TriangleMesh& tm,
   typedef typename boost::property_map<TriangleMesh, vertex_point_t>::type PPM;
   typedef typename boost::property_traits<PPM>::value_type Point_3;
   typedef typename CGAL::Kernel_traits<Point_3>::Kernel Kernel;
-  typedef CGAL::Heat_method_3::Heat_method_3<TriangleMesh,Kernel,VertexDistanceMap> Heat_method;
+  typedef CGAL::Heat_method_3::Heat_method_3<TriangleMesh,Kernel> Heat_method;
 
-  Heat_method hm(tm,vdm);
+  Heat_method hm(tm);
   hm.add_source(source);
-  hm.update();
+  hm.fill_distance_map(vdm);
 }
 
 
@@ -862,11 +854,11 @@ geodesic_distances_with_intrinsic_Delaunay_triangulation_3(const TriangleMesh& t
   typedef typename boost::property_map<TriangleMesh, vertex_point_t>::type PPM;
   typedef typename boost::property_traits<PPM>::value_type Point_3;
   typedef typename CGAL::Kernel_traits<Point_3>::Kernel Kernel;
-  typedef CGAL::Heat_method_3::Heat_method_3<TriangleMesh, Kernel, VertexDistanceMap, CGAL::Tag_true> Heat_method;
+  typedef CGAL::Heat_method_3::Heat_method_3<TriangleMesh, Kernel, CGAL::Tag_true> Heat_method;
 
-  Heat_method hm(tm,vdm);
+  Heat_method hm(tm);
   hm.add_source(source);
-  hm.update();
+  hm.fill_distance_map(vdm);
 }
 
 
