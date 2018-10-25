@@ -177,10 +177,10 @@ public:
     build();
   }
 
-  Intrinsic_Delaunay_triangulation_3(const TriangleMesh& tm, VertexPointMap)
+  Intrinsic_Delaunay_triangulation_3(const TriangleMesh& tm, VertexPointMap vpm)
     : tm(), tmref(tm), m_vpm(*this), hcm(get(Halfedge_coordinate_tag(), this->tm))
   {
-    build();
+    build(vpm);
   }
 
 #ifndef DOXYGEN_RUNNING
@@ -353,13 +353,15 @@ private:
 
 
   void
-  build()
+  build(VertexPointMap vpm)
   {
     CGAL_precondition(is_triangle_mesh(tm));
 
     std::vector<std::pair<vertex_descriptor,
                           vertex_descriptor> > pairs;
-    copy_face_graph(tmref,tm, std::back_inserter(pairs));
+    copy_face_graph(tmref, tm,
+                    parameters::vertex_to_vertex_output_iterator(std::back_inserter(pairs)).
+                    vertex_point_map(vpm));
 
     for(std::size_t i=0; i < pairs.size(); i++) {
       v2v[pairs[i].second] = pairs[i].first;
@@ -414,6 +416,12 @@ private:
       put(hcm,prev(hd,tm),p31);
 
     }
+  }
+
+  void
+  build()
+  {
+    build( get(boost::vertex_point, tmref) );
   }
 
 
