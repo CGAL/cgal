@@ -744,6 +744,29 @@ struct property_map<CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TM,T
   typedef type const_type;
 };
 
+template <typename TM,
+          typename T>
+struct property_map<CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TM,T>,
+                    CGAL::face_index_t > {
+  typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TM,T> IDT;
+  typedef typename property_map<TM, CGAL::face_index_t>::type type;
+  typedef typename property_map<TM, CGAL::face_index_t>::const_type const_type;
+};
+
+} // boost
+
+
+namespace CGAL {
+namespace Heat_method_3 {
+
+template <typename TM,
+          typename T>
+typename boost::property_map<TM,CGAL::face_index_t>::type
+get(CGAL::face_index_t fi,
+    const CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TM,T>& idt)
+{
+  return get(fi, idt.triangle_mesh());
+}
 
 template <typename TM,
           typename T>
@@ -754,34 +777,6 @@ get(CGAL::vertex_point_t,
   return CGAL::Heat_method_3::IDT_vertex_point_property_map<CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TM,T> >(idt);
 }
 
-
-template <typename TM,
-          typename T>
-struct property_map<CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TM,T>,
-                    CGAL::face_index_t > {
-  typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TM,T> IDT;
-  typedef typename property_map<TM, CGAL::face_index_t>::type type;
-  typedef typename property_map<TM, CGAL::face_index_t>::const_type const_type;
-};
-
-
-template <typename TM,
-          typename T>
-typename property_map<TM,CGAL::face_index_t>::type
-get(CGAL::face_index_t fi,
-    const CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TM,T>& idt)
-{
-  return get(fi, idt.triangle_mesh());
-}
-
-} // boost
-
-
-namespace CGAL {
-namespace Heat_method_3 {
-
-
-#ifndef DOXYGEN_RUNNING
 template <typename IDT, typename PM, typename K, typename V>
 class IDT_dynamic_vertex_property_map {
   const IDT& idt;
@@ -823,9 +818,7 @@ public:
 
 };
 
-#endif // DOXYGEN_RUNNING
-  }
-}
+} } // CGAL::Heat_method_3
 
 namespace boost {
 
