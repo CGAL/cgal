@@ -87,11 +87,9 @@ typedef unspecified_type Has_on_positive_side_3;
 
 /*!
 Predicate object type that provides 
-a constructor taking a single `Point_3` object and 
-`bool operator()(Point_3 q, Point_3 r)`, which returns true iff the 
+`bool operator()(Point_3 p, Point_3 q, Point_3 r)`, which returns true iff the 
 distance from `q` to `p` is smaller than the distance from 
-`r` to `p`, where `p` is the point passed to the object 
-at construction. 
+`r` to `p`. 
 */ 
 typedef unspecified_type Less_distance_to_point_3; 
 
