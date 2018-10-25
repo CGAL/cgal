@@ -16,7 +16,7 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
-#include <CGAL/convex_hull_3.h>
+#include <CGAL/convex_hull_2.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
@@ -45,6 +45,7 @@ class Polyhedron_demo_surface_mesh_approximation_plugin :
   typedef Kernel::FT FT;
   typedef Polyhedron::Facet_iterator Facet_iterator;
   typedef Polyhedron::Facet_handle Facet_handle;
+  typedef Polyhedron::Vertex_iterator Vertex_iterator;
   typedef Polyhedron::Vertex_handle Vertex_handle;
 
 public:
@@ -364,6 +365,76 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
   corres_item->setColor(Qt::blue);
   corres_item->invalidateOpenGLBuffers();
   scene->addItem(corres_item);
+
+  // add patch convex hull item
+  std::vector<std::vector<Kernel::Triangle_3> > patch_triangles(m_approx.number_of_proxies());
+  for (Facet_iterator fitr = m_pmesh->facets_begin(); fitr != m_pmesh->facets_end(); ++fitr) {
+    Polyhedron::Halfedge_around_facet_circulator circ = fitr->facet_begin();
+    patch_triangles[m_fidx_pmap[fitr]].push_back(Kernel::Triangle_3(
+      circ->opposite()->vertex()->point(),
+      circ->vertex()->point(),
+      circ->next()->vertex()->point()));
+  }
+  std::vector<Kernel::Plane_3> patch_planes;
+  BOOST_FOREACH(const std::vector<Kernel::Triangle_3> &tris, patch_triangles) {
+    Kernel::Plane_3 fit_plane;
+    CGAL::linear_least_squares_fitting_3(
+      tris.begin(), tris.end(), fit_plane, CGAL::Dimension_tag<2>());
+    patch_planes.push_back(fit_plane);
+  }
+  std::vector<std::vector<Kernel::Point_3> > patch_points(m_approx.number_of_proxies());
+  for (Vertex_iterator vitr = m_pmesh->vertices_begin(); vitr != m_pmesh->vertices_end(); ++vitr) {
+    Polyhedron::Halfedge_around_vertex_circulator he = vitr->vertex_begin();
+    for (++he; he != vitr->vertex_begin(); ++he) {
+      if (he->is_border())
+        continue;
+      const std::size_t fidx = m_fidx_pmap[he->facet()];
+      patch_points[fidx].push_back(vitr->point());
+    }
+  }
+  std::vector<Kernel::Point_3> cvx_hull_points;
+  std::vector<std::vector<std::size_t> > cvx_hulls;
+  for (std::size_t i = 0; i < m_approx.number_of_proxies(); ++i) {
+    const std::vector<Kernel::Point_3> &pts = patch_points[i];
+    const Kernel::Plane_3 plane = patch_planes[i];
+    const Kernel::Point_3 origin = plane.projection(pts.front());
+
+    Kernel::Vector_3 base1 = plane.base1();
+    Kernel::Vector_3 base2 = plane.base2();
+    base1 = base1 / std::sqrt(base1.squared_length());
+    base2 = base2 / std::sqrt(base2.squared_length());
+
+    Kernel::Line_3 base_linex(origin, base1);
+    Kernel::Line_3 base_liney(origin, base2);
+
+    std::vector<Kernel::Point_2> pts_2d;
+    BOOST_FOREACH(const Kernel::Point_3 &p, pts) {
+      const Kernel::Point_3 point = plane.projection(p);
+      Kernel::Vector_3 vecx(origin, base_linex.projection(point));
+      Kernel::Vector_3 vecy(origin, base_liney.projection(point));
+      double x = std::sqrt(vecx.squared_length());
+      double y = std::sqrt(vecy.squared_length());
+      x = vecx * base1 < 0 ? -x : x;
+      y = vecy * base2 < 0 ? -y : y;
+      pts_2d.push_back(Kernel::Point_2(x, y));
+    }
+
+    std::vector<Kernel::Point_2> cvx_hull_2d;
+    CGAL::convex_hull_2(pts_2d.begin(), pts_2d.end(), std::back_inserter(cvx_hull_2d));
+
+    cvx_hulls.push_back(std::vector<std::size_t>());
+    BOOST_FOREACH(const Kernel::Point_2 &p, cvx_hull_2d) {
+      cvx_hulls.back().push_back(cvx_hull_points.size());
+      cvx_hull_points.push_back(origin + p.x() * base1 + p.y() * base2);
+    }
+  }
+  Scene_polygon_soup_item *cvx_hull_item = new Scene_polygon_soup_item();
+  cvx_hull_item->load(cvx_hull_points, cvx_hulls);
+  cvx_hull_item->setName(tr("Patch convex hull of %1").arg(
+    scene->item(scene->mainSelectionIndex())->name()));
+  cvx_hull_item->setColor(Qt::yellow);
+  cvx_hull_item->setRenderingMode(FlatPlusEdges);
+  scene->addItem(cvx_hull_item);
 
   QApplication::restoreOverrideCursor();
 }
