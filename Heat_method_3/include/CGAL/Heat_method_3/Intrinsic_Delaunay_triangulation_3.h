@@ -169,16 +169,16 @@ public: // for the BGL functions below. They should maybe become friend?
 
 public:
   /// Constructor
-  /// \param tm the triangle mesh
-  Intrinsic_Delaunay_triangulation_3(const TriangleMesh& tm)
-    : tm(), tmref(tm), m_vpm(*this), hcm(get(Halfedge_coordinate_tag(), this->tm))
+  /// \param input_tm the triangle mesh
+  Intrinsic_Delaunay_triangulation_3(const TriangleMesh& input_tm)
+    : m_intrinsic_tm(), m_input_tm(input_tm), m_vpm(*this), hcm(get(Halfedge_coordinate_tag(), m_intrinsic_tm))
   {
     build();
   }
 
   template <class VertexPointMap>
-  Intrinsic_Delaunay_triangulation_3(const TriangleMesh& tm, VertexPointMap vpm)
-    : tm(), tmref(tm), m_vpm(*this), hcm(get(Halfedge_coordinate_tag(), this->tm))
+  Intrinsic_Delaunay_triangulation_3(const TriangleMesh& input_tm, VertexPointMap vpm)
+    : m_intrinsic_tm(), m_input_tm(input_tm), m_vpm(*this), hcm(get(Halfedge_coordinate_tag(), m_intrinsic_tm))
   {
     build(vpm);
   }
@@ -189,14 +189,14 @@ public:
   const Triangle_mesh&
   triangle_mesh() const
   {
-    return tm;
+    return m_intrinsic_tm;
   }
 
 
   Triangle_mesh&
   triangle_mesh()
   {
-    return tm;
+    return m_intrinsic_tm;
   }
 
   const HalfedgeCoordinateMap&
@@ -226,12 +226,12 @@ private:
   get_cotan_weight(edge_descriptor ed)
   {
     double cotan_weight = 0;
-    halfedge_descriptor hd = halfedge(ed, tm);
-    halfedge_descriptor hd2 = next(hd,tm);
-    halfedge_descriptor hd3 = next(hd2,tm);
+    halfedge_descriptor hd = halfedge(ed, m_intrinsic_tm);
+    halfedge_descriptor hd2 = next(hd,m_intrinsic_tm);
+    halfedge_descriptor hd3 = next(hd2,m_intrinsic_tm);
     Index a_i = get(edge_id_map, ed);
-    Index b_i = get(edge_id_map, edge(hd2,tm));
-    Index c_i = get(edge_id_map, edge(hd3,tm));
+    Index b_i = get(edge_id_map, edge(hd2,m_intrinsic_tm));
+    Index c_i = get(edge_id_map, edge(hd3,m_intrinsic_tm));
     double a = edge_lengths[a_i] + 0.0;
     double b = edge_lengths[b_i] + 0.0;
     double c = edge_lengths[c_i] + 0.0;
@@ -239,11 +239,11 @@ private:
     double tan2 = CGAL::sqrt(CGAL::abs(((a-b+c)*(a+b-c))/((a+b+c)*(-a+b+c))));
     cotan_weight+=(1-(tan2*tan2))/(2*tan2);
 
-    hd = opposite(hd,tm);
-    hd2 =next(hd,tm);
-    hd3 = next(hd2,tm);
-    b_i = get(edge_id_map, edge(hd2,tm));
-    c_i = get(edge_id_map, edge(hd3,tm));
+    hd = opposite(hd,m_intrinsic_tm);
+    hd2 =next(hd,m_intrinsic_tm);
+    hd3 = next(hd2,m_intrinsic_tm);
+    b_i = get(edge_id_map, edge(hd2,m_intrinsic_tm));
+    c_i = get(edge_id_map, edge(hd3,m_intrinsic_tm));
     b = edge_lengths[b_i] + 0.0;
     c = edge_lengths[c_i] + 0.0;
     tan2 = CGAL::sqrt(CGAL::abs(((a-b+c)*(a+b-c))/((a+b+c)*(-a+b+c))));
@@ -266,20 +266,20 @@ private:
   void
   change_edge_length(Index i, edge_descriptor ed)
   {
-    halfedge_descriptor hd = halfedge(ed,tm);
-    halfedge_descriptor hd2 = next(hd,tm);
-    halfedge_descriptor hd3 = next(hd2,tm);
-    Index b_i = get(edge_id_map, edge(hd2,tm));
-    Index c_i = get(edge_id_map, edge(hd3,tm));
+    halfedge_descriptor hd = halfedge(ed,m_intrinsic_tm);
+    halfedge_descriptor hd2 = next(hd,m_intrinsic_tm);
+    halfedge_descriptor hd3 = next(hd2,m_intrinsic_tm);
+    Index b_i = get(edge_id_map, edge(hd2,m_intrinsic_tm));
+    Index c_i = get(edge_id_map, edge(hd3,m_intrinsic_tm));
     double a = edge_lengths[i];
     double b1 = edge_lengths[b_i];
     double c1 = edge_lengths[c_i];
     double tan2a = CGAL::sqrt(CGAL::abs(((c1-a+b1)*(-b1+a+c1))/((a+b1+c1)*(b1+a-c1))));
-    hd = opposite(hd,tm);
-    hd2 =next(hd,tm);
-    hd3 = next(hd2,tm);
-    b_i = get(edge_id_map, edge(hd2,tm));
-    c_i = get(edge_id_map, edge(hd3,tm));
+    hd = opposite(hd,m_intrinsic_tm);
+    hd2 =next(hd,m_intrinsic_tm);
+    hd3 = next(hd2,m_intrinsic_tm);
+    b_i = get(edge_id_map, edge(hd2,m_intrinsic_tm));
+    c_i = get(edge_id_map, edge(hd3,m_intrinsic_tm));
     double b2 = edge_lengths[b_i];
     double c2 = edge_lengths[c_i];
     double tan2d = CGAL::sqrt(CGAL::abs(((-a+b2+c2)*(a+b2-c2))/((a+b2+c2)*(a-b2+c2))));
@@ -312,12 +312,12 @@ private:
       marked_edges[edge_i]=0;
       //if the edge itself is not locally delaunay, go back
       if(!(is_edge_locally_delaunay(ed))) {
-        if(!(is_border(ed,tm))) {
+        if(!(is_border(ed,m_intrinsic_tm))) {
           a++;
           change_edge_length(edge_i,ed);
-          halfedge_descriptor hd = (halfedge(ed, tm));
-          CGAL::Euler::flip_edge(hd, tm);
-          edge_descriptor next_edge= edge(next(hd,tm),tm);
+          halfedge_descriptor hd = (halfedge(ed, m_intrinsic_tm));
+          CGAL::Euler::flip_edge(hd, m_intrinsic_tm);
+          edge_descriptor next_edge= edge(next(hd,m_intrinsic_tm),m_intrinsic_tm);
           Index next_edge_i =  get(edge_id_map, next_edge);
 
           //if edge was already checked, go back and check again
@@ -326,19 +326,19 @@ private:
             stack.push(next_edge);
             marked_edges[next_edge_i] = 1;
           }
-          next_edge = edge(prev(hd,tm),tm);
+          next_edge = edge(prev(hd,m_intrinsic_tm),m_intrinsic_tm);
           next_edge_i = get(edge_id_map,next_edge);
           if(!(marked_edges[next_edge_i])) {
             stack.push(next_edge);
             marked_edges[next_edge_i] = 1;
           }
-          next_edge = edge(next(opposite(hd,tm),tm),tm);
+          next_edge = edge(next(opposite(hd,m_intrinsic_tm),m_intrinsic_tm),m_intrinsic_tm);
           next_edge_i = get(edge_id_map,next_edge);
           if(!(marked_edges[next_edge_i])) {
             stack.push(next_edge);
             marked_edges[next_edge_i] = 1;
           }
-          next_edge = edge(prev(opposite(hd,tm),tm),tm);
+          next_edge = edge(prev(opposite(hd,m_intrinsic_tm),m_intrinsic_tm),m_intrinsic_tm);
           next_edge_i = get(edge_id_map,next_edge);
           if(!(marked_edges[next_edge_i])) {
             stack.push(next_edge);
@@ -356,11 +356,11 @@ private:
   void
   build(VertexPointMap vpm)
   {
-    CGAL_precondition(is_triangle_mesh(tm));
+    CGAL_precondition(is_triangle_mesh(m_intrinsic_tm));
 
     std::vector<std::pair<vertex_descriptor,
                           vertex_descriptor> > pairs;
-    copy_face_graph(tmref, tm,
+    copy_face_graph(m_input_tm, m_intrinsic_tm,
                     parameters::vertex_to_vertex_output_iterator(std::back_inserter(pairs)).
                     vertex_point_map(vpm));
 
@@ -370,41 +370,41 @@ private:
     }
 
     edge_stack stack;
-    number_of_edges = num_edges(tm);
+    number_of_edges = num_edges(m_intrinsic_tm);
     edge_lengths.resize(number_of_edges);
     mark_edges.resize(number_of_edges, 1);
-    edge_id_map = get(Edge_property_tag(), tm);
+    edge_id_map = get(Edge_property_tag(), m_intrinsic_tm);
     Index edge_i = 0;
-    BOOST_FOREACH(edge_descriptor ed, edges(tm)) {
-      edge_lengths[edge_i] = Polygon_mesh_processing::edge_length(halfedge(ed,tm),tm);
+    BOOST_FOREACH(edge_descriptor ed, edges(m_intrinsic_tm)) {
+      edge_lengths[edge_i] = Polygon_mesh_processing::edge_length(halfedge(ed,m_intrinsic_tm),m_intrinsic_tm);
       put(edge_id_map, ed, edge_i++);
       stack.push(ed);
     }
     loop_over_edges(stack, mark_edges);
     //now that edges are calculated, go through and for each face, calculate the vertex positions around it
 
-    BOOST_FOREACH(face_descriptor f, faces(tm)) {
+    BOOST_FOREACH(face_descriptor f, faces(m_intrinsic_tm)) {
       CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
 
-      boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
-      halfedge_descriptor hd = halfedge(f,tm);
-      if(face(hd,tm) != f) {
-        hd = opposite(hd,tm);
+      boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,m_intrinsic_tm),m_intrinsic_tm);
+      halfedge_descriptor hd = halfedge(f,m_intrinsic_tm);
+      if(face(hd,m_intrinsic_tm) != f) {
+        hd = opposite(hd,m_intrinsic_tm);
       }
-      hd = next(hd,tm);
+      hd = next(hd,m_intrinsic_tm);
       //each 'local' set of coordinates will have 0,0 at the first vertex/halfedge
       Point_2 p11(0,0);
-      put(hcm, prev(hd,tm),p11);
-      edge_descriptor ed1 = edge(hd, tm);
-      hd = next(hd,tm);
+      put(hcm, prev(hd,m_intrinsic_tm),p11);
+      edge_descriptor ed1 = edge(hd, m_intrinsic_tm);
+      hd = next(hd,m_intrinsic_tm);
       //the second local coordinate will be edge_length(first edge),0
       Point_2 p21(edge_lengths[get(edge_id_map,ed1)], 0);
-      put(hcm,prev(hd,tm),p21);
+      put(hcm,prev(hd,m_intrinsic_tm),p21);
 
       //use basic trigonometry to compute third coordinate
-      edge_descriptor ed2 = edge(hd, tm);
-      hd = next(hd,tm);
-      edge_descriptor ed3 = edge(hd, tm);
+      edge_descriptor ed2 = edge(hd, m_intrinsic_tm);
+      hd = next(hd,m_intrinsic_tm);
+      edge_descriptor ed3 = edge(hd, m_intrinsic_tm);
       Index e1 = get(edge_id_map, ed1);
       Index e2 = get(edge_id_map, ed2);
       Index e3 = get(edge_id_map, ed3);
@@ -414,7 +414,7 @@ private:
       double angle_a = -(e2_len*e2_len) + e3_len*e3_len + e1_len*e1_len;
       angle_a = acos(angle_a/(2*e3_len*e1_len));
       Point_2 p31(e3_len*std::cos(angle_a), e3_len*std::sin(angle_a));
-      put(hcm,prev(hd,tm),p31);
+      put(hcm,prev(hd,m_intrinsic_tm),p31);
 
     }
   }
@@ -422,13 +422,13 @@ private:
   void
   build()
   {
-    build( get(boost::vertex_point, tmref) );
+    build( get(boost::vertex_point, m_input_tm) );
   }
 
 
   //todo:: determine which can be const
-  TriangleMesh tm; // this is the copy where edges get flipped
-  const TriangleMesh& tmref; // this is the reference to the original
+  TriangleMesh m_intrinsic_tm; // this is the copy where edges get flipped
+  const TriangleMesh& m_input_tm; // this is the reference to the original
   Vertex_point_map m_vpm;
   HalfedgeCoordinateMap hcm;
   Edge_id_map edge_id_map;
