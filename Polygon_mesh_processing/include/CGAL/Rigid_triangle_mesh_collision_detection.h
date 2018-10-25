@@ -243,8 +243,9 @@ public:
     m_is_closed[id] = is_closed(tm);
     m_own_aabb_trees[id] = true;
     Tree* t = new Tree(boost::begin(faces(tm)), boost::end(faces(tm)), tm, vpm);
+    t->build();
     m_aabb_trees[id] = t;
-    m_traversal_traits[id] = Traversal_traits(m_aabb_trees.back()->traits());
+    m_traversal_traits[id] = Traversal_traits(m_aabb_trees[id]->traits());
     add_cc_points(tm, id, np);
 
     return id;
@@ -286,7 +287,7 @@ public:
     m_is_closed[id] = is_closed(tm);
     m_own_aabb_trees[id] = false ;
     m_aabb_trees[id] = const_cast<Tree*>(&tree);
-    m_traversal_traits[id] = Traversal_traits(m_aabb_trees.back()->traits());
+    m_traversal_traits[id] = Traversal_traits(m_aabb_trees[id]->traits());
     collect_one_point_per_connected_component(tm, m_points_per_cc[id], np);
     return id;
   }
@@ -604,7 +605,7 @@ public:
     m_is_closed[id] = is_closed;
     m_own_aabb_trees[id] = false ;
     m_aabb_trees[id] = const_cast<Tree*>(&tree);
-    m_traversal_traits[id] = Traversal_traits(m_aabb_trees.back()->traits());
+    m_traversal_traits[id] = Traversal_traits(m_aabb_trees[id]->traits());
     m_points_per_cc[id] = points_per_cc;
 
     return id;
