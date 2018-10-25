@@ -686,6 +686,10 @@ struct Base_helper<TriangleMesh, Traits, Tag_true, LA, VertexPointMap>
  *
  * \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
  * \tparam Traits a model of HeatMethodTraits_3
+ * \tparam UseIntrinsicDelaunay indicates if an intrinsic Delaunay triangulation should be internally constructed (`Tag_true`)
+ *                              or if the input mesh should be used as is (`Tag_false`).
+ *                              If `Tag_true` the type `TriangleMesh` must have an internal property for `vertex_point`
+ *                              and its value type must be the same as the value type of `VertexPointMap`.
  * \tparam LA a model of `SparseLinearAlgebraWithFactorTraits_d`.
 
  * \tparam VertexPointMap a model of `ReadablePropertyMap` with
