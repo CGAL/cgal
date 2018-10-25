@@ -20,7 +20,7 @@ on a fixed domain, since precomputation done for the first query can be re-used.
 
 As a rule of thumb, the method works well on triangle meshes which are
 Delaunay, though in practice may also work fine for meshes that are far from
-Delaunay.  In order to ensure good behavior, one can optionally apply enable a
+Delaunay.  In order to ensure good behavior, one can optionally enable a
 preprocessing step that constructs an <em>intrinsic Delaunay triangulation
 (iDT)</em>; this triangulation will not change the input geometry, but
 generally improves the quality of the solution.  The cost of this preprocessing
@@ -42,8 +42,8 @@ This implementation is based on \cgalCite{cgal:cww-ghnac-13} and \cgalCite{cgal:
 \section sec_HM_examples Examples
 
 We give examples for the free function `CGAL::Heat_method_3::geodesic_distances_3()`,
-for the class template `CGAL::Heat_method_3::Heat_method_3`, and
-for the class template `CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3`. 
+for the class template `CGAL::Heat_method_3::Heat_method_3`, with and without the use
+of intrinsic Delaunay triangulation.
 
 \subsection HM_example_Free_function Using a Free Function
 
@@ -68,16 +68,16 @@ when one adds and removes source vertices. It precomputes matrix
 factorization which depend only on the input mesh and not the particular
 set of source vertices.  In the example we compute the distances to one
 source, add the farthest vertex as a second source vertex, then compute
-the distances to these two sources. 
+the distances to these two sources.
 
 \cgalExample{Heat_method_3/heat_method_surface_mesh.cpp}
 
 
-\subsection HM_example_Intrinsic Using the Intrinsic Delaunay Triangulation Class
+\subsection HM_example_Intrinsic Using the Intrinsic Delaunay Triangulation
 
 The following example shows the heat method on a triangle mesh using the
-intrinsic Delaunay triangulation (iDT) algorithm. The iDT should triangulation
-should be built when the input mesh has poor quality, or when results of
+intrinsic Delaunay triangulation (iDT) algorithm. The iDT
+should be used when the input mesh has poor quality, or when results of
 distance computation appear to be highly inaccurate.  (Poor quality in this
 case means that the input is far from Delaunay, though even in this case
 one may still get good results without iDT, depending on the specific
@@ -215,7 +215,7 @@ todo
 \section sec_HM_history Implementation History
 
 This package was developed by Christina Vaz, Keenan Crane and Andreas
-Fabri as a project of the Google Summer of Code 2018. 
+Fabri as a project of the Google Summer of Code 2018.
 
 
 

@@ -48,11 +48,12 @@
 #include <array>
 #include <cmath>
 
+#ifndef DOXYGEN_RUNNING
 
 namespace CGAL {
 namespace Heat_method_3 {
 
-#ifndef DOXYGEN_RUNNING
+
 
 // forward declaration
 template <typename IDT>
@@ -61,8 +62,6 @@ struct IDT_vertex_point_property_map;
 // forward declaration
 template <typename IDT, typename PM>
 struct IDT_vertex_distance_property_map;
-
-#endif
 
 template <class TriangleMesh>
 struct Intrinsic_Delaunay_triangulation_3_vertex_descriptor {
@@ -940,6 +939,8 @@ get(CGAL::dynamic_vertex_property_t<dT> dvp,
 
 } // namespace Heat_method_3
 } // namespace CGAL
+
+#endif // DOXYGEN_RUNNING
 
 #include <CGAL/enable_warnings.h>
 #endif // CGAL_INTRINSIC_DELAUNAY_TRIANGULATION_3_H

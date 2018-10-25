@@ -14,13 +14,13 @@
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Keenan Crane, Christina Vaz, Andreas Fabri}
-\cgalPkgDesc{The package provides the Heat Method, a geodesic distance algorithm, and an Intrinsic Delaunay remeshing algorithm to be run on triangle meshes. }
+\cgalPkgDesc{The package provides the Heat Method, a geodesic distance algorithm. }
 \cgalPkgManuals{Chapter_HeatMethod,PkgHeatMethod}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.14}
 \cgalPkgDependsOn{ \ref PkgSolverSummary; <a href="https://doc.cgal.org/latest/Manual/installation.html#thirdpartyEigen">Eigen</a>}
-\cgalPkgBib{cgal:x-x}
+\cgalPkgBib{cgal:cvf-hm3}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
@@ -34,7 +34,6 @@
 
 ## Classes ##
 - `CGAL::Heat_method_3::Heat_method_3`
-- `CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3`
 
 ## Functions ##
 
