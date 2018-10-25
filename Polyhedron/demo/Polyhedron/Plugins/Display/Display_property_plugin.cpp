@@ -11,7 +11,6 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Heat_method_3/Heat_method_3.h>
-#include <CGAL/Heat_method_3/Intrinsic_Delaunay_triangulation_3.h>
 
 #include "Scene_points_with_normal_item.h"
 #include "Messages_interface.h"
@@ -310,10 +309,8 @@ class DisplayPropertyPlugin :
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
   typedef SMesh::Property_map<boost::graph_traits<SMesh>::vertex_descriptor, double> Vertex_distance_map;
-  typedef CGAL::Heat_method_3::Heat_method_3<SMesh,EPICK,Vertex_distance_map> Heat_method;
-
-  typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<SMesh,EPICK,Vertex_distance_map> Idt;
-  typedef CGAL::Heat_method_3::Heat_method_3<Idt,EPICK,Idt::Vertex_distance_map> Heat_method_idt;
+  typedef CGAL::Heat_method_3::Heat_method_3<SMesh> Heat_method;
+  typedef CGAL::Heat_method_3::Heat_method_3<SMesh, CGAL::Tag_true> Heat_method_idt;
   
 public:
 
@@ -715,14 +712,13 @@ private Q_SLOTS:
     SMesh& mesh = *item->face_graph();
     Heat_method * hm;
     Heat_method_idt * hm_idt;
-    SMesh::Property_map<vertex_descriptor, double> heat_intensity;
+    SMesh::Property_map<vertex_descriptor, double> heat_intensity =
+      mesh.add_property_map<vertex_descriptor, double>("v:heat_intensity", 0).first;
     if(! iDT){
       if(mesh_heat_method_map.find(item) != mesh_heat_method_map.end()){
         hm = mesh_heat_method_map[item];
-        heat_intensity = mesh.property_map<vertex_descriptor, double>("v:heat_intensity").first;
       }else {
-        heat_intensity = mesh.add_property_map<vertex_descriptor, double>("v:heat_intensity", 0).first;
-        hm = new Heat_method(mesh,heat_intensity);
+        hm = new Heat_method(mesh);
         mesh_heat_method_map[item] = hm;
       }
       connect(item, &Scene_surface_mesh_item::aboutToBeDestroyed,
@@ -733,14 +729,10 @@ private Q_SLOTS:
               }
               );
     } else {
-      Idt* idt;
       if(mesh_heat_method_idt_map.find(item) != mesh_heat_method_idt_map.end()){
         hm_idt = mesh_heat_method_idt_map[item];
-        heat_intensity = mesh.property_map<vertex_descriptor, double>("v:heat_intensity").first;
       }else {
-        heat_intensity = mesh.add_property_map<vertex_descriptor, double>("v:heat_intensity", 0).first;
-        idt = new Idt(mesh,heat_intensity);
-        hm_idt = new Heat_method_idt(*idt,idt->vertex_distance_map());
+        hm_idt = new Heat_method_idt(mesh);
         mesh_heat_method_idt_map[item] = hm_idt;
       }
       connect(item, &Scene_surface_mesh_item::aboutToBeDestroyed,
@@ -749,9 +741,7 @@ private Q_SLOTS:
                 if(it == mesh_heat_method_idt_map.end())
                   return;
                 Heat_method_idt *hm_idt = it->second;
-                Idt* idt = &(const_cast<Idt&>(hm_idt->triangle_mesh()));
                 delete hm_idt;
-                delete idt;
                 mesh_heat_method_idt_map.erase(it);
               }
               );
@@ -779,9 +769,9 @@ private Q_SLOTS:
     }
 
     if(iDT){
-      hm_idt->update();
+      hm_idt->fill_distance_map(heat_intensity);
     }else{
-      hm->update();
+      hm->fill_distance_map(heat_intensity);
     }
 
     double max = 0;
