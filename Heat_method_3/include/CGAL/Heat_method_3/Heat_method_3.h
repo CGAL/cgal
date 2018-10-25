@@ -621,7 +621,7 @@ template<class TriangleMesh,
          class VertexPointMap>
 struct Idt_storage
 {
-  Intrinsic_Delaunay_triangulation_3<TriangleMesh, VertexPointMap, Traits> m_idt;
+  Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits> m_idt;
 
   Idt_storage(const TriangleMesh& tm, VertexPointMap vpm)
     : m_idt(tm, vpm)
@@ -638,12 +638,12 @@ template <typename TriangleMesh,
           typename VertexPointMap>
 struct Base_helper<TriangleMesh, Traits, Tag_true, LA, VertexPointMap>
   : public Idt_storage<TriangleMesh, Traits, VertexPointMap>
-  , public Heat_method_3<Intrinsic_Delaunay_triangulation_3<TriangleMesh, VertexPointMap, Traits>,
+  , public Heat_method_3<Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits>,
                          Traits,
                          LA,
-                         typename Intrinsic_Delaunay_triangulation_3<TriangleMesh, VertexPointMap, Traits>::Vertex_point_map>
+                         typename Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits>::Vertex_point_map>
 {
-  typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TriangleMesh, VertexPointMap, Traits> Idt;
+  typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits> Idt;
   typedef Idt_storage<TriangleMesh, Traits, VertexPointMap> Idt_wrapper;
 
   typedef Heat_method_3<Idt, Traits, LA, typename Idt::Vertex_point_map> type;

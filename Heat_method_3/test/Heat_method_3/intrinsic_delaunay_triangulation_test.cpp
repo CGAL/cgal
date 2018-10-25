@@ -22,10 +22,7 @@ typedef boost::property_map<Mesh, Vertex_distance_tag >::type Vertex_distance_ma
 
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 
-typedef CGAL::dynamic_halfedge_property_t<Point_2> Halfedge_coordinate_tag;
-typedef boost::property_map<Mesh, Halfedge_coordinate_tag >::type Halfedge_coordinate_map;
-
-typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<Mesh, Halfedge_coordinate_map> IDT;
+typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<Mesh> IDT;
 
 
 void bglstyle(const IDT& idt)
@@ -37,6 +34,7 @@ void bglstyle(const IDT& idt)
   vertices(idt);
   IDT_halfedge_descriptor hd = *(halfedges(idt).first);
   IDT_vertex_descriptor vd = vertex(hd,idt);
+  CGAL_USE(vd);
 
   //get(idt, CGAL::vertex_point);
 }
@@ -46,8 +44,6 @@ int main()
 {
   Mesh sm;
 
-  Halfedge_coordinate_map halfedge_coord_map = get(Halfedge_coordinate_tag(), sm);
-
   std::ifstream in("data/brain100k.off");
   in >> sm;
   if(!in || num_vertices(sm) == 0) {
@@ -55,7 +51,7 @@ int main()
     return 1;
   }
   num_faces(sm);
-  IDT im(sm, halfedge_coord_map);
+  IDT im(sm);
 
   std::cout<<"success \n";
   return 0;
