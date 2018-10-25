@@ -17,8 +17,8 @@ typedef CGAL::Surface_mesh<Point>                            Surface_mesh;
 typedef boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
 typedef Surface_mesh::Property_map<vertex_descriptor,double> Vertex_distance_map;
 
-typedef CGAL::Heat_method_3::Heat_method_3<Surface_mesh, Kernel> Heat_method;
-typedef CGAL::Heat_method_3::Heat_method_3<Surface_mesh, Kernel, CGAL::Tag_true> Heat_method_idt;
+typedef CGAL::Heat_method_3::Heat_method_3<Surface_mesh> Heat_method;
+typedef CGAL::Heat_method_3::Heat_method_3<Surface_mesh, CGAL::Tag_true> Heat_method_idt;
 
 
 

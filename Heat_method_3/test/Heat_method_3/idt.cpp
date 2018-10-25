@@ -15,10 +15,7 @@ typedef Kernel::Point_3                                      Point;
 typedef Kernel::Point_2                                      Point_2;
 typedef CGAL::Surface_mesh<Point>                            Surface_mesh;
 
-typedef boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
-typedef Surface_mesh::Property_map<vertex_descriptor,double> Vertex_distance_map;
-
-typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<Surface_mesh,Kernel, Vertex_distance_map> Idt;
+typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<Surface_mesh> Idt;
 
 
 int validate(char* fname)
@@ -34,9 +31,7 @@ int validate(char* fname)
     return 1;
   }
   
-  Vertex_distance_map vdm_idt = sm.add_property_map<vertex_descriptor,double>("v:idt",0).first;
-
-  Idt idt(sm, vdm_idt);
+  Idt idt(sm);
   boost::property_map<Idt,CGAL::vertex_point_t>::type vpm = get(CGAL::vertex_point_t(),idt);
   std::cout.precision(17);
   BOOST_FOREACH(boost::graph_traits<Idt>::face_descriptor fd, faces(idt)){

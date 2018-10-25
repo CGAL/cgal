@@ -621,7 +621,7 @@ template<class TriangleMesh,
          class VertexPointMap>
 struct Idt_storage
 {
-  Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits, VertexPointMap> m_idt;
+  Intrinsic_Delaunay_triangulation_3<TriangleMesh, VertexPointMap, Traits> m_idt;
 
   Idt_storage(const TriangleMesh& tm, VertexPointMap vpm)
     : m_idt(const_cast<TriangleMesh&>(tm), vpm)
@@ -638,12 +638,12 @@ template <typename TriangleMesh,
           typename VertexPointMap>
 struct Base_helper<TriangleMesh, Traits, Tag_true, LA, VertexPointMap>
   : public Idt_storage<TriangleMesh, Traits, VertexPointMap>
-  , public Heat_method_3<Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits, VertexPointMap>,
+  , public Heat_method_3<Intrinsic_Delaunay_triangulation_3<TriangleMesh, VertexPointMap, Traits>,
                          Traits,
                          LA,
-                         typename Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits, VertexPointMap>::Vertex_point_map>
+                         typename Intrinsic_Delaunay_triangulation_3<TriangleMesh, VertexPointMap, Traits>::Vertex_point_map>
 {
-  typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits, VertexPointMap> Idt;
+  typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TriangleMesh, VertexPointMap, Traits> Idt;
   typedef Idt_storage<TriangleMesh, Traits, VertexPointMap> Idt_wrapper;
 
   typedef Heat_method_3<Idt, Traits, LA, typename Idt::Vertex_point_map> type;
@@ -695,14 +695,14 @@ struct Base_helper<TriangleMesh, Traits, Tag_true, LA, VertexPointMap>
  *
  */
 template <typename TriangleMesh,
-          typename Traits,
           typename UseIntrinsicDelaunay = Tag_false,
 #ifdef CGAL_EIGEN3_ENABLED
           typename LA = Eigen_solver_traits<Eigen::SimplicialLDLT<typename Eigen_sparse_matrix<double>::EigenType > >,
 #else
           typename LA = Default,
 #endif
-          typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::const_type>
+          typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::const_type,
+          typename Traits = typename Kernel_traits< typename boost::property_traits<VertexPointMap>::value_type>::Kernel >
 class Heat_method_3
 #ifndef DOXYGEN_RUNNING
   : public internal::Base_helper<TriangleMesh, Traits, UseIntrinsicDelaunay, LA, VertexPointMap>
@@ -830,12 +830,7 @@ geodesic_distances_3(const TriangleMesh& tm,
                      VertexDistanceMap vdm,
                      typename boost::graph_traits<TriangleMesh>::vertex_descriptor source)
 {
-  typedef typename boost::property_map<TriangleMesh, vertex_point_t>::type PPM;
-  typedef typename boost::property_traits<PPM>::value_type Point_3;
-  typedef typename CGAL::Kernel_traits<Point_3>::Kernel Kernel;
-  typedef CGAL::Heat_method_3::Heat_method_3<TriangleMesh,Kernel> Heat_method;
-
-  Heat_method hm(tm);
+  CGAL::Heat_method_3::Heat_method_3<TriangleMesh> hm(tm);
   hm.add_source(source);
   hm.fill_distance_map(vdm);
 }
@@ -851,12 +846,7 @@ geodesic_distances_with_intrinsic_Delaunay_triangulation_3(const TriangleMesh& t
                                                            VertexDistanceMap vdm,
                                                            typename boost::graph_traits<TriangleMesh>::vertex_descriptor source)
 {
-  typedef typename boost::property_map<TriangleMesh, vertex_point_t>::type PPM;
-  typedef typename boost::property_traits<PPM>::value_type Point_3;
-  typedef typename CGAL::Kernel_traits<Point_3>::Kernel Kernel;
-  typedef CGAL::Heat_method_3::Heat_method_3<TriangleMesh, Kernel, CGAL::Tag_true> Heat_method;
-
-  Heat_method hm(tm);
+  CGAL::Heat_method_3::Heat_method_3<TriangleMesh, CGAL::Tag_true> hm(tm);
   hm.add_source(source);
   hm.fill_distance_map(vdm);
 }

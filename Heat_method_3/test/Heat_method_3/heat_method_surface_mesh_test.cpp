@@ -22,7 +22,7 @@ typedef CGAL::dynamic_vertex_property_t<double> Vertex_distance_tag;
 typedef boost::property_map<Mesh, Vertex_distance_tag >::type Vertex_distance_map;
 
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
-typedef CGAL::Heat_method_3::Heat_method_3<Mesh,Kernel,Vertex_distance_map> Heat_method;
+typedef CGAL::Heat_method_3::Heat_method_3<Mesh> Heat_method;
 typedef CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT<CGAL::Eigen_sparse_matrix<double>::EigenType > > Solver_traits;
 typedef Solver_traits::Matrix SparseMatrix;
 
