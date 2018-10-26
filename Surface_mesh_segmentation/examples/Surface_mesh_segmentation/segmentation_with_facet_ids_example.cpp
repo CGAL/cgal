@@ -33,11 +33,12 @@ private:
     std::vector<ValueType>& internal_vector;
 };
 
-int main()
+int main(int argc, char* argv[])
 {
     // create and read Polyhedron
     Polyhedron mesh;
-    std::ifstream input("data/cactus.off");
+    const char* filename = (argc > 1) ? argv[1] : "data/cactus.off";
+    std::ifstream input(filename);
     if ( !input || !(input >> mesh) || mesh.empty() || ( !CGAL::is_triangle_mesh(mesh)) ) {
       std::cerr << "Input is not a triangle mesh" << std::endl;
       return EXIT_FAILURE;

@@ -18,13 +18,10 @@ typedef boost::graph_traits<Mesh>::face_iterator face_iterator;
 int main(int argc, char** argv )
 {
   Mesh mesh;
-  if (argc==2){
-    std::ifstream input(argv[1]); 
-    input >> mesh;
-  } else {
-    std::ifstream cactus("data/cactus.off");
-    cactus >> mesh;
-  }
+  const char* filename = (argc > 1) ? argv[1] : "data/cactus.off";
+  std::ifstream input(filename);
+  input >> mesh;
+
   if (!CGAL::is_triangle_mesh(mesh)){
     std::cerr << "Input is not a triangle mesh" << std::endl;
     return EXIT_FAILURE;

@@ -23,11 +23,9 @@ typedef boost::graph_traits<Mesh>::face_iterator face_iterator;
 int main(int argc, char** argv )
 {
   Mesh mesh;
-  if (argc==2)
-    OpenMesh::IO::read_mesh(mesh, argv[1]);
-  else
-    OpenMesh::IO::read_mesh(mesh, "data/cactus.off");
- 
+  const char* filename = (argc > 1) ? argv[1] : "data/cactus.off";
+  OpenMesh::IO::read_mesh(mesh, filename);
+
   if (!CGAL::is_triangle_mesh(mesh)){
     std::cerr << "Input geometry is not triangulated." << std::endl;
     return EXIT_FAILURE;

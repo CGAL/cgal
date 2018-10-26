@@ -19,12 +19,13 @@ typedef CGAL::Sequential_tag Concurrency_tag;
 typedef CGAL::Parallel_tag Concurrency_tag;
 #endif
 
-int main()
+int main(int argc, char* argv[])
 {
   // read mesh
   Mesh mesh;
   
-  std::ifstream input("data/sword.off");
+  const char* filename = (argc > 1) ? argv[1] : "data/sword.off";
+  std::ifstream input(filename);
   
   if (!input || !(input >> mesh))
   {

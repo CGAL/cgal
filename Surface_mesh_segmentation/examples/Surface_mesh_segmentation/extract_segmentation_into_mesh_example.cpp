@@ -16,13 +16,10 @@ typedef boost::graph_traits<SM>::face_descriptor face_descriptor;
 int main(int argc, char** argv )
 {
   SM mesh;
-  if (argc==2){
-    std::ifstream input(argv[1]);
-    input >> mesh;
-  } else {
-    std::ifstream cactus("data/cactus.off");
-    cactus >> mesh;
-  }
+  const char* filename = (argc > 1) ? argv[1] : "data/cactus.off";
+  std::ifstream input(filename);
+  input >> mesh;
+
   typedef SM::Property_map<face_descriptor,double> Facet_double_map;
   Facet_double_map sdf_property_map;
 

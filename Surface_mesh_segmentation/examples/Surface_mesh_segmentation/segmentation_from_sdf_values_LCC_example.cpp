@@ -15,11 +15,12 @@ typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper
     <2, 3, MyTraits>::type LCC;
 typedef LCC::Attribute_const_handle<2>::type Facet_const_handle;
 
-int main()
+int main(int argc, char* argv[])
 {
   // create and read LCC
   LCC mesh;
-  CGAL::read_off("data/cactus.off", mesh);
+  const char* filename = (argc > 1) ? argv[1] : "data/cactus.off";
+  CGAL::read_off(filename, mesh);
 
   // create a property-map for SDF values
   typedef CGAL::Unique_hash_map<Facet_const_handle, double> Facet_double_map;
