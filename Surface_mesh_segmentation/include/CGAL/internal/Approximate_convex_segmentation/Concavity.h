@@ -59,12 +59,12 @@ namespace internal
     typedef typename GeomTraits::Point_3 Point_3;
     typedef typename GeomTraits::Vector_3 Vector_3;
     typedef typename GeomTraits::Ray_3 Ray_3;
-    
+
     typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
     typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
     typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator vertex_iterator;
-    
+
     typedef std::map<vertex_descriptor, Vector_3> Normals_map;
 
     typedef CGAL::Face_filtered_graph<TriangleMesh> Filtered_graph;
@@ -73,21 +73,21 @@ namespace internal
     typedef CGAL::AABB_tree<CGAL::AABB_traits<GeomTraits, AABB_primitive> > AABB_tree;
 
     typedef boost::optional<typename AABB_tree::template Intersection_and_primitive_id<Ray_3>::Type> Ray_intersection;
-  
+
   public:
-    Concavity(const TriangleMesh& mesh, const Vpm& vpm, const GeomTraits& traits, bool shortest_method = false)
+    Concavity(const TriangleMesh& mesh, const Vpm& vpm, const GeomTraits& traits, bool use_closest_point = false)
     : m_mesh(mesh)
     , m_vpm(vpm)
     , m_traits(traits)
-    , m_shortest_method(shortest_method)
+    , m_use_closest_point(use_closest_point)
     , m_normals_computed(false)
     {}
-    
-    Concavity(const TriangleMesh& mesh, const Vpm& vpm, const GeomTraits& traits, bool shortest_method, const Normals_map& normals_map)
+
+    Concavity(const TriangleMesh& mesh, const Vpm& vpm, const GeomTraits& traits, bool use_closest_point, const Normals_map& normals_map)
     : m_mesh(mesh)
     , m_vpm(vpm)
     , m_traits(traits)
-    , m_shortest_method(shortest_method)
+    , m_use_closest_point(use_closest_point)
     , m_normals_map(normals_map)
     , m_normals_computed(true)
     {}
@@ -99,10 +99,10 @@ namespace internal
     double compute(FacetPropertyMap facet_ids, std::size_t segment_id, DistancesMap& distances)
     {
       compute_normals();
-      
+
       Filtered_graph filtered_mesh(m_mesh, segment_id, facet_ids);
 
-      Concavity<Filtered_graph, Vpm, GeomTraits, ConcurrencyTag, TriangleMesh> concavity(filtered_mesh, m_vpm, m_traits, m_shortest_method, m_normals_map);
+      Concavity<Filtered_graph, Vpm, GeomTraits, ConcurrencyTag, TriangleMesh> concavity(filtered_mesh, m_vpm, m_traits, m_use_closest_point, m_normals_map);
       return concavity.compute(distances);
     }
 
@@ -126,15 +126,15 @@ namespace internal
       }
 
       // compute convex hull
-      CGAL::convex_hull_3(pts.begin(), pts.end(), conv_hull); 
-      
-      if (m_shortest_method)
+      CGAL::convex_hull_3(pts.begin(), pts.end(), conv_hull);
+
+      if (m_use_closest_point)
       {
         return compute_shortest(vertices(m_mesh), conv_hull, distances);
       }
       return compute_projected(vertices(m_mesh), conv_hull, distances);
     }
-    
+
     double compute()
     {
       boost::unordered_map<vertex_descriptor, double> distances;
@@ -160,13 +160,13 @@ namespace internal
 
       if (pts.size() <= 4) return 0;
 
-      if (m_shortest_method)
+      if (m_use_closest_point)
       {
         return compute_shortest(std::make_pair(pts.begin(), pts.end()), conv_hull, distances);
       }
       return compute_projected(std::make_pair(pts.begin(), pts.end()), conv_hull, distances);
     }
-    
+
     double compute(const std::vector<face_descriptor>& faces, const Mesh& conv_hull)
     {
       boost::unordered_map<vertex_descriptor, double> distances;
@@ -186,11 +186,11 @@ namespace internal
     Vpm m_vpm;
     const GeomTraits& m_traits;
 
-    bool m_shortest_method;
+    bool m_use_closest_point;
 
     Normals_map m_normals_map;
     bool m_normals_computed;
-    
+
     /**
     * Computes concavity value projecting vertices from a list onto a convex hull.
     */
@@ -202,35 +202,40 @@ namespace internal
 
       // construct AABB for fast computations of intersections between ray and convex hull
       AABB_tree tree(faces(conv_hull).begin(), faces(conv_hull).end(), conv_hull);
+      tree.build();
 
       // compute intersections and select the largest projection length
-      double result = 0;
+      #ifdef CGAL_LINKED_WITH_TBB
+      typedef tbb::atomic<double> Result_type;
+      #else
+      typedef double Result_type;
+      #endif
+      Result_type result = 0;
 
       // functor that computes intersection, its projection length from a vertex and maximizes the result variable
       struct Intersection_functor
       {
-        Intersection_functor(const TriangleMesh& mesh, const Vpm& vpm, const Normals_map& normals_map, const AABB_tree& tree, DistancesMap& distances, double& result
-#ifdef CGAL_LINKED_WITH_TBB
-        , tbb::mutex& mutex
-#endif
-        )
-        : m_mesh(mesh), m_vpm(vpm), m_normals_map(normals_map), m_tree(tree), m_distances(distances), m_result(result)
-#ifdef CGAL_LINKED_WITH_TBB
-       , m_mutex(mutex)
-#endif
-       {}
+        Intersection_functor(const TriangleMesh& mesh,
+                             const Vpm& vpm,
+                             const Normals_map& normals_map,
+                             const AABB_tree& tree,
+                             DistancesMap& distances,
+                             Result_type* result)
+        : m_mesh(mesh)
+        , m_vpm(vpm)
+        , m_normals_map(normals_map)
+        , m_tree(tree)
+        , m_distances(distances)
+        , m_result(result)
+        {}
 
         void operator() (const vertex_descriptor& vert) const
         {
-          Point_3 origin = get(m_vpm, vert);
+          const Point_3& origin = get(m_vpm, vert);
           Ray_3 ray(origin, m_normals_map.at(vert));
-          
+
           Ray_intersection intersection = m_tree.first_intersection(ray);
 
-#ifdef CGAL_LINKED_WITH_TBB
-          m_mutex.lock();
-#endif
-          put(m_distances, vert, 0.);
           if (intersection)
           {
             const Point_3* intersection_point =  boost::get<Point_3>(&(intersection->first));
@@ -238,12 +243,19 @@ namespace internal
             {
               double d = CGAL::squared_distance(origin, *intersection_point);
               put(m_distances, vert, d);
-              m_result = std::max(m_result, d);
+
+              // update max value stored in distance
+              #ifdef CGAL_LINKED_WITH_TBB
+              double current_value = *m_result;
+              while( current_value < d )
+              {
+                current_value = m_result->compare_and_swap(d, current_value);
+              }
+              #else
+              *m_result = (std::max)(*m_result, d);
+              #endif
             }
           }
-#ifdef CGAL_LINKED_WITH_TBB
-          m_mutex.unlock();
-#endif
         }
 
       private:
@@ -252,114 +264,110 @@ namespace internal
         const Normals_map& m_normals_map;
         const AABB_tree& m_tree;
         DistancesMap& m_distances;
-        double& m_result;
-#ifdef CGAL_LINKED_WITH_TBB
-        tbb::mutex& m_mutex;
-#endif
+        Result_type* m_result;
       };
 
-#ifdef CGAL_LINKED_WITH_TBB
-      tbb::mutex mutex;
-#endif
-      Intersection_functor intersection_functor(m_mesh, m_vpm, m_normals_map, tree, distances, result
-#ifdef CGAL_LINKED_WITH_TBB
-      , mutex
-#endif
-      );
+      Intersection_functor intersection_functor(m_mesh, m_vpm, m_normals_map, tree, distances, &result);
 
 #ifdef CGAL_LINKED_WITH_TBB
       if (boost::is_convertible<ConcurrencyTag, Parallel_tag>::value)
       {
+        BOOST_FOREACH(vertex_descriptor vert, verts)
+        {
+          put(distances, vert, 0.); // make sure that the value can be updated thread-safely
+        }
         tbb::parallel_for_each(verts.first, verts.second, intersection_functor);
       }
       else
 #endif
+      BOOST_FOREACH(vertex_descriptor vert, verts)
       {
-        BOOST_FOREACH(vertex_descriptor vert, verts)
-        {
-          intersection_functor(vert);
-        }
+        put(distances, vert, 0.);
+        intersection_functor(vert);
       }
 
-      return CGAL::sqrt(result);
+      return CGAL::sqrt(double(result));
     }
-    
+
     /**
     * Computes concavity values as the shortest distances from the point of a vertex on the convex hull.
     */
     template <class iterator, class DistancesMap>
     double compute_shortest(const std::pair<iterator, iterator>& verts, const Mesh& conv_hull, DistancesMap distances)
     {
-      // construct AABB for fast the shortest distance computations 
+      // construct AABB for fast the shortest distance computations
       AABB_tree tree(faces(conv_hull).begin(), faces(conv_hull).end(), conv_hull);
       tree.build();
       tree.accelerate_distance_queries();
 
       // compute intersections and select the largest projection length
-      double result = 0;
+      #ifdef CGAL_LINKED_WITH_TBB
+      typedef tbb::atomic<double> Result_type;
+      #else
+      typedef double Result_type;
+      #endif
+      Result_type result = 0;
 
       // functor that computes the shortest distance and maximizes the result variable
-      struct Shortest_distance_functor
+      struct Closest_point_functor
       {
-        Shortest_distance_functor(const Vpm& vpm, const AABB_tree& tree, DistancesMap& distances, double& result
-#ifdef CGAL_LINKED_WITH_TBB
-        , tbb::mutex& mutex
-#endif
-        )
-        : m_vpm(vpm), m_tree(tree), m_distances(distances), m_result(result)
-#ifdef CGAL_LINKED_WITH_TBB
-       , m_mutex(mutex)
-#endif
-       {}
+        Closest_point_functor(const Vpm& vpm,
+                              const AABB_tree& tree,
+                              DistancesMap& distances,
+                              Result_type* result)
+        : m_vpm(vpm)
+        , m_tree(tree)
+        , m_distances(distances)
+        , m_result(result)
+        {}
 
         void operator() (const vertex_descriptor& vert) const
         {
-          double distance = static_cast<double>(m_tree.squared_distance(get(m_vpm, vert)));
+          double distance = m_tree.squared_distance(get(m_vpm, vert));
 
-#ifdef CGAL_LINKED_WITH_TBB
-          m_mutex.lock();
-#endif
           put(m_distances, vert, distance);
-          m_result = std::max(m_result, distance);
-#ifdef CGAL_LINKED_WITH_TBB
-          m_mutex.unlock();
-#endif
+          // update max value stored in distance
+          #ifdef CGAL_LINKED_WITH_TBB
+          double current_value = *m_result;
+          while( current_value < distance )
+          {
+            current_value = m_result->compare_and_swap(distance, current_value);
+          }
+          #else
+          *m_result = (std::max)(*m_result, distance);
+          #endif
         }
 
       private:
         const Vpm& m_vpm;
         const AABB_tree& m_tree;
         DistancesMap& m_distances;
-        double& m_result;
-#ifdef CGAL_LINKED_WITH_TBB
-        tbb::mutex& m_mutex;
-#endif
+        Result_type* m_result;
       };
 
-#ifdef CGAL_LINKED_WITH_TBB
-      tbb::mutex mutex;
-#endif
-      Shortest_distance_functor shortest_functor(m_vpm, tree, distances, result
-#ifdef CGAL_LINKED_WITH_TBB
-      , mutex
-#endif
-      );
+
+      Closest_point_functor functor(m_vpm, tree, distances, &result);
 
 #ifdef CGAL_LINKED_WITH_TBB
       if (boost::is_convertible<ConcurrencyTag, Parallel_tag>::value)
       {
-        tbb::parallel_for_each(verts.first, verts.second, shortest_functor);
+        BOOST_FOREACH(vertex_descriptor vert, verts)
+        {
+          put(distances, vert, 0.); // make sure that the value can be updated thread-safely
+        }
+        tbb::parallel_for_each(verts.first, verts.second, functor);
       }
       else
 #endif
       {
         BOOST_FOREACH(vertex_descriptor vert, verts)
         {
-          shortest_functor(vert);
+          put(distances, vert, 0.);
+          functor(vert);
         }
       }
 
-      return CGAL::sqrt(result);
+      return CGAL::sqrt(double(result));
     }
   };
 }

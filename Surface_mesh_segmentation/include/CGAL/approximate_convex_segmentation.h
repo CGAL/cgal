@@ -47,14 +47,16 @@ namespace CGAL
  *
  * @tparam ConcurrencyTag enables sequential versus parallel algorithm (possible values are `Sequential_tag` and `Parallel_tag`)
  * @tparam TriangleMesh a model of `FaceListGraph`
- * @tparam FacePropertyMap a `ReadWritePropertyMap` with the `boost::graph_traits<TriangleMesh>::%face_descriptor` key type and an integer value type
- * @tparam DistancesPropertyMap a `ReadWritePropertyMap` with the `boost::graph_traits<TriangleMesh>::%vertex_descriptor` key type and a floating-point value type
+ * @tparam FacePropertyMap a `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor` as key type and an integer as value type
+ * @tparam DistancesPropertyMap a `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and a floating-point as value type
+ *                              If `ConcurrencyTag` is `Parallel_tag`, then this type must support thread-safe calls to `put()` by concurrent threads.
+ *                              An initial sequential pass will first set all values to `0` before values being updated by concurrent threads.
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param mesh segmented triangle mesh
  * @param face_ids property map with per face segment ids
  * @param segment_id id of the target segment on which concavity value is computed
- * @param[out] distances optional property map with per vertex distances to the convex hull
+ * @param[out] distances optional property map with per vertex squared distance to the convex hull
  * @param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
@@ -127,11 +129,13 @@ concavity_values(const TriangleMesh& mesh,
  *
  * @tparam ConcurrencyTag enables sequential versus parallel algorithm (possible values are `Sequential_tag` and `Parallel_tag`)
  * @tparam TriangleMesh a model of `FaceListGraph`
- * @tparam DistancesPropertyMap a `ReadWritePropertyMap` with the `boost::graph_traits<TriangleMesh>::%vertex_descriptor` key type and a floating-point as value type
+ * @tparam DistancesPropertyMap a `WritablePropertyMap` with the `boost::graph_traits<TriangleMesh>::%vertex_descriptor` key type and a floating-point as value type
+ *                              If `ConcurrencyTag` is `Parallel_tag`, then this type must support thread-safe calls to `put()` by concurrent threads.
+ *                              An initial sequential pass will first set all values to `0` before values being updated by concurrent threads.
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param mesh triangle mesh on which concavity value is computed
- * @param distances optional property map with per vertex distances to the convex hull
+ * @param distances optional property map with per vertex squared distance to the convex hull
  * @param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
