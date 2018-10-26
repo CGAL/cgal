@@ -94,10 +94,10 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::get_placement_policy).v == 35);
 
     // Named parameters that we use in the package 'Surface Mesh Segmentation'
-  assert(get_param(np, CGAL::internal_np::min_number_of_segments).v == 47);
-  assert(get_param(np, CGAL::internal_np::convex_hulls_of_segments).v == 48);
-  assert(get_param(np, CGAL::internal_np::use_closest_point).v == 49);
-  assert(get_param(np, CGAL::internal_np::segment_size_threshold).v == 50);
+  assert(get_param(np, CGAL::internal_np::min_number_of_segments).v == 48);
+  assert(get_param(np, CGAL::internal_np::convex_hulls_of_segments).v == 49);
+  assert(get_param(np, CGAL::internal_np::use_closest_point).v == 50);
+  assert(get_param(np, CGAL::internal_np::segment_size_threshold).v == 51);
 
     // To-be-documented named parameters
   assert(get_param(np, CGAL::internal_np::face_normal).v == 36);
