@@ -166,20 +166,22 @@ namespace CGAL {
       t2.reset(); t2.start();
 #endif // COMPUTE_TIME
 
+      // Now we label all the darts of the reduced map, to allow the computation
+      // of turns in constant time.
       CGAL_assertion(m_map.number_of_darts()%2==0);
-      number_of_edges=m_map.number_of_darts()/2;
+      m_number_of_edges=m_map.number_of_darts()/2;
 
       if (!m_map.is_empty())
       {
         Dart_handle dh1=m_map.darts().begin();
         Dart_handle dh2=m_map.template beta<2>(dh1);
         std::size_t id=0;
-        for(; dh1!=dh2; dh1=dh2) // We have two vertices to process
+        for(; dh1!=NULL; dh1=(dh1==dh2?NULL:dh2)) // We have two vertices to process
         {
           Dart_handle cur_dh=dh1;
           do
           {
-            dart_ids[cur_dh]=id++;
+            m_dart_ids[cur_dh]=id++;
             cur_dh=m_map.template beta<2, 1>(cur_dh);
           }
           while(cur_dh!=dh1);
@@ -848,22 +850,60 @@ namespace CGAL {
     std::size_t next_positive_turn(const Path_on_surface<Map>& path,
                                    std::size_t i) const
     {
-      return path.next_positive_turn(i);
-     /* Dart_const_handle d1=path.get_ith_dart(i);
+      // OLD return path.next_positive_turn(i);
+      Dart_const_handle d1=path.get_ith_dart(i);
       Dart_const_handle d2=path.get_next_dart(i);
       assert(d1!=d2);
-TODO */
+
+      std::size_t id1=m_dart_ids.at(m_map.template beta<2>(d1));
+      std::size_t id2=m_dart_ids.at(d2);
+
+      if (id1>=m_number_of_edges)
+      {
+        id1-=m_number_of_edges; // id of the first dart in its own vertex
+        assert(id2>=m_number_of_edges);
+        id2-=m_number_of_edges; // id of the second dart in its own vertex
+      }
+
+      // TODO check with Francis what to do when id1==id2.
+      // I think for positive return m_number_of_edges
+      // and for negative return 0. (But I am not sure...)
+      std::size_t res=(id1<id2?id2-id1:
+                               m_number_of_edges-id1+id2);
+      // std::size_t tempodebug=path.next_positive_turn(i);
+      assert(res==path.next_positive_turn(i));
+      return res;
     }
 
     /// Same than next_positive_turn but turning in reverse orientation around vertex.
     std::size_t next_negative_turn(const Path_on_surface<Map>& path,
                                    std::size_t i) const
     {
-      return path.next_negative_turn(i);
-      /* Dart_const_handle d1=m_map.template beta<2>(path.get_ith_dart(i));
-      Dart_const_handle d2=m_map.template beta<2>(path.get_next_dart(i));
+      // OLD return path.next_negative_turn(i);
+      Dart_const_handle d1=path.get_ith_dart(i);
+      Dart_const_handle d2=path.get_next_dart(i);
+/*      Dart_const_handle d1=m_map.template beta<2>(path.get_ith_dart(i));
+      Dart_const_handle d2=m_map.template beta<2>(path.get_next_dart(i));*/
       assert(d1!=d2);
-TODO */
+
+      std::size_t id1=m_dart_ids.at(m_map.template beta<2>(d1));
+      std::size_t id2=m_dart_ids.at(d2);
+
+      if (id1>=m_number_of_edges)
+      {
+        id1-=m_number_of_edges; // id of the first dart in its own vertex
+        assert(id2>=m_number_of_edges);
+        id2-=m_number_of_edges; // id of the second dart in its own vertex
+      }
+
+      // TODO check with Francis what to do when id1==id2.
+      // I think for positive return m_number_of_edges
+      // and for negative return 0. (But I am not sure...)
+      std::size_t res=(id1<=id2?m_number_of_edges-id2+id1:
+                               id1-id2);
+      // std::size_t tempodebug=path.next_negative_turn(i);
+      assert(res==path.next_negative_turn(i));
+      return res;
     }
 
     std::size_t find_end_of_braket(const Path_on_surface<Map>& path,
@@ -1339,13 +1379,13 @@ TODO */
                   /// (except the edges that belong to the spanning tree T).
     std::size_t m_mark_T; /// mark each edge of m_original_map that belong to the spanning tree T
     std::size_t m_mark_L; /// mark each edge of m_original_map that belong to the dual spanning tree L
-    TDartIds dart_ids; /// Ids of each dart of the transformed map, between 0 and n-1 (n being the number of darts)
+    TDartIds m_dart_ids; /// Ids of each dart of the transformed map, between 0 and n-1 (n being the number of darts)
                        /// so that darts between 0...(n/2)-1 belong to the same vertex and
                        /// d1=beta<1, 2>(d0), d2=beta<1, 2>(d1)...
                        /// The same for darts between n/2...n-1 for the second vertex
                        /// Thanks to these ids, we can compute in constant time the positive and
                        /// negative turns between two consecutive darts
-    std::size_t number_of_edges; // number of edges in the tranformed map (==number of darts / 2)
+    std::size_t m_number_of_edges; // number of edges in the tranformed map (==number of darts / 2)
   };
   
 } // namespace CGAL

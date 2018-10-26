@@ -123,7 +123,7 @@ int main(int argc, char** argv)
     cmt.transform_original_path_into_quad_surface(path1);
 
   CGAL::Path_on_surface<LCC_3_cmap> transformed_path2=
-    cmt.transform_original_path_into_quad_surface(path1);
+    cmt.transform_original_path_into_quad_surface(path2);
   
   cmt.canonize(transformed_path1);
   cmt.canonize(transformed_path2);
