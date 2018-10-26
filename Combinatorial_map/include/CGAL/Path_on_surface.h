@@ -21,10 +21,11 @@
 #ifndef CGAL_PATH_ON_SURFACE_H
 #define CGAL_PATH_ON_SURFACE_H 1
 
-#include <stack>
 #include <CGAL/Union_find.h>
 #include <CGAL/Path_generators.h>
+#include <CGAL/Timer.h>
 #include <boost/unordered_map.hpp>
+#include <stack>
 
 namespace CGAL {
 
@@ -53,11 +54,8 @@ public:
   bool are_same_paths_from(const Self& other, std::size_t start) const
   {
     assert(start==0 || start<length());
-
-    if (length()!=other.length() || is_closed()!=other.is_closed())
-    { return false; }
-
-    if (!is_closed() && start>0) { return false; }
+    assert(is_closed() || start==0);
+    assert(length()==other.length() && is_closed()==other.is_closed());
 
     for(std::size_t i=0; i<length(); ++i)
     {
@@ -94,12 +92,11 @@ public:
   bool are_same_paths_from(const char* other, std::size_t start) const
   {
     assert(start==0 || start<length());
+    assert(is_closed() || start==0);
 
     std::string sother(other);
     std::istringstream iss(sother);
     uint64_t nb;
-
-    if (!is_closed() && start>0) { return false; }
 
     for(std::size_t i=0; i<length(); ++i)
     {
@@ -309,6 +306,20 @@ public:
     }
   }
 
+  // copy all darts starting from begin and going to the dart before end
+  // from this path to new_path.
+  void copy_rest_of_path(std::size_t begin, std::size_t end,
+                         Self& new_path)
+  {
+    assert(end<=length());
+    assert(begin<=end);
+    while(begin!=end)
+    {
+      new_path.push_back(get_ith_dart(begin));
+      ++begin;
+    }
+  }
+
   /// @return the turn between dart number i and dart number i+1.
   ///         (turn is position of the second edge in the cyclic ordering of
   ///          edges starting from the first edge around the second extremity
@@ -358,470 +369,6 @@ public:
     return res;
   }
 
-  std::size_t find_end_of_braket(std::size_t begin, bool positive) const
-  {
-    assert((positive && next_positive_turn(begin)==1) ||
-           (!positive && next_negative_turn(begin)==1));
-    std::size_t end=next_index(begin);
-    if (!is_closed() && end>=length()-1)
-    { return begin; } // begin is the before last dart
-
-    while ((positive && next_positive_turn(end)==2) ||
-           (!positive && next_negative_turn(end)==2))
-    { end=next_index(end); }
-    
-    if ((positive && next_positive_turn(end)==1) ||
-        (!positive && next_negative_turn(end)==1)) // We are on the end of a bracket
-    { end=next_index(end); }
-    else
-    { end=begin; }
-    
-    return end;
-  }
-
-  void transform_positive_bracket(std::size_t begin, std::size_t end,
-                                  Self& new_path)
-  {
-    // There is a special case for (1 2^r). In this case, we need to ignore
-    // the two darts begin and end
-    Dart_const_handle d1=(next_index(begin)!=end?
-          m_map.template beta<0>(get_ith_dart(begin)):
-          m_map.template beta<1,2,0>(get_ith_dart(end)));
-    Dart_const_handle d2=(next_index(begin)!=end?
-          m_map.template beta<2,0,2>(get_ith_dart(end)):
-          m_map.template beta<0,0,2>(get_ith_dart(begin)));
-
-    new_path.push_back(m_map.template beta<2>(d1));
-    CGAL::extend_straight_negative_until(new_path, d2);
-  }
-
-  void transform_negative_bracket(std::size_t begin, std::size_t end,
-                                  Self& new_path)
-  {
-    // There is a special case for (-1 -2^r). In this case, we need to ignore
-    // the two darts begin and end
-    Dart_const_handle d1=(next_index(begin)!=end?
-          m_map.template beta<2,1>(get_ith_dart(begin)):
-          m_map.template beta<2,0,2,1>(get_ith_dart(end)));
-    Dart_const_handle d2=(next_index(begin)!=end?
-          m_map.template beta<1>(get_ith_dart(end)):
-          m_map.template beta<2,1,1>(get_ith_dart(begin)));
-
-    new_path.push_back(d1);
-    CGAL::extend_straight_positive_until(new_path, d2);
-  }
-
-  void transform_bracket(std::size_t begin, std::size_t end,
-                         Self& new_path,
-                         bool positive)
-  {
-    if (positive)
-    { transform_positive_bracket(begin, end, new_path); }
-    else
-    { transform_negative_bracket(begin, end, new_path); }
-  }
-
-  // copy all darts starting from begin and going to the dart before end
-  // from this path to new_path.
-  void copy_rest_of_path(std::size_t begin, std::size_t end,
-                         Self& new_path)
-  {
-    assert(end<=length());
-    assert(begin<=end);
-    while(begin!=end)
-    {
-      new_path.push_back(get_ith_dart(begin));
-      ++begin;
-    }
-  }
-
-  bool bracket_flattening_one_step()
-  {
-    if (is_empty()) return false;
-
-#ifndef NDEBUG
-    bool is_even=length()%2;
-#endif // NDEBUG
-
-    Self new_path(m_map);
-    bool positive=false;
-    std::size_t begin, end;
-    std::size_t lastturn=m_path.size()-(is_closed()?0:1);
-
-    for (begin=0; begin<lastturn; ++begin)
-    {
-      positive=(next_positive_turn(begin)==1);
-      if (positive || next_negative_turn(begin)==1)
-      {
-        // we test if begin is the beginning of a bracket
-        end=find_end_of_braket(begin, positive);
-        if (begin!=end)
-        {
-          /* std::cout<<"Bracket: ["<<begin<<"; "<<end<<"] "
-                   <<(positive?"+":"-")<<std::endl; */
-          if (end<begin)
-          {
-            if (!is_closed())
-            { return false; }
-
-            copy_rest_of_path(end+1, begin, new_path);
-          }
-          else if (next_index(begin)!=end) // Special case of (1 2^r)
-          { copy_rest_of_path(0, begin, new_path); }
-
-          transform_bracket(begin, end, new_path, positive);
-
-          if (begin<end && next_index(begin)!=end && end<length()-1)
-          { copy_rest_of_path(end+1, length(), new_path); }
-
-          swap(new_path);
-
-          assert(length()%2==is_even); // bracket flattening is supposed to preserve length parity
-
-          return true;
-        }
-      }
-    }
-
-    return false;
-  }
-
-  // Simplify the path by removing all brackets
-  bool bracket_flattening()
-  {
-    bool res=false;
-    while(bracket_flattening_one_step())
-    { res=true; }
-    return res;
-  }
-  
-  bool remove_spurs_one_step()
-  {
-    if (is_empty()) return false;
-
-    bool res=false;
-    std::size_t i;
-    std::size_t lastturn=m_path.size()-(is_closed()?0:1);
-    for (i=0; !res && i<lastturn; ++i)
-    {
-      if (m_path[i]==m_map.template beta<2>(m_path[next_index(i)]))
-      { res=true; }
-    }
-
-    if (!res)
-    { return false; }
-
-#ifndef NDEBUG
-    bool is_even=length()%2;
-#endif // NDEBUG
-
-    --i; // Because we did a ++ before to leave the loop
-    // Here there is a spur at position i in the path
-    Self new_path(m_map);
-
-    // Special case, the spur is between last dart of the path and the first dart
-    if (is_closed() && i==m_path.size()-1)
-    {
-      copy_rest_of_path(1, m_path.size()-1, new_path); // copy path between 1 and m_path.size()-2
-    }
-    else
-    { // Otherwise copy darts before the spur
-      if (i>0)
-      { copy_rest_of_path(0, i, new_path); } // copy path between 0 and i-1
-
-      // and the darts after
-      if (i+2<m_path.size())
-      { copy_rest_of_path(i+2, m_path.size(), new_path); } // copy path between 0 and m_path.size()-1
-    }
-
-    swap(new_path);
-
-    assert(length()%2==is_even); // spur rremoval is supposed to preserve length parity
-
-    return true;
-  }
-
-  // Simplify the path by removing all spurs
-  bool remove_spurs()
-  {
-    bool res=false;
-    while(remove_spurs_one_step())
-    { res=true; }
-    return res;
-  }
-
-  // Simplify the path by removing all possible brackets and spurs
-  void simplify()
-  {
-    bool modified=false;
-    do
-    {
-      modified=bracket_flattening_one_step();
-      if (!modified)
-      { modified=remove_spurs_one_step(); }
-    }
-    while(modified);
-  }
-
-  bool find_l_shape(std::size_t begin,
-                    std::size_t& middle,
-                    std::size_t& end) const
-  {
-    assert(next_negative_turn(begin)==1 || next_negative_turn(begin)==2);
-    end=begin+1;
-    if (end==m_path.size()-1 && !is_closed())
-    { return false; } // begin is the before last dart
-
-    while (next_negative_turn(end)==2 && end!=begin)
-    { end=next_index(end); }
-
-    if (begin==end)
-    { // Case of a path having only 2 turns
-      return true;
-    }
-
-    if (next_negative_turn(end)==1)
-    {
-      middle=end;
-      end=next_index(end);
-    }
-    else
-    { return false; }
-
-    while (next_negative_turn(end)==2 && end!=begin)
-    { end=next_index(end); }
-
-    return true;
-  }
-
-  void push_l_shape(std::size_t begin,
-                    std::size_t middle,
-                    std::size_t end,
-                    Self& new_path,
-                    bool case_seven)
-  {
-    Dart_const_handle d1;
-
-    if (!case_seven)
-    { d1=m_map.template beta<2,1>(get_ith_dart(begin)); }
-    else
-    { d1=m_map.template beta<2,1,2,0>(get_ith_dart(begin)); }
-    new_path.push_back(d1);
-
-    if (begin!=middle)
-    {
-      if (!case_seven)
-      { CGAL::extend_uturn_positive(new_path, 1); }
-
-      d1=m_map.template beta<2,1,1>(get_ith_dart(middle));
-      CGAL::extend_straight_positive_until(new_path, d1);
-
-      if (next_index(middle)!=end)
-      { CGAL::extend_uturn_positive(new_path, 3); }
-      else
-      { CGAL::extend_straight_positive(new_path, 1); }
-    }
-
-    if (next_index(middle)!=end)
-    {
-      d1=m_map.template beta<2,0,2,1>(get_ith_dart(end));
-      CGAL::extend_straight_positive_until(new_path, d1);
-
-      if (!case_seven)
-      { CGAL::extend_uturn_positive(new_path, 1); }
-      else
-      { CGAL::extend_straight_positive(new_path, 1); }
-    }
-
-    if (begin==middle && next_index(middle)==end)
-    { // TODO: check if we need to do also something for !case_seven ?
-      // if (case_seven)
-      { CGAL::extend_uturn_positive(new_path, 1); }
-      /* else
-      { assert(false); } // We think (?) that this case is not possible */
-    }
-
-  }
-
-  void push_l_shape_cycle_2()
-  {
-    Dart_const_handle d1=
-        m_map.template beta<2,1,1>(get_ith_dart(0));
-    clear();
-    push_back(d1);
-    CGAL::extend_straight_positive(*this, 1);
-    CGAL::extend_straight_positive_until(*this, d1);
-  }
-
-  bool push_l_shape_2darts()
-  {
-    Dart_const_handle d1=NULL;
-
-    if (next_negative_turn(0)==1)
-      d1=m_map.template beta<2,1>(get_ith_dart(0));
-    else if (next_negative_turn(1)==1)
-      d1=m_map.template beta<2,1>(get_ith_dart(1));
-    else return false;
-
-    clear();
-    push_back(d1);
-    CGAL::extend_uturn_positive(*this, 1);
-    //push_back(m_map.template beta<1>(d1));
-    return true;
-  }
-
-  bool right_push_one_step()
-  {
-    if (is_empty()) { return false; }
-
-    if (length()==2)
-    { return push_l_shape_2darts(); }
-
-#ifndef NDEBUG
-    bool is_even=length()%2;
-#endif // NDEBUG
-
-    std::size_t begin, middle, end;
-    std::size_t lastturn=m_path.size()-(is_closed()?0:1);
-    std::size_t next_turn;
-    std::size_t val_x=0; // value of turn before the beginning of a l-shape
-    bool prev2=false;
-
-    for (middle=0; middle<lastturn; ++middle)
-    {
-      next_turn=next_negative_turn(middle);
-
-      if (next_turn==2)
-      {
-        if (!prev2)
-        {
-          begin=middle; // First 2 of a serie
-          prev2=true;
-          if (begin==0 && is_closed())
-          {
-            begin=length()-1;
-            do
-            {
-              next_turn=next_negative_turn(begin);
-              if (next_turn==2) { --begin; }
-              if (begin==0) // Loop of only -2 turns
-              {
-                push_l_shape_cycle_2();
-                return true;
-              }
-            }
-            while(next_turn==2);
-            begin=next_index(begin); // because we stopped on a dart s.t. next_turn!=2
-          }
-          // Here begin is the first dart of the path s.t. next_turn==-2
-          // i.e. the previous turn != -2
-        }
-      }
-      else
-      {
-        if (next_turn==1)
-        {
-          // Here middle is a real middle; we already know begin (or we know
-          // that there is no -2 before if !prev2), we only need to compute
-          // end.
-          if (!prev2) { begin=middle; } // There is no -2 before this -1
-          end=next_index(middle);
-          do
-          {
-            next_turn=next_negative_turn(end);
-            if (next_turn==2) { end=next_index(end); }
-            assert(end!=middle);
-          }
-          while(next_turn==2);
-
-          if (is_closed() || begin>0)
-          { val_x=next_negative_turn(prev_index(begin)); }
-
-          // And here now we can push the path
-          Self new_path(m_map);
-          if (end<begin)
-          {
-            if (!is_closed())
-            { return false; }
-
-            copy_rest_of_path(end+1, begin, new_path);
-          }
-          else
-          { copy_rest_of_path(0, begin, new_path); }
-
-          // std::cout<<prev_index(begin)<<"  "<<next_index(end)<<std::endl;
-          bool case_seven=(val_x==3 && prev_index(begin)==end);
-
-          push_l_shape(begin, middle, end, new_path, case_seven);
-
-          if (begin<end)
-          { copy_rest_of_path(end+1, length(), new_path); }
-
-          swap(new_path);
-
-          assert(length()%2==is_even); // push lshape is supposed to preserve length parity (maybe preserve length ?? TODO check)
-
-          return true;
-
-        }
-        prev2=false;
-      }
-    }
-    return false;
-  }
-
-  bool right_push()
-  {
-    bool res=false;
-    while(right_push_one_step())
-    { res=true;
-      
-      /*std::cout<<"PUSH "; display();  display_pos_and_neg_turns();
-      std::cout<<std::endl; */
-    }
-    return res;
-  }
-
-  // Canonize the path
-  void canonize()
-  {
-    if (!is_closed())
-    { return; }
-
-    /* std::cout<<"##########################################"<<std::endl;
-    std::cout<<"Init "; display();
-    std::cout<<std::endl;
-    display_pos_and_neg_turns();
-    std::cout<<std::endl; */
-
-    bool modified=false;
-    // std::cout<<"RS ";
-    remove_spurs_one_step();
-
-    /* display(); display_pos_and_neg_turns();
-    std::cout<<std::endl; */
-
-    do
-    {
-      do
-      {
-        modified=bracket_flattening_one_step();
-
-        /* std::cout<<"BF "; display(); display_pos_and_neg_turns();
-        std::cout<<std::endl; */
-
-        modified=modified || remove_spurs_one_step();
-
-        /* std::cout<<"RS "; display(); display_pos_and_neg_turns();
-        std::cout<<std::endl; */
-      }
-      while(modified);
-
-      modified=right_push();
-    }
-    while(modified); // Maybe we do not need to iterate, a unique last righ_push should be enough (? To verify)
-
-  }
 
   std::vector<std::size_t> compute_positive_turns() const
   {

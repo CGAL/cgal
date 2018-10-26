@@ -12,7 +12,7 @@
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3> LCC_3_cmap;
 ///////////////////////////////////////////////////////////////////////////////
-void usage(int /*argc*/, char** argv)
+[[ noreturn ]] void usage(int /*argc*/, char** argv)
 {
   std::cout<<"usage: "<<argv[0]<<" file [-draw] [-seed S] [-nbfaces F] [-nbdefo D]"<<std::endl
            <<"   Loadd the given off file, compute one random path, deform it into a second path and "
@@ -25,7 +25,7 @@ void usage(int /*argc*/, char** argv)
   exit(EXIT_FAILURE);
 }
 ///////////////////////////////////////////////////////////////////////////////
-void error_command_line(int argc, char** argv, const char* msg)
+[[ noreturn ]] void error_command_line(int argc, char** argv, const char* msg)
 {
   std::cout<<"ERROR: "<<msg<<std::endl;
   usage(argc, argv);
@@ -39,7 +39,7 @@ void process_command_line(int argc, char** argv,
                           CGAL::Random& random)
 {
   std::string arg;
-  for (unsigned int i=1; i<(unsigned int)argc; ++i)
+  for (int i=1; i<argc; ++i)
   {
     arg=argv[i];
     if (arg=="-draw")
@@ -48,19 +48,19 @@ void process_command_line(int argc, char** argv,
     {
       if (i==argc-1)
       { error_command_line(argc, argv, "Error: no number after -seed option."); }
-      random=CGAL::Random(std::stoi(std::string(argv[++i]))); // initialize the random generator with the given seed
+      random=CGAL::Random(static_cast<unsigned int>(std::stoi(std::string(argv[++i])))); // initialize the random generator with the given seed
     }
     else if (arg=="-nbfaces")
     {
      if (i==argc-1)
      { error_command_line(argc, argv, "Error: no number after -nbfaces option."); }
-     F=std::stoi(std::string(argv[++i]));
+     F=static_cast<unsigned int>(std::stoi(std::string(argv[++i])));
     }
     else if (arg=="-nbdefo")
     {
      if (i==argc-1)
      { error_command_line(argc, argv, "Error: no number after -nbdefo option."); }
-     D=std::stoi(std::string(argv[++i]));
+     D=static_cast<unsigned int>(std::stoi(std::string(argv[++i])));
     }
     else if (arg=="-h" || arg=="--help" || arg=="-?")
     { usage(argc, argv); }
@@ -71,11 +71,10 @@ void process_command_line(int argc, char** argv,
   }
 
   if (F==0)
-  { F=random.get_int(10, 101); }
+  { F=static_cast<unsigned int>(random.get_int(10, 101)); }
 
   if (D==0)
-  { D=random.get_int(10, 101); }
-  
+  { D=static_cast<unsigned int>(random.get_int(10, 101)); }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -87,7 +86,7 @@ int main(int argc, char** argv)
   unsigned int D=0;
   CGAL::Random random; // Used when user do not provide its own seed.
 
-  process_command_line(argc, argv, file, draw, F, D, random);  
+  process_command_line(argc, argv, file, draw, F, D, random);
 
   LCC_3_cmap lcc;
   if (!CGAL::load_off(lcc, file.c_str()))
@@ -126,12 +125,12 @@ int main(int argc, char** argv)
   CGAL::Path_on_surface<LCC_3_cmap> transformed_path2=
     cmt.transform_original_path_into_quad_surface(path1);
   
-  transformed_path1.canonize();
-  transformed_path2.canonize();
+  cmt.canonize(transformed_path1);
+  cmt.canonize(transformed_path2);
     
   if (transformed_path1!=transformed_path2)
   {
-    std::cout<<"ERROR: pathes are not isotopic while it should be. (";
+    std::cout<<"ERROR: pathes are not isotopic while they should be. (";
     transformed_path1.display();
     std::cout<<") != (";
     transformed_path2.display();
@@ -142,7 +141,6 @@ int main(int argc, char** argv)
   
   if (draw)
   { display(lcc, paths); }
-
 
   return EXIT_SUCCESS;
 }

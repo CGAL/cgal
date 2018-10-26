@@ -21,13 +21,13 @@
 #ifndef CGAL_COMBINATORIAL_MAP_FUNCTIONALITIES_H
 #define CGAL_COMBINATORIAL_MAP_FUNCTIONALITIES_H 1
 
-#include <stack>
 #include <CGAL/Union_find.h>
-#include <boost/unordered_map.hpp>
 #include <CGAL/Random.h>
 #include <CGAL/Path_on_surface.h>
 #include <CGAL/Combinatorial_map_basic_operations.h>
 #include <CGAL/Timer.h>
+#include <boost/unordered_map.hpp>
+#include <stack>
 
 namespace CGAL {
   
@@ -42,6 +42,7 @@ namespace CGAL {
     
     typedef boost::unordered_map<Dart_const_handle,
                       std::pair<Dart_const_handle, Dart_const_handle> > TPaths;
+    typedef boost::unordered_map<Dart_const_handle, std::size_t> TDartIds;
 
     Combinatorial_map_tools(Map& amap) : m_original_map(amap)
     {
@@ -58,6 +59,12 @@ namespace CGAL {
                  <<std::endl;
       }
  
+#ifdef COMPUTE_TIME
+      CGAL::Timer t; t.start();
+
+      CGAL::Timer t2; t2.start();
+#endif // COMPUTE_TIME
+
       // The mapping between darts of the original map into the copied map.
       boost::unordered_map<Dart_const_handle, Dart_handle> origin_to_copy;
 
@@ -68,6 +75,13 @@ namespace CGAL {
       boost::unordered_map<Dart_handle, Dart_const_handle> copy_to_origin;
       for (auto it=origin_to_copy.begin(); it!=origin_to_copy.end(); ++it)
       { copy_to_origin[it->second]=it->first; }
+
+#ifdef COMPUTE_TIME
+      t2.stop();
+      std::cout<<"[TIME] Copy map: "<<t2.time()<<" seconds"<<std::endl;
+
+      t2.reset(); t2.start();
+#endif // COMPUTE_TIME
 
       // We reserve the two marks (used to mark darts in m_original_map that
       // belong to T or to L)
@@ -81,6 +95,13 @@ namespace CGAL {
 
       // 1) We simplify m_map in a surface with only one vertex
       surface_simplification_in_one_vertex(origin_to_copy, copy_to_origin);
+
+#ifdef COMPUTE_TIME
+      t2.stop();
+      std::cout<<"[TIME] Simplification in one vertex: "<<t2.time()<<" seconds"<<std::endl;
+
+      t2.reset(); t2.start();
+#endif // COMPUTE_TIME
 
 #ifdef CGAL_TRACE_CMAP_TOOLS
       std::cout<<"All non loop contracted: ";
@@ -96,6 +117,13 @@ namespace CGAL {
       // not belong to the spanning tree (which are thus all the survival edges).
       compute_length_two_paths(origin_to_copy);
 
+#ifdef COMPUTE_TIME
+      t2.stop();
+      std::cout<<"[TIME] Computation of length two pathes: "<<t2.time()<<" seconds"<<std::endl;
+
+      t2.reset(); t2.start();
+#endif // COMPUTE_TIME
+
       /* std::cout<<"Number of darts in m_map: "<<m_map.number_of_darts()
               <<"; number of darts in origin_to_copy: "<<origin_to_copy.size()
              <<"; number of darts in copy_to_origin: "<<copy_to_origin.size()
@@ -106,6 +134,13 @@ namespace CGAL {
 
       // 3) We simplify m_map in a surface with only one face
       surface_simplification_in_one_face(origin_to_copy, copy_to_origin);
+
+#ifdef COMPUTE_TIME
+      t2.stop();
+      std::cout<<"[TIME] Simplification in one face: "<<t2.time()<<" seconds"<<std::endl;
+
+      t2.reset(); t2.start();
+#endif // COMPUTE_TIME
 
 #ifdef CGAL_TRACE_CMAP_TOOLS
       std::cout<<"All faces merges: ";
@@ -123,6 +158,38 @@ namespace CGAL {
 
       // 4) And we quadrangulate the face
       surface_quadrangulate();
+
+#ifdef COMPUTE_TIME
+      t2.stop();
+      std::cout<<"[TIME] Face quadrangulation: "<<t2.time()<<" seconds"<<std::endl;
+
+      t2.reset(); t2.start();
+#endif // COMPUTE_TIME
+
+      CGAL_assertion(m_map.number_of_darts()%2==0);
+      number_of_edges=m_map.number_of_darts()/2;
+
+      if (!m_map.is_empty())
+      {
+        Dart_handle dh1=m_map.darts().begin();
+        Dart_handle dh2=m_map.template beta<2>(dh1);
+        std::size_t id=0;
+        for(; dh1!=dh2; dh1=dh2) // We have two vertices to process
+        {
+          Dart_handle cur_dh=dh1;
+          do
+          {
+            dart_ids[cur_dh]=id++;
+            cur_dh=m_map.template beta<2, 1>(cur_dh);
+          }
+          while(cur_dh!=dh1);
+        }
+      }
+
+#ifdef COMPUTE_TIME
+      t2.stop();
+      std::cout<<"[TIME] Label darts: "<<t2.time()<<" seconds"<<std::endl;
+#endif // COMPUTE_TIME
 
 #ifdef CGAL_TRACE_CMAP_TOOLS
       std::cout<<"After quadrangulation: ";
@@ -153,6 +220,11 @@ namespace CGAL {
       m_map.free_mark(marktemp);
       m_map.display_darts(std::cout);
 #endif
+
+#ifdef COMPUTE_TIME
+      t.stop();
+      std::cout<<"[TIME] Total time for computation of reduced map: "<<t.time()<<" seconds"<<std::endl;
+#endif // COMPUTE_TIME
 
       assert(are_paths_valid());
     }
@@ -403,13 +475,17 @@ namespace CGAL {
       }
       else
       {
+#ifdef COMPUTE_TIME
         CGAL::Timer t; t.start();
+#endif // COMPUTE_TIME
 
         // update_length_two_paths_before_edge_removals_v1(toremove);
         update_length_two_paths_before_edge_removals_v2(toremove, copy_to_origin);
 
+#ifdef COMPUTE_TIME
         t.stop();
-        std::cout<<"Update length two paths: "<<t.time()<<" seconds"<<std::endl;
+        std::cout<<"[TIME] Update length two paths: "<<t.time()<<" seconds"<<std::endl;
+#endif // COMPUTE_TIME
 
         // We remove all the edges to remove.
         for (typename Map::Dart_range::iterator it=m_map.darts().begin(),
@@ -765,14 +841,511 @@ namespace CGAL {
       return res;
     }
 
+    /// @return the turn between dart number i and dart number i+1 of path.
+    ///         (turn is position of the second edge in the cyclic ordering of
+    ///          edges starting from the first edge around the second extremity
+    ///          of the first dart)
+    std::size_t next_positive_turn(const Path_on_surface<Map>& path,
+                                   std::size_t i) const
+    {
+      return path.next_positive_turn(i);
+     /* Dart_const_handle d1=path.get_ith_dart(i);
+      Dart_const_handle d2=path.get_next_dart(i);
+      assert(d1!=d2);
+TODO */
+    }
+
+    /// Same than next_positive_turn but turning in reverse orientation around vertex.
+    std::size_t next_negative_turn(const Path_on_surface<Map>& path,
+                                   std::size_t i) const
+    {
+      return path.next_negative_turn(i);
+      /* Dart_const_handle d1=m_map.template beta<2>(path.get_ith_dart(i));
+      Dart_const_handle d2=m_map.template beta<2>(path.get_next_dart(i));
+      assert(d1!=d2);
+TODO */
+    }
+
+    std::size_t find_end_of_braket(const Path_on_surface<Map>& path,
+                                   std::size_t begin, bool positive) const
+    {
+      assert((positive && next_positive_turn(path, begin)==1) ||
+             (!positive && next_negative_turn(path, begin)==1));
+      std::size_t end=path.next_index(begin);
+      if (!path.is_closed() && end>=path.length()-1)
+      { return begin; } // begin is the before last dart
+
+      while ((positive && next_positive_turn(path, end)==2) ||
+             (!positive && next_negative_turn(path, end)==2))
+      { end=path.next_index(end); }
+
+      if ((positive && next_positive_turn(path, end)==1) ||
+          (!positive && next_negative_turn(path, end)==1)) // We are on the end of a bracket
+      { end=path.next_index(end); }
+      else
+      { end=begin; }
+
+      return end;
+    }
+
+    void transform_positive_bracket(Path_on_surface<Map>& path,
+                                    std::size_t begin, std::size_t end,
+                                    Path_on_surface<Map>& new_path) const
+    {
+      // There is a special case for (1 2^r). In this case, we need to ignore
+      // the two darts begin and end
+      Dart_const_handle d1=(path.next_index(begin)!=end?
+            m_map.template beta<0>(path.get_ith_dart(begin)):
+            m_map.template beta<1,2,0>(path.get_ith_dart(end)));
+      Dart_const_handle d2=(path.next_index(begin)!=end?
+            m_map.template beta<2,0,2>(path.get_ith_dart(end)):
+            m_map.template beta<0,0,2>(path.get_ith_dart(begin)));
+
+      new_path.push_back(m_map.template beta<2>(d1));
+      CGAL::extend_straight_negative_until(new_path, d2);
+    }
+
+    void transform_negative_bracket(Path_on_surface<Map>& path,
+                                    std::size_t begin, std::size_t end,
+                                    Path_on_surface<Map>& new_path) const
+    {
+      // There is a special case for (-1 -2^r). In this case, we need to ignore
+      // the two darts begin and end
+      Dart_const_handle d1=(path.next_index(begin)!=end?
+            m_map.template beta<2,1>(path.get_ith_dart(begin)):
+            m_map.template beta<2,0,2,1>(path.get_ith_dart(end)));
+      Dart_const_handle d2=(path.next_index(begin)!=end?
+            m_map.template beta<1>(path.get_ith_dart(end)):
+            m_map.template beta<2,1,1>(path.get_ith_dart(begin)));
+
+      new_path.push_back(d1);
+      CGAL::extend_straight_positive_until(new_path, d2);
+    }
+
+    void transform_bracket(Path_on_surface<Map>& path,
+                           std::size_t begin, std::size_t end,
+                           Path_on_surface<Map>& new_path,
+                           bool positive) const
+    {
+      if (positive)
+      { transform_positive_bracket(path, begin, end, new_path); }
+      else
+      { transform_negative_bracket(path, begin, end, new_path); }
+    }
+
+    bool bracket_flattening_one_step(Path_on_surface<Map>& path) const
+    {
+      if (path.is_empty()) return false;
+
+  #ifndef NDEBUG
+      bool is_even=path.length()%2;
+  #endif // NDEBUG
+
+      Path_on_surface<Map> new_path(m_map);
+      bool positive=false;
+      std::size_t begin, end;
+      std::size_t lastturn=path.length()-(path.is_closed()?0:1);
+
+      for (begin=0; begin<lastturn; ++begin)
+      {
+        positive=(next_positive_turn(path, begin)==1);
+        if (positive || next_negative_turn(path, begin)==1)
+        {
+          // we test if begin is the beginning of a bracket
+          end=find_end_of_braket(path, begin, positive);
+          if (begin!=end)
+          {
+            /* std::cout<<"Bracket: ["<<begin<<"; "<<end<<"] "
+                     <<(positive?"+":"-")<<std::endl; */
+            if (end<begin)
+            {
+              if (!path.is_closed())
+              { return false; }
+
+              path.copy_rest_of_path(end+1, begin, new_path);
+            }
+            else if (path.next_index(begin)!=end) // Special case of (1 2^r)
+            { path.copy_rest_of_path(0, begin, new_path); }
+
+            transform_bracket(path, begin, end, new_path, positive);
+
+            if (begin<end && path.next_index(begin)!=end && end<path.length()-1)
+            { path.copy_rest_of_path(end+1, path.length(), new_path); }
+
+            path.swap(new_path);
+
+            assert(path.length()%2==is_even); // bracket flattening is supposed to preserve length parity
+
+            return true;
+          }
+        }
+      }
+
+      return false;
+    }
+
+    // Simplify the path by removing all brackets
+    bool bracket_flattening(Path_on_surface<Map>& path) const
+    {
+      bool res=false;
+      while(bracket_flattening_one_step(path))
+      { res=true; }
+      return res;
+    }
+
+    bool remove_spurs_one_step(Path_on_surface<Map>& path) const
+    {
+      if (path.is_empty()) return false;
+
+      bool res=false;
+      std::size_t i;
+      std::size_t lastturn=path.length()-(path.is_closed()?0:1);
+      for (i=0; !res && i<lastturn; ++i)
+      {
+        if (path[i]==m_map.template beta<2>(path.get_next_dart(i)))
+        { res=true; }
+      }
+
+      if (!res)
+      { return false; }
+
+  #ifndef NDEBUG
+      bool is_even=path.length()%2;
+  #endif // NDEBUG
+
+      --i; // Because we did a ++ before to leave the loop
+      // Here there is a spur at position i in the path
+      Path_on_surface<Map> new_path(m_map);
+
+      // Special case, the spur is between last dart of the path and the first dart
+      if (path.is_closed() && i==path.length()-1)
+      {
+        path.copy_rest_of_path(1, path.length()-1, new_path); // copy path between 1 and m_path.length()-2
+      }
+      else
+      { // Otherwise copy darts before the spur
+        if (i>0)
+        { path.copy_rest_of_path(0, i, new_path); } // copy path between 0 and i-1
+
+        // and the darts after
+        if (i+2<path.length())
+        { path.copy_rest_of_path(i+2, path.length(), new_path); } // copy path between 0 and m_path.length()-1
+      }
+
+      path.swap(new_path);
+
+      assert(path.length()%2==is_even); // spur rremoval is supposed to preserve length parity
+
+      return true;
+    }
+
+    // Simplify the path by removing all spurs
+    bool remove_spurs(Path_on_surface<Map>& path) const
+    {
+      bool res=false;
+      while(remove_spurs_one_step(path))
+      { res=true; }
+      return res;
+    }
+
+    // Simplify the path by removing all possible brackets and spurs
+    void simplify(Path_on_surface<Map>& path) const
+    {
+      bool modified=false;
+      do
+      {
+        modified=bracket_flattening_one_step(path);
+        if (!modified)
+        { modified=remove_spurs_one_step(path); }
+      }
+      while(modified);
+    }
+
+    bool find_l_shape(const Path_on_surface<Map>& path,
+                      std::size_t begin,
+                      std::size_t& middle,
+                      std::size_t& end) const
+    {
+      assert(next_negative_turn(begin)==1 || next_negative_turn(begin)==2);
+      end=begin+1;
+      if (end==path.length()-1 && !path.is_closed())
+      { return false; } // begin is the before last dart
+
+      while (next_negative_turn(end)==2 && end!=begin)
+      { end=path.next_index(end); }
+
+      if (begin==end)
+      { // Case of a path having only 2 turns
+        return true;
+      }
+
+      if (next_negative_turn(end)==1)
+      {
+        middle=end;
+        end=path.next_index(end);
+      }
+      else
+      { return false; }
+
+      while (next_negative_turn(end)==2 && end!=begin)
+      { end=path.next_index(end); }
+
+      return true;
+    }
+
+    void push_l_shape(Path_on_surface<Map>& path,
+                      std::size_t begin,
+                      std::size_t middle,
+                      std::size_t end,
+                      Path_on_surface<Map>& new_path,
+                      bool case_seven) const
+    {
+      Dart_const_handle d1;
+
+      if (!case_seven)
+      { d1=m_map.template beta<2,1>(path.get_ith_dart(begin)); }
+      else
+      { d1=m_map.template beta<2,1,2,0>(path.get_ith_dart(begin)); }
+      new_path.push_back(d1);
+
+      if (begin!=middle)
+      {
+        if (!case_seven)
+        { CGAL::extend_uturn_positive(new_path, 1); }
+
+        d1=m_map.template beta<2,1,1>(path.get_ith_dart(middle));
+        CGAL::extend_straight_positive_until(new_path, d1);
+
+        if (path.next_index(middle)!=end)
+        { CGAL::extend_uturn_positive(new_path, 3); }
+        else
+        { CGAL::extend_straight_positive(new_path, 1); }
+      }
+
+      if (path.next_index(middle)!=end)
+      {
+        d1=m_map.template beta<2,0,2,1>(path.get_ith_dart(end));
+        CGAL::extend_straight_positive_until(new_path, d1);
+
+        if (!case_seven)
+        { CGAL::extend_uturn_positive(new_path, 1); }
+        else
+        { CGAL::extend_straight_positive(new_path, 1); }
+      }
+
+      if (begin==middle && path.next_index(middle)==end)
+      { // TODO: check if we need to do also something for !case_seven ?
+        // if (case_seven)
+        { CGAL::extend_uturn_positive(new_path, 1); }
+        /* else
+        { assert(false); } // We think (?) that this case is not possible */
+      }
+
+    }
+
+    void push_l_shape_cycle_2(Path_on_surface<Map>& path) const
+    {
+      Dart_const_handle d1=
+          m_map.template beta<2,1,1>(path.get_ith_dart(0));
+      path.clear();
+      path.push_back(d1);
+      CGAL::extend_straight_positive(path, 1);
+      CGAL::extend_straight_positive_until(path, d1);
+    }
+
+    bool push_l_shape_2darts(Path_on_surface<Map>& path) const
+    {
+      Dart_const_handle d1=NULL;
+
+      if (next_negative_turn(path, 0)==1)
+        d1=m_map.template beta<2,1>(path.get_ith_dart(0));
+      else if (next_negative_turn(path, 1)==1)
+        d1=m_map.template beta<2,1>(path.get_ith_dart(1));
+      else return false;
+
+      path.clear();
+      path.push_back(d1);
+      CGAL::extend_uturn_positive(path, 1);
+      //path.push_back(m_map.template beta<1>(d1));
+      return true;
+    }
+
+    bool right_push_one_step(Path_on_surface<Map>& path) const
+    {
+      if (path.is_empty()) { return false; }
+
+      if (path.length()==2)
+      { return push_l_shape_2darts(path); }
+
+  #ifndef NDEBUG
+      bool is_even=path.length()%2;
+  #endif // NDEBUG
+
+      std::size_t begin, middle, end;
+      std::size_t lastturn=path.length()-(path.is_closed()?0:1);
+      std::size_t next_turn;
+      std::size_t val_x=0; // value of turn before the beginning of a l-shape
+      bool prev2=false;
+
+      for (middle=0; middle<lastturn; ++middle)
+      {
+        next_turn=next_negative_turn(path, middle);
+
+        if (next_turn==2)
+        {
+          if (!prev2)
+          {
+            begin=middle; // First 2 of a serie
+            prev2=true;
+            if (begin==0 && path.is_closed())
+            {
+              begin=path.length()-1;
+              do
+              {
+                next_turn=next_negative_turn(path, begin);
+                if (next_turn==2) { --begin; }
+                if (begin==0) // Loop of only -2 turns
+                {
+                  push_l_shape_cycle_2(path);
+                  return true;
+                }
+              }
+              while(next_turn==2);
+              begin=path.next_index(begin); // because we stopped on a dart s.t. next_turn!=2
+            }
+            // Here begin is the first dart of the path s.t. next_turn==-2
+            // i.e. the previous turn != -2
+          }
+        }
+        else
+        {
+          if (next_turn==1)
+          {
+            // Here middle is a real middle; we already know begin (or we know
+            // that there is no -2 before if !prev2), we only need to compute
+            // end.
+            if (!prev2) { begin=middle; } // There is no -2 before this -1
+            end=path.next_index(middle);
+            do
+            {
+              next_turn=next_negative_turn(path, end);
+              if (next_turn==2) { end=path.next_index(end); }
+              assert(end!=middle);
+            }
+            while(next_turn==2);
+
+            if (path.is_closed() || begin>0)
+            { val_x=next_negative_turn(path, path.prev_index(begin)); }
+
+            // And here now we can push the path
+            Path_on_surface<Map> new_path(m_map);
+            if (end<begin)
+            {
+              if (!path.is_closed())
+              { return false; }
+
+              path.copy_rest_of_path(end+1, begin, new_path);
+            }
+            else
+            { path.copy_rest_of_path(0, begin, new_path); }
+
+            // std::cout<<prev_index(begin)<<"  "<<next_index(end)<<std::endl;
+            bool case_seven=(val_x==3 && path.prev_index(begin)==end);
+
+            push_l_shape(path, begin, middle, end, new_path, case_seven);
+
+            if (begin<end)
+            { path.copy_rest_of_path(end+1, path.length(), new_path); }
+
+            path.swap(new_path);
+
+            assert(path.length()%2==is_even); // push lshape is supposed to preserve length parity (maybe preserve length ?? TODO check)
+
+            return true;
+
+          }
+          prev2=false;
+        }
+      }
+      return false;
+    }
+
+    bool right_push(Path_on_surface<Map>& path) const
+    {
+      bool res=false;
+      while(right_push_one_step(path))
+      { res=true;
+
+        /*std::cout<<"PUSH "; display();  display_pos_and_neg_turns();
+        std::cout<<std::endl; */
+      }
+      return res;
+    }
+
+  public:
+    // Canonize the path
+    void canonize(Path_on_surface<Map>& path) const
+    {
+      if (!path.is_closed())
+      { return; }
+
+  #ifdef COMPUTE_TIME
+      CGAL::Timer t; t.start();
+  #endif // COMPUTE_TIME
+
+      /* std::cout<<"##########################################"<<std::endl;
+      std::cout<<"Init "; display();
+      std::cout<<std::endl;
+      display_pos_and_neg_turns();
+      std::cout<<std::endl; */
+
+      bool modified=false;
+      // std::cout<<"RS ";
+      remove_spurs_one_step(path);
+
+      /* display(); display_pos_and_neg_turns();
+      std::cout<<std::endl; */
+
+      do
+      {
+        do
+        {
+          modified=bracket_flattening_one_step(path);
+
+          /* std::cout<<"BF "; display(); display_pos_and_neg_turns();
+          std::cout<<std::endl; */
+
+          modified=modified || remove_spurs_one_step(path);
+
+          /* std::cout<<"RS "; display(); display_pos_and_neg_turns();
+          std::cout<<std::endl; */
+        }
+        while(modified);
+
+        modified=right_push(path);
+      }
+      while(modified); // Maybe we do not need to iterate, a unique last righ_push should be enough (? To verify)
+
+  #ifdef COMPUTE_TIME
+      t.stop();
+      std::cout<<"[TIME] Canonize path: "<<t.time()<<" seconds"<<std::endl;
+  #endif // COMPUTE_TIME
+    }
+
   protected:
-    const Map& m_original_map; // The original surface; not modified
-    Map m_map; // the transformed map
-    TPaths paths; // Pair of edges associated with each edge of m_original_map
-                  // (except the edges that belong to the spanning tree T).
-  public: //TODO TEMPO POUR DEBUG; REMOVE PUBLIC
-    std::size_t m_mark_T; // mark each edge of m_original_map that belong to the spanning tree T
-    std::size_t m_mark_L; // mark each edge of m_original_map that belong to the dual spanning tree L
+    const Map& m_original_map; /// The original surface; not modified
+    Map m_map; /// the transformed map
+    TPaths paths; /// Pair of edges associated with each edge of m_original_map
+                  /// (except the edges that belong to the spanning tree T).
+    std::size_t m_mark_T; /// mark each edge of m_original_map that belong to the spanning tree T
+    std::size_t m_mark_L; /// mark each edge of m_original_map that belong to the dual spanning tree L
+    TDartIds dart_ids; /// Ids of each dart of the transformed map, between 0 and n-1 (n being the number of darts)
+                       /// so that darts between 0...(n/2)-1 belong to the same vertex and
+                       /// d1=beta<1, 2>(d0), d2=beta<1, 2>(d1)...
+                       /// The same for darts between n/2...n-1 for the second vertex
+                       /// Thanks to these ids, we can compute in constant time the positive and
+                       /// negative turns between two consecutive darts
+    std::size_t number_of_edges; // number of edges in the tranformed map (==number of darts / 2)
   };
   
 } // namespace CGAL
