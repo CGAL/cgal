@@ -133,7 +133,6 @@ class Rigid_triangle_mesh_collision_detection
   template <class NamedParameters>
   void add_cc_points(const TriangleMesh& tm, std::size_t id, const NamedParameters& np)
   {
-    m_points_per_cc.resize(m_points_per_cc.size()+1);
     collect_one_point_per_connected_component(tm, m_points_per_cc[id], np);
   }
 
@@ -457,6 +456,7 @@ public:
     if (itf == m_id_pool.begin()+m_free_id) return;
 
     if (m_own_aabb_trees[mesh_id]) delete m_aabb_trees[mesh_id];
+    m_points_per_cc[mesh_id].clear();
     m_aabb_trees[mesh_id] = NULL;
     if (m_id_pool[m_free_id-1]!=mesh_id)
       std::swap(m_id_pool[m_free_id-1], *itf);
