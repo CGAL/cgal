@@ -35,6 +35,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/File_medit.h>
 #include <CGAL/IO/File_tetgen.h>
+#include <CGAL/Real_timer.h>
 
 
 
@@ -377,6 +378,7 @@ struct Tester
 
 int main()
 {
+  CGAL::Real_timer timer; timer.start();
   std::cerr << "TESTING WITH Exact_predicates_inexact_constructions_kernel...\n";
   Tester<K_e_i> test_epic;
   test_epic();
@@ -385,5 +387,6 @@ int main()
   Tester<K_e_e> test_epec;
   test_epec();
 
+  std::cout << timer.time() << "sec" << std::endl;
   return EXIT_SUCCESS;
 }

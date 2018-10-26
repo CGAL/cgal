@@ -1,6 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
-
+#include <iostream>
+#include <CGAL/Real_timer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K_e_i;
 typedef K_e_i::Point_3 Point_3;
@@ -132,10 +133,12 @@ void test_constructor_vfunc_vstr ()
   assert(rp2 != rp3);
 }
 
-int main ()
+int main()
 {
+  CGAL::Real_timer timer; timer.start();
   test_constructor_vfunc();
   test_constructor_vfunc_vvpos();
   test_constructor_vfunc_vstr();
+  std::cout << timer.time() << "sec" << std::endl;
   return 0;
 }

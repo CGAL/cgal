@@ -9,7 +9,8 @@
 #include <CGAL/odt_optimize_mesh_3.h>
 #include <CGAL/perturb_mesh_3.h>
 #include <CGAL/exude_mesh_3.h>
-
+#include <iostream>
+#include <CGAL/Real_timer.h>
 #include <fstream>
 #include <sstream>
 #include <cstring>
@@ -117,9 +118,11 @@ void test()
 
 int main(int, char*[])
 {
+  CGAL::Real_timer timer; timer.start();
   test<CGAL::Sequential_tag>();
 #ifdef CGAL_LINKED_WITH_TBB
   tbb::task_scheduler_init init(1);
   test<CGAL::Parallel_tag>();
 #endif
+  std::cout << timer.time() << "sec" << std::endl;
 }

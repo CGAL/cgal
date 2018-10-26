@@ -26,7 +26,8 @@
 #include "test_meshing_utilities.h"
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
-
+#include <iostream>
+#include <CGAL/Real_timer.h>
 
 template <typename K>
 struct LM3_tester
@@ -265,8 +266,10 @@ private:
 
 int main ()
 {
+  CGAL::Real_timer timer; timer.start();
   LM3_tester<K_e_i> test_epic;
   test_epic();
   
+  std::cout << timer.time() << "sec" << std::endl;
   return EXIT_SUCCESS;
 }

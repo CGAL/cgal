@@ -9,7 +9,8 @@
 #include <CGAL/make_mesh_3.h>
 
 #include <CGAL/IO/File_binary_mesh_3.h>
-
+#include <iostream>
+#include <CGAL/Real_timer.h>
 #include <cassert>
 
 // Domain
@@ -33,6 +34,7 @@ using namespace CGAL::parameters;
 
 int main(int argc, char** argv)
 {
+  CGAL::Real_timer timer; timer.start();
   if(argc != 2) {
     std::cerr << "This test needs a filename as argument.\n";
     return 1;
@@ -98,4 +100,6 @@ int main(int argc, char** argv)
             << c3t3.triangulation().number_of_vertices() << std::endl;
   assert(c3t3.triangulation().number_of_vertices() > 900);
   assert(c3t3.triangulation().number_of_vertices() < 1100);
+  
+  std::cout << timer.time() << "sec" << std::endl;
 }

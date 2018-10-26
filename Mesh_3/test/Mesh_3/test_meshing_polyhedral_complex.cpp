@@ -29,7 +29,8 @@
 #include <CGAL/make_mesh_3.h>
 
 #include <CGAL/IO/File_binary_mesh_3.h>
-
+#include <iostream>
+#include <CGAL/Real_timer.h>
 #include <fstream>
 
 const char* const filenames[] = {
@@ -119,6 +120,7 @@ struct Polyhedral_complex_tester : public Tester<K>
 
 int main()
 {
+  CGAL::Real_timer timer; timer.start();
   Polyhedral_complex_tester<K_e_i> test_epic;
   std::cerr << "Mesh generation from a polyhedral complex:\n";
   test_epic();
@@ -129,5 +131,6 @@ int main()
   test_epic_p();
 #endif
 
+  std::cout << timer.time() << "sec" << std::endl;
   return EXIT_SUCCESS;
 }

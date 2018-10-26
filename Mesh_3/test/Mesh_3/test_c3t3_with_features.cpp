@@ -34,6 +34,7 @@
 #include <fstream>
 #include <iostream>
 #include <CGAL/IO/File_medit.h>
+#include <CGAL/Real_timer.h>
 
 
 
@@ -365,8 +366,10 @@ struct Tester
 
 int main()
 {
+  CGAL::Real_timer timer; timer.start();
   Tester<K_e_i> test_epic;
   test_epic();
 
+  std::cout << timer.time() << "sec" << std::endl;
   return EXIT_SUCCESS;
 }

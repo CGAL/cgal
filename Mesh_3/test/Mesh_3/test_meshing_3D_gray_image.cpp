@@ -27,7 +27,8 @@
 #include <CGAL/Image_3.h>
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/use.h>
-
+#include <iostream>
+#include <CGAL/Real_timer.h>
 #include <functional>
 
 // To avoid verbose function and named parameters call
@@ -108,6 +109,7 @@ public:
 
 int main()
 {
+  CGAL::Real_timer timer; timer.start();
   Image_tester<> test_epic;
   std::cerr << "Mesh generation from a 3D image:\n";
   test_epic.image();
@@ -118,5 +120,6 @@ int main()
   test_epic_p.image();
 #endif
 
+  CGAL::Real_timer timer; timer.start();
   return EXIT_SUCCESS;
 }

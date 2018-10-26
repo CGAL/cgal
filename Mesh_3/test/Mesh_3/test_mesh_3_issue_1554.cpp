@@ -12,7 +12,8 @@
 #include <CGAL/make_mesh_3.h>
 
 #include <fstream>
-
+#include <iostream>
+#include <CGAL/Real_timer.h>
 // Domain 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
@@ -52,6 +53,7 @@ Tr::Bare_point wc_circumcenter(const Tr& tr,
 
 int main(int argc, char*argv[])
 {
+  CGAL::Real_timer timer; timer.start();
   const char* fname = (argc>1)?argv[1]:"data/fandisk.off";
   // Create domain
   std::ifstream in(fname);
@@ -106,5 +108,6 @@ int main(int argc, char*argv[])
   }
   std::cout << c3t3.triangulation().number_of_vertices() << std::endl;
   // Output
+  std::cout << timer.time() << "sec" << std::endl;
   return return_code;
 }

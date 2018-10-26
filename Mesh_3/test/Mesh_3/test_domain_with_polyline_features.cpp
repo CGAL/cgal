@@ -29,6 +29,8 @@
 #include <vector>
 #include <list>
 #include <utility>
+#include <iostream>
+#include <CGAL/Real_timer.h>
 
 template <typename K>
 struct Dummy_domain
@@ -237,6 +239,7 @@ private:
 
 int main()
 {
+  CGAL::Real_timer timer; timer.start();
   std::cout << "Test corners" << std::endl;
   Domain_with_polyline_tester domain_corner_tester;
   domain_corner_tester.build_corners();
@@ -258,5 +261,6 @@ int main()
   domain_cycle_tester.test_cycles();
   domain_cycle_tester.test_geodesic_distance();
   
+  std::cout << timer.time() << "sec" << std::endl;
   return EXIT_SUCCESS;
 }

@@ -30,7 +30,8 @@
 #include <CGAL/IO/File_tetgen.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
 #include <CGAL/use.h>
-
+#include <iostream>
+#include <CGAL/Real_timer.h>
 #include <fstream>
 
 template <typename K, typename Concurrency_tag = CGAL::Sequential_tag>
@@ -116,6 +117,7 @@ struct Polyhedron_with_features_tester : public Tester<K>
 
 int main()
 {
+  CGAL::Real_timer timer; timer.start();
   Polyhedron_with_features_tester<K_e_i> test_epic;
   std::cerr << "Mesh generation from a polyhedron with edges:\n";
   test_epic();
@@ -126,5 +128,6 @@ int main()
   test_epic_p();
 #endif
 
+  std::cout << timer.time() << "sec" << std::endl;
   return EXIT_SUCCESS;
 }

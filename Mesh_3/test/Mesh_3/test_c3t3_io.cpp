@@ -3,10 +3,12 @@
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
+#include <CGAL/Real_timer.h>
 
 #include <boost/variant.hpp>
 
 #include <string>
+#include <iostream>
 
 #include <CGAL/disable_warnings.h>
 
@@ -450,14 +452,17 @@ struct Test_c3t3_io {
 
 int main()
 {
+  CGAL::Real_timer timer; timer.start();
   std::cout << "First test I/O when all indices are integers" << std::endl;
   bool ok = Test_c3t3_io<MD_homogeneous_types>()("data/c3t3_io-homo");
+  std::cout << timer.time() << "sec" << std::endl;
   if(!ok) {
     std::cerr << "Error\n";
     return -1;
   }
   std::cout << "Then test I/O when all indices are different types" << std::endl;
   ok = Test_c3t3_io<MD_heterogeneous_types>()("data/c3t3_io-hetero");
+  std::cout << timer.time() << "sec" << std::endl;
   if(!ok) {
     std::cerr << "Error\n";
     return -1;

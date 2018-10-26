@@ -6,7 +6,8 @@
 
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
-
+#include <iostream>
+#include <CGAL/Real_timer.h>
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::FT FT;
@@ -55,6 +56,7 @@ struct Field {
 
 int main()
 {
+  CGAL::Real_timer timer; timer.start();
   Mesh_domain domain =
     Mesh_domain::create_implicit_mesh_domain(capsule_function,
                                              K::Sphere_3(CGAL::ORIGIN, 49.));
@@ -70,6 +72,7 @@ int main()
   std::ofstream medit_file("out.mesh");
   c3t3.output_to_medit(medit_file);
 
+  std::cout << timer.time() << "sec" << std::endl;
   return 0;
 }
 

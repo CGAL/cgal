@@ -34,7 +34,8 @@
 #include <CGAL/Mesh_3/Dump_c3t3.h>
 
 #include <CGAL/disable_warnings.h>
-
+#include <iostream>
+#include <CGAL/Real_timer.h>
 template <typename K, typename Concurrency_tag = CGAL::Sequential_tag>
 struct Polyhedron_tester : public Tester<K>
 {
@@ -118,6 +119,7 @@ struct Polyhedron_tester : public Tester<K>
 
 int main()
 {
+  CGAL::Real_timer timer; timer.start();
   Polyhedron_tester<K_e_i> test_epic;
   std::cerr << "Mesh generation from a polyhedron:\n";
   test_epic.polyhedron();
@@ -131,5 +133,6 @@ int main()
             << "The parallel version cannot be tested.\n";
 #endif
 
+  std::cout << timer.time() << "sec" << std::endl;
   return EXIT_SUCCESS;
 }

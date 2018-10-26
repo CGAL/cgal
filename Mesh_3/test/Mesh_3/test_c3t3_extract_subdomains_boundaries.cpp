@@ -9,6 +9,9 @@
 #include <CGAL/make_mesh_3.h>
 
 #include <sstream>
+#include <iostream>
+
+#include <CGAL/Real_timer.h>
 
 using namespace CGAL::parameters;
 
@@ -60,6 +63,7 @@ typedef Mesh_criteria::Cell_criteria     Cell_criteria;
 
 int main()
 {
+  CGAL::Real_timer timer; timer.start();
   // Define functions
   Function f1(&torus_function);
   Function f2(&sphere_function<3>);
@@ -93,5 +97,6 @@ int main()
     assert( off_file.str().size() > 20 );
   }
 
+  std::cout << timer.time() << "sec" << std::endl;
   return 0;
 }

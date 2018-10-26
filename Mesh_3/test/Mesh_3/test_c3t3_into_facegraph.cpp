@@ -7,6 +7,7 @@
 #include <CGAL/Mesh_3/tet_soup_to_c3t3.h>
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
+#include <CGAL/Real_timer.h>
 
 #include <CGAL/tags.h>
 
@@ -14,6 +15,7 @@
 #include <fstream>
 
 int main (int argc, char** argv){
+  CGAL::Real_timer timer; timer.start();
   typedef CGAL::Exact_predicates_inexact_constructions_kernel                 K;
   typedef CGAL::Polyhedral_mesh_domain_with_features_3<K>                     Polyhedral_mesh_domain;
 
@@ -90,5 +92,6 @@ int main (int argc, char** argv){
   out << poly;
 
   CGAL_assertion(is_valid(poly));
+  std::cout << timer.time() << "sec" << std::endl;
   return EXIT_SUCCESS;
 }
