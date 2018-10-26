@@ -69,7 +69,7 @@
           <enum>Qt::LeftToRight</enum>
          </property>
          <property name="text">
-          <string>Concavity threshold:</string>
+          <string>Concavity Threshold:</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -79,7 +79,7 @@
        <item row="1" column="0">
         <widget class="QLabel" name="min_segments_label">
          <property name="text">
-          <string>Min number of segments:</string>
+          <string>Min. Number of Segments:</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -96,7 +96,7 @@
        <item row="3" column="0">
         <widget class="QLabel" name="shortest_method_label">
          <property name="text">
-          <string>Use shortest point method:</string>
+          <string>Use Closest Point for Concavity Estimation:</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -120,7 +120,7 @@
        <item row="5" column="0">
         <widget class="QLabel" name="postprocess_segments_label">
          <property name="text">
-          <string>Postprocess segments:</string>
+          <string>Post-Process Segments:</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -130,7 +130,7 @@
        <item row="6" column="0">
         <widget class="QLabel" name="segment_size_threshold_label">
          <property name="text">
-          <string>Small segment threshold (%):</string>
+          <string>Small Segment Threshold (%):</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -174,7 +174,7 @@
           <enum>Qt::LeftToRight</enum>
          </property>
          <property name="text">
-          <string>Extract convex hulls:</string>
+          <string>Compute Segment Convex Hulls:</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -197,7 +197,7 @@
           <enum>Qt::LeftToRight</enum>
          </property>
          <property name="text">
-          <string>Use concavity values for convex hulls' colors:</string>
+          <string>Use Concavity Values to Color Convex Hulls:</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -241,7 +241,7 @@
       <item>
        <widget class="QPushButton" name="concavity_values_button">
         <property name="text">
-         <string>Concavity values</string>
+         <string>Concavity Values</string>
         </property>
        </widget>
       </item>

@@ -316,7 +316,10 @@ private:
     }
    
     concavity_values_item->setItemIsMulticolor(true);
-    concavity_values_item->setName(tr("concavity-values"));
+    if(use_shortest_method)
+      concavity_values_item->setName(tr("%1-concavity-values-with-closest-point").arg(item->name()));
+    else
+      concavity_values_item->setName(tr("%1-concavity-values").arg(item->name()));
 
     // add to the scene
     scene->addItem(concavity_values_item);
