@@ -1563,8 +1563,8 @@ void MainWindow::on_actionLoadScript_triggered()
     tr("Select a script to run..."),
     ".",
     "QTScripts (*.js);;All Files (*)");
-if(filename.isEmpty())
-  return;
+  if(filename.isEmpty())
+    return;
   loadScript(QFileInfo(filename));
 #endif
 }
