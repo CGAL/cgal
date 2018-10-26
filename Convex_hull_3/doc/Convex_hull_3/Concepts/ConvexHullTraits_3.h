@@ -103,7 +103,7 @@ typedef unspecified_type Less_signed_distance_to_plane_3;
 
 /*!
 A traits class providing the requirements of the template parameter `Traits` of
-the 2D convex hull function `CGAL::ch_bykat()` such that `Traits::Point_2`
+the 2D convex hull function `CGAL::ch_akl_toussaint()` such that `Traits::Point_2`
 is `Point_3`, and the 2D points considered in the algorithm are the projections
 of the 3D points in the `xy`-plane.
 If this type is not available, the function `CGAL::convex_hull_3()` will
