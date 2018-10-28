@@ -183,7 +183,6 @@ public:
     build(vpm);
   }
 
-#ifndef DOXYGEN_RUNNING
   typedef TriangleMesh Triangle_mesh;
 
   const Triangle_mesh&
@@ -204,8 +203,6 @@ public:
   {
     return hcm;
   }
-
-#endif // DOXYGEN_RUNNING
 
   template <class VertexDistanceMap>
   IDT_vertex_distance_property_map<Self,VertexDistanceMap>
@@ -438,10 +435,7 @@ private:
   std::vector<int> mark_edges;
 public:
 
-#ifndef DOXYGEN_RUNNING
   boost::unordered_map<vertex_descriptor,vertex_descriptor> v2v, vtov;
-#endif // DOXYGEN_RUNNING
-
 };
 
 } // namespace Heat_method_3
@@ -668,66 +662,61 @@ target(typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T> >::
   return vertex_descriptor(hd);
 }
 
-
-#ifndef DOXYGEN_RUNNING
-
-  template <typename IDT>
-  struct IDT_vertex_point_property_map {
-    const IDT& idt;
-    typedef typename IDT::Triangle_mesh TM;
-    typedef typename boost::graph_traits<IDT>::vertex_descriptor key_type;
-    typedef typename IDT::Point_3 value_type;
-    typedef typename IDT::Point_2 Point_2;
-    typedef value_type reference;
-    typedef boost::readable_property_map_tag category;
-    /**
-     * Default constructor for vertex/point property map
-     */
-    IDT_vertex_point_property_map(const IDT& idt)
-      : idt(idt)
-      {}
+template <typename IDT>
+struct IDT_vertex_point_property_map {
+  const IDT& idt;
+  typedef typename IDT::Triangle_mesh TM;
+  typedef typename boost::graph_traits<IDT>::vertex_descriptor key_type;
+  typedef typename IDT::Point_3 value_type;
+  typedef typename IDT::Point_2 Point_2;
+  typedef value_type reference;
+  typedef boost::readable_property_map_tag category;
+  /**
+   * Default constructor for vertex/point property map
+   */
+  IDT_vertex_point_property_map(const IDT& idt)
+    : idt(idt)
+    {}
 
 
-    /**
-     * friend function for Heat method to get vertex descriptor's coordinates in iDT's local coordinate system
-     */
-    friend value_type get(const IDT_vertex_point_property_map<IDT>& pm,
-                          key_type vd)
-    {
-      const Point_2& p = get(pm.idt.hcmap(), vd.hd);
-      return value_type(p.x(), p.y(), 0);
-    }
-  };
+  /**
+   * friend function for Heat method to get vertex descriptor's coordinates in iDT's local coordinate system
+   */
+  friend value_type get(const IDT_vertex_point_property_map<IDT>& pm,
+                        key_type vd)
+  {
+    const Point_2& p = get(pm.idt.hcmap(), vd.hd);
+    return value_type(p.x(), p.y(), 0);
+  }
+};
 
-  template <typename IDT, typename PM>
-  struct IDT_vertex_distance_property_map {
-    const IDT& idt;
-    PM pm;
+template <typename IDT, typename PM>
+struct IDT_vertex_distance_property_map {
+  const IDT& idt;
+  PM pm;
 
-    typedef typename IDT::Triangle_mesh TM;
-    typedef typename IDT::Vertex_descriptor key_type;
-    typedef double value_type;
-    typedef value_type reference;
+  typedef typename IDT::Triangle_mesh TM;
+  typedef typename IDT::Vertex_descriptor key_type;
+  typedef double value_type;
+  typedef value_type reference;
 
-    IDT_vertex_distance_property_map(const IDT& idt,
-                                     PM pm)
-      : idt(idt), pm(pm)
-      {}
+  IDT_vertex_distance_property_map(const IDT& idt,
+                                   PM pm)
+    : idt(idt), pm(pm)
+    {}
 
 
-    // no need for a get()
+  // no need for a get()
 
-    friend void put(IDT_vertex_distance_property_map<IDT,PM> idtpm,
-                    key_type vd,
-                    value_type v)
-    {
-      typename boost::graph_traits<TM>::vertex_descriptor tm_vd = target(vd.hd, idtpm.idt.triangle_mesh());
+  friend void put(IDT_vertex_distance_property_map<IDT,PM> idtpm,
+                  key_type vd,
+                  value_type v)
+  {
+    typename boost::graph_traits<TM>::vertex_descriptor tm_vd = target(vd.hd, idtpm.idt.triangle_mesh());
 
-      put(idtpm.pm, idtpm.idt.v2v.at(tm_vd), v);
-    }
-  };
-
-#endif // DOXYGEN_RUNNING
+    put(idtpm.pm, idtpm.idt.v2v.at(tm_vd), v);
+  }
+};
 
 } // namespace Heat_method_3
 } // namespace CGAL
