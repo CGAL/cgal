@@ -1251,7 +1251,7 @@ bool do_intersect(const TriangleMesh& tm1,
 {
   CGAL_precondition(CGAL::is_triangle_mesh(tm1));
   CGAL_precondition(CGAL::is_triangle_mesh(tm2));
-  return do_intersect(tm1, tm2, parameters::all_default(), parameters::all_default());
+  return CGAL::Polygon_mesh_processing::do_intersect(tm1, tm2, parameters::all_default(), parameters::all_default());
 }
 
 /**
@@ -1382,7 +1382,7 @@ bool do_intersect(const TriangleMesh& tm,
 {
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
 
-  return do_intersect(tm, polylines, parameters::all_default());
+  return CGAL::Polygon_mesh_processing::do_intersect(tm, polylines, parameters::all_default());
 }
 
 
@@ -1405,7 +1405,7 @@ bool do_intersect(const TriangleMesh& tm,
 {
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
 
-  return do_intersect(tm, polyline, parameters::all_default());
+  return CGAL::Polygon_mesh_processing::do_intersect(tm, polyline, parameters::all_default());
 }
 
 namespace internal{
