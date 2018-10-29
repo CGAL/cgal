@@ -26,7 +26,7 @@
 #include <Eigen/SVD>
 
 namespace CGAL {
-/// \ingroup PkgSurfaceMeshDeformation
+/// \ingroup PkgSurfaceMeshDeformationRef
 /// A class to compute the closest rotation in Frobenius norm to a 3x3 Matrix using the \link thirdpartyEigen `Eigen` library \endlink.
 /// The internal computation relies on `Eigen::JacobiSVD<>` solver.
 ///

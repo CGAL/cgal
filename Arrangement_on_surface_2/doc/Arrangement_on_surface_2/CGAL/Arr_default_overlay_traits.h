@@ -2,8 +2,8 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2TraitsClasses
-\ingroup PkgArrangement2Overlay
+\ingroup PkgArrangementOnSurface2TraitsClasses
+\ingroup PkgArrangementOnSurface2Overlay
 
 An instance of `Arr_default_overlay_traits` should be used for overlaying two arrangements 
 of type `Arrangement` that store no auxiliary data with their <span class="textsc">Dcel</span> records, where the resulting overlaid arrangement stores no auxiliary 
@@ -27,8 +27,8 @@ public:
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2TraitsClasses
-\ingroup PkgArrangement2Overlay
+\ingroup PkgArrangementOnSurface2TraitsClasses
+\ingroup PkgArrangementOnSurface2Overlay
 
 An instance of `Arr_face_overlay_traits` should be used for overlaying two arrangements 
 of types `Arr_A` and `Arr_B`, which are instantiated using the same 

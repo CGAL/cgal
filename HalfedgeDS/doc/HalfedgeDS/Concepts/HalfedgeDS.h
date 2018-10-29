@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgHDSConcepts
+\ingroup PkgHalfedgeDSConcepts
 \cgalConcept
 
 The concept of a halfedge data structure (abbreviated as `HalfedgeDS`, or 

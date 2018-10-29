@@ -44,7 +44,7 @@
 
 namespace CGAL {
 
-/// \addtogroup PkgAABB_tree
+/// \addtogroup PkgAABBTreeRef
 /// @{
 
 	/**

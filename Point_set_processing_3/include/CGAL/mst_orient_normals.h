@@ -499,7 +499,7 @@ create_mst_graph(
 // ----------------------------------------------------------------------------
 
 /**  
-   \ingroup PkgPointSetProcessingAlgorithms
+   \ingroup PkgPointSetProcessing3Algorithms
    Orients the normals of the range of `points` using the propagation
    of a seed orientation through a minimum spanning tree of the Riemannian graph.
    This method modifies the order of input points so as to pack all sucessfully oriented points first,

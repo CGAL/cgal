@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgVoronoiDiagramAdaptor2Concepts
+\ingroup PkgVoronoiDiagram2Concepts
 \cgalConcept
 
 The concept `AdaptationPolicy_2` defines the requirements on 

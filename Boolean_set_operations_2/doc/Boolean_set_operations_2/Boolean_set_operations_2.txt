@@ -23,7 +23,7 @@ intersection predicates, and point containment predicates.
 
 Ordinary Boolean set-operations, which distinguish between the
 interior and the boundary of a polygon, are not implemented within this
-package. The Chapter \ref PkgNef2Summary supports these operations for (linear)
+package. The Chapter \ref PkgNef2 supports these operations for (linear)
 polygons.
 
 In the rest of this chapter we use, unless otherwise stated, the

@@ -46,7 +46,7 @@ namespace Surface_mesh_parameterization {
 // Declaration
 //
 
-/// \ingroup PkgSurfaceParameterizationBorderParameterizationMethods
+/// \ingroup PkgSurfaceMeshParameterizationBorderParameterizationMethods
 ///
 /// The class `Two_vertices_parameterizer_3` parameterizes two extreme vertices
 /// of a 3D surface.

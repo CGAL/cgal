@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgPeriodic_3_mesh_3Concepts
+\ingroup PkgPeriodic3Mesh3Concepts
 \cgalConcept
 
 \cgalRefines `MeshDomain_3`

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3MeshClasses
+\ingroup PkgMesh3MeshClasses
 
 The class `Mesh_complex_3_in_triangulation_3` implements a data structure 
 to store the 3D restricted Delaunay triangulation used by a mesh 

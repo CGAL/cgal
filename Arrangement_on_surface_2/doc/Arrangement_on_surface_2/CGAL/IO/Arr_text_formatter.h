@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2IO
+\ingroup PkgArrangementOnSurface2IO
 
 `Arr_extended_dcel_text_formatter` defines the format of an arrangement in an input or output stream 
 (typically a file stream), thus enabling reading and writing an `Arrangement` 
@@ -21,8 +21,8 @@ the `<<` operator and read from an input stream using the `>>` operator.
 \cgalModels `ArrangementInputFormatter`
 \cgalModels `ArrangementOutputFormatter`
 
-\sa `PkgArrangement2Read` 
-\sa `PkgArrangement2Write` 
+\sa `PkgArrangementOnSurface2Read` 
+\sa `PkgArrangementOnSurface2Write` 
 \sa `Arr_extended_dcel<Traits,VData,HData,FData,V,H,F>` 
 
 */
@@ -38,7 +38,7 @@ public:
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2IO
+\ingroup PkgArrangementOnSurface2IO
 
 `Arr_face_extended_text_formatter` defines the format of an arrangement in an input or output stream 
 (typically a file stream), thus enabling reading and writing an `Arrangement` 
@@ -55,8 +55,8 @@ can all be written to an input stream using the `<<` operator and read from an i
 \cgalModels `ArrangementInputFormatter`
 \cgalModels `ArrangementOutputFormatter`
 
-\sa `PkgArrangement2Read` 
-\sa `PkgArrangement2Write` 
+\sa `PkgArrangementOnSurface2Read` 
+\sa `PkgArrangementOnSurface2Write` 
 \sa `Arr_face_extended_dcel<Traits,FData,V,H,F>` 
 
 */
@@ -72,7 +72,7 @@ public:
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2IO
+\ingroup PkgArrangementOnSurface2IO
 
 `Arr_text_formatter` defines the format of an arrangement in an input or output stream 
 (typically a file stream), thus enabling reading and writing an `Arrangement` 
@@ -88,8 +88,8 @@ operator.
 \cgalModels `ArrangementInputFormatter`
 \cgalModels `ArrangementOutputFormatter`
 
-\sa `PkgArrangement2Read` 
-\sa `PkgArrangement2Write` 
+\sa `PkgArrangementOnSurface2Read` 
+\sa `PkgArrangementOnSurface2Write` 
 
 */
 template< typename Arrangement >

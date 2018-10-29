@@ -46,7 +46,7 @@ true, for instance, upon reaching a desired number of vertices or
 reaching a maximum simplification error.
 
 The polyline simplification algorithm operates on a triangulation
-class from Chapter \ref PkgTriangulation2Summary, namely
+class from Chapter \ref PkgTriangulation2, namely
 `Constrained_triangulation_plus_2`.  This data structure allows to
 remove vertices of a polyline constraint, while keeping the points of
 the removed vertices of the polyline constraint. The fact that it is a

@@ -107,7 +107,7 @@ public:
 
 } // namespace internal
 
-/// \ingroup PkgSurfaceParameterizationOrbifoldHelperFunctions
+/// \ingroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
 /// Compute the shortest path between `source` and `target` over `mesh`, using
 /// <a href="https://www.boost.org/doc/libs/release/libs/graph/doc/dijkstra_shortest_paths.html">
@@ -166,7 +166,7 @@ void compute_shortest_paths_between_two_cones(const TriangleMesh& mesh,
   } while (s != source);
 }
 
-/// \ingroup PkgSurfaceParameterizationOrbifoldHelperFunctions
+/// \ingroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
 /// Given a range `[first; beyond[` of cones (described as vertex descriptors),
 /// compute the shortest path for all pairs of consecutive entries in the range

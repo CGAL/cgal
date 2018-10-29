@@ -38,7 +38,7 @@ lead to precision issues, please use CGAL::Eigen_diagonalize_traits")
 
 namespace CGAL {
 
-/// \ingroup PkgSolver
+/// \ingroup PkgSolverInterfaceRef
 ///
 /// The class `Diagonalize_traits` provides an internal
 /// implementation for the diagonalization of Variance-Covariance

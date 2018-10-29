@@ -269,7 +269,7 @@ namespace CGAL {
   /// \ingroup PkgSurface_mesh
   /// This class is a data structure that can be used as halfedge data structure or polyhedral
   /// surface. It is an alternative to the classes `HalfedgeDS` and `Polyhedron_3`
-  /// defined in the packages  \ref PkgHDSSummary and \ref PkgPolyhedronSummary. 
+  /// defined in the packages  \ref PkgHalfedgeDS and \ref PkgPolyhedron. 
   /// The main difference is that it is indexed based and not pointer based,
   /// and that the mechanism for adding information to vertices, halfedges, edges,
   /// and faces is much simpler and done at runtime and not at compile time.

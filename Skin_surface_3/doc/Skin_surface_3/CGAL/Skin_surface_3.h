@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSkinSurface3
+\ingroup PkgSkinSurface3Ref
 
 The `Skin_surface_3` is the main class in this package. 
 It is a model of the concept `SkinSurface_3`. 

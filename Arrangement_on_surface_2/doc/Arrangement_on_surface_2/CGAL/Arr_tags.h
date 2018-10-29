@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2Tags
+\ingroup PkgArrangementOnSurface2Tags
 
 The categories `Left_side_category`, `Right_side_category`, 
 `Bottom_side_category`, and `Top_side_category`, 
@@ -26,7 +26,7 @@ struct Arr_oblivious_side_tag {
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2Tags
+\ingroup PkgArrangementOnSurface2Tags
 
 All the four types `Left_side_category`, 
 `Right_side_category`, `Bottom_side_category`, 

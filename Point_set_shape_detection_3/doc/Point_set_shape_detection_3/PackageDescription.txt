@@ -1,23 +1,23 @@
 /*!
-\defgroup PkgPointSetShapeDetection3 Point Set Shape Detection Reference
+\defgroup PkgPointSetShapeDetection3Ref Point Set Shape Detection Reference
 
 \defgroup PkgPointSetShapeDetection3Concepts Concepts
-\ingroup PkgPointSetShapeDetection3
+\ingroup PkgPointSetShapeDetection3Ref
 
 \defgroup PkgPointSetShapeDetection3Shapes Shapes
-\ingroup PkgPointSetShapeDetection3
+\ingroup PkgPointSetShapeDetection3Ref
 
 
 
-\addtogroup PkgPointSetShapeDetection3
+\addtogroup PkgPointSetShapeDetection3Ref
 
-\cgalPkgDescriptionBegin{Point Set Shape Detection, PkgPointSetShapeDetection3Summary}
+\cgalPkgDescriptionBegin{Point Set Shape Detection, PkgPointSetShapeDetection3}
 \cgalPkgPicture{shapes_detail.png}
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Sven Oesau, Yannick Verdie, Clément Jamin, Pierre Alliez, Florent Lafarge, Simon Giraudot}
 \cgalPkgDesc{This component implements two primitive shape detection algorithms: efficient RANSAC and region growing. Planes are detected from point sets with unoriented normals. RANSAC also handles the following shapes: sphere, cylinder, cone and torus. Other types of shapes can be detected through implementing a class deriving from the base shape class.}
-\cgalPkgManuals{Chapter_Point_Set_Shape_Detection, PkgPointSetShapeDetection3}
+\cgalPkgManuals{Chapter_Point_Set_Shape_Detection, PkgPointSetShapeDetection3Ref}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin

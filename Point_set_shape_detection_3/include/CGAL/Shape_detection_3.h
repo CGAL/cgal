@@ -21,7 +21,7 @@
 //
 
 /**
-* \ingroup PkgPointSetShapeDetection3
+* \ingroup PkgPointSetShapeDetection3Ref
 * \file CGAL/Shape_detection_3.h
 * Convenience header file including the headers of this package.
 */
