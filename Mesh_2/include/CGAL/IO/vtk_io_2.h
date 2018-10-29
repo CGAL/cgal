@@ -275,7 +275,7 @@ write_points(std::ostream& os,
 
 
 template <class CDT>
-void write_unstructured_grid_2(std::ostream& os,
+void write_VTU(std::ostream& os,
                                const CDT& tr,
                                bool binary = true)
 {

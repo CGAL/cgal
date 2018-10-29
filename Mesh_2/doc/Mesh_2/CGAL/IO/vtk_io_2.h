@@ -1,6 +1,6 @@
 namespace CGAL{
 //!\ingroup PkgMesh2
-//! \brief write_unstructured_grid_2 writes the content of a `CDT` in the .vtu
+//! \brief writes the content of a `CDT` in the .vtu
 //! XML format. 
 //! 
 //! The triangles inside the domain and the constrained edges will be outputted.
@@ -13,7 +13,7 @@ namespace CGAL{
 //!   or in ASCII(`false`).
 //!
 template <class CDT>
-void write_unstructured_grid_2(std::ostream& os,
+void write_VTU(std::ostream& os,
                                const CDT& tr,
                                bool binary = true);
 }

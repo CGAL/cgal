@@ -676,7 +676,7 @@ MainWindow::saveConstraints(QString fileName)
     output << cdt;
   else if (output)
   {
-    CGAL::write_unstructured_grid_2(output, cdt);
+    CGAL::write_VTU(output, cdt);
   }
 }
 

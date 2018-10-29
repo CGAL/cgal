@@ -1,7 +1,7 @@
 namespace CGAL{
 //! \ingroup PkgMesh_3IOFunctions
 //! 
-//! \brief write_polydata_3 writes the content of a triangulated surface mesh in the .vtp
+//! \brief  writes the content of a triangulated surface mesh in the .vtp
 //! XML format.
 //! 
 //! \tparam TriangleMesh a model of `FaceListGraph` with triangle faces.
@@ -26,14 +26,14 @@ namespace CGAL{
 //! \cgalNamedParamsEnd
 template<class TriangleMesh, 
          class NamedParameters>
-void write_polydata(std::ostream& os,
+void write_VTP(std::ostream& os,
                     const TriangleMesh& mesh,
                     bool binary,
                     const NamedParameters& np);
 
 //! \ingroup PkgMesh_3IOFunctions
 //! 
-//! \brief write_unstructured_grid_3 writes the content of a `C3t3` in the .vtu
+//! \brief writes the content of a `C3t3` in the .vtu
 //! XML format.
 //! 
 //! \tparam C3T3 a model of `MeshComplexWithFeatures_3InTriangulation_3`.
@@ -42,6 +42,6 @@ void write_polydata(std::ostream& os,
 //! \param c3t3 an instance of `C3T3` to be written.
 //!
 template <class C3T3>
-void write_unstructured_grid_3(std::ostream& os,
+void write_VTU(std::ostream& os,
                              const C3T3& c3t3);
 }

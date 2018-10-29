@@ -345,7 +345,7 @@ public:
         std::ofstream os(output_filename.data());
         os << std::setprecision(16);
         //write header
-        CGAL::write_polydata(os, *mesh);
+        CGAL::write_VTP(os, *mesh);
       }
     }
     else
@@ -359,7 +359,7 @@ public:
       os << std::setprecision(16);
       const C3t3& c3t3 = c3t3_item->c3t3();
       
-      CGAL::write_unstructured_grid_3(os, c3t3);
+      CGAL::write_VTU(os, c3t3);
     }
     return true;
   }

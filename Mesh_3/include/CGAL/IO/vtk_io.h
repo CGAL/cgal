@@ -474,7 +474,7 @@ write_attributes(std::ostream& os,
 
 template<class TriangleMesh, 
          class NamedParameters>
-void write_polydata(std::ostream& os,
+void write_VTP(std::ostream& os,
                     const TriangleMesh& mesh,
                     bool binary,
                     const NamedParameters& np)
@@ -510,16 +510,16 @@ void write_polydata(std::ostream& os,
 }
 
 template<class TriangleMesh>
-void write_polydata(std::ostream& os,
+void write_VTP(std::ostream& os,
                       const TriangleMesh& mesh,
                       bool binary = true)
 {
-  write_polydata(os, mesh, binary, CGAL::parameters::all_default());
+  write_VTP(os, mesh, binary, CGAL::parameters::all_default());
 } 
 
 
 template <class C3T3>
-void write_unstructured_grid_3(std::ostream& os,
+void write_VTU(std::ostream& os,
                              const C3T3& c3t3)
 {
   typedef typename C3T3::Triangulation Tr;
