@@ -79,7 +79,13 @@ public:
             n_r += 1;
         }
         // sort data so thresholding is easy based on position in array
-        std::sort(data_points.begin(), data_points.end());
+        std::sort(data_points.begin(), data_points.end(),
+                  [&](const std::pair<float, int>& a,
+                      const std::pair<float, int>& b) -> bool
+                  {
+                    return a.first < b.first;
+                  });
+                      
         // loop over data, update class distributions left&right
         for (size_t i_point = 1; i_point < data_points.size(); ++i_point) {
             int cls = data_points[i_point-1].second;
@@ -92,6 +98,7 @@ public:
                 continue;
             // weighted average
             double gini = n_l - gini_square_term(classes_l) * 1.0 / n_l + n_r - gini_square_term(classes_r) * 1.0 / n_r;
+
             if (gini < best_loss) {
                 best_loss = gini;
                 double fraction = fraction_dist(gen);
@@ -106,6 +113,7 @@ public:
     {
         ar & boost::serialization::make_nvp("base",  boost::serialization::base_object< Node< NodeGini<Splitter>, ForestParams, Splitter > >(*this));
     }
+  
 };
 
 }

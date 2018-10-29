@@ -62,9 +62,9 @@ namespace liblearning {
 namespace RandomForest {
 
 typedef std::vector< std::pair<float, int> > FeatureClassDataFloat;
-inline void init_feature_class_data(FeatureClassDataFloat& data, int /*n_classes*/, int n_samples)
+inline void init_feature_class_data(FeatureClassDataFloat& data, int /*n_classes*/, int /* n_samples */)
 {
-    data.resize(n_samples);
+//    data.resize(n_samples);
 }
 typedef boost::unordered_set<int> FeatureSet;
 
@@ -222,15 +222,21 @@ struct AxisAlignedSplitter {
                     int             n_samples,
                     FeatureClassData&        data_points) const
     {
-        for (int i_sample = 0; i_sample < n_samples; ++i_sample) {
-            // determine index of this sample ...
-            int sample_idx    = sample_idxes[i_sample];
-            // determine class ...
-            int sample_class  = labels(sample_idx, 0);
-            // determine value of the selected feature for this sample
-            FeatureType sample_fval = samples(sample_idx, feature);
-            data_points[i_sample] = std::make_pair(sample_fval, sample_class);
-        }
+      std::size_t size = (std::min)(std::size_t(5000), std::size_t(n_samples));
+      data_points.clear();
+      data_points.reserve(size);
+      
+      std::size_t step = n_samples / size;
+
+      for (int i_sample = 0; i_sample < n_samples; i_sample += step) {
+        // determine index of this sample ...
+        int sample_idx    = sample_idxes[i_sample];
+        // determine class ...
+        int sample_class  = labels(sample_idx, 0);
+        // determine value of the selected feature for this sample
+        FeatureType sample_fval = samples(sample_idx, feature);
+        data_points.push_back(std::make_pair(sample_fval, sample_class));
+      }
     }
     template <typename Archive>
     void serialize(Archive& ar, unsigned /*version*/)
