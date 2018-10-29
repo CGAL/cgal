@@ -26,9 +26,13 @@
 #include <CGAL/number_type_config.h>
 #include <CGAL/double.h>
 
+#ifndef CGAL_I_WANT_TO_USE_DIAGONALIZE_TRAITS
 #define CGAL_WARNING_DIAGONALIZE_TRAITS \
   CGAL_DEPRECATED_MSG("CGAL::Diagonalize_traits is a deprecated class that can \
 lead to precision issues, please use CGAL::Eigen_diagonalize_traits")
+#else
+#define CGAL_WARNING_DIAGONALIZE_TRAITS
+#endif
 
 /// \cond SKIP_IN_MANUAL
 
