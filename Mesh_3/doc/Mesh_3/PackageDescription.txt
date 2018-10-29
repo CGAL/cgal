@@ -139,6 +139,8 @@ and their associated classes:
 
 ## Input/Output Functions ##
 - `CGAL::output_to_medit()`
+- `CGAL::write_polydata()`
+- `CGAL::write_unstructured_grid_3()`
 
 */
 
