@@ -120,6 +120,5 @@ int main()
   test_epic_p.image();
 #endif
 
-  CGAL::Real_timer timer; timer.start();
   return EXIT_SUCCESS;
 }
