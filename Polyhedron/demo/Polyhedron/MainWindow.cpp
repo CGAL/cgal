@@ -1347,6 +1347,14 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
             {
               menu_actions["alpha slider"] = action->menu()->actions().last();
             }
+            else if(action->text() == QString("Points Size"))
+            {
+              menu_actions["points slider"] = action->menu()->actions().last();
+            }
+            else if(action->text() == QString("Normals Length"))
+            {
+              menu_actions["normals slider"] = action->menu()->actions().last();
+            }
           }
           
         }
@@ -1364,7 +1372,9 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
         QMenu menu;
         Q_FOREACH(QString name, menu_actions.keys())
         {
-          if(name == QString("alpha slider"))
+          if(name == QString("alpha slider")
+             || name == QString("points slider")
+             || name == QString("normals slider"))
             continue;
           if(name == QString("Alpha value"))
           {
@@ -1398,6 +1408,74 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
               }
             });
             QMenu* new_menu = new QMenu("Alpha value", &menu);
+              new_menu->addAction(sliderAction);
+              menu.addMenu(new_menu);
+          }
+          else if(name == QString("Points Size"))
+          {
+            QWidgetAction* sliderAction = new QWidgetAction(&menu);
+            QSlider* slider = new QSlider(&menu);
+            slider->setMinimum(1);
+            slider->setMaximum(25);
+            slider->setValue(
+                  qobject_cast<QSlider*>(
+                    qobject_cast<QWidgetAction*>
+                    (menu_actions["points slider"])->defaultWidget()
+                  )->value());
+            slider->setOrientation(Qt::Horizontal);
+            sliderAction->setDefaultWidget(slider);
+            
+            connect(slider, &QSlider::valueChanged, [this, slider]()
+            {
+              Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
+              {
+                Scene_item* item = scene->item(id);
+                Q_FOREACH(QAction* action, item->contextMenu()->actions())
+                {
+                  if(action->text() == "Points Size")
+                  {
+                    QWidgetAction* sliderAction = qobject_cast<QWidgetAction*>(action->menu()->actions().last());
+                    QSlider* ac_slider = qobject_cast<QSlider*>(sliderAction->defaultWidget());
+                    ac_slider->setValue(slider->value());
+                    break;
+                  }
+                }
+              }
+            });
+            QMenu* new_menu = new QMenu("Points Size", &menu);
+              new_menu->addAction(sliderAction);
+              menu.addMenu(new_menu);
+          }
+          else if(name == QString("Normals Length"))
+          {
+            QWidgetAction* sliderAction = new QWidgetAction(&menu);
+            QSlider* slider = new QSlider(&menu);
+            slider->setValue(
+                  qobject_cast<QSlider*>(
+                    qobject_cast<QWidgetAction*>
+                    (menu_actions["normals slider"])->defaultWidget()
+                  )->value());
+            slider->setOrientation(Qt::Horizontal);
+            sliderAction->setDefaultWidget(slider);
+            
+            connect(slider, &QSlider::valueChanged, [this, slider]()
+            {
+              Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
+              {
+                Scene_item* item = scene->item(id);
+                Q_FOREACH(QAction* action, item->contextMenu()->actions())
+                {
+                  if(action->text() == "Normals Length")
+                  {
+                    QWidgetAction* sliderAction = qobject_cast<QWidgetAction*>(action->menu()->actions().last());
+                    QSlider* ac_slider = qobject_cast<QSlider*>(sliderAction->defaultWidget());
+                    ac_slider->setValue(slider->value());
+                    break;
+                  }
+                }
+              }
+            });
+            QMenu* new_menu = new QMenu("Normals Length", &menu);
               new_menu->addAction(sliderAction);
               menu.addMenu(new_menu);
           }

@@ -931,7 +931,7 @@ QMenu* Scene_points_with_normal_item::contextMenu()
           connect(d->normal_Slider, &QSlider::sliderReleased, this, &Scene_points_with_normal_item::itemChanged);
         }
         sliderAction->setDefaultWidget(d->normal_Slider);
-
+        container->menuAction()->setProperty("is_groupable", true);
         container->addAction(sliderAction);
         menu->addMenu(container);
       }
@@ -942,7 +942,7 @@ QMenu* Scene_points_with_normal_item::contextMenu()
         connect(d->point_Slider, &QSlider::valueChanged, this, &Scene_points_with_normal_item::itemChanged);
 
         sliderAction->setDefaultWidget(d->point_Slider);
-
+        container->menuAction()->setProperty("is_groupable", true);
         container->addAction(sliderAction);
         menu->addMenu(container);
 
