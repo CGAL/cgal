@@ -1020,8 +1020,9 @@ make_icosahedron(
  * If `triangulated` is `true`, the diagonal of each cell is oriented from (0,0) to (1,1)
  * in the cell coordinates.
  *
- * \tparam CoordinateFunctor that takes two `boost::graph_traits<Graph>::%vertices_size_type`
+ * \tparam CoordinateFunctor that takes three `boost::graph_traits<Graph>::%vertices_size_type`
  * and outputs a `boost::property_traits<boost::property_map<Graph,CGAL::vertex_point_t>::%type>::%value_type`.
+ *  It will be called with arguments (`w`, `h`, 0), with `w` in [0..`i`] and `h` in [0..`j`].
  * <p>%Default: a point with positive integer coordinates (`w`, `h`, 0), with `w` in [0..`i`] and `h` in [0..`j`]
  * \returns the non-border non-diagonal halfedge that has the target vertex associated with the first point of the grid (default is (0,0,0) ).
  */
@@ -1043,7 +1044,6 @@ make_grid(typename boost::graph_traits<Graph>::vertices_size_type i,
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
   typename boost::graph_traits<Graph>::vertices_size_type w(i+1), h(j+1);
   Point_property_map vpmap = get(CGAL::vertex_point, g);
-  // create the initial icosahedron
   //create the vertices
   std::vector<vertex_descriptor> v_vertices;
   v_vertices.resize(static_cast<std::size_t>(w*h));
