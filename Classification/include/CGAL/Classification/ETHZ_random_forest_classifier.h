@@ -134,7 +134,7 @@ public:
     will underfit the test data and conversely an overly high value
     will likely overfit.
   */
-  template <typename LabelIndexRange>
+  template <typename ConcurrencyTag, typename LabelIndexRange>
   void train (const LabelIndexRange& ground_truth,
               bool reset_trees = true,
               std::size_t num_trees = 25,
@@ -174,7 +174,8 @@ public:
 
     CGAL::internal::liblearning::RandomForest::AxisAlignedRandomSplitGenerator generator;
     
-    m_rfc->train(feature_vector, label_vector, CGAL::internal::liblearning::DataView2D<int>(), generator, 0, false, reset_trees);
+    m_rfc->train<ConcurrencyTag>
+      (feature_vector, label_vector, CGAL::internal::liblearning::DataView2D<int>(), generator, 0, reset_trees, m_labels.size());
   }
 
   /// \cond SKIP_IN_MANUAL
