@@ -55,7 +55,7 @@ The distances are written into an internal property map of the surface mesh.
 \cgalExample{Heat_method_3/heat_method.cpp}
 
 For a `Polyhedron_3` you can either add a data field to the vertex type, or, as shown
-in the following example create a `boost::unordered_map` and pass it to the function
+in the following example, create a `boost::unordered_map` and pass it to the function
 `boost::make_assoc_property_map()` which generates a vertex distance property map.
 
 \cgalExample{Heat_method_3/heat_method_polyhedron.cpp}
@@ -159,7 +159,8 @@ the polyhedron and do not have to correspond to edges of the input triangulation
 explicitly; instead, we simply keep track of their lengths as the triangulation is updated.  These lengths are
 sufficient to determine areas and angles of the intrinsic triangles, and in turn, the new cotan Laplace matrix.
 
-    - An edge of a mesh is locally Delaunay if the sum of opposite angles is no smaller than pi, or equivalently, if the cotangents of the opposing angles is nonnegative. A mesh is Delaunay if all of its edges are locally Delaunay.
+An edge of a mesh is locally Delaunay if the sum of opposite angles is no smaller than pi, or equivalently,
+if the cotangents of the opposing angles is nonnegative. A mesh is Delaunay if all of its edges are locally Delaunay.
 
 A standard algorithm to convert a given planar triangulation into a Delaunay triangulation is
 to flip non-Delaunay edges in a mesh until the mesh is Delaunay.

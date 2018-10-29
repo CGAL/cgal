@@ -166,7 +166,7 @@ public:
 
 
   /**
-   * removes vd` from the source set, returning 'true' if `vd` was in the set.
+   * removes `vd` from the source set, returning `true` if `vd` was in the set.
    */
   template <typename VD>
   bool
@@ -767,7 +767,7 @@ public:
   }
 
   /**
-   * removes vd` from the source set, returning 'true' if `vd` was in the set.
+   * removes `vd` from the source set, returning `true` if `vd` was in the set.
    */
   bool
   remove_source(vertex_descriptor vd)
@@ -812,10 +812,10 @@ public:
   }
 
   /**
+   * fills the distance property map with the geodesic distance of each vertex to the closest source vertex.
    * \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
    * with `vertex_descriptor` as key type and `double` as value type.
    * \param vdm the vertex distance map to be filled
-   * fills the distance property map with the geodesic distance of each vertex to the closest source vertex.
    **/
   template <class VertexDistanceMap>
   void fill_distance_map(VertexDistanceMap vdm)
