@@ -2055,7 +2055,7 @@ void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
 void MainWindow::on_actionRecenterScene_triggered()
 {
   updateViewerBBox();
-  viewer->camera()->interpolateToFitScene();
+  viewer->camera()->showEntireScene();
 }
 
 void MainWindow::on_actionLoadPlugin_triggered()
