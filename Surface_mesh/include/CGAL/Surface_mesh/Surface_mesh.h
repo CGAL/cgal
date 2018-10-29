@@ -1112,7 +1112,7 @@ public:
   
   bool join(const Surface_mesh& other)
   {
-    size_type nv = num_vertices(), nh = num_halfedges(), nf = num_faces();
+    const size_type nv = num_vertices(), nh = num_halfedges(), nf = num_faces();
     resize(num_vertices()+  other.num_vertices(),
             num_edges()+  other.num_edges(),
             num_faces()+  other.num_faces());
@@ -1155,7 +1155,9 @@ public:
         Vertex_index vi(nv+other.vertices_freelist_);
         Halfedge_index inf((std::numeric_limits<size_type>::max)());
         while(vconn_[vi].halfedge_ != inf){
-          vi = Vertex_index(size_type(vconn_[vi].halfedge_));
+          Vertex_index corrected_vi = Vertex_index(size_type(vconn_[vi].halfedge_)+nv-nh);
+          vconn_[vi].halfedge_ = Halfedge_index(corrected_vi);
+          vi = corrected_vi;
         }
         vconn_[vi].halfedge_ = Halfedge_index(vertices_freelist_);
       }
@@ -1166,7 +1168,9 @@ public:
         Face_index fi(nf+other.faces_freelist_);
         Halfedge_index inf((std::numeric_limits<size_type>::max)());
         while(fconn_[fi].halfedge_ != inf){
-          fi = Face_index(size_type(fconn_[fi].halfedge_));
+          Face_index corrected_fi = Face_index(size_type(fconn_[fi].halfedge_)+nf-nh);
+          fconn_[fi].halfedge_ = Halfedge_index(corrected_fi);
+          fi = corrected_fi;
         }
         fconn_[fi].halfedge_ = Halfedge_index(faces_freelist_);
       }
@@ -1174,14 +1178,14 @@ public:
     }
     if(other.edges_freelist_ != inf_value){
       if(edges_freelist_ != inf_value){
-        Halfedge_index hi((nh>>1)+other.edges_freelist_);
+        Halfedge_index hi(nh+other.edges_freelist_);
         Halfedge_index inf((std::numeric_limits<size_type>::max)());
         while(hconn_[hi].next_halfedge_ != inf){
           hi = hconn_[hi].next_halfedge_;
         }
         hconn_[hi].next_halfedge_ = Halfedge_index(edges_freelist_);
       }
-      edges_freelist_ = (nh>>1) + other.edges_freelist_; 
+      edges_freelist_ = nh + other.edges_freelist_; 
     }
     garbage_ = garbage_ || other.garbage_;
     removed_vertices_ += other.removed_vertices_;
@@ -1962,6 +1966,22 @@ private: //--------------------------------------------------- property handling
   }
   /// @}
 
+#if defined(CGAL_SURFACE_MESH_TEST_SUITE)
+  Vertex_index vertex_freelist() const
+  {
+    return Vertex_index(vertices_freelist_);
+  }
+  
+  Face_index face_freelist() const
+  {
+    return Face_index(faces_freelist_);
+  }
+  
+  Edge_index edge_freelist() const
+  {
+    return Edge_index(edges_freelist_>>1);
+  }
+#endif
   
 private: //--------------------------------------------------- helper functions
 
