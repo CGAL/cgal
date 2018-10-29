@@ -120,5 +120,6 @@ int main()
   test_epic_p.image();
 #endif
 
+  std::cout << timer.time() << "sec" << std::endl;
   return EXIT_SUCCESS;
 }
