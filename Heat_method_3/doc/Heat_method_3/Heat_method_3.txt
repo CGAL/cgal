@@ -210,7 +210,17 @@ The algorithm is as follows:
 
 \section sec_HM_Performance Performances
 
-todo
+We perform the benchmark on an Intel Core i7-7700HQ, 2.8HGz, and compiled with Visual Studio 2013.
+
+<center>
+Number of triangles  | Initialization | Distance computation  | Initialization (iDT) | Distance computation  (iDT)
+--------------------:| ----------- :  | ---------------- :    | ------------------:  | --------------:
+30,000               |  0.13          |  0.10                 |  0.18                |  0.11
+200,000              |  1.44          |  1.21                 |  1.82                |  1.31
+500,000              |  8.07          |  7.17                 |  9.77                |  8.05
+1,800,000            | 71.13          | 68.20                 | 75.43                | 67.04
+ 
+</center>
 
 
 \section sec_HM_history Implementation History

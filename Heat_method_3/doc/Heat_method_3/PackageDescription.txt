@@ -14,7 +14,10 @@
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Keenan Crane, Christina Vaz, Andreas Fabri}
-\cgalPkgDesc{The package provides the Heat Method, a geodesic distance algorithm. }
+\cgalPkgDesc{The package provides an algorithm that solves the single- or
+multiple-source shortest path problem by returning the geodesic distance
+for all vertices of a triangle mesh to the closest vertex in a given set of
+source vertices. }
 \cgalPkgManuals{Chapter_HeatMethod,PkgHeatMethod}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
