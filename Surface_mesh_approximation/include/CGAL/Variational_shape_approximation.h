@@ -69,7 +69,7 @@
 namespace CGAL {
 
 namespace Surface_mesh_approximation {
-/// \ingroup PkgTSMA
+/// \ingroup PkgTSMARef
 /// @brief Seeding method enumeration for Variational Shape Approximation algorithm.
 enum Seeding_method {
   /// Random seeding
@@ -82,7 +82,7 @@ enum Seeding_method {
 
 } // namespace Surface_mesh_approximation
 
-/// \ingroup PkgTSMA
+/// \ingroup PkgTSMARef
 /// @brief Main class for Variational Shape Approximation algorithm.
 /// It is based on \cgalCite{cgal:cad-vsa-04}. For simple use cases, the function `CGAL::Surface_mesh_approximation::approximate_mesh()` might be sufficient.
 /// @tparam TriangleMesh a model of `FaceListGraph`

@@ -38,7 +38,7 @@
 namespace CGAL {
 namespace Surface_mesh_approximation {
 
-/// \ingroup PkgTSMA
+/// \ingroup PkgTSMARef
 /// @brief Approximation L2 metric of plane proxy.
 ///
 /// \cgalModels `ErrorMetricProxy`

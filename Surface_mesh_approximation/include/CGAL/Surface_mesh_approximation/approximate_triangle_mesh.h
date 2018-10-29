@@ -41,7 +41,7 @@
 namespace CGAL {
 namespace Surface_mesh_approximation {
 
-/// \ingroup PkgTSMA
+/// \ingroup PkgTSMARef
 /// @brief Verbose level enumeration.
 enum Verbose_level {
   /// Silent
@@ -65,7 +65,7 @@ unspecified_type all_default();
 #endif
 
 /*!
- * \ingroup PkgTSMA
+ * \ingroup PkgTSMARef
  * @brief approximates the input mesh with plane proxies.
  * This function uses the Variational Shape Approximation algorithm described in \cgalCite{cgal:cad-vsa-04}
  * to approximate a triangle surface mesh, with indexed triangles as output.
