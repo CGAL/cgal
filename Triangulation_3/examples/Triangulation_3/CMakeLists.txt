@@ -33,6 +33,21 @@ if ( CGAL_FOUND )
     target_link_libraries(draw_triangulation_3 PUBLIC CGAL::CGAL_Qt5)
   endif()
 
+  find_package( TBB QUIET )
+
+  if( TBB_FOUND )
+    include( CGAL_target_use_TBB )
+
+    create_single_source_cgal_program( "parallel_insertion_and_removal_in_regular_3.cpp" )
+    create_single_source_cgal_program( "parallel_insertion_in_delaunay_3.cpp" )
+    create_single_source_cgal_program( "sequential_parallel.cpp" )
+    CGAL_target_use_TBB( parallel_insertion_and_removal_in_regular_3 )
+    CGAL_target_use_TBB( parallel_insertion_in_delaunay_3 )
+    CGAL_target_use_TBB( sequential_parallel )
+  else()
+    message(STATUS "NOTICE: a few examples require TBB and will not be compiled.")
+  endif()
+
 else()
   
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
