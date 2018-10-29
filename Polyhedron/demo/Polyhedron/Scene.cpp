@@ -534,17 +534,17 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
           viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
         item.draw(viewer);
-      }
-
-      if(with_names) {
-
-        //    read depth buffer at pick location;
-        float depth = 1.0;
-        viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-        if (depth != 1.0)
-        {
-          //add object to list of picked objects;
-          picked_item_IDs[depth] = index;
+        
+        if(with_names) {
+          
+          //    read depth buffer at pick location;
+          float depth = 1.0;
+          viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+          if (depth != 1.0)
+          {
+            //add object to list of picked objects;
+            picked_item_IDs[depth] = index;
+          }
         }
       }
       if(group)

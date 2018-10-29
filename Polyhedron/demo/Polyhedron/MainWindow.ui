@@ -99,6 +99,7 @@
     <addaction name="actionSwitchProjection"/>
     <addaction name="actionMaxTextItemsDisplayed"/>
     <addaction name="actionSetBackgroundColor"/>
+    <addaction name="actionSetLighting"/>
     <addaction name="menuDockWindows"/>
     <addaction name="menuCamera"/>
     <addaction name="separator"/>
@@ -538,6 +539,11 @@
    </property>
    <property name="toolTip">
     <string>In Polyhedron Mode, the default type for facegraphs is Polyhedron, by opposition to Surface_mesh.</string>
+   </property>
+  </action>
+  <action name="actionSetLighting">
+   <property name="text">
+    <string>Change Lighting &amp;Settings...</string>
    </property>
   </action>
   <action name="actionSet_Transparency_Pass_Number">
