@@ -135,6 +135,10 @@ public:
         ar & BOOST_SERIALIZATION_NVP(params);
         ar & BOOST_SERIALIZATION_NVP(root_node);
     }
+    void get_feature_usage (std::vector<std::size_t>& count) const
+    {
+      root_node->get_feature_usage(count);
+    }
 };
 
 }

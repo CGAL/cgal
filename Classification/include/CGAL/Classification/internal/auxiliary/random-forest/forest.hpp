@@ -234,6 +234,12 @@ public:
         ar & BOOST_SERIALIZATION_NVP(params);
         ar & BOOST_SERIALIZATION_NVP(trees);
     }
+
+    void get_feature_usage (std::vector<std::size_t>& count) const
+    {
+      for (std::size_t i_tree = 0; i_tree < trees.size(); ++i_tree)
+        trees[i_tree].get_feature_usage(count);
+    }
 };
 
 }

@@ -158,7 +158,7 @@ public:
       }
     }
 
-    std::cerr << "Using " << gt.size() << " inliers" << std::endl;
+    CGAL_CLASSIFICATION_CERR << "Using " << gt.size() << " inliers" << std::endl;
 
     CGAL::internal::liblearning::DataView2D<int> label_vector (&(gt[0]), gt.size(), 1);    
     CGAL::internal::liblearning::DataView2D<float> feature_vector(&(ft[0]), gt.size(), ft.size() / gt.size());
@@ -194,6 +194,11 @@ public:
     
     for (std::size_t i = 0; i < out.size(); ++ i)
       out[i] = (std::min) (1.f, (std::max) (0.f, prob[i]));
+  }
+
+  void get_feature_usage (std::vector<std::size_t>& count) const
+  {
+    return m_rfc->get_feature_usage(count);
   }
   /// \endcond
   
