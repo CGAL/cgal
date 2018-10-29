@@ -24,8 +24,8 @@ int main()
 // define my selection of faces to remove
   boost::unordered_map<face_descriptor, bool> is_selected_map;
 
-  const int selection_indices[] = {501, 652, 646, 322, 328, 212, 347, 345, 352, 353, 696, 697, 698, 706, 714, 2892};
-  std::set<int> index_set(&selection_indices[0], &selection_indices[0]+16);
+  const int selection_indices[30] = {652,18,328,698,322,212,808,353,706,869,646,352,788,696,714,796,937,2892,374,697,227,501,786,794,345,16,21,581,347,723};
+  std::set<int> index_set(&selection_indices[0], &selection_indices[0]+30);
 
   std::vector<face_descriptor> faces_to_remove;
   int index = 0;
@@ -41,6 +41,8 @@ int main()
     ++index;
   }
 
+  std::size_t nb_input_faces = sm.number_of_faces();
+
   expand_face_selection_for_removal(faces_to_remove,
                                     sm,
                                     boost::make_assoc_property_map(is_selected_map));
@@ -55,8 +57,10 @@ int main()
     }
   }
 
-  assert(index == 25);
-  assert(is_valid(sm));
+  CGAL_USE(nb_input_faces);
+  assert( sm.number_of_faces()+30 < nb_input_faces);
+  assert(is_valid_polygon_mesh(sm));
+
   return 0;
 }
 
