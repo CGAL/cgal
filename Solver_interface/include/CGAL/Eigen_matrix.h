@@ -198,16 +198,16 @@ public:
   /// \pre 0 <= j < column_dimension().
   void add_coef(int i, int j, T  val)
   {
-    CGAL_precondition(i < row_dimension());
-    CGAL_precondition(j < column_dimension());
-
     if(m_is_symmetric && (j > i))
       return;
 
-    if(m_is_already_built)
+    if(m_is_already_built){      
+      CGAL_precondition(i < row_dimension());
+      CGAL_precondition(j < column_dimension());
       m_matrix.coeffRef(i,j) += val;
-    else
+    }else{
       m_triplets.push_back(Triplet(i,j,val));
+    }
   }
 
   /// Read access to a matrix coefficient.

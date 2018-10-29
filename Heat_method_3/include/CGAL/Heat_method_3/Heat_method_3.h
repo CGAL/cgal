@@ -480,6 +480,8 @@ public:
 
 private:
 
+
+  
   void
   build()
   {
@@ -495,9 +497,16 @@ private:
       put(face_id_map, fd, face_i++);
     }
     dimension = static_cast<int>(num_vertices(tm));
-
-    m_mass_matrix.eigen_object().resize(dimension, dimension);
-    m_cotan_matrix.eigen_object().resize(dimension, dimension);
+    {
+      Matrix M(dimension,dimension);
+      m_mass_matrix.swap(M);
+    }
+    {
+      Matrix M(dimension,dimension);
+      m_cotan_matrix.swap(M);
+    }
+    //m_mass_matrix.eigen_object().resize(dimension, dimension);
+    //m_cotan_matrix.eigen_object().resize(dimension, dimension);
     CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
 
     BOOST_FOREACH(face_descriptor f, faces(tm)) {
@@ -553,7 +562,9 @@ private:
       m_cotan_matrix.add_coef(j,j, 1e-8);
       m_cotan_matrix.add_coef(k,k, 1e-8);
     }
-
+    m_cotan_matrix.assemble_matrix();
+    m_mass_matrix.assemble_matrix();
+    
     m_time_step = 1./(num_edges(tm));
     m_time_step = m_time_step*summation_of_edges();
     m_time_step = m_time_step*m_time_step;
@@ -579,6 +590,9 @@ private:
   Vector solved_phi;
   std::set<Index> source_index;
   bool source_change_flag;
+  
+  std::vector<Eigen::Triplet<double> > m_triplets;
+  
 };
 
 template <typename TriangleMesh,
