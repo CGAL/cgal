@@ -344,8 +344,6 @@
            </widget>
           </item>
          </layout>
-         <zorder></zorder>
-         <zorder>buttonSplit</zorder>
         </widget>
        </item>
       </layout>

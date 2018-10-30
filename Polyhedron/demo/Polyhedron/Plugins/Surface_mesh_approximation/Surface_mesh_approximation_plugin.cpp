@@ -5,11 +5,10 @@
 #include <QObject>
 #include <QDockWidget>
 
+#include "SMesh_type.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polygon_soup_item.h"
 #include "Scene_polylines_item.h"
-#include "Scene_points_with_normal_item.h"
-#include "Polyhedron_type.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
@@ -19,7 +18,6 @@
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
 #include "ui_Surface_mesh_approximation_dockwidget.h"
-#include <CGAL/Surface_mesh_approximation/approximate_triangle_mesh.h>
 #include "VSA_approximation_wrapper.h"
 #include "Color_cheat_sheet.h"
 
@@ -33,19 +31,13 @@ class Polyhedron_demo_surface_mesh_approximation_plugin :
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
-  typedef VSA_approximation_wrapper<SMesh, Kernel> Approximation_wrapper;
+  typedef VSA_approximation_wrapper<SMesh, EPICK> Approximation_wrapper;
   #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
   typedef Approximation_wrapper::L21_proxy_wrapper L21_proxy_wrapper;
   #endif
   typedef Approximation_wrapper::Indexed_triangle Indexed_triangle;
 
-  // typedef Kernel::Point_3 Point_3;
-  typedef Kernel::FT FT;
-  typedef SMesh::Face_iterator Face_iterator;
-  typedef SMesh::Face_index Face_index;
-  typedef SMesh::Halfedge_index Halfedge_index;
-  typedef SMesh::Vertex_iterator Vertex_iterator;
-  typedef SMesh::Vertex_index  Vertex_index;
+  typedef EPICK::FT FT;
 
 public:
   Polyhedron_demo_surface_mesh_approximation_plugin() {}
@@ -124,7 +116,7 @@ private:
   SMesh *m_pmesh;
 
   // property-map for segment-idx
-  SMesh::Property_map<Face_index, std::size_t> m_fidx_pmap;
+  SMesh::Property_map<face_descriptor, std::size_t> m_fidx_pmap;
 
   // algorithm instance
   Approximation_wrapper m_approx;
@@ -133,8 +125,8 @@ private:
   std::vector<L21_proxy_wrapper> m_proxies;
 #endif
   std::vector<std::size_t> m_px_color;
-  std::vector<Kernel::Point_3> m_anchor_pos;
-  std::vector<Vertex_index> m_anchor_vtx;
+  std::vector<Point_3> m_anchor_pos;
+  std::vector<vertex_descriptor> m_anchor_vtx;
   std::vector<std::vector<std::size_t> > m_bdrs; // anchor borders
   std::vector<Indexed_triangle> m_tris;
 }; // end Polyhedron_demo_surface_mesh_approximation_plugin
@@ -189,7 +181,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
 
   // set mesh
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+  Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(scene->item(index));
   if (!sm_item) {
     std::cerr << "No surface mesh item selected." << std::endl;
     return;
@@ -199,7 +191,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   m_pmesh = sm_item->polyhedron();
-  m_fidx_pmap = m_pmesh->add_property_map<Face_index, std::size_t>("m_fidx_pmap", 0).first;
+  m_fidx_pmap = m_pmesh->add_property_map<face_descriptor, std::size_t>("m_fidx_pmap", 0).first;
 
   m_approx.set_mesh(*m_pmesh);
   m_approx.set_metric(Approximation_wrapper::L21);
@@ -247,7 +239,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
 
   typedef typename boost::property_map<SMesh, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
   Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *sm_item->face_graph());
-  BOOST_FOREACH(Face_index f, m_pmesh->faces())
+  BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
     put(pidmap, f, int(m_fidx_pmap[f]));
   std::vector<QColor> &color_vector = sm_item->color_vector();
   std::cout << "#color_vector " << color_vector.size() << std::endl;
@@ -330,7 +322,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
   // add patch border item
   Scene_polylines_item *borders_item = new Scene_polylines_item();
   BOOST_FOREACH(const std::vector<std::size_t> &border, m_bdrs) {
-    std::vector<Kernel::Point_3> polyline;
+    std::vector<Point_3> polyline;
     for (std::size_t i = 0; i <= border.size(); ++i)
       polyline.push_back(m_anchor_pos[border[i % border.size()]]);
     borders_item->polylines.push_back(polyline);
@@ -344,7 +336,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
   // add anchor vertex and anchor point correspondence item
   Scene_polylines_item *corres_item = new Scene_polylines_item();
   for (std::size_t i = 0; i < m_anchor_vtx.size(); ++i) {
-    std::vector<Kernel::Point_3> polyline;
+    std::vector<Point_3> polyline;
     polyline.push_back(m_pmesh->point(m_anchor_vtx[i]));
     polyline.push_back(m_anchor_pos[i]);
     corres_item->polylines.push_back(polyline);
@@ -356,66 +348,62 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
   scene->addItem(corres_item);
 
   // add patch convex hull item
-  std::vector<std::vector<Kernel::Triangle_3> > patch_triangles(m_approx.number_of_proxies());\
-  BOOST_FOREACH(Face_index f, m_pmesh->faces())
-  {
-    Halfedge_index h = m_pmesh->halfedge(f);
-    patch_triangles[m_fidx_pmap[f]].push_back(Kernel::Triangle_3(
-      m_pmesh->point( source(h, *m_pmesh) ),
-      m_pmesh->point( target(h, *m_pmesh) ),
-      m_pmesh->point( target(next(h, *m_pmesh), *m_pmesh) ) ) );
+  std::vector<std::vector<EPICK::Triangle_3> > patch_triangles(m_approx.number_of_proxies());\
+  BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
+    halfedge_descriptor h = m_pmesh->halfedge(f);
+    patch_triangles[m_fidx_pmap[f]].push_back(EPICK::Triangle_3(
+      m_pmesh->point(source(h, *m_pmesh)),
+      m_pmesh->point(target(h, *m_pmesh)),
+      m_pmesh->point(target(next(h, *m_pmesh), *m_pmesh))));
   }
-  std::vector<Kernel::Plane_3> patch_planes;
-  BOOST_FOREACH(const std::vector<Kernel::Triangle_3> &tris, patch_triangles) {
-    Kernel::Plane_3 fit_plane;
+  std::vector<EPICK::Plane_3> patch_planes;
+  BOOST_FOREACH(const std::vector<EPICK::Triangle_3> &tris, patch_triangles) {
+    EPICK::Plane_3 fit_plane;
     CGAL::linear_least_squares_fitting_3(
       tris.begin(), tris.end(), fit_plane, CGAL::Dimension_tag<2>());
     patch_planes.push_back(fit_plane);
   }
-  std::vector<std::vector<Kernel::Point_3> > patch_points(m_approx.number_of_proxies());
-  BOOST_FOREACH(Vertex_index v, m_pmesh->vertices())
-  {
-    BOOST_FOREACH(Halfedge_index h, CGAL::halfedges_around_target(v, *m_pmesh))
-    {
-      if (!CGAL::is_border(h, *m_pmesh))
-      {
+  std::vector<std::vector<Point_3> > patch_points(m_approx.number_of_proxies());
+  BOOST_FOREACH(vertex_descriptor v, vertices(*m_pmesh)) {
+    BOOST_FOREACH(halfedge_descriptor h, CGAL::halfedges_around_target(v, *m_pmesh)) {
+      if (!CGAL::is_border(h, *m_pmesh)) {
         const std::size_t fidx = m_fidx_pmap[ face(h, *m_pmesh) ];
         patch_points[fidx].push_back(m_pmesh->point(v));
       }
     }
   }
-  std::vector<Kernel::Point_3> cvx_hull_points;
+  std::vector<Point_3> cvx_hull_points;
   std::vector<std::vector<std::size_t> > cvx_hulls;
   for (std::size_t i = 0; i < m_approx.number_of_proxies(); ++i) {
-    const std::vector<Kernel::Point_3> &pts = patch_points[i];
-    const Kernel::Plane_3 plane = patch_planes[i];
-    const Kernel::Point_3 origin = plane.projection(pts.front());
+    const std::vector<Point_3> &pts = patch_points[i];
+    const EPICK::Plane_3 plane = patch_planes[i];
+    const Point_3 origin = plane.projection(pts.front());
 
-    Kernel::Vector_3 base1 = plane.base1();
-    Kernel::Vector_3 base2 = plane.base2();
+    EPICK::Vector_3 base1 = plane.base1();
+    EPICK::Vector_3 base2 = plane.base2();
     base1 = base1 / std::sqrt(base1.squared_length());
     base2 = base2 / std::sqrt(base2.squared_length());
 
-    Kernel::Line_3 base_linex(origin, base1);
-    Kernel::Line_3 base_liney(origin, base2);
+    EPICK::Line_3 base_linex(origin, base1);
+    EPICK::Line_3 base_liney(origin, base2);
 
-    std::vector<Kernel::Point_2> pts_2d;
-    BOOST_FOREACH(const Kernel::Point_3 &p, pts) {
-      const Kernel::Point_3 point = plane.projection(p);
-      Kernel::Vector_3 vecx(origin, base_linex.projection(point));
-      Kernel::Vector_3 vecy(origin, base_liney.projection(point));
+    std::vector<EPICK::Point_2> pts_2d;
+    BOOST_FOREACH(const Point_3 &p, pts) {
+      const Point_3 point = plane.projection(p);
+      EPICK::Vector_3 vecx(origin, base_linex.projection(point));
+      EPICK::Vector_3 vecy(origin, base_liney.projection(point));
       double x = std::sqrt(vecx.squared_length());
       double y = std::sqrt(vecy.squared_length());
       x = vecx * base1 < 0 ? -x : x;
       y = vecy * base2 < 0 ? -y : y;
-      pts_2d.push_back(Kernel::Point_2(x, y));
+      pts_2d.push_back(EPICK::Point_2(x, y));
     }
 
-    std::vector<Kernel::Point_2> cvx_hull_2d;
+    std::vector<EPICK::Point_2> cvx_hull_2d;
     CGAL::convex_hull_2(pts_2d.begin(), pts_2d.end(), std::back_inserter(cvx_hull_2d));
 
     cvx_hulls.push_back(std::vector<std::size_t>());
-    BOOST_FOREACH(const Kernel::Point_2 &p, cvx_hull_2d) {
+    BOOST_FOREACH(const EPICK::Point_2 &p, cvx_hull_2d) {
       cvx_hulls.back().push_back(cvx_hull_points.size());
       cvx_hull_points.push_back(origin + p.x() * base1 + p.y() * base2);
     }
@@ -486,7 +474,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSplit_clicked()
 }
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_comboMetric_currentIndexChanged(const int m) {
-  BOOST_FOREACH(Face_index f, m_pmesh->faces())
+  BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
     m_fidx_pmap[f] = 0;
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
