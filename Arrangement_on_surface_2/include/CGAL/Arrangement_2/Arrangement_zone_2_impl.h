@@ -1067,8 +1067,6 @@ _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
     m_geom_traits->is_in_x_range_2_object();
   typename Traits_adaptor_2::Construct_min_vertex_2 min_vertex =
     m_geom_traits->construct_min_vertex_2_object();
-  typename Traits_adaptor_2::Compare_y_at_x_2 compare_y_at_x =
-    m_geom_traits->compare_y_at_x_2_object();
 
   // If this edge is fictitious, skip it.
   if (he_curr->is_fictitious()) return;
@@ -1183,8 +1181,6 @@ _leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary)
     m_geom_traits->compare_xy_2_object();
   typename Traits_adaptor_2::Is_in_x_range_2 is_in_x_range =
     m_geom_traits->is_in_x_range_2_object();
-  typename Traits_adaptor_2::Construct_min_vertex_2 min_vertex =
-    m_geom_traits->construct_min_vertex_2_object();
 
   bool leftmost_on_right_boundary = false;
 

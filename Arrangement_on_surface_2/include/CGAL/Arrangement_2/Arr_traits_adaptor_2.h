@@ -2468,7 +2468,7 @@ public:
      */
     Comparison_result compare_max_end(const X_monotone_curve_2& c1,
                                       const X_monotone_curve_2& c2,
-                                      Arr_all_sides_oblivious_tag tag) const
+                                      Arr_all_sides_oblivious_tag) const
     {
       typedef typename Self::Construct_max_vertex_2 Construct_max_vertex_2;
       Construct_max_vertex_2 ctr_max =
@@ -2483,7 +2483,7 @@ public:
      */
     Comparison_result compare_max_end(const X_monotone_curve_2& c1,
                                       const X_monotone_curve_2& c2,
-                                      Arr_not_all_sides_oblivious_tag tag) const
+                                      Arr_not_all_sides_oblivious_tag) const
     {
       typedef typename Base::Parameter_space_in_x_2     Parameter_space_in_x_2;
       typedef typename Base::Parameter_space_in_y_2     Parameter_space_in_y_2;
@@ -2635,7 +2635,7 @@ public:
     Comparison_result operator()(const X_monotone_curve_2& c1,
                                  const X_monotone_curve_2& c2,
                                  std::list<CGAL::Object>& intersections,
-                                 Arr_all_sides_oblivious_tag tag) const
+                                 Arr_all_sides_oblivious_tag) const
     {
       const Point_2& c1_min = m_self.construct_min_vertex_2_object()(c1);
       const Point_2& c2_min = m_self.construct_min_vertex_2_object()(c2);
