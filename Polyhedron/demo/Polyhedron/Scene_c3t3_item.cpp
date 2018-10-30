@@ -1881,6 +1881,8 @@ void Scene_c3t3_item::copyProperties(Scene_item *item)
   show_cnc(c3t3_item->has_cnc());
 
   show_grid(c3t3_item->has_grid());
+  int value = c3t3_item->alphaSlider()->value();
+  alphaSlider()->setValue(value);
 }
 
 bool Scene_c3t3_item::is_valid() const

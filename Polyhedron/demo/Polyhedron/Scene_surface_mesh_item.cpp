@@ -2207,3 +2207,12 @@ void Scene_surface_mesh_item::computeElements()const
   d->compute_elements(ALL);
   setBuffersFilled(true);
 }
+
+void Scene_surface_mesh_item::copyProperties(Scene_item *item)
+{
+  Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(item);
+  if(!sm_item)
+    return;
+  int value = sm_item->alphaSlider()->value();
+  alphaSlider()->setValue(value);
+}
