@@ -1,10 +1,9 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Heat_method_3/Heat_method_3.h>
+#include <CGAL/Heat_method_3/Surface_mesh_geodesic_distances_3.h>
 
 #include <iostream>
 #include <fstream>
-#include <iostream>
 
 #include <boost/foreach.hpp>
 
@@ -34,7 +33,7 @@ int main(int argc, char* argv[])
   //add the first vertex as the source set
   vertex_descriptor source = *(vertices(sm).first);
   hm_idt.add_source(source);
-  hm_idt.fill_distance_map(vdm_idt);
+  hm_idt.estimate_geodesic_distances(vdm_idt);
 
   BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
     std::cout << vd << "  is at distance " << get(vdm_idt, vd) << " from " << source << std::endl;

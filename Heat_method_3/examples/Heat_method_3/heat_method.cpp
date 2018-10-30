@@ -1,11 +1,9 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Heat_method_3/Heat_method_3.h>
+#include <CGAL/Heat_method_3/Surface_mesh_geodesic_distances_3.h>
 
 #include <iostream>
 #include <fstream>
-#include <vector>
-#include <iostream>
 
 #include <boost/foreach.hpp>
 
