@@ -18,8 +18,8 @@
 //
 // Author(s)     : Maxime Gimeno
 
-#ifndef CGAL_TRAITS_MULTIPOLYGON_H
-#define CGAL_TRAITS_MULTIPOLYGON_H
+#ifndef CGAL_IO_TRAITS_MULTIPOLYGON_H
+#define CGAL_IO_TRAITS_MULTIPOLYGON_H
 #include <CGAL/internal/Geometry_container.h>
 
 

@@ -18,8 +18,8 @@
 //
 // Author(s)     : Maxime Gimeno
 
-#ifndef CGAL_TRAITS_POINT_H
-#define CGAL_TRAITS_POINT_H
+#ifndef CGAL_IO_TRAITS_POINT_H
+#define CGAL_IO_TRAITS_POINT_H
 
 #include <CGAL/number_utils.h>
 #include <CGAL/Point_2.h>

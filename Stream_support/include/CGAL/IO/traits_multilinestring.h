@@ -18,8 +18,8 @@
 //
 // Author(s)     : Maxime Gimeno
 
-#ifndef TRAITS_MULTILINESTRING_H
-#define TRAITS_MULTILINESTRING_H
+#ifndef CGAL_IO_TRAITS_MULTILINESTRING_H
+#define CGAL_IO_TRAITS_MULTILINESTRING_H
 
 #include <CGAL/internal/Geometry_container.h>
 

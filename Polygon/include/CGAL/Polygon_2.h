@@ -53,7 +53,8 @@ namespace CGAL {
 /// The class Polygon_2 implements polygons. The Polygon_2 is
 /// parameterized by a traits class and a container class.  The latter
 /// can be any class that fulfills the requirements for an STL
-/// container. It defaults to the std::vector class.
+/// container, and has a function `resize()` that takes an std::size_t as argument
+///  . It defaults to the std::vector class.
 ///
 /// \cgalHeading{Implementation}
 ///

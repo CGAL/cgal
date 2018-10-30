@@ -18,8 +18,8 @@
 //
 // Author(s)     : Maxime Gimeno
 
-#ifndef TRAITS_MULTIPOINT_H
-#define TRAITS_MULTIPOINT_H
+#ifndef CGAL_IO_TRAITS_MULTIPOINT_H
+#define CGAL_IO_TRAITS_MULTIPOINT_H
 #include <CGAL/internal/Geometry_container.h>
 
 namespace boost{

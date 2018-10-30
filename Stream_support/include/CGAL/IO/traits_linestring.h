@@ -18,8 +18,8 @@
 //
 // Author(s)     : Maxime Gimeno
 
-#ifndef TRAITS_LINESTRING_H
-#define TRAITS_LINESTRING_H
+#ifndef CGAL_IO_TRAITS_LINESTRING_H
+#define CGAL_IO_TRAITS_LINESTRING_H
 #include <CGAL/internal/Geometry_container.h>
 
 

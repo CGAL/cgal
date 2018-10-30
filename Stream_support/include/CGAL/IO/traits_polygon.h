@@ -18,8 +18,8 @@
 //
 // Author(s)     : Maxime Gimeno
 
-#ifndef CGAL_TRAITS_POLYGON_H
-#define CGAL_TRAITS_POLYGON_H
+#ifndef CGAL_IO_TRAITS_POLYGON_H
+#define CGAL_IO_TRAITS_POLYGON_H
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Point_2.h>
