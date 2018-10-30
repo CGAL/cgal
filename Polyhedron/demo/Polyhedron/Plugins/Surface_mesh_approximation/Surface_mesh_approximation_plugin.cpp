@@ -408,8 +408,13 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
       cvx_hull_points.push_back(origin + p.x() * base1 + p.y() * base2);
     }
   }
+  std::vector<CGAL::Color> fcolors;
+  BOOST_FOREACH(const std::size_t c, m_px_color) {
+    fcolors.push_back(CGAL::Color(
+      Color_cheat_sheet::r(c), Color_cheat_sheet::g(c), Color_cheat_sheet::b(c)));
+  }
   Scene_polygon_soup_item *cvx_hull_item = new Scene_polygon_soup_item();
-  cvx_hull_item->load(cvx_hull_points, cvx_hulls);
+  cvx_hull_item->load(cvx_hull_points, cvx_hulls, fcolors, std::vector<CGAL::Color>());
   cvx_hull_item->setName(tr("Patch convex hull of %1").arg(
     scene->item(scene->mainSelectionIndex())->name()));
   cvx_hull_item->setColor(Qt::yellow);
