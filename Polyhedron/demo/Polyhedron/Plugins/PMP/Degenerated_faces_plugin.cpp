@@ -4,12 +4,7 @@
 #include <QMainWindow>
 
 #include "Kernel_type.h"
-#include "Polyhedron_type.h"
-#ifdef USE_SURFACE_MESH
 #include "Scene_surface_mesh_item.h"
-#else
-#include "Scene_polyhedron_item.h"
-#endif
 #include "Scene_polyhedron_selection_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
@@ -19,14 +14,9 @@
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/Make_triangle_soup.h>
 #include <CGAL/Kernel_traits.h>
-
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 
-#ifdef USE_SURFACE_MESH
 typedef Scene_surface_mesh_item Scene_facegraph_item;
-#else
-typedef Scene_polyhedron_item Scene_facegraph_item;
-#endif
 typedef Scene_facegraph_item::Face_graph Face_graph;
 using namespace CGAL::Three;
 class Degenerated_faces_plugin :
@@ -118,6 +108,7 @@ void Degenerated_faces_plugin::on_actionDegenFaces_triggered()
 
   typedef boost::graph_traits<Face_graph>::face_descriptor Face_descriptor;
   typedef boost::graph_traits<Face_graph>::halfedge_descriptor halfedge_descriptor;
+  typedef boost::graph_traits<Face_graph>::edge_descriptor edge_descriptor;
   QApplication::setOverrideCursor(Qt::WaitCursor);
   bool found = false;
   std::vector<Scene_facegraph_item*> selected_polys;
@@ -137,13 +128,28 @@ void Degenerated_faces_plugin::on_actionDegenFaces_triggered()
     // add intersecting triangles to a selection_item.
     if(isDegen(pMesh, facets))
     {
+      std::vector<edge_descriptor> edges;
+      isDegen(pMesh, edges);
+      std::vector<bool> is_degen(pMesh->number_of_edges()+pMesh->number_of_removed_edges(), false);
+      BOOST_FOREACH(edge_descriptor e, edges)
+      {
+        is_degen[(std::size_t)e] = true;
+      }
       Scene_polyhedron_selection_item* selection_item = new Scene_polyhedron_selection_item(poly_item, mw);
       for(std::vector<Face_descriptor>::iterator fb = facets.begin();
           fb != facets.end(); ++fb) {
         selection_item->selected_facets.insert(*fb);
         BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(*fb, *pMesh), *pMesh))
         {
-          selection_item->selected_edges.insert(edge(h, *selection_item->polyhedron()));
+          edge_descriptor e = edge(h, *selection_item->polyhedron());
+          selection_item->selected_edges.insert(e);
+          if(is_degen[(std::size_t)e])
+          {
+            selection_item->selected_vertices.insert(source( halfedge(e, *selection_item->polyhedron()),
+                                                             *selection_item->polyhedron()));
+            selection_item->selected_vertices.insert(target( halfedge(e, *selection_item->polyhedron()),
+                                                             *selection_item->polyhedron()));
+          }
         }
       }
       selection_item->invalidateOpenGLBuffers();

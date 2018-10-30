@@ -65,11 +65,7 @@ public:
 
   QMenu* contextMenu() Q_DECL_OVERRIDE;
 
-  // Only needed for Scene_polyhedron_item
   void setItemIsMulticolor(bool);
-  void update_vertex_indices(){}
-  void update_halfedge_indices(){}
-  void update_facet_indices(){}
   bool isItemMulticolor();
   bool hasPatchIds();
   Vertex_selection_map vertex_selection_map();

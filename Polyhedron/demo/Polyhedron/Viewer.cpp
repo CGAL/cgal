@@ -2,6 +2,7 @@
 #include <CGAL/Three/Scene_draw_interface.h>
 #include <QMouseEvent>
 #include <QKeyEvent>
+#include <QSettings>
 #include <QDebug>
 #include <QSettings>
 #include <QOpenGLShader>
@@ -254,7 +255,6 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->shader_programs.resize(NB_OF_PROGRAMS);
   d->textRenderer = new TextRenderer();
   d->is_2d_selection_mode = false;
-  d->total_pass = 4;
   
   connect( d->textRenderer, SIGNAL(sendMessage(QString,int)),
            this, SLOT(printMessage(QString,int)) );
@@ -289,8 +289,12 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
                              tr("Selects a point. When the second point is selected,  "
                                 "displays the two points and the distance between them."));
   setMouseBindingDescription(Qt::Key_O, Qt::NoModifier, Qt::LeftButton,
-                             tr("Move the camera orthogonally to the picked facet of a Scene_polyhedron_item or "
+                             tr("Move the camera orthogonally to the picked facet of a Scene_surface_mesh_item or "
                                 "to the current selection of a Scene_points_with_normal_item."));
+  setKeyDescription(Qt::Key_F5,
+                    tr("Reloads the selected item if possible."));
+  setKeyDescription(Qt::Key_F11,
+                    tr("Toggle the viewer's fullscreen mode."));
 
   prev_radius = sceneRadius();
   d->has_text = false;
@@ -417,9 +421,10 @@ void Viewer::init()
   }
   else
       d->extension_is_found = true;
-
-
-  setBackgroundColor(::Qt::white);
+  QSettings settings;
+  QString colorname = settings.value("background_color", "#ffffff").toString();
+  QColor bc(colorname);
+  setBackgroundColor(bc);
   d->vao.create();
   d->buffer.create();
   
@@ -1464,15 +1469,6 @@ void Viewer::setTotalPass(int p)
 {
   d->total_pass = p;
   update();
-}
-
-void Viewer::setTotalPass_clicked()
-{
-  bool ok;
-  int passes = QInputDialog::getInt(0, QString("Set Number of Passes"), QString("Number of Depth Peeling Passes:  "), 4, 2,100, 1, &ok);
-  if(!ok)
-    return;
-  setTotalPass(passes);
 }
 
 void Viewer::messageLogged(QOpenGLDebugMessage msg)

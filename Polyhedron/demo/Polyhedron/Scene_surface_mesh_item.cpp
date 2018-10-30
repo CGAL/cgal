@@ -43,6 +43,7 @@
 #include <CGAL/Three/Triangle_container.h>
 #include <CGAL/Three/Edge_container.h>
 #include <CGAL/Three/Point_container.h>
+#include <CGAL/Three/Three.h>
 
 #include <CGAL/Buffer_for_vao.h>
 #include <QMenu>
@@ -234,6 +235,7 @@ struct Scene_surface_mesh_item_priv{
   Scene_surface_mesh_item *item;
 
   mutable SMesh::Property_map<face_descriptor,int> fpatch_id_map;
+  mutable int min_patch_id;
   mutable SMesh::Property_map<vertex_descriptor,int> v_selection_map;
   mutable SMesh::Property_map<face_descriptor,int> f_selection_map;
   mutable SMesh::Property_map<boost::graph_traits<SMesh>::edge_descriptor, bool> e_is_feature_map;
@@ -252,20 +254,21 @@ Scene_surface_mesh_item::Scene_surface_mesh_item()
 {
   d = new Scene_surface_mesh_item_priv(new SMesh(), this);
   d->floated = false;
-
+  setRenderingMode(CGAL::Three::Three::defaultSurfaceMeshRenderingMode());
   d->checkFloat();
   d->textVItems = new TextListItem(this);
   d->textEItems = new TextListItem(this);
   d->textFItems = new TextListItem(this);
 
   are_buffers_filled = false;
+  invalidate(ALL);
 }
 
 Scene_surface_mesh_item::Scene_surface_mesh_item(const Scene_surface_mesh_item& other)
 {
   d = new Scene_surface_mesh_item_priv(other, this);
+  setRenderingMode(CGAL::Three::Three::defaultSurfaceMeshRenderingMode());
   d->floated = false;
-
   d->checkFloat();
   d->textVItems = new TextListItem(this);
   d->textEItems = new TextListItem(this);
@@ -279,13 +282,14 @@ void Scene_surface_mesh_item::standard_constructor(SMesh* sm)
 {
   d = new Scene_surface_mesh_item_priv(sm, this);
   d->floated = false;
-
+  setRenderingMode(CGAL::Three::Three::defaultSurfaceMeshRenderingMode());
   d->checkFloat();
   d->textVItems = new TextListItem(this);
   d->textEItems = new TextListItem(this);
   d->textFItems = new TextListItem(this);
 
   are_buffers_filled = false;
+  invalidate(ALL);
 }
 Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
 {
@@ -473,8 +477,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
   }
   
   if(name.testFlag(Scene_item_rendering_helper::COLORS) &&
-     has_fpatch_id &&
-     colors_.empty()){
+     has_fpatch_id){
     initialize_colors();
   }
   
@@ -505,8 +508,10 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
         {
           if(has_fpatch_id)
           {
-            QColor c = item->color_vector()[fpatch_id_map[fd]];
-            CGAL::Color color(c.red(), c.green(), c.blue());
+            //The sharp features detection produces patch ids >=1, this
+            //is meant to insure the wanted id is in the range [min,max]
+            QColor c = item->color_vector()[fpatch_id_map[fd] - min_patch_id]; 
+            CGAL::Color color(c.red(),c.green(),c.blue());
             CPF::add_color_in_buffer(color, f_colors);
           }
           else if(has_fcolors)
@@ -664,14 +669,14 @@ void Scene_surface_mesh_item_priv::initialize_colors() const
 {
   // Fill indices map and get max subdomain value
   int max = 0;
-  int min = (std::numeric_limits<int>::max)();
+  min_patch_id = (std::numeric_limits<int>::max)();
   BOOST_FOREACH(face_descriptor fd, faces(*smesh_)){
     max = (std::max)(max, fpatch_id_map[fd]);
-    min = (std::min)(min, fpatch_id_map[fd]);
+    min_patch_id = (std::min)(min_patch_id, fpatch_id_map[fd]);
   }
 
   colors_.clear();
-  compute_color_map(item->color(), (std::max)(0, max + 1 - min),
+  compute_color_map(item->color(), (std::max)(1, max + 1 - min_patch_id),
                     std::back_inserter(colors_));
 }
 
@@ -882,9 +887,33 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
                                            Scene_item_rendering_helper::Gl_data_names name,
                                            bool index) const
 {
+  
   //Computes the normal of the facet
   EPICK::Vector_3 normal = get(*fnormals, fd);
-  
+  if(normal == CGAL::NULL_VECTOR)
+  {
+    boost::graph_traits<SMesh>::halfedge_descriptor start = prev(halfedge(fd, *smesh_), *smesh_);
+    boost::graph_traits<SMesh>::halfedge_descriptor next_;
+    do
+    {
+      boost::graph_traits<SMesh>::halfedge_descriptor hd = halfedge(fd, *smesh_);
+       next_ =next(hd, *smesh_);
+      const Point_3& pa = smesh_->point(target(hd, *smesh_));
+      const Point_3& pb = smesh_->point(target(next_, *smesh_));
+      const Point_3& pc = smesh_->point(target(prev(hd, *smesh_), *smesh_));
+      if (!CGAL::collinear (pa, pb, pc))
+      {
+        normal = CGAL::cross_product(pb-pa, pc -pa);
+        break;
+      }
+    }while(next_ != start);
+    
+    if (normal == CGAL::NULL_VECTOR) // No normal could be computed, return
+    {
+      qDebug()<<"Warning : normal is not valid. Facet not displayed";
+      return;
+    }
+  }
   //check if normal contains NaN values
   if (normal.x() != normal.x() || normal.y() != normal.y() || normal.z() != normal.z())
   {
@@ -1819,6 +1848,12 @@ void Scene_surface_mesh_item::zoomToPosition(const QPoint &point, CGAL::Three::V
 void Scene_surface_mesh_item::resetColors()
 {
   setItemIsMulticolor(false);
+  if(d->has_feature_edges){
+    BOOST_FOREACH(boost::graph_traits<SMesh>::edge_descriptor e, edges(*d->smesh_)){
+      put(d->e_is_feature_map, e, false);
+    }
+    d->has_feature_edges = false;
+  }
   invalidate(COLORS);
   itemChanged();
 }

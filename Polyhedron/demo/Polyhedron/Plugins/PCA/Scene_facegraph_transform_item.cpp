@@ -1,6 +1,5 @@
 #include <QApplication>
 #include "Scene_facegraph_transform_item.h"
-#include "Polyhedron_type.h"
 #include <CGAL/Three/Viewer_interface.h>
 
 struct Scene_facegraph_transform_item_priv

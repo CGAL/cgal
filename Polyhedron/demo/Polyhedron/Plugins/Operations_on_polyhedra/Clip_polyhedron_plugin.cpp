@@ -4,7 +4,6 @@
 #include <QAction>
 #include <QVector>
 #include "Scene_surface_mesh_item.h"
-#include "Scene_polyhedron_item.h"
 #include "Scene_plane_item.h"
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
@@ -122,8 +121,7 @@ public :
   {
     Q_FOREACH(int id, scene->selectionIndices())
     {
-      if(qobject_cast<Scene_surface_mesh_item*>(scene->item(id))
-         || qobject_cast<Scene_polyhedron_item*>(scene->item(id)))
+      if(qobject_cast<Scene_surface_mesh_item*>(scene->item(id)))
         return true;
     }
     return false;
@@ -224,20 +222,11 @@ public Q_SLOTS:
         {
           polyhedra << sm_item;
         }
-        else
-        {
-          Scene_polyhedron_item *poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(id));
-          if(poly_item && CGAL::is_triangle_mesh(*poly_item->polyhedron()))
-          {
-            polyhedra << poly_item;
-          }
-        }
       }
       //apply the clipping function
       Q_FOREACH(Scene_item* item, polyhedra)
       {
         Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item*>(item);
-        Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
 
         if (ui_widget.clip_radioButton->isChecked())
         {
@@ -249,15 +238,6 @@ public Q_SLOTS:
                                                   CGAL::Polygon_mesh_processing::parameters::clip_volume(
                                                     ui_widget.close_checkBox->isChecked()).
                                                   throw_on_self_intersection(true));
-            }
-            else
-            {
-              CGAL::Polygon_mesh_processing::clip(*(poly_item->face_graph()),
-                                                  plane->plane(),
-                                                  CGAL::Polygon_mesh_processing::parameters::clip_volume(
-                                                    ui_widget.close_checkBox->isChecked()).
-                                                  throw_on_self_intersection(true));
-
             }
           }
           catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
@@ -273,10 +253,6 @@ public Q_SLOTS:
           if(sm_item)
           {
             apply<SMesh>(sm_item);
-          }
-          else
-          {
-            apply<Polyhedron>(poly_item);
           }
         }
       }

@@ -3,7 +3,6 @@
 #include  <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Scene_interface.h>
 #include "Scene_edit_box_item.h"
-#include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -102,7 +101,7 @@ void Edit_box_plugin::exportToPoly()
 {
   int id =0;
   const CGAL::qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
-  Kernel::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
+  EPICK::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
   Scene_edit_box_item* item = NULL;
   for(int i = 0, end = scene->numberOfEntries();
       i < end; ++i)
@@ -115,30 +114,12 @@ void Edit_box_plugin::exportToPoly()
     }
   }
 
-  Polyhedron::Point_3 points[8];
+  EPICK::Point_3 points[8];
   for(int i=0; i<8; ++i)
   {
-    points[i] = Polyhedron::Point_3(item->point(i,0),item->point(i,1), item->point(i,2))-offset;
+    points[i] = EPICK::Point_3(item->point(i,0),item->point(i,1), item->point(i,2))-offset;
   }
 
-  if(mw->property("is_polyhedron_mode").toBool()){
-    Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
-    CGAL::make_hexahedron(points[0],
-                          points[3],
-                          points[2],
-                          points[1],
-                          points[5],
-                          points[4],
-                          points[7],
-                          points[6],
-                          *poly_item->polyhedron());
-    CGAL::Polygon_mesh_processing::triangulate_faces(*poly_item->polyhedron());
-    item->setName("Edit box");
-    item->setRenderingMode(FlatPlusEdges);
-    scene->replaceItem(id, poly_item, true);
-    item->deleteLater();
-    actionBbox->setEnabled(true);
-  }else{
  Scene_surface_mesh_item* poly_item = new Scene_surface_mesh_item();
     CGAL::make_hexahedron(points[0],
                           points[3],
@@ -155,6 +136,5 @@ void Edit_box_plugin::exportToPoly()
     scene->replaceItem(id, poly_item, true);
     item->deleteLater();
     actionBbox->setEnabled(true);
-  }
 }
 #include "Edit_box_plugin.moc"
