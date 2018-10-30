@@ -11,8 +11,7 @@
 
 #include <vector>
 
-//typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef CGAL::Simple_cartesian<CGAL::Gmpq> Kernel; 
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel; 
 typedef CGAL::Point_2<Kernel> Point;
 typedef std::vector<Point> Linestring;
 typedef CGAL::Polygon_with_holes_2<Kernel> Polygon;
@@ -33,7 +32,7 @@ Point generate_point(double xmin, double xmax,
       y = fRand(ymin,ymax);
   return Point(x,y);
 }
-/*
+
 Linestring generate_linestring()
 {
   Linestring ls;
@@ -100,7 +99,7 @@ MultiPolygon generate_multipolygon()
   polies.push_back(p2);
   return polies;
 }
-*/
+
 int main()
 {
   
@@ -119,7 +118,7 @@ int main()
     is.close();
   }
   CGAL_assertion(p == test_p);
-  /*
+  
   Linestring ls = generate_linestring();
   {
     std::ofstream os("test.wkt");
@@ -198,7 +197,7 @@ int main()
     is.close();
   }
   CGAL_assertion(polies == test_polies);
-*/  
+  
   std::cout<<"WKT writing test passed."<<std::endl;
   return 0;
 }
