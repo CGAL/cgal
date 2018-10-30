@@ -21,10 +21,9 @@ Release date: March 2019
     - `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycles()`
 
 ### 2D and 3D Mesh Generation
--   Added 3 functions for writing in modern VTK formats:
-    -`CGAL::write_unstructured_grid_3(std::ostream& os, const C3T3& c3t3)`
-    -`CGAL::write_unstructured_grid_2(std::ostream& os, const CDT& tr, bool binary = true)`
-    -`CGAL::write_polydata(std::ostream& os, const TriangleMesh& mesh, bool binary, const NamedParameters& np)`
+-   Added 2 functions for writing in modern VTK formats:
+    -`CGAL::write_VTU()`
+    -`CGAL::write_VTP()`
 
 
 Release 4.13

@@ -57,7 +57,7 @@ The package can handle intersecting input constraints  and set no restriction on
 - `CGAL::make_conforming_Gabriel_2`
 - `CGAL::refine_Delaunay_mesh_2`
 - `CGAL::lloyd_optimize_mesh_2`
-- `CGAL::write_unstructured_grid_2()`
+- `CGAL::write_VTU()`
 
 ## Enumerations ##
 - `CGAL::Mesh_optimization_return_code`
