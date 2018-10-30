@@ -79,6 +79,10 @@ class VSA_approximation_wrapper {
     Compact_metric, GeomTraits> Compact_approx;
 #endif
 
+  std::size_t rand_0_255() {
+    return static_cast<std::size_t>(std::rand() % 255);
+  }
+
 public:
   enum Metric { L21, L2, Compact };
 
@@ -113,6 +117,9 @@ public:
     if (m_pcompact_metric)
       delete m_pcompact_metric;
   }
+
+  std::vector<std::size_t> &proxy_colors() { return m_proxy_colors; }
+  const std::vector<std::size_t> &proxy_colors() const  { return m_proxy_colors; }
 
   void set_mesh(const TriangleMesh &mesh) {
     Vertex_point_map vpm = get(boost::vertex_point, const_cast<TriangleMesh &>(mesh));
@@ -153,35 +160,50 @@ public:
 
     m_pcompact_metric = new Compact_metric(m_center_pmap, m_area_pmap);
     m_iso_approx = new Compact_approx(mesh, vpm, *m_pcompact_metric);
+
+    m_proxy_colors.clear();
   }
 
-  void set_metric(const Metric &m) { m_metric = m; }
+  void set_metric(const Metric &m) {
+    m_metric = m;
+    m_proxy_colors.clear();
+  }
 
   std::size_t initialize_seeds(const VSA::Seeding_method method,
     const boost::optional<std::size_t> max_nb_of_proxies,
     const boost::optional<FT> min_error_drop,
     const std::size_t nb_relaxations) {
+    std::size_t nb_initialized = 0;
     switch (m_metric) {
       case L21:
-        return m_l21_approx->initialize_seeds(
+        nb_initialized = m_l21_approx->initialize_seeds(
           CGAL::parameters::seeding_method(method)
             .max_number_of_proxies(max_nb_of_proxies)
             .min_error_drop(min_error_drop)
             .number_of_relaxations(nb_relaxations));
+        break;
       case L2:
-        return m_l2_approx->initialize_seeds(
+        nb_initialized = m_l2_approx->initialize_seeds(
           CGAL::parameters::seeding_method(method)
             .max_number_of_proxies(max_nb_of_proxies)
             .min_error_drop(min_error_drop)
             .number_of_relaxations(nb_relaxations));
+        break;
       case Compact:
-        return m_iso_approx->initialize_seeds(
+        nb_initialized = m_iso_approx->initialize_seeds(
           CGAL::parameters::seeding_method(method)
             .max_number_of_proxies(max_nb_of_proxies)
             .min_error_drop(min_error_drop)
             .number_of_relaxations(nb_relaxations));
+        break;
     }
-    return 0;
+
+    // generate proxy colors
+    m_proxy_colors.clear();
+    for (std::size_t i = 0; i < number_of_proxies(); ++i)
+      m_proxy_colors.push_back(rand_0_255());
+
+    return nb_initialized;
   }
 
   void run(const std::size_t nb_iterations) {
@@ -200,15 +222,22 @@ public:
   }
 
   std::size_t add_one_proxy() {
+    std::size_t nb_added = 0;
     switch (m_metric) {
       case L21:
-        return m_l21_approx->add_to_furthest_proxies(1, 0);
+        nb_added = m_l21_approx->add_to_furthest_proxies(1, 0);
+        break;
       case L2:
-        return m_l2_approx->add_to_furthest_proxies(1, 0);
+        nb_added = m_l2_approx->add_to_furthest_proxies(1, 0);
+        break;
       case Compact:
-        return m_iso_approx->add_to_furthest_proxies(1, 0);
+        nb_added = m_iso_approx->add_to_furthest_proxies(1, 0);
+        break;
     }
-    return 0;
+    if (nb_added == 1)
+      m_proxy_colors.push_back(rand_0_255());
+
+    return nb_added;
   }
 
   std::size_t teleport_one_proxy() {
@@ -224,15 +253,24 @@ public:
   }
 
   bool split(const std::size_t px_idx, const std::size_t n, const std::size_t nb_relaxations) {
+    bool splitted = false;
     switch (m_metric) {
       case L21:
-        return m_l21_approx->split(px_idx, n, nb_relaxations);
+        splitted = m_l21_approx->split(px_idx, n, nb_relaxations);
+        break;
       case L2:
-        return m_l2_approx->split(px_idx, n, nb_relaxations);
+        splitted = m_l2_approx->split(px_idx, n, nb_relaxations);
+        break;
       case Compact:
-        return m_iso_approx->split(px_idx, n, nb_relaxations);
+        splitted = m_iso_approx->split(px_idx, n, nb_relaxations);
+        break;
     }
-    return false;
+    if (splitted) {
+      for (std::size_t i = m_proxy_colors.size(); i < number_of_proxies(); ++i)
+        m_proxy_colors.push_back(rand_0_255());
+    }
+
+    return splitted;
   }
 
   bool extract_mesh(const FT subdivision_ratio,
@@ -358,6 +396,9 @@ private:
   Face_center_map m_center_pmap;
   std::map<face_descriptor, FT> m_face_areas;
   Face_area_map m_area_pmap;
+
+  // patch color
+  std::vector<std::size_t> m_proxy_colors;
 
   L21_metric *m_pl21_metric;
   L21_approx *m_l21_approx;

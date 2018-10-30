@@ -86,12 +86,6 @@ public Q_SLOTS:
   void on_buttonSplit_clicked();
 
 private:
-  // pseudo random number for proxy color mapping
-  std::size_t rand_0_255() {
-    return static_cast<std::size_t>(std::rand() % 255);
-  }
-
-private:
   QAction *actionSurfaceMeshApproximation;
   Ui::Surface_mesh_approximation ui_widget;
   QDockWidget *dock_widget;
@@ -111,7 +105,6 @@ private:
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
   std::vector<L21_proxy_wrapper> m_proxies;
 #endif
-  std::vector<std::size_t> m_px_color;
 }; // end Polyhedron_demo_surface_mesh_approximation_plugin
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionSurfaceMeshApproximation_triggered()
@@ -142,7 +135,6 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
   m_proxies.clear();
 #endif
-  m_px_color.clear();
 
   QTime time;
   time.start();
@@ -162,10 +154,6 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
   m_approx.get_l21_proxies(std::back_inserter(m_proxies));
 #endif
 
-  // generate proxy color map
-  for (std::size_t i = 0; i < m_approx.number_of_proxies(); i++)
-    m_px_color.push_back(rand_0_255());
-
   std::cout << "#proxies " << m_approx.number_of_proxies() << std::endl;
   std::cout << "Done. (" << time.elapsed() << " ms)" << std::endl;
 
@@ -178,9 +166,9 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
     put(pidmap, f, int(m_fidx_pmap[f]));
   std::vector<QColor> &color_vector = sm_item->color_vector();
   color_vector.clear();
-  BOOST_FOREACH(const std::size_t &cidx, m_px_color)
+  BOOST_FOREACH(const std::size_t c, m_approx.proxy_colors())
     color_vector.push_back(QColor::fromRgb(
-      Color_cheat_sheet::r(cidx), Color_cheat_sheet::g(cidx), Color_cheat_sheet::b(cidx)));
+      Color_cheat_sheet::r(c), Color_cheat_sheet::g(c), Color_cheat_sheet::b(c)));
 
   sm_item->setItemIsMulticolor(true);
   sm_item->invalidateOpenGLBuffers();
@@ -329,7 +317,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
     }
   }
   std::vector<CGAL::Color> fcolors;
-  BOOST_FOREACH(const std::size_t c, m_px_color) {
+  BOOST_FOREACH(const std::size_t c, m_approx.proxy_colors()) {
     fcolors.push_back(CGAL::Color(
       Color_cheat_sheet::r(c), Color_cheat_sheet::g(c), Color_cheat_sheet::b(c)));
   }
@@ -356,9 +344,6 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonAdd_clicked() {
   m_approx.get_l21_proxies(std::back_inserter(m_proxies));
 #endif
 
-  // add one proxy color
-  m_px_color.push_back(rand_0_255());
-
   QApplication::restoreOverrideCursor();
 }
 
@@ -379,14 +364,9 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSplit_clicked()
   ui_widget.operations->setEnabled(true);
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  if (m_approx.split(ui_widget.split_proxy_idx->value(),
+  if (!m_approx.split(ui_widget.split_proxy_idx->value(),
     ui_widget.split_nb_sections->value(),
-    ui_widget.split_nb_relaxations->value())) {
-    // add colors
-    for (std::size_t i = 1; i < ui_widget.split_nb_sections->value(); ++i)
-      m_px_color.push_back(rand_0_255());
-  }
-  else
+    ui_widget.split_nb_relaxations->value()))
     std::cout << "split failed" << std::endl;
 
   m_approx.proxy_map(m_fidx_pmap);
@@ -405,7 +385,6 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_comboMetric_currentIn
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
   m_proxies.clear();
 #endif
-  m_px_color.clear();
 
   switch (m) {
     case 0: return m_approx.set_metric(Approximation_wrapper::L21);
