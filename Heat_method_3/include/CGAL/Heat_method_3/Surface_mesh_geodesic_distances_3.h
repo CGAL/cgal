@@ -709,7 +709,7 @@ struct Base_helper<TriangleMesh, Traits, Intrinsic_Delaunay, LA, VertexPointMap>
 /**
  * \ingroup PkgHeatMethod
  *
- * Class `Surface_mesh_geodesic_distances_3` computes geodesic distances for a set of source vertices where sources can be added and removed.
+ * Class `Surface_mesh_geodesic_distances_3` computes estimated geodesic distances for a set of source vertices where sources can be added and removed.
  * The class performs a preprocessing step that does only depend on the mesh, so that the distance computation takes less
  * time after changes of the set of sources.
  *
@@ -860,11 +860,14 @@ public:
 /// \ingroup PkgHeatMethod
 /// computes for each vertex of the triangle mesh `tm` the estimated geodesic distance to a given source vertex.
 /// \tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph` and `HalfedgeListGraph`
-///         with `boost::graph_traits<TriangleMesh>::vertex_descriptor` as key type and `double` as value type.
 /// \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
+///         with `boost::graph_traits<TriangleMesh>::vertex_descriptor` as key type and `double` as value type.
+/// \tparam Mode either the tag `Direct` or `Intrinsic_Delaunay`, which determines if the geodesic distance
+///              is computed directly on the mesh, or if the intrinsic Delaunay triangulation is applied first.
+///              The default is `Direct`.
 ///
 /// \sa CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3
-template <typename TriangleMesh, typename VertexDistanceMap, typename Mode>
+template <typename TriangleMesh, typename VertexDistanceMap,Mode>
 void
 estimate_geodesic_distances(const TriangleMesh& tm,
                             VertexDistanceMap vdm,
@@ -876,8 +879,8 @@ estimate_geodesic_distances(const TriangleMesh& tm,
   hm.estimate_geodesic_distances(vdm);
 }
 
-  
- template <typename TriangleMesh, typename VertexDistanceMap>
+
+template <typename TriangleMesh, typename VertexDistanceMap>
 void
 estimate_geodesic_distances(const TriangleMesh& tm,
                             VertexDistanceMap vdm,
@@ -895,6 +898,9 @@ estimate_geodesic_distances(const TriangleMesh& tm,
 /// \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
 ///         with `boost::graph_traits<TriangleMesh>::vertex_descriptor` as key type and `double` as value type.
 /// \tparam VertexRange a range with value type `boost::graph_traits<TriangleMesh>::vertex_descriptor`
+/// \tparam Mode either the tag `Direct` or `Intrinsic_Delaunay`, which determines if the geodesic distance
+///              is computed directly on the mesh, or if the intrinsic Delaunay triangulation is applied first.
+///              The default is `Direct`.
 ///
 /// \sa CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3 
 template <typename TriangleMesh, typename VertexDistanceMap, typename VertexRange, typename Mode>

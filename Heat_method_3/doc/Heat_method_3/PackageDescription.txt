@@ -40,7 +40,7 @@ source vertices. }
 
 ## Functions ##
 
-- `CGAL::Heat_method_3::geodesic_distances_3()`
+- `CGAL::Heat_method_3::estimate_geodesic_distances()`
 
 */
 \todo Add more detailed cache
