@@ -841,6 +841,10 @@ public:
 
 /// \ingroup PkgHeatMethod
 /// computes for each vertex  of the triangle mesh `tm` the geodesic distance to a given source vertex.
+/// \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
+/// \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
+/// with `vertex_descriptor` as key type and `double` as value type.
+///
 /// \sa CGAL::Heat_method_3::Heat_method_3
 template <typename TriangleMesh, typename VertexDistanceMap>
 void
@@ -856,7 +860,10 @@ geodesic_distances_3(const TriangleMesh& tm,
 
 /// \ingroup PkgHeatMethod
 /// computes for each vertex of the triangle mesh `tm` the geodesic distance to a given source vertex.
+/// \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
+/// \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
 /// This version computes better results when `tm` has triangles with small angles.
+///
 /// \sa CGAL::Heat_method_3::Heat_method_3
 template <typename TriangleMesh, typename VertexDistanceMap>
 void
