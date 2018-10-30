@@ -37,6 +37,8 @@ source vertices. }
 
 ## Classes ##
 - `CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3`
+- `CGAL::Heat_method_3::Direct`
+- `CGAL::Heat_method_3::Intrinsic_Delaunay`
 
 ## Functions ##
 

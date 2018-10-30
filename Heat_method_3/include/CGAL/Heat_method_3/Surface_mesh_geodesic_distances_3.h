@@ -231,6 +231,7 @@ private:
   double
   summation_of_edges() const
   {
+    typename Traits::Compute_squared_distance_3 squared_distance = Traits().compute_squared_distance_3_object();
     double edge_sum = 0;
     CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
     BOOST_FOREACH(face_descriptor f, faces(tm)) {
@@ -245,9 +246,9 @@ private:
       VertexPointMap_reference pi = get(vpm,current);
       VertexPointMap_reference pj = get(vpm, neighbor_one);
       VertexPointMap_reference pk = get(vpm, neighbor_two);
-      edge_sum += (CGAL::is_border(opposite(hd,tm),tm)?1.0:0.5) * std::sqrt(CGAL::squared_distance(pi,pj));
-      edge_sum += (CGAL::is_border(opposite(hd2,tm),tm)?1.0:0.5) * std::sqrt(CGAL::squared_distance(pj,pk)) ;
-      edge_sum += (CGAL::is_border(opposite(hd3,tm),tm)?1.0:0.5) * std::sqrt(CGAL::squared_distance(pk,pi)) ;
+      edge_sum += (CGAL::is_border(opposite(hd,tm),tm)?1.0:0.5) * std::sqrt(squared_distance(pi,pj));
+      edge_sum += (CGAL::is_border(opposite(hd2,tm),tm)?1.0:0.5) * std::sqrt(squared_distance(pj,pk)) ;
+      edge_sum += (CGAL::is_border(opposite(hd3,tm),tm)?1.0:0.5) * std::sqrt(squared_distance(pk,pi)) ;
     }
     return edge_sum;
   }
@@ -312,6 +313,11 @@ private:
   void
   compute_unit_gradient()
   {
+    Traits::Construct_vector_3 construct_vector = Traits().construct_vector_3_object();
+        Traits::Construct_sum_of_vectors_3 sum = Traits().construct_sum_of_vectors_3_object();
+    Traits::Compute_scalar_product_3 scalar_product = Traits().compute_scalar_product_3_object();
+    Traits::Construct_cross_product_vector_3 cross_product = Traits().construct_cross_product_vector_3_object();
+    Traits::Construct_scaled_vector_3 scale = Traits().construct_scaled_vector_3_object();
     if(X.empty()){
       X.resize(num_faces(tm));
     }
@@ -335,9 +341,13 @@ private:
       //cross that with eij, ejk, eki
       //so (Ncross eij) *uk and so on
       //sum all of those then multiply by 1./(2a)
-      Vector_3 cross = CGAL::cross_product((p_j-p_i), (p_k-p_i));
-      double N_cross = (CGAL::sqrt(cross*cross));
-      Vector_3 unit_cross = cross/N_cross;
+      
+      Vector_3 v_ij = construct_vector(p_i,p_j);
+      Vector_3 v_ik = construct_vector(p_i,p_k);
+      
+      Vector_3 cross = cross_product(v_ij, v_ik);
+      double N_cross = (CGAL::sqrt(scalar_product(cross,cross)));
+      Vector_3 unit_cross = scale(cross, 1./N_cross);
       double area_face = N_cross * (1./2);
       double u_i = CGAL::abs(solved_u(i));
       double u_j = CGAL::abs(solved_u(j));
@@ -349,25 +359,24 @@ private:
         u_j = u_j * r_Mag;
         u_k = u_k * r_Mag;
       }
-      Vector_3 edge_sums = u_k * CGAL::cross_product(unit_cross,(p_j-p_i));
-      edge_sums = edge_sums + u_i * (CGAL::cross_product(unit_cross, (p_k-p_j)));
-      edge_sums = edge_sums + u_j * CGAL::cross_product(unit_cross, (p_i-p_k));
-      edge_sums = edge_sums * (1./area_face);
-      double e_magnitude = CGAL::sqrt(edge_sums*edge_sums);
-      X[face_i] = edge_sums*(1./e_magnitude);
+      Vector_3 edge_sums = scale(cross_product(unit_cross,v_ij), u_k);
+      edge_sums = sum(edge_sums, scale(cross_product(unit_cross, construct_vector(p_j,p_k)), u_i));
+      edge_sums = sum(edge_sums, scale(cross_product(unit_cross, construct_vector(p_k,p_i)), u_j));
+      edge_sums = scale(edge_sums, (1./area_face));
+      double e_magnitude = CGAL::sqrt(scalar_product(edge_sums,edge_sums));
+      X[face_i] = scale(edge_sums,(1./e_magnitude));
     }
   }
 
-  double
-  dot_eigen_vector(const Vector_3& a, const Vector_3& b) const
-  {
-    return (a.x()*b.x() + a.y()*b.y() + a.z()*b.z());
-  }
+ 
 
 
   void
   compute_divergence()
   {
+    Traits::Construct_cross_product_vector_3 cross_product = Traits().construct_cross_product_vector_3_object();
+    Traits::Compute_scalar_product_3 scalar_product = Traits().compute_scalar_product_3_object();
+    Traits::Construct_vector_3 construct_vector = Traits().construct_vector_3_object();
     Matrix indexD(dimension,1);
     CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
     BOOST_FOREACH(face_descriptor f, faces(tm)) {
@@ -382,24 +391,32 @@ private:
       VertexPointMap_reference p_j = get(vpm, neighbor_one);
       VertexPointMap_reference p_k = get(vpm, neighbor_two);
       Index face_i = get(face_id_map, f);
-
-      Vector_3 cross = CGAL::cross_product((p_j-p_i), (p_k-p_i));
-      double norm_cross = (CGAL::sqrt(cross*cross));
-      double dot = (p_j-p_i)*(p_k-p_i);
+      
+      Vector_3 v_ij = construct_vector(p_i,p_j);
+      Vector_3 v_ik = construct_vector(p_i,p_k);
+      Vector_3 cross = cross_product(v_ij, v_ik);
+      double norm_cross = CGAL::sqrt(scalar_product(cross,cross));
+      double dot = scalar_product(v_ij, v_ik);
       double cotan_i = dot/norm_cross;
 
-      cross = CGAL::cross_product((p_i-p_j), (p_k-p_j));
-      dot = to_double((p_i-p_j)*(p_k-p_j));
+      Vector_3 v_ji = construct_vector(p_j, p_i);
+      Vector_3 v_jk = construct_vector(p_j, p_k);
+      
+      cross = cross_product(v_ji, v_jk);
+      dot = to_double(scalar_product(v_ji, v_jk));
       double cotan_j = dot/norm_cross;
 
-      cross = CGAL::cross_product((p_i-p_k), (p_j-p_k));
-      dot = to_double((p_i-p_k)*(p_j-p_k));
+      Vector_3 v_ki = construct_vector(p_k,p_i);
+      Vector_3 v_kj = construct_vector(p_k,p_j);
+      
+      cross = cross_product(v_ki, v_kj);
+      dot = to_double(scalar_product(v_ki,v_kj));
       double cotan_k = dot/norm_cross;
 
       const Vector_3& a  = X[face_i];
-      double i_entry = cotan_k*(dot_eigen_vector(a,(p_j-p_i))) + cotan_j*(dot_eigen_vector(a,(p_k-p_i)));
-      double j_entry = cotan_i*(dot_eigen_vector(a,(p_k-p_j))) + cotan_k*(dot_eigen_vector(a,(p_i-p_j)));
-      double k_entry = cotan_j*(dot_eigen_vector(a,(p_i-p_k))) + cotan_i*(dot_eigen_vector(a,(p_j-p_k)));
+      double i_entry = (scalar_product(a,v_ij) * cotan_k) + (scalar_product(a,v_ik) *  cotan_j);
+      double j_entry = (scalar_product(a,v_jk) * cotan_i) + (scalar_product(a,v_ji) * cotan_k);
+      double k_entry = (scalar_product(a,v_ki) * cotan_j) + (scalar_product(a,v_kj) * cotan_i);
 
       indexD.add_coef(i, 0, (1./2)*i_entry);
       indexD.add_coef(j, 0, (1./2)*j_entry);
@@ -499,6 +516,10 @@ private:
   void
   build()
   {
+    Traits::Construct_cross_product_vector_3 cross_product = Traits().construct_cross_product_vector_3_object();
+    Traits::Compute_scalar_product_3 scalar_product = Traits().compute_scalar_product_3_object();
+    Traits::Construct_vector_3 construct_vector = Traits().construct_vector_3_object();
+    
     source_change_flag = false;
 
     CGAL_precondition(is_triangle_mesh(tm));
@@ -540,27 +561,35 @@ private:
       pj = p_j;
       pk = p_k;
 
-      Vector_3 cross = CGAL::cross_product((pj-pi), (pk-pi));
-      double dot = (pj-pi)*(pk-pi);
-
-      double norm_cross = (CGAL::sqrt(cross*cross));
-
+      Vector_3 v_ij = construct_vector(p_i,p_j);
+      Vector_3 v_ik = construct_vector(p_i,p_k);
+      
+      Vector_3 cross = cross_product(v_ij, v_ik);
+      double dot = scalar_product(v_ij,v_ik);
+                                  
+      double norm_cross = (CGAL::sqrt(scalar_product(cross,cross)));
+                                  
       double cotan_i = dot/norm_cross;
       m_cotan_matrix.add_coef(j,k ,-(1./2)*cotan_i);
       m_cotan_matrix.add_coef(k,j,-(1./2)* cotan_i);
       m_cotan_matrix.add_coef(j,j,(1./2)*cotan_i);
       m_cotan_matrix.add_coef(k,k,(1./2)* cotan_i);
 
-      cross = CGAL::cross_product((pi-pj), (pk-pj));
-      dot = to_double((pi-pj)*(pk-pj));
+      Vector_3 v_ji = construct_vector(p_j,p_i);
+      Vector_3 v_jk = construct_vector(p_j,p_k);
+      
+      cross = cross_product(v_ji, v_jk);
+      dot = to_double(scalar_product(v_ji, v_jk));
       double cotan_j = dot/norm_cross;
       m_cotan_matrix.add_coef(i,k ,-(1./2)*cotan_j);
       m_cotan_matrix.add_coef(k,i,-(1./2)* cotan_j);
       m_cotan_matrix.add_coef(i,i,(1./2)* cotan_j);
       m_cotan_matrix.add_coef(k,k,(1./2)* cotan_j);
 
-      cross = CGAL::cross_product((pi-pk), (pj-pk));
-      dot = to_double((pi-pk)*(pj-pk));
+      Vector_3 v_ki = construct_vector(p_k,p_i);
+      Vector_3 v_kj = construct_vector(p_k,p_j);
+      cross = cross_product(v_ki, v_kj);
+      dot = to_double(scalar_product(v_ki,v_kj));
       double cotan_k = dot/norm_cross;
       m_cotan_matrix.add_coef(i,j,-(1./2)*cotan_k);
       m_cotan_matrix.add_coef(j,i,-(1./2)* cotan_k);
@@ -604,9 +633,7 @@ private:
   Vector solved_phi;
   std::set<Index> source_index;
   bool source_change_flag;
-  
-  std::vector<Eigen::Triplet<double> > m_triplets;
-  
+    
 };
 
 template <typename TriangleMesh,
@@ -859,7 +886,8 @@ public:
 
 /// \ingroup PkgHeatMethod
 /// computes for each vertex of the triangle mesh `tm` the estimated geodesic distance to a given source vertex.
-/// \tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph` and `HalfedgeListGraph`
+/// \tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph` and `HalfedgeListGraph`.
+///         It must have an internal vertex point property map with the value type being a 3D point from a cgal Kernel model
 /// \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
 ///         with `boost::graph_traits<TriangleMesh>::vertex_descriptor` as key type and `double` as value type.
 /// \tparam Mode either the tag `Direct` or `Intrinsic_Delaunay`, which determines if the geodesic distance
@@ -867,7 +895,7 @@ public:
 ///              The default is `Direct`.
 ///
 /// \sa CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3
-template <typename TriangleMesh, typename VertexDistanceMap,Mode>
+template <typename TriangleMesh, typename VertexDistanceMap, typename Mode>
 void
 estimate_geodesic_distances(const TriangleMesh& tm,
                             VertexDistanceMap vdm,
@@ -879,7 +907,8 @@ estimate_geodesic_distances(const TriangleMesh& tm,
   hm.estimate_geodesic_distances(vdm);
 }
 
-
+  
+#ifndef DOXYGEN_RUNNING
 template <typename TriangleMesh, typename VertexDistanceMap>
 void
 estimate_geodesic_distances(const TriangleMesh& tm,
@@ -890,11 +919,13 @@ estimate_geodesic_distances(const TriangleMesh& tm,
   hm.add_source(source);
   hm.estimate_geodesic_distances(vdm);
 }
-   
+#endif
+  
 
- /// \ingroup PkgHeatMethod
+/// \ingroup PkgHeatMethod
 /// computes for each vertex  of the triangle mesh `tm` the estimated geodesic distance to a given set of source vertices.
 /// \tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph` and `HalfedgeListGraph`
+///         It must have an internal vertex point property map with the value type being a 3D point from a cgal Kernel model
 /// \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
 ///         with `boost::graph_traits<TriangleMesh>::vertex_descriptor` as key type and `double` as value type.
 /// \tparam VertexRange a range with value type `boost::graph_traits<TriangleMesh>::vertex_descriptor`

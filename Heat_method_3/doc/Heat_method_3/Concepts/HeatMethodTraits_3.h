@@ -32,7 +32,11 @@ public:
   typedef unspecified_type Compute_y_3;
   typedef unspecified_type Compute_z_3;
   typedef unspecified_type Construct_vector_3;
+    typedef unspecified_type Construct_sum_of_vectors_3;
+  typedef unspecified_type Construct_scaled_vector_3;
   typedef unspecified_type Construct_cross_product_vector_3;
+  typedef unspecified_type Compute_scalar_product_3;
+  typedef unspecified_type Compute_squared_distance_3;
   
 /// @}
 

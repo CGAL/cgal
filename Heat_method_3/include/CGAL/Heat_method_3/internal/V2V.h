@@ -24,6 +24,8 @@
 
 #include <CGAL/license/Heat_method_3.h>
 
+#ifndef DOXYGEN_RUNNING
+
 namespace CGAL {
 namespace Heat_method_3 {
 
@@ -39,7 +41,7 @@ namespace Heat_method_3 {
       return t;
     }
   };
-
+#endif
 } // namespace Heat_method_3
 } // namespace CGAL
 #endif //CGAL_HEAT_METHOD_3_INTERNAL_V2V_H

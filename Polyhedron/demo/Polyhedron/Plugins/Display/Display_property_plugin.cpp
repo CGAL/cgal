@@ -10,7 +10,7 @@
 #include <QMessageBox>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include <CGAL/Heat_method_3/Heat_method_3.h>
+#include <CGAL/Heat_method_3/Surface_mesh_geodesic_distances_3.h>
 
 #include "Scene_points_with_normal_item.h"
 #include "Messages_interface.h"
@@ -309,8 +309,8 @@ class DisplayPropertyPlugin :
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
   typedef SMesh::Property_map<boost::graph_traits<SMesh>::vertex_descriptor, double> Vertex_distance_map;
-  typedef CGAL::Heat_method_3::Heat_method_3<SMesh> Heat_method;
-  typedef CGAL::Heat_method_3::Heat_method_3<SMesh, CGAL::Tag_true> Heat_method_idt;
+  typedef CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<SMesh> Heat_method;
+  typedef CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<SMesh, CGAL::Heat_method_3::Intrinsic_Delaunay> Heat_method_idt;
   
 public:
 
@@ -769,9 +769,9 @@ private Q_SLOTS:
     }
 
     if(iDT){
-      hm_idt->fill_distance_map(heat_intensity);
+      hm_idt->estimate_geodesic_distances(heat_intensity);
     }else{
-      hm->fill_distance_map(heat_intensity);
+      hm->estimate_geodesic_distances(heat_intensity);
     }
 
     double max = 0;
