@@ -21,7 +21,6 @@
 #ifndef CGAL_TRAITS_MULTIPOLYGON_H
 #define CGAL_TRAITS_MULTIPOLYGON_H
 #include <CGAL/internal/Geometry_container.h>
-#include <boost/geometry/geometry.hpp>
 
 
 namespace boost{

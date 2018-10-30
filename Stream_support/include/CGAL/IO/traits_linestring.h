@@ -20,7 +20,6 @@
 
 #ifndef TRAITS_LINESTRING_H
 #define TRAITS_LINESTRING_H
-#include <boost/geometry/geometry.hpp>
 #include <CGAL/internal/Geometry_container.h>
 
 

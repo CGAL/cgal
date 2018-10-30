@@ -23,7 +23,6 @@
 
 #include <CGAL/number_utils.h>
 #include <CGAL/Point_3.h>
-#include <boost/geometry/geometry.hpp>
 namespace boost{
 namespace geometry{
 namespace traits{
