@@ -18,8 +18,8 @@
 //
 // Author(s)     : Maxime Gimeno
 
-#ifndef CGAL_WKT_H
-#define CGAL_WKT_H
+#ifndef CGAL_IO_WKT_H
+#define CGAL_IO_WKT_H
 
 #include <iostream>
 #include <sstream>

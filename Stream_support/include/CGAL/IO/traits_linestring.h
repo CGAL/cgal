@@ -27,7 +27,6 @@
 namespace boost{
 namespace geometry{
 namespace traits{
-//!\todo should we use our own tag in namespace CGAL rather than use the ones from boost ?
 template< typename R> struct tag<CGAL::internal::Geometry_container<R, linestring_tag> >
 { typedef linestring_tag type; };
 
