@@ -70,17 +70,17 @@ class AABB_face_graph_triangle_primitive
                           FaceGraph,
                           typename Default::Get<VertexPointPMap,
                                                 typename boost::property_map< FaceGraph,
-                                                                              vertex_point_t>::type >::type>,
+                                                                              vertex_point_t>::const_type >::type>,
                         One_point_from_face_descriptor_map<
                           FaceGraph,
                           typename Default::Get<VertexPointPMap,
                                                 typename boost::property_map< FaceGraph,
-                                                                              vertex_point_t>::type >::type>,
+                                                                              vertex_point_t>::const_type >::type>,
                         OneFaceGraphPerTree,
                         CacheDatum >
 #endif
 {
-  typedef typename Default::Get<VertexPointPMap, typename boost::property_map< FaceGraph, vertex_point_t>::type >::type VertexPointPMap_;
+  typedef typename Default::Get<VertexPointPMap, typename boost::property_map< FaceGraph, vertex_point_t>::const_type >::type VertexPointPMap_;
 
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor Id_;
   typedef Triangle_from_face_descriptor_map<FaceGraph,VertexPointPMap_>  Triangle_property_map;

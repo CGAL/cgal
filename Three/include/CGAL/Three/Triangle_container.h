@@ -35,6 +35,7 @@ using namespace CGAL::Three;
 #  define DEMO_FRAMEWORK_EXPORT Q_DECL_IMPORT
 #endif
 struct Tri_d;
+class QMatrix4x4;
 namespace CGAL {
 namespace Three {
 
@@ -95,12 +96,16 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
   QVector4D getPlane();
   //! getter for the "alpha" parameter
   float getAlpha();
+  //! getter for the "f_matrix" parameter
+  QMatrix4x4 getFrameMatrix()const;
 //! setter for the "shrink_factor" parameter
   void setShrinkFactor(const float&);
   //! setter for the "plane" parameter
   void setPlane       (const QVector4D&);
   //! setter for the "alpha" parameter
   void setAlpha       (const float&);
+  //! setter for the "f_matrix" parameter
+  void setFrameMatrix(const QMatrix4x4&);
   ///@}
 
   //drawing variables

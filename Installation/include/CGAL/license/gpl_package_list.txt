@@ -54,6 +54,7 @@ Polygon_mesh_processing/predicate Polygon Mesh Processing - Predicate
 Polygon_mesh_processing/repair Polygon Mesh Processing - Repair
 Polygon_mesh_processing/miscellaneous Polygon Mesh Processing - Miscellaneous
 Polygon_mesh_processing/detect_features Polygon Mesh Processing - Feature Detection
+Polygon_mesh_processing/collision_detection Polygon Mesh Processing - Collision Detection
 Polyhedron 3D Polyhedral Surface
 Polyline_simplification_2 2D Polyline Simplification
 Polytope_distance_d Optimal Distances

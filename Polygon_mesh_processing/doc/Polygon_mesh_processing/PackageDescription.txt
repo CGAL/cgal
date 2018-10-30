@@ -181,6 +181,9 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::detect_sharp_edges()`
 - `CGAL::Polygon_mesh_processing::detect_vertex_incident_patches()`
 
+## Collision Detection
+- `CGAL::Rigid_triangle_mesh_collision_detection`
+
 ## Miscellaneous ##
 - `CGAL::Polygon_mesh_slicer`
 - `CGAL::Side_of_triangle_mesh`
