@@ -41,13 +41,13 @@ This implementation is based on \cgalCite{cgal:cww-ghnac-13} and \cgalCite{cgal:
 
 \section sec_HM_examples Examples
 
-We give examples for the free function `CGAL::Heat_method_3::geodesic_distances_3()`,
-for the class template `CGAL::Heat_method_3::Heat_method_3`, with and without the use
+We give examples for the free function `CGAL::Heat_method_3::estimate_geodesic_distances()`,
+for the class template `CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3`, with and without the use
 of intrinsic Delaunay triangulation.
 
 \subsection HM_example_Free_function Using a Free Function
 
-The first example calls the free function `Heat_method_3::geodesic_distances_3()`
+The first example calls the free function `Heat_method_3::estimate_geodesic_distances()`
 which computes for all vertices of a triangle mesh the distances to a single source vertex.
 
 The distances are written into an internal property map of the surface mesh.

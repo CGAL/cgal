@@ -49,17 +49,30 @@ struct Heat_method_3_private_tests;
 
 namespace CGAL {
 namespace Heat_method_3 {
+  
+  /**
+   * A tag class used to specify that the heat method is applied to the input mesh. 
+   */
+  struct Direct
+  {};
+
+  /**
+   * A tag class used to specify that the heat method applies the intrinsic Delaunay triangulation to the input mesh.
+   */
+  struct Intrinsic_Delaunay
+  {};
+
 
 namespace internal {
 template <typename TriangleMesh,
           typename Traits,
           typename LA,
           typename VertexPointMap>
-class Heat_method_3
+class Surface_mesh_geodesic_distances_3
 {
 protected:
 #ifdef CGAL_TESTSUITE
-  friend Heat_method_3_private_tests;
+  friend Surface_mesh_geodesic_distances_3_private_tests;
 #endif
   /// Polygon_mesh typedefs
   typedef typename boost::graph_traits<TriangleMesh>               graph_traits;
@@ -67,7 +80,7 @@ protected:
   typedef typename graph_traits::edge_descriptor                edge_descriptor;
   typedef typename graph_traits::halfedge_descriptor        halfedge_descriptor;
   typedef typename graph_traits::face_descriptor                face_descriptor;
-  typedef typename std::set<vertex_descriptor>::iterator        vertex_iterator;
+  typedef typename std::set<vertex_descriptor>                     Vertex_range;
   /// Geometric typedefs
   typedef typename Traits::Point_3                                      Point_3;
   typedef typename Traits::FT                                                FT;
@@ -97,7 +110,7 @@ public:
   /*!
     \brief Constructor
   */
-  Heat_method_3(const TriangleMesh& tm)
+  Surface_mesh_geodesic_distances_3(const TriangleMesh& tm)
     : vertex_id_map(get(Vertex_property_tag(),tm)), face_id_map(get(Face_property_tag(),tm)), v2v(tm), tm(tm), vpm(get(vertex_point,tm))
   {
     build();
@@ -107,7 +120,7 @@ public:
   /*!
     \brief Constructor
   */
-  Heat_method_3(const TriangleMesh& tm, VertexPointMap vpm)
+  Surface_mesh_geodesic_distances_3(const TriangleMesh& tm, VertexPointMap vpm)
     : v2v(tm), tm(tm), vpm(vpm)
   {
     build();
@@ -161,7 +174,21 @@ public:
   add_source(VD vd)
   {
     source_change_flag = true;
-    return sources.insert(v2v(vd)).second;
+    return m_sources.insert(v2v(vd)).second;
+  }
+  
+  /**
+   * adds vertices in the `vrange` to the source set'.
+   */
+  template <typename VertexRange>
+  void
+  add_sources(VertexRange vrange)
+  {
+    typedef typename std::iterator_traits<typename Range::const_iterator>::value_type value_type;
+    source_change_flag = true;
+    BOOST_FOREACH(value_type vd, vrange){
+      m_sources.insert(v2v(vd));
+    }
   }
 
 
@@ -173,7 +200,7 @@ public:
   remove_source(VD vd)
   {
     source_change_flag = true;
-    return (sources.erase(v2v(vd)) == 1);
+    return (m_sources.erase(v2v(vd)) == 1);
   }
 
 
@@ -184,28 +211,20 @@ public:
   clear_sources()
   {
     source_change_flag = true;
-    sources.clear();
+    m_sources.clear();
     return;
   }
 
   /**
-   * returns an iterator to the first vertex in the source set.
+   * returns the set of  source vertices.
    */
-  vertex_iterator
-  sources_begin() const
-  {
-    return sources.begin();
-  }
 
-
-  /**
-   * returns past-the-end iterator of the source set.
-   */
-  vertex_iterator
-  sources_end() const
+  const Vertex_range&
+  sources() const
   {
-    return sources.end();
+    return m_sources;
   }
+  
 
 private:
 
@@ -247,18 +266,16 @@ private:
     //currently just working with a single vertex in source set, add the first one for now
     Index i;
     Matrix K(static_cast<int>(num_vertices(tm)), 1);
-    if(sources.empty()) {
+    if(sources().empty()) {
       i = 0;
       K.set_coef(i,0, 1, true);
       source_index.insert(0);
     } else {
-      vertex_descriptor current = *(sources.begin());
+      vertex_descriptor current = *(sources().begin());
       i = get(vertex_id_map, current);
-      vertex_iterator vd =sources.begin();
-      while(vd!=sources.end()){
-        i = get(vertex_id_map, *(vd));
+      BOOST_FOREACH(vertex_descriptor vd, sources()){
+        i = get(vertex_id_map, vd);
         K.set_coef(i,0, 1, true);
-        vd = ++vd;
       }
     }
     kronecker.swap(K);
@@ -396,7 +413,7 @@ private:
   value_at_source_set(const Vector& phi)
   {
     Vector source_set_val(dimension);
-    if(sources.empty()) {
+    if(sources().empty()) {
       for(int k = 0; k<dimension; k++) {
         source_set_val(k,0) = phi.coeff(0,0);
       }
@@ -404,20 +421,17 @@ private:
     } else {
       for(int i = 0; i<dimension; i++) {
         double min_val = (std::numeric_limits<double>::max)();
-        vertex_iterator current;
-        Index current_Index;
-        current = sources.begin();
+        Index vd_index;
         //go through the distances to the sources and leave the minimum distance;
-        for(std::size_t j = 0; j<sources.size(); j++) {
-          current_Index = get(vertex_id_map, *current);
-          double new_d = CGAL::abs(-phi.coeff(current_Index,0)+phi.coeff(i,0));
-          if(phi.coeff(current_Index,0)==phi.coeff(i,0)) {
+        BOOST_FOREACH(vertex_descriptor vd, sources()){
+          vd_index = get(vertex_id_map, vd);
+          double new_d = CGAL::abs(-phi.coeff(vd_index,0)+phi.coeff(i,0));
+          if(phi.coeff(vd_index,0)==phi.coeff(i,0)) {
             min_val = 0.;
           }
           if(new_d < min_val) {
             min_val = new_d;
           }
-          current = ++current;
         }
         source_set_val(i,0) = min_val;
       }
@@ -458,7 +472,7 @@ public:
    *  Updates the distance property map after changes in the source set.
    **/
   template<class VertexDistanceMap>
-  void fill_distance_map(VertexDistanceMap vdm)
+  void estimate_geodesic_distances(VertexDistanceMap vdm)
   {
     double d=0;
     if(source_change_flag) {
@@ -580,7 +594,7 @@ private:
   V2V<TriangleMesh> v2v;
   const TriangleMesh& tm;
   VertexPointMap vpm;
-  std::set<vertex_descriptor> sources;
+  std::set<vertex_descriptor> m_sources;
   double m_time_step;
   Matrix kronecker;
   Matrix m_mass_matrix, m_cotan_matrix;
@@ -597,13 +611,13 @@ private:
 
 template <typename TriangleMesh,
           typename Traits,
-          typename UseIntrinsicDelaunay,
+          typename Mode,
           typename LA,
           typename VertexPointMap>
 struct Base_helper
-  : public Heat_method_3<TriangleMesh, Traits, LA, VertexPointMap>
+  : public Surface_mesh_geodesic_distances_3<TriangleMesh, Traits, LA, VertexPointMap>
 {
-  typedef Heat_method_3<TriangleMesh, Traits, LA, VertexPointMap> type;
+  typedef Surface_mesh_geodesic_distances_3<TriangleMesh, Traits, LA, VertexPointMap> type;
 
   Base_helper(const TriangleMesh& tm, VertexPointMap vpm)
     : type(tm, vpm)
@@ -624,9 +638,9 @@ struct Base_helper
   }
 
   template <class VertexDistanceMap>
-  void fill_distance_map(VertexDistanceMap vdm)
+  void estimate_geodesic_distances(VertexDistanceMap vdm)
   {
-    base().fill_distance_map(vdm);
+    base().estimate_geodesic_distances(vdm);
   }
 };
 
@@ -650,17 +664,17 @@ template <typename TriangleMesh,
           typename Traits,
           typename LA,
           typename VertexPointMap>
-struct Base_helper<TriangleMesh, Traits, Tag_true, LA, VertexPointMap>
+struct Base_helper<TriangleMesh, Traits, Intrinsic_Delaunay, LA, VertexPointMap>
   : public Idt_storage<TriangleMesh, Traits, VertexPointMap>
-  , public Heat_method_3<Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits>,
-                         Traits,
-                         LA,
-                         typename Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits>::Vertex_point_map>
+  , public Surface_mesh_geodesic_distances_3<Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits>,
+                                             Traits,
+                                             LA,
+                                             typename Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits>::Vertex_point_map>
 {
   typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TriangleMesh, Traits> Idt;
   typedef Idt_storage<TriangleMesh, Traits, VertexPointMap> Idt_wrapper;
 
-  typedef Heat_method_3<Idt, Traits, LA, typename Idt::Vertex_point_map> type;
+  typedef Surface_mesh_geodesic_distances_3<Idt, Traits, LA, typename Idt::Vertex_point_map> type;
 
   Base_helper(const TriangleMesh& tm, VertexPointMap vpm)
     : Idt_wrapper(tm, vpm)
@@ -683,26 +697,27 @@ struct Base_helper<TriangleMesh, Traits, Tag_true, LA, VertexPointMap>
   }
 
   template <class VertexDistanceMap>
-  void fill_distance_map(VertexDistanceMap vdm)
+  void estimate_geodesic_distances(VertexDistanceMap vdm)
   {
-    base().fill_distance_map(this->m_idt.vertex_distance_map(vdm));
+    base().estimate_geodesic_distances(this->m_idt.vertex_distance_map(vdm));
   }
 };
 
 } // namespace internal
 
+  
 /**
  * \ingroup PkgHeatMethod
  *
- * Class `Heat_method_3` computes geodesic distances for a set of source vertices where sources can be added and removed.
+ * Class `Surface_mesh_geodesic_distances_3` computes geodesic distances for a set of source vertices where sources can be added and removed.
  * The class performs a preprocessing step that does only depend on the mesh, so that the distance computation takes less
  * time after changes of the set of sources.
  *
- * \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
+ * \tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph` and `HalfedgeListGraph`
  * \tparam Traits a model of HeatMethodTraits_3
- * \tparam UseIntrinsicDelaunay indicates if an intrinsic Delaunay triangulation should be internally constructed (`Tag_true`)
- *                              or if the input mesh should be used as is (`Tag_false`).
- *                              If `Tag_true` the type `TriangleMesh` must have an internal property for `vertex_point`
+ * \tparam Mode indicates if an intrinsic Delaunay triangulation should be internally constructed (`Intrinsic_Delaunay`)
+ *                              or if the input mesh should be used as is (`Direct`).
+ *                              If `Intrinsic_Delaunay` the type `TriangleMesh` must have an internal property for `vertex_point`
  *                              and its value type must be the same as the value type of `VertexPointMap`.
  * \tparam LA a model of `SparseLinearAlgebraWithFactorTraits_d`.
 
@@ -713,7 +728,7 @@ struct Base_helper<TriangleMesh, Traits, Tag_true, LA, VertexPointMap>
  *
  */
 template <typename TriangleMesh,
-          typename UseIntrinsicDelaunay = Tag_false,
+          typename Mode = Direct,
 #ifdef CGAL_EIGEN3_ENABLED
           typename LA = Eigen_solver_traits<Eigen::SimplicialLDLT<typename Eigen_sparse_matrix<double>::EigenType > >,
 #else
@@ -721,12 +736,12 @@ template <typename TriangleMesh,
 #endif
           typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::const_type,
           typename Traits = typename Kernel_traits< typename boost::property_traits<VertexPointMap>::value_type>::Kernel >
-class Heat_method_3
+class Surface_mesh_geodesic_distances_3
 #ifndef DOXYGEN_RUNNING
-  : public internal::Base_helper<TriangleMesh, Traits, UseIntrinsicDelaunay, LA, VertexPointMap>
+  : public internal::Base_helper<TriangleMesh, Traits, Mode, LA, VertexPointMap>
 #endif
 {
-  typedef internal::Base_helper<TriangleMesh, Traits, UseIntrinsicDelaunay, LA, VertexPointMap> Base_helper;
+  typedef internal::Base_helper<TriangleMesh, Traits, Mode, LA, VertexPointMap> Base_helper;
 
   const typename Base_helper::type& base() const
   {
@@ -744,22 +759,23 @@ public:
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   #ifndef DOXYGEN_RUNNING
   /// Source vertex iterator type
-  typedef typename Base_helper::type::vertex_iterator Source_vertex_iterator;
+  typedef typename Base_helper::type::Vertex_range Vertex_range;
   #else
-  typedef unspecified_type Source_vertex_iterator;
+  /// a model of `ConstRange` with an iterator that is model of `ForwardIterator` with `vertex_descriptor` as value type.
+  typedef unspecified_type Vertex_range;
   #endif
 
   /*!
     \brief Constructor
   */
-  Heat_method_3(const TriangleMesh& tm)
+  Surface_mesh_geodesic_distances_3(const TriangleMesh& tm)
     : Base_helper(tm)
   {}
 
   /*!
     \brief Constructor
   */
-  Heat_method_3(const TriangleMesh& tm, VertexPointMap vpm)
+  Surface_mesh_geodesic_distances_3(const TriangleMesh& tm, VertexPointMap vpm)
     : Base_helper(tm, vpm)
   {}
 
@@ -778,6 +794,16 @@ public:
   add_source(vertex_descriptor vd)
   {
     return base().add_source(vd);
+  }
+  
+  /**
+   * adds the range of vertices to the source set.
+   */
+  template <typename VertexRange>
+  void
+  add_sources(const Vertex_range& vrange)
+  {
+    base().add_sources(vrange);
   }
 
   /**
@@ -799,81 +825,88 @@ public:
   }
 
   /**
-   * get distance from the current source set to a vertex `vd`.
+   * get estimated distance from the current source set to a vertex `vd`.
    */
   double
-  distance(vertex_descriptor vd) const
+  estimate_geodesic_distance(vertex_descriptor vd) const
   {
-    return base().distance(vd);
+    return base().estimate_geodesic_distance(vd);
   }
 
   /**
-   * returns an iterator to the first vertex in the source set.
+   * returns the source set.
    */
-  Source_vertex_iterator
-  sources_begin() const
+  const Vertex_range&
+  sources() const
   {
-    return base().sources_begin();
+    return base().sources();
   }
 
+ 
   /**
-   * returns past-the-end iterator of the source set.
-   */
-  Source_vertex_iterator
-  sources_end() const
-  {
-    return base().sources_end();
-  }
-
-  /**
-   * fills the distance property map with the geodesic distance of each vertex to the closest source vertex.
+   * fills the distance property map with the estimated geodesic distance of each vertex to the closest source vertex.
    * \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
    * with `vertex_descriptor` as key type and `double` as value type.
    * \param vdm the vertex distance map to be filled
    **/
   template <class VertexDistanceMap>
-  void fill_distance_map(VertexDistanceMap vdm)
+  void estimate_geodesic_distances(VertexDistanceMap vdm)
   {
-    Base_helper::fill_distance_map(vdm);
+    Base_helper::estimate_geodesic_distances(vdm);
   }
 };
 
 
 /// \ingroup PkgHeatMethod
-/// computes for each vertex  of the triangle mesh `tm` the geodesic distance to a given source vertex.
-/// \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
+/// computes for each vertex of the triangle mesh `tm` the estimated geodesic distance to a given source vertex.
+/// \tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph` and `HalfedgeListGraph`
+///         with `boost::graph_traits<TriangleMesh>::vertex_descriptor` as key type and `double` as value type.
 /// \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
-/// with `vertex_descriptor` as key type and `double` as value type.
 ///
-/// \sa CGAL::Heat_method_3::Heat_method_3
-template <typename TriangleMesh, typename VertexDistanceMap>
+/// \sa CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3
+template <typename TriangleMesh, typename VertexDistanceMap, typename Mode>
 void
-geodesic_distances_3(const TriangleMesh& tm,
-                     VertexDistanceMap vdm,
-                     typename boost::graph_traits<TriangleMesh>::vertex_descriptor source)
+estimate_geodesic_distances(const TriangleMesh& tm,
+                            VertexDistanceMap vdm,
+                            typename boost::graph_traits<TriangleMesh>::vertex_descriptor source,
+                            Mode)
 {
-  CGAL::Heat_method_3::Heat_method_3<TriangleMesh> hm(tm);
+  CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<TriangleMesh, Mode> hm(tm);
   hm.add_source(source);
-  hm.fill_distance_map(vdm);
+  hm.estimate_geodesic_distances(vdm);
 }
 
-
-/// \ingroup PkgHeatMethod
-/// computes for each vertex of the triangle mesh `tm` the geodesic distance to a given source vertex.
-/// \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
-/// \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
-/// This version computes better results when `tm` has triangles with small angles.
-///
-/// \sa CGAL::Heat_method_3::Heat_method_3
-template <typename TriangleMesh, typename VertexDistanceMap>
+  
+ template <typename TriangleMesh, typename VertexDistanceMap>
 void
-geodesic_distances_with_intrinsic_Delaunay_triangulation_3(const TriangleMesh& tm,
-                                                           VertexDistanceMap vdm,
-                                                           typename boost::graph_traits<TriangleMesh>::vertex_descriptor source)
+estimate_geodesic_distances(const TriangleMesh& tm,
+                            VertexDistanceMap vdm,
+                            typename boost::graph_traits<TriangleMesh>::vertex_descriptor source)
 {
-  CGAL::Heat_method_3::Heat_method_3<TriangleMesh, CGAL::Tag_true> hm(tm);
+  CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<TriangleMesh, Direct> hm(tm);
   hm.add_source(source);
-  hm.fill_distance_map(vdm);
+  hm.estimate_geodesic_distances(vdm);
+}
+   
+
+ /// \ingroup PkgHeatMethod
+/// computes for each vertex  of the triangle mesh `tm` the estimated geodesic distance to a given set of source vertices.
+/// \tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph` and `HalfedgeListGraph`
+/// \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
+///         with `boost::graph_traits<TriangleMesh>::vertex_descriptor` as key type and `double` as value type.
+/// \tparam VertexRange a range with value type `boost::graph_traits<TriangleMesh>::vertex_descriptor`
+///
+/// \sa CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3 
+template <typename TriangleMesh, typename VertexDistanceMap, typename VertexRange, typename Mode>
+void
+estimate_geodesic_distances(const TriangleMesh& tm,
+                            VertexDistanceMap vdm,
+                            const VertexRange sources,
+                            Mode)
+{
+  CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<TriangleMesh, Mode> hm(tm);
+  hm.add_sources(sources);
+  hm.estimate_geodesic_distances(vdm);
 }
 
 

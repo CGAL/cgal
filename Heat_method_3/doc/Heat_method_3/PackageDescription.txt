@@ -36,12 +36,11 @@ source vertices. }
 - `HeatMethodTraits_3`
 
 ## Classes ##
-- `CGAL::Heat_method_3::Heat_method_3`
+- `CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3`
 
 ## Functions ##
 
 - `CGAL::Heat_method_3::geodesic_distances_3()`
-- `CGAL::Heat_method_3::geodesic_distances_with_intrinsic_Delaunay_triangulation_3()`
 
 */
 \todo Add more detailed cache
