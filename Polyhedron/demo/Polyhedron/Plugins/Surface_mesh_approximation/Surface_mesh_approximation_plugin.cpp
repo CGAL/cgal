@@ -12,10 +12,7 @@
 
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
-
 #include <CGAL/convex_hull_2.h>
-#include <CGAL/boost/graph/copy_face_graph.h>
-#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 #include "ui_Surface_mesh_approximation_dockwidget.h"
 #include "VSA_approximation_wrapper.h"
@@ -32,9 +29,9 @@ class Polyhedron_demo_surface_mesh_approximation_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
   typedef VSA_approximation_wrapper<SMesh, EPICK> Approximation_wrapper;
-  #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
   typedef Approximation_wrapper::L21_proxy_wrapper L21_proxy_wrapper;
-  #endif
+#endif
   typedef Approximation_wrapper::Indexed_triangle Indexed_triangle;
 
   typedef EPICK::FT FT;
@@ -66,7 +63,6 @@ public:
     connect(ui_widget.buttonMeshing, SIGNAL(clicked()), this, SLOT(on_buttonMeshing_clicked()));
     connect(ui_widget.buttonTeleport, SIGNAL(clicked()), this, SLOT(on_buttonTeleport_clicked()));
     connect(ui_widget.buttonSplit, SIGNAL(clicked()), this, SLOT(on_buttonSplit_clicked()));
-    // connect(actionApproximation, SIGNAL(clicked()), this, SLOT(on_actionApproximation_clicked()));
   }
 
   void closure() {
@@ -83,7 +79,6 @@ public:
 
 public Q_SLOTS:
   void on_actionSurfaceMeshApproximation_triggered();
-
   void on_comboMetric_currentIndexChanged(const int init);
   void on_buttonSeeding_clicked();
   void on_buttonAdd_clicked();
@@ -91,15 +86,9 @@ public Q_SLOTS:
   void on_buttonMeshing_clicked();
   void on_buttonTeleport_clicked();
   void on_buttonSplit_clicked();
-  void on_actionApproximation_clicked();
-
-  // settings
-  // void quit();
-  // void readSettings();
-  // void writeSettings();
 
 private:
-  // pseudorandom number for proxy color mapping
+  // pseudo random number for proxy color mapping
   std::size_t rand_0_255() {
     return static_cast<std::size_t>(std::rand() % 255);
   }
@@ -135,46 +124,6 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionSurfaceMeshAppr
 {
   dock_widget->show();
   return;
-}
-
-void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionApproximation_clicked() {
-  ui_widget.seeding->setEnabled(true);
-  ui_widget.mesh_extraction->setEnabled(true);
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-
-  const VSA::Seeding_method method = ui_widget.method_random->isChecked() ? VSA::RANDOM : (
-    ui_widget.method_incremental->isChecked() ? VSA::INCREMENTAL : VSA::HIERARCHICAL);
-  m_approx.initialize_seeds(method,
-    (ui_widget.cb_nb_proxies->isChecked() ? boost::optional<std::size_t>(ui_widget.nb_proxies->value()) : boost::none),
-    (ui_widget.cb_error_drop->isChecked() ? boost::optional<FT>(ui_widget.error_drop->value()) : boost::none),
-    ui_widget.nb_relaxations->value());
-  m_approx.run(ui_widget.nb_iterations->value());
-
-  m_approx.proxy_map(m_fidx_pmap);
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-  m_proxies.clear();
-  m_approx.get_l21_proxies(std::back_inserter(m_proxies));
-#endif
-  // generate proxy color map
-  m_px_color.clear();
-  for (std::size_t i = 0; i < m_approx.number_of_proxies(); i++)
-    m_px_color.push_back(rand_0_255());
-
-  m_tris.clear();
-  m_anchor_pos.clear();
-  m_anchor_vtx.clear();
-  m_bdrs.clear();
-  m_approx.extract_mesh(ui_widget.chord_error->value(),
-    ui_widget.is_relative_to_chord->isChecked(),
-    ui_widget.with_dihedral_angle->isChecked(),
-    ui_widget.if_optimize_anchor_location->isChecked(),
-    ui_widget.pca_plane->isChecked());
-  m_approx.indexed_triangles(std::back_inserter(m_tris));
-  m_approx.anchor_points(std::back_inserter(m_anchor_pos));
-  m_approx.anchor_vertices(std::back_inserter(m_anchor_vtx));
-  m_approx.indexed_boundary_polygons(std::back_inserter(m_bdrs));
-
-  QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked() {
