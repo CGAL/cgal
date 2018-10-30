@@ -1796,7 +1796,7 @@ void MainWindow::on_actionSaveAs_triggered()
                                      &sf);
     
     if(filename.isEmpty())
-      continue;
+      return;
     last_saved_dir = QFileInfo(filename).absoluteDir().path();
     extensions.indexIn(sf.split(";;").first());
     QString filter_ext, filename_ext;
