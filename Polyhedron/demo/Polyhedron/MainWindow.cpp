@@ -1337,6 +1337,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
       else if(scene->selectionIndices().size() > 1 )
       {
         QMap<QString, QAction*> menu_actions;
+        QVector<QMenu*> slider_menus;
         bool has_stats = false;
         Q_FOREACH(QAction* action, scene->item(main_index)->contextMenu()->actions())
         {
@@ -1409,7 +1410,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
             });
             QMenu* new_menu = new QMenu("Alpha value", &menu);
               new_menu->addAction(sliderAction);
-              menu.addMenu(new_menu);
+              slider_menus.push_back(new_menu);
           }
           else if(name == QString("Points Size"))
           {
@@ -1444,7 +1445,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
             });
             QMenu* new_menu = new QMenu("Points Size", &menu);
               new_menu->addAction(sliderAction);
-              menu.addMenu(new_menu);
+              slider_menus.push_back(new_menu);
           }
           else if(name == QString("Normals Length"))
           {
@@ -1477,13 +1478,20 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
             });
             QMenu* new_menu = new QMenu("Normals Length", &menu);
               new_menu->addAction(sliderAction);
-              menu.addMenu(new_menu);
+              slider_menus.push_back(new_menu);
           }
           else
           {
             QAction* action = menu.addAction(name);
             connect(action, &QAction::triggered, this, &MainWindow::propagate_action);
           }
+        }
+        if(!slider_menus.empty())
+        {
+          Q_FOREACH(QMenu* m, slider_menus){
+            menu.addMenu(m);
+          }
+          menu.insertSeparator(0);
         }
         if(has_stats)
         {
