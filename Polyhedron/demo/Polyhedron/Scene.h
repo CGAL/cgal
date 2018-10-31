@@ -128,6 +128,8 @@ public:
   // auxiliary public function for QMainWindow
   //Selects the row at index i in the sceneView.
   QItemSelection createSelection(int i);
+  //same fo lists
+  QItemSelection createSelection(QList<int> is);
   //Selects all the rows in the sceneView.
   QItemSelection createSelectionAll();
   //Connects specific signals to a group when it is added and
@@ -229,6 +231,8 @@ Q_SIGNALS:
   void selectionRay(double, double, double, double, double, double);
   //! Used to update the selected item in the Geometric Objects view.
   void selectionChanged(int i);
+  //! Used to update the selected items in the Geometric Objects view.
+  void selectionChanged(QList<int> is);
   //! Used when you don't want to update the selectedItem in the Geometric Objects view.
   void itemIndexSelected(int i);
   //! Emit this to reset the collapsed state of all groups after the Geometric Objects view has been redrawn.

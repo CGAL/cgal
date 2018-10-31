@@ -211,6 +211,8 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
 
   connect(scene, SIGNAL(selectionChanged(int)),
           this, SLOT(selectSceneItem(int)));
+  connect(scene, SIGNAL(selectionChanged(QList<int>)),
+          this, SLOT(selectSceneItems(QList<int>)));
 
   connect(scene, SIGNAL(itemPicked(const QModelIndex &)),
           this, SLOT(recenterSceneView(const QModelIndex &)));
@@ -1172,6 +1174,23 @@ void MainWindow::selectSceneItem(int i)
   else {
     QItemSelection s =
       proxyModel->mapSelectionFromSource(scene->createSelection(i));
+
+    sceneView->selectionModel()->select(s,
+                                        QItemSelectionModel::ClearAndSelect);
+    sceneView->scrollTo(s.indexes().first());
+  }
+}
+
+void MainWindow::selectSceneItems(QList<int> is)
+{
+  if(is.first() < 0 || is.last() >= scene->numberOfEntries()) {
+    sceneView->selectionModel()->clearSelection();
+    updateInfo();
+    updateDisplayInfo();
+  }
+  else {
+    QItemSelection s =
+      proxyModel->mapSelectionFromSource(scene->createSelection(is));
 
     sceneView->selectionModel()->select(s,
                                         QItemSelectionModel::ClearAndSelect);

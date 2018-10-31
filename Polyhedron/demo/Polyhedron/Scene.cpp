@@ -1076,62 +1076,81 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
 
 void Scene::moveRowUp()
 {
-  
-  int selected_id = selectionIndices().first();
-  Scene_item* selected_item = item(selected_id);
-  if(!selected_item)
+  QList<int> to_select;
+  QList<int> sorted_list = selectionIndices();
+  std::sort(sorted_list.begin(), sorted_list.end());
+  if( children.indexOf(sorted_list.first()) == 0)
     return;
-  if(index_map.key(selected_id).row() > 0)
+  for(int i=0; i<sorted_list.size(); ++i)
   {
-    if(item(selected_id)->has_group >0)
+    Item_id selected_id = sorted_list[i];
+    Scene_item* selected_item = item(selected_id);
+    if(!selected_item)
+      return;
+    if(index_map.key(selected_id).row() > 0)
     {
-      Scene_group_item* group = selected_item->parentGroup();
-      if(group)
+      if(item(selected_id)->has_group >0)
       {
-        int id = group->getChildren().indexOf(item_id(selected_item));
-        group->moveUp(id);
+        Scene_group_item* group = selected_item->parentGroup();
+        if(group)
+        {
+          int id = group->getChildren().indexOf(item_id(selected_item));
+          group->moveUp(id);
+        }
       }
+      else
+      {
+        //if not in group
+        QModelIndex baseId = index_map.key(selected_id);
+        int newId = children.indexOf(
+              index_map.value(index(baseId.row()-1, baseId.column(),baseId.parent()))) ;
+        children.move(children.indexOf(selected_id), newId);
+      }
+      redraw_model();
+      to_select.append(m_entries.indexOf(selected_item));
     }
-    else
-    {
-      //if not in group
-      QModelIndex baseId = index_map.key(selected_id);
-      int newId = children.indexOf(
-            index_map.value(index(baseId.row()-1, baseId.column(),baseId.parent()))) ;
-      children.move(children.indexOf(selected_id), newId);
-    }
-    redraw_model();
-    setSelectedItem(m_entries.indexOf(selected_item));
   }
+  setSelectedItemsList(to_select);
+  selectionChanged(to_select);
 }
 void Scene::moveRowDown()
 {
-  int selected_id = selectionIndices().first();
-  Scene_item* selected_item = item(selected_id);
-  if(!selected_item)
+  QList<int> to_select;
+  QList<int> sorted_list = selectionIndices();
+  std::sort(sorted_list.begin(), sorted_list.end());
+  if( children.indexOf(sorted_list.last()) == children.size() -1)
     return;
-  if(index_map.key(selected_id).row() < rowCount(index_map.key(selected_id).parent())-1)
+  for(int i=sorted_list.size()-1; i>=0; --i)
   {
-    if(item(selected_id)->has_group >0)
+    Item_id selected_id = sorted_list[i];
+    Scene_item* selected_item = item(selected_id);
+    if(!selected_item)
+      return;
+    if(index_map.key(selected_id).row() < rowCount(index_map.key(selected_id).parent())-1)
     {
-      Scene_group_item* group = selected_item->parentGroup();
-      if(group)
+      if(item(selected_id)->has_group >0)
       {
-        int id = group->getChildren().indexOf(item_id(selected_item));
-        group->moveDown(id);
+        Scene_group_item* group = selected_item->parentGroup();
+        if(group)
+        {
+          int id = group->getChildren().indexOf(item_id(selected_item));
+          group->moveDown(id);
+        }
       }
+      else
+      {
+        //if not in group
+        QModelIndex baseId = index_map.key(selected_id);
+        int newId = children.indexOf(
+              index_map.value(index(baseId.row()+1, baseId.column(),baseId.parent()))) ;
+        children.move(children.indexOf(selected_id), newId);
+      }
+      redraw_model();
+      to_select.prepend(m_entries.indexOf(selected_item));
     }
-    else
-    {
-      //if not in group
-      QModelIndex baseId = index_map.key(selected_id);
-      int newId = children.indexOf(
-            index_map.value(index(baseId.row()+1, baseId.column(),baseId.parent()))) ;
-      children.move(children.indexOf(selected_id), newId);
-    }
-    redraw_model();
-    setSelectedItem(m_entries.indexOf(selected_item));
   }
+  setSelectedItemsList(to_select);
+  selectionChanged(to_select);
 }
 Scene::Item_id Scene::mainSelectionIndex() const {
     return (selectionIndices().size() == 1) ? selected_item : -1;
@@ -1153,6 +1172,15 @@ QItemSelection Scene::createSelection(int i)
 {
     return QItemSelection(index_map.keys(i).at(0),
                           index_map.keys(i).at(4));
+}
+
+QItemSelection Scene::createSelection(QList<int> is)
+{
+    QItemSelection sel;
+    Q_FOREACH(int i, is)
+      sel.select(index_map.keys(i).at(0),
+                 index_map.keys(i).at(4));
+    return sel;
 }
 
 QItemSelection Scene::createSelectionAll()

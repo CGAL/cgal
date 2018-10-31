@@ -143,6 +143,11 @@ public Q_SLOTS:
    */
   void selectSceneItem(int i);
   /*!
+   * Clears the current selection and selects the scene_items with
+   * indices in is in the Geometric Objects view.
+   */
+  void selectSceneItems(QList<int> i);
+  /*!
    * Prints coordinates of a point and its distance to the last
    * position printed by this function.
    */
