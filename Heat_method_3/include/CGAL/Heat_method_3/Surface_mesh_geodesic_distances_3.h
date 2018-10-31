@@ -486,6 +486,9 @@ public:
   template<class VertexDistanceMap>
   void estimate_geodesic_distances(VertexDistanceMap vdm)
   {
+    if(is_empty(tm)){
+      return;
+    }
     double d=0;
     if(source_change_flag) {
       //don't need to recompute Mass matrix, cotan matrix or timestep reflect that in this function
@@ -513,6 +516,9 @@ private:
     typename Traits::Compute_scalar_product_3 scalar_product = Traits().compute_scalar_product_3_object();
     typename Traits::Construct_vector_3 construct_vector = Traits().construct_vector_3_object();
 
+    if(is_empty(tm)){
+      return;
+    }
     source_change_flag = false;
 
     CGAL_precondition(is_triangle_mesh(tm));
