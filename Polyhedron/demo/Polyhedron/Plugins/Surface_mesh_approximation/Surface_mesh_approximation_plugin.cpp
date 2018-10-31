@@ -6,6 +6,7 @@
 #include <QDockWidget>
 
 #include "SMesh_type.h"
+#include "Scene.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polygon_soup_item.h"
 #include "Scene_polylines_item.h"
@@ -67,6 +68,10 @@ public:
     connect(ui_widget.buttonMeshing, SIGNAL(clicked()), this, SLOT(on_buttonMeshing_clicked()));
     connect(ui_widget.buttonTeleport, SIGNAL(clicked()), this, SLOT(on_buttonTeleport_clicked()));
     connect(ui_widget.buttonSplit, SIGNAL(clicked()), this, SLOT(on_buttonSplit_clicked()));
+    // scene item delete action
+    if (Scene *scene = dynamic_cast<Scene *>(scene_interface))
+      connect(scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item *)),
+        this, SLOT(itemAboutToBeDestroyed(CGAL::Three::Scene_item *)));
   }
 
   void closure() {
@@ -90,6 +95,7 @@ public Q_SLOTS:
   void on_buttonMeshing_clicked();
   void on_buttonTeleport_clicked();
   void on_buttonSplit_clicked();
+  void itemAboutToBeDestroyed(CGAL::Three::Scene_item *);
 
 private:
   QAction *actionSurfaceMeshApproximation;
@@ -111,9 +117,8 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionSurfaceMeshAppr
 { dock_widget->show(); }
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked() {
-  // set mesh
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(scene->item(index));
+  Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(
+    scene->item(scene->mainSelectionIndex()));
   if (!sm_item) {
     std::cerr << "No surface mesh item selected." << std::endl;
     return;
@@ -163,8 +168,8 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
 }
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonFit_clicked() {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(scene->item(index));
+  Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(
+    scene->item(scene->mainSelectionIndex()));
   if (!sm_item) {
     std::cerr << "No surface mesh item selected." << std::endl;
     return;
@@ -197,8 +202,8 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonFit_clicked() {
 }
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked() {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(scene->item(index));
+  Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(
+    scene->item(scene->mainSelectionIndex()));
   if (!sm_item) {
     std::cerr << "No surface mesh item selected." << std::endl;
     return;
@@ -242,8 +247,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
     polygons.push_back(polygon);
   }
   psoup_item->load(anchor_points, polygons);
-  psoup_item->setName(tr("Approximated triangle soup of %1").arg(
-    scene->item(scene->mainSelectionIndex())->name()));
+  psoup_item->setName(tr("Approximated triangle soup of %1").arg(sm_item->name()));
   psoup_item->setColor(Qt::lightGray);
   psoup_item->setRenderingMode(FlatPlusEdges);
   scene->addItem(psoup_item);
@@ -256,8 +260,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
       polyline.push_back(anchor_points[border[i % border.size()]]);
     borders_item->polylines.push_back(polyline);
   }
-  borders_item->setName(tr("Approximated patch polygons of %1").arg(
-    scene->item(scene->mainSelectionIndex())->name()));
+  borders_item->setName(tr("Approximated patch polygons of %1").arg(sm_item->name()));
   borders_item->setColor(Qt::red);
   borders_item->invalidateOpenGLBuffers();
   scene->addItem(borders_item);
@@ -270,8 +273,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
     polyline.push_back(anchor_points[i]);
     corres_item->polylines.push_back(polyline);
   }
-  corres_item->setName(tr("Approximated anchors of %1").arg(
-    scene->item(scene->mainSelectionIndex())->name()));
+  corres_item->setName(tr("Approximated anchors of %1").arg(sm_item->name()));
   corres_item->setColor(Qt::blue);
   corres_item->invalidateOpenGLBuffers();
   scene->addItem(corres_item);
@@ -342,8 +344,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
     fcolors.push_back(CGAL::Color(c.red(), c.green(), c.blue()));
   Scene_polygon_soup_item *cvx_hull_item = new Scene_polygon_soup_item();
   cvx_hull_item->load(cvx_hull_points, cvx_hulls, fcolors, std::vector<CGAL::Color>());
-  cvx_hull_item->setName(tr("Approximated patch planes of %1").arg(
-    scene->item(scene->mainSelectionIndex())->name()));
+  cvx_hull_item->setName(tr("Approximated patch planes of %1").arg(sm_item->name()));
   cvx_hull_item->setColor(Qt::yellow);
   cvx_hull_item->setRenderingMode(FlatPlusEdges);
   scene->addItem(cvx_hull_item);
@@ -352,8 +353,8 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
 }
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonAdd_clicked() {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(scene->item(index));
+  Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(
+    scene->item(scene->mainSelectionIndex()));
   if (!sm_item) {
     std::cerr << "No surface mesh item selected." << std::endl;
     return;
@@ -389,8 +390,8 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonAdd_clicked() {
 }
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonTeleport_clicked() {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(scene->item(index));
+  Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(
+    scene->item(scene->mainSelectionIndex()));
   if (!sm_item) {
     std::cerr << "No surface mesh item selected." << std::endl;
     return;
@@ -422,8 +423,8 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonTeleport_clicke
 }
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSplit_clicked() {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(scene->item(index));
+  Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(
+    scene->item(scene->mainSelectionIndex()));
   if (!sm_item) {
     std::cerr << "No surface mesh item selected." << std::endl;
     return;
@@ -462,17 +463,15 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSplit_clicked()
 }
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_comboMetric_currentIndexChanged(const int m) {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(scene->item(index));
+  Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(
+    scene->item(scene->mainSelectionIndex()));
   if (!sm_item) {
     std::cerr << "No surface mesh item selected." << std::endl;
     return;
   }
   typename SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
-  if (search == m_sm_wrapper_map.end()) {
-    std::cerr << "Please initialize seeds first." << std::endl;
+  if (search == m_sm_wrapper_map.end())
     return;
-  }
   SMesh *pmesh = search->first->face_graph();
   Approximation_wrapper &approx = search->second;
 
@@ -484,16 +483,23 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_comboMetric_currentIn
   m_proxies.clear();
 #endif
 
-  sm_item->color_vector() = approx.proxy_colors();
+  sm_item->color_vector().clear();
   sm_item->setItemIsMulticolor(false);
   sm_item->invalidateOpenGLBuffers();
   scene->itemChanged(scene->item_id(sm_item));
 
+  approx.set_mesh(*pmesh);
   switch (m) {
     case 0: return approx.set_metric(Approximation_wrapper::L21);
     case 1: return approx.set_metric(Approximation_wrapper::L2);
     case 2: return approx.set_metric(Approximation_wrapper::Compact);
   }
+}
+
+void Polyhedron_demo_surface_mesh_approximation_plugin::itemAboutToBeDestroyed(CGAL::Three::Scene_item *scene_item)
+{
+  if (Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(scene_item))
+    m_sm_wrapper_map.erase(sm_item);
 }
 
 #include "Surface_mesh_approximation_plugin.moc"
