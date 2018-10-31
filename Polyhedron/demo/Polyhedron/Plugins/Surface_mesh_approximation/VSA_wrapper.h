@@ -107,7 +107,8 @@ public:
   std::vector<QColor> &proxy_colors() { return m_proxy_colors; }
   const std::vector<QColor> &proxy_colors() const  { return m_proxy_colors; }
 
-  bool initialized() { return m_initialized; }
+  bool &initialized() { return m_initialized; }
+  const bool &initialized() const { return m_initialized; }
 
   void set_metric(const Metric &m);
 
