@@ -34,7 +34,6 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/Heat_method_3/internal/V2V.h>
 
@@ -140,7 +139,7 @@ class Intrinsic_Delaunay_triangulation_3
   typedef typename Traits::FT                                                FT;
   typedef typename Traits::Vector_3                                    Vector_3;
 
-  typedef typename Traits::Point_2                                     Point_2;
+  typedef std::pair<double,double>                                      Point_2;
 
   typedef int Index;
 
@@ -355,6 +354,8 @@ private:
   {
     CGAL_precondition(is_triangle_mesh(m_intrinsic_tm));
 
+    typename Traits::Compute_squared_distance_3 squared_distance = Traits().compute_squared_distance_3_object();
+    
     std::vector<std::pair<vertex_descriptor,
                           vertex_descriptor> > pairs;
     copy_face_graph(m_input_tm, m_intrinsic_tm,
@@ -372,8 +373,12 @@ private:
     mark_edges.resize(number_of_edges, 1);
     edge_id_map = get(Edge_property_tag(), m_intrinsic_tm);
     Index edge_i = 0;
+    VertexPointMap vpm_intrinsic_tm = get(boost::vertex_point,m_intrinsic_tm);
+    
     BOOST_FOREACH(edge_descriptor ed, edges(m_intrinsic_tm)) {
-      edge_lengths[edge_i] = Polygon_mesh_processing::edge_length(halfedge(ed,m_intrinsic_tm),m_intrinsic_tm);
+      edge_lengths[edge_i] = CGAL::sqrt(squared_distance(get(vpm_intrinsic_tm, source(ed,m_intrinsic_tm)),
+                                                         get(vpm_intrinsic_tm, target(ed,m_intrinsic_tm))));
+        //  Polygon_mesh_processing::edge_length(halfedge(ed,m_intrinsic_tm),m_intrinsic_tm);
       put(edge_id_map, ed, edge_i++);
       stack.push(ed);
     }
@@ -686,7 +691,7 @@ struct IDT_vertex_point_property_map {
                         key_type vd)
   {
     const Point_2& p = get(pm.idt.hcmap(), vd.hd);
-    return value_type(p.x(), p.y(), 0);
+    return value_type(p.first, p.second, 0);
   }
 };
 

@@ -2,7 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Heat_method_3/Surface_mesh_geodesic_distances_3.h>
 
-#include "Heat_method_3/Heat_method_traits_3.h"
+#include "Heat_method_traits_3.h"
 
 #include <fstream>
 #include <iostream>
@@ -16,7 +16,7 @@ typedef CGAL::Surface_mesh<Point_3>                          Surface_mesh;
 typedef boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
 typedef Surface_mesh::Property_map<vertex_descriptor,double> Vertex_distance_map;
 typedef CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<Surface_mesh,
-                                                               CGAL::Heat_method_3::Direct,
+                                                               CGAL::Heat_method_3::Intrinsic_Delaunay,
                                                                CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT<CGAL::Eigen_sparse_matrix<double>::EigenType > >,
                                                                boost::property_map< Surface_mesh, CGAL::vertex_point_t>::const_type,
                                                                Kernel> Heat_method;

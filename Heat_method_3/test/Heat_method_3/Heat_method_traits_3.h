@@ -27,27 +27,7 @@ struct Heat_method_traits_3
   };
   
 
-  struct Point_2 {
-    Point_2()
-    {}
-    
-    Point_2(double, double)
-    {}
-    Point_2(const Point_2&)
-    {}
-  };
 
-  struct Compute_x_2 {
-    double operator()(const Point_2&)const
-    {return 0;}
-  };
-  
-  struct Compute_y_2 {
-    double operator()(const Point_2&)const
-    {return 0;}
-  };
-  
-  
   struct Construct_vector_3{
     Vector_3 operator()(const Point_3&, const Point_3&) const
     { return Vector_3();}
@@ -80,17 +60,7 @@ struct Heat_method_traits_3
     double operator()(const Point_3&, const Point_3&) const
     { return 0;}
   };
-  
-  Compute_x_2 compute_x_2_object() const 
-  {
-    return Compute_x_2();
-  }
-
-  Compute_y_2 compute_y_2_object() const 
-  {
-    return Compute_y_2();
-  }
-
+ 
   
   Construct_vector_3 construct_vector_3_object() const
   {

@@ -25,14 +25,8 @@ public:
   /// The 3D vector type.
   typedef unspecified_type Vector_3;
   
-  /// The 2D point type.
-  typedef unspecified_type Point_2;
-
-  typedef unspecified_type Compute_x_3;
-  typedef unspecified_type Compute_y_3;
-  typedef unspecified_type Compute_z_3;
   typedef unspecified_type Construct_vector_3;
-    typedef unspecified_type Construct_sum_of_vectors_3;
+  typedef unspecified_type Construct_sum_of_vectors_3;
   typedef unspecified_type Construct_scaled_vector_3;
   typedef unspecified_type Construct_cross_product_vector_3;
   typedef unspecified_type Compute_scalar_product_3;

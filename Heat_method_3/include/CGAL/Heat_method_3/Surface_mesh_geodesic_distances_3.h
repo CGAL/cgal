@@ -85,7 +85,6 @@ protected:
   typedef typename Traits::Point_3                                      Point_3;
   typedef typename Traits::FT                                                FT;
   typedef typename Traits::Vector_3                                    Vector_3;
-  typedef typename Traits::Point_2                                      Point_2;
 
   // Property map typedefs
   typedef typename boost::property_traits<VertexPointMap>::reference VertexPointMap_reference;
