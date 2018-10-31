@@ -1575,6 +1575,7 @@ void MainWindow::readSettings()
     QSettings settings;
     viewer->setAntiAliasing(settings.value("antialiasing", false).toBool());
     viewer->setFastDrawing(settings.value("quick_camera_mode", true).toBool());
+    scene->enableVisibilityRecentering(settings.value("offset_update", true).toBool());
     viewer->textRenderer()->setMax(settings.value("max_text_items", 10000).toInt());
     viewer->setTotalPass(settings.value("transparency_pass_number", 4).toInt());
     CGAL::Three::Three::s_defaultSMRM = CGAL::Three::Three::modeFromName(
@@ -1947,6 +1948,11 @@ void MainWindow::on_actionPreferences_triggered()
   QSettings settings;
   prefdiag.setupUi(&dialog);
   
+  prefdiag.offset_updateCheckBox->setChecked(
+        settings.value("offset_update", true).toBool());
+  connect(prefdiag.offset_updateCheckBox, SIGNAL(toggled(bool)),
+          scene, SLOT(enableVisibilityRecentering(bool)));
+  
   prefdiag.antialiasingCheckBox->setChecked(settings.value("antialiasing", false).toBool());
   connect(prefdiag.antialiasingCheckBox, SIGNAL(toggled(bool)),
           viewer, SLOT(setAntiAliasing(bool)));
@@ -2042,6 +2048,8 @@ void MainWindow::on_actionPreferences_triggered()
     //write settings
     settings.setValue("antialiasing",
                       prefdiag.antialiasingCheckBox->isChecked());
+    settings.setValue("offset_update",
+                      prefdiag.offset_updateCheckBox->isChecked());
     settings.setValue("quick_camera_mode",
                       prefdiag.quick_cameraCheckBox->isChecked());
     settings.setValue("transparency_pass_number",

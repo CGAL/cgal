@@ -79,6 +79,13 @@
              </widget>
             </item>
             <item>
+             <widget class="QCheckBox" name="offset_updateCheckBox">
+              <property name="text">
+               <string>Visibility Changes Recenter</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QSpinBox" name="max_itemsSpinBox">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">

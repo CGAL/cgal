@@ -1201,7 +1201,8 @@ void Scene::itemVisibilityChanged(CGAL::Three::Scene_item* item)
      && !item->isEmpty())
   {
     //does not recenter
-    Q_EMIT updated_bbox(false);
+    if(visibility_recentering_enabled)
+      Q_EMIT updated_bbox(false);
   }
 }
 
@@ -1661,4 +1662,9 @@ void Scene::adjustIds(Item_id removed_id)
   {
     m_entries[i]->setId(i-1);//the signal is emitted before m_entries is amputed from the item, so new id is current id -1.
   }
+}
+
+void Scene::enableVisibilityRecentering(bool b)
+{
+  visibility_recentering_enabled = b;
 }

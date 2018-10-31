@@ -208,6 +208,7 @@ public Q_SLOTS:
   void setItemA(int i);
   //!Sets the item_B as the item at index i .
   void setItemB(int i);
+  void enableVisibilityRecentering(bool);
 
 Q_SIGNALS:
   //generated automatically by moc
@@ -280,6 +281,7 @@ private:
   QOpenGLShaderProgram program;
   QOpenGLVertexArrayObject* vao;
   mutable QOpenGLBuffer vbo[2];
+  bool visibility_recentering_enabled;
 
 }; // end class Scene
 
