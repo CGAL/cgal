@@ -182,7 +182,7 @@ public:
   void
   add_sources(VertexRange vrange)
   {
-    typedef typename std::iterator_traits<typename Range::const_iterator>::value_type value_type;
+    typedef typename std::iterator_traits<typename VertexRange::const_iterator>::value_type value_type;
     source_change_flag = true;
     BOOST_FOREACH(value_type vd, vrange){
       m_sources.insert(v2v(vd));
@@ -310,11 +310,11 @@ private:
   void
   compute_unit_gradient()
   {
-    Traits::Construct_vector_3 construct_vector = Traits().construct_vector_3_object();
-        Traits::Construct_sum_of_vectors_3 sum = Traits().construct_sum_of_vectors_3_object();
-    Traits::Compute_scalar_product_3 scalar_product = Traits().compute_scalar_product_3_object();
-    Traits::Construct_cross_product_vector_3 cross_product = Traits().construct_cross_product_vector_3_object();
-    Traits::Construct_scaled_vector_3 scale = Traits().construct_scaled_vector_3_object();
+    typename Traits::Construct_vector_3 construct_vector = Traits().construct_vector_3_object();
+    typename Traits::Construct_sum_of_vectors_3 sum = Traits().construct_sum_of_vectors_3_object();
+    typename Traits::Compute_scalar_product_3 scalar_product = Traits().compute_scalar_product_3_object();
+    typename Traits::Construct_cross_product_vector_3 cross_product = Traits().construct_cross_product_vector_3_object();
+    typename Traits::Construct_scaled_vector_3 scale = Traits().construct_scaled_vector_3_object();
     if(X.empty()){
       X.resize(num_faces(tm));
     }
@@ -369,9 +369,9 @@ private:
   void
   compute_divergence()
   {
-    Traits::Construct_cross_product_vector_3 cross_product = Traits().construct_cross_product_vector_3_object();
-    Traits::Compute_scalar_product_3 scalar_product = Traits().compute_scalar_product_3_object();
-    Traits::Construct_vector_3 construct_vector = Traits().construct_vector_3_object();
+    typename Traits::Construct_cross_product_vector_3 cross_product = Traits().construct_cross_product_vector_3_object();
+    typename Traits::Compute_scalar_product_3 scalar_product = Traits().compute_scalar_product_3_object();
+    typename Traits::Construct_vector_3 construct_vector = Traits().construct_vector_3_object();
     Matrix indexD(dimension,1);
     CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
     BOOST_FOREACH(face_descriptor f, faces(tm)) {
@@ -509,9 +509,9 @@ private:
   void
   build()
   {
-    Traits::Construct_cross_product_vector_3 cross_product = Traits().construct_cross_product_vector_3_object();
-    Traits::Compute_scalar_product_3 scalar_product = Traits().compute_scalar_product_3_object();
-    Traits::Construct_vector_3 construct_vector = Traits().construct_vector_3_object();
+    typename Traits::Construct_cross_product_vector_3 cross_product = Traits().construct_cross_product_vector_3_object();
+    typename Traits::Compute_scalar_product_3 scalar_product = Traits().compute_scalar_product_3_object();
+    typename Traits::Construct_vector_3 construct_vector = Traits().construct_vector_3_object();
 
     source_change_flag = false;
 
@@ -881,7 +881,7 @@ public:
 /// \tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph` and `HalfedgeListGraph`.
 ///         It must have an internal vertex point property map with the value type being a 3D point from a cgal Kernel model
 /// \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
-///         with `boost::graph_traits<TriangleMesh>::vertex_descriptor` as key type and `double` as value type.
+///         with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `double` as value type.
 /// \tparam Mode either the tag `Direct` or `Intrinsic_Delaunay`, which determines if the geodesic distance
 ///              is computed directly on the mesh, or if the intrinsic Delaunay triangulation is applied first.
 ///              The default is `Direct`.
@@ -919,8 +919,8 @@ estimate_geodesic_distances(const TriangleMesh& tm,
 /// \tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph` and `HalfedgeListGraph`
 ///         It must have an internal vertex point property map with the value type being a 3D point from a cgal Kernel model
 /// \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
-///         with `boost::graph_traits<TriangleMesh>::vertex_descriptor` as key type and `double` as value type.
-/// \tparam VertexRange a range with value type `boost::graph_traits<TriangleMesh>::vertex_descriptor`
+///         with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `double` as value type.
+/// \tparam VertexRange a range with value type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 /// \tparam Mode either the tag `Direct` or `Intrinsic_Delaunay`, which determines if the geodesic distance
 ///              is computed directly on the mesh, or if the intrinsic Delaunay triangulation is applied first.
 ///              The default is `Direct`.
