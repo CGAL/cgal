@@ -12,7 +12,7 @@
 
 namespace VSA = CGAL::Surface_mesh_approximation;
 
-class VSA_approximation_wrapper {
+class VSA_wrapper {
   typedef typename EPICK::FT FT;
   typedef typename EPICK::Point_3 Point_3;
   typedef typename EPICK::Vector_3 Vector_3;
@@ -93,7 +93,7 @@ public:
   typedef typename L21_approx::Proxy_wrapper L21_proxy_wrapper;
 #endif
 
-  VSA_approximation_wrapper()
+  VSA_wrapper()
     : m_metric(L21),
     m_center_pmap(m_face_centers),
     m_area_pmap(m_face_areas),
@@ -105,7 +105,7 @@ public:
     m_pcompact_metric(NULL),
     m_compact_approx(NULL) {}
 
-  ~VSA_approximation_wrapper() {
+  ~VSA_wrapper() {
     if (m_l21_approx)
       delete m_l21_approx;
     if (m_pl21_metric)

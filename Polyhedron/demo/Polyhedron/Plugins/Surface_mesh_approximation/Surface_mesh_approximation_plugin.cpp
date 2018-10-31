@@ -19,7 +19,7 @@
 #include <vector>
 
 #include "ui_Surface_mesh_approximation_dockwidget.h"
-#include "VSA_approximation_wrapper.h"
+#include "VSA_wrapper.h"
 
 using namespace CGAL::Three;
 
@@ -31,15 +31,14 @@ class Polyhedron_demo_surface_mesh_approximation_plugin :
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
-  typedef VSA_approximation_wrapper Approximation_wrapper;
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-  typedef Approximation_wrapper::L21_proxy_wrapper L21_proxy_wrapper;
+  typedef VSA_wrapper::L21_proxy_wrapper L21_proxy_wrapper;
 #endif
-  typedef Approximation_wrapper::Indexed_triangle Indexed_triangle;
+  typedef VSA_wrapper::Indexed_triangle Indexed_triangle;
 
   typedef typename boost::property_map<SMesh, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
-  typedef std::map<Scene_surface_mesh_item *, Approximation_wrapper> SM_wrapper_map;
-  typedef std::pair<Scene_surface_mesh_item *, Approximation_wrapper> SM_wrapper_pair;
+  typedef std::map<Scene_surface_mesh_item *, VSA_wrapper> SM_wrapper_map;
+  typedef std::pair<Scene_surface_mesh_item *, VSA_wrapper> SM_wrapper_pair;
 
 public:
   Polyhedron_demo_surface_mesh_approximation_plugin() {}
@@ -127,11 +126,11 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   typename SM_wrapper_map::iterator pair = m_sm_wrapper_map.insert(
-    SM_wrapper_pair(sm_item, Approximation_wrapper())).first;
-  Approximation_wrapper &approx = pair->second;
+    SM_wrapper_pair(sm_item, VSA_wrapper())).first;
+  VSA_wrapper &approx = pair->second;
   SMesh *pmesh = pair->first->face_graph();
   approx.set_mesh(*pmesh);
-  approx.set_metric(Approximation_wrapper::L21);
+  approx.set_metric(VSA_wrapper::L21);
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
   m_proxies.clear();
@@ -180,7 +179,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonFit_clicked() {
     return;
   }
   SMesh *pmesh = search->first->face_graph();
-  Approximation_wrapper &approx = search->second;
+  VSA_wrapper &approx = search->second;
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -214,7 +213,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
     return;
   }
   SMesh *pmesh = search->first->face_graph();
-  Approximation_wrapper &approx = search->second;
+  VSA_wrapper &approx = search->second;
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -365,7 +364,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonAdd_clicked() {
     return;
   }
   SMesh *pmesh = search->first->face_graph();
-  Approximation_wrapper &approx = search->second;
+  VSA_wrapper &approx = search->second;
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -402,7 +401,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonTeleport_clicke
     return;
   }
   SMesh *pmesh = search->first->face_graph();
-  Approximation_wrapper &approx = search->second;
+  VSA_wrapper &approx = search->second;
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -435,7 +434,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSplit_clicked()
     return;
   }
   SMesh *pmesh = search->first->face_graph();
-  Approximation_wrapper &approx = search->second;
+  VSA_wrapper &approx = search->second;
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -473,7 +472,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_comboMetric_currentIn
   if (search == m_sm_wrapper_map.end())
     return;
   SMesh *pmesh = search->first->face_graph();
-  Approximation_wrapper &approx = search->second;
+  VSA_wrapper &approx = search->second;
 
   Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *pmesh);
   BOOST_FOREACH(face_descriptor f, faces(*pmesh))
@@ -490,9 +489,9 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_comboMetric_currentIn
 
   approx.set_mesh(*pmesh);
   switch (m) {
-    case 0: return approx.set_metric(Approximation_wrapper::L21);
-    case 1: return approx.set_metric(Approximation_wrapper::L2);
-    case 2: return approx.set_metric(Approximation_wrapper::Compact);
+    case 0: return approx.set_metric(VSA_wrapper::L21);
+    case 1: return approx.set_metric(VSA_wrapper::L2);
+    case 2: return approx.set_metric(VSA_wrapper::Compact);
   }
 }
 
