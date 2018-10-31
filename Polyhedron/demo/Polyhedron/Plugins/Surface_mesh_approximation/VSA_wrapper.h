@@ -93,31 +93,15 @@ public:
   typedef typename L21_approx::Proxy_wrapper L21_proxy_wrapper;
 #endif
 
-  VSA_wrapper()
-    : m_metric(L21),
-    m_center_pmap(m_face_centers),
-    m_area_pmap(m_face_areas),
-    m_initialized(false),
-    m_pl21_metric(NULL),
-    m_l21_approx(NULL),
-    m_pl2_metric(NULL),
-    m_l2_approx(NULL),
-    m_pcompact_metric(NULL),
-    m_compact_approx(NULL) {}
+  VSA_wrapper(const SMesh &mesh);
 
   ~VSA_wrapper() {
-    if (m_l21_approx)
-      delete m_l21_approx;
-    if (m_pl21_metric)
-      delete m_pl21_metric;
-    if (m_l2_approx)
-      delete m_l2_approx;
-    if (m_pl2_metric)
-      delete m_pl2_metric;
-    if (m_compact_approx)
-      delete m_compact_approx;
-    if (m_pcompact_metric)
-      delete m_pcompact_metric;
+    delete m_l21_approx;
+    delete m_pl21_metric;
+    delete m_l2_approx;
+    delete m_pl2_metric;
+    delete m_compact_approx;
+    delete m_pcompact_metric;
   }
 
   std::vector<QColor> &proxy_colors() { return m_proxy_colors; }
@@ -125,7 +109,6 @@ public:
 
   bool initialized() { return m_initialized; }
 
-  void set_mesh(const SMesh &mesh);
   void set_metric(const Metric &m);
 
   std::size_t initialize_seeds(const VSA::Seeding_method method,

@@ -37,8 +37,8 @@ class Polyhedron_demo_surface_mesh_approximation_plugin :
   typedef VSA_wrapper::Indexed_triangle Indexed_triangle;
 
   typedef typename boost::property_map<SMesh, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
-  typedef std::map<Scene_surface_mesh_item *, VSA_wrapper> SM_wrapper_map;
-  typedef std::pair<Scene_surface_mesh_item *, VSA_wrapper> SM_wrapper_pair;
+  typedef std::map<Scene_surface_mesh_item *, VSA_wrapper *> SM_wrapper_map;
+  typedef std::pair<Scene_surface_mesh_item *, VSA_wrapper *> SM_wrapper_pair;
 
 public:
   Polyhedron_demo_surface_mesh_approximation_plugin() {}
@@ -125,11 +125,11 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  typename SM_wrapper_map::iterator pair = m_sm_wrapper_map.insert(
-    SM_wrapper_pair(sm_item, VSA_wrapper())).first;
-  VSA_wrapper &approx = pair->second;
-  SMesh *pmesh = pair->first->face_graph();
-  approx.set_mesh(*pmesh);
+  SMesh *pmesh = sm_item->face_graph();
+  typename SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
+  if (search == m_sm_wrapper_map.end())
+    search = m_sm_wrapper_map.insert(SM_wrapper_pair(sm_item, new VSA_wrapper(*pmesh))).first;
+  VSA_wrapper &approx = *search->second;
   approx.set_metric(VSA_wrapper::L21);
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
@@ -179,7 +179,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonFit_clicked() {
     return;
   }
   SMesh *pmesh = search->first->face_graph();
-  VSA_wrapper &approx = search->second;
+  VSA_wrapper &approx = *search->second;
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -213,7 +213,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
     return;
   }
   SMesh *pmesh = search->first->face_graph();
-  VSA_wrapper &approx = search->second;
+  VSA_wrapper &approx = *search->second;
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -364,7 +364,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonAdd_clicked() {
     return;
   }
   SMesh *pmesh = search->first->face_graph();
-  VSA_wrapper &approx = search->second;
+  VSA_wrapper &approx = *search->second;
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -401,7 +401,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonTeleport_clicke
     return;
   }
   SMesh *pmesh = search->first->face_graph();
-  VSA_wrapper &approx = search->second;
+  VSA_wrapper &approx = *search->second;
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -434,7 +434,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSplit_clicked()
     return;
   }
   SMesh *pmesh = search->first->face_graph();
-  VSA_wrapper &approx = search->second;
+  VSA_wrapper &approx = *search->second;
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -472,7 +472,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_comboMetric_currentIn
   if (search == m_sm_wrapper_map.end())
     return;
   SMesh *pmesh = search->first->face_graph();
-  VSA_wrapper &approx = search->second;
+  VSA_wrapper &approx = *search->second;
 
   Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *pmesh);
   BOOST_FOREACH(face_descriptor f, faces(*pmesh))
@@ -487,7 +487,6 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_comboMetric_currentIn
   sm_item->invalidateOpenGLBuffers();
   scene->itemChanged(scene->item_id(sm_item));
 
-  approx.set_mesh(*pmesh);
   switch (m) {
     case 0: return approx.set_metric(VSA_wrapper::L21);
     case 1: return approx.set_metric(VSA_wrapper::L2);
@@ -497,8 +496,13 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_comboMetric_currentIn
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::itemAboutToBeDestroyed(CGAL::Three::Scene_item *scene_item)
 {
-  if (Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(scene_item))
-    m_sm_wrapper_map.erase(sm_item);
+  if (Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(scene_item)) {
+    SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
+    if (search != m_sm_wrapper_map.end()) {
+      delete search->second;
+      m_sm_wrapper_map.erase(sm_item);
+    }
+  }
 }
 
 #include "Surface_mesh_approximation_plugin.moc"

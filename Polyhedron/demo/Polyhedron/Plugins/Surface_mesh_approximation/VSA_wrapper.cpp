@@ -1,6 +1,11 @@
 #include "VSA_wrapper.h"
 
-void VSA_wrapper::set_mesh(const SMesh &mesh) {
+VSA_wrapper::VSA_wrapper(const SMesh &mesh) :
+  m_metric(L21),
+  m_center_pmap(m_face_centers),
+  m_area_pmap(m_face_areas),
+  m_initialized(false)
+{
   Vertex_point_map vpm = get(boost::vertex_point, const_cast<SMesh &>(mesh));
 
   m_face_centers.clear();
@@ -17,19 +22,6 @@ void VSA_wrapper::set_mesh(const SMesh &mesh) {
     FT area(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
     m_face_areas.insert(std::pair<face_descriptor, FT>(f, area));
   }
-
-  if (m_l21_approx)
-    delete m_l21_approx;
-  if (m_pl21_metric)
-    delete m_pl21_metric;
-  if (m_l2_approx)
-    delete m_l2_approx;
-  if (m_pl2_metric)
-    delete m_pl2_metric;
-  if (m_compact_approx)
-    delete m_compact_approx;
-  if (m_pcompact_metric)
-    delete m_pcompact_metric;
 
   m_pl21_metric = new L21_metric(mesh, vpm);
   m_l21_approx = new L21_approx(mesh, vpm, *m_pl21_metric);
