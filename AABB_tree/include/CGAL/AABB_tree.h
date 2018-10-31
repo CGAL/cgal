@@ -167,7 +167,6 @@ namespace CGAL {
     void build();
 #else
     void build();
-    template
     template<typename T1>
     void build(T1& t1);
     template<typename T1, typename T2>
