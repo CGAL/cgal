@@ -308,11 +308,12 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  approx.extract_mesh(ui_widget.chord_error->value(),
-    ui_widget.is_relative_to_chord->isChecked(),
-    ui_widget.with_dihedral_angle->isChecked(),
-    ui_widget.if_optimize_anchor_location->isChecked(),
-    ui_widget.pca_plane->isChecked());
+  approx.extract_mesh(CGAL::parameters::subdivision_ratio(ui_widget.chord_error->value())
+    .relative_to_chord(ui_widget.is_relative_to_chord->isChecked())
+    .with_dihedral_angle(ui_widget.with_dihedral_angle->isChecked())
+    .optimize_anchor_location(ui_widget.if_optimize_anchor_location->isChecked())
+    .pca_plane(ui_widget.pca_plane->isChecked()));
+
   Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *sm_item->face_graph());
   approx.proxy_map(pidmap);
 

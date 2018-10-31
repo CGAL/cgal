@@ -37,18 +37,11 @@ void VSA_wrapper::set_metric(const Metric &m) {
   m_initialized = false;
 }
 
-void VSA_wrapper::run(const std::size_t nb_iterations) {
-  FT err(0.0);
+EPICK::FT VSA_wrapper::run(const std::size_t nb_iterations) {
   switch (m_metric) {
-    case L21:
-      m_l21_approx->run(nb_iterations);
-      break;
-    case L2:
-      m_l2_approx->run(nb_iterations);
-      break;
-    case Compact:
-      m_compact_approx->run(nb_iterations);
-      break;
+    case L21: return m_l21_approx->run(nb_iterations);
+    case L2: return m_l2_approx->run(nb_iterations);
+    case Compact: return m_compact_approx->run(nb_iterations);
   }
 }
 
@@ -110,45 +103,10 @@ bool VSA_wrapper::split(const std::size_t px_idx, const std::size_t n, const std
   return splitted;
 }
 
-bool VSA_wrapper::extract_mesh(const FT subdivision_ratio,
-  const bool relative_to_chord,
-  const bool with_dihedral_angle,
-  const bool optimize_anchor_location,
-  const bool pca_plane) {
-  switch (m_metric) {
-    case L21:
-      return m_l21_approx->extract_mesh(
-        CGAL::parameters::subdivision_ratio(subdivision_ratio).
-        relative_to_chord(relative_to_chord).
-        with_dihedral_angle(with_dihedral_angle).
-        optimize_anchor_location(optimize_anchor_location).
-        pca_plane(pca_plane));
-    case L2:
-      return m_l2_approx->extract_mesh(
-        CGAL::parameters::subdivision_ratio(subdivision_ratio).
-        relative_to_chord(relative_to_chord).
-        with_dihedral_angle(with_dihedral_angle).
-        optimize_anchor_location(optimize_anchor_location).
-        pca_plane(pca_plane));
-    case Compact:
-      return m_compact_approx->extract_mesh(
-        CGAL::parameters::subdivision_ratio(subdivision_ratio).
-        relative_to_chord(relative_to_chord).
-        with_dihedral_angle(with_dihedral_angle).
-        optimize_anchor_location(optimize_anchor_location).
-        pca_plane(pca_plane));
-  }
-  return false;
-}
-
 std::size_t VSA_wrapper::number_of_proxies() {
   switch (m_metric) {
-    case L21:
-      return m_l21_approx->number_of_proxies();
-    case L2:
-      return m_l2_approx->number_of_proxies();
-    case Compact:
-      return m_compact_approx->number_of_proxies();
+    case L21: return m_l21_approx->number_of_proxies();
+    case L2: return m_l2_approx->number_of_proxies();
+    case Compact: return m_compact_approx->number_of_proxies();
   }
-  return 0;
 }

@@ -132,7 +132,7 @@ public:
     return nb_initialized;
   }
 
-  void run(const std::size_t nb_iterations);
+  FT run(const std::size_t nb_iterations);
 
   std::size_t add_one_proxy();
 
@@ -140,11 +140,15 @@ public:
 
   bool split(const std::size_t px_idx, const std::size_t n, const std::size_t nb_relaxations);
 
-  bool extract_mesh(const FT subdivision_ratio,
-    const bool relative_to_chord,
-    const bool with_dihedral_angle,
-    const bool optimize_anchor_location,
-    const bool pca_plane);
+  template <typename NamedParameters>
+  bool extract_mesh(const NamedParameters &np) {
+    switch (m_metric) {
+      case L21: return m_l21_approx->extract_mesh(np);
+      case L2: return m_l2_approx->extract_mesh(np);
+      case Compact: return m_compact_approx->extract_mesh(np);
+    }
+    return false;
+  }
 
   std::size_t number_of_proxies();
 
