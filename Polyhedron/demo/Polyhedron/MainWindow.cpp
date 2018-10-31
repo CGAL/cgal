@@ -1565,14 +1565,15 @@ void MainWindow::updateInfo() {
   if(item) {
     QString item_text = item->toolTip();
     QString item_filename = item->property("source filename").toString();
-    if(item->bbox()!=CGAL::Bbox_3())
+    CGAL::Bbox_3 bbox = item->bbox();
+    if(bbox !=CGAL::Bbox_3())
       item_text += QString("<div>Bounding box: min (%1,%2,%3), max (%4,%5,%6)</div>")
-          .arg(item->bbox().xmin())
-          .arg(item->bbox().ymin())
-          .arg(item->bbox().zmin())
-          .arg(item->bbox().xmax())
-          .arg(item->bbox().ymax())
-          .arg(item->bbox().zmax());
+          .arg(bbox.xmin())
+          .arg(bbox.ymin())
+          .arg(bbox.zmin())
+          .arg(bbox.xmax())
+          .arg(bbox.ymax())
+          .arg(bbox.zmax());
     if(!item_filename.isEmpty()) {
       item_text += QString("<div>File:<i> %1</div>").arg(item_filename);
     }

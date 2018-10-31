@@ -1078,7 +1078,10 @@ void Scene::moveRowUp()
 {
   QList<int> to_select;
   QList<int> sorted_list = selectionIndices();
-  std::sort(sorted_list.begin(), sorted_list.end());
+  std::sort(sorted_list.begin(), sorted_list.end(),
+            [this](int a, int b) {
+    return children.indexOf(a) < children.indexOf(b);
+});
   if( children.indexOf(sorted_list.first()) == 0)
     return;
   for(int i=0; i<sorted_list.size(); ++i)
@@ -1110,14 +1113,16 @@ void Scene::moveRowUp()
       to_select.append(m_entries.indexOf(selected_item));
     }
   }
-  setSelectedItemsList(to_select);
   selectionChanged(to_select);
 }
 void Scene::moveRowDown()
 {
   QList<int> to_select;
   QList<int> sorted_list = selectionIndices();
-  std::sort(sorted_list.begin(), sorted_list.end());
+  std::sort(sorted_list.begin(), sorted_list.end(),
+            [this](int a, int b) {
+    return children.indexOf(a) < children.indexOf(b);
+});
   if( children.indexOf(sorted_list.last()) == children.size() -1)
     return;
   for(int i=sorted_list.size()-1; i>=0; --i)
@@ -1125,6 +1130,7 @@ void Scene::moveRowDown()
     Item_id selected_id = sorted_list[i];
     Scene_item* selected_item = item(selected_id);
     if(!selected_item)
+      
       return;
     if(index_map.key(selected_id).row() < rowCount(index_map.key(selected_id).parent())-1)
     {
@@ -1149,7 +1155,7 @@ void Scene::moveRowDown()
       to_select.prepend(m_entries.indexOf(selected_item));
     }
   }
-  setSelectedItemsList(to_select);
+  
   selectionChanged(to_select);
 }
 Scene::Item_id Scene::mainSelectionIndex() const {
