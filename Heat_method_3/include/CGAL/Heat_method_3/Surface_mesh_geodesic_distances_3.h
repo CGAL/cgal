@@ -739,28 +739,73 @@ struct Base_helper<TriangleMesh, Traits, Intrinsic_Delaunay, LA, VertexPointMap>
  *                              If `Intrinsic_Delaunay` the type `TriangleMesh` must have an internal property for `vertex_point`
  *                              and its value type must be the same as the value type of `VertexPointMap`.
  * \tparam VertexPointMap a model of `ReadablePropertyMap` with
- *        `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
- *        `Traits::Point_3` as value type.
- *        The default is `typename boost::property_map<TriangleMesh, vertex_point_t>::%type`.
- * \tparam LA a model of `SparseLinearAlgebraWithFactorTraits_d`.
- * \tparam Traits a model of `HeatMethodTraits_3`
+ *         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
+ *         `Traits::Point_3` as value type.
+ *         The default is `typename boost::property_map< TriangleMesh, vertex_point_t>::%const_type`.
+ * \tparam LA a model of `SparseLinearAlgebraWithFactorTraits_d`. If `CGAL_EIGEN3_ENABLED` is defined
+ *         `Eigen_solver_traits<Eigen::SimplicialLDLT<typename Eigen_sparse_matrix<double>::%EigenType > >`
+ *         is used as default
+ * \tparam Traits a model of `HeatMethodTraits_3`. The default is the Kernel of the value type
+ *         of the vertex point map (extracted using `Kernel_traits`).
  *
  */
 template <typename TriangleMesh,
           typename Mode = Direct,
-          typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::const_type,
-#ifdef CGAL_EIGEN3_ENABLED
-          typename LA = Eigen_solver_traits<Eigen::SimplicialLDLT<typename Eigen_sparse_matrix<double>::EigenType > >,
-#else
+          typename VertexPointMap = Default,
           typename LA = Default,
-#endif
-          typename Traits = typename Kernel_traits< typename boost::property_traits<VertexPointMap>::value_type>::Kernel >
+          typename Traits = Default >
 class Surface_mesh_geodesic_distances_3
 #ifndef DOXYGEN_RUNNING
-  : public internal::Base_helper<TriangleMesh, Traits, Mode, LA, VertexPointMap>
+  : public
+    internal::Base_helper<
+      TriangleMesh,
+      typename Default::Get<Traits,
+        typename Kernel_traits<
+          typename boost::property_traits<
+            typename Default::Get<
+              VertexPointMap,
+              typename boost::property_map< TriangleMesh, vertex_point_t>::const_type
+            >::type
+          >::value_type
+        >::Kernel
+      >::type,
+      Mode,
+      #ifdef CGAL_EIGEN3_ENABLED
+      typename Default::Get<
+        LA,
+        Eigen_solver_traits<Eigen::SimplicialLDLT<typename Eigen_sparse_matrix<double>::EigenType > >
+      >::type,
+      #else
+      LA,
+      #endif
+      typename Default::Get<
+        VertexPointMap,
+        typename boost::property_map< TriangleMesh, vertex_point_t>::const_type
+      >::type
+    >
 #endif
 {
-  typedef internal::Base_helper<TriangleMesh, Traits, Mode, LA, VertexPointMap> Base_helper;
+  // extract real types from Default
+  #ifdef CGAL_EIGEN3_ENABLED
+  typedef typename Default::Get<
+    LA,
+    Eigen_solver_traits<Eigen::SimplicialLDLT<typename Eigen_sparse_matrix<double>::EigenType > >
+  >::type LA_type;
+  #else
+  typedef LA LA_type;
+  #endif
+
+  typedef typename Default::Get<
+    VertexPointMap,
+    typename boost::property_map< TriangleMesh, vertex_point_t>::const_type>::type Vertex_point_map;
+  typedef
+    typename Default::Get<Traits,
+                          typename Kernel_traits<
+                            typename boost::property_traits<Vertex_point_map>::value_type
+                          >::Kernel
+    >::type Traits_type;
+
+  typedef internal::Base_helper<TriangleMesh, Traits_type, Mode, LA_type, Vertex_point_map> Base_helper;
 
   const typename Base_helper::type& base() const
   {
@@ -782,6 +827,8 @@ public:
   #else
   /// a model of `ConstRange` with an iterator that is model of `ForwardIterator` with `vertex_descriptor` as value type.
   typedef unspecified_type Vertex_range;
+  /// Vertex point map type
+  typedef unspecified_type Vertex_point_map;
   #endif
 
   /*!
@@ -794,7 +841,7 @@ public:
   /*!
     \brief Constructor
   */
-  Surface_mesh_geodesic_distances_3(const TriangleMesh& tm, VertexPointMap vpm)
+  Surface_mesh_geodesic_distances_3(const TriangleMesh& tm, Vertex_point_map vpm)
     : Base_helper(tm, vpm)
   {}
 
@@ -875,9 +922,10 @@ public:
   }
 };
 
-
+#if defined(DOXYGEN_RUNNING) || defined(CGAL_EIGEN3_ENABLED)
 /// \ingroup PkgHeatMethod
 /// computes for each vertex of the triangle mesh `tm` the estimated geodesic distance to a given source vertex.
+/// This function is provided only if \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined.
 /// \tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph` and `HalfedgeListGraph`.
 ///         It must have an internal vertex point property map with the value type being a 3D point from a cgal Kernel model
 /// \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
@@ -916,6 +964,7 @@ estimate_geodesic_distances(const TriangleMesh& tm,
 
 /// \ingroup PkgHeatMethod
 /// computes for each vertex  of the triangle mesh `tm` the estimated geodesic distance to a given set of source vertices.
+/// This function is provided only if \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined.
 /// \tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph` and `HalfedgeListGraph`
 ///         It must have an internal vertex point property map with the value type being a 3D point from a cgal Kernel model
 /// \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
@@ -937,7 +986,7 @@ estimate_geodesic_distances(const TriangleMesh& tm,
   hm.add_sources(sources);
   hm.estimate_geodesic_distances(vdm);
 }
-
+#endif
 
 } // namespace Heat_method_3
 } // namespace CGAL
