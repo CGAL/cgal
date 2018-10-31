@@ -1175,6 +1175,7 @@ void MainWindow::selectSceneItem(int i)
 
     sceneView->selectionModel()->select(s,
                                         QItemSelectionModel::ClearAndSelect);
+    sceneView->scrollTo(s.indexes().first());
   }
 }
 
