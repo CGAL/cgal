@@ -7,39 +7,36 @@
 
 #include <QColor>
 
+#include "SMesh_type.h"
 #include "Color_cheat_sheet.h"
 
 namespace VSA = CGAL::Surface_mesh_approximation;
 
-template <typename TriangleMesh, typename GeomTraits>
 class VSA_approximation_wrapper {
-  typedef typename GeomTraits::FT FT;
-  typedef typename GeomTraits::Point_3 Point_3;
-  typedef typename GeomTraits::Vector_3 Vector_3;
+  typedef typename EPICK::FT FT;
+  typedef typename EPICK::Point_3 Point_3;
+  typedef typename EPICK::Vector_3 Vector_3;
 
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
-
-  typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type Vertex_point_map;
+  typedef typename boost::property_map<SMesh, boost::vertex_point_t>::type Vertex_point_map;
   typedef boost::associative_property_map<std::map<face_descriptor, FT> > Face_area_map;
   typedef boost::associative_property_map<std::map<face_descriptor, Point_3> > Face_center_map;
 
 #ifdef CGAL_LINKED_WITH_TBB
-  typedef CGAL::Variational_shape_approximation<TriangleMesh, Vertex_point_map,
-    CGAL::Default, GeomTraits, CGAL::Parallel_tag> L21_approx;
+  typedef CGAL::Variational_shape_approximation<SMesh, Vertex_point_map,
+    CGAL::Default, EPICK, CGAL::Parallel_tag> L21_approx;
 #else
-  typedef CGAL::Variational_shape_approximation<TriangleMesh, Vertex_point_map,
-    CGAL::Default, GeomTraits> L21_approx;
+  typedef CGAL::Variational_shape_approximation<SMesh, Vertex_point_map,
+    CGAL::Default, EPICK> L21_approx;
 #endif
   typedef typename L21_approx::Error_metric L21_metric;
 
-  typedef VSA::L2_metric_plane_proxy<TriangleMesh> L2_metric;
+  typedef VSA::L2_metric_plane_proxy<SMesh> L2_metric;
 #ifdef CGAL_LINKED_WITH_TBB
-  typedef CGAL::Variational_shape_approximation<TriangleMesh, Vertex_point_map,
-    L2_metric, GeomTraits, CGAL::Parallel_tag> L2_approx;
+  typedef CGAL::Variational_shape_approximation<SMesh, Vertex_point_map,
+    L2_metric, EPICK, CGAL::Parallel_tag> L2_approx;
 #else
-  typedef CGAL::Variational_shape_approximation<TriangleMesh, Vertex_point_map,
-    L2_metric, GeomTraits> L2_approx;
+  typedef CGAL::Variational_shape_approximation<SMesh, Vertex_point_map,
+    L2_metric, EPICK> L2_approx;
 #endif
 
   // user defined point-wise compact metric
@@ -50,13 +47,13 @@ class VSA_approximation_wrapper {
       const Face_area_map &_area_pmap)
       : center_pmap(_center_pmap), area_pmap(_area_pmap) {}
 
-    FT compute_error(const face_descriptor f, const TriangleMesh &, const Proxy &px) const {
+    FT compute_error(const face_descriptor f, const SMesh &, const Proxy &px) const {
       return FT(std::sqrt(CGAL::to_double(
         CGAL::squared_distance(center_pmap[f], px))));
     }
 
     template <typename FaceRange>
-    Proxy fit_proxy(const FaceRange &faces, const TriangleMesh &) const {
+    Proxy fit_proxy(const FaceRange &faces, const SMesh &) const {
       CGAL_assertion(!faces.empty());
 
       // fitting center
@@ -76,11 +73,11 @@ class VSA_approximation_wrapper {
   typedef Compact_metric_point_proxy Compact_metric;
 
 #ifdef CGAL_LINKED_WITH_TBB
-  typedef CGAL::Variational_shape_approximation<TriangleMesh, Vertex_point_map,
-    Compact_metric, GeomTraits, CGAL::Parallel_tag> Compact_approx;
+  typedef CGAL::Variational_shape_approximation<SMesh, Vertex_point_map,
+    Compact_metric, EPICK, CGAL::Parallel_tag> Compact_approx;
 #else
-  typedef CGAL::Variational_shape_approximation<TriangleMesh, Vertex_point_map,
-    Compact_metric, GeomTraits> Compact_approx;
+  typedef CGAL::Variational_shape_approximation<SMesh, Vertex_point_map,
+    Compact_metric, EPICK> Compact_approx;
 #endif
 
   std::size_t rand_0_255() {
@@ -100,12 +97,13 @@ public:
     : m_metric(L21),
     m_center_pmap(m_face_centers),
     m_area_pmap(m_face_areas),
+    m_initialized(false),
     m_pl21_metric(NULL),
     m_l21_approx(NULL),
     m_pl2_metric(NULL),
     m_l2_approx(NULL),
     m_pcompact_metric(NULL),
-    m_iso_approx(NULL) {}
+    m_compact_approx(NULL) {}
 
   ~VSA_approximation_wrapper() {
     if (m_l21_approx)
@@ -116,8 +114,8 @@ public:
       delete m_l2_approx;
     if (m_pl2_metric)
       delete m_pl2_metric;
-    if (m_iso_approx)
-      delete m_iso_approx;
+    if (m_compact_approx)
+      delete m_compact_approx;
     if (m_pcompact_metric)
       delete m_pcompact_metric;
   }
@@ -125,8 +123,10 @@ public:
   std::vector<QColor> &proxy_colors() { return m_proxy_colors; }
   const std::vector<QColor> &proxy_colors() const  { return m_proxy_colors; }
 
-  void set_mesh(const TriangleMesh &mesh) {
-    Vertex_point_map vpm = get(boost::vertex_point, const_cast<TriangleMesh &>(mesh));
+  bool initialized() { return m_initialized; }
+
+  void set_mesh(const SMesh &mesh) {
+    Vertex_point_map vpm = get(boost::vertex_point, const_cast<SMesh &>(mesh));
 
     m_face_centers.clear();
     m_face_areas.clear();
@@ -151,8 +151,8 @@ public:
       delete m_l2_approx;
     if (m_pl2_metric)
       delete m_pl2_metric;
-    if (m_iso_approx)
-      delete m_iso_approx;
+    if (m_compact_approx)
+      delete m_compact_approx;
     if (m_pcompact_metric)
       delete m_pcompact_metric;
 
@@ -163,14 +163,16 @@ public:
     m_l2_approx = new L2_approx(mesh, vpm, *m_pl2_metric);
 
     m_pcompact_metric = new Compact_metric(m_center_pmap, m_area_pmap);
-    m_iso_approx = new Compact_approx(mesh, vpm, *m_pcompact_metric);
+    m_compact_approx = new Compact_approx(mesh, vpm, *m_pcompact_metric);
 
     m_proxy_colors.clear();
+    m_initialized = false;
   }
 
   void set_metric(const Metric &m) {
     m_metric = m;
     m_proxy_colors.clear();
+    m_initialized = false;
   }
 
   std::size_t initialize_seeds(const VSA::Seeding_method method,
@@ -194,7 +196,7 @@ public:
             .number_of_relaxations(nb_relaxations));
         break;
       case Compact:
-        nb_initialized = m_iso_approx->initialize_seeds(
+        nb_initialized = m_compact_approx->initialize_seeds(
           CGAL::parameters::seeding_method(method)
             .max_number_of_proxies(max_nb_of_proxies)
             .min_error_drop(min_error_drop)
@@ -210,6 +212,7 @@ public:
         Color_cheat_sheet::r(c), Color_cheat_sheet::g(c), Color_cheat_sheet::b(c)));
     }
 
+    m_initialized = true;
     return nb_initialized;
   }
 
@@ -223,7 +226,7 @@ public:
         m_l2_approx->run(nb_iterations);
         break;
       case Compact:
-        m_iso_approx->run(nb_iterations);
+        m_compact_approx->run(nb_iterations);
         break;
     }
   }
@@ -238,7 +241,7 @@ public:
         nb_added = m_l2_approx->add_to_furthest_proxies(1, 0);
         break;
       case Compact:
-        nb_added = m_iso_approx->add_to_furthest_proxies(1, 0);
+        nb_added = m_compact_approx->add_to_furthest_proxies(1, 0);
         break;
     }
     if (nb_added == 1) {
@@ -257,7 +260,7 @@ public:
       case L2:
         return m_l2_approx->teleport_proxies(1, 0, true);
       case Compact:
-        return m_iso_approx->teleport_proxies(1, 0, true);
+        return m_compact_approx->teleport_proxies(1, 0, true);
     }
     return 0;
   }
@@ -272,7 +275,7 @@ public:
         splitted = m_l2_approx->split(px_idx, n, nb_relaxations);
         break;
       case Compact:
-        splitted = m_iso_approx->split(px_idx, n, nb_relaxations);
+        splitted = m_compact_approx->split(px_idx, n, nb_relaxations);
         break;
     }
     if (splitted) {
@@ -307,7 +310,7 @@ public:
           optimize_anchor_location(optimize_anchor_location).
           pca_plane(pca_plane));
       case Compact:
-        return m_iso_approx->extract_mesh(
+        return m_compact_approx->extract_mesh(
           CGAL::parameters::subdivision_ratio(subdivision_ratio).
           relative_to_chord(relative_to_chord).
           with_dihedral_angle(with_dihedral_angle).
@@ -324,7 +327,7 @@ public:
       case L2:
         return m_l2_approx->number_of_proxies();
       case Compact:
-        return m_iso_approx->number_of_proxies();
+        return m_compact_approx->number_of_proxies();
     }
     return 0;
   }
@@ -349,7 +352,7 @@ public:
       case L2:
         return m_l2_approx->proxy_map(fpmap);
       case Compact:
-        return m_iso_approx->proxy_map(fpmap);
+        return m_compact_approx->proxy_map(fpmap);
     }
   }
 
@@ -361,7 +364,7 @@ public:
       case L2:
         return m_l2_approx->indexed_triangles(outitr);
       case Compact:
-        return m_iso_approx->indexed_triangles(outitr);
+        return m_compact_approx->indexed_triangles(outitr);
     }
   }
 
@@ -373,7 +376,7 @@ public:
       case L2:
         return m_l2_approx->anchor_points(outitr);
       case Compact:
-        return m_iso_approx->anchor_points(outitr);
+        return m_compact_approx->anchor_points(outitr);
     }
   }
 
@@ -385,7 +388,7 @@ public:
       case L2:
         return m_l2_approx->anchor_vertices(outitr);
       case Compact:
-        return m_iso_approx->anchor_vertices(outitr);
+        return m_compact_approx->anchor_vertices(outitr);
     }
   }
 
@@ -397,7 +400,7 @@ public:
       case L2:
         return m_l2_approx->indexed_boundary_polygons(outitr);
       case Compact:
-        return m_iso_approx->indexed_boundary_polygons(outitr);
+        return m_compact_approx->indexed_boundary_polygons(outitr);
     }
   }
 
@@ -413,6 +416,8 @@ private:
   // patch color
   std::vector<QColor> m_proxy_colors;
 
+  bool m_initialized;
+
   L21_metric *m_pl21_metric;
   L21_approx *m_l21_approx;
 
@@ -420,7 +425,7 @@ private:
   L2_approx *m_l2_approx;
 
   Compact_metric *m_pcompact_metric;
-  Compact_approx *m_iso_approx;
+  Compact_approx *m_compact_approx;
 };
 
 #endif // VSA_APPROXIMAITON_WRAPPER_H

@@ -31,7 +31,7 @@ class Polyhedron_demo_surface_mesh_approximation_plugin :
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
-  typedef VSA_approximation_wrapper<SMesh, EPICK> Approximation_wrapper;
+  typedef VSA_approximation_wrapper Approximation_wrapper;
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
   typedef Approximation_wrapper::L21_proxy_wrapper L21_proxy_wrapper;
 #endif
