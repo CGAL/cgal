@@ -2046,10 +2046,10 @@ void MainWindow::on_actionPreferences_triggered()
       QTreeWidgetItem *item = new QTreeWidgetItem(pluginItem);
       item->setText(1, name);
       if(plugin_blacklist.contains(name)){
-        item->setCheckState(0, Qt::Checked);
+        item->setCheckState(0, Qt::Unchecked);
       }
       else{
-        item->setCheckState(0, Qt::Unchecked);
+        item->setCheckState(0, Qt::Checked);
       }
       if(pluginsStatus_map[name] == QString("success"))
         item->setBackground(1, successBrush);
@@ -2073,7 +2073,7 @@ void MainWindow::on_actionPreferences_triggered()
     for (std::size_t k=0; k<items.size(); ++k)
     {
      QTreeWidgetItem* item=items[k];
-      if (item->checkState(0)==Qt::Checked)
+      if (item->checkState(0)==Qt::Unchecked)
         plugin_blacklist.insert(item->text(1));
     }
     
