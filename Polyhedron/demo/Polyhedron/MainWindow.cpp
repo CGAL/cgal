@@ -1586,6 +1586,9 @@ void MainWindow::readSettings()
     QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
     Q_FOREACH(QString name,blacklist){ plugin_blacklist.insert(name); }
     def_save_dir = settings.value("default_saveas_dir", QDir::homePath()).toString();
+    this->default_point_size = settings.value("points_size").toInt();
+    this->default_normal_length = settings.value("normals_length").toInt();
+    this->default_lines_width = settings.value("lines_width").toInt();
 }
 
 void MainWindow::writeSettings()
@@ -1948,6 +1951,17 @@ void MainWindow::on_actionPreferences_triggered()
   QSettings settings;
   prefdiag.setupUi(&dialog);
   
+  float lineWidth[2];
+  if(!viewer->isOpenGL_4_3())
+    viewer->glGetFloatv(GL_LINE_WIDTH_RANGE, lineWidth);
+  else
+  {
+    lineWidth[0] = 0;
+    lineWidth[1] = 10;
+  }
+  prefdiag.linesHorizontalSlider->setMinimum(lineWidth[0]);
+  prefdiag.linesHorizontalSlider->setMaximum(lineWidth[1]);
+  
   prefdiag.offset_updateCheckBox->setChecked(
         settings.value("offset_update", true).toBool());
   connect(prefdiag.offset_updateCheckBox, SIGNAL(toggled(bool)),
@@ -1972,6 +1986,24 @@ void MainWindow::on_actionPreferences_triggered()
               this, [this](int i)
   {
     setTransparencyPasses(i);
+  });
+  prefdiag.pointsHorizontalSlider->setValue(this->default_point_size);
+  connect(prefdiag.pointsHorizontalSlider, &QSlider::valueChanged,
+              this, [this](int i)
+  {
+    this->default_point_size = i;
+  });
+  prefdiag.normalsHorizontalSlider->setValue(this->default_normal_length);
+  connect(prefdiag.normalsHorizontalSlider, &QSlider::valueChanged,
+              this, [this](int i)
+  {
+    this->default_normal_length = i;
+  });
+  prefdiag.linesHorizontalSlider->setValue(this->default_lines_width);
+  connect(prefdiag.linesHorizontalSlider, &QSlider::valueChanged,
+              this, [this](int i)
+  {
+    this->default_lines_width = i;
   });
   connect(prefdiag.background_colorPushButton, &QPushButton::clicked,
           this, &MainWindow::setBackgroundColor);
@@ -2061,7 +2093,9 @@ void MainWindow::on_actionPreferences_triggered()
                         CGAL::Three::Three::defaultSurfaceMeshRenderingMode()));
     settings.setValue("default_ps_rm", CGAL::Three::Three::modeName(
                         CGAL::Three::Three::defaultPointSetRenderingMode()));
-    
+    settings.setValue("points_size", this->default_point_size);
+    settings.setValue("normals_length", this->default_normal_length);
+    settings.setValue("lines_width", this->default_lines_width);
     
   }
 }

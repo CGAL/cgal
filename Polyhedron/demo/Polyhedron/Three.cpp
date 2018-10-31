@@ -11,6 +11,9 @@ QObject* Three::s_connectable_scene = NULL;
 Three* Three::s_three = NULL;
 RenderingMode Three::s_defaultSMRM;
 RenderingMode Three::s_defaultPSRM;
+int Three::default_point_size;
+int Three::default_normal_length;
+int Three::default_lines_width;
 
 QMainWindow* Three::mainWindow()
 {
@@ -184,3 +187,17 @@ RenderingMode Three::modeFromName(QString name) {
   return Points;
 }
 
+int Three::getDefaultPointSize()
+{
+  return default_point_size;
+}
+
+int Three::getDefaultNormalLength()
+{
+  return default_normal_length;
+}
+
+int Three::getDefaultLinesWidth()
+{
+  return default_lines_width;
+}
