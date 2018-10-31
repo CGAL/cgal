@@ -355,7 +355,7 @@ private:
     CGAL_precondition(is_triangle_mesh(m_intrinsic_tm));
 
     typename Traits::Compute_squared_distance_3 squared_distance = Traits().compute_squared_distance_3_object();
-    
+
     std::vector<std::pair<vertex_descriptor,
                           vertex_descriptor> > pairs;
     copy_face_graph(m_input_tm, m_intrinsic_tm,
@@ -374,7 +374,7 @@ private:
     edge_id_map = get(Edge_property_tag(), m_intrinsic_tm);
     Index edge_i = 0;
     VertexPointMap vpm_intrinsic_tm = get(boost::vertex_point,m_intrinsic_tm);
-    
+
     BOOST_FOREACH(edge_descriptor ed, edges(m_intrinsic_tm)) {
       edge_lengths[edge_i] = CGAL::sqrt(squared_distance(get(vpm_intrinsic_tm, source(ed,m_intrinsic_tm)),
                                                          get(vpm_intrinsic_tm, target(ed,m_intrinsic_tm))));

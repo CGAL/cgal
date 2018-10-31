@@ -49,19 +49,18 @@ struct Heat_method_3_private_tests;
 
 namespace CGAL {
 namespace Heat_method_3 {
-  
-  /**
-   * A tag class used to specify that the heat method is applied to the input mesh. 
-   */
-  struct Direct
-  {};
 
-  /**
-   * A tag class used to specify that the heat method applies the intrinsic Delaunay triangulation to the input mesh.
-   */
-  struct Intrinsic_Delaunay
-  {};
+/**
+ * A tag class used to specify that the heat method is applied to the input mesh.
+ */
+struct Direct
+{};
 
+/**
+ * A tag class used to specify that the heat method applies the intrinsic Delaunay triangulation to the input mesh.
+ */
+struct Intrinsic_Delaunay
+{};
 
 namespace internal {
 template <typename TriangleMesh,
@@ -175,7 +174,7 @@ public:
     source_change_flag = true;
     return m_sources.insert(v2v(vd)).second;
   }
-  
+
   /**
    * adds vertices in the `vrange` to the source set'.
    */
@@ -223,7 +222,6 @@ public:
   {
     return m_sources;
   }
-  
 
 private:
 
@@ -340,10 +338,10 @@ private:
       //cross that with eij, ejk, eki
       //so (Ncross eij) *uk and so on
       //sum all of those then multiply by 1./(2a)
-      
+
       Vector_3 v_ij = construct_vector(p_i,p_j);
       Vector_3 v_ik = construct_vector(p_i,p_k);
-      
+
       Vector_3 cross = cross_product(v_ij, v_ik);
       double N_cross = (CGAL::sqrt(scalar_product(cross,cross)));
       Vector_3 unit_cross = scale(cross, 1./N_cross);
@@ -367,8 +365,6 @@ private:
     }
   }
 
- 
-
 
   void
   compute_divergence()
@@ -390,7 +386,7 @@ private:
       VertexPointMap_reference p_j = get(vpm, neighbor_one);
       VertexPointMap_reference p_k = get(vpm, neighbor_two);
       Index face_i = get(face_id_map, f);
-      
+
       Vector_3 v_ij = construct_vector(p_i,p_j);
       Vector_3 v_ik = construct_vector(p_i,p_k);
       Vector_3 cross = cross_product(v_ij, v_ik);
@@ -400,14 +396,14 @@ private:
 
       Vector_3 v_ji = construct_vector(p_j, p_i);
       Vector_3 v_jk = construct_vector(p_j, p_k);
-      
+
       cross = cross_product(v_ji, v_jk);
       dot = to_double(scalar_product(v_ji, v_jk));
       double cotan_j = dot/norm_cross;
 
       Vector_3 v_ki = construct_vector(p_k,p_i);
       Vector_3 v_kj = construct_vector(p_k,p_j);
-      
+
       cross = cross_product(v_ki, v_kj);
       dot = to_double(scalar_product(v_ki,v_kj));
       double cotan_k = dot/norm_cross;
@@ -510,15 +506,13 @@ public:
 
 private:
 
-
-  
   void
   build()
   {
     Traits::Construct_cross_product_vector_3 cross_product = Traits().construct_cross_product_vector_3_object();
     Traits::Compute_scalar_product_3 scalar_product = Traits().compute_scalar_product_3_object();
     Traits::Construct_vector_3 construct_vector = Traits().construct_vector_3_object();
-    
+
     source_change_flag = false;
 
     CGAL_precondition(is_triangle_mesh(tm));
@@ -562,12 +556,12 @@ private:
 
       Vector_3 v_ij = construct_vector(p_i,p_j);
       Vector_3 v_ik = construct_vector(p_i,p_k);
-      
+
       Vector_3 cross = cross_product(v_ij, v_ik);
       double dot = scalar_product(v_ij,v_ik);
-                                  
+
       double norm_cross = (CGAL::sqrt(scalar_product(cross,cross)));
-                                  
+
       double cotan_i = dot/norm_cross;
       m_cotan_matrix.add_coef(j,k ,-(1./2)*cotan_i);
       m_cotan_matrix.add_coef(k,j,-(1./2)* cotan_i);
@@ -576,7 +570,7 @@ private:
 
       Vector_3 v_ji = construct_vector(p_j,p_i);
       Vector_3 v_jk = construct_vector(p_j,p_k);
-      
+
       cross = cross_product(v_ji, v_jk);
       dot = to_double(scalar_product(v_ji, v_jk));
       double cotan_j = dot/norm_cross;
@@ -606,7 +600,7 @@ private:
     }
     m_cotan_matrix.assemble_matrix();
     m_mass_matrix.assemble_matrix();
-    
+
     m_time_step = 1./(num_edges(tm));
     m_time_step = m_time_step*summation_of_edges();
     m_time_step = m_time_step*m_time_step;
@@ -632,7 +626,7 @@ private:
   Vector solved_phi;
   std::set<Index> source_index;
   bool source_change_flag;
-    
+
 };
 
 template <typename TriangleMesh,
@@ -731,7 +725,7 @@ struct Base_helper<TriangleMesh, Traits, Intrinsic_Delaunay, LA, VertexPointMap>
 
 } // namespace internal
 
-  
+
 /**
  * \ingroup PkgHeatMethod
  *
@@ -820,7 +814,7 @@ public:
   {
     return base().add_source(vd);
   }
-  
+
   /**
    * adds the range of vertices to the source set.
    */
@@ -867,7 +861,7 @@ public:
     return base().sources();
   }
 
- 
+
   /**
    * fills the distance property map with the estimated geodesic distance of each vertex to the closest source vertex.
    * \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
@@ -905,7 +899,7 @@ estimate_geodesic_distances(const TriangleMesh& tm,
   hm.estimate_geodesic_distances(vdm);
 }
 
-  
+
 #ifndef DOXYGEN_RUNNING
 template <typename TriangleMesh, typename VertexDistanceMap>
 void
@@ -918,7 +912,7 @@ estimate_geodesic_distances(const TriangleMesh& tm,
   hm.estimate_geodesic_distances(vdm);
 }
 #endif
-  
+
 
 /// \ingroup PkgHeatMethod
 /// computes for each vertex  of the triangle mesh `tm` the estimated geodesic distance to a given set of source vertices.
@@ -931,7 +925,7 @@ estimate_geodesic_distances(const TriangleMesh& tm,
 ///              is computed directly on the mesh, or if the intrinsic Delaunay triangulation is applied first.
 ///              The default is `Direct`.
 ///
-/// \sa CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3 
+/// \sa CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3
 template <typename TriangleMesh, typename VertexDistanceMap, typename VertexRange, typename Mode>
 void
 estimate_geodesic_distances(const TriangleMesh& tm,
