@@ -243,9 +243,9 @@ private:
       VertexPointMap_reference pi = get(vpm,current);
       VertexPointMap_reference pj = get(vpm, neighbor_one);
       VertexPointMap_reference pk = get(vpm, neighbor_two);
-      edge_sum += (CGAL::is_border(opposite(hd,tm),tm)?1.0:0.5) * std::sqrt(squared_distance(pi,pj));
-      edge_sum += (CGAL::is_border(opposite(hd2,tm),tm)?1.0:0.5) * std::sqrt(squared_distance(pj,pk)) ;
-      edge_sum += (CGAL::is_border(opposite(hd3,tm),tm)?1.0:0.5) * std::sqrt(squared_distance(pk,pi)) ;
+      edge_sum += (CGAL::is_border(opposite(hd,tm),tm)?1.0:0.5) * std::sqrt(to_double(squared_distance(pi,pj)));
+      edge_sum += (CGAL::is_border(opposite(hd2,tm),tm)?1.0:0.5) * std::sqrt(to_double(squared_distance(pj,pk))) ;
+      edge_sum += (CGAL::is_border(opposite(hd3,tm),tm)?1.0:0.5) * std::sqrt(to_double(squared_distance(pk,pi))) ;
     }
     return edge_sum;
   }
@@ -343,7 +343,7 @@ private:
       Vector_3 v_ik = construct_vector(p_i,p_k);
 
       Vector_3 cross = cross_product(v_ij, v_ik);
-      double N_cross = (CGAL::sqrt(scalar_product(cross,cross)));
+      double N_cross = (CGAL::sqrt(to_double(scalar_product(cross,cross))));
       Vector_3 unit_cross = scale(cross, 1./N_cross);
       double area_face = N_cross * (1./2);
       double u_i = CGAL::abs(solved_u(i));
@@ -360,7 +360,7 @@ private:
       edge_sums = sum(edge_sums, scale(cross_product(unit_cross, construct_vector(p_j,p_k)), u_i));
       edge_sums = sum(edge_sums, scale(cross_product(unit_cross, construct_vector(p_k,p_i)), u_j));
       edge_sums = scale(edge_sums, (1./area_face));
-      double e_magnitude = CGAL::sqrt(scalar_product(edge_sums,edge_sums));
+      double e_magnitude = CGAL::sqrt(to_double(scalar_product(edge_sums,edge_sums)));
       X[face_i] = scale(edge_sums,(1./e_magnitude));
     }
   }
@@ -390,8 +390,8 @@ private:
       Vector_3 v_ij = construct_vector(p_i,p_j);
       Vector_3 v_ik = construct_vector(p_i,p_k);
       Vector_3 cross = cross_product(v_ij, v_ik);
-      double norm_cross = CGAL::sqrt(scalar_product(cross,cross));
-      double dot = scalar_product(v_ij, v_ik);
+      double norm_cross = CGAL::sqrt(to_double(scalar_product(cross,cross)));
+      double dot = to_double(scalar_product(v_ij, v_ik));
       double cotan_i = dot/norm_cross;
 
       Vector_3 v_ji = construct_vector(p_j, p_i);
@@ -409,9 +409,9 @@ private:
       double cotan_k = dot/norm_cross;
 
       const Vector_3& a  = X[face_i];
-      double i_entry = (scalar_product(a,v_ij) * cotan_k) + (scalar_product(a,v_ik) *  cotan_j);
-      double j_entry = (scalar_product(a,v_jk) * cotan_i) + (scalar_product(a,v_ji) * cotan_k);
-      double k_entry = (scalar_product(a,v_ki) * cotan_j) + (scalar_product(a,v_kj) * cotan_i);
+      double i_entry = (to_double(scalar_product(a,v_ij)) * cotan_k) + (to_double(scalar_product(a,v_ik)) *  cotan_j);
+      double j_entry = (to_double(scalar_product(a,v_jk)) * cotan_i) + (to_double(scalar_product(a,v_ji)) * cotan_k);
+      double k_entry = (to_double(scalar_product(a,v_ki)) * cotan_j) + (to_double(scalar_product(a,v_kj)) * cotan_i);
 
       indexD.add_coef(i, 0, (1./2)*i_entry);
       indexD.add_coef(j, 0, (1./2)*j_entry);
@@ -539,8 +539,6 @@ private:
       Matrix M(dimension,dimension);
       m_cotan_matrix.swap(M);
     }
-    //m_mass_matrix.eigen_object().resize(dimension, dimension);
-    //m_cotan_matrix.eigen_object().resize(dimension, dimension);
     CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
 
     BOOST_FOREACH(face_descriptor f, faces(tm)) {
@@ -564,9 +562,9 @@ private:
       Vector_3 v_ik = construct_vector(p_i,p_k);
 
       Vector_3 cross = cross_product(v_ij, v_ik);
-      double dot = scalar_product(v_ij,v_ik);
+      double dot = to_double(scalar_product(v_ij,v_ik));
 
-      double norm_cross = (CGAL::sqrt(scalar_product(cross,cross)));
+      double norm_cross = (CGAL::sqrt(to_double(scalar_product(cross,cross))));
 
       double cotan_i = dot/norm_cross;
       m_cotan_matrix.add_coef(j,k ,-(1./2)*cotan_i);

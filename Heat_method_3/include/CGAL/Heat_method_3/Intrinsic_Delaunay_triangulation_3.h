@@ -376,8 +376,8 @@ private:
     VertexPointMap vpm_intrinsic_tm = get(boost::vertex_point,m_intrinsic_tm);
 
     BOOST_FOREACH(edge_descriptor ed, edges(m_intrinsic_tm)) {
-      edge_lengths[edge_i] = CGAL::sqrt(squared_distance(get(vpm_intrinsic_tm, source(ed,m_intrinsic_tm)),
-                                                         get(vpm_intrinsic_tm, target(ed,m_intrinsic_tm))));
+      edge_lengths[edge_i] = CGAL::sqrt(to_double(squared_distance(get(vpm_intrinsic_tm, source(ed,m_intrinsic_tm)),
+                                                                   get(vpm_intrinsic_tm, target(ed,m_intrinsic_tm)))));
         //  Polygon_mesh_processing::edge_length(halfedge(ed,m_intrinsic_tm),m_intrinsic_tm);
       put(edge_id_map, ed, edge_i++);
       stack.push(ed);
