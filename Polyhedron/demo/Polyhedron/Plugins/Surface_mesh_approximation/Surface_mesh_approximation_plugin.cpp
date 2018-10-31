@@ -33,6 +33,7 @@ class Polyhedron_demo_surface_mesh_approximation_plugin :
   typedef Approximation_wrapper::L21_proxy_wrapper L21_proxy_wrapper;
 #endif
   typedef Approximation_wrapper::Indexed_triangle Indexed_triangle;
+  typedef typename boost::property_map<SMesh, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
 
 public:
   Polyhedron_demo_surface_mesh_approximation_plugin() {}
@@ -96,9 +97,6 @@ private:
 
   SMesh *m_pmesh;
 
-  // property-map for segment-idx
-  SMesh::Property_map<face_descriptor, std::size_t> m_fidx_pmap;
-
   // algorithm instance
   Approximation_wrapper m_approx;
 
@@ -114,7 +112,6 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionSurfaceMeshAppr
 }
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked() {
-
   // set mesh
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(scene->item(index));
@@ -127,8 +124,6 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   m_pmesh = sm_item->polyhedron();
-  m_fidx_pmap = m_pmesh->add_property_map<face_descriptor, std::size_t>("m_fidx_pmap", 0).first;
-
   m_approx.set_mesh(*m_pmesh);
   m_approx.set_metric(Approximation_wrapper::L21);
 
@@ -148,7 +143,8 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
     ui_widget.nb_relaxations->value());
   m_approx.run(ui_widget.nb_iterations->value());
 
-  m_approx.proxy_map(m_fidx_pmap);
+  Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *sm_item->face_graph());
+  m_approx.proxy_map(pidmap);
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
   m_proxies.clear();
   m_approx.get_l21_proxies(std::back_inserter(m_proxies));
@@ -157,13 +153,6 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
   std::cout << "#proxies " << m_approx.number_of_proxies() << std::endl;
   std::cout << "Done. (" << time.elapsed() << " ms)" << std::endl;
 
-  // face color
-  m_approx.proxy_map(m_fidx_pmap);
-
-  typedef typename boost::property_map<SMesh, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
-  Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *sm_item->face_graph());
-  BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
-    put(pidmap, f, int(m_fidx_pmap[f]));
   std::vector<QColor> &color_vector = sm_item->color_vector();
   color_vector.clear();
   BOOST_FOREACH(const std::size_t c, m_approx.proxy_colors())
@@ -178,10 +167,15 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
 }
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonFit_clicked() {
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(scene->item(index));
+
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   m_approx.run(1);
-  m_approx.proxy_map(m_fidx_pmap);
+  Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *sm_item->face_graph());
+  m_approx.proxy_map(pidmap);
+
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
   m_proxies.clear();
   m_approx.get_l21_proxies(std::back_inserter(m_proxies));
@@ -191,7 +185,9 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonFit_clicked() {
 }
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked() {
-  ui_widget.mesh_extraction->setEnabled(true);
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(scene->item(index));
+
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   m_approx.extract_mesh(ui_widget.chord_error->value(),
@@ -199,6 +195,8 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
     ui_widget.with_dihedral_angle->isChecked(),
     ui_widget.if_optimize_anchor_location->isChecked(),
     ui_widget.pca_plane->isChecked());
+  Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *sm_item->face_graph());
+  m_approx.proxy_map(pidmap);
 
   std::vector<Indexed_triangle> indexed_triangles;
   std::vector<Point_3> anchor_points;
@@ -259,7 +257,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
   std::vector<std::vector<EPICK::Triangle_3> > patch_triangles(m_approx.number_of_proxies());
   BOOST_FOREACH(face_descriptor f, faces(*m_pmesh)) {
     halfedge_descriptor h = halfedge(f, *m_pmesh);
-    patch_triangles[m_fidx_pmap[f]].push_back(EPICK::Triangle_3(
+    patch_triangles[pidmap[f]].push_back(EPICK::Triangle_3(
       m_pmesh->point(source(h, *m_pmesh)),
       m_pmesh->point(target(h, *m_pmesh)),
       m_pmesh->point(target(next(h, *m_pmesh), *m_pmesh))));
@@ -275,7 +273,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
   BOOST_FOREACH(vertex_descriptor v, vertices(*m_pmesh)) {
     BOOST_FOREACH(halfedge_descriptor h, CGAL::halfedges_around_target(v, *m_pmesh)) {
       if (!CGAL::is_border(h, *m_pmesh)) {
-        const std::size_t fidx = m_fidx_pmap[ face(h, *m_pmesh) ];
+        const std::size_t fidx = pidmap[face(h, *m_pmesh)];
         patch_points[fidx].push_back(m_pmesh->point(v));
       }
     }
@@ -333,12 +331,16 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
 }
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonAdd_clicked() {
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(scene->item(index));
+
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   if (m_approx.add_one_proxy() == 0)
     return;
 
-  m_approx.proxy_map(m_fidx_pmap);
+  Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *sm_item->face_graph());
+  m_approx.proxy_map(pidmap);
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
   m_proxies.clear();
   m_approx.get_l21_proxies(std::back_inserter(m_proxies));
@@ -348,10 +350,14 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonAdd_clicked() {
 }
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonTeleport_clicked() {
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(scene->item(index));
+
   QApplication::setOverrideCursor(Qt::WaitCursor);
+  Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *sm_item->face_graph());
 
   m_approx.teleport_one_proxy();
-  m_approx.proxy_map(m_fidx_pmap);
+  m_approx.proxy_map(pidmap);
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
   m_proxies.clear();
   m_approx.get_l21_proxies(std::back_inserter(m_proxies));
@@ -361,7 +367,9 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonTeleport_clicke
 }
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSplit_clicked() {
-  ui_widget.operations->setEnabled(true);
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(scene->item(index));
+
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   if (!m_approx.split(ui_widget.split_proxy_idx->value(),
@@ -369,7 +377,8 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSplit_clicked()
     ui_widget.split_nb_relaxations->value()))
     std::cout << "split failed" << std::endl;
 
-  m_approx.proxy_map(m_fidx_pmap);
+  Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *sm_item->face_graph());
+  m_approx.proxy_map(pidmap);
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
   m_proxies.clear();
   m_approx.get_l21_proxies(std::back_inserter(m_proxies));
@@ -379,8 +388,12 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSplit_clicked()
 }
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_comboMetric_currentIndexChanged(const int m) {
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(scene->item(index));
+
+  Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *sm_item->face_graph());
   BOOST_FOREACH(face_descriptor f, faces(*m_pmesh))
-    m_fidx_pmap[f] = 0;
+    pidmap[f] = 0;
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
   m_proxies.clear();
