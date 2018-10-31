@@ -740,7 +740,7 @@ struct Base_helper<TriangleMesh, Traits, Intrinsic_Delaunay, LA, VertexPointMap>
  * time after changes of the set of sources.
  *
  * \tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph` and `HalfedgeListGraph`
- * \tparam Mode must be `Intrinsic_Delaunay` to indicatethat an intrinsic Delaunay triangulation is internally constructed ()
+ * \tparam Mode must be `Intrinsic_Delaunay` to indicate that an intrinsic Delaunay triangulation is internally constructed
  *                              or `Direct`to indicate that the input mesh should be used as is.
  *                              If `Intrinsic_Delaunay` the type `TriangleMesh` must have an internal property for `vertex_point`
  *                              and its value type must be the same as the value type of `VertexPointMap`.
