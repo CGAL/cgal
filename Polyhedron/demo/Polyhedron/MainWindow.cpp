@@ -350,7 +350,7 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
   readSettings(); // Among other things, the column widths are stored.
 
   // Load plugins, and re-enable actions that need it.
-  operationSearchBar.setPlaceholderText("Research...");
+  operationSearchBar.setPlaceholderText("Filter...");
   searchAction->setDefaultWidget(&operationSearchBar);  
   connect(&operationSearchBar, &QLineEdit::textChanged,
           this, &MainWindow::filterOperations);
@@ -397,29 +397,45 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
 }
 
 //Recursive function that do a pass over a menu and its sub-menus(etc.) and hide them when they are empty
-void filterMenuOperations(QMenu* menu)
+void filterMenuOperations(QMenu* menu, bool showFullMenu)
 {
-    Q_FOREACH(QAction* action, menu->actions()) {
-        if(QMenu* menu = action->menu())
-        {
-            filterMenuOperations(menu);
-            action->setVisible(!(menu->isEmpty()));
-        }
+  Q_FOREACH(QAction* action, menu->actions()) {
+    if(QMenu* menu = action->menu())
+    {
+      filterMenuOperations(menu, showFullMenu);
+      action->setVisible(showFullMenu && !(menu->isEmpty()));
     }
+  }
 
 }
 
 void MainWindow::filterOperations()
 {
+  static QVector<QAction*> to_remove;
+  Q_FOREACH(QAction* action, to_remove)
+    ui->menuOperations->removeAction(action);
   QString filter=operationSearchBar.text();
-  Q_FOREACH(const PluginNamePair& p, plugins) {
-    Q_FOREACH(QAction* action, p.first->actions()) {
+  if(!filter.isEmpty())
+    Q_FOREACH(const PluginNamePair& p, plugins) {
+      Q_FOREACH(QAction* action, p.first->actions()) {
         action->setVisible( p.first->applicable(action) 
                             && action->text().contains(filter, Qt::CaseInsensitive));
+        if(action->menu() != ui->menuOperations){
+          ui->menuOperations->addAction(action);
+          to_remove.push_back(action);
+        }
+      }
     }
+  else{
+    Q_FOREACH(const PluginNamePair& p, plugins) {
+      Q_FOREACH(QAction* action, p.first->actions()) {
+        action->setVisible( p.first->applicable(action) 
+                            && action->text().contains(filter, Qt::CaseInsensitive));
+      }
+    }
+    // do a pass over all menus in Operations and their sub-menus(etc.) and hide them when they are empty
   }
-  // do a pass over all menus in Operations and their sub-menus(etc.) and hide them when they are empty
-  filterMenuOperations(ui->menuOperations);
+  filterMenuOperations(ui->menuOperations, filter.isEmpty());
 }
 
 #include <CGAL/Three/exceptions.h>
