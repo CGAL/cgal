@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 The template function `abs()` returns the absolute value of a number. 
 
@@ -19,7 +19,7 @@ template <class NT> NT abs(const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 The template function `compare()` compares the first argument with respect to 
 the second, i.e.\ it returns `CGAL::LARGER` if \f$ x\f$ is larger then \f$ y\f$. 
@@ -43,7 +43,7 @@ result_type compare(const NT &x, const NT &y);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 The function `div()` computes the integral quotient of division 
 with remainder. 
@@ -74,7 +74,7 @@ div(const NT1& x, const NT2& y);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 computes the quotient \f$ q\f$ and remainder \f$ r\f$, such that \f$ x = q*y + r\f$ 
 and \f$ r\f$ minimal with respect to the Euclidean Norm of the 
@@ -109,7 +109,7 @@ div_mod(const NT1& x, const NT2& y, result_type& q, result_type& r);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 The function `gcd()` computes the greatest common divisor of two values. 
 
@@ -136,7 +136,7 @@ gcd(const NT1& x, const NT2& y);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 The function `integral_division()` (a.k.a.\ exact division or division without remainder) 
 maps ring elements \f$ (x,y)\f$ to ring element \f$ z\f$ such that \f$ x = yz\f$ if such a \f$ z\f$ 
@@ -167,7 +167,7 @@ integral_division(const NT1& x, const NT2& y);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 The function `inverse()` returns the inverse element with respect to multiplication. 
 
@@ -187,7 +187,7 @@ template <class NT> NT inverse(const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 The template function `is_negative()` determines if a value is negative or not. 
 The function is defined if the argument type 
@@ -206,7 +206,7 @@ result_type is_negative(const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 The function `is_one()` determines if a value is equal to 1 or not. 
 
@@ -226,7 +226,7 @@ template <class NT> result_type is_one(const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 The template function `is_positive()` determines if a value is positive or not. 
 The function is defined if the argument type 
@@ -245,7 +245,7 @@ result_type is_positive(const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 An ring element \f$ x\f$ is said to be a square iff there exists a ring element 
 \f$ y\f$ such 
@@ -264,7 +264,7 @@ The `result_type` is convertible to `bool`.
 template <class NT> result_type is_square(const NT& x);
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 An ring element \f$ x\f$ is said to be a square iff there exists a ring element 
 \f$ y\f$ such 
@@ -287,7 +287,7 @@ template <class NT> result_type is_square(const NT& x, NT& y);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 The function `is_zero()` determines if a value is equal to 0 or not. 
 
@@ -309,7 +309,7 @@ template <class NT> result_type is_zero(const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 The function `kth_root()` returns the k-th root of a value. 
 
@@ -327,7 +327,7 @@ template <class NT> NT kth_root(int k, const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 The function `mod()` computes the remainder of division with remainder. 
 
@@ -357,7 +357,7 @@ mod(const NT1& x, const NT2& y);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 returns the k-th real root of the univariate polynomial, which is
 defined by the iterator range, where begin refers to the constant
@@ -383,7 +383,7 @@ root_of(int k, InputIterator begin, InputIterator end);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 The template function `sign()` returns the sign of its argument. 
 
@@ -403,7 +403,7 @@ template <class NT> result_type sign(const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 The function `simplify()` may simplify a given object. 
 
@@ -421,7 +421,7 @@ template <class NT> void simplify(const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 The function `sqrt()` returns the square root of a value. 
 
@@ -439,7 +439,7 @@ template <class NT> NT sqrt(const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 The function `square()` returns the square of a number. 
 
@@ -457,7 +457,7 @@ template <class NT> NT square(const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 The template function `to_double()` returns a double approximation of a number.
 Note that in general, the value returned is not guaranteed to be the same
@@ -482,7 +482,7 @@ template <class NT> double to_double(const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 The template function `to_interval()` computes for a given real embeddable 
 number \f$ x\f$ a double interval containing \f$ x\f$. 
@@ -502,7 +502,7 @@ std::pair<double,double> to_interval(const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRef
 
 The function `unit_part()` computes the unit part of a given ring 
 element. 

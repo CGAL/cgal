@@ -29,6 +29,7 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+#include <CGAL/Polygon_mesh_processing/orientation.h>
 
 #include <CGAL/AABB_triangle_primitive.h>
 
@@ -77,6 +78,10 @@ clip_open_impl(      TriangleMesh& tm,
   Clipper_tree clipper_tree(clipper_triangles.begin(), clipper_triangles.end());
   // predicate functor
   Side_of_triangle_mesh<TriangleMesh, GeomTraits, Vpm, Clipper_tree> side_of(clipper_tree);
+  const bool clipper_outward_oriented =
+    CGAL::Polygon_mesh_processing::is_outward_oriented(clipper, np_c);
+  const CGAL::Bounded_side REGION_TO_REMOVE = clipper_outward_oriented
+                                            ? ON_UNBOUNDED_SIDE:ON_BOUNDED_SIDE;
 
 // Second corefine the meshes
   typedef CGAL::dynamic_edge_property_t<bool> Ecm_tag;
@@ -131,7 +136,7 @@ clip_open_impl(      TriangleMesh& tm,
           break;
         }
       if (no_marked_edge){
-        if ( side_of( get(vpm1, target(h, tm) ) ) == ON_UNBOUNDED_SIDE )
+        if ( side_of( get(vpm1, target(h, tm) ) ) == REGION_TO_REMOVE )
           ccs_to_remove.push_back(cc_id);
         cc_not_handled.reset(cc_id);
         break;
@@ -143,7 +148,7 @@ clip_open_impl(      TriangleMesh& tm,
 
   if (cc_not_handled.any())
   {
-    // A patch without no vertex incident to a non-constrained edges
+    // A patch with no vertex incident to a non-constrained edges
     //  is a coplanar patch: drop it or keep it!
     if (!boost::choose_param(boost::get_param(np_tm, internal_np::use_compact_clipper), true))
     {

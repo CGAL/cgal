@@ -20,7 +20,7 @@
 // Author(s)     : Jane Tournois
 
 /**
-* \ingroup PkgPolygonMeshProcessing
+* \ingroup PkgPolygonMeshProcessingRef
 * \file CGAL/polygon_mesh_processing.h
 * Convenience header file including the headers for all
 * the free functions of this package.

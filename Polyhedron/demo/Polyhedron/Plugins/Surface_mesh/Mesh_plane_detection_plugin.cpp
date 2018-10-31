@@ -13,7 +13,6 @@
 #include <QAction>
 #include <QDebug>
 #include <QObject>
-#include <QDockWidget>
 //#include <QtConcurrentRun>
 #include <map>
 #include <algorithm>

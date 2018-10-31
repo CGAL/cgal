@@ -269,6 +269,7 @@ private Q_SLOTS:
     if(!dock_widget->isVisible())
     {
       dock_widget->show();
+      dock_widget->raise();
     }
     perform();
   }

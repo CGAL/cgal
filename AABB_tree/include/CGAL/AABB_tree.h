@@ -44,7 +44,7 @@
 
 namespace CGAL {
 
-/// \addtogroup PkgAABB_tree
+/// \addtogroup PkgAABBTreeRef
 /// @{
 
 	/**
@@ -645,6 +645,18 @@ public:
                         }
 			else
 				return this->any_reference_point_and_id();
+		}
+		
+		//! Returns the datum (geometric object) represented `p`. 
+#ifndef DOXYGEN_RUNNING
+		typename internal::Primitive_helper<AABBTraits>::Datum_type 
+#else
+		typename AABBTraits::Primitive::Datum_reference 
+#endif
+		datum(Primitive& p)const
+		{
+		  return internal::Primitive_helper<AABBTraits>::
+		      get_datum(p, this->traits());
 		}
 
 	private:

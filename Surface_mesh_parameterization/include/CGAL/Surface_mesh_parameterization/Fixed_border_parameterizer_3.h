@@ -56,7 +56,7 @@ namespace Surface_mesh_parameterization {
 // Declaration
 // ------------------------------------------------------------------------------------
 
-/// \ingroup PkgSurfaceParameterizationMethods
+/// \ingroup PkgSurfaceMeshParameterizationMethods
 ///
 /// The class `Fixed_border_parameterizer_3`
 /// is the base class of fixed border parameterization methods (Tutte, Floater, ...).

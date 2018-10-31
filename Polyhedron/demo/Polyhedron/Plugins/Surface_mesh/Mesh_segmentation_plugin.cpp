@@ -180,7 +180,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::itemAboutToBeDestroyed(CGAL::Thre
 }
 
 void Polyhedron_demo_mesh_segmentation_plugin::on_actionSegmentation_triggered()
-{ dock_widget->show(); }
+{ dock_widget->show(); dock_widget->raise();}
 
 template<class FacegraphItem>
 void Polyhedron_demo_mesh_segmentation_plugin::apply_SDF_button_clicked(FacegraphItem* item)

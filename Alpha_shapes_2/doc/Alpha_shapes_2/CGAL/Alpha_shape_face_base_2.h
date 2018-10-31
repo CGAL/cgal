@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgAlphaShape2
+\ingroup PkgAlphaShapes2Ref
 
 The class `Alpha_shape_face_base_2` is the default model for the concept `AlphaShapeFace_2`. 
 

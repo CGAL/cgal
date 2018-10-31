@@ -1,6 +1,6 @@
 /*!
 \defgroup pmp_namedparameters Named Parameters for Polygon Mesh Processing
-\ingroup PkgPolygonMeshProcessing
+\ingroup PkgPolygonMeshProcessingRef
 
 In this package, all functions optional parameters are implemented as BGL optional
 named parameters (see \ref BGLNamedParameters for more information on how to use them).
@@ -19,7 +19,7 @@ the type is more specific:
      predicates evaluated. Everywhere in this package, a \cgal `Kernel` fulfills the requirements.</li>
 </ul>
 
-The following named parameters, offered by the package \ref PkgBGLSummary
+The following named parameters, offered by the package \ref PkgBGL
 (see \ref bgl_namedparameters), are used in this package:
 
 \cgalNPTableBegin

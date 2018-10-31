@@ -552,6 +552,7 @@ private:
     } else {
       layout = controlDockWidget->findChild<QLayout*>("vpSliderLayout");
       controlDockWidget->show();
+      controlDockWidget->raise();
     }
 
     return layout;

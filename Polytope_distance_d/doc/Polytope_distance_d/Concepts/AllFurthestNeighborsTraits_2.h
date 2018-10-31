@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgOptimalDistancesConcepts
+\ingroup PkgPolytopeDistanceDConcepts
 \cgalConcept
 
 The concept `AllFurthestNeighborsTraits_2` defines types and operations 

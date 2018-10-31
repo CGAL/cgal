@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgApolloniusGraph2
+\ingroup PkgApolloniusGraph2Ref
 
 The class `Apollonius_site_2` is a model for the concept 
 `ApolloniusSite_2`. It is parametrized by a template parameter 

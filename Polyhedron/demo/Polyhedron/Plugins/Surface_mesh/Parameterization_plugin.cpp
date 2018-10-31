@@ -948,8 +948,10 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   current_uv_item = projection;
   qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item))->add_border_edges(current_uv_item->concatenated_borders(),
                                                                                                    is_ogl_4_3);
-  if(dock_widget->isHidden())
+  if(dock_widget->isHidden()){
     dock_widget->setVisible(true);
+    dock_widget->raise();
+  }
   dock_widget->setWindowTitle(tr("UVMapping for %1").arg(new_item->name()));
   ui_widget.component_numberLabel->setText(QString("Component : %1/%2").arg(current_uv_item->current_component()+1).arg(current_uv_item->number_of_components()));
   ui_widget.graphicsView->fitInView(projection->boundingRect(), Qt::KeepAspectRatio);

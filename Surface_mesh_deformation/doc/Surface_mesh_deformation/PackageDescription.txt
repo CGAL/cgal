@@ -1,20 +1,20 @@
-/// \defgroup PkgSurfaceMeshDeformation Triangulated Surface Mesh Deformation Reference
+/// \defgroup PkgSurfaceMeshDeformationRef Triangulated Surface Mesh Deformation Reference
 /// \defgroup PkgSurfaceMeshDeformationConcepts Concepts
-/// \ingroup PkgSurfaceMeshDeformation
+/// \ingroup PkgSurfaceMeshDeformationRef
 
 /*!
-\addtogroup PkgSurfaceMeshDeformation
-\cgalPkgDescriptionBegin{Triangulated Surface Mesh Deformation,PkgSurfaceMeshDeformationSummary}
+\addtogroup PkgSurfaceMeshDeformationRef
+\cgalPkgDescriptionBegin{Triangulated Surface Mesh Deformation,PkgSurfaceMeshDeformation}
 \cgalPkgPicture{deform-ico.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Sébastien Loriot, Olga Sorkine-Hornung, Yin Xu and Ilker %O. Yaz}
 \cgalPkgDesc{This package offers surface mesh deformation algorithms which provide new positions to the vertices of a surface mesh
 under positional constraints of some of its vertices, without requiring any additional structure other than the surface mesh itself.}
-\cgalPkgManuals{Chapter_SurfaceMeshDeformation,PkgSurfaceMeshDeformation}
+\cgalPkgManuals{Chapter_SurfaceMeshDeformation,PkgSurfaceMeshDeformationRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.5}
-\cgalPkgDependsOn{\ref PkgSolverSummary and \ref thirdpartyEigen}
+\cgalPkgDependsOn{\ref PkgSolverInterface and \ref thirdpartyEigen}
 \cgalPkgBib{cgal:lsxy-tsmd}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}

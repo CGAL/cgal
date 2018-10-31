@@ -257,6 +257,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
   add_item(scene_shortest_path_item Plugins/Surface_mesh/Scene_polyhedron_shortest_path_item.cpp)
   target_link_libraries(scene_shortest_path_item PUBLIC scene_item_decorator scene_surface_mesh_item scene_polylines_item)
 
+  add_item(scene_movable_sm_item Plugins/AABB_tree/Scene_movable_sm_item.cpp)
+  
   if(EIGEN3_FOUND )
     add_item(scene_textured_item Scene_textured_surface_mesh_item.cpp texture.cpp)
     qt5_wrap_ui( editionUI_FILES Plugins/Surface_mesh_deformation/Deform_mesh.ui )

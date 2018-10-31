@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgSurfaceSubdivisionMethods3Concepts
+\ingroup PkgSurfaceSubdivisionMethod3Concepts
 \cgalConcept
 
 This concept defines types used by the mask concepts.

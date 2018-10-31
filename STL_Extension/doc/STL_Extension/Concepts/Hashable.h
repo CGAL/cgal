@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgStlExtensionConcepts
+\ingroup PkgSTLExtensionConcepts
 \cgalConcept
 
 A type `Key` is a model of the concept `Hashable` if the

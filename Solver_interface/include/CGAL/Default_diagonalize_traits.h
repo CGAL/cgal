@@ -30,7 +30,7 @@
 
 namespace CGAL {
 
-/// \ingroup PkgSolver
+/// \ingroup PkgSolverInterfaceRef
 ///
 /// The class `Default_diagonalize_traits` is a wrapper designed to automatically
 /// use `Eigen_diagonalize_traits` if Eigen is available and otherwise use

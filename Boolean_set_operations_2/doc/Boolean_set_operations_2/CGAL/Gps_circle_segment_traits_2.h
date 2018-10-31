@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBooleanSetOperations2
+\ingroup PkgBooleanSetOperations2Ref
 
 The traits class `Gps_circle_segment_traits_2` models the `GeneralPolygonSetTraits_2` 
 concept. It enables Boolean set-operations on general polygons bounded by 
