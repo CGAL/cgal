@@ -21,17 +21,17 @@ int main(int argc, char* argv[])
   const char* filename = (argc > 1) ? argv[1] : "./data/elephant.off";
   std::ifstream in(filename);
   in >> sm;
-  //the heat intensity will hold the distance values from the source set
-  Vertex_distance_map heat_intensity = sm.add_property_map<vertex_descriptor, double>("v:heat_intensity", 0).first;
+  //property map for the distance values to the source set
+  Vertex_distance_map vertex_distance = sm.add_property_map<vertex_descriptor, double>("v:distance", 0).first;
 
   vertex_descriptor source = *(vertices(sm).first);
   
-  CGAL::Heat_method_3::estimate_geodesic_distances(sm, heat_intensity,source) ;
+  CGAL::Heat_method_3::estimate_geodesic_distances(sm, vertex_distance,source) ;
 
   std::cout << "Source vertex " << source << " at: " << sm.point(source) << std::endl;
   BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
     std::cout << vd << " ("<< sm.point(vd) << ")"
-              <<  " is at distance " << get(heat_intensity, vd) << std::endl;
+              <<  " is at distance " << get(vertex_distance, vd) << std::endl;
   }
 
   return 0;

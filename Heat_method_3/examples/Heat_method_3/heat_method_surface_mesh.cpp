@@ -24,15 +24,15 @@ int main(int argc, char* argv[])
   const char* filename = (argc > 1) ? argv[1] : "./data/elephant.off";
   std::ifstream in(filename);
   in >> sm;
-  //the heat intensity will hold the distance values from the source set
-  Vertex_distance_map heat_intensity = sm.add_property_map<vertex_descriptor, double>("v:heat_intensity", 0).first;
+  //property map for the distance values to the source set
+  Vertex_distance_map vertex_distance = sm.add_property_map<vertex_descriptor, double>("v:distance", 0).first;
 
   Heat_method hm(sm);
 
   //add the first vertex as the source set
   vertex_descriptor source = *(vertices(sm).first);
   hm.add_source(source);
-  hm.estimate_geodesic_distances(heat_intensity);
+  hm.estimate_geodesic_distances(vertex_distance);
 
   Point_3 sp = sm.point(source);
   
@@ -40,17 +40,17 @@ int main(int argc, char* argv[])
   double sdistance = 0;
   
   BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
-    std::cout << vd << "  is at distance " << get(heat_intensity, vd) << " from " << source << std::endl;
+    std::cout << vd << "  is at distance " << get(vertex_distance, vd) << " from " << source << std::endl;
     if(squared_distance(sp,sm.point(vd)) > sdistance){
       far = vd;
       sdistance = squared_distance(sp,sm.point(vd));
     }
   }
   hm.add_source(far);
-  hm.estimate_geodesic_distances(heat_intensity);
+  hm.estimate_geodesic_distances(vertex_distance);
 
   BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
-    std::cout << vd << "  is at distance " << get(heat_intensity, vd) << " " << std::endl;
+    std::cout << vd << "  is at distance " << get(vertex_distance, vd) << " " << std::endl;
   }
 
   return 0;
