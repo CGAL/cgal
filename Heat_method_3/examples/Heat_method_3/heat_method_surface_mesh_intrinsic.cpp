@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
 {
   //read in mesh
   Surface_mesh sm;
-  const char* filename = (argc > 1) ? argv[1] : "./data/bunny.off";
+  const char* filename = (argc > 1) ? argv[1] : "./data/elephant.off";
   std::ifstream in(filename);
   in >> sm;
   //the vertex distance map will hold the distance values from the source set
