@@ -12,6 +12,7 @@
 #include <QString>
 #include <QColor>
 #include <QList>
+#include <QVector>
 #include <QMap>
 #include <QItemDelegate>
 #include <QPixmap>
@@ -286,7 +287,7 @@ private:
   QOpenGLVertexArrayObject* vao;
   mutable QOpenGLBuffer vbo[2];
   bool visibility_recentering_enabled;
-
+  bool sort_lists(QVector<QList<int> >&sorted_lists, bool up);
 }; // end class Scene
 
 class QAbstractProxyModel;

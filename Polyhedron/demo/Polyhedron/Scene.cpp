@@ -1074,88 +1074,162 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
     return true;
 }
 
-void Scene::moveRowUp()
-{
-  QList<int> to_select;
-  QList<int> sorted_list = selectionIndices();
-  std::sort(sorted_list.begin(), sorted_list.end(),
+
+bool Scene::sort_lists(QVector<QList<int> >&sorted_lists, bool up)
+{  
+  QVector<int> group_found;
+  Q_FOREACH(int i, selectionIndices())
+  {
+    Scene_item* item = this->item(i);
+    if(item->has_group == 0)
+    {
+      sorted_lists.first().push_back(i);
+    }
+    else
+    {
+      int group_id = item_id(item->parentGroup());
+      if(group_found.contains(group_id))
+        sorted_lists[group_id].push_back(i);
+      else
+      {
+        group_found.push_back(group_id);
+        if(sorted_lists.size() < group_id+1)
+          sorted_lists.resize(group_id+1);
+        sorted_lists[group_id].push_back(i);
+      }
+    }
+  }
+  std::sort(sorted_lists.first().begin(), sorted_lists.first().end(),
             [this](int a, int b) {
     return children.indexOf(a) < children.indexOf(b);
 });
-  if( children.indexOf(sorted_list.first()) == 0)
-    return;
-  for(int i=0; i<sorted_list.size(); ++i)
+  if(!sorted_lists.first().isEmpty())
   {
-    Item_id selected_id = sorted_list[i];
+    if(up &&  children.indexOf(sorted_lists.first().first()) == 0)
+      return false;
+    else if(!up &&  children.indexOf(sorted_lists.first().last()) == children.size() -1)
+      return false;
+  }
+  for(int i=1; i<sorted_lists.size(); ++i)
+  {
+    QList<int>& list = sorted_lists[i];
+    if(list.isEmpty())
+      continue;
+    Scene_group_item* group = qobject_cast<Scene_group_item*>(this->item(i));
+    if(!group)
+      continue;
+    std::sort(list.begin(), list.end(),
+              [this, group](int a, int b) {
+      return group->getChildren().indexOf(a) < group->getChildren().indexOf(b);
+  });
+    if(up && group->getChildren().indexOf(list.first()) == 0)
+      return false;
+    else if(!up && group->getChildren().indexOf(list.last()) == group->getChildren().size()-1)
+      return false;
+  }
+  return true;
+}
+void Scene::moveRowUp()
+{
+  QVector<QList<int> >sorted_lists(1);
+  QList<int> to_select;
+  //sort lists according to the indices of each item in its container (scene or group)
+  //if moving one up would put it out of range, then we stop and do nothing.
+  if(!sort_lists(sorted_lists, true))
+    return;
+  
+  for(int i=0; i<sorted_lists.first().size(); ++i)
+  {
+    Item_id selected_id = sorted_lists.first()[i];
     Scene_item* selected_item = item(selected_id);
     if(!selected_item)
       return;
     if(index_map.key(selected_id).row() > 0)
     {
-      if(item(selected_id)->has_group >0)
+      //if not in group
+      QModelIndex baseId = index_map.key(selected_id);
+      int newId = children.indexOf(
+            index_map.value(index(baseId.row()-1, baseId.column(),baseId.parent()))) ;
+      children.move(children.indexOf(selected_id), newId);
+      redraw_model();
+      to_select.append(m_entries.indexOf(selected_item));
+    }
+  }
+  for(int i=1; i<sorted_lists.size(); ++i)
+  {
+    for(int j = 0; j< sorted_lists[i].size(); ++j)
+    {
+      Item_id selected_id = sorted_lists[i][j];
+      Scene_item* selected_item = item(selected_id);
+      if(!selected_item)
+        return;
+      if(index_map.key(selected_id).row() > 0)
       {
         Scene_group_item* group = selected_item->parentGroup();
         if(group)
         {
           int id = group->getChildren().indexOf(item_id(selected_item));
           group->moveUp(id);
+          redraw_model();
+          to_select.append(m_entries.indexOf(selected_item));
         }
       }
-      else
-      {
-        //if not in group
-        QModelIndex baseId = index_map.key(selected_id);
-        int newId = children.indexOf(
-              index_map.value(index(baseId.row()-1, baseId.column(),baseId.parent()))) ;
-        children.move(children.indexOf(selected_id), newId);
-      }
-      redraw_model();
-      to_select.append(m_entries.indexOf(selected_item));
     }
   }
-  selectionChanged(to_select);
+  if(!to_select.isEmpty())
+    selectionChanged(to_select);
 }
 void Scene::moveRowDown()
 {
+  QVector<QList<int> >sorted_lists(1);
   QList<int> to_select;
-  QList<int> sorted_list = selectionIndices();
-  std::sort(sorted_list.begin(), sorted_list.end(),
-            [this](int a, int b) {
-    return children.indexOf(a) < children.indexOf(b);
-});
-  if( children.indexOf(sorted_list.last()) == children.size() -1)
+  //sort lists according to the indices of each item in its container (scene or group)
+  //if moving one up would put it out of range, then we stop and do nothing.
+  if(!sort_lists(sorted_lists, false))
     return;
-  for(int i=sorted_list.size()-1; i>=0; --i)
+  for(int i=sorted_lists.first().size()-1; i>=0; --i)
   {
-    Item_id selected_id = sorted_list[i];
+    Item_id selected_id = sorted_lists.first()[i];
     Scene_item* selected_item = item(selected_id);
     if(!selected_item)
-      
       return;
     if(index_map.key(selected_id).row() < rowCount(index_map.key(selected_id).parent())-1)
     {
-      if(item(selected_id)->has_group >0)
-      {
-        Scene_group_item* group = selected_item->parentGroup();
-        if(group)
-        {
-          int id = group->getChildren().indexOf(item_id(selected_item));
-          group->moveDown(id);
-        }
-      }
-      else
-      {
         //if not in group
         QModelIndex baseId = index_map.key(selected_id);
         int newId = children.indexOf(
               index_map.value(index(baseId.row()+1, baseId.column(),baseId.parent()))) ;
         children.move(children.indexOf(selected_id), newId);
-      }
+      
       redraw_model();
       to_select.prepend(m_entries.indexOf(selected_item));
     }
   }
-  
+  for(int i=1; i<sorted_lists.size(); ++i){
+    if(sorted_lists[i].isEmpty())
+      continue;
+    for(int j = sorted_lists[i].size()-1; j >=0; --j)
+    {
+      Item_id selected_id = sorted_lists[i][j];
+      Scene_item* selected_item = item(selected_id);
+      if(!selected_item)
+        return;
+      if(index_map.key(selected_id).row() < rowCount(index_map.key(selected_id).parent())-1)
+      {
+        if(item(selected_id)->has_group >0)
+        {
+          Scene_group_item* group = selected_item->parentGroup();
+          if(group)
+          {
+            int id = group->getChildren().indexOf(item_id(selected_item));
+            group->moveDown(id);
+          }
+        }
+        redraw_model();
+        to_select.prepend(m_entries.indexOf(selected_item));
+      }
+    }
+  }
   selectionChanged(to_select);
 }
 Scene::Item_id Scene::mainSelectionIndex() const {
