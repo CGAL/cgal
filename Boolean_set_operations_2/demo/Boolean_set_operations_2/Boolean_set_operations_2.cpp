@@ -885,13 +885,14 @@ void MainWindow::on_actionDeleteAll_triggered()
 
   if (lDone) modelChanged();
 }
-void MainWindow::on_drawBlue_toggled(bool a_check) { m_color_active = 0; }
-void MainWindow::on_drawRed_toggled(bool a_check) { m_color_active = 1; }
-void MainWindow::on_drawBlack_toggled(bool a_check) { m_color_active = 2; }
-void MainWindow::on_drawBrown_toggled(bool a_check) { m_color_active = 3; }
-void MainWindow::on_drawYellow_toggled(bool a_check) { m_color_active = 4; }
-void MainWindow::on_drawMagenta_toggled(bool a_check) { m_color_active = 5; }
-void MainWindow::on_drawAqua_toggled(bool a_check) { m_color_active = 6; }
+
+void MainWindow::on_drawBlue_toggled(bool /* a_check */) { m_color_active = 0; }
+void MainWindow::on_drawRed_toggled(bool /* a_check */) { m_color_active = 1; }
+void MainWindow::on_drawBlack_toggled(bool /* a_check */) { m_color_active = 2; }
+void MainWindow::on_drawBrown_toggled(bool /* a_check */) { m_color_active = 3; }
+void MainWindow::on_drawYellow_toggled(bool /* a_check */) { m_color_active = 4; }
+void MainWindow::on_drawMagenta_toggled(bool /* a_check */) { m_color_active = 5; }
+void MainWindow::on_drawAqua_toggled(bool /* a_check */) { m_color_active = 6; }
 
 //extra utilities
 void MainWindow::on_actionRecenter_triggered() { zoomToFit(); }
@@ -1020,15 +1021,15 @@ bool MainWindow::ensure_linear_mode()
 }
 
 //check out
-bool read_linear(QString aFileName, Linear_polygon_set& rSet,
-                 Linear_region_source_container& rSources)
+bool read_linear(QString /* aFileName */, Linear_polygon_set& /* rSet */,
+                 Linear_region_source_container& /* rSources */)
 {
   bool rOK = false;
   return rOK;
 }
 
-bool read_circular(QString aFileName, Circular_polygon_set& rSet,
-                   Circular_region_source_container& rSources)
+bool read_circular(QString /* aFileName */, Circular_polygon_set& /* rSet */,
+                   Circular_region_source_container& /* rSources */)
 {
   bool rOK = false;
   return rOK;
@@ -1301,7 +1302,7 @@ int main(int argc, char* argv[])
     w.show();
     return app.exec();
   }
-  catch (const std::exception e)
+  catch (const std::exception& e)
   {
     std::string s = e.what();
     show_error("Exception throne during run of the program:\n" + s);
