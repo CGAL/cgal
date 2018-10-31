@@ -3,7 +3,7 @@
 
 #include <CGAL/Variational_shape_approximation.h>
 #include <CGAL/Surface_mesh_approximation/L2_metric_plane_proxy.h>
-#include <CGAL/property_map.h>
+#include <CGAL/Dynamic_property_map.h>
 
 #include <QColor>
 
@@ -18,8 +18,10 @@ class VSA_wrapper {
   typedef typename EPICK::Vector_3 Vector_3;
 
   typedef typename boost::property_map<SMesh, boost::vertex_point_t>::type Vertex_point_map;
-  typedef boost::associative_property_map<std::map<face_descriptor, FT> > Face_area_map;
-  typedef boost::associative_property_map<std::map<face_descriptor, Point_3> > Face_center_map;
+  typedef CGAL::dynamic_face_property_t<Point_3> Face_center_tag;
+  typedef CGAL::dynamic_face_property_t<FT> Face_area_tag;
+  typedef typename boost::property_map<SMesh, Face_center_tag>::type Face_center_map;
+  typedef typename boost::property_map<SMesh, Face_area_tag>::type Face_area_map;
 
 #ifdef CGAL_LINKED_WITH_TBB
   typedef CGAL::Variational_shape_approximation<SMesh, Vertex_point_map,
@@ -43,13 +45,14 @@ class VSA_wrapper {
   struct Compact_metric_point_proxy {
     typedef Point_3 Proxy;
 
-    Compact_metric_point_proxy(const Face_center_map &_center_pmap,
-      const Face_area_map &_area_pmap)
-      : center_pmap(_center_pmap), area_pmap(_area_pmap) {}
+    Compact_metric_point_proxy(
+      const Face_center_map &center_pmap_,
+      const Face_area_map &area_pmap_)
+      : center_pmap(center_pmap_), area_pmap(area_pmap_) {}
 
     FT compute_error(const face_descriptor f, const SMesh &, const Proxy &px) const {
       return FT(std::sqrt(CGAL::to_double(
-        CGAL::squared_distance(center_pmap[f], px))));
+        CGAL::squared_distance(get(center_pmap, f), px))));
     }
 
     template <typename FaceRange>
@@ -60,8 +63,8 @@ class VSA_wrapper {
       Vector_3 center = CGAL::NULL_VECTOR;
       FT area(0.0);
       BOOST_FOREACH(const face_descriptor f, faces) {
-        center = center + (center_pmap[f] - CGAL::ORIGIN) * area_pmap[f];
-        area += area_pmap[f];
+        center = center + (get(center_pmap, f) - CGAL::ORIGIN) * get(area_pmap, f);
+        area += get(area_pmap, f);
       }
       center = center / area;
       return CGAL::ORIGIN + center;
@@ -193,9 +196,7 @@ private:
   Metric m_metric; // current metric
 
   // face property maps
-  std::map<face_descriptor, Point_3> m_face_centers;
   Face_center_map m_center_pmap;
-  std::map<face_descriptor, FT> m_face_areas;
   Face_area_map m_area_pmap;
 
   // patch color
