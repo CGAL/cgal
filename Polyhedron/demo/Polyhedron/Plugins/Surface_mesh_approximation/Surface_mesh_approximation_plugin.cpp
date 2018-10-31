@@ -10,6 +10,7 @@
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polygon_soup_item.h"
 #include "Scene_polylines_item.h"
+#include "Messages_interface.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
@@ -17,6 +18,8 @@
 
 #include <map>
 #include <vector>
+#include <cstdlib>
+#include <ctime>
 
 #include "ui_Surface_mesh_approximation_dockwidget.h"
 #include "VSA_wrapper.h"
@@ -37,7 +40,9 @@ class Polyhedron_demo_surface_mesh_approximation_plugin :
   typedef std::pair<Scene_surface_mesh_item *, VSA_wrapper *> SM_wrapper_pair;
 
 public:
-  Polyhedron_demo_surface_mesh_approximation_plugin() {}
+  Polyhedron_demo_surface_mesh_approximation_plugin() {
+    std::srand(time(0));
+  }
 
   void init(QMainWindow *main_window,
     Scene_interface *scene_interface,
@@ -111,7 +116,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
   Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(
     scene->item(scene->mainSelectionIndex()));
   if (!sm_item) {
-    std::cerr << "No surface mesh item selected." << std::endl;
+    mi->information(QString("No surface mesh item selected."));
     return;
   }
 
@@ -140,8 +145,8 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
   Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *sm_item->face_graph());
   approx.proxy_map(pidmap);
 
-  std::cout << "#proxies " << approx.number_of_proxies() << std::endl;
-  std::cout << "Done. (" << time.elapsed() << " ms)" << std::endl;
+  mi->information(QString("Done, #proxies = %1. (%2 ms)").arg(
+    approx.number_of_proxies()).arg(time.elapsed()));
 
   sm_item->color_vector() = approx.proxy_colors();
   sm_item->setItemIsMulticolor(true);
@@ -155,12 +160,12 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonFit_clicked() {
   Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(
     scene->item(scene->mainSelectionIndex()));
   if (!sm_item) {
-    std::cerr << "No surface mesh item selected." << std::endl;
+    mi->information(QString("No surface mesh item selected."));
     return;
   }
   typename SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
   if (search == m_sm_wrapper_map.end() || !search->second->initialized()) {
-    std::cerr << "Please initialize seeds first." << std::endl;
+    mi->information(QString("Please initialize seeds first."));
     return;
   }
   SMesh *pmesh = search->first->face_graph();
@@ -171,6 +176,8 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonFit_clicked() {
   approx.run(1);
   Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *pmesh);
   approx.proxy_map(pidmap);
+
+  mi->information(QString("Fit one iteration, #proxies = %1.").arg(approx.number_of_proxies()));
 
   sm_item->color_vector() = approx.proxy_colors();
   sm_item->setItemIsMulticolor(true);
@@ -184,12 +191,12 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonAdd_clicked() {
   Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(
     scene->item(scene->mainSelectionIndex()));
   if (!sm_item) {
-    std::cerr << "No surface mesh item selected." << std::endl;
+    mi->information(QString("No surface mesh item selected."));
     return;
   }
   typename SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
   if (search == m_sm_wrapper_map.end() || !search->second->initialized()) {
-    std::cerr << "Please initialize seeds first." << std::endl;
+    mi->information(QString("Please initialize seeds first."));
     return;
   }
   SMesh *pmesh = search->first->face_graph();
@@ -199,8 +206,10 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonAdd_clicked() {
 
   if (approx.add_one_proxy() == 0) {
     QApplication::restoreOverrideCursor();
+    mi->information(QString("No proxy added, #proxies = %1.").arg(approx.number_of_proxies()));
     return;
   }
+  mi->information(QString("One proxy added, #proxies = %1.").arg(approx.number_of_proxies()));
 
   Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *pmesh);
   approx.proxy_map(pidmap);
@@ -217,12 +226,12 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonTeleport_clicke
   Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(
     scene->item(scene->mainSelectionIndex()));
   if (!sm_item) {
-    std::cerr << "No surface mesh item selected." << std::endl;
+    mi->information(QString("No surface mesh item selected."));
     return;
   }
   typename SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
   if (search == m_sm_wrapper_map.end() || !search->second->initialized()) {
-    std::cerr << "Please initialize seeds first." << std::endl;
+    mi->information(QString("Please initialize seeds first."));
     return;
   }
   SMesh *pmesh = search->first->face_graph();
@@ -231,8 +240,12 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonTeleport_clicke
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *pmesh);
-  approx.teleport_one_proxy();
+  if (approx.teleport_one_proxy() == 0) {
+    mi->information(QString("No proxy teleported, #proxies = %1.").arg(approx.number_of_proxies()));
+    return;
+  }
   approx.proxy_map(pidmap);
+  mi->information(QString("One proxy teleported, #proxies = %1.").arg(approx.number_of_proxies()));
 
   sm_item->color_vector() = approx.proxy_colors();
   sm_item->setItemIsMulticolor(true);
@@ -246,12 +259,12 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSplit_clicked()
   Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(
     scene->item(scene->mainSelectionIndex()));
   if (!sm_item) {
-    std::cerr << "No surface mesh item selected." << std::endl;
+    mi->information(QString("No surface mesh item selected."));
     return;
   }
   typename SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
   if (search == m_sm_wrapper_map.end() || !search->second->initialized()) {
-    std::cerr << "Please initialize seeds first." << std::endl;
+    mi->information(QString("Please initialize seeds first."));
     return;
   }
   SMesh *pmesh = search->first->face_graph();
@@ -262,10 +275,11 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSplit_clicked()
   if (!approx.split(ui_widget.split_proxy_idx->value(),
     ui_widget.split_nb_sections->value(),
     ui_widget.split_nb_relaxations->value())) {
-    std::cerr << "split failed" << std::endl;
+    mi->information(QString("No proxy splitted, #proxies = %1.").arg(approx.number_of_proxies()));
     QApplication::restoreOverrideCursor();
     return;
   }
+  mi->information(QString("One proxy splitted, #proxies = %1.").arg(approx.number_of_proxies()));
 
   Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *pmesh);
   approx.proxy_map(pidmap);
@@ -282,12 +296,12 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
   Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(
     scene->item(scene->mainSelectionIndex()));
   if (!sm_item) {
-    std::cerr << "No surface mesh item selected." << std::endl;
+    mi->information(QString("No surface mesh item selected."));
     return;
   }
   typename SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
   if (search == m_sm_wrapper_map.end() || !search->second->initialized()) {
-    std::cerr << "Please initialize seeds first." << std::endl;
+    mi->information(QString("Please initialize seeds first."));
     return;
   }
   SMesh *pmesh = search->first->face_graph();
@@ -426,6 +440,8 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
   cvx_hull_item->setRenderingMode(FlatPlusEdges);
   scene->addItem(cvx_hull_item);
 
+  mi->information(QString("Meshing done."));
+
   QApplication::restoreOverrideCursor();
 }
 
@@ -433,7 +449,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_comboMetric_currentIn
   Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(
     scene->item(scene->mainSelectionIndex()));
   if (!sm_item) {
-    std::cerr << "No surface mesh item selected." << std::endl;
+    mi->information(QString("No surface mesh item selected."));
     return;
   }
   typename SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
