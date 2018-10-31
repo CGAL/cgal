@@ -740,27 +740,26 @@ struct Base_helper<TriangleMesh, Traits, Intrinsic_Delaunay, LA, VertexPointMap>
  * time after changes of the set of sources.
  *
  * \tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph` and `HalfedgeListGraph`
- * \tparam Traits a model of HeatMethodTraits_3
- * \tparam Mode indicates if an intrinsic Delaunay triangulation should be internally constructed (`Intrinsic_Delaunay`)
- *                              or if the input mesh should be used as is (`Direct`).
+ * \tparam Mode must be `Intrinsic_Delaunay` to indicatethat an intrinsic Delaunay triangulation is internally constructed ()
+ *                              or `Direct`to indicate that the input mesh should be used as is.
  *                              If `Intrinsic_Delaunay` the type `TriangleMesh` must have an internal property for `vertex_point`
  *                              and its value type must be the same as the value type of `VertexPointMap`.
- * \tparam LA a model of `SparseLinearAlgebraWithFactorTraits_d`.
-
  * \tparam VertexPointMap a model of `ReadablePropertyMap` with
  *        `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
  *        `Traits::Point_3` as value type.
  *        The default is `typename boost::property_map<TriangleMesh, vertex_point_t>::%type`.
+ * \tparam LA a model of `SparseLinearAlgebraWithFactorTraits_d`.
+ * \tparam Traits a model of `HeatMethodTraits_3`
  *
  */
 template <typename TriangleMesh,
           typename Mode = Direct,
+          typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::const_type,
 #ifdef CGAL_EIGEN3_ENABLED
           typename LA = Eigen_solver_traits<Eigen::SimplicialLDLT<typename Eigen_sparse_matrix<double>::EigenType > >,
 #else
           typename LA = Default,
 #endif
-          typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::const_type,
           typename Traits = typename Kernel_traits< typename boost::property_traits<VertexPointMap>::value_type>::Kernel >
 class Surface_mesh_geodesic_distances_3
 #ifndef DOXYGEN_RUNNING
