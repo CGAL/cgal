@@ -5,6 +5,10 @@
 #include <CGAL/Surface_mesh_approximation/L2_metric_plane_proxy.h>
 #include <CGAL/property_map.h>
 
+#include <QColor>
+
+#include "Color_cheat_sheet.h"
+
 namespace VSA = CGAL::Surface_mesh_approximation;
 
 template <typename TriangleMesh, typename GeomTraits>
@@ -118,8 +122,8 @@ public:
       delete m_pcompact_metric;
   }
 
-  std::vector<std::size_t> &proxy_colors() { return m_proxy_colors; }
-  const std::vector<std::size_t> &proxy_colors() const  { return m_proxy_colors; }
+  std::vector<QColor> &proxy_colors() { return m_proxy_colors; }
+  const std::vector<QColor> &proxy_colors() const  { return m_proxy_colors; }
 
   void set_mesh(const TriangleMesh &mesh) {
     Vertex_point_map vpm = get(boost::vertex_point, const_cast<TriangleMesh &>(mesh));
@@ -200,8 +204,11 @@ public:
 
     // generate proxy colors
     m_proxy_colors.clear();
-    for (std::size_t i = 0; i < number_of_proxies(); ++i)
-      m_proxy_colors.push_back(rand_0_255());
+    for (std::size_t i = 0; i < number_of_proxies(); ++i) {
+      const std::size_t c = rand_0_255();
+      m_proxy_colors.push_back(QColor::fromRgb(
+        Color_cheat_sheet::r(c), Color_cheat_sheet::g(c), Color_cheat_sheet::b(c)));
+    }
 
     return nb_initialized;
   }
@@ -234,8 +241,11 @@ public:
         nb_added = m_iso_approx->add_to_furthest_proxies(1, 0);
         break;
     }
-    if (nb_added == 1)
-      m_proxy_colors.push_back(rand_0_255());
+    if (nb_added == 1) {
+      const std::size_t c = rand_0_255();
+      m_proxy_colors.push_back(QColor::fromRgb(
+        Color_cheat_sheet::r(c), Color_cheat_sheet::g(c), Color_cheat_sheet::b(c)));
+    }
 
     return nb_added;
   }
@@ -266,8 +276,11 @@ public:
         break;
     }
     if (splitted) {
-      for (std::size_t i = m_proxy_colors.size(); i < number_of_proxies(); ++i)
-        m_proxy_colors.push_back(rand_0_255());
+      for (std::size_t i = m_proxy_colors.size(); i < number_of_proxies(); ++i) {
+        const std::size_t c = rand_0_255();
+        m_proxy_colors.push_back(QColor::fromRgb(
+          Color_cheat_sheet::r(c), Color_cheat_sheet::g(c), Color_cheat_sheet::b(c)));
+      }
     }
 
     return splitted;
@@ -398,7 +411,7 @@ private:
   Face_area_map m_area_pmap;
 
   // patch color
-  std::vector<std::size_t> m_proxy_colors;
+  std::vector<QColor> m_proxy_colors;
 
   L21_metric *m_pl21_metric;
   L21_approx *m_l21_approx;

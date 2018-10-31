@@ -16,7 +16,6 @@
 
 #include "ui_Surface_mesh_approximation_dockwidget.h"
 #include "VSA_approximation_wrapper.h"
-#include "Color_cheat_sheet.h"
 
 using namespace CGAL::Three;
 
@@ -153,12 +152,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
   std::cout << "#proxies " << m_approx.number_of_proxies() << std::endl;
   std::cout << "Done. (" << time.elapsed() << " ms)" << std::endl;
 
-  std::vector<QColor> &color_vector = sm_item->color_vector();
-  color_vector.clear();
-  BOOST_FOREACH(const std::size_t c, m_approx.proxy_colors())
-    color_vector.push_back(QColor::fromRgb(
-      Color_cheat_sheet::r(c), Color_cheat_sheet::g(c), Color_cheat_sheet::b(c)));
-
+  sm_item->color_vector() = m_approx.proxy_colors();
   sm_item->setItemIsMulticolor(true);
   sm_item->invalidateOpenGLBuffers();
   scene->itemChanged(scene->item_id(sm_item));
@@ -180,6 +174,11 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonFit_clicked() {
   m_proxies.clear();
   m_approx.get_l21_proxies(std::back_inserter(m_proxies));
 #endif
+
+  sm_item->color_vector() = m_approx.proxy_colors();
+  sm_item->setItemIsMulticolor(true);
+  sm_item->invalidateOpenGLBuffers();
+  scene->itemChanged(scene->item_id(sm_item));
 
   QApplication::restoreOverrideCursor();
 }
@@ -315,10 +314,8 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
     }
   }
   std::vector<CGAL::Color> fcolors;
-  BOOST_FOREACH(const std::size_t c, m_approx.proxy_colors()) {
-    fcolors.push_back(CGAL::Color(
-      Color_cheat_sheet::r(c), Color_cheat_sheet::g(c), Color_cheat_sheet::b(c)));
-  }
+  BOOST_FOREACH(const QColor &c, m_approx.proxy_colors())
+    fcolors.push_back(CGAL::Color(c.red(), c.green(), c.blue()));
   Scene_polygon_soup_item *cvx_hull_item = new Scene_polygon_soup_item();
   cvx_hull_item->load(cvx_hull_points, cvx_hulls, fcolors, std::vector<CGAL::Color>());
   cvx_hull_item->setName(tr("Approximated patch planes of %1").arg(
@@ -346,6 +343,11 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonAdd_clicked() {
   m_approx.get_l21_proxies(std::back_inserter(m_proxies));
 #endif
 
+  sm_item->color_vector() = m_approx.proxy_colors();
+  sm_item->setItemIsMulticolor(true);
+  sm_item->invalidateOpenGLBuffers();
+  scene->itemChanged(scene->item_id(sm_item));
+
   QApplication::restoreOverrideCursor();
 }
 
@@ -362,6 +364,11 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonTeleport_clicke
   m_proxies.clear();
   m_approx.get_l21_proxies(std::back_inserter(m_proxies));
 #endif
+
+  sm_item->color_vector() = m_approx.proxy_colors();
+  sm_item->setItemIsMulticolor(true);
+  sm_item->invalidateOpenGLBuffers();
+  scene->itemChanged(scene->item_id(sm_item));
 
   QApplication::restoreOverrideCursor();
 }
@@ -384,6 +391,11 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSplit_clicked()
   m_approx.get_l21_proxies(std::back_inserter(m_proxies));
 #endif
 
+  sm_item->color_vector() = m_approx.proxy_colors();
+  sm_item->setItemIsMulticolor(true);
+  sm_item->invalidateOpenGLBuffers();
+  scene->itemChanged(scene->item_id(sm_item));
+
   QApplication::restoreOverrideCursor();
 }
 
@@ -398,6 +410,11 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_comboMetric_currentIn
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
   m_proxies.clear();
 #endif
+
+  sm_item->color_vector() = m_approx.proxy_colors();
+  sm_item->setItemIsMulticolor(false);
+  sm_item->invalidateOpenGLBuffers();
+  scene->itemChanged(scene->item_id(sm_item));
 
   switch (m) {
     case 0: return m_approx.set_metric(Approximation_wrapper::L21);
