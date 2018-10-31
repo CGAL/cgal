@@ -37,47 +37,6 @@ void VSA_wrapper::set_metric(const Metric &m) {
   m_initialized = false;
 }
 
-std::size_t VSA_wrapper::initialize_seeds(const VSA::Seeding_method method,
-  const boost::optional<std::size_t> max_nb_of_proxies,
-  const boost::optional<FT> min_error_drop,
-  const std::size_t nb_relaxations) {
-  std::size_t nb_initialized = 0;
-  switch (m_metric) {
-    case L21:
-      nb_initialized = m_l21_approx->initialize_seeds(
-        CGAL::parameters::seeding_method(method)
-          .max_number_of_proxies(max_nb_of_proxies)
-          .min_error_drop(min_error_drop)
-          .number_of_relaxations(nb_relaxations));
-      break;
-    case L2:
-      nb_initialized = m_l2_approx->initialize_seeds(
-        CGAL::parameters::seeding_method(method)
-          .max_number_of_proxies(max_nb_of_proxies)
-          .min_error_drop(min_error_drop)
-          .number_of_relaxations(nb_relaxations));
-      break;
-    case Compact:
-      nb_initialized = m_compact_approx->initialize_seeds(
-        CGAL::parameters::seeding_method(method)
-          .max_number_of_proxies(max_nb_of_proxies)
-          .min_error_drop(min_error_drop)
-          .number_of_relaxations(nb_relaxations));
-      break;
-  }
-
-  // generate proxy colors
-  m_proxy_colors.clear();
-  for (std::size_t i = 0; i < number_of_proxies(); ++i) {
-    const std::size_t c = rand_0_255();
-    m_proxy_colors.push_back(QColor::fromRgb(
-      Color_cheat_sheet::r(c), Color_cheat_sheet::g(c), Color_cheat_sheet::b(c)));
-  }
-
-  m_initialized = true;
-  return nb_initialized;
-}
-
 void VSA_wrapper::run(const std::size_t nb_iterations) {
   FT err(0.0);
   switch (m_metric) {

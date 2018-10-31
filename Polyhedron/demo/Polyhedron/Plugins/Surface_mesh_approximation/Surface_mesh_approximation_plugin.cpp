@@ -132,14 +132,13 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
 
   QTime time;
   time.start();
-  const VSA::Seeding_method method = ui_widget.method_random->isChecked() ? VSA::RANDOM : (
-    ui_widget.method_incremental->isChecked() ? VSA::INCREMENTAL : VSA::HIERARCHICAL);
-  approx.initialize_seeds(method,
-    (ui_widget.cb_nb_proxies->isChecked() ?
-      boost::optional<std::size_t>(ui_widget.nb_proxies->value()) : boost::none),
-    (ui_widget.cb_error_drop->isChecked() ?
-      boost::optional<EPICK::FT>(ui_widget.error_drop->value()) : boost::none),
-    ui_widget.nb_relaxations->value());
+  approx.initialize_seeds(CGAL::parameters::seeding_method(
+    static_cast<VSA::Seeding_method>(ui_widget.comboMethod->currentIndex()))
+    .max_number_of_proxies((ui_widget.cb_nb_proxies->isChecked() ?
+      boost::optional<std::size_t>(ui_widget.nb_proxies->value()) : boost::none))
+    .min_error_drop((ui_widget.cb_error_drop->isChecked() ?
+      boost::optional<EPICK::FT>(ui_widget.error_drop->value()) : boost::none))
+    .number_of_relaxations(ui_widget.nb_relaxations->value()));
   approx.run(ui_widget.nb_iterations->value());
 
   Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *sm_item->face_graph());

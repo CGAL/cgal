@@ -111,10 +111,26 @@ public:
 
   void set_metric(const Metric &m);
 
-  std::size_t initialize_seeds(const VSA::Seeding_method method,
-    const boost::optional<std::size_t> max_nb_of_proxies,
-    const boost::optional<FT> min_error_drop,
-    const std::size_t nb_relaxations);
+  template <typename NamedParameters>
+  std::size_t initialize_seeds(const NamedParameters &np) {
+    std::size_t nb_initialized = 0;
+    switch (m_metric) {
+      case L21: nb_initialized = m_l21_approx->initialize_seeds(np); break;
+      case L2: nb_initialized = m_l2_approx->initialize_seeds(np); break;
+      case Compact: nb_initialized = m_compact_approx->initialize_seeds(np); break;
+    }
+
+    // generate proxy colors
+    m_proxy_colors.clear();
+    for (std::size_t i = 0; i < number_of_proxies(); ++i) {
+      const std::size_t c = rand_0_255();
+      m_proxy_colors.push_back(QColor::fromRgb(
+        Color_cheat_sheet::r(c), Color_cheat_sheet::g(c), Color_cheat_sheet::b(c)));
+    }
+
+    m_initialized = true;
+    return nb_initialized;
+  }
 
   void run(const std::size_t nb_iterations);
 
