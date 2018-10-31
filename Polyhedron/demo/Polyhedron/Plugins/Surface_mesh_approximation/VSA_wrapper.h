@@ -89,10 +89,6 @@ public:
 
   typedef CGAL::cpp11::array<std::size_t, 3> Indexed_triangle;
 
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-  typedef typename L21_approx::Proxy_wrapper L21_proxy_wrapper;
-#endif
-
   VSA_wrapper(const SMesh &mesh);
 
   ~VSA_wrapper() {
@@ -132,18 +128,6 @@ public:
     const bool pca_plane);
 
   std::size_t number_of_proxies();
-
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-  template <typename OutputIterator>
-  void get_l21_proxies(OutputIterator out_itr) {
-    switch (m_metric) {
-      case L21:
-        return m_l21_approx->wrapped_proxies(out_itr);
-      default:
-        return;
-    }
-  }
-#endif
 
   template <typename FaceProxyMap>
   void proxy_map(FaceProxyMap &fpmap) {

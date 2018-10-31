@@ -31,12 +31,8 @@ class Polyhedron_demo_surface_mesh_approximation_plugin :
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-  typedef VSA_wrapper::L21_proxy_wrapper L21_proxy_wrapper;
-#endif
-  typedef VSA_wrapper::Indexed_triangle Indexed_triangle;
-
   typedef typename boost::property_map<SMesh, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
+  typedef VSA_wrapper::Indexed_triangle Indexed_triangle;
   typedef std::map<Scene_surface_mesh_item *, VSA_wrapper *> SM_wrapper_map;
   typedef std::pair<Scene_surface_mesh_item *, VSA_wrapper *> SM_wrapper_pair;
 
@@ -106,10 +102,6 @@ private:
   Messages_interface *mi;
 
   SM_wrapper_map m_sm_wrapper_map;
-
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-  std::vector<L21_proxy_wrapper> m_proxies;
-#endif
 }; // end Polyhedron_demo_surface_mesh_approximation_plugin
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_actionSurfaceMeshApproximation_triggered()
@@ -133,10 +125,6 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
   approx.set_metric(static_cast<VSA_wrapper::Metric>(
     ui_widget.comboMetric->currentIndex()));
 
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-  m_proxies.clear();
-#endif
-
   QTime time;
   time.start();
   const VSA::Seeding_method method = ui_widget.method_random->isChecked() ? VSA::RANDOM : (
@@ -151,10 +139,6 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
 
   Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *sm_item->face_graph());
   approx.proxy_map(pidmap);
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-  m_proxies.clear();
-  approx.get_l21_proxies(std::back_inserter(m_proxies));
-#endif
 
   std::cout << "#proxies " << approx.number_of_proxies() << std::endl;
   std::cout << "Done. (" << time.elapsed() << " ms)" << std::endl;
@@ -188,11 +172,6 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonFit_clicked() {
   Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *pmesh);
   approx.proxy_map(pidmap);
 
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-  m_proxies.clear();
-  approx.get_l21_proxies(std::back_inserter(m_proxies));
-#endif
-
   sm_item->color_vector() = approx.proxy_colors();
   sm_item->setItemIsMulticolor(true);
   sm_item->invalidateOpenGLBuffers();
@@ -225,10 +204,6 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonAdd_clicked() {
 
   Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *pmesh);
   approx.proxy_map(pidmap);
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-  m_proxies.clear();
-  approx.get_l21_proxies(std::back_inserter(m_proxies));
-#endif
 
   sm_item->color_vector() = approx.proxy_colors();
   sm_item->setItemIsMulticolor(true);
@@ -258,10 +233,6 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonTeleport_clicke
   Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *pmesh);
   approx.teleport_one_proxy();
   approx.proxy_map(pidmap);
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-  m_proxies.clear();
-  approx.get_l21_proxies(std::back_inserter(m_proxies));
-#endif
 
   sm_item->color_vector() = approx.proxy_colors();
   sm_item->setItemIsMulticolor(true);
@@ -298,10 +269,6 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSplit_clicked()
 
   Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *pmesh);
   approx.proxy_map(pidmap);
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-  m_proxies.clear();
-  approx.get_l21_proxies(std::back_inserter(m_proxies));
-#endif
 
   sm_item->color_vector() = approx.proxy_colors();
   sm_item->setItemIsMulticolor(true);
@@ -473,10 +440,6 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_comboMetric_currentIn
   if (search == m_sm_wrapper_map.end())
     return;
   search->second->initialized() = false;
-
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-  m_proxies.clear();
-#endif
 
   sm_item->color_vector().clear();
   sm_item->setItemIsMulticolor(false);
