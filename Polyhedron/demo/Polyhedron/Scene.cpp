@@ -1074,7 +1074,7 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
     return true;
 }
 
-
+//todo : if a group is selected, don't treat it's children.
 bool Scene::sort_lists(QVector<QList<int> >&sorted_lists, bool up)
 {  
   QVector<int> group_found;
@@ -1097,6 +1097,17 @@ bool Scene::sort_lists(QVector<QList<int> >&sorted_lists, bool up)
           sorted_lists.resize(group_id+1);
         sorted_lists[group_id].push_back(i);
       }
+    }
+  }
+  //iterate the first list to find the groups that are selected and remove the corresponding 
+  //sub lists.
+  //todo: do that for each group. (treat subgroups)
+  for(int i = 0; i< sorted_lists.first().size(); ++i)
+  {
+    Scene_group_item* group = qobject_cast<Scene_group_item*>(this->item(sorted_lists.first()[i]));
+    if(group && ! group->getChildren().isEmpty())
+    {
+      sorted_lists[sorted_lists.first()[i]].clear();
     }
   }
   std::sort(sorted_lists.first().begin(), sorted_lists.first().end(),
