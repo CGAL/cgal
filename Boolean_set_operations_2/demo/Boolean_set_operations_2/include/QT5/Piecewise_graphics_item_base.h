@@ -97,9 +97,10 @@ protected:
 };
 
 //
-void Piecewise_graphics_item_base::paint(QPainter* aPainter,
-                                         const QStyleOptionGraphicsItem* aOption,
-                                         QWidget* aWidget)
+void Piecewise_graphics_item_base::
+paint(QPainter* aPainter,
+      const QStyleOptionGraphicsItem* /* aOption */,
+      QWidget* /* aWidget */)
 {
   //if there is any data to draw
   if (!isModelEmpty()) {
