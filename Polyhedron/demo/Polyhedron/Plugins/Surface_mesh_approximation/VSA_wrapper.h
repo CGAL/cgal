@@ -152,63 +152,30 @@ public:
 
   std::size_t number_of_proxies();
 
-  template <typename FaceProxyMap>
-  void proxy_map(FaceProxyMap &fpmap) {
+  template <typename NamedParameters>
+  void output(const NamedParameters &np) {
     switch (m_metric) {
-      case L21:
-        return m_l21_approx->proxy_map(fpmap);
-      case L2:
-        return m_l2_approx->proxy_map(fpmap);
-      case Compact:
-        return m_compact_approx->proxy_map(fpmap);
-    }
-  }
-
-  template <typename OutputIterator>
-  void indexed_triangles(OutputIterator out_itr) {
-    switch (m_metric) {
-      case L21:
-        return m_l21_approx->indexed_triangles(out_itr);
-      case L2:
-        return m_l2_approx->indexed_triangles(out_itr);
-      case Compact:
-        return m_compact_approx->indexed_triangles(out_itr);
-    }
-  }
-
-  template <typename OutputIterator>
-  void anchor_points(OutputIterator out_itr) {
-    switch (m_metric) {
-      case L21:
-        return m_l21_approx->anchor_points(out_itr);
-      case L2:
-        return m_l2_approx->anchor_points(out_itr);
-      case Compact:
-        return m_compact_approx->anchor_points(out_itr);
+      case L21: return m_l21_approx->output(np);
+      case L2: return m_l2_approx->output(np);
+      case Compact: return m_compact_approx->output(np);
     }
   }
 
   template <typename OutputIterator>
   void anchor_vertices(OutputIterator out_itr) {
     switch (m_metric) {
-      case L21:
-        return m_l21_approx->anchor_vertices(out_itr);
-      case L2:
-        return m_l2_approx->anchor_vertices(out_itr);
-      case Compact:
-        return m_compact_approx->anchor_vertices(out_itr);
+      case L21: return m_l21_approx->anchor_vertices(out_itr);
+      case L2: return m_l2_approx->anchor_vertices(out_itr);
+      case Compact: return m_compact_approx->anchor_vertices(out_itr);
     }
   }
 
   template <typename OutputIterator>
   void indexed_boundary_polygons(OutputIterator out_itr) {
     switch (m_metric) {
-      case L21:
-        return m_l21_approx->indexed_boundary_polygons(out_itr);
-      case L2:
-        return m_l2_approx->indexed_boundary_polygons(out_itr);
-      case Compact:
-        return m_compact_approx->indexed_boundary_polygons(out_itr);
+      case L21: return m_l21_approx->indexed_boundary_polygons(out_itr);
+      case L2: return m_l2_approx->indexed_boundary_polygons(out_itr);
+      case Compact: return m_compact_approx->indexed_boundary_polygons(out_itr);
     }
   }
 

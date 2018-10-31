@@ -142,7 +142,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
   approx.run(ui_widget.nb_iterations->value());
 
   Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *sm_item->face_graph());
-  approx.proxy_map(pidmap);
+  approx.output(CGAL::parameters::face_proxy_map(pidmap));
 
   mi->information(QString("Done, #proxies = %1. (%2 ms)").arg(
     approx.number_of_proxies()).arg(time.elapsed()));
@@ -174,7 +174,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonFit_clicked() {
 
   approx.run(1);
   Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *pmesh);
-  approx.proxy_map(pidmap);
+  approx.output(CGAL::parameters::face_proxy_map(pidmap));
 
   mi->information(QString("Fit one iteration, #proxies = %1.").arg(approx.number_of_proxies()));
 
@@ -211,7 +211,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonAdd_clicked() {
   mi->information(QString("One proxy added, #proxies = %1.").arg(approx.number_of_proxies()));
 
   Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *pmesh);
-  approx.proxy_map(pidmap);
+  approx.output(CGAL::parameters::face_proxy_map(pidmap));
 
   sm_item->color_vector() = approx.proxy_colors();
   sm_item->setItemIsMulticolor(true);
@@ -243,7 +243,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonTeleport_clicke
     mi->information(QString("No proxy teleported, #proxies = %1.").arg(approx.number_of_proxies()));
     return;
   }
-  approx.proxy_map(pidmap);
+  approx.output(CGAL::parameters::face_proxy_map(pidmap));
   mi->information(QString("One proxy teleported, #proxies = %1.").arg(approx.number_of_proxies()));
 
   sm_item->color_vector() = approx.proxy_colors();
@@ -281,7 +281,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSplit_clicked()
   mi->information(QString("One proxy splitted, #proxies = %1.").arg(approx.number_of_proxies()));
 
   Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *pmesh);
-  approx.proxy_map(pidmap);
+  approx.output(CGAL::parameters::face_proxy_map(pidmap));
 
   sm_item->color_vector() = approx.proxy_colors();
   sm_item->setItemIsMulticolor(true);
@@ -314,16 +314,15 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
     .optimize_anchor_location(ui_widget.if_optimize_anchor_location->isChecked())
     .pca_plane(ui_widget.pca_plane->isChecked()));
 
-  Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *sm_item->face_graph());
-  approx.proxy_map(pidmap);
-
-  std::vector<Indexed_triangle> indexed_triangles;
   std::vector<Point_3> anchor_points;
+  std::vector<Indexed_triangle> indexed_triangles;
   std::vector<vertex_descriptor> anchor_vertices;
   std::vector<std::vector<std::size_t> > patch_polygons;
 
-  approx.indexed_triangles(std::back_inserter(indexed_triangles));
-  approx.anchor_points(std::back_inserter(anchor_points));
+  Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *sm_item->face_graph());
+  approx.output(CGAL::parameters::face_proxy_map(pidmap)
+    .anchors(std::back_inserter(anchor_points))
+    .triangles(std::back_inserter(indexed_triangles)));
   approx.anchor_vertices(std::back_inserter(anchor_vertices));
   approx.indexed_boundary_polygons(std::back_inserter(patch_polygons));
 
