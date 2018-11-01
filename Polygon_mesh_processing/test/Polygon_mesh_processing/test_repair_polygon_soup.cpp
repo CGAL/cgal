@@ -149,7 +149,7 @@ void test_merge_duplicate_points(const bool /*verbose*/ = false)
     const Polygon& polygon = polygons[i];
     for(std::size_t j=0, pn=polygon.size(); j<pn; ++j)
     {
-      assert(polygon[j] >= 0 && polygon[j] < points.size());
+      assert(polygon[j] < points.size());
     }
   }
 }
