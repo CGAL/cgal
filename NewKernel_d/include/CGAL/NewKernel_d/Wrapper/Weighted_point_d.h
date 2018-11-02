@@ -138,6 +138,7 @@ std::ostream& operator<<(std::ostream& os, const Weighted_point_d<R_>& p)
     write(os, p.point());
     write(os, p.weight());
   }
+  return os;
 }
 
 template <class R_>

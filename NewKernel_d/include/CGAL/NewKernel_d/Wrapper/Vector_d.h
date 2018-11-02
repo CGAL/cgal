@@ -274,7 +274,7 @@ std::ostream& operator <<(std::ostream& os, const Vector_d<R_>& v)
   }
   else
   {
-    write(os, os << v.dimension());
+    write(os, v.dimension());
     for(; b != e; ++b){
       write(os, *b);
     }
@@ -283,7 +283,7 @@ std::ostream& operator <<(std::ostream& os, const Vector_d<R_>& v)
   return os;
 }
 
-// TODO: test if the stream is binary or text?
+
 template<typename K>
 std::istream &
 operator>>(std::istream &is, Vector_d<K> & v)
