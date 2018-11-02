@@ -22,6 +22,13 @@ Release date: March 2019
 -   Added the class `CGAL::Rigid_triangle_mesh_collision_detection` to detect intersections between meshes
     and volumes undergoing affine transformations.
 
+### 3D Fast Intersection and Distance Computation
+
+-   The primitives `AABB_face_graph_triangle_primitive` and
+    `AABB_halfedge_graph_segment_primitive` now use as `Id` a pair of descriptor and
+    graph pointer in the case they are configured to deal with a possible different
+    graph per primitive (configuration set using a template tag).
+
 Release 4.13
 ------------
 
