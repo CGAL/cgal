@@ -159,6 +159,8 @@ class Face_graph_output_builder
     }
   };
   Mesh_to_intersection_edges mesh_to_intersection_edges;
+  bool used_to_clip_a_surface;
+  bool use_compact_clipper;
 
   typename An_edge_per_polyline_map::iterator last_polyline;
 
@@ -373,7 +375,15 @@ public:
     , is_tm2_inside_out( is_tm2_closed && !PMP::is_outward_oriented(tm2) )
     , NID((std::numeric_limits<Node_id>::max)())
     , mesh_to_intersection_edges(tm1, tm2)
+    , used_to_clip_a_surface(false)
+    , use_compact_clipper(false)
   {}
+
+  void setup_for_clipping_a_surface(bool ucc)
+  {
+    used_to_clip_a_surface = true;
+    use_compact_clipper = ucc;
+  }
 
   bool union_is_valid() const
   {
@@ -652,15 +662,21 @@ public:
           else
           {
             //Nothing allowed
-            impossible_operation.set();
-            return;
+            if (!used_to_clip_a_surface)
+            {
+              impossible_operation.set();
+              return;
+            }
           }
         }
         else
         {
           //Ambiguous, we can do nothing
-          impossible_operation.set();
-          return;
+          if (!used_to_clip_a_surface)
+          {
+            impossible_operation.set();
+            return;
+          }
         }
       }
       else
@@ -872,7 +888,8 @@ public:
                 // opposite( poly_first U poly_second ) = {O}
                 is_patch_inside_tm2.set(patch_id_p1);
                 is_patch_inside_tm2.set(patch_id_p2);
-                impossible_operation.set(INTERSECTION); // tm1 n tm2 is non-manifold
+                if (!used_to_clip_a_surface)
+                  impossible_operation.set(INTERSECTION); // tm1 n tm2 is non-manifold
               }
             }
             else
@@ -1001,6 +1018,8 @@ public:
         }
       }
     }
+
+    if (used_to_clip_a_surface) patch_status_not_set_tm2.reset();
 
     if ( patch_status_not_set_tm2.any() )
     {
@@ -1155,6 +1174,18 @@ public:
           patches_of_tm1_used[INTERSECTION] |= coplanar_patches_of_tm1_for_union_and_intersection;
       }
     }
+    // handle special cases for clipping case
+    if (used_to_clip_a_surface)
+    {
+      if (coplanar_patches_of_tm1.any())
+      {
+        if (use_compact_clipper)
+          patches_of_tm1_used[INTERSECTION] |= coplanar_patches_of_tm1;
+        else
+          patches_of_tm1_used[INTERSECTION] -= coplanar_patches_of_tm1;
+      }
+      patches_of_tm2_used[INTERSECTION].reset();
+    }
 
     /// handle the bitset for P-Q
     if ( !impossible_operation.test(TM1_MINUS_TM2) && requested_output[TM1_MINUS_TM2] )
@@ -1189,7 +1220,6 @@ public:
           patches_of_tm1_used[TM2_MINUS_TM1] |= ~coplanar_patches_of_tm1_for_union_and_intersection & coplanar_patches_of_tm1;
       }
     }
-
 
     #ifdef CGAL_COREFINEMENT_DEBUG
     std::cout << "patches_of_tm1_used[UNION] " << patches_of_tm1_used[UNION] << "\n";

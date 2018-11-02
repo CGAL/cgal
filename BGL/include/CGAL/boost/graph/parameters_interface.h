@@ -93,6 +93,7 @@ CGAL_add_named_parameter(do_project_t, do_project, do_project)
 
 //internal
 CGAL_add_named_parameter(weight_calculator_t, weight_calculator, weight_calculator)
+CGAL_add_named_parameter(use_bool_op_to_clip_surface_t, use_bool_op_to_clip_surface, use_bool_op_to_clip_surface)
 
 // List of named parameters used in the Point Set Processing package
 CGAL_add_named_parameter(point_t, point_map, point_map)

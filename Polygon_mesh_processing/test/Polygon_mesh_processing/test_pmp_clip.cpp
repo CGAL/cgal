@@ -2,6 +2,7 @@
 #include <CGAL/Polygon_mesh_processing/clip.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/Polygon_mesh_processing/transform.h>
 
 #include <iostream>
 #include <fstream>
@@ -18,6 +19,7 @@ void test()
 {
   // test with a clipper mesh
   TriangleMesh tm1, tm2;
+
   std::ifstream input("data-coref/elephant.off");
   input >> tm1;
   input.close();
@@ -31,7 +33,6 @@ void test()
             params::face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm2))
   );
   assert(!CGAL::is_closed(tm1));
-
   CGAL::clear(tm1);
   CGAL::clear(tm2);
 
@@ -46,9 +47,10 @@ void test()
               .face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm1)),
             params::face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm2)));
   assert(CGAL::is_closed(tm1));
+  CGAL::clear(tm1);
+  CGAL::clear(tm2);
 
   // test with a plane
-  CGAL::clear(tm1);
   input.open("data-coref/cube.off");
   input >> tm1;
   input.close();
@@ -96,6 +98,114 @@ void test()
   PMP::clip(tm1, K::Plane_3(0, 0, 1, -2));
   assert(!CGAL::is_empty(tm1));
   CGAL::clear(tm1);
+
+  // clipping with identity
+  input.open("data-coref/cube.off");
+  input >> tm1;
+  input.close();
+  input.open("data-coref/cube.off");
+  input >> tm2;
+  input.close();
+  PMP::clip(tm1, tm2,params::clip_volume(true)
+                      .use_compact_clipper(true)
+                      .face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm1)),
+                     params::face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm2)));
+  assert(num_vertices(tm1)==8);
+  CGAL::clear(tm1);
+  CGAL::clear(tm2);
+
+  input.open("data-coref/cube.off");
+  input >> tm1;
+  input.close();
+  input.open("data-coref/cube.off");
+  input >> tm2;
+  input.close();
+  PMP::clip(tm1, tm2,params::clip_volume(false)
+                      .use_compact_clipper(false)
+                      .face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm1)),
+                     params::face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm2)));
+  assert(CGAL::is_empty(tm1));
+  CGAL::clear(tm1);
+  CGAL::clear(tm2);
+
+  input.open("data-coref/cube.off");
+  input >> tm1;
+  input.close();
+  input.open("data-coref/cube.off");
+  input >> tm2;
+  input.close();
+  PMP::clip(tm1, tm2,params::clip_volume(false)
+                      .use_compact_clipper(true)
+                      .face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm1)),
+                     params::face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm2)));
+  assert(num_vertices(tm1)==8);
+  CGAL::clear(tm1);
+  CGAL::clear(tm2);
+
+  input.open("data-coref/cube.off");
+  input >> tm1;
+  input.close();
+  input.open("data-coref/cube.off");
+  input >> tm2;
+  input.close();
+  PMP::transform(K::Aff_transformation_3(CGAL::TRANSLATION, K::Vector_3(1,0,0)), tm2);
+  PMP::clip(tm1, tm2,params::clip_volume(false)
+                      .use_compact_clipper(false)
+                      .face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm1)),
+                     params::face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm2)));
+  assert(CGAL::is_empty(tm1));
+  CGAL::clear(tm1);
+  CGAL::clear(tm2);
+
+  input.open("data-coref/cube.off");
+  input >> tm1;
+  input.close();
+  input.open("data-coref/cube.off");
+  input >> tm2;
+  input.close();
+  PMP::transform(K::Aff_transformation_3(CGAL::TRANSLATION, K::Vector_3(1,0,0)), tm2);
+  PMP::clip(tm1, tm2,params::clip_volume(false)
+                      .use_compact_clipper(true)
+                      .face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm1)),
+                     params::face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm2)));
+  assert(vertices(tm1).size()==4);
+  CGAL::clear(tm1);
+  CGAL::clear(tm2);
+
+  // test orientation + patch without input vertex
+  CGAL::make_tetrahedron(
+    K::Point_3(0.53, -1.3, 0.2),
+    K::Point_3(0.53, 1.1, 0.2),
+    K::Point_3(0.53, -1.3, 0.4),
+    K::Point_3(0.73, -1.3, 0.2),
+    tm2);
+  input.open("data-coref/cube.off");
+  input >> tm1;
+  input.close();
+  PMP::clip(tm1, tm2,params::clip_volume(false)
+                      .face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm1)),
+                     params::face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm2)));
+  assert(vertices(tm1).size()==6);
+  CGAL::clear(tm1);
+  CGAL::clear(tm2);
+
+  CGAL::make_tetrahedron(
+    K::Point_3(0.53, -1.3, 0.2),
+    K::Point_3(0.53, 1.1, 0.2),
+    K::Point_3(0.53, -1.3, 0.4),
+    K::Point_3(0.73, -1.3, 0.2),
+    tm2);
+  PMP::reverse_face_orientations(tm2);
+  input.open("data-coref/cube.off");
+  input >> tm1;
+  input.close();
+  PMP::clip(tm1, tm2,params::clip_volume(false)
+                      .face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm1)),
+                     params::face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm2)));
+  assert(vertices(tm1).size()==6+8);
+  CGAL::clear(tm1);
+  CGAL::clear(tm2);
+
 }
 
 int main()
