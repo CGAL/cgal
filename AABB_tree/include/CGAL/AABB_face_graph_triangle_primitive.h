@@ -120,8 +120,8 @@ public:
   typedef Kernel_traits<Point>::Kernel::Triangle_3 Datum;
   /*!
   Id type:
-  - `boost::graph_traits<FaceGraph>::face_descriptor` if `OneFaceGraphPerTree` is `CGAL::Tag_true`
-  - `std::pair<boost::graph_traits<FaceGraph>::face_descriptor, FaceGraph>` if `OneFaceGraphPerTree` is `CGAL::Tag_false`
+  - `boost::graph_traits<FaceGraph>::%face_descriptor` if `OneFaceGraphPerTree` is `CGAL::Tag_true`
+  - `std::pair<boost::graph_traits<FaceGraph>::%face_descriptor, FaceGraph>` if `OneFaceGraphPerTree` is `CGAL::Tag_false`
   */
   unspecified_type Id;
   
