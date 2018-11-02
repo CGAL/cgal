@@ -222,7 +222,7 @@ public:
   template <class T1, class T2>
   typename result<Intersect(T1,T2)>::type
   operator()(const T1& t1, const T2& t2) const
-  { return internal::intersection(t1, t2, R()); }
+  { return Intersections::internal::intersection(t1, t2, R()); }
 #endif
 };
 
@@ -235,7 +235,7 @@ class Do_intersect
     template <class T1, class T2>
     bool
     operator()(const T1& t1, const T2& t2) const
-    { return CGAL::internal::do_intersect(t1, t2, R()); }
+  { return CGAL::Intersections::internal::do_intersect(t1, t2, R()); }
 };
 
 } // end namespace internal

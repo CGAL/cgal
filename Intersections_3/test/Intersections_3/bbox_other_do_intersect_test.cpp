@@ -62,10 +62,10 @@ typename K::Point_3 random_point_in(const CGAL::Bbox_3& bbox)
 }
 
 
-template <class T>
+template <class T, class Box3>
 bool test_aux(const T& t,
               const std::string& name,
-              const CGAL::Bbox_3& bbox,
+              const Box3& bbox,
               bool expected, bool /*exact_predicates*/ = false)
 {
   bool b = CGAL::do_intersect(t,bbox);
@@ -386,6 +386,7 @@ bool test(bool exact_kernel = false)
   typedef typename K::Sphere_3 Sphere;
   typedef typename K::Plane_3 Plane;
   typedef typename K::Triangle_3 Triangle;
+  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
   
   CGAL::Bbox_3 bbox(1.0,1.0,1.0,10.0,50.0,100.0);
   
@@ -540,6 +541,12 @@ bool test(bool exact_kernel = false)
   b &= test_aux(sphE_1,"sphE_1",bbox,true);
   b &= test_aux(sph1_3,"sph1_3",bbox,true);
   
+  b &= test_aux(sphA_1,"sphA_1",Iso_cuboid_3(bbox),false);
+  b &= test_aux(sphB_1,"sphB_1",Iso_cuboid_3(bbox),true);
+  b &= test_aux(sphC_1,"sphC_1",Iso_cuboid_3(bbox),false);
+  b &= test_aux(sphE_1,"sphE_1",Iso_cuboid_3(bbox),true);
+  b &= test_aux(sph1_3,"sph1_3",Iso_cuboid_3(bbox),true);
+  
   Plane Pl1(Point(1,1,1),Vector(0,0,1));
   Plane Pl2(Point(1,1,1),Vector(1,1,1));
   Plane Pl3(Point(5,5,5),Vector(1,2,-5));
@@ -549,6 +556,11 @@ bool test(bool exact_kernel = false)
   b &= test_aux(Pl2,"Pl2",bbox,true);
   b &= test_aux(Pl3,"Pl3",bbox,true);
   b &= test_aux(Pl4,"Pl4",bbox,false);
+  
+  b &= test_aux(Pl1,"Pl1",Iso_cuboid_3(bbox),true);
+  b &= test_aux(Pl2,"Pl2",Iso_cuboid_3(bbox),true);
+  b &= test_aux(Pl3,"Pl3",Iso_cuboid_3(bbox),true);
+  b &= test_aux(Pl4,"Pl4",Iso_cuboid_3(bbox),false);
   
   Triangle t123(p1,p2,p3);
   Triangle t124(p1,p2,p4);
@@ -568,6 +580,14 @@ bool test(bool exact_kernel = false)
   b &= test_aux(t2,"t2",bbox,true);
   b &= test_aux(t3,"t3",bbox,false);
   
+  b &= test_aux(t123,"t123",Iso_cuboid_3(bbox),true);
+  b &= test_aux(t124,"t124",Iso_cuboid_3(bbox),true);
+  b &= test_aux(t126,"t126",Iso_cuboid_3(bbox),true);
+  b &= test_aux(t136,"t136",Iso_cuboid_3(bbox),true);
+  b &= test_aux(tABC,"tABC",Iso_cuboid_3(bbox),true);
+  b &= test_aux(t1,"t1",Iso_cuboid_3(bbox),true);
+  b &= test_aux(t2,"t2",Iso_cuboid_3(bbox),true);
+  b &= test_aux(t3,"t3",Iso_cuboid_3(bbox),false);
   
   // Test more bboxes
   CGAL::Bbox_3 bbox2(-0.248143,-0.49325,0.0747943,-0.107021,-0.406955,0.151042);
@@ -601,6 +621,9 @@ bool test(bool exact_kernel = false)
   b &= test_aux(line2, "line2", bbox2, false);
   b &= test_aux(line3, "line3", bbox3, true);
   b &= test_aux(line4, "line4", bbox4, false);
+
+  Iso_cuboid_3 ic(bbox);
+  b &= test_aux(ic, "ic", bbox, true);
   
   // Use do_intersect(bbox,bbox)
   CGAL::do_intersect(bbox2,bbox4);

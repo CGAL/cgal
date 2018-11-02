@@ -21,7 +21,7 @@ if ( CGAL_FOUND )
   foreach(cppfile ${cppfiles})
     create_single_source_cgal_program( "${cppfile}" )
   endforeach()
-
+  
 else()
   
     message(STATUS "This program requires the CGAL library, and will not be compiled.")

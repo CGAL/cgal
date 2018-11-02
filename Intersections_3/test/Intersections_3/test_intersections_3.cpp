@@ -1,3 +1,18 @@
+#if 0
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/Intersections_3/Segment_3_Segment_3.h>
+
+typedef CGAL::Cartesian<double> K;
+
+int main()
+{
+  K::Segment_3 s1, s2;
+  std::cout << do_intersect(s1,s2) << std::endl;
+  return 0;
+}
+
+#else
 // 3D intersection tests.
 
 #include <CGAL/Object.h>
@@ -62,6 +77,7 @@ struct Test {
   typedef CGAL::Triangle_3< K >       Tr;
   typedef CGAL::Ray_3< K >            R;
   typedef CGAL::Iso_cuboid_3< K >     Cub;
+  typedef CGAL::Sphere_3< K >         Sph;
   typedef CGAL::Bbox_3                Bbox;
 
 
@@ -155,6 +171,18 @@ struct Test {
     return Pl(to_nt(a*w), to_nt(b*w), to_nt(c*w), to_nt(d*w));
   }
 
+  void P_do_intersect()
+  {
+    P p(0,0,0), q(1,0,0), r(2,0,0), s(10,10,10);
+    Sph sph(p,1);
+    Cub cub(p,r);
+    assert(do_intersect(q,sph));
+    assert(do_intersect(sph,q));
+    assert(! do_intersect(s,cub));
+    assert(! do_intersect(cub,s));
+  }
+
+  
   void Cub_Cub()
   {
     std::cout << "Iso_cuboid - Iso_cuboid\n";
@@ -556,6 +584,7 @@ struct Test {
   void run()
   {
     std::cout << "3D Intersection tests\n";
+    P_do_intersect();
     Cub_Cub();
     L_Cub();
     Pl_L();
@@ -583,3 +612,4 @@ int main()
 	Test< CGAL::Homogeneous<CGAL::MP_Float> >().run();
 	// TODO : test more kernels.
 }
+#endif

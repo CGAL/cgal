@@ -38,7 +38,7 @@
 #include <CGAL/distance_predicates_2.h>
 
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Segment_2_Segment_2_intersection.h>
+#include <CGAL/Intersections_2/Segment_2_Segment_2.h>
 
 namespace CGAL { 
 

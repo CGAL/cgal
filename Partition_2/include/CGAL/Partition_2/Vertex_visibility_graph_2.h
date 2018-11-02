@@ -68,7 +68,7 @@
 #include <CGAL/Partition_2/Iterator_list.h>
 #include <CGAL/Partition_2/Turn_reverser.h>
 #include <CGAL/Partition_2/Point_pair_less_xy_2.h>
-#include <CGAL/Segment_2_Ray_2_intersection.h>
+#include <CGAL/Intersections_2/Ray_2_Segment_2.h>
 #include <CGAL/Partition_2/Segment_less_yx_2.h>
 #include <cmath>
 #include <list>
