@@ -28,11 +28,8 @@
 
 #include <CGAL/Intersections_2/internal/Bbox_2_Circle_2_do_intersect.h>
 
-
 namespace CGAL {
   CGAL_DO_INTERSECT_FUNCTION(Iso_rectangle_2, Circle_2, 2)
 }
-
-
 
 #endif // CGAL_INTERSECTIONS_2_ISO_RECTANGLE_2_CIRCLE_2_H

@@ -27,7 +27,7 @@
 #include <CGAL/Intersection_traits_3.h>
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
@@ -38,7 +38,7 @@ do_intersect(const typename K::Point_3 &pt,
              const typename K::Line_3 &line,
              const K&)
 {
-    return line.has_on(pt);
+  return line.has_on(pt);
 }
 
 template <class K>
@@ -47,7 +47,7 @@ do_intersect(const typename K::Line_3 &line,
              const typename K::Point_3 &pt,
              const K&)
 {
-    return line.has_on(pt);
+  return line.has_on(pt);
 }
 
 template <class K>
@@ -57,10 +57,9 @@ intersection(const typename K::Point_3 &pt,
              const typename K::Line_3 &line,
              const K& k)
 {
-    if (do_intersect(pt,line,k)) {
-        return intersection_return<typename K::Intersect_3, typename K::Point_3, typename K::Line_3>(pt);
-    }
-    return intersection_return<typename K::Intersect_3, typename K::Point_3, typename K::Line_3>();
+  if (do_intersect(pt,line,k))
+    return intersection_return<typename K::Intersect_3, typename K::Point_3, typename K::Line_3>(pt);
+  return intersection_return<typename K::Intersect_3, typename K::Point_3, typename K::Line_3>();
 }
 
 template <class K>
@@ -75,7 +74,7 @@ intersection(const typename K::Line_3 &line,
 
 } // namespace internal
 } // namespace Intersections
-  
+
 CGAL_INTERSECTION_FUNCTION(Point_3, Line_3, 3)
 CGAL_DO_INTERSECT_FUNCTION(Point_3, Line_3, 3)
 

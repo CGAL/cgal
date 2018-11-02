@@ -28,30 +28,30 @@
 #include <CGALL/Intersections_3/internal/Bbox_3_Sphere_3_do_intersect.h>
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
 
-    template <class K>
-    bool do_intersect(const typename K::Iso_cuboid_3& ic,
-                      const typename K::Sphere_3& sphere,
-                      const K&)
-    {
-      return do_intersect_sphere_box_3(sphere, ic, K());
-    }
+template <class K>
+bool do_intersect(const typename K::Iso_cuboid_3& ic,
+                  const typename K::Sphere_3& sphere,
+                  const K&)
+{
+  return do_intersect_sphere_box_3(sphere, ic, K());
+}
 
-    template <class K>
-    bool do_intersect(const typename K::Sphere_3& sphere,
-                      const typename K::Iso_cuboid_3& ic,
-                      const K&)
-    {
-      return do_intersect_sphere_box_3(sphere, ic, K());
-    }
-  
+template <class K>
+bool do_intersect(const typename K::Sphere_3& sphere,
+                  const typename K::Iso_cuboid_3& ic,
+                  const K&)
+{
+  return do_intersect_sphere_box_3(sphere, ic, K());
+}
+
 } // namespace internal
 } // namespace Intersections
-  
+
 template<typename K>
 bool do_intersect(const Iso_cuboid_3<K>& a,
                   const Sphere_3<K>& b) {
@@ -63,7 +63,6 @@ bool do_intersect(const Sphere_3<K>& a,
                   const Iso_cuboid_3<K>& b) {
   return K().do_intersect_3_object()(a, b);
 }
-
 
 } //namespace CGAL
 

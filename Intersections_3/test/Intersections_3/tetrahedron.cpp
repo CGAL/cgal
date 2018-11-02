@@ -22,35 +22,33 @@ int main()
 {
   Tetrahedron tet;
   Sphere sp;
-  
+
   CGAL::do_intersect(tet,Triangle());
   CGAL::do_intersect(tet,Segment());
   CGAL::do_intersect(tet,Iso_cuboid());
   CGAL::do_intersect(tet,Sphere());
   CGAL::do_intersect(tet,Plane());
   CGAL::do_intersect(tet,Line());
-  CGAL::do_intersect(tet,Ray());  
+  CGAL::do_intersect(tet,Ray());
   CGAL::do_intersect(tet,tet);
   CGAL::do_intersect(tet,Bbox());
   CGAL::do_intersect(sp, Line());
   CGAL::do_intersect(sp, Ray());
   CGAL::do_intersect(sp, Segment());
-  
-  
+
   CGAL::do_intersect(Triangle(), tet);
   CGAL::do_intersect(Segment(), tet);
   CGAL::do_intersect(Iso_cuboid(), tet);
   CGAL::do_intersect(Sphere(), tet);
   CGAL::do_intersect(Plane(), tet);
   CGAL::do_intersect(Line(), tet);
-  CGAL::do_intersect(Ray(), tet);  
+  CGAL::do_intersect(Ray(), tet);
   CGAL::do_intersect(Bbox(), tet);
-  
+
   CGAL::do_intersect(Line(), sp);
   CGAL::do_intersect(Ray(), sp);
   CGAL::do_intersect(Segment(), sp);
 
 
   return 0;
-  
 }

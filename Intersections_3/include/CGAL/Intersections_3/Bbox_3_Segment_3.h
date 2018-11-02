@@ -29,7 +29,7 @@
 #include <CGAL/Intersections_3/internal/Bbox_3_Segment_3_do_intersect.h>
 
 namespace CGAL {
-  
+
 template<typename K>
 bool do_intersect(const CGAL::Bbox_3& a,
                   const Segment_3<K>& b) {
@@ -41,7 +41,7 @@ bool do_intersect(const Segment_3<K>& a,
                   const CGAL::Bbox_3& b) {
   return K().do_intersect_3_object()(a, b);
 }
-  
+
 template<typename K>
 typename Intersection_traits<K, typename K::Segment_3, Bbox_3>::result_type
 intersection(const CGAL::Bbox_3& a,

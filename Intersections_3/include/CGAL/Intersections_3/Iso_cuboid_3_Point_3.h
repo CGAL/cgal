@@ -37,7 +37,7 @@ do_intersect(const typename K::Point_3 &pt,
              const typename K::Iso_cuboid_3 &iso,
              const K&)
 {
-    return !iso.has_on_unbounded_side(pt);
+  return !iso.has_on_unbounded_side(pt);
 }
 
 template <class K>
@@ -47,7 +47,7 @@ do_intersect(const typename K::Iso_cuboid_3 &iso,
              const typename K::Point_3 &pt,
              const K&)
 {
-    return !iso.has_on_unbounded_side(pt);
+  return !iso.has_on_unbounded_side(pt);
 }
 
 template <class K>
@@ -57,9 +57,8 @@ intersection(const typename K::Point_3 &pt,
              const typename K::Iso_cuboid_3 &iso,
              const K& k)
 {
-  if (internal::do_intersect(pt,iso,k)) {
+  if (internal::do_intersect(pt,iso,k))
     return intersection_return<typename K::Intersect_3, typename K::Point_3, typename K::Iso_cuboid_3>(pt);
-  }
   return intersection_return<typename K::Intersect_3, typename K::Point_3, typename K::Iso_cuboid_3>();
 }
 
@@ -75,7 +74,7 @@ intersection(const typename K::Iso_cuboid_3 &iso,
 
 } // namespace internal
 } // namespace Intersections
-  
+
 CGAL_INTERSECTION_FUNCTION(Point_3, Iso_cuboid_3, 3)
 CGAL_DO_INTERSECT_FUNCTION(Point_3, Iso_cuboid_3, 3)
 

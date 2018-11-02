@@ -1,9 +1,9 @@
-// Copyright (c) 2005  
+// Copyright (c) 2005
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Nico Kruithof
 
@@ -33,11 +33,11 @@
 
 namespace CGAL {
 
-  template <class K>
-  class Tetrahedron_3;
+template <class K>
+class Tetrahedron_3;
 
 namespace Intersections {
-  
+
 namespace internal {
 
 template <class K>
@@ -45,7 +45,7 @@ typename K::Boolean
 do_intersect(const typename K::Tetrahedron_3 &tet,
 	     const typename K::Triangle_3 &tr,
 	     const K & k);
-  
+
 // This code is not optimized:
   template <class K, class Bounded>
 typename K::Boolean
@@ -89,7 +89,7 @@ do_intersect(const typename K::Triangle_3 &tr,
   return do_intersect_tetrahedron_bounded(tr, tet, tr[0], k);
 }
 
-  
+
 template <class K>
 inline
 typename K::Boolean
@@ -99,7 +99,7 @@ do_intersect(const typename K::Tetrahedron_3 &tet,
 {
   return do_intersect_tetrahedron_bounded(seg, tet, seg.source(), k);
 }
-    
+
 template <class K>
 inline
 typename K::Boolean
@@ -109,7 +109,6 @@ do_intersect(const typename K::Segment_3 &seg,
 {
   return do_intersect_tetrahedron_bounded(seg, tet, seg.source(), k);
 }
-  
 
 template <class K>
 inline
@@ -131,7 +130,6 @@ do_intersect(const typename K::Iso_cuboid_3 &ic,
   return do_intersect_tetrahedron_bounded(ic, tet, ic[0], k);
 }
 
-  
 template <class K>
 inline
 typename K::Boolean
@@ -152,7 +150,6 @@ do_intersect(const typename K::Sphere_3 &sp,
   return do_intersect_tetrahedron_bounded(sp, tet, sp.center(), k);
 }
 
-  
 template <class K>
 inline
 typename K::Boolean
@@ -182,7 +179,7 @@ do_intersect(const CGAL::Bbox_3 &bb,
 {
   return do_intersect_tetrahedron_bounded(bb, tet, typename K::Point_3(bb.xmin(), bb.ymin(), bb.zmin()), k);
 }
-  
+
 } // namespace internal
 } // namespace Intersections
 } //namespace CGAL

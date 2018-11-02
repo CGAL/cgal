@@ -26,7 +26,7 @@
 #include <CGAL/Intersection_traits_3.h>
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
@@ -47,9 +47,8 @@ intersection(const typename K::Point_3 &pt1,
              const typename K::Point_3 &pt2,
              const K&)
 {
-  if (pt1 == pt2) {
+  if (pt1 == pt2)
     return intersection_return<typename K::Intersect_3, typename K::Point_3, typename K::Point_3>(pt1);
-  }
   return intersection_return<typename K::Intersect_3, typename K::Point_3, typename K::Point_3>();
 }
 

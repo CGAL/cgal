@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -30,80 +30,80 @@
 
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
 
-  template <class K, class Box3>
-  bool do_intersect_circle_box_2(const typename K::Circle_2& circle,
-                                 const Box3& bbox,
-                                 const K&)
-  {
-    typedef typename K::FT FT;
-    typedef typename K::Point_2 Point;
-    FT d = FT(0);
-    FT distance = FT(0);
-    Point center = circle.center();
-    
-    if(center.x() < (FT)bbox.xmin())
-      {
-        d = (FT)bbox.xmin() - center.x();
-        distance += d * d;
-      }
-    else if(center.x() > (FT)bbox.xmax())
-      {
-        d = center.x() - (FT)bbox.xmax();
-        distance += d * d;
-      }
-    
-    if(center.y() < (FT)bbox.ymin())
-      {
-        d = (FT)bbox.ymin() - center.y();
-        distance += d * d;
-      }
-    else if(center.y() > (FT)bbox.ymax())
-      {
-        d = center.y() - (FT)bbox.ymax();
-        distance += d * d;
-      }
+template <class K, class Box3>
+bool do_intersect_circle_box_2(const typename K::Circle_2& circle,
+                               const Box3& bbox,
+                               const K&)
+{
+  typedef typename K::FT FT;
+  typedef typename K::Point_2 Point;
+  FT d = FT(0);
+  FT distance = FT(0);
+  Point center = circle.center();
 
-    return distance <= circle.squared_radius();
+  if(center.x() < (FT)bbox.xmin())
+  {
+    d = (FT)bbox.xmin() - center.x();
+    distance += d * d;
+  }
+  else if(center.x() > (FT)bbox.xmax())
+  {
+    d = center.x() - (FT)bbox.xmax();
+    distance += d * d;
   }
 
-    template <class K>
-    bool do_intersect(const CGAL::Bbox_2& bbox,
-                      const typename K::Circle_2& circle,
-                      const K&)
-    {
-      return do_intersect_circle_box_2(circle, bbox, K());
-    }
+  if(center.y() < (FT)bbox.ymin())
+  {
+    d = (FT)bbox.ymin() - center.y();
+    distance += d * d;
+  }
+  else if(center.y() > (FT)bbox.ymax())
+  {
+    d = center.y() - (FT)bbox.ymax();
+    distance += d * d;
+  }
 
-  
-    template <class K>
-    bool do_intersect(const typename K::Circle_2& circle,
-                      const CGAL::Bbox_2& bbox,
-                      const K&)
-    {
-          return do_intersect_circle_box_2(circle, bbox, K());  
-    }
-  
-    template <class K>
-    bool do_intersect(const typename K::Iso_rectangle_2& bbox,
-                      const typename K::Circle_2& circle,
-                      const K&)
-    {
-      return do_intersect_circle_box_2(circle, bbox, K());
-    }
+  return distance <= circle.squared_radius();
+}
 
-  
-    template <class K>
-    bool do_intersect(const typename K::Circle_2& circle,
-                      const typename K::Iso_rectangle_2& bbox,
-                      const K&)
-    {
-          return do_intersect_circle_box_2(circle, bbox, K());  
-    }
+template <class K>
+bool do_intersect(const CGAL::Bbox_2& bbox,
+                  const typename K::Circle_2& circle,
+                  const K&)
+{
+  return do_intersect_circle_box_2(circle, bbox, K());
+}
+
+
+template <class K>
+bool do_intersect(const typename K::Circle_2& circle,
+                  const CGAL::Bbox_2& bbox,
+                  const K&)
+{
+  return do_intersect_circle_box_2(circle, bbox, K());
+}
+
+template <class K>
+bool do_intersect(const typename K::Iso_rectangle_2& bbox,
+                  const typename K::Circle_2& circle,
+                  const K&)
+{
+  return do_intersect_circle_box_2(circle, bbox, K());
+}
+
+
+template <class K>
+bool do_intersect(const typename K::Circle_2& circle,
+                  const typename K::Iso_rectangle_2& bbox,
+                  const K&)
+{
+  return do_intersect_circle_box_2(circle, bbox, K());
+}
 
 } // namespace internal
 } // namespace Intersections

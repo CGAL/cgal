@@ -41,6 +41,6 @@ bool do_intersect(const Circle_2<K>& a,
                   const CGAL::Bbox_2& b) {
   return K().do_intersect_2_object()(a, b);
 }
-  
+
 }
 #endif // CGAL_INTERSECTIONS_2_BBOX_2_CIRCLE_2_H

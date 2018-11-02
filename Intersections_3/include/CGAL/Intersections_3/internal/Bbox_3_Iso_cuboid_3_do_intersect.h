@@ -27,24 +27,24 @@
 #include <CGAL/Bbox_3.h>
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
 
-  template <class K>
-  bool do_intersect(const CGAL::Bbox_3& bb,
-                    const typename K::Iso_cuboid_3& ic,
-                    const K& k)
-  {
-      if (bb.xmax() < ic.xmin() || ic.xmax() < bb.xmin())
-        return false;
-    if (bb.ymax() < ic.ymin() || ic.ymax() < bb.ymin())
-        return false;
-    if (bb.zmax() < ic.zmin() || ic.zmax() < bb.zmin())
-        return false;
-    return true;
-  }
+template <class K>
+bool do_intersect(const CGAL::Bbox_3& bb,
+                  const typename K::Iso_cuboid_3& ic,
+                  const K& /* k */)
+{
+  if (bb.xmax() < ic.xmin() || ic.xmax() < bb.xmin())
+    return false;
+  if (bb.ymax() < ic.ymin() || ic.ymax() < bb.ymin())
+    return false;
+  if (bb.zmax() < ic.zmin() || ic.zmax() < bb.zmin())
+    return false;
+  return true;
+}
 
 } // namespace internal
 } // namespace Intersections

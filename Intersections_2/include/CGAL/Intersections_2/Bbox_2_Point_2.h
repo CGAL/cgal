@@ -29,20 +29,22 @@
 #include <CGAL/Intersections_2/Iso_rectangle_2_Point_2.h>
 
 namespace CGAL {
-  
+
 template<typename K>
 bool do_intersect(const CGAL::Bbox_2& a,
-                  const Point_2<K>& b) {
+                  const Point_2<K>& b)
+{
   Point_2<K> bl(a.xmin(), a.ymin()), tr(a.xmax(), a.ymax());
-    
+
   Iso_rectangle_2<K> ic(bl,tr);
   return K().do_intersect_2_object()(ic, b);
 }
 
-  
+
 template<typename K>
 bool do_intersect(const Point_2<K>& a,
-                  const CGAL::Bbox_2& b) {
+                  const CGAL::Bbox_2& b)
+{
   return do_intersect(b,a);
 }
 
@@ -53,24 +55,23 @@ namespace internal {
 template<typename K>
 typename CGAL::Intersection_traits<K, typename K::Point_2, CGAL::Bbox_2>::result_type
 intersection(const Point_2<K>& a,
-             const CGAL::Bbox_2& b
-             ) {
-    if (do_intersect(a,b)) {
-      return Intersections::internal::intersection_return<typename K::Intersect_2, typename K::Point_2, CGAL::Bbox_2>(a);
-  }
-    return Intersections::internal::intersection_return<typename K::Intersect_2, typename K::Point_2, CGAL::Bbox_2>();
+             const CGAL::Bbox_2& b)
+{
+  if (do_intersect(a,b))
+    return Intersections::internal::intersection_return<typename K::Intersect_2, typename K::Point_2, CGAL::Bbox_2>(a);
+  return Intersections::internal::intersection_return<typename K::Intersect_2, typename K::Point_2, CGAL::Bbox_2>();
 }
 
-  
+
 template<typename K>
 typename CGAL::Intersection_traits<K, CGAL::Bbox_2, typename K::Point_2>::result_type
-intersection(const CGAL::Bbox_2& b,   
+intersection(const CGAL::Bbox_2& b,
              const typename K::Point_2  & a,
-             const K& k ) {
-    if (do_intersect(a,b)) {
-      return Intersections::internal::intersection_return<typename K::Intersect_2, CGAL::Bbox_2, typename K::Point_2>(a);
-  }
-    return Intersections::internal::intersection_return<typename K::Intersect_2, CGAL::Bbox_2, typename K::Point_2>();
+             const K& /*k*/ )
+{
+  if (do_intersect(a,b))
+    return Intersections::internal::intersection_return<typename K::Intersect_2, CGAL::Bbox_2, typename K::Point_2>(a);
+  return Intersections::internal::intersection_return<typename K::Intersect_2, CGAL::Bbox_2, typename K::Point_2>();
 }
 
 } // namespace internal
@@ -78,12 +79,13 @@ intersection(const CGAL::Bbox_2& b,
 
 template<typename K>
 typename CGAL::Intersection_traits<K, Bbox_2, Point_2<K> >::result_type
-intersection(const Bbox_2& b,   
+intersection(const Bbox_2& b,
              const Point_2<K>  & a)
 {
   return Intersections::internal::intersection(b,a,K());
 }
-  template<typename K>
+
+template<typename K>
 typename CGAL::Intersection_traits<K, Bbox_2, Point_2<K> >::result_type
   intersection(const Point_2<K>  & a,
                const Bbox_2& b)

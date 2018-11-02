@@ -27,7 +27,7 @@
 #include <CGAL/Intersections_3/Plane_3_Triangle_3.h>
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
@@ -52,7 +52,7 @@ bool do_intersect(const typename K::Plane_3& unb,
                   const K& k) {
   return do_intersect_tetrahedron_unbounded(tet, unb, k);
 }
-  
+
 template<typename K>
 bool do_intersect(const typename K::Tetrahedron_3& tet,
                   const typename K::Plane_3& unb,
@@ -67,7 +67,7 @@ bool do_intersect(const typename K::Line_3& unb,
                   const K& k) {
   return do_intersect_tetrahedron_unbounded(tet, unb, k);
 }
-  
+
 template<typename K>
 bool do_intersect(const typename K::Tetrahedron_3& tet,
                   const typename K::Line_3& unb,
@@ -82,14 +82,14 @@ bool do_intersect(const typename K::Ray_3& unb,
                   const K& k) {
   return do_intersect_tetrahedron_unbounded(tet, unb, k);
 }
-  
+
 template<typename K>
 bool do_intersect(const typename K::Tetrahedron_3& tet,
                   const typename K::Ray_3& unb,
                   const K& k) {
   return do_intersect_tetrahedron_unbounded(tet, unb, k);
 }
-  
+
 } // namespace internal
 } // namespace Intersections
 } // namespace CGAL

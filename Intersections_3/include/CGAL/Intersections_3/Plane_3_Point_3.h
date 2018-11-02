@@ -27,7 +27,7 @@
 #include <CGAL/Intersection_traits_3.h>
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
@@ -38,7 +38,7 @@ do_intersect(const typename K::Point_3 &pt,
              const typename K::Plane_3 &plane,
              const K&)
 {
-    return plane.has_on(pt);
+  return plane.has_on(pt);
 }
 
 template <class K>
@@ -47,7 +47,7 @@ do_intersect(const typename K::Plane_3 &plane,
              const typename K::Point_3 &pt,
              const K&)
 {
-    return plane.has_on(pt);
+  return plane.has_on(pt);
 }
 
 template <class K>
@@ -57,10 +57,9 @@ intersection(const typename K::Point_3 &pt,
              const typename K::Plane_3 &plane,
              const K& k)
 {
-    if (do_intersect(pt,plane,k)) {
-        return intersection_return<typename K::Intersect_3, typename K::Point_3, typename K::Plane_3>(pt);
-    }
-    return intersection_return<typename K::Intersect_3, typename K::Point_3, typename K::Plane_3>();
+  if (do_intersect(pt,plane,k))
+    return intersection_return<typename K::Intersect_3, typename K::Point_3, typename K::Plane_3>(pt);
+  return intersection_return<typename K::Intersect_3, typename K::Point_3, typename K::Plane_3>();
 }
 
 template <class K>

@@ -28,11 +28,8 @@
 
 #include <CGAL/Intersections_3/internal/Bbox_3_Sphere_3_do_intersect.h>
 
-
 namespace CGAL {
   CGAL_DO_INTERSECT_FUNCTION(Iso_cuboid_3, Sphere_3, 3)
 }
-
-
 
 #endif // CGAL_INTERSECTIONS_3_ISO_CUBOID_3_SPHERE_3_H

@@ -27,7 +27,7 @@
 #include <CGAL/Intersection_traits_3.h>
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
@@ -61,9 +61,8 @@ intersection(const typename K::Point_3 &pt,
              const typename K::Segment_3 &seg,
              const K& k)
 {
-  if (do_intersect(pt,seg, k)) {
+  if (do_intersect(pt,seg, k))
     return intersection_return<typename K::Intersect_3, typename K::Point_3, typename K::Segment_3>(pt);
-  }
   return intersection_return<typename K::Intersect_3, typename K::Point_3, typename K::Segment_3>();
 }
 
@@ -80,7 +79,7 @@ intersection( const typename K::Segment_3 &seg,
 
 } // namespace internal
 } // namespace Intersections
-  
+
 CGAL_INTERSECTION_FUNCTION(Point_3, Segment_3, 3)
 CGAL_DO_INTERSECT_FUNCTION(Point_3, Segment_3, 3)
 

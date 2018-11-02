@@ -27,7 +27,7 @@
 #include <CGAL/Intersection_traits_3.h>
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
@@ -61,9 +61,8 @@ intersection(const typename K::Point_3 &pt,
              const typename K::Sphere_3 &sphere,
              const K& k)
 {
-  if (do_intersect(pt,sphere, k)) {
+  if (do_intersect(pt,sphere, k))
     return intersection_return<typename K::Intersect_3, typename K::Point_3, typename K::Sphere_3>(pt);
-  }
   return intersection_return<typename K::Intersect_3, typename K::Point_3, typename K::Sphere_3>();
 }
 
@@ -79,7 +78,7 @@ intersection(const typename K::Sphere_3 &sphere,
 
 } // namespace internal
 } // namespace Intersections
-  
+
 CGAL_INTERSECTION_FUNCTION(Point_3, Sphere_3, 3)
 CGAL_DO_INTERSECT_FUNCTION(Point_3, Sphere_3, 3)
 

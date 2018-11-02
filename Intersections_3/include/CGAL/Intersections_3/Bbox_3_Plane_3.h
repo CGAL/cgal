@@ -42,7 +42,7 @@ bool do_intersect(const Plane_3<K>& a,
                   const CGAL::Bbox_3& b) {
   return K().do_intersect_3_object()(a, b);
 }
-  
+
 }
 
 #endif // CGAL_INTERSECTIONS_3_BBOX_3_PLANE_3_H

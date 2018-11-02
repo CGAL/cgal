@@ -42,7 +42,7 @@ bool do_intersect(const Line_3<K>& a,
                   const CGAL::Bbox_3& b) {
   return K().do_intersect_3_object()(a, b);
 }
-  
+
 template<typename K>
 typename Intersection_traits<K, typename K::Line_3, Bbox_3>::result_type
 intersection(const CGAL::Bbox_3& a,
