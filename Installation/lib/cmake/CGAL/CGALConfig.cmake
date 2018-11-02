@@ -84,7 +84,7 @@ endforeach()
 
 set(CGALConfig_all_targets_are_defined TRUE)
 foreach(cgal_lib ${CGAL_LIBRARIES})
-  if(NOT WITH_${cgal_lib})
+  if(NOT TARGET CGAL::${cgal_lib})
     set(CGALConfig_all_targets_are_defined FALSE)
   endif()
 endforeach()
