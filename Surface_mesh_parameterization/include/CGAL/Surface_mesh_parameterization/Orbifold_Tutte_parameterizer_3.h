@@ -210,7 +210,7 @@ Error_code read_cones(const TriangleMesh& tm, const char* filename, ConeOutputIt
 ///                  having to pass the multiple template parameters of the class `CGAL::Seam_mesh`.
 /// \tparam ConeInputBidirectionalIterator must be a model of `BidirectionalIterator`
 ///                  with value type `boost::graph_traits<SeamMesh::TriangleMesh>::%vertex_descriptor`.
-/// \tparam ConeMap must be a model of <a href="http://en.cppreference.com/w/cpp/concept/AssociativeContainer"><tt>AssociativeContainer</tt></a>
+/// \tparam ConeMap must be a model of `AssociativeContainer`
 ///                 with `boost::graph_traits<SeamMesh>::%vertex_descriptor` as key type and
 ///                 \link PkgSurfaceMeshParameterizationEnums Cone_type \endlink as value type.
 ///
@@ -896,7 +896,7 @@ public:
   /// The mapping is piecewise linear (linear in each triangle).
   /// The result is the (u,v) pair image of each vertex of the 3D surface.
   ///
-  /// \tparam ConeMap must be a model of <a href="http://en.cppreference.com/w/cpp/concept/AssociativeContainer"><tt>AssociativeContainer</tt></a>
+  /// \tparam ConeMap must be a model of `AssociativeContainer`
   ///                 with key type `boost::graph_traits<Seam_mesh>::%vertex_descriptor` and
   ///                 \link PkgSurfaceMeshParameterizationEnums Cone_type \endlink as value type.
   /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with

@@ -7,7 +7,17 @@ Release 4.14
 Release date: March 2019
 
 ### Polygon Mesh Processing package
--   Added the following new functions to detect and repair mesh degeneracies:
+-   Added the following new functions to detect and repair issues in polygon soups:
+    - `CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup()`, which detects and removes
+       points that are not used in any polygon of the soup.
+    - `CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup()`,
+       which detects and merges points that share the same geometric position.
+    - `CGAL::Polygon_mesh_processing::merge_duplicate_polygons_in_polygon_soup()`,
+       which detects and merges polygons that are identical.
+    - `CGAL::Polygon_mesh_processing::repair_polygon_soup()`,
+       which applies a number of repairing steps (a subset of which are the functions above)
+       to clean and repair a polygon soup.
+-   Added the following new functions to detect and repair degeneracies in polygon meshes:
     - `CGAL::Polygon_mesh_processing::degenerate_edges()`
     - `CGAL::Polygon_mesh_processing::degenerate_faces()`
     - `CGAL::Polygon_mesh_processing::is_non_manifold_vertex()`

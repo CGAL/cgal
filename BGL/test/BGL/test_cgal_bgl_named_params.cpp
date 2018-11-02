@@ -85,6 +85,8 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::throw_on_self_intersection).v == 43);
   assert(get_param(np, CGAL::internal_np::clip_volume).v == 44);
   assert(get_param(np, CGAL::internal_np::use_compact_clipper).v == 45);
+  assert(get_param(np, CGAL::internal_np::erase_all_duplicates).v == 48);
+  assert(get_param(np, CGAL::internal_np::require_same_orientation).v == 49);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   assert(get_param(np, CGAL::internal_np::get_cost_policy).v == 34);
@@ -162,6 +164,8 @@ void test(const NamedParameters& np)
   check_same_type<43>(get_param(np, CGAL::internal_np::throw_on_self_intersection));
   check_same_type<44>(get_param(np, CGAL::internal_np::clip_volume));
   check_same_type<45>(get_param(np, CGAL::internal_np::use_compact_clipper));
+  check_same_type<48>(get_param(np, CGAL::internal_np::erase_all_duplicates));
+  check_same_type<49>(get_param(np, CGAL::internal_np::require_same_orientation));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<34>(get_param(np, CGAL::internal_np::get_cost_policy));
@@ -241,6 +245,8 @@ int main()
                          .use_compact_clipper(A<45>(45))
                          .apply_per_connected_component(A<46>(46))
                          .output_iterator(A<47>(47))
+                         .erase_all_duplicates(A<48>(48))
+                         .require_same_orientation(A<49>(49))
        );
 
   return EXIT_SUCCESS;

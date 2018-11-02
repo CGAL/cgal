@@ -1017,7 +1017,7 @@ public:
   /// of a vertex of the underlying mesh is given by its position
   /// in the container `tm_vds`.
   ///
-  /// \tparam VdContainer must be a model of <a href="http://en.cppreference.com/w/cpp/concept/SequenceContainer"><tt>SequenceContainer</tt></a> (that is, provide
+  /// \tparam VdContainer must be a model of `SequenceContainer` (that is, provide
   ///         the functions: `operator[]` and `at()`).
   ///
   /// \returns one of the halfedges of the seam mesh that is on a seam.
@@ -1062,7 +1062,7 @@ public:
   ///
   /// \returns one of the halfedges of the seam mesh that is on a seam.
   ///
-  /// \tparam VdContainer must be a model of <a href="http://en.cppreference.com/w/cpp/concept/SequenceContainer"><tt>SequenceContainer</tt></a> (that is, provide
+  /// \tparam VdContainer must be a model of `SequenceContainer` (that is, provide
   ///         the functions: `operator[]` and `at()`).
   ///
   /// \pre filename should be the name of a CGAL selection file: edges are

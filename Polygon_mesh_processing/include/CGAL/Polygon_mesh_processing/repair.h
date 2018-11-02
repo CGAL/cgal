@@ -850,12 +850,12 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
 //    \cgalParamEnd
 //    \cgalParamBegin{geom_traits} a geometric traits class instance.
 //       The traits class must provide the nested type `Point_3`,
-//       and the nested functors :
+//       and the nested functors:
 //         - `Compare_distance_3` to compute the distance between 2 points
 //         - `Collinear_3` to check whether 3 points are collinear
 //         - `Less_xyz_3` to compare lexicographically two points
-//         - `Equal_3` to check whether 2 points are identical
-//       For each functor `Foo`, a function `Foo foo_object()`
+///        - `Equal_3` to check whether 2 points are identical.
+///       For each functor Foo, a function `Foo foo_object()` must be provided.
 //   \cgalParamEnd
 // \cgalNamedParamsEnd
 //
