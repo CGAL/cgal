@@ -259,10 +259,14 @@ private:
 
       // Add the facets:
       counter = 0;
-      for (auto it = m_indices_begin; it != m_indices_end; ++it) {
+      for (CoordIndexIter it = m_indices_begin; it != m_indices_end; ++it) {
         Polyhedron_facet_handle fh = B.begin_facet();
         if (counter == m_marked_facet_index) fh->set_marked(true);
-        for (auto index: *it) B.add_vertex_to_facet(index);
+        //! \todo EF: when upgrading to C++11 change the type of the following
+        // iterator to auto. Better yet, use for (auto blah : foo).
+        for (std::vector<size_t>::const_iterator iit = it->begin();
+             iit != it->end(); ++iit)
+          B.add_vertex_to_facet(*iit);
         B.end_facet();
         ++counter;
       }
