@@ -7,12 +7,25 @@ if(NOT POLICY CMP0070 AND POLICY CMP0053)
   # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
   cmake_policy(SET CMP0053 OLD)
 endif()
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
+if(POLICY CMP0072)
+  # About the use of OpenGL
+  cmake_policy(SET CMP0072 NEW)
+endif()
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
+
+list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_generalized_initializers has_cpp11)
+if (has_cpp11 LESS 0)
+  message(STATUS "NOTICE: These examples requires a C++11 compiler and will not be compiled.")
+  return()
+endif()
 
 # Require c++11
 set(CMAKE_CXX_STANDARD 11)
@@ -33,7 +46,7 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
   # include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
   # include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR}/include)
 
-  qt5_add_resources(UI_RESOURCES UiFiles/Boolean_operations_2.qrc)
+  qt5_add_resources(CGAL_Qt5_RESOURCE_FILES Boolean_operations_2.qrc)
 
   qt5_wrap_ui(UI_HEADERS
     UiFiles/Boolean_set_operations_2.ui
@@ -54,7 +67,7 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
     include/QT5/Graphics_view_linear_polygon_input.h
     include/QT5/Linear_polygons.h
     ${UI_HEADERS}
-    ${UI_RESOURCES})
+    ${CGAL_Qt5_RESOURCE_FILES})
 
   # Link with Qt libraries
   target_link_libraries(Boolean_set_operations_2 ${QT_LIBRARIES})
