@@ -27,6 +27,7 @@
 #if BOOST_VERSION >= 105600 && !defined CGAL_DO_NOT_USE_BOOST_MP
 #define CGAL_USE_BOOST_MP 1
 
+#include <CGAL/functional.h> // *ary_function
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Modular_traits.h>
 // We can't just include all Boost.Multiprecision here...
@@ -55,14 +56,14 @@ struct AST_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_int
     typedef Boolean_tag<std::numeric_limits<Type>::is_exact>	Is_exact;
     typedef Tag_false		Is_numerical_sensitive;
 
-    struct Is_zero: public std::unary_function<Type ,bool> {
+    struct Is_zero: public CGAL::cpp98::unary_function<Type ,bool> {
         bool operator()( const Type& x) const {
             return x.is_zero();
         }
     };
 
     struct Div:
-        public std::binary_function<Type ,Type, Type> {
+        public CGAL::cpp98::binary_function<Type ,Type, Type> {
         template <typename T, typename U>
         Type operator()(const T& x, const U& y) const {
             return x / y;
@@ -70,21 +71,21 @@ struct AST_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_int
     };
 
     struct Mod:
-        public std::binary_function<Type ,Type, Type> {
+        public CGAL::cpp98::binary_function<Type ,Type, Type> {
         template <typename T, typename U>
         Type operator()(const T& x, const U& y) const {
             return x % y;
         }
     };
 
-    struct Gcd : public std::binary_function<Type, Type, Type> {
+    struct Gcd : public CGAL::cpp98::binary_function<Type, Type, Type> {
         template <typename T, typename U>
         Type operator()(const T& x, const U& y) const {
             return boost::multiprecision::gcd(x, y);
         }
     };
 
-    struct Sqrt : public std::unary_function<Type, Type> {
+    struct Sqrt : public CGAL::cpp98::unary_function<Type, Type> {
         template <typename T>
         Type operator()(const T& x) const {
             return boost::multiprecision::sqrt(x);
@@ -101,14 +102,14 @@ struct AST_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_rat
     typedef Tag_true		Is_exact;
     typedef Tag_false		Is_numerical_sensitive;
 
-    struct Is_zero: public std::unary_function<Type ,bool> {
+    struct Is_zero: public CGAL::cpp98::unary_function<Type ,bool> {
         bool operator()( const Type& x) const {
             return x.is_zero();
         }
     };
 
     struct Div:
-        public std::binary_function<Type ,Type, Type> {
+        public CGAL::cpp98::binary_function<Type ,Type, Type> {
         template <typename T, typename U>
         Type operator()(const T& x, const U& y) const {
             return x / y;
@@ -124,53 +125,53 @@ struct RET_boost_mp_base
 
     typedef NT Type;
 
-    struct Is_zero: public std::unary_function<Type ,bool> {
+    struct Is_zero: public CGAL::cpp98::unary_function<Type ,bool> {
         bool operator()( const Type& x) const {
             return x.is_zero();
         }
     };
 
-    struct Is_positive: public std::unary_function<Type ,bool> {
+    struct Is_positive: public CGAL::cpp98::unary_function<Type ,bool> {
         bool operator()( const Type& x) const {
             return x.sign() > 0;
         }
     };
 
-    struct Is_negative: public std::unary_function<Type ,bool> {
+    struct Is_negative: public CGAL::cpp98::unary_function<Type ,bool> {
         bool operator()( const Type& x) const {
             return x.sign() < 0;
         }
     };
 
-    struct Abs : public std::unary_function<Type, Type> {
+    struct Abs : public CGAL::cpp98::unary_function<Type, Type> {
         template <typename T>
         Type operator()(const T& x) const {
             return boost::multiprecision::abs(x);
         }
     };
 
-    struct Sgn : public std::unary_function<Type, ::CGAL::Sign> {
+    struct Sgn : public CGAL::cpp98::unary_function<Type, ::CGAL::Sign> {
         ::CGAL::Sign operator()(Type const& x) const {
             return CGAL::sign(x.sign());
         }
     };
 
     struct Compare
-        : public std::binary_function<Type, Type, Comparison_result> {
+        : public CGAL::cpp98::binary_function<Type, Type, Comparison_result> {
         Comparison_result operator()(const Type& x, const Type& y) const {
             return CGAL::sign(x.compare(y));
         }
     };
 
     struct To_double
-        : public std::unary_function<Type, double> {
+        : public CGAL::cpp98::unary_function<Type, double> {
         double operator()(const Type& x) const {
             return x.template convert_to<double>();
         }
     };
 
     struct To_interval
-        : public std::unary_function< Type, std::pair< double, double > > {
+        : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
         std::pair<double, double>
         operator()(const Type& x) const {
 	    // assume the conversion is within 1 ulp
@@ -195,7 +196,7 @@ struct RET_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_rat
 #if BOOST_VERSION < 105700
     typedef NT Type;
     struct To_interval
-        : public std::unary_function< Type, std::pair< double, double > > {
+        : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
         std::pair<double, double>
         operator()(const Type& x) const {
 	    std::pair<double,double> p_num = CGAL::to_interval (numerator (x));
