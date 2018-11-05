@@ -22,6 +22,8 @@
 #define CGAL_IO_TRAITS_MULTILINESTRING_H
 
 #include <CGAL/internal/Geometry_container.h>
+#include <boost/geometry/io/wkt/write.hpp>
+#include <boost/geometry/io/wkt/read.hpp>
 
 namespace boost{
 namespace geometry{

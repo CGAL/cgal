@@ -23,6 +23,8 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Point_2.h>
+#include <boost/geometry/io/wkt/write.hpp>
+#include <boost/geometry/io/wkt/read.hpp>
 
 namespace boost{
 namespace geometry{

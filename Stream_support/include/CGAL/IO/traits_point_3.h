@@ -23,6 +23,9 @@
 
 #include <CGAL/number_utils.h>
 #include <CGAL/Point_3.h>
+#include <boost/geometry/io/wkt/write.hpp>
+#include <boost/geometry/io/wkt/read.hpp>
+
 namespace boost{
 namespace geometry{
 namespace traits{

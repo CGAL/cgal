@@ -21,6 +21,8 @@
 #ifndef CGAL_IO_TRAITS_LINESTRING_H
 #define CGAL_IO_TRAITS_LINESTRING_H
 #include <CGAL/internal/Geometry_container.h>
+#include <boost/geometry/io/wkt/write.hpp>
+#include <boost/geometry/io/wkt/read.hpp>
 
 
 
