@@ -426,7 +426,7 @@ simplify(const CGAL::Polygon_with_holes_2<Traits,Container>& polygon,
     }
   }
   std::vector<Polygon_2>holes(hole_id.size());
-  for(int i=0; i < hole_id.size(); i++){
+  for(std::size_t i=0; i < hole_id.size(); i++){
     Vertices_in_constraint_iterator beg = pct.vertices_in_constraint_begin(hole_id[i]);
     Vertices_in_constraint_iterator end = pct.vertices_in_constraint_end(hole_id[i]);
     for(; beg!=end;){

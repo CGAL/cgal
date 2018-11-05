@@ -245,10 +245,10 @@ MainWindow::on_actionSavePoints_triggered()
     
     std::vector<std::vector<Point_2> >mp;
     mp.resize(regular_grid->get_dimension().second);
-    for (unsigned int i=0;i<static_cast<unsigned int>(regular_grid->get_dimension().first);++i)
+    for (int i=0;i<regular_grid->get_dimension().first;++i)
     {
       mp[i].reserve(regular_grid->get_dimension().second);
-      for (unsigned int j=0;j<regular_grid->get_dimension().second;++j)
+      for (int j=0;j<regular_grid->get_dimension().second;++j)
       {
         mp[i].push_back(Point_2(regular_grid->get_field(j,i).x(),
                                 regular_grid->get_field(j,i).y()));
