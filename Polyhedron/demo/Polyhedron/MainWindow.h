@@ -17,10 +17,13 @@
 #include <QStringList>
 #include <QSet>
 #include <QModelIndex>
+#include <QLineEdit>
+
 class Scene;
 class Viewer;
 class QTreeView;
 class QMenu;
+class QWidgetAction;
 namespace CGAL {
 namespace Three{
 class Polyhedron_demo_io_plugin_interface;
@@ -35,8 +38,6 @@ namespace Ui {
   class MainWindow;
   class Statistics_on_item_dialog;
 }
-
-#include "Polyhedron_type_fwd.h"
 
 #include "Messages_interface.h"
 
@@ -239,11 +240,6 @@ public Q_SLOTS:
   void throw_exception();
 
   /*!
-   * set_face_graph_default_type sets the global state of the application to `Polyhedron mode` or `Surface_mesh mode`.
-   */
-  void set_face_graph_default_type(MainWindow::Face_graph_mode m);
-
-  /*!
    * Writes the statistics dialog content in a text file.
    */
   void exportStatistics();
@@ -314,7 +310,8 @@ protected Q_SLOTS:
   //!Swap the visibility of the selected item(s).
   void on_actionShowHide_triggered();
   //!Pops a dialog to change the max TextItems
-  void on_actionMaxTextItemsDisplayed_triggered();
+  void setMaxTextItemsDisplayed(int val);
+  void setTransparencyPasses(int val);
   // Select A/B
   //!Sets the selected item as item_A.
   void on_actionSetPolyhedronA_triggered();
@@ -332,10 +329,9 @@ protected Q_SLOTS:
   //!Calls the function saveSnapShot of the viewer.
   void on_actionSaveSnapshot_triggered();
   //!Opens a Dialog to choose a color and make it the background color.
-  void on_actionSetBackgroundColor_triggered();
+  void setBackgroundColor();
   //!Opens a Dialog to change the lighting settings
-  void on_actionSetLighting_triggered();
-  
+  void setLighting_triggered();
   /*! Opens a Dialog to enter coordinates of the new center point and sets it
    * with viewerShow.
    *@see viewerShow(float, float, float, float, float, float)
@@ -437,8 +433,14 @@ public:
   void evaluate_script_quiet(QString script, 
                              const QString & fileName = QString());
 #endif
-private Q_SLOTS:
-  void set_facegraph_mode_adapter(bool is_polyhedron);
+public Q_SLOTS:
+  void toggleFullScreen();
+  void setDefaultSaveDir();
+private:
+  QList<QDockWidget *> visibleDockWidgets;
+  QLineEdit operationSearchBar;
+  QWidgetAction* searchAction;
+  QString def_save_dir;
 };
 
 #endif // ifndef MAINWINDOW_H

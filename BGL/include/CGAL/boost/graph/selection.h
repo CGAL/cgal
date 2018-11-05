@@ -570,14 +570,16 @@ void expand_face_selection_for_removal(const FaceRange& faces_to_be_deleted,
     vertex_descriptor vd = *vertices_queue.begin();
     vertices_queue.erase( vertices_queue.begin() );
 
-    // set hd to the last selected face of a connected component
-    // of selected faces around a vertex
+    // make sure hd is not a border halfedge
     halfedge_descriptor hd = halfedge(vd, tm);
     while(is_border(hd,tm) || ( !get(is_selected, face(hd, tm))) )
     {
       hd = opposite( next(hd, tm), tm);
       CGAL_assertion( hd != halfedge(vd, tm) );
     }
+
+    // set hd to the last selected face of a connected component
+    // of selected faces around a vertex
     halfedge_descriptor start = hd;
     halfedge_descriptor next_around_vertex = opposite( next(hd, tm), tm);
     while(is_border(next_around_vertex,tm) || get(is_selected, face(next_around_vertex, tm) ) )
@@ -596,6 +598,9 @@ void expand_face_selection_for_removal(const FaceRange& faces_to_be_deleted,
       {
         faces_traversed.push_back(next_around_vertex);
         next_around_vertex = opposite( next(next_around_vertex, tm), tm);
+        if (is_border(next_around_vertex,tm))
+          next_around_vertex = opposite( next(next_around_vertex, tm), tm);
+        CGAL_assertion(!is_border(next_around_vertex,tm));
       }
       while( !get(is_selected, face(next_around_vertex, tm) ) );
 
@@ -640,7 +645,7 @@ bool is_selection_a_topological_disk(const FaceRange& face_selection,
       sel_edges.insert(edge(h,pm));
     }
   }
-  return (sel_vertices.size() - sel_edges.size() + face_selection.size() == 1); 
+  return (sel_vertices.size() - sel_edges.size() + face_selection.size() == 1);
 }
 } //end of namespace CGAL
 

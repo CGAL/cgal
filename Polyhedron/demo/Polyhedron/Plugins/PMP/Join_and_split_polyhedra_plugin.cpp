@@ -2,12 +2,8 @@
 #include <QMessageBox>
 #include <QMainWindow>
 #include "Kernel_type.h"
-#ifdef USE_SURFACE_MESH
+
 #include "Scene_surface_mesh_item.h"
-#else
-#include "Polyhedron_type.h"
-#include "Scene_polyhedron_item.h"
-#endif
 #include "Scene_polyhedron_selection_item.h"
 #include "Scene_polylines_item.h"
 #include "Messages_interface.h"
@@ -29,11 +25,7 @@
 #include <boost/unordered_map.hpp>
 #include "Color_map.h"
 
-#ifdef USE_SURFACE_MESH
 typedef Scene_surface_mesh_item Scene_facegraph_item;
-#else
-typedef Scene_polyhedron_item Scene_facegraph_item;
-#endif
 typedef Scene_facegraph_item::Face_graph FaceGraph;
 using namespace CGAL::Three;
 class Polyhedron_demo_join_and_split_polyhedra_plugin:
@@ -254,9 +246,6 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
         typedef boost::graph_traits<FaceGraph>::face_descriptor   face_descriptor;
 
         selection_item->polyhedron_item()->setItemIsMulticolor(true);
-#ifndef USE_SURFACE_MESH
-        selection_item->polyhedron_item()->set_color_vector_read_only(false);
-#endif
         FaceGraph& pmesh = *(selection_item->polyhedron());
 
         boost::property_map<FaceGraph, boost::face_index_t>::type fim

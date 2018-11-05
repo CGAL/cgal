@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-  \ingroup PkgArrangement2TraitsClasses
+  \ingroup PkgArrangementOnSurface2TraitsClasses
 
   The traits class `Arr_linear_traits_2` is a model of the
   `ArrangementTraits_2` concept, which enables the construction and maintenance of arrangements of
@@ -35,7 +35,7 @@ public:
     The `Curve_2` (and the `X_monotone_curve_2`) class nested within
     the linear-traits can represent all types of linear objects. The class
     supports the copy and default constructor and the assignment operator.
-    In addition, the \link PkgArrangement2op_left_shift `operator<<` \endlink and \link PkgArrangement2op_right_shift `operator>>` \endlink for linear objects
+    In addition, the \link PkgArrangementOnSurface2op_left_shift `operator<<` \endlink and \link PkgArrangementOnSurface2op_right_shift `operator>>` \endlink for linear objects
     are defined for standard output and input streams.
   */
   class Curve_2 {

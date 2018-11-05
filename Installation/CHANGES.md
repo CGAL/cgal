@@ -7,7 +7,17 @@ Release 4.14
 Release date: March 2019
 
 ### Polygon Mesh Processing package
--   Added the following new functions to detect and repair mesh degeneracies:
+-   Added the following new functions to detect and repair issues in polygon soups:
+    - `CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup()`, which detects and removes
+       points that are not used in any polygon of the soup.
+    - `CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup()`,
+       which detects and merges points that share the same geometric position.
+    - `CGAL::Polygon_mesh_processing::merge_duplicate_polygons_in_polygon_soup()`,
+       which detects and merges polygons that are identical.
+    - `CGAL::Polygon_mesh_processing::repair_polygon_soup()`,
+       which applies a number of repairing steps (a subset of which are the functions above)
+       to clean and repair a polygon soup.
+-   Added the following new functions to detect and repair degeneracies in polygon meshes:
     - `CGAL::Polygon_mesh_processing::degenerate_edges()`
     - `CGAL::Polygon_mesh_processing::degenerate_faces()`
     - `CGAL::Polygon_mesh_processing::is_non_manifold_vertex()`
@@ -19,6 +29,15 @@ Release date: March 2019
     - `CGAL::Polygon_mesh_processing::extract_boundary_cycles()`
     - `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycle()`
     - `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycles()`
+-   Added the class `CGAL::Rigid_triangle_mesh_collision_detection` to detect intersections between meshes
+    and volumes undergoing affine transformations.
+
+### 3D Fast Intersection and Distance Computation
+
+-   The primitives `AABB_face_graph_triangle_primitive` and
+    `AABB_halfedge_graph_segment_primitive` now use as `Id` a pair of descriptor and
+    graph pointer in the case they are configured to deal with a possible different
+    graph per primitive (configuration set using a template tag).
 
 Release 4.13
 ------------

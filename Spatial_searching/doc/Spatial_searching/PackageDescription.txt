@@ -1,37 +1,37 @@
-/// \defgroup PkgSpatialSearchingD dD Spatial Searching Reference
+/// \defgroup PkgSpatialSearchingDRef dD Spatial Searching Reference
 
 /// \defgroup PkgSpatialSearchingDConcepts Concepts
-/// \ingroup PkgSpatialSearchingD
+/// \ingroup PkgSpatialSearchingDRef
 
 /// \defgroup SearchClasses Search Classes
-/// \ingroup PkgSpatialSearchingD
+/// \ingroup PkgSpatialSearchingDRef
 
 /// \defgroup RangeQueryItemClasses Range Query Item Classes
-/// \ingroup PkgSpatialSearchingD
+/// \ingroup PkgSpatialSearchingDRef
 
 /// \defgroup SearchTraitsClasses Search Traits Classes
-/// \ingroup PkgSpatialSearchingD
+/// \ingroup PkgSpatialSearchingDRef
 
 /// \defgroup DistanceClasses Distance Classes
-/// \ingroup PkgSpatialSearchingD
+/// \ingroup PkgSpatialSearchingDRef
 
 /// \defgroup SplitterClasses Splitter Classes
-/// \ingroup PkgSpatialSearchingD
+/// \ingroup PkgSpatialSearchingDRef
 
 /// \defgroup AdvancedClasses Advanced Classes
-/// \ingroup PkgSpatialSearchingD
+/// \ingroup PkgSpatialSearchingDRef
 
 
 
 /*!
-\addtogroup PkgSpatialSearchingD
+\addtogroup PkgSpatialSearchingDRef
 
-\cgalPkgDescriptionBegin{dD Spatial Searching,PkgSpatialSearchingDSummary}
+\cgalPkgDescriptionBegin{dD Spatial Searching,PkgSpatialSearchingD}
 \cgalPkgPicture{windowQuery.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Hans Tangelder and Andreas Fabri}
 \cgalPkgDesc{This package implements exact and approximate distance browsing by providing exact and approximate algorithms for range searching, k-nearest and k-furthest neighbor searching, as well as incremental nearest and incremental furthest neighbor searching, where the query items are points in dD Euclidean space.}
-\cgalPkgManuals{Chapter_dD_Spatial_Searching,PkgSpatialSearchingD}
+\cgalPkgManuals{Chapter_dD_Spatial_Searching,PkgSpatialSearchingDRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.0}

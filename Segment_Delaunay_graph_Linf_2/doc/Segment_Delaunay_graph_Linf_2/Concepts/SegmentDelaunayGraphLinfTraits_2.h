@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgSDGLinfConcepts
+\ingroup PkgSegmentDelaunayGraphLinf2Concepts
 \cgalConcept
 
 The concept `SegmentDelaunayGraphLinfTraits_2` provides traits

@@ -1,6 +1,7 @@
 #include "config.h"
 #include "Scene_spheres_item.h"
 #include "Scene_c3t3_item.h"
+#include "Scene_surface_mesh_item.h"
 
 #include <QVector>
 #include <QColor>
@@ -31,11 +32,10 @@
 #include <CGAL/IO/facets_in_complex_3_to_triangle_mesh.h>
 
 #include "Scene_polygon_soup_item.h"
-#include "Scene_polyhedron_item.h"
 
 
-typedef CGAL::AABB_triangulation_3_triangle_primitive<Kernel,C3t3> Primitive;
-typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
+typedef CGAL::AABB_triangulation_3_triangle_primitive<EPICK,C3t3> Primitive;
+typedef CGAL::AABB_traits<EPICK, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 typedef Tree::Point_and_primitive_id Point_and_primitive_id;
 
@@ -151,7 +151,7 @@ public :
        alphaSlider->setValue(255);
      }
     QOpenGLFramebufferObject* fbo = viewer->depthPeelingFbo();
-    const Kernel::Plane_3& plane = qobject_cast<Scene_c3t3_item*>(this->parent())->plane();
+    const EPICK::Plane_3& plane = qobject_cast<Scene_c3t3_item*>(this->parent())->plane();
     vaos[Facets]->bind();
     program = getShaderProgram(PROGRAM_C3T3);
     attribBuffers(viewer, PROGRAM_C3T3);
@@ -184,7 +184,7 @@ public :
     program = getShaderProgram(PROGRAM_C3T3_EDGES);
     attribBuffers(viewer, PROGRAM_C3T3_EDGES);
     program->bind();
-    const Kernel::Plane_3& plane = qobject_cast<Scene_c3t3_item*>(this->parent())->plane();
+    const EPICK::Plane_3& plane = qobject_cast<Scene_c3t3_item*>(this->parent())->plane();
     QVector4D cp(-plane.a(), -plane.b(), -plane.c(), -plane.d());
     program->setUniformValue("cutplane", cp);
     program->setAttributeValue("colors", QColor(Qt::black));
@@ -1281,12 +1281,11 @@ double Scene_c3t3_item_priv::complex_diag() const {
 
 void Scene_c3t3_item::export_facets_in_complex()
 {
-  Polyhedron outmesh;
+  SMesh outmesh;
   CGAL::facets_in_complex_3_to_triangle_mesh(c3t3(), outmesh);
-  Scene_polyhedron_item* item = new Scene_polyhedron_item(std::move(outmesh));
+  Scene_surface_mesh_item* item = new Scene_surface_mesh_item(std::move(outmesh));
   item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
   scene->addItem(item);
-
   this->setVisible(false);
 }
 

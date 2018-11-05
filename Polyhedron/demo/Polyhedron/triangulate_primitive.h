@@ -127,7 +127,8 @@ private:
 
     BOOST_FOREACH(PointAndId idPoint, idPoints)
     {
-     x += idPoint.point.x();
+     
+      x += idPoint.point.x();
      y += idPoint.point.y();
      z += idPoint.point.z();
      typename CDT::Vertex_handle vh;

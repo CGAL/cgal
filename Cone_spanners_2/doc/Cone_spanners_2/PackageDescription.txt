@@ -1,11 +1,11 @@
 // PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
 
-/// \defgroup PkgConeBasedSpanners Cone-Based Spanners Reference
+/// \defgroup PkgConeSpanners2Ref Cone-Based Spanners Reference
 
 /*!
-\addtogroup PkgConeBasedSpanners
+\addtogroup PkgConeSpanners2Ref
 
-\cgalPkgDescriptionBegin{Cone-Based Spanners,PkgConeBasedSpannersSummary}
+\cgalPkgDescriptionBegin{Cone-Based Spanners,PkgConeSpanners2}
 \cgalPkgPicture{Logo-ConeSpanners.png}
 
 \cgalPkgSummaryBegin
@@ -20,7 +20,7 @@ value defined in \cgal, which is still accurate enough for most applications.
 Moreover, for visualization purpose, this package provides a global function to
 generate the data and script files used by Gnuplot to plot the constructed graphs.
 This package also provides options for the Half Yao graph and the Half Theta graph.}
-\cgalPkgManuals{Chapter_ConeBasedSpanners,PkgConeBasedSpanners}
+\cgalPkgManuals{Chapter_ConeBasedSpanners,PkgConeSpanners2Ref}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin

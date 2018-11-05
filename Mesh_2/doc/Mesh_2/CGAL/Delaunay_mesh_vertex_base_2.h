@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh2
+\ingroup PkgMesh2Ref
 
 The class `Delaunay_mesh_vertex_base_2` is a model for the concept 
 `DelaunayMeshVertexBase_2`. 

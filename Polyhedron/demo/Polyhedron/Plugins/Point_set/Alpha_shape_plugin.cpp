@@ -180,6 +180,7 @@ public Q_SLOTS:
     if(dock_widget->isVisible()) { dock_widget->hide(); }
     else {
       dock_widget->show();
+      dock_widget->raise();
       Scene_points_with_normal_item* sel_item =
           qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
       if(sel_item)

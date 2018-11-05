@@ -1,5 +1,5 @@
 namespace CGAL {
-//! \ingroup PkgMesh_3Functions
+//! \ingroup PkgMesh3Functions
 //!
 //! \brief builds a `TriangleMesh` from the surface facets, with a consistent orientation at the interface of two subdomains.
 //!
