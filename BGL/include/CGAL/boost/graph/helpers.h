@@ -529,6 +529,16 @@ make_quad(typename boost::graph_traits<Graph>::vertex_descriptor v0,
   return opposite(h3,g);
 }
 
+//default Functor for make_grid
+template<typename Size_type, typename Point>
+struct Default_grid_maker
+    : public CGAL::Creator_uniform_3<Size_type, Point>
+{
+  Point operator()(const Size_type& i, const Size_type& j)const 
+  {
+    return CGAL::Creator_uniform_3<Size_type, Point>::operator ()(i,j,0);
+  }
+};
 } // namespace internal
 
 /** 
@@ -1055,7 +1065,7 @@ make_grid(typename boost::graph_traits<Graph>::vertices_size_type i,
   {
     for(typename boost::graph_traits<Graph>::vertices_size_type b=0; b<h; ++b)
     {
-      put(vpmap, v_vertices[a+w*b], calculator(a,b,0));
+      put(vpmap, v_vertices[a+w*b], calculator(a,b));
     }
   }
 
@@ -1093,16 +1103,6 @@ make_grid(typename boost::graph_traits<Graph>::vertices_size_type i,
   return halfedge(v_vertices[1], v_vertices[0], g).first;
 }
 
-//default Functor
-template<typename Size_type, typename Point>
-struct Default_grid_maker
-    : public CGAL::Creator_uniform_3<Size_type, Point>
-{
-  Point operator()(const Size_type& i, const Size_type& j)
-  {
-    return CGAL::Creator_uniform_3<Size_type, Point>::operator ()(i,j,0);
-  }
-};
 
 template<class Graph>
 typename boost::graph_traits<Graph>::halfedge_descriptor
@@ -1113,7 +1113,7 @@ make_grid(typename boost::graph_traits<Graph>::vertices_size_type w,
 {
   typedef typename boost::graph_traits<Graph>::vertices_size_type Size_type;
   typedef typename boost::property_traits<typename boost::property_map<Graph, vertex_point_t>::type>::value_type Point;
-  return make_grid(w, h, g, CGAL::Creator_uniform_3<Size_type, Point>(), triangulated);
+  return make_grid(w, h, g, internal::Default_grid_maker<Size_type, Point>(), triangulated);
 }
 
 namespace internal {
