@@ -1037,13 +1037,7 @@ make_icosahedron(
  * <p>%Default: a point with positive integer coordinates (`w`, `h`, 0), with `w` in [0..`i`] and `h` in [0..`j`]
  * \returns the non-border non-diagonal halfedge that has the target vertex associated with the first point of the grid (default is (0,0,0) ).
  */
-#ifndef DOXYGEN_RUNNING
 template<class Graph, class CoordinateFunctor>
-#else
-template<class Graph, class CoordinateFunctor = CGAL::Creator_uniform_3<
-           typename boost::graph_traits<Graph>::vertices_size_type,
-           typename boost::property_traits<typename boost::property_map<Graph, vertex_point_t>::type>::value_type> >
-#endif
 typename boost::graph_traits<Graph>::halfedge_descriptor
 make_grid(typename boost::graph_traits<Graph>::vertices_size_type i,
           typename boost::graph_traits<Graph>::vertices_size_type j,
