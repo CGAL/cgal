@@ -79,11 +79,11 @@ Furthermore, we can relocate the vertices by calling `relocate_all_points()`.
 \tparam Traits a model of the concept `OptimalTransportationReconstructionTraits_2`.
 
 \tparam PointPMap a model of `ReadablePropertyMap` with value type `Traits::Point_2`.
-        Defaults to <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/identity_property_map.html">`boost::typed_identity_property_map<Traits::Point_2>`</a> 
+        Defaults to <a href="https://www.boost.org/doc/libs/release/libs/property_map/doc/identity_property_map.html">`boost::typed_identity_property_map<Traits::Point_2>`</a> 
         (for the case the input is points without mass).
 
 \tparam MassPMap a model of `ReadablePropertyMap` with value type `Traits::FT`
-        Defaults to <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/static_property_map.html">`boost::static_property_map<Traits::FT>`</a> 
+        Defaults to <a href="https://www.boost.org/doc/libs/release/libs/property_map/doc/static_property_map.html">`boost::static_property_map<Traits::FT>`</a> 
         (for the case the input is points without mass).
 
  */
@@ -839,7 +839,7 @@ public:
 
 
   bool random_pedge(Rec_edge_2& pedge) {
-    for (unsigned i = 0; i < 10; ++i) {
+    for (unsigned int i = 0; i < 10; ++i) {
       Edge edge = m_dt.random_finite_edge();
       if (m_dt.is_pinned(edge))
         continue;
@@ -992,7 +992,7 @@ public:
   Face_handle copy_face(
     Face_handle f0, Face_handle f1, Vertex_handle_map& vmap) const 
   {
-    for (unsigned i = 0; i < 3; ++i) {
+    for (unsigned int i = 0; i < 3; ++i) {
       Vertex_handle v0i = f0->vertex(i);
       Vertex_handle v1i = vmap[v0i];
       f1->set_vertex(i, v1i);
@@ -1014,7 +1014,7 @@ public:
       cf->set_neighbor(i, cfi);
     }
 
-    for (unsigned j = 0; j < 2; ++j) {
+    for (unsigned int j = 0; j < 2; ++j) {
       i = (i + 1) % 3;
       Face_handle fi = f->neighbor(i);
       Face_handle cfi = fmap[fi];
@@ -1049,8 +1049,8 @@ public:
       outer_faces.push_back(outer);
     }
 
-    for (unsigned i = 0; i < outer_faces.size(); ++i) {
-      unsigned j = (i + 1) % outer_faces.size();
+    for (unsigned int i = 0; i < outer_faces.size(); ++i) {
+      unsigned int j = (i + 1) % outer_faces.size();
       outer_faces[i]->set_neighbor(2, outer_faces[j]);
       outer_faces[j]->set_neighbor(1, outer_faces[i]);
     }
@@ -1534,15 +1534,15 @@ public:
     `false` if the algorithm was prematurely ended because no more
     edge collapse was possible.
    */
-  bool run(const unsigned steps) {
+  bool run(const unsigned int steps) {
     m_tolerance = (FT)(-1.);
     CGAL::Real_timer timer;
     if (m_verbose > 0)
       std::cerr << "reconstruct " << steps;
 
     timer.start();
-    unsigned performed = 0;
-    for (unsigned i = 0; i < steps; ++i) {
+    unsigned int performed = 0;
+    for (unsigned int i = 0; i < steps; ++i) {
       bool ok = decimate();
       if (!ok)
         break;
@@ -1579,7 +1579,7 @@ public:
       std::cerr << "reconstruct under tolerance " << tolerance;
 
     timer.start();
-    unsigned performed = 0;
+    unsigned int performed = 0;
     while (decimate ())
       performed++;
 

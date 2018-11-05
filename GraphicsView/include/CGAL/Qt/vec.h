@@ -361,8 +361,8 @@ cout << "Position=" << pos << endl;
 #endif
 };
 
-}} // namespace CGAL::qglviewer
+std::ostream &operator<<(std::ostream &o, const Vec &);
 
-std::ostream &operator<<(std::ostream &o, const CGAL::qglviewer::Vec &);
+}} // namespace CGAL::qglviewer
 
 #endif // QGLVIEWER_VEC_H

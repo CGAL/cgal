@@ -2,6 +2,7 @@
 #include "Scene_polyhedron_selection_item.h"
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 #include <CGAL/boost/graph/dijkstra_shortest_paths.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/property_map.h>
@@ -21,11 +22,7 @@
 
 #include "triangulate_primitive.h"
 
-#ifdef USE_SURFACE_MESH
 typedef Scene_surface_mesh_item Scene_face_graph_item;
-#else
-typedef Scene_polyhedron_item Scene_face_graph_item;
-#endif
 
 typedef Scene_face_graph_item::Face_graph Face_graph;
 typedef boost::property_map<Face_graph,CGAL::vertex_point_t>::type VPmap;
@@ -53,6 +50,7 @@ struct Scene_polyhedron_selection_item_priv{
   Scene_polyhedron_selection_item_priv(Scene_polyhedron_selection_item* parent):
     item(parent)
   {
+    
   }
 
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
@@ -63,7 +61,7 @@ struct Scene_polyhedron_selection_item_priv{
                             const Selection_set_vertex& p_sel_vertex, const Selection_set_facet &p_sel_facet, const Selection_set_edge &p_sel_edges) const;
   void compute_temp_elements() const;
   void compute_HL_elements() const;
-  void triangulate_facet(fg_face_descriptor, Kernel::Vector_3 normal,
+  void triangulate_facet(fg_face_descriptor, EPICK::Vector_3 normal,
                          std::vector<float> &p_facets,std::vector<float> &p_normals) const;
   void tempInstructions(QString s1, QString s2);
 
@@ -117,11 +115,11 @@ struct Scene_polyhedron_selection_item_priv{
   Active_handle::Type original_sel_mode;
   //Only needed for the triangulation
   Face_graph* poly;
-  CGAL::Unique_hash_map<fg_face_descriptor, Kernel::Vector_3>  face_normals_map;
-  CGAL::Unique_hash_map<fg_vertex_descriptor, Kernel::Vector_3>  vertex_normals_map;
-  boost::associative_property_map< CGAL::Unique_hash_map<fg_face_descriptor, Kernel::Vector_3> >
+  CGAL::Unique_hash_map<fg_face_descriptor, EPICK::Vector_3>  face_normals_map;
+  CGAL::Unique_hash_map<fg_vertex_descriptor, EPICK::Vector_3>  vertex_normals_map;
+  boost::associative_property_map< CGAL::Unique_hash_map<fg_face_descriptor, EPICK::Vector_3> >
     nf_pmap;
-  boost::associative_property_map< CGAL::Unique_hash_map<fg_vertex_descriptor, Kernel::Vector_3> >
+  boost::associative_property_map< CGAL::Unique_hash_map<fg_vertex_descriptor, EPICK::Vector_3> >
     nv_pmap;
   Scene_face_graph_item::ManipulatedFrame *manipulated_frame;
   bool ready_to_move;
@@ -420,7 +418,7 @@ void push_back_xyz(const TypeWithXYZ& t,
   vector.push_back(t.z());
 }
 
-typedef Kernel Traits;
+typedef EPICK Traits;
 
 //Make sure all the facets are triangles
 typedef Traits::Point_3	            Point_3;
@@ -432,9 +430,9 @@ Scene_polyhedron_selection_item_priv::triangulate_facet(fg_face_descriptor fit,c
                                                    std::vector<float> &p_facets,std::vector<float> &p_normals ) const
 {
   const CGAL::qglviewer::Vec off = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
-  Kernel::Vector_3 offset(off.x,off.y,off.z);
+  EPICK::Vector_3 offset(off.x,off.y,off.z);
   
-  typedef FacetTriangulator<Face_graph, Kernel, fg_vertex_descriptor> FT;
+  typedef FacetTriangulator<Face_graph, EPICK, fg_vertex_descriptor> FT;
   double diagonal;
   if(item->poly_item->diagonalBbox() != std::numeric_limits<double>::infinity())
     diagonal = item->poly_item->diagonalBbox();
@@ -510,7 +508,7 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
       }
       else if (is_quad(halfedge(f,*poly), *poly))
       {
-        Kernel::Vector_3 v_offset(offset.x, offset.y, offset.z);
+        EPICK::Vector_3 v_offset(offset.x, offset.y, offset.z);
         Vector nf = get(nf_pmap, f);
         {
           //1st half-quad
@@ -677,7 +675,6 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
     d->computeElements();
     d->initializeBuffers(viewer);
   }
-  viewer->makeCurrent();
   vaos[Scene_polyhedron_selection_item_priv::Facets]->bind();
 
   attribBuffers(viewer,PROGRAM_WITH_LIGHT);
@@ -763,7 +760,6 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
     d->computeElements();
     d->initializeBuffers(viewer);
   }
-  viewer->makeCurrent();
   vaos[Scene_polyhedron_selection_item_priv::Edges]->bind();
   if(!viewer->isOpenGL_4_3())
   {
@@ -833,7 +829,6 @@ void Scene_polyhedron_selection_item::drawPoints(CGAL::Three::Viewer_interface* 
     d->computeElements();
     d->initializeBuffers(viewer);
   }
-  viewer->makeCurrent();
   vaos[Scene_polyhedron_selection_item_priv::Points]->bind();
   d->program = getShaderProgram(PROGRAM_NO_SELECTION);
   attribBuffers(viewer,PROGRAM_NO_SELECTION);
@@ -1897,6 +1892,7 @@ Scene_polyhedron_selection_item::Scene_polyhedron_selection_item()
   d->are_temp_buffers_filled = false;
   d->poly = NULL;
   d->ready_to_move = false;
+  setProperty("no_picking", true);
 }
 
 Scene_polyhedron_selection_item::Scene_polyhedron_selection_item(Scene_face_graph_item* poly_item, QMainWindow* mw)
@@ -1908,7 +1904,12 @@ Scene_polyhedron_selection_item::Scene_polyhedron_selection_item(Scene_face_grap
   d->nb_facets = 0;
   d->nb_points = 0;
   d->nb_lines = 0;
-
+  QString sf = poly_item->property("source filename").toString();
+  QRegExp rx("\\.(ts$|off$|obj$|ply$|stl$|surf$|vtk$|vtp$|vtu)");
+  sf.remove(rx);
+  if(!sf.isEmpty())
+    setProperty("defaultSaveDir", sf);
+  qDebug()<<property("defaultSaveDir").toString();
   for(int i=0; i<Scene_polyhedron_selection_item_priv::NumberOfVaos; i++)
   {
     addVaos(i);
@@ -1928,6 +1929,7 @@ Scene_polyhedron_selection_item::Scene_polyhedron_selection_item(Scene_face_grap
   d->is_treated = false;
   d->poly_need_update = false;
   d->ready_to_move = false;
+  setProperty("no_picking", true);
 
 }
 
@@ -1994,8 +1996,8 @@ void Scene_polyhedron_selection_item::compute_normal_maps()
 
   d->face_normals_map.clear();
   d->vertex_normals_map.clear();
-  d->nf_pmap = boost::associative_property_map< CGAL::Unique_hash_map<fg_face_descriptor, Kernel::Vector_3> >(d->face_normals_map);
-  d->nv_pmap = boost::associative_property_map< CGAL::Unique_hash_map<fg_vertex_descriptor, Kernel::Vector_3> >(d->vertex_normals_map);
+  d->nf_pmap = boost::associative_property_map< CGAL::Unique_hash_map<fg_face_descriptor, EPICK::Vector_3> >(d->face_normals_map);
+  d->nv_pmap = boost::associative_property_map< CGAL::Unique_hash_map<fg_vertex_descriptor, EPICK::Vector_3> >(d->vertex_normals_map);
   PMP::compute_normals(*d->poly, d->nv_pmap, d->nf_pmap);
 }
 
@@ -2030,6 +2032,7 @@ void Scene_polyhedron_selection_item::validateMoveVertex()
   k_ring_selector.setEditMode(true);
   viewer->setManipulatedFrame(NULL);
   invalidateOpenGLBuffers();
+  poly_item->itemChanged();
   Q_EMIT updateInstructions("Select a vertex. (1/2)");
 }
 
@@ -2076,8 +2079,9 @@ bool Scene_polyhedron_selection_item_priv::canAddFace(fg_halfedge_descriptor hc,
       found = true;
       fg_halfedge_descriptor res =
           CGAL::Euler::add_face_to_border(t,hc, *item->polyhedron());
+      fg_face_descriptor resf = face(res, *item->polyhedron());
 
-      if(CGAL::is_degenerate_triangle_face(res, *item->polyhedron(), get(CGAL::vertex_point, *item->polyhedron()), Kernel()))
+      if(CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(resf, *item->polyhedron()))
       {
         CGAL::Euler::remove_face(res, *item->polyhedron());
         tempInstructions("Edge not selected : resulting facet is degenerated.",

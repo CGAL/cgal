@@ -652,12 +652,12 @@ protected:
 
       shift_pressing = modifiers.testFlag(Qt::ShiftModifier);
       ctrl_pressing = modifiers.testFlag(Qt::ControlModifier);
-      background = static_cast<CGAL::Three::Viewer_interface*>(*CGAL::QGLViewer::QGLViewerPool().begin())->grabFramebuffer();
     }
 
     // mouse events
     if(shift_pressing && event->type() == QEvent::MouseButtonPress)
       {
+      background = static_cast<CGAL::Three::Viewer_interface*>(*CGAL::QGLViewer::QGLViewerPool().begin())->grabFramebuffer();
 	QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
 	// Start selection
 	if (mouseEvent->button() == Qt::LeftButton)

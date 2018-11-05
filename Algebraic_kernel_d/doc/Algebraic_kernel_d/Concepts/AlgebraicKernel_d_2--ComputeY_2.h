@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicKerneldConceptsBi
+\ingroup PkgAlgebraicKernelDConceptsBi
 \cgalConcept
 
 Computes the second coordinate of an 

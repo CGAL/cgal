@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 #include <fstream>
 #include <QMessageBox>
 #include <QMenu>
@@ -49,6 +50,9 @@ Polyhedron_demo_xyz_plugin::load(QFileInfo fileinfo)
     delete point_set_item;
     return NULL;
   }
+  if(point_set_item->has_normals())
+    point_set_item->setRenderingMode(CGAL::Three::Three::defaultPointSetRenderingMode());
+    
   return point_set_item;
 }
 

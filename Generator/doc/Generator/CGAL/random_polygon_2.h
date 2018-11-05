@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgGenerators
+\ingroup PkgGeneratorsRef
 
 \brief computes a random simple polygon by writing its vertices (oriented
 counterclockwise) to `result`. The polygon generated will have a number

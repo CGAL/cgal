@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicKerneldConceptsBi
+\ingroup PkgAlgebraicKernelDConceptsBi
 \cgalConcept
 
 Returns a square free part of a bivariate polynomial. 

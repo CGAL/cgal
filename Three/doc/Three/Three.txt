@@ -199,7 +199,7 @@ Once your code is written, you will need to link the item's library to your plug
 
     polyhedron_demo_plugin(basic_item_plugin Basic_item_plugin)
     #  links the library containing the scene_plane_item with the plugin
-    target_link_libraries(basic_item_plugin scene_basic_objects)
+    target_link_libraries(basic_item_plugin PUBLIC scene_basic_objects)
 
 \subsubsection exampleCreatingANewTypeItem Creating a new type of item
 
@@ -241,7 +241,7 @@ To display, you need to call the same program that got configured previously, an
 If you created your item in a specific file and you need to use it outside your plugin (like in another plugin), it is recommended to put it in the demo's root directory, and you will have to define your item in the general Polyhedron_demo's CMakeLists.txt by using the macro add_item :
 
     add_item(scene_trivial_item Scene_trivial_item.cpp)
-    target_link_libraries(scene_trivial_item scene_dependances_item)
+    target_link_libraries(scene_trivial_item PUBLIC scene_dependances_item)
 
 \subsection exampleUsingAGroupItem Using a Scene_group_item
 
@@ -342,7 +342,7 @@ Finally, you can declare your plugin
 If you need targets from the Polyhedron_demo, you will have to add the prefix 'Polyhedron_' to the target's name, as the exported targets belong to the namespace Polyhedron_
 
     polyhedron_demo_plugin(basic_item_plugin Basic_item_plugin)
-    target_link_libraries(basic_item_plugin Polyhedron_scene_basic_objects)
+    target_link_libraries(basic_item_plugin PUBLIC Polyhedron_scene_basic_objects)
 
 Notice that an external plugin will not be automatically loaded in the Polyhedron demo. It must be built in its own project.
 
@@ -380,7 +380,7 @@ Notice that an external plugin will not be automatically loaded in the Polyhedro
 
 
 \section example Examples
-All the examples have been constructed as external plugins in CGAL/Three/demo/Three/Example_plugin. You will have to use "Load plugin" in the File menu if you want to test it.
+All the examples have been constructed as external plugins in CGAL/Three/demo/Three/Example_plugin. You will have to use "Load plugin" in the File menu or set the environment variable POLYHEDRON_DEMO_PLUGINS_PATH if you want to test it.
 \subsection example1 Creating a Basic Plugin
 \cgalExample{Three/Example_plugin/Basic_plugin.cpp}
 

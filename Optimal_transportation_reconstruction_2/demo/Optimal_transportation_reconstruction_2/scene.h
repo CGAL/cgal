@@ -18,7 +18,7 @@
 #define cimg_display 0 // To avoid X11 or Windows-GDI dependency
 #include <CImg.h>
 #endif
-#include "random.h"
+#include <CGAL/Random.h>
 #include <utility>      // std::pair
 #include <vector>
 #include <CGAL/property_map.h>
@@ -104,7 +104,17 @@ private:
   double m_bbox_x;
   double m_bbox_y;
   double m_bbox_size;
-
+  
+  //Random
+  CGAL::Random random;
+  
+  template <class Vector>
+  Vector random_vec(const double scale)
+  {
+    double dx = random.get_double(-scale, scale);
+    double dy = random.get_double(-scale, scale);
+    return Vector(dx, dy);
+  }
 
 public:
   Scene() {
@@ -523,7 +533,7 @@ public:
 
     std::vector<Sample_>::iterator it;
     for (it = m_samples.begin(); it != m_samples.end(); it++) {
-      const double rd = random_double(0.0, 1.0);
+      const double rd = random.get_double(0.0, 1.0);
       if (rd >= percentage)
         selected.push_back(*it);
     }
@@ -542,7 +552,7 @@ public:
       Sample_& s = *it;
 
       samples.push_back(&s);
-      FT rv = random_double(0.0, 1.0);
+      FT rv = random.get_double(0.0, 1.0);
       if (rv <= percentage)
         vertices.push_back(&s);
     }

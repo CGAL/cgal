@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgArrangement2ConceptsDCEL
+\ingroup PkgArrangementOnSurface2ConceptsDCEL
 \cgalConcept
 
 The concept `ArrangementDcelWithRebind` refines the `ArrangementDcel` concept by adding 

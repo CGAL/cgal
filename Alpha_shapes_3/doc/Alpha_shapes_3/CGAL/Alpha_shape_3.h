@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgAlphaShapes3
+\ingroup PkgAlphaShapes3Ref
 
 The class `Alpha_shape_3` represents the family of 
 alpha shapes of points in the 3D space for <I>all</I> real 

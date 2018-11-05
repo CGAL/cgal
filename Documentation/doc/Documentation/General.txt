@@ -1,186 +1,239 @@
-///This concept refers to the one described at http://www.sgi.com/tech/stl/Assignable.html.
-///
-///Using the latest concepts of the \cpp standard, a type that is a model of this concept
-///is both <a href="http://en.cppreference.com/w/cpp/concept/CopyAssignable"><tt>CopyAssignable</tt></a>
-///and <a href="http://en.cppreference.com/w/cpp/concept/CopyConstructible"><tt>CopyConstructible</tt></a>.
+///This concept refines both
+/// <a href="https://en.cppreference.com/w/cpp/named_req/CopyAssignable"><tt>CopyAssignable</tt></a>
+///and <a href="https://en.cppreference.com/w/cpp/named_req/CopyConstructible"><tt>CopyConstructible</tt></a>.
 class Assignable {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See http://en.cppreference.com/w/cpp/concept/DefaultConstructible
+/// See https://en.cppreference.com/w/cpp/named_req/DefaultConstructible
 class DefaultConstructible {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See http://en.cppreference.com/w/cpp/concept/CopyConstructible
+/// See https://en.cppreference.com/w/cpp/named_req/CopyConstructible
 class CopyConstructible {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See http://en.cppreference.com/w/cpp/concept/Callable
+/// See https://en.cppreference.com/w/cpp/named_req/Callable
 class Callable {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See http://en.cppreference.com/w/cpp/concept/EqualityComparable
+/// See https://en.cppreference.com/w/cpp/named_req/EqualityComparable
 class EqualityComparable {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See http://en.cppreference.com/w/cpp/concept/LessThanComparable
+/// See https://en.cppreference.com/w/cpp/named_req/LessThanComparable
 class LessThanComparable {};
 
 /// \cgalConcept
-/// The concept AdaptableFunctor defines an adaptable functor, that is, a functor that can be
+/// The concept `AdaptableFunctor` defines an adaptable functor, that is, a functor that can be
 /// used with function object adaptors such as binders and composers.
 ///
 class AdaptableFunctor {};
+
 /// \cgalConcept
-///This concept refers to the one described at  http://www.sgi.com/tech/stl/AdaptableUnaryFunction.html.
-class AdaptableUnaryFunction {};
+/// Adaptable functor with one argument
+/// \cgalRefines AdaptableFunctor
+class AdaptableUnaryFunction
+{
+public:
+  /// result_type
+  typedef unspecified_type result_type;
+  /// argument_type
+  typedef unspecified_type argument_type;
+  /// operator type
+  result_type operator()(argument_type);
+};
+
 /// \cgalConcept
-///This concept refers to the one described at  http://www.sgi.com/tech/stl/AdaptableBinaryFunction.html.
-class AdaptableBinaryFunction {};
+/// Adaptable functor with two arguments
+/// \cgalRefines AdaptableFunctor
+class AdaptableBinaryFunction
+{
+public:
+  /// result_type
+  typedef unspecified_type result_type;
+  /// first argument_type
+  typedef unspecified_type first_argument_type;
+  /// second argument_type
+  typedef unspecified_type second_argument_type;
+  /// operator type
+  result_type operator()(first_argument_type, second_argument_type);
+};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See http://en.cppreference.com/w/cpp/concept/Iterator
+/// See https://en.cppreference.com/w/cpp/named_req/Iterator
 class Iterator {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See http://en.cppreference.com/w/cpp/concept/OutputIterator
+/// See https://en.cppreference.com/w/cpp/named_req/OutputIterator
 class OutputIterator {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See http://en.cppreference.com/w/cpp/concept/InputIterator
+/// See https://en.cppreference.com/w/cpp/named_req/InputIterator
 class InputIterator {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See http://en.cppreference.com/w/cpp/concept/ForwardIterator
+/// See https://en.cppreference.com/w/cpp/named_req/ForwardIterator
 class ForwardIterator {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See http://en.cppreference.com/w/cpp/concept/RandomAccessIterator
+/// See https://en.cppreference.com/w/cpp/named_req/RandomAccessIterator
 class RandomAccessIterator {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See http://en.cppreference.com/w/cpp/concept/BidirectionalIterator
+/// See https://en.cppreference.com/w/cpp/named_req/BidirectionalIterator
 class BidirectionalIterator {};
 
 /// \cgalConcept
-/// This concept refers to the one described at http://www.sgi.com/tech/stl/RandomAccessContainer.html.
-///
-/// It is a container that is a model of
-/// <a href="http://en.cppreference.com/w/cpp/concept/ReversibleContainer"><tt>ReversibleContainer</tt></a> and whose iterator type is a model of
-/// <a href="http://en.cppreference.com/w/cpp/concept/RandomAccessIterator"><tt>RandomAccessIterator</tt></a>.
-class RandomAccessContainer {};
+/// Concept from the \cpp standard.
+/// See https://en.cppreference.com/w/cpp/named_req/Swappable
+class Swappable {};
+
 /// \cgalConcept
-/// This concepts refers to the one described at http://www.sgi.com/tech/stl/BackInsertionSequence.html.
-///
-/// It is a container that is a model of
-/// <a href="http://en.cppreference.com/w/cpp/concept/SequenceContainer"><tt>SequenceContainer</tt></a>
-/// that has the ability to append elements at the end of the sequence and to access the last element, both in amortized constant time.
-class BackInsertionSequence {};
+/// Concept from the \cpp standard.
+/// See https://en.cppreference.com/w/cpp/named_req/Container
+class Container {};
+
+/// \cgalConcept
+/// Concept from the \cpp standard.
+/// See https://en.cppreference.com/w/cpp/named_req/ReversibleContainer
+class ReversibleContainer {};
+
+/// \cgalConcept
+/// Concept from the \cpp standard.
+/// See https://en.cppreference.com/w/cpp/named_req/AssociativeContainer
+class AssociativeContainer {};
+
+/// \cgalConcept
+/// Concept from the \cpp standard.
+/// See https://en.cppreference.com/w/cpp/named_req/SequenceContainer
+class SequenceContainer {};
+
+/// \cgalConcept
+/// This container concept refines
+/// <a href="https://en.cppreference.com/w/cpp/named_req/ReversibleContainer"><tt>ReversibleContainer</tt></a> and its iterator type is a model of
+/// <a href="https://en.cppreference.com/w/cpp/named_req/RandomAccessIterator"><tt>RandomAccessIterator</tt></a>.
+class RandomAccessContainer {};
+
+/// \cgalConcept
+/// This container concepts refines
+/// <a href="https://en.cppreference.com/w/cpp/named_req/SequenceContainer"><tt>SequenceContainer</tt></a> and
+/// has the ability to append elements at the end of the sequence and to access the last element, both in amortized constant time.
+class BackInsertionSequence
+{
+public:
+  /// returns the last inserted element.
+  const value_type& back() const;
+  /// removes the last inserted element if not empty.
+  void pop_back()
+  /// inserts an element
+  void push_back(const value_type&)
+};
 
 /*!
-See http://www.boost.org/libs/property_map/doc/LvaluePropertyMap.html
+See https://www.boost.org/libs/property_map/doc/LvaluePropertyMap.html
 \cgalConcept
 */
 class LvaluePropertyMap {};
 
 /*!
-See http://www.boost.org/libs/property_map/doc/ReadWritePropertyMap.html
+See https://www.boost.org/libs/property_map/doc/ReadWritePropertyMap.html
 \cgalConcept
 */
 class ReadWritePropertyMap {};
 
 /*!
-See http://www.boost.org/libs/property_map/doc/WritablePropertyMap.html
+See https://www.boost.org/libs/property_map/doc/WritablePropertyMap.html
 \cgalConcept
 */
 class WritablePropertyMap {};
 
 /*!
-See http://www.boost.org/libs/property_map/doc/ReadablePropertyMap.html
+See https://www.boost.org/libs/property_map/doc/ReadablePropertyMap.html
 \cgalConcept
 */
 class ReadablePropertyMap {};
 
 /*!
-See http://www.boost.org/libs/range/doc/html/range/concepts/single_pass_range.html
+See https://www.boost.org/libs/range/doc/html/range/concepts/single_pass_range.html
 \cgalConcept
 */
 class SinglePassRange {};
 
 /*!
-See http://www.boost.org/libs/range/doc/html/range/concepts/random_access_range.html
+See https://www.boost.org/libs/range/doc/html/range/concepts/random_access_range.html
 \cgalConcept
 */
 class RandomAccessRange {};
 
 /*!
-See http://www.boost.org/libs/range/doc/html/range/concepts/forward_range.html
+See https://www.boost.org/libs/range/doc/html/range/concepts/forward_range.html
 \cgalConcept
 */
 class ForwardRange {};
 
 /*!
 Concept from the Boost Graph Library.
-See http://www.boost.org/libs/graph/doc/IncidenceGraph.html
+See https://www.boost.org/libs/graph/doc/IncidenceGraph.html
 \cgalConcept
 */
 class IncidenceGraph {};
 
 /*!
 Concept from the Boost Graph Library.
-See http://www.boost.org/libs/graph/doc/BidirectionalGraph.html
+See https://www.boost.org/libs/graph/doc/BidirectionalGraph.html
 \cgalConcept
 */
 class BidirectionalGraph {};
 
 /*!
 Concept from the Boost Graph Library.
-See http://www.boost.org/libs/graph/doc/VertexAndEdgeListGraph.html
+See https://www.boost.org/libs/graph/doc/VertexAndEdgeListGraph.html
 \cgalConcept
 */
 class VertexAndEdgeListGraph {};
 
 /*!
 Concept from the Boost Graph Library.
-See http://www.boost.org/libs/graph/doc/AdjacencyGraph.html
+See https://www.boost.org/libs/graph/doc/AdjacencyGraph.html
 \cgalConcept
 */
 class AdjacencyGraph {};
 
 /*!
 Concept from the Boost Graph Library.
-See http://www.boost.org/libs/graph/doc/AdjacencyMatrix.html
+See https://www.boost.org/libs/graph/doc/AdjacencyMatrix.html
 \cgalConcept
 */
 class AdjacencyMatrix {};
 
 /*!
 Concept from the Boost Graph Library.
-See http://www.boost.org/libs/graph/doc/MutableGraph.html
+See https://www.boost.org/libs/graph/doc/MutableGraph.html
 \cgalConcept
 */
 class MutableGraph {};
 
 /*!
 Concept from the Boost Graph Library.
-See http://www.boost.org/libs/graph/doc/PropertyGraph.html
+See https://www.boost.org/libs/graph/doc/PropertyGraph.html
 \cgalConcept
 */
 class PropertyGraph {};
 
 /*!
 Concept from the Boost Graph Library.
-See http://www.boost.org/libs/graph/doc/MutablePropertyGraph.html
+See https://www.boost.org/libs/graph/doc/MutablePropertyGraph.html
 \cgalConcept
 */
 class MutablePropertyGraph {};

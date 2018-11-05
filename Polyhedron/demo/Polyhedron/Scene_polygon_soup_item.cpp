@@ -2,11 +2,8 @@
 #include <queue>
 
 #include "Scene_polygon_soup_item.h"
-#include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 #include <CGAL/Three/Viewer_interface.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/Polyhedron_incremental_builder_3.h>
 
 #include <QObject>
 #include <QApplication>
@@ -26,6 +23,8 @@
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 
+#include <CGAL/Polygon_2.h>
+
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include "triangulate_primitive.h"
 #include <CGAL/array.h>
@@ -34,7 +33,7 @@
 struct Scene_polygon_soup_item_priv{
 
   typedef Polygon_soup::Polygons::const_iterator Polygons_iterator;
-  typedef Kernel::Point_3 Point_3;
+  typedef EPICK::Point_3 Point_3;
 
   Scene_polygon_soup_item_priv(Scene_polygon_soup_item* parent)
     : soup(0),
@@ -90,49 +89,6 @@ struct Scene_polygon_soup_item_priv{
 
 };
 
-
-struct Polyhedron_to_polygon_soup_writer {
-  typedef Kernel::Point_3 Point_3;
-
-  Polygon_soup* soup;
-  Polygon_soup::Polygon_3 polygon;
-
-  Polyhedron_to_polygon_soup_writer(Polygon_soup* soup) : soup(soup), polygon() {
-  }
-
-  void write_header( std::ostream&,
-                     std::size_t /* vertices */,
-                     std::size_t /* halfedges */,
-                     std::size_t /* facets */,
-                     bool /* normals */ = false ) {
-    soup->clear();
-  }
-
-  void write_footer() {
-  }
-
-  void write_vertex( const double& x, const double& y, const double& z) {
-    soup->points.push_back(Point_3(x, y, z));
-  }
-
-  void write_normal( const double& /* x */, const double& /* y */, const double& /* z */) {
-  }
-
-  void write_facet_header() {
-  }
-
-  void write_facet_begin( std::size_t no) {
-    polygon.clear();
-    polygon.reserve(no);
-  }
-  void write_facet_vertex_index( std::size_t index) {
-    polygon.push_back(index);
-  }
-  void write_facet_end() {
-    soup->polygons.push_back(polygon);
-    polygon.clear();
-  }
-}; // end struct Polyhedron_to_soup_writer
 
 void
 Scene_polygon_soup_item_priv::initializeBuffers(CGAL::Three::Viewer_interface* viewer) const
@@ -242,7 +198,7 @@ Scene_polygon_soup_item_priv::initializeBuffers(CGAL::Three::Viewer_interface* v
     item->are_buffers_filled = true;
 }
 
-typedef Polyhedron::Traits Traits;
+typedef EPICK Traits;
 typedef Polygon_soup::Polygon_3 Facet;
 
 void
@@ -253,21 +209,20 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
   
     //Computes the normal of the facet
     Traits::Vector_3 normal = CGAL::NULL_VECTOR;
-    //Newell's method
-    for (std::size_t i = 0; i < pit->size() ; ++ i)
-    {
-       const Point_3& pa = soup->points[pit->at(i)];
-       const Point_3& pb = soup->points[pit->at(i+1)%pit->size()];
-       double x = normal.x() + (pa.y()-pb.y())*(pa.z()+pb.z());
-       double y = normal.y() + (pa.z()-pb.z())*(pa.x()+pb.x());
-       double z = normal.z() + (pa.x()-pb.x())*(pa.y()+pb.y());
-       normal = Traits::Vector_3(x,y,z);
-    }
 
+    //Newell's method
+    for (std::size_t i = 0; i < pit->size() ; ++ i){
+      const Point_3& pa = soup->points[pit->at(i)];
+      const Point_3& pb = soup->points[pit->at((i+1)%pit->size())];
+      double x = normal.x() + (pa.y()-pb.y())*(pa.z()+pb.z());
+      double y = normal.y() + (pa.z()-pb.z())*(pa.x()+pb.x());
+      double z = normal.z() + (pa.x()-pb.x())*(pa.y()+pb.y());
+      normal = Traits::Vector_3(x,y,z);
+    }
     if (normal == CGAL::NULL_VECTOR) // No normal could be computed, return
       return;
-
-    typedef FacetTriangulator<Polyhedron, Kernel, std::size_t> FT;
+    
+    typedef FacetTriangulator<SMesh, EPICK, std::size_t> FT;
 
     double diagonal;
     if(item->diagonalBbox() != std::numeric_limits<double>::infinity())
@@ -325,21 +280,14 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
         positions_poly.push_back(ffit->vertex(2)->point().z());
         positions_poly.push_back(1.0);
 
-
-        const Point_3& pa = soup->points[pit->at(0)];
-        const Point_3& pb = soup->points[pit->at(1)];
-        const Point_3& pc = soup->points[pit->at(2)];
-
-        Kernel::Vector_3 n = CGAL::cross_product(pb-pa, pc -pa);
-        n = n / std::sqrt(n * n);
         CGAL::Color color;
         if(!soup->fcolors.empty())
           color = soup->fcolors[polygon_id];
         for(int i=0; i<3; i++)
         {
-          normals.push_back(n.x());
-          normals.push_back(n.y());
-          normals.push_back(n.z());
+          normals.push_back(normal.x());
+          normals.push_back(normal.y());
+          normals.push_back(normal.z());
           if(!soup->fcolors.empty())
           {
             f_colors.push_back((float)color.red()/255);
@@ -384,7 +332,7 @@ Scene_polygon_soup_item_priv::compute_normals_and_vertices() const{
             const Point_3& pb = soup->points[it->at(1)];
             const Point_3& pc = soup->points[it->at(2)];
 
-            Kernel::Vector_3 n = CGAL::cross_product(pb-pa, pc -pa);
+            EPICK::Vector_3 n = CGAL::cross_product(pb-pa, pc -pa);
             n = n / std::sqrt(n * n);
 
             normals.push_back(n.x());
@@ -510,8 +458,6 @@ void Scene_polygon_soup_item::init_polygon_soup(std::size_t nb_pts, std::size_t 
 }
 
 
-
-//#include <CGAL/IO/generic_print_polyhedron.h>
 #include <iostream>
 template<class PolygonMesh>
 void polygon_mesh_to_soup(PolygonMesh& mesh, Polygon_soup& soup)
@@ -544,15 +490,6 @@ void polygon_mesh_to_soup(PolygonMesh& mesh, Polygon_soup& soup)
 
 }
 
-void Scene_polygon_soup_item::load(Scene_polyhedron_item* poly_item) {
-  if(!poly_item) return;
-  if(!poly_item->polyhedron()) return;
-
-  if(!d->soup)
-    d->soup = new Polygon_soup;
-  polygon_mesh_to_soup(*poly_item->polyhedron(), *d->soup);
-  invalidateOpenGLBuffers();
-}
 
 void Scene_polygon_soup_item::load(Scene_surface_mesh_item* sm_item) {
   if(!sm_item) return;
@@ -665,28 +602,6 @@ Scene_polygon_soup_item::save(std::ostream& out) const
   writer.write_footer();
 
   return (bool) out;
-}
-
-bool 
-Scene_polygon_soup_item::exportAsPolyhedron(Polyhedron* out_polyhedron)
-{
-  if (!orient())
-    return false;
-
-  CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh<Polyhedron>(
-    d->soup->points, d->soup->polygons, *out_polyhedron);
-  std::size_t rv = CGAL::Polygon_mesh_processing::remove_isolated_vertices(*out_polyhedron);
-  if(rv > 0)
-    std::cerr << "Ignore isolated vertices: " << rv << std::endl;
-  if(out_polyhedron->size_of_vertices() > 0) {
-    // Also check whether the consistent orientation is fine
-    if(out_polyhedron->is_closed() &&
-       !CGAL::Polygon_mesh_processing::is_outward_oriented(*out_polyhedron)) {
-      out_polyhedron->inside_out();
-    }
-    return true;
-  }
-  return false;
 }
 
 bool

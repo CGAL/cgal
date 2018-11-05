@@ -15,14 +15,14 @@ faces as edges of the dual graph.
 
 The scope of \cgal is geometry and not graph algorithms. Nevertheless, this package
 provides the necessary classes and functions that enable using the
-algorithms of the <A HREF="http://www.boost.org/libs/graph/doc/index.html">Boost Graph Library</A> \cgalCite{cgal:sll-bgl-02}
+algorithms of the <A HREF="https://www.boost.org/libs/graph/doc/index.html">Boost Graph Library</A> \cgalCite{cgal:sll-bgl-02}
 (\sc{Bgl} for short) with \cgal data structures.
 
 Furthermore, this package extends the \sc{Bgl}
 by introducing concepts such as `HalfedgeGraph` and `FaceGraph`
 allowing to handle *halfedges* and *faces*.
 These concepts reflect the design of the halfedge data structure described
-in Chapter \ref PkgHDSSummary, with opposite halfedges and circular
+in Chapter \ref PkgHalfedgeDS, with opposite halfedges and circular
 sequences of halfedges around vertices and around faces.
 
 This chapter is organized as follows:
@@ -31,10 +31,10 @@ This chapter is organized as follows:
 different libraries.
 - The four following sections give examples on how to use CGAL graph and mesh data structures
 such as
-\link PkgSurfaceMeshSummary Surface_mesh \endlink,
-\link PkgPolyhedronSummary Polyhedron \endlink,
-\link PkgArrangement2Summary Arrangement_2 \endlink, and the
-\link PkgTriangulation2Summary 2D triangulation \endlink classes as models of the \sc{Bgl} concepts.
+\link PkgSurfaceMesh Surface_mesh \endlink,
+\link PkgPolyhedron Polyhedron \endlink,
+\link PkgArrangementOnSurface2 Arrangement_2 \endlink, and the
+\link PkgTriangulation2 2D triangulation \endlink classes as models of the \sc{Bgl} concepts.
 - Starting with Section \ref BGLExtensions, we introduce new graph concepts, classes,
 and functions that extend the functionalities of the \sc{Bgl}.
 
@@ -53,7 +53,7 @@ arbitrary order.
 
 \subsection BGLGraphConcepts Graph Concepts
 
-The \sc{Bgl} introduces several <a href="http://www.boost.org/libs/graph/doc/graph_concepts.html">graph concepts</a>,
+The \sc{Bgl} introduces several <a href="https://www.boost.org/libs/graph/doc/graph_concepts.html">graph concepts</a>,
 which have different sets of characteristics and requirements.
 For example, iterating through all vertices or all edges in a graph, obtaining the outgoing
 or in-going edges of a vertex, inserting vertices and edges into a graph,
@@ -62,7 +62,7 @@ and removing vertices and edges from a graph.
 \subsection BGLTheGraphTraitsClass The Graph Traits Class
 
 An algorithm operating on a graph model determines types with the help of the traits class
-<a href="http://www.boost.org/libs/graph/doc/graph_traits.html">boost::graph_traits</a>.
+<a href="https://www.boost.org/libs/graph/doc/graph_traits.html">boost::graph_traits</a>.
 Such types are the `vertex_descriptor`,
 which is similar to a vertex handle in \cgal data structures, or
 the `edge_descriptor`, which is similar to the \link HalfedgeDSHalfedge halfedge handle \endlink in
@@ -102,7 +102,7 @@ std::pair<vertex_iterator,vertex_iterator> vertices(const Graph& g);
 \subsection BGLPropertyMaps Property Maps
 
 Another feature extensively used in the \sc{Bgl} is the *property map*,
-which is offered by the <a href="http://www.boost.org/libs/property_map/doc/property_map.html">Boost Property Map Library</a>. Property maps
+which is offered by the <a href="https://www.boost.org/libs/property_map/doc/property_map.html">Boost Property Map Library</a>. Property maps
 are a general purpose interface for mapping key objects to
 corresponding value objects.
 
@@ -127,7 +127,7 @@ The data itself may be stored in the vertex or the edge, or it may
 be stored in an external data structure, or it may be computed on
 the fly. This is an implementation detail of a particular property map.
 
-See also Chapter \ref PkgProperty_mapSummary.
+See also Chapter \ref PkgPropertyMap.
 
 \subsection BGLVisitors Visitors
 
@@ -137,14 +137,14 @@ The functions as well as the event points are algorithm-specific.
 Examples of such event points in graph algorithms are when a vertex is traversed the first time,
 or when all outgoing edges of a vertex have been traversed.<BR>
 
-See also Section <A HREF="http://www.boost.org/libs/graph/doc/visitor_concepts.html">Visitor Concepts</A>
+See also Section <A HREF="https://www.boost.org/libs/graph/doc/visitor_concepts.html">Visitor Concepts</A>
 in the \sc{Bgl} manual.
 
 \subsection BGLNamedParameters Named Parameters
 
 The notion of <I>named parameters</I> was introduced in the \sc{Bgl},
 and allow the user to specify only those parameters which are really needed, by name, making the parameter ordering unimportant.
-See also <a href="http://www.boost.org/libs/graph/doc/bgl_named_params.html">this page</a>
+See also <a href="https://www.boost.org/libs/graph/doc/bgl_named_params.html">this page</a>
 in the manual of the \sc{Bgl} for more information.
 
 Say there is a function `f()` that takes 3 parameters called name, age and gender,
@@ -218,7 +218,7 @@ the concepts provided by \cgal to implement a simple algorithm.
 
 The following example program computes the minimum spanning tree on a surface mesh.
 More examples can be found in Chapters
-\ref PkgSurfaceMeshSimplificationSummary, \ref PkgSurfaceSegmentationSummary, and \ref PkgSurfaceMeshDeformationSummary.
+\ref PkgSurfaceMeshSimplification, \ref PkgSurfaceMeshSegmentation, and \ref PkgSurfaceMeshDeformation.
 
 The surface mesh class uses integer indices to address vertices and edges,
 and it comes with a built-in property mechanism that maps nicely on the \sc{Bgl}.
@@ -237,7 +237,7 @@ the concepts provided by \cgal to implement a simple algorithm.
 
 The following example program computes the minimum spanning tree on a polyhedral surface.
 More examples can be found in the Chapter
-\ref PkgSurfaceMeshSimplificationSummary.
+\ref PkgSurfaceMeshSimplification.
 
 \cgalExample{BGL_polyhedron_3/kruskal.cpp}
 
@@ -258,7 +258,7 @@ as a graph. An edge is defined as a pair of a face handle and the
 index of the edge.
 Particular care has to be taken with the infinite vertex and its incident
 edges. One can either use a
-<a href="http://www.boost.org/libs/graph/doc/filtered_graph.html">boost::filtered_graph</a>
+<a href="https://www.boost.org/libs/graph/doc/filtered_graph.html">boost::filtered_graph</a>
 in order to make the infinite edges
 invisible, or one can have a property map that returns an infinite length
 for these edges.
@@ -423,11 +423,11 @@ by the functionalities of the \sc{Bgl}.
 
 \subsection BGLExtensionsGraphConcepts Graph concepts
 
-In order to match \ref PkgHDSSummary more closely and to enable writing generic algorithms
+In order to match \ref PkgHalfedgeDS more closely and to enable writing generic algorithms
 which operate on data structures that have faces and halfedges, we define
-a set of new concepts to extend the <a href="http://www.boost.org/libs/graph/doc/graph_concepts.html">graph concepts of the BGL</a>:
+a set of new concepts to extend the <a href="https://www.boost.org/libs/graph/doc/graph_concepts.html">graph concepts of the BGL</a>:
 
-- `HalfedgeGraph` refines <a href="http://www.boost.org/libs/graph/doc/Graph.html">`Graph`</a>
+- `HalfedgeGraph` refines <a href="https://www.boost.org/libs/graph/doc/Graph.html">`Graph`</a>
 with operations to accommodate halfedge data structures:
 given a halfedge, say `h`, the concept `HalfedgeGraph` requires the provision
 of the halfedge opposite to `h`, the halfedge that succeeds `h`,
@@ -492,7 +492,7 @@ stored in the vertex record.)
 
 The following example program shows a simple algorithm for calculating
 facet normals for a polyhedron using the \sc{Bgl} API. A
-<a href="http://www.boost.org/libs/property_map/doc/vector_property_map.html">boost::vector_property_map</a>
+<a href="https://www.boost.org/libs/property_map/doc/vector_property_map.html">boost::vector_property_map</a>
 is used to to store the calculated normals instead of changing the Polyhedron items class.
 
 \cgalExample{BGL_polyhedron_3/normals.cpp}
@@ -564,7 +564,7 @@ Note that border edges in a `Dual` have the `null_face` of the
 original graph as either source or target. This is unusual and might
 break other algorithms since edges are always assumed to have non-null
 vertices as a source and target. It is nevertheless possible to filter border edges
-using <a href="http://www.boost.org/libs/graph/doc/filtered_graph.html">boost::filtered_graph</a>,
+using <a href="https://www.boost.org/libs/graph/doc/filtered_graph.html">boost::filtered_graph</a>,
 as shown in the following example.
 
 \cgalExample{BGL_surface_mesh/surface_mesh_dual.cpp}
@@ -636,7 +636,7 @@ Vertices of the seam mesh that are linked by a green dashed segment correspond
 to the same vertex in the underlying mesh.
 \cgalFigureEnd
 
-Seam meshes are for example used in Chapter \ref PkgSurfaceParameterizationSummary
+Seam meshes are for example used in Chapter \ref PkgSurfaceMeshParameterization
 to parameterize a topological sphere by first virtually cutting it into a topological
 disk.
 
