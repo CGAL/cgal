@@ -52,7 +52,6 @@ public:
   FacetTriangulator(typename boost::graph_traits<Mesh>::face_descriptor fd,
                     const Vector& normal,
                     Mesh *poly,
-                    const double item_diag,
                     Vector offset = Vector(0,0,0))
   {
     std::vector<PointAndId> idPoints;
@@ -64,14 +63,13 @@ public:
       idPoints.push_back(idPoint);
 
     }
-    if(!triangulate(idPoints, normal, item_diag))
+    if(!triangulate(idPoints, normal))
       std::cerr<<"Facet not displayed"<<std::endl;
   }
   FacetTriangulator(typename boost::graph_traits<Mesh>::face_descriptor fd,
                     const std::vector<typename Kernel::Point_3>& more_points,
                     const Vector& normal,
                     Mesh *poly,
-                    const double item_diag,
                     Vector offset = Vector(0,0,0))
   {
    std::vector<PointAndId> idPoints;
@@ -83,23 +81,21 @@ public:
     idPoints.push_back(idPoint);
 
    }
-   if(!triangulate_with_points(idPoints,more_points, normal, item_diag))
+   if(!triangulate_with_points(idPoints,more_points, normal))
      std::cerr<<"Facet not displayed"<<std::endl;
   }
 
   FacetTriangulator(std::vector<PointAndId > &idPoints,
-                  const Vector& normal,
-                  const double item_diag)
+                  const Vector& normal)
   {
-    if(!triangulate(idPoints, normal, item_diag))
+    if(!triangulate(idPoints, normal))
       std::cerr<<"Facet not displayed"<<std::endl;
   }
   FacetTriangulator(std::vector<PointAndId > &idPoints,
                     const std::vector<typename Kernel::Point_3>& more_points,
-                    const Vector& normal,
-                    const double item_diag)
+                    const Vector& normal)
   {
-   if(!triangulate_with_points(idPoints, more_points, normal, item_diag))
+   if(!triangulate_with_points(idPoints, more_points, normal))
      std::cerr<<"Facet not displayed"<<std::endl;
 
   }
@@ -111,8 +107,7 @@ public:
 
 private:
   bool triangulate( std::vector<PointAndId > &idPoints,
-              const Vector& normal,
-              const double item_diag )
+              const Vector& normal )
   {
     P_traits cdt_traits(normal);
     cdt = new CDT(cdt_traits);
@@ -176,8 +171,7 @@ private:
 
   bool triangulate_with_points( std::vector<PointAndId > &idPoints,
                const std::vector<typename Kernel::Point_3>& more_points,
-               const Vector& normal,
-               const double item_diag )
+               const Vector& normal)
    {
      P_traits cdt_traits(normal);
      cdt = new CDT(cdt_traits);

@@ -224,11 +224,6 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
     
     typedef FacetTriangulator<SMesh, EPICK, std::size_t> FT;
 
-    double diagonal;
-    if(item->diagonalBbox() != std::numeric_limits<double>::infinity())
-      diagonal = item->diagonalBbox();
-    else
-      diagonal = 0.0;
     std::size_t it = 0;
     std::size_t it_end =pit->size();
     std::vector<FT::PointAndId> pointIds;
@@ -253,7 +248,7 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
       }
      }
     }
-    FT triangulation(pointIds,normal,diagonal);
+    FT triangulation(pointIds,normal);
     //iterates on the internal faces to add the vertices to the positions
     //and the normals to the appropriate vectors
     for(FT::CDT::Finite_faces_iterator
