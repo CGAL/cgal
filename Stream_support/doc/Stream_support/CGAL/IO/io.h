@@ -361,7 +361,7 @@ read_multi_linestring_WKT( std::istream& in,
                            MultiLineString& mls );
 
 //! \ingroup PkgIOstreams
-//! \brief `read_polygon_WKT()` fills `Polygon` from a WKT stream.
+//! \brief `read_polygon_WKT()` fills `polygon` from a WKT stream.
 //! The first line starting with POLYGON in the stream will be used.
 //! 
 //! \tparam Polygon is a `CGAL::General_polygon_with_holes_2`.
@@ -377,7 +377,7 @@ read_polygon_WKT( std::istream& in,
 //! \brief `read_multi_polygon_WKT()` overwrites the content of a `MultiPolygon` 
 //! with the first line starting with MULTIPOLYGON in the stream.
 //!
-//! \tparam Multipolygon must be a model of `RandomAccessRange` of `CGAL::General_polygon_with_holes_2`, 
+//! \tparam MultiPolygon must be a model of `RandomAccessRange` of `CGAL::General_polygon_with_holes_2`, 
 //! and have:
 //! - a function `push_back()` that takes a `CGAL::General_polygon_with_holes_2`,
 //! - a function `clear()`,
