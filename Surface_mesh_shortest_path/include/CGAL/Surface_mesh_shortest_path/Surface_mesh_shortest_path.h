@@ -54,7 +54,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSurfaceMeshShortestPath
+\ingroup PkgSurfaceMeshShortestPathRef
 
 \brief Computes shortest surface paths from one or more source points on a surface mesh.
 

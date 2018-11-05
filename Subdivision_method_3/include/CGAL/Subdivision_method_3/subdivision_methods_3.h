@@ -41,7 +41,7 @@ namespace CGAL {
 namespace Subdivision_method_3 {
 
 /*!
-\addtogroup PkgSurfaceSubdivisionMethods3Functions
+\addtogroup PkgSurfaceSubdivisionMethod3Functions
 
 A subdivision method recursively refines a coarse mesh and
 generates an ever closer approximation to a smooth surface.

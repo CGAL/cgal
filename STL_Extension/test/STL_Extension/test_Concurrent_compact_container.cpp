@@ -24,6 +24,7 @@ int main()
 #include <CGAL/Random.h>
 #include <CGAL/Testsuite/use.h>
 
+# include <tbb/task_scheduler_init.h>
 # include <tbb/parallel_for.h>
 # include <tbb/atomic.h>
 
@@ -32,9 +33,21 @@ int main()
 struct Node_1
 : public CGAL::Compact_container_base
 {
+  Node_1() {}
+  Node_1(const Node_1& o) : time_stamp_(o.time_stamp_) {}
   bool operator==(const Node_1 &) const { return true; }
   bool operator!=(const Node_1 &) const { return false; }
   bool operator< (const Node_1 &) const { return false; }
+
+  typedef CGAL::Tag_true Has_timestamp;
+
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
+  std::size_t time_stamp_;
 };
 
 class Node_2
@@ -380,6 +393,22 @@ void test(const Cont &)
 }
 
 
+template < class Cont >
+void test_time_stamps() {
+  Cont c1;
+  for (std::size_t i = 0 ; i < 10 ; ++i)
+    c1.emplace();
+  typename Cont::iterator it = c1.begin();
+  for (std::size_t i = 0 ; i < 10 ; ++i) {
+    assert(i == it++->time_stamp());
+  }
+  Cont c2(c1);
+  it = c2.begin();
+  for (std::size_t i = 0 ; i < 10 ; ++i) {
+    assert(i == it++->time_stamp());
+  }
+}
+
 int main()
 {
   CGAL::Concurrent_compact_container<Node_1> C1;
@@ -435,6 +464,8 @@ int main()
     std::cout << "cc2: " << it->rnd << " / " << std::endl;
   }*/
 
+  tbb::task_scheduler_init init(1);
+  test_time_stamps<CGAL::Concurrent_compact_container<Node_1> >();
   return 0;
 }
 

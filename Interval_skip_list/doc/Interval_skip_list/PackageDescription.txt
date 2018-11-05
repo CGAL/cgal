@@ -1,15 +1,15 @@
-/// \defgroup PkgIntervalSkipList Interval Skip List Reference
+/// \defgroup PkgIntervalSkipListRef Interval Skip List Reference
 /// \defgroup PkgIntervalSkipListConcepts Concepts
-/// \ingroup PkgIntervalSkipList
+/// \ingroup PkgIntervalSkipListRef
 /*!
-\addtogroup PkgIntervalSkipList
+\addtogroup PkgIntervalSkipListRef
 
-\cgalPkgDescriptionBegin{Interval Skip List,PkgIntervalSkipListSummary}
+\cgalPkgDescriptionBegin{Interval Skip List,PkgIntervalSkipList}
 \cgalPkgPicture{Interval_skip_list/fig/query.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Andreas Fabri}
 \cgalPkgDesc{An interval skip list is a data structure for finding all intervals that contain a point, and for stabbing queries, that is for answering the question whether a given point is contained in an interval or not. For a triangulated terrain, this allows to quickly identify the triangles which intersect an iso line. }
-\cgalPkgManuals{Chapter_Interval_Skip_List,PkgIntervalSkipList}
+\cgalPkgManuals{Chapter_Interval_Skip_List,PkgIntervalSkipListRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.0}

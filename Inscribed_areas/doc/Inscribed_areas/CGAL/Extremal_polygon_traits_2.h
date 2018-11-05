@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgInscribedAreas
+\ingroup PkgInscribedAreasRef
 
 \cgalAdvancedClass
 \cgalAdvancedBegin
@@ -105,7 +105,7 @@ Orientation_2 orientation_2_object();
 }; /* end Extremal_polygon_area_traits_2 */
 
 /*!
-\ingroup PkgInscribedAreas
+\ingroup PkgInscribedAreasRef
 
 \cgalAdvancedClass
 \cgalAdvancedBegin

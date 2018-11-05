@@ -3,7 +3,7 @@ namespace CGAL {
 namespace cpp11 {
 
 /*!
-\ingroup PkgStlExtension
+\ingroup PkgSTLExtensionRef
 
 
 

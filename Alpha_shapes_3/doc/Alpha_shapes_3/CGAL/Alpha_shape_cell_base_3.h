@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgAlphaShapes3
+\ingroup PkgAlphaShapes3Ref
 
 The class `Alpha_shape_cell_base_3` is the default model for the concept 
 `AlphaShapeCell_3`. 
@@ -37,7 +37,7 @@ public:
 namespace CGAL {
 
 /*!
-\ingroup PkgAlphaShapes3
+\ingroup PkgAlphaShapes3Ref
 
 The class `Alpha_status` is a small data structure to store 
 the critical alpha values of faces of an alpha shape. 

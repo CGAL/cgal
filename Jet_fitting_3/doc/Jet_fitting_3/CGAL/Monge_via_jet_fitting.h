@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgJet_fitting_3
+\ingroup PkgJetFitting3Ref
 
 The class `Monge_via_jet_fitting` is designed to perform the estimation of the 
 local differential quantities at a given point. The point range is 
@@ -39,7 +39,7 @@ public:
 /// @{
 
 /*!
-\ingroup PkgJet_fitting_3
+\ingroup PkgJetFitting3Ref
 
 The class `Monge_form` stores the Monge representation, i.e., the Monge 
 coordinate system and the coefficients of the Monge form in this 

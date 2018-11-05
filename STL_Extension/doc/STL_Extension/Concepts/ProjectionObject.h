@@ -2,7 +2,7 @@
 
 
 /*!
-\ingroup PkgStlExtensionConcepts
+\ingroup PkgSTLExtensionConcepts
 \cgalConcept
 
 \anchor sectionProjectionFunctionObjects 

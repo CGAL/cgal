@@ -1,17 +1,17 @@
-/// \defgroup PkgInscribedAreas Inscribed Areas Reference
+/// \defgroup PkgInscribedAreasRef Inscribed Areas Reference
 
 /// \defgroup PkgInscribedAreasConcepts Concepts
-/// \ingroup PkgInscribedAreas
+/// \ingroup PkgInscribedAreasRef
 
 /*!
-\addtogroup PkgInscribedAreas
+\addtogroup PkgInscribedAreasRef
 \todo check generated documentation
-\cgalPkgDescriptionBegin{Inscribed Areas,PkgInscribedAreasSummary}
+\cgalPkgDescriptionBegin{Inscribed Areas,PkgInscribedAreas}
 \cgalPkgPicture{ler-detail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Michael Hoffmann and Eli Packer}
 \cgalPkgDesc{This package provides algorithms for computing inscribed areas. The algorithms for computing inscribed areas are: the largest inscribed k-gon (area or perimeter) of a convex point set and the largest inscribed iso-rectangle.}
-\cgalPkgManuals{Chapter_Inscribed_Areas,PkgInscribedAreas}
+\cgalPkgManuals{Chapter_Inscribed_Areas,PkgInscribedAreasRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{1.1}

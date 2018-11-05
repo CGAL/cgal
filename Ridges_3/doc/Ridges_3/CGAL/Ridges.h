@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgRidges_3Enums
+\ingroup PkgRidges3Enums
 The enum `Ridge_order` describes the order of differential quantities
 used to distinguish elliptic and hyperbolic ridges. Third or fourth
 order quantities may be used as explained in Section  \ref Ridges_3Approximating
@@ -12,7 +12,7 @@ of the User Manual.
 enum Ridge_order { Ridge_order_3 = 3, Ridge_order_4};
 
 /*!
-\ingroup PkgRidges_3Enums
+\ingroup PkgRidges3Enums
 The enum `Ridge_type` describes the types for the class `Ridge_line`.
 \sa `Ridge_line`
 */
@@ -24,7 +24,7 @@ enum Ridge_type {
 
 
 /*!
-\ingroup PkgRidges_3
+\ingroup PkgRidges3Ref
 
 The function `compute_crest_ridges()` is a shortcut to the
 method `Ridge_approximation::compute_crest_ridges()`.
@@ -53,7 +53,7 @@ OutputIterator compute_crest_ridges(const TriangleMesh &tm,
 namespace CGAL {
 
 /*!
-\ingroup PkgRidges_3
+\ingroup PkgRidges3Ref
 
 The function `compute_max_ridges()` is a shortcut to the
 method `Ridge_approximation::compute_max_ridges()`.
@@ -80,7 +80,7 @@ OutputIterator compute_max_ridges(const TriangleMesh &tm,
 namespace CGAL {
 
 /*!
-\ingroup PkgRidges_3
+\ingroup PkgRidges3Ref
 
 The function `compute_min_ridges()` is a shortcut to
 the method `Ridge_approximation::compute_min_ridges()`.
@@ -110,7 +110,7 @@ OutputIterator compute_min_ridges(const TriangleMesh &tm,
 namespace CGAL {
 
 /*!
-\ingroup PkgRidges_3
+\ingroup PkgRidges3Ref
 
 The class `Ridge_approximation` computes the approximation of 
 ridges of a triangular polyhedral surface. 
@@ -194,7 +194,7 @@ template <class OutputIterator> OutputIterator compute_crest_ridges(OutputIterat
 namespace CGAL {
 
 /*!
-\ingroup PkgRidges_3
+\ingroup PkgRidges3Ref
 
 The class `Ridge_line` stores the description of a ridge line. The list 
 of halfedges defines a connected sequence of edges (but not as 

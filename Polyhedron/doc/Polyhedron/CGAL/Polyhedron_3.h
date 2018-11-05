@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-  \ingroup PkgPolyhedron
+  \ingroup PkgPolyhedronRef
 
   A polyhedral surface `Polyhedron_3` consists of vertices `V`, 
   edges `E`, facets `F` and an incidence relation on them. Each edge is 
@@ -114,7 +114,7 @@ class Polyhedron_3 {
 public:
 
   /*!
-    \ingroup PkgPolyhedron
+    \ingroup PkgPolyhedronRef
 
     A halfedge is an oriented edge 
     between two vertices. It is always paired with a halfedge pointing in 
@@ -423,7 +423,7 @@ public:
   }; /* end Halfedge */
 
   /*!
-    \ingroup PkgPolyhedron
+    \ingroup PkgPolyhedronRef
 
     A facet optionally stores a plane equation, and a reference to an 
     incident halfedge that points to the facet. Type tags indicate whether 
@@ -600,7 +600,7 @@ public:
   }; /* end Facet */
 
   /*!
-    \ingroup PkgPolyhedron
+    \ingroup PkgPolyhedronRef
 
     A vertex optionally stores a point and a reference to an incident 
     halfedge that points to the vertex. Type tags indicate whether these 

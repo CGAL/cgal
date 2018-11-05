@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgAlphaShapes3
+\ingroup PkgAlphaShapes3Ref
 
 The class `Fixed_alpha_shape_3` represents one (fixed) 
 alpha shape of points in the 3D space for a real 

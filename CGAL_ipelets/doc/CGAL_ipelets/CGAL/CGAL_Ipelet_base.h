@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgCGALIpelets
+\ingroup PkgCGALIpeletsRef
 The registration of a new ipelet can be done using the macro command `CGAL_IPELET`.
 Taking as a parameter the name of the class defining the new ipelet, that macro must be placed in the source
 file after the class definition. 
@@ -9,7 +9,7 @@ file after the class definition.
 namespace CGAL {
 
 /*!
-\ingroup PkgCGALIpelets
+\ingroup PkgCGALIpeletsRef
 
 `Ipelet_base` is an abstract base class for defining an ipelet. 
 The only function that needs to be defined in a derived class is 

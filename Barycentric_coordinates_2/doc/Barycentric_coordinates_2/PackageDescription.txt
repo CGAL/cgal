@@ -1,17 +1,17 @@
-/// \defgroup PkgBarycentric_coordinates_2 2D Generalized Barycentric Coordinates Reference
+/// \defgroup PkgBarycentricCoordinates2Ref 2D Generalized Barycentric Coordinates Reference
 
-/// \defgroup PkgBarycentric_coordinates_2Concepts Concepts
-/// \ingroup PkgBarycentric_coordinates_2
+/// \defgroup PkgBarycentricCoordinates2Concepts Concepts
+/// \ingroup PkgBarycentricCoordinates2Ref
 
 /*!
 
-\addtogroup PkgBarycentric_coordinates_2
-\cgalPkgDescriptionBegin{2D Generalized Barycentric Coordinates, PkgBarycentric_coordinates_2Summary}
+\addtogroup PkgBarycentricCoordinates2Ref
+\cgalPkgDescriptionBegin{2D Generalized Barycentric Coordinates, PkgBarycentricCoordinates2}
 \cgalPkgPicture{barcoord_thumb.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez}
-\cgalPkgDesc{The package 2D Generalized Barycentric Coordinates offers an efficient and robust implementation of two-dimensional closed-form generalized barycentric coordinates defined for simple two-dimensional polygons. If coordinates with respect to multivariate scattered points instead of a polygon are required, please refer to natural neighbor coordinates from the Package \ref PkgInterpolation2Summary.}
-\cgalPkgManuals{Chapter_2D_Generalized_Barycentric_Coordinates, PkgBarycentric_coordinates_2}
+\cgalPkgDesc{The package 2D Generalized Barycentric Coordinates offers an efficient and robust implementation of two-dimensional closed-form generalized barycentric coordinates defined for simple two-dimensional polygons. If coordinates with respect to multivariate scattered points instead of a polygon are required, please refer to natural neighbor coordinates from the Package \ref PkgInterpolation2.}
+\cgalPkgManuals{Chapter_2D_Generalized_Barycentric_Coordinates, PkgBarycentricCoordinates2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.6}

@@ -23,13 +23,7 @@
 #include "Scene_c3t3_item.h"
 #include <QtCore/qglobal.h>
 
-#ifdef USE_SURFACE_MESH
 #include "Scene_surface_mesh_item.h"
-#else
-#include "Polyhedron_type.h"
-#include "Scene_polyhedron_item.h"
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#endif
 #include "Scene_polylines_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
@@ -76,11 +70,8 @@
 #include <vtkCommand.h>
 #include <vtkXMLUnstructuredGridWriter.h>
 
-#ifdef USE_SURFACE_MESH
+
 typedef Scene_surface_mesh_item Scene_facegraph_item;
-#else
-typedef Scene_polyhedron_item Scene_facegraph_item;
-#endif
 typedef Scene_facegraph_item::Face_graph FaceGraph;
 typedef boost::property_traits<boost::property_map<FaceGraph, CGAL::vertex_point_t>::type>::value_type Point;
 namespace CGAL{
@@ -286,15 +277,10 @@ public:
   typedef boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
   typedef boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
 
-#ifdef USE_SURFACE_MESH
+
   QString nameFilters() const {
-    return "VTK PolyData files Surface_mesh (*.vtk);; VTK XML PolyData Surface_mesh (*.vtp);; VTK XML UnstructuredGrid Surface_mesh(*.vtu)"; }
+    return "VTK PolyData files (*.vtk);; VTK XML PolyData (*.vtp);; VTK XML UnstructuredGrid (*.vtu)"; }
   QString name() const { return "vtk_sm_plugin"; }
-#else
-  QString nameFilters() const {
-    return "VTK PolyData files Polyhedron (*.vtk);; VTK XML PolyData Polyhedron (*.vtp);; VTK XML UnstructuredGrid Polyhedron(*.vtu)"; }
-  QString name() const { return "vtk_plugin"; }
-#endif
   bool canSave(const CGAL::Three::Scene_item* item)
   {
     return (qobject_cast<const Scene_facegraph_item*>(item)
