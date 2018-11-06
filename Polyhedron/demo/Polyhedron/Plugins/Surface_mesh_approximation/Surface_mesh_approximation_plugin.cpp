@@ -446,7 +446,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
 
 void Polyhedron_demo_surface_mesh_approximation_plugin::on_comboMetric_currentIndexChanged(const int m) {
   Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(
-    scene->item(scene->mainSelectionIndex()));
+    scene->item(m));
   if (!sm_item) {
     mi->information(QString("No surface mesh item selected."));
     return;

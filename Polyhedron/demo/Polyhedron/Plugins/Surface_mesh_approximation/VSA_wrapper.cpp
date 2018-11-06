@@ -43,6 +43,7 @@ EPICK::FT VSA_wrapper::run(const std::size_t nb_iterations) {
     case L2: return m_l2_approx->run(nb_iterations);
     case Compact: return m_compact_approx->run(nb_iterations);
   }
+  return 0;
 }
 
 std::size_t VSA_wrapper::add_one_proxy() {
@@ -109,4 +110,5 @@ std::size_t VSA_wrapper::number_of_proxies() {
     case L2: return m_l2_approx->number_of_proxies();
     case Compact: return m_compact_approx->number_of_proxies();
   }
+  return 0;
 }
