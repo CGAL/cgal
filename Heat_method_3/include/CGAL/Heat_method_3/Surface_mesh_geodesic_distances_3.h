@@ -171,7 +171,7 @@ public:
   bool
   add_source(VD vd)
   {
-    source_change_flag = true;
+    m_source_change_flag = true;
     return m_sources.insert(v2v(vd)).second;
   }
 
@@ -183,7 +183,7 @@ public:
   add_sources(VertexRange vrange)
   {
     typedef typename std::iterator_traits<typename VertexRange::const_iterator>::value_type value_type;
-    source_change_flag = true;
+    m_source_change_flag = true;
     BOOST_FOREACH(value_type vd, vrange){
       m_sources.insert(v2v(vd));
     }
@@ -197,7 +197,7 @@ public:
   bool
   remove_source(VD vd)
   {
-    source_change_flag = true;
+    m_source_change_flag = true;
     return (m_sources.erase(v2v(vd)) == 1);
   }
 
@@ -208,7 +208,7 @@ public:
   void
   clear_sources()
   {
-    source_change_flag = true;
+    m_source_change_flag = true;
     m_sources.clear();
     return;
   }
@@ -267,27 +267,24 @@ private:
     if(sources().empty()) {
       i = 0;
       K.set_coef(i,0, 1, true);
-      source_index.insert(0);
     } else {
-      vertex_descriptor current = *(sources().begin());
-      i = get(vertex_id_map, current);
       BOOST_FOREACH(vertex_descriptor vd, sources()){
         i = get(vertex_id_map, vd);
         K.set_coef(i,0, 1, true);
       }
     }
-    kronecker.swap(K);
+    m_kronecker.swap(K);
   }
 
 
   const Matrix&
   kronecker_delta() const
   {
-    return kronecker;
+    return m_kronecker;
   }
 
 
-  void solve_cotan_laplace()
+  void factor_cotan_laplace()
   {
     Matrix A, A0;
     A0 = m_time_step * m_cotan_matrix;
@@ -299,8 +296,11 @@ private:
       // decomposition failed
       CGAL_error_msg("Eigen Decomposition in cotan failed");
     }
+  }
 
-    if(! la.linear_solver(kronecker, solved_u)) {
+  void solve_cotan_laplace()
+  {
+    if(! la.linear_solver(m_kronecker, m_solved_u)) {
       // solving failed
       CGAL_error_msg("Eigen Solving in cotan failed");
     }
@@ -315,8 +315,8 @@ private:
     typename Traits::Compute_scalar_product_3 scalar_product = Traits().compute_scalar_product_3_object();
     typename Traits::Construct_cross_product_vector_3 cross_product = Traits().construct_cross_product_vector_3_object();
     typename Traits::Construct_scaled_vector_3 scale = Traits().construct_scaled_vector_3_object();
-    if(X.empty()){
-      X.resize(num_faces(tm));
+    if(m_X.empty()){
+      m_X.resize(num_faces(tm));
     }
     CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
     BOOST_FOREACH(face_descriptor f, faces(tm)) {
@@ -346,9 +346,9 @@ private:
       double N_cross = (CGAL::sqrt(to_double(scalar_product(cross,cross))));
       Vector_3 unit_cross = scale(cross, 1./N_cross);
       double area_face = N_cross * (1./2);
-      double u_i = CGAL::abs(solved_u(i));
-      double u_j = CGAL::abs(solved_u(j));
-      double u_k = CGAL::abs(solved_u(k));
+      double u_i = CGAL::abs(m_solved_u(i));
+      double u_j = CGAL::abs(m_solved_u(j));
+      double u_k = CGAL::abs(m_solved_u(k));
       double r_Mag = 1./(std::max)((std::max)(u_i, u_j),u_k);
       /* normalize heat values so that they have roughly unit magnitude */
       if(!std::isinf(r_Mag)) {
@@ -361,7 +361,7 @@ private:
       edge_sums = sum(edge_sums, scale(cross_product(unit_cross, construct_vector(p_k,p_i)), u_j));
       edge_sums = scale(edge_sums, (1./area_face));
       double e_magnitude = CGAL::sqrt(to_double(scalar_product(edge_sums,edge_sums)));
-      X[face_i] = scale(edge_sums,(1./e_magnitude));
+      m_X[face_i] = scale(edge_sums,(1./e_magnitude));
     }
   }
 
@@ -408,7 +408,7 @@ private:
       dot = to_double(scalar_product(v_ki,v_kj));
       double cotan_k = dot/norm_cross;
 
-      const Vector_3& a  = X[face_i];
+      const Vector_3& a  = m_X[face_i];
       double i_entry = (to_double(scalar_product(a,v_ij)) * cotan_k) + (to_double(scalar_product(a,v_ik)) *  cotan_j);
       double j_entry = (to_double(scalar_product(a,v_jk)) * cotan_i) + (to_double(scalar_product(a,v_ji)) * cotan_k);
       double k_entry = (to_double(scalar_product(a,v_ki)) * cotan_j) + (to_double(scalar_product(a,v_kj)) * cotan_i);
@@ -421,6 +421,7 @@ private:
   }
 
 
+  // modifies m_solved_phi
   void
   value_at_source_set(const Vector& phi)
   {
@@ -448,23 +449,29 @@ private:
         source_set_val(i,0) = min_val;
       }
     }
-    solved_phi.swap(source_set_val);
+    m_solved_phi.swap(source_set_val);
   }
 
 
   void
+  factor_phi()
+  {
+    double d = 1;
+    if(! la_cotan.factor(m_cotan_matrix, d)) {
+      // decomposition failed
+      CGAL_error_msg("Eigen Decomposition in solve_phi() failed");
+    }
+  }
+
+  
+  void
   solve_phi()
   {
     Vector phi;
-    double d = 1;
-    if(! la.factor(m_cotan_matrix, d)) {
-      // decomposition failed
-      CGAL_error_msg("Eigen Decomposition in phi failed");
-    }
-
-    if(! la.linear_solver(m_index_divergence, phi)) {
+  
+    if(! la_cotan.linear_solver(m_index_divergence, phi)) {
       // solving failed
-      CGAL_error_msg("Eigen Solving in phi failed");
+      CGAL_error_msg("Eigen Solving in solve_phi() failed");
     }
     value_at_source_set(phi);
   }
@@ -475,7 +482,7 @@ private:
   const Vector&
   distances() const
   {
-    return solved_phi;
+    return m_solved_phi;
   }
 
 public:
@@ -490,19 +497,18 @@ public:
       return;
     }
     double d=0;
-    if(source_change_flag) {
+    if(m_source_change_flag) {
       //don't need to recompute Mass matrix, cotan matrix or timestep reflect that in this function
-      update_kronecker_delta();
-      solve_cotan_laplace();
-      compute_unit_gradient();
-      compute_divergence();
-      solve_phi();
-      source_change_flag = false;
-      std::cout<<"sources changed, recompute\n";
+      update_kronecker_delta(); //                                changes m_kronecker
+      solve_cotan_laplace();    // depends on m_kronecker         changes m_solved_u
+      compute_unit_gradient();  // depends on m_solved_u          changes m_X
+      compute_divergence();     // depends on m_X                 changes m_index_divergence
+      solve_phi();              // depends on m_index_divergence
+      m_source_change_flag = false;
     }
     BOOST_FOREACH(vertex_descriptor vd, vertices(tm)){
       Index i_d = get(vertex_id_map, vd);
-      d = solved_phi(i_d,0);
+      d = m_solved_phi(i_d,0);
       put(vdm,vd,d);
     }
   }
@@ -519,7 +525,7 @@ private:
     if(is_empty(tm)){
       return;
     }
-    source_change_flag = false;
+    m_source_change_flag = false;
 
     CGAL_precondition(is_triangle_mesh(tm));
     Index i = 0;
@@ -609,27 +615,28 @@ private:
     m_time_step = m_time_step*summation_of_edges();
     m_time_step = m_time_step*m_time_step;
     update_kronecker_delta();
+    factor_cotan_laplace();
     solve_cotan_laplace();
     compute_unit_gradient();
     compute_divergence();
-    solve_phi();
+    factor_phi();
   }
 
   LA la;
+  LA la_cotan;
   int dimension;
   V2V<TriangleMesh> v2v;
   const TriangleMesh& tm;
   VertexPointMap vpm;
   std::set<vertex_descriptor> m_sources;
   double m_time_step;
-  Matrix kronecker;
+  Matrix m_kronecker;
   Matrix m_mass_matrix, m_cotan_matrix;
-  Vector solved_u;
-  std::vector<Vector_3> X;
+  Vector m_solved_u;
+  std::vector<Vector_3> m_X;
   Matrix m_index_divergence;
-  Vector solved_phi;
-  std::set<Index> source_index;
-  bool source_change_flag;
+  Vector m_solved_phi;
+  bool m_source_change_flag;
 
 };
 

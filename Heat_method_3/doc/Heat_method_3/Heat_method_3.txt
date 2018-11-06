@@ -216,10 +216,10 @@ We perform the benchmark on an Intel Core i7-7700HQ, 2.8HGz, and compiled with V
 <center>
 Number of triangles  | Initialization | Distance computation  | Initialization (iDT) | Distance computation  (iDT)
 --------------------:| ----------- :  | ---------------- :    | ------------------:  | --------------:
-30,000               |  0.13          |  0.10                 |  0.18                |  0.11
-200,000              |  1.44          |  1.21                 |  1.82                |  1.31
-500,000              |  8.07          |  7.17                 |  9.77                |  8.05
-1,800,000            | 71.13          | 68.20                 | 75.43                | 67.04
+30,000               |  0.12          |  0.01                 |  0.18                |  0.02
+200,000              |  1.32          |  0.11                 |  1.82                |  1.31
+500,000              |  8.07          |  0.55                 | 10.45                |  0.75
+1,800,000            | 35.68          |  1.1                  | 38.91                |  2.24
  
 </center>
 

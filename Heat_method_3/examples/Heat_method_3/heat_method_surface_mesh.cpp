@@ -1,7 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Heat_method_3/Surface_mesh_geodesic_distances_3.h>
-
 #include <fstream>
 #include <iostream>
 
@@ -21,7 +20,7 @@ int main(int argc, char* argv[])
 {
   //read in mesh
   Surface_mesh sm;
-  const char* filename = (argc > 1) ? argv[1] : "./data/elephant.off";
+  const char* filename = (argc > 1) ? argv[1] : "./data/sphere.off";
   std::ifstream in(filename);
   in >> sm;
   //property map for the distance values to the source set
@@ -33,9 +32,10 @@ int main(int argc, char* argv[])
   vertex_descriptor source = *(vertices(sm).first);
   hm.add_source(source);
   hm.estimate_geodesic_distances(vertex_distance);
-
-  Point_3 sp = sm.point(source);
   
+  Point_3 sp = sm.point(source);
+
+  std::cout << "source: " << sp  << " " << source << std::endl;
   vertex_descriptor far;
   double sdistance = 0;
   
@@ -46,6 +46,9 @@ int main(int argc, char* argv[])
       sdistance = squared_distance(sp,sm.point(vd));
     }
   }
+
+  std::cout << "far: " << sm.point(far) << " " << far << std::endl;
+
   hm.add_source(far);
   hm.estimate_geodesic_distances(vertex_distance);
 
@@ -53,5 +56,6 @@ int main(int argc, char* argv[])
     std::cout << vd << "  is at distance " << get(vertex_distance, vd) << " " << std::endl;
   }
 
+  std::cout << "done" << std::endl;
   return 0;
 }
