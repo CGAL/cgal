@@ -31,6 +31,7 @@
 #include <CGAL/boost/graph/properties.h>
 #include <boost/unordered_set.hpp>
 #include <boost/graph/graph_traits.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
@@ -38,6 +39,7 @@
 #include <CGAL/Kernel/global_functions_3.h>
 
 #include <CGAL/Lazy.h> // needed for CGAL::exact(FT)/CGAL::exact(Lazy_exact_nt<T>)
+#include <CGAL/centroid.h>
 
 #include <utility>
 
@@ -532,11 +534,104 @@ volume(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
     CGAL::vertex_point_t>::type>::Kernel::FT
   volume(const TriangleMesh& tmesh)
   {
-
     return volume(tmesh,
       CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
+  namespace internal {
+  template <typename TriangleMesh, typename Vpm, typename Point, typename Tetrahedron, typename Construct_tetrahedron>
+  struct Face2Tet {
+
+    const TriangleMesh& tmesh;
+    const Vpm& vpm;
+
+    Face2Tet(const TriangleMesh& tmesh, const Vpm& vpm)
+      : tmesh(tmesh), vpm(vpm)
+    {}
+    
+    template <typename Fd>
+    Tetrahedron operator()(Fd fd) const
+    {
+      Point origin(0,0,0),
+        p(get(vpm, target(halfedge(fd, tmesh), tmesh))),
+        q(get(vpm, target(next(halfedge(fd, tmesh), tmesh), tmesh))),
+        r(get(vpm, target(prev(halfedge(fd, tmesh), tmesh), tmesh)));
+      return Construct_tetrahedron()(origin,p,q,r);
+    }
+
+  };
+  } // namespace internal
+  
+/**
+  * \ingroup measure_grp
+  * computes the centroid of the domain bounded by
+  * a closed triangulated surface mesh.
+  *
+  * @tparam TriangleMesh a model of `HalfedgeGraph`
+  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  *
+  * @param tmesh the closed triangulated surface mesh bounding the volume
+  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  *
+  * @pre `tmesh` is closed
+  *
+  * \cgalNamedParamsBegin
+  *  \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+  *   If this parameter is omitted, an internal property map for
+  *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
+  *  \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+  * \cgalNamedParamsEnd
+  *
+  * @return the centroid bounded by `tmesh`.
+  * The return type `FT` is a number type. It is
+  * either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+  * or the geometric traits class deduced from the point property map
+  * of `tmesh`.
+  */
+  template<typename TriangleMesh
+         , typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+#ifdef DOXYGEN_RUNNING
+  Point_3
+#else
+  typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type::Point_3
+#endif
+centroid(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
+  {
+  CGAL_assertion(is_triangle_mesh(tmesh));
+  CGAL_assertion(is_closed(tmesh));
+
+  using boost::choose_param;
+  using boost::get_param;
+
+  typedef typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type Vpm;
+  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+                         get_const_property_map(CGAL::vertex_point, tmesh));
+  typedef typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type Kernel;
+  typedef typename Kernel::Point_3 Point_3;
+  typedef typename Kernel::Tetrahedron_3 Tetrahedron_3;
+  typedef typename Kernel::Construct_tetrahedron_3 Construct_tetrahedron_3;
+
+  typedef typename boost::graph_traits<TriangleMesh>::face_iterator face_iterator;
+
+  internal::Face2Tet<TriangleMesh,Vpm,Point_3,Tetrahedron_3,Construct_tetrahedron_3> f2t(tmesh, vpm);
+
+  std::pair<face_iterator,face_iterator> range = faces(tmesh);
+
+  return centroid(boost::make_transform_iterator(range.first, f2t),
+                  boost::make_transform_iterator(range.second, f2t),
+                  Kernel(),Dimension_tag<3>());
+  
+}
+
+template<typename TriangleMesh>
+typename CGAL::Kernel_traits<typename property_map_value<TriangleMesh,
+                                                         CGAL::vertex_point_t>::type>::Kernel::Point_3
+centroid(const TriangleMesh& tmesh)
+{
+  return centroid(tmesh,
+                  CGAL::Polygon_mesh_processing::parameters::all_default());
+}
+  
 }
 }
 
