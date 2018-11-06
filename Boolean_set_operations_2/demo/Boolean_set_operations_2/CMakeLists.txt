@@ -31,11 +31,11 @@ endif()
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(CGAL COMPONENTS Qt5 Core )
+find_package(CGAL COMPONENTS Qt5 )
 
 include(${CGAL_USE_FILE})
 
-if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
+if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
 
   set(QT_USE_QTMAIN TRUE)
 
@@ -68,10 +68,10 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
 
   # Link with CGAL and Qt libraries
   target_link_libraries(Boolean_set_operations_2
-    PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_Core Qt5::Widgets Qt5::Script Qt5::Svg Qt5::OpenGL)
+    PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Widgets Qt5::Script Qt5::Svg Qt5::OpenGL)
 
 else()
 
-  message(STATUS "NOTICE: This demo requires CGAL, CGAL-Core and Qt5 (Widges, Script, Svg, OpenGL), and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires CGAL and Qt5 (Widges, Script, Svg, OpenGL), and will not be compiled.")
 
 endif()

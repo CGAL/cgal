@@ -58,7 +58,6 @@
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/General_polygon_set_2.h>
 #include <CGAL/Iso_rectangle_2.h>
-#include <CGAL/CORE_algebraic_number_traits.h>
 #include <CGAL/minkowski_sum_2.h>
 #include <CGAL/approximated_offset_2.h>
 #include <CGAL/Arrangement_2.h>
