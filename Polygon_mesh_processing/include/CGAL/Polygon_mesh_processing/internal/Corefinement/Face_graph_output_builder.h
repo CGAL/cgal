@@ -902,8 +902,11 @@ public:
               if ( is_dangling_edge(ids.first, ids.second, h1, tm1, is_node_of_degree_one) ||
                    is_dangling_edge(ids.first, ids.second, h2, tm2, is_node_of_degree_one) )
               {
-                impossible_operation.set();
-                return;
+                if (!used_to_clip_a_surface)
+                {
+                  impossible_operation.set();
+                  return;
+                }
               }
               is_patch_inside_tm2.set(patch_id_p2);
             }
@@ -920,8 +923,11 @@ public:
               if ( is_dangling_edge(ids.first, ids.second, h1, tm1, is_node_of_degree_one) ||
                    is_dangling_edge(ids.first, ids.second, h2, tm2, is_node_of_degree_one) )
               {
-                impossible_operation.set();
-                return;
+                if (!used_to_clip_a_surface)
+                {
+                  impossible_operation.set();
+                  return;
+                }
               }
               is_patch_inside_tm1.set(patch_id_q2);
               is_patch_inside_tm2.set(patch_id_p1);
