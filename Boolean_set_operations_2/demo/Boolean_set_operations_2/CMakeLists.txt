@@ -23,7 +23,7 @@ set(CMAKE_AUTOMOC ON)
 
 list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_generalized_initializers has_cpp11)
 if (has_cpp11 LESS 0)
-  message(STATUS "NOTICE: These examples requires a C++11 compiler and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires a C++11 compiler and will not be compiled.")
   return()
 endif()
 
@@ -41,10 +41,7 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
 
   find_package(Qt5 QUIET COMPONENTS Widgets Script Svg OpenGL)
 
-  include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/include )
-  include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/../../include )
-  # include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
-  # include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR}/include)
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include )
 
   qt5_add_resources(CGAL_Qt5_RESOURCE_FILES Boolean_operations_2.qrc)
 
@@ -69,18 +66,12 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
     ${UI_HEADERS}
     ${CGAL_Qt5_RESOURCE_FILES})
 
-  # Link with Qt libraries
-  target_link_libraries(Boolean_set_operations_2 ${QT_LIBRARIES})
-
-  # Link with CGAL
-  #target_link_libraries(Boolean_set_operations_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
-
-  qt5_use_modules(Boolean_set_operations_2 Widgets Script Svg OpenGL)
-
-  #set_target_properties(Boolean_set_operations_2 PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+  # Link with CGAL and Qt libraries
+  target_link_libraries(Boolean_set_operations_2
+    PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_Core Qt5::Widgets Qt5::Script Qt5::Svg Qt5::OpenGL)
 
 else()
 
-  message(STATUS "NOTICE: This demo requires CGAL, CGAL-Core and Qt5, and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires CGAL, CGAL-Core and Qt5 (Widges, Script, Svg, OpenGL), and will not be compiled.")
 
 endif()
