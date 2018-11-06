@@ -16,8 +16,9 @@ The API is flexible and can be extended to user-defined proxies and error metric
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
-\cgalPkgSince{4.13}
+\cgalPkgSince{4.14}
 \cgalPkgBib{cgal:az-tsma}
+\cgalPkgDependsOn{\ref thirdpartyEigen}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
 \cgalPkgShortInfoEnd

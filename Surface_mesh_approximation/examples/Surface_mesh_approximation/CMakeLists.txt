@@ -6,7 +6,7 @@ project( Surface_mesh_approximation )
 cmake_minimum_required(VERSION 2.8.11)
 
 # CGAL and its components
-find_package( CGAL QUIET COMPONENTS  )
+find_package( CGAL QUIET)
 
 if ( NOT CGAL_FOUND )
 
@@ -19,24 +19,21 @@ endif()
 include( ${CGAL_USE_FILE} )
 
 
-# Boost and its components
-find_package( Boost REQUIRED )
-
+# Boost
+find_package( Boost )
 if ( NOT Boost_FOUND )
-
   message(STATUS "This project requires the Boost library, and will not be compiled.")
-
   return()
-
 endif()
 
-add_definitions(-DBOOST_NO_CXX11_TEMPLATE_ALIASES)
-
-# include for local directory
-
-# include for local package
-include_directories( BEFORE ../../include )
-
+# Use Eigen (for PCA)
+find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
+if (NOT EIGEN3_FOUND)
+  message(STATUS "This project requires the Eigen library, and will not be compiled.")
+  return()
+else()
+  include( ${EIGEN3_USE_FILE} )
+endif()
 
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
