@@ -742,7 +742,6 @@ MainWindow::MainWindow() :
 
   for (auto si = m_curve_sets.begin(); si != m_curve_sets.end(); ++ si)
     link_GI(si->gi());
-  std::cout<<"This demo is under construction"<<std::endl;
   //
   // Setup the m_scene and the view
   //
