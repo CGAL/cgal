@@ -336,6 +336,9 @@ public:
     Dart_const_handle d2=get_next_dart(i);
     assert(d1!=d2);
 
+    if (d2==m_map.template beta<2>(d1))
+    { return 0; }
+
     std::size_t res=1;
     while (m_map.template beta<1>(d1)!=d2)
     {
@@ -358,6 +361,9 @@ public:
     Dart_const_handle d1=m_map.template beta<2>(get_ith_dart(i));
     Dart_const_handle d2=m_map.template beta<2>(get_next_dart(i));
     assert(d1!=d2);
+
+    if (d2==m_map.template beta<2>(d1))
+    { return 0; }
 
     std::size_t res=1;
     while (m_map.template beta<0>(d1)!=d2)

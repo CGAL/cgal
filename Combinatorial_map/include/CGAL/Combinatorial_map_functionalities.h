@@ -855,6 +855,9 @@ namespace CGAL {
       Dart_const_handle d2=path.get_next_dart(i);
       assert(d1!=d2);
 
+      if (d2==m_map.template beta<2>(d1))
+      { return 0; }
+
       std::size_t id1=m_dart_ids.at(m_map.template beta<2>(d1));
       std::size_t id2=m_dart_ids.at(d2);
 
@@ -865,12 +868,8 @@ namespace CGAL {
         id2-=m_number_of_edges; // id of the second dart in its own vertex
       }
 
-      // TODO check with Francis what to do when id1==id2.
-      // I think for positive return m_number_of_edges
-      // and for negative return 0. (But I am not sure...)
       std::size_t res=(id1<id2?id2-id1:
                                m_number_of_edges-id1+id2);
-      // std::size_t tempodebug=path.next_positive_turn(i);
       assert(res==path.next_positive_turn(i));
       return res;
     }
@@ -886,6 +885,9 @@ namespace CGAL {
       Dart_const_handle d2=m_map.template beta<2>(path.get_next_dart(i));*/
       assert(d1!=d2);
 
+      if (d2==m_map.template beta<2>(d1))
+      { return 0; }
+
       std::size_t id1=m_dart_ids.at(m_map.template beta<2>(d1));
       std::size_t id2=m_dart_ids.at(d2);
 
@@ -896,12 +898,8 @@ namespace CGAL {
         id2-=m_number_of_edges; // id of the second dart in its own vertex
       }
 
-      // TODO check with Francis what to do when id1==id2.
-      // I think for positive return m_number_of_edges
-      // and for negative return 0. (But I am not sure...)
       std::size_t res=(id1<=id2?m_number_of_edges-id2+id1:
                                id1-id2);
-      // std::size_t tempodebug=path.next_negative_turn(i);
       assert(res==path.next_negative_turn(i));
       return res;
     }
