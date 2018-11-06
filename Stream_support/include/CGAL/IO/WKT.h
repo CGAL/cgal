@@ -25,8 +25,9 @@
 #include <sstream>
 #include <string>
 
-#include <boost/geometry/io/wkt/write.hpp>
+#include <boost/geometry/multi/multi.hpp>
 #include <boost/geometry/io/wkt/read.hpp>
+#include <boost/geometry/io/wkt/write.hpp>
 #include <boost/foreach.hpp>
 
 #include <CGAL/Point_2.h>
