@@ -406,9 +406,9 @@ bool clip(      TriangleMesh& tm,
   CGAL::Bbox_3 bbox = ::CGAL::Polygon_mesh_processing::bbox(tm);
 
   //extend the bbox a bit to avoid border cases
-  double xd=(bbox.xmax()-bbox.xmin())/100;
-  double yd=(bbox.ymax()-bbox.ymin())/100;
-  double zd=(bbox.zmax()-bbox.zmin())/100;
+  double xd=(std::max)(1.,(bbox.xmax()-bbox.xmin())/100);
+  double yd=(std::max)(1.,(bbox.ymax()-bbox.ymin())/100);
+  double zd=(std::max)(1.,(bbox.zmax()-bbox.zmin())/100);
   bbox=CGAL::Bbox_3(bbox.xmin()-xd, bbox.ymin()-yd, bbox.zmin()-zd,
                     bbox.xmax()+xd, bbox.ymax()+yd, bbox.zmax()+zd);
   TriangleMesh clipper;

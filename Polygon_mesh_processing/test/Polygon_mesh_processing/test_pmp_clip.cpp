@@ -206,6 +206,16 @@ void test()
   CGAL::clear(tm1);
   CGAL::clear(tm2);
 
+  // clip meshes with intersection polyline opened
+  make_triangle( K::Point_3(0, 0, 0), K::Point_3(0, 4, 0), K::Point_3(4, 0, 0), tm1 );
+  PMP::clip(tm1, K::Plane_3(1, 0, 0, -2));
+  assert(vertices(tm1).size()==4);
+  CGAL::clear(tm1);
+
+  make_triangle( K::Point_3(0, 0, 0), K::Point_3(0, 4, 0), K::Point_3(4, 0, 0), tm1 );
+  PMP::clip(tm1, K::Plane_3(-1, 0, 0, 2));
+  assert(vertices(tm1).size()==3);
+  CGAL::clear(tm1);
 }
 
 int main()
