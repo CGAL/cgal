@@ -36,8 +36,21 @@
 // ... but we kind of have to :-(
 #include <boost/multiprecision/cpp_int.hpp>
 #ifdef CGAL_USE_GMP
-#include <CGAL/gmp.h>
+// Same dance as in CGAL/gmp.h
+#include <CGAL/disable_warnings.h>
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable: 4127 4244 4146) // conversion with loss of data
+                                     // warning on - applied on unsigned number
+#endif
+
 #include <boost/multiprecision/gmp.hpp>
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
+#include <CGAL/enable_warnings.h>
 #endif
 
 // TODO: work on the coercions (end of the file)
