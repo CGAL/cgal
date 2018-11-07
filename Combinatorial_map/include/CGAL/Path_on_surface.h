@@ -21,11 +21,11 @@
 #ifndef CGAL_PATH_ON_SURFACE_H
 #define CGAL_PATH_ON_SURFACE_H 1
 
-#include <CGAL/Union_find.h>
-#include <CGAL/Path_generators.h>
-#include <CGAL/Timer.h>
-#include <boost/unordered_map.hpp>
-#include <stack>
+#include <utility>
+#include <string>
+#include <vector>
+#include <iostream>
+#include <sstream>
 
 namespace CGAL {
 
@@ -188,6 +188,12 @@ public:
     return m_path[next_index(i)];
   }
 
+  Dart_const_handle front() const
+  {
+    assert(!is_empty());
+    return m_path.front();
+  }
+  
   Dart_const_handle back() const
   {
     assert(!is_empty());
