@@ -20,12 +20,12 @@
 
 #ifndef CGAL_IO_WKT_H
 #define CGAL_IO_WKT_H
-
+#if BOOST_VERSION >= 105600
 #include <iostream>
 #include <sstream>
 #include <string>
 
-#include <boost/geometry/multi/multi.hpp>
+
 #include <boost/geometry/io/wkt/read.hpp>
 #include <boost/geometry/io/wkt/write.hpp>
 #include <boost/foreach.hpp>
@@ -394,4 +394,5 @@ read_WKT( std::istream& input,
   return input;  
 }
 }//end CGAL
+#endif
 #endif

@@ -17,6 +17,7 @@
 // SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Maxime Gimeno
+#if BOOST_VERSION >= 105600
 
 #ifndef CGAL_IO_TRAITS_LINESTRING_H
 #define CGAL_IO_TRAITS_LINESTRING_H
@@ -35,3 +36,4 @@ template< typename R> struct tag<CGAL::internal::Geometry_container<R, linestrin
 }}} //end namespaces
 
 #endif // TRAITS_LINESTRING_H
+#endif

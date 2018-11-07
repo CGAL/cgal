@@ -20,7 +20,7 @@
 
 #ifndef CGAL_IO_TRAITS_POINT_H
 #define CGAL_IO_TRAITS_POINT_H
-
+#if BOOST_VERSION >= 105600
 #include <CGAL/number_utils.h>
 #include <CGAL/Point_2.h>
 #include <boost/geometry/io/wkt/write.hpp>
@@ -73,4 +73,5 @@ struct access<CGAL::Point_2<K> , 1>
 };
 
 }}}//end namespaces
+#endif
 #endif

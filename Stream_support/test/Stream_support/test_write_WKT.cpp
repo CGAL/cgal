@@ -1,3 +1,4 @@
+#if BOOST_VERSION >= 105600
 #include <iostream>
 #include <fstream>
 
@@ -201,3 +202,4 @@ int main()
   std::cout<<"WKT writing test passed."<<std::endl;
   return 0;
 }
+#endif

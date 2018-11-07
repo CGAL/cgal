@@ -9,7 +9,9 @@
 #include <CGAL/intersections.h>
 #include <CGAL/Circular_kernel_2.h>
 #include <CGAL/Object.h>
+#if BOOST_VERSION >= 105600
 #include <CGAL/IO/WKT.h>
+#endif
 
 // Qt headers
 #include <QtGui>
@@ -213,7 +215,10 @@ MainWindow::on_actionLoadLineAndCircularArcs_triggered()
 						  tr("Open Line and Circular Arc File"),
 						  ".",
 						  tr("Edge files (*.arc)\n"
-                                                     "WKT files (*.wkt *.WKT)\n"));
+						   #if BOOST_VERSION >= 105600
+                                                     "WKT files (*.wkt *.WKT)\n"
+                                                   #endif
+                                                     ));
   if(! fileName.isEmpty()){
     open(fileName);
     this->addToRecentFiles(fileName);
@@ -230,6 +235,7 @@ MainWindow::open(QString fileName)
     double x,y;
     if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
     {
+#if BOOST_VERSION >= 105600
       //read pairs as Line_arc_2 and triplets as circular_arc_2
       do
       {
@@ -272,6 +278,7 @@ MainWindow::open(QString fileName)
         }
       }while(ifs.good() && !ifs.eof());
       ifs.close();
+#endif
     }
     else
     {

@@ -22,7 +22,9 @@
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
 #include <CGAL/Qt/SegmentDelaunayGraphLinfGraphicsItem.h>
 #include <CGAL/Constraints_loader.h>
+#if BOOST_VERSION >= 105600
 #include <CGAL/IO/WKT.h>
+#endif
 //#include <CGAL/Qt/Converter.h>
 
 // the two base classes
@@ -269,8 +271,10 @@ MainWindow::open(QString fileName)
       loadSitesInput(fileName);
       this->addToRecentFiles(fileName);
     } else if(fileName.endsWith(".wkt", Qt::CaseInsensitive)){
+#if BOOST_VERSION >= 105600
       loadWKT(fileName);
       this->addToRecentFiles(fileName);
+#endif
     }
   }
 }
@@ -288,7 +292,9 @@ MainWindow::on_actionLoadSegments_triggered()
                                     "Pts  files (*.pts);;"
                                     "Edge files (*.edg);;"
                                     "Polylines files (*.polygons.cgal);;"
+                                 #if BOOST_VERSION >= 105600
                                     "WKT files (*.WKT *.wkt)"
+                                 #endif
                                                           ));
   open(fileName);
 }
@@ -383,8 +389,13 @@ MainWindow::loadPoints(QString fileName)
 }
 
 void
-MainWindow::loadWKT(QString fileName)
+MainWindow::loadWKT(QString 
+                    #if BOOST_VERSION >= 105600
+                    fileName
+                    #endif
+                    )
 {
+#if BOOST_VERSION >= 105600
   std::ifstream ifs(qPrintable(fileName));
   //Points
   do
@@ -469,6 +480,7 @@ MainWindow::loadWKT(QString fileName)
   
   Q_EMIT( changed());
   actionRecenter->trigger();
+#endif
 }
 
 void

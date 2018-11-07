@@ -9,7 +9,9 @@
 #include <CGAL/assertions_behaviour.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Timer.h> 
+#if BOOST_VERSION >= 105600
 #include <CGAL/IO/WKT.h>
+#endif
 
 //#define CGAL_TESTING_POLYLINE_SIMPLIFICATION
 //#define CGAL_POLYLINE_SIMPLIFICATION_TRACE_LEVEL 15
@@ -341,8 +343,10 @@ MainWindow::open(QString fileName)
       this->addToRecentFiles(fileName);
     }
     else if(fileName.endsWith(".wkt")){
+#if BOOST_VERSION >= 105600
       loadWKT(fileName);
       this->addToRecentFiles(fileName);
+#endif
     }
   }
 }
@@ -352,8 +356,10 @@ MainWindow::on_actionLoadConstraints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
                                                   tr("Open Constraint File"),
-                                                  "../data",
-                                                  tr("Polylines (*.osm *.wkt);;")
+                                                  "../data"
+                                                #if BOOST_VERSION >= 105600
+                                                  ,tr("Polylines (*.osm *.wkt);;")
+                                                #endif
                                                   );
   open(fileName);
 }
@@ -370,8 +376,13 @@ std::string trim_right ( std::string str )
   return std::string("") ;  
 }
 
-void MainWindow::loadWKT(QString fileName)
+void MainWindow::loadWKT(QString 
+                         #if BOOST_VERSION >= 105600
+                         fileName
+                         #endif
+                         )
 {
+#if BOOST_VERSION >= 105600
     typedef std::vector<Point_2> MultiPoint;
   
   typedef std::vector<Point_2> LineString;
@@ -409,6 +420,7 @@ void MainWindow::loadWKT(QString fileName)
   Q_EMIT( changed());
   
   actionRecenter->trigger();
+#endif
 }
 
 

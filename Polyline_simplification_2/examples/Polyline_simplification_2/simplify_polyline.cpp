@@ -1,3 +1,4 @@
+#if BOOST_VERSION >= 105600
 #include <iostream>
 #include <fstream>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -29,5 +30,4 @@ int main(int argc, char* argv[])
   }
   return 0;
 }
-
-
+#endif

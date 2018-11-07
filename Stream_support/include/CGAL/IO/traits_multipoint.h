@@ -20,6 +20,7 @@
 
 #ifndef CGAL_IO_TRAITS_MULTIPOINT_H
 #define CGAL_IO_TRAITS_MULTIPOINT_H
+#if BOOST_VERSION >= 105600
 #include <CGAL/internal/Geometry_container.h>
 #include <boost/geometry/io/wkt/write.hpp>
 #include <boost/geometry/io/wkt/read.hpp>
@@ -36,3 +37,4 @@ struct tag<CGAL::internal::Geometry_container<R, multi_point_tag > >
 }//end geometry
 }//end boost
 #endif // TRAITS_MULTIPOINT_H
+#endif

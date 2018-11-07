@@ -6,8 +6,9 @@
 #include <CGAL/Alpha_shape_2.h>
 #include <CGAL/Alpha_shape_face_base_2.h>
 #include <CGAL/Alpha_shape_vertex_base_2.h>
+#if BOOST_VERSION >= 105600
 #include <CGAL/IO/WKT.h>
-
+#endif
 #include <CGAL/point_generators_2.h>
 
 // Qt headers
@@ -251,7 +252,9 @@ MainWindow::on_actionLoadPoints_triggered()
 						  tr("Open Points file"),
                                                   ".",
                                                   tr("CGAL files (*.pts.cgal);;"
+                                                   #if BOOST_VERSION >= 105600
                                                      "WKT files (*.wktk *.WKT);;"
+                                                   #endif
                                                      "All files (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
@@ -270,7 +273,9 @@ MainWindow::open(QString fileName)
   std::ifstream ifs(qPrintable(fileName));
   if(fileName.endsWith(".wkt",Qt::CaseInsensitive))
   {
+#if BOOST_VERSION >= 105600
     CGAL::read_multi_point_WKT(ifs, points);
+#endif
   }
   else
   {

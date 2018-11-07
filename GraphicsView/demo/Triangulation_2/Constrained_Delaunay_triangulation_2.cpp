@@ -22,7 +22,9 @@
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Timer.h>
+#if BOOST_VERSION >= 105600
 #include <CGAL/IO/WKT.h>
+#endif
 
 // Qt headers
 #include <QtGui>
@@ -523,7 +525,9 @@ MainWindow::open(QString fileName)
     } else if(fileName.endsWith(".poly")){
       loadPolyConstraints(fileName);
     } else if(fileName.endsWith(".wkt")){
+#if BOOST_VERSION >= 105600
       loadWKT(fileName);
+#endif
     }
     this->addToRecentFiles(fileName);
   }
@@ -541,14 +545,21 @@ MainWindow::on_actionLoadConstraints_triggered()
                                                      "Polyline files (*.polygons.cgal);;"
                                                      "Poly files (*.poly);;"
                                                      "CGAL files (*.cpts.cgal);;"
+                                                   #if BOOST_VERSION >= 105600
                                                      "WKT files (*.WKT *.wkt);;"
+                                                   #endif
                                                      "All (*)"));
   open(fileName);
 }
 
 void 
-MainWindow::loadWKT(QString filename)
+MainWindow::loadWKT(QString
+                    #if BOOST_VERSION >= 105600
+                    filename
+                    #endif
+                    )
 {
+#if BOOST_VERSION >= 105600
   //Polygons todo : make it multipolygons
   std::ifstream ifs(qPrintable(filename));
   do
@@ -636,6 +647,7 @@ MainWindow::loadWKT(QString filename)
   discoverComponents(cdt, m_seeds);
   Q_EMIT( changed());
   actionRecenter->trigger();
+#endif
 }
 
 void

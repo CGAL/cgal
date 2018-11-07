@@ -20,7 +20,9 @@
 
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
+#if BOOST_VERSION >= 105600
 #include <CGAL/IO/WKT.h>
+#endif
 // the two base classes
 #include "ui_Stream_lines_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -164,10 +166,15 @@ MainWindow::generate()
 void
 MainWindow::on_actionLoadPoints_triggered()
 {
+#if BOOST_VERSION >= 105600
+#endif
   QString fileName = QFileDialog::getOpenFileName(this,
 						  tr("Open grid file"),
-						  ".",
-                                                  tr("WKT files (*.wkt *.WKT)"));
+						  "."
+						#if BOOST_VERSION >= 105600
+						,tr("WKT files (*.wkt *.WKT)")
+						#endif
+                                                  );
   if(! fileName.isEmpty()){
     open(fileName);
   }
@@ -186,6 +193,7 @@ MainWindow::open(QString fileName)
   iXSize = iYSize = 512;
   if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
   {
+#if BOOST_VERSION >= 105600
     std::vector<std::vector<Point_2> > mp;
     int size= -1;
     do
@@ -207,6 +215,10 @@ MainWindow::open(QString fileName)
       {
         regular_grid->set_field(i, j, Vector(mp[j][i].x(), mp[j][i].y()));
       }
+#else
+    QApplication::restoreOverrideCursor();
+    return;
+#endif
   }
   else{
     unsigned int x_samples, y_samples;
@@ -235,7 +247,7 @@ MainWindow::open(QString fileName)
 void
 MainWindow::on_actionSavePoints_triggered()
 {
-  
+#if BOOST_VERSION >= 105600
   QString fileName = QFileDialog::getSaveFileName(this,
 						  tr("Save points"),
 						  ".",
@@ -257,7 +269,7 @@ MainWindow::on_actionSavePoints_triggered()
     }
     ofs.close();
   }
-  
+#endif
 }
 
 

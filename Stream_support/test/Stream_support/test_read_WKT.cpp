@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-
+#if BOOST_VERSION >= 105600
 #include <CGAL/IO/WKT.h>
 
 #include <CGAL/Simple_cartesian.h>
@@ -67,3 +67,5 @@ int main()
   std::cout<<"WKT reading test passed."<<std::endl;
   return 0;
 }
+
+#endif
