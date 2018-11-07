@@ -94,7 +94,7 @@ public Q_SLOTS:
   void on_buttonTeleport_clicked();
   void on_buttonSplit_clicked();
   void on_buttonMeshing_clicked();
-  void on_comboMetric_currentIndexChanged(const int init);
+  void on_comboMetric_currentIndexChanged(const int);
   void itemAboutToBeDestroyed(CGAL::Three::Scene_item *);
 
 private:
@@ -444,9 +444,9 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
   QApplication::restoreOverrideCursor();
 }
 
-void Polyhedron_demo_surface_mesh_approximation_plugin::on_comboMetric_currentIndexChanged(const int m) {
+void Polyhedron_demo_surface_mesh_approximation_plugin::on_comboMetric_currentIndexChanged(const int) {
   Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(
-    scene->item(m));
+    scene->item(scene->mainSelectionIndex()));
   if (!sm_item) {
     mi->information(QString("No surface mesh item selected."));
     return;
