@@ -41,14 +41,15 @@
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
 
-#ifdef CGAL_USE_BOOST_MP
-# include <boost/multiprecision/cpp_int.hpp>
-// After some CGAL includes so we get a chance to define CGAL_USE_GMP.
-# ifdef CGAL_USE_GMP
-#  include <CGAL/gmp.h>
-#  include <boost/multiprecision/gmp.hpp>
-# endif
-#endif
+#include <CGAL/boost_mp.h>
+//Currently already included in boost_mp.h
+//#ifdef CGAL_USE_BOOST_MP
+//# include <boost/multiprecision/cpp_int.hpp>
+//// After some CGAL includes so we get a chance to define CGAL_USE_GMP.
+//# ifdef CGAL_USE_GMP
+//#  include <boost/multiprecision/gmp.hpp>
+//# endif
+//#endif
 
 // Routines to output to MPS format:
 namespace QP_from_mps_detail {
