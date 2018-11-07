@@ -180,10 +180,10 @@ value_of()
 remote_command()
 {
   if [ "${1}" = "localhost" ]; then
-      eval $2
+      eval 'TEST_XTERNAL=$TEST_XTERNAL $2'
   else
     printf "** Logging into host ${1} **\n"
-    ${RSH} ${1} ${MYSHELL} \"${2}\"
+    ${RSH} ${1} ${MYSHELL} \"TEST_XTERNAL=$TEST_XTERNAL ${2}\"
   fi
 }
 
@@ -825,6 +825,11 @@ do
       echo "Compiled test/ directory will be kept."
       KEEP_TESTS="y"
       ;;
+    "-x")
+      echo "Add the external projects to the testsuite."
+      TEST_XTERNAL="y"
+      ;;
+
     *)
       CGAL_LOCATION=$arg
   esac
@@ -951,7 +956,6 @@ setup_dirs
 copy_old_stuff
 
 build_cgal
-
 if [ "${BUILD_HOSTS}" = "localhost" ]; then
   TEXT="`value_of COMPILERS_localhost`"
   if [ -z "${DO_NOT_TEST}" ]; then
