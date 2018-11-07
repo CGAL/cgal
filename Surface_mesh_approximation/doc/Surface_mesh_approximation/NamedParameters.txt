@@ -78,19 +78,19 @@ set the verbose level of the function.\n
 \cgalNPBegin{seeding_method} \anchor VSA_seeding_method
 the selection of seeding method.\n
 \b Type : \c CGAL::Surface_mesh_approximation::Seeding_method \n
-\b Default value is `CGAL::Surface_mesh_approximation::Seeding_method::HIERARCHICAL`
+\b Default value is `CGAL::Surface_mesh_approximation::HIERARCHICAL`
 \cgalNPEnd
 
 \cgalNPBegin{max_number_of_proxies} \anchor VSA_max_number_of_proxies
 the maximum number of proxies used to approximate the input mesh.\n
-\b Type : `boost::optional<std::size_t>` \n
-\b Default value is `boost::none`
+\b Type : `std::size_t` \n
+\b Default value is `num_faces(tm) / 3`, used when `min_error_drop` is also not provided
 \cgalNPEnd
 
 \cgalNPBegin{min_error_drop} \anchor VSA_min_error_drop
 the minimum total error drop to approximate the input mesh.\n
-\b Type : `boost::optional<GeomTraits::FT>` \n
-\b Default value is `0.1`
+\b Type : `GeomTraits::FT` \n
+\b Default value is `0.1`, used when `max_number_of_proxies` is also not provided.
 \cgalNPEnd
 
 \cgalNPBegin{number_of_relaxations} \anchor VSA_number_of_relaxations
