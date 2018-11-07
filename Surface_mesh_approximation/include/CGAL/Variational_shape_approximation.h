@@ -109,6 +109,7 @@ public:
       typename boost::property_traits<VertexPointMap>::value_type
     >::Kernel >::type Geom_traits;
 #else
+  /// Geometric traits type
   typedef GeomTraits Geom_traits;
 #endif
   // ErrorMetricProxy type
@@ -116,12 +117,13 @@ public:
   typedef typename CGAL::Default::Get<ErrorMetricProxy,
     Surface_mesh_approximation::L21_metric_plane_proxy<TriangleMesh, VertexPointMap, Geom_traits> >::type Error_metric;
 #else
+  /// Error metric for proxy fitting type
   typedef ErrorMetricProxy Error_metric;
 #endif
-  // Proxy type
+  /// Proxy type
   typedef typename Error_metric::Proxy Proxy;
 
-  // indexed triangle type
+  /// Indexed triangle type
   typedef CGAL::cpp11::array<std::size_t, 3> Indexed_triangle;
   /// @}
 

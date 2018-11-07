@@ -68,6 +68,7 @@ class L2_metric_plane_proxy {
 public:
   /// \name Types
   /// @{
+  /// Proxy type
   typedef typename GeomTraits::Plane_3 Proxy;
   /// @}
 
