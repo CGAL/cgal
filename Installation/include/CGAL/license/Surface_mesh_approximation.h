@@ -12,9 +12,14 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0+
+//
 // Author(s) : Andreas Fabri
 //
 // Warning: this file is generated, see include/CGAL/licence/README.md
+
 
 #ifndef CGAL_LICENSE_SURFACE_MESH_APPROXIMATION_H
 #define CGAL_LICENSE_SURFACE_MESH_APPROXIMATION_H
@@ -32,12 +37,12 @@
 #    if defined(CGAL_LICENSE_WARNING)
 
        CGAL_pragma_warning("Your commercial license for CGAL does not cover "
-                           "this release of the Surface Mesh Approximation package.")
+                           "this release of the Triangulated Surface Mesh Approximation package.")
 #    endif
 
 #    ifdef CGAL_LICENSE_ERROR
 #      error "Your commercial license for CGAL does not cover this release \
-of the Surface Mesh Approximation package. \
+of the Triangulated Surface Mesh Approximation package. \
 You get this error, as you defined CGAL_LICENSE_ERROR."
 #    endif // CGAL_LICENSE_ERROR
 
@@ -46,12 +51,14 @@ You get this error, as you defined CGAL_LICENSE_ERROR."
 #else // no CGAL_SURFACE_MESH_APPROXIMATION_COMMERCIAL_LICENSE
 
 #  if defined(CGAL_LICENSE_WARNING)
-     CGAL_pragma_warning("You use the CGAL Surface Mesh Approximation package under "
-                         "the terms of the GPLv3+.")
+     CGAL_pragma_warning("\nThe macro CGAL_SURFACE_MESH_APPROXIMATION_COMMERCIAL_LICENSE is not defined."
+                          "\nYou use the CGAL Triangulated Surface Mesh Approximation package under "
+                          "the terms of the GPLv3+.")
 #  endif // CGAL_LICENSE_WARNING
 
 #  ifdef CGAL_LICENSE_ERROR
-#    error "You use the CGAL Surface Mesh Approximation package under the terms of \
+#    error "The macro CGAL_SURFACE_MESH_APPROXIMATION_COMMERCIAL_LICENSE is not defined.\
+ You use the CGAL Triangulated Surface Mesh Approximation package under the terms of \
 the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
 #  endif // CGAL_LICENSE_ERROR
 
