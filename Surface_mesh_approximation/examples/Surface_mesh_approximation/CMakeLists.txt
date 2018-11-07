@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-project( Surface_mesh_approximation )
+project( Surface_mesh_approximation_Examples )
 
 cmake_minimum_required(VERSION 2.8.11)
 
