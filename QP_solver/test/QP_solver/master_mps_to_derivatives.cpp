@@ -45,6 +45,7 @@
 # include <boost/multiprecision/cpp_int.hpp>
 // After some CGAL includes so we get a chance to define CGAL_USE_GMP.
 # ifdef CGAL_USE_GMP
+#  include <CGAL/gmp.h>
 #  include <boost/multiprecision/gmp.hpp>
 # endif
 #endif

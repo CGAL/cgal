@@ -36,6 +36,7 @@
 // ... but we kind of have to :-(
 #include <boost/multiprecision/cpp_int.hpp>
 #ifdef CGAL_USE_GMP
+#include <CGAL/gmp.h>
 #include <boost/multiprecision/gmp.hpp>
 #endif
 
