@@ -10,7 +10,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Surface_mesh<Kernel::Point_3> Mesh;
-typedef typename boost::graph_traits<Mesh>::face_descriptor face_descriptor;
+typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 typedef Mesh::Property_map<face_descriptor, std::size_t> Face_proxy_pmap;
 
 /**

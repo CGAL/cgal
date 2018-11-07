@@ -913,7 +913,7 @@ public:
    * @param[out] face_proxy_map face proxy index map
    */
   template <typename FaceProxyMap>
-  void proxy_map(FaceProxyMap &face_proxy_map) const {
+  void proxy_map(FaceProxyMap face_proxy_map) const {
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
       face_proxy_map[f] = get(m_fproxy_map, f);
   }
