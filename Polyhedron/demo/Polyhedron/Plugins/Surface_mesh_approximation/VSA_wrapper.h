@@ -13,15 +13,15 @@
 namespace VSA = CGAL::Surface_mesh_approximation;
 
 class VSA_wrapper {
-  typedef typename EPICK::FT FT;
-  typedef typename EPICK::Point_3 Point_3;
-  typedef typename EPICK::Vector_3 Vector_3;
+  typedef EPICK::FT FT;
+  typedef EPICK::Point_3 Point_3;
+  typedef EPICK::Vector_3 Vector_3;
 
-  typedef typename boost::property_map<SMesh, boost::vertex_point_t>::type Vertex_point_map;
+  typedef boost::property_map<SMesh, boost::vertex_point_t>::type Vertex_point_map;
   typedef CGAL::dynamic_face_property_t<Point_3> Face_center_tag;
   typedef CGAL::dynamic_face_property_t<FT> Face_area_tag;
-  typedef typename boost::property_map<SMesh, Face_center_tag>::type Face_center_map;
-  typedef typename boost::property_map<SMesh, Face_area_tag>::type Face_area_map;
+  typedef boost::property_map<SMesh, Face_center_tag>::type Face_center_map;
+  typedef boost::property_map<SMesh, Face_area_tag>::type Face_area_map;
 
 #ifdef CGAL_LINKED_WITH_TBB
   typedef CGAL::Variational_shape_approximation<SMesh, Vertex_point_map,
@@ -30,7 +30,7 @@ class VSA_wrapper {
   typedef CGAL::Variational_shape_approximation<SMesh, Vertex_point_map,
     CGAL::Default, EPICK> L21_approx;
 #endif
-  typedef typename L21_approx::Error_metric L21_metric;
+  typedef L21_approx::Error_metric L21_metric;
 
   typedef VSA::L2_metric_plane_proxy<SMesh> L2_metric;
 #ifdef CGAL_LINKED_WITH_TBB

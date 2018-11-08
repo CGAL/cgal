@@ -34,7 +34,7 @@ class Polyhedron_demo_surface_mesh_approximation_plugin :
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
-  typedef typename boost::property_map<SMesh, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
+  typedef boost::property_map<SMesh, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
   typedef VSA_wrapper::Indexed_triangle Indexed_triangle;
   typedef std::map<Scene_surface_mesh_item *, VSA_wrapper *> SM_wrapper_map;
   typedef std::pair<Scene_surface_mesh_item *, VSA_wrapper *> SM_wrapper_pair;
@@ -123,7 +123,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   SMesh *pmesh = sm_item->face_graph();
-  typename SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
+  SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
   if (search == m_sm_wrapper_map.end())
     search = m_sm_wrapper_map.insert(SM_wrapper_pair(sm_item, new VSA_wrapper(*pmesh))).first;
   VSA_wrapper &approx = *search->second;
@@ -162,7 +162,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonFit_clicked() {
     mi->information(QString("No surface mesh item selected."));
     return;
   }
-  typename SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
+  SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
   if (search == m_sm_wrapper_map.end() || !search->second->initialized()) {
     mi->information(QString("Please initialize seeds first."));
     return;
@@ -193,7 +193,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonAdd_clicked() {
     mi->information(QString("No surface mesh item selected."));
     return;
   }
-  typename SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
+  SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
   if (search == m_sm_wrapper_map.end() || !search->second->initialized()) {
     mi->information(QString("Please initialize seeds first."));
     return;
@@ -228,7 +228,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonTeleport_clicke
     mi->information(QString("No surface mesh item selected."));
     return;
   }
-  typename SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
+  SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
   if (search == m_sm_wrapper_map.end() || !search->second->initialized()) {
     mi->information(QString("Please initialize seeds first."));
     return;
@@ -261,7 +261,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSplit_clicked()
     mi->information(QString("No surface mesh item selected."));
     return;
   }
-  typename SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
+  SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
   if (search == m_sm_wrapper_map.end() || !search->second->initialized()) {
     mi->information(QString("Please initialize seeds first."));
     return;
@@ -298,7 +298,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
     mi->information(QString("No surface mesh item selected."));
     return;
   }
-  typename SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
+  SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
   if (search == m_sm_wrapper_map.end() || !search->second->initialized()) {
     mi->information(QString("Please initialize seeds first."));
     return;
@@ -451,7 +451,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_comboMetric_currentIn
     mi->information(QString("No surface mesh item selected."));
     return;
   }
-  typename SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
+  SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
   if (search == m_sm_wrapper_map.end())
     return;
   search->second->initialized() = false;
