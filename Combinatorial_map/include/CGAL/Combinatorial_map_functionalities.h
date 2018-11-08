@@ -24,6 +24,8 @@
 #include <CGAL/Union_find.h>
 #include <CGAL/Random.h>
 #include <CGAL/Path_on_surface.h>
+#include <CGAL/Path_on_surface_with_rle.h>
+#include <CGAL/Path_generators.h>
 #include <CGAL/Combinatorial_map_basic_operations.h>
 #include <CGAL/Timer.h>
 #include <boost/unordered_map.hpp>

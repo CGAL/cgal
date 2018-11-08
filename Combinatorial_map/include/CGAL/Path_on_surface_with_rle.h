@@ -23,12 +23,19 @@
 
 #include <list>
 #include <utility>
+#include <iostream>
+#include <iterator>
 
 namespace CGAL {
 
 template<typename Map_>
+class Path_on_surface;
+
+template<typename Map_>
 class Path_on_surface_with_rle
 {
+  friend class Path_on_surface<Map_>;
+
 public:
   typedef Map_ Map;
   typedef typename Map::Dart_handle Dart_handle;
@@ -45,7 +52,7 @@ public:
                                                                 m_is_closed(apath.is_closed()),
                                                                 m_length(apath.length())
   {
-    std::size_t i=0, j=0, length=0;
+    std::size_t i=0, j=0, starti=0, length=0;
     bool positive_flat=false;
     bool negative_flat=false;    
     
@@ -65,28 +72,38 @@ public:
       }
     }
 
-    // Here dart i is the beginning of a flat part
-    if (apath.next_positive_turn(i)==2)
-    { positive_flat=true; negative_flat=false; }
-    else if (apath.next_negative_turn(i)==2)
-    { positive_flat=false; negative_flat=true; }
-    
-    if (!positive_flat && !negative_flat)
+    starti=i;
+    do
     {
-      m_path.push_back(std::make_pair(apath[i], 0));
-    }
-    else
-    {
-      j=i;
-      length=0;
-      while ((positive_flat && apath.next_positive_turn(j)==2) ||
-             (negative_flat && apath.next_negative_turn(j)==2))
+      // Here dart i is the beginning of a flat part (maybe of length 0)
+      if (apath.next_positive_turn(i)==2)
+      { positive_flat=true; negative_flat=false; }
+      else if (apath.next_negative_turn(i)==2)
+      { positive_flat=false; negative_flat=true; }
+      else
+      { positive_flat=false; negative_flat=false; }
+
+      if (!positive_flat && !negative_flat)
       {
-        j=apath.next_index(j);
-        ++length;
+        m_path.push_back(std::make_pair(apath[i], 0));
+        i=apath.next_index(i);
       }
-      m_path.push_back(std::make_pair(apath[i], positive_flat?length:-length));      
+      else
+      {
+        j=i;
+        length=0;
+        while ((positive_flat && apath.next_positive_turn(j)==2) ||
+               (negative_flat && apath.next_negative_turn(j)==2))
+        {
+          j=apath.next_index(j);
+          ++length;
+        }
+        assert(length>0);
+        m_path.push_back(std::make_pair(apath[i], positive_flat?length:-length)); // begining of the flat part
+        i=j;
+      }
     }
+    while(i<apath.length() && i!=starti);
   }
   
   void swap(Self& p2)
@@ -118,6 +135,9 @@ public:
   std::size_t length() const
   { return m_length; }
 
+  std::size_t size_of_list() const
+  { return m_path.size(); }
+
   // @return true iff the path is closed (update after each path modification).
   bool is_closed() const
   { return m_is_closed; }
@@ -145,10 +165,16 @@ public:
     for (auto it=m_path.begin(), itend=m_path.end(); it!=itend; ++it)
     {
       std::cout<<m_map.darts().index(it->first)<<"("<<it->second<<")";
-      if (it+1!=itend) { std::cout<<" "; }
+      if (std::next(it)!=itend) { std::cout<<" "; }
     }
      if (is_closed())
      { std::cout<<" c "; } //<<m_map.darts().index(get_ith_dart(0)); }
+  }
+
+  friend std::ostream& operator<<(std::ostream& os, const Self& p)
+  {
+    p.display();
+    return os;
   }
 
 protected:

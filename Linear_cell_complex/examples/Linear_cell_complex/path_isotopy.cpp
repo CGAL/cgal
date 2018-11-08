@@ -119,6 +119,28 @@ int main(int argc, char** argv)
   paths.push_back(&path2);
   std::cout<<std::flush;
   
+  /* Test RLE encoding */
+  {
+/*    CGAL::Path_on_surface_with_rle<LCC_3_cmap> path1_rle(path1);
+    CGAL::Path_on_surface_with_rle<LCC_3_cmap> path2_rle(path2);
+    CGAL::Path_on_surface<LCC_3_cmap> path1_copy(path1_rle);
+    CGAL::Path_on_surface<LCC_3_cmap> path2_copy(path2_rle);
+    if (path1!=path1_copy)
+    {
+      std::cout<<"Error: path1!=path1_copy: "<<std::endl
+              <<"path1="<<path1<<"; "<<std::endl
+             <<"path1_rle="<<path1_rle<<std::endl
+            <<"path1_copy="<<path1_copy<<std::endl;
+    }
+    else
+    {
+      std::cout<<"Lengt normal="<<path2.length()
+              <<"; length rle="<<path2_rle.size_of_list()<<std::endl;
+      std::cout<<path2_rle<<std::endl;
+    }*/
+  }
+  /* End of test RLE encoding */
+
   CGAL::Path_on_surface<LCC_3_cmap> transformed_path1=
     cmt.transform_original_path_into_quad_surface(path1);
 

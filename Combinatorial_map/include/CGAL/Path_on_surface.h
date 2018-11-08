@@ -26,12 +26,19 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
+#include <CGAL/Path_generators.h>
+#include <CGAL/Combinatorial_map_operations.h>
 
 namespace CGAL {
 
 template<typename Map_>
+class Path_on_surface_with_rle;
+
+template<typename Map_>
 class Path_on_surface
 {
+  friend class Path_on_surface_with_rle<Map_>;
+
 public:
   typedef Map_ Map;
   typedef typename Map::Dart_handle Dart_handle;
@@ -41,6 +48,20 @@ public:
 
   Path_on_surface(const Map& amap) : m_map(amap), m_is_closed(false)
   {}
+
+  Path_on_surface(const Path_on_surface_with_rle<Map>& apath) :
+    m_map(apath.get_map()),
+    m_is_closed(apath.is_closed())
+  {
+    for (auto it=apath.m_path.begin(), itend=apath.m_path.end(); it!=itend; ++it)
+    {
+      push_back(it->first, false);
+      if (it->second>0)
+      { CGAL::extend_straight_positive(*this, it->second-1, false); }
+      else if (it->second<0)
+      { CGAL::extend_straight_negative(*this, -(it->second)-1, false); }
+    }
+  }
 
   void swap(Self& p2)
   {
@@ -508,6 +529,12 @@ public:
     }
      if (is_closed())
      { std::cout<<" c "; } //<<m_map.darts().index(get_ith_dart(0)); }
+  }
+
+  friend std::ostream& operator<<(std::ostream& os, const Self& p)
+  {
+    p.display();
+    return os;
   }
 
 protected:
