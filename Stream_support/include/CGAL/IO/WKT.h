@@ -20,6 +20,11 @@
 
 #ifndef CGAL_IO_WKT_H
 #define CGAL_IO_WKT_H
+#include <CGAL/Point_2.h>
+#include <CGAL/Point_3.h>
+#include <CGAL/Polygon_2.h>
+#include <CGAL/Polygon_with_holes_2.h>
+
 #if BOOST_VERSION >= 105600
 #include <iostream>
 #include <sstream>
@@ -30,10 +35,6 @@
 #include <boost/geometry/io/wkt/write.hpp>
 #include <boost/foreach.hpp>
 
-#include <CGAL/Point_2.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Polygon_2.h>
-#include <CGAL/Polygon_with_holes_2.h>
 
 #include <CGAL/IO/traits_point.h>
 #include <CGAL/IO/traits_point_3.h>
