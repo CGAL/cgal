@@ -31,7 +31,7 @@ In this package, we use the Poincar&eacute; disk model to represent the hyperbol
 
 The Delaunay triangulation of a set of points \f$\mathcal P\f$ in \f$\mathbb H^2\f$ is a subset of the Euclidean Delaunay triangulation of \f$\mathcal P\f$. The hyperbolic Delaunay triangulation of \f$\mathcal P\f$ contains only the simplices that are <i>Delaunay hyperbolic</i>:
 <ul>
-	<li> A segment with endpoints in \f$\mathbb H^2\f$ is Delaunay hyperbolic if there exists an empty disk (i.e., not containing any points in \f$\mathcal P\f$) passing through its endpoint that is contained in \f$\mathbb H^2\f$;
+	<li> A segment with endpoints in \f$\mathbb H^2\f$ is Delaunay hyperbolic if there exists an empty disk (i.e., not containing any points in \f$\mathcal P\f$) passing through its endpoints that is contained in \f$\mathbb H^2\f$;
 	<li> A face is Delaunay hyperbolic if its circumscribing circle is contained in \f$\mathbb H^2\f$.
 </ul>
 \cgalModifEnd
@@ -43,7 +43,7 @@ For an illustration, see \cgalFigureRef{Hyperbolic_triangulation_2Empty_disks}
 <img src="ht-empty-disks.png" style="max-width:40%; width=40%;"/>
 </center>
 \cgalFigureCaptionBegin{Hyperbolic_triangulation_2Empty_disks}
-A face is Delaunay hyperbolic if its circumscribing disk is empty and is also contained in \f$\mathbb H^2\f$ (shaded face). An edge is hyperbolic if there exists at least one disk that passes through its endpoints and is contained in \f$\mathbb H^2\f$. An example of non-hyperbolic edge is the dashed segment: the disks that pass through its endpoints and are contained in \f$\mathbb H^2\f$ are not empty; on the other hand, the disks that pass through its endpoint and are empty, are not contained in \f$\mathbb H^2\f$.
+An example of non-hyperbolic edge is the dashed segment: the disks that pass through its endpoints and are contained in \f$\mathbb H^2\f$ are not empty; on the other hand, the disks that pass through its endpoints and are empty, are not contained in \f$\mathbb H^2\f$.
 \cgalFigureCaptionEnd
 
 

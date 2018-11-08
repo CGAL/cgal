@@ -13,12 +13,6 @@ to be fulfilled by any class used to instantiate the first template parameter of
 (points, segments...) forming the triangulation together with geometric predicates and 
 constructions on these objects.
 
-\cgalModifBegin
-Note that this concept refines the concept `DelaunayTriangulationTraits_2` since
-a hyperbolic Delaunay triangulation is computed internally with the use of a Euclidean 
-`Delaunay_triangulation_2`.
-\cgalModifEnd
-
 \cgalHasModel CGAL::Hyperbolic_Delaunay_triangulation_traits_2
 \cgalHasModel CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2
 */
@@ -108,9 +102,9 @@ public:
 
 		`bool operator() (Hyperbolic_point_2 p0, Hyperbolic_point_2 p1, Hyperbolic_point_2 p2, int& ind),`
 		
-		which returns the same result, but also stores in the integer
-		`ind` the index of the non-hyperbolic edge of the triangle, if
-		the returned value is `false`. The side of the triangle opposite 
+		gives in addition the integer
+		`ind`, which is the index of the non-hyperbolic edge of the triangle, if
+		the returned value is `false`, as defined in \cgalCite{cgal:bdt-hdcvd-14}. The side of the triangle opposite 
 		to `pj` for `j = 0,1,2` is considered to have index `j`.
 
 		\cgalModifEnd
