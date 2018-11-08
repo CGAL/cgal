@@ -1404,7 +1404,7 @@ operator<<(std::ostream & os, const Triangulation<TT, TDS> & tr)
 
     size_t i(0);
     // write the vertices
-    std::map<Vertex_handle, int> index_of_vertex;
+    std::map<Vertex_handle, size_t> index_of_vertex;
 
     // infinite vertex has index 0 (among all the vertices)
     index_of_vertex[tr.infinite_vertex()] = i++;
