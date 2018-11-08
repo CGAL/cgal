@@ -1080,11 +1080,34 @@ namespace CGAL {
     }
 
     // Simplify the path by removing all spurs
+    // @return true iff at least one spur was removed
     bool remove_spurs(Path_on_surface<Map>& path) const
     {
+      /* TODO TEMPO POUR TEST */
+      Path_on_surface_with_rle<Map> prle(path);
+      prle.remove_spurs();
+      /* TODO FIN TEMPO POUR TEST */
+
       bool res=false;
       while(remove_spurs_one_step(path))
       { res=true; }
+
+      /* TODO TEMPO POUR TEST */
+      Path_on_surface<Map> p2(prle);
+      if (p2!=path)
+      {
+        std::cout<<"Error: p2!=path: "<<std::endl
+                <<"p2= "<<p2<<"; "<<std::endl
+               <<"path="<<path<<"; "<<std::endl
+              <<"prle="<<prle<<std::endl;
+        prle.display_pos_and_neg_turns();
+      }
+      else
+      {
+        std::cout<<"GOOD JOB for path "<<p2<<std::endl;
+      }
+      /* TODO FIN TEMPO POUR TEST */
+
       return res;
     }
 
@@ -1341,7 +1364,7 @@ namespace CGAL {
 
       bool modified=false;
       // std::cout<<"RS ";
-      remove_spurs_one_step(path);
+      remove_spurs(path); // TODO BEFORE remove_spurs_one_step(path);
 
       /* display(); display_pos_and_neg_turns();
       std::cout<<std::endl; */
@@ -1355,7 +1378,8 @@ namespace CGAL {
           /* std::cout<<"BF "; display(); display_pos_and_neg_turns();
           std::cout<<std::endl; */
 
-          modified=modified || remove_spurs_one_step(path);
+          modified=modified || remove_spurs(path); // TODO BEFORE remove_spurs_one_step(path);
+
 
           /* std::cout<<"RS "; display(); display_pos_and_neg_turns();
           std::cout<<std::endl; */

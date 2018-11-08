@@ -355,9 +355,7 @@ public:
   {
     assert(is_valid());
     assert(i<m_path.size());
-
-    if (!is_closed() && i==length()-1)
-    { return 0; }
+    assert (is_closed() || i<length()-1);
 
     Dart_const_handle d1=get_ith_dart(i);
     Dart_const_handle d2=get_next_dart(i);
@@ -381,9 +379,7 @@ public:
   {
     assert(is_valid());
     assert(i<m_path.size());
-
-    if (!is_closed() && i==length()-1)
-    { return 0; }
+    assert (is_closed() || i<length()-1);
 
     Dart_const_handle d1=m_map.template beta<2>(get_ith_dart(i));
     Dart_const_handle d2=m_map.template beta<2>(get_next_dart(i));
@@ -402,7 +398,6 @@ public:
     return res;
   }
 
-
   std::vector<std::size_t> compute_positive_turns() const
   {
     std::vector<std::size_t> res;
@@ -410,17 +405,9 @@ public:
 
     std::size_t i;
     for (i=0; i<m_path.size()-1; ++i)
-    {
-      if (m_path[i]==m_map.template beta<2>(m_path[i+1]))
-      { res.push_back(0); }
-      else { res.push_back(next_positive_turn(i)); }
-    }
+    { res.push_back(next_positive_turn(i)); }
     if (is_closed())
-    {
-      if (m_path[i]==m_map.template beta<2>(m_path[0]))
-      { res.push_back(0); }
-      else { res.push_back(next_positive_turn(i)); }
-    }
+    { res.push_back(next_positive_turn(i)); }
     return res;
   }
 
@@ -431,17 +418,9 @@ public:
 
     std::size_t i;
     for (i=0; i<m_path.size()-1; ++i)
-    {
-      if (m_path[i]==m_map.template beta<2>(m_path[i+1]))
-      { res.push_back(0); }
-      else { res.push_back(next_negative_turn(i)); }
-    }
+    { res.push_back(next_negative_turn(i)); }
     if (is_closed())
-    {
-      if (m_path[i]==m_map.template beta<2>(m_path[0]))
-      { res.push_back(0); }
-      else { res.push_back(next_negative_turn(i)); }
-    }
+    { res.push_back(next_negative_turn(i)); }
     return res;
   }
 
