@@ -72,9 +72,7 @@ The class expects two template parameters.
 			Computes the conflict zone induced by `p`.
 			The output iterator `it` contains all faces in conflict with `p`.
 			The optional parameters `start` and `ltr`, if given, must be such 
-			that `start` translated by `ltr` is in conflict with `p`. If `start` 
-			is omitted, then `p` is located internally to obtain a starting 
-			face and a location translation.
+			that `start` translated by `ltr` is in conflict with `p`. 
 			\cgalModifEnd
 	 	*/
 	 	template<class OutputFaceIterator>
@@ -114,8 +112,6 @@ The class expects two template parameters.
 			Note that this function does not remove unnecessary dummy points. 
 			The removal, if desired, should be done by manually calling the function 
 			`clean_dummy_points()`.
-
-			\sa `clean_dummy_points()`
 			\cgalModifEnd
 		*/
 		Vertex_handle insert(const Point  &p, Face_handle start = Face_handle());
@@ -127,8 +123,6 @@ The class expects two template parameters.
 			at the end of the insertion process. This behavior is controlled by the 
 			optional boolean parameter `flag_clean_dummy_points`; if automatic removal
 			of the dummy points is not desired, set the flag to `false`.
-
-			\sa `clean_dummy_points()`
 			\cgalModifEnd
 		*/
 		template < class InputIterator >
@@ -142,7 +136,6 @@ The class expects two template parameters.
 		/*!
 			\cgalModifBegin
 			Removes the vertex `v` from the triangulation.
-			The triangulation is fixed locally by triangulating the resulting hole. 
 			Note that `v` is removed from the triangulation only if the resulting
 			triangulation remains a simplicial complex. The function returns `true`
 			if the vertex `v` is removed from the triangulation, otherwise it returns 

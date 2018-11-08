@@ -10,9 +10,7 @@
 The concept `Periodic_4HyperbolicDelaunayTriangulationTraits_2` adds a requirement 
 to `Periodic_4HyperbolicDelaunayTriangulationTraits_2` that needs to be fulfilled 
 by any class used to instantiate the first template parameter of the class 
-`CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2`. The added requirement is 
-essential for the removal of existing vertices in a Delaunay triangulation of the
-Bolza surface.
+`CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2`. 
 
 \cgalHasModel CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2
 */
@@ -27,7 +25,6 @@ public:
 	/// @{
 		/*!
 			\cgalModifBegin
-			Type that permits to compute the hyperbolic diameter of a circle.
 			Must provide the function operator
 
 			`double operator()(Hyperbolic_point_2 p1, Hyperbolic_point_2 p2, Hyperbolic_point_2 p3),`
@@ -41,10 +38,7 @@ public:
 
 
 	/// \name Operations
-	/// \cgalModifBegin
-	/// The following function gives access to the computation object:
-	/// \cgalModifEnd
-	/// @{
+		/// @{
 
 		Compute_approximate_hyperbolic_diameter	
 		compute_approximate_hyperbolic_diameter_object() const;

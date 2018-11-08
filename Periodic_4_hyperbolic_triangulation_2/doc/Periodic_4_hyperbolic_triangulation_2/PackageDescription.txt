@@ -64,47 +64,23 @@ the hyperbolic plane.
 
 ## Concepts ##
 
-The concepts in this package provide an interface for working with objects in the hyperbolic plane, including
-hyperbolic translations, which allow us to represent a triangulation of the Bolza surface. The concept
-`Periodic_4HyperbolicTriangulationTraits_2` refines the concept `HyperbolicDelaunayTriangulationTraits_2`
-and adds the functionality needed to apply hyperbolic translations to geometric objects in the hyperbolic plane.
-- `Periodic_4HyperbolicTriangulationTraits_2`
-
-The concept `Periodic_4HyperbolicDelaunayTriangulationTraits_2` refines `Periodic_4HyperbolicTriangulationTraits_2`
-and adds functionality needed for the removal of vertices from a Delaunay triangulation of the Bolza surface.
-- `Periodic_4HyperbolicDelaunayTriangulationTraits_2`
-
-The concepts `Periodic_4HyperbolicTriangulationDSFaceBase_2` and `Periodic_4HyperbolicTriangulationDSFaceBase_2`
-describe the requirements for the faces and the vertices of a triangulation of the Bolza surface. A face needs
-to be able to store hyperbolic translations as a canonical representative. A vertex needs to be able to store
-temporarily hyperbolic translations to facilitate insertion and removal procedures.
-- `Periodic_4HyperbolicTriangulationDSFaceBase_2`
-- `Periodic_4HyperbolicTriangulationDSVertexBase_2`
+- `Periodic_4HyperbolicTriangulationTraits_2` refines the concept `HyperbolicDelaunayTriangulationTraits_2`
+- `Periodic_4HyperbolicDelaunayTriangulationTraits_2` 
+- `Periodic_4HyperbolicTriangulationFaceBase_2` 
+- `Periodic_4HyperbolicTriangulationVertexBase_2` 
 
 
 ## Classes ##
 
-The main class of the 2D Periodic Triangulation package is `CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2`. 
-This class allows to construct and modify Delaunay triangulations of the Bolza surface. A secondary 
-class made available is `CGAL::Periodic_4_hyperbolic_triangulation_2`, which gives access 
+- `CGAL::Periodic_4_hyperbolic_triangulation_2` gives access 
 to the elements of the triangulation (vertices, edges, and faces), and functionality common to 
-triangulations in general, such as point location. The class `CGAL::Periodic_4_hyperbolic_triangulation_2` 
-does <i>not</i> support insertion or removal of points. `CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2`
-inherits `CGAL::Periodic_4_hyperbolic_triangulation_2`.
-- `CGAL::Periodic_4_hyperbolic_triangulation_2`
-- `CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2`
-
-The package provides a model for the concept `Periodic_4HyperbolicDelaunayTriangulationTraits_2`, which
-is the class `CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2`. 
-- `CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2`
-
-Models for the face and vertex concepts are provided as well.
-- `CGAL::Periodic_4_hyperbolic_triangulation_ds_face_base_2`
-- `CGAL::Periodic_4_hyperbolic_triangulation_ds_vertex_base_2`
-
-Finally, the package provides a class to represent hyperbolic translations of the fundamental group \f$\mathcal G\f$ 
+triangulations in general, such as point location. This class does <i>not</i> support insertion or removal of points.
+- `CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2` allows to construct and modify Delaunay triangulations of the Bolza surface.
+- `CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2` is a model for the concept `Periodic_4HyperbolicDelaunayTriangulationTraits_2`.
+- `CGAL::Periodic_4_hyperbolic_triangulation_face_base_2` is a model of the concept `Periodic_4HyperbolicTriangulationFaceBase_2`.
+- `CGAL::Periodic_4_hyperbolic_triangulation_vertex_base_2` is a model of the concept `Periodic_4HyperbolicTriangulationVertexBase_2`.
+- `CGAL::Hyperbolic_octagon_translation` is a class that represent hyperbolic translations of the fundamental group \f$\mathcal G\f$ 
 of the Bolza surface.
-- `CGAL::Hyperbolic_octagon_translation`
 \cgalModifEnd
 
 */

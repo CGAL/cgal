@@ -32,11 +32,6 @@ public:
   /// \name Types
   /// @{
 	
-	/*!
-  \cgalModifBegin
-    (note: was inheriting from `Vb`, which is not defined here)
-  \cgalModifEnd
-  */
   typedef typename TriangulationVertexBase_2::Face_handle 		    
                                                       Face_handle;
   
@@ -84,7 +79,7 @@ public:
   /// \name Hyperbolic translations API
   /// @{
   /*!
-    Stores the translation `tr` in the vertex, and sets a flag indicating that the vertex stores a translation.
+    Stores the translation `tr` in the vertex, and sets the translation flag to `true`. 
   */
 	void set_translation(const Hyperbolic_translation& tr);
 
@@ -94,12 +89,12 @@ public:
 	Hyperbolic_translation translation();
 
   /*!
-    Removes the translation stored in the vertex, and resets the translation flag.
+    Removes the translation stored in the vertex, and sets the translation flag to `false`. 
   */
 	void clear_translation();
 
   /*!
-    Returns the value of a flag, indicating whether the vertex stores a translation or not.
+    Returns the value of the translation flag. 
   */
 	bool get_translation_flag();
   ///@}

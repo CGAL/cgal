@@ -8,9 +8,7 @@ namespace CGAL
 \ingroup PkgPeriodic4HyperbolicTriangulation2TraitsClasses
 
 The class `Periodic_4_hyperbolic_Delaunay_triangulation_traits_2` is 
-a model of the concept `Periodic_4HyperbolicDelaunayTriangulationTraits_2`.
-
-It is the default traits class for the class `Periodic_4_hyperbolic_Delaunay_triangulation_2`.
+the default traits class for the class `Periodic_4_hyperbolic_Delaunay_triangulation_2`.
 
 \cgalModels `Periodic_4HyperbolicDelaunayTriangulationTraits_2`
 

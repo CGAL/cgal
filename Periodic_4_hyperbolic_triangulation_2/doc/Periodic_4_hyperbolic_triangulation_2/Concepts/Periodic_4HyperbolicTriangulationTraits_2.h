@@ -14,9 +14,8 @@ operations defined on them in `HyperbolicDelaunayTriangulationTraits_2`, it defi
 hyperbolic translations that allow to encode the periodicity of the triangulation.
 
 \cgalModifBegin
-The concept requires that a nested field number type `FT` is provided. The type `FT`  
-must support exact computations with algebraic numbers, in particular with nested 
-square roots.
+The concept requires that the field number type `FT` defined in the concept HyperbolicDelaunayTriangulationTraits_2 supports exact computations with algebraic numbers, in particular with nested 
+square roots. 
 \cgalModifEnd
 
 */
