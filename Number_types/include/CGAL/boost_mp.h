@@ -40,7 +40,7 @@
 #include <CGAL/disable_warnings.h>
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
-#  pragma warning(disable: 4127 4244 4146) // conversion with loss of data
+#  pragma warning(disable: 4127 4244 4146 4267) // conversion with loss of data
                                      // warning on - applied on unsigned number
 #endif
 
