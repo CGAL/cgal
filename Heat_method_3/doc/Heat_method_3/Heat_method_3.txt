@@ -11,14 +11,20 @@ namespace CGAL {
 \section sec_HM_introduction Introduction
 
 The <em>heat method</em> is an algorithm that solves the single- or
-multiple-source shortest path problem by returning the geodesic distance
-for all vertices of a triangle mesh to the closest vertex in a given set of
-source vertices.  The heat method is highly efficient, since the algorithm
+multiple-source shortest path problem by returning an approximation of the
+<em>geodesic distance</em> for all vertices of a triangle mesh to the closest vertex in a given set of
+source vertices. The geodesic distance between two vertices of a mesh
+is the distance when walking on the surface, potentially through the interior of faces.
+Two vertices that are close in 3D space may be far away on the surface, for example
+on neighboring arms of the octopus. In the figures we color code the distance
+as a gradient red/green corresponding to close/far from the source vertices.
+
+The heat method is highly efficient, since the algorithm
 boils down to two standard sparse linear algebra problems.  It is especially
 useful in situations where one wishes to evaluate repeated distance queries
 on a fixed domain, since precomputation done for the first query can be re-used.
 
-As a rule of thumb, the method works well on triangle meshes which are
+As a rule of thumb, the method works well on triangle meshes, which are
 Delaunay, though in practice may also work fine for meshes that are far from
 Delaunay.  In order to ensure good behavior, one can optionally enable a
 preprocessing step that constructs an <em>intrinsic Delaunay triangulation
@@ -27,7 +33,7 @@ generally improves the quality of the solution.  The cost of this preprocessing
 step will roughly double the overall preprocessing cost.
 
 \cgalFigureBegin{landscape_meshes, landscape.jpg}
-  Isolines placed on a mesh without and with iDT remeshing.
+  Isolines placed on a mesh without and with iDT remeshing. 
 \cgalFigureEnd
 
 In the next section we give some examples. Section \ref sec_HM_definitions presents
@@ -48,7 +54,7 @@ of intrinsic Delaunay triangulation.
 
 \subsection HM_example_Free_function Using a Free Function
 
-The first example calls the free function `Heat_method_3::estimate_geodesic_distances()`
+The first example calls the free function `Heat_method_3::estimate_geodesic_distances()`,
 which computes for all vertices of a triangle mesh the distances to a single source vertex.
 
 The distances are written into an internal property map of the surface mesh.
@@ -57,7 +63,7 @@ The distances are written into an internal property map of the surface mesh.
 
 For a `Polyhedron_3` you can either add a data field to the vertex type, or, as shown
 in the following example, create a `boost::unordered_map` and pass it to the function
-`boost::make_assoc_property_map()` which generates a vertex distance property map.
+`boost::make_assoc_property_map()`, which generates a vertex distance property map.
 
 \cgalExample{Heat_method_3/heat_method_polyhedron.cpp}
 
@@ -66,10 +72,10 @@ in the following example, create a `boost::unordered_map` and pass it to the fun
 
 The following example shows the heat method class. It can be used
 when one adds and removes source vertices. It precomputes matrix
-factorization which depend only on the input mesh and not the particular
+factorization, which depend only on the input mesh and not the particular
 set of source vertices.  In the example we compute the distances to one
-source, add the farthest vertex as a second source vertex, then compute
-the distances to these two sources.
+source, add the farthest vertex as a second source vertex, and then compute
+the distances with respect to these two sources.
 
 \cgalExample{Heat_method_3/heat_method_surface_mesh.cpp}
 
@@ -101,10 +107,9 @@ sequel, we introduce the basic notions so as to explain our
 algorithms. In general, the heat method is applicable to any setting
 if there exists a gradient operator \f$ \nabla\f$, a divergence
 operator \f$\nabla\f$ and a Laplace operator \f$\Delta = \nabla \cdot
-\nabla\f$ which are standard derivatives from vector calculus.
+\nabla\f$, which are standard derivatives from vector calculus.
 
 The Heat Method consists of three main steps:
-   Algorithm:
            -# Integrate the heat flow \f$ \dot u = \Delta u\f$ for some fixed time \f$t\f$.
            -# Evaluate the vector field   \f$ X = -\nabla u_t / |\nabla u_t| \f$.
            -# Solve the Poisson Equation \f$ \Delta \phi = \nabla \cdot X \f$.
@@ -172,7 +177,7 @@ Let \f$ K = (V,E,T) \f$ be a 2-manifold triangle mesh, where \f$V\f$ is the vert
 \f$ E \f$ is the edge set and \f$ T \f$ is the face set (triangle set).
 Let \f$ L \f$ be the set of Euclidean distances, where \f$ L(e_{ij}) = l_{ij} = || p_i - p_j || \f$ ,
 where \f$ p_i \f$ and \f$ p_j \f$ are the point positions \f$ \in R^3 \f$ of vertices \f$ i \f$ and \f$ j \f$ respectively.
-Then, let the pair \f$ (K,L) \f$ be the input to the iDT algorithm which returns the pair \f$(\tilde K, \tilde L)\f$,
+Then, let the pair \f$ (K,L) \f$ be the input to the iDT algorithm, which returns the pair \f$(\tilde K, \tilde L)\f$,
 which are the intrinsic Delaunay mesh and the intrinsic lengths.
 The algorithm is as follows:
 
@@ -209,12 +214,12 @@ The algorithm is as follows:
   \cgalFigureEnd
 
 
-\section sec_HM_Performance Performances
+\section sec_HM_Performance Performance
 
 We perform the benchmark on an Intel Core i7-7700HQ, 2.8HGz, and compiled with Visual Studio 2013.
 
 <center>
-Number of triangles  | Initialization | Distance computation  | Initialization (iDT) | Distance computation  (iDT)
+Number of triangles  | Initialization (sec) | Distance computation  (sec) | Initialization iDT (sec) | Distance computation iDT (sec)
 --------------------:| ----------- :  | ---------------- :    | ------------------:  | --------------:
 30,000               |  0.12          |  0.01                 |  0.18                |  0.02
 200,000              |  1.32          |  0.11                 |  1.82                |  1.31

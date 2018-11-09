@@ -177,6 +177,7 @@ public:
 
   /**
    * adds vertices in the `vrange` to the source set'.
+   * \tparam VertexRange a model of the concept `Range` with value type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
    */
   template <typename VertexRange>
   void
@@ -875,6 +876,7 @@ public:
 
   /**
    * adds the range of vertices to the source set.
+   * \tparam VertexRange a model of the concept `Range` with value type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
    */
   template <typename VertexRange>
   void
@@ -942,7 +944,7 @@ public:
 /// \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
 ///         with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `double` as value type.
 /// \tparam Mode either the tag `Direct` or `Intrinsic_Delaunay`, which determines if the geodesic distance
-///              is computed directly on the mesh, or if the intrinsic Delaunay triangulation is applied first.
+///              is computed directly on the mesh or if the intrinsic Delaunay triangulation is applied first.
 ///              The default is `Direct`.
 ///
 /// \sa CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3
@@ -980,9 +982,9 @@ estimate_geodesic_distances(const TriangleMesh& tm,
 ///         It must have an internal vertex point property map with the value type being a 3D point from a cgal Kernel model
 /// \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
 ///         with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `double` as value type.
-/// \tparam VertexRange a range with value type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+/// \tparam VertexRange a model of the concept `Range` with value type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 /// \tparam Mode either the tag `Direct` or `Intrinsic_Delaunay`, which determines if the geodesic distance
-///              is computed directly on the mesh, or if the intrinsic Delaunay triangulation is applied first.
+///              is computed directly on the mesh or if the intrinsic Delaunay triangulation is applied first.
 ///              The default is `Direct`.
 ///
 /// \sa CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3
