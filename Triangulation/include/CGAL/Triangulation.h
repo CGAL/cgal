@@ -1402,9 +1402,9 @@ operator<<(std::ostream & os, const Triangulation<TT, TDS> & tr)
     if( n == 0 )
         return os;
 
-    size_t i(0);
+    int i = 0;
     // write the vertices
-    std::map<Vertex_handle, size_t> index_of_vertex;
+    std::map<Vertex_handle, int> index_of_vertex;
 
     // infinite vertex has index 0 (among all the vertices)
     index_of_vertex[tr.infinite_vertex()] = i++;
@@ -1423,7 +1423,7 @@ operator<<(std::ostream & os, const Triangulation<TT, TDS> & tr)
           write(os, *it);
         index_of_vertex[it] = i++;
     }
-    CGAL_assertion( i == n+1 );
+    CGAL_assertion( size_t(i) == n+1 );
 
     // output the combinatorial information
     return tr.tds().write_full_cells(os, index_of_vertex);
