@@ -1083,30 +1083,25 @@ namespace CGAL {
     // @return true iff at least one spur was removed
     bool remove_spurs(Path_on_surface<Map>& path) const
     {
-      /* TODO TEMPO POUR TEST */
-      Path_on_surface_with_rle<Map> prle(path);
+#ifdef CGAL_QUADRATIC_CANONIZE
+      // TODO TEMPO POUR TEST
+      /* Path_on_surface_with_rle<Map> prle(path);
       prle.remove_spurs();
-      /* TODO FIN TEMPO POUR TEST */
+      Path_on_surface<Map> p2(prle); */
 
       bool res=false;
       while(remove_spurs_one_step(path))
       { res=true; }
 
-      /* TODO TEMPO POUR TEST */
+      // assert(p2==path); 
+
+#else CGAL_QUADRATIC_CANONIZE
+      // TODO work only with a Path_on_surface_with_rle, to avoid these copies.
+      Path_on_surface_with_rle<Map> prle(path);
+      bool res=prle.remove_spurs();
       Path_on_surface<Map> p2(prle);
-      if (p2!=path)
-      {
-        std::cout<<"Error: p2!=path: "<<std::endl
-                <<"p2= "<<p2<<"; "<<std::endl
-               <<"path="<<path<<"; "<<std::endl
-              <<"prle="<<prle<<std::endl;
-        prle.display_pos_and_neg_turns();
-      }
-      else
-      {
-        std::cout<<"GOOD JOB for path "<<p2<<std::endl;
-      }
-      /* TODO FIN TEMPO POUR TEST */
+      path=p2;
+#endif // CGAL_QUADRATIC_CANONIZE
 
       return res;
     }

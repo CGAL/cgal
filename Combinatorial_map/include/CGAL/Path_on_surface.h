@@ -65,7 +65,7 @@ public:
 
   void swap(Self& p2)
   {
-    assert(&m_map==&(p2.m_map));
+    CGAL_assertion(&m_map==&(p2.m_map));
     m_path.swap(p2.m_path);
     std::swap(m_is_closed, p2.m_is_closed);
   }
@@ -74,9 +74,9 @@ public:
   ///          this path with dart start in other path.
   bool are_same_paths_from(const Self& other, std::size_t start) const
   {
-    assert(start==0 || start<length());
-    assert(is_closed() || start==0);
-    assert(length()==other.length() && is_closed()==other.is_closed());
+    CGAL_assertion(start==0 || start<length());
+    CGAL_assertion(is_closed() || start==0);
+    CGAL_assertion(length()==other.length() && is_closed()==other.is_closed());
 
     for(std::size_t i=0; i<length(); ++i)
     {
@@ -85,6 +85,14 @@ public:
       start=next_index(start);
     }
     return true;
+  }
+
+  Self& operator=(const Self& other)
+  {
+    CGAL_assertion(&m_map==&(other.m_map));
+    m_path=other.m_path;
+    m_is_closed=other.m_is_closed;
+    return *this;
   }
 
   /// @return true if this path is equal to other path. For closed paths, test
@@ -112,8 +120,8 @@ public:
   ///          by index of its darts, in text format.
   bool are_same_paths_from(const char* other, std::size_t start) const
   {
-    assert(start==0 || start<length());
-    assert(is_closed() || start==0);
+    CGAL_assertion(start==0 || start<length());
+    CGAL_assertion(is_closed() || start==0);
 
     std::string sother(other);
     std::istringstream iss(sother);
@@ -188,7 +196,7 @@ public:
 
   Dart_const_handle get_ith_dart(std::size_t i) const
   {
-    assert(i<m_path.size());
+    CGAL_assertion(i<m_path.size());
     return m_path[i];
   }
   
@@ -197,35 +205,35 @@ public:
 
   Dart_const_handle get_prev_dart(std::size_t i) const
   {
-    assert(i<m_path.size());
+    CGAL_assertion(i<m_path.size());
     if (i==0 && !is_closed()) return NULL;
     return m_path[prev_index(i)];
   }
 
   Dart_const_handle get_next_dart(std::size_t i) const
   {
-    assert(i<m_path.size());
+    CGAL_assertion(i<m_path.size());
     if (i==m_path.size()-1 && !is_closed()) return NULL;
     return m_path[next_index(i)];
   }
 
   Dart_const_handle front() const
   {
-    assert(!is_empty());
+    CGAL_assertion(!is_empty());
     return m_path.front();
   }
   
   Dart_const_handle back() const
   {
-    assert(!is_empty());
+    CGAL_assertion(!is_empty());
     return m_path.back();
   }
   
   void push_back(Dart_const_handle dh, bool update_isclosed=true)
   {
-    assert(dh!=NULL && dh!=m_map.null_dart_handle);
+    CGAL_assertion(dh!=NULL && dh!=m_map.null_dart_handle);
     /* This assert is too long...
-     assert((is_empty() ||
+     CGAL_assertion((is_empty() ||
            CGAL::template belong_to_same_cell<Map, 0>
            (m_map, m_map.other_extremity(back()), dh))); */
 
@@ -299,7 +307,7 @@ public:
     i=0;
     while(m_map.number_of_marked_darts(markedge)>0)
     {
-      assert(i<m_path.size());
+      CGAL_assertion(i<m_path.size());
       CGAL::unmark_cell<Map, 0>(m_path[i], markvertex);
       CGAL::unmark_cell<Map, 1>(m_path[i], markedge);
       ++i;
@@ -338,8 +346,8 @@ public:
   void copy_rest_of_path(std::size_t begin, std::size_t end,
                          Self& new_path)
   {
-    assert(end<=length());
-    assert(begin<=end);
+    CGAL_assertion(end<=length());
+    CGAL_assertion(begin<=end);
     while(begin!=end)
     {
       new_path.push_back(get_ith_dart(begin));
@@ -353,13 +361,13 @@ public:
   ///          of the first dart)
   std::size_t next_positive_turn(std::size_t i) const
   {
-    assert(is_valid());
-    assert(i<m_path.size());
-    assert (is_closed() || i<length()-1);
+    CGAL_assertion(is_valid());
+    CGAL_assertion(i<m_path.size());
+    CGAL_assertion (is_closed() || i<length()-1);
 
     Dart_const_handle d1=get_ith_dart(i);
     Dart_const_handle d2=get_next_dart(i);
-    assert(d1!=d2);
+    CGAL_assertion(d1!=d2);
 
     if (d2==m_map.template beta<2>(d1))
     { return 0; }
@@ -377,13 +385,13 @@ public:
   /// Same than next_positive_turn but turning in reverse orientation around vertex.
   std::size_t next_negative_turn(std::size_t i) const
   {
-    assert(is_valid());
-    assert(i<m_path.size());
-    assert (is_closed() || i<length()-1);
+    CGAL_assertion(is_valid());
+    CGAL_assertion(i<m_path.size());
+    CGAL_assertion (is_closed() || i<length()-1);
 
     Dart_const_handle d1=m_map.template beta<2>(get_ith_dart(i));
     Dart_const_handle d2=m_map.template beta<2>(get_next_dart(i));
-    assert(d1!=d2);
+    CGAL_assertion(d1!=d2);
 
     if (d2==m_map.template beta<2>(d1))
     { return 0; }
@@ -432,8 +440,8 @@ public:
                        const std::vector<std::size_t>& resmoins,
                        std::size_t start) const
   {
-    assert(start==0 || start<resplus.size());
-    assert(resplus.size()==resmoins.size());
+    CGAL_assertion(start==0 || start<resplus.size());
+    CGAL_assertion(resplus.size()==resmoins.size());
 
     std::string sturns(turns);
     std::istringstream iss(sturns);

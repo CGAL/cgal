@@ -104,7 +104,7 @@ public:
           j=apath.next_index(j);
           ++length;
         }
-        assert(length>0);
+        CGAL_assertion(length>0);
         m_path.push_back(std::make_pair(apath[i], positive_flat?length:-length)); // begining of the flat part
         i=j;
       }
@@ -114,10 +114,19 @@ public:
   
   void swap(Self& p2)
   {
-    assert(&m_map==&(p2.m_map));
+    CGAL_assertion(&m_map==&(p2.m_map));
     m_path.swap(p2.m_path);
     std::swap(m_is_closed, p2.m_is_closed);
     std::swap(m_length, p2.m_length);
+  }
+
+  Self& operator=(const Self& other)
+  {
+    CGAL_assertion(&m_map==&(other.m_map));
+    m_path=other.m_path;
+    m_is_closed=other.m_is_closed;
+    m_length=other.m_length;
+    return *this;
   }
 
   /// @return true if this path is equal to other path. For closed paths, test
@@ -168,7 +177,7 @@ public:
 
   void advance_iterator(List_iterator& it)
   {
-    assert(it!=m_path.end());
+    CGAL_assertion(it!=m_path.end());
     it=std::next(it);
     if (is_closed() && it==m_path.end())
     { it=m_path.begin(); } // Here the path is closed, and it is the last element of the list
@@ -176,7 +185,7 @@ public:
 
   void advance_iterator(List_const_iterator& it) const
   {
-    assert(it!=m_path.end());
+    CGAL_assertion(it!=m_path.end());
     it=std::next(it);
     if (is_closed() && it==m_path.end())
     { it=m_path.begin(); } // Here the path is closed, and it is the last element of the list
@@ -184,8 +193,7 @@ public:
 
   void retreat_iterator(List_iterator& it)
   {
-    assert(it!=m_path.end());
-    assert(it!=m_path.begin() || is_closed());
+    CGAL_assertion(it!=m_path.begin() || is_closed());
     if (is_closed() && it==m_path.begin())
     { it=m_path.end(); }
     it=std::prev(it);
@@ -193,8 +201,8 @@ public:
 
   void retreat_iterator(List_const_iterator& it) const
   {
-    assert(it!=m_path.end());
-    assert(it!=m_path.begin() || is_closed());
+    CGAL_assertion(it!=m_path.end());
+    CGAL_assertion(it!=m_path.begin() || is_closed());
     if (is_closed() && it==m_path.begin())
     { it=m_path.end(); }
     it=std::prev(it);
@@ -214,7 +222,7 @@ public:
     return res;
   }
 
-  List_iterator prev_iterator(const List_iterator& it) const
+  List_iterator prev_iterator(const List_iterator& it)
   {
     List_iterator res=it;
     retreat_iterator(res);
@@ -231,64 +239,235 @@ public:
   // @return true iff there is a dart after it
   bool next_dart_exist(const List_const_iterator& it) const
   {
-    assert(it!=m_path.end());
+    CGAL_assertion(it!=m_path.end());
     return is_closed() || std::next(it)!=m_path.end();
+  }
+
+  // @return true iff 'it' is the beginning of a flat part (possibly of null length)
+  // In fact, return false only if 'it' is the second dart of a flat part of non
+  // null length.
+  bool is_beginning_of_flat(const List_const_iterator& it) const
+  {
+    if (it->second!=0)
+    { return true; } // Only the beginning of a flat part has a non null length
+
+    if (!is_closed() && it==m_path.begin())
+    { return true; }
+
+    return prev_iterator(it)->second==0;
+  }
+
+  // @return true iff 'it' is the beginning of a non null flat part
+  bool is_beginning_of_non_null_flat(const List_const_iterator& it) const
+  {
+    CGAL_assertion(it!=m_path.end());
+    CGAL_assertion(it->second==0 || next_dart_exist(it));
+
+    return (it->second!=0);
+  }
+
+  // @return true iff 'it' is the end of a flat part (possibly of null length)
+  // In fact, return false only if 'it' is the first dart of a flat part of non
+  // null length.
+  bool is_end_of_flat(const List_const_iterator& it) const
+  {
+    CGAL_assertion(it!=m_path.end());
+    return (it->second==0);
+  }
+
+  // @return the second dart of the given flat.
+  Dart_const_handle second_dart_of_a_flat(const List_const_iterator& it) const
+  {
+    CGAL_assertion(is_beginning_of_non_null_flat(it));
+
+    if (it->second>0)
+    { return m_map.template beta<1, 2, 1>(it->first); }
+
+    // here it->second<0
+    return m_map.template beta<2, 0, 2, 0, 2>(it->first);
+  }
+
+  // @return the dart before the last dart of the given flat.
+  Dart_const_handle before_last_dart_of_a_flat(const List_const_iterator& it) const
+  {
+    CGAL_assertion(is_beginning_of_non_null_flat(it));
+
+    if (it->second>0)
+    { return m_map.template beta<0, 2, 0>(next_iterator(it)->first); }
+
+    // here it->second<0
+    return m_map.template beta<2, 1, 2, 1, 2>(next_iterator(it)->first);
+  }
+
+  // Reduce the length of the flat part starting at 'it' from its beginning
+  // 'it' moves to the end of the previous flat part if the current flat part
+  // If the flat was empty, remove 'it'.
+  // If the flat part becomes empty, remove its second element.
+  // The path could be not valid after this operation (consistency with next
+  // element should be ensure, by possibly updating the next flat part).
+  void reduce_flat_from_beginning(List_iterator& it)
+  {
+    CGAL_assertion(is_beginning_of_flat(it));
+
+    if (it->second==0)
+    {
+      it=m_path.erase(it);
+      if (!m_path.empty()) { retreat_iterator(it); } // TODO if !is_closed && first dart
+    }
+    else
+    {
+      it->first=second_dart_of_a_flat(it);
+
+      if (it->second>0) { --(it->second); }
+      else              { ++(it->second); }
+
+      if (it->second==0)
+      {
+        m_path.erase(next_iterator(it)); // erase the second element of the flat
+      }
+      else { it=next_iterator(it); }
+    }
+  }
+
+  // Reduce the length of the flat part starting at 'it' from its end
+  // 'it' moves to the end of the previous flat part if the current flat part
+  // becomes empty (and thus was removed) or to the end of this part otherwise
+  // If the flat was empty, remove 'it'.
+  // If the flat part becomes empty, remove its second element.
+  // The path could be not valid after this operation (consistency with next
+  // element should be ensure, by possibly updating the next flat part).
+  void reduce_flat_from_end(List_iterator& it)
+  {
+    CGAL_assertion(is_beginning_of_flat(it));
+
+    if (it->second==0)
+    {
+      it=m_path.erase(it);
+      if (!m_path.empty()) { retreat_iterator(it); } // TODO if !is_closed && first dart
+    }
+    else
+    {
+      next_iterator(it)->first=before_last_dart_of_a_flat(it);
+
+      if (it->second>0) { --(it->second); }
+      else              { ++(it->second); }
+
+      if (it->second==0)
+      {
+        m_path.erase(next_iterator(it)); // erase the second element of the flat
+      }
+      else { it=next_iterator(it); }
+    }
+  }
+
+  void merge_adjacent_flats_if_possible(List_iterator& it)
+  {
+    CGAL_assertion(is_beginning_of_flat(it));
+    bool positive1=false, negative1=false;
+    bool positive2=false, negative2=false;
+    bool positive3=false, negative3=false;
+
+    List_iterator it2=next_iterator(it);
+    if (!is_beginning_of_flat(it2)) { advance_iterator(it2); }
+
+    if (it==it2) { return; } // only one flat in the path
+
+    if (it->second>0) positive1=true;
+    else if (it->second<0) negative1=true;
+
+    List_iterator it1_end=it;
+    if (!is_end_of_flat(it)) { advance_iterator(it1_end); }
+
+    if (next_positive_turn(it1_end)==2) { positive2=true; }
+    if (next_negative_turn(it1_end)==2) { negative2=true; }
+
+    if (!positive2 && !negative2) { return; } // the middle turn is not a flat
+
+    if (it2->second>0) positive3=true;
+    else if (it2->second<0) negative3=true;
+
+    if (!positive1 && !negative1)
+    { // First flat is empty (length 0)
+      if (!positive3 && !negative3)
+      { // and second flat too
+        it->second=(positive2?+1:-1); // we only initialize the length of the beginning of the flat
+      }
+      else
+      { // here second flat is not empty => we have 3 darts (1 for first flat, 2 for second flat)
+        if ((positive3 && !positive2) || (negative3 && !negative2))
+        { return; } // the two flats cannot be merged
+
+        it->second=it2->second+(positive3?1:-1);
+        m_path.erase(it2);
+      }
+    }
+    else
+    { // here first flat is not empty
+      if (!positive3 && !negative3)
+      { // Second flat is empty =>  we have 3 darts (2 for first flat, 1 for second flat)
+        if ((positive1 && !positive2) || (negative1 && !negative2))
+        { return; } // the two flats cannot be merged
+
+        it->second+=(positive1?1:-1);
+        m_path.erase(it1_end);
+      }
+      else
+      {
+        // Second flat is not empty =>  we have 4 darts (2 for first flat, 2 for second flat)
+        if ((positive1!=positive3) || (negative1!=negative3) ||
+            (positive1 && !positive2) || (negative1 && !negative2))
+        { return; } // the two flats cannot be merged
+
+        it->second+=(it2->second+(positive1?1:-1));
+        m_path.erase(it2);
+        m_path.erase(it1_end);
+      }
+    }
   }
 
   // Return true if it is the beginning of a spur.
   bool is_spur(const List_const_iterator& it) const
   {
-    assert(it!=m_path.end());
+    CGAL_assertion(it!=m_path.end());
     return it->second==0 &&
         next_dart_exist(it) &&
         m_map.template beta<2>(it->first)==next_iterator(it)->first;
   }
 
-  // Remove the spur given by it; move it to the element before it
-  // (m_path.end() if the path becomes empty).
+  // Remove the spur given by 'it'.
+  // Either 'it' stay on the same element (if the flat still exist),
+  // or 'it' move to the previous element if the flat containing the spur is removed.
+  // ('it' will be equal to m_path.end() if the path becomes empty).
+  // 'it' is necessary either the beginning of a null length flat, or the end
+  // of a non null flat.
   void remove_spur(List_iterator& it)
   {
-    assert(is_spur(it));
-    it=m_path.erase(it); // Erase the first dart of the spur
-    if (is_closed() && it==m_path.end())
-    { it=m_path.begin(); }
+    CGAL_assertion(is_spur(it));
 
-    if (it->second==0) // a flat part having only one dart
-    {
-      it=m_path.erase(it); // Erase the second dart of the spur
-      if (is_closed() && it==m_path.end())
-      { it=m_path.begin(); }
-    }
-    else
-    { // Here we need to reduce the length of the flat part
-      if (it->second>0)
-      {
-        --(it->second);
-        it->first=m_map.template beta<1, 2, 1>(it->first);
-      }
-      else
-      {
-        ++(it->second);
-        it->first=m_map.template beta<2, 0, 2, 0, 2>(it->first);
-      }
-    }
+    List_iterator it2=next_iterator(it); // it2 is the beginning of the next flat
+
+    if (!is_beginning_of_flat(it)) { retreat_iterator(it); }
+    reduce_flat_from_end(it);
+
+    CGAL_assertion(is_beginning_of_flat(it2));
+    reduce_flat_from_beginning(it2);
+
+    // Here it is on the flat before the
 
     // Now move it to the element before the removed spur
     // except if the path has become empty, or if it is not closed
     // and we are in its first element.
     if (m_path.empty())
     {
-      assert(it==m_path.end());
+      it=m_path.end();
       m_is_closed=false;
     }
-    else if (is_closed() || it!=m_path.begin())
+    else
     {
-      retreat_iterator(it); // go to the previous element
-      // TODO we need to test if the previous flat part should be merged with the next one
-      if (compute_positive_turns(it, next(it))==2 || compute_negative_turns(it, next(it))==2 )
-      {
-
-      }
+      CGAL_assertion(it!=m_path.end());
+      // here 'it' is the end of the flat
+      if (!is_beginning_of_flat(it)) { retreat_iterator(it); }
+      merge_adjacent_flats_if_possible(it);
     }
   }
 
@@ -296,7 +475,7 @@ public:
   // spur in the path.
   void move_to_next_spur(List_iterator& it)
   {
-     assert(it!=m_path.end());
+     CGAL_assertion(it!=m_path.end());
     List_iterator itend=(is_closed()?it:m_path.end());
     do
     {
@@ -327,9 +506,9 @@ public:
   ///          of the first dart)
   std::size_t next_positive_turn(const List_const_iterator& it) const
   {
-    assert(is_valid());
-    assert(it!=m_path.end());
-    assert(is_closed() || std::next(it)!=m_path.end());
+    CGAL_assertion(is_valid());
+    CGAL_assertion(it!=m_path.end());
+    CGAL_assertion(is_closed() || std::next(it)!=m_path.end());
 
     Dart_const_handle d1=it->first;
     if (it->second!=0)
@@ -339,7 +518,7 @@ public:
     }
 
     Dart_const_handle d2=next_iterator(it)->first;
-    assert(d1!=d2);
+    CGAL_assertion(d1!=d2);
 
     if (d2==m_map.template beta<2>(d1))
     { return 0; }
@@ -357,9 +536,9 @@ public:
   /// Same than next_positive_turn but turning in reverse orientation around vertex.
   std::size_t next_negative_turn(const List_const_iterator& it) const
   {
-    assert(is_valid());
-    assert(it!=m_path.end());
-    assert(is_closed() || std::next(it)!=m_path.end());
+    CGAL_assertion(is_valid());
+    CGAL_assertion(it!=m_path.end());
+    CGAL_assertion(is_closed() || std::next(it)!=m_path.end());
 
     Dart_const_handle d1=m_map.template beta<2>(it->first);
     if (it->second!=0)
@@ -369,7 +548,7 @@ public:
     }
 
     Dart_const_handle d2=m_map.template beta<2>(next_iterator(it)->first);
-    assert(d1!=d2);
+    CGAL_assertion(d1!=d2);
 
     if (d2==m_map.template beta<2>(d1))
     { return 0; }
