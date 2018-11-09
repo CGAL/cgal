@@ -1095,8 +1095,9 @@ namespace CGAL {
 
       // assert(p2==path); 
 
-#else CGAL_QUADRATIC_CANONIZE
+#else // CGAL_QUADRATIC_CANONIZE
       // TODO work only with a Path_on_surface_with_rle, to avoid these copies.
+      // ie do the method: remove_spurs(Path_on_surface_with_rle<Map>& path)
       Path_on_surface_with_rle<Map> prle(path);
       bool res=prle.remove_spurs();
       Path_on_surface<Map> p2(prle);
