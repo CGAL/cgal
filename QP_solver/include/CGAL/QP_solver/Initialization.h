@@ -23,6 +23,7 @@
 //                 Kaspar Fischer
 
 #include<CGAL/QP_functions.h>
+#include<CGAL/NT_converter.h>
 
 namespace CGAL {
 
@@ -550,7 +551,7 @@ init_solution__b_C(Tag_true)
 {
   b_C.reserve(qp_m);
   std::transform(qp_b, qp_b+qp_m, std::back_inserter(b_C),
-      typename Coercion_traits<ET,B_entry>::Cast());
+      NT_converter<B_entry,ET>());
 }
 
 template < typename Q, typename ET, typename Tags >  inline                                 // has ineq.
@@ -564,7 +565,7 @@ init_solution__b_C(Tag_false)
   std::transform(B_by_index_iterator(C.begin(), b_accessor),
 		 B_by_index_iterator(C.end  (), b_accessor),
 		 b_C.begin(),
-		 typename Coercion_traits<ET,RT>::Cast());
+		 NT_converter<RT,ET>());
 }
 
 // initial solution

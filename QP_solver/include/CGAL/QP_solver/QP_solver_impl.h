@@ -24,6 +24,7 @@
 
 #include <CGAL/QP_solver/Initialization.h>
 #include <boost/bind.hpp>
+#include <CGAL/NT_converter.h>
 
 namespace CGAL {
 
@@ -73,7 +74,7 @@ transition( )
                     C_by_index_iterator( B_O.end  (), c_accessor),
                     minus_c_B.begin(),
 		    boost::bind(
-		      typename Coercion_traits<ET,RT>::Cast(),
+		      NT_converter<RT,ET>(),
 		      boost::bind(std::negate<RT>(), _1)));
     
     // compute initial solution of phase II
@@ -425,7 +426,7 @@ ratio_test_init__A_Cj( Value_iterator A_Cj_it, int j_, Tag_true)
     if ( j_ < qp_n) {                                   // original variable
 
 	CGAL::transform_n( *(qp_A + j_), qp_m, A_Cj_it,
-	    typename Coercion_traits<ET,A_entry>::Cast());
+	    NT_converter<A_entry,ET>());
 
     } else {                                            // artificial variable
 
@@ -447,7 +448,7 @@ ratio_test_init__A_Cj( Value_iterator A_Cj_it, int j_, Tag_false)
       std::transform(A_by_index_iterator( C.begin(), a_accessor),
 		     A_by_index_iterator( C.end  (), a_accessor),
 		     A_Cj_it,
-		     typename Coercion_traits<ET,RT>::Cast());
+		     NT_converter<RT,ET>());
 
     } else {
       unsigned int  k = j_;
@@ -473,7 +474,7 @@ ratio_test_init__A_Cj( Value_iterator A_Cj_it, int j_, Tag_false)
           std::transform(S_by_index_iterator( C.begin(), s_accessor),
 			 S_by_index_iterator( C.end  (), s_accessor),
 			 A_Cj_it,
-			 typename Coercion_traits<ET,RT>::Cast());
+			 NT_converter<RT,ET>());
         }	
       }
     }
@@ -1451,7 +1452,7 @@ replace_variable_slack_slack( )
     std::transform(A_row_by_index_iterator( B_O.begin(), a_accessor),
 		   A_row_by_index_iterator( B_O.end  (), a_accessor),
 		   tmp_x.begin(),
-		   typename Coercion_traits<ET,RT>::Cast());
+		   NT_converter<RT,ET>());
     if ( art_s_i > 0) {                                 // special artificial
 	tmp_x[ in_B[ art_s_i]] = ET( art_s[ new_row]);
     }
@@ -1604,7 +1605,7 @@ replace_variable_original_slack( )
     std::transform(A_row_by_index_iterator( B_O.begin(), a_accessor),
 		   A_row_by_index_iterator( B_O.end  (), a_accessor),
 		   tmp_x.begin(),
-		   typename Coercion_traits<ET,RT>::Cast());
+		   NT_converter<RT,ET>());
     if ( art_s_i > 0) {                                 // special art.
 	tmp_x[ in_B[ art_s_i]] = ET( art_s[ new_row]);
     }

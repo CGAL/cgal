@@ -43,6 +43,7 @@
 #include <CGAL/QP_solver/QP_exact_bland_pricing.h>
 
 #include <CGAL/algorithm.h>
+#include <CGAL/NT_converter.h>
 
 #include <CGAL/IO/Verbose_ostream.h>
 
@@ -1609,7 +1610,7 @@ ratio_test_1__q_x_S( Tag_false)
 				_1,
 				boost::bind(std::multiplies<ET>(), d,
 				  boost::bind(
-				    typename Coercion_traits<ET,RT>::Cast(),
+				    NT_converter<RT,ET>(),
 				    _2))));
   }
 
@@ -1896,7 +1897,7 @@ basis_matrix_stays_regular()
     std::transform(A_row_by_index_iterator( B_O.begin(), a_accessor),
 		   A_row_by_index_iterator( B_O.end  (), a_accessor),
 		   tmp_x.begin(),
-		   typename Coercion_traits<ET,RT>::Cast());
+		   NT_converter<RT,ET>());
     inv_M_B.multiply( tmp_x.begin(),                        // dummy (not used)
 		      tmp_x.begin(), tmp_l_2.begin(), tmp_x_2.begin(),
 		      Tag_false(),                                 // QP
@@ -1976,7 +1977,7 @@ struct submul {
   ET const& d;
   submul(ET const&d):d(d) {}
   ET operator()(RT const&x, ET const&y) const {
-    typename Coercion_traits<ET, RT>::Cast cast;
+    NT_converter<RT, ET> cast;
     return cast(x) * d - y;
   }
 };

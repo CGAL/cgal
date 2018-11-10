@@ -42,6 +42,7 @@
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/functional.hpp>
+#include <CGAL/NT_converter.h>
 
 // here is how it works. We have d+2 variables: 
 // R (big radius), r (small radius), c (center). The problem is
@@ -627,7 +628,7 @@ private:
       std::transform( da_coord( points[ 0]),
 		      da_coord( points[ 0])+d+1,
 		      center_coords.begin(),
-		      typename Coercion_traits<ET,RT>::Cast());
+		      NT_converter<RT,ET>());
       sqr_i_rad_numer = ET( 0);
       sqr_o_rad_numer = ET( 0);
       sqr_rad_denom   = ET( 1);
