@@ -34,7 +34,7 @@ class Polyhedron_demo_surface_mesh_approximation_plugin :
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
-  typedef boost::property_map<SMesh, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
+  typedef boost::property_map<SMesh, CGAL::face_patch_id_t<std::size_t> >::type Patch_id_pmap;
   typedef VSA_wrapper::Indexed_triangle Indexed_triangle;
   typedef std::map<Scene_surface_mesh_item *, VSA_wrapper *> SM_wrapper_map;
   typedef std::pair<Scene_surface_mesh_item *, VSA_wrapper *> SM_wrapper_pair;
@@ -141,7 +141,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
     .number_of_relaxations(ui_widget.nb_relaxations->value()));
   approx.run(ui_widget.nb_iterations->value());
 
-  Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *sm_item->face_graph());
+  Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<std::size_t>(), *sm_item->face_graph());
   approx.output(CGAL::parameters::face_proxy_map(pidmap));
 
   mi->information(QString("Done, #proxies = %1. (%2 ms)").arg(
@@ -173,7 +173,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonFit_clicked() {
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   approx.run(1);
-  Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *pmesh);
+  Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<std::size_t>(), *pmesh);
   approx.output(CGAL::parameters::face_proxy_map(pidmap));
 
   mi->information(QString("Fit one iteration, #proxies = %1.").arg(approx.number_of_proxies()));
@@ -210,7 +210,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonAdd_clicked() {
   }
   mi->information(QString("One proxy added, #proxies = %1.").arg(approx.number_of_proxies()));
 
-  Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *pmesh);
+  Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<std::size_t>(), *pmesh);
   approx.output(CGAL::parameters::face_proxy_map(pidmap));
 
   sm_item->color_vector() = approx.proxy_colors();
@@ -238,7 +238,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonTeleport_clicke
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *pmesh);
+  Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<std::size_t>(), *pmesh);
   if (approx.teleport_one_proxy() == 0) {
     mi->information(QString("No proxy teleported, #proxies = %1.").arg(approx.number_of_proxies()));
     return;
@@ -280,7 +280,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSplit_clicked()
   }
   mi->information(QString("One proxy splitted, #proxies = %1.").arg(approx.number_of_proxies()));
 
-  Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *pmesh);
+  Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<std::size_t>(), *pmesh);
   approx.output(CGAL::parameters::face_proxy_map(pidmap));
 
   sm_item->color_vector() = approx.proxy_colors();
@@ -319,7 +319,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
   std::vector<vertex_descriptor> anchor_vertices;
   std::vector<std::vector<std::size_t> > patch_polygons;
 
-  Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<int>(), *sm_item->face_graph());
+  Patch_id_pmap pidmap = get(CGAL::face_patch_id_t<std::size_t>(), *sm_item->face_graph());
   approx.output(CGAL::parameters::face_proxy_map(pidmap)
     .anchors(std::back_inserter(anchor_points))
     .triangles(std::back_inserter(indexed_triangles)));
