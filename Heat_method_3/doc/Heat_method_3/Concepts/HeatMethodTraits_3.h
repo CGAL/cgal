@@ -31,22 +31,22 @@ public:
   /// and have a constructor with three parameters of a type constructibe from `double`.
   typedef unspecified_type Vector_3;
 
-  /// Functor with operator: `Vector_3 operator()(Point_3 from, Point_3 to) const`, which constructs the vector from `from` to `to` .
+  /// Functor with operator: `Vector_3 operator()(Point_3 from, Point_3 to) const`, which constructs the vector from `to - from` .
   typedef unspecified_type Construct_vector_3;
 
-  ///  Functor with operator: `Vector_3 operator()(Vector_3 v, Vector_3 w) const`, which constructs the vector `v+ w`.
+  ///  Functor with operator: `Vector_3 operator()(Vector_3 v, Vector_3 w) const`, which constructs the vector `v + w`.
   typedef unspecified_type Construct_sum_of_vectors_3;
   
-  ///  Functor with operator: `Vector_3 operator()(Vector_3 v, double d) const`, which constructs the vector `d* v`.
+  ///  Functor with operator: `Vector_3 operator()(Vector_3 v, double d) const`, which constructs the vector `d * v`.
   typedef unspecified_type Construct_scaled_vector_3;
   
-  ///  Functor with operator: `Vector_3 operator()(Vector_3 v, Vector_3 w) const`, which constructs the cross product of `v`and `w`.
+  ///  Functor with operator: `Vector_3 operator()(Vector_3 v, Vector_3 w) const`, which constructs the cross product of `v` and `w`.
   typedef unspecified_type Construct_cross_product_vector_3;
   
-  ///  Functor with operator: `FT operator()(Vector_3 v, Vector_3 w) const, which constructs the scalar product of `v`and `w`.`.
+  ///  Functor with operator: `FT operator()(Vector_3 v, Vector_3 w) const, which constructs the scalar product of `v` and `w`.
   typedef unspecified_type Compute_scalar_product_3;
   
-  ///  Functor with operator: `FT operator()(Point_3 p, Point_3 q) const` which computes the squared distance between `p`and `q`.
+  ///  Functor with operator: `FT operator()(Point_3 p, Point_3 q) const` which computes the squared distance between `p` and `q`.
   typedef unspecified_type Compute_squared_distance_3;
   
   

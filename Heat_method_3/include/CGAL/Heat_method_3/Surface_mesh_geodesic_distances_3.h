@@ -74,16 +74,16 @@ protected:
   friend Surface_mesh_geodesic_distances_3_private_tests;
 #endif
   /// Polygon_mesh typedefs
-  typedef typename boost::graph_traits<TriangleMesh>               graph_traits;
-  typedef typename graph_traits::vertex_descriptor            vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>            graph_traits;
+  typedef typename graph_traits::vertex_descriptor              vertex_descriptor;
   typedef typename graph_traits::edge_descriptor                edge_descriptor;
-  typedef typename graph_traits::halfedge_descriptor        halfedge_descriptor;
+  typedef typename graph_traits::halfedge_descriptor            halfedge_descriptor;
   typedef typename graph_traits::face_descriptor                face_descriptor;
-  typedef typename std::set<vertex_descriptor>                     Vertex_range;
+  typedef typename std::set<vertex_descriptor>                  Vertex_const_range;
   /// Geometric typedefs
-  typedef typename Traits::Point_3                                      Point_3;
-  typedef typename Traits::FT                                                FT;
-  typedef typename Traits::Vector_3                                    Vector_3;
+  typedef typename Traits::Point_3                              Point_3;
+  typedef typename Traits::FT                                   FT;
+  typedef typename Traits::Vector_3                             Vector_3;
 
   // Property map typedefs
   typedef typename boost::property_traits<VertexPointMap>::reference VertexPointMap_reference;
@@ -177,13 +177,13 @@ public:
 
   /**
    * adds vertices in the `vrange` to the source set'.
-   * \tparam VertexRange a model of the concept `ConstRange` with value type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+   * \tparam VertexConstRange a model of the concept `ConstRange` with value type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
    */
-  template <typename VertexRange>
+  template <typename VertexConstRange>
   void
-  add_sources(const VertexRange& vrange)
+  add_sources(const VertexConstRange& vrange)
   {
-    typedef typename std::iterator_traits<typename VertexRange::const_iterator>::value_type value_type;
+    typedef typename std::iterator_traits<typename VertexConstRange::const_iterator>::value_type value_type;
     m_source_change_flag = true;
     BOOST_FOREACH(value_type vd, vrange){
       m_sources.insert(v2v(vd));
@@ -218,7 +218,7 @@ public:
    * returns the set of  source vertices.
    */
 
-  const Vertex_range&
+  const Vertex_const_range&
   sources() const
   {
     return m_sources;
@@ -835,10 +835,10 @@ public:
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   #ifndef DOXYGEN_RUNNING
   /// Source vertex iterator type
-  typedef typename Base_helper::type::Vertex_range Vertex_range;
+  typedef typename Base_helper::type::Vertex_const_range Vertex_const_range;
   #else
   /// a model of `ConstRange` with an iterator that is model of `ForwardIterator` with `vertex_descriptor` as value type.
-  typedef unspecified_type Vertex_range;
+  typedef unspecified_type Vertex_const_range;
   /// Vertex point map type derived from `VertexPointMap`.
   typedef unspecified_type Vertex_point_map;
   #endif
@@ -876,11 +876,11 @@ public:
 
   /**
    * adds the range of vertices to the source set.
-   * \tparam VertexRange a model of the concept `ConstRange` with value type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+   * \tparam VertexConstRange a model of the concept `ConstRange` with value type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
    */
-  template <typename VertexRange>
+  template <typename VertexConstRange>
   void
-  add_sources(const VertexRange& vrange)
+  add_sources(const VertexConstRange& vrange)
   {
     base().add_sources(vrange);
   }
@@ -916,7 +916,7 @@ public:
   /**
    * returns the source set.
    */
-  const Vertex_range&
+  const Vertex_const_range&
   sources() const
   {
     return base().sources();
@@ -985,17 +985,17 @@ estimate_geodesic_distances(const TriangleMesh& tm,
 ///         It must have an internal vertex point property map with the value type being a 3D point from a cgal Kernel model
 /// \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
 ///         with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `double` as value type.
-/// \tparam VertexRange a model of the concept `ConstRange` with value type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+/// \tparam VertexConstRange a model of the concept `ConstRange` with value type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 /// \tparam Mode either the tag `Direct` or `Intrinsic_Delaunay`, which determines if the geodesic distance
 ///              is computed directly on the mesh or if the intrinsic Delaunay triangulation is applied first.
 ///              The default is `Direct`.
 /// \warning The return type is `double` even when used with an exact kernel.
 /// \sa CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3
-template <typename TriangleMesh, typename VertexDistanceMap, typename VertexRange, typename Mode>
+template <typename TriangleMesh, typename VertexDistanceMap, typename VertexConstRange, typename Mode>
 void
 estimate_geodesic_distances(const TriangleMesh& tm,
                             VertexDistanceMap vdm,
-                            const VertexRange& sources,
+                            const VertexConstRange& sources,
                             Mode)
 {
   CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<TriangleMesh, Mode> hm(tm);
