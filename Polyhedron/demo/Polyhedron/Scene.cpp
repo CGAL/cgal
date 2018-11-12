@@ -1130,7 +1130,7 @@ bool Scene::sort_lists(QVector<QList<int> >&sorted_lists, bool up)
     if(!group)
       continue;
     std::sort(list.begin(), list.end(),
-              [this, group](int a, int b) {
+              [group](int a, int b) {
       return group->getChildren().indexOf(a) < group->getChildren().indexOf(b);
   });
     if(up && group->getChildren().indexOf(list.first()) == 0)
