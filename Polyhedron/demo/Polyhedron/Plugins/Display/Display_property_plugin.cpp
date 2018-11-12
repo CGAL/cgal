@@ -774,7 +774,6 @@ private Q_SLOTS:
     dock_widget->maxBox->setValue(angles_max[item].first);
     return true;
   }
-<<<<<<< HEAD
 
   // AF: This function gets called when we click on the button "Colorize"
   void displayHeatIntensity(Scene_surface_mesh_item* item, bool iDT = false)
@@ -900,8 +899,6 @@ private Q_SLOTS:
       dock_widget->sourcePointsButton->toggle();
   }
 
-=======
->>>>>>> cgal/master
   void replaceRamp()
   {
     color_ramp = Color_ramp(rm, rM, gm, gM, bm, bM);
@@ -918,7 +915,7 @@ private Q_SLOTS:
     {
       dock_widget->groupBox->  setEnabled(true);
       dock_widget->groupBox_3->setEnabled(true);
-      dock_widget->rampButton->setEnabled(true);
+
       dock_widget->sourcePointsButton->setEnabled(false);
 
       dock_widget->minBox->setMinimum(0);
@@ -940,7 +937,6 @@ private Q_SLOTS:
     case 1:
       dock_widget->groupBox->  setEnabled(true);
       dock_widget->groupBox_3->setEnabled(true);
-      dock_widget->rampButton->setEnabled(true);
       dock_widget->sourcePointsButton->setEnabled(false);
 
       dock_widget->minBox->setMinimum(-1000);
@@ -956,7 +952,6 @@ private Q_SLOTS:
       dock_widget->maxBox->setMaximum(99999999);
       dock_widget->groupBox->  setEnabled(false);
       dock_widget->groupBox_3->setEnabled(false);
-      dock_widget->rampButton->setEnabled(false);
       dock_widget->sourcePointsButton->setEnabled(true);
 
     }
