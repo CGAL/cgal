@@ -349,8 +349,8 @@ public:
     , desired_output(desired_output)
     , is_tm1_closed( is_closed(tm1))
     , is_tm2_closed( is_closed(tm2))
-    , is_tm1_inside_out( is_tm1_closed && !PMP::is_outward_oriented(tm1) )
-    , is_tm2_inside_out( is_tm2_closed && !PMP::is_outward_oriented(tm2) )
+    , is_tm1_inside_out( is_tm1_closed && !PMP::is_outward_oriented(tm1, parameters::vertex_point_map(vpm1)) )
+    , is_tm2_inside_out( is_tm2_closed && !PMP::is_outward_oriented(tm2, parameters::vertex_point_map(vpm2)) )
     , NID((std::numeric_limits<Node_id>::max)())
     , mesh_to_intersection_edges(tm1, tm2)
   {}
