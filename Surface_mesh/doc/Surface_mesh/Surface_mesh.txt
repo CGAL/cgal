@@ -13,8 +13,8 @@ namespace CGAL {
 
 The class `Surface_mesh` is an implementation of a halfedge data structure 
 and can be used to represent a polyhedral surface. 
-It is an alternative to the \cgal packages \ref PkgHDSSummary
-and \ref PkgPolyhedronSummary.
+It is an alternative to the \cgal packages \ref PkgHalfedgeDS
+and \ref PkgPolyhedron.
 The main difference is that it is indexed based and not pointer based.
 Additionally, the mechanism for adding information to vertices, halfedges,
 edges, and faces is much simpler and is done at runtime and not at compile time.
@@ -29,11 +29,11 @@ When elements are removed, they are only marked as removed, and a garbage
 collection function must be called to really remove them. 
 
 The class `Surface_mesh` can be used through its class member functions 
-as well as through the BGL API as described in the package \ref PkgBGLSummary,
+as well as through the BGL API as described in the package \ref PkgBGL,
 as it is a model of the concepts `MutableFaceGraph` and `FaceListGraph`.
 Therefore it is possible to apply the algorithms of the packages 
-\ref  PkgSurfaceMeshSimplificationSummary,
-\ref PkgSurfaceSegmentationSummary, and \ref PkgSurfaceMeshDeformationSummary  on a surface mesh.
+\ref  PkgSurfaceMeshSimplification,
+\ref PkgSurfaceMeshSegmentation, and \ref PkgSurfaceMeshDeformation  on a surface mesh.
 
 
 \section sectionSurfaceMeshUsage Usage
@@ -92,7 +92,7 @@ in a surface mesh:  `Surface_mesh::opposite()`, `Surface_mesh::next()`,
 functions `Surface_mesh::halfedge()` allows to obtain the halfedge
 associated to a vertex and to a face.
 Alternatively, one may use the free functions with the same names
-defined in the package \ref PkgBGLSummary.
+defined in the package \ref PkgBGL.
 
 \cgalFigureBegin{FigSurfaceMeshConnectivity,connectivity.svg}
 Connectivity of halfedges and vertices in a surface mesh seen from outside.
@@ -114,7 +114,7 @@ The connectivity does not allow to represent faces with holes.
 `Surface_mesh` provides iterator ranges to enumerate all vertices,
 halfedges, edges, and faces. It provides member functions
 returning ranges of elements which are compatible with the
-<a href="http://www.boost.org/libs/range/doc/html/index.html">Boost.Range</a>
+<a href="https://www.boost.org/libs/range/doc/html/index.html">Boost.Range</a>
 library. 
 
 \subsection iterators_example Example
@@ -129,7 +129,7 @@ and alternatives for range-based loops.
 \section sectionSurfaceMesh_circulators Circulators
 
 Circulators around faces and around vertices are provided as class templates 
-in the package \ref PkgBGLSummary.
+in the package \ref PkgBGL.
 
 Circulators around faces basically call `Surface_mesh::next()`
 in order to go from halfedge to halfedge counterclockwise around the face, and 
@@ -227,8 +227,8 @@ face of `h`, and for all vertices of the surface mesh, respectively.
 The class `Surface_mesh` is a model of the concept `IncidenceGraph`
 defined in the Boost Graph Library.  This enables to apply algorithms such
 as 
-[Dijkstra shortest path](http://www.boost.org/libs/graph/doc/dijkstra_shortest_paths.html), or
-[Kruskal minimum spanning tree](http://www.boost.org/libs/graph/doc/kruskal_min_spanning_tree.html)
+[Dijkstra shortest path](https://www.boost.org/libs/graph/doc/dijkstra_shortest_paths.html), or
+[Kruskal minimum spanning tree](https://www.boost.org/libs/graph/doc/kruskal_min_spanning_tree.html)
 directly on a surface mesh.
 
 The types and free functions of the BGL API have each a similar type or member function,
@@ -250,7 +250,7 @@ fall in the range `[0,num_vertices(g))`  which is assumed in many
 of the algorithms.
 
 The class `Surface_mesh` is also a model of the concept `MutableFaceGraph` defined
-in the package \ref PkgBGLSummary. This and similar concepts like `HalfedgeGraph`
+in the package \ref PkgBGL. This and similar concepts like `HalfedgeGraph`
 refine the graph concepts of the BGL by introducing the notion of halfedges and faces,
 as well as cycles of halfedges around faces and around vertices.
 Again, there are similar types and functions, for example:
@@ -268,7 +268,7 @@ Again, there are similar types and functions, for example:
 | etc. | |
 
 The BGL API described
-in the package \ref PkgBGLSummary enables us to write geometric algorithms operating
+in the package \ref PkgBGL enables us to write geometric algorithms operating
 on surface meshes, that work for any model of `FaceGraph`, or
 `MutableFaceGraph`. That is surface mesh simplification, deformation,
 or segmentation algorithms work for `Surface_mesh` and `Polyhedron_3`.
@@ -380,12 +380,12 @@ This package is derived from an early version of Daniel Sieger and Mario Botsch 
 <a href="http://graphics.uni-bielefeld.de/publications/imr11/"><em>%Surface_mesh</em></a>
 \cgalCite{sieger2011design}, 
 which is inspired from the design of <a href="www.openmesh.org">OpenMesh</a> and the \cgal package 
-\ref PkgPolyhedronSummary.
+\ref PkgPolyhedron.
 
 Philipp Moeller and Andreas Fabri worked on the code so that iterators
 fulfill the requirements of the \stl iterator concepts, and
 changed the API so that it becomes a model of the concepts `MutableFaceGraph`
-and `FaceListGraph` of the package \ref PkgBGLSummary.
+and `FaceListGraph` of the package \ref PkgBGL.
 
 */
 

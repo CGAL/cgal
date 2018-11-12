@@ -144,11 +144,11 @@ inline CGAL::Color get_random_color(CGAL::Random& random)
 //------------------------------------------------------------------------------
 class Basic_viewer_qt : public CGAL::QGLViewer
 {  
+public:
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
   typedef Local_kernel::Point_3  Local_point;
   typedef Local_kernel::Vector_3 Local_vector;
 
-public:
   // Constructor/Destructor
   Basic_viewer_qt(QWidget* parent,
                   const char* title="",

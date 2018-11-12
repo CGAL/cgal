@@ -379,12 +379,12 @@ Flip.
 
 \subsection Triangulation_2Implementation Implementation
 
-Locate is implemented by a line walk. The walk
-begins at a vertex of the face which
+Locate is implemented by a stochastic walk \cgalCite{cgal:dpt-wt-02}.
+The walk begins at a vertex of the face which
 is given
 as an optional argument or at an arbitrary vertex of the triangulation
 if no optional argument is given. It takes
-time \f$ O(n)\f$ in the worst case, but only \f$ O(\sqrt{n})\f$
+time \f$ O(n)\f$ in the worst case for Delaunay Triangulations, but only \f$ O(\sqrt{n})\f$
 on average if the vertices are distributed uniformly at random.
 The class `Triangulation_hierarchy_2<Traits,Tds>`,
 described in section \ref Section_2D_Triangulations_Hierarchy, 

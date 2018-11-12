@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3MeshClasses
+\ingroup PkgMesh3MeshClasses
 
 The class `Compact_mesh_cell_base_3<Gt, MD>` is a model of the concept `MeshCellBase_3`.
 It is designed to serve as cell base class for the 3D triangulation

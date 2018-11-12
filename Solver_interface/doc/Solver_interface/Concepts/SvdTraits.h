@@ -1,5 +1,5 @@
 /*!
-  \ingroup PkgSolverConcepts
+  \ingroup PkgSolverInterfaceConcepts
   \cgalConcept
 
   The concept `SvdTraits` describes the linear algebra types and algorithms needed 

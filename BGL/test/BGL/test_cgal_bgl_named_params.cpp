@@ -85,6 +85,9 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::throw_on_self_intersection).v == 43);
   assert(get_param(np, CGAL::internal_np::clip_volume).v == 44);
   assert(get_param(np, CGAL::internal_np::use_compact_clipper).v == 45);
+  assert(get_param(np, CGAL::internal_np::erase_all_duplicates).v == 48);
+  assert(get_param(np, CGAL::internal_np::require_same_orientation).v == 49);
+  assert(get_param(np, CGAL::internal_np::use_bool_op_to_clip_surface).v == 50);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   assert(get_param(np, CGAL::internal_np::get_cost_policy).v == 34);
@@ -101,6 +104,7 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::verbosity_level).v == 41);
   assert(get_param(np, CGAL::internal_np::projection_functor).v == 42);
   assert(get_param(np, CGAL::internal_np::apply_per_connected_component).v == 46);
+  assert(get_param(np, CGAL::internal_np::output_iterator).v == 47);
 
 
   // Test types
@@ -161,6 +165,9 @@ void test(const NamedParameters& np)
   check_same_type<43>(get_param(np, CGAL::internal_np::throw_on_self_intersection));
   check_same_type<44>(get_param(np, CGAL::internal_np::clip_volume));
   check_same_type<45>(get_param(np, CGAL::internal_np::use_compact_clipper));
+  check_same_type<48>(get_param(np, CGAL::internal_np::erase_all_duplicates));
+  check_same_type<49>(get_param(np, CGAL::internal_np::require_same_orientation));
+  check_same_type<50>(get_param(np, CGAL::internal_np::use_bool_op_to_clip_surface));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<34>(get_param(np, CGAL::internal_np::get_cost_policy));
@@ -177,6 +184,7 @@ void test(const NamedParameters& np)
   check_same_type<41>(get_param(np, CGAL::internal_np::verbosity_level));
   check_same_type<42>(get_param(np, CGAL::internal_np::projection_functor));
   check_same_type<46>(get_param(np, CGAL::internal_np::apply_per_connected_component));
+  check_same_type<47>(get_param(np, CGAL::internal_np::output_iterator));
 }
 
 int main()
@@ -237,7 +245,11 @@ int main()
                          .throw_on_self_intersection(A<43>(43))
                          .clip_volume(A<44>(44))
                          .use_compact_clipper(A<45>(45))
+                         .use_bool_op_to_clip_surface(A<50>(50))
                          .apply_per_connected_component(A<46>(46))
+                         .output_iterator(A<47>(47))
+                         .erase_all_duplicates(A<48>(48))
+                         .require_same_orientation(A<49>(49))
        );
 
   return EXIT_SUCCESS;

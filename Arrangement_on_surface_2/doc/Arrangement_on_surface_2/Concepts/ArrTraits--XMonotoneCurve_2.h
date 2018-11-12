@@ -1,6 +1,6 @@
 namespace ArrTraits {
 /*!
-\ingroup PkgArrangement2ConceptsGeometricObjects
+\ingroup PkgArrangementOnSurface2ConceptsGeometricObjects
 \cgalConcept
 
 Represents a planar (weakly) \f$ x\f$-monotone curve. 

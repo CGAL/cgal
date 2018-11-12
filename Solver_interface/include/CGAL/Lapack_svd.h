@@ -58,7 +58,7 @@ void dgelss(int *m, int *n, int *nrhs,
 
 namespace CGAL {
 
-/// \ingroup PkgSolver
+/// \ingroup PkgSolverInterfaceRef
 ///
 /// A matrix class to be used in the class `Lapack_svd`.
 ///
@@ -102,7 +102,7 @@ private:
   Lapack_vector& operator =(const Lapack_vector& toCopy);
 };
 
-/// \ingroup PkgSolver
+/// \ingroup PkgSolverInterfaceRef
 ///
 /// In CLAPACK, matrices are one-dimensional arrays and elements are
 /// column-major ordered. This class is a wrapper defining set and get
@@ -152,7 +152,7 @@ private:
   Lapack_matrix& operator =(const Lapack_matrix& toCopy);
 }; 
 
-/// \ingroup PkgSolver
+/// \ingroup PkgSolverInterfaceRef
 ///
 /// This class is a wrapper to the singular value decomposition algorithm of LAPACK.
 ///

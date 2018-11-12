@@ -19,7 +19,7 @@ before_script:
 - sudo chmod +x /usr/bin/doxygen
 - mkdir -p build 
 - cd build 
-- cmake -DCMAKE_CXX_FLAGS="-std=c++11" -DCGAL_HEADER_ONLY=ON -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" -DQt5Svg_DIR="/opt/qt55/lib/cmake/Qt5Svg" -DQt5OpenGL_DIR="/opt/qt55/lib/cmake/Qt5OpenGL" -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG .. 
+- cmake -DCMAKE_CXX_FLAGS="-std=c++11" -DCGAL_HEADER_ONLY=ON -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" -DQt5Svg_DIR="/opt/qt55/lib/cmake/Qt5Svg" -DQt5OpenGL_DIR="/opt/qt55/lib/cmake/Qt5OpenGL" -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG -DWITH_examples=ON -DWITH_demos=ON -DWITH_tests=ON .. 
 - make 
 - sudo make install &>/dev/null
 - cd ..

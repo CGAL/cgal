@@ -302,7 +302,13 @@ struct Mpzf {
     data()[-1] = mini;
   }
   void clear(){
-    while(*--data()==0); // in case we skipped final zeroes
+    // while(*--data()==0);
+    // This line gave a misscompilation by Intel Compiler 2019
+    // (19.0.0.117). I replaced it by the following two lines:
+    // -- Laurent Rineau, sept. 2018
+    --data();
+    while(*data()==0) { --data(); } // in case we skipped final zeroes
+
 #ifdef CGAL_MPZF_USE_CACHE
     if (data() == cache) return;
 #endif

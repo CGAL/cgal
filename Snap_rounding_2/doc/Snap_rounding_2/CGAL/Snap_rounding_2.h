@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSnapRounding2
+\ingroup PkgSnapRounding2Ref
 
 <span style="display:none">\f$ \def\A{{\cal A}} \f$ \f$ \def\S{{\cal S}} \f$</span>
 

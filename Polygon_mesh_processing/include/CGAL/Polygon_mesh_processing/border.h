@@ -24,15 +24,15 @@
 
 #include <CGAL/license/Polygon_mesh_processing/miscellaneous.h>
 
+#include <CGAL/algorithm.h>
+#include <CGAL/boost/graph/iterator.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/unordered_set.hpp>
-
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
-#include <CGAL/algorithm.h>
 
 #include <set>
 
@@ -147,7 +147,7 @@ namespace Polygon_mesh_processing {
   }//end namespace internal
 
   /*!
-  \ingroup PkgPolygonMeshProcessing
+  \ingroup PkgPolygonMeshProcessingRef
   * collects the border halfedges of a surface patch defined as a face range.
   * For each returned halfedge `h`, `opposite(h, pmesh)` belongs to a face of the patch,
   * but `face(h, pmesh)` does not belong to the patch.
@@ -257,6 +257,38 @@ namespace Polygon_mesh_processing {
 
     return border_counter;
   }
+
+  /// @ingroup PkgPolygonMeshProcessing
+  /// extracts boundary cycles as a list of halfedges, with one halfedge per border.
+  ///
+  /// @tparam PolygonMesh a model of `HalfedgeListGraph`
+  /// @tparam OutputIterator a model of `OutputIterator` holding objects of type
+  ///   `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
+  ///
+  /// @param pm a polygon mesh
+  /// @param out an output iterator where the border halfedges will be put
+  ///
+  /// @todo It could make sense to also return the length of each cycle.
+  /// @todo It should probably go into BGL package (like the rest of this file).
+  template <typename PolygonMesh, typename OutputIterator>
+  OutputIterator extract_boundary_cycles(PolygonMesh& pm,
+                                         OutputIterator out)
+  {
+    typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+
+    boost::unordered_set<halfedge_descriptor> hedge_handled;
+    BOOST_FOREACH(halfedge_descriptor h, halfedges(pm))
+    {
+      if(is_border(h, pm) && hedge_handled.insert(h).second)
+      {
+        *out++ = h;
+        BOOST_FOREACH(halfedge_descriptor h2, halfedges_around_face(h, pm))
+          hedge_handled.insert(h2);
+      }
+    }
+    return out;
+  }
+
 } // end of namespace Polygon_mesh_processing
 } // end of namespace CGAL
 

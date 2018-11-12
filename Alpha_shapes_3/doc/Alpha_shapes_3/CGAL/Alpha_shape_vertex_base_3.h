@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgAlphaShapes3
+\ingroup PkgAlphaShapes3Ref
 
 The class `Alpha_shape_vertex_base_3` is the default model for the concept 
 `AlphaShapeVertex_3`. 

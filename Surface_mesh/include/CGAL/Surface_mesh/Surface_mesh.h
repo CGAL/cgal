@@ -73,7 +73,7 @@ namespace CGAL {
     public:
     typedef boost::uint32_t size_type;
         /// Constructor. %Default construction creates an invalid index.
-        /// We write -1, which is <a href="http://en.cppreference.com/w/cpp/concept/numeric_limits">
+        /// We write -1, which is <a href="https://en.cppreference.com/w/cpp/types/numeric_limits">
         /// <tt>std::numeric_limits<size_type>::max()</tt></a>
         /// as `size_type` is an unsigned type. 
         explicit SM_Index(size_type _idx=(std::numeric_limits<size_type>::max)()) : idx_(_idx) {}
@@ -277,7 +277,7 @@ namespace CGAL {
   /// \ingroup PkgSurface_mesh
   /// This class is a data structure that can be used as halfedge data structure or polyhedral
   /// surface. It is an alternative to the classes `HalfedgeDS` and `Polyhedron_3`
-  /// defined in the packages  \ref PkgHDSSummary and \ref PkgPolyhedronSummary. 
+  /// defined in the packages  \ref PkgHalfedgeDS and \ref PkgPolyhedron. 
   /// The main difference is that it is indexed based and not pointer based,
   /// and that the mechanism for adding information to vertices, halfedges, edges,
   /// and faces is much simpler and done at runtime and not at compile time.
@@ -574,7 +574,7 @@ public:
 
     /// \brief The range over all vertex indices.
     ///
-    /// A model of <a href="http://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a> with value type `Vertex_index`.
+    /// A model of <a href="https://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a> with value type `Vertex_index`.
     /// \sa `vertices()`
     /// \sa `Halfedge_range`, `Edge_range`, `Face_range`
 #ifdef DOXYGEN_RUNNING
@@ -589,7 +589,7 @@ public:
 
     /// \brief The range over all halfedge indices.
     ///
-    /// A model of <a href="http://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a> with value type `Halfedge_index`.
+    /// A model of <a href="https://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a> with value type `Halfedge_index`.
     /// \sa `halfedges()`
     /// \sa `Vertex_range`, `Edge_range`, `Face_range`
 #ifdef DOXYGEN_RUNNING
@@ -604,7 +604,7 @@ public:
 
     /// \brief The range over all edge indices.
     ///
-    /// A model of <a href="http://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a> with value type `Edge_index`.
+    /// A model of <a href="https://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a> with value type `Edge_index`.
     /// \sa `edges()`
     /// \sa `Halfedge_range`, `Vertex_range`, `Face_range`
 #ifdef DOXYGEN_RUNNING
@@ -619,7 +619,7 @@ public:
 #endif
     /// \brief The range over all face indices.
     ///
-    /// A model of <a href="http://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a> with value type `Face_index`.
+    /// A model of <a href="https://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a> with value type `Face_index`.
     /// \sa `faces()`
     /// \sa `Vertex_range`, `Halfedge_range`, `Edge_range`
  #ifdef DOXYGEN_RUNNING
@@ -1120,7 +1120,7 @@ public:
   
   bool join(const Surface_mesh& other)
   {
-    size_type nv = num_vertices(), nh = num_halfedges(), nf = num_faces();
+    const size_type nv = num_vertices(), nh = num_halfedges(), nf = num_faces();
     resize(num_vertices()+  other.num_vertices(),
             num_edges()+  other.num_edges(),
             num_faces()+  other.num_faces());
@@ -1163,7 +1163,9 @@ public:
         Vertex_index vi(nv+other.vertices_freelist_);
         Halfedge_index inf((std::numeric_limits<size_type>::max)());
         while(vconn_[vi].halfedge_ != inf){
-          vi = Vertex_index(size_type(vconn_[vi].halfedge_));
+          Vertex_index corrected_vi = Vertex_index(size_type(vconn_[vi].halfedge_)+nv-nh);
+          vconn_[vi].halfedge_ = Halfedge_index(corrected_vi);
+          vi = corrected_vi;
         }
         vconn_[vi].halfedge_ = Halfedge_index(vertices_freelist_);
       }
@@ -1174,7 +1176,9 @@ public:
         Face_index fi(nf+other.faces_freelist_);
         Halfedge_index inf((std::numeric_limits<size_type>::max)());
         while(fconn_[fi].halfedge_ != inf){
-          fi = Face_index(size_type(fconn_[fi].halfedge_));
+          Face_index corrected_fi = Face_index(size_type(fconn_[fi].halfedge_)+nf-nh);
+          fconn_[fi].halfedge_ = Halfedge_index(corrected_fi);
+          fi = corrected_fi;
         }
         fconn_[fi].halfedge_ = Halfedge_index(faces_freelist_);
       }
@@ -1182,14 +1186,14 @@ public:
     }
     if(other.edges_freelist_ != inf_value){
       if(edges_freelist_ != inf_value){
-        Halfedge_index hi((nh>>1)+other.edges_freelist_);
+        Halfedge_index hi(nh+other.edges_freelist_);
         Halfedge_index inf((std::numeric_limits<size_type>::max)());
         while(hconn_[hi].next_halfedge_ != inf){
           hi = hconn_[hi].next_halfedge_;
         }
         hconn_[hi].next_halfedge_ = Halfedge_index(edges_freelist_);
       }
-      edges_freelist_ = (nh>>1) + other.edges_freelist_; 
+      edges_freelist_ = nh + other.edges_freelist_; 
     }
     garbage_ = garbage_ || other.garbage_;
     removed_vertices_ += other.removed_vertices_;
@@ -1970,6 +1974,22 @@ private: //--------------------------------------------------- property handling
   }
   /// @}
 
+#if defined(CGAL_SURFACE_MESH_TEST_SUITE)
+  Vertex_index vertex_freelist() const
+  {
+    return Vertex_index(vertices_freelist_);
+  }
+  
+  Face_index face_freelist() const
+  {
+    return Face_index(faces_freelist_);
+  }
+  
+  Edge_index edge_freelist() const
+  {
+    return Edge_index(edges_freelist_>>1);
+  }
+#endif
   
 private: //--------------------------------------------------- helper functions
 

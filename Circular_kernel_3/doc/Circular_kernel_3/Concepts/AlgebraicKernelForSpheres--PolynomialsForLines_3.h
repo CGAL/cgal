@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgSphericalKernel3AlgebraicConcepts
+\ingroup PkgCircularKernel3AlgebraicConcepts
 \cgalConcept
 
 Concept to represent a system of polynomials on `FieldNumberType` 

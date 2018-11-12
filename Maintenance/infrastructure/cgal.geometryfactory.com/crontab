@@ -23,15 +23,17 @@ LC_CTYPE=en_US.UTF-8
 # The script also updates the manual tools.
 
 # "master" alone
-0 21  *  *  Sun,Tue                  cd $HOME/CGAL/create_internal_release && /usr/bin/time $HOME/bin/create_release $HOME/CGAL/branches/master.git --public --do-it || echo ERROR
+0 21  *  *  Sun                      cd $HOME/CGAL/create_internal_release && /usr/bin/time $HOME/bin/create_release $HOME/CGAL/branches/master.git --public --do-it || echo ERROR
 # "integration"
-0 21  *  *  Mon,Wed,Thu,Fri          cd $HOME/CGAL/create_internal_release && /usr/bin/time $HOME/bin/create_release $HOME/CGAL/branches/integration.git $HOME/CGAL/branches/empty-dir --public --do-it || echo ERROR
+0 21  *  *  Mon,Tue,Wed,Thu,Fri      cd $HOME/CGAL/create_internal_release && /usr/bin/time $HOME/bin/create_release $HOME/CGAL/branches/integration.git $HOME/CGAL/branches/empty-dir --public --do-it || echo ERROR
+# from branch 4.13
+0 21  *  *  Sat                      cd $HOME/CGAL/create_internal_release-4.13-branch && /usr/bin/time $HOME/bin/create_release $HOME/CGAL/branches/CGAL-4.13-branch.git --public --do-it || echo ERROR
 # from branch 4.12
 #0 21  *  *  Sat                      cd $HOME/CGAL/create_internal_release-4.12-branch && /usr/bin/time $HOME/bin/create_release $HOME/CGAL/branches/CGAL-4.12-branch.git --public --do-it || echo ERROR
 # from branch 4.11
-0 21  *  *  Sat                      cd $HOME/CGAL/create_internal_release-4.11-branch && /usr/bin/time $HOME/bin/create_release $HOME/CGAL/branches/CGAL-4.11-branch.git --public --do-it || echo ERROR
+#0 21  *  *  Sat                      cd $HOME/CGAL/create_internal_release-4.11-branch && /usr/bin/time $HOME/bin/create_release $HOME/CGAL/branches/CGAL-4.11-branch.git --public --do-it || echo ERROR
 # from branch 4.10
-#0 21  *  *  Mon,Tue                   cd $HOME/CGAL/create_internal_release-4.10-branch && /usr/bin/time $HOME/bin/create_release $HOME/CGAL/branches/CGAL-4.10-branch.git --public --do-it || echo ERROR
+#0 21  *  *  Mon,Tue                  cd $HOME/CGAL/create_internal_release-4.10-branch && /usr/bin/time $HOME/bin/create_release $HOME/CGAL/branches/CGAL-4.10-branch.git --public --do-it || echo ERROR
 # from branch 4.9
 #0 21  *  *  Sat                      cd $HOME/CGAL/create_internal_release-4.9-branch && /usr/bin/time $HOME/bin/create_release $HOME/CGAL/branches/CGAL-4.9-branch.git --public --do-it
 # from branch 4.8

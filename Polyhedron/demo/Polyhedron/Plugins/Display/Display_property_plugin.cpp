@@ -8,11 +8,13 @@
 #include <QPalette>
 #include <QColor>
 #include <QMessageBox>
+
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Heat_method_3/Surface_mesh_geodesic_distances_3.h>
 
 #include "Scene_points_with_normal_item.h"
+
 #include "Messages_interface.h"
 #include "Scene_surface_mesh_item.h"
 #include "Color_ramp.h"
@@ -368,9 +370,6 @@ public:
     connect(dock_widget->colorizeButton, SIGNAL(clicked(bool)),
             this, SLOT(colorize()));
 
-    connect(dock_widget->rampButton, SIGNAL(clicked(bool)),
-            this, SLOT(replaceRamp()));
-
     connect(dock_widget->propertyBox, SIGNAL(currentIndexChanged(int)),
             this, SLOT(on_propertyBox_currentIndexChanged(int)));
     connect(dock_widget->zoomToMinButton, &QPushButton::pressed,
@@ -381,11 +380,15 @@ public:
             this, [this]()
     {
       QColor minColor = QColorDialog::getColor();
+      if (!minColor.isValid())
+      {
+        return;
+      }
+      
       rm = minColor.redF();
       gm = minColor.greenF();
       bm = minColor.blueF();
       QPalette palette(minColor);
-      dock_widget->minColorButton->setAutoFillBackground(true);
       dock_widget->minColorButton->setPalette(palette);
       dock_widget->minColorButton->update();
     });
@@ -393,17 +396,23 @@ public:
             this, [this]()
     {
       QColor maxColor = QColorDialog::getColor();
+      if(!maxColor.isValid())
+        return;
       QPalette palette(maxColor);
       rM = maxColor.redF();
       gM = maxColor.greenF();
       bM = maxColor.blueF();
 
-      dock_widget->maxColorButton->setAutoFillBackground(true);
       dock_widget->maxColorButton->setPalette(palette);
       dock_widget->maxColorButton->update();
     });
+
     connect(dock_widget->sourcePointsButton, SIGNAL(toggled(bool)),
             this, SLOT(on_sourcePointsButton_toggled(bool)));
+
+    connect(dock_widget->resetButton, &QPushButton::pressed,
+            this, &DisplayPropertyPlugin::resetRampExtremas);
+
     dock_widget->zoomToMaxButton->setEnabled(false);
     dock_widget->zoomToMinButton->setEnabled(false);
     Scene* scene_obj =static_cast<Scene*>(scene);
@@ -416,9 +425,35 @@ private Q_SLOTS:
   void openDialog()
   {
     if(dock_widget->isVisible()) { dock_widget->hide(); }
-    else                         { replaceRamp(); dock_widget->show(); }
+    else{
+      replaceRamp(); 
+      dock_widget->show();
+      dock_widget->raise(); }
   }
 
+  void resetRampExtremas()
+  {
+    Scene_surface_mesh_item* item =
+        qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+    if(!item)
+      return;
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    item->face_graph()->collect_garbage();
+    bool ok;
+    switch(dock_widget->propertyBox->currentIndex())
+    {
+    case 0:
+      ok = resetAngles(item);
+      break;
+    default:
+      ok = resetScaledJacobian(item);
+      break;
+    }
+    QApplication::restoreOverrideCursor();
+    if(!ok)
+      QMessageBox::warning(mw, "Error", "You must first run colorize once to initialize the values.");
+  }
+  
   void colorize()
   {
     Scene_heat_item* h_item = nullptr;
@@ -432,27 +467,41 @@ private Q_SLOTS:
       item = h_item->getParent();
     }
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    if(item)
-    {
-      item->face_graph()->collect_garbage();
-      switch(dock_widget->propertyBox->currentIndex())
-      {
-      case 0:
-        displayAngles(item);
-        break;
+
+    replaceRamp();
+    item->face_graph()->collect_garbage();
+
+    item->face_graph()->collect_garbage();
+    switch(dock_widget->propertyBox->currentIndex()){
+    case 0:
+      displayAngles(item);
+      break;
       case 1:
         displayScaledJacobian(item);
         break;
-      case 2:
-        displayHeatIntensity(item);
-        item->setRenderingMode(Gouraud);
-        break;
-      default:  // Heat Method (Intrinsic Delaunay)
-        displayHeatIntensity(item, true);  
-        item->setRenderingMode(Gouraud);
-        break;
-      }
+    case 2:
+      displayHeatIntensity(item);
+      item->setRenderingMode(Gouraud);
+      break;
+    default:  // Heat Method (Intrinsic Delaunay)
+      displayHeatIntensity(item, true);  
+      item->setRenderingMode(Gouraud);
+      break;
     }
+
+    connect(item, &Scene_surface_mesh_item::itemChanged,
+            this, [item](){
+      bool does_exist;
+      SMesh::Property_map<face_descriptor, double> pmap;
+      boost::tie(pmap, does_exist) = 
+          item->face_graph()->property_map<face_descriptor,double>("f:jacobian");
+      if(does_exist)
+        item->face_graph()->remove_property_map(pmap);
+      boost::tie(pmap, does_exist) = 
+          item->face_graph()->property_map<face_descriptor,double>("f:angle");
+      if(does_exist)
+        item->face_graph()->remove_property_map(pmap);
+    });
     QApplication::restoreOverrideCursor();
     item->invalidateOpenGLBuffers();
     item->redraw();
@@ -573,10 +622,20 @@ private Q_SLOTS:
             255*color_ramp.b(f));
       fcolors[*fit] = color;
     }
-    dock_widget->minBox->setValue(jacobian_min[item].first-0.01);
-    dock_widget->maxBox->setValue(jacobian_max[item].first);
   }
 
+  bool resetScaledJacobian(Scene_surface_mesh_item* item)
+  {
+    SMesh& smesh = *item->face_graph();
+    if(!smesh.property_map<face_descriptor, double>("f:jacobian").second)
+    {
+      return false;
+    }
+    dock_widget->minBox->setValue(jacobian_min[item].first-0.01);
+    dock_widget->maxBox->setValue(jacobian_max[item].first);
+    return true;
+  }
+  
   void displayAngles(Scene_surface_mesh_item* item)
   {
     SMesh& smesh = *item->face_graph();
@@ -702,9 +761,20 @@ private Q_SLOTS:
             255*color_ramp.b(f));
       fcolors[*fit] = color;
     }
+  }
+
+  bool resetAngles(Scene_surface_mesh_item* item)
+  {
+    SMesh& smesh = *item->face_graph();
+    if(!smesh.property_map<face_descriptor, double>("f:angle").second)
+    {
+      return false;
+    }
     dock_widget->minBox->setValue(angles_min[item].first);
     dock_widget->maxBox->setValue(angles_max[item].first);
+    return true;
   }
+<<<<<<< HEAD
 
   // AF: This function gets called when we click on the button "Colorize"
   void displayHeatIntensity(Scene_surface_mesh_item* item, bool iDT = false)
@@ -830,6 +900,8 @@ private Q_SLOTS:
       dock_widget->sourcePointsButton->toggle();
   }
 
+=======
+>>>>>>> cgal/master
   void replaceRamp()
   {
     color_ramp = Color_ramp(rm, rM, gm, gM, bm, bM);
