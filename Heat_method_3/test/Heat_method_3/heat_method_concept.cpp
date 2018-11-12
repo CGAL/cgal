@@ -17,13 +17,13 @@ typedef boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
 typedef Surface_mesh::Property_map<vertex_descriptor,double> Vertex_distance_map;
 typedef CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<Surface_mesh,
                                                                CGAL::Heat_method_3::Intrinsic_Delaunay,
-                                                               CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT<CGAL::Eigen_sparse_matrix<double>::EigenType > >,
                                                                boost::property_map< Surface_mesh, CGAL::vertex_point_t>::const_type,
+                                                               CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT<CGAL::Eigen_sparse_matrix<double>::EigenType > >,
                                                                Kernel> Heat_method;
 
 
 
-int main(int argc, char* argv[])
+int main()
 {
   //read in mesh
   Surface_mesh sm;
@@ -38,10 +38,10 @@ int main(int argc, char* argv[])
   hm.add_source(source);
   hm.estimate_geodesic_distances(heat_intensity);
 
-  Point_3 sp = sm.point(source);
+  //Point_3 sp = sm.point(source);
   
   vertex_descriptor far;
-  double sdistance = 0;
+  // double sdistance = 0;
   
   BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
     std::cout << vd << "  is at distance " << get(heat_intensity, vd) << " from " << source << std::endl;

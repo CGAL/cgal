@@ -996,12 +996,35 @@ void
 estimate_geodesic_distances(const TriangleMesh& tm,
                             VertexDistanceMap vdm,
                             const VertexConstRange& sources,
-                            Mode)
+                            Mode
+#ifndef DOXYGEN_RUNNING
+                            , typename boost::enable_if<
+                              typename boost::has_range_const_iterator<VertexConstRange>
+                                     >::type* = 0
+#endif
+)
 {
   CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<TriangleMesh, Mode> hm(tm);
   hm.add_sources(sources);
   hm.estimate_geodesic_distances(vdm);
 }
+
+#ifndef DOXYGEN_RUNNING
+template <typename TriangleMesh, typename VertexDistanceMap, typename VertexConstRange>
+void
+estimate_geodesic_distances(const TriangleMesh& tm,
+                            VertexDistanceMap vdm,
+                            const VertexConstRange& sources,
+                            typename boost::enable_if<
+                              typename boost::has_range_const_iterator<VertexConstRange>
+                                     >::type* = 0)
+{
+  CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<TriangleMesh, Direct> hm(tm);
+  hm.add_sources(sources);
+  hm.estimate_geodesic_distances(vdm);
+}
+#endif
+
 #endif
 
 } // namespace Heat_method_3
