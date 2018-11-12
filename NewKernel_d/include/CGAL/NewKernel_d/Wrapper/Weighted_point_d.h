@@ -21,6 +21,9 @@
 #ifndef CGAL_WRAPPER_WEIGHTED_POINT_D_H
 #define CGAL_WRAPPER_WEIGHTED_POINT_D_H
 
+#include <istream>
+#include <ostream>
+#include <CGAL/IO/io.h>
 #include <CGAL/representation_tags.h>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
@@ -124,7 +127,42 @@ public:
 
 };
 
+template <class R_>
+std::ostream& operator<<(std::ostream& os, const Weighted_point_d<R_>& p)
+{
+  if(is_ascii(os))
+  {
+    return os << p.point() << ' ' << p.weight();
+  }
+  else
+  {
+    write(os, p.point());
+    write(os, p.weight());
+  }
+  return os;
+}
+
+template <class R_>
+std::istream& operator>>(std::istream& is, Weighted_point_d<R_>& p)
+{
+  typedef typename Get_type<R_, FT_tag>::type		FT_;
+  typedef typename Get_type<R_, Point_tag>::type	Point_;
+  typedef typename Get_functor<R_, Construct_ttag<Weighted_point_tag> >::type	CWP;
+  Point_ q; FT_ w;
+  if(is_ascii(is))
+  {
+    if(is >> q >> iformat(w)) p=CWP()(q,w);
+  }
+  else
+  {
+    read(is, q);
+    read(is, w);
+    p=CWP()(q,w);
+  }
+  return is;
+}
+
 } //namespace Wrap
 } //namespace CGAL
 
-#endif // CGAL_WRAPPER_SPHERE_D_H
+#endif // CGAL_WRAPPER_WEIGHTED_POINT_D_H
