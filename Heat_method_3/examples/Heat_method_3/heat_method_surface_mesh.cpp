@@ -40,10 +40,10 @@ int main(int argc, char* argv[])
   double sdistance = 0;
   
   BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
-    std::cout << vd << "  is at distance " << get(vertex_distance, vd) << " from " << source << std::endl;
-    if(squared_distance(sp,sm.point(vd)) > sdistance){
+    std::cout << vd << "  is at distance " << get(vertex_distance, vd) << " to " << source << std::endl;
+    if(get(vertex_distance, vd) > sdistance){
       far = vd;
-      sdistance = squared_distance(sp,sm.point(vd));
+      sdistance = get(vertex_distance, vd);
     }
   }
 
