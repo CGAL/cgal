@@ -11,7 +11,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 #Find CGAL
 find_package(CGAL COMPONENTS Qt5)
-include( ${CGAL_USE_FILE} )
 # Find Qt5 itself
 find_package(Qt5
              QUIET

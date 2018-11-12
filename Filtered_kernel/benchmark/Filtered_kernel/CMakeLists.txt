@@ -4,7 +4,7 @@
 
 project( Filtered_kernel_test )
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
 
 add_executable(bench_simple_comparisons bench_simple_comparisons.cpp)
@@ -13,11 +13,7 @@ find_package(CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
-  include_directories (BEFORE ../../include)
+  include(${CGAL_USE_FILE})
 
   add_executable( bench_orientation_3 "orientation_3.cpp" )
   target_link_libraries(bench_orientation_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )

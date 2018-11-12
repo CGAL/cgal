@@ -46,7 +46,7 @@ endif()
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 # Include this package's headers first
-include_directories( BEFORE ./ ./include ../../include ./CGAL_demo )
+include_directories( BEFORE ./ ./include ./CGAL_demo )
 list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}")
 
 # Find CGAL
@@ -56,7 +56,7 @@ option( POLYHEDRON_QTSCRIPT_DEBUGGER
 
 # Find Qt5 itself
 find_package(CGAL COMPONENTS Qt5 ImageIO)
-include( ${CGAL_USE_FILE} )
+include(${CGAL_USE_FILE})
 
 find_package(Qt5
              QUIET
@@ -124,6 +124,7 @@ endif()
 
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
+  include(${CGAL_USE_FILE})
 
   set(Boost_USE_MULTITHREADED      ON)
   find_package(Boost COMPONENTS thread system filesystem)

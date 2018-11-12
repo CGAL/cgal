@@ -10,13 +10,12 @@ if(NOT POLICY CMP0070 AND POLICY CMP0053)
 endif()
 
 find_package(CGAL QUIET)
-include( ${CGAL_USE_FILE} )
 
-include_directories(BEFORE ../../include)
 include_directories(BEFORE ../../../Triangulation_2/include)
 
 
 if ( CGAL_FOUND )
+  include(${CGAL_USE_FILE})
 
   # conform target
   add_executable  (conform conform.cpp)

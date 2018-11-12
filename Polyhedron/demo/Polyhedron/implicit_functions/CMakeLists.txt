@@ -18,7 +18,6 @@ include_directories( BEFORE ${Mesh_3_implicit_functions_BINARY_DIR} ../include )
 
 # Find CGAL and CGAL Qt5
 find_package(CGAL COMPONENTS Qt5)
-include( ${CGAL_USE_FILE} )
 
 # Find Qt5 itself
 set( QT_USE_QTXML    TRUE )
