@@ -165,7 +165,7 @@ private:
 public:
 
   /**
-   * adds `vd` to the source set, returning `false` if `vd` is already in the set.
+   * adds `vd` to the source set, returning `false` iff `vd` is already in the set.
    */
   template <typename VD>
   bool
@@ -177,11 +177,11 @@ public:
 
   /**
    * adds vertices in the `vrange` to the source set'.
-   * \tparam VertexRange a model of the concept `Range` with value type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+   * \tparam VertexRange a model of the concept `ConstRange` with value type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
    */
   template <typename VertexRange>
   void
-  add_sources(VertexRange vrange)
+  add_sources(const VertexRange& vrange)
   {
     typedef typename std::iterator_traits<typename VertexRange::const_iterator>::value_type value_type;
     m_source_change_flag = true;
@@ -192,7 +192,7 @@ public:
 
 
   /**
-   * removes `vd` from the source set, returning `true` if `vd` was in the set.
+   * removes `vd` from the source set, returning `true` iff `vd` was in the set.
    */
   template <typename VD>
   bool
@@ -839,7 +839,7 @@ public:
   #else
   /// a model of `ConstRange` with an iterator that is model of `ForwardIterator` with `vertex_descriptor` as value type.
   typedef unspecified_type Vertex_range;
-  /// Vertex point map type
+  /// Vertex point map type derived from `VertexPointMap`.
   typedef unspecified_type Vertex_point_map;
   #endif
 
@@ -876,11 +876,11 @@ public:
 
   /**
    * adds the range of vertices to the source set.
-   * \tparam VertexRange a model of the concept `Range` with value type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+   * \tparam VertexRange a model of the concept `ConstRange` with value type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
    */
   template <typename VertexRange>
   void
-  add_sources(const Vertex_range& vrange)
+  add_sources(const VertexRange& vrange)
   {
     base().add_sources(vrange);
   }
@@ -905,6 +905,7 @@ public:
 
   /**
    * get estimated distance from the current source set to a vertex `vd`.
+   * \warning The return type is `double` even when used with an exact kernel.
    */
   double
   estimate_geodesic_distance(vertex_descriptor vd) const
@@ -927,6 +928,7 @@ public:
    * \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
    * with `vertex_descriptor` as key type and `double` as value type.
    * \param vdm the vertex distance map to be filled
+   * \warning The key type is `double` even when used with an exact kernel.
    **/
   template <class VertexDistanceMap>
   void estimate_geodesic_distances(VertexDistanceMap vdm)
@@ -946,6 +948,7 @@ public:
 /// \tparam Mode either the tag `Direct` or `Intrinsic_Delaunay`, which determines if the geodesic distance
 ///              is computed directly on the mesh or if the intrinsic Delaunay triangulation is applied first.
 ///              The default is `Direct`.
+/// \warning The return type is `double` even when used with an exact kernel.
 ///
 /// \sa CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3
 template <typename TriangleMesh, typename VertexDistanceMap, typename Mode>
@@ -982,17 +985,17 @@ estimate_geodesic_distances(const TriangleMesh& tm,
 ///         It must have an internal vertex point property map with the value type being a 3D point from a cgal Kernel model
 /// \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
 ///         with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `double` as value type.
-/// \tparam VertexRange a model of the concept `Range` with value type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+/// \tparam VertexRange a model of the concept `ConstRange` with value type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 /// \tparam Mode either the tag `Direct` or `Intrinsic_Delaunay`, which determines if the geodesic distance
 ///              is computed directly on the mesh or if the intrinsic Delaunay triangulation is applied first.
 ///              The default is `Direct`.
-///
+/// \warning The return type is `double` even when used with an exact kernel.
 /// \sa CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3
 template <typename TriangleMesh, typename VertexDistanceMap, typename VertexRange, typename Mode>
 void
 estimate_geodesic_distances(const TriangleMesh& tm,
                             VertexDistanceMap vdm,
-                            const VertexRange sources,
+                            const VertexRange& sources,
                             Mode)
 {
   CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<TriangleMesh, Mode> hm(tm);
