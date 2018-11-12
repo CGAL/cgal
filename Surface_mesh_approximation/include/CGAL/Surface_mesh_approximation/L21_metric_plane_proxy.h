@@ -70,6 +70,7 @@ class L21_metric_plane_proxy {
 public:
   /// \name Types
   /// @{
+
   /// Proxy type
   typedef typename GeomTraits::Vector_3 Proxy;
   /// @}

@@ -1,6 +1,6 @@
 /*!
 \defgroup vsa_namedparameters Named Parameters
-\ingroup PkgTSMA
+\ingroup PkgTSMARef
 
 \cgalHeading{How to use BGL Optional Named Parameters}
 

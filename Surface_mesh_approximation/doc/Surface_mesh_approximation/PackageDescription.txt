@@ -1,4 +1,4 @@
-/// \defgroup PkgTSMA Triangulated Surface Mesh Approximation
+/// \defgroup PkgTSMARef Triangulated Surface Mesh Approximation Reference
 
 /// \defgroup PkgTSMAConcepts Concepts
 /// \ingroup PkgTSMARef
