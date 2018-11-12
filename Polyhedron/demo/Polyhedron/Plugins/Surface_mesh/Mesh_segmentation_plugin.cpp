@@ -377,7 +377,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize_sdf(
         }
         put(pidmap, *facet_it, static_cast<int>(patch_id));
     }
-    item->setItemIsMulticolor(true);
+    item->setItemIsMulticolor(true, false);
 }
 
 

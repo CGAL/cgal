@@ -81,7 +81,6 @@ public Q_SLOTS:
 
 private :
   CGAL::Three::Scene_interface* scene;
-  std::vector<QColor> colors_;
 }; // end Polyhedron_demo_polyhedron_stitching_plugin
 
 void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionJoinPolyhedra_triggered()
@@ -140,7 +139,6 @@ bool operator()(FaceGraph* mesh1, FaceGraph* mesh2)
 void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_triggered()
 {
   Q_FOREACH(int index, scene->selectionIndices()) {
-    colors_.clear();
     Scene_facegraph_item* item =
       qobject_cast<Scene_facegraph_item*>(scene->item(index));
     if(item)
@@ -176,17 +174,17 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
       }
 
       int cc=0;
-
-      compute_color_map(item->color(), item->isItemMulticolor() ? static_cast<unsigned int>(new_polyhedra.size()) : 1,
-                        std::back_inserter(colors_));
-
+      
       Scene_group_item *group = new Scene_group_item("CC");
        scene->addItem(group);
       BOOST_FOREACH(FaceGraph* polyhedron_ptr, new_polyhedra)
       {
         Scene_facegraph_item* new_item=new Scene_facegraph_item(polyhedron_ptr);
         new_item->setName(tr("%1 - CC %2").arg(item->name()).arg(cc));
-        new_item->setColor(colors_[item->isItemMulticolor()? cc : 0]);
+        if(item->isItemMulticolor() || item->hasPatchIds())
+          new_item->setColor(item->color_vector()[cc]);
+        else
+          new_item->setColor(item->color());
         ++cc;
         scene->addItem(new_item);
         scene->changeGroup(new_item, group);

@@ -68,7 +68,11 @@ public:
 
   QMenu* contextMenu() Q_DECL_OVERRIDE;
 
-  void setItemIsMulticolor(bool);
+  //first bool to set property, second to disable the recomputation of the colors_ vector 
+  //to scale on min_patch value. For example, the Mesh_segmentation_plugin computes the colors_
+  // vector itself, so it must set recompute_colors to false to avoid having it ovewritten 
+  // in the code of this item.
+  void setItemIsMulticolor(bool, bool recompute_colors = true);
   bool isItemMulticolor();
   bool hasPatchIds();
   Vertex_selection_map vertex_selection_map();

@@ -287,9 +287,9 @@ void Scene_surface_mesh_item::standard_constructor(SMesh* sm)
   d->textVItems = new TextListItem(this);
   d->textEItems = new TextListItem(this);
   d->textFItems = new TextListItem(this);
-
   are_buffers_filled = false;
   invalidate(ALL);
+  
 }
 Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
 {
@@ -674,10 +674,12 @@ void Scene_surface_mesh_item_priv::initialize_colors() const
     max = (std::max)(max, fpatch_id_map[fd]);
     min_patch_id = (std::min)(min_patch_id, fpatch_id_map[fd]);
   }
-
-  colors_.clear();
-  compute_color_map(item->color(), (std::max)(1, max + 1 - min_patch_id),
-                    std::back_inserter(colors_));
+  if(item->property("recompute_colors").toBool())
+  {
+    colors_.clear();
+    compute_color_map(item->color(), (std::max)(1, max + 1 - min_patch_id),
+                      std::back_inserter(colors_));
+  }
 }
 
 void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interface* viewer)const
@@ -1379,8 +1381,9 @@ bool Scene_surface_mesh_item::intersect_face(double orig_x,
   return false;
 
 }
-void Scene_surface_mesh_item::setItemIsMulticolor(bool b)
+void Scene_surface_mesh_item::setItemIsMulticolor(bool b, bool recompute_colors)
 {
+  this->setProperty("recompute_colors",recompute_colors);
   if(b)
   {
     d->fpatch_id_map = d->smesh_->add_property_map<face_descriptor,int>("f:patch_id", 1).first;
