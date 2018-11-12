@@ -1352,7 +1352,7 @@ operator>>(std::istream & is, Triangulation<TT, TDS> & tr)
     else
     {
         read(is, cd);
-        read(is, n, io_Read_write());
+        read(is, n);
     }
 
     CGAL_assertion_msg( cd <= tr.maximal_dimension(), "input Triangulation has too high dimension");
@@ -1404,27 +1404,34 @@ operator<<(std::ostream & os, const Triangulation<TT, TDS> & tr)
     else
     {
         write(os, tr.current_dimension());
-        write(os, n, io_Read_write());
+        write(os, n);
     }
 
     if( n == 0 )
         return os;
 
-    size_t i(0);
+    int i = 0;
     // write the vertices
     std::map<Vertex_handle, int> index_of_vertex;
 
     // infinite vertex has index 0 (among all the vertices)
     index_of_vertex[tr.infinite_vertex()] = i++;
-    os << *tr.infinite_vertex();
+    if(is_ascii(os))
+      os << *tr.infinite_vertex() <<"\n";
+    else
+      write(os, *tr.infinite_vertex());
+       
     for( Vertex_iterator it = tr.vertices_begin(); it != tr.vertices_end(); ++it )
     {
         if( tr.is_infinite(it) )
             continue;
-        os << *it; // write the vertex
+        if(is_ascii(os))
+          os << *it <<"\n"; // write the vertex
+        else
+          write(os, *it);
         index_of_vertex[it] = i++;
     }
-    CGAL_assertion( i == n+1 );
+    CGAL_assertion( size_t(i) == n+1 );
 
     // output the combinatorial information
     return tr.tds().write_full_cells(os, index_of_vertex);
