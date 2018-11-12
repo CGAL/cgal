@@ -32,7 +32,7 @@ if ( NOT Boost_FOUND )
 endif()
 
 
-find_package(Eigen3 3.1.0)
+find_package(Eigen3 3.2.0)
 
 if (EIGEN3_FOUND)
   include( ${EIGEN3_USE_FILE} )
