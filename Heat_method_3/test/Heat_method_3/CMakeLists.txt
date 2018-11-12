@@ -53,4 +53,4 @@ include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "heat_method_concept.cpp" )
 create_single_source_cgal_program( "heat_method_surface_mesh_test.cpp" )
-create_single_source_cgal_program( "heat_method_intrinsic_surface_mesh_test.cpp" )
+create_single_source_cgal_program( "heat_method_surface_mesh_intrinsic_test.cpp" )

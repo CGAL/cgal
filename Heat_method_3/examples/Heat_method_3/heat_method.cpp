@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
 
   vertex_descriptor source = *(vertices(sm).first);
   
-  CGAL::Heat_method_3::estimate_geodesic_distances(sm, vertex_distance,source) ;
+  CGAL::Heat_method_3::estimate_geodesic_distances(sm, vertex_distance, source) ;
 
   std::cout << "Source vertex " << source << " at: " << sm.point(source) << std::endl;
   BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
