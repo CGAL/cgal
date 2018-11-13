@@ -39,6 +39,7 @@
 #endif
 
 #include <boost/foreach.hpp>
+#include <boost/range/has_range_iterator.hpp>
 
 #include <vector>
 #include <set>
