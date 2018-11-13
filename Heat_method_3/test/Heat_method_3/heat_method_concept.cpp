@@ -28,6 +28,9 @@ int main()
   //read in mesh
   Surface_mesh sm;
 
+  if(sm.is_empty()){
+    return 0;
+  }
   //the heat intensity will hold the distance values from the source set
   Vertex_distance_map heat_intensity = sm.add_property_map<vertex_descriptor, double>("v:heat_intensity", 0).first;
 
