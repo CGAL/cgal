@@ -36,7 +36,6 @@ add_definitions(-DCGAL_PROFILE_LCC_DEMO)
 
 ##################
 find_package(CGAL COMPONENTS Qt5)
-include(${CGAL_USE_FILE})
 
 find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
 
@@ -48,8 +47,6 @@ if ( NOT (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND ) )
 else()
 
 add_definitions(-DQT_NO_KEYWORDS)
-
-include_directories(BEFORE . ../../include/)
 
 # ui file, created wih Qt Designer
 qt5_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui

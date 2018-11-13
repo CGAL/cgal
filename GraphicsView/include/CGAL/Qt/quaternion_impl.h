@@ -529,11 +529,6 @@ Quaternion Quaternion::squadTangent(const Quaternion &before,
   return e;
 }
 
-CGAL_INLINE_FUNCTION
-std::ostream &operator<<(std::ostream &o, const Quaternion &Q) {
-  return o << Q[0] << '\t' << Q[1] << '\t' << Q[2] << '\t' << Q[3];
-}
-
 /*! Returns a random unit Quaternion.
 
 You can create a randomly directed unit vector using:
@@ -556,4 +551,10 @@ Quaternion Quaternion::randomQuaternion() {
   qreal t2 = 2.0 * CGAL_PI * (rand() / (qreal)RAND_MAX);
   return Quaternion(sin(t1) * r1, cos(t1) * r1, sin(t2) * r2, cos(t2) * r2);
 }
-}}
+
+CGAL_INLINE_FUNCTION
+std::ostream &operator<<(std::ostream &o, const Quaternion &Q) {
+  return o << Q[0] << '\t' << Q[1] << '\t' << Q[2] << '\t' << Q[3];
+}
+
+}} // namespace CGAL::qglviewer

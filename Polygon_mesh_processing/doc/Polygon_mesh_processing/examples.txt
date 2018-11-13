@@ -8,7 +8,7 @@
 \example Polygon_mesh_processing/triangulate_faces_example.cpp
 \example Polygon_mesh_processing/connected_components_example.cpp
 \example Polygon_mesh_processing/face_filtered_graph_example.cpp
-\example Polygon_mesh_processing/polygon_soup_example.cpp
+\example Polygon_mesh_processing/orient_polygon_soup_example.cpp
 \example Polygon_mesh_processing/triangulate_polyline_example.cpp
 \example Polygon_mesh_processing/refine_fair_example.cpp
 \example Polygon_mesh_processing/mesh_slicer_example.cpp
@@ -21,4 +21,6 @@
 \example Polygon_mesh_processing/corefinement_mesh_union_and_intersection.cpp
 \example Polygon_mesh_processing/corefinement_consecutive_bool_op.cpp
 \example Polygon_mesh_processing/detect_features_example.cpp
+\example Polygon_mesh_processing/manifoldness_repair_example.cpp
+\example Polygon_mesh_processing/repair_polygon_soup_example.cpp
 */

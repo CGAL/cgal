@@ -11,7 +11,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 #Find CGAL
 find_package(CGAL COMPONENTS Qt5)
-include( ${CGAL_USE_FILE} )
 # Find Qt5 itself
 find_package(Qt5
              QUIET
@@ -38,6 +37,6 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
   polyhedron_demo_plugin(basic_item_plugin Basic_item_plugin)
 
 #  links the library containing the scene_plane_item with the plugin
-  target_link_libraries(basic_item_plugin Polyhedron_scene_basic_objects)
+  target_link_libraries(basic_item_plugin PUBLIC Polyhedron_scene_basic_objects)
 
 endif()

@@ -1,6 +1,6 @@
-/// \defgroup PkgPolygonMeshProcessing Polygon Mesh Processing Reference
+/// \defgroup PkgPolygonMeshProcessingRef Polygon Mesh Processing Reference
 /// \defgroup PkgPolygonMeshProcessingConcepts Concepts
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup keep_connected_components_grp Connected Components
 ///
@@ -8,60 +8,61 @@
 /// of adjacent faces such that all edges between two consecutive faces of the 
 /// path are not marked as constrained.
 ///
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 
 
 /// \defgroup hole_filling_grp Hole Filling
 /// Functions to fill holes given as a range of halfedges or as range of points.
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup PMP_meshing_grp Meshing
 /// Functions to triangulate faces, and to refine and fair regions of a polygon mesh.
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup PMP_normal_grp Normal Computation
 /// Functions to compute unit normals for individual/all vertices or faces.
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup measure_grp Geometric Measure Functions
 /// Functions to compute lengths of edges and borders, areas of faces and patches, as well as volumes of closed meshes.
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup PMP_orientation_grp Orientation Functions
 ///  Functions to compute or change the orientation of faces and surfaces.
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup PMP_intersection_grp Intersection Functions
 /// Functions to test if there are self intersections, and to report faces that do intersect.
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup PMP_repairing_grp Combinatorial Repairing
-/// Functions to orient polygon soups  and to stitch geometrically identical boundaries.
-/// \ingroup PkgPolygonMeshProcessing
+/// Functions to repair polygon soups and polygon meshes.
+/// \ingroup PkgPolygonMeshProcessingRef
+
 
 /// \defgroup PMP_distance_grp Distance Functions
 /// Functions to compute the distance between meshes, between a mesh and a point set and between a point set and a mesh.
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup PMP_corefinement_grp Corefinement and Boolean Operations
 /// Functions to corefine triangulated surface meshes and compute triangulated
 /// surface meshes of the union, difference and intersection
 /// of the bounded volumes.
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup PMP_detect_features_grp Feature Detection Functions
 /// Functions to detect sharp edges and surface patches of polygon meshes.
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup PMP_predicates_grp Intersection Detection Functions
 /// Functions to detect intersections.
 /// Note that those functions will be exact as long as the underlying do-intersect predicates used are exact.
 /// In practice, it means that the 3D point type used must come from a \cgal kernel with exact predicates.
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 /*!
-\addtogroup PkgPolygonMeshProcessing
+\addtogroup PkgPolygonMeshProcessingRef
  
-\cgalPkgDescriptionBegin{Polygon Mesh Processing, PkgPolygonMeshProcessingSummary}
+\cgalPkgDescriptionBegin{Polygon Mesh Processing, PkgPolygonMeshProcessing}
 \cgalPkgPicture{hole_filling_ico.png}
  
 \cgalPkgSummaryBegin
@@ -69,12 +70,12 @@
 \cgalPkgDesc{This package provides
 a collection of methods and classes for polygon mesh processing,
 ranging from basic operations on simplices, to complex geometry processing algorithms.}
-\cgalPkgManuals{Chapter_PolygonMeshProcessing,PkgPolygonMeshProcessing}
+\cgalPkgManuals{Chapter_PolygonMeshProcessing,PkgPolygonMeshProcessingRef}
 \cgalPkgSummaryEnd
  
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.7}
-\cgalPkgDependsOn{documented for each function; \ref PkgSolverSummary}
+\cgalPkgDependsOn{documented for each function; \ref PkgSolverInterface}
 \cgalPkgBib{cgal:lty-pmp}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
@@ -113,19 +114,33 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::self_intersections()`
 - \link PMP_predicates_grp `CGAL::Polygon_mesh_processing::do_intersect()` \endlink
 - `CGAL::Polygon_mesh_processing::intersecting_meshes()`
+- `CGAL::Polygon_mesh_processing::is_degenerate_edge()`
+- `CGAL::Polygon_mesh_processing::degenerate_edges()`
+- `CGAL::Polygon_mesh_processing::is_degenerate_triangle_face()`
+- `CGAL::Polygon_mesh_processing::degenerate_faces()`
+- `CGAL::Polygon_mesh_processing::is_needle_triangle_face()`
+- `CGAL::Polygon_mesh_processing::is_cap_triangle_face()`
 
 ## Orientation Functions ##
-- `CGAL::Polygon_mesh_processing::is_outward_oriented()`
-- `CGAL::Polygon_mesh_processing::reverse_face_orientations()`
 - `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
 - `CGAL::Polygon_mesh_processing::orient()`
 - `CGAL::Polygon_mesh_processing::orient_to_bound_a_volume()`
+- `CGAL::Polygon_mesh_processing::is_outward_oriented()`
+- `CGAL::Polygon_mesh_processing::reverse_face_orientations()`
 
 ## Combinatorial Repairing Functions ##
-- \link PMP_repairing_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
+- `CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup()`
+- `CGAL::Polygon_mesh_processing::merge_duplicate_polygons_in_polygon_soup()`
+- `CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup()`
+- `CGAL::Polygon_mesh_processing::repair_polygon_soup()`
+- `CGAL::Polygon_mesh_processing::stitch_borders()`
 - `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()`
 - `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
 - `CGAL::Polygon_mesh_processing::remove_isolated_vertices()`
+- `CGAL::Polygon_mesh_processing::is_non_manifold_vertex()`
+- `CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices()`
+- `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycle()`
+- `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycles()`
 
 ## Normal Computation Functions ##
 - `CGAL::Polygon_mesh_processing::compute_face_normal()`
@@ -171,6 +186,9 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::detect_sharp_edges()`
 - `CGAL::Polygon_mesh_processing::detect_vertex_incident_patches()`
 
+## Collision Detection
+- `CGAL::Rigid_triangle_mesh_collision_detection`
+
 ## Miscellaneous ##
 - `CGAL::Polygon_mesh_slicer`
 - `CGAL::Side_of_triangle_mesh`
@@ -179,6 +197,7 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::edge_bbox()`
 - `CGAL::Polygon_mesh_processing::face_bbox()`
 - `CGAL::Polygon_mesh_processing::border_halfedges()`
+- `CGAL::Polygon_mesh_processing::extract_boundary_cycles()`
 - `CGAL::Polygon_mesh_processing::transform()`
 
 */

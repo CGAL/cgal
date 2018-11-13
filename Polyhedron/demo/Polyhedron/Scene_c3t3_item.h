@@ -19,6 +19,7 @@
 
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Scene_group_item.h>
+#include <Scene_polygon_soup_item.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
 #include <CGAL/Three/Scene_item_with_properties.h>
 
@@ -33,8 +34,8 @@ using namespace CGAL::Three;
 public:
   typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
 
-  Scene_c3t3_item();
-  Scene_c3t3_item(const C3t3& c3t3);
+  Scene_c3t3_item(bool is_surface = false);
+  Scene_c3t3_item(const C3t3& c3t3, bool is_surface = false);
   ~Scene_c3t3_item();
 
   bool has_stats()const  Q_DECL_OVERRIDE {return true;}

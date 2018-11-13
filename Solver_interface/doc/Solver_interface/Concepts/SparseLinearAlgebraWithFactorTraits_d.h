@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgSolverConcepts
+\ingroup PkgSolverInterfaceConcepts
 \cgalConcept
 
 @brief Concept describing the set of requirements for a direct sparse linear system solver with factorization.

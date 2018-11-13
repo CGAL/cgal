@@ -1,9 +1,7 @@
 #include <QtCore/qglobal.h>
 
-#include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 #include <CGAL/Three/Scene_interface.h>
-#include "Polyhedron_type.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include "Messages_interface.h"
@@ -58,7 +56,7 @@ public:
     actionStitchCloseBorderHalfedges->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionRemoveSelfIntersections->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionRemoveIsolatedVertices->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
-    actionDuplicateNMVertices->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
+    actionDuplicateNMVertices->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
     actionAutorefine->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionAutorefineAndRMSelfIntersections->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
 
@@ -79,8 +77,7 @@ public:
   bool applicable(QAction*) const
   {
     int item_id = scene->mainSelectionIndex();
-    return qobject_cast<Scene_polyhedron_item*>(scene->item(item_id)) ||
-           qobject_cast<Scene_surface_mesh_item*>(scene->item(item_id));
+    return qobject_cast<Scene_surface_mesh_item*>(scene->item(item_id));
   }
   template <typename Item>
   void on_actionRemoveIsolatedVertices_triggered(Scene_interface::Item_id index);
@@ -139,7 +136,6 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveIsolatedVertices_t
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  on_actionRemoveIsolatedVertices_triggered<Scene_polyhedron_item>(index);
   on_actionRemoveIsolatedVertices_triggered<Scene_surface_mesh_item>(index);
   QApplication::restoreOverrideCursor();
 }
@@ -165,7 +161,6 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveDegenerateFaces_tr
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  on_actionRemoveDegenerateFaces_triggered<Scene_polyhedron_item>(index);
   on_actionRemoveDegenerateFaces_triggered<Scene_surface_mesh_item>(index);
   QApplication::restoreOverrideCursor();
 }
@@ -191,7 +186,6 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveSelfIntersections_
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  on_actionRemoveSelfIntersections_triggered<Scene_polyhedron_item>(index);
   on_actionRemoveSelfIntersections_triggered<Scene_surface_mesh_item>(index);
   QApplication::restoreOverrideCursor();
 }
@@ -219,7 +213,6 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionAutorefine_triggered()
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  on_actionAutorefine_triggered<Scene_polyhedron_item>(index);
   on_actionAutorefine_triggered<Scene_surface_mesh_item>(index);
   QApplication::restoreOverrideCursor();
 }
@@ -251,7 +244,6 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionAutorefineAndRMSelfInter
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  on_actionAutorefineAndRMSelfIntersections_triggered<Scene_polyhedron_item>(index);
   on_actionAutorefineAndRMSelfIntersections_triggered<Scene_surface_mesh_item>(index);
   QApplication::restoreOverrideCursor();
 }
@@ -286,7 +278,6 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionStitchCloseBorderHalfedg
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  on_actionStitchCloseBorderHalfedges_triggered<Scene_polyhedron_item>(index);
   on_actionStitchCloseBorderHalfedges_triggered<Scene_surface_mesh_item>(index);
   QApplication::restoreOverrideCursor();
 }
@@ -312,7 +303,6 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionDuplicateNMVertices_trig
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  on_actionDuplicateNMVertices_triggered<Scene_polyhedron_item>(index);
   on_actionDuplicateNMVertices_triggered<Scene_surface_mesh_item>(index);
   QApplication::restoreOverrideCursor();
 }

@@ -4,20 +4,14 @@
 
 project( STL_Extension_Tests )
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
 
 find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
-
   find_package( TBB QUIET )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
-  include_directories (BEFORE "../../include")
 
   create_single_source_cgal_program( "test_Boolean_tag.cpp" )
   create_single_source_cgal_program( "test_Cache.cpp" )

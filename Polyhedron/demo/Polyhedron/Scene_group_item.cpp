@@ -31,7 +31,21 @@ bool Scene_group_item::isEmpty() const {
 
 Scene_group_item::Bbox Scene_group_item::bbox() const
 {
-    return Bbox(0, 0, 0, 0, 0,0);
+ Scene_item* first_non_empty = nullptr;
+ Q_FOREACH(Scene_interface::Item_id id, children)
+   if(!getChild(id)->isEmpty())
+   {
+     first_non_empty = getChild(id);
+   }
+ 
+ if(first_non_empty)
+ {
+   Bbox b =first_non_empty->bbox();
+   Q_FOREACH(Scene_interface::Item_id id, children)
+     b+=getChild(id)->bbox();
+   return b;
+ }
+ return Bbox(0,0,0,0,0,0);
 }
 
 

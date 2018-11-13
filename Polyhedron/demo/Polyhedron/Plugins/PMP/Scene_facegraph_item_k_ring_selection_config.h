@@ -1,7 +1,7 @@
 #ifndef SCENE_FACEGRAPH_ITEM_K_RING_SELECTION_CONFIG_H
 #define SCENE_FACEGRAPH_ITEM_K_RING_SELECTION_CONFIG_H
 
-#if defined(scene_poly_item_k_ring_selection_EXPORTS) || (scene_sm_item_k_ring_selection_EXPORTS)
+#if defined(scene_k_ring_selection_EXPORTS)
 #  define SCENE_FACEGRAPH_ITEM_K_RING_SELECTION_EXPORT Q_DECL_EXPORT
 #else
 #  define SCENE_FACEGRAPH_ITEM_K_RING_SELECTION_EXPORT Q_DECL_IMPORT

@@ -1,28 +1,28 @@
-/// \defgroup PkgAlgebraicKerneld Algebraic Kernel Reference
+/// \defgroup PkgAlgebraicKernelDRef Algebraic Kernel Reference
 
-/// \defgroup PkgAlgebraicKerneldConcepts Concepts
-/// \ingroup PkgAlgebraicKerneld
+/// \defgroup PkgAlgebraicKernelDConcepts Concepts
+/// \ingroup PkgAlgebraicKernelDRef
 
-/// \defgroup PkgAlgebraicKerneldConceptsUni Univariate Algebraic Kernel 
-/// \ingroup PkgAlgebraicKerneldConcepts
+/// \defgroup PkgAlgebraicKernelDConceptsUni Univariate Algebraic Kernel 
+/// \ingroup PkgAlgebraicKernelDConcepts
 
-/// \defgroup PkgAlgebraicKerneldConceptsBi Bivariate Algebraic Kernel 
-/// \ingroup PkgAlgebraicKerneldConcepts
+/// \defgroup PkgAlgebraicKernelDConceptsBi Bivariate Algebraic Kernel 
+/// \ingroup PkgAlgebraicKernelDConcepts
 
 
-/// \defgroup PkgAlgebraicKerneldModels Models
-/// \ingroup PkgAlgebraicKerneld
+/// \defgroup PkgAlgebraicKernelDModels Models
+/// \ingroup PkgAlgebraicKernelDRef
 
 
 /*!
-\addtogroup PkgAlgebraicKerneld
+\addtogroup PkgAlgebraicKernelDRef
 \todo check generated documentation
-\cgalPkgDescriptionBegin{Algebraic Kernel,PkgAlgebraicKerneldSummary}
+\cgalPkgDescriptionBegin{Algebraic Kernel,PkgAlgebraicKernelD}
 \cgalPkgPicture{Algebraic_kernel_d.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Eric Berberich, Michael Hemmer, Michael Kerber, Sylvain Lazard, Luis Peñaranda, and Monique Teillaud}
 \cgalPkgDesc{Real solving of polynomials is a fundamental problem with a wide application range.  This package is targeted to provide black-box implementations of state-of-the-art  algorithms to determine, compare and approximate real roots of univariate polynomials and bivariate polynomial systems. Such a black-box is called an *Algebraic %Kernel*.  So far the package only provides models for the univariate kernel. Nevertheless,  it already defines concepts for the bivariate kernel, since this settles the interface for upcoming implementations.}
-\cgalPkgManuals{Chapter_Algebraic_Kernel,PkgAlgebraicKerneld}
+\cgalPkgManuals{Chapter_Algebraic_Kernel,PkgAlgebraicKernelDRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.6}

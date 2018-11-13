@@ -45,29 +45,30 @@ struct DefaultColorFunctorLCC
   }
 };
 
-template<class LCC, int dim=LCC::ambient_dimension>
-struct Geom_utils;
+template<class LCC, class Kernel, int dim=LCC::ambient_dimension>
+struct LCC_geom_utils;
 
-template<class LCC>
-struct Geom_utils<LCC, 3>
+template<class LCC, class Kernel>
+struct LCC_geom_utils<LCC, Kernel, 3>
 {
-  static typename LCC::Vector get_vertex_normal(const LCC& lcc,
-                                                typename LCC::Dart_const_handle dh)
+  static typename Kernel::Vector_3
+  get_vertex_normal(const LCC& lcc, typename LCC::Dart_const_handle dh)
   {
-    typename LCC::Vector n = CGAL::compute_normal_of_cell_0<LCC>(lcc,dh);
+    typename Kernel::Vector_3 n = internal::Geom_utils<typename LCC::Traits>::
+      get_local_vector(CGAL::compute_normal_of_cell_0<LCC>(lcc,dh));
     n = n/(CGAL::sqrt(n*n));
     return n;
   }
 };
 
-template<class LCC>
-struct Geom_utils<LCC, 2>
+template<class LCC, class Kernel>
+struct LCC_geom_utils<LCC, Kernel, 2>
 {
-  static typename LCC::Vector get_vertex_normal(const LCC&,
-                                                typename LCC::Dart_const_handle)
+  static typename Kernel::Vector_3
+  get_vertex_normal(const LCC&, typename LCC::Dart_const_handle)
   {
-    typename LCC::Vector res=CGAL::NULL_VECTOR;
-    return res;
+    typename Kernel::Vector_3 n=CGAL::NULL_VECTOR;
+    return n;
   }
 };
 
@@ -121,8 +122,8 @@ protected:
     cur=dh;
     do
     {
-      add_point_in_face(lcc.point(cur),
-                        Geom_utils<LCC>::get_vertex_normal(lcc, cur));
+      add_point_in_face(lcc.point(cur), LCC_geom_utils<LCC, Local_kernel>::
+                        get_vertex_normal(lcc, cur));
       cur=lcc.next(cur);
     }
     while(cur!=dh);

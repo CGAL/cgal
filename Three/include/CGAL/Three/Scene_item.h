@@ -246,6 +246,9 @@ public:
   //!
   int getId()const;
 
+  //! invalidates the context menu. Call it when supportsRenderingMode() changes, 
+  //! for example.
+  void resetMenu();
   //!Handles key press events.
   virtual bool keyPressEvent(QKeyEvent*){return false;}
 
@@ -469,6 +472,13 @@ protected:
 
   /*! Compatibility function. Calls `viewer->getShaderProgram()`. */
   virtual QOpenGLShaderProgram* getShaderProgram(int name , CGAL::Three::Viewer_interface *viewer = 0) const;
+public:
+  //! \brief defaultSaveName returns the name to be used as default
+  //! when saving this item.
+  //! 
+  //! Default is `name()`.
+  //! \return A new name for the default value in the "save as" dialog.
+  virtual QString defaultSaveName() const { return name(); }
 }; // end class Scene_item
 }
 }

@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgRangeSegmentTreesDConcepts
+\ingroup PkgSearchStructuresConcepts
 \cgalConcept
 
 A tree traits class gives the range tree and segment tree class the necessary 

@@ -17,6 +17,7 @@ uniform bool comparing;
 uniform bool writing;
 uniform sampler2D sampler;
 uniform float alpha;
+uniform bool is_surface;
 out  vec4 out_color;
 
 float depth(float z)
@@ -33,7 +34,7 @@ void main(void) {
     out_color = vec4(d,d,d,1.0);
   else
   {
-    if(color.w<0)
+    if(color.w<0 || is_surface)
     {
 
       vec4 my_color = vec4(color.xyz, 1.);

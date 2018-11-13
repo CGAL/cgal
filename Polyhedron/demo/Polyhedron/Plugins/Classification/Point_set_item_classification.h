@@ -8,7 +8,6 @@
 
 #include "Scene_points_with_normal_item.h"
 #include "Item_classification_base.h"
-#include "Polyhedron_type_fwd.h"
 #include "Kernel_type.h"
 #include "Point_set_3.h"
 

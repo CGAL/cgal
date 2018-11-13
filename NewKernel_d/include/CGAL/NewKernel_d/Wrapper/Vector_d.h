@@ -21,6 +21,9 @@
 #ifndef CGAL_WRAPPER_VECTOR_D_H
 #define CGAL_WRAPPER_VECTOR_D_H
 
+#include <istream>
+#include <ostream>
+#include <CGAL/IO/io.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/representation_tags.h>
@@ -239,6 +242,11 @@ public:
       return rep.dimension();
   }
 */
+  int dimension() const {
+    typedef typename Get_functor<Kbase, Vector_dimension_tag>::type VDBase;
+    return VDBase()(rep());
+  }
+
   typename boost::result_of<SLBase(Rep)>::type squared_length()const{
 	  return SLBase()(rep());
   }
@@ -247,7 +255,68 @@ public:
 template <class R_> Vector_d<R_>::Vector_d(Vector_d &)=default;
 #endif
 
-//TODO: IO
+template <class R_>
+std::ostream& operator <<(std::ostream& os, const Vector_d<R_>& v)
+{
+  typedef typename R_::Kernel_base Kbase;
+  typedef typename Get_functor<Kbase, Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CVI;
+  // Should just be "auto"...
+  typename CGAL::decay<typename boost::result_of<
+        CVI(typename Vector_d<R_>::Rep,Begin_tag)
+      >::type>::type
+    b = v.cartesian_begin(),
+    e = v.cartesian_end();
+  if(is_ascii(os))
+  {
+    os << v.dimension();
+    for(; b != e; ++b){
+      os << " " << *b;
+    }
+  }
+  else
+  {
+    write(os, v.dimension());
+    for(; b != e; ++b){
+      write(os, *b);
+    }
+  }
+  
+  return os;
+}
+
+
+template<typename K>
+std::istream &
+operator>>(std::istream &is, Vector_d<K> & v)
+{
+  typedef typename Get_type<K, Vector_tag>::type V;
+  typedef typename Get_type<K, FT_tag>::type   FT;
+  int dim;
+  if( is_ascii(is) )
+    is >> dim;
+  else
+  {
+    read(is, dim);
+  }
+  if(!is) return is;
+
+  std::vector<FT> coords(dim);
+  if(is_ascii(is))
+  {
+    for(int i=0;i<dim;++i)
+      is >> iformat(coords[i]);
+  }
+  else
+  {
+    for(int i=0;i<dim;++i)
+      read(is, coords[i]);
+  }
+
+  if(is)
+    v = V(coords.begin(), coords.end());
+  return is;
+}
+
 
 template <class R_>
 Vector_d<R_> operator+(const Vector_d<R_>& v,const Vector_d<R_>& w)

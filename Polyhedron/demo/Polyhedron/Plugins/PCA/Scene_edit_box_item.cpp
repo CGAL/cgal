@@ -517,6 +517,7 @@ void Scene_edit_box_item::drawEdges(Viewer_interface* viewer) const
     d->program->bind();
     QVector2D vp(viewer->width(), viewer->height());
     d->program->setUniformValue("viewport", vp);
+    d->program->setUniformValue("is_clipbox_on", false);
     d->program->setUniformValue("near",(GLfloat)viewer->camera()->zNear());
     d->program->setUniformValue("far",(GLfloat)viewer->camera()->zFar());
     d->program->setUniformValue("width", 6.0f);

@@ -39,7 +39,7 @@
 
 namespace CGAL {
 
-/// \ingroup PkgSolver
+/// \ingroup PkgSolverInterfaceRef
 ///
 /// The class `Eigen_diagonalize_traits` provides an interface to the
 /// diagonalization of covariance matrices of \ref thirdpartyEigen

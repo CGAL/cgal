@@ -4,7 +4,7 @@
 project( Classification_Tests )
 
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS  )
@@ -15,10 +15,6 @@ if ( NOT CGAL_FOUND )
   return()  
 
 endif()
-
-# include helper file
-include( ${CGAL_USE_FILE} )
-
 
 # Boost and its components
 find_package( Boost REQUIRED )
@@ -49,13 +45,9 @@ find_package( TBB )
 include_directories( BEFORE include )
 
 # include for local package
-include_directories( BEFORE ../../include )
-
 
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
-
-include( CGAL_CreateSingleSourceCGALProgram )
 
 #add_definitions("-DCGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE")
 
@@ -102,5 +94,13 @@ if(TARGET deprecated_test_classification_point_set)
   target_link_libraries(deprecated_test_classification_point_set PUBLIC ${classification_linked_libraries})
   if (TBB_FOUND)
     CGAL_target_use_TBB( deprecated_test_classification_point_set )
+  endif()
+endif()
+
+create_single_source_cgal_program( "test_classification_io.cpp" CXX_FEATURES ${needed_cxx_features} )
+if(TARGET test_classification_io)
+  target_link_libraries(test_classification_io PUBLIC ${classification_linked_libraries})
+  if (TBB_FOUND)
+    CGAL_target_use_TBB( test_classification_io )
   endif()
 endif()

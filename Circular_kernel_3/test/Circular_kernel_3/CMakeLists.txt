@@ -4,18 +4,15 @@
 
 project( Circular_kernel_3_Tests )
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.11)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
 
 find_package(CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
+include(${CGAL_USE_FILE})
 
 include_directories (BEFORE include)
-include_directories (BEFORE ../../include)
 include_directories (BEFORE ../../../Kernel_23/test/Kernel_23/include)
 include_directories (BEFORE ../Kernel_23/include)
 include_directories (BEFORE ../Cartesian_kernel/include)

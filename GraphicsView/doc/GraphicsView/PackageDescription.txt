@@ -1,20 +1,20 @@
-/// \defgroup PkgGraphicsView CGAL and the Qt Graphics View Framework Reference
+/// \defgroup PkgGraphicsViewRef CGAL and the Qt Graphics View Framework Reference
 /// \defgroup PkgGraphicsViewGraphicsItemClasses Graphics Item Classes
-/// \ingroup PkgGraphicsView
+/// \ingroup PkgGraphicsViewRef
 /// \defgroup PkgGraphicsViewInputClasses Input Classes
-/// \ingroup PkgGraphicsView
+/// \ingroup PkgGraphicsViewRef
 /// \defgroup PkgGraphicsViewMiscClasses Miscellaneous Classes
-/// \ingroup PkgGraphicsView
+/// \ingroup PkgGraphicsViewRef
 
 /*!
-\addtogroup PkgGraphicsView
+\addtogroup PkgGraphicsViewRef
 
-\cgalPkgDescriptionBegin{CGAL and the Qt Graphics View Framework,PkgGraphicsViewSummary}
+\cgalPkgDescriptionBegin{CGAL and the Qt Graphics View Framework,PkgGraphicsView}
 \cgalPkgPicture{detail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Andreas Fabri and Laurent Rineau}
 \cgalPkgDesc{This package provides classes for displaying \cgal objects  and data structures in the <A HREF="http://qt-project.org/doc/qt-5/graphicsview.html">Qt 5 Graphics View Framework</A>.}
-\cgalPkgManuals{Chapter_CGAL_and_the_Qt_Graphics_View_Framework,PkgGraphicsView}
+\cgalPkgManuals{Chapter_CGAL_and_the_Qt_Graphics_View_Framework,PkgGraphicsViewRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.4}

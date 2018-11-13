@@ -1,15 +1,12 @@
 project( Core_Examples )
 
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
 
 
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS Core )
-
-# include helper file
-include( ${CGAL_USE_FILE} )
 
 if ( NOT CGAL_Core_FOUND )
 
@@ -32,12 +29,9 @@ endif()
 # include for local directory
 
 # include for local package
-include_directories( BEFORE ../../include )
-
+include(${CGAL_USE_FILE})
 
 # Creating entries for all .cpp/.C files with "main" routine
 # ##########################################################
-
-include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "delaunay.cpp" )

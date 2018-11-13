@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgModularArithmetic
+\ingroup PkgModularArithmeticRef
 \anchor Residue 
 
 \brief The class `Residue` represents a finite field \f$ \mathbb{Z}{/p\mathbb{Z}}\f$, 
