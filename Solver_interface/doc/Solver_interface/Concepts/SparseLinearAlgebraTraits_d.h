@@ -62,6 +62,8 @@ bool linear_solver(const Matrix& A, const Vector& B, Vector& X, NT& D);
 `SparseLinearAlgebraTraits_d::Vector` is a concept of a vector that can be multiplied
 by a sparse matrix.
 
+\cgalRefines DefaultConstructible
+
 \cgalHasModel `CGAL::Eigen_vector<T>`
 
 \sa `SparseLinearAlgebraTraits_d`
@@ -86,7 +88,7 @@ typedef unspecified_type Index;
 
 /// @}
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
@@ -100,7 +102,7 @@ Copy constructor.
 Vector(const Vector& toCopy);
 /// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
@@ -129,6 +131,8 @@ NT& operator[](Index row);
 
 `SparseLinearAlgebraTraits_d::Matrix` is a concept of a sparse matrix class.
 
+\cgalRefines DefaultConstructible
+
 \cgalHasModel `CGAL::Eigen_sparse_matrix<T>`
 \cgalHasModel `CGAL::Eigen_sparse_symmetric_matrix<T>`
 
@@ -148,7 +152,7 @@ typedef unspecified_type NT;
 
 /// @}
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
@@ -193,7 +197,7 @@ Write access to a matrix coefficient: `a_ij = a_ij + val`.
 void add_coef(Index row, Index column, NT value);
 
 /*!
-Write access to a matrix coefficient: `a_ij = val`. 
+Write access to a matrix coefficient: `a_ij = val`.
 
 Optimization: Users can indicate that the coefficient does not already exist
 in the matrix by setting `new_coef` to `true`.
@@ -203,16 +207,19 @@ in the matrix by setting `new_coef` to `true`.
 */
 void set_coef(Index row, Index column, NT value, bool new_coef = false);
 
+/*!
+swaps the content of `*this` and `m`
+ */
+void swap(Matrix& m);
 
-  /// Multiplication with a scalar.
-  friend Matrix
-  operator*(const NT& c, const Matrix& M);  
+/// Multiplication with a scalar.
+friend Matrix
+operator*(const NT& c, const Matrix& M);
 
-  /// Sum of two matrices.
-  friend Matrix
-  operator+(const Matrix& M0, const Matrix& M1);
+/// Sum of two matrices.
+friend Matrix
+operator+(const Matrix& M0, const Matrix& M1);
 
-  
 /// @}
 
 }; /* end Matrix */

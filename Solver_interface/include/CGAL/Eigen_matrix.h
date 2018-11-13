@@ -55,16 +55,15 @@ public:
   typedef T                           NT;
   /// @}
 
+  Eigen_sparse_matrix(const EigenType& et)
+    : m_is_already_built(true), m_matrix(et), m_is_symmetric(false)
+  {}
+
   // Public operations
 public:
   Eigen_sparse_matrix()  :
       m_is_already_built(false)
   {}
-
-  Eigen_sparse_matrix(const EigenType& et)
-    : m_is_already_built(true), m_matrix(et), m_is_symmetric(false)
-  {}
-
   
   /// Create a square matrix initialized with zeros.
   Eigen_sparse_matrix(std::size_t  dim,           ///< Matrix dimension.
