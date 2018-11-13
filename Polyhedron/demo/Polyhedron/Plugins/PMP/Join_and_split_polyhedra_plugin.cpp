@@ -244,6 +244,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
         typedef boost::graph_traits<FaceGraph>::face_descriptor   face_descriptor;
 
         selection_item->polyhedron_item()->setItemIsMulticolor(true);
+        selection_item->polyhedron_item()->computeItemColorVectorAutomatically(true);
         FaceGraph& pmesh = *(selection_item->polyhedron());
 
         boost::property_map<FaceGraph, boost::face_index_t>::type fim

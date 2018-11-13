@@ -1381,9 +1381,8 @@ bool Scene_surface_mesh_item::intersect_face(double orig_x,
   return false;
 
 }
-void Scene_surface_mesh_item::setItemIsMulticolor(bool b, bool recompute_colors)
+void Scene_surface_mesh_item::setItemIsMulticolor(bool b)
 {
-  this->setProperty("recompute_colors",recompute_colors);
   if(b)
   {
     d->fpatch_id_map = d->smesh_->add_property_map<face_descriptor,int>("f:patch_id", 1).first;
@@ -2218,4 +2217,9 @@ void Scene_surface_mesh_item::copyProperties(Scene_item *item)
     return;
   int value = sm_item->alphaSlider()->value();
   alphaSlider()->setValue(value);
+}
+
+void Scene_surface_mesh_item::computeItemColorVectorAutomatically(bool b)
+{
+  this->setProperty("recompute_colors",b);
 }

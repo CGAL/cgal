@@ -377,7 +377,8 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize_sdf(
         }
         put(pidmap, *facet_it, static_cast<int>(patch_id));
     }
-    item->setItemIsMulticolor(true, false);
+    item->setItemIsMulticolor(true);
+    item->computeItemColorVectorAutomatically(false);
 }
 
 
@@ -407,6 +408,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize_segmentation(
         color_vector.push_back(aColor);
     }
     item->setItemIsMulticolor(true);
+    item->computeItemColorVectorAutomatically(true);
     item->setProperty("NbPatchIds", static_cast<int>(max_segment + 1)); //for join_and_split plugin
 }
 
