@@ -48,7 +48,8 @@ typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<>           
 typedef Traits::Segment_2                                                       Segment_2;
 typedef Traits::Circle_2                                                        Circle_2;
 typedef Traits::Circular_arc_2                                                  Circular_arc_2;
-typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<Traits>            Triangulation;
+//typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<Traits>            Triangulation;
+typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<>                  Triangulation;
 typedef Triangulation::Point                                                    Point;
 typedef Triangulation::Vertex_handle                                            Vertex_handle;
 typedef Traits::Side_of_original_octagon                                        Side_of_original_octagon;
