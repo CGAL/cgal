@@ -169,15 +169,20 @@ namespace CGAL {
       prev_dart=cur;
     }
 
-    // add one facet, s is a sequence of labels, add all the corresponding edges into the current facet.
-    void add_facet(const std::string& s)
+    // add the given edges to the current facet
+    // s is a sequence of labels, add all the corresponding edges into the current facet.
+    void add_edges_to_facet(const std::string& s)
     {
-      begin_facet();
-      
       std::istringstream iss(s);
       for (std::string token; std::getline(iss, token, ' '); )
       { add_edge_to_facet(token); }
-
+    }
+      
+    // add one facet, s is a sequence of labels, add all the corresponding edges into a new facet.
+    void add_facet(const std::string& s)
+    {
+      begin_facet();
+      add_edges_to_facet(s);
       end_facet();
     }
 
