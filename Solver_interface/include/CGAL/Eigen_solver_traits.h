@@ -122,7 +122,7 @@ public:
 #if EIGEN_VERSION_AT_LEAST(3, 3, 0)
   typedef Eigen::Index                                                Index;
 #else
-  typedef DenseIndex                                                  Index;
+  typedef Eigen::DenseIndex                                                  Index;
 #endif
   /// If `T` is `Eigen::ConjugateGradient<M>` or `Eigen::SimplicialCholesky<M>`,
   /// `Matrix` is `CGAL::Eigen_sparse_symmetric_matrix<T>`, and `CGAL::Eigen_sparse_matrix<T>` otherwise.
