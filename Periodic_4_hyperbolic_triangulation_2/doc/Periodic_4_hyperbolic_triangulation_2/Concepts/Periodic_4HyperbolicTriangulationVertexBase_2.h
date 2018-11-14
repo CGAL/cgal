@@ -32,24 +32,10 @@ public:
   /// \name Types
   /// @{
 	
-  typedef typename TriangulationVertexBase_2::Face_handle 		    
-                                                      Face_handle;
-  
-  /*!
-  \cgalModifBegin
-    Must be the same as the point type `Periodic_4HyperbolicDelaunayTriangulationTraits_2::Point_2`
-    defined by the geometric traits of the triangulation.
-  \cgalModifEnd
-  */
-	typedef unspecified_type	    		                  Point;
-	
-  /*!
-  \cgalModifBegin
-    Must be the same as the translation type `Periodic_4HyperbolicDelaunayTriangulationTraits_2::Hyperbolic_translation`
-    defined by the geometric traits of the triangulation.
-  \cgalModifEnd
-  */
-  typedef unspecified_type                    			  Hyperbolic_translation;
+  typedef TriangulationVertexBase_2::Face_handle 		           Face_handle;
+  typedef Periodic_4HyperbolicDelaunayTriangulationTraits_2    Geom_traits;
+	typedef Geom_traits::Hyperbolic_point_2	                     Point;
+  typedef Geom_traits::Hyperbolic_translation                  Hyperbolic_translation;
   /// @}
 
   /// \name Creation
