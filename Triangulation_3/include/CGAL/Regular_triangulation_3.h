@@ -767,19 +767,32 @@ namespace CGAL {
     // which might be invalided by other threads. One way to do that is the 'is_vertex()' function
     // of the TDS, but it runs in O(sqrt(n)) complexity. When we are using our TDS, we can use
     // a lower level function from the compact container, which runs in constant time.
+    BOOST_MPL_HAS_XXX_TRAIT_DEF(Is_CGAL_TDS_3)
+
+    template <typename TDS_,
+              bool has_TDS_tag = has_Is_CGAL_TDS_3<TDS_>::value>
+    struct Is_CGAL_TDS_3 : public CGAL::Tag_false
+    { };
+
     template <typename TDS_>
+    struct Is_CGAL_TDS_3<TDS_, true> : public CGAL::Boolean_tag<TDS_::Is_CGAL_TDS_3::value>
+    { };
+
+    template <typename TDS_,
+              bool is_CGAL_TDS_3 = Is_CGAL_TDS_3<TDS_>::value>
     struct Vertex_validity_checker
     {
-      bool operator()(const typename TDS_::Vertex_handle vh_, const TDS_& tds_) { return tds_.is_vertex(vh_); }
+      bool operator()(const typename TDS_::Vertex_handle vh_, const TDS_& tds_) {
+        return tds_.is_vertex(vh_);
+      }
     };
 
-    template <typename T1, typename T2, typename T3>
-    struct Vertex_validity_checker<CGAL::Triangulation_data_structure_3<T1, T2, T3> >
+    template <typename TDS_>
+    struct Vertex_validity_checker<TDS_, true /* is_CGAL_TDS_3 */>
     {
-      typedef CGAL::Triangulation_data_structure_3<T1, T2, T3>   TDS_;
-
       bool operator()(const typename TDS_::Vertex_handle vh_, const TDS_& tds_) {
-        return tds_.vertices().is_used(vh_); }
+        return tds_.vertices().is_used(vh_);
+      }
     };
 
     void remove (Vertex_handle v);
