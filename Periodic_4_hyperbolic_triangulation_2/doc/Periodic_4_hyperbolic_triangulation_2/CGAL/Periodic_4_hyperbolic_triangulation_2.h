@@ -14,7 +14,7 @@ modification of the triangulation (insertion or removal).
 The class expects two template parameters.
 
 \tparam GT 	Geometric Traits parameter. Must be a model of the concept 
-			`Periodic_4HyperbolicDelaunayTriangulationTraits_2`. This parameter has no
+			`Periodic_4HyperbolicTriangulationTraits_2`. This parameter has no
 			default value.
 \tparam	TDS %Triangulation Data Structure parameter. Must be a model of the concept
 		`TriangulationDataStructure_2` with some additional functionality in the vertices 
@@ -52,12 +52,12 @@ public:
 		/*!
 			Represents a hyperbolic segment in the hyperbolic plane.
 		*/
-		typedef typename Geometric_traits::Segment_2 						Segment;
+		typedef typename Geometric_traits::Hyperbolic_segment_2 			Hyperbolic_segment;
 
 		/*!
 			Represents a triangle contained in the Poincaré disk.
 		*/
-		typedef typename Geometric_traits::Triangle_2 						Triangle;
+		typedef typename Geometric_traits::Hyperbolic_triangle_2 			Hyperbolic_triangle;
 	/// @}
 
 	/// \name
@@ -100,7 +100,7 @@ public:
 	
 	/// \name
 	/// The following iterator and circulator types are defined to give access over the vertices,
-	/// edges and faces of the triangulation.
+	/// edges, and faces of the triangulation.
 	/// @{
 		typedef typename Triangulation_data_structure::Face_iterator        Face_iterator;
 		typedef typename Triangulation_data_structure::Edge_iterator        Edge_iterator;
@@ -111,15 +111,12 @@ public:
 	/// @}
 
 	/// \name
-	/// The following type is inherited from the base Triangulation class.
+	/// The following enumeration type indicates where a point is located in the triangulation.
 	/// @{
-	/*!
-		Enumeration type that indicates where a point is located.
-	*/
 	enum Locate_type {
-		VERTEX = 0,
-		EDGE,
-		FACE
+		VERTEX = 0, /*!< the located point coincides with a vertex of the triangulation */
+		EDGE,		/*!< the point is in the relative interior of an edge */
+		FACE 		/*!< the point is in the interior of a facet */
 	};
 	/// @}
 
@@ -209,7 +206,7 @@ public:
 
 
 	/// \name Geometric access functions
-	/// The functions below return periodic points, segments and triangles.
+	/// The functions below return periodic points, segments, and triangles.
 	/// @{
 		/*!
 			Returns the periodic point given by the `i`-th vertex of face `f`, that is the point 
@@ -276,22 +273,22 @@ public:
 			Constructs the hyperbolic segment formed by the endpoints of edge `(fh, idx)`.
 			\pre \f$ 0 \leq idx \leq 2 \f$
 		*/
-		Segment construct_segment(const Face_handle & fh, int idx) const;
+		Hyperbolic_segment construct_hyperbolic_segment(const Face_handle & fh, int idx) const;
 
 		/*!
 			Returns the hyperbolic segment with endpoints `p1` and `p2`.
 		*/
-		Segment construct_segment(const Point& p1, const Point& p2) const;
+		Hyperbolic_segment construct_hyperbolic_segment(const Point& p1, const Point& p2) const;
 
 		/*!
 			Returns the hyperbolic segment formed by the endpoints of `e`.
 		*/
-		Segment construct_segment(const pair<Face_handle, int> & e) const;
+		Hyperbolic_segment construct_hyperbolic_segment(const pair<Face_handle, int> & e) const;
 
 		/*!
 			Returns the hyperbolic segment formed by the endpoints of `ps`.
 		*/
-		Segment construct_segment(const Periodic_segment & ps) const;
+		Hyperbolic_segment construct_hyperbolic_segment(const Periodic_segment & ps) const;
 
 		/*!
 			Returns the triangle formed by the vertices of `fh`.
@@ -416,8 +413,6 @@ public:
 			\cgalModifBegin
 			Tests whether face `f` has `v` as a vertex. If the answer is `true`,
 			then `i` contains the index of `v` in `f`.
-
-			(note: changed function declaration: Face& became Face_handle, and added 'const' modifiers to other parameters)
 			\cgalModifEnd
 		*/
 		bool has_vertex(const Face_handle f, const Vertex_handle v, const int i) const;
