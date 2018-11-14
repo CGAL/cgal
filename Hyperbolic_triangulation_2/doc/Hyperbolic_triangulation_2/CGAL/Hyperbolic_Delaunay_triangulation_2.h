@@ -92,7 +92,7 @@ public:
   /// @}  
 
   /// \name Creation
-  /// @{    
+  /// @{
     /*!
       %Default constructor
     */
