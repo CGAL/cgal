@@ -8,12 +8,14 @@ namespace CGAL {
 
 The class `Hyperbolic_Delaunay_triangulation_traits_2` is designed as one of the 
 default models for the traits concept `HyperbolicDelaunayTriangulationTraits_2`
-offered by %CGAL. 
+offered by %CGAL. It guarantees exact constructions of Delaunay triangulations 
+and dual objects for input points with algebraic coordinates. 
 
 \tparam K must be a model of `Kernel`.
 
-If `K` provides exact computations with square roots, then this class automatically provides exact constructions
-and predicates. The default value for `K` is `CGAL::Cartesian<CORE::Expr>`.
+If `K` provides exact computations with square roots, then this class automatically 
+provides exact constructions and predicates. The default value for `K` is 
+`CGAL::Cartesian<CORE::Expr>`.
 
 \sa Hyperbolic_Delaunay_triangulation_CK_traits_2
 
@@ -31,6 +33,7 @@ public:
     \cgalModifBegin
     \cgalModifEnd
     */
+    typedef typename K::FT                           FT;
     typedef typename K::Point_2                      Hyperbolic_point_2;
     /*!
     \cgalModifBegin
@@ -41,13 +44,14 @@ public:
     typedef typename K::Segment_2                    Euclidean_segment_2;
   	typedef boost::variant< Circular_arc_2, 
                             Euclidean_segment_2 >	   Hyperbolic_segment_2;
+    typedef typename K::Triangle_2                   Hyperbolic_triangle_2;
   /// @}
   
 
   /// \name Creation
   /// @{
     /*!
-      Default constructor
+      %Default constructor
     */
     Hyperbolic_Delaunay_triangulation_traits_2();
 
