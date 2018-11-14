@@ -196,7 +196,7 @@ public:
 	typedef Translation_type<FT> 												Hyperbolic_translation;
 
 	typedef typename Base::Hyperbolic_point_2     								Hyperbolic_point_2;
-	typedef Hyperbolic_point_2 													Voronoi_point;
+	typedef Hyperbolic_point_2 													Hyperbolic_Voronoi_point_2;
 	typedef typename Base::Line_2      											Euclidean_line_2;
 	typedef typename Base::Euclidean_circle_or_line_2  							Euclidean_circle_or_line_2; 
 	typedef typename Base::Circular_arc_2			 							Circular_arc_2;
@@ -235,7 +235,7 @@ public:
 	typedef Hyperbolic_traits_with_translations_2_adaptor<Self, 
 			typename Base::Compare_distance_2>      							Compare_distance_2;
 	typedef Periodic_4_construct_hyperbolic_point_2<Self, 		
-			typename Base::Construct_hyperbolic_point_2> 		      			Construct_hyperbolic_point_2;
+			typename Kernel::Construct_point_2> 		  						Construct_hyperbolic_point_2;
 	typedef Hyperbolic_traits_with_translations_2_adaptor<Self,
 			typename Base::Side_of_oriented_hyperbolic_segment_2> 				Side_of_oriented_hyperbolic_segment_2;
 
@@ -541,9 +541,9 @@ public:
 
   public:
     
-  	typedef Voronoi_point 	result_type;
+  	typedef Hyperbolic_Voronoi_point_2 	result_type;
 
-    Voronoi_point operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q, Hyperbolic_point_2 r) { 
+    Hyperbolic_Voronoi_point_2 operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q, Hyperbolic_point_2 r) { 
       Origin o; 
       Hyperbolic_point_2 po = Hyperbolic_point_2(o);
       Circle_2 l_inf(po, FT(1));
@@ -586,7 +586,7 @@ public:
 	}
 
 	template <typename Face_handle>
-	Voronoi_point operator()(Face_handle fh) {
+	Hyperbolic_Voronoi_point_2 operator()(Face_handle fh) {
 		return operator()(	Construct_hyperbolic_point_2()(fh.vertex(0)->point(), fh.translation(0)),
 							Construct_hyperbolic_point_2()(fh.vertex(1)->point(), fh.translation(1)),
 							Construct_hyperbolic_point_2()(fh.vertex(2)->point(), fh.translation(2))  );
