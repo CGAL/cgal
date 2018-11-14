@@ -80,9 +80,9 @@ namespace CGAL {
 	typedef typename Base::Triangulation_data_structure        	Triangulation_data_structure;
 	typedef typename Base::Hyperbolic_translation              	Hyperbolic_translation;
 	typedef typename Base::Point                             	Point;
-	typedef typename Geom_traits::Voronoi_point 		   		Voronoi_point;
-	typedef typename Base::Segment                           	Segment;
-	typedef typename Base::Triangle 		                   	Triangle;
+	typedef typename Geom_traits::Hyperbolic_Voronoi_point_2 	Hyperbolic_Voronoi_point;
+	typedef typename Base::Hyperbolic_segment                  	Hyperbolic_segment;
+	typedef typename Base::Hyperbolic_triangle 		           	Hyperbolic_triangle;
 
 	typedef typename Base::Periodic_point                      Periodic_point;
 	typedef typename Base::Periodic_segment                    Periodic_segment;
@@ -105,7 +105,7 @@ namespace CGAL {
 	typedef typename Base::Edge_circulator                     Edge_circulator;
 	typedef typename Base::Vertex_circulator                   Vertex_circulator;
 	typedef typename GT::Construct_hyperbolic_circumcenter_2   Construct_hyperbolic_circumcenter_2;
-	typedef typename GT::Construct_segment_2 				   Construct_segment_2;
+	typedef typename GT::Construct_hyperbolic_segment_2 	   Construct_hyperbolic_segment_2;
 
   private:
 	typedef typename GT::FT                                    FT;
@@ -168,7 +168,7 @@ namespace CGAL {
 
 	template < class InputIterator >
 	std::ptrdiff_t
-	insert(InputIterator first, InputIterator last, const bool flag_clean_dummy_points = true) {
+	insert(InputIterator first, InputIterator last, const bool flag_clear_dummy_points = true) {
 	  size_type n_initial = this->number_of_vertices();
 	  std::vector<Point> points(first, last);
 	  spatial_sort(points.begin(), points.end(), geom_traits());
@@ -186,8 +186,8 @@ namespace CGAL {
 
 	  std::ptrdiff_t ret = this->number_of_vertices() - n_initial;
 
-	  if (flag_clean_dummy_points) {
-	  	clean_dummy_points();
+	  if (flag_clear_dummy_points) {
+	  	try_to_remove_dummy_vertices();
 	  }
 
 	  return ret;
@@ -259,7 +259,7 @@ namespace CGAL {
 
 
 
-	int clean_dummy_points() {
+	int try_to_remove_dummy_vertices() {
 		// count of dummy points in the triangulation
 		int cnt = 0;
 		for (int i = 0; i < dummy_points.size(); i++) {
@@ -357,8 +357,8 @@ public:
 	}
 
 
-	Segment dual(const Edge &e) const {
-		Segment res = Construct_segment_2()(dual(e.first), dual(e.first->neighbor(e.second), neighbor_translation(e.first, e.second)));
+	Hyperbolic_segment dual(const Edge &e) const {
+		Hyperbolic_segment res = Construct_hyperbolic_segment_2()(dual(e.first), dual(e.first->neighbor(e.second), neighbor_translation(e.first, e.second)));
 		return res;
 	}
 
