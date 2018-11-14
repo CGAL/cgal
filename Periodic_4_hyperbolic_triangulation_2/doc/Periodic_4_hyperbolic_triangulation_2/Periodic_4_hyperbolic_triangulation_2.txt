@@ -24,7 +24,7 @@ A triangulation is defined as a <i>simplicial complex</i>, i.e.:
 The simplices of dimension 0, 1, and 2 are called <I>vertex</I>, <I>edge</I>, and <I>face</I>, 
 respectively.
 
-A triangulations of the Bolza surface can be seen as a periodic triangulation of the hyperbolic plane.
+A triangulation of the Bolza surface can be seen as a periodic triangulation of the hyperbolic plane.
 
 
 \section P4HT2_thespace The Bolza surface
