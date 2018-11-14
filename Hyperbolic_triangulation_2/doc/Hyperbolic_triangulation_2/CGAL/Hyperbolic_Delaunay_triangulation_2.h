@@ -39,12 +39,12 @@ public:
       Size type (integral unsigned).
     */
     typedef typename Triangulation_data_structure::size_type        size_type;
-    typedef typename Geom_traits::Point_2                           Point;
+    typedef typename Geom_traits::Hyperbolic_point_2                Point;
     /*!
     \cgalModifBegin
     \cgalModifEnd
     */
-    typedef typename Geom_traits::Triangle_2                        Hyperbolic_triangle;
+    typedef typename Geom_traits::Hyperbolic_triangle_2             Hyperbolic_triangle;
   /// @}
 
 
@@ -60,8 +60,8 @@ public:
   /// \name 
   /// The following types are defined for use in the construction of the Voronoi diagram:
   /// @{
-    typedef typename Geom_traits::Voronoi_point_2       Voronoi_point;
-    typedef typename Geom_traits::Hyperbolic_segment_2  Hyperbolic_segment;
+    typedef typename Geom_traits::Hyperbolic_Voronoi_point_2       Hyperbolic_Voronoi_point;
+    typedef typename Geom_traits::Hyperbolic_segment_2             Hyperbolic_segment;
   /// @}
 
     
@@ -70,10 +70,10 @@ public:
   /// The following iterator and circulator types are defined to give access over hyperbolic faces and edges:
   /// \cgalModifEnd
   /// @{
-    typedef unspecified_type                            All_faces_iterator;
-    typedef unspecified_type                            All_edges_iterator;
-    typedef unspecified_type                            All_vertices_iterator;
-    typedef unspecified_type                            Vertex_circulator;
+    typedef Triangulation_data_structure::Face_iterator     All_faces_iterator;
+    typedef Triangulation_data_structure::Edge_iterator     All_edges_iterator;
+    typedef Triangulation_data_structure::Vertex_iterator   All_vertices_iterator;
+    typedef Triangulation_data_structure::Vertex_circulator Vertex_circulator;
   /// @}
 
   /// \name
@@ -118,7 +118,7 @@ public:
       The triangulation `tr` is duplicated, and modifying the copy after the duplication does not modify the original.
       \todo implement! 
     */
-    Hyperbolic_Delaunay_triangulation_2& operator=(Hyperbolic_Delaunay_triangulation_2& tr);
+    Hyperbolic_Delaunay_triangulation_2& operator=(Hyperbolic_Delaunay_triangulation_2 tr);
     
     /*!
       The triangulation is swapped with `tr`.
@@ -127,7 +127,7 @@ public:
     void swap(Hyperbolic_Delaunay_triangulation_2& tr);
     
     /*!
-      Deletes all finite vertices and faces of the triangulation.
+      Deletes all vertices and faces of the triangulation.
       \todo implement!
     */
     void clear();
@@ -167,6 +167,16 @@ public:
       \todo implement!
     */
     Triangulation_data_structure& tds();
+
+    /*!
+      \cgalModifBegin
+      Checks the combinatorial validity of the triangulation, the validity of 
+      its geometric embedding, and also that all edges and faces are Delaunay 
+      hyperbolic.
+      \cgalModifEnd
+      \todo implement!
+    */
+    bool  is_valid ();
 
     /*!
       Returns the dimension of the affine hull.
@@ -257,6 +267,16 @@ public:
       \todo implement this function!
     */
     void remove(Vertex_handle v);
+
+    /*!
+      \cgalModifBegin
+      Removes the vertices in the iterator range `[firs, last)` from the triangulation.
+      \pre all vertices in `[first, last)` are vertices of the triangulation.
+      \cgalModifEnd
+      \todo implement!
+    */
+    template <class VertexRemoveIterator>
+    void remove(VertexRemoveIterator first, VertexRemoveIterator last);
   /// @}
 
 
@@ -339,7 +359,7 @@ public:
       Returns the hyperbolic center of the circumdisk of `f`.
       \pre `f` is hyperbolic
     */
-    Voronoi_point dual(Face_handle f) const;
+    Hyperbolic_Voronoi_point dual(Face_handle f) const;
 
     /*!
       Returns the hyperbolic segment that is dual to `e`.
