@@ -77,8 +77,8 @@ public:
 	typedef TDS 									        	Triangulation_data_structure;
 	typedef typename GT::Hyperbolic_translation 				Hyperbolic_translation;
 	typedef typename TDS::Vertex::Point 	    				Point;
-	typedef typename GT::Segment_2 								Segment;
-	typedef typename GT::Triangle_2 							Triangle;
+	typedef typename GT::Hyperbolic_segment_2 					Hyperbolic_segment;
+	typedef typename GT::Hyperbolic_triangle_2 					Hyperbolic_triangle;
 	typedef typename GT::Side_of_oriented_hyperbolic_segment_2 	Side_of_oriented_hyperbolic_segment;
 
 	typedef std::pair<Point, Hyperbolic_translation> 				      	Periodic_point;
@@ -282,38 +282,38 @@ public:
 		return construct_point(	pp.first, pp.second);
 	}
 
-	Segment construct_segment(const Point& src, const Point& tgt) const {
+	Hyperbolic_segment construct_hyperbolic_segment(const Point& src, const Point& tgt) const {
 	  	return geom_traits().construct_segment_2_object()(src, tgt);
 	}
 
-	Segment construct_segment(	const Point& src, 					const Point& tgt, 
-								const Hyperbolic_translation& tr1, 	const Hyperbolic_translation& tr2) const {
+	Hyperbolic_segment construct_hyperbolic_segment(	const Point& src, 					const Point& tgt, 
+														const Hyperbolic_translation& tr1, 	const Hyperbolic_translation& tr2) const {
 	  	return geom_traits().construct_segment_2_object()(src, tgt, tr1, tr2);
 	}
 
-	Segment construct_segment(const Face_handle & fh, int idx) const {
+	Hyperbolic_segment construct_hyperbolic_segment(const Face_handle & fh, int idx) const {
 		CGAL_triangulation_precondition( idx >= 0 && idx <= 2 );
-		return construct_segment(	fh->vertex(ccw(idx))->point(),  fh->vertex(cw(idx))->point(),
-									fh->translation(ccw(idx)),           fh->translation(cw(idx)) );
+		return construct_hyperbolic_segment(	fh->vertex(ccw(idx))->point(),  fh->vertex(cw(idx))->point(),
+												fh->translation(ccw(idx)),           fh->translation(cw(idx)) );
 	}
 
-	Segment construct_segment(const pair<Face_handle, int> & edge) const {
+	Hyperbolic_segment construct_hyperbolic_segment(const pair<Face_handle, int> & edge) const {
 	  	CGAL_triangulation_precondition( edge.second >= 0 && edge.second <= 2 );	
-	  	return construct_segment(edge.first, ccw(edge.second));
+	  	return construct_hyperbolic_segment(edge.first, ccw(edge.second));
 	}
 
-	Segment construct_segment(const Periodic_segment & ps) const {
-		return construct_segment(	ps[0].first,  ps[1].first,
-									ps[0].second, ps[1].second );
+	Hyperbolic_segment construct_hyperbolic_segment(const Periodic_segment & ps) const {
+		return construct_hyperbolic_segment(	ps[0].first,  ps[1].first,
+												ps[0].second, ps[1].second );
 	}
 
-	Triangle construct_triangle(const Face_handle & fh) const {
+	Hyperbolic_triangle construct_hyperbolic_triangle(const Face_handle & fh) const {
 	  return geom_traits().construct_triangle_2_object()( 	fh->vertex(0)->point(),	fh->vertex(1)->point(),	fh->vertex(2)->point(),
 								 							fh->translation(0),     fh->translation(1),     fh->translation(2)   );
 	}
 
 
-	Triangle construct_triangle(const Periodic_triangle & pt) const {
+	Hyperbolic_triangle construct_hyperbolic_triangle(const Periodic_triangle & pt) const {
 		return construct_triangle( 	pt[0].first, pt[1].first, pt[2].first,
 									pt[0].second,pt[1].second,pt[2].second );
 	}
