@@ -14,8 +14,8 @@ handling of Delaunay triangulations of the Bolza surface.
 The class expects two template parameters.
 
 \tparam GT 	Geometric Traits parameter. Must be a model of the concept 
-			`Periodic_4HyperbolicDelaunayTriangulationTraits_2`. This parameter has no
-			default value.
+			`Periodic_4HyperbolicDelaunayTriangulationTraits_2`. The default value for this
+			parameter is `Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<>`.
 \tparam	TDS %Triangulation Data Structure parameter. Must be a model of the concept
 		`TriangulationDataStructure_2` with some additional functionality in the vertices 
 		and faces, following the concepts `Periodic_4HyperbolicTriangulationVertexBase_2` and
