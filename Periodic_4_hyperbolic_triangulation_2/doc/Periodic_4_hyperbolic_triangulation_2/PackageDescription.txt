@@ -64,11 +64,10 @@ the hyperbolic plane.
 
 ## Concepts ##
 
-- `Periodic_4HyperbolicTriangulationTraits_2` refines the concept `HyperbolicDelaunayTriangulationTraits_2`
-- `Periodic_4HyperbolicDelaunayTriangulationTraits_2` 
-- `Periodic_4HyperbolicTriangulationFaceBase_2` 
-- `Periodic_4HyperbolicTriangulationVertexBase_2` 
-
+- `Periodic_4HyperbolicTriangulationTraits_2` adds supplementary requirements to the concept `HyperbolicDelaunayTriangulationTraits_2` that are necessary for periodic hyperbolic triangulations.
+- `Periodic_4HyperbolicDelaunayTriangulationTraits_2` refines the concept `Periodic_4HyperbolicTriangulationTraits_2` by adding requirements necessary for the computation of periodic hyperbolic Delaunay triangulations.
+- `Periodic_4HyperbolicTriangulationFaceBase_2` describes the requirements for an interface that allows faces to store hyperbolic translations.
+- `Periodic_4HyperbolicTriangulationVertexBase_2` describes the requirements for an interface that allows vertices to store hyperbolic translations.
 
 ## Classes ##
 
@@ -77,8 +76,8 @@ to the elements of the triangulation (vertices, edges, and faces), and functiona
 triangulations in general, such as point location. This class does <i>not</i> support insertion or removal of points.
 - `CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2` allows to construct and modify Delaunay triangulations of the Bolza surface.
 - `CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2` is a model for the concept `Periodic_4HyperbolicDelaunayTriangulationTraits_2`.
-- `CGAL::Periodic_4_hyperbolic_triangulation_face_base_2` is a model of the concept `Periodic_4HyperbolicTriangulationFaceBase_2`.
-- `CGAL::Periodic_4_hyperbolic_triangulation_vertex_base_2` is a model of the concept `Periodic_4HyperbolicTriangulationVertexBase_2`.
+- `CGAL::Periodic_4_hyperbolic_triangulation_face_base_2` is a model of the concept `Periodic_4HyperbolicTriangulationFaceBase_2` and represents a face of the triangulation.
+- `CGAL::Periodic_4_hyperbolic_triangulation_vertex_base_2` is a model of the concept `Periodic_4HyperbolicTriangulationVertexBase_2` and represents a vertex of the triangulation.
 - `CGAL::Hyperbolic_octagon_translation` is a class that represent hyperbolic translations of the fundamental group \f$\mathcal G\f$ 
 of the Bolza surface.
 \cgalModifEnd
