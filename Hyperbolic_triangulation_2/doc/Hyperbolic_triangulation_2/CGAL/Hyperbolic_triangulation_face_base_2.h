@@ -6,15 +6,13 @@ namespace CGAL {
 /*!
 \ingroup PkgHyperbolicTriangulation2VertexFaceClasses
 
-The class `Hyperbolic_triangulation_face_base_2` is designed as one of the 
-default models for the face concept `HyperbolicTriangulationFaceBase_2`
+The class `Hyperbolic_triangulation_face_base_2` is designed as the 
+default model for the face concept `HyperbolicTriangulationFaceBase_2`
 offered by %CGAL. 
 
 \tparam Gt must be a model of `HyperbolicDelaunayTriangulationTraits_2`.
 \tparam Fb must be a model of `TriangulationFaceBase_2`. %Defaults to `Triangulation_face_base_2<Gt>`.
 
-
-\sa Hyperbolic_triangulation_face_base_with_info_2
 
 \cgalModels HyperbolicTriangulationFaceBase_2
 */
