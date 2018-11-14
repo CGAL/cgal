@@ -13,6 +13,11 @@ to be fulfilled by any class used to instantiate the first template parameter of
 (points, segments...) forming the triangulation together with geometric predicates and 
 constructions on these objects.
 
+\cgalModifBegin
+This concept refines `DelaunayTriangulationTraits_2` because the class `CGAL::Hyperbolic_Delaunay_triangulation_2`
+internally relies on the class `CGAL::Delaunay_triangulation_2`.	
+\cgalModifEnd
+
 \cgalHasModel CGAL::Hyperbolic_Delaunay_triangulation_traits_2
 \cgalHasModel CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2
 */
@@ -54,7 +59,7 @@ public:
 
 	/*!
 		\cgalModifBegin
-		Represents a triangle in the hyperbolic plane defined by three points. 
+		Represents a triangle in the hyperbolic plane defined by three hyperbolic points. 
 		\cgalModifEnd
 	*/
 	typedef unspecified_type 			Hyperbolic_triangle_2;
@@ -101,11 +106,10 @@ public:
 		provide the function operator
 
 		`bool operator() (Hyperbolic_point_2 p0, Hyperbolic_point_2 p1, Hyperbolic_point_2 p2, int& ind),`
-		
-		gives in addition the integer
-		`ind`, which is the index of the non-hyperbolic edge of the triangle, if
-		the returned value is `false`, as defined in \cgalCite{cgal:bdt-hdcvd-14}. The side of the triangle opposite 
-		to `pj` for `j = 0,1,2` is considered to have index `j`.
+	
+		which returns whether the triangle is hyperbolic, and if not stores in `ind` the index of the 
+		non-hyperbolic edge of the triangle, as defined in \cgalCite{cgal:bdt-hdcvd-14}.
+		The edge of the triangle opposite to `pj` for `j = 0,1,2` is considered to have index `j`.
 
 		\cgalModifEnd
 	*/
@@ -116,12 +120,6 @@ public:
   /// \name Construction Types
   /// @{
 
-	/*!
-	\cgalModifBegin
-	A constructor object, must be model of the concept `Kernel::ConstructPoint_2`.
-	\cgalModifEnd
-	*/
-	typedef unspecified_type 			Construct_hyperbolic_point_2;
 
 	/*!
 		A constructor object. 
@@ -193,7 +191,6 @@ public:
   /// The following functions must be provided only if the methods of `Hyperbolic_Delaunay_triangulation_2`
   /// that return elements of the Voronoi diagram are instantiated:
   /// @{
-  	Construct_hyperbolic_point_2 		 construct_hyperbolic_point_2_object();
 	Construct_hyperbolic_segment_2       construct_hyperbolic_segment_2_object();
 	Construct_hyperbolic_circumcenter_2  construct_hyperbolic_circumcenter_2_object();
 	Construct_hyperbolic_bisector_2      construct_hyperbolic_bisector_2_object();
