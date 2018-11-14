@@ -26,6 +26,7 @@
 #include <CGAL/Periodic_4_hyperbolic_triangulation_2.h>
 #include <CGAL/Periodic_4_hyperbolic_triangulation_vertex_base_2.h>
 #include <CGAL/Periodic_4_hyperbolic_triangulation_face_base_2.h>
+#include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Triangulation_vertex_base_2.h>
 #include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -52,7 +53,7 @@
 
 namespace CGAL {
 
-  template <  class GT,
+  template <  class GT = Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<>,
   class TDS = Triangulation_data_structure_2<
   		Periodic_4_hyperbolic_triangulation_vertex_base_2<GT>,
 		Periodic_4_hyperbolic_triangulation_face_base_2<GT> 
