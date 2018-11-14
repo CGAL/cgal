@@ -45,7 +45,8 @@ The class expects two template parameters.
 		/*!
 		\cgalModifBegin
 			Point range constructor.
-			Initializes a triangulation and then inserts all points in the `InputIterator`.
+			Initializes a triangulation and then inserts the points in the 
+			iterator range `[first, last)`.
 		\cgalModifEnd
 		*/
 		template < class InputIterator >
@@ -111,7 +112,7 @@ The class expects two template parameters.
 			The face `start`, if given, is used as a starting place for the location of the point.
 			Note that this function does not remove unnecessary dummy points. 
 			The removal, if desired, should be done by manually calling the function 
-			`clean_dummy_points()`.
+			`try_to_remove_dummy_vertices()`.
 			\cgalModifEnd
 		*/
 		Vertex_handle insert(const Point  &p, Face_handle start = Face_handle());
@@ -121,13 +122,13 @@ The class expects two template parameters.
 			Inserts all points in the input iterator into the triangulation.
 			Note that this function by default tries to remove unnecessary dummy points 
 			at the end of the insertion process. This behavior is controlled by the 
-			optional boolean parameter `flag_clean_dummy_points`; if automatic removal
+			optional boolean parameter `flag_try_to_remove_dummy_vertices`; if automatic removal
 			of the dummy points is not desired, set the flag to `false`.
 			\cgalModifEnd
 		*/
 		template < class InputIterator >
 		std::ptrdiff_t
-		insert(InputIterator first, InputIterator last, const bool flag_clean_dummy_points = true);
+		insert(InputIterator first, InputIterator last, const bool flag_try_to_remove_dummy_vertices = true);
 	/// @}
 
 	/// \name Vertex removal
@@ -143,6 +144,16 @@ The class expects two template parameters.
 			\cgalModifEnd
 		*/
 		bool remove(Vertex_handle v);
+
+		/*!
+	      \cgalModifBegin
+	      Removes the vertices in the iterator range `[firs, last)` from the triangulation.
+	      \pre all vertices in `[first, last)` are vertices of the triangulation.
+	      \cgalModifEnd
+	      \todo implement!
+	    */
+	    template <class VertexRemoveIterator>
+	    void remove(VertexRemoveIterator first, VertexRemoveIterator last); 
 	/// @}
 
 	/// \name Removal of dummy points
@@ -155,7 +166,7 @@ The class expects two template parameters.
 			still present in the triangulation.
 			\cgalModifEnd
 		*/
-		int clean_dummy_points();
+		int try_to_remove_dummy_vertices();
 	/// @}
 	
 
