@@ -238,7 +238,7 @@ TriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
     for (int i=0; i<3; i++) {
       if (fh < fh->neighbor(i)) {
         m_painter->setPen(this->edgesPen());
-        painterostream << t->construct_segment(fh, i);
+        painterostream << t->construct_hyperbolic_segment(fh, i);
       }
     }
   }
@@ -287,14 +287,14 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
     Point_2 v6(-em*p34/FT(4), -ep*p34/FT(4));
     Point_2 v7(p14*(ep - em)/FT(4), -p14*(ep + em)/FT(4));
 
-    painterostream << t->construct_segment(v0, v1);
-    painterostream << t->construct_segment(v1, v2);
-    painterostream << t->construct_segment(v2, v3);
-    painterostream << t->construct_segment(v3, v4);
-    painterostream << t->construct_segment(v4, v5);
-    painterostream << t->construct_segment(v5, v6);
-    painterostream << t->construct_segment(v6, v7);
-    painterostream << t->construct_segment(v7, v0);
+    painterostream << t->construct_hyperbolic_segment(v0, v1);
+    painterostream << t->construct_hyperbolic_segment(v1, v2);
+    painterostream << t->construct_hyperbolic_segment(v2, v3);
+    painterostream << t->construct_hyperbolic_segment(v3, v4);
+    painterostream << t->construct_hyperbolic_segment(v4, v5);
+    painterostream << t->construct_hyperbolic_segment(v5, v6);
+    painterostream << t->construct_hyperbolic_segment(v6, v7);
+    painterostream << t->construct_hyperbolic_segment(v7, v0);
   }
 
 
@@ -308,7 +308,7 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
     painterostream = PainterOstream<Geom_traits>(painter);
     int cnt = 0;
     for (typename std::list<typename T::Face_handle>::iterator it = cfaces.begin(); it != cfaces.end(); it++) {
-      painterostream << t->construct_triangle(*it);
+      painterostream << t->construct_hyperbolic_triangle(*it);
     }
     painter->setPen(oldpen);
   }
@@ -327,18 +327,18 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
                                               CP2()(fit->vertex(1)->point(), fit->translation(1)),
                                               CP2()(fit->vertex(2)->point(), fit->translation(2)) } ;
 
-      painterostream << t->construct_segment(pts[0], pts[1]);
-      painterostream << t->construct_segment(pts[1], pts[2]);
-      painterostream << t->construct_segment(pts[2], pts[0]);
+      painterostream << t->construct_hyperbolic_segment(pts[0], pts[1]);
+      painterostream << t->construct_hyperbolic_segment(pts[1], pts[2]);
+      painterostream << t->construct_hyperbolic_segment(pts[2], pts[0]);
       //cout << " original painted" << endl;
       if (visible_copies) {
       //   cout << "painting copies" << endl;
       //   typename Geom_traits::Point_2 pts[] = {fit->translation(Triangulation_cw_ccw_2::ccw(0)).apply(fit->vertex(Triangulation_cw_ccw_2::ccw(k))->point());
       //   typename Geom_traits::Point_2 tgt = fit->translation(Triangulation_cw_ccw_2::cw(k)).apply(fit->vertex(Triangulation_cw_ccw_2::cw(k))->point());
         for (int j = 0; j < trans.size(); j++) {
-          painterostream << t->construct_segment( CP2()(pts[0], trans[j]), CP2()(pts[1], trans[j]) );
-          painterostream << t->construct_segment( CP2()(pts[1], trans[j]), CP2()(pts[2], trans[j]) );
-          painterostream << t->construct_segment( CP2()(pts[2], trans[j]), CP2()(pts[0], trans[j]) );
+          painterostream << t->construct_hyperbolic_segment( CP2()(pts[0], trans[j]), CP2()(pts[1], trans[j]) );
+          painterostream << t->construct_hyperbolic_segment( CP2()(pts[1], trans[j]), CP2()(pts[2], trans[j]) );
+          painterostream << t->construct_hyperbolic_segment( CP2()(pts[2], trans[j]), CP2()(pts[0], trans[j]) );
         }
       }
       //cout << "   copies painted" << endl;
@@ -348,7 +348,7 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
       temp.setColor(::Qt::red);
       painter->setPen(temp);
       painterostream = PainterOstream<Geom_traits>(painter);
-      painterostream << t->construct_segment(source, target);
+      painterostream << t->construct_hyperbolic_segment(source, target);
     }
   }
 

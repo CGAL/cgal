@@ -76,7 +76,7 @@ private:
     }
   }
 
-  typedef typename DT::Voronoi_point                                              Voronoi_point;
+  typedef typename DT::Hyperbolic_Voronoi_point                                   Voronoi_point;
   typedef typename DT::Geom_traits::Construct_inexact_hyperbolic_circumcenter_2   Circumcenter;
   typedef typename DT::Geom_traits::Construct_hyperbolic_segment_2                Segment;
   typedef typename DT::Face_handle                                                Face_handle;
@@ -124,7 +124,7 @@ VoronoiGraphicsItem<DT>::paint(QPainter *painter, const QStyleOptionGraphicsItem
   
   for (typename DT::Face_iterator fit = dt->faces_begin(); fit != dt->faces_end(); fit++) {
     for (int i = 0; i < 3; i++) {
-      typename DT::Segment s =  Segment()(cc[fit], CP2()(cc[fit->neighbor(i)], dt->neighbor_translation(fit, i))); //dt->dual(std::pair<typename DT::Face_handle, int>(fit, i));
+      typename DT::Hyperbolic_segment s =  Segment()(cc[fit], CP2()(cc[fit->neighbor(i)], dt->neighbor_translation(fit, i))); //dt->dual(std::pair<typename DT::Face_handle, int>(fit, i));
       pos << s;
     }
   }
