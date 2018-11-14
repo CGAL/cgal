@@ -134,6 +134,7 @@ MainWindow::~MainWindow()
 MainWindow::MainWindow(bool verbose, QWidget* parent)
   : CGAL::Qt::DemosMainWindow(parent)
 {
+  bbox_need_update = true;
   ui = new Ui::MainWindow;
   ui->setupUi(this);
   menuBar()->setNativeMenuBar(false);
@@ -207,7 +208,7 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
           this, SLOT(removeManipulatedFrame(CGAL::Three::Scene_item*)));
 
   connect(scene, SIGNAL(updated_bbox(bool)),
-          this, SLOT(updateViewerBBox(bool)));
+          this, SLOT(invalidate_bbox()));
 
   connect(scene, SIGNAL(selectionChanged(int)),
           this, SLOT(selectSceneItem(int)));
@@ -863,50 +864,54 @@ void MainWindow::error(QString text) {
 
 void MainWindow::updateViewerBBox(bool recenter = true)
 {
-  const Scene::Bbox bbox = scene->bbox();
+  if(bbox_need_update)
+  {
+    const Scene::Bbox bbox = scene->bbox();
     CGAL::qglviewer::Vec center = viewer->camera()->pivotPoint();
-  const double xmin = bbox.xmin();
-  const double ymin = bbox.ymin();
-  const double zmin = bbox.zmin();
-  const double xmax = bbox.xmax();
-  const double ymax = bbox.ymax();
-  const double zmax = bbox.zmax();
-
-
-  CGAL::qglviewer::Vec
-    vec_min(xmin, ymin, zmin),
-    vec_max(xmax, ymax, zmax),
-    bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
-  CGAL::qglviewer::Vec offset(0,0,0);
-  double l_dist = (std::max)((std::abs)(bbox_center.x - viewer->offset().x),
-                      (std::max)((std::abs)(bbox_center.y - viewer->offset().y),
-                          (std::abs)(bbox_center.z - viewer->offset().z)));
-  if((std::log2)(l_dist) > 13.0 )
-    for(int i=0; i<3; ++i)
+    const double xmin = bbox.xmin();
+    const double ymin = bbox.ymin();
+    const double zmin = bbox.zmin();
+    const double xmax = bbox.xmax();
+    const double ymax = bbox.ymax();
+    const double zmax = bbox.zmax();
+    
+    
+    CGAL::qglviewer::Vec
+        vec_min(xmin, ymin, zmin),
+        vec_max(xmax, ymax, zmax),
+        bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
+    CGAL::qglviewer::Vec offset(0,0,0);
+    double l_dist = (std::max)((std::abs)(bbox_center.x - viewer->offset().x),
+                               (std::max)((std::abs)(bbox_center.y - viewer->offset().y),
+                                          (std::abs)(bbox_center.z - viewer->offset().z)));
+    if((std::log2)(l_dist) > 13.0 )
+      for(int i=0; i<3; ++i)
+      {
+        offset[i] = -bbox_center[i];
+        
+      }
+    if(offset != viewer->offset())
     {
-      offset[i] = -bbox_center[i];
-
+      viewer->setOffset(offset);
+      for(int i=0; i<scene->numberOfEntries(); ++i)
+      {
+        scene->item(i)->invalidateOpenGLBuffers();
+        scene->item(i)->itemChanged();
+      }
     }
-  if(offset != viewer->offset())
-  {
-    viewer->setOffset(offset);
-    for(int i=0; i<scene->numberOfEntries(); ++i)
+    
+    
+    viewer->setSceneBoundingBox(vec_min,
+                                vec_max);
+    if(recenter)
     {
-      scene->item(i)->invalidateOpenGLBuffers();
-      scene->item(i)->itemChanged();
+      viewer->camera()->showEntireScene();
     }
-  }
-
-
-  viewer->setSceneBoundingBox(vec_min,
-                              vec_max);
-  if(recenter)
-  {
-    viewer->camera()->showEntireScene();
-  }
-  else
-  {
-    viewer->camera()->setPivotPoint(center);
+    else
+    {
+      viewer->camera()->setPivotPoint(center);
+    }
+    bbox_need_update = false;
   }
 }
 
@@ -1644,6 +1649,7 @@ void MainWindow::on_actionLoad_triggered()
         scene->item(scene->numberOfEntries()-1)->setColor(colors_[++nb_item]);
     }
   }
+  updateViewerBBox(true);
 }
 
 void MainWindow::on_actionSaveAs_triggered()
@@ -1817,13 +1823,17 @@ void MainWindow::on_actionDuplicate_triggered()
 
 void MainWindow::on_actionShowHide_triggered()
 {
+  scene->cutDataUpdate(true);
   Q_FOREACH(QModelIndex index, sceneView->selectionModel()->selectedRows())
   {
     int i = scene->getIdFromModelIndex(proxyModel->mapToSource(index));
     CGAL::Three::Scene_item* item = scene->item(i);
     item->setVisible(!item->visible());
-    scene->itemChanged(i);
+    item->redraw();
   }
+  scene->cutDataUpdate(false);
+  scene->allItemsChanged();
+  updateViewerBBox(false);
 }
 
 void MainWindow::on_actionSetPolyhedronA_triggered()
@@ -2406,4 +2416,9 @@ void MainWindow::setDefaultSaveDir()
     def_save_dir = dirpath;
   QSettings settings;
   settings.setValue("default_saveas_dir", def_save_dir);
+}
+
+void MainWindow::invalidate_bbox()
+{
+  bbox_need_update = true;
 }

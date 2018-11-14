@@ -144,11 +144,22 @@ public:
   //! Updates the information about `item` in the
   //! Geometric Objects list and redraws the scene.
   virtual void itemChanged(CGAL::Three::Scene_item* item) = 0;
+  //!
+  //! \brief Updates all the items in the SceneView.
+  //!
+  virtual void allItemsChanged() = 0;
   //! Re computes the scene Bbox without recentering it.
   virtual void itemVisibilityChanged(CGAL::Three::Scene_item*) = 0;
   //! Clears the current selection then sets the selected item to the target index.
   //! Used to update the selection in the Geometric Objects view.
-  virtual void setSelectedItem(Item_id) = 0;  
+  virtual void setSelectedItem(Item_id) = 0;
+  //! \brief ignore data updating.
+  //! 
+  //! This will ignore all the individual calls to `itemChanged()` until 
+  //! `cutDataUpdate()` is called whith `b` being `false`.
+  //! Activate this when you know you will call allItemsChanged() after a loop. 
+  //!
+  virtual void cutDataUpdate(bool b) =0;
 }; // end interface Scene_interface
 }
 }
