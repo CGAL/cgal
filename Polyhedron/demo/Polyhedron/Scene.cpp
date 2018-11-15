@@ -1178,8 +1178,8 @@ void Scene::itemChanged(Item_id i)
 {
   if(dont_emit_changes)
     return;
-    if(i < 0 || i >= m_entries.size())
-        return;
+  if(i < 0 || i >= m_entries.size())
+    return;
 
   Q_EMIT dataChanged(this->createIndex(i, 0),
                      this->createIndex(i, LastColumn));
