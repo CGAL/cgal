@@ -611,12 +611,6 @@ void Viewer::keyPressEvent(QKeyEvent* e)
         update();
         return;
     }
-    else if(e->key() == Qt::Key_C) {
-      QVector4D box[6];
-      for(int i=0; i<6; ++i)
-        box[i] = QVector4D(1,0,0,0);
-          enableClippingBox(box);
-        }
   }
   else if(e->key() == Qt::Key_I && e->modifiers() & Qt::ControlModifier){
     d->scene->printAllIds(this);

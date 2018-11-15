@@ -793,6 +793,7 @@ public:
 
   void setItemIsMulticolor(bool b) {
     poly_item->setItemIsMulticolor(b);
+    poly_item->computeItemColorVectorAutomatically(b);
   }
 
   void selection_changed(bool b);

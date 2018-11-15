@@ -133,6 +133,7 @@ Optimizer_thread* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
   if ( NULL != sm_item )
   {
     const_cast<Scene_surface_mesh_item*>(sm_item)->setItemIsMulticolor(true);
+    const_cast<Scene_surface_mesh_item*>(sm_item)->computeItemColorVectorAutomatically(true);
     // Build domain
     const SMesh* smesh = sm_item->face_graph();
     if ( NULL == smesh )
