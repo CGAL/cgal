@@ -43,8 +43,6 @@
 
 #include <set>
 #include <stack>
-#include <fstream>
-#include <array>
 #include <cmath>
 
 #ifndef DOXYGEN_RUNNING
