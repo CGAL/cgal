@@ -1,5 +1,4 @@
-#ifndef CGAL_NO_DEPRECATED_CODE
-#define  CGAL_NO_DEPRECATION_WARNINGS
+#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -54,11 +53,3 @@ int main()
   std::ofstream medit_file("out.mesh");
   c3t3.output_to_medit(medit_file);
 }
-
-#else // CGAL_NO_DEPRECATED_CODE
-#include <iostream>
-int main() {
-  std::cerr << "CGAL_NO_DEPRECATED_CODE is defined. Nothing to test.\n";
-  return 0;
-}
-#endif // CGAL_NO_DEPRECATED_CODE

@@ -5,7 +5,7 @@
 
 The concept `AlphaShapeCell_3` describes the requirements for the base cell of an alpha shape.
 
-\cgalRefines `TriangulationCellBase_3`, if the underlying triangulation of the alpha shape is a Delaunay triangulation.
+\cgalRefines `DelaunayTriangulationCellBase_3`, if the underlying triangulation of the alpha shape is a Delaunay triangulation.
 \cgalRefines `RegularTriangulationCellBase_3`, if the underlying triangulation of the alpha shape is a regular triangulation.
 \cgalRefines `Periodic_3TriangulationDSCellBase_3`, if the underlying triangulation of the alpha shape is a periodic triangulation.
 

@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgApolloniusGraph2
+\ingroup PkgApolloniusGraph2Ref
 
 We provide an alternative to the class 
 `Apollonius_graph_2<Gt,Agds>` for the dynamic 

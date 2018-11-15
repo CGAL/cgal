@@ -25,7 +25,6 @@ endforeach()
 
 
 find_package(CGAL REQUIRED ImageIO)
-include( ${CGAL_USE_FILE} )
 find_package(VTK QUIET NO_MODULE)
 
 if(VTK_FOUND)

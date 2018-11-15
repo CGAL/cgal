@@ -281,7 +281,7 @@ update_new_point(
 // ----------------------------------------------------------------------------
 
 /**
-   \ingroup PkgPointSetProcessingAlgorithms
+   \ingroup PkgPointSetProcessing3Algorithms
    This method progressively upsamples the point set while 
    approaching the edge singularities (detected by normal variation), which 
    generates a denser point set from an input point set. This has applications 

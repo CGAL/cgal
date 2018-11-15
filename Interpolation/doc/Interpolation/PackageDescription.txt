@@ -1,27 +1,27 @@
-/// \defgroup PkgInterpolation2 2D and Surface Function Interpolation Reference
+/// \defgroup PkgInterpolation2Ref 2D and Surface Function Interpolation Reference
 
 /// \defgroup PkgInterpolation2Concepts Concepts
-/// \ingroup PkgInterpolation2
+/// \ingroup PkgInterpolation2Ref
 
 /// \defgroup PkgInterpolation2Interpolation Interpolation Functions
-/// \ingroup PkgInterpolation2
+/// \ingroup PkgInterpolation2Ref
 
 /// \defgroup PkgInterpolation2NatNeighbor Natural Neighbor Coordinate Computation
-/// \ingroup PkgInterpolation2
+/// \ingroup PkgInterpolation2Ref
 
 /// \defgroup PkgInterpolation2SurfaceNeighbor Surface Neighbor and Surface Neighbor Coordinate Computation
-/// \ingroup PkgInterpolation2
+/// \ingroup PkgInterpolation2Ref
 
 /*!
-\addtogroup PkgInterpolation2
-\cgalPkgDescriptionBegin{2D and Surface Function Interpolation,PkgInterpolation2Summary}
+\addtogroup PkgInterpolation2Ref
+\cgalPkgDescriptionBegin{2D and Surface Function Interpolation,PkgInterpolation2}
 \cgalPkgPicture{interpolation.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Julia Flötotto}
 \cgalPkgDesc{This package implements different methods for scattered data interpolation:
 Given measures of a function on a set of discrete data points, the task is to interpolate
 this function on an arbitrary query point. The package further offers functions for natural neighbor interpolation.}
-\cgalPkgManuals{Chapter_2D_and_Surface_Function_Interpolation,PkgInterpolation2}
+\cgalPkgManuals{Chapter_2D_and_Surface_Function_Interpolation,PkgInterpolation2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.1}

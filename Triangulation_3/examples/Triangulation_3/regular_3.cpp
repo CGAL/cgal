@@ -1,5 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Regular_triangulation_3.h>
+
 #include <cassert>
 #include <vector>
 
@@ -24,10 +26,10 @@ int main()
   for (int z=0 ; z<5 ; z++)
     for (int y=0 ; y<5 ; y++)
       for (int x=0 ; x<5 ; x++) {
-	  Point p(x, y, z);
-          Weight w = (x+y-z*y*x)*2.0; // let's say this is the weight.
-	  P.push_back(Weighted_point(p, w));
-          ++number_of_points;
+        Point p(x, y, z);
+        Weight w = (x+y-z*y*x)*2.0; // let's say this is the weight.
+        P.push_back(Weighted_point(p, w));
+        ++number_of_points;
       }
 
   Rt T;
@@ -43,8 +45,8 @@ int main()
   // removal of all vertices
   int count = 0;
   while (T.number_of_vertices() > 0) {
-      T.remove (T.finite_vertices_begin());
-      ++count;
+    T.remove (T.finite_vertices_begin());
+    ++count;
   }
 
   assert( count == number_of_points );

@@ -2,16 +2,13 @@
 
 project( Point_set_processing_3_Tests )
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
 
 # Find CGAL
 find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
-
-  include( ${CGAL_USE_FILE} )
-  include( CGAL_CreateSingleSourceCGALProgram )
 
   # VisualC++ optimization for applications dealing with large data
   if (MSVC)

@@ -7,6 +7,7 @@
 #include "Color_ramp.h"
 
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
@@ -226,8 +227,9 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
 #endif
 
   // Compute neighborhood
-  typedef CGAL::Triangulation_vertex_base_with_info_3<int, Kernel> Vb;
-  typedef CGAL::Triangulation_data_structure_3<Vb>                    Tds;
+  typedef CGAL::Triangulation_vertex_base_with_info_3<int, Kernel>         Vb;
+  typedef CGAL::Delaunay_triangulation_cell_base_3<Kernel>                 Cb;
+  typedef CGAL::Triangulation_data_structure_3<Vb, Cb>                     Tds;
   typedef CGAL::Delaunay_triangulation_3<Kernel, Tds>                      Delaunay;
 
   Delaunay dt (boost::make_transform_iterator
@@ -539,8 +541,13 @@ void Cluster_classification::compute_features (std::size_t nb_scales)
   std::cerr << "Computing pointwise features with " << nb_scales << " scale(s)" << std::endl;
   m_features.clear();
 
+  Point_set::Vector_map normal_map;
   bool normals = m_points->point_set()->has_normal_map();
+  if (normals)
+    normal_map = m_points->point_set()->normal_map();
+  
   bool colors = (m_color != Point_set::Property_map<Color>());
+  
   Point_set::Property_map<boost::uint8_t> echo_map;
   bool echo;
   boost::tie (echo_map, echo) = m_points->point_set()->template property_map<boost::uint8_t>("echo");
@@ -560,18 +567,18 @@ void Cluster_classification::compute_features (std::size_t nb_scales)
 
   generator.generate_point_based_features(pointwise_features);
   if (normals)
-    generator.generate_normal_based_features (pointwise_features, m_points->point_set()->normal_map());
+    generator.generate_normal_based_features (pointwise_features, normal_map);
   if (colors)
     generator.generate_color_based_features (pointwise_features, m_color);
   if (echo)
     generator.generate_echo_based_features (pointwise_features, echo_map);
   
-  add_remaining_point_set_properties_as_features(pointwise_features);
-
 #ifdef CGAL_LINKED_WITH_TBB
   pointwise_features.end_parallel_additions();
 #endif
   
+  add_remaining_point_set_properties_as_features(pointwise_features);
+
   t.stop();
   std::cerr << pointwise_features.size() << " feature(s) computed in " << t.time() << " second(s)" << std::endl;
   t.reset();

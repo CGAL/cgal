@@ -75,7 +75,7 @@ In the following example a convex hull is constructed from point data read
 from standard input using `Graham_Andrew` algorithm. The resulting convex 
 polygon is shown at the standard output console. The same results could be 
 achieved by substituting the function `ch_graham_andrew()` by other 
-function like `ch_bykat()`.
+functions such as `ch_bykat()`.
 
 \cgalExample{Convex_hull_2/ch_from_cin_to_cout.cpp}
 

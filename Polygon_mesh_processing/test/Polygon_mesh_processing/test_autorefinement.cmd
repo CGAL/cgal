@@ -1,17 +1,28 @@
-data-autoref/test_01.off 0 0 4 1 4
-data-autoref/test_02.off 1 5 13 1 13
-data-autoref/test_03.off 4 8 18 0 18
-data-autoref/test_04.off 1 5 17 1 17
-data-autoref/test_05.off 1 5 17 1 17
-data-autoref/test_06.off 3 55 141 1 141
-data-autoref/test_07.off 1 4 10 1 10
-data-autoref/test_08.off 1 31 87 1 87
-data-autoref/test_09.off 1 4 5 1 5
-data-autoref/test_10.off 1 3 13 0 13
-data-autoref/test_11.off 1 3 12 1 12
-data-autoref/test_12.off 2 2 11 1 11
-data-autoref/test_13.off 1 5 16 0 16
-data-autoref/test_14.off 1 5 16 1 16
-data-autoref/test_15.off 3 8 16 1 16
-data-autoref/test_16.off 1 2 6 1 6
-data-autoref/test_17.off 1 2 6 1 6
+data-autoref/test_01.off 0 0 4 1 4 0
+data-autoref/test_02.off 1 5 13 1 5 0
+data-autoref/test_03.off 4 8 18 0 18 0
+data-autoref/test_04.off 1 5 17 1 0 0
+data-autoref/test_05.off 1 5 17 1 0 0
+data-autoref/test_06.off 3 55 141 1 76 0
+data-autoref/test_07.off 1 4 10 1 4 0
+data-autoref/test_08.off 1 31 87 1 52 0
+data-autoref/test_09.off 1 4 5 1 5 0
+data-autoref/test_10.off 1 3 13 0 13 0
+data-autoref/test_11.off 1 3 12 1 5 0
+data-autoref/test_12.off 2 2 11 1 11 0
+data-autoref/test_13.off 1 5 16 0 16 0
+data-autoref/test_14.off 1 5 16 1 12 0
+data-autoref/test_15.off 3 8 16 1 12 0
+data-autoref/test_16.off 1 2 6 1 4 0
+data-autoref/test_17.off 1 2 6 1 4 0
+data-autoref/triple_inter_exception/triple.off 0 0 0 0 0 1
+data-autoref/triple_inter_exception/cubes_cpln_1.off 0 0 0 0 0 1
+data-autoref/triple_inter_exception/cubes_cpln_2.off 0 0 0 0 0 1
+data-autoref/triple_inter_exception/cubes_cpln_3.off 0 0 0 0 0 1
+data-autoref/open_01.off 1 65 1377 1 1313 0
+data-autoref/open_02.off 1 33 595 1 562 0
+data-autoref/cpln_01.off 18 42 48 1 30 0
+data-autoref/cpln_02.off 28 56 40 1 24 0
+data-autoref/cpln_03.off 15 35 42 1 27 0
+data-autoref/four_cubes.off 12 94 184 1 78 0
+data-autoref/spiral.off 7 14 26 0 26 0

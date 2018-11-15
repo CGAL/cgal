@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3Enum
+\ingroup PkgMesh3Enum
 
 The enum `Mesh_facet_topology` is designed to tell which constraints have to
 be checked on each surface facet during the mesh refinement process.
@@ -9,7 +9,8 @@ be checked on each surface facet during the mesh refinement process.
 \sa `CGAL::Mesh_criteria_3<Tr>`, 
 \sa `CGAL::Mesh_facet_criteria_3<Tr>`.
 */
-enum Mesh_facet_topology {
+enum Mesh_facet_topology
+{
   FACET_VERTICES_ON_SURFACE = 1, //!< Each vertex of the facet have 
                                  //!< to be on the surface, on a curve, or on a corner.
   FACET_VERTICES_ON_SAME_SURFACE_PATCH, //!< The three vertices of a facet belonging 

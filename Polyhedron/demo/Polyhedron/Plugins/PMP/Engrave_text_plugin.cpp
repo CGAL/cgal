@@ -296,7 +296,7 @@ private:
   typedef CGAL::Surface_mesh_shortest_path<SP_traits> Surface_mesh_shortest_path;
   typedef Surface_mesh_shortest_path::Face_location Face_location;
   typedef CGAL::AABB_face_graph_triangle_primitive<SMesh> Primitive;
-  typedef CGAL::AABB_traits<Kernel, Primitive> Tree_traits;
+  typedef CGAL::AABB_traits<EPICK, Primitive> Tree_traits;
   typedef CGAL::AABB_tree<Tree_traits> Tree;
   typedef EPICK::Point_3 Point_3;
   Messages_interface* messages;
@@ -508,9 +508,9 @@ public Q_SLOTS:
             bf_line,
             CGAL::Dimension_tag<0>());
       
-      Kernel::Vector_2 A(bf_line.to_vector()),
-          B(Kernel::Point_2(0,0), 
-            Kernel::Point_2(1,0));      
+      EPICK::Vector_2 A(bf_line.to_vector()),
+          B(EPICK::Point_2(0,0), 
+            EPICK::Point_2(1,0));      
       if (A.x()<0) A=-A;
           angle = std::acos(A.x()/CGAL::sqrt(A.squared_length()));
           if ( A.y()<0 ) angle+=3*CGAL_PI/2.;
@@ -672,7 +672,7 @@ public Q_SLOTS:
     CGAL::Bbox_2 bbox= CGAL::bbox_2(local_polylines.front().begin(),
                                     local_polylines.front().end(),
                                     EPICK());
-    Q_FOREACH(const std::vector<Kernel::Point_2>& points,
+    Q_FOREACH(const std::vector<EPICK::Point_2>& points,
               local_polylines)
     {
       bbox += CGAL::bbox_2(points.begin(), points.end(), EPICK());
@@ -683,10 +683,10 @@ public Q_SLOTS:
     cdt2_to_face_graph(cdt,
                        text_mesh_bottom);
     typedef boost::property_map<SMesh, CGAL::vertex_point_t>::type VPMap;
-    typedef SMesh::Property_map<vertex_descriptor, Kernel::Vector_3> NPMAP;
+    typedef SMesh::Property_map<vertex_descriptor, EPICK::Vector_3> NPMAP;
     NPMAP vnormals =
         text_mesh_bottom.add_property_map<vertex_descriptor,
-        Kernel::Vector_3 >("v:normal").first;
+        EPICK::Vector_3 >("v:normal").first;
     
     if(!dock_widget->letter_checkBox->isChecked())
     {
@@ -704,7 +704,7 @@ public Q_SLOTS:
       for(std::size_t cc = 0; cc<nb_cc; ++cc)
       {
         //compute the average normal for the cc give it to every vertex
-        Kernel::Vector_3 normal(0,0,0);
+        EPICK::Vector_3 normal(0,0,0);
         CGAL::Face_filtered_graph<SMesh> fmesh(text_mesh_bottom, 
                                                cc,
                                                fcmap);
@@ -868,7 +868,7 @@ private:
         boost::tie(it,insert_ok) =
             descriptors.insert(std::make_pair(fit->vertex(i),vertex_descriptor()));
         if (insert_ok){
-          const Kernel::Point_2& pt=fit->vertex(i)->point();
+          const EPICK::Point_2& pt=fit->vertex(i)->point();
           Face_location loc = Surface_mesh_shortest_path::locate(
                 Point_3(pt.x(), pt.y(), 0),
                 aabb_tree, *sm, uv_map_3);
@@ -923,7 +923,7 @@ private:
   float xmin, xmax, ymin, ymax;
   int pointsize;
   bool locked;
-  Kernel::Line_2 bf_line;
+  EPICK::Line_2 bf_line;
   QGraphicsScene *graphics_scene;
   Navigation* navigation;
 };

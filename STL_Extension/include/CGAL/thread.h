@@ -55,9 +55,10 @@
 
 #if !CGAL_USE_TBB_THREADS
 #  include <thread>
-#  include <atomic>
 #  include <chrono>
 #endif
+
+#include <CGAL/atomic.h> // for CGAL::cpp11::atomic
 
 namespace CGAL {
 
@@ -66,7 +67,6 @@ namespace cpp11 {
 #if CGAL_USE_TBB_THREADS
   
   using std::thread; // std::thread is declared by TBB if TBB_IMPLEMENT_CPP0X == 1
-  using tbb::atomic;
 
   inline void sleep_for (double seconds)
   {
@@ -75,10 +75,9 @@ namespace cpp11 {
     std::this_thread::sleep_for(tbb::tick_count::interval_t(seconds));
   }
   
-#else
+#else // C++11 implementation
 
   using std::thread;
-  using std::atomic;
 
   inline void sleep_for (double seconds)
   {
@@ -89,6 +88,12 @@ namespace cpp11 {
     std::this_thread::sleep_for(ns);
   }
 
+#endif
+
+#if defined(CGAL_NO_ATOMIC) && defined(CGAL_LINKED_WITH_TBB)
+  // If <CGAL/atomic.h> did not defined CGAL::cpp11::atomic, then use
+  // tbb::atomic as a fallback.
+  using tbb::atomic;
 #endif
 
 } // cpp11

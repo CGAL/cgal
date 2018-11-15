@@ -1,0 +1,11 @@
+The Periodic_3_mesh_3 package generates periodic 3-dimensional
+isotropic simplicial meshes. The discretized region
+may be a monodomain, i.e. a single connected component,
+or  a multidomain subdivided into different subdomains.
+The domain is input as an oracle able to answer
+different types of queries on the domain.
+In the current version, Periodic_3_mesh_3 generates meshes for domains described
+through implicit functions.
+The output is a periodic 3D mesh of the domain volume
+and conformal surface meshes for all the boundary and subdividing
+surfaces.

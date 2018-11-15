@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgProfilingTools
+\ingroup MiscellanyRef
 
 An instance of the class template `Unique_hash_map` is an 
 injective mapping from the set of keys of type `Key` to the set of 

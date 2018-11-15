@@ -30,7 +30,8 @@ namespace CGAL {
 
 enum Mesh_error_code {
   CGAL_MESH_3_NO_ERROR = 0,
-  CGAL_MESH_3_MAXIMAL_NUMBER_OF_VERTICES_REACHED
+  CGAL_MESH_3_MAXIMAL_NUMBER_OF_VERTICES_REACHED,
+  CGAL_MESH_3_STOPPED
 };
 
 inline
@@ -40,6 +41,8 @@ std::string mesh_error_string(const Mesh_error_code& error_code) {
     return "no error";
   case CGAL_MESH_3_MAXIMAL_NUMBER_OF_VERTICES_REACHED:
     return "the maximal number of vertices has been reached";
+  case CGAL_MESH_3_STOPPED:
+    return "the meshing process was stopped";
   default:
     std::stringstream str("");
     str << "unknown error (error_code="

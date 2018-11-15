@@ -1,27 +1,27 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3MeshClasses
+\ingroup PkgMesh3MeshClasses
 
-The class `Mesh_vertex_base_3` is a model of the concept `MeshVertexBase_3`. 
-It is designed to serve as vertex base class for the 3D triangulation 
-used in a 3D mesh generation process. 
+The class `Mesh_vertex_base_3` is a model of the concept `MeshVertexBase_3`.
+It is designed to serve as vertex base class for the 3D triangulation
+used in a 3D mesh generation process.
 
-\tparam Gt is the geometric traits class. 
-It must be a model of the concept `RegularTriangulationTraits_3`. 
+\tparam Gt is the geometric traits class.
+It must be a model of the concept `MeshTriangulationTraits_3`.
 
-\tparam MD provides the types of indices 
-used to identify 
-the faces of the input complex. It must be a model 
-of the concept `MeshDomain_3`. 
-	
-\tparam Vb is the vertex base class. It has to be a model 
-of the concept `TriangulationVertexBase_3` and defaults to 
-`Triangulation_vertex_base_3<Gt>`. 
+\tparam MD provides the types of indices
+used to identify
+the faces of the input complex. It must be a model
+of the concept `MeshDomain_3`.
 
-\cgalModels `MeshVertexBase_3` 
+\tparam Vb is the vertex base class. It has to be a model
+of the concept `RegularTriangulationVertexBase_3` and defaults to
+`Regular_triangulation_vertex_base_3<Gt>`.
 
-\sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>` 
+\cgalModels `MeshVertexBase_3`
+
+\sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
 
 */
 template< typename Gt, typename MD, typename Vb >

@@ -38,6 +38,7 @@
 #include <CGAL/is_streamable.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/property_map.h>
+#include <CGAL/internal/Mesh_3/indices_management.h>
 
 #include <vector>
 #include <set>
@@ -55,8 +56,8 @@
 namespace CGAL {
 
 /// @cond DEVELOPERS
-namespace internal {
 namespace Mesh_3 {
+namespace internal {
 
 template <typename Kernel>
 class Polyline
@@ -512,12 +513,12 @@ struct Display_incidences_to_curves_aux<MDwPF, false> {
                   const Container&) const;
 };
 
-} // end of namespace CGAL::internal::Mesh_3
-} // end of namespace CGAL::internal
+} // end of namespace CGAL::Mesh_3::internal
+} // end of namespace CGAL::Mesh_3
 /// @endcond
 
 /*!
-\ingroup PkgMesh_3Domains
+\ingroup PkgMesh3Domains
 
 The class `Mesh_domain_with_polyline_features_3` is designed to allow the user
 to add some 0- and 1-dimensional
@@ -546,15 +547,19 @@ class Mesh_domain_with_polyline_features_3
 public:
 /// \name Types
 /// @{
-  typedef typename MeshDomain_3::Index    Index;
+  typedef typename MeshDomain_3::Surface_patch_index Surface_patch_index;
+  typedef typename MeshDomain_3::Subdomain_index     Subdomain_index;
+  typedef int                                        Curve_index;
+  typedef int                                        Corner_index;
 
-  typedef typename MeshDomain_3::Surface_patch_index
-                                  Surface_patch_index;
+  typedef typename Mesh_3::internal::Index_generator_with_features<
+    typename MeshDomain_3::Subdomain_index,
+    Surface_patch_index,
+    Curve_index,
+    Corner_index>::type                              Index;
 
-  typedef int                     Curve_index;
-  typedef int                     Corner_index;
-  typedef CGAL::Tag_true           Has_features;
-  typedef typename MeshDomain_3::R::FT          FT;
+  typedef CGAL::Tag_true                             Has_features;
+  typedef typename MeshDomain_3::R::FT               FT;
 /// @}
 
 #ifndef DOXYGEN_RUNNING
@@ -777,17 +782,46 @@ public:
                                 const Point_3& c1, const Point_3& c2,
                                 const FT sq_r1, const FT sq_r2) const;
 
+
+  /**
+   * Returns the index to be stored in a vertex lying on the surface identified
+   * by \c index.
+   */
+  Index index_from_surface_patch_index(const Surface_patch_index& index) const
+  { return Index(index); }
+
+  /**
+   * Returns the index to be stored in a vertex lying in the subdomain
+   * identified by \c index.
+   */
+  Index index_from_subdomain_index(const Subdomain_index& index) const
+  { return Index(index); }
+
   /// Returns an `Index` from a `Curve_index`
   Index index_from_curve_index(const Curve_index& index) const
   { return Index(index); }
 
-  /// Returns a `Curve_index` from an `Index`
-  Curve_index curve_index(const Index& index) const
-  { return boost::get<Curve_index>(index); }
-
   /// Returns an `Index` from a `Corner_index`
   Index index_from_corner_index(const Corner_index& index) const
   { return Index(index); }
+
+  /**
+   * Returns the \c Surface_patch_index of the surface patch
+   * where lies a vertex with dimension 2 and index \c index.
+   */
+  Surface_patch_index surface_patch_index(const Index& index) const
+  { return boost::get<Surface_patch_index>(index); }
+
+  /**
+   * Returns the index of the subdomain containing a vertex
+   *  with dimension 3 and index \c index.
+   */
+  Subdomain_index subdomain_index(const Index& index) const
+  { return boost::get<Subdomain_index>(index); }
+
+  /// Returns a `Curve_index` from an `Index`
+  Curve_index curve_index(const Index& index) const
+  { return boost::get<Curve_index>(index); }
 
   /// Returns a `Corner_index` from an `Index`
   Corner_index corner_index(const Index& index) const
@@ -844,13 +878,13 @@ private:
 private:
   typedef std::map<Point_3,Corner_index> Corners;
 
-  typedef internal::Mesh_3::Polyline<Gt> Polyline;
+  typedef Mesh_3::internal::Polyline<Gt> Polyline;
   typedef std::map<Curve_index, Polyline> Edges;
   typedef std::map<Curve_index, Surface_patch_index_set > Edges_incidences;
   typedef std::map<Corner_index, std::set<Curve_index> > Corners_tmp_incidences;
   typedef std::map<Corner_index, Surface_patch_index_set > Corners_incidences;
 
-  typedef internal::Mesh_3::Mesh_domain_segment_of_curve_primitive<
+  typedef Mesh_3::internal::Mesh_domain_segment_of_curve_primitive<
     Gt,
     typename Edges::const_iterator> Curves_primitives;
 
@@ -1285,7 +1319,8 @@ get_corner_incident_curves(Corner_index id,
 /// @endcond
 
 /// @cond DEVELOPERS
-namespace internal { namespace Mesh_3 {
+namespace Mesh_3 {
+namespace internal {
 
 template <typename MDwPF_, bool curve_id_is_streamable>
 // here 'curve_id_is_streamable' is true
@@ -1350,7 +1385,8 @@ operator()(std::ostream& os, Point p, typename MDwPF_::Curve_index id,
      << " surface patch(es).\n";
 }
 
-}} // end namespaces internal::Mesh_3:: and internal::
+} // end namespace Mesh_3::internal
+} // end namespace Mesh_3
 /// @endcond
 
 /// @cond DEVELOPERS
@@ -1363,9 +1399,8 @@ display_corner_incidences(std::ostream& os, Point_3 p, Corner_index id)
   typedef is_streamable<Surface_patch_index> i_s_spi;
   typedef is_streamable<Curve_index> i_s_csi;
 
-  using namespace internal::Mesh_3;
-  typedef Display_incidences_to_curves_aux<Mdwpf,i_s_csi::value> D_i_t_c;
-  typedef Display_incidences_to_patches_aux<Mdwpf,i_s_spi::value> D_i_t_p;
+  typedef Mesh_3::internal::Display_incidences_to_curves_aux<Mdwpf,i_s_csi::value> D_i_t_c;
+  typedef Mesh_3::internal::Display_incidences_to_patches_aux<Mdwpf,i_s_spi::value> D_i_t_p;
   D_i_t_c()(os, p, id, corners_tmp_incidences_[id]);
   D_i_t_p()(os, p, id, corners_incidences_[id]);
 }

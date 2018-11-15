@@ -1,7 +1,7 @@
 include( polyhedron_demo_macros )
 
 polyhedron_demo_plugin(gocad_plugin GOCAD_io_plugin)
-target_link_libraries(gocad_plugin PUBLIC scene_polyhedron_item scene_surface_mesh_item)
+target_link_libraries(gocad_plugin PUBLIC scene_surface_mesh_item)
 
 qt5_wrap_ui( funcUI_FILES Function_dialog.ui )
 polyhedron_demo_plugin(io_implicit_function_plugin Implicit_function_io_plugin ${funcUI_FILES})
@@ -11,7 +11,7 @@ polyhedron_demo_plugin(nef_io_plugin Nef_io_plugin)
 target_link_libraries(nef_io_plugin PUBLIC scene_nef_polyhedron_item)
 
 polyhedron_demo_plugin(off_plugin OFF_io_plugin)
-target_link_libraries(off_plugin PUBLIC scene_polyhedron_item scene_polygon_soup_item scene_points_with_normal_item)
+target_link_libraries(off_plugin PUBLIC scene_polygon_soup_item scene_points_with_normal_item scene_surface_mesh_item)
 
 polyhedron_demo_plugin(off_to_nef_plugin OFF_to_nef_io_plugin)
 target_link_libraries(off_to_nef_plugin PUBLIC scene_nef_polyhedron_item)
@@ -20,19 +20,14 @@ polyhedron_demo_plugin(polylines_io_plugin Polylines_io_plugin)
 target_link_libraries(polylines_io_plugin PUBLIC scene_polylines_item)
 
 polyhedron_demo_plugin(selection_io_plugin Selection_io_plugin)
-target_link_libraries(selection_io_plugin PUBLIC scene_polyhedron_selection_item selection_plugin)
-
-polyhedron_demo_plugin(selection_io_sm_plugin Selection_io_plugin)
-target_link_libraries(selection_io_sm_plugin PUBLIC scene_surface_mesh_selection_item selection_sm_plugin)
+target_link_libraries(selection_io_plugin PUBLIC scene_selection_item selection_plugin)
 
 polyhedron_demo_plugin(stl_plugin STL_io_plugin)
-target_link_libraries(stl_plugin PUBLIC scene_polyhedron_item scene_surface_mesh_item scene_polygon_soup_item)
+target_link_libraries(stl_plugin PUBLIC scene_surface_mesh_item scene_polygon_soup_item)
 
-polyhedron_demo_plugin(surface_mesh_io_plugin Surface_mesh_io_plugin)
-target_link_libraries(surface_mesh_io_plugin PUBLIC scene_surface_mesh_item scene_polygon_soup_item)
 
 polyhedron_demo_plugin(surf_io_plugin Surf_io_plugin)
-target_link_libraries(surf_io_plugin PUBLIC scene_polyhedron_item scene_surface_mesh_item)
+target_link_libraries(surf_io_plugin PUBLIC scene_surface_mesh_item)
 
 
 
@@ -43,15 +38,9 @@ if (VTK_FOUND)
   if ("${VTK_VERSION_MAJOR}" GREATER "5")
     if(VTK_LIBRARIES)
       polyhedron_demo_plugin(vtk_plugin VTK_io_plugin)
-      target_link_libraries(vtk_plugin PUBLIC scene_polyhedron_item scene_polylines_item scene_c3t3_item
+      target_link_libraries(vtk_plugin PUBLIC scene_surface_mesh_item scene_polylines_item scene_c3t3_item
                                        vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML
                                        vtkFiltersCore vtkFiltersSources)
-
-      polyhedron_demo_plugin(vtk_sm_plugin VTK_io_plugin)
-      target_link_libraries(vtk_sm_plugin PUBLIC scene_surface_mesh_item scene_polylines_item scene_c3t3_item
-                                       vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML
-                                       vtkFiltersCore vtkFiltersSources)
-      target_compile_definitions(vtk_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 
     else()
       message(STATUS "NOTICE : the vtk IO plugin needs VTK libraries and will not be compiled.")

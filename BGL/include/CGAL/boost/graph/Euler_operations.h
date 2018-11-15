@@ -1421,10 +1421,15 @@ bool
           //CGAL_ECMS_TRACE(3,"  p-q belongs to a tetrahedron. NON-COLLAPSABLE edge." ) ;
           return false ;
         }
+        if ( next(v0_v1, g) == opposite(prev(v1_v0, g), g) &&
+             prev(v0_v1, g) == opposite(next(v1_v0, g), g) )
+        {
+          //CGAL_ECMS_TRACE(3,"  degenerate volume." ) ;
+          return false ;
+        }
       }
     }
 
-  
   return true ;
 }
 

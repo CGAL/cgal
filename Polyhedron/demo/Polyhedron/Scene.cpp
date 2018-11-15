@@ -227,9 +227,11 @@ Scene::erase(QList<int> indices)
   }
 
   Q_FOREACH(Scene_item* item, to_be_removed) {
+    Item_id removed_item = item_id(item);
+    if(removed_item == -1) //case of the selection_item, for example.
+      continue;
     if(item->parentGroup())
       item->parentGroup()->removeChild(item);
-    Item_id removed_item = item_id(item);
         children.removeAll(removed_item);
         indexErased(removed_item);
         m_entries.removeAll(item);
@@ -504,8 +506,7 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
                         bool writing_depth,
                         QOpenGLFramebufferObject *fbo)
 {
-  if(pass == -1)
-    viewer->makeCurrent();
+
   viewer->setCurrentPass(pass);
   viewer->setDepthWriting(writing_depth);
   viewer->setDepthPeelingFbo(fbo);
@@ -533,17 +534,17 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
           viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
         item.draw(viewer);
-      }
-
-      if(with_names) {
-
-        //    read depth buffer at pick location;
-        float depth = 1.0;
-        viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-        if (depth != 1.0)
-        {
-          //add object to list of picked objects;
-          picked_item_IDs[depth] = index;
+        
+        if(with_names) {
+          
+          //    read depth buffer at pick location;
+          float depth = 1.0;
+          viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+          if (depth != 1.0)
+          {
+            //add object to list of picked objects;
+            picked_item_IDs[depth] = index;
+          }
         }
       }
       if(group)
@@ -663,7 +664,6 @@ void Scene::renderPointScene(const QList<Scene_interface::Item_id> &items,
 void 
 Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
 {
-    viewer->makeCurrent();
     QMap<float, int> picked_item_IDs;
     if(with_names)
       viewer->glEnable(GL_DEPTH_TEST);
@@ -703,7 +703,6 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                            0.0f);
       viewer->glClearDepthf(1);
       viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      //renderScene(children, viewer, picked_item_IDs, false, 0,false, NULL);
       renderScene(opaque_items, viewer, picked_item_IDs, false, 0,false, NULL);
       renderScene(transparent_items, viewer, picked_item_IDs, false, 0,false, NULL);
       fbos[0]->release();
@@ -718,7 +717,6 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                            0.0f);
       viewer->glClearDepthf(1);
       viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//      renderScene(children, viewer, picked_item_IDs, false, 0,true, NULL);
       renderScene(opaque_items, viewer, picked_item_IDs, false, 0,true, NULL);
       renderScene(transparent_items, viewer, picked_item_IDs, false, 0,true, NULL);
       depth_test[0]->release();
@@ -739,7 +737,6 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
         viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         renderWireScene(children, viewer, picked_item_IDs, false);
         renderPointScene(children, viewer, picked_item_IDs, false);
-        //renderScene(children, viewer, picked_item_IDs, false, i, false, depth_test[i-1]);
         renderScene(opaque_items     , viewer, picked_item_IDs, false, i, false, depth_test[i-1]);
         renderScene(transparent_items, viewer, picked_item_IDs, false, i, false, depth_test[i-1]);
         fbos[i]->release();
@@ -755,7 +752,6 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                              0.0f);
         viewer->glClearDepthf(1);
         viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        //renderScene(children, viewer, picked_item_IDs, false, i, true, depth_test[i-1]);
         renderScene(opaque_items     , viewer, picked_item_IDs, false, i, true, depth_test[i-1]);
         renderScene(transparent_items, viewer, picked_item_IDs, false, i, true, depth_test[i-1]);
         depth_test[i]->release();
@@ -786,7 +782,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
       viewer->glClearColor(background.redF(),
                            background.greenF(),
                            background.blueF(),
-                           1.0f);
+                           0.0f);
       viewer->glDisable(GL_DEPTH_TEST);
       viewer->glClear(GL_COLOR_BUFFER_BIT);
       viewer->glEnable(GL_BLEND);
@@ -1155,15 +1151,19 @@ int Scene::selectionBindex() const {
 
 QItemSelection Scene::createSelection(int i)
 {
-
     return QItemSelection(index_map.keys(i).at(0),
                           index_map.keys(i).at(4));
 }
 
 QItemSelection Scene::createSelectionAll()
 {
-    return QItemSelection(index(0, 0,index_map.key(0).parent()),
-                          index(m_entries.size()-1, 4, index_map.key(0).parent()));
+  //it is not possible to directly create a selection with items that have different parents, so 
+  //we do it iteratively.
+  QItemSelection sel;
+  for(int i=0; i< m_entries.size(); ++i)
+    sel.select(index_map.keys(i).at(0),
+               index_map.keys(i).at(4));
+  return sel;
 }
 
 void Scene::itemChanged()

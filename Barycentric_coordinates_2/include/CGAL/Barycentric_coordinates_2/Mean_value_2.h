@@ -101,7 +101,7 @@ public:
 // [2] Reference: "M. S. Floater, Wachspress and mean value coordinates, to appear in the Proceedings of the 14th International Conference on Approximation Theory, G. Fasshauer and L. L. Schumaker (eds.)."
 
 /*!
- * \ingroup PkgBarycentric_coordinates_2
+ * \ingroup PkgBarycentricCoordinates2Ref
  * The class `Mean_value_2` implements 2D mean value coordinates ( \cite cgal:bc:hf-mvcapp-06, \cite cgal:bc:fhk-gcbcocp-06, \cite cgal:f-mvc-03 ).
  * This class is parameterized by a traits class `Traits`, and it is used as a coordinate class to complete the class `Generalized_barycentric_coordinates_2`.
  * For a polygon with three vertices (triangle) it is better to use the class `Triangle_coordinates_2`.

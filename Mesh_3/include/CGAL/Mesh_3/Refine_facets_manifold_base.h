@@ -26,15 +26,21 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <CGAL/Mesh_facet_topology.h>
+
+#include <CGAL/Hash_handles_with_or_without_timestamps.h>
 #include <CGAL/utility.h>
-#include <set>
-#include <vector>
+#include <CGAL/atomic.h>
+
 #include <boost/bimap.hpp>
 #include <boost/bimap/unordered_set_of.hpp>
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/foreach.hpp>
 #include <boost/mpl/has_xxx.hpp>
-#include <CGAL/Mesh_facet_topology.h>
+#include <boost/unordered_set.hpp>
+
+#include <set>
+#include <vector>
 
 namespace CGAL {
 
@@ -63,32 +69,37 @@ class Refine_facets_manifold_base
                                Container_> Base;
 
 public:
-  typedef Complex3InTriangulation3 C3t3;
-  typedef MeshDomain Mesh_domain;
-  typedef typename Tr::Weighted_point Weighted_point;
-  typedef typename Tr::Bare_point Bare_point;
-  typedef typename Tr::Facet Facet;
-  typedef typename Tr::Vertex_handle Vertex_handle;
+  typedef Complex3InTriangulation3                               C3t3;
+  typedef MeshDomain                                             Mesh_domain;
+
+  typedef typename Tr::Bare_point                                Bare_point;
+  typedef typename Tr::Weighted_point                            Weighted_point;
+
+  typedef typename Tr::Vertex_handle                             Vertex_handle;
+  typedef typename Tr::Facet                                     Facet;
 
   typedef typename Triangulation_mesher_level_traits_3<Tr>::Zone Zone;
 
 protected:
-  typedef typename Tr::Geom_traits GT;
-  typedef typename GT::FT FT;
-  typedef typename GT::Construct_point_3 Construct_point_3;
-  typedef typename Tr::Edge Edge;
-  typedef typename Tr::Cell_handle Cell_handle;
+  typedef typename Tr::Geom_traits                               GT;
+  typedef typename GT::FT                                        FT;
 
-  typedef typename Tr::Facet_circulator Tr_facet_circulator;
-  typedef std::pair<Vertex_handle, Vertex_handle> EdgeVV;
+  typedef typename Tr::Edge                                      Edge;
+  typedef typename Tr::Cell_handle                               Cell_handle;
+
+  typedef typename Tr::Facet_circulator                          Tr_facet_circulator;
+  typedef std::pair<Vertex_handle, Vertex_handle>                EdgeVV;
 
 protected:
   typedef ::boost::bimap< EdgeVV,
-                          ::boost::bimaps::multiset_of<int> > Bad_edges;
-  typedef typename Bad_edges::value_type Bad_edge;
+                          ::boost::bimaps::multiset_of<int> >    Bad_edges;
+  typedef typename Bad_edges::value_type                         Bad_edge;
+
+  typedef CGAL::Hash_handles_with_or_without_timestamps          Hash_fct;
+  typedef boost::unordered_set<Vertex_handle, Hash_fct>          Vertex_set;
 
   mutable Bad_edges m_bad_edges;
-  mutable std::set<Vertex_handle> m_bad_vertices;
+  mutable Vertex_set m_bad_vertices;
 
   mutable bool m_manifold_info_initialized;
   mutable bool m_bad_vertices_initialized;
@@ -129,22 +140,22 @@ private:
   }
 
   FT compute_sq_distance_to_facet_center(const Facet& f,
-                                         const Vertex_handle v) const {
-    Construct_point_3 wp2p = this->r_tr_.geom_traits().construct_point_3_object();
-    const Bare_point& fcenter = f.first->get_facet_surface_center(f.second);
-    const Bare_point& vpoint = wp2p(v->point());
+                                         const Vertex_handle v) const
+  {
+    typename GT::Compute_weight_3 cw = this->r_tr_.geom_traits().compute_weight_3_object();
+    typename GT::Construct_point_3 cp = this->r_tr_.geom_traits().construct_point_3_object();
 
-    return
-      this->r_tr_.geom_traits().compute_squared_distance_3_object()(fcenter,
-                                                                    vpoint)
-      - v->point().weight();
+    const Bare_point& fcenter = f.first->get_facet_surface_center(f.second);
+    const Weighted_point& wp = this->r_tr_.point(v);
+
+    return this->r_tr_.min_squared_distance(fcenter, cp(wp)) - cw(wp);
   }
 
   Facet
   biggest_incident_facet_in_complex(const Vertex_handle v) const
   {
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
-    std::cerr << "Bad vertex: " << v->point() << std::endl;
+    std::cerr << "Bad vertex: " << this->r_tr_.point(v) << std::endl;
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     std::vector<Facet> facets;
     facets.reserve(64);
@@ -203,8 +214,8 @@ private:
     // use the list of incident facets in the complex
     Vertex_handle fev = edge_to_edgevv(arete).first;
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
-    std::cerr << "Bad edge: (" << fev->point()
-              << ", " << arete.first->vertex(arete.third)->point()
+    std::cerr << "Bad edge: (" << this->r_tr_.point(fev)
+              << ", " << this->r_tr_.point(arete.first->vertex(arete.third))
               << ")\n  incident facets squared sizes:\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     Tr_facet_circulator fcirc = this->r_tr_.incident_facets(arete);
@@ -292,7 +303,7 @@ private:
           if(m_bad_vertices.erase(c->vertex(j)) > 0) {
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
             std::cerr << "m_bad_vertices.erase("
-                      << c->vertex(j)->point() << ")\n";
+                      << this->r_tr_.point(c, j) << ")\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
           }
     }
@@ -305,12 +316,20 @@ public:
                               const Mesh_domain& oracle,
                               const Criteria& criteria,
                               int mesh_topology,
-                              std::size_t maximal_number_of_vertices)
+                              std::size_t maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+                              , CGAL::cpp11::atomic<bool>* stop_ptr
+#endif
+                              )
     : Base(triangulation,
            c3t3,
            oracle,
            criteria,
-           maximal_number_of_vertices)
+           maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+           , stop_ptr
+#endif
+           )
     , m_manifold_info_initialized(false)
     , m_bad_vertices_initialized(false)
     , m_with_manifold_criterion((mesh_topology & MANIFOLD_WITH_BOUNDARY) != 0)
@@ -349,18 +368,18 @@ public:
              (this->r_c3t3_.face_status(*eit) == C3t3::BOUNDARY) ) )
       {
 #ifdef CGAL_LINKED_WITH_TBB
-	// Parallel
-	if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
-	{
-	  this->insert_bad_facet(biggest_incident_facet_in_complex(*eit),
-				 typename Base::Quality());
-	} else
+        // Parallel
+        if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+        {
+          this->insert_bad_facet(biggest_incident_facet_in_complex(*eit),
+                                 typename Base::Quality());
+        } else
 #endif // CGAL_LINKED_WITH_TBB
-	{ // Sequential
-	  m_bad_edges.insert(Bad_edge(edge_to_edgevv(*eit),
-				      (this->r_c3t3_.face_status(*eit) ==
-				       C3t3::SINGULAR ? 0 : 1)));
-	}
+        { // Sequential
+          m_bad_edges.insert(Bad_edge(edge_to_edgevv(*eit),
+                                      (this->r_c3t3_.face_status(*eit) ==
+                                       C3t3::SINGULAR ? 0 : 1)));
+        }
 #ifdef CGAL_MESH_3_VERBOSE
         ++n;
 #endif
@@ -389,19 +408,19 @@ public:
       if( this->r_c3t3_.face_status(vit) == C3t3::SINGULAR ) {
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
         std::cerr << "m_bad_vertices.insert("
-                  << vit->point() << ")\n";
+                  << this->r_tr_.point(vit) << ")\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 #ifdef CGAL_LINKED_WITH_TBB
-	// Parallel
-	if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
-	{
-	  this->insert_bad_facet(biggest_incident_facet_in_complex(vit),
-				 typename Base::Quality());
-	} else
+        // Parallel
+        if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+        {
+          this->insert_bad_facet(biggest_incident_facet_in_complex(vit),
+                                 typename Base::Quality());
+        } else
 #endif // CGAL_LINKED_WITH_TBB
-	{ // Sequential
-	  m_bad_vertices.insert( vit );
-	}
+        { // Sequential
+          m_bad_vertices.insert( vit );
+        }
 #ifdef CGAL_MESH_3_VERBOSE
         ++n;
 #endif
@@ -414,7 +433,7 @@ public:
     std::cerr << "Bad vertices queue:\n";
     BOOST_FOREACH(Vertex_handle v2, m_bad_vertices)
     {
-      std::cerr << v2->point() << std::endl;
+      std::cerr << this->r_tr_.point(v2) << std::endl;
     }
     CGAL::dump_c3t3(this->r_c3t3_, "dump-at-scan-vertices");
 #  endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
@@ -434,6 +453,14 @@ public:
     if(Base::no_longer_element_to_refine_impl())
     {
       if(!m_with_manifold_criterion) return true;
+
+#ifndef CGAL_NO_ATOMIC
+      if(this->m_stop_ptr != 0 &&
+         this->m_stop_ptr->load(CGAL::cpp11::memory_order_acquire) == true)
+      {
+        return true;
+      }
+#endif // not defined CGAL_NO_ATOMIC
 
       if(this->m_maximal_number_of_vertices_ !=0 &&
          this->r_tr_.number_of_vertices() >=
@@ -467,9 +494,9 @@ public:
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
         const EdgeVV& edgevv = m_bad_edges.right.begin()->second;
         std::cerr << "Bad edge "
-                  << edgevv.first->point()
+                  << this->r_tr_.point(edgevv.first)
                   << " - "
-                  << edgevv.second->point()
+                  << this->r_tr_.point(edgevv.second)
                   << "\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
         return biggest_incident_facet_in_complex(first_bad_edge);
@@ -480,9 +507,9 @@ public:
         std::cerr << "Bad vertices queue:\n";
         BOOST_FOREACH(Vertex_handle v2, m_bad_vertices)
         {
-          std::cerr << v2->point() << std::endl;
+          std::cerr << this->r_tr_.point(v2) << std::endl;
         }
-        std::cerr << "Bad vertex " << v->point() << "\n";
+        std::cerr << "Bad vertex " << this->r_tr_.point(v) << "\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
         CGAL_assertion(this->r_c3t3_.has_incident_facets_in_complex(v));
         if(this->r_c3t3_.face_status(v) != C3t3::SINGULAR) {
@@ -552,27 +579,27 @@ public:
                )
           {
 #ifdef CGAL_LINKED_WITH_TBB
-	    // Parallel
-	    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
-	      {
-		this->insert_bad_facet(biggest_incident_facet_in_complex(edge),
-				       typename Base::Quality());
-	      } else
+            // Parallel
+            if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+            {
+              this->insert_bad_facet(biggest_incident_facet_in_complex(edge),
+                                     typename Base::Quality());
+            } else
 #endif // CGAL_LINKED_WITH_TBB
-	      { // Sequential
-		m_bad_edges.insert(Bad_edge(edge_to_edgevv(edge),
-					    (this->r_c3t3_.face_status(edge) ==
-					     C3t3::SINGULAR ? 0 : 1)));
-	      }
+            { // Sequential
+              m_bad_edges.insert(Bad_edge(edge_to_edgevv(edge),
+                                          (this->r_c3t3_.face_status(edge) ==
+                                           C3t3::SINGULAR ? 0 : 1)));
+            }
           }
           else {
 #ifdef CGAL_LINKED_WITH_TBB
-	    // Sequential only
-	    if (!boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+            // Sequential only
+            if (!boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
 #endif // CGAL_LINKED_WITH_TBB
-	    {
-	      m_bad_edges.left.erase( edge_to_edgevv(edge) ); // @TODO: pourquoi?!
-	    }
+            {
+              m_bad_edges.left.erase( edge_to_edgevv(edge) ); // @TODO: pourquoi?!
+            }
           }
         }
       }
@@ -601,19 +628,19 @@ public:
       {
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
         std::cerr << "m_bad_vertices.insert("
-                  << (*vit)->point() << ")\n";
+                  << this->r_tr_.point(*vit) << ")\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 #ifdef CGAL_LINKED_WITH_TBB
-	// Parallel
-	if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
-	{
-	  this->insert_bad_facet(biggest_incident_facet_in_complex(*vit),
-				 typename Base::Quality());
-	} else
+        // Parallel
+        if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+        {
+          this->insert_bad_facet(biggest_incident_facet_in_complex(*vit),
+                                 typename Base::Quality());
+        } else
 #endif // CGAL_LINKED_WITH_TBB
-	{ // Sequential
-	  m_bad_vertices.insert(*vit);
-	}
+        { // Sequential
+          m_bad_vertices.insert(*vit);
+        }
       }
     }
 
@@ -624,19 +651,19 @@ public:
     {
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
       std::cerr << "m_bad_vertices.insert("
-                << v->point() << ")\n";
+                << this->r_tr_.point(v) << ")\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 #ifdef CGAL_LINKED_WITH_TBB
-	// Parallel
-	if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
-	{
-	  this->insert_bad_facet(biggest_incident_facet_in_complex(v),
-				 typename Base::Quality());
-	} else
+      // Parallel
+      if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+      {
+        this->insert_bad_facet(biggest_incident_facet_in_complex(v),
+                               typename Base::Quality());
+      } else
 #endif // CGAL_LINKED_WITH_TBB
-	{ // Sequential
-	  m_bad_vertices.insert(v);
-	}
+      { // Sequential
+        m_bad_vertices.insert(v);
+      }
     }
   }
 

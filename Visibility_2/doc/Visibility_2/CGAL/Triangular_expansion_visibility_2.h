@@ -1,6 +1,6 @@
 namespace CGAL {
 /*!
-\ingroup PkgVisibility_2Classes
+\ingroup PkgVisibility2Classes
 
 \brief This class is a model of the concept `Visibility_2` can answer visibility queries within a polygon that may have holes.
 

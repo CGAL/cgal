@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgArrangement2ConceptsTraits
+\ingroup PkgArrangementOnSurface2ConceptsTraits
 \cgalConcept
 
 The concept `ArrangementBasicTraits_2` defines the minimal set of geometric 

@@ -11,8 +11,6 @@ endif()
 
 find_package(CGAL COMPONENTS Qt5 Core)
 
-include(${CGAL_USE_FILE})
-
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
 if (EIGEN3_FOUND)
   include( ${EIGEN3_USE_FILE} )
@@ -23,10 +21,8 @@ endif()
 
 find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
 
-include_directories (BEFORE ../../include)
-
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
-
+  include(${CGAL_USE_FILE})
   add_definitions(-DQT_NO_KEYWORDS)
 
   if( CGAL_Core_FOUND)

@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2TraitsClasses
+\ingroup PkgArrangementOnSurface2TraitsClasses
 
 The traits class `Arr_Bezier_curve_traits_2` is a model of the `ArrangementTraits_2` 
 concept that handles planar B&eacute;zier curves. A planar <I>B&eacute;zier curve</I> 
@@ -85,7 +85,7 @@ typedef unspecified_type Algebraic;
 The `Curve_2` class nested within the B&eacute;zier traits class is used 
 to represent a B&eacute;zier curve of arbitrary degree, which is defined by a 
 sequence of rational control points. In addition to the methods listed 
-below, the I/O operators \link PkgArrangement2op_left_shift `operator<<` \endlink and \link PkgArrangement2op_right_shift `operator>>` \endlink for 
+below, the I/O operators \link PkgArrangementOnSurface2op_left_shift `operator<<` \endlink and \link PkgArrangementOnSurface2op_right_shift `operator>>` \endlink for 
 standard output-streams are also supported. The copy constructor and 
 assignment operator are supported as well. 
 

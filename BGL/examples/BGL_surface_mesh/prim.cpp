@@ -13,11 +13,11 @@ typedef CGAL::Surface_mesh<Point>                            Mesh;
 
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 
-int main(int, char* argv[]) 
+int main(int argc, char* argv[]) 
 {
   Mesh P;
   //std::cin >> P;
-  std::ifstream in(argv[1]);
+  std::ifstream in((argc>1)?argv[1]:"data/prim.off");
   in >> P;
   Mesh::Property_map<vertex_descriptor,vertex_descriptor> predecessor;
   predecessor = P.add_property_map<vertex_descriptor,vertex_descriptor>("v:predecessor").first;

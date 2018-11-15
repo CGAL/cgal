@@ -40,7 +40,7 @@ private:
   
   typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
   typedef typename Base::Quality Quality;
-  typedef typename Base::Badness Badness;
+  typedef typename Base::Is_bad  Is_bad;
   
   typedef Facet_topological_criterion_with_adjacency<Tr,MeshDomain, Visitor_> Self;
 
@@ -52,9 +52,10 @@ public:
   /// Constructor
   Facet_topological_criterion_with_adjacency(const MeshDomain* domain)
     : domain(domain)
-  {};
+  {}
+
   /// Destructor
-  virtual ~Facet_topological_criterion_with_adjacency() {};
+  virtual ~Facet_topological_criterion_with_adjacency() {}
   
 protected:
   virtual void do_accept(Visitor_& v) const
@@ -68,7 +69,7 @@ protected:
     return new Self(*this);
   }
   
-  virtual Badness do_is_bad (const Facet& f) const
+  virtual Is_bad do_is_bad (const Tr& /*tr*/, const Facet& f) const
   {
     typedef typename Tr::Vertex_handle  Vertex_handle;
     typedef typename Tr::Cell_handle    Cell_handle;
@@ -96,7 +97,7 @@ protected:
           Index_set set;
           domain->get_corner_incidences(corner_id, std::back_inserter(set));
           if(std::find(set.begin(), set.end(), patch_index) == set.end())
-            return Badness(Quality(1)); // bad!
+            return Is_bad(Quality(1)); // bad!
         }
         break;
       case 1: 
@@ -107,24 +108,24 @@ protected:
           Index_set set;
           domain->get_incidences(curve_id, std::back_inserter(set));
           if(std::find(set.begin(), set.end(), patch_index) == set.end())
-            return Badness(Quality(1)); // bad!
+            return Is_bad(Quality(1)); // bad!
         }
         break;
       case 2:
         if(domain->surface_patch_index(v->index()) != patch_index)
-          return Badness(Quality(1)); // bad!
+          return Is_bad(Quality(1)); // bad!
         break;
       default:
-        return Badness(Quality(1));
+        return Is_bad(Quality(1));
         break;
       }
     }
     if(nb_vertices_on_curves == 3) {
-      return Badness(Quality(1)); // bad!
+      return Is_bad(Quality(1)); // bad!
       // All vertices are on curves. That means that the facet could be on
       // several different patches. Let's disallow that.
     }
-    return Badness();
+    return Is_bad();
   }
 }; // end class Facet_topological_criterion_with_adjacency
 

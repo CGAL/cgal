@@ -3199,9 +3199,11 @@ void CGAL::QGLViewer::drawVisualHints() {
     glScissor (GLint((camera()->projectedCoordinatesOf(camera()->pivotPoint()).x-size/2)*devicePixelRatio()),
                GLint((height() - camera()->projectedCoordinatesOf(camera()->pivotPoint()).y-size/2)*devicePixelRatio()), size, size);
     rendering_program.setUniformValue("color", QColor(::Qt::black));
+    glDisable(GL_DEPTH_TEST);
     glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(4));
     rendering_program.setUniformValue("color", QColor(::Qt::white));
     glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(4));
+    glEnable(GL_DEPTH_TEST);
     // The viewport and the scissor are restored.
     glScissor(scissor[0],scissor[1],scissor[2],scissor[3]);
     glViewport(viewport[0],viewport[1],viewport[2],viewport[3]);

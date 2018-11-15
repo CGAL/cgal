@@ -1,12 +1,12 @@
-/// \defgroup PkgCGALIpelets CGAL Ipelets Reference
+/// \defgroup PkgCGALIpeletsRef CGAL Ipelets Reference
 /*!
-\addtogroup PkgCGALIpelets
-\cgalPkgDescriptionBegin{CGAL Ipelets,PkgCGALIpeletsSummary}
+\addtogroup PkgCGALIpeletsRef
+\cgalPkgDescriptionBegin{CGAL Ipelets,PkgCGALIpelets}
 \cgalPkgPicture{ipeico.jpg}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Olivier Devillers, Sébastien Loriot, and Sylvain Pion}
 \cgalPkgDesc{This package provides  a generic framework to easily write ipelets (plug-in's) using \cgal for the the Ipe extensible drawing editor.}
-\cgalPkgManuals{Chapter_CGAL_Ipelets,PkgCGALIpelets}
+\cgalPkgManuals{Chapter_CGAL_Ipelets,PkgCGALIpeletsRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.5}

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3MeshClasses
+\ingroup PkgMesh3MeshClasses
 
 The class `Mesh_facet_criteria_3` is a model of `MeshFacetCriteria_3`. 
 It provides a uniform bound for the shape criterion, 
@@ -54,11 +54,10 @@ which have to be verified by each surface facet. See
 section \ref Mesh_3DelaunayRefinement for further details. 
 Note that if one parameter is set to 0, then its corresponding criteria is ignored. 
 */ 
-Mesh_facet_criteria_3( 
-FT angle_bound, 
-FT radius_bound, 
-FT distance_bound, 
-Mesh_facet_topology topology = FACET_VERTICES_ON_SURFACE); 
+  Mesh_facet_criteria_3(const FT& angle_bound,
+                        const FT& radius_bound,
+                        const FT& distance_bound,
+                        Mesh_facet_topology topology = FACET_VERTICES_ON_SURFACE);
 
 /*!
 Returns an object to serve as criteria for facets. The types `SizingField` and 
@@ -66,12 +65,11 @@ Returns an object to serve as criteria for facets. The types `SizingField` and
 be models of the concept `MeshDomainField_3`. The behavior and semantic of the arguments are the same 
 as above, except that the radius and distance bound parameters are functionals instead of constants. 
 */ 
-template <class SizingField, class DistanceField> 
-Mesh_facet_criteria_3( 
-FT angle_bound, 
-SizingField radius_bound, 
-DistanceField distance_bound, 
-Mesh_facet_topology topology = FACET_VERTICES_ON_SURFACE); 
+  template <class SizingField, class DistanceField>
+  Mesh_facet_criteria_3(const FT& angle_bound,
+                        const SizingField& radius_bound,
+                        const DistanceField& distance_bound,
+                        Mesh_facet_topology topology = FACET_VERTICES_ON_SURFACE);
 
 /// @}
 

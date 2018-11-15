@@ -38,8 +38,8 @@ typedef K::Triangle_3   Triangle_3;
 typedef K::Iso_cuboid_3 Iso_cuboid_3;
 
 typedef CGAL::Triangulation_vertex_base_with_info_3<unsigned int, K> Vb1;
-typedef CGAL::Alpha_shape_vertex_base_3<K, Vb1> Vb;
-typedef CGAL::Alpha_shape_cell_base_3<K>   Fb;
+typedef CGAL::Alpha_shape_vertex_base_3<K, Vb1>                      Vb;
+typedef CGAL::Alpha_shape_cell_base_3<K>                             Fb;
 
 typedef CGAL::Triangulation_data_structure_3<Vb,Fb> Tds;
 typedef CGAL::Delaunay_triangulation_3<K,Tds> Triangulation_3;
@@ -180,6 +180,7 @@ public Q_SLOTS:
     if(dock_widget->isVisible()) { dock_widget->hide(); }
     else {
       dock_widget->show();
+      dock_widget->raise();
       Scene_points_with_normal_item* sel_item =
           qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
       if(sel_item)

@@ -29,37 +29,36 @@
 
 #include <CGAL/Mesh_3/config.h>
 
-#include <CGAL/Random.h>
-#include <CGAL/Union_find.h>
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/Mesh_polyhedron_3.h>
-
-#include <CGAL/Polygon_mesh_processing/compute_normal.h>
-
 #include <CGAL/Mesh_3/Polyline_with_context.h>
-#include <CGAL/Polygon_mesh_processing/detect_features.h>
+
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/internal/Mesh_3/helpers.h>
 
 #include <CGAL/enum.h>
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/split_graph_into_polylines.h>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/detect_features.h>
+#include <CGAL/Random.h>
+#include <CGAL/Union_find.h>
+
+#include <boost/dynamic_bitset.hpp>
+#include <boost/foreach.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/dynamic_bitset.hpp>
-#include <CGAL/boost/graph/split_graph_into_polylines.h>
-#include <CGAL/internal/Mesh_3/helpers.h>
-#include <CGAL/boost/iterator/transform_iterator.hpp>
-#include <boost/foreach.hpp>
 
 #include <string>
 #include <vector>
 #include <fstream>
 
-
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3Domains
+\ingroup PkgMesh3Domains
 
 The class `Polyhedral_complex_mesh_domain_3` implements a domain
 defined by a collection of polyhedral surfaces, forming a complex.
@@ -159,7 +158,7 @@ public:
 
   /// The polyhedron type
   typedef Polyhedron Polyhedron_type;
-  
+
   /// \name Index types
   /// @{
   /// The types are `int` or types compatible with `int`.
@@ -224,11 +223,28 @@ public:
     , patch_indices(indices_begin, indices_end)
     , borders_detected_(false)
   {
-    stored_polyhedra.reserve(std::distance(begin, end));
+    patch_id_to_polyhedron_id.resize(std::distance(begin, end)+1);
+    stored_polyhedra.reserve(patch_id_to_polyhedron_id.size()-1);
     CGAL_assertion(stored_polyhedra.capacity() ==
                    std::size_t(std::distance(indices_begin, indices_end)));
+
+    Surface_patch_index sp_index = 1;
+
     for (; begin != end; ++begin) {
+      typedef boost::graph_traits<Polyhedron_type> Graph_traits;
+      typedef typename Graph_traits::face_descriptor face_descriptor;
       stored_polyhedra.push_back(*begin);
+      patch_id_to_polyhedron_id[sp_index] = sp_index - 1;
+
+      typedef typename boost::property_map<Polyhedron_type,
+                                           CGAL::face_patch_id_t<Patch_id>
+                                           >::type PIDMap;
+      PIDMap pid_map = get(face_patch_id_t<Patch_id>(), stored_polyhedra.back());
+      BOOST_FOREACH(face_descriptor fd,
+                    faces(stored_polyhedra.back())) {
+        put(pid_map, fd, sp_index);
+      }
+      ++sp_index;
       this->add_primitives(stored_polyhedra.back());
     }
     this->build();
@@ -278,7 +294,7 @@ public:
   For an edge of the polyhedron, if the angle between the two normal vectors of its
   incident facets is bigger than the given bound, then the edge is considered as
   a feature edge, and inserted as a feature of the domain.
-  */ 
+  */
   void detect_features(FT angle_bound = FT(60)) {
     detect_features(angle_bound, stored_polyhedra, false/*do protect*/);
   }
@@ -358,16 +374,25 @@ public:
   /// @cond DEVELOPERS
   template <typename C3t3>
   void add_vertices_to_c3t3_on_patch_without_feature_edges(C3t3& c3t3) const {
-#if CGAL_MESH_3_VERBOSE
+#ifdef CGAL_MESH_3_VERBOSE
     std::cout << "add_vertices_to_c3t3_on_patch_without_feature_edges...";
     std::cout.flush();
 #endif
     CGAL::Random random(0);
-    typedef typename C3t3::Triangulation Tr;
+
+    typedef typename C3t3::Triangulation                  Tr;
+    typedef typename Tr::Weighted_point                   Weighted_point;
+    typedef typename IGT::Sphere_3                        Sphere_3;
+    typedef typename Polyhedron::Vertex_const_handle      Vertex_const_handle;
+
     Tr& tr = c3t3.triangulation();
-    typedef typename Polyhedron::Vertex_const_handle Vertex_const_handle;
-    typename Tr::Geom_traits::Construct_weighted_point_3 cwp
-      = tr.geom_traits().construct_weighted_point_3_object();
+
+    typename Tr::Geom_traits::Compute_weight_3 cw =
+      tr.geom_traits().compute_weight_3_object();
+    typename Tr::Geom_traits::Construct_point_3 cp =
+      tr.geom_traits().construct_point_3_object();
+    typename Tr::Geom_traits::Construct_weighted_point_3 cwp =
+      tr.geom_traits().construct_weighted_point_3_object();
 
     const std::size_t nb_of_patch_plus_one = this->nb_of_patch_plus_one();
     const std::size_t nb_of_extra_vertices_per_patch = 20;
@@ -389,10 +414,12 @@ public:
         const Patch_id patch_id = vit->halfedge()->face()->patch_id();
         CGAL_assertion(std::size_t(patch_id) <= nb_of_patch_plus_one);
         typename Tr::Vertex_handle tr_v = tr.nearest_power_vertex(vit->point());
-        if (tr_v != typename Tr::Vertex_handle()) {
-          typedef typename IGT::Sphere_3 Sphere_3;
-          const Sphere_3 sphere(tr_v->point().point(), tr_v->point().weight());
-          if (!sphere.has_on_unbounded_side(vit->point())) continue;
+        if (tr_v != typename Tr::Vertex_handle())
+        {
+          const Weighted_point& trv_wp = tr.point(tr_v);
+          const Sphere_3 sphere(cp(trv_wp), cw(trv_wp));
+          if (!sphere.has_on_unbounded_side(vit->point()))
+            continue;
         }
         ++nb_of_free_vertices_on_patch[patch_id];
       }
@@ -404,9 +431,9 @@ public:
       needed_vertices_on_patch[i] = (std::min)(nb_of_extra_vertices_per_patch,
                                                needed_vertices_on_patch[i]);
     }
+
     // Then a second path to fill `several_vertices_on_patch`...
-    // The algorithm is adapted from SGI `random_sample_n`:
-    //   https://www.sgi.com/tech/stl/random_sample_n.html
+    // The algorithm is adapted from SGI `random_sample_n`
     BOOST_FOREACH(const Polyhedron& p, this->stored_polyhedra)
     {
       for (typename Polyhedron::Vertex_const_iterator
@@ -422,10 +449,12 @@ public:
         if(needed_vertices_on_patch[patch_id] == 0) continue;
 
         typename Tr::Vertex_handle tr_v = tr.nearest_power_vertex(vit->point());
-        if (tr_v != typename Tr::Vertex_handle()) {
-          typedef typename IGT::Sphere_3 Sphere_3;
-          const Sphere_3 sphere(tr_v->point().point(), tr_v->point().weight());
-          if (!sphere.has_on_unbounded_side(vit->point())) continue;
+        if (tr_v != typename Tr::Vertex_handle())
+        {
+          const Weighted_point& trv_wp = tr.point(tr_v);
+          const Sphere_3 sphere(cp(trv_wp), cw(trv_wp));
+          if (!sphere.has_on_unbounded_side(vit->point()))
+            continue;
         }
 
         // here we have a new free vertex on patch #`patch_id`
@@ -483,7 +512,7 @@ public:
         }
       }
     }
-#if CGAL_MESH_3_VERBOSE
+#ifdef CGAL_MESH_3_VERBOSE
     std::cout << "\badd_vertices_to_c3t3_on_patch_without_feature_edges done.";
     std::cout << std::endl;
 #endif
@@ -538,7 +567,7 @@ public:
       {
         return Subdomain();
       }
-  
+
       // Shoot ray
       typename IGT::Construct_ray_3 ray = IGT().construct_ray_3_object();
       typename IGT::Construct_vector_3 vector = IGT().construct_vector_3_object();
@@ -727,9 +756,9 @@ detect_features(FT angle_in_degree,
   BOOST_FOREACH(Polyhedron_type& p, poly)
   {
     initialize_ts(p);
-    using internal::Mesh_3::Get_face_index_pmap;
+    using Mesh_3::internal::Get_face_index_pmap;
     Get_face_index_pmap<Polyhedron_type> get_face_index_pmap(p);
-#if CGAL_MESH_3_VERBOSE
+#ifdef CGAL_MESH_3_VERBOSE
     std::size_t poly_id = &p-&poly[0];
     std::cerr << "Polyhedron #" << poly_id << " :\n";
     std::cerr << "  material #" << patch_indices[poly_id].first << "\n";
@@ -749,13 +778,13 @@ detect_features(FT angle_in_degree,
       .vertex_incident_patches_map(vip_map)
       .vertex_feature_degree_map(vertex_feature_degree_map));
 
-    internal::Mesh_3::Is_featured_edge<Polyhedron_type> is_featured_edge(p);
+    Mesh_3::internal::Is_featured_edge<Polyhedron_type> is_featured_edge(p);
 
     add_featured_edges_to_graph(p, is_featured_edge, g_copy, p2vmap);
   }
   this->patch_id_to_polyhedron_id.resize(nb_of_patch_plus_one);
   this->patch_has_featured_edges.resize(nb_of_patch_plus_one);
-#if CGAL_MESH_3_VERBOSE
+#ifdef CGAL_MESH_3_VERBOSE
   std::cerr << "Number of patches: " << (nb_of_patch_plus_one - 1) << std::endl;
 #endif
   BOOST_FOREACH(Polyhedron_type& p, poly)
@@ -767,7 +796,7 @@ detect_features(FT angle_in_degree,
     {
       patch_id_to_polyhedron_id[get(pid_map, f)] = polyhedron_id;
     }
-    BOOST_FOREACH(halfedge_descriptor he, halfedges(p)) 
+    BOOST_FOREACH(halfedge_descriptor he, halfedges(p))
     {
       if(is_border(he, p) || !get(eif, edge(he, p))) continue;
       patch_has_featured_edges.set(get(pid_map, face(he, p)));
@@ -884,11 +913,11 @@ add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& g_copy)
 {
   std::vector<Polyline_with_context> polylines;
 
-  internal::Mesh_3::Extract_polyline_with_context_visitor<
+  Mesh_3::internal::Extract_polyline_with_context_visitor<
     Polyline_with_context,
     Featured_edges_copy_graph
     > visitor(g_copy, polylines);
-  internal::Mesh_3::Angle_tester<GT_> angle_tester;
+  Mesh_3::internal::Angle_tester<GT_> angle_tester;
   split_graph_into_polylines(g_copy, visitor, angle_tester);
 
   this->add_features_with_context(polylines.begin(),
@@ -969,7 +998,7 @@ add_featured_edges_to_graph(const Polyhedron_type& p,
 
 #if CGAL_MESH_3_PROTECTION_DEBUG > 1
   {// DEBUG
-    internal::Mesh_3::dump_graph_edges("edges-graph.polylines.txt", g_copy);
+    Mesh_3::internal::dump_graph_edges("edges-graph.polylines.txt", g_copy);
   }
 #endif
 }

@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgAlphaShapes3
+\ingroup PkgAlphaShapes3Ref
 
 The class `Alpha_shape_cell_base_3` is the default model for the concept 
 `AlphaShapeCell_3`. 
@@ -10,7 +10,7 @@ The class `Alpha_shape_cell_base_3` is the default model for the concept
 \tparam Traits is the geometric traits class that is provided 
 to the `Alpha_shape_3` class. 
 \tparam Cb must be a cell base class adapted to the type of triangulation that is being used.
-        By default, it is instantiated with `Triangulation_cell_base_3<Traits>`,
+        By default, it is instantiated with `Delaunay_triangulation_cell_base_3<Traits>`,
         which is appropriate for basic alpha shapes.
 \tparam ExactAlphaComparisonTag is a tag that, when set to 
 \link Tag_true `Tag_true`\endlink, triggers exact comparisons between alpha values. See the description
@@ -21,7 +21,7 @@ and \link Tag_false `Tag_false`\endlink otherwise. The default is \link Tag_fals
 
 \cgalModels `AlphaShapeCell_3`
 
-\sa `Triangulation_cell_base_3`
+\sa `Delaunay_triangulation_cell_base_3`
 \sa `Regular_triangulation_cell_base_3`
 \sa `Periodic_3_triangulation_ds_cell_base_3`
 */
@@ -37,7 +37,7 @@ public:
 namespace CGAL {
 
 /*!
-\ingroup PkgAlphaShapes3
+\ingroup PkgAlphaShapes3Ref
 
 The class `Alpha_status` is a small data structure to store 
 the critical alpha values of faces of an alpha shape. 

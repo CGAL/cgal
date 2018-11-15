@@ -16,12 +16,6 @@ find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
-  include_directories (BEFORE "../../include")
-
   create_single_source_cgal_program( "interpolation_2_demo.cpp" )
   create_single_source_cgal_program( "surface_voronoi.cpp" )
 

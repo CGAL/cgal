@@ -1,9 +1,8 @@
 project(Surface_mesh_performance)
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
 find_package(CGAL REQUIRED)
-include(${CGAL_USE_FILE})
 
 include_directories(BEFORE "../include")
 
@@ -35,6 +34,5 @@ add_executable(performance_2
 
 target_link_libraries(performance_2 ${CGAL_LIBRARIES})
 
-include( CGAL_CreateSingleSourceCGALProgram )
 create_single_source_cgal_program( "sm_sms.cpp" )
 create_single_source_cgal_program( "poly_sms.cpp" )

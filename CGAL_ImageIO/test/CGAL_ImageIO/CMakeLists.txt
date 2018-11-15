@@ -4,18 +4,12 @@
 
 project( CGAL_ImageIO_Tests )
 
-cmake_minimum_required(VERSION 2.8.11)
-
-
-include_directories(../../include)
+cmake_minimum_required(VERSION 3.1)
 
 find_package(CGAL QUIET COMPONENTS ImageIO )
 
 if ( CGAL_FOUND )
-
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
+  include(${CGAL_USE_FILE})
 
   if (WITH_CGAL_ImageIO) 
     create_single_source_cgal_program( "test_trilinear_interpolation.cpp" )

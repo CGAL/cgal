@@ -33,19 +33,17 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
+#include <CGAL/Mesh_3/Profile_counter.h>
 
-#include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
-
-#include <sstream>
-
-#include <CGAL/Default.h>
-#include <CGAL/Random.h>
-#include <CGAL/point_generators_3.h>
-#include <CGAL/Mesh_3/Profile_counter.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/properties.h>
+#include <CGAL/Default.h>
+#include <CGAL/point_generators_3.h>
+#include <CGAL/Random.h>
+#include <CGAL/Side_of_triangle_mesh.h>
+#include <CGAL/tuple.h>
 
 #include <boost/optional.hpp>
 #include <boost/none.hpp>
@@ -54,10 +52,15 @@
 #include <boost/mpl/contains.hpp>
 #include <boost/mpl/or.hpp>
 #include <boost/type_traits/is_same.hpp>
-#include <CGAL/tuple.h>
 #include <boost/format.hpp>
 #include <boost/variant.hpp>
 #include <boost/math/special_functions/round.hpp>
+
+#include <iostream>
+#include <map>
+#include <sstream>
+#include <string>
+#include <utility>
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/enumerable_thread_specific.h>
@@ -109,11 +112,10 @@ struct IGT_generator<Gt,CGAL::Tag_false>
 };
 
 }  // end namespace details
-
 }  // end namespace Mesh_3
 
-
-namespace internal { namespace Mesh_3 {
+namespace Mesh_3 {
+namespace internal {
 
 template <typename Polyhedron_type,
           bool = CGAL::graph_has_property<Polyhedron_type,
@@ -150,8 +152,8 @@ private:
   Map face_ids;
 };
 
-} // end namespace Mesh_3
 } // end namespace internal
+} // end namespace Mesh_3
 
 /**
  * @class Polyhedral_mesh_domain_3
@@ -196,7 +198,7 @@ public:
   typedef boost::optional<Surface_patch_index>            Surface_patch;
   /// Type of indexes to characterize the lowest dimensional face of the input
   /// complex on which a vertex lie
-  typedef typename internal::Mesh_3::Index_generator<
+  typedef typename Mesh_3::internal::Index_generator<
     Subdomain_index, Surface_patch_index>::type           Index;
 
   typedef CGAL::cpp11::tuple<Point_3,Index,int> Intersection;
@@ -885,9 +887,6 @@ Is_in_domain::operator()(const Point_3& p) const
   if(side == CGAL::ON_UNBOUNDED_SIDE) { return Subdomain(); }
   else { return Subdomain(Subdomain_index(1)); } // case ON_BOUNDARY && ON_BOUNDED_SIDE
 }
-
-
-
 
 }  // end namespace CGAL
 
