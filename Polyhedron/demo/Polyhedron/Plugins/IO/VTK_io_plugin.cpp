@@ -173,7 +173,6 @@ namespace CGAL{
       vtkCell* cell_ptr = poly_data->GetCell(i);
 
       vtkIdType nb_vertices = cell_ptr->GetNumberOfPoints();
-      std::cout<<nb_vertices<<std::endl;
       if (nb_vertices < 3)
         return false;
       std::vector<vertex_descriptor> vr(nb_vertices);
