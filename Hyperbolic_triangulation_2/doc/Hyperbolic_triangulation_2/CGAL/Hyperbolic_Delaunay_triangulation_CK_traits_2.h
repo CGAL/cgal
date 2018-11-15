@@ -8,12 +8,13 @@ namespace CGAL {
 
 The class `Hyperbolic_Delaunay_triangulation_CK_traits_2` is designed as one of the 
 default models for the traits concept `HyperbolicDelaunayTriangulationTraits_2`
-offered by %CGAL. It guarantees exact constructions of Delaunay triangulations and 
-dual objects when the input points have rational coordinates.
+offered by %CGAL. 
 
 \tparam K must be a model of `CircularKernel`.
 
-This class provides exact constructions and predicates. The default value for `K` is `CGAL::Exact_circular_kernel_2`.
+This class provides exact constructions and predicates. The default value for `K` is 
+`CGAL::Exact_circular_kernel_2`, which guarantees exact constructions of Delaunay 
+triangulations and dual objects when the input points have rational coordinates.
 
 \sa `Hyperbolic_Delaunay_triangulation_traits_2`
 
