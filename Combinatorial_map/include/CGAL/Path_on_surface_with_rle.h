@@ -175,6 +175,68 @@ public:
     return true;
   }
 
+  // @return true iff there is a dart after it
+  bool next_dart_exist(const List_const_iterator& it) const
+  {
+    CGAL_assertion(it!=m_path.end());
+    return is_closed() || std::next(it)!=m_path.end();
+  }
+
+  // @return true iff there is a dart before it
+  bool prev_dart_exist(const List_const_iterator& it) const
+  {
+    CGAL_assertion(it!=m_path.end());
+    return is_closed() || it!=m_path.begin();
+  }
+
+  // @return true iff there is a flat after the flat given by 'it'
+  bool next_flat_exist(const List_const_iterator& it) const
+  {
+    CGAL_assertion(it!=m_path.end());
+    return next_dart_exist(it) &&
+      (is_beginning_of_flat(next_iterator(it)) || next_dart_exist(next_iterator(it)));
+  }
+  
+  // @return true iff there is a flat before the flat given by 'it'
+  bool previous_flat_exist(const List_const_iterator& it) const
+  {
+    CGAL_assertion(it!=m_path.end());
+    return prev_dart_exist(it) &&
+      (is_beginning_of_flat(prev_iterator(it)) || prev_dart_exist(prev_iterator(it)));
+  }
+  
+  // @return true iff 'it' is the beginning of a flat part (possibly of null length)
+  // In fact, return false only if 'it' is the second dart of a flat part of non
+  // null length.
+  bool is_beginning_of_flat(const List_const_iterator& it) const
+  {
+    if (it->second!=0)
+    { return true; } // Only the beginning of a flat part has a non null length
+
+    if (!is_closed() && it==m_path.begin())
+    { return true; }
+
+    return prev_iterator(it)->second==0;
+  }
+
+  // @return true iff 'it' is the beginning of a non null flat part
+  bool is_beginning_of_non_null_flat(const List_const_iterator& it) const
+  {
+    CGAL_assertion(it!=m_path.end());
+    CGAL_assertion(it->second==0 || next_dart_exist(it));
+
+    return (it->second!=0);
+  }
+
+  // @return true iff 'it' is the end of a flat part (possibly of null length)
+  // In fact, return false only if 'it' is the first dart of a flat part of non
+  // null length.
+  bool is_end_of_flat(const List_const_iterator& it) const
+  {
+    CGAL_assertion(it!=m_path.end());
+    return (it->second==0);
+  }
+
   void advance_iterator(List_iterator& it)
   {
     CGAL_assertion(it!=m_path.end());
@@ -208,6 +270,38 @@ public:
     it=std::prev(it);
   }
 
+  void advance_to_next_flat(List_iterator& it)
+  {
+    CGAL_assertion(is_beginning_of_flat(it));
+    advance_iterator(it);
+    if (it!=m_map.end() && !is_beginning_of_flat(it))
+    { advance_iterator(it); }
+  }
+
+  void advance_to_next_flat(List_const_iterator& it) const
+  {
+    CGAL_assertion(it!=m_path.end());
+    advance_iterator(it);
+    if (it!=m_map.end() && !is_beginning_of_flat(it))
+    { advance_iterator(it); }
+  }
+
+  void retreat_to_prev_flat(List_iterator& it)
+  {
+    CGAL_assertion(it!=m_path.end());
+    retreat_iterator(it);
+    if (!is_beginning_of_flat(it))
+    { retreat_iterator(it); }
+  }
+
+  void retreat_to_prev_flat(List_const_iterator& it) const
+  {
+    CGAL_assertion(it!=m_path.end());
+    retreat_iterator(it);
+    if (!is_beginning_of_flat(it))
+    { retreat_iterator(it); }
+  }
+
   List_iterator next_iterator(const List_iterator& it)
   {
     List_iterator res=it;
@@ -236,43 +330,32 @@ public:
     return res;
  }
 
-  // @return true iff there is a dart after it
-  bool next_dart_exist(const List_const_iterator& it) const
+  List_iterator next_flat(const List_iterator& it)
   {
-    CGAL_assertion(it!=m_path.end());
-    return is_closed() || std::next(it)!=m_path.end();
+    List_iterator res=it;
+    advance_to_next_flat(res);
+    return res;
   }
 
-  // @return true iff 'it' is the beginning of a flat part (possibly of null length)
-  // In fact, return false only if 'it' is the second dart of a flat part of non
-  // null length.
-  bool is_beginning_of_flat(const List_const_iterator& it) const
+  List_const_iterator next_flat(const List_const_iterator& it) const
   {
-    if (it->second!=0)
-    { return true; } // Only the beginning of a flat part has a non null length
-
-    if (!is_closed() && it==m_path.begin())
-    { return true; }
-
-    return prev_iterator(it)->second==0;
+    List_iterator res=it;
+    advance_to_next_flat(res);
+    return res;
   }
 
-  // @return true iff 'it' is the beginning of a non null flat part
-  bool is_beginning_of_non_null_flat(const List_const_iterator& it) const
+  List_iterator prev_flat(const List_iterator& it)
   {
-    CGAL_assertion(it!=m_path.end());
-    CGAL_assertion(it->second==0 || next_dart_exist(it));
-
-    return (it->second!=0);
+    List_iterator res=it;
+    retreat_to_prev_flat(res);
+    return res;
   }
 
-  // @return true iff 'it' is the end of a flat part (possibly of null length)
-  // In fact, return false only if 'it' is the first dart of a flat part of non
-  // null length.
-  bool is_end_of_flat(const List_const_iterator& it) const
+  List_const_iterator prev_flat(const List_const_iterator& it) const
   {
-    CGAL_assertion(it!=m_path.end());
-    return (it->second==0);
+    List_iterator res=it;
+    retreat_to_prev_flat(res);
+    return res;
   }
 
   // @return the second dart of the given flat.
@@ -298,6 +381,103 @@ public:
     // here it->second<0
     return m_map.template beta<2, 1, 2, 1, 2>(next_iterator(it)->first);
   }
+
+  // @return the length of the given flat.
+  int flat_length(const List_const_iterator& it) const
+  {
+    CGAL_assertion(is_beginning_of_flat(it));
+    return it->second;
+  }
+
+  /// @return the turn between dart it and next dart.
+  ///         (turn is position of the second edge in the cyclic ordering of
+  ///          edges starting from the first edge around the second extremity
+  ///          of the first dart)
+  std::size_t next_positive_turn(const List_const_iterator& it) const
+  {
+    CGAL_assertion(is_valid());
+    CGAL_assertion(it!=m_path.end());
+    CGAL_assertion(is_closed() || std::next(it)!=m_path.end());
+
+    Dart_const_handle d1=it->first;
+    if (it->second!=0)
+    {
+      if (it->second<0) { return -(it->second); }
+      else { return it->second; }
+    }
+
+    Dart_const_handle d2=next_iterator(it)->first;
+    CGAL_assertion(d1!=d2);
+
+    if (d2==m_map.template beta<2>(d1))
+    { return 0; }
+
+    std::size_t res=1;
+    while (m_map.template beta<1>(d1)!=d2)
+    {
+      ++res;
+      d1=m_map.template beta<1, 2>(d1);
+    }
+    // std::cout<<"next_positive_turn="<<res<<std::endl;
+    return res;
+  }
+
+  /// Same than next_positive_turn but turning in reverse orientation around vertex.
+  std::size_t next_negative_turn(const List_const_iterator& it) const
+  {
+    CGAL_assertion(is_valid());
+    CGAL_assertion(it!=m_path.end());
+    CGAL_assertion(is_closed() || std::next(it)!=m_path.end());
+
+    Dart_const_handle d1=m_map.template beta<2>(it->first);
+    if (it->second!=0)
+    {
+      if (it->second<0) { return -(it->second); }
+      else { return it->second; }
+    }
+
+    Dart_const_handle d2=m_map.template beta<2>(next_iterator(it)->first);
+    CGAL_assertion(d1!=d2);
+
+    if (d2==m_map.template beta<2>(d1))
+    { return 0; }
+
+    std::size_t res=1;
+    while (m_map.template beta<0>(d1)!=d2)
+    {
+      ++res;
+      d1=m_map.template beta<0, 2>(d1);
+    }
+    // std::cout<<"next_negative_turn="<<res<<std::endl;
+    return res;
+  }
+
+  std::vector<std::size_t> compute_positive_turns() const
+  {
+    std::vector<std::size_t> res;
+    if (is_empty()) return res;
+    for (auto it=m_path.begin(), itend=m_path.end(); it!=itend; ++it)
+    {
+      if (is_closed() || std::next(it)!=m_path.end())
+      { res.push_back(next_positive_turn(it)); }
+    }
+    return res;
+  }
+
+  std::vector<std::size_t> compute_negative_turns() const
+  {
+    std::vector<std::size_t> res;
+    if (is_empty()) return res;
+    for (auto it=m_path.begin(), itend=m_path.end(); it!=itend; ++it)
+    {
+      if (is_closed() || std::next(it)!=m_path.end())
+      { res.push_back(next_negative_turn(it)); }
+    }
+    return res;
+  }
+
+  std::vector<std::size_t> compute_turns(bool positive) const
+  { return (positive?compute_positive_turns():compute_negative_turns()); }
 
   // Reduce the length of the flat part starting at 'it' from its beginning
   // 'it' moves to the end of the previous flat part if the current flat part
@@ -475,7 +655,7 @@ public:
   // spur in the path.
   void move_to_next_spur(List_iterator& it)
   {
-     CGAL_assertion(it!=m_path.end());
+    CGAL_assertion(it!=m_path.end());
     List_iterator itend=(is_closed()?it:m_path.end());
     do
     {
@@ -500,95 +680,166 @@ public:
     return res;
   }
 
-  /// @return the turn between dart it and next dart.
-  ///         (turn is position of the second edge in the cyclic ordering of
-  ///          edges starting from the first edge around the second extremity
-  ///          of the first dart)
-  std::size_t next_positive_turn(const List_const_iterator& it) const
+  // Return true if it is the beginning of a positive bracket.
+  // If true, itend is updated to be the end of the bracket
+  bool is_positive_bracket(const List_const_iterator& it,
+                           List_iterator& itend) const
   {
-    CGAL_assertion(is_valid());
     CGAL_assertion(it!=m_path.end());
-    CGAL_assertion(is_closed() || std::next(it)!=m_path.end());
+    if (it->second!=0 || !next_dart_exist(it) || next_positive_turns(it)!=1)
+    { return false; }
+    // Here it is the end of a first flat, and first turn is 1
 
-    Dart_const_handle d1=it->first;
-    if (it->second!=0)
-    {
-      if (it->second<0) { return -(it->second); }
-      else { return it->second; }
-    }
+    itend=next_iterator(it);
+    // Here itend is the beginning of the second flat
+    if (it->second<0)
+    { return false; } // This is not a positive bracket, we have some -2
 
-    Dart_const_handle d2=next_iterator(it)->first;
-    CGAL_assertion(d1!=d2);
+    if (is_beginning_of_flat(itend)) { advance_iterator(itend); }
+    // Here itend is the end of the second flat
+    if (!next_dart_exist(itend) || next_positive_turns(itend)!=1)
+    { return false; }
 
-    if (d2==m_map.template beta<2>(d1))
-    { return 0; }
-
-    std::size_t res=1;
-    while (m_map.template beta<1>(d1)!=d2)
-    {
-      ++res;
-      d1=m_map.template beta<1, 2>(d1);
-    }
-    // std::cout<<"next_positive_turn="<<res<<std::endl;
-    return res;
+    // Now we move itend to the beginning of the third flat.
+    advance_iterator(itend);
+    return true;
   }
-
-  /// Same than next_positive_turn but turning in reverse orientation around vertex.
-  std::size_t next_negative_turn(const List_const_iterator& it) const
+  
+  // Return true if it is the beginning of a negative bracket.
+  // If true, itend is updated to be the end of the bracket
+  bool is_negative_bracket(const List_const_iterator& it,
+                           List_iterator& itend) const
   {
-    CGAL_assertion(is_valid());
     CGAL_assertion(it!=m_path.end());
-    CGAL_assertion(is_closed() || std::next(it)!=m_path.end());
+    if (it->second!=0 || !next_dart_exist(it) || next_negative_turn(it)!=1)
+    { return false; }
+    // Here it is the end of a first flat, and first negative turn is 1
 
-    Dart_const_handle d1=m_map.template beta<2>(it->first);
-    if (it->second!=0)
-    {
-      if (it->second<0) { return -(it->second); }
-      else { return it->second; }
-    }
+    itend=next_iterator(it);
+    // Here itend is the beginning of the second flat
+    if (it->second>0)
+    { return false; } // This is not a negative bracket, we have some +2
 
-    Dart_const_handle d2=m_map.template beta<2>(next_iterator(it)->first);
-    CGAL_assertion(d1!=d2);
+    if (is_beginning_of_flat(itend)) { advance_iterator(itend); }
+    // Here itend is the end of the second flat
+    if (!next_dart_exist(itend) || next_negative_turns(itend)!=1)
+    { return false; }
 
-    if (d2==m_map.template beta<2>(d1))
-    { return 0; }
-
-    std::size_t res=1;
-    while (m_map.template beta<0>(d1)!=d2)
-    {
-      ++res;
-      d1=m_map.template beta<0, 2>(d1);
-    }
-    // std::cout<<"next_negative_turn="<<res<<std::endl;
-    return res;
+    // Now we move itend to the beginning of the third flat.
+    advance_iterator(itend);
+    return true;
   }
 
-  std::vector<std::size_t> compute_positive_turns() const
+  // Move 'it' to the next bracket after 'it'. Go to m_path.end() if there is no
+  // bracket in the path.
+  void move_to_next_bracket(List_iterator& it)
   {
-    std::vector<std::size_t> res;
-    if (is_empty()) return res;
-    for (auto it=m_path.begin(), itend=m_path.end(); it!=itend; ++it)
+    CGAL_assertion(it!=m_path.end());
+    List_iterator itend=(is_closed()?it:m_path.end());
+    List_iterator it2;
+    do
     {
-      if (is_closed() || std::next(it)!=m_path.end())
-      { res.push_back(next_positive_turn(it)); }
+      advance_iterator(it);
+      if (is_positive_bracket(it, it2) || is_negative_bracket(it, it2))
+      { return; }
     }
-    return res;
+    while(it!=itend);
+    it=m_path.end(); // Here there is no spur in the whole path
   }
 
-  std::vector<std::size_t> compute_negative_turns() const
+  // Remove the given negative bracket. it1 is the end of a flat beginning
+  // of the bracket; it3 is the beginning of the flat end of the bracket.
+  void remove_negative_bracket(List_iterator& it1, List_iterator& it3)
   {
-    std::vector<std::size_t> res;
-    if (is_empty()) return res;
-    for (auto it=m_path.begin(), itend=m_path.end(); it!=itend; ++it)
+    List_iterator it2;
+    CGAL_assertion(is_negative_bracket(it1, it2)); // Here it2 is unused
+
+    if (next_iterator(it1)==it3)
+    { // Case of cyclic bracket
+      CGAL_assertion(it3->second<0);
+      CGAL_assertion(next_iterator(it3)==it1);
+      it3->first=m_map.template  beta<2,0,2,1>(it3->first);
+      it1->first=m_map.template  beta<2,1,2,0>(it1->first);
+      it3->second=(-it3->second)-2;
+      return;
+    }
+    
+    it2=next_iterator(it1); // it2 is the beginning of the next flat after it1
+    if (!is_beginning_of_flat(it1)) { retreat_iterator(it1); }    
+
+    assert(is_beginning_of_flat(it1));
+    assert(is_beginning_of_flat(it2));
+    assert(is_beginning_of_flat(it3));
+    
+    reduce_flat_from_end(it1);
+    reduce_flat_from_end(it3);
+
+    it2->first=m_map.template  beta<2,1,1>(it2->first);
+    if (it2->second<0)
     {
-      if (is_closed() || std::next(it)!=m_path.end())
-      { res.push_back(next_negative_turn(it)); }
+      it2->second=-it2->second;
+      advance_iterator(it2);
+      it2->first=m_map.template  beta<2,1,1>(it2->first);
+    }
+
+    if (is_beginning_of_non_null_flat(it1)) { advance_iterator(it1); }
+  }
+
+  // Remove the given positive bracket. it1 is the end of a flat beginning
+  // of the bracket; it3 is the beginning of the flat end of the bracket.
+  void remove_positive_bracket(List_iterator& it1, List_iterator& it3)
+  {
+    List_iterator it2;
+    CGAL_assertion(is_positive_bracket(it1, it2)); // Here it2 is unused
+
+    if (next_iterator(it1)==it3)
+    { // Case of cyclic bracket
+      CGAL_assertion(it3->second>0);
+      CGAL_assertion(next_iterator(it3)==it1);
+      it3->first=m_map.template  beta<1,2,0,2>(it3->first);
+      it1->first=m_map.template  beta<0,2,1,2>(it1->first);
+      it3->second=-(it3->second-2);
+      return;
+    }
+
+    it2=next_iterator(it1); // it2 is the beginning of the next flat after it1
+    if (!is_beginning_of_flat(it1)) { retreat_iterator(it1); }    
+
+    assert(is_beginning_of_flat(it1));
+    assert(is_beginning_of_flat(it2));
+    assert(is_beginning_of_flat(it3));
+    
+    reduce_flat_from_end(it1);
+    reduce_flat_from_end(it3);
+
+    it2->first=m_map.template  beta<1,1,2>(it2->first);
+    if (it2->second>0)
+    {
+      it2->second=-it2->second;
+      advance_iterator(it2);
+      it2->first=m_map.template  beta<1,1,2>(it2->first);
+    }
+
+    if (is_beginning_of_non_null_flat(it1)) { advance_iterator(it1); }
+  }
+  
+  // Simplify the path by removing all brackets
+  // @return true iff at least one bracket was removed
+  bool remove_brackets()
+  {
+    bool res=false;
+    List_iterator it1=m_path.begin();
+    List_iterator it2;
+    while(it1!=m_path.end())
+    {
+      if (is_positive_bracket(it1, it2))
+      { remove_positive_bracket(it1, it2); res=true; }
+      else if (is_negative_bracket(it1, it2))
+      { remove_negative_bracket(it1, it2); res=true; }
+      else { move_to_next_bracket(it1); }
     }
     return res;
   }
-
-  std::vector<std::size_t> compute_turns(bool positive) const
-  { return (positive?compute_positive_turns():compute_negative_turns()); }
 
   void display_positive_turns() const
   {

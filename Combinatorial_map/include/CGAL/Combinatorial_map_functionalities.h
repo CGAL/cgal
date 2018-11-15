@@ -1027,9 +1027,26 @@ namespace CGAL {
     // Simplify the path by removing all brackets
     bool bracket_flattening(Path_on_surface<Map>& path) const
     {
+#ifdef CGAL_QUADRATIC_CANONIZE
+      /* // TODO TEMPO POUR TEST
+      Path_on_surface_with_rle<Map> prle(path);
+      prle.remove_brackets();
+      Path_on_surface<Map> p2(prle); */
+
       bool res=false;
       while(bracket_flattening_one_step(path))
       { res=true; }
+
+      // assert(p2==path); // FOR TEST
+#else // CGAL_QUADRATIC_CANONIZE
+      // TODO work only with a Path_on_surface_with_rle, to avoid these copies.
+      // ie do the method: brackets_flattening(Path_on_surface_with_rle<Map>& path)
+      Path_on_surface_with_rle<Map> prle(path);
+      bool res=prle.remove_brackets();
+      Path_on_surface<Map> p2(prle);
+      path=p2;
+#endif // CGAL_QUADRATIC_CANONIZE*/
+
       return res;
     }
 
