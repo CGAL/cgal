@@ -1,5 +1,5 @@
 
-\page Chapter_2D_Hyperbolic_Triangulations 2D Hyperbolic Triangulations
+\page Chapter_2D_Hyperbolic_Triangulations 2D Hyperbolic Delaunay Triangulations
 
 namespace CGAL {
 /*!
@@ -9,47 +9,126 @@ namespace CGAL {
 \anchor chapterHTriangulation2
 
 \cgalAutoToc
-\author Monique Teillaud, Mikhail Bogdanov, and Iordan Iordanov
+\author Mikhail Bogdanov, and Iordan Iordanov, and Monique Teillaud
 
 \image html ht-450px.png 
 
-2D hyperbolic triangulations of \cgal are designed to represent triangulations of 
-the hyperbolic plane. The vertices of the triangulation are defined by an input set of points.
-The resulting triangulation is a connected <i>simplicial complex</i>,
-i.e.:
-<ul>
-  <li> it contains all incident \f$ j\f$-simplices (\f$ j<k\f$) of any \f$ k\f$-simplex, and 
-  <li> two \f$ k\f$-simplices either do not intersect or share a common \f$ j\f$-face, \f$ j<k\f$. 
-</ul>
-The resulting simplices of dimension 0, 1 and 2 are called <I>vertex</I>, <I>edge</I>, and
-<I>face</I> respectively.
+\cgalModifBegin
+TODO image Delaunay + Voronoi a cote
+\cgalModifEnd
 
+This package allows to compute triangulations of point sets in the Poincar&eacute;
+disk model of the hyperbolic plane. 
+
+\section The Poincar&eacute; Disk Model of the Hyperbolic Plane
+The Poincar&eacute; disk model represents the hyperbolic plane
+\f$\mathbb H^2\f$ as the open unit disk centered at the origin in the
+Euclidean plane. The unit circle represents the set \f$\mathcal
+H_\infty\f$ of points at infinity.
+
+In this model, a hyperbolic line is either an arc of circle
+perpendicular to the unit circle or, if it passes through the origin,
+a diameter of the unit disk. A hyperbolic circle is a Euclidean circle
+contained in the unit disk; however, its hyperbolic center and radius
+are not the same as its Euclidean center and radius.
 
 \cgalModifBegin
-\section HT_Triangulations Triangulations in the Hyperbolic Plane
-In this package, we use the Poincar&eacute; disk model to represent the hyperbolic plane \f$\mathbb H^2\f$ as the open unit disk centered at the origin. Points on the unit circle are points at infinity. Hyperbolic lines in this model are represented as arcs of circles perpendicular to the boundary of the unit disk, or as its diameters (if they pass through the origin). Hyperbolic circles in \f$\mathbb H^2\f$ coincide with Euclidean circles contained in the unit disk; however, the hyperbolic centers and radii of these circles are not the same as their Euclidean centers and radii.
-
-The Delaunay triangulation of a set of points \f$\mathcal P\f$ in \f$\mathbb H^2\f$ is a subset of the Euclidean Delaunay triangulation of \f$\mathcal P\f$. The hyperbolic Delaunay triangulation of \f$\mathcal P\f$ contains only the simplices that are <i>Delaunay hyperbolic</i>:
-<ul>
-	<li> A segment with endpoints in \f$\mathbb H^2\f$ is Delaunay hyperbolic if there exists an empty disk (i.e., not containing any points in \f$\mathcal P\f$) passing through its endpoints that is contained in \f$\mathbb H^2\f$;
-	<li> A face is Delaunay hyperbolic if its circumscribing circle is contained in \f$\mathbb H^2\f$.
-</ul>
+TODO figure showing \f$\mathcal H_\infty\f$ and O in black, 2 lines (one of each
+kind) in e.g., blue, and a few co-circular circles in e.g., green 
 \cgalModifEnd
-For an illustration, see \cgalFigureRef{Hyperbolic_triangulation_2Empty_disks}
 
+\section Euclidean and Hyperbolic Delaunay Triangulations
+As hyperbolic circles coincide with Euclidean circles contained in the
+unit disk, the combinatorial structure of the hyperbolic Delaunay
+triangulation of a set \f$\mathcal P\f of points in \f$\mathbb H^2\f$
+is a subset of the Euclidean Delaunay triangulation of \f$\mathcal
+P\f. Of course, the hyperbolic and Euclidean geometric embeddings of a
+given Delaunay face are different. 
+\cgalModifBegin
+TODO maybe figure showing the 2 embeddings?
+\cgalModifEnd
+
+More precisely, the hyperbolic Delaunay triangulation of \f$\mathcal
+P\f$ is a connected simplicial complex. It only
+contains the simplices of the Euclidean Delaunay triangulation that
+are <i>hyperbolic</i>:
+<ul>
+	<li> A Euclidean Delaunay face is hyperbolic if its
+	circumscribing circle is contained in \f$\mathbb H^2\f$. 
+	<li> An Euclidean Delaunay edge is hyperbolic if one fo the
+	empty disks (i.e., not containing any point of \f$\mathcal
+	P\f$) passing through its endpoints is contained in \f$\mathbb
+	H^2\f. 
+</ul>
+In the Euclidean Delaunay triangulation, there is a bijection between
+non-hyperbolic faces and non-hyperbolic edges
+\cgalCite{cgal:bdt-hdcvd-14}. See
+\cgalFigureRef{Hyperbolic_triangulation_2Empty_disks} 
+
+\cgalModifBegin
+TODO fix bib entry: Delaunay and Voronoi should be capitalized
+\cgalModifEnd
 
 \cgalFigureAnchor{Hyperbolic_triangulation_2Empty_disks}
 <center>
-<img src="ht-empty-disks.png" style="max-width:40%; width=40%;"/>
+<img src="ht-empty-disks.png" style="max-width:30%; width=30%;"/>
 </center>
 \cgalFigureCaptionBegin{Hyperbolic_triangulation_2Empty_disks}
-An example of non-hyperbolic edge is the dashed segment: the disks that pass through its endpoints and are contained in \f$\mathbb H^2\f$ are not empty; on the other hand, the disks that pass through its endpoints and are empty, are not contained in \f$\mathbb H^2\f$.
+The shaded face is non-hyperbolic. Its dashed edge is non-hyperbolic,
+as no empty circle through its endpoints is contained in
+\f$\mathbb H^2\f$. Its other two edges are hyperbolic. 
 \cgalFigureCaptionEnd
 
+\cgalModifBegin
+TODO fix the picture so that it shows what is written in the caption.
+\cgalModifEnd
+
+\section Software Design
+From what was said above, it is natural that the class
+`Hyperbolic_Delaunay_triangulation_2` privately inherits from the class
+`Delaunay_triangulation_2`. So, users are encouraged to look at the chapter
+\cgalModifBegin
+TODO link T2
+\cgalModifEnd
+of the CGAL manual to know more in particular about the
+representation of triangulations in CGAL and the flexibility of the design. 
+
+The class `Hyperbolic_Delaunay_triangulation_2` has two template
+parameters:
+<ul>
+	<li>	A geometric traits class `Gt`, which provides geometric
+	primitives. The requirements on this first template parameter
+	are described by the concept
+	`HyperbolicDelaunayTriangulationTraits_2`, which refines
+	`DelaunayTriangulationTraits_2`. 
+	<li> A triangulation data structure parameter, for which the
+	requirements are described by the concept
+	`TriangulationDataStructure_2`. The default for this second template parameter
+	is `Triangulation_data_structure_2< Triangulation_vertex_base_2<Gt>, Hyperbolic_triangulation_face_base_2<Gt> >`.
+</ul>
+
+Two models of the concept `HyperbolicDelaunayTriangulationTraits_2`
+are proposed for the geometric traits
+class. The first one, `CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2`, is based
+upon `CGAL::Circular_kernel_2` and guarantees exact constructions of
+Delaunay triangulations and dual objects when the input points have
+rational coordinates. The second one,
+`CGAL::Hyperbolic_Delaunay_triangulation_traits_2`, is more general,
+as it guarantees exact constructions even for input points with
+algebraic coordinates; however the first model is more efficient for
+rational points. 
+
+\section Examples
+\cgalModifBegin
+TODO two examples, one with each traits. Maybe one with colors on
+vertices to show how to plug vertex-with-info
+\cgalModifEnd
 
 \section HT2_Design Design and Implementation History
 
-This package implements the algorithm for computing Delaunay complexes in the hyperbolic plane, described by Mikhail Bogdanov, Olivier Devillers, and Monique Teillaud \cgalCite{cgal:bdt-hdcvd-14}.
+This package implements the algorithms for computing Delaunay complexes
+in the hyperbolic plane, described by Mikhail Bogdanov, Olivier
+Devillers, and Monique Teillaud \cgalCite{cgal:bdt-hdcvd-14}. 
 
 */ 
 } /* namespace CGAL */
