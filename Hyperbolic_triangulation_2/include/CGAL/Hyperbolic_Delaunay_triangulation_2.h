@@ -106,7 +106,7 @@ private:
     return Non_hyperbolic_tester(this);
   }
 
-
+public:
   class Hyperbolic_faces_iterator
   : public Filter_iterator<typename Base::All_faces_iterator, Non_hyperbolic_tester> 
   {
