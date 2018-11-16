@@ -14,7 +14,8 @@ HTML_EXTRA_FILES = 	${CGAL_PACKAGE_DOC_DIR}/fig/octagon_identification.svg \
 					${CGAL_PACKAGE_DOC_DIR}/fig/ds_cgal.svg \
 					${CGAL_PACKAGE_DOC_DIR}/fig/dummy-points.png \
 					${CGAL_PACKAGE_DOC_DIR}/fig/non-triangulation.svg \
-					${CGAL_PACKAGE_DOC_DIR}/fig/histogram-dummy-points.png 
+					${CGAL_PACKAGE_DOC_DIR}/fig/histogram-dummy-points.png \
+					${CGAL_PACKAGE_DOC_DIR}/fig/new-triangulation-350px.png
 
 HTML_EXTRA_STYLESHEET = ${CGAL_PACKAGE_DOC_DIR}/css/customstyle.css
 
