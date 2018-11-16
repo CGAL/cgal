@@ -1,23 +1,23 @@
-/// \defgroup PkgHyperbolicTriangulation2 2D Hyperbolic Delaunay Triangulations Reference
+/// \defgroup PkgHyperbolicTriangulation2Ref 2D Hyperbolic Delaunay Triangulations Reference
 
 /// \defgroup PkgHyperbolicTriangulation2Concepts Concepts
-/// \ingroup PkgHyperbolicTriangulation2
+/// \ingroup PkgHyperbolicTriangulation2Ref
 
 /// \defgroup PkgHyperbolicTriangulation2MainClasses Main Classes
-/// \ingroup PkgHyperbolicTriangulation2
+/// \ingroup PkgHyperbolicTriangulation2Ref
 
 /// \defgroup PkgHyperbolicTriangulation2TraitsClasses Traits Classes
-/// \ingroup PkgHyperbolicTriangulation2
+/// \ingroup PkgHyperbolicTriangulation2Ref
 
 /// \defgroup PkgHyperbolicTriangulation2VertexFaceClasses Face Classes
-/// \ingroup PkgHyperbolicTriangulation2
+/// \ingroup PkgHyperbolicTriangulation2Ref
 
 
 
 /*!
-\addtogroup PkgHyperbolicTriangulation2
+\addtogroup PkgHyperbolicTriangulation2Ref
  
-\cgalPkgDescriptionBegin{2D Hyperbolic Delaunay Triangulations,PkgHyperbolicTriangulation2Summary}
+\cgalPkgDescriptionBegin{2D Hyperbolic Delaunay Triangulations,PkgHyperbolicTriangulation2}
 \cgalPkgPicture{Hyperbolic_triangulation_2/fig/ht-120px.png}
  
 \cgalPkgSummaryBegin
@@ -26,12 +26,12 @@
 in the Poincar&eacute; disk model of the hyperbolic plane. Triangulations are built incrementally and can be modified by insertion
 and removal of vertices; point location facilities are also offered, as well as primitives to 
 build the dual Voronoi diagrams.}
-\cgalPkgManuals{Chapter_2D_Hyperbolic_Triangulations,PkgHyperbolicTriangulation2}
+\cgalPkgManuals{Chapter_2D_Hyperbolic_Triangulations,PkgHyperbolicTriangulation2Ref}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.14}
-\cgalPkgDependsOn{\ref PkgTriangulation2Summary}
+\cgalPkgDependsOn{\ref PkgTriangulation2}
 \cgalPkgBib{cgal:bt-ht2-17}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Hyperbolic Delaunay Triangulation,Hyperbolic_Delaunay_triangulation_2.zip}
