@@ -1,4 +1,4 @@
-/// \defgroup PkgHyperbolicTriangulation2 2D Hyperbolic Triangulations Reference
+/// \defgroup PkgHyperbolicTriangulation2 2D Hyperbolic Delaunay Triangulations Reference
 
 /// \defgroup PkgHyperbolicTriangulation2Concepts Concepts
 /// \ingroup PkgHyperbolicTriangulation2

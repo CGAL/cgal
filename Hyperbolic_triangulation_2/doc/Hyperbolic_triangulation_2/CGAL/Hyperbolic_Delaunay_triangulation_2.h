@@ -7,7 +7,7 @@ namespace CGAL {
 /*!
 \ingroup PkgHyperbolicTriangulation2MainClasses
 
-The class `Hyperbolic_Delaunay_triangulation_2` is the main class of the 2D Hyperbolic Triangulations package.
+The class `Hyperbolic_Delaunay_triangulation_2` is the main class of the 2D Hyperbolic Delaunay Triangulations package.
 It is designed to represent Delaunay triangulations of sets of points in the hyperbolic plane. 
 The hyperbolic plane is represented in the Poincaré disk model.
 
