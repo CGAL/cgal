@@ -504,11 +504,6 @@ public:
       halfedge_descriptor h2 = epp_it->second.first[&tm2];
       halfedge_descriptor h2_opp = opposite(h2, tm2);
 
-      if (is_border_edge(h1,tm1) || is_border_edge(h2,tm2)){
-        ++epp_it;
-        continue;
-      }
-
       //vertices from tm1
       vertex_descriptor p1 = target(next(h1_opp, tm1), tm1);
       vertex_descriptor p2 = target(next(h1, tm1), tm1);
@@ -521,41 +516,53 @@ public:
       Node_id index_q2 = get_node_id(q2, vertex_to_node_id2);
 
       // set boolean for the position of p1 wrt to q1 and q2
-      bool p1_eq_q1=false, p1_eq_q2=false;
+      bool p1_eq_q1=is_border(h1_opp, tm1), p1_eq_q2=p1_eq_q1;
       if (!is_border(h1_opp, tm1) && index_p1!=NID)
       {
         if (!is_border(h2_opp, tm2))
+        {
           p1_eq_q1 = index_p1 == index_q1;
+          if (p1_eq_q1)
+          {
+            //mark coplanar facets if any
+            tm1_coplanar_faces.set(get(fids1, face(h1_opp, tm1)));
+            tm2_coplanar_faces.set(get(fids2, face(h2_opp, tm2)));
+          }
+        }
         if (!is_border(h2, tm2))
+        {
           p1_eq_q2 = index_p1 == index_q2;
+          if (p1_eq_q2)
+          {
+            //mark coplanar facets if any
+            tm1_coplanar_faces.set(get(fids1, face(h1_opp, tm1)));
+            tm2_coplanar_faces.set(get(fids2, face(h2, tm2)));
+          }
+        }
       }
 
       // set boolean for the position of p2 wrt to q1 and q2
-      bool p2_eq_q1=false, p2_eq_q2=false;
+      bool p2_eq_q1=is_border(h1, tm1), p2_eq_q2=p2_eq_q1;
       if (!is_border(h1, tm1) && index_p2!=NID)
       {
         if (!is_border(h2_opp, tm2))
+        {
           p2_eq_q1 = index_p2 == index_q1;
+          if (p2_eq_q1){
+            //mark coplanar facets if any
+            tm1_coplanar_faces.set(get(fids1, face(h1, tm1)));
+            tm2_coplanar_faces.set(get(fids2, face(h2_opp, tm2)));
+          }
+        }
         if (!is_border(h2, tm2))
+        {
           p2_eq_q2 = index_p2 == index_q2;
-      }
-
-      //mark coplanar facets if any
-      if (p1_eq_q1){
-        tm1_coplanar_faces.set(get(fids1, face(h1_opp, tm1)));
-        tm2_coplanar_faces.set(get(fids2, face(h2_opp, tm2)));
-      }
-      if (p1_eq_q2){
-        tm1_coplanar_faces.set(get(fids1, face(h1_opp, tm1)));
-        tm2_coplanar_faces.set(get(fids2, face(h2, tm2)));
-      }
-      if (p2_eq_q1){
-        tm1_coplanar_faces.set(get(fids1, face(h1, tm1)));
-        tm2_coplanar_faces.set(get(fids2, face(h2_opp, tm2)));
-      }
-      if (p2_eq_q2){
-        tm1_coplanar_faces.set(get(fids1, face(h1, tm1)));
-        tm2_coplanar_faces.set(get(fids2, face(h2, tm2)));
+          if (p2_eq_q2){
+            //mark coplanar facets if any
+            tm1_coplanar_faces.set(get(fids1, face(h1, tm1)));
+            tm2_coplanar_faces.set(get(fids2, face(h2, tm2)));
+          }
+        }
       }
 
       if ( (p1_eq_q1 || p1_eq_q2) && (p2_eq_q1 || p2_eq_q2) )
@@ -565,6 +572,48 @@ public:
         an_edge_per_polyline.erase(it_to_rm);
         inter_edges_to_remove1.insert(edge(h1,tm1));
         inter_edges_to_remove2.insert(edge(h2,tm2));
+
+        // on the border, we can have a degree 2 node so prev/next
+        // halfedge should be also considered for removal
+        // (as the coplanar edge will not be reported in an_edge_per_polyline
+        //  and thus not removed from intersection_edges[12])
+        if ( !is_border(h1, tm1) )
+        {
+          h1 = opposite(h1, tm1);
+          h2 = opposite(h2, tm2);
+        }
+        if ( is_border(h1, tm1) )
+        {
+          if ( opposite(next(h1, tm1), tm1) == prev(opposite(h1, tm1), tm1) )
+          {
+            inter_edges_to_remove1.insert(edge(next(h1, tm1),tm1));
+            inter_edges_to_remove1.insert(edge(next(h2, tm2),tm2));
+          }
+          if ( opposite(prev(h1, tm1), tm1) == next(opposite(h1, tm1), tm1) )
+          {
+            inter_edges_to_remove1.insert(edge(prev(h1, tm1), tm1));
+            inter_edges_to_remove1.insert(edge(prev(h2, tm2), tm2));
+          }
+        }
+        // same but for h2
+        if ( !is_border(h2, tm2) )
+        {
+          h1 = opposite(h1, tm1);
+          h2 = opposite(h2, tm2);
+        }
+        if ( is_border(h2, tm2) )
+        {
+          if ( opposite(next(h2, tm2), tm2) == prev(opposite(h2, tm2), tm2) )
+          {
+            inter_edges_to_remove1.insert(edge(next(h1, tm1),tm1));
+            inter_edges_to_remove1.insert(edge(next(h2, tm2),tm2));
+          }
+          if ( opposite(prev(h2, tm2), tm2) == next(opposite(h2, tm2), tm2) )
+          {
+            inter_edges_to_remove1.insert(edge(prev(h1, tm1), tm1));
+            inter_edges_to_remove1.insert(edge(prev(h2, tm2), tm2));
+          }
+        }
       }
       else
         ++epp_it;
@@ -677,11 +726,55 @@ public:
             impossible_operation.set();
             return;
           }
+          else
+          {
+            //Sort the three triangle faces around their common edge
+            //  we assume that the exterior of the volume is indicated by
+            //  counterclockwise oriented faces
+            //  (corrected by is_tmi_inside_tmi).
+            halfedge_descriptor h = is_border(h1, tm1) ? opposite(h1, tm1) : h1;
+            vertex_descriptor p = target(next(h,tm1),tm1);
+            //    when looking from the side of indices.second,
+            //    the interior of the first triangle mesh is described
+            //    by turning counterclockwise from p1 to p2
+            vertex_descriptor q1=target(next(opposite(h2,tm2),tm2),tm2);
+            vertex_descriptor q2=target(next(h2,tm2),tm2);
+            //    when looking from the side of indices.second,
+            //    the interior of the second volume is described
+            //    by turning from q1 to q2
+
+            //check if the third point of each triangular face is an original point (stay NID)
+            //or a intersection point (in that case we need the index of the corresponding node to
+            //have the exact value of the point)
+            Node_id index_p = get_node_id(p, vertex_to_node_id1);
+            Node_id index_q1 = get_node_id(q1, vertex_to_node_id2);
+            Node_id index_q2 = get_node_id(q2, vertex_to_node_id2);
+
+            std::size_t patch_id_p=tm1_patch_ids[ get(fids1, face(h,tm1)) ];
+            std::size_t patch_id_q1=tm2_patch_ids[ get(fids2, face(opposite(h2,tm2),tm2)) ];
+            std::size_t patch_id_q2=tm2_patch_ids[ get(fids2, face(h2,tm2)) ];
+
+            //indicates that patch status will be updated
+            patch_status_not_set_tm1.reset(patch_id_p);
+            patch_status_not_set_tm2.reset(patch_id_q1);
+            patch_status_not_set_tm2.reset(patch_id_q2);
+
+            bool p_is_between_q1q2 = sorted_around_edge(
+                ids.first, ids.second,
+                index_q1, index_q2, index_p,
+                q1, q2, p,
+                vpm2, vpm1,
+                nodes);
+
+            if (p_is_between_q1q2)
+              is_patch_inside_tm2.set(patch_id_p);
+          }
         }
       }
       else
         if ( is_border_edge(h2,tm2) )
         {
+          CGAL_assertion(!used_to_clip_a_surface);
           //Ambiguous, we do nothing
           impossible_operation.set();
           return;
@@ -1000,25 +1093,10 @@ public:
           else
             if( position == ON_BOUNDARY)
             {
-              if (tm1_coplanar_faces.test(get(fids1, f)))
-              {
-                coplanar_patches_of_tm1.set(patch_id);
-                coplanar_patches_of_tm1_for_union_and_intersection.set(patch_id);
-              }
-              else
-              {
-                vertex_descriptor vn = source(halfedge(f, tm1), tm1);
-                Bounded_side other_position = inside_tm2( get(vpm1, vn) );
-                if (other_position==ON_BOUNDARY)
-                {
-                  // \todo improve this part which is not robust with a kernel
-                  // with inexact constructions.
-                  other_position = inside_tm2(midpoint(get(vpm1, vn),
-                                                     get(vpm1, v) ));
-                }
-                if ( other_position == in_tm2 )
-                 is_patch_inside_tm2.set(patch_id);
-              }
+              CGAL_assertion(input_have_coplanar_faces);
+              // The patch is a coplanar patch because it is "free" from filtered polyline intersection
+              coplanar_patches_of_tm1.set(patch_id);
+              coplanar_patches_of_tm1_for_union_and_intersection.set(patch_id);
             }
           if ( patch_status_not_set_tm1.none() ) break;
         }
