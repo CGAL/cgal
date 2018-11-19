@@ -91,10 +91,10 @@ _test_cls_parallel_triangulation_3(const Parallel_triangulation &)
   std::vector<Vertex_handle> vertices_to_remove;
   typename Cls::Finite_vertices_iterator vit = tr.finite_vertices_begin();
 
-  const int num_remove = tr.number_of_vertices() / 10;
+  const std::size_t num_remove = tr.number_of_vertices() / 10;
   std::cout << "Removing " << num_remove << " from " << tr.number_of_vertices() << " vertices" << std::endl;
 
-  for(int i=0 ; i<num_remove; ++i) {
+  for(std::size_t i=0 ; i<num_remove; ++i) {
     vertices_to_remove.push_back(vit++);
   }
 
