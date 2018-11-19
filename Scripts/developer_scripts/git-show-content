@@ -5,7 +5,8 @@ set -e
 
 git=git
 
-base=${1:-HEAD}
+commit=${1:-HEAD}
+base=${2:-cgal/master}
 
 function reset() {
     git update-ref -d refs/cgal/git-show-content
@@ -14,7 +15,7 @@ function reset() {
 
 trap reset ERR EXIT KILL TERM INT
 
-for c in $(git log --pretty='%h' --first-parent cgal/master..$base); do
+for c in $(git log --pretty='%h' --first-parent ${base}..${commit}); do
     git update-ref refs/cgal/git-show-content $c
     git bundle create bundle ${c}^..refs/cgal/git-show-content > /dev/null 2>&1
     gzip -f bundle
