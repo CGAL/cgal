@@ -160,11 +160,12 @@ namespace CGAL {
     /// is made using the internally stored traits.
     /// For compilers that do not support variadic templates,
     /// overloads up to 5 template arguments are provided.
-    
 #if !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)
     template<typename ... T>
     void build(T&& ...);
+#ifndef DOXYGEN_RUNNING
     void build();
+#endif
 #else
     void build();
     template<typename T1>

@@ -47,10 +47,10 @@ struct Scene_points_with_normal_item_priv
     nb_lines = 0;
     is_point_slider_moving = false;
     normal_Slider = new QSlider(Qt::Horizontal);
-    normal_Slider->setValue(20);
+    normal_Slider->setValue(CGAL::Three::Three::getDefaultNormalLength());
     point_Slider = new QSlider(Qt::Horizontal);
     point_Slider->setMinimum(1);
-    point_Slider->setValue(2);
+    point_Slider->setValue(CGAL::Three::Three::getDefaultPointSize());
     point_Slider->setMaximum(25);
   }
   Scene_points_with_normal_item_priv(Scene_points_with_normal_item* parent)
@@ -223,11 +223,6 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_
     setRenderingMode(CGAL::Three::Three::defaultPointSetRenderingMode());
     is_selected = true;
   }
-  
-  if(d->m_points->number_of_points() < 30 )
-    d->point_Slider->setValue(5);
-  else
-    d->point_Slider->setValue(2);
   invalidateOpenGLBuffers();
 }
 
@@ -241,10 +236,6 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const SMesh& input_
   d = new Scene_points_with_normal_item_priv(input_mesh, this);
   setRenderingMode(CGAL::Three::Three::defaultPointSetRenderingMode());
   is_selected = true;
-  if(d->m_points->number_of_points() < 30 )
-    d->point_Slider->setValue(5);
-  else
-    d->point_Slider->setValue(2);
   invalidateOpenGLBuffers();
 }
 
@@ -622,10 +613,7 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
   bool ok = stream &&
     CGAL::read_ply_point_set (stream, *(d->m_points), &(d->m_comments)) &&
             !isEmpty();
-  if(d->m_points->number_of_points() < 30 )
-    d->point_Slider->setValue(5);
-  else
-    d->point_Slider->setValue(2);
+    d->point_Slider->setValue(CGAL::Three::Three::getDefaultPointSize());
   std::cerr << d->m_points->info();
 
   if (!d->m_points->has_normal_map())
@@ -673,10 +661,7 @@ bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)
   bool ok = stream &&
     CGAL::read_off_point_set(stream, *(d->m_points)) &&
             !isEmpty();
-  if(d->m_points->number_of_points() < 30 )
-    d->point_Slider->setValue(5);
-  else
-    d->point_Slider->setValue(2);
+  d->point_Slider->setValue(CGAL::Three::Three::getDefaultPointSize());
   invalidateOpenGLBuffers();
   return ok;
 }
@@ -702,10 +687,7 @@ bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
   bool ok = stream &&
     CGAL::read_xyz_point_set (stream, *(d->m_points)) &&
     !isEmpty();
-  if(d->m_points->number_of_points() < 30 )
-    d->point_Slider->setValue(5);
-  else
-    d->point_Slider->setValue(2);
+  d->point_Slider->setValue(CGAL::Three::Three::getDefaultPointSize());
   invalidateOpenGLBuffers();
   return ok;
 }
@@ -931,7 +913,7 @@ QMenu* Scene_points_with_normal_item::contextMenu()
           connect(d->normal_Slider, &QSlider::sliderReleased, this, &Scene_points_with_normal_item::itemChanged);
         }
         sliderAction->setDefaultWidget(d->normal_Slider);
-
+        container->menuAction()->setProperty("is_groupable", true);
         container->addAction(sliderAction);
         menu->addMenu(container);
       }
@@ -942,7 +924,7 @@ QMenu* Scene_points_with_normal_item::contextMenu()
         connect(d->point_Slider, &QSlider::valueChanged, this, &Scene_points_with_normal_item::itemChanged);
 
         sliderAction->setDefaultWidget(d->point_Slider);
-
+        container->menuAction()->setProperty("is_groupable", true);
         container->addAction(sliderAction);
         menu->addMenu(container);
 

@@ -133,6 +133,7 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
                                                .vertex_incident_patches_map(vip));
     //update item
     item->setItemIsMulticolor(true);
+    item->computeItemColorVectorAutomatically(true);
     item->invalidateOpenGLBuffers();
 
     // update scene

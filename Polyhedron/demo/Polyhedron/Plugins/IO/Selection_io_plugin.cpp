@@ -16,11 +16,16 @@ public:
     QString nameFilters() const { return "Selection files(*.selection.txt)"; }
     
     bool canLoad() const {
-    Scene_facegraph_item* sel_item = qobject_cast<Scene_facegraph_item*>(CGAL::Three::Three::scene()->item(
-          CGAL::Three::Three::scene()->mainSelectionIndex()));
-    if(sel_item)
-      return true;
-    return false;
+      Scene_item * item = CGAL::Three::Three::scene()->item(
+            CGAL::Three::Three::scene()->mainSelectionIndex());
+      Scene_facegraph_item* fg_item = qobject_cast<Scene_facegraph_item*>(item);
+      if(fg_item)
+        return true;
+      Scene_polyhedron_selection_item* sel_item = 
+          qobject_cast<Scene_polyhedron_selection_item*>(item);
+      if (sel_item)
+        return true;
+      return false;
     }
     CGAL::Three::Scene_item* load(QFileInfo fileinfo) {
         if(fileinfo.suffix().toLower() != "txt") return 0;

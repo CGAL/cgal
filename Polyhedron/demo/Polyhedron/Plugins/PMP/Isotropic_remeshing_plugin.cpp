@@ -473,7 +473,16 @@ public Q_SLOTS:
         }
         selection_item->polyhedron_item()->setColor(
               selection_item->polyhedron_item()->color());
-        selection_item->polyhedron_item()->setItemIsMulticolor(fpmap_valid);
+        if(fpmap_valid)
+        {
+          selection_item->polyhedron_item()->setItemIsMulticolor(true);
+          selection_item->polyhedron_item()->computeItemColorVectorAutomatically(true);
+        }
+        else
+        {
+          selection_item->polyhedron_item()->setItemIsMulticolor(false);
+        }
+        
         selection_item->polyhedron_item()->polyhedron()->collect_garbage();
         //fix constrained_edges_map
         for(int i=0; i< nE; ++i)
