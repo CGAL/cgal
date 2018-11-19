@@ -365,21 +365,7 @@ public:
     CGAL_assertion(i<m_path.size());
     CGAL_assertion (is_closed() || i<length()-1);
 
-    Dart_const_handle d1=get_ith_dart(i);
-    Dart_const_handle d2=get_next_dart(i);
-    CGAL_assertion(d1!=d2);
-
-    if (d2==m_map.template beta<2>(d1))
-    { return 0; }
-
-    std::size_t res=1;
-    while (m_map.template beta<1>(d1)!=d2)
-    {
-      ++res;
-      d1=m_map.template beta<1, 2>(d1);
-    }
-    // std::cout<<"next_positive_turn="<<res<<std::endl;
-    return res;
+    return m_map.positive_turn(get_ith_dart(i), get_next_dart(i));
   }
 
   /// Same than next_positive_turn but turning in reverse orientation around vertex.
@@ -389,21 +375,7 @@ public:
     CGAL_assertion(i<m_path.size());
     CGAL_assertion (is_closed() || i<length()-1);
 
-    Dart_const_handle d1=m_map.template beta<2>(get_ith_dart(i));
-    Dart_const_handle d2=m_map.template beta<2>(get_next_dart(i));
-    CGAL_assertion(d1!=d2);
-
-    if (d2==m_map.template beta<2>(d1))
-    { return 0; }
-
-    std::size_t res=1;
-    while (m_map.template beta<0>(d1)!=d2)
-    {
-      ++res;
-      d1=m_map.template beta<0, 2>(d1);
-    }
-    // std::cout<<"next_negative_turn="<<res<<std::endl;
-    return res;
+    return m_map.negative_turn(get_ith_dart(i), get_next_dart(i));
   }
 
   std::vector<std::size_t> compute_positive_turns() const

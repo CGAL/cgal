@@ -2773,6 +2773,56 @@ namespace CGAL {
       return mmask_marks[amark];
     }
 
+    /// @return the positive turn between the two given darts.
+    //  @pre beta1(d1) and d2 must belong to the same vertex.
+    std::size_t positive_turn(Dart_const_handle d1, Dart_const_handle d2) const
+    {
+      CGAL_assertion(!is_free<1>(d1));
+      CGAL_assertion(!is_free<2>(d1));
+      CGAL_assertion((!belong_to_same_cell<Self, 0>(beta<1>(d1), d2)));
+      
+      if (d2==beta<2>(d1)) { return 0; }
+      
+      std::size_t res=1;
+      while (beta<1>(d1)!=d2)
+      {
+        CGAL_assertion(!is_free<1>(d1));
+        CGAL_assertion(!is_free<2>(beta<1>(d1)));
+        
+        ++res;
+        d1=beta<1, 2>(d1);
+        
+        CGAL_assertion(!is_free<1>(d1));
+      }
+      return res;
+    }
+
+    /// @return the negative turn between the two given darts.
+    //  @pre beta1(d1) and d2 must belong to the same vertex.
+    std::size_t negative_turn(Dart_const_handle d1, Dart_const_handle d2) const
+    {
+      CGAL_assertion(!is_free<1>(d1));
+      CGAL_assertion(!is_free<2>(d1));
+      CGAL_assertion((!belong_to_same_cell<Self, 0>(beta<1>(d1), d2)));
+      
+      if (d2==beta<2>(d1)) { return 0; }
+
+      d1=beta<2>(d1);
+      d2=beta<2>(d2);
+      std::size_t res=1;
+      while (beta<0>(d1)!=d2)
+      {
+        CGAL_assertion(!is_free<1>(d1));
+        CGAL_assertion(!is_free<2>(beta<1>(d1)));
+        
+        ++res;
+        d1=beta<0, 2>(d1);
+        
+        CGAL_assertion(!is_free<1>(d1));
+      }
+      return res;
+    }
+
   public:
     /** Erase marked darts from the map.
      * Marked darts are unlinked before to be removed, thus surviving darts
