@@ -1823,7 +1823,7 @@ void MainWindow::on_actionDuplicate_triggered()
 
 void MainWindow::on_actionShowHide_triggered()
 {
-  scene->cutDataUpdate(true);
+  scene->setUpdatesEnabled(false);
   Q_FOREACH(QModelIndex index, sceneView->selectionModel()->selectedRows())
   {
     int i = scene->getIdFromModelIndex(proxyModel->mapToSource(index));
@@ -1831,8 +1831,7 @@ void MainWindow::on_actionShowHide_triggered()
     item->setVisible(!item->visible());
     item->redraw();
   }
-  scene->cutDataUpdate(false);
-  scene->allItemsChanged();
+  scene->setUpdatesEnabled(true);
   updateViewerBBox(false);
 }
 

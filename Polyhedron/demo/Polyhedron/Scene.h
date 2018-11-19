@@ -136,9 +136,11 @@ public:
 
   void zoomToPosition(QPoint point,
                         CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
-  void cutDataUpdate(bool b) Q_DECL_OVERRIDE
+  void setUpdatesEnabled(bool b) Q_DECL_OVERRIDE
   {
     dont_emit_changes = b;
+    if(b)
+      allItemsChanged();
   }
   
 public Q_SLOTS:
