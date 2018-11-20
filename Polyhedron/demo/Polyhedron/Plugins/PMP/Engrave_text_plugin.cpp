@@ -182,7 +182,7 @@ public :
         points.push_back(QPointF(transfo_point.x(),
                                  -transfo_point.y()));
       }
-      painter->drawPolyline(points.data(), points.size());
+      painter->drawPolyline(points.data(), static_cast<int>(points.size()));
     }
   }
   
@@ -706,7 +706,7 @@ public Q_SLOTS:
         //compute the average normal for the cc give it to every vertex
         EPICK::Vector_3 normal(0,0,0);
         CGAL::Face_filtered_graph<SMesh> fmesh(text_mesh_bottom, 
-                                               cc,
+                                               static_cast<int>(cc),
                                                fcmap);
         BOOST_FOREACH(vertex_descriptor vd, vertices(fmesh))
         {
