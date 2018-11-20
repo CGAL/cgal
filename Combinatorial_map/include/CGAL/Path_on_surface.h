@@ -361,7 +361,7 @@ public:
   ///          of the first dart)
   std::size_t next_positive_turn(std::size_t i) const
   {
-    CGAL_assertion(is_valid());
+    // CGAL_assertion(is_valid());
     CGAL_assertion(i<m_path.size());
     CGAL_assertion (is_closed() || i<length()-1);
 
@@ -371,7 +371,7 @@ public:
   /// Same than next_positive_turn but turning in reverse orientation around vertex.
   std::size_t next_negative_turn(std::size_t i) const
   {
-    CGAL_assertion(is_valid());
+    // CGAL_assertion(is_valid());
     CGAL_assertion(i<m_path.size());
     CGAL_assertion (is_closed() || i<length()-1);
 
