@@ -1348,6 +1348,12 @@ namespace CGAL {
 
     bool right_push(Path_on_surface<Map>& path) const
     {
+// #ifdef CGAL_QUADRATIC_CANONIZE
+      // TODO TEMPO POUR TEST
+      Path_on_surface_with_rle<Map> prle(path);
+      prle.right_push();
+      Path_on_surface<Map> p2(prle);
+
       bool res=false;
       while(right_push_one_step(path))
       { res=true;
@@ -1355,6 +1361,17 @@ namespace CGAL {
         /*std::cout<<"PUSH "; display();  display_pos_and_neg_turns();
         std::cout<<std::endl; */
       }
+
+      assert(p2==path);
+
+/* #else // CGAL_QUADRATIC_CANONIZE
+      // TODO work only with a Path_on_surface_with_rle, to avoid these copies.
+      Path_on_surface_with_rle<Map> prle(path);
+      bool res=prle.right_push();
+      Path_on_surface<Map> p2(prle);
+      path=p2;
+#endif // CGAL_QUADRATIC_CANONIZE
+*/
       return res;
     }
 
