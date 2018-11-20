@@ -263,6 +263,7 @@ template < class TriangleMesh,
            class Node_id,
            class Node_vector,
            class CDT,
+           class OutputBuilder,
            class UserVisitor>
 void
 triangulate_a_face(
@@ -277,6 +278,7 @@ triangulate_a_face(
                 ::halfedge_descriptor>& edge_to_hedge,
   const CDT& cdt,
   const VertexPointMap& vpm,
+  OutputBuilder& output_builder,
   UserVisitor& user_visitor)
 {
   typedef boost::graph_traits<TriangleMesh> GT;
@@ -292,6 +294,9 @@ triangulate_a_face(
     vertex_descriptor v=add_vertex(tm);
 //    user_visitor.new_vertex_added(node_id, v, tm); // NODE_VISITOR_TAG
     nodes.call_put(vpm, v, node_id, tm);
+    // register the new vertex in the output builder
+    output_builder.set_vertex_id(v, node_id, tm);
+
     CGAL_assertion(node_id_to_vertex.size()>node_id);
     node_id_to_vertex[node_id]=v;
   }

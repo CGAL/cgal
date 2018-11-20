@@ -127,6 +127,9 @@ class Face_graph_output_builder
   const VpmOutTuple& output_vpms;
   EdgeMarkMapTuple& out_edge_mark_maps;
   UserVisitor& user_visitor;
+  // mapping vertex to node id
+  Node_id_map vertex_to_node_id1, vertex_to_node_id2;
+
   // output meshes
   const cpp11::array<boost::optional<TriangleMesh*>, 4>& requested_output;
   // input meshes closed ?
@@ -445,6 +448,17 @@ public:
     }
   }
 
+  void set_vertex_id(vertex_descriptor v, Node_id node_id, const TriangleMesh& tm)
+  {
+    if (&tm == &tm1)
+      vertex_to_node_id1.insert( std::make_pair(v, node_id) );
+    else
+    {
+      CGAL_assertion(&tm == &tm2);
+      vertex_to_node_id2.insert( std::make_pair(v, node_id) );
+    }
+  }
+
   template <class Nodes_vector, class Mesh_to_map_node>
   void operator()(
     const Nodes_vector& nodes,
@@ -452,30 +466,12 @@ public:
     const boost::dynamic_bitset<>& is_node_of_degree_one,
     const Mesh_to_map_node&)
   {
-    // first build an unordered_map mapping a vertex to its node id
+    CGAL_assertion( vertex_to_node_id1.size() == vertex_to_node_id2.size());
+    CGAL_assertion( vertex_to_node_id1.size() == nodes.size());
+
+    // TODO check if Intersection_edge_map needs to be so complicated (id stored...)
     Intersection_edge_map& intersection_edges1 = mesh_to_intersection_edges[&tm1];
-    Node_id_map vertex_to_node_id1;
-
-    for (typename Intersection_edge_map::iterator
-            it=intersection_edges1.begin(),
-            it_end=intersection_edges1.end(); it!=it_end; ++it)
-    {
-      vertex_to_node_id1[source(it->first,tm1)]=it->second.first;
-      vertex_to_node_id1[target(it->first,tm1)]=it->second.second;
-    }
-
     Intersection_edge_map& intersection_edges2 = mesh_to_intersection_edges[&tm2];
-    Node_id_map vertex_to_node_id2;
-
-    for (typename Intersection_edge_map::iterator
-            it=intersection_edges2.begin(),
-            it_end=intersection_edges2.end(); it!=it_end; ++it)
-    {
-      vertex_to_node_id2[source(it->first,tm2)]=it->second.first;
-      vertex_to_node_id2[target(it->first,tm2)]=it->second.second;
-    }
-
-    CGAL_assertion(intersection_edges1.size()==intersection_edges2.size());
 
     // this will initialize face indices if the face index map is writable.
     helpers::init_face_indices(tm1, fids1);
@@ -650,7 +646,7 @@ public:
                                 .face_index_map(fids2));
 
     std::vector <std::size_t> tm2_patch_sizes(nb_patches_tm2, 0);
-    BOOST_FOREACH(std::size_t i, tm2_patch_ids)
+    BOOST_FOREACH(Node_id i, tm2_patch_ids)
       if(i!=NID)
         ++tm2_patch_sizes[i];
 
