@@ -51,6 +51,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/IO/Complex_3_in_triangulation_3_to_vtk.h>
 #include <CGAL/IO/vtk_io.h>
+#include <CGAL/IO/vtp_io.h>
 
 #include <vtkSmartPointer.h>
 #include <vtkDataSetReader.h>
