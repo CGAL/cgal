@@ -1,4 +1,3 @@
-
 /// \defgroup PkgSurface_mesh Surface Mesh Reference
 
 /*! Draw.
