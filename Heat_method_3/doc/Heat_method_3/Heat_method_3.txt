@@ -216,7 +216,7 @@ The algorithm is as follows:
 
 The time complexity of the algorithm is determined primarily by the
 choice of linear solver.  In the current implementation, Cholesky
-prefactorization is roughly \f$ O(N^1.5)\f$ and evaluation of distance is
+prefactorization is roughly \f$ O(N^{1.5})\f$ and evaluation of distance is
 roughly \f$ O(N)\f$, where \f$ N\f$ is the number of vertices in the triangulation.
 The algorithm uses two \f$ N \times N\f$ matrices, both with the same pattern of
 nonzeros as the graph Laplacian of the edge graph (roughly 7 nonzeros
