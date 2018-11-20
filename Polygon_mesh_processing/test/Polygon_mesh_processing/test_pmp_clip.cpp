@@ -238,6 +238,38 @@ void test()
   PMP::clip(tm1, K::Plane_3(0, 0, 1, 0), params::use_compact_clipper(false));
   assert(vertices(tm1).size()==0);
   CGAL::clear(tm1);
+
+  // test tangencies
+  make_triangle( K::Point_3(0, 0, 0), K::Point_3(0, 2, 0), K::Point_3(1, 1, 0), tm1 );
+  PMP::clip(tm1, K::Plane_3(1, 0, 0, -1));
+  assert(vertices(tm1).size()==3);
+  CGAL::clear(tm1);
+
+  make_triangle( K::Point_3(0, 0, 0), K::Point_3(0, 2, 0), K::Point_3(1, 1, 0), tm1 );
+  PMP::clip(tm1, K::Plane_3(-1, 0, 0, 1));
+  assert(vertices(tm1).size()==0);
+  CGAL::clear(tm1);
+
+  make_triangle( K::Point_3(0.5, 0, 0.5), K::Point_3(1, 0.5, 0.5), K::Point_3(0.5, 1, 0.5), tm1 );
+  input.open("data-coref/cube.off");
+  input >> tm2;
+  input.close();
+  PMP::clip(tm1, tm2, params::face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm1)),
+                      params::face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm2)));
+  assert(vertices(tm1).size()==3);
+  CGAL::clear(tm1);
+  CGAL::clear(tm2);
+
+  make_triangle( K::Point_3(0.5, 0, 0.5), K::Point_3(1, 0.5, 0.5), K::Point_3(0.5, 1, 0.5), tm1 );
+  input.open("data-coref/cube.off");
+  input >> tm2;
+  input.close();
+  PMP::reverse_face_orientations(tm2);
+  PMP::clip(tm1, tm2, params::face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm1)),
+                      params::face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm2)));
+  assert(vertices(tm1).size()==0);
+  CGAL::clear(tm1);
+  CGAL::clear(tm2);
 }
 
 int main()

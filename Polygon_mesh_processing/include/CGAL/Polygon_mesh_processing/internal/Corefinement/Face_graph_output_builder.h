@@ -1078,22 +1078,51 @@ public:
 
       BOOST_FOREACH(face_descriptor f, faces(tm1))
       {
-        std::size_t patch_id=tm1_patch_ids[ get(fids1, f) ];
+        const std::size_t f_id = get(fids1, f);
+        const std::size_t patch_id = tm1_patch_ids[ f_id ];
         if ( patch_status_not_set_tm1.test( patch_id ) )
         {
           patch_status_not_set_tm1.reset( patch_id );
-          vertex_descriptor v = target(halfedge(f, tm1), tm1);
-          Bounded_side position = inside_tm2( get(vpm1, v));
-          if ( position == in_tm2 )
-            is_patch_inside_tm2.set(patch_id);
-          else
-            if( position == ON_BOUNDARY)
+          halfedge_descriptor h = halfedge(f, tm1);
+          Node_id index_p1 = get_node_id(target(h, tm1), vertex_to_node_id1);
+          if (index_p1 != NID)
+          {
+            h=next(h, tm1);
+            index_p1 = get_node_id(target(h, tm1), vertex_to_node_id1);
+            if (index_p1 != NID)
             {
-              CGAL_assertion(input_have_coplanar_faces);
-              // The patch is a coplanar patch because it is "free" from filtered polyline intersection
+              h=next(h, tm1);
+              index_p1 = get_node_id(target(h, tm1), vertex_to_node_id1);
+            }
+          }
+          if (index_p1 != NID)
+          {
+            if (tm1_coplanar_faces.test(f_id))
+            {
               coplanar_patches_of_tm1.set(patch_id);
               coplanar_patches_of_tm1_for_union_and_intersection.set(patch_id);
             }
+            else
+            {
+              // triangle which is tangent at its 3 vertices
+              // \todo improve this part which is not robust with a kernel
+              // with inexact constructions.
+              Bounded_side position = inside_tm2(midpoint(get(vpm1, source(h, tm1)),
+                                                          get(vpm1, target(h, tm1)) ));
+              CGAL_assertion( position != ON_BOUNDARY);
+              if ( position == in_tm2 )
+                is_patch_inside_tm2.set(patch_id);
+            }
+          }
+          else
+          {
+            // TODO: tm2 might have been modified and an inexact vpm will
+            //       provide a non-robust result.
+            Bounded_side position = inside_tm2( get(vpm1, target(h, tm1)));
+            CGAL_assertion( position != ON_BOUNDARY);
+            if ( position == in_tm2 )
+              is_patch_inside_tm2.set(patch_id);
+          }
           if ( patch_status_not_set_tm1.none() ) break;
         }
       }
@@ -1109,37 +1138,51 @@ public:
       Inside_poly_test inside_tm1(tm1, vpm1);
       BOOST_FOREACH(face_descriptor f, faces(tm2))
       {
-        std::size_t patch_id=tm2_patch_ids[ get(fids2, f) ];
+        const std::size_t f_id = get(fids2, f);
+        std::size_t patch_id=tm2_patch_ids[ f_id ];
         if ( patch_status_not_set_tm2.test( patch_id ) )
         {
           patch_status_not_set_tm2.reset( patch_id );
-          vertex_descriptor v = target(halfedge(f, tm2), tm2);
-          Bounded_side position = inside_tm1( get(vpm2, v));
-          if ( position == in_tm1 )
-            is_patch_inside_tm1.set(patch_id);
-          else
-            if( position == ON_BOUNDARY)
+          halfedge_descriptor h = halfedge(f, tm2);
+          Node_id index_p2 = get_node_id(target(h, tm2), vertex_to_node_id2);
+          if (index_p2 != NID)
+          {
+            h=next(h, tm2);
+            index_p2 = get_node_id(target(h, tm2), vertex_to_node_id2);
+            if (index_p2 != NID)
             {
-              if (tm2_coplanar_faces.test(get(fids2, f)))
-              {
-                coplanar_patches_of_tm2.set(patch_id);
-                coplanar_patches_of_tm2_for_union_and_intersection.set(patch_id);
-              }
-              else
-              {
-                vertex_descriptor vn = source(halfedge(f, tm2), tm2);
-                Bounded_side other_position = inside_tm1( get(vpm2, vn) );
-                if (other_position==ON_BOUNDARY)
-                {
-                  // \todo improve this part which is not robust with a kernel
-                  // with inexact constructions.
-                  other_position = inside_tm1(midpoint(get(vpm2, vn),
-                                                       get(vpm2, v) ));
-                }
-                if ( other_position == in_tm1 )
-                 is_patch_inside_tm1.set(patch_id);
-              }
+              h=next(h, tm2);
+              index_p2 = get_node_id(target(h, tm2), vertex_to_node_id2);
             }
+          }
+          if (index_p2 != NID)
+          {
+            if (tm2_coplanar_faces.test(f_id))
+            {
+              coplanar_patches_of_tm2.set(patch_id);
+              coplanar_patches_of_tm2_for_union_and_intersection.set(patch_id);
+            }
+            else
+            {
+              // triangle which is tangent at its 3 vertices
+              // \todo improve this part which is not robust with a kernel
+              // with inexact constructions.
+              Bounded_side position = inside_tm1(midpoint(get(vpm2, source(h, tm2)),
+                                                          get(vpm2, target(h, tm2)) ));
+              CGAL_assertion( position != ON_BOUNDARY);
+              if ( position == in_tm1 )
+                is_patch_inside_tm1.set(patch_id);
+            }
+          }
+          else
+          {
+            // TODO: tm1 might have been modified and an inexact vpm will
+            //       provide a non-robust result.
+            Bounded_side position = inside_tm1( get(vpm2, target(h, tm2)));
+            CGAL_assertion( position != ON_BOUNDARY);
+            if ( position == in_tm1 )
+              is_patch_inside_tm1.set(patch_id);
+          }
           if ( patch_status_not_set_tm2.none() ) break;
         }
       }
