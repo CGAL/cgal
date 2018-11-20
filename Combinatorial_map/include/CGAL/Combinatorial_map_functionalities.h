@@ -1027,7 +1027,6 @@ namespace CGAL {
     // Simplify the path by removing all brackets
     bool bracket_flattening(Path_on_surface<Map>& path) const
     {
-#ifdef CGAL_QUADRATIC_CANONIZE
       /* // TODO TEMPO POUR TEST
       Path_on_surface_with_rle<Map> prle(path);
       prle.remove_brackets();
@@ -1038,16 +1037,13 @@ namespace CGAL {
       { res=true; }
 
       // assert(p2==path); // FOR TEST
-#else // CGAL_QUADRATIC_CANONIZE
-      // TODO work only with a Path_on_surface_with_rle, to avoid these copies.
-      // ie do the method: brackets_flattening(Path_on_surface_with_rle<Map>& path)
-      Path_on_surface_with_rle<Map> prle(path);
-      bool res=prle.remove_brackets();
-      Path_on_surface<Map> p2(prle);
-      path=p2;
-#endif // CGAL_QUADRATIC_CANONIZE*/
-
       return res;
+    }
+
+    // Simplify the path by removing all brackets
+    bool bracket_flattening(Path_on_surface_with_rle<Map>& path) const
+    {
+      return path.remove_brackets(); // TODO use method with index to compute turns (and add a compilation flat allowing to use either normal version, or version with indices
     }
 
     bool remove_spurs_one_step(Path_on_surface<Map>& path) const
@@ -1100,7 +1096,6 @@ namespace CGAL {
     // @return true iff at least one spur was removed
     bool remove_spurs(Path_on_surface<Map>& path) const
     {
-#ifdef CGAL_QUADRATIC_CANONIZE
       // TODO TEMPO POUR TEST
       /* Path_on_surface_with_rle<Map> prle(path);
       prle.remove_spurs();
@@ -1110,18 +1105,14 @@ namespace CGAL {
       while(remove_spurs_one_step(path))
       { res=true; }
 
-      // assert(p2==path); 
-
-#else // CGAL_QUADRATIC_CANONIZE
-      // TODO work only with a Path_on_surface_with_rle, to avoid these copies.
-      // ie do the method: remove_spurs(Path_on_surface_with_rle<Map>& path)
-      Path_on_surface_with_rle<Map> prle(path);
-      bool res=prle.remove_spurs();
-      Path_on_surface<Map> p2(prle);
-      path=p2;
-#endif // CGAL_QUADRATIC_CANONIZE
+      // assert(p2==path); // TEMPO POUR TESTS
 
       return res;
+    }
+
+    bool remove_spurs(Path_on_surface_with_rle<Map>& path) const
+    {
+        return path.remove_spurs();
     }
 
     // Simplify the path by removing all possible brackets and spurs
@@ -1348,11 +1339,10 @@ namespace CGAL {
 
     bool right_push(Path_on_surface<Map>& path) const
     {
-// #ifdef CGAL_QUADRATIC_CANONIZE
       // TODO TEMPO POUR TEST
-      Path_on_surface_with_rle<Map> prle(path);
+      /* Path_on_surface_with_rle<Map> prle(path);
       prle.right_push();
-      Path_on_surface<Map> p2(prle);
+      Path_on_surface<Map> p2(prle); */
 
       bool res=false;
       while(right_push_one_step(path))
@@ -1362,17 +1352,14 @@ namespace CGAL {
         std::cout<<std::endl; */
       }
 
-      assert(p2==path);
+      // assert(p2==path); // TEMPO POUR TEST
 
-/* #else // CGAL_QUADRATIC_CANONIZE
-      // TODO work only with a Path_on_surface_with_rle, to avoid these copies.
-      Path_on_surface_with_rle<Map> prle(path);
-      bool res=prle.right_push();
-      Path_on_surface<Map> p2(prle);
-      path=p2;
-#endif // CGAL_QUADRATIC_CANONIZE
-*/
       return res;
+    }
+
+    bool right_push(Path_on_surface_with_rle<Map>& path) const
+    {
+      return path.right_push();
     }
 
   public:
@@ -1386,6 +1373,12 @@ namespace CGAL {
       CGAL::Timer t; t.start();
   #endif // COMPUTE_TIME
 
+#ifdef CGAL_QUADRATIC_CANONIZE
+      Path_on_surface<Map>& path2=path;
+#else
+      Path_on_surface_with_rle<Map> path2(path);
+#endif
+
       /* std::cout<<"##########################################"<<std::endl;
       std::cout<<"Init "; display();
       std::cout<<std::endl;
@@ -1394,7 +1387,7 @@ namespace CGAL {
 
       bool modified=false;
       // std::cout<<"RS ";
-      remove_spurs(path); // TODO BEFORE remove_spurs_one_step(path);
+      remove_spurs(path2); // TODO BEFORE remove_spurs_one_step(path);
 
       /* display(); display_pos_and_neg_turns();
       std::cout<<std::endl; */
@@ -1403,12 +1396,12 @@ namespace CGAL {
       {
         do
         {
-          modified=bracket_flattening_one_step(path);
+          modified=bracket_flattening(path2); // TODO BEFORE  bracket_flattening_one_step(path);
 
           /* std::cout<<"BF "; display(); display_pos_and_neg_turns();
           std::cout<<std::endl; */
 
-          modified=modified || remove_spurs(path); // TODO BEFORE remove_spurs_one_step(path);
+          modified=modified || remove_spurs(path2); // TODO BEFORE remove_spurs_one_step(path);
 
 
           /* std::cout<<"RS "; display(); display_pos_and_neg_turns();
@@ -1416,9 +1409,13 @@ namespace CGAL {
         }
         while(modified);
 
-        modified=right_push(path);
+        modified=right_push(path2);
       }
       while(modified); // Maybe we do not need to iterate, a unique last righ_push should be enough (? To verify)
+
+#ifndef CGAL_QUADRATIC_CANONIZE
+      path=path2;
+#endif
 
   #ifdef COMPUTE_TIME
       t.stop();
