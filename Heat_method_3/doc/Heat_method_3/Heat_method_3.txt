@@ -26,7 +26,7 @@ on a fixed domain, since precomputation done for the first query can be re-used.
 
 As a rule of thumb, the method works well on triangle meshes, which are
 Delaunay, though in practice may also work fine for meshes that are far from
-Delaunay.  In order to ensure good behavior, one can optionally enable a
+Delaunay.  In order to ensure good behavior, we enable a
 preprocessing step that constructs an <em>intrinsic Delaunay triangulation
 (iDT)</em>; this triangulation will not change the input geometry, but
 generally improves the quality of the solution.  The cost of this preprocessing
@@ -80,17 +80,15 @@ the distances with respect to these two sources.
 \cgalExample{Heat_method_3/heat_method_surface_mesh.cpp}
 
 
-\subsection HM_example_Intrinsic Using the Intrinsic Delaunay Triangulation
+\subsection HM_example_Intrinsic Switching off the Intrinsic Delaunay Triangulation
 
-The following example shows the heat method on a triangle mesh using the
-intrinsic Delaunay triangulation (iDT) algorithm. The iDT
-should be used when the input mesh has poor quality, or when results of
-distance computation appear to be highly inaccurate.  (Poor quality in this
-case means that the input is far from Delaunay, though even in this case
-one may still get good results without iDT, depending on the specific
-geometry of the surface.)
+The following example shows the heat method on a triangle mesh without using the
+intrinsic Delaunay triangulation (iDT) algorithm, for example because by constrution
+your meshes have a good quality (Poor quality in this case means that the input
+is far from Delaunay, though even in this case one may still get good results without iDT,
+depending on the specific geometry of the surface.)
 
-\cgalExample{Heat_method_3/heat_method_surface_mesh_intrinsic.cpp}
+\cgalExample{Heat_method_3/heat_method_surface_mesh_direct.cpp}
 
 
 
@@ -216,15 +214,26 @@ The algorithm is as follows:
 
 \section sec_HM_Performance Performance
 
+The time complexity of the algorithm is determined primarily by the
+choice of linear solver.  In the current implementation, Cholesky
+prefactorization is roughly \f$ O(N^1.5)\f$ and evaluation of distance is
+roughly \f$ O(N)\f$, where \f$ N\f$ is the number of vertices in the triangulation.
+The algorithm uses two \f$ N \times N\f$ matrices, both with the same pattern of
+nonzeros as the graph Laplacian of the edge graph (roughly 7 nonzeros
+per row/column).  The cost of computation is independent of the size
+of the source set.  Primitive operations include sparse numerical
+linear algebra (in double precision), and basic arithmetic operations
+(including square roots).
+
 We perform the benchmark on an Intel Core i7-7700HQ, 2.8HGz, and compiled with Visual Studio 2013.
 
 <center>
-Number of triangles  | Initialization (sec) | Distance computation  (sec) | Initialization iDT (sec) | Distance computation iDT (sec)
---------------------:| ----------- :  | ---------------- :    | ------------------:  | --------------:
-30,000               |  0.12          |  0.01                 |  0.18                |  0.02
-200,000              |  1.32          |  0.11                 |  1.82                |  1.31
-500,000              |  8.07          |  0.55                 | 10.45                |  0.75
-1,800,000            | 35.68          |  1.1                  | 38.91                |  2.24
+Number of triangles  | Initialization iDT (sec) | Distance computation iDT (sec) | Initialization Direct (sec) | Distance computation Direct (sec)
+--------------------:| ----------- :            | ---------------- :             | ------------------:         | --------------:
+30,000               |  0.18                    |  0.02                          |  0.12                       |  0.01                 
+200,000              |  1.82                    |  1.31                          |  1.32                       |  0.11                 
+500,000              | 10.45                    |  0.75                          |  8.07                       |  0.55                 
+1,800,000            | 38.91                    |  2.24                          | 35.68                       |  1.1                  
  
 </center>
 

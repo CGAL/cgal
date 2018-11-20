@@ -948,7 +948,7 @@ public:
 ///         with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `double` as value type.
 /// \tparam Mode either the tag `Direct` or `Intrinsic_Delaunay`, which determines if the geodesic distance
 ///              is computed directly on the mesh or if the intrinsic Delaunay triangulation is applied first.
-///              The default is `Direct`.
+///              The default is `Intrinsic_Delaunay`.
 /// \warning The return type is `double` even when used with an exact kernel.
 ///
 /// \sa CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3
@@ -972,7 +972,7 @@ estimate_geodesic_distances(const TriangleMesh& tm,
                             VertexDistanceMap vdm,
                             typename boost::graph_traits<TriangleMesh>::vertex_descriptor source)
 {
-  CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<TriangleMesh, Direct> hm(tm);
+  CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<TriangleMesh, Intrinsic_Delaunay> hm(tm);
   hm.add_source(source);
   hm.estimate_geodesic_distances(vdm);
 }
@@ -989,7 +989,7 @@ estimate_geodesic_distances(const TriangleMesh& tm,
 /// \tparam VertexConstRange a model of the concept `ConstRange` with value type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 /// \tparam Mode either the tag `Direct` or `Intrinsic_Delaunay`, which determines if the geodesic distance
 ///              is computed directly on the mesh or if the intrinsic Delaunay triangulation is applied first.
-///              The default is `Direct`.
+///              The default is `Intrinsic_Delaunay`.
 /// \warning The return type is `double` even when used with an exact kernel.
 /// \sa CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3
 template <typename TriangleMesh, typename VertexDistanceMap, typename VertexConstRange, typename Mode>
@@ -1020,7 +1020,7 @@ estimate_geodesic_distances(const TriangleMesh& tm,
                               typename boost::has_range_const_iterator<VertexConstRange>
                                      >::type* = 0)
 {
-  CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<TriangleMesh, Direct> hm(tm);
+  CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<TriangleMesh, Intrinsic_Delaunay> hm(tm);
   hm.add_sources(sources);
   hm.estimate_geodesic_distances(vdm);
 }

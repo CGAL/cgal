@@ -12,7 +12,7 @@ typedef CGAL::Surface_mesh<Point_3>                          Surface_mesh;
 
 typedef boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
 typedef Surface_mesh::Property_map<vertex_descriptor,double> Vertex_distance_map;
-typedef CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<Surface_mesh, CGAL::Heat_method_3::Intrinsic_Delaunay> Heat_method;
+typedef CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<Surface_mesh, CGAL::Heat_method_3::Direct> Heat_method;
 
 
 
@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
   assert(sdistance < CGAL_PI);
 
   
-  CGAL::Heat_method_3::estimate_geodesic_distances(sm, vertex_distance, source, CGAL::Heat_method_3::Intrinsic_Delaunay());
+  CGAL::Heat_method_3::estimate_geodesic_distances(sm, vertex_distance, source, CGAL::Heat_method_3::Direct());
   sdistance = 0;
   BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
     if(get(vertex_distance,vd) > sdistance){
