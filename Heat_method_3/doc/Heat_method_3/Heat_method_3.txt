@@ -39,7 +39,7 @@ step will roughly double the overall preprocessing cost.
 In the next section we give some examples. Section \ref sec_HM_definitions presents
 the mathematical theory of the Heat method. The last section is about the \ref sec_HM_history.
 
-Note that this package depends on the third party \ref thirdpartyEigen library, or another
+Note that this package depends on the third party \ref thirdpartyEigen library (3.3 or greater), or another
 model of the concept `SparseLinearAlgebraWithFactorTraits_d`.
 This implementation is based on \cgalCite{cgal:cww-ghnac-13} and \cgalCite{cgal:fsbs-acidt-06}
 

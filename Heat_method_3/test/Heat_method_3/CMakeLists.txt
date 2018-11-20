@@ -32,12 +32,12 @@ if ( NOT Boost_FOUND )
 endif()
 
 
-find_package(Eigen3 3.2.0)
+find_package(Eigen3 3.3.0)
 
 if (EIGEN3_FOUND)
   include( ${EIGEN3_USE_FILE} )
 else()  
-  message(STATUS "This project requires the Boost library, and will not be compiled.")
+  message(STATUS "This project requires the  Eigen library (3.3 or greater), and will not be compiled.")
 
   return()
 endif()
