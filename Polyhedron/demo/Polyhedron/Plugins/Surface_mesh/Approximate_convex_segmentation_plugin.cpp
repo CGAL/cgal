@@ -212,7 +212,7 @@ private:
       // add convex hulls
       for (std::size_t i = 0; i < segments_num; ++i)
       {
-        FacegraphItem* new_item=new FacegraphItem();
+        FacegraphItem* new_item = new FacegraphItem();
         new_item->setName(tr("Convex_hull %1").arg(i));
         if (use_concavity_colors)
         {
@@ -225,6 +225,7 @@ private:
         CGAL::copy_face_graph(convex_hulls_pmap[i], *new_item->face_graph());
         scene->addItem(new_item);
         scene->changeGroup(new_item, group);
+        new_item->invalidateOpenGLBuffers();
       }
       item->setVisible(false);
     }
