@@ -872,7 +872,7 @@ public:
    * @param np optional sequence of \ref vsa_namedparameters among the ones listed below
 
    * \cgalNamedParamsBegin{Output Named Parameters}
-   *  \cgalParamBegin{face_proxy_map} a ReadWritePropertyMap with
+   *  \cgalParamBegin{face_proxy_map} a `WritePropertyMap` with
    * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type.
    * A proxy is a set of connected faces which are placed under the same proxy patch (see \cgalFigureRef{iterations}).
    * The proxy-ids are contiguous in range `[0, number_of_proxies() - 1]`.
@@ -917,7 +917,7 @@ public:
   template <typename FaceProxyMap>
   void proxy_map(FaceProxyMap face_proxy_map) const {
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
-      face_proxy_map[f] = get(m_fproxy_map, f);
+      put(face_proxy_map, f, get(m_fproxy_map, f));
   }
 
   void proxy_map(boost::param_not_found) const {}
@@ -1923,7 +1923,7 @@ private:
 
   /*!
    * @brief checks if a vertex is attached with an anchor.
-   * @tparam VertexAnchorIndexMap `WritablePropertyMap`
+   * @tparam VertexAnchorIndexMap `ReadablePropertyMap`
    * with `boost::graph_traights<TriangleMesh>::vertex_descriptor` as key and `std::size_t` as value type
    * @param vtx a vertex descriptor
    * @param vanchor_map vertex anchor index map

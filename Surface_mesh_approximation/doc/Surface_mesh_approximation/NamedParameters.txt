@@ -146,7 +146,7 @@ set the plane approximated with the PCA algorithm in the meshing step.\n
 
 \cgalNPBegin{face_proxy_map} \anchor VSA_face_proxy_map
 the property map outputs the proxy index of each face of the input polygon mesh.\n
-\b Type: a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor` as key type and the value type `std::size_t`\n
+\b Type: a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor` as key type and the value type `std::size_t`\n
 \b Default : if this parameter is omitted, no output operation is performed
 \cgalNPEnd
 

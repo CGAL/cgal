@@ -44,7 +44,7 @@ namespace Surface_mesh_approximation {
 /// \cgalModels `ErrorMetricProxy`
 ///
 /// @tparam TriangleMesh a triangle `FaceGraph`
-/// @tparam VertexPointMap a property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+/// @tparam VertexPointMap a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 ///    as key type, GeomTraits::Point_3 as value type
 /// @tparam GeomTraits a model of Kernel
 template <typename TriangleMesh,

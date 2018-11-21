@@ -111,7 +111,7 @@ unspecified_type all_default();
  *  \cgalParamEnd
  * \cgalNamedParamsEnd
  * \cgalNamedParamsBegin{Output Named Parameters}
- *  \cgalParamBegin{face_proxy_map} a ReadWritePropertyMap with
+ *  \cgalParamBegin{face_proxy_map} a `WritablePropertyMap` with
  * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type.
  * A proxy is a set of connected faces which are placed under the same proxy patch (see \cgalFigureRef{iterations}).
  * The proxy-ids are contiguous in range [0, number_of_proxies - 1].
