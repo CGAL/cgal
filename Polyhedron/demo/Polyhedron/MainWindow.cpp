@@ -2373,7 +2373,7 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
       QFileDialog::getSaveFileName(this,
                                    "Save the Scene as a Script File",
                                    last_saved_dir,
-                                   "*.js");
+                                   "Qt Script files (*.js)");
   std::ofstream os(filename.toUtf8());
   if(!os)
     return;
@@ -2381,13 +2381,17 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
   std::vector<QString> loaders;
   std::vector<QColor> colors;
   std::vector<int> rendering_modes;
+  QStringList not_saved;
   for(int i = 0; i < scene->numberOfEntries(); ++i)
   {
     Scene_item* item = scene->item(i);
     QString loader = item->property("loader_name").toString();
     QString source = item->property("source filename").toString();
     if(loader.isEmpty())
+    {
+      not_saved.push_back(item->name());
       continue;
+    }
     names.push_back(source);
     loaders.push_back(loader);
     colors.push_back(item->color());
@@ -2437,6 +2441,11 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
   os << "});\n";
   os << "viewer.moveCameraToCoordinates(camera, 0.05);\n";
   os.close();
+  if(!not_saved.empty())
+    QMessageBox::warning(this,
+                         "Items Not  Saved",
+                         QString("The following items could not be saved: %1").arg(
+                           not_saved.join(", ")));
 }
 
 void MainWindow::setTransparencyPasses(int val)
