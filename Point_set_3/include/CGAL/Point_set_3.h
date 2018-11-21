@@ -41,7 +41,7 @@ namespace CGAL {
 
 /*!
 
-  \ingroup PkgPointSet3
+  \ingroup PkgPointSet3Ref
 
   \brief A collection of points with dynamically associated
   properties.
@@ -67,7 +67,7 @@ namespace CGAL {
   removed elements. A garbage collection method must be called to
   really remove it from memory.
 
-  For convenience, all functions of the package \ref PkgPointSetProcessing
+  For convenience, all functions of the package \ref PkgPointSetProcessing3Ref
   are provided with an overload that takes a Point_set_3
   object as an argument.
 

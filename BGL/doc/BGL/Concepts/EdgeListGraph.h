@@ -33,7 +33,7 @@ edges(const EdgeListGraph& g);
   This is the case for implementations only marking edges deleted in the edge container.
  */
 template <typename EdgeListGraph>
-boost::graph_traits<EdgeListGraph>::ver_size_type
+boost::graph_traits<EdgeListGraph>::edges_size_type
 num_edges(const EdgeListGraph& g);
 
 

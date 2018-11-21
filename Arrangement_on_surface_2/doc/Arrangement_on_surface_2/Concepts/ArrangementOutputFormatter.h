@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgArrangement2Concepts
+\ingroup PkgArrangementOnSurface2Concepts
 \cgalConcept
 
 A model for the `ArrangementOutputFormatter` concept supports a set of functions that enable 

@@ -11,21 +11,21 @@ class Polyhedron_demo_selection_io_plugin :
     Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
-#ifdef USE_SURFACE_MESH
+
     QString name() const { return "selection_io_sm_plugin"; }
-    QString nameFilters() const { return "Surface_mesh selection files(*.selection.txt)"; }
-#else
-    QString name() const { return "selection_io_plugin"; }
-    QString nameFilters() const { return "Polyhedron selection files (*.selection.txt)"; }
-#endif
-
-
+    QString nameFilters() const { return "Selection files(*.selection.txt)"; }
+    
     bool canLoad() const {
-    Scene_facegraph_item* sel_item = qobject_cast<Scene_facegraph_item*>(CGAL::Three::Three::scene()->item(
-          CGAL::Three::Three::scene()->mainSelectionIndex()));
-    if(sel_item)
-      return true;
-    return false;
+      Scene_item * item = CGAL::Three::Three::scene()->item(
+            CGAL::Three::Three::scene()->mainSelectionIndex());
+      Scene_facegraph_item* fg_item = qobject_cast<Scene_facegraph_item*>(item);
+      if(fg_item)
+        return true;
+      Scene_polyhedron_selection_item* sel_item = 
+          qobject_cast<Scene_polyhedron_selection_item*>(item);
+      if (sel_item)
+        return true;
+      return false;
     }
     CGAL::Three::Scene_item* load(QFileInfo fileinfo) {
         if(fileinfo.suffix().toLower() != "txt") return 0;
@@ -36,6 +36,7 @@ public:
             delete item;
             return NULL;
         }
+        item->setName(fileinfo.baseName());
         return item;
     }
 

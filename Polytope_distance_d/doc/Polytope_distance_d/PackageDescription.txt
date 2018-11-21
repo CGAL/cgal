@@ -1,16 +1,16 @@
-/// \defgroup PkgOptimalDistances Optimal Distances Reference
-/// \defgroup PkgOptimalDistancesConcepts Concepts
-/// \ingroup PkgOptimalDistances
+/// \defgroup PkgPolytopeDistanceDRef Optimal Distances Reference
+/// \defgroup PkgPolytopeDistanceDConcepts Concepts
+/// \ingroup PkgPolytopeDistanceDRef
 
 /*!
-\addtogroup PkgOptimalDistances
+\addtogroup PkgPolytopeDistanceDRef
 \todo check generated documentation
-\cgalPkgDescriptionBegin{Optimal Distances,PkgOptimalDistancesSummary}
+\cgalPkgDescriptionBegin{Optimal Distances,PkgPolytopeDistanceD}
 \cgalPkgPicture{dist.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Kaspar Fischer, Bernd Gärtner, Thomas Herrmann, Michael Hoffmann, and Sven Schönherr}
 \cgalPkgDesc{This package provides algorithms for computing the distance between the convex hulls of two point sets in d-dimensional space, without explicitely constructing the convex hulls.   It further provides an algorithm to compute the width of a point set, and the furthest point for each vertex of a convex polygon. }
-\cgalPkgManuals{Chapter_Optimal_Distances,PkgOptimalDistances}
+\cgalPkgManuals{Chapter_Optimal_Distances,PkgPolytopeDistanceDRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{1.1}

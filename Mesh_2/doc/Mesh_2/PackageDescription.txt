@@ -1,19 +1,19 @@
-/// \defgroup PkgMesh2 2D Conforming Triangulations and Meshes Reference
+/// \defgroup PkgMesh2Ref 2D Conforming Triangulations and Meshes Reference
 
 /// \defgroup PkgMesh2Concepts Concepts
-/// \ingroup PkgMesh2
+/// \ingroup PkgMesh2Ref
 
 /// \defgroup PkgMesh2Functions Mesh Generation Functions
-/// \ingroup PkgMesh2
+/// \ingroup PkgMesh2Ref
 /// The main function to generate a mesh is `refine_Delaunay_mesh_2()`. 
 /// The function `lloyd_optimize_mesh_2()` allows to optimize an existing mesh.
 
 /// \defgroup PkgMesh2Enum Enumerations
-/// \ingroup PkgMesh2
+/// \ingroup PkgMesh2Ref
 
 /*!
-\addtogroup PkgMesh2
-\cgalPkgDescriptionBegin{2D Conforming Triangulations and Meshes,PkgMesh2Summary}
+\addtogroup PkgMesh2Ref
+\cgalPkgDescriptionBegin{2D Conforming Triangulations and Meshes,PkgMesh2}
 \cgalPkgPicture{Mesh_2/fig/delaunaymesh-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Laurent Rineau}
@@ -23,11 +23,11 @@ Conforming Gabriel triangulations  are obtained by further refining constrained 
 The package provides also a 2D mesh generator that refines triangles and constrained edges until user defined size and shape criteria on triangles are satisfied.
 The generated meshes can be optimized using the Lloyd algorithm, also provided in this package.
 The package can handle intersecting input constraints  and set no restriction on the angle formed  by two constraints sharing an endpoint.}
-\cgalPkgManuals{Chapter_2D_Conforming_Triangulations_and_Meshes,PkgMesh2}
+\cgalPkgManuals{Chapter_2D_Conforming_Triangulations_and_Meshes,PkgMesh2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.1}
-\cgalPkgDependsOn{\ref PkgTriangulation2Summary}
+\cgalPkgDependsOn{\ref PkgTriangulation2}
 \cgalPkgBib{cgal:r-ctm2}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{2D Mesh Generator,constrained_delaunay_triangulation_2.zip}

@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSegmentDelaunayGraph2
+\ingroup PkgSegmentDelaunayGraph2Ref
 
 The class `Segment_Delaunay_graph_filtered_traits_2` provides a model for the 
 `SegmentDelaunayGraphTraits_2` concept. 
@@ -150,7 +150,7 @@ typedef unspecified_type Exact_traits;
 namespace CGAL {
 
 /*!
-\ingroup PkgSegmentDelaunayGraph2
+\ingroup PkgSegmentDelaunayGraph2Ref
 
 The class `Segment_Delaunay_graph_filtered_traits_without_intersections_2` provides a model for the 
 `SegmentDelaunayGraphTraits_2` concept. 

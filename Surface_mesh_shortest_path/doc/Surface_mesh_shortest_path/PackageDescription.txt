@@ -1,26 +1,26 @@
 // Triangulated Surface Mesh Geodesic Shortest Paths
 
-/// \defgroup PkgSurfaceMeshShortestPath Triangulated Surface Mesh Geodesic Shortest Paths Reference
+/// \defgroup PkgSurfaceMeshShortestPathRef Triangulated Surface Mesh Geodesic Shortest Paths Reference
 
 /// \defgroup PkgSurfaceMeshShortestPathConcepts Concepts
-/// \ingroup PkgSurfaceMeshShortestPath
+/// \ingroup PkgSurfaceMeshShortestPathRef
 
 /// \defgroup PkgSurfaceMeshShortestPathTraitsClasses Traits Classes
-/// \ingroup PkgSurfaceMeshShortestPath
+/// \ingroup PkgSurfaceMeshShortestPathRef
 
 /*!
-\addtogroup PkgSurfaceMeshShortestPath
+\addtogroup PkgSurfaceMeshShortestPathRef
 \todo Modify the algorithm to support more efficient incremental construction
 \todo Add parallelization to the algorithm
 \todo Add methods for computing the ridge tree using the output of the algorithm
 \todo Add methods for computing shortest paths from geodesic sources as well
 
-\cgalPkgDescriptionBegin{Triangulated Surface Mesh Shortest Paths,PkgSurfaceMeshShortestPathSummary}
+\cgalPkgDescriptionBegin{Triangulated Surface Mesh Shortest Paths,PkgSurfaceMeshShortestPath}
 \cgalPkgPicture{shortestpathspackage-ico.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Stephen Kiazyk, Sébastien Loriot, Éric Colin de Verdière}
 \cgalPkgDesc{The package provides methods for computing geodesic shortest path on triangulated surface meshes.  The algorithm used is based on a paper by Xin and Wang \cgalCite{XinWang2009improvingchenandhan} .  The input of this package can be any model of the `FaceListGraph` concept. }
-\cgalPkgManuals{Chapter_Surface_mesh_shortest_path,PkgSurfaceMeshShortestPath}
+\cgalPkgManuals{Chapter_Surface_mesh_shortest_path,PkgSurfaceMeshShortestPathRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.7}

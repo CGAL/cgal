@@ -3,7 +3,6 @@
 #include <QtCore/qglobal.h>
 
 #include "Messages_interface.h"
-#include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polylines_item.h"
 #include "Scene_polyhedron_selection_item.h"
@@ -11,7 +10,6 @@
 
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include "ui_Hole_filling_widget.h"
-#include "Polyhedron_type.h"
 
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Timer.h>
@@ -42,21 +40,10 @@
 #include <QMap>
 #include <QVector>
 
-#ifdef USE_SURFACE_MESH
 typedef Scene_surface_mesh_item Scene_face_graph_item;
 
 void normalize_border(Scene_face_graph_item::Face_graph&)
 {}
-
-#else
-typedef Scene_polyhedron_item Scene_face_graph_item;
-
-void normalize_border(Scene_face_graph_item::Face_graph& polyhedron)
-{
-  polyhedron.normalize_border(); 
-}
-
-#endif
 
 typedef Scene_face_graph_item::Face_graph Face_graph;
 
@@ -436,21 +423,13 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
   messages = m;
 
   actionHoleFilling = new QAction(tr(
-                                  #ifdef USE_SURFACE_MESH
-                                      "Hole Filling for Surface Mesh"
-                                  #else
-                                      "Hole Filling for Polyhedron"
-                                  #endif
+                                      "Hole Filling"
                                     ), mw);
   actionHoleFilling->setProperty("subMenuName", "Polygon Mesh Processing");
   connect(actionHoleFilling, SIGNAL(triggered()), this, SLOT(hole_filling_action()));
 
   dock_widget = new QDockWidget(
-      #ifdef USE_SURFACE_MESH
-          "Hole Filling for Surface Mesh"
-      #else
-          "Hole Filling for Polyhedron"
-      #endif
+          "Hole Filling"
         , mw);
   dock_widget->setVisible(false);
   dock_widget->installEventFilter(this);
@@ -461,11 +440,7 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
 
   addDockWidget(dock_widget);
   dock_widget->setWindowTitle(tr(
-                              #ifdef USE_SURFACE_MESH
-                                  "Hole Filling for Surface Mesh"
-                              #else
-                                  "Hole Filling for Polyhedron"
-                              #endif
+                                  "Hole Filling"
                                 ));
   
   connect(ui_widget.Fill_from_selection_button,  SIGNAL(clicked()), this, SLOT(on_Fill_from_selection_button()));

@@ -49,7 +49,7 @@
 
 namespace CGAL {
 
-/// \ingroup PkgPolygon2
+/// \ingroup PkgPolygon2Ref
 /// The class Polygon_2 implements polygons. The Polygon_2 is
 /// parameterized by a traits class and a container class.  The latter
 /// can be any class that fulfills the requirements for an STL

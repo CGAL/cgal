@@ -23,10 +23,6 @@ endif()
 # add_definition(-DCGAL_DISABLE_ROUNDING_MATH_CHECK)
 
 if (CGAL_FOUND)
-  include( ${CGAL_USE_FILE} )
-
-  include(CGAL_CreateSingleSourceCGALProgram)
-  include_directories(BEFORE ../../include)
 
   create_single_source_cgal_program("gmap_linear_cell_complex_3.cpp")
   create_single_source_cgal_program("linear_cell_complex_3.cpp")

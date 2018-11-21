@@ -33,7 +33,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPolygon2
+\ingroup PkgPolygon2Ref
 
 The class `General_polygon_with_holes_2` models the concept
 `GeneralPolygonWithHoles_2`. It represents a general polygon with

@@ -17,7 +17,6 @@
 #include <QMenuBar>
 #include <QChar>
 #include <QAction>
-#include <QWidgetAction>
 #include <QShortcut>
 #include <QKeySequence>
 #include <QLibrary>
@@ -38,8 +37,10 @@
 #include <QTreeWidgetItem>
 #include <QTreeWidget>
 #include <QDockWidget>
+#include <QSpinBox>
 #include <stdexcept>
 #include <QTime>
+#include <QWidgetAction>
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptValue>
 #  ifdef QT_SCRIPTTOOLS_LIB
@@ -126,6 +127,7 @@ QScriptValue myPrintFunction(QScriptContext *context, QScriptEngine *engine)
 
 MainWindow::~MainWindow()
 {
+  searchAction->deleteLater();
   delete ui;
   delete statistics_ui;
 }
@@ -135,6 +137,7 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
   ui = new Ui::MainWindow;
   ui->setupUi(this);
   menuBar()->setNativeMenuBar(false);
+  searchAction = new QWidgetAction(0);
   CGAL::Three::Three::s_mainwindow = this;
   menu_map[ui->menuOperations->title()] = ui->menuOperations;
   this->verbose = verbose;
@@ -154,7 +157,6 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
   viewer->setScene(scene);
   CGAL::Three::Three::s_scene = scene;
   CGAL::Three::Three::s_connectable_scene = scene;
-  ui->actionMaxTextItemsDisplayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(viewer->textRenderer()->getMax_textItems()));
   {
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::ALT+Qt::Key_Q), this);
     connect(shortcut, SIGNAL(activated()),
@@ -162,6 +164,9 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
     shortcut = new QShortcut(QKeySequence(Qt::Key_F5), this);
     connect(shortcut, SIGNAL(activated()),
             this, SLOT(reloadItem()));
+    shortcut = new QShortcut(QKeySequence(Qt::Key_F11), this);
+    connect(shortcut, SIGNAL(activated()),
+            this, SLOT(toggleFullScreen()));
   }
 
   proxyModel = new QSortFilterProxyModel(this);
@@ -194,8 +199,6 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
   connect(viewer, &Viewer::needNewContext,
     [this](){create();});
   
-  connect(ui->actionSet_Transparency_Pass_Number, SIGNAL(triggered()),
-              viewer, SLOT(setTotalPass_clicked()));
 
   connect(scene, SIGNAL(updated()),
           this, SLOT(selectionChanged()));
@@ -208,6 +211,8 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
 
   connect(scene, SIGNAL(selectionChanged(int)),
           this, SLOT(selectSceneItem(int)));
+  connect(scene, SIGNAL(selectionChanged(QList<int>)),
+          this, SLOT(selectSceneItems(QList<int>)));
 
   connect(scene, SIGNAL(itemPicked(const QModelIndex &)),
           this, SLOT(recenterSceneView(const QModelIndex &)));
@@ -262,16 +267,11 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
   //         this, SLOT(showSceneContextMenu(const QPoint &)));
   connect(ui->actionRecenterScene, SIGNAL(triggered()),
           viewer, SLOT(update()));
-  connect(ui->actionAntiAliasing, SIGNAL(toggled(bool)),
-          viewer, SLOT(setAntiAliasing(bool)));
-
   connect(ui->actionDrawTwoSides, SIGNAL(toggled(bool)),
           viewer, SLOT(setTwoSides(bool)));
-  connect(ui->actionQuickCameraMode, SIGNAL(toggled(bool)),
-          viewer, SLOT(setFastDrawing(bool)));
   connect(ui->actionSwitchProjection, SIGNAL(toggled(bool)),
           viewer, SLOT(SetOrthoProjection(bool)));
-
+  
   // add the "About CGAL..." and "About demo..." entries
   this->addAboutCGAL();
   this->addAboutDemo(":/cgal/Polyhedron_3/about.html");
@@ -352,6 +352,10 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
   readSettings(); // Among other things, the column widths are stored.
 
   // Load plugins, and re-enable actions that need it.
+  operationSearchBar.setPlaceholderText("Filter...");
+  searchAction->setDefaultWidget(&operationSearchBar);  
+  connect(&operationSearchBar, &QLineEdit::textChanged,
+          this, &MainWindow::filterOperations);
   loadPlugins();
 
   // Setup the submenu of the View menu that can toggle the dockwidgets
@@ -395,27 +399,45 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
 }
 
 //Recursive function that do a pass over a menu and its sub-menus(etc.) and hide them when they are empty
-void filterMenuOperations(QMenu* menu)
+void filterMenuOperations(QMenu* menu, bool showFullMenu)
 {
-    Q_FOREACH(QAction* action, menu->actions()) {
-        if(QMenu* menu = action->menu())
-        {
-            filterMenuOperations(menu);
-            action->setVisible(!(menu->isEmpty()));
-        }
+  Q_FOREACH(QAction* action, menu->actions()) {
+    if(QMenu* menu = action->menu())
+    {
+      filterMenuOperations(menu, showFullMenu);
+      action->setVisible(showFullMenu && !(menu->isEmpty()));
     }
+  }
 
 }
 
 void MainWindow::filterOperations()
 {
-  Q_FOREACH(const PluginNamePair& p, plugins) {
-    Q_FOREACH(QAction* action, p.first->actions()) {
-        action->setVisible( p.first->applicable(action) );
+  static QVector<QAction*> to_remove;
+  Q_FOREACH(QAction* action, to_remove)
+    ui->menuOperations->removeAction(action);
+  QString filter=operationSearchBar.text();
+  if(!filter.isEmpty())
+    Q_FOREACH(const PluginNamePair& p, plugins) {
+      Q_FOREACH(QAction* action, p.first->actions()) {
+        action->setVisible( p.first->applicable(action) 
+                            && action->text().contains(filter, Qt::CaseInsensitive));
+        if(action->menu() != ui->menuOperations){
+          ui->menuOperations->addAction(action);
+          to_remove.push_back(action);
+        }
+      }
     }
+  else{
+    Q_FOREACH(const PluginNamePair& p, plugins) {
+      Q_FOREACH(QAction* action, p.first->actions()) {
+        action->setVisible( p.first->applicable(action) 
+                            && action->text().contains(filter, Qt::CaseInsensitive));
+      }
+    }
+    // do a pass over all menus in Operations and their sub-menus(etc.) and hide them when they are empty
   }
-  // do a pass over all menus in Operations and their sub-menus(etc.) and hide them when they are empty
-  filterMenuOperations(ui->menuOperations);
+  filterMenuOperations(ui->menuOperations, filter.isEmpty());
 }
 
 #include <CGAL/Three/exceptions.h>
@@ -680,7 +702,9 @@ void MainWindow::updateMenus()
   as = ui->menuOperations->actions();
   qSort(as.begin(), as.end(), actionsByName);
   ui->menuOperations->clear();
+  ui->menuOperations->addAction(searchAction);
   ui->menuOperations->addActions(as);
+  operationSearchBar.setFocus();
 }
 
 bool MainWindow::hasPlugin(const QString& pluginName) const
@@ -1153,6 +1177,24 @@ void MainWindow::selectSceneItem(int i)
 
     sceneView->selectionModel()->select(s,
                                         QItemSelectionModel::ClearAndSelect);
+    sceneView->scrollTo(s.indexes().first());
+  }
+}
+
+void MainWindow::selectSceneItems(QList<int> is)
+{
+  if(is.first() < 0 || is.last() >= scene->numberOfEntries()) {
+    sceneView->selectionModel()->clearSelection();
+    updateInfo();
+    updateDisplayInfo();
+  }
+  else {
+    QItemSelection s =
+      proxyModel->mapSelectionFromSource(scene->createSelection(is));
+
+    sceneView->selectionModel()->select(s,
+                                        QItemSelectionModel::ClearAndSelect);
+    sceneView->scrollTo(s.indexes().first());
   }
 }
 
@@ -1331,6 +1373,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
       else if(scene->selectionIndices().size() > 1 )
       {
         QMap<QString, QAction*> menu_actions;
+        QVector<QMenu*> slider_menus;
         bool has_stats = false;
         Q_FOREACH(QAction* action, scene->item(main_index)->contextMenu()->actions())
         {
@@ -1340,6 +1383,14 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
             if(action->text() == QString("Alpha value"))
             {
               menu_actions["alpha slider"] = action->menu()->actions().last();
+            }
+            else if(action->text() == QString("Points Size"))
+            {
+              menu_actions["points slider"] = action->menu()->actions().last();
+            }
+            else if(action->text() == QString("Normals Length"))
+            {
+              menu_actions["normals slider"] = action->menu()->actions().last();
             }
           }
           
@@ -1358,7 +1409,9 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
         QMenu menu;
         Q_FOREACH(QString name, menu_actions.keys())
         {
-          if(name == QString("alpha slider"))
+          if(name == QString("alpha slider")
+             || name == QString("points slider")
+             || name == QString("normals slider"))
             continue;
           if(name == QString("Alpha value"))
           {
@@ -1393,13 +1446,88 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
             });
             QMenu* new_menu = new QMenu("Alpha value", &menu);
               new_menu->addAction(sliderAction);
-              menu.addMenu(new_menu);
+              slider_menus.push_back(new_menu);
+          }
+          else if(name == QString("Points Size"))
+          {
+            QWidgetAction* sliderAction = new QWidgetAction(&menu);
+            QSlider* slider = new QSlider(&menu);
+            slider->setMinimum(1);
+            slider->setMaximum(25);
+            slider->setValue(
+                  qobject_cast<QSlider*>(
+                    qobject_cast<QWidgetAction*>
+                    (menu_actions["points slider"])->defaultWidget()
+                  )->value());
+            slider->setOrientation(Qt::Horizontal);
+            sliderAction->setDefaultWidget(slider);
+            
+            connect(slider, &QSlider::valueChanged, [this, slider]()
+            {
+              Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
+              {
+                Scene_item* item = scene->item(id);
+                Q_FOREACH(QAction* action, item->contextMenu()->actions())
+                {
+                  if(action->text() == "Points Size")
+                  {
+                    QWidgetAction* sliderAction = qobject_cast<QWidgetAction*>(action->menu()->actions().last());
+                    QSlider* ac_slider = qobject_cast<QSlider*>(sliderAction->defaultWidget());
+                    ac_slider->setValue(slider->value());
+                    break;
+                  }
+                }
+              }
+            });
+            QMenu* new_menu = new QMenu("Points Size", &menu);
+              new_menu->addAction(sliderAction);
+              slider_menus.push_back(new_menu);
+          }
+          else if(name == QString("Normals Length"))
+          {
+            QWidgetAction* sliderAction = new QWidgetAction(&menu);
+            QSlider* slider = new QSlider(&menu);
+            slider->setValue(
+                  qobject_cast<QSlider*>(
+                    qobject_cast<QWidgetAction*>
+                    (menu_actions["normals slider"])->defaultWidget()
+                  )->value());
+            slider->setOrientation(Qt::Horizontal);
+            sliderAction->setDefaultWidget(slider);
+            
+            connect(slider, &QSlider::valueChanged, [this, slider]()
+            {
+              Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
+              {
+                Scene_item* item = scene->item(id);
+                Q_FOREACH(QAction* action, item->contextMenu()->actions())
+                {
+                  if(action->text() == "Normals Length")
+                  {
+                    QWidgetAction* sliderAction = qobject_cast<QWidgetAction*>(action->menu()->actions().last());
+                    QSlider* ac_slider = qobject_cast<QSlider*>(sliderAction->defaultWidget());
+                    ac_slider->setValue(slider->value());
+                    break;
+                  }
+                }
+              }
+            });
+            QMenu* new_menu = new QMenu("Normals Length", &menu);
+              new_menu->addAction(sliderAction);
+              slider_menus.push_back(new_menu);
           }
           else
           {
             QAction* action = menu.addAction(name);
             connect(action, &QAction::triggered, this, &MainWindow::propagate_action);
           }
+        }
+        if(!slider_menus.empty())
+        {
+          Q_FOREACH(QMenu* m, slider_menus){
+            menu.addMenu(m);
+          }
+          menu.insertSeparator(0);
         }
         if(has_stats)
         {
@@ -1437,14 +1565,15 @@ void MainWindow::updateInfo() {
   if(item) {
     QString item_text = item->toolTip();
     QString item_filename = item->property("source filename").toString();
-    if(item->bbox()!=CGAL::Bbox_3())
+    CGAL::Bbox_3 bbox = item->bbox();
+    if(bbox !=CGAL::Bbox_3())
       item_text += QString("<div>Bounding box: min (%1,%2,%3), max (%4,%5,%6)</div>")
-          .arg(item->bbox().xmin())
-          .arg(item->bbox().ymin())
-          .arg(item->bbox().zmin())
-          .arg(item->bbox().xmax())
-          .arg(item->bbox().ymax())
-          .arg(item->bbox().zmax());
+          .arg(bbox.xmin())
+          .arg(bbox.ymin())
+          .arg(bbox.zmin())
+          .arg(bbox.xmax())
+          .arg(bbox.ymax())
+          .arg(bbox.zmax());
     if(!item_filename.isEmpty()) {
       item_text += QString("<div>File:<i> %1</div>").arg(item_filename);
     }
@@ -1464,28 +1593,35 @@ void MainWindow::updateDisplayInfo() {
 
 void MainWindow::readSettings()
 {
-    // enable anti-aliasing
-    ui->actionAntiAliasing->setChecked(settings.value("antialiasing", false).toBool());
+    QSettings settings;
+    viewer->setAntiAliasing(settings.value("antialiasing", false).toBool());
+    viewer->setFastDrawing(settings.value("quick_camera_mode", true).toBool());
+    scene->enableVisibilityRecentering(settings.value("offset_update", true).toBool());
+    viewer->textRenderer()->setMax(settings.value("max_text_items", 10000).toInt());
+    viewer->setTotalPass(settings.value("transparency_pass_number", 4).toInt());
+    CGAL::Three::Three::s_defaultSMRM = CGAL::Three::Three::modeFromName(
+          settings.value("default_sm_rm", "flat+edges").toString());
+    CGAL::Three::Three::s_defaultPSRM = CGAL::Three::Three::modeFromName(
+          settings.value("default_ps_rm", "points").toString());
     // read plugin blacklist
     QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
     Q_FOREACH(QString name,blacklist){ plugin_blacklist.insert(name); }
-    set_facegraph_mode_adapter(settings.value("polyhedron_mode", true).toBool());
+    def_save_dir = settings.value("default_saveas_dir", QDir::homePath()).toString();
+    this->default_point_size = settings.value("points_size").toInt();
+    this->default_normal_length = settings.value("normals_length").toInt();
+    this->default_lines_width = settings.value("lines_width").toInt();
 }
 
 void MainWindow::writeSettings()
 {
   this->writeState("MainWindow");
   {
-    
-    settings.setValue("antialiasing",
-                      ui->actionAntiAliasing->isChecked());
+    QSettings settings;
     //setting plugin blacklist
     QStringList blacklist;
     Q_FOREACH(QString name,plugin_blacklist){ blacklist << name; }
     if ( !blacklist.isEmpty() ) settings.setValue("plugin_blacklist",blacklist);
     else settings.remove("plugin_blacklist");
-    //setting polyhedron mode
-    settings.setValue("polyhedron_mode", this->property("is_polyhedron_mode").toBool());
   }
   std::cerr << "Write setting... done.\n";
 }
@@ -1554,7 +1690,8 @@ void MainWindow::on_actionLoadScript_triggered()
     tr("Select a script to run..."),
     ".",
     "QTScripts (*.js);;All Files (*)");
-
+  if(filename.isEmpty())
+    return;
   loadScript(QFileInfo(filename));
 #endif
 }
@@ -1654,9 +1791,8 @@ void MainWindow::on_actionSaveAs_triggered()
           sf = plugin->saveNameFilters().split(";;").first();
       }
     }
-    QString ext1, ext2;
     QRegExp extensions("\\(\\*\\..+\\)");
-    QStringList filter_ext;
+    QStringList filter_exts;
     if(filters.empty())
     {
       QMessageBox::warning(this,
@@ -1671,7 +1807,7 @@ void MainWindow::on_actionSaveAs_triggered()
       Q_FOREACH(QString s, sl){
         int pos = extensions.indexIn(s);
         if( pos >-1)
-          filter_ext.append(extensions.capturedTexts());
+          filter_exts.append(extensions.capturedTexts());
       }
     }
     filters << tr("All files (*)");
@@ -1684,10 +1820,15 @@ void MainWindow::on_actionSaveAs_triggered()
     }
     QString caption = tr("Save %1 to File...").arg(item->name());
     QString dir = item->property("source filename").toString();
-    if(dir.isEmpty())
-      dir = QString("%1/%2").arg(last_saved_dir).arg(item->name());
-    if(dir.isEmpty())
-      dir = item->name();
+    if(dir.isEmpty() &&
+       !item->property("defaultSaveDir").toString().isEmpty())
+    {
+      dir = item->property("defaultSaveDir").toString();
+    }
+    else if(!last_saved_dir.isEmpty() && dir.isEmpty())
+      dir = QString("%1/%2").arg(last_saved_dir).arg(item->defaultSaveName());
+    else if(dir.isEmpty())
+      dir = QString("%1/%2").arg(def_save_dir).arg(item->name());
     QString filename =
         QFileDialog::getSaveFileName(this,
                                      caption,
@@ -1695,24 +1836,25 @@ void MainWindow::on_actionSaveAs_triggered()
                                      filters.join(";;"),
                                      &sf);
     
-    last_saved_dir = QFileInfo(dir).absoluteDir().path();
-    extensions.indexIn(sf.split(";;").first());
-    ext1 = extensions.cap().split(" ").first();// in case of syntax like (*.a *.b)
-    
-    ext1.remove(")");
-    ext1.remove("(");
-    //remove *
-    ext1=ext1.right(ext1.size()-1);
     if(filename.isEmpty())
-      continue;
+      return;
+    last_saved_dir = QFileInfo(filename).absoluteDir().path();
+    extensions.indexIn(sf.split(";;").first());
+    QString filter_ext, filename_ext;
+    filter_ext = extensions.cap().split(" ").first();// in case of syntax like (*.a *.b)
+    
+    filter_ext.remove(")");
+    filter_ext.remove("(");
+    //remove *
+    filter_ext=filter_ext.right(filter_ext.size()-1);
 
     QStringList filename_split = filename.split(".");
     filename_split.removeFirst();
-    ext2 = filename_split.join(".");
-    ext2.push_front(".");
+    filename_ext = filename_split.join(".");
+    filename_ext.push_front(".");
    
     QStringList final_extensions;
-    Q_FOREACH(QString string, filter_ext)
+    Q_FOREACH(QString string, filter_exts)
     {
       Q_FOREACH(QString s, string.split(" ")){// in case of syntax like (*.a *.b) 
           s.remove(")");
@@ -1722,9 +1864,29 @@ void MainWindow::on_actionSaveAs_triggered()
           final_extensions.append(s);
       }
     }
-    if(!final_extensions.contains(ext2))
+    bool ok = false;
+    while(!ok)
     {
-      filename = filename.append(ext1);
+      if(final_extensions.contains(filename_ext))
+      {
+        ok = true;
+      }
+      else{
+        QStringList shatterd_filename_ext = filename_ext.split(".");
+        if(!shatterd_filename_ext.last().isEmpty())
+        {
+          shatterd_filename_ext.removeFirst();//removes ""
+          shatterd_filename_ext.removeFirst();
+          filename_ext = shatterd_filename_ext.join(".");
+          filename_ext.push_front(".");
+        }
+        else
+          break;
+      }
+    }
+    if(!ok)
+    {
+      filename = filename.append(filter_ext);
     }
     viewer->update();
     save(filename, item);
@@ -1802,20 +1964,90 @@ void MainWindow::on_actionSetPolyhedronB_triggered()
   int i = getSelectedSceneItemIndex();
   scene->setItemB(i);
 }
+
 void MainWindow::on_actionPreferences_triggered()
 {
   QDialog dialog(this);
   Ui::PreferencesDialog prefdiag;
+  QSettings settings;
   prefdiag.setupUi(&dialog);
-  if(this->property("is_polyhedron_mode").toBool())
-    prefdiag.polyRadioButton->setChecked(true);
+  
+  float lineWidth[2];
+  if(!viewer->isOpenGL_4_3())
+    viewer->glGetFloatv(GL_LINE_WIDTH_RANGE, lineWidth);
   else
-    prefdiag.smRadioButton->setChecked(true);
-  connect(prefdiag.polyRadioButton, &QRadioButton::toggled,
-          this, &MainWindow::set_facegraph_mode_adapter);
-
-  //QStandardItemModel* iStandardModel = new QStandardItemModel(this);
-
+  {
+    lineWidth[0] = 0;
+    lineWidth[1] = 10;
+  }
+  prefdiag.linesHorizontalSlider->setMinimum(lineWidth[0]);
+  prefdiag.linesHorizontalSlider->setMaximum(lineWidth[1]);
+  
+  prefdiag.offset_updateCheckBox->setChecked(
+        settings.value("offset_update", true).toBool());
+  connect(prefdiag.offset_updateCheckBox, SIGNAL(toggled(bool)),
+          scene, SLOT(enableVisibilityRecentering(bool)));
+  
+  prefdiag.antialiasingCheckBox->setChecked(settings.value("antialiasing", false).toBool());
+  connect(prefdiag.antialiasingCheckBox, SIGNAL(toggled(bool)),
+          viewer, SLOT(setAntiAliasing(bool)));
+  
+  prefdiag.quick_cameraCheckBox->setChecked(
+        settings.value("quick_camera_mode", true).toBool());
+  connect(prefdiag.quick_cameraCheckBox, SIGNAL(toggled(bool)),
+          viewer, SLOT(setFastDrawing(bool)));
+  prefdiag.max_itemsSpinBox->setValue(viewer->textRenderer()->getMax_textItems());
+  
+  connect(prefdiag.max_itemsSpinBox,static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+          this, [this](int i){
+    setMaxTextItemsDisplayed(i);
+  });
+  prefdiag.transpSpinBox->setValue(viewer->total_pass());
+  connect(prefdiag.transpSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+              this, [this](int i)
+  {
+    setTransparencyPasses(i);
+  });
+  prefdiag.pointsHorizontalSlider->setValue(this->default_point_size);
+  connect(prefdiag.pointsHorizontalSlider, &QSlider::valueChanged,
+              this, [this](int i)
+  {
+    this->default_point_size = i;
+  });
+  prefdiag.normalsHorizontalSlider->setValue(this->default_normal_length);
+  connect(prefdiag.normalsHorizontalSlider, &QSlider::valueChanged,
+              this, [this](int i)
+  {
+    this->default_normal_length = i;
+  });
+  prefdiag.linesHorizontalSlider->setValue(this->default_lines_width);
+  connect(prefdiag.linesHorizontalSlider, &QSlider::valueChanged,
+              this, [this](int i)
+  {
+    this->default_lines_width = i;
+  });
+  connect(prefdiag.background_colorPushButton, &QPushButton::clicked,
+          this, &MainWindow::setBackgroundColor);
+  
+  connect(prefdiag.default_save_asPushButton, &QPushButton::clicked,
+          this, &MainWindow::setDefaultSaveDir);
+  
+  connect(prefdiag.lightingPushButton, &QPushButton::clicked,
+          this, &MainWindow::setLighting_triggered);
+  
+  prefdiag.surface_meshComboBox->setCurrentText(CGAL::Three::Three::modeName(
+                                                  CGAL::Three::Three::s_defaultSMRM));
+  connect(prefdiag.surface_meshComboBox, &QComboBox::currentTextChanged,
+          this, [this](const QString& text){
+    this->s_defaultSMRM = CGAL::Three::Three::modeFromName(text);
+  });
+  
+  prefdiag.point_setComboBox->setCurrentText(CGAL::Three::Three::modeName(
+                                               CGAL::Three::Three::s_defaultPSRM));
+  connect(prefdiag.point_setComboBox, &QComboBox::currentTextChanged,
+          this, [this](const QString& text){
+    this->s_defaultPSRM = CGAL::Three::Three::modeFromName(text);
+  });
   std::vector<QTreeWidgetItem*> items;
   QBrush successBrush(Qt::green),
       errorBrush(Qt::red),
@@ -1835,10 +2067,10 @@ void MainWindow::on_actionPreferences_triggered()
       QTreeWidgetItem *item = new QTreeWidgetItem(pluginItem);
       item->setText(1, name);
       if(plugin_blacklist.contains(name)){
-        item->setCheckState(0, Qt::Checked);
+        item->setCheckState(0, Qt::Unchecked);
       }
       else{
-        item->setCheckState(0, Qt::Unchecked);
+        item->setCheckState(0, Qt::Checked);
       }
       if(pluginsStatus_map[name] == QString("success"))
         item->setBackground(1, successBrush);
@@ -1862,13 +2094,34 @@ void MainWindow::on_actionPreferences_triggered()
     for (std::size_t k=0; k<items.size(); ++k)
     {
      QTreeWidgetItem* item=items[k];
-      if (item->checkState(0)==Qt::Checked)
+      if (item->checkState(0)==Qt::Unchecked)
         plugin_blacklist.insert(item->text(1));
     }
+    
+    //write settings
+    settings.setValue("antialiasing",
+                      prefdiag.antialiasingCheckBox->isChecked());
+    settings.setValue("offset_update",
+                      prefdiag.offset_updateCheckBox->isChecked());
+    settings.setValue("quick_camera_mode",
+                      prefdiag.quick_cameraCheckBox->isChecked());
+    settings.setValue("transparency_pass_number",
+                      viewer->total_pass());
+    settings.setValue("max_text_items",
+                      viewer->textRenderer()->getMax_textItems());
+    settings.setValue("background_color",viewer->backgroundColor().name());
+    settings.setValue("default_sm_rm", CGAL::Three::Three::modeName(
+                        CGAL::Three::Three::defaultSurfaceMeshRenderingMode()));
+    settings.setValue("default_ps_rm", CGAL::Three::Three::modeName(
+                        CGAL::Three::Three::defaultPointSetRenderingMode()));
+    settings.setValue("points_size", this->default_point_size);
+    settings.setValue("normals_length", this->default_normal_length);
+    settings.setValue("lines_width", this->default_lines_width);
+    
   }
 }
 
-void MainWindow::on_actionSetBackgroundColor_triggered()
+void MainWindow::setBackgroundColor()
 {
   QColor c =  QColorDialog::getColor();
   if(c.isValid()) {
@@ -1877,7 +2130,7 @@ void MainWindow::on_actionSetBackgroundColor_triggered()
   }
 }
 
-void MainWindow::on_actionSetLighting_triggered()
+void MainWindow::setLighting_triggered()
 {
   viewer->setLighting();
 }
@@ -1967,7 +2220,7 @@ void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
 void MainWindow::on_actionRecenterScene_triggered()
 {
   updateViewerBBox();
-  viewer->camera()->interpolateToFitScene();
+  viewer->camera()->showEntireScene();
 }
 
 void MainWindow::on_actionLoadPlugin_triggered()
@@ -2148,18 +2401,9 @@ void MainWindow::setExpanded(QModelIndex index)
 }
 
 
-void MainWindow::on_actionMaxTextItemsDisplayed_triggered()
+void MainWindow::setMaxTextItemsDisplayed(int val)
 {
-  bool ok;
-  bool valid;
-  QString text = QInputDialog::getText(this, tr("Maximum Number of Text Items"),
-                                       tr("Maximum Text Items Diplayed:"), QLineEdit::Normal,
-                                       QString("%1").arg(viewer->textRenderer()->getMax_textItems()), &ok);
-  text.toInt(&valid);
-  if (ok && valid){
-    viewer->textRenderer()->setMax(text.toInt());
-    ui->actionMaxTextItemsDisplayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(text.toInt()));
-  }
+    viewer->textRenderer()->setMax(val);
 }
 
 void MainWindow::resetHeader()
@@ -2220,20 +2464,7 @@ void MainWindow::colorItems()
   }
   viewer->update();
 }
-// Only used to make the doc clearer. Only the adapter is actueally used in the code,
-// for signal/slots reasons.
-void MainWindow::set_face_graph_default_type(Face_graph_mode m)
-{
-  this->setProperty("is_polyhedron_mode", m);
-}
 
-void MainWindow::set_facegraph_mode_adapter(bool is_polyhedron)
-{
-  if(is_polyhedron)
-   set_face_graph_default_type(POLYHEDRON);
-  else
-    set_face_graph_default_type(SURFACE_MESH);
-}
 
 void MainWindow::exportStatistics()
 {
@@ -2302,4 +2533,42 @@ void MainWindow::propagate_action()
       }
     }
   }
+}
+void MainWindow::setTransparencyPasses(int val)
+{
+  viewer->setTotalPass(val);
+  viewer->update();
+}
+
+void MainWindow::toggleFullScreen()
+{
+  QList<QDockWidget *> dockWidgets = findChildren<QDockWidget *>();
+  if(visibleDockWidgets.isEmpty())
+  {
+    Q_FOREACH(QDockWidget * dock, dockWidgets)
+    {
+      if(dock->isVisible())
+      {
+        visibleDockWidgets.append(dock);
+        dock->hide();
+      }
+    }
+  }
+  else
+  {
+    Q_FOREACH(QDockWidget * dock, visibleDockWidgets){
+      dock->show();
+    }
+    visibleDockWidgets.clear();
+    
+  }
+}
+
+void MainWindow::setDefaultSaveDir()
+{
+  QString dirpath = QFileDialog::getExistingDirectory(this, "Set Default Save as Directory", def_save_dir);
+  if(!dirpath.isEmpty())
+    def_save_dir = dirpath;
+  QSettings settings;
+  settings.setValue("default_saveas_dir", def_save_dir);
 }

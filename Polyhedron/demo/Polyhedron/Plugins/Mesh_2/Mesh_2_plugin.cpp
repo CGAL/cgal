@@ -15,11 +15,10 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
-#include "Scene_polyhedron_item.h"
+
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polylines_item.h"
 #include "Scene_points_with_normal_item.h"
-#include "Polyhedron_type.h"
 
 #include <CGAL/iterator.h>
 
@@ -334,33 +333,22 @@ private:
       std::cout << " done (" << ltime.elapsed() << " ms)" << std::endl;
     }
 
-    // export result as a polyhedron item
+    // export result as a surface_mesh item
     QString iname =
       polylines_items.size()==1?
       polylines_items.front()->name()+QString("_meshed_"):
       QString("2dmesh_");
     iname+=QString::number(target_length);
     if (runLloyd) iname+=QString("_Lloyd_")+QString::number(nb_iter);
+    Scene_surface_mesh_item* poly_item = new Scene_surface_mesh_item();
+    poly_item->setName(iname);
+    cdt2_to_face_graph(cdt,
+                       *poly_item->polyhedron(),
+                       constant_coordinate_index,
+                       constant_coordinate);
+    scene->addItem(poly_item);
+    poly_item->invalidateOpenGLBuffers();
     
-    if(mw->property("is_polyhedron_mode").toBool()){
-      Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
-      poly_item->setName(iname);
-      cdt2_to_face_graph(cdt,
-                         *poly_item->polyhedron(),
-                         constant_coordinate_index,
-                         constant_coordinate);
-      scene->addItem(poly_item);
-      poly_item->invalidateOpenGLBuffers();
-    }else{
-      Scene_surface_mesh_item* poly_item = new Scene_surface_mesh_item();
-      poly_item->setName(iname);
-      cdt2_to_face_graph(cdt,
-                         *poly_item->polyhedron(),
-                         constant_coordinate_index,
-                         constant_coordinate);
-      scene->addItem(poly_item);
-      poly_item->invalidateOpenGLBuffers();
-    }
     std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
     // default cursor
     QApplication::restoreOverrideCursor();
