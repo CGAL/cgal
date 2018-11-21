@@ -10,6 +10,10 @@ if(NOT POLICY CMP0070 AND POLICY CMP0053)
   cmake_policy(SET CMP0053 OLD)
 endif()
 
+if(POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW)
+endif()
+
 # Let plugins be compiled in the same directory as the executable.
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
