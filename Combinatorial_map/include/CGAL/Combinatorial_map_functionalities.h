@@ -1417,10 +1417,12 @@ namespace CGAL {
       path=path2;
 #endif
 
-  #ifdef COMPUTE_TIME
+#ifdef COMPUTE_TIME
       t.stop();
       std::cout<<"[TIME] Canonize path: "<<t.time()<<" seconds"<<std::endl;
-  #endif // COMPUTE_TIME
+#endif // COMPUTE_TIME
+
+      CGAL_assertion(path.is_valid());
     }
 
   protected:

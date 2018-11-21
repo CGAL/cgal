@@ -2781,22 +2781,23 @@ namespace CGAL {
     {
       CGAL_assertion((!this->template is_free<1>(d1)));
       CGAL_assertion((!this->template is_free<2>(d1)));
-      CGAL_assertion((belong_to_same_cell<Self, 0>(*this,
+      /* CGAL_assertion((belong_to_same_cell<Self, 0>(*this,
                                                    this->template beta<1>(d1),
-                                                   d2)));
+                                                   d2))); */
       
       if (d2==beta<2>(d1)) { return 0; }
       
+      Dart_const_handle dd1=d1;
       std::size_t res=1;
-      while (beta<1>(d1)!=d2)
+      while (beta<1>(dd1)!=d2)
       {
-        CGAL_assertion(!this->template is_free<1>(d1));
-        CGAL_assertion(!this->template is_free<2>(beta<1>(d1)));
+        CGAL_assertion(!this->template is_free<2>(beta<1>(dd1)));
         
         ++res;
-        d1=beta<1, 2>(d1);
-        
-        CGAL_assertion(!this->template is_free<1>(d1));
+        dd1=beta<1, 2>(dd1);
+
+        CGAL_assertion(!this->template is_free<1>(dd1));
+        CGAL_assertion(beta<1>(dd1)==d2 || dd1!=d1);
       }
       return res;
     }
@@ -2807,24 +2808,25 @@ namespace CGAL {
     {
       CGAL_assertion((!this->template is_free<1>(d1)));
       CGAL_assertion((!this->template is_free<2>(d1)));
-      CGAL_assertion((belong_to_same_cell<Self, 0>(*this,
+      /* CGAL_assertion((belong_to_same_cell<Self, 0>(*this,
                                                    this->template beta<1>(d1),
-                                                   d2)));
+                                                   d2))); */
       
       if (d2==beta<2>(d1)) { return 0; }
 
       d1=beta<2>(d1);
       d2=beta<2>(d2);
+      Dart_const_handle dd1=d1;
       std::size_t res=1;
-      while (beta<0>(d1)!=d2)
+      while (beta<0>(dd1)!=d2)
       {
-        CGAL_assertion(!this->template is_free<1>(d1));
-        CGAL_assertion(!this->template is_free<2>(beta<1>(d1)));
+        CGAL_assertion(!this->template is_free<2>(beta<0>(dd1)));
         
         ++res;
-        d1=beta<0, 2>(d1);
+        dd1=beta<0, 2>(dd1);
         
-        CGAL_assertion(!this->template is_free<1>(d1));
+        CGAL_assertion(!this->template is_free<0>(dd1));
+        CGAL_assertion(beta<0>(dd1)==d2 || dd1!=d1);
       }
       return res;
     }
