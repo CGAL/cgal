@@ -70,6 +70,17 @@ public:
     std::swap(m_is_closed, p2.m_is_closed);
   }
 
+  Self& operator=(const Self& other)
+  {
+    CGAL_assertion(&m_map==&(other.m_map));
+    if (this!=&other)
+    {
+      m_path=other.m_path;
+      m_is_closed=other.m_is_closed;
+    }
+    return *this;
+  }
+
   /// @Return true if this path is equal to other path, identifying dart 0 of
   ///          this path with dart start in other path.
   bool are_same_paths_from(const Self& other, std::size_t start) const
@@ -85,14 +96,6 @@ public:
       start=next_index(start);
     }
     return true;
-  }
-
-  Self& operator=(const Self& other)
-  {
-    CGAL_assertion(&m_map==&(other.m_map));
-    m_path=other.m_path;
-    m_is_closed=other.m_is_closed;
-    return *this;
   }
 
   /// @return true if this path is equal to other path. For closed paths, test
@@ -275,13 +278,13 @@ public:
   //   of the first dart of the path).
   void update_is_closed()
   {
-    if (is_empty()) { m_is_closed=false; } // or true by vacuity ?
-    else if (!is_valid()) { m_is_closed=false; } // Interest ??
+    CGAL_assertion(is_valid());
+    if (is_empty()) { m_is_closed=false; }
     else
     {
       Dart_const_handle pend=m_map.other_extremity(back());
       if (pend==Map::null_handle) { m_is_closed=false; }
-      else 
+      else
       { m_is_closed=CGAL::belong_to_same_cell<Map,0>(m_map, m_path[0], pend); }
     }
   }

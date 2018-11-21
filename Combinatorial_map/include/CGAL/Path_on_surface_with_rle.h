@@ -116,7 +116,7 @@ public:
     while(i<apath.length() && i!=starti);
     CGAL_assertion(is_valid());
   }
-  
+
   void swap(Self& p2)
   {
     CGAL_assertion(&m_map==&(p2.m_map));
@@ -128,23 +128,53 @@ public:
   Self& operator=(const Self& other)
   {
     CGAL_assertion(&m_map==&(other.m_map));
-    m_path=other.m_path;
-    m_is_closed=other.m_is_closed;
-    m_length=other.m_length;
+    if (this!=&other)
+    {
+      m_path=other.m_path;
+      m_is_closed=other.m_is_closed;
+      m_length=other.m_length;
+    }
     return *this;
+  }
+
+  /// @Return true if this path is equal to other path, identifying dart begin
+  ///         of this path with dart 'itother' in other path.
+  bool are_same_paths_from(const Self& other, List_iterator itother)
+  {
+    CGAL_assertion(itother!=other.m_path.end());
+    CGAL_assertion(is_closed() || itother==other.m_path.begin());
+    CGAL_assertion(is_closed()==other.is_closed());
+
+    for(auto it=m_path.begin(); it!=m_path.end(); ++it)
+    {
+      if (it->first!=itother->first || it->second!=itother->second)
+      { return false; }
+      other.advance_iterator(itother);
+    }
+    return true;
   }
 
   /// @return true if this path is equal to other path. For closed paths, test
   ///         all possible starting darts.
-  bool operator==(const Self& other) const
+  bool operator==(const Self& other)
   {
     if (is_closed()!=other.is_closed() ||
-        length()!=other.length())
+        length()!=other.length() ||
+        size_of_list()!=other.size_of_list())
       return false;
     
-    // TODO TEST THE TWO PATHS
-    return true;
+    if (!is_closed())
+    { return are_same_paths_from(other, other.m_path.begin()); }
+
+    for(auto itother=other.m_path.begin(); itother!=other.m_path.end(); ++itother)
+    {
+      if (are_same_paths_from(other, itother))
+      { return true; }
+    }
+
+    return false;
   }
+
   bool operator!=(const Self&  other) const
   { return !(operator==(other)); }
 
@@ -153,7 +183,7 @@ public:
   { return m_path.empty(); }
 
   std::size_t length() const
-  { return m_length; } // TODO
+  { return m_length; }
 
   std::size_t size_of_list() const
   { return m_path.size(); }
@@ -171,14 +201,14 @@ public:
     m_is_closed=false;
     m_length=0;
   }
-  
+
   // @return true iff the path is valid; i.e. a sequence of edges two by
   //              two adjacent.
   bool is_valid()
   {
     if (is_empty()) { return !is_closed(); } // an empty past is not closed
 
-    unsigned int i=0;
+    unsigned int nbdarts=0,i=0;
     Dart_const_handle prev=NULL;
     bool loopend=false;
     auto it=m_path.begin();
@@ -212,6 +242,7 @@ public:
         {
           if (it->second>0) { dhend=m_map.template beta<1, 2, 1>(dhend); ++nb; }
           else              { dhend=m_map.template beta<2, 0, 2, 0, 2>(dhend); --nb; }
+          ++nbdarts;
         }
         advance_iterator(it); ++i;
         if (it==m_path.end() || it==m_path.begin()) loopend=true;
@@ -224,6 +255,8 @@ public:
           return false;
         }
       }
+      else
+      { ++nbdarts; }
       prev=it->first;
       ++i; advance_iterator(it);
       if (it==m_path.end() || it==m_path.begin()) loopend=true;
@@ -247,7 +280,54 @@ public:
       }
     }
 
+    if (length()!=nbdarts)
+    {
+      std::cerr<<"ERROR: The path is not valid: store length=="<<nbdarts
+               <<" different of real length=="<<nbdarts<<std::endl;
+      return false;
+    }
+
     return true;
+  }
+
+  Dart_const_handle front()
+  {
+    CGAL_assertion(!is_empty());
+    return m_path.front()->first;
+  }
+
+  Dart_const_handle back() const
+  {
+    CGAL_assertion(!is_empty());
+    return m_path.back()->first;
+  }
+
+  void push_back(Dart_const_handle dh, bool update_isclosed=true)
+  {
+    CGAL_assertion(dh!=NULL && dh!=m_map.null_dart_handle);
+    /* This assert is too long...
+     CGAL_assertion((is_empty() ||
+           CGAL::template belong_to_same_cell<Map, 0>
+           (m_map, m_map.other_extremity(back()), dh))); */
+
+    m_path.push_back(dh);
+    if (update_isclosed) { update_is_closed(); }
+  }
+
+  // Update m_is_closed to true iff the path is closed (i.e. the second
+  //   extremity of the last dart of the path is the same vertex than the one
+  //   of the first dart of the path).
+  void update_is_closed()
+  {
+    CGAL_assertion(is_valid());
+    if (is_empty()) { m_is_closed=false; }
+    else
+    {
+      Dart_const_handle pend=m_map.other_extremity(back());
+      if (pend==Map::null_handle) { m_is_closed=false; }
+      else
+      { m_is_closed=CGAL::belong_to_same_cell<Map,0>(m_map, m_path[0], pend); }
+    }
   }
 
   // @return true iff there is a dart after it
@@ -433,6 +513,13 @@ public:
     return res;
   } */
 
+  // @return the length of the given flat.
+  int flat_length(const List_iterator& it) const
+  {
+    CGAL_assertion(is_beginning_of_flat(it));
+    return it->second;
+  }
+
   // @return the second dart of the given flat.
   Dart_const_handle second_dart_of_a_flat(const List_iterator& it) const
   {
@@ -455,13 +542,6 @@ public:
 
     CGAL_assertion(it->second<0);
     return m_map.template beta<2, 1, 2, 1, 2>(next_iterator(it)->first);
-  }
-
-  // @return the length of the given flat.
-  int flat_length(const List_iterator& it) const
-  {
-    CGAL_assertion(is_beginning_of_flat(it));
-    return it->second;
   }
 
   /// @return the turn between dart it and next dart.
@@ -554,6 +634,8 @@ public:
       }
       else { it=next_iterator(it); }
     }
+    CGAL_assertion(m_length>0);
+    --m_length;
   }
 
   // Reduce the length of the flat part starting at 'it' from its end
@@ -588,6 +670,8 @@ public:
         it=it2;
       }
     }
+    CGAL_assertion(m_length>0);
+    --m_length;
   }
 
   void merge_adjacent_flats_if_possible(List_iterator& it)
@@ -813,6 +897,8 @@ public:
       it3->first=m_map.template  beta<2,0,2,1>(it3->first);
       it1->first=m_map.template  beta<2,1,2,0>(it1->first);
       it3->second=(-it3->second)-2;
+      CGAL_assertion(m_length>1);
+      m_length-=2;
       return;
     }
     
@@ -823,7 +909,7 @@ public:
     assert(is_beginning_of_flat(it2));
     assert(is_beginning_of_flat(it3));
     
-    reduce_flat_from_end(it1);
+    reduce_flat_from_end(it1); // decrease also m_length
     reduce_flat_from_beginning(it3);
 
     it2->first=m_map.template  beta<2,1,1>(it2->first);
@@ -854,6 +940,7 @@ public:
       it3->first=m_map.template  beta<1,2,0,2>(it3->first);
       it1->first=m_map.template  beta<0,2,1,2>(it1->first);
       it3->second=-(it3->second-2);
+      m_length-=2;
       return;
     }
 
@@ -864,7 +951,7 @@ public:
     assert(is_beginning_of_flat(it2));
     assert(is_beginning_of_flat(it3));
     
-    reduce_flat_from_end(it1);
+    reduce_flat_from_end(it1); // decrease also m_length
     reduce_flat_from_beginning(it3);
 
     it2->first=m_map.template  beta<1,1,2>(it2->first);
@@ -999,6 +1086,7 @@ public:
       m_path.insert(it, std::make_pair(dh, 0));
       // insert the new element before 'it'
     }
+    ++m_length;
   }
   
   /// Add the given dart 'dh' after the flat 'it' (given by its end).
@@ -1027,6 +1115,7 @@ public:
       m_path.insert(ittemp, std::make_pair(dh, 0));
       // insert the new element before 'ittemp', thus after 'it'
     }
+    ++m_length;
   }
   
   void right_push_l_shape(List_iterator& it)
@@ -1082,6 +1171,7 @@ public:
       else
       { it3->first=m_map.template beta<2,1,1>(it3->first); }
     }
+    m_length-=2;
   }
 
   // Right push the path.
@@ -1134,6 +1224,7 @@ public:
     }
      if (is_closed())
      { std::cout<<" c "; } //<<m_map.darts().index(get_ith_dart(0)); }
+     std::cout<<" length("<<length()<<")";
   }
 
   friend std::ostream& operator<<(std::ostream& os, const Self& p)
