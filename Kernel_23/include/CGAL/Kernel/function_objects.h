@@ -830,6 +830,58 @@ namespace CommonKernelFunctors {
   };
 
  template <typename K>
+ class Compute_approximate_angle_3
+ {
+    typedef typename K::Point_3 Point_3;  
+ public:
+   typedef typename K::FT       result_type;
+
+    result_type
+    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+   {
+     K k;
+     typename K::Construct_vector_3 vector = k.construct_vector_3_object();
+     typename K::Construct_cross_product_vector_3 cross_product =
+       k.construct_cross_product_vector_3_object();
+     typename K::Compute_scalar_product_3 scalar_product =
+       k.compute_scalar_product_3_object();
+     typedef typename K::FT                           FT;
+     typedef typename K::Vector_3                     Vector_3;
+     
+     Vector_3 u = vector(q,p);
+     Vector_3 v = vector(q,r);
+
+     double product = CGAL::sqrt(to_double(scalar_product(u,u))) * CGAL::sqrt(to_double(scalar_product(v,v)));
+     
+     if(product == 0)
+       return 0;
+     
+     // cosine
+     double dot = to_double(scalar_product(u,v));
+     double cosine = dot / product;
+
+     // sine
+     Vector_3 w = cross_product(u, v);
+     double abs_sine = CGAL::sqrt(to_double(scalar_product(w, w) / product));
+
+     if(abs_sine > 1.){
+       abs_sine = 1.;
+     }
+     if(abs_sine < -1.){
+       abs_sine = -1.;
+     }
+
+     double angle =  std::asin(abs_sine);
+     if(cosine < FT(0)){
+       angle = CGAL_PI - angle;
+     }
+     return angle * 180./CGAL_PI;
+
+     return 0;
+   }
+ };
+  
+ template <typename K>
  class Compute_approximate_dihedral_angle_3
  {
     typedef typename K::Point_3 Point_3;  

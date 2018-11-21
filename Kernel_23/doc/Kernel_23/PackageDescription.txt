@@ -298,6 +298,7 @@
 - `Kernel::ComputeB_2`
 - `Kernel::ComputeC_2`
 - `Kernel::ComputeApproximateArea_3`
+- `Kernel::ComputeApproximateAngle_3`
 - `Kernel::ComputeApproximateDihedralAngle_3`
 - `Kernel::ComputeApproximateSquaredLength_3`
 - `Kernel::ComputeArea_2`

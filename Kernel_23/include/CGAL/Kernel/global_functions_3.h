@@ -72,6 +72,16 @@ angle(const Point_3<K> &p, const Point_3<K> &q,
 template < class K >
 inline
 typename K::FT
+approximate_angle(const Point_3<K> &p,
+                  const Point_3<K> &q,
+                  const Point_3<K> &r)
+{
+  return internal::approximate_angle(p, q, r, K());
+}
+
+template < class K >
+inline
+typename K::FT
 approximate_dihedral_angle(const Point_3<K> &p,
                            const Point_3<K> &q,
                            const Point_3<K> &r,

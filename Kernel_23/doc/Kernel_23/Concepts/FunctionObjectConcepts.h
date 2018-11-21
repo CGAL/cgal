@@ -1767,6 +1767,34 @@ public:
 
 }; /* end Kernel::ComputeApproximateArea_3 */
 
+  
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor`
+
+*/
+class ComputeApproximateAngle_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns an approximation of the angle between `p-q` and `r-q`.
+    The angle is given in degrees.
+    \pre `p`and `r` are not equal to `q`.
+  */
+  Kernel::FT operator()(const Kernel::Point_3& p,
+                        const Kernel::Point_3& q,
+                        const Kernel::Point_3& r) const;
+
+  /// @}
+
+}; /* end Kernel::ComputeApproximateAngle_3 */
+  
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
