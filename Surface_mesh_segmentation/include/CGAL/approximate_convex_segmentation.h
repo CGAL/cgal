@@ -250,10 +250,10 @@ approximate_convex_segmentation(const TriangleMesh& mesh,
   algorithm.segmentize(concavity_threshold, min_number_of_segments);
 
   double segment_size_threshold = boost::choose_param(boost::get_param(np, internal_np::segment_size_threshold), 0.);
-  if (segment_size_threshold<0) segment_size_threshold=0;
-  if (segment_size_threshold>100) segment_size_threshold=100;
+  if (segment_size_threshold < 0) segment_size_threshold = 0;
+  if (segment_size_threshold > 100) segment_size_threshold = 100;
 
-  if (segment_size_threshold!=0)
+  if (segment_size_threshold != 0)
   {
     algorithm.postprocess(min_number_of_segments, segment_size_threshold, concavity_threshold);
   }

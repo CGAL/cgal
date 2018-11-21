@@ -1,8 +1,6 @@
 #include "ui_Approximate_convex_segmentation_widget.h"
 
 #include "Scene_surface_mesh_item.h"
-#include "Scene_polyhedron_item.h"
-#include "Polyhedron_type.h"
 #include "Scene.h"
 #include "Color_map.h"
 
@@ -53,8 +51,7 @@ public:
 
   bool applicable(QAction*) const
   {
-    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())) ||
-           qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+    return qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*)
@@ -100,18 +97,10 @@ public Q_SLOTS:
     
     CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
     
-    Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+    Scene_surface_mesh_item* item = qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
     if (item)
     {
       segment(item);
-      return;
-    }
-    
-    Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
-    if (sm_item)
-    {
-      segment(sm_item);
-      return;
     }
   }
 
@@ -121,18 +110,10 @@ public Q_SLOTS:
 
     CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
     
-    Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+    Scene_surface_mesh_item* item = qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
     if (item)
     {
       compute_concavity_values(item);
-      return;
-    }
-    
-    Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
-    if (sm_item)
-    {
-      compute_concavity_values(sm_item);
-      return;
     }
   }
 
@@ -161,7 +142,7 @@ private:
     bool use_shortest_method = m_segmentation_ui.shortest_method_check_box->isChecked();
     bool enable_postprocessing_segments = m_segmentation_ui.postprocess_segments_check_box->isChecked();
     double segment_size_threshold = m_segmentation_ui.segment_size_threshold_spin_box->value();
-    if (!enable_postprocessing_segments) segment_size_threshold=0;
+    if (!enable_postprocessing_segments) segment_size_threshold = 0;
 
     // create a new item and use it for segmentation
     FacegraphItem* segmentation_item = new FacegraphItem(*item->face_graph());
@@ -210,7 +191,6 @@ private:
         put(patch_pmap, face, static_cast<int>(segments_map[face]));
       }
 
-      set_color_read_only(segmentation_item);
       segmentation_item->color_vector() = colors;
       segmentation_item->setItemIsMulticolor(true);
       segmentation_item->setName(tr("%1-segmentation-[%2,%3]").arg(segments_num).arg(concavity_threshold).arg(min_number_of_segments));
@@ -305,7 +285,6 @@ private:
       distances.push_back(dist);
     }
       
-    set_color_read_only(concavity_values_item);
     std::vector<QColor>& colors = concavity_values_item->color_vector();
     colors.clear();
     
@@ -374,19 +353,11 @@ private:
     {
       if (i > 128 && i <= 192) { r = static_cast<int>( ((i - 128) / (192.0 - 128)) * 255 ); }
       if (i > 0 && i <= 98)    { g = static_cast<int>( ((i) / (98.0)) * 255 ); }
-      if (i > 191 && i <=255)  { g = 255 - static_cast<int>( ((i - 191) / (255.0 - 191)) * 255 ); }
+      if (i > 191 && i <= 255)  { g = 255 - static_cast<int>( ((i - 191) / (255.0 - 191)) * 255 ); }
       if (i > 64 && i <= 127)  { b = 255 - static_cast<int>( ((i - 64) / (127.0 - 64)) * 255 ); }
       m_gradient_colors[i] = QColor(r, g, b);
     }
   }
-
-  void set_color_read_only(Scene_polyhedron_item* poly)
-  {
-    poly->set_color_vector_read_only(true);
-  }
-
-  void set_color_read_only(Scene_surface_mesh_item*)
-  {}
 };
 
 #include "Approximate_convex_segmentation_plugin.moc"
