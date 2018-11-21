@@ -10,6 +10,12 @@
 #include "SMesh_type.h"
 #include "Color_cheat_sheet.h"
 
+#ifdef vsa_wrapper_EXPORTS
+# define VSA_WRAPPER_EXPORT Q_DECL_EXPORT
+#else
+# define VSA_WRAPPER_EXPORT Q_DECL_IMPORT
+#endif
+
 namespace VSA = CGAL::Surface_mesh_approximation;
 
 class VSA_wrapper {
