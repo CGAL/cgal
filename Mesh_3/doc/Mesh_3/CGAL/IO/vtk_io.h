@@ -8,8 +8,11 @@ namespace CGAL{
 //! 
 //! \param os a `std::ostream`.
 //! \param c3t3 an instance of `C3T3` to be written.
+//! \param binary decides if the data should be written in binary(`true`)
+//!   or in ASCII(`false`).
 //!
 template <class C3T3>
 void write_VTU(std::ostream& os,
-                             const C3T3& c3t3);
+                             const C3T3& c3t3,
+               bool binary = true);
 }

@@ -257,7 +257,8 @@ write_attributes(std::ostream& os,
 //public API
 template <class C3T3>
 void write_VTU(std::ostream& os,
-                             const C3T3& c3t3)
+               const C3T3& c3t3,
+               bool binary = true)
 {
   typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Vertex_handle Vertex_handle;
@@ -282,7 +283,6 @@ void write_VTU(std::ostream& os,
   
   os << "  <Piece NumberOfPoints=\"" << tr.number_of_vertices() 
      << "\" NumberOfCells=\"" << c3t3.number_of_cells() << "\">\n";
-  bool binary = true;
   std::size_t offset = 0;
   write_points_tag(os,tr,V,binary,offset);
   write_cells_tag(os,c3t3,V,binary,offset);
