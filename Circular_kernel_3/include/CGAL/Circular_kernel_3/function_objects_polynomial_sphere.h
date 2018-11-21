@@ -1587,13 +1587,29 @@ template < class SK > \
 
   template <class SK>
   class Compute_approximate_angle_3
+#ifndef CGAL_CFG_MATCHING_BUG_6
+    : public SK::Linear_kernel::Compute_approximate_angle_3
+#endif
   {
+    typedef typename SK::Point_3                   Point_3;
     typedef typename SK::Circular_arc_3            Circular_arc_3;
+    typedef typename SK::FT                        FT;
 
   public:
 
     typedef double result_type;
 
+#ifndef CGAL_CFG_MATCHING_BUG_6
+    using SK::Linear_kernel::Compute_approximate_angle_3::operator();
+#else
+    typedef typename SK::Linear_kernel::Compute_approximate_angle_3 LK_Compute_approximate_angle_3;
+    
+    FT operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+    {
+      return LK_Compute_approximate_angle_3()(p,q,r);
+    }
+    
+#endif    
     result_type operator() (const Circular_arc_3 & c) const
     { return c.rep().approximate_angle(); }
 
