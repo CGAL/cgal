@@ -470,6 +470,8 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
   scene->addItem(cvx_hull_item);
   scene->changeGroup(cvx_hull_item, group);
 
+  sm_item->setVisible(false);
+
   mi->information(QString("Meshing done."));
 
   QApplication::restoreOverrideCursor();
