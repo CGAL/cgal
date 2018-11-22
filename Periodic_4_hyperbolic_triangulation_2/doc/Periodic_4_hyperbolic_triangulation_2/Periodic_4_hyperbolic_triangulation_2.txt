@@ -172,7 +172,7 @@ Delaunay triangulation in \f$\mathbb H^2\f$ of \f$\mathcal{G P}\f$
 is a <i>triangulation</i> of \f$\mathcal{M}\f$ if
 and only if its combinatorial graph does not contain 
 loops (i.e., edges having two identical vertices) or double edges
-(i.e. two edges sharing the same two vertices), or, equivalently, if the
+(i.e., two edges sharing the same two vertices), or, equivalently, if the
 projection is a simplicial complex: 
 <ul>
   <li> it contains all incident \f$ j\f$-simplices (\f$ j<k\f$) of any \f$ k\f$-simplex, and</li>
@@ -277,10 +277,9 @@ one template parameter:
 </ul>
 
 
-
 \subsection P4HT2_datastructure The Triangulation Data Structure Parameter 
 
-The triangulation data structure class is a container for the faces and vertices and maintains
+The triangulation data structure is a container for the faces and vertices and maintains
 incidence and adjacency relations. 
 This parameter must meet the requirements described in the concept `TriangulationDataStructure_2`, 
 for which \cgal offers the model `Triangulation_data_structure_2`. 
@@ -377,7 +376,7 @@ Monique Teillaud \cgalCite{cgal:it-idtbs-17}.
 
 In 2016, Iordanov started working on the 2D Periodic Hyperbolic Triangulations package. 
 
-The authors wold like to thank their partners from the
+The authors would like to thank their partners from the
 <a href="https://members.loria.fr/Monique.Teillaud/collab/Astonishing/">Astonishing</a> and
 <a href="https://members.loria.fr/Monique.Teillaud/collab/SoS/">SoS</a>
 projects for very helpful discussions. 
