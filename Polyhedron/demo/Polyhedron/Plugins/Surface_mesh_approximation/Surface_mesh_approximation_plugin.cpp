@@ -332,7 +332,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   approx.extract_mesh(CGAL::parameters::subdivision_ratio(ui_widget.chord_error->value())
-    .relative_to_chord(ui_widget.is_relative_to_chord->isChecked())
+    .relative_to_chord(ui_widget.comboRelative->currentIndex() == 1)
     .with_dihedral_angle(ui_widget.with_dihedral_angle->isChecked())
     .optimize_anchor_location(ui_widget.if_optimize_anchor_location->isChecked())
     .pca_plane(ui_widget.pca_plane->isChecked()));
@@ -364,7 +364,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
     polygons.push_back(polygon);
   }
   psoup_item->load(anchor_points, polygons);
-  psoup_item->setName(tr("Triangle soup").arg(sm_item->name()));
+  psoup_item->setName(tr("Triangle soup"));
   psoup_item->setColor(Qt::lightGray);
   psoup_item->setRenderingMode(FlatPlusEdges);
   scene->addItem(psoup_item);
@@ -378,7 +378,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
       polyline.push_back(anchor_points[border[i % border.size()]]);
     borders_item->polylines.push_back(polyline);
   }
-  borders_item->setName(tr("Patch polygons").arg(sm_item->name()));
+  borders_item->setName(tr("Patch polygons"));
   borders_item->setColor(Qt::red);
   scene->addItem(borders_item);
   scene->changeGroup(borders_item, group);
@@ -391,7 +391,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
     polyline.push_back(anchor_points[i]);
     corres_item->polylines.push_back(polyline);
   }
-  corres_item->setName(tr("Anchors").arg(sm_item->name()));
+  corres_item->setName(tr("Anchors"));
   corres_item->setColor(Qt::blue);
   corres_item->setVisible(false);
   scene->addItem(corres_item);
@@ -463,7 +463,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
     fcolors.push_back(CGAL::Color(c.red(), c.green(), c.blue()));
   Scene_polygon_soup_item *cvx_hull_item = new Scene_polygon_soup_item();
   cvx_hull_item->load(cvx_hull_points, cvx_hulls, fcolors, std::vector<CGAL::Color>());
-  cvx_hull_item->setName(tr("Patch planes").arg(sm_item->name()));
+  cvx_hull_item->setName(tr("Patch planes"));
   cvx_hull_item->setColor(Qt::yellow);
   cvx_hull_item->setRenderingMode(FlatPlusEdges);
   cvx_hull_item->setVisible(false);
