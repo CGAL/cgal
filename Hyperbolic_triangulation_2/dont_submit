@@ -1,0 +1,7 @@
+TODO
+benchmark/
+include/CGAL/Periodic_2_Delaunay_hyperbolic_triangulation_2.h
+include/CGAL/Periodic_2_hyperbolic_triangulation_dummy.h
+include/CGAL/Hyperbolic_isometry_2.h
+demo/Octagon_mesh_2/
+demo/Hyperbolic_translations_2_demo.cpp
