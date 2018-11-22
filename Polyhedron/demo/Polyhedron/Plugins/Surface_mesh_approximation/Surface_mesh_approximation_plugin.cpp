@@ -7,6 +7,7 @@
 
 #include "SMesh_type.h"
 #include "Scene.h"
+#include <CGAL/Three/Scene_group_item.h>
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polygon_soup_item.h"
 #include "Scene_polylines_item.h"
@@ -225,8 +226,8 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonAdd_clicked() {
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   if (approx.add_one_proxy() == 0) {
-    QApplication::restoreOverrideCursor();
     mi->information(QString("No proxy added, #proxies = %1.").arg(approx.number_of_proxies()));
+    QApplication::restoreOverrideCursor();
     return;
   }
   mi->information(QString("One proxy added, #proxies = %1.").arg(approx.number_of_proxies()));
@@ -259,11 +260,12 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonTeleport_clicke
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  Patch_id_pmap pidmap(get(CGAL::face_patch_id_t<int>(), *pmesh));
   if (approx.teleport_one_proxy() == 0) {
     mi->information(QString("No proxy teleported, #proxies = %1.").arg(approx.number_of_proxies()));
+    QApplication::restoreOverrideCursor();
     return;
   }
+  Patch_id_pmap pidmap(get(CGAL::face_patch_id_t<int>(), *pmesh));
   approx.output(CGAL::parameters::face_proxy_map(pidmap));
   mi->information(QString("One proxy teleported, #proxies = %1.").arg(approx.number_of_proxies()));
 
@@ -347,6 +349,10 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
   approx.anchor_vertices(std::back_inserter(anchor_vertices));
   approx.indexed_boundary_polygons(std::back_inserter(patch_polygons));
 
+  // create a group
+  Scene_group_item *group = new Scene_group_item(tr("Approximation of %1").arg(sm_item->name()));
+  scene->addItem(group);
+
   // add triangle soup item
   Scene_polygon_soup_item *psoup_item = new Scene_polygon_soup_item();
   std::vector<std::vector<std::size_t> > polygons;
@@ -358,10 +364,11 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
     polygons.push_back(polygon);
   }
   psoup_item->load(anchor_points, polygons);
-  psoup_item->setName(tr("Approximated triangle soup of %1").arg(sm_item->name()));
+  psoup_item->setName(tr("Triangle soup").arg(sm_item->name()));
   psoup_item->setColor(Qt::lightGray);
   psoup_item->setRenderingMode(FlatPlusEdges);
   scene->addItem(psoup_item);
+  scene->changeGroup(psoup_item, group);
 
   // add patch border item
   Scene_polylines_item *borders_item = new Scene_polylines_item();
@@ -371,10 +378,11 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
       polyline.push_back(anchor_points[border[i % border.size()]]);
     borders_item->polylines.push_back(polyline);
   }
-  borders_item->setName(tr("Approximated patch polygons of %1").arg(sm_item->name()));
+  borders_item->setName(tr("Patch polygons").arg(sm_item->name()));
   borders_item->setColor(Qt::red);
   borders_item->invalidateOpenGLBuffers();
   scene->addItem(borders_item);
+  scene->changeGroup(borders_item, group);
 
   // add anchor vertex and anchor point correspondence item
   Scene_polylines_item *corres_item = new Scene_polylines_item();
@@ -384,10 +392,11 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
     polyline.push_back(anchor_points[i]);
     corres_item->polylines.push_back(polyline);
   }
-  corres_item->setName(tr("Approximated anchors of %1").arg(sm_item->name()));
+  corres_item->setName(tr("Anchors").arg(sm_item->name()));
   corres_item->setColor(Qt::blue);
   corres_item->invalidateOpenGLBuffers();
   scene->addItem(corres_item);
+  scene->changeGroup(corres_item, group);
 
   // add patch convex hull item
   std::vector<std::vector<EPICK::Triangle_3> > patch_triangles(approx.number_of_proxies());
@@ -455,10 +464,11 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
     fcolors.push_back(CGAL::Color(c.red(), c.green(), c.blue()));
   Scene_polygon_soup_item *cvx_hull_item = new Scene_polygon_soup_item();
   cvx_hull_item->load(cvx_hull_points, cvx_hulls, fcolors, std::vector<CGAL::Color>());
-  cvx_hull_item->setName(tr("Approximated patch planes of %1").arg(sm_item->name()));
+  cvx_hull_item->setName(tr("Patch planes").arg(sm_item->name()));
   cvx_hull_item->setColor(Qt::yellow);
   cvx_hull_item->setRenderingMode(FlatPlusEdges);
   scene->addItem(cvx_hull_item);
+  scene->changeGroup(cvx_hull_item, group);
 
   mi->information(QString("Meshing done."));
 
