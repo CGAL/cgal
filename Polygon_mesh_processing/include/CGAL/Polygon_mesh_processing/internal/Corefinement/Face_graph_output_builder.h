@@ -103,8 +103,7 @@ class Face_graph_output_builder
 // Internal typedefs
   typedef std::size_t                                          Node_id;
   typedef std::pair<Node_id,Node_id>                      Node_id_pair;
-  typedef boost::unordered_map<edge_descriptor,
-                               Node_id_pair >    Intersection_edge_map;
+  typedef boost::unordered_set<edge_descriptor>  Intersection_edge_map;
   // to maintain a halfedge on each polyline per TriangleMesh + pair<bool,size_t>
   // with first = "is the key (pair<Node_id,Node_id>) was reversed?" and
   // second is the number of edges -1 in the polyline
@@ -313,9 +312,8 @@ class Face_graph_output_builder
   {
     std::vector<edge_descriptor> edges;
     edges.reserve(edge_map.size());
-    typedef std::pair<const edge_descriptor, Node_id_pair> Pair;
-    BOOST_FOREACH(const Pair& p, edge_map)
-      edges.push_back(p.first);
+    BOOST_FOREACH(edge_descriptor ed, edge_map)
+      edges.push_back(ed);
 
     CGAL_assertion(tuple_id < 4 && tuple_id >= 0);
     switch (tuple_id)
@@ -430,8 +428,7 @@ public:
     //register an intersection halfedge
     // It is important here not to use operator[] since a two edges might be
     // equals while the indices are reversed
-    mesh_to_intersection_edges[&tm].
-      insert(std::make_pair(edge(hedge, tm), indices));
+    mesh_to_intersection_edges[&tm].insert(edge(hedge, tm));
 
     if (indices.first>indices.second)
     {
@@ -469,7 +466,6 @@ public:
     CGAL_assertion( vertex_to_node_id1.size() == vertex_to_node_id2.size());
     CGAL_assertion( vertex_to_node_id1.size() == nodes.size());
 
-    // TODO check if Intersection_edge_map needs to be so complicated (id stored...)
     Intersection_edge_map& intersection_edges1 = mesh_to_intersection_edges[&tm1];
     Intersection_edge_map& intersection_edges2 = mesh_to_intersection_edges[&tm2];
 
