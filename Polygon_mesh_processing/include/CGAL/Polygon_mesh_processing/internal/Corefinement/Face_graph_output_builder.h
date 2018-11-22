@@ -1563,25 +1563,7 @@ public:
           // the correct point and trouble happen. Here the workaround consists in
           // removing border edges of patches to be removed that are not in a
           // polyline schedule for removal.
-          std::set<edge_descriptor> edges_removed_later;
           boost::dynamic_bitset<> patches_to_remove = ~patches_of_tm1_used[inplace_operation_tm1];
-          if (patches_to_remove.any() && polylines.to_skip_in_tm1.any())
-          {
-            for (std::size_t poly_id = polylines.to_skip_in_tm1.find_first();
-                 poly_id < polylines.to_skip_in_tm1.npos;
-                 poly_id = polylines.to_skip_in_tm1.find_next(poly_id))
-            {
-              std::size_t nb_segments = polylines.lengths[poly_id];
-              halfedge_descriptor h = polylines.tm1[poly_id];
-              edges_removed_later.insert(edge(h, tm1));
-              for (std::size_t i=1; i<nb_segments; ++i)
-              {
-                h = next_marked_halfedge_around_target_vertex(h, tm1, intersection_edges1);
-                edges_removed_later.insert(edge(h, tm1));
-              }
-            }
-          }
-
           for (std::size_t i = patches_to_remove.find_first();
                            i < patches_to_remove.npos;
                            i = patches_to_remove.find_next(i))
@@ -1592,11 +1574,8 @@ public:
                                 it!= patches_of_tm1[i].shared_edges.end();
                                 ++it)
             {
-              if ( is_border(opposite(*it, tm1), tm1) &&
-                   edges_removed_later.count(edge(*it, tm1))==0 )
-              {
+              if ( is_border(opposite(*it, tm1), tm1) )
                 to_rm.push_back(it);
-              }
             }
             if (!to_rm.empty())
             {
