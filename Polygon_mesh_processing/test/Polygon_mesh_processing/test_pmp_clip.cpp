@@ -270,6 +270,19 @@ void test()
   assert(vertices(tm1).size()==0);
   CGAL::clear(tm1);
   CGAL::clear(tm2);
+
+  // test special case
+  input.open("data-clip/tm_1.off");
+  input >> tm1;
+  input.close();
+  input.open("data-clip/clipper_1.off");
+  input >> tm2;
+  input.close();
+  PMP::clip(tm1, tm2, params::face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm1)),
+                      params::face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm2)));
+  assert(is_valid_polygon_mesh(tm1));
+  CGAL::clear(tm1);
+  CGAL::clear(tm2);
 }
 
 int main()

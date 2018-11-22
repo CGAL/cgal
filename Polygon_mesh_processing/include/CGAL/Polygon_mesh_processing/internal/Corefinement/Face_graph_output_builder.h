@@ -1553,6 +1553,80 @@ public:
           patches_of_tm1_used[inplace_operation_tm1],
           patches_of_tm2_used[inplace_operation_tm1],
           fids1, fids2, tm1, tm2);
+
+        if (used_to_clip_a_surface)
+        {
+          // The following code is here to handle the case when an intersection polyline
+          // contains some border edges of tm1 that should be considered as an independant polyline.
+          // This polyline removal should be handled by remove_unused_polylines.
+          // However, since all nodes are of degree 2 the polyline is not split at
+          // the correct point and trouble happen. Here the workaround consists in
+          // removing border edges of patches to be removed that are not in a
+          // polyline schedule for removal.
+          std::set<edge_descriptor> edges_removed_later;
+          boost::dynamic_bitset<> patches_to_remove = ~patches_of_tm1_used[inplace_operation_tm1];
+          if (patches_to_remove.any() && polylines.to_skip_in_tm1.any())
+          {
+            for (std::size_t poly_id = polylines.to_skip_in_tm1.find_first();
+                 poly_id < polylines.to_skip_in_tm1.npos;
+                 poly_id = polylines.to_skip_in_tm1.find_next(poly_id))
+            {
+              std::size_t nb_segments = polylines.lengths[poly_id];
+              halfedge_descriptor h = polylines.tm1[poly_id];
+              edges_removed_later.insert(edge(h, tm1));
+              for (std::size_t i=1; i<nb_segments; ++i)
+              {
+                h = next_marked_halfedge_around_target_vertex(h, tm1, intersection_edges1);
+                edges_removed_later.insert(edge(h, tm1));
+              }
+            }
+          }
+
+          for (std::size_t i = patches_to_remove.find_first();
+                           i < patches_to_remove.npos;
+                           i = patches_to_remove.find_next(i))
+          {
+            typedef typename std::vector<halfedge_descriptor>::iterator Hedge_iterator;
+            std::vector< Hedge_iterator > to_rm;
+            for (Hedge_iterator it = patches_of_tm1[i].shared_edges.begin();
+                                it!= patches_of_tm1[i].shared_edges.end();
+                                ++it)
+            {
+              if ( is_border(opposite(*it, tm1), tm1) &&
+                   edges_removed_later.count(edge(*it, tm1))==0 )
+              {
+                to_rm.push_back(it);
+              }
+            }
+            if (!to_rm.empty())
+            {
+              std::reverse(to_rm.begin(), to_rm.end());
+              BOOST_FOREACH(Hedge_iterator it, to_rm)
+              {
+                patches_of_tm1[i].interior_edges.push_back(*it);
+                if (it!=cpp11::prev(patches_of_tm1[i].shared_edges.end()))
+                  std::swap(patches_of_tm1[i].shared_edges.back(), *it);
+                patches_of_tm1[i].shared_edges.pop_back();
+              }
+              //now update interior vertices
+              std::set<vertex_descriptor> border_vertices;
+              BOOST_FOREACH(halfedge_descriptor h, patches_of_tm1[i].shared_edges)
+              {
+                border_vertices.insert( target(h,tm1) );
+                border_vertices.insert( source(h,tm1) );
+              }
+
+              BOOST_FOREACH(halfedge_descriptor h, patches_of_tm1[i].interior_edges)
+              {
+                if ( !border_vertices.count( target(h,tm1) ) )
+                  patches_of_tm1[i].interior_vertices.insert( target(h,tm1) );
+                if ( !border_vertices.count( source(h,tm1) ) )
+                  patches_of_tm1[i].interior_vertices.insert( source(h,tm1) );
+              }
+            }
+          }
+        }
+
         #define CGAL_COREF_FUNCTION_CALL_DEF(BO_type) \
           compute_inplace_operation( \
             tm1, tm2, \
