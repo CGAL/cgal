@@ -26,7 +26,7 @@ triangulation of the hyperbolic plane.
 \section P4HT2_thespace The Bolza Surface
 
 Let \f$\mathbb{H}^2\f$ denote the hyperbolic plane, represented in the
-Poincaré disk model (see Chapter \ref Chapter_2D_Hyperbolic_Triangulation).
+Poincaré disk model (see Chapter \ref ChapterHTriangulation2 "2D Hyperbolic Delaunay Triangulations").
 Consider the regular hyperbolic octagon \f$ \mathcal D_O \f$ centered
 at the origin with all angles equal to \f$ \pi/4\f$, as shown in
 \cgalFigureRef{P4HTriangulationOctagonId}.
@@ -381,9 +381,6 @@ The authors wold like to thank their partners from the
 <a href="https://members.loria.fr/Monique.Teillaud/collab/Astonishing/">Astonishing</a> and
 <a href="https://members.loria.fr/Monique.Teillaud/collab/SoS/">SoS</a>
 projects for very helpful discussions. 
-\cgalModifBegin
-syntaxe pour les liens ?
-\cgalModifEnd
 
 
 */ 
