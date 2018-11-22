@@ -65,7 +65,7 @@ See \cgalFigureRef{Hyperbolic_triangulation_2Euclidean_vs_hyperbolic}.
 <img src="hyperbolic-vs-euclidean.png" style="max-width:35%; width=35%;"/>
 </center>
 \cgalFigureCaptionBegin{Hyperbolic_triangulation_2Euclidean_vs_hyperbolic}
-Comparison of the Euclidean (green) and hyperbolic (black) Delaunay triangulations 
+The Euclidean (green) and hyperbolic (black) Delaunay triangulations 
 of a given set of points in the unit disk. Only the colored faces
 are faces of the hyperbolic Delaunay triangulation. The hyperbolic and Euclidean geometric embeddings of a
 Delaunay face that exists in both triangulations are different.
