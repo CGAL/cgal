@@ -9,7 +9,7 @@ namespace CGAL {
 \anchor chapterP4HTriangulation2
 
 \cgalAutoToc
-\author Iordan Iordanov & Monique Teillaud
+\author Iordan Iordanov and Monique Teillaud
 
 <center>
 <img src="new-triangulation-350px.png" style="max-width:50%; width=50%;"/>
@@ -19,20 +19,14 @@ namespace CGAL {
 This package allows to compute Delaunay triangulations of the Bolza surface, which is the
 most symmetric surface of genus 2. The Bolza surface is a hyperbolic closed compact orientable surface. 
 
-A triangulation is defined as a <i>simplicial complex</i>, i.e.:
-<ul>
-  <li> it contains all incident \f$ j\f$-simplices (\f$ j<k\f$) of any \f$ k\f$-simplex, and 
-  <li> two \f$ k\f$-simplices either do not intersect or share a common \f$ j\f$-face, \f$ j<k\f$. 
-</ul>
-The simplices of dimension 0, 1, and 2 are called <I>vertex</I>, <I>edge</I>, and <I>face</I>, 
-respectively.
-
-A triangulation of the Bolza surface can be seen as a periodic triangulation of the hyperbolic plane.
+A triangulation of the Bolza surface can be seen as a periodic
+triangulation of the hyperbolic plane. 
 
 
-\section P4HT2_thespace The Bolza surface
+\section P4HT2_thespace The Bolza Surface
 
-Let \f$\mathbb{H}^2\f$ denote the hyperbolic plane, represented in the Poincaré disk model.
+Let \f$\mathbb{H}^2\f$ denote the hyperbolic plane, represented in the
+Poincaré disk model (see Chapter \ref Chapter_2D_Hyperbolic_Triangulation).
 Consider the regular hyperbolic octagon \f$ \mathcal D_O \f$ centered at the origin, with 
 all angles equal to \f$ \pi/4\f$ that is shown in
 \cgalFigureRef{P4HTriangulationOctagonId} - Left.
@@ -112,10 +106,11 @@ D\f$. Similarly, \f$\mathcal{P}\f$ denotes both a set of points on the
 surface and the set of their representatives in \f$\mathcal D\f$. 
 
 The Delaunay triangulation of \f$\mathcal{M}\f$ defined by a point set
-\f$\mathcal{P}\f$ is defined as the projection by \f$\pi\f$ of the
+\f$\mathcal{P}\f$ is the projection by \f$\pi\f$ of the
 Delaunay triangulation in the plane \f$\mathbb H^2\f$ of the
 (infinite) set of points \f$\mathcal{G P}\f$ onto \f$\mathcal{M}\f$,
-under some validity conditions that will be detailed in Section \ref P4HT2_validity. 
+provided that some <i>condition</i> (detailed below) holds. More
+details can be found in \cgalCite{cgal:btv-dtosl-16}. 
 
 We require that all input points lie inside \f$\mathcal D\f$. As for
 orbits of points, all faces of the Delaunay triangulation of
@@ -171,11 +166,27 @@ closest, in the counterclockwise order, to the region labeled
 \f$r\f$ are stored in the face in the data structure. 
 \cgalFigureCaptionEnd
 
+Let us now give details on the <i>condition</i> mentioned
+above. The projection by \f$\pi\f$ of the
+Delaunay triangulation in \f$\mathbb H^2\f$ of \f$\mathcal{G P}\f$
+is a <i>triangulation</i> of \f$\mathcal{M}\f$ if
+and only if its combinatorial graph does not contain cycles of length
+1 or 2, or, equivalently, if the projection is a simplicial complex, i.e.,
+<ul>
+  <li> it contains all incident \f$ j\f$-simplices (\f$ j<k\f$) of any \f$ k\f$-simplex, and</li>
+  <li> two \f$ k\f$-simplices either do not intersect or share a common \f$ j\f$-face, \f$ j<k\f$. </li>
+</ul> 
 
-\section P4HT2_validity Validity
-
-Let us now give details on the validity condition mentioned above. 
-A periodic hyperbolic triangulation is said to be `valid` if and only if
+\cgalModifBegin
+En fait la section Validity etait fausse. Elle melangeait deux notions de validite de niveaux differents. La
+condition ci-dessus est celle du papier, c'est l'algo d'insertion
+lui-meme qui la garantit grace aux dummy points. 
+Les conditions ci-dessous expliquent juste la fonction is-valid, c'est vraiment
+autre chose. On ne pourrait meme pas utiliser TDS si la validity
+condition n'etait pas satisfaite. 
+Donc je propose d'enlever l'itemize ci-dessous. Peut-être le mettre
+dans le ref manual ? (si ca n'y est pas deja) IL MANQUE LA CONDITION
+DELAUNAY !
 <ol>
   <li> Its underlying combinatorial graph, the triangulation data structure, is `valid`
         (see the function \link TriangulationDataStructure_2::is_valid() is_valid\endlink() in the concept \ref TriangulationDataStructure_2) and each face of the triangulation is positively oriented. See 
@@ -183,13 +194,11 @@ A periodic hyperbolic triangulation is said to be `valid` if and only if
   <li>  It is a triangulation of a genus-2 surface; this condition is satisfied when the Euler 
         relation \f$V-E+F = -2\f$ is verified, where \f$V, E, F\f$ are the number 
         of vertices, edges and faces of the triangulation, respectively. </li>
-  <li>  The combinatorial graph of the triangulation does not contain cycles of length 1 
-        or 2; this condition is equivalent to requiring that the triangulation is a simplicial 
-        complex. </li>
 </ol>
+\cgalModifEnd
 
-Some point sets do not define a valid triangulation of \f$\mathcal M\f$. For
-instance, a single point does not define a valid triangulation of
+Some point sets do not define a triangulation of \f$\mathcal M\f$. For
+instance, a single point does not define a triangulation of
 \f$\mathcal M\f$, as the induced subdivision would not be a simplicial
 complex. Another example is shown in
 \cgalFigureRef{P4HNonSimplicialExample}. 
@@ -251,7 +260,8 @@ point sets (i.e., more than three co-circular points) are handled with symbolic 
 \cgalCite{cgal:dt-pvr3d-03}.
 
 The implementation is fully dynamic, supporting both point insertion and vertex removal.
-However, a vertex can be removed only if the triangulation remains valid (as defined above).
+However, a vertex can be removed only if the subdivision remains a
+simplicial complex. 
 
 The class `Periodic_4_hyperbolic_Delaunay_triangulation_2` provides high-level geometric 
 functionality specific to Delaunay triangulations, such as point insertion and vertex removal, 
@@ -391,9 +401,17 @@ Monique Teillaud \cgalCite{cgal:it-idtbs-17}.
 
 In 2016, Iordanov started working on the 2D Periodic Hyperbolic Triangulations package. 
 
+The authors wold like to thank their partners from the
+<a href="https://members.loria.fr/Monique.Teillaud/collab/Astonishing/">Astonishing</a> and
+<a href="https://members.loria.fr/Monique.Teillaud/collab/SoS/">SoS</a>
+projects for very helpful discussions. 
+\cgalModifBegin
+syntaxe pour les liens ?
+\cgalModifEnd
 
 
 */ 
 } /* namespace CGAL */
 
 \\\\\\\\\\\\
+in 
