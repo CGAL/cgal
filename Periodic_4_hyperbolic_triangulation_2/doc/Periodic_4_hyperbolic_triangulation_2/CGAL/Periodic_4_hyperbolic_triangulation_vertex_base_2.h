@@ -17,11 +17,9 @@ concept `Periodic_4HyperbolicTriangulationVertexBase_2`. It accepts two template
 \tparam Vb 	Vertex Base type. Should be a model of the concept `TriangulationVertexBase_2`. 
 		   	The default value for this template parameter is `CGAL::Triangulation_vertex_base_2<GT>`
 
-\cgalModifBegin
 `Periodic_4_hyperbolic_triangulation_vertex_base_2` can be simply plugged in the triangulation 
 data structure of a periodic hyperbolic triangulation, or used as a base class to derive other 
 base vertex classes tuned for specific applications.
-\cgalModifEnd
 
 \cgalModels Periodic_4HyperbolicTriangulationVertexBase_2
 

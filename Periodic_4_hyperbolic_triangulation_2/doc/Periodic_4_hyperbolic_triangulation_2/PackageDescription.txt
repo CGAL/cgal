@@ -41,7 +41,6 @@ triangulations and offers primitives to build the dual Voronoi diagrams.}
 
 \cgalPkgDescriptionEnd
 
-\cgalModifBegin
 
 \cgal traditionally represents a triangulation via its faces and vertices. We represent a triangulation of the 
 Bolza surface via the canonical representatives of its faces in the hyperbolic plane. This package provides the
@@ -80,7 +79,6 @@ triangulations in general, such as point location. This class does <i>not</i> su
 - `CGAL::Periodic_4_hyperbolic_triangulation_vertex_base_2` is a model of the concept `Periodic_4HyperbolicTriangulationVertexBase_2` and represents a vertex of the triangulation.
 - `CGAL::Hyperbolic_octagon_translation` is a class that represent hyperbolic translations of the fundamental group \f$\mathcal G\f$ 
 of the Bolza surface.
-\cgalModifEnd
 
 */
 

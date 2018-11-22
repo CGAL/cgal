@@ -24,14 +24,12 @@ public:
 	/// \name Computation Types
 	/// @{
 		/*!
-			\cgalModifBegin
 			Must provide the function operator
 
 			`double operator()(Hyperbolic_point_2 p1, Hyperbolic_point_2 p2, Hyperbolic_point_2 p3),`
 
 			which returns a floating-point approximation of the hyperbolic diameter
 			of the circle defined by the points `p1, p2,` and `p3`.
-			\cgalModifEnd
 		*/
 		typedef unspecified_type 				Compute_approximate_hyperbolic_diameter;
 	/// @}

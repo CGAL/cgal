@@ -5,11 +5,9 @@
 \ingroup PkgPeriodic4HyperbolicTriangulation2Concepts
 \cgalConcept
 
-\cgalModifBegin
 \cgalRefines TriangulationFaceBase_2
 
 A refinement of the concept `TriangulationFaceBase_2` that adds an interface for hyperbolic translations.
-\cgalModifEnd
 
 At the base level, a face stores handles to its incident vertices and to its neighboring faces. 
 Compare with Section \ref Section_2D_Triangulations_Software_Design of the 2D Triangulations 

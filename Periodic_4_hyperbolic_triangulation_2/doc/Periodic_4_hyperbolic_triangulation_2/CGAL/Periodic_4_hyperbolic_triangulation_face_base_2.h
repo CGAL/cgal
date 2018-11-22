@@ -17,11 +17,9 @@ concept `Periodic_4HyperbolicTriangulationFaceBase_2`. It accepts two template p
 \tparam FB 	Face Base type. Should be a model of the concept `TriangulationFaceBase_2`. 
 		   	The default value for this template parameter is `Triangulation_face_base_2<GT>`
 
-\cgalModifBegin
 `Periodic_4_hyperbolic_triangulation_face_base_2` can be simply plugged in the triangulation 
 data structure of a periodic hyperbolic triangulation, or used as a base class to derive other 
 base vertex classes tuned for specific applications.
-\cgalModifEnd
 
 \cgalModels Periodic_4HyperbolicTriangulationFaceBase_2
 

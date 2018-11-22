@@ -5,18 +5,14 @@
 \ingroup PkgPeriodic4HyperbolicTriangulation2Concepts
 \cgalConcept
 
-\cgalModifBegin
 \cgalRefines TriangulationVertexBase_2
 
 A refinement of the concept `TriangulationVertexBase_2` that adds an interface for hyperbolic translations.
-\cgalModifEnd
 
 For periodic hyperbolic triangulations, the vertex base class needs to temporarily store a hyperbolic 
 translation during the insertion process. 
-\cgalModifBegin
 A boolean flag indicates whether the face stores a translation or not. The value of the flag is automatically
 set when storing or removing a translation.
-\cgalModifEnd
 
 \cgalHasModel `CGAL::Periodic_4_hyperbolic_triangulation_vertex_base_2`
 

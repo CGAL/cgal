@@ -42,10 +42,8 @@ public:
 	/// The following types represent geometric objects.
 	/// @{
 		/*!
-			\cgalModifBegin
 			Represents a point in the hyperbolic plane. Note that for Delaunay triangulations
 			of the Bolza surface, all points must lie inside the original hyperbolic octagon.
-			\cgalModifEnd
 		*/
 		typedef typename Triangulation_data_structure::Vertex::Point 		Point;
 
@@ -410,10 +408,8 @@ public:
 						Face_handle & fh) const;
 
 		/*!
-			\cgalModifBegin
 			Tests whether face `f` has `v` as a vertex. If the answer is `true`,
 			then `i` contains the index of `v` in `f`.
-			\cgalModifEnd
 		*/
 		bool has_vertex(const Face_handle f, const Vertex_handle v, const int i) const;
 	/// @}
@@ -424,9 +420,7 @@ public:
 	/// @{
 
 		/*!
-		\cgalModifBegin
 			Starts at an arbitrary vertex. Iterates over all the vertices in the triangulation.
-		\cgalModifEnd
 		*/
 		Vertex_iterator vertices_begin() const;
 
@@ -436,9 +430,7 @@ public:
 		Vertex_iterator vertices_end() const;
 
 		/*!
-		\cgalModifBegin
 			Starts at an arbitrary edge. Iterates over all the edges in the triangulation.
-		\cgalModifEnd
 		*/
 		Edge_iterator edges_begin() const;
 
@@ -448,9 +440,7 @@ public:
 		Edge_iterator edges_end() const;
 
 		/*!
-		\cgalModifBegin
 			Starts at an arbitrary face. Iterates over all the faces of the triangulation.
-		\cgalModifEnd
 		*/
 		Face_iterator faces_begin() const;
 
@@ -464,16 +454,12 @@ public:
 	/// \name Vertex, Edge and Face circulators
 	/// @{
 		/*!
-		\cgalModifBegin
 			Starts at an arbitrary vertex incident to `v`.
-		\cgalModifEnd
 		*/
 		Vertex_circulator adjacent_vertices(Vertex_handle v) const;
 
 		/*!
-		\cgalModifBegin
 			Starts at the first vertex of `f` adjacent to `v` in counterclockwise order around `v`.
-		\cgalModifEnd
 		*/
 		Vertex_circulator adjacent_vertices(Vertex_handle v, Face_handle f) const;
 

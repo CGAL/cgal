@@ -15,7 +15,6 @@ one template parameter:
 			notably with nested square roots. The default value for this parameter is 
 			`CORE::Expr`.
 
-\cgalModifBegin
 A translation \f$g\f$ in \f$\mathcal G\f$ is a mapping acting on the hyperbolic plane 
 \f$\mathbb H^2\f$. It has the form
 \f[ g(z) = \frac{ \alpha\cdot z + \beta }{ \overline{\beta}\cdot z + \overline{\alpha} }, \qquad 
@@ -28,7 +27,6 @@ Considering the set of generators \f$\mathcal A = [a, \overline{b}, c, \overline
 b, \overline{c}, d]\f$ as an alphabet, a translation \f$g\f$ in \f$\mathcal G\f$ can be seen as a 
 word on the alphabet \f$\mathcal A\f$. Each letter of this alphabet is represented as an unsigned 
 integer from from 0 to 7, and each word (i.e., translation) is a sequence of letters.
-\cgalModifEnd
 */
 
 template <typename FT = CORE::Expr>
@@ -49,18 +47,14 @@ public:
 	typedef unspecified_type 			FT;
 
 	/*!
-	\cgalModifBegin 
 		Represents a single letter of the alphabet \f$\mathcal A\f$.
 		By extension, represents a generator of the group \f$\mathcal G\f$.
-	\cgalModifEnd
 	*/
 	typedef unsigned short int 			Word_letter;
 
 	/*!
-	\cgalModifBegin 
 		Represents a word on the alphabet \f$\mathcal A\f$. By extension, represents 
 		a hyperbolic translation in the group \f$\mathcal A\f$.
-	\cgalModifEnd
 	*/
 	typedef std::vector<Word_letter> 	Word;
 
@@ -158,11 +152,9 @@ public:
 	/// \name Static Access Functions
 
 	/*!
-		\cgalModifBegin
 		Return the generator `wl` of the group \f$\mathcal G\f$.
 		Note that `wl` can be an element of the enumeration set Generator. The calls
 		`generator(0)` and `generator(A)` will both return the translation \f$a\f$.
-		\cgalModifEnd
 	*/
 	static Self generator(const Word_letter wl) {
 		return Self(wl);

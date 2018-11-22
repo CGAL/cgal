@@ -43,11 +43,9 @@ The class expects two template parameters.
 		Periodic_4_hyperbolic_Delaunay_triangulation_2(const Periodic_4_hyperbolic_Delaunay_triangulation_2& tr);
 
 		/*!
-		\cgalModifBegin
 			Point range constructor.
 			Initializes a triangulation and then inserts the points in the 
 			iterator range `[first, last)`.
-		\cgalModifEnd
 		*/
 		template < class InputIterator >
 		Periodic_4_hyperbolic_Delaunay_triangulation_2( InputIterator first, InputIterator last, const Geom_traits& gt = Geom_traits() );
@@ -69,12 +67,10 @@ The class expects two template parameters.
 	/// @{
 	 	
 	 	/*!
-	 		\cgalModifBegin
 			Computes the conflict zone induced by `p`.
 			The output iterator `it` contains all faces in conflict with `p`.
 			The optional parameters `start` and `ltr`, if given, must be such 
 			that `start` translated by `ltr` is in conflict with `p`. 
-			\cgalModifEnd
 	 	*/
 	 	template<class OutputFaceIterator>
 		void
@@ -114,24 +110,20 @@ The class expects two template parameters.
 	/// @{
 
 		/*!
-			\cgalModifBegin
 			Inserts the point `p` in the triangulation.
 			The face `start`, if given, is used as a starting place for the location of the point.
 			Note that this function does not remove unnecessary dummy points. 
 			The removal, if desired, should be done by manually calling the function 
 			`try_to_remove_dummy_vertices()`.
-			\cgalModifEnd
 		*/
 		Vertex_handle insert(const Point  &p, Face_handle start = Face_handle());
 
 		/*!
-			\cgalModifBegin
 			Inserts all points in the input iterator into the triangulation.
 			Note that this function by default tries to remove unnecessary dummy points 
 			at the end of the insertion process. This behavior is controlled by the 
 			optional boolean parameter `flag_try_to_remove_dummy_vertices`; if automatic removal
 			of the dummy points is not desired, set the flag to `false`.
-			\cgalModifEnd
 		*/
 		template < class InputIterator >
 		std::ptrdiff_t
@@ -142,21 +134,17 @@ The class expects two template parameters.
 	/// @{
 
 		/*!
-			\cgalModifBegin
 			Removes the vertex `v` from the triangulation.
 			Note that `v` is removed from the triangulation only if the resulting
 			triangulation remains a simplicial complex. The function returns `true`
 			if the vertex `v` is removed from the triangulation, otherwise it returns 
 			`false`.
-			\cgalModifEnd
 		*/
 		bool remove(Vertex_handle v);
 
 		/*!
-	      \cgalModifBegin
 	      Removes the vertices in the iterator range `[firs, last)` from the triangulation.
 	      \pre all vertices in `[first, last)` are vertices of the triangulation.
-	      \cgalModifEnd
 	      \todo implement!
 	    */
 	    template <class VertexRemoveIterator>
@@ -167,11 +155,9 @@ The class expects two template parameters.
 	/// @{
 
 		/*!
-			\cgalModifBegin
 			Tries to remove the dummy points from the triangulation one by one.
 			Returns the number of dummy points that could not be removed and are 
 			still present in the triangulation.
-			\cgalModifEnd
 		*/
 		int try_to_remove_dummy_vertices();
 	/// @}
