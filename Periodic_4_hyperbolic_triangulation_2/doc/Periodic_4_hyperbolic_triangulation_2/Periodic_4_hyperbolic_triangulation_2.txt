@@ -27,9 +27,9 @@ triangulation of the hyperbolic plane.
 
 Let \f$\mathbb{H}^2\f$ denote the hyperbolic plane, represented in the
 Poincaré disk model (see Chapter \ref Chapter_2D_Hyperbolic_Triangulation).
-Consider the regular hyperbolic octagon \f$ \mathcal D_O \f$ centered at the origin, with 
-all angles equal to \f$ \pi/4\f$ that is shown in
-\cgalFigureRef{P4HTriangulationOctagonId} - Left.
+Consider the regular hyperbolic octagon \f$ \mathcal D_O \f$ centered
+at the origin with all angles equal to \f$ \pi/4\f$, as shown in
+\cgalFigureRef{P4HTriangulationOctagonId}.
 Note that \f$\mathcal D_O\f$ is unique up to rotation, and cannot
 be scaled, since this operation would change its angles. Consider the 
 four hyperbolic translations \f$ a,b,c,d\f$ with their respective inverses \f$\overline{a}, 
@@ -66,7 +66,7 @@ onto \f$\mathcal M\f$.
   <b>Center:</b> Illustration of periodicity in the hyperbolic
   plane. The figure shows a few periodic copies of the points in the central octagon.
   <b>Right:</b> The half-open octagon \f$\mathcal D\f$ is an original domain for \f$\mathcal{M}\f$. Note that 
-  only one vertex of the octagon is included in the original domain.
+  only one vertex of the octagon is contained in the original domain.
 \cgalFigureCaptionEnd
 
 By definition, all points of \f$\mathbb H^2\f$ that belong to the same
@@ -170,37 +170,18 @@ Let us now give details on the <i>condition</i> mentioned
 above. The projection by \f$\pi\f$ of the
 Delaunay triangulation in \f$\mathbb H^2\f$ of \f$\mathcal{G P}\f$
 is a <i>triangulation</i> of \f$\mathcal{M}\f$ if
-and only if its combinatorial graph does not contain cycles of length
-1 or 2, or, equivalently, if the projection is a simplicial complex, i.e.,
+and only if its combinatorial graph does not contain 
+loops (i.e., edges having two identical vertices) or double edges
+(i.e. two edges sharing the same two vertices), or, equivalently, if the
+projection is a simplicial complex: 
 <ul>
   <li> it contains all incident \f$ j\f$-simplices (\f$ j<k\f$) of any \f$ k\f$-simplex, and</li>
   <li> two \f$ k\f$-simplices either do not intersect or share a common \f$ j\f$-face, \f$ j<k\f$. </li>
 </ul> 
 
-\cgalModifBegin
-En fait la section Validity etait fausse. Elle melangeait deux notions de validite de niveaux differents. La
-condition ci-dessus est celle du papier, c'est l'algo d'insertion
-lui-meme qui la garantit grace aux dummy points. 
-Les conditions ci-dessous expliquent juste la fonction is-valid, c'est vraiment
-autre chose. On ne pourrait meme pas utiliser TDS si la validity
-condition n'etait pas satisfaite. 
-Donc je propose d'enlever l'itemize ci-dessous. Peut-être le mettre
-dans le ref manual ? (si ca n'y est pas deja) IL MANQUE LA CONDITION
-DELAUNAY !
-<ol>
-  <li> Its underlying combinatorial graph, the triangulation data structure, is `valid`
-        (see the function \link TriangulationDataStructure_2::is_valid() is_valid\endlink() in the concept \ref TriangulationDataStructure_2) and each face of the triangulation is positively oriented. See 
-        \cgalFigureRef{P4HTriangulationOrientationDS}. </li>
-  <li>  It is a triangulation of a genus-2 surface; this condition is satisfied when the Euler 
-        relation \f$V-E+F = -2\f$ is verified, where \f$V, E, F\f$ are the number 
-        of vertices, edges and faces of the triangulation, respectively. </li>
-</ol>
-\cgalModifEnd
-
 Some point sets do not define a triangulation of \f$\mathcal M\f$. For
 instance, a single point does not define a triangulation of
-\f$\mathcal M\f$, as the induced subdivision would not be a simplicial
-complex. Another example is shown in
+\f$\mathcal M\f$, as all edges the induced subdivision would be loops. Another example is shown in
 \cgalFigureRef{P4HNonSimplicialExample}. 
 
 \cgalFigureAnchor{P4HNonSimplicialExample}
@@ -209,10 +190,11 @@ complex. Another example is shown in
 </center>
 \cgalFigureCaptionBegin{P4HNonSimplicialExample}
   The three 
-  points in the central octagon define a subdivision of the Bolza surface that is <b>not</b> a triangulation,
-  since it is non-simplicial. A few cycles of length 2 are shown in
-  color, leading to double edges on the surface. The pink edge between the two blue 
-  vertices corresponds to a loop (cycle of length 1) on the surface. 
+  points in the central octagon define a non-simplicial subdivision of
+  the Bolza surface. The pink edge between the two blue 
+  vertices corresponds to a loop on the surface. The two blue edges 
+  correspond to a double edge on the surface; the two green edge,
+  too. 
 \cgalFigureCaptionEnd
 
 We initialize a triangulation of \f$\mathcal M\f$ with a predetermined set \f$\mathcal Q\f$ of 
@@ -232,17 +214,14 @@ See \cgalFigureRef{P4HTriangulationDummyPoints}.
   Delaunay triangulation of \f$\mathcal M\f$ defined by the 14 dummy
   points. The set \f$\mathcal Q\f$ of dummy points
   contains the origin, the vertex of \f$\mathcal D\f$, the midpoints of the closed sides of 
-  \f$\mathcal D\f$, and the hyperbolic midpoints of the segments between the origin and the vertices 
+  \f$\mathcal D\f$, and the (hyperbolic) midpoints of the segments between the origin and the vertices 
   of the octagon. 
 \cgalFigureCaptionEnd
 
-If sufficiently many well-distributed 
-points are inserted, the dummy points become unnecessary, i.e., the triangulation remains a 
-simplicial complex even if we remove them. 
-If the set of input points is not sufficiently large, or if the points 
-are not well-distributed on the surface, then the final triangulation will contain the
-dummy points necessary to guarantee that the triangulation is a simplicial complex. 
-
+If sufficiently many well-distributed points are inserted, the dummy
+points become unnecessary, i.e., the subdivision remains a simplicial
+complex even if we remove them. Otherwise some dummy points are left
+to ensure that the final subdivision is a simplicial complex.
 
 \section P4HT2_design Software Design 
 
@@ -271,12 +250,13 @@ functionality common to triangulations in general, such as point location \cgalC
 and access functions, but supports neither point insertion nor vertex removal.
 
 Both classes `Periodic_4_hyperbolic_triangulation_2` and `Periodic_4_hyperbolic_Delaunay_triangulation_2`
-require two template parameters that reflect the separation between the geometric and combinatorial
+have two template parameters that reflect the separation between the geometric and combinatorial
 structures of the triangulation:
 
-- a <B>geometric traits</B> class, which provides all objects, predicates, and constructions 
-necessary for the computation of Delaunay triangulations of the Bolza surface.For more details, see 
-Section \ref P4HT2_traits. 
+- a <B>geometric traits</B> class, which provides all objects,
+predicates, and constructions that are 
+necessary for the computation of Delaunay triangulations of the Bolza
+surface. See Section \ref P4HT2_traits. 
 
 - a <B>triangulation data structure</B> class, which encodes the combinatorial structure of 
 the triangulation. See Section \ref P4HT2_datastructure.
@@ -284,13 +264,12 @@ the triangulation. See Section \ref P4HT2_datastructure.
 \subsection P4HT2_traits The Geometric Traits Parameter 
 
 The geometric traits class must fulfill the requirements described in the concept
-`Periodic_4HyperbolicDelaunayTriangulationTraits_2`. It must provide all necessary objects, 
-predicates, and constructions for the computation of Delaunay triangulations of the Bolza surface.
+`Periodic_4HyperbolicDelaunayTriangulationTraits_2`. 
 Moreover, the traits class must represent hyperbolic translations of the group \f$\mathcal G\f$
 via the class `Hyperbolic_octagon_translation`.
 
 A model for the concept `Periodic_4HyperbolicDelaunayTriangulationTraits_2` offered by this
-package is the class `Periodic_4_hyperbolic_Delaunay_triangulation_traits_2`. The class requires 
+package is the class `Periodic_4_hyperbolic_Delaunay_triangulation_traits_2`. The class has 
 one template parameter:
 <ul>
 	<li> A `Kernel` with a field number type `FT` that guarantees exact computations on algebraic numbers 
@@ -301,8 +280,7 @@ one template parameter:
 
 \subsection P4HT2_datastructure The Triangulation Data Structure Parameter 
 
-The triangulation data structure class is the second template parameter of the periodic hyperbolic
-triangulation classes. It is a container for the faces and vertices and maintains
+The triangulation data structure class is a container for the faces and vertices and maintains
 incidence and adjacency relations. 
 This parameter must meet the requirements described in the concept `TriangulationDataStructure_2`, 
 for which \cgal offers the model `Triangulation_data_structure_2`. 
@@ -313,8 +291,7 @@ the face base and vertex base classes must be models of the concepts
 `Periodic_4HyperbolicTriangulationFaceBase_2` and
 `Periodic_4HyperbolicTriangulationVertexBase_2`, respectively.
 
-The default value for the triangulation data structure parameter in the class 
-`Periodic_4_hyperbolic_Delaunay_triangulation_2` is
+The default value for the triangulation data structure parameter is
 `Triangulation_data_structure_2< Periodic_4_hyperbolic_triangulation_face_base_2<Traits>, Periodic_4_hyperbolic_triangulation_vertex_base_2<Traits> >`, 
 where `Traits` is a model of `Periodic_4HyperbolicDelaunayTriangulationTraits_2`.
 
@@ -333,8 +310,7 @@ We refer the reader to selected examples of the \ref Chapter_2D_Triangulations "
 
 The example below shows the initialization of a periodic hyperbolic 2D Delaunay triangulation,  the
 insertion of random points uniformly distributed in the unit disk for the Euclidean metric, and the
-properties of the triangulation after the insertion. It uses the default parameter of the
-`Periodic_4_hyperbolic_Delaunay_triangulation_2` class for the triangulation data structure.
+properties of the triangulation after the insertion. It uses the default triangulation data structure.
 
 \cgalExample{Periodic_4_hyperbolic_triangulation_2/p4ht2_example_insertion.cpp}
 
@@ -372,9 +348,9 @@ have been executed on two machines:
 
 Another experiment shows that, on average, all dummy points are removed 
 from the triangulation with the insertion of fewer than 200 random points uniformly distributed 
-in the unit disk with respect to the Euclidean metric \cgalCite{cgal:it-idtbs-17}. 
+in the unit disk with respect to the Euclidean metric. 
 We start with an empty triangulation of the Bolza 
-surface (i.e., initialized with only the dummy points), and we start inserting random points 
+surface (i.e., initialized with only the dummy points), and we insert random points 
 one by one. After each insertion, the unnecessary dummy points (if any) are removed from the 
 triangulation. As soon as the last dummy point has been removed, we stop the process and record 
 the number of random points inserted. Results are shown in \cgalFigureRef{P4HDummyPointsHistogram}.
