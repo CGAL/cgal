@@ -380,7 +380,6 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
   }
   borders_item->setName(tr("Patch polygons").arg(sm_item->name()));
   borders_item->setColor(Qt::red);
-  borders_item->invalidateOpenGLBuffers();
   scene->addItem(borders_item);
   scene->changeGroup(borders_item, group);
 
@@ -394,7 +393,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
   }
   corres_item->setName(tr("Anchors").arg(sm_item->name()));
   corres_item->setColor(Qt::blue);
-  corres_item->invalidateOpenGLBuffers();
+  corres_item->setVisible(false);
   scene->addItem(corres_item);
   scene->changeGroup(corres_item, group);
 
@@ -467,6 +466,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
   cvx_hull_item->setName(tr("Patch planes").arg(sm_item->name()));
   cvx_hull_item->setColor(Qt::yellow);
   cvx_hull_item->setRenderingMode(FlatPlusEdges);
+  cvx_hull_item->setVisible(false);
   scene->addItem(cvx_hull_item);
   scene->changeGroup(cvx_hull_item, group);
 
