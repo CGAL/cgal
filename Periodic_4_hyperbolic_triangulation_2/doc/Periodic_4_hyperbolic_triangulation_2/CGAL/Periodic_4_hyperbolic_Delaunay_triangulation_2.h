@@ -95,20 +95,16 @@ The class expects two template parameters.
 		int number_of_dummy_points() const;
 
 		/*!
-		\cgalModifBegin
 			Checks the combinatorial validity of the triangulation, and also the validity of its geometric embedding. 
 			In more detail, this function verifies that:
-			<ol>
-				<li>  All faces of the triangulation have the Delaunay property. </li>
-				<li>  The underlying combinatorial graph of the triangulation, the triangulation data structure, is `valid`
-				(see the function \link TriangulationDataStructure_2::is_valid() is_valid\endlink() in the concept 
-				\ref TriangulationDataStructure_2) and each face of the triangulation is positively oriented. See 
-				\cgalFigureRef{P4HTriangulationOrientationDS} in the User Manual. </li>
-				<li>  The triangulation is a triangulation of a genus-2 surface; this condition is satisfied when the Euler 
-				relation \f$V-E+F = -2\f$ is verified, where \f$V, E, F\f$ are the number of vertices, edges and faces 
+			<ul>
+				<li> The underlying triangulation data structure, is `valid`
+				(see the function \link TriangulationDataStructure_2::is_valid() is_valid\endlink()) </li>
+				<li> Each face of the triangulation is positively oriented and has the Delaunay property. </li>
+				<li> The Euler relation for genus-2 surfaces is satisfied, i.e., \f$V-E+F = -2\f$,
+				where \f$V, E, F\f$ are the number of vertices, edges and faces 
 				of the triangulation, respectively. </li>
-			</ol>
-		\cgalModifEnd
+			</ul>
 		*/
 		bool is_valid(bool verbose = false) const;
 	/// @}
