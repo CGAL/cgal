@@ -1,25 +1,25 @@
-/// \defgroup PkgPeriodic4HyperbolicTriangulation2 2D Periodic Hyperbolic Triangulations Reference
+/// \defgroup PkgPeriodic4HyperbolicTriangulation2Ref 2D Periodic Hyperbolic Triangulations Reference
 
 /// \defgroup PkgPeriodic4HyperbolicTriangulation2Concepts Concepts
-/// \ingroup PkgPeriodic4HyperbolicTriangulation2
+/// \ingroup PkgPeriodic4HyperbolicTriangulation2Ref
 
 /// \defgroup PkgPeriodic4HyperbolicTriangulation2MainClasses Main Classes
-/// \ingroup PkgPeriodic4HyperbolicTriangulation2
+/// \ingroup PkgPeriodic4HyperbolicTriangulation2Ref
 
 /// \defgroup PkgPeriodic4HyperbolicTriangulation2TraitsClasses Traits Classes
-/// \ingroup PkgPeriodic4HyperbolicTriangulation2
+/// \ingroup PkgPeriodic4HyperbolicTriangulation2Ref
 
 /// \defgroup PkgPeriodic4HyperbolicTriangulation2VertexFaceClasses Vertex and Face Base Classes
-/// \ingroup PkgPeriodic4HyperbolicTriangulation2
+/// \ingroup PkgPeriodic4HyperbolicTriangulation2Ref
 
 /// \defgroup PkgPeriodic4HyperbolicTriangulation2HyperbolicTranslationsClasses Hyperbolic Translations Classes
-/// \ingroup PkgPeriodic4HyperbolicTriangulation2
+/// \ingroup PkgPeriodic4HyperbolicTriangulation2Ref
 
 
 /*!
-\addtogroup PkgPeriodic4HyperbolicTriangulation2
+\addtogroup PkgPeriodic4HyperbolicTriangulation2Ref
  
-\cgalPkgDescriptionBegin{2D Periodic Hyperbolic Triangulations,PkgPeriodic4HyperbolicTriangulation2Summary}
+\cgalPkgDescriptionBegin{2D Periodic Hyperbolic Triangulations,PkgPeriodic4HyperbolicTriangulation2}
 \cgalPkgPicture{Periodic_4_hyperbolic_triangulation_2/fig/new-triangulation-120px.png}
  
 \cgalPkgSummaryBegin
@@ -28,12 +28,12 @@
 hyperbolic Bolza surface. Triangulations are built incrementally and can be modified by insertion or
 removal of vertices. Point location facilities are also offered. The package provides Delaunay
 triangulations and offers primitives to build the dual Voronoi diagrams.}
-\cgalPkgManuals{Chapter_2D_Periodic_Hyperbolic_Triangulations,PkgPeriodic4HyperbolicTriangulation2}
+\cgalPkgManuals{Chapter_2D_Periodic_Hyperbolic_Triangulations,PkgPeriodic4HyperbolicTriangulation2Ref}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.14}
-\cgalPkgDependsOn{\ref PkgHyperbolicTriangulation2Summary}
+\cgalPkgDependsOn{\ref PkgHyperbolicTriangulation2}
 \cgalPkgBib{cgal:i-p4ht2-17}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Periodic Hyperbolic Delaunay Triangulation,Periodic_4_hyperbolic_Delaunay_triangulation_2.zip}
