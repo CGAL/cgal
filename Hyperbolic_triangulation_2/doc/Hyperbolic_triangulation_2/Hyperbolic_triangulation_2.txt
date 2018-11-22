@@ -6,7 +6,7 @@ namespace CGAL {
 
 \mainpage User Manual 
 \anchor Chapter_2D_Hyperbolic_Triangulations
-\anchor chapterHTriangulation2
+\anchor ChapterHTriangulation2
 
 \cgalAutoToc
 \author Mikhail Bogdanov, Iordan Iordanov, and Monique Teillaud
