@@ -13,10 +13,8 @@ to be fulfilled by any class used to instantiate the first template parameter of
 (points, segments...) forming the triangulation together with geometric predicates and 
 constructions on these objects.
 
-\cgalModifBegin
 This concept refines `DelaunayTriangulationTraits_2` because the class `CGAL::Hyperbolic_Delaunay_triangulation_2`
 internally relies on the class `CGAL::Delaunay_triangulation_2`.	
-\cgalModifEnd
 
 \cgalHasModel CGAL::Hyperbolic_Delaunay_triangulation_traits_2
 \cgalHasModel CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2
@@ -58,9 +56,7 @@ public:
 	typedef unspecified_type	        Hyperbolic_segment_2;
 
 	/*!
-		\cgalModifBegin
 		Represents a triangle in the hyperbolic plane defined by three hyperbolic points. 
-		\cgalModifEnd
 	*/
 	typedef unspecified_type 			Hyperbolic_triangle_2;
   /// @}
@@ -72,30 +68,23 @@ public:
 		A predicate object. Must provide the function operator
 
 		`Oriented_side operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q, Hyperbolic_point_2 r, Hyperbolic_point_2 t),`
-		\cgalModifBegin
 		which returns the position of the point `t` relative to the oriented circle
-		\cgalModifEnd
 		defined by the points `p, q`, and `r`. 
 	*/
 	typedef unspecified_type			Side_of_oriented_circle_2;
 
 
 	/*!
-		\cgalModifBegin
 		A predicate object. Must provide the function operator
 
 		`Oriented_side operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q, Hyperbolic_point_2 query),`
-		\cgalModifBegin
 		which returns the position of the point `query` relative to the oriented hyperbolic 
-		\cgalModifEnd
 		segment with vertices `p` and `q`. 
-		\cgalModifEnd
 	*/
 	typedef unspecified_type 			Side_of_oriented_hyperbolic_segment_2;
 
 
 	/*!
-		\cgalModifBegin
 		A predicate object. Must provide the function operator
 
 		`bool operator()(Hyperbolic_point_2 p0, Hyperbolic_point_2 p1, Hyperbolic_point_2 p2),`
@@ -111,7 +100,6 @@ public:
 		non-hyperbolic edge of the triangle, as defined in \cgalCite{cgal:bdt-hdcvd-14}.
 		The edge of the triangle opposite to `pj` for `j = 0,1,2` is considered to have index `j`.
 
-		\cgalModifEnd
 	*/
 	typedef unspecified_type 			Is_Delaunay_hyperbolic;
 
@@ -175,15 +163,7 @@ public:
   /// @{  
 	Orientation_2                          orientation_2_object();
 	Side_of_oriented_circle_2              side_of_oriented_circle_2_object();  
-	/*!
-		\cgalModifBegin
-		\cgalModifEnd
-	*/
 	Side_of_oriented_hyperbolic_segment_2  	side_of_oriented_hyperbolic_segment_2_object();
-	/*!
-		\cgalModifBegin
-		\cgalModifEnd
-	*/
 	Is_Delaunay_hyperbolic 		   		   	is_Delaunay_hyperbolic_object();  
   /// @}
 

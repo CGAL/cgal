@@ -40,10 +40,6 @@ public:
     */
     typedef typename Triangulation_data_structure::size_type        size_type;
     typedef typename Geom_traits::Hyperbolic_point_2                Point;
-    /*!
-    \cgalModifBegin
-    \cgalModifEnd
-    */
     typedef typename Geom_traits::Hyperbolic_triangle_2             Hyperbolic_triangle;
   /// @}
 
@@ -66,9 +62,7 @@ public:
 
     
   /// \name 
-  /// \cgalModifBegin
   /// The following iterator and circulator types are defined to give access over hyperbolic faces and edges:
-  /// \cgalModifEnd
   /// @{
     typedef Triangulation_data_structure::Face_iterator     All_faces_iterator;
     typedef Triangulation_data_structure::Edge_iterator     All_edges_iterator;
@@ -77,10 +71,8 @@ public:
   /// @}
 
   /// \name
-  /// \cgalModifBegin
   /// The enumeration `Locate_type` is defined to specify which case occurs when locating a 
   /// point in the triangulation.
-  /// \cgalModifEnd
   /// @{
     enum Locate_type { 
       VERTEX = 0, 
@@ -169,11 +161,9 @@ public:
     Triangulation_data_structure& tds();
 
     /*!
-      \cgalModifBegin
       Checks the combinatorial validity of the triangulation, the validity of 
       its geometric embedding, and also that all edges and faces are Delaunay 
       hyperbolic.
-      \cgalModifEnd
       \todo implement!
     */
     bool  is_valid ();
@@ -203,23 +193,17 @@ public:
   /// \name Geometric access functions
   /// @{
     /*
-      \cgalModifBegin
       Returns the triangle formed by the three vertices of face `f`.
-      \cgalModifEnd
     */
     Hyperbolic_triangle hyperbolic_triangle(const Face_handle f) const;
 
     /*!
-      \cgalModifBegin
       Returns the hyperbolic segment formed by the vertices of the edge `(f, i)`.
-      \cgalModifEnd
     */
     Hyperbolic_segment hyperbolic_segment(const Face_handle f, const int i) const;
 
     /*!
-      \cgalModifBegin
       Returns the hyperbolic segment formed by the vertices of edge `e`.
-      \cgalModifEnd
     */
     Hyperbolic_segment hyperbolic_segment (const Edge& e) const;
   ///@}
@@ -250,10 +234,8 @@ public:
       guaranteed to insert the points following the order of `InputIterator`, 
       as `spatial_sort()` is used to improve efficiency.
       
-      \cgalModifBegin
       \tparam InputIterator  must be an input iterator with the value type
       \link Hyperbolic_Delaunay_triangulation_2::Point `Point`\endlink.
-      \cgalModifEnd
     */
     template < class InputIterator >
     std::ptrdiff_t insert(InputIterator first, InputIterator last);
@@ -269,10 +251,8 @@ public:
     void remove(Vertex_handle v);
 
     /*!
-      \cgalModifBegin
       Removes the vertices in the iterator range `[firs, last)` from the triangulation.
       \pre all vertices in `[first, last)` are vertices of the triangulation.
-      \cgalModifEnd
       \todo implement!
     */
     template <class VertexRemoveIterator>
@@ -349,9 +329,7 @@ public:
 
   
   /// \name Voronoi Diagram 
-  /// \cgalModifBegin
   /// Users should use a kernel with exact constructions in order to guarantee
-  /// \cgalModifEnd 
   /// the computation of the Voronoi diagram (as opposed to computing the triangulation only, 
   /// which requires only exact predicates).
   /// @{
