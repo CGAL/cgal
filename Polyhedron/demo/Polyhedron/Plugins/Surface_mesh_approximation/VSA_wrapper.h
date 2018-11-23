@@ -26,7 +26,7 @@ class Scene_group_item;
 class Scene_polygon_soup_item;
 class Scene_polylines_item;
 
-class VSA_wrapper {
+class VSA_WRAPPER_EXPORT VSA_wrapper {
   typedef EPICK::FT FT;
   typedef EPICK::Point_3 Point_3;
   typedef EPICK::Vector_3 Vector_3;

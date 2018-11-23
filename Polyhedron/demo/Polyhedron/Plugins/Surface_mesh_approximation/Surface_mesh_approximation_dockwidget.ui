@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>654</width>
-    <height>353</height>
+    <height>360</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -451,6 +451,13 @@
         <widget class="QCheckBox" name="pca_plane">
          <property name="text">
           <string>PCA plane</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkAutomatic">
+         <property name="text">
+          <string>Automatic extraction</string>
          </property>
         </widget>
        </item>

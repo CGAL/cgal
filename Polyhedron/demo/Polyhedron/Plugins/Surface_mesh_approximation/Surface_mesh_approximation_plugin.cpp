@@ -241,6 +241,11 @@ public:
     BOOST_FOREACH(const QColor &c, approx.proxy_colors())
       fcolors.push_back(CGAL::Color(c.red(), c.green(), c.blue()));
     approx.visual_items().planes->load(cvx_hull_points, cvx_hulls, fcolors, std::vector<CGAL::Color>());
+
+    approx.visual_items().triangles->setVisible(true);
+    approx.visual_items().polygons->setVisible(true);
+    approx.visual_items().anchors->setVisible(false);
+    approx.visual_items().planes->setVisible(false);
   }
 
 public Q_SLOTS:
@@ -358,6 +363,15 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
   sm_item->invalidateOpenGLBuffers();
   scene->itemChanged(scene->item_id(sm_item));
 
+  if (ui_widget.checkAutomatic->isChecked()) {
+    update_meshing_items(approx, pmesh,
+      CGAL::parameters::subdivision_ratio(ui_widget.chord_error->value())
+        .relative_to_chord(ui_widget.comboRelative->currentIndex() == 1)
+        .with_dihedral_angle(ui_widget.with_dihedral_angle->isChecked())
+        .optimize_anchor_location(ui_widget.if_optimize_anchor_location->isChecked())
+        .pca_plane(ui_widget.pca_plane->isChecked()));
+  }
+
   QApplication::restoreOverrideCursor();
 }
 
@@ -389,6 +403,15 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonFit_clicked() {
   sm_item->setItemIsMulticolor(true);
   sm_item->invalidateOpenGLBuffers();
   scene->itemChanged(scene->item_id(sm_item));
+
+  if (ui_widget.checkAutomatic->isChecked()) {
+    update_meshing_items(approx, pmesh,
+      CGAL::parameters::subdivision_ratio(ui_widget.chord_error->value())
+        .relative_to_chord(ui_widget.comboRelative->currentIndex() == 1)
+        .with_dihedral_angle(ui_widget.with_dihedral_angle->isChecked())
+        .optimize_anchor_location(ui_widget.if_optimize_anchor_location->isChecked())
+        .pca_plane(ui_widget.pca_plane->isChecked()));
+  }
 
   QApplication::restoreOverrideCursor();
 }
@@ -426,6 +449,15 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonAdd_clicked() {
   sm_item->invalidateOpenGLBuffers();
   scene->itemChanged(scene->item_id(sm_item));
 
+  if (ui_widget.checkAutomatic->isChecked()) {
+    update_meshing_items(approx, pmesh,
+      CGAL::parameters::subdivision_ratio(ui_widget.chord_error->value())
+        .relative_to_chord(ui_widget.comboRelative->currentIndex() == 1)
+        .with_dihedral_angle(ui_widget.with_dihedral_angle->isChecked())
+        .optimize_anchor_location(ui_widget.if_optimize_anchor_location->isChecked())
+        .pca_plane(ui_widget.pca_plane->isChecked()));
+  }
+
   QApplication::restoreOverrideCursor();
 }
 
@@ -461,6 +493,15 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonTeleport_clicke
   sm_item->setItemIsMulticolor(true);
   sm_item->invalidateOpenGLBuffers();
   scene->itemChanged(scene->item_id(sm_item));
+
+  if (ui_widget.checkAutomatic->isChecked()) {
+    update_meshing_items(approx, pmesh,
+      CGAL::parameters::subdivision_ratio(ui_widget.chord_error->value())
+        .relative_to_chord(ui_widget.comboRelative->currentIndex() == 1)
+        .with_dihedral_angle(ui_widget.with_dihedral_angle->isChecked())
+        .optimize_anchor_location(ui_widget.if_optimize_anchor_location->isChecked())
+        .pca_plane(ui_widget.pca_plane->isChecked()));
+  }
 
   QApplication::restoreOverrideCursor();
 }
@@ -499,6 +540,15 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSplit_clicked()
   sm_item->setItemIsMulticolor(true);
   sm_item->invalidateOpenGLBuffers();
   scene->itemChanged(scene->item_id(sm_item));
+
+  if (ui_widget.checkAutomatic->isChecked()) {
+    update_meshing_items(approx, pmesh,
+      CGAL::parameters::subdivision_ratio(ui_widget.chord_error->value())
+        .relative_to_chord(ui_widget.comboRelative->currentIndex() == 1)
+        .with_dihedral_angle(ui_widget.with_dihedral_angle->isChecked())
+        .optimize_anchor_location(ui_widget.if_optimize_anchor_location->isChecked())
+        .pca_plane(ui_widget.pca_plane->isChecked()));
+  }
 
   QApplication::restoreOverrideCursor();
 }
