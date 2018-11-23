@@ -18,6 +18,14 @@
 
 namespace VSA = CGAL::Surface_mesh_approximation;
 
+namespace CGAL {
+namespace Three {
+class Scene_group_item;
+}
+}
+class Scene_polygon_soup_item;
+class Scene_polylines_item;
+
 class VSA_wrapper {
   typedef EPICK::FT FT;
   typedef EPICK::Point_3 Point_3;
@@ -97,6 +105,23 @@ public:
   enum Metric { L21, L2, Compact };
 
   typedef CGAL::cpp11::array<std::size_t, 3> Indexed_triangle;
+
+  // visual items
+  struct Visual_items {
+    Visual_items() :
+      group(NULL),
+      indexed_triangles(NULL),
+      patch_borders(NULL),
+      anchors(NULL),
+      planes(NULL) {}
+
+    CGAL::Three::Scene_group_item *group;
+    Scene_polylines_item *seeds;
+    Scene_polygon_soup_item *indexed_triangles;
+    Scene_polylines_item *patch_borders;
+    Scene_polylines_item *anchors;
+    Scene_polygon_soup_item *planes;
+  };
 
   VSA_wrapper(const SMesh &mesh);
 
@@ -203,6 +228,9 @@ public:
       *out_itr++ = pxw.seed;
   }
 
+  Visual_items &visual_items() { return m_visual_items; }
+  const Visual_items &visual_items() const { return m_visual_items; }
+
 private:
   Metric m_metric; // current metric
 
@@ -223,6 +251,9 @@ private:
 
   Compact_metric *m_pcompact_metric;
   Compact_approx *m_compact_approx;
+
+  // visualization group item
+  Visual_items m_visual_items;
 };
 
 #endif // VSA_APPROXIMAITON_WRAPPER_H
