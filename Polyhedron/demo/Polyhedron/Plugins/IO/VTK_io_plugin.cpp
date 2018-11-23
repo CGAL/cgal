@@ -343,7 +343,7 @@ public:
       os << std::setprecision(16);
       const C3t3& c3t3 = c3t3_item->c3t3();
       
-      CGAL::write_VTU(os, c3t3);
+      CGAL::output_to_vtu(os, c3t3);
     }
     return true;
   }

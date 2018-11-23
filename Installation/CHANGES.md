@@ -55,7 +55,8 @@ Release date: March 2019
     `Arr_polycurve_basic_traits_2`.
 
 ### 2D and 3D Mesh Generation
--   Added 2 functions for writing in modern VTK formats:
+-   Added 3 functions for writing in modern VTK formats:
+    -`CGAL::output_to_vtu()`
     -`CGAL::write_VTU()`
     -`CGAL::write_VTP()`
 

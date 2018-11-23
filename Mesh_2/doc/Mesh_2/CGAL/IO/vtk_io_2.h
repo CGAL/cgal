@@ -13,7 +13,7 @@ namespace CGAL{
 //!   or in ASCII(`false`).
 //!
 template <class CDT>
-void write_VTU_2D(std::ostream& os,
-                               const CDT& tr,
-                               bool binary = true);
+void write_VTU(std::ostream& os,
+               const CDT& tr,
+               bool binary = true);
 }

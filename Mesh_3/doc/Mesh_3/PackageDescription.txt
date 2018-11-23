@@ -139,8 +139,6 @@ and their associated classes:
 
 ## Input/Output Functions ##
 - `CGAL::output_to_medit()`
-- `CGAL::write_VTP()`
-- `CGAL::write_VTU()`
-
+- `CGAL::output_to_vtu()`
 */
 

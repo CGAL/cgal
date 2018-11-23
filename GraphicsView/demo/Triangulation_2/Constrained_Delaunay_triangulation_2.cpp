@@ -676,7 +676,7 @@ MainWindow::saveConstraints(QString fileName)
     output << cdt;
   else if (output)
   {
-    CGAL::write_VTU_2D(output, cdt);
+    CGAL::write_VTU(output, cdt);
   }
 }
 

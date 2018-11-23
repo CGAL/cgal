@@ -256,7 +256,7 @@ write_attributes(std::ostream& os,
 
 //public API
 template <class C3T3>
-void write_VTU(std::ostream& os,
+void output_to_vtu(std::ostream& os,
                const C3T3& c3t3,
                bool binary = true)
 {
