@@ -110,15 +110,16 @@ public:
   struct Visual_items {
     Visual_items() :
       group(NULL),
-      indexed_triangles(NULL),
-      patch_borders(NULL),
+      seeds(NULL),
+      triangles(NULL),
+      polygons(NULL),
       anchors(NULL),
       planes(NULL) {}
 
     CGAL::Three::Scene_group_item *group;
     Scene_polylines_item *seeds;
-    Scene_polygon_soup_item *indexed_triangles;
-    Scene_polylines_item *patch_borders;
+    Scene_polygon_soup_item *triangles;
+    Scene_polylines_item *polygons;
     Scene_polylines_item *anchors;
     Scene_polygon_soup_item *planes;
   };
