@@ -165,6 +165,28 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
 
   Patch_id_pmap pidmap(get(CGAL::face_patch_id_t<int>(), *sm_item->face_graph()));
   approx.output(CGAL::parameters::face_proxy_map(pidmap));
+  // update seeds item
+  std::vector<face_descriptor> seeds;
+  approx.proxy_seeds(std::back_inserter(seeds));
+  Scene_polylines_item *seeds_item = new Scene_polylines_item();
+  BOOST_FOREACH(face_descriptor f, seeds) {
+    const halfedge_descriptor h = halfedge(f, *pmesh);
+    const Point_3 center = CGAL::centroid(
+      pmesh->point(source(h, *pmesh)),
+      pmesh->point(target(h, *pmesh)),
+      pmesh->point(target(next(h, *pmesh), *pmesh)));
+    const EPICK::Vector_3 normal = CGAL::unit_normal(
+      pmesh->point(source(h, *pmesh)),
+      pmesh->point(target(h, *pmesh)),
+      pmesh->point(target(next(h, *pmesh), *pmesh)));
+    std::vector<Point_3> polyline;
+    polyline.push_back(center);
+    polyline.push_back(center + normal);
+    seeds_item->polylines.push_back(polyline);
+  }
+  seeds_item->setName(tr("Seeds"));
+  seeds_item->setColor(Qt::red);
+  scene->addItem(seeds_item);
 
   mi->information(QString("Done, #proxies = %1. (%2 ms)").arg(
     approx.number_of_proxies()).arg(time.elapsed()));

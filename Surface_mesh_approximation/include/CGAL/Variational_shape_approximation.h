@@ -157,9 +157,8 @@ private:
   typedef std::vector<halfedge_descriptor> Boundary_chord;
   typedef typename Boundary_chord::iterator Boundary_chord_iterator;
 
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
+  /// \cond SKIP_IN_MANUAL
 public:
-#endif
   // The proxy wrapper for approximation.
   struct Proxy_wrapper {
     Proxy_wrapper(const Proxy &p, const std::size_t &i, const face_descriptor s, const FT &e)
@@ -170,10 +169,9 @@ public:
     face_descriptor seed; // proxy seed
     FT err; // proxy fitting error
   };
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-private:
-#endif
+  /// \endcond
 
+private:
   // The proxy fitting plane for meshing.
   struct Proxy_plane {
     Proxy_plane(const Plane_3 &p, const Vector_3 &n, const FT &a)
@@ -951,7 +949,7 @@ public:
 
   void proxies(boost::param_not_found) const {}
 
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
+  /// \cond SKIP_IN_MANUAL
   /*!
    * @brief gets the wrapped proxies.
    * @tparam OutputIterator output iterator with Proxy_wrapper as value type
@@ -962,7 +960,7 @@ public:
     BOOST_FOREACH(const Proxy_wrapper &pxw, m_proxies)
       *out++ = pxw;
   }
-#endif
+  /// \endcond
 
   /*!
    * @brief gets the anchor points, which have the area-averaged position of the projected anchor vertex points on the incident proxies.

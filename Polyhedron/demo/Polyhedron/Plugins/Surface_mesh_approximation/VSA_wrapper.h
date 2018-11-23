@@ -185,6 +185,24 @@ public:
     }
   }
 
+  template <typename OutputIterator>
+  void proxy_seeds(OutputIterator out_itr) {
+    switch (m_metric) {
+      case L21: return proxy_seeds(*m_l21_approx, out_itr);
+      case L2: return proxy_seeds(*m_l2_approx, out_itr);
+      case Compact: return proxy_seeds(*m_compact_approx, out_itr);
+    }
+  }
+
+  template <typename Approx, typename OutputIterator>
+  void proxy_seeds(Approx &approx, OutputIterator out_itr) {
+    typedef typename Approx::Proxy_wrapper Proxy_wrapper;
+    std::vector<Proxy_wrapper> pxwrapper;
+    approx.wrapped_proxies(std::back_inserter(pxwrapper));
+    BOOST_FOREACH(const Proxy_wrapper &pxw, pxwrapper)
+      *out_itr++ = pxw.seed;
+  }
+
 private:
   Metric m_metric; // current metric
 
