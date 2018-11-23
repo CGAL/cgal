@@ -832,21 +832,18 @@ namespace CommonKernelFunctors {
  template <typename K>
  class Compute_approximate_angle_3
  {
-    typedef typename K::Point_3 Point_3;  
+   typedef typename K::Point_3 Point_3;
+   typedef typename K::Vector_3 Vector_3;
+   
  public:
    typedef typename K::FT       result_type;
 
     result_type
-    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+    operator()(const Vector_3& u, const Vector_3& v) const
    {
      K k;
-     typename K::Construct_vector_3 vector = k.construct_vector_3_object();
      typename K::Compute_scalar_product_3 scalar_product =
        k.compute_scalar_product_3_object();
-     typedef typename K::Vector_3                     Vector_3;
-     
-     Vector_3 u = vector(q,p);
-     Vector_3 v = vector(q,r);
 
      double product = CGAL::sqrt(to_double(scalar_product(u,u))) * CGAL::sqrt(to_double(scalar_product(v,v)));
      
@@ -865,6 +862,19 @@ namespace CommonKernelFunctors {
      }
 
      return std::acos(cosine) * 180./CGAL_PI;
+   }
+
+   
+   result_type
+   operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+   {
+     K k;
+     typename K::Construct_vector_3 vector = k.construct_vector_3_object();
+     
+     Vector_3 u = vector(q,p);
+     Vector_3 v = vector(q,r);
+
+     return this->operator()(u,v); 
    }
  };
   

@@ -1783,9 +1783,17 @@ public:
   /// @{
 
   /*!
+    returns an approximation of the angle between `u` and `v`.
+    The angle is given in degrees.
+    \pre `u`and `v` are not equal to the null vector.
+  */
+  Kernel::FT operator()(const Kernel::Vector_3& u,
+                        const Kernel::Vector_3& v) const;
+  
+  /*!
     returns an approximation of the angle between `p-q` and `r-q`.
     The angle is given in degrees.
-    \pre `p`and `r` are not equal to `q`.
+    \pre `p` and `r` are not equal to `q`.
   */
   Kernel::FT operator()(const Kernel::Point_3& p,
                         const Kernel::Point_3& q,
@@ -6920,7 +6928,7 @@ public:
   Kernel::Vector_2 operator()(const Kernel::Line_2 &l); 
 
   /*!
-    introduces a null vector . 
+    introduces a null vector. 
   */ 
   Kernel::Vector_2 operator()(const Null_vector &NULL_VECTOR); 
 
@@ -6979,7 +6987,7 @@ public:
   Kernel::Vector_3 operator()(const Kernel::Line_3 &l); 
 
   /*!
-    introduces a null vector . 
+    introduces a null vector. 
   */ 
   Kernel::Vector_3 operator()(const Null_vector &NULL_VECTOR); 
 
