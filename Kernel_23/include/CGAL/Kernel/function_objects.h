@@ -841,11 +841,8 @@ namespace CommonKernelFunctors {
    {
      K k;
      typename K::Construct_vector_3 vector = k.construct_vector_3_object();
-     typename K::Construct_cross_product_vector_3 cross_product =
-       k.construct_cross_product_vector_3_object();
      typename K::Compute_scalar_product_3 scalar_product =
        k.compute_scalar_product_3_object();
-     typedef typename K::FT                           FT;
      typedef typename K::Vector_3                     Vector_3;
      
      Vector_3 u = vector(q,p);
@@ -860,24 +857,14 @@ namespace CommonKernelFunctors {
      double dot = to_double(scalar_product(u,v));
      double cosine = dot / product;
 
-     // sine
-     Vector_3 w = cross_product(u, v);
-     double abs_sine = CGAL::sqrt(to_double(scalar_product(w, w) / product));
-
-     if(abs_sine > 1.){
-       abs_sine = 1.;
+     if(cosine > 1.){
+       cosine = 1.;
      }
-     if(abs_sine < -1.){
-       abs_sine = -1.;
+     if(cosine < -1.){
+       cosine = -1.;
      }
 
-     double angle =  std::asin(abs_sine);
-     if(cosine < FT(0)){
-       angle = CGAL_PI - angle;
-     }
-     return angle * 180./CGAL_PI;
-
-     return 0;
+     return std::acos(cosine) * 180./CGAL_PI;
    }
  };
   
