@@ -29,16 +29,15 @@ A class interface is also provided for advanced users, in which a series of plia
 
 \section sma_overview Overview
 
-The package contains 3 main components: approximation algorithm, pliant operators and meshing.
+The package contains 3 main components: approximation algorithm, pliant operators and meshing as shown in Figure \cgalFigureRef{workflow}.
 
+\cgalFigureBegin{workflow, workflow.svg}
+From left to right are 3 components of the approximation package: approximation algorithm (left), optional pliant operations (middle) and meshing (right).
+\cgalFigureEnd
 
 \subsection sma_approximation Approximation
 
-Figure \cgalFigureRef{workflow} depicts the workflow of the approximation algorithm in the free function APIs. The main steps of the workflow are described below.
-
-\cgalFigureBegin{workflow, workflow.svg}
-Workflow of the approximation process in the free function.
-\cgalFigureEnd
+The left part of Figure \cgalFigureRef{workflow} depicts the workflow of the approximation algorithm.
 
 \subsubsection sma_clustering Clustering Iteration
 
