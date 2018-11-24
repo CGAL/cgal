@@ -166,6 +166,7 @@ public:
         polyline.push_back(anchor_points[border[i % border.size()]]);
       approx.visual_items().polygons->polylines.push_back(polyline);
     }
+    approx.visual_items().polygons->invalidateOpenGLBuffers();
 
     // update anchors item
     approx.visual_items().anchors->polylines.clear();
@@ -175,6 +176,7 @@ public:
       polyline.push_back(anchor_points[i]);
       approx.visual_items().anchors->polylines.push_back(polyline);
     }
+    approx.visual_items().anchors->invalidateOpenGLBuffers();
 
     // update patch planes item
     std::vector<std::vector<EPICK::Triangle_3> > patch_triangles(approx.number_of_proxies());
