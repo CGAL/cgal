@@ -156,6 +156,9 @@ generate_point() {
       coord[i]=RT(this->d_range * ( 2 * this->_rnd.get_double() - 1.0));
 
     P p(dimension, coord.begin(), coord.end() );
+    #ifdef BOOST_GCC
+    #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+    #endif
     this->d_item = p;
 }
 
