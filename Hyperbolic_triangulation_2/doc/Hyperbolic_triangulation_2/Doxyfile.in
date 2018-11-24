@@ -6,7 +6,7 @@ EXAMPLE_PATH = ${CGAL_PACKAGE_DIR}/examples
 
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 2D Hyperbolic Delaunay Triangulations"
 
-HTML_EXTRA_FILES = 	${CGAL_PACKAGE_DOC_DIR}/fig/ht-empty-disks.png \
-					${CGAL_PACKAGE_DOC_DIR}/fig/poincare-disk.png \
+HTML_EXTRA_FILES = 	${CGAL_PACKAGE_DOC_DIR}/fig/ht-empty-disks.svg \
+					${CGAL_PACKAGE_DOC_DIR}/fig/poincare-disk.svg \
 					${CGAL_PACKAGE_DOC_DIR}/fig/header.png \
-					${CGAL_PACKAGE_DOC_DIR}/fig/hyperbolic-vs-euclidean.png
+					${CGAL_PACKAGE_DOC_DIR}/fig/hyperbolic-vs-euclidean.svg

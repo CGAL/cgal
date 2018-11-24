@@ -15,7 +15,7 @@ namespace CGAL {
 <img src="header.png" style="max-width:60%; width=60%;"/>
 </center>
 
-This package allows to compute Delaunay triangulations of point sets in the Poincar&eacute;
+This package enables the computation of Delaunay triangulations of point sets in the Poincar&eacute;
 disk model of the hyperbolic plane, as well as their dual objects. 
 
 \section HT2_Poincare_model The Poincar&eacute; Disk Model of the Hyperbolic Plane
@@ -32,7 +32,7 @@ are not the same as its Euclidean center and radius.
 
 \cgalFigureAnchor{Hyperbolic_triangulation_2Poincare_disk}
 <center>
-<img src="poincare-disk.png" style="max-width:35%; width=35%;"/>
+<img src="poincare-disk.svg" style="max-width:35%; width=35%;"/>
 </center>
 \cgalFigureCaptionBegin{Hyperbolic_triangulation_2Poincare_disk}
 The Poincar&eacute; disk model for the hyperbolic plane. The figure shows 
@@ -62,7 +62,7 @@ See \cgalFigureRef{Hyperbolic_triangulation_2Euclidean_vs_hyperbolic}.
 
 \cgalFigureAnchor{Hyperbolic_triangulation_2Euclidean_vs_hyperbolic}
 <center>
-<img src="hyperbolic-vs-euclidean.png" style="max-width:35%; width=35%;"/>
+<img src="hyperbolic-vs-euclidean.svg" style="max-width:35%; width=35%;"/>
 </center>
 \cgalFigureCaptionBegin{Hyperbolic_triangulation_2Euclidean_vs_hyperbolic}
 The Euclidean (green) and hyperbolic (black) Delaunay triangulations 
@@ -79,7 +79,7 @@ non-hyperbolic faces and non-hyperbolic edges
 
 \cgalFigureAnchor{Hyperbolic_triangulation_2Empty_disks}
 <center>
-<img src="ht-empty-disks.png" style="max-width:35%; width=35%;"/>
+<img src="ht-empty-disks.svg" style="max-width:35%; width=35%;"/>
 </center>
 \cgalFigureCaptionBegin{Hyperbolic_triangulation_2Empty_disks}
 The shaded face is non-hyperbolic. Its dashed edge is non-hyperbolic,
