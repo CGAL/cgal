@@ -16,7 +16,7 @@ namespace CGAL {
 </center>
 
 
-This package allows to compute Delaunay triangulations of the Bolza surface, which is the
+This package enables the computation of Delaunay triangulations of the Bolza surface, which is the
 most symmetric surface of genus 2. The Bolza surface is a hyperbolic closed compact orientable surface. 
 
 A triangulation of the Bolza surface can be seen as a periodic

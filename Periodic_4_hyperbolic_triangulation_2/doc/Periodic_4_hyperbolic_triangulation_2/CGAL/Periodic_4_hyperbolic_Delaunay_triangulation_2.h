@@ -8,7 +8,7 @@ namespace CGAL {
 /*!
 \ingroup PkgPeriodic4HyperbolicTriangulation2MainClasses
 
-The class `Periodic_4_hyperbolic_Delaunay_triangulation_2` allows the construction and
+The class `Periodic_4_hyperbolic_Delaunay_triangulation_2` enables the construction and
 handling of Delaunay triangulations of the Bolza surface. 
 
 The class expects two template parameters.

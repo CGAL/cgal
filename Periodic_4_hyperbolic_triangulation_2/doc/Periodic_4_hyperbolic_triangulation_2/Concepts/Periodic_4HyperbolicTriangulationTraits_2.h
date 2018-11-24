@@ -11,7 +11,7 @@ The concept `Periodic_4HyperbolicTriangulationTraits_2` describes the set of req
 to be fulfilled by any class used to instantiate the first template parameter of the class 
 `CGAL::Periodic_4_hyperbolic_triangulation_2`. In addition to the geometric types and the 
 operations defined on them in `HyperbolicDelaunayTriangulationTraits_2`, it defines the 
-hyperbolic translations that allow to encode the periodicity of the triangulation.
+hyperbolic translations that enable the encoding of the periodicity of the triangulation.
 
 The concept requires that the field number type `FT` defined in the concept 
 `HyperbolicDelaunayTriangulationTraits_2` supports exact computations with algebraic numbers, 
