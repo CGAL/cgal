@@ -46,7 +46,7 @@ template <class Kernel,
           class PointMap2,
           class VectorMap1,
           class VectorMap2>
-void
+double
 align(const PointRange1& range1,    PointRange2& range2,
             PointMap1 point_map1,   PointMap2 point_map2,
             VectorMap1 vector_map1, VectorMap2 vector_map2,
@@ -91,7 +91,7 @@ align(const PointRange1& range1,    PointRange2& range2,
   }
 
   // logger
-  GR::Utils::Logger logger;
+  GR::Utils::Logger logger(GR::Utils::NoLog);
 
   // TODO add alternative?
   GR::MatchSuper4PCS matcher(options, logger);
@@ -99,8 +99,8 @@ align(const PointRange1& range1,    PointRange2& range2,
   GR::Match4PCSBase::DummyTransformVisitor visitor;
 
   // Match and return the score (estimated overlap or the LCP).
-  //GR::Point3D::Scalar score =
-  matcher.ComputeTransformation(set1, &set2, mat, sampler, visitor );
+  double score =
+    matcher.ComputeTransformation(set1, &set2, mat, sampler, visitor );
 
   CGAL_assertion(mat.coeff(3,0) == 0);
   CGAL_assertion(mat.coeff(3,1) == 0);
@@ -121,6 +121,8 @@ align(const PointRange1& range1,    PointRange2& range2,
     put(point_map2, *it, Point_3(set2[id].x(), set2[id].y(), set2[id].z()));
     ++id;
   }
+
+  return score;
 }
 
 } // end of namespace internal
@@ -130,7 +132,7 @@ align(const PointRange1& range1,    PointRange2& range2,
  */
 template <class PointRange1, class PointRange2,
           class NamedParameters1, class NamedParameters2>
-void
+double
 align(const PointRange1& point_set_1, PointRange2& point_set_2,
       const NamedParameters1& np1, const NamedParameters2& np2)
 {
@@ -162,31 +164,31 @@ align(const PointRange1& point_set_1, PointRange2& point_set_2,
   GR::Match4PCSOptions options = choose_param(get_param(np1, internal_np::opengr_options),
                                               GR::Match4PCSOptions());
 
-  internal::align<Kernel>(point_set_1, point_set_2,
-                          point_map1, point_map2,
-                          normal_map1, normal_map2,
-                          options);
+  return internal::align<Kernel>(point_set_1, point_set_2,
+                                 point_map1, point_map2,
+                                 normal_map1, normal_map2,
+                                 options);
 }
 
 // convenience overloads
 template <class PointRange1, class PointRange2,
           class NamedParameters1>
-void
+double
 align(const PointRange1& point_set_1, PointRange2& point_set_2,
       const NamedParameters1& np1)
 {
   namespace params = CGAL::Point_set_processing_3::parameters;
-  align(point_set_1, point_set_2, np1, params::all_default(point_set_1));
+  return align(point_set_1, point_set_2, np1, params::all_default(point_set_1));
 }
 
 template <class PointRange1, class PointRange2>
-void
+double
 align(const PointRange1& point_set_1, PointRange2& point_set_2)
 {
   namespace params = CGAL::Point_set_processing_3::parameters;
-  align(point_set_1, point_set_2,
-        params::all_default(point_set_1),
-        params::all_default(point_set_2));
+  return align(point_set_1, point_set_2,
+               params::all_default(point_set_1),
+               params::all_default(point_set_2));
 }
 
 } } // end of namespace CGAL::OpenGR

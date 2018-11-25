@@ -59,12 +59,13 @@ int main(int argc, const char** argv)
   options.delta = 0.01;
 
   // call the registration method Super4PCS from OpenGR
-  CGAL::OpenGR::align(pwns1, pwns2,
-                      params::point_map(Point_map())
-                             .normal_map(Normal_map())
-                             .opengr_options(options),
-                      params::point_map(Point_map())
-                             .normal_map(Normal_map()));
+  double score =
+    CGAL::OpenGR::align(pwns1, pwns2,
+                        params::point_map(Point_map())
+                               .normal_map(Normal_map())
+                               .opengr_options(options),
+                        params::point_map(Point_map())
+                               .normal_map(Normal_map()));
 
   std::ofstream out("pwns2_aligned.xyz");
   if (!out ||
@@ -75,6 +76,10 @@ int main(int argc, const char** argv)
   {
     return EXIT_FAILURE;
   }
+
+  std::cout << "Registration score: " << score << ".\n"
+            << "Transformed version of " << fname2
+            << " written to pwn2_aligned.xyz.\n";
 
   return EXIT_SUCCESS;
 }
