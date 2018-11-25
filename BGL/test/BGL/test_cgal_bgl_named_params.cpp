@@ -97,6 +97,7 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::face_normal).v == 36);
   assert(get_param(np, CGAL::internal_np::random_seed).v == 37);
   assert(get_param(np, CGAL::internal_np::do_project).v == 38);
+  assert(get_param(np, CGAL::internal_np::opengr_options).v == 9001);
 
     // Internal named parameters
   assert(get_param(np, CGAL::internal_np::weight_calculator).v == 39);
@@ -178,6 +179,7 @@ void test(const NamedParameters& np)
   check_same_type<36>(get_param(np, CGAL::internal_np::face_normal));
   check_same_type<37>(get_param(np, CGAL::internal_np::random_seed));
   check_same_type<38>(get_param(np, CGAL::internal_np::do_project));
+  check_same_type<9001>(get_param(np, CGAL::internal_np::opengr_options));
 
     // Internal named parameters
   check_same_type<39>(get_param(np, CGAL::internal_np::weight_calculator));
@@ -240,6 +242,7 @@ int main()
                          .face_normal_map(A<36>(36))
                          .random_seed(A<37>(37))
                          .do_project(A<38>(38))
+                         .opengr_options(A<>(9001))
                          .weight_calculator(A<39>(39))
                          .preserve_genus(A<40>(40))
                          .verbosity_level(A<41>(41))

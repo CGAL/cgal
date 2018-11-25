@@ -134,7 +134,8 @@ void
 align(const PointRange1& point_set_1, PointRange2& point_set_2,
       const NamedParameters1& np1, const NamedParameters2& np2)
 {
-  namespace  PSP = CGAL::Point_set_processing_3;
+  namespace PSP = CGAL::Point_set_processing_3;
+  namespace GR = GlobalRegistration;
   using boost::choose_param;
   using boost::get_param;
 
@@ -158,18 +159,8 @@ align(const PointRange1& point_set_1, PointRange2& point_set_2,
   PointMap1 point_map2 = choose_param(get_param(np2, internal_np::point_map), PointMap2());
   NormalMap2 normal_map2 = choose_param(get_param(np2, internal_np::normal_map), NormalMap2());
 
-  // TODO: Add a named parameter
-  GlobalRegistration::Match4PCSOptions options;
-  // DEFAULT OPTION for hippo
-  // -o 0.7 -d 0.01 -t 1000 -n 200 -r 4pcs_fast.obj -m mat_4pcs_fast.txt -x
-  bool overlapOk = options.configureOverlap(0.7);
-  CGAL_assertion(overlapOk);
-
-  options.sample_size = 200;
-  options.max_normal_difference = -1;
-  options.max_color_distance = -1;
-  options.max_time_seconds = 1000;
-  options.delta = 0.01;
+  GR::Match4PCSOptions options = choose_param(get_param(np1, internal_np::opengr_options),
+                                              GR::Match4PCSOptions());
 
   internal::align<Kernel>(point_set_1, point_set_2,
                           point_map1, point_map2,

@@ -46,10 +46,25 @@ int main(int argc, const char** argv)
   }
   input.close();
 
+  // OpenGR options
+  GlobalRegistration::Match4PCSOptions options;
+  bool overlap_OK = options.configureOverlap(0.7);
+  if(!overlap_OK)
+  {
+    std::cerr << "Invalid overlap configuration.\n";
+    return EXIT_FAILURE;
+  }
+  options.sample_size = 200;
+  options.max_time_seconds = 1000;
+  options.delta = 0.01;
+
   // call the registration method Super4PCS from OpenGR
   CGAL::OpenGR::align(pwns1, pwns2,
-                      params::point_map(Point_map()).normal_map(Normal_map()),
-                      params::point_map(Point_map()).normal_map(Normal_map()));
+                      params::point_map(Point_map())
+                             .normal_map(Normal_map())
+                             .opengr_options(options),
+                      params::point_map(Point_map())
+                             .normal_map(Normal_map()));
 
   std::ofstream out("pwns2_aligned.ply");
   if (!out ||
