@@ -93,6 +93,7 @@ CGAL_add_named_parameter(face_normal_t, face_normal, face_normal_map)
 CGAL_add_named_parameter(random_seed_t, random_seed, random_seed)
 CGAL_add_named_parameter(do_project_t, do_project, do_project)
 CGAL_add_named_parameter(tolerance_map_t, tolerance_map, tolerance_map)
+CGAL_add_named_parameter(opengr_options_t, opengr_options, opengr_options)
 
 //internal
 CGAL_add_named_parameter(weight_calculator_t, weight_calculator, weight_calculator)
