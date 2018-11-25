@@ -78,6 +78,17 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "jet_smoothing_example.cpp" )
     create_single_source_cgal_program( "normal_estimation.cpp" )
     create_single_source_cgal_program( "edges_example.cpp" )
+ 
+    # Executables that require OpenGR
+    find_package(OpenGR)
+    if (OpenGR_FOUND)
+      include_directories(SYSTEM ${OpenGR_INCLUDE_DIR})
+      create_single_source_cgal_program( "registration_with_OpenGR.cpp" )
+      target_link_libraries("registration_with_OpenGR" PRIVATE ${OpenGR_LIBRARIES})
+    else()
+      message(STATUS "NOTICE: registration_with_OpenGR requires OpenGR, and will not be compiled.")
+    endif()
+
   else()
 
     message(STATUS "NOTICE: Some of the executables in this directory need Eigen 3.1 (or greater) and will not be compiled.")
