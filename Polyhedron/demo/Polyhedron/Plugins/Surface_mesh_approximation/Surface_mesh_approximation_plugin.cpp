@@ -360,9 +360,9 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
 
   mi->information(QString("Done, #proxies = %1. (%2 ms)").arg(
     approx.number_of_proxies()).arg(time.elapsed()));
-  sm_item->color_vector() = approx.proxy_colors();
   sm_item->setItemIsMulticolor(true);
   sm_item->invalidateOpenGLBuffers();
+  sm_item->color_vector() = approx.proxy_colors();
   scene->itemChanged(scene->item_id(sm_item));
 
   if (ui_widget.checkAutomatic->isChecked()) {
@@ -401,9 +401,9 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonFit_clicked() {
 
   mi->information(QString("Fit one iteration, #proxies = %1.").arg(approx.number_of_proxies()));
 
-  sm_item->color_vector() = approx.proxy_colors();
   sm_item->setItemIsMulticolor(true);
   sm_item->invalidateOpenGLBuffers();
+  sm_item->color_vector() = approx.proxy_colors();
   scene->itemChanged(scene->item_id(sm_item));
 
   if (ui_widget.checkAutomatic->isChecked()) {
@@ -446,9 +446,9 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonAdd_clicked() {
   approx.output(CGAL::parameters::face_proxy_map(pidmap));
   update_seeds_item(approx, pmesh);
 
-  sm_item->color_vector() = approx.proxy_colors();
   sm_item->setItemIsMulticolor(true);
   sm_item->invalidateOpenGLBuffers();
+  sm_item->color_vector() = approx.proxy_colors();
   scene->itemChanged(scene->item_id(sm_item));
 
   if (ui_widget.checkAutomatic->isChecked()) {
@@ -491,9 +491,9 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonTeleport_clicke
 
   mi->information(QString("One proxy teleported, #proxies = %1.").arg(approx.number_of_proxies()));
 
-  sm_item->color_vector() = approx.proxy_colors();
   sm_item->setItemIsMulticolor(true);
   sm_item->invalidateOpenGLBuffers();
+  sm_item->color_vector() = approx.proxy_colors();
   scene->itemChanged(scene->item_id(sm_item));
 
   if (ui_widget.checkAutomatic->isChecked()) {
@@ -538,9 +538,9 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSplit_clicked()
   approx.output(CGAL::parameters::face_proxy_map(pidmap));
   update_seeds_item(approx, pmesh);
 
-  sm_item->color_vector() = approx.proxy_colors();
   sm_item->setItemIsMulticolor(true);
   sm_item->invalidateOpenGLBuffers();
+  sm_item->color_vector() = approx.proxy_colors();
   scene->itemChanged(scene->item_id(sm_item));
 
   if (ui_widget.checkAutomatic->isChecked()) {
