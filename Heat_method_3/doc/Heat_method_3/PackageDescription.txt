@@ -22,7 +22,7 @@ source vertices. }
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.14}
-\cgalPkgDependsOn{ \ref PkgSolverSummary; <a href="https://doc.cgal.org/latest/Manual/installation.html#thirdpartyEigen">Eigen</a>}
+\cgalPkgDependsOn{ \ref PkgSolverInterface; <a href="https://doc.cgal.org/latest/Manual/installation.html#thirdpartyEigen">Eigen</a>}
 \cgalPkgBib{cgal:cvf-hm3}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
