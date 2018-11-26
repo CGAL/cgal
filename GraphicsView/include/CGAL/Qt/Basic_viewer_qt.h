@@ -966,7 +966,7 @@ protected:
     return text;
   }
 
-private:
+protected:
   bool m_draw_vertices;
   bool m_draw_edges;
   bool m_draw_faces;

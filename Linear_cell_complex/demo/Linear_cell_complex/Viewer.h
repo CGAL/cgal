@@ -60,7 +60,7 @@ public:
 public:
   //  void draw();
 
-  //  virtual void init();
+  // virtual void init();
 
   void keyPressEvent(QKeyEvent *e);
 
@@ -118,7 +118,7 @@ private:
   // QOpenGLShaderProgram rendering_program;
   // QOpenGLShaderProgram rendering_program_p_l;
 
-  CGAL::Bbox_3 bb;
+  // CGAL::Bbox_3 bb;
 };
 
 #endif

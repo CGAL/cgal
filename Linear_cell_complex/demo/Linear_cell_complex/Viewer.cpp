@@ -47,12 +47,12 @@ Viewer::~Viewer()
 void Viewer::sceneChanged()
 {
   Base::compute_elements();
-  this->camera()->setSceneBoundingBox(CGAL::qglviewer::Vec(bb.xmin(),
-                                                     bb.ymin(),
-                                                     bb.zmin()),
-                                      CGAL::qglviewer::Vec(bb.xmax(),
-                                                     bb.ymax(),
-                                                     bb.zmax()));
+  this->camera()->setSceneBoundingBox(CGAL::qglviewer::Vec(m_bounding_box.xmin(),
+                                                     m_bounding_box.ymin(),
+                                                     m_bounding_box.zmin()),
+                                      CGAL::qglviewer::Vec(m_bounding_box.xmax(),
+                                                     m_bounding_box.ymax(),
+                                                     m_bounding_box.zmax()));
   if (m_previous_scene_empty)
     this->showEntireScene();
   else

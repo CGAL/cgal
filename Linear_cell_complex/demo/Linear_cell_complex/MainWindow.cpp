@@ -78,7 +78,7 @@ MainWindow::MainWindow (QWidget * parent) : CGAL::Qt::DemosMainWindow (parent),
 
   QObject::connect(&dialogmesh, SIGNAL(accepted()),
                    this, SLOT(onCreateMeshOk()));
-  //  this->viewer->setScene(&scene);
+  this->viewer->setScene(&scene);
 
   connect_actions ();
   this->addAboutDemo (":/cgal/help/about_Linear_cell_complex_3.html");
