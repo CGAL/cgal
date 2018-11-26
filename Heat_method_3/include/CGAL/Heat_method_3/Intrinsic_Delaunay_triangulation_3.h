@@ -366,7 +366,7 @@ private:
     }
 
     edge_stack stack;
-    number_of_edges = num_edges(m_intrinsic_tm);
+    std::size_t number_of_edges = num_edges(m_intrinsic_tm);
     edge_lengths.resize(number_of_edges);
     mark_edges.resize(number_of_edges, 1);
     edge_id_map = get(Edge_property_tag(), m_intrinsic_tm);
@@ -433,7 +433,6 @@ private:
   HalfedgeCoordinateMap hcm;
   Edge_id_map edge_id_map;
 
-  int number_of_edges;
   std::vector<double> edge_lengths;
   std::vector<int> mark_edges;
 public:

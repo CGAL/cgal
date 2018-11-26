@@ -195,8 +195,10 @@ public:
   ///
   /// \pre 0 <= i < row_dimension().
   /// \pre 0 <= j < column_dimension().
-  void add_coef(int i, int j, T  val)
+  void add_coef(std::size_t i_, std::size_t j_, T  val)
   {
+    int i = static_cast<int>(i_);
+    int j = static_cast<int>(j_);
     if(m_is_symmetric && (j > i))
       return;
 
@@ -218,8 +220,10 @@ public:
   ///
   /// \pre 0 <= i < row_dimension().
   /// \pre 0 <= j < column_dimension().
-  NT get_coef (unsigned int i, unsigned int j) const
+  NT get_coef (std::size_t i_, std::size_t j_) const
   {
+    int i = static_cast<int>(i_);
+    int j = static_cast<int>(j_);
     CGAL_precondition(i < row_dimension());
     CGAL_precondition(j < column_dimension());
 
