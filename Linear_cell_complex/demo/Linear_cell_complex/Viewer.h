@@ -24,37 +24,43 @@
 
 #include "typedefs.h"
 
+#include <CGAL/draw_linear_cell_complex.h>
 #include <vector>
 #include <QMap>
-#include <CGAL/Qt/qglviewer.h>
-#include <QKeyEvent>
-#include <QOpenGLFunctions_2_1>
-#include <QOpenGLVertexArrayObject>
-#include <QGLBuffer>
-#include <QOpenGLShaderProgram>
 
-#define NB_VBO_BUFFERS 8
-#define NB_VAO_BUFFERS 4
 
-class Viewer : public CGAL::QGLViewer
+// #include <CGAL/Qt/qglviewer.h>
+// #include <QKeyEvent>
+// #include <QOpenGLFunctions_2_1>
+// #include <QOpenGLVertexArrayObject>
+// #include <QGLBuffer>
+// #include <QOpenGLShaderProgram>
+
+// #define NB_VBO_BUFFERS 8
+// #define NB_VAO_BUFFERS 4
+
+class Viewer : public CGAL::SimpleLCCViewerQt<LCC, CGAL::DefaultColorFunctorLCC> // CGAL::QGLViewer
 {
   Q_OBJECT
 
+  typedef CGAL::SimpleLCCViewerQt<LCC, CGAL::DefaultColorFunctorLCC> Base;  
   typedef LCC::Dart_handle Dart_handle;
   typedef LCC::Dart_const_handle Dart_const_handle;
 
 public:
   Viewer(QWidget* parent);
-
   ~Viewer();
 
   void setScene(Scene* scene_)
-  { scene = scene_; }
+  {
+    scene = scene_;
+    set_lcc(scene->lcc);
+  }
 
 public:
-  void draw();
+  //  void draw();
 
-  virtual void init();
+  //  virtual void init();
 
   void keyPressEvent(QKeyEvent *e);
 
@@ -65,14 +71,14 @@ public Q_SLOTS:
   void sceneChanged();
 
 private:
-  void initialize_buffers();
-  void attrib_buffers(CGAL::QGLViewer*);
-  void compile_shaders();
+  //  void initialize_buffers();
+  //  void attrib_buffers(CGAL::QGLViewer*);
+  //  void compile_shaders();
 
-  void compute_elements();
+  /*  void compute_elements();
   void compute_face(Dart_handle dh, LCC::size_type markface);
   void compute_edge(Dart_handle dh, LCC::size_type markedge);
-  void compute_vertex(Dart_handle dh, LCC::size_type markvertex, bool& empty);
+  void compute_vertex(Dart_handle dh, LCC::size_type markvertex, bool& empty); */
 
 private:
   Scene* scene;
@@ -92,25 +98,25 @@ private:
   bool are_buffers_initialized;
 
   //Shaders elements
-  int vertexLocation[3];
-  int normalsLocation;
-  int mvpLocation[2];
-  int mvLocation;
-  int colorLocation;
-  int colorsLocation;
-  int lightLocation[5];
+  // int vertexLocation[3];
+  // int normalsLocation;
+  // int mvpLocation[2];
+  // int mvLocation;
+  // int colorLocation;
+  // int colorsLocation;
+  // int lightLocation[5];
 
-  std::vector<float> pos_points;
-  std::vector<float> pos_lines;
-  std::vector<float> pos_facets;
-  std::vector<float> smooth_normals;
-  std::vector<float> flat_normals;
-  std::vector<float> colors;
+  // std::vector<float> pos_points;
+  // std::vector<float> pos_lines;
+  // std::vector<float> pos_facets;
+  // std::vector<float> smooth_normals;
+  // std::vector<float> flat_normals;
+  // std::vector<float> colors;
 
-  QGLBuffer buffers[NB_VBO_BUFFERS];
-  QOpenGLVertexArrayObject vao[NB_VAO_BUFFERS];
-  QOpenGLShaderProgram rendering_program;
-  QOpenGLShaderProgram rendering_program_p_l;
+  // QGLBuffer buffers[NB_VBO_BUFFERS];
+  // QOpenGLVertexArrayObject vao[NB_VAO_BUFFERS];
+  // QOpenGLShaderProgram rendering_program;
+  // QOpenGLShaderProgram rendering_program_p_l;
 
   CGAL::Bbox_3 bb;
 };

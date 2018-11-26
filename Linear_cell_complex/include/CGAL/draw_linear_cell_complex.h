@@ -89,7 +89,7 @@ public:
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
   ///        usefull for very big object where this time could be long)
   SimpleLCCViewerQt(QWidget* parent,
-                    const LCC& alcc,
+                    const LCC* alcc=NULL,
                     const char* title="Basic LCC Viewer",
                     bool anofaces=false,
                     const ColorFunctor& fcolor=ColorFunctor()) :
@@ -103,6 +103,12 @@ public:
   }
 
 protected:
+  void set_lcc(const LCC* alcc)
+  {
+    lcc=alcc;
+    compute_elements();
+  }
+  
   void compute_face(Dart_const_handle dh)
   {
     // We fill only closed faces.
@@ -110,21 +116,21 @@ protected:
     Dart_const_handle min=dh;
     do
     {
-      if (!lcc.is_next_exist(cur)) return; // open face=>not filled
+      if (!lcc->is_next_exist(cur)) return; // open face=>not filled
       if (cur<min) min=cur;
-      cur=lcc.next(cur);
+      cur=lcc->next(cur);
     }
     while(cur!=dh);
     
-    CGAL::Color c=m_fcolor.run(lcc, dh);
+    CGAL::Color c=m_fcolor.run(*lcc, dh);
     face_begin(c);
 
     cur=dh;
     do
     {
-      add_point_in_face(lcc.point(cur), LCC_geom_utils<LCC, Local_kernel>::
-                        get_vertex_normal(lcc, cur));
-      cur=lcc.next(cur);
+      add_point_in_face(lcc->point(cur), LCC_geom_utils<LCC, Local_kernel>::
+                        get_vertex_normal(*lcc, cur));
+      cur=lcc->next(cur);
     }
     while(cur!=dh);
 
@@ -133,48 +139,49 @@ protected:
 
   void compute_edge(Dart_const_handle dh)
   {
-    Point p1 = lcc.point(dh);
-    Dart_const_handle d2 = lcc.other_extremity(dh);
+    Point p1 = lcc->point(dh);
+    Dart_const_handle d2 = lcc->other_extremity(dh);
     if (d2!=NULL)
-    { add_segment(p1, lcc.point(d2)); }
+    { add_segment(p1, lcc->point(d2)); }
   }
 
   void compute_vertex(Dart_const_handle dh)
-  { add_point(lcc.point(dh)); }
+  { add_point(lcc->point(dh)); }
 
   void compute_elements()
   {
     clear();
+    if (lcc==NULL) return;
+    
+    typename LCC::size_type markfaces    = lcc->get_new_mark();
+    typename LCC::size_type markedges    = lcc->get_new_mark();
+    typename LCC::size_type markvertices = lcc->get_new_mark();
 
-    typename LCC::size_type markfaces    = lcc.get_new_mark();
-    typename LCC::size_type markedges    = lcc.get_new_mark();
-    typename LCC::size_type markvertices = lcc.get_new_mark();
-
-    for (typename LCC::Dart_range::const_iterator it=lcc.darts().begin(),
-         itend=lcc.darts().end(); it!=itend; ++it )
+    for (typename LCC::Dart_range::const_iterator it=lcc->darts().begin(),
+         itend=lcc->darts().end(); it!=itend; ++it )
     {
-      if ( !m_nofaces && !lcc.is_marked(it, markfaces) )
+      if ( !m_nofaces && !lcc->is_marked(it, markfaces) )
       {
         compute_face(it);
-        CGAL::mark_cell<LCC, 2>(lcc, it, markfaces);
+        CGAL::mark_cell<LCC, 2>(*lcc, it, markfaces);
       }
 
-      if ( !lcc.is_marked(it, markedges) )
+      if ( !lcc->is_marked(it, markedges) )
       {
         compute_edge(it);
-        CGAL::mark_cell<LCC, 1>(lcc, it, markedges);
+        CGAL::mark_cell<LCC, 1>(*lcc, it, markedges);
       }
 
-      if ( !lcc.is_marked(it, markvertices) )
+      if ( !lcc->is_marked(it, markvertices) )
       {
         compute_vertex(it);
-        CGAL::mark_cell<LCC, 0>(lcc, it, markvertices);
+        CGAL::mark_cell<LCC, 0>(*lcc, it, markvertices);
       }
     }
 
-    lcc.free_mark(markfaces);
-    lcc.free_mark(markedges);
-    lcc.free_mark(markvertices);
+    lcc->free_mark(markfaces);
+    lcc->free_mark(markedges);
+    lcc->free_mark(markvertices);
   }
 
   virtual void keyPressEvent(QKeyEvent *e)
@@ -194,7 +201,7 @@ protected:
   }
 
 protected:
-  const LCC& lcc;
+  const LCC* lcc;
   bool m_nofaces;
   const ColorFunctor& m_fcolor;
 };
@@ -217,7 +224,7 @@ void draw(const LCC& alcc,
     const char* argv[2]={"lccviewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));
     SimpleLCCViewerQt<LCC, ColorFunctor> mainwindow(app.activeWindow(),
-                                                    alcc,
+                                                    &alcc,
                                                     title,
                                                     nofill,
                                                     fcolor);

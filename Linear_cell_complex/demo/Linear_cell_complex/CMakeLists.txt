@@ -46,7 +46,7 @@ if ( NOT (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND ) )
 
 else()
 
-add_definitions(-DQT_NO_KEYWORDS)
+add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
 
 # ui file, created wih Qt Designer
 qt5_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui
