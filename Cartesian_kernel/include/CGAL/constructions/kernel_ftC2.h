@@ -284,7 +284,7 @@ line_get_pointC2(const FT &a, const FT &b, const FT &c, int i,
 {
   if (CGAL_NTS is_zero(b))
     {
-      x = (-b-c)/a + i * b;
+      x = -c/a;
       y = 1 - i * a;
     }
   else
