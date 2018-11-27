@@ -64,7 +64,7 @@ add_executable(Linear_cell_complex_3_demo
 
 add_to_cached_list(CGAL_EXECUTABLE_TARGETS Linear_cell_complex_3_demo)
 
-target_link_libraries(Linear_cell_complex_3_demo PRIVATE
+target_link_libraries(Linear_cell_complex_3_demo PUBLIC
   CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui Qt5::OpenGL)
 
 include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)

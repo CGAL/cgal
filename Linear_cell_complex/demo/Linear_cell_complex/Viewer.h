@@ -51,10 +51,10 @@ public:
   Viewer(QWidget* parent);
   ~Viewer();
 
-  void setScene(Scene* scene_)
+  void setScene(Scene* scene_, bool doredraw=true)
   {
     scene = scene_;
-    set_lcc(scene->lcc);
+    set_lcc(scene->lcc, doredraw);
   }
 
 public:
@@ -92,10 +92,10 @@ private:
   double size_points;
   double size_edges;
 
-  QVector4D ambient;
+  // QVector4D ambient;
   
   bool m_previous_scene_empty;
-  bool are_buffers_initialized;
+  // bool are_buffers_initialized;
 
   //Shaders elements
   // int vertexLocation[3];

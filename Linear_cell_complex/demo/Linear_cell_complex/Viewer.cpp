@@ -37,8 +37,8 @@ Viewer::Viewer(QWidget* parent) :
     inverse_normal(false),
     size_points(7.),
     size_edges(3.1),
-    ambient(0.6f, 0.5f, 0.5f, 0.5f),
     m_previous_scene_empty(true)
+//    ambient(0.6f, 0.5f, 0.5f, 0.5f),
 {}
 
 Viewer::~Viewer()
@@ -53,10 +53,9 @@ void Viewer::sceneChanged()
                                       CGAL::qglviewer::Vec(m_bounding_box.xmax(),
                                                      m_bounding_box.ymax(),
                                                      m_bounding_box.zmax()));
+  Base::redraw();
   if (m_previous_scene_empty)
     this->showEntireScene();
-  else
-    this->update();
 
   m_previous_scene_empty = scene->lcc->is_empty(); // for the next call to sceneChanged
 }
@@ -132,7 +131,7 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     displayMessage(QString("Size of points=%1.").arg(size_points));
     update();
   }
-  else if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton))
+/*  else if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton))
   {
     ambient.setX(ambient.x()+.1);
     if (ambient.x()>1.) ambient.setX(1.);
@@ -203,9 +202,9 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     displayMessage(QString("Light color=(%1 %2 %3).").
         arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
     update();
-  }
+  }*/
   else
-    CGAL::QGLViewer::keyPressEvent(e);
+    Base::keyPressEvent(e);
 }
 
 QString Viewer::helpString() const

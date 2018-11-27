@@ -103,10 +103,11 @@ public:
   }
 
 protected:
-  void set_lcc(const LCC* alcc)
+  void set_lcc(const LCC* alcc, bool doredraw=true)
   {
     lcc=alcc;
     compute_elements();
+    if (doredraw) { redraw(); }
   }
   
   void compute_face(Dart_const_handle dh)
