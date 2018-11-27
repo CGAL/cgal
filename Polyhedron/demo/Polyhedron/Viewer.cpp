@@ -104,6 +104,7 @@ public:
   {
     return shader_programs;
   }
+  bool first_init;
 };
 
 class LightingDialog :
@@ -257,6 +258,7 @@ void Viewer::doBindings()
   d->shader_programs.resize(NB_OF_PROGRAMS);
   d->textRenderer = new TextRenderer();
   d->is_2d_selection_mode = false;
+  d->first_init = true;
   
   connect( d->textRenderer, SIGNAL(sendMessage(QString,int)),
            this, SLOT(printMessage(QString,int)) );
@@ -1734,7 +1736,11 @@ void Viewer::resetFov()
 void Viewer::initializeGL()
 {
   QGLViewer::initializeGL();
-  doneInitGL(this);
+  if(d->first_init)
+  {
+    doneInitGL(this);
+    d->first_init = false;
+  }
 }
 #include "Viewer.moc"
 
