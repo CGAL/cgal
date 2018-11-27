@@ -740,7 +740,7 @@ protected:
     setKeyDescription(::Qt::Key_E, "Toggles edges display");
     setKeyDescription(::Qt::Key_F, "Toggles faces display");
     setKeyDescription(::Qt::Key_G, "Switch between flat/Gouraud shading display");
-    setKeyDescription(::Qt::Key_M, "Toggles mono color for all faces");
+    setKeyDescription(::Qt::Key_M, "Toggles mono color");
     setKeyDescription(::Qt::Key_N, "Inverse direction of normals");
     setKeyDescription(::Qt::Key_V, "Toggles vertices display");
     setKeyDescription(::Qt::Key_Plus, "Increase size of edges");

@@ -178,6 +178,7 @@ public:
     Base(parent, title, true, true, true, false, true), 
     lcc(alcc),
     m_nofaces(anofaces),
+    m_random_face_color(false),
     m_drawing_functor(drawing_functor)
   {
     compute_elements();
@@ -205,8 +206,14 @@ protected:
       cur=lcc->next(cur);
     }
     while(cur!=dh);
-    
-    if (m_drawing_functor.colored_face(*lcc, dh))
+
+    if (m_random_face_color)
+    {
+      CGAL::Random random((unsigned int)(lcc->darts().index(dh)));
+      CGAL::Color c=get_random_color(random);
+      face_begin(c);      
+    }
+    else if (m_drawing_functor.colored_face(*lcc, dh))
     {
       CGAL::Color c=m_drawing_functor.face_color(*lcc, dh);
       face_begin(c);
@@ -331,26 +338,37 @@ protected:
     lcc->free_mark(markedges);
     lcc->free_mark(markvertices);
   }
-
+  
+  virtual void init()
+  {
+    Base::init();
+    setKeyDescription(::Qt::Key_C, "Toggles random face colors");
+  }
+  
   virtual void keyPressEvent(QKeyEvent *e)
   {
-    // Test key pressed:
-    //    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-    //    if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton)) { ... }
+    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
+    if ((e->key()==::Qt::Key_C) && (modifiers==::Qt::NoButton))
+    {
+      m_random_face_color=!m_random_face_color;
+      displayMessage(QString("Random face color=%1.").arg(m_random_face_color?"true":"false"));
+      compute_elements();
+      redraw();
+    }
+    else
+    { Base::keyPressEvent(e); } // Call the base method to process others/classicals key
     
     // Call: * compute_elements() if the model changed, followed by
     //       * redraw() if some viewing parameters changed that implies some
     //                  modifications of the buffers
     //                  (eg. type of normal, color/mono)
     //       * update() just to update the drawing
-
-    // Call the base method to process others/classicals key
-    Base::keyPressEvent(e);
   }
 
 protected:
   const LCC* lcc;
   bool m_nofaces;
+  bool m_random_face_color;
   const DrawingFunctorLCC& m_drawing_functor;
 };
   
