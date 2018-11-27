@@ -23,102 +23,103 @@
 #define VIEWER_H
 
 #include "typedefs.h"
-
 #include <CGAL/draw_linear_cell_complex.h>
-#include <vector>
-#include <QMap>
+
+// Functor used by SimpleLCCViewerQt to colorize of not elements.
+struct MyDrawingFunctorLCC
+{
+  /// @return true iff the volume containing dh is drawn.
+  template<typename LCC>
+  bool draw_volume(const LCC& alcc,
+                   typename LCC::Dart_const_handle dh) const
+  { return alcc.template info<3>(dh).is_visible(); }
+  /// @return true iff the face containing dh is drawn.
+  template<typename LCC>
+  bool draw_face(const LCC& alcc,
+                 typename LCC::Dart_const_handle dh) const
+  { return true; }
+  /// @return true iff the edge containing dh is drawn.
+  template<typename LCC>
+  bool draw_edge(const LCC& alcc,
+                 typename LCC::Dart_const_handle dh) const
+  { return true; }
+  /// @return true iff the vertex containing dh is drawn.
+  template<typename LCC>
+  bool draw_vertex(const LCC& alcc,
+                   typename LCC::Dart_const_handle dh) const
+  { return true; }
+
+  /// @return true iff the volume containing dh is colored.
+  template<typename LCC>
+  bool colored_volume(const LCC& alcc,
+                      typename LCC::Dart_const_handle dh) const
+  { return true; }
+  /// @return true iff the face containing dh is colored.
+  ///  if we have also colored_volume(alcc, dh), the volume color is
+  ///  ignored and only the face color is considered.
+  template<typename LCC>
+  bool colored_face(const LCC& alcc,
+                    typename LCC::Dart_const_handle dh) const
+  { return false; }
+  /// @return true iff the edge containing dh is colored.
+  template<typename LCC>
+  bool colored_edge(const LCC& alcc,
+                    typename LCC::Dart_const_handle dh) const
+  { return false; }
+  /// @return true iff the vertex containing dh is colored.
+  template<typename LCC>
+  bool colored_vertex(const LCC& alcc,
+                      typename LCC::Dart_const_handle dh) const
+  { return false; }
+
+  /// @return the color of the volume containing dh
+  ///  used only if colored_volume(alcc, dh) and !colored_face(alcc, dh)
+  template<typename LCC>
+  CGAL::Color volume_color(const LCC& alcc,
+                           typename LCC::Dart_const_handle dh) const
+  { return alcc.template info<3>(dh).color(); }
+  /// @return the color of the face containing dh
+  ///  used only if colored_face(alcc, dh)
+  template<typename LCC>
+  CGAL::Color face_color(const LCC& alcc,
+                         typename LCC::Dart_const_handle dh) const
+  {
+    CGAL::Random random((unsigned int)(alcc.darts().index(dh)));
+    return get_random_color(random);
+  }
+  /// @return the color of the edge containing dh
+  ///  used only if colored_edge(alcc, dh)
+  template<typename LCC>
+  CGAL::Color edge_color(const LCC& alcc,
+                         typename LCC::Dart_const_handle dh) const
+  { return CGAL::Color(0, 0, 0); }
+  /// @return the color of the vertex containing dh
+  ///  used only if colored_vertex(alcc, dh)
+  template<typename LCC>
+  CGAL::Color vertex_color(const LCC& alcc,
+                           typename LCC::Dart_const_handle dh) const
+  { return CGAL::Color(0, 0, 0); }
+};
 
 
-// #include <CGAL/Qt/qglviewer.h>
-// #include <QKeyEvent>
-// #include <QOpenGLFunctions_2_1>
-// #include <QOpenGLVertexArrayObject>
-// #include <QGLBuffer>
-// #include <QOpenGLShaderProgram>
-
-// #define NB_VBO_BUFFERS 8
-// #define NB_VAO_BUFFERS 4
-
-class Viewer : public CGAL::SimpleLCCViewerQt<LCC, CGAL::DefaultColorFunctorLCC> // CGAL::QGLViewer
+class Viewer : public CGAL::SimpleLCCViewerQt<LCC, MyDrawingFunctorLCC>
 {
   Q_OBJECT
 
-  typedef CGAL::SimpleLCCViewerQt<LCC, CGAL::DefaultColorFunctorLCC> Base;  
-  typedef LCC::Dart_handle Dart_handle;
-  typedef LCC::Dart_const_handle Dart_const_handle;
+  typedef CGAL::SimpleLCCViewerQt<LCC, MyDrawingFunctorLCC> Base;
 
 public:
   Viewer(QWidget* parent);
-  ~Viewer();
-
-  void setScene(Scene* scene_, bool doredraw=true)
-  {
-    scene = scene_;
-    set_lcc(scene->lcc, doredraw);
-  }
-
-public:
-  //  void draw();
-
-  // virtual void init();
-
+  void setScene(Scene* scene_, bool doredraw=true);
   void keyPressEvent(QKeyEvent *e);
-
   virtual QString helpString() const;
 
 public Q_SLOTS:
-
   void sceneChanged();
 
 private:
-  //  void initialize_buffers();
-  //  void attrib_buffers(CGAL::QGLViewer*);
-  //  void compile_shaders();
-
-  /*  void compute_elements();
-  void compute_face(Dart_handle dh, LCC::size_type markface);
-  void compute_edge(Dart_handle dh, LCC::size_type markedge);
-  void compute_vertex(Dart_handle dh, LCC::size_type markvertex, bool& empty); */
-
-private:
   Scene* scene;
-  
-  bool wireframe;
-  bool flatShading;
-  bool edges;
-  bool vertices;  
-  bool inverse_normal;
-  
-  double size_points;
-  double size_edges;
-
-  // QVector4D ambient;
-  
   bool m_previous_scene_empty;
-  // bool are_buffers_initialized;
-
-  //Shaders elements
-  // int vertexLocation[3];
-  // int normalsLocation;
-  // int mvpLocation[2];
-  // int mvLocation;
-  // int colorLocation;
-  // int colorsLocation;
-  // int lightLocation[5];
-
-  // std::vector<float> pos_points;
-  // std::vector<float> pos_lines;
-  // std::vector<float> pos_facets;
-  // std::vector<float> smooth_normals;
-  // std::vector<float> flat_normals;
-  // std::vector<float> colors;
-
-  // QGLBuffer buffers[NB_VBO_BUFFERS];
-  // QOpenGLVertexArrayObject vao[NB_VAO_BUFFERS];
-  // QOpenGLShaderProgram rendering_program;
-  // QOpenGLShaderProgram rendering_program_p_l;
-
-  // CGAL::Bbox_3 bb;
 };
 
 #endif

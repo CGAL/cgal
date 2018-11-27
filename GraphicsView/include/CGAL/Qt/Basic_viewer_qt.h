@@ -935,8 +935,11 @@ protected:
   }
 
   virtual QString helpString() const
+  { return helpString("CGAL Basic Viewer"); }
+
+  virtual QString helpString(const char* title) const
   {
-    QString text("<h2>C G A L   B a s i c   V i e w e r</h2>");
+    QString text(QString("<h2>")+QString(title)+QString("</h2>"));
     text += "Use the mouse to move the camera around the object. ";
     text += "You can respectively revolve around, zoom and translate with "
       "the three mouse buttons. ";

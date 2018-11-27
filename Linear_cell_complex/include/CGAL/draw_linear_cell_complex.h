@@ -31,15 +31,85 @@ namespace CGAL
 {
   
 // Default color functor; user can change it to have its own face color
-struct DefaultColorFunctorLCC
+struct DefaultDrawingFunctorLCC
 {
+  /// @return true iff the volume containing dh is drawn.
   template<typename LCC>
-  static CGAL::Color run(const LCC& alcc,
-                         typename LCC::Dart_const_handle dh)
-  {
-    if (dh==alcc.null_handle) // use to get the mono color
-      return CGAL::Color(100, 125, 200); // R G B between 0-255
+  bool draw_volume(const LCC& alcc,
+                   typename LCC::Dart_const_handle dh) const
+  { return true; }
+  /// @return true iff the face containing dh is drawn.
+  template<typename LCC>
+  bool draw_face(const LCC& alcc,
+                 typename LCC::Dart_const_handle dh) const
+  { return true; }
+  /// @return true iff the edge containing dh is drawn.
+  template<typename LCC>
+  bool draw_edge(const LCC& alcc,
+                 typename LCC::Dart_const_handle dh) const
+  { return true; }
+  /// @return true iff the vertex containing dh is drawn.
+  template<typename LCC>
+  bool draw_vertex(const LCC& alcc,
+                   typename LCC::Dart_const_handle dh) const
+  { return true; }
 
+  /// @return true iff the volume containing dh is colored.
+  template<typename LCC>
+  bool colored_volume(const LCC& alcc,
+                      typename LCC::Dart_const_handle dh) const
+  { return true; }
+  /// @return true iff the face containing dh is colored.
+  ///  if we have also colored_volume(alcc, dh), the volume color is
+  ///  ignored and only the face color is considered.
+  template<typename LCC>
+  bool colored_face(const LCC& alcc,
+                    typename LCC::Dart_const_handle dh) const
+  { return false; }
+  /// @return true iff the edge containing dh is colored.
+  template<typename LCC>
+  bool colored_edge(const LCC& alcc,
+                    typename LCC::Dart_const_handle dh) const
+  { return false; }
+  /// @return true iff the vertex containing dh is colored.
+  template<typename LCC>
+  bool colored_vertex(const LCC& alcc,
+                      typename LCC::Dart_const_handle dh) const
+  { return false; }
+
+  /// @return the color of the volume containing dh
+  ///  used only if colored_volume(alcc, dh) and !colored_face(alcc, dh)
+  template<typename LCC>
+  CGAL::Color volume_color(const LCC& alcc,
+                           typename LCC::Dart_const_handle dh) const
+  {
+    CGAL::Random random((unsigned int)(alcc.darts().index(dh)));
+    return get_random_color(random);
+  }
+  /// @return the color of the face containing dh
+  ///  used only if colored_face(alcc, dh)
+  template<typename LCC>
+  CGAL::Color face_color(const LCC& alcc,
+                         typename LCC::Dart_const_handle dh) const
+  {
+    CGAL::Random random((unsigned int)(alcc.darts().index(dh)));
+    return get_random_color(random);
+  }
+  /// @return the color of the edge containing dh
+  ///  used only if colored_edge(alcc, dh)
+  template<typename LCC>
+  CGAL::Color edge_color(const LCC& alcc,
+                         typename LCC::Dart_const_handle dh) const
+  {
+    CGAL::Random random((unsigned int)(alcc.darts().index(dh)));
+    return get_random_color(random);
+  }
+  /// @return the color of the vertex containing dh
+  ///  used only if colored_vertex(alcc, dh)
+  template<typename LCC>
+  CGAL::Color vertex_color(const LCC& alcc,
+                           typename LCC::Dart_const_handle dh) const
+  {
     CGAL::Random random((unsigned int)(alcc.darts().index(dh)));
     return get_random_color(random);
   }
@@ -73,7 +143,7 @@ struct LCC_geom_utils<LCC, Kernel, 2>
 };
 
 // Viewer class for LCC 
-template<class LCC, class ColorFunctor>
+template<class LCC, class DrawingFunctorLCC>
 class SimpleLCCViewerQt : public Basic_viewer_qt
 {
   typedef Basic_viewer_qt Base;
@@ -92,12 +162,12 @@ public:
                     const LCC* alcc=NULL,
                     const char* title="Basic LCC Viewer",
                     bool anofaces=false,
-                    const ColorFunctor& fcolor=ColorFunctor()) :
+                    const DrawingFunctorLCC& drawing_functor=DrawingFunctorLCC()) :
     // First draw: vertices; edges, faces; multi-color; inverse normal
     Base(parent, title, true, true, true, false, true), 
     lcc(alcc),
     m_nofaces(anofaces),
-    m_fcolor(fcolor)
+    m_drawing_functor(drawing_functor)
   {
     compute_elements();
   }
@@ -110,8 +180,10 @@ protected:
     if (doredraw) { redraw(); }
   }
   
-  void compute_face(Dart_const_handle dh)
+  void compute_face(Dart_const_handle dh, Dart_const_handle voldh)
   {
+    if (m_nofaces || !m_drawing_functor.draw_face(*lcc, dh)) return;
+
     // We fill only closed faces.
     Dart_const_handle cur=dh;
     Dart_const_handle min=dh;
@@ -123,8 +195,18 @@ protected:
     }
     while(cur!=dh);
     
-    CGAL::Color c=m_fcolor.run(*lcc, dh);
-    face_begin(c);
+    if (m_drawing_functor.colored_face(*lcc, dh))
+    {
+      CGAL::Color c=m_drawing_functor.face_color(*lcc, dh);
+      face_begin(c);
+    }
+    else if (m_drawing_functor.colored_volume(*lcc, voldh))
+    {
+      CGAL::Color c=m_drawing_functor.volume_color(*lcc, voldh);
+      face_begin(c);
+    }
+    else
+    { face_begin(); }
 
     cur=dh;
     do
@@ -140,20 +222,35 @@ protected:
 
   void compute_edge(Dart_const_handle dh)
   {
+    if (!m_drawing_functor.draw_edge(*lcc, dh)) return;
+
     Point p1 = lcc->point(dh);
     Dart_const_handle d2 = lcc->other_extremity(dh);
     if (d2!=NULL)
-    { add_segment(p1, lcc->point(d2)); }
+    {
+      if (m_drawing_functor.colored_edge(*lcc, dh))
+      { add_segment(p1, lcc->point(d2), m_drawing_functor.edge_color(*lcc, dh)); }
+      else
+      { add_segment(p1, lcc->point(d2)); }
+    }
   }
 
   void compute_vertex(Dart_const_handle dh)
-  { add_point(lcc->point(dh)); }
+  {
+    if (!m_drawing_functor.draw_vertex(*lcc, dh)) return;
+
+    if (m_drawing_functor.colored_vertex(*lcc, dh))
+    { add_point(lcc->point(dh), m_drawing_functor.vertex_color(*lcc, dh)); }
+    else
+    { add_point(lcc->point(dh)); }
+  }
 
   void compute_elements()
   {
     clear();
     if (lcc==NULL) return;
     
+    typename LCC::size_type markvolumes  = lcc->get_new_mark();
     typename LCC::size_type markfaces    = lcc->get_new_mark();
     typename LCC::size_type markedges    = lcc->get_new_mark();
     typename LCC::size_type markvertices = lcc->get_new_mark();
@@ -161,25 +258,57 @@ protected:
     for (typename LCC::Dart_range::const_iterator it=lcc->darts().begin(),
          itend=lcc->darts().end(); it!=itend; ++it )
     {
-      if ( !m_nofaces && !lcc->is_marked(it, markfaces) )
+      if (!lcc->is_marked(it, markvolumes) &&
+          m_drawing_functor.draw_volume(*lcc, it))
       {
-        compute_face(it);
-        CGAL::mark_cell<LCC, 2>(*lcc, it, markfaces);
-      }
-
-      if ( !lcc->is_marked(it, markedges) )
-      {
-        compute_edge(it);
-        CGAL::mark_cell<LCC, 1>(*lcc, it, markedges);
-      }
-
-      if ( !lcc->is_marked(it, markvertices) )
-      {
-        compute_vertex(it);
-        CGAL::mark_cell<LCC, 0>(*lcc, it, markvertices);
+        for (typename LCC::template Dart_of_cell_basic_range<3>::
+             const_iterator itv=lcc->template darts_of_cell_basic<3>(it, markvolumes).begin(),
+             itvend=lcc->template darts_of_cell_basic<3>(it, markvolumes).end();
+             itv!=itvend; ++itv)
+        {
+          if (!lcc->is_marked(itv, markfaces) &&
+              m_drawing_functor.draw_face(*lcc, itv))
+          {
+            compute_face(itv, it);
+            for (typename LCC::template Dart_of_cell_basic_range<2>::
+                 const_iterator itf=lcc->template darts_of_cell_basic<2>(itv, markfaces).begin(),
+                 itfend=lcc->template darts_of_cell_basic<2>(itv, markfaces).end();
+                 itf!=itfend; ++itf)
+            {
+              if ( !lcc->is_marked(itf, markedges)  &&
+                   m_drawing_functor.draw_edge(*lcc, itf))
+              {
+                compute_edge(itf);
+                for (typename LCC::template Dart_of_cell_basic_range<1>::
+                     const_iterator ite=lcc->template darts_of_cell_basic<1>(itf, markfaces).begin(),
+                     iteend=lcc->template darts_of_cell_basic<1>(itf, markfaces).end();
+                     ite!=iteend; ++ite)
+                {
+                  if ( !lcc->is_marked(ite, markvertices)  &&
+                       m_drawing_functor.draw_vertex(*lcc, ite))
+                  {
+                    compute_vertex(ite);
+                    CGAL::mark_cell<LCC, 0>(*lcc, ite, markvertices);
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
 
+    for (typename LCC::Dart_range::const_iterator it=lcc->darts().begin(),
+         itend=lcc->darts().end(); it!=itend; ++it )
+    {
+      lcc->unmark(it, markvertices);
+      lcc->unmark(it, markedges);
+      lcc->unmark(it, markfaces);
+      lcc->unmark(it, markvolumes);
+
+    }
+
+    lcc->free_mark(markvolumes);
     lcc->free_mark(markfaces);
     lcc->free_mark(markedges);
     lcc->free_mark(markvertices);
@@ -204,14 +333,14 @@ protected:
 protected:
   const LCC* lcc;
   bool m_nofaces;
-  const ColorFunctor& m_fcolor;
+  const DrawingFunctorLCC& m_drawing_functor;
 };
   
-template<class LCC, class ColorFunctor>
+template<class LCC, class DrawingFunctorLCC>
 void draw(const LCC& alcc,
           const char* title,
           bool nofill,
-          const ColorFunctor& fcolor)
+          const DrawingFunctorLCC& drawing_functor)
 {
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
@@ -224,11 +353,11 @@ void draw(const LCC& alcc,
     int argc=1;
     const char* argv[2]={"lccviewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));
-    SimpleLCCViewerQt<LCC, ColorFunctor> mainwindow(app.activeWindow(),
-                                                    &alcc,
-                                                    title,
-                                                    nofill,
-                                                    fcolor);
+    SimpleLCCViewerQt<LCC, DrawingFunctorLCC> mainwindow(app.activeWindow(),
+                                                         &alcc,
+                                                         title,
+                                                         nofill,
+                                                         drawing_functor);
     mainwindow.show();
     app.exec();
   }
@@ -237,8 +366,8 @@ void draw(const LCC& alcc,
 template<class LCC>
 void draw(const LCC& alcc, const char* title, bool nofill)
 {
-  DefaultColorFunctorLCC c;
-  draw(alcc, title, nofill, c);
+  DefaultDrawingFunctorLCC f;
+  draw(alcc, title, nofill, f);
 }
   
 template<class LCC>

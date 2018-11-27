@@ -39,7 +39,7 @@ int main(int argc, char** argv)
   application.setApplicationName("3D Linear Cell Complex");
   //for windows
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
-  // application.setAttribute(Qt::AA_UseDesktopOpenGL);
+  application.setAttribute(Qt::AA_UseDesktopOpenGL);
 #endif
 
   // Import resources from libCGALQt5
