@@ -53,7 +53,7 @@ struct MyDrawingFunctorLCC
   template<typename LCC>
   bool volume_wireframe(const LCC& alcc,
                         typename LCC::Dart_const_handle dh) const
-  { return false; }
+  { return !(alcc.template info<3>(dh).is_filled()); }
   /// @return true iff the face containing dh is drawn in wireframe.
   template<typename LCC>
   bool face_wireframe(const LCC& alcc,

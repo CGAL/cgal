@@ -289,7 +289,9 @@ protected:
                  itfend=lcc->template darts_of_cell_basic<2>(itv, markfaces).end();
                  itf!=itfend; ++itf)
             {
-              lcc->mark(itf, markfaces); // To be sure that all darts of the basic iterator will be marked
+              if (!m_drawing_functor.volume_wireframe(*lcc, itv) &&
+                !m_drawing_functor.face_wireframe(*lcc, itv))
+              { lcc->mark(itf, markfaces); } // To be sure that all darts of the basic iterator will be marked
               if ( !lcc->is_marked(itf, markedges)  &&
                    m_drawing_functor.draw_edge(*lcc, itf))
               {
