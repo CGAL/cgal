@@ -54,6 +54,17 @@ struct DefaultDrawingFunctorLCC
                    typename LCC::Dart_const_handle dh) const
   { return true; }
 
+  /// @return true iff the volume containing dh is drawn in wireframe.
+  template<typename LCC>
+  bool volume_wireframe(const LCC& alcc,
+                        typename LCC::Dart_const_handle dh) const
+  { return false; }
+  /// @return true iff the face containing dh is drawn in wireframe.
+  template<typename LCC>
+  bool face_wireframe(const LCC& alcc,
+                        typename LCC::Dart_const_handle dh) const
+  { return false; }
+
   /// @return true iff the volume containing dh is colored.
   template<typename LCC>
   bool colored_volume(const LCC& alcc,
@@ -266,24 +277,29 @@ protected:
              itvend=lcc->template darts_of_cell_basic<3>(it, markvolumes).end();
              itv!=itvend; ++itv)
         {
+          lcc->mark(itv, markvolumes); // To be sure that all darts of the basic iterator will be marked
           if (!lcc->is_marked(itv, markfaces) &&
               m_drawing_functor.draw_face(*lcc, itv))
           {
-            compute_face(itv, it);
+            if (!m_drawing_functor.volume_wireframe(*lcc, itv) &&
+                !m_drawing_functor.face_wireframe(*lcc, itv))
+            { compute_face(itv, it); }
             for (typename LCC::template Dart_of_cell_basic_range<2>::
                  const_iterator itf=lcc->template darts_of_cell_basic<2>(itv, markfaces).begin(),
                  itfend=lcc->template darts_of_cell_basic<2>(itv, markfaces).end();
                  itf!=itfend; ++itf)
             {
+              lcc->mark(itf, markfaces); // To be sure that all darts of the basic iterator will be marked
               if ( !lcc->is_marked(itf, markedges)  &&
                    m_drawing_functor.draw_edge(*lcc, itf))
               {
                 compute_edge(itf);
                 for (typename LCC::template Dart_of_cell_basic_range<1>::
-                     const_iterator ite=lcc->template darts_of_cell_basic<1>(itf, markfaces).begin(),
-                     iteend=lcc->template darts_of_cell_basic<1>(itf, markfaces).end();
+                     const_iterator ite=lcc->template darts_of_cell_basic<1>(itf, markedges).begin(),
+                     iteend=lcc->template darts_of_cell_basic<1>(itf, markedges).end();
                      ite!=iteend; ++ite)
                 {
+                  lcc->mark(ite, markedges); // To be sure that all darts of the basic iterator will be marked
                   if ( !lcc->is_marked(ite, markvertices)  &&
                        m_drawing_functor.draw_vertex(*lcc, ite))
                   {

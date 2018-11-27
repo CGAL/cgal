@@ -49,6 +49,17 @@ struct MyDrawingFunctorLCC
                    typename LCC::Dart_const_handle dh) const
   { return true; }
 
+  /// @return true iff the volume containing dh is drawn in wireframe.
+  template<typename LCC>
+  bool volume_wireframe(const LCC& alcc,
+                        typename LCC::Dart_const_handle dh) const
+  { return false; }
+  /// @return true iff the face containing dh is drawn in wireframe.
+  template<typename LCC>
+  bool face_wireframe(const LCC& alcc,
+                        typename LCC::Dart_const_handle dh) const
+  { return false; }
+
   /// @return true iff the volume containing dh is colored.
   template<typename LCC>
   bool colored_volume(const LCC& alcc,
