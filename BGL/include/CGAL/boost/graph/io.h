@@ -36,6 +36,94 @@
 #include <CGAL/boost/graph/named_function_params.h>
 
 namespace CGAL {
+  /*!
+   \ingroup PkgBGLIOFct
+    writes the graph `g` in the wrl format (VRML 2.0).
+    
+    \cgalNamedParamsBegin
+    *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
+    *       If this parameter is omitted, an internal property map for
+    *       `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
+    * \cgalNamedParamsEnd
+    */ 
+template <typename FaceGraph, typename NamedParameters>
+bool write_wrl(std::ostream& os,
+               const FaceGraph& g,
+               const NamedParameters& np)
+{
+  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<FaceGraph>::vertices_size_type vertices_size_type;
+  typedef typename boost::graph_traits<FaceGraph>::faces_size_type faces_size_type;
+
+  
+  typename Polygon_mesh_processing::GetVertexPointMap<FaceGraph, NamedParameters>::const_type
+      vpm = choose_param(get_param(np, internal_np::vertex_point),
+                         get_const_property_map(CGAL::vertex_point, g));
+
+  vertices_size_type nv = static_cast<vertices_size_type>(std::distance(vertices(g).first, vertices(g).second));
+  faces_size_type nf = static_cast<faces_size_type>(std::distance(faces(g).first, faces(g).second));
+
+  boost::container::flat_map<vertex_descriptor,vertices_size_type> reindex;
+  int n = 0;
+  
+  os << "#VRML V2.0 utf8\n"
+    "Group {\n"
+    "children [\n"
+    "Shape {\n"
+    "appearance DEF A1 Appearance {\n"
+    "material Material {\n"
+    "diffuseColor .6 .5 .9\n"
+    "}\n"
+    "}\n"
+    "appearance\n"
+    "Appearance {\n"
+    "material DEF Material Material {}\n"
+    "}\n"
+    "}\n"
+    "Group {\n"
+    "children [\n"
+    "Shape {\n"
+    "appearance Appearance { material USE Material }\n"
+    "geometry IndexedFaceSet {\n"
+    "convex FALSE\n"
+    "solid  FALSE\n"
+    "coord  Coordinate {\n"
+    "point [\n";
+
+  BOOST_FOREACH(vertex_descriptor v, vertices(g)){
+    os <<  get(vpm,v) << ",\n";
+      reindex[v]=n++;
+  }
+  os << "] #point\n"
+    "} #coord Coordinate\n"
+    "coordIndex  [\n";
+   BOOST_FOREACH(face_descriptor f, faces(g)){
+    BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f,g),g)){
+      os << reindex[v] << ",";
+    }
+    os << "-1,\n";
+   }
+
+  os << "] #coordIndex\n"
+    "} #geometry\n"
+    "} #Shape\n"
+    "] #children\n"
+    "} #group\n"
+    "]\n"
+    "}\n";
+
+  return os.good();
+}
+
+template <typename FaceGraph>
+bool write_wrl(std::ostream& os,
+               const FaceGraph& g)
+{
+  return write_wrl(os, g, 
+                   parameters::all_default());
+}
+  
 /*!
    \ingroup PkgBGLIOFct
     writes the graph `g` in the OFF format.
