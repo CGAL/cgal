@@ -58,24 +58,11 @@ if ( CGAL_FOUND )
   add_executable(linear_cell_complex_3_operations linear_cell_complex_3_operations.cpp)
   target_link_libraries(linear_cell_complex_3_operations ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES}
     ${BASIC_VIEWER_LIBRARIES})
-
- # TODO update compute_example with the new API
- # add_executable("compute_example" "compute_example.cpp")
- # target_link_libraries(compute_example ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES}
- #   ${BASIC_VIEWER_LIBRARIES})
   
-  add_executable(path_isotopy path_isotopy.cpp
-    ../../../Combinatorial_map/include/CGAL/Path_on_surface.h
-    ../../../Combinatorial_map/include/CGAL/Combinatorial_map_functionalities.h )
-  target_link_libraries(path_isotopy ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES}
-    ${BASIC_VIEWER_LIBRARIES})
-
   if (USE_BASIC_VIEWER)
     qt5_use_modules(voronoi_2 ${BASIC_VIEWER_MODULES})
     qt5_use_modules(voronoi_3 ${BASIC_VIEWER_MODULES})
     qt5_use_modules(linear_cell_complex_3_operations ${BASIC_VIEWER_MODULES})
-#    qt5_use_modules(compute_example ${BASIC_VIEWER_MODULES})
-    qt5_use_modules(path_isotopy ${BASIC_VIEWER_MODULES})
   endif(USE_BASIC_VIEWER)
   
 else()
