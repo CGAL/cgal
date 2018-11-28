@@ -89,7 +89,12 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
   in.seekg(0);
   // Try to read .off in a surface_mesh
   SMesh *surface_mesh = new SMesh();
-  in >> *surface_mesh;
+  try{
+    in >> *surface_mesh;
+  } catch(...)
+  {
+    surface_mesh->clear();
+  }
   if(!in || surface_mesh->is_empty())
   {
     delete surface_mesh;
@@ -106,6 +111,7 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
       delete soup_item;
       return 0;
     }
+    QApplication::restoreOverrideCursor();
     QMessageBox::information(
           CGAL::Three::Three::mainWindow(),
           "Cannot Open File",
@@ -145,6 +151,7 @@ Polyhedron_demo_off_plugin::load_obj(QFileInfo fileinfo) {
     return NULL;
   }
   Scene_surface_mesh_item* item = new Scene_surface_mesh_item();
+  item->setName(fileinfo.baseName());
   if(item->load_obj(in))
     return item;
   return 0;

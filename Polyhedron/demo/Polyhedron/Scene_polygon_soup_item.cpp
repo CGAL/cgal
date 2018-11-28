@@ -135,9 +135,10 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
         for (std::size_t i = 0; i < pit->size(); ++ i)
             poly.push_back (plane.to_2d(soup->points[pit->at(i)]));
 
-        if (poly.is_clockwise_oriented())
+        if (poly.is_simple() && poly.is_clockwise_oriented())
             normal = -normal;
     }
+
     typedef FacetTriangulator<SMesh, EPICK, std::size_t> FT;
 
     double diagonal;

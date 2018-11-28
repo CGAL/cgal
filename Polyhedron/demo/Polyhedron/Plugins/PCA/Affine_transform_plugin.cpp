@@ -6,6 +6,7 @@
 #include <CGAL/Three/Scene_item_rendering_helper.h>
 #include <CGAL/Three/Three.h>
 #include <CGAL/Three/Point_container.h>
+
 #include <CGAL/Polygon_mesh_processing/transform.h>
 #include "Scene_surface_mesh_item.h"
 
@@ -24,9 +25,11 @@
 #include <QMessageBox>
 
 #include "ui_Transformation_widget.h"
+
 using namespace CGAL::Three;
 typedef Viewer_interface Vi;
 typedef Point_container Pc;
+
 #include "ui_MeshOnGrid_dialog.h"
 typedef Scene_surface_mesh_item Facegraph_item;
 
@@ -170,7 +173,7 @@ public:
     return QList<QAction*>() << actionTransformPolyhedron
                              << actionMeshOnGrid;
   }
-  
+
   bool applicable(QAction* a) const {
     if(a == actionMeshOnGrid)
     {
@@ -459,6 +462,7 @@ void Polyhedron_demo_affine_transform_plugin::go(){
         return;
     }
     dock_widget->show();
+    dock_widget->raise();
     started=true;
     actionTransformPolyhedron->setText("Apply affine transformation");
     if(poly_item)

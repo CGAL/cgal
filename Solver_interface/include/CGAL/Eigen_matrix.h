@@ -27,7 +27,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSolver
+\ingroup PkgSolverInterfaceRef
 
 The class `Eigen_sparse_matrix` is a wrapper around \ref thirdpartyEigen "Eigen" matrix type
 <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1SparseMatrix.html">`Eigen::SparseMatrix`</a>
@@ -265,7 +265,7 @@ private:
 }; // Eigen_sparse_matrix
 
 /*!
-\ingroup PkgSolver
+\ingroup PkgSolverInterfaceRef
 
 The class `Eigen_sparse_symmetric_matrix` is a wrapper around \ref thirdpartyEigen "Eigen" matrix type
 <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1SparseMatrix.html">`Eigen::SparseMatrix` </a>
@@ -301,7 +301,7 @@ struct Eigen_sparse_symmetric_matrix
 };
 
 /*!
-\ingroup PkgSolver
+\ingroup PkgSolverInterfaceRef
 
 The class `Eigen_matrix` is a wrapper around \ref thirdpartyEigen "Eigen" matrix type
 <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1Matrix.html">`Eigen::Matrix`</a>.

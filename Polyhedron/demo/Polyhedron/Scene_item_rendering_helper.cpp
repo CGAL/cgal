@@ -134,7 +134,6 @@ void Scene_item_rendering_helper::initGL() const
 void Scene_item_rendering_helper::processData(Gl_data_names )const
 {
   computeElements();
-  //redraw();
 }
 
 

@@ -1,6 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Bbox_2.h>
-#include <CGAL/Polygon_2.h>
 #include <QtCore/qglobal.h>
 #include <CGAL/Three/Three.h>
 #include <CGAL/Qt/manipulatedCameraFrame.h>
@@ -37,7 +36,7 @@
 #include <map>
 #include <fstream>
 #include <boost/make_shared.hpp>
-
+#include "Selection_visualizer.h"
 
 //#undef  CGAL_LINKED_WITH_TBB
 #ifdef CGAL_LINKED_WITH_TBB
@@ -209,9 +208,7 @@ public:
       }
     return false;
   }
-
-
-}; // end class Scene_point_set_selection_visualizer
+};
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -222,7 +219,7 @@ class Selection_test {
   CGAL::qglviewer::Camera* camera;
   const CGAL::qglviewer::Vec offset;
   Scene_edit_box_item* edit_box;
-  Scene_point_set_selection_visualizer* visualizer;
+  Selection_visualizer* visualizer;
   const Ui::PointSetSelection& ui_widget;
 
   
@@ -233,7 +230,7 @@ public:
                  CGAL::qglviewer::Camera* camera,
                  const CGAL::qglviewer::Vec offset,
                  Scene_edit_box_item* edit_box,
-                 Scene_point_set_selection_visualizer* visualizer,
+                 Selection_visualizer* visualizer,
                  const Ui::PointSetSelection& ui_widget)
     : point_set (point_set)
     , selected (selected)
@@ -717,7 +714,7 @@ protected:
             if (viewer->camera()->frame()->isSpinning())
               viewer->camera()->frame()->stopSpinning();
 	
-            visualizer = new Scene_point_set_selection_visualizer(ui_widget.rectangle->isChecked(),
+            visualizer = new Selection_visualizer(ui_widget.rectangle->isChecked(),
                                                                   point_set_item->bbox());
 
             visualizer->sample_mouse_path(background);
@@ -1065,7 +1062,7 @@ private:
   QAction* add_box;
   
   Ui::PointSetSelection ui_widget;
-  Scene_point_set_selection_visualizer* visualizer;
+  Selection_visualizer* visualizer;
   Neighborhood neighborhood;
   bool shift_pressing;
   bool ctrl_pressing;

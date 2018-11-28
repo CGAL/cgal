@@ -8,6 +8,7 @@
 #include <QColorDialog>
 #include <QPalette>
 #include <QColor>
+#include <QMessageBox>
 #include "Messages_interface.h"
 #include "Scene_surface_mesh_item.h"
 #include "Color_ramp.h"
@@ -147,7 +148,10 @@ private Q_SLOTS:
   void openDialog()
   {
     if(dock_widget->isVisible()) { dock_widget->hide(); }
-    else                         { replaceRamp(); dock_widget->show(); }
+    else{
+      replaceRamp(); 
+      dock_widget->show();
+      dock_widget->raise(); }
   }
 
   void resetRampExtremas()

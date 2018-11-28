@@ -55,6 +55,9 @@ public:
   static RenderingMode defaultPointSetRenderingMode();
   static QString modeName(RenderingMode mode);
   static RenderingMode modeFromName(QString name);
+  static int getDefaultPointSize();
+  static int getDefaultNormalLength();
+  static int getDefaultLinesWidth();
   /*! \brief Adds a dock widget to the interface
    *
    * Adds a dock widget in the left section of the MainWindow. If the slot is already 
@@ -85,6 +88,9 @@ protected:
   static Three* s_three;
   static RenderingMode s_defaultSMRM;
   static RenderingMode s_defaultPSRM;
+  static int default_point_size;
+  static int default_normal_length;
+  static int default_lines_width;
 
 };
 }

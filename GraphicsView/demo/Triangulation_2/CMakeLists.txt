@@ -25,6 +25,7 @@ if ( NOT CGAL_FOUND OR NOT CGAL_Qt5_FOUND OR NOT Qt5_FOUND )
 endif()
 
 add_definitions(-DQT_NO_KEYWORDS)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 #--------------------------------
 # The "constrained Delaunay" demo: Constrained_Delaunay_triangulation_2

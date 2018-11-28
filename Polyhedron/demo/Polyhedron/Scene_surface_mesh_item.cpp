@@ -287,9 +287,9 @@ void Scene_surface_mesh_item::standard_constructor(SMesh* sm)
   d->textVItems = new TextListItem(this);
   d->textEItems = new TextListItem(this);
   d->textFItems = new TextListItem(this);
-
   are_buffers_filled = false;
   invalidate(ALL);
+  
 }
 Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
 {
@@ -674,10 +674,12 @@ void Scene_surface_mesh_item_priv::initialize_colors() const
     max = (std::max)(max, fpatch_id_map[fd]);
     min_patch_id = (std::min)(min_patch_id, fpatch_id_map[fd]);
   }
-
-  colors_.clear();
-  compute_color_map(item->color(), (std::max)(1, max + 1 - min_patch_id),
-                    std::back_inserter(colors_));
+  if(item->property("recompute_colors").toBool())
+  {
+    colors_.clear();
+    compute_color_map(item->color(), (std::max)(1, max + 1 - min_patch_id),
+                      std::back_inserter(colors_));
+  }
 }
 
 void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interface* viewer)const
@@ -1074,7 +1076,7 @@ void* Scene_surface_mesh_item_priv::get_aabb_tree()
       BOOST_FOREACH( face_descriptor f, faces(*sm))
       {
         //if face is degenerate, skip it
-        if (CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, *sm))
+        if (CGAL::is_triangle(halfedge(f, *sm), *sm) && CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, *sm))
           continue;
         //if face not triangle, triangulate corresponding primitive before adding it to the tree
         if(!CGAL::is_triangle(halfedge(f, *sm), *sm))
@@ -1844,6 +1846,12 @@ void Scene_surface_mesh_item::zoomToPosition(const QPoint &point, CGAL::Three::V
 void Scene_surface_mesh_item::resetColors()
 {
   setItemIsMulticolor(false);
+  if(d->has_feature_edges){
+    BOOST_FOREACH(boost::graph_traits<SMesh>::edge_descriptor e, edges(*d->smesh_)){
+      put(d->e_is_feature_map, e, false);
+    }
+    d->has_feature_edges = false;
+  }
   invalidate(COLORS);
   itemChanged();
 }
@@ -2231,4 +2239,18 @@ Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* viewer
 {
   const_cast<Scene_surface_mesh_item*>(this)->//temporary, until the drawing pipeline is not const anymore.
       d->initializeBuffers(viewer);
+}
+
+void Scene_surface_mesh_item::copyProperties(Scene_item *item)
+{
+  Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(item);
+  if(!sm_item)
+    return;
+  int value = sm_item->alphaSlider()->value();
+  alphaSlider()->setValue(value);
+}
+
+void Scene_surface_mesh_item::computeItemColorVectorAutomatically(bool b)
+{
+  this->setProperty("recompute_colors",b);
 }

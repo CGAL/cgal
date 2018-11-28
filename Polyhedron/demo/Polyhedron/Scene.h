@@ -12,6 +12,7 @@
 #include <QString>
 #include <QColor>
 #include <QList>
+#include <QVector>
 #include <QMap>
 #include <QItemDelegate>
 #include <QPixmap>
@@ -130,6 +131,8 @@ public:
   // auxiliary public function for QMainWindow
   //Selects the row at index i in the sceneView.
   QItemSelection createSelection(int i);
+  //same fo lists
+  QItemSelection createSelection(QList<int> is);
   //Selects all the rows in the sceneView.
   QItemSelection createSelectionAll();
   //Connects specific signals to a group when it is added and
@@ -212,6 +215,8 @@ public Q_SLOTS:
   void setItemB(int i);
   void newViewer(CGAL::Three::Viewer_interface*);
   void removeViewer(CGAL::Three::Viewer_interface*);
+  void enableVisibilityRecentering(bool);
+
 Q_SIGNALS:
   //generated automatically by moc
   //!Is emitted when the ids of the items are changed.
@@ -231,6 +236,8 @@ Q_SIGNALS:
   void selectionRay(double, double, double, double, double, double);
   //! Used to update the selected item in the Geometric Objects view.
   void selectionChanged(int i);
+  //! Used to update the selected items in the Geometric Objects view.
+  void selectionChanged(QList<int> is);
   //! Used when you don't want to update the selectedItem in the Geometric Objects view.
   void itemIndexSelected(int i);
   //! Emit this to reset the collapsed state of all groups after the Geometric Objects view has been redrawn.
@@ -284,6 +291,8 @@ private:
   QMap<CGAL::Three::Viewer_interface*, QOpenGLVertexArrayObject*> vaos;
   mutable QOpenGLBuffer vbo[2];
   Bbox last_bbox;
+  bool visibility_recentering_enabled;
+  bool sort_lists(QVector<QList<int> >&sorted_lists, bool up);
 }; // end class Scene
 
 class QAbstractProxyModel;

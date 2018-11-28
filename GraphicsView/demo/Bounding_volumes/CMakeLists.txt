@@ -11,16 +11,14 @@ endif()
 
 find_package(CGAL COMPONENTS Qt5)
 
-include(${CGAL_USE_FILE})
-
 find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
-include_directories (BEFORE ../../include)
 include_directories (BEFORE ./include)
 include_directories (BEFORE ../../../Matrix_search/include)
 
 
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_definitions(-DQT_NO_KEYWORDS)
 
 #----------------------------------------------

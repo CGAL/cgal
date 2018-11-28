@@ -3,15 +3,13 @@
 
 project( CGALimageIO_Examples ) 
 
-cmake_minimum_required(VERSION 2.8.11)
-
+cmake_minimum_required(VERSION 3.1)
 
 find_package(CGAL QUIET COMPONENTS ImageIO )
 
-include( ${CGAL_USE_FILE} )
-include( CGAL_CreateSingleSourceCGALProgram )
-
 if(CGAL_ImageIO_FOUND)
+  include(${CGAL_USE_FILE})
+
   create_single_source_cgal_program( "convert_raw_image_to_inr.cpp" )
   create_single_source_cgal_program( "test_imageio.cpp" )
 else()

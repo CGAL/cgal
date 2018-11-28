@@ -796,6 +796,7 @@ public:
 
   void setItemIsMulticolor(bool b) {
     poly_item->setItemIsMulticolor(b);
+    poly_item->computeItemColorVectorAutomatically(b);
   }
 
   void selection_changed(bool);
@@ -838,6 +839,7 @@ public Q_SLOTS:
     remove_erased_handles<fg_vertex_descriptor>();
     remove_erased_handles<fg_edge_descriptor>();
     remove_erased_handles<fg_face_descriptor>();
+    compute_normal_maps();
   }
   void endSelection(){
     Q_EMIT simplicesSelected(this);

@@ -26,7 +26,7 @@
 #define SCENE_INTERFACE_H
 #include <CGAL/license/Three.h>
 /*!
-* \ingroup PkgThree
+* \ingroup PkgThreeRef
 * The RenderingMode determines which of an item's primitives must be drawn.
 * It can be Points, PointsPlusNormals, Wireframe, Flat, FlatPlusEdges, or Gouraud.
 * - Points, PointsPlusNormals, and Wireframe have no light model.

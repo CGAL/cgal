@@ -18,11 +18,14 @@
 #include <QSet>
 #include <QModelIndex>
 #include <QMdiSubWindow>
+#include <QLineEdit>
+
 class Scene;
 class Viewer;
 struct SubViewer;
 class QTreeView;
 class QMenu;
+class QWidgetAction;
 namespace CGAL {
 namespace Three{
 class Polyhedron_demo_io_plugin_interface;
@@ -152,6 +155,11 @@ public Q_SLOTS:
    * the index i in the Geometric Objects view.
    */
   void selectSceneItem(int i);
+  /*!
+   * Clears the current selection and selects the scene_items with
+   * indices in is in the Geometric Objects view.
+   */
+  void selectSceneItems(QList<int> i);
   /*!
    * Prints coordinates of a point and its distance to the last
    * position printed by this function.

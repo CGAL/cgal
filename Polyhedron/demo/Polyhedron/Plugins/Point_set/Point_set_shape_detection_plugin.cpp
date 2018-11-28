@@ -414,7 +414,7 @@ private:
               sm_item->setName(QString("%1%2_alpha_shape").arg(QString::fromStdString(ss.str()))
                                .arg (QString::number (shape->indices_of_assigned_points().size())));
               sm_item->setRenderingMode (Flat);
-              
+              sm_item->invalidateOpenGLBuffers();
               scene->addItem(sm_item);
               if(scene->item_id(groups[0]) == -1)
                 scene->addItem(groups[0]);
@@ -422,14 +422,13 @@ private:
             }
           }
       }
-      else if (dynamic_cast<CGAL::Shape_detection_3::Cone<Traits> *>(shape.get()))
-        ss << item->name().toStdString() << "_cone_";
-      else if (dynamic_cast<CGAL::Shape_detection_3::Torus<Traits> *>(shape.get()))
-        ss << item->name().toStdString() << "_torus_";
-      else if (dynamic_cast<CGAL::Shape_detection_3::Sphere<Traits> *>(shape.get()))
-        ss << item->name().toStdString() << "_sphere_";
-
-
+    }
+    else if (dynamic_cast<CGAL::Shape_detection_3::Cone<Traits> *>(shape.get()))
+      ss << item->name().toStdString() << "_cone_";
+    else if (dynamic_cast<CGAL::Shape_detection_3::Torus<Traits> *>(shape.get()))
+      ss << item->name().toStdString() << "_torus_";
+    else if (dynamic_cast<CGAL::Shape_detection_3::Sphere<Traits> *>(shape.get()))
+      ss << item->name().toStdString() << "_sphere_";
       ss << shape->indices_of_assigned_points().size();
 
       //names[i] = ss.str(		

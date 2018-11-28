@@ -132,10 +132,10 @@ public:
     
     //Fill operations combo box.
     operations_strings = {
-      "Create Point Set Item from Selected Vertices"           ,
-      "Create Polyline Item from Selected Edges"               ,
-      "Create Polyhedron Item from Selected Facets"            ,
-      "Erase Selected Facets from Polyhedron Item"             ,
+      "Create Point Set from Selected Vertices"           ,
+      "Create Polyline from Selected Edges"               ,
+      "Create Facegraph from Selected Facets"            ,
+      "Erase Selected Facets"             ,
       "Keep Connected Components of Selected Facets"           ,
       "Expand Face Selection to Stay Manifold After Removal"   ,
       "Convert from Edge Selection to Facets Selection"        ,
@@ -350,6 +350,7 @@ public Q_SLOTS:
   }
   // Create selection item for selected polyhedron item
   void on_Create_selection_item_button_clicked() {
+    
     Scene_face_graph_item* poly_item = qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex()));
     if(!poly_item) {
       print_message("Error: there is no selected "
@@ -359,6 +360,7 @@ public Q_SLOTS:
     }
     // all other arrangements (putting inside selection_item_map), setting names etc,
     // other params (e.g. k_ring) will be set inside new_item_created
+    from_plugin = true;
     Scene_polyhedron_selection_item* new_item = new Scene_polyhedron_selection_item(poly_item, mw);
     new_item->setName(QString("%1 (selection)").arg(poly_item->name()));
     ui_widget.selectionOrEuler->setCurrentIndex(last_mode);
@@ -853,23 +855,36 @@ public Q_SLOTS:
       qobject_cast<Scene_polyhedron_selection_item*>(scene->item(item_id));
     if(!selection_item) { return; }
 
-    Scene_face_graph_item* poly_item = getSelectedItem<Scene_face_graph_item>();
+    Scene_face_graph_item* poly_item = NULL;
+    if(selection_item->polyhedron_item() == NULL) { //coming from selection_io loader
+      bool found = false;
+      for(int i = 0; i<scene->numberOfEntries(); ++i){
+        poly_item = qobject_cast<Scene_face_graph_item*>(scene->item(i));
+        if(!poly_item)
+          continue;
+        if(!selection_item->actual_load(poly_item, mw)) {
+          continue;
+        }
+        found = true;
+        selection_item->invalidateOpenGLBuffers();
+        scene->itemChanged(selection_item);
+        break;
+      }
+      if(!found)
+      {
+        print_message("Error: loading selection item is not successful!");
+        scene->erase(item_id);
+        return;
+      }
+    } else {
+      poly_item = getSelectedItem<Scene_face_graph_item>();
+    }
     if(!poly_item) {
-      CGAL_assertion(selection_item->polyhedron_item() == NULL); // which means it is coming from selection_io loader
       print_message("Error: please select corresponding polyhedron item from Geometric Objects list.");
       scene->erase(item_id);
       return;
     }
 
-    if(selection_item->polyhedron_item() == NULL) { //coming from selection_io loader
-      if(!selection_item->actual_load(poly_item, mw)) {
-        print_message("Error: loading selection item is not successful!");
-        scene->erase(item_id);
-        return;
-      }
-      selection_item->invalidateOpenGLBuffers();
-      scene->itemChanged(selection_item);
-    }
     // now set default params both for selection items coming from selection_io, or on_Create_selection_item_button_clicked
     Active_handle::Type aht = static_cast<Active_handle::Type>(ui_widget.Selection_type_combo_box->currentIndex());
     bool is_insert = ui_widget.Insertion_radio_button->isChecked();
@@ -893,6 +908,12 @@ public Q_SLOTS:
     //  connect(selection_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
     connect(selection_item,SIGNAL(isCurrentlySelected(Scene_facegraph_item_k_ring_selection*)), this, SLOT(isCurrentlySelected(Scene_facegraph_item_k_ring_selection*)));
     on_LassoCheckBox_changed(ui_widget.lassoCheckBox->isChecked());
+    
+    if(!from_plugin){
+      ui_widget.selectionOrEuler->setCurrentIndex(0);
+    }
+    else
+      from_plugin = false;
     on_SelectionOrEuler_changed(ui_widget.selectionOrEuler->currentIndex());
     if(last_mode == 0)
       on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
@@ -975,6 +996,7 @@ private:
 typedef std::multimap<Scene_face_graph_item*, Scene_polyhedron_selection_item*> Selection_item_map;
   Selection_item_map selection_item_map;
   int last_mode;
+  bool from_plugin;
 }; // end Polyhedron_demo_selection_plugin
 
 //Q_EXPORT_PLUGIN2(Polyhedron_demo_selection_plugin, Polyhedron_demo_selection_plugin)

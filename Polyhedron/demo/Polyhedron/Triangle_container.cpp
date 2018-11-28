@@ -143,6 +143,8 @@ void Triangle_container::draw(Viewer_interface* viewer,
     getVao(viewer)->bind();
     if(is_color_uniform)
       getVao(viewer)->program->setAttributeValue("colors", getColor());
+    if(getVao(viewer)->program->property("hasFMatrix").toBool())
+      getVao(viewer)->program->setUniformValue("f_matrix", getFrameMatrix());
     getVbo(Vertex_indices)->bind();
     if(getVao(viewer)->program->property("hasFMatrix").toBool())
       getVao(viewer)->program->setUniformValue("f_matrix", getFrameMatrix());

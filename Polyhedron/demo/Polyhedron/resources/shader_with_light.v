@@ -39,7 +39,7 @@ void main(void)
    //
    if(is_clipbox_on)
     compute_distances();
-   fP = mv_matrix * vertex;
+   fP = mv_matrix * f_matrix * vertex;
    mat3 mv_matrix_3;
    mv_matrix_3[0] = mv_matrix[0].xyz;
    mv_matrix_3[1] = mv_matrix[1].xyz;

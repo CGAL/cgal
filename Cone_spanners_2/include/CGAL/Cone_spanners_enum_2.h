@@ -31,7 +31,7 @@
 
 
 namespace CGAL {
-  /*! \ingroup PkgConeBasedSpanners
+  /*! \ingroup PkgConeSpanners2Ref
 
    \brief An enum of the choice of cones in cone spanners.
    */

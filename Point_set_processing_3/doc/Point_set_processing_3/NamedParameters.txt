@@ -1,6 +1,6 @@
 /*!
 \defgroup psp_namedparameters Named Parameters for Point Set Processing
-\ingroup PkgPointSetProcessing
+\ingroup PkgPointSetProcessing3Ref
 
 In this package, all functions optional parameters are implemented as BGL optional named parameters (see \ref BGLNamedParameters for more information on how to use them).
 

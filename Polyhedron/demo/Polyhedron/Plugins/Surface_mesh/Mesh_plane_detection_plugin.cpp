@@ -13,7 +13,6 @@
 #include <QAction>
 #include <QDebug>
 #include <QObject>
-#include <QDockWidget>
 //#include <QtConcurrentRun>
 #include <map>
 #include <algorithm>
@@ -81,6 +80,8 @@ private:
                               const double angle_max,
                               OutputIterator output)
   {
+    typedef SMesh::size_type size_type;
+    
     std::cerr << "Detecting planes with:" << std::endl
               << " * Area min = " << area_min << std::endl
               << " * Min cos angle = " << angle_max << std::endl;
@@ -90,10 +91,10 @@ private:
     
     for (typename SMesh::Face_iterator f = mesh.faces_begin(); f != mesh.faces_end(); ++f)
       {
-        if (label_region[static_cast<std::size_t>(*f)] != 0)
+        if (label_region[*f] != 0)
           continue;
         class_index++;
-        label_region[static_cast<std::size_t>(*f)] = class_index;
+        label_region[*f] = class_index;
         double area = PMP::face_area (*f, mesh, PMP::parameters::geom_traits(EPICK()));
             
         //characteristics of the seed
@@ -103,9 +104,9 @@ private:
                    //        Kernel::Plane_3 optimal_plane = f->plane();
               
         //initialization containers
-        std::vector<std::size_t> index_container (1, static_cast<std::size_t>(*f));
-        std::vector<std::size_t> index_container_former_ring (1, static_cast<std::size_t>(*f));
-        std::list<std::size_t> index_container_current_ring;
+        std::vector<size_type> index_container (1,*f);
+        std::vector<size_type> index_container_former_ring (1, *f);
+        std::list<size_type> index_container_current_ring;
 
         //propagation
         bool propagation = true;
@@ -113,7 +114,7 @@ private:
 
           propagation = false;
 
-          for (std::size_t k = 0; k < index_container_former_ring.size(); k++)
+          for (size_type k = 0; k < index_container_former_ring.size(); k++)
             {
               typename SMesh::Halfedge_around_face_circulator
                 circ( mesh.halfedge(SMesh::Face_index(index_container_former_ring[k])), mesh)
@@ -126,7 +127,7 @@ private:
                   
                   typename SMesh::Face_index
                     neighbor = mesh.face(opposite(*circ, mesh));
-                  std::size_t neighbor_index = static_cast<std::size_t>(neighbor);
+                  size_type neighbor_index = neighbor;
                   if (label_region[neighbor_index] == 0)
                     {
                       EPICK::Vector_3 normal
@@ -146,7 +147,7 @@ private:
 			
           //update containers
           index_container_former_ring.clear();
-          for (std::list<std::size_t>::iterator it = index_container_current_ring.begin();
+          for (std::list<size_type>::iterator it = index_container_current_ring.begin();
                it != index_container_current_ring.end(); ++it)
             {
               index_container_former_ring.push_back(*it);
@@ -160,8 +161,8 @@ private:
         if (area < area_min)
           {
             class_index--;
-            label_region[static_cast<std::size_t>(*f)] = 0;
-            for (std::size_t k = 0; k < index_container.size(); k++)
+            label_region[*f] = 0;
+            for (size_type k = 0; k < index_container.size(); k++)
               label_region[index_container[k]] = 0;
           }
       }
@@ -228,6 +229,7 @@ void Polyhedron_demo_mesh_plane_detection_plugin::colorize_segmentation(
                                                                         std::vector<QColor>& color_vector)
 {
   item->setItemIsMulticolor(true);
+  item->computeItemColorVectorAutomatically(true);
   SMesh* sm = item->face_graph();
   color_vector.clear();
   std::size_t max_segment = 0;

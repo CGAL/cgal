@@ -167,7 +167,7 @@ public Q_SLOTS:
   void pop_widget()
   {
     if(dock_widget->isVisible()) { dock_widget->hide(); }
-    else                         { dock_widget->show(); }
+    else                         { dock_widget->show(); dock_widget->raise();}
 
     //creates a new  cutting_plane;
     if(!plane)

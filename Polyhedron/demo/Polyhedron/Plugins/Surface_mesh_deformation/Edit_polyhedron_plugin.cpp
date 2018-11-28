@@ -168,7 +168,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_actionDeformation_triggered()
 {  
   // dock widget should be constructed in init()
   if(dock_widget->isVisible()) { dock_widget->hide(); }
-  else                         { dock_widget->show(); }
+  else                         { dock_widget->show(); dock_widget->raise();}
 }
 
 /////// Dock window signal handlers //////

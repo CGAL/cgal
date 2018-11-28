@@ -139,7 +139,7 @@ void Polyhedron_demo_kernel_plugin::on_actionKernel_triggered()
     
     std::map<dual_vertex_descriptor,Point> vpm; 
     BOOST_FOREACH(boost::graph_traits<SMesh>::face_descriptor fd, faces(convex_hull)){  
-      Point points[3];
+      std::vector<Point> points(3, Point(CGAL::ORIGIN));
       int i = 0;
       BOOST_FOREACH(boost::graph_traits<SMesh>::vertex_descriptor vd, 
                     vertices_around_face(halfedge(fd,convex_hull),convex_hull)){

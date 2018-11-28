@@ -179,7 +179,7 @@ Triangulation_line_face_circulator_2(Vertex_handle v,
     ++fc;
     ic = fc->index(v);
     vt= fc->vertex(cw(ic));
-    if (fc == done) { *this = Line_face_circulator(); return;}
+    if (fc == done) { _tr=NULL; return;}
   }
   
   // now vt is finite and to the left of pq
@@ -214,7 +214,7 @@ Triangulation_line_face_circulator_2(Vertex_handle v,
       i = ic;
       break;
     case LEFT_TURN:
-     *this = Line_face_circulator(); 
+     _tr = NULL;
      break;
     }
   }
@@ -643,8 +643,8 @@ operator==(const Line_face_circulator& lfc) const
 {
   CGAL_triangulation_precondition( pos != Face_handle() &&
 			       lfc.pos != Face_handle());
-  return ( pos == lfc.pos &&  _tr == lfc._tr &&
-            s== lfc.s && p==lfc.p && q==lfc.q);
+  return ( _tr == lfc._tr && ( _tr==NULL ||
+            (pos == lfc.pos  && s== lfc.s && p==lfc.p && q==lfc.q) ) );
 }
 
 template < class Triangulation >

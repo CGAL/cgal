@@ -2,6 +2,7 @@
 #include "Scene_spheres_item.h"
 
 #include <CGAL/bounding_box.h>
+#include <CGAL/Three/Three.h>
 #include <QMenu>
 #include <QSlider>
 #include <QWidgetAction>
@@ -26,9 +27,9 @@ struct Scene_polylines_item_private {
         spheres_drawn_square_radius(0)
     {
       line_Slider = new QSlider(Qt::Horizontal);
-      line_Slider->setMaximum(2);
+      line_Slider->setValue(CGAL::Three::Three::getDefaultLinesWidth());
+      line_Slider->setMaximum(2000);
       line_Slider->setMinimum(1);
-      line_Slider->setValue(2);
       item = parent;
       invalidate_stats();
     }
