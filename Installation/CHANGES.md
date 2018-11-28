@@ -54,6 +54,12 @@ Release date: March 2019
     `Arr_polyline_traits_2`, `Arr_polycurve_traits_2`, and
     `Arr_polycurve_basic_traits_2`.
 
+### 2D Minkowski Sums
+
+-   Fixed a bug in the function that computed the Minkowski sum using the
+    reduced-convolution method. In particular, correctly handled the case where
+    one of the summands does not have an outer boundaey.
+
 Release 4.13
 ------------
 
