@@ -15,7 +15,7 @@ typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3> LCC_3_cmap;
 [[ noreturn ]] void usage(int /*argc*/, char** argv)
 {
   std::cout<<"usage: "<<argv[0]<<" file [-draw] [-seed S] [-nbfaces F] "
-           <<"[-nbdefo D]"<<std::endl
+           <<"[-nbdefo D] [-nbtests N]"<<std::endl
            <<"   Load the given off file, compute one random path, deform it "
            <<"into a second path and test that the two pathes are isotopic."
            <<std::endl
