@@ -212,6 +212,8 @@ public:
     Dart_const_handle prev=NULL;
     bool loopend=false;
     auto it=m_path.begin();
+    if (!is_beginning_of_flat(it)) { advance_iterator(it); }
+
     do
     {
       if (prev!=NULL &&
@@ -244,7 +246,7 @@ public:
           else              { dhend=m_map.template beta<2, 0, 2, 0, 2>(dhend); --nb; }
           ++nbdarts;
         }
-        advance_iterator(it); ++i;
+        advance_iterator(it); ++i; ++nbdarts;
         if (it==m_path.end() || it==m_path.begin()) loopend=true;
 
         if (dhend!=it->first)
@@ -257,7 +259,7 @@ public:
       }
       else
       { ++nbdarts; }
-      prev=it->first;
+      prev=it->first; // end of the previous flat
       ++i; advance_iterator(it);
       if (it==m_path.end() || it==m_path.begin()) loopend=true;
     }
@@ -282,7 +284,7 @@ public:
 
     if (length()!=nbdarts)
     {
-      std::cerr<<"ERROR: The path is not valid: store length=="<<nbdarts
+      std::cerr<<"ERROR: The path is not valid: store length=="<<length()
                <<" different of real length=="<<nbdarts<<std::endl;
       return false;
     }
@@ -994,6 +996,7 @@ public:
     if (!is_beginning_of_flat(it) || it->second>0)
     { return false; }
     
+    // Here it->second<=0
     List_iterator it2=(it->second==0?it:next_iterator(it));
 
     if (next_negative_turn(it2)!=1)
@@ -1009,6 +1012,7 @@ public:
   // l_shape in the path.
   void move_to_next_l_shape(List_iterator& it)
   {
+    // CGAL_assertion(is_valid());
     CGAL_assertion(it!=m_path.end());
     List_iterator itend=(is_closed()?it:m_path.end());
     do
@@ -1178,12 +1182,16 @@ public:
   // @return true iff the path was pushed
   bool right_push()
   {
+    CGAL_assertion(is_valid());
     bool res=false;
     List_iterator it=m_path.begin();
     while(it!=m_path.end())
     {
       if (is_l_shape(it))
-      { right_push_l_shape(it); res=true; }
+      {
+        right_push_l_shape(it); res=true;
+        CGAL_assertion(is_valid());
+      }
       else { move_to_next_l_shape(it); }
     }
     CGAL_assertion(is_valid());

@@ -108,7 +108,6 @@ int main(int argc, char** argv)
     exit(EXIT_FAILURE);
   }
 
-  std::cout<<"Random seed: "<<random.get_seed()<<std::endl;
   std::cout<<"Initial map: ";
   lcc.display_characteristics(std::cout) << ", valid="
                                          << lcc.is_valid() << std::endl;
@@ -120,11 +119,17 @@ int main(int argc, char** argv)
    
   for (unsigned int i=0; i<N; ++i)
   {
+    if (i!=0)
+    {
+      random=CGAL::Random(random.get_int(0, std::numeric_limits<int>::max()));
+    }
+    std::cout<<"Random seed: "<<random.get_seed()<<std::endl;
+
     std::vector<const CGAL::Path_on_surface<LCC_3_cmap>* > paths;
     std::vector<CGAL::Path_on_surface<LCC_3_cmap> > transformed_paths;
 
     CGAL::Path_on_surface<LCC_3_cmap> path1(lcc);
-    generate_random_closed_path(path1, F, random); // random path, length between 30 and 500
+    generate_random_closed_path(path1, F, random); // random path, length given by F
     std::cout<<"Path1 size: "<<path1.length()<<" (from "<<F<<" faces); ";
     paths.push_back(&path1);
 
