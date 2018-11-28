@@ -40,8 +40,14 @@
 #endif
 
 #ifdef CGAL_USE_BOOST_BIMAP
+#  if defined(BOOST_MSVC)
+#    pragma warning(push)
+#    pragma warning(disable: 4996)
+#  endif
 #include <CGAL/boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
+#  if defined(BOOST_MSVC)
+#    pragma warning(pop)
 #endif
 
 namespace CGAL {
