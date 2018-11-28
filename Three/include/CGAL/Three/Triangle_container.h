@@ -102,6 +102,7 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
   //! getter for the "f_matrix" parameter
   QMatrix4x4 getFrameMatrix()const;
   //! getter for the "mv_matrix" parameter
+  QMatrix4x4 getMvMatrix()const;
 
   //! setter for the "shrink_factor" parameter
   void setShrinkFactor(const float&);

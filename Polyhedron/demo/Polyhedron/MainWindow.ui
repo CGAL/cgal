@@ -456,6 +456,9 @@
    <property name="text">
     <string>Recenter Scene</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
   </action>
  </widget>
  <resources>

@@ -112,9 +112,12 @@ public:
       ratio_displayed = 3 * 300000. / (double)nb_points;
 
     Pc* pc = getPointContainer(0);
+    std::size_t real_size = pc->getFlatDataSize();
+    pc->setFlatDataSize(ratio_displayed * real_size);
     pc->setColor(QColor(Qt::green));
     pc->setFrameMatrix(f_matrix);
     pc->draw(viewer, true);
+    pc->setFlatDataSize(real_size);
   }
   bool keyPressEvent(QKeyEvent* e){
     if (e->key()==Qt::Key_S){

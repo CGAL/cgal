@@ -1034,7 +1034,6 @@ void Scene_c3t3_item::drawPoints(CGAL::Three::Viewer_interface * viewer) const
     return;
   if(renderingMode() == Points)
   {
-    Scene_c3t3_item* ncthis = const_cast<Scene_c3t3_item*>(this);
     if(!isInit())
       initGL();
     if ( getBuffersFilled() &&

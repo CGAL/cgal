@@ -1349,35 +1349,30 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
   int main_index = scene->selectionIndices().first();
 
   if(sender == sceneView) {
-    QModelIndex modelIndex = sceneView->indexAt(p);
-    if(!modelIndex.isValid())
-    {
-      const char* prop_name = "Menu modified by MainWindow.";
+      QModelIndex modelIndex = sceneView->indexAt(p);
+      if(!modelIndex.isValid())
+      {
+          const char* prop_name = "Menu modified by MainWindow.";
 
-      QMenu* menu = ui->menuFile;
-      if(menu) {
-        bool menuChanged = menu->property(prop_name).toBool();
-        if(!menuChanged) {
-          menu->setProperty(prop_name, true);
-        }
+          QMenu* menu = ui->menuFile;
+          if(menu) {
+              bool menuChanged = menu->property(prop_name).toBool();
+              if(!menuChanged) {
+                  menu->setProperty(prop_name, true);
+              }
+          }
+          if(menu)
+              menu->exec(sender->mapToGlobal(p));
+          return;
       }
-      if(menu)
-        menu->exec(sender->mapToGlobal(p));
-      return;
-    }
-    else if(scene->selectionIndices().size() > 1 )
-    {
-      QMap<QString, QAction*> menu_actions;
-      bool has_stats = false;
-      Q_FOREACH(QAction* action, scene->item(main_index)->contextMenu()->actions())
+      else if(scene->selectionIndices().size() > 1 )
       {
         QMap<QString, QAction*> menu_actions;
         QVector<QMenu*> slider_menus;
         bool has_stats = false;
         Q_FOREACH(QAction* action, scene->item(main_index)->contextMenu()->actions())
         {
-          menu_actions[action->text()] = action;
-          if(action->text() == QString("Alpha value"))
+          if(action->property("is_groupable").toBool())
           {
             menu_actions[action->text()] = action;
             if(action->text() == QString("Alpha value"))
@@ -1393,26 +1388,21 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
               menu_actions["normals slider"] = action->menu()->actions().last();
             }
           }
+          
         }
+        Q_FOREACH(Scene::Item_id index, scene->selectionIndices())
+        {
+          if(index == main_index)
+            continue;
 
-      }
-      Q_FOREACH(Scene::Item_id index, scene->selectionIndices())
-      {
-        if(index == main_index)
-          continue;
-
-        CGAL::Three::Scene_item* item = scene->item(index);
-        if(!item)
-          continue;
-        if(item->has_stats())
-          has_stats = true;
-      }
-      QMenu menu;
-      Q_FOREACH(QString name, menu_actions.keys())
-      {
-        if(name == QString("alpha slider"))
-          continue;
-        if(name == QString("Alpha value"))
+          CGAL::Three::Scene_item* item = scene->item(index);
+          if(!item)
+            continue;
+          if(item->has_stats())
+            has_stats = true;
+        }
+        QMenu menu;
+        Q_FOREACH(QString name, menu_actions.keys())
         {
           if(name == QString("alpha slider")
              || name == QString("points slider")
@@ -1420,17 +1410,32 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
             continue;
           if(name == QString("Alpha value"))
           {
-            Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
+            QWidgetAction* sliderAction = new QWidgetAction(&menu);
+            QSlider* slider = new QSlider(&menu);
+            slider->setMinimum(0);
+            slider->setMaximum(255);
+            slider->setValue(
+                  qobject_cast<QSlider*>(
+                    qobject_cast<QWidgetAction*>
+                    (menu_actions["alpha slider"])->defaultWidget()
+                  )->value());
+            slider->setOrientation(Qt::Horizontal);
+            sliderAction->setDefaultWidget(slider);
+            
+            connect(slider, &QSlider::valueChanged, [this, slider]()
             {
-              Scene_item* item = scene->item(id);
-              Q_FOREACH(QAction* action, item->contextMenu()->actions())
+              Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
               {
-                if(action->text() == "Alpha value")
+                Scene_item* item = scene->item(id);
+                Q_FOREACH(QAction* action, item->contextMenu()->actions())
                 {
-                  QWidgetAction* sliderAction = qobject_cast<QWidgetAction*>(action->menu()->actions().last());
-                  QSlider* ac_slider = qobject_cast<QSlider*>(sliderAction->defaultWidget());
-                  ac_slider->setValue(slider->value());
-                  break;
+                  if(action->text() == "Alpha value")
+                  {
+                    QWidgetAction* sliderAction = qobject_cast<QWidgetAction*>(action->menu()->actions().last());
+                    QSlider* ac_slider = qobject_cast<QSlider*>(sliderAction->defaultWidget());
+                    ac_slider->setValue(slider->value());
+                    break;
+                  }
                 }
               }
             });
@@ -1521,28 +1526,22 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
         }
         if(has_stats)
         {
-          QAction* action = menu.addAction(name);
-          connect(action, &QAction::triggered, this, &MainWindow::propagate_action);
+          QAction* actionStatistics =
+              menu.addAction(tr("Statistics..."));
+          actionStatistics->setObjectName("actionStatisticsOnPolyhedron");
+          connect(actionStatistics, SIGNAL(triggered()),
+                  this, SLOT(statisticsOnItem()));
         }
+          QAction* reload = menu.addAction(tr("&Reload Item from File"));
+          reload->setProperty("is_groupable", true);
+          connect(reload, SIGNAL(triggered()),
+                  this, SLOT(reloadItem()));
+        QAction* saveas = menu.addAction(tr("&Save as..."));
+        connect(saveas,  SIGNAL(triggered()),
+                this, SLOT(on_actionSaveAs_triggered()));
+        menu.exec(sender->mapToGlobal(p));
+        return;
       }
-      if(has_stats)
-      {
-        QAction* actionStatistics =
-            menu.addAction(tr("Statistics..."));
-        actionStatistics->setObjectName("actionStatisticsOnPolyhedron");
-        connect(actionStatistics, SIGNAL(triggered()),
-                this, SLOT(statisticsOnItem()));
-      }
-      QAction* reload = menu.addAction(tr("&Reload Item from File"));
-      reload->setProperty("is_groupable", true);
-      connect(reload, SIGNAL(triggered()),
-              this, SLOT(reloadItem()));
-      QAction* saveas = menu.addAction(tr("&Save as..."));
-      connect(saveas,  SIGNAL(triggered()),
-              this, SLOT(on_actionSaveAs_triggered()));
-      menu.exec(sender->mapToGlobal(p));
-      return;
-    }
   }
   showSceneContextMenu(main_index, sender->mapToGlobal(p));
   return;
