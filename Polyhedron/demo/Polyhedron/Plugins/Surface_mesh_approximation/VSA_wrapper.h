@@ -10,7 +10,7 @@
 #include "SMesh_type.h"
 #include "Color_cheat_sheet.h"
 
-#ifdef vsa_wrapper_EXPORTS
+#ifdef surface_mesh_approximation_plugin_EXPORTS
 #define VSA_WRAPPER_EXPORT Q_DECL_EXPORT
 #else
 #define VSA_WRAPPER_EXPORT Q_DECL_IMPORT

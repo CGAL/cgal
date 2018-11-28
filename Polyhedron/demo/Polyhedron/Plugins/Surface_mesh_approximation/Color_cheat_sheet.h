@@ -7,7 +7,7 @@
 // 256 color cheat sheet
 // Source: https://jonasjacek.github.io/colors/
 
-#ifdef color_cheat_sheet_EXPORTS
+#ifdef surface_mesh_approximation_plugin_EXPORTS
 #define COLOR_CHEAT_SHEET_EXPORT Q_DECL_EXPORT
 #else
 #define COLOR_CHEAT_SHEET_EXPORT Q_DECL_IMPORT
