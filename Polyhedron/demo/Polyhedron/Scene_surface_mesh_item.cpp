@@ -720,8 +720,6 @@ void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interfa
 
 void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
 {
-  if(viewer->isSharing())
-    int ii=0;
   if(!isInit() && viewer->context()->isValid())
     initGL();
   if (getBuffersFilled() )
