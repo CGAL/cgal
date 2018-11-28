@@ -48,6 +48,7 @@
 #include <boost/bimap/multiset_of.hpp>
 #  if defined(BOOST_MSVC)
 #    pragma warning(pop)
+#  endif
 #endif
 
 namespace CGAL {
