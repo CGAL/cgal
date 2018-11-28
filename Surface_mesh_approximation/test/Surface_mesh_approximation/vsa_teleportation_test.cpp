@@ -33,7 +33,7 @@ bool check_strict_ordering(const std::vector<FT> &error)
 {
   if (error.empty()) {
     std::cout << "Empty error sequence." << std::endl;
-    return false;
+    return true;
   }
 
   FT pre = error.front();
@@ -67,27 +67,31 @@ int main()
 
   std::cout << "Random seeding by number." << std::endl;
   std::srand(static_cast<unsigned int>(std::time(0)));
-  approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::Surface_mesh_approximation::RANDOM)
-    .max_number_of_proxies(50));
-  if (approx.number_of_proxies() != 50)
-    return EXIT_FAILURE;
-  approx.run(10);
 
-  std::cout << "Teleport until merge test failed." << std::endl;
-  std::vector<FT> error;
   std::size_t count = 0;
-  while(approx.teleport_proxies(1) == 1) {
-    FT sum_err(0);
+  while (!count) {
+    approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::Surface_mesh_approximation::RANDOM)
+      .max_number_of_proxies(50));
+    if (approx.number_of_proxies() != 50)
+      return EXIT_FAILURE;
     approx.run(10);
-    sum_err += approx.compute_total_error();
-    error.push_back(sum_err / FT(10.0));
-    ++count;
-  }
-  std::cout << "#teleported " << count << std::endl;
 
-  if (!check_strict_ordering(error)) {
-    std::cout << "Failed: teleportation error decrease inconsistent." << std::endl;
-    return EXIT_FAILURE;
+    std::cout << "Teleport until merge test failed." << std::endl;
+    std::vector<FT> error;
+    count = 0;
+    while(approx.teleport_proxies(1) == 1) {
+      FT sum_err(0);
+      approx.run(10);
+      sum_err += approx.compute_total_error();
+      error.push_back(sum_err / FT(10.0));
+      ++count;
+    }
+    std::cout << "#teleported " << count << std::endl;
+
+    if (!check_strict_ordering(error)) {
+      std::cout << "Failed: teleportation error decrease inconsistent." << std::endl;
+      return EXIT_FAILURE;
+    }
   }
 
   // test partition placement
