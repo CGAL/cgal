@@ -1,0 +1,20 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_Surface_Mesh_Topology
+\anchor ChapterSurfaceMeshTopology
+
+\author Guillaume Damiand and Francis Lazarus
+\cgalAutoToc
+
+\section SMTopology Introduction
+
+\section SMTopology_DS Data Structure Presentation
+
+\section SMTopology_Examples Examples
+
+\section SMTopology_History Implementation History
+
+*/
+} /* namespace CGAL */

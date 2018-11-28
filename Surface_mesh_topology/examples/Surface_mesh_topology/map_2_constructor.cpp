@@ -19,6 +19,9 @@ int main()
   cm.display_characteristics(std::cout);
   std::cout<<", valid="<<cm.is_valid()<<std::endl;
 
+  Path p=b.create_path("a b -a");
+  
+  
   return EXIT_SUCCESS;
 }
 
