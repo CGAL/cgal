@@ -1,4 +1,4 @@
-// Copyright (c) 2017 CNRS and LIRIS' Establishments (France).
+// Copyright (c) 2019 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -40,11 +40,9 @@ class Path_on_surface
   friend class Path_on_surface_with_rle<Map_>;
 
 public:
-  typedef Map_ Map;
-  typedef typename Map::Dart_handle Dart_handle;
+  typedef Path_on_surface<Map_>           Self;
+  typedef Map_                            Map;
   typedef typename Map::Dart_const_handle Dart_const_handle;
-
-  typedef Path_on_surface<Map> Self;
 
   Path_on_surface(const Map& amap) : m_map(amap), m_is_closed(false)
   {}
@@ -65,6 +63,8 @@ public:
 
   void swap(Self& p2)
   {
+    if (this==&p2) { return; }
+    
     CGAL_assertion(&m_map==&(p2.m_map));
     m_path.swap(p2.m_path);
     std::swap(m_is_closed, p2.m_is_closed);
@@ -79,6 +79,104 @@ public:
       m_is_closed=other.m_is_closed;
     }
     return *this;
+  }
+
+  /// @return true iff the path is empty
+  bool is_empty() const
+  { return m_path.empty(); }
+
+  /// @return the length of the path, i.e. its number of darts.
+  std::size_t length() const
+  { return m_path.size(); }
+
+  /// @return true iff the path is closed.
+  ///  (m_is_closed is updated after each path modification).
+  bool is_closed() const
+  { return m_is_closed; }
+
+  /// @return the combinatorial map supporting this path.
+  const Map& get_map() const
+  { return m_map; }
+
+  /// clear the path.
+  void clear()
+  {
+    m_path.clear();
+    m_is_closed=false;
+  }
+  
+  /// @return the index after index i.
+  std::size_t next_index(std::size_t i) const
+  { return (is_closed() && i==m_path.size()-1?0:i+1); }
+
+  /// @return the index before index i.
+  std::size_t prev_index(std::size_t i) const
+  { return (is_closed() && i==0?m_path.size()-1:i-1); }
+
+  /// @return the ith dart of the path.
+  Dart_const_handle get_ith_dart(std::size_t i) const
+  {
+    CGAL_assertion(i<m_path.size());
+    return m_path[i];
+  }
+  
+  /// @return the ith dart of the path.
+  Dart_const_handle operator[] (std::size_t i) const
+  { return get_ith_dart(i); }
+
+  /// @return the dart before the ith dart of the path,
+  ///          NULL if such a dart does not exist.
+  Dart_const_handle get_prev_dart(std::size_t i) const
+  {
+    CGAL_assertion(i<m_path.size());
+    if (i==0 && !is_closed()) return NULL;
+    return m_path[prev_index(i)];
+  }
+
+  /// @return the dart after the ith dart of the path,
+  ///          NULL if such a dart does not exist.
+  Dart_const_handle get_next_dart(std::size_t i) const
+  {
+    CGAL_assertion(i<m_path.size());
+    if (i==m_path.size()-1 && !is_closed()) return NULL;
+    return m_path[next_index(i)];
+  }
+
+  /// @return the first dart of the path.
+  /// @pre !is_empty()
+  Dart_const_handle front() const
+  {
+    CGAL_assertion(!is_empty());
+    return m_path.front();
+  }
+  
+  /// @return the last dart of the path.
+  /// @pre !is_empty()
+  Dart_const_handle back() const
+  {
+    CGAL_assertion(!is_empty());
+    return m_path.back();
+  }
+
+  /// @return true iff df can be added at the end of the path.
+  bool can_be_pushed(Dart_const_handle dh) const
+  {
+    if (is_empty()) return true;
+
+    return CGAL::template belong_to_same_cell<Map, 0>
+      (m_map, m_map.other_extremity(back()), dh);
+  }
+  
+  /// Add the given dart at the end of this path.
+  /// @pre can_be_pushed(dh)
+  void push_back(Dart_const_handle dh, bool update_isclosed=true)
+  {
+    CGAL_assertion(dh!=NULL && dh!=m_map.null_dart_handle);
+    /* This assert is too long, it is tested in the is_valid method.
+       CGAL_assertion(can_be_pushed(dh)); */
+
+    m_path.push_back(dh);
+    if (update_isclosed) { update_is_closed(); }
   }
 
   /// @Return true if this path is equal to other path, identifying dart 0 of
@@ -164,26 +262,6 @@ public:
   bool operator!=(const char*  other) const
   { return !(operator==(other)); }
 
-  // @return true iff the path is empty
-  bool is_empty() const
-  { return m_path.empty(); }
-
-  std::size_t length() const
-  { return m_path.size(); }
-
-  // @return true iff the path is closed (update after each path modification).
-  bool is_closed() const
-  { return m_is_closed; }
-
-  const Map& get_map() const
-  { return m_map; }
-
-  void clear()
-  {
-    m_path.clear();
-    m_is_closed=false;
-  }
-  
   void cut(std::size_t n, bool update_isclosed=true)
   {
     if (n>=length()) return;
@@ -191,94 +269,48 @@ public:
     if (update_isclosed) { update_is_closed(); }
   }
 
-  std::size_t next_index(std::size_t i) const
-  { return (is_closed() && i==m_path.size()-1?0:i+1); }
-
-  std::size_t prev_index(std::size_t i) const
-  { return (is_closed() && i==0?m_path.size()-1:i-1); }
-
-  Dart_const_handle get_ith_dart(std::size_t i) const
-  {
-    CGAL_assertion(i<m_path.size());
-    return m_path[i];
-  }
-  
-  Dart_const_handle operator[] (std::size_t i) const
-  { return get_ith_dart(i); }
-
-  Dart_const_handle get_prev_dart(std::size_t i) const
-  {
-    CGAL_assertion(i<m_path.size());
-    if (i==0 && !is_closed()) return NULL;
-    return m_path[prev_index(i)];
-  }
-
-  Dart_const_handle get_next_dart(std::size_t i) const
-  {
-    CGAL_assertion(i<m_path.size());
-    if (i==m_path.size()-1 && !is_closed()) return NULL;
-    return m_path[next_index(i)];
-  }
-
-  Dart_const_handle front() const
-  {
-    CGAL_assertion(!is_empty());
-    return m_path.front();
-  }
-  
-  Dart_const_handle back() const
-  {
-    CGAL_assertion(!is_empty());
-    return m_path.back();
-  }
-  
-  void push_back(Dart_const_handle dh, bool update_isclosed=true)
-  {
-    CGAL_assertion(dh!=NULL && dh!=m_map.null_dart_handle);
-    /* This assert is too long...
-     CGAL_assertion((is_empty() ||
-           CGAL::template belong_to_same_cell<Map, 0>
-           (m_map, m_map.other_extremity(back()), dh))); */
-
-    m_path.push_back(dh);
-    if (update_isclosed) { update_is_closed(); }
-  }
-
-  // @return true iff the path is valid; i.e. a sequence of edges two by
-  //              two adjacent.
+  /// @return true iff the path is valid; i.e. a sequence of edges two by
+  ///              two adjacent.
   bool is_valid() const
   {
     for (unsigned int i=1; i<m_path.size(); ++i)
     {
-      if (!m_map.darts().owns(m_path[i]))
-      { return false; }
+      /* This assert is long if (!m_map.darts().owns(m_path[i]))
+      { return false; } */
 
       if (m_path[i]==NULL || m_path[i]==m_map.null_dart_handle)
       { return false; }
 
       Dart_const_handle pend=m_map.other_extremity(m_path[i-1]);
-      if (pend==Map::null_handle) { return false; }
+      if (pend==Map::null_handle && get_next_dart(i)!=NULL) { return false; }
 
-      if (!CGAL::template belong_to_same_cell<Map,0>(m_map, m_path[i], pend))
+      if (!CGAL::template belong_to_same_cell<Map,0>(m_map, get_next_dart(i), pend))
       { return false; }
     }
     if (is_closed())
     {
-      Dart_const_handle pend=m_map.other_extremity(m_path[m_path.size()-1]);
+      Dart_const_handle pend=m_map.other_extremity(back());
       if (pend==Map::null_handle) { return false; }
-      if (!CGAL::template belong_to_same_cell<Map,0>(m_map, pend, m_path[0]))
+      if (!CGAL::template belong_to_same_cell<Map,0>(m_map, pend, front()))
+      { return false; }
+    }
+    else
+    {
+      Dart_const_handle pend=m_map.other_extremity(back());
+      if (pend==Map::null_handle) { return true; }
+      if (CGAL::template belong_to_same_cell<Map,0>(m_map, pend, front()))
       { return false; }
     }
 
     return true;
   }
 
-  // Update m_is_closed to true iff the path is closed (i.e. the second
-  //   extremity of the last dart of the path is the same vertex than the one
-  //   of the first dart of the path).
+  /// Update m_is_closed to true iff the path is closed (i.e. the second
+  ///   extremity of the last dart of the path is the same vertex than the one
+  ///   of the first dart of the path).
   void update_is_closed()
   {
-    CGAL_assertion(is_valid());
+    // CGAL_assertion(is_valid());
     if (is_empty()) { m_is_closed=false; }
     else
     {
@@ -289,8 +321,8 @@ public:
     }
   }
 
-  // @return true iff the path does not pass twice through a same edge
-  //              or a same vertex.
+  /// @return true iff the path does not pass twice through a same edge
+  ///              or a same vertex.
   bool is_simple() const
   {
     typename Map::size_type markvertex=m_map.get_new_mark();
@@ -300,19 +332,22 @@ public:
     unsigned int i=0;
     for (i=0; res && i<m_path.size(); ++i)
     {
-      if (m_map.is_marked(m_path[i], markvertex)) res=false;
-      if (m_map.is_marked(m_path[i], markedge)) res=false;
+      if (m_map.is_marked(m_path[i], markvertex)) { res=false; }
+      else { CGAL::mark_cell<Map, 0>(m_path[i], markvertex); }
 
-      CGAL::mark_cell<Map, 0>(m_path[i], markvertex);
-      CGAL::mark_cell<Map, 1>(m_path[i], markedge);
+      if (m_map.is_marked(m_path[i], markedge)) { res=false; }
+      else  { CGAL::mark_cell<Map, 1>(m_path[i], markedge); }
     }
 
     i=0;
-    while(m_map.number_of_marked_darts(markedge)>0)
+    while(m_map.number_of_marked_darts(markedge)>0 ||
+          m_map.number_of_marked_darts(markvertex)>0)
     {
       CGAL_assertion(i<m_path.size());
-      CGAL::unmark_cell<Map, 0>(m_path[i], markvertex);
-      CGAL::unmark_cell<Map, 1>(m_path[i], markedge);
+      if (m_map.is_marked(m_path[i], markvertex))
+      { CGAL::unmark_cell<Map, 0>(m_path[i], markvertex); }
+      if (m_map.is_marked(m_path[i], markvertex))
+      { CGAL::unmark_cell<Map, 1>(m_path[i], markedge); }
       ++i;
     }
 
@@ -322,6 +357,7 @@ public:
     return res;
   }
 
+  /// Reverse the path (i.e. negate its orientation).
   void reverse()
   {
     std::vector<Dart_const_handle> new_path(m_path.size());
