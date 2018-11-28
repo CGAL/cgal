@@ -61,9 +61,6 @@ bool write_wrl(std::ostream& os,
       vpm = choose_param(get_param(np, internal_np::vertex_point),
                          get_const_property_map(CGAL::vertex_point, g));
 
-  vertices_size_type nv = static_cast<vertices_size_type>(std::distance(vertices(g).first, vertices(g).second));
-  faces_size_type nf = static_cast<faces_size_type>(std::distance(faces(g).first, faces(g).second));
-
   boost::container::flat_map<vertex_descriptor,vertices_size_type> reindex;
   int n = 0;
   
