@@ -502,6 +502,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
                                  edge_size,
                                  radius_edge,
                                  manifold,
+                                 surface_only,
                                  scene);
   }
 #endif
@@ -527,6 +528,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
                                  radius_edge,
                                  protect_features,
                                  manifold,
+                                 surface_only,
                                  scene,
                                  detect_connected_components,
                                  image_item->isGray(),
