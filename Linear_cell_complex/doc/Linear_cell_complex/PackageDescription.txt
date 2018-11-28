@@ -1,15 +1,15 @@
-/// \defgroup PkgLinearCellComplex Linear Cell Complex Reference
+/// \defgroup PkgLinearCellComplexRef Linear Cell Complex Reference
 
 /// \defgroup PkgLinearCellComplexConcepts Concepts
-/// \ingroup PkgLinearCellComplex
+/// \ingroup PkgLinearCellComplexRef
 
 /// \defgroup PkgLinearCellComplexClasses Classes
-/// \ingroup PkgLinearCellComplex
+/// \ingroup PkgLinearCellComplexRef
 
 /*! Basic constructions.
 */
 /// \defgroup PkgLinearCellComplexConstructions Constructions for Linear Cell Complex
-/// \ingroup PkgLinearCellComplex
+/// \ingroup PkgLinearCellComplexRef
 
 /*! High-level operations.
   \code
@@ -17,7 +17,7 @@
    \endcode
 */
 /// \defgroup PkgLinearCellComplexOperations Operations for Linear Cell Complex
-/// \ingroup PkgLinearCellComplex
+/// \ingroup PkgLinearCellComplexRef
 
 /*! Draw.
   \code
@@ -25,22 +25,22 @@
   \endcode
 */
 /// \defgroup PkgDrawLinearCellComplex Draw a Linear Cell Complex
-/// \ingroup PkgLinearCellComplex
+/// \ingroup PkgLinearCellComplexRef
 
 
 /*!
-\addtogroup PkgLinearCellComplex
-\cgalPkgDescriptionBegin{Linear Cell Complex,PkgLinearCellComplexSummary}
+\addtogroup PkgLinearCellComplexRef
+\cgalPkgDescriptionBegin{Linear Cell Complex,PkgLinearCellComplex}
 \cgalPkgPicture{lcc_logo.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Guillaume Damiand}
 \cgalPkgDesc{This package implements linear cell complexes, objects in <I>d</I>-dimension with linear geometry. The combinatorial part of objects is described either by a combinatorial or a generalized map, representing all the cells of the object plus the incidence and adjacency relations between cells. Geometry is added to the combinatorial data-structure simply by associating a point to each vertex of the map. Taking a 2D combinatorial map, and using 3D points, gives a linear cell complex equivalent to a <I>Polyhedron_3</I>.}
-\cgalPkgManuals{Chapter_Linear_Cell_Complex,PkgLinearCellComplex}
+\cgalPkgManuals{Chapter_Linear_Cell_Complex,PkgLinearCellComplexRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.0}
-\cgalPkgDependsOn{\ref PkgCombinatorialMapsSummary}
-\cgalPkgDependsOn{\ref PkgGeneralizedMapsSummary}
+\cgalPkgDependsOn{\ref PkgCombinatorialMaps}
+\cgalPkgDependsOn{\ref PkgGeneralizedMaps}
 \cgalPkgBib{cgal:d-lcc-12}
 \cgalPkgLicense{\ref licensesLGPL "LGPL"}
 \cgalPkgDemo{3D Linear Cell Complex,linear_cell_complex_3.zip}

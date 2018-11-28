@@ -1392,7 +1392,9 @@ Triangulation_data_structure<Dimen, Vb, Fcb>
     std::size_t i = 0;
     while( i < m )
     {
-        Full_cell_handle s = new_full_cell();
+        Full_cell_handle s = (i==0 && full_cells_.size()==1 )
+                           ? full_cells_begin()
+                           : new_full_cell();
         full_cells.push_back(s);
         for( int j = 0; j <= cd; ++j )
         {

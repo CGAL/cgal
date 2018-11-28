@@ -1,20 +1,20 @@
-/// \defgroup PkgSkinSurface3 3D Skin Surface Meshing Reference
+/// \defgroup PkgSkinSurface3Ref 3D Skin Surface Meshing Reference
 /// \defgroup PkgSkinSurface3Concepts Concepts
-/// \ingroup PkgSkinSurface3
+/// \ingroup PkgSkinSurface3Ref
 
 /*!
-\addtogroup PkgSkinSurface3
+\addtogroup PkgSkinSurface3Ref
 
-\cgalPkgDescriptionBegin{3D Skin Surface Meshing,PkgSkinSurface3Summary}
+\cgalPkgDescriptionBegin{3D Skin Surface Meshing,PkgSkinSurface3}
 \cgalPkgPicture{small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Nico Kruithof}
 \cgalPkgDesc{This package allows to build a triangular mesh of a skin surface.     Skin surfaces are used for modeling large molecules in biological     computing. The surface is defined by a set of balls, representing     the atoms of the molecule, and a shrink factor that determines the     size of the smooth patches gluing the balls together.      The construction of a triangular mesh of a smooth skin surface is     often necessary for further analysis and for fast visualization.     This package provides functions to construct a triangular mesh     approximating the skin surface from a set of balls and a shrink     factor. It also contains code to subdivide the mesh efficiently.     }
-\cgalPkgManuals{Chapter_3D_Skin_Surface_Meshing,PkgSkinSurface3}
+\cgalPkgManuals{Chapter_3D_Skin_Surface_Meshing,PkgSkinSurface3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.3}
-\cgalPkgDependsOn{\ref PkgTriangulation3Summary and \ref PkgPolyhedronSummary}
+\cgalPkgDependsOn{\ref PkgTriangulation3 and \ref PkgPolyhedron}
 \cgalPkgBib{cgal:k-ssm3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgShortInfoEnd

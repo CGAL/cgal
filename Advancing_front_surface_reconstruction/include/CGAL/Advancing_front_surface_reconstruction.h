@@ -175,7 +175,7 @@ namespace CGAL {
 
 
   /*!
-  \ingroup PkgAdvancingFrontSurfaceReconstruction
+  \ingroup PkgAdvancingFrontSurfaceReconstructionRef
 
   The class `Advancing_front_surface_reconstruction` enables advanced users to provide the unstructured
   point cloud in a 3D Delaunay triangulation. The reconstruction algorithm then marks vertices and faces
@@ -389,10 +389,10 @@ namespace CGAL {
 
     Intern_successors_type* new_border()
     {
-      nbe_pool.push_back(Next_border_elt());
+      nbe_pool.resize(nbe_pool.size()+1);
 
       Next_border_elt* p1 = & nbe_pool.back();
-      nbe_pool.push_back(Next_border_elt());
+      nbe_pool.resize(nbe_pool.size()+1);
       Next_border_elt* p2 = & nbe_pool.back();
 
       Intern_successors_type ist(p1,p2);
@@ -2480,7 +2480,7 @@ namespace CGAL {
   }
 
   /*!
-  \ingroup PkgAdvancingFrontSurfaceReconstruction
+  \ingroup PkgAdvancingFrontSurfaceReconstructionRef
 
   For a sequence of points computes a sequence of index triples
   describing the faces of the reconstructed surface.
@@ -2532,7 +2532,7 @@ namespace CGAL {
   }
 
   /*!
-  \ingroup PkgAdvancingFrontSurfaceReconstruction
+  \ingroup PkgAdvancingFrontSurfaceReconstructionRef
 
   For a sequence of points computes a sequence of index triples
   describing the faces of the reconstructed surface.

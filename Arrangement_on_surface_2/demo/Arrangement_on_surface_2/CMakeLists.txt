@@ -9,15 +9,14 @@ if(NOT POLICY CMP0070 AND POLICY CMP0053)
 endif()
 
 find_package(CGAL COMPONENTS Core Qt5 )
-include( ${CGAL_USE_FILE} )
 
 find_package( Qt5 QUIET COMPONENTS Gui Widgets)
 
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
+  include(${CGAL_USE_FILE})
+  
   include_directories( ./ )
   # Arrangement package includes
-  include_directories( BEFORE ../../include )
-
   add_definitions(-DQT_NO_KEYWORDS)
 
   qt5_wrap_ui( arrangement_2_uis

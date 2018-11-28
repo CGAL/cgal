@@ -80,12 +80,18 @@ public:
   QString name() const { return "selection_sm_plugin"; }
   
   bool canLoad() const {
-  Scene_facegraph_item* sel_item = qobject_cast<Scene_facegraph_item*>(CGAL::Three::Three::scene()->item(
-        CGAL::Three::Three::scene()->mainSelectionIndex()));
-  if(sel_item)
-    return true;
-  return false;
+    Scene_item * item = CGAL::Three::Three::scene()->item(
+          CGAL::Three::Three::scene()->mainSelectionIndex());
+    Scene_facegraph_item* fg_item = qobject_cast<Scene_facegraph_item*>(item);
+    if(fg_item)
+      return true;
+    Scene_polyhedron_selection_item* sel_item = 
+        qobject_cast<Scene_polyhedron_selection_item*>(item);
+    if (sel_item)
+      return true;
+    return false;
   }
+
   CGAL::Three::Scene_item* load(QFileInfo fileinfo) {
       if(fileinfo.suffix().toLower() != "txt") return 0;
       // There will be no actual loading at this step.
@@ -891,23 +897,36 @@ public Q_SLOTS:
       qobject_cast<Scene_polyhedron_selection_item*>(scene->item(item_id));
     if(!selection_item) { return; }
 
-    Scene_face_graph_item* poly_item = getSelectedItem<Scene_face_graph_item>();
+    Scene_face_graph_item* poly_item = NULL;
+    if(selection_item->polyhedron_item() == NULL) { //coming from selection_io loader
+      bool found = false;
+      for(int i = 0; i<scene->numberOfEntries(); ++i){
+        poly_item = qobject_cast<Scene_face_graph_item*>(scene->item(i));
+        if(!poly_item)
+          continue;
+        if(!selection_item->actual_load(poly_item, mw)) {
+          continue;
+        }
+        found = true;
+        selection_item->invalidateOpenGLBuffers();
+        scene->itemChanged(selection_item);
+        break;
+      }
+      if(!found)
+      {
+        print_message("Error: loading selection item is not successful!");
+        scene->erase(item_id);
+        return;
+      }
+    } else {
+      poly_item = getSelectedItem<Scene_face_graph_item>();
+    }
     if(!poly_item) {
-      CGAL_assertion(selection_item->polyhedron_item() == NULL); // which means it is coming from selection_io loader
       print_message("Error: please select corresponding polyhedron item from Geometric Objects list.");
       scene->erase(item_id);
       return;
     }
 
-    if(selection_item->polyhedron_item() == NULL) { //coming from selection_io loader
-      if(!selection_item->actual_load(poly_item, mw)) {
-        print_message("Error: loading selection item is not successful!");
-        scene->erase(item_id);
-        return;
-      }
-      selection_item->invalidateOpenGLBuffers();
-      scene->itemChanged(selection_item);
-    }
     // now set default params both for selection items coming from selection_io, or on_Create_selection_item_button_clicked
     Active_handle::Type aht = static_cast<Active_handle::Type>(ui_widget.Selection_type_combo_box->currentIndex());
     bool is_insert = ui_widget.Insertion_radio_button->isChecked();

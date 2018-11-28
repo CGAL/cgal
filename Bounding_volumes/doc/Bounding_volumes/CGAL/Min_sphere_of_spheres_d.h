@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBoundingVolumes
+\ingroup PkgBoundingVolumesRef
 
 An object of the class `Min_sphere_of_spheres_d` is a data structure that represents 
 the unique sphere of smallest volume enclosing a finite set of spheres 

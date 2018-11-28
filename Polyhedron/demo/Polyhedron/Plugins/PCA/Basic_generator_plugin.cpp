@@ -182,42 +182,42 @@ private:
 //show the widget
 void Basic_generator_plugin::on_actionPrism_triggered()
 {
-  dock_widget->show();
+  dock_widget->show(); dock_widget->raise();
   dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(PRISM);
 }
 void Basic_generator_plugin::on_actionSphere_triggered()
 {
-  dock_widget->show();
+  dock_widget->show(); dock_widget->raise();
   dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(SPHERE);
 }
 void Basic_generator_plugin::on_actionPyramid_triggered()
 {
-  dock_widget->show();
+  dock_widget->show(); dock_widget->raise();
   dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(PYRAMID);
 }
 void Basic_generator_plugin::on_actionHexahedron_triggered()
 {
-  dock_widget->show();
+  dock_widget->show(); dock_widget->raise();
   dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(HEXAHEDRON);
 }
 void Basic_generator_plugin::on_actionTetrahedron_triggered()
 {
-  dock_widget->show();
+  dock_widget->show(); dock_widget->raise();
   dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(TETRAHEDRON);
 }
 void Basic_generator_plugin::on_actionGrid_triggered()
 {
-  dock_widget->show();
+  dock_widget->show(); dock_widget->raise();
   dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(GRID);
 }
 void Basic_generator_plugin::on_actionPointSet_triggered()
 {
-  dock_widget->show();
+  dock_widget->show(); dock_widget->raise();
   dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(POINT_SET);
 }
 void Basic_generator_plugin::on_actionPolyline_triggered()
 {
-  dock_widget->show();
+  dock_widget->show(); dock_widget->raise();
   dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(POLYLINE);
 }
 void Basic_generator_plugin::on_tab_changed()
@@ -553,7 +553,7 @@ void Basic_generator_plugin::generateSphere()
   //emplace the points back on the sphere
   BOOST_FOREACH(typename boost::graph_traits<typename Facegraph_item::Face_graph>::vertex_descriptor vd, vertices(sphere))
   {
-    Kernel::Vector_3 vec(get(vpmap, vd), center);
+    Kernel::Vector_3 vec(center, get(vpmap, vd));
     vec = radius*vec/CGAL::sqrt(vec.squared_length());
     put(vpmap, vd, Kernel::Point_3(center.x() + vec.x(),
                                    center.y() + vec.y(),
@@ -742,11 +742,11 @@ struct Point_generator
                   const Point& ur)
     :w(w), h(h), bl(bl), ur(ur)
   {}
-  Point operator()(std::size_t i, std::size_t j, std::size_t k) const
+  Point operator()(std::size_t i, std::size_t j) const
   {
     return Point(bl.x() + i*(ur.x()-bl.x())/(w-1),
                  bl.y() + j*(ur.y()-bl.y())/(h-1),
-                 k);
+                 0);
   }
 };
 template<class Facegraph_item>

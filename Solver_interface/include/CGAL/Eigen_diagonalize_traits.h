@@ -39,7 +39,7 @@
 
 namespace CGAL {
 
-/// \ingroup PkgSolver
+/// \ingroup PkgSolverInterfaceRef
 ///
 /// The class `Eigen_diagonalize_traits` provides an interface to the
 /// diagonalization of covariance matrices of \ref thirdpartyEigen
@@ -156,6 +156,15 @@ public:
 
         for(std::size_t j=0; j<dim; ++j)
           eigenvectors[dim*i + j] = static_cast<FT>(eigenvectors_(j,i));
+      }
+    }
+    else{
+      for(std::size_t i=0; i<dim; ++i)
+      {
+        eigenvalues[i] = static_cast<FT>(0.);
+
+        for(std::size_t j=0; j<dim; ++j)
+          eigenvectors[dim*i + j] = static_cast<FT>(0.);
       }
     }
 

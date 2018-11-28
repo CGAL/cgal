@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgOptimalDistancesConcepts
+\ingroup PkgPolytopeDistanceDConcepts
 \cgalConcept
 
 This concept defines the requirements for traits classes of \f$ d\f$-dimensional 

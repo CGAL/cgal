@@ -15,10 +15,8 @@ pushd AABB_tree_Demo;                   zip ../AABB_demo.zip          *    ;    
 pushd Alpha_shapes_3_Demo;              zip ../alpha_shape_3.zip      *    ;      popd
 pushd Bounding_volumes_Demo;            zip ../bounding_volumes_2.zip *    ;      popd
 pushd Circular_kernel_2_Demo;           zip ../circular_kernel.zip    *    ;      popd
-pushd Mesh_3_Demo;                      zip -r ../mesh_3.zip          *    ;      popd
 pushd Periodic_3_triangulation_3_Demo;  zip ../periodic_3_triangulation_3.zip *;  popd
 pushd Periodic_Lloyd_3_Demo;            zip ../periodic_3_lloyd.zip *;            popd
-pushd Polygon_Demo;                     zip ../polygon.zip *               ;      popd
 pushd Polyhedron_Demo;                  zip -r ../polyhedron_3.zip *       ;      popd
 pushd Segment_Delaunay_graph_2_Demo;    zip ../segment_voronoi_diagram_2.zip *;   popd
 pushd Surface_mesher_Demo;              zip ../surface_mesher.zip *;              popd
@@ -27,9 +25,6 @@ pushd Triangulation_2_Demo;
   zip ../constrained_delaunay_triangulation_2.zip Constrained_Delaunay_triangulation_2.exe
   zip ../delaunay_triangulation_2.zip Delaunay_triangulation_2.exe
 popd
-
-# CGAL<3.8 but was forgot
-pushd Principal_component_analysis_Demo;    zip ../pca.zip *; popd
 
 # CGAL-3.8
 pushd Largest_empty_rect_2_Demo;        zip ../largest_empty_rect_2.zip *;           popd

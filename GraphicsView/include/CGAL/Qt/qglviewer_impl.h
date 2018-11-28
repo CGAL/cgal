@@ -3164,9 +3164,7 @@ void CGAL::QGLViewer::drawVisualHints() {
   int size = 100;
   glViewport(width()*devicePixelRatio()-size, height()*devicePixelRatio()-size, size, size);
   glScissor (width()*devicePixelRatio()-size, height()*devicePixelRatio()-size, size, size);
-  glDisable(GL_DEPTH_TEST);
   glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(axis_size / 9));
-  glEnable(GL_DEPTH_TEST);
   // The viewport and the scissor are restored.
   glScissor(scissor[0],scissor[1],scissor[2],scissor[3]);
   glViewport(viewport[0],viewport[1],viewport[2],viewport[3]);

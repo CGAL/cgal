@@ -309,7 +309,7 @@ void isotropic_remeshing(
 * @param edges the range of edges to be split if they are longer than given threshold
 * @param max_length the edge length above which an edge from `edges` is split
 *        into to sub-edges
-* @param np optional \ref pmp_namedparameters "Named Parameters" described below
+* @param np optional \ref pmp_namedparameters "Named Parameters", amongst those described below
 
 * \cgalNamedParamsBegin
 *  \cgalParamBegin{vertex_point_map} the property map with the points associated

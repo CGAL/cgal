@@ -13,7 +13,6 @@
 #include <QAction>
 #include <QMenu>
 #include <QMainWindow>
-#include <QDockWidget>
 #include <QApplication>
 #include <QTime>
 #include <QMessageBox>
@@ -98,8 +97,11 @@ private:
     QApplication::setOverrideCursor(Qt::WaitCursor);
     item->face_graph()->collect_garbage();
     item->color_vector().clear();
-    if(!item->hasPatchIds())
+    if(!item->hasPatchIds()){
       item->setItemIsMulticolor(true);
+      item->computeItemColorVectorAutomatically(true);
+    }
+    
     typedef boost::property_map<FaceGraph,CGAL::face_patch_id_t<int> >::type PatchIDMap;
     FaceGraph* fg =item->face_graph();
     boost::property_map<FaceGraph, boost::vertex_index_t>::type 

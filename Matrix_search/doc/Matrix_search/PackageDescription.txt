@@ -1,17 +1,17 @@
-/// \defgroup PkgMatrixSearch Monotone and Sorted Matrix Search Reference
+/// \defgroup PkgMatrixSearchRef Monotone and Sorted Matrix Search Reference
 
 /// \defgroup PkgMatrixSearchConcepts Concepts
-/// \ingroup PkgMatrixSearch
+/// \ingroup PkgMatrixSearchRef
 
 /*!
-\addtogroup PkgMatrixSearch
+\addtogroup PkgMatrixSearchRef
 \todo check generated documentation
-\cgalPkgDescriptionBegin{Monotone and Sorted Matrix Search,PkgMatrixSearchSummary}
+\cgalPkgDescriptionBegin{Monotone and Sorted Matrix Search,PkgMatrixSearch}
 \cgalPkgPicture{matrix.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Michael Hoffmann}
 \cgalPkgDesc{This package provides a matrix search framework, which is the underlying technique for the computation of all furthest neighbors for the vertices of a convex polygon,  maximal k-gons inscribed into a planar point set, and computing rectangular p-centers.}
-\cgalPkgManuals{Chapter_Monotone_and_Sorted_Matrix_Search,PkgMatrixSearch}
+\cgalPkgManuals{Chapter_Monotone_and_Sorted_Matrix_Search,PkgMatrixSearchRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{1.1}

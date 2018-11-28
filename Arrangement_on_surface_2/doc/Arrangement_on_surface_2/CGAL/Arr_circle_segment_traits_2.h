@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2TraitsClasses
+\ingroup PkgArrangementOnSurface2TraitsClasses
 
 The class `Arr_circle_segment_traits_2` is a model of the `ArrangementTraits_2` concept 
 and can be used to construct and maintain arrangements of circular arcs 

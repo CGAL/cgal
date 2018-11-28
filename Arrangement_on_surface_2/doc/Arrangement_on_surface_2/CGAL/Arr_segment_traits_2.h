@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2TraitsClasses
+\ingroup PkgArrangementOnSurface2TraitsClasses
 
 The traits class `Arr_segment_traits_2` is a model of the `ArrangementTraits_2`
 concept, which allows the construction and maintenance of arrangements of

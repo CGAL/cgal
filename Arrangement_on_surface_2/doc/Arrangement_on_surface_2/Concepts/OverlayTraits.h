@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgArrangement2ConceptsTraits
+\ingroup PkgArrangementOnSurface2ConceptsTraits
 \cgalConcept
 
 A model for the `OverlayTraits` should be able to operate on records (namely, 

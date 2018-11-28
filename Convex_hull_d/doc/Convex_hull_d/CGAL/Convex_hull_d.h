@@ -1,9 +1,9 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgConvexHullD
+\ingroup PkgConvexHullDRef
 
-\deprecated This package is deprecated since the version 4.6 of \cgal. The package \ref PkgTriangulationsSummary should be used instead.
+\deprecated This package is deprecated since the version 4.6 of \cgal. The package \ref PkgTriangulations should be used instead.
 
 An instance `C` of type `Convex_hull_d<R>` is the convex hull
 of a multi-set `S` of points in \f$ d\f$-dimensional space. We call

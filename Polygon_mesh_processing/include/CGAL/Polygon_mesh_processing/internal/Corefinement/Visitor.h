@@ -208,7 +208,8 @@ private:
 public:
   Surface_intersection_visitor_for_corefinement(
     UserVisitor& uv, OutputBuilder& o, const EdgeMarkMapBind& emm)
-    : user_visitor(uv)
+    : number_coplanar_vertices(0)
+    , user_visitor(uv)
     , output_builder(o)
     , marks_on_edges(emm)
     , input_with_coplanar_faces(false)
