@@ -14,9 +14,10 @@ typedef K::Point_2 Point_2;
 typedef std::deque<Point_2> Polyline_2;
 typedef PS::Stop_above_cost_threshold Stop;
 typedef PS::Squared_distance_cost Cost;
-
+#endif
 int main(int argc, char* argv[])
 {
+  #if BOOST_VERSION >= 105600
   Polyline_2 polyline;
   std::ifstream ifs( (argc==1)?"data/polyline.wkt":argv[1]);
   CGAL::read_linestring_WKT(ifs, polyline);
@@ -28,6 +29,6 @@ int main(int argc, char* argv[])
   for(std::size_t i=0; i < result.size(); ++i){
     std::cout << result[i] << std::endl;
   }
+#endif
   return 0;
 }
-#endif

@@ -29,5 +29,11 @@ int main(int argc, char* argv[])
     std::cout<<p<<std::endl;
   }
   is.close();
+  return 0;
+}
+#else
+int main()
+{
+  return 0;
 }
 #endif

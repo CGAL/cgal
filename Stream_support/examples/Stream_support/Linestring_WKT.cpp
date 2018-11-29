@@ -38,6 +38,11 @@ int main(int argc, char* argv[])
     BOOST_FOREACH(const Point& p, l)
         std::cout<<p<<std::endl;
   }
-  
+  return 0;
+}
+#else
+int main()
+{
+  return 0;
 }
 #endif

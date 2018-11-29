@@ -14,9 +14,10 @@ typedef CGAL::Polygon_2<K>                   Polygon_2;
 typedef CGAL::Polygon_with_holes_2<K>        Polygon_with_holes_2;
 typedef PS::Stop_below_count_ratio_threshold Stop;
 typedef PS::Squared_distance_cost            Cost;
-
+#endif
 int main(int argc, char* argv[])
 {
+  #if BOOST_VERSION >= 105600
   std::ifstream ifs( (argc==1)?"data/polygon.wkt":argv[1]);
   Polygon_with_holes_2 polygon;
   CGAL::read_polygon_WKT(ifs, polygon);
@@ -26,8 +27,6 @@ int main(int argc, char* argv[])
   std::cout.precision(12);
   CGAL::write_polygon_WKT(std::cout, polygon) << std::endl;
 
+#endif
   return 0;
 }
-#endif
-
-
