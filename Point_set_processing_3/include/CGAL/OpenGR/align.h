@@ -25,8 +25,9 @@
 
 #include <boost/type_traits/is_same.hpp>
 
-#include <super4pcs/algorithms/super4pcs.h>
-#include <super4pcs/utils/geometry.h>
+#include <gr/algorithms/FunctorSuper4pcs.h>
+#include <gr/algorithms/PointPairFilter.h>
+#include <gr/utils/geometry.h>
 
 #include <Eigen/Dense>
 
@@ -36,6 +37,11 @@
 namespace CGAL {
 
 namespace OpenGR {
+
+typedef gr::Match4pcsBase<gr::FunctorSuper4PCS,
+                          gr::DummyTransformVisitor,
+                          gr::AdaptivePointFilter,
+                          gr::AdaptivePointFilter::Options>::OptionsType Options;
 
 namespace internal {
 
@@ -50,20 +56,27 @@ double
 align(const PointRange1& range1,    PointRange2& range2,
             PointMap1 point_map1,   PointMap2 point_map2,
             VectorMap1 vector_map1, VectorMap2 vector_map2,
-            GlobalRegistration::Match4PCSOptions& options)
+            Options& options)
 {
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Vector_3 Vector_3;
-  namespace GR=GlobalRegistration;
+  namespace GR=gr;
 
   std::vector<GR::Point3D> set1, set2;
   std::vector<GR::Point3D::VectorType> normals1, normals2;
 
-  typedef GR::Sampling::UniformDistSampler SamplerType;
-  SamplerType sampler;
+  // TODO: see if should allow user to change those types
+  typedef Eigen::Matrix<gr::Point3D::Scalar, 4, 4> MatrixType;
+  typedef gr::UniformDistSampler SamplerType;
+  typedef gr::DummyTransformVisitor TrVisitorType;
+  typedef gr::Match4pcsBase<gr::FunctorSuper4PCS,
+                            TrVisitorType,
+                            gr::AdaptivePointFilter,
+                            gr::AdaptivePointFilter::Options> MatcherType;
 
-  // prepare matcher ressources
-  GR::Match4PCSBase::MatrixType mat (GR::Match4PCSBase::MatrixType::Identity());
+  MatrixType mat (MatrixType::Identity());
+  SamplerType sampler;
+  TrVisitorType visitor;
 
   // copy points and normal
   const std::size_t nbpt1 = range1.size();
@@ -93,14 +106,11 @@ align(const PointRange1& range1,    PointRange2& range2,
   // logger
   GR::Utils::Logger logger(GR::Utils::NoLog);
 
-  // TODO add alternative?
-  GR::MatchSuper4PCS matcher(options, logger);
-  // TODO: add as a named parameter?
-  GR::Match4PCSBase::DummyTransformVisitor visitor;
-
-  // Match and return the score (estimated overlap or the LCP).
+  // matcher
+  MatcherType matcher(options, logger);
   double score =
-    matcher.ComputeTransformation(set1, &set2, mat, sampler, visitor );
+    matcher.ComputeTransformation(set1, set2, mat, sampler, visitor);
+  gr::Utils::TransformPointCloud( set2, mat);
 
   CGAL_assertion(mat.coeff(3,0) == 0);
   CGAL_assertion(mat.coeff(3,1) == 0);
@@ -137,7 +147,7 @@ align(const PointRange1& point_set_1, PointRange2& point_set_2,
       const NamedParameters1& np1, const NamedParameters2& np2)
 {
   namespace PSP = CGAL::Point_set_processing_3;
-  namespace GR = GlobalRegistration;
+  namespace GR = gr;
   using boost::choose_param;
   using boost::get_param;
 
@@ -161,8 +171,7 @@ align(const PointRange1& point_set_1, PointRange2& point_set_2,
   PointMap1 point_map2 = choose_param(get_param(np2, internal_np::point_map), PointMap2());
   NormalMap2 normal_map2 = choose_param(get_param(np2, internal_np::normal_map), NormalMap2());
 
-  GR::Match4PCSOptions options = choose_param(get_param(np1, internal_np::opengr_options),
-                                              GR::Match4PCSOptions());
+  Options options = choose_param(get_param(np1, internal_np::opengr_options), Options());
 
   return internal::align<Kernel>(point_set_1, point_set_2,
                                  point_map1, point_map2,
