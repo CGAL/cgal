@@ -107,6 +107,15 @@ public:
   Gmpq(unsigned long n)
   { mpq_set_ui(mpq(), n, 1); }
 
+
+#ifdef CGAL_CXX11
+  // https://en.cppreference.com/w/cpp/language/rule_of_three#Rule_of_five
+  Gmpq(const Gmpq&) = default;
+  Gmpq(Gmpq&&) = default;
+  Gmpq& operator=(const Gmpq&) = default;
+  Gmpq& operator=(Gmpq&&) = default;
+#endif // CGAL_CXX11
+
 private:
   void init_ull(unsigned long long n){
       CGAL_assertion(sizeof(long)==4 && sizeof(long long)==8);
