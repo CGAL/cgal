@@ -321,8 +321,8 @@ MainWindow::on_actionSaveSegments_triggered()
         mls.push_back(ls);
       }
       CGAL::write_multi_linestring_WKT(ofs, mls);
-    }
 #endif
+    }
     else
       std::copy(input.begin(), input.end(),  std::ostream_iterator<Segment_2>(ofs, "\n"));
   }
