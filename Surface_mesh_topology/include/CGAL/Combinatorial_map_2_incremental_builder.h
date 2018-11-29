@@ -1,4 +1,4 @@
-// Copyright (c) 2011 CNRS and LIRIS' Establishments (France).
+// Copyright (c) 2019 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -18,12 +18,13 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-#ifndef CGAL_COMBINATORIAL_MAP_INCREMENTAL_BUILDER_H
-#define CGAL_COMBINATORIAL_MAP_INCREMENTAL_BUILDER_H 1
+#ifndef CGAL_COMBINATORIAL_MAP_2_INCREMENTAL_BUILDER_H
+#define CGAL_COMBINATORIAL_MAP_2_INCREMENTAL_BUILDER_H 1
 
 #include <vector>
 #include <unordered_map>
 #include <cstddef>
+#include <CGAL/Path_on_surface.h>
 
 namespace CGAL {
   struct Combinatorial_map_tag;
@@ -81,41 +82,66 @@ namespace CGAL {
 
   // Incremental builder
   template < class CMap_ >
-  class Combinatorial_map_incremental_builder
+  class Combinatorial_map_2_incremental_builder
   {
   public:
-    typedef CMap_                      CMap;
-    typedef typename CMap::Dart_handle Dart_handle;
-    typedef typename CMap::size_type   size_type;
+    typedef CMap_                            CMap;
+    typedef typename CMap::Dart_handle       Dart_handle;
+    typedef typename CMap::Dart_const_handle Dart_const_handle;
+    typedef typename CMap::size_type         size_type;
 
-    Combinatorial_map_incremental_builder(CMap & acmap) :
+    Combinatorial_map_2_incremental_builder(CMap & acmap) :
       cmap(acmap),
       first_dart(cmap.null_handle),
       prev_dart(cmap.null_handle),
       used_add_vertex(false),
-      used_add_edge(false)
+      used_add_edge(false),
+      facet_started(false),
+      path_started(false),
+      m_cur_path(acmap)
     {}
 
+    /// Start a new facet.
     void begin_facet()
     {
+      if (facet_started)
+      {
+        std::cerr<<"Combinatorial_map_incremental_builder ERROR: "
+                 <<"you try to start a facet"
+                 <<" but the previous facet is not yet ended."<<std::endl;
+        return;
+      }
+
       first_dart = cmap.null_handle;
       prev_dart  = cmap.null_handle;
+      facet_started=true;
       // std::cout<<"Begin facet: "<<std::flush;
     }
 
+    /// Add vertex 'i' in the current facet.
     void add_vertex_to_facet(size_type i)
     {
+      if (!facet_started)
+      {
+        std::cerr<<"Combinatorial_map_incremental_builder ERROR: "
+                 <<"you try to add a vertex to a facet"
+                 <<" but the facet is not yet started."<<std::endl;
+        return;
+      }
+
       if (used_add_edge)
       {
-        std::cerr<<"Combinatorial_map_incremental_builder ERROR: you cannot mix add_edge_to_facet"
+        std::cerr<<"Combinatorial_map_incremental_builder ERROR: "
+                 <<"you cannot mix add_edge_to_facet"
                  <<" and add_vertex_to_facet for a same builder."<<std::endl;
         return;
       }
       used_add_vertex=true;
-        
-      CGAL_assertion( i<new_vertices );
+      if (i>=vertex_to_dart_map.size())
+      { vertex_to_dart_map.resize(i+1); }
+
       // std::cout<<i<<"  "<<std::flush;
-      Dart_handle cur = Add_vertex_to_face<CMap>::run(cmap, prev_dart);
+      Dart_handle cur=Add_vertex_to_face<CMap>::run(cmap, prev_dart);
 
       if ( prev_dart!=cmap.null_handle )
       {
@@ -130,20 +156,28 @@ namespace CGAL {
       }
       else
       {
-        first_dart   = cur;
-        first_vertex = i;
+        first_dart  =cur;
+        first_vertex=i;
       }
 
-      prev_dart   = cur;
-      prev_vertex = i;
+      prev_dart  =cur;
+      prev_vertex=i;
     }
 
-    // Add one edge to the current facet, given by its label (any string, using minus sign for orientation) 
+    /// Add one edge to the current facet, given by its label (any string, using minus sign for orientation)
     void add_edge_to_facet(const std::string& s)
     {
+      if (!facet_started)
+      {
+        std::cerr<<"Combinatorial_map_incremental_builder ERROR: "
+                 <<"you try to add an edge to a facet"
+                 <<" but the facet is not yet started."<<std::endl;
+        return;
+      }
       if (used_add_vertex)
       {
-        std::cerr<<"Combinatorial_map_incremental_builder ERROR: you cannot mix add_edge_to_facet"
+        std::cerr<<"Combinatorial_map_incremental_builder ERROR: "
+                 <<"you cannot mix add_edge_to_facet"
                  <<" and add_vertex_to_facet for a same builder."<<std::endl;
         return;
       }
@@ -153,12 +187,12 @@ namespace CGAL {
                                               // we cannot use a same edge twice.
 
       Dart_handle cur = Add_vertex_to_face<CMap>::run(cmap, prev_dart);
-      auto ite=edge_label_to_dart.find(opposite_label(s));
+      Dart_handle opposite=find_dart_with_label(opposite_label(s));
 
-      if (ite!=edge_label_to_dart.end())
+      if (opposite!=NULL)
       {
-        CGAL_assertion( cmap.template is_free<2>(ite->second) );
-        cmap.template set_opposite<2>(cur, ite->second);
+        CGAL_assertion(cmap.template is_free<2>(opposite));
+        cmap.template set_opposite<2>(cur, opposite);
       }
 
       edge_label_to_dart[s]=cur;
@@ -169,28 +203,48 @@ namespace CGAL {
       prev_dart=cur;
     }
 
-    // add the given edges to the current facet
-    // s is a sequence of labels, add all the corresponding edges into the current facet.
+    /// add the given edges to the current facet
+    /// s is a sequence of labels, add all the corresponding edges into the current facet.
     void add_edges_to_facet(const std::string& s)
     {
+      if (!facet_started)
+      {
+        std::cerr<<"Combinatorial_map_incremental_builder ERROR: "
+                 <<"you try to add edges to a facet"
+                 <<" but the facet is not yet started."<<std::endl;
+        return;
+      }
       std::istringstream iss(s);
       for (std::string token; std::getline(iss, token, ' '); )
       { add_edge_to_facet(token); }
     }
       
-    // add one facet, s is a sequence of labels, add all the corresponding edges into a new facet.
+    /// add one facet, s is a sequence of labels, add all the corresponding edges into a new facet.
     void add_facet(const std::string& s)
     {
+      if (facet_started)
+      {
+        std::cerr<<"Combinatorial_map_incremental_builder ERROR: "
+                 <<"you try to add a new facet"
+                 <<" but the previous facet is not yet ended."<<std::endl;
+        return;
+      }
       begin_facet();
       add_edges_to_facet(s);
       end_facet();
     }
 
-    // End of the facet. Return the first dart of this facet.
+    /// End of the facet. Return the first dart of this facet.
     Dart_handle end_facet()
     {
+      if (!facet_started)
+      {
+        std::cerr<<"Combinatorial_map_incremental_builder ERROR: "
+                 <<"you try to end a facet"
+                 <<" but the facet is not yet started."<<std::endl;
+        return NULL;
+      }
       CGAL_assertion( first_dart!=cmap.null_handle && prev_dart!=cmap.null_handle );
-
       if (used_add_vertex)
       {
         Add_vertex_to_face<CMap>::run_for_last(cmap, prev_dart);
@@ -210,35 +264,155 @@ namespace CGAL {
         cmap.set_next(prev_dart, first_dart);
       }
       
+      facet_started=false;
       return first_dart;
     }
 
-    void begin_surface( std::size_t v, std::size_t /*f*/, std::size_t h)
+    /// Start a new surface
+    void begin_surface()
     {
-      new_vertices  = 0;
+      if (facet_started) { end_facet(); }
+
       first_dart    = cmap.null_handle;
       prev_dart     = cmap.null_handle;
 
       vertex_to_dart_map.clear();
-      vertex_to_dart_map.reserve(v);
-
       edge_label_to_dart.clear();
-      edge_label_to_dart.reserve(h/2);
       
       used_add_vertex=false;
       used_add_edge=false;
-      
-      // cmap.reserve(v,h);
     }
 
-    // End of the surface. Return one dart of the created surface.
+    /// End of the surface. Return one dart of the created surface.
     Dart_handle end_surface()
     { return first_dart; }
 
-  protected:
+    /// Start a path on the surface
+    void start_path()
+    {
+      if (path_started)
+      {
+        std::cerr<<"Combinatorial_map_incremental_builder ERROR: "
+                 <<"you try to start a path"
+                 <<" but the previous path is not yet ended."<<std::endl;
+        return;
+      }
+      path_started=true;
+      m_first_path_vertex=true;
+      m_cur_path.clear();
+    }
 
+    /// Add vertex with id i at the end of the current path
+    void add_vertex_to_path(size_type i)
+    {
+      if (!path_started)
+      {
+        std::cerr<<"Combinatorial_map_incremental_builder ERROR: "
+                 <<"you try to add a vertex to a path"
+                 <<" but the path is not yet started."<<std::endl;
+        return;
+      }
+      if (used_add_edge)
+      {
+        std::cerr<<"Combinatorial_map_incremental_builder ERROR: "
+                 <<"you cannot use add_vertex_to_path with a "
+                 <<"combinatorial map built by adding edges."<<std::endl;
+        return;
+      }
+
+      if (m_first_path_vertex)
+      {
+        path_prev_vertex=i;
+        m_first_path_vertex=false;
+      }
+      else
+      {
+        Dart_const_handle dh=find_dart_between(path_prev_vertex, i);
+        if (dh==NULL)
+        {
+          std::cerr<<"Combinatorial_map_incremental_builder ERROR: "
+                   <<"edge ("<<path_prev_vertex<<", "<<i<<") does not exists "
+                   <<"and thus cannot be added in the path."<<std::endl;
+          return;
+        }
+        CGAL_assertion(m_cur_path.can_be_pushed(dh));
+        m_cur_path.push_back(dh);
+        path_prev_vertex=i;
+      }
+    }
+
+    /// Add edge labeled e at the end of the current path
+    void add_edge_to_path(const std::string& e)
+    {
+      if (!path_started)
+      {
+        std::cerr<<"Combinatorial_map_incremental_builder ERROR: "
+                 <<"you try to add an edge to a path"
+                 <<" but the path is not yet started."<<std::endl;
+        return;
+      }
+      if (used_add_vertex)
+      {
+        std::cerr<<"Combinatorial_map_incremental_builder ERROR: "
+                 <<"you cannot use add_edge_to_path with a "
+                 <<"combinatorial map built by adding vertices."<<std::endl;
+        return;
+      }
+
+      Dart_const_handle dh=find_dart_with_label(e);
+      if (dh==NULL)
+      {
+        std::cerr<<"Combinatorial_map_incremental_builder ERROR: "
+                 <<"edge labeled ("<<e<<") does not exists "
+                 <<"and thus cannot be added in the path."<<std::endl;
+        return;
+      }
+
+      if (!m_cur_path.can_be_pushed(dh))
+      {
+        std::cerr<<"Combinatorial_map_incremental_builder ERROR: "
+                 <<"edge labeled ("<<e<<") is not adjacent to the previous "
+                 <<"edge of the path and thus cannot be added."<<std::endl;
+        return;
+      }
+      m_cur_path.push_back(dh);
+    }
+
+    /// End the current path
+    CGAL::Path_on_surface<CMap> end_path()
+    {
+      if (!path_started)
+      {
+        std::cerr<<"Combinatorial_map_incremental_builder ERROR: "
+                 <<"you try to end a path"
+                 <<" but the path is not yet started."<<std::endl;
+        return m_cur_path;
+      }
+      path_started=false;
+      return m_cur_path;
+    }
+
+    /// A shortcut allowing to create a path directly with a sequence
+    /// of vertex ids, if the map was built by adding vertices
+    /// or edge labels, if the map was built by adding edges
+    CGAL::Path_on_surface<CMap> create_path(const std::string& s)
+    {
+      start_path();
+
+      std::istringstream iss(s);
+      for (std::string token; std::getline(iss, token, ' '); )
+      { add_edge_to_path(token); }
+
+      return end_path();
+    }
+
+  protected:
+    /// @return dart between vertices i and j, NULL if this dart does not exist
+    ///   can be used only if the current map is created by adding vertices
     Dart_handle find_dart_between(size_type i, size_type j)
     {
+      if (i>=vertex_to_dart_map.size()) { return NULL; }
+
       typename std::vector<std::pair<Dart_handle, size_type> >::reverse_iterator
         it(vertex_to_dart_map[i].rbegin());
       typename std::vector<std::pair<Dart_handle, size_type> >::reverse_iterator
@@ -251,12 +425,16 @@ namespace CGAL {
       return cmap.null_handle;
     }
 
+    /// Add dart adart between vertices i and j.
+    ///   can be used only if the current map is created by adding vertices
     void add_dart_in_vertex_to_dart_map(Dart_handle adart, size_type i, size_type j)
     {
       CGAL_assertion( adart!=cmap.null_handle );
       vertex_to_dart_map[i].push_back(std::make_pair(adart, j));
     }
 
+    /// @return opposite label of label s
+    ///    (i.e. add/remove - depending if s is positive or negative)
     std::string opposite_label(const std::string & s)
     {
       assert(!s.empty());
@@ -266,7 +444,18 @@ namespace CGAL {
       return std::string("-")+s;
     }
     
-  private:
+    /// @return dart with the given label, NULL if this dart does not exist
+    ///   can be used only if the current map is created by adding edges
+    Dart_handle find_dart_with_label(const std::string & s)
+    {
+      auto ite=edge_label_to_dart.find(s);
+      if (ite==edge_label_to_dart.end())
+      { return NULL; }
+
+      return ite->second;
+    }
+
+  protected:
     // For vertex number i, vector of all vertices linked to i with an edge (dart of the edge and index
     // of the second vertex). TODO use a std::unordered_map instead of the second vector
     typedef std::vector<std::vector<std::pair<Dart_handle, size_type> > > Vertex_to_dart_array;
@@ -280,12 +469,16 @@ namespace CGAL {
     Dart_handle prev_dart;
     size_type   first_vertex;
     size_type   prev_vertex;
-    size_type   new_vertices;
     bool        used_add_vertex;
     bool        used_add_edge;
+    bool        facet_started;
+    bool        path_started;
+    CGAL::Path_on_surface<CMap> m_cur_path;
+    size_type   path_prev_vertex;
+    bool m_first_path_vertex;
   };
 
 } //namespace CGAL
 
-#endif // CGAL_COMBINATORIAL_MAP_INCREMENTAL_BUILDER_H //
+#endif // CGAL_COMBINATORIAL_MAP_2_INCREMENTAL_BUILDER_H //
 // EOF //

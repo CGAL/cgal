@@ -160,8 +160,10 @@ int main(int argc, char** argv)
     { std::cout<<"TEST OK: pathes are isotopic (path length="
               <<transformed_path1.length()<<")."<<std::endl; }
 
+#ifdef CGAL_USE_BASIC_VIEWER
     if (draw)
     { display(lcc, paths); }
+#endif
   }
 
   return EXIT_SUCCESS;

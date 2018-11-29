@@ -12,7 +12,7 @@
 
 #include <CGAL/Path_generators.h>
 #include <CGAL/Path_on_surface.h>
-#include <CGAL/Creation_of_test_cases_for_paths.h>
+#include "Creation_of_test_cases_for_paths.h"
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3> LCC_3_cmap;
 typedef CGAL::Linear_cell_complex_for_generalized_map<2,3> LCC_3_gmap;
