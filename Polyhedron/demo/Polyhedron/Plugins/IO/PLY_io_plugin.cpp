@@ -19,7 +19,7 @@ class Polyhedron_demo_ply_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0" FILE "ply_io_plugin.json")
 
 public:
   bool isDefaultLoader(const CGAL::Three::Scene_item *item) const 

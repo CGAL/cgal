@@ -16,6 +16,7 @@
 #include <QFileInfo>
 #include <QStringList>
 #include <QSet>
+#include <QMap>
 #include <QModelIndex>
 #include <QMdiSubWindow>
 #include <QLineEdit>
@@ -78,7 +79,7 @@ public:
    * Then it creates and initializes the scene and do the
    * connexions with the UI. Finally it loads the plugins.*/
 
-  MainWindow(bool verbose = false,QWidget* parent = 0);
+  MainWindow(const QStringList& keywords, bool verbose = false,QWidget* parent = 0);
   ~MainWindow();
 
   /*! Finds an IO plugin.
@@ -406,7 +407,7 @@ private:
   void setMenus(QString, QString, QAction *a);
   /// plugin black-list
   QSet<QString> plugin_blacklist;
-  QMap<QString, std::vector<QString> > PathNames_map; //For each non-empty plugin directory, contains a vector of plugin names
+  QMap<QString, QString > PathNames_map; //For each non-empty plugin directory, contains a vector of plugin names
   QMap<QString, QString > pluginsStatus_map; //For each non-empty plugin directory, contains a vector of plugin names
   Scene* scene;
   Viewer* viewer;
@@ -453,6 +454,9 @@ private:
   QLineEdit operationSearchBar;
   QWidgetAction* searchAction;
   QString def_save_dir;
+  QMap<QString, QPair<QStringList, QString> >plugin_metadata_map;
+  QMap<QString, bool> ignored_map;
+  const QStringList& accepted_keywords;
   
 private Q_SLOTS:
   void on_actionAdd_Viewer_triggered();
