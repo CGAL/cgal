@@ -46,25 +46,25 @@ bool do_intersect_circle_box_2(const typename K::Circle_2& circle,
   FT distance = FT(0);
   Point center = circle.center();
 
-  if(center.x() < (FT)bbox.xmin())
+  if(center.x() < FT(bbox.xmin()))
   {
-    d = (FT)bbox.xmin() - center.x();
+    d = FT(bbox.xmin()) - center.x();
     distance += d * d;
   }
-  else if(center.x() > (FT)bbox.xmax())
+  else if(center.x() > FT(bbox.xmax()))
   {
-    d = center.x() - (FT)bbox.xmax();
+    d = center.x() - FT(bbox.xmax());
     distance += d * d;
   }
 
-  if(center.y() < (FT)bbox.ymin())
+  if(center.y() < FT(bbox.ymin()))
   {
-    d = (FT)bbox.ymin() - center.y();
+    d = FT(bbox.ymin()) - center.y();
     distance += d * d;
   }
-  else if(center.y() > (FT)bbox.ymax())
+  else if(center.y() > FT(bbox.ymax()))
   {
-    d = center.y() - (FT)bbox.ymax();
+    d = center.y() - FT(bbox.ymax());
     distance += d * d;
   }
 

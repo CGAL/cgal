@@ -89,6 +89,25 @@ void test_P_Pl()
   assert(res == p);
 }
 
+template<typename K>
+void test_P_Tet()
+{
+  typedef CGAL::Point_3<K> P;
+  typedef CGAL::Tetrahedron_3<K> T;
+  P p(0,0,0), q(1,0,0), r(1,1,0), s(0,0,1);
+  T t(p,q,r,s);
+  P q0(0.1, 0.1, 0.1), q1(10,10,10);
+
+  assert(CGAL::do_intersect(p,t));
+  assert(CGAL::do_intersect(t,p));
+  
+  assert(CGAL::do_intersect(q0,t));
+  assert(CGAL::do_intersect(t,q0));
+  
+  assert(! CGAL::do_intersect(q1,t));
+  assert(! CGAL::do_intersect(t,q1));
+}
+
 int main()
 {
   test_P_Cub<Epick>();
@@ -99,7 +118,6 @@ int main()
 
   test_P_R<Epick>();
   test_P_R<Epeck>();
-
   test_P_S<Epick>();
   test_P_S<Epeck>();
 
@@ -108,6 +126,9 @@ int main()
 
   test_P_Pl<Epick>();
   test_P_Pl<Epeck>();
+  
+  test_P_Tet<Epick>();
+  test_P_Tet<Epeck>();
 }
 #include <iostream>
 

@@ -51,7 +51,7 @@ do_intersect(const typename K::Tetrahedron_3 &tet,
 typename K::Boolean
 do_intersect_tetrahedron_bounded(const Bounded &tr,
                                  const typename K::Tetrahedron_3 &tet,
-                                 const typename K::Point_3 p,
+                                 const typename K::Point_3 &p,
                                  const K & k)
 {
     typedef typename K::Triangle_3 Triangle;

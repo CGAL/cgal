@@ -50,7 +50,7 @@ do_intersect(const typename K::Tetrahedron_3 &tetrahedron,
              const typename K::Point_3 &pt,
              const K&)
 {
-  return tetrahedron.has_on_unbounded_side(pt);
+  return ! tetrahedron.has_on_unbounded_side(pt);
 }
 
 
