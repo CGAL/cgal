@@ -47,7 +47,8 @@ int main(int argc, const char** argv)
   input.close();
 
   // OpenGR options
-  GlobalRegistration::Match4PCSOptions options;
+  CGAL::OpenGR::Options options;
+
   bool overlap_OK = options.configureOverlap(0.7);
   if(!overlap_OK)
   {
