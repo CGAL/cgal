@@ -15,6 +15,8 @@ INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/Euler_operations.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/partition.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/METIS/partition_graph.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/METIS/partition_dual_graph.h
+         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/IO/vtp_io.h
+
 
 EXAMPLE_PATH               =  ${CGAL_Surface_mesh_skeletonization_EXAMPLE_DIR} \
                               ${CGAL_Surface_mesh_segmentation_EXAMPLE_DIR} \
