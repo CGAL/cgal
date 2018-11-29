@@ -1825,9 +1825,10 @@ void Scene::newViewer(Viewer_interface *viewer)
 
 void Scene::removeViewer(Viewer_interface *viewer)
 {
-  //already destroyed in the Scene's destructor
+ //already destroyed;
   if(viewer->property("is_destroyed").toBool())
     return;
+
   vaos[viewer]->destroy();
   vaos[viewer]->deleteLater();
   vaos.remove(viewer);
@@ -1835,6 +1836,7 @@ void Scene::removeViewer(Viewer_interface *viewer)
   {
     item->removeViewer(viewer);
   }
+  viewer->setProperty("is_destroyed", true);
 }
 
 void Scene::initGL(Viewer_interface *viewer)
