@@ -169,7 +169,7 @@ void test_closed_surface_mesh(const char* filename)
   std::cout << "volume = " << vol << std::endl;
   assert(vol > 0);
 
-  K::Point_3 p = PMP::centroid(sm);
+  typename K::Point_3 p = PMP::centroid(sm);
   
   // compare with centroid of 1.000.000 points inside the mesh:
   //  0.00772887 -0.134923 0.011703
