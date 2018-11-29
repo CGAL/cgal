@@ -168,6 +168,14 @@ void test_closed_surface_mesh(const char* filename)
   typename K::FT vol = PMP::volume(sm);
   std::cout << "volume = " << vol << std::endl;
   assert(vol > 0);
+
+  K::Point_3 p = PMP::centroid(sm);
+  
+  // compare with centroid of 1.000.000 points inside the mesh:
+  //  0.00772887 -0.134923 0.011703
+  assert (p.x() > 0.007 && p.x() < 0.008);
+  assert (p.y() > -0.14 && p.y() < -0.13);
+  assert (p.z() > 0.01 && p.z() < 0.02);
 }
 
 int main(int argc, char* argv[])
