@@ -54,8 +54,6 @@ bool write_wrl(std::ostream& os,
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::vertices_size_type vertices_size_type;
-  typedef typename boost::graph_traits<FaceGraph>::faces_size_type faces_size_type;
-
   
   typename Polygon_mesh_processing::GetVertexPointMap<FaceGraph, NamedParameters>::const_type
       vpm = choose_param(get_param(np, internal_np::vertex_point),
