@@ -1081,7 +1081,7 @@ make_regular_prism(
  * \ingroup PkgBGLHelperFct
  * \brief Creates a pyramid, outward oriented, having `nb_vertices` vertices in its base and adds it to the graph `g`.
  *
- * If `center` is (0, 0, 0), then the first point of the base is (`radius`, 0`, 0)
+ * If `center` is `(0, 0, 0)`, then the first point of the base is `(radius, 0, 0)`
  * \param nb_vertices the number of vertices in the base. It must be greater than or equal to 3.
  * \param g the graph in which the pyramid will be created
  * \param base_center the center of the circle in which the base is inscribed.
