@@ -471,7 +471,7 @@ namespace CGAL {
     ///    (i.e. add/remove - depending if s is positive or negative)
     std::string opposite_label(const std::string & s)
     {
-      assert(!s.empty());
+      CGAL_assertion(!s.empty());
       if (s[0]=='-')
       { return s.substr(1, std::string::npos); }
 

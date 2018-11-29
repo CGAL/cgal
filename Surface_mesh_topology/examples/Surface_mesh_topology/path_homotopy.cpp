@@ -1,6 +1,6 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
-#include <CGAL/Combinatorial_map_functionalities.h>
+#include <CGAL/Surface_mesh_curve_topology.h>
 
 /* If you want to use a viewer, you can use qglviewer. */
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -112,7 +112,7 @@ int main(int argc, char** argv)
   lcc.display_characteristics(std::cout) << ", valid="
                                          << lcc.is_valid() << std::endl;
   
-  CGAL::Combinatorial_map_tools<LCC_3_cmap> cmt(lcc);
+  CGAL::Surface_mesh_curve_topology<LCC_3_cmap> cmt(lcc);
   std::cout<<"Reduced map: ";
   cmt.get_map().display_characteristics(std::cout)
     << ", valid="<< cmt.get_map().is_valid() << std::endl;

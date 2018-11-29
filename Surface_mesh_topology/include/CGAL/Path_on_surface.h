@@ -28,6 +28,7 @@
 #include <sstream>
 #include <CGAL/Path_generators.h>
 #include <CGAL/Combinatorial_map_operations.h>
+#include <boost/algorithm/searching/knuth_morris_pratt.hpp>
 
 namespace CGAL {
 
@@ -207,6 +208,12 @@ public:
 
     if (!is_closed())
     { return are_same_paths_from(other, 0); }
+
+    // TODO use
+    /*template <typename patIter, typename corpusIter>
+    pair<corpusIter, corpusIter> knuth_morris_pratt_search (
+            corpusIter corpus_first, corpusIter corpus_last,
+            patIter pat_first, patIter pat_last ); */
 
     for(std::size_t start=0; start<length(); ++start)
     {

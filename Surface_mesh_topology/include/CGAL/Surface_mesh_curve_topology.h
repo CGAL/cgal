@@ -18,8 +18,8 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-#ifndef CGAL_COMBINATORIAL_MAP_FUNCTIONALITIES_H
-#define CGAL_COMBINATORIAL_MAP_FUNCTIONALITIES_H 1
+#ifndef CGAL_SURFACE_MESH_CURVE_TOPOLOGY_H
+#define CGAL_SURFACE_MESH_CURVE_TOPOLOGY_H 1
 
 #include <CGAL/Union_find.h>
 #include <CGAL/Random.h>
@@ -34,7 +34,7 @@
 namespace CGAL {
   
   template<typename Map>
-  class Combinatorial_map_tools
+  class Surface_mesh_curve_topology
   {
   public:
     typedef typename Map::Dart_handle Dart_handle;
@@ -46,7 +46,7 @@ namespace CGAL {
                       std::pair<Dart_const_handle, Dart_const_handle> > TPaths;
     typedef boost::unordered_map<Dart_const_handle, std::size_t> TDartIds;
 
-    Combinatorial_map_tools(Map& amap) : m_original_map(amap)
+    Surface_mesh_curve_topology(Map& amap) : m_original_map(amap)
     {
       if (!m_map.is_without_boundary(1))
       {
@@ -233,7 +233,7 @@ namespace CGAL {
       assert(are_paths_valid());
     }
     
-    ~Combinatorial_map_tools()
+    ~Surface_mesh_curve_topology()
     {
       m_original_map.free_mark(m_mark_T);
       m_original_map.free_mark(m_mark_L);
@@ -1443,5 +1443,5 @@ namespace CGAL {
   
 } // namespace CGAL
 
-#endif // CGAL_COMBINATORIAL_MAP_FUNCTIONALITIES_H //
+#endif // CGAL_SURFACE_MESH_CURVE_TOPOLOGY_H //
 // EOF //
