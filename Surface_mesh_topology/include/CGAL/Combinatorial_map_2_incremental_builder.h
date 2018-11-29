@@ -30,19 +30,15 @@ namespace CGAL {
   struct Combinatorial_map_tag;
   struct Generalized_map_tag;
   
-  template<class CMAP, class Combinatorial_data_structure=
-           typename CMAP::Combinatorial_data_structure>
-  struct Add_vertex_to_face
-  {
-    static typename CMAP::Dart_handle run(CMAP&,
-                                         typename CMAP::Dart_handle)
-    {}
-  };
+  template<class MAP, class Combinatorial_data_structure=
+           typename MAP::Combinatorial_data_structure>
+  struct Map_incremental_builder_tools
+  {};
   template<class CMAP>
-  struct Add_vertex_to_face<CMAP, Combinatorial_map_tag>
+  struct Map_incremental_builder_tools<CMAP, Combinatorial_map_tag>
   {
-    static typename CMAP::Dart_handle run(CMAP& cmap,
-                                         typename CMAP::Dart_handle prev_dart)
+    static typename CMAP::Dart_handle
+    add_vertex_to_face(CMAP& cmap, typename CMAP::Dart_handle prev_dart)
     {
       typename CMAP::Dart_handle res=cmap.create_dart();
       if (prev_dart!=cmap.null_handle)
@@ -51,32 +47,68 @@ namespace CGAL {
       }
       return res;
     }
-    static void run_for_last(CMAP&,
-                             typename CMAP::Dart_handle)
-    { // here nothing to do, all darts were already created.
-    }
+    static void add_last_vertex_to_face(CMAP& cmap,
+                                        typename CMAP::Dart_handle prev_dart,
+                                        typename CMAP::Dart_handle first_dart)
+    { cmap.template link_beta<1>(prev_dart, first_dart); }
+    static typename CMAP::Dart_handle
+    add_edge_to_face(CMAP& cmap, typename CMAP::Dart_handle prev_dart)
+    { return add_vertex_to_face(cmap, prev_dart); } // For CMap no difference
   };
-  template<class CMAP>
-  struct Add_vertex_to_face<CMAP, Generalized_map_tag>
+  template<class GMAP>
+  struct Map_incremental_builder_tools<GMAP, Generalized_map_tag>
   {
-    static typename CMAP::Dart_handle run(CMAP& cmap,
-                                         typename CMAP::Dart_handle prev_dart)
+    static typename GMAP::Dart_handle
+    add_vertex_to_face(GMAP& gmap, typename GMAP::Dart_handle prev_dart)
     {
-      typename CMAP::Dart_handle res=cmap.create_dart();
-      if (prev_dart!=cmap.null_handle)
+      typename GMAP::Dart_handle res=gmap.create_dart();
+      if (prev_dart!=gmap.null_handle)
       {
-        cmap.template link_alpha<0>(prev_dart, res);
-        cmap.template link_alpha<1>(res, cmap.create_dart());
-        res=cmap.template alpha<1>(res);
+        //if (gmap.template is_free<0>(prev_dart))
+        { // Case of the first dart of the face
+          gmap.template link_alpha<0>(prev_dart, res);
+          gmap.template link_alpha<1>(res, gmap.create_dart());
+          res=gmap.template alpha<1>(res);
+        }
+        /*else
+        {
+          gmap.template link_alpha<0>(gmap.template alpha<1>(prev_dart), res);
+          gmap.template link_alpha<1>(res, gmap.create_dart());
+        }*/
       }
+      assert(gmap.is_valid());
       return res;
     }
-    static void run_for_last(CMAP& cmap,
-                             typename CMAP::Dart_handle prev_dart)
+    static void add_last_vertex_to_face(GMAP& gmap,
+                                        typename GMAP::Dart_handle prev_dart,
+                                        typename GMAP::Dart_handle first_dart)
     {
       // here we need to create a last dart and 0-link it
-      assert(prev_dart!=cmap.null_handle);
-      cmap.template link_alpha<0>(prev_dart, cmap.create_dart());
+      assert(prev_dart!=gmap.null_handle);
+      //if (gmap.template is_free<0>(prev_dart))
+      { // Case of the first dart of the face
+        gmap.template link_alpha<0>(prev_dart, gmap.create_dart());
+        gmap.template link_alpha<1>(gmap.template alpha<0>(prev_dart),
+                                    first_dart);
+        assert(gmap.is_valid());
+      }
+      /*else
+      {
+        gmap.template link_alpha<0>(gmap.template alpha<1>(prev_dart),
+                                    gmap.create_dart());
+      }*/
+    }
+    static typename GMAP::Dart_handle
+    add_edge_to_face(GMAP& gmap, typename GMAP::Dart_handle prev_dart)
+    {
+      typename GMAP::Dart_handle res=gmap.create_dart();
+      typename GMAP::Dart_handle dh2=gmap.create_dart();
+      gmap.template link_alpha<0>(res, dh2);
+      if (prev_dart!=gmap.null_handle)
+      {
+        gmap.template link_alpha<1>(res, gmap.template alpha<0>(prev_dart));
+      }
+      return res;
     }
   };
 
@@ -141,7 +173,8 @@ namespace CGAL {
       { vertex_to_dart_map.resize(i+1); }
 
       // std::cout<<i<<"  "<<std::flush;
-      Dart_handle cur=Add_vertex_to_face<CMap>::run(cmap, prev_dart);
+      Dart_handle cur=Map_incremental_builder_tools<CMap>::
+          add_vertex_to_face(cmap, prev_dart);
 
       if ( prev_dart!=cmap.null_handle )
       {
@@ -186,7 +219,8 @@ namespace CGAL {
       assert(edge_label_to_dart.count(s)==0); // Since we have an orientable surface,
                                               // we cannot use a same edge twice.
 
-      Dart_handle cur = Add_vertex_to_face<CMap>::run(cmap, prev_dart);
+      Dart_handle cur = Map_incremental_builder_tools<CMap>::
+          add_edge_to_face(cmap, prev_dart);
       Dart_handle opposite=find_dart_with_label(opposite_label(s));
 
       if (opposite!=NULL)
@@ -247,8 +281,8 @@ namespace CGAL {
       CGAL_assertion( first_dart!=cmap.null_handle && prev_dart!=cmap.null_handle );
       if (used_add_vertex)
       {
-        Add_vertex_to_face<CMap>::run_for_last(cmap, prev_dart);
-        cmap.set_next(prev_dart, first_dart);
+        Map_incremental_builder_tools<CMap>::
+            add_last_vertex_to_face(cmap, prev_dart, first_dart);
 
         Dart_handle opposite=find_dart_between(first_vertex, prev_vertex);
         if ( opposite!=cmap.null_handle )

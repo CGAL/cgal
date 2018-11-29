@@ -161,6 +161,8 @@ public:
   /// @return true iff df can be added at the end of the path.
   bool can_be_pushed(Dart_const_handle dh) const
   {
+    // This assert is too long CGAL_assertion(m_map.darts().owns(dh));
+
     if (is_empty()) return true;
 
     return CGAL::template belong_to_same_cell<Map, 0>
@@ -171,7 +173,7 @@ public:
   /// @pre can_be_pushed(dh)
   void push_back(Dart_const_handle dh, bool update_isclosed=true)
   {
-    CGAL_assertion(dh!=NULL && dh!=m_map.null_dart_handle);
+    CGAL_assertion(dh!=Map::null_handle);
     /* This assert is too long, it is tested in the is_valid method.
        CGAL_assertion(can_be_pushed(dh)); */
 
