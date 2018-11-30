@@ -542,6 +542,7 @@ volume(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
   template <typename TriangleMesh, typename Vpm, typename Point, typename Tetrahedron, typename Construct_tetrahedron>
   struct Face2Tet {
 
+    typedef Tetrahedron result_type;
     const TriangleMesh& tmesh;
     const Vpm& vpm;
 
@@ -582,7 +583,7 @@ volume(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
   *  \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
   * \cgalNamedParamsEnd
   *
-  * @return the centroid bounded by `tmesh`.
+  * @return the centroid of the domain bounded by `tmesh`.
   * The return type `FT` is a number type. It is
   * either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
   * or the geometric traits class deduced from the point property map
