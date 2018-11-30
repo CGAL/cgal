@@ -30,10 +30,10 @@ void generate_one_positive_spur(Path& p)
 {
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[5]));
-  extend_straight_positive(p, 6);
-  extend_uturn_positive(p);
-  extend_uturn_half_turn(p);
-  extend_straight_positive(p, 4);
+  p.extend_straight_positive(6);
+  p.extend_positive_turn();
+  p.extend_positive_turn(0);
+  p.extend_straight_positive(4);
 }
 
 template<typename Path>
@@ -41,10 +41,10 @@ void generate_one_negative_spur(Path& p)
 {
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[5]));
-  extend_straight_negative(p, 6);
-  extend_uturn_negative(p);
-  extend_uturn_half_turn(p);
-  extend_straight_negative(p, 4);
+  p.extend_straight_negative(6);
+  p.extend_negative_turn();
+  p.extend_positive_turn(0);
+  p.extend_straight_negative(4);
 }
 
 template<typename Path>
@@ -52,7 +52,7 @@ void generate_cyclic_spur(Path& p)
 {
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[5]));
-  extend_uturn_half_turn(p);
+  p.extend_positive_turn(0);
 }
 
 template<typename Path>
@@ -60,13 +60,13 @@ void generate_one_positive_bracket(Path& p)
 {
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[5]));
-  extend_straight_positive(p, 3);
-  extend_uturn_positive(p, 3);
-  extend_uturn_positive(p);
-  extend_straight_positive(p, 6);
-  extend_uturn_positive(p);
-  extend_uturn_positive(p, 3);
-  extend_straight_positive(p, 2);
+  p.extend_straight_positive(3);
+  p.extend_positive_turn(3);
+  p.extend_positive_turn();
+  p.extend_straight_positive(6);
+  p.extend_positive_turn();
+  p.extend_positive_turn(3);
+  p.extend_straight_positive(2);
 }
 
 template<typename Path>
@@ -74,11 +74,11 @@ void generate_one_negative_bracket(Path& p)
 {
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[5]));
-  extend_straight_negative(p, 3);
-  extend_uturn_negative(p);
-  extend_straight_negative(p, 6);
-  extend_uturn_negative(p);
-  extend_straight_negative(p, 2);
+  p.extend_straight_negative(3);
+  p.extend_negative_turn();
+  p.extend_straight_negative(6);
+  p.extend_negative_turn();
+  p.extend_straight_negative(2);
 }
 
 template<typename Path>
@@ -86,9 +86,9 @@ void generate_bracket_special1(Path& p, bool reverse)
 { // Case (x, 1, 2^r, 1)
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[79]));
-  extend_uturn_positive(p, 1);
-  extend_straight_positive(p, 7);
-  extend_uturn_positive(p);
+  p.extend_positive_turn(1);
+  p.extend_straight_positive(7);
+  p.extend_positive_turn();
 
   if (reverse)
   { p.reverse(); }
@@ -107,8 +107,8 @@ void generate_bracket_special2(Path& p, bool reverse)
 { // Case (1, 2^r)
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[0]));
-  extend_uturn_positive(p, 1);
-  extend_straight_positive(p, 10);
+  p.extend_positive_turn(1);
+  p.extend_straight_positive(10);
 
   if (reverse)
   { p.reverse(); }
@@ -127,13 +127,13 @@ void generate_one_l_shape(Path& p)
 { // Generic case (... x -2^s -1 -2^t y ... ): here  (-2^2 -3 -2^8 -1 -2^5 -3 -2^3)
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[0]));
-  extend_straight_negative(p, 2);
-  extend_uturn_negative(p, 3);
-  extend_straight_negative(p, 8);
-  extend_uturn_negative(p);
-  extend_straight_negative(p, 5);
-  extend_uturn_negative(p, 3);
-  extend_straight_negative(p, 3);
+  p.extend_straight_negative(2);
+  p.extend_negative_turn(3);
+  p.extend_straight_negative(8);
+  p.extend_negative_turn();
+  p.extend_straight_negative(5);
+  p.extend_negative_turn(3);
+  p.extend_straight_negative(3);
 }
 
 template<typename Path>
@@ -141,12 +141,12 @@ void generate_l_shape_case2(Path& p)
 { // (... x -1 -2^t y ...): here (-2^2 -3 -1 -2^5 -3 -2^3)
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[0]));
-  extend_straight_negative(p, 2);
-  extend_uturn_negative(p, 3);
-  extend_uturn_negative(p);
-  extend_straight_negative(p, 5);
-  extend_uturn_negative(p, 3);
-  extend_straight_negative(p, 3);
+  p.extend_straight_negative(2);
+  p.extend_negative_turn(3);
+  p.extend_negative_turn();
+  p.extend_straight_negative(5);
+  p.extend_negative_turn(3);
+  p.extend_straight_negative(3);
 }
 
 template<typename Path>
@@ -154,12 +154,12 @@ void generate_l_shape_case3(Path& p)
 { // (... x -2^s -1 y ...): here (-2^2 -3 -2^5 -1 -3 -2^3)
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[0]));
-  extend_straight_negative(p, 2);
-  extend_uturn_negative(p, 3);
-  extend_straight_negative(p, 5);
-  extend_uturn_negative(p, 1);
-  extend_uturn_negative(p, 3);
-  extend_straight_negative(p, 3);
+  p.extend_straight_negative(2);
+  p.extend_negative_turn(3);
+  p.extend_straight_negative(5);
+  p.extend_negative_turn(1);
+  p.extend_negative_turn(3);
+  p.extend_straight_negative(3);
 }
 
 template<typename Path>
@@ -167,10 +167,10 @@ void generate_l_shape_case4(Path& p)
 { // (x -2^s -1 -2^t): here (-2^7 -1 -2^3 -4)
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[35]));
-  extend_uturn_negative(p, 4);
-  extend_straight_negative(p, 7);
-  extend_uturn_negative(p, 1);
-  extend_straight_negative(p, 2);
+  p.extend_negative_turn(4);
+  p.extend_straight_negative(7);
+  p.extend_negative_turn(1);
+  p.extend_straight_negative(2);
 }
 
 template<typename Path>
@@ -178,8 +178,8 @@ void generate_l_shape_case5(Path& p)
 { // (x -1 -2^t): here (-4 -1 -2^12)
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[27]));
-  extend_uturn_negative(p, 1);
-  extend_straight_negative(p, 12);
+  p.extend_negative_turn(1);
+  p.extend_straight_negative(12);
 }
 
 template<typename Path>
@@ -187,8 +187,8 @@ void generate_l_shape_case6(Path& p)
 { // (x -2^t -1): here (-4 -2^12 -1)
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[13]));
-  extend_straight_negative(p, 12);
-  extend_uturn_negative(p, 1);
+  p.extend_straight_negative(12);
+  p.extend_negative_turn(1);
 }
 
 template<typename Path>
@@ -196,9 +196,9 @@ void generate_l_shape_case7(Path& p)
 { // (-3 -2^s -1 -2^t): here (-2^7 -1 -2^3 -3)
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[194]));
-  extend_straight_negative(p, 7);
-  extend_uturn_negative(p, 1);
-  extend_straight_negative(p, 3);
+  p.extend_straight_negative(7);
+  p.extend_negative_turn(1);
+  p.extend_straight_negative(3);
 }
 
 template<typename Path>
@@ -206,7 +206,7 @@ void generate_l_shape_case8(Path& p)
 { // (-2^l): here (-2^20)
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[4]));
-  extend_straight_negative(p, 19);
+  p.extend_straight_negative(19);
 }
 
 template<typename Path>
@@ -214,7 +214,7 @@ void generate_g1_v0_torus(Path& p)
 { // 1st generator
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[0]));
-  extend_straight_negative(p, 4);
+  p.extend_straight_negative(4);
 }
 
 template<typename Path>
@@ -222,7 +222,7 @@ void generate_g1_v1_torus(Path& p)
 { // 1st generator v2
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[20]));
-  extend_straight_negative(p, 4);
+  p.extend_straight_negative(4);
 }
 
 template<typename Path>
@@ -230,14 +230,14 @@ void generate_g1_v2_torus(Path& p)
 { // 1st generator v3
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[20]));
-  extend_uturn_negative(p, 1);
-  extend_straight_negative(p, 1);
-  extend_uturn_positive(p, 1);
-  extend_straight_negative(p, 2);
-  extend_uturn_positive(p, 1);
-  extend_straight_negative(p, 2);
-  extend_uturn_negative(p, 1);
-  extend_uturn_negative(p, 1);
+  p.extend_negative_turn(1);
+  p.extend_straight_negative(1);
+  p.extend_positive_turn(1);
+  p.extend_straight_negative(2);
+  p.extend_positive_turn(1);
+  p.extend_straight_negative(2);
+  p.extend_negative_turn(1);
+  p.extend_negative_turn(1);
 }
 
 template<typename Path>
@@ -258,9 +258,9 @@ void generate_null_cycle_v0_torus(Path& p)
 { // Empty cycle
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[20]));
-  extend_uturn_positive(p, 1);
-  extend_uturn_positive(p, 1);
-  extend_uturn_positive(p, 1);
+  p.extend_positive_turn(1);
+  p.extend_positive_turn(1);
+  p.extend_positive_turn(1);
 }
 
 template<typename Path>
@@ -268,11 +268,11 @@ void generate_null_cycle_v1_torus(Path& p)
 { // Empty cycle v2
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[20]));
-  extend_uturn_positive(p, 1);
-  extend_straight_positive(p, 1);
-  extend_uturn_positive(p, 1);
-  extend_uturn_positive(p, 1);
-  extend_straight_positive(p, 1);
+  p.extend_positive_turn(1);
+  p.extend_straight_positive(1);
+  p.extend_positive_turn(1);
+  p.extend_positive_turn(1);
+  p.extend_straight_positive(1);
 }
 
 template<typename Path>
@@ -280,14 +280,14 @@ void generate_null_cycle_v2_torus(Path& p)
 { // Empty cycle v3
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[20]));
-  extend_uturn_negative(p, 1);
-  extend_straight_negative(p, 3);
-  extend_uturn_negative(p, 1);
-  extend_straight_negative(p, 2);
-  extend_uturn_negative(p, 1);
-  extend_straight_negative(p, 3);
-  extend_uturn_negative(p, 1);
-  extend_straight_negative(p, 1);
+  p.extend_negative_turn(1);
+  p.extend_straight_negative(3);
+  p.extend_negative_turn(1);
+  p.extend_straight_negative(2);
+  p.extend_negative_turn(1);
+  p.extend_straight_negative(3);
+  p.extend_negative_turn(1);
+  p.extend_straight_negative(1);
 }
 
 template<typename Path>
@@ -308,7 +308,7 @@ void generate_g2_v0_torus(Path& p)
 { // 2nd generator v1
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[1]));
-  extend_straight_positive(p, 4);
+  p.extend_straight_positive(4);
 }
 
 template<typename Path>
@@ -316,7 +316,7 @@ void generate_g2_v1_torus(Path& p)
 { // 2nd generator v2
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[13]));
-  extend_straight_negative(p, 4);
+  p.extend_straight_negative(4);
 }
 
 template<typename Path>
@@ -324,15 +324,15 @@ void generate_g2_v2_torus(Path& p)
 { // 2nd generator v3
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[0]));
-  extend_uturn_negative(p, 1);
-  extend_uturn_positive(p, 1);
-  extend_uturn_negative(p, 1);
-  extend_uturn_positive(p, 1);
-  extend_uturn_negative(p, 1);
-  extend_uturn_positive(p, 1);
-  extend_straight_negative(p, 1);
-  extend_uturn_positive(p, 1);
-  extend_straight_negative(p, 2);
+  p.extend_negative_turn(1);
+  p.extend_positive_turn(1);
+  p.extend_negative_turn(1);
+  p.extend_positive_turn(1);
+  p.extend_negative_turn(1);
+  p.extend_positive_turn(1);
+  p.extend_straight_negative(1);
+  p.extend_positive_turn(1);
+  p.extend_straight_negative(2);
 }
 
 template<typename Path>
@@ -353,7 +353,7 @@ void generate_g1_v0_double_torus(Path& p)
 { // 1st generator
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[16]));
-  extend_straight_negative(p, 2);
+  p.extend_straight_negative(2);
 }
 
 template<typename Path>
@@ -361,7 +361,7 @@ void generate_g1_v1_double_torus(Path& p)
 { // 1st generator
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[4]));
-  extend_straight_negative(p, 2);
+  p.extend_straight_negative(2);
 }
 
 template<typename Path>
@@ -369,7 +369,7 @@ void generate_g1_v2_double_torus(Path& p)
 { // 1st generator
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[2]));
-  extend_straight_negative(p, 2);
+  p.extend_straight_negative(2);
   p.reverse();
 }
 
@@ -378,8 +378,8 @@ void generate_g2_v1_double_torus(Path& p)
 { // 2nd generator
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[10]));
-  extend_straight_negative(p, 2);
-  extend_uturn_negative(p, 1);
+  p.extend_straight_negative(2);
+  p.extend_negative_turn(1);
 }
 
 template<typename Path>

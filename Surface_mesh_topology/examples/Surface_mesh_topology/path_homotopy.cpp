@@ -4,7 +4,7 @@
 
 /* If you want to use a viewer, you can use qglviewer. */
 #ifdef CGAL_USE_BASIC_VIEWER
-#include <CGAL/LCC_with_paths.h>
+#include <CGAL/draw_lcc_with_pathes.h>
 #endif
 
 #include <CGAL/Path_generators.h>
@@ -129,12 +129,13 @@ int main(int argc, char** argv)
     std::vector<CGAL::Path_on_surface<LCC_3_cmap> > transformed_paths;
 
     CGAL::Path_on_surface<LCC_3_cmap> path1(lcc);
-    generate_random_closed_path(path1, F, random); // random path, length given by F
+    // Old method with set of faces: generate_random_closed_path(path1, F, random); // random path, length given by F
+    path1.generate_random_closed_path(F, random);
     std::cout<<"Path1 size: "<<path1.length()<<" (from "<<F<<" faces); ";
     paths.push_back(&path1);
 
     CGAL::Path_on_surface<LCC_3_cmap> path2(path1);
-    update_path_randomly(path2, D, random);
+    path2.update_path_randomly(D, random);
     std::cout<<"Path2 size: "<<path2.length()<<" (from "<<D<<" deformations): ";
     paths.push_back(&path2);
     std::cout<<std::flush;

@@ -64,16 +64,22 @@ public:
     
     if (apath.is_closed())
     {
-      while (apath.next_positive_turn(i)==2 || apath.next_negative_turn(i)==2)
+      if (apath.next_positive_turn(i)==2)
+      { positive_flat=true; negative_flat=false; }
+      else if (apath.next_negative_turn(i)==2)
+      { positive_flat=false; negative_flat=true; }
+
+      while ((positive_flat && apath.next_positive_turn(i)==2) ||
+             (negative_flat && apath.next_negative_turn(i)==2))
       {
         i=apath.next_index(i);
         if (i==0) // Case of a closed path, made of only one flat part.
         {
           m_path.push_back(std::make_pair(apath.front(),
-                                          apath.next_positive_turn(0)==2?
-                                              apath.length():
-                                             -apath.length()));
-          m_path.push_back(std::make_pair(apath.back(),0));
+                                          positive_flat?(apath.length()-1):
+                                                        -(apath.length())-1));
+          if (apath.length()>1)
+          { m_path.push_back(std::make_pair(apath.back(),0)); }
           return;
         }
       }
@@ -119,10 +125,13 @@ public:
 
   void swap(Self& p2)
   {
-    CGAL_assertion(&m_map==&(p2.m_map));
-    m_path.swap(p2.m_path);
-    std::swap(m_is_closed, p2.m_is_closed);
-    std::swap(m_length, p2.m_length);
+    if (this!=&p2)
+    {
+      CGAL_assertion(&m_map==&(p2.m_map));
+      m_path.swap(p2.m_path);
+      std::swap(m_is_closed, p2.m_is_closed);
+      std::swap(m_length, p2.m_length);
+    }
   }
 
   Self& operator=(const Self& other)
@@ -139,7 +148,7 @@ public:
 
   /// @Return true if this path is equal to other path, identifying dart begin
   ///         of this path with dart 'itother' in other path.
-  bool are_same_paths_from(const Self& other, List_iterator itother)
+  bool are_same_paths_from(Self& other, List_iterator itother)
   {
     CGAL_assertion(itother!=other.m_path.end());
     CGAL_assertion(is_closed() || itother==other.m_path.begin());
@@ -156,7 +165,7 @@ public:
 
   /// @return true if this path is equal to other path. For closed paths, test
   ///         all possible starting darts.
-  bool operator==(const Self& other)
+  bool operator==(Self& other)
   {
     if (is_closed()!=other.is_closed() ||
         length()!=other.length() ||
@@ -175,26 +184,31 @@ public:
     return false;
   }
 
-  bool operator!=(const Self&  other) const
+  bool operator!=(Self&  other)
   { return !(operator==(other)); }
 
-  // @return true iff the path is empty
+  /// @return true iff the path is empty
   bool is_empty() const
   { return m_path.empty(); }
 
+  /// @return the length of the path, i.e. its number of darts
   std::size_t length() const
   { return m_length; }
 
+  /// @return the number of darts in the double linked list.
+  /// note that size_of_list()<=length().
   std::size_t size_of_list() const
   { return m_path.size(); }
 
-  // @return true iff the path is closed (update after each path modification).
+  /// @return true iff the path is closed (update after each path modification).
   bool is_closed() const
   { return m_is_closed; }
 
+  /// @return the underlying map.
   const Map& get_map() const
   { return m_map; }
 
+  /// clear the path.
   void clear()
   {
     m_path.clear();
@@ -202,8 +216,8 @@ public:
     m_length=0;
   }
 
-  // @return true iff the path is valid; i.e. a sequence of edges two by
-  //              two adjacent.
+  /// @return true iff the path is valid; i.e. a sequence of edges two by
+  ///              two adjacent.
   bool is_valid()
   {
     if (is_empty()) { return !is_closed(); } // an empty past is not closed
@@ -217,23 +231,23 @@ public:
     do
     {
       if (prev!=NULL &&
-          !belong_to_same_cell<Map, 0>(m_map, m_map.template beta<1>(prev),
-                                       it->first))
+          !CGAL::belong_to_same_cell<Map, 0>
+          (m_map, m_map.template beta<1>(prev), it->first))
       {
-        std::cerr<<"ERROR: The path is not valid: dart in position "<<i<<" does not"
-                <<" follow the previous dart."<<std::endl;
+        std::cerr<<"ERROR: The path is not valid: dart in position "<<i
+                 <<" does not follow the previous dart."<<std::endl;
         return false;
       }
       if (it->second!=0 && next_iterator(it)==m_path.end())
       {
-        std::cerr<<"ERROR: The path is not valid: a non null flat does not have a"
-                <<" second dart in position "<<i<<"."<<std::endl;
+        std::cerr<<"ERROR: The path is not valid: a non null flat does not "
+                <<"have a second dart in position "<<i<<"."<<std::endl;
         return false;
       }
       if (it->second!=0 && next_iterator(it)->second!=0)
       {
-        std::cerr<<"ERROR: The path is not valid: two non null flat are consecutive"
-                <<" in position "<<i<<"."<<std::endl;
+        std::cerr<<"ERROR: The path is not valid: two non null flat are "
+                <<"consecutive in position "<<i<<"."<<std::endl;
         return false;
       }
       if (it->second!=0)
@@ -242,8 +256,10 @@ public:
         int nb=0;
         while(nb!=it->second)
         {
-          if (it->second>0) { dhend=m_map.template beta<1, 2, 1>(dhend); ++nb; }
-          else              { dhend=m_map.template beta<2, 0, 2, 0, 2>(dhend); --nb; }
+          if (it->second>0)
+          { dhend=m_map.template beta<1, 2, 1>(dhend); ++nb; }
+          else
+          { dhend=m_map.template beta<2, 0, 2, 0, 2>(dhend); --nb; }
           ++nbdarts;
         }
         advance_iterator(it); ++i; ++nbdarts;
@@ -252,7 +268,7 @@ public:
         if (dhend!=it->first)
         {
           std::cout<<"ERROR: The path is not valid: flat at position "<<i-1
-                  <<" with length "<<nb<<" is not correct: its end does not "
+                  <<" with length "<<nb<<" is not correct: its end does not"
                  <<" correspond to the flat."<<std::endl;
           return false;
         }
@@ -273,11 +289,11 @@ public:
                 <<std::endl;
         return false;
       }
-      if (!belong_to_same_cell<Map, 0>(m_map, m_map.template beta<1>(prev),
-                                       it->first))
+      if (!CGAL::belong_to_same_cell<Map, 0>
+          (m_map, m_map.template beta<1>(prev), it->first))
       {
-        std::cerr<<"ERROR: The path is not valid: dart in position "<<i<<" does not"
-                <<" follow the previous dart."<<std::endl;
+        std::cerr<<"ERROR: The path is not valid: dart in position "<<i
+                 <<" does not follow the previous dart."<<std::endl;
         return false;
       }
     }
@@ -304,13 +320,14 @@ public:
     return m_path.back()->first;
   }
 
-  void push_back(Dart_const_handle dh, bool update_isclosed=true)
+  /* TODO REMOVE
+   void push_back(Dart_const_handle dh, bool update_isclosed=true)
   {
     CGAL_assertion(dh!=NULL && dh!=m_map.null_dart_handle);
-    /* This assert is too long...
-     CGAL_assertion((is_empty() ||
-           CGAL::template belong_to_same_cell<Map, 0>
-           (m_map, m_map.other_extremity(back()), dh))); */
+    // This assert is too long...
+    // CGAL_assertion((is_empty() ||
+    //      CGAL::template belong_to_same_cell<Map, 0>
+    //       (m_map, m_map.other_extremity(back()), dh)));
 
     m_path.push_back(dh);
     if (update_isclosed) { update_is_closed(); }
@@ -330,41 +347,43 @@ public:
       else
       { m_is_closed=CGAL::belong_to_same_cell<Map,0>(m_map, m_path[0], pend); }
     }
-  }
+  } */
 
-  // @return true iff there is a dart after it
+  /// @return true iff there is a dart after it
   bool next_dart_exist(const List_iterator& it) const
   {
     CGAL_assertion(it!=m_path.end());
     return is_closed() || std::next(it)!=m_path.end();
   }
 
-  // @return true iff there is a dart before it
+  /// @return true iff there is a dart before it
   bool prev_dart_exist(const List_iterator& it) const
   {
     CGAL_assertion(it!=m_path.end());
     return is_closed() || it!=m_path.begin();
   }
 
-  // @return true iff there is a flat after the flat given by 'it'
+  /// @return true iff there is a flat after the flat given by 'it'
   bool next_flat_exist(const List_iterator& it)
   {
     CGAL_assertion(it!=m_path.end());
     return next_dart_exist(it) &&
-      (is_beginning_of_flat(next_iterator(it)) || next_dart_exist(next_iterator(it)));
+      (is_beginning_of_flat(next_iterator(it)) ||
+       next_dart_exist(next_iterator(it)));
   }
   
-  // @return true iff there is a flat before the flat given by 'it'
+  /// @return true iff there is a flat before the flat given by 'it'
   bool previous_flat_exist(const List_iterator& it)
   {
     CGAL_assertion(it!=m_path.end());
     return prev_dart_exist(it) &&
-      (is_beginning_of_flat(prev_iterator(it)) || prev_dart_exist(prev_iterator(it)));
+      (is_beginning_of_flat(prev_iterator(it)) ||
+       prev_dart_exist(prev_iterator(it)));
   }
   
-  // @return true iff 'it' is the beginning of a flat part (possibly of null length)
-  // In fact, return false only if 'it' is the second dart of a flat part of non
-  // null length.
+  /// @return true iff 'it' is the beginning of a flat part (possibly of null
+  ///   length). In fact, returns false only if 'it' is the second dart of a
+  ///   non length null flat.
   bool is_beginning_of_flat(const List_iterator& it)
   {
     if (it->second!=0)
@@ -376,7 +395,7 @@ public:
     return prev_iterator(it)->second==0;
   }
 
-  // @return true iff 'it' is the beginning of a non null flat part
+  /// @return true iff 'it' is the beginning of a non length null flat
   bool is_beginning_of_non_null_flat(const List_iterator& it) const
   {
     CGAL_assertion(it!=m_path.end());
@@ -385,9 +404,9 @@ public:
     return (it->second!=0);
   }
 
-  // @return true iff 'it' is the end of a flat part (possibly of null length)
-  // In fact, return false only if 'it' is the first dart of a flat part of non
-  // null length.
+  /// @return true iff 'it' is the end of a flat part (possibly of null length).
+  /// In fact, return false only if 'it' is the first dart of a non
+  /// length null flat.
   bool is_end_of_flat(const List_iterator& it) const
   {
     CGAL_assertion(it!=m_path.end());
@@ -515,14 +534,14 @@ public:
     return res;
   } */
 
-  // @return the length of the given flat.
+  /// @return the length of the given flat.
   int flat_length(const List_iterator& it) const
   {
     CGAL_assertion(is_beginning_of_flat(it));
     return it->second;
   }
 
-  // @return the second dart of the given flat.
+  /// @return the second dart of the given flat.
   Dart_const_handle second_dart_of_a_flat(const List_iterator& it) const
   {
     CGAL_assertion(is_beginning_of_non_null_flat(it));
@@ -534,7 +553,7 @@ public:
     return m_map.template beta<2, 0, 2, 0, 2>(it->first);
   }
 
-  // @return the dart before the last dart of the given flat.
+  /// @return the dart before the last dart of the given flat.
   Dart_const_handle before_last_dart_of_a_flat(const List_iterator& it)
   {
     CGAL_assertion(is_beginning_of_non_null_flat(it));
@@ -608,12 +627,12 @@ public:
   std::vector<std::size_t> compute_turns(bool positive) const
   { return (positive?compute_positive_turns():compute_negative_turns()); }
 
-  // Reduce the length of the flat part starting at 'it' from its beginning
-  // 'it' moves to the end of the previous flat part if the current flat part
-  // If the flat was empty, remove 'it'.
-  // If the flat part becomes empty, remove its second element.
-  // The path could be not valid after this operation (consistency with next
-  // element should be ensure, by possibly updating the next flat part).
+  /// Reduce the length of the flat part starting at 'it' from its beginning
+  /// 'it' moves to the end of the previous flat part if the current flat part
+  /// If the flat was empty, remove 'it'.
+  /// If the flat part becomes empty, remove its second element.
+  /// The path could be not valid after this operation (consistency with next
+  /// element should be ensure, by possibly updating the next flat part).
   void reduce_flat_from_beginning(List_iterator& it)
   {
     CGAL_assertion(is_beginning_of_flat(it));
@@ -640,13 +659,13 @@ public:
     --m_length;
   }
 
-  // Reduce the length of the flat part starting at 'it' from its end
-  // 'it' moves to the end of the previous flat part if the current flat part
-  // becomes empty (and thus was removed) or to the end of this part otherwise
-  // If the flat was empty, remove 'it'.
-  // If the flat part becomes empty, remove its second element.
-  // The path could be not valid after this operation (consistency with next
-  // element should be ensure, by possibly updating the next flat part).
+  /// Reduce the length of the flat part starting at 'it' from its end
+  /// 'it' moves to the end of the previous flat part if the current flat part
+  /// becomes empty (and thus was removed) or to the end of this part otherwise
+  /// If the flat was empty, remove 'it'.
+  /// If the flat part becomes empty, remove its second element.
+  /// The path could be not valid after this operation (consistency with next
+  /// element should be ensure, by possibly updating the next flat part).
   void reduce_flat_from_end(List_iterator& it)
   {
     CGAL_assertion(is_beginning_of_flat(it));
@@ -742,7 +761,7 @@ public:
     // CGAL_assertion(is_valid());
   }
 
-  // Return true if it is the beginning of a spur.
+  /// Return true if it is the beginning of a spur.
   bool is_spur(const List_iterator& it)
   {
     CGAL_assertion(it!=m_path.end());
@@ -751,12 +770,12 @@ public:
         m_map.template beta<2>(it->first)==next_iterator(it)->first;
   }
 
-  // Remove the spur given by 'it'.
-  // Either 'it' stay on the same element (if the flat still exist),
-  // or 'it' move to the previous element if the flat containing the spur is removed.
-  // ('it' will be equal to m_path.end() if the path becomes empty).
-  // 'it' is necessary either the beginning of a null length flat, or the end
-  // of a non null flat.
+  /// Remove the spur given by 'it'.
+  /// Either 'it' stay on the same element (if the flat still exist),
+  /// or 'it' move to the previous element if the flat containing the spur is removed.
+  /// ('it' will be equal to m_path.end() if the path becomes empty).
+  /// 'it' is necessary either the beginning of a null length flat, or the end
+  /// of a non null flat.
   void remove_spur(List_iterator& it)
   {
     CGAL_assertion(is_spur(it));
@@ -788,8 +807,8 @@ public:
     }
   }
 
-  // Move it to the next spur after it. Go to m_path.end() if there is no
-  // spur in the path.
+  /// Move it to the next spur after it. Go to m_path.end() if there is no
+  /// spur in the path.
   void move_to_next_spur(List_iterator& it)
   {
     CGAL_assertion(it!=m_path.end());
@@ -803,23 +822,28 @@ public:
     it=m_path.end(); // Here there is no spur in the whole path
   }
 
-  // Simplify the path by removing all spurs
-  // @return true iff at least one spur was removed
-  bool remove_spurs()
+  /// Simplify the path by removing all spurs, if all==true; otherwise
+  /// remove only one spur.
+  /// @return true iff at least one spur was removed
+  bool remove_spurs(bool all=true)
   {
     bool res=false;
     List_iterator it=m_path.begin();
     while(it!=m_path.end())
     {
-      if (is_spur(it)) { remove_spur(it); res=true; }
+      if (is_spur(it))
+      {
+        remove_spur(it); res=true;
+        if (!all) { return true; }
+      }
       else { move_to_next_spur(it); }
     }
     CGAL_assertion(is_valid());
     return res;
   }
 
-  // Return true if it is the beginning of a positive bracket.
-  // If true, itend is updated to be the end of the bracket
+  /// Return true if it is the beginning of a positive bracket.
+  /// If true, itend is updated to be the end of the bracket
   bool is_positive_bracket(const List_iterator& it,
                            List_iterator& itend)
   {
@@ -843,8 +867,8 @@ public:
     return true;
   }
   
-  // Return true if it is the beginning of a negative bracket.
-  // If true, itend is updated to be the end of the bracket
+  /// Return true if it is the beginning of a negative bracket.
+  /// If true, itend is updated to be the end of the bracket
   bool is_negative_bracket(const List_iterator& it,
                            List_iterator& itend)
   {
@@ -868,8 +892,8 @@ public:
     return true;
   }
 
-  // Move 'it' to the next bracket after 'it'. Go to m_path.end() if there is no
-  // bracket in the path.
+  /// Move 'it' to the next bracket after 'it'. Go to m_path.end() if there is no
+  /// bracket in the path.
   void move_to_next_bracket(List_iterator& it)
   {
     CGAL_assertion(it!=m_path.end());
@@ -885,8 +909,8 @@ public:
     it=m_path.end(); // Here there is no spur in the whole path
   }
 
-  // Remove the given negative bracket. it1 is the end of a flat beginning
-  // of the bracket; it3 is the beginning of the flat end of the bracket.
+  /// Remove the given negative bracket. it1 is the end of a flat beginning
+  /// of the bracket; it3 is the beginning of the flat end of the bracket.
   void remove_negative_bracket(List_iterator& it1, List_iterator& it3)
   {
     List_iterator it2;
@@ -927,8 +951,8 @@ public:
     // CGAL_assertion(is_valid());
   }
 
-  // Remove the given positive bracket. it1 is the end of a flat beginning
-  // of the bracket; it3 is the beginning of the flat end of the bracket.
+  /// Remove the given positive bracket. it1 is the end of a flat beginning
+  /// of the bracket; it3 is the beginning of the flat end of the bracket.
   void remove_positive_bracket(List_iterator& it1,
                                List_iterator& it3)
   {
@@ -969,9 +993,10 @@ public:
     // CGAL_assertion(is_valid());
   }
   
-  // Simplify the path by removing all brackets
-  // @return true iff at least one bracket was removed
-  bool remove_brackets()
+  /// Simplify the path by removing all brackets, if all==true (default),
+  /// or by removing only one bracket, if all==false.
+  /// @return true iff at least one bracket was removed
+  bool remove_brackets(bool all=true)
   {
     bool res=false;
     List_iterator it1=m_path.begin();
@@ -983,6 +1008,7 @@ public:
       else if (is_negative_bracket(it1, it2))
       { remove_negative_bracket(it1, it2); res=true; }
       else { move_to_next_bracket(it1); }
+      if (!all && res) { return true; }
     }
     CGAL_assertion(is_valid());
     return res;
@@ -1008,8 +1034,8 @@ public:
     return true;
   }
 
-  // Move it to the next l_shape after it. Go to m_path.end() if there is no
-  // l_shape in the path.
+  /// Move it to the next l_shape after it. Go to m_path.end() if there is no
+  /// l_shape in the path.
   void move_to_next_l_shape(List_iterator& it)
   {
     // CGAL_assertion(is_valid());
@@ -1122,6 +1148,7 @@ public:
     ++m_length;
   }
   
+  /// Right push the given l-shape.
   void right_push_l_shape(List_iterator& it)
   {
     CGAL_assertion(it!=m_path.end());
@@ -1178,9 +1205,9 @@ public:
     m_length-=2;
   }
 
-  // Right push the path.
-  // @return true iff the path was pushed
-  bool right_push()
+  /// Right push the path, if all all l-shape are pushed, otherwise only one.
+  /// @return true iff the path was pushed
+  bool right_push(bool all=true)
   {
     CGAL_assertion(is_valid());
     bool res=false;
@@ -1190,12 +1217,36 @@ public:
       if (is_l_shape(it))
       {
         right_push_l_shape(it); res=true;
-        CGAL_assertion(is_valid());
+        if (!all) { return true; }
+        // CGAL_assertion(is_valid());
       }
       else { move_to_next_l_shape(it); }
     }
     CGAL_assertion(is_valid());
     return res;
+  }
+
+  /// Canonize the path
+  void canonize()
+  {
+     // ?? if (!is_closed()) { return; }
+
+     bool modified=false;
+     remove_spurs();
+
+     do
+     {
+       do
+       {
+         modified=remove_brackets();
+         modified=modified || remove_spurs();
+       }
+       while(modified);
+       modified=right_push();
+     }
+     while(modified);
+
+     CGAL_assertion(is_valid());
   }
 
   void display_positive_turns() const

@@ -21,14 +21,14 @@
 #ifndef CGAL_PATH_ON_SURFACE_H
 #define CGAL_PATH_ON_SURFACE_H 1
 
+#include <CGAL/Combinatorial_map_operations.h>
+#include <CGAL/Random.h>
+#include <boost/algorithm/searching/knuth_morris_pratt.hpp>
 #include <utility>
 #include <string>
 #include <vector>
 #include <iostream>
 #include <sstream>
-#include <CGAL/Path_generators.h>
-#include <CGAL/Combinatorial_map_operations.h>
-#include <boost/algorithm/searching/knuth_morris_pratt.hpp>
 
 namespace CGAL {
 
@@ -56,9 +56,9 @@ public:
     {
       push_back(it->first, false);
       if (it->second>0)
-      { CGAL::extend_straight_positive(*this, it->second-1, false); }
+      { extend_straight_positive(it->second-1, false); }
       else if (it->second<0)
-      { CGAL::extend_straight_negative(*this, -(it->second)-1, false); }
+      { extend_straight_negative(-(it->second)-1, false); }
     }
   }
 
@@ -182,6 +182,320 @@ public:
     if (update_isclosed) { update_is_closed(); }
   }
 
+  Self& operator+=(const Self& other)
+  {
+    m_path.reserve(m_path.size()+other.m_path.size());
+    // Be careful to the special case when *this==other
+    // this is the reason of the iend.
+    for (std::size_t i=0, iend=other.length(); i<iend; ++i)
+    { push_back(other[i], false); }
+    update_is_closed();
+    return *this;
+  }
+
+  Self operator+(const Self& other) const
+  {
+    Self res=*this;
+    res+=other;
+    return res;
+  }
+
+  void cut(std::size_t n, bool update_isclosed=true)
+  {
+    if (n>=length()) return;
+    m_path.resize(n);
+    if (update_isclosed) { update_isclosed; }
+  }
+
+  /// copy all darts starting from begin and going to the dart before end
+  /// from this path to new_path.
+  void copy_rest_of_path(std::size_t begin, std::size_t end,
+                         Self& new_path)
+  {
+    CGAL_assertion(begin<=end);
+    CGAL_assertion(end<=length());
+    new_path.m_path.reserve(new_path.m_path.size()+end-begin+1);
+    while(begin!=end)
+    {
+      new_path.push_back(get_ith_dart(begin));
+      ++begin;
+    }
+  }
+
+  void extend_straight_positive(std::size_t nb=1, bool update_isclosed=true)
+  {
+    if (is_empty() || nb==0)
+    { return; }
+
+    m_path.reserve(m_path.size()+nb);
+    Dart_const_handle d2;
+    for (std::size_t i=0; i<nb; ++i)
+    {
+      d2=get_map().template beta<1,2,1>(back());
+      if (d2!=get_map().null_dart_handle)
+      { push_back(d2, false); }
+    }
+    if (update_isclosed) { update_is_closed(); }
+  }
+
+  void extend_straight_negative(std::size_t nb=1, bool update_isclosed=true)
+  {
+    if (is_empty() || nb==0)
+    { return; }
+
+    m_path.reserve(m_path.size()+nb);
+    Dart_const_handle d2;
+    for (std::size_t i=0; i<nb; ++i)
+    {
+      d2=get_map().template beta<2,0,2,0,2>(back());
+      if (d2!=get_map().null_dart_handle)
+      { push_back(d2, false); }
+    }
+    if (update_isclosed) { update_is_closed(); }
+  }
+
+  void extend_straight_positive_until(Dart_const_handle dend,
+                                      bool update_isclosed=true)
+  {
+    if (is_empty() || back()==dend)
+    { return; }
+
+    Dart_const_handle d2=get_map().template beta<1,2,1>(back());
+    while(d2!=dend)
+    {
+      push_back(d2, false);
+      d2=get_map().template beta<1,2,1>(d2);
+    }
+    if (update_isclosed) { update_is_closed(); }
+  }
+
+  void extend_straight_negative_until(Dart_const_handle dend,
+                                      bool update_isclosed=true)
+  {
+    if (is_empty() || back()==dend)
+    { return; }
+
+    Dart_const_handle d2=get_map().template beta<2,0,2,0,2>(back());
+    while(d2!=dend)
+    {
+      push_back(d2, false);
+      d2=get_map().template beta<2,0,2,0,2>(d2);
+    }
+    if (update_isclosed) { update_is_closed(); }
+  }
+
+  void extend_positive_turn(std::size_t nb=1, bool update_isclosed=true)
+  {
+    if (is_empty()) { return; }
+
+    if (nb==0)
+    {
+      if (!get_map().template is_free<2>(back()))
+      { push_back(get_map().template beta<2>(back())); }
+      return;
+    }
+
+    Dart_const_handle d2=get_map().template beta<1>(back());
+    for (std::size_t i=1; i<nb; ++i)
+    { d2=get_map().template beta<2, 1>(d2); }
+
+    if (d2!=get_map().null_dart_handle)
+    { push_back(d2, update_isclosed); }
+  }
+
+  void extend_negative_turn(std::size_t nb=1, bool update_isclosed=true)
+  {
+    if (is_empty()) { return; }
+
+    if (nb==0)
+    {
+      if (!get_map().template is_free<2>(back()))
+      { push_back(get_map().template beta<2>(back())); }
+      return;
+    }
+
+    Dart_const_handle d2=get_map().template beta<2>(back());
+    for (std::size_t i=0; i<nb; ++i)
+    { d2=get_map().template beta<0, 2>(d2); }
+
+    if (d2!=get_map().null_dart_handle)
+    { push_back(d2, update_isclosed); }
+  }
+
+  /// Replace edge [i] by the path of darts along the face.
+  /// Problem of complexity when used many times (like in update_path_randomly).
+  void push_around_face(std::size_t i, bool update_isclosed=true)
+  {
+    CGAL_assertion(i<length());
+
+    Self p2(get_map());
+    std::size_t begin=i;
+    Dart_const_handle dh=get_map().template beta<0>(get_ith_dart(begin));
+    do
+    {
+      p2.push_back(get_map().template beta<2>(dh));
+      dh=get_map().template beta<0>(dh);
+    }
+    while(dh!=get_ith_dart(begin));
+
+    p2.m_path.reserve(p2.m_path.size()+length()-begin);
+    for (std::size_t j=begin+1; j<length(); ++j)
+    { p2.push_back(get_ith_dart(j), false); }
+
+    cut(begin, false);
+    m_path.reserve(m_path.size()+p2.length());
+    for (std::size_t j=0; j<p2.length(); ++j)
+    { push_back(p2[j], false); }
+
+    if (update_isclosed) { update_isclosed; }
+  }
+
+  /// Push back a random dart, if the path is empty.
+  bool initialize_random_starting_dart(CGAL::Random& random,
+                                       bool update_isclosed=true)
+  {
+    if (!is_empty() || get_map().is_empty()) { return false; }
+
+    unsigned int index=random.get_int(0, get_map().darts().capacity());
+    while (!get_map().darts().is_used(index))
+    {
+      ++index;
+      if (index==get_map().darts().capacity()) index=0;
+    }
+    push_back(get_map().darts().iterator_to(get_map().darts()[index]),
+              update_isclosed);
+    return true;
+  }
+
+  bool initialize_random_starting_dart(bool update_isclosed=true)
+  {
+    CGAL::Random random;
+    return initialize_random_starting_dart(random, update_isclosed);
+  }
+
+  bool extend_path_randomly(CGAL::Random& random,
+                            bool allow_half_turn=true,
+                            bool update_isclosed=true)
+  {
+    if (is_empty())
+    { return initialize_random_starting_dart(random, update_isclosed); }
+
+    Dart_const_handle pend=get_map().template beta<2>(back());
+    if (pend==Map::null_handle)
+    {
+      if (!get_map().template is_free<1>(back()))
+      { // Here there is no other possibility to extend the path !
+        push_back(get_map().template beta<1>(back()), update_isclosed);
+        return true;
+      }
+      else { return false; }
+    }
+
+    unsigned int index=random.get_int  //get_int(a,b) returns an int in {a,...,b-1}
+        ((allow_half_turn?0:1),
+         get_map().template darts_of_cell<0>(pend).size());
+
+    Dart_const_handle res=pend;
+    for(unsigned int i=0; i<index; ++i)
+    { res=get_map().template beta<2,1>(res); }
+
+    CGAL_assertion(allow_half_turn || res!=pend);
+
+    push_back(res, update_isclosed);
+    return true;
+  }
+
+  bool extend_path_randomly(bool allow_half_turn=false,
+                            bool update_isclosed=true)
+  {
+    CGAL::Random random;
+    extend_path_randomly(random, allow_half_turn, update_isclosed);
+  }
+
+  void generate_random_path(std::size_t length, CGAL::Random& random,
+                            bool update_isclosed=true)
+  {
+    m_path.reserve(m_path.size()+length);
+    for (std::size_t i=0; i<length; ++i)
+    { extend_path_randomly(random, true, false); }
+    if (update_isclosed) { update_is_closed(); }
+  }
+
+  template<typename Path>
+  void generate_random_path(CGAL::Random& random,
+                            bool update_isclosed=true)
+  { generate_random_path(random.get_int(1, 10000), random, update_isclosed); }
+
+  template<typename Path>
+  void generate_random_path(std::size_t length,
+                            bool update_isclosed=true)
+  {
+    CGAL::Random random;
+    generate_random_path(length, random, update_isclosed);
+  }
+
+  template<typename Path>
+  void generate_random_path(bool update_isclosed=true)
+  {
+    CGAL::Random random;
+    generate_random_path(random, update_isclosed);
+  }
+
+  void generate_random_closed_path(std::size_t length, CGAL::Random& random)
+  {
+    m_path.reserve(m_path.size()+length);
+    std::size_t i=0;
+    while(i<length || !is_closed())
+    {
+      extend_path_randomly(random, true, true);
+      ++i;
+    }
+  }
+  void generate_random_closed_path(std::size_t length)
+  {
+    CGAL::Random random;
+    generate_random_closed_path(random, length);
+  }
+
+  void generate_random_closed_path(CGAL::Random& random)
+  { generate_random_closed_path(random.get_int(1, 10000), random); }
+
+  void generate_random_closed_path()
+  {
+    CGAL::Random random;
+    generate_random_closed_path(random.get_int(1, 10000), random);
+  }
+
+  /// Transform the current path by pushing some dart around faces.
+  /// At the end, the new path is homotopic to the original one.
+  void update_path_randomly(std::size_t nb, CGAL::Random& random,
+                            bool update_isclosed=true)
+  {
+    if (is_empty()) return;
+
+    for (unsigned int i=0; i<nb; ++i)
+    {
+      push_around_face(random.get_int(0, length()), false);
+    }
+    if (update_isclosed) { update_isclosed; }
+  }
+
+  void update_path_randomly(CGAL::Random& random,
+                            bool update_isclosed=true)
+  { update_path_randomly(random.get_int(0, 10000), update_isclosed); }
+
+  void update_path_randomly(std::size_t nb, bool update_isclosed=true)
+  {
+    CGAL::Random random;
+    update_path_randomly(nb, random, update_isclosed);
+  }
+
+  void update_path_randomly(bool update_isclosed=true)
+  {
+    CGAL::Random random;
+    update_path_randomly(random, update_isclosed);
+  }
+
   /// @Return true if this path is equal to other path, identifying dart 0 of
   ///          this path with dart start in other path.
   bool are_same_paths_from(const Self& other, std::size_t start) const
@@ -200,7 +514,26 @@ public:
   }
 
   /// @return true if this path is equal to other path. For closed paths, test
-  ///         all possible starting darts.
+  ///         all possible starting darts. Old quadratic version, new version
+  ///         (operator==) use linear version based on Knuth, Morris, Pratt
+  bool are_paths_equals(const Self& other) const
+  {
+    if (length()!=other.length() || is_closed()!=other.is_closed())
+    { return false; }
+
+    if (!is_closed())
+    { return are_same_paths_from(other, 0); }
+
+    for(std::size_t start=0; start<length(); ++start)
+    {
+      if (are_same_paths_from(other, start))
+      { return true; }
+    }
+    return false;
+  }
+
+  /// @return true if this path is equal to other path. For closed paths,
+  ///         equality is achieved whatever the first dart.
   bool operator==(const Self& other) const
   {
     if (length()!=other.length() || is_closed()!=other.is_closed())
@@ -209,18 +542,14 @@ public:
     if (!is_closed())
     { return are_same_paths_from(other, 0); }
 
-    // TODO use
-    /*template <typename patIter, typename corpusIter>
-    pair<corpusIter, corpusIter> knuth_morris_pratt_search (
-            corpusIter corpus_first, corpusIter corpus_last,
-            patIter pat_first, patIter pat_last ); */
+    Self p2(*this); p2+=p2;
+    // Now we search if other is a sub-motif of p2 <=> *this==other
 
-    for(std::size_t start=0; start<length(); ++start)
-    {
-      if (are_same_paths_from(other, start))
-      { return true; }
-    }
-    return false;
+    return boost::algorithm::knuth_morris_pratt_search(p2.m_path.begin(),
+                                                       p2.m_path.end(),
+                                                       other.m_path.begin(),
+                                                       other.m_path.end()).first
+        !=p2.m_path.end();
   }
   bool operator!=(const Self&  other) const
   { return !(operator==(other)); }
@@ -252,11 +581,10 @@ public:
 
     return true;
   }
-
   /// @return true if this path is equal to other path. For closed paths, test
   ///         all possible starting darts. other path is given by index of its
   ///         darts, in text format.
-  bool operator==(const char*  other) const
+  bool operator==(const char* other) const
   {
     if (!is_closed())
     { return are_same_paths_from(other, 0); }
@@ -271,17 +599,13 @@ public:
   bool operator!=(const char*  other) const
   { return !(operator==(other)); }
 
-  void cut(std::size_t n, bool update_isclosed=true)
-  {
-    if (n>=length()) return;
-    m_path.resize(n);
-    if (update_isclosed) { update_is_closed(); }
-  }
 
   /// @return true iff the path is valid; i.e. a sequence of edges two by
   ///              two adjacent.
   bool is_valid() const
   {
+    if (is_empty()) { return !is_closed(); } // an empty past is not closed
+
     for (unsigned int i=1; i<m_path.size(); ++i)
     {
       /* This assert is long if (!m_map.darts().owns(m_path[i]))
@@ -291,9 +615,9 @@ public:
       { return false; }
 
       Dart_const_handle pend=m_map.other_extremity(m_path[i-1]);
-      if (pend==Map::null_handle && get_next_dart(i)!=NULL) { return false; }
+      if (pend==Map::null_handle) { return false; }
 
-      if (!CGAL::template belong_to_same_cell<Map,0>(m_map, get_next_dart(i), pend))
+      if (!CGAL::template belong_to_same_cell<Map,0>(m_map, m_path[i], pend))
       { return false; }
     }
     if (is_closed())
@@ -342,10 +666,10 @@ public:
     for (i=0; res && i<m_path.size(); ++i)
     {
       if (m_map.is_marked(m_path[i], markvertex)) { res=false; }
-      else { CGAL::mark_cell<Map, 0>(m_path[i], markvertex); }
+      else { CGAL::mark_cell<Map, 0>(m_map, m_path[i], markvertex); }
 
       if (m_map.is_marked(m_path[i], markedge)) { res=false; }
-      else  { CGAL::mark_cell<Map, 1>(m_path[i], markedge); }
+      else  { CGAL::mark_cell<Map, 1>(m_map, m_path[i], markedge); }
     }
 
     i=0;
@@ -354,9 +678,9 @@ public:
     {
       CGAL_assertion(i<m_path.size());
       if (m_map.is_marked(m_path[i], markvertex))
-      { CGAL::unmark_cell<Map, 0>(m_path[i], markvertex); }
-      if (m_map.is_marked(m_path[i], markvertex))
-      { CGAL::unmark_cell<Map, 1>(m_path[i], markedge); }
+      { CGAL::unmark_cell<Map, 0>(m_map, m_path[i], markvertex); }
+      if (m_map.is_marked(m_path[i], markedge))
+      { CGAL::unmark_cell<Map, 1>(m_map, m_path[i], markedge); }
       ++i;
     }
 
@@ -380,26 +704,12 @@ public:
   /// If the given path is opened, close it by doing the same path that the
   /// first one in reverse direction.
   void close()
-  {
+  { // TODO follow shortest path ?
     if (!is_closed())
     {
       for (int i=m_path.size()-1; i>=0; --i)
-      { m_path.push_back(m_map.template beta<2>(get_ith_dart(i))); }
+      { m_path.push_back(m_map.template beta<2>(get_ith_dart(i)), false); }
       m_is_closed=true;
-    }
-  }
-
-  // copy all darts starting from begin and going to the dart before end
-  // from this path to new_path.
-  void copy_rest_of_path(std::size_t begin, std::size_t end,
-                         Self& new_path)
-  {
-    CGAL_assertion(end<=length());
-    CGAL_assertion(begin<=end);
-    while(begin!=end)
-    {
-      new_path.push_back(get_ith_dart(begin));
-      ++begin;
     }
   }
 
@@ -545,9 +855,9 @@ public:
   }
 
 protected:
-  const Map& m_map; // The underlying map
-  std::vector<Dart_const_handle> m_path; // The sequence of darts
-  bool m_is_closed; // True iff the path is a cycle
+  const Map& m_map;                      /// The underlying map
+  std::vector<Dart_const_handle> m_path; /// The sequence of darts
+  bool m_is_closed;                      /// True iff the path is a cycle
 };
 
 } // namespace CGAL

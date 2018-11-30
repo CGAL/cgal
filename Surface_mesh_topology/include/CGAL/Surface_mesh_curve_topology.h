@@ -844,7 +844,7 @@ namespace CGAL {
 
       return res;
     }
-
+    /*
     /// @return the turn between dart number i and dart number i+1 of path.
     ///         (turn is position of the second edge in the cyclic ordering of
     ///          edges starting from the first edge around the second extremity
@@ -883,8 +883,8 @@ namespace CGAL {
       // OLD return path.next_negative_turn(i);
       Dart_const_handle d1=path.get_ith_dart(i);
       Dart_const_handle d2=path.get_next_dart(i);
-/*      Dart_const_handle d1=m_map.template beta<2>(path.get_ith_dart(i));
-      Dart_const_handle d2=m_map.template beta<2>(path.get_next_dart(i));*/
+//      Dart_const_handle d1=m_map.template beta<2>(path.get_ith_dart(i));
+//      Dart_const_handle d2=m_map.template beta<2>(path.get_next_dart(i));
       assert(d1!=d2);
 
       if (d2==m_map.template beta<2>(d1))
@@ -995,8 +995,8 @@ namespace CGAL {
           end=find_end_of_braket(path, begin, positive);
           if (begin!=end)
           {
-            /* std::cout<<"Bracket: ["<<begin<<"; "<<end<<"] "
-                     <<(positive?"+":"-")<<std::endl; */
+            // std::cout<<"Bracket: ["<<begin<<"; "<<end<<"] "
+            //         <<(positive?"+":"-")<<std::endl;
             if (end<begin)
             {
               if (!path.is_closed())
@@ -1023,7 +1023,8 @@ namespace CGAL {
 
       return false;
     }
-
+*/
+    
     // Simplify the path by removing all brackets
     bool bracket_flattening(Path_on_surface<Map>& path) const
     {
@@ -1128,7 +1129,7 @@ namespace CGAL {
       while(modified);
     }
 
-    bool find_l_shape(const Path_on_surface<Map>& path,
+    /*    bool find_l_shape(const Path_on_surface<Map>& path,
                       std::size_t begin,
                       std::size_t& middle,
                       std::size_t& end) const
@@ -1204,8 +1205,7 @@ namespace CGAL {
       { // TODO: check if we need to do also something for !case_seven ?
         // if (case_seven)
         { CGAL::extend_uturn_positive(new_path, 1); }
-        /* else
-        { assert(false); } // We think (?) that this case is not possible */
+        // else  { assert(false); } // We think (?) that this case is not possible
       }
 
     }
@@ -1336,7 +1336,8 @@ namespace CGAL {
       }
       return false;
     }
-
+*/
+    
     bool right_push(Path_on_surface<Map>& path) const
     {
       // TODO TEMPO POUR TEST
@@ -1363,7 +1364,7 @@ namespace CGAL {
     }
 
   public:
-    // Canonize the path
+    /// Canonize the path
     void canonize(Path_on_surface<Map>& path) const
     {
       if (!path.is_closed())

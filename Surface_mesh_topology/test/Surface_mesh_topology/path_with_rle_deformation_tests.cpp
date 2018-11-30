@@ -1,17 +1,18 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
-#include <CGAL/Combinatorial_map_functionalities.h>
+#include <CGAL/Surface_mesh_curve_topology.h>
 #include <vector>
 #include <sstream>
 
 /* If you want to use a viewer, you can use qglviewer. */
 #ifdef CGAL_USE_BASIC_VIEWER
-#include <CGAL/LCC_with_paths.h>
+#include <CGAL/draw_lcc_with_pathes.h>
 #endif
 
 #include <CGAL/Path_generators.h>
 #include <CGAL/Path_on_surface.h>
+#include <CGAL/Path_on_surface_with_rle.h>
 #include "Creation_of_test_cases_for_paths.h"
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3> LCC_3_cmap;
@@ -27,12 +28,12 @@ enum Transformation // enum for the type of transformations
   FULL_SIMPLIFICATION
 };
 
-static unsigned int starting_seed;
+static int starting_seed;
 
 ///////////////////////////////////////////////////////////////////////////////
 void transform_path(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
                     bool draw=false,
-                    unsigned int repeat=0) // If 0, repeat as long as there is one modifcation;
+                    std::size_t repeat=0) // If 0, repeat as long as there is one modifcation;
                                            // otherwise repeat the given number of times
 {
   std::vector<const CGAL::Path_on_surface<LCC_3_cmap>*> v;
@@ -42,13 +43,13 @@ void transform_path(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
     // display(path.get_map(), v);
   }
 
-  CGAL::Path_on_surface<LCC_3_cmap>* prevp=&path;
-  CGAL::Path_on_surface<LCC_3_cmap>* curp=NULL;
-  unsigned int nb=0;
+  CGAL::Path_on_surface<LCC_3_cmap> prevp=path;
+  CGAL::Path_on_surface_with_rle<LCC_3_cmap> curp(path.get_map());
+  std::size_t nb=0;
   bool modified=false;
   do
   {
-    curp=new CGAL::Path_on_surface<LCC_3_cmap>(*prevp);
+    curp=CGAL::Path_on_surface_with_rle<LCC_3_cmap>(prevp);
     modified=false;
     /* curp->display_negative_turns();
     std::cout<<"  "; curp->display_positive_turns();
@@ -56,30 +57,26 @@ void transform_path(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
 
     if (t==REDUCTION || t==FULL_SIMPLIFICATION)
     {
-      modified=curp->bracket_flattening_one_step();
+      modified=curp.remove_brackets(false);
       if (!modified)
-      { modified=curp->remove_spurs(); }
+      { modified=curp.remove_spurs(false); }
     }
     if (t==PUSH || t==FULL_SIMPLIFICATION)
     {
       if (!modified)
-      { modified=curp->right_push_one_step(); }
+      { modified=curp.right_push(false); }
     }
 
     if (modified)
     {
-      if (draw) { v.push_back(curp); }
-      prevp=curp;
+      prevp=CGAL::Path_on_surface<LCC_3_cmap>(curp);
+#ifdef CGAL_USE_BASIC_VIEWER
+      if (draw) { v.push_back(prevp); }
+#endif // CGAL_USE_BASIC_VIEWER
 
       /* curp->display_negative_turns();
       std::cout<<"  "; curp->display_positive_turns();
       std::cout<<std::endl; */
-    }
-    else
-    {
-      delete curp;
-      curp=NULL;
-      // std::cout<<"unchanged."<<std::endl;
     }
 
     // if (draw /* && nbtest==1*/)
@@ -87,27 +84,17 @@ void transform_path(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
 
     ++nb;
   }
-  while((repeat==0 && curp!=NULL) || (nb<repeat));
+  while((repeat==0 && modified) || (nb<repeat));
 
+#ifdef CGAL_USE_BASIC_VIEWER
   if (draw)
   {
     std::string title="Test "+std::to_string(nbtests);
     display(path.get_map(), v, title.c_str());
   }
+#endif // CGAL_USE_BASIC_VIEWER
 
-  path.swap(*prevp);
-}
-///////////////////////////////////////////////////////////////////////////////
-void generate_random_bracket(CGAL::Path_on_surface<LCC_3_cmap>& path,
-                             std::size_t nb1, std::size_t nb2, std::size_t nb3,
-                             CGAL::Random& random)
-{
-  path.clear();
-  CGAL::initialize_path_random_starting_dart(path, random);
-  CGAL::extend_straight_positive(path, nb1-1);
-  CGAL::create_braket_positive(path, nb2);
-  CGAL::extend_straight_positive(path, nb3);
-  CGAL::generate_random_path(path, random.get_int(0, 15), random);
+  path.swap(prevp);
 }
 ///////////////////////////////////////////////////////////////////////////////
 bool unit_test(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
@@ -147,12 +134,10 @@ bool unit_test(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
 }
 ///////////////////////////////////////////////////////////////////////////////
 bool unit_test_canonize(std::vector<CGAL::Path_on_surface<LCC_3_cmap> >& paths,
-                        std::vector<CGAL::Path_on_surface<LCC_3_cmap> >& transformed_paths,
+                        std::vector<CGAL::Path_on_surface_with_rle<LCC_3_cmap> >& transformed_paths,
                         const char* msg,
                         bool draw, int testtorun)
 {
-  // Wrong assert !! assert(paths.size()==transformed_paths.size());
-
   std::vector<const CGAL::Path_on_surface<LCC_3_cmap>*> v;
   bool res=true;
 
@@ -166,11 +151,13 @@ bool unit_test_canonize(std::vector<CGAL::Path_on_surface<LCC_3_cmap> >& paths,
 
     for (unsigned int i=0; i<paths.size(); ++i)
     {
+#ifdef CGAL_USE_BASIC_VIEWER
       if (draw)
       {
         v.push_back(&paths[i]);
         // display(paths[i].get_map(), v);
       }
+#endif // CGAL_USE_BASIC_VIEWER
 
       transformed_paths[i].canonize();
 
@@ -193,11 +180,13 @@ bool unit_test_canonize(std::vector<CGAL::Path_on_surface<LCC_3_cmap> >& paths,
       }
     }
 
+#ifdef CGAL_USE_BASIC_VIEWER
     if (draw)
     {
       std::string title="Test "+std::to_string(nbtests);
       display(paths[0].get_map(), v, title.c_str());
     }
+#endif // CGAL_USE_BASIC_VIEWER
 
 #ifdef CGAL_TRACE_PATH_TESTS
     std::cout<<std::endl;
@@ -215,13 +204,8 @@ bool test_all_cases_spurs_and_bracket(bool draw, int testtorun)
   if (!CGAL::load_off(lcc, "./data/cube-mesh-5-5.off"))
   {
     std::cout<<"PROBLEM reading file ./data/cube-mesh-5-5.off"<<std::endl;
-    exit(EXIT_FAILURE);
+    return false;
   }
-
-  /* std::cout<<"Initial map 1: ";
-  lcc.display_characteristics(std::cout) << ", valid="
-                                         << lcc.is_valid() << std::endl;
-  */
 
   CGAL::Path_on_surface<LCC_3_cmap> path(lcc);
 
@@ -294,7 +278,7 @@ bool test_all_cases_l_shape(bool draw, int testtorun)
   if (!CGAL::load_off(lcc, "./data/cube-mesh-5-5.off"))
   {
     std::cout<<"PROBLEM reading file ./data/cube-mesh-5-5.off"<<std::endl;
-    exit(EXIT_FAILURE);
+    return false;
   }
   CGAL::Path_on_surface<LCC_3_cmap> path(lcc);
 
@@ -381,7 +365,7 @@ bool test_some_random_paths_on_cube(bool draw, int testtorun)
   if (!CGAL::load_off(lcc, "./data/cube-mesh-5-5.off"))
   {
     std::cout<<"PROBLEM reading file ./data/cube-mesh-5-5.off"<<std::endl;
-    exit(EXIT_FAILURE);
+    return false;
   }
 
   CGAL::Path_on_surface<LCC_3_cmap> path(lcc);
@@ -411,69 +395,6 @@ bool test_some_random_paths_on_cube(bool draw, int testtorun)
                    "2", draw, testtorun))
   { res=false; }
 
-  return true;
-}
-///////////////////////////////////////////////////////////////////////////////
-bool test_torus_quad(bool draw, int testtorun)
-{
-  bool res=true;
-
-/*  LCC_3_cmap lcc;
-  if (!CGAL::load_off(lcc, "./data/torus_quad.off"))
-  {
-    std::cout<<"PROBLEM reading file ./data/torus_quad.off"<<std::endl;
-    exit(EXIT_FAILURE);
-  }
-
-  CGAL::Combinatorial_map_tools<LCC_3_cmap> cmt(lcc);
-
-  std::vector<CGAL::Path_on_surface<LCC_3_cmap> > paths;
-  std::vector<CGAL::Path_on_surface<LCC_3_cmap> > transformed_paths;
-
-  // Test 21 (3 g1 cycles)
-  for (int i=0; i<3; ++i)
-  {
-    paths.push_back(CGAL::Path_on_surface<LCC_3_cmap>(lcc));
-    CGAL::generate_g1_torus(paths[i], i);
-    transformed_paths.push_back
-        (cmt.transform_original_path_into_quad_surface(paths[i]));
-  }
-
-  if (!unit_test_canonize(paths, transformed_paths,
-                          "canonize paths on torus gen1",
-                          draw, testtorun))
-  { res=false; }
-
-  // Test 22 (3 null cycles)
-  paths.clear(); transformed_paths.clear();
-  for (int i=0; i<3; ++i)
-  {
-    paths.push_back(CGAL::Path_on_surface<LCC_3_cmap>(lcc));
-    CGAL::generate_null_cycle_torus(paths[i], i);
-    transformed_paths.push_back
-        (cmt.transform_original_path_into_quad_surface(paths[i]));
-  }
-
-  if (!unit_test_canonize(paths, transformed_paths,
-                          "canonize paths on torus null cycles",
-                          draw, testtorun))
-  { res=false; }
-
-  // Test 23 (3 g2 cycles) TODO BUG IN TEST 23 !!!
-  paths.clear(); transformed_paths.clear();
-  for (int i=0; i<3; ++i)
-  {
-    paths.push_back(CGAL::Path_on_surface<LCC_3_cmap>(lcc));
-    CGAL::generate_g2_torus(paths[i], i);
-    transformed_paths.push_back
-        (cmt.transform_original_path_into_quad_surface(paths[i]));
-  }
-
-  if (!unit_test_canonize(paths, transformed_paths,
-                          "canonize paths on torus gen2",
-                          draw, testtorun))
-  { res=false; }
-*/
   return res;
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -485,7 +406,7 @@ bool test_right_push(bool draw, int testtorun)
   if (!CGAL::load_off(lcc, "./data/cube-mesh-5-5.off"))
   {
     std::cout<<"PROBLEM reading file ./data/cube-mesh-5-5.off"<<std::endl;
-    exit(EXIT_FAILURE);
+    return false;
   }
 
   CGAL::Path_on_surface<LCC_3_cmap> path(lcc);
@@ -493,14 +414,14 @@ bool test_right_push(bool draw, int testtorun)
   if (testtorun==-1 || nbtests==testtorun)
   {
     generate_one_l_shape(path); // Test 21
-    transform_path(path, PUSH, draw, testtorun); // TODO COMPARE RESULT WITH GOLD STANDARD
+    transform_path(path, PUSH, draw, 0); // TODO COMPARE RESULT WITH GOLD STANDARD
   }
   ++nbtests;
 
   if (testtorun==-1 || nbtests==testtorun)
   {
     generate_l_shape_case2(path); // Test 22
-    transform_path(path, PUSH, draw, testtorun); // TODO COMPARE RESULT WITH GOLD STANDARD
+    transform_path(path, PUSH, draw, 0); // TODO COMPARE RESULT WITH GOLD STANDARD
   }
   ++nbtests;
 
@@ -518,10 +439,10 @@ bool test_double_torus_quad(bool draw, int testtorun)
     exit(EXIT_FAILURE);
   }
 
-  CGAL::Combinatorial_map_tools<LCC_3_cmap> cmt(lcc);
+  CGAL::Surface_mesh_curve_topology<LCC_3_cmap> cmt(lcc);
 
   std::vector<CGAL::Path_on_surface<LCC_3_cmap> > paths;
-  std::vector<CGAL::Path_on_surface<LCC_3_cmap> > transformed_paths;
+  std::vector<CGAL::Path_on_surface_with_rle<LCC_3_cmap> > transformed_paths;
 
   // Test 23 (3 g1 cycles)
   for (unsigned int i=0; i<3; ++i)
@@ -548,7 +469,7 @@ bool test_double_torus_quad(bool draw, int testtorun)
     exit(EXIT_FAILURE);
   }
 
-  CGAL::Combinatorial_map_tools<LCC_3_cmap> cmt2(lcc2);
+  CGAL::Surface_mesh_curve_topology<LCC_3_cmap> cmt2(lcc2);
 
   paths.clear();
   transformed_paths.clear();
@@ -563,7 +484,7 @@ bool test_double_torus_quad(bool draw, int testtorun)
 
     std::cout<<"Path1 size: "<<p.length()<<"; ";
 
-    update_path_randomly(p, random);
+    p.update_path_randomly(random);
     paths.push_back(p);
 
     std::cout<<"Path2 size: "<<p.length()<<"; ";
@@ -594,7 +515,7 @@ bool test_double_torus_quad(bool draw, int testtorun)
     exit(EXIT_FAILURE);
   }
 
-  CGAL::Combinatorial_map_tools<LCC_3_cmap> cmt3(lcc3);
+  CGAL::Surface_mesh_curve_topology<LCC_3_cmap> cmt3(lcc3);
 
   paths.clear();
   transformed_paths.clear();
@@ -609,7 +530,7 @@ bool test_double_torus_quad(bool draw, int testtorun)
 
     std::cout<<"Path1 size: "<<p.length()<<"; ";
 
-    update_path_randomly(p, random);
+    p.update_path_randomly(random);
     paths.push_back(p);
 
     std::cout<<"Path2 size: "<<p.length()<<"; ";
@@ -635,64 +556,6 @@ bool test_double_torus_quad(bool draw, int testtorun)
   return res;
 }
 ///////////////////////////////////////////////////////////////////////////////
-bool test_elephant(bool draw, int testtorun) // TODO LATER
-{
-  bool res=true;
-
-/*   LCC_3_cmap lcc;
-  if (!CGAL::load_off(lcc, "./data/elephant.off"))
-  {
-    std::cout<<"PROBLEM reading file ./data/elephant.off"<<std::endl;
-    exit(EXIT_FAILURE);
-  }
-
- // std::cout<<"Initial map: ";
- // lcc.display_characteristics(std::cout) << ", valid="
- //                                        << lcc.is_valid() << std::endl;
-
-  CGAL::Path_on_surface<LCC_3_cmap> p1(lcc);
-  CGAL::Random random(starting_seed+nbtests);
-  CGAL::generate_random_path(p1, 10, random);
-
-  CGAL::Path_on_surface<LCC_3_cmap> p2(lcc);
-  random=CGAL::Random(starting_seed+nbtests);
-  CGAL::generate_random_path(p2, 15, random);
-
-  CGAL::Path_on_surface<LCC_3_cmap> p3(lcc);
-  random=CGAL::Random(starting_seed+nbtests);
-  CGAL::generate_random_path(p3, 10, random);
-
-  CGAL::Path_on_surface<LCC_3_cmap> p4(lcc);
-  random=CGAL::Random(starting_seed+nbtests);
-  CGAL::generate_random_path(p4, 15, random);
-
-  CGAL::Combinatorial_map_tools<LCC_3_cmap> cmt(lcc);
-
-  CGAL::Path_on_surface<LCC_3_cmap>
-      pp1=cmt.transform_original_path_into_quad_surface(p1),
-      pp2=cmt.transform_original_path_into_quad_surface(p2),
-      pp3=cmt.transform_original_path_into_quad_surface(p3),
-      pp4=cmt.transform_original_path_into_quad_surface(p4);
-
-
-  if (!unit_test(pp1, FULL_SIMPLIFICATION, 0, "1st random path on off file",
-                 "", draw, testtorun)) // Test XX
-  { res=false; }
-
-  if (!unit_test(pp2, FULL_SIMPLIFICATION, 0, "2nd random path on off file",
-                 "", draw, testtorun)) // Test XX
-  { res=false; }
-
-  if (!unit_test(pp3, FULL_SIMPLIFICATION, 0, "3rd random path on off file",
-                 "", draw, testtorun)) // Test XX
-  { res=false; }
-
-  if (!unit_test(pp4, FULL_SIMPLIFICATION, 0, "4th random path on off file",
-                 "", draw, testtorun)) // Test XX
-  { res=false; }
- */
-  return res;
-}
 ///////////////////////////////////////////////////////////////////////////////
 void usage(int /*argc*/, char** argv)
 {
@@ -725,7 +588,7 @@ int main(int argc, char** argv)
   CGAL::Random r; // Used when user do not provide its own seed.
   starting_seed=r.get_int(0,INT_MAX);
 
-  for (unsigned int i=1; i<(unsigned int)argc; ++i)
+  for (int i=1; i<argc; ++i)
   {
     arg=argv[i];
     if (arg=="-draw")
@@ -785,18 +648,6 @@ int main(int argc, char** argv)
     std::cout<<"TEST DOUBLE TORUS FAILED."<<std::endl;
     return EXIT_FAILURE;
   }
-
-  /* if (!test_torus_quad(draw, testN)) // Doesn't work because the method is valid only for surfaces with genus >=2
-  {
-    std::cout<<"TEST TORUS FAILED."<<std::endl;
-    return EXIT_FAILURE;
-  } */
-
-  /* TODO LATER if (!test_file(draw, testN))
-  {
-    std::cout<<"TEST FILE FAILED."<<std::endl;
-    return EXIT_FAILURE;
-  } */
 
   if (testN==-1)
   { std::cout<<"all the "<<nbtests<<" tests OK."<<std::endl; }
