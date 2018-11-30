@@ -242,6 +242,14 @@ private:
     /*! Set the marked-face index */
     void set_marked_facet_index(size_type id) {m_marked_facet_index = id;}
 
+    /*! Add all facets. */
+    template <typename Iterator, typename Builder>
+    void add_facets(Iterator begin, Iterator end, Builder& B)
+    {
+      for (Iterator it = begin; it != end; ++it) B.add_vertex_to_facet(*it);
+      B.end_facet();
+    }
+
     /*! builds the polyhedron */
     void operator()(HDS& hds)
     {
@@ -262,12 +270,11 @@ private:
       for (CoordIndexIter it = m_indices_begin; it != m_indices_end; ++it) {
         Polyhedron_facet_handle fh = B.begin_facet();
         if (counter == m_marked_facet_index) fh->set_marked(true);
-        //! \todo EF: when upgrading to C++11 change the type of the following
-        // iterator to auto. Better yet, use for (auto blah : foo).
-        for (std::vector<size_t>::const_iterator iit = it->begin();
-             iit != it->end(); ++iit)
-          B.add_vertex_to_facet(*iit);
-        B.end_facet();
+        //! \todo EF: when upgrading to C++11 enable the following code and
+        // remove add_facets().
+        // for (const auto& facet : *it) B.add_vertex_to_facet(facet);
+        // B.end_facet();
+        add_facets(it->begin(), it->end(), B);
         ++counter;
       }
       B.end_surface();
