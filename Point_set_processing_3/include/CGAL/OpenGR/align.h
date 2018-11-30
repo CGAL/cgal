@@ -18,6 +18,11 @@
 //
 // Author(s) : Sebastien Loriot
 
+#ifndef CGAL_OPENGR_ALIGN_H
+#define CGAL_OPENGR_ALIGN_H
+
+#include <CGAL/license/Point_set_processing_3.h>
+
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/named_function_params.h>
@@ -30,9 +35,6 @@
 #include <gr/utils/geometry.h>
 
 #include <Eigen/Dense>
-
-#ifndef CGAL_OPENGR_ALIGN_H
-#define CGAL_OPENGR_ALIGN_H
 
 namespace CGAL {
 
