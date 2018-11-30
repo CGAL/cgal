@@ -35,39 +35,39 @@ struct DefaultDrawingFunctorLCC
 {
   /// @return true iff the volume containing dh is drawn.
   template<typename LCC>
-  bool draw_volume(const LCC& alcc,
-                   typename LCC::Dart_const_handle dh) const
+  bool draw_volume(const LCC&,
+                   typename LCC::Dart_const_handle) const
   { return true; }
   /// @return true iff the face containing dh is drawn.
   template<typename LCC>
-  bool draw_face(const LCC& alcc,
-                 typename LCC::Dart_const_handle dh) const
+  bool draw_face(const LCC&,
+                 typename LCC::Dart_const_handle) const
   { return true; }
   /// @return true iff the edge containing dh is drawn.
   template<typename LCC>
-  bool draw_edge(const LCC& alcc,
-                 typename LCC::Dart_const_handle dh) const
+  bool draw_edge(const LCC&,
+                 typename LCC::Dart_const_handle) const
   { return true; }
   /// @return true iff the vertex containing dh is drawn.
   template<typename LCC>
-  bool draw_vertex(const LCC& alcc,
-                   typename LCC::Dart_const_handle dh) const
+  bool draw_vertex(const LCC&,
+                   typename LCC::Dart_const_handle) const
   { return true; }
 
   /// @return true iff the volume containing dh is drawn in wireframe.
   template<typename LCC>
-  bool volume_wireframe(const LCC& alcc,
-                        typename LCC::Dart_const_handle dh) const
+  bool volume_wireframe(const LCC&,
+                        typename LCC::Dart_const_handle) const
   { return false; }
   /// @return true iff the face containing dh is drawn in wireframe.
   template<typename LCC>
-  bool face_wireframe(const LCC& alcc,
-                        typename LCC::Dart_const_handle dh) const
+  bool face_wireframe(const LCC&,
+                        typename LCC::Dart_const_handle) const
   { return false; }
 
   /// @return true iff the volume containing dh is colored.
   template<typename LCC>
-  bool colored_volume(const LCC& alcc,
+  bool colored_volume(const LCC&,
                       typename LCC::Dart_const_handle dh) const
   { return true; }
   /// @return true iff the face containing dh is colored.
@@ -85,7 +85,7 @@ struct DefaultDrawingFunctorLCC
   /// @return true iff the vertex containing dh is colored.
   template<typename LCC>
   bool colored_vertex(const LCC& alcc,
-                      typename LCC::Dart_const_handle dh) const
+                      typename LCC::Dart_const_handle) const
   { return false; }
 
   /// @return the color of the volume containing dh
