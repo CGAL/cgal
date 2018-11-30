@@ -39,6 +39,7 @@
 #include <stdexcept>
 #include <QTime>
 #include <QWidgetAction>
+#include <QJsonArray>
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptValue>
 #  ifdef QT_SCRIPTTOOLS_LIB
