@@ -109,6 +109,9 @@ target_link_libraries(random_perturbation_plugin PUBLIC scene_surface_mesh_item 
 polyhedron_demo_plugin(degenerated_faces_plugin Degenerated_faces_plugin)
 target_link_libraries(degenerated_faces_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
 
+qt5_wrap_ui( engravUI_FILES Engrave_dock_widget.ui )
+polyhedron_demo_plugin(engrave_text_plugin Engrave_text_plugin ${engravUI_FILES})
+target_link_libraries(engrave_text_plugin PUBLIC scene_surface_mesh_item scene_selection_item scene_polylines_item)
 
 polyhedron_demo_plugin(extrude_plugin Extrude_plugin)
 target_link_libraries(extrude_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
