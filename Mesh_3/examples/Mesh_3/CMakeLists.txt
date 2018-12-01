@@ -14,6 +14,10 @@ if ( MESH_3_VERBOSE )
   add_definitions(-DCGAL_MESH_3_VERBOSE)
 endif()
 
+if(POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW)
+endif()
+
 find_package(CGAL COMPONENTS ImageIO)
 
 if ( CGAL_FOUND )
