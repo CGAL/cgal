@@ -325,11 +325,17 @@ namespace CGAL {
     template<typename PointRange, typename NamedParameters>
     class GetK
     {
-      typedef typename boost::property_traits<
-        typename GetPointMap<PointRange, NamedParameters>::type
-        >::value_type Point;
+      typedef typename GetPointMap<PointRange, NamedParameters>::type Vpm;
+      typedef typename Kernel_traits<
+        typename boost::property_traits<Vpm>::value_type
+      >::Kernel Default_kernel;
+
     public:
-      typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
+      typedef typename boost::lookup_named_param_def <
+        internal_np::geom_traits_t,
+        NamedParameters,
+        Default_kernel
+      > ::type  Kernel;
     };
 
     template<typename PointRange, typename NamedParameters>
