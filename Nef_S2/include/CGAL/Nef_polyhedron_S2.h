@@ -339,7 +339,7 @@ public:
             f->mark() == false);
   }
 
-  bool is_plane() const
+  bool is_sphere() const
   /*{\Mop returns true if |\Mvar| is the whole plane, false otherwise.}*/
   { Const_decorator D(&sphere_map());
     SFace_const_iterator f = D.sfaces_begin();
