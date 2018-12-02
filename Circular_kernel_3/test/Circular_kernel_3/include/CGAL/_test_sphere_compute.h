@@ -107,8 +107,6 @@ void _test_spherical_kernel_compute(SK sk)
       const double diff1 = ((v1 > 0) ? (v1) : (-v1));
       const double diff2 = ((v2 > 0) ? (v2) : (-v2));
       // we suppose at least a precision of 10e-4, but it is not necessarily true
-      std::cout << "diff1 " << diff1 << "\n";
-      std::cout << "diff2 " << diff2 << "\n";
       assert(diff1 < 10e-4);
       assert(diff2 < 10e-4);
 
@@ -123,8 +121,6 @@ void _test_spherical_kernel_compute(SK sk)
       std::cout << sql1 << " " << app_sql1 << std::endl;
       std::cout << sql2 << " " << app_sql2 << std::endl;
       // we suppose at least a precision of 10e-4, but it is not necessarily true
-      std::cout << "diffv1 " << diff1 << "\n";
-      std::cout << "diffv2 " << diff2 << "\n";
       assert(diffv1 < 10e-4);
       assert(diffv2 < 10e-4);
     }
