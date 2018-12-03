@@ -63,6 +63,7 @@ Also, `Type1` and `Type2` can be both of type
 In three-dimensional space, the types `Type1` and
 `Type2` can be any of the following:
 
+- `Point_3<Kernel>`
 - `Plane_3<Kernel>`
 - `Line_3<Kernel>`
 - `Ray_3<Kernel>`
@@ -220,6 +221,9 @@ It is equivalent to `boost::optional< boost::variant< T... > >`, the last column
 </TABLE>
 </DIV>
 
+Additional overloads are provided for the type `Point_2` combined with any other type with the result type being 
+`boost::optional< boost::variant< Point_2 > >`.
+
 \cgalHeading{3D Intersections}
 
 The return type can be obtained through `CGAL::cpp11::result_of<Kernel::Intersect_3(A, B)>::%type`.
@@ -318,6 +322,10 @@ p    <TD>Point_3, or Segment_3</TD>
 </TR>
 </TABLE>
 </DIV>
+
+Additional overloads are provided for the type `Point_3` combined with any other type with the result type being 
+`boost::optional< boost::variant< Point_3 > >`.
+
 
 \cgalHeading{Examples}
 
