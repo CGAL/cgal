@@ -9,6 +9,7 @@
 #include <map>
 #include <CGAL/ImageIO.h>
 #include <CGAL/use.h>
+#include <QApplication>
 
 // -----------------------------------
 // Internal classes
