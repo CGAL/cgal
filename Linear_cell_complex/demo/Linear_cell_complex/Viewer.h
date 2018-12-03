@@ -101,8 +101,8 @@ struct MyDrawingFunctorLCC
   /// @return the color of the edge containing dh
   ///  used only if colored_edge(alcc, dh)
   template<typename LCC>
-  CGAL::Color edge_color(const LCC& alcc,
-                         typename LCC::Dart_const_handle dh) const
+  CGAL::Color edge_color(const LCC&,
+                         typename LCC::Dart_const_handle) const
   { return CGAL::Color(0, 0, 0); }
   /// @return the color of the vertex containing dh
   ///  used only if colored_vertex(alcc, dh)

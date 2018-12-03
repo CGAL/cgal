@@ -68,23 +68,23 @@ struct DefaultDrawingFunctorLCC
   /// @return true iff the volume containing dh is colored.
   template<typename LCC>
   bool colored_volume(const LCC&,
-                      typename LCC::Dart_const_handle dh) const
+                      typename LCC::Dart_const_handle) const
   { return true; }
   /// @return true iff the face containing dh is colored.
   ///  if we have also colored_volume(alcc, dh), the volume color is
   ///  ignored and only the face color is considered.
   template<typename LCC>
-  bool colored_face(const LCC& alcc,
-                    typename LCC::Dart_const_handle dh) const
+  bool colored_face(const LCC&,
+                    typename LCC::Dart_const_handle) const
   { return false; }
   /// @return true iff the edge containing dh is colored.
   template<typename LCC>
-  bool colored_edge(const LCC& alcc,
-                    typename LCC::Dart_const_handle dh) const
+  bool colored_edge(const LCC&,
+                    typename LCC::Dart_const_handle) const
   { return false; }
   /// @return true iff the vertex containing dh is colored.
   template<typename LCC>
-  bool colored_vertex(const LCC& alcc,
+  bool colored_vertex(const LCC&,
                       typename LCC::Dart_const_handle) const
   { return false; }
 
