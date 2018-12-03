@@ -499,6 +499,7 @@ struct Scene_c3t3_item_priv {
   bool cnc_are_shown;
   bool is_valid;
   bool is_surface;
+  bool last_intersection;
 };
 
 struct Set_show_tetrahedra {
@@ -521,6 +522,7 @@ void Scene_c3t3_item::common_constructor(bool is_surface)
   d->is_surface = is_surface;
   d->is_grid_shown = !is_surface;
   d->show_tetrahedra = !is_surface;
+  d->last_intersection = !d->show_tetrahedra;
   
   setTriangleContainer(C3t3_faces, new Tc(Vi::PROGRAM_C3T3, false));
   
@@ -1640,7 +1642,7 @@ void Scene_c3t3_item::show_spheres(bool b)
 }
 void Scene_c3t3_item::show_intersection(bool b)
 {
-      contextMenu()->findChild<QAction*>("actionShowTets")->setChecked(b);
+  contextMenu()->findChild<QAction*>("actionShowTets")->setChecked(b);
   if(b && !d->intersection)
   {
     d->intersection = new Scene_intersection_item(this);
@@ -1662,7 +1664,11 @@ void Scene_c3t3_item::show_intersection(bool b)
     unlockChild(d->intersection);
     scene->erase(scene->item_id(d->intersection));
   }
-  Q_EMIT redraw();
+  if(d->last_intersection != b)
+  {
+    d->last_intersection = b;
+    Q_EMIT redraw();
+  }
 
 }
 void Scene_c3t3_item::show_cnc(bool b)
