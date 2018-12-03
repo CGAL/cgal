@@ -350,6 +350,11 @@ public:
             f->mark() == true);
   }
 
+  bool is_sphere() const
+  {
+    return is_plane();
+  }
+
   void extract_complement()
   { CGAL_NEF_TRACEN("extract complement");
     if ( this->is_shared() ) clone_rep();
