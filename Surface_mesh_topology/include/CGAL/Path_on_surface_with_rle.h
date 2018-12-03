@@ -1091,7 +1091,6 @@ public:
   void move_to_next_l_shape(List_iterator& it)
   {
     // CGAL_assertion(is_valid());
-    CGAL_assertion(is_valid_iterator(it));
     CGAL_assertion(it!=m_path.end());
     List_iterator itend=(is_closed()?it:m_path.end());
     do
@@ -1244,7 +1243,10 @@ public:
    
     // 4) Move the second flat
     if (it2->second==0)
-    { it2=m_path.erase(it2); }
+    {
+      if (it==it2) { it=m_path.erase(it2); }
+      else { m_path.erase(it2); }
+    }
     else
     {
       CGAL_assertion(it2->second<0);
@@ -1256,29 +1258,28 @@ public:
       { it3->first=m_map.template beta<2,1,1>(it3->first); }
     }
     m_length-=2;
+    if (it==m_path.end() && !is_empty())
+    {
+      it=m_path.begin();
+      if (!is_beginning_of_flat(it)) { advance_iterator(it); }
+    }
   }
 
   /// Right push the path, if all all l-shape are pushed, otherwise only one.
   /// @return true iff the path was pushed
   bool right_push(bool all=true)
   {
-    CGAL_assertion(is_valid());
     bool res=false;
     List_iterator it=m_path.begin();
-    unsigned int TOTO=0;
     while(it!=m_path.end())
     {
       if (is_l_shape(it))
       {
-        std::cout<<"right_push_l_shape "<<TOTO++<<std::endl;
         right_push_l_shape(it); res=true;
         if (!all) { return true; }
-        CGAL_assertion(is_valid());
       }
-      else { CGAL_assertion(is_valid());
-        move_to_next_l_shape(it); }
+      else { move_to_next_l_shape(it); }
     }
-    CGAL_assertion(is_valid());
     return res;
   }
 
