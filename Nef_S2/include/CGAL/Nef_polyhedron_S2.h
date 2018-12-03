@@ -395,7 +395,7 @@ public:
     CGAL_forall_svertices(v,D) v->mark() = true;
     CGAL_forall_sedges(e,D)    e->mark() = true;
     CGAL_forall_sfaces(f,D)    f->mark() = false;
-    if ( D.has_sloop() )       D.shalfloop()->mark() = D.shalfoop()->twin() = true;
+    if ( D.has_sloop() )       D.shalfloop()->mark() = D.shalfoop()->twin()->mark() = true;
     D.simplify();
   }
 
