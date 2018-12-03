@@ -1,6 +1,5 @@
 #include <CGAL/use.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/intersections.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 

@@ -1,7 +1,6 @@
 #include <cassert>
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/intersections.h>
 
 typedef CGAL::Cartesian<double> K;
 
