@@ -40,8 +40,6 @@ namespace CGAL {
     return CGAL::do_overlap(c, bbox);
   }
 
-  void intersection(const CGAL::Bbox_3&,
-                    const CGAL::Bbox_3&){}
 } //namespace CGAL
 
 #endif  // CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_BBOX_3_DO_INTERSECT_H

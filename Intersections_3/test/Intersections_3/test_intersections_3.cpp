@@ -1,18 +1,3 @@
-#if 0
-
-#include <CGAL/Cartesian.h>
-#include <CGAL/Intersections_3/Segment_3_Segment_3.h>
-
-typedef CGAL::Cartesian<double> K;
-
-int main()
-{
-  K::Segment_3 s1, s2;
-  std::cout << do_intersect(s1,s2) << std::endl;
-  return 0;
-}
-
-#else
 // 3D intersection tests.
 
 #include <CGAL/Object.h>
@@ -612,4 +597,4 @@ int main()
 	Test< CGAL::Homogeneous<CGAL::MP_Float> >().run();
 	// TODO : test more kernels.
 }
-#endif
+
