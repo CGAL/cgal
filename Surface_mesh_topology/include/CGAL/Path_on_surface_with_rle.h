@@ -146,6 +146,24 @@ public:
     return *this;
   }
 
+  Self& operator+=(const Self& other)
+  {
+    // Be careful to the special case when *this==other
+    // this is the reason of the iend.
+    for (List_iterator lit=other.begin(), litend=std::prev(other.end());
+         lit!=litend; ++lit)
+    { m_path.push_back(*lit); }
+    m_path.push_back(other.back()); // Last element
+    update_is_closed();
+    return *this;
+  }
+
+  Self operator+(const Self& other) const
+  {
+    Self res=*this;
+    res+=other;
+    return res;
+  }  
   /// @Return true if this path is equal to other path, identifying dart begin
   ///         of this path with dart 'itother' in other path.
   bool are_same_paths_from(Self& other, List_iterator itother)
@@ -164,8 +182,9 @@ public:
   }
 
   /// @return true if this path is equal to other path. For closed paths, test
-  ///         all possible starting darts.
-  bool operator==(Self& other)
+  ///         all possible starting darts. Old quadratic version, new version
+  ///         (operator==) use linear version based on Knuth, Morris, Pratt
+  bool are_paths_equals(const Self& other)
   {
     if (is_closed()!=other.is_closed() ||
         length()!=other.length() ||
@@ -184,6 +203,28 @@ public:
     return false;
   }
 
+    /// @return true if this path is equal to other path. For closed paths, test
+  ///         all possible starting darts.
+  bool operator==(Self& other)
+  {
+    if (is_closed()!=other.is_closed() ||
+        length()!=other.length() ||
+        size_of_list()!=other.size_of_list())
+      return false;
+
+    if (!is_closed())
+    { return are_same_paths_from(other, other.m_path.begin()); }
+
+    Self p2(*this); p2+=p2;
+    // Now we search if other is a sub-motif of p2 <=> *this==other
+
+    return boost::algorithm::knuth_morris_pratt_search(p2.m_path.begin(),
+                                                       p2.m_path.end(),
+                                                       other.m_path.begin(),
+                                                       other.m_path.end()).first
+        !=p2.m_path.end();
+  }
+  
   bool operator!=(Self&  other)
   { return !(operator==(other)); }
 
@@ -332,7 +373,7 @@ public:
     m_path.push_back(dh);
     if (update_isclosed) { update_is_closed(); }
   }
-
+  */
   // Update m_is_closed to true iff the path is closed (i.e. the second
   //   extremity of the last dart of the path is the same vertex than the one
   //   of the first dart of the path).
@@ -347,7 +388,7 @@ public:
       else
       { m_is_closed=CGAL::belong_to_same_cell<Map,0>(m_map, m_path[0], pend); }
     }
-  } */
+  }
 
   /// @return true iff there is a dart after it
   bool next_dart_exist(const List_iterator& it) const
