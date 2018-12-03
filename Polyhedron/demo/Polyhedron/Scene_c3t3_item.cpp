@@ -13,6 +13,7 @@
 #include <QSlider>
 #include <QWidgetAction>
 #include <QKeyEvent>
+#include <QMouseEvent>
 
 #include <map>
 #include <vector>
@@ -530,6 +531,7 @@ void Scene_c3t3_item::common_constructor(bool is_surface)
   setEdgeContainer(Grid_edges, new Ec(Vi::PROGRAM_NO_SELECTION, false));
   setEdgeContainer(C3t3_edges, new Ec(Vi::PROGRAM_C3T3_EDGES, false));
   setPointContainer(C3t3_points, new Pc(Vi::PROGRAM_C3T3_EDGES, false));
+  Three::mainViewer()->installEventFilter(this);
 }
 Scene_c3t3_item::Scene_c3t3_item(bool is_surface)
   : Scene_group_item("unnamed")
@@ -948,7 +950,6 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
         ncthis->show_intersection(true);
       }
     }
-    
     if(d->spheres_are_shown)
     {
       d->spheres->setPlane(this->plane());
@@ -956,6 +957,7 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   }
   if(d->is_grid_shown)
   {
+    viewer->makeCurrent();
     getEdgeContainer(Grid_edges)->setColor(QColor(Qt::black));
     QMatrix4x4 f_mat;
     for (int i = 0; i<16; i++)
@@ -1669,8 +1671,8 @@ void Scene_c3t3_item::show_intersection(bool b)
     d->last_intersection = b;
     Q_EMIT redraw();
   }
-
 }
+
 void Scene_c3t3_item::show_cnc(bool b)
 {
   if(is_valid())
@@ -1746,6 +1748,16 @@ float Scene_c3t3_item::getShrinkFactor() const
 {
   return float(d->tet_Slider->value())/100.0f;
 }
+
+bool Scene_c3t3_item::eventFilter(QObject *, QEvent *event)
+{
+  if(event->type() == QEvent::MouseButtonRelease)
+  {
+    redraw();
+  }
+  return false;
+}
+
 bool Scene_c3t3_item::keyPressEvent(QKeyEvent *event)
 {
  if(event->key() == Qt::Key_Plus)
@@ -2109,6 +2121,7 @@ void Scene_c3t3_item::computeElements()const
 
 void Scene_c3t3_item::newViewer(Viewer_interface *viewer)
 {
+  viewer->installEventFilter(this);
   Scene_item_rendering_helper::newViewer(viewer);
   if(d->intersection)
   {

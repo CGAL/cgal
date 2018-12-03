@@ -1836,7 +1836,6 @@ void Scene::removeViewer(Viewer_interface *viewer)
   {
     item->removeViewer(viewer);
   }
-  viewer->setProperty("is_destroyed", true);
 }
 
 void Scene::initGL(Viewer_interface *viewer)
