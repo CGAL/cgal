@@ -97,8 +97,7 @@ class Approximator {
 
  public:
   static VPoint approximate(const CGAL::Sphere_point<R>& p) {
-    VVector v = convert(p-CGAL::ORIGIN);
-    v = v / CGAL_NTS sqrt(v*v) ; // normalize
+    VVector v = normalize_and_convert(p-CGAL::ORIGIN);
     return CGAL::ORIGIN+v;
   }
    
