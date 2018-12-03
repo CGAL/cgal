@@ -349,6 +349,17 @@ public:
     return true;
   }
 
+  /// For debugging purpose, test if 'it' is a valid iterator.
+  bool is_valid_iterator(const List_iterator& ittotest)
+  {
+    if (ittotest==m_path.end()) { return true; }
+    for (auto it=m_path.begin(); it!=m_path.end(); ++it)
+    {
+      if (it==ittotest) { return true; }
+    }
+    return false;
+  }
+
   Dart_const_handle front()
   {
     CGAL_assertion(!is_empty());
@@ -1080,6 +1091,7 @@ public:
   void move_to_next_l_shape(List_iterator& it)
   {
     // CGAL_assertion(is_valid());
+    CGAL_assertion(is_valid_iterator(it));
     CGAL_assertion(it!=m_path.end());
     List_iterator itend=(is_closed()?it:m_path.end());
     do
@@ -1143,6 +1155,7 @@ public:
         ittemp->second=1;
         m_path.insert(it, std::make_pair(dh, 0));
         // insert the new element before 'it', thus after 'ittemp'
+        it=ittemp; // 'it' stays at the beginning of the flat
       }
       else
       {
@@ -1192,8 +1205,7 @@ public:
   /// Right push the given l-shape.
   void right_push_l_shape(List_iterator& it)
   {
-    CGAL_assertion(it!=m_path.end());
-    CGAL_assertion(is_beginning_of_flat(it));
+    CGAL_assertion(is_l_shape(it));
 
     if (m_path.size()==2 && it->second==0 &&
         next_iterator(it)->second==0)
@@ -1253,15 +1265,18 @@ public:
     CGAL_assertion(is_valid());
     bool res=false;
     List_iterator it=m_path.begin();
+    unsigned int TOTO=0;
     while(it!=m_path.end())
     {
       if (is_l_shape(it))
       {
+        std::cout<<"right_push_l_shape "<<TOTO++<<std::endl;
         right_push_l_shape(it); res=true;
         if (!all) { return true; }
-        // CGAL_assertion(is_valid());
+        CGAL_assertion(is_valid());
       }
-      else { move_to_next_l_shape(it); }
+      else { CGAL_assertion(is_valid());
+        move_to_next_l_shape(it); }
     }
     CGAL_assertion(is_valid());
     return res;
