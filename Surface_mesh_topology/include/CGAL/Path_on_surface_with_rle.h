@@ -894,8 +894,8 @@ public:
     return res;
   }
 
-  /// Return true if it is the beginning of a positive bracket.
-  /// If true, itend is updated to be the end of the bracket
+  /// Return true if 'it' is the beginning of a positive bracket.
+  /// If true, 'itend' is updated to be the end of the bracket
   bool is_positive_bracket(const List_iterator& it,
                            List_iterator& itend)
   {
@@ -906,7 +906,7 @@ public:
 
     itend=next_iterator(it);
     // Here itend is the beginning of the second flat
-    if (it->second<0)
+    if (itend->second<0)
     { return false; } // This is not a positive bracket, we have some -2
 
     if (!is_end_of_flat(itend)) { advance_iterator(itend); }
@@ -931,7 +931,7 @@ public:
 
     itend=next_iterator(it);
     // Here itend is the beginning of the second flat
-    if (it->second>0)
+    if (itend->second>0)
     { return false; } // This is not a negative bracket, we have some +2
 
     if (!is_end_of_flat(itend)) { advance_iterator(itend); }
@@ -948,6 +948,7 @@ public:
   /// bracket in the path.
   void move_to_next_bracket(List_iterator& it)
   {
+    CGAL_assertion(is_valid_iterator(it));
     CGAL_assertion(it!=m_path.end());
     List_iterator itend=(is_closed()?it:m_path.end());
     List_iterator it2;
@@ -1055,12 +1056,14 @@ public:
     List_iterator it2;
     while(it1!=m_path.end())
     {
+      // CGAL_assertion(is_valid());
       if (is_positive_bracket(it1, it2))
       { remove_positive_bracket(it1, it2); res=true; }
       else if (is_negative_bracket(it1, it2))
       { remove_negative_bracket(it1, it2); res=true; }
       else { move_to_next_bracket(it1); }
       if (!all && res) { return true; }
+      // CGAL_assertion(is_valid());
     }
     CGAL_assertion(is_valid());
     return res;
@@ -1151,6 +1154,7 @@ public:
   void add_dart_before(List_iterator& it, Dart_const_handle dh)
   {
     CGAL_assertion(is_beginning_of_flat(it));
+
     bool positive_flat, negative_flat;
     if (is_prev_flat_can_be_extended_at_end(it, dh,
                                             positive_flat, negative_flat))
@@ -1280,10 +1284,12 @@ public:
       if (is_l_shape(it))
       {
         right_push_l_shape(it); res=true;
+        // CGAL_assertion(is_valid_iterator(it));
         if (!all) { return true; }
       }
       else { move_to_next_l_shape(it); }
     }
+    CGAL_assertion(is_valid());
     return res;
   }
 
