@@ -72,6 +72,24 @@ VVector convert(const CGAL::Vector_3<R>& v)
                  CGAL::to_double(v.z())); }
 
 
+template <typename R>
+VVector normalize_and_convert(const CGAL::Vector_3<R>& v)
+{ 
+    typename R::FT xa = CGAL::abs(v.x());
+    typename R::FT ya = CGAL::abs(v.y());
+    typename R::FT za = CGAL::abs(v.z());
+    typename R::FT m = std::max(std::max(xa,ya),za);
+    if (m==0) {
+        return VVector(0,0,0);
+    } else {
+        double xd = CGAL::to_double(v.x()/m);
+        double yd = CGAL::to_double(v.y()/m);
+        double zd = CGAL::to_double(v.z()/m);
+        VVector u(xd,yd,zd);
+        return u / CGAL_NTS sqrt(u*u) ; // normalize
+    }
+}
+
 const double refinement_angle = 0.1;
 const double shrink_fac = 0.995;
 
@@ -80,8 +98,7 @@ class Approximator {
 
  public:
   static VPoint approximate(const CGAL::Sphere_point<R>& p) {
-    VVector v = convert(p-CGAL::ORIGIN);
-    v = v / CGAL_NTS sqrt(v*v) ; // normalize
+    VVector v = normalize_and_convert(p-CGAL::ORIGIN);
     return CGAL::ORIGIN+v;
   }
    
@@ -185,6 +202,8 @@ class Approximator {
     angle[1] = std::acos((t[1]-CGAL::ORIGIN)*(t[2]-CGAL::ORIGIN));
     angle[2] = std::acos((t[2]-CGAL::ORIGIN)*(t[0]-CGAL::ORIGIN));
     CGAL_NEF_TRACEN("refine "<<angle[0]<<" "<<angle[1]<<" "<<angle[2]);
+    CGAL_assertion_msg(!(std::isnan(angle[0])||std::isnan(angle[1])||std::isnan(angle[2])), 
+            "Refined triangle has NAN angle");
     if ( angle[1] > angle[0] ) {
       if ( angle[2] > angle[1] ) i=2;
       else                       i=1;
