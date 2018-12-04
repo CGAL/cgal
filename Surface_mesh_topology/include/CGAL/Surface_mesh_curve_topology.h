@@ -46,7 +46,8 @@ namespace CGAL {
                       std::pair<Dart_const_handle, Dart_const_handle> > TPaths;
     typedef boost::unordered_map<Dart_const_handle, std::size_t> TDartIds;
 
-    Surface_mesh_curve_topology(Map& amap) : m_original_map(amap)
+    Surface_mesh_curve_topology(Map& amap, bool display_time=false) :
+      m_original_map(amap)
     {
       if (!m_map.is_without_boundary(1))
       {
@@ -61,11 +62,9 @@ namespace CGAL {
                  <<std::endl;
       }
  
-#ifdef COMPUTE_TIME
-      CGAL::Timer t; t.start();
-
-      CGAL::Timer t2; t2.start();
-#endif // COMPUTE_TIME
+      CGAL::Timer t, t2;
+      if (display_time)
+      { t.start(); t2.start(); }
 
       // The mapping between darts of the original map into the copied map.
       boost::unordered_map<Dart_const_handle, Dart_handle> origin_to_copy;
@@ -78,12 +77,13 @@ namespace CGAL {
       for (auto it=origin_to_copy.begin(); it!=origin_to_copy.end(); ++it)
       { copy_to_origin[it->second]=it->first; }
 
-#ifdef COMPUTE_TIME
-      t2.stop();
-      std::cout<<"[TIME] Copy map: "<<t2.time()<<" seconds"<<std::endl;
+      if (display_time)
+      {
+        t2.stop();
+        std::cout<<"[TIME] Copy map: "<<t2.time()<<" seconds"<<std::endl;
 
-      t2.reset(); t2.start();
-#endif // COMPUTE_TIME
+        t2.reset(); t2.start();
+      }
 
       // We reserve the two marks (used to mark darts in m_original_map that
       // belong to T or to L)
@@ -98,12 +98,14 @@ namespace CGAL {
       // 1) We simplify m_map in a surface with only one vertex
       surface_simplification_in_one_vertex(origin_to_copy, copy_to_origin);
 
-#ifdef COMPUTE_TIME
-      t2.stop();
-      std::cout<<"[TIME] Simplification in one vertex: "<<t2.time()<<" seconds"<<std::endl;
+      if (display_time)
+      {
+        t2.stop();
+        std::cout<<"[TIME] Simplification in one vertex: "
+                 <<t2.time()<<" seconds"<<std::endl;
 
-      t2.reset(); t2.start();
-#endif // COMPUTE_TIME
+        t2.reset(); t2.start();
+      }
 
 #ifdef CGAL_TRACE_CMAP_TOOLS
       std::cout<<"All non loop contracted: ";
@@ -119,12 +121,14 @@ namespace CGAL {
       // not belong to the spanning tree (which are thus all the survival edges).
       compute_length_two_paths(origin_to_copy);
 
-#ifdef COMPUTE_TIME
-      t2.stop();
-      std::cout<<"[TIME] Computation of length two pathes: "<<t2.time()<<" seconds"<<std::endl;
+      if (display_time)
+      {
+        t2.stop();
+        std::cout<<"[TIME] Computation of length two paths: "
+                 <<t2.time()<<" seconds"<<std::endl;
 
-      t2.reset(); t2.start();
-#endif // COMPUTE_TIME
+        t2.reset(); t2.start();
+      }
 
       /* std::cout<<"Number of darts in m_map: "<<m_map.number_of_darts()
               <<"; number of darts in origin_to_copy: "<<origin_to_copy.size()
@@ -137,12 +141,14 @@ namespace CGAL {
       // 3) We simplify m_map in a surface with only one face
       surface_simplification_in_one_face(origin_to_copy, copy_to_origin);
 
-#ifdef COMPUTE_TIME
-      t2.stop();
-      std::cout<<"[TIME] Simplification in one face: "<<t2.time()<<" seconds"<<std::endl;
+      if (display_time)
+      {
+        t2.stop();
+        std::cout<<"[TIME] Simplification in one face: "
+                 <<t2.time()<<" seconds"<<std::endl;
 
-      t2.reset(); t2.start();
-#endif // COMPUTE_TIME
+        t2.reset(); t2.start();
+      }
 
 #ifdef CGAL_TRACE_CMAP_TOOLS
       std::cout<<"All faces merges: ";
@@ -161,12 +167,14 @@ namespace CGAL {
       // 4) And we quadrangulate the face
       surface_quadrangulate();
 
-#ifdef COMPUTE_TIME
-      t2.stop();
-      std::cout<<"[TIME] Face quadrangulation: "<<t2.time()<<" seconds"<<std::endl;
+      if (display_time)
+      {
+        t2.stop();
+        std::cout<<"[TIME] Face quadrangulation: "
+                 <<t2.time()<<" seconds"<<std::endl;
 
-      t2.reset(); t2.start();
-#endif // COMPUTE_TIME
+        t2.reset(); t2.start();
+      }
 
       // Now we label all the darts of the reduced map, to allow the computation
       // of turns in constant time.
@@ -190,10 +198,11 @@ namespace CGAL {
         }
       }
 
-#ifdef COMPUTE_TIME
-      t2.stop();
-      std::cout<<"[TIME] Label darts: "<<t2.time()<<" seconds"<<std::endl;
-#endif // COMPUTE_TIME
+      if (display_time)
+      {
+        t2.stop();
+        std::cout<<"[TIME] Label darts: "<<t2.time()<<" seconds"<<std::endl;
+      }
 
 #ifdef CGAL_TRACE_CMAP_TOOLS
       std::cout<<"After quadrangulation: ";
@@ -225,10 +234,12 @@ namespace CGAL {
       m_map.display_darts(std::cout);
 #endif
 
-#ifdef COMPUTE_TIME
-      t.stop();
-      std::cout<<"[TIME] Total time for computation of reduced map: "<<t.time()<<" seconds"<<std::endl;
-#endif // COMPUTE_TIME
+      if (display_time)
+      {
+        t.stop();
+        std::cout<<"[TIME] Total time for computation of reduced map: "
+                <<t.time()<<" seconds"<<std::endl;
+      }
 
       assert(are_paths_valid());
     }
@@ -242,8 +253,112 @@ namespace CGAL {
     const Map& get_map() const
     { return m_map; }
     
+    /// Canonize the path
+    void canonize(Path_on_surface<Map>& path, bool display_time=false) const
+    {
+      if (!path.is_closed())
+      {
+        std::cerr<<"Error: a non closed path cannot be canonized."<<std::endl;
+        return;
+      }
+
+      CGAL::Timer t;
+      if (display_time)
+      { t.start(); }
+
+      Path_on_surface_with_rle<Map> path2(path);
+      path2.canonize();
+      path=path2;
+
+      if (display_time)
+      {
+        t.stop();
+        std::cout<<"[TIME] Canonize path: "<<t.time()<<" seconds"<<std::endl;
+      }
+
+      CGAL_assertion(path.is_valid());
+    }
+
+    /// @return true iff 'path' is contractible.
+    bool is_contractible(const Path_on_surface<Map>& p,
+                         bool display_time=false)
+    {
+      CGAL::Timer t;
+      if (display_time)
+      { t.start(); }
+
+      Path_on_surface<Map> pt=transform_original_path_into_quad_surface(p);
+      Path_on_surface_with_rle<Map> path(pt);
+      path.canonize();
+
+      if (display_time)
+      {
+        t.stop();
+        std::cout<<"[TIME] is_contractible: "<<t.time()<<" seconds"
+                 <<"(length of reduced paths="<<path.length()<<")"<<std::endl;
+      }
+
+      return path.is_empty();
+    }
+
+    /// @return true iff 'path1' and 'path2' are freely homotopic.
+    bool are_freely_homotopic(const Path_on_surface<Map>& p1,
+                              const Path_on_surface<Map>& p2,
+                              bool display_time=false)
+    {
+      CGAL::Timer t;
+      if (display_time)
+      { t.start(); }
+
+      Path_on_surface<Map> pt1=transform_original_path_into_quad_surface(p1);
+      Path_on_surface<Map> pt2=transform_original_path_into_quad_surface(p2);
+
+      Path_on_surface_with_rle<Map> path1(pt1);
+      Path_on_surface_with_rle<Map> path2(pt2);
+
+      path1.canonize();
+      path2.canonize();
+      bool res=(path1==path2); // Do here to be counted in the computation time
+
+      if (display_time)
+      {
+        t.stop();
+        std::cout<<"[TIME] are_freely_homotopic: "<<t.time()<<" seconds"
+                 <<"(length of reduced paths="<<path1.length()<<" and "
+                 <<path2.length()<<")"<<std::endl;
+      }
+
+      return res;
+    }
+
+    /// @return true iff 'path1' and 'path2' are base point freely homotopic.
+    bool are_base_point_homotopic(const Path_on_surface<Map>& p1,
+                                  const Path_on_surface<Map>& p2,
+                                  bool display_time=false) const
+    {
+      CGAL::Timer t;
+      if (display_time)
+      { t.start(); }
+
+      Path_on_surface<Map> path=p1;
+      Path_on_surface<Map> path2=p2; p2.reverse();
+      path+=path2;
+
+      bool res=is_contractible(path);
+
+      if (display_time)
+      {
+        t.stop();
+        std::cout<<"[TIME] are_base_point_homotopic: "<<t.time()<<" seconds."
+                 <<std::endl;
+      }
+
+      return res;
+    }
+
+  protected:
     Path_on_surface<Map> transform_original_path_into_quad_surface
-    (const Path_on_surface<Map>& path)
+    (const Path_on_surface<Map>& path) // TODO return directly a Path_on_durface_with_rle
     {
       Path_on_surface<Map> res(m_map);
       if (path.is_empty()) return res;
@@ -262,7 +377,6 @@ namespace CGAL {
       return res;
     }
 
-  protected:
     void initialize_vertices(UFTree& uftrees,
                              boost::unordered_map<Dart_const_handle, UFTree_handle>&
                              vertices)
@@ -479,17 +593,8 @@ namespace CGAL {
       }
       else
       {
-#ifdef COMPUTE_TIME
-        CGAL::Timer t; t.start();
-#endif // COMPUTE_TIME
-
         // update_length_two_paths_before_edge_removals_v1(toremove);
         update_length_two_paths_before_edge_removals_v2(toremove, copy_to_origin);
-
-#ifdef COMPUTE_TIME
-        t.stop();
-        std::cout<<"[TIME] Update length two paths: "<<t.time()<<" seconds"<<std::endl;
-#endif // COMPUTE_TIME
 
         // We remove all the edges to remove.
         for (typename Map::Dart_range::iterator it=m_map.darts().begin(),
@@ -552,7 +657,7 @@ namespace CGAL {
       m_map.free_mark(oldedges);
     }
 
-    /// Version1: quadratic in number of darts in the pathes
+    /// Version1: quadratic in number of darts in the paths
     void update_length_two_paths_before_edge_removals_v1(typename Map::size_type toremove)
     {
       // std::cout<<"************************************************"<<std::endl;
@@ -602,7 +707,7 @@ namespace CGAL {
       }
     }
 
-    /// Version2: linear in number of darts in the pathes
+    /// Version2: linear in number of darts in the paths
     void update_length_two_paths_before_edge_removals_v2(typename Map::size_type toremove,
                                                          const boost::unordered_map<Dart_handle, Dart_const_handle>& copy_to_origin)
     {
@@ -907,85 +1012,6 @@ namespace CGAL {
     }
 
 */
-    
-    // Simplify the path by removing all brackets
-    bool bracket_flattening(Path_on_surface_with_rle<Map>& path) const
-    {
-      return path.remove_brackets(); // TODO use method with index to compute turns (and add a compilation flat allowing to use either normal version, or version with indices
-    }
-
-    bool remove_spurs(Path_on_surface_with_rle<Map>& path) const
-    {
-        return path.remove_spurs();
-    }
-
-    bool right_push(Path_on_surface_with_rle<Map>& path) const
-    {
-      return path.right_push();
-    }
-
-  public:
-    /// Canonize the path
-    void canonize(Path_on_surface<Map>& path) const
-    {
-      if (!path.is_closed())
-      { return; }
-
-#ifdef COMPUTE_TIME
-      CGAL::Timer t; t.start();
-#endif // COMPUTE_TIME
-
-#ifdef CGAL_QUADRATIC_CANONIZE
-      Path_on_surface<Map>& path2=path;
-#else
-      Path_on_surface_with_rle<Map> path2(path);
-#endif
-
-      /* std::cout<<"##########################################"<<std::endl;
-      std::cout<<"Init "; display();
-      std::cout<<std::endl;
-      display_pos_and_neg_turns();
-      std::cout<<std::endl; */
-
-      bool modified=false;
-      // std::cout<<"RS ";
-      remove_spurs(path2); // TODO BEFORE remove_spurs_one_step(path);
-
-      /* display(); display_pos_and_neg_turns();
-      std::cout<<std::endl; */
-
-      do
-      {
-        do
-        {
-          modified=bracket_flattening(path2); // TODO BEFORE  bracket_flattening_one_step(path);
-
-          /* std::cout<<"BF "; display(); display_pos_and_neg_turns();
-          std::cout<<std::endl; */
-
-          modified=modified || remove_spurs(path2); // TODO BEFORE remove_spurs_one_step(path);
-
-
-          /* std::cout<<"RS "; display(); display_pos_and_neg_turns();
-          std::cout<<std::endl; */
-        }
-        while(modified);
-
-        modified=right_push(path2);
-      }
-      while(modified); // Maybe we do not need to iterate, a unique last righ_push should be enough (? To verify)
-
-#ifndef CGAL_QUADRATIC_CANONIZE
-      path=path2;
-#endif
-
-#ifdef COMPUTE_TIME
-      t.stop();
-      std::cout<<"[TIME] Canonize path: "<<t.time()<<" seconds"<<std::endl;
-#endif // COMPUTE_TIME
-
-      CGAL_assertion(path.is_valid());
-    }
 
   protected:
     const Map& m_original_map; /// The original surface; not modified
