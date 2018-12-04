@@ -3,7 +3,7 @@
 #include <CGAL/IO/write_ply_points.h>
 #include <CGAL/property_map.h>
 
-#include <CGAL/OpenGR/align.h>
+#include <CGAL/OpenGR/registration.h>
 
 #include <fstream>
 #include <iostream>
@@ -59,7 +59,16 @@ int main(int argc, const char** argv)
   options.max_time_seconds = 1000;
   options.delta = 0.01;
 
-  // call the registration method Super4PCS from OpenGR
+  // EITHER call the registration method Super4PCS from OpenGR to get the transformation to apply to pwns2
+  // std::pair<K::Aff_transformation_3, double> res =
+    CGAL::OpenGR::compute_transformation(pwns1, pwns2,
+                                         params::point_map(Point_map())
+                                                .normal_map(Normal_map())
+                                                .opengr_options(options),
+                                         params::point_map(Point_map())
+                                                .normal_map(Normal_map()));
+
+  // OR call the registration method Super4PCS from OpenGR and apply the transformation to pwn2
   double score =
     CGAL::OpenGR::align(pwns1, pwns2,
                         params::point_map(Point_map())
