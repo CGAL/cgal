@@ -169,6 +169,18 @@ void test_closed_surface_mesh(const char* filename)
   std::cout << "volume = " << vol << std::endl;
   assert(vol > 0);
 
+}
+
+
+template <typename Surface_mesh, typename K>
+void test_centroid(const char* filename)
+{
+  std::cout << "Test Surface_mesh " << filename
+    << " with Kernel " << typeid(K).name() << std::endl;
+  Surface_mesh sm;
+  std::ifstream input(filename);
+  input >> sm;
+ 
   typename K::Point_3 p = PMP::centroid(sm);
   
   // compare with centroid of 1.000.000 points inside the mesh:
@@ -189,6 +201,10 @@ int main(int argc, char* argv[])
     (argc > 1) ? argv[1] : "data/elephant.off";
   test_closed_surface_mesh<CGAL::Surface_mesh<Epic::Point_3>,Epic>(filename_surface_mesh);
   test_closed_surface_mesh<CGAL::Surface_mesh<Epec::Point_3>,Epec>(filename_surface_mesh);
+
+  // It won't work with Epec for large meshes as it builds up a deep DAG
+  // leading to a stackoverflow when the destructor is called.
+  test_centroid<CGAL::Surface_mesh<Epic::Point_3>,Epic>(filename_surface_mesh);
 
   std::cerr << "All done." << std::endl;
   return 0;
