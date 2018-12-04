@@ -146,14 +146,14 @@ public:
     return *this;
   }
 
-  Self& operator+=(const Self& other)
+  Self& operator+=(Self& other)
   {
     // Be careful to the special case when *this==other
     // this is the reason of the iend.
-    for (List_iterator lit=other.begin(), litend=std::prev(other.end());
-         lit!=litend; ++lit)
+    for (List_iterator lit=other.m_path.begin(),
+         litend=std::prev(other.m_path.end()); lit!=litend; ++lit)
     { m_path.push_back(*lit); }
-    m_path.push_back(other.back()); // Last element
+    m_path.push_back(other.m_path.back()); // Last element
     update_is_closed();
     return *this;
   }
@@ -212,17 +212,17 @@ public:
         size_of_list()!=other.size_of_list())
       return false;
 
+    if (is_empty() && other.is_empty())
+    { return true; }
+
     if (!is_closed())
     { return are_same_paths_from(other, other.m_path.begin()); }
 
-    Self p2(*this); p2+=p2;
-    // Now we search if other is a sub-motif of p2 <=> *this==other
-
-    return boost::algorithm::knuth_morris_pratt_search(p2.m_path.begin(),
-                                                       p2.m_path.end(),
-                                                       other.m_path.begin(),
-                                                       other.m_path.end()).first
-        !=p2.m_path.end();
+    // TODO: is it possible to avoid the transformations into Path_on_surface
+    //  and use directly knuth_morris_pratt_search with Path_on_surface_with_rle ?
+    Path_on_surface<Map> p1(*this);
+    Path_on_surface<Map> p2(other);
+    return p1==p2;
   }
   
   bool operator!=(Self&  other)
@@ -363,13 +363,13 @@ public:
   Dart_const_handle front()
   {
     CGAL_assertion(!is_empty());
-    return m_path.front()->first;
+    return m_path.front().first;
   }
 
-  Dart_const_handle back() const
+  Dart_const_handle back()
   {
     CGAL_assertion(!is_empty());
-    return m_path.back()->first;
+    return m_path.back().first;
   }
 
   /* TODO REMOVE
@@ -397,7 +397,7 @@ public:
       Dart_const_handle pend=m_map.other_extremity(back());
       if (pend==Map::null_handle) { m_is_closed=false; }
       else
-      { m_is_closed=CGAL::belong_to_same_cell<Map,0>(m_map, m_path[0], pend); }
+      { m_is_closed=CGAL::belong_to_same_cell<Map,0>(m_map, front(), pend); }
     }
   }
 
