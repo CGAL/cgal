@@ -1330,8 +1330,10 @@ void Scene::itemVisibilityChanged(CGAL::Three::Scene_item* item)
      && !item->isEmpty())
   {
     //does not recenter
-    if(visibility_recentering_enabled)
-      Q_EMIT updated_bbox(false);
+    if(visibility_recentering_enabled){
+      Q_EMIT updated_bbox(true);
+      
+    }
   }
 }
 

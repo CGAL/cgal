@@ -441,7 +441,7 @@ public:
 public Q_SLOTS:
   void toggleFullScreen();
   void setDefaultSaveDir();
-  void invalidate_bbox();
+  void invalidate_bbox(bool do_recenter);
 private:
   QList<QDockWidget *> visibleDockWidgets;
   QLineEdit operationSearchBar;

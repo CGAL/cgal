@@ -208,7 +208,7 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
           this, SLOT(removeManipulatedFrame(CGAL::Three::Scene_item*)));
 
   connect(scene, SIGNAL(updated_bbox(bool)),
-          this, SLOT(invalidate_bbox()));
+          this, SLOT(invalidate_bbox(bool)));
 
   connect(scene, SIGNAL(selectionChanged(int)),
           this, SLOT(selectSceneItem(int)));
@@ -1105,6 +1105,7 @@ void MainWindow::open(QString filename)
           qobject_cast<CGAL::Three::Scene_group_item*>(scene_item);
   if(group)
     scene->redraw_model();
+  updateViewerBBox(true);
 }
 
 bool MainWindow::open(QString filename, QString loader_name) {
@@ -1776,7 +1777,6 @@ void MainWindow::on_actionLoad_triggered()
         scene->item(scene->numberOfEntries()-1)->setColor(colors_[++nb_item]);
     }
   }
-  updateViewerBBox(true);
 }
 
 void MainWindow::on_actionSaveAs_triggered()
@@ -2228,7 +2228,9 @@ void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
 
 void MainWindow::on_actionRecenterScene_triggered()
 {
-  updateViewerBBox();
+  //force the recomputaion of the bbox
+  bbox_need_update = true;
+  updateViewerBBox(true);
   viewer->camera()->showEntireScene();
 }
 
@@ -2582,7 +2584,10 @@ void MainWindow::setDefaultSaveDir()
   settings.setValue("default_saveas_dir", def_save_dir);
 }
 
-void MainWindow::invalidate_bbox()
+void MainWindow::invalidate_bbox(bool do_recenter)
 {
   bbox_need_update = true;
+  if(do_recenter)
+    updateViewerBBox(true);
+  
 }
