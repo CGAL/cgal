@@ -336,6 +336,17 @@ namespace CGAL {
                                   const Path_on_surface<Map>& p2,
                                   bool display_time=false) const
     {
+      if (p1.is_empty() && p2.is_empty()) { return true; }
+      if (p1.is_empty() || p2.is_empty()) { return true; }
+
+      if (!CGAL::belong_to_same_cell<Map,0>(m_map,
+                                            p1.front(), p2.front()))
+      {
+        std::cerr<<"Error: are_base_point_homotopic requires two paths that"
+                 <<" share the same first vertex."<<std::endl;
+        return false;
+      }
+
       CGAL::Timer t;
       if (display_time)
       { t.start(); }
