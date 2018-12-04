@@ -19,8 +19,7 @@ if(POLICY CMP0071)
 endif()
 
 find_package(CGAL)
-find_package(Qt5Widgets REQUIRED)
-find_package(Qt5OpenGL REQUIRED)
+find_package(Qt5 COMPONENTS Widgets OpenGL)
 
 if ( CGAL_FOUND )
 
@@ -31,7 +30,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program("nef_s2_point_location.cpp")
   create_single_source_cgal_program("nef_s2_simple.cpp")
 
-  if(Qt5Widgets_FOUND AND Qt5OpenGL_FOUND)
+  if(Qt5_FOUND)
       # The Qt5Widgets_INCLUDES also includes the include directories for
       # dependencies QtCore and QtGui
       include_directories(${Qt5Widgets_INCLUDE_DIRS} ${Qt5OpenGL_INCLUDE_DIRS})
@@ -40,7 +39,7 @@ if ( CGAL_FOUND )
       add_definitions(${Qt5Widgets_DEFINITIONS} ${Qt5OpenGL_DEFINITIONS})
 
       # Tell CMake to run moc when necessary:
-      set(CMAKE_AUTOMOC OFF)
+      set(CMAKE_AUTOMOC ON)
       # As moc files are generated in the binary dir, tell CMake
       # to always look for includes there:
       set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -62,7 +61,7 @@ if ( CGAL_FOUND )
       if(CGAL_3RD_PARTY_LIBRARIES)
           target_link_libraries(nef_S2 PRIVATE ${CGAL_3RD_PARTY_LIBRARIES})
       endif()
-      target_link_libraries(nef_S2 PRIVATE  ${CGAL_LIBRARIES} ${Qt5Widgets_LIBRARIES}  ${Qt5OpenGL_LIBRARIES} glut GLU GL )
+      target_link_libraries(nef_S2 PRIVATE  ${CGAL_LIBRARIES} Qt5::Widgets Qt5::OpenGL glut GLU GL )
 
 
       add_executable(draw_nef_s2
@@ -75,7 +74,7 @@ if ( CGAL_FOUND )
       if(CGAL_3RD_PARTY_LIBRARIES)
           target_link_libraries(draw_nef_s2 PRIVATE ${CGAL_3RD_PARTY_LIBRARIES})
       endif()
-      target_link_libraries(draw_nef_s2 PRIVATE ${CGAL_LIBRARIES} ${Qt5Widgets_LIBRARIES}  ${Qt5OpenGL_LIBRARIES} glut GLU GL )
+      target_link_libraries(draw_nef_s2 PRIVATE ${CGAL_LIBRARIES} Qt5::Widgets Qt5::OpenGL glut GLU GL )
   endif()
 
 else()
