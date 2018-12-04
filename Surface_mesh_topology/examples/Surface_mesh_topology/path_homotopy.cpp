@@ -169,7 +169,7 @@ int main(int argc, char** argv)
   }
 
   std::cout<<"Number of contractible paths: "<<nbcontractible<<" among "<<N
-           <<" (i.e. "<<(double)nbcontractible/double(N)<<"%)."<<std::endl;
+           <<" (i.e. "<<(double)(nbcontractible*100)/double(N)<<"%)."<<std::endl;
 
   return EXIT_SUCCESS;
 }

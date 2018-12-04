@@ -164,25 +164,28 @@ namespace CGAL {
             <<std::endl; */
 #endif
 
-      // 4) And we quadrangulate the face
-      surface_quadrangulate();
-
-      if (display_time)
+      if (!m_map.is_empty()) // m_map is_empty if the surface is a sphere
       {
-        t2.stop();
-        std::cout<<"[TIME] Face quadrangulation: "
-                 <<t2.time()<<" seconds"<<std::endl;
+        // 4) And we quadrangulate the face, except for the torus surfaces
+        if (m_map.darts().size()!=4)
+        {
+          surface_quadrangulate();
 
-        t2.reset(); t2.start();
-      }
+          if (display_time)
+          {
+            t2.stop();
+            std::cout<<"[TIME] Face quadrangulation: "
+                    <<t2.time()<<" seconds"<<std::endl;
 
-      // Now we label all the darts of the reduced map, to allow the computation
-      // of turns in constant time.
-      CGAL_assertion(m_map.number_of_darts()%2==0);
-      m_number_of_edges=m_map.number_of_darts()/2;
+            t2.reset(); t2.start();
+          }
+        }
 
-      if (!m_map.is_empty())
-      {
+        // Now we label all the darts of the reduced map, to allow the computation
+        // of turns in constant time.
+        CGAL_assertion(m_map.number_of_darts()%2==0);
+        m_number_of_edges=m_map.number_of_darts()/2;
+
         Dart_handle dh1=m_map.darts().begin();
         Dart_handle dh2=m_map.template beta<2>(dh1);
         std::size_t id=0;
@@ -196,12 +199,12 @@ namespace CGAL {
           }
           while(cur_dh!=dh1);
         }
-      }
 
-      if (display_time)
-      {
-        t2.stop();
-        std::cout<<"[TIME] Label darts: "<<t2.time()<<" seconds"<<std::endl;
+        if (display_time)
+        {
+          t2.stop();
+          std::cout<<"[TIME] Label darts: "<<t2.time()<<" seconds"<<std::endl;
+        }
       }
 
 #ifdef CGAL_TRACE_CMAP_TOOLS
@@ -241,7 +244,7 @@ namespace CGAL {
                 <<t.time()<<" seconds"<<std::endl;
       }
 
-      assert(are_paths_valid());
+      assert(m_map.darts().size()==4 || are_paths_valid()); // Because torus is a special case
     }
     
     ~Surface_mesh_curve_topology()
@@ -379,7 +382,8 @@ namespace CGAL {
         if (!m_original_map.is_marked(path[i], m_mark_T))
         {
           res.push_back(get_first_dart_of_the_path(path[i]), false);
-          res.push_back(get_second_dart_of_the_path(path[i]), false);
+          if (res.back()!=get_second_dart_of_the_path(path[i])) // darts are equal for the special case of torus
+          { res.push_back(get_second_dart_of_the_path(path[i]), false); }
         }
       }
       res.update_is_closed();
@@ -453,16 +457,16 @@ namespace CGAL {
       return uftrees.find(mapdhtouf.find(dh)->second);
     }
 
-    // Mark the edge containing adart in the given map.
+    /// Mark the edge containing adart in the given map.
     void mark_edge(const Map& amap, Dart_const_handle adart, std::size_t amark)
     {
       amap.mark(amap.template beta<2>(adart), amark);
       amap.mark(adart, amark);
     }
 
-    // Erase the edge given by adart (which belongs to the map m_map) from the
-    // associative array copy_to_origin, and erase the corresponding edge
-    // (which belongs to the map m_original_map) from the array origin_to_copy
+    /// Erase the edge given by adart (which belongs to the map m_map) from the
+    /// associative array copy_to_origin, and erase the corresponding edge
+    /// (which belongs to the map m_original_map) from the array origin_to_copy
     void erase_edge_from_associative_arrays
     (Dart_handle adart,
      boost::unordered_map<Dart_const_handle, Dart_handle>& origin_to_copy,
@@ -475,9 +479,9 @@ namespace CGAL {
       copy_to_origin.erase(adart);
     }
 
-    // Step 1) Transform m_map into an equivalent surface having only one
-    // vertex. All edges contracted during this step belong to the spanning
-    // tree T, and thus corresponding edges in m_original_map are marked.
+    /// Step 1) Transform m_map into an equivalent surface having only one
+    /// vertex. All edges contracted during this step belong to the spanning
+    /// tree T, and thus corresponding edges in m_original_map are marked.
     void surface_simplification_in_one_vertex
     (boost::unordered_map<Dart_const_handle, Dart_handle>& origin_to_copy,
      boost::unordered_map<Dart_handle, Dart_const_handle>& copy_to_origin)
@@ -513,10 +517,10 @@ namespace CGAL {
       m_map.set_automatic_attributes_management(true);
     }
 
-    // Step 2) Compute, for each edge of m_original_map not in the spanning
-    // tree T, the pair of darts of the edge in m_copy. This pair of edges
-    // will be updated later (in surface_simplification_in_one_face() and in
-    // surface_quadrangulate() )
+    /// Step 2) Compute, for each edge of m_original_map not in the spanning
+    /// tree T, the pair of darts of the edge in m_copy. This pair of edges
+    /// will be updated later (in surface_simplification_in_one_face() and in
+    /// surface_quadrangulate() )
     void compute_length_two_paths
     (const boost::unordered_map<Dart_const_handle, Dart_handle>& origin_to_copy)
     {
@@ -546,9 +550,9 @@ namespace CGAL {
 #endif
     }
 
-    // Step 3) Transform the 2-map into an equivalent surface having only
-    // one vertex. All edges removed during this step belong to the
-    // dual spanning tree L (spanning tree of the dual 2-map).
+    /// Step 3) Transform the 2-map into an equivalent surface having only
+    /// one face. All edges removed during this step belong to the
+    /// dual spanning tree L (spanning tree of the dual 2-map).
     void surface_simplification_in_one_face
     (boost::unordered_map<Dart_const_handle, Dart_handle>& origin_to_copy,
      boost::unordered_map<Dart_handle, Dart_const_handle>& copy_to_origin)
@@ -626,7 +630,7 @@ namespace CGAL {
       m_map.free_mark(toremove);
     }
 
-    // Step 4) quadrangulate the surface.
+    /// Step 4) quadrangulate the surface.
     void surface_quadrangulate()
     {
       // Here the map has only one face and one vertex.
