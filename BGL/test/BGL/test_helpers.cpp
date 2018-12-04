@@ -132,7 +132,7 @@ int main()
   assert(CGAL::is_triangle_mesh(m));
   assert(CGAL::is_valid_polygon_mesh(m));
   m.clear();
-  hd = CGAL::make_hexahedron(a,b,c,d,aa,bb,cc,dd,m);
+  hd = CGAL::make_hexahedron(a,b,c,d,dd,aa,bb,cc,m);
   assert(CGAL::is_hexahedron(hd,m));
   assert(CGAL::is_quad_mesh(m));
   assert(CGAL::is_valid_polygon_mesh(m));

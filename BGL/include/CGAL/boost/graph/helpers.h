@@ -868,16 +868,16 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
   ppmap[v6] = p6;
   ppmap[v7] = p7;
 
-  halfedge_descriptor ht = internal::make_quad(v7, v4, v5, v6, g);
-  halfedge_descriptor hb = prev(internal::make_quad(v1, v0, v3, v2, g),g);
+  halfedge_descriptor ht = internal::make_quad(v4, v5, v6, v7, g);
+  halfedge_descriptor hb = prev(internal::make_quad(v0, v3, v2, v1, g),g);
   for(int i=0; i <4; i++){
     halfedge_descriptor h = halfedge(add_edge(g),g);
     set_target(h,target(hb,g),g);
     set_next(h,opposite(hb,g),g);
-    set_next(opposite(next(ht,g),g),h,g);
+    set_next(opposite(prev(ht,g),g),h,g);
     h = opposite(h,g);
-    set_target(h,target(ht,g),g);
-    set_next(h,opposite(ht,g),g);
+    set_target(h,source(prev(ht,g),g),g);
+    set_next(h,opposite(next(next(ht,g),g),g),g);
     set_next(opposite(next(hb,g),g),h,g);
     hb = next(hb,g);
     ht = prev(ht,g);
