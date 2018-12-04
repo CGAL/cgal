@@ -694,11 +694,18 @@ public:
   void reverse()
   {
     std::vector<Dart_const_handle> new_path(m_path.size());
-    for (std::size_t i=0; i<m_path.size(); ++i)
+    for (std::size_t i=0; i<m_path.size()/2; ++i)
     {
-      new_path[m_path.size()-1-i]=m_map.template beta<2>(m_path[i]);
+      m_path[m_path.size()-1-i]=
+          m_map.template beta<2>(m_path[m_path.size()-1-i]);
+      m_path[i]=m_map.template beta<2>(m_path[i]);
+      std::swap(m_path[i], m_path[m_path.size()-1-i]);
     }
-    new_path.swap(m_path);
+    if (m_path.size()%2==1)
+    {
+      m_path[m_path.size()/2+1]=
+          m_map.template beta<2>(m_path[m_path.size()/2+1]);
+    }
   }
 
   /// If the given path is opened, close it by doing the same path that the
