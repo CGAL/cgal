@@ -8,6 +8,7 @@
 #include <CGAL/Three/exceptions.h>
 #include <CGAL/Qt/debug.h>
 
+#include <QJsonArray>
 #include <QtDebug>
 #include <QFileDialog>
 #include <QFileInfo>
@@ -39,7 +40,7 @@
 #include <stdexcept>
 #include <QTime>
 #include <QWidgetAction>
-#include <QJsonArray>
+
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptValue>
 #  ifdef QT_SCRIPTTOOLS_LIB
