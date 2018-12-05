@@ -284,28 +284,6 @@ namespace CGAL {
       CGAL_assertion(path.is_valid());
     }
 
-    /// @return true iff 'path' is contractible.
-    bool is_contractible(const Path_on_surface<Map>& p,
-                         bool display_time=false)
-    {
-      CGAL::Timer t;
-      if (display_time)
-      { t.start(); }
-
-      Path_on_surface<Map> pt=transform_original_path_into_quad_surface(p);
-      Path_on_surface_with_rle<Map> path(pt);
-      path.canonize();
-
-      if (display_time)
-      {
-        t.stop();
-        std::cout<<"[TIME] is_contractible: "<<t.time()<<" seconds"
-                 <<"(length of reduced paths="<<path.length()<<")"<<std::endl;
-      }
-
-      return path.is_empty();
-    }
-
     void count_edges_of_path_on_torus(const Path_on_surface<Map>& path,
                                       std::size_t& a,
                                       std::size_t& b)
@@ -334,6 +312,41 @@ namespace CGAL {
         else if (path[i]==dhb) { ++b; }
         else if (path[i]==m_map.template beta<2>(dhb)) { --b; }
       }
+    }
+
+    /// @return true iff 'path' is contractible.
+    bool is_contractible(const Path_on_surface<Map>& p,
+                         bool display_time=false)
+    {
+      CGAL::Timer t;
+      if (display_time)
+      { t.start(); }
+
+      Path_on_surface<Map> pt=transform_original_path_into_quad_surface(p);
+
+      bool res=false;
+      if (m_map.number_of_darts()==4)
+      { // Case of torus
+        std::size_t a, b;
+        count_edges_of_path_on_torus(pt, a, b);
+        res=(a==0 && b==0);
+      }
+      else
+      {
+        Path_on_surface_with_rle<Map> path(pt);
+        path.canonize();
+        res=path.is_empty();
+        std::cout<<"Length of reduced paths: "<<path.length()<<std::endl;
+      }
+
+      if (display_time)
+      {
+        t.stop();
+        std::cout<<"[TIME] is_contractible: "<<t.time()<<" seconds"
+                <<std::endl;
+      }
+
+      return res;
     }
 
     /// @return true iff 'path1' and 'path2' are freely homotopic.
