@@ -54,12 +54,14 @@ namespace CGAL {
         std::cerr<<"ERROR: the given amap has 1-boundaries; "
                  <<"such a surface is not possible to process here."
                  <<std::endl;
+        return;
       }
       if (!m_map.is_without_boundary(2))
       {
         std::cerr<<"ERROR: the given amap has 2-boundaries; "
                  <<"which are not yet considered (but this will be done later)."
                  <<std::endl;
+        return;
       }
  
       CGAL::Timer t, t2;
@@ -304,6 +306,36 @@ namespace CGAL {
       return path.is_empty();
     }
 
+    void count_edges_of_path_on_torus(const Path_on_surface<Map>& path,
+                                      std::size_t& a,
+                                      std::size_t& b)
+    {
+      Dart_const_handle dha=m_map.darts().begin();
+      if (dha>m_map.template beta<2>(dha)) { dha=m_map.template beta<2>(dha); }
+
+      Dart_const_handle dhb=NULL;
+      auto it=m_map.darts().begin();
+      while(dhb==NULL)
+      {
+        if (it!=dha && it!=m_map.template beta<2>(dha)) { dhb=it; }
+        else { ++it; }
+      }
+
+      if (dhb>m_map.template beta<2>(dhb)) { dhb=m_map.template beta<2>(dhb); }
+
+      if (dha<dhb) { std::swap(dha, dhb); }
+
+      a=0; b=0;
+
+      for (int i=0; i<path.length(); ++i)
+      {
+        if (path[i]==dha) { ++a; }
+        else if (path[i]==m_map.template beta<2>(dha)) { --a; }
+        else if (path[i]==dhb) { ++b; }
+        else if (path[i]==m_map.template beta<2>(dhb)) { --b; }
+      }
+    }
+
     /// @return true iff 'path1' and 'path2' are freely homotopic.
     bool are_freely_homotopic(const Path_on_surface<Map>& p1,
                               const Path_on_surface<Map>& p2,
@@ -316,19 +348,31 @@ namespace CGAL {
       Path_on_surface<Map> pt1=transform_original_path_into_quad_surface(p1);
       Path_on_surface<Map> pt2=transform_original_path_into_quad_surface(p2);
 
-      Path_on_surface_with_rle<Map> path1(pt1);
-      Path_on_surface_with_rle<Map> path2(pt2);
+      bool res=false;
+      if (m_map.number_of_darts()==4)
+      { // Case of torus
+        std::size_t a1, a2, b1, b2;
+        count_edges_of_path_on_torus(p1, a1, b1);
+        count_edges_of_path_on_torus(p2, a2, b2);
+        res=(a1==a2 && b1==b2);
+      }
+      else
+      {
+        Path_on_surface_with_rle<Map> path1(pt1);
+        Path_on_surface_with_rle<Map> path2(pt2);
 
-      path1.canonize();
-      path2.canonize();
-      bool res=(path1==path2); // Do here to be counted in the computation time
+        path1.canonize();
+        path2.canonize();
+        res=(path1==path2); // Do here to be counted in the computation time
+
+        std::cout<<"Length of reduced paths: "<<path1.length()<<" and "
+                 <<path2.length()<<std::endl;
+      }
 
       if (display_time)
       {
         t.stop();
-        std::cout<<"[TIME] are_freely_homotopic: "<<t.time()<<" seconds"
-                 <<"(length of reduced paths="<<path1.length()<<" and "
-                 <<path2.length()<<")"<<std::endl;
+        std::cout<<"[TIME] are_freely_homotopic: "<<t.time()<<" seconds"<<std::endl;
       }
 
       return res;
@@ -382,8 +426,7 @@ namespace CGAL {
         if (!m_original_map.is_marked(path[i], m_mark_T))
         {
           res.push_back(get_first_dart_of_the_path(path[i]), false);
-          if (res.back()!=get_second_dart_of_the_path(path[i])) // darts are equal for the special case of torus
-          { res.push_back(get_second_dart_of_the_path(path[i]), false); }
+          res.push_back(get_second_dart_of_the_path(path[i]), false);
         }
       }
       res.update_is_closed();
@@ -737,9 +780,9 @@ namespace CGAL {
 
           Dart_handle initdart=m_map.darts().iterator_to(const_cast<typename Map::Dart &>(*(p.first)));
           Dart_handle initdart2=m_map.template beta<2>(initdart);
-
-          assert(!m_map.is_marked(initdart, toremove));
-          assert(!m_map.is_marked(initdart2, toremove));
+          CGAL_assertion(initdart2==p.second);
+          CGAL_assertion(!m_map.is_marked(initdart, toremove));
+          CGAL_assertion(!m_map.is_marked(initdart2, toremove));
 
           // 1) We update the dart associated with p.second
           p.second=m_map.template beta<1>(initdart);
@@ -772,12 +815,10 @@ namespace CGAL {
             if (d1<d2) {
               assert(paths.count(d1)==1);
               paths[d1].first=enddart2;
-              assert(!m_map.is_marked(enddart2, toremove));
             }
             else       {
               assert(paths.count(d2)==1);
               paths[d2].second=enddart2;
-              assert(!m_map.is_marked(enddart2, toremove));
             }
             initdart2=m_map.template beta<2, 1>(initdart2);
           }
