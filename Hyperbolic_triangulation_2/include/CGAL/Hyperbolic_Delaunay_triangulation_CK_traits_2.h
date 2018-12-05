@@ -22,8 +22,10 @@
 #ifndef CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_CK_TRAITS_2_H
 #define CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_CK_TRAITS_2_H
 
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Circular_kernel_2/Intersection_traits.h>
-#include <CGAL/Exact_circular_kernel_2.h>
+#include <CGAL/Circular_kernel_2.h>
+#include <CGAL/Algebraic_kernel_for_circles_2_2.h>
 #include <CGAL/triangulation_assertions.h>
 #include "boost/tuple/tuple.hpp"
 #include "boost/variant.hpp"
@@ -31,7 +33,12 @@
 
 namespace CGAL {
 
-template < class R = CGAL::Exact_circular_kernel_2 >
+template < class R = CGAL::Circular_kernel_2< 
+                      CGAL::Exact_predicates_inexact_constructions_kernel, 
+                      CGAL::Algebraic_kernel_for_circles_2_2<
+                        CGAL::Exact_predicates_inexact_constructions_kernel::RT > 
+                      > 
+                    >
 class Hyperbolic_Delaunay_triangulation_CK_traits_2
   : public R
   // R is supposed to be a model of CircularKernel2
