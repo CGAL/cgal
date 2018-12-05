@@ -78,7 +78,7 @@ public:
     connect(actionSurfaceMeshApproximation, SIGNAL(triggered()), this, SLOT(on_actionSurfaceMeshApproximation_triggered()));
 
     dock_widget = new QDockWidget("Mesh approximation parameters", mw);
-    dock_widget->setVisible(true);
+    dock_widget->setVisible(false);
     ui_widget.setupUi(dock_widget);
     mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
 
