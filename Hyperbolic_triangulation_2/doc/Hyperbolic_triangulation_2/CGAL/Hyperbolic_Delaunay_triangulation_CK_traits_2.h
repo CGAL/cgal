@@ -13,7 +13,8 @@ offered by %CGAL.
 \tparam K must be a model of `CircularKernel`.
 
 This class provides exact constructions and predicates. The default value for `K` is 
-`CGAL::Exact_circular_kernel_2`, which guarantees exact constructions of Delaunay 
+`CGAL::Circular_kernel_2< CGAL::Exact_predicates_inexact_constructions_kernel, CGAL::Algebraic_kernel_for_circles_2_2< CGAL::Exact_predicates_inexact_constructions_kernel::RT > >`, 
+which guarantees exact constructions of Delaunay 
 triangulations and dual objects when the input points have rational coordinates.
 
 \sa `Hyperbolic_Delaunay_triangulation_traits_2`
