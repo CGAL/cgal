@@ -993,7 +993,7 @@ make_tetrahedron(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
  * having `nb_vertices` vertices in each of its bases and adds it to the graph `g`.
  * If `center` is (0, 0, 0), then the first point of the prism is (`radius`, `height`, 0)
  * \param nb_vertices the number of vertices per base. It must be greater than or equal to 3.
- * \param g the graph in which the regular prism will be created.https://cgal.geometryfactory.com/~mgimeno/BGL_helpers/BGL/group__PkgBGLRef.html
+ * \param g the graph in which the regular prism will be created.
  * \param base_center the center of the circle in which the lower base is inscribed.
  * \param height the distance between the two bases.
  * \param radius the radius of the circles in which the bases are inscribed.
