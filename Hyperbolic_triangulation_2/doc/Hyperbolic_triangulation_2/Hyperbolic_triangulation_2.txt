@@ -131,6 +131,43 @@ are inserted and the filtering is done once at the end.
 The example below shows how user-defined info can be added to the hyperbolic faces.
 \cgalExample{Hyperbolic_triangulation_2/ht2_example_color.cpp}
 
+
+\section HT2_Performance Performance
+
+We have measured the insertion execution time of our implementation
+with both traits classes `CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2` 
+and `CGAL::Hyperbolic_Delaunay_triangulation_traits_2` with their default template
+parameters against the insertion time in a Euclidean \cgal triangulation. 
+We generate 1 million random points, uniformly distributed in the unit disk with respect 
+to the Euclidean metric. We insert the same set of points in three triangulations:
+<ul>
+  <li> a hyperbolic Delaunay triangulation with `CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<>` as traits class;
+  <li> a hyperbolic Delaunay triangulation with `CGAL::Hyperbolic_Delaunay_triangulation_traits_2<>`    as traits class;
+  <li> a Euclidean  Delaunay triangulation with `CGAL::Exact_predicates_inexact_constructions_kernel`   as traits class. 
+</ul>
+We create two instances of each type of triangulation. In one instance we insert the points one by one, which causes 
+non-hyperbolic faces to be filtered out at each insertion. In the other instance we insert the points via iterator
+input, which causes non-hyperbolic faces to be filtered only once, after all points have been inserted. We report 
+results averaged over 10 executions of this experiment in \ref HT2_Table_1 "Table 1" below. The experiments have been 
+executed on two machines:
+<ul>
+  <li> <b>Machine 1:</b> MacBook Pro (2015), CPU: Intel Core i5 @ 2.9 GHz, RAM: 16 GB @ 1867 MHz, OS: Mac OS X (10.10.5), Compiler: gcc version 7.3.0;
+  <li> <b>Machine 2:</b> Dell Vostro 5471 (2018), CPU: Intel Core i5 @ 1.6 GHZ (up to 3.4 GHz in TurboMode), RAM: 8GB @ 2400 MHz, OS: Ubuntu 18.04 (kernel 4.15.0), Compiler: gcc version 7.3.0. 
+</ul>
+
+<center>
+\anchor HT2_Table_1
+<table>
+<caption>Table 1: Comparison of insertion times of 1 million random points</caption>
+<tr><th>  %Triangulation type       <th colspan="2">  Machine 1     						<th colspan="2">  Machine 2
+<tr><td>  							<td> Sequential insertion 	<td> %Iterator insertion 	<td> Sequential insertion 	<td> %Iterator insertion
+<tr><td>  Hyperbolic (General traits) <td> 955 sec. 				<td> 23 sec.				<td> 884 sec.				<td> 20 sec.
+<tr><td>  Hyperbolic (CK traits)    <td> 330 sec.      			<td> 1 sec.					<td> 289 sec.				<td> 1 sec.
+<tr><td>  Euclidean  (%Cartesian traits)     <td> 131 sec.      			<td> < 1 sec.				<td> 114 sec.				<td> < 1 sec.
+</table>
+</center>
+
+
 \section HT2_Design Design and Implementation History
 
 This package implements the algorithms for computing Delaunay complexes
