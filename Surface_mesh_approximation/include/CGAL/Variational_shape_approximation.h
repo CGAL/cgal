@@ -327,10 +327,10 @@ public:
 
     const Surface_mesh_approximation::Seeding_method method = choose_param(
       get_param(np, internal_np::seeding_method), Surface_mesh_approximation::HIERARCHICAL);
-    const boost::optional<std::size_t> max_nb_proxies = choose_param(
-      get_param(np, internal_np::max_number_of_proxies), boost::optional<std::size_t>());
-    const boost::optional<FT> min_error_drop = choose_param(
-      get_param(np, internal_np::min_error_drop), boost::optional<FT>());
+    const std::size_t max_nb_proxies = choose_param(
+      get_param(np, internal_np::max_number_of_proxies), m_nb_of_faces);
+    const FT min_error_drop = choose_param(
+      get_param(np, internal_np::min_error_drop), FT(0));
     const std::size_t nb_relaxations = choose_param(get_param(np, internal_np::number_of_relaxations), 5);
 
     // maximum number of proxies internally, maybe better choice?
@@ -339,33 +339,33 @@ public:
     // initialize proxies and the proxy map to prepare for insertion
     bootstrap_from_connected_components();
 
-    if (min_error_drop && *min_error_drop > FT(0.0) && *min_error_drop < FT(1.0)) {
+    if (min_error_drop > FT(0.0) && min_error_drop < FT(1.0)) {
       // as long as minimum error is specified and valid
       // maximum number of proxies always exists, no matter specified or not or out of range
       // there is always a maximum number of proxies explicitly (max_nb_proxies) or implicitly (nb_px)
       std::size_t max_nb_px_adjusted = nb_px;
-      if (max_nb_proxies && *max_nb_proxies < nb_px && *max_nb_proxies > 0)
-        max_nb_px_adjusted = *max_nb_proxies;
+      if (max_nb_proxies < nb_px)
+        max_nb_px_adjusted = max_nb_proxies;
       switch (method) {
         case Surface_mesh_approximation::RANDOM:
-          return init_random_error(max_nb_px_adjusted, *min_error_drop, nb_relaxations);
+          return init_random_error(max_nb_px_adjusted, min_error_drop, nb_relaxations);
         case Surface_mesh_approximation::INCREMENTAL:
-          return init_incremental_error(max_nb_px_adjusted, *min_error_drop, nb_relaxations);
+          return init_incremental_error(max_nb_px_adjusted, min_error_drop, nb_relaxations);
         case Surface_mesh_approximation::HIERARCHICAL:
-          return init_hierarchical_error(max_nb_px_adjusted, *min_error_drop, nb_relaxations);
+          return init_hierarchical_error(max_nb_px_adjusted, min_error_drop, nb_relaxations);
         default:
           return 0;
       }
     }
-    else if (max_nb_proxies && *max_nb_proxies < nb_px && *max_nb_proxies > 0) {
+    else if (max_nb_proxies < nb_px) {
       // no valid min_error_drop provided, only max_nb_proxies
       switch (method) {
         case Surface_mesh_approximation::RANDOM:
-          return init_random(*max_nb_proxies, nb_relaxations);
+          return init_random(max_nb_proxies, nb_relaxations);
         case Surface_mesh_approximation::INCREMENTAL:
-          return init_incremental(*max_nb_proxies, nb_relaxations);
+          return init_incremental(max_nb_proxies, nb_relaxations);
         case Surface_mesh_approximation::HIERARCHICAL:
-          return init_hierarchical(*max_nb_proxies, nb_relaxations);
+          return init_hierarchical(max_nb_proxies, nb_relaxations);
         default:
           return 0;
       }

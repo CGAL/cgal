@@ -33,7 +33,6 @@
 #include <CGAL/property_map.h>
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/optional.hpp>
 #include <boost/type_traits/is_same.hpp>
 
 #include <iostream>
@@ -89,8 +88,6 @@ unspecified_type all_default();
  *  \cgalParamBegin{seeding_method} selection of seeding method.
  *  \cgalParamEnd
  *  \cgalParamBegin{max_number_of_proxies} maximum number of proxies to approximate the input mesh.
- *  \cgalParamEnd
- *  \cgalParamBegin{min_error_drop} minimum error drop of the approximation, expressed in ratio between two iterations of proxy addition.
  *  \cgalParamEnd
  *  \cgalParamBegin{number_of_relaxations} number of relaxation iterations interleaved within seeding.
  *  \cgalParamEnd
@@ -159,17 +156,14 @@ bool approximate_triangle_mesh(const TriangleMesh &tm, const NamedParameters &np
   // hierarchical seeding by default
   Seeding_method method = choose_param(
     get_param(np, internal_np::seeding_method), HIERARCHICAL);
-  boost::optional<std::size_t> max_nb_of_proxies = choose_param(
-    get_param(np, internal_np::max_number_of_proxies), boost::optional<std::size_t>());
-  boost::optional<FT> min_error_drop = choose_param(
-    get_param(np, internal_np::min_error_drop), boost::optional<FT>());
+  std::size_t max_nb_of_proxies = choose_param(
+    get_param(np, internal_np::max_number_of_proxies), std::size_t(-1));
   std::size_t nb_of_relaxations = choose_param(get_param(np, internal_np::number_of_relaxations), 5);
 
   if (vl == VERBOSE) {
     std::cout << (method == RANDOM ? "Random" :
       (method == INCREMENTAL ? "Incremental" : "Hierarchical")) << " seeding.";
-    std::cout << "\n#max_nb_of_proxies = " << *max_nb_of_proxies
-      << "\n#min_error_drop = " << *min_error_drop
+    std::cout << "\n#max_nb_of_proxies = " << max_nb_of_proxies
       << "\nnb_of_relaxations " << nb_of_relaxations << std::endl;
   }
 
@@ -179,7 +173,7 @@ bool approximate_triangle_mesh(const TriangleMesh &tm, const NamedParameters &np
     std::cout << "Seeding done." << std::endl;
 
   // default number of iterations
-  std::size_t nb_of_iterations_default = max_nb_of_proxies ? number_of_faces / *max_nb_of_proxies : 30;
+  std::size_t nb_of_iterations_default = max_nb_of_proxies!=std::size_t(-1) ? number_of_faces / max_nb_of_proxies : 30;
   nb_of_iterations_default = (std::min)((std::max)(
     nb_of_iterations_default, static_cast<std::size_t>(20)), static_cast<std::size_t>(60));
   const std::size_t nb_of_iterations = choose_param(
