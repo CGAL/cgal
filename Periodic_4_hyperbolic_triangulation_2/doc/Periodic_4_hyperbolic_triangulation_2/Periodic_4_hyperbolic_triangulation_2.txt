@@ -325,7 +325,7 @@ octagon \f$\mathcal D_O\f$. We insert the same set of points in three triangulat
 <ul>
   <li> a periodic hyperbolic Delaunay triangulation with `CORE::Expr` as `number type`;
   <li> a (non-periodic) Euclidean Delaunay triangulation with `CORE::Expr` as `number type`;
-  <li> a (non-periodic) Euclidean Delaunay triangulation with `double` as `number_type`. 
+  <li> a (non-periodic) Euclidean Delaunay triangulation with `double` as `number type`. 
 </ul>
 We report results averaged over 10 executions of this experiment in \ref Table_1 "Table 1" below. The experiments
 have been executed on two machines:
