@@ -941,7 +941,7 @@ public:
 #if defined(DOXYGEN_RUNNING) || defined(CGAL_EIGEN3_ENABLED)
 /// \ingroup PkgHeatMethod
 /// computes for each vertex of the triangle mesh `tm` the estimated geodesic distance to a given source vertex.
-/// This function is provided only if \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined.
+/// This function is provided only if \ref thirdpartyEigen "Eigen" 3.3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined.
 /// \tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph` and `HalfedgeListGraph`.
 ///         It must have an internal vertex point property map with the value type being a 3D point from a cgal Kernel model
 /// \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
@@ -951,7 +951,7 @@ public:
 ///              The default is `Intrinsic_Delaunay`.
 /// \warning The return type is `double` even when used with an exact kernel.
 ///
-/// \sa CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3
+/// \sa `CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3`
 template <typename TriangleMesh, typename VertexDistanceMap, typename Mode>
 void
 estimate_geodesic_distances(const TriangleMesh& tm,
@@ -981,7 +981,7 @@ estimate_geodesic_distances(const TriangleMesh& tm,
 
 /// \ingroup PkgHeatMethod
 /// computes for each vertex  of the triangle mesh `tm` the estimated geodesic distance to a given set of source vertices.
-/// This function is provided only if \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined.
+/// This function is provided only if \ref thirdpartyEigen "Eigen" 3.3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined.
 /// \tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph` and `HalfedgeListGraph`
 ///         It must have an internal vertex point property map with the value type being a 3D point from a cgal Kernel model
 /// \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
@@ -991,7 +991,7 @@ estimate_geodesic_distances(const TriangleMesh& tm,
 ///              is computed directly on the mesh or if the intrinsic Delaunay triangulation is applied first.
 ///              The default is `Intrinsic_Delaunay`.
 /// \warning The return type is `double` even when used with an exact kernel.
-/// \sa CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3
+/// \sa `CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3`
 template <typename TriangleMesh, typename VertexDistanceMap, typename VertexConstRange, typename Mode>
 void
 estimate_geodesic_distances(const TriangleMesh& tm,
