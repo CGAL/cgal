@@ -36,6 +36,7 @@
 #include <boost/type_traits/is_same.hpp>
 
 #include <iostream>
+#include <limits>
 
 namespace CGAL {
 namespace Surface_mesh_approximation {
@@ -157,7 +158,8 @@ bool approximate_triangle_mesh(const TriangleMesh &tm, const NamedParameters &np
   Seeding_method method = choose_param(
     get_param(np, internal_np::seeding_method), HIERARCHICAL);
   std::size_t max_nb_of_proxies = choose_param(
-    get_param(np, internal_np::max_number_of_proxies), std::size_t(-1));
+    get_param(np, internal_np::max_number_of_proxies),
+    (std::numeric_limits<std::size_t>::max)());
   std::size_t nb_of_relaxations = choose_param(get_param(np, internal_np::number_of_relaxations), 5);
 
   if (vl == VERBOSE) {
@@ -173,7 +175,9 @@ bool approximate_triangle_mesh(const TriangleMesh &tm, const NamedParameters &np
     std::cout << "Seeding done." << std::endl;
 
   // default number of iterations
-  std::size_t nb_of_iterations_default = max_nb_of_proxies!=std::size_t(-1) ? number_of_faces / max_nb_of_proxies : 30;
+  std::size_t nb_of_iterations_default = (max_nb_of_proxies!=(std::numeric_limits<std::size_t>::max)())
+                                       ? number_of_faces / max_nb_of_proxies
+                                       : 30;
   nb_of_iterations_default = (std::min)((std::max)(
     nb_of_iterations_default, static_cast<std::size_t>(20)), static_cast<std::size_t>(60));
   const std::size_t nb_of_iterations = choose_param(
