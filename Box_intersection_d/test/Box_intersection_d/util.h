@@ -27,14 +27,14 @@ struct Util {
       int numBoxes, numDim;
       int boxNum, dim;
     
-      std::fscanf(infile, "%d %d\n", &numBoxes, &numDim);
+      (void)std::fscanf(infile, "%d %d\n", &numBoxes, &numDim);
       std::vector< int > minc( numDim ), maxc( numDim );
       /* Read boxes */
       for(boxNum = 0; boxNum < numBoxes; boxNum++) {
           for(dim = 0; dim < numDim; dim++)
-              std::fscanf( infile, "[%d, %d) ", &minc[dim], &maxc[dim] );
+              (void)std::fscanf( infile, "[%d, %d) ", &minc[dim], &maxc[dim] );
           boxes.push_back( Box( &minc[0], &maxc[0] ) );
-          std::fscanf(infile, "\n");
+          (void)std::fscanf(infile, "\n");
       }
     }
     
