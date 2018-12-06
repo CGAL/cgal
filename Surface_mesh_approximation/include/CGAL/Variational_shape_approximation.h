@@ -327,62 +327,35 @@ public:
 
     const Surface_mesh_approximation::Seeding_method method = choose_param(
       get_param(np, internal_np::seeding_method), Surface_mesh_approximation::HIERARCHICAL);
-    const std::size_t max_nb_proxies = choose_param(
-      get_param(np, internal_np::max_number_of_proxies), m_nb_of_faces);
-    const FT min_error_drop = choose_param(
-      get_param(np, internal_np::min_error_drop), FT(0));
-    const std::size_t nb_relaxations = choose_param(get_param(np, internal_np::number_of_relaxations), 5);
+    std::size_t max_nb_proxies = choose_param(
+      get_param(np, internal_np::max_number_of_proxies), 0);
+    FT min_error_drop = choose_param(
+      get_param(np, internal_np::min_error_drop), FT(0.0));
+    const std::size_t nb_relaxations = choose_param(
+      get_param(np, internal_np::number_of_relaxations), 5);
 
-    // maximum number of proxies internally, maybe better choice?
-    const std::size_t nb_px = m_nb_of_faces / 3;
+    // adjust parameters
+    if (max_nb_proxies < (m_nb_of_faces / 3) && max_nb_proxies > 0) {
+      if(!(min_error_drop < FT(1.0)) || !(min_error_drop > FT(0.0)))
+        min_error_drop = FT(-1.0);
+    }
+    else {
+      max_nb_proxies = m_nb_of_faces / 3;
+      if (!(min_error_drop < FT(1.0)) || !(min_error_drop > FT(0.0)))
+        min_error_drop = FT(0.1);
+    }
 
     // initialize proxies and the proxy map to prepare for insertion
     bootstrap_from_connected_components();
-
-    if (min_error_drop > FT(0.0) && min_error_drop < FT(1.0)) {
-      // as long as minimum error is specified and valid
-      // maximum number of proxies always exists, no matter specified or not or out of range
-      // there is always a maximum number of proxies explicitly (max_nb_proxies) or implicitly (nb_px)
-      std::size_t max_nb_px_adjusted = nb_px;
-      if (max_nb_proxies < nb_px)
-        max_nb_px_adjusted = max_nb_proxies;
-      switch (method) {
-        case Surface_mesh_approximation::RANDOM:
-          return init_random_error(max_nb_px_adjusted, min_error_drop, nb_relaxations);
-        case Surface_mesh_approximation::INCREMENTAL:
-          return init_incremental_error(max_nb_px_adjusted, min_error_drop, nb_relaxations);
-        case Surface_mesh_approximation::HIERARCHICAL:
-          return init_hierarchical_error(max_nb_px_adjusted, min_error_drop, nb_relaxations);
-        default:
-          return 0;
-      }
-    }
-    else if (max_nb_proxies < nb_px) {
-      // no valid min_error_drop provided, only max_nb_proxies
-      switch (method) {
-        case Surface_mesh_approximation::RANDOM:
-          return init_random(max_nb_proxies, nb_relaxations);
-        case Surface_mesh_approximation::INCREMENTAL:
-          return init_incremental(max_nb_proxies, nb_relaxations);
-        case Surface_mesh_approximation::HIERARCHICAL:
-          return init_hierarchical(max_nb_proxies, nb_relaxations);
-        default:
-          return 0;
-      }
-    }
-    else {
-      // both parameters are unspecified or out of range
-      const FT e(0.1);
-      switch (method) {
-        case Surface_mesh_approximation::RANDOM:
-          return init_random_error(nb_px, e, nb_relaxations);
-        case Surface_mesh_approximation::INCREMENTAL:
-          return init_incremental_error(nb_px, e, nb_relaxations);
-        case Surface_mesh_approximation::HIERARCHICAL:
-          return init_hierarchical_error(nb_px, e, nb_relaxations);
-        default:
-          return 0;
-      }
+    switch (method) {
+      case Surface_mesh_approximation::RANDOM:
+        return init_random(max_nb_proxies, min_error_drop, nb_relaxations);
+      case Surface_mesh_approximation::INCREMENTAL:
+        return init_incremental(max_nb_proxies, min_error_drop, nb_relaxations);
+      case Surface_mesh_approximation::HIERARCHICAL:
+        return init_hierarchical(max_nb_proxies, min_error_drop, nb_relaxations);
+      default:
+        return 0;
     }
   }
 
@@ -1024,80 +997,30 @@ public:
 // private member functions
 private:
   /*!
-   * @brief randomly initializes proxies to target number of proxies.
-   * @note To ensure the randomness, call `std::srand()` beforehand.
-   * @param max_nb_proxies maximum number of proxies,
-   * should be in range `(nb_connected_components, nb_faces)`
-   * @param nb_iterations number of re-fitting iterations
-   * @return number of proxies initialized
-   */
-  std::size_t init_random(const std::size_t max_nb_proxies,
-    const std::size_t nb_iterations) {
-    // pick from current non seed faces randomly
-    std::vector<face_descriptor> picked_seeds;
-    if (random_pick_non_seed_faces(max_nb_proxies - m_proxies.size(), picked_seeds)) {
-      BOOST_FOREACH(face_descriptor f, picked_seeds)
-        add_one_proxy_at(f);
-      run(nb_iterations);
-    }
-
-    return m_proxies.size();
-  }
-
-  /*!
-   * @brief incrementally initializes proxies to target number of proxies.
-   * @param max_nb_proxies maximum number of proxies,
-   * should be in range `(nb_connected_components, nb_faces)`
-   * @param nb_iterations number of re-fitting iterations
-   * before each incremental proxy insertion
-   * @return number of proxies initialized
-   */
-  std::size_t init_incremental(const std::size_t max_nb_proxies,
-    const std::size_t nb_iterations) {
-    if (m_proxies.size() < max_nb_proxies)
-      add_to_furthest_proxies(max_nb_proxies - m_proxies.size(), nb_iterations);
-
-    return m_proxies.size();
-  }
-
-  /*!
-   * @brief hierarchically initializes proxies to target number of proxies.
-   * @param max_nb_proxies maximum number of proxies,
-   * should be in range `(nb_connected_components, nb_faces)`
-   * @param nb_iterations number of re-fitting iterations
-   * before each hierarchical proxy insertion
-   * @return number of proxies initialized
-   */
-  std::size_t init_hierarchical(const std::size_t max_nb_proxies,
-    const std::size_t nb_iterations) {
-    while (m_proxies.size() < max_nb_proxies) {
-      // try to double current number of proxies each time
-      std::size_t target_px = m_proxies.size();
-      if (target_px * 2 > max_nb_proxies)
-        target_px = max_nb_proxies;
-      else
-        target_px *= 2;
-      // add proxies by error diffusion
-      add_proxies_error_diffusion(target_px - m_proxies.size());
-      run(nb_iterations);
-    }
-
-    return m_proxies.size();
-  }
-
-  /*!
    * @brief randomly initializes proxies
    * with both maximum number of proxies and minimum error drop stop criteria,
    * where the first criterion met stops the seeding.
    * @note To ensure the randomness, call `std::srand()` beforehand.
    * @param max_nb_proxies maximum number of proxies, should be in range `(nb_connected_components, nb_faces / 3)`
-   * @param min_error_drop minimum error drop, should be in range `(0.0, 1.0)`
-   * @param nb_iterations number of re-fitting iterations
+   * @param min_error_drop minimum error drop, should be in range `(0.0, 1.0)`,
+   * negative value is ignored
+   * @param nb_relaxations number of re-fitting iterations
    * @return number of proxies initialized
    */
-  std::size_t init_random_error(const std::size_t max_nb_proxies,
+  std::size_t init_random(const std::size_t max_nb_proxies,
     const FT min_error_drop,
-    const std::size_t nb_iterations) {
+    const std::size_t nb_relaxations) {
+
+    if (min_error_drop >= FT(0.0)) {
+      // pick from current non seed faces randomly
+      std::vector<face_descriptor> picked_seeds;
+      if (random_pick_non_seed_faces(max_nb_proxies - m_proxies.size(), picked_seeds)) {
+        BOOST_FOREACH(face_descriptor f, picked_seeds)
+          add_one_proxy_at(f);
+        run(nb_relaxations);
+      }
+      return m_proxies.size();
+    }
 
     const FT initial_err = compute_total_error();
     FT error_drop = min_error_drop * FT(2.0);
@@ -1114,7 +1037,7 @@ private:
 
       BOOST_FOREACH(face_descriptor f, picked_seeds)
         add_one_proxy_at(f);
-      const FT err = run(nb_iterations);
+      const FT err = run(nb_relaxations);
       error_drop = err / initial_err;
     }
 
@@ -1126,18 +1049,26 @@ private:
    * with both maximum number of proxies and minimum error drop stop criteria,
    * The first criterion met stops the seeding.
    * @param max_nb_proxies maximum number of proxies, should be in range `(nb_connected_components, nb_faces / 3)`
-   * @param min_error_drop minimum error drop, should be in range `(0.0, 1.0)`
-   * @param nb_iterations number of re-fitting iterations
+   * @param min_error_drop minimum error drop, should be in range `(0.0, 1.0)`,
+   * negative value is ignored
+   * @param nb_relaxations number of re-fitting iterations
    * @return number of proxies initialized
    */
-  std::size_t init_incremental_error(const std::size_t max_nb_proxies,
+  std::size_t init_incremental(const std::size_t max_nb_proxies,
     const FT min_error_drop,
-    const std::size_t nb_iterations) {
+    const std::size_t nb_relaxations) {
+
+    if (min_error_drop >= FT(0.0)) {
+      if (m_proxies.size() < max_nb_proxies)
+        add_to_furthest_proxies(max_nb_proxies - m_proxies.size(), nb_relaxations);
+      return m_proxies.size();
+    }
+
     const FT initial_err = compute_total_error();
     FT error_drop = min_error_drop * FT(2.0);
     while (m_proxies.size() < max_nb_proxies && error_drop > min_error_drop) {
       add_to_furthest_proxy();
-      const FT err = run(nb_iterations);
+      const FT err = run(nb_relaxations);
       error_drop = err / initial_err;
     }
 
@@ -1149,15 +1080,17 @@ private:
    * with both maximum number of proxies and minimum error drop stop criteria,
    * where the first criterion met stops the seeding.
    * @param max_nb_proxies maximum number of proxies, should be in range `(nb_connected_components, nb_faces / 3)`
-   * @param min_error_drop minimum error drop, should be in range `(0.0, 1.0)`
-   * @param nb_iterations number of re-fitting iterations
+   * @param min_error_drop minimum error drop, should be in range `(0.0, 1.0)`,
+   * negative value is ignored
+   * @param nb_relaxations number of re-fitting iterations
    * @return number of proxies initialized
    */
-  std::size_t init_hierarchical_error(const std::size_t max_nb_proxies,
+  std::size_t init_hierarchical(const std::size_t max_nb_proxies,
     const FT min_error_drop,
-    const std::size_t nb_iterations) {
+    const std::size_t nb_relaxations) {
+
     const FT initial_err = compute_total_error();
-    FT error_drop = min_error_drop * FT(2.0);
+    FT error_drop = min_error_drop >= FT(0.0) ? FT(1.0) : min_error_drop * FT(2.0);
     while (m_proxies.size() < max_nb_proxies && error_drop > min_error_drop) {
       // try to double current number of proxies each time
       std::size_t target_px = m_proxies.size();
@@ -1166,7 +1099,7 @@ private:
       else
         target_px *= 2;
       add_proxies_error_diffusion(target_px - m_proxies.size());
-      const FT err = run(nb_iterations);
+      const FT err = run(nb_relaxations);
       error_drop = err / initial_err;
     }
 
