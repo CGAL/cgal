@@ -41,7 +41,9 @@ namespace CGAL {
       template <class CMap>
       struct Dart_wrapper
       {
+#ifdef CGAL_PWRLE_TURN_V3
         typedef std::size_t Dart_info;
+#endif // CGAL_PWRLE_TURN_V3
         // typedef CGAL::Cell_attribute<CMap, int> Edge_attrib;
         // typedef CGAL::cpp11::tuple<void,Edge_attrib> Attributes;
         typedef CGAL::cpp11::tuple<> Attributes;
