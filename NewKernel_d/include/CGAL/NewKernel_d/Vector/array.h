@@ -70,7 +70,8 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct Array_vector {
 					CGAL_assertion(d<=d_);
 					//TODO: optimize for forward iterators
 					Vector a;
-					std::copy(f,e,a.begin());
+                                        CGAL_assume(f!=e);
+                                        std::copy(f,e,a.begin());
 					return a;
 				}
 		};
