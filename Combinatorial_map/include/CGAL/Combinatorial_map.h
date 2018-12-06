@@ -211,13 +211,19 @@ namespace CGAL {
      *  @param amap the combinatorial map to copy.
      *  @post *this is valid.
      */
-    template <typename CMap2, typename Converters, typename DartInfoConverter,
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
+              typename Storage2,
+              typename Converters, typename DartInfoConverter,
               typename PointConverter>
-    void copy(const CMap2& amap, const Converters& converters,
+    void copy(const Combinatorial_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap,
+              const Converters& converters,
               const DartInfoConverter& dartinfoconverter,
               const PointConverter& pointconverter,
-              boost::unordered_map<typename CMap2::Dart_const_handle, Dart_handle>* dart_mapping=NULL)
+              boost::unordered_map
+              <typename Combinatorial_map_base<d2, Refs2, Items2, Alloc2, Storage2>::
+              Dart_const_handle, Dart_handle>* dart_mapping=NULL)
     {
+      typedef Combinatorial_map_base<d2, Refs2, Items2, Alloc2, Storage2> CMap2;
       this->clear();
 
       this->mnb_used_marks = amap.mnb_used_marks;
@@ -239,7 +245,8 @@ namespace CGAL {
       // Create an mapping between darts of the two maps (originals->copies).
       // (here we cannot use CGAL::Unique_hash_map because it does not provide
       // iterators...
-      boost::unordered_map<typename CMap2::Dart_const_handle, Dart_handle> local_dartmap;
+      boost::unordered_map<typename CMap2::Dart_const_handle, Dart_handle>
+          local_dartmap;
       if (dart_mapping==NULL)
       { dart_mapping=&local_dartmap; }
       
@@ -249,9 +256,9 @@ namespace CGAL {
       {
         (*dart_mapping)[it]=mdarts.emplace();
         init_dart((*dart_mapping)[it], amap.get_marks(it));
-        internal::Copy_dart_info_functor<CMap2, Refs, DartInfoConverter>::run
-            (amap, static_cast<Refs&>(*this), it, (*dart_mapping)[it],
-             dartinfoconverter);
+        internal::Copy_dart_info_functor<Refs2, Refs, DartInfoConverter>::run
+            (static_cast<const Refs2&>(amap), static_cast<Refs&>(*this),
+             it, (*dart_mapping)[it], dartinfoconverter);
       }
 
       unsigned int min_dim=(dimension<amap.dimension?dimension:amap.dimension);
@@ -277,42 +284,56 @@ namespace CGAL {
            ++dartmap_iter)
       {
         Helper::template Foreach_enabled_attributes
-          < internal::Copy_attributes_functor <CMap2, Refs, Converters,
+          < internal::Copy_attributes_functor <Refs2, Refs, Converters,
             PointConverter> >::
-          run(amap, static_cast<Refs&>(*this),
+          run(static_cast<const Refs2&>(amap), static_cast<Refs&>(*this),
               dartmap_iter->first, dartmap_iter->second,
               converters, pointconverter);
       }
 
-      CGAL_assertion (is_valid () == 1);
+      CGAL_assertion (is_valid());
     }
 
-    template <typename CMap2>
-    void copy(const CMap2& amap,
-              boost::unordered_map<typename CMap2::Dart_const_handle, Dart_handle>* dart_mapping=NULL)
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
+              typename Storage2>
+    void copy(const Combinatorial_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap,
+              boost::unordered_map
+              <typename Combinatorial_map_base<d2, Refs2, Items2, Alloc2,
+              Storage2>::Dart_const_handle, Dart_handle>* dart_mapping=NULL)
 
     {
       CGAL::cpp11::tuple<> converters;
-      Default_converter_dart_info<CMap2, Refs> dartinfoconverter;
-      Default_converter_cmap_0attributes_with_point<CMap2, Refs> pointconverter;
+      Default_converter_dart_info<Refs2, Refs> dartinfoconverter;
+      Default_converter_cmap_0attributes_with_point<Refs2, Refs> pointconverter;
       copy(amap, converters, dartinfoconverter, pointconverter, dart_mapping);
     }
 
-    template <typename CMap2, typename Converters>
-    void copy(const CMap2& amap, const Converters& converters,
-              boost::unordered_map<typename CMap2::Dart_const_handle, Dart_handle>* dart_mapping=NULL)
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
+              typename Storage2, typename Converters>
+    void copy(const Combinatorial_map_base<d2, Refs2, Items2,
+              Alloc2, Storage2>& amap,
+              const Converters& converters,
+              boost::unordered_map
+              <typename Combinatorial_map_base<d2, Refs2, Items2, Alloc2,
+              Storage2>::Dart_const_handle, Dart_handle>* dart_mapping=NULL)
     {
-      Default_converter_cmap_0attributes_with_point<CMap2, Refs> pointconverter;
-      Default_converter_dart_info<CMap2, Refs> dartinfoconverter;
+      Default_converter_cmap_0attributes_with_point<Refs2, Refs> pointconverter;
+      Default_converter_dart_info<Refs2, Refs> dartinfoconverter;
       copy(amap, converters, dartinfoconverter, pointconverter, dart_mapping);
     }
 
-    template <typename CMap2, typename Converters, typename DartInfoConverter>
-    void copy(const CMap2& amap, const Converters& converters,
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
+              typename Storage2,
+              typename Converters, typename DartInfoConverter>
+    void copy(const Combinatorial_map_base<d2, Refs2, Items2,
+              Alloc2, Storage2>& amap,
+              const Converters& converters,
               const DartInfoConverter& dartinfoconverter,
-              boost::unordered_map<typename CMap2::Dart_const_handle, Dart_handle>* dart_mapping=NULL)
+              boost::unordered_map
+              <typename Combinatorial_map_base<d2, Refs2, Items2, Alloc2,
+              Storage2>::Dart_const_handle, Dart_handle>* dart_mapping=NULL)
     {
-      Default_converter_cmap_0attributes_with_point<CMap2, Refs> pointconverter;
+      Default_converter_cmap_0attributes_with_point<Refs2, Refs> pointconverter;
       copy(amap, converters, dartinfoconverter, pointconverter, dart_mapping);
     }
 
@@ -321,25 +342,37 @@ namespace CGAL {
     { copy(amap); }
 
     // "Copy constructor" from a map having different type.
-    template <typename CMap2>
-    Combinatorial_map_base(const CMap2& amap)
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
+              typename Storage2>
+    Combinatorial_map_base(const Combinatorial_map_base<d2, Refs2, Items2,
+                           Alloc2, Storage2>& amap)
     { copy(amap); }
 
     // "Copy constructor" from a map having different type.
-    template <typename CMap2, typename Converters>
-    Combinatorial_map_base(const CMap2& amap, Converters& converters)
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
+              typename Storage2, typename Converters>
+    Combinatorial_map_base(const Combinatorial_map_base<d2, Refs2, Items2,
+                           Alloc2, Storage2>& amap,
+                           const Converters& converters)
     { copy(amap, converters); }
 
     // "Copy constructor" from a map having different type.
-    template <typename CMap2, typename Converters, typename DartInfoConverter>
-    Combinatorial_map_base(const CMap2& amap, Converters& converters,
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
+              typename Storage2, typename Converters, typename DartInfoConverter>
+    Combinatorial_map_base(const Combinatorial_map_base<d2, Refs2, Items2,
+                           Alloc2, Storage2>& amap,
+                           const Converters& converters,
                            const DartInfoConverter& dartinfoconverter)
     { copy(amap, converters, dartinfoconverter); }
 
     // "Copy constructor" from a map having different type.
-    template <typename CMap2, typename Converters, typename DartInfoConverter,
-                           typename PointConverter>
-    Combinatorial_map_base(const CMap2& amap, Converters& converters,
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
+              typename Storage2,
+              typename Converters, typename DartInfoConverter,
+              typename PointConverter>
+    Combinatorial_map_base(const Combinatorial_map_base<d2, Refs2, Items2,
+                           Alloc2, Storage2>& amap,
+                           const Converters& converters,
                            const DartInfoConverter& dartinfoconverter,
                            const PointConverter& pointconverter)
     { copy(amap, converters, dartinfoconverter, pointconverter); }
@@ -5137,24 +5170,33 @@ namespace CGAL {
     Combinatorial_map(const Self & amap) : Base(amap)
     {}
 
-    template < class CMap >
-    Combinatorial_map(const CMap & amap) : Base(amap)
+    template <unsigned int d2, typename Items2, typename Alloc2,
+              typename Storage2>
+    Combinatorial_map(const Combinatorial_map<d2, Items2, Alloc2, Storage2>&
+                      amap) : Base(amap)
     {}
 
-    template < class CMap, typename Converters >
-    Combinatorial_map(const CMap & amap, const Converters& converters) :
+    template <unsigned int d2, typename Items2, typename Alloc2,
+              typename Storage2, typename Converters>
+    Combinatorial_map(const Combinatorial_map<d2, Items2, Alloc2, Storage2>&
+                      amap, const Converters& converters) :
       Base(amap, converters)
     {}
 
-    template < class CMap, typename Converters, typename DartInfoConverter >
-    Combinatorial_map(const CMap & amap, const Converters& converters,
+    template <unsigned int d2, typename Items2, typename Alloc2,
+              typename Storage2, typename Converters,
+              typename DartInfoConverter>
+    Combinatorial_map(const Combinatorial_map<d2, Items2, Alloc2, Storage2>&
+                      amap, const Converters& converters,
                       const DartInfoConverter& dartinfoconverter) :
       Base(amap, converters, dartinfoconverter)
     {}
 
-    template < class CMap, typename Converters, typename DartInfoConverter,
-               typename PointConverter >
-    Combinatorial_map(const CMap & amap, const Converters& converters,
+    template <unsigned int d2, typename Items2, typename Alloc2,
+              typename Storage2, typename Converters,
+              typename DartInfoConverter, typename PointConverter >
+    Combinatorial_map(const Combinatorial_map<d2, Items2, Alloc2, Storage2>&
+                      amap, const Converters& converters,
                       const DartInfoConverter& dartinfoconverter,
                       const PointConverter& pointconverter) :
       Base(amap, converters, dartinfoconverter, pointconverter)
