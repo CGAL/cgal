@@ -1031,7 +1031,7 @@ private:
     const FT min_error_drop,
     const std::size_t nb_relaxations) {
 
-    if (min_error_drop >= FT(0.0)) {
+    if (!(min_error_drop > FT(0.0))) {
       // pick from current non seed faces randomly
       std::vector<face_descriptor> picked_seeds;
       if (random_pick_non_seed_faces(max_nb_proxies - m_proxies.size(), picked_seeds)) {
@@ -1078,7 +1078,7 @@ private:
     const FT min_error_drop,
     const std::size_t nb_relaxations) {
 
-    if (min_error_drop >= FT(0.0)) {
+    if (!(min_error_drop > FT(0.0))) {
       if (m_proxies.size() < max_nb_proxies)
         add_to_furthest_proxies(max_nb_proxies - m_proxies.size(), nb_relaxations);
       return m_proxies.size();
@@ -1110,7 +1110,7 @@ private:
     const std::size_t nb_relaxations) {
 
     const FT initial_err = compute_total_error();
-    FT error_drop = min_error_drop >= FT(0.0) ? FT(1.0) : min_error_drop * FT(2.0);
+    FT error_drop = !(min_error_drop > FT(0.0)) ? FT(1.0) : min_error_drop * FT(2.0);
     while (m_proxies.size() < max_nb_proxies && error_drop > min_error_drop) {
       // try to double current number of proxies each time
       std::size_t target_px = m_proxies.size();
