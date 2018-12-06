@@ -333,10 +333,11 @@ class Point_set_item_classification : public Item_classification_base
   {
     std::vector<int> indices (m_points->point_set()->size(), -1);
 
+    m_label_probabilities.clear();
     if (method == 0)
       CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
                                                        m_labels, classifier,
-                                                       indices);
+                                                       indices, m_label_probabilities);
     else if (method == 1)
     {
       if (m_clusters.empty()) // Use real local smoothing

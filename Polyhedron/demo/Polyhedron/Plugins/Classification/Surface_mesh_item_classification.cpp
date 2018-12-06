@@ -293,9 +293,9 @@ void Surface_mesh_item_classification::train (int classifier, const QMultipleInp
     if (m_ethz != NULL)
       delete m_ethz;
     m_ethz = new ETHZ_random_forest (m_labels, m_features);
-    m_ethz->train(training, true,
-                  dialog.get<QSpinBox>("num_trees")->value(),
-                  dialog.get<QSpinBox>("max_depth")->value());
+    m_ethz->train<Concurrency_tag>(training, true,
+                                   dialog.get<QSpinBox>("num_trees")->value(),
+                                   dialog.get<QSpinBox>("max_depth")->value());
     CGAL::Classification::classify<Concurrency_tag> (m_mesh->polyhedron()->faces(),
                                                      m_labels, *m_ethz,
                                                      indices, m_label_probabilities);
