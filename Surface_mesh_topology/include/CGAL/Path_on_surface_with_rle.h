@@ -1,4 +1,4 @@
-// Copyright (c) 2017 CNRS and LIRIS' Establishments (France).
+// Copyright (c) 2019 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -27,6 +27,10 @@
 #include <iterator>
 #include <vector>
 
+// #define CGAL_PWRLE_TURN_V1  // Compute turns by turning (method of CMap)
+#define CGAL_PWRLE_TURN_V2  // Compute turns by using an id of darts, given by an hash-table (built and given by Surface_mesh_curve_topology)
+// #define CGAL_PWRLE_TURN_V3  // Compute turns by using an id of darts, associated in Info of Darts (build by Surface_mesh_curve_topology)
+
 namespace CGAL {
 
 template<typename Map_>
@@ -47,14 +51,36 @@ public:
 
   typedef Path_on_surface_with_rle<Map> Self;
 
-  Path_on_surface_with_rle(const Map& amap) : m_map(amap),
-                                              m_is_closed(false),
-                                              m_length(0)
+#ifdef CGAL_PWRLE_TURN_V2
+    typedef boost::unordered_map<Dart_const_handle, std::size_t> TDartIds;
+#endif //CGAL_PWRLE_TURN_V2
+
+  /// Constructor
+  Path_on_surface_with_rle(const Map& amap
+                         #ifdef CGAL_PWRLE_TURN_V2
+                           , const TDartIds & darts_ids
+                         #endif //CGAL_PWRLE_TURN_V2
+                           )
+    : m_map(amap),
+      m_is_closed(false),
+      m_length(0)
+  #ifdef CGAL_PWRLE_TURN_V2
+    , m_darts_ids(darts_ids)
+  #endif //CGAL_PWRLE_TURN_V2
   {}
 
-  Path_on_surface_with_rle(const Path_on_surface<Map>& apath) : m_map(apath.get_map()),
-                                                                m_is_closed(apath.is_closed()),
-                                                                m_length(apath.length())
+  /// Copy constructor
+  Path_on_surface_with_rle(const Path_on_surface<Map>& apath
+                         #ifdef CGAL_PWRLE_TURN_V2
+                           , const TDartIds & darts_ids
+                         #endif //CGAL_PWRLE_TURN_V2
+                           ) :
+    m_map(apath.get_map()),
+    m_is_closed(apath.is_closed()),
+    m_length(apath.length())
+#ifdef CGAL_PWRLE_TURN_V2
+  , m_darts_ids(darts_ids)
+#endif //CGAL_PWRLE_TURN_V2
   {
     if (apath.is_empty()) return;
 
@@ -128,6 +154,9 @@ public:
     if (this!=&p2)
     {
       CGAL_assertion(&m_map==&(p2.m_map));
+#ifdef CGAL_PWRLE_TURN_V2
+      CGAL_assertion(&m_darts_ids==&(p2.m_darts_ids));
+#endif // CGAL_PWRLE_TURN_V2
       m_path.swap(p2.m_path);
       std::swap(m_is_closed, p2.m_is_closed);
       std::swap(m_length, p2.m_length);
@@ -137,6 +166,9 @@ public:
   Self& operator=(const Self& other)
   {
     CGAL_assertion(&m_map==&(other.m_map));
+#ifdef CGAL_PWRLE_TURN_V2
+    CGAL_assertion(&m_darts_ids==&(other.m_darts_ids));
+#endif // CGAL_PWRLE_TURN_V2
     if (this!=&other)
     {
       m_path=other.m_path;
@@ -617,6 +649,50 @@ public:
     return m_map.template beta<2, 1, 2, 1, 2>(next_iterator(it)->first);
   }
 
+  /// @return the positive turn given two ids of darts (unsed for CGAL_PWRLE_TURN_V1)
+  std::size_t compute_positive_turn_given_ids(std::size_t id1,
+                                               std::size_t id2) const
+  {
+    std::size_t number_of_edges=m_map.number_of_darts()/2;
+    if (id1>=number_of_edges)
+    {
+      id1-=number_of_edges; // id of the first dart in its own vertex
+      CGAL_assertion(id2>=number_of_edges);
+      id2-=number_of_edges; // id of the second dart in its own vertex
+    }
+
+    return (id1<id2?id2-id1:number_of_edges-id1+id2);
+  }
+
+  /// @return the negative turn given two ids of darts (unused for CGAL_PWRLE_TURN_V1)
+  std::size_t compute_negative_turn_given_ids(std::size_t id1,
+                                              std::size_t id2) const
+  {
+    std::size_t number_of_edges=m_map.number_of_darts()/2;
+    if (id1>=number_of_edges)
+    {
+      id1-=number_of_edges; // id of the first dart in its own vertex
+      CGAL_assertion(id2>=number_of_edges);
+      id2-=number_of_edges; // id of the second dart in its own vertex
+    }
+
+    return (id1<=id2?number_of_edges-id2+id1:id1-id2);
+  }
+
+  std::size_t get_dart_id(Dart_const_handle dh) const
+  {
+#ifdef CGAL_PWRLE_TURN_V2
+    return m_darts_ids.at(dh);
+#else // CGAL_PWRLE_TURN_V2
+#ifdef CGAL_PWRLE_TURN_V3
+    return m_map.info(dh);
+#else //  CGAL_PWRLE_TURN_V3
+    std::cerr<<"Error: impossible to get dart id without method V2 or V3."<<std::endl;
+    return -1;
+#endif  CGAL_PWRLE_TURN_V3
+#endif //  CGAL_PWRLE_TURN_V2
+  }
+
   /// @return the turn between dart it and next dart.
   ///         (turn is position of the second edge in the cyclic ordering of
   ///          edges starting from the first edge around the second extremity
@@ -633,7 +709,12 @@ public:
       else { return 2; }
     }
 
+#ifdef CGAL_PWRLE_TURN_V1
     return m_map.positive_turn(it->first, next_iterator(it)->first);
+#else // CGAL_PWRLE_TURN_V1
+    return compute_positive_turn_given_ids(get_dart_id(m_map.template beta<2>(it->first)),
+                                           get_dart_id(next_iterator(it)->first));
+#endif CGAL_PWRLE_TURN_V1
   }
 
   /// Same than next_positive_turn but turning in reverse orientation around vertex.
@@ -649,7 +730,12 @@ public:
       else { return 2; }
     }
 
+#ifdef CGAL_PWRLE_TURN_V1
     return m_map.negative_turn(it->first, next_iterator(it)->first);
+#else // CGAL_PWRLE_TURN_V1
+    return compute_negative_turn_given_ids(get_dart_id(m_map.template beta<2>(it->first)),
+                                           get_dart_id(next_iterator(it)->first));
+#endif CGAL_PWRLE_TURN_V1
   }
 
   std::vector<std::size_t> compute_positive_turns() const
@@ -1366,6 +1452,10 @@ protected:
   List_of_dart_length m_path; // The sequence of turning darts, plus the length of the flat part after the dart (a flat part is a sequence of dart with positive turn == 2). If negative value k, -k is the length of the flat part, for negative turns (-2).
   bool m_is_closed; // True iff the path is a cycle
   std::size_t m_length;
+
+#ifdef CGAL_PWRLE_TURN_V2
+  TDartIds m_darts_ids;
+#endif //CGAL_PWRLE_TURN_V2
 };
 
 } // namespace CGAL

@@ -44,7 +44,10 @@ namespace CGAL {
     
     typedef boost::unordered_map<Dart_const_handle,
                       std::pair<Dart_const_handle, Dart_const_handle> > TPaths;
+
+#ifdef CGAL_PWRLE_TURN_V2
     typedef boost::unordered_map<Dart_const_handle, std::size_t> TDartIds;
+#endif //CGAL_PWRLE_TURN_V2
 
     Surface_mesh_curve_topology(Map& amap, bool display_time=false) :
       m_original_map(amap)
@@ -184,10 +187,9 @@ namespace CGAL {
         }
 
         // Now we label all the darts of the reduced map, to allow the computation
-        // of turns in constant time.
+        // of turns in constant time: only for methods V2 and V3
+#if defined(CGAL_PWRLE_TURN_V2) || defined(CGAL_PWRLE_TURN_V3)
         CGAL_assertion(m_map.number_of_darts()%2==0);
-        m_number_of_edges=m_map.number_of_darts()/2;
-
         Dart_handle dh1=m_map.darts().begin();
         Dart_handle dh2=m_map.template beta<2>(dh1);
         std::size_t id=0;
@@ -196,7 +198,13 @@ namespace CGAL {
           Dart_handle cur_dh=dh1;
           do
           {
+#ifdef CGAL_PWRLE_TURN_V2
             m_dart_ids[cur_dh]=id++;
+#else //  CGAL_PWRLE_TURN_V2
+            // Here we use CGAL_PWRLE_TURN_V3
+            m_map.info(cur_dh)=id++;
+#endif // CGAL_PWRLE_TURN_V2
+
             cur_dh=m_map.template beta<2, 1>(cur_dh);
           }
           while(cur_dh!=dh1);
@@ -207,6 +215,7 @@ namespace CGAL {
           t2.stop();
           std::cout<<"[TIME] Label darts: "<<t2.time()<<" seconds"<<std::endl;
         }
+#endif // defined(CGAL_PWRLE_TURN_V2) || defined(CGAL_PWRLE_TURN_V3)
       }
 
 #ifdef CGAL_TRACE_CMAP_TOOLS
@@ -333,7 +342,11 @@ namespace CGAL {
       }
       else
       {
-        Path_on_surface_with_rle<Map> path(pt);
+        Path_on_surface_with_rle<Map> path(pt
+                                   #ifdef CGAL_PWRLE_TURN_V2
+                                           , m_dart_ids
+                                   #endif //CGAL_PWRLE_TURN_V2
+                                           );
         path.canonize();
         res=path.is_empty();
         std::cout<<"Length of reduced paths: "<<path.length()<<std::endl;
@@ -371,8 +384,16 @@ namespace CGAL {
       }
       else
       {
-        Path_on_surface_with_rle<Map> path1(pt1);
-        Path_on_surface_with_rle<Map> path2(pt2);
+        Path_on_surface_with_rle<Map> path1(pt1
+                                    #ifdef CGAL_PWRLE_TURN_V2
+                                            , m_dart_ids
+                                    #endif //CGAL_PWRLE_TURN_V2
+                                            );
+        Path_on_surface_with_rle<Map> path2(pt2
+                                    #ifdef CGAL_PWRLE_TURN_V2
+                                            , m_dart_ids
+                                    #endif //CGAL_PWRLE_TURN_V2
+                                            );
 
         path1.canonize();
         path2.canonize();
@@ -1018,69 +1039,6 @@ namespace CGAL {
 
       return res;
     }
-    /*
-    /// @return the turn between dart number i and dart number i+1 of path.
-    ///         (turn is position of the second edge in the cyclic ordering of
-    ///          edges starting from the first edge around the second extremity
-    ///          of the first dart)
-    std::size_t next_positive_turn(const Path_on_surface<Map>& path,
-                                   std::size_t i) const
-    {
-      // OLD return path.next_positive_turn(i);
-      Dart_const_handle d1=path.get_ith_dart(i);
-      Dart_const_handle d2=path.get_next_dart(i);
-      assert(d1!=d2);
-
-      if (d2==m_map.template beta<2>(d1))
-      { return 0; }
-
-      std::size_t id1=m_dart_ids.at(m_map.template beta<2>(d1));
-      std::size_t id2=m_dart_ids.at(d2);
-
-      if (id1>=m_number_of_edges)
-      {
-        id1-=m_number_of_edges; // id of the first dart in its own vertex
-        assert(id2>=m_number_of_edges);
-        id2-=m_number_of_edges; // id of the second dart in its own vertex
-      }
-
-      std::size_t res=(id1<id2?id2-id1:
-                               m_number_of_edges-id1+id2);
-      assert(res==path.next_positive_turn(i));
-      return res;
-    }
-
-    /// Same than next_positive_turn but turning in reverse orientation around vertex.
-    std::size_t next_negative_turn(const Path_on_surface<Map>& path,
-                                   std::size_t i) const
-    {
-      // OLD return path.next_negative_turn(i);
-      Dart_const_handle d1=path.get_ith_dart(i);
-      Dart_const_handle d2=path.get_next_dart(i);
-//      Dart_const_handle d1=m_map.template beta<2>(path.get_ith_dart(i));
-//      Dart_const_handle d2=m_map.template beta<2>(path.get_next_dart(i));
-      assert(d1!=d2);
-
-      if (d2==m_map.template beta<2>(d1))
-      { return 0; }
-
-      std::size_t id1=m_dart_ids.at(m_map.template beta<2>(d1));
-      std::size_t id2=m_dart_ids.at(d2);
-
-      if (id1>=m_number_of_edges)
-      {
-        id1-=m_number_of_edges; // id of the first dart in its own vertex
-        assert(id2>=m_number_of_edges);
-        id2-=m_number_of_edges; // id of the second dart in its own vertex
-      }
-
-      std::size_t res=(id1<=id2?m_number_of_edges-id2+id1:
-                               id1-id2);
-      assert(res==path.next_negative_turn(i));
-      return res;
-    }
-
-*/
 
   protected:
     const Map& m_original_map; /// The original surface; not modified
@@ -1089,13 +1047,14 @@ namespace CGAL {
                   /// (except the edges that belong to the spanning tree T).
     std::size_t m_mark_T; /// mark each edge of m_original_map that belong to the spanning tree T
     std::size_t m_mark_L; /// mark each edge of m_original_map that belong to the dual spanning tree L
+#ifdef CGAL_PWRLE_TURN_V2
     TDartIds m_dart_ids; /// Ids of each dart of the transformed map, between 0 and n-1 (n being the number of darts)
                        /// so that darts between 0...(n/2)-1 belong to the same vertex and
                        /// d1=beta<1, 2>(d0), d2=beta<1, 2>(d1)...
                        /// The same for darts between n/2...n-1 for the second vertex
                        /// Thanks to these ids, we can compute in constant time the positive and
                        /// negative turns between two consecutive darts
-    std::size_t m_number_of_edges; // number of edges in the tranformed map (==number of darts / 2)
+#endif // CGAL_PWRLE_TURN_V2
   };
   
 } // namespace CGAL
