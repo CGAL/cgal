@@ -891,7 +891,12 @@ public:
       put(face_proxy_map, f, get(m_fproxy_map, f));
   }
 
+  /// \cond SKIP_IN_MANUAL
+  /*!
+   * @brief dummy function for named parameters.
+   */
   void proxy_map(boost::param_not_found) const {}
+  /// \endcond
 
   /*!
    * @brief gets the face region of the specified proxy.
@@ -920,7 +925,12 @@ public:
       *out++ = pxw.px;
   }
 
+  /// \cond SKIP_IN_MANUAL
+  /*!
+   * @brief dummy function for named parameters.
+   */
   void proxies(boost::param_not_found) const {}
+  /// \endcond
 
   /// \cond SKIP_IN_MANUAL
   /*!
@@ -946,7 +956,12 @@ public:
       *out++ = a.pos;
   }
 
+  /// \cond SKIP_IN_MANUAL
+  /*!
+   * @brief dummy function for named parameters.
+   */
   void anchor_points(boost::param_not_found) const {}
+  /// \endcond
 
   /*!
    * @brief gets the anchor vertices.
@@ -971,7 +986,12 @@ public:
       *out++ = t;
   }
 
+  /// \cond SKIP_IN_MANUAL
+  /*!
+   * @brief dummy function for named parameters.
+   */
   void indexed_triangles(boost::param_not_found) const {}
+  /// \endcond
 
   /*!
    * @brief gets the indexed boundary polygon approximation.
