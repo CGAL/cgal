@@ -1057,7 +1057,7 @@ void classify (const ItemRange& input,
     probabilities[i].resize (input.size());
 
   const std::size_t mem_allocated = sizeof(float) * input.size() * (labels.size() + classifier.features().size());
-  const std::size_t size_max = 1024 * 1024 * 1024;
+  const std::size_t size_max = 512 * 1024 * 1024;
   const std::size_t nb_subdivisions = (mem_allocated / size_max) + 1;
   std::cerr << nb_subdivisions << " subdivision(s) for GPU processing" << std::endl;
 
@@ -1106,7 +1106,7 @@ void classify (const ItemRange& input,
   output.resize(input.size());
 
   const std::size_t mem_allocated = sizeof(float) * input.size() * (labels.size() + classifier.features().size());
-  const std::size_t size_max = 1024 * 1024 * 1024;
+  const std::size_t size_max = 512 * 1024 * 1024;
   const std::size_t nb_subdivisions = (mem_allocated / size_max) + 1;
   std::cerr << nb_subdivisions << " subdivision(s) for GPU processing" << std::endl;
 
