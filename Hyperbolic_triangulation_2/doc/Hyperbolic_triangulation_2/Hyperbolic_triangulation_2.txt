@@ -53,7 +53,7 @@ are <i>hyperbolic</i>:
 <ul>
 	<li> A Euclidean Delaunay face is hyperbolic if its
 	circumscribing circle is contained in \f$\mathbb H^2\f$. 
-	<li> An Euclidean Delaunay edge is hyperbolic if one fo the
+	<li> An Euclidean Delaunay edge is hyperbolic if one of the
 	empty disks (i.e., not containing any point of \f$\mathcal
 	P\f$) passing through its endpoints is contained in \f$\mathbb
 	H^2\f$. 
