@@ -714,7 +714,7 @@ public:
 #else // CGAL_PWRLE_TURN_V1
     return compute_positive_turn_given_ids(get_dart_id(m_map.template beta<2>(it->first)),
                                            get_dart_id(next_iterator(it)->first));
-#endif CGAL_PWRLE_TURN_V1
+#endif // CGAL_PWRLE_TURN_V1
   }
 
   /// Same than next_positive_turn but turning in reverse orientation around vertex.
@@ -735,7 +735,7 @@ public:
 #else // CGAL_PWRLE_TURN_V1
     return compute_negative_turn_given_ids(get_dart_id(m_map.template beta<2>(it->first)),
                                            get_dart_id(next_iterator(it)->first));
-#endif CGAL_PWRLE_TURN_V1
+#endif // CGAL_PWRLE_TURN_V1
   }
 
   std::vector<std::size_t> compute_positive_turns() const
