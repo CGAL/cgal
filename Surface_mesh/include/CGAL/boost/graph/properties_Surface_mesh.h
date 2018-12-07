@@ -387,28 +387,28 @@ get(dynamic_halfedge_property_t<T>, Surface_mesh<Point>& sm)
 
 // get functions for dynamic properties of const Surface_mesh
 template <typename Point, typename T>
-CGAL::internal::Dynamic_with_index<typename Surface_mesh<Point>::Vertex_index, T>
+typename boost::property_map<Surface_mesh<Point>, dynamic_vertex_property_t<T> >::const_type
 get(dynamic_vertex_property_t<T>, const Surface_mesh<Point>& sm)
 {
   return CGAL::internal::Dynamic_with_index<typename Surface_mesh<Point>::Vertex_index, T>(num_vertices(sm));
 }
 
 template <typename Point, typename T>
-CGAL::internal::Dynamic_with_index<typename Surface_mesh<Point>::Face_index, T>
+typename boost::property_map<Surface_mesh<Point>, dynamic_face_property_t<T> >::const_type
 get(dynamic_face_property_t<T>, const Surface_mesh<Point>& sm)
 {
   return CGAL::internal::Dynamic_with_index<typename Surface_mesh<Point>::Face_index, T>(num_faces(sm));
 }
 
 template <typename Point, typename T>
-CGAL::internal::Dynamic_with_index<typename Surface_mesh<Point>::Halfedge_index, T>
+typename boost::property_map<Surface_mesh<Point>, dynamic_halfedge_property_t<T> >::const_type
 get(dynamic_halfedge_property_t<T>, const Surface_mesh<Point>& sm)
 {
   return CGAL::internal::Dynamic_with_index<typename Surface_mesh<Point>::Halfedge_index, T>(num_halfedges(sm));
 }
 
 template <typename Point, typename T>
-CGAL::internal::Dynamic_with_index<typename Surface_mesh<Point>::Edge_index, T>
+typename boost::property_map<Surface_mesh<Point>, dynamic_edge_property_t<T> >::const_type
 get(dynamic_edge_property_t<T>, const Surface_mesh<Point>& sm)
 {
   return CGAL::internal::Dynamic_with_index<typename Surface_mesh<Point>::Edge_index, T>(num_edges(sm));
