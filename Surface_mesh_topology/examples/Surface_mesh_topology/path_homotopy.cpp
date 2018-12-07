@@ -38,7 +38,9 @@ typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3> LCC_3_cmap;
 void process_command_line(int argc, char** argv,
                           std::string& file,
                           bool& draw,
+                          bool& withD,
                           unsigned int& D,
+                          bool& withF,
                           unsigned int& F,
                           unsigned int& N,
                           CGAL::Random& random,
@@ -54,12 +56,14 @@ void process_command_line(int argc, char** argv,
     {
      if (i==argc-1)
      { error_command_line(argc, argv, "Error: no number after -nbdefo option."); }
+     withD=true;
      D=static_cast<unsigned int>(std::stoi(std::string(argv[++i])));
     }
     else if (arg=="-nbfaces")
     {
      if (i==argc-1)
      { error_command_line(argc, argv, "Error: no number after -nbfaces option."); }
+     withF=true;
      F=static_cast<unsigned int>(std::stoi(std::string(argv[++i])));
     }
     else if (arg=="-nbtests")
@@ -84,12 +88,6 @@ void process_command_line(int argc, char** argv,
     { file=arg; }
   }
 
-  if (F==0)
-  { F=static_cast<unsigned int>(random.get_int(10, 101)); }
-
-  if (D==0)
-  { D=static_cast<unsigned int>(random.get_int(10, 101)); }
-
   if (N==0) { N=1; }
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -97,13 +95,15 @@ int main(int argc, char** argv)
 {
   std::string file="data/3torus-smooth.off";  
   bool draw=false;
+  bool withD=false;
   unsigned int D=0;
+  bool withF=false;
   unsigned int F=0;
   unsigned int N=1;
   CGAL::Random random; // Used when user do not provide its own seed.
   bool time=false;
 
-  process_command_line(argc, argv, file, draw, D, F, N, random, time);
+  process_command_line(argc, argv, file, draw, withD, D, withF, F, N, random, time);
 
   LCC_3_cmap lcc;
   if (!CGAL::load_off(lcc, file.c_str()))
@@ -130,6 +130,18 @@ int main(int argc, char** argv)
       random=CGAL::Random(random.get_int(0, std::numeric_limits<int>::max()));
     }
     std::cout<<"Random seed: "<<random.get_seed()<<std::endl;
+
+    if (!withF)
+    { F=static_cast<unsigned int>(random.get_int
+                                  (10, std::max(std::size_t(11),
+                                                lcc.number_of_darts()/10))); }
+
+    if (!withD)
+    { D=static_cast<unsigned int>(random.get_int
+                                  (10, std::max(std::size_t(11),
+                                                lcc.number_of_darts()/10))); }
+
+
 
     std::vector<const CGAL::Path_on_surface<LCC_3_cmap>* > paths;
     std::vector<CGAL::Path_on_surface<LCC_3_cmap> > transformed_paths;
