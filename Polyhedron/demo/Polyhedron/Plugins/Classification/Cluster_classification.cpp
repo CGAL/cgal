@@ -128,20 +128,26 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
       
       if (training_found)
       {
-        if (las_found && (m_training[*it] == 0 || m_training[*it] == 1)) // Unclassified class in LAS
-          m_training[*it] = -1;
-        else if (m_training[*it] != -1)
-          m_training[*it] = used_indices[std::size_t(m_training[*it])];
-        if (c != -1)
+        if (std::size_t(current_idx) != used_indices.size()) // Empty indices -> reorder indices in point set
+        {
+          if (las_found && (m_training[*it] == 0 || m_training[*it] == 1)) // Unclassified class in LAS
+            m_training[*it] = -1;
+          else if (m_training[*it] != -1)
+            m_training[*it] = used_indices[std::size_t(m_training[*it])];
+        }
+        if (c != -1 && m_training[*it] != -1)
           m_clusters[c].training() = m_training[*it];
       }
       if (classif_found)
       {
-        if (las_found && (m_classif[*it] == 0 || m_classif[*it] == 1)) // Unclassified class in LAS
-          m_classif[*it] = -1;
-        else if (m_classif[*it] != -1)
-          m_classif[*it] = used_indices[std::size_t(m_classif[*it])];
-        if (c != -1)
+        if (std::size_t(current_idx) != used_indices.size()) // Empty indices -> reorder indices in point set
+        {
+          if (las_found && (m_classif[*it] == 0 || m_classif[*it] == 1)) // Unclassified class in LAS
+            m_classif[*it] = -1;
+          else if (m_classif[*it] != -1)
+            m_classif[*it] = used_indices[std::size_t(m_classif[*it])];
+        }
+        if (c != -1 && m_classif[*it] != -1)
           m_clusters[c].label() = m_classif[*it];
       }
     }
