@@ -651,8 +651,10 @@ public:
 
   /// @return the positive turn given two ids of darts (unsed for CGAL_PWRLE_TURN_V1)
   std::size_t compute_positive_turn_given_ids(std::size_t id1,
-                                               std::size_t id2) const
+                                              std::size_t id2) const
   {
+    if (id1==id2) { return 0; }
+
     std::size_t number_of_edges=m_map.number_of_darts()/2;
     if (id1>=number_of_edges)
     {
@@ -668,6 +670,8 @@ public:
   std::size_t compute_negative_turn_given_ids(std::size_t id1,
                                               std::size_t id2) const
   {
+    if (id1==id2) { return 0; }
+
     std::size_t number_of_edges=m_map.number_of_darts()/2;
     if (id1>=number_of_edges)
     {
@@ -693,6 +697,41 @@ public:
 #endif //  CGAL_PWRLE_TURN_V2
   }
 
+  /// @return the turn between the two given darts.
+  std::size_t positive_turn(Dart_const_handle dh1,
+                            Dart_const_handle dh2)
+  {
+#ifdef CGAL_PWRLE_TURN_V1
+    return m_map.positive_turn(dh1, dh2);
+#else // CGAL_PWRLE_TURN_V1
+    unsigned int toto1=m_map.positive_turn(dh1, dh2);
+    unsigned int toto2=compute_positive_turn_given_ids(get_dart_id(m_map.template beta<2>(dh1)),
+                                                       get_dart_id(dh2));
+   // std::cout<<"toto1="<<toto1<<"  toto2="<<toto2<<std::endl;
+    CGAL_assertion(toto1==toto2);
+
+    return compute_positive_turn_given_ids(get_dart_id(m_map.template beta<2>(dh1)),
+                                           get_dart_id(dh2));
+#endif // CGAL_PWRLE_TURN_V1
+  }
+
+  /// @return the turn between the two given darts.
+  std::size_t negative_turn(Dart_const_handle dh1,
+                            Dart_const_handle dh2)
+  {
+#ifdef CGAL_PWRLE_TURN_V1
+    return m_map.negative_turn(dh1, dh2);
+#else // CGAL_PWRLE_TURN_V1
+    // TEMPO POUR DEBUG
+    CGAL_assertion(m_map.negative_turn(dh1, dh2)==
+                   compute_negative_turn_given_ids(get_dart_id(m_map.template beta<2>(dh1)),
+                                                   get_dart_id(dh2)));
+
+    return compute_negative_turn_given_ids(get_dart_id(m_map.template beta<2>(dh1)),
+                                           get_dart_id(dh2));
+#endif // CGAL_PWRLE_TURN_V1
+  }
+
   /// @return the turn between dart it and next dart.
   ///         (turn is position of the second edge in the cyclic ordering of
   ///          edges starting from the first edge around the second extremity
@@ -700,6 +739,7 @@ public:
   std::size_t next_positive_turn(const List_iterator& it)
   {
     // CGAL_assertion(is_valid());
+    // CGAL_assertion(is_valid_iterator(it));
     CGAL_assertion(it!=m_path.end());
     CGAL_assertion(is_closed() || std::next(it)!=m_path.end());
 
@@ -709,12 +749,7 @@ public:
       else { return 2; }
     }
 
-#ifdef CGAL_PWRLE_TURN_V1
-    return m_map.positive_turn(it->first, next_iterator(it)->first);
-#else // CGAL_PWRLE_TURN_V1
-    return compute_positive_turn_given_ids(get_dart_id(m_map.template beta<2>(it->first)),
-                                           get_dart_id(next_iterator(it)->first));
-#endif // CGAL_PWRLE_TURN_V1
+    return positive_turn(it->first, next_iterator(it)->first);
   }
 
   /// Same than next_positive_turn but turning in reverse orientation around vertex.
@@ -730,12 +765,7 @@ public:
       else { return 2; }
     }
 
-#ifdef CGAL_PWRLE_TURN_V1
-    return m_map.negative_turn(it->first, next_iterator(it)->first);
-#else // CGAL_PWRLE_TURN_V1
-    return compute_negative_turn_given_ids(get_dart_id(m_map.template beta<2>(it->first)),
-                                           get_dart_id(next_iterator(it)->first));
-#endif // CGAL_PWRLE_TURN_V1
+    return negative_turn(it->first, next_iterator(it)->first);
   }
 
   std::vector<std::size_t> compute_positive_turns() const
@@ -833,7 +863,9 @@ public:
     --m_length;
   }
 
-  void merge_adjacent_flats_if_possible(List_iterator& it)
+  /// Merge, if possible, the flat starting at iterator 'it' with its previous
+  /// flat.
+  void merge_adjacent_flats_if_possible(const List_iterator& it)
   {
     CGAL_assertion(is_beginning_of_flat(it));
 
@@ -925,8 +957,6 @@ public:
 
     CGAL_assertion(is_beginning_of_flat(it2));
     reduce_flat_from_beginning(it2);
-
-    // Here it is on the flat before the
 
     // Now move it to the element before the removed spur
     // except if the path has become empty, or if it is not closed
@@ -1202,7 +1232,7 @@ public:
 
     positive_flat=false; negative_flat=false;
     if (!prev_dart_exist(it)) { return false; }
-    List_iterator ittemp=prev_iterator(it);
+    List_iterator ittemp=prev_iterator(it); // TODO USE LOCAL POSITIVE_TURN
     if (m_map.positive_turn(ittemp->first, dh)==2) { positive_flat=true; }
     if (m_map.negative_turn(ittemp->first, dh)==2) { negative_flat=true; }
 
@@ -1454,7 +1484,7 @@ protected:
   std::size_t m_length;
 
 #ifdef CGAL_PWRLE_TURN_V2
-  TDartIds m_darts_ids;
+  const TDartIds& m_darts_ids;
 #endif //CGAL_PWRLE_TURN_V2
 };
 
