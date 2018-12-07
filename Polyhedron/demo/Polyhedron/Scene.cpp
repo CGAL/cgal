@@ -180,9 +180,9 @@ Scene::erase(Scene::Item_id index)
   item->deleteLater();
   selected_item = -1;
   //re-creates the Scene_view
-  Q_FOREACH(Scene_item* item, m_entries)
+  Q_FOREACH(Item_id id, children)
   {
-    organize_items(item, invisibleRootItem(), 0);
+    organize_items(this->item(id), invisibleRootItem(), 0);
   }
   QStandardItemModel::beginResetModel();
   Q_EMIT updated();
@@ -232,9 +232,9 @@ Scene::erase(QList<int> indices)
       continue;
     if(item->parentGroup())
       item->parentGroup()->removeChild(item);
-        children.removeAll(removed_item);
-        indexErased(removed_item);
-        m_entries.removeAll(item);
+    children.removeAll(removed_item);
+    indexErased(removed_item);
+    m_entries.removeAll(item);
     
     Q_EMIT itemAboutToBeDestroyed(item);
     item->aboutToBeDestroyed();
@@ -243,9 +243,9 @@ Scene::erase(QList<int> indices)
   clear();
   index_map.clear();
   selected_item = -1;
-  Q_FOREACH(Scene_item* item, m_entries)
+  Q_FOREACH(Item_id id, children)
   {
-    organize_items(item, invisibleRootItem(), 0);
+    organize_items(item(id), invisibleRootItem(), 0);
   }
   QStandardItemModel::beginResetModel();
   Q_EMIT updated();
@@ -1536,7 +1536,6 @@ void Scene::redraw_model()
     index_map.clear();
     //fills the model
     Q_FOREACH(Item_id id, children)
-    
     {
         organize_items(m_entries[id], invisibleRootItem(), 0);
     }
