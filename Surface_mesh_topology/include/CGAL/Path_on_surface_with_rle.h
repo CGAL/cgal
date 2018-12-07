@@ -27,9 +27,9 @@
 #include <iterator>
 #include <vector>
 
-#define CGAL_PWRLE_TURN_V1  // Compute turns by turning (method of CMap)
+// #define CGAL_PWRLE_TURN_V1  // Compute turns by turning (method of CMap)
 // #define CGAL_PWRLE_TURN_V2  // Compute turns by using an id of darts, given by an hash-table (built and given by Surface_mesh_curve_topology)
-// #define CGAL_PWRLE_TURN_V3  // Compute turns by using an id of darts, associated in Info of Darts (build by Surface_mesh_curve_topology)
+#define CGAL_PWRLE_TURN_V3  // Compute turns by using an id of darts, associated in Info of Darts (build by Surface_mesh_curve_topology)
 
 namespace CGAL {
 
@@ -343,6 +343,23 @@ public:
           std::cout<<"ERROR: The path is not valid: flat at position "<<i-1
                   <<" with length "<<nb<<" is not correct: its end does not"
                  <<" correspond to the flat."<<std::endl;
+          return false;
+        }
+
+        if (nb>0 && next_positive_turn(it)==2 &&
+            (!next_dart_exist(it) || next_iterator(it)->second>=0))
+        {
+          std::cout<<"ERROR: The path is not valid: flat at position "<<i-1
+                  <<" with length "<<nb<<" is not correct: it can be merged "
+                 <<"with the next flat."<<std::endl;
+          return false;
+        }
+        if (nb<0 && next_negative_turn(it)==2 &&
+            (!next_dart_exist(it) || next_iterator(it)->second<=0))
+        {
+          std::cout<<"ERROR: The path is not valid: flat at position "<<i-1
+                  <<" with length "<<nb<<" is not correct: it can be merged "
+                 <<"with the next flat."<<std::endl;
           return false;
         }
       }
@@ -693,8 +710,8 @@ public:
 #else //  CGAL_PWRLE_TURN_V3
     std::cerr<<"Error: impossible to get dart id without method V2 or V3."<<std::endl;
     return -1;
-#endif  CGAL_PWRLE_TURN_V3
-#endif //  CGAL_PWRLE_TURN_V2
+#endif // CGAL_PWRLE_TURN_V3
+#endif // CGAL_PWRLE_TURN_V2
   }
 
   /// @return the turn between the two given darts.
@@ -768,7 +785,7 @@ public:
     return negative_turn(it->first, next_iterator(it)->first);
   }
 
-  std::vector<std::size_t> compute_positive_turns() const
+  std::vector<std::size_t> compute_positive_turns()
   {
     std::vector<std::size_t> res;
     if (is_empty()) return res;
@@ -780,7 +797,7 @@ public:
     return res;
   }
 
-  std::vector<std::size_t> compute_negative_turns() const
+  std::vector<std::size_t> compute_negative_turns()
   {
     std::vector<std::size_t> res;
     if (is_empty()) return res;
@@ -792,7 +809,7 @@ public:
     return res;
   }
 
-  std::vector<std::size_t> compute_turns(bool positive) const
+  std::vector<std::size_t> compute_turns(bool positive)
   { return (positive?compute_positive_turns():compute_negative_turns()); }
 
   /// Reduce the length of the flat part starting at 'it' from its beginning
@@ -807,8 +824,8 @@ public:
 
     if (it->second==0)
     {
-      it=m_path.erase(it);
-      if (!m_path.empty()) { retreat_iterator(it); } // TODO ? if !is_closed && first dart
+      it=m_path.erase(it); // after the erase, it is the element after the erased one
+      if (!m_path.empty()) { retreat_iterator(it); } // this is why we move it backaward here
     }
     else
     {
@@ -819,6 +836,7 @@ public:
 
       if (it->second==0)
       {
+        CGAL_assertion(it!=next_iterator(it));
         m_path.erase(next_iterator(it)); // erase the second element of the flat
       }
       else { it=next_iterator(it); }
@@ -827,7 +845,7 @@ public:
     --m_length;
   }
 
-  /// Reduce the length of the flat part starting at 'it' from its end
+  /// Reduce the length of the flat part starting at 'it' from its end.
   /// 'it' moves to the end of the previous flat part if the current flat part
   /// becomes empty (and thus was removed) or to the end of this part otherwise
   /// If the flat was empty, remove 'it'.
@@ -840,8 +858,8 @@ public:
 
     if (it->second==0)
     {
-      it=m_path.erase(it);
-      if (!m_path.empty()) { retreat_iterator(it); } // TODO ? if !is_closed && first dart
+      it=m_path.erase(it); // after the erase, it is the element after the erased one
+      if (!m_path.empty()) { retreat_iterator(it); } // this is why we move it backaward here
     }
     else
     {
@@ -851,6 +869,7 @@ public:
       List_iterator it2=next_iterator(it);
       if (it->second==0)
       {
+        CGAL_assertion(it!=it2);
         m_path.erase(it2); // erase the second element of the flat
       }
       else
@@ -863,7 +882,7 @@ public:
     --m_length;
   }
 
-  /// Merge, if possible, the flat starting at iterator 'it' with its previous
+  /// Merge, if possible, the flat starting at iterator 'it' with its next
   /// flat.
   void merge_adjacent_flats_if_possible(const List_iterator& it)
   {
@@ -940,12 +959,12 @@ public:
         m_map.template beta<2>(it->first)==next_iterator(it)->first;
   }
 
-  /// Remove the spur given by 'it'.
-  /// Either 'it' stay on the same element (if the flat still exist),
-  /// or 'it' move to the previous element if the flat containing the spur is removed.
+  /// Remove the spur given by 'it', which is either the beginning of a null
+  ///   length flat, or the end of a non null flat.
+  /// After the operation, either 'it' stay on the same element (if the flat
+  /// still exist), or 'it' move to the previous element if the flat containing
+  /// the spur is removed.
   /// ('it' will be equal to m_path.end() if the path becomes empty).
-  /// 'it' is necessary either the beginning of a null length flat, or the end
-  /// of a non null flat.
   void remove_spur(List_iterator& it)
   {
     CGAL_assertion(is_spur(it));
@@ -1243,9 +1262,9 @@ public:
 
     positive_flat=false; negative_flat=false;
     if (!prev_dart_exist(it)) { return false; }
-    List_iterator ittemp=prev_iterator(it); // TODO USE LOCAL POSITIVE_TURN
-    if (m_map.positive_turn(ittemp->first, dh)==2) { positive_flat=true; }
-    if (m_map.negative_turn(ittemp->first, dh)==2) { negative_flat=true; }
+    List_iterator ittemp=prev_iterator(it);
+    if (positive_turn(ittemp->first, dh)==2) { positive_flat=true; }
+    if (negative_turn(ittemp->first, dh)==2) { negative_flat=true; }
 
     if (is_beginning_of_flat(ittemp)) // Case of flat lengh 0
     { return positive_flat || negative_flat; }
@@ -1267,8 +1286,8 @@ public:
      positive_flat=false; negative_flat=false;
      if (!next_dart_exist(it)) { return false; }
      List_iterator ittemp=next_iterator(it);
-     if (m_map.positive_turn(dh, ittemp->first)==2) { positive_flat=true; }
-     if (m_map.negative_turn(dh, ittemp->first)==2) { negative_flat=true; }
+     if (positive_turn(dh, ittemp->first)==2) { positive_flat=true; }
+     if (negative_turn(dh, ittemp->first)==2) { negative_flat=true; }
 
      if (ittemp->second==0)  // Case of flat lengh 0
      { return positive_flat || negative_flat; }
@@ -1341,37 +1360,83 @@ public:
   
   /// Right push the given l-shape.
   void right_push_l_shape(List_iterator& it)
-  {
+  { // it is the beginning of a flat
     CGAL_assertion(is_l_shape(it));
-
-    if (m_path.size()==2 && it->second==0 &&
-        next_iterator(it)->second==0)
-    { // Special case of a path with only 2 darts
-      it->first=m_map.template beta<2,1>(it->first);
-      List_iterator ittemp=next_iterator(it);
-      ittemp->first=m_map.template beta<2,0>(ittemp->first);
-      return;
-    }
 
     List_iterator it2=next_flat(it);  // Beginning of the second flat
     List_iterator it3=(is_end_of_flat(it2)?it2:next_iterator(it2)); // End of the second flat
-     
+    CGAL_assertion(it!=it2);
+
+    if (it->second==0)
+    {
+      if (it2->second==0)
+      {
+        // Special case of a l-shape with only 2 darts
+        CGAL_assertion(it2==it3);
+        it->first=m_map.template beta<2,1>(it->first);
+        it2->first=m_map.template beta<1>(it->first);
+        CGAL_assertion(is_valid());
+        return;
+      }
+      else
+      { // Here first flat length is 0, while second flat not
+        CGAL_assertion(next_iterator(it)==it2);
+        it->first=m_map.template beta<2,1>(it->first);
+        it2->first=m_map.template beta<2,1,1>(it3->first);
+        it3->first=m_map.template beta<1>(it2->first);
+        it->second=(-it2->second);
+        it2->second=0;
+        CGAL_assertion(is_valid());
+        return;
+      }
+    }
+    else
+    { // Here it->second!=0
+      if (it2->second==0)
+      { // Here first flat length is non zero, while second flat length is 0
+        CGAL_assertion(it2==it3);
+        it->first=m_map.template beta<2,1>(it->first); // beginning of first flat
+        it2=next_iterator(it); // now it2 is the end of first flat
+        it2->first=m_map.template beta<1>(it->first);
+        it3->first=m_map.template beta<2,0>(it3->first);
+        it2->second=(-it->second);
+        it->second=0;
+        CGAL_assertion(is_valid());
+        return;
+      }
+    }
+
+    // General case, with two flats with non zero length
+    static int TOTO=0;
+    std::cout<<"right_push_l_shape "<<TOTO++<<std::endl;
+
+    Dart_const_handle first_dart_toinsert=m_map.template beta<2,1>(it->first);
+    Dart_const_handle second_dart_toinsert=m_map.template beta<2,0>(it3->first);
+
+    List_iterator it_insert1=m_path.insert(it, std::make_pair
+                                           (first_dart_toinsert, 0));
+    List_iterator it_insert2=m_path.insert(next_iterator(it3),
+                                           std::make_pair
+                                           (second_dart_toinsert, 0));
+
     // 1) Add the first dart before flat 'it'
-    add_dart_before(it, m_map.template beta<2,1>(it->first));
-  
+    //add_dart_before(it, first_dart_toinsert);
+
     // 2) Add the last dart after flat 'it3'
-    add_dart_after(it3, m_map.template beta<2,0>(it3->first));
+    /* it2=next_flat(it);  // we recompute it2 and it3; because maybe the second flat was extended by the previous method add_dart_before
+    it3=(is_end_of_flat(it2)?it2:next_iterator(it2));
+    add_dart_after(it3, second_dart_toinsert); */
 
     // 3) Move the first flat
-    if (it->second==0)
+    /*f (it->second==0)
     { it=m_path.erase(it); }
-    else
+    else */
     {
       CGAL_assertion(it->second<0);
       it->first=m_map.template beta<2,1,1>(it->first);
       it->second=(-it->second)-1;
       if (it->second==0)
-      { it=m_path.erase(next_iterator(it)); }
+      { m_path.erase(next_iterator(it)); }
       else
       {
         List_iterator ittemp=next_iterator(it);
@@ -1380,23 +1445,27 @@ public:
     }
    
     // 4) Move the second flat
-    if (it2->second==0)
+    /* if (it2->second==0)
     {
       it=m_path.erase(it2);
     }
-    else
+    else */
     {
       CGAL_assertion(it2->second<0);
       it2->first=m_map.template beta<2,0,2,1>(it2->first);
       it2->second=(-it2->second)-1;
       if (it2->second==0)
-      { it=m_path.erase(next_iterator(it2)); }
+      { m_path.erase(it3); }
       else
       { it3->first=m_map.template beta<2,1,1>(it3->first); }
     }
     m_length-=2;
-    if (it==m_path.end() && !is_empty())
-    { it=m_path.begin(); }
+
+    merge_adjacent_flats_if_possible(prev_iterator(it));
+    merge_adjacent_flats_if_possible(it3);
+
+    /*if (it==m_path.end() && !is_empty())
+    { it=m_path.begin(); } */
   }
 
   /// Right push the path, if all all l-shape are pushed, otherwise only one.
@@ -1412,7 +1481,7 @@ public:
       {
         // std::cout<<"right_push "<<TOTO++<<std::endl;
         right_push_l_shape(it); res=true;
-        //CGAL_assertion(is_valid());
+        CGAL_assertion(is_valid());
         CGAL_assertion(is_valid_iterator(it));
         if (!all) { return true; }
       }
@@ -1442,10 +1511,11 @@ public:
      }
      while(modified);
 
+     right_push();
      CGAL_assertion(is_valid());
   }
 
-  void display_positive_turns() const
+  void display_positive_turns()
   {
     std::cout<<"+(";
     std::vector<std::size_t> res=compute_positive_turns();
@@ -1454,7 +1524,7 @@ public:
     std::cout<<")";
   }
 
-  void display_negative_turns() const
+  void display_negative_turns()
   {
     std::cout<<"-(";
     std::vector<std::size_t> res=compute_negative_turns();
@@ -1463,14 +1533,14 @@ public:
     std::cout<<")";
   }
 
-  void display_pos_and_neg_turns() const
+  void display_pos_and_neg_turns()
   {
     display_positive_turns();
     std::cout<<"  ";
     display_negative_turns();
   }
 
-  void display() const
+  void display()
   {
     for (auto it=m_path.begin(), itend=m_path.end(); it!=itend; ++it)
     {
