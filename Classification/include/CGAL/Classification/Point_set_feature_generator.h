@@ -166,7 +166,7 @@ private:
         neighborhood = new Neighborhood (input, point_map, voxel_size);
       t.stop();
       
-      if (voxel_size < 0.)
+      if (lower_grid == NULL)
         CGAL_CLASSIFICATION_CERR << "Neighborhood computed in " << t.time() << " second(s)" << std::endl;
       else
         CGAL_CLASSIFICATION_CERR << "Neighborhood with voxel size " << voxel_size
@@ -216,8 +216,8 @@ private:
     }
 
     float grid_resolution() const { return voxel_size; }
-    float radius_neighbors() const { return voxel_size * 5; }
-    float radius_dtm() const { return voxel_size * 100; }
+    float radius_neighbors() const { return voxel_size * 3; }
+    float radius_dtm() const { return voxel_size * 10; }
     
   };
 
