@@ -952,6 +952,8 @@ void MainWindow::reloadItem() {
   Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
   {
     item = scene->item(id);
+    if(!item)//secure items like selection items that get deleted when their "parent" item is reloaded.
+      continue;
     QString filename = item->property("source filename").toString();
     QString loader_name = item->property("loader_name").toString();
     if(filename.isEmpty() || loader_name.isEmpty()) {
