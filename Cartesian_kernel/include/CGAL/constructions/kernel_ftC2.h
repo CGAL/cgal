@@ -285,7 +285,7 @@ line_get_pointC2(const FT &a, const FT &b, const FT &c, int i,
 {
   if (CGAL_NTS is_zero(b))
     {
-      // Laurent Rineau, 2018/12/07: I had this CGAL_assume to calm
+      // Laurent Rineau, 2018/12/07: I add this CGAL_assume to calm
       // down a warning from MSVC 2017:
       // > include\cgal\constructions\kernel_ftc2.h(287) :
       // >   warning C4723: potential divide by 0
