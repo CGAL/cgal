@@ -60,7 +60,7 @@
              <x>0</x>
              <y>0</y>
              <width>278</width>
-             <height>432</height>
+             <height>499</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -311,7 +311,7 @@
         <item>
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>Tick plugins you don't want to load at start up</string>
+           <string>Tick plugins you want to load at start up</string>
           </property>
          </widget>
         </item>
