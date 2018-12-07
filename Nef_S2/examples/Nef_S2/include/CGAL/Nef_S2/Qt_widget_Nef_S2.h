@@ -23,7 +23,7 @@
 
 #include <CGAL/Nef_S2/Sphere_geometry_OGL.h>
 #include "CGAL/Nef_S2/Qt_widget_OpenGL.h"
-#include <boost/thread/mutex.hpp>
+#include <CGAL/mutex.h>
 
 namespace CGAL {
 
@@ -45,7 +45,7 @@ class Qt_widget_Nef_S2 : public Qt_widget_OpenGL {
   virtual ~Qt_widget_Nef_S2(); 
 
  protected:
-  boost::mutex mutex;
+  CGAL_MUTEX mutex;
   
 };
 
