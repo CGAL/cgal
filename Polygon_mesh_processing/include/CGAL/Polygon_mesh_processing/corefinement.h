@@ -441,6 +441,58 @@ corefine_and_compute_boolean_operations(
     return CGAL::make_array(true, true, true, true);
   }
 
+  // handle case of empty meshes (isolated vertices are ignored)
+  if (faces(tm1).empty())
+  {
+    if(faces(tm2).empty())
+    {
+      for (int i=0; i<4; ++i)
+        if (output[i] != boost::none)
+          clear(*(*output[i]));
+      return CGAL::make_array(true, true, true, true);
+    }
+    // tm2 is not empty
+    if (output[Corefinement::UNION] != boost::none)
+      if (&tm2 != *output[Corefinement::UNION])
+        copy_face_graph(tm2,
+                        *(*output[Corefinement::UNION]),
+                        parameters::vertex_point_map(vpm2),
+                        parameters::vertex_point_map(*cpp11::get<Corefinement::UNION>(vpm_out_tuple)));
+    if (output[Corefinement::INTERSECTION] != boost::none)
+      clear(*(*output[Corefinement::INTERSECTION]));
+    if (output[Corefinement::TM1_MINUS_TM2] != boost::none)
+      clear(*(*output[Corefinement::TM1_MINUS_TM2]));
+    if (output[Corefinement::TM2_MINUS_TM1] != boost::none)
+      if (&tm2 != *output[Corefinement::TM2_MINUS_TM1])
+        copy_face_graph(tm2,
+                        *(*output[Corefinement::TM2_MINUS_TM1]),
+                        parameters::vertex_point_map(vpm2),
+                        parameters::vertex_point_map(*cpp11::get<Corefinement::TM2_MINUS_TM1>(vpm_out_tuple)));
+    return CGAL::make_array(true, true, true, true);
+  }
+  else
+    if (faces(tm2).empty())
+    {
+      // tm1 is not empty
+      if (output[Corefinement::UNION] != boost::none)
+        if (&tm1 != *output[Corefinement::UNION])
+          copy_face_graph(tm1,
+                          *(*output[Corefinement::UNION]),
+                          parameters::vertex_point_map(vpm1),
+                          parameters::vertex_point_map(*cpp11::get<Corefinement::UNION>(vpm_out_tuple)));
+      if (output[Corefinement::INTERSECTION] != boost::none)
+        clear(*(*output[Corefinement::INTERSECTION]));
+      if (output[Corefinement::TM2_MINUS_TM1] != boost::none)
+        clear(*(*output[Corefinement::TM2_MINUS_TM1]));
+      if (output[Corefinement::TM1_MINUS_TM2] != boost::none)
+        if (&tm1 != *output[Corefinement::TM1_MINUS_TM2])
+          copy_face_graph(tm1,
+                          *(*output[Corefinement::TM1_MINUS_TM2]),
+                          parameters::vertex_point_map(vpm1),
+                          parameters::vertex_point_map(*cpp11::get<Corefinement::TM1_MINUS_TM2>(vpm_out_tuple)));
+      return CGAL::make_array(true, true, true, true);
+    }
+
 // Edge is-constrained maps
   //for input meshes
   typedef typename boost::lookup_named_param_def <
