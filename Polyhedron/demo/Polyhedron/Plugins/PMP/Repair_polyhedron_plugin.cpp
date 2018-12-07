@@ -147,13 +147,14 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveDegenerateFaces_tr
     qobject_cast<Item*>(scene->item(index));
   if (poly_item)
   {
-    std::size_t nbv =
+    std::size_t nbv = num_faces(*poly_item->polyhedron());
       CGAL::Polygon_mesh_processing::remove_degenerate_faces(
       *poly_item->polyhedron());
-    messages->information(tr(" %1 degenerate faces have been removed.")
-      .arg(nbv));
-    poly_item->invalidateOpenGLBuffers();
-    Q_EMIT poly_item->itemChanged();
+      poly_item->invalidateOpenGLBuffers();
+      Q_EMIT poly_item->itemChanged();
+      nbv -= num_faces(*poly_item->polyhedron());
+      messages->information(tr(" %1 degenerate faces have been removed.")
+                            .arg(nbv));
   }
 }
 
