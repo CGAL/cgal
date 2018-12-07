@@ -151,6 +151,8 @@ private:
     QApplication::setOverrideCursor(Qt::WaitCursor);
     try{
       PMP::corefine(*item1->face_graph(), *item2->face_graph(), params::throw_on_self_intersection(true));
+      item1->resetColors();
+      item2->resetColors();
       item1->invalidateOpenGLBuffers();
       item2->invalidateOpenGLBuffers();
       scene->itemChanged(item2);

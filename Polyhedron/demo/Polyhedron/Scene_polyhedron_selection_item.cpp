@@ -899,6 +899,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_d
           set_active_handle_type(static_cast<Active_handle::Type>(1));
           d->tempInstructions("Face split.",
                            "Select a facet (1/3).");
+          polyhedron_item()->resetColors();
           polyhedron_item()->invalidateOpenGLBuffers();
         }
       }
@@ -1124,6 +1125,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
           temp_selected_edges.clear();
           temp_selected_vertices.clear();
           compute_normal_maps();
+          polyhedron_item()->resetColors();
           invalidateOpenGLBuffers();
           polyhedron_item()->invalidateOpenGLBuffers();
           d->tempInstructions("Face and vertex added.",
@@ -1174,6 +1176,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
           temp_selected_vertices.clear();
           temp_selected_edges.clear();
           compute_normal_maps();
+          polyhedron_item()->resetColors();
           invalidateOpenGLBuffers();
           polyhedron_item()->invalidateOpenGLBuffers();
           d->tempInstructions("Face added.",
@@ -1272,6 +1275,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_face_des
             invalidateOpenGLBuffers();
             //reset selection mode
             set_active_handle_type(static_cast<Active_handle::Type>(0));
+            poly_item->resetColors();
             poly_item->invalidateOpenGLBuffers();
             d->tempInstructions("Vertex splitted.", "Select the vertex you want splitted. (1/3)");
           }
@@ -1327,6 +1331,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_face_des
           if(total !=0)
             put(vpm, target(hhandle,*polyhedron()), Point_3(x/(double)total, y/(double)total, z/(double)total));
           compute_normal_maps();
+          polyhedron_item()->resetColors();
           poly_item->invalidateOpenGLBuffers();
 
         }

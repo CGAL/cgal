@@ -455,6 +455,7 @@ private Q_SLOTS:
                                                 Kernel::Vector_3(dir.x(), dir.y(), dir.z()));
     scene->erase(scene->item_id(oliver_queen));
     oliver_queen = NULL;
+    target->resetColors();
     target->invalidateOpenGLBuffers();
     target->itemChanged();
     target = NULL;
