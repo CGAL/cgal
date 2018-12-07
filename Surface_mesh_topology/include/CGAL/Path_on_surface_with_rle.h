@@ -1108,6 +1108,8 @@ public:
     reduce_flat_from_end(it1); // decrease also m_length
     reduce_flat_from_beginning(it3);
 
+    it1=it2; // Beginning of the second flat, we are sure it exists
+
     it2->first=m_map.template  beta<2,1,1>(it2->first);
     if (it2->second<0)
     {
@@ -1116,7 +1118,7 @@ public:
       it2->first=m_map.template  beta<2,1,1>(it2->first);
     }
 
-    if (is_beginning_of_non_null_flat(it1)) { advance_iterator(it1); }
+    // if (is_beginning_of_non_null_flat(it1)) { advance_iterator(it1); }
 
     // CGAL_assertion(is_valid());
   }
@@ -1150,6 +1152,8 @@ public:
     reduce_flat_from_end(it1); // decrease also m_length
     reduce_flat_from_beginning(it3);
 
+    it1=it2; // Beginning of the second flat, we are sure it exists
+
     it2->first=m_map.template  beta<1,1,2>(it2->first);
     if (it2->second>0)
     {
@@ -1158,7 +1162,7 @@ public:
       it2->first=m_map.template  beta<1,1,2>(it2->first);
     }
 
-    if (is_beginning_of_non_null_flat(it1)) { advance_iterator(it1); }
+    // if (is_beginning_of_non_null_flat(it1)) { advance_iterator(it1); }
 
     // CGAL_assertion(is_valid());
   }

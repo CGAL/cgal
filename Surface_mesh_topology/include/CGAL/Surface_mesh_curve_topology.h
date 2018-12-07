@@ -422,9 +422,6 @@ namespace CGAL {
         path2.canonize();
         res=(path1==path2); // Do here to be counted in the computation time
 
-        std::cout<<"path1="<<path1<<std::endl
-                   <<"path2="<<path2<<std::endl;
-
         std::cout<<"Length of reduced paths: "<<path1.length()<<" and "
                  <<path2.length()<<std::endl;
       }
