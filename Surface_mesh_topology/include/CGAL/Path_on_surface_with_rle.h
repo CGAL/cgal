@@ -1002,6 +1002,7 @@ public:
       if (is_spur(it))
       {
         remove_spur(it); res=true;
+        CGAL_assertion(is_valid_iterator(it));
         if (!all) { return true; }
       }
       else { move_to_next_spur(it); }
@@ -1174,9 +1175,15 @@ public:
     {
       // CGAL_assertion(is_valid());
       if (is_positive_bracket(it1, it2))
-      { remove_positive_bracket(it1, it2); res=true; }
+      {
+        remove_positive_bracket(it1, it2); res=true;
+        CGAL_assertion(is_valid_iterator(it1));
+      }
       else if (is_negative_bracket(it1, it2))
-      { remove_negative_bracket(it1, it2); res=true; }
+      {
+        remove_negative_bracket(it1, it2); res=true;
+        CGAL_assertion(is_valid_iterator(it1));
+      }
       else { move_to_next_bracket(it1); }
       if (!all && res) { return true; }
       // CGAL_assertion(is_valid());
@@ -1402,7 +1409,7 @@ public:
         // std::cout<<"right_push "<<TOTO++<<std::endl;
         right_push_l_shape(it); res=true;
         //CGAL_assertion(is_valid());
-        //CGAL_assertion(is_valid_iterator(it));
+        CGAL_assertion(is_valid_iterator(it));
         if (!all) { return true; }
       }
       else { move_to_next_l_shape(it); }
