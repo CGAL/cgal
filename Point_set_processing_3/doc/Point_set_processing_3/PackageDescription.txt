@@ -1,7 +1,6 @@
+/// \defgroup PkgPointSetProcessing3Ref Point Set Processing Reference
+
 /*!
-
-\defgroup PkgPointSetProcessing3Ref Point Set Processing Reference
-
 \defgroup PkgPointSetProcessing3Algorithms Algorithms
 \ingroup PkgPointSetProcessing3Ref
 
