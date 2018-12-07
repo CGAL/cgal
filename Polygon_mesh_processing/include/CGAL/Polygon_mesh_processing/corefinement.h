@@ -329,6 +329,62 @@ boolean_operation(      TriangleMesh& tm1,
     return CGAL::make_array(true, true, true, true);
   }
 
+  // handle case of empty meshes (isolated vertices are ignored)
+  if (faces(tm1).empty())
+  {
+    if(faces(tm2).empty())
+    {
+      for (int i=0; i<4; ++i)
+        if (desired_output[i] != boost::none)
+          clear(*(*desired_output[i]));
+      return CGAL::make_array(true, true, true, true);
+    }
+    // tm2 is not empty
+    if (desired_output[Corefinement::UNION] != boost::none)
+      if (&tm2 != *desired_output[Corefinement::UNION])
+        copy_face_graph(tm2,
+                        *(*desired_output[Corefinement::UNION]),
+                        Emptyset_iterator(), Emptyset_iterator(), Emptyset_iterator(),
+                        vpm2,
+                        vpm_out[Corefinement::UNION]);
+    if (desired_output[Corefinement::INTER] != boost::none)
+      clear(*(*desired_output[Corefinement::INTER]));
+    if (desired_output[Corefinement::TM1_MINUS_TM2] != boost::none)
+      clear(*(*desired_output[Corefinement::TM1_MINUS_TM2]));
+    if (desired_output[Corefinement::TM2_MINUS_TM1] != boost::none)
+      if (&tm2 != *desired_output[Corefinement::TM2_MINUS_TM1])
+        copy_face_graph(tm2,
+                        *(*desired_output[Corefinement::TM2_MINUS_TM1]),
+                        Emptyset_iterator(), Emptyset_iterator(), Emptyset_iterator(),
+                        vpm2,
+                        vpm_out[Corefinement::TM2_MINUS_TM1]);
+    return CGAL::make_array(true, true, true, true);
+  }
+  else
+    if (faces(tm2).empty())
+    {
+      // tm1 is not empty
+      if (desired_output[Corefinement::UNION] != boost::none)
+        if (&tm1 != *desired_output[Corefinement::UNION])
+          copy_face_graph(tm1,
+                          *(*desired_output[Corefinement::UNION]),
+                          Emptyset_iterator(), Emptyset_iterator(), Emptyset_iterator(),
+                          vpm1,
+                          vpm_out[Corefinement::UNION]);
+      if (desired_output[Corefinement::INTER] != boost::none)
+        clear(*(*desired_output[Corefinement::INTER]));
+      if (desired_output[Corefinement::TM2_MINUS_TM1] != boost::none)
+        clear(*(*desired_output[Corefinement::TM2_MINUS_TM1]));
+      if (desired_output[Corefinement::TM1_MINUS_TM2] != boost::none)
+        if (&tm1 != *desired_output[Corefinement::TM1_MINUS_TM2])
+          copy_face_graph(tm1,
+                          *(*desired_output[Corefinement::TM1_MINUS_TM2]),
+                          Emptyset_iterator(), Emptyset_iterator(), Emptyset_iterator(),
+                          vpm1,
+                          vpm_out[Corefinement::TM1_MINUS_TM2]);
+      return CGAL::make_array(true, true, true, true);
+    }
+
 // Edge is-constrained maps
   //for input meshes
   typedef typename boost::lookup_named_param_def <
