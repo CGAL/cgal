@@ -533,7 +533,7 @@ when we use the homogeneous representations of the points: if
 suitable coefficients for a convex combination if and only if
 \f[\ccSum{j=1}{n}{~ \lambda_j(p_j \mid 1)} = (p\mid 1), \f]
 equivalently, if there are \f$\mu_1,\ldots,\mu_n\f$ 
-(with \f$\mu_j = \lambda_j \cdot h/{h_j}\f$ for all $j$) such that
+(with \f$\mu_j = \lambda_j \cdot h/{h_j}\f$ for all \f$j\f$) such that
 \f[\ccSum{j=1}{n}{~\mu_j~q_j} = q, \quad \mu_j \geq 0\mbox{~for all $j$}.\f]
 
 The linear program now tests for the existence of nonnegative \f$ \mu_j\f$
