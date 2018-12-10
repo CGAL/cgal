@@ -1534,7 +1534,7 @@ public:
     `false` if the algorithm was prematurely ended because no more
     edge collapse was possible.
    */
-  bool run(const unsigned steps) {
+  bool run(const unsigned int steps) {
     m_tolerance = (FT)(-1.);
     CGAL::Real_timer timer;
     if (m_verbose > 0)
