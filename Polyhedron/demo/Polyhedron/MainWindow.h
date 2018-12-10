@@ -440,6 +440,7 @@ public:
                              const QString & fileName = QString());
 #endif
 public Q_SLOTS:
+  void on_actionSa_ve_Scene_as_Script_triggered();
   void toggleFullScreen();
   void setDefaultSaveDir();
   void invalidate_bbox(bool do_recenter);
