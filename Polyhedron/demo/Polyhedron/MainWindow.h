@@ -462,6 +462,8 @@ private Q_SLOTS:
   void on_actionAdd_Viewer_triggered();
   void on_action_Organize_Viewers_triggered();
   void recenterViewer();
+private:
+  QMap<QAction*, QMenu*> action_menu_map;
 };
   
 struct SubViewer : public QMdiSubWindow
