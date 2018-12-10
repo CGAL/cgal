@@ -441,11 +441,13 @@ public:
 public Q_SLOTS:
   void toggleFullScreen();
   void setDefaultSaveDir();
+  void invalidate_bbox(bool do_recenter);
 private:
   QList<QDockWidget *> visibleDockWidgets;
   QLineEdit operationSearchBar;
   QWidgetAction* searchAction;
   QString def_save_dir;
+  bool bbox_need_update;
 };
 
 #endif // ifndef MAINWINDOW_H
