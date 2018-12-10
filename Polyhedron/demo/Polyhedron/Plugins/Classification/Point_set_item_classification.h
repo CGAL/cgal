@@ -412,6 +412,8 @@ class Point_set_item_classification : public Item_classification_base
   Generator* m_generator;
   
   int m_index_color;
+
+  bool m_input_is_las;
   
 }; // end class Point_set_item_classification
 

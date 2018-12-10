@@ -397,6 +397,8 @@ class Cluster_classification : public Item_classification_base
   int m_index_color;
 
   boost::shared_ptr<Local_eigen_analysis> m_eigen;
+
+  bool m_input_is_las;
   
 }; // end class Cluster_classification
 

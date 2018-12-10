@@ -21,6 +21,7 @@
 Point_set_item_classification::Point_set_item_classification(Scene_points_with_normal_item* points)
   : m_points (points)
   , m_generator (NULL)
+  , m_input_is_las (false)
 {
   m_index_color = 1;
 
@@ -60,6 +61,7 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
     boost::tie (las_classif, las_found) = m_points->point_set()->property_map<unsigned char>("classification");
     if (las_found)
     {
+      m_input_is_las = true;
       for (Point_set::const_iterator it = m_points->point_set()->begin();
            it != m_points->point_set()->first_selected(); ++ it)
       {
@@ -245,10 +247,81 @@ Point_set_item_classification::~Point_set_item_classification()
   if (m_generator != NULL)
     delete m_generator;
   if (m_points != NULL)
+  {
+    // For LAS saving, convert classification info in the LAS standard
+    if (m_input_is_las)
     {
-      reset_colors();
-      erase_item();
+      Point_set::Property_map<unsigned char> las_classif
+        = m_points->point_set()->add_property_map<unsigned char>("classification", 0).first;
+    
+      std::vector<unsigned char> label_indices;
+
+      unsigned char custom = 19;
+      for (std::size_t i = 0; i < m_labels.size(); ++ i)
+      {
+        if (m_labels[i]->name() == "ground")
+          label_indices.push_back (2);
+        else if (m_labels[i]->name() == "low_veget")
+          label_indices.push_back (3);
+        else if (m_labels[i]->name() == "med_veget" || m_labels[i]->name() == "vegetation")
+          label_indices.push_back (4);
+        else if (m_labels[i]->name() == "high_veget")
+          label_indices.push_back (5);
+        else if (m_labels[i]->name() == "building" || m_labels[i]->name() == "roof")
+          label_indices.push_back (6);
+        else if (m_labels[i]->name() == "noise")
+          label_indices.push_back (7);
+        else if (m_labels[i]->name() == "reserved" || m_labels[i]->name() == "facade")
+          label_indices.push_back (8);
+        else if (m_labels[i]->name() == "water")
+          label_indices.push_back (9);
+        else if (m_labels[i]->name() == "rail")
+          label_indices.push_back (10);
+        else if (m_labels[i]->name() == "road_surface")
+          label_indices.push_back (11);
+        else if (m_labels[i]->name() == "reserved_2")
+          label_indices.push_back (12);
+        else if (m_labels[i]->name() == "wire_guard")
+          label_indices.push_back (13);
+        else if (m_labels[i]->name() == "wire_conduct")
+          label_indices.push_back (14);
+        else if (m_labels[i]->name() == "trans_tower")
+          label_indices.push_back (15);
+        else if (m_labels[i]->name() == "wire_connect")
+          label_indices.push_back (16);
+        else if (m_labels[i]->name() == "bridge_deck")
+          label_indices.push_back (17);
+        else if (m_labels[i]->name() == "high_noise")
+          label_indices.push_back (18);
+        else
+          label_indices.push_back (custom ++);
+      }
+
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->end(); ++ it)
+      {
+        int c = m_classif[*it];
+        unsigned char lc = 1; // unclassified in LAS standard
+        if (c != -1)
+          lc = label_indices[std::size_t(c)];
+        
+        las_classif[*it] = lc;
+
+        int t = m_training[*it];
+        unsigned char lt = 1; // unclassified in LAS standard
+        if (t != -1)
+          lt = label_indices[std::size_t(t)];
+        
+        m_training[*it] = int(lt);
+      }
+
+      m_points->point_set()->remove_property_map (m_classif);
     }
+
+    reset_colors();
+    erase_item();
+  }
+
 }
 
 
