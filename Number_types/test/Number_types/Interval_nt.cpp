@@ -211,7 +211,7 @@ bool multiplication_test()
   g = d * e;
   h = d * f;
   i = a * e;
-  j = j;
+  j = (IA_nt&)j;
 
   // When CGAL_IA_DEBUG is defined, it'll test the current rounding mode for
   // these operations.

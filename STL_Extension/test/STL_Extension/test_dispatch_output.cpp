@@ -23,7 +23,7 @@ void check_types(output out){
   CGAL_USE_TYPE(typename output::pointer);
   CGAL_USE_TYPE(typename output::reference);
   T1 tmp=out.get_iterator_tuple();
-  tmp=tmp;
+  tmp=(T1&)tmp;
 }
   
 template <class T1,class T2>
@@ -69,8 +69,8 @@ void complete_test(std::vector<T1> data1,std::list<T2> data2){
   check_types(disp);
   check_types(drop);
   
-  disp = disp;
-  drop = drop;
+  disp = (Dispatcher&)disp;
+  drop = (Dropper&)drop;
 
   std::back_insert_iterator<std::vector<T2> > bck_ins(cont_2);
   

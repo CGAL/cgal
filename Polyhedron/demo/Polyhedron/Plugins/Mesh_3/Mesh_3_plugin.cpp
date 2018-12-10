@@ -45,7 +45,7 @@ class Mesh_3_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "mesh_3_plugin.json")
 
 public:
   void init(QMainWindow* mainWindow,
@@ -502,6 +502,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
                                  edge_size,
                                  radius_edge,
                                  manifold,
+                                 surface_only,
                                  scene);
   }
 #endif
@@ -527,6 +528,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
                                  radius_edge,
                                  protect_features,
                                  manifold,
+                                 surface_only,
                                  scene,
                                  detect_connected_components,
                                  image_item->isGray(),

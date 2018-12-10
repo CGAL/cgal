@@ -21,6 +21,10 @@ if(POLICY CMP0072)
   cmake_policy(SET CMP0072 NEW)
 endif()
 
+if(POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW)
+endif()
+
 set(PACKAGE_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../..)
 
 # Add several CGAL packages to the include and link paths,
