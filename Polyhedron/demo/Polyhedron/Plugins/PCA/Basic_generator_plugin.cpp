@@ -40,7 +40,7 @@ class Q_DECL_EXPORT Basic_generator_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "basic_generator_plugin.json")
 public :
   void init(QMainWindow* mainWindow,
             CGAL::Three::Scene_interface* scene_interface,

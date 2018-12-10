@@ -19,7 +19,8 @@ struct Polyhedron_demo_impl {
 
 Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
                                  QString application_name,
-                                 QString main_window_title)
+                                 QString main_window_title,
+                                 QStringList input_keywords)
   : QApplication(argc, argv)
   , d_ptr_is_initialized(false)
   , d_ptr(new Polyhedron_demo_impl)
@@ -43,6 +44,11 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
 
   QCommandLineParser parser;
   parser.addHelpOption();
+  
+  QCommandLineOption use_keyword("keyword",
+                              tr("Only loads the plugins associated with the following keyword. Can be called multiple times."),
+                                 "keyword");
+  parser.addOption(use_keyword);
 
   QCommandLineOption use_meta("use-meta",
                               tr("Use the [Meta] key to move frames, instead of [Tab]."));
@@ -67,7 +73,10 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
   parser.addOption(old);
   parser.addPositionalArgument("files", tr("Files to open"), "[files...]");
   parser.process(*this);
-  d_ptr->mainWindow.reset(new MainWindow(parser.isSet(verbose)));
+  QStringList keywords = input_keywords;
+  QStringList parser_keywords = parser.values(use_keyword);
+  keywords.append(parser_keywords);
+  d_ptr->mainWindow.reset(new MainWindow(keywords, parser.isSet(verbose)));
   MainWindow& mainWindow = *d_ptr->mainWindow;
   
   mainWindow.setWindowTitle(main_window_title);
