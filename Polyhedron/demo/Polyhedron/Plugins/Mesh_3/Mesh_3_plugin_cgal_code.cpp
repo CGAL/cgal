@@ -181,6 +181,7 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
                                  const double edge_size,
                                  const double tet_shape,
                                  const int manifold,
+                                 const bool surface_only,
                                  CGAL::Three::Scene_interface* scene)
 {
   if (pfunction == NULL) { return NULL; }
@@ -198,7 +199,7 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
                                [](int i, int j) { return (i * 1000 + j); }
                              );
 
-  Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
+  Scene_c3t3_item* p_new_item = new Scene_c3t3_item(surface_only);
   p_new_item->setScene(scene);
 
   Mesh_parameters param;
@@ -236,6 +237,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
                                  const double tet_shape,
                                  bool protect_features,
                                  const int manifold,
+                                 const bool surface_only,
                                  CGAL::Three::Scene_interface* scene,
                                  bool detect_connected_components,
                                  bool is_gray,
@@ -259,7 +261,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   param.tet_shape = tet_shape;
   param.manifold = manifold;
   param.image_3_ptr = pImage;
-  Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
+  Scene_c3t3_item* p_new_item = new Scene_c3t3_item(surface_only);
   p_new_item->setScene(scene);
   if(!is_gray)
   {
