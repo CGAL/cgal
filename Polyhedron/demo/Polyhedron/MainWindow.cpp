@@ -8,10 +8,10 @@
 #include <CGAL/Three/exceptions.h>
 #include <CGAL/Qt/debug.h>
 
+#include <QJsonArray>
 #include <QtDebug>
 #include <QFileDialog>
 #include <QFileInfo>
-#include <QSettings>
 #include <QHeaderView>
 #include <QMenu>
 #include <QMenuBar>
@@ -37,9 +37,11 @@
 #include <QDockWidget>
 #include <QSpinBox>
 #include <stdexcept>
+#include <fstream>
 #include <QTime>
 #include <QWidgetAction>
 #include <QJsonArray>
+
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptValue>
 #  ifdef QT_SCRIPTTOOLS_LIB
@@ -137,6 +139,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   : CGAL::Qt::DemosMainWindow(parent),
     accepted_keywords(keywords)
 {
+  bbox_need_update = true;
   ui = new Ui::MainWindow;
   ui->setupUi(this);
   menuBar()->setNativeMenuBar(false);
@@ -212,7 +215,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
           this, SLOT(removeManipulatedFrame(CGAL::Three::Scene_item*)));
 
   connect(scene, SIGNAL(updated_bbox(bool)),
-          this, SLOT(updateViewersBboxes(bool)));
+          this, SLOT(invalidate_bbox(bool)));
 
   connect(scene, SIGNAL(selectionChanged(int)),
           this, SLOT(selectSceneItem(int)));
@@ -915,6 +918,8 @@ void MainWindow::error(QString text) {
 
 void MainWindow::updateViewersBboxes(bool recenter)
 {
+  if(bbox_need_update)
+  {
   CGAL::qglviewer::Vec min, max;
   computeViewerBBox(min, max);
   Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
@@ -924,6 +929,8 @@ void MainWindow::updateViewersBboxes(bool recenter)
     Viewer* vi = static_cast<Viewer*>(v);
     updateViewerBbox(vi, recenter, min, max);
   }
+  bbox_need_update = false;
+}
 
 }
 
@@ -936,24 +943,28 @@ void MainWindow::computeViewerBBox(CGAL::qglviewer::Vec& min, CGAL::qglviewer::V
   const double xmax = bbox.xmax();
   const double ymax = bbox.ymax();
   const double zmax = bbox.zmax();
-
-
-
+  
+  
+  
   min = CGAL::qglviewer::Vec(xmin, ymin, zmin);
   max= CGAL::qglviewer::Vec(xmax, ymax, zmax);
-
+  
   CGAL::qglviewer::Vec bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
-
+  
   CGAL::qglviewer::Vec offset(0,0,0);
-
+  
   double l_dist = (std::max)((std::abs)(bbox_center.x - viewer->offset().x),
                              (std::max)((std::abs)(bbox_center.y - viewer->offset().y),
                                         (std::abs)(bbox_center.z - viewer->offset().z)));
   if((std::log2)(l_dist) > 13.0 )
     for(int i=0; i<3; ++i)
     {
-      offset[i] = -bbox_center[i];
-
+      viewer->setOffset(offset);
+      for(int i=0; i<scene->numberOfEntries(); ++i)
+      {
+        scene->item(i)->invalidateOpenGLBuffers();
+        scene->item(i)->itemChanged();
+      }
     }
   if(offset != viewer->offset())
   {
@@ -1147,6 +1158,7 @@ void MainWindow::open(QString filename)
       qobject_cast<CGAL::Three::Scene_group_item*>(scene_item);
   if(group)
     scene->redraw_model();
+  updateViewersBboxes(true);
 }
 
 bool MainWindow::open(QString filename, QString loader_name) {
@@ -1645,7 +1657,6 @@ void MainWindow::updateDisplayInfo() {
 
 void MainWindow::readSettings()
 {
-    QSettings settings;
     viewer->setAntiAliasing(settings.value("antialiasing", false).toBool());
     viewer->setFastDrawing(settings.value("quick_camera_mode", true).toBool());
     scene->enableVisibilityRecentering(settings.value("offset_update", true).toBool());
@@ -1668,7 +1679,6 @@ void MainWindow::writeSettings()
 {
   this->writeState("MainWindow");
   {
-    QSettings settings;
     //setting plugin blacklist
     QStringList blacklist;
     Q_FOREACH(QString name,plugin_blacklist){ blacklist << name; }
@@ -1996,13 +2006,16 @@ void MainWindow::on_actionDuplicate_triggered()
 
 void MainWindow::on_actionShowHide_triggered()
 {
+  scene->setUpdatesEnabled(false);
   Q_FOREACH(QModelIndex index, sceneView->selectionModel()->selectedRows())
   {
     int i = scene->getIdFromModelIndex(proxyModel->mapToSource(index));
     CGAL::Three::Scene_item* item = scene->item(i);
     item->setVisible(!item->visible());
-    scene->itemChanged(i);
+    item->redraw();
   }
+  scene->setUpdatesEnabled(true);
+  updateViewersBboxes(false);
 }
 
 void MainWindow::on_actionSetPolyhedronA_triggered()
@@ -2021,7 +2034,6 @@ void MainWindow::on_actionPreferences_triggered()
 {
   QDialog dialog(this);
   Ui::PreferencesDialog prefdiag;
-  QSettings settings;
   prefdiag.setupUi(&dialog);
   
   float lineWidth[2];
@@ -2276,6 +2288,8 @@ void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
 
 void MainWindow::on_actionRecenterScene_triggered()
 {
+  //force the recomputaion of the bbox
+  bbox_need_update = true;
   CGAL::qglviewer::Vec min, max;
   computeViewerBBox(min, max);
   Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
@@ -2600,6 +2614,86 @@ void MainWindow::propagate_action()
   }
 }
 
+void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
+{
+  QString filename =
+      QFileDialog::getSaveFileName(this,
+                                   "Save the Scene as a Script File",
+                                   last_saved_dir,
+                                   "Qt Script files (*.js)");
+  std::ofstream os(filename.toUtf8());
+  if(!os)
+    return;
+  std::vector<QString> names;
+  std::vector<QString> loaders;
+  std::vector<QColor> colors;
+  std::vector<int> rendering_modes;
+  QStringList not_saved;
+  for(int i = 0; i < scene->numberOfEntries(); ++i)
+  {
+    Scene_item* item = scene->item(i);
+    QString loader = item->property("loader_name").toString();
+    QString source = item->property("source filename").toString();
+    if(loader.isEmpty())
+    {
+      not_saved.push_back(item->name());
+      continue;
+    }
+    names.push_back(source);
+    loaders.push_back(loader);
+    colors.push_back(item->color());
+    rendering_modes.push_back(item->renderingMode());
+  }
+  //path
+  os << "var camera = \""<<viewer->dumpCameraCoordinates().toStdString()<<"\";\n";
+  os << "var items = [";
+  for(std::size_t i = 0; i< names.size() -1; ++i)
+  {
+    os << "\'" << names[i].toStdString() << "\', ";
+  }
+  os<<"\'"<<names.back().toStdString()<<"\'];\n";
+  
+  //plugin
+  os << "var loaders = [";
+  for(std::size_t i = 0; i< names.size() -1; ++i)
+  {
+    os << "\'" << loaders[i].toStdString() << "\', ";
+  }
+  os<<"\'"<<loaders.back().toStdString()<<"\'];\n";
+  
+  //color
+  os << "var colors = [";
+  for(std::size_t i = 0; i< names.size() -1; ++i)
+  {
+    os << "[" << colors[i].red() <<", "<< colors[i].green() <<", "<< colors[i].blue() <<"], ";
+  }
+  os<<"[" << colors.back().red() <<", "<< colors.back().green() <<", "<< colors.back().blue() <<"]];\n";
+  
+  //rendering mode
+  os << "var rendering_modes = [";
+  for(std::size_t i = 0; i< names.size() -1; ++i)
+  {
+    os << rendering_modes[i] << ", ";
+  }
+  os << rendering_modes.back()<<"];\n";
+  os <<"var initial_scene_size = scene.numberOfEntries;\n";
+  os << "items.forEach(function(item, index, array){\n";
+  os << "        main_window.open(item, loaders[index]);\n";
+  os << "        var it = scene.item(initial_scene_size+index);\n";
+  os << "        var r = colors[index][0];\n";
+  os << "        var g = colors[index][1];\n";
+  os << "        var b = colors[index][2];\n";
+  os << "        it.setRgbColor(r,g,b);\n";
+  os << "        it.setRenderingMode(rendering_modes[index]);\n";
+  os << "});\n";
+  os << "viewer.moveCameraToCoordinates(camera, 0.05);\n";
+  os.close();
+  if(!not_saved.empty())
+    QMessageBox::warning(this,
+                         "Items Not  Saved",
+                         QString("The following items could not be saved: %1").arg(
+                           not_saved.join(", ")));
+}
 void MainWindow::setTransparencyPasses(int val)
 {
   viewer->setTotalPass(val);
@@ -2635,9 +2729,10 @@ void MainWindow::setDefaultSaveDir()
   QString dirpath = QFileDialog::getExistingDirectory(this, "Set Default Save as Directory", def_save_dir);
   if(!dirpath.isEmpty())
     def_save_dir = dirpath;
-  QSettings settings;
   settings.setValue("default_saveas_dir", def_save_dir);
 }
+
+
 void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer)
 {
   // do not save the state of the viewer (anoying)
@@ -2765,7 +2860,6 @@ void MainWindow::recenterViewer()
 void MainWindow::updateViewerBbox(Viewer *vi, bool recenter,
                                   CGAL::qglviewer::Vec min,
                                   CGAL::qglviewer::Vec max){
-
   CGAL::qglviewer::Vec center = viewer->camera()->pivotPoint();
   vi->setSceneBoundingBox(min,
                           max);
@@ -2961,4 +3055,11 @@ void SubViewer::changeEvent(QEvent *event)
               );
     }
   }
+}
+
+void MainWindow::invalidate_bbox(bool do_recenter)
+{
+  bbox_need_update = true;
+  if(do_recenter)
+    updateViewersBboxes(true);
 }

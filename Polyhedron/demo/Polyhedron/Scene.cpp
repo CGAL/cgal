@@ -42,6 +42,7 @@ Scene::Scene(QObject* parent)
               this, SLOT(adjustIds(Scene_interface::Item_id)));
     picked = false;
     gl_init = false;
+    dont_emit_changes = false;
 
 }
 Scene::Item_id
@@ -1298,14 +1299,23 @@ void Scene::itemChanged()
 
 void Scene::itemChanged(Item_id i)
 {
-    if(i < 0 || i >= m_entries.size())
-        return;
+  if(dont_emit_changes)
+    return;
+  if(i < 0 || i >= m_entries.size())
+    return;
 
   Q_EMIT dataChanged(this->createIndex(i, 0),
                      this->createIndex(i, LastColumn));
 }
 
-void Scene::itemChanged(CGAL::Three::Scene_item*)
+void Scene::itemChanged(CGAL::Three::Scene_item*item )
+{
+  if(dont_emit_changes)
+    return;
+  itemChanged(item_id(item));
+}
+
+void Scene::allItemsChanged()
 {
   Q_EMIT dataChanged(this->createIndex(0, 0),
                      this->createIndex(m_entries.size() - 1, LastColumn));
@@ -1324,8 +1334,10 @@ void Scene::itemVisibilityChanged(CGAL::Three::Scene_item* item)
      && !item->isEmpty())
   {
     //does not recenter
-    if(visibility_recentering_enabled)
-      Q_EMIT updated_bbox(false);
+    if(visibility_recentering_enabled){
+      Q_EMIT updated_bbox(true);
+      
+    }
   }
 }
 

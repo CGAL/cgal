@@ -500,7 +500,8 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
                                  tet_sizing,
                                  edge_size,
                                  radius_edge,
-                                 manifold);
+                                 manifold,
+                                 surface_only);
   }
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
@@ -525,6 +526,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
                                  radius_edge,
                                  protect_features,
                                  manifold,
+                                 surface_only,
                                  detect_connected_components,
                                  image_item->isGray(),
                                  iso_value,

@@ -141,7 +141,13 @@ public:
 
   void zoomToPosition(QPoint point,
                         CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
-
+  void setUpdatesEnabled(bool b) Q_DECL_OVERRIDE
+  {
+    dont_emit_changes = b;
+    if(b)
+      allItemsChanged();
+  }
+  
 public Q_SLOTS:
   //!Specifies a group as Expanded for the Geometric Objects view
   void setExpanded(QModelIndex);
@@ -151,6 +157,7 @@ public Q_SLOTS:
   void itemChanged();
   void itemChanged(int i) Q_DECL_OVERRIDE;
   void itemChanged(CGAL::Three::Scene_item*) Q_DECL_OVERRIDE;
+  void allItemsChanged() Q_DECL_OVERRIDE;
   //!Transmits a CGAL::Three::Scene_item::itemVisibilityChanged() signal to the scene.
   void itemVisibilityChanged();
   void itemVisibilityChanged(CGAL::Three::Scene_item*) Q_DECL_OVERRIDE;
@@ -291,6 +298,8 @@ private:
   QMap<CGAL::Three::Viewer_interface*, QOpenGLVertexArrayObject*> vaos;
   mutable QOpenGLBuffer vbo[2];
   Bbox last_bbox;
+  //the scene will ignore the itemChanged() signals while this is true. 
+  bool dont_emit_changes;
   bool visibility_recentering_enabled;
   bool sort_lists(QVector<QList<int> >&sorted_lists, bool up);
 }; // end class Scene

@@ -56,6 +56,7 @@
     <addaction name="actionEraseAll"/>
     <addaction name="actionDuplicate"/>
     <addaction name="actionSaveAs"/>
+    <addaction name="actionSa_ve_Scene_as_Script"/>
     <addaction name="actionSaveSnapshot"/>
     <addaction name="separator"/>
     <addaction name="actionLoadScript"/>
@@ -458,6 +459,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionSa_ve_Scene_as_Script">
+   <property name="text">
+    <string>Sa&amp;ve the Scene as a Script File...</string>
    </property>
   </action>
  </widget>

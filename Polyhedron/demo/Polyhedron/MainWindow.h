@@ -446,14 +446,17 @@ public:
                              const QString & fileName = QString());
 #endif
 public Q_SLOTS:
+  void on_actionSa_ve_Scene_as_Script_triggered();
   void toggleFullScreen();
   void setDefaultSaveDir();
+  void invalidate_bbox(bool do_recenter);
 private:
   SubViewer* viewer_window;
   QList<QDockWidget *> visibleDockWidgets;
   QLineEdit operationSearchBar;
   QWidgetAction* searchAction;
   QString def_save_dir;
+  bool bbox_need_update;
   QMap<QString, QPair<QStringList, QString> >plugin_metadata_map;
   QMap<QString, bool> ignored_map;
   const QStringList& accepted_keywords;

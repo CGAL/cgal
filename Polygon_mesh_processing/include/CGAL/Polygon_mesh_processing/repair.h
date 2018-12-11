@@ -900,9 +900,53 @@ bool remove_degenerate_faces(      TriangleMesh& tmesh,
   }
   #endif
 
+
 // Then, remove triangles made of 3 collinear points
   std::set<face_descriptor> degenerate_face_set;
   degenerate_faces(tmesh, std::inserter(degenerate_face_set, degenerate_face_set.begin()), np);
+
+// start by filtering out border faces
+  std::set<face_descriptor> border_deg_faces;
+  BOOST_FOREACH(face_descriptor f, degenerate_face_set)
+  {
+    halfedge_descriptor h = halfedge(f, tmesh);
+    for (int i=0; i<3; ++i)
+    {
+      if ( is_border( opposite(h, tmesh), tmesh) )
+      {
+        border_deg_faces.insert(f);
+        break;
+      }
+      h = next(h, tmesh);
+    }
+  }
+
+  while( !border_deg_faces.empty() )
+  {
+    face_descriptor f_to_rm = *border_deg_faces.begin();
+    border_deg_faces.erase(border_deg_faces.begin());
+
+    halfedge_descriptor h = halfedge(f_to_rm, tmesh);
+    for (int i=0; i<3; ++i)
+    {
+      if (is_border(h, tmesh) )
+      {
+        face_descriptor f = face(opposite(h, tmesh), tmesh);
+        if (is_degenerate_triangle_face(f, tmesh, np) )
+          border_deg_faces.insert(f);
+      }
+      h = next(h, tmesh);
+    }
+
+    while( !is_border(opposite(h, tmesh), tmesh) )
+    {
+      h = next(h, tmesh);
+    }
+
+    degenerate_face_set .erase(f_to_rm);
+    Euler::remove_face(h, tmesh);
+  }
+
 // Ignore faces with null edges
   if (!all_removed)
   {
