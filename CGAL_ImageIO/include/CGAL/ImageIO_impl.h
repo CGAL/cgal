@@ -168,7 +168,7 @@ unsigned int ImageIO_limit_len(size_t to_be_read)
 CGAL_INLINE_FUNCTION
 size_t ImageIO_write(const _image *im, const void *buf, size_t len) {
   size_t to_be_written = len;
-  int l = -1;
+  std::ptrdiff_t l = -1;
   char *b = (char*)buf;
 
   switch(im->openMode) {
