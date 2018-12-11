@@ -2095,8 +2095,14 @@ private: //------------------------------------------------------- private data
     std::string off;
     is >> sm_skip_comments;
     is >> off;
-    CGAL_assertion( (off == "OFF") || (off == "COFF") || (off == "NOFF") || (off == "CNOFF"));
-
+    if(! (
+         (off == "OFF") || (off == "COFF") || (off == "NOFF") || (off == "CNOFF")
+         )
+       )
+    {
+      is.setstate(std::ios::failbit);
+      return false;
+    }
     is >> n >> f >> e;
     if(!is){
       return false;
