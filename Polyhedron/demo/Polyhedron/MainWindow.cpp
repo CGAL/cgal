@@ -2242,21 +2242,6 @@ void MainWindow::setLighting_triggered()
   viewer->setLighting();
 }
 
-void MainWindow::actionLookAt_triggered()
-{
-  Show_point_dialog dialog(this);
-  dialog.setWindowTitle(tr("Look at..."));
-  int i = dialog.exec();
-  if( i == QDialog::Accepted &&
-      dialog.has_correct_coordinates() )
-  {
-    viewerShow(viewer,
-               (float)dialog.get_x()+viewer->offset().x,
-               (float)dialog.get_y()+viewer->offset().y,
-               (float)dialog.get_z()+viewer->offset().z);
-  }
-}
-
 void MainWindow::viewerShowObject()
 {
   Scene_item* item = NULL;
@@ -3004,6 +2989,8 @@ void SubViewer::lookat()
   if( i == QDialog::Accepted &&
       dialog.has_correct_coordinates() )
   {
+    if (viewer->camera()->frame()->isSpinning())
+      viewer->camera()->frame()->stopSpinning();
     mw->viewerShow(viewer,
                    (float)dialog.get_x(),
                    (float)dialog.get_y(),

@@ -351,11 +351,6 @@ protected Q_SLOTS:
   void setBackgroundColor();
   //!Opens a Dialog to change the lighting settings
   void setLighting_triggered();
-  /*! Opens a Dialog to enter coordinates of the new center point and sets it
-   * with viewerShow.
-   *@see viewerShow(float, float, float, float, float, float)
-   */
-  void actionLookAt_triggered();
   //!Returns the position and orientation of the current camera frame.
     QString cameraString(CGAL::Three::Viewer_interface *v) const;
   //!Hides not available operations and show available operations in all the
@@ -481,6 +476,10 @@ public:
   ~SubViewer();
 public Q_SLOTS:
   void recenter();
+  /*! Opens a Dialog to enter coordinates of the new center point and sets it
+   * with viewerShow.
+   *@see viewerShow(float, float, float, float, float, float)
+   */
   void lookat();
   void color();
 protected:
