@@ -1439,6 +1439,15 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
         QMap<QString, QAction*> menu_actions;
         QVector<QMenu*> slider_menus;
         bool has_stats = false;
+        bool has_reload = false;
+        Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
+        {
+          if(!scene->item(id)->property("source filename").toString().isEmpty())
+          {
+            has_reload = true;
+            break;
+          }
+        }
         Q_FOREACH(QAction* action, scene->item(main_index)->contextMenu()->actions())
         {
           if(action->property("is_groupable").toBool())
@@ -1601,10 +1610,13 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
           connect(actionStatistics, SIGNAL(triggered()),
                   this, SLOT(statisticsOnItem()));
         }
+        if(has_reload)
+        {
           QAction* reload = menu.addAction(tr("&Reload Item from File"));
           reload->setProperty("is_groupable", true);
           connect(reload, SIGNAL(triggered()),
                   this, SLOT(reloadItem()));
+        }
         QAction* saveas = menu.addAction(tr("&Save as..."));
         connect(saveas,  SIGNAL(triggered()),
                 this, SLOT(on_actionSaveAs_triggered()));
