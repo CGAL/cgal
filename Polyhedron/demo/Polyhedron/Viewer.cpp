@@ -708,12 +708,27 @@ void Viewer::drawWithNames()
 void Viewer::postSelection(const QPoint& pixel)
 {
   Q_EMIT selected(this->selectedName());
-  bool found = false;
-  CGAL::qglviewer::Vec point = camera()->pointUnderPixel(pixel, found) - offset();
+  CGAL::qglviewer::Vec point;
+  bool found = true;
+  if(property("picked_point").isValid()) {
+    if(!property("picked_point").toList().isEmpty())
+    {
+      QList<QVariant> picked_point = property("picked_point").toList();
+      point = CGAL::qglviewer::Vec (picked_point[0].toDouble(),
+          picked_point[1].toDouble(),
+          picked_point[2].toDouble());
+    }
+    else{
+      found = false;
+    }
+  }
+  else{
+    point = camera()->pointUnderPixel(pixel, found) - offset();
+  }
   if(found) {
     Q_EMIT selectedPoint(point.x,
-                       point.y,
-                       point.z);
+                         point.y,
+                         point.z);
     CGAL::qglviewer::Vec dir;
     CGAL::qglviewer::Vec orig;
     if(d->projection_is_ortho)
@@ -726,7 +741,7 @@ void Viewer::postSelection(const QPoint& pixel)
       dir = point - orig;
     }
     Q_EMIT selectionRay(orig.x, orig.y, orig.z,
-                      dir.x, dir.y, dir.z);
+                        dir.x, dir.y, dir.z);
   }
 }
 bool CGAL::Three::Viewer_interface::readFrame(QString s, CGAL::qglviewer::Frame& frame)

@@ -683,6 +683,34 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
         transparent_items.push_back(id);
     }
     renderScene(children, viewer, picked_item_IDs, with_names, -1, false, NULL);
+    if(with_names)
+    {
+      //here we get the selected point, before erasing the depth buffer. We store it 
+      //in a dynamic property as a QList<double>. If there is some alpha, the 
+      //depth buffer is altered, and the picking will return true even when it is 
+      // performed in the background, when it should return false. To avoid that,
+      // we distinguish the case were there is no alpha, to let the viewer
+      //perform it, and the case where the pixel is not found. In the first case,
+      //we erase the property, in the latter we return an empty list.
+      //According ot that, in the viewer, either we perform the picking, either we do nothing.
+      if(has_alpha()) {
+        bool found = false;
+        CGAL::qglviewer::Vec point = viewer->camera()->pointUnderPixel(picked_pixel, found) - viewer->offset();
+        if(found){
+          QList<QVariant> picked_point;
+          picked_point <<point.x
+                      <<point.y
+                     <<point.z;
+          viewer->setProperty("picked_point", picked_point);
+        }
+        else{
+          viewer->setProperty("picked_point", QList<QVariant>());
+        }
+      }
+      else {
+        viewer->setProperty("picked_point", {});
+      }
+    }
     if(!with_names && has_alpha())
     {
       std::vector<QOpenGLFramebufferObject*> fbos;
