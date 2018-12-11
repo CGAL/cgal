@@ -118,6 +118,9 @@
               <property name="prefix">
                <string>Transparency Pass Number: </string>
               </property>
+              <property name="minimum">
+               <number>4</number>
+              </property>
               <property name="value">
                <number>4</number>
               </property>
