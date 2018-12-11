@@ -83,7 +83,7 @@
      </layout>
     </item>
     <item>
-     <widget class="QGroupBox" name="groupBox">
+     <widget class="QGroupBox" name="view">
       <property name="title">
        <string>View</string>
       </property>

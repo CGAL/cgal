@@ -66,8 +66,6 @@ public:
   virtual void generate_one_item_per_label(std::vector<CGAL::Three::Scene_item*>& items,
                                            const char* name) const = 0;
 
-  virtual bool write_output(std::ostream& out) = 0;
-
   bool features_computed() const { return (m_features.size() != 0); }
   std::size_t number_of_features() const { return m_features.size(); }  
   Feature_handle feature(std::size_t i) { return m_features[i]; }

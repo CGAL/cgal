@@ -357,7 +357,7 @@ public Q_SLOTS:
     ui_widget.features_menu->setEnabled(false);
     ui_widget.training_menu->setEnabled(false);
     ui_widget.classifier_menu->setEnabled(false);
-    ui_widget.display->setEnabled(false);
+    ui_widget.view->setEnabled(false);
     ui_widget.frame->setEnabled(false);
   }
 
@@ -377,7 +377,7 @@ public Q_SLOTS:
     action_run->setEnabled(false);
     action_run_smoothed->setEnabled(false);
     action_run_graphcut->setEnabled(false);
-    ui_widget.display->setEnabled(true);
+    ui_widget.view->setEnabled(true);
     ui_widget.frame->setEnabled(true);
   }
 
@@ -1577,10 +1577,7 @@ public Q_SLOTS:
     Item_classification_base* classif
       = get_classification();
     if(!classif)
-      {
-        print_message("Error: there is no point set classification item!");
         return; 
-      }
 
     if (classif->number_of_features() <= (std::size_t)v)
       return;

@@ -406,17 +406,7 @@ void Cluster_classification::backup_existing_colors_and_add_new()
     m_points->point_set()->remove_colors();
   }
       
-  m_red = m_points->point_set()->add_property_map<unsigned char>("red").first;
-  m_green = m_points->point_set()->add_property_map<unsigned char>("green").first;
-  m_blue = m_points->point_set()->add_property_map<unsigned char>("blue").first;
-  for (Point_set::const_iterator it = m_points->point_set()->begin();
-       it != m_points->point_set()->first_selected(); ++ it)
-  {
-    m_red[*it] = 0;
-    m_green[*it] = 0;
-    m_blue[*it] = 0;
-  }
-  m_points->point_set()->check_colors();
+  m_points->point_set()->add_colors();
 }
 
 void Cluster_classification::reset_colors()
@@ -427,38 +417,11 @@ void Cluster_classification::reset_colors()
   {
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->first_selected(); ++ it)
-    {
-      m_red[*it] = m_color[*it][0];
-      m_green[*it] = m_color[*it][1];
-      m_blue[*it] = m_color[*it][2];
-    }
+      m_points->point_set()->set_color(*it, m_color[*it]);
+    
     m_points->point_set()->remove_property_map(m_color);
   }
 }
-
-// Write point set to .PLY file
-bool Cluster_classification::write_output(std::ostream& stream)
-{
-  if (m_features.size() == 0)
-    return false;
-
-  reset_indices();
-  
-  stream.precision (std::numeric_limits<double>::digits10 + 2);
-
-  // std::vector<Color> colors;
-  // for (std::size_t i = 0; i < m_labels.size(); ++ i)
-  //   {
-  //     Color c = {{ (unsigned char)(m_labels[i].second.red()),
-  //                  (unsigned char)(m_labels[i].second.green()),
-  //                  (unsigned char)(m_labels[i].second.blue()) }};
-  //     colors.push_back (c);
-  //   }
-  
-  //  m_psc->write_classification_to_ply (stream);
-  return true;
-}
-
 
 void Cluster_classification::change_color (int index, float* vmin, float* vmax)
 {
@@ -470,175 +433,146 @@ void Cluster_classification::change_color (int index, float* vmin, float* vmax)
   static Color_ramp ramp;
   ramp.build_rainbow();
   reset_indices();
+  
   if (index_color == -1) // item color
-  {
-    for (Point_set::const_iterator it = m_points->point_set()->begin();
-         it != m_points->point_set()->first_selected(); ++ it)
-    {
-      m_red[*it] = 0;
-      m_green[*it] = 0;
-      m_blue[*it] = 0;
-    }
-  }
-  else if (index_color == 0) // real colors
-  {
-
-    for (Point_set::const_iterator it = m_points->point_set()->begin();
-         it != m_points->point_set()->first_selected(); ++ it)
-    {
-      m_red[*it] = m_color[*it][0];
-      m_green[*it] = m_color[*it][1];
-      m_blue[*it] = m_color[*it][2];
-    }
-  }
-  else if (index_color == 1) // classif
-  {
-    for (Point_set::const_iterator it = m_points->point_set()->begin();
-         it != m_points->point_set()->first_selected(); ++ it)
-    {
-      QColor color (0, 0, 0);
-      int cid = m_cluster_id[*it];
-      if (cid != -1)
-      {
-        std::size_t c = m_clusters[cid].label();
-          
-        if (c != std::size_t(-1))
-          color = m_label_colors[c];
-      }
-      
-      m_red[*it] = color.red();
-      m_green[*it] = color.green();
-      m_blue[*it] = color.blue();
-    }
-  }
-  else if (index_color == 2) // training
-  {
-    for (Point_set::const_iterator it = m_points->point_set()->begin();
-         it != m_points->point_set()->first_selected(); ++ it)
-    {
-      QColor color (0, 0, 0);
-      int cid = m_cluster_id[*it];
-      float div = 1;
-      
-      if (cid != -1)
-      {
-        int c = m_clusters[cid].training();
-        int c2 = m_clusters[cid].label();
-          
-        if (c != -1)
-          color = m_label_colors[std::size_t(c)];
-          
-        if (c != c2)
-          div = 2;
-      }          
-      m_red[*it] = (color.red() / div);
-      m_green[*it] = (color.green() / div);
-      m_blue[*it] = (color.blue() / div);
-    }
-  }
-  else if (index_color == 3) // clusters
-  {
-    for (Point_set::const_iterator it = m_points->point_set()->begin();
-         it != m_points->point_set()->first_selected(); ++ it)
-    {
-      int cid = m_cluster_id[*it];
-      
-      if (cid != -1)
-      {
-        srand(cid);
-        m_red[*it] = 64 + rand() % 192;
-        m_green[*it] = 64 + rand() % 192;
-        m_blue[*it] = 64 + rand() % 192;
-      }
-      else
-      {
-        m_red[*it] = 0;
-        m_green[*it] = 0;
-        m_blue[*it] = 0;
-      }
-    }
-  }
+    m_points->point_set()->remove_colors();
   else
   {
-    std::size_t corrected_index = index_color - 4;
-    if (corrected_index < m_labels.size()) // Display label probabilities
+    if (!m_points->point_set()->has_colors())
+      m_points->point_set()->add_colors();
+    
+    if (index_color == 0) // real colors
     {
-      if (m_label_probabilities.size() <= corrected_index ||
-          m_label_probabilities[corrected_index].size() != m_clusters.size())
+
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->first_selected(); ++ it)
+        m_points->point_set()->set_color(*it, m_color[*it]);
+    }
+    else if (index_color == 1) // classif
+    {
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->first_selected(); ++ it)
       {
-        for (Point_set::const_iterator it = m_points->point_set()->begin();
-             it != m_points->point_set()->first_selected(); ++ it)
+        QColor color (0, 0, 0);
+        int cid = m_cluster_id[*it];
+        if (cid != -1)
         {
-          m_red[*it] = 0;
-          m_green[*it] = 0;
-          m_blue[*it] = 0;
+          std::size_t c = m_clusters[cid].label();
+          
+          if (c != std::size_t(-1))
+            color = m_label_colors[c];
+        }
+      
+        m_points->point_set()->set_color(*it, color);
+      }
+    }
+    else if (index_color == 2) // training
+    {
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->first_selected(); ++ it)
+      {
+        QColor color (0, 0, 0);
+        int cid = m_cluster_id[*it];
+        float div = 1;
+      
+        if (cid != -1)
+        {
+          int c = m_clusters[cid].training();
+          int c2 = m_clusters[cid].label();
+          
+          if (c != -1)
+            color = m_label_colors[std::size_t(c)];
+          
+          if (c != c2)
+            div = 2;
+        }          
+        m_points->point_set()->set_color(*it, color.red() / div, color.green() / div, color.blue() / div);
+      }
+    }
+    else if (index_color == 3) // clusters
+    {
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->first_selected(); ++ it)
+      {
+        int cid = m_cluster_id[*it];
+      
+        if (cid != -1)
+        {
+          srand(cid);
+          m_points->point_set()->set_color(*it, 64 + rand() % 192, 64 + rand() % 192, 64 + rand() % 192);
+        }
+        else
+        {
+          m_points->point_set()->set_color(*it);
+        }
+      }
+    }
+    else
+    {
+      std::size_t corrected_index = index_color - 4;
+      if (corrected_index < m_labels.size()) // Display label probabilities
+      {
+        if (m_label_probabilities.size() <= corrected_index ||
+            m_label_probabilities[corrected_index].size() != m_clusters.size())
+        {
+          for (Point_set::const_iterator it = m_points->point_set()->begin();
+               it != m_points->point_set()->first_selected(); ++ it)
+            m_points->point_set()->set_color(*it);
+        }
+        else
+        {
+          for (Point_set::const_iterator it = m_points->point_set()->begin();
+               it != m_points->point_set()->first_selected(); ++ it)
+          {
+            int cid = m_cluster_id[*it];
+            if (cid != -1)
+            {
+              float v = std::max (0.f, std::min(1.f, m_label_probabilities[corrected_index][cid]));
+              m_points->point_set()->set_color(*it, ramp.r(v) * 255, ramp.g(v) * 255, ramp.b(v) * 255);
+            }
+            else
+              m_points->point_set()->set_color(*it);
+          }
         }
       }
       else
       {
+        corrected_index -= m_labels.size();
+        if (corrected_index >= m_features.size())
+        {
+          std::cerr << "Error: trying to access feature " << corrected_index << " out of " << m_features.size() << std::endl;
+          return;
+        }
+
+        Feature_handle feature = m_features[corrected_index];
+
+        float min = std::numeric_limits<float>::max();
+        float max = -std::numeric_limits<float>::max();
+      
         for (Point_set::const_iterator it = m_points->point_set()->begin();
              it != m_points->point_set()->first_selected(); ++ it)
         {
           int cid = m_cluster_id[*it];
           if (cid != -1)
           {
-            float v = std::max (0.f, std::min(1.f, m_label_probabilities[corrected_index][cid]));
-            m_red[*it] = (unsigned char)(ramp.r(v) * 255);
-            m_green[*it] = (unsigned char)(ramp.g(v) * 255);
-            m_blue[*it] = (unsigned char)(ramp.b(v) * 255);
+            if (feature->value(cid) > max)
+              max = feature->value(cid);
+            if (feature->value(cid) < min)
+              min = feature->value(cid);
+          }
+        }
+
+        for (Point_set::const_iterator it = m_points->point_set()->begin();
+             it != m_points->point_set()->first_selected(); ++ it)
+        {
+          int cid = m_cluster_id[*it];
+          if (cid != -1)
+          {
+            float v = (feature->value(cid) - min) / (max - min);
+            m_points->point_set()->set_color(*it, ramp.r(v) * 255, ramp.g(v) * 255, ramp.b(v) * 255);
           }
           else
-          {
-            m_red[*it] = 0;
-            m_green[*it] = 0;
-            m_blue[*it] = 0;
-          }
-        }
-      }
-    }
-    else
-    {
-      corrected_index -= m_labels.size();
-      if (corrected_index >= m_features.size())
-      {
-        std::cerr << "Error: trying to access feature " << corrected_index << " out of " << m_features.size() << std::endl;
-        return;
-      }
-
-      Feature_handle feature = m_features[corrected_index];
-
-      float min = std::numeric_limits<float>::max();
-      float max = -std::numeric_limits<float>::max();
-      
-      for (Point_set::const_iterator it = m_points->point_set()->begin();
-           it != m_points->point_set()->first_selected(); ++ it)
-      {
-        int cid = m_cluster_id[*it];
-        if (cid != -1)
-        {
-          if (feature->value(cid) > max)
-            max = feature->value(cid);
-          if (feature->value(cid) < min)
-            min = feature->value(cid);
-        }
-      }
-
-      for (Point_set::const_iterator it = m_points->point_set()->begin();
-           it != m_points->point_set()->first_selected(); ++ it)
-      {
-        int cid = m_cluster_id[*it];
-        if (cid != -1)
-        {
-          float v = (feature->value(cid) - min) / (max - min);
-          m_red[*it] = (unsigned char)(ramp.r(v) * 255);
-          m_green[*it] = (unsigned char)(ramp.g(v) * 255);
-          m_blue[*it] = (unsigned char)(ramp.b(v) * 255);
-        }
-        else
-        {
-          m_red[*it] = 0;
-          m_green[*it] = 0;
-          m_blue[*it] = 0;
+            m_points->point_set()->set_color(*it);
         }
       }
     }
@@ -646,12 +580,7 @@ void Cluster_classification::change_color (int index, float* vmin, float* vmax)
   
   for (Point_set::const_iterator it = m_points->point_set()->first_selected();
        it != m_points->point_set()->end(); ++ it)
-  {
-    m_red[*it] = 255;
-    m_green[*it] = 0;
-    m_blue[*it] = 0;
-  }
-
+    m_points->point_set()->set_color(*it, 255, 0, 0);
 }
 
 int Cluster_classification::real_index_color() const

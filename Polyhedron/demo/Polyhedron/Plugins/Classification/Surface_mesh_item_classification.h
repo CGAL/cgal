@@ -135,8 +135,6 @@ public:
     std::cerr << "Warning: operation not yet available for meshes." << std::endl;
   }
 
-  bool write_output(std::ostream& out);
-
   void set_selection_item (Scene_polyhedron_selection_item* selection)
   {
     m_selection = selection;

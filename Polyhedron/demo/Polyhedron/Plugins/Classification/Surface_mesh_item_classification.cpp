@@ -80,13 +80,6 @@ void Surface_mesh_item_classification::backup_existing_colors_and_add_new()
       m_mesh->polyhedron()->add_property_map<face_descriptor, CGAL::Color>("f:color", CGAL::Color(128,128,128)).first;
 }
 
-bool Surface_mesh_item_classification::write_output(std::ostream& )
-{
-  // TODO
-  return true;
-}
-
-
 void Surface_mesh_item_classification::change_color (int index, float* vmin, float* vmax)
 {
   m_index_color = index;

@@ -254,8 +254,6 @@ class Cluster_classification : public Item_classification_base
 
   }
   
-  bool write_output(std::ostream& out);
-
   QColor add_new_label (const char* name)
   {
     QColor out = Item_classification_base::add_new_label (name);
@@ -384,9 +382,6 @@ class Cluster_classification : public Item_classification_base
 
   std::vector<Cluster> m_clusters;
 
-  Point_set::Property_map<unsigned char> m_red;
-  Point_set::Property_map<unsigned char> m_green;
-  Point_set::Property_map<unsigned char> m_blue;
   Point_set::Property_map<Color> m_color;
   Point_set::Property_map<int> m_cluster_id;
   Point_set::Property_map<int> m_training;
