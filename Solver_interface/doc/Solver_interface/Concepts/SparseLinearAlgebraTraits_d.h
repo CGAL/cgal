@@ -146,6 +146,12 @@ public:
 /// @{
 
 /*!
+Index type
+*/
+typedef unspecified_type Index;
+
+  
+/*!
 
 */
 typedef unspecified_type NT;

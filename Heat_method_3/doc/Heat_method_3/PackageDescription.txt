@@ -45,6 +45,4 @@ source vertices. }
 - `CGAL::Heat_method_3::estimate_geodesic_distances()`
 
 */
-\todo Add more detailed cache
-\todo Add Neumann and Dirichlet boundary conditions
-\todo Check if suitesparse is more efficient than eigen
+

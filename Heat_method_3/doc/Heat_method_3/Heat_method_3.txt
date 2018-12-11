@@ -21,7 +21,7 @@ as a gradient red/green corresponding to close/far from the source vertices.
 
 The heat method is highly efficient, since the algorithm
 boils down to two standard sparse linear algebra problems.  It is especially
-useful in situations where one wishes to evaluate repeated distance queries
+useful in situations where one wishes to perform repeated distance queries
 on a fixed domain, since precomputation done for the first query can be re-used.
 
 As a rule of thumb, the method works well on triangle meshes, which are
@@ -118,7 +118,7 @@ The algorithm must then be translated in to a discrete algorithm by replacing th
 
 The heat equation can be discretized in time using a single backward Euler step. This means the following equation must be solved:
 
-\f$(id-t\Delta)u_t = \delta(x) \f$ where \f$\delta(x)\f$ is a Dirac delta encoding an 'infinite' spike of heat (1 if x is in the source set, 0 otherwise)
+\f$(id-t\Delta)u_t = \delta(x) \f$ where \f$\delta(x)\f$ is a Dirac delta encoding an "infinite" spike of heat (1 if x is in the source set, 0 otherwise)
         over the entire domain M, where id is the identity operator.
 
 The spatial discretization depends on the choice of discrete surface representation.
@@ -163,8 +163,8 @@ the polyhedron and do not have to correspond to edges of the input triangulation
 explicitly; instead, we simply keep track of their lengths as the triangulation is updated.  These lengths are
 sufficient to determine areas and angles of the intrinsic triangles, and in turn, the new cotan Laplace matrix.
 
-An edge of a mesh is locally Delaunay if the sum of opposite angles is no smaller than pi, or equivalently,
-if the cotangents of the opposing angles is nonnegative. A mesh is Delaunay if all of its edges are locally Delaunay.
+An edge of a mesh is locally Delaunay if the sum of opposite angles is not smaller than pi, or equivalently,
+if the cotangents of the opposing angles are non-negative. A mesh is Delaunay if all of its edges are locally Delaunay.
 
 A standard algorithm to convert a given planar triangulation into a Delaunay triangulation is
 to flip non-Delaunay edges in a mesh until the mesh is Delaunay.
@@ -216,10 +216,10 @@ The algorithm is as follows:
 
 The time complexity of the algorithm is determined primarily by the
 choice of linear solver.  In the current implementation, Cholesky
-prefactorization is roughly \f$ O(N^{1.5})\f$ and evaluation of distance is
+prefactorization is roughly \f$ O(N^{1.5})\f$ and computation of distances is
 roughly \f$ O(N)\f$, where \f$ N\f$ is the number of vertices in the triangulation.
 The algorithm uses two \f$ N \times N\f$ matrices, both with the same pattern of
-nonzeros as the graph Laplacian of the edge graph (roughly 7 nonzeros
+non-zeros (in average 7 non-zeros
 per row/column).  The cost of computation is independent of the size
 of the source set.  Primitive operations include sparse numerical
 linear algebra (in double precision), and basic arithmetic operations

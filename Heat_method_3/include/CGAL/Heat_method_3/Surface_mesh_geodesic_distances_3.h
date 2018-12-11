@@ -44,10 +44,6 @@
 #include <vector>
 #include <set>
 
-#ifdef CGAL_TESTSUITE
-struct Heat_method_3_private_tests;
-#endif
-
 namespace CGAL {
 namespace Heat_method_3 {
 
@@ -71,9 +67,6 @@ template <typename TriangleMesh,
 class Surface_mesh_geodesic_distances_3
 {
 protected:
-#ifdef CGAL_TESTSUITE
-  friend Surface_mesh_geodesic_distances_3_private_tests;
-#endif
   /// Polygon_mesh typedefs
   typedef typename boost::graph_traits<TriangleMesh>            graph_traits;
   typedef typename graph_traits::vertex_descriptor              vertex_descriptor;
