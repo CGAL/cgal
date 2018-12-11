@@ -27,10 +27,8 @@ typedef CT::Vertices_in_constraint_iterator Vertices_in_constraint_iterator;
 typedef CT::Points_in_constraint_iterator   Points_in_constraint_iterator;
 typedef PS::Stop_below_count_ratio_threshold Stop;
 typedef PS::Squared_distance_cost Cost;
-#endif
 int main(int argc, char* argv[])
 {
-  #if BOOST_VERSION >= 105600
   std::ifstream ifs( (argc==1)?"data/polygon.wkt":argv[1]);
   CT ct;
   Polygon_with_holes_2 P;
@@ -54,8 +52,13 @@ int main(int argc, char* argv[])
         ++vit)
       std::cout << *vit << std::endl;
   }
-#endif
   return 0;
 }
 
+#else
 
+int main()
+{
+  return 0;
+}
+#endif
