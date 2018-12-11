@@ -2098,7 +2098,9 @@ private: //------------------------------------------------------- private data
     CGAL_assertion( (off == "OFF") || (off == "COFF") || (off == "NOFF") || (off == "CNOFF"));
 
     is >> n >> f >> e;
-
+    if(!is){
+      return false;
+    }
     sm.reserve(sm.num_vertices()+n, sm.num_faces()+2*f, sm.num_edges()+e);
     std::vector<Vertex_index> vertexmap(n);
     P p;
@@ -2151,6 +2153,10 @@ private: //------------------------------------------------------- private data
     for(int i=0; i < f; i++){
       is >> sm_skip_comments;
       is >> d;
+      if(!is){
+        sm.clear();
+        return false;
+      }
       vr.resize(d);
       for(std::size_t j=0; j<d; j++){
         is >> vi;
