@@ -193,75 +193,67 @@ public:
 
     color_att = QColor (75, 75, 77);
 
-    ui_widget.menu->setMenu (new QMenu("Classification Menu", ui_widget.menu));
-
-    QAction* help = ui_widget.menu->menu()->addAction ("Help");
-    connect(help,  SIGNAL(triggered()), this,
-            SLOT(on_help_clicked()));
-
-    QAction* compute_features = ui_widget.menu->menu()->addAction ("Compute features...");
+    QAction* compute_features = ui_widget.features_menu->addAction ("Compute features...");
     connect(compute_features,  SIGNAL(triggered()), this,
             SLOT(on_compute_features_button_clicked()));
 
-    action_statistics = ui_widget.menu->menu()->addAction ("Show feature statistics");
+    action_statistics = ui_widget.features_menu->addAction ("Show feature statistics");
     connect(action_statistics,  SIGNAL(triggered()), this,
             SLOT(on_statistics_clicked()));
 
-    ui_widget.menu->menu()->addSection ("Training Set");
-
-    action_reset_local = ui_widget.menu->menu()->addAction ("Reset training set of selection");
+    action_reset_local = ui_widget.training_menu->addAction ("Reset training set of selection");
     connect(action_reset_local,  SIGNAL(triggered()), this,
             SLOT(on_reset_training_set_of_selection_clicked()));
     
-    action_reset = ui_widget.menu->menu()->addAction ("Reset all training sets");
+    action_reset = ui_widget.training_menu->addAction ("Reset all training sets");
     connect(action_reset,  SIGNAL(triggered()), this,
             SLOT(on_reset_training_sets_clicked()));
 
-    action_random_region = ui_widget.menu->menu()->addAction ("Select random region");
+    action_random_region = ui_widget.training_menu->addAction ("Select random region");
     action_random_region->setShortcut(Qt::SHIFT | Qt::Key_S);
     connect(action_random_region,  SIGNAL(triggered()), this,
             SLOT(on_select_random_region_clicked()));
 
-    action_validate = ui_widget.menu->menu()->addAction ("Validate labels of current selection as training sets");
+    action_validate = ui_widget.training_menu->addAction ("Validate labels of current selection as training sets");
     connect(action_validate,  SIGNAL(triggered()), this,
             SLOT(on_validate_selection_clicked()));
 
-    classifier = ui_widget.menu->menu()->addSection (CGAL_CLASSIFICATION_ETHZ_ID);
+    classifier = ui_widget.classifier_menu->addSection (CGAL_CLASSIFICATION_ETHZ_ID);
 
-    QAction* switch_classifier = ui_widget.menu->menu()->addAction ("Switch to another classifier...");
-    connect(switch_classifier,  SIGNAL(triggered()), this,
-            SLOT(on_switch_classifier_clicked()));
-    
-    action_train = ui_widget.menu->menu()->addAction ("Train...");
+    action_train = ui_widget.classifier_menu->addAction ("Train...");
     action_train->setShortcut(Qt::SHIFT | Qt::Key_T);
     connect(action_train,  SIGNAL(triggered()), this,
             SLOT(on_train_clicked()));
     
-    action_run = ui_widget.menu->menu()->addAction ("Classify");
+    ui_widget.classifier_menu->addSeparator();
+
+    action_run = ui_widget.classifier_menu->addAction ("Classify");
     connect(action_run,  SIGNAL(triggered()), this,
             SLOT(on_run_button_clicked()));
 
-    action_run_smoothed = ui_widget.menu->menu()->addAction ("Classify with local smoothing...");
+    action_run_smoothed = ui_widget.classifier_menu->addAction ("Classify with local smoothing...");
     connect(action_run_smoothed,  SIGNAL(triggered()), this,
             SLOT(on_run_smoothed_button_clicked()));
 
-    action_run_graphcut = ui_widget.menu->menu()->addAction ("Classify with Graph Cut...");
+    action_run_graphcut = ui_widget.classifier_menu->addAction ("Classify with Graph Cut...");
     connect(action_run_graphcut,  SIGNAL(triggered()), this,
             SLOT(on_run_graphcut_button_clicked()));
 
-    action_save_config = ui_widget.menu->menu()->addAction ("Save current configuration...");
-    action_load_config = ui_widget.menu->menu()->addAction ("Load configuration...");
+    ui_widget.classifier_menu->addSeparator();
+
+    action_save_config = ui_widget.classifier_menu->addAction ("Save current configuration...");
+    action_load_config = ui_widget.classifier_menu->addAction ("Load configuration...");
     connect(action_save_config,  SIGNAL(triggered()), this,
             SLOT(on_save_config_button_clicked()));
     connect(action_load_config,  SIGNAL(triggered()), this,
             SLOT(on_load_config_button_clicked()));
 
-    ui_widget.menu->menu()->addSeparator();
-
-    QAction* close = ui_widget.menu->menu()->addAction ("Close");
-    connect(close,  SIGNAL(triggered()), this,
-            SLOT(ask_for_closing()));
-
+    ui_widget.classifier_menu->addSeparator();
+    
+    QAction* switch_classifier = ui_widget.classifier_menu->addAction ("Switch to another classifier...");
+    connect(switch_classifier,  SIGNAL(triggered()), this,
+            SLOT(on_switch_classifier_clicked()));
+    
     connect(ui_widget.display,  SIGNAL(currentIndexChanged(int)), this,
             SLOT(on_display_button_clicked(int)));
 
@@ -274,6 +266,11 @@ public:
             SLOT(on_selected_feature_changed(int)));
     connect(ui_widget_adv.feature_weight,  SIGNAL(valueChanged(int)), this,
             SLOT(on_feature_weight_changed(int)));
+
+    connect(ui_widget.help,  SIGNAL(clicked()), this,
+            SLOT(on_help_clicked()));
+    connect(ui_widget.close,  SIGNAL(clicked()), this,
+            SLOT(ask_for_closing()));
 
     QObject* scene_obj = dynamic_cast<QObject*>(scene_interface);
     if(scene_obj)
@@ -357,14 +354,18 @@ public Q_SLOTS:
 
   void disable_everything ()
   {
-    ui_widget.menu->setEnabled(false);
+    ui_widget.features_menu->setEnabled(false);
+    ui_widget.training_menu->setEnabled(false);
+    ui_widget.classifier_menu->setEnabled(false);
     ui_widget.display->setEnabled(false);
     ui_widget.frame->setEnabled(false);
   }
 
   void enable_computation()
   {
-    ui_widget.menu->setEnabled(true);
+    ui_widget.features_menu->setEnabled(true);
+    ui_widget.training_menu->setEnabled(true);
+    ui_widget.classifier_menu->setEnabled(false);
     action_statistics->setEnabled(false);
     action_train->setEnabled(false);
     action_reset_local->setEnabled(true);
@@ -382,6 +383,9 @@ public Q_SLOTS:
 
   void enable_classif()
   {
+    ui_widget.features_menu->setEnabled(true);
+    ui_widget.training_menu->setEnabled(true);
+    ui_widget.classifier_menu->setEnabled(true);
     action_statistics->setEnabled(true);
     action_train->setEnabled(true);
     action_reset_local->setEnabled(true);
