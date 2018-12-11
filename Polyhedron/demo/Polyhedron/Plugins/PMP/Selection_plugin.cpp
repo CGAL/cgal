@@ -138,6 +138,11 @@ public:
     dock_widget->setWindowTitle(tr(
                                   "Surface Mesh Selection"
                                   ));
+    connect(dock_widget, &QDockWidget::visibilityChanged,
+            this, [this](bool b){
+      if(!b)
+        this->set_operation_mode(-1);
+    });
 
     addDockWidget(dock_widget);
 
