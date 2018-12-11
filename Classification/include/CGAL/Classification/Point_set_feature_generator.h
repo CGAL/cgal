@@ -35,6 +35,9 @@
 #include <CGAL/Classification/Feature/Verticality.h>
 #include <CGAL/Classification/Feature/Eigenvalue.h>
 #include <CGAL/Classification/Feature/Color_channel.h>
+#include <CGAL/Classification/Feature/Height_below.h>
+#include <CGAL/Classification/Feature/Height_above.h>
+#include <CGAL/Classification/Feature/Vertical_range.h>
 
 // Experimental feature, not used officially
 #ifdef CGAL_CLASSIFICATION_USE_GRADIENT_OF_FEATURE
@@ -133,6 +136,12 @@ public:
   <PointRange, PointMap>                                 Distance_to_plane;
   typedef Classification::Feature::Elevation
   <GeomTraits, PointRange, PointMap>                    Elevation;
+  typedef Classification::Feature::Height_below
+  <GeomTraits, PointRange, PointMap>                    Height_below;
+  typedef Classification::Feature::Height_above
+  <GeomTraits, PointRange, PointMap>                    Height_above;
+  typedef Classification::Feature::Vertical_range
+  <GeomTraits, PointRange, PointMap>                    Vertical_range;
   typedef Classification::Feature::Vertical_dispersion
   <GeomTraits, PointRange, PointMap>                    Dispersion;
   typedef Classification::Feature::Verticality
@@ -370,7 +379,10 @@ public:
     - `CGAL::Classification::Feature::Eigenvalue` with indices 0, 1 and 2
     - `CGAL::Classification::Feature::Distance_to_plane`
     - `CGAL::Classification::Feature::Elevation`
+    - `CGAL::Classification::Feature::Height_above`
+    - `CGAL::Classification::Feature::Height_below`
     - `CGAL::Classification::Feature::Vertical_dispersion`
+    - `CGAL::Classification::Feature::Vertical_range`
     - The version of `CGAL::Classification::Feature::Verticality` based on eigenvalues
 
     \param features the feature set where the features are instantiated.
@@ -386,6 +398,12 @@ public:
       features.add_with_scale_id<Dispersion> (i, m_input, m_point_map, grid(i), radius_neighbors(i));
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       features.add_with_scale_id<Elevation> (i, m_input, m_point_map, grid(i), radius_dtm(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      features.add_with_scale_id<Height_below> (i, m_input, m_point_map, grid(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      features.add_with_scale_id<Height_above> (i, m_input, m_point_map, grid(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      features.add_with_scale_id<Vertical_range> (i, m_input, m_point_map, grid(i));
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       features.add_with_scale_id<Verticality> (i, m_input, eigen(i));
   }

@@ -115,8 +115,11 @@ Data structures specialized to classify clusters.
 - `CGAL::Classification::Feature::Echo_scatter<GeomTraits, PointRange, PointMap, EchoMap>`
 - `CGAL::Classification::Feature::Eigenvalue`
 - `CGAL::Classification::Feature::Elevation<GeomTraits, PointRange, PointMap>`
+- `CGAL::Classification::Feature::Height_above<GeomTraits, PointRange, PointMap>`
+- `CGAL::Classification::Feature::Height_below<GeomTraits, PointRange, PointMap>`
 - `CGAL::Classification::Feature::Simple_feature<InputRange, PropertyMap>`
 - `CGAL::Classification::Feature::Vertical_dispersion<GeomTraits, PointRange, PointMap>`
+- `CGAL::Classification::Feature::Vertical_range<GeomTraits, PointRange, PointMap>`
 - `CGAL::Classification::Feature::Verticality<GeomTraits>`
 
 ## Point Set Classification ##
