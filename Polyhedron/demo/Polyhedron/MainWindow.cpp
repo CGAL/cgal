@@ -2244,6 +2244,8 @@ void MainWindow::on_actionLookAt_triggered()
   if( i == QDialog::Accepted &&
       dialog.has_correct_coordinates() )
   {
+    if(viewer->camera()->frame()->isSpinning())
+      viewer->camera()->frame()->stopSpinning();
     viewerShow((float)dialog.get_x()+viewer->offset().x,
                (float)dialog.get_y()+viewer->offset().y,
                (float)dialog.get_z()+viewer->offset().z);
