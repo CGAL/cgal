@@ -41,7 +41,7 @@
 
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 
-#define CGAL_NEURAL_NETWORKS_VERSION "0.1"
+#define CGAL_NEURAL_NETWORK_VERSION "0.1"
 
 namespace CGAL {
 
@@ -53,25 +53,36 @@ namespace TFops = tensorflow::ops;
 /*!
   \ingroup PkgClassificationClassifiers
 
+  \brief %Classifier based on the TensorFlow version of neural network.
+
+  This class provides an interface to a feature-based neural network:
+  a set of features is used as an input layer followed by a
+  user-specified number of hidden layers with a user-specified
+  activation function. The output layer is a softmax layer providing,
+  for each label, the probability that an input item belongs to it.
+
+  \warning This feature is still experimental: it may not be stable
+  and is likely to undergo substantial changes in future releases of
+  \cgal. Use at your own risk.
+
+  \note This class requires the \ref thirdpartyTensorFlow library.
+
+  \tparam ActivationFunction Chosen activation function for the hidden
+  layers. Relu is used as default. The following functions can be used
+  (please refer to the documentation of TensorFlow for more
+  information):
+   - `tensorflow::ops::Elu`
+   - `tensorflow::ops::Relu6`
+   - `tensorflow::ops::Relu`
+   - `tensorflow::ops::Selu`
+   - `tensorflow::ops::Sigmoid`
+   - `tensorflow::ops::Tanh`
+
   \cgalModels `CGAL::Classification::Classifier`
 */
+template <typename ActivationFunction = tensorflow::ops::Relu>
 class TensorFlow_neural_network_classifier
 {
-#define USE_RELU
-#if defined(USE_TANH)
-  typedef TFops::Tanh Activation_function;
-#elif defined(USE_RELU)
-  typedef TFops::Relu Activation_function;
-#elif defined(USE_RELU6)
-  typedef TFops::Relu6 Activation_function;
-#elif defined(USE_ELU)
-  typedef TFops::Elu Activation_function;
-#elif defined(USE_SELU)
-  typedef TFops::Selu Activation_function;
-#elif defined(USE_SIGMOID)
-  typedef TFops::Sigmoid Activation_function;
-#endif
-
   bool m_verbose;
   
   const Label_set& m_labels;
@@ -83,27 +94,21 @@ class TensorFlow_neural_network_classifier
   TFops::Placeholder* m_ph_ft;
   TFops::Placeholder* m_ph_gt;
 
-//#define USE_IOU
-#ifdef USE_IOU
   TFops::ReduceMean* m_loss;
-#else
-  TFops::ReduceMean* m_loss;
-#endif
   
   std::vector<std::vector<float> > m_weights;
   std::vector<std::vector<float> > m_bias;
   float m_learning_rate;
   std::vector<TF::Output> m_layers;
 
-#define USE_ADAM
-#ifdef USE_ADAM
-  std::vector<TFops::ApplyAdam> m_gradient_descent;
+#define CGAL_CLASSIFICATION_TENSORFLOW_USE_ADAM
+#ifdef CGAL_CLASSIFICATION_TENSORFLOW_USE_ADAM
+  std::vector<TFops::ApplyAdam> m_optimizer;
 #else
-  std::vector<TFops::ApplyGradientDescent> m_gradient_descent;
+  std::vector<TFops::ApplyGradientDescent> m_optimizer;
 #endif
   
   TF::ClientSession* m_session;
-
   
 public:
 
@@ -143,7 +148,7 @@ public:
     clear (m_root);
     m_weights.clear();
     m_bias.clear();
-    m_gradient_descent.clear();
+    m_optimizer.clear();
     m_layers.clear();
   }
 
@@ -208,12 +213,47 @@ public:
   /*!
     \brief Runs the training algorithm.
 
+    From the set of provided ground truth, this algorithm constructs a
+    neural network and applies an Adam optimizer to set up the weights
+    and bias that produce the most accurate result with respect to
+    this ground truth.
+
+    \pre At least one ground truth item should be assigned to each
+    label.
+
+    \param ground_truth vector of label indices. It should contain for
+    each input item, in the same order as the input set, the index of
+    the corresponding label in the `Label_set` provided in the
+    constructor. Input items that do not have a ground truth
+    information should be given the value `-1`.
+
+    \param restart_from_scratch should be set to `false` if the user
+    wants to continue adjusting weights and bias based, and kept to
+    `true` if the neural network should be re-created from scratch
+    (discarding all previous training result).
+
+    \param number_of_iterations number of times the optimizer is
+    called.
+
+    \param learning_rate describes the rate at which the optimizer
+    changes the weights and bias.
+
+    \param batch_size size of the random subset of inliers uses for
+    optimizing at each iteration.
+
+    \param hidden_layers vector containing the consecutive sizes
+    (number of neurons) of the hidden layers of the network. If no
+    vector is given, the behavior used is the following: 2 hidden
+    layers are used. The first layer has as many neurons as the number
+    of features; the second layer has a number of neurons equal to the
+    average value between the number of features and the number of
+    labels.
   */
   template <typename LabelIndexRange>
   void train (const LabelIndexRange& ground_truth,
-              bool restart_from_scratch = false,
+              bool restart_from_scratch = true,
               std::size_t number_of_iterations = 5000,
-              float learning_rate = 0.1,
+              float learning_rate = 0.01,
               std::size_t batch_size = 1000,
               const std::vector<std::size_t>& hidden_layers
               = std::vector<std::size_t>())
@@ -221,11 +261,7 @@ public:
     if (restart_from_scratch)
       clear();
 
-#define EQUAL_DISTRIBUTION
-
-#ifdef EQUAL_DISTRIBUTION
     std::vector<std::vector<std::size_t> > random_indices (m_labels.size());
-#endif
     
     std::vector<std::size_t> indices;
     std::vector<int> raw_gt;
@@ -236,9 +272,7 @@ public:
       {
         indices.push_back (i);
         raw_gt.push_back (gc);
-#ifdef EQUAL_DISTRIBUTION
         random_indices[std::size_t(gc)].push_back (indices.size() - 1);
-#endif
       }
     }
 
@@ -252,16 +286,9 @@ public:
     
     if (m_verbose) std::cerr << "III - TRAINING NEURAL NETWORK" << std::endl;
     
-#ifndef EQUAL_DISTRIBUTION
-    batch_size = std::min (std::size_t(batch_size), indices.size());
-    std::vector<std::size_t> random_indices
-      (boost::make_counting_iterator<std::size_t>(0),
-       boost::make_counting_iterator<std::size_t>(indices.size()));
-#endif
-    
     std::vector<TF::Output> operations;
-    for (std::size_t i = 0; i < m_gradient_descent.size(); ++ i)
-      operations.push_back (m_gradient_descent[i]);
+    for (std::size_t i = 0; i < m_optimizer.size(); ++ i)
+      operations.push_back (m_optimizer[i]);
     operations.push_back (m_layers.back());
     
     std::vector<TF::Tensor> outputs;
@@ -273,7 +300,6 @@ public:
 
     for (std::size_t i = 0; i < number_of_iterations; ++ i)
     {
-#ifdef EQUAL_DISTRIBUTION
       std::size_t total_batch_size = 0;
       for (std::size_t j = 0; j < random_indices.size(); ++ j)
       {
@@ -327,40 +353,9 @@ public:
           ++ current_i;
         }
       }
-#else
-      random_unique (random_indices.begin(), random_indices.end(), batch_size);
-
-      TF::Tensor ft
-        (TF::DataTypeToEnum<float>::v(), 
-         TF::TensorShape {(long long)(batch_size), (long long)(m_features.size())});
-      TF::Tensor gt
-        (TF::DataTypeToEnum<float>::v(), 
-         TF::TensorShape {(long long)(batch_size), (long long)(m_labels.size())});
-
-      float* ft_data = ft.flat<float>().data();
-      float* gt_data = gt.flat<float>().data();
-
-      // Fill input tensors
-      for (std::size_t i = 0; i < batch_size; ++ i)
-      {
-        std::size_t idx = indices[random_indices[i]];
-        int g = raw_gt[random_indices[i]];
-
-        for (std::size_t f = 0; f < m_features.size(); ++ f)
-          ft_data[i * m_features.size() + f]
-            = (m_features[f]->value(idx) - m_feature_means[f]) / m_feature_sd[f];
-
-        for (std::size_t l = 0; l < m_labels.size(); ++ l)
-          if (std::size_t(g) == l)
-            gt_data[i * m_labels.size() + l] = 1.f;
-          else
-            gt_data[i * m_labels.size() + l] = 0.f;
-      }
-#endif
       
       TF_CHECK_OK (m_session->Run ({{*m_ph_ft, ft}, {*m_ph_gt, gt}}, {*m_loss}, &outputs));
 
-//      log << outputs[0].scalar<float>() << std::endl;
       if ((i+1) % (number_of_iterations / 20) == 0)
       {
         if (m_verbose) std::cerr << "   * Step " << i+1 << "/" << number_of_iterations << ": loss = "
@@ -461,10 +456,14 @@ public:
     \brief Saves the current configuration in the stream `output`.
 
     This allows to easily save and recover a specific classification
-    configuration.
+    configuration, that is to say:
 
-    The output file is written in an GZIP container that is readable
-    by the `load_configuration()` method.
+    - The statistics of features (mean and standard deviation)
+    - The number of hiddens layers and their respectives sizes
+    - The weights and bias of the neurons
+
+    The output file is written in an XML format that is readable by
+    the `load_configuration()` method.
   */
   void save_configuration (std::ostream& output)
   {
@@ -472,7 +471,7 @@ public:
 
     {
       boost::property_tree::ptree ptr;
-      ptr.put("classifier_version", CGAL_NEURAL_NETWORKS_VERSION);
+      ptr.put("classifier_version", CGAL_NEURAL_NETWORK_VERSION);
       ptr.put("number_of_features", m_features.size());
       ptr.put("number_of_labels", m_labels.size());
       ptr.put("number_of_hidden_layers", m_layers.size() - 1);
@@ -524,8 +523,6 @@ public:
       
       tree.add_child("classification.layers.layer", ptr);
     }
-
-    
     
     // Write property tree to XML file
     boost::property_tree::write_xml(output, tree,
@@ -539,7 +536,7 @@ public:
   /*!
     \brief Loads a configuration from the stream `input`.
 
-    The input file should be a GZIP container written by the
+    The input file should be in the XML format written by the
     `save_configuration()` method. The feature set of the classifier
     should contain the exact same features in the exact same order as
     the ones present when the file was generated using
@@ -555,10 +552,10 @@ public:
     boost::property_tree::read_xml(input, tree);
 
     std::string version = tree.get<std::string>("classification.metadata.classifier_version");
-    if (version != CGAL_NEURAL_NETWORKS_VERSION)
+    if (version != CGAL_NEURAL_NETWORK_VERSION)
     {
       if (verbose)
-        std::cerr << "Error: CGAL Neural Network version mismatch " << version << "/" << CGAL_NEURAL_NETWORKS_VERSION << std::endl;
+        std::cerr << "Error: CGAL Neural Network version mismatch " << version << "/" << CGAL_NEURAL_NETWORK_VERSION << std::endl;
       return false;
     }
     std::size_t nb_features = std::size_t(tree.get<int>("classification.metadata.number_of_features"));
@@ -673,7 +670,6 @@ public:
     return out;
   }
 
-
 private:
 
   template<class BidiIter >
@@ -752,20 +748,20 @@ private:
 
       if (m_weights.empty())
       {
-#ifdef USE_TANH // Weights initialized by Xavier method
-        assign_weights.push_back (TFops::Assign (*m_root, weights.back(),
-                                                 TFops::Mul (*m_root, TFops::Const(*m_root,
-                                                                                   std::sqrt (1.f / (float)(size_from))),
-                                                             TFops::RandomNormal (*m_root, { size_from, size_to}, TF::DT_FLOAT))));
-#elif defined(USE_RELU) || defined(USE_RELU6) // Weights initialized by He method
-        assign_weights.push_back (TFops::Assign (*m_root, weights.back(),
-          TFops::Mul (*m_root, TFops::Const(*m_root,
-                                            std::sqrt (2.f / (float)(size_from))),
-                      TFops::RandomNormal (*m_root, { size_from, size_to}, TF::DT_FLOAT))));
-#else // Default: weights truncated normal
-        assign_weights.push_back (TFops::Assign (*m_root, weights.back(),
-                                                 TFops::TruncatedNormal (*m_root, { size_from, size_to}, TF::DT_FLOAT)));
-#endif
+        if (boost::is_same<ActivationFunction, TFops::Tanh>::value)  // Weights initialized by Xavier method
+          assign_weights.push_back (TFops::Assign (*m_root, weights.back(),
+                                                   TFops::Mul (*m_root, TFops::Const(*m_root,
+                                                                                     std::sqrt (1.f / (float)(size_from))),
+                                                               TFops::RandomNormal (*m_root, { size_from, size_to}, TF::DT_FLOAT))));
+        else if (boost::is_same<ActivationFunction, TFops::Relu>::value ||
+                 boost::is_same<ActivationFunction, TFops::Relu6>::value)  // Weights initialized by He method
+          assign_weights.push_back (TFops::Assign (*m_root, weights.back(),
+                                                   TFops::Mul (*m_root, TFops::Const(*m_root,
+                                                                                     std::sqrt (2.f / (float)(size_from))),
+                                                               TFops::RandomNormal (*m_root, { size_from, size_to}, TF::DT_FLOAT))));
+        else // Default: weights truncated normal
+          assign_weights.push_back (TFops::Assign (*m_root, weights.back(),
+                                                   TFops::TruncatedNormal (*m_root, { size_from, size_to}, TF::DT_FLOAT)));
       }
       else
       {
@@ -805,17 +801,17 @@ private:
     for (std::size_t i = 0; i < weights.size(); ++ i)
     {
       if (i == 0)
-        m_layers.push_back (Activation_function (*m_root, TFops::Add
-                                                 (*m_root, TFops::MatMul (*m_root, *m_ph_ft, weights[0]),
-                                                  bias[0])));
+        m_layers.push_back (ActivationFunction (*m_root, TFops::Add
+                                                (*m_root, TFops::MatMul (*m_root, *m_ph_ft, weights[0]),
+                                                 bias[0])));
       else if (i == weights.size() - 1)
         m_layers.push_back (TFops::Softmax (*m_root, TFops::Add
                                             (*m_root, TFops::MatMul (*m_root, m_layers.back(), weights[i]),
                                              bias[i])));
       else
-        m_layers.push_back (Activation_function (*m_root, TFops::Add
-                                                 (*m_root, TFops::MatMul (*m_root, m_layers.back(), weights[i]),
-                                                  bias[i])));
+        m_layers.push_back (ActivationFunction (*m_root, TFops::Add
+                                                (*m_root, TFops::MatMul (*m_root, m_layers.back(), weights[i]),
+                                                 bias[i])));
     }
 
     if (!m_root->status().ok())
@@ -827,27 +823,6 @@ private:
     if (m_verbose) std::cerr << " 4) Setting up loss calculation" << std::endl;
     
     // loss calculation based on cross-entropy
-      
-//      TFops::Log log_ypred = TFops::Log (*m_root, m_layers.back());
-
-#ifdef USE_IOU
-
-    TFops::Mul ygt_times_ypred = TFops::Mul (*m_root, *m_ph_gt, m_layers.back());
-    TFops::ReduceSum intersection = TFops::ReduceSum(*m_root, ygt_times_ypred, {1});
-
-    TFops::Add ygt_plus_ypred = TFops::Add (*m_root, *m_ph_gt, m_layers.back());
-    TFops::Mul ygt_times_ypred_2 = TFops::Mul (*m_root, *m_ph_gt, m_layers.back());
-    TFops::Sub sum_minus_product = TFops::Sub (*m_root, ygt_plus_ypred, ygt_times_ypred_2);
-    TFops::ReduceSum my_union = TFops::ReduceSum(*m_root, sum_minus_product, {1});
-
-    TFops::Div IoU = TFops::Div(*m_root, intersection, my_union);
-    TFops::Sub one_minus_IoU = TFops::Sub (*m_root, TFops::Const(*m_root, 1.f), IoU);
-    m_loss = new TFops::ReduceMean (*m_root, one_minus_IoU, {0});
-
-    // TFops::ReduceMean mean_IoU = TFops::ReduceMean (*m_root, IoU, {0});
-    // m_loss = new TFops::Sub (*m_root, TFops::Const(*m_root, 1.f), mean_IoU);
-    
-#else
     TFops::Maximum truncated_ypred = TFops::Maximum (*m_root, TFops::Const(*m_root, 0.0001f), m_layers.back());
     TFops::Log log_ypred = TFops::Log (*m_root, truncated_ypred);
     TFops::Mul ygt_times_log_ypred = TFops::Mul (*m_root, *m_ph_gt, log_ypred);
@@ -855,7 +830,6 @@ private:
     TFops::Mul minus_sum_ygt_times_log_ypred = TFops::Mul (*m_root, TFops::Const(*m_root, -1.f), sum_ygt_times_log_ypred);
 
     m_loss = new TFops::ReduceMean (*m_root, minus_sum_ygt_times_log_ypred, {0});
-#endif
     
     if (!m_root->status().ok())
     {
@@ -885,7 +859,7 @@ private:
   
     std::vector<TF::Output> assigners;
   
-#ifdef USE_ADAM
+#ifdef CGAL_CLASSIFICATION_TENSORFLOW_USE_ADAM
     for (std::size_t i = 0; i < weights.size(); ++ i)
     {
       long long size_from = 0;
@@ -926,7 +900,7 @@ private:
           init_v_data[ss * size_from + s] = 0.f;
       assigners.push_back (TFops::Assign (*m_root, v, init_v));
 
-      m_gradient_descent.push_back (TFops::ApplyAdam
+      m_optimizer.push_back (TFops::ApplyAdam
                                     (*m_root,
                                      weights[i],
                                      m,
@@ -969,7 +943,7 @@ private:
         init_v_data[s] = 0.f;
       assigners.push_back (TFops::Assign (*m_root, v, init_v));
 
-      m_gradient_descent.push_back (TFops::ApplyAdam
+      m_optimizer.push_back (TFops::ApplyAdam
                                     (*m_root,
                                      bias[i],
                                      m,
@@ -985,11 +959,11 @@ private:
     
 #else
     for (std::size_t i = 0; i < weights.size(); ++ i)
-      m_gradient_descent.push_back (TFops::ApplyGradientDescent
+      m_optimizer.push_back (TFops::ApplyGradientDescent
                                     (*m_root, weights[i],
                                      TFops::Cast(*m_root, m_learning_rate, TF::DT_FLOAT), {gradients[i]}));
     for (std::size_t i = 0; i < bias.size(); ++ i)
-      m_gradient_descent.push_back (TFops::ApplyGradientDescent
+      m_optimizer.push_back (TFops::ApplyGradientDescent
                                     (*m_root, bias[i],
                                      TFops::Cast(*m_root, m_learning_rate, TF::DT_FLOAT), {gradients[weights.size() + i]}));
 #endif
@@ -1003,11 +977,6 @@ private:
     
     TF::SessionOptions options = TF::SessionOptions();
     
-    // options.config.mutable_gpu_options()->set_visible_device_list("0");
-    // options.config.mutable_gpu_options()->set_per_process_gpu_memory_fraction(0.3);
-    // options.config.mutable_gpu_options()->set_operation_timeout_in_ms(15000);
-
-//    options.config.mutable_gpu_options()->set_visible_device_list("");
     options.config.mutable_gpu_options()->set_allow_growth(true);
     options.config.mutable_gpu_options()->set_per_process_gpu_memory_fraction(0.8);
     options.config.mutable_gpu_options()->set_force_gpu_compatible(true);
@@ -1033,11 +1002,11 @@ private:
       return;
     }
   }
-
 };
 
 
-#if 1
+/// \cond SKIP_IN_MANUAL
+#ifdef CGAL_CLASSIFICATION_TENSORFLOW_ENABLE_GPU_SPECIALIZATION
 // Specialization to use GPU parallelization
 template <typename ConcurrencyTag,
           typename ItemRange,
@@ -1140,7 +1109,10 @@ void classify (const ItemRange& input,
   }
 }
 #endif  
+/// \endcond
+
 }
+
 
 }
 

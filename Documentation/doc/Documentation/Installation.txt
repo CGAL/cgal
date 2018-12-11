@@ -593,6 +593,15 @@ In \cgal, \sc{OpenCV} is used by the \ref PkgClassificationRef package.
 
 The \sc{OpenCV} web site is <A HREF="http://opencv.org/">`http://opencv.org/`</A>.
 
+\subsection thirdpartyTensorFlow TensorFlow
+
+\sc{TensorFlow} is a library designed for machine learning and deep learning.
+
+In \cgal, the C++ API of \sc{TensorFlow} is used by the \ref PkgClassificationRef
+package for neural network.
+
+The \sc{TensorFlow} web site is <A HREF="https://www.tensorflow.org/">`https://www.tensorflow.org/`</A>.
+
 \subsection thirdpartyMETIS METIS
 
 \sc{METIS} is a library developed by the <A HREF="http://glaros.dtc.umn.edu/gkhome/">Karypis Lab</A>

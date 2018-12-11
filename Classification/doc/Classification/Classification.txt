@@ -196,9 +196,9 @@ Example of cluster classification mesh (left: input, middle: clusters computed f
 
 %Classification relies on a classifier: this classifier is an object that, from the set of values taken by the features at an input item, computes the probability that an input item belongs to one label or another. A model of the concept `CGAL::Classification::Classifier` must take the index of an input item and store the probability associated to each label in a vector. If a classifier returns the value 1 for a pair of label and input item, it means that this item belongs to this label with certainty; values close to 0 mean that this item is not likely to belong to this label.
 
-\cgal provides three models for this concept, [ETHZ_random_forest_classifier](@ref CGAL::Classification::ETHZ_random_forest_classifier), [OpenCV_random_forest_classifier](@ref CGAL::Classification::OpenCV_random_forest_classifier) and [Sum_of_weighted_features_classifier](@ref CGAL::Classification::Sum_of_weighted_features_classifier).
+\cgal provides four models for this concept, [ETHZ_random_forest_classifier](@ref CGAL::Classification::ETHZ_random_forest_classifier), [OpenCV_random_forest_classifier](@ref CGAL::Classification::OpenCV_random_forest_classifier), [TensorFlow_neural_network_classifier](@ref CGAL::Classification::TensorFlow_neural_network_classifier) and [Sum_of_weighted_features_classifier](@ref CGAL::Classification::Sum_of_weighted_features_classifier).
 
-To perform classification based on these classifiers, please refer to \ref Classification_classification_functions.
+To perform classification based on four classifiers, please refer to \ref Classification_classification_functions.
 
 \subsection Classification_ETHZ_random_forest ETHZ Random Forest
 
@@ -243,6 +243,31 @@ An [example](\ref Classification_example_opencv_random_forest) shows how to
 use this classifier. For more details about the algorithm, please refer
 to [the official documentation](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
 of OpenCV.
+
+\subsection Classification_TensorFlow_neural_network TensorFlow Neural Network
+
+\cgal provides [TensorFlow_neural_network_classifier](@ref CGAL::Classification::TensorFlow_neural_network_classifier).
+
+It uses the C++ API of the \ref thirdpartyTensorFlow library.
+
+\warning This feature is still experimental: it may not be stable
+and is likely to undergo substantial changes in future releases of
+\cgal. Use at your own risk.
+
+The provided interface is a feature-based neural network: a set of
+features is used as an input layer followed by a user-specified number
+of hidden layers with a user-specified activation function. The output
+layer is a softmax layer providing, for each label, the probability
+that an input item belongs to it.
+
+This classifier cannot be set up by hand and requires a ground truth
+training set. The training algorithm usually requires a higher number
+of inliers than random forest. The quality of the results, so far, is
+comparable to random forest.
+
+An [example](\ref Classification_example_tensorflow_neural_network) shows how to
+use this classifier. For more details about the algorithm, please refer
+to [the TensorFlow tutorials](https://www.tensorflow.org/tutorials/).
 
 \subsection Classification_sowf Sum of Weighted Features
 
@@ -487,6 +512,12 @@ The following example shows how to use the classifier [ETHZ_random_forest_classi
 The following example shows how to use the classifier [OpenCV_random_forest_classifier](@ref CGAL::Classification::OpenCV_random_forest_classifier) using an input training set.
 
 \cgalExample{Classification/example_opencv_random_forest.cpp}
+
+\subsection Classification_example_tensorflow_neural_network TensorFlow Neural Network
+
+The following example shows how to use the classifier [TensorFlow_neural_network_classifier](@ref CGAL::Classification::TensorFlow_neural_network_classifier) using an input training set.
+
+\cgalExample{Classification/example_tensorflow_neural_network.cpp}
 
 \subsection Classification_example_mesh Mesh Classification
 

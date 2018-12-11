@@ -32,7 +32,7 @@ public:
   typedef CGAL::Classification::OpenCV_random_forest_classifier Random_forest;
 #endif
 #ifdef CGAL_LINKED_WITH_TENSORFLOW
-  typedef CGAL::Classification::TensorFlow_neural_network_classifier Neural_network;
+  typedef CGAL::Classification::TensorFlow_neural_network_classifier<> Neural_network;
 #endif
   
 public:
