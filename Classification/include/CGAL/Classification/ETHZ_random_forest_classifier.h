@@ -101,8 +101,23 @@ public:
   /// @}
 
   /// \name Training
-  
   /// @{
+
+  /// \cond SKIP_IN_MANUAL
+  template <typename LabelIndexRange>
+  void train (const LabelIndexRange& ground_truth,
+              bool reset_trees = true,
+              std::size_t num_trees = 25,
+              std::size_t max_depth = 20)
+  {
+#ifdef CGAL_LINKED_WITH_TBB
+    train<CGAL::Parallel_tag>(ground_truth, reset_trees, num_trees, max_depth);
+#else
+    train<CGAL::Sequential_tag>(ground_truth, reset_trees, num_trees, max_depth);
+#endif
+  }
+  /// \endcond
+    
   /*!
     \brief Runs the training algorithm.
 
@@ -112,6 +127,11 @@ public:
 
     \pre At least one ground truth item should be assigned to each
     label.
+
+    \tparam ConcurrencyTag enables sequential versus parallel
+    algorithm. Possible values are `Parallel_tag` (default value is
+    %CGAL is linked with TBB) or `Sequential_tag` (default value
+    otherwise).
 
     \param ground_truth vector of label indices. It should contain for
     each input item, in the same order as the input set, the index of
@@ -196,11 +216,42 @@ public:
       out[i] = (std::min) (1.f, (std::max) (0.f, prob[i]));
   }
 
+  /// \endcond
+  
+  /// @}
+
+  /// \name Miscellaneous
+  /// @{
+  
+  /*!
+    \brief Computes, for each feature, how many nodes in the forest
+    uses it as a split criterion.
+
+    Each tree of the random forest recursively splits the training
+    data set using at each node one of the input features. This method
+    counts, for each feature, how many times it was selected by the
+    training algorithm as a split criterion.
+
+    This method allows to evaluate how useful a feature was with
+    respect to a training set: if a feature is used a lot, that means
+    that it has a strong discriminative power with respect to how the
+    labels are represented by the feature set; on the contrary, if a
+    feature is not used very often, it's discriminative power is
+    probably low; if a feature is _never_ used, it likely has no
+    interest at all and is completely uncorrelated to the label
+    segmentation of the training set.
+
+    \param count vector where the result is stored. After running the
+    method, it contains, for each feature, the number of nodes in the
+    foret that uses it as a split criterion, in the same order as the
+    feature set order.
+  */
   void get_feature_usage (std::vector<std::size_t>& count) const
   {
+    count.clear();
+    count.resize(m_features.size(), 0);
     return m_rfc->get_feature_usage(count);
   }
-  /// \endcond
   
   /// @}
 
