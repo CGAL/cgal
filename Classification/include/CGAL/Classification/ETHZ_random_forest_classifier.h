@@ -90,6 +90,26 @@ public:
     : m_labels (labels), m_features (features), m_rfc (NULL)
   { }
   
+  /*!
+    \brief Copies the `other` classifier's configuration using another
+    set of `features`.
+
+    This constructor can be used to apply a trained random forest to
+    another data set.
+
+    \warning The feature set should be composed of the same features
+    than the ones used by `other`, and in the same order.
+
+  */
+  ETHZ_random_forest_classifier (const ETHZ_random_forest_classifier& other,
+                                 const Feature_set& features)
+    : m_labels (other.m_labels), m_features (features), m_rfc (NULL)
+  {
+    std::stringstream stream;
+    other.save_configuration(stream);
+    this->load_configuration(stream);
+  }
+  
   /// \cond SKIP_IN_MANUAL
   ~ETHZ_random_forest_classifier ()
   {
@@ -267,7 +287,7 @@ public:
     The output file is written in an GZIP container that is readable
     by the `load_configuration()` method.
   */
-  void save_configuration (std::ostream& output)
+  void save_configuration (std::ostream& output) const
   {
     boost::iostreams::filtering_ostream outs;
     outs.push(boost::iostreams::gzip_compressor());
