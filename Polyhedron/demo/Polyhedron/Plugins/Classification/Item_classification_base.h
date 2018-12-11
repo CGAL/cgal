@@ -236,6 +236,10 @@ public:
   {
     m_label_colors[position] = color;
   }
+  void change_label_name (std::size_t position, const std::string& name)
+  {
+    m_labels[position]->set_name (name);
+  }
 
   QColor get_new_label_color (const std::string& name)
   {

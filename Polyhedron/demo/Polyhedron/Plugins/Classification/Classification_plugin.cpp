@@ -126,6 +126,7 @@ class Polyhedron_demo_classification_plugin :
       color_button->setStyleSheet(s);
       color_button->update();
     }
+
   };
 
 
@@ -1451,6 +1452,10 @@ public Q_SLOTS:
     connect(change_color,  SIGNAL(triggered()), this,
             SLOT(on_color_changed_clicked()));
 
+    QAction* change_name = label_buttons.back().menu->addAction ("Change name");
+    connect(change_name,  SIGNAL(triggered()), this,
+            SLOT(on_name_changed_clicked()));
+
     QAction* create = label_buttons.back().menu->addAction ("Create point set item from labeled points");
     connect(create,  SIGNAL(triggered()), this,
             SLOT(on_create_point_set_item()));
@@ -1551,11 +1556,56 @@ public Q_SLOTS:
       int position = row_index * 3 + column_index;
     
       QColor color = label_buttons[position].color;
-      color = QColorDialog::getColor(color, (QWidget*)mw, "Change of color of label");
+      color = QColorDialog::getColor(color, (QWidget*)mw, "Change color of label");
+
+      if (!color.isValid())
+        return;
+      
       label_buttons[position].change_color (color);
       classif->change_label_color (position,
                                    color);
     }
+    classif->update_color ();
+    item_changed(classif->item());
+  }
+
+  void on_name_changed_clicked()
+  {
+    Item_classification_base* classif
+      = get_classification();
+    if(!classif)
+    {
+      print_message("Error: there is no point set classification item!");
+      return; 
+    }
+
+    QPushButton* label_clicked = qobject_cast<QPushButton*>(QObject::sender()->parent()->parent());
+    if (label_clicked == NULL)
+      std::cerr << "Error" << std::endl;
+    else
+    {
+      int index = ui_widget.labelGrid->indexOf(label_clicked);
+      int row_index, column_index, row_span, column_span;
+      ui_widget.labelGrid->getItemPosition(index, &row_index, &column_index, &row_span, &column_span);
+
+      int position = row_index * 3 + column_index;
+      
+      bool ok;
+      QString name =
+        QInputDialog::getText((QWidget*)mw,
+                              tr("Change name of label"), // dialog title
+                              tr("New name:"), // field label
+                              QLineEdit::Normal,
+                              classif->label(position)->name().c_str(),
+                              &ok);
+
+      if (!ok)
+        return;
+
+      classif->change_label_name (position, name.toStdString());
+    }
+    
+    update_plugin_from_item(classif);
     classif->update_color ();
     item_changed(classif->item());
   }
