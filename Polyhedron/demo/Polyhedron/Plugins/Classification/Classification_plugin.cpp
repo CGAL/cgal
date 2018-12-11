@@ -307,10 +307,25 @@ public Q_SLOTS:
     dock_widget->raise();
     if (Scene_points_with_normal_item* points_item
              = qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex())))
+    {
       create_from_item(points_item);
+      QAction* ps_selection = mw->findChild<QAction*>("actionPointSetSelection");
+      if (ps_selection)
+        ps_selection->trigger();
+      else
+        print_message("Warning: can't find Point Set Selection plugin");
+    }
     else if (Scene_surface_mesh_item* mesh_item
              = qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex())))
+    {
       create_from_item(mesh_item);
+      QAction* sm_selection = mw->findChild<QAction*>("actionSelection");
+      if (sm_selection)
+        sm_selection->trigger();
+      else
+        print_message("Warning: can't find Surface Mesh Selection plugin");
+    }
+    
     on_help_clicked();
   }
 
