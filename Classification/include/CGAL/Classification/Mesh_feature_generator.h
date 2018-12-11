@@ -65,14 +65,19 @@ namespace Classification {
   \brief Generates a set of generic features for surface mesh
   classification.
 
-  This class takes care of computing all necessary data structures and
-  of generating a set of generic features at multiple scales to
-  increase the reliability of the classification.
+  This class takes care of computing and storing all necessary data
+  structures and of generating a set of generic features at multiple
+  scales to increase the reliability of the classification.
 
   A `PointMap` is required: this map should associate each face of the
   mesh to a representative point (for example, the center of mass of
   the face). It is used to generate point set features by considering
   the mesh as a point set.
+
+  \warning The generated features use data structures that are stored
+  inside the generator. For this reason, the generator should be
+  instantiated _within the same scope_ as the feature set and should
+  not be deleted before the feature set.
 
   \tparam GeomTraits model of \cgal Kernel.
   \tparam FaceListGraph model of `FaceListGraph`. 

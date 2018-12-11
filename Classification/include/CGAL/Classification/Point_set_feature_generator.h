@@ -67,9 +67,14 @@ namespace Classification {
   \brief Generates a set of generic features for point set
   classification.
 
-  This class takes care of computing all necessary data structures and
-  of generating a set of generic features at multiple scales to
-  increase the reliability of the classification.
+  This class takes care of computing and storing all necessary data
+  structures and of generating a set of generic features at multiple
+  scales to increase the reliability of the classification.
+
+  \warning The generated features use data structures that are stored
+  inside the generator. For this reason, the generator should be
+  instantiated _within the same scope_ as the feature set and should
+  not be deleted before the feature set.
 
   \tparam GeomTraits model of \cgal Kernel.
   \tparam PointRange model of `ConstRange`. Its iterator type is
