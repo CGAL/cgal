@@ -87,7 +87,10 @@ The following code snippet shows how to instantiate such data structures from an
 - [Distance_to_plane](@ref CGAL::Classification::Feature::Distance_to_plane) measures how far away a point is from a locally estimated plane;
 - [Eigenvalue](@ref CGAL::Classification::Feature::Eigenvalue) measures one of the three local eigenvalues;
 - [Elevation](@ref CGAL::Classification::Feature::Elevation) computes the local distance to an estimation of the ground;
+- [Height_above](@ref CGAL::Classification::Feature::Elevation) computes the distance between the local highest point and the point;
+- [Height_below](@ref CGAL::Classification::Feature::Elevation) computes the distance between the point and local lowest point;
 - [Vertical_dispersion](@ref CGAL::Classification::Feature::Vertical_dispersion) computes how noisy the point set is on a local Z-cylinder;
+- [Vertical_range](@ref CGAL::Classification::Feature::Elevation) computes the distance between the local highest and lowest points;
 - [Verticality](@ref CGAL::Classification::Feature::Verticality) compares the local normal vector to the vertical vector.
 
 These features are designed for point sets but can easily be used with surface meshes as well (see \ref Classification_meshes). For more details about how these different features can help to identify one label or the other, please refer to their associated reference manual pages.
@@ -107,6 +110,8 @@ Users commonly want to use all predefined features to get the best result possib
 Multiple scales that are sequentially larger can be used to increase the quality of the results \cgalCite{cgal:hws-fsso3-16}. 
 
 Note that using this class in order to generate features is not mandatory, as features and data structures can all be handled by hand. It is mainly provided to make the specific case of point sets simpler to handle. Users can still add their own features within their feature set.
+
+Some data structure instantiated by the generator will be used by feature: for this reason, the generator should be instantiated _within the same scope_ as the feature set and should not be deleted before the feature set.
 
 The following snippet shows how to use the point set feature generator:
 
@@ -548,7 +553,7 @@ The following example:
 
 \section Classification_history History
 
-This package is based on a research code by [Florent Lafarge](https://www-sop.inria.fr/members/Florent.Lafarge/) that was generalized, extended and packaged by [Simon Giraudot](http://geometryfactory.com/who-we-are/) in \cgal 4.12. %Classification of surface meshes and of clusters were introduced in \cgal 4.13.
+This package is based on a research code by [Florent Lafarge](https://www-sop.inria.fr/members/Florent.Lafarge/) that was generalized, extended and packaged by [Simon Giraudot](http://geometryfactory.com/who-we-are/) in \cgal 4.12. %Classification of surface meshes and of clusters were introduced in \cgal 4.13. The Neural Network classifier was introduced in \cgal 4.14.
 
 
 
