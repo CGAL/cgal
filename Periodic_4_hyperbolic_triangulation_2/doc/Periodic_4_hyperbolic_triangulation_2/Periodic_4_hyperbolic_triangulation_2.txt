@@ -16,8 +16,9 @@ namespace CGAL {
 </center>
 
 
-This package enables the computation of Delaunay triangulations of the Bolza surface, which is the
-most symmetric surface of genus 2. The Bolza surface is a hyperbolic closed compact orientable surface. 
+This package enables the computation of Delaunay triangulations of the Bolza 
+surface. The Bolza surface is a hyperbolic, closed, compact, and orientable 
+surface, which is the most symmetric surface of genus 2.
 
 A triangulation of the Bolza surface can be seen as a periodic
 triangulation of the hyperbolic plane. 
@@ -27,15 +28,18 @@ triangulation of the hyperbolic plane.
 
 Let \f$\mathbb{H}^2\f$ denote the hyperbolic plane, represented in the
 Poincaré disk model (see Chapter \ref ChapterHTriangulation2 "2D Hyperbolic Delaunay Triangulations").
+The Bolza surface \f$\mathcal{M}\f$ is defined as the quotient of \f$\mathbb H^2\f$
+under the action of a group \f$\mathcal G\f$ that we will introduce now.
+
 Consider the regular hyperbolic octagon \f$ \mathcal D_O \f$ centered
 at the origin with all angles equal to \f$ \pi/4\f$, as shown in
 \cgalFigureRef{P4HTriangulationOctagonId}.
-Note that \f$\mathcal D_O\f$ is unique up to rotation, and cannot
-be scaled, since this operation would change its angles. Consider the 
+Note that \f$\mathcal D_O\f$ is unique up to rotation and cannot
+be scaled since this operation would change its angles. Consider the 
 four hyperbolic translations \f$ a,b,c,d\f$ with their respective inverses \f$\overline{a}, 
 \overline{b}, \overline{c}, \overline{d}\f$ that identify the opposite sides of 
 \f$ \mathcal D_O \f$. The axes of these translations are diameters of the Poincaré disk. 
-See \cgalFigureRef{P4HTriangulationOctagonId} - Left. The four translations 
+See&nbsp;\cgalFigureRef{P4HTriangulationOctagonId} - Left. The four translations 
 \f$a, b, c, d\f$ generate a (non-commutative) discrete group of orientation-preserving isometries, with 
 finite presentation
 \f[ \mathcal{G} = \left< a,b,c,d \; \bigg| \; 
@@ -43,16 +47,19 @@ finite presentation
 Note that equivalent translations of the group \f$\mathcal G\f$ can be
 reduced to a unique minimal representative. 
 
-The group \f$\mathcal G\f$ is acting on \f$\mathbb H^2\f$; two points
+The group \f$\mathcal G\f$ is acting on \f$\mathbb H^2\f$: two points
 \f$p\f$ and \f$q\f$ in \f$\mathbb H^2\f$ are in the same orbit under
 the action of \f$\mathcal G\f$ if there exists an element
-\f$g \in \mathcal G\f$ such that \f$g(p) = q\f$. See
-\cgalFigureRef{P4HTriangulationOctagonId} - Center.  The Bolza surface
+\f$g \in \mathcal G\f$ such that \f$g(p) = q\f$. 
+See&nbsp;\cgalFigureRef{P4HTriangulationOctagonId} - Center.  
+The Bolza surface
 \f$\mathcal{M}\f$ is defined as the quotient of \f$\mathbb H^2\f$
 under the action of \f$\mathcal G\f$, named the fundamental group of
-\f$\mathcal M\f$: \f[ \mathcal{M} = \mathbb H^2 / \mathcal{G} \f]
-\f$\pi\f$ denotes the natural projection map from \f$\mathbb H^2\f$
-onto \f$\mathcal M\f$.
+\f$\mathcal M\f$: \f[ \mathcal{M} = \mathbb H^2 / \mathcal{G}. \f]
+The natural projection map from \f$\mathbb H^2\f$ onto \f$\mathcal M\f$ 
+is denoted with \f$\pi\f$. By definition, all points of \f$\mathbb H^2\f$ 
+that belong to the same orbit under the action of \f$\mathcal G\f$ project 
+by \f$\pi\f$ onto the same point of the surface \f$\mathcal M\f$.
 
 \cgalFigureAnchor{P4HTriangulationOctagonId}
 <center>
@@ -69,17 +76,14 @@ onto \f$\mathcal M\f$.
   only one vertex of the octagon is contained in the original domain.
 \cgalFigureCaptionEnd
 
-By definition, all points of \f$\mathbb H^2\f$ that belong to the same
-orbit under the action of \f$\mathcal G\f$ project by \f$\pi\f$ onto
-the same point of the surface \f$\mathcal M\f$. 
 The half-open octagon \f$\mathcal D\f$ shown in
 \cgalFigureRef{P4HTriangulationOctagonId} - Right contains exactly one
 <i>representative</i> of each point of \f$\mathcal{M}\f$;
 \f$\mathcal D\f$ is called the <i>original domain</i> of
 \f$\mathcal{M}\f$. 
 A point outside \f$\mathcal D\f$ is the image of a point in
-\f$\mathcal D\f$ under the action of a uniquely defined translation in
-the group \f$\mathcal{G}\f$. 
+\f$\mathcal D\f$, its representative, under the action of a uniquely 
+defined translation in the group \f$\mathcal{G}\f$. 
 
 \cgalFigureRef{P4HTDoubleTorusConstruction} illustrates how a genus-2
 surface can be obtained by identifying opposite sides of \f$\mathcal
@@ -99,33 +103,36 @@ D\f$ under the action of \f$\mathcal G\f$.
 
 \section P4HT2_representation Representation 
 
-When there is no risk
+In the following, and when there is no risk
 of confusion, the same notation will be used for a point on the
 surface \f$\mathcal M\f$ and its representative in \f$\mathcal
-D\f$. Similarly, \f$\mathcal{P}\f$ denotes both a set of points on the
+D\f$. Similarly, \f$\mathcal{P}\f$ will denote both a set of points on the
 surface and the set of their representatives in \f$\mathcal D\f$. 
+
+\subsection P4HT2_Data_structure Data Structure
 
 The Delaunay triangulation of \f$\mathcal{M}\f$ defined by a point set
 \f$\mathcal{P}\f$ is the projection by \f$\pi\f$ of the
 Delaunay triangulation in the plane \f$\mathbb H^2\f$ of the
 (infinite) set of points \f$\mathcal{G P}\f$ onto \f$\mathcal{M}\f$,
-provided that some <i>condition</i> (detailed below) holds. More
-details can be found in \cgalCite{cgal:btv-dtosl-16}. 
+provided that some <i>condition</i> (detailed in 
+Section \ref P4HT2_Embedding_condition "Simplicial Embedding Condition" below) 
+holds. More details can be found in \cgalCite{cgal:btv-dtosl-16}. 
 
 We require that all input points lie inside \f$\mathcal D\f$. As for
 orbits of points, all faces of the Delaunay triangulation of
 \f$\mathcal{G P}\f$ that are in the same orbit under the action of
 \f$\mathcal{G}\f$ project by \f$\pi\f$ onto the same face on the
-surface \f$\mathcal{M}\f$; the data structure stores a unique
+surface \f$\mathcal{M}\f$; we use a data structure that stores a unique
 <i>canonical</i> representative of each orbit, which has at least one
 vertex in \f$\mathcal D\f$. Some canonical faces have vertices both inside and
 outside \f$\mathcal D\f$. Such faces can be uniquely specified by
-three pairs of points in \f$\mathcal D\f$ and (reduced) translations
+three pairs of points in \f$\mathcal D\f$ and reduced translations
 of \f$\mathcal{G}\f$; points in the original domain are paired with
-the identity translation \f$\mathbb 1\f$. The underlying combinatorial
+the identity translation \f$\mathbb 1.\f$ The underlying combinatorial
 triangulation is a \ref PkgTDS2, enriched in each face by the
-three translations that are paired with the point in each vertex. See
-\cgalFigureRef{P4HTriangulationOrientationDS}. 
+three translations that are paired with the point in each vertex. 
+See&nbsp;\cgalFigureRef{P4HTriangulationOrientationDS}. 
 
 \cgalFigureAnchor{P4HTriangulationOrientationDS}
 <center>
@@ -149,7 +156,7 @@ translation \f$abcd\f$.  The canonical representative in
 \f$\mathbb H^2\f$ of a face on \f$\mathcal M\f$ is such that 
 <ul> 
   <li> either all vertices of the representative lie in \f$\mathcal D\f$, or
-  <li> the representative has at least one vertex in \f$\mathcal D\f$
+  <li> at least one of the vertices of the representative lies in \f$\mathcal D\f$
   and is as close as possible to \f$abcd\f$ in the ordering defined above.  
 </ul> 
 
@@ -161,10 +168,12 @@ translation \f$abcd\f$.  The canonical representative in
 Among the three faces in the orbit that have at least one vertex in
 \f$\mathcal D\f$, the canonical representative is the green one: it is
 closest, in the counterclockwise order, to the region labeled
-\f$abcd\f$.  The translations \f$\mathbb 1, a\f$, and
+\f$abcd\f$.  The translations \f$\mathbb 1, a,\f$ and
 \f$\overline{b}\f$, corresponding to the points \f$p, q\f$, and
 \f$r\f$ are stored in the face in the data structure. 
 \cgalFigureCaptionEnd
+
+\subsection P4HT2_Embedding_condition Simplicial Embedding Condition
 
 Let us now give details on the <i>condition</i> mentioned
 above. The projection by \f$\pi\f$ of the
@@ -175,25 +184,25 @@ loops (i.e., edges having two identical vertices) or double edges
 (i.e., two edges sharing the same two vertices), or, equivalently, if the
 projection is a simplicial complex: 
 <ul>
-  <li> it contains all incident \f$ j\f$-simplices (\f$ j<k\f$) of any \f$ k\f$-simplex, and</li>
-  <li> two \f$ k\f$-simplices either do not intersect or share a common \f$ j\f$-face, \f$ j<k\f$. </li>
+  <li> it contains all incident \f$j\f$-simplices \f$(j<k)\f$ of any \f$ k\f$-simplex, and</li>
+  <li> two \f$ k\f$-simplices either do not intersect or share a common \f$j\f$-face, \f$ j<k\f$. </li>
 </ul> 
 
 Some point sets do not define a triangulation of \f$\mathcal M\f$. For
 instance, a single point does not define a triangulation of
-\f$\mathcal M\f$, as all edges the induced subdivision would be loops. Another example is shown in
+\f$\mathcal M\f$, as all edges of the induced subdivision would be loops. Another example is shown in
 \cgalFigureRef{P4HNonSimplicialExample}. 
 
 \cgalFigureAnchor{P4HNonSimplicialExample}
 <center>
-  <img src="non-triangulation.svg" style="max-width:45%; width=45%; display: inline-block;"/>
+  <img src="non-triangulation.svg" style="max-width:33%; width=33%; display: inline-block;"/>
 </center>
 \cgalFigureCaptionBegin{P4HNonSimplicialExample}
   The three 
   points in the central octagon define a non-simplicial subdivision of
   the Bolza surface. The pink edge between the two blue 
   vertices corresponds to a loop on the surface. The two blue edges 
-  correspond to a double edge on the surface; the two green edge,
+  correspond to a double edge on the surface; the two green edges,
   too. 
 \cgalFigureCaptionEnd
 
@@ -204,7 +213,7 @@ projection by \f$\pi\f$ of the Delaunay triangulation of \f$\mathcal{G}
 \f$\mathcal M\f$ is a simplicial 
 complex for any set of input points \f$\mathcal{P}\f$
 \cgalCite{cgal:btv-dtosl-16}. 
-See \cgalFigureRef{P4HTriangulationDummyPoints}. 
+See&nbsp;\cgalFigureRef{P4HTriangulationDummyPoints}. 
 
 \cgalFigureAnchor{P4HTriangulationDummyPoints}
 <center>
@@ -231,7 +240,8 @@ implements Delaunay triangulations of the Bolza surface \f$\mathcal M\f$. The pr
 is periodic in the four directions defined by the hyperbolic translations \f$ a,b,c\f$, 
 and \f$d\f$.
 
-Delaunay triangulations have the <I>empty circle property</I>, that is, the circumscribing
+Similarly to their Euclidean counterparts, Delaunay triangulations of the Bolza surface are
+characterized by the <I>empty circle property</I>, that is, the circumscribing
 hyperbolic circle of each face does not contain any other vertex of the triangulation in its
 interior. Since hyperbolic circles coincide with Euclidean circles in the Poincaré disk model, 
 the implementation uses Euclidean predicates to ensure the Delaunay property. Degenerate 
@@ -245,7 +255,7 @@ simplicial complex.
 The class `Periodic_4_hyperbolic_Delaunay_triangulation_2` provides high-level geometric 
 functionality specific to Delaunay triangulations, such as point insertion and vertex removal, 
 the side-of-circle test, finding the conflicting region of a given point, and dual functions. 
-It inherits from a base class called `Periodic_4_hyperbolic_triangulation_2` that provides 
+It inherits from a base class, `Periodic_4_hyperbolic_triangulation_2`, which provides 
 functionality common to triangulations in general, such as point location \cgalCite{cgal:dpt-wt-02}, 
 and access functions, but supports neither point insertion nor vertex removal.
 
@@ -291,7 +301,7 @@ the face base and vertex base classes must be models of the concepts
 `Periodic_4HyperbolicTriangulationVertexBase_2`, respectively.
 
 The default value for the triangulation data structure parameter is
-`Triangulation_data_structure_2< Periodic_4_hyperbolic_triangulation_face_base_2<Traits>, Periodic_4_hyperbolic_triangulation_vertex_base_2<Traits> >`, 
+`Triangulation_data_structure_2< Periodic_4_hyperbolic_triangulation_vertex_base_2<Traits>, Periodic_4_hyperbolic_triangulation_face_base_2<Traits> >`, 
 where `Traits` is a model of `Periodic_4HyperbolicDelaunayTriangulationTraits_2`.
 
 
@@ -299,13 +309,12 @@ where `Traits` is a model of `Periodic_4HyperbolicDelaunayTriangulationTraits_2`
 \section P4HT2_examples Example
 
 Most functionalities of periodic hyperbolic triangulations are similar
-to those of Euclidean 2D triangulations. 
-We refer the reader to selected examples of the \ref Chapter_2D_Triangulations "2D Triangulation" package:
+to those of Euclidean 2D triangulations. We refer the reader to the following 
+two examples of the \ref Chapter_2D_Triangulations "2D Triangulation" package:
 <ul>
   <li> \ref Subsection_2D_Triangulations_Voronoi "Voronoi Diagram"
   <li> \ref Triangulation_2AddingColors
 </ul>
-
 
 The example below shows the initialization of a periodic hyperbolic 2D Delaunay triangulation,  the
 insertion of random points uniformly distributed in the unit disk for the Euclidean metric, and the
@@ -339,7 +348,7 @@ have been executed on two machines:
 <table>
 <caption>Table 1: Comparison of insertion times of 1 million random points</caption>
 <tr><th>  %Triangulation type                   <th>  Machine 1     <th>  Machine 2
-<tr><td>  Periodic hyperbolic (`CORE::Expr`)    <td>  55 sec.       <td>  40 sec.
+<tr><td>  Periodic hyperbolic (`CORE::Expr`)  <div style="width:100px; max-width:100px; display:inline-block;"></div>  <td>  55 sec.       <td>  40 sec.
 <tr><td>  Non-periodic Euclidean (`CORE::Expr`) <td>  24 sec.       <td>  20 sec.
 <tr><td>  Non-periodic Euclidean (`double`)     <td>  1 sec.        <td>  1 sec.
 </table>
@@ -370,7 +379,7 @@ the number of random points inserted. Results are shown in \cgalFigureRef{P4HDum
 \section P4HT2_Design Design and Implementation History
 
 This package implements the algorithm for the computation of Delaunay triangulation of the Bolza
-surface proposed by Mikhail Bogdanov,  Monique Teillaud and Gert Vegter 
+surface proposed by Mikhail Bogdanov,  Monique Teillaud, and Gert Vegter 
 \cgalCite{cgal:btv-dtosl-16}. The implementation itself is described by Iordan Iordanov and 
 Monique Teillaud \cgalCite{cgal:it-idtbs-17}.
 
