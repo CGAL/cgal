@@ -110,6 +110,8 @@ surface \f$\mathcal M\f$ and its representative in \f$\mathcal
 D\f$. Similarly, \f$\mathcal{P}\f$ will denote both a set of points on the
 surface and the set of their representatives in \f$\mathcal D\f$. 
 
+We require that all input points lie inside \f$\mathcal D\f$.
+
 \subsection P4HT2_Data_structure Data Structure
 
 The Delaunay triangulation of \f$\mathcal{M}\f$ defined by a point set
@@ -120,20 +122,20 @@ provided that some <i>condition</i> (detailed in
 Section \ref P4HT2_Embedding_condition "Simplicial Embedding Condition" below) 
 holds. More details can be found in \cgalCite{cgal:btv-dtosl-16}. 
 
-We require that all input points lie inside \f$\mathcal D\f$. As for
+As for
 orbits of points, all faces of the Delaunay triangulation of
 \f$\mathcal{G P}\f$ that are in the same orbit under the action of
 \f$\mathcal{G}\f$ project by \f$\pi\f$ onto the same face on the
-surface \f$\mathcal{M}\f$; we use a data structure that stores a unique
-<i>canonical</i> representative of each orbit, which has at least one
+surface \f$\mathcal{M}\f$. We can define a unique 
+<i>canonical</i> representative for each orbit, which has at least one
 vertex in \f$\mathcal D\f$. Some canonical faces have vertices both inside and
-outside \f$\mathcal D\f$. Such faces can be uniquely specified by
+outside \f$\mathcal D\f$; such faces can be uniquely specified by
 three pairs of points in \f$\mathcal D\f$ and reduced translations
-of \f$\mathcal{G}\f$; points in the original domain are paired with
-the identity translation \f$\mathbb 1.\f$ The underlying combinatorial
-triangulation is a \ref PkgTDS2, enriched in each face by the
+of \f$\mathcal{G}\f$ (points in the original domain are paired with
+the identity translation \f$\mathbb 1)\f$.
+The underlying combinatorial triangulation is a \ref PkgTDS2 enriched in each face by the
 three translations that are paired with the point in each 
-vertex (see&nbsp;\cgalFigureRef{P4HTriangulationOrientationDS}). 
+vertex of the canonical representative (see&nbsp;\cgalFigureRef{P4HTriangulationOrientationDS}). 
 
 \cgalFigureAnchor{P4HTriangulationOrientationDS}
 <center>
@@ -185,8 +187,8 @@ loops (i.e., edges having two identical vertices) or double edges
 (i.e., two edges sharing the same two vertices), or, equivalently, if the
 projection is a simplicial complex: 
 <ul>
-  <li> it contains all incident \f$j\f$-simplices \f$(j<k)\f$ of any \f$ k\f$-simplex, and</li>
-  <li> two \f$ k\f$-simplices either do not intersect or share a common \f$j\f$-face, \f$ j<k\f$. </li>
+  <li> any face of a simplex is a simplex, and</li>
+  <li> two simplices either do not intersect or share one common face. </li>
 </ul> 
 
 Some point sets do not define a triangulation of \f$\mathcal M\f$. For
@@ -240,14 +242,6 @@ implements Delaunay triangulations of the Bolza surface \f$\mathcal M\f$. The pr
 "Periodic_4" emphasizes that the triangulation in the universal covering \f$\mathbb H^2\f$ 
 is periodic in the four directions defined by the hyperbolic translations \f$ a,b,c\f$, 
 and \f$d\f$.
-
-Similarly to their Euclidean counterparts, Delaunay triangulations of the Bolza surface are
-characterized by the <I>empty circle property</I>, that is, the circumscribing
-hyperbolic circle of each face does not contain any other vertex of the triangulation in its
-interior. Since hyperbolic circles coincide with Euclidean circles in the Poincaré disk model, 
-the implementation uses Euclidean predicates to ensure the Delaunay property. Degenerate 
-point sets (i.e., more than three co-circular points) are handled with symbolic perturbations
-\cgalCite{cgal:dt-pvr3d-03}.
 
 The implementation is fully dynamic, supporting both point insertion and vertex removal.
 However, a vertex can be removed only if the subdivision remains a
