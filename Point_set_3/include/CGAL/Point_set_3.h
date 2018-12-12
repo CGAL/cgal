@@ -562,7 +562,7 @@ public:
     \note The elements are just marked as removed and are not erased
     from the memory. `collect_garbage()` should be called if the
     memory needs to be disallocated. Elements can be recovered with
-    `cancel_removal()`.
+    `cancel_removals()`.
 
     \note All iterators, pointers and references related to the
     container are invalidated.
@@ -601,7 +601,7 @@ public:
     \note The element is just marked as removed and is not erased from
     the memory. `collect_garbage()` should be called if the memory
     needs to be freed. The element can be recovered with
-    `cancel_removal()`.
+    `cancel_removals()`.
 
     \note The `end()` iterator is invalidated, `it` dereferences to a
     different element.
@@ -618,7 +618,7 @@ public:
     \note The element is just marked as removed and is not erased from
     the memory. `collect_garbage()` should be called if the memory
     needs to be freed. The element can be recovered with
-    `cancel_removal()`.
+    `cancel_removals()`.
 
     \note The `end()` iterator is invalidated, `it` dereferences to a
     different element.
@@ -725,7 +725,7 @@ public:
     \note If `collect_garbage()` was called after removal, the points
     are irremediably lost and nothing will be restored.
   */
-  void cancel_removal()
+  void cancel_removals()
   {
     m_nb_removed = 0;
     for (std::size_t i = 0; i < this->m_base.size(); ++ i)
