@@ -138,7 +138,7 @@ public:
 
   void reset_indices()
   {
-    this->cancel_removal();
+    this->cancel_removals();
   }
   
   bool add_radius()
