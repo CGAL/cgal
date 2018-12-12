@@ -54,11 +54,11 @@ public:
   {
     for (auto it=apath.m_path.begin(), itend=apath.m_path.end(); it!=itend; ++it)
     {
-      push_back(it->first, false);
-      if (it->second>0)
-      { extend_straight_positive(it->second-1, false); }
-      else if (it->second<0)
-      { extend_straight_negative(-(it->second)-1, false); }
+      push_back(it->begin, false);
+      if (it->length>0)
+      { extend_straight_positive(it->length-1, false); }
+      else if (it->length<0)
+      { extend_straight_negative(-(it->length)-1, false); }
     }
   }
 
