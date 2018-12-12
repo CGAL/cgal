@@ -30,6 +30,7 @@
 //  * fix computation of node_dist[label] so that results are always <= 1.0
 //  * change serialization functions to avoid a bug with boost and some
 //    compilers (that leads to dereferencing a null pointer)
+//  * add a method to get feature usage
 
 #ifndef CGAL_INTERNAL_LIBLEARNING_RANDOMFORESTS_NODE_H
 #define CGAL_INTERNAL_LIBLEARNING_RANDOMFORESTS_NODE_H

@@ -27,6 +27,16 @@
 // Modifications from original library:
 //  * changed inclusion protection tag
 //  * moved to namespace CGAL::internal::
+//  * init_feature_class_data() does not resize anymore (it's done
+//    later directly in the splitter). WARNING: all splitters other
+//    than the default won't be working correctly (but experimentally
+//    they are less good and we don't use them - we keep them just in
+//    case)
+//  * sample reduction is now 36.8% (to account for the correction of
+//    the randomization of the input which used to implicitly ignore
+//    this proportion of items)
+//  * map_points() in axis aligned splitter now only uses a subset of
+//    the points for evaluation (for timing optimization=
 
 #ifndef CGAL_INTERNAL_LIBLEARNING_RANDOMFOREST_COMMON_LIBRARIES_H
 #define CGAL_INTERNAL_LIBLEARNING_RANDOMFOREST_COMMON_LIBRARIES_H

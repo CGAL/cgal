@@ -27,6 +27,7 @@
 // Modifications from original library:
 //  * changed inclusion protection tag
 //  * moved to namespace CGAL::internal::
+//  * add a method to get feature usage
 
 #ifndef CGAL_INTERNAL_LIBLEARNING_RANDOMFOREST_TREE_H
 #define CGAL_INTERNAL_LIBLEARNING_RANDOMFOREST_TREE_H

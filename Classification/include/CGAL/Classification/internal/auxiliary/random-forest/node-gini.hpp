@@ -28,6 +28,11 @@
 //  * changed inclusion protection tag
 //  * moved to namespace CGAL::internal::
 
+//  * improve sorting algorithm by only comparing the first of pair
+//    (second is useless)
+
+
+
 #ifndef CGAL_INTERNAL_LIBLEARNING_RANDOMFOREST_NODE_GINI_H
 #define CGAL_INTERNAL_LIBLEARNING_RANDOMFOREST_NODE_GINI_H
 #include "node.hpp"
@@ -98,7 +103,6 @@ public:
                 continue;
             // weighted average
             double gini = n_l - gini_square_term(classes_l) * 1.0 / n_l + n_r - gini_square_term(classes_r) * 1.0 / n_r;
-
             if (gini < best_loss) {
                 best_loss = gini;
                 double fraction = fraction_dist(gen);
@@ -113,7 +117,6 @@ public:
     {
         ar & boost::serialization::make_nvp("base",  boost::serialization::base_object< Node< NodeGini<Splitter>, ForestParams, Splitter > >(*this));
     }
-  
 };
 
 }

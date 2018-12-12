@@ -29,6 +29,12 @@
 //  * moved to namespace CGAL::internal::
 //  * add parameter "reset_trees" to train() to be able to construct
 //    forest with several iterations
+//  * training algorithm has been parallelized with Intel TBB
+//  * remove the unused feature "register_obb"
+//  * add option to not count labels (if it's know before)
+//  * fix the randomization of input (which was implicitly losing
+//    samples)
+//  * add method to get feature usage
 
 #ifndef CGAL_INTERNAL_LIBLEARNING_RANDOMFOREST_FOREST_H
 #define CGAL_INTERNAL_LIBLEARNING_RANDOMFOREST_FOREST_H
