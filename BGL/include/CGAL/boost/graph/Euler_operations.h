@@ -585,6 +585,12 @@ add_face(const VertexRange& vr, Graph& g)
 
   std::vector<vertex_descriptor> vertices(vr.begin(), vr.end()); // quick and dirty copy
   unsigned int n = (unsigned int)vertices.size();
+  //check that every vertex is unique
+  std::sort(vertices.begin(), vertices.end());
+  if(std::unique(vertices.begin(), vertices.end()) != vertices.end())
+    return boost::graph_traits<Graph>::null_face();
+  vertices.clear();
+  vertices=std::vector<vertex_descriptor>(vr.begin(), vr.end());
   // don't allow degenerated faces
   CGAL_assertion(n > 2);
 
