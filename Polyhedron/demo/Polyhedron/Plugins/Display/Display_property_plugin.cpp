@@ -779,8 +779,8 @@ private Q_SLOTS:
   void displayHeatIntensity(Scene_surface_mesh_item* item, bool iDT = false)
   {    
     SMesh& mesh = *item->face_graph();
-    Heat_method * hm;
-    Heat_method_idt * hm_idt;
+    Heat_method * hm = NULL;
+    Heat_method_idt * hm_idt = NULL;
     SMesh::Property_map<vertex_descriptor, double> heat_intensity =
       mesh.add_property_map<vertex_descriptor, double>("v:heat_intensity", 0).first;
     if(! iDT){
