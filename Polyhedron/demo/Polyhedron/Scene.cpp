@@ -1220,8 +1220,9 @@ void Scene::moveRowUp()
       }
     }
   }
-  if(!to_select.isEmpty())
+  if(!to_select.isEmpty()){
     selectionChanged(to_select);
+  }
 }
 void Scene::moveRowDown()
 {
