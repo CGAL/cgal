@@ -63,6 +63,7 @@ read_vtk_image_data(vtkImageData* vtk_image)
   _image* image = ::_initImage();
   const int* dims = vtk_image->GetDimensions();
   const double* spacing = vtk_image->GetSpacing();
+  const double* offset = vtk_image->GetOrigin();
   image->vectMode = VM_SCALAR;
   image->xdim = dims[0];
   image->ydim = dims[1];
@@ -71,6 +72,9 @@ read_vtk_image_data(vtkImageData* vtk_image)
   image->vx = spacing[0];
   image->vy = spacing[1];
   image->vz = spacing[2];
+  image->tx = offset[0];
+  image->ty = offset[1];
+  image->tz = offset[2];
   image->endianness = ::_getEndianness();
   int vtk_type = vtk_image->GetScalarType();
   if(vtk_type == VTK_SIGNED_CHAR) vtk_type = VTK_CHAR;
