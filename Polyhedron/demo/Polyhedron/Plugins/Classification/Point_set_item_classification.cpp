@@ -707,7 +707,10 @@ void Point_set_item_classification::train(int classifier, const QMultipleInputDi
   reset_indices();
 
   m_label_probabilities.clear();
-
+  m_label_probabilities.resize (m_labels.size());
+  for (std::size_t i = 0; i < m_label_probabilities.size(); ++ i)
+    m_label_probabilities[i].resize (m_points->point_set()->size(), -1);
+  
   std::vector<int> training (m_points->point_set()->size(), -1);
   std::vector<int> indices (m_points->point_set()->size(), -1);
 

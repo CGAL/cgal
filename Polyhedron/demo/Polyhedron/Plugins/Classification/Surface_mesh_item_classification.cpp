@@ -252,6 +252,9 @@ void Surface_mesh_item_classification::train (int classifier, const QMultipleInp
   }
 
   m_label_probabilities.clear();
+  m_label_probabilities.resize (m_labels.size());
+  for (std::size_t i = 0; i < m_label_probabilities.size(); ++ i)
+    m_label_probabilities[i].resize (num_faces(*(m_mesh->polyhedron())));
 
   std::vector<std::size_t> training (num_faces(*(m_mesh->polyhedron())), std::size_t(-1));
   std::vector<std::size_t> indices (num_faces(*(m_mesh->polyhedron())), std::size_t(-1));

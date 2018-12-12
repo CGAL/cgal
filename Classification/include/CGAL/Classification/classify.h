@@ -370,8 +370,6 @@ namespace internal {
                  const Classifier& classifier,
                  LabelIndexRange& output)
   {
-    output.resize(input.size());
-    
     internal::Classify_functor<Classifier, LabelIndexRange>
       f (labels, classifier, output);
 
@@ -404,11 +402,6 @@ namespace internal {
                  LabelIndexRange& output,
                  ProbabilitiesRanges& probabilities)
   {
-    output.resize (input.size());
-    probabilities.resize (labels.size());
-    for (std::size_t i = 0; i < probabilities.size(); ++ i)
-      probabilities[i].resize (input.size());
-    
     internal::Classify_detailed_output_functor<Classifier, LabelIndexRange, ProbabilitiesRanges>
       f (labels, classifier, output, probabilities);
 
@@ -473,8 +466,6 @@ namespace internal {
                                       const NeighborQuery& neighbor_query,
                                       LabelIndexRange& output)
   {
-    output.resize(input.size());
-    
     std::vector<std::vector<float> > values
       (labels.size(), std::vector<float> (input.size(), -1.));
     internal::Classify_functor_local_smoothing_preprocessing<Classifier>

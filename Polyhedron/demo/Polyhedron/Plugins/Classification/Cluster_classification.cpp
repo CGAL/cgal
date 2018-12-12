@@ -796,6 +796,9 @@ void Cluster_classification::train(int classifier, const QMultipleInputDialog& d
   reset_indices();
 
   m_label_probabilities.clear();
+  m_label_probabilities.resize (m_labels.size());
+  for (std::size_t i = 0; i < m_label_probabilities.size(); ++ i)
+    m_label_probabilities[i].resize (m_clusters.size(), -1);
 
   std::vector<std::size_t> nb_label (m_labels.size(), 0);
   std::size_t nb_total = 0;

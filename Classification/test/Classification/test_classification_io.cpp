@@ -89,9 +89,9 @@ int main (int, char**)
 
   Classifier classifier3 (classifier, features);
 
-  std::vector<std::size_t> label_indices;
-  std::vector<std::size_t> label_indices_2;
-  std::vector<std::size_t> label_indices_3;
+  std::vector<std::size_t> label_indices (points.size());
+  std::vector<std::size_t> label_indices_2 (points.size());
+  std::vector<std::size_t> label_indices_3 (points.size());
     
   Classification::classify<CGAL::Sequential_tag> (points, labels, classifier, label_indices);
   Classification::classify<CGAL::Sequential_tag> (points, labels, classifier2, label_indices_2);
