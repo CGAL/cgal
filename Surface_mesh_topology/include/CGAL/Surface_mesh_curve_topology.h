@@ -424,6 +424,15 @@ namespace CGAL {
 
         std::cout<<"Length of reduced paths: "<<path1.length()<<" and "
                  <<path2.length()<<std::endl;
+
+        /* std::cout<<"path1="<<Path_on_surface<CMap_for_surface_mesh_curve_topology>(path1)<<std::endl
+                 <<"path2="<<Path_on_surface<CMap_for_surface_mesh_curve_topology>(path2)<<std::endl;
+
+        Path_on_surface<CMap_for_surface_mesh_curve_topology>(path1).display_pos_and_neg_turns(); std::cout<<std::endl;
+        Path_on_surface<CMap_for_surface_mesh_curve_topology>(path2).display_pos_and_neg_turns(); std::cout<<std::endl;
+
+        path1.display_pos_and_neg_turns(); std::cout<<std::endl;
+        path2.display_pos_and_neg_turns(); std::cout<<std::endl; */
       }
 
       if (display_time)
