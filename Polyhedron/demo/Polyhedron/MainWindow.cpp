@@ -1237,11 +1237,13 @@ void MainWindow::selectSceneItem(int i)
   }
   else {
     QItemSelection s =
-      proxyModel->mapSelectionFromSource(scene->createSelection(i));
-
+        proxyModel->mapSelectionFromSource(scene->createSelection(i));
+    QModelIndex mi = proxyModel->mapFromSource(scene->getModelIndexFromId(i).first());
+    sceneView->setCurrentIndex(mi);
     sceneView->selectionModel()->select(s,
                                         QItemSelectionModel::ClearAndSelect);
     sceneView->scrollTo(s.indexes().first());
+    sceneView->setCurrentIndex(sceneView->selectionModel()->selectedIndexes().first());
   }
 }
 
@@ -1256,6 +1258,8 @@ void MainWindow::selectSceneItems(QList<int> is)
     QItemSelection s =
       proxyModel->mapSelectionFromSource(scene->createSelection(is));
 
+    QModelIndex i = proxyModel->mapFromSource(scene->getModelIndexFromId(is.first()).first());
+    sceneView->setCurrentIndex(i);
     sceneView->selectionModel()->select(s,
                                         QItemSelectionModel::ClearAndSelect);
     sceneView->scrollTo(s.indexes().first());
