@@ -48,7 +48,7 @@ unit disk, the combinatorial structure of the hyperbolic Delaunay
 triangulation of a set \f$\mathcal P\f$ of points in \f$\mathbb H^2\f$
 is a subset of the Euclidean Delaunay triangulation of \f$\mathcal
 P\f$ (see
-\cgalFigureRef{Hyperbolic_triangulation_2Euclidean_vs_hyperbolic}-Left). More
+\cgalFigureRef{Hyperbolic_triangulation_2Euclidean_vs_hyperbolic}&nbsp;-&nbsp;Left). More
 precisely, the hyperbolic Delaunay triangulation of \f$\mathcal P\f$ only
 contains the simplices of the Euclidean Delaunay triangulation that
 are <i>hyperbolic</i>:
@@ -64,7 +64,7 @@ are <i>hyperbolic</i>:
 In the Euclidean Delaunay triangulation, there is a bijection between
 non-hyperbolic faces and non-hyperbolic
 edges&nbsp;\cgalCite{cgal:bdt-hdcvd-14}, illustrated by
-\cgalFigureRef{Hyperbolic_triangulation_2Euclidean_vs_hyperbolic}-Right. 
+\cgalFigureRef{Hyperbolic_triangulation_2Euclidean_vs_hyperbolic}&nbsp;-&nbsp;Right. 
 
 \cgalFigureAnchor{Hyperbolic_triangulation_2Euclidean_vs_hyperbolic}
 <center>
@@ -87,7 +87,7 @@ The hyperbolic Delaunay triangulation is a simplicial complex, i.e., a set of si
 	<li>any face of a simplex is a simplex,
 	<li>two simplices either are disjoint or share a common face.
 </ul>
-Moreover, it is connected. 
+Moreover, it is connected&nbsp;\cgalCite{cgal:bdt-hdcvd-14}. 
 
 \section HT2_Software_design Software Design
 From what was said above, it is natural that the class
@@ -164,7 +164,7 @@ executed on two machines:
 <tr><td>  							<td> Sequential insertion 	<td> %Iterator insertion 	<td> Sequential insertion 	<td> %Iterator insertion
 <tr><td>  Hyperbolic (%CORE traits) <td> 955 sec. 				<td> 23 sec.				<td> 884 sec.				<td> 20 sec.
 <tr><td>  Hyperbolic (CK traits)    <td> 330 sec.      			<td> 1 sec.					<td> 289 sec.				<td> 1 sec.
-<tr><td>  Euclidean  (EPICK)        <td> 131 sec.      			<td> < 1 sec.				<td> 114 sec.				<td> < 1 sec.
+<tr><td>  Euclidean  (EPICK)        <td> 131 sec.      			<td> 0.71 sec.				<td> 114 sec.				<td> 0.68 sec.
 </table>
 </center>
 
@@ -179,6 +179,8 @@ Mikhail Bogdanov wrote most of the code. Iordan Iordanov added the
 traits class `CGAL::Hyperbolic_Delaunay_triangulation_traits_2` and
 worked on the documentations. Both were PhD candidates advised by
 Monique Teillaud. 
+
+Authors acknowledge partial support from <a href="https://members.loria.fr/Monique.Teillaud/collab/SoS/">ANR SoS</a>.
 
 */ 
 } /* namespace CGAL */
