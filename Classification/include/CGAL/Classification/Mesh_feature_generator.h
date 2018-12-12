@@ -226,8 +226,8 @@ private:
     }
 
     float grid_resolution() const { return voxel_size; }
-    float radius_neighbors() const { return voxel_size * 5; }
-    float radius_dtm() const { return voxel_size * 100; }
+    float radius_neighbors() const { return voxel_size * 3; }
+    float radius_dtm() const { return voxel_size * 10; }
     
   };
 
