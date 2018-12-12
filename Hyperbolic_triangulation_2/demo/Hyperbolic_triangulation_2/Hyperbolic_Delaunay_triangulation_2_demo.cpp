@@ -124,7 +124,7 @@ MainWindow::MainWindow()
 
   QPen pen;  // creates a default pen
 
-  pen.setWidthF(0.01);
+  pen.setWidthF(0.025);
   pen.setBrush(Qt::black);
   disk->setPen(pen);
 
@@ -138,14 +138,14 @@ MainWindow::MainWindow()
 
   QPen vpen;
   vpen.setStyle(::Qt::SolidLine);
-  vpen.setWidth(7);
+  vpen.setWidth(15);
   vpen.setBrush(::Qt::red);
   vpen.setCapStyle(::Qt::RoundCap);
   vpen.setJoinStyle(::Qt::RoundJoin);
   dgi->setVerticesPen(vpen);
   
   QPen epen;
-  epen.setWidthF(0.005);
+  epen.setWidthF(0.01);
   epen.setBrush(::Qt::black);
   dgi->setEdgesPen(epen);
 
@@ -157,7 +157,7 @@ MainWindow::MainWindow()
   QObject::connect(this, SIGNAL(changed()),
 		   vgi, SLOT(modelChanged()));
 
-  vgi->setEdgesPen(QPen(Qt::blue, 0.001, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  vgi->setEdgesPen(QPen(Qt::blue, 0.01, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(vgi);
   vgi->hide();
 
