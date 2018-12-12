@@ -20,8 +20,9 @@ point sets in the Poincar&eacute; disk model of the hyperbolic plane.
 
 \section HT2_Poincare_model The Poincar&eacute; Disk Model of the Hyperbolic Plane
 The Poincar&eacute; disk model represents the hyperbolic plane
-\f$\mathbb H^2\f$ as the open unit disk centered at the origin in the
-Euclidean plane. The unit circle represents the set \f$\mathcal
+\f$\mathbb H^2\f$ in the unit disk centered at the origin in the Euclidean plane: points of
+\f$\mathbb H^2\f$ lie in the interior of the disk, while its boundary,
+the unit circle, represents the set \f$\mathcal
 H_\infty\f$ of points at infinity.
 
 In this model, a hyperbolic line is either an arc of circle
@@ -46,24 +47,24 @@ As hyperbolic circles coincide with Euclidean circles contained in the
 unit disk, the combinatorial structure of the hyperbolic Delaunay
 triangulation of a set \f$\mathcal P\f$ of points in \f$\mathbb H^2\f$
 is a subset of the Euclidean Delaunay triangulation of \f$\mathcal
-P\f$. More precisely, the hyperbolic Delaunay triangulation of \f$\mathcal
-P\f$ is a connected simplicial complex that only
+P\f$ (see
+\cgalFigureRef{Hyperbolic_triangulation_2Euclidean_vs_hyperbolic}-Left). More
+precisely, the hyperbolic Delaunay triangulation of \f$\mathcal P\f$ only
 contains the simplices of the Euclidean Delaunay triangulation that
 are <i>hyperbolic</i>:
 <ul>
 	<li> A Euclidean Delaunay face is hyperbolic if its
 	circumscribing circle is contained in \f$\mathbb H^2\f$. 
-	<li> An Euclidean Delaunay edge is hyperbolic if one of the
+	<li> A Euclidean Delaunay edge is hyperbolic if one of the
 	empty disks (i.e., not containing any point of \f$\mathcal
 	P\f$) passing through its endpoints is contained in \f$\mathbb
 	H^2\f$. 
 </ul>
 
 In the Euclidean Delaunay triangulation, there is a bijection between
-non-hyperbolic faces and non-hyperbolic edges&nbsp;\cgalCite{cgal:bdt-hdcvd-14}. 
-For an example of a hyperbolic Delaunay triangulation and the underlying Euclidean
-Delaunay triangulation, as well as for an example of a non-hyperbolic Delaunay
-edge, see&nbsp;\cgalFigureRef{Hyperbolic_triangulation_2Euclidean_vs_hyperbolic}.
+non-hyperbolic faces and non-hyperbolic
+edges&nbsp;\cgalCite{cgal:bdt-hdcvd-14}, illustrated by
+\cgalFigureRef{Hyperbolic_triangulation_2Euclidean_vs_hyperbolic}-Right. 
 
 \cgalFigureAnchor{Hyperbolic_triangulation_2Euclidean_vs_hyperbolic}
 <center>
@@ -81,6 +82,12 @@ as no empty circle through its endpoints is contained in
 \f$\mathbb H^2\f$. Its other two edges are hyperbolic. 
 \cgalFigureCaptionEnd
 
+The hyperbolic Delaunay triangulation is a simplicial complex, i.e., a set of simplices such that
+<ul>
+	<li>any face of a simplex is a simplex,
+	<li>two simplices either are disjoint or share a common face.
+</ul>
+Moreover, it is connected. 
 
 \section HT2_Software_design Software Design
 From what was said above, it is natural that the class
@@ -166,7 +173,12 @@ executed on two machines:
 
 This package implements the algorithms for computing Delaunay complexes
 in the hyperbolic plane, described by Mikhail Bogdanov, Olivier
-Devillers, and Monique Teillaud \cgalCite{cgal:bdt-hdcvd-14}. 
+Devillers, and Monique Teillaud \cgalCite{cgal:bdt-hdcvd-14}.
+
+Mikhail Bogdanov wrote most of the code. Iordan Iordanov added the
+traits class `CGAL::Hyperbolic_Delaunay_triangulation_traits_2` and
+worked on the documentations. Both were PhD candidates advised by
+Monique Teillaud. 
 
 */ 
 } /* namespace CGAL */
