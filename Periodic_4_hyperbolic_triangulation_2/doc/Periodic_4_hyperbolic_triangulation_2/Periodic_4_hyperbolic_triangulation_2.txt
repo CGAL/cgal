@@ -16,9 +16,10 @@ namespace CGAL {
 </center>
 
 
+
 This package enables the computation of Delaunay triangulations of the Bolza 
-surface. The Bolza surface is a hyperbolic, closed, compact, and orientable 
-surface, which is the most symmetric surface of genus 2.
+surface, which is the most symmetric surface of genus 2. The Bolza surface is 
+a hyperbolic closed compact orientable surface.
 
 A triangulation of the Bolza surface can be seen as a periodic
 triangulation of the hyperbolic plane. 
@@ -38,9 +39,9 @@ Note that \f$\mathcal D_O\f$ is unique up to rotation and cannot
 be scaled since this operation would change its angles. Consider the 
 four hyperbolic translations \f$ a,b,c,d\f$ with their respective inverses \f$\overline{a}, 
 \overline{b}, \overline{c}, \overline{d}\f$ that identify the opposite sides of 
-\f$ \mathcal D_O \f$. The axes of these translations are diameters of the Poincaré disk. 
-See&nbsp;\cgalFigureRef{P4HTriangulationOctagonId} - Left. The four translations 
-\f$a, b, c, d\f$ generate a (non-commutative) discrete group of orientation-preserving isometries, with 
+\f$ \mathcal D_O \f$. The axes of these translations, shown in \cgalFigureRef{P4HTriangulationOctagonId} - Left, 
+are diameters of the Poincaré disk. The four translations \f$a, b, c, d\f$ generate a 
+(non-commutative) discrete group of orientation-preserving isometries, with 
 finite presentation
 \f[ \mathcal{G} = \left< a,b,c,d \; \bigg| \; 
     abcd\overline{a}\overline{b}\overline{c}\overline{d} \right>. \f]
@@ -50,8 +51,8 @@ reduced to a unique minimal representative.
 The group \f$\mathcal G\f$ is acting on \f$\mathbb H^2\f$: two points
 \f$p\f$ and \f$q\f$ in \f$\mathbb H^2\f$ are in the same orbit under
 the action of \f$\mathcal G\f$ if there exists an element
-\f$g \in \mathcal G\f$ such that \f$g(p) = q\f$. 
-See&nbsp;\cgalFigureRef{P4HTriangulationOctagonId} - Center.  
+\f$g \in \mathcal G\f$ such that \f$g(p) = q\f$, as shown in 
+\cgalFigureRef{P4HTriangulationOctagonId} - Center.  
 The Bolza surface
 \f$\mathcal{M}\f$ is defined as the quotient of \f$\mathbb H^2\f$
 under the action of \f$\mathcal G\f$, named the fundamental group of
@@ -131,8 +132,8 @@ three pairs of points in \f$\mathcal D\f$ and reduced translations
 of \f$\mathcal{G}\f$; points in the original domain are paired with
 the identity translation \f$\mathbb 1.\f$ The underlying combinatorial
 triangulation is a \ref PkgTDS2, enriched in each face by the
-three translations that are paired with the point in each vertex. 
-See&nbsp;\cgalFigureRef{P4HTriangulationOrientationDS}. 
+three translations that are paired with the point in each 
+vertex (see&nbsp;\cgalFigureRef{P4HTriangulationOrientationDS}). 
 
 \cgalFigureAnchor{P4HTriangulationOrientationDS}
 <center>
@@ -207,13 +208,13 @@ instance, a single point does not define a triangulation of
 \cgalFigureCaptionEnd
 
 We initialize a triangulation of \f$\mathcal M\f$ with a predetermined set \f$\mathcal Q\f$ of 
-14 points, called <i>dummy points</i>, which ensures that the
+14 points, called <i>dummy points</i> (see \cgalFigureRef{P4HTriangulationDummyPoints}), 
+which ensures that the
 projection by \f$\pi\f$ of the Delaunay triangulation of \f$\mathcal{G}
 (\mathcal{P}\cup\mathcal{Q})\f$ onto 
 \f$\mathcal M\f$ is a simplicial 
 complex for any set of input points \f$\mathcal{P}\f$
-\cgalCite{cgal:btv-dtosl-16}. 
-See&nbsp;\cgalFigureRef{P4HTriangulationDummyPoints}. 
+\cgalCite{cgal:btv-dtosl-16}.  
 
 \cgalFigureAnchor{P4HTriangulationDummyPoints}
 <center>
@@ -266,10 +267,10 @@ structures of the triangulation:
 - a <B>geometric traits</B> class, which provides all objects,
 predicates, and constructions that are 
 necessary for the computation of Delaunay triangulations of the Bolza
-surface. See Section \ref P4HT2_traits. 
+surface (see Section \ref P4HT2_traits). 
 
 - a <B>triangulation data structure</B> class, which encodes the combinatorial structure of 
-the triangulation. See Section \ref P4HT2_datastructure.
+the triangulation (see Section \ref P4HT2_datastructure).
 
 \subsection P4HT2_traits The Geometric Traits Parameter 
 
