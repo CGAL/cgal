@@ -363,13 +363,13 @@ public:
   bool is_valid_iterator(const List_iterator& ittotest)
   {
     if (ittotest==m_path.end()) { return false; }
-    return true;
+    // return true;
     // Assert too long; uncomment in case of bug.
-    /* for (auto it=m_path.begin(); it!=m_path.end(); ++it)
+    for (auto it=m_path.begin(); it!=m_path.end(); ++it)
     {
       if (it==ittotest) { return true; }
     }
-    return false; */
+    return false;
   }
 
   Dart_const_handle front()
@@ -838,7 +838,7 @@ public:
     set_end_of_flat(it, end_of_flat(it2));
     m_path.erase(it2);
 
-    // CGAL_assertion(is_flat_valid(it));
+    CGAL_assertion(is_flat_valid(it));
     return true;
   }
 
@@ -1248,25 +1248,37 @@ public:
 
     if (m_path.size()==1)
     {
-      if (next_negative_turn(it)==2)
+      if (next_negative_turn(it1)==2)
       { // Special case of a global shift
-        set_flat_length(it, -flat_length(it));
-        set_begin_of_flat(it, m_map.template beta<2,1,1>(begin_of_flat(it)));
-        set_end_of_flat(it, m_map.template beta<2,1,1>(end_of_flat(it)));
+        set_flat_length(it1, -flat_length(it1));
+        set_begin_of_flat(it1, m_map.template beta<2,1,1>(begin_of_flat(it1)));
+        set_end_of_flat(it1, m_map.template beta<2,1,1>(end_of_flat(it1)));
+        CGAL_assertion(is_valid());
         return;
       }
       else // Here negative turn is 1
       {
         if (flat_length(it1)>0) // Case where the first flat is positive
         { // We split the flat in two parts
-          Dart_const_handle dh=end_of_flat(it1); // last dart of the first flat
+          CGAL_assertion(flat_length(it1)>=2);
+          Dart_const_handle dh1=begin_of_flat(it1);
+          Dart_const_handle dh2=end_of_flat(it1);
+          reduce_flat_from_beginning(it1);
           reduce_flat_from_end(it1);
-          it1=m_path.insert(it1, Flat(dh)); // insert dh before it1
-          ++m_length;
+          m_path.insert(it1, Flat(dh1)); // insert dh1 before it1
+          it1=m_path.insert(next_iterator(it1), Flat(dh2)); // insert dh2 after it1
+          m_length+=2;
+          // Now we can continue with the normal case because we have 3 flats
+          CGAL_assertion(flat_length(it1)==0);
+          CGAL_assertion(flat_length(next_iterator(it1))==0);
         }
-
-
-        return;
+        else
+        {
+          // Here we have only one flat, with some -2
+          // Is this case possible ??
+          CGAL_assertion(false);
+          return;
+        }
       }
     }
 
@@ -1318,7 +1330,7 @@ public:
         merge_with_next_flat_if_possible(it2);
         if (merge_with_next_flat_if_possible(prev_iterator(it1)))
         { it1=prev_iterator(it2); }
-        // CGAL_assertion(is_valid());
+        CGAL_assertion(is_valid());
         return;
       }
       else
@@ -1332,7 +1344,7 @@ public:
         merge_with_next_flat_if_possible(it2);
         if (merge_with_next_flat_if_possible(prev_iterator(it1)))
         { it1=prev_iterator(it2); }
-        // CGAL_assertion(is_valid());
+        CGAL_assertion(is_valid());
         return;
       }
     }
@@ -1349,7 +1361,7 @@ public:
         merge_with_next_flat_if_possible(it2);
         if (merge_with_next_flat_if_possible(prev_iterator(it1)))
         { it1=prev_iterator(it2); }
-        // CGAL_assertion(is_valid());
+        CGAL_assertion(is_valid());
         return;
       }
     }
@@ -1403,7 +1415,7 @@ public:
     }
     m_length-=2;
 
-    // CGAL_assertion(is_valid());
+    CGAL_assertion(is_valid());
     /*it2=next_flat(it1);
     if (merge_with_next_flat_if_possible(prev_iterator(it1)))
     { it1=prev_iterator(it2); }
