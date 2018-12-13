@@ -56,10 +56,11 @@ public:
     {
       push_back(it->begin, false);
       if (it->length>0)
-      { extend_straight_positive(it->length-1, false); }
+      { extend_straight_positive(it->length, false); }
       else if (it->length<0)
-      { extend_straight_negative(-(it->length)-1, false); }
+      { extend_straight_negative(-(it->length), false); }
     }
+    CGAL_assertion(is_valid());
   }
 
   void swap(Self& p2)
