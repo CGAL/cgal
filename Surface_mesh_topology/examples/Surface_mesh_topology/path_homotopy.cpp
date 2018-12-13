@@ -122,6 +122,7 @@ int main(int argc, char** argv)
     << ", valid="<< smct.get_map().is_valid() << std::endl;
    
   unsigned int nbcontractible=0;
+  std::vector<std::size_t> errors_seeds;
 
   for (unsigned int i=0; i<N; ++i)
   {
@@ -165,11 +166,12 @@ int main(int argc, char** argv)
 
     if (!smct.are_freely_homotopic(path1, path2, time))
     {
-      std::cout<<"ERROR: paths are not homotopic while they should be."
-               <<std::endl;
+      /* std::cout<<"ERROR: paths are not homotopic while they should be."
+               <<std::endl; */
+      errors_seeds.push_back(random.get_seed());
     }
-    else
-    { std::cout<<"TEST OK: paths are homotopic."<<std::endl; }
+    /* else
+    { std::cout<<"TEST OK: paths are homotopic."<<std::endl; } */
 
 #ifdef CGAL_USE_BASIC_VIEWER
     if (draw)
@@ -177,6 +179,21 @@ int main(int argc, char** argv)
 #endif
     }
     // else { --i; } // TEMPO POUR DEBUG
+  }
+
+  if (errors_seeds.empty())
+  {
+    if (N==1) { std::cout<<"Test OK: both paths are homotopic."<<std::endl; }
+    else { std::cout<<"All the "<<N<<" tests OK: each pair of paths were homotopic."<<std::endl; }
+  }
+  else
+  {
+    std::cout<<"ERRORS for "<<errors_seeds.size()<<" tests among "<<N
+            <<" (i.e. "<<(double)(errors_seeds.size()*100)/double(N)<<"%)."<<std::endl;
+    std::cout<<"Errors for seeds: ";
+    for (std::size_t i=0; i<errors_seeds.size(); ++i)
+    { std::cout<<errors_seeds[i]<<"  "; }
+    std::cout<<std::endl;
   }
 
   std::cout<<"Number of contractible paths: "<<nbcontractible<<" among "<<N

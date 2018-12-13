@@ -224,61 +224,20 @@ public:
     return res;
   }
 
-  /// @Return true if this path is equal to other path, identifying dart begin
-  ///         of this path with dart 'itother' in other path.
-  bool are_same_paths_from(Self& other, List_iterator itother)
-  {
-    CGAL_assertion(itother!=other.m_path.end());
-    CGAL_assertion(is_closed() || itother==other.m_path.begin());
-    CGAL_assertion(is_closed()==other.is_closed());
-
-    for(auto it=m_path.begin(); it!=m_path.end(); ++it)
-    {
-      if (it!=itother) { return false; }
-      other.advance_iterator(itother);
-    }
-    return true;
-  }
-
   /// @return true if this path is equal to other path. For closed paths, test
-  ///         all possible starting darts. Old quadratic version, new version
-  ///         (operator==) use linear version based on Knuth, Morris, Pratt
-  bool are_paths_equals(const Self& other)
-  {
-    if (is_closed()!=other.is_closed() ||
-        length()!=other.length() ||
-        size_of_list()!=other.size_of_list())
-      return false;
-    
-    if (!is_closed())
-    { return are_same_paths_from(other, other.m_path.begin()); }
-
-    for(auto itother=other.m_path.begin(); itother!=other.m_path.end(); ++itother)
-    {
-      if (are_same_paths_from(other, itother))
-      { return true; }
-    }
-
-    return false;
-  }
-
-    /// @return true if this path is equal to other path. For closed paths, test
   ///         all possible starting darts.
   bool operator==(Self& other)
   {
     if (is_closed()!=other.is_closed() ||
-        length()!=other.length() ||
-        size_of_list()!=other.size_of_list())
+        length()!=other.length())
       return false;
 
     if (is_empty() && other.is_empty())
     { return true; }
 
-    if (!is_closed())
-    { return are_same_paths_from(other, other.m_path.begin()); }
-
-    // TODO: is it possible to avoid the transformations into Path_on_surface
-    //  and use directly knuth_morris_pratt_search with Path_on_surface_with_rle ?
+    // Note that we need to transform the Path_on_surface_with_rle into
+    // the correspondings Path_on_surface, because a same path can have two
+    // different rle representations.
     Path_on_surface<Map> p1(*this);
     Path_on_surface<Map> p2(other);
     return p1==p2;
@@ -404,13 +363,13 @@ public:
   bool is_valid_iterator(const List_iterator& ittotest)
   {
     if (ittotest==m_path.end()) { return false; }
-    //return true;
+    return true;
     // Assert too long; uncomment in case of bug.
-    for (auto it=m_path.begin(); it!=m_path.end(); ++it)
+    /* for (auto it=m_path.begin(); it!=m_path.end(); ++it)
     {
       if (it==ittotest) { return true; }
     }
-    return false;
+    return false; */
   }
 
   Dart_const_handle front()
@@ -975,8 +934,9 @@ public:
         // CGAL_assertion(is_valid_iterator(it));
         // CGAL_assertion(is_valid());
         if (!all) { return true; }
+        it=m_path.begin();
       }
-      else { move_to_next_spur(it); }
+      else { ++it; } // move_to_next_spur(it); }
     }
     CGAL_assertion(is_valid());
     return res;
@@ -1140,16 +1100,18 @@ public:
       if (is_positive_bracket(it1, it2))
       {
         remove_positive_bracket(it1, it2); res=true;
+        it1=m_path.begin();
         // CGAL_assertion(is_valid_iterator(it1));
         // CGAL_assertion(is_valid());
       }
       else if (is_negative_bracket(it1, it2))
       {
         remove_negative_bracket(it1, it2); res=true;
+        it1=m_path.begin();
         // CGAL_assertion(is_valid_iterator(it1));
         // CGAL_assertion(is_valid());
       }
-      else { move_to_next_bracket(it1); }
+      else { ++it1; } // move_to_next_bracket(it1); }
       if (!all && res) { return true; }      
     }
     CGAL_assertion(is_valid());
@@ -1160,7 +1122,9 @@ public:
   bool is_l_shape(const List_iterator& it)
   {
     CGAL_assertion(is_valid_iterator(it));
-    return (next_negative_turn(it)==1);
+    std::size_t t=next_negative_turn(it);
+    return (t==1 ||
+            (flat_length(it)<0 && t==2));
   }
 
   /// Move it to the next l_shape after it. Go to m_path.end() if there is no
@@ -1248,7 +1212,7 @@ public:
     {
       List_iterator ittemp=prev_iterator(it);
       set_end_of_flat(ittemp, dh); // Move the last dart of the previous flat
-      set_flat_length(ittemp, flat_length(ittemp)+(flat_length(ittemp)>0?+1:-1)); // Increment the length of the flat
+      set_flat_length(ittemp, flat_length(ittemp)+(positive_flat?+1:-1)); // Increment the length of the flat
     }
     else
     {
@@ -1257,7 +1221,7 @@ public:
     ++m_length;
   }
   
-  /// Add the given dart 'dh' after the flat 'it' (given by its end).
+  /// Add the given dart 'dh' after the flat 'it'.
   void add_dart_after(const List_iterator& it, Dart_const_handle dh)
   {
     CGAL_assertion(is_valid_iterator(it));
@@ -1266,9 +1230,8 @@ public:
     if (is_next_flat_can_be_extended_at_beginning(it, dh,
                                                   positive_flat, negative_flat))
     {
-      CGAL_assertion(flat_length(ittemp)!=0);
       set_begin_of_flat(ittemp, dh); // Move the first dart of the flat
-      set_flat_length(ittemp, flat_length(ittemp)+(flat_length(ittemp)>0?+1:-1)); // Increment the length of the flat
+      set_flat_length(ittemp, flat_length(ittemp)+(positive_flat?+1:-1)); // Increment the length of the flat
     }
     else
     {
@@ -1282,6 +1245,30 @@ public:
   void right_push_l_shape(List_iterator& it1)
   { // it is the beginning of a flat
     CGAL_assertion(is_l_shape(it1));
+
+    if (m_path.size()==1)
+    {
+      if (next_negative_turn(it)==2)
+      { // Special case of a global shift
+        set_flat_length(it, -flat_length(it));
+        set_begin_of_flat(it, m_map.template beta<2,1,1>(begin_of_flat(it)));
+        set_end_of_flat(it, m_map.template beta<2,1,1>(end_of_flat(it)));
+        return;
+      }
+      else // Here negative turn is 1
+      {
+        if (flat_length(it1)>0) // Case where the first flat is positive
+        { // We split the flat in two parts
+          Dart_const_handle dh=end_of_flat(it1); // last dart of the first flat
+          reduce_flat_from_end(it1);
+          it1=m_path.insert(it1, Flat(dh)); // insert dh before it1
+          ++m_length;
+        }
+
+
+        return;
+      }
+    }
 
     /* static int TOTO=0;
     std::cout<<"right_push_l_shape "<<TOTO++<<std::endl; */
@@ -1440,8 +1427,9 @@ public:
         // CGAL_assertion(is_valid_iterator(it));
         // CGAL_assertion(is_valid());
         if (!all) { return true; }
+        it=m_path.begin();
       }
-      else { move_to_next_l_shape(it); }
+      else { ++it; } // move_to_next_l_shape(it); }
     }
     CGAL_assertion(is_valid());
     return res;
