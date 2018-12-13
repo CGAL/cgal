@@ -824,6 +824,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       if (i == QDialog::Rejected)
       {
         std::cout << "Aborting parameterization" << std::endl;
+        QApplication::restoreOverrideCursor();
         return;
       }
 
@@ -836,6 +837,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
         std::cerr << "Error: incompatible orbifold type and number of cones" << std::endl;
         std::cerr << "Types I, II & III require 3 selected vertices" << std::endl;
         std::cerr << "Type IV requires 4 selected vertices" << std::endl;
+        QApplication::restoreOverrideCursor();
         return;
       }
 
@@ -847,6 +849,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       if(!SMP::locate_unordered_cones(sMesh, unordered_cones.begin(), unordered_cones.end(), cmap))
       {
         std::cerr << "Error: invalid cone or seam selection" << std::endl;
+        QApplication::restoreOverrideCursor();
         return;
       }
 
@@ -881,6 +884,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       std::cout << "success (in " << time.elapsed() << " ms)" << std::endl;
     } else {
       std::cerr << "failure: " << SMP::get_error_message(status) << std::endl;
+      QApplication::restoreOverrideCursor();
       return;
     }
 
