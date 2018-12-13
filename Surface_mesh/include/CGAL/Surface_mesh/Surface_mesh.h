@@ -2482,6 +2482,11 @@ void
 Surface_mesh<P>::
 collect_garbage()
 {
+    if (!has_garbage())
+    {
+      return;
+    }
+
     int  i, i0, i1,
     nV(num_vertices()),
     nE(num_edges()),
