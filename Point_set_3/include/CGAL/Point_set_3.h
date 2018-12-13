@@ -675,12 +675,13 @@ public:
   const_iterator garbage_end () const { return m_indices.end(); }
   /*!
     \brief Number of removed points.
-
-    \note The method `garbage_size()` is also available and does the
-    same thing.
+    \sa `garbage_size()`
   */
   std::size_t number_of_removed_points () const { return m_nb_removed; }
-  /// \cond SKIP_IN_MANUAL
+  /*!
+    \brief Number of removed points.
+    \sa `number_of_removed_points()`
+  */
   std::size_t garbage_size () const { return number_of_removed_points(); }
   /// \endcond
   
