@@ -45,6 +45,8 @@
 #include <cstdio>
 #endif
 
+#include <CGAL/tags.h>
+
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
