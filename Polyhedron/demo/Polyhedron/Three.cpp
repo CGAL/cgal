@@ -201,3 +201,4 @@ int Three::getDefaultLinesWidth()
 {
   return default_lines_width;
 }
+

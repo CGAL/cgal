@@ -2722,3 +2722,27 @@ void MainWindow::invalidate_bbox(bool do_recenter)
     updateViewerBBox(true);
   
 }
+
+void MainWindow::test_all_actions()
+{
+  selectSceneItem(0);
+  Q_FOREACH(PluginNamePair pnp, plugins)
+  {
+    Polyhedron_demo_plugin_interface* plugin = pnp.first;
+    Q_FOREACH(QAction* action, plugin->actions()){
+      if(plugin->applicable(action)){
+        qDebug()<<"Testing "<<pnp.second<<"...";
+        action->triggered();
+        qDebug()<<" OK.";
+        while(scene->numberOfEntries() > 1)
+        {
+          scene->erase(1);
+        }
+        
+        selectSceneItem(0);
+        reloadItem();
+      }
+    }
+  }
+  scene->erase(0);
+}

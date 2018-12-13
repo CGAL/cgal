@@ -453,6 +453,8 @@ private:
   QMap<QString, QPair<QStringList, QString> >plugin_metadata_map;
   QMap<QString, bool> ignored_map;
   const QStringList& accepted_keywords;
+public Q_SLOTS:
+  void test_all_actions();
 };
 
 #endif // ifndef MAINWINDOW_H

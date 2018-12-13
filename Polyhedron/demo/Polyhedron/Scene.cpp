@@ -154,6 +154,9 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
 Scene::Item_id
 Scene::erase(Scene::Item_id index)
 {
+  if(index <0 || index >= numberOfEntries())
+    return -1;
+  
   CGAL::Three::Scene_item* item = m_entries[index];
   if(qobject_cast<Scene_group_item*>(item))
   {
@@ -166,8 +169,6 @@ Scene::erase(Scene::Item_id index)
   //clears the Scene_view
   clear();
   index_map.clear();
-  if(index < 0 || index >= m_entries.size())
-    return -1;
   if(item->parentGroup())
     item->parentGroup()->removeChild(item);
 
@@ -175,7 +176,7 @@ Scene::erase(Scene::Item_id index)
   Item_id removed_item = item_id(item);
   children.removeAll(removed_item);
   indexErased(removed_item);
-    m_entries.removeAll(item);
+  m_entries.removeAll(item);
   Q_EMIT itemAboutToBeDestroyed(item);
   item->aboutToBeDestroyed();
   item->deleteLater();
