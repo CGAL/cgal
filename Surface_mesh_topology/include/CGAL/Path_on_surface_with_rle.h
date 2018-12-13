@@ -712,6 +712,7 @@ public:
   std::size_t next_negative_turn(const List_iterator& it)
   {
     // CGAL_assertion(is_valid());
+    // CGAL_assertion(is_valid_iterator(it));
     CGAL_assertion(next_flat_exist(it));
 
     /*if (flat_length(it)!=0)
@@ -754,43 +755,49 @@ public:
   /// 'it' moves to the previous flat if the current flat disapeared.
   /// The path could be not valid after this operation (consistency with next
   /// element should be ensure, by possibly updating the next flat part).
-  void reduce_flat_from_beginning(List_iterator& it)
+  /// @return true iff the flat disapeared after its reduction.
+  bool reduce_flat_from_beginning(List_iterator& it)
   {
     CGAL_assertion(is_valid_iterator(it));
+
+    CGAL_assertion(m_length>0);
+    --m_length;
 
     if (flat_length(it)==0)
     {
       it=m_path.erase(it); // after the erase, it is the element after the erased one
       if (!m_path.empty()) { retreat_iterator(it); } // this is why we move it backward here
+      return true;
     }
-    else
-    {
-      set_begin_of_flat(it, second_dart_of_a_flat(it));
-      decrease_flat_length(it);
-    }
-    CGAL_assertion(m_length>0);
-    --m_length;
+
+    //else
+    set_begin_of_flat(it, second_dart_of_a_flat(it));
+    decrease_flat_length(it);
+    return false;
   }
 
   /// Reduce the length of the flat part starting at 'it' from its end.
   /// 'it' moves to the previous flat if the current flat disapeared.
   /// The path could be not valid after this operation (consistency with next
   /// element should be ensure, by possibly updating the next flat part).
-  void reduce_flat_from_end(List_iterator& it)
+  /// @return true iff the flat disapeared after its reduction.
+  bool reduce_flat_from_end(List_iterator& it)
   {
     CGAL_assertion(is_valid_iterator(it));
+
+    CGAL_assertion(m_length>0);
+    --m_length;
+
     if (flat_length(it)==0)
     {
       it=m_path.erase(it); // after the erase, it is the element after the erased one
       if (!m_path.empty()) { retreat_iterator(it); } // this is why we move it backward here
+      return true;
     }
-    else
-    {
-      set_end_of_flat(it, before_last_dart_of_a_flat(it));
-      decrease_flat_length(it);
-    }
-    CGAL_assertion(m_length>0);
-    --m_length;
+    // else
+    set_end_of_flat(it, before_last_dart_of_a_flat(it));
+    decrease_flat_length(it);
+    return false;
   }
 
   /// Merge, if possible, the flat starting at iterator 'it' with its next
@@ -809,6 +816,7 @@ public:
 
     if (next_positive_turn(it)==2) { positive2=true; }
     if (next_negative_turn(it)==2) { negative2=true; }
+    CGAL_assertion(!(positive2 && negative2));
 
     if (!positive2 && !negative2) { return false; } // the middle turn is not a flat
 
@@ -822,10 +830,10 @@ public:
     { // First flat is empty (length 0)
       if (!positive3 && !negative3)
       { // and second flat too
-        set_flat_length(it, positive2?+1:-1); // we only initialize the length of the beginning of the flat
+        set_flat_length(it, positive2?+1:-1);
       }
       else
-      { // here second flat is not empty => we have 3 darts (1 for first flat, 2 for second flat)
+      { // here second flat is not empty
         if ((positive3 && !positive2) || (negative3 && !negative2))
         { return false; } // the two flats cannot be merged
 
@@ -835,7 +843,7 @@ public:
     else
     { // here first flat is not empty
       if (!positive3 && !negative3)
-      { // Second flat is empty =>  we have 3 darts (2 for first flat, 1 for second flat)
+      { // and second flat is empty
         if ((positive1 && !positive2) || (negative1 && !negative2))
         { return false; } // the two flats cannot be merged
 
@@ -897,10 +905,10 @@ public:
     List_iterator itprev=prev_iterator(it);
 
     // We reduce the first flat
-    reduce_flat_from_end(it);
+    bool TOTO1=reduce_flat_from_end(it);
 
     // And we reduce the second flat
-    reduce_flat_from_beginning(it2);
+    bool TOTO2=reduce_flat_from_beginning(it2);
 
     // Now move it to the element before the removed spur
     // except if the path has become empty, or if it is not closed
