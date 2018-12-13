@@ -26,8 +26,8 @@
 #include <CGAL/license/Polyhedron.h>
 
 
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/IO/write_vtk.h>
 
 
