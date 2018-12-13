@@ -98,7 +98,7 @@ namespace parameters = CGAL::parameters;
 #ifndef CGAL_NO_DEPRECATED_CODE
 template <class PolygonMesh>
 CGAL_DEPRECATED_MSG("you are using the deprecated API of CatmullClark_subdivision(), please update your code")
-void CatmullClark_subdivision(PolygonMesh& pmesh, int step = 1) {
+void CatmullClark_subdivision(PolygonMesh& pmesh, int step) {
   PQQ(pmesh, CatmullClark_mask_3<PolygonMesh>(&pmesh, get(vertex_point,pmesh)), step);
 }
 #endif  
@@ -141,6 +141,11 @@ void CatmullClark_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
     internal::PQQ_1step(pmesh, vpm, mask);
 }
 
+template <class PolygonMesh>
+void CatmullClark_subdivision(PolygonMesh& pmesh)
+{
+  CatmullClark_subdivision(pmesh, CGAL::parameters::all_default());
+}
 // -----------------------------------------------------------------------------
 
 #ifndef DOXYGEN_RUNNING
@@ -148,7 +153,7 @@ void CatmullClark_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
 #ifndef CGAL_NO_DEPRECATED_CODE
 template <class PolygonMesh>
 CGAL_DEPRECATED_MSG("you are using the deprecated API of Loop_subdivision(), please update your code")
-void Loop_subdivision(PolygonMesh& pmesh, int step = 1) {
+void Loop_subdivision(PolygonMesh& pmesh, int step) {
   PTQ(pmesh, Loop_mask_3<PolygonMesh>(&pmesh, get(vertex_point,pmesh)) , step);
 }
 #endif  
@@ -189,6 +194,11 @@ void Loop_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
     internal::PTQ_1step(pmesh, vpm, mask);
 }
 
+template <class PolygonMesh>
+void Loop_subdivision(PolygonMesh& pmesh)
+{
+  Loop_subdivision(pmesh, CGAL::parameters::all_default());
+}
 // -----------------------------------------------------------------------------
 
 #ifndef DOXYGEN_RUNNING
@@ -196,7 +206,7 @@ void Loop_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
 #ifndef CGAL_NO_DEPRECATED_CODE
 template <class PolygonMesh>
 CGAL_DEPRECATED_MSG("you are using the deprecated API of DooSabin_subdivision(), please update your code")
-void DooSabin_subdivision(PolygonMesh& pmesh, int step = 1) {
+void DooSabin_subdivision(PolygonMesh& pmesh, int step) {
   DQQ(pmesh, DooSabin_mask_3<PolygonMesh>(&pmesh, get(vertex_point, pmesh)), step);
 }
 #endif
@@ -236,7 +246,12 @@ void DooSabin_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
   for(unsigned int i = 0; i < step; i++)
     internal::DQQ_1step(pmesh, vpm, mask);
 }
-
+  
+template <class PolygonMesh>
+void DooSabin_subdivision(PolygonMesh& pmesh)
+{
+  DooSabin_subdivision(pmesh, CGAL::parameters::all_default());
+}
 // -----------------------------------------------------------------------------
 
 #ifndef DOXYGEN_RUNNING
@@ -244,7 +259,7 @@ void DooSabin_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
 #ifndef CGAL_NO_DEPRECATED_CODE
 template <class PolygonMesh>
 CGAL_DEPRECATED_MSG("you are using the deprecated API of Sqrt3_subdivision(), please update your code")
-void Sqrt3_subdivision(PolygonMesh& pmesh, int step = 1) {
+void Sqrt3_subdivision(PolygonMesh& pmesh, int step) {
   Sqrt3(pmesh, Sqrt3_mask_3<PolygonMesh>(&pmesh, get(vertex_point,pmesh)), step);
 }
 #endif
@@ -289,7 +304,12 @@ void Sqrt3_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
   for(unsigned int i = 0; i < step; i++)
     internal::Sqrt3_1step(pmesh, vpm, mask, (i%2==1));
 }
-
+  
+template <class PolygonMesh>
+void Sqrt3_subdivision(PolygonMesh& pmesh)
+{
+  Sqrt3_subdivision(pmesh, CGAL::parameters::all_default());
+}
 /// @}
 
 } // namespace Subdivision_method_3

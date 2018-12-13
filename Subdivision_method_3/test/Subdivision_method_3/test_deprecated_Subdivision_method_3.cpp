@@ -1,3 +1,4 @@
+#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
 // ============================================================================
 //
 // Copyright (c) 2005-2006, 2017 Le-Jeng Shiue
@@ -57,7 +58,7 @@ void test_Subdivision_surface_3() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::CatmullClark_subdivision(P);
+    Subdivision_method_3::CatmullClark_subdivision(P,TEST_DEPTH);
     assert(CGAL::is_valid_polygon_mesh(P));
   }
 
@@ -68,7 +69,7 @@ void test_Subdivision_surface_3() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::CatmullClark_subdivision(P);
+    Subdivision_method_3::CatmullClark_subdivision(P,TEST_DEPTH);
     assert(CGAL::is_valid_polygon_mesh(P));
   }
 
@@ -80,7 +81,7 @@ void test_Subdivision_surface_3() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::Loop_subdivision(P);
+    Subdivision_method_3::Loop_subdivision(P,TEST_DEPTH);
     assert(CGAL::is_valid_polygon_mesh(P));
   }
 
@@ -91,7 +92,7 @@ void test_Subdivision_surface_3() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::Loop_subdivision(P);
+    Subdivision_method_3::Loop_subdivision(P,TEST_DEPTH);
     assert(CGAL::is_valid_polygon_mesh(P));
   }
 
@@ -102,7 +103,7 @@ void test_Subdivision_surface_3() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::DooSabin_subdivision(P);
+    Subdivision_method_3::DooSabin_subdivision(P,TEST_DEPTH);
     assert(CGAL::is_valid_polygon_mesh(P));
   }
 
@@ -113,7 +114,7 @@ void test_Subdivision_surface_3() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::Sqrt3_subdivision(P);
+    Subdivision_method_3::Sqrt3_subdivision(P,TEST_DEPTH);
     assert(CGAL::is_valid_polygon_mesh(P));
   }
 }
@@ -129,7 +130,7 @@ void test_Subdivision_surface_3_SM() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::CatmullClark_subdivision(P);
+    Subdivision_method_3::CatmullClark_subdivision(P,TEST_DEPTH);
     assert(CGAL::is_valid_polygon_mesh(P));
   }
 
@@ -140,7 +141,7 @@ void test_Subdivision_surface_3_SM() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::CatmullClark_subdivision(P);
+    Subdivision_method_3::CatmullClark_subdivision(P,TEST_DEPTH);
     assert(CGAL::is_valid_polygon_mesh(P));
   }
 
@@ -152,7 +153,7 @@ void test_Subdivision_surface_3_SM() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::Loop_subdivision(P);
+    Subdivision_method_3::Loop_subdivision(P,TEST_DEPTH);
     assert(CGAL::is_valid_polygon_mesh(P));
   }
 
@@ -163,7 +164,7 @@ void test_Subdivision_surface_3_SM() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::Loop_subdivision(P);
+    Subdivision_method_3::Loop_subdivision(P,TEST_DEPTH);
     assert(CGAL::is_valid_polygon_mesh(P));
   }
 
@@ -174,7 +175,7 @@ void test_Subdivision_surface_3_SM() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::DooSabin_subdivision(P);
+    Subdivision_method_3::DooSabin_subdivision(P,TEST_DEPTH);
     assert(CGAL::is_valid_polygon_mesh(P, true));
   }
 
@@ -185,7 +186,7 @@ void test_Subdivision_surface_3_SM() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::DooSabin_subdivision(P);
+    Subdivision_method_3::DooSabin_subdivision(P,TEST_DEPTH);
     assert(CGAL::is_valid_polygon_mesh(P));
   }
 
@@ -196,7 +197,7 @@ void test_Subdivision_surface_3_SM() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::Sqrt3_subdivision(P);
+    Subdivision_method_3::Sqrt3_subdivision(P,TEST_DEPTH);
     assert(CGAL::is_valid_polygon_mesh(P));
   }
 
@@ -207,7 +208,7 @@ void test_Subdivision_surface_3_SM() {
     Polyhedron P;
     mesh >> P;
 
-    Subdivision_method_3::Sqrt3_subdivision(P);
+    Subdivision_method_3::Sqrt3_subdivision(P,TEST_DEPTH);
     assert(CGAL::is_valid_polygon_mesh(P));
   }
 }
