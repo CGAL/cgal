@@ -30,6 +30,7 @@
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include <QMainWindow>
+#include <QApplication>
 
 #ifdef three_EXPORTS
 #  define THREE_EXPORT Q_DECL_EXPORT
@@ -92,6 +93,19 @@ protected:
   static int default_normal_length;
   static int default_lines_width;
 
+public:
+  struct CursorScopeGuard
+  {
+    CursorScopeGuard(){}
+    void setCursor(QCursor cursor)
+    {
+      QApplication::setOverrideCursor(cursor);
+    }
+    ~CursorScopeGuard()
+    {
+      QApplication::restoreOverrideCursor();
+    }
+  };
 };
 }
 }
