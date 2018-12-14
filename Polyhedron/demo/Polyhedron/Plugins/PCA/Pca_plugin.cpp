@@ -100,8 +100,7 @@ void Polyhedron_demo_pca_plugin::on_actionFitPlane_triggered()
     Scene_surface_mesh_item* sm_item =
     qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
 
-  Three::CursorScopeGuard scope;
-  scope.setCursor(Qt::WaitCursor);
+  Three::CursorScopeGuard scope(Qt::WaitCursor);
   if(sm_item){
     std::list<Triangle> triangles;
     
@@ -165,8 +164,7 @@ void Polyhedron_demo_pca_plugin::on_actionFitLine_triggered()
 {
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
-  Three::CursorScopeGuard sg;
-  sg.setCursor(Qt::WaitCursor);
+  Three::CursorScopeGuard sg(Qt::WaitCursor);
 
   Scene_surface_mesh_item* sm_item =
       qobject_cast<Scene_surface_mesh_item*>(scene->item(index));

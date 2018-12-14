@@ -92,8 +92,7 @@ protected:
 public:
   struct CursorScopeGuard
   {
-    CursorScopeGuard(){}
-    void setCursor(QCursor cursor)
+    CursorScopeGuard(QCursor cursor)
     {
       QApplication::setOverrideCursor(cursor);
     }
