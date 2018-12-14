@@ -1469,6 +1469,10 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
             {
               menu_actions["normals slider"] = action->menu()->actions().last();
             }
+            else if(action->text() == QString("Line Width"))
+            {
+              menu_actions["line width"] = action->menu()->actions().last();
+            }
           }
           
         }
@@ -1564,6 +1568,8 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
           {
             QWidgetAction* sliderAction = new QWidgetAction(&menu);
             QSlider* slider = new QSlider(&menu);
+            slider->setMinimum(0);
+            slider->setMaximum(100);
             slider->setValue(
                   qobject_cast<QSlider*>(
                     qobject_cast<QWidgetAction*>
@@ -1590,6 +1596,49 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
               }
             });
             QMenu* new_menu = new QMenu("Normals Length", &menu);
+              new_menu->addAction(sliderAction);
+              slider_menus.push_back(new_menu);
+          }
+          else if(name == QString("Line Width"))
+          {
+            QWidgetAction* sliderAction = new QWidgetAction(&menu);
+            QSlider* slider = new QSlider(&menu);
+            slider->setMinimum(1);
+            float lineWidth[2];
+            if(!viewer->isOpenGL_4_3())
+              viewer->glGetFloatv(GL_LINE_WIDTH_RANGE, lineWidth);
+            else
+            {
+              lineWidth[0] = 0;
+              lineWidth[1] = 10;
+            }
+            slider->setMaximum(lineWidth[1]);
+            slider->setValue(
+                  qobject_cast<QSlider*>(
+                    qobject_cast<QWidgetAction*>
+                    (menu_actions["line width"])->defaultWidget()
+                  )->value());
+            slider->setOrientation(Qt::Horizontal);
+            sliderAction->setDefaultWidget(slider);
+            
+            connect(slider, &QSlider::valueChanged, [this, slider]()
+            {
+              Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
+              {
+                Scene_item* item = scene->item(id);
+                Q_FOREACH(QAction* action, item->contextMenu()->actions())
+                {
+                  if(action->text() == "Line Width")
+                  {
+                    QWidgetAction* sliderAction = qobject_cast<QWidgetAction*>(action->menu()->actions().last());
+                    QSlider* ac_slider = qobject_cast<QSlider*>(sliderAction->defaultWidget());
+                    ac_slider->setValue(slider->value());
+                    break;
+                  }
+                }
+              }
+            });
+            QMenu* new_menu = new QMenu("Line Width", &menu);
               new_menu->addAction(sliderAction);
               slider_menus.push_back(new_menu);
           }

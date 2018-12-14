@@ -494,6 +494,7 @@ QMenu* Scene_polylines_item::contextMenu()
         menu->addMenu(container);
 
         menu->setProperty(prop_name, true);
+        container->menuAction()->setProperty("is_groupable", true);
     }
     return menu;
 }
