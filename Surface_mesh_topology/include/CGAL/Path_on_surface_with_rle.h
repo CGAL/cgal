@@ -1285,14 +1285,23 @@ public:
       {
         if (flat_length(it1)>0) // Case where the first flat is positive
         { // We split the flat in two parts
-          CGAL_assertion(flat_length(it1)>=2);
+          CGAL_assertion(flat_length(it1)>=1);
           Dart_const_handle dh1=begin_of_flat(it1);
           Dart_const_handle dh2=end_of_flat(it1);
-          reduce_flat_from_beginning(it1);
-          reduce_flat_from_end(it1);
-          m_path.insert(it1, Flat(dh1)); // insert dh1 before it1
-          it1=m_path.insert(next_iterator(it1), Flat(dh2)); // insert dh2 after it1
-          m_length+=2;
+          if (flat_length(it1)==1) // only one flat with two darts
+          {
+            reduce_flat_from_end(it1);
+            it1=m_path.insert(it1, Flat(dh2)); // insert dh1 before it1
+            ++m_length;
+          }
+          else
+          {
+            reduce_flat_from_beginning(it1);
+            reduce_flat_from_end(it1);
+            m_path.insert(it1, Flat(dh1)); // insert dh1 before it1
+            it1=m_path.insert(next_iterator(it1), Flat(dh2)); // insert dh2 after it1
+            m_length+=2;
+          }
           // Now we can continue with the normal case because we have 3 flats
           CGAL_assertion(flat_length(it1)==0);
           CGAL_assertion(flat_length(next_iterator(it1))==0);

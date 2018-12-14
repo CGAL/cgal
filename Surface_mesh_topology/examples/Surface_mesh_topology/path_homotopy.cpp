@@ -144,7 +144,7 @@ int main(int argc, char** argv)
 
 
 
-    std::vector<const CGAL::Path_on_surface<LCC_3_cmap>* > paths;
+    std::vector<CGAL::Path_on_surface<LCC_3_cmap> > paths;
     std::vector<CGAL::Path_on_surface<LCC_3_cmap> > transformed_paths;
 
     CGAL::Path_on_surface<LCC_3_cmap> path1(lcc);
@@ -153,12 +153,12 @@ int main(int argc, char** argv)
     //if (path1.length()<100000) // TEMPO FOR DEBUG
     {
     std::cout<<"Path1 size: "<<path1.length()<<" (from "<<F<<" darts); ";
-    paths.push_back(&path1);
+    paths.push_back(path1);
 
     CGAL::Path_on_surface<LCC_3_cmap> path2(path1);
     path2.update_path_randomly(D, random);
     std::cout<<"Path2 size: "<<path2.length()<<" (from "<<D<<" deformations): ";
-    paths.push_back(&path2);
+    paths.push_back(path2);
     std::cout<<std::flush;
 
     if (smct.is_contractible(path1, time))
@@ -175,7 +175,7 @@ int main(int argc, char** argv)
 
 #ifdef CGAL_USE_BASIC_VIEWER
     if (draw)
-    { display(lcc, paths); }
+    { CGAL::draw(lcc, paths); }
 #endif
     }
     // else { --i; } // TEMPO POUR DEBUG
