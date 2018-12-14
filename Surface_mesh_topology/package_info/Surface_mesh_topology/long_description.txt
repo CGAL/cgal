@@ -1,0 +1,3 @@
+Implementation of topological algorithms on surface meshes.
+
+TODO: an abstract. 

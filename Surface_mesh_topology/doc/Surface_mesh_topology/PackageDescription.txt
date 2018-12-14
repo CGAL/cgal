@@ -1,0 +1,28 @@
+/// \defgroup PkgSurfaceMeshTopology Surface Mesh Topology Reference
+
+/// \defgroup PkgSurfaceMeshTopologyClasses Classes
+/// \ingroup PkgSurfaceMeshTopology
+
+/*!
+\addtogroup PkgSurfaceMeshTopology
+\cgalPkgDescriptionBegin{Surface Mesh Topology,PkgSurfaceMeshTopologySummary}
+\cgalPkgPicture{sm_topology_logo.svg}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Guillaume Damiand, Francis Lazarus}
+\cgalPkgDesc{This package implements...}
+\cgalPkgManuals{Chapter_Surface_Mesh_Topology,PkgSurfaceMeshTopology}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.XX}
+\cgalPkgBib{cgal:d-smtopology}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Classes ##
+- `CGAL::Surface_mesh_curve_topology<CMap>`
+- `CGAL::Path_on_surface<CMap>`
+
+*/
