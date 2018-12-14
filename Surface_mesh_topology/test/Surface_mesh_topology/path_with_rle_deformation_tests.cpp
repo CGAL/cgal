@@ -1,7 +1,5 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
-#include <CGAL/Surface_mesh_curve_topology.h>
 #include <CGAL/Path_generators.h>
 #include <CGAL/Path_on_surface.h>
 #include <CGAL/Path_on_surface_with_rle.h>
@@ -47,16 +45,19 @@ enum Transformation // enum for the type of transformations
 
 ///////////////////////////////////////////////////////////////////////////////
 void transform_path(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
+                    bool start_with_positive_turn,
                     bool draw=false,
                     std::size_t repeat=0) // If 0, repeat as long as there is one modifcation;
                                            // otherwise repeat the given number of times
 {
   std::vector<CGAL::Path_on_surface<LCC_3_cmap> > v;
+#ifdef CGAL_USE_BASIC_VIEWER
   if (draw)
   {
     v.push_back(path);
     // CGAL::draw(path.get_map(), v);
   }
+#endif // CGAL_USE_BASIC_VIEWER
 
   CGAL::Path_on_surface<LCC_3_cmap> prevp=path;
   CGAL::Path_on_surface_with_rle<LCC_3_cmap> curp(path.get_map());
@@ -64,7 +65,8 @@ void transform_path(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
   bool modified=false;
   do
   {
-    curp=CGAL::Path_on_surface_with_rle<LCC_3_cmap>(prevp);
+    curp=CGAL::Path_on_surface_with_rle<LCC_3_cmap>(prevp,
+                                                    start_with_positive_turn);
     modified=false;
     /* curp->display_negative_turns();
     std::cout<<"  "; curp->display_positive_turns();
@@ -115,7 +117,8 @@ void transform_path(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
 bool unit_test(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
                std::size_t repeat,
                const char* msg, const char* expected_result,
-               bool draw, int testtorun)
+               bool draw, int testtorun,
+               bool start_with_positive_turn)
 {
   bool res=true;
 
@@ -128,7 +131,7 @@ bool unit_test(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
     std::cout<<"."<<std::flush;
 #endif
 
-    transform_path(path, t, draw, repeat);
+    transform_path(path, t, start_with_positive_turn, draw, repeat);
 
     if (!path.same_turns(expected_result))
     {
@@ -162,27 +165,27 @@ bool test_all_cases_spurs_and_bracket(bool draw, int testtorun)
 
   generate_one_positive_spur(path); // Test 0
   if (!unit_test(path, REDUCTION, 1, "Positive spur (2^6 1 0 2^4)",
-                 "2 2 2 2 2 2 3 2 2 2", draw, testtorun))
+                 "2 2 2 2 2 2 3 2 2 2", draw, testtorun, true))
   { res=false; }
 
   generate_one_negative_spur(path); // Test 1
   if (!unit_test(path, REDUCTION, 1, "Negative spur (-2^6 -1 0 -2^4)",
-                 "-2 -2 -2 -2 -2 -2 -3 -2 -2 -2", draw, testtorun))
+                 "-2 -2 -2 -2 -2 -2 -3 -2 -2 -2", draw, testtorun, false))
   { res=false; }
 
   generate_cyclic_spur(path); // Test  2
   if (!unit_test(path, REDUCTION, 1, "Cyclic spur (0 0)",
-                 "", draw, testtorun))
+                 "", draw, testtorun, true))
   { res=false; }
 
   generate_one_positive_bracket(path); // Test 3
   if (!unit_test(path, REDUCTION, 1, "Positive bracket (2^3 3 1 2^6 1 3 2^2)",
-                 "2 2 2 2 -2 -2 -2 -2 -2 -2 2 2 2", draw, testtorun))
+                 "2 2 2 2 -2 -2 -2 -2 -2 -2 2 2 2", draw, testtorun, true))
   { res=false; }
 
   generate_one_negative_bracket(path); // Test 4
   if (!unit_test(path, REDUCTION, 1, "Negative bracket (-2^3 -1 -2^6 -1 -2^2)",
-                 "-2 -2 3 2 2 2 2 2 2 3 -2 -2", draw, testtorun))
+                 "-2 -2 3 2 2 2 2 2 2 3 -2 -2", draw, testtorun, false))
   { res=false; }
 
   lcc.clear();
@@ -194,12 +197,12 @@ bool test_all_cases_spurs_and_bracket(bool draw, int testtorun)
 
   generate_positive_bracket_special1(path); // Test 5
   if (!unit_test(path, REDUCTION, 1, "Positive special case 1 (4 1 2^7 1)",
-                 "-2 -2 -2 -2 -2 -2 -2 2", draw, testtorun))
+                 "-2 -2 -2 -2 -2 -2 -2 2", draw, testtorun, true))
   { res=false; }
 
   generate_negative_bracket_special1(path); // Test 6
   if (!unit_test(path, REDUCTION, 1, "Negative special case 1 (-4 -1 -2^7 -1)",
-                 "2 2 2 2 2 2 2 -2", draw, testtorun))
+                 "2 2 2 2 2 2 2 -2", draw, testtorun, false))
   { res=false; }
 
   lcc.clear();
@@ -211,12 +214,12 @@ bool test_all_cases_spurs_and_bracket(bool draw, int testtorun)
 
   generate_positive_bracket_special2(path); // Test 7
   if (!unit_test(path, REDUCTION, 1, "Positive special case 2 (1 2^11)",
-                 "-2 -2 -2 -2 -2 -2 -2 -2 -2 -3", draw, testtorun))
+                 "-2 -2 -2 -2 -2 -2 -2 -2 -2 -3", draw, testtorun, true))
   { res=false; }
 
   generate_negative_bracket_special2(path); // Test 8
   if (!unit_test(path, REDUCTION, 1, "Negative special case 2 (-1 -2^11)",
-                 "2 2 2 2 2 2 2 2 2 3", draw, testtorun))
+                 "2 2 2 2 2 2 2 2 2 3", draw, testtorun, false))
   { res=false; }
 
   return res;
@@ -236,17 +239,17 @@ bool test_all_cases_l_shape(bool draw, int testtorun)
   generate_one_l_shape(path); // Test 9
   if (!unit_test(path, PUSH, 1, "L-shape (-2^2 -3 -2^8 -1 -2^5 -3 -2^3)",
                  "-2 -2 2 1 2 2 2 2 2 2 2 3 2 2 2 2 1 2 -2 -2 -2",
-                 draw, testtorun))
+                 draw, testtorun, false))
   { res=false; }
 
   generate_l_shape_case2(path); // Test 10
   if (!unit_test(path, PUSH, 1, "L-shape (-2^2 -3 -1 -2^5 -3 -2^3)",
-                 "-2 -2 2 2 2 2 2 2 1 2 2 2 2", draw, testtorun))
+                 "-2 -2 2 2 2 2 2 2 1 2 2 2 2", draw, testtorun, false))
   { res=false; }
 
   generate_l_shape_case3(path); // Test 11
   if (!unit_test(path, PUSH, 1, "L-shape (-2^2 -3 -2^5 -1 -3 -2^3)",
-                 "-2 -2 2 1 2 2 2 2 2 2 -2 -2 -2", draw, testtorun))
+                 "-2 -2 2 1 2 2 2 2 2 2 -2 -2 -2", draw, testtorun, false))
   { res=false; }
 
   lcc.clear();
@@ -260,7 +263,7 @@ bool test_all_cases_l_shape(bool draw, int testtorun)
 
   generate_l_shape_case4(path); // Test 12
   if (!unit_test(path, PUSH, 1, "L-shape (-4 -2^7 -1 -2^3)",
-                 "4 1 2 2 2 2 2 2 3 2 2 1", draw, testtorun))
+                 "4 1 2 2 2 2 2 2 3 2 2 1", draw, testtorun, false))
   { res=false; }
 
   lcc.clear();
@@ -274,12 +277,12 @@ bool test_all_cases_l_shape(bool draw, int testtorun)
 
   generate_l_shape_case5(path); // Test 13
   if (!unit_test(path, PUSH, 1, "L-shape (-4 -1 -2^12)",
-                 "4 2 2 2 2 2 2 2 2 2 2 2 2 1", draw, testtorun))
+                 "4 2 2 2 2 2 2 2 2 2 2 2 2 1", draw, testtorun, false))
   { res=false; }
 
   generate_l_shape_case6(path); // Test 14
   if (!unit_test(path, PUSH, 1, "L-shape (-4 -2^12 -1)",
-                 "4 1 2 2 2 2 2 2 2 2 2 2 2 2", draw, testtorun))
+                 "4 1 2 2 2 2 2 2 2 2 2 2 2 2", draw, testtorun, false))
   { res=false; }
 
   lcc.clear();
@@ -291,8 +294,8 @@ bool test_all_cases_l_shape(bool draw, int testtorun)
   }
 
   generate_l_shape_case7(path); // Test 15
-  if (!unit_test(path, PUSH, 1, "L-shape (-3 -2^7 -1 -2^3)",
-                 "1 2 2 2 2 2 2 2 3 2 2 2", draw, testtorun))
+  if (!unit_test(path, PUSH, 1, "L-shape (-3 -2^7 -1 -2^3), false",
+                 "1 2 2 2 2 2 2 2 3 2 2 2", draw, testtorun, false))
   { res=false; }
 
   lcc.clear();
@@ -304,7 +307,8 @@ bool test_all_cases_l_shape(bool draw, int testtorun)
 
   generate_l_shape_case8(path); // Test 16
   if (!unit_test(path, PUSH, 1, "L-shape (-2^20)",
-                 "2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2", draw, testtorun))
+                 "2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2",
+                 draw, testtorun, false))
   { res=false; }
 
   return res;
@@ -325,25 +329,25 @@ bool test_some_random_paths_on_cube(bool draw, int testtorun)
   CGAL::Random random(starting_seed+nbtests); // fix seed
   generate_random_bracket(path, 2, 6, 3, random); // Test 17
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^1 1 2^6 1 2^3 ... )",
-                 "2 2", draw, testtorun))
+                 "2 2", draw, testtorun, true))
   { res=false; }
 
   random=CGAL::Random(starting_seed+nbtests);
   generate_random_bracket(path, 3, 8, 4, random); // Test 18
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^2 1 2^8 1 2^4 ... )",
-                   "", draw, testtorun))
+                   "", draw, testtorun, true))
   { res=false; }
 
   random=CGAL::Random(starting_seed+nbtests);
   generate_random_bracket(path, 5, 12, 8, random); // Test 19
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^4 1 2^12 1 2^8 ...)",
-                 "1", draw, testtorun))
+                 "1", draw, testtorun, true))
   { res=false; }
 
   random=CGAL::Random(starting_seed+nbtests);
   generate_random_bracket(path, 5, 12, 8, random); // Test 20
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^4 1 2^12 1 2^8 ...)",
-                   "2", draw, testtorun))
+                   "2", draw, testtorun, true))
   { res=false; }
 
   return res;
@@ -365,14 +369,14 @@ bool test_right_push(bool draw, int testtorun)
   if (testtorun==-1 || nbtests==testtorun)
   {
     generate_one_l_shape(path); // Test 21
-    transform_path(path, PUSH, draw, 0); // TODO COMPARE RESULT WITH GOLD STANDARD
+    transform_path(path, PUSH, false, draw, 0); // TODO COMPARE RESULT WITH GOLD STANDARD
   }
   ++nbtests;
 
   if (testtorun==-1 || nbtests==testtorun)
   {
     generate_l_shape_case2(path); // Test 22
-    transform_path(path, PUSH, draw, 0); // TODO COMPARE RESULT WITH GOLD STANDARD
+    transform_path(path, PUSH, false, draw, 0); // TODO COMPARE RESULT WITH GOLD STANDARD
   }
   ++nbtests;
 

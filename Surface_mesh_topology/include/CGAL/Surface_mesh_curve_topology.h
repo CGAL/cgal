@@ -21,6 +21,12 @@
 #ifndef CGAL_SURFACE_MESH_CURVE_TOPOLOGY_H
 #define CGAL_SURFACE_MESH_CURVE_TOPOLOGY_H 1
 
+// Should be defined before to include Path_on_surface_with_rle.h
+// If nothing is defined, use V1
+// #define CGAL_PWRLE_TURN_V1  // Compute turns by turning (method of CMap)
+// #define CGAL_PWRLE_TURN_V2  // Compute turns by using an id of darts, given by an hash-table (built and given by Surface_mesh_curve_topology)
+#define CGAL_PWRLE_TURN_V3  // Compute turns by using an id of darts, associated in Info of Darts (build by Surface_mesh_curve_topology)
+
 #include <CGAL/Union_find.h>
 #include <CGAL/Random.h>
 #include <CGAL/Path_on_surface.h>

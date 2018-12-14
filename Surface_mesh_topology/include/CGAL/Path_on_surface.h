@@ -107,6 +107,10 @@ public:
     m_is_closed=false;
   }
   
+  /// @return true iff the next index exists
+  bool next_index_exists(std::size_t i) const
+  { return is_closed() || i<(m_path.size()-1); }
+
   /// @return the index after index i.
   std::size_t next_index(std::size_t i) const
   { return (is_closed() && i==m_path.size()-1?0:i+1); }

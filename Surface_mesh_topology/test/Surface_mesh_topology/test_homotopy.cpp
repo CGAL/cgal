@@ -2,8 +2,6 @@
 #include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
 #include <CGAL/Surface_mesh_curve_topology.h>
-#include <CGAL/Path_on_surface.h>
-#include <CGAL/Path_on_surface_with_rle.h>
 #include <CGAL/Path_generators.h>
 #include <vector>
 #include <sstream>

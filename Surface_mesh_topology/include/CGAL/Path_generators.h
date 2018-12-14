@@ -21,6 +21,7 @@
 #ifndef CGAL_PATH_GENERATORS_H
 #define CGAL_PATH_GENERATORS_H 1
 
+#include <CGAL/Random.h>
 #include<unordered_set>
 #include<unordered_map>
 #include <cstdlib>
