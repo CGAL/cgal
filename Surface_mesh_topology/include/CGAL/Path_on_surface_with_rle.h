@@ -88,30 +88,38 @@ public:
                            )
     : m_map(amap),
       m_is_closed(false),
-      m_length(0)
+      m_length(0),
+      m_use_only_positive(false),
+      m_use_only_negative(false)
   #ifdef CGAL_PWRLE_TURN_V2
     , m_darts_ids(darts_ids)
   #endif //CGAL_PWRLE_TURN_V2
   {}
 
   /// Creates a Path_on_surface_with_rle from a Path_on_surface.
-  /// If start_with_positive_turn, starts to compute negative turn, otherwise
-  /// starts to compute positive turn. For a minimal surface of genus>=2, we
-  /// cannot have both -2 and +2 as turn, and thus this parameter is useless.
+  /// If use_only_positive, consider only positive flats and not negative ones.
+  /// If use_only_negative, consider only negative flats and not positive ones.
+  /// If both are false, consider both positive and negative flats.
+  /// Both cannot be true at the same time.
+  /// Note that for a minimal surface of genus>=2, we cannot have both -2 and
+  /// +2 as turn, and thus these parameters are useless.
   /// However, this case can occured for our unit tests on the cube, this is
-  /// the reason of this parameter.
+  /// the reason of these parameters.
   Path_on_surface_with_rle(const Path_on_surface<Map>& apath,
                          #ifdef CGAL_PWRLE_TURN_V2
                            const TDartIds & darts_ids,
                          #endif //CGAL_PWRLE_TURN_V2
-                           bool start_with_positive_turn=true
+                           bool use_only_positive=false,
+                           bool use_only_negative=false
                            ) :
     m_map(apath.get_map()),
     m_is_closed(apath.is_closed()),
-    m_length(apath.length())
+    m_length(apath.length()),
 #ifdef CGAL_PWRLE_TURN_V2
-  , m_darts_ids(darts_ids)
+    m_darts_ids(darts_ids),
 #endif //CGAL_PWRLE_TURN_V2
+    m_use_only_positive(use_only_positive),
+    m_use_only_negative(use_only_negative)
   {
     if (apath.is_empty()) return;
 
@@ -121,20 +129,10 @@ public:
     
     if (apath.is_closed())
     {
-      if (start_with_positive_turn)
-      {
-        if (apath.next_positive_turn(i)==2)
-        { positive_flat=true; negative_flat=false; }
-        else if (apath.next_negative_turn(i)==2)
-        { positive_flat=false; negative_flat=true; }
-      }
-      else
-      {
-        if (apath.next_negative_turn(i)==2)
-        { positive_flat=false; negative_flat=true; }
-        else if (apath.next_positive_turn(i)==2)
-        { positive_flat=true; negative_flat=false; }
-      }
+      if (!use_only_negative && apath.next_positive_turn(i)==2)
+      { positive_flat=true; negative_flat=false; }
+      else if (!use_only_positive && apath.next_negative_turn(i)==2)
+      { positive_flat=false; negative_flat=true; }
 
       while ((positive_flat && apath.next_positive_turn(i)==2) ||
              (negative_flat && apath.next_negative_turn(i)==2))
@@ -142,9 +140,10 @@ public:
         i=apath.next_index(i);
         if (i==0) // Case of a closed path, made of only one flat part.
         {
-          m_path.push_back(Flat(apath.front(), apath.front(),
-                                positive_flat?(apath.length()-1):
-                                              -(apath.length())-1));
+          m_path.push_back(Flat(apath.front(), apath.back(),
+                                (positive_flat?(apath.length()-1):
+                                               -(apath.length()-1))));
+          CGAL_assertion(is_valid());
           return;
         }
       }
@@ -156,20 +155,11 @@ public:
     do
     {
       // Here dart i is the beginning of a flat part (maybe of length 0)
-      if (start_with_positive_turn)
-      {
-        if (apath.next_positive_turn(i)==2)
-        { positive_flat=true; negative_flat=false; }
-        else if (apath.next_negative_turn(i)==2)
-        { positive_flat=false; negative_flat=true; }
-      }
-      else
-      {
-        if (apath.next_negative_turn(i)==2)
-        { positive_flat=false; negative_flat=true; }
-        else if (apath.next_positive_turn(i)==2)
-        { positive_flat=true; negative_flat=false; }
-      }
+      positive_flat=false; negative_flat=false;
+      if (!use_only_negative && apath.next_positive_turn(i)==2)
+      { positive_flat=true; }
+      else if (!use_only_positive && apath.next_negative_turn(i)==2)
+      { negative_flat=true; }
 
       if (!positive_flat && !negative_flat)
       {
@@ -189,7 +179,7 @@ public:
         }
         CGAL_assertion(length>0);
         m_path.push_back(Flat(apath[i], apath[j],
-                              positive_flat?length:-length));
+                              (positive_flat?length:-length)));
         i=apath.next_index(j);
       }
     }
@@ -208,6 +198,8 @@ public:
       m_path.swap(p2.m_path);
       std::swap(m_is_closed, p2.m_is_closed);
       std::swap(m_length, p2.m_length);
+      std::swap(m_use_only_negative, p2.m_use_only_negative);
+      std::swap(m_use_only_positive, p2.m_use_only_positive);
     }
   }
 
@@ -222,6 +214,8 @@ public:
       m_path=other.m_path;
       m_is_closed=other.m_is_closed;
       m_length=other.m_length;
+      m_use_only_negative=other.m_use_only_negative;
+      m_use_only_positive=other.m_use_only_positive;
     }
     return *this;
   }
@@ -597,7 +591,7 @@ public:
       id2-=number_of_edges; // id of the second dart in its own vertex
     }
 
-    return (id1<id2?id2-id1:number_of_edges-id1+id2);
+    return (id1<id2?(id2-id1):(number_of_edges-id1+id2));
   }
 
   /// @return the negative turn given two ids of darts (unused for CGAL_PWRLE_TURN_V1)
@@ -614,7 +608,7 @@ public:
       id2-=number_of_edges; // id of the second dart in its own vertex
     }
 
-    return (id1<=id2?number_of_edges-id2+id1:id1-id2);
+    return (id1<=id2?(number_of_edges-id2+id1):(id1-id2));
   }
 
   std::size_t get_dart_id(Dart_const_handle dh) const
@@ -792,9 +786,10 @@ public:
     CGAL_assertion(m_path.size()>1 || it==it2);
     if (it==it2) { return false; } // only one flat in the path
 
-    positive2=(next_positive_turn(it)==2);
-    negative2=(next_negative_turn(it)==2);
-    // True for minimal surface, not for tests in a cube CGAL_assertion(!(positive2 && negative2));
+    positive2=(!m_use_only_negative && (next_positive_turn(it)==2));
+    negative2=(!m_use_only_positive && (next_negative_turn(it)==2));
+    CGAL_assertion(!(positive2 && negative2));
+
     if (!positive2 && !negative2) { return false; } // the middle turn is not a flat
 
     bool positive1=false, negative1=false;
@@ -1074,8 +1069,8 @@ public:
     if (it1==it3)
     { // Case of cyclic bracket
       CGAL_assertion(size_of_list()==1);
-      CGAL_assertion(flat_length(it3)<0);
-      set_begin_of_flat(it1, m_map.template  beta<1,2,0,2>(begin_of_flat(it3))); // TODO CHECK
+      CGAL_assertion(flat_length(it1)>0);
+      set_begin_of_flat(it1, m_map.template  beta<1,2,0,2>(begin_of_flat(it1))); // TODO CHECK
       set_end_of_flat(it1, m_map.template  beta<0,2,1,2>(end_of_flat(it1))); // TODO CHECK
       set_flat_length(it1, -(flat_length(it1)-2));
       m_length-=2;
@@ -1556,6 +1551,8 @@ protected:
   List_of_flats m_path; // The sequence of flats (a flat part is a pair of darts with positive or negative turn == 2). If negative value k, -k is the length of the flat part, for negative turns (-2).
   bool m_is_closed; // True iff the path is a cycle
   std::size_t m_length;
+  bool m_use_only_positive;
+  bool m_use_only_negative;
 
 #ifdef CGAL_PWRLE_TURN_V2
   const TDartIds& m_darts_ids;

@@ -113,11 +113,11 @@ public:
 
   /// @return the index after index i.
   std::size_t next_index(std::size_t i) const
-  { return (is_closed() && i==m_path.size()-1?0:i+1); }
+  { return ((is_closed() && i==(m_path.size()-1))?0:(i+1)); }
 
   /// @return the index before index i.
   std::size_t prev_index(std::size_t i) const
-  { return (is_closed() && i==0?m_path.size()-1:i-1); }
+  { return ((is_closed() && i==0)?(m_path.size()-1):(i-1)); }
 
   /// @return the ith dart of the path.
   Dart_const_handle get_ith_dart(std::size_t i) const
