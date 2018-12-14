@@ -3,9 +3,8 @@
 #include <CGAL/Linear_cell_complex_constructors.h>
 #include <CGAL/Surface_mesh_curve_topology.h>
 #include <CGAL/Path_on_surface.h>
-#include <CGAL/Path_generators.h>
-#include <CGAL/Path_on_surface.h>
 #include <CGAL/Path_on_surface_with_rle.h>
+#include <CGAL/Path_generators.h>
 #include <vector>
 #include <sstream>
 
@@ -13,7 +12,7 @@
 
 /* If you want to use a viewer, you can use qglviewer. */
 #ifdef CGAL_USE_BASIC_VIEWER
-#include <CGAL/draw_lcc_with_pathes.h>
+#include <CGAL/draw_lcc_with_paths.h>
 #endif
 
 struct MyItems
@@ -45,7 +44,6 @@ bool unit_test_canonize(CGAL::Surface_mesh_curve_topology<LCC_3_cmap>& smct,
                         const char* msg,
                         bool draw, int testtorun)
 {
-  std::vector<const CGAL::Path_on_surface<LCC_3_cmap>*> v;
   bool res=true;
 
   if (testtorun==-1 || nbtests==testtorun)
@@ -56,14 +54,6 @@ bool unit_test_canonize(CGAL::Surface_mesh_curve_topology<LCC_3_cmap>& smct,
 
     for (unsigned int i=0; i<paths.size(); ++i)
     {
-#ifdef CGAL_USE_BASIC_VIEWER
-      if (draw)
-      {
-        v.push_back(&paths[i]);
-        // display(paths[i].get_map(), v);
-      }
-#endif // CGAL_USE_BASIC_VIEWER
-
       if (i>0 && !smct.are_freely_homotopic(paths[0], paths[i]))
       {
         std::cout<<"[Test "<<nbtests<<"] ERROR: ";
@@ -78,7 +68,7 @@ bool unit_test_canonize(CGAL::Surface_mesh_curve_topology<LCC_3_cmap>& smct,
     if (draw)
     {
       std::string title="Test "+std::to_string(nbtests);
-      display(paths[0].get_map(), v, title.c_str());
+      CGAL::draw(paths[0].get_map(), paths, title.c_str());
     }
 #endif // CGAL_USE_BASIC_VIEWER
 
@@ -108,8 +98,9 @@ bool test_double_torus_quad(bool draw, int testtorun)
 
     for (unsigned int i=0; i<3; ++i)
     {
-      paths.push_back(CGAL::Path_on_surface<LCC_3_cmap>(lcc));
-      CGAL::generate_g1_double_torus(paths[i], i);
+      CGAL::Path_on_surface<LCC_3_cmap> p(lcc);
+      CGAL::generate_g1_double_torus(p, i);
+      paths.push_back(p);
     }
 
     if (!unit_test_canonize(smct, paths,
@@ -133,18 +124,15 @@ bool test_double_torus_quad(bool draw, int testtorun)
     {
       CGAL::Random random(starting_seed+nbtests);
       CGAL::Path_on_surface<LCC_3_cmap> p(lcc);
+
       generate_random_closed_path(p, random.get_int(5, 20), random); // random path, length between 30 and 500
-
       paths.push_back(p);
-      // std::cout<<"Path1 size: "<<p.length()<<"; ";
 
       p.update_path_randomly(random);
       paths.push_back(p);
-      // std::cout<<"Path2 size: "<<p.length()<<"; ";
 
       p.update_path_randomly(random);
       paths.push_back(p);
-      // std::cout<<"Path3 size: "<<p.length()<<"; ";
     }
 
     if (!unit_test_canonize(smct, paths,
@@ -168,19 +156,15 @@ bool test_double_torus_quad(bool draw, int testtorun)
     {
       CGAL::Random random(starting_seed+nbtests);
       CGAL::Path_on_surface<LCC_3_cmap> p(lcc);
+
       generate_random_closed_path(p, random.get_int(5, 200), random); // random path, length between 30 and 500
-
-      // p.close();
       paths.push_back(p);
-      // std::cout<<"Path1 size: "<<p.length()<<"; ";
 
       p.update_path_randomly(random);
       paths.push_back(p);
-      // std::cout<<"Path2 size: "<<p.length()<<"; ";
 
       p.update_path_randomly(random);
       paths.push_back(p);
-      // std::cout<<"Path3 size: "<<p.length()<<"; ";
 
       if (!unit_test_canonize(smct, paths,
                               "random canonize paths on double torus",

@@ -12,7 +12,7 @@
 
 /* If you want to use a viewer, you can use qglviewer. */
 #ifdef CGAL_USE_BASIC_VIEWER
-#include <CGAL/draw_lcc_with_pathes.h>
+#include <CGAL/draw_lcc_with_paths.h>
 #endif
 
 struct MyItems
@@ -51,11 +51,11 @@ void transform_path(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
                     std::size_t repeat=0) // If 0, repeat as long as there is one modifcation;
                                            // otherwise repeat the given number of times
 {
-  std::vector<const CGAL::Path_on_surface<LCC_3_cmap>*> v;
+  std::vector<CGAL::Path_on_surface<LCC_3_cmap> > v;
   if (draw)
   {
-    v.push_back(&path);
-    // display(path.get_map(), v);
+    v.push_back(path);
+    // CGAL::draw(path.get_map(), v);
   }
 
   CGAL::Path_on_surface<LCC_3_cmap> prevp=path;
@@ -95,7 +95,7 @@ void transform_path(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
     }
 
     // if (draw /* && nbtest==1*/)
-    // display(path.get_map(), v);
+    // CGAL::draw(path.get_map(), v);
 
     ++nb;
   }
@@ -105,7 +105,7 @@ void transform_path(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
   if (draw)
   {
     std::string title="Test "+std::to_string(nbtests);
-    display(path.get_map(), v, title.c_str());
+    CGAL::draw(path.get_map(), v, title.c_str());
   }
 #endif // CGAL_USE_BASIC_VIEWER
 
