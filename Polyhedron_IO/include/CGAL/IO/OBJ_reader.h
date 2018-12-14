@@ -52,6 +52,11 @@ read_OBJ( std::istream& input,
         iss.ignore(256, ' ');
       }
     }
+    else
+    {
+      std::cerr<<"ERROR : Cannnot read line beginning with "<<line[0]<<std::endl;
+      return false;
+    }
   }
   return true;
 }

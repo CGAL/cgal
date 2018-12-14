@@ -193,7 +193,8 @@ public:
     if(has_normals)
     {
       const Kernel::Vector_3& n = point_set->normal(*it);
-      Point_set_3<Kernel>::Point q = p + length * n;
+      Kernel::FT normalizer = 1.0/CGAL::sqrt(n.squared_length());
+      Point_set_3<Kernel>::Point q = p + length * n * normalizer;
       positions_lines[i * size_p + 3] = q.x() + offset.x;
       positions_lines[i * size_p + 4] = q.y() + offset.y;
       positions_lines[i * size_p + 5] = q.z() + offset.z;
@@ -314,7 +315,7 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
       average_spacing = 0.005 * item->diagonalBbox(); 
       normal_length = (std::min)(average_spacing, std::sqrt(
                                    region_of_interest.squared_radius() / 1000.));
-      length_factor = 5.0/100*normal_Slider->value();
+      length_factor = 10.0/100*normal_Slider->value();
     }
     else
     {
