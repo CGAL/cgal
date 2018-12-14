@@ -422,8 +422,10 @@ namespace CGAL {
         path2.canonize();
         res=(path1==path2); // Do here to be counted in the computation time
 
+#ifdef CGAL_TRACE_PATH_TESTS
         std::cout<<"Length of reduced paths: "<<path1.length()<<" and "
                  <<path2.length()<<std::endl;
+#endif
 
         /* std::cout<<"path1="<<Path_on_surface<CMap_for_surface_mesh_curve_topology>(path1)<<std::endl
                  <<"path2="<<Path_on_surface<CMap_for_surface_mesh_curve_topology>(path2)<<std::endl;

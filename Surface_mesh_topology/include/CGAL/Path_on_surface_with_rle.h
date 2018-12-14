@@ -363,13 +363,13 @@ public:
   bool is_valid_iterator(const List_iterator& ittotest)
   {
     if (ittotest==m_path.end()) { return false; }
-    // return true;
+    return true;
     // Assert too long; uncomment in case of bug.
-    for (auto it=m_path.begin(); it!=m_path.end(); ++it)
+    /* for (auto it=m_path.begin(); it!=m_path.end(); ++it)
     {
       if (it==ittotest) { return true; }
     }
-    return false;
+    return false; */
   }
 
   Dart_const_handle front()
@@ -877,17 +877,11 @@ public:
     List_iterator itprev=prev_iterator(it);
 
     // We reduce the first flat
-    if (reduce_flat_from_end(it))
-    { itprev=it; }
+    reduce_flat_from_end(it); // If flat 'it' is erased, it is moved to the previous flat
 
     // And we reduce the second flat
-    bool previsnext=(itprev==it2);
-    if (reduce_flat_from_beginning(it2) && previsnext)
-    { itprev=it2; }
+    reduce_flat_from_beginning(it2);
 
-    // Now move it to the element before the removed spur
-    // except if the path has become empty, or if it is not closed
-    // and we are in its first element.
     if (m_path.empty())
     {
       it=m_path.end();
@@ -895,10 +889,12 @@ public:
     }
     else
     {
-      merge_with_next_flat_if_possible(itprev);  // Try to merge flat before flat 'it' with flat 'it'
-      it=next_iterator(itprev);
-      merge_with_next_flat_if_possible(it);  // try to merge flat 'it' with its next flat
-      it=itprev;
+      merge_with_next_flat_if_possible(it2);  // Try to merge flat 'it2' with its next flat
+      if (size_of_list()>1)
+      {
+        merge_with_next_flat_if_possible(it);  // try to merge flat 'it' with its next flat
+      }
+      else { it=m_path.begin(); }
     }
 
     // CGAL_assertion(is_valid());
@@ -934,9 +930,9 @@ public:
         // CGAL_assertion(is_valid_iterator(it));
         // CGAL_assertion(is_valid());
         if (!all) { return true; }
-        it=m_path.begin();
+        // it=m_path.begin();
       }
-      else { ++it; } // move_to_next_spur(it); }
+      else { move_to_next_spur(it); } // ++it; }
     }
     CGAL_assertion(is_valid());
     return res;
@@ -1012,8 +1008,9 @@ public:
     List_iterator it2;
     CGAL_assertion(is_negative_bracket(it1, it2)); // Here it2 is unused
 
-    if (it1==it3) // TODO CHECK THE CONDITION
+    if (it1==it3)
     { // Case of cyclic bracket
+      CGAL_assertion(size_of_list()==1);
       CGAL_assertion(flat_length(it1)<0);
       set_begin_of_flat(it1, m_map.template  beta<2,0,2,1>(begin_of_flat(it1))); // TODO CHECK
       set_end_of_flat(it1, m_map.template  beta<2,1,2,0>(end_of_flat(it1))); // TODO CHECK
@@ -1035,12 +1032,11 @@ public:
     set_flat_length(it2, -flat_length(it2));
 
     // Merge if possible flat it1 with its next flat
-    merge_with_next_flat_if_possible(it1);
+    merge_with_next_flat_if_possible(it1); // Possibly erase the next flat
 
-    it2=prev_iterator(it1);
-    // Merge if possible prev flat with flat it
-    if (merge_with_next_flat_if_possible(it2))
-    { it1=it2; }
+    it1=prev_iterator(it1);
+    // Merge if possible previous flat with flat it1
+    merge_with_next_flat_if_possible(it1);
 
     // CGAL_assertion(is_valid());
   }
@@ -1053,8 +1049,9 @@ public:
     List_iterator it2;
     CGAL_assertion(is_positive_bracket(it1, it2)); // Here it2 is unused
 
-    if (it1==it3) // TODO CHECK THE CONDITION
+    if (it1==it3)
     { // Case of cyclic bracket
+      CGAL_assertion(size_of_list()==1);
       CGAL_assertion(flat_length(it3)<0);
       set_begin_of_flat(it1, m_map.template  beta<1,2,0,2>(begin_of_flat(it3))); // TODO CHECK
       set_end_of_flat(it1, m_map.template  beta<0,2,1,2>(end_of_flat(it1))); // TODO CHECK
@@ -1075,11 +1072,10 @@ public:
     set_flat_length(it2, -flat_length(it2));
 
     // Merge if possible flat it with its next flat
-    merge_with_next_flat_if_possible(it1);
+    merge_with_next_flat_if_possible(it1); // Possibly erase the next flat
 
-    it2=prev_iterator(it1);
-    if(merge_with_next_flat_if_possible(it2))
-    { it1=it2; }
+    it1=prev_iterator(it1);
+    merge_with_next_flat_if_possible(it1);
 
     // if (is_beginning_of_non_null_flat(it1)) { advance_iterator(it1); }
 
@@ -1100,18 +1096,16 @@ public:
       if (is_positive_bracket(it1, it2))
       {
         remove_positive_bracket(it1, it2); res=true;
-        it1=m_path.begin();
         // CGAL_assertion(is_valid_iterator(it1));
         // CGAL_assertion(is_valid());
       }
       else if (is_negative_bracket(it1, it2))
       {
         remove_negative_bracket(it1, it2); res=true;
-        it1=m_path.begin();
         // CGAL_assertion(is_valid_iterator(it1));
         // CGAL_assertion(is_valid());
       }
-      else { ++it1; } // move_to_next_bracket(it1); }
+      else { move_to_next_bracket(it1); }
       if (!all && res) { return true; }      
     }
     CGAL_assertion(is_valid());
@@ -1328,8 +1322,12 @@ public:
         set_begin_of_flat(it2, dh6);
         set_end_of_flat(it2, dh6);
         merge_with_next_flat_if_possible(it2);
-        if (merge_with_next_flat_if_possible(prev_iterator(it1)))
-        { it1=prev_iterator(it2); }
+        if (size_of_list()>1)
+        {
+          retreat_iterator(it1);
+          merge_with_next_flat_if_possible(it1);
+        }
+        else { it1=m_path.begin(); }
         CGAL_assertion(is_valid());
         return;
       }
@@ -1342,8 +1340,12 @@ public:
         set_flat_length(it1, -flat_length(it2));
         set_flat_length(it2, 0);
         merge_with_next_flat_if_possible(it2);
-        if (merge_with_next_flat_if_possible(prev_iterator(it1)))
-        { it1=prev_iterator(it2); }
+        if (size_of_list()>1)
+        {
+          retreat_iterator(it1);
+          merge_with_next_flat_if_possible(it1);
+        }
+        else { it1=m_path.begin(); }
         CGAL_assertion(is_valid());
         return;
       }
@@ -1359,8 +1361,12 @@ public:
         set_flat_length(it2, -flat_length(it1));
         set_flat_length(it1, 0);
         merge_with_next_flat_if_possible(it2);
-        if (merge_with_next_flat_if_possible(prev_iterator(it1)))
-        { it1=prev_iterator(it2); }
+        if (size_of_list()>1)
+        {
+          retreat_iterator(it1);
+          merge_with_next_flat_if_possible(it1);
+        }
+        else { it1=m_path.begin(); }
         CGAL_assertion(is_valid());
         return;
       }
@@ -1413,6 +1419,7 @@ public:
 
       // merge_with_next_flat_if_possible(prev_iterator(it3));
     }
+
     m_length-=2;
 
     CGAL_assertion(is_valid());
@@ -1439,9 +1446,9 @@ public:
         // CGAL_assertion(is_valid_iterator(it));
         // CGAL_assertion(is_valid());
         if (!all) { return true; }
-        it=m_path.begin();
+        // it=m_path.begin();
       }
-      else { ++it; } // move_to_next_l_shape(it); }
+      else { move_to_next_l_shape(it); } // ++it; }
     }
     CGAL_assertion(is_valid());
     return res;
