@@ -72,9 +72,10 @@ void create_braket_negative(Path& p, std::size_t length,
 }
 
 template<typename Path>
-void generate_random_bracket(Path& path,
-                             std::size_t nb1, std::size_t nb2, std::size_t nb3,
-                             CGAL::Random& random)
+void generate_random_positive_bracket(Path& path,
+                                      std::size_t nb1,
+                                      std::size_t nb2, std::size_t nb3,
+                                      CGAL::Random& random)
 {
   path.clear();
   path.initialize_random_starting_dart(random);

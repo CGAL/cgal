@@ -156,10 +156,13 @@ public:
     {
       // Here dart i is the beginning of a flat part (maybe of length 0)
       positive_flat=false; negative_flat=false;
-      if (!use_only_negative && apath.next_positive_turn(i)==2)
-      { positive_flat=true; }
-      else if (!use_only_positive && apath.next_negative_turn(i)==2)
-      { negative_flat=true; }
+      if (apath.next_index_exists(i))
+      {
+        if (!use_only_negative && apath.next_positive_turn(i)==2)
+        { positive_flat=true; }
+        else if (!use_only_positive && apath.next_negative_turn(i)==2)
+        { negative_flat=true; }
+      }
 
       if (!positive_flat && !negative_flat)
       {
@@ -455,15 +458,21 @@ public:
   {
     CGAL_assertion(it!=m_path.end());
     it=std::next(it);
-    if (is_closed() && it==m_path.end())
-    { it=m_path.begin(); } // Here the path is closed, and it is the last element of the list
+    if (it==m_path.end())
+    {
+      if (is_closed())
+      { it=m_path.begin(); } // Here the path is closed, and it is the last element of the list
+    }
   }
 
   void retreat_iterator(List_iterator& it)
   {
-    CGAL_assertion(it!=m_path.begin() || is_closed());
-    if (is_closed() && it==m_path.begin())
-    { it=m_path.end(); }
+    if (it==m_path.begin())
+    {
+      if (is_closed())
+      { it=m_path.end(); }
+      else { return; }
+    }
     it=std::prev(it);
   }
 
@@ -960,7 +969,7 @@ public:
                            List_iterator& itend)
   {
     CGAL_assertion(is_valid_iterator(it));
-    if (!next_flat_exist(it) || next_positive_turn(it)!=1)
+    if (m_use_only_negative || !next_flat_exist(it) || next_positive_turn(it)!=1)
     { return false; }
     // Here first positive turn is 1
 
@@ -983,7 +992,7 @@ public:
                            List_iterator& itend)
   {
     CGAL_assertion(is_valid_iterator(it));
-    if (!next_flat_exist(it) || next_negative_turn(it)!=1)
+    if (m_use_only_positive || !next_flat_exist(it) || next_negative_turn(it)!=1)
     { return false; }
     // Here first negative turn is 1
 
@@ -1133,6 +1142,7 @@ public:
   bool is_l_shape(const List_iterator& it)
   {
     CGAL_assertion(is_valid_iterator(it));
+    if (!next_flat_exist(it)) { return false; }
     std::size_t t=next_negative_turn(it);
     return (t==1 ||
             (flat_length(it)<0 && t==2));
@@ -1148,7 +1158,7 @@ public:
     do
     {
       advance_iterator(it);
-      if (is_l_shape(it)) { return; }
+      if (it!=m_path.end() && is_l_shape(it)) { return; }
     }
     while(it!=itend);
     it=m_path.end(); // Here there is no spur in the whole path
@@ -1166,8 +1176,10 @@ public:
     positive_flat=false; negative_flat=false;
     if (!prev_flat_exist(it)) { return false; }
     List_iterator ittemp=prev_iterator(it);
-    if (positive_turn(end_of_flat(ittemp), dh)==2) { positive_flat=true; }
-    if (negative_turn(end_of_flat(ittemp), dh)==2) { negative_flat=true; }
+    if (!m_use_only_negative && positive_turn(end_of_flat(ittemp), dh)==2)
+    { positive_flat=true; }
+    if (!m_use_only_positive && negative_turn(end_of_flat(ittemp), dh)==2)
+    { negative_flat=true; }
 
     if (flat_length(ittemp)==0) // Case of flat lengh 0
     { return positive_flat || negative_flat; }
@@ -1195,8 +1207,10 @@ public:
      positive_flat=false; negative_flat=false;
      if (!next_flat_exist(it)) { return false; }
      List_iterator ittemp=next_iterator(it);
-     if (positive_turn(dh, begin_of_flat(ittemp))==2) { positive_flat=true; }
-     if (negative_turn(dh, begin_of_flat(ittemp))==2) { negative_flat=true; }
+     if (!m_use_only_negative && positive_turn(dh, begin_of_flat(ittemp))==2)
+     { positive_flat=true; }
+     if (!m_use_only_positive && negative_turn(dh, begin_of_flat(ittemp))==2)
+     { negative_flat=true; }
 
      if (flat_length(ittemp)==0)  // Case of flat lengh 0
      { return positive_flat || negative_flat; }
@@ -1397,12 +1411,22 @@ public:
                                            std::make_pair
                                            (second_dart_toinsert, 0)); */
 
-    // 1) Add the first dart before flat 'it'
-    add_dart_before(it1, dh1);
+    if (next_iterator(it2)!=it1 || next_negative_turn(it2)!=3)
+    {
+      // 1) Add the first dart before flat 'it'
+      add_dart_before(it1, dh1);
 
-    // 2) Add the last dart after flat 'it2'
-    add_dart_after(it2, dh6);
-
+      // 2) Add the last dart after flat 'it2'
+      add_dart_after(it2, dh6);
+    }
+    else
+    { // Case "-2^s -1 -2^t -3" is a special case
+      dh2=m_map.template beta<2,0>(dh1);
+      dh5=m_map.template beta<2,1>(dh6);
+      increase_flat_length(it1);
+      increase_flat_length(it2);
+      m_length+=2;
+    }
     // 3) Move the first flat
    /* if (first_flat_zero)
     {

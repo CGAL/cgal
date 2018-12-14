@@ -227,7 +227,9 @@ protected:
       else if (m_current_path==m_paths->size()+1)
       { displayMessage(QString("Do not draw paths.")); }
       else
-      { displayMessage(QString("Draw path=%1.").arg((m_current_path))); }
+      { displayMessage(QString("Draw path=%1, nb_darts=%2.").
+                       arg(m_current_path).
+                       arg((*m_paths)[m_current_path].length())); }
       compute_elements();
       redraw();
     }

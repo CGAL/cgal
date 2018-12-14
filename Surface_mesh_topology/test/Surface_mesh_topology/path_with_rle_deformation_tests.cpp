@@ -32,9 +32,8 @@ typedef CGAL::Linear_cell_complex_traits
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<2, 3,
                                             MyTraits, MyItems> LCC_3_cmap;
 
-#define NB_TESTS 23 // 0 ... 22
+#define NB_TESTS 21 // 0 ... 20
 static int nbtests=0;
-static int starting_seed;
 
 enum Transformation // enum for the type of transformations
 {
@@ -329,59 +328,29 @@ bool test_some_random_paths_on_cube(bool draw, int testtorun)
   CGAL::Path_on_surface<LCC_3_cmap> path(lcc);
   bool res=true;
 
-  CGAL::Random random(starting_seed+nbtests); // fix seed
-  generate_random_bracket(path, 2, 6, 3, random); // Test 17
+  CGAL::Random random(nbtests); // fix seed
+  generate_random_positive_bracket(path, 2, 6, 3, random); // Test 17
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^1 1 2^6 1 2^3 ... )",
-                 "2 2", draw, testtorun, true, false))
+                 "2 2 2 2 2 2 1", draw, testtorun, true, false))
   { res=false; }
 
-  random=CGAL::Random(starting_seed+nbtests);
-  generate_random_bracket(path, 3, 8, 4, random); // Test 18
+  random=CGAL::Random(nbtests);
+  generate_random_positive_bracket(path, 3, 8, 4, random); // Test 18
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^2 1 2^8 1 2^4 ... )",
-                   "", draw, testtorun, true, false))
+                   "2 1 2 2 2 2 2", draw, testtorun, true, false))
   { res=false; }
 
-  random=CGAL::Random(starting_seed+nbtests);
-  generate_random_bracket(path, 5, 12, 8, random); // Test 19
+  random=CGAL::Random(nbtests);
+  generate_random_positive_bracket(path, 5, 12, 8, random); // Test 19
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^4 1 2^12 1 2^8 ...)",
-                 "1", draw, testtorun, true, false))
+                 "2 1 2", draw, testtorun, true, false))
   { res=false; }
 
-  random=CGAL::Random(starting_seed+nbtests);
-  generate_random_bracket(path, 5, 12, 8, random); // Test 20
+  random=CGAL::Random(nbtests);
+  generate_random_positive_bracket(path, 5, 12, 8, random); // Test 20
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^4 1 2^12 1 2^8 ...)",
-                   "2", draw, testtorun, true, false))
+                   "1 2 2 2", draw, testtorun, true, false))
   { res=false; }
-
-  return res;
-}
-///////////////////////////////////////////////////////////////////////////////
-bool test_right_push(bool draw, int testtorun)
-{
-  bool res=true;
-
-  LCC_3_cmap lcc;
-  if (!CGAL::load_off(lcc, "./data/cube-mesh-5-5.off"))
-  {
-    std::cout<<"PROBLEM reading file ./data/cube-mesh-5-5.off"<<std::endl;
-    return false;
-  }
-
-  CGAL::Path_on_surface<LCC_3_cmap> path(lcc);
-
-  if (testtorun==-1 || nbtests==testtorun)
-  {
-    generate_one_l_shape(path); // Test 21
-    transform_path(path, PUSH, false, true, draw, 0); // TODO COMPARE RESULT WITH GOLD STANDARD
-  }
-  ++nbtests;
-
-  if (testtorun==-1 || nbtests==testtorun)
-  {
-    generate_l_shape_case2(path); // Test 22
-    transform_path(path, PUSH, false, true, draw, 0); // TODO COMPARE RESULT WITH GOLD STANDARD
-  }
-  ++nbtests;
 
   return res;
 }
@@ -389,15 +358,13 @@ bool test_right_push(bool draw, int testtorun)
 ///////////////////////////////////////////////////////////////////////////////
 void usage(int /*argc*/, char** argv)
 {
-  std::cout<<"usage: "<<argv[0]<<" [-draw] [-test N] [-seed S]"<<std::endl
+  std::cout<<"usage: "<<argv[0]<<" [-draw] [-test N]"<<std::endl
            <<"   Test several path transformations "
            <<"(bracket flattening, spurs removal and right shift of l-shape)."
            <<std::endl
            <<"   -draw: draw mesh and paths before and after the transformation"
            <<std::endl
            <<"   -test N: only run test number N (0<=N<"<<NB_TESTS<<")."
-           <<std::endl
-           <<"   -seed S: uses S as seed of random generator. Otherwise use a different seed at each run (based on time)."
            <<std::endl
            <<std::endl;
   exit(EXIT_FAILURE);
@@ -415,9 +382,6 @@ int main(int argc, char** argv)
   std::string arg;
   int testN=-1;
 
-  CGAL::Random r; // Used when user do not provide its own seed.
-  starting_seed=r.get_int(0,INT_MAX);
-
   for (int i=1; i<argc; ++i)
   {
     arg=argv[i];
@@ -431,19 +395,11 @@ int main(int argc, char** argv)
       if (testN<0 || testN>=NB_TESTS)
       { error_command_line(argc, argv, "Error: invalid value for -test option."); }
     }
-    else if (arg=="-seed")
-    {
-      if (i==argc-1)
-      { error_command_line(argc, argv, "Error: no number after -seed option."); }
-      starting_seed=std::stoi(std::string(argv[++i]));
-    }
     else if (arg=="-h" || arg=="--help" || arg=="-?")
     { usage(argc, argv); }
     else if (arg[0]=='-')
     { std::cout<<"Unknown option "<<arg<<", ignored."<<std::endl; }
   }
-
-  std::cout<<"Start tests (seed="<<starting_seed<<"):"<<std::flush;
 
 #ifdef CGAL_TRACE_PATH_TESTS
   std::cout<<std::endl;
@@ -464,12 +420,6 @@ int main(int argc, char** argv)
   if (!test_some_random_paths_on_cube(draw, testN))
   {
     std::cout<<"TEST RANDOM PATHS ON CUBE FAILED."<<std::endl;
-    return EXIT_FAILURE;
-  }
-
-  if (!test_right_push(draw, testN))
-  {
-    std::cout<<"TEST RIGHT PUSH FAILED."<<std::endl;
     return EXIT_FAILURE;
   }
 
