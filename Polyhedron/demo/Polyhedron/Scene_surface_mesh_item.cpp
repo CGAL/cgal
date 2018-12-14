@@ -895,11 +895,10 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
   if(normal == CGAL::NULL_VECTOR)
   {
     boost::graph_traits<SMesh>::halfedge_descriptor start = prev(halfedge(fd, *smesh_), *smesh_);
-    boost::graph_traits<SMesh>::halfedge_descriptor next_;
+    boost::graph_traits<SMesh>::halfedge_descriptor hd = halfedge(fd, *smesh_);
+    boost::graph_traits<SMesh>::halfedge_descriptor next_=next(hd, *smesh_);
     do
     {
-      boost::graph_traits<SMesh>::halfedge_descriptor hd = halfedge(fd, *smesh_);
-       next_ =next(hd, *smesh_);
       const Point_3& pa = smesh_->point(target(hd, *smesh_));
       const Point_3& pb = smesh_->point(target(next_, *smesh_));
       const Point_3& pc = smesh_->point(target(prev(hd, *smesh_), *smesh_));
@@ -908,6 +907,7 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
         normal = CGAL::cross_product(pb-pa, pc -pa);
         break;
       }
+      next_ =next(next_, *smesh_);
     }while(next_ != start);
     
     if (normal == CGAL::NULL_VECTOR) // No normal could be computed, return
