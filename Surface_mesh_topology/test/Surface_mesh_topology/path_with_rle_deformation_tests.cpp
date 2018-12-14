@@ -2,24 +2,41 @@
 #include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
 #include <CGAL/Surface_mesh_curve_topology.h>
+#include <CGAL/Path_generators.h>
+#include <CGAL/Path_on_surface.h>
+#include <CGAL/Path_on_surface_with_rle.h>
 #include <vector>
 #include <sstream>
+
+#include "Creation_of_test_cases_for_paths.h"
 
 /* If you want to use a viewer, you can use qglviewer. */
 #ifdef CGAL_USE_BASIC_VIEWER
 #include <CGAL/draw_lcc_with_pathes.h>
 #endif
 
-#include <CGAL/Path_generators.h>
-#include <CGAL/Path_on_surface.h>
-#include <CGAL/Path_on_surface_with_rle.h>
-#include "Creation_of_test_cases_for_paths.h"
+struct MyItems
+{
+  template <class CMap>
+  struct Dart_wrapper
+  {
+#ifdef CGAL_PWRLE_TURN_V3
+    typedef std::size_t Dart_info;
+#endif // CGAL_PWRLE_TURN_V3
+    typedef CGAL::Cell_attribute_with_point<CMap> Vertex_attrib;
+    typedef CGAL::cpp11::tuple<Vertex_attrib> Attributes;
+  };
+};
 
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3> LCC_3_cmap;
-typedef CGAL::Linear_cell_complex_for_generalized_map<2,3> LCC_3_gmap;
+typedef CGAL::Linear_cell_complex_traits
+<3, CGAL::Exact_predicates_inexact_constructions_kernel> MyTraits;
 
-#define NB_TESTS 26 // 0 ... 25
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<2, 3,
+                                            MyTraits, MyItems> LCC_3_cmap;
+
+#define NB_TESTS 23 // 0 ... 22
 static int nbtests=0;
+static int starting_seed;
 
 enum Transformation // enum for the type of transformations
 {
@@ -27,8 +44,6 @@ enum Transformation // enum for the type of transformations
   PUSH,
   FULL_SIMPLIFICATION
 };
-
-static int starting_seed;
 
 ///////////////////////////////////////////////////////////////////////////////
 void transform_path(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
@@ -125,70 +140,6 @@ bool unit_test(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
 
 #ifdef CGAL_TRACE_PATH_TESTS
     std::cout<<" -> "<<std::flush; path.display_pos_and_neg_turns();
-    std::cout<<std::endl;
-#endif
-  }
-
-  ++nbtests;
-  return res;
-}
-///////////////////////////////////////////////////////////////////////////////
-bool unit_test_canonize(std::vector<CGAL::Path_on_surface<LCC_3_cmap> >& paths,
-                        std::vector<CGAL::Path_on_surface_with_rle<LCC_3_cmap> >& transformed_paths,
-                        const char* msg,
-                        bool draw, int testtorun)
-{
-  std::vector<const CGAL::Path_on_surface<LCC_3_cmap>*> v;
-  bool res=true;
-
-  if (testtorun==-1 || nbtests==testtorun)
-  {
-#ifdef CGAL_TRACE_PATH_TESTS
-    std::cout<<"[Test "<<nbtests<<"] "<<msg<<": "<<std::flush;
-#else
-    std::cout<<"."<<std::flush;
-#endif
-
-    for (unsigned int i=0; i<paths.size(); ++i)
-    {
-#ifdef CGAL_USE_BASIC_VIEWER
-      if (draw)
-      {
-        v.push_back(&paths[i]);
-        // display(paths[i].get_map(), v);
-      }
-#endif // CGAL_USE_BASIC_VIEWER
-
-      transformed_paths[i].canonize();
-
-#ifdef CGAL_TRACE_PATH_TESTS
-      std::cout<<"Path["<<i<<"] -> (";
-      transformed_paths[i].display();
-      std::cout<<")  ";
-#endif
-
-      if (i>0 && transformed_paths[i]!=transformed_paths[0])
-      {
-        std::cout<<"[Test "<<nbtests<<"] ERROR: ";
-        std::cout<<"paths["<<i<<"]"
-                 <<" is not isotopic to paths[0] while it should be. (";
-        transformed_paths[0].display();
-        std::cout<<") != (";
-        transformed_paths[i].display();
-        std::cout<<")"<<std::endl;
-        res=false;
-      }
-    }
-
-#ifdef CGAL_USE_BASIC_VIEWER
-    if (draw)
-    {
-      std::string title="Test "+std::to_string(nbtests);
-      display(paths[0].get_map(), v, title.c_str());
-    }
-#endif // CGAL_USE_BASIC_VIEWER
-
-#ifdef CGAL_TRACE_PATH_TESTS
     std::cout<<std::endl;
 #endif
   }
@@ -428,134 +379,6 @@ bool test_right_push(bool draw, int testtorun)
   return res;
 }
 ///////////////////////////////////////////////////////////////////////////////
-bool test_double_torus_quad(bool draw, int testtorun)
-{
-  bool res=true;
-
-  LCC_3_cmap lcc;
-  if (!CGAL::load_off(lcc, "./data/double-torus.off"))
-  {
-    std::cout<<"PROBLEM reading file ./data/double-torus.off"<<std::endl;
-    exit(EXIT_FAILURE);
-  }
-
-  CGAL::Surface_mesh_curve_topology<LCC_3_cmap> cmt(lcc);
-
-  std::vector<CGAL::Path_on_surface<LCC_3_cmap> > paths;
-  std::vector<CGAL::Path_on_surface_with_rle<LCC_3_cmap> > transformed_paths;
-
-  // Test 23 (3 g1 cycles)
-  for (unsigned int i=0; i<3; ++i)
-  {
-    paths.push_back(CGAL::Path_on_surface<LCC_3_cmap>(lcc));
-    CGAL::generate_g1_double_torus(paths[i], i);
-    transformed_paths.push_back
-        (cmt.transform_original_path_into_quad_surface(paths[i]));
-  }
-
-  if (!unit_test_canonize(paths, transformed_paths,
-                          "canonize paths on double torus gen1",
-                          draw, testtorun))
-  { res=false; }
-
-
-  std::vector<const CGAL::Path_on_surface<LCC_3_cmap>*> v; // TEMPO POUR DEBUG
-
-  // Test 24 (one random path, deformed randomly)
-  LCC_3_cmap lcc2;
-  if (!CGAL::load_off(lcc2, "./data/double-torus.off")) // "./data/double-torus-smooth.off"))
-  {
-    std::cout<<"PROBLEM reading file ./data/double-torus.off"<<std::endl; // ./data/double-torus-smooth.off"<<std::endl;
-    exit(EXIT_FAILURE);
-  }
-
-  CGAL::Surface_mesh_curve_topology<LCC_3_cmap> cmt2(lcc2);
-
-  paths.clear();
-  transformed_paths.clear();
-  if (testtorun==-1 || nbtests==testtorun)
-  {
-    CGAL::Random random(starting_seed+nbtests);
-    CGAL::Path_on_surface<LCC_3_cmap> p(lcc2);
-    generate_random_closed_path(p, random.get_int(5, 20), random); // random path, length between 30 and 500
-
-    // p.close();
-    paths.push_back(p);
-
-    std::cout<<"Path1 size: "<<p.length()<<"; ";
-
-    p.update_path_randomly(random);
-    paths.push_back(p);
-
-    std::cout<<"Path2 size: "<<p.length()<<"; ";
-
-    /* update_path_randomly(p, random);
-    paths.push_back(p);  */
-    for (unsigned int i=0; i<paths.size(); ++i)
-    {
-      transformed_paths.push_back
-          (cmt2.transform_original_path_into_quad_surface(paths[i]));
-
-      v.push_back(&paths[i]);
-    }
-
-    // display(paths[0].get_map(), v, "LCC Viewer", cmt2.m_mark_T);
-  }
-
-  if (!unit_test_canonize(paths, transformed_paths,
-                          "random canonize paths on double torus",
-                          draw, testtorun))
-  { res=false; }
-
-  // Test 25 (one random path, deformed randomly)
-  LCC_3_cmap lcc3;
-  if (!CGAL::load_off(lcc3, "./data/3torus-smooth.off")) // 3torus.off
-  {
-    std::cout<<"PROBLEM reading file ./data/3torus-smooth.off"<<std::endl; // 3torus.off
-    exit(EXIT_FAILURE);
-  }
-
-  CGAL::Surface_mesh_curve_topology<LCC_3_cmap> cmt3(lcc3);
-
-  paths.clear();
-  transformed_paths.clear();
-  if (testtorun==-1 || nbtests==testtorun)
-  {
-    CGAL::Random random(starting_seed+nbtests);
-    CGAL::Path_on_surface<LCC_3_cmap> p(lcc3);
-    generate_random_closed_path(p, random.get_int(5, 200), random); // random path, length between 30 and 500
-
-    // p.close();
-    paths.push_back(p);
-
-    std::cout<<"Path1 size: "<<p.length()<<"; ";
-
-    p.update_path_randomly(random);
-    paths.push_back(p);
-
-    std::cout<<"Path2 size: "<<p.length()<<"; ";
-
-    /* update_path_randomly(p, random);
-    paths.push_back(p);  */
-    for (unsigned int i=0; i<paths.size(); ++i)
-    {
-      transformed_paths.push_back
-          (cmt3.transform_original_path_into_quad_surface(paths[i]));
-
-      v.push_back(&paths[i]);
-    }
-
-    // display(paths[0].get_map(), v, "LCC Viewer", cmt2.m_mark_T);
-  }
-
-  if (!unit_test_canonize(paths, transformed_paths,
-                          "random canonize paths on double torus",
-                          draw, testtorun))
-  { res=false; }
-
-  return res;
-}
-///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 void usage(int /*argc*/, char** argv)
 {
@@ -640,12 +463,6 @@ int main(int argc, char** argv)
   if (!test_right_push(draw, testN))
   {
     std::cout<<"TEST RIGHT PUSH FAILED."<<std::endl;
-    return EXIT_FAILURE;
-  }
-
-  if (!test_double_torus_quad(draw, testN))
-  {
-    std::cout<<"TEST DOUBLE TORUS FAILED."<<std::endl;
     return EXIT_FAILURE;
   }
 

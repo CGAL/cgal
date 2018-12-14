@@ -91,9 +91,9 @@ bool basic_tests()
   }
 
   CGAL::Path_on_surface_with_rle<CMap> p7(p6);
-  if (!p7.is_valid() || p7.size_of_list()!=4)
+  if (!p7.is_valid() || p7.size_of_list()!=2)
   {
-    std::cerr<<"path_tests ERROR: !p7.is_valid() || size_of_list()!=4."<<std::endl;
+    std::cerr<<"path_tests ERROR: !p7.is_valid() || size_of_list()!=2."<<std::endl;
     res=false;
   }
 
