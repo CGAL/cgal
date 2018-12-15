@@ -55,6 +55,12 @@ public:
   bool operator!=(const Self& other) const
   { return !(operator==(other)); }
 
+  friend std::ostream& operator<< (std::ostream& os, const Self& flat)
+  {
+    os<<"["<<&*(flat.begin)<<", "<<&*(flat.end)<<" (l="<<flat.length<<")]";
+    return os;
+  }
+
   Dart_const_handle begin, end;
   int length; // Length of the flat, positive flat if >0, negative flat if <0
 };
@@ -305,18 +311,20 @@ public:
       else
       { dhend=m_map.template beta<2, 0, 2, 0, 2>(dhend); --nb; }
     }
+
     return dhend==flat->end;
   }
 
   /// @return true iff the path is valid; i.e. a sequence of flats two by
   ///              two adjacent.
-  bool is_valid()
+  /// if test_minimal is true, test that there is no two consecutive flats
+  /// that can be merged. If test_minimal is false, this test is not done.
+  bool is_valid(bool test_minimal=true)
   {
     if (is_empty()) { return !is_closed(); } // an empty past is not closed
 
     unsigned int nbdarts=0,i=0;
     Dart_const_handle prev=(is_closed()?back():NULL); // Last dart of the path
-    bool loopend=false;
     for (auto it=m_path.begin(); it!=m_path.end(); ++it)
     {
       if (prev!=NULL && !CGAL::belong_to_same_cell<Map, 0>
@@ -338,12 +346,13 @@ public:
         return false;
       }
 
-      if (can_merge_with_next_flat(it))
+      if (test_minimal && can_merge_with_next_flat(it))
       {
        /* std::cout<<"************* ERROR ************"<<std::endl;
         display();
         Path_on_surface<Map>(*this).display_pos_and_neg_turns(); std::cout<<std::endl;
         display_pos_and_neg_turns(); std::cout<<std::endl; */
+        std::cout<<"FLAT ERROR "<<*it<<std::endl;
 
         std::cout<<"ERROR: The path is not valid: flat at position "<<i
                 <<" with length "<<flat_length(it)<<" is not correct: it can be merged "
@@ -381,13 +390,13 @@ public:
   bool is_valid_iterator(const List_iterator& ittotest)
   {
     if (ittotest==m_path.end()) { return false; }
-    //return true;
+    return true;
     // Assert too long; uncomment in case of bug.
-    for (auto it=m_path.begin(); it!=m_path.end(); ++it)
+    /* for (auto it=m_path.begin(); it!=m_path.end(); ++it)
     {
       if (it==ittotest) { return true; }
     }
-    return false;
+    return false; */
   }
 
   Dart_const_handle front()
@@ -863,7 +872,7 @@ public:
     set_end_of_flat(it, end_of_flat(it2));
     m_path.erase(it2);
 
-    CGAL_assertion(is_flat_valid(it));
+    // CGAL_assertion(is_flat_valid(it));
     return true;
   }
 
@@ -899,13 +908,15 @@ public:
     }*/
 
     List_iterator it2=next_iterator(it); // it2 is the next flat
-    List_iterator itprev=prev_iterator(it);
 
     // We reduce the first flat
-    reduce_flat_from_end(it); // If flat 'it' is erased, it is moved to the previous flat
+    bool iterased=reduce_flat_from_end(it); // If flat 'it' is erased, it is moved to the previous flat
 
     // And we reduce the second flat
-    reduce_flat_from_beginning(it2);
+    bool it2erased=reduce_flat_from_beginning(it2);
+
+    /* std::cout<<*prev_iterator(it)<<std::endl
+            <<*it<<std::endl<<*it2<<std::endl<<*next_iterator(it2)<<std::endl;*/
 
     if (m_path.empty())
     {
@@ -914,10 +925,20 @@ public:
     }
     else
     {
-      merge_with_next_flat_if_possible(it2);  // Try to merge flat 'it2' with its next flat
       if (size_of_list()>1)
       {
-        merge_with_next_flat_if_possible(it);  // try to merge flat 'it' with its next flat
+        merge_with_next_flat_if_possible(it2);  // Try to merge flat 'it2' with its next flat
+      }
+      if (size_of_list()>1)
+      {
+        if (iterased)
+        { merge_with_next_flat_if_possible(it); } // try to merge flat 'it' with its next flat
+        else
+        {
+          List_iterator itprev=prev_iterator(it);
+          if (merge_with_next_flat_if_possible(itprev))
+          { it=itprev; }
+        }
       }
       else { it=m_path.begin(); }
     }
@@ -959,7 +980,7 @@ public:
       }
       else { move_to_next_spur(it); } // ++it; }
     }
-    CGAL_assertion(is_valid());
+    // CGAL_assertion(is_valid());
     return res;
   }
 
@@ -1270,6 +1291,12 @@ public:
   void right_push_l_shape(List_iterator& it1)
   { // it is the beginning of a flat
     CGAL_assertion(is_l_shape(it1));
+    // CGAL_assertion(is_valid());
+
+    /* static int TOTO=0;
+    std::cout<<"right_push_l_shape "<<TOTO++<<std::endl;
+    if (TOTO==1)
+    { std::cout<<"BUG"<<std::endl;} */
 
     if (m_path.size()==1)
     {
@@ -1278,7 +1305,7 @@ public:
         set_flat_length(it1, -flat_length(it1));
         set_begin_of_flat(it1, m_map.template beta<2,1,1>(begin_of_flat(it1)));
         set_end_of_flat(it1, m_map.template beta<2,1,1>(end_of_flat(it1)));
-        CGAL_assertion(is_valid());
+        // CGAL_assertion(is_valid());
         return;
       }
       else // Here negative turn is 1
@@ -1316,9 +1343,6 @@ public:
       }
     }
 
-    /* static int TOTO=0;
-    std::cout<<"right_push_l_shape "<<TOTO++<<std::endl; */
-
     List_iterator it2=next_iterator(it1);  // Beginning of the second flat
     CGAL_assertion(it1!=it2);
 
@@ -1337,6 +1361,9 @@ public:
       it2=m_path.insert(it2, Flat(dh)); // insert dh before the second flat
       ++m_length;
     }
+
+    // CGAL_assertion(is_valid(false));
+    // CGAL_assertion(is_l_shape(it1));
 
     Dart_const_handle dh1=m_map.template beta<2,1>(begin_of_flat(it1));
     Dart_const_handle dh2=m_map.template beta<1>(dh1);
@@ -1368,7 +1395,7 @@ public:
           merge_with_next_flat_if_possible(it1);
         }
         else { it1=m_path.begin(); }
-        CGAL_assertion(is_valid());
+        // CGAL_assertion(is_valid());
         return;
       }
       else
@@ -1379,6 +1406,10 @@ public:
         set_end_of_flat(it2, dh6);
         set_flat_length(it1, -flat_length(it2));
         set_flat_length(it2, 0);
+
+        // CGAL_assertion(is_flat_valid(it1));
+        // CGAL_assertion(is_flat_valid(it2));
+
         merge_with_next_flat_if_possible(it2);
         if (size_of_list()>1)
         {
@@ -1386,7 +1417,7 @@ public:
           merge_with_next_flat_if_possible(it1);
         }
         else { it1=m_path.begin(); }
-        CGAL_assertion(is_valid());
+        // CGAL_assertion(is_valid());
         return;
       }
     }
@@ -1397,9 +1428,31 @@ public:
         set_begin_of_flat(it1, dh1);
         set_end_of_flat(it1, dh1);
         set_begin_of_flat(it2, dh2);
-        set_end_of_flat(it2, dh6);
+        // set_end_of_flat(it2, dh6); // TODO WHY THIS DOES NOT WORK ????
+        set_end_of_flat(it2, m_map.template beta<1, 2, 1>(dh3));
         set_flat_length(it2, -flat_length(it1));
         set_flat_length(it1, 0);
+/*
+        { // TEMPO DEBUG
+          unsigned int NBTOTO=0;
+          Dart_const_handle dhtoto=dh2;
+          while (dhtoto!=dh3)
+          {
+            dhtoto=m_map.template beta<1, 2, 1>(dhtoto);
+            ++NBTOTO;
+          }
+
+        }
+
+        Dart_const_handle dhtoto2=m_map.template beta<1, 2, 1>(dh3);
+        Dart_const_handle dhtoto4=m_map.template beta<1, 2, 1>(dh5);
+
+        CGAL_assertion((m_map.template beta<1, 2, 1>(dh3)==dh6));*/
+
+
+        // CGAL_assertion(is_flat_valid(it1));
+        // CGAL_assertion(is_flat_valid(it2));
+
         merge_with_next_flat_if_possible(it2);
         if (size_of_list()>1)
         {
@@ -1407,7 +1460,7 @@ public:
           merge_with_next_flat_if_possible(it1);
         }
         else { it1=m_path.begin(); }
-        CGAL_assertion(is_valid());
+        // CGAL_assertion(is_valid());
         return;
       }
     }
@@ -1472,7 +1525,7 @@ public:
 
     m_length-=2;
 
-    CGAL_assertion(is_valid());
+    // CGAL_assertion(is_valid());
     /*it2=next_flat(it1);
     if (merge_with_next_flat_if_possible(prev_iterator(it1)))
     { it1=prev_iterator(it2); }
