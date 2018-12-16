@@ -403,13 +403,13 @@ public:
   bool is_valid_iterator(const List_iterator& ittotest)
   {
     if (ittotest==m_path.end()) { return false; }
-    // return true;
+    return true;
     // Assert too long; uncomment in case of bug.
-    for (auto it=m_path.begin(); it!=m_path.end(); ++it)
+    /* for (auto it=m_path.begin(); it!=m_path.end(); ++it)
     {
       if (it==ittotest) { return true; }
     }
-    return false;
+    return false; */
   }
 
   Dart_const_handle front()
@@ -464,7 +464,6 @@ public:
   /// @return true iff there is a flat before it
   bool prev_flat_exist(const List_iterator& it) const
   {
-    CGAL_assertion(it!=m_path.end());
     return is_closed() || it!=m_path.begin();
   }
 
@@ -759,12 +758,25 @@ public:
     modified_flats.insert(it);
     if (prev_flat_exist(it))
     { modified_flats.insert(prev_iterator(it)); }
+    if (next_flat_exist(it))
+    { modified_flats.insert(next_iterator(it)); }
   }
 
-  void flat_erased(const List_iterator& it,
-                   Set_of_it& modified_flats)
+  void erase_flat(List_iterator& it, Set_of_it& modified_flats)
   {
+    if (next_flat_exist(it))
+    { modified_flats.insert(next_iterator(it)); }
+    if (prev_flat_exist(it))
+    { modified_flats.insert(prev_iterator(it)); }
+
     modified_flats.erase(it);
+
+    it=m_path.erase(it); // after the erase, it is the element after the erased one
+    if (prev_flat_exist(it))
+    {
+      retreat_iterator(it); // this is why we move it backward here
+      // modified_flats.insert(it);
+    }
   }
 
   List_iterator merge_modified_flats_when_possible(Set_of_it& modified_flats)
@@ -783,11 +795,14 @@ public:
       { smallest_it=*it; }
     }
 
+    List_iterator itcur;
     if (smallest_it==m_path.end())
     { // Case of a closed path, with all paths modified
       for (auto it=modified_flats.begin(); it!=modified_flats.end(); ++it)
       {
-        merge_with_next_flat_if_possible(*it, modified_flats);
+        itcur=*it;
+        while(merge_with_next_flat_if_possible(itcur, modified_flats))
+        {}
       }
       return m_path.begin();
     }
@@ -815,7 +830,9 @@ public:
 
     for (auto it=modified_flats.begin(); it!=modified_flats.end(); ++it)
     {
-      merge_with_next_flat_if_possible(*it, modified_flats);
+      itcur=*it;
+      while(merge_with_next_flat_if_possible(itcur, modified_flats))
+      {}
     }
 
     // Note that smallest is not necessarily the smallest, this is a flat
@@ -840,14 +857,11 @@ public:
     CGAL_assertion(m_length>0);
     --m_length;
 
-
     flat_modified(it, modified_flats);
 
     if (flat_length(it)==0)
     {
-      flat_erased(it, modified_flats);
-      it=m_path.erase(it); // after the erase, it is the element after the erased one
-      if (!m_path.empty()) { retreat_iterator(it); } // this is why we move it backward here
+      erase_flat(it, modified_flats);
       return true;
     }
 
@@ -874,9 +888,7 @@ public:
 
     if (flat_length(it)==0)
     {
-      flat_erased(it, modified_flats);
-      it=m_path.erase(it); // after the erase, it is the element after the erased one
-      if (!m_path.empty()) { retreat_iterator(it); } // this is why we move it backward here
+      erase_flat(it, modified_flats);
       return true;
     }
 
@@ -970,8 +982,8 @@ public:
                     (positive2?1:-1));
     set_end_of_flat(it, end_of_flat(it2));
     m_path.erase(it2);
-
-    flat_erased(it2, modified_flats);
+    if (modified_flats.count(it2)==1)
+      modified_flats.erase(it2);
 
     // CGAL_assertion(is_flat_valid(it));
     return true;
@@ -996,18 +1008,18 @@ public:
     CGAL_assertion(is_spur(it));
     Set_of_it modified_flats;
 
+    //std::cout<<"*********************************** ";
    /* static int TOTO=0;
-    std::cout<<"*********************************** ";
-    std::cout<<"remove_spur "<<TOTO++<<std::endl;
+    std::cout<<"remove_spur "<<TOTO++<<std::endl; */
 
-    if (TOTO==783)
+    /*if (TOTO==984)
     {
       int dh=TOTO;
      CGAL_assertion(is_valid());
       display();
      // Path_on_surface<Map>(*this).display_pos_and_neg_turns(); std::cout<<std::endl;
       display_pos_and_neg_turns(); std::cout<<std::endl;
-    } */
+    }*/
 
     List_iterator it2=next_iterator(it); // it2 is the next flat
 
@@ -1061,7 +1073,7 @@ public:
       }
       else { move_to_next_spur(it); } // ++it; }
     }
-    // CGAL_assertion(is_valid());
+    CGAL_assertion(is_valid());
     return res;
   }
 
@@ -1172,7 +1184,7 @@ public:
               <<*it1<<std::endl
              <<*prev_iterator(it1)<<std::endl;
     } */
-    CGAL_assertion(is_valid());
+    // CGAL_assertion(is_valid());
   }
 
   /// Remove the given positive bracket. 'it1' is the flat beginning
@@ -1220,7 +1232,7 @@ public:
              <<*prev_iterator(it1)<<std::endl;
     } */
 
-    CGAL_assertion(is_valid());
+    // CGAL_assertion(is_valid());
   }
   
   /// Simplify the path by removing all brackets, if all==true (default),
@@ -1228,6 +1240,7 @@ public:
   /// @return true iff at least one bracket was removed
   bool remove_brackets(bool all=true)
   {
+    // CGAL_assertion(is_valid());
     bool res=false;
     List_iterator it1=m_path.begin();
     List_iterator it2;
@@ -1249,7 +1262,7 @@ public:
       else { move_to_next_bracket(it1); }
       if (!all && res) { return true; }      
     }
-    CGAL_assertion(is_valid());
+    // CGAL_assertion(is_valid());
     return res;
   }
 
@@ -1405,7 +1418,7 @@ public:
         set_flat_length(it1, -flat_length(it1));
         set_begin_of_flat(it1, m_map.template beta<2,1,1>(begin_of_flat(it1)));
         set_end_of_flat(it1, m_map.template beta<2,1,1>(end_of_flat(it1)));
-        CGAL_assertion(is_valid());
+        // CGAL_assertion(is_valid());
         return;
       }
       else // Here negative turn is 1
@@ -1505,7 +1518,7 @@ public:
                  <<*prev_iterator(it1)<<std::endl;
         } */
 
-        CGAL_assertion(is_valid());
+        // CGAL_assertion(is_valid());
         return;
       }
       else
@@ -1525,7 +1538,7 @@ public:
 
         it1=merge_modified_flats_when_possible(modified_flats);
 
-        CGAL_assertion(is_valid());
+        // CGAL_assertion(is_valid());
         return;
       }
     }
@@ -1565,7 +1578,7 @@ public:
 
         it1=merge_modified_flats_when_possible(modified_flats);
 
-        CGAL_assertion(is_valid());
+        // CGAL_assertion(is_valid());
         return;
       }
     }
@@ -1637,7 +1650,7 @@ public:
 
     it1=merge_modified_flats_when_possible(modified_flats);
 
-    CGAL_assertion(is_valid());
+    // CGAL_assertion(is_valid());
     /*it2=next_flat(it1);
     if (merge_with_next_flat_if_possible(prev_iterator(it1)))
     { it1=prev_iterator(it2); }
