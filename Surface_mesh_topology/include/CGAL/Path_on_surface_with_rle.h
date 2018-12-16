@@ -1478,12 +1478,12 @@ public:
         // CGAL_assertion(is_flat_valid(it2));
 
         merge_with_next_flat_if_possible(it2);
-        if (size_of_list()>1)
-        {
-          retreat_iterator(it1);
-          merge_with_next_flat_if_possible(it1);
-        }
-        else { it1=m_path.begin(); }
+
+        merge_with_next_flat_if_possible(it1);
+
+        retreat_iterator(it1);
+        merge_with_next_flat_if_possible(it1);
+
         CGAL_assertion(is_valid());
         return;
       }
