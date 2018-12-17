@@ -36,6 +36,7 @@
 #include <CGAL/Timer.h>
 #include <boost/unordered_map.hpp>
 #include <stack>
+#include <iostream>
 
 namespace CGAL {
   

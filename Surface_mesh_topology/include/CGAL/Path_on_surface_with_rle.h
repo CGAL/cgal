@@ -148,6 +148,9 @@ public:
     
     if (apath.is_closed())
     {
+      /// Tempo pour debug
+      // i=get_default_random().get_int(0, apath.length());
+      /// END Tempo pour debug
       if (!use_only_negative && apath.next_positive_turn(i)==2)
       { positive_flat=true; negative_flat=false; }
       else if (!use_only_positive && apath.next_negative_turn(i)==2)
@@ -984,10 +987,12 @@ public:
     { return false; }
 
 #ifdef CGAL_TRACE_PATH_TESTS
-        std::cout<<"Merge with next flat: ";
-        display_flat(std::cout, it); std::cout<<" and ";
-        display_flat(std::cout, next_iterator(it)); std::cout<<std::endl;
+    std::cout<<"Merge with next flat: ";
+    display_flat(std::cout, it); std::cout<<" and ";
+    display_flat(std::cout, next_iterator(it)); std::cout<<std::endl;
 #endif
+
+    //Path_on_surface<Map> pbefore(*this);
 
     List_iterator it2=next_iterator(it);
     set_flat_length(it, flat_length(it)+flat_length(it2)+
@@ -996,6 +1001,9 @@ public:
     m_path.erase(it2);
     if (modified_flats.count(it2)==1)
       modified_flats.erase(it2);
+
+    //Path_on_surface<Map> pafter(*this);
+    //CGAL_assertion(pbefore==pafter);
 
     // CGAL_assertion(is_flat_valid(it));
     return true;
@@ -1305,7 +1313,7 @@ public:
     if (!next_flat_exist(it)) { return false; }
     std::size_t t=next_negative_turn(it);
     return (t==1 ||
-            (flat_length(it)<0 && t==2));
+            (flat_length(it)<0 && size_of_list()==1 && t==2));
   }
 
   /// Move it to the next l_shape after it. Go to m_path.end() if there is no
@@ -1450,6 +1458,8 @@ public:
     if (TOTO==1)
     { std::cout<<"BUG"<<std::endl;} */
 
+    //Path_on_surface<Map> pbefore(*this);
+
     if (m_path.size()==1)
     {
       if (next_negative_turn(it1)==2)
@@ -1517,6 +1527,9 @@ public:
       ++m_length;
       flat_modified(it2, modified_flats);
     }
+
+    //Path_on_surface<Map> pafter(*this);
+    //CGAL_assertion(pbefore==pafter);
 
     // CGAL_assertion(is_valid(false));
     // CGAL_assertion(is_l_shape(it1));
@@ -1731,7 +1744,7 @@ public:
      bool modified=false;
      remove_spurs();
 
-     do
+     //do
      {
        do
        {
@@ -1739,9 +1752,19 @@ public:
          modified=modified || remove_spurs();
        }
        while(modified);
+
+       // std::cout<<"path="<<Path_on_surface<Map>(*this)<<std::endl;
+       // Path_on_surface<Map>(*this).display_pos_and_neg_turns(); std::cout<<std::endl;
+
        modified=right_push();
      }
-     while(modified);
+     //while(modified);
+
+     // std::cout<<"path="<<Path_on_surface<Map>(*this)<<std::endl;
+     // Path_on_surface<Map>(*this).display_pos_and_neg_turns(); std::cout<<std::endl;
+
+     CGAL_assertion(remove_brackets()==false);
+     CGAL_assertion(remove_spurs()==false);
 
      // right_push(); // Not needed
      CGAL_assertion(is_valid());
