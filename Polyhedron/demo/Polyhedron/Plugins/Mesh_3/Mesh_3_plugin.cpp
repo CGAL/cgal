@@ -17,6 +17,7 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include <fstream>
+#include "MainWindow.h"
 
 #include "Scene_polylines_item.h"
 
@@ -546,6 +547,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
 
   // Launch thread
   source_item_ = item;
+  static_cast<MainWindow*>(mw)->lock_test_item(true);
   launch_thread(thread);
 
   QApplication::restoreOverrideCursor();
@@ -682,6 +684,7 @@ treat_result(Scene_item& source_item,
     scene->setSelectedItem(new_item_id);
     delete result_item;
   }
+  static_cast<MainWindow*>(mw)->lock_test_item(false);
 }
 
 #include "Mesh_3_plugin.moc"

@@ -48,6 +48,7 @@ Scene::Scene(QObject* parent)
 Scene::Item_id
 Scene::addItem(CGAL::Three::Scene_item* item)
 {
+  qDebug()<<"add "<<item->name();
     Bbox bbox_before = bbox();
     m_entries.push_back(item);
     Item_id id = m_entries.size() - 1;
@@ -158,6 +159,7 @@ Scene::erase(Scene::Item_id index)
     return -1;
   
   CGAL::Three::Scene_item* item = m_entries[index];
+  qDebug()<<"remove "<<item->name();
   if(qobject_cast<Scene_group_item*>(item))
   {
     setSelectedItemsList(QList<Scene_interface::Item_id>()<<item_id(item));

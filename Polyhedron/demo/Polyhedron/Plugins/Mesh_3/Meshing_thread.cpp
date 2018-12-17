@@ -65,7 +65,6 @@ run()
   
   f_->launch();
   time_ = double(timer.elapsed()) / 1000;
-  
   Q_EMIT done(this);
 }
 

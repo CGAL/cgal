@@ -455,6 +455,9 @@ private:
   const QStringList& accepted_keywords;
 public Q_SLOTS:
   void test_all_actions();
+  void lock_test_item(bool b);
+private:
+  bool is_locked;
 };
 
 #endif // ifndef MAINWINDOW_H

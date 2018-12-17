@@ -144,6 +144,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   CGAL::Three::Three::s_mainwindow = this;
   menu_map[ui->menuOperations->title()] = ui->menuOperations;
   this->verbose = verbose;
+  is_locked = false;
   // remove the Load Script menu entry, when the demo has not been compiled with QT_SCRIPT_LIB
 #if !defined(QT_SCRIPT_LIB)
   ui->menuBar->removeAction(ui->actionLoadScript);
@@ -2733,6 +2734,16 @@ void MainWindow::test_all_actions()
       if(plugin->applicable(action)){
         qDebug()<<"Testing "<<pnp.second<<"...";
         action->triggered();
+        //wait until is_locked is false again. This shouldn't freeze the tests 
+        //because it should only be used when the work is done in another thread.
+        while(is_locked)
+        {
+          // to not block the main event loop, we call
+           QCoreApplication::processEvents(); 
+           //. Indeed, if we don't, the events are not processed, which means the signals are not received, 
+           //which means we never escape that loop because mesh_3 finishes its work in a slot.
+           
+        }
         qDebug()<<" OK.";
         while(scene->numberOfEntries() > 1)
         {
@@ -2740,9 +2751,17 @@ void MainWindow::test_all_actions()
         }
         
         selectSceneItem(0);
+        //if the item is hidden, the scene's bbox is 0 and that badly 
+        //messes with the offset meshing, for example.
+        scene->item(scene->mainSelectionIndex())->setVisible(true);
         reloadItem();
       }
     }
   }
   scene->erase(0);
+}
+
+void MainWindow::lock_test_item(bool b)
+{
+  is_locked = b;
 }
