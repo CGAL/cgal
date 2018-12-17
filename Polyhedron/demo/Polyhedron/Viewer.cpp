@@ -331,7 +331,14 @@ Viewer::~Viewer()
                              .arg(d->specular.z()));
     viewer_settings.setValue("spec_power",
                              d->spec_power);
+    if(d->_recentFunctions)
+      delete d->_recentFunctions;
+    if(d->painter)
+      delete d->painter;
+    if(d->textRenderer)
+      d->textRenderer->deleteLater();
   delete d;
+
 }
 
 void Viewer::setScene(CGAL::Three::Scene_draw_interface* scene)
@@ -1002,6 +1009,7 @@ void Viewer::drawVisualHints()
     
     if (d->_displayMessage)
       d->textRenderer->removeText(message_text);
+    delete message_text;
 }
 
 QOpenGLShaderProgram* Viewer::declare_program(int name,

@@ -276,12 +276,13 @@ void Scene::remove_item_from_groups(Scene_item* item)
 }
 Scene::~Scene()
 {
-    Q_FOREACH(CGAL::Three::Scene_item* item_ptr, m_entries)
-    {
-         item_ptr->deleteLater();
-    }
-    m_entries.clear();
-
+  vao->destroy();
+  delete vao;  
+  Q_FOREACH(CGAL::Three::Scene_item* item_ptr, m_entries)
+  {
+    item_ptr->deleteLater();
+  }
+  m_entries.clear();
 }
 
 CGAL::Three::Scene_item*
