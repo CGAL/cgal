@@ -10,6 +10,8 @@ if(CGAL_Qt5_FOUND)
     add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
 endif()
 
+# add_definitions(-DCGAL_TRACE_PATH_TESTS)
+
 if ( CGAL_FOUND )
 
   # create a target per cppfile

@@ -328,6 +328,12 @@ public:
     return dhend==flat->end;
   }
 
+  void display_flat(std::ostream& os, const List_iterator& flat)
+  {
+    os<<"["<<m_map.darts().index(flat->begin)<<", "
+      <<m_map.darts().index(flat->end)<<" (l="<<flat->length<<")]";
+  }
+
   /// @return true iff the path is valid; i.e. a sequence of flats two by
   ///              two adjacent.
   /// if test_minimal is true, test that there is no two consecutive flats
@@ -977,6 +983,12 @@ public:
     if (!can_merge_with_next_flat(it, positive2, negative2))
     { return false; }
 
+#ifdef CGAL_TRACE_PATH_TESTS
+        std::cout<<"Merge with next flat: ";
+        display_flat(std::cout, it); std::cout<<" and ";
+        display_flat(std::cout, next_iterator(it)); std::cout<<std::endl;
+#endif
+
     List_iterator it2=next_iterator(it);
     set_flat_length(it, flat_length(it)+flat_length(it2)+
                     (positive2?1:-1));
@@ -1005,6 +1017,12 @@ public:
   /// ('it' will be equal to m_path.end() if the path becomes empty).
   void remove_spur(List_iterator& it)
   {
+#ifdef CGAL_TRACE_PATH_TESTS
+        std::cout<<"Remove spur between flats: ";
+        display_flat(std::cout, it); std::cout<<" and ";
+        display_flat(std::cout, next_iterator(it)); std::cout<<std::endl;
+#endif
+
     CGAL_assertion(is_spur(it));
     Set_of_it modified_flats;
 
@@ -1145,6 +1163,13 @@ public:
   /// of the bracket; it3 is the flat end of the bracket.
   void remove_negative_bracket(List_iterator& it1, List_iterator& it3)
   {
+#ifdef CGAL_TRACE_PATH_TESTS
+    std::cout<<"Remove negative bracket: ";
+    display_flat(std::cout, it1); std::cout<<", ";
+    display_flat(std::cout, next_iterator(it1)); std::cout<<" and ";
+    display_flat(std::cout, it3); std::cout<<std::endl;
+#endif
+
     Set_of_it modified_flats;
     List_iterator it2;
     CGAL_assertion(is_negative_bracket(it1, it2)); // Here it2 is unused
@@ -1192,6 +1217,13 @@ public:
   void remove_positive_bracket(List_iterator& it1,
                                List_iterator& it3)
   {
+#ifdef CGAL_TRACE_PATH_TESTS
+    std::cout<<"Remove positive bracket: ";
+    display_flat(std::cout, it1); std::cout<<", ";
+    display_flat(std::cout, next_iterator(it1)); std::cout<<" and ";
+    display_flat(std::cout, it3); std::cout<<std::endl;
+#endif
+
     Set_of_it modified_flats;
     List_iterator it2;
     CGAL_assertion(is_positive_bracket(it1, it2)); // Here it2 is unused
@@ -1401,7 +1433,14 @@ public:
   
   /// Right push the given l-shape.
   void right_push_l_shape(List_iterator& it1)
-  { // it is the beginning of a flat
+  {
+#ifdef CGAL_TRACE_PATH_TESTS
+        std::cout<<"Right push l-shape: ";
+        display_flat(std::cout, it1); std::cout<<" and ";
+        display_flat(std::cout, next_iterator(it1)); std::cout<<std::endl;
+#endif
+
+    // it is the beginning of a flat
     CGAL_assertion(is_l_shape(it1));
     // CGAL_assertion(is_valid());
     Set_of_it modified_flats;
