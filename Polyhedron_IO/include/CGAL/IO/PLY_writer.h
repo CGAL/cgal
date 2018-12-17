@@ -67,7 +67,6 @@ namespace CGAL{
     return out.good();
   }
 
-
   template <class FaceListGraph>
   bool
   write_PLY(std::ostream& out,
@@ -78,7 +77,10 @@ namespace CGAL{
     typedef typename boost::graph_traits<FaceListGraph>::halfedge_descriptor halfedge_descriptor;
     typedef typename boost::graph_traits<FaceListGraph>::vertex_descriptor vertex_descriptor;
     typedef typename boost::property_map<FaceListGraph, boost::vertex_point_t>::type::value_type Point_3;
-    
+    typedef typename FaceListGraph::template Property_map<halfedge_descriptor,std::pair<float, float> > UV_map;
+    UV_map h_uv;
+    bool has_texture;
+    boost::tie(h_uv, has_texture) = mesh.template property_map<halfedge_descriptor,std::pair<float, float> >("h:uv");
     if(!out)
     {
       std::cerr << "Error: cannot open file" << std::endl;
@@ -100,6 +102,22 @@ namespace CGAL{
                                            std::make_pair (CGAL::Identity_property_map<std::vector<std::size_t> >(),
                                                            PLY_property<std::vector<int> >("vertex_indices")));
     
+    if(has_texture)
+    {
+      out << "element halfedge " << num_halfedges(mesh) << std::endl;
+      
+      internal::PLY::output_property_header (out,
+                                             std::make_pair (CGAL::Identity_property_map<std::size_t >(),
+                                                             PLY_property<unsigned int >("source")));
+      
+      internal::PLY::output_property_header (out,
+                                             std::make_pair (CGAL::Identity_property_map<std::size_t >(),
+                                                             PLY_property<unsigned int >("target")));
+      internal::PLY::output_property_header (out,
+                                             std::make_tuple (h_uv,
+                                                              PLY_property<float>("u"),
+                                                              PLY_property<float>("v")));
+    }
     out << "end_header" << std::endl;
 
     BOOST_FOREACH(vertex_descriptor vd, vertices(mesh))
@@ -122,7 +140,28 @@ namespace CGAL{
                                         std::make_pair (CGAL::Identity_property_map<std::vector<std::size_t> >(),
                                                         PLY_property<std::vector<int> >("vertex_indices")));
     }
-
+    
+    if(has_texture)
+    {
+      BOOST_FOREACH(halfedge_descriptor hd, halfedges(mesh))
+      {
+        typedef std::tuple<unsigned int, unsigned int, float, float> Super_tuple;
+         Super_tuple t = 
+            std::make_tuple(source(hd, mesh),target(hd, mesh),
+                            h_uv[hd].first,
+                            h_uv[hd].second);
+        
+        internal::PLY::output_properties (out, &t,
+                                          std::make_pair (Nth_of_tuple_property_map<0,Super_tuple>(),
+                                                          PLY_property<unsigned int >("source")),
+                                          std::make_pair (Nth_of_tuple_property_map<1,Super_tuple>(),
+                                                          PLY_property<unsigned int >("target")),
+                                          std::make_pair (Nth_of_tuple_property_map<2,Super_tuple>(),
+                                                          PLY_property<float>("u")),
+                                          std::make_pair (Nth_of_tuple_property_map<3,Super_tuple>(),
+                                                          PLY_property<float>("v")));
+      }
+    }
     return out.good();
   }
 

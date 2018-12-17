@@ -1,5 +1,6 @@
 #include "Scene_polygon_soup_item.h"
 #include "Scene_surface_mesh_item.h"
+#include "Scene_textured_surface_mesh_item.h"
 #include "Scene_points_with_normal_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
@@ -170,7 +171,8 @@ bool Polyhedron_demo_ply_plugin::canSave(const CGAL::Three::Scene_item* item)
   // This plugin supports point sets and any type of surface
   return (qobject_cast<const Scene_points_with_normal_item*>(item)
           || qobject_cast<const Scene_polygon_soup_item*>(item)
-          || qobject_cast<const Scene_surface_mesh_item*>(item));
+          || qobject_cast<const Scene_surface_mesh_item*>(item)
+          || qobject_cast<const Scene_textured_surface_mesh_item*>(item));
 }
 
 bool Polyhedron_demo_ply_plugin::save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
@@ -210,6 +212,12 @@ bool Polyhedron_demo_ply_plugin::save(const CGAL::Three::Scene_item* item, QFile
     qobject_cast<const Scene_surface_mesh_item*>(item);
   if (sm_item)
     return CGAL::write_PLY (out, *(sm_item->polyhedron()));
+  
+  // This plugin supports textured surface meshes
+  const Scene_textured_surface_mesh_item* stm_item =
+    qobject_cast<const Scene_textured_surface_mesh_item*>(item);
+  if (stm_item)
+    return CGAL::write_PLY (out, *(stm_item->textured_face_graph()));
   return false;
 }
 
