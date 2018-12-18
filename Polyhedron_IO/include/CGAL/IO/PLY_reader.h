@@ -175,8 +175,10 @@ namespace CGAL{
   read_PLY( std::istream& in,
             std::vector< Point_3 >& points,
             std::vector< Polygon_3 >& polygons,
+            std::vector<std::pair<unsigned int, unsigned int> >& hedges,
             std::vector<Color_rgb>& fcolors,
             std::vector<Color_rgb>& vcolors,
+            std::vector<std::pair<float, float> >& huvs,
             bool /* verbose */ = false)
   {
     if(!in)
@@ -257,6 +259,52 @@ namespace CGAL{
           return false;
         }
       }
+      else if(element.name() == "halfedge" )
+      {
+        bool has_uv = false;
+        std::string stag = "source", ttag = "target", utag = "u", vtag = "v";
+        if ( element.has_property<unsigned int>("source") &&
+            element.has_property<unsigned int>("target") &&
+             element.has_property<float>("u") &&
+            element.has_property<float>("v"))
+        {
+          has_uv = true;
+        }
+        cpp11::tuple<unsigned int, unsigned int, float, float, float>  new_hedge;
+        for (std::size_t j = 0; j < element.number_of_items(); ++ j)
+        {
+          for (std::size_t k = 0; k < element.number_of_properties(); ++ k)
+          {
+            internal::PLY::PLY_read_number* property = element.property(k);
+            property->get (in);
+
+            if (in.eof())
+              return false;
+          }
+
+          if (has_uv)
+          {
+            internal::PLY::process_properties (element, new_hedge,
+                                               std::make_pair (CGAL::make_nth_of_tuple_property_map<0>(new_hedge),
+                                                               PLY_property<unsigned int>(stag.c_str())),
+                                               std::make_pair (CGAL::make_nth_of_tuple_property_map<1>(new_hedge),
+                                                               PLY_property<unsigned int>(ttag.c_str())),
+                                               std::make_pair (CGAL::make_nth_of_tuple_property_map<2>(new_hedge),
+                                                               PLY_property<float>(utag.c_str())),
+                                               std::make_pair (CGAL::make_nth_of_tuple_property_map<3>(new_hedge),
+                                                               PLY_property<float>(vtag.c_str())));
+            hedges.push_back (std::make_pair(get<0>(new_hedge), get<1>(new_hedge)));
+            huvs.push_back (std::make_pair(get<2>(new_hedge), get<3>(new_hedge)));
+          }
+          else
+            internal::PLY::process_properties (element, new_hedge,
+                                               std::make_pair(CGAL::make_nth_of_tuple_property_map<0>(new_hedge),
+                                                              PLY_property<unsigned int>(stag.c_str())),
+                                               std::make_pair(CGAL::make_nth_of_tuple_property_map<1>(new_hedge),
+                                                              PLY_property<unsigned int>(ttag.c_str()))
+                                               );
+        }
+      }
       else // Read other elements and ignore
       {
         for (std::size_t j = 0; j < element.number_of_items(); ++ j)
@@ -276,7 +324,22 @@ namespace CGAL{
     return !in.bad();
   }
 
-
+  template <class Point_3, class Polygon_3, class Color_rgb>
+  bool
+  read_PLY( std::istream& in,
+            std::vector< Point_3 >& points,
+            std::vector< Polygon_3 >& polygons,
+            std::vector<Color_rgb>& fcolors,
+            std::vector<Color_rgb>& vcolors,
+            bool /* verbose */ = false)
+  {
+    std::vector<std::pair<unsigned int, unsigned int> > dummy_pui;
+    std::vector<std::pair<float, float> > dummy_pf;
+    return read_PLY<Point_3, Polygon_3, Color_rgb>(in, points, polygons, 
+                                                   dummy_pui,
+                                                   fcolors, vcolors, 
+                                                   dummy_pf);
+  }
 } // namespace CGAL
 
 #endif // CGAL_IO_PLY_READER_H

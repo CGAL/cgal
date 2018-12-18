@@ -134,7 +134,7 @@ namespace CGAL{
       polygon.clear();
       
       BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, mesh), mesh))
-        polygon.push_back (get(get(boost::vertex_index, mesh), source(hd,mesh)));
+        polygon.push_back (get(get(boost::vertex_index, mesh), target(hd,mesh)));
 
       internal::PLY::output_properties (out, &polygon,
                                         std::make_pair (CGAL::Identity_property_map<std::vector<std::size_t> >(),
