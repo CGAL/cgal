@@ -203,8 +203,8 @@ void generate_random_closed_path(Path& p, std::size_t nb,
   typename Path::Map::Dart_const_handle dh=dhi;
   do
   {
-    assert(p.get_map().template is_free<2>(dh) ||
-           !p.get_map().is_marked(p.get_map().template beta<2>(dh), amark));
+    CGAL_assertion(p.get_map().template is_free<2>(dh) ||
+                   !p.get_map().is_marked(p.get_map().template beta<2>(dh), amark));
     p.push_back(dh, false);
     dh=p.get_map().template beta<1>(dh);
     while(!p.get_map().template is_free<2>(dh) &&
@@ -219,8 +219,8 @@ void generate_random_closed_path(Path& p, std::size_t nb,
 
   p.get_map().free_mark(amark);
 
-  p.update_is_closed(); // TODO we can avoid that because we know that we generated a closed path (to do so, we need a method that put p.is_closed to true)
-  assert(p.is_closed());
+  p.update_is_closed();
+  CGAL_assertion(p.is_closed());
 }
 
 } // namespace CGAL
