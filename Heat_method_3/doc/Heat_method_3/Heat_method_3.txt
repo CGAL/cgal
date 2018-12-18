@@ -104,7 +104,7 @@ For a detailed overview of the heat method, the reader may consult
 sequel, we introduce the basic notions so as to explain our
 algorithms. In general, the heat method is applicable to any setting
 if there exists a gradient operator \f$ \nabla\f$, a divergence
-operator \f$\nabla\f$ and a Laplace operator \f$\Delta = \nabla \cdot
+operator \f$\nabla \cdot\f$ and a Laplace operator \f$\Delta = \nabla \cdot
 \nabla\f$, which are standard derivatives from vector calculus.
 
 The Heat Method consists of three main steps:
