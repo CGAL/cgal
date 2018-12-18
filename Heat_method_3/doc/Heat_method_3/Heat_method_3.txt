@@ -141,7 +141,11 @@ From this, the symmetric positive-definite system
 \f$(M-tL_C)u = \delta_{\gamma}\f$ can be solved to find
 \f$u\f$ where \f$\delta_{\gamma}\f$ is the Kronecker delta over \f$\gamma\f$.
 
-Next, the gradient in a given triangle can be expressed as:
+Next, the gradient in a given triangle can be expressed as
+
+\f$\nabla u = \frac{1}{2 A_f} \sum_i u_i ( N \times e_i ) \f$
+
+where \f$A_f\f$ is the area of the triangle, \f$N\f$ is its outward unit normal, \f$e_i\f$ is the \f$i\f$th edge vector (oriented counter-clockwise), and \f$u_i\f$ is the value of \f$u\f$ at the opposing vertex. The integrated divergence associated with vertex \f$i\f$ can be written as
 
 \f$\nabla \cdot X = \frac{1}{2} \sum_j cot\theta_1 (e_1 \cdot X_j) + cot \theta_2 (e_2 \cdot X_j)\f$
 
