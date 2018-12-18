@@ -1,4 +1,4 @@
-// Copyright (c) 2017 CNRS and LIRIS' Establishments (France).
+// Copyright (c) 2019 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -51,8 +51,6 @@ namespace CGAL {
 #ifdef CGAL_PWRLE_TURN_V3
         typedef std::size_t Dart_info;
 #endif // CGAL_PWRLE_TURN_V3
-        // typedef CGAL::Cell_attribute<CMap, int> Edge_attrib;
-        // typedef CGAL::cpp11::tuple<void,Edge_attrib> Attributes;
         typedef CGAL::cpp11::tuple<> Attributes;
       };
     };
@@ -189,9 +187,6 @@ namespace CGAL {
       m_map.display_characteristics(std::cout) << ", valid=" 
                                                << m_map.is_valid() << std::endl;
 
-     /* std::cout<<"Paths are all valid 2 ? "<<(are_paths_valid()?"YES":"NO")
-               <<std::endl;*/
-
       /*      std::cout<<"Number of darts in m_map: "<<m_map.number_of_darts()
               <<"; number of darts in origin_to_copy: "<<origin_to_copy.size()
              <<"; number of darts in copy_to_origin: "<<copy_to_origin.size()
@@ -284,7 +279,7 @@ namespace CGAL {
                 <<t.time()<<" seconds"<<std::endl;
       }
 
-      assert(m_map.darts().size()==4 || are_paths_valid()); // Because torus is a special case
+      CGAL_assertion(m_map.darts().size()==4 || are_paths_valid()); // Because torus is a special case
     }
     
     ~Surface_mesh_curve_topology()
@@ -295,7 +290,7 @@ namespace CGAL {
 
     /// @return true iff 'path' is contractible.
     bool is_contractible(const Path_on_surface<Map>& p,
-                         bool display_time=false)
+                         bool display_time=false) const
     {
       if (p.is_empty())
       { return true; }
@@ -346,7 +341,7 @@ namespace CGAL {
     /// @return true iff 'path1' and 'path2' are freely homotopic.
     bool are_freely_homotopic(const Path_on_surface<Map>& p1,
                               const Path_on_surface<Map>& p2,
-                              bool display_time=false)
+                              bool display_time=false) const
     {
       if (p1.is_empty() && p2.is_empty()) { return true; }
 
@@ -460,7 +455,7 @@ namespace CGAL {
   protected:
     void count_edges_of_path_on_torus
     (const Path_on_surface<CMap_for_surface_mesh_curve_topology>& path,
-     std::size_t& a, std::size_t& b)
+     std::size_t& a, std::size_t& b) const
     {
       Dart_const_handle dha=m_map.darts().begin();
       if (dha>m_map.template beta<2>(dha)) { dha=m_map.template beta<2>(dha); }
@@ -489,7 +484,7 @@ namespace CGAL {
     }
 
     Path_on_surface<CMap_for_surface_mesh_curve_topology>
-    transform_original_path_into_quad_surface(const Path_on_surface<Map>& path)
+    transform_original_path_into_quad_surface(const Path_on_surface<Map>& path) const
     {
       Path_on_surface<CMap_for_surface_mesh_curve_topology> res(m_map);
       if (path.is_empty()) return res;
@@ -510,7 +505,7 @@ namespace CGAL {
 
     Path_on_surface_with_rle<CMap_for_surface_mesh_curve_topology>
     transform_original_path_into_quad_surface_with_rle
-    (const Path_on_surface<Map>& path)
+    (const Path_on_surface<Map>& path) const
     {
       Path_on_surface_with_rle<CMap_for_surface_mesh_curve_topology>
           res(m_map
@@ -597,10 +592,10 @@ namespace CGAL {
     UFTree_handle get_uftree(const UFTree& uftrees,
                              const boost::unordered_map<Dart_const_handle,
                              UFTree_handle>& mapdhtouf,
-                             Dart_const_handle dh)
+                             Dart_const_handle dh) const
     {
-      assert(dh!=NULL);
-      assert(mapdhtouf.find(dh)!=mapdhtouf.end());
+      CGAL_assertion(dh!=NULL);
+      CGAL_assertion(mapdhtouf.find(dh)!=mapdhtouf.end());
       return uftrees.find(mapdhtouf.find(dh)->second);
     }
 
@@ -690,14 +685,14 @@ namespace CGAL {
       {
         if (!m_original_map.is_marked(it, m_mark_T))
         {
-          assert(!m_original_map.template is_free<2>(it));
+          CGAL_assertion(!m_original_map.template is_free<2>(it));
           if (it<m_original_map.template beta<2>(it))
           {
             paths[it]=std::make_pair
                 (origin_to_copy.at(it),
                  m_map.template beta<2>(origin_to_copy.at(it)));
-            assert(paths[it].first!=paths[it].second);
-            assert(paths[it].first==m_map.template beta<2>(paths[it].second));
+            CGAL_assertion(paths[it].first!=paths[it].second);
+            CGAL_assertion(paths[it].first==m_map.template beta<2>(paths[it].second));
           }
         }
       }
@@ -733,7 +728,7 @@ namespace CGAL {
            ++it)
       {
         currentdart=it;
-        assert (!m_map.template is_free<2>(currentdart)); // TODO later
+        CGAL_assertion(!m_map.template is_free<2>(currentdart)); // TODO later, support opened surfaces
         oppositedart=m_map.template beta<2>(currentdart);
 
         if (currentdart<oppositedart && !m_map.is_marked(currentdart, toremove))
@@ -745,8 +740,8 @@ namespace CGAL {
               get_uftree(uftrees, faces, oppositedart))
           {
             // We cannot have a dangling edge
-            assert(m_map.template beta<0>(currentdart)!=oppositedart);
-            assert(m_map.template beta<1>(currentdart)!=oppositedart);
+            CGAL_assertion(m_map.template beta<0>(currentdart)!=oppositedart);
+            CGAL_assertion(m_map.template beta<1>(currentdart)!=oppositedart);
 
             uftrees.unify_sets(get_uftree(uftrees, faces, currentdart),
                                get_uftree(uftrees, faces, oppositedart));
@@ -864,7 +859,7 @@ namespace CGAL {
           initdart=m_map.template beta<1>(initdart);
           while (m_map.is_marked(initdart, toremove))
           {
-            assert(copy_to_origin.count(initdart)==1);
+            CGAL_assertion(copy_to_origin.count(initdart)==1);
             typename Map::Dart_const_handle
                 d1=copy_to_origin.find(initdart)->second;
             typename Map::Dart_const_handle
@@ -882,17 +877,17 @@ namespace CGAL {
 
           while (m_map.is_marked(initdart2, toremove))
           {
-            assert(copy_to_origin.count(initdart2)==1);
+            CGAL_assertion(copy_to_origin.count(initdart2)==1);
             typename Map::Dart_const_handle
                 d1=copy_to_origin.find(initdart2)->second;
             typename Map::Dart_const_handle
                 d2=m_original_map.template beta<2>(d1);
             if (d1<d2) {
-              assert(paths.count(d1)==1);
+              CGAL_assertion(paths.count(d1)==1);
               paths[d1].first=enddart2;
             }
             else       {
-              assert(paths.count(d2)==1);
+              CGAL_assertion(paths.count(d2)==1);
               paths[d2].second=enddart2;
             }
             initdart2=m_map.template beta<2, 1>(initdart2);
@@ -921,8 +916,8 @@ namespace CGAL {
     std::pair<Dart_const_handle, Dart_const_handle>& get_pair_of_darts
     (typename Map::Dart_const_handle adart)
     {
-      assert(!m_original_map.is_marked(adart, m_mark_T));
-      assert(is_edge_has_path(adart));
+      CGAL_assertion(!m_original_map.is_marked(adart, m_mark_T));
+      CGAL_assertion(is_edge_has_path(adart));
 
       typename Map::Dart_const_handle
           opposite=m_original_map.template beta<2>(adart);
@@ -935,8 +930,8 @@ namespace CGAL {
     Dart_const_handle get_first_dart_of_the_path
     (typename Map::Dart_const_handle adart) const
     {
-      assert(!m_original_map.is_marked(adart, m_mark_T));
-      assert(is_edge_has_path(adart));
+      CGAL_assertion(!m_original_map.is_marked(adart, m_mark_T));
+      CGAL_assertion(is_edge_has_path(adart));
 
       typename Map::Dart_const_handle
           opposite=m_original_map.template beta<2>(adart);
@@ -955,8 +950,8 @@ namespace CGAL {
     Dart_const_handle get_second_dart_of_the_path
     (typename Map::Dart_const_handle adart) const
     {
-      assert(!m_original_map.is_marked(adart, m_mark_T));
-      assert(is_edge_has_path(adart));
+      CGAL_assertion(!m_original_map.is_marked(adart, m_mark_T));
+      CGAL_assertion(is_edge_has_path(adart));
 
       typename Map::Dart_const_handle
           opposite=m_original_map.template beta<2>(adart);
@@ -1075,7 +1070,7 @@ namespace CGAL {
           else
           {
             Dart_const_handle dd1=m_map.other_extremity(d1);
-            assert(dd1!=NULL);
+            CGAL_assertion(dd1!=NULL);
             if (!CGAL::belong_to_same_cell<CMap_for_surface_mesh_curve_topology,0>(m_map, dd1, d2))
             {
               std::cout<<"ERROR: the two darts in a path are not consecutive."
