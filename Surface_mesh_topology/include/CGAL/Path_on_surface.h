@@ -374,7 +374,7 @@ public:
 
   bool initialize_random_starting_dart(bool update_isclosed=true)
   {
-    CGAL::Random random;
+    CGAL::Random& random=get_default_random();
     return initialize_random_starting_dart(random, update_isclosed);
   }
 
@@ -413,7 +413,7 @@ public:
   bool extend_path_randomly(bool allow_half_turn=false,
                             bool update_isclosed=true)
   {
-    CGAL::Random random;
+    CGAL::Random& random=get_default_random();
     extend_path_randomly(random, allow_half_turn, update_isclosed);
   }
 
@@ -435,14 +435,14 @@ public:
   void generate_random_path(std::size_t length,
                             bool update_isclosed=true)
   {
-    CGAL::Random random;
+    CGAL::Random& random=get_default_random();
     generate_random_path(length, random, update_isclosed);
   }
 
   template<typename Path>
   void generate_random_path(bool update_isclosed=true)
   {
-    CGAL::Random random;
+    CGAL::Random& random=get_default_random();
     generate_random_path(random, update_isclosed);
   }
 
@@ -458,7 +458,7 @@ public:
   }
   void generate_random_closed_path(std::size_t length)
   {
-    CGAL::Random random;
+    CGAL::Random& random=get_default_random();
     generate_random_closed_path(random, length);
   }
 
@@ -467,7 +467,7 @@ public:
 
   void generate_random_closed_path()
   {
-    CGAL::Random random;
+    CGAL::Random& random=get_default_random();
     generate_random_closed_path(random.get_int(1, 10000), random);
   }
 
@@ -497,7 +497,7 @@ public:
 
   void update_path_randomly(bool update_isclosed=true)
   {
-    CGAL::Random random;
+    CGAL::Random& random=get_default_random();
     update_path_randomly(random, update_isclosed);
   }
 

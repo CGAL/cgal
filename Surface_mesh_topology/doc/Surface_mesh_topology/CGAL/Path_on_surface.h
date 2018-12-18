@@ -41,11 +41,11 @@ namespace CGAL {
 
     /*!
      */
-    void generate_random_path(std::size_t length, CGAL::Random& random);
+    void generate_random_path(std::size_t length, CGAL::Random& random=CGAL::get_default_random());
 
      /*!
      */
-    void generate_random_closed_path(std::size_t length, CGAL::Random& random);
+    void generate_random_closed_path(std::size_t length, CGAL::Random& random=CGAL::get_default_random());
     
     /// Reverse the path (i.e. negate its orientation).
     void reverse();
