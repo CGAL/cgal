@@ -765,7 +765,10 @@ bool read_ply_points_with_properties (std::istream& stream,
   internal::PLY::PLY_reader reader;
   
   if (!(reader.init (stream)))
+  {
+    stream.setstate(std::ios::failbit);
     return false;
+  }
   
   for (std::size_t i = 0; i < reader.number_of_elements(); ++ i)
   {
@@ -778,7 +781,7 @@ bool read_ply_points_with_properties (std::istream& stream,
         internal::PLY::PLY_read_number* property = element.property(k);
         property->get (stream);
 
-        if (stream.eof())
+        if (stream.fail())
           return false;
       }
 

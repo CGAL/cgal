@@ -54,7 +54,7 @@ namespace CGAL{
           internal::PLY::PLY_read_number* property = element.property(k);
           property->get (in);
 
-          if (in.eof())
+          if (in.fail())
             return false;
         }
 
@@ -84,7 +84,7 @@ namespace CGAL{
           polygons.back()[i] = std::size_t(get<0>(new_face)[i]);
       }
 
-      return !in.bad();
+      return true;
     }
 
   }
@@ -106,7 +106,10 @@ namespace CGAL{
     internal::PLY::PLY_reader reader;
   
     if (!(reader.init (in)))
+    {
+      in.setstate(std::ios::failbit);
       return false;
+    }
   
     for (std::size_t i = 0; i < reader.number_of_elements(); ++ i)
     {
@@ -121,7 +124,7 @@ namespace CGAL{
             internal::PLY::PLY_read_number* property = element.property(k);
             property->get (in);
 
-            if (in.eof())
+            if (in.fail())
               return false;
           }
 
@@ -160,14 +163,14 @@ namespace CGAL{
             internal::PLY::PLY_read_number* property = element.property(k);
             property->get (in);
 
-            if (in.eof())
+            if (in.fail())
               return false;
           }
         }
       }
     }
 
-    return !in.bad();
+    return true;
   }
 
   template <class Point_3, class Polygon_3, class Color_rgb>
@@ -187,7 +190,10 @@ namespace CGAL{
     internal::PLY::PLY_reader reader;
   
     if (!(reader.init (in)))
+    {
+      in.setstate(std::ios::failbit);
       return false;
+    }
 
     for (std::size_t i = 0; i < reader.number_of_elements(); ++ i)
     {
@@ -215,7 +221,7 @@ namespace CGAL{
             internal::PLY::PLY_read_number* property = element.property(k);
             property->get (in);
 
-            if (in.eof())
+            if (in.fail())
               return false;
           }
 
@@ -266,14 +272,14 @@ namespace CGAL{
             internal::PLY::PLY_read_number* property = element.property(k);
             property->get (in);
 
-            if (in.eof())
+            if (in.fail())
               return false;
           }
         }
       }
     }
 
-    return !in.bad();
+    return true;
   }
 
 
