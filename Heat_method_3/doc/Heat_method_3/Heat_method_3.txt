@@ -118,8 +118,7 @@ The algorithm must then be translated in to a discrete algorithm by replacing th
 
 The heat equation can be discretized in time using a single backward Euler step. This means the following equation must be solved:
 
-\f$(id-t\Delta)u_t = \delta(x) \f$ where \f$\delta(x)\f$ is a Dirac delta encoding an "infinite" spike of heat (1 if x is in the source set, 0 otherwise)
-        over the entire domain M, where id is the identity operator.
+\f$(id-t\Delta)u_t = \delta_{\gamma}(x) \f$ where \f$\delta_{\gamma}(x)\f$ is a Dirac delta encoding an "infinite" spike of heat (1 if x is in the source set \f$\gamma\f$, 0 otherwise), where id is the identity operator.
 
 The spatial discretization depends on the choice of discrete surface representation.
 For this package, we use triangle meshes exclusively.
