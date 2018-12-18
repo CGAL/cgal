@@ -11,8 +11,6 @@
 
 #include <CGAL/Three/Viewer_interface.h>
 
-#include <QLineEdit>
-
 #include <set>
 #include <stack>
 #include <algorithm>

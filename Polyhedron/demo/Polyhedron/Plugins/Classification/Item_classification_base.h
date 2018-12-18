@@ -4,6 +4,8 @@
 #include <CGAL/Three/Scene_item.h>
 
 #include <QComboBox>
+#include <QLineEdit>
+#include <QSpinBox>
 #include <QMultipleInputDialog.h>
 
 #include <CGAL/Classification/Feature_set.h>
