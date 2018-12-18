@@ -134,7 +134,7 @@ public:
                            ) :
     m_map(apath.get_map()),
     m_is_closed(apath.is_closed()),
-    m_length(apath.length()),
+    m_length(0),
 #ifdef CGAL_PWRLE_TURN_V2
     m_darts_ids(darts_ids),
 #endif //CGAL_PWRLE_TURN_V2
@@ -166,6 +166,7 @@ public:
           m_path.push_back(Flat(apath.front(), apath.back(),
                                 (positive_flat?(apath.length()-1):
                                                -(apath.length()-1))));
+          m_length=apath.length();
           CGAL_assertion(is_valid());
           return;
         }
@@ -178,7 +179,7 @@ public:
     do
     {
       // Here dart i is the beginning of a flat part (maybe of length 0)
-        push_back(apath[i]);
+        push_back(apath[i], false);
         i=apath.next_index(i);
     }
     while(i<apath.length() && i!=starti);
@@ -455,7 +456,6 @@ public:
   //   of the first dart of the path).
   void update_is_closed()
   {
-    CGAL_assertion(is_valid());
     if (is_empty()) { m_is_closed=false; }
     else
     {

@@ -489,12 +489,7 @@ namespace CGAL {
     }
 
     Path_on_surface<CMap_for_surface_mesh_curve_topology>
-    transform_original_path_into_quad_surface
-    (const Path_on_surface<Map>& path
- #ifdef CGAL_PWRLE_TURN_V2
-                 , m_dart_ids
- #endif //CGAL_PWRLE_TURN_V2
-     )
+    transform_original_path_into_quad_surface(const Path_on_surface<Map>& path)
     {
       Path_on_surface<CMap_for_surface_mesh_curve_topology> res(m_map);
       if (path.is_empty()) return res;
@@ -508,8 +503,8 @@ namespace CGAL {
         }
       }
       res.update_is_closed();
-      assert(res.is_closed());
-      assert(res.is_valid());
+      CGAL_assertion(res.is_closed());
+      CGAL_assertion(res.is_valid());
       return res;
     }
 
@@ -525,7 +520,6 @@ namespace CGAL {
               );
 
       if (path.is_empty()) return res;
-      CGAL_assertion(path.is_closed());
 
       for (std::size_t i=0; i<path.length(); ++i)
       {
@@ -537,7 +531,6 @@ namespace CGAL {
       }
       res.update_is_closed();
       res.merge_last_flat_with_next_if_possible();
-
       CGAL_assertion(res.is_closed());
       CGAL_assertion(res.is_valid());
       return res;
