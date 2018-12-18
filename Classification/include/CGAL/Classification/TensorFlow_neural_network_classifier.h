@@ -230,7 +230,7 @@ public:
     \param restart_from_scratch should be set to `false` if the user
     wants to continue adjusting weights and bias based, and kept to
     `true` if the neural network should be re-created from scratch
-    (discarding all previous training result).
+    (discarding all previous training results).
 
     \param number_of_iterations number of times the optimizer is
     called.
@@ -238,7 +238,7 @@ public:
     \param learning_rate describes the rate at which the optimizer
     changes the weights and bias.
 
-    \param batch_size size of the random subset of inliers uses for
+    \param batch_size size of the random subset of inliers used for
     optimizing at each iteration.
 
     \param hidden_layers vector containing the consecutive sizes

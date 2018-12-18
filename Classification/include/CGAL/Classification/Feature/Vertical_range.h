@@ -40,7 +40,7 @@ namespace Feature {
   /*!
     \ingroup PkgClassificationFeatures
 
-    %Feature based on local height distribution This feature computes
+    %Feature based on local height distribution. This feature computes
     the distance between the maximum and the minimum height on the
     local cell of the planimetric grid.
 

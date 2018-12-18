@@ -41,10 +41,10 @@ namespace Feature {
     \ingroup PkgClassificationFeatures
 
     %Feature based on local height distribution This feature computes
-    the distance between the maxium height on the local cell of the
+    the distance between the maximum height on the local cell of the
     planimetric grid and a point's height.
 
-    Its default name is "height_after".
+    Its default name is "height_above".
 
     \tparam GeomTraits model of \cgal Kernel.
     \tparam PointRange model of `ConstRange`. Its iterator type

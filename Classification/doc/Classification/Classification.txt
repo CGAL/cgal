@@ -88,7 +88,7 @@ The following code snippet shows how to instantiate such data structures from an
 - [Eigenvalue](@ref CGAL::Classification::Feature::Eigenvalue) measures one of the three local eigenvalues;
 - [Elevation](@ref CGAL::Classification::Feature::Elevation) computes the local distance to an estimation of the ground;
 - [Height_above](@ref CGAL::Classification::Feature::Elevation) computes the distance between the local highest point and the point;
-- [Height_below](@ref CGAL::Classification::Feature::Elevation) computes the distance between the point and local lowest point;
+- [Height_below](@ref CGAL::Classification::Feature::Elevation) computes the distance between the point and the local lowest point;
 - [Vertical_dispersion](@ref CGAL::Classification::Feature::Vertical_dispersion) computes how noisy the point set is on a local Z-cylinder;
 - [Vertical_range](@ref CGAL::Classification::Feature::Elevation) computes the distance between the local highest and lowest points;
 - [Verticality](@ref CGAL::Classification::Feature::Verticality) compares the local normal vector to the vertical vector.

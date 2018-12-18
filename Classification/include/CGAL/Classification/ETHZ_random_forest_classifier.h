@@ -266,7 +266,7 @@ public:
 
     \param count vector where the result is stored. After running the
     method, it contains, for each feature, the number of nodes in the
-    foret that uses it as a split criterion, in the same order as the
+    forest that use it as a split criterion, in the same order as the
     feature set order.
   */
   void get_feature_usage (std::vector<std::size_t>& count) const
