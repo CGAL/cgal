@@ -982,6 +982,8 @@ namespace CGAL {
     /// 5) The two darts in a pair are different
     bool are_paths_valid() const
     {
+      if (paths.empty()) { return true; }
+
       bool res=true;
       for (auto it=m_original_map.darts().begin(),
            itend=m_original_map.darts().end(); it!=itend; ++it)
