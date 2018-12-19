@@ -109,13 +109,15 @@ void fill_pairs(const Halfedge& he,
     ++set_it->second.first; // increase the multiplicity
     if(set_it->second.first == 2)
     {
+      set_it->second.second = halfedge_pairs.size(); // set the id of the pair in the vector
+      halfedge_pairs.push_back( std::make_pair(set_it->first, he) );
       if ( get(vpmap, source(he,pmesh))==get(vpmap, target(set_it->first,pmesh)) &&
            get(vpmap, target(he,pmesh))==get(vpmap, source(set_it->first,pmesh)) )
       {
-        set_it->second.second = halfedge_pairs.size(); // set the id of the pair in the vector
-        halfedge_pairs.push_back( std::make_pair(set_it->first, he) );
         manifold_halfedge_pairs.push_back(true);
       }
+      else
+        manifold_halfedge_pairs.push_back(false);
     }
     else
       if ( set_it->second.first > 2 )

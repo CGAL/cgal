@@ -105,7 +105,7 @@ void test_surface_mesh_cc(const char* fname)
 
 void bug_test()
 {
-  typedef Epic K;
+  typedef CGAL::Simple_cartesian<double> K;
   typedef K::Point_3 Point_3;
   CGAL::Surface_mesh<Point_3> tm;
 
