@@ -316,6 +316,10 @@ public:
     return _actions;
   }
 
+  ~Polyhedron_demo_parameterization_plugin()
+  {
+    delete navigation;
+  }
   void init(QMainWindow* mainWindow,
             Scene_interface* scene_interface,
             Messages_interface* msg)
