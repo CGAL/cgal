@@ -1,5 +1,4 @@
 
-
 #include <boost/tuple/tuple.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
@@ -65,7 +64,7 @@ int main(int argc, char** argv) {
             }
         } while (cnt < N);
 
-        tr.clean_dummy_points();
+        tr.try_to_remove_dummy_vertices();
         assert(tr.is_valid());
         assert(tr.number_of_dummy_points() == 0);
 
