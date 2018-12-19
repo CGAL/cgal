@@ -585,8 +585,16 @@ add_face(const VertexRange& vr, Graph& g)
 
   std::vector<vertex_descriptor> vertices(vr.begin(), vr.end()); // quick and dirty copy
   unsigned int n = (unsigned int)vertices.size();
+  //check that every vertex is unique
+  std::sort(vertices.begin(), vertices.end());
+  if(std::adjacent_find(vertices.begin(), vertices.end()) != vertices.end()){
+    return boost::graph_traits<Graph>::null_face();
+  }
+  std::copy(vr.begin(), vr.end(), vertices.begin());
   // don't allow degenerated faces
-  CGAL_assertion(n > 2);
+  if(n <= 2){
+    return boost::graph_traits<Graph>::null_face();
+  }
 
   std::vector<halfedge_descriptor> halfedges(n);
   std::vector<bool>                is_new(n);
