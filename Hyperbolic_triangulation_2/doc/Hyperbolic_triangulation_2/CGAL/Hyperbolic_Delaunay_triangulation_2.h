@@ -217,7 +217,7 @@ public:
       and the triangulation is not modified. The optional parameter `start` is used
       to initialize the location of `p`.
     */
-    Vertex_handle insert(const Point  &p, Face_handle start = Face_handle() );
+    Vertex_handle insert(const Point  &p, Face_handle start = Face_handle());
     
     /*!
       Inserts the point p at the location given by `(lt,loc,li)`. 
@@ -225,7 +225,7 @@ public:
 
       \sa locate()
     */
-    Vertex_handle insert(const Point& p, typename Locate_type lt, Face_handle loc, int li );
+    Vertex_handle insert(const Point& p, typename Locate_type lt, Face_handle loc, int li);
       
 
     /*!

@@ -159,7 +159,7 @@ public:
       
       Origin o; 
       Point_2 po = Point_2(o);
-      if (circle.center() == po)
+      if(circle.center() == po)
 	{ return po; }
 
       FT x0 = circle.center().x(), y0 = circle.center().y();
@@ -398,7 +398,7 @@ public:
     
     bool operator() (const Point_2& p0, const Point_2& p1, const Point_2& p2, int& ind) const
     {
-      if (this->operator()(p0, p1, p2) == false) {
+      if(this->operator()(p0, p1, p2) == false) {
         ind = find_non_hyperbolic_edge(p0, p1, p2);
         return false;
       }
