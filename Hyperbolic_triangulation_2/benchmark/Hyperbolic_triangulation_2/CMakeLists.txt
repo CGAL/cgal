@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Periodic_4_hyperbolic_triangulation_2_benchmark )
+project( Hyperbolic_triangulation_2_benchmark )
 
 cmake_minimum_required(VERSION 2.8.10)
 
