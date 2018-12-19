@@ -76,13 +76,12 @@ namespace CGAL {
       GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
       typename GT::Construct_bbox_3 get_bbox = gt.construct_bbox_3_object();
 
-      typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+      typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
-      halfedge_descriptor h0 = *(halfedges(pmesh).first);
-      CGAL::Bbox_3 bb = get(vpm, target(h0, pmesh)).bbox();
-      BOOST_FOREACH(halfedge_descriptor h, halfedges(pmesh))
+      CGAL::Bbox_3 bb;
+      BOOST_FOREACH(vertex_descriptor v, vertices(pmesh))
       {
-        bb += get_bbox( get(vpm, target(h, pmesh)) );
+        bb += get_bbox( get(vpm, v) );
       }
       return bb;
     }
