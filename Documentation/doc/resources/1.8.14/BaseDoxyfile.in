@@ -287,7 +287,7 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "cgalModifEnd=\htmlonly </div> \endhtmlonly \latexonly END MODIFICATIONS \endlatexonly" \
                          "cgalPkgBib{1}=<B>BibTeX:</B> <a href=\"../Manual/how_to_cite_cgal.html#\1-${CGAL_RELEASE_YEAR_ID}\">\1-${CGAL_RELEASE_YEAR_ID}</a><BR>" \
                          "cgalFootnote{1}=<span class=\"footnote\">\1</span>" \
-                         "cgalAutoToc=\htmlonly <div id=\"autotoc\" class=\"toc\"></div> \endhtmlonly" \
+                         "cgalAutoToc=\htmlonly[block] <div id=\"autotoc\" class=\"toc\"></div> \endhtmlonly" \
                          "cgalTagTrue=\link CGAL::Tag_true `CGAL::Tag_true`\endlink" \
                          "cgalTagFalse=\link CGAL::Tag_false `CGAL::Tag_false`\endlink" \
                          "cgalHeading{1}= <B>\1</B><BR>" \
