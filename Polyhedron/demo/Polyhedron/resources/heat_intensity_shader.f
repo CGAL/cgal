@@ -76,9 +76,11 @@ void main(void) {
     h = h - floor(h);
     h = (1./(1.+exp(-100.*(h-.55)))) + (1./(1.+exp(-100.*(-h+.45))));
     h = 1.-h;
-    
-    c = h*vec3(1.,1.,1.) + (1.-h)*c;
-    
+#ifdef HEAT_METHOD_BLACK_LINES
+      c = h*vec3(0.,0.,0.) + (1.-h)*c;
+#else
+      c = h*vec3(1.,1.,1.) + (1.-h)*c;
+#endif
     out_color.rgb = c;
     out_color.a = alpha;
   }
