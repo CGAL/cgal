@@ -114,7 +114,7 @@ template <typename T>
 bool 
 TriangulationCircumcircle<T>::eventFilter(QObject *obj, QEvent *event)
 {
-  if (event->type() == QEvent::GraphicsSceneMouseMove) {
+  if(event->type() == QEvent::GraphicsSceneMouseMove) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
     mouseMoveEvent(mouseEvent);
     return false; // don't consume the event

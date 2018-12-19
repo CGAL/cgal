@@ -133,14 +133,14 @@ void
 TriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
 {
   if(visible_edges) {
-    for (int i=0; i<3; i++) {
-      if (fh < fh->neighbor(i) || !t->is_Delaunay_hyperbolic(fh->neighbor(i))){
+    for(int i=0; i<3; i++) {
+      if(fh < fh->neighbor(i) || !t->is_Delaunay_hyperbolic(fh->neighbor(i))){
         painterostream << t->hyperbolic_segment(fh,i);
       }
     }
   }
   if(visible_vertices) {
-    for (int i=0; i<3; i++) {
+    for(int i=0; i<3; i++) {
       paintVertex(fh->vertex(i));
     }
   }
@@ -203,7 +203,7 @@ TriangulationGraphicsItem<T>::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem *option,
                                     QWidget * /*widget*/)
 {
-  if ( t->dimension()<2 || option->exposedRect.contains(boundingRect()) ) {
+  if(t->dimension()<2 || option->exposedRect.contains(boundingRect())) {
     drawAll(painter);
   } else {
     m_painter = painter;
@@ -232,7 +232,7 @@ template <typename T>
 void 
 TriangulationGraphicsItem<T>::modelChanged()
 {
-  if((t->number_of_vertices() == 0) ){
+  if((t->number_of_vertices() == 0)){
     this->hide();
   } else if((t->number_of_vertices() > 0) && (! this->isVisible())){
     this->show();

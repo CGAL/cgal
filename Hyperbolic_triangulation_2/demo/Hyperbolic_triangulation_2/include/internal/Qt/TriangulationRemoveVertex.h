@@ -64,7 +64,7 @@ template <typename T>
 bool 
 TriangulationRemoveVertex<T>::eventFilter(QObject *obj, QEvent *event)
 {
-  if (event->type() == QEvent::GraphicsSceneMousePress) {
+  if(event->type() == QEvent::GraphicsSceneMousePress) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
     mousePressEvent(mouseEvent);
     return false;

@@ -122,15 +122,15 @@ template <typename T>
 bool 
 TriangulationMovingPoint<T>::eventFilter(QObject *obj, QEvent *event)
 {
-  if (event->type() == QEvent::GraphicsSceneMousePress) {
+  if(event->type() == QEvent::GraphicsSceneMousePress) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
     mousePressEvent(mouseEvent);
     return true;
-  } else if (event->type() == QEvent::GraphicsSceneMouseMove) {
+  } else if(event->type() == QEvent::GraphicsSceneMouseMove) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
     mouseMoveEvent(mouseEvent);
     return false; // do not eat move event!
-  } else if (event->type() == QEvent::GraphicsSceneMouseRelease) {
+  } else if(event->type() == QEvent::GraphicsSceneMouseRelease) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
     mouseReleaseEvent(mouseEvent);
     return true;

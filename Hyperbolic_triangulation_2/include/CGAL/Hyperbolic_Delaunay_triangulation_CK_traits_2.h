@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2016   INRIA Sophia Antipolis, INRIA Nancy (France).
+// Copyright (c) 2010-2018   INRIA Sophia Antipolis, INRIA Nancy (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -12,8 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:
-// $Id:
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Mikhail Bogdanov
 //                 Monique Teillaud <Monique.Teillaud@inria.fr>
@@ -31,7 +32,6 @@
 
 #include "boost/tuple/tuple.hpp"
 #include "boost/variant.hpp"
-
 
 namespace CGAL {
 
@@ -89,8 +89,6 @@ public:
     typedef typename R::Point_2                               Bare_point;
 
   public:
-    Construct_hyperbolic_segment_2() {}
-
     Hyperbolic_segment_2 operator()(const Hyperbolic_point_2& p, const Hyperbolic_point_2& q) const
     {
       Origin o;
@@ -116,21 +114,23 @@ public:
 
   // wrong names kept for demo
   typedef Construct_hyperbolic_segment_2                      Construct_segment_2;
-  Construct_hyperbolic_segment_2 construct_hyperbolic_segment_2_object() const {
-    return Construct_hyperbolic_segment_2();
-  }
 
-  Construct_segment_2 construct_segment_2_object() const {
-    return Construct_hyperbolic_segment_2();
-  }
+  Construct_hyperbolic_segment_2
+  construct_hyperbolic_segment_2_object() const
+  { return Construct_hyperbolic_segment_2(); }
+
+  Construct_segment_2
+  construct_segment_2_object() const
+  { return Construct_hyperbolic_segment_2(); }
 
   class Construct_hyperbolic_circumcenter_2
   {
   public:
-    Hyperbolic_Voronoi_point_2 operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q, Hyperbolic_point_2 r)
+    Hyperbolic_Voronoi_point_2 operator()(const Hyperbolic_point_2& p,
+                                          const Hyperbolic_point_2& q,
+                                          const Hyperbolic_point_2& r) const
     {
-      Origin o;
-      Hyperbolic_point_2 po = Hyperbolic_point_2(o);
+      Hyperbolic_point_2 po(CGAL::ORIGIN);
       Circle_2 l_inf(po, FT(1));
 
       if(Compare_distance_2()(po, p, q) == EQUAL && Compare_distance_2()(po, p,r) == EQUAL)
@@ -194,12 +194,6 @@ public:
 
   }; // end Construct_hyperbolic_circumcenter_2
 
-  Hyperbolic_Delaunay_triangulation_CK_traits_2() {}
-  Hyperbolic_Delaunay_triangulation_CK_traits_2(const Hyperbolic_Delaunay_triangulation_CK_traits_2 & other) {}
-
-  Hyperbolic_Delaunay_triangulation_CK_traits_2 &operator=(
-      const Hyperbolic_Delaunay_triangulation_CK_traits_2 &) { return *this; }
-
   Compare_x_2 compare_x_2_object() const { return Compare_x_2(); }
   Compare_y_2 compare_y_2_object() const { return Compare_y_2(); }
   Orientation_2 orientation_2_object() const { return Orientation_2(); }
@@ -215,13 +209,11 @@ public:
   class Construct_hyperbolic_bisector_2
   {
   public:
-    Construct_hyperbolic_bisector_2() {}
-
     // constructs a hyperbolic line
-    Hyperbolic_segment_2 operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q) const
+    Hyperbolic_segment_2 operator()(const Hyperbolic_point_2& p,
+                                    const Hyperbolic_point_2& q) const
     {
-      Origin o;
-      Hyperbolic_point_2 po = Hyperbolic_point_2(o);
+      Hyperbolic_point_2 po(CGAL::ORIGIN);
       Circle_2 l_inf = Circle_2(po, FT(1));
 
       if(Compare_distance_2()(po, p, q) == EQUAL)
@@ -249,16 +241,17 @@ public:
     // constructs the hyperbolic bisector of segment [p, q] limited by
     // circumcenter(p, q, r) on one side
     // and circumcenter(p, s, q) on the other side
-    Hyperbolic_segment_2
-    operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q, Hyperbolic_point_2 r, Hyperbolic_point_2 s)
+    Hyperbolic_segment_2 operator()(const Hyperbolic_point_2& p,
+                                    const Hyperbolic_point_2& q,
+                                    const Hyperbolic_point_2& r,
+                                    const Hyperbolic_point_2& s) const
     {
       CGAL_triangulation_precondition((Orientation_2()(p, q, r) == ON_POSITIVE_SIDE) &&
                                       (Orientation_2()(p, s, q) == ON_POSITIVE_SIDE));
       CGAL_triangulation_precondition((Side_of_oriented_circle_2()(p, q, r,s) == ON_NEGATIVE_SIDE) &&
                                       (Side_of_oriented_circle_2()(p, s, q, r) == ON_NEGATIVE_SIDE));
 
-      Origin o;
-      Hyperbolic_point_2 po = Hyperbolic_point_2(o);
+      Hyperbolic_point_2 po(CGAL::ORIGIN);
 
       // TODO MT this is non-optimal...
       // the bisector is already computed here
@@ -288,12 +281,13 @@ public:
     // constructs the hyperbolic bisector of segment [p, q]
     // limited by hyperbolic circumcenter(p, q, r) on one side
     // and going to the infinite line on the other side
-    Hyperbolic_segment_2 operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q, Hyperbolic_point_2 r)
+    Hyperbolic_segment_2 operator()(const Hyperbolic_point_2& p,
+                                    const Hyperbolic_point_2& q,
+                                    const Hyperbolic_point_2& r) const
     {
       CGAL_triangulation_precondition(Orientation_2()(p, q, r) == POSITIVE);
 
-      Origin o;
-      Hyperbolic_point_2 po = Hyperbolic_point_2(o);
+      Hyperbolic_point_2 po(CGAL::ORIGIN);
       Circle_2 l_inf(po, FT(1));
 
       // TODO MT this is non-optimal...
@@ -368,11 +362,11 @@ public:
     typedef typename R::Point_2                            Bare_point;
 
   public:
-    Side_of_oriented_hyperbolic_segment_2() {}
-
     typedef Oriented_side                                  result_type;
 
-    result_type operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q, Hyperbolic_point_2 query) const
+    result_type operator()(const Hyperbolic_point_2& p,
+                           const Hyperbolic_point_2& q,
+                           const Hyperbolic_point_2& query) const
     {
       // Check first if the points are collinear with the origin
       Circle_2 poincare(Hyperbolic_point_2(FT(0), FT(0)), FT(1));
@@ -510,14 +504,12 @@ public:
   class Construct_circle_or_line_supporting_bisector
   {
   public:
-    Construct_circle_or_line_supporting_bisector() {}
-
-    Euclidean_circle_or_line_2 operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q) const
+    Euclidean_circle_or_line_2 operator()(const Hyperbolic_point_2& p,
+                                          const Hyperbolic_point_2& q) const
     {
       typedef typename R::Point_3                                   Point_3;
 
-      Origin o;
-      Hyperbolic_point_2 po = Hyperbolic_point_2(o);
+      Hyperbolic_point_2 po(CGAL::ORIGIN);
 
       if(Compare_distance_2()(po, p, q) == EQUAL)
         return Construct_Euclidean_bisector_2()(p, q);

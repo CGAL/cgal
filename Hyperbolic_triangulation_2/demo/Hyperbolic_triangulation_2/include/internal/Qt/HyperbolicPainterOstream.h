@@ -1,4 +1,4 @@
-// Copyright (c) 2011   INRIA Sophia-Antipolis (France).
+// Copyright (c) 2011-2018   INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -13,7 +13,7 @@
 //
 // $URL: svn+ssh://mbogdanov@scm.gforge.inria.fr/svn/cgal/trunk/Triangulation_2/include/CGAL/Triangulation_hyperbolic_traits_2.h $
 // $Id: Triangulation_hyperbolic_traits_2.h 57323 2010-07-05 10:07:39Z sloriot $
-// 
+//
 //
 // Author(s)     : Mikhail Bogdanov
 
@@ -26,99 +26,95 @@
 namespace CGAL{
 
 namespace Qt {
-  
-  template <typename K>
-  class PainterOstream< Hyperbolic_Delaunay_triangulation_traits_2<K> > : public PainterOstream<K> {
 
-  	typedef PainterOstream<K> 															Base;
-	typedef PainterOstream< Hyperbolic_Delaunay_triangulation_traits_2<K> > 	Self;
-	typedef Hyperbolic_Delaunay_triangulation_traits_2<K> 					Gt;
-	
-	typedef typename Gt::Hyperbolic_segment_2       									Hyperbolic_segment_2;    
-	typedef typename Gt::Circular_arc_2             									Circular_arc_2;
-	typedef typename Gt::Euclidean_segment_2        									Euclidean_segment_2;    
-	typedef typename Gt::Point_2                    									Point_2;
+template <typename K>
+class PainterOstream< Hyperbolic_Delaunay_triangulation_traits_2<K> >
+  : public PainterOstream<K>
+{
+  typedef PainterOstream<K>                                         Base;
+  typedef PainterOstream<Hyperbolic_Delaunay_triangulation_traits_2<K> >   Self;
+  typedef Hyperbolic_Delaunay_triangulation_traits_2<K>             Gt;
 
-private:  	
-  	PainterOstream& operator<<(const Circular_arc_2& arc) {
-		const typename K::Circle_2 & circ  = arc.supporting_circle();
-		const typename K::Point_2 & center = circ.center();
-		const typename K::Point_2 & source = arc.source();
-		const typename K::Point_2 & target = arc.target();
+  typedef typename Gt::Hyperbolic_segment_2                         Hyperbolic_segment_2;
+  typedef typename Gt::Circular_arc_2                               Circular_arc_2;
+  typedef typename Gt::Euclidean_segment_2                          Euclidean_segment_2;
+  typedef typename Gt::Point_2                                      Point_2;
 
-		double ds = CGAL::to_double(sqrt(source.x()*source.x() + source.y()*source.y()));
-		double dt = CGAL::to_double(sqrt(target.x()*target.x() + target.y()*target.y()));
-		
-		double asource = std::atan2( -to_double(source.y() - center.y()),
-		                              to_double(source.x() - center.x())); 
-		double atarget = std::atan2( -to_double(target.y() - center.y()),
-		                              to_double(target.x() - center.x()));
+private:
+  PainterOstream& operator<<(const Circular_arc_2& arc)
+  {
+    const typename K::Circle_2 & circ  = arc.supporting_circle();
+    const typename K::Point_2 & center = circ.center();
+    const typename K::Point_2 & source = arc.source();
+    const typename K::Point_2 & target = arc.target();
 
-		std::swap(asource, atarget);
-		double aspan = atarget - asource;
+    double asource = std::atan2( -to_double(source.y() - center.y()),
+                                 to_double(source.x() - center.x()));
+    double atarget = std::atan2( -to_double(target.y() - center.y()),
+                                 to_double(target.x() - center.x()));
 
-		if(aspan < 0.)
-		aspan += 2 * CGAL_PI;
+    std::swap(asource, atarget);
+    double aspan = atarget - asource;
 
-		const double coeff = 180*16/CGAL_PI;
-		qp->drawArc(convert(circ.bbox()), 
-		(int)(asource * coeff), 
-			 (int)(aspan * coeff));
-	
-		return *this;
-	}
-	
+    if(aspan < 0.)
+      aspan += 2 * CGAL_PI;
 
-	PainterOstream& operator<<(const Euclidean_segment_2& seg) {
+    const double coeff = 180*16/CGAL_PI;
+    qp->drawArc(convert(circ.bbox()), int(asource * coeff), int(aspan * coeff));
 
-		const typename K::Point_2 & source = seg.source();
-		const typename K::Point_2 & target = seg.target();
+    return *this;
+  }
 
-		double ds = CGAL::to_double(sqrt(source.x()*source.x() + source.y()*source.y()));
-		double dt = CGAL::to_double(sqrt(target.x()*target.x() + target.y()*target.y()));
-		
-		QPointF src(to_double(source.x()), to_double(source.y()));
-		QPointF tgt(to_double(target.x()), to_double(target.y()));
 
-		qp->drawLine(src, tgt);
-	
-		return *this;
-	}
-	
+  PainterOstream& operator<<(const Euclidean_segment_2& seg)
+  {
+    const typename K::Point_2 & source = seg.source();
+    const typename K::Point_2 & target = seg.target();
+
+    QPointF src(to_double(source.x()), to_double(source.y()));
+    QPointF tgt(to_double(target.x()), to_double(target.y()));
+
+    qp->drawLine(src, tgt);
+
+    return *this;
+  }
+
 public:
-	PainterOstream(QPainter* p, QRectF rect = QRectF())
-	: Base(p, rect), qp(p), convert(rect) {}
-	
-	using Base::operator <<;
-	
-	PainterOstream& operator << (Hyperbolic_segment_2 s) {
-	  if (const Euclidean_segment_2* seg = boost::get<Euclidean_segment_2>(&s)) {
-		operator << (*seg);
-		return *this;
-	  }
-	  
-	  Circular_arc_2* arc = boost::get<Circular_arc_2>(&s);
+  PainterOstream(QPainter* p, QRectF rect = QRectF())
+    : Base(p, rect), qp(p), convert(rect)
+  {}
 
-	  if (arc->squared_radius() > 100) {
-	  	Euclidean_segment_2 seg(arc->source(), arc->target());
-	  	operator << (seg);
-	  	return *this;
-	  }
+  using Base::operator <<;
 
-	  operator << (*arc);
-	  return *this;
-	}
-	
-  private:
-	// ToDo: These objects must be deleted
-	// Copies of these objects are in the base class.
-	// We need access to the copies in the base class.
-	QPainter* qp;
-	Converter<K> convert;      
+  PainterOstream& operator << (Hyperbolic_segment_2 s)
+  {
+    if(const Euclidean_segment_2* seg = boost::get<Euclidean_segment_2>(&s)) {
+      operator << (*seg);
+      return *this;
+    }
+
+    Circular_arc_2* arc = boost::get<Circular_arc_2>(&s);
+
+    if(arc->squared_radius() > 100) {
+      Euclidean_segment_2 seg(arc->source(), arc->target());
+      operator << (seg);
+      return *this;
+    }
+
+    operator << (*arc);
+    return *this;
+  }
+
+private:
+  // ToDo: These objects must be deleted
+  // Copies of these objects are in the base class.
+  // We need access to the copies in the base class.
+  QPainter* qp;
+  Converter<K> convert;
 };
-  
+
 } //namespace Qt
-  
+
 } //namespace CGAL
 
 #endif // CGAL_HYPERBOLIC_PAINTER_OSTREAM_H

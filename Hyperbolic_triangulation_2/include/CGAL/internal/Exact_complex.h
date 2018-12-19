@@ -1,4 +1,4 @@
-// Copyright (c) 2017  INRIA Nancy - Grand Est (France).
+// Copyright (c) 2017-2018 INRIA Nancy - Grand Est (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -11,8 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id:  $
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     :   Iordan Iordanov
 //

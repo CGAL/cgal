@@ -33,13 +33,10 @@ int main(int argc, char** argv)
 
   CGAL::Random_points_in_disc_2<Point_2, Creator> in_disc;
   std::vector<Point_2> pts;
-  std::vector<Point_2>::iterator ip;
-
   for(int i=0; i<N; ++i)
     pts.push_back(*(in_disc++));
 
   Dt dt;
-
   dt.insert(pts.begin(), pts.end());
   Dt::Vertex_handle vo = dt.insert(Point_2(0,0));
 

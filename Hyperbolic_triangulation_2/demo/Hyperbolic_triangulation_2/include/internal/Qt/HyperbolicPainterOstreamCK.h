@@ -53,14 +53,14 @@ namespace Qt {
     
     PainterOstream& operator << (Hyperbolic_segment_2 s)
       {
-	if (const Line_arc* seg = boost::get<Line_arc>(&s)) {
+	if(const Line_arc* seg = boost::get<Line_arc>(&s)) {
 	  operator << (*seg);
 	  return *this;
 	}
       
 	Circular_arc* arc = boost::get<Circular_arc>(&s);
 
-	if (arc->squared_radius() > 10 )
+	if(arc->squared_radius() > 10)
 	  // due to rounding, the arc drawn does not look like it 
 	  // passes through the endpoints
 	  // so we replace the arc by a line segment

@@ -164,7 +164,7 @@ MainWindow::MainWindow()
   // Setup input handlers. They get events before the scene gets them
   // and the input they generate is passed to the triangulation with 
   // the signal/slot mechanism    
-  pi = new CGAL::Qt::TriangulationPointInputAndConflictZone<Delaunay>(&scene, &dt, this );
+  pi = new CGAL::Qt::TriangulationPointInputAndConflictZone<Delaunay>(&scene, &dt, this);
 
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
 		   this, SLOT(processInput(CGAL::Object)));

@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2016  INRIA Sophia Antipolis, INRIA Nancy (France).
+// Copyright (c) 2010-2018  INRIA Sophia Antipolis, INRIA Nancy (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -12,8 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:
-// $Id:
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Mikhail Bogdanov
 //                 Monique Teillaud <Monique.Teillaud@inria.fr>
@@ -31,8 +32,8 @@ namespace CGAL {
 
 template < class Gt,
            class Tds = Triangulation_data_structure_2 <
-             Triangulation_vertex_base_2<Gt>,
-             Hyperbolic_triangulation_face_base_2<Gt> > >
+                         Triangulation_vertex_base_2<Gt>,
+                         Hyperbolic_triangulation_face_base_2<Gt> > >
 class Hyperbolic_Delaunay_triangulation_2
   : private Delaunay_triangulation_2<Gt,Tds>
 {
@@ -45,21 +46,21 @@ public:
   typedef typename Tds::Face_handle                             Face_handle;
   typedef typename Tds::Edge                                    Edge;
 
+  typedef Gt                                                    Geom_traits;
+  typedef typename Geom_traits::FT                              FT;
+  typedef typename Geom_traits::Hyperbolic_point_2              Point;
+  typedef typename Geom_traits::Hyperbolic_Voronoi_point_2      Hyperbolic_Voronoi_point;
+  typedef typename Geom_traits::Hyperbolic_segment_2            Hyperbolic_segment;
+  typedef typename Geom_traits::Hyperbolic_triangle_2           Hyperbolic_triangle;
+
+  // Redeclaration of `Segment` that would have been inherited from DT2
+  //typedef Hyperbolic_segment                                     Segment;
+
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Base::cw;
   using Base::ccw;
   using Base::geom_traits;
 #endif
-
-  typedef Gt Geom_traits;
-  typedef typename Geom_traits::FT                               FT;
-  typedef typename Geom_traits::Hyperbolic_point_2               Point;
-  typedef typename Geom_traits::Hyperbolic_Voronoi_point_2       Hyperbolic_Voronoi_point;
-  typedef typename Geom_traits::Hyperbolic_segment_2             Hyperbolic_segment;
-  typedef typename Geom_traits::Hyperbolic_triangle_2            Hyperbolic_triangle;
-
-  // Redeclaration of `Segment` that would have been inherited from DT2
-  //typedef Hyperbolic_segment                                     Segment;
 
   enum Locate_type {
     VERTEX = 0,
@@ -72,6 +73,26 @@ public:
   typedef typename Geom_traits::Side_of_oriented_hyperbolic_segment_2 Side_of_oriented_hyperbolic_segment;
   typedef typename Geom_traits::Is_Delaunay_hyperbolic                Is_Delaunay_hyperbolic;
 
+  Hyperbolic_Delaunay_triangulation_2(const Geom_traits& gt = Geom_traits())
+    : Delaunay_triangulation_2<Gt,Tds>(gt)
+  {}
+
+  Hyperbolic_Delaunay_triangulation_2(const Hyperbolic_Delaunay_triangulation_2<Gt,Tds> &tr)
+    : Delaunay_triangulation_2<Gt,Tds>(tr)
+  {
+    CGAL_triangulation_postcondition(this->is_valid());
+  }
+
+  template<class InputIterator>
+  Hyperbolic_Delaunay_triangulation_2(InputIterator first, InputIterator last,
+                                      const Geom_traits& gt = Geom_traits())
+    : Delaunay_triangulation_2<Gt,Tds>(gt)
+  {
+    insert(first, last);
+    for(All_vertices_iterator vit=all_vertices_begin(); vit!=all_vertices_end(); ++vit)
+      ensure_hyperbolic_face_handle(vit);
+  }
+
   /*************************************
       Circulators and iterators
   *************************************/
@@ -82,7 +103,7 @@ private:
     const Self *t;
 
   public:
-    Non_hyperbolic_tester() {}
+    Non_hyperbolic_tester() {} // needs a default constructor for Filter_iterator
     Non_hyperbolic_tester(const Self *tr) : t(tr) {}
 
     bool operator()(const typename Base::All_vertices_iterator & vit) const { return Base::is_infinite(vit); }
@@ -115,7 +136,7 @@ public:
 
   Hyperbolic_faces_iterator hyperbolic_faces_begin() const
   {
-    if(this->dimension() < 2)
+    if(dimension() < 2)
       return hyperbolic_faces_end();
 
     return CGAL::filter_iterator(Base::all_faces_end(),
@@ -132,7 +153,7 @@ public:
 
   Hyperbolic_edges_iterator hyperbolic_edges_begin() const
   {
-    if(this->dimension() < 1)
+    if(dimension() < 1)
       return hyperbolic_edges_end();
 
     return CGAL::filter_iterator(Base::all_edges_end(),
@@ -145,9 +166,8 @@ public:
     return CGAL::filter_iterator(Base::all_edges_end(), Non_hyperbolic_tester(this));
   }
 
-
   class Hyperbolic_adjacent_vector_circulator
-      : Base::Vertex_circulator
+    : Base::Vertex_circulator
   {
     typedef typename Base::Vertex_circulator        VBase;
     typedef Hyperbolic_adjacent_vector_circulator   Self;
@@ -159,15 +179,10 @@ public:
     int _iv;
 
   public:
-    Hyperbolic_adjacent_vector_circulator()
-      : VBase()
-    {
-      _v = Vertex_handle();
-      pos = Face_handle();
-      _ri = 0;
-    }
+    Hyperbolic_adjacent_vector_circulator() : VBase(), _v(Vertex_handle()), pos(Face_handle()), _ri(0) {}
 
-    Hyperbolic_adjacent_vector_circulator(Vertex_handle v, Face_handle fh = Face_handle()): VBase(v, fh)
+    Hyperbolic_adjacent_vector_circulator(Vertex_handle v, Face_handle fh = Face_handle())
+      : VBase(v, fh)
     {
       _v = v;
       if(fh = Face_handle())
@@ -272,27 +287,6 @@ public:
   // Algebraic_kernel_for_circles_2 needs this for some reason
   typedef typename Base::Line_face_circulator     Line_face_circulator;
 
-
-  Hyperbolic_Delaunay_triangulation_2(const Geom_traits& gt = Geom_traits())
-    : Delaunay_triangulation_2<Gt,Tds>(gt)
-  {}
-
-  Hyperbolic_Delaunay_triangulation_2(const Hyperbolic_Delaunay_triangulation_2<Gt,Tds> &tr)
-    : Delaunay_triangulation_2<Gt,Tds>(tr)
-  {
-    CGAL_triangulation_postcondition(this->is_valid());
-  }
-
-  template<class InputIterator>
-  Hyperbolic_Delaunay_triangulation_2(InputIterator first, InputIterator last,
-                                      const Geom_traits& gt = Geom_traits())
-    : Delaunay_triangulation_2<Gt,Tds>(gt)
-  {
-    insert(first, last);
-    for(All_vertices_iterator vit = all_vertices_begin(); vit != all_vertices_end(); vit++)
-      ensure_hyperbolic_face_handle(vit);
-  }
-
   void clear() { Base::clear(); }
 
   void mark_star(Vertex_handle v) const
@@ -302,11 +296,12 @@ public:
   }
 
   template<class OutputItFaces>
-  OutputItFaces find_conflicts(const Point& p, OutputItFaces fit, Face_handle start = Face_handle()) const {
+  OutputItFaces find_conflicts(const Point& p, OutputItFaces fit, Face_handle start = Face_handle()) const
+  {
     return Base::get_conflicts(p, fit, start);
   }
 
-  Vertex_handle insert(const Point  &p,
+  Vertex_handle insert(const Point& p,
                        Face_handle start = Face_handle())
   {
     Vertex_handle v = Base::insert(p, start);
@@ -417,7 +412,7 @@ private:
   */
   void ensure_hyperbolic_face_handle(Vertex_handle v)
   {
-    if(this->dimension() > 2)
+    if(dimension() > 2)
     {
       Face_circulator fc = this->incident_faces(v), done(fc);
       if(fc != 0)
@@ -436,11 +431,11 @@ private:
     }
   }
 
-  Oriented_side side_of_hyperbolic_triangle(const Point p, const Point q, const Point r,
-                                            const Point query, Locate_type &lt, int& li) const
+  Oriented_side side_of_hyperbolic_triangle(const Point& p, const Point& q, const Point& r,
+                                            const Point& query, Locate_type &lt, int& li) const
   {
     // The triangle (p,q,r) must be Delaunay hyperbolic
-    CGAL_triangulation_precondition(Is_Delaunay_hyperbolic()(p, q, r));
+    CGAL_triangulation_precondition(geom_traits().is_Delaunay_hyperbolic_2_object()(p, q, r));
 
     // Point p is assumed to be at index 0, q at index 1 and r at index 2 in the face.
     li = -1;
@@ -466,7 +461,7 @@ private:
       return ON_ORIENTED_BOUNDARY;
     }
 
-    Oriented_side cp1 = Side_of_oriented_hyperbolic_segment()(p, q, query);
+    Oriented_side cp1 = geom_traits().side_of_oriented_hyperbolic_segment_2_object()(p, q, query);
     if(cp1 == ON_ORIENTED_BOUNDARY)
     {
       lt = EDGE;
@@ -474,7 +469,7 @@ private:
       return ON_ORIENTED_BOUNDARY;
     }
 
-    Oriented_side cp2 = Side_of_oriented_hyperbolic_segment()(q, r, query);
+    Oriented_side cp2 = geom_traits().side_of_oriented_hyperbolic_segment_2_object()(q, r, query);
     if(cp2 == ON_ORIENTED_BOUNDARY)
     {
       lt = EDGE;
@@ -482,7 +477,7 @@ private:
       return ON_ORIENTED_BOUNDARY;
     }
 
-    Oriented_side cp3 = Side_of_oriented_hyperbolic_segment()(r, p, query);
+    Oriented_side cp3 = geom_traits().side_of_oriented_hyperbolic_segment_2_object()(r, p, query);
     if(cp3 == ON_ORIENTED_BOUNDARY)
     {
       lt = EDGE;
@@ -490,9 +485,9 @@ private:
       return ON_ORIENTED_BOUNDARY;
     }
 
-    Oriented_side cs1 = Side_of_oriented_hyperbolic_segment()(p, q, r);
-    Oriented_side cs2 = Side_of_oriented_hyperbolic_segment()(q, r, p);
-    Oriented_side cs3 = Side_of_oriented_hyperbolic_segment()(r, p, q);
+    Oriented_side cs1 = geom_traits().side_of_oriented_hyperbolic_segment_2_object()(p, q, r);
+    Oriented_side cs2 = geom_traits().side_of_oriented_hyperbolic_segment_2_object()(q, r, p);
+    Oriented_side cs3 = geom_traits().side_of_oriented_hyperbolic_segment_2_object()(r, p, q);
 
     // Cannot be on the boundary here.
     lt = FACE;
@@ -524,7 +519,7 @@ private:
 
   bool is_finite_non_hyperbolic(Face_handle f, int i) const
   {
-    if(this->dimension() <= 1)
+    if(dimension() <= 1)
       return false;
 
     if(is_finite_non_hyperbolic(f) && get_finite_non_hyperbolic_edge(f) == i)
@@ -548,7 +543,7 @@ private:
   // Depth-first search (dfs) and marking the finite non_hyperbolic faces.
   void mark_finite_non_hyperbolic_faces() const
   {
-    if(this->dimension() <= 1)
+    if(dimension() <= 1)
       return;
 
     std::set<Face_handle> visited_faces;
@@ -604,7 +599,7 @@ private:
   // TODO: rename this function name
   bool is_star_bounded(Vertex_handle v) const
   {
-    if(this->dimension() <= 1)
+    if(dimension() <= 1)
       return true;
 
     Face_handle f = v->face();
@@ -619,7 +614,7 @@ private:
       next = f->neighbor(ccw(i));  // turn ccw around v
 
       opposite_face = f->neighbor(i);
-      if(!this->is_Delaunay_hyperbolic(opposite_face))
+      if(!is_Delaunay_hyperbolic(opposite_face))
         return false;
 
       f = next;
@@ -634,7 +629,7 @@ private:
   void mark_star_faces(Vertex_handle v) const
   {
     // TODO: think of it
-    if(this->dimension() <= 1)
+    if(dimension() <= 1)
       return;
 
     Face_handle f = v->face();
@@ -651,13 +646,14 @@ private:
     } while(next != start);
   }
 
-  void mark_face(const Face_handle& f) const
+  void mark_face(const Face_handle f) const
   {
     Is_Delaunay_hyperbolic del;
     int idx;
     bool flag = del(f->vertex(0)->point(),
                     f->vertex(1)->point(),
-                    f->vertex(2)->point(), idx);
+                    f->vertex(2)->point(),
+                    idx);
 
     Face_data fd;
     fd.set_is_Delaunay_hyperbolic(flag);
@@ -682,8 +678,8 @@ public:
 
   Hyperbolic_segment hyperbolic_segment(const Face_handle f, const int i) const
   {
-    return typename Geom_traits::Construct_hyperbolic_segment_2()(f->vertex(cw(i))->point(),
-                                                                  f->vertex(ccw(i))->point());
+    return geom_traits().construct_hyperbolic_segment_2_object()(f->vertex(cw(i))->point(),
+                                                                 f->vertex(ccw(i))->point());
   }
 
   Hyperbolic_segment hyperbolic_segment(const Edge& e) const
@@ -717,25 +713,25 @@ public:
 
   Hyperbolic_Voronoi_point dual(Face_handle f) const
   {
-    CGAL_triangulation_precondition (this->is_Delaunay_hyperbolic(f));
-    return this->geom_traits().construct_hyperbolic_circumcenter_2_object()(f->vertex(0)->point(),
-                                                                            f->vertex(1)->point(),
-                                                                            f->vertex(2)->point());
+    CGAL_triangulation_precondition(is_Delaunay_hyperbolic(f));
+    return geom_traits().construct_hyperbolic_circumcenter_2_object()(f->vertex(0)->point(),
+                                                                      f->vertex(1)->point(),
+                                                                      f->vertex(2)->point());
   }
 
   Hyperbolic_segment dual(const Edge& e) const { return dual(e.first, e.second); }
 
   Hyperbolic_segment dual(Face_handle f, int i) const
   {
-    CGAL_triangulation_precondition (this->is_Delaunay_hyperbolic(f, i));
+    CGAL_triangulation_precondition(is_Delaunay_hyperbolic(f, i));
 
-    if(this->dimension() == 1)
+    if(dimension() == 1)
     {
-      Point p = f->vertex(cw(i))->point();
-      Point q = f->vertex(ccw(i))->point();
+      const Point& p = f->vertex(cw(i))->point();
+      const Point& q = f->vertex(ccw(i))->point();
 
       // hyperbolic line
-      Hyperbolic_segment line = this->geom_traits().construct_hyperbolic_bisector_2_object()(p, q);
+      Hyperbolic_segment line = geom_traits().construct_hyperbolic_bisector_2_object()(p, q);
       return line;
     }
 
@@ -750,7 +746,7 @@ public:
       const Point& q = f->vertex(cw(i))->point();
 
       // hyperbolic line
-      Hyperbolic_segment line = this->geom_traits().construct_hyperbolic_bisector_2_object()(p, q);
+      Hyperbolic_segment line = geom_traits().construct_hyperbolic_bisector_2_object()(p, q);
       return line;
     }
 
@@ -760,7 +756,7 @@ public:
       const Point& p = f->vertex(ccw(i))->point();
       const Point& q = f->vertex(cw(i))->point();
 
-      Hyperbolic_segment s = this->geom_traits().construct_hyperbolic_bisector_2_object()(
+      Hyperbolic_segment s = geom_traits().construct_hyperbolic_bisector_2_object()(
                                p, q, f->vertex(i)->point(), n->vertex(in)->point());
       //TODO MT cut edge at dual points !!!!
       return s;
@@ -780,10 +776,10 @@ public:
 
     // ToDo: Line or Segment?
     // hyperbolic line and ray
-    Hyperbolic_segment ray = this->geom_traits().construct_hyperbolic_bisector_2_object()(
+    Hyperbolic_segment ray = geom_traits().construct_hyperbolic_bisector_2_object()(
                                p, q, hyp_face->vertex(i)->point());
     // TODO MT cut edge at dual point !!!
-    //    Segment ray = this->geom_traits().construct_ray_2_object()(dual(finite_face), line);
+    //    Segment ray = geom_traits().construct_ray_2_object()(dual(finite_face), line);
     return ray;
   }
 
@@ -810,7 +806,7 @@ public:
         if(blt == Base::FACE) {
           lt = FACE;
         } else {
-          if(blt == OUTSIDE_CONVEX_HULL) {
+          if(blt == Base::OUTSIDE_CONVEX_HULL) {
             lt = OUTSIDE_CONVEX_HULL;
           } else {
             lt = OUTSIDE_AFFINE_HULL;
@@ -831,7 +827,8 @@ public:
       Point p = fh->vertex(0)->point();
       Point q = fh->vertex(1)->point();
       Point r = fh->vertex(2)->point();
-      if(Is_Delaunay_hyperbolic()(p, q, r))
+
+      if(geom_traits().is_Delaunay_hyperbolic_2_object()(p, q, r))
       {
         Oriented_side side = side_of_hyperbolic_triangle(p, q, r, query, lt, li);
         if(side == ON_ORIENTED_BOUNDARY) {
@@ -851,7 +848,7 @@ public:
       q = Base::mirror_vertex(fh, li)->point();  //fh->mirror_vertex(li)->point();
       r = fh->vertex(cw(li))->point();
 
-      if(Is_Delaunay_hyperbolic()(p, q, r))
+      if(geom_traits().is_Delaunay_hyperbolic_2_object()(p, q, r))
       {
         Oriented_side side = side_of_hyperbolic_triangle(p, q, r, query, lt, li);
         if(side == ON_ORIENTED_BOUNDARY) {
@@ -871,10 +868,10 @@ public:
     }
 
     // Here, the face has been located in the Euclidean face lh
-    Point p = fh->vertex(0)->point();
-    Point q = fh->vertex(1)->point();
-    Point r = fh->vertex(2)->point();
-    if(!Is_Delaunay_hyperbolic()(p, q, r))
+    const Point& p = fh->vertex(0)->point();
+    const Point& q = fh->vertex(1)->point();
+    const Point& r = fh->vertex(2)->point();
+    if(!geom_traits().is_Delaunay_hyperbolic_2_object()(p, q, r))
     {
       lt = OUTSIDE_CONVEX_HULL;
       return Face_handle();
@@ -892,8 +889,14 @@ public:
         // Here, the point lies in a face that is a neighbor to fh
         for(int i = 0; i < 3; i++) {
           Face_handle nfh = fh->neighbor(i);
-          if(Is_Delaunay_hyperbolic()(nfh->vertex(0)->point(),nfh->vertex(1)->point(),nfh->vertex(2)->point())) {
-            Oriented_side nside = side_of_hyperbolic_triangle(nfh->vertex(0)->point(),nfh->vertex(1)->point(),nfh->vertex(2)->point(), query, lt, li);
+          if(geom_traits().is_Delaunay_hyperbolic_2_object()(nfh->vertex(0)->point(),
+                                                             nfh->vertex(1)->point(),
+                                                             nfh->vertex(2)->point()))
+          {
+            Oriented_side nside = side_of_hyperbolic_triangle(nfh->vertex(0)->point(),
+                                                              nfh->vertex(1)->point(),
+                                                              nfh->vertex(2)->point(),
+                                                              query, lt, li);
             if(nside == ON_POSITIVE_SIDE) {
               lt = FACE;
               return nfh;

@@ -99,11 +99,11 @@ template <typename T>
 bool 
 TriangulationPointInputAndConflictZone<T>::eventFilter(QObject *obj, QEvent *event)
 {
-  if (event->type() == QEvent::GraphicsSceneMousePress) {
+  if(event->type() == QEvent::GraphicsSceneMousePress) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
     mousePressEvent(mouseEvent);
     return true;
-  } else if (event->type() == QEvent::GraphicsSceneMouseRelease) {
+  } else if(event->type() == QEvent::GraphicsSceneMouseRelease) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
     mouseReleaseEvent(mouseEvent);
     return true;

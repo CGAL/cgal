@@ -10,7 +10,7 @@
 #include <iostream>
 
 template<typename Point_type>
-std::pair<double, double> insert_Euclidean(std::vector<Point_type>& dpts)
+std::pair<double, double> insert_Euclidean(const std::vector<Point_type>& dpts)
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
   typedef CGAL::Delaunay_triangulation_2< K >                 Dt;
@@ -19,9 +19,8 @@ std::pair<double, double> insert_Euclidean(std::vector<Point_type>& dpts)
   CGAL::Timer timer;
 
   std::vector<Point_2> pts;
-  std::vector<Point_2>::iterator ip;
 
-  for(int i=0; i<dpts.size(); ++i)
+  for(std::size_t i=0; i<dpts.size(); ++i)
     pts.push_back(Point_2(dpts[i].x(), dpts[i].y()));
 
   Dt dt_end;
@@ -34,7 +33,7 @@ std::pair<double, double> insert_Euclidean(std::vector<Point_type>& dpts)
   Dt dt_during;
   timer.reset();
   timer.start();
-  for(int i=0; i<pts.size(); ++i)
+  for(std::size_t i=0; i<pts.size(); ++i)
     dt_during.insert(pts[i]);
 
   timer.stop();
@@ -45,19 +44,17 @@ std::pair<double, double> insert_Euclidean(std::vector<Point_type>& dpts)
 }
 
 template<typename NT_point>
-std::pair<double,double> insert_CK_points(std::vector<NT_point>& dpts)
+std::pair<double,double> insert_CK_points(const std::vector<NT_point>& dpts)
 {
   typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<>   Gt;
   typedef Gt::Point_2                                             Point_2;
-  typedef Gt::Circle_2                                            Circle_2;
-  typedef Gt::FT                                                  FT;
   typedef CGAL::Hyperbolic_Delaunay_triangulation_2<Gt>           Dt;
 
   CGAL::Timer timer;
   std::vector<Point_2> pts;
   std::vector<Point_2>::iterator ip;
 
-  for(int i=0; i<dpts.size(); ++i)
+  for(std::size_t i=0; i<dpts.size(); ++i)
     pts.push_back(Point_2(dpts[i].x(), dpts[i].y()));
 
   Dt dt_end;
@@ -81,20 +78,18 @@ std::pair<double,double> insert_CK_points(std::vector<NT_point>& dpts)
 }
 
 template<typename NT_point>
-std::pair<double,double> insert_CORE_points(std::vector<NT_point>& dpts)
+std::pair<double,double> insert_CORE_points(const std::vector<NT_point>& dpts)
 {
   typedef CGAL::Cartesian<CORE::Expr>                             K;
   typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<K>     Gt;
   typedef Gt::Point_2                                             Point_2;
-  typedef Gt::Circle_2                                            Circle_2;
-  typedef Gt::FT                                                  FT;
   typedef CGAL::Hyperbolic_Delaunay_triangulation_2<Gt>           Dt;
 
   CGAL::Timer timer;
   std::vector<Point_2> pts;
   std::vector<Point_2>::iterator ip;
 
-  for(int i=0; i<dpts.size(); ++i)
+  for(std::size_t i=0; i<dpts.size(); ++i)
     pts.push_back(Point_2(dpts[i].x(), dpts[i].y()));
 
   Dt dt_end;
@@ -154,7 +149,7 @@ int main(int argc, char** argv)
     timeEUCL1 += resEUCL.first;
     timeEUCL2 += resEUCL.second;
 
-    std::pair<double, double> resCK   = insert_CK_points(pts);
+    std::pair<double, double> resCK = insert_CK_points(pts);
     timeCK1 += resCK.first;
     timeCK2 += resCK.second;
 
@@ -164,12 +159,13 @@ int main(int argc, char** argv)
     std::cout << std::endl;
   }
 
-  timeEUCL1 /= (double)iters;
-  timeCORE1 /= (double)iters;
-  timeCK1 /= (double)iters;
-  timeEUCL2 /= (double)iters;
-  timeCORE2 /= (double)iters;
-  timeCK2 /= (double)iters;
+  double diters(iters);
+  timeEUCL1 /= diters;
+  timeCORE1 /= diters;
+  timeCK1 /= diters;
+  timeEUCL2 /= diters;
+  timeCORE2 /= diters;
+  timeCK2 /= diters;
 
   std::cout << "----------------------------------------------------" << std::endl;
   std::cout << "Average time for EUCL (one-at-a-time): " << timeEUCL2 << std::endl;
