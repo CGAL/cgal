@@ -3,7 +3,7 @@
 //
 // This file is part of CGAL (www.cgal.org).
 // You can redistribute it and/or modify it under the terms of the GNU
-// Interal Public License as published by the Free Software Foundation,
+// General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-//
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Iordan Iordanov <iordan.iordanov@loria.fr>
 

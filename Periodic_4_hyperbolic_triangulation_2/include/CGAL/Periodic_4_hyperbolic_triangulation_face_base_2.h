@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-//
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Iordan Iordanov  <Iordan.Iordanov@loria.fr>
 //
