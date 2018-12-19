@@ -22,6 +22,8 @@
 #ifndef CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_TRAITS_2_H
 #define CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_TRAITS_2_H
 
+#include <CGAL/license/Hyperbolic_triangulation_2.h>
+
 #include <CGAL/basic.h>
 #include <CGAL/basic_constructions_2.h>
 #include <CGAL/Bbox_2.h>
@@ -35,11 +37,10 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/utility.h>
 
-#include "boost/tuple/tuple.hpp"
-#include "boost/variant.hpp"
+#include <boost/tuple/tuple.hpp>
+#include <boost/variant.hpp>
 
-using std::pair;
-using std::make_pair;
+#include <utility>
 
 namespace CGAL {
 
@@ -205,7 +206,7 @@ public:
       FT y2 = q - CGAL::sqrt(c.squared_radius() - p*p);
       Hyperbolic_point_2 p1(FT(0), y1);
       Hyperbolic_point_2 p2(FT(0), y2);
-      return make_pair(p1, p2);
+      return std::make_pair(p1, p2);
     }
 
     FT lambda = -ell.a()/ell.b();
@@ -222,7 +223,7 @@ public:
     FT y2 = lambda*x2 + mu;
     Hyperbolic_point_2 sol1(x1, y1);
     Hyperbolic_point_2 sol2(x2, y2);
-    return make_pair(sol1, sol2);
+    return std::make_pair(sol1, sol2);
   }
 
   std::pair<Hyperbolic_point_2, Hyperbolic_point_2> operator()(const Circle_2& c,
@@ -252,7 +253,7 @@ public:
 
     Hyperbolic_point_2 res1(x1, y1);
     Hyperbolic_point_2 res2(x2, y2);
-    return make_pair(res1, res2);
+    return std::make_pair(res1, res2);
   }
 
   Hyperbolic_point_2 operator()(Hyperbolic_segment_2 s1, Hyperbolic_segment_2 s2)
@@ -261,7 +262,7 @@ public:
     {
       if(Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2))
       {
-        pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(c1->circle(), c2->circle());
+        std::pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(c1->circle(), c2->circle());
         Hyperbolic_point_2 p1 = res.first;
         if(p1.x()*p1.x() + p1.y()*p1.y() < FT(1))
           return p1;
@@ -273,7 +274,7 @@ public:
       else
       {
         Euclidean_segment_2* ell2 = boost::get<Euclidean_segment_2>(&s2);
-        pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(c1->circle(),
+        std::pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(c1->circle(),
                                                                       ell2->supporting_line());
         Hyperbolic_point_2 p1 = res.first;
         if(p1.x()*p1.x() + p1.y()*p1.y() < FT(1))
@@ -289,7 +290,7 @@ public:
       Euclidean_segment_2* ell1 = boost::get<Euclidean_segment_2>(&s1);
       if(Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2))
       {
-        pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(ell1->supporting_line(),
+        std::pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(ell1->supporting_line(),
                                                                       c2->circle());
         Hyperbolic_point_2 p1 = res.first;
         if(p1.x()*p1.x() + p1.y()*p1.y() < FT(1))

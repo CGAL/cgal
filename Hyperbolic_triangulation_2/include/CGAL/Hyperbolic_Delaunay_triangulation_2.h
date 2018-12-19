@@ -22,6 +22,8 @@
 #ifndef CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_2_H
 #define CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_2_H
 
+#include <CGAL/license/Hyperbolic_triangulation_2.h>
+
 #include <CGAL/Hyperbolic_triangulation_face_base_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 

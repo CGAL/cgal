@@ -22,6 +22,8 @@
 #ifndef CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_OLD_TRAITS_2_H
 #define CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_OLD_TRAITS_2_H
 
+#include <CGAL/license/Hyperbolic_triangulation_2.h>
+
 //#include <CGAL/Regular_triangulation_filtered_traits_2.h>
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/basic_constructions_2.h>

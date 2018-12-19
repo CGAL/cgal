@@ -21,9 +21,13 @@
 #ifndef CGAL_EXACT_COMPLEX_H
 #define CGAL_EXACT_COMPLEX_H
 
-#include <iostream>
+#include <CGAL/license/Hyperbolic_triangulation_2.h>
+
 #include <CGAL/assertions.h>
 #include <CGAL/number_utils.h>
+
+#include <iostream>
+#include <fstream>
 
 // Complex number in the form a + bi, where a and b are of type NT.
 // NT must be an exact number type, model of:

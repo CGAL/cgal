@@ -22,6 +22,8 @@
 #ifndef CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_CK_TRAITS_2_H
 #define CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_CK_TRAITS_2_H
 
+#include <CGAL/license/Hyperbolic_triangulation_2.h>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Algebraic_kernel_for_circles_2_2.h>
@@ -30,8 +32,8 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/determinant.h>
 
-#include "boost/tuple/tuple.hpp"
-#include "boost/variant.hpp"
+#include <boost/tuple/tuple.hpp>
+#include <boost/variant.hpp>
 
 namespace CGAL {
 
