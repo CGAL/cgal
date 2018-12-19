@@ -1524,17 +1524,11 @@ compute_intermediate_values_and_slices() const {
 #if CGAL_ACK_DEBUG_FLAG
     CGAL_ACK_DEBUG_PRINT << "Prepare intermediate slices.." << std::flush;
 #endif
+    std::size_t size = event_x_coordinates().size()+1;
     this->ptr()->intermediate_values=std::vector<Lazy_bound>();
     this->ptr()->intermediate_slices=std::vector<Lazy_status_line_CPA_1>();
-    
-    for(size_type i=0;
-        i<=static_cast<size_type>(event_x_coordinates().size());
-        i++) {
-        this->ptr()->intermediate_values.get().push_back(Lazy_bound());
-        this->ptr()->intermediate_slices.get().push_back
-            (Lazy_status_line_CPA_1());
-    }
-    
+    this->ptr()->intermediate_values.get().resize(size);
+    this->ptr()->intermediate_slices.get().resize(size);
 #if CGAL_ACK_DEBUG_FLAG
     CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
 #endif

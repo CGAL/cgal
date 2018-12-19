@@ -156,7 +156,7 @@ private:
     
     virtual void assign (PLY_reader& reader, typename Point_set::Index index)
     {
-      Type t;
+      Type t{};
       reader.assign (t, m_name.c_str());
       put(m_pmap, index, t);
     }
