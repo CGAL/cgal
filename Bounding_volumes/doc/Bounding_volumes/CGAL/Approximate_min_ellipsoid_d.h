@@ -13,28 +13,28 @@ x\in\E^d \mid x^T E x + x^T e + \eta\leq 0 \}\f$, where \f$ E\f$ is some
 positive definite matrix from the set \f$ \mathbb{R}^{d\times d}\f$, \f$ e\f$ is some 
 real \f$ d\f$-vector, and \f$ \eta\in\mathbb{R}\f$. A pointset \f$ P\subseteq \E^d\f$ is 
 called <I>full-dimensional</I> if its affine hull has dimension \f$ d\f$. 
-For a finite, full-dimensional pointset \f$ P\f$ we denote by \f$ \mel(P)\f$ the 
+For a finite, full-dimensional pointset \f$ P\f$ we denote by \f$ (P)\f$ the 
 smallest ellipsoid that contains all points of \f$ P\f$; this ellipsoid 
 exists and is unique. 
 
 For a given finite and full-dimensional pointset \f$ P\subset \E^d\f$ and a 
 real number \f$ \epsilon\ge 0\f$, we say that an ellipsoid \f$ {\cal 
-E}\subset\E^d\f$ is an <I>\f$ (1+\epsilon)\f$-appoximation</I> to \f$ \mel(P)\f$ if 
-\f$ P\subset {\cal E}\f$ and \f$ \vol({\cal E}) \leq (1+\epsilon) 
-\vol(\mel(P))\f$. In other words, an \f$ (1+\epsilon)\f$-approximation to 
-\f$ \mel(P)\f$ is an enclosing ellipsoid whose volume is by at most a 
+E}\subset\E^d\f$ is an <I>\f$ (1+\epsilon)\f$-appoximation</I> to \f$ (P)\f$ if 
+\f$ P\subset {\cal E}\f$ and \f$ ({\cal E}) \leq (1+\epsilon) 
+((P))\f$. In other words, an \f$ (1+\epsilon)\f$-approximation to 
+\f$ (P)\f$ is an enclosing ellipsoid whose volume is by at most a 
 factor of \f$ 1+\epsilon\f$ larger than the volume of the smallest 
 enclosing ellipsoid of \f$ P\f$. 
 
 Given this notation, an object of class `Approximate_min_ellipsoid_d` represents an 
-\f$ (1+\epsilon)\f$-approximation to \f$ \mel(P)\f$ for a given finite and 
+\f$ (1+\epsilon)\f$-approximation to \f$ (P)\f$ for a given finite and 
 full-dimensional multiset of points \f$ P\subset\E^d\f$ and a real constant 
 \f$ \epsilon>0\f$.\cgalFootnote{A <I>multiset</I> is a set where elements may have multiplicity greater than \f$ 1\f$.} When an 
 `Approximate_min_ellipsoid_d<Traits>` object is constructed, an 
 iterator over the points \f$ P\f$ and the number \f$ \epsilon\f$ have to be 
 specified; the number \f$ \epsilon\f$ defines the <I>desired 
 approximation ratio</I> \f$ 1+\epsilon\f$. The underlying algorithm will then 
-try to compute an \f$ (1+\epsilon)\f$-approximation to \f$ \mel(P)\f$, and one of 
+try to compute an \f$ (1+\epsilon)\f$-approximation to \f$ (P)\f$, and one of 
 the following two cases takes place. 
 <UL> 
 <LI>The algorithm determines that \f$ P\f$ is not full-dimensional (see 
@@ -44,7 +44,7 @@ the following two cases takes place.
 in all cases decide correctly whether \f$ P\f$ is full-dimensional or 
 not. If `is_full_dimensional()` returns `false`, the points 
 lie in such a "thin" subspace of \f$ \E^d\f$ that the algorithm is 
-incapable of computing an approximation to \f$ \mel(P)\f$. More 
+incapable of computing an approximation to \f$ (P)\f$. More 
 precisely, if `is_full_dimensional()` returns `false`, there 
 exist two parallel hyperplanes in \f$ \E^d\f$ with the points \f$ P\f$ in 
 between so that the distance \f$ \delta\f$ between the hyperplanes is 
@@ -55,7 +55,7 @@ If \f$ P\f$ is not full-dimensional, linear algebra techniques should be
 used to determine an affine subspace \f$ S\f$ of \f$ \E^d\f$ that contains the 
 points \f$ P\f$ as a (w.r.t.\ \f$ S\f$) full-dimensional pointset; once \f$ S\f$ is 
 determined, the algorithm can be invoked again to compute an 
-approximation to (the lower-dimensional) \f$ \mel(P)\f$ in \f$ S\f$. Since 
+approximation to (the lower-dimensional) \f$ (P)\f$ in \f$ S\f$. Since 
 `is_full_dimensional()` might (due to rounding errors, see 
 above) return `false` even though \f$ P\f$ is full-dimensional, the 
 lower-dimensional subspace \f$ S\f$ containing \f$ P\f$ need not exist. 
@@ -66,7 +66,7 @@ ellipsoid of the projected points within \f$ H\f$; the fitting can be
 done for instance using the `linear_least_squares_fitting()` 
 function from the \cgal package `Principal_component_analysis`. 
 <LI>The algorithm determines that \f$ P\f$ is full-dimensional. In this 
-case, it provides an approximation \f$ {\cal E}\f$ to \f$ \mel(P)\f$, but 
+case, it provides an approximation \f$ {\cal E}\f$ to \f$ (P)\f$, but 
 depending on the input problem (i.e., on the pair \f$ (P,\epsilon)\f$), 
 it may not have achieved the desired approximation ratio but merely 
 some <I>worse</I> approximation ratio \f$ 1+\epsilon'>1+\epsilon\f$. The 
@@ -126,7 +126,7 @@ Cholesky-decomposition. The algorithm's running time is
 
 To illustrate the usage of `Approximate_min_ellipsoid_d` we give two examples in 2D. The 
 first program generates a random set \f$ P\subset\E^2\f$ and outputs the 
-points and a \f$ 1.01\f$-approximation of \f$ \mel(P)\f$ as an EPS-file, which 
+points and a \f$ 1.01\f$-approximation of \f$ (P)\f$ as an EPS-file, which 
 you can view using <TT>gv</TT>, for instance. (In both examples you can 
 change the variables `n` and `d` to experiment with the code.) 
 
@@ -204,7 +204,7 @@ typedef unspecified_type Axis_direction_iterator;
 /*!
 
 initializes `ame` to an \f$ (1+\epsilon)\f$-approximation of 
-\f$ \mel(P)\f$ with \f$ P\f$ being the set of points in the range 
+\f$ (P)\f$ with \f$ P\f$ being the set of points in the range 
 [`first`,`last`). The number \f$ \epsilon\f$ in this will 
 be at most `eps`, if possible. However, due to the 
 limited precision in the algorithm's underlying arithmetic, it 
@@ -260,7 +260,7 @@ unsigned int number_of_points( ) const;
 returns a number 
 \f$ \epsilon'\f$ such that the computed approximation is (under exact 
 arithmetic) guaranteed to be an \f$ (1+\epsilon')\f$-approximation to 
-\f$ \mel(P)\f$. 
+\f$ (P)\f$. 
 \pre `ame.is_full_dimensional() == true`. 
 \post \f$ \epsilon'>0\f$. 
 */ 
@@ -404,7 +404,7 @@ bool is_full_dimensional( ) const;
 /// An object `ame` is valid iff <UL> <LI>`ame` contains all points of
 /// its defining set \f$ P\f$, <LI>`ame` is an \f$
 /// (1+\epsilon')\f$-approximation to the smallest ellipsoid \f$
-/// \mel(P)\f$ of \f$ P\f$, <LI>The ellipsoid represented by `ame`
+/// (P)\f$ of \f$ P\f$, <LI>The ellipsoid represented by `ame`
 /// fulfills the inclusion ( \ref eqapproximate_min_ellipsoid_incl
 /// ). </UL>
 /// @{
@@ -426,7 +426,7 @@ bool is_valid( bool verbose = false) const;
 /*!
 
 Writes the points \f$ P\f$ and the computed approximation to 
-\f$ \mel(P)\f$ as an EPS-file under pathname `name`. \pre The dimension of points \f$ P\f$ must be \f$ 2\f$. 
+\f$ (P)\f$ as an EPS-file under pathname `name`. \pre The dimension of points \f$ P\f$ must be \f$ 2\f$. 
 <I>Note:</I> this 
 routine is provided as a debugging routine; future version of 
 \cgal might not provide it anymore. 
