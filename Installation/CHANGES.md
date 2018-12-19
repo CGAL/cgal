@@ -54,6 +54,10 @@ Release date: March 2019
     `Arr_polyline_traits_2`, `Arr_polycurve_traits_2`, and
     `Arr_polycurve_basic_traits_2`.
 
+### CGAL and the Boost Graph Library (BGL)
+
+-    Add function `write_wrl()` for writing into VRML 2.0 format.
+
 Release 4.13
 ------------
 
