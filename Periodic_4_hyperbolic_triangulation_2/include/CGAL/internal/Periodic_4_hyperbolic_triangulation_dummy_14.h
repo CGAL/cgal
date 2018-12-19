@@ -1,9 +1,10 @@
-// Copyright (c) 2016  INRIA Nancy - Grand Est (France).
+// Copyright (c) 2016-2018  INRIA Sophia Antipolis, INRIA Nancy (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -11,14 +12,16 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/branches/candidate-packages/Triangulation_2/include/CGAL/Delaunay_triangulation_2.h $
-// $Id: Delaunay_triangulation_2.h 57509 2010-07-15 09:14:09Z sloriot $
-//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Iordan Iordanov
 
 #ifndef CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_DUMMY_14_H
 #define CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_DUMMY_14_H
+
+#include <CGAL/license/Periodic_4_hyperbolic_triangulation_2.h>
 
 #include <CGAL/Aff_transformation_2.h>
 

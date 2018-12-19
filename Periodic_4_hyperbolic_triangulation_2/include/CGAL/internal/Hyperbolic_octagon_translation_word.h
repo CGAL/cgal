@@ -21,11 +21,13 @@
 #ifndef CGAL_HYPERBOLIC_OCTAGON_TRANSLATION_WORD
 #define CGAL_HYPERBOLIC_OCTAGON_TRANSLATION_WORD
 
-#include <iostream>
-#include <vector>
+#include <CGAL/license/Periodic_4_hyperbolic_triangulation_2.h>
+
 #include <CGAL/internal/Hyperbolic_octagon_translation_matrix.h>
 #include <CGAL/internal/Dehn_hyperbolic_octagon_translation_word.h>
- 
+
+#include <iostream>
+#include <vector>
 
 //-------------------------------------------------------
 // Global variables -- used only for profiling!

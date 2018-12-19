@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2016   INRIA Sophia Antipolis, INRIA Nancy (France).
+// Copyright (c) 2011-2016 INRIA Sophia Antipolis, INRIA Nancy (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -12,9 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: 
-// $Id: 
-// 
+// $URL:
+// $Id:
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     :  Monique Teillaud <Monique.Teillaud@inria.fr>
 //                  Mikhail Bogdanov

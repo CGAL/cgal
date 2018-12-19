@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2016   INRIA Nancy - Grand Est (France).
+// Copyright (c) 1999-2016 INRIA Sophia Antipolis, INRIA Nancy - Grand Est (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -14,14 +14,15 @@
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Iordan Iordanov  <Iordan.Iordanov@loria.fr>
-//                 
-
+//
 
 #ifndef CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_VERTEX_BASE_2_H
 #define CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_VERTEX_BASE_2_H
+
+#include <CGAL/license/Periodic_4_hyperbolic_triangulation_2.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Triangulation_vertex_base_2.h>

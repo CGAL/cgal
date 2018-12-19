@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2004,2006-2009,2014-2016   INRIA Nancy - Grand Est (France).
+// Copyright (c) 1999-2004,2006-2009,2014-2018   INRIA Sophia Antipolis, INRIA Nancy - Grand Est (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Iordan Iordanov <iordan.iordanov@loria.fr>
@@ -21,12 +22,15 @@
 #ifndef CGAL_HYPERBOLIC_OCTAGON_TRANSLATION
 #define CGAL_HYPERBOLIC_OCTAGON_TRANSLATION
 
-#include <iostream>
-#include <vector>
+#include <CGAL/license/Periodic_4_hyperbolic_triangulation_2.h>
+
 #include <CGAL/internal/Hyperbolic_octagon_translation_matrix.h>
 #include <CGAL/internal/Hyperbolic_octagon_translation_word.h>
 #include <CGAL/internal/Exact_complex.h>
 #include <CGAL/CORE_Expr.h>
+
+#include <iostream>
+#include <vector>
 
 namespace CGAL {
 

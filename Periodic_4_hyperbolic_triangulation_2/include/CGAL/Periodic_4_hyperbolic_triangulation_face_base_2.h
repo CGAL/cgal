@@ -23,6 +23,8 @@
 #ifndef CGAL_PERIODIC_4_HYPERBOLIC_TIANGULATION_FACE_BASE_2
 #define CGAL_PERIODIC_4_HYPERBOLIC_TIANGULATION_FACE_BASE_2
 
+#include <CGAL/license/Periodic_4_hyperbolic_triangulation_2.h>
+
 #include <CGAL/basic.h>
 #include <CGAL/Dummy_tds_2.h>
 #include <CGAL/triangulation_assertions.h>

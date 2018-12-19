@@ -1,9 +1,9 @@
-// Copyright (c) 1999-2016   INRIA Nancy - Grand Est (France).
+// Copyright (c) 1999-2004,2006-2009,2014-2016   INRIA Nancy - Grand Est (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
 // You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
+// Interal Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
@@ -14,35 +14,37 @@
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Iordan Iordanov  <Iordan.Iordanov@loria.fr>
-//                 
-
+//
 
 #ifndef CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_2_H
 #define CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_2_H
 
+#include <CGAL/license/Periodic_4_hyperbolic_triangulation_2.h>
+
 #include <CGAL/basic.h>
-
-#include <iostream>
-#include <algorithm>
-#include <cmath>
-#include <functional>
-#include <list>
-
-#include <boost/tuple/tuple.hpp>
-#include <CGAL/Triangulation_utils_2.h>
-#include <CGAL/triangulation_assertions.h>
-#include <CGAL/utility.h>
-#include <CGAL/use.h>
 
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Periodic_4_hyperbolic_triangulation_face_base_2.h>
 #include <CGAL/Periodic_4_hyperbolic_triangulation_vertex_base_2.h>
 #include <CGAL/Triangulation_vertex_base_2.h>
 #include <CGAL/Triangulation_face_base_2.h>
+
 #include <CGAL/NT_converter.h>
+#include <CGAL/Triangulation_utils_2.h>
+#include <CGAL/triangulation_assertions.h>
+#include <CGAL/utility.h>
+#include <CGAL/use.h>
+
+#include <boost/tuple/tuple.hpp>
+
+#include <iostream>
+#include <algorithm>
+#include <cmath>
+#include <functional>
+#include <list>
 
 
 #if defined PROFILING_MODE
