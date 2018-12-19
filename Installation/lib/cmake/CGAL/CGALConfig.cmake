@@ -73,6 +73,9 @@ include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_Common.cmake)
 
+set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
+
+
 if(CGAL_BUILDING_LIBS)
   foreach(comp ${CGAL_FIND_COMPONENTS})
     if(CGAL_${comp}_FOUND)
@@ -145,8 +148,6 @@ endforeach()
 
 # Temporary? Change the CMAKE module path
 cgal_setup_module_path()
-
-set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
 
 include("${CGAL_MODULES_DIR}/CGAL_parse_version_h.cmake")
 cgal_parse_version_h( "${CGAL_INSTALLATION_PACKAGE_DIR}/include/CGAL/version.h"
