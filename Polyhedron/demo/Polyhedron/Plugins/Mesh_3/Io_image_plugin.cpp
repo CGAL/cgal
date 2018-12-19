@@ -1,5 +1,8 @@
 #ifdef _MSC_VER
 #  pragma warning(disable:4244) // conversion with loss of data
+#  pragma warning(disable:4996) // boost_1_65_1\boost/iostreams/positioning.hpp(96):
+                                // warning C4996: 'std::fpos<_Mbstatet>::seekpos': warning STL4019:
+                                // The member std::fpos::seekpos() is non-Standard
 #endif
 
 #include "Volume_plane.h"
