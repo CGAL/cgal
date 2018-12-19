@@ -11,11 +11,6 @@ get_filename_component(CGAL_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 set(CGAL_HEADER_ONLY TRUE)
 
-# Save the current source directory. That variable can be changed by
-# a `CMakeLists.txt`, for `CMakeLists.txt` files that are created in
-# the binary directory.
-set(CGAL_CURRENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-
 function(cgal_detect_branch_build VAR_NAME)
   if(IS_DIRECTORY ${CGAL_CONFIG_DIR}/../../../../Installation/package_info/Installation/)
     set(${VAR_NAME} TRUE PARENT_SCOPE)

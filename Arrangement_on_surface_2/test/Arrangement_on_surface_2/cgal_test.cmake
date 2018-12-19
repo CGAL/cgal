@@ -197,7 +197,7 @@ function(run_test_alt name datafile)
   set(command ${name} ${datafile} ${ARGN})
   string(MAKE_C_IDENTIFIER "${name}  ${ARGV4}  ${ARGV5}" test_name)
   add_test(NAME ${test_name} COMMAND ${command}
-    WORKING_DIRECTORY ${CGAL_CURRENT_SOURCE_DIR})
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   set_property(TEST "${test_name}"
     APPEND PROPERTY DEPENDS "compilation_of__${name}")
   if(POLICY CMP0066) # CMake 3.7 or later
