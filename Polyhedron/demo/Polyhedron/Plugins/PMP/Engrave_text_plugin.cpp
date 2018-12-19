@@ -302,7 +302,11 @@ private:
   Messages_interface* messages;
   
 public :
-  
+  ~Engrave_text_plugin()
+  {
+    delete graphics_scene;
+    delete navigation;
+  }
   void init(QMainWindow*,
             CGAL::Three::Scene_interface*,
             Messages_interface* m) Q_DECL_OVERRIDE{
