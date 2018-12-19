@@ -96,6 +96,10 @@ public:
     init(poly_item, mw, aht, k_ring);
   }
   
+  void setHighLighting(bool b)
+  {
+    cut_highlighting = !b;
+  }
   void setEditMode(bool b)
   {
     is_edit_mode = b;
@@ -115,6 +119,7 @@ public:
     mainwindow = mw;
     is_highlighting = false;
     is_ready_to_highlight = true;
+    cut_highlighting = false;
     is_ready_to_paint_select = true;
     is_lasso_active = false;
     
@@ -590,9 +595,9 @@ protected:
         sample_mouse_path(background);
       }
     }
-    //if in edit_mode and the mouse is moving without left button pressed :
+    //if the mouse is moving without left button pressed :
     // highlight the primitive under cursor
-    else if(is_edit_mode && event->type() == QEvent::MouseMove && !state.left_button_pressing)
+    else if(event->type() == QEvent::MouseMove && !state.left_button_pressing)
     {
       if(target == mainwindow)
       {
@@ -601,7 +606,7 @@ protected:
         return false;
       }
 
-      is_ready_to_highlight = true;
+      is_ready_to_highlight = !cut_highlighting;
       QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
       hl_pos = mouse_event->pos();
       QTimer::singleShot(0, this, SLOT(highlight()));
@@ -619,6 +624,7 @@ protected:
   Polyline_2& poly() const  { return polyline->front(); }
   Polygon_2 lasso;
   CGAL::Bbox_2 domain_rectangle;
+  bool cut_highlighting;
   bool update_polyline () const
   {
     if (contour_2d.size() < 2 ||

@@ -818,6 +818,7 @@ public Q_SLOTS:
   void resetIsTreated();
   void save_handleType();
   void set_operation_mode(int mode);
+  void set_highlighting(bool b);
   void invalidateOpenGLBuffers();
   void validateMoveVertex();
   void compute_normal_maps();

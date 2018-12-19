@@ -662,6 +662,10 @@ void Scene_polyhedron_selection_item::inverse_selection()
   invalidateOpenGLBuffers();
 }
 
+void Scene_polyhedron_selection_item::set_highlighting(bool b)
+{
+  k_ring_selector.setHighLighting(b);
+}
 void Scene_polyhedron_selection_item::set_operation_mode(int mode)
 {
   k_ring_selector.setEditMode(true);

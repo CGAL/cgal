@@ -140,12 +140,12 @@ public:
                                   ));
     connect(dock_widget, &QDockWidget::visibilityChanged,
             this, [this](bool b){
-      if(!b)
-        this->set_operation_mode(-1);
+        this->set_highlighting(b);
     });
 
     addDockWidget(dock_widget);
 
+    connect(ui_widget.hl_checkBox, SIGNAL(toggled(bool)), this, SIGNAL(set_highlighting(bool)));
     connect(ui_widget.Select_all_button,  SIGNAL(clicked()), this, SLOT(on_Select_all_button_clicked()));
     connect(ui_widget.Select_all_NTButton,  SIGNAL(clicked()), this, SLOT(on_Select_all_NTButton_clicked()));
     connect(ui_widget.Select_boundaryButton,  SIGNAL(clicked()), this, SLOT(on_Select_boundaryButton_clicked()));
@@ -209,6 +209,7 @@ public:
 Q_SIGNALS:
   void save_handleType();
   void set_operation_mode(int);
+  void set_highlighting(bool);
 public Q_SLOTS:
 
 
@@ -217,6 +218,8 @@ public Q_SLOTS:
     connect(this, SIGNAL(save_handleType()),new_item, SLOT(save_handleType()));
     connect(new_item, SIGNAL(updateInstructions(QString)), this, SLOT(setInstructions(QString)));
     connect(this, SIGNAL(set_operation_mode(int)),new_item, SLOT(set_operation_mode(int)));
+    connect(this, SIGNAL(set_highlighting(bool)),new_item, SLOT(set_highlighting(bool)));
+    this->set_highlighting(ui_widget.hl_checkBox->isChecked());
     int item_id = scene->addItem(new_item);
    // QObject* scene_ptr = dynamic_cast<QObject*>(scene);
    // if (scene_ptr)
@@ -950,6 +953,8 @@ public Q_SLOTS:
     connect(selection_item, SIGNAL(updateInstructions(QString)), this, SLOT(setInstructions(QString)));
     connect(selection_item, SIGNAL(printMessage(QString)), this, SLOT(printMessage(QString)));
     connect(this, SIGNAL(set_operation_mode(int)),selection_item, SLOT(set_operation_mode(int)));
+    connect(this, SIGNAL(set_highlighting(bool)),selection_item, SLOT(set_highlighting(bool)));
+    this->set_highlighting(ui_widget.hl_checkBox->isChecked());
     //QObject* scene_ptr = dynamic_cast<QObject*>(scene);
     //if (scene_ptr)
     //  connect(selection_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
