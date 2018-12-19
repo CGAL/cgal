@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
     Trans::generators(gens);
 
     Point O(0,0);
-    for (int i = 0; i < gens.size(); i++) {
+    for(int i=0; i<gens.size(); ++i) {
         Point pt = CP2()(O, gens[i]);
         cout << "Image " << i << ": " << pt << endl;
     }

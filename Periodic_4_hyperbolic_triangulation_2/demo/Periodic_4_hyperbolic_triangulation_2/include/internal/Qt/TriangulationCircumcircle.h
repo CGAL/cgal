@@ -120,7 +120,7 @@ TriangulationCircumcircle<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
   typename T::Point p = typename T::Point(event->scenePos().x(), event->scenePos().y());
 
   fh = dt->hyperbolic_locate(p);
-  if (fh != typename T::Face_handle()) {
+  if(fh != typename T::Face_handle()) {
     hint = fh->vertex(0);
     typename T::Point p0, p1, p2;
     p0 = apply<T>(fh->vertex(0)->point(), fh->translation(0));
@@ -141,7 +141,7 @@ template <typename T>
 bool 
 TriangulationCircumcircle<T>::eventFilter(QObject *obj, QEvent *event)
 {
-  if (event->type() == QEvent::GraphicsSceneMouseMove) {
+  if(event->type() == QEvent::GraphicsSceneMouseMove) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
     mouseMoveEvent(mouseEvent);
     return false; // don't consume the event

@@ -251,7 +251,7 @@ MainWindow::processInput(CGAL::Object o)
 
   Point p;
   if(CGAL::assign(p, o)){
-    for (Triangulation::Vertex_iterator vi = dt.vertices_begin(); vi != dt.vertices_end(); vi++) {
+    for(Triangulation::Vertex_iterator vi = dt.vertices_begin(); vi != dt.vertices_end(); vi++) {
       vi->clear_translation();
     }
 
@@ -290,7 +290,7 @@ MainWindow::on_actionInsertPoint_toggled(bool checked)
 
 void MainWindow::on_actionPlayDemo_toggled(bool checked) {
   on_actionInsertPoint_toggled(!checked);
-  if (checked) {
+  if(checked) {
     dgi->setVisibleDemo(true);
     go = true;
     animate();
@@ -363,11 +363,11 @@ MainWindow::on_actionInsertRandomPoints_triggered()
     QInputDialog::getInt(this, 
                         tr("Number of random points"),
                         tr("Enter number of random points"),
-			     100,
-			     0,
-			     std::numeric_limits<int>::max(),
-			     1,
-			     &ok);
+           100,
+           0,
+           std::numeric_limits<int>::max(),
+           1,
+           &ok);
 
   if(!ok) {
     return;
@@ -387,12 +387,12 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   int cnt = 0;
   do {    
       Point_double pd = *(++g);
-      if (pred(pd) != CGAL::ON_UNBOUNDED_SIDE) {
+      if(pred(pd) != CGAL::ON_UNBOUNDED_SIDE) {
           Point pt = Point(pd.x(), pd.y());
           pts.push_back(pt);
           cnt++;
       } 
-  } while (cnt < number_of_points);
+  } while(cnt < number_of_points);
 
 
   CGAL::Timer tt;
@@ -412,8 +412,8 @@ void
 MainWindow::on_actionLoadPoints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
-						  tr("Open Points file"),
-						  ".");
+              tr("Open Points file"),
+              ".");
   if(! fileName.isEmpty()){
     open(fileName);
   }

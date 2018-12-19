@@ -61,8 +61,8 @@ protected:
 
 template <typename T>
 TriangulationConflictZone<T>::TriangulationConflictZone(QGraphicsScene* s,
-							T * dt_,
-							QObject* parent)
+              T * dt_,
+              QObject* parent)
   :  GraphicsViewInput(parent), dt(dt_), scene_(s)
 {}
   
@@ -81,7 +81,7 @@ template <typename T>
 bool 
 TriangulationConflictZone<T>::eventFilter(QObject *obj, QEvent *event)
 {
-  if (event->type() == QEvent::GraphicsSceneMouseMove) {
+  if(event->type() == QEvent::GraphicsSceneMouseMove) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
     mouseMoveEvent(mouseEvent);
     return false; // don't consume the event

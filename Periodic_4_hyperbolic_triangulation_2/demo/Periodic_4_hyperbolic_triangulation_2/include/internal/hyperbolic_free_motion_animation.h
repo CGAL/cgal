@@ -26,24 +26,24 @@ void
 MainWindow::initialize_animation_parameters() {
 
   poincare = Circle_2(Point(0,0),1);
-	timestep = 0.005;
+  timestep = 0.005;
 
-	std::srand(std::time(0));
-	double rx1, rx2, ry1, ry2;
-	rx1 = ((double)std::rand()/(double)RAND_MAX)*0.6;
-	rx2 = ((double)std::rand()/(double)RAND_MAX)*0.6;
-	ry1 = ((double)std::rand()/(double)RAND_MAX)*0.6;
-	ry2 = ((double)std::rand()/(double)RAND_MAX)*0.6;
-	source = Point(rx1, ry1);
-	target = Point(rx2, ry2);
-	Segment_2 seg = Construct_hyperbolic_segment_2()(source, target);
-	Circular_arc_2* carc = boost::get<Circular_arc_2>(&seg);
+  std::srand(std::time(0));
+  double rx1, rx2, ry1, ry2;
+  rx1 = ((double)std::rand()/(double)RAND_MAX)*0.6;
+  rx2 = ((double)std::rand()/(double)RAND_MAX)*0.6;
+  ry1 = ((double)std::rand()/(double)RAND_MAX)*0.6;
+  ry2 = ((double)std::rand()/(double)RAND_MAX)*0.6;
+  source = Point(rx1, ry1);
+  target = Point(rx2, ry2);
+  Segment_2 seg = Construct_hyperbolic_segment_2()(source, target);
+  Circular_arc_2* carc = boost::get<Circular_arc_2>(&seg);
 
   source = carc->source();
   target = carc->target();
 
   std::pair<Point,Point> inters = Construct_inexact_intersection_2()(carc->supporting_circle(), poincare);
-  if (squared_distance(source, inters.first) < squared_distance(source, inters.second)) {
+  if(squared_distance(source, inters.first) < squared_distance(source, inters.second)) {
     source = inters.first;
     target = inters.second;
   } else {
@@ -51,74 +51,74 @@ MainWindow::initialize_animation_parameters() {
     target = inters.first;
   }
 
-	time = updateTime();
+  time = updateTime();
     //std::cout << "time = " << time << std::endl;
     Point img = get_image(source, target, time);
     //std::cout << "img = " << img << std::endl;
     //std::cout << "last_loc_translation = " << last_loc_translation << std::endl;
-	last_location = dt.hyperbolic_periodic_locate(img, last_loc_translation);
+  last_location = dt.hyperbolic_periodic_locate(img, last_loc_translation);
 }
 
 
 // Gets all the translations of the set N (neighbors of the octagon)
 template < typename NT >
 void get_all_translations(std::vector< CGAL::Hyperbolic_octagon_translation<NT> >& tr) {
-	typedef CGAL::Hyperbolic_octagon_translation<NT> Translation;
-	tr.push_back(Translation(0,5,2,7));
-	tr.push_back(Translation(0,5,2));
-	tr.push_back(Translation(0,5));
-	tr.push_back(Translation(0));
-	tr.push_back(Translation(0,3));
-	tr.push_back(Translation(0,3,6));
+  typedef CGAL::Hyperbolic_octagon_translation<NT> Translation;
+  tr.push_back(Translation(0,5,2,7));
+  tr.push_back(Translation(0,5,2));
+  tr.push_back(Translation(0,5));
+  tr.push_back(Translation(0));
+  tr.push_back(Translation(0,3));
+  tr.push_back(Translation(0,3,6));
 
-	tr.push_back(Translation(1,6,3,0));
-	tr.push_back(Translation(1,6,3));
-	tr.push_back(Translation(1,6));
-	tr.push_back(Translation(1));
-	tr.push_back(Translation(1,4));
-	tr.push_back(Translation(1,4,7));
+  tr.push_back(Translation(1,6,3,0));
+  tr.push_back(Translation(1,6,3));
+  tr.push_back(Translation(1,6));
+  tr.push_back(Translation(1));
+  tr.push_back(Translation(1,4));
+  tr.push_back(Translation(1,4,7));
 
-	tr.push_back(Translation(2,7,4,1));
-	tr.push_back(Translation(2,7,4));
-	tr.push_back(Translation(2,7));
-	tr.push_back(Translation(2));
-	tr.push_back(Translation(2,5));
-	tr.push_back(Translation(2,5,0));
+  tr.push_back(Translation(2,7,4,1));
+  tr.push_back(Translation(2,7,4));
+  tr.push_back(Translation(2,7));
+  tr.push_back(Translation(2));
+  tr.push_back(Translation(2,5));
+  tr.push_back(Translation(2,5,0));
 
-	tr.push_back(Translation(3,0,5,2));
-	tr.push_back(Translation(3,0,5));
-	tr.push_back(Translation(3,0));
-	tr.push_back(Translation(3));
-	tr.push_back(Translation(3,6));
-	tr.push_back(Translation(3,6,1));
+  tr.push_back(Translation(3,0,5,2));
+  tr.push_back(Translation(3,0,5));
+  tr.push_back(Translation(3,0));
+  tr.push_back(Translation(3));
+  tr.push_back(Translation(3,6));
+  tr.push_back(Translation(3,6,1));
 
-	tr.push_back(Translation(4,1,6,3));
-	tr.push_back(Translation(4,1,6));
-	tr.push_back(Translation(4,1));
-	tr.push_back(Translation(4));
-	tr.push_back(Translation(4,7));
-	tr.push_back(Translation(4,7,2));
+  tr.push_back(Translation(4,1,6,3));
+  tr.push_back(Translation(4,1,6));
+  tr.push_back(Translation(4,1));
+  tr.push_back(Translation(4));
+  tr.push_back(Translation(4,7));
+  tr.push_back(Translation(4,7,2));
 
-	tr.push_back(Translation(5,2,7,4));
-	tr.push_back(Translation(5,2,7));
-	tr.push_back(Translation(5,2));
-	tr.push_back(Translation(5));
-	tr.push_back(Translation(5,0));
-	tr.push_back(Translation(5,0,3));
+  tr.push_back(Translation(5,2,7,4));
+  tr.push_back(Translation(5,2,7));
+  tr.push_back(Translation(5,2));
+  tr.push_back(Translation(5));
+  tr.push_back(Translation(5,0));
+  tr.push_back(Translation(5,0,3));
 
-	tr.push_back(Translation(6,3,0,5));
-	tr.push_back(Translation(6,3,0));
-	tr.push_back(Translation(6,3));
-	tr.push_back(Translation(6));
-	tr.push_back(Translation(6,1));
-	tr.push_back(Translation(6,1,4));
+  tr.push_back(Translation(6,3,0,5));
+  tr.push_back(Translation(6,3,0));
+  tr.push_back(Translation(6,3));
+  tr.push_back(Translation(6));
+  tr.push_back(Translation(6,1));
+  tr.push_back(Translation(6,1,4));
 
-	tr.push_back(Translation(7,4,1,6));
-	tr.push_back(Translation(7,4,1));
-	tr.push_back(Translation(7,4));
-	tr.push_back(Translation(7));
-	tr.push_back(Translation(7,2));
-	tr.push_back(Translation(7,2,5));
+  tr.push_back(Translation(7,4,1,6));
+  tr.push_back(Translation(7,4,1));
+  tr.push_back(Translation(7,4));
+  tr.push_back(Translation(7));
+  tr.push_back(Translation(7,2));
+  tr.push_back(Translation(7,2,5));
 }
 
 
@@ -178,7 +178,7 @@ MainWindow::animate() {
   // If the point is inside the octagon, just increment the time, compute the point 
   // corresponding to that time, update everything, and continue.
   //std::cout << "  ..updating time "; std::cout.flush();
-  if (check(p) == CGAL::ON_BOUNDED_SIDE) {
+  if(check(p) == CGAL::ON_BOUNDED_SIDE) {
     //std::cout << "  INSIDE!" << std::endl;
     Locate_type lt;
     int li;
@@ -205,9 +205,9 @@ MainWindow::animate() {
     //std::cout << "  ..checking generators "; std::cout.flush();
     std::vector<Hyperbolic_translation> gens;
     Hyperbolic_translation::generators(gens);
-    for (int i = 0; i < gens.size(); i++) {
+    for(int i=0; i<gens.size(); ++i) {
       o = gens[i];
-      if (check(dt.construct_point(p,o)) == CGAL::ON_BOUNDED_SIDE) {
+      if(check(dt.construct_point(p,o)) == CGAL::ON_BOUNDED_SIDE) {
         found = true;
         break;
       }
@@ -219,12 +219,12 @@ MainWindow::animate() {
     // be among the translations corresponding to the neighboring regions
     // of the octagon. Check them all.
     //std::cout << "  ..checking all-trans "; std::cout.flush();
-    if (!found) {
+    if(!found) {
       std::vector<Hyperbolic_translation> tr;
       get_all_translations(tr);
-      for (int i = 0; i < tr.size(); i++) {
+      for(int i=0; i<tr.size(); ++i) {
         o = tr[i];
-        if (check(dt.construct_point(p,o)) == CGAL::ON_BOUNDED_SIDE) {
+        if(check(dt.construct_point(p,o)) == CGAL::ON_BOUNDED_SIDE) {
           found = true;
           break;
         }
@@ -233,7 +233,7 @@ MainWindow::animate() {
     //std::cout << "  DONE! " << (found ? "Found it!" : "Didn't find it!") << std::endl;
 
     // The correct translation MUST have been identified now.
- 	  CGAL_assertion(found);
+     CGAL_assertion(found);
 
     //std::cout << "  ..making points..." << std::endl;
     source = dt.construct_point(source,o);
@@ -244,7 +244,7 @@ MainWindow::animate() {
     Segment_2 seg = Construct_hyperbolic_segment_2()(source, target);
     Circular_arc_2* carc = boost::get<Circular_arc_2>(&seg);
     std::pair<Point,Point> inters = Construct_inexact_intersection_2()(carc->supporting_circle(), poincare);
-    if (squared_distance(source, inters.first) < squared_distance(source, inters.second)) {
+    if(squared_distance(source, inters.first) < squared_distance(source, inters.second)) {
       source = inters.first;
       target = inters.second;
     } else {
@@ -262,7 +262,7 @@ MainWindow::animate() {
   qApp->processEvents();
 
   // This variable reflects if the animation button in the demo window is active or not.
-  if (go) {
+  if(go) {
     // Uncomment here to generate snapshots!
     // QPixmap sshot = this->grab(QRect(QPoint(560, 210), QSize(780, 770)));
     // //QPixmap sshot = this->grab(QRect(QPoint(320, 55), QSize(625, 615)));

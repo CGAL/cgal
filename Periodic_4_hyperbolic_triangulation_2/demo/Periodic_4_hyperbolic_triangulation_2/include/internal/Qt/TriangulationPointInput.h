@@ -62,8 +62,8 @@ protected:
 
 template <typename T>
 TriangulationPointInput<T>::TriangulationPointInput(QGraphicsScene* s,
-							T * dt_,
-							QObject* parent)
+              T * dt_,
+              QObject* parent)
   :  GraphicsViewInput(parent), dt(dt_), scene_(s)
 {}
 
@@ -102,11 +102,11 @@ template <typename T>
 bool 
 TriangulationPointInput<T>::eventFilter(QObject *obj, QEvent *event)
 {
-  if (event->type() == QEvent::GraphicsSceneMousePress) {
+  if(event->type() == QEvent::GraphicsSceneMousePress) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
     mousePressEvent(mouseEvent);
     return true;
-  } else if (event->type() == QEvent::GraphicsSceneMouseRelease) {
+  } else if(event->type() == QEvent::GraphicsSceneMouseRelease) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
     mouseReleaseEvent(mouseEvent);
     return true;

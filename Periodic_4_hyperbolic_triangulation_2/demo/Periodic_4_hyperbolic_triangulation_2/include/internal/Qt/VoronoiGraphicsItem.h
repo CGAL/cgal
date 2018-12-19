@@ -23,8 +23,6 @@
 #ifndef CGAL_QT_VORONOI_GRAPHICS_ITEM_H
 #define CGAL_QT_VORONOI_GRAPHICS_ITEM_H
 
-
-
 #include <CGAL/Qt/GraphicsItem.h>
 #include <CGAL/Qt/PainterOstream.h>
 #include <CGAL/Qt/utility.h>
@@ -72,7 +70,7 @@ private:
 
   void updateCCenters() {
     cc.clear();
-    for (typename DT::Face_iterator it = dt->faces_begin(); it != dt->faces_end(); it++) {
+    for(typename DT::Face_iterator it = dt->faces_begin(); it != dt->faces_end(); it++) {
       cc[it] = Circumcenter()(*it);
     }
   }
@@ -123,8 +121,8 @@ VoronoiGraphicsItem<DT>::paint(QPainter *painter, const QStyleOptionGraphicsItem
   painter->setPen(temp);
   //
   
-  for (typename DT::Face_iterator fit = dt->faces_begin(); fit != dt->faces_end(); fit++) {
-    for (int i = 0; i < 3; i++) {
+  for(typename DT::Face_iterator fit = dt->faces_begin(); fit != dt->faces_end(); fit++) {
+    for(int i=0; i<3; ++i) {
       typename DT::Hyperbolic_segment s =  Segment()(cc[fit], CP2()(cc[fit->neighbor(i)], dt->neighbor_translation(fit, i))); //dt->dual(std::pair<typename DT::Face_handle, int>(fit, i));
       pos << s;
     }

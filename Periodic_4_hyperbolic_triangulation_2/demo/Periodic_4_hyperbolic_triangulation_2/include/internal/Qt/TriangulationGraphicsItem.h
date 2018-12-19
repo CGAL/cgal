@@ -117,7 +117,7 @@ public:
   }
 
   void setVisibleCopies(const bool val) {
-    if (val) 
+    if(val)
       initializeTranslations();
     visible_copies = val;
   }
@@ -149,21 +149,21 @@ public:
     std::vector<Matrix> gens;
     T::Hyperbolic_translation::generators(gens);
     std::vector<Matrix> tmp;
-    for (int j = 0; j < gens.size(); j++) {
+    for(int j=0; j<gens.size(); ++j) {
       tmp.push_back(gens[j]);
     }
 
-    for (int j = 0; j < 3; j++) {
+    for(int j=0; j<3; ++j) {
       int N = tmp.size();
-      for (int i = 0; i < N; i++) {
-        for (int k = 0; k < gens.size(); k++) {
+      for(int i=0; i<N; ++i) {
+        for(int k=0; k< gens.size(); k++) {
           tmp.push_back(gens[k]*tmp[i]);
         }
       }
     }
 
-    for (int k = 0; k < tmp.size(); k++) {
-      if (std::find(trans.begin(), trans.end(), tmp[k]) == trans.end()) {
+    for(int k=0; k< tmp.size(); k++) {
+      if(std::find(trans.begin(), trans.end(), tmp[k]) == trans.end()) {
         trans.push_back(tmp[k]);
       }
     }
@@ -236,15 +236,15 @@ void
 TriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
 {
   if(visible_edges) {
-    for (int i=0; i<3; i++) {
-      if (fh < fh->neighbor(i)) {
+    for(int i=0; i<3; ++i) {
+      if(fh < fh->neighbor(i)) {
         m_painter->setPen(this->edgesPen());
         painterostream << t->construct_hyperbolic_segment(fh, i);
       }
     }
   }
   if(visible_vertices) {
-    for (int i=0; i<3; i++) {
+    for(int i=0; i<3; ++i) {
       paintVertex(fh->vertex(i));
     }
   }
@@ -271,7 +271,7 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
   
   painter->drawEllipse(QRectF(-1.0, -1.0, 2.0, 2.0));
 
-  if (visible_octagon) {
+  if(visible_octagon) {
     typedef typename Geom_traits::FT        FT;
     typedef typename Geom_traits::Point_2   Point_2;
     FT ep = CGAL::sqrt(FT(2)+CGAL::sqrt(FT(2)));
@@ -299,7 +299,7 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
   }
 
 
-  if (visible_cz) {
+  if(visible_cz) {
     painter->setBrush(QColor(122, 20, 39, 100));
     QPen oldpen = painter->pen();
     QPen npen(QColor(122, 20, 39, 0));
@@ -308,13 +308,13 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
     //painter->pen().setColor(::Qt::white);
     painterostream = PainterOstream<Geom_traits>(painter);
     int cnt = 0;
-    for (typename std::list<typename T::Face_handle>::iterator it = cfaces.begin(); it != cfaces.end(); it++) {
+    for(typename std::list<typename T::Face_handle>::iterator it = cfaces.begin(); it != cfaces.end(); it++) {
       painterostream << t->construct_hyperbolic_triangle(*it);
     }
     painter->setPen(oldpen);
   }
 
-  if (visible_edges) {
+  if(visible_edges) {
     //cout << "painting edges" << endl;
     temp.setWidthF(0.01);
     temp.setColor(::Qt::darkGreen);
@@ -323,7 +323,7 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 
     typedef typename Geom_traits::Construct_hyperbolic_point_2 CP2;
 
-    for (typename T::Face_iterator fit = t->faces_begin(); fit != t->faces_end(); fit++) {      
+    for(typename T::Face_iterator fit = t->faces_begin(); fit != t->faces_end(); fit++) {      
       typename Geom_traits::Point_2 pts[] = { CP2()(fit->vertex(0)->point(), fit->translation(0)),
                                               CP2()(fit->vertex(1)->point(), fit->translation(1)),
                                               CP2()(fit->vertex(2)->point(), fit->translation(2)) } ;
@@ -332,11 +332,11 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
       painterostream << t->construct_hyperbolic_segment(pts[1], pts[2]);
       painterostream << t->construct_hyperbolic_segment(pts[2], pts[0]);
       //cout << " original painted" << endl;
-      if (visible_copies) {
+      if(visible_copies) {
       //   cout << "painting copies" << endl;
       //   typename Geom_traits::Point_2 pts[] = {fit->translation(Triangulation_cw_ccw_2::ccw(0)).apply(fit->vertex(Triangulation_cw_ccw_2::ccw(k))->point());
       //   typename Geom_traits::Point_2 tgt = fit->translation(Triangulation_cw_ccw_2::cw(k)).apply(fit->vertex(Triangulation_cw_ccw_2::cw(k))->point());
-        for (int j = 0; j < trans.size(); j++) {
+        for(int j=0; j<trans.size(); ++j) {
           painterostream << t->construct_hyperbolic_segment( CP2()(pts[0], trans[j]), CP2()(pts[1], trans[j]) );
           painterostream << t->construct_hyperbolic_segment( CP2()(pts[1], trans[j]), CP2()(pts[2], trans[j]) );
           painterostream << t->construct_hyperbolic_segment( CP2()(pts[2], trans[j]), CP2()(pts[0], trans[j]) );
@@ -345,7 +345,7 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
       //cout << "   copies painted" << endl;
     }
     
-    if (visible_demo) {
+    if(visible_demo) {
       temp.setColor(::Qt::red);
       painter->setPen(temp);
       painterostream = PainterOstream<Geom_traits>(painter);
@@ -390,7 +390,7 @@ TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
       width = 20.*(exp(.85) - exp(dist));
       temp.setWidthF(width);
 
-      if (t->is_dummy_vertex(it)) {
+      if(t->is_dummy_vertex(it)) {
         temp.setColor(::Qt::green);
       } else {
         temp.setColor(::Qt::red);
@@ -400,8 +400,8 @@ TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
       QPointF point = matrix.map(convert(it->point()));
       painter->drawPoint(point);
       
-      if (visible_copies) {
-        for (int k = 0; k < trans.size(); k++) {
+      if(visible_copies) {
+        for(int k=0; k< trans.size(); k++) {
           typedef typename Geom_traits::Construct_hyperbolic_point_2 CP2;
           typename Geom_traits::Point_2 img = CP2()(it->point(), trans[k]);
 
@@ -418,7 +418,7 @@ TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
 
     }
 
-    if (visible_demo) {
+    if(visible_demo) {
 
       double sx = to_double(source.x());
       double sy = to_double(source.y());
@@ -493,7 +493,7 @@ TriangulationGraphicsItem<T>::paint(QPainter *painter,
                                     QWidget * /*widget*/)
 {
   painter->setPen(this->edgesPen());
-  if ( t->dimension()<2 || option->exposedRect.contains(boundingRect()) ) {
+  if( t->dimension()<2 || option->exposedRect.contains(boundingRect()) ) {
     drawAll(painter);
   } else {
     m_painter = painter;
