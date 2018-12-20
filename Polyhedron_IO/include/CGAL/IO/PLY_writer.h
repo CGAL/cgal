@@ -67,17 +67,19 @@ namespace CGAL{
     return out.good();
   }
 
-  template <class FaceListGraph>
+  template <class SurfaceMesh>
   bool
   write_PLY(std::ostream& out,
-            const FaceListGraph& mesh,
+            const SurfaceMesh& mesh,
             bool /* verbose */ = false)
   {
-    typedef typename boost::graph_traits<FaceListGraph>::face_descriptor face_descriptor;
-    typedef typename boost::graph_traits<FaceListGraph>::halfedge_descriptor halfedge_descriptor;
-    typedef typename boost::graph_traits<FaceListGraph>::vertex_descriptor vertex_descriptor;
-    typedef typename boost::property_map<FaceListGraph, boost::vertex_point_t>::type::value_type Point_3;
-    typedef typename FaceListGraph::template Property_map<halfedge_descriptor,std::pair<float, float> > UV_map;
+    typedef typename boost::graph_traits<SurfaceMesh>::face_descriptor face_descriptor;
+    typedef typename boost::graph_traits<SurfaceMesh>::halfedge_descriptor halfedge_descriptor;
+    typedef typename boost::graph_traits<SurfaceMesh>::vertex_descriptor vertex_descriptor;
+    typedef typename boost::property_map<SurfaceMesh, boost::vertex_point_t>::type::value_type Point_3;
+    typedef typename SurfaceMesh::template Property_map<halfedge_descriptor,std::pair<float, float> > ;
+    typedef boost::property_map<SurfaceMesh, CGAL::dynamic_halfedge_property_t<std::pair<float, float> > >::type TrafficDensityMap;
+    TrafficDensityMap tdm = get(CGAL::dynamic_halfedge_property_t<double>(), mesh);
     UV_map h_uv;
     bool has_texture;
     boost::tie(h_uv, has_texture) = mesh.template property_map<halfedge_descriptor,std::pair<float, float> >("h:uv");
