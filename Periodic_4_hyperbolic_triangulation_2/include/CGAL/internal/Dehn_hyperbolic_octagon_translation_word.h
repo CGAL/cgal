@@ -211,7 +211,7 @@ private:
     std::vector<Word_idx_type> word, sub;
     bool is_inverse;
     Word_idx_type N, idx;
-    //cout << "Nb = " << Nb << ", Nf = " << Nf << endl;
+    //cout << "Nb = " << Nb << ", Nf = " << Nf << std::endl;
     if(Nb > Nf)
     {
       word = inv;

@@ -42,7 +42,6 @@ namespace CGAL {
 template <class NumberType>
 class Exact_complex
 {
-
   typedef Exact_complex<NumberType>       Self;
 
 private:

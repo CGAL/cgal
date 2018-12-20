@@ -61,11 +61,6 @@ typedef Triangulation::Face_handle                                              
 typedef Triangulation::Face_iterator                                            Face_iterator;
 typedef Traits::Construct_point_2                                               Make_point;
 
-
-using CGAL::to_double;
-using std::cout;
-using std::endl;
-
 class MainWindow :
   public CGAL::Qt::DemosMainWindow,
   public Ui::Periodic_4_hyperbolic_Delaunay_triangulation_2
@@ -400,8 +395,8 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   dt.insert(pts.begin(), pts.end());
   tt.stop();
 
-  cout << "Time elapsed for the insertion of " << number_of_points << " points: " << tt.time() << " secs." << endl;
-  cout << "Number of vertices in the triangulation: " << dt.number_of_vertices() << endl;
+  std::cout << "Time elapsed for the insertion of " << number_of_points << " points: " << tt.time() << " secs." << std::endl;
+  std::cout << "Number of vertices in the triangulation: " << dt.number_of_vertices() << std::endl;
 
   QApplication::restoreOverrideCursor();
   emit(changed());
@@ -432,9 +427,9 @@ MainWindow::open(QString fileName)
   while(ifs >> p) {
     points.push_back(p);
   }
-  cout << "Read " << points.size() << " input points." << endl << "Inserting!" << endl;
+  std::cout << "Read " << points.size() << " input points." << std::endl << "Inserting!" << std::endl;
   dt.insert(points.begin(), points.end());
-  cout << "Done inserting!" << endl;
+  std::cout << "Done inserting!" << std::endl;
 
   // default cursor
   QApplication::restoreOverrideCursor();

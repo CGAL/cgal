@@ -37,9 +37,6 @@
 
 //#define DRAW_OCTAGON_IMAGE ;
 
-using std::cout;
-using std::endl;
-
 namespace CGAL {
 namespace Qt {
 
@@ -167,7 +164,7 @@ public:
         trans.push_back(tmp[k]);
       }
     }
-    cout << "translations ready; tmp has " << tmp.size() << " elems, trans has " << trans.size() << " elems" << endl;
+    std::cout << "translations ready; tmp has " << tmp.size() << " elems, trans has " << trans.size() << " elems" << std::endl;
   }
 
 protected:
@@ -315,7 +312,7 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
   }
 
   if(visible_edges) {
-    //cout << "painting edges" << endl;
+    //cout << "painting edges" << std::endl;
     temp.setWidthF(0.01);
     temp.setColor(::Qt::darkGreen);
     painter->setPen(temp);
@@ -331,9 +328,9 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
       painterostream << t->construct_hyperbolic_segment(pts[0], pts[1]);
       painterostream << t->construct_hyperbolic_segment(pts[1], pts[2]);
       painterostream << t->construct_hyperbolic_segment(pts[2], pts[0]);
-      //cout << " original painted" << endl;
+      //cout << " original painted" << std::endl;
       if(visible_copies) {
-      //   cout << "painting copies" << endl;
+      //   std::cout << "painting copies" << std::endl;
       //   typename Geom_traits::Point_2 pts[] = {fit->translation(Triangulation_cw_ccw_2::ccw(0)).apply(fit->vertex(Triangulation_cw_ccw_2::ccw(k))->point());
       //   typename Geom_traits::Point_2 tgt = fit->translation(Triangulation_cw_ccw_2::cw(k)).apply(fit->vertex(Triangulation_cw_ccw_2::cw(k))->point());
         for(int j=0; j<trans.size(); ++j) {
@@ -342,7 +339,7 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
           painterostream << t->construct_hyperbolic_segment( CP2()(pts[2], trans[j]), CP2()(pts[0], trans[j]) );
         }
       }
-      //cout << "   copies painted" << endl;
+      //cout << "   copies painted" << std::endl;
     }
     
     if(visible_demo) {
@@ -357,7 +354,7 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
   painter->setPen(old);
   //
   
-  //cout << "painting vertices" << endl;
+  //cout << "painting vertices" << std::endl;
   paintVertices(painter);
 }
 
