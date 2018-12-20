@@ -58,6 +58,12 @@ public:
   // Redeclaration of `Segment` that would have been inherited from DT2
   //typedef Hyperbolic_segment                                     Segment;
 
+  // Tag to distinguish regular triangulations from others
+  typedef Tag_false                                             Weighted_tag;
+
+  // Tag to distinguish periodic triangulations from others
+  typedef Tag_false                                             Periodic_tag;
+
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Base::cw;
   using Base::ccw;
