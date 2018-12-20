@@ -100,14 +100,12 @@ namespace CGAL {
       boost::unordered_map<typename Map::Dart_const_handle, Dart_handle>
                         origin_to_copy;
 
-      // We copy the original map, while keeping a mapping between darts.
-      m_map.copy(m_original_map, &origin_to_copy);
-
       // The mapping between darts of the copy into darts of the original map.
       boost::unordered_map<Dart_handle, typename Map::Dart_const_handle>
                         copy_to_origin;
-      for (auto it=origin_to_copy.begin(); it!=origin_to_copy.end(); ++it)
-      { copy_to_origin[it->second]=it->first; }
+
+      // We copy the original map, while keeping mappings between darts.
+      m_map.copy(m_original_map, &origin_to_copy, &copy_to_origin);
 
       if (display_time)
       {
