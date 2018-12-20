@@ -730,7 +730,8 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
     break;
     //Join face
   case 3:
-    Q_EMIT updateInstructions("Select the edge separating the faces you want to join.");
+    Q_EMIT updateInstructions("Select the edge separating the faces you want to join."
+                              "Warning: this operation will clear the undo stack.");
     //set the selection type to Edge
     set_active_handle_type(static_cast<Active_handle::Type>(2));
     break;
@@ -1103,10 +1104,22 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
         if(out_degree(source(halfedge(ed,*polyhedron()),*polyhedron()),*polyhedron())<3 ||
            out_degree(target(halfedge(ed,*polyhedron()),*polyhedron()),*polyhedron())<3)
           d->tempInstructions("Faces not joined : the two ends of the edge must have a degree of at least 3.",
-                           "Select the edge separating the faces you want to join.");
+                           "Select the edge separating the faces you want to join."
+                           "Warning: this operation will clear the undo stack.");
         else
         {
-          CGAL::Euler::join_face(halfedge(ed, *polyhedron()), *polyhedron());
+          SMesh* mesh = polyhedron();
+          vertex_descriptor v1(source(ed, *mesh)),
+              v2(target(ed, *mesh));
+          halfedge_descriptor hd = CGAL::Euler::join_face(halfedge(ed, *mesh), *mesh);
+          d->stack.clear();
+          d->stack.push(new EulerOperation(
+                          [v1,v2,hd,mesh](){
+            CGAL::Euler::split_face(
+                  halfedge(v1, *mesh),
+                  halfedge(v2, *mesh),
+                  *mesh);
+          }, this));
           compute_normal_maps();
           poly_item->invalidateOpenGLBuffers();
         }
