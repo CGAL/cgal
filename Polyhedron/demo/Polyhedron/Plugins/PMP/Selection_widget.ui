@@ -647,7 +647,7 @@
              <item>
               <widget class="QLabel" name="label_4">
                <property name="text">
-                <string>Ctrl+Z to cancel the temporary selection.</string>
+                <string>Ctrl+Z to cancel the temporary selection. Ctrl+U to undo last operation (if applicable).</string>
                </property>
               </widget>
              </item>

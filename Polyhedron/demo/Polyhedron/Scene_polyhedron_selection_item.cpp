@@ -48,8 +48,6 @@ typedef boost::graph_traits<Face_graph>::face_descriptor fg_face_descriptor;
 typedef boost::graph_traits<Face_graph>::edge_descriptor fg_edge_descriptor;
 typedef boost::graph_traits<Face_graph>::halfedge_descriptor fg_halfedge_descriptor;
 
-//! \todo secure the destruction of item. Check that the stack cannot undo then to 
-//! avoid segfault with deleted mesh in lambda.
 class EulerOperation : public QUndoCommand
 {
   std::function<void ()> undo_;
@@ -762,7 +760,8 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
     break;
     //Remove center vertex
   case 8:
-    Q_EMIT updateInstructions("Select the vertex you want to remove.");
+    Q_EMIT updateInstructions("Select the vertex you want to remove."
+                              "Warning: This will clear the undo stack.");
     //set the selection type to vertex
     set_active_handle_type(static_cast<Active_handle::Type>(0));
     break;
@@ -805,6 +804,19 @@ bool Scene_polyhedron_selection_item::treat_classic_selection(const HandleRange&
   if(any_change) { invalidateOpenGLBuffers(); Q_EMIT itemChanged(); }
   return any_change;
 }
+
+struct Index_updator{
+  const SMesh::Halfedge_index& old_;
+  SMesh::Halfedge_index& new_;
+  Index_updator(const SMesh::Halfedge_index& _old,
+                SMesh::Halfedge_index& _new)
+    :old_(_old), new_(_new){}
+  template<class V, class H, class F>
+  void operator()(const V&, const H& hmap, const F&)
+  {
+    new_ = hmap[old_];
+  }
+};
 
 bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_descriptor>& selection)
 {
@@ -959,14 +971,30 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_d
       }
       if(!has_hole)
       {
-        CGAL::Euler::remove_center_vertex(halfedge(vh,*polyhedron()),*polyhedron());
+        SMesh* mesh = polyhedron();
+        halfedge_descriptor hd = halfedge(vh,*mesh);
+        Point_3 p = get(vpm, target(hd, *mesh));
+        halfedge_descriptor hhandle = CGAL::Euler::remove_center_vertex(hd,*mesh);
+        halfedge_descriptor new_h;
+        Index_updator iu(hhandle, new_h);
+        mesh->collect_garbage(iu);
+        d->stack.clear();
+        d->stack.push(new EulerOperation(
+                        [new_h, p, mesh, vpm](){
+          
+          halfedge_descriptor h = CGAL::Euler::add_center_vertex(
+                new_h, *mesh);
+          put(vpm, target(h,*mesh), p);
+          
+        }, this));
         compute_normal_maps();
         polyhedron_item()->invalidateOpenGLBuffers();
       }
       else
       {
         d->tempInstructions("Vertex not selected : There must be no hole incident to the selection.",
-                         "Select the vertex you want to remove.");
+                         "Select the vertex you want to remove."
+                         "Warning: This will clear the undo stack.");
       }
       break;
     }
@@ -1117,16 +1145,22 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
       if(boost::distance(CGAL::halfedges_around_face(halfedge(ed, *polyhedron()),*polyhedron())) == 3 
          && 
          boost::distance(CGAL::halfedges_around_face(opposite(halfedge(ed, *polyhedron()),*polyhedron()),*polyhedron())) == 3)
-        {
-          CGAL::Euler::flip_edge(halfedge(ed, *polyhedron()), *polyhedron());
-          polyhedron_item()->invalidateOpenGLBuffers();
-          compute_normal_maps();
-        }
-        else
-        {
-          d->tempInstructions("Edge not selected : incident facets must be triangles.",
-                           "Select the edge you want to flip.");
-        }
+      {
+        SMesh* mesh = polyhedron();
+        halfedge_descriptor h = halfedge(ed, *mesh);
+        CGAL::Euler::flip_edge(h, *mesh);
+        d->stack.push(new EulerOperation(
+                        [h, mesh](){
+          CGAL::Euler::flip_edge(h, *mesh);
+        }, this));
+        polyhedron_item()->invalidateOpenGLBuffers();
+        compute_normal_maps();
+      }
+      else
+      {
+        d->tempInstructions("Edge not selected : incident facets must be triangles.",
+                            "Select the edge you want to flip.");
+      }
 
       break;
       //Add vertex and face to border
@@ -1307,15 +1341,21 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_face_des
 
           if(found &&(h1 != h2))
           {
-            fg_halfedge_descriptor hhandle = CGAL::Euler::split_vertex(h1,h2,*polyhedron());
-
+            SMesh* mesh = polyhedron();
+            Point p = get(vpm, target(h1, *mesh));
+            fg_halfedge_descriptor hhandle = CGAL::Euler::split_vertex(h1,h2,*mesh);
+            d->stack.push(new EulerOperation(
+                            [hhandle, mesh, vpm, p](){
+              halfedge_descriptor h = CGAL::Euler::join_vertex(hhandle, *mesh);
+              put(vpm, target(h,*mesh), p);
+            }, this));
             temp_selected_facets.clear();
-            Point_3 p1t = get(vpm, target(h1,*polyhedron()));
-            Point_3 p1s = get(vpm, target(opposite(h1,*polyhedron()),*polyhedron()));
+            Point_3 p1t = get(vpm, target(h1,*mesh));
+            Point_3 p1s = get(vpm, target(opposite(h1,*mesh),*mesh));
             double x =  p1t.x() + 0.01 * (p1s.x() - p1t.x());
             double y =  p1t.y() + 0.01 * (p1s.y() - p1t.y());
             double z =  p1t.z() + 0.01 * (p1s.z() - p1t.z());
-            put(vpm, target(opposite(hhandle,*polyhedron()),*polyhedron()), Point_3(x,y,z));;
+            put(vpm, target(opposite(hhandle,*mesh),*mesh), Point_3(x,y,z));;
             d->first_selected = false;
             temp_selected_vertices.clear();
             compute_normal_maps();
@@ -1364,19 +1404,24 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_face_des
         }
         else
         {
+        SMesh* mesh = polyhedron();
           double x(0), y(0), z(0);
           int total(0);
 
-          BOOST_FOREACH(fg_halfedge_descriptor hafc, halfedges_around_face(halfedge(fh,*polyhedron()),*polyhedron()))
+          BOOST_FOREACH(fg_halfedge_descriptor hafc, halfedges_around_face(halfedge(fh,*mesh),*mesh))
           {
-            fg_vertex_descriptor vd = target(hafc,*polyhedron());
+            fg_vertex_descriptor vd = target(hafc,*mesh);
             Point_3& p = get(vpm,vd);
             x+= p.x(); y+=p.y(); z+=p.z();
             total++;
           }
-          fg_halfedge_descriptor hhandle = CGAL::Euler::add_center_vertex(halfedge(fh,*polyhedron()), *polyhedron());
+          fg_halfedge_descriptor hhandle = CGAL::Euler::add_center_vertex(halfedge(fh,*mesh), *mesh);
+          d->stack.push(new EulerOperation(
+                          [hhandle, mesh](){
+            CGAL::Euler::remove_center_vertex(hhandle, *mesh);
+          }, this));
           if(total !=0)
-            put(vpm, target(hhandle,*polyhedron()), Point_3(x/(double)total, y/(double)total, z/(double)total));
+            put(vpm, target(hhandle,*mesh), Point_3(x/(double)total, y/(double)total, z/(double)total));
           compute_normal_maps();
           polyhedron_item()->resetColors();
           poly_item->invalidateOpenGLBuffers();
@@ -1753,7 +1798,6 @@ Scene_polyhedron_selection_item::Scene_polyhedron_selection_item(Scene_face_grap
   sf.remove(rx);
   if(!sf.isEmpty())
     setProperty("defaultSaveDir", sf);
-  qDebug()<<property("defaultSaveDir").toString();
   
   init(poly_item, mw);
   invalidateOpenGLBuffers();

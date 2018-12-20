@@ -1016,6 +1016,6 @@ public:
 protected :
   friend struct Scene_polyhedron_selection_item_priv;
   Scene_polyhedron_selection_item_priv *d;
-};
+};//end of Selection_item
 
 #endif

@@ -1280,6 +1280,10 @@ public:
     /// or in a property these indices are potentially no longer 
     /// refering to the right elements. 
     void collect_garbage();
+    
+    //undocumented convenience fucntion that allows to get old-index->new-index information
+    template <typename F>
+    void collect_garbage(F& f);
 
 
     /// @cond CGAL_DOCUMENT_INTERNALS
@@ -2546,10 +2550,10 @@ degree(Face_index f) const
     return count;
 }
 
-template <typename P>
+template <typename P> template< typename F>
 void
 Surface_mesh<P>::
-collect_garbage()
+collect_garbage(F& funct)
 {
     int  i, i0, i1,
     nV(num_vertices()),
@@ -2667,6 +2671,8 @@ collect_garbage()
         set_halfedge(f, hmap[halfedge(f)]);
     }
 
+    //apply functor befor invalidating the maps
+    funct(vmap, hmap, fmap);
     // remove index maps
     remove_property_map<Vertex_index>(vmap);
     remove_property_map<Halfedge_index>(hmap);
@@ -2681,6 +2687,23 @@ collect_garbage()
     removed_vertices_ = removed_edges_ = removed_faces_ = 0;
     vertices_freelist_ = edges_freelist_ = faces_freelist_ = -1;
     garbage_ = false;
+}
+
+namespace collect_garbage_internal {
+struct Dummy_functor{
+  template<typename A, typename B, typename C>
+  void operator()(const A&, const B&, const C&)
+  {}
+};
+
+}
+template <typename P>
+void
+Surface_mesh<P>::
+collect_garbage()
+{
+  collect_garbage_internal::Dummy_functor f;
+  collect_garbage(f);
 }
 
 namespace internal{
