@@ -408,6 +408,8 @@ public Q_SLOTS:
                     "item!");
       return; 
     }
+    if(selection_item_map.find(poly_item) != selection_item_map.end())
+      return;
     // all other arrangements (putting inside selection_item_map), setting names etc,
     // other params (e.g. k_ring) will be set inside new_item_created
     from_plugin = true;
@@ -1047,7 +1049,7 @@ private:
   Ui::Selection ui_widget;
   std::map<QString, int> operations_map;
   std::vector<QString> operations_strings;
-typedef std::multimap<Scene_face_graph_item*, Scene_polyhedron_selection_item*> Selection_item_map;
+typedef boost::unordered_map<Scene_face_graph_item*, Scene_polyhedron_selection_item*> Selection_item_map;
   Selection_item_map selection_item_map;
   int last_mode;
   bool from_plugin;
