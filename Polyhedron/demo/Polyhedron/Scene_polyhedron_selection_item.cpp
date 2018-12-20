@@ -1,4 +1,6 @@
 #include <QApplication>
+#include <QUndoCommand>
+#include <QUndoStack>
 #include "Scene_polyhedron_selection_item.h"
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
@@ -23,6 +25,7 @@
 #include <set>
 #include <utility>
 #include <vector>
+#include <functional>
 
 #include "triangulate_primitive.h"
 
@@ -45,6 +48,31 @@ typedef boost::graph_traits<Face_graph>::face_descriptor fg_face_descriptor;
 typedef boost::graph_traits<Face_graph>::edge_descriptor fg_edge_descriptor;
 typedef boost::graph_traits<Face_graph>::halfedge_descriptor fg_halfedge_descriptor;
 
+//! \todo secure the destruction of item. Check that the stack cannot undo then to 
+//! avoid segfault with deleted mesh in lambda.
+class EulerOperation : public QUndoCommand
+{
+  std::function<void ()> undo_;
+  Scene_polyhedron_selection_item* item;
+public:
+  template <typename Undo>
+  EulerOperation(Undo&& undo, Scene_polyhedron_selection_item* item)
+    :undo_(std::forward<Undo> (undo)),
+      item(item)
+  {}
+  
+  void undo() override
+  {
+    undo_(); 
+    item->compute_normal_maps();
+    item->polyhedron_item()->invalidateOpenGLBuffers();
+    item->invalidateOpenGLBuffers();
+    item->redraw();
+  }
+  void redo() override
+  {}
+};
+
 struct Scene_polyhedron_selection_item_priv{
 
   typedef Scene_facegraph_item_k_ring_selection::Active_handle Active_handle;
@@ -59,6 +87,7 @@ struct Scene_polyhedron_selection_item_priv{
     fg_vertex_descriptor vertex;
     bool is_constrained;
   };
+  
 
   Scene_polyhedron_selection_item_priv(Scene_polyhedron_selection_item* parent):
     item(parent)
@@ -163,6 +192,7 @@ struct Scene_polyhedron_selection_item_priv{
     HL_points,
     Fixed_points
   };
+  QUndoStack stack;
 };
 typedef Scene_polyhedron_selection_item_priv Priv;
 
@@ -893,7 +923,13 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_d
                            "Select the second vertex (3/3).");
         else
         {
-          CGAL::Euler::split_face(h1,h2, *polyhedron());
+          SMesh* mesh = polyhedron();
+          fg_halfedge_descriptor h, h_1(h1), h_2(h2);
+          h = CGAL::Euler::split_face(h1,h2, *mesh);
+          d->stack.push(new EulerOperation(//the stack takes ownership of the cmd, so no worries
+          [h, mesh](){
+            CGAL::Euler::join_face(h,*mesh);
+          }, this));
           d->first_selected = false;
           temp_selected_vertices.clear();
           temp_selected_facets.clear();
@@ -1013,19 +1049,26 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
       //Split edge
     case 2:
     {
-
-      Point_3 a(get(vpm,target(halfedge(ed, *polyhedron()),*polyhedron()))),
-        b(get(vpm,target(opposite(halfedge(ed, *polyhedron()),*polyhedron()),*polyhedron())));
-      fg_halfedge_descriptor hhandle = CGAL::Euler::split_edge(halfedge(ed, *polyhedron()),*polyhedron());
-        Point_3 p((b.x()+a.x())/2.0, (b.y()+a.y())/2.0,(b.z()+a.z())/2.0);
-
-        put(vpm, target(hhandle,*polyhedron()), p);
-        invalidateOpenGLBuffers();
-        poly_item->invalidateOpenGLBuffers();
-        compute_normal_maps();
-        d->tempInstructions("Edge splitted.",
-                            "Select the edge you want to split.");
-        break;
+      
+      SMesh* mesh = polyhedron();
+      Point_3 a(get(vpm,target(halfedge(ed, *mesh),*mesh))),
+          b(get(vpm,target(opposite(halfedge(ed, *mesh),*mesh),*mesh)));
+      fg_halfedge_descriptor hhandle = CGAL::Euler::split_edge(halfedge(ed, *mesh),*mesh);
+      d->stack.push(new EulerOperation(
+                      [hhandle, mesh, vpm](){
+        Point_3 p(get(vpm,source(hhandle,*mesh)));
+        halfedge_descriptor h = CGAL::Euler::join_vertex(hhandle, *mesh);
+        put(vpm, target(h,*mesh), p);
+      }, this));
+      Point_3 p((b.x()+a.x())/2.0, (b.y()+a.y())/2.0,(b.z()+a.z())/2.0);
+      
+      put(vpm, target(hhandle,*mesh), p);
+      invalidateOpenGLBuffers();
+      poly_item->invalidateOpenGLBuffers();
+      compute_normal_maps();
+      d->tempInstructions("Edge splitted.",
+                          "Select the edge you want to split.");
+      break;
     }
       //Join face
     case 3:
@@ -1653,6 +1696,12 @@ void Scene_polyhedron_selection_item::on_Ctrlz_pressed()
   d->are_temp_buffers_filled = false;
   set_operation_mode(d->operation_mode);
   Q_EMIT itemChanged();
+}
+
+void Scene_polyhedron_selection_item::on_Ctrlu_pressed()
+{
+  if(d->stack.canUndo())
+    d->stack.undo();
 }
 
 void Scene_polyhedron_selection_item::common_constructor()

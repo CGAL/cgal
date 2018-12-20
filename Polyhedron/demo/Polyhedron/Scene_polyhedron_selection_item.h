@@ -814,6 +814,7 @@ public Q_SLOTS:
   }
   void update_poly();
   void on_Ctrlz_pressed();
+  void on_Ctrlu_pressed();
   void emitTempInstruct();
   void resetIsTreated();
   void save_handleType();
@@ -859,8 +860,20 @@ protected:
             && static_cast<QKeyEvent*>(gen_event)->key()==Qt::Key_Z)
     {
       QKeyEvent *keyEvent = static_cast<QKeyEvent*>(gen_event);
-      if(keyEvent->modifiers().testFlag(Qt::ControlModifier))
+      if(keyEvent->modifiers().testFlag(Qt::ControlModifier)){
         on_Ctrlz_pressed();
+        return true;
+      }
+    }
+    else if(gen_event->type() == QEvent::KeyPress
+            && static_cast<QKeyEvent*>(gen_event)->key()==Qt::Key_U)
+    {
+      QKeyEvent *keyEvent = static_cast<QKeyEvent*>(gen_event);
+      if(keyEvent->modifiers().testFlag(Qt::ControlModifier))
+      {
+        on_Ctrlu_pressed();
+        return true;
+      }
     }
 
     if(!visible() || !k_ring_selector.state.shift_pressing) { return false; }
