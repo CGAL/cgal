@@ -766,6 +766,13 @@ public:
   typedef internal::Is_Delaunay_hyperbolic<Self>                Is_Delaunay_hyperbolic;
   typedef internal::Side_of_oriented_hyperbolic_segment_2<Self> Side_of_oriented_hyperbolic_segment_2;
 
+  // Needed for P4HT2
+  typedef typename Kernel::Construct_bisector_2                 Construct_Euclidean_bisector_2;
+  typedef typename internal::Construct_intersection_2<Self>     Construct_intersection_2;
+  typedef typename internal::Construct_circle_or_line_supporting_bisector<Self> Construct_circle_or_line_supporting_bisector;
+  typedef typename Kernel::Collinear_2                          Euclidean_collinear_2;
+  typedef typename Kernel::Compute_squared_distance_2           Compute_squared_Euclidean_distance_2;
+
 public:
   Hyperbolic_Delaunay_triangulation_traits_2(const Base& kernel = Base())
     : Base(kernel)
@@ -794,6 +801,26 @@ public:
   Side_of_oriented_hyperbolic_segment_2
   side_of_oriented_hyperbolic_segment_2_object() const
   { return Side_of_oriented_hyperbolic_segment_2(*this); }
+
+  Construct_Euclidean_bisector_2
+  construct_Euclidean_bisector_2_object() const
+  { return this->Base::construct_bisector_2_object(); }
+
+  Construct_intersection_2
+  construct_intersection_2_object() const
+  { return Construct_intersection_2(*this); }
+
+  Construct_circle_or_line_supporting_bisector
+  construct_circle_or_line_supporting_bisector_2_object() const
+  { return Construct_circle_or_line_supporting_bisector(*this); }
+
+  Euclidean_collinear_2
+  euclidean_collinear_2_object() const
+  { return this->Base::collinear_2_object(); }
+
+  Compute_squared_Euclidean_distance_2
+  compute_squared_Euclidean_distance_2_object() const
+  { return this->Base::compute_squared_distance_2_object(); }
 
 }; // class Hyperbolic_Delaunay_triangulation_traits_2
 
