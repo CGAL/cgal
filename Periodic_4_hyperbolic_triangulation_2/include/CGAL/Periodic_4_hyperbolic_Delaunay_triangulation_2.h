@@ -127,13 +127,13 @@ private:
 
   public:
     Dummy_point(FT x, FT y): _pt(x,y), _is_inserted(true) {}
-    Dummy_point(Point p): _pt(p), _is_inserted(true) {}
+    Dummy_point(const Point& p): _pt(p), _is_inserted(true) {}
 
     Point operator()() const { return _pt; }
     bool is_inserted() const {  return _is_inserted; }
     Vertex_handle vertex() const { return _vh; }
     void set_inserted(bool val) { _is_inserted = val; }
-    void set(Point val) { _pt = val; }
+    void set(const Point& val) { _pt = val; }
     void set_vertex(Vertex_handle v) { _vh = v; }
   };
 
@@ -269,7 +269,7 @@ public:
   {
     // count of dummy points in the triangulation
     int cnt = 0;
-    for(int i=0; i<dummy_points.size(); ++i)
+    for(std::size_t i=0; i<dummy_points.size(); ++i)
     {
       if(dummy_points[i].is_inserted())
       {
@@ -285,7 +285,7 @@ public:
 
   Point get_dummy_point(int i) const
   {
-    CGAL_triangulation_precondition(0 <= i && i <= dummy_points.size());
+    CGAL_triangulation_precondition(0 <= i && i <= static_cast<int>(dummy_points.size()));
     return dummy_points[i]();
   }
 
@@ -293,7 +293,7 @@ public:
 
   bool is_dummy_vertex(Vertex_handle vh) const
   {
-    for(int i=0; i<dummy_points.size(); ++i)
+    for(std::size_t i=0; i<dummy_points.size(); ++i)
     {
       if(dummy_points[i]() == vh->point())
         return true;
@@ -305,7 +305,7 @@ public:
   int number_of_dummy_points() const
   {
     int cnt = 0;
-    for(int i=0; i<dummy_points.size(); ++i)
+    for(std::size_t i=0; i<dummy_points.size(); ++i)
     {
       if(dummy_points[i].is_inserted())
         ++cnt;
@@ -393,7 +393,6 @@ is_removable(Vertex_handle v,
              std::map<Vertex_handle,
              Vertex_handle>& vmap)
 {
-  typedef typename Gt::FT                             FT;
   typedef Delaunay_triangulation_2<Gt, Tds>           Delaunay;
   typedef typename Delaunay::Finite_faces_iterator    Finite_Delaunay_faces_iterator;
 
@@ -420,19 +419,18 @@ is_removable(Vertex_handle v,
   }
   while(++nbf != done);
 
-
-  int n_verts = bdry_verts.size();
+  std::size_t n_verts = bdry_verts.size();
   double max_diam = 0.;
   for(Finite_Delaunay_faces_iterator fit = dt.finite_faces_begin();
                                      fit != dt.finite_faces_end(); ++fit)
   {
     bool is_good = true;
-    for(int i=0; i<3; ++i)
+    for(std::size_t i=0; i<3; ++i)
     {
       Vertex_handle this_v = vmap[fit->vertex(i)];
       Vertex_handle prev_v = bdry_verts[n_verts - 1];
       Vertex_handle curr_v = bdry_verts[0];
-      for(int j = 1; curr_v != this_v; j=(j+1)%n_verts)
+      for(std::size_t j=1; curr_v!=this_v; j=(j+1)%n_verts)
       {
         prev_v = curr_v;
         curr_v = bdry_verts[j];
@@ -463,7 +461,7 @@ template <typename Gt, class Tds >
 inline
 typename Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::Vertex_handle
 Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::
-insert(const Point  &p,  Face_handle hint)
+insert(const Point& p, Face_handle hint)
 {
   Hyperbolic_translation loff;
   Locate_type lt;
@@ -476,7 +474,7 @@ insert(const Point  &p,  Face_handle hint)
 
   if(lt == Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::VERTEX)
   {
-    for(int i=0; i<dummy_points.size(); ++i)
+    for(std::size_t i=0; i<dummy_points.size(); ++i)
     {
       if(dummy_points[i].is_inserted())
       {
@@ -564,25 +562,24 @@ remove(Vertex_handle v)
     }
     while(nb != done);
 
-    for(int i=0; i<bdry_edges.size(); ++i)
+    for(std::size_t i=0; i<bdry_edges.size(); ++i)
     {
       Edge e = bdry_edges[i];
       Face_handle f = e.first;
-      int j = e.second;
     }
 
-    int n_verts = bdry_verts.size();
+    std::size_t n_verts = bdry_verts.size();
     std::vector<Face_handle> new_f;
     for(Finite_Delaunay_faces_iterator fit = dt.finite_faces_begin();
                                        fit != dt.finite_faces_end(); ++fit)
     {
       bool is_good = true;
-      for(int i=0; i<3; ++i)
+      for(std::size_t i=0; i<3; ++i)
       {
         Vertex_handle this_v = vmap[fit->vertex(i)];
         Vertex_handle prev_v = bdry_verts[n_verts - 1];
         Vertex_handle curr_v = bdry_verts[0];
-        for(int j=1; curr_v!=this_v; j=(j+1)%n_verts)
+        for(std::size_t j=1; curr_v!=this_v; j=(j+1)%n_verts)
         {
           prev_v = curr_v;
           curr_v = bdry_verts[j];
@@ -607,12 +604,12 @@ remove(Vertex_handle v)
 
     int internb = 0;
     int bdrynb = 0;
-    for(int i=0; i<new_f.size(); ++i)
+    for(std::size_t i=0; i<new_f.size(); ++i)
     {
-      for(int k=0; k< 3; k++)
+      for(std::size_t k=0; k< 3; k++)
       {
         bool found_bdry = false;
-        for(int j=0; j<bdry_verts.size(); ++j)
+        for(std::size_t j=0; j<bdry_verts.size(); ++j)
         {
           if(new_f[i]->vertex(ccw(k)) == bdry_verts[j] &&
              new_f[i]->vertex(cw(k)) == bdry_verts[(j+1)%n_verts])
@@ -629,12 +626,12 @@ remove(Vertex_handle v)
 
         if(!found_bdry)
         {
-          for(int l=0; l<new_f.size(); ++l)
+          for(std::size_t l=0; l<new_f.size(); ++l)
           {
             if(l == i)
               continue;
 
-            for(int j=0; j<3; ++j)
+            for(std::size_t j=0; j<3; ++j)
             {
               if(new_f[i]->vertex(ccw(k)) == new_f[l]->vertex(cw(j)) &&
                  new_f[i]->vertex(cw(k))  == new_f[l]->vertex(ccw(j)))
@@ -649,9 +646,9 @@ remove(Vertex_handle v)
       }
     }
 
-    for(int j=0; j<new_f.size(); ++j)
+    for(std::size_t j=0; j<new_f.size(); ++j)
     {
-      for(int i=0; i<3; ++i)
+      for(std::size_t i=0; i<3; ++i)
       {
         new_f[j]->vertex(i)->set_face(new_f[j]);
         new_f[j]->set_translation(i, new_f[j]->vertex(i)->translation());
@@ -660,14 +657,14 @@ remove(Vertex_handle v)
       this->make_canonical(new_f[j]);
     }
 
-    for(int j=0; j<bdry_edges.size(); ++j)
+    for(std::size_t j=0; j<bdry_edges.size(); ++j)
     {
       Face_handle f = bdry_edges[j].first;
       int i = bdry_edges[j].second;
       f->vertex(ccw(i))->clear_translation();
     }
 
-    for(int i=0; i<nbrs.size(); ++i)
+    for(std::size_t i=0; i<nbrs.size(); ++i)
       tds().delete_face(nbrs[i]);
 
     tds().delete_vertex(v);

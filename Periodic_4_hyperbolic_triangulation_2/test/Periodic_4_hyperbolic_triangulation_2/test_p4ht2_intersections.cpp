@@ -23,8 +23,8 @@ using CGAL::sqrt;
 using std::cout;
 using std::endl;
 
-int main(int argc, char** argv) {    
-
+int main(int /*argc*/, char** /*argv*/)
+{
     NT F2(2);
 
     Line ell1(sqrt(F2), sqrt(F2 - sqrt(F2)), - sqrt(F2 + sqrt(F2)));

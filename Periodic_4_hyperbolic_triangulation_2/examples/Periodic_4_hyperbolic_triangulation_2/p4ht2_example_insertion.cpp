@@ -65,7 +65,7 @@ int main(int argc, char** argv)
 
   // Finally, we try to manually remove all dummy points from the triangulation.
   std::cout << "Cleaning dummy points from the triangulation... "; std::cout.flush();
-  int DP_remaining = tr.clean_dummy_points();
+  int DP_remaining = tr.try_to_remove_dummy_vertices();
   std::cout << "DONE! " << std::endl;
 
   // Make sure that the triangulation is valid.

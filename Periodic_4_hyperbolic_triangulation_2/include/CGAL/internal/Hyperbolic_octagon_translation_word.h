@@ -51,15 +51,12 @@ class Hyperbolic_octagon_translation_word
 
 private:
   Int   w0 : 3;
-  bool  b0 : 1;
-
   Int   w1 : 3;
-  bool  b1 : 1;
-
   Int   w2 : 3;
-  bool  b2 : 1;
-
   Int   w3 : 3;
+  bool  b0 : 1;
+  bool  b1 : 1;
+  bool  b2 : 1;
   bool  b3 : 1;
 
   static const Int RELATION_LENGTH = 8; // Length of the group relation
@@ -429,9 +426,9 @@ public:
   {
     std::vector<Int> old = this->get_vector();
     std::vector<Int> oth = rh.get_vector();
-    for(int i=0; i<oth.size(); ++i) {
+    for(std::size_t i=0; i<oth.size(); ++i)
       old.push_back(oth[i]);
-    }
+
     std::vector<Int> red;
     Dehn_reductor dehn;
     dehn(red, old);
