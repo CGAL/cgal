@@ -109,7 +109,7 @@ public:
       {
         std::size_t I = grid.x(i);
         std::size_t J = grid.y(i);
-        values[i] = get (point_map, *(input.begin() + i)).z() - dtm(I,J);
+        values[i] = float(get (point_map, *(input.begin() + i)).z() - dtm(I,J));
       }
       dtm.free();
     }
@@ -123,7 +123,7 @@ public:
     {
       std::size_t I = grid.x(pt_index);
       std::size_t J = grid.y(pt_index);
-      return get (point_map, *(input.begin() + pt_index)).z() - dtm(I,J);
+      return float(get (point_map, *(input.begin() + pt_index)).z() - dtm(I,J));
     }
     
     return values[pt_index];

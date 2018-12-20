@@ -72,7 +72,7 @@ namespace liblearning {
 namespace RandomForest {
 
 typedef std::vector< std::pair<float, int> > FeatureClassDataFloat;
-inline void init_feature_class_data(FeatureClassDataFloat& data, int /*n_classes*/, int /* n_samples */)
+inline void init_feature_class_data(FeatureClassDataFloat& /*data*/, int /*n_classes*/, int /* n_samples */)
 {
 //    data.resize(n_samples);
 }

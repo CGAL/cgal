@@ -1346,10 +1346,6 @@ public Q_SLOTS:
         return; 
       }
 
-    int nb_trials = 0;
-    int num_trees = 0;
-    int max_depth = 0;
-
     QMultipleInputDialog dialog ("Train Classifier", mw);
     
     int classifier = get_classifier();
@@ -1380,7 +1376,7 @@ public Q_SLOTS:
       QSpinBox* batch = dialog.add<QSpinBox> ("Batch size: ", "batch_size");
       batch->setRange (1, 2000000000);
       batch->setValue (1000);
-      QLineEdit* layers = dialog.add<QLineEdit> ("Hidden layer size(s): ", "hidden_layers");
+      dialog.add<QLineEdit> ("Hidden layer size(s): ", "hidden_layers");
       QCheckBox* restart = dialog.add<QCheckBox> ("Restart from scratch: ", "restart");
       restart->setChecked (false);
     }
