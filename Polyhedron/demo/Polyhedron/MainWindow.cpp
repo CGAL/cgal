@@ -1011,9 +1011,9 @@ void MainWindow::reloadItem() {
     new_item->setRenderingMode(item->renderingMode());
     new_item->setVisible(item->visible());
     Scene_item_with_properties *property_item = dynamic_cast<Scene_item_with_properties*>(new_item);
+    scene->replaceItem(scene->item_id(item), new_item, true);
     if(property_item)
       property_item->copyProperties(item);
-    scene->replaceItem(scene->item_id(item), new_item, true);
     new_item->invalidateOpenGLBuffers();
     item->deleteLater();
   }

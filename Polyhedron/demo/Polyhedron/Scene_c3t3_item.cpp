@@ -138,12 +138,13 @@ public :
     if(is_fast)
       return;
     if(!alphaSlider)
-     {
-       alphaSlider = new QSlider(::Qt::Horizontal);
-       alphaSlider->setMinimum(0);
-       alphaSlider->setMaximum(255);
-       alphaSlider->setValue(255);
-     }    const EPICK::Plane_3& plane = qobject_cast<Scene_c3t3_item*>(this->parent())->plane();
+    {
+      alphaSlider = new QSlider(::Qt::Horizontal);
+      alphaSlider->setMinimum(0);
+      alphaSlider->setMaximum(255);
+      alphaSlider->setValue(255);
+    }    
+    const EPICK::Plane_3& plane = qobject_cast<Scene_c3t3_item*>(this->parent())->plane();
     float shrink_factor = qobject_cast<Scene_c3t3_item*>(this->parent())->getShrinkFactor();
     QVector4D cp(-plane.a(), -plane.b(), -plane.c(), -plane.d());
     getTriangleContainer(0)->setPlane(cp);
@@ -1211,7 +1212,7 @@ QMenu* Scene_c3t3_item::contextMenu()
     QMenu *container = new QMenu(tr("Alpha value"));
     container->menuAction()->setProperty("is_groupable", true);
     QWidgetAction *sliderAction = new QWidgetAction(0);
-    sliderAction->setDefaultWidget(d->alphaSlider);
+    sliderAction->setDefaultWidget(alphaSlider());
     connect(d->alphaSlider, &QSlider::valueChanged,
             [this]()
     {
