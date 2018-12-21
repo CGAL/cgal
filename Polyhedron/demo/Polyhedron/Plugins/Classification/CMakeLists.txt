@@ -20,7 +20,7 @@ if(EIGEN3_FOUND)
 
   if (Boost_SERIALIZATION_FOUND AND Boost_IOSTREAMS_FOUND AND (NOT WIN32 OR Boost_ZLIB_FOUND))
     qt5_wrap_ui( classificationUI_FILES Classification_widget.ui Classification_advanced_widget.ui )
-    polyhedron_demo_plugin(classification_plugin Classification_plugin Point_set_item_classification Cluster_classification Surface_mesh_item_classification ${classificationUI_FILES})
+    polyhedron_demo_plugin(classification_plugin Classification_plugin Point_set_item_classification Cluster_classification Surface_mesh_item_classification ${classificationUI_FILES} KEYWORDS Classification)
     
     set(classification_linked_libraries ${classification_linked_libraries}
       ${Boost_SERIALIZATION_LIBRARY}

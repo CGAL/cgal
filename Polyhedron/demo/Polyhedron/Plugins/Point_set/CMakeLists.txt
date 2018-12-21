@@ -5,7 +5,7 @@ if(EIGEN3_FOUND)
   target_link_libraries(surface_reconstruction_plugin PUBLIC scene_polygon_soup_item scene_surface_mesh_item scene_points_with_normal_item)
 
   qt5_wrap_ui( point_set_normal_estimationUI_FILES Point_set_normal_estimation_plugin.ui)
-  polyhedron_demo_plugin(point_set_normal_estimation_plugin Point_set_normal_estimation_plugin ${point_set_normal_estimationUI_FILES})
+  polyhedron_demo_plugin(point_set_normal_estimation_plugin Point_set_normal_estimation_plugin ${point_set_normal_estimationUI_FILES} KEYWORDS Classification)
   target_link_libraries(point_set_normal_estimation_plugin PUBLIC scene_points_with_normal_item scene_callback_signaler)
 
   qt5_wrap_ui( features_detection_pluginUI_FILES Features_detection_plugin.ui)
@@ -15,7 +15,7 @@ if(EIGEN3_FOUND)
   polyhedron_demo_plugin(point_set_smoothing_plugin Point_set_smoothing_plugin)
   target_link_libraries(point_set_smoothing_plugin PUBLIC scene_points_with_normal_item scene_callback_signaler)
 
-  polyhedron_demo_plugin(point_set_average_spacing_plugin Point_set_average_spacing_plugin)
+  polyhedron_demo_plugin(point_set_average_spacing_plugin Point_set_average_spacing_plugin KEYWORDS Classification)
   target_link_libraries(point_set_average_spacing_plugin PUBLIC scene_points_with_normal_item scene_callback_signaler)
 
 else(EIGEN3_FOUND)
@@ -36,11 +36,11 @@ endif()
   target_link_libraries(point_set_outliers_removal_plugin PUBLIC scene_points_with_normal_item scene_callback_signaler)
 
   qt5_wrap_ui( point_set_selectionUI_FILES Point_set_selection_widget.ui)
-  polyhedron_demo_plugin(point_set_selection_plugin Point_set_selection_plugin ${point_set_selectionUI_FILES})
+  polyhedron_demo_plugin(point_set_selection_plugin Point_set_selection_plugin ${point_set_selectionUI_FILES} KEYWORDS Classification)
   target_link_libraries(point_set_selection_plugin PUBLIC scene_points_with_normal_item scene_polylines_item scene_edit_box_item)
 
   qt5_wrap_ui(point_set_shape_detectionUI_FILES Point_set_shape_detection_plugin.ui)
-  polyhedron_demo_plugin(point_set_shape_detection_plugin Point_set_shape_detection_plugin ${point_set_shape_detectionUI_FILES})
+  polyhedron_demo_plugin(point_set_shape_detection_plugin Point_set_shape_detection_plugin ${point_set_shape_detectionUI_FILES} KEYWORDS Classification)
   target_link_libraries(point_set_shape_detection_plugin PUBLIC scene_surface_mesh_item scene_points_with_normal_item scene_polygon_soup_item scene_callback_signaler)
 
   qt5_wrap_ui(point_set_simplificationUI_FILES Point_set_simplification_plugin.ui)
@@ -55,7 +55,7 @@ endif()
   polyhedron_demo_plugin(point_set_wlop_plugin Point_set_wlop_plugin ${point_set_wlopFILES})
   target_link_libraries(point_set_wlop_plugin PUBLIC scene_points_with_normal_item scene_callback_signaler)
 
-  polyhedron_demo_plugin(merge_point_sets_plugin Merge_point_sets_plugin)
+  polyhedron_demo_plugin(merge_point_sets_plugin Merge_point_sets_plugin KEYWORDS Classification)
   target_link_libraries(merge_point_sets_plugin PUBLIC scene_points_with_normal_item)
 
   polyhedron_demo_plugin(point_set_interference_plugin Point_set_interference_plugin)
