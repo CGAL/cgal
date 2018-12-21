@@ -6,6 +6,11 @@ Release 4.14
 
 Release date: March 2019
 
+### Triangulated Surface Mesh Approximation (new package)
+
+-   This package implements the Variational Shape Approximation method to approximate
+    an input surface triangle mesh by a simpler surface triangle mesh.
+
 ### Polygon Mesh Processing package
 -   Added the following new functions to detect and repair issues in polygon soups:
     - `CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup()`, which detects and removes
