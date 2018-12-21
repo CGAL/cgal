@@ -128,6 +128,7 @@ public:
     actionSelection = new QAction(
           QString("Surface Mesh Selection")
           , mw);
+    actionSelection->setObjectName("actionSelection");
     connect(actionSelection, SIGNAL(triggered()), this, SLOT(selection_action()));
     last_mode = 0;
     dock_widget = new QDockWidget(

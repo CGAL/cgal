@@ -30,6 +30,7 @@
 //  * fix computation of node_dist[label] so that results are always <= 1.0
 //  * change serialization functions to avoid a bug with boost and some
 //    compilers (that leads to dereferencing a null pointer)
+//  * add a method to get feature usage
 
 #ifndef CGAL_INTERNAL_LIBLEARNING_RANDOMFORESTS_NODE_H
 #define CGAL_INTERNAL_LIBLEARNING_RANDOMFORESTS_NODE_H
@@ -256,6 +257,16 @@ public:
           ar & BOOST_SERIALIZATION_NVP(left);
           ar & BOOST_SERIALIZATION_NVP(right);
         }
+    }
+  
+    void get_feature_usage (std::vector<std::size_t>& count) const
+    {
+      if (!is_leaf)
+      {
+        count[std::size_t(splitter.feature)] ++;
+        left->get_feature_usage(count);
+        right->get_feature_usage(count);
+      }
     }
 };
 

@@ -87,13 +87,18 @@ int main (int, char**)
   std::ifstream inf ("output_config.gz", std::ios::binary);
   classifier2.load_configuration(inf);
 
-  std::vector<std::size_t> label_indices;
-  std::vector<std::size_t> label_indices_2;
+  Classifier classifier3 (classifier, features);
+
+  std::vector<std::size_t> label_indices (points.size());
+  std::vector<std::size_t> label_indices_2 (points.size());
+  std::vector<std::size_t> label_indices_3 (points.size());
     
   Classification::classify<CGAL::Sequential_tag> (points, labels, classifier, label_indices);
   Classification::classify<CGAL::Sequential_tag> (points, labels, classifier2, label_indices_2);
+  Classification::classify<CGAL::Sequential_tag> (points, labels, classifier3, label_indices_3);
 
   assert (label_indices == label_indices_2);
-  
+  assert (label_indices == label_indices_3);
+
   return EXIT_SUCCESS;
 }

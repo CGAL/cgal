@@ -91,7 +91,7 @@ int main (int, char**)
 #endif
   
   assert (generator.number_of_scales() == 5);
-  assert (features.size() == 44);
+  assert (features.size() == 59);
 
   Label_set labels;
 

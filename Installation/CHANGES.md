@@ -32,6 +32,20 @@ Release date: March 2019
 -   Added the class `CGAL::Rigid_triangle_mesh_collision_detection` to detect intersections between meshes
     and volumes undergoing affine transformations.
 
+### Classification
+
+-   Added a new experimental classifier
+    `TensorFlow_neural_network_classifier`.
+
+-   The training algorithm of `ETHZ_random_forest_classifier` was
+    parallelized.
+
+-   Added a constructor to copy a `ETHZ_random_forest_classifier`
+    using a different data set as input.
+
+-   Added 3 new geometric features, `Height_above`, `Height_below` and
+    `Vertical_range`.
+
 ### 3D Fast Intersection and Distance Computation
 
 -   The primitives `AABB_face_graph_triangle_primitive` and
