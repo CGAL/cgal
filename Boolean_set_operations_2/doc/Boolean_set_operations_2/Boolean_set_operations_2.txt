@@ -74,7 +74,7 @@ polygon vertices is referred to as the polygon <B>(outer) boundary</B>.
 
 <LI>A polygon whose curves are pairwise disjoint in their interior, and whose vertices' degree equals two is defined as a <B>Simple polygon</B>. Such a polygon has a well-defined interior and exterior and is topologically equivalent to a disk. Note that while traversing the edges of the relatively simple polygon illustrated above (B), no curve is crossed over.
 
-<LI>A <B>Relatively simple</B> polygon allows vertices with a degree\f$\gt 2\f$, but all of its edges are disjoint in their interior. Furthermore, it must be an orientable polygon. Namely when it is inserted into an arrangement and its outer boundary is traversed, the same face is adjacent to all of the halfedges (no crossing over any curve during the traversal). 
+<LI>A <B>Relatively simple</B> polygon allows vertices with a degree\f$> 2\f$, but all of its edges are disjoint in their interior. Furthermore, it must be an orientable polygon. Namely when it is inserted into an arrangement and its outer boundary is traversed, the same face is adjacent to all of the halfedges (no crossing over any curve during the traversal).
 Note that while polygon C has the same curves as polygon B, traversal of the curves leads to crossing over a previously traversed curve, and is therefore neither simple nor relatively simple. 
 
 <LI>A polygon in our context must be relatively simple and its outer boundary vertices must be ordered in a counterclockwise direction around the interior of the polygon.

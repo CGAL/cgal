@@ -156,7 +156,7 @@ private:
     
     virtual void assign (PLY_element& element, typename Point_set::Index index)
     {
-      Type t;
+      Type t{};
       element.assign (t, m_name.c_str());
       put(m_pmap, index, t);
     }

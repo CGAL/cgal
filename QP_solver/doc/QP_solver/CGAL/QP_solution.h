@@ -495,9 +495,9 @@ then \f$\lambda_i\geq 0\f$ (\f$\lambda_i\leq 0\f$, respectively).
 <LI>
 \f[
 \begin{array}{llll}
-&&\geq 0 & \mbox{if \f$u_j=\infty\f$} \\
+&&\geq 0 & \mbox{if $u_j=\infty$} \\
 \qplambda^T A_j &\quad  \\
-&&\leq 0 & \mbox{if \f$l_j=-\infty\f$.}
+&&\leq 0 & \mbox{if $l_j=-\infty$}.
 \end{array}
 \f]
 <LI> \f[\qplambda^T\qpb \quad<\quad \ccSum{j: \qplambda^TA_j <0}{}{ \qplambda^TA_j u_j }
@@ -508,12 +508,12 @@ then \f$\lambda_i\geq 0\f$ (\f$\lambda_i\leq 0\f$, respectively).
 that there is a feasible solution \f$\qpx\f$. Then we get
 \f[
 \begin{array}{lcll}
-0 &\geq& \qplambda^T(A\qpx -\qpb) &  \mbox{(by \f$A\qpx\qprel \qpb\f$ and 1.)} \\
+0 &\geq& \qplambda^T(A\qpx -\qpb) &  \mbox{(by $A\qpx\qprel \qpb$ and 1.)} \\
   &=& \ccSum{j: \qplambda^TA_j <0}{}{ \qplambda^TA_j x_j }
 \quad+\quad  \ccSum{j: \qplambda^TA_j >0}{}{ \qplambda^TA_j x_j} - \qplambda^T \qpb \\
   &\geq& \ccSum{j: \qplambda^TA_j <0}{}{ \qplambda^TA_j u_j }
 \quad+\quad  \ccSum{j: \qplambda^TA_j >0}{}{ \qplambda^TA_j l_j} - \qplambda^T \qpb &
-\mbox{(by \f$\qpl\leq \qpx \leq \qpu\f$ and 2.)} \\
+\mbox{(by $\qpl\leq \qpx \leq \qpu$ and 2.)} \\
   &>& 0 & \mbox{(by 3.)}, 
 \end{array}
 \f]
@@ -547,9 +547,9 @@ solution of (QP). The program (QP) is unbounded if an \f$n\f$-vector
 then \f$(A\qpw)_i\leq 0\f$ (\f$(A\qpw)_i\geq 0, (A\qpw)_i=0\f$, respectively).
 <LI> \f[
 \begin{array}{llll}
-&&\geq 0 & \mbox{if \f$l_j\f$ is finite} \\
+&&\geq 0 & \mbox{if $l_j$ is finite} \\
 w_j &\quad  \\
-&&\leq 0 & \mbox{if \f$u_j\f$ is finite.}
+&&\leq 0 & \mbox{if $u_j$ is finite.}
 \end{array}
 \f]
 <LI> \f$\qpw^TD\qpw=0\f$ and \f$(\qpc^T+2{\qpx^*}^TD)\qpw<0\f$.

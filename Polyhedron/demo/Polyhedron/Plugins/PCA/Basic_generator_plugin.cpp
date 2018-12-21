@@ -34,6 +34,8 @@ typedef Kernel::Point_3 Point;
 
 namespace euler =  CGAL::Euler;
 using namespace CGAL::Three;
+namespace params = CGAL::parameters;
+
 class Q_DECL_EXPORT Basic_generator_plugin :
     public QObject,
     public Polyhedron_demo_plugin_helper
@@ -548,7 +550,7 @@ void Basic_generator_plugin::generateSphere()
   typedef typename boost::property_map<typename Facegraph_item::Face_graph, CGAL::vertex_point_t>::type VPMap;
   if(precision !=0)
     CGAL::Subdivision_method_3::Sqrt3_subdivision(sphere,
-                                                  precision);
+                                                  params::number_of_iterations(precision));
   VPMap vpmap = get(CGAL::vertex_point, sphere);
   //emplace the points back on the sphere
   BOOST_FOREACH(typename boost::graph_traits<typename Facegraph_item::Face_graph>::vertex_descriptor vd, vertices(sphere))
