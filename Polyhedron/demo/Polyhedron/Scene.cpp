@@ -184,9 +184,9 @@ Scene::erase(Scene::Item_id index)
   item->deleteLater();
   selected_item = -1;
   //re-creates the Scene_view
-  Q_FOREACH(Scene_item* item, m_entries)
+  Q_FOREACH(Item_id id, children)
   {
-    organize_items(item, invisibleRootItem(), 0);
+    organize_items(this->item(id), invisibleRootItem(), 0);
   }
   QStandardItemModel::beginResetModel();
   Q_EMIT updated();
@@ -236,9 +236,9 @@ Scene::erase(QList<int> indices)
       continue;
     if(item->parentGroup())
       item->parentGroup()->removeChild(item);
-        children.removeAll(removed_item);
-        indexErased(removed_item);
-        m_entries.removeAll(item);
+    children.removeAll(removed_item);
+    indexErased(removed_item);
+    m_entries.removeAll(item);
     
     Q_EMIT itemAboutToBeDestroyed(item);
     item->aboutToBeDestroyed();
@@ -247,9 +247,9 @@ Scene::erase(QList<int> indices)
   clear();
   index_map.clear();
   selected_item = -1;
-  Q_FOREACH(Scene_item* item, m_entries)
+  Q_FOREACH(Item_id id, children)
   {
-    organize_items(item, invisibleRootItem(), 0);
+    organize_items(item(id), invisibleRootItem(), 0);
   }
   QStandardItemModel::beginResetModel();
   Q_EMIT updated();
@@ -279,12 +279,13 @@ void Scene::remove_item_from_groups(Scene_item* item)
 }
 Scene::~Scene()
 {
-    Q_FOREACH(CGAL::Three::Scene_item* item_ptr, m_entries)
-    {
-         item_ptr->deleteLater();
-    }
-    m_entries.clear();
-
+  vao->destroy();
+  delete vao;  
+  Q_FOREACH(CGAL::Three::Scene_item* item_ptr, m_entries)
+  {
+    item_ptr->deleteLater();
+  }
+  m_entries.clear();
 }
 
 CGAL::Three::Scene_item*
@@ -686,6 +687,34 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
         transparent_items.push_back(id);
     }
     renderScene(children, viewer, picked_item_IDs, with_names, -1, false, NULL);
+    if(with_names)
+    {
+      //here we get the selected point, before erasing the depth buffer. We store it 
+      //in a dynamic property as a QList<double>. If there is some alpha, the 
+      //depth buffer is altered, and the picking will return true even when it is 
+      // performed in the background, when it should return false. To avoid that,
+      // we distinguish the case were there is no alpha, to let the viewer
+      //perform it, and the case where the pixel is not found. In the first case,
+      //we erase the property, in the latter we return an empty list.
+      //According ot that, in the viewer, either we perform the picking, either we do nothing.
+      if(has_alpha()) {
+        bool found = false;
+        CGAL::qglviewer::Vec point = viewer->camera()->pointUnderPixel(picked_pixel, found) - viewer->offset();
+        if(found){
+          QList<QVariant> picked_point;
+          picked_point <<point.x
+                      <<point.y
+                     <<point.z;
+          viewer->setProperty("picked_point", picked_point);
+        }
+        else{
+          viewer->setProperty("picked_point", QList<QVariant>());
+        }
+      }
+      else {
+        viewer->setProperty("picked_point", {});
+      }
+    }
     if(!with_names && has_alpha())
     {
       std::vector<QOpenGLFramebufferObject*> fbos;
@@ -1191,8 +1220,9 @@ void Scene::moveRowUp()
       }
     }
   }
-  if(!to_select.isEmpty())
+  if(!to_select.isEmpty()){
     selectionChanged(to_select);
+  }
 }
 void Scene::moveRowDown()
 {
@@ -1547,7 +1577,6 @@ void Scene::redraw_model()
     index_map.clear();
     //fills the model
     Q_FOREACH(Item_id id, children)
-    
     {
         organize_items(m_entries[id], invisibleRootItem(), 0);
     }

@@ -458,6 +458,7 @@ public Q_SLOTS:
   void lock_test_item(bool b);
 private:
   bool is_locked;
+  QMap<QAction*, QMenu*> action_menu_map;
 };
 
 #endif // ifndef MAINWINDOW_H

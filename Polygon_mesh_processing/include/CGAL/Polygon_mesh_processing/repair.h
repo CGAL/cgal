@@ -1510,7 +1510,7 @@ bool remove_degenerate_faces(      TriangleMesh& tmesh,
 }
 
 template<class TriangleMesh>
-std::size_t remove_degenerate_faces(TriangleMesh& tmesh)
+bool remove_degenerate_faces(TriangleMesh& tmesh)
 {
   return remove_degenerate_faces(tmesh,
     CGAL::Polygon_mesh_processing::parameters::all_default());

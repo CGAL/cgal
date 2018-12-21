@@ -13,6 +13,7 @@
 #include <CGAL/boost/graph/helpers.h>
 
 #include "Kernel_type.h"
+#include <CGAL/Three/Three.h>
 typedef Kernel::Plane_3 Plane;
 typedef Kernel::Iso_cuboid_3 Iso_cuboid;
 typedef Kernel::Triangle_3 Triangle;
@@ -95,12 +96,11 @@ private:
 void Polyhedron_demo_pca_plugin::on_actionFitPlane_triggered()
 {
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
-  Scene_surface_mesh_item* sm_item =
-      qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
-  
-  
-  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    Scene_surface_mesh_item* sm_item =
+    qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+
+  Three::CursorScopeGuard scope(Qt::WaitCursor);
   if(sm_item){
     std::list<Triangle> triangles;
     
@@ -127,46 +127,44 @@ void Polyhedron_demo_pca_plugin::on_actionFitPlane_triggered()
       new_item->setColor(Qt::magenta);
       new_item->setRenderingMode(sm_item->renderingMode());
       scene->addItem(new_item);
-      QApplication::restoreOverrideCursor();
       return;
     }
   }
-  Scene_points_with_normal_item* item =
-      qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
-  
-  if (item)
-  {
-    Point_set* points = item->point_set();
+    Scene_points_with_normal_item* item =
+        qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
     
-    // fit plane to triangles
-    Plane plane;
-    Point center_of_mass;
-    std::cout << "Fit plane...";
-    CGAL::linear_least_squares_fitting_3
-        (points->points().begin(),points->points().end(),plane, center_of_mass,
-         CGAL::Dimension_tag<0>());
-    std::cout << "ok" << std::endl;
-    
-    // compute centroid
-    Scene_plane_item* new_item = new Scene_plane_item(this->scene);
-    new_item->setPosition(center_of_mass.x(),
-                          center_of_mass.y(),
-                          center_of_mass.z());
-    const Vector& normal = plane.orthogonal_vector();
-    new_item->setNormal(normal.x(), normal.y(), normal.z());
-    new_item->setName(tr("%1 (plane fit)").arg(item->name()));
-    new_item->setColor(Qt::magenta);
-    new_item->setRenderingMode(item->renderingMode());
-    scene->addItem(new_item);
-  }
-  QApplication::restoreOverrideCursor();
+    if (item)
+    {
+      Point_set* points = item->point_set();
+      
+      // fit plane to triangles
+      Plane plane;
+      Point center_of_mass;
+      std::cout << "Fit plane...";
+      CGAL::linear_least_squares_fitting_3
+          (points->points().begin(),points->points().end(),plane, center_of_mass,
+           CGAL::Dimension_tag<0>());
+      std::cout << "ok" << std::endl;
+      
+      // compute centroid
+      Scene_plane_item* new_item = new Scene_plane_item(this->scene);
+      new_item->setPosition(center_of_mass.x(),
+                            center_of_mass.y(),
+                            center_of_mass.z());
+      const Vector& normal = plane.orthogonal_vector();
+      new_item->setNormal(normal.x(), normal.y(), normal.z());
+      new_item->setName(tr("%1 (plane fit)").arg(item->name()));
+      new_item->setColor(Qt::magenta);
+      new_item->setRenderingMode(item->renderingMode());
+      scene->addItem(new_item);
+    }
 }
 
 void Polyhedron_demo_pca_plugin::on_actionFitLine_triggered()
 {
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
-  QApplication::setOverrideCursor(Qt::WaitCursor);
+  Three::CursorScopeGuard sg(Qt::WaitCursor);
 
   Scene_surface_mesh_item* sm_item =
       qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
@@ -245,7 +243,6 @@ void Polyhedron_demo_pca_plugin::on_actionFitLine_triggered()
       new_item->setRenderingMode( sm_item->renderingMode());
       scene->addItem(new_item);
     }
-    QApplication::restoreOverrideCursor();
     return;
   }
   else
@@ -320,7 +317,6 @@ void Polyhedron_demo_pca_plugin::on_actionFitLine_triggered()
         scene->addItem(new_item);
       }
   }
-  QApplication::restoreOverrideCursor();
 }
 
 #include "Pca_plugin.moc"

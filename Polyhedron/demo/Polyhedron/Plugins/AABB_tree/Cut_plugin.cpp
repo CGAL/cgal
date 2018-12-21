@@ -253,7 +253,7 @@ public:
     {
     }
 
-  bool isFinite() const { return true; }
+  bool isFinite() const { return false; }
   bool isEmpty() const { return is_tree_empty; }
   //computed in constructor
   void compute_bbox() const {}

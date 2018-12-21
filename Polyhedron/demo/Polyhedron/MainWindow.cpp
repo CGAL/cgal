@@ -403,45 +403,70 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
 }
 
 //Recursive function that do a pass over a menu and its sub-menus(etc.) and hide them when they are empty
-void filterMenuOperations(QMenu* menu, bool showFullMenu)
+void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
 {
-  Q_FOREACH(QAction* action, menu->actions()) {
-    if(QMenu* menu = action->menu())
-    {
-      filterMenuOperations(menu, showFullMenu);
-      action->setVisible(showFullMenu && !(menu->isEmpty()));
+  QList<QAction*> buffer;
+  Q_FOREACH(QAction* action, menu->actions())
+    buffer.append(action);
+  while(!buffer.isEmpty()){
+    
+    Q_FOREACH(QAction* action, buffer) {
+      if(QMenu* submenu = action->menu())
+      {
+        bool keep = true;
+        if(!keep_from_here){
+          keep = submenu->menuAction()->text().contains(filter, Qt::CaseInsensitive);
+          if(!keep)
+          {
+            Q_FOREACH(QAction* subaction, submenu->actions())
+            {
+              submenu->removeAction(subaction);
+              buffer.append(subaction);
+            }
+          }
+          else
+          {
+            menu->addAction(submenu->menuAction());
+          }
+        }
+        filterMenuOperations(submenu, filter, keep);
+        action->setVisible(!(submenu->isEmpty()));
+      }
+      else if(action->text().contains(filter, Qt::CaseInsensitive)){
+        menu->addAction(action);
+      }
+      buffer.removeAll(action);
     }
   }
-
 }
 
 void MainWindow::filterOperations()
 {
-  static QVector<QAction*> to_remove;
-  Q_FOREACH(QAction* action, to_remove)
-    ui->menuOperations->removeAction(action);
-  QString filter=operationSearchBar.text();
-  if(!filter.isEmpty())
-    Q_FOREACH(const PluginNamePair& p, plugins) {
-      Q_FOREACH(QAction* action, p.first->actions()) {
-        action->setVisible( p.first->applicable(action) 
-                            && action->text().contains(filter, Qt::CaseInsensitive));
-        if(action->menu() != ui->menuOperations){
-          ui->menuOperations->addAction(action);
-          to_remove.push_back(action);
-        }
-      }
+  //return actions to their true menu
+  Q_FOREACH(QMenu* menu, action_menu_map.values())
+  {
+    Q_FOREACH(QAction* action, menu->actions())
+    {
+      if(action != searchAction)
+        menu->removeAction(action);
     }
-  else{
-    Q_FOREACH(const PluginNamePair& p, plugins) {
-      Q_FOREACH(QAction* action, p.first->actions()) {
-        action->setVisible( p.first->applicable(action) 
-                            && action->text().contains(filter, Qt::CaseInsensitive));
-      }
-    }
-    // do a pass over all menus in Operations and their sub-menus(etc.) and hide them when they are empty
   }
-  filterMenuOperations(ui->menuOperations, filter.isEmpty());
+  Q_FOREACH(QAction* action, action_menu_map.keys())
+  {
+    action_menu_map[action]->addAction(action);
+  }
+  QString filter=operationSearchBar.text();
+  Q_FOREACH(const PluginNamePair& p, plugins) {
+    Q_FOREACH(QAction* action, p.first->actions()) {
+      action->setVisible( p.first->applicable(action) 
+                          && (action->text().contains(filter, Qt::CaseInsensitive)
+                              || action->property("subMenuName")
+                              .toString().contains(filter, Qt::CaseInsensitive)));
+    }
+  }
+  // do a pass over all menus in Operations and their sub-menus(etc.) and hide them when they are empty
+  filterMenuOperations(ui->menuOperations, filter, false);
+  operationSearchBar.setFocus();
 }
 
 #include <CGAL/Three/exceptions.h>
@@ -550,12 +575,14 @@ void MainWindow::setMenus(QString name, QString parentName, QAction* a )
     menu_map[parentName] = new QMenu(parentName, this);
   // add the submenu in the menu
   menu_map[parentName]->addMenu(menu_map[menuName]);
+  action_menu_map[menu_map[menuName]->menuAction()] = menu_map[parentName];
 
   // only add the action in the last submenu
   if(slash_index==-1)
   {
     ui->menuOperations->removeAction(a);
     menu_map[menuName]->addAction(a);
+    action_menu_map[a] = menu_map[menuName];
   }
 }
 
@@ -766,6 +793,7 @@ bool MainWindow::initPlugin(QObject* obj)
       // If action does not belong to the menus, add it to "Operations" menu
       if(!childs.contains(action)) {
         ui->menuOperations->addAction(action);
+        action_menu_map[action] = ui->menuOperations;
       }
       // Show and enable menu item
       addAction(action);
@@ -969,6 +997,8 @@ void MainWindow::reloadItem() {
   Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
   {
     item = scene->item(id);
+    if(!item)//secure items like selection items that get deleted when their "parent" item is reloaded.
+      continue;
     QString filename = item->property("source filename").toString();
     QString loader_name = item->property("loader_name").toString();
     if(filename.isEmpty() || loader_name.isEmpty()) {
@@ -1208,11 +1238,13 @@ void MainWindow::selectSceneItem(int i)
   }
   else {
     QItemSelection s =
-      proxyModel->mapSelectionFromSource(scene->createSelection(i));
-
+        proxyModel->mapSelectionFromSource(scene->createSelection(i));
+    QModelIndex mi = proxyModel->mapFromSource(scene->getModelIndexFromId(i).first());
+    sceneView->setCurrentIndex(mi);
     sceneView->selectionModel()->select(s,
                                         QItemSelectionModel::ClearAndSelect);
     sceneView->scrollTo(s.indexes().first());
+    sceneView->setCurrentIndex(sceneView->selectionModel()->selectedIndexes().first());
   }
 }
 
@@ -1227,6 +1259,8 @@ void MainWindow::selectSceneItems(QList<int> is)
     QItemSelection s =
       proxyModel->mapSelectionFromSource(scene->createSelection(is));
 
+    QModelIndex i = proxyModel->mapFromSource(scene->getModelIndexFromId(is.first()).first());
+    sceneView->setCurrentIndex(i);
     sceneView->selectionModel()->select(s,
                                         QItemSelectionModel::ClearAndSelect);
     sceneView->scrollTo(s.indexes().first());
@@ -1410,6 +1444,15 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
         QMap<QString, QAction*> menu_actions;
         QVector<QMenu*> slider_menus;
         bool has_stats = false;
+        bool has_reload = false;
+        Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
+        {
+          if(!scene->item(id)->property("source filename").toString().isEmpty())
+          {
+            has_reload = true;
+            break;
+          }
+        }
         Q_FOREACH(QAction* action, scene->item(main_index)->contextMenu()->actions())
         {
           if(action->property("is_groupable").toBool())
@@ -1572,10 +1615,13 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
           connect(actionStatistics, SIGNAL(triggered()),
                   this, SLOT(statisticsOnItem()));
         }
+        if(has_reload)
+        {
           QAction* reload = menu.addAction(tr("&Reload Item from File"));
           reload->setProperty("is_groupable", true);
           connect(reload, SIGNAL(triggered()),
                   this, SLOT(reloadItem()));
+        }
         QAction* saveas = menu.addAction(tr("&Save as..."));
         connect(saveas,  SIGNAL(triggered()),
                 this, SLOT(on_actionSaveAs_triggered()));
@@ -2203,6 +2249,8 @@ void MainWindow::on_actionLookAt_triggered()
   if( i == QDialog::Accepted &&
       dialog.has_correct_coordinates() )
   {
+    if(viewer->camera()->frame()->isSpinning())
+      viewer->camera()->frame()->stopSpinning();
     viewerShow((float)dialog.get_x()+viewer->offset().x,
                (float)dialog.get_y()+viewer->offset().y,
                (float)dialog.get_z()+viewer->offset().z);
