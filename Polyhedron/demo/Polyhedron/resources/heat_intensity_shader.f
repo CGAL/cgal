@@ -22,6 +22,10 @@ uniform sampler2D sampler;
 uniform highp float alpha;
 out vec4 out_color;
 
+// Define this and resources/heat_intensity_shader.f will draw black instead of white lines.
+// #define HEAT_METHOD_BLACK_LINES
+
+
 float depth(float z)
 {
   return (2 * near) / (far + near - z * (far - near));

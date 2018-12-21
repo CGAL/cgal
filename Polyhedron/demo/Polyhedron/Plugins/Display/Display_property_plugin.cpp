@@ -29,8 +29,6 @@
 #define ARBITRARY_DBL_MIN 1.0E-30
 #define ARBITRARY_DBL_MAX 1.0E+30
 
-// Define this and resources/heat_intensity_shader.f will draw black instead of white lines.
-// #define HEAT_METHOD_BLACK_LINES
 
 //Item for heat values
 typedef CGAL::Three::Triangle_container Tri;
