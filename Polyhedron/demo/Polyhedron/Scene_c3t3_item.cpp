@@ -2058,7 +2058,11 @@ void Scene_c3t3_item::setAlpha(int alpha)
   redraw();
 }
 
-QSlider* Scene_c3t3_item::alphaSlider() { return d->alphaSlider; }
+QSlider* Scene_c3t3_item::alphaSlider() {
+  if(!d->alphaSlider)
+    d->computeElements();
+  return d->alphaSlider;
+}
 
 void Scene_c3t3_item::initializeBuffers(Viewer_interface *v) const
 {
