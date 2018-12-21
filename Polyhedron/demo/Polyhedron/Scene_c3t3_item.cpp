@@ -1304,7 +1304,7 @@ QMenu* Scene_c3t3_item::contextMenu()
     QMenu *container = new QMenu(tr("Alpha value"));
     container->menuAction()->setProperty("is_groupable", true);
     QWidgetAction *sliderAction = new QWidgetAction(0);
-    sliderAction->setDefaultWidget(d->alphaSlider);
+    sliderAction->setDefaultWidget(alphaSlider());
     connect(d->alphaSlider, &QSlider::valueChanged,
             [this]()
     {
