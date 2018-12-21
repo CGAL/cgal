@@ -43,6 +43,9 @@ Note that this package depends on the third party \ref thirdpartyEigen library (
 model of the concept `SparseLinearAlgebraWithFactorTraits_d`.
 This implementation is based on \cgalCite{cgal:cww-ghnac-13} and \cgalCite{cgal:fsbs-acidt-06}
 
+This package is related to the package \ref PkgSurfaceMeshShortestPath. Both deal with geodesic distances.
+The heat method package computes for every vertex of a mesh an approximate distance to one or several source vertices.
+The geodesic shortest path package computes the exact shortest path between any two points on the surface.
 
 
 
