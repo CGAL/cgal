@@ -2726,6 +2726,7 @@ void MainWindow::invalidate_bbox(bool do_recenter)
 
 void MainWindow::test_all_actions()
 {
+  int nb_items = scene->numberOfEntries();
   selectSceneItem(0);
   Q_FOREACH(PluginNamePair pnp, plugins)
   {
@@ -2745,9 +2746,9 @@ void MainWindow::test_all_actions()
            
         }
         qDebug()<<" OK.";
-        while(scene->numberOfEntries() > 1)
+        while(scene->numberOfEntries() > nb_items)
         {
-          scene->erase(1);
+          scene->erase(nb_items);
         }
         
         selectSceneItem(0);
@@ -2758,7 +2759,8 @@ void MainWindow::test_all_actions()
       }
     }
   }
-  scene->erase(0);
+  while(scene->numberOfEntries() > 0)
+    scene->erase(0);
 }
 
 void MainWindow::lock_test_item(bool b)
