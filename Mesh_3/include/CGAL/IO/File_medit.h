@@ -815,7 +815,7 @@ output_to_medit(std::ostream& os,
        fit != c3t3.facets_in_complex_end();
        ++fit)
   {
-    C3T3::Facet f = (*fit);
+    typename C3T3::Facet f = (*fit);
     
     // Apply priority among subdomains, to get consistent facet orientation per subdomain-pair interface.
     if (f.first->subdomain_index() < f.first->neighbor(f.second)->subdomain_index())
