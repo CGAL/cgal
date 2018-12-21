@@ -17,7 +17,7 @@ bool test_info(SDG& sdg, const char* fname)
   assert( ifs );
 
   sdg.clear();
-  typename SDG::Site_2  site;
+  typename SDG::Site_2  site = SDG::Site_2::construct_site_2(CGAL::ORIGIN);
 
   // read the sites and insert them in the segment Delaunay graph
   int info_id = 1;
