@@ -2688,7 +2688,7 @@ collect_garbage(F& funct)
         set_halfedge(f, hmap[halfedge(f)]);
     }
 
-    //apply functor befor invalidating the maps
+    //apply functor before invalidating the maps
     funct(vmap, hmap, fmap);
     // remove index maps
     remove_property_map<Vertex_index>(vmap);
