@@ -25,10 +25,11 @@
 // This could check BOOST_VERSION >= 105300, but before 1.56 there is no
 // implicit conversion from double, which makes it hard to use in CGAL.
 // It is easier to disable this number type completely for old versions.
-// Before 1.63, I/O is broken. If we have LEDA or GMP, we have a safer
-// alternative, but otherwise, without an alternative, we might as well still
-// use boost. Again, disabling the whole file is just the easy solution.
-#if !defined CGAL_DO_NOT_USE_BOOST_MP && BOOST_VERSION >= 105600 && (BOOST_VERSION >= 106300 || !defined CGAL_USE_GMP)
+// Before 1.63, I/O is broken.  Again, disabling the whole file is just the
+// easy solution.
+// TODO: MSVC has trouble with versions <= 1.69, reenable once 1.70 has been
+// tested. https://github.com/boostorg/multiprecision/issues/98
+#if !defined CGAL_DO_NOT_USE_BOOST_MP && BOOST_VERSION >= 106300 && !defined _MSC_VER
 #define CGAL_USE_BOOST_MP 1
 
 #include <CGAL/functional.h> // *ary_function
