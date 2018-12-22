@@ -69,10 +69,10 @@ struct AST_boost_mp;
 template <class NT>
 struct AST_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_integer> >
   : Algebraic_structure_traits_base< NT, Euclidean_ring_tag > {
-    typedef NT			Type;
-    typedef Euclidean_ring_tag	Algebraic_category;
-    typedef Boolean_tag<std::numeric_limits<Type>::is_exact>	Is_exact;
-    typedef Tag_false		Is_numerical_sensitive;
+    typedef NT Type;
+    typedef Euclidean_ring_tag Algebraic_category;
+    typedef Boolean_tag<std::numeric_limits<Type>::is_exact> Is_exact;
+    typedef Tag_false Is_numerical_sensitive;
 
     struct Is_zero: public CGAL::cpp98::unary_function<Type ,bool> {
         bool operator()( const Type& x) const {
@@ -115,10 +115,10 @@ template <class NT>
 struct AST_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_rational> >
   : public Algebraic_structure_traits_base< NT , Field_tag >  {
   public:
-    typedef NT			Type;
-    typedef Field_tag		Algebraic_category;
-    typedef Tag_true		Is_exact;
-    typedef Tag_false		Is_numerical_sensitive;
+    typedef NT                  Type;
+    typedef Field_tag           Algebraic_category;
+    typedef Tag_true            Is_exact;
+    typedef Tag_false           Is_numerical_sensitive;
 
     struct Is_zero: public CGAL::cpp98::unary_function<Type ,bool> {
         bool operator()( const Type& x) const {
@@ -192,11 +192,11 @@ struct RET_boost_mp_base
         : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
         std::pair<double, double>
         operator()(const Type& x) const {
-	    // assume the conversion is within 1 ulp
-	    // adding IA::smallest() doesn't work because inf-e=inf, even rounded down.
-	    double d = x.template convert_to<double>();
-	    double inf = std::numeric_limits<double>::infinity();
-	    return std::pair<double, double> (nextafter (d, -inf), nextafter (d, inf));
+            // assume the conversion is within 1 ulp
+            // adding IA::smallest() doesn't work because inf-e=inf, even rounded down.
+            double d = x.template convert_to<double>();
+            double inf = std::numeric_limits<double>::infinity();
+            return std::pair<double, double> (nextafter (d, -inf), nextafter (d, inf));
         }
     };
 };
@@ -217,14 +217,14 @@ struct RET_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_rat
         : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
         std::pair<double, double>
         operator()(const Type& x) const {
-	    std::pair<double,double> p_num = CGAL::to_interval (numerator (x));
-	    std::pair<double,double> p_den = CGAL::to_interval (denominator (x));
-	    typedef Interval_nt<false> IA;
-	    IA::Protector P;
-	    // assume the conversion is within 1 ulp for integers, but the conversion from rational may be unsafe, see boost trac #10085
-	    IA i_num (p_num.first, p_num.second);
-	    IA i_den (p_den.first, p_den.second);
-	    IA i = i_num / i_den;
+            std::pair<double,double> p_num = CGAL::to_interval (numerator (x));
+            std::pair<double,double> p_den = CGAL::to_interval (denominator (x));
+            typedef Interval_nt<false> IA;
+            IA::Protector P;
+            // assume the conversion is within 1 ulp for integers, but the conversion from rational may be unsafe, see boost trac #10085
+            IA i_num (p_num.first, p_num.second);
+            IA i_den (p_den.first, p_den.second);
+            IA i = i_num / i_den;
             return std::pair<double, double>(i.inf(), i.sup());
         }
     };
@@ -387,7 +387,7 @@ struct Coercion_traits<boost::multiprecision::number<B1, E1>, boost::multiprecis
     typedef Type result_type;
     template <class U>
       Type operator()(const U& x) const {
-	return Type(x);
+        return Type(x);
       }
   };
 };
@@ -402,7 +402,7 @@ struct Coercion_traits<boost::multiprecision::number<B1, E1>, boost::multiprecis
     typedef Type result_type;
     template <class U>
       Type operator()(const U& x) const {
-	return Type(x);
+        return Type(x);
       }
   };
 };
