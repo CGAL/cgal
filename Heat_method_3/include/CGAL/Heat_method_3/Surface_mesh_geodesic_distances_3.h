@@ -23,7 +23,7 @@
 #define CGAL_HEAT_METHOD_3_SURFACE_MESH_GEODESIC_DISTANCES_3_H
 
 #include <CGAL/license/Heat_method_3.h>
-#include <CGAL/Heat_method_3/Intrinsic_Delaunay_triangulation_3.h>
+#include <CGAL/Heat_method_3/internal/Intrinsic_Delaunay_triangulation_3.h>
 #include <CGAL/Heat_method_3/internal/V2V.h>
 #include <CGAL/disable_warnings.h>
 
