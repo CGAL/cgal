@@ -1065,9 +1065,20 @@ namespace INTERN_INTERVAL_NT {
   Interval_nt<Protected>
   abs (const Interval_nt<Protected> & d)
   {
+#ifdef CGAL_USE_SSE2
+    __m128d a = d.simd();
+    __m128d b = (-d).simd();
+    __m128d x = _mm_min_pd (a, b);
+    __m128d y = _mm_max_pd (a, b);
+    __m128d t = _mm_move_sd (y, x);
+    __m128d z = _mm_set1_pd(-0.); // +0. would be valid, but I'd rather end up with interval [+0, sup]
+    __m128d r = _mm_min_sd(t, z);
+    return Interval_nt<Protected> (r);
+#else
     if (d.inf() >= 0.0) return d;
     if (d.sup() <= 0.0) return -d;
     return Interval_nt<Protected>(0.0, (std::max)(-d.inf(), d.sup()));
+#endif
   }
 
   template <bool Protected>
