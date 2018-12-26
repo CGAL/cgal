@@ -71,7 +71,11 @@ public:
 
   Interval_nt()
 #ifndef CGAL_NO_ASSERTIONS
+# ifdef CGAL_USE_SSE2
+      : val(_mm_setr_pd(-1, 0))
+# else
       : _inf(-1), _sup(0)
+# endif
              // to early and deterministically detect use of uninitialized
 #endif
     {}
@@ -135,8 +139,18 @@ public:
 #  define CGAL_DISABLE_ROUNDING_MATH_CHECK
 #endif
 
+#ifdef CGAL_USE_SSE2
+  // This constructor should really be private, like the simd() function, but
+  // that would mean a lot of new friends, so they are only undocumented.
+  explicit Interval_nt(__m128d v) : val(v) {}
+#endif
+
   Interval_nt(double i, double s)
+#ifdef CGAL_USE_SSE2
+    : val(_mm_setr_pd(-i, s))
+#else
     : _inf(-i), _sup(s)
+#endif
   {
     // Previously it was:
     //    CGAL_assertion_msg(!(i>s);
@@ -154,7 +168,11 @@ public:
 
   IA operator-() const
   {
+#ifdef CGAL_USE_SSE2
+    return IA (_mm_shuffle_pd(val, val, 1));
+#else
     return IA (-sup(), -inf());
+#endif
   }
 
   IA & operator+= (const IA &d) { return *this = *this + d; }
@@ -179,12 +197,24 @@ public:
 
   double inf() const
   {
+#ifdef CGAL_USE_SSE2
+    return -_mm_cvtsd_f64(val);
+#else
     return -_inf;
+#endif
   }
   double sup() const
   {
+#ifdef CGAL_USE_SSE2
+    // Should we use shufpd because it is already used by operator- ?
+    return _mm_cvtsd_f64(_mm_unpackhi_pd(val, val));
+#else
     return _sup;
+#endif
   }
+#ifdef CGAL_USE_SSE2
+  __m128d simd() const { return val; }
+#endif
 
   std::pair<double, double> pair() const
   {
@@ -212,7 +242,15 @@ public:
 private:
   // Pair inf_sup;
   // The value stored in _inf is the negated lower bound.
+  // TODO: experiment with different orders of the values in the SSE2 register,
+  // for instance {sup, -inf}, or {inf, -sup}, and adapt users to query the low
+  // value in priority. {-inf, sup} has the drawback that neither inf nor sup
+  // is free to access.
+#ifdef CGAL_USE_SSE2
+  __m128d val;
+#else
   double _inf, _sup;
+#endif
 
   struct Test_runtime_rounding_modes {
     Test_runtime_rounding_modes()
