@@ -187,12 +187,24 @@ public:
 
   bool is_same (const IA & d) const
   {
+#ifdef CGAL_USE_SSE2
+    // Faster to answer yes, but slower to answer no.
+    return _mm_movemask_pd (_mm_cmpneq_pd (val, d.val)) == 0;
+#else
     return inf() == d.inf() && sup() == d.sup();
+#endif
   }
 
   bool do_overlap (const IA & d) const
   {
+#ifdef CGAL_USE_SSE2
+    __m128d m = _mm_set1_pd (-0.);
+    __m128d y = _mm_xor_pd ((-d).val, m); // {-ds,di}
+    __m128d c = _mm_cmplt_pd (val, y); // {i>ds,s<di}
+    return _mm_movemask_pd (c) == 0;
+#else
     return !(d.inf() > sup() || d.sup() < inf());
+#endif
   }
 
   double inf() const
@@ -552,8 +564,15 @@ Interval_nt<Protected>
 operator+ (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
 {
   typename Interval_nt<Protected>::Internal_protector P;
+#ifdef CGAL_USE_SSE2
+  __m128d aa = IA_opacify128(a.simd());
+  __m128d bb = IA_opacify128_weak(b.simd());
+  __m128d r = _mm_add_pd(aa, bb);
+  return Interval_nt<Protected>(IA_opacify128(r));
+#else
   return Interval_nt<Protected> (-CGAL_IA_ADD(-a.inf(), -b.inf()),
                                   CGAL_IA_ADD(a.sup(), b.sup()));
+#endif
 }
 
 template <bool Protected>
@@ -584,9 +603,13 @@ inline
 Interval_nt<Protected>
 operator- (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
 {
+#ifdef CGAL_USE_SSE2
+  return a+-b;
+#else
   typename Interval_nt<Protected>::Internal_protector P;
   return Interval_nt<Protected>(-CGAL_IA_ADD(b.sup(), -a.inf()),
                                  CGAL_IA_ADD(a.sup(), -b.inf()));
+#endif
 }
 
 template <bool Protected>
@@ -740,9 +763,16 @@ struct Min <Interval_nt<Protected> >
     Interval_nt<Protected> operator()( const Interval_nt<Protected>& d,
                                        const Interval_nt<Protected>& e) const
     {
+#ifdef CGAL_USE_SSE2
+        __m128d x = _mm_min_pd (d.simd(), e.simd());
+        // Use _mm_max_sd instead?
+        __m128d y = _mm_max_pd (d.simd(), e.simd());
+        return Interval_nt<Protected> (_mm_move_sd (x, y));
+#else
         return Interval_nt<Protected>(
                 -(std::max)(-d.inf(), -e.inf()),
                  (std::min)( d.sup(),  e.sup()));
+#endif
     }
 };
 
@@ -755,9 +785,16 @@ struct Max <Interval_nt<Protected> >
     Interval_nt<Protected> operator()( const Interval_nt<Protected>& d,
                                        const Interval_nt<Protected>& e) const
     {
+#ifdef CGAL_USE_SSE2
+        // Use _mm_min_sd instead?
+        __m128d x = _mm_min_pd (d.simd(), e.simd());
+        __m128d y = _mm_max_pd (d.simd(), e.simd());
+        return Interval_nt<Protected> (_mm_move_sd (y, x));
+#else
         return Interval_nt<Protected>(
                 -(std::min)(-d.inf(), -e.inf()),
                  (std::max)( d.sup(),  e.sup()));
+#endif
     }
 };
 
