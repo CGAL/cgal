@@ -786,9 +786,22 @@ operator* (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
 template <bool Protected>
 inline
 Interval_nt<Protected>
-operator* (double a, const Interval_nt<Protected> & b)
+operator* (double a, Interval_nt<Protected> b)
 {
-  return Interval_nt<Protected>(a)*b;
+  // return Interval_nt<Protected>(a)*b;
+  typedef Interval_nt<Protected> IA;
+  typename IA::Internal_protector P;
+  if (a < 0) { a = -a; b = -b; }
+  // Now a >= 0
+#ifdef CGAL_USE_SSE2
+  // TODO: try/benchmark a branchless version
+  __m128d bb = IA_opacify128_weak(b.simd());
+  __m128d aa = _mm_set1_pd(IA_opacify(a));
+  __m128d r = _mm_mul_pd(aa, bb);
+  return IA(IA_opacify128(r));
+#else
+  return IA(-CGAL_IA_MUL(a, -b.inf()), CGAL_IA_MUL(a, b.sup()));
+#endif
 }
 
 template <bool Protected>
@@ -796,7 +809,7 @@ inline
 Interval_nt<Protected>
 operator* (const Interval_nt<Protected> & a, double b)
 {
-  return a*Interval_nt<Protected>(b);
+  return b * a;
 }
 
 template <bool Protected>
