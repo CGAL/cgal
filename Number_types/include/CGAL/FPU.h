@@ -107,7 +107,7 @@ extern "C" {
 #if  defined(__SSE2__) \
   || (defined(_M_IX86_FP) && _M_IX86_FP >= 2) \
   || defined(_M_X64)
-#  include <emmintrin.h>
+#  include <immintrin.h>
 #  define CGAL_HAS_SSE2 1
 #endif
 
@@ -229,6 +229,40 @@ inline double IA_force_to_double(double x)
 #endif
 #endif
 }
+
+#ifdef CGAL_USE_SSE2
+// Vector version of IA_opacify
+inline __m128d IA_opacify128(__m128d x)
+{
+# ifdef __GNUG__
+#  ifdef __llvm__
+  asm volatile ("":"+x"(x));
+#  else
+  asm volatile ("":"+xm"(x));
+#  endif
+  return x;
+# else
+  volatile __m128d e = x;
+  return e;
+# endif
+}
+
+// Weaker version. It still blocks transformations like -(a-b) to b-a, but does not prevent migrating across fesetround. When an operation has 2 arguments and one uses IA_opacify128, the other one can stick to IA_opacify128_weak
+inline __m128d IA_opacify128_weak(__m128d x)
+{
+# ifdef __GNUG__
+#  ifdef __llvm__
+  asm ("":"+x"(x));
+#  else
+  asm ("":"+xm"(x));
+#  endif
+  return x;
+# else
+  volatile __m128d e = x;
+  return e;
+# endif
+}
+#endif
 
 // Interval arithmetic needs to protect against double-rounding effects
 // caused by excess FPU precision, even if it forces the 53bit mantissa
