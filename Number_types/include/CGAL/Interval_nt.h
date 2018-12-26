@@ -1292,7 +1292,31 @@ class Algebraic_structure_traits< Interval_nt<B> >
       return Boolean(true);
     }
   };
-  
+#ifdef CGAL_USE_SSE2
+  class Inverse
+    : public CGAL::cpp98::unary_function< Type, Type > {
+  public:
+    Type operator()( const Type& x ) const {
+      int m = _mm_movemask_pd(x.simd());
+      switch(m) {
+	case 0:
+	case 3: // only possible for [ 0., -0. ]
+	  // The 2 bounds have different sign bits, so the interval contains 0
+	  return Type::largest();
+	case 1:
+	case 2:
+	  {
+            __m128d m1 = _mm_set1_pd(-1.);
+            __m128d xx = IA_opacify128((-x).simd());
+            __m128d r = _mm_div_pd(m1, xx);
+            return Type(IA_opacify128(r));
+	  }
+	default: CGAL_assume(false);
+      }
+      std::abort(); // unreachable
+    }
+  };
+#endif
 };
 
 
