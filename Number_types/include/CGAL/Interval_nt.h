@@ -71,7 +71,7 @@ public:
 
   Interval_nt()
 #ifndef CGAL_NO_ASSERTIONS
-      : _inf(1), _sup(0)
+      : _inf(-1), _sup(0)
              // to early and deterministically detect use of uninitialized
 #endif
     {}
@@ -136,7 +136,7 @@ public:
 #endif
 
   Interval_nt(double i, double s)
-    : _inf(i), _sup(s)
+    : _inf(-i), _sup(s)
   {
     // Previously it was:
     //    CGAL_assertion_msg(!(i>s);
@@ -179,7 +179,7 @@ public:
 
   double inf() const
   {
-    return _inf;
+    return -_inf;
   }
   double sup() const
   {
@@ -211,6 +211,7 @@ public:
 
 private:
   // Pair inf_sup;
+  // The value stored in _inf is the negated lower bound.
   double _inf, _sup;
 
   struct Test_runtime_rounding_modes {
