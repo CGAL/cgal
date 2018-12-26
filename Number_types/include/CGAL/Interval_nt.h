@@ -463,7 +463,14 @@ inline
 double
 magnitude (const Interval_nt<Protected> & d)
 {
+#ifdef CGAL_USE_SSE2
+  const __m128d m = _mm_castsi128_pd (_mm_set1_epi64x (0x7fffffffffffffff));
+  __m128d x = _mm_and_pd (d.simd(), m); // { abs(inf), abs(sup) }
+  __m128d y = _mm_unpackhi_pd (x, x);
+  return _mm_cvtsd_f64 (_mm_max_sd (x, y));
+#else
   return (std::max)(CGAL::abs(d.inf()), CGAL::abs(d.sup()));
+#endif
 }
 
 // Non-documented
@@ -580,7 +587,16 @@ inline
 Interval_nt<Protected>
 operator+ (double a, const Interval_nt<Protected> & b)
 {
+  // MSVC does not define __SSE3__, not sure if /arch:AVX2 defines __AVX__...
+#if defined CGAL_USE_SSE2 && (defined __SSE3__ || defined __AVX__)
+  typename Interval_nt<Protected>::Internal_protector P;
+  __m128d aa = _mm_set1_pd(IA_opacify(a));
+  __m128d bb = IA_opacify128_weak(b.simd());
+  __m128d r = _mm_addsub_pd(bb, aa);
+  return Interval_nt<Protected>(IA_opacify128(r));
+#else
   return Interval_nt<Protected>(a)+b;
+#endif
 }
 
 template <bool Protected>
@@ -617,7 +633,11 @@ inline
 Interval_nt<Protected>
 operator- (double a, const Interval_nt<Protected> & b)
 {
+#ifdef CGAL_USE_SSE2
+  return a+-b;
+#else
   return Interval_nt<Protected>(a)-b;
+#endif
 }
 
 template <bool Protected>
