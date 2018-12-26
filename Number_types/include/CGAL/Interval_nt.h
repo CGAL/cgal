@@ -77,29 +77,32 @@ public:
     {}
 
   Interval_nt(int i)
-    : _inf(i), _sup(i) {}
+  { *this = static_cast<double>(i); }
 
   Interval_nt(unsigned i)
-    : _inf(i), _sup(i) {}
+  { *this = static_cast<double>(i); }
 
   Interval_nt(long long i)
-    : _inf(static_cast<double>(i)), _sup(static_cast<double>(i))
   {
     // gcc ignores -frounding-math when converting integers to floats.
+    // Is this safe against excess precision? -- Marc Glisse, Dec 2012
+    double d = static_cast<double>(i);
+    *this = d;
 #ifdef __GNUC__
     long long safe = 1LL << 52; // Use numeric_limits?
-    bool exact = ((long long)_inf == i) || (i <= safe && i >= -safe);
+    bool exact = ((long long)d == i) || (i <= safe && i >= -safe);
     if (!(__builtin_constant_p(exact) && exact))
 #endif
       *this += smallest();
   }
 
   Interval_nt(unsigned long long i)
-    : _inf(static_cast<double>(i)), _sup(static_cast<double>(i))
   {
+    double d = static_cast<double>(i);
+    *this = d;
 #ifdef __GNUC__
     unsigned long long safe = 1ULL << 52; // Use numeric_limits?
-    bool exact = ((unsigned long long)_inf == i) || (i <= safe);
+    bool exact = ((unsigned long long)d == i) || (i <= safe);
     if (!(__builtin_constant_p(exact) && exact))
 #endif
       *this += smallest();
@@ -120,7 +123,10 @@ public:
   }
 
   Interval_nt(double d)
-    : _inf(d), _sup(d) { CGAL_assertion(is_finite(d)); }
+  {
+    CGAL_assertion(is_finite(d));
+    *this = Interval_nt(d, d);
+  }
 
 // The Intel compiler on Linux is aggressive with constant propagation and
 // it seems there is no flag to stop it, so disable this check for it.
@@ -144,9 +150,12 @@ public:
   }
 
   Interval_nt(const Pair & p)
-    : _inf(p.first), _sup(p.second) {}
+  { *this = Interval_nt(p.first, p.second); }
 
-  IA operator-() const { return IA (-sup(), -inf()); }
+  IA operator-() const
+  {
+    return IA (-sup(), -inf());
+  }
 
   IA & operator+= (const IA &d) { return *this = *this + d; }
   IA & operator-= (const IA &d) { return *this = *this - d; }
@@ -168,8 +177,14 @@ public:
     return !(d.inf() > sup() || d.sup() < inf());
   }
 
-  const double & inf() const { return _inf; }
-  const double & sup() const { return _sup; }
+  double inf() const
+  {
+    return _inf;
+  }
+  double sup() const
+  {
+    return _sup;
+  }
 
   std::pair<double, double> pair() const
   {
@@ -313,7 +328,7 @@ Uncertain<bool>
 operator==(double a, const Interval_nt<Protected> &b)
 {
   if (b.inf() >  a || b.sup() <  a) return false;
-  if (b.inf() == a && b.sup() == a) return true;
+  if (b.is_point()) return true;
   return Uncertain<bool>::indeterminate();
 }
 
@@ -328,9 +343,7 @@ inline
 Uncertain<bool>
 operator<(const Interval_nt<Protected> &a, double b)
 {
-  if (a.sup()  < b) return true;
-  if (a.inf() >= b) return false;
-  return Uncertain<bool>::indeterminate();
+  return b > a;
 }
 
 template <bool Protected>
@@ -360,16 +373,14 @@ inline
 Uncertain<bool>
 operator==(const Interval_nt<Protected> &a, double b)
 {
-  if (b >  a.sup() || b <  a.inf()) return false;
-  if (b == a.sup() && b == a.inf()) return true;
-  return Uncertain<bool>::indeterminate();
+  return b == a;
 }
 
 template <bool Protected>
 inline
 Uncertain<bool>
 operator!=(const Interval_nt<Protected> &a, double b)
-{ return ! (a == b); }
+{ return b != a; }
 
 
 
@@ -519,7 +530,7 @@ inline
 Interval_nt<Protected>
 operator+ (const Interval_nt<Protected> & a, double b)
 {
-  return a+Interval_nt<Protected>(b);
+  return b + a;
 }
 
 template< bool Protected >
