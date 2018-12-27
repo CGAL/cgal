@@ -817,12 +817,55 @@ inline
 Interval_nt<Protected>
 operator/ (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
 {
-#if 0
-  // FIXME: not a tight bound, although it may be faster than something tight.
-  return CGAL::inverse(b)*a;
-#else
   typedef Interval_nt<Protected> IA;
   typename Interval_nt<Protected>::Internal_protector P;
+#if defined CGAL_USE_SSE2 && (defined __SSE4_1__ || defined __AVX__)
+  //// not a tight bound, but easy:
+  // return CGAL::inverse(b)*a;
+# if 1
+  // Current fastest
+  // if b>0 we want [ai/(ai>0?bs:bi),as/(as>0?bi:bs)]
+  // if b<0 we want [as/(as>0?bs:bi),ai/(ai>0?bi:bs)]
+  __m128d m = _mm_set_sd(-0.);
+  __m128d aa = a.simd();
+  __m128d bb = b.simd();
+  int i = _mm_movemask_pd(_mm_cmpge_pd(bb, _mm_set1_pd(0.)));
+  if(i==3) return IA::largest(); // bi<=0 && bs>=0
+  __m128d ap = _mm_xor_pd(aa, m); // {ai, as}
+  __m128d ax = _mm_shuffle_pd(ap, ap, 1); // {as, ai}
+  __m128d bp = _mm_xor_pd(bb, m); // {bi, bs}
+  __m128d bx = _mm_shuffle_pd(bp, bp, 1); // {bs, bi}
+  __m128d num = _mm_blendv_pd(ap, ax, bp); // {(b>0)?ai:as, (b>0)?as:ai}
+  __m128d d = _mm_blendv_pd(bx, bp, num);
+  // Can we rearrange things so we need fewer xor?
+  __m128d den = _mm_xor_pd(d, m);
+  num = IA_opacify128_weak(num);
+  den = IA_opacify128(den);
+  __m128d r = _mm_div_pd(num, den);
+  return IA (IA_opacify128(r));
+# else
+  // Similar to the multiplication, but slow, because divisions are slow
+  // if b>0 we want [-max(-ai/bi,-ai/bs),max(as/bi,as/bs)] {-ai,as}/{bi,bs} {-ai,as}/{bs,bi}
+  // if b<0 we want [-max(-as/bi,-as/bs),max(ai/bi,ai/bs)] {-as,ai}/{bi,bs} {-as,ai}/{bs,bi}
+  __m128d m = _mm_set_sd(-0.);
+  __m128d m1 = _mm_set1_pd(-0.);
+  __m128d aa = a.simd(); // {-ai, as}
+  __m128d bb = b.simd(); // {-bi, bs}
+  int i = _mm_movemask_pd(_mm_cmpge_pd(bb, _mm_set1_pd(0.)));
+  if(i==3) return IA::largest(); // bi<=0 && bs>=0
+  __m128d ap = _mm_xor_pd(aa, m1); // {ai, -as}
+  __m128d ax = _mm_shuffle_pd(ap, ap, 1); // {-as, ai}
+  __m128d bp = _mm_xor_pd(bb, m); // {bi, bs}
+  __m128d num = _mm_blendv_pd(aa, ax, bp);
+  num = IA_opacify128_weak(num);
+  bp = IA_opacify128(bp);
+  __m128d bx = _mm_shuffle_pd(bp, bp, 1); // {bs, bi}
+  __m128d d1 = _mm_div_pd(num, bp);
+  __m128d d2 = _mm_div_pd(num, bx);
+  __m128d r = _mm_max_pd(d1, d2);
+  return IA (IA_opacify128(r));
+# endif
+#else
   if (b.inf() > 0.0)				// b>0
   {
     // e>=0	[a.inf()/b.sup(); a.sup()/b.inf()]
