@@ -55,9 +55,6 @@ public:
   typedef typename Geom_traits::Hyperbolic_segment_2            Hyperbolic_segment;
   typedef typename Geom_traits::Hyperbolic_triangle_2           Hyperbolic_triangle;
 
-  // Redeclaration of `Segment` that would have been inherited from DT2
-  //typedef Hyperbolic_segment                                     Segment;
-
   // Tag to distinguish regular triangulations from others
   typedef Tag_false                                             Weighted_tag;
 
@@ -82,11 +79,12 @@ public:
   typedef typename Geom_traits::Is_Delaunay_hyperbolic                Is_Delaunay_hyperbolic;
 
   Hyperbolic_Delaunay_triangulation_2(const Geom_traits& gt = Geom_traits())
-    : Delaunay_triangulation_2<Gt,Tds>(gt)
-  {}
+    : Delaunay_triangulation_2<Gt,Tds>(gt), _gt(gt)
+  {
+  }
 
   Hyperbolic_Delaunay_triangulation_2(const Hyperbolic_Delaunay_triangulation_2<Gt,Tds> &tr)
-    : Delaunay_triangulation_2<Gt,Tds>(tr)
+    : Delaunay_triangulation_2<Gt,Tds>(tr), _gt()
   {
     CGAL_triangulation_postcondition(this->is_valid());
   }
@@ -94,7 +92,7 @@ public:
   template<class InputIterator>
   Hyperbolic_Delaunay_triangulation_2(InputIterator first, InputIterator last,
                                       const Geom_traits& gt = Geom_traits())
-    : Delaunay_triangulation_2<Gt,Tds>(gt)
+    : Delaunay_triangulation_2<Gt,Tds>(gt), _gt(gt)
   {
     insert(first, last);
     for(All_vertices_iterator vit=all_vertices_begin(); vit!=all_vertices_end(); ++vit)
@@ -193,7 +191,7 @@ public:
       : VBase(v, fh)
     {
       _v = v;
-      if(fh = Face_handle())
+      if (fh == Face_handle())
         pos = _v->face();
       else
         pos = fh;
@@ -201,7 +199,7 @@ public:
       _iv = pos->index(_v);
       _ri = ccw(_iv);
 
-      while(!is_finite_non_hyperbolic(pos, cw(_iv)))
+      while (!is_finite_non_hyperbolic(pos, cw(_iv)))
       {
         pos = pos->neighbor(_ri);
         _iv = pos->index(_v);
@@ -233,8 +231,6 @@ public:
       while(!is_finite_non_hyperbolic(pos, cw(_iv)));
     }
 
-    //Self  operator--(int);
-
     bool operator==(const Self &vc) const
     {
       return (this->_v == vc->_v &&
@@ -248,8 +244,6 @@ public:
     bool operator!=(const Vertex_handle &vh) const { return !this->operator==(vh); }
 
     bool is_empty() const { return (this->pos == Face_handle() && this->_v == Vertex_handle()); }
-    //bool operator==(Nullptr_t CGAL_triangulation_assertion_code(n)) const;
-    //bool operator!=(Nullptr_t CGAL_triangulation_assertion_code(n)) const;
 
     Vertex& operator*() const
     {
@@ -267,7 +261,71 @@ public:
     operator Vertex_handle() const { return pos->vertex(_ri); }
   };
 
+private:
+  Geom_traits   _gt;
+
 public:
+
+  Tds& tds()
+  {
+    return Base::tds();
+  }
+
+  const Tds& tds() const
+  {
+    return Base::tds();
+  }
+
+  Geom_traits& geom_traits()
+  {
+    return _gt;
+  }
+
+  const Geom_traits& geom_traits() const 
+  {
+    return _gt;
+  }
+
+  void swap (Self&  tr)
+  {
+    Base::swap(tr);
+
+    Geom_traits t = _gt;
+    _gt = tr._gt;
+    tr._gt = t;
+
+    this->mark_finite_non_hyperbolic_faces();
+    tr.mark_finite_non_hyperbolic_faces();
+  } 
+
+
+  Self& operator=(const Self &tr)
+  {
+    _gt = tr._gt;
+    Base::tds().clear();
+    Base::tds() = tr.tds();
+    
+  //  CGAL_triangulation_expensive_postcondition(*this == tr);
+    return *this;
+  }
+
+
+  bool operator==(const Self& tr )
+  {
+    if (tr.number_of_vertices() != this->number_of_vertices())
+      return false;
+
+    if (tr.number_of_hyperbolic_faces() != this->number_of_hyperbolic_faces())
+      return false;
+
+    if (tr.number_of_vertices() == 0)
+      return true; // as in Periodic_2_triangulation_2
+
+    return Base::operator==(tr);
+
+  }
+
+
   typedef Hyperbolic_adjacent_vector_circulator Vertex_circulator;
   typedef typename Tds::Edge_circulator         Edge_circulator;
   typedef typename Tds::Face_circulator         Face_circulator;
@@ -349,6 +407,47 @@ public:
 
     return n;
   }
+
+
+
+  void remove(Vertex_handle v) 
+  {
+    CGAL_triangulation_precondition(tds().is_vertex(v));
+    std::vector<Vertex_handle> nbr;
+    bool dim_was_2 = false;
+    if (this->dimension() == 2)
+    {
+      dim_was_2 = true;
+      typename Base::Vertex_circulator nbv = Base::incident_vertices(v), done(nbv);
+      do 
+      {
+        nbr.push_back(nbv);
+      } while (++nbv != done);  
+    }
+    
+    Base::remove(v);
+
+    if (dim_was_2) 
+    {
+      for (int i = 0; i < nbr.size(); ++i) 
+      {
+        mark_star_faces(nbr[i]);
+        ensure_hyperbolic_face_handle(nbr[i]);
+      }  
+    }
+  } 
+
+
+  template <class VertexRemoveIterator>
+  void remove(VertexRemoveIterator first, VertexRemoveIterator last)
+  {
+    for (VertexRemoveIterator vit = first; vit != last; ++vit) 
+    {
+      remove(*vit);
+    } 
+  }
+
+
 
   /*
     Needed by DT_2: do not document!
@@ -792,6 +891,30 @@ public:
   }
 
 public:
+
+  bool is_valid() 
+  {
+    if (Base::is_valid()) 
+    {
+      for (Hyperbolic_faces_iterator fit = hyperbolic_faces_begin(); fit != hyperbolic_faces_end(); fit++) 
+      {
+        if (!is_Delaunay_hyperbolic(fit)) 
+        {
+          return false;
+        }
+      }
+      for (Hyperbolic_edges_iterator eit = hyperbolic_edges_begin(); eit != hyperbolic_edges_end(); eit++) 
+      {
+        if (!is_Delaunay_hyperbolic(eit)) 
+        {
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
+  }
+
   Face_handle locate(const Point& p, const Face_handle hint = Face_handle()) const
   {
     Locate_type lt;
@@ -927,6 +1050,7 @@ public:
     return Face_handle();
   }
 };
+
 
 } // end namespace CGAL
 
