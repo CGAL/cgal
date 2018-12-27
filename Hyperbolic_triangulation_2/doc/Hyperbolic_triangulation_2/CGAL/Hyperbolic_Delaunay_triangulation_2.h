@@ -108,19 +108,16 @@ public:
 
     /*!
       The triangulation `tr` is duplicated, and modifying the copy after the duplication does not modify the original.
-      \todo implement! 
     */
     Hyperbolic_Delaunay_triangulation_2& operator=(Hyperbolic_Delaunay_triangulation_2 tr);
     
     /*!
       The triangulation is swapped with `tr`.
-      \todo implement!
     */
     void swap(Hyperbolic_Delaunay_triangulation_2& tr);
     
     /*!
       Deletes all vertices and faces of the triangulation.
-      \todo implement!
     */
     void clear();
 
@@ -144,19 +141,16 @@ public:
   /// @{
     /*!
       Returns a const reference to the geometric traits object.
-      \todo implement!
     */
     const Geom_traits&    geom_traits() const;
 
     /*!
       Returns a const reference to the triangulation data structure.
-      \todo implement!
     */
     const Triangulation_data_structure& tds() const; 
 
     /*!
       Returns a reference to the triangulation data structure.
-      \todo implement!
     */
     Triangulation_data_structure& tds();
 
@@ -164,7 +158,6 @@ public:
       Checks the combinatorial validity of the triangulation, the validity of 
       its geometric embedding, and also that all edges and faces are Delaunay 
       hyperbolic.
-      \todo implement!
     */
     bool  is_valid ();
 
@@ -246,14 +239,12 @@ public:
     /*!
       Removes the vertex `v` from the triangulation.
       \pre `v` is a vertex of the triangulation.
-      \todo implement this function!
     */
     void remove(Vertex_handle v);
 
     /*!
       Removes the vertices in the iterator range `[firs, last)` from the triangulation.
       \pre all vertices in `[first, last)` are vertices of the triangulation.
-      \todo implement!
     */
     template <class VertexRemoveIterator>
     void remove(VertexRemoveIterator first, VertexRemoveIterator last);
