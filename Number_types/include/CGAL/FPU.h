@@ -262,6 +262,17 @@ inline __m128d IA_opacify128_weak(__m128d x)
   return e;
 # endif
 }
+
+// _mm_shuffle_pd would work everywhere, but it is too opaque for some optimizations (yes, this is a thin line)
+inline __m128d swap_m128d(__m128d x){
+# ifdef __llvm__
+  return __builtin_shufflevector(x, x, 1, 0);
+# elif defined __GNUC__ && !defined __INTEL_COMPILER
+  return __builtin_shuffle(x, (__m128i){ 1, 0 });
+# else
+  return _mm_shuffle_pd(x, x, 1);
+# endif
+}
 #endif
 
 // Interval arithmetic needs to protect against double-rounding effects

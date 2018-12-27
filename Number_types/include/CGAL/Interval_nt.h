@@ -53,6 +53,15 @@
 #include <CGAL/IO/io.h>
 #include <iostream>
 
+#ifdef __GNUC__
+// gcc's __builtin_constant_p does not like arguments with side effects. Be
+// careful not to use this macro for something that the compiler will have
+// trouble eliminating as dead code.
+# define CGAL_CST_TRUE(X) ({ bool _ugly_ = (X); __builtin_constant_p(_ugly_) && _ugly_; })
+#else
+# define CGAL_CST_TRUE(X) false
+#endif
+
 namespace CGAL {
 
 template <bool Protected = true>
@@ -95,7 +104,7 @@ public:
 #ifdef __GNUC__
     long long safe = 1LL << 52; // Use numeric_limits?
     bool exact = ((long long)d == i) || (i <= safe && i >= -safe);
-    if (!(__builtin_constant_p(exact) && exact))
+    if (!CGAL_CST_TRUE(exact))
 #endif
       *this += smallest();
   }
@@ -107,7 +116,7 @@ public:
 #ifdef __GNUC__
     unsigned long long safe = 1ULL << 52; // Use numeric_limits?
     bool exact = ((unsigned long long)d == i) || (i <= safe);
-    if (!(__builtin_constant_p(exact) && exact))
+    if (!CGAL_CST_TRUE(exact))
 #endif
       *this += smallest();
   }
@@ -169,7 +178,7 @@ public:
   IA operator-() const
   {
 #ifdef CGAL_USE_SSE2
-    return IA (_mm_shuffle_pd(val, val, 1));
+    return IA (swap_m128d(val));
 #else
     return IA (-sup(), -inf());
 #endif
@@ -218,8 +227,11 @@ public:
   double sup() const
   {
 #ifdef CGAL_USE_SSE2
-    // Should we use shufpd because it is already used by operator- ?
-    return _mm_cvtsd_f64(_mm_unpackhi_pd(val, val));
+    return _mm_cvtsd_f64(swap_m128d(val));
+    // The following is a bit more natural, but
+    // - it is too opaque
+    // - it is a less likely CSE candidate
+    // return _mm_cvtsd_f64(_mm_unpackhi_pd(val, val));
 #else
     return _sup;
 #endif
@@ -653,6 +665,10 @@ inline
 Interval_nt<Protected>
 operator* (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
 {
+  if(CGAL_CST_TRUE(a.is_point()))
+    return a.inf() * b;
+  else if(CGAL_CST_TRUE(b.is_point()))
+    return a * b.inf();
   typedef Interval_nt<Protected> IA;
   typename Interval_nt<Protected>::Internal_protector P;
 #ifdef CGAL_USE_SSE2
@@ -663,11 +679,11 @@ operator* (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
   __m128d bb = b.simd();                                // {-bi,bs}
   __m128d m = _mm_set_sd(-0.);                          // {-0,+0}
   __m128d m1 = _mm_set1_pd(-0.);                        // {-0,-0}
-  __m128d ax = _mm_shuffle_pd (aa, aa, 1);              // {as,-ai}
+  __m128d ax = swap_m128d (aa);                         // {as,-ai}
   __m128d ap = _mm_xor_pd (ax, m1);                     // {-as,ai}
   __m128d bz = _mm_xor_pd(bb, m);                       // {bi,bs}
   bz = IA_opacify128(bz);
-  __m128d c = _mm_shuffle_pd (bz, bz, 1);               // {bs,bi}
+  __m128d c = swap_m128d (bz);                          // {bs,bi}
   __m128d x1 = _mm_mul_pd(aa,bz);                       // {-ai*bi,as*bs}
   __m128d x2 = _mm_mul_pd(aa,c);                        // {-ai*bs,as*bi}
   __m128d x3 = _mm_mul_pd(ap,bz);                       // {-as*bi,ai*bs}
@@ -686,9 +702,9 @@ operator* (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
   __m128d aa = a.simd();                                // {-ai,as}
   __m128d az = _mm_xor_pd(aa, m);                       // {ai,as}
   az = IA_opacify128_weak(az);
-  __m128d azp = _mm_shuffle_pd (az, az, 1);             // {as,ai}
+  __m128d azp = swap_m128d (az);                        // {as,ai}
   __m128d bb = IA_opacify128(b.simd());                 // {-bi,bs}
-  __m128d bx = _mm_shuffle_pd (bb, bb, 1);              // {bs,-bi}
+  __m128d bx = swap_m128d (bb);                         // {bs,-bi}
   __m128d bp = _mm_xor_pd(bx, m1);                      // {-bs,bi}
   __m128d x = _mm_blendv_pd (bb, bp, az);               // {ai<0?-bs:-bi,as<0?bi:bs}
   __m128d y = _mm_blendv_pd (bb, bp, azp);              // {as<0?-bs:-bi,ai<0?bi:bs}
@@ -702,7 +718,7 @@ operator* (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
 // slightly worse than the previous one
   __m128d m1 = _mm_set1_pd(-0.);                        // {-0,-0}
   __m128d aa = IA_opacify128_weak(a.simd());            // {-ai,as}
-  __m128d ax = _mm_shuffle_pd (aa, aa, 1);              // {as,-ai}
+  __m128d ax = swap_m128d (aa);                         // {as,-ai}
   __m128d ap = _mm_xor_pd (ax, m1);                     // {-as,ai}
   __m128d bb = IA_opacify128(b.simd());                 // {-bi,bs}
   double bi = -_mm_cvtsd_f64(bb);
@@ -721,7 +737,7 @@ operator* (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
   __m128d bb = b.simd();                                // {-bi,bs}
   __m128d m = _mm_set_sd(-0.);                          // {-0,+0}
   __m128d m1 = _mm_set1_pd(-0.);                        // {-0,-0}
-  __m128d ax = _mm_shuffle_pd (aa, aa, 1);              // {as,-ai}
+  __m128d ax = swap_m128d (aa);                         // {as,-ai}
   __m128d ap = _mm_xor_pd (ax, m1);                     // {-as,ai}
   __m128d bz = _mm_xor_pd(bb, m);                       // {bi,bs}
   bz = IA_opacify128(bz);
@@ -817,6 +833,10 @@ inline
 Interval_nt<Protected>
 operator/ (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
 {
+  if(CGAL_CST_TRUE(a.is_point()))
+    return a.inf() / b;
+  else if(CGAL_CST_TRUE(b.is_point()))
+    return a / b.inf();
   typedef Interval_nt<Protected> IA;
   typename Interval_nt<Protected>::Internal_protector P;
 #if defined CGAL_USE_SSE2 && (defined __SSE4_1__ || defined __AVX__)
@@ -832,9 +852,9 @@ operator/ (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
   int i = _mm_movemask_pd(_mm_cmpge_pd(bb, _mm_set1_pd(0.)));
   if(i==3) return IA::largest(); // bi<=0 && bs>=0
   __m128d ap = _mm_xor_pd(aa, m); // {ai, as}
-  __m128d ax = _mm_shuffle_pd(ap, ap, 1); // {as, ai}
+  __m128d ax = swap_m128d(ap); // {as, ai}
   __m128d bp = _mm_xor_pd(bb, m); // {bi, bs}
-  __m128d bx = _mm_shuffle_pd(bp, bp, 1); // {bs, bi}
+  __m128d bx = swap_m128d(bp); // {bs, bi}
   __m128d num = _mm_blendv_pd(ap, ax, bp); // {(b>0)?ai:as, (b>0)?as:ai}
   __m128d d = _mm_blendv_pd(bx, bp, num);
   // Can we rearrange things so we need fewer xor?
@@ -854,12 +874,12 @@ operator/ (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
   int i = _mm_movemask_pd(_mm_cmpge_pd(bb, _mm_set1_pd(0.)));
   if(i==3) return IA::largest(); // bi<=0 && bs>=0
   __m128d ap = _mm_xor_pd(aa, m1); // {ai, -as}
-  __m128d ax = _mm_shuffle_pd(ap, ap, 1); // {-as, ai}
+  __m128d ax = swap_m128d(ap); // {-as, ai}
   __m128d bp = _mm_xor_pd(bb, m); // {bi, bs}
   __m128d num = _mm_blendv_pd(aa, ax, bp);
   num = IA_opacify128_weak(num);
   bp = IA_opacify128(bp);
-  __m128d bx = _mm_shuffle_pd(bp, bp, 1); // {bs, bi}
+  __m128d bx = swap_m128d(bp); // {bs, bi}
   __m128d d1 = _mm_div_pd(num, bp);
   __m128d d2 = _mm_div_pd(num, bx);
   __m128d r = _mm_max_pd(d1, d2);
@@ -1576,5 +1596,7 @@ namespace Eigen {
       : significant_decimals_impl<typename CGAL::Interval_nt<b>::value_type> { };
   }
 }
+
+#undef CGAL_CST_TRUE
 
 #endif // CGAL_INTERVAL_NT_H
