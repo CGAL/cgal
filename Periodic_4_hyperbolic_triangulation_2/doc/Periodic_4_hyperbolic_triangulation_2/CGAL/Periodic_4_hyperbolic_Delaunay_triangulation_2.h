@@ -145,7 +145,6 @@ The class expects two template parameters.
 		/*!
 	      Removes the vertices in the iterator range `[firs, last)` from the triangulation.
 	      \pre all vertices in `[first, last)` are vertices of the triangulation.
-	      \todo implement!
 	    */
 	    template <class VertexRemoveIterator>
 	    void remove(VertexRemoveIterator first, VertexRemoveIterator last); 

@@ -551,7 +551,6 @@ public:
 
 		/*!
 			Checks the combinatorial validity of face `f`.
-			\todo add checks for 1- and 2-cycles!
 		*/
 		bool is_valid(Face_handle f, bool verbose = false) const;
 	/// @}
