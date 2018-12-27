@@ -924,9 +924,21 @@ operator/ (double a, const Interval_nt<Protected> & b)
 template <bool Protected>
 inline
 Interval_nt<Protected>
-operator/ (const Interval_nt<Protected> & a, double b)
+operator/ (Interval_nt<Protected> a, double b)
 {
-  return a/Interval_nt<Protected>(b);
+  if(b<0){ a = -a; b = -b; }
+  else if(b==0) return Interval_nt<Protected>::largest();
+  // Now b > 0
+  typename Interval_nt<Protected>::Internal_protector P;
+#ifdef __GNUC__
+  // Paradoxically, constants should be safe, and this lets the compiler optimize x/2 to x*.5
+  if (!__builtin_constant_p(b))
+#endif
+    b = IA_opacify(b);
+  __m128d bb = _mm_set1_pd(b);
+  __m128d aa = IA_opacify128(a.simd());
+  __m128d r = _mm_div_pd(aa, bb);
+  return Interval_nt<Protected>(IA_opacify128(r));
 }
 
 // TODO: What about these two guys? Where do they belong to?
