@@ -291,6 +291,15 @@ public:
 
   bool remove(Vertex_handle v);
 
+  template <class VertexRemoveIterator>
+  void remove(VertexRemoveIterator first, VertexRemoveIterator last)
+  {
+    for (VertexRemoveIterator vit = first; vit != last; ++vit)
+    {
+      remove(*vit);
+    }
+  }   
+
   bool is_dummy_vertex(Vertex_handle vh) const
   {
     for(std::size_t i=0; i<dummy_points.size(); ++i)
