@@ -817,6 +817,10 @@ inline
 Interval_nt<Protected>
 operator/ (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
 {
+#if 0
+  // FIXME: not a tight bound, although it may be faster than something tight.
+  return CGAL::inverse(b)*a;
+#else
   typedef Interval_nt<Protected> IA;
   typename Interval_nt<Protected>::Internal_protector P;
   if (b.inf() > 0.0)				// b>0
@@ -851,6 +855,7 @@ operator/ (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
     return IA::largest();
 	   // We could do slightly better -> [0;infinity] when b.sup()==0,
 	   // but is this worth ?
+#endif
 }
 
 template <bool Protected>
@@ -1038,9 +1043,31 @@ namespace INTERN_INTERVAL_NT {
     // sqrt([+a,+b]) => [sqrt(+a);sqrt(+b)]
     // sqrt([-a,+b]) => [0;sqrt(+b)] => assumes roundoff error.
     // sqrt([-a,-b]) => [0;sqrt(-b)] => assumes user bug (unspecified result).
+#ifdef __AVX512F__
+    double i = 0;
+    if(d.inf() > 0){
+      __m128d x = d.simd();
+      // We don't opacify because hopefully a rounded operation is explicit
+      // enough that compilers won't mess with it, and it does not care about
+      // fesetround.
+      __m128d vr = _mm_sqrt_round_sd(x, x, _MM_FROUND_TO_NEG_INF|_MM_FROUND_NO_EXC);
+      i = _mm_cvtsd_f64(vr);
+      // We could compute the sqrt of d.sup() using _mm_sqrt_pd (same speed as
+      // _sd except on broadwell) so it is already in the high part and we can
+      // call _mm_sqrt_round_sd(y, x, ...) to merge them directly, but I doubt
+      // it helps significantly, it might even hurt by introducing a
+      // dependency.
+    }
+#else
+    // TODO: Alternative for computing CGAL_IA_SQRT_DOWN(d.inf()) exactly
+    // without changing the rounding mode:
+    // - compute x = CGAL_IA_SQRT(d.inf())
+    // - compute y = CGAL_IA_SQUARE(x)
+    // - if y==d.inf() use x, else use -CGAL_IA_SUB(CGAL_IA_MIN_DOUBLE,x)
     FPU_set_cw(CGAL_FE_DOWNWARD);
     double i = (d.inf() > 0.0) ? CGAL_IA_SQRT(d.inf()) : 0.0;
     FPU_set_cw(CGAL_FE_UPWARD);
+#endif
     return Interval_nt<Protected>(i, CGAL_IA_SQRT(d.sup()));
   }
 
