@@ -14,8 +14,6 @@ if ( CGAL_FOUND )
 
   	include( CGAL_CreateSingleSourceCGALProgram )
 
-  	include_directories (BEFORE "../../include" $HOME/include)
-
   	create_single_source_cgal_program( "bench_insertion_with_different_kernels.cpp" )
 
 else()

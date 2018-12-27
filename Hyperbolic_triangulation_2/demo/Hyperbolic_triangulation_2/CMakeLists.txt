@@ -23,7 +23,7 @@ find_package(Qt5 QUIET COMPONENTS Widgets)
 find_package( Boost REQUIRED )
 include_directories(${Boost_INCLUDE_DIRS})
 
-include_directories (BEFORE ../../include include )
+include_directories (BEFORE include)
 
 # ui files, created with Qt Designer
 qt5_wrap_ui( UIS Hyperbolic_triangulation_2_demo.ui )
