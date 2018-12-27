@@ -906,7 +906,19 @@ inline
 Interval_nt<Protected>
 operator/ (double a, const Interval_nt<Protected> & b)
 {
-  return Interval_nt<Protected>(a)/b;
+  int i = _mm_movemask_pd(_mm_cmpge_pd(b.simd(), _mm_set1_pd(0.)));
+  if(i==3) return Interval_nt<Protected>::largest(); // bi<=0 && bs>=0
+  __m128d aa, xx;
+  if(a>0){
+    aa = _mm_set1_pd(-a);
+    xx = (-b).simd();
+  } else if(a<0){
+    aa = _mm_set1_pd(a);
+    xx = b.simd();
+  } else return 0.;
+  typename Interval_nt<Protected>::Internal_protector P;
+  __m128d r = _mm_div_pd(IA_opacify128_weak(aa), IA_opacify128(xx));
+  return Interval_nt<Protected>(IA_opacify128(r));
 }
 
 template <bool Protected>
@@ -1368,6 +1380,8 @@ class Algebraic_structure_traits< Interval_nt<B> >
     : public CGAL::cpp98::unary_function< Type, Type > {
   public:
     Type operator()( const Type& x ) const {
+      typename Type::Internal_protector P;
+#if 0
       int m = _mm_movemask_pd(x.simd());
       switch(m) {
 	case 0:
@@ -1385,6 +1399,14 @@ class Algebraic_structure_traits< Interval_nt<B> >
 	default: CGAL_assume(false);
       }
       std::abort(); // unreachable
+#else
+      int i = _mm_movemask_pd(_mm_cmpge_pd(x.simd(), _mm_set1_pd(0.)));
+      if(i==3) return Type::largest(); // bi<=0 && bs>=0
+      __m128d m1 = _mm_set1_pd(-1.);
+      __m128d xx = IA_opacify128((-x).simd());
+      __m128d r = _mm_div_pd(m1, xx);
+      return Type(IA_opacify128(r));
+#endif
     }
   };
 #endif
