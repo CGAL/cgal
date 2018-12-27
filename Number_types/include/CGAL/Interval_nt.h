@@ -1187,17 +1187,6 @@ namespace INTERN_INTERVAL_NT {
   template <bool Protected>
   inline
   Uncertain<bool>
-  is_one (const Interval_nt<Protected> & d)
-  {
-    if (d.inf() > 1) return false;
-    if (d.sup() < 1) return false;
-    if (d.inf() == d.sup()) return true;
-    return Uncertain<bool>::indeterminate();
-  }
-
-  template <bool Protected>
-  inline
-  Uncertain<bool>
   is_positive (const Interval_nt<Protected> & d)
   {
     if (d.inf() > 0.0) return true;
@@ -1313,11 +1302,12 @@ class Algebraic_structure_traits< Interval_nt<B> >
         }
     };
 
+    // Specialized just to specify the result type
     class Is_one
       : public CGAL::cpp98::unary_function< Type, Boolean > {
       public:
         Boolean operator()( const Type& x ) const {
-          return INTERN_INTERVAL_NT::is_one( x );
+          return x == 1;
         }
     };
 
@@ -1485,7 +1475,7 @@ public:
 
   struct Singleton :public CGAL::cpp98::unary_function<Interval,bool>{
     bool operator()( const Interval& a ) const {
-      return Lower()(a) == Upper()(a);
+      return a.is_point();
     }
   };
 
@@ -1527,12 +1517,15 @@ public:
     
   struct Hull :public CGAL::cpp98::binary_function<Interval,Interval,Interval>{
     Interval operator()( const Interval& a, const Interval& b ) const {
+#ifdef CGAL_USE_SSE2
+      return Interval(_mm_max_pd(a.simd(), b.simd()));
+#else
       BOOST_USING_STD_MAX();
       BOOST_USING_STD_MIN();
       return Interval( 
-          std::make_pair(
-              min BOOST_PREVENT_MACRO_SUBSTITUTION (Lower()(a),b.inf()), 
-              max BOOST_PREVENT_MACRO_SUBSTITUTION (Upper()(a),b.sup())));
+             -max BOOST_PREVENT_MACRO_SUBSTITUTION (-a.inf(),-b.inf()),
+              max BOOST_PREVENT_MACRO_SUBSTITUTION ( a.sup(), b.sup()));
+#endif
     }
   };
     
