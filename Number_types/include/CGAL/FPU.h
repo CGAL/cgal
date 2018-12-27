@@ -1,4 +1,4 @@
-// Copyright (c) 1998-2008
+// Copyright (c) 1998-2019
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
@@ -21,7 +21,7 @@
 // SPDX-License-Identifier: LGPL-3.0+
 //
 //
-// Author(s)     : Sylvain Pion
+// Author(s)     : Sylvain Pion, Marc Glisse
 
 #ifndef CGAL_FPU_H
 #define CGAL_FPU_H

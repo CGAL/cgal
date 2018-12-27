@@ -1,4 +1,4 @@
-// Copyright (c) 1998-2005,2007  
+// Copyright (c) 1998-2019
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
@@ -21,7 +21,7 @@
 // SPDX-License-Identifier: LGPL-3.0+
 //
 //
-// Author(s)     : Sylvain Pion, Michael Hemmer
+// Author(s)     : Sylvain Pion, Michael Hemmer, Marc Glisse
 
 #ifndef CGAL_INTERVAL_NT_H
 #define CGAL_INTERVAL_NT_H
