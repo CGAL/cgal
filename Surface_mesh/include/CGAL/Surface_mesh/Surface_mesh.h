@@ -1106,42 +1106,40 @@ public:
     }
     size_type inf_value = (std::numeric_limits<size_type>::max)();
     if(other.vertices_freelist_ != inf_value){
-      if(vertices_freelist_ != inf_value){
-        Vertex_index vi(nv+other.vertices_freelist_);
-        Halfedge_index inf((std::numeric_limits<size_type>::max)());
-        while(vconn_[vi].halfedge_ != inf){
-          Vertex_index corrected_vi = Vertex_index(size_type(vconn_[vi].halfedge_)+nv-nh);
-          vconn_[vi].halfedge_ = Halfedge_index(corrected_vi);
-          vi = corrected_vi;
-        }
-        vconn_[vi].halfedge_ = Halfedge_index(vertices_freelist_);
+      Vertex_index vi(nv+other.vertices_freelist_);
+      Halfedge_index inf((std::numeric_limits<size_type>::max)());
+      while(vconn_[vi].halfedge_ != inf){
+        Vertex_index corrected_vi = Vertex_index(size_type(vconn_[vi].halfedge_)+nv-nh);
+        vconn_[vi].halfedge_ = Halfedge_index(corrected_vi);
+        vi = corrected_vi;
       }
+      vconn_[vi].halfedge_ = Halfedge_index(vertices_freelist_);
+      
       vertices_freelist_ = nv + other.vertices_freelist_; 
     }
     if(other.faces_freelist_ != inf_value){
-      if(faces_freelist_ != inf_value){
-        Face_index fi(nf+other.faces_freelist_);
-        Halfedge_index inf((std::numeric_limits<size_type>::max)());
-        while(fconn_[fi].halfedge_ != inf){
-          Face_index corrected_fi = Face_index(size_type(fconn_[fi].halfedge_)+nf-nh);
-          fconn_[fi].halfedge_ = Halfedge_index(corrected_fi);
-          fi = corrected_fi;
-        }
-        fconn_[fi].halfedge_ = Halfedge_index(faces_freelist_);
+      Face_index fi(nf+other.faces_freelist_);
+      Halfedge_index inf((std::numeric_limits<size_type>::max)());
+      while(fconn_[fi].halfedge_ != inf){
+        Face_index corrected_fi = Face_index(size_type(fconn_[fi].halfedge_)+nf-nh);
+        fconn_[fi].halfedge_ = Halfedge_index(corrected_fi);
+        fi = corrected_fi;
       }
+      fconn_[fi].halfedge_ = Halfedge_index(faces_freelist_);
+
       faces_freelist_ = nf + other.faces_freelist_; 
     }
+    
     if(other.edges_freelist_ != inf_value){
-      if(edges_freelist_ != inf_value){
-        Halfedge_index hi(nh+other.edges_freelist_);
-        Halfedge_index inf((std::numeric_limits<size_type>::max)());
-        while(hconn_[hi].next_halfedge_ != inf){
-          hi = hconn_[hi].next_halfedge_;
-        }
-        hconn_[hi].next_halfedge_ = Halfedge_index(edges_freelist_);
+      Halfedge_index hi(nh+other.edges_freelist_);
+      Halfedge_index inf((std::numeric_limits<size_type>::max)());
+      while(hconn_[hi].next_halfedge_ != inf){
+        hi = hconn_[hi].next_halfedge_;
       }
+      hconn_[hi].next_halfedge_ = Halfedge_index(edges_freelist_);
       edges_freelist_ = nh + other.edges_freelist_; 
     }
+
     garbage_ = garbage_ || other.garbage_;
     removed_vertices_ += other.removed_vertices_;
     removed_edges_ += other.removed_edges_;
@@ -1378,6 +1376,37 @@ public:
         if(!valid && verbose){
           std::cerr << "#faces: iterated: " << fcount << " vs number_of_faces(): " << number_of_faces()<< std::endl;
         }
+
+        size_type inf = (std::numeric_limits<size_type>::max)();
+        size_type vfl = vertices_freelist_;
+        int rv = 0;
+        while(vfl != inf){
+          vfl = (size_type)vconn_[Vertex_index(vfl)].halfedge_;
+          rv++;
+        }
+        assert( rv == removed_vertices_ );
+        valid = valid && ( rv == removed_vertices_ );
+
+
+        size_type efl = edges_freelist_;
+        int re = 0;
+        while(efl != inf){
+          efl = (size_type)hconn_[Halfedge_index(efl)].next_halfedge_;
+          re++;
+        }
+        assert( re == removed_edges_ );
+        valid = valid && ( re == removed_edges_ );
+
+        size_type ffl = faces_freelist_;
+        int rf = 0;
+        while(ffl != inf){
+          ffl = (size_type)fconn_[Face_index(ffl)].halfedge_;
+          rf++;
+        }
+        assert( rf == removed_faces_ );
+        valid = valid && ( rf == removed_faces_ );
+
+  
         return valid;
     }
 
