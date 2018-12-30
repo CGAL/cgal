@@ -528,6 +528,8 @@ public:
   construct_inexact_intersection_2_object() const
   { return Construct_inexact_intersection_2(); }
 
+
+
   class Construct_inexact_hyperbolic_circumcenter_2
   {
     typedef typename Kernel::Circle_2                       Circle_2;
@@ -594,6 +596,12 @@ public:
     }
 
   }; // end Construct_inexact_hyperbolic_circumcenter_2
+
+
+  Construct_inexact_hyperbolic_circumcenter_2
+  construct_inexact_hyperbolic_circumcenter_2_object() const
+  { return Construct_inexact_hyperbolic_circumcenter_2(); }
+
 
 public:
   Periodic_4_hyperbolic_Delaunay_triangulation_traits_2() {}
