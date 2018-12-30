@@ -757,9 +757,8 @@ public:
   typedef Euclidean_line_2                                      Line_2;
   typedef typename Kernel::Iso_rectangle_2                      Iso_rectangle_2;
 
-  // wrong names kept for demo
   typedef internal::Construct_hyperbolic_segment_2<Self>        Construct_hyperbolic_segment_2;
-  typedef Construct_hyperbolic_segment_2                        Construct_segment_2;
+  typedef typename Base::Construct_segment_2                    Construct_segment_2;
 
   typedef internal::Construct_hyperbolic_circumcenter_2<Self>   Construct_hyperbolic_circumcenter_2;
   typedef internal::Construct_hyperbolic_bisector_2<Self>       Construct_hyperbolic_bisector_2;
@@ -784,7 +783,7 @@ public:
 
   Construct_segment_2
   construct_segment_2_object() const
-  { return Construct_hyperbolic_segment_2(*this); }
+  { return this->Base::construct_segment_2_object(); }
 
   Construct_hyperbolic_circumcenter_2
   construct_hyperbolic_circumcenter_2_object() const
