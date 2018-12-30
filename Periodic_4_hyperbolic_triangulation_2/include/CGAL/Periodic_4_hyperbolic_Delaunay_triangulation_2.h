@@ -108,9 +108,6 @@ public:
   // Tag to distinguish periodic triangulations from others
   typedef Tag_true                                                  Periodic_tag;
 
-private:
-  typedef typename GT::FT                                           FT;
-
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Base::cw;
   using Base::ccw;
@@ -118,6 +115,9 @@ private:
   using Base::tds;
   using Base::neighbor_translation;
 #endif
+
+private:
+  typedef typename GT::FT                                           FT;
 
   class Dummy_point
   {
