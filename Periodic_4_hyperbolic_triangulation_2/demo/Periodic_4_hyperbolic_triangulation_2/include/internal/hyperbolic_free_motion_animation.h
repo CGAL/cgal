@@ -130,12 +130,12 @@ MainWindow::get_image(Point src, Point tgt, double time) {
   Circular_arc_2* carc = boost::get<Circular_arc_2>(&seg);
   Circle_2 crc = carc->supporting_circle();
   
-  double sx = to_double(((src.x()) - crc.center().x())/sqrt(crc.squared_radius()));
-  double sy = to_double(((src.y()) - crc.center().y())/sqrt(crc.squared_radius()));
-  double tx = to_double(((tgt.x()) - crc.center().x())/sqrt(crc.squared_radius()));
-  double ty = to_double(((tgt.y()) - crc.center().y())/sqrt(crc.squared_radius()));
+  double sx = CGAL::to_double(((src.x()) - crc.center().x())/sqrt(crc.squared_radius()));
+  double sy = CGAL::to_double(((src.y()) - crc.center().y())/sqrt(crc.squared_radius()));
+  double tx = CGAL::to_double(((tgt.x()) - crc.center().x())/sqrt(crc.squared_radius()));
+  double ty = CGAL::to_double(((tgt.y()) - crc.center().y())/sqrt(crc.squared_radius()));
   
-  double dot = to_double(sx*tx + sy*ty);
+  double dot = CGAL::to_double(sx*tx + sy*ty);
   double n1 = sqrt(sx*sx+sy*sy);
   double n2 = sqrt(tx*tx+ty*ty);
   double theta = acos(dot/n1/n2);
@@ -143,8 +143,8 @@ MainWindow::get_image(Point src, Point tgt, double time) {
   double x = sin((1.0-time)*theta)/sin(theta)*sx + sin(time*theta)/sin(theta)*tx;
   double y = sin((1.0-time)*theta)/sin(theta)*sy + sin(time*theta)/sin(theta)*ty;
   
-  x = to_double(x*sqrt(crc.squared_radius()) + crc.center().x());
-  y = to_double(y*sqrt(crc.squared_radius()) + crc.center().y());
+  x = CGAL::to_double(x*sqrt(crc.squared_radius()) + crc.center().x());
+  y = CGAL::to_double(y*sqrt(crc.squared_radius()) + crc.center().y());
 
   Point p(x, y);
   //std::cout << "  DONE!" << std::endl;

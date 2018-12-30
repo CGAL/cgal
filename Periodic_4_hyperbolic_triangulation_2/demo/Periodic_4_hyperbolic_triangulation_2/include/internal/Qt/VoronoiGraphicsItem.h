@@ -70,15 +70,13 @@ private:
   void updateCCenters() {
     cc.clear();
     for(typename DT::Face_iterator it = dt->faces_begin(); it != dt->faces_end(); it++) {
-      cc[it] = Circumcenter()(*it);
+      cc[it] = dt->geom_traits().construct_inexact_hyperbolic_circumcenter_2_object()(*it);
     }
   }
 
   typedef typename DT::Hyperbolic_Voronoi_point                                   Voronoi_point;
-  typedef typename DT::Geom_traits::Construct_inexact_hyperbolic_circumcenter_2   Circumcenter;
-  typedef typename DT::Geom_traits::Construct_hyperbolic_segment_2                Segment;
   typedef typename DT::Face_handle                                                Face_handle;
-  typedef typename DT::Geom_traits::Construct_hyperbolic_point_2                  CP2;
+  typedef typename DT::Point                                                      Point;
 
   DT * dt;
   QPen edges_pen;
@@ -118,11 +116,12 @@ VoronoiGraphicsItem<DT>::paint(QPainter *painter, const QStyleOptionGraphicsItem
   QPen old = temp;
   temp.setWidthF(0.01);
   painter->setPen(temp);
-  //
   
   for(typename DT::Face_iterator fit = dt->faces_begin(); fit != dt->faces_end(); fit++) {
     for(int i=0; i<3; ++i) {
-      typename DT::Hyperbolic_segment s =  Segment()(cc[fit], CP2()(cc[fit->neighbor(i)], dt->neighbor_translation(fit, i))); //dt->dual(std::pair<typename DT::Face_handle, int>(fit, i));
+      Point p1 = cc[fit];
+      Point p2 = dt->geom_traits().construct_hyperbolic_point_2_object()(cc[fit->neighbor(i)], dt->neighbor_translation(fit, i));
+      typename DT::Hyperbolic_segment s =  dt->geom_traits().construct_hyperbolic_segment_2_object()(p1, p2); 
       pos << s;
     }
   }
