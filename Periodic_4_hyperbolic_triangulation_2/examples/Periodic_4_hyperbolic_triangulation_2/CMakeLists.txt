@@ -14,8 +14,6 @@ if ( CGAL_FOUND )
 
   	include( CGAL_CreateSingleSourceCGALProgram )
 
-  	include_directories (BEFORE "../../include" $HOME/include)
-
   	create_single_source_cgal_program( "p4ht2_example_insertion.cpp" )
 
 else()
