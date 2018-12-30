@@ -2,7 +2,7 @@
 <ui version="4.0">
  <author>GeometryFactory</author>
  <class>Delaunay_triangulation_2</class>
- <widget class="QMainWindow" name="Delaunay_triangulation_2">
+ <widget class="QMainWindow" name="Hyperbolic_Delaunay_triangulation_2">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -12,7 +12,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>CGAL Delaunay Triangulation</string>
+   <string>CGAL Hyperbolic Delaunay Triangulation</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../../../GraphicsView/demo/resources/CGAL.qrc">
@@ -229,7 +229,7 @@
      <normaloff>:/cgal/Actions/icons/triangulation.png</normaloff>:/cgal/Actions/icons/triangulation.png</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Delaunay Triangulation</string>
+    <string>Show Hyperbolic &amp;Delaunay Triangulation</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+D</string>
