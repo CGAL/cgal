@@ -703,7 +703,6 @@ private:
   }
 
   // check if a star is bounded by finite faces
-  // TODO: rename this function name
   bool is_star_bounded(Vertex_handle v) const
   {
     if(dimension() <= 1)
@@ -731,11 +730,9 @@ private:
     return true;
   }
 
-  //use the function: insert_and_give_new_faces?
 
   void mark_star_faces(Vertex_handle v) const
   {
-    // TODO: think of it
     if(dimension() <= 1)
       return;
 
@@ -844,10 +841,12 @@ public:
 
     Face_handle n = f->neighbor(i);
     int in = n->index(f);
-    //TODO MT store values of bools to avoid recomputing is-hyperbolic several times
 
-    // boths faces are non_hyperbolic, but the incident edge is hyperbolic
-    if(!is_Delaunay_hyperbolic(f) && !is_Delaunay_hyperbolic(n))
+    bool fhyp = is_Delaunay_hyperbolic(f);
+    bool nhyp = is_Delaunay_hyperbolic(n);
+
+    // both faces are non_hyperbolic, but the incident edge is hyperbolic
+    if(!fhyp && !nhyp)
     {
       const Point& p = f->vertex(ccw(i))->point();
       const Point& q = f->vertex(cw(i))->point();
@@ -858,21 +857,20 @@ public:
     }
 
     // both faces are hyperbolic
-    if(is_Delaunay_hyperbolic(f) && is_Delaunay_hyperbolic(n))
+    if(fhyp && nhyp)
     {
       const Point& p = f->vertex(ccw(i))->point();
       const Point& q = f->vertex(cw(i))->point();
 
       Hyperbolic_segment s = geom_traits().construct_hyperbolic_bisector_2_object()(
                                p, q, f->vertex(i)->point(), n->vertex(in)->point());
-      //TODO MT cut edge at dual points !!!!
       return s;
     }
 
     // one of the incident faces is non_hyperbolic
     Face_handle hyp_face = f;
 
-    if(!is_Delaunay_hyperbolic(f))
+    if(!fhyp)
     {
       hyp_face = n;
       i = in;
@@ -881,12 +879,8 @@ public:
     const Point& p = hyp_face->vertex(ccw(i))->point();
     const Point& q = hyp_face->vertex(cw(i))->point();
 
-    // ToDo: Line or Segment?
-    // hyperbolic line and ray
     Hyperbolic_segment ray = geom_traits().construct_hyperbolic_bisector_2_object()(
                                p, q, hyp_face->vertex(i)->point());
-    // TODO MT cut edge at dual point !!!
-    //    Segment ray = geom_traits().construct_ray_2_object()(dual(finite_face), line);
     return ray;
   }
 
