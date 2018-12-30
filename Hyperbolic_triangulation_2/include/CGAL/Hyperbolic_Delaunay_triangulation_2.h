@@ -754,9 +754,9 @@ private:
   {
     Is_Delaunay_hyperbolic del;
     int idx;
-    bool flag = del(f->vertex(0)->point(),
-                    f->vertex(1)->point(),
-                    f->vertex(2)->point(),
+    bool flag = del(point(f,0),
+                    point(f,1),
+                    point(f,2),
                     idx);
 
     Face_data fd;
@@ -782,8 +782,8 @@ public:
 
   Hyperbolic_segment hyperbolic_segment(const Face_handle f, const int i) const
   {
-    return geom_traits().construct_hyperbolic_segment_2_object()(f->vertex(cw(i))->point(),
-                                                                 f->vertex(ccw(i))->point());
+    return geom_traits().construct_hyperbolic_segment_2_object()(point(f,cw(i)),
+                                                                 point(f,ccw(i)));
   }
 
   Hyperbolic_segment hyperbolic_segment(const Edge& e) const
@@ -818,9 +818,9 @@ public:
   Hyperbolic_Voronoi_point dual(Face_handle f) const
   {
     CGAL_triangulation_precondition(is_Delaunay_hyperbolic(f));
-    return geom_traits().construct_hyperbolic_circumcenter_2_object()(f->vertex(0)->point(),
-                                                                      f->vertex(1)->point(),
-                                                                      f->vertex(2)->point());
+    return geom_traits().construct_hyperbolic_circumcenter_2_object()(point(f,0),
+                                                                      point(f,1),
+                                                                      point(f,2));
   }
 
   Hyperbolic_segment dual(const Edge& e) const { return dual(e.first, e.second); }
@@ -831,8 +831,8 @@ public:
 
     if(dimension() == 1)
     {
-      const Point& p = f->vertex(cw(i))->point();
-      const Point& q = f->vertex(ccw(i))->point();
+      const Point& p = point(f,cw(i));
+      const Point& q = point(f,ccw(i));
 
       // hyperbolic line
       Hyperbolic_segment line = geom_traits().construct_hyperbolic_bisector_2_object()(p, q);
@@ -848,8 +848,8 @@ public:
     // both faces are non_hyperbolic, but the incident edge is hyperbolic
     if(!fhyp && !nhyp)
     {
-      const Point& p = f->vertex(ccw(i))->point();
-      const Point& q = f->vertex(cw(i))->point();
+      const Point& p = point(f,ccw(i));
+      const Point& q = point(f,cw(i));
 
       // hyperbolic line
       Hyperbolic_segment line = geom_traits().construct_hyperbolic_bisector_2_object()(p, q);
@@ -859,11 +859,11 @@ public:
     // both faces are hyperbolic
     if(fhyp && nhyp)
     {
-      const Point& p = f->vertex(ccw(i))->point();
-      const Point& q = f->vertex(cw(i))->point();
+      const Point& p = point(f,ccw(i));
+      const Point& q = point(f,cw(i));
 
       Hyperbolic_segment s = geom_traits().construct_hyperbolic_bisector_2_object()(
-                               p, q, f->vertex(i)->point(), n->vertex(in)->point());
+                               p, q, point(f,i), point(n,in));
       return s;
     }
 
@@ -876,15 +876,42 @@ public:
       i = in;
     }
 
-    const Point& p = hyp_face->vertex(ccw(i))->point();
-    const Point& q = hyp_face->vertex(cw(i))->point();
+    const Point& p = point(hyp_face,ccw(i));
+    const Point& q = point(hyp_face,cw(i));
 
     Hyperbolic_segment ray = geom_traits().construct_hyperbolic_bisector_2_object()(
-                               p, q, hyp_face->vertex(i)->point());
+                               p, q, point(hyp_face,i));
     return ray;
   }
 
 public:
+
+  const Point point(const Vertex_handle vh) const
+  {
+    return vh->point();
+  }
+
+  const Point point(const Face_handle fh, const int i) const
+  {
+    CGAL_triangulation_precondition(0 <= i);
+    CGAL_triangulation_precondition(i <= 2);
+    return fh->vertex(i)->point();
+  }
+
+
+  Point point(const Vertex_handle vh)
+  {
+    return vh->point();
+  }
+
+  Point point(const Face_handle fh, const int i) 
+  {
+    CGAL_triangulation_precondition(0 <= i);
+    CGAL_triangulation_precondition(i <= 2);
+    return fh->vertex(i)->point();
+  }
+
+
 
   bool is_valid() 
   {
@@ -949,9 +976,9 @@ public:
     // This case corresponds to when the point is located on an Euclidean edge.
     if(lt == EDGE)
     {
-      Point p = fh->vertex(0)->point();
-      Point q = fh->vertex(1)->point();
-      Point r = fh->vertex(2)->point();
+      Point p = point(fh, 0);
+      Point q = point(fh, 1);
+      Point r = point(fh, 2);
 
       if(geom_traits().is_Delaunay_hyperbolic_2_object()(p, q, r))
       {
@@ -969,9 +996,9 @@ public:
         }
       }
 
-      p = fh->vertex(ccw(li))->point();
-      q = Base::mirror_vertex(fh, li)->point();  //fh->mirror_vertex(li)->point();
-      r = fh->vertex(cw(li))->point();
+      p = point(fh, ccw(li));
+      q = point(Base::mirror_vertex(fh, li)); 
+      r = point(fh, cw(li));
 
       if(geom_traits().is_Delaunay_hyperbolic_2_object()(p, q, r))
       {
@@ -993,9 +1020,9 @@ public:
     }
 
     // Here, the face has been located in the Euclidean face lh
-    const Point& p = fh->vertex(0)->point();
-    const Point& q = fh->vertex(1)->point();
-    const Point& r = fh->vertex(2)->point();
+    const Point& p = point(fh, 0);
+    const Point& q = point(fh, 1);
+    const Point& r = point(fh, 2);
     if(!geom_traits().is_Delaunay_hyperbolic_2_object()(p, q, r))
     {
       lt = OUTSIDE_CONVEX_HULL;
@@ -1014,13 +1041,13 @@ public:
         // Here, the point lies in a face that is a neighbor to fh
         for(int i = 0; i < 3; i++) {
           Face_handle nfh = fh->neighbor(i);
-          if(geom_traits().is_Delaunay_hyperbolic_2_object()(nfh->vertex(0)->point(),
-                                                             nfh->vertex(1)->point(),
-                                                             nfh->vertex(2)->point()))
+          if(geom_traits().is_Delaunay_hyperbolic_2_object()(point(nfh,0),
+                                                             point(nfh,1),
+                                                             point(nfh,2)))
           {
-            Oriented_side nside = side_of_hyperbolic_triangle(nfh->vertex(0)->point(),
-                                                              nfh->vertex(1)->point(),
-                                                              nfh->vertex(2)->point(),
+            Oriented_side nside = side_of_hyperbolic_triangle(point(nfh,0),
+                                                              point(nfh,1),
+                                                              point(nfh,2),
                                                               query, lt, li);
             if(nside == ON_POSITIVE_SIDE) {
               lt = FACE;
