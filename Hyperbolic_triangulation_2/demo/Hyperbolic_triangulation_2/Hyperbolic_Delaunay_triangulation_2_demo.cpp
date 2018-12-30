@@ -388,7 +388,7 @@ MainWindow::on_actionSavePoints_triggered()
           end = dt.all_vertices_end();
         vit!= end; ++vit)
     {
-      ofs << vit->point() << std::endl;
+      ofs << dt.point(vit) << std::endl;
     }
   }
 }

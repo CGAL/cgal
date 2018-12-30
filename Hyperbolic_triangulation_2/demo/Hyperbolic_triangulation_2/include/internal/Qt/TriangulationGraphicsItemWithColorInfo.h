@@ -264,8 +264,8 @@ TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
       QPen old = temp;
       temp.setWidth(9);
       
-      double px = to_double(it->point().x());
-      double py = to_double(it->point().y());
+      double px = to_double(t->point(it).x());
+      double py = to_double(t->point(it).y());
       double dist = px*px + py*py;
       if(dist > 0.25) {
         temp.setWidth(8);//6
@@ -284,7 +284,7 @@ TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
       }
       //painter->setPen(temp);
       
-      QPointF point = matrix.map(convert(it->point()));
+      QPointF point = matrix.map(convert(t->point(it)));
       painter->drawPoint(point);
       
       painter->setPen(old);
@@ -326,7 +326,7 @@ TriangulationGraphicsItem<T>::paintVertex(typename T::Vertex_handle vh)
   
   QMatrix matrix = m_painter->matrix();
   m_painter->resetMatrix();
-  m_painter->drawPoint(matrix.map(convert(vh->point())));
+  m_painter->drawPoint(matrix.map(convert(t->point(vh))));
   m_painter->setMatrix(matrix);
 }
 
@@ -364,7 +364,7 @@ TriangulationGraphicsItem<T>::updateBoundingBox()
     bb_initialized = false;
     return;
   } else if(! bb_initialized){
-    bb = t->finite_vertices_begin()->point().bbox();
+    bb = t->point(t->finite_vertices_begin()).bbox();
     bb_initialized = true;
   }
   
@@ -372,13 +372,13 @@ TriangulationGraphicsItem<T>::updateBoundingBox()
     for(typename T::Finite_vertices_iterator it = t->finite_vertices_begin();
 	it != t->finite_vertices_end();
 	++it){
-      bb = bb + it->point().bbox();
+      bb = bb + t->point(it).bbox();
     }
   } else {
     typename T::Vertex_handle inf = t->infinite_vertex();
     typename T::Vertex_circulator vc = t->incident_vertices(inf), done(vc);
     do {
-      bb = bb + vc->point().bbox();
+      bb = bb + t->point(vc).bbox();
       ++vc;
     } while(vc != done);
   }

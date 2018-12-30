@@ -116,9 +116,9 @@ TriangulationCircumcircle<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
   fh = dt->locate(p);
   if (fh != Face_handle()) {  
     if(dt->is_Delaunay_hyperbolic(fh)){
-      typename T::Geom_traits::Circle_2 c(fh->vertex(0)->point(), 
-                                          fh->vertex(1)->point(), 
-                                          fh->vertex(2)->point());
+      typename T::Geom_traits::Circle_2 c(dt->point(fh,0), 
+                                          dt->point(fh,1), 
+                                          dt->point(fh,2));
       CGAL::Bbox_2 bb = c.bbox();
       circle->setRect(bb.xmin(), bb.ymin(), bb.xmax()-bb.xmin(), bb.ymax()-bb.ymin());
       circle->show();

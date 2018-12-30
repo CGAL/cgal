@@ -179,7 +179,7 @@ TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
     for(typename T::All_vertices_iterator it = t->all_vertices_begin();
         it != t->all_vertices_end();
         it++){
-      QPointF point = matrix.map(convert(it->point()));
+      QPointF point = matrix.map(convert(t->point(it)));
       painter->drawPoint(point);
     }
   }
@@ -193,7 +193,7 @@ TriangulationGraphicsItem<T>::paintVertex(typename T::Vertex_handle vh)
   m_painter->setPen(vertices_pen);
   QMatrix matrix = m_painter->matrix();
   m_painter->resetMatrix();
-  m_painter->drawPoint(matrix.map(convert(vh->point())));
+  m_painter->drawPoint(matrix.map(convert(t->point(vh))));
   m_painter->setMatrix(matrix);
 }
 
