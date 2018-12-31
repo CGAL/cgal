@@ -1067,28 +1067,33 @@ public:
   
   bool join(const Surface_mesh& other)
   {
+    // increase capacity
     const size_type nv = num_vertices(), nh = num_halfedges(), nf = num_faces();
     resize(num_vertices()+  other.num_vertices(),
             num_edges()+  other.num_edges(),
             num_faces()+  other.num_faces());
 
+    // append properties in the free space created by resize
     vprops_.transfer(other.vprops_);
     hprops_.transfer(other.hprops_);
     fprops_.transfer(other.fprops_);
     eprops_.transfer(other.eprops_);
 
+    // translate halfedge index in vertex -> halfedge
     for(size_type i = nv; i < nv+other.num_vertices(); i++){
       Vertex_index vi(i);
       if(vconn_[vi].halfedge_ != null_halfedge()){
         vconn_[vi].halfedge_ = Halfedge_index(size_type(vconn_[vi].halfedge_)+nh);
       }
     }
+    // translate halfedge index in face -> halfedge
     for(size_type i = nf; i < nf+other.num_faces(); i++){
       Face_index fi(i);
       if(fconn_[fi].halfedge_ != null_halfedge()){
         fconn_[fi].halfedge_ = Halfedge_index(size_type(fconn_[fi].halfedge_)+nh);
       }
     }
+    // translate indices in halfedge -> face, halfedge -> target, halfedge -> prev, and halfedge -> next
     for(size_type i = nh; i < nh+other.num_halfedges(); i++){
       Halfedge_index hi(i);
       if(hconn_[hi].face_ != null_face()){
@@ -1105,41 +1110,50 @@ public:
       }
     }
     size_type inf_value = (std::numeric_limits<size_type>::max)();
+
+    // merge vertex free list
     if(other.vertices_freelist_ != inf_value){
       Vertex_index vi(nv+other.vertices_freelist_);
       Halfedge_index inf((std::numeric_limits<size_type>::max)());
+      // correct the indices in the linked list of free vertices copied (due to vconn_ translation)
       while(vconn_[vi].halfedge_ != inf){
         Vertex_index corrected_vi = Vertex_index(size_type(vconn_[vi].halfedge_)+nv-nh);
         vconn_[vi].halfedge_ = Halfedge_index(corrected_vi);
         vi = corrected_vi;
       }
+      // append the vertex free linked list of `this` to the copy of `other`
       vconn_[vi].halfedge_ = Halfedge_index(vertices_freelist_);
-      
+      // update the begin of the vertex free linked list
       vertices_freelist_ = nv + other.vertices_freelist_; 
     }
+    // merge face free list
     if(other.faces_freelist_ != inf_value){
       Face_index fi(nf+other.faces_freelist_);
       Halfedge_index inf((std::numeric_limits<size_type>::max)());
+      // correct the indices in the linked list of free faces copied (due to fconn_ translation)
       while(fconn_[fi].halfedge_ != inf){
         Face_index corrected_fi = Face_index(size_type(fconn_[fi].halfedge_)+nf-nh);
         fconn_[fi].halfedge_ = Halfedge_index(corrected_fi);
         fi = corrected_fi;
       }
+      // append the face free linked list of `this` to the copy of `other`
       fconn_[fi].halfedge_ = Halfedge_index(faces_freelist_);
-
+      // update the begin of the face free linked list
       faces_freelist_ = nf + other.faces_freelist_; 
     }
-    
+    // merge edge free list
     if(other.edges_freelist_ != inf_value){
       Halfedge_index hi(nh+other.edges_freelist_);
       Halfedge_index inf((std::numeric_limits<size_type>::max)());
       while(hconn_[hi].next_halfedge_ != inf){
         hi = hconn_[hi].next_halfedge_;
       }
+      // append the halfedge free linked list of `this` to the copy of `other`
       hconn_[hi].next_halfedge_ = Halfedge_index(edges_freelist_);
+      // update the begin of the halfedge free linked list
       edges_freelist_ = nh + other.edges_freelist_; 
     }
-
+    // update garbage infos
     garbage_ = garbage_ || other.garbage_;
     removed_vertices_ += other.removed_vertices_;
     removed_edges_ += other.removed_edges_;
@@ -1406,7 +1420,6 @@ public:
         assert( rf == removed_faces_ );
         valid = valid && ( rf == removed_faces_ );
 
-  
         return valid;
     }
 
