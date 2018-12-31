@@ -686,6 +686,7 @@ namespace internal {
           if (is_on_border(he) || is_on_mesh(he))
           {
             he = opposite(he, mesh_); //he now is PATCH_BORDER
+            e = edge(he, mesh_);
             CGAL_assertion(is_on_patch_border(he));
           }
         }//end if(not on PATCH)
