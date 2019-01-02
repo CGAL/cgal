@@ -231,9 +231,6 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
     QApplication::setOverrideCursor(Qt::BusyCursor);
     QApplication::processEvents();
 
-    // First point to delete
-    Point_set::iterator first_unoriented_point = points->end();
-
     //***************************************
     // normal estimation
     //***************************************
