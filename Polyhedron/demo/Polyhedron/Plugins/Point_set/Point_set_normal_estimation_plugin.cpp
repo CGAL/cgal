@@ -82,7 +82,7 @@ struct Jet_estimate_normals_functor
 struct Vector_to_pmap
 {
   typedef boost::readable_property_map_tag     category;
-  typedef typename Point_set::Index            key_type;
+  typedef Point_set::Index                     key_type;
   typedef bool                                 value_type;
   typedef value_type                           reference;
   
@@ -362,7 +362,7 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalOrientat
     {
       std::vector<bool> constrained_map (points->size(), false);
 
-      for (typename Point_set::iterator it = points->first_selected(); it != points->end(); ++ it)
+      for (Point_set::iterator it = points->first_selected(); it != points->end(); ++ it)
         constrained_map[*it] = true;
               
       first_unoriented_point =
