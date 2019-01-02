@@ -36,13 +36,11 @@ the four functions
 `solve_nonnegative_quadratic_program`, and 
 `solve_nonnegative_linear_program`. 
 
-Example 
--------------- 
+\cgalHeading{Example}
 
 \ref QP_solver/first_qp.cpp 
 
-Terminology 
--------------- 
+\cgalHeading{Terminology}
 
 If there is no \f$ \qpx\f$ that satisfies all the (in)equalities, 
 the program is called <I>infeasible</I>, otherwise, it is <I>feasible</I>, 
