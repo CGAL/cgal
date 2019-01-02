@@ -1393,31 +1393,28 @@ public:
 
         size_type inf = (std::numeric_limits<size_type>::max)();
         size_type vfl = vertices_freelist_;
-        int rv = 0;
+        size_type rv = 0;
         while(vfl != inf){
           vfl = (size_type)vconn_[Vertex_index(vfl)].halfedge_;
           rv++;
         }
-        assert( rv == removed_vertices_ );
         valid = valid && ( rv == removed_vertices_ );
 
 
         size_type efl = edges_freelist_;
-        int re = 0;
+        size_type re = 0;
         while(efl != inf){
           efl = (size_type)hconn_[Halfedge_index(efl)].next_halfedge_;
           re++;
         }
-        assert( re == removed_edges_ );
         valid = valid && ( re == removed_edges_ );
 
         size_type ffl = faces_freelist_;
-        int rf = 0;
+        size_type rf = 0;
         while(ffl != inf){
           ffl = (size_type)fconn_[Face_index(ffl)].halfedge_;
           rf++;
         }
-        assert( rf == removed_faces_ );
         valid = valid && ( rf == removed_faces_ );
 
         return valid;
