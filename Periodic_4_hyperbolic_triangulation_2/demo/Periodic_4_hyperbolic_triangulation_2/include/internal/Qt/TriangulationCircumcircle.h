@@ -104,12 +104,6 @@ TriangulationCircumcircle<T>::hide()
 }
 
 template <typename T>
-typename T::Point apply(typename T::Point p, typename T::Hyperbolic_translation tr) {
-  typename T::Construct_hyperbolic_point_2 CP2;
-  return CP2(p, tr);
-}
-
-template <typename T>
 void 
 TriangulationCircumcircle<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
@@ -123,9 +117,9 @@ TriangulationCircumcircle<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
   if(fh != typename T::Face_handle()) {
     hint = fh->vertex(0);
     typename T::Point p0, p1, p2;
-    p0 = apply<T>(fh->vertex(0)->point(), fh->translation(0));
-    p1 = apply<T>(fh->vertex(1)->point(), fh->translation(1));
-    p2 = apply<T>(fh->vertex(2)->point(), fh->translation(2));
+    p0 = dt->geom_traits().construct_hyperbolic_point_2_object()(fh->vertex(0)->point(), fh->translation(0));
+    p1 = dt->geom_traits().construct_hyperbolic_point_2_object()(fh->vertex(1)->point(), fh->translation(1));
+    p2 = dt->geom_traits().construct_hyperbolic_point_2_object()(fh->vertex(2)->point(), fh->translation(2));
 
     typename T::Geom_traits::Circle_2 c(p0, p1, p2);  
     CGAL::Bbox_2 bb = c.bbox();
