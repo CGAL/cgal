@@ -1,6 +1,5 @@
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/internal/Exact_complex.h>
-
 #include <CGAL/Cartesian.h>
 
 #include <iostream>

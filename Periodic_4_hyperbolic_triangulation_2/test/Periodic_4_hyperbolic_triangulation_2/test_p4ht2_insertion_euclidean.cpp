@@ -1,11 +1,8 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/CORE_Expr.h>
-
 #include <CGAL/basic.h>
-
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
-
 #include <CGAL/point_generators_2.h>
 #include <CGAL/determinant.h>
 #include <CGAL/Timer.h>

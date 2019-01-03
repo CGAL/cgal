@@ -17,7 +17,6 @@ int main(int, char**)
   typedef Exact_complex<NT>                            ECplx;
   typedef Hyperbolic_octagon_translation_matrix<ECplx> Matrix;
   typedef Point_2< Cartesian<NT> >                     Point;
-  // typedef Circle_2< Cartesian<NT> >   Circle;
 
   Matrix m;
   std::cout << "Identity matrix: " << m << std::endl;

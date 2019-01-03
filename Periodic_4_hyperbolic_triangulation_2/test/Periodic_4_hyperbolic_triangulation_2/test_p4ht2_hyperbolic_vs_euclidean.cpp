@@ -1,14 +1,11 @@
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/Cartesian.h>
-
-//#include <CGAL/Hyperbolic_random_points_in_disc_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Hyperbolic_octagon_translation.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_2_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Periodic_2_Delaunay_triangulation_2.h>
-
 #include <CGAL/determinant.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Timer.h>

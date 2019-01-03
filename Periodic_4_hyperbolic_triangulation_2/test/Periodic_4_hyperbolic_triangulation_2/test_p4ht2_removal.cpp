@@ -1,11 +1,9 @@
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/Cartesian.h>
-
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Hyperbolic_octagon_translation.h>
-
 #include <CGAL/determinant.h>
 #include <CGAL/Point_2.h>
 
@@ -57,13 +55,11 @@ int main(int argc, char** argv)
     CGAL::Random_points_in_disc_2<DPoint, Creator> g(0.85);
     Side_of_original_octagon pred;
 
-    //std::vector<Vertex_handle> new_v;
     int cnt = 0;
     do {
       DPoint pt = *g;
       ++g;
       if(pred(pt) != CGAL::ON_UNBOUNDED_SIDE) {
-        //new_v.push_back(tr.insert(pt));
         tr.insert(Point(pt.x(), pt.y()));
         cnt++;
       }

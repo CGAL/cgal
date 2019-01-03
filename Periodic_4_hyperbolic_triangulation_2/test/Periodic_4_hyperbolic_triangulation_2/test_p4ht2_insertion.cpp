@@ -1,7 +1,6 @@
 #define PROFILING_MODE
 
 #include <CGAL/basic.h>
-
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
@@ -9,9 +8,7 @@
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/determinant.h>
-
 #include <CGAL/Timer.h>
-
 #include <CGAL/Circular_kernel_2.h>
 #include <CGAL/Algebraic_kernel_for_circles_2_2.h>
 
@@ -68,7 +65,6 @@ int main(int argc, char** argv)
   for(int exec = 1; exec <= iters; ++exec)
   {
     std::vector<Point> pts;
-    // We can consider points only in the circle circumscribing the fundamental domain
     CGAL::Random_points_in_disc_2<Point_double, Creator> g(0.85);
 
     int cnt = 0;

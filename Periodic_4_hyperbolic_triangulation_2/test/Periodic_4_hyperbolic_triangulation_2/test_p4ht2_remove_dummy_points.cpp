@@ -1,9 +1,6 @@
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/Cartesian.h>
-
 #include <CGAL/point_generators_2.h>
-//#include <CGAL/Random_points_in_disc_2.h>
-
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Hyperbolic_octagon_translation.h>
@@ -45,8 +42,6 @@ int main(int argc, char** argv)
   double mean = 0.0;
   for(int j=0; j<iter; ++j)
   {
-    //cout << "Iteration " << (j+1) << "/" << iter << "..." << std::endl;
-
     std::vector<Point_double> v;
     CGAL::Random_points_in_disc_2<Point_double, Creator> g(0.85);
 

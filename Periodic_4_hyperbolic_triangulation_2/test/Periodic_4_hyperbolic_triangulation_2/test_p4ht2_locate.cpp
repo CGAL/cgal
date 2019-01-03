@@ -1,11 +1,9 @@
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/Cartesian.h>
-
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/internal/Periodic_4_hyperbolic_triangulation_dummy_14.h>
 #include <CGAL/Hyperbolic_octagon_translation.h>
-
 #include <CGAL/Algebraic_kernel_for_circles_2_2.h>
 #include <CGAL/Circular_kernel_2.h>
 #include <CGAL/determinant.h>
