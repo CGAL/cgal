@@ -384,9 +384,8 @@ create_riemannian_graph(
     }
 
     // add source vertex (virtual, does not correspond to a point)
-    typename Riemannian_graph::vertex_descriptor v = add_vertex(riemannian_graph);
+    add_vertex(riemannian_graph);
     std::size_t source_point_index = num_input_points;
-    CGAL_point_set_processing_assertion(v == source_point_index);
 
     //
     // add edges
