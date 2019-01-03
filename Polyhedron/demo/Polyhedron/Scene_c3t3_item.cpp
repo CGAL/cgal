@@ -958,7 +958,7 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   }
   if(d->is_grid_shown)
   {
-    viewer->makeCurrent();
+    //viewer->makeCurrent(); //messes with the depthPeeling 
     getEdgeContainer(Grid_edges)->setColor(QColor(Qt::black));
     QMatrix4x4 f_mat;
     for (int i = 0; i<16; i++)
