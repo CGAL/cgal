@@ -64,9 +64,6 @@ public:
     : Base(p, fh), _stored_translation(false)
   {}
 
-  Periodic_4_hyperbolic_triangulation_vertex_base_2(const Face_handle /*fh*/)
-    : Base(), _stored_translation(false)
-  {}
 
   void set_translation(const Hyperbolic_translation& tr)
   {
