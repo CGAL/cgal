@@ -74,13 +74,10 @@ public:
   typedef typename TDS::Vertex::Point                             Point;
   typedef typename GT::Hyperbolic_segment_2                       Hyperbolic_segment;
   typedef typename GT::Hyperbolic_triangle_2                      Hyperbolic_triangle;
-  typedef typename GT::Side_of_oriented_hyperbolic_segment_2      Side_of_oriented_hyperbolic_segment;
 
   typedef std::pair<Point, Hyperbolic_translation>                Periodic_point;
   typedef array< std::pair<Point, Hyperbolic_translation>, 2 >    Periodic_segment;
   typedef array< std::pair<Point, Hyperbolic_translation>, 3 >    Periodic_triangle;
-
-  typedef typename GT::Construct_hyperbolic_point_2               Construct_hyperbolic_point_2;
 
   typedef typename TDS::Vertex                                    Vertex;
   typedef typename TDS::Edge                                      Edge;
@@ -404,7 +401,7 @@ protected:
       return ON_ORIENTED_BOUNDARY;
     }
 
-    Oriented_side cp1 = Side_of_oriented_hyperbolic_segment()(p, q, query);
+    Oriented_side cp1 = geom_traits().side_of_oriented_hyperbolic_segment_2_object()(p, q, query);
     if(cp1 == ON_ORIENTED_BOUNDARY)
     {
       lt = EDGE;
@@ -412,7 +409,7 @@ protected:
       return ON_ORIENTED_BOUNDARY;
     }
 
-    Oriented_side cp2 = Side_of_oriented_hyperbolic_segment()(q, r, query);
+    Oriented_side cp2 = geom_traits().side_of_oriented_hyperbolic_segment_2_object()(q, r, query);
     if(cp2 == ON_ORIENTED_BOUNDARY)
     {
       lt = EDGE;
@@ -420,7 +417,7 @@ protected:
       return ON_ORIENTED_BOUNDARY;
     }
 
-    Oriented_side cp3 = Side_of_oriented_hyperbolic_segment()(r, p, query);
+    Oriented_side cp3 = geom_traits().side_of_oriented_hyperbolic_segment_2_object()(r, p, query);
     if(cp3 == ON_ORIENTED_BOUNDARY)
     {
       lt = EDGE;
@@ -428,9 +425,9 @@ protected:
       return ON_ORIENTED_BOUNDARY;
     }
 
-    Oriented_side cs1 = Side_of_oriented_hyperbolic_segment()(p, q, r);
-    Oriented_side cs2 = Side_of_oriented_hyperbolic_segment()(q, r, p);
-    Oriented_side cs3 = Side_of_oriented_hyperbolic_segment()(r, p, q);
+    Oriented_side cs1 = geom_traits().side_of_oriented_hyperbolic_segment_2_object()(p, q, r);
+    Oriented_side cs2 = geom_traits().side_of_oriented_hyperbolic_segment_2_object()(q, r, p);
+    Oriented_side cs3 = geom_traits().side_of_oriented_hyperbolic_segment_2_object()(r, p, q);
 
     // Cannot be on the boundary here.
     lt = FACE;
@@ -882,10 +879,8 @@ euclidean_locate(const Point& p,
                  int& li,
                  Hyperbolic_translation& loff, Face_handle f) const
 {
-  typedef typename GT::Side_of_original_octagon Side_of_original_octagon;
 
-  Side_of_original_octagon check = Side_of_original_octagon();
-  CGAL::Bounded_side side = check(p);
+  CGAL::Bounded_side side = geom_traits().side_of_original_octagon_object()(p);
   if(side != ON_BOUNDED_SIDE)
     return Face_handle();
 

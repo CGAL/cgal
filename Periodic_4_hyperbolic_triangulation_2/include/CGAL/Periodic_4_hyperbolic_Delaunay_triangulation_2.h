@@ -95,8 +95,6 @@ public:
   typedef typename Base::Face_circulator                            Face_circulator;
   typedef typename Base::Edge_circulator                            Edge_circulator;
   typedef typename Base::Vertex_circulator                          Vertex_circulator;
-  typedef typename GT::Construct_hyperbolic_circumcenter_2          Construct_hyperbolic_circumcenter_2;
-  typedef typename GT::Construct_hyperbolic_segment_2               Construct_hyperbolic_segment_2;
 
 public:
   typedef Point                                                     value_type;
@@ -369,7 +367,7 @@ protected:
 public:
   Point dual(const Face_handle f, const Hyperbolic_translation& nboff = Hyperbolic_translation()) const
   {
-    Point res = Construct_hyperbolic_circumcenter_2()(f->vertex(0)->point(),
+    Point res = geom_traits.construct_hyperbolic_circumcenter_2_object()(f->vertex(0)->point(),
                                                       f->vertex(1)->point(),
                                                       f->vertex(2)->point(),
                                                       nboff * f->translation(0),
@@ -380,7 +378,7 @@ public:
 
   Hyperbolic_segment dual(const Edge &e) const
   {
-    Hyperbolic_segment res = Construct_hyperbolic_segment_2()(dual(e.first), dual(e.first->neighbor(e.second), neighbor_translation(e.first, e.second)));
+    Hyperbolic_segment res = geom_traits().construct_hyperbolic_segment_2_object()(dual(e.first), dual(e.first->neighbor(e.second), neighbor_translation(e.first, e.second)));
     return res;
   }
 
