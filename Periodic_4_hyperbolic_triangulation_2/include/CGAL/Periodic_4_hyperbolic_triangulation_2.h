@@ -264,13 +264,13 @@ public:
 
   Hyperbolic_segment construct_hyperbolic_segment(const Point& src, const Point& tgt) const
   {
-    return geom_traits().construct_segment_2_object()(src, tgt);
+    return geom_traits().construct_hyperbolic_segment_2_object()(src, tgt);
   }
 
   Hyperbolic_segment construct_hyperbolic_segment(const Point& src, const Point& tgt,
                                                   const Hyperbolic_translation& tr1, const Hyperbolic_translation& tr2) const
   {
-    return geom_traits().construct_segment_2_object()(src, tgt, tr1, tr2);
+    return geom_traits().construct_hyperbolic_segment_2_object()(src, tgt, tr1, tr2);
   }
 
   Hyperbolic_segment construct_hyperbolic_segment(const Face_handle & fh, int idx) const

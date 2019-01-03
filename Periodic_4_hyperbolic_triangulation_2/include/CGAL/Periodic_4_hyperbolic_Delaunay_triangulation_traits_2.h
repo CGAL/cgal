@@ -39,8 +39,12 @@
 
 namespace CGAL {
 
+namespace internal {
+
+
 template <typename K, typename Predicate_>
 class Hyperbolic_traits_with_translations_2_adaptor
+  : Predicate_
 {
   typedef K                                               Kernel;
   typedef Predicate_                                      Predicate;
@@ -55,18 +59,20 @@ class Hyperbolic_traits_with_translations_2_adaptor
 public:
   typedef typename Predicate::result_type                 result_type;
 
-  Hyperbolic_traits_with_translations_2_adaptor() { }
+  using Predicate::operator();
+
+  Hyperbolic_traits_with_translations_2_adaptor(const Predicate_ pred = Predicate_()) : Predicate_(pred) {}
 
   result_type operator()(const Point& p0, const Point& p1,
                          const Hyperbolic_translation& o0, const Hyperbolic_translation& o1) const
   {
-    return Predicate()(pp(p0, o0), pp(p1, o1));
+    return operator()(pp(p0, o0), pp(p1, o1));
   }
 
   result_type operator()(const Point& p0, const Point& p1, const Point& p2,
                          const Hyperbolic_translation& o0, const Hyperbolic_translation& o1, const Hyperbolic_translation& o2) const
   {
-    return Predicate()(pp(p0, o0), pp(p1, o1), pp(p2, o2));
+    return operator()(pp(p0, o0), pp(p1, o1), pp(p2, o2));
   }
 
   result_type operator()(const Point& p0, const Point& p1,
@@ -74,22 +80,7 @@ public:
                          const Hyperbolic_translation& o0, const Hyperbolic_translation& o1,
                          const Hyperbolic_translation& o2, const Hyperbolic_translation& o3) const
   {
-    return Predicate()(pp(p0, o0), pp(p1, o1), pp(p2, o2), pp(p3, o3));
-  }
-
-  result_type operator()(const Point& p0, const Point& p1) const
-  {
-    return Predicate()(p0, p1);
-  }
-
-  result_type operator()(const Point& p0, const Point& p1, const Point& p2) const
-  {
-    return Predicate()(p0, p1, p2);
-  }
-
-  result_type operator()(const Point& p0, const Point& p1, const Point& p2, const Point& p3) const
-  {
-    return Predicate()(p0, p1, p2, p3);
+    return operator()(pp(p0, o0), pp(p1, o1), pp(p2, o2), pp(p3, o3));
   }
 
   // Added for Side_of_hyperbolic_triangle_2
@@ -97,7 +88,7 @@ public:
   result_type operator()(const Point& p0, const Point& p1,
                          const Point& p2, const Point& p3, T& t) const
   {
-    return Predicate()(p0, p1, p2, p3, t);
+    return operator()(p0, p1, p2, p3, t);
   }
 
   template <typename T>
@@ -106,7 +97,7 @@ public:
                          const Hyperbolic_translation& o0, const Hyperbolic_translation& o1,
                          const Hyperbolic_translation& o2, const Hyperbolic_translation& o3, T& t) const
   {
-    return Predicate()(pp(p0, o0), pp(p1, o1), pp(p2, o2), pp(p3, o3), t);
+    return operator()(pp(p0, o0), pp(p1, o1), pp(p2, o2), pp(p3, o3), t);
   }
 private:
   Point pp(const Point &p, const Hyperbolic_translation &o) const
@@ -128,6 +119,8 @@ private:
 
 public:
   typedef Point                                           result_type;
+
+  using Construct_point_base::operator();
 
   Periodic_4_construct_hyperbolic_point_2() { }
 
@@ -163,104 +156,45 @@ public:
     NT rx((rn*rd + in*id));
     NT ry((in*rd - rn*id));
 
-    Point ret(rx/den, ry/den);
-    return ret;
+    return operator()(rx/den, ry/den);
   }
 
   Point operator() (const Point& p) const
   {
     return p;
   }
+
 };
 
-template <typename Kernel = CGAL::Cartesian<CORE::Expr>,
-          template<typename> class Translation_type = Hyperbolic_octagon_translation>
-class Periodic_4_hyperbolic_Delaunay_triangulation_traits_2
-  : public Hyperbolic_Delaunay_triangulation_traits_2<Kernel>
-{
-  typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>                              Base;
-  typedef Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel, Translation_type> Self;
 
-public:
-  typedef typename Base::FT                                               FT;
-  typedef Translation_type<FT>                                            Hyperbolic_translation;
-
-  typedef typename Base::Hyperbolic_point_2                               Hyperbolic_point_2;
-  typedef Hyperbolic_point_2                                              Hyperbolic_Voronoi_point_2;
-  typedef typename Base::Line_2                                           Euclidean_line_2;
-  typedef typename Base::Euclidean_circle_or_line_2                       Euclidean_circle_or_line_2;
-  typedef typename Base::Circular_arc_2                                   Circular_arc_2;
-  typedef typename Base::Euclidean_segment_2                              Euclidean_segment_2; //only used internally here
-  typedef typename Base::Hyperbolic_segment_2                             Hyperbolic_segment_2;
-  typedef Euclidean_segment_2                                             Line_segment_2; // kept for demo
-  typedef Hyperbolic_segment_2                                            Segment_2; // kept for demo
-
-  // the following types are only used internally in this traits class,
-  // so they need not be documented, and they don't need _object()
-  typedef typename Base::Construct_Euclidean_bisector_2                   Construct_Euclidean_bisector_2;
-  typedef typename Base::Construct_intersection_2                         Construct_intersection_2;
-  typedef typename Base::Construct_hyperbolic_segment_2                   Construct_hyperbolic_segment_2;
-  typedef typename Base::Construct_hyperbolic_bisector_2                  Construct_hyperbolic_bisector_2;
-  typedef typename Base::Construct_circle_or_line_supporting_bisector     Construct_circle_or_line_supporting_bisector;
-  typedef typename Base::Euclidean_collinear_2                            Euclidean_collinear_2;
-  typedef typename Base::Compute_squared_Euclidean_distance_2             Compute_squared_Euclidean_distance_2;
-  typedef typename Base::Has_on_bounded_side_2                            Has_on_bounded_side_2;
-
-  // Wrappers for the translation adapter
-  typedef Hyperbolic_traits_with_translations_2_adaptor<
-            Self, typename Base::Orientation_2>                           Orientation_2;
-  typedef Hyperbolic_traits_with_translations_2_adaptor<
-            Self, typename Base::Side_of_oriented_circle_2>               Side_of_oriented_circle_2;
-  typedef Hyperbolic_traits_with_translations_2_adaptor<
-            Self, typename Base::Construct_hyperbolic_circumcenter_2>     Construct_hyperbolic_circumcenter_2;
-  typedef Hyperbolic_traits_with_translations_2_adaptor<
-            Self, Construct_hyperbolic_segment_2>                         Construct_segment_2;
-
-  typedef Hyperbolic_traits_with_translations_2_adaptor<
-            Self, typename Base::Construct_triangle_2>                    Construct_triangle_2;
-
-  typedef Hyperbolic_traits_with_translations_2_adaptor<
-            Self, typename Base::Compare_distance_2>                      Compare_distance_2;
-  typedef Periodic_4_construct_hyperbolic_point_2<
-            Self, typename Kernel::Construct_point_2>                     Construct_hyperbolic_point_2;
-  typedef Hyperbolic_traits_with_translations_2_adaptor<
-            Self, typename Base::Side_of_oriented_hyperbolic_segment_2>   Side_of_oriented_hyperbolic_segment_2;
-
-public:
-  Construct_triangle_2
-  construct_triangle_2_object() const
-  { return Construct_triangle_2(); }
-
-  Side_of_oriented_hyperbolic_segment_2
-  side_of_oriented_hyperbolic_segment_2_object() const
-  { return Side_of_oriented_hyperbolic_segment_2(); }
-
-  class Compute_approximate_hyperbolic_diameter
+template <typename Traits>
+class Compute_approximate_hyperbolic_diameter
   {
+
+    typedef typename Traits:: Euclidean_line_2     Euclidean_line_2;
+    typedef typename Traits::Circle_2              Circle_2;
+    typedef typename Traits::Hyperbolic_point_2    Hyperbolic_point_2;
   public:
     typedef double result_type;
 
-    Compute_approximate_hyperbolic_diameter() {}
+    Compute_approximate_hyperbolic_diameter(const Traits& gt = Traits()) : _gt(gt) {}
 
     result_type operator()(const Hyperbolic_point_2& p1,
                            const Hyperbolic_point_2& p2,
                            const Hyperbolic_point_2& p3)
     {
-      typedef Euclidean_line_2                                Line;
-      typedef typename Kernel::Circle_2                       Circle;
-      typedef Construct_inexact_intersection_2                Intersection;
 
-      Circle c(p1, p2, p3);
+      Circle_2 c = _gt.construct_circle_2_object()(p1, p2, p3);
 
-      Hyperbolic_point_2  p0(0, 0);
-      Circle c0(p0, 1);
-      Line ell(p0, c.center());
+      Hyperbolic_point_2 p0 = _gt.construct_point_2_object()(0, 0);
+      Circle_2           c0 = _gt.construct_circle_2_object()(p0, 1);
+      Euclidean_line_2  ell = _gt.construct_line_2_object()(p0, c.center());
 
       if(ell.is_degenerate())
         return 5.; // for the Bolza surface, this just needs to be larger than half the systole (which is ~1.5)
 
-      std::pair<Hyperbolic_point_2, Hyperbolic_point_2> res1 = Intersection()(c0, ell);
-      std::pair<Hyperbolic_point_2, Hyperbolic_point_2> res2 = Intersection()(c , ell);
+      std::pair<Hyperbolic_point_2, Hyperbolic_point_2> res1 = _gt.construct_inexact_intersection_2_object()(c0, ell);
+      std::pair<Hyperbolic_point_2, Hyperbolic_point_2> res2 = _gt.construct_inexact_intersection_2_object()(c , ell);
 
       Hyperbolic_point_2 a = res1.first;
       Hyperbolic_point_2 b = res1.second;
@@ -277,95 +211,71 @@ public:
 
       return hyperdist;
     }
+
+  private:
+    const Traits& _gt;
   };
 
-  Compute_approximate_hyperbolic_diameter
-  compute_approximate_hyperbolic_diameter_object() const
-  { return Compute_approximate_hyperbolic_diameter(); }
 
-  Construct_hyperbolic_point_2
-  construct_hyperbolic_point_2_object() const
-  { return Construct_hyperbolic_point_2(); }
-
-  Construct_hyperbolic_segment_2
-  construct_hyperbolic_segment_2_object() const
-  { return Construct_hyperbolic_segment_2(); }
-
-  // wrong names kept for demo
-  Construct_segment_2
-  construct_segment_2_object() const
-  { return Construct_segment_2(); }
-
+  template <typename Traits>
   class Construct_hyperbolic_line_2
   {
-    typedef typename Kernel::Construct_weighted_circumcenter_2   Construct_weighted_circumcenter_2;
-    typedef typename Kernel::Weighted_point_2                    Weighted_point_2;
-    typedef typename Kernel::Point_2                             Bare_point;
-    typedef typename Kernel::Circle_2                            Circle_2;
+    typedef typename Traits::Weighted_point_2                    Weighted_point_2;
+    typedef typename Traits::Hyperbolic_point_2                  Hyperbolic_point_2;
+    typedef typename Traits::Hyperbolic_segment_2                Hyperbolic_segment_2;
+    typedef typename Traits::Point_2                             Bare_point;
+    typedef typename Traits::Circle_2                            Circle_2;
+    typedef typename Traits::Circular_arc_2                      Circular_arc_2;
+    typedef typename Traits::FT                                  FT;
 
   public:
-    Construct_hyperbolic_line_2() { }
+    Construct_hyperbolic_line_2(const Traits gt = Traits()) : _gt(gt) { }
 
     Hyperbolic_segment_2 operator()(const Hyperbolic_point_2& p, const Hyperbolic_point_2& q)
     {
       Origin o;
-      if(Euclidean_collinear_2()(p, q, Hyperbolic_point_2(o)))
+      if(_gt.collinear_2_object()(p, q, _gt.construct_hyperbolic_point_2_object(o)))
       {
-        std::pair<Hyperbolic_point_2,Hyperbolic_point_2> inters = Construct_intersection_2()(Euclidean_line_2(p,q), Circle_2(Hyperbolic_point_2(0,0),1));
+        std::pair<Hyperbolic_point_2,Hyperbolic_point_2> inters = _gt.construct_intersection_2_object()(_gt.construct_line_2_object()(p,q), _gt.construct_circle_2_object()(_gt.construct_hyperbolic_point_2_object()(0,0),1));
         return Euclidean_segment_2(inters.first, inters.second);
       }
 
       Weighted_point_2 wp(p);
       Weighted_point_2 wq(q);
-      Weighted_point_2 wo(Hyperbolic_point_2(o), FT(1)); // Poincaré circle
+      Weighted_point_2 wo(_gt.construct_hyperbolic_point_2_object()(o), FT(1)); // Poincaré circle
 
-      Bare_point center = Construct_weighted_circumcenter_2()(wp, wo, wq);
-      FT sq_radius = Compute_squared_Euclidean_distance_2()(p, center);
+      Bare_point center = _gt.construct_weighted_circumcenter_2_object()(wp, wo, wq);
+      FT sq_radius = _gt.compute_squared_Euclidean_distance_2_object()(p, center);
 
-      Circle_2 circle(center, sq_radius);
-      std::pair<Hyperbolic_point_2,Hyperbolic_point_2> inters = Construct_intersection_2()(circle,Circle_2(Hyperbolic_point_2(0,0),1));
+      Circle_2 circle = _gt.construct_circle_2_object()(center, sq_radius);
+      std::pair<Hyperbolic_point_2,Hyperbolic_point_2> inters = _gt.construct_intersection_2_object()(circle, _gt.construct_circle_2_object()(_gt.construct_hyperbolic_point_2_object()(0,0),1));
 
-      if(Orientation_2()(circle.center(), inters.first, inters.second) == POSITIVE) {
+      if(_gt.orientation_2_object()(circle.center(), inters.first, inters.second) == POSITIVE) {
         return Circular_arc_2(circle, inters.first, inters.second);
       } else {
         return Circular_arc_2(circle, inters.second, inters.first);
       }
     }
+
+  private:
+    const Traits& _gt;
   };
 
-  Construct_hyperbolic_line_2
-  construct_hyperbolic_line_2_object() const
-  { return Construct_hyperbolic_line_2(); }
 
-  Orientation_2
-  orientation_2_object() const
-  { return Orientation_2(); }
 
-  Side_of_oriented_circle_2
-  side_of_oriented_circle_2_object() const
-  { return Side_of_oriented_circle_2(); }
-
-  Construct_hyperbolic_bisector_2
-  construct_hyperbolic_bisector_2_object() const
-  { return Construct_hyperbolic_bisector_2(); }
-
-  Construct_Euclidean_bisector_2
-  construct_Euclidean_bisector_2_object() const
-  { return Construct_Euclidean_bisector_2(); }
-
-  Construct_intersection_2
-  construct_intersection_2_object() const
-  { return Construct_intersection_2(); }
-
-  Construct_hyperbolic_circumcenter_2
-  construct_hyperbolic_circumcenter_2_object() const
-  { return Construct_hyperbolic_circumcenter_2(); }
-
+  template <typename Traits>
   class Construct_inexact_intersection_2
   {
-    typedef typename Kernel::Circle_2                                Circle_2;
+    typedef typename Traits::FT                                 FT;
+    typedef typename Traits::Circle_2                           Circle_2;
+    typedef typename Traits::Euclidean_line_2                   Euclidean_line_2;
+    typedef typename Traits::Hyperbolic_point_2                 Hyperbolic_point_2;
+    typedef typename Traits::Hyperbolic_segment_2               Hyperbolic_segment_2;
+    typedef typename Traits::Euclidean_segment_2                Euclidean_segment_2;
+    typedef typename Traits::Circular_arc_2                     Circular_arc_2;
+
   public:
-    Construct_inexact_intersection_2() {}
+    Construct_inexact_intersection_2(const Traits& gt = Traits()) : _gt(gt) {}
 
     Hyperbolic_point_2 operator()(const Euclidean_line_2& ell1, const Euclidean_line_2& ell2)
     {
@@ -522,19 +432,26 @@ public:
         }
       }
     }
+
+  private:
+    const Traits& _gt;
   };
 
-  Construct_inexact_intersection_2
-  construct_inexact_intersection_2_object() const
-  { return Construct_inexact_intersection_2(); }
 
 
-
+  template <typename Traits>
   class Construct_inexact_hyperbolic_circumcenter_2
   {
-    typedef typename Kernel::Circle_2                       Circle_2;
+    typedef typename Traits::FT                             FT;
+    typedef typename Traits::Hyperbolic_Voronoi_point_2     Hyperbolic_Voronoi_point_2;
+    typedef typename Traits::Euclidean_circle_or_line_2     Euclidean_circle_or_line_2;
+    typedef typename Traits::Hyperbolic_point_2             Hyperbolic_point_2;
+    typedef typename Traits::Circle_2                       Circle_2;
+    typedef typename Traits::Euclidean_line_2               Euclidean_line_2;
 
   public:
+    Construct_inexact_hyperbolic_circumcenter_2(const Traits& gt = Traits()) : _gt(gt) {}
+
     typedef Hyperbolic_Voronoi_point_2                      result_type;
 
     Hyperbolic_Voronoi_point_2 operator()(const Hyperbolic_point_2& p,
@@ -542,15 +459,15 @@ public:
                                           const Hyperbolic_point_2& r)
     {
       Origin o;
-      Hyperbolic_point_2 po = Hyperbolic_point_2(o);
-      Circle_2 l_inf(po, FT(1));
+      Hyperbolic_point_2 po = _gt.construct_hyperbolic_point_2_object()(o);
+      Circle_2 l_inf = _gt.construct_circle_2_object()(po, FT(1));
 
       // Check if |p,O| = |q,O| = |r,O| -- then the circumcenter is the origin O
-      if(Compare_distance_2()(po,p,q) == EQUAL && Compare_distance_2()(po,p,r) == EQUAL)
+      if(_gt.compare_distance_2_object()(po,p,q) == EQUAL && _gt.compare_distance_2_object()(po,p,r) == EQUAL)
         return po;
 
-      Euclidean_circle_or_line_2 bis_pq = Construct_circle_or_line_supporting_bisector()(p,q);
-      Euclidean_circle_or_line_2 bis_qr = Construct_circle_or_line_supporting_bisector()(q,r);
+      Euclidean_circle_or_line_2 bis_pq = _gt.construct_circle_or_line_supporting_bisector_2_object()(p,q);
+      Euclidean_circle_or_line_2 bis_qr = _gt.construct_circle_or_line_supporting_bisector_2_object()(q,r);
 
       // now supporting objects cannot both be Euclidean lines
 
@@ -561,9 +478,9 @@ public:
       {
         if(Circle_2* c_qr = boost::get<Circle_2>(&bis_qr))
         {
-          std::pair<Hyperbolic_point_2, Hyperbolic_point_2> inters = Construct_inexact_intersection_2()(*c_pq, *c_qr);
+          std::pair<Hyperbolic_point_2, Hyperbolic_point_2> inters = _gt.construct_inexact_intersection_2_object()(*c_pq, *c_qr);
 
-          if(Has_on_bounded_side_2()(l_inf, inters.first))
+          if(_gt.has_on_bounded_side_2_object()(l_inf, inters.first))
             return inters.first;
 
           return inters.second;
@@ -579,9 +496,9 @@ public:
         c = boost::get<Circle_2>(&bis_qr);
       }
 
-      std::pair<Hyperbolic_point_2, Hyperbolic_point_2> inters = Construct_inexact_intersection_2()(*c, *l);
+      std::pair<Hyperbolic_point_2, Hyperbolic_point_2> inters = _gt.construct_inexact_intersection_2_object()(*c, *l);
 
-      if(Has_on_bounded_side_2()(l_inf, inters.first))
+      if(_gt.has_on_bounded_side_2_object()(l_inf, inters.first))
         return inters.first;
 
       return inters.second;
@@ -590,28 +507,26 @@ public:
     template <typename Face_handle>
     Hyperbolic_Voronoi_point_2 operator()(const Face_handle fh)
     {
-      return operator()(Construct_hyperbolic_point_2()(fh.vertex(0)->point(), fh.translation(0)),
-                        Construct_hyperbolic_point_2()(fh.vertex(1)->point(), fh.translation(1)),
-                        Construct_hyperbolic_point_2()(fh.vertex(2)->point(), fh.translation(2)) );
+      return operator()(_gt.construct_hyperbolic_point_2_object()(fh.vertex(0)->point(), fh.translation(0)),
+                        _gt.construct_hyperbolic_point_2_object()(fh.vertex(1)->point(), fh.translation(1)),
+                        _gt.construct_hyperbolic_point_2_object()(fh.vertex(2)->point(), fh.translation(2)) );
     }
 
+  private:
+    const Traits& _gt;
   }; // end Construct_inexact_hyperbolic_circumcenter_2
 
 
-  Construct_inexact_hyperbolic_circumcenter_2
-  construct_inexact_hyperbolic_circumcenter_2_object() const
-  { return Construct_inexact_hyperbolic_circumcenter_2(); }
 
-
-public:
-  Periodic_4_hyperbolic_Delaunay_triangulation_traits_2() {}
-
-  class Side_of_original_octagon
+template <typename Traits>
+class Side_of_original_octagon
   {
-    typedef typename Kernel::Circle_2                       Circle_2;
+    typedef typename Traits::FT                         FT;
+    typedef typename Traits::Circle_2                   Circle_2;
+    typedef typename Traits::Hyperbolic_point_2         Hyperbolic_point_2;
 
   public:
-    Side_of_original_octagon() {}
+    Side_of_original_octagon(const Traits& gt = Traits()) : _gt(gt) {}
 
     template <class Point_2_template>
     CGAL::Bounded_side operator()(const Point_2_template& p)
@@ -625,21 +540,21 @@ public:
       FT s2 (CGAL::sqrt(n2 - CGAL::sqrt(n2))); // CGAL::sqrt(2 - CGAL::sqrt(2))
       FT s3 (CGAL::sqrt(sq2 - FT(1))); // CGAL::sqrt(CGAL::sqrt(2) - 1)
 
-      Hyperbolic_point_2 V0(s1*p34/n4, -s2*p34/n4);
-      Hyperbolic_point_2 V1(p14*(s1+s2)/n4, p14*(s1-s2)/n4);
-      Hyperbolic_point_2 V2(s2*p34/n4, s1*p34/n4);
+      Hyperbolic_point_2 V0 = _gt.construct_hyperbolic_point_2_object()(_gt.construct_point_2_object()(s1*p34/n4, -s2*p34/n4));
+      Hyperbolic_point_2 V1 = _gt.construct_hyperbolic_point_2_object()(_gt.construct_point_2_object()(p14*(s1+s2)/n4, p14*(s1-s2)/n4));
+      Hyperbolic_point_2 V2 = _gt.construct_hyperbolic_point_2_object()(_gt.construct_point_2_object()(s2*p34/n4, s1*p34/n4));
 
-      Hyperbolic_point_2 M0(s3, FT(0));
-      Hyperbolic_point_2 M1(sq2*s3/n2, sq2*s3/n2);
+      Hyperbolic_point_2 M0 = _gt.construct_hyperbolic_point_2_object()(_gt.construct_point_2_object()(s3, FT(0)));
+      Hyperbolic_point_2 M1 = _gt.construct_hyperbolic_point_2_object()(_gt.construct_point_2_object()(sq2*s3/n2, sq2*s3/n2));
 
       // Poincare disk (i.e., unit Euclidean disk)
-      Circle_2 Poincare(Hyperbolic_point_2(0, 0), 1*1);
+      Circle_2 Poincare = _gt.construct_circle_2_object()(_gt.construct_hyperbolic_point_2_object()(_gt.construct_point_2_object()(0, 0)), 1*1);
 
       // Euclidean circle supporting the side [V0, V1]
-      Circle_2 SuppCircle1(M0, V0, V1);
+      Circle_2 SuppCircle1 = _gt.construct_circle_2_object()(M0, V0, V1);
 
       // Euclidean circle supporting the side [V1, V2]
-      Circle_2 SuppCircle2(M1, V1, V2);
+      Circle_2 SuppCircle2 = _gt.construct_circle_2_object()(M1, V1, V2);
 
       // This transformation brings the point in the first quadrant (positive x, positive y)
       FT x(FT(p.x()) > FT(0) ? p.x() : -p.x());
@@ -656,11 +571,11 @@ public:
       // This tells us whether the point is on the side of the open boundary
       bool on_open_side = ((p.y() + std::tan(CGAL_PI / 8.) * p.x()) < 0.0);
 
-      Hyperbolic_point_2 t(x, y);
+      Hyperbolic_point_2 t = _gt.construct_hyperbolic_point_2_object()(x, y);
 
-      CGAL::Bounded_side PoincareSide = Poincare.bounded_side(t);
-      CGAL::Bounded_side Circ1Side = SuppCircle1.bounded_side(t);
-      CGAL::Bounded_side Circ2Side = SuppCircle2.bounded_side(t);
+      CGAL::Bounded_side PoincareSide = _gt.bounded_side_2_object()(Poincare, t);
+      CGAL::Bounded_side Circ1Side = _gt.bounded_side_2_object()(SuppCircle1, t);
+      CGAL::Bounded_side Circ2Side = _gt.bounded_side_2_object()(SuppCircle2, t);
 
       // First off, the point needs to be inside the Poincare disk. if not, there's no hope.
       if(PoincareSide == CGAL::ON_BOUNDED_SIDE)
@@ -683,11 +598,143 @@ public:
         return CGAL::ON_UNBOUNDED_SIDE;
       }
     }
+
+  private:
+    const Traits& _gt;
   };
+
+
+} // end namespace internal 
+
+
+template <typename Kernel = CGAL::Cartesian<CORE::Expr>,
+          template<typename> class Translation_type = Hyperbolic_octagon_translation>
+class Periodic_4_hyperbolic_Delaunay_triangulation_traits_2
+  : public Hyperbolic_Delaunay_triangulation_traits_2<Kernel>
+{
+  typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>                              Base;
+  typedef Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel, Translation_type> Self;
+
+public:
+  typedef typename Base::FT                                               FT;
+  typedef Translation_type<FT>                                            Hyperbolic_translation;
+
+  typedef typename Base::Hyperbolic_point_2                               Hyperbolic_point_2;
+  typedef Hyperbolic_point_2                                              Hyperbolic_Voronoi_point_2;
+  typedef typename Base::Line_2                                           Euclidean_line_2;
+  typedef typename Base::Euclidean_circle_or_line_2                       Euclidean_circle_or_line_2;
+  typedef typename Base::Circular_arc_2                                   Circular_arc_2;
+  typedef typename Base::Euclidean_segment_2                              Euclidean_segment_2; //only used internally here
+  typedef typename Base::Hyperbolic_segment_2                             Hyperbolic_segment_2;
+  typedef Euclidean_segment_2                                             Line_segment_2; // kept for demo
+  typedef Hyperbolic_segment_2                                            Segment_2; // kept for demo
+
+  // the following types are only used internally in this traits class,
+  // so they need not be documented, and they don't need _object()
+  typedef typename Base::Construct_Euclidean_bisector_2                   Construct_Euclidean_bisector_2;
+  typedef typename Base::Construct_intersection_2                         Construct_intersection_2;
+  typedef typename Base::Construct_hyperbolic_bisector_2                  Construct_hyperbolic_bisector_2;
+  typedef typename Base::Construct_circle_or_line_supporting_bisector     Construct_circle_or_line_supporting_bisector;
+  typedef typename Base::Euclidean_collinear_2                            Euclidean_collinear_2;
+  typedef typename Base::Compute_squared_Euclidean_distance_2             Compute_squared_Euclidean_distance_2;
+  typedef typename Base::Has_on_bounded_side_2                            Has_on_bounded_side_2;
+
+  // Wrappers for the translation adapter
+  typedef internal::Hyperbolic_traits_with_translations_2_adaptor<
+            Self, typename Base::Orientation_2>                           Orientation_2;
+
+  typedef internal::Hyperbolic_traits_with_translations_2_adaptor<
+            Self, typename Base::Side_of_oriented_circle_2>               Side_of_oriented_circle_2;
+
+  typedef internal::Hyperbolic_traits_with_translations_2_adaptor<
+            Self, typename Base::Construct_hyperbolic_circumcenter_2>     Construct_hyperbolic_circumcenter_2;
+
+  typedef internal::Hyperbolic_traits_with_translations_2_adaptor<
+            Self, typename Base::Construct_hyperbolic_segment_2>          Construct_hyperbolic_segment_2;
+
+  typedef internal::Hyperbolic_traits_with_translations_2_adaptor<
+            Self, typename Base::Construct_segment_2>                     Construct_segment_2;
+
+  typedef internal::Hyperbolic_traits_with_translations_2_adaptor<
+            Self, typename Base::Construct_triangle_2>                    Construct_triangle_2;
+
+  typedef internal::Hyperbolic_traits_with_translations_2_adaptor<
+            Self, typename Base::Compare_distance_2>                      Compare_distance_2;
+
+  typedef internal::Periodic_4_construct_hyperbolic_point_2<
+            Self, typename Kernel::Construct_point_2>                     Construct_hyperbolic_point_2;
+
+  typedef internal::Hyperbolic_traits_with_translations_2_adaptor<
+            Self, typename Base::Side_of_oriented_hyperbolic_segment_2>   Side_of_oriented_hyperbolic_segment_2;
+
+
+  typedef internal::Compute_approximate_hyperbolic_diameter<Self>         Compute_approximate_hyperbolic_diameter;
+  typedef internal::Construct_hyperbolic_line_2<Self>                     Construct_hyperbolic_line_2;
+  typedef internal::Construct_inexact_intersection_2<Self>                Construct_inexact_intersection_2;
+  typedef internal::Construct_inexact_hyperbolic_circumcenter_2<Self>     Construct_inexact_hyperbolic_circumcenter_2;
+  typedef internal::Side_of_original_octagon<Self>                        Side_of_original_octagon;
+
+
+public:
+
+  Compute_approximate_hyperbolic_diameter
+  compute_approximate_hyperbolic_diameter_object() const
+  { return Compute_approximate_hyperbolic_diameter(*this); }
+
+
+  Construct_hyperbolic_line_2
+  construct_hyperbolic_line_2_object() const
+  { return Construct_hyperbolic_line_2(*this); }
+
+
+  Construct_inexact_intersection_2
+  construct_inexact_intersection_2_object() const
+  { return Construct_inexact_intersection_2(*this); }
+
+
+  Construct_inexact_hyperbolic_circumcenter_2
+  construct_inexact_hyperbolic_circumcenter_2_object() const
+  { return Construct_inexact_hyperbolic_circumcenter_2(*this); }
+
 
   Side_of_original_octagon
   side_of_original_octagon_object() const
-  { return Side_of_original_octagon(); }
+  { return Side_of_original_octagon(*this); }
+
+
+  Side_of_oriented_hyperbolic_segment_2
+  side_of_oriented_hyperbolic_segment_2_object() const
+  { return Side_of_oriented_hyperbolic_segment_2(*this); }
+
+
+  Construct_triangle_2
+  construct_triangle_2_object() const
+  { return Construct_triangle_2(); }
+
+  Construct_hyperbolic_point_2
+  construct_hyperbolic_point_2_object() const
+  { return Construct_hyperbolic_point_2(); }
+
+  Construct_hyperbolic_segment_2
+  construct_hyperbolic_segment_2_object() const
+  { return Construct_hyperbolic_segment_2(); }
+
+  Construct_segment_2
+  construct_segment_2_object() const
+  { return Construct_segment_2(); }
+
+  Orientation_2
+  orientation_2_object() const
+  { return Orientation_2(); }
+
+  Side_of_oriented_circle_2
+  side_of_oriented_circle_2_object() const
+  { return Side_of_oriented_circle_2(); }
+
+
+public:
+  Periodic_4_hyperbolic_Delaunay_triangulation_traits_2(const Base& base = Base()) : Base(base) {}
+
 
 }; // class Periodic_4_hyperbolic_Delaunay_triangulation_traits_2
 
