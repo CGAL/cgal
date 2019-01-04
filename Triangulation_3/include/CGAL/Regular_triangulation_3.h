@@ -763,6 +763,38 @@ namespace CGAL {
       return std::copy(vertices.begin(), vertices.end(), res);
     }
 
+    // In parallel operations, we need to be able to check the health of the 'hint' vertex handle,
+    // which might be invalided by other threads. One way to do that is the 'is_vertex()' function
+    // of the TDS, but it runs in O(sqrt(n)) complexity. When we are using our TDS, we can use
+    // a lower level function from the compact container, which runs in constant time.
+    BOOST_MPL_HAS_XXX_TRAIT_DEF(Is_CGAL_TDS_3)
+
+    template <typename TDS_,
+              bool has_TDS_tag = has_Is_CGAL_TDS_3<TDS_>::value>
+    struct Is_CGAL_TDS_3 : public CGAL::Tag_false
+    { };
+
+    template <typename TDS_>
+    struct Is_CGAL_TDS_3<TDS_, true> : public CGAL::Boolean_tag<TDS_::Is_CGAL_TDS_3::value>
+    { };
+
+    template <typename TDS_,
+              bool is_CGAL_TDS_3 = Is_CGAL_TDS_3<TDS_>::value>
+    struct Vertex_validity_checker
+    {
+      bool operator()(const typename TDS_::Vertex_handle vh_, const TDS_& tds_) {
+        return tds_.is_vertex(vh_);
+      }
+    };
+
+    template <typename TDS_>
+    struct Vertex_validity_checker<TDS_, true /* is_CGAL_TDS_3 */>
+    {
+      bool operator()(const typename TDS_::Vertex_handle vh_, const TDS_& tds_) {
+        return tds_.vertices().is_used(vh_);
+      }
+    };
+
     void remove (Vertex_handle v);
     // Concurrency-safe
     // See Triangulation_3::remove for more information
@@ -1324,14 +1356,40 @@ namespace CGAL {
 #endif
 
       Vertex_handle &hint = m_tls_hint.local();
+      Vertex_validity_checker<typename RT::Triangulation_data_structure> vertex_validity_check;
+
       for( size_t i_point = r.begin() ; i_point != r.end() ; ++i_point)
       {
         bool success = false;
         const Weighted_point &p = m_points[i_point];
         while(!success)
         {
-          if (m_rt.try_lock_vertex(hint) && m_rt.try_lock_point(p))
+          // The 'hint' is unsafe to use immediately because we are in a regular triangulation,
+          // and the insertion of a (weighted) point in another thread might have hidden (deleted)
+          // the hint.
+          if(!vertex_validity_check(hint, m_rt.tds()))
           {
+            hint = m_rt.finite_vertices_begin();
+            continue;
+          }
+
+          // We need to make sure that while are locking the position P1 := hint->point(), 'hint'
+          // does not get its position changed to P2 != P1.
+          const Weighted_point hint_point_mem = hint->point();
+
+          if(m_rt.try_lock_point(hint_point_mem) && m_rt.try_lock_point(p))
+          {
+            // Make sure that the hint is still valid (so that we can safely take hint->cell()) and
+            // that its position hasn't changed to ensure that we will start the locate from where
+            // we have locked.
+            if(!vertex_validity_check(hint, m_rt.tds()) ||
+               hint->point() != hint_point_mem)
+            {
+              hint = m_rt.finite_vertices_begin();
+              m_rt.unlock_all_elements();
+              continue;
+            }
+
             bool could_lock_zone;
             Locate_type lt;
             int li, lj;
@@ -1411,6 +1469,8 @@ namespace CGAL {
 #endif
 
       Vertex_handle &hint = m_tls_hint.local();
+      Vertex_validity_checker<typename RT::Triangulation_data_structure> vertex_validity_check;
+
       for (size_t i_idx = r.begin() ; i_idx != r.end() ; ++i_idx)
       {
         bool success = false;
@@ -1418,14 +1478,37 @@ namespace CGAL {
         const Weighted_point &p = m_points[i_point];
         while (!success)
         {
-          if (m_rt.try_lock_vertex(hint) && m_rt.try_lock_point(p))
+          // The 'hint' is unsafe to use immediately because we are in a regular triangulation,
+          // and the insertion of a (weighted) point in another thread might have hidden (deleted)
+          // the hint.
+          if(!vertex_validity_check(hint, m_rt.tds()))
           {
+            hint = m_rt.finite_vertices_begin();
+            continue;
+          }
+
+          // We need to make sure that while are locking the position P1 := hint->point(), 'hint'
+          // does not get its position changed to P2 != P1.
+          const Weighted_point hint_point_mem = hint->point();
+
+          if(m_rt.try_lock_point(hint_point_mem) && m_rt.try_lock_point(p))
+          {
+            // Make sure that the hint is still valid (so that we can safely take hint->cell()) and
+            // that its position hasn't changed to ensure that we will start the locate from where
+            // we have locked.
+            if(!vertex_validity_check(hint, m_rt.tds()) ||
+               hint->point() != hint_point_mem)
+            {
+              hint = m_rt.finite_vertices_begin();
+              m_rt.unlock_all_elements();
+              continue;
+            }
+
             bool could_lock_zone;
             Locate_type lt;
             int li, lj;
 
-            Cell_handle c = m_rt.locate(p, lt, li, lj, hint->cell(),
-              &could_lock_zone);
+            Cell_handle c = m_rt.locate(p, lt, li, lj, hint->cell(), &could_lock_zone);
             Vertex_handle v;
             if (could_lock_zone)
               v = m_rt.insert(p, lt, c, li, lj, &could_lock_zone);
@@ -1504,8 +1587,7 @@ namespace CGAL {
         bool could_lock_zone, needs_to_be_done_sequentially;
         do
         {
-          needs_to_be_done_sequentially =
-            !m_rt.remove(v, &could_lock_zone);
+          needs_to_be_done_sequentially = !m_rt.remove(v, &could_lock_zone);
           m_rt.unlock_all_elements();
         } while (!could_lock_zone);
 
@@ -2388,40 +2470,86 @@ namespace CGAL {
 
   template < class Gt, class Tds, class Lds >
   bool
-    Regular_triangulation_3<Gt,Tds,Lds>::
-    remove(Vertex_handle v, bool *could_lock_zone)
+  Regular_triangulation_3<Gt,Tds,Lds>::
+  remove(Vertex_handle v, bool *could_lock_zone)
   {
     bool removed = true;
 
     // Locking vertex v...
-    if (!this->try_lock_vertex(v))
+    if(!this->try_lock_vertex(v))
     {
       *could_lock_zone = false;
     }
     else
     {
-      Vertex_handle hint = (v->cell()->vertex(0) == v ?
-        v->cell()->vertex(1) : v->cell()->vertex(0));
+      Vertex_validity_checker<Tds> vertex_validity_check;
+
+      // Check that the vertex hasn't be deleted from the TDS while we were locking it
+      if(!vertex_validity_check(v, tds()))
+        return true; // vertex is already gone from the TDS, nothing to do
+
+      Vertex_handle hint = v->cell()->vertex(0) == v ? v->cell()->vertex(1) : v->cell()->vertex(0);
 
       Self tmp;
       Vertex_remover<Self> remover(tmp);
       removed = Tr_Base::remove(v, remover, could_lock_zone);
 
-      if (*could_lock_zone && removed)
+      if(*could_lock_zone && removed)
       {
-        // Re-insert the points that v was hiding.
-        for (typename Vertex_remover<Self>::Hidden_points_iterator
-          hi = remover.hidden_points_begin();
-          hi != remover.hidden_points_end(); ++hi)
+        // The vertex has been removed, re-insert the points that 'v' was hiding
+
+        // Start by unlocking the area of the removed vertex to avoid deadlocks
+        this->unlock_all_elements();
+
+        for(typename Vertex_remover<Self>::Hidden_points_iterator
+              hi = remover.hidden_points_begin();
+              hi != remover.hidden_points_end(); ++hi)
         {
-          bool could_lock_zone = false;
-          Vertex_handle hv;
-          while (!could_lock_zone)
+          const Weighted_point& wp = *hi;
+
+          // try to lock the positions of the hint and the hidden point
+          bool success = false;
+          while(!success)
           {
-            hv = insert (*hi, hint, &could_lock_zone);
+            // The 'hint' is unsafe to use immediately because we are in a regular triangulation,
+            // and the insertion of a (weighted) point in another thread might have hidden (deleted)
+            // the hint.
+            if(!vertex_validity_check(hint, tds()))
+            {
+              hint = finite_vertices_begin();
+              continue;
+            }
+
+            // We need to make sure that while are locking the position P1 := hint->point(), 'hint'
+            // does not get its position changed to P2 != P1.
+            const Weighted_point hint_point_mem = hint->point();
+
+            if(this->try_lock_point(hint_point_mem) && this->try_lock_point(wp))
+            {
+              // Make sure that the hint is still valid (so that we can safely take hint->cell()) and
+              // that its position hasn't changed to ensure that we will start the locate from where
+              // we have locked.
+              if(!vertex_validity_check(hint, tds()) ||
+                 hint->point() != hint_point_mem)
+              {
+                hint = finite_vertices_begin();
+                this->unlock_all_elements();
+                continue;
+              }
+
+              Vertex_handle hv = insert(wp, hint, could_lock_zone);
+
+              if(*could_lock_zone)
+              {
+                success = true;
+                if(hv != Vertex_handle())
+                  hint = hv;
+              }
+            }
+
+            // This unlocks everything in all cases: partial lock failure, failed insertion, successful insertion
+            this->unlock_all_elements();
           }
-          if (hv != Vertex_handle())
-            hint = hv;
         }
         CGAL_triangulation_expensive_postcondition (is_valid());
       }
