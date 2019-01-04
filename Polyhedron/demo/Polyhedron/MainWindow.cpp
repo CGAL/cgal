@@ -1213,13 +1213,16 @@ CGAL::Three::Scene_item* MainWindow::loadItem(QFileInfo fileinfo, CGAL::Three::P
 
   item = loader->load(fileinfo);
   QApplication::restoreOverrideCursor();
-  if(!item) {
-    throw std::logic_error(QString("Could not load item from file %1 using plugin %2")
-                           .arg(fileinfo.absoluteFilePath()).arg(loader->name()).toStdString());
+  if( loader->name() != "camera_positions_plugin")
+  {
+    if(!item ) {
+      throw std::logic_error(QString("Could not load item from file %1 using plugin %2")
+                             .arg(fileinfo.absoluteFilePath()).arg(loader->name()).toStdString());
+    }
+    
+    item->setProperty("source filename", fileinfo.absoluteFilePath());
+    item->setProperty("loader_name", loader->name());
   }
-
-  item->setProperty("source filename", fileinfo.absoluteFilePath());
-  item->setProperty("loader_name", loader->name());
   return item;
 }
 
