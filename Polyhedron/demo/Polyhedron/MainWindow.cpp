@@ -1186,6 +1186,8 @@ bool MainWindow::open(QString filename, QString loader_name) {
     std::cerr << e.what() << std::endl;
     return false;
   }
+  if(!item)
+    return false;
   selectSceneItem(scene->addItem(item));
 
   CGAL::Three::Scene_group_item* group =
