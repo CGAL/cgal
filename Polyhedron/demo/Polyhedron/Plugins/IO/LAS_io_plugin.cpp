@@ -14,6 +14,8 @@ class Polyhedron_demo_las_plugin :
 public:
   QString name() const { return "las_plugin"; }
   QString nameFilters() const { return "LAS files (*.las);;Compressed LAS files (*.laz)"; }
+  QString saveNameFilters() const { return "LAS files (*.las)"; }
+  QString loadNameFilters() const { return "LAS files (*.las);;Compressed LAS files (*.laz)"; }
   bool canLoad() const;
   CGAL::Three::Scene_item* load(QFileInfo fileinfo);
 
