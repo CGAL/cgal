@@ -599,7 +599,7 @@ inline
 Interval_nt<Protected>
 operator+ (double a, const Interval_nt<Protected> & b)
 {
-  // MSVC does not define __SSE3__, not sure if /arch:AVX2 defines __AVX__...
+  // MSVC does not define __SSE3__
 #if defined CGAL_USE_SSE2 && (defined __SSE3__ || defined __AVX__)
   typename Interval_nt<Protected>::Internal_protector P;
   __m128d aa = _mm_set1_pd(IA_opacify(a));
@@ -665,10 +665,13 @@ inline
 Interval_nt<Protected>
 operator* (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
 {
+#if 0
+  // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=88626
   if(CGAL_CST_TRUE(a.is_point()))
     return a.inf() * b;
   else if(CGAL_CST_TRUE(b.is_point()))
     return a * b.inf();
+#endif
   typedef Interval_nt<Protected> IA;
   typename Interval_nt<Protected>::Internal_protector P;
 #ifdef CGAL_USE_SSE2
@@ -833,10 +836,13 @@ inline
 Interval_nt<Protected>
 operator/ (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
 {
+#if 0
+  // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=88626
   if(CGAL_CST_TRUE(a.is_point()))
     return a.inf() / b;
   else if(CGAL_CST_TRUE(b.is_point()))
     return a / b.inf();
+#endif
   typedef Interval_nt<Protected> IA;
   typename Interval_nt<Protected>::Internal_protector P;
 #if defined CGAL_USE_SSE2 && (defined __SSE4_1__ || defined __AVX__)
