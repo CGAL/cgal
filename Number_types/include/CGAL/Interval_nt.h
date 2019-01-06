@@ -406,7 +406,9 @@ inline
 Uncertain<bool>
 operator<(const Interval_nt<Protected> &a, double b)
 {
-  return b > a;
+  if (a.sup() <  b) return true;
+  if (a.inf() >= b) return false;
+  return Uncertain<bool>::indeterminate();
 }
 
 template <bool Protected>
