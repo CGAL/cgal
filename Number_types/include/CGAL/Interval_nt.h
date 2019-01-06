@@ -1171,13 +1171,14 @@ namespace INTERN_INTERVAL_NT {
   Interval_nt<Protected>
   square (const Interval_nt<Protected> & d)
   {
+    //TODO: SSE version, possibly using abs
     typename Interval_nt<Protected>::Internal_protector P;
     if (d.inf()>=0.0)
-        return Interval_nt<Protected>(-CGAL_IA_MUL(d.inf(), -d.inf()),
-                                 CGAL_IA_MUL(d.sup(), d.sup()));
+        return Interval_nt<Protected>(-CGAL_IA_MUL(-d.inf(), d.inf()),
+                                 CGAL_IA_SQUARE(d.sup()));
     if (d.sup()<=0.0)
         return Interval_nt<Protected>(-CGAL_IA_MUL(d.sup(), -d.sup()),
-                               CGAL_IA_MUL(d.inf(), d.inf()));
+                               CGAL_IA_SQUARE(-d.inf()));
     return Interval_nt<Protected>(0.0, CGAL_IA_SQUARE((std::max)(-d.inf(),
                      d.sup())));
   }
