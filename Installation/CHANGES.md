@@ -40,6 +40,24 @@ Release date: March 2019
     original behavior (using one unique and automatically selected seed) is
     kept if this parameter is not used.
 
+### Classification
+
+-   Added a new experimental classifier
+    `TensorFlow::Neural_network_classifier`.
+
+-   For uniformity, `ETHZ_random_forest_classifier` is renamed
+    `ETHZ::Random_forest_classifier` and `OpenCV_random_forest_classifier`
+    is renamed `OpenCV::Random_forest_classifier`.
+
+-   The training algorithm of `ETHZ::Random_forest_classifier` was
+    parallelized.
+
+-   Added a constructor to copy a `ETHZ::Random_forest_classifier` using a
+    different data set as input.
+
+-   Added 3 new geometric features, `Height_above`, `Height_below` and
+    `Vertical_range`.
+
 ### 3D Fast Intersection and Distance Computation
 
 -   The primitives `AABB_face_graph_triangle_primitive` and
