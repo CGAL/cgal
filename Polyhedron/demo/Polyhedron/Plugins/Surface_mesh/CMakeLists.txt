@@ -1,5 +1,9 @@
 include( polyhedron_demo_macros )
 
+if(POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW)
+endif()
+
 if(EIGEN3_FOUND)
   find_package(CGAL COMPONENTS Core)
   

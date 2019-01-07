@@ -44,6 +44,7 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
                                  const double edge_size,
                                  const double tet_shape,
                                  const int manifold,
+                                 const bool surface_only,
                                  CGAL::Three::Scene_interface* scene);
 #endif
 
@@ -58,6 +59,7 @@ Meshing_thread* cgal_code_mesh_3(const CGAL::Image_3* pImage,
                                  const double tet_shape,
                                  bool protect_features,
                                  const int manifold,
+                                 const bool surface_only,
                                  CGAL::Three::Scene_interface* scene,
                                  bool detect_connected_components,
                                  bool is_gray = false,

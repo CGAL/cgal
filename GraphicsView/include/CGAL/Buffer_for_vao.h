@@ -426,25 +426,7 @@ public:
       const Local_point& S=facet[id];
       const Local_point& T=facet[(id+1==facet.size())?0:id+1];
       Local_vector V1=Local_vector((T-S).x(), (T-S).y(), (T-S).z());
-      if(std::isnan(S.x()) ||
-         std::isnan(S.y()) ||
-         std::isnan(S.z()))
-      {
-        return false;
-      }
-      if(std::isnan(T.x()) ||
-         std::isnan(T.y()) ||
-         std::isnan(T.z()))
-      {
-        return false;
-      }
-      const Local_point& U=facet[(id+2==facet.size())?0:id+2];
-      if(std::isnan(U.x()) ||
-         std::isnan(U.y()) ||
-         std::isnan(U.z()))
-      {
-        return false;
-      }
+      const Local_point& U=facet[(id+2>=facet.size())?id+2-facet.size():id+2];
       Local_vector V2=Local_vector((U-T).x(), (U-T).y(), (U-T).z());
 
       orientation = Local_kernel::Orientation_3()(V1, V2, normal);
@@ -465,7 +447,7 @@ public:
       const Local_point& T=facet[(id+1==facet.size())?0:id+1];
       Local_vector V1=Local_vector((T-S).x(), (T-S).y(), (T-S).z());
       
-      const Local_point& U=facet[(id+2==facet.size())?0:id+2];
+      const Local_point& U=facet[(id+2>=facet.size())?id+2-facet.size():id+2];
       Local_vector V2=Local_vector((U-T).x(), (U-T).y(), (U-T).z());
       
       local_orientation=Local_kernel::Orientation_3()(V1, V2, normal) ;

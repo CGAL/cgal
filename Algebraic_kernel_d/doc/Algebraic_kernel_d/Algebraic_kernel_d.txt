@@ -325,27 +325,27 @@ efficiency.
 
 The following example illustrates the construction of `AlgebraicKernel_d_1::Algebraic_real_1` 
 using `AlgebraicKernel_d_1::Construct_algebraic_real_1`:
-<SMALL>\cgalExample{Algebraic_kernel_d/Construct_algebraic_real_1.cpp}</SMALL>
+\cgalExample{Algebraic_kernel_d/Construct_algebraic_real_1.cpp}
 
 \subsection CGALAK1Solving Solving Univariate Polynomials
 
 The following example illustrates the construction of `AlgebraicKernel_d_1::Algebraic_real_1` 
-using `AlgebraicKernel_d_1::Solve_1`: <SMALL>\cgalExample{Algebraic_kernel_d/Solve_1.cpp} </SMALL>
+using `AlgebraicKernel_d_1::Solve_1`: \cgalExample{Algebraic_kernel_d/Solve_1.cpp} 
 
 \subsection CGALAK1EGCompare_1 Comparison and Approximation of Algebraic Real Numbers
 
 The following example illustrates the comparison of `AlgebraicKernel_d_1::Algebraic_real_1` numbers: 
-<SMALL>\cgalExample{Algebraic_kernel_d/Compare_1.cpp}</SMALL>
+\cgalExample{Algebraic_kernel_d/Compare_1.cpp}
 
 \subsection CGALAK1EGIsolate_1 Isolation of Algebraic Real Numbers with respect to roots of other polynomials 
 
 The following example illustrates the isolation of `AlgebraicKernel_d_1::Algebraic_real_1` numbers: 
-<SMALL>\cgalExample{Algebraic_kernel_d/Isolate_1.cpp}</SMALL>
+\cgalExample{Algebraic_kernel_d/Isolate_1.cpp}
 
 \subsection CGALAK1EGSign_at_1 Interplay with Polynomials 
 
 The following example illustrates the sign evaluation of `AlgebraicKernel_d_1::Algebraic_real_1` numbers in polynomials:
-<SMALL>\cgalExample{Algebraic_kernel_d/Sign_at_1.cpp}</SMALL>
+\cgalExample{Algebraic_kernel_d/Sign_at_1.cpp}
 
 \section Algebraic_kernel_dDesign Design and Implementation History
 
