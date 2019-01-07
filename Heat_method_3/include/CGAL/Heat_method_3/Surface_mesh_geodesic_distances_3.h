@@ -736,20 +736,20 @@ struct Base_helper<TriangleMesh, Traits, Intrinsic_Delaunay, LA, VertexPointMap>
  * \ingroup PkgHeatMethod
  *
  * Class `Surface_mesh_geodesic_distances_3` computes estimated geodesic distances for a set of source vertices where sources can be added and removed.
- * The class performs a preprocessing step that does only depend on the mesh, so that the distance computation takes less
- * time after changes of the set of sources.
+ * The class performs a preprocessing step that only depends on the mesh, so that the distance computation takes less
+ * time after changes to the set of sources.
  *
  * \tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph` and `HalfedgeListGraph`
  * \tparam Mode must be `Intrinsic_Delaunay` to indicate that an intrinsic Delaunay triangulation is internally constructed
- *                              or `Direct`to indicate that the input mesh should be used as is.
- *                              If `Intrinsic_Delaunay` the type `TriangleMesh` must have an internal property for `vertex_point`
+ *                              or `Direct` to indicate that the input mesh should be used as is.
+ *                              If `Intrinsic_Delaunay`, then the type `TriangleMesh` must have an internal property for `vertex_point`
  *                              and its value type must be the same as the value type of `VertexPointMap`.
  * \tparam VertexPointMap a model of `ReadablePropertyMap` with
  *         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
  *         `Traits::Point_3` as value type.
  *         The default is `typename boost::property_map< TriangleMesh, vertex_point_t>::%const_type`.
- * \tparam LA a model of `SparseLinearAlgebraWithFactorTraits_d`. If `CGAL_EIGEN3_ENABLED` is defined
- *         `Eigen_solver_traits<Eigen::SimplicialLDLT<typename Eigen_sparse_matrix<double>::%EigenType > >`
+ * \tparam LA a model of `SparseLinearAlgebraWithFactorTraits_d`. If `CGAL_EIGEN3_ENABLED` is defined,
+ *         then `Eigen_solver_traits<Eigen::SimplicialLDLT<typename Eigen_sparse_matrix<double>::%EigenType > >`
  *         is used as default
  * \tparam Traits a model of `HeatMethodTraits_3`. The default is the Kernel of the value type
  *         of the vertex point map (extracted using `Kernel_traits`).
