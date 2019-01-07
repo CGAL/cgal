@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
   hm.estimate_geodesic_distances(vertex_distance);
 
   BOOST_FOREACH(vertex_descriptor vd , vertices(tm)){
-    std::cout << vd << "  is at distance " << get(vertex_distance, vd) << "to the two sources" << std::endl;
+    std::cout << vd << "  is at distance " << get(vertex_distance, vd) << "to the set of two sources" << std::endl;
   }
 
   std::cout << "done" << std::endl;

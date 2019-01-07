@@ -28,9 +28,9 @@ As a rule of thumb, the method works well on triangle meshes, which are
 Delaunay, though in practice may also work fine for meshes that are far from
 Delaunay.  In order to ensure good behavior, we enable a
 preprocessing step that constructs an <em>intrinsic Delaunay triangulation
-(iDT)</em>; this triangulation will not change the input geometry, but
+(iDT)</em>; this triangulation does not change the input geometry, but
 generally improves the quality of the solution.  The cost of this preprocessing
-step will roughly double the overall preprocessing cost.
+step roughly doubles the overall preprocessing cost.
 
 \cgalFigureBegin{landscape_meshes, landscape.jpg}
   Isolines placed on a mesh without and with iDT remeshing. 
@@ -74,8 +74,8 @@ in the following example, create a `boost::unordered_map` and pass it to the fun
 \subsection HM_example_Class Using the Heat Method Class
 
 The following example shows the heat method class. It can be used
-when one adds and removes source vertices. It precomputes matrix
-factorization, which depend only on the input mesh and not the particular
+when one adds and removes source vertices. It performs a precomputation,
+which depend only on the input mesh and not the particular
 set of source vertices.  In the example we compute the distances to one
 source, add the farthest vertex as a second source vertex, and then compute
 the distances with respect to these two sources.
@@ -86,10 +86,11 @@ the distances with respect to these two sources.
 \subsection HM_example_Intrinsic Switching off the Intrinsic Delaunay Triangulation
 
 The following example shows the heat method on a triangle mesh without using the
-intrinsic Delaunay triangulation (iDT) algorithm, for example because by constrution
+intrinsic Delaunay triangulation (iDT) algorithm, for example because by construction
 your meshes have a good quality (Poor quality in this case means that the input
 is far from Delaunay, though even in this case one may still get good results without iDT,
-depending on the specific geometry of the surface.)
+depending on the specific geometry of the surface). The iDT algorithm is switched off
+by the template parameter `Heat_method_3::Direct`.
 
 \cgalExample{Heat_method_3/heat_method_surface_mesh_direct.cpp}
 
