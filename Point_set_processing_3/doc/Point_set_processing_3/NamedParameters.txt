@@ -191,6 +191,30 @@ Constrained points are left unaltered and are used as seeds in `mst_orient_norma
 <b>Default value</b>: a property map with only the highest point constrained.
 \cgalNPEnd
 
+\cgalNPBegin{number_of_samples} \anchor PSP_number_of_samples
+is the number of input points used for computation.\n
+\b Type: \c unsigned \c int \n
+<b>Default value</b>: `200`
+\cgalNPEnd
+
+\cgalNPBegin{accuracy} \anchor PSP_accuracy
+is the wanted output accuracy, expressed in scene units.\n
+\b Type: floating scalar value\n
+<b>Default value</b>: `5.00`
+\cgalNPEnd
+
+\cgalNPBegin{overlap} \anchor PSP_overlap
+is the expected overlap ratio (between 0 and 1) between two points sets to register.\n
+\b Type: floating scalar value\n
+<b>Default value</b>: `0.20`
+\cgalNPEnd
+
+\cgalNPBegin{maximum_running_time} \anchor PSP_maximum_running_time
+is the maximum time (in seconds) allowed to the function before ending and returning the best solution found so far.\n
+\b Type: floating scalar value\n
+<b>Default value</b>: `1000`
+\cgalNPEnd
+
 \cgalNPTableEnd
 
 */
