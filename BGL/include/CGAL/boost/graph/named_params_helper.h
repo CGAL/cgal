@@ -405,6 +405,29 @@ namespace CGAL {
         > ::type  type;
     };
 
+    template<typename PointRange, typename NamedParameters>
+    class GetIsConstrainedMap
+    {
+      struct DummyConstrainedMap
+      {
+        typedef typename std::iterator_traits<typename PointRange::iterator>::value_type key_type;
+        typedef bool value_type;
+        typedef value_type reference;
+        typedef boost::readable_property_map_tag category;
+
+        typedef DummyConstrainedMap Self;
+        friend reference get(const Self&, const key_type&) { return false; }
+      };
+
+    public:
+      typedef DummyConstrainedMap NoMap;
+      typedef typename boost::lookup_named_param_def <
+        internal_np::point_is_constrained_t,
+        NamedParameters,
+        DummyConstrainedMap //default
+        > ::type  type;
+    };
+
   } // namespace Point_set_processing_3
   
   template<typename NamedParameters, typename DefaultSolver>
