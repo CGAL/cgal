@@ -51,10 +51,12 @@ format.
 - `CGAL::estimate_global_range_scale()`
 - `CGAL::estimate_local_k_neighbor_scales()`
 - `CGAL::estimate_local_range_scales()`
+- `CGAL::OpenGR::compute_registration_transformation()`
+- `CGAL::OpenGR::register_point_sets()`
 - `CGAL::remove_outliers()`
 - `CGAL::grid_simplify_point_set()`
 - `CGAL::random_simplify_point_set()`
-- `CGAL::hierarchy_simplify_point_set()`	
+- `CGAL::hierarchy_simplify_point_set()`
 - `CGAL::wlop_simplify_and_regularize_point_set()`
 - `CGAL::jet_smooth_point_set()`
 - `CGAL::bilateral_smooth_point_set()`

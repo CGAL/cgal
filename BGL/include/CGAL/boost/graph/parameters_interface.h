@@ -93,7 +93,6 @@ CGAL_add_named_parameter(face_normal_t, face_normal, face_normal_map)
 CGAL_add_named_parameter(random_seed_t, random_seed, random_seed)
 CGAL_add_named_parameter(do_project_t, do_project, do_project)
 CGAL_add_named_parameter(tolerance_map_t, tolerance_map, tolerance_map)
-CGAL_add_named_parameter(opengr_options_t, opengr_options, opengr_options)
 
 //internal
 CGAL_add_named_parameter(weight_calculator_t, weight_calculator, weight_calculator)
@@ -142,4 +141,9 @@ CGAL_add_named_parameter(face_proxy_map_t, face_proxy_map, face_proxy_map)
 CGAL_add_named_parameter(proxies_t, proxies, proxies)
 CGAL_add_named_parameter(anchors_t, anchors, anchors)
 CGAL_add_named_parameter(triangles_t, triangles, triangles)
+
+CGAL_add_named_parameter(number_of_samples_t, number_of_samples, number_of_samples)
+CGAL_add_named_parameter(accuracy_t, accuracy, accuracy)
+CGAL_add_named_parameter(maximum_running_time_t, maximum_running_time, maximum_running_time)
+CGAL_add_named_parameter(overlap_t, overlap, overlap)
 

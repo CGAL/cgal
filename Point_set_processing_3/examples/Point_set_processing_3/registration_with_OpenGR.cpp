@@ -46,26 +46,15 @@ int main(int argc, const char** argv)
     return EXIT_FAILURE;
   }
   input.close();
-
-  // OpenGR options
-  CGAL::OpenGR::Options options;
-
-  bool overlap_OK = options.configureOverlap(0.8);
-  if(!overlap_OK)
-  {
-    std::cerr << "Invalid overlap configuration.\n";
-    return EXIT_FAILURE;
-  }
-  options.sample_size = 200;
-  options.max_time_seconds = 1000;
-  options.delta = 0.01;
-
+  
   // EITHER call the registration method Super4PCS from OpenGR to get the transformation to apply to pwns2
   // std::pair<K::Aff_transformation_3, double> res =
     CGAL::OpenGR::compute_registration_transformation(pwns1, pwns2,
                                                       params::point_map(Point_map())
                                                       .normal_map(Normal_map())
-                                                      .opengr_options(options),
+                                                      .number_of_samples(200)
+                                                      .maximum_running_time(60)
+                                                      .accuracy(0.01),
                                                       params::point_map(Point_map())
                                                       .normal_map(Normal_map()));
 
@@ -74,7 +63,9 @@ int main(int argc, const char** argv)
     CGAL::OpenGR::register_point_sets(pwns1, pwns2,
                                       params::point_map(Point_map())
                                       .normal_map(Normal_map())
-                                      .opengr_options(options),
+                                      .number_of_samples(200)
+                                      .maximum_running_time(60)
+                                      .accuracy(0.01),
                                       params::point_map(Point_map())
                                       .normal_map(Normal_map()));
 
