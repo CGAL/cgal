@@ -40,6 +40,10 @@ public:
     : _red(red), _green(green), _blue(blue), _alpha(alpha)
   {}
 
+  Color(const Color& other)
+    : _red(other._red), _green(other._green), _blue(other._blue), _alpha(other._alpha)
+  {}
+
   unsigned char r() const {return _red;}
   unsigned char g() const {return _green;}
   unsigned char b() const {return _blue;}
