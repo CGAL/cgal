@@ -535,6 +535,14 @@ and the \ref PkgRidges3Ref packages.
 
 The \sc{Eigen} web site is <A HREF="http://eigen.tuxfamily.org/index.php?title=Main_Page">`http://eigen.tuxfamily.org`</A>.
 
+\subsection thirdpartyOpenGR OpenGR 
+
+\sc{OpenGR} is a is a set C++ libraries for 3D Global Registration released under the terms of the APACHE V2 licence.
+
+\cgal provides wrappers for the Super4PCS algorithm of \sc{OpenGR} in the \ref PkgPointSetProcessing3Ref packages. 
+
+The \sc{OpenGR} web site is <A HREF="https://github.com/STORM-IRIT/OpenGR">`https://github.com/STORM-IRIT/OpenGR`</A>.
+
 \subsection thirdpartyESBTL ESBTL
 
 The \sc{Esbtl} (Easy Structural Biology Template Library) is a library that allows

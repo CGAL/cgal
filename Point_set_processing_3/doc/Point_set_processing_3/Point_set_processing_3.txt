@@ -314,7 +314,24 @@ points in the domain.
 
 \cgalExample{Point_set_processing_3/scale_estimation_2d_example.cpp}
 
+\section Point_set_processing_3Registration Registration
 
+\cgal provides two wrappers for the \ref thirdpartyOpenGR library
+\cgalCite{cgal:m-ogr-17} :
+
+- `CGAL::OpenGR::compute_registration_transformation()` computes the
+registration of one point set w.r.t. another in the form of a
+`CGAL::Aff_transformation_3` object, using the Super4PCS algorithm
+\cgalCite{cgal:mam-sffgp-14};
+
+- `CGAL::OpenGR::register_point_sets()` computes the registration of
+one point set w.r.t. another and directly aligns it to it.
+
+\subsection Point_set_processing_3Example_registration Example
+
+The following example reads two point sets and aligns them using the
+\ref thirdpartyOpenGR library:
+\cgalExample{Point_set_processing_3/registration_with_OpenGR.cpp}
 
 \section Point_set_processing_3OutlierRemoval Outlier Removal
 
