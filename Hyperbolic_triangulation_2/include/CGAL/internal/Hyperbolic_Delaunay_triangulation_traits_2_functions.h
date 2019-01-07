@@ -1,10 +1,33 @@
-#ifndef HYPERBOLIC_DELAUNAY_TRIANGULATION_TRAITS_2_FUNCTIONS
-#define HYPERBOLIC_DELAUNAY_TRIANGULATION_TRAITS_2_FUNCTIONS
+// Copyright (c) 2010-2018  INRIA Sophia Antipolis, INRIA Nancy (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s)     : Mikhail Bogdanov
+//                 Monique Teillaud <Monique.Teillaud@inria.fr>
+
+#ifndef CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_TRAITS_2_FUNCTIONS
+#define CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_TRAITS_2_FUNCTIONS
+
+#include <CGAL/Origin.h>
+#include <CGAL/enum.h>
 
 namespace CGAL {
 
 namespace internal {
-
 
 // only used internally to construct the Euclidean circle or line supporting the hyperbolic
 // bisector of two points
@@ -24,7 +47,7 @@ public:
   Euclidean_circle_or_line_2 operator()(const Hyperbolic_point_2& p,
                                         const Hyperbolic_point_2& q) const
   {
-    Hyperbolic_point_2 po(CGAL::ORIGIN);
+    Hyperbolic_point_2 po = CGAL::ORIGIN;
 
     if(_gt.compare_distance_2_object()(po, p, q) == EQUAL)
       return _gt.construct_bisector_2_object()(p, q);
@@ -281,4 +304,4 @@ private:
 } // end namespace CGAL
 
 
-#endif // HYPERBOLIC_DELAUNAY_TRIANGULATION_TRAITS_2_FUNCTIONS
+#endif // CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_TRAITS_2_FUNCTIONS
