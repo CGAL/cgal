@@ -3,7 +3,8 @@
 #include <CGAL/IO/write_ply_points.h>
 #include <CGAL/property_map.h>
 
-#include <CGAL/OpenGR/registration.h>
+#include <CGAL/OpenGR/compute_registration_transformation.h>
+#include <CGAL/OpenGR/register_point_sets.h>
 
 #include <fstream>
 #include <iostream>
@@ -49,7 +50,7 @@ int main(int argc, const char** argv)
   // OpenGR options
   CGAL::OpenGR::Options options;
 
-  bool overlap_OK = options.configureOverlap(0.7);
+  bool overlap_OK = options.configureOverlap(0.8);
   if(!overlap_OK)
   {
     std::cerr << "Invalid overlap configuration.\n";
@@ -61,21 +62,21 @@ int main(int argc, const char** argv)
 
   // EITHER call the registration method Super4PCS from OpenGR to get the transformation to apply to pwns2
   // std::pair<K::Aff_transformation_3, double> res =
-    CGAL::OpenGR::compute_transformation(pwns1, pwns2,
-                                         params::point_map(Point_map())
-                                                .normal_map(Normal_map())
-                                                .opengr_options(options),
-                                         params::point_map(Point_map())
-                                                .normal_map(Normal_map()));
+    CGAL::OpenGR::compute_registration_transformation(pwns1, pwns2,
+                                                      params::point_map(Point_map())
+                                                      .normal_map(Normal_map())
+                                                      .opengr_options(options),
+                                                      params::point_map(Point_map())
+                                                      .normal_map(Normal_map()));
 
   // OR call the registration method Super4PCS from OpenGR and apply the transformation to pwn2
   double score =
-    CGAL::OpenGR::align(pwns1, pwns2,
-                        params::point_map(Point_map())
-                               .normal_map(Normal_map())
-                               .opengr_options(options),
-                        params::point_map(Point_map())
-                               .normal_map(Normal_map()));
+    CGAL::OpenGR::register_point_sets(pwns1, pwns2,
+                                      params::point_map(Point_map())
+                                      .normal_map(Normal_map())
+                                      .opengr_options(options),
+                                      params::point_map(Point_map())
+                                      .normal_map(Normal_map()));
 
   std::ofstream out("pwns2_aligned.ply");
   if (!out ||
