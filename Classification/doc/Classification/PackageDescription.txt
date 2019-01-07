@@ -14,6 +14,21 @@ Functions that perform classification based on a set of labels and a classifier,
 
 Classifiers are functors that, given a label set and an input item, associate this input item with an energy for each label. This energy measures the likelihood of the item to belong to this label.
 
+\defgroup PkgClassificationClassifiersETHZ ETHZ
+\ingroup PkgClassificationClassifiers
+
+Classifiers that use the ETHZ library.
+
+\defgroup PkgClassificationClassifiersOpenCV OpenCV
+\ingroup PkgClassificationClassifiers
+
+Classifiers that use the \ref thirdpartyOpenCV library.
+
+\defgroup PkgClassificationClassifiersTensorFlow TensorFlow
+\ingroup PkgClassificationClassifiers
+
+Classifiers that use the \ref thirdpartyTensorFlow library.
+
 \defgroup PkgClassificationDataStructures Common Data Structures
 \ingroup PkgClassificationRef
 
@@ -86,9 +101,9 @@ Data structures specialized to classify clusters.
 
 ## Classifiers ##
 
-- `CGAL::Classification::ETHZ_random_forest_classifier`
-- `CGAL::Classification::OpenCV_random_forest_classifier`
-- `CGAL::Classification::TensorFlow_neural_network_classifier<ActivationFunction>`
+- `CGAL::Classification::ETHZ::Random_forest_classifier`
+- `CGAL::Classification::OpenCV::Random_forest_classifier`
+- `CGAL::Classification::TensorFlow::Neural_network_classifier<ActivationFunction>`
 - `CGAL::Classification::Sum_of_weighted_features_classifier`
 
 ## Common Data Structures ##

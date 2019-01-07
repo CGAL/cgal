@@ -11,13 +11,13 @@
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Label_set.h>
 #include <CGAL/Classification/Sum_of_weighted_features_classifier.h>
-#include <CGAL/Classification/ETHZ_random_forest_classifier.h>
+#include <CGAL/Classification/ETHZ/Random_forest_classifier.h>
 
 #ifdef CGAL_LINKED_WITH_OPENCV
-#include <CGAL/Classification/OpenCV_random_forest_classifier.h>
+#include <CGAL/Classification/OpenCV/Random_forest_classifier.h>
 #endif
 #ifdef CGAL_LINKED_WITH_TENSORFLOW
-#include <CGAL/Classification/TensorFlow_neural_network_classifier.h>
+#include <CGAL/Classification/TensorFlow/Neural_network_classifier.h>
 #endif
 
 class Item_classification_base
@@ -28,13 +28,13 @@ public:
   typedef CGAL::Classification::Label_set   Label_set;
   typedef CGAL::Classification::Feature_set Feature_set;
   typedef CGAL::Classification::Sum_of_weighted_features_classifier Sum_of_weighted_features;
-  typedef CGAL::Classification::ETHZ_random_forest_classifier ETHZ_random_forest;
+  typedef CGAL::Classification::ETHZ::Random_forest_classifier ETHZ_random_forest;
 
 #ifdef CGAL_LINKED_WITH_OPENCV
-  typedef CGAL::Classification::OpenCV_random_forest_classifier Random_forest;
+  typedef CGAL::Classification::OpenCV::Random_forest_classifier Random_forest;
 #endif
 #ifdef CGAL_LINKED_WITH_TENSORFLOW
-  typedef CGAL::Classification::TensorFlow_neural_network_classifier<> Neural_network;
+  typedef CGAL::Classification::TensorFlow::Neural_network_classifier<> Neural_network;
 #endif
   
 public:

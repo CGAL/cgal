@@ -28,7 +28,7 @@ typedef Classification::Feature_handle                                          
 typedef Classification::Label_set                                               Label_set;
 typedef Classification::Feature_set                                             Feature_set;
 
-typedef Classification::ETHZ_random_forest_classifier                           Classifier;
+typedef Classification::ETHZ::Random_forest_classifier                           Classifier;
 
 typedef Classification::Planimetric_grid<Kernel, Point_set, Point_map>        Planimetric_grid;
 typedef Classification::Point_set_neighborhood<Kernel, Point_set, Point_map>  Neighborhood;

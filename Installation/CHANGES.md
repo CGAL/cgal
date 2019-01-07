@@ -35,13 +35,17 @@ Release date: March 2019
 ### Classification
 
 -   Added a new experimental classifier
-    `TensorFlow_neural_network_classifier`.
+    `TensorFlow::Neural_network_classifier`.
 
--   The training algorithm of `ETHZ_random_forest_classifier` was
+-   For uniformity, `ETHZ_random_forest_classifier` is renamed
+    `ETHZ::Random_forest_classifier` and `OpenCV_random_forest_classifier`
+    is renamed `OpenCV::Random_forest_classifier`.
+
+-   The training algorithm of `ETHZ::Random_forest_classifier` was
     parallelized.
 
--   Added a constructor to copy a `ETHZ_random_forest_classifier`
-    using a different data set as input.
+-   Added a constructor to copy a `ETHZ::Random_forest_classifier` using a
+    different data set as input.
 
 -   Added 3 new geometric features, `Height_above`, `Height_below` and
     `Vertical_range`.

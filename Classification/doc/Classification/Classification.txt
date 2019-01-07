@@ -201,13 +201,13 @@ Example of cluster classification mesh (left: input, middle: clusters computed f
 
 %Classification relies on a classifier: this classifier is an object that, from the set of values taken by the features at an input item, computes the probability that an input item belongs to one label or another. A model of the concept `CGAL::Classification::Classifier` must take the index of an input item and store the probability associated to each label in a vector. If a classifier returns the value 1 for a pair of label and input item, it means that this item belongs to this label with certainty; values close to 0 mean that this item is not likely to belong to this label.
 
-\cgal provides four models for this concept, [ETHZ_random_forest_classifier](@ref CGAL::Classification::ETHZ_random_forest_classifier), [OpenCV_random_forest_classifier](@ref CGAL::Classification::OpenCV_random_forest_classifier), [TensorFlow_neural_network_classifier](@ref CGAL::Classification::TensorFlow_neural_network_classifier) and [Sum_of_weighted_features_classifier](@ref CGAL::Classification::Sum_of_weighted_features_classifier).
+\cgal provides four models for this concept, [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier), [OpenCV::Random_forest_classifier](@ref CGAL::Classification::OpenCV::Random_forest_classifier), [TensorFlow::Neural_network_classifier](@ref CGAL::Classification::TensorFlow::Neural_network_classifier) and [Sum_of_weighted_features_classifier](@ref CGAL::Classification::Sum_of_weighted_features_classifier).
 
 To perform classification based on four classifiers, please refer to \ref Classification_classification_functions.
 
 \subsection Classification_ETHZ_random_forest ETHZ Random Forest
 
-\cgal provides [ETHZ_random_forest_classifier](@ref CGAL::Classification::ETHZ_random_forest_classifier),
+\cgal provides [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier),
 a classifier based on the Random Forest Template Library developed by
 Stefan Walk at ETH Zurich \cgalCite{cgal:w-erftl-14} (the library is
 distributed under the MIT license and is included with the \cgal release,
@@ -232,13 +232,13 @@ to README provided in the [ETH Zurich's code archive](https://www.ethz.ch/conten
 
 \subsection Classification_OpenCV_random_forest OpenCV Random Forest
 
-The second classifier is [OpenCV_random_forest_classifier](@ref CGAL::Classification::OpenCV_random_forest_classifier).
+The second classifier is [OpenCV::Random_forest_classifier](@ref CGAL::Classification::OpenCV::Random_forest_classifier).
 It uses the \ref thirdpartyOpenCV library, more specifically the
 [Random Trees](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
 package.
 
 Note that this classifier usually produces results with a lower
-quality than [ETHZ_random_forest_classifier](@ref CGAL::Classification::ETHZ_random_forest_classifier).
+quality than [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier).
 
 It is provided for the sake of completeness and for testing purposes,
 but if you are not sure what to use, we advise using the ETHZ Random
@@ -251,7 +251,7 @@ of OpenCV.
 
 \subsection Classification_TensorFlow_neural_network TensorFlow Neural Network
 
-\cgal provides [TensorFlow_neural_network_classifier](@ref CGAL::Classification::TensorFlow_neural_network_classifier).
+\cgal provides [TensorFlow::Neural_network_classifier](@ref CGAL::Classification::TensorFlow::Neural_network_classifier).
 
 It uses the C++ API of the \ref thirdpartyTensorFlow library.
 
@@ -508,19 +508,19 @@ The following example:
 
 \subsection Classification_example_ethz_random_forest ETHZ Random Forest
 
-The following example shows how to use the classifier [ETHZ_random_forest_classifier](@ref CGAL::Classification::ETHZ_random_forest_classifier) using an input training set.
+The following example shows how to use the classifier [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier) using an input training set.
 
 \cgalExample{Classification/example_ethz_random_forest.cpp}
 
 \subsection Classification_example_opencv_random_forest OpenCV Random Forest
 
-The following example shows how to use the classifier [OpenCV_random_forest_classifier](@ref CGAL::Classification::OpenCV_random_forest_classifier) using an input training set.
+The following example shows how to use the classifier [OpenCV::Random_forest_classifier](@ref CGAL::Classification::OpenCV::Random_forest_classifier) using an input training set.
 
 \cgalExample{Classification/example_opencv_random_forest.cpp}
 
 \subsection Classification_example_tensorflow_neural_network TensorFlow Neural Network
 
-The following example shows how to use the classifier [TensorFlow_neural_network_classifier](@ref CGAL::Classification::TensorFlow_neural_network_classifier) using an input training set.
+The following example shows how to use the classifier [TensorFlow::Neural_network_classifier](@ref CGAL::Classification::TensorFlow::Neural_network_classifier) using an input training set.
 
 \cgalExample{Classification/example_tensorflow_neural_network.cpp}
 
@@ -530,7 +530,7 @@ The following example:
 
 - reads a mesh in OFF format;
 - automatically generates features on 5 scales;
-- loads a configuration file for classifier [ETHZ_random_forest_classifier](@ref CGAL::Classification::ETHZ_random_forest_classifier);
+- loads a configuration file for classifier [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier);
 - runs the algorithm using the graphcut regularization.
 
 \cgalExample{Classification/example_mesh_classification.cpp}
@@ -545,7 +545,7 @@ The following example:
 - detects plane using the algorithm `CGAL::Shape_detection_3::Region_growing`;
 - creates [Cluster](@ref CGAL::Classification::Cluster) objects from these detected planes;
 - computes cluster features from the pointwise features;
-- loads a configuration file for classifier [ETHZ_random_forest_classifier](@ref CGAL::Classification::ETHZ_random_forest_classifier);
+- loads a configuration file for classifier [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier);
 - runs the algorithm using the raw algorithm.
 
 \cgalExample{Classification/example_cluster_classification.cpp}

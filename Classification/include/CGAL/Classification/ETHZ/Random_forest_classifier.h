@@ -42,8 +42,8 @@
 #  pragma warning(disable:4996)
 #endif
 
-#include <CGAL/Classification/internal/auxiliary/random-forest/node-gini.hpp>
-#include <CGAL/Classification/internal/auxiliary/random-forest/forest.hpp>
+#include <CGAL/Classification/ETHZ/internal/random-forest/node-gini.hpp>
+#include <CGAL/Classification/ETHZ/internal/random-forest/forest.hpp>
 
 #include <CGAL/tags.h>
 
@@ -61,8 +61,10 @@ namespace CGAL {
 
 namespace Classification {
 
+namespace ETHZ {
+
 /*!
-  \ingroup PkgClassificationClassifiers
+  \ingroup PkgClassificationClassifiersETHZ
 
   \brief %Classifier based on the ETH Zurich version of random forest algorithm \cgalCite{cgal:w-erftl-14}.
 
@@ -70,7 +72,7 @@ namespace Classification {
 
   \cgalModels `CGAL::Classification::Classifier`
 */
-class ETHZ_random_forest_classifier
+class Random_forest_classifier
 {
   typedef CGAL::internal::liblearning::RandomForest::RandomForest
   < CGAL::internal::liblearning::RandomForest::NodeGini
@@ -89,8 +91,8 @@ public:
     \brief Instantiate the classifier using the sets of `labels` and `features`.
 
   */
-  ETHZ_random_forest_classifier (const Label_set& labels,
-                                 const Feature_set& features)
+  Random_forest_classifier (const Label_set& labels,
+                            const Feature_set& features)
     : m_labels (labels), m_features (features), m_rfc (NULL)
   { }
   
@@ -105,8 +107,8 @@ public:
     than the ones used by `other`, and in the same order.
 
   */
-  ETHZ_random_forest_classifier (const ETHZ_random_forest_classifier& other,
-                                 const Feature_set& features)
+  Random_forest_classifier (const Random_forest_classifier& other,
+                            const Feature_set& features)
     : m_labels (other.m_labels), m_features (features), m_rfc (NULL)
   {
     std::stringstream stream;
@@ -115,7 +117,7 @@ public:
   }
   
   /// \cond SKIP_IN_MANUAL
-  ~ETHZ_random_forest_classifier ()
+  ~Random_forest_classifier ()
   {
     if (m_rfc != NULL)
       delete m_rfc;
@@ -324,6 +326,13 @@ public:
   }
 
 };
+
+}
+
+/// \cond SKIP_IN_MANUAL
+// Backward compatibility
+typedef ETHZ::Random_forest_classifier ETHZ_random_forest_classifier;
+/// \endcond
 
 }
 

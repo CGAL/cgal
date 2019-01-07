@@ -91,7 +91,7 @@ int main (int argc, char** argv)
   std::vector<int> label_indices(pts.size(), -1);
   
   std::cerr << "Using TensorFlow neural network Classifier" << std::endl;
-  Classification::TensorFlow_neural_network_classifier<> classifier (labels, features);
+  Classification::TensorFlow::Neural_network_classifier<> classifier (labels, features);
   
   std::cerr << "Training" << std::endl;
   t.reset();

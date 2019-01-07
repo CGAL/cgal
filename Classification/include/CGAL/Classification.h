@@ -25,14 +25,14 @@
 
 #include <CGAL/Classification/classify.h>
 #include <CGAL/Classification/Sum_of_weighted_features_classifier.h>
-#include <CGAL/Classification/ETHZ_random_forest_classifier.h>
+#include <CGAL/Classification/ETHZ/Random_forest_classifier.h>
 
 #ifdef CGAL_LINKED_WITH_OPENCV
-#include <CGAL/Classification/OpenCV_random_forest_classifier.h>
+#include <CGAL/Classification/OpenCV/Random_forest_classifier.h>
 #endif
 
 #ifdef CGAL_LINKED_WITH_TENSORFLOW
-#include <CGAL/Classification/TensorFlow_neural_network_classifier.h>
+#include <CGAL/Classification/TensorFlow/Neural_network_classifier.h>
 #endif
 
 #include <CGAL/Classification/Cluster.h>

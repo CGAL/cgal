@@ -47,11 +47,13 @@ namespace CGAL {
 
 namespace Classification {
 
+namespace TensorFlow {
+
 namespace TF = tensorflow;
 namespace TFops = tensorflow::ops;
 
 /*!
-  \ingroup PkgClassificationClassifiers
+  \ingroup PkgClassificationClassifiersTensorFlow
 
   \brief %Classifier based on the TensorFlow version of neural network.
 
@@ -81,7 +83,7 @@ namespace TFops = tensorflow::ops;
   \cgalModels `CGAL::Classification::Classifier`
 */
 template <typename ActivationFunction = tensorflow::ops::Relu>
-class TensorFlow_neural_network_classifier
+class Neural_network_classifier
 {
   bool m_verbose;
   
@@ -123,14 +125,14 @@ public:
     \brief Instantiate the classifier using the sets of `labels` and `features`.
 
   */
-  TensorFlow_neural_network_classifier (const Label_set& labels,
-                                        const Feature_set& features)
+  Neural_network_classifier (const Label_set& labels,
+                             const Feature_set& features)
     : m_verbose (true), m_labels (labels), m_features (features)
     , m_root (NULL), m_ph_ft (NULL), m_ph_gt (NULL), m_loss(NULL), m_session (NULL)
   { }
   
   /// \cond SKIP_IN_MANUAL
-  ~TensorFlow_neural_network_classifier ()
+  ~Neural_network_classifier ()
   {
     clear();
   }
@@ -1014,7 +1016,7 @@ template <typename ConcurrencyTag,
           typename ProbabilitiesRanges>
 void classify (const ItemRange& input,
                const Label_set& labels,
-               const TensorFlow_neural_network_classifier& classifier,
+               const TensorFlow::Neural_network_classifier& classifier,
                LabelIndexRange& output,
                ProbabilitiesRanges& probabilities)
 {
@@ -1067,7 +1069,7 @@ template <typename ConcurrencyTag,
           typename LabelIndexRange>
 void classify (const ItemRange& input,
                const Label_set& labels,
-               const TensorFlow_neural_network_classifier& classifier,
+               const TensorFlow::Neural_network_classifier& classifier,
                LabelIndexRange& output)
 {
   std::cerr << "Classify with TensorFlow classifier" << std::endl;
@@ -1113,6 +1115,7 @@ void classify (const ItemRange& input,
 
 }
 
+}
 
 }
 
