@@ -77,6 +77,11 @@ register_point_sets(const PointRange1& range1,    PointRange2& range2,
    Computes the registration of `point_set_2` with respect to `point_set_1` and
    applies it.
 
+   Registration is computed using the Super4PCS algorithm
+   \cgalCite{cgal:mam-sffgp-14}.
+
+   \note This function requires the \ref thirdpartyOpenGR library.
+
    \tparam PointRange1 is a model of `Range`. The value type of its iterator is
    the key type of the named parameter `point_map` in `NamedParameters1`.
    \tparam PointRange2 is a model of `Range`. The value type of its iterator is

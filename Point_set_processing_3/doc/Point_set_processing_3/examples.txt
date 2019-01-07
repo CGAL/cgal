@@ -6,6 +6,7 @@
 \example Point_set_processing_3/average_spacing_example.cpp
 \example Point_set_processing_3/scale_estimation_example.cpp
 \example Point_set_processing_3/scale_estimation_2d_example.cpp
+\example Point_set_processing_3/registration_with_OpenGR.cpp
 \example Point_set_processing_3/remove_outliers_example.cpp
 \example Point_set_processing_3/grid_simplification_example.cpp
 \example Point_set_processing_3/grid_simplify_indices.cpp
