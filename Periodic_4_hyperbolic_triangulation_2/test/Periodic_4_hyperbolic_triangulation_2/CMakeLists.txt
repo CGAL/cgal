@@ -14,21 +14,14 @@ if ( CGAL_FOUND )
 
   	include( CGAL_CreateSingleSourceCGALProgram )
 
-  	create_single_source_cgal_program( "test_p4ht2_dummy_points.cpp" )
-  	create_single_source_cgal_program( "test_p4ht2_locate.cpp" )
-  	create_single_source_cgal_program( "test_p4ht2_insertion.cpp" )
-    create_single_source_cgal_program( "test_p4ht2_intersections.cpp" )
-    create_single_source_cgal_program( "test_p4ht2_insertion_euclidean.cpp" )
-  	create_single_source_cgal_program( "test_p4ht2_removal.cpp" )
-    create_single_source_cgal_program( "test_p4ht2_removal_iterator.cpp" )
-    create_single_source_cgal_program( "test_p4ht2_remove_dummy_points.cpp" )
+    create_single_source_cgal_program( "test_p4ht2_construct_point_2.cpp" ) 
     create_single_source_cgal_program( "test_p4ht2_exact_complex_numbers.cpp" )
-  	create_single_source_cgal_program( "test_p4ht2_matrix.cpp" )
-    create_single_source_cgal_program( "test_p4ht2_words.cpp" )
-    create_single_source_cgal_program( "test_p4ht2_triangulation.cpp" )
-    create_single_source_cgal_program( "test_p4ht2_hyperbolic_vs_euclidean.cpp" )
-    create_single_source_cgal_program( "test_p4ht2_construct_point_2.cpp" )	
-
+    create_single_source_cgal_program( "test_p4ht2_intersections.cpp" )
+    create_single_source_cgal_program( "test_p4ht2_locate.cpp" )
+    create_single_source_cgal_program( "test_p4ht2_matrix.cpp" )
+    create_single_source_cgal_program( "test_p4ht2_removal_iterator.cpp" )
+    create_single_source_cgal_program( "test_p4ht2_removal.cpp" )
+    
 else()
   
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
