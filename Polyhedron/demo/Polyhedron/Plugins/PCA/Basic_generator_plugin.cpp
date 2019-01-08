@@ -687,10 +687,17 @@ void Basic_generator_plugin::generateLines()
   double coord[3];
   bool ok = true;
   if (list.isEmpty()) return;
-  if (list.size()%3!=0){
+  if(!dock_widget->polygon_checkBox->isChecked()&& !list.size()%3!=0){
     QMessageBox *msgBox = new QMessageBox;
     msgBox->setWindowTitle("Error");
     msgBox->setText("ERROR : Input should consists of triplets.");
+    msgBox->exec();
+    return;
+  }
+  else if(dock_widget->polygon_checkBox->isChecked()&& !list.size()%2!=0){
+    QMessageBox *msgBox = new QMessageBox;
+    msgBox->setWindowTitle("Error");
+    msgBox->setText("ERROR : Input should consists of pairs.");
     msgBox->exec();
     return;
   }
@@ -713,12 +720,22 @@ void Basic_generator_plugin::generateLines()
             counter++;
           }
       }
-      if(counter == 3)
+      if(!dock_widget->polygon_checkBox->isChecked() && counter == 3)
       {
           Scene_polylines_item::Point_3 p(coord[0], coord[1], coord[2]);
           polyline.push_back(p);
           counter =0;
       }
+      else if(dock_widget->polygon_checkBox->isChecked() && counter == 2)
+      {
+          Scene_polylines_item::Point_3 p(coord[0], coord[1], 0);
+          polyline.push_back(p);
+          counter = 0;
+      }
+  }
+  if(dock_widget->polygon_checkBox->isChecked())
+  {
+    polyline.push_back(polyline.front()); //polygon_2 are not closed.
   }
     if(ok)
     {
