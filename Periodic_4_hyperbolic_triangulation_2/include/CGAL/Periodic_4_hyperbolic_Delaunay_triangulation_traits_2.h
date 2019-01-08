@@ -333,8 +333,8 @@ class Compute_approximate_hyperbolic_diameter
 
         y1 = (A + CGAL::sqrt(D))/B;
         y2 = (A - CGAL::sqrt(D))/B;
-        x1 = (C - b*sqrt(D))/(a*(a*a + b*b));
-        x2 = (C + b*sqrt(D))/(a*(a*a + b*b));
+        x1 = (C - b*CGAL::sqrt(D))/(a*(a*a + b*b));
+        x2 = (C + b*CGAL::sqrt(D))/(a*(a*a + b*b));
       }
 
       Hyperbolic_point_2 p1(x1, y1);
