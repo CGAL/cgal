@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Hyperbolic_triangulation_2_tests )
+project( Hyperbolic_triangulation_2_Tests )
 
 cmake_minimum_required(VERSION 2.8.10)
 
