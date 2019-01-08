@@ -934,6 +934,7 @@ inline
 Interval_nt<Protected>
 operator/ (double a, const Interval_nt<Protected> & b)
 {
+#ifdef CGAL_USE_SSE2
   int i = _mm_movemask_pd(_mm_cmpge_pd(b.simd(), _mm_set1_pd(0.)));
   if(i==3) return Interval_nt<Protected>::largest(); // bi<=0 && bs>=0
   __m128d aa, xx;
@@ -947,6 +948,9 @@ operator/ (double a, const Interval_nt<Protected> & b)
   typename Interval_nt<Protected>::Internal_protector P;
   __m128d r = _mm_div_pd(IA_opacify128_weak(aa), IA_opacify128(xx));
   return Interval_nt<Protected>(IA_opacify128(r));
+#else
+  return Interval_nt<Protected>(a) / b;
+#endif
 }
 
 template <bool Protected>
@@ -954,6 +958,7 @@ inline
 Interval_nt<Protected>
 operator/ (Interval_nt<Protected> a, double b)
 {
+#ifdef CGAL_USE_SSE2
   if(b<0){ a = -a; b = -b; }
   else if(b==0) return Interval_nt<Protected>::largest();
   // Now b > 0
@@ -967,6 +972,9 @@ operator/ (Interval_nt<Protected> a, double b)
   __m128d aa = IA_opacify128(a.simd());
   __m128d r = _mm_div_pd(aa, bb);
   return Interval_nt<Protected>(IA_opacify128(r));
+#else
+  return a / Interval_nt<Protected>(b);
+#endif
 }
 
 // TODO: What about these two guys? Where do they belong to?
