@@ -202,7 +202,7 @@ public:
     {
       if(Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2))
       {
-        std::pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(c1->circle(), c2->circle());
+        std::pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(c1->supporting_circle(), c2->supporting_circle());
         Hyperbolic_point_2 p1 = res.first;
         if(p1.x()*p1.x() + p1.y()*p1.y() < FT(1))
           return p1;
@@ -214,7 +214,7 @@ public:
       else
       {
         Euclidean_segment_2* ell2 = boost::get<Euclidean_segment_2>(&s2);
-        std::pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(c1->circle(),
+        std::pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(c1->supporting_circle(),
                                                                       ell2->supporting_line());
         Hyperbolic_point_2 p1 = res.first;
         if(p1.x()*p1.x() + p1.y()*p1.y() < FT(1))
@@ -231,7 +231,7 @@ public:
       if(Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2))
       {
         std::pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(ell1->supporting_line(),
-                                                                      c2->circle());
+                                                                      c2->supporting_circle());
         Hyperbolic_point_2 p1 = res.first;
         if(p1.x()*p1.x() + p1.y()*p1.y() < FT(1))
           return p1;
