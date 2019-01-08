@@ -426,13 +426,13 @@ is_removable(Vertex_handle v,
   }
   while(++nbf != done);
 
-  std::size_t n_verts = bdry_verts.size();
+  int n_verts = static_cast<int>(bdry_verts.size());
   double max_diam = 0.;
   for(Finite_Delaunay_faces_iterator fit = dt.finite_faces_begin();
                                      fit != dt.finite_faces_end(); ++fit)
   {
     bool is_good = true;
-    for(std::size_t i=0; i<3; ++i)
+    for(int i=0; i<3; ++i)
     {
       Vertex_handle this_v = vmap[fit->vertex(i)];
       Vertex_handle prev_v = bdry_verts[n_verts - 1];
@@ -616,7 +616,7 @@ remove(Vertex_handle v)
       for(std::size_t k=0; k< 3; k++)
       {
         bool found_bdry = false;
-        for(std::size_t j=0; j<bdry_verts.size(); ++j)
+        for(int j=0; j<static_cast<int>(bdry_verts.size()); ++j)
         {
           if(new_f[i]->vertex(ccw(k)) == bdry_verts[j] &&
              new_f[i]->vertex(cw(k)) == bdry_verts[(j+1)%n_verts])
@@ -633,7 +633,7 @@ remove(Vertex_handle v)
 
         if(!found_bdry)
         {
-          for(std::size_t l=0; l<new_f.size(); ++l)
+          for(int l=0; l<static_cast<int>(new_f.size()); ++l)
           {
             if(l == i)
               continue;
@@ -653,9 +653,9 @@ remove(Vertex_handle v)
       }
     }
 
-    for(std::size_t j=0; j<new_f.size(); ++j)
+    for(int j=0; j<static_cast<int>(new_f.size()); ++j)
     {
-      for(std::size_t i=0; i<3; ++i)
+      for(int i=0; i<3; ++i)
       {
         new_f[j]->vertex(i)->set_face(new_f[j]);
         new_f[j]->set_translation(i, new_f[j]->vertex(i)->translation());
@@ -671,7 +671,7 @@ remove(Vertex_handle v)
       f->vertex(ccw(i))->clear_translation();
     }
 
-    for(std::size_t i=0; i<nbrs.size(); ++i)
+    for(int i=0; i<static_cast<int>(nbrs.size()); ++i)
       tds().delete_face(nbrs[i]);
 
     tds().delete_vertex(v);

@@ -39,7 +39,7 @@ class Hyperbolic_octagon_translation
 public:
   typedef unsigned short int                                    Word_letter;
 
-  enum Generator: Word_letter {
+  enum Generator {
     A = 0,
     B_BAR = 1,
     C = 2,

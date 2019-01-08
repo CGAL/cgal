@@ -51,7 +51,7 @@ private:
   {
     std::vector<Word_idx_type> t;
     bool reduced = false;
-    Word_idx_type N = w.size();
+    Word_idx_type N = static_cast<Word_idx_type>(w.size());
     if(N > 1) {
       for(Word_idx_type i = 0; i < N-1; ++i)
       {
@@ -140,7 +140,7 @@ private:
                    const std::vector<Word_idx_type>& original)
   {
     w.clear();
-    for(int i=original.size()-1; i>=0; --i)
+    for(int i=static_cast<int>(original.size())-1; i>=0; --i)
       w.push_back(relation_index_of_inverse(original[i]));
   }
 
@@ -148,7 +148,7 @@ private:
                      const std::vector<Word_idx_type>& original)
   {
     w.clear();
-    for(int i = original.size()-1; i>=0; --i)
+    for(int i = static_cast<int>(original.size())-1; i>=0; --i)
       w.push_back(original[i]);
   }
 
@@ -161,7 +161,7 @@ private:
     for(Word_idx_type i=next_relation_index(end); i!=begin; i=next_relation_index(i))
       tmp.push_back(i);
 
-    for(int i=tmp.size()-1; i>=0; --i)
+    for(int i=static_cast<int>(tmp.size())-1; i>=0; --i)
       v.push_back(tmp[i]);
   }
 
@@ -171,7 +171,7 @@ private:
   {
     std::vector<Word_idx_type> tmp;
     complementary_relation_indices(tmp, original[0], original[original.size() - 1]);
-    for(int i=tmp.size()-1; i>=0; --i)
+    for(int i = static_cast<int>(tmp.size())-1; i>=0; --i)
       v.push_back(tmp[i]);
   }
 
@@ -196,7 +196,7 @@ private:
     // Look for longest subword forward
     std::vector<Word_idx_type> lfwd;
     Word_idx_type idxf = longest_relation_subsequence(lfwd, original);
-    Word_idx_type Nf = lfwd.size();
+    Word_idx_type Nf = static_cast<Word_idx_type>(lfwd.size());
 
     // Get inverse of the original word
     std::vector<Word_idx_type> inv;
@@ -205,7 +205,7 @@ private:
     // Look for longest subword backwards
     std::vector<Word_idx_type> lbwd;
     Word_idx_type idxb = longest_relation_subsequence(lbwd, inv);
-    Word_idx_type Nb = lbwd.size();
+    Word_idx_type Nb = static_cast<Word_idx_type>(lbwd.size());
 
     // Assign parameters based on results to homogenise the logic
     std::vector<Word_idx_type> word, sub;
