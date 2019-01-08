@@ -172,11 +172,13 @@ public:
     return CGAL::filter_iterator(Base::all_edges_end(), Non_hyperbolic_tester(this));
   }
 
-  class Hyperbolic_adjacent_vector_circulator
+
+  template <typename HTriangulation>
+  class Hyperbolic_adjacent_vertex_circulator
     : Base::Vertex_circulator
   {
     typedef typename Base::Vertex_circulator        VBase;
-    typedef Hyperbolic_adjacent_vector_circulator   Self;
+    typedef Hyperbolic_adjacent_vertex_circulator   Self;
     typedef typename Tds::Vertex                    Vertex;
 
     Vertex_handle _v;
@@ -185,50 +187,97 @@ public:
     int _iv;
 
   public:
-    Hyperbolic_adjacent_vector_circulator() : VBase(), _v(Vertex_handle()), pos(Face_handle()), _ri(0) {}
+    Hyperbolic_adjacent_vertex_circulator(const HTriangulation& tri) : VBase(), _v(Vertex_handle()), pos(Face_handle()), _ri(0), _tri(tri) {}
 
-    Hyperbolic_adjacent_vector_circulator(Vertex_handle v, Face_handle fh = Face_handle())
-      : VBase(v, fh)
+    Hyperbolic_adjacent_vertex_circulator(Vertex_handle v, const HTriangulation& tri, Face_handle fh = Face_handle())
+      : VBase(v, fh), _tri(tri)
     {
       _v = v;
       if (fh == Face_handle())
         pos = _v->face();
       else
         pos = fh;
-
       _iv = pos->index(_v);
-      _ri = ccw(_iv);
 
-      while (!is_finite_non_hyperbolic(pos, cw(_iv)))
+      bool ok = false;
+      do 
       {
-        pos = pos->neighbor(_ri);
-        _iv = pos->index(_v);
-        _ri = ccw(_iv);
-      }
+        _ri = cw(_iv);
+        if (_tri.is_finite_non_hyperbolic(pos, ccw(_iv)))
+        {
+          _ri = ccw(_iv);
+          if (_tri.is_finite_non_hyperbolic(pos, cw(_iv)))
+          {
+            pos = pos->neighbor(cw(_iv));
+            _iv = pos->index(_v);
+          }
+          else 
+          {
+            ok = true;
+          }
+        }
+        else {
+          ok = true;
+        }
+      } while (!ok);
+
     }
 
     Self& operator++()
     {
-      do
+      pos = pos->neighbor(cw(_iv));
+      _iv = pos->index(_v);
+      
+      bool ok = false;
+      do 
       {
-        pos = pos->neighbor(_ri);
-        _iv = pos->index(_v);
-        _ri = ccw(_iv);
-      }
-      while(!is_finite_non_hyperbolic(pos, cw(_iv)));
+        _ri = cw(_iv);
+        if (_tri.is_finite_non_hyperbolic(pos, ccw(_iv)))
+        {
+          _ri = ccw(_iv);
+          if (_tri.is_finite_non_hyperbolic(pos, cw(_iv)))
+          {
+            pos = pos->neighbor(cw(_iv));
+            _iv = pos->index(_v);
+          }
+          else 
+          {
+            ok = true;
+          }
+        }
+        else {
+          ok = true;
+        }
+      } while (!ok);
     }
 
-    //Self  operator++(int);
 
     Self& operator--()
     {
-      do
+      pos = pos->neighbor(ccw(_iv));
+      _iv = pos->index(_v);
+      
+      bool ok = false;
+      do 
       {
-        pos = pos->neighbor(ccw(_ri));
-        _iv = pos->index(_v);
         _ri = ccw(_iv);
-      }
-      while(!is_finite_non_hyperbolic(pos, cw(_iv)));
+        if (_tri.is_finite_non_hyperbolic(pos, cw(_iv)))
+        {
+          _ri = cw(_iv);
+          if (_tri.is_finite_non_hyperbolic(pos, ccw(_iv)))
+          {
+            pos = pos->neighbor(ccw(_iv));
+            _iv = pos->index(_v);
+          }
+          else 
+          {
+            ok = true;
+          }
+        }
+        else {
+          ok = true;
+        }
+      } while (!ok);
     }
 
     bool operator==(const Self &vc) const
@@ -259,6 +308,9 @@ public:
 
     Vertex_handle base() const { return pos->vertex(_ri); }
     operator Vertex_handle() const { return pos->vertex(_ri); }
+
+  private:
+    const HTriangulation& _tri;
   };
 
 private:
@@ -326,7 +378,7 @@ public:
   }
 
 
-  typedef Hyperbolic_adjacent_vector_circulator Vertex_circulator;
+  typedef Hyperbolic_adjacent_vertex_circulator<Self> Vertex_circulator;
   typedef typename Tds::Edge_circulator         Edge_circulator;
   typedef typename Tds::Face_circulator         Face_circulator;
 
@@ -801,7 +853,7 @@ public:
   Hyperbolic_segment segment(const Edge_circulator& e) const { return hyperbolic_segment(e); }
 
   size_type number_of_vertices() const { return Base::number_of_vertices(); }
-  Vertex_circulator adjacent_vertices(Vertex_handle v) const { return Vertex_circulator(v); }
+  Vertex_circulator adjacent_vertices(Vertex_handle v) const { return Vertex_circulator(v, *this); }
 
   size_type number_of_hyperbolic_faces() const
   {
