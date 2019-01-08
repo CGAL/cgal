@@ -112,6 +112,16 @@ compute_registration_transformation(const PointRange1& range1,    const PointRan
   double score =
     matcher.ComputeTransformation(set1, set2, mat, sampler, visitor);
 
+#ifdef CGAL_OPENGR_VERBOSE
+  std::cerr << "Transformation matrix: " << std::endl;
+  for (std::size_t i = 0; i < 4; ++ i)
+  {
+    for (std::size_t j = 0; j < 4; ++ j)
+      std::cerr << mat.coeff(i,j) << " ";
+    std::cerr << std::endl;
+  }
+#endif
+
   typename Kernel::Aff_transformation_3 cgal_trsf(
     mat.coeff(0,0), mat.coeff(0,1), mat.coeff(0,2), mat.coeff(0,3),
     mat.coeff(1,0), mat.coeff(1,1), mat.coeff(1,2), mat.coeff(1,3),
