@@ -581,7 +581,7 @@ remove(Vertex_handle v)
                                        fit != dt.finite_faces_end(); ++fit)
     {
       bool is_good = true;
-      for(std::size_t i=0; i<3; ++i)
+      for(int i=0; i<3; ++i)
       {
         Vertex_handle this_v = vmap[fit->vertex(i)];
         Vertex_handle prev_v = bdry_verts[n_verts - 1];
