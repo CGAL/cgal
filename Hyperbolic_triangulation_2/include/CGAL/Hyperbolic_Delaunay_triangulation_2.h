@@ -1023,9 +1023,17 @@ public:
     const Point& p = point(fh, 0);
     const Point& q = point(fh, 1);
     const Point& r = point(fh, 2);
-    if(!geom_traits().is_Delaunay_hyperbolic_2_object()(p, q, r))
+    int idx;
+    if(!geom_traits().is_Delaunay_hyperbolic_2_object()(p, q, r, idx))
     {
-      lt = OUTSIDE_CONVEX_HULL;
+      // Need to check if the point lies on one of the sides of the face
+      // Note that at least one side is Delaunay hyperbolic!
+      if (geom_traits().side_of_oriented_hyperbolic_segment_2_object()(p,q,query) == ON_ORIENTED_BOUNDARY ||
+          geom_traits().side_of_oriented_hyperbolic_segment_2_object()(q,r,query) == ON_ORIENTED_BOUNDARY ||
+          geom_traits().side_of_oriented_hyperbolic_segment_2_object()(r,p,query) == ON_ORIENTED_BOUNDARY   )
+          lt = EDGE;
+      else
+        lt = OUTSIDE_CONVEX_HULL;
       return Face_handle();
     }
 
