@@ -18,21 +18,6 @@ function build_tests {
 function build_demo {
   mkdir -p build-travis
   cd build-travis
-  if [ $NEED_3D = 1 ]; then
-    #install libqglviewer
-    git clone --depth=4 -b v2.6.3 --single-branch https://github.com/GillesDebunne/libQGLViewer.git ./qglviewer
-    pushd ./qglviewer/QGLViewer
-    #use qt5 instead of qt4
-#    export QT_SELECT=5
-    qmake NO_QT_VERSION_SUFFIX=yes
-    make -j2
-    if [ ! -f libQGLViewer.so ]; then
-        echo "libQGLViewer.so not made"
-        exit 1
-    else
-      echo "QGLViewer built successfully"
-    fi
-    #end install qglviewer
     popd
   fi
   EXTRA_CXX_FLAGS=
@@ -41,17 +26,12 @@ function build_demo {
       EXTRA_CXX_FLAGS="-Werror=inconsistent-missing-override"
       ;;
   esac
-  if [ $NEED_3D = 1 ]; then
-    QGLVIEWERROOT=$PWD/qglviewer
-    export QGLVIEWERROOT
-  fi
   cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" -DQt5Svg_DIR="/opt/qt55/lib/cmake/Qt5Svg" -DQt5OpenGL_DIR="/opt/qt55/lib/cmake/Qt5OpenGL" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" ..
   make -j2
 }
 old_IFS=$IFS
 IFS=$' '
 ROOT="$PWD/.."
-NEED_3D=0
 for ARG in $(echo "$@")
 do
 #skip package maintenance
@@ -146,12 +126,6 @@ cd $ROOT
   EXAMPLES="$ARG/examples/$ARG"
   TEST="$ARG/test/$ARG" 
   DEMOS=$ROOT/$ARG/demo/*
-  if [ "$ARG" = AABB_tree ] || [ "$ARG" = Alpha_shapes_3 ] ||\
-     [ "$ARG" = Circular_kernel_3 ] || [ "$ARG" = Linear_cell_complex ] ||\
-     [ "$ARG" = Periodic_3_triangulation_3 ] || [ "$ARG" = Principal_component_analysis ] ||\
-     [ "$ARG" = Surface_mesher ] || [ "$ARG" = Triangulation_3 ]; then
-    NEED_3D=1
-  fi
 
   if [ -d "$ROOT/$EXAMPLES" ]
   then
@@ -206,7 +180,6 @@ cd $ROOT
   done
   if [ "$ARG" = Polyhedron_demo ]; then
     DEMO=Polyhedron/demo/Polyhedron
-    NEED_3D=1
     cd "$ROOT/$DEMO"
     build_demo
   fi  
