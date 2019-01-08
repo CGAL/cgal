@@ -22,6 +22,16 @@ if(EIGEN3_FOUND)
   polyhedron_demo_plugin(point_set_shape_detection_plugin Point_set_shape_detection_plugin ${point_set_shape_detectionUI_FILES} KEYWORDS PointSetProcessing Classification)
   target_link_libraries(point_set_shape_detection_plugin PUBLIC scene_surface_mesh_item scene_points_with_normal_item scene_polygon_soup_item scene_callback_signaler)
 
+  find_package(OpenGR)
+  if (OpenGR_FOUND)
+    include_directories(SYSTEM ${OpenGR_INCLUDE_DIR})
+    polyhedron_demo_plugin(register_point_sets_plugin Register_point_sets_plugin)
+    target_link_libraries(register_point_sets_plugin PUBLIC scene_points_with_normal_item)
+  else()
+    message(STATUS "NOTICE: registration plugin requires OpenGR, and will not be compiled.")
+  endif()
+
+
 else(EIGEN3_FOUND)
   message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Surface reconstruction plugin will not be available.")
   message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Normal estimation plugins will not be available.")
