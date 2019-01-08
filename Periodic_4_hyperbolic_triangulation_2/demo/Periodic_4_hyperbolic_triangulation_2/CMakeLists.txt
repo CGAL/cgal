@@ -9,7 +9,6 @@ include_directories( ${CMAKE_BINARY_DIR} )
 
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON) 
-set(CMAKE_AUTOUIC ON)
 
 cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0043)
