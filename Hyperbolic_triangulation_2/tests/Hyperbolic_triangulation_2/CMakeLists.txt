@@ -15,10 +15,10 @@ if ( CGAL_FOUND )
   	include( CGAL_CreateSingleSourceCGALProgram )
 
   	create_single_source_cgal_program( "ht2_test_clear.cpp" )
+  	create_single_source_cgal_program( "ht2_test_locate.cpp" )
   	create_single_source_cgal_program( "ht2_test_remove.cpp" )
   	create_single_source_cgal_program( "ht2_test_swap.cpp" )
   	create_single_source_cgal_program( "ht2_test_copy.cpp" )
-  	#create_single_source_cgal_program( "ht2_test_equality.cpp" )
 
 else()
   
