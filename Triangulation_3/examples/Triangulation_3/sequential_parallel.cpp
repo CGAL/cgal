@@ -5,7 +5,6 @@
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
-#include <CGAL/bounding_box.h>
 
 #include <iostream>
 #include <fstream>
@@ -14,42 +13,23 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3          Point;
 
-const int NUM_INSERTED_POINTS = 1000000;
+const int NUM_INSERTED_POINTS = 10000;
 
-int main(int argc, char* argv[])
+int main()
 {
-  
+  CGAL::Random_points_in_cube_3<Point> rnd(1.);
+
+  std::cerr << "Construction of a 3D Delaunay triangulation from a vector of " 
+            << NUM_INSERTED_POINTS << " random points in a cube" << std::endl;
   std::vector<Point> V;
-  if(argc == 1){
-    CGAL::Random_points_in_cube_3<Point> rnd(1.);
-    
-    std::cerr << "Construction of a 3D Delaunay triangulation from a vector of " 
-              << NUM_INSERTED_POINTS << " random points in a cube" << std::endl;
-    
-    V.reserve(NUM_INSERTED_POINTS);
-    for (int i = 0; i != NUM_INSERTED_POINTS; ++i)
-      V.push_back(*rnd++);
-  } else {
-    Point p;
-    std::ifstream in(argv[1]);
-    while(in >> p){
-      V.push_back(p);
-    }
-  }
+  V.reserve(NUM_INSERTED_POINTS);
+  for (int i = 0; i != NUM_INSERTED_POINTS; ++i)
+    V.push_back(*rnd++);
   
   // Sequential Delaunay T3
   typedef CGAL::Delaunay_triangulation_3<K> SequentialTriangulation;
 
   CGAL::Real_timer t;
-
-  
-  t.start();
-  CGAL::spatial_sort(V.begin(), V.end());
-   t.stop();
-   std::cerr << "spatial sort " << t.time() << std::endl;
-
-   t.reset();
-   
   t.start();
   SequentialTriangulation S(V.begin(), V.end());
   t.stop();
@@ -66,7 +46,8 @@ int main(int argc, char* argv[])
   t.reset();
   t.start();
   // Construct the locking data-structure, using the bounding-box of the points
-  ParallelTriangulation::Lock_data_structure locking_ds(CGAL::bounding_box(V.begin(), V.end()).bbox(), 50);
+  ParallelTriangulation::Lock_data_structure locking_ds(
+    CGAL::Bbox_3(-1., -1., -1., 1., 1., 1.), 50);
   // Construct the triangulation in parallel
   ParallelTriangulation T(V.begin(), V.end(), &locking_ds);
   t.stop();
