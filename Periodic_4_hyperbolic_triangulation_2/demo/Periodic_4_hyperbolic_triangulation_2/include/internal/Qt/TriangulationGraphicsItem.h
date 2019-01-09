@@ -304,7 +304,6 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
     painter->setPen(npen);
     //painter->pen().setColor(::Qt::white);
     painterostream = PainterOstream<Geom_traits>(painter);
-    int cnt = 0;
     for(typename std::list<typename T::Face_handle>::iterator it = cfaces.begin(); it != cfaces.end(); it++) {
       painterostream << t->construct_hyperbolic_triangle(*it);
     }
@@ -417,10 +416,6 @@ TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
 
     if(visible_demo) {
 
-      double sx = to_double(source.x());
-      double sy = to_double(source.y());
-      double sdist = sx*sx + sy*sy;
-
       width = 10;
       temp.setWidthF(width);
       temp.setColor(::Qt::red);
@@ -430,10 +425,6 @@ TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
       painter->drawPoint(spoint);
 
       //--------------------------------------
-
-      double tx = to_double(target.x());
-      double ty = to_double(target.y());
-      double tdist = tx*tx + ty*ty;
 
       QPointF tpoint = matrix.map(convert(target));
       painter->drawPoint(tpoint);

@@ -72,7 +72,6 @@ private:
   Point                                                              movingPoint;
 
   Triangulation                                                      dt;
-  QGraphicsEllipseItem                                             * disk;
   QGraphicsScene                                                     scene;  
 
   CGAL::Qt::TriangulationGraphicsItem<Triangulation>               * dgi;
@@ -250,7 +249,7 @@ MainWindow::processInput(CGAL::Object o)
       vi->clear_translation();
     }
 
-    Vertex_handle v = dt.insert(p);
+    dt.insert(p);
     dt.try_to_remove_dummy_vertices();
   }
   emit(changed());
