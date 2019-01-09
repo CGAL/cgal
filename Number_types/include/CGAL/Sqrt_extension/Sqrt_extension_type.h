@@ -218,6 +218,10 @@ public:
     }
   }
 
+#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
+  Self&
+  operator=(const Self& v)=default;
+#endif
   
   Self conjugate() const
   {
