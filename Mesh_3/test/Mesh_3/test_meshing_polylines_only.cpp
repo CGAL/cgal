@@ -82,15 +82,12 @@ int main(int argc, char** argv)
   // Mesh criteria
   Mesh_criteria criteria(edge_size = 0.1);
   typedef Mesh_criteria::Edge_criteria Edge_criteria;
-  typedef CGAL::internal::Mesh_3::Edge_criteria_sizing_field_wrapper<Edge_criteria> Sizing_field;
-  CGAL::Mesh_3::Protect_edges_sizing_field<C3t3,
-					   Mesh_domain,
-					   Sizing_field>
-    protect_edges(c3t3, domain, Sizing_field(criteria.edge_criteria_object()),
-		  0.01);
+  typedef CGAL::Mesh_3::internal::Edge_criteria_sizing_field_wrapper<Edge_criteria> Sizing_field;
+  CGAL::Mesh_3::Protect_edges_sizing_field<C3t3, Mesh_domain, Sizing_field>
+    protect_edges(c3t3, domain, Sizing_field(criteria.edge_criteria_object()), 0.01);
   protect_edges(true);
 
-  // CGAL::internal::Mesh_3::init_c3t3_with_features(c3t3, domain, criteria);
+  // CGAL::Mesh_3::internal::init_c3t3_with_features(c3t3, domain, criteria);
 
   // Output
   std::ofstream medit_file("out-mesh-polylines.mesh");

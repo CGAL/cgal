@@ -57,8 +57,8 @@ struct Get_facet_patch_id_selector {
 };
 //specialization for surface_mesh
 template<>
-struct Get_facet_patch_id_selector<Polyhedral_mesh_domain_sm> {
-  typedef CGAL::Mesh_3::Get_facet_patch_id_sm<Polyhedral_mesh_domain_sm> type;
+struct Get_facet_patch_id_selector<Polyhedral_mesh_domain> {
+  typedef CGAL::Mesh_3::Get_facet_patch_id_sm<Polyhedral_mesh_domain> type;
 };
 }//end internal
 struct Mesh_parameters
@@ -138,7 +138,7 @@ private:
   C3t3& c3t3_;
   Domain* domain_;
   Mesh_parameters p_;
-  bool continue_;
+  std::atomic<bool> stop_;
   Mesher* mesher_;
 #ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
   mutable typename Mesher::Mesher_status last_report_;
@@ -177,7 +177,7 @@ Mesh_function(C3t3& c3t3, Domain* domain, const Mesh_parameters& p)
 : c3t3_(c3t3)
 , domain_(domain)
 , p_(p)
-, continue_(true)
+, stop_()
 , mesher_(NULL)
 #ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
 , last_report_(0,0,0)
@@ -241,11 +241,11 @@ initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag)
   // features, or with the initial points (or both).
   // If `detect_connected_components==true`, the initialization is
   // already done.
-  CGAL::internal::Mesh_3::C3t3_initializer<
+  CGAL::Mesh_3::internal::C3t3_initializer<
     C3t3,
     Domain,
     Mesh_criteria,
-    CGAL::internal::Mesh_3::has_Has_features<Domain>::value >()
+    CGAL::Mesh_3::internal::has_Has_features<Domain>::value >()
     (c3t3_,
      *domain_,
      criteria,
@@ -330,7 +330,10 @@ launch()
 
   // Build mesher and launch refinement process
   mesher_ = new Mesher(c3t3_, *domain_, criteria,
-                       topology(p_.manifold) & CGAL::MANIFOLD);
+                       topology(p_.manifold) & CGAL::MANIFOLD,
+                       0,
+                       0,
+                       &stop_);
 
 #ifdef CGAL_MESH_3_PROFILING
   CGAL::Real_timer t;
@@ -339,7 +342,7 @@ launch()
 
 #if CGAL_MESH_3_MESHER_STATUS_ACTIVATED
   mesher_->initialize();
-  while ( ! mesher_->is_algorithm_done() && continue_ )
+  while ( ! mesher_->is_algorithm_done() && ! stop_ )
   {
     mesher_->one_step();
   }
@@ -376,7 +379,7 @@ void
 Mesh_function<D_,Tag>::
 stop()
 {
-  continue_ = false;
+  stop_.store(true, std::memory_order_release);
 }
 
 

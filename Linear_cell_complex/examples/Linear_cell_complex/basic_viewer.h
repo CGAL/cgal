@@ -861,36 +861,6 @@ protected:
 
     QColor color;
 
-    /*    if(m_draw_vertices)
-    {
-      ::glPointSize(m_size_points);
-      vao[3].bind();
-      attrib_buffers(this);
-      color.setRgbF((double)m_vertices_mono_color.red()/(double)255,
-                    (double)m_vertices_mono_color.green()/(double)255,
-                    (double)m_vertices_mono_color.blue()/(double)255);
-      rendering_program_p_l.bind();
-      rendering_program_p_l.setAttributeValue(colorLocation,color);
-      //      glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(pos_points.size()/3));
-      rendering_program_p_l.release();
-      vao[3].release();
-    }
-
-    if(m_draw_edges)
-    {
-      vao[2].bind();
-      attrib_buffers(this);
-      color.setRgbF((double)m_edges_mono_color.red()/(double)255,
-                    (double)m_edges_mono_color.green()/(double)255,
-                    (double)m_edges_mono_color.blue()/(double)255);
-      rendering_program_p_l.bind();
-      rendering_program_p_l.setAttributeValue(colorLocation,color);
-      ::glLineWidth(m_size_edges);
-      //      glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_segments.size()/3));
-      rendering_program_p_l.release();
-      vao[2].release();
-      }*/
-
     if (m_draw_faces)
     {
       vao[0].bind();
@@ -945,14 +915,9 @@ protected:
 
     // Light default parameters
     ::glLineWidth(m_size_edges);
-    ::glPointSize(m_size_points);
     ::glEnable(GL_POLYGON_OFFSET_FILL);
     ::glPolygonOffset(1.f,1.f);
     ::glClearColor(1.0f,1.0f,1.0f,0.0f);
-    ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-    ::glEnable(GL_LIGHTING);
-    ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-    ::glShadeModel(GL_FLAT);
     ::glDisable(GL_BLEND);
     ::glEnable(GL_LINE_SMOOTH);
     ::glDisable(GL_POLYGON_SMOOTH_HINT);

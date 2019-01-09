@@ -23,8 +23,8 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
-
 #include <CGAL/Complex_2_in_triangulation_cell_base_3.h>
+#include <CGAL/Delaunay_triangulation_cell_base_3.h>
 
 #ifdef CGAL_MESH_3_IO_H
 #include <string>
@@ -36,7 +36,7 @@
 
 namespace CGAL {
   
-  template < class GT, class Cb=Triangulation_cell_base_3<GT> > 
+  template < class GT, class Cb = Delaunay_triangulation_cell_base_3<GT> >
   class Surface_mesh_cell_base_3 : 
     public Complex_2_in_triangulation_cell_base_3<GT, Cb> 
   { 

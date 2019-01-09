@@ -6,7 +6,7 @@
 #include <iostream>
 #include "texture.h"
 
-#ifdef scene_textured_surface_mesh_item_EXPORTS
+#ifdef scene_textured_item_EXPORTS
 #  define SCENE_TEXTURED_SURFACE_MESH_ITEM_EXPORT Q_DECL_EXPORT
 #else
 #  define SCENE_TEXTURED_SURFACE_MESH_ITEM_EXPORT Q_DECL_IMPORT
@@ -51,7 +51,7 @@ public:
   void compute_bbox() const;
   virtual void invalidateOpenGLBuffers();
   virtual void selection_changed(bool);
-  void add_border_edges(std::vector<float> border_edges);
+  void add_border_edges(std::vector<float> border_edges, bool is_opengl_4_3);
 
 Q_SIGNALS:
   void selectionChanged();

@@ -1,7 +1,7 @@
-/// \defgroup PkgKernel23 2D and 3D Linear Geometry Kernel Reference
+/// \defgroup PkgKernel23Ref 2D and 3D Linear Geometry Kernel Reference
 
 /// \defgroup PkgKernel23Concepts Concepts
-/// \ingroup PkgKernel23
+/// \ingroup PkgKernel23Ref
 
 /// \defgroup PkgKernel23ConceptsGeomObject Kernel Geometric Object Concepts
 /// \ingroup PkgKernel23Concepts
@@ -10,37 +10,37 @@
 /// \ingroup PkgKernel23Concepts
 
 /// \defgroup kernel_predef Predefined Kernels
-/// \ingroup PkgKernel23
+/// \ingroup PkgKernel23Ref
 
 /// \defgroup kernel_classes2 2D Kernel Objects
-/// \ingroup PkgKernel23
+/// \ingroup PkgKernel23Ref
 
 /// \defgroup kernel_classes3 3D Kernel Objects
-/// \ingroup PkgKernel23
+/// \ingroup PkgKernel23Ref
 
 /// \defgroup kernel_classes Kernel Classes
-/// \ingroup PkgKernel23
+/// \ingroup PkgKernel23Ref
 
 /// \defgroup kernel_global_function Global Kernel Functions
-/// \ingroup PkgKernel23
+/// \ingroup PkgKernel23Ref
 
 /// \defgroup kernel_enums Enumerations and Related Functions
-/// \ingroup PkgKernel23
+/// \ingroup PkgKernel23Ref
 
 /// \defgroup kernel_conversion Cartesian/Homogenous Conversion
-/// \ingroup PkgKernel23
+/// \ingroup PkgKernel23Ref
 
 /// \defgroup kernel_dimension Dimension Handling Tools
-/// \ingroup PkgKernel23
+/// \ingroup PkgKernel23Ref
 
 /*!
-\addtogroup PkgKernel23
-\cgalPkgDescriptionBegin{2D and 3D Linear Geometry Kernel,PkgKernel23Summary}
+\addtogroup PkgKernel23Ref
+\cgalPkgDescriptionBegin{2D and 3D Linear Geometry Kernel,PkgKernel23}
 \cgalPkgPicture{pointSegmentTriangle.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Hervé Brönnimann, Andreas Fabri, Geert-Jan Giezeman, Susan Hert, Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Stefan Schirra}
 \cgalPkgDesc{This package contains kernels each containing objects of  constant size, such as point, vector, direction, line, ray, segment, circle as well as predicates and constructions for these objects. The kernels mainly differ in the way they handle robustness issues.}
-\cgalPkgManuals{Chapter_2D_and_3D_Geometry_Kernel,PkgKernel23}
+\cgalPkgManuals{Chapter_2D_and_3D_Geometry_Kernel,PkgKernel23Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{0.9}

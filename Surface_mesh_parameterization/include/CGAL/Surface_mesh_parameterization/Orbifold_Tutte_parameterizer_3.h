@@ -72,7 +72,7 @@ namespace CGAL {
 
 namespace Surface_mesh_parameterization {
 
-/// \ingroup PkgSurfaceParameterizationOrbifoldHelperFunctions
+/// \ingroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
 /// Read a serie of cones from an input stream. Cones are passed as an
 /// integer value that is the index of a vertex handle in the mesh tm`, using
@@ -93,7 +93,7 @@ namespace Surface_mesh_parameterization {
 /// \param vpmap an initialized vertex index map
 /// \param out the output iterator
 ///
-/// \pre The number of cones must match the chosen \link PkgSurfaceParameterizationEnums Orbifold_type \endlink.
+/// \pre The number of cones must match the chosen \link PkgSurfaceMeshParameterizationEnums Orbifold_type \endlink.
 /// \pre No two cones correspond to the same vertex (all cones have different index).
 ///
 /// \return The corresponding vertex descriptors are output, in the same order as the input integers, in `out`.
@@ -110,10 +110,12 @@ Error_code read_cones(const TriangleMesh& tm, std::ifstream& in, VertexIndexMap 
   while(in >> cone_index)
     cones.push_back(cone_index);
 
+#ifdef CGAL_PARAMETERIZATION_ORBIFOLD_CONE_VERBOSE
   std::cout << "Input cones: ";
   for(std::size_t i=0; i<cones.size(); ++i)
     std::cout << cones[i] << " ";
   std::cout << std::endl;
+#endif
 
   if(cones.size() < 3 || cones.size() > 4) {
     std::cerr << "Error: Not enough or too many input cones" << std::endl;
@@ -148,7 +150,7 @@ Error_code read_cones(const TriangleMesh& tm, std::ifstream& in, VertexIndexMap 
   return OK;
 }
 
-/// \ingroup PkgSurfaceParameterizationOrbifoldHelperFunctions
+/// \ingroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
 /// Same as above, using the default indexation of the vertices of `tm`: vertices
 /// are numbered from `0` to `num_vertices(tm)-1`, in the order that they appear
@@ -173,7 +175,7 @@ Error_code read_cones(const TriangleMesh& tm, std::ifstream& in, ConeOutputItera
   return read_cones(tm, in, boost::make_assoc_property_map(m), out);
 }
 
-/// \ingroup PkgSurfaceParameterizationOrbifoldHelperFunctions
+/// \ingroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
 /// Same as above, but from a file instead of a stream.
 template<typename TriangleMesh, typename VertexIndexMap, typename ConeOutputIterator>
@@ -183,7 +185,7 @@ Error_code read_cones(const TriangleMesh& tm, const char* filename, VertexIndexM
   return read_cones(tm, in, vpmap, out);
 }
 
-/// \ingroup PkgSurfaceParameterizationOrbifoldHelperFunctions
+/// \ingroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
 /// Same as above, but from a file instead of a stream. The default indexation
 /// of the vertices of `tm` is used: vertices are numbered from `0` to `num_vertices(tm)-1`,
@@ -195,11 +197,11 @@ Error_code read_cones(const TriangleMesh& tm, const char* filename, ConeOutputIt
   return read_cones(tm, in, out);
 }
 
-/// \ingroup PkgSurfaceParameterizationOrbifoldHelperFunctions
+/// \ingroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
 /// Locate the cones on the seam mesh (that is, find the corresponding seam mesh
 /// `vertex_descriptor`) and mark them with a tag to indicate whether the cone is a
-/// simple cone or a duplicated cone (see \link PkgSurfaceParameterizationEnums Cone_type \endlink).
+/// simple cone or a duplicated cone (see \link PkgSurfaceMeshParameterizationEnums Cone_type \endlink).
 ///
 /// \attention The cones must be ordered: the first and last cones are the extremities of the seam.
 ///
@@ -208,9 +210,9 @@ Error_code read_cones(const TriangleMesh& tm, const char* filename, ConeOutputIt
 ///                  having to pass the multiple template parameters of the class `CGAL::Seam_mesh`.
 /// \tparam ConeInputBidirectionalIterator must be a model of `BidirectionalIterator`
 ///                  with value type `boost::graph_traits<SeamMesh::TriangleMesh>::%vertex_descriptor`.
-/// \tparam ConeMap must be a model of <a href="http://en.cppreference.com/w/cpp/concept/AssociativeContainer"><tt>AssociativeContainer</tt></a>
+/// \tparam ConeMap must be a model of `AssociativeContainer`
 ///                 with `boost::graph_traits<SeamMesh>::%vertex_descriptor` as key type and
-///                 \link PkgSurfaceParameterizationEnums Cone_type \endlink as value type.
+///                 \link PkgSurfaceMeshParameterizationEnums Cone_type \endlink as value type.
 ///
 /// \param mesh the seam mesh
 /// \param first, beyond the range of cones, as vertex descriptors of the base mesh.
@@ -256,7 +258,7 @@ bool locate_cones(const SeamMesh& mesh,
   return internal::check_cone_validity(mesh, first, beyond, cones);
 }
 
-/// \ingroup PkgSurfaceParameterizationOrbifoldHelperFunctions
+/// \ingroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
 /// Same as above, but the cones are <i>not</i> ordered and we thus use seam mesh
 /// information to determine which cones are extremities of the seam (so-called
@@ -343,7 +345,7 @@ bool locate_unordered_cones(const SeamMesh& mesh,
   return internal::check_cone_validity(mesh, first, beyond, cones);
 }
 
-/// \ingroup  PkgSurfaceParameterizationMethods
+/// \ingroup  PkgSurfaceMeshParameterizationMethods
 ///
 /// The class `Orbifold_Tutte_parameterizer_3` implements <em>Orbifold Tutte Planar
 /// Embeddings</em> \cgalCite{aigerman2015orbifold}.
@@ -357,7 +359,7 @@ bool locate_unordered_cones(const SeamMesh& mesh,
 ///
 /// Some helper functions related to the class `Orbifold_Tutte_parameterizer_3`
 /// (for example to read and compute paths between cones) can be found
-/// \link PkgSurfaceParameterizationOrbifoldHelperFunctions here \endlink.
+/// \link PkgSurfaceMeshParameterizationOrbifoldHelperFunctions here \endlink.
 ///
 /// The example \ref Surface_mesh_parameterization/orbifold.cpp "orbifold.cpp"
 /// shows how to select cones on the input mesh and automatically construct
@@ -382,7 +384,7 @@ bool locate_unordered_cones(const SeamMesh& mesh,
 ///           Eigen::UmfPackLU<Eigen_sparse_matrix<double>::EigenType> >
 /// \endcode
 ///
-/// \sa \ref PkgSurfaceParameterizationOrbifoldHelperFunctions
+/// \sa \ref PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
 template < typename SeamMesh,
            typename SolverTraits_ = Default>
@@ -894,9 +896,9 @@ public:
   /// The mapping is piecewise linear (linear in each triangle).
   /// The result is the (u,v) pair image of each vertex of the 3D surface.
   ///
-  /// \tparam ConeMap must be a model of <a href="http://en.cppreference.com/w/cpp/concept/AssociativeContainer"><tt>AssociativeContainer</tt></a>
+  /// \tparam ConeMap must be a model of `AssociativeContainer`
   ///                 with key type `boost::graph_traits<Seam_mesh>::%vertex_descriptor` and
-  ///                 \link PkgSurfaceParameterizationEnums Cone_type \endlink as value type.
+  ///                 \link PkgSurfaceMeshParameterizationEnums Cone_type \endlink as value type.
   /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
   ///         `boost::graph_traits<Seam_mesh>::%vertex_descriptor` as key type and
   ///         %Point_2 (type deduced from `Seam_mesh` using `Kernel_traits`)
@@ -908,7 +910,7 @@ public:
   /// \param mesh a `Seam_mesh` parameterized by any model of a `FaceListGraph` and `HalfedgeListGraph`
   /// \param bhd a halfedge on the border of the seam mesh
   /// \param cmap a mapping of the `vertex_descriptor`s of `mesh` that are cones
-  ///             to their respective \link PkgSurfaceParameterizationEnums Cone_type \endlink
+  ///             to their respective \link PkgSurfaceMeshParameterizationEnums Cone_type \endlink
   ///             classification.
   /// \param uvmap an instanciation of the class `VertexUVmap`.
   /// \param vimap an instanciation of the class `VertexIndexMap`.

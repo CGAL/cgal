@@ -24,13 +24,14 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
-#include <map>
+#include <CGAL/Hash_handles_with_or_without_timestamps.h>
 
 #include <vtkPoints.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkCellArray.h>
 #include <vtkType.h>
+
+#include <boost/unordered_map.hpp>
 
 namespace CGAL {
 
@@ -39,8 +40,9 @@ vtkUnstructuredGrid*
 output_c3t3_to_vtk_unstructured_grid(const C3T3& c3t3, 
                                      vtkUnstructuredGrid* grid = 0)
 {
-  typedef typename C3T3::Triangulation Triangulation;
-  typedef typename Triangulation::Vertex_handle Vertex_handle;
+  typedef typename C3T3::Triangulation                      Triangulation;
+  typedef typename Triangulation::Vertex_handle             Vertex_handle;
+  typedef CGAL::Hash_handles_with_or_without_timestamps     Hash_fct;
 
   const Triangulation& tr = c3t3.triangulation();
 
@@ -52,7 +54,7 @@ output_c3t3_to_vtk_unstructured_grid(const C3T3& c3t3,
   vtk_facets->Allocate(c3t3.number_of_facets_in_complex());
   vtk_cells->Allocate(c3t3.number_of_cells_in_complex());
 
-  std::map<Vertex_handle, vtkIdType> V;
+  boost::unordered_map<Vertex_handle, vtkIdType, Hash_fct> V;
   vtkIdType inum = 0;
 
   for(typename Triangulation::Finite_vertices_iterator 
@@ -62,7 +64,7 @@ output_c3t3_to_vtk_unstructured_grid(const C3T3& c3t3,
       ++vit)
   {
     typedef typename Triangulation::Weighted_point Weighted_point;
-    const Weighted_point& p = vit->point();
+    const Weighted_point& p = tr.point(vit);
     vtk_points->InsertNextPoint(CGAL::to_double(p.x()),
                                 CGAL::to_double(p.y()),
                                 CGAL::to_double(p.z()));

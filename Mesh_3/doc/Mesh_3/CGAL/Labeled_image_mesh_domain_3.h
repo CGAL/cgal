@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3Domains
+\ingroup PkgMesh3Domains
 
 \deprecated The class template `Labeled_image_mesh_domain_3` is deprecated
 since CGAL-4.13, in favor of the class template `Labeled_mesh_domain_3` and
@@ -15,8 +15,8 @@ class is a model of the concept `MeshDomain_3`. The domain to be discretized
 is the union of voxels that have an non-default index (different from the 
 default constructed value of the type `Image::Type`). 
 
-This class includes a member function that provides, by interpolation, the subdomain index of any 
-query point. An intersection between a segment and bounding 
+This class includes a member function that provides, by interpolation, the index
+of the subdomain in which any query point lies. An intersection between a segment and bounding
 surfaces is detected when both segment endpoints are associated with different 
 values of subdomain indices. The intersection is then constructed by bisection. 
 The bisection stops when the query segment is shorter than a given error bound 
@@ -54,8 +54,8 @@ public:
 Construction from an image. 
 The parameter `error_bound` is relative to the size of the image. 
 */ 
-Labeled_Image_mesh_domain_3( Image image, 
-BGT::FT error_bound = FT(1e-3)); 
+  Labeled_Image_mesh_domain_3(const Image& image,
+                              const BGT::FT& error_bound = FT(1e-3));
 
 /// @}
 

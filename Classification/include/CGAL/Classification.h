@@ -31,6 +31,7 @@
 #include <CGAL/Classification/OpenCV_random_forest_classifier.h>
 #endif
 
+#include <CGAL/Classification/Cluster.h>
 #include <CGAL/Classification/Color.h>
 #include <CGAL/Classification/Evaluation.h>
 #include <CGAL/Classification/Feature_base.h>
@@ -41,12 +42,19 @@
 #include <CGAL/Classification/Planimetric_grid.h>
 #include <CGAL/Classification/Point_set_feature_generator.h>
 #include <CGAL/Classification/Point_set_neighborhood.h>
+#include <CGAL/Classification/Mesh_feature_generator.h>
+#include <CGAL/Classification/Mesh_neighborhood.h>
+#include <CGAL/Classification/property_maps.h>
 
+#include <CGAL/Classification/Feature/Cluster_mean_of_feature.h>
+#include <CGAL/Classification/Feature/Cluster_size.h>
+#include <CGAL/Classification/Feature/Cluster_variance_of_feature.h>
+#include <CGAL/Classification/Feature/Cluster_vertical_extent.h>
+#include <CGAL/Classification/Feature/Color_channel.h>
 #include <CGAL/Classification/Feature/Distance_to_plane.h>
 #include <CGAL/Classification/Feature/Echo_scatter.h>
-#include <CGAL/Classification/Feature/Eigen.h>
+#include <CGAL/Classification/Feature/Eigenvalue.h>
 #include <CGAL/Classification/Feature/Elevation.h>
-#include <CGAL/Classification/Feature/Hsv.h>
 #include <CGAL/Classification/Feature/Simple_feature.h>
 #include <CGAL/Classification/Feature/Vertical_dispersion.h>
 #include <CGAL/Classification/Feature/Verticality.h>

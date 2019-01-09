@@ -26,21 +26,11 @@ Library (MKL)</a>.
 The concept `DiagonalizeTraits<T,dim>` defines an interface for the
 diagonalization and computation of eigenvectors and eigenvalues of a
 symmetric matrix. `T` is the number type and `dim` is the dimension of
-the matrices and vector (set to 3 by default). We provide two models
-for this concept:
-
-- `Eigen_diagonalize_traits<T,dim>` uses the \ref thirdpartyEigen library.
-- `Diagonalize_traits<T,dim>` is an internal implementation that does not
-depend on another library.
-
-Although both models achieve the same computation,
-`Eigen_diagonalize_traits<T,dim>` is faster and should thus be used if the
-\ref thirdpartyEigen library is available. The eigenvalues are stored
-in ascending order and eigenvectors are stored in accordance.
+the matrices and vector (set to 3 by default). We provide the model
+`Eigen_diagonalize_traits<T,dim>` that uses the \ref thirdpartyEigen library.
 
 This is an example of an eigen decomposition of a matrix using this
 class:
-
 
 \cgalExample{Solver_interface/diagonalize_matrix.cpp}
 
@@ -100,12 +90,12 @@ the solver:
 \section SolversHistory Implementation History
 This package is the result of the increasing needs for linear solvers
 in \cgal.  The first packages that introduced the solver concepts were
-\ref PkgSurfaceParameterization, \ref PkgPoissonSurfaceReconstruction
-and \ref PkgJet_fitting_3.  At that time, these packages were relying
+\ref PkgSurfaceMeshParameterizationRef, \ref PkgPoissonSurfaceReconstruction3Ref
+and \ref PkgJetFitting3Ref.  At that time, these packages were relying
 on \sc{Taucs}, \sc{LAPACK}, \sc{BLAS} and \sc{OpenNL}. Gaël Guennebaud
 then introduced new models using the \ref thirdpartyEigen library that
 became the only supported models by \cgal.  Later on the packages \ref
-PkgMeanCurvatureSkeleton3Summary and \ref PkgSurfaceMeshDeformationSummary
+PkgSurfaceMeshSkeletonization and \ref PkgSurfaceMeshDeformation
 extended the existing concepts.
 
 Simon Giraudot was responsible for gathering all concepts and classes, and also wrote this user manual

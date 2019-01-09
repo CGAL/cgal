@@ -4,8 +4,11 @@
 
 project( Mesh_3_Tests )
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
+if(POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW)
+endif()
 
 find_package(CGAL QUIET COMPONENTS ImageIO)
 
@@ -14,12 +17,17 @@ if ( CGAL_FOUND )
 
   find_package( TBB QUIET )
 
-  include( CGAL_CreateSingleSourceCGALProgram )
-
-  include_directories (BEFORE ../../include)
   include_directories (BEFORE ../../../AABB_tree/include)
 
-  create_single_source_cgal_program( "test_backward_compatibility.cpp" )
+  # Use Eigen
+  find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
+  if (NOT EIGEN3_FOUND)
+    message(STATUS "This project requires the Eigen library, and will not be compiled.")
+    return()
+  else()
+    include( ${EIGEN3_USE_FILE} )
+  endif()
+  
   create_single_source_cgal_program( "test_boost_has_xxx.cpp" )
   create_single_source_cgal_program( "test_c3t3.cpp" )
   create_single_source_cgal_program( "test_mesh_capsule_var_distance_bound.cpp" )
@@ -40,6 +48,7 @@ if ( CGAL_FOUND )
     message(STATUS "test_meshing_3D_image requires the ZLIB library, and will not be compiled.")
   endif()
   create_single_source_cgal_program( "test_meshing_implicit_function.cpp" )
+  create_single_source_cgal_program( "test_meshing_implicit_function_deprecated.cpp" )
   create_single_source_cgal_program( "test_meshing_polyhedral_complex.cpp" )
   create_single_source_cgal_program( "test_meshing_polyhedron.cpp" )
   create_single_source_cgal_program( "test_meshing_polylines_only.cpp" )

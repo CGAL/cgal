@@ -254,8 +254,9 @@ protected:
   void draw();
 
   // customize selection process
+  void beginSelection(const QPoint &point);
   void drawWithNames();
-  void endSelection(const QPoint& point);
+  void endSelection(const QPoint&);
   // customize mouse events
   void mousePressEvent(QMouseEvent *event);
   void mouseMoveEvent(QMouseEvent *event);
@@ -344,7 +345,7 @@ private:
 
   QColor color;
   static const int vaoSize = 29;
-  static const int vboSize = 33;
+  static const int vboSize = 34;
   // define material
    QVector4D	ambient;
    QVector4D	diffuse;
@@ -395,6 +396,10 @@ private:
       std::vector<float> *incremental_next_point;
       std::vector<float> *incremental_facet;
       std::vector<float> *incremental_conflict;
+      
+      //picking
+      QMap<float, int> picked_IDs;
+      QPoint picking_pos;
 
       QOpenGLBuffer buffers[vboSize];
       QOpenGLVertexArrayObject vao[vaoSize];

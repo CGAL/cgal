@@ -1,13 +1,13 @@
-/// \defgroup PkgConvexHull3 3D Convex Hulls Reference
+/// \defgroup PkgConvexHull3Ref 3D Convex Hulls Reference
 
 /// \defgroup PkgConvexHull3Concepts Concepts
-/// \ingroup PkgConvexHull3
+/// \ingroup PkgConvexHull3Ref
 
 /// \defgroup PkgConvexHull3Traits Traits Classes
-/// \ingroup PkgConvexHull3
+/// \ingroup PkgConvexHull3Ref
 
 /*! \defgroup PkgConvexHull3Functions Convex Hull Functions 
-   \ingroup PkgConvexHull3
+   \ingroup PkgConvexHull3Ref
 The function `convex_hull_3()` computes the convex hull of a given set of 
 three-dimensional points.
  
@@ -17,22 +17,22 @@ degenerate hull may also be possible.
 */
 
 /// \defgroup PkgConvexityChecking Convexity Checking
-/// \ingroup PkgConvexHull3
+/// \ingroup PkgConvexHull3Ref
 
 /*!
-\addtogroup PkgConvexHull3
+\addtogroup PkgConvexHull3Ref
 \todo fix or keep the `Default_traits`
 
-\cgalPkgDescriptionBegin{3D Convex Hulls,PkgConvexHull3Summary}
+\cgalPkgDescriptionBegin{3D Convex Hulls,PkgConvexHull3}
 \cgalPkgPicture{Convex_hull_3/fig/bunny.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Susan Hert and Stefan Schirra}
 \cgalPkgDesc{This package provides functions  for computing convex hulls in three dimensions as well as functions for checking if sets of points are strongly convex or not. One can compute the convex hull of a set of points in three dimensions in two ways: using a static algorithm or using a triangulation to get a fully dynamic computation.}
-\cgalPkgManuals{Chapter_3D_Convex_Hulls,PkgConvexHull3}
+\cgalPkgManuals{Chapter_3D_Convex_Hulls,PkgConvexHull3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{1.1}
-\cgalPkgDependsOn{The dynamic algorithms depend on \ref PkgTriangulation3Summary "3D Triangulations".}
+\cgalPkgDependsOn{The dynamic algorithms depend on \ref PkgTriangulation3 "3D Triangulations".}
 \cgalPkgBib{cgal:hs-ch3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
@@ -70,10 +70,13 @@ defining `CGAL_CH_CHECK_EXPENSIVE`.
 ## Traits Classes ##
 
 - `CGAL::Convex_hull_traits_3<R>`
+- `CGAL::Extreme_points_traits_adapter_3`
 
 ## Convex Hull Functions ##
 
 - `CGAL::convex_hull_3`
+- `CGAL::extreme_points_3`
+- `CGAL::make_extreme_points_traits_adapter`
 
 ## Convexity Checking Function ##
 

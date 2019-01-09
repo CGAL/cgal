@@ -23,14 +23,15 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/Hash_handles_with_or_without_timestamps.h>
+#include <CGAL/utility.h>
+
+#include <boost/unordered_map.hpp>
 
 #include <iostream>
-#include <map>
-#include <set>
 #include <vector>
 #include <string>
 #include <sstream>
-#include <CGAL/utility.h>
 
 namespace CGAL {
 
@@ -51,6 +52,8 @@ output_to_maya(std::ostream& os,
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Weighted_point Weighted_point;
+
+  typedef CGAL::Hash_handles_with_or_without_timestamps Hash_fct;
 
 #ifdef CGAL_MESH_3_IO_VERBOSE
   std::cerr << "Output to maya:\n";
@@ -106,7 +109,7 @@ output_to_maya(std::ostream& os,
   // Vertices
   //------------------------------------------------------
   
-  std::map<Vertex_handle, int> V;
+  boost::unordered_map<Vertex_handle, int, Hash_fct> V;
   std::stringstream vertices_sstr;
   int num_vertices = 0;
   for( Finite_vertices_iterator vit = tr.finite_vertices_begin();
@@ -117,7 +120,7 @@ output_to_maya(std::ostream& os,
       || !surfaceOnly)
     {
       V[vit] = num_vertices++;
-      Weighted_point p = vit->point();
+      Weighted_point p = tr.point(vit);
       vertices_sstr << "    " << CGAL::to_double(p.x()) << " " << CGAL::to_double(p.y()) << " " << CGAL::to_double(p.z()) << std::endl;
     }
   }
@@ -172,7 +175,7 @@ output_to_maya(std::ostream& os,
       {
         const Vertex_handle& vh = fit->first->vertex(i);
         indices[j] = V[vh];
-        //points[j] = vh->point();
+        //points[j] = tr.point(fit->first, i);
       }
     
       // Reverse triangle orientation?
@@ -231,7 +234,7 @@ output_to_maya(std::ostream& os,
         {
           const Vertex_handle& vh = cit->vertex(i);
           indices[j] = V[vh];
-          //points[j] = vh->point();
+          //points[j] = tr.point(cit, i);
         }
     
         // Reverse triangle orientation?

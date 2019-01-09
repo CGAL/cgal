@@ -81,7 +81,7 @@ compatibility all functionality is also
 accessible through global functions defined within namespace `CGAL`, 
 e.g., \link sqrt `CGAL::sqrt(x)` \endlink. This is realized via function templates using
 the according functor of the traits class. For an overview see 
-Section \ref PkgAlgebraicFoundations in the reference manual.
+Section \ref PkgAlgebraicFoundationsRef in the reference manual.
 
 \subsection Algebraic_foundationsTagsinAlgebraicStructure Tags in Algebraic Structure Traits
 

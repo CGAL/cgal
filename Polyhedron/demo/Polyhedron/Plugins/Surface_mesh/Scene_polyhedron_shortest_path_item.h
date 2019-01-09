@@ -6,10 +6,9 @@
 #include <CGAL/Three/Scene_interface.h>
 #include "Messages_interface.h"
 
-//#include "Polyhedron_type.h"
 #include "Kernel_type.h"
 
-#include "opengl_tools.h"
+
 
 #include <CGAL/Qt/qglviewer.h>
 #include <QKeyEvent>

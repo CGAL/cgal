@@ -31,7 +31,7 @@ export PATH="`cygpath $GMP_LIB_DIR`":$PATH
 
 #paths depending on the compiler and the architecture
 if [ -d /cygdrive/c/3rdPartyLibs/Qt/${QT_VERSION}/msvc${VC_VERSION_YEAR}_${ARCH} ]; then
-   export QTDIR="C:\3rdPartyLibs\Qt\${QT_VERSION}\msvc${VC_VERSION_YEAR}_${ARCH}"
+   export QTDIR="C:/3rdPartyLibs/Qt/${QT_VERSION}/msvc${VC_VERSION_YEAR}_${ARCH}"
    export Qt5_DIR=`cygpath -w /cygdrive/c/3rdPartyLibs/Qt/${QT_VERSION}/msvc${VC_VERSION_YEAR}_${ARCH}/lib/cmake/Qt5`
 elif [ -d /cygdrive/c/3rdPartyLibs/Qt/${QT_VERSION}/msvc${VC_VERSION_YEAR} ]; then
    export QTDIR="C:\3rdPartyLibs\Qt\${QT_VERSION}\msvc${VC_VERSION_YEAR}"
@@ -39,6 +39,7 @@ elif [ -d /cygdrive/c/3rdPartyLibs/Qt/${QT_VERSION}/msvc${VC_VERSION_YEAR} ]; th
 #else
 #  export Qt5_DIR=`cygpath -w /cygdrive/c/3rdPartyLibs/VC${VC_VERSION_YEAR}-${ARCH}/QT-5*/*/msvc*/lib/cmake/Qt5`
 fi
+export PATH=`cygpath ${QTDIR}/bin`:$PATH
 
 if [ -d /cygdrive/c/3rdPartyLibs/VC${VC_VERSION}-${ARCH}/libQGLViewer-2.6.2 ]; then
    export QGLVIEWERROOT="C:\3rdPartyLibs\VC${VC_VERSION}-${ARCH}\libQGLViewer-2.6.2"
@@ -55,11 +56,15 @@ export OPENMESH_LIB_DIR="${OPENMESH_DIR}\build_vs${VC_VERSION_YEAR}-${ARCH}\Buil
 export PATH=${OPENMESH_LIB_DIR}:$PATH
 
 #Zlib build_msvc2013 is sufficient for all versions
-export ZLIB_ROOT="C:/3rdPartyLibs/zlib-1.2.11"
-export PATH="`cygpath ${ZLIB_ROOT}/build_msvc2013/Release`":$PATH
-export PATH="`cygpath ${ZLIB_ROOT}/build_msvc2013/Debug`":$PATH
+export ZLIB_ROOT="C:/3rdPartyLibs/zlib-1.2.11/build_msvc2013"
+export PATH="`cygpath ${ZLIB_ROOT}/Release`":$PATH
+export PATH="`cygpath ${ZLIB_ROOT}/Debug`":$PATH
+
+export CMAKE_PREFIX_PATH="$ZLIB_ROOT;$CMAKE_PREFIX_PATH"
+
 
 #TBB
+export TBB_ARCH_PLATFORM="${TBB_ARCH}/vc${VC_VERSION}"
 export TBBROOT="C:/3rdPartyLibs/tbb2018_20170919oss"
 export PATH="`cygpath ${TBBROOT}/bin/${TBB_ARCH_PLATFORM}`":$PATH
 
@@ -81,5 +86,5 @@ if [ -d/cygdrive/c/3rdPartyLibs/opencv/build_vs${VC_VERSION_YEAR}-${ARCH} ]; the
   export OpenCV_DIR="C:/3rdPartyLibs/opencv/build_vs${VC_VERSION_YEAR}-${ARCH}"
   export PATH="`cygpath ${OpenCV_DIR}/bin/Release`":$PATH
   export PATH="`cygpath ${OpenCV_DIR}/bin/Debug`":$PATH
+  export PATH="`cygpath ${OpenCV_DIR}/3rdparty/ffmpeg/`":$PATH
 fi
-

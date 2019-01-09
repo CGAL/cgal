@@ -29,9 +29,9 @@ env:
     - PACKAGE='Mesher_level Minkowski_sum_2 Minkowski_sum_3 ' 
     - PACKAGE='Modifier Modular_arithmetic Nef_2 ' 
     - PACKAGE='Nef_3 Nef_S2 NewKernel_d ' 
-    - PACKAGE='Number_types OpenNL Operations_on_polyhedra ' 
-    - PACKAGE='Optimal_transportation_reconstruction_2 Optimisation_basic Partition_2 ' 
-    - PACKAGE='Periodic_2_triangulation_2 Periodic_3_triangulation_3 Point_set_2 ' 
+    - PACKAGE='Number_types OpenNL Optimal_transportation_reconstruction_2 ' 
+    - PACKAGE='Optimisation_basic Partition_2 Periodic_2_triangulation_2 ' 
+    - PACKAGE='Periodic_3_mesh_3 Periodic_3_triangulation_3 Point_set_2 ' 
     - PACKAGE='Point_set_3 Point_set_processing_3 Point_set_shape_detection_3 ' 
     - PACKAGE='Poisson_surface_reconstruction_3 Polygon Polygon_mesh_processing ' 
     - PACKAGE='Polyhedron Polyhedron_IO Polyline_simplification_2 ' 
@@ -62,7 +62,7 @@ before_script:
 - sudo chmod +x /usr/bin/doxygen
 - mkdir -p build 
 - cd build 
-- cmake -DCMAKE_CXX_FLAGS="-std=c++11" -DCGAL_HEADER_ONLY=ON -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" -DQt5Svg_DIR="/opt/qt55/lib/cmake/Qt5Svg" -DQt5OpenGL_DIR="/opt/qt55/lib/cmake/Qt5OpenGL" -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG .. 
+- cmake -DCMAKE_CXX_FLAGS="-std=c++11" -DCGAL_HEADER_ONLY=ON -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" -DQt5Svg_DIR="/opt/qt55/lib/cmake/Qt5Svg" -DQt5OpenGL_DIR="/opt/qt55/lib/cmake/Qt5OpenGL" -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG -DWITH_examples=ON -DWITH_demos=ON -DWITH_tests=ON .. 
 - make 
 - sudo make install &>/dev/null
 - cd ..

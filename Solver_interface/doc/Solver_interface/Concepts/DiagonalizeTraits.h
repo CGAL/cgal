@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgSolverConcepts
+\ingroup PkgSolverInterfaceConcepts
 \cgalConcept
 
 Concept providing functions to extract eigenvectors and eigenvalues
@@ -17,8 +17,6 @@ follows:
 \tparam FT Number type
 \tparam dim Dimension of the matrices and vectors
 
-\cgalHasModel `CGAL::Default_diagonalize_traits`
-\cgalHasModel `CGAL::Diagonalize_traits`
 \cgalHasModel `CGAL::Eigen_diagonalize_traits`
 */
 

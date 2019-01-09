@@ -36,45 +36,10 @@
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 
 namespace CGAL{
+namespace Polygon_mesh_processing {
 namespace Corefinement{
 
 // TODO option to ignore internal edges for patches of coplanar faces
-
-template <class TriangleMesh>
-struct Default_node_visitor{
-  typedef boost::graph_traits<TriangleMesh> GT;
-  typedef typename GT::halfedge_descriptor halfedge_descriptor;
-  typedef typename GT::face_descriptor face_descriptor;
-  typedef typename GT::vertex_descriptor vertex_descriptor;
-
-  void new_node_added(  std::size_t /* node_id */,
-                        Intersection_type /* type */,
-                        halfedge_descriptor /* principal_edge */,
-                        halfedge_descriptor /* additional_edge */,
-                        bool /* is_target_coplanar */,
-                        bool /* is_source_coplanar */ )
-  {}
-
-  void new_node_added_triple_face(std::size_t /* node_id */,
-                                  face_descriptor /* f1 */,
-                                  face_descriptor /* f2 */,
-                                  face_descriptor /* f3 */,
-                                  const TriangleMesh& /* tm */)
-  {}
-
-  void new_vertex_added(std::size_t /* node_id */,
-                        vertex_descriptor /* vh */,
-                        TriangleMesh& /*tm*/){}
-};
-
-template <class TriangleMesh>
-struct Default_face_visitor{
-  typedef boost::graph_traits<TriangleMesh> GT;
-  typedef typename GT::face_descriptor face_descriptor;
-
-  void before_subface_creations(face_descriptor /*f_old*/,TriangleMesh&){}
-  void after_subface_created(face_descriptor /*f_new*/,TriangleMesh&){}
-};
 
 //binds two edge constrained pmaps
 template <class G, class Ecm1, class Ecm2=Ecm1>
@@ -131,6 +96,8 @@ struct No_extra_output_from_corefinement
   void set_edge_per_polyline(G& /*tm*/,
                              Node_id_pair /*indices*/,
                              halfedge_descriptor /*hedge*/){}
+  template <class vertex_descriptor, class Node_id>
+  void set_vertex_id(vertex_descriptor, Node_id, const G&){}
   template <class Node_vector,
             class Mesh_to_map_node>
   void operator()(
@@ -147,19 +114,16 @@ template< class TriangleMesh,
           class VertexPointMap,
           class OutputBuilder_ = Default,
           class EdgeMarkMapBind_ = Default,
-          class NewNodeVisitor_ = Default,
-          class NewFaceVisitor_ = Default,
+          class UserVisitor_ = Default,
           bool doing_autorefinement = false >
-class Visitor{
+class Surface_intersection_visitor_for_corefinement{
 //default template parameters
   typedef typename Default::Get<EdgeMarkMapBind_,
     Ecm_bind<TriangleMesh, No_mark<TriangleMesh> > >::type      EdgeMarkMapBind;
   typedef typename Default::Get<OutputBuilder_,
     No_extra_output_from_corefinement<TriangleMesh> >::type       OutputBuilder;
   typedef typename Default::Get<
-    NewNodeVisitor_, Default_node_visitor<TriangleMesh> >::type  NewNodeVisitor;
-  typedef typename Default::Get<
-    NewFaceVisitor_, Default_face_visitor<TriangleMesh> >::type  NewFaceVisitor;
+    UserVisitor_, Default_visitor<TriangleMesh> >::type  UserVisitor;
 
 // config flags
 public:
@@ -211,8 +175,7 @@ private:
   std::map< Node_id,std::set<Node_id> > coplanar_constraints;
 
 //data members that require initialization in the constructor
-  NewNodeVisitor& new_node_visitor;
-  NewFaceVisitor& new_face_visitor;
+  UserVisitor& user_visitor;
   OutputBuilder& output_builder;
   EdgeMarkMapBind marks_on_edges;
   bool input_with_coplanar_faces;
@@ -245,10 +208,10 @@ private:
 
 // visitor public functions
 public:
-  Visitor(NewNodeVisitor& v, NewFaceVisitor& f,
-          OutputBuilder& o, const EdgeMarkMapBind& emm)
-    : new_node_visitor(v)
-    , new_face_visitor(f)
+  Surface_intersection_visitor_for_corefinement(
+    UserVisitor& uv, OutputBuilder& o, const EdgeMarkMapBind& emm)
+    : number_coplanar_vertices(0)
+    , user_visitor(uv)
     , output_builder(o)
     , marks_on_edges(emm)
     , input_with_coplanar_faces(false)
@@ -353,7 +316,7 @@ public:
   {
     CGAL_assertion(f1!=f2 && f1!=f3 && f2!=f3);
     TriangleMesh* tm_ptr = const_cast<TriangleMesh*>(&tm);
-    new_node_visitor.new_node_added_triple_face(node_id, f1, f2, f3, tm);
+//    user_visitor.new_node_added_triple_face(node_id, f1, f2, f3, tm); // NODE_VISITOR_TAG
 #ifdef CGAL_DEBUG_AUTOREFINEMENT
     std::cout << "adding node " << node_id << " " << f1 << " " << f2 << " " << f3 << "\n";
 #endif
@@ -377,7 +340,7 @@ public:
     TriangleMesh* tm2_ptr = const_cast<TriangleMesh*>(&tm2);
 
     //forward to the visitor
-    new_node_visitor.new_node_added(node_id, type, h_1, h_2, is_target_coplanar, is_source_coplanar);
+//    user_visitor.new_node_added(node_id, type, h_1, h_2, is_target_coplanar, is_source_coplanar); // NODE_VISITOR_TAG
     switch(type)
     {
       case ON_FACE: //Face intersected by an edge
@@ -399,6 +362,7 @@ public:
         node_id_to_vertex[node_id]=target(h_2,tm2);
         all_incident_faces_got_a_node_as_vertex(h_2,node_id,*tm2_ptr);
       //   check_node_on_non_manifold_vertex(node_id,h_2,tm2);
+        output_builder.set_vertex_id(target(h_2, tm2), node_id, tm2);
       }
       break;
       default:
@@ -416,6 +380,8 @@ public:
         node_id_to_vertex.resize(node_id+1,Graph_traits::null_vertex());
       node_id_to_vertex[node_id]=target(h_1,tm1);
       all_incident_faces_got_a_node_as_vertex(h_1,node_id, *tm1_ptr);
+      // register the vertex in the output builder
+      output_builder.set_vertex_id(target(h_1, tm1), node_id, tm1);
       // check_node_on_non_manifold_vertex(node_id,h_1,tm1);
     }
     else{
@@ -428,6 +394,8 @@ public:
           node_id_to_vertex.resize(node_id+1,Graph_traits::null_vertex());
         node_id_to_vertex[node_id]=source(h_1,tm1);
         all_incident_faces_got_a_node_as_vertex(h_1_opp,node_id, *tm1_ptr);
+        // register the vertex in the output builder
+        output_builder.set_vertex_id(source(h_1, tm1), node_id, tm1);
       //   check_node_on_non_manifold_vertex(node_id,h_1_opp,tm1);
       }
       else{
@@ -790,9 +758,10 @@ public:
           halfedge_descriptor hnew = Euler::split_edge(hedge, tm);
           CGAL_assertion(expected_src==source(hnew,tm));
           vertex_descriptor vnew=target(hnew,tm);
-          new_node_visitor.new_vertex_added(node_id, vnew, tm);
+//          user_visitor.new_vertex_added(node_id, vnew, tm); // NODE_VISITOR_TAG
           nodes.call_put(vpm, vnew, node_id, tm);
-
+          // register the new vertex in the output builder
+          output_builder.set_vertex_id(vnew, node_id, tm);
           node_id_to_vertex[node_id]=vnew;
           if (first){
             first=false;
@@ -1036,7 +1005,7 @@ public:
 
         // import the triangle in `cdt` in the face `f` of `tm`
         triangulate_a_face(f, tm, nodes, node_ids, node_id_to_vertex,
-          edge_to_hedge, cdt, vpm, new_node_visitor, new_face_visitor);
+          edge_to_hedge, cdt, vpm, output_builder, user_visitor);
 
         // TODO Here we do the update only for internal edges.
         // Update for border halfedges could be done during the split
@@ -1080,7 +1049,7 @@ public:
   }
 };
 
-} } //end of namespace CGAL::Corefinement
+} } } // CGAL::Polygon_mesh_processing::Corefinement
 
 #include <CGAL/enable_warnings.h>
 

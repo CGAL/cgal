@@ -23,117 +23,75 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
-#include <map>
-#include <sstream>
-
-#include <CGAL/array.h>
+#include <CGAL/IO/facets_in_complex_3_to_triangle_mesh.h>
 
 namespace CGAL {
 
-namespace internal{
+namespace internal {
 
-namespace mesh_3_export{
-template <class Vertex_handle>
-std::size_t get_vertex_index(Vertex_handle v,std::map<Vertex_handle, std::size_t>& V,std::size_t& inum,std::stringstream& vertex_buffer){
-  std::pair<typename std::map<Vertex_handle, std::size_t>::iterator,bool> res=
-    V.insert(std::make_pair(v,inum));
-  if (res.second){
-    ++inum;
-    vertex_buffer <<   res.first->first->point().point() <<"\n"; //point is weighted!
+template<typename PointContainer, typename FaceContainer>
+std::ostream&
+output_polygon_soup_to_off(const PointContainer& points,
+                           const FaceContainer& faces,
+                           std::ostream& out)
+{
+  typedef typename FaceContainer::value_type             Face;
+
+  const std::size_t np = points.size();
+  const std::size_t nf = faces.size();
+
+  out << "OFF\n" << np << " " << nf << " 0\n";
+
+  for(std::size_t i=0; i<np; ++i)
+    out << points[i] << '\n';
+
+  for(std::size_t i=0; i<nf; ++i)
+  {
+    const Face& f = faces[i];
+    const std::size_t fs = f.size();
+    out << fs;
+    for(std::size_t j=0; j<fs; ++j)
+      out << " " << f[j];
+    out << '\n';
   }
-  return res.first->second;
+
+  return out;
 }
-} // end of namespace mesh_3_export
 
 template <typename C3T3>
 std::ostream&
-output_boundary_of_c3t3_to_off(const C3T3& c3t3, 
+output_boundary_of_c3t3_to_off(const C3T3& c3t3,
                                typename C3T3::Subdomain_index sd_index,
-                               std::ostream& output,
-                               bool normals_point_outside_of_the_subdomain=true)
+                               std::ostream& out,
+                               bool normals_point_outside_of_the_subdomain = true)
 {
-  typedef typename C3T3::Triangulation Triangulation;
-  typedef typename Triangulation::Vertex_handle Vertex_handle;
+  typedef typename C3T3::Triangulation::Geom_traits::Point_3             Point;
+  typedef std::vector<std::size_t>                                       Face;
 
-  std::map<Vertex_handle, std::size_t> V;
-  
-  std::size_t inum = 0; 
-  std::size_t nfacets = 0;
-  cpp0x::array<std::size_t,3> indices={{0,0,0}};
-  std::stringstream facet_buffer,vertex_buffer;
-  for(typename C3T3::Facets_in_complex_iterator 
-        fit = c3t3.facets_in_complex_begin(),
-        end = c3t3.facets_in_complex_end();
-      fit != end; ++fit) 
-  {
-    typename C3T3::Subdomain_index cell_sd=c3t3.subdomain_index(fit->first);
-    typename C3T3::Subdomain_index opp_sd=c3t3.subdomain_index(fit->first->neighbor(fit->second));
-    
-    if (cell_sd!=sd_index && opp_sd!=sd_index) continue;
+  std::vector<Point> points;
+  std::vector<Face> faces;
 
-    ++nfacets;
-    int j=-1;
-    
-    
-    for (int i = 0; i < 4; ++i)
-      if (i != fit->second)
-          indices[++j]=mesh_3_export::get_vertex_index((*fit).first->vertex(i), V, inum,vertex_buffer);
-    if ( ( (cell_sd==sd_index) == (fit->second%2 == 1) ) == normals_point_outside_of_the_subdomain )
-      std::swap(indices[0],indices[1]);
-    facet_buffer << "3" << " " << indices[0] <<" " << indices[1] <<" " << indices[2] << "\n";
-  }
-  
-  output << "OFF " << inum << " " << nfacets << " 0\n";
-  output << vertex_buffer.str();
-  output << facet_buffer.str();
-  
-  
-  return output;
+  CGAL::Mesh_3::internal::facets_in_complex_3_to_triangle_soup(c3t3, sd_index, points, faces, normals_point_outside_of_the_subdomain);
+
+  return output_polygon_soup_to_off(points, faces, out);
 }
 
 template <typename C3T3>
 std::ostream&
 output_facets_in_complex_to_off(const C3T3& c3t3,
-                                std::ostream& output)
+                                std::ostream& out)
 {
-  typedef typename C3T3::Triangulation Triangulation;
-  typedef typename Triangulation::Vertex_handle Vertex_handle;
+  typedef typename C3T3::Triangulation::Geom_traits::Point_3             Point;
+  typedef std::vector<std::size_t>                                       Face;
 
-  std::map<Vertex_handle, std::size_t> V;
+  std::vector<Point> points;
+  std::vector<Face> faces;
 
-  std::size_t inum = 0;
-  std::size_t nfacets = 0;
-  cpp0x::array<std::size_t,3> indices={{0,0,0}};
-  std::stringstream facet_buffer,vertex_buffer;
-  for(typename C3T3::Facets_in_complex_iterator
-        fit = c3t3.facets_in_complex_begin(),
-        end = c3t3.facets_in_complex_end();
-      fit != end; ++fit)
-  {
-    typename C3T3::Subdomain_index cell_sd=c3t3.subdomain_index(fit->first);
-    typename C3T3::Subdomain_index opp_sd=c3t3.subdomain_index(fit->first->neighbor(fit->second));
+  CGAL::Mesh_3::internal::facets_in_complex_3_to_triangle_soup(c3t3, points, faces);
 
-    ++nfacets;
-    int j=-1;
-
-
-    for (int i = 0; i < 4; ++i)
-      if (i != fit->second)
-          indices[++j]=mesh_3_export::get_vertex_index((*fit).first->vertex(i), V, inum,vertex_buffer);
-    if ( (cell_sd > opp_sd) == (fit->second%2 == 1) ) std::swap(indices[0],indices[1]);
-    facet_buffer << "3" << " " << indices[0] <<" " << indices[1] <<" " << indices[2] << "\n";
-  }
-
-  output << "OFF " << inum << " " << nfacets << " 0\n";
-  output << vertex_buffer.str();
-  output << facet_buffer.str();
-
-
-  return output;
+  return output_polygon_soup_to_off(points, faces, out);
 }
 
 } } // end of namespace CGAL::internal
-
 
 #endif // CGAL_INTERNAL_MESH_3_BOUNDARY_OF_SUDDOMAIN_OF_COMPLEX_3_IN_TRIANGULATION_3_TO_OFF_H

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3MeshClasses
+\ingroup PkgMesh3MeshClasses
 
 The function object class `Mesh_edge_criteria_3` is a model of `MeshEdgeCriteria_3`. It 
 provides a bound for the size criterion. 
@@ -36,8 +36,7 @@ The argument `length_bound` is an upper bound
 for the length of the edges which are used to discretize the curves. 
 Note that if one parameter is set to 0, then its corresponding criteria is ignored. 
 */ 
-Mesh_edge_criteria_3( 
-FT length_bound); 
+Mesh_edge_criteria_3(const FT& length_bound);
 
 /*!
 Returns an object to serve as criteria for edges. The type `SizingField` 
@@ -46,8 +45,7 @@ as above, except that the length
 parameter is a functional instead of a constant. 
 */ 
 template <class SizingField> 
-Mesh_edge_criteria_3( 
-SizingField length_bound); 
+Mesh_edge_criteria_3(const SizingField& length_bound);
 
 /// @}
 

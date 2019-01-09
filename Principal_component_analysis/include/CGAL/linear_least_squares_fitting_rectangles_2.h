@@ -78,7 +78,7 @@ linear_least_squares_fitting_2(InputIterator first,
   // assemble 2nd order moment about the origin.  
   FT temp[4] = {1/3.0, 0.25,
 		0.25,  1/3.0};
-  Matrix moment = init_matrix<K>(2,temp);
+  Matrix moment = init_matrix<FT>(2,temp);
 
   for(InputIterator it = first;
       it != beyond;
@@ -98,7 +98,7 @@ linear_least_squares_fitting_2(InputIterator first,
     FT delta[4] = {x1-x0, 0.0, 
 		   0.0, y2-y0};
 
-    Matrix transformation = init_matrix<K>(2,delta);
+    Matrix transformation = init_matrix<FT>(2,delta);
     FT area = (x1-x0)*(y2-y0);
 
     CGAL_assertion(area != 0.0);

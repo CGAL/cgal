@@ -76,7 +76,20 @@ Note that the latter may also be planar polygon with a border.
 
 \cgalExample{Convex_hull_3/quickhull_any_dim_3.cpp}
 
+\subsection Convex_hull_3ExtremePoints Extreme points
+In addition to the `convex_hull_3()` function, the function `extreme_points_3()` is also
+provided in case only the points on the convex hull are required (without the connectivity
+information). In addition the traits class adapter `CGAL::Extreme_points_traits_adapter_3`
+is also provided in order to get the indices or more generally any given entity that
+is associated a 3D point that is on the convex hull.
 
+The following program reads a set of points from an OFF file and outputs the indices
+of the points that are on the convex hull.
+\cgalExample{Convex_hull_3/extreme_indices_3.cpp}
+
+The following program reads and builds a mesh from an OFF file, and then collects the vertices
+that are on the convex hull of the mesh.
+\cgalExample{Convex_hull_3/extreme_points_3_sm.cpp}
 
 \subsection Convex_hull_3HalfspaceIntersection Halfspace Intersection
 

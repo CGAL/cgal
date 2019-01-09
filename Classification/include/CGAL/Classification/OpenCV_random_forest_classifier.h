@@ -158,14 +158,14 @@ public:
     
     std::size_t nb_samples = 0;
     for (std::size_t i = 0; i < ground_truth.size(); ++ i)
-      if (ground_truth[i] != -1)
+      if (int(ground_truth[i]) != -1)
         ++ nb_samples;
 
     cv::Mat training_features (int(nb_samples), int(m_features.size()), CV_32FC1);
     cv::Mat training_labels (int(nb_samples), 1, CV_32FC1);
 
     for (std::size_t i = 0, index = 0; i < ground_truth.size(); ++ i)
-      if (ground_truth[i] != -1)
+      if (int(ground_truth[i]) != -1)
       {
         for (std::size_t f = 0; f < m_features.size(); ++ f)
           training_features.at<float>(int(index), int(f)) = m_features[f]->value(i);
@@ -237,7 +237,7 @@ public:
     }
 
     for (std::size_t i = 0; i < out.size(); ++ i)
-      out[i] = - std::log (out[i] / nb_trees);
+      out[i] = out[i] / nb_trees;
 #else
 
     std::vector<float> result (1, 0);
@@ -246,9 +246,9 @@ public:
     
     for (std::size_t i = 0; i < out.size(); ++ i)
       if (i == std::size_t(result[0]))
-        out[i] = 0.;
+        out[i] = 1.f;
       else
-        out[i] = 1.;
+        out[i] = 0.f;
 
 #endif
   }

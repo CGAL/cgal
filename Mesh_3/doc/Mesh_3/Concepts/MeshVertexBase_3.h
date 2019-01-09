@@ -1,12 +1,11 @@
 /*!
-\ingroup PkgMesh_3SecondaryConcepts
+\ingroup PkgMesh3SecondaryConcepts
 \cgalConcept
 
 The concept `MeshVertexBase_3` describes the requirements 
 for the `Vertex` type of the triangulation 
-used by a 3D mesh generation process. The type `MeshVertexBase_3` refines both the concept `TriangulationVertexBase_3` 
-and 
-the concept `SurfaceMeshVertexBase_3`. 
+used by a 3D mesh generation process. The type `MeshVertexBase_3` refines both
+the concept `RegularTriangulationVertexBase_3` and the concept `SurfaceMeshVertexBase_3`.
 It provides additional members to store and retrieve 
 information about the location of the vertex with respect 
 to the input domain describing the domain to be discretized. 

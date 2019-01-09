@@ -33,16 +33,24 @@
 
 namespace CGAL {
 
-template <class Polyhedron>
+template <class Polyhedron, class Vpm>
 void print_polyhedron_with_header_OFF( std::ostream& out, 
                                        const Polyhedron& P,
-                                       const File_header_OFF& header) {
+                                       const File_header_OFF& header,
+                                       const Vpm& vpm) {
     File_writer_OFF  writer( header);
     writer.header().set_polyhedral_surface( true);
     writer.header().set_halfedges( P.size_of_halfedges());
-    generic_print_polyhedron( out, P, writer);
+    generic_print_polyhedron( out, P, writer, vpm);
 }
 
+template <class Polyhedron>
+void print_polyhedron_with_header_OFF( std::ostream& out, 
+                                       const Polyhedron& P,
+                                       const File_header_OFF& header) 
+{
+  print_polyhedron_with_header_OFF(out, P, header, get(CGAL::vertex_point, P));
+}
 
 template <class Polyhedron>
 void print_polyhedron_OFF( std::ostream& out, 

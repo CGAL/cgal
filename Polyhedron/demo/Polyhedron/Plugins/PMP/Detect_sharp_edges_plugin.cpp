@@ -7,22 +7,12 @@
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
-#ifdef USE_SURFACE_MESH
 #include "Scene_surface_mesh_item.h"
-
-#else
-#include "Scene_polyhedron_item.h"
-#include "Polyhedron_type.h"
-#endif
 
 #include "Polyhedron_demo_detect_sharp_edges.h"
 
-#ifdef USE_SURFACE_MESH
 typedef Scene_surface_mesh_item Scene_facegraph_item;
 typedef CGAL::Kernel_traits<Scene_surface_mesh_item::Face_graph::Point>::Kernel Kernel;
-#else
-typedef Scene_polyhedron_item Scene_facegraph_item;
-#endif
 
 typedef Scene_facegraph_item::Face_graph FaceGraph;
 typedef boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
@@ -143,9 +133,7 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
                                                .vertex_incident_patches_map(vip));
     //update item
     item->setItemIsMulticolor(true);
-#ifndef USE_SURFACE_MESH
-    item->set_color_vector_read_only(false);
-#endif
+    item->computeItemColorVectorAutomatically(true);
     item->invalidateOpenGLBuffers();
 
     // update scene

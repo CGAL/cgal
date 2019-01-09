@@ -55,10 +55,10 @@ void fct(const LCC& lcc)
   std::for_each(vb,ve, Fct());
 }
 
-int main(int, char** argv)
+int main(int argc, char** argv)
 {
   LCC lcc;  
-  CGAL::read_off(argv[1], lcc);
+  CGAL::read_off((argc>1)?argv[1]:"cube.off", lcc);
 
   fct(lcc);
   return 0;

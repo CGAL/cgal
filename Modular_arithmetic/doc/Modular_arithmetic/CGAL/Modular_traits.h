@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgModularArithmetic
+\ingroup PkgModularArithmeticRef
 
 An instance of `Modular_traits` is a model of `ModularTraits`, 
 where <span class="textsc">T</span> is the associated type. 

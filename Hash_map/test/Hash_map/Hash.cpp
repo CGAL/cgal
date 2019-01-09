@@ -6,6 +6,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <CGAL/boost/graph/graph_traits_Arrangement_2.h>
@@ -26,7 +27,7 @@ typedef CGAL::Triangulation_2<Kernel> Triangulation_2;
 #ifdef CGAL_LINKED_WITH_TBB
 typedef CGAL::Triangulation_data_structure_3<
     CGAL::Triangulation_vertex_base_3<Kernel>,
-    CGAL::Triangulation_cell_base_3<Kernel>,
+    CGAL::Delaunay_triangulation_cell_base_3<Kernel>,
     CGAL::Parallel_tag>                          Tds;
 typedef CGAL::Delaunay_triangulation_3<Kernel, Tds> Triangulation_3;
 #endif

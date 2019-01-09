@@ -323,7 +323,7 @@ public:
           Quaternion rot(...);
           cout << "Rotation=" << rot << endl;
           \endcode */
-  std::ostream &operator<<(std::ostream &o, const CGAL::qglviewer::Vec &);
+  std::ostream &operator<<(std::ostream &o, const CGAL::qglviewer::Quaternion &);
 //@}
 #endif
 
@@ -333,8 +333,8 @@ private:
   qreal q[4];
 };
 
-}} // namespace CGAL::qglviewer
+std::ostream &operator<<(std::ostream &o, const Quaternion &);
 
-std::ostream &operator<<(std::ostream &o, const CGAL::qglviewer::Quaternion &);
+}} // namespace CGAL::qglviewer
 
 #endif // QGLVIEWER_QUATERNION_H

@@ -79,7 +79,7 @@ class Mesh_3_optimization_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "optimization_plugin.json")
 
   typedef Polyhedron_demo_plugin_interface Base;
 public:
@@ -227,7 +227,7 @@ Mesh_3_optimization_plugin::odt()
   Ui::Smoother_dialog ui;
   ui.setupUi(&dialog);
   dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
-  dialog.setWindowTitle(tr("Odt-smoothing parameters"));
+  dialog.setWindowTitle(tr("ODT-smoothing parameters"));
 
   connect(ui.buttonBox, SIGNAL(accepted()),
           &dialog, SLOT(accept()));

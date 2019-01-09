@@ -28,7 +28,10 @@
 
 #include <CGAL/Classification/Image.h>
 
+#include <CGAL/assertions.h>
+
 #include <boost/iterator/iterator_facade.hpp>
+#include <boost/cstdint.hpp>
 
 namespace CGAL {
 
@@ -61,13 +64,15 @@ public:
   typedef typename GeomTraits::Iso_cuboid_3 Iso_cuboid_3;
 
 private:
-  typedef Image<std::vector<std::size_t> > Image_indices;
+  typedef Image<std::vector<boost::uint32_t> > Image_indices;
   typedef Image<bool> Image_bool;
 
-  Image_indices m_grid;
+  const PointRange* m_points;
+  PointMap m_point_map;
+  Iso_cuboid_3 m_bbox;
   float m_resolution;
-  std::vector<std::size_t> m_x;
-  std::vector<std::size_t> m_y;
+
+  Image_indices m_grid;
   Planimetric_grid* m_lower_scale;
   std::size_t m_current_scale;
 
@@ -81,7 +86,10 @@ public:
   typedef unspecified_type iterator; ///< A forward iterator with value type `std::size_t`.
 #else
   class iterator
-    : public boost::iterator_facade<iterator, std::size_t, std::forward_iterator_tag>
+    : public boost::iterator_facade<iterator,
+                                    std::size_t,
+                                    std::forward_iterator_tag,
+                                    std::size_t> // Return value instead of reference
   {
   public:
     friend class boost::iterator_core_access;
@@ -165,9 +173,9 @@ public:
               m_idx == other.m_idx);
     }
 
-    std::size_t& dereference() const
+    std::size_t dereference() const
     {
-      return const_cast<std::size_t&>(m_lowest_scale->m_grid(m_pos_x, m_pos_y)[m_idx]);
+      return static_cast<std::size_t>(m_lowest_scale->m_grid(m_pos_x, m_pos_y)[m_idx]);
     }
 
   private:
@@ -206,7 +214,8 @@ public:
                     PointMap point_map,
                     const Iso_cuboid_3& bbox,
                     float grid_resolution)
-    : m_resolution (grid_resolution), m_lower_scale(NULL), m_current_scale(0)
+    : m_points (&input), m_point_map (point_map)
+    , m_bbox (bbox), m_resolution (grid_resolution), m_lower_scale(NULL), m_current_scale(0)
   {
     m_width = (std::size_t)((bbox.xmax() - bbox.xmin()) / grid_resolution) + 1;
     m_height = (std::size_t)((bbox.ymax() - bbox.ymin()) / grid_resolution) + 1;
@@ -216,21 +225,21 @@ public:
     for (std::size_t i = 0; i < input.size(); ++ i)
     {
       const Point_3& p = get(point_map, *(input.begin()+i));
-      m_x.push_back ((std::size_t)((p.x() - bbox.xmin()) / grid_resolution));
-      m_y.push_back ((std::size_t)((p.y() - bbox.ymin()) / grid_resolution));
-      m_grid(m_x.back(), m_y.back()).push_back (i);
+      std::size_t x = (boost::uint32_t)((p.x() - bbox.xmin()) / grid_resolution);
+      std::size_t y = (boost::uint32_t)((p.y() - bbox.ymin()) / grid_resolution);
+      m_grid(x,y).push_back (boost::uint32_t(i));
     }
   }
 
   /// \cond SKIP_IN_MANUAL
   Planimetric_grid (Planimetric_grid* lower_scale)
-    : m_resolution (lower_scale->resolution() * 2), m_lower_scale (lower_scale)
+      : m_resolution (lower_scale->resolution() * 2), m_lower_scale (lower_scale)
   {
     m_current_scale = lower_scale->m_current_scale + 1;
 
     m_width = (m_lower_scale->width() + 1) / 2;
     m_height = (m_lower_scale->height() + 1) / 2;
-    
+
     m_has_points.reserve(m_width * m_height);
     for (std::size_t x = 0; x < m_width; ++ x)
       for (std::size_t y = 0; y < m_height; ++ y)
@@ -341,7 +350,10 @@ public:
   std::size_t x(std::size_t index) const
   {
     if (m_lower_scale == NULL)
-      return m_x[index];
+    {
+      const Point_3& p = get(m_point_map, *(m_points->begin()+index));
+      return (std::size_t)((p.x() - m_bbox.xmin()) / m_resolution);
+    }
 
     // else
     return m_lower_scale->x(index) / 2;
@@ -352,7 +364,10 @@ public:
   std::size_t y(std::size_t index) const
   {
     if (m_lower_scale == NULL)
-      return m_y[index];
+    {
+      const Point_3& p = get(m_point_map, *(m_points->begin()+index));
+      return (std::size_t)((p.y() - m_bbox.ymin()) / m_resolution);
+    }
 
     // else
     return m_lower_scale->y(index) / 2;

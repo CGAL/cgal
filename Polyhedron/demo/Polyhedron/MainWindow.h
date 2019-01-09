@@ -5,6 +5,7 @@
 
 #include <QtOpenGL/qgl.h>
 #include <CGAL/Qt/DemosMainWindow.h>
+#include <CGAL/Three/Three.h>
 
 #include <QScriptEngine>
 #include <QScriptable>
@@ -15,11 +16,15 @@
 #include <QFileInfo>
 #include <QStringList>
 #include <QSet>
+#include <QMap>
 #include <QModelIndex>
+#include <QLineEdit>
+
 class Scene;
 class Viewer;
 class QTreeView;
 class QMenu;
+class QWidgetAction;
 namespace CGAL {
 namespace Three{
 class Polyhedron_demo_io_plugin_interface;
@@ -35,8 +40,6 @@ namespace Ui {
   class Statistics_on_item_dialog;
 }
 
-#include "Polyhedron_type_fwd.h"
-
 #include "Messages_interface.h"
 
 /*!
@@ -48,6 +51,7 @@ namespace Ui {
 class MAINWINDOW_EXPORT MainWindow : 
   public CGAL::Qt::DemosMainWindow,
   public Messages_interface,
+  public CGAL::Three::Three,
   protected QScriptable
 {
   Q_OBJECT
@@ -68,7 +72,7 @@ public:
    * Then it creates and initializes the scene and do the
    * connexions with the UI. Finally it loads the plugins.*/
 
-  MainWindow(bool verbose = false,QWidget* parent = 0);
+  MainWindow(const QStringList& keywords, bool verbose = false,QWidget* parent = 0);
   ~MainWindow();
 
   /*! Finds an IO plugin.
@@ -139,6 +143,11 @@ public Q_SLOTS:
    * the index i in the Geometric Objects view.
    */
   void selectSceneItem(int i);
+  /*!
+   * Clears the current selection and selects the scene_items with
+   * indices in is in the Geometric Objects view.
+   */
+  void selectSceneItems(QList<int> i);
   /*!
    * Prints coordinates of a point and its distance to the last
    * position printed by this function.
@@ -237,11 +246,6 @@ public Q_SLOTS:
   void throw_exception();
 
   /*!
-   * set_face_graph_default_type sets the global state of the application to `Polyhedron mode` or `Surface_mesh mode`.
-   */
-  void set_face_graph_default_type(MainWindow::Face_graph_mode m);
-
-  /*!
    * Writes the statistics dialog content in a text file.
    */
   void exportStatistics();
@@ -312,7 +316,8 @@ protected Q_SLOTS:
   //!Swap the visibility of the selected item(s).
   void on_actionShowHide_triggered();
   //!Pops a dialog to change the max TextItems
-  void on_actionMaxTextItemsDisplayed_triggered();
+  void setMaxTextItemsDisplayed(int val);
+  void setTransparencyPasses(int val);
   // Select A/B
   //!Sets the selected item as item_A.
   void on_actionSetPolyhedronA_triggered();
@@ -330,7 +335,9 @@ protected Q_SLOTS:
   //!Calls the function saveSnapShot of the viewer.
   void on_actionSaveSnapshot_triggered();
   //!Opens a Dialog to choose a color and make it the background color.
-  void on_actionSetBackgroundColor_triggered();
+  void setBackgroundColor();
+  //!Opens a Dialog to change the lighting settings
+  void setLighting_triggered();
   /*! Opens a Dialog to enter coordinates of the new center point and sets it
    * with viewerShow.
    *@see viewerShow(float, float, float, float, float, float)
@@ -394,7 +401,7 @@ private:
   void setMenus(QString, QString, QAction *a);
   /// plugin black-list
   QSet<QString> plugin_blacklist;
-  QMap<QString, std::vector<QString> > PathNames_map; //For each non-empty plugin directory, contains a vector of plugin names
+  QMap<QString, QString > PathNames_map; //For each non-empty plugin directory, contains a vector of plugin names
   QMap<QString, QString > pluginsStatus_map; //For each non-empty plugin directory, contains a vector of plugin names
   Scene* scene;
   Viewer* viewer;
@@ -410,6 +417,7 @@ private:
   //!Called when "Add new group" in the file menu is triggered.
   QAction* actionAddToGroup;
   QAction* actionResetDefaultLoaders;
+  CGAL::Three::Three* three;
   void print_message(QString message) { messages->information(message); }
   Messages_interface* messages;
 
@@ -431,8 +439,20 @@ public:
   void evaluate_script_quiet(QString script, 
                              const QString & fileName = QString());
 #endif
-private Q_SLOTS:
-  void set_facegraph_mode_adapter(bool is_polyhedron);
+public Q_SLOTS:
+  void on_actionSa_ve_Scene_as_Script_triggered();
+  void toggleFullScreen();
+  void setDefaultSaveDir();
+  void invalidate_bbox(bool do_recenter);
+private:
+  QList<QDockWidget *> visibleDockWidgets;
+  QLineEdit operationSearchBar;
+  QWidgetAction* searchAction;
+  QString def_save_dir;
+  bool bbox_need_update;
+  QMap<QString, QPair<QStringList, QString> >plugin_metadata_map;
+  QMap<QString, bool> ignored_map;
+  const QStringList& accepted_keywords;
 };
 
 #endif // ifndef MAINWINDOW_H

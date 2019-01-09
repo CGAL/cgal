@@ -744,7 +744,6 @@ public:
     // Run the MVC
     parameterize_convex_hull_with_MVC(mesh, vertices, faces, ct, uvmap, vimap, vpmap);
 
-    std::cout << "End of post processing" << std::endl;
     return OK;
   }
 

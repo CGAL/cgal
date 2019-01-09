@@ -118,11 +118,11 @@ private:
         std::vector<float> v;
         m_classifier (m_training_set[k], v);
 
-        float min = (std::numeric_limits<float>::max)();
+        float max = 0.f;
         for(std::size_t l = 0; l < v.size(); ++ l)
-          if (v[l] < min)
+          if (v[l] > max)
           {
-            min = v[l];
+            max = v[l];
             res = l;
           }
 
@@ -270,6 +270,7 @@ public:
       for (std::size_t f = 0; f < m_features.size(); ++ f)
         if (weight(f) != 0.)
           out[l] += value (l, f, item_index);
+      out[l] = std::exp (-out[l]);
     }
   }
   /// \endcond
@@ -310,7 +311,7 @@ public:
     std::vector<std::vector<std::size_t> > training_sets (m_labels.size());
     std::size_t nb_tot = 0;
     for (std::size_t i = 0; i < ground_truth.size(); ++ i)
-      if (ground_truth[i] != -1)
+      if (int(ground_truth[i]) != -1)
       {
         training_sets[std::size_t(ground_truth[i])].push_back (i);
         ++ nb_tot;
@@ -927,11 +928,11 @@ private:
           std::vector<float> v;
           (*this) (training_sets[j][k], v);
 
-          float min = (std::numeric_limits<float>::max)();
+          float max = 0.f;
           for(std::size_t l = 0; l < m_labels.size(); ++ l)
-            if (v[l] < min)
+            if (v[l] > max)
             {
-              min = v[l];
+              max = v[l];
               res = l;
             }
 

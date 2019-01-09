@@ -174,7 +174,7 @@ void Scene_polyhedron_shortest_path_item::drawPoints(CGAL::Three::Viewer_interfa
     {
         d->initialize_buffers(viewer);
     }
-   viewer->glPointSize(4.0f);
+   viewer->setGlPointSize(4.0f);
    d->program = getShaderProgram(PROGRAM_NO_SELECTION);
    attribBuffers(viewer, PROGRAM_NO_SELECTION);
    vaos[Scene_polyhedron_shortest_path_item_priv::Selected_Edges]->bind();
@@ -183,7 +183,7 @@ void Scene_polyhedron_shortest_path_item::drawPoints(CGAL::Three::Viewer_interfa
    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(d->vertices.size() / 3));
    d->program->release();
    vaos[Scene_polyhedron_shortest_path_item_priv::Selected_Edges]->release();
-   viewer->glPointSize(1.0f);
+   viewer->setGlPointSize(1.0f);
 }
   
 Scene_polyhedron_shortest_path_item* Scene_polyhedron_shortest_path_item::clone() const

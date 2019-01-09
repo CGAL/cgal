@@ -449,7 +449,7 @@ struct Polygon_soup_orienter
  * When it is not possible to produce a combinatorial manifold surface,
  * some points are duplicated.
  * Because a polygon soup does not have any connectivity (each point
- * has as many occurences as the number of polygons it belongs to),
+ * has as many occurrences as the number of polygons it belongs to),
  * duplicating one point (or a pair of points)
  * amounts to duplicate the polygon to which it belongs.
  *
@@ -463,13 +463,13 @@ struct Polygon_soup_orienter
  * The algorithm is described in \cgalCite{gueziec2001cutting}.
  *
  * @tparam PointRange a model of the concepts `RandomAccessContainer`
- * and `BackInsertionSequence` whose value type is the point type
+ * and `BackInsertionSequence` whose value type is the point type.
  * @tparam PolygonRange a model of the concept `RandomAccessContainer`
  * whose value_type is a model of the concept `RandomAccessContainer`
  * whose value_type is `std::size_t`.
  *
- * @param points points of the soup of polygons. Some points might be pushed back to resolve
- *               non-manifold or non-orientability issues.
+ * @param points points of the soup of polygons. Some additional points might be pushed back to resolve
+ *               non-manifoldness or non-orientability issues.
  * @param polygons each element in the vector describes a polygon using the index of the points in `points`.
  *                 If needed the order of the indices of a polygon might be reversed.
  * @return `true`  if the orientation operation succeded.

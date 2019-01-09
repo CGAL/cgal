@@ -107,7 +107,7 @@ public:
   typedef typename Dt::Triangulation_data_structure Tds;
 
   // The Exact Comparison Tag cannot be used in conjonction with periodic triangulations
-  // because the periodic triangulations' point() function return a temporary
+  // because the periodic triangulations' point() function returns a temporary
   // value while the lazy predicate evaluations that are used when the Exact tag
   // is set to true rely on a permanent and safe access to the points.
   CGAL_static_assertion(

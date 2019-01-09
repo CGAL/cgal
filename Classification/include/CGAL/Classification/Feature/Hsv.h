@@ -28,6 +28,9 @@
 #include <CGAL/Classification/Color.h>
 #include <CGAL/Classification/Feature_base.h>
 
+/// \cond SKIP_IN_MANUAL
+#ifndef CGAL_NO_DEPRECATED_CODE
+
 namespace CGAL {
 
 namespace Classification {
@@ -81,6 +84,7 @@ namespace Feature {
     is `CGAL::Classification::RGB_Color`.
   */
 template <typename GeomTraits, typename PointRange, typename ColorMap>
+CGAL_DEPRECATED_MSG("you are using the deprecated feature Hsv, please update your code with Color_channel instead")
 class Hsv : public Feature_base
 {
 public:
@@ -138,7 +142,6 @@ public:
                                          * (c[std::size_t(channel)] - mean) / (2. * sd * sd)));
     }
 #endif
-
     std::ostringstream oss;
     if (channel == HUE) oss << "hue";
     else if (channel == SATURATION) oss << "saturation";
@@ -147,7 +150,6 @@ public:
     this->set_name (oss.str());
   }
 
-  /// \cond SKIP_IN_MANUAL
   virtual float value (std::size_t pt_index)
   {
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
@@ -159,7 +161,6 @@ public:
 #endif
   }
 
-  /// \endcond
 };
 
 } // namespace Feature
@@ -167,5 +168,8 @@ public:
 } // namespace Classification
 
 } // namespace CGAL
+
+#endif
+/// \endcond
 
 #endif // CGAL_CLASSIFICATION_FEATURE_HSV_H

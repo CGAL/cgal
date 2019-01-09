@@ -9,6 +9,10 @@ if(NOT POLICY CMP0070 AND POLICY CMP0053)
   cmake_policy(SET CMP0053 OLD)
 endif()
 
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
+
 find_package(CGAL COMPONENTS Qt5)
 
 if(CGAL_Qt5_FOUND)
@@ -23,10 +27,6 @@ endif()
 # add_definition(-DCGAL_DISABLE_ROUNDING_MATH_CHECK)
 
 if (CGAL_FOUND)
-  include( ${CGAL_USE_FILE} )
-
-  include(CGAL_CreateSingleSourceCGALProgram)
-  include_directories(BEFORE ../../include)
 
   create_single_source_cgal_program("gmap_linear_cell_complex_3.cpp")
   create_single_source_cgal_program("linear_cell_complex_3.cpp")

@@ -86,8 +86,7 @@ function \ref PkgInterpolationNaturalNeighborCoordinates2.
 \tparam OutputFunctor must be a functor with argument type `std::pair<Dt::Vertex_handle, Traits::Vector_d>`.
         Note that the result type of the functor is not specified and is chosen by users to fit their needs.
 \tparam ValueFunctor must be a functor where:
-- `ValueFunctor::argument_type` must be either `std::pair<Dt::Vertex_handle, Dt::Geom_traits::FT>`
-or `std::pair<Dt::Point, Dt::Geom_traits::FT>`.
+- `ValueFunctor::argument_type` must be either `Dt::Vertex_handle` or `Dt::Point`.
 - `ValueFunctor::result_type` is a pair of the function value type and a Boolean.
 The function value type must provide a multiplication and addition operation with the type
 `Traits::FT` as well as a constructor with argument `0`.
@@ -124,8 +123,7 @@ functions \ref PkgInterpolationRegularNeighborCoordinates2.
 \tparam OutputFunctor must be a functor with argument type `std::pair<Rt::Vertex_handle, Traits::Vector_d>`.
         Note that the result type of the functor is not specified and is chosen by users to fit their needs.
 \tparam ValueFunctor must be a functor where:
-- `ValueFunctor::argument_type` must be either `std::pair<Rt::Vertex_handle, Rt::Geom_traits::FT>`
-or `std::pair<Rt::Weighted_point, Rt::Geom_traits::FT>`.
+- `ValueFunctor::argument_type` must be either `Rt::Vertex_handle` or `Rt::Weighted_point`.
 - `ValueFunctor::result_type` is a pair of the function value type and a Boolean.
 The function value type must provide a multiplication and addition operation with the type
 `Traits::FT` as well as a constructor with argument `0`.

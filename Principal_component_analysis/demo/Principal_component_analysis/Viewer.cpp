@@ -25,8 +25,8 @@ void Viewer::draw()
 void Viewer::initializeGL()
 {
   CGAL::QGLViewer::initializeGL();
-  makeCurrent();
-  initializeOpenGLFunctions();
+  //makeCurrent();
+  //initializeOpenGLFunctions();
   setBackgroundColor(::Qt::white);
 }
 

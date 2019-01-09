@@ -4,7 +4,7 @@
 project( Polygon_mesh_processing_Tests )
 
 
-cmake_minimum_required(VERSION 2.6.2)
+cmake_minimum_required(VERSION 3.1)
 if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
   if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
     cmake_policy(VERSION 2.8.4)
@@ -24,10 +24,6 @@ if ( NOT CGAL_FOUND )
 
 endif()
 
-# include helper file
-include( ${CGAL_USE_FILE} )
-
-
 # Boost and its components
 find_package( Boost REQUIRED )
 
@@ -42,13 +38,10 @@ endif()
 # include for local directory
 
 # include for local package
-include_directories( BEFORE ../../include )
-
 find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 
 find_package( TBB )
 
-include( CGAL_CreateSingleSourceCGALProgram )
 if (EIGEN3_FOUND)
   include( ${EIGEN3_USE_FILE} )
 
@@ -100,6 +93,11 @@ endif()
   create_single_source_cgal_program("surface_intersection_sm_poly.cpp" )
   create_single_source_cgal_program("test_orient_cc.cpp")
   create_single_source_cgal_program("test_pmp_transform.cpp")
+  create_single_source_cgal_program("extrude_test.cpp")
+  create_single_source_cgal_program("test_merging_border_vertices.cpp")
+  create_single_source_cgal_program("test_repair_polygon_soup.cpp")
+  create_single_source_cgal_program("test_shape_predicates.cpp")
+  create_single_source_cgal_program("test_pmp_collision_detection.cpp")
 
   if( TBB_FOUND )
     CGAL_target_use_TBB(test_pmp_distance)

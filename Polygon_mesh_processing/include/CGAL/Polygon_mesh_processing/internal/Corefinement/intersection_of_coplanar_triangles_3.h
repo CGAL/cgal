@@ -33,6 +33,7 @@
 #include <bitset>
 
 namespace CGAL{
+namespace Polygon_mesh_processing {
 namespace Corefinement{
 
 template <class TriangleMesh, class VertexPointMap>
@@ -320,7 +321,7 @@ void intersection_coplanar_faces(
   intersect_cpln.cutoff_face(next(next(h2,tm2),tm2),inter_pts,h1);
 }
 
-} } //namespace CGAL::Corefinement
+} } } // CGAL::Polygon_mesh_processing::Corefinement
 
 
 #endif //CGAL_PMP_INTERNAL_COREFINEMENT_INTERSECTION_OF_COPLANAR_TRIANGLES_3_H

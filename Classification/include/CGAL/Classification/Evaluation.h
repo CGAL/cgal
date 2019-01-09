@@ -71,10 +71,10 @@ public:
   a classification.
 
 */
-  template <typename LabelIndexRange>
+  template <typename GroundTruthIndexRange, typename ResultIndexRange>
   Evaluation (const Label_set& labels,
-              const LabelIndexRange& ground_truth,
-              const LabelIndexRange& result)
+              const GroundTruthIndexRange& ground_truth,
+              const ResultIndexRange& result)
     : m_precision (labels.size()),
       m_recall (labels.size()),
       m_iou (labels.size())

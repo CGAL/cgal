@@ -41,6 +41,7 @@
 #include <boost/unordered_set.hpp>
 #include <CGAL/utility.h>
 #include <CGAL/iterator.h>
+#include <CGAL/internal/Has_member_visited.h>
 
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/triangulation_assertions.h>
@@ -77,8 +78,12 @@ class Triangulation_data_structure_3
   typedef Triangulation_data_structure_3<Vb, Cb, Concurrency_tag_> Tds;
 
 public:
-
   typedef Concurrency_tag_            Concurrency_tag;
+
+  // This tag is used in the parallel operations of RT_3 to access some functions
+  // of the TDS (tds.vertices().is_used(Vertex_handle)) that are much more efficient
+  // than what is exposed by the TDS concept (tds.is_vertex(Vertex_handle)).
+  typedef CGAL::Tag_true              Is_CGAL_TDS_3;
 
   // Tools to change the Vertex and Cell types of the TDS.
   template < typename Vb2 >
@@ -1077,8 +1082,6 @@ public:
     return incident_facets_threadsafe<False_filter>(v, facets);
   }
 
-  BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_member_visited,Has_visited_for_vertex_extractor,false)
-
   template <class Filter, class OutputIterator>
   OutputIterator
   incident_edges_1d(Vertex_handle v, OutputIterator edges, Filter f = Filter()) const
@@ -1111,7 +1114,8 @@ public:
       return incident_edges_1d(v, edges, f);
     }
     return visit_incident_cells<Vertex_extractor<Edge_feeder_treatment<OutputIterator>,
-                                                 OutputIterator, Filter, Has_member_visited<Vertex>::value>,
+                                                 OutputIterator, Filter,
+                                                 internal::Has_member_visited<Vertex>::value>,
     OutputIterator>(v, edges, f);
   }
 
@@ -1130,7 +1134,8 @@ public:
     }
     return visit_incident_cells_threadsafe<
       Vertex_extractor<Edge_feeder_treatment<OutputIterator>,
-                       OutputIterator, Filter, Has_member_visited<Vertex>::value>,
+                       OutputIterator, Filter,
+                       internal::Has_member_visited<Vertex>::value>,
       OutputIterator>(v, edges, f);
   }
 
@@ -1181,7 +1186,8 @@ public:
       return vertices;
     }
     return visit_incident_cells<Vertex_extractor<Vertex_feeder_treatment<OutputIterator>,
-    OutputIterator, Filter, Has_member_visited<Vertex>::value>,
+                                OutputIterator, Filter,
+                                internal::Has_member_visited<Vertex>::value>,
     OutputIterator>(v, vertices, f);
   }
 
@@ -1342,7 +1348,7 @@ public:
         Vertex_extractor<Vertex_feeder_treatment<OutputVertexIterator>,
                          OutputVertexIterator, 
                          VertexFilter, 
-                         Has_member_visited<Vertex>::value>,
+                         internal::Has_member_visited<Vertex>::value>,
         OutputVertexIterator
       >(v, vertices, cells, f);
   }

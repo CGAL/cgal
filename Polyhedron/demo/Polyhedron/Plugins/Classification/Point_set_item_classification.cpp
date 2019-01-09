@@ -442,49 +442,54 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales)
   std::cerr << "Computing features with " << nb_scales << " scale(s)" << std::endl;
   m_features.clear();
 
+  Point_set::Vector_map normal_map;
   bool normals = m_points->point_set()->has_normal_map();
+  if (normals)
+    normal_map = m_points->point_set()->normal_map();
+  
   bool colors = (m_color != Point_set::Property_map<Color>());
+  
   Point_set::Property_map<boost::uint8_t> echo_map;
   bool echo;
   boost::tie (echo_map, echo) = m_points->point_set()->template property_map<boost::uint8_t>("echo");
   if (!echo)
     boost::tie (echo_map, echo) = m_points->point_set()->template property_map<boost::uint8_t>("number_of_returns");
 
-  add_remaining_point_set_properties_as_features();
+  m_generator = new Generator (*(m_points->point_set()), m_points->point_set()->point_map(), nb_scales);
 
-  if (!normals && !colors && !echo)
-    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales);
-  else if (!normals && !colors && echo)
-    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 CGAL::Default(), CGAL::Default(), echo_map);
-  else if (!normals && colors && !echo)
-    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 CGAL::Default(), m_color);
-  else if (!normals && colors && echo)
-    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 CGAL::Default(), m_color, echo_map);
-  else if (normals && !colors && !echo)
-    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 m_points->point_set()->normal_map());
-  else if (normals && !colors && echo)
-    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 m_points->point_set()->normal_map(), CGAL::Default(), echo_map);
-  else if (normals && colors && !echo)
-    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 m_points->point_set()->normal_map(), m_color);
-  else
-    m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 m_points->point_set()->normal_map(), m_color, echo_map);
+  CGAL::Real_timer t;
+  t.start();
+    
+#ifdef CGAL_LINKED_WITH_TBB
+  m_features.begin_parallel_additions();
+#endif
+
+  m_generator->generate_point_based_features(m_features);
+  if (normals)
+    m_generator->generate_normal_based_features (m_features, normal_map);
+  if (colors)
+    m_generator->generate_color_based_features (m_features, m_color);
+  if (echo)
+    m_generator->generate_echo_based_features (m_features, echo_map);
+  
+#ifdef CGAL_LINKED_WITH_TBB
+  m_features.end_parallel_additions();
+#endif
+
+  add_remaining_point_set_properties_as_features();
 
   delete m_sowf;
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
   delete m_ethz;
   m_ethz = new ETHZ_random_forest (m_labels, m_features);
+
 #ifdef CGAL_LINKED_WITH_OPENCV
   delete m_random_forest;
   m_random_forest = new Random_forest (m_labels, m_features);
 #endif
-  std::cerr << "Features = " << m_features.size() << std::endl;
+
+  t.stop();
+  std::cerr << m_features.size() << " feature(s) computed in " << t.time() << " second(s)" << std::endl;
 }
 
 void Point_set_item_classification::select_random_region()

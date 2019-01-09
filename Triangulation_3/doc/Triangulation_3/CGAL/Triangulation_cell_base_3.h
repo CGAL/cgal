@@ -24,7 +24,6 @@ It has the default value `Triangulation_ds_cell_base_3`.
 
 \sa `CGAL::Triangulation_ds_cell_base_3` 
 \sa `CGAL::Triangulation_cell_base_with_info_3` 
-\sa `CGAL::Triangulation_cell_base_with_circumcenter_3`
 \sa `CGAL::Triangulation_vertex_base_3` 
 
 */

@@ -2049,6 +2049,20 @@ namespace CommonKernelFunctors {
       CGAL_assertion(e_pt!=NULL);
       return *e_pt;
     }
+
+    Point
+    operator()(const Plane& plane,
+               const Point& l1, const Point& l2) const
+    {
+      Line line = construct_line( l1, l2 );
+
+      typename cpp11::result_of<typename K::Intersect_3(Plane,Line)>::type
+        res = typename K::Intersect_3()(plane,line);
+      CGAL_assertion(res!=boost::none);
+      const Point* e_pt = boost::get<Point>(&(*res));
+      CGAL_assertion(e_pt!=NULL);
+      return *e_pt;
+    }
   };
 
   template <typename K>

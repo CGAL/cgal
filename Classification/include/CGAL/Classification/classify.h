@@ -72,10 +72,10 @@ namespace internal {
       std::vector<float> values;
       m_classifier (s, values);
         
-      float val_class_best = (std::numeric_limits<float>::max)();      
+      float val_class_best = 0.f;
       for(std::size_t k = 0; k < m_labels.size(); ++ k)
       {
-        if(val_class_best > values[k])
+        if(val_class_best < values[k])
         {
           val_class_best = values[k];
           nb_class_best = k;
@@ -163,11 +163,11 @@ namespace internal {
           mean[j] += m_values[j][neighbors[n]];
 
       std::size_t nb_class_best=0; 
-      float val_class_best = (std::numeric_limits<float>::max)();
+      float val_class_best = 0.f;
       for(std::size_t k = 0; k < mean.size(); ++ k)
       {
         mean[k] /= neighbors.size();
-        if(val_class_best > mean[k])
+        if(val_class_best < mean[k])
         {
           val_class_best = mean[k];
           nb_class_best = k;
@@ -256,13 +256,13 @@ namespace internal {
         std::vector<float> values;
         m_classifier(s, values);
         std::size_t nb_class_best = 0;
-        float val_class_best = (std::numeric_limits<float>::max)();
+        float val_class_best = 0.f;
         for(std::size_t k = 0; k < m_labels.size(); ++ k)
         {
           float value = values[k];
-          probability_matrix[k][j] = value;
+          probability_matrix[k][j] = -std::log(value);
             
-          if(val_class_best > value)
+          if(val_class_best < value)
           {
             val_class_best = value;
             nb_class_best = k;

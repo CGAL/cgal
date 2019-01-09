@@ -4,22 +4,26 @@
 
 project( Bounding_volumes_Tests )
 
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 3.1)
 
 find_package(CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
+  include(${CGAL_USE_FILE})
 
-  include( CGAL_CreateSingleSourceCGALProgram )
-
-  include_directories (BEFORE "../../include")
-
+  # Use Eigen
+  find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
+  if (EIGEN3_FOUND)
+    include( ${EIGEN3_USE_FILE} )
+  endif()
+  
   # create a target per cppfile
   file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
   foreach(cppfile ${cppfiles})
-    create_single_source_cgal_program( "${cppfile}" )
+    if(NOT (${cppfile} STREQUAL "Approximate_min_ellipsoid_d.cpp") OR EIGEN3_FOUND)
+      create_single_source_cgal_program( "${cppfile}" )
+    endif()
   endforeach()
 
 else()

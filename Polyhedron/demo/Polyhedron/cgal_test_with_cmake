@@ -26,7 +26,7 @@ configure()
 {
   echo "Configuring... "
   
-  if eval 'cmake --no-warn-unused-cli "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
+  if eval 'cmake --no-warn-unused-cli ${INIT_FILE:+"-C${INIT_FILE}"} "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
                                      -DCGAL_DIR="$CGAL_DIR" \
                                      .' ; then
                                      
@@ -140,6 +140,8 @@ distance_plugin \
 distance_sm_plugin \
 edit_polyhedron_plugin \
 edit_sm_plugin \
+extrude_poly_plugin \
+extrude_sm_plugin \
 fairing_plugin \
 features_detection_plugin \
 gocad_plugin \

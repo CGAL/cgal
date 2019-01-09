@@ -4,19 +4,14 @@
 
 project( Periodic_3_triangulation_3_Tests )
 
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 3.1)
 
 find_package(CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
-  include_directories (BEFORE "../../include")
-
-    include_directories (BEFORE "include")
+  include(${CGAL_USE_FILE})
+  include_directories (BEFORE "include")
 
   create_single_source_cgal_program( "test_p3rt3_as_p3t3.cpp" )
   create_single_source_cgal_program( "test_p3rt3_insert_remove_point_set.cpp" )

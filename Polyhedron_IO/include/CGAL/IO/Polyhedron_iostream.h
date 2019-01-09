@@ -28,6 +28,8 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/print_OFF.h>
 #include <CGAL/IO/scan_OFF.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/named_function_params.h>
 #include <iostream>
 
 namespace CGAL {
@@ -36,16 +38,54 @@ namespace CGAL {
 template < class Traits,
            class Items,
            template < class T, class I, class A>
-           class HDS, class Alloc>
+           class HDS, class Alloc, class NamedParameters>
 bool
-write_off( std::ostream& out, const Polyhedron_3<Traits,Items,HDS,Alloc>& P){
+write_off( std::ostream& out, const Polyhedron_3<Traits,Items,HDS,Alloc>& P, const NamedParameters& np){
   // writes P to `out' in PRETTY, ASCII or BINARY format
     // as the stream indicates.
     File_header_OFF header( is_binary( out), ! is_pretty( out), false);
-    CGAL::print_polyhedron_with_header_OFF( out, P, header);
+    typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Polyhedron_3<Traits,Items,HDS,Alloc>, NamedParameters>::const_type 
+        vpm = choose_param(get_param(np, internal_np::vertex_point),
+                           get_const_property_map(CGAL::vertex_point, P));
+    CGAL::print_polyhedron_with_header_OFF( out, P, header, vpm);
     return out.good();
 }
 
+template < class Traits,
+           class Items,
+           template < class T, class I, class A>
+           class HDS, class Alloc>
+bool
+write_off( std::ostream& out, const Polyhedron_3<Traits,Items,HDS,Alloc>& P){
+  return write_off(out, P, parameters::all_default());
+}
+
+template < class Traits,
+           class Items,
+           template < class T, class I, class A>
+           class HDS, class Alloc,
+           class NamedParameters>
+bool 
+read_off(std::istream& in,
+         Polyhedron_3<Traits,Items,HDS,Alloc>& P,
+         NamedParameters np) {
+    // reads a polyhedron from `in' and appends it to P.
+  typedef typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Polyhedron_3<Traits,Items,HDS,Alloc>, NamedParameters>::type Vpm;
+      Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+                               get_property_map(CGAL::vertex_point, P));
+    CGAL::scan_OFF( in, P);
+    if(!boost::is_default_param(get_param(np, internal_np::vertex_point)))
+    {
+      typedef typename boost::graph_traits<Polyhedron_3<Traits,Items,HDS,Alloc> >::vertex_descriptor Vertex;
+      typename property_map_selector<Polyhedron_3<Traits,Items,HDS,Alloc>, boost::vertex_point_t>::type
+          def_vpm = get_property_map(CGAL::vertex_point, P);
+      BOOST_FOREACH(Vertex v, vertices(P))
+      {
+        put(vpm, v, get(def_vpm, v));
+      }
+    }
+    return in.good();
+}
 
 template < class Traits,
            class Items,
@@ -53,12 +93,10 @@ template < class Traits,
            class HDS, class Alloc>
 bool 
 read_off(std::istream& in,
-         Polyhedron_3<Traits,Items,HDS,Alloc>& P) {
-    // reads a polyhedron from `in' and appends it to P.
-    CGAL::scan_OFF( in, P);
-    return in.good();
+         Polyhedron_3<Traits,Items,HDS,Alloc>& P) 
+{
+  return read_off(in, P, parameters::all_default());
 }
-
 
 template < class Traits,
            class Items,

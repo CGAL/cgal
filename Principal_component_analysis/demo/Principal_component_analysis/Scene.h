@@ -4,7 +4,9 @@
 
 #include <iostream>
 #include <cmath>
-
+#include <QOpenGLShaderProgram>
+#include <QOpenGLBuffer>
+#include <QOpenGLVertexArrayObject>
 #include "types.h"
 class Viewer;
 
@@ -28,6 +30,11 @@ private:
     Plane m_plane;
     Point m_centroid;
     Polyhedron *m_pPolyhedron;
+    QOpenGLShaderProgram rendering_program;
+    QOpenGLBuffer buffers[4];
+    QOpenGLVertexArrayObject vao[4];
+    bool is_gl_init;
+    void gl_init();
 
     // view options
     bool m_view_polyhedron;

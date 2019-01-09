@@ -7,4 +7,3 @@ export BOOST_VERSION="1_57_0"
 export TBB_ARCH="intel64"
 export EIGEN3_DIR="C:/3rdPartyLibs/eigen-3.3.4" 
 source "${PLATFORM_REFERENCE}/setup_common"
-

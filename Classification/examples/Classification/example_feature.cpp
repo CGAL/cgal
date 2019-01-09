@@ -30,7 +30,7 @@ typedef Classification::Feature_handle                                          
 typedef Classification::Label_set                                               Label_set;
 typedef Classification::Feature_set                                             Feature_set;
 
-typedef Classification::Feature::Sphericity                                     Sphericity;
+typedef Classification::Feature::Verticality<Kernel>                            Verticality;
 
 ///////////////////////////////////////////////////////////////////
 //! [Feature]
@@ -79,7 +79,8 @@ int main (int argc, char** argv)
   }
 
   Neighborhood neighborhood (pts, Pmap());
-  Local_eigen_analysis eigen (pts, Pmap(), neighborhood.k_neighbor_query(6));
+  Local_eigen_analysis eigen
+    = Local_eigen_analysis::create_from_point_set (pts, Pmap(), neighborhood.k_neighbor_query(6));
 
   Label_set labels;
   Label_handle a = labels.add ("label_A");
@@ -98,18 +99,18 @@ int main (int argc, char** argv)
   //! [Addition]
   ///////////////////////////////////////////////////////////////////
   
-  Feature_handle sphericity = features.add<Sphericity> (pts, eigen);
+  Feature_handle verticality = features.add<Verticality> (pts, eigen);
 
   Classifier classifier (labels, features);
   
   std::cerr << "Setting weights" << std::endl;
-  classifier.set_weight(sphericity, 0.5);
+  classifier.set_weight(verticality, 0.5);
   classifier.set_weight(my_feature, 0.25);
 
   std::cerr << "Setting up labels" << std::endl;
-  classifier.set_effect (a, sphericity, Classifier::FAVORING);
+  classifier.set_effect (a, verticality, Classifier::FAVORING);
   classifier.set_effect (a, my_feature, Classifier::FAVORING);
-  classifier.set_effect (b, sphericity, Classifier::PENALIZING);
+  classifier.set_effect (b, verticality, Classifier::PENALIZING);
   classifier.set_effect (b, my_feature, Classifier::PENALIZING);
 
   std::cerr << "Classifying" << std::endl;

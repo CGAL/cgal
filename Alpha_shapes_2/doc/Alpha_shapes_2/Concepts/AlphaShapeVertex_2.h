@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlphaShape2Concepts
+\ingroup PkgAlphaShapes2Concepts
 \cgalConcept
 
 The concept `AlphaShapeVertex_2` describes the requirements for the base vertex of an alpha shape.

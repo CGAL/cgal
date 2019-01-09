@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3Domains
+\ingroup PkgMesh3Domains
 
 The class `Polyhedral_mesh_domain_3` implements 
 a domain defined by a simplicial polyhedral surface.
@@ -31,7 +31,8 @@ with a model of the concept `IntersectionGeometricTraits_3`.
 
 */
 template< typename Polyhedron, typename IGT, typename TriangleAccessor >
-class Polyhedral_mesh_domain_3 {
+class Polyhedral_mesh_domain_3
+{
 public:
 
 /// \name Creation 
@@ -41,7 +42,7 @@ public:
 Construction from a bouding polyhedral surface which must be closed, and free of intersections.
 The inside of `bounding_polyhedron` will be meshed.
 */ 
-Polyhedral_mesh_domain_3(Polyhedron bounding_polyhedron); 
+Polyhedral_mesh_domain_3(const Polyhedron& bounding_polyhedron);
 
 /*!
 Construction from a polyhedral surface, and a bounding polyhedral surface,.
@@ -50,9 +51,8 @@ and free of intersections.
 Using this constructor allows to mesh a polyhedral surface which is not closed, or has holes.
 The inside of `bounding_polyhedron` will be meshed.
 */
-Polyhedral_mesh_domain_3(Polyhedron polyhedron,
-			 Polyhedron bounding_polyhedron);
-			   
+Polyhedral_mesh_domain_3(const Polyhedron& polyhedron,
+                         const Polyhedron& bounding_polyhedron);
 
 /// @}
 

@@ -59,6 +59,7 @@
 // For Voronoi diagram
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 
 // For debugging macro
@@ -92,8 +93,8 @@ template < class Refs, class Point, class ID, class vertex_descriptor>
 struct Skel_HDS_vertex_type : public HalfedgeDS_vertex_max_base_with_id<Refs, Point, ID>
 {
   typedef HalfedgeDS_vertex_max_base_with_id<Refs, Point, ID> Base;
-  Skel_HDS_vertex_type() : Base (), is_fixed(false)  {}
-  Skel_HDS_vertex_type( Point const& p) : Base(p), is_fixed(false) {}
+  Skel_HDS_vertex_type() : Base (), pole(ORIGIN), is_fixed(false)  {}
+  Skel_HDS_vertex_type( Point const& p) : Base(p), pole(ORIGIN), is_fixed(false) {}
   std::vector<vertex_descriptor> vertices;
   Point pole;
   bool is_fixed;
@@ -111,7 +112,7 @@ struct Skel_polyhedron_items_3: CGAL::Polyhedron_items_with_id_3 {
 } //end of namespace internal
 
 
-/// \ingroup PkgMeanCurvatureSkeleton3
+/// \ingroup PkgSurfaceMeshSkeletonizationRef
 /// Function object that enables to extract the mean curvature
 /// flow skeleton of a triangulated surface mesh.
 ///
@@ -217,7 +218,7 @@ public:
   /// `Vmap` is a struct with a member `point` of type `Traits::Point_3`
   /// and a member `vertices` of type
   /// `std::vector<boost::graph_traits<TriangleMesh>::%vertex_descriptor>`.
-  /// See  <a href="http://www.boost.org/doc/libs/release/libs/graph/doc/adjacency_list.html"><tt>the boost documentation</tt></a> page for more details
+  /// See  <a href="https://www.boost.org/doc/libs/release/libs/graph/doc/adjacency_list.html"><tt>the boost documentation</tt></a> page for more details
   typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, Vmap> Skeleton;
 
 
@@ -247,7 +248,8 @@ public:
   typedef CGAL::Exact_predicates_exact_constructions_kernel                    Exact_kernel;
   typedef CGAL::Triangulation_vertex_base_with_info_3
                                             <vertex_descriptor, Exact_kernel>  Vb;
-  typedef CGAL::Triangulation_data_structure_3<Vb>                             Tds;
+  typedef CGAL::Delaunay_triangulation_cell_base_3<Exact_kernel>               Cb;
+  typedef CGAL::Triangulation_data_structure_3<Vb, Cb>                         Tds;
   typedef CGAL::Delaunay_triangulation_3<Exact_kernel, Tds>                    Delaunay;
   typedef typename Delaunay::Point                                             Exact_point;
   typedef typename Delaunay::Cell_handle                                       Cell_handle;
@@ -787,7 +789,7 @@ public:
   /**
    * Converts the contracted surface mesh to a skeleton curve.
    * @tparam Skeleton
-   *         an instantiation of <A href="http://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</a>
+   *         an instantiation of <A href="https://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</a>
    *         as a data structure for the skeleton curve.
    * @param skeleton
    *        graph that will contain the skeleton of `tmesh`. It should be empty before passed to the function.
@@ -845,7 +847,8 @@ private:
   {
     typedef std::pair<Input_vertex_descriptor, vertex_descriptor> Vertex_pair;
     std::vector<Vertex_pair> v2v;
-    copy_face_graph(tmesh, m_tmesh, std::back_inserter(v2v));
+    copy_face_graph(tmesh, m_tmesh, 
+                    CGAL::parameters::vertex_to_vertex_output_iterator(std::back_inserter(v2v)));
 
     // copy input vertices to keep correspondence
     BOOST_FOREACH(const Vertex_pair& vp, v2v)

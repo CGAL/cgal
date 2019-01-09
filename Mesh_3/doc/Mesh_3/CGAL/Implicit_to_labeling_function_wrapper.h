@@ -1,9 +1,9 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3Domains
+\ingroup PkgMesh3Domains
 
-The class `Implicit_multi_domain_to_labeling_function_wrapper` is an helping class to get a function with integer values
+The class `Implicit_multi_domain_to_labeling_function_wrapper` is a helping class to get a function with integer values
 labeling the components of a multi-domain. The multidomain is described through a set of functions {fi(p), i=1, ...n}.
 Each component corresponds to a sign vector [s1, s2, ..., sn] where si is the sign of the function fi(p) at a point p of the component.
 This wrapper class can be passed to `Labeled_mesh_domain_3` as first template parameter.
@@ -49,14 +49,16 @@ public:
    * \param position_vectors the vector of vector of signs. Each vector of positions describes a component.
    * \sa `Sign`
    */
-  Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& implicit_functions, const std::vector<std::vector<Sign> >& position_vectors);
+  Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& implicit_functions,
+                                                      const std::vector<std::vector<Sign> >& position_vectors);
 
   /*!
    * \brief Construction from a vector of implicit functions and a vector of strings.
    * \param implicit_functions the vector of implicit functions.
    * \param position_strings the vector of strings. The strings contained in this vector must contain '+' or '-' only. Each string (vector of positions) describes a component.
    */
-  Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& implicit_functions, const std::vector<std::string>& position_strings);
+  Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& implicit_functions,
+                                                      const std::vector<std::string>& position_strings);
 /// @}
 
 }; /* end Implicit_multi_domain_to_labeling_function_wrapper */

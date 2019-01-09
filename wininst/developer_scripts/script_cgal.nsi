@@ -153,6 +153,8 @@ Section "!Main CGAL" MAIN_Idx
   File /r "${CGAL_SRC}\doc_html\*.*"
   SetOutPath "$INSTDIR\include"
   File /r "${CGAL_SRC}\include\*.*"
+  SetOutPath "$INSTDIR\lib"
+  File /r "${CGAL_SRC}\lib\*.*"
   SetOutPath "$INSTDIR\scripts"
   File /r "${CGAL_SRC}\scripts\*.*"
   SetOutPath "$INSTDIR\src"
@@ -164,6 +166,7 @@ Section "!Main CGAL" MAIN_Idx
 
   SetOutPath "$INSTDIR"
   File "${CGAL_SRC}\AUTHORS"
+  File "${CGAL_SRC}\CGALConfig.cmake"
   File "${CGAL_SRC}\CHANGES.md"
   File "${CGAL_SRC}\CMakeLists.txt"
   File "${CGAL_SRC}\INSTALL.md"

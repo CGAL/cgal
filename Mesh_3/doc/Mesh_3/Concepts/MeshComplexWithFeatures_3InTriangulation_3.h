@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMesh_3Concepts
+\ingroup PkgMesh3Concepts
 \cgalConcept
 
 The concept `MeshComplexWithFeatures_3InTriangulation_3` describes a data structure 
@@ -142,12 +142,6 @@ void remove_from_complex(const Vertex_handle& v);
 Returns the number of edges which belong to curves.
 */ 
 size_type number_of_edges() const; 
-
-/*!
-
-Returns the number of edges which belong to curve with index `index`.
-*/ 
-size_type number_of_edges(Curve_index index) const;
 
 /*!
 

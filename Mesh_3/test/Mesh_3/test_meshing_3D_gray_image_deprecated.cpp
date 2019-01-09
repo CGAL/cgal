@@ -1,32 +1,7 @@
-// Copyright (c) 2015 GeometryFactory (France).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL$
-// $Id$
-// SPDX-License-Identifier: GPL-3.0+
-//
-//
-// Author(s)     : Laurent Rineau, Jane Tournois
-//
-//******************************************************************************
-// File Description :
-//***************************************************************************
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-#define CGAL_NO_DEPRECATION_WARNINGS 1
+#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
 
 #include "test_meshing_utilities.h"
+
 #include <CGAL/Image_3.h>
 #include <CGAL/Gray_image_mesh_domain_3.h>
 #include <CGAL/use.h>
@@ -126,11 +101,3 @@ int main()
 
   return EXIT_SUCCESS;
 }
-
-#else // CGAL_NO_DEPRECATED_CODE
-#include <iostream>
-int main() { 
-  std::cerr << "CGAL_NO_DEPRECATED_CODE is defined. Nothing to test.\n";
-  return 0; 
-}
-#endif // CGAL_NO_DEPRECATED_CODE

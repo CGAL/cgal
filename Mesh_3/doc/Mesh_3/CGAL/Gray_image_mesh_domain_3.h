@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3Domains
+\ingroup PkgMesh3Domains
 
 \deprecated The class template `Gray_image_mesh_domain_3` is deprecated
 since CGAL-4.13, in favor of the class template `Labeled_mesh_domain_3` and
@@ -9,7 +9,7 @@ its static function
 `Labeled_mesh_domain_3::create_gray_image_mesh_domain()`.
 
 The class `Gray_image_mesh_domain_3` implements a domain described by a 3D
-gray image. A 3D gray image is a grid of voxels, 
+gray image. A 3D gray image is a grid of voxels,
 where each voxel is associated with a gray level value.
 This class is a model of the concept `MeshDomain_3`.
 The domain to be discretized is the union of voxels that lie inside a surface
@@ -21,7 +21,7 @@ a gray level value at any query point.
 An intersection between a segment and bounding 
 surfaces is detected when both segment endpoints are associated with gray level
 values which are on both sides of the isovalue.
-The intersection is then constructed by bisection. 
+The intersection is then constructed by bisection.
 The bisection stops when the query segment is shorter than a given error bound 
 `e`. This error bound is given by `e=d`\f$ \times\f$`bound` where `d` is the 
 length of the diagonal of the bounding box (in world coordinates) and 
@@ -43,8 +43,8 @@ input file
 
 \cgalModels `MeshDomain_3`
 
-\sa `BisectionGeometricTraits_3` 
-\sa `CGAL::make_mesh_3()`. 
+\sa `BisectionGeometricTraits_3`
+\sa `CGAL::make_mesh_3()`.
 
 */
 template<typename Image,
@@ -66,7 +66,7 @@ value higher than the input isovalue.
        of the surface describing the boundary of the object to be meshed.
 @param value_outside the value attached to voxels outside of the domain
        to be meshed. It should be lower than `iso_value`
-@param error_bound is relative to the size of the image. 
+@param error_bound is relative to the size of the image.
 */ 
   Gray_image_mesh_domain_3(
       const Image& image,

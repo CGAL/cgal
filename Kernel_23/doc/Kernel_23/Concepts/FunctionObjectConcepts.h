@@ -1785,7 +1785,7 @@ public:
   /*!
     returns an approximation of the signed dihedral angle in the tetrahedron `pqrs` of edge `pq`.
     The sign is negative if `orientation(p,q,r,s)` is `CGAL::NEGATIVE` and positive otherwise.
-    The angle is given in degree.
+    The angle is given in degrees.
     \pre `p,q,r` and `p,q,s` are not collinear.
   */
   Kernel::FT operator()(const Kernel::Point_3& p,
@@ -3846,7 +3846,7 @@ public:
     direction as the sum of the normalized normal vectors of the two planes, and 
     passes through the intersection of `h1` and `h2`. 
     If `h1` and `h2` are parallel, then the bisector is defined as the 
-    plane which has the same oriented normal vector as `l1`, and which is at 
+    plane which has the same oriented normal vector as `h1`, and which is at
     the same distance from `h1` and `h2`. 
     This function requires that `Kernel::RT` supports the `sqrt()` 
     operation. 

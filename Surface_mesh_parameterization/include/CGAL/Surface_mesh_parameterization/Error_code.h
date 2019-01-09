@@ -29,7 +29,7 @@ namespace CGAL {
 
 namespace Surface_mesh_parameterization {
 
-/// \ingroup PkgSurfaceParameterizationEnums
+/// \ingroup PkgSurfaceMeshParameterizationEnums
 ///
 /// List of errors detected by this package
 enum Error_code
@@ -38,6 +38,7 @@ enum Error_code
   ERROR_EMPTY_MESH,               ///< Input mesh is empty
   ERROR_NON_TRIANGULAR_MESH,      ///< Input mesh is not triangular
   ERROR_NO_TOPOLOGICAL_DISC,      ///< Input mesh is not a topological disc
+  ERROR_NO_TOPOLOGICAL_BALL,      ///< Input mesh is not a topological ball
   ERROR_BORDER_TOO_SHORT,         ///< This border parameterization requires a longer border
   ERROR_NON_CONVEX_BORDER,        ///< This parameterization method requires a convex border
   ERROR_CANNOT_SOLVE_LINEAR_SYSTEM,///< Cannot solve linear system
@@ -45,7 +46,7 @@ enum Error_code
   ERROR_WRONG_PARAMETER           ///< A method received an unexpected parameter
 };
 
-/// \ingroup PkgSurfaceParameterizationEnums
+/// \ingroup PkgSurfaceMeshParameterizationEnums
 /// \brief Get the message corresponding to an error code.
 /// \param error_code The code returned by `parameterize()`
 /// \return The string describing the error code.

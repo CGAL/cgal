@@ -1,6 +1,6 @@
 /*!
 \defgroup bgl_namedparameters BGL Named Parameters
-\ingroup PkgBGL
+\ingroup PkgBGLRef
 
 The algorithms of the \sc{Bgl} often have many parameters with default
 values that are appropriate for most cases. In general, when no
@@ -19,7 +19,7 @@ dijkstra_shortest_paths(g, s, predecessor_map(&p[0]).distance_map(&d[0]));
 \endcode
 
 In the \sc{Bgl} manual, this is called
-<a href="http://www.boost.org/libs/graph/doc/bgl_named_params.html">named parameters</a>.
+<a href="https://www.boost.org/libs/graph/doc/bgl_named_params.html">named parameters</a>.
 The named parameters in the example use the tags `predecessor_map` and `distance_map`
 and they are concatenated with the dot operator.<BR>
 
@@ -113,6 +113,67 @@ of the partition that has been assigned to this face.\n
 as result of a partition algorithm; if it is not provided, this information is
 simply inaccessible.
 \cgalNPEnd
+
+
+\cgalNPBegin{vertex_to_vertex_output_iterator} \anchor BGL_vertex_to_vertex_output_iterator
+is a model of `OutputIterator` accepting `std::pair<vertex_descriptor, vertex_descriptor>`
+A typical use case is mapping the vertices from a source mesh to its copy's after a `copy_face_graph()`
+operation.\n
+<b>Type:</b>a class model of `OutputIterator` accepting 
+`std::pair<`boost::graph_traits<PolygonMesh>::%vertex_descriptor, `boost::graph_traits<PolygonMesh>::%vertex_descriptor>`.\n
+<b>Default:</b> Emptyset_iterator
+\cgalNPEnd
+
+\cgalNPBegin{halfedge_to_halfedge_output_iterator} \anchor BGL_halfedge_to_halfedge_output_iterator
+is a model of `OutputIterator` accepting `std::pair<halfedge_descriptor, halfedge_descriptor>`
+A typical use case is mapping the halfedges from a source mesh to its copy's after a `copy_face_graph()`
+operation.\n
+<b>Type:</b>a class model of `OutputIterator` accepting 
+`std::pair<`boost::graph_traits<PolygonMesh>::%halfedge_descriptor, `boost::graph_traits<PolygonMesh>::%halfedge_descriptor>`.\n
+<b>Default:</b> Emptyset_iterator
+\cgalNPEnd
+
+
+\cgalNPBegin{face_to_face_output_iterator} \anchor BGL_face_to_face_output_iterator
+is a model of `OutputIterator` accepting `std::pair<face_descriptor, face_descriptor>`
+A typical use case is mapping the faces from a source mesh to its copy's after a `copy_face_graph()`
+operation.\n
+<b>Type:</b>a class model of `OutputIterator` accepting 
+`std::pair<`boost::graph_traits<PolygonMesh>::%face_descriptor, `boost::graph_traits<PolygonMesh>::%face_descriptor>`.\n
+<b>Default:</b> Emptyset_iterator
+\cgalNPEnd
+
+\cgalNPBegin{vertex_to_vertex_map} \anchor BGL_vertex_to_vertex_map
+is a property map storing for each vertex of a source mesh the corresponding vertex of another mesh.\n
+A typical use case is mapping the vertices from a source mesh to its copy's after a `copy_face_graph()`
+operation.\n
+<b>Type:</b>a class model of `ReadWritePropertyMap` with
+`boost::graph_traits<PolygonMesh1>::%vertex_descriptor` as key type and 
+`boost::graph_traits<PolygonMesh2>::%vertex_descriptor` as value type.\n
+<b>Default:</b> None.
+\cgalNPEnd
+
+\cgalNPBegin{halfedge_to_halfedge_map} \anchor BGL_halfedge_to_halfedge_map
+is a property map storing for each halfedge of a source mesh the corresponding halfedge of another mesh.\n
+A typical use case is mapping the vertices from a source mesh to its copy's after a `copy_face_graph()`
+operation.\n
+<b>Type:</b>a class model of `ReadWritePropertyMap` with
+`boost::graph_traits<PolygonMesh1>::%halfedge_descriptor` as key type and 
+`boost::graph_traits<PolygonMesh2>::%halfedge_descriptor` as value type.\n
+<b>Default:</b> None.
+\cgalNPEnd
+
+\cgalNPBegin{face_to_face_map} \anchor BGL_face_to_face_map
+is a property map storing for each face of a source mesh the corresponding face of another mesh.\n
+A typical use case is mapping the vertices from a source mesh to its copy's after a `copy_face_graph()`
+operation.\n
+<b>Type:</b>a class model of `ReadWritePropertyMap` with
+`boost::graph_traits<PolygonMesh1>::%face_descriptor` as key type and 
+`boost::graph_traits<PolygonMesh2>::%face_descriptor` as value type.\n
+<b>Default:</b> None.
+\cgalNPEnd
+
+
 
 \cgalNPTableEnd
 

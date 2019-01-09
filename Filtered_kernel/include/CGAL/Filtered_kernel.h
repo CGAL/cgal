@@ -27,9 +27,8 @@
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Homogeneous_converter.h>
-#include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Kernel/Type_equality_wrapper.h>
+#include <CGAL/Exact_kernel_selector.h>
 
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
@@ -50,28 +49,6 @@
 //   traits-like mechanism ?
 
 namespace CGAL {
-namespace Filter {
-template <class CK, class Rep=typename CK::Rep_tag /* Cartesian_tag */>
-struct Select_exact_kernel
-{
-  typedef typename internal::Exact_field_selector<typename CK::RT>::Type  Exact_nt;
-  typedef typename internal::Exact_ring_selector <typename CK::RT>::Type  Exact_rt;
-  typedef Simple_cartesian<Exact_nt>			Exact_kernel;
-  typedef Simple_cartesian<Exact_rt>			Exact_kernel_rt;
-  typedef Cartesian_converter<CK, Exact_kernel>		C2E;
-  typedef Cartesian_converter<CK, Exact_kernel_rt>	C2E_rt;
-};
-
-template <class CK>
-struct Select_exact_kernel <CK, Homogeneous_tag>
-{
-  typedef typename internal::Exact_ring_selector<typename CK::RT>::Type  Exact_nt;
-  typedef Simple_homogeneous<Exact_nt>			Exact_kernel;
-  typedef Homogeneous_converter<CK, Exact_kernel>	C2E;
-  typedef Exact_kernel					Exact_kernel_rt;
-  typedef C2E						C2E_rt;
-};
-}
 
 // CK = eventually rebound construction kernel (gets Point_2 from).
 // Exact_kernel = exact kernel called when needed by the filter.
@@ -80,12 +57,12 @@ template < typename CK >
 struct Filtered_kernel_base
   : public CK
 {
-  // Use Select_exact_kernel as a base class?
-    typedef typename Filter::Select_exact_kernel<CK>::Exact_nt Exact_nt;
-    typedef typename Filter::Select_exact_kernel<CK>::Exact_kernel Exact_kernel;
-    typedef typename Filter::Select_exact_kernel<CK>::Exact_kernel_rt Exact_kernel_rt;
-    typedef typename Filter::Select_exact_kernel<CK>::C2E C2E;
-    typedef typename Filter::Select_exact_kernel<CK>::C2E_rt C2E_rt;
+  // Use Exact_kernel_selector as a base class?
+    typedef typename Exact_kernel_selector<CK>::Exact_nt        Exact_nt;
+    typedef typename Exact_kernel_selector<CK>::Exact_kernel    Exact_kernel;
+    typedef typename Exact_kernel_selector<CK>::Exact_kernel_rt Exact_kernel_rt;
+    typedef typename Exact_kernel_selector<CK>::C2E             C2E;
+    typedef typename Exact_kernel_selector<CK>::C2E_rt          C2E_rt;
 
     typedef Simple_cartesian<Interval_nt_advanced>        Approximate_kernel;
     typedef Cartesian_converter<CK, Approximate_kernel>   C2F;

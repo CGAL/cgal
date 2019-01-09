@@ -31,10 +31,13 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/double.h>
 #include <CGAL/function_objects.h>
+#include <CGAL/function.h>
 #include <CGAL/Origin.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Random.h>
 #include <CGAL/squared_distance_2.h>
+
+#include <boost/utility/result_of.hpp>
 
 #include <iostream>
 #include <cassert>
@@ -47,6 +50,8 @@ struct Extract_point
   typedef typename Traits::Point_2              Point_2;
   typedef typename Traits::Weighted_point_2     Weighted_point_2;
 
+  typedef typename Traits::Construct_point_2    Construct_point_2;
+
   Extract_point(const Traits& traits = Traits()) : traits(traits) {}
 
   const Point_2& operator()(const Point_2& p) const { return p; }
@@ -56,13 +61,50 @@ struct Extract_point
   }
 
   template <typename VH>
-  const Point_2& operator()(const VH& vh) const {
+  typename boost::result_of<const Construct_point_2(const Point_2&)>::type
+  operator()(const VH& vh) const {
     return traits.construct_point_2_object()(vh->point());
   }
 
 private:
   Traits traits;
 };
+
+template <typename V, typename T>
+struct Value_function
+{
+  typedef V                                                 argument_type;
+  typedef std::pair<T, bool>                                result_type;
+
+  Value_function(std::size_t i) : index(i) { }
+
+  result_type operator()(const argument_type& a) const {
+    return result_type(a->info()[index].value, true);
+  }
+
+private:
+  std::size_t index;
+};
+
+template <typename V, typename G>
+struct Gradient_function
+  : public CGAL::cpp98::iterator<std::output_iterator_tag, void, void, void, void>
+{
+
+  typedef V                                                 argument_type;
+  typedef std::pair<G, bool>                                result_type;
+
+  Gradient_function(std::size_t i) : index(i) { }
+
+  result_type operator()(const argument_type& a) const {
+    return std::make_pair(a->info()[index].gradient,
+                          a->info()[index].gradient != CGAL::NULL_VECTOR);
+  }
+
+private:
+  std::size_t index;
+};
+
 
 template < class ForwardIterator >
 bool test_norm(ForwardIterator first, ForwardIterator beyond,
@@ -83,10 +125,10 @@ bool test_norm(ForwardIterator first, ForwardIterator beyond,
   }
 }
 
-template < class Tr, class ForwardIterator >
+template < class Tr, class ForwardIterator, class Point >
 bool test_barycenter(ForwardIterator first, ForwardIterator beyond,
                      typename std::iterator_traits<ForwardIterator>::value_type::second_type norm,
-                     const typename std::iterator_traits<ForwardIterator>::value_type::first_type& p,
+                     const Point& p,
                      const typename std::iterator_traits<ForwardIterator>::value_type::second_type& tolerance)
 {
   typedef typename Tr::Geom_traits                                               Gt;
@@ -133,9 +175,13 @@ bool _test_sibson_c1_interpolation_sqrt(ForwardIterator first, ForwardIterator b
                                         const typename std::iterator_traits<ForwardIterator>::value_type::second_type& exact_value,
                                         CGAL::Field_with_sqrt_tag)
 {
-  typename ValueFunctor::result_type res = CGAL::sibson_c1_interpolation(first, beyond,
-                                                                         norm, p, f,
-                                                                         grad_f, geom_traits);
+  typedef typename std::iterator_traits<ForwardIterator>::value_type::first_type  arg_type;
+  typedef typename boost::result_of<ValueFunctor(arg_type)>::type                 value_functor_result_type;
+
+  value_functor_result_type res = CGAL::sibson_c1_interpolation(first, beyond,
+                                                                norm, p, f,
+                                                                grad_f, geom_traits);
+
   return res.second && (CGAL_NTS abs(res.first-exact_value) <= tolerance);
 }
 
@@ -143,14 +189,18 @@ template < class ForwardIterator, class ValueFunctor, class GradFunctor, class G
 bool test_interpolation_with_value(ForwardIterator first, ForwardIterator beyond,
                                    const typename std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
                                    const Point& p,
-                                   const typename ValueFunctor::result_type::first_type exact_value,
+                                   const typename boost::result_of<
+                                                    ValueFunctor(typename std::iterator_traits<ForwardIterator>::value_type::first_type)>
+                                                    ::type::first_type exact_value,
                                    ValueFunctor f,
                                    GradFunctor grad_f,
                                    const Gt& geom_traits,
                                    const int& i,
                                    const typename std::iterator_traits<ForwardIterator>::value_type::second_type& tolerance)
 {
-  typedef typename ValueFunctor::result_type::first_type       Value_type;
+  typedef typename std::iterator_traits<ForwardIterator>::value_type::first_type  arg_type;
+  typedef typename boost::result_of<ValueFunctor(arg_type)>::type                 value_functor_result_type;
+  typedef typename value_functor_result_type::first_type                          Value_type;
 
   if(i == 0)
   {
@@ -158,8 +208,8 @@ bool test_interpolation_with_value(ForwardIterator first, ForwardIterator beyond
     assert(CGAL_NTS abs(val - exact_value) <= tolerance);
   }
 
-  typename ValueFunctor::result_type res = CGAL::quadratic_interpolation(first, beyond, norm, p, f,
-                                                                         grad_f, geom_traits);
+  value_functor_result_type res = CGAL::quadratic_interpolation(first, beyond, norm, p, f,
+                                                                grad_f, geom_traits);
   assert(res.second && (CGAL_NTS abs(res.first - exact_value) <= tolerance));
 
   if(i<2)
@@ -185,20 +235,17 @@ bool test_interpolation_with_value(ForwardIterator first, ForwardIterator beyond
   return true;
 }
 
-template < class ForwardIterator, class ValueFunctor, class GradFunctor, class Gt, class Point>
+template < class ForwardIterator, class ValueFunctor, class GradFunctor, class Gt, class Point, class Value_type>
 bool test_interpolation(ForwardIterator first, ForwardIterator beyond,
                         const typename std::iterator_traits<ForwardIterator>::value_type::second_type& norm,
                         const Point& p,
+                        const Value_type exact_value,
                         ValueFunctor f,
                         GradFunctor grad_f,
                         const Gt& geom_traits,
                         const int& i,
                         const typename std::iterator_traits<ForwardIterator>::value_type::second_type& tolerance)
 {
-  typedef typename ValueFunctor::result_type::first_type       Value_type;
-  assert(f(p).second);
-  Value_type exact_value = f(p).first;
-
   return test_interpolation_with_value(first, beyond, norm, p, exact_value, f, grad_f, geom_traits, i, tolerance);
 }
 
@@ -222,7 +269,7 @@ void _test_interpolation_functions_2_Delaunay_without_OutputFunctor(const Dt&, c
   typedef typename Gt::FT                                      Coord_type;
   typedef typename Gt::Vector_2                                Vector;
 
-  typedef std::map<Point, Coord_type, typename Gt::Less_xy_2>  Point_value_map ;
+  typedef std::map<Point, Coord_type, typename Gt::Less_xy_2>  Point_value_map;
   typedef std::map<Point, Vector, typename Gt::Less_xy_2>      Point_vector_map;
 
   typedef std::vector<std::pair<Point, Coord_type> >           Point_coordinate_vector;
@@ -308,7 +355,8 @@ void _test_interpolation_functions_2_Delaunay_without_OutputFunctor(const Dt&, c
 
     for(int i=0; i<3; ++i)
     {
-      assert(test_interpolation(coords.begin(), coords.end(), norm, points[j],
+      assert(test_interpolation(coords.begin(), coords.end(), norm,
+                                points[j], values[i][points[j]],
                                 CGAL::Data_access< Point_value_map >(values[i]),
                                 CGAL::Data_access< Point_vector_map >(gradients[i]),
                                 Traits(), i, tolerance));
@@ -368,7 +416,8 @@ void _test_interpolation_functions_2_Delaunay_without_OutputFunctor(const Dt&, c
 
   for(int j=0; j<3; ++j)
   {
-    assert(test_interpolation(coords.begin(), coords.end(), norm, points[n/2],
+    assert(test_interpolation(coords.begin(), coords.end(), norm,
+                              points[n/2], values[j][points[n/2]],
                               CGAL::Data_access<Point_value_map>(values[j]),
                               CGAL::Data_access<Point_vector_map>(gradients[j]),
                               Traits(), j, tolerance));
@@ -391,16 +440,18 @@ void _test_interpolation_functions_2_Delaunay_with_OutputFunctor(const Dt&, cons
   typedef typename Dt::Geom_traits                               Gt;
   typedef CGAL::Interpolation_traits_2<Gt>                       Traits;
 
+  typedef typename Dt::Vertex_handle                             Vertex_handle;
+
   typedef typename Gt::FT                                        Coord_type;
   typedef typename Dt::Point                                     Point;
   typedef typename Gt::Vector_2                                  Vector;
 
-  typedef std::map<Point, Coord_type, typename Gt::Less_xy_2>    Point_value_map ;
-  typedef std::map<Point, Vector, typename Gt::Less_xy_2>        Point_vector_map;
+  typedef std::vector<std::pair<Vertex_handle, Coord_type> >     Coordinate_vector;
+  typedef typename Coordinate_vector::const_iterator             CV_cit;
+  typedef CGAL::Identity<std::pair<Vertex_handle, Coord_type> >  Output_functor;
 
-  typedef std::vector<std::pair<Point, Coord_type> >                            Point_coordinate_vector;
-  typedef typename Point_coordinate_vector::const_iterator                      PCV_cit;
-  typedef CGAL::Interpolation::internal::Extract_point_in_pair<Dt, Coord_type>  Point_output_functor;
+  typedef std::map<Point, Coord_type>                            Point_value_map;
+  typedef std::map<Point, Vector>                                Point_vector_map;
 
   std::cout << "NN2: Testing random points." << std::endl;
 
@@ -420,9 +471,6 @@ void _test_interpolation_functions_2_Delaunay_with_OutputFunctor(const Dt&, cons
 
   CGAL::Random random;
 
-  Point_value_map values[3];
-  Point_vector_map gradients[3];
-
   Coord_type alpha = Coord_type(random.get_double(-max_value, max_value)),
              beta1 = Coord_type(random.get_double(-max_value, max_value)),
              beta2 = Coord_type(random.get_double(-max_value, max_value)),
@@ -431,67 +479,110 @@ void _test_interpolation_functions_2_Delaunay_with_OutputFunctor(const Dt&, cons
              gamma3 = Coord_type(random.get_double(-max_value, max_value));
 
   //INSERTION + DET. of GRADIENT for n DATA POINTS :
-  for(int j=0; j<n; ++j)
-  {
-    T.insert(points[j]);
-
-    gradients[0].insert(std::make_pair(points[j], Vector(beta1, beta2)));
-
-    gradients[1].insert(std::make_pair(points[j],
-                                       Vector(beta1 + Coord_type(2)*gamma1*points[j].x(),
-                                              beta2 + Coord_type(2)*gamma1*points[j].y())));
-    gradients[2].insert(std::make_pair(points[j],
-                                       Vector(beta1 + Coord_type(2)*gamma1*points[j].x() + gamma3*points[j].y(),
-                                              beta2 + Coord_type(2)*gamma2*points[j].y() + gamma3*points[j].x())));
-  }
-
   //DETERMINE VALUES FOR n DATA POINTS AND m RANDOM TEST POINTS:
-  for(int j=0; j<n+m; j++)
+  Point_value_map exact_values[3];
+
+  std::map<Point, Vertex_handle> p_to_vh;
+
+  for(int j=0; j<n+m; ++j)
   {
-    // linear function
-    values[0].insert(std::make_pair(points[j], alpha + beta1*points[j].x() + beta2*points[j].y()));
+    Vector gradient0(beta1, beta2);
+    Vector gradient1(beta1 + Coord_type(2)*gamma1*points[j].x(),
+                     beta2 + Coord_type(2)*gamma1*points[j].y());
+    Vector gradient2(beta1 + Coord_type(2)*gamma1*points[j].x() + gamma3*points[j].y(),
+                     beta2 + Coord_type(2)*gamma2*points[j].y() + gamma3*points[j].x());
 
-    // spherical function:
-    values[1].insert(std::make_pair(points[j], alpha + beta1*points[j].x() +
-                                                       beta2*points[j].y() +
-                                                       gamma1*points[j].x()*points[j].x()+
-                                                       gamma1*points[j].y()*points[j].y()));
+    Coord_type value0 = alpha + beta1*points[j].x() + beta2*points[j].y();
+    Coord_type value1 = alpha + beta1*points[j].x()
+                              + beta2*points[j].y()
+                              + gamma1*points[j].x()*points[j].x()
+                              + gamma1*points[j].y()*points[j].y();
+    Coord_type value2 = alpha + beta1*points[j].x()
+                              + beta2*points[j].y()
+                              + gamma1*points[j].x()*points[j].x()
+                              + gamma2*points[j].y()*points[j].y()
+                              + gamma3*points[j].x()*points[j].y();
 
-    // quadratic function
-    values[2].insert(std::make_pair(points[j], alpha + beta1*points[j].x() +
-                                                       beta2*points[j].y() +
-                                                       gamma1*points[j].x()*points[j].x() +
-                                                       gamma2*points[j].y()*points[j].y() +
-                                                       gamma3*points[j].x()*points[j].y()));
+    if(j<n) // only insert n points
+    {
+      Vertex_handle vh = T.insert(points[j]);
+      p_to_vh[points[j]] = vh;
+
+      vh->info()[0].gradient = gradient0;
+      vh->info()[1].gradient = gradient1;
+      vh->info()[2].gradient = gradient2;
+
+
+      vh->info()[0].value = value0;
+      vh->info()[1].value = value1;
+      vh->info()[2].value = value2;
+    }
+    else
+    {
+      exact_values[0][points[j]] = value0;
+      exact_values[1][points[j]] = value1;
+      exact_values[2][points[j]] = value2;
+    }
   }
 
   //INTERPOLATION OF RANDOM POINTS:
   Coord_type norm;
 
-  Point_coordinate_vector pt_coords;
-  Point_output_functor pt_fct;
+  Coordinate_vector coords;
+  Output_functor out_fct;
 
   for(int j=n; j<n+m; ++j)
   {
-    CGAL::Triple<std::back_insert_iterator<Point_coordinate_vector>, Coord_type, bool> coordinate_result =
-        CGAL::natural_neighbor_coordinates_2(T, points[j], std::back_inserter(pt_coords), pt_fct);
+    CGAL::Triple<std::back_insert_iterator<Coordinate_vector>, Coord_type, bool> coordinate_result =
+        CGAL::natural_neighbor_coordinates_2(T, points[j], std::back_inserter(coords), out_fct);
     assert(coordinate_result.third);
     norm = coordinate_result.second;
 
-    bool is_equal = test_norm(pt_coords.begin(), pt_coords.end(), norm);
+    bool is_equal = test_norm(coords.begin(), coords.end(), norm);
     assert(norm > 0);
     assert(is_equal);
-    is_equal = test_barycenter<Dt>(pt_coords.begin(), pt_coords.end(), norm, points[j], tolerance);
+    is_equal = test_barycenter<Dt>(coords.begin(), coords.end(), norm, points[j], tolerance);
     assert(is_equal);
 
+#ifdef CGAL_CXX11
+      assert(test_interpolation(coords.begin(), coords.end(), norm,
+                                points[j], exact_values[0][points[j]],
+                                [](const Vertex_handle vh) -> std::pair<Coord_type, bool> { return std::make_pair(vh->info()[0].value, true); },
+                                [](const Vertex_handle vh) -> std::pair<Vector, bool> { return std::make_pair(vh->info()[0].gradient, true); },
+                                Traits(), 0, tolerance));
+
+
+      // wrapping the lambda in a std function
+      CGAL::cpp11::function<std::pair<Coord_type, bool>(const Vertex_handle)> value_function_1 =
+        [](const Vertex_handle vh) -> std::pair<Coord_type, bool> { return std::make_pair(vh->info()[1].value, true); };
+
+      std::function<std::pair<Vector, bool>(const Vertex_handle)> gradient_function_1 =
+        [](const Vertex_handle vh) -> std::pair<Vector, bool> { return std::make_pair(vh->info()[1].gradient, true); };
+
+      assert(test_interpolation(coords.begin(), coords.end(), norm,
+                                points[j], exact_values[1][points[j]],
+                                value_function_1, gradient_function_1,
+                                Traits(), 1, tolerance));
+
+      assert(test_interpolation(coords.begin(), coords.end(), norm,
+                                points[j], exact_values[2][points[j]],
+                                [](const Vertex_handle vh) -> std::pair<Coord_type, bool> { return std::make_pair(vh->info()[2].value, true); },
+                                [](const Vertex_handle vh) -> std::pair<Vector, bool> { return std::make_pair(vh->info()[2].gradient, true); },
+                                Traits(), 2, tolerance));
+#else
     for(int i=0; i<3; ++i)
     {
-      assert(test_interpolation(pt_coords.begin(), pt_coords.end(), norm, points[j],
-                                CGAL::Data_access< Point_value_map >(values[i]),
-                                CGAL::Data_access< Point_vector_map >(gradients[i]),
+      Value_function<Vertex_handle, Coord_type> value_function(i);
+      Gradient_function<Vertex_handle, Vector> gradient_function(i);
+
+      assert(test_interpolation(coords.begin(), coords.end(), norm,
+                                points[j], exact_values[i][points[j]],
+                                value_function, gradient_function,
                                 Traits(), i, tolerance));
     }
-    pt_coords.clear();
+#endif
+
+    coords.clear();
   }
 
   //TESTING THE GRADIENT APPRXIMATION METHOD:
@@ -499,18 +590,44 @@ void _test_interpolation_functions_2_Delaunay_with_OutputFunctor(const Dt&, cons
   std::cout << "Testing gradient estimation method on random points." << std::endl;
 
   typedef CGAL::Interpolation_gradient_fitting_traits_2<Gt> GradTraits;
+
   Point_vector_map approx_gradients[2];
+
+#ifdef CGAL_CXX11
+  {
+    CGAL::sibson_gradient_fitting_nn_2(T,
+                                       std::inserter(approx_gradients[0], approx_gradients[0].begin()), // OutputIterator
+                                       CGAL::Interpolation::internal::Extract_point_in_pair<Dt, Vector>(), // OutputFunctor
+                                       [](const Vertex_handle vh)
+                                          -> std::pair<Coord_type, bool>
+                                         { return std::make_pair(vh->info()[0].value, true); },
+                                       GradTraits());
+
+    std::function<std::pair<Coord_type, bool>(const Vertex_handle)> value_function_1 =
+      [](const Vertex_handle vh) -> std::pair<Coord_type, bool> { return std::make_pair(vh->info()[1].value, true); };
+
+    CGAL::sibson_gradient_fitting_nn_2(T,
+                                       std::inserter(approx_gradients[1], approx_gradients[1].begin()),
+                                       CGAL::Interpolation::internal::Extract_point_in_pair<Dt, Vector>(),
+                                       value_function_1,
+                                       GradTraits());
+  }
+#else
+  Value_function<Vertex_handle, Coord_type> value_function_0(0);
+  Value_function<Vertex_handle, Coord_type> value_function_1(1);
+
   CGAL::sibson_gradient_fitting_nn_2(T,
                                      std::inserter(approx_gradients[0], approx_gradients[0].begin()), // OutputIterator
                                      CGAL::Interpolation::internal::Extract_point_in_pair<Dt, Vector>(), // OutputFunctor
-                                     CGAL::Data_access<Point_value_map>(values[0]), // ValueFunctor
+                                     value_function_0,
                                      GradTraits());
 
   CGAL::sibson_gradient_fitting_nn_2(T,
                                      std::inserter(approx_gradients[1], approx_gradients[1].begin()),
                                      CGAL::Interpolation::internal::Extract_point_in_pair<Dt, Vector>(),
-                                     CGAL::Data_access<Point_value_map>(values[1]),
+                                     value_function_1,
                                      GradTraits());
+#endif
 
   for(int j=0; j<n; ++j)
   {
@@ -518,16 +635,19 @@ void _test_interpolation_functions_2_Delaunay_with_OutputFunctor(const Dt&, cons
 
     if(res.second)
     {
+      Gradient_function<Vertex_handle, Vector> gradient_function_0(0);
+      Gradient_function<Vertex_handle, Vector> gradient_function_1(1);
+
       // if it is the exact computation kernel: test the equality:
       assert(tolerance > Coord_type(0) ||
-             res.first == CGAL::Data_access<Point_vector_map>(gradients[0])(points[j]).first);
+             res.first == (gradient_function_0(p_to_vh[points[j]])).first);
       res = CGAL::Data_access<Point_vector_map>(approx_gradients[1])(points[j]);
 
       // if one exists->the other must also exist
       assert(res.second);
 
       assert(tolerance > Coord_type(0) ||
-             res.first == CGAL::Data_access<Point_vector_map>(gradients[1])(points[j]).first);
+             res.first == gradient_function_1(p_to_vh[points[j]]).first);
     }
     else
     {
@@ -536,31 +656,66 @@ void _test_interpolation_functions_2_Delaunay_with_OutputFunctor(const Dt&, cons
   }
 
   //TESTING A POINT == A DATA POINT:
-  CGAL::Triple<std::back_insert_iterator<Point_coordinate_vector>, Coord_type, bool> coordinate_result =
-      CGAL::natural_neighbor_coordinates_2(T, points[n/2], std::back_inserter(pt_coords), pt_fct);
+  CGAL::Triple<std::back_insert_iterator<Coordinate_vector>, Coord_type, bool> coordinate_result =
+      CGAL::natural_neighbor_coordinates_2(T, points[n/2], std::back_inserter(coords), out_fct);
   assert(coordinate_result.third);
   norm = coordinate_result.second;
   assert(norm == Coord_type(1));
 
-  PCV_cit ci = pt_coords.begin();
-  assert(ci->first == points[n/2]);
+  CV_cit ci = coords.begin();
+  assert(ci->first == p_to_vh[points[n/2]]);
   assert(ci->second == Coord_type(1));
   ci++;
-  assert(ci == pt_coords.end());
+  assert(ci == coords.end());
 
+#ifdef CGAL_CXX11
+  Value_function<Vertex_handle, Coord_type> value_function_0(0);
+  Value_function<Vertex_handle, Coord_type> value_function_2(2);
+
+  assert(test_interpolation(coords.begin(), coords.end(), norm,
+                            points[n/2], value_function_0(p_to_vh[points[n/2]]).first,
+                            [](const Vertex_handle vh) -> std::pair<Coord_type, bool> { return std::make_pair(vh->info()[0].value, true); },
+                            [](const Vertex_handle vh) -> std::pair<Vector, bool> { return std::make_pair(vh->info()[0].gradient, true); },
+                            Traits(), 0, tolerance));
+
+  // wrapping the lambda in a std function
+  CGAL::cpp11::function<std::pair<Coord_type, bool>(const Vertex_handle)> value_function_1 =
+      [](const Vertex_handle vh) -> std::pair<Coord_type, bool> { return std::make_pair(vh->info()[1].value, true); };
+
+  std::function<std::pair<Vector, bool>(const Vertex_handle)> gradient_function_1 =
+      [](const Vertex_handle vh) -> std::pair<Vector, bool> { return std::make_pair(vh->info()[1].gradient, true); };
+
+  assert(test_interpolation(coords.begin(), coords.end(), norm,
+                            points[n/2], value_function_1(p_to_vh[points[n/2]]).first,
+                            value_function_1, gradient_function_1,
+                            Traits(), 1, tolerance));
+
+  assert(test_interpolation(coords.begin(), coords.end(), norm,
+                            points[n/2], value_function_2(p_to_vh[points[n/2]]).first,
+                            [](const Vertex_handle vh) -> std::pair<Coord_type, bool> { return std::make_pair(vh->info()[2].value, true); },
+                            [](const Vertex_handle vh) -> std::pair<Vector, bool> { return std::make_pair(vh->info()[2].gradient, true); },
+                            Traits(), 2, tolerance));
+#else
   for(int j=0; j<3; ++j)
   {
-    assert(test_interpolation(pt_coords.begin(), pt_coords.end(), norm, points[n/2],
-                              CGAL::Data_access<Point_value_map>(values[j]),
-                              CGAL::Data_access<Point_vector_map>(gradients[j]),
+    Value_function<Vertex_handle, Coord_type> value_function(j);
+    Gradient_function<Vertex_handle, Vector> gradient_function(j);
+
+    assert(test_interpolation(coords.begin(), coords.end(), norm,
+                              points[n/2], value_function(p_to_vh[points[n/2]]).first,
+                              value_function, gradient_function,
                               Traits(), j, tolerance));
   }
-  pt_coords.clear();
+#endif
+
+  coords.clear();
 }
 
 template <class Rt>
 void _test_interpolation_functions_2_regular_without_OutputFunctor(const Rt&, const typename Rt::Geom_traits::FT& tolerance)
 {
+  std::cout << "Testing backward compatibility..." << std::endl;
+
   CGAL::Set_ieee_double_precision pfr;
   Rt T;
 
@@ -577,12 +732,12 @@ void _test_interpolation_functions_2_regular_without_OutputFunctor(const Rt&, co
   typedef typename Gt::FT                                      Coord_type;
   typedef typename Gt::Vector_2                                Vector;
 
-  typedef std::map<Weighted_point, Coord_type>                 Point_value_map ;
+  typedef std::map<Weighted_point, Coord_type>                 Point_value_map;
   typedef std::map<Weighted_point, Vector>                     Point_vector_map;
 
   typedef std::vector<std::pair<Weighted_point, Coord_type> >  Point_coordinate_vector;
 
-  std::cout << "NN2: Testing random points." << std::endl;
+  std::cout << "RN2: Testing random points." << std::endl;
 
   // test random points in a square of length r:
   std::vector<Weighted_point> points;
@@ -674,7 +829,8 @@ void _test_interpolation_functions_2_regular_without_OutputFunctor(const Rt&, co
 
     for(int i=0; i<3; ++i)
     {
-      assert(test_interpolation(coords.begin(), coords.end(), norm, points[j],
+      assert(test_interpolation(coords.begin(), coords.end(), norm,
+                                points[j], values[i][points[j]],
                                 CGAL::Data_access< Point_value_map >(values[i]),
                                 CGAL::Data_access< Point_vector_map >(gradients[i]),
                                 Traits(), i, tolerance));
@@ -735,7 +891,8 @@ void _test_interpolation_functions_2_regular_without_OutputFunctor(const Rt&, co
 
     for(int j=0; j<3; ++j)
     {
-      assert(test_interpolation(coords.begin(), coords.end(), norm, points[n/2],
+      assert(test_interpolation(coords.begin(), coords.end(), norm,
+                                points[n/2], values[j][points[n/2]],
                                 CGAL::Data_access<Point_value_map>(values[j]),
                                 CGAL::Data_access<Point_vector_map>(gradients[j]),
                                 Traits(), j, tolerance));
@@ -771,7 +928,7 @@ void _test_interpolation_functions_2_regular_with_OutputFunctor(const Rt&, const
   typedef typename Rt::Vertex_handle                             Vertex_handle;
 
   // These are the values at points which won't be inserted in the triangulation
-  typedef std::map<Weighted_point, Coord_type>                   Point_value_map ;
+  typedef std::map<Weighted_point, Coord_type>                   Point_value_map;
 
   typedef std::map<Vertex_handle, Coord_type>                    Vertex_value_map;
   typedef std::map<Vertex_handle, Vector>                        Vertex_vector_map;
@@ -782,7 +939,7 @@ void _test_interpolation_functions_2_regular_with_OutputFunctor(const Rt&, const
 
   Identity_output_functor vh_fct;
 
-  std::cout << "NN2: Testing random points." << std::endl;
+  std::cout << "RN2: Testing random points." << std::endl;
 
   // test random points in a square of length r:
   std::vector<Weighted_point> points;
@@ -979,8 +1136,8 @@ void _test_interpolation_functions_2_regular_with_OutputFunctor(const Rt&, const
       std::pair<FT, bool> ev = CGAL::Data_access<Vertex_value_map>(values[j])(vh);
       assert(ev.second);
 
-      assert(test_interpolation_with_value(vh_coords.begin(), vh_coords.end(), norm, vh->point(),
-                                           ev.first /*exact value*/,
+      assert(test_interpolation_with_value(vh_coords.begin(), vh_coords.end(), norm,
+                                           vh->point(), ev.first /*exact value*/,
                                            CGAL::Data_access<Vertex_value_map>(values[j]),
                                            CGAL::Data_access<Vertex_vector_map>(gradients[j]),
                                            Traits(), j, tolerance));

@@ -34,7 +34,8 @@
 #include <CGAL/Mesh_3/Mesher_level.h>
 #include <CGAL/Mesh_3/Mesher_level_default_implementations.h>
 #ifdef CGAL_LINKED_WITH_TBB
-  #include <tbb/tbb.h>
+  #include <tbb/enumerable_thread_specific.h>
+  #include <tbb/parallel_do.h>
 #endif
 
 #include <CGAL/Meshes/Filtered_deque_container.h>
@@ -48,6 +49,7 @@
 #endif
 
 #include <CGAL/Object.h>
+#include <CGAL/atomic.h>
 
 #include <boost/format.hpp>
 #include <boost/optional.hpp>
@@ -60,35 +62,6 @@
 namespace CGAL {
 
 namespace Mesh_3 {
-
-// Helper meta-programming functions, to allow backward compatibility.
-//
-//   - Has_Is_facet_bad and Had_Facet_badness are used to detect if a model
-//     of the MeshFacetCriteria_3 concept follows the specifications of
-//     CGAL-3.7 (with Facet_badness) or later (with Is_facet_bad).
-//
-//   - Then the meta-function Get_Is_facet_bad is used to get the actual
-//     type, either Facet_criteria::Facet_badness or
-//      Facet_criteria::Is_facet_bad.
-
-BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_Is_facet_bad, Is_facet_bad, true)
-BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_Facet_badness, Facet_badness, false)
-
-// template class, used when use_facet_badness = false
-template <typename Facet_criteria,
-          bool use_facet_badness = (!Has_Is_facet_bad<Facet_criteria>::value) &&
-                                    Has_Facet_badness<Facet_criteria>::value >
-struct Get_Is_facet_bad {
-  typedef typename Facet_criteria::Is_facet_bad Type;
-  typedef Type type; // compatibility with Boost
-};
-
-// partial specialization when use_facet_badness == true
-template <typename Facet_criteria>
-struct Get_Is_facet_bad<Facet_criteria, true> {
-  typedef typename Facet_criteria::Facet_badness Type;
-  typedef Type type;
-};
 
   // Predicate to know if a facet in a refinement queue is a zombie
   // A facet is a pair <cell, index of the opposite vertex>.
@@ -142,7 +115,7 @@ struct Get_Is_facet_bad<Facet_criteria, true> {
         << "}" << std::endl;
 
         std::string s = sstr.str();
-        //std::cerr << s << std::endl;
+        std::cerr << s << std::endl;
       }*/
 #endif
       return (CGAL::cpp11::get<0>(f).first->erase_counter() == CGAL::cpp11::get<1>(f)
@@ -287,12 +260,19 @@ public:
   Refine_facets_3_base(Tr& tr, Complex3InTriangulation3& c3t3,
                        const MeshDomain& oracle,
                        const Criteria& criteria,
-                       std::size_t maximal_number_of_vertices)
+                       std::size_t maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+                       , CGAL::cpp11::atomic<bool>* stop_ptr
+#endif
+                       )
     : r_tr_(tr)
     , r_criteria_(criteria)
     , r_oracle_(oracle)
     , r_c3t3_(c3t3)
     , m_maximal_number_of_vertices_(maximal_number_of_vertices)
+#ifndef CGAL_NO_ATOMIC
+    , m_stop_ptr(stop_ptr)
+#endif
   {}
 
   void scan_triangulation_impl_amendement() const {}
@@ -300,6 +280,13 @@ public:
   // Tells if the refinement process of cells is currently finished
   bool no_longer_element_to_refine_impl()
   {
+#ifndef CGAL_NO_ATOMIC
+    if(m_stop_ptr != 0 &&
+       m_stop_ptr->load(CGAL::cpp11::memory_order_acquire) == true)
+    {
+      return true;
+    }
+#endif // not defined CGAL_NO_ATOMIC
     if(m_maximal_number_of_vertices_ !=0 &&
        r_tr_.number_of_vertices() >=
        m_maximal_number_of_vertices_)
@@ -316,16 +303,17 @@ public:
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     const Cell_handle c = facet.first;
     const int i = facet.second;
-    std::cerr << "Facet ("
-              << c->vertex((i+1)&3)->point() << " , "
-              << c->vertex((i+2)&3)->point() << " , "
-              << c->vertex((i+3)&3)->point() << ") : refinement point is "
+    std::cerr << "\n Facet ("
+              << r_tr_.point(c, (i+1)&3) << " , "
+              << r_tr_.point(c, (i+2)&3) << " , "
+              << r_tr_.point(c, (i+3)&3) << ") : refinement point is "
               << get_facet_surface_center(facet) << std::endl;
 #endif
+
     CGAL_assertion (this->is_facet_on_surface(facet));
     this->set_last_vertex_index(get_facet_surface_center_index(facet));
     return get_facet_surface_center(facet);
-  };
+  }
 
   Facet get_next_element_impl()
   {
@@ -368,10 +356,10 @@ public:
   {
     std::stringstream sstr;
     sstr << "Facet { " << std::endl
-    << "  - " << *facet.first->vertex((facet.second+1)%4)  << std::endl
-    << "  - " << *facet.first->vertex((facet.second+2)%4)  << std::endl
-    << "  - " << *facet.first->vertex((facet.second+3)%4)  << std::endl
-    << "  - 4th vertex in cell: " << *facet.first->vertex(facet.second)  << std::endl
+    << "  " << *facet.first->vertex((facet.second+1)%4) << std::endl
+    << "  " << *facet.first->vertex((facet.second+2)%4) << std::endl
+    << "  " << *facet.first->vertex((facet.second+3)%4) << std::endl
+    << "  4th vertex in cell: " << *facet.first->vertex(facet.second)  << std::endl
     << "}" << std::endl;
 
     return sstr.str();
@@ -412,7 +400,7 @@ protected:
   // Private types
   //-------------------------------------------------------
   typedef typename Criteria::Facet_quality Quality;
-  typedef typename Get_Is_facet_bad<Criteria>::Type Is_facet_bad;
+  typedef typename Criteria::Is_facet_bad Is_facet_bad;
   typedef typename MeshDomain::Surface_patch_index Surface_patch_index;
   typedef typename MeshDomain::Index Index;
 
@@ -625,6 +613,10 @@ protected:
   Complex3InTriangulation3& r_c3t3_;
   /// Maximal allowed number of vertices
   std::size_t m_maximal_number_of_vertices_;
+#ifndef CGAL_NO_ATOMIC
+  /// Pointer to the atomic Boolean that can stop the process
+  CGAL::cpp11::atomic<bool>* const m_stop_ptr;
+#endif
 }; // end class template Refine_facets_3_base
 
 /************************************************
@@ -789,7 +781,11 @@ public:
                   Previous_level_& previous,
                   C3T3& c3t3,
                   int mesh_topology,
-                  std::size_t maximal_number_of_vertices);
+                  std::size_t maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+                  , CGAL::cpp11::atomic<bool>* stop_ptr
+#endif
+                  );
   // For parallel
   Refine_facets_3(Tr& triangulation,
                   const Criteria& criteria,
@@ -798,7 +794,11 @@ public:
                   C3T3& c3t3,
                   Lock_data_structure *lock_ds,
                   WorksharingDataStructureType *worksharing_ds,
-                  std::size_t maximal_number_of_vertices);
+                  std::size_t maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+                  , CGAL::cpp11::atomic<bool>* stop_ptr
+#endif
+                  );
 
   /// Destructor
   virtual ~Refine_facets_3() { }
@@ -910,9 +910,17 @@ Refine_facets_3(Tr& triangulation,
                 P_& previous,
                 C3T3& c3t3,
                 int mesh_topology,
-                std::size_t maximal_number_of_vertices)
+                std::size_t maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+                , CGAL::cpp11::atomic<bool>* stop_ptr
+#endif
+                )
   : Rf_base(triangulation, c3t3, oracle, criteria, mesh_topology,
-            maximal_number_of_vertices)
+            maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+                , stop_ptr
+#endif
+            )
   , Mesher_level<Tr, Self, Facet, P_,
       Triangulation_mesher_level_traits_3<Tr>, Ct>(previous)
   , No_after_no_insertion()
@@ -931,8 +939,16 @@ Refine_facets_3(Tr& triangulation,
                 C3T3& c3t3,
                 Lock_data_structure *lock_ds,
                 WorksharingDataStructureType *worksharing_ds,
-                std::size_t maximal_number_of_vertices)
-  : Rf_base(triangulation, c3t3, oracle, criteria, maximal_number_of_vertices)
+                std::size_t maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+                , CGAL::cpp11::atomic<bool>* stop_ptr
+#endif
+                )
+  : Rf_base(triangulation, c3t3, oracle, criteria, maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+            , stop_ptr
+#endif
+            )
   , Mesher_level<Tr, Self, Facet, P_,
       Triangulation_mesher_level_traits_3<Tr>, Ct>(previous)
   , No_after_no_insertion()
@@ -976,7 +992,7 @@ scan_triangulation_impl()
     // PARALLEL_DO
     tbb::parallel_do(
       this->r_tr_.finite_facets_begin(), this->r_tr_.finite_facets_end(),
-      typename Rf_base::template Scan_facet<Self>(*this) 
+      typename Rf_base::template Scan_facet<Self>(*this)
     );
 
     splice_local_lists();
@@ -998,9 +1014,12 @@ scan_triangulation_impl()
     {
       // Cannot be const, see treat_new_facet signature
       Facet facet = *facet_it;
-      /*std::cerr << "*" << *facet.first->vertex((facet.second+1)%4)  << std::endl
-          << "  " << *facet.first->vertex((facet.second+2)%4)  << std::endl
-          << "  " << *facet.first->vertex((facet.second+3)%4)  << std::endl;*/
+#ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
+      std::cerr << "TREAT FACET : " << std::endl
+                 << "*" << *facet.first->vertex((facet.second+1)%4)  << std::endl
+                << "  " << *facet.first->vertex((facet.second+2)%4)  << std::endl
+                << "  " << *facet.first->vertex((facet.second+3)%4)  << std::endl;
+#endif
       this->treat_new_facet(facet);
     }
   }
@@ -1314,7 +1333,7 @@ conflicts_zone_impl(const Weighted_point& point
       std::cerr << "Info: the facet is not in the conflict zone of (" << point
                 << "). Switching to exact computation." << std::endl;
 # endif
-      
+
       typename Rf_base::Facet_properties properties;
       this->compute_facet_properties(facet, properties, /*force_exact=*/true);
       if ( properties )
@@ -1331,7 +1350,7 @@ conflicts_zone_impl(const Weighted_point& point
       {
         // Facet is not on surface
         this->remove_facet_from_surface(facet);
-	this->remove_bad_facet(facet, Ct());
+        this->remove_bad_facet(facet, Ct());
       }
     }
   }
@@ -1393,7 +1412,7 @@ conflicts_zone_impl(const Weighted_point& point
       {
         // Facet is not on surface
         this->remove_facet_from_surface(facet);
-	this->remove_bad_facet(facet, Ct());
+        this->remove_bad_facet(facet, Ct());
       }
     }
   }
@@ -1412,11 +1431,6 @@ before_insertion_impl(const Facet& facet,
   typedef typename Zone::Facets_iterator Facets_iterator;
 
   bool source_facet_is_in_conflict = false;
-
-  /*std::cerr << "before_insertion_impl:" << std::endl
-    << "* " << *facet.first->vertex((facet.second+1)%4)  << std::endl
-    << "  " << *facet.first->vertex((facet.second+2)%4)  << std::endl
-    << "  " << *facet.first->vertex((facet.second+3)%4)  << std::endl;*/
 
   // Iterate on conflict zone facets
   for (Facets_iterator facet_it = zone.internal_facets.begin();
@@ -1464,17 +1478,17 @@ before_insertion_impl(const Facet& facet,
       % display_dual(facet)
       % 0 // dummy: %4% no longer used
       % group(setprecision(17), point)
-      % group(setprecision(17), facet.first->vertex((facet.second + 1)&3)->point())
-      % group(setprecision(17), facet.first->vertex((facet.second + 2)&3)->point())
-      % group(setprecision(17), facet.first->vertex((facet.second + 3)&3)->point())
-      % facet.first->vertex(0)->point()
-      % facet.first->vertex(1)->point()
-      % facet.first->vertex(2)->point()
-      % facet.first->vertex(3)->point()
-      % source_other_side.first->vertex(0)->point()
-      % source_other_side.first->vertex(1)->point()
-      % source_other_side.first->vertex(2)->point()
-      % source_other_side.first->vertex(3)->point();
+      % group(setprecision(17), r_tr_.point(facet.first, (facet.second + 1)&3))
+      % group(setprecision(17), r_tr_.point(facet.first, (facet.second + 2)&3))
+      % group(setprecision(17), r_tr_.point(facet.first, (facet.second + 3)&3))
+      % r_tr_.point(facet.first, 0)
+      % r_tr_.point(facet.first, 1)
+      % r_tr_.point(facet.first, 2)
+      % r_tr_.point(facet.first, 3)
+      % r_tr_.point(source_other_side.first, 0)
+      % r_tr_.point(source_other_side.first, 1)
+      % r_tr_.point(source_other_side.first, 2)
+      % r_tr_.point(source_other_side.first, 3);
 
     CGAL_error_msg(error_msg.str().c_str());
   }
@@ -1563,17 +1577,20 @@ treat_new_facet(Facet& facet)
     set_facet_on_surface(facet, surface_index);
 
     // Insert facet into refinement queue if needed
-    const Is_facet_bad is_facet_bad = r_criteria_(facet);
+    const Is_facet_bad is_facet_bad = r_criteria_(r_tr_, facet);
 
     if ( is_facet_bad )
     {
       insert_bad_facet(facet, *is_facet_bad);
 
-      /*std::cerr << "INSERT BAD FACET : " << std::endl
-        << "* " << *facet.first->vertex((facet.second+1)%4)  << std::endl
-        << "  " << *facet.first->vertex((facet.second+2)%4)  << std::endl
-        << "  " << *facet.first->vertex((facet.second+3)%4)  << std::endl
-        << "  Quality=" << is_facet_bad->second << std::endl;*/
+#ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
+      std::cerr << "INSERT BAD FACET : " << std::endl
+                << "* " << *facet.first->vertex((facet.second+1)%4) << std::endl
+                << "  " << *facet.first->vertex((facet.second+2)%4) << std::endl
+                << "  " << *facet.first->vertex((facet.second+3)%4) << std::endl
+                << "  Surface center: " << get_facet_surface_center(facet) << std::endl
+                << "  Quality = " << is_facet_bad->second << std::endl;
+#endif
     }
   }
   else
@@ -1610,6 +1627,8 @@ compute_facet_properties(const Facet& facet,
       r_tr_.geom_traits().is_degenerate_3_object();
   typename Gt::Compare_xyz_3 compare_xyz =
       r_tr_.geom_traits().compare_xyz_3_object();
+  typename Gt::Construct_segment_3 construct_segment =
+      r_tr_.geom_traits().construct_segment_3_object();
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
   typename MD::Do_intersect_surface do_intersect_surface =
       r_oracle_.do_intersect_surface_object();
@@ -1630,9 +1649,9 @@ compute_facet_properties(const Facet& facet,
 
     // Trick to have canonical vector : thus, we compute always the same
     // intersection
-    Segment_3 segment = ( compare_xyz(p1,p2)== CGAL::SMALLER )
-      ? Segment_3(p1, p2)
-      : Segment_3(p2, p1);
+    Segment_3 segment = ( compare_xyz(p1, p2)== CGAL::SMALLER )
+                          ? construct_segment(p1, p2)
+                          : construct_segment(p2, p1);
 
     // If facet is on surface, compute intersection point and return true
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
@@ -1709,21 +1728,17 @@ is_facet_encroached(const Facet& facet,
                     const Weighted_point& point) const
 {
   if ( r_tr_.is_infinite(facet) || ! this->is_facet_on_surface(facet) )
-  {
     return false;
-  }
-
-  typename Gt::Compare_power_distance_3 compare_distance =
-    r_tr_.geom_traits().compare_power_distance_3_object();
 
   const Cell_handle& cell = facet.first;
   const int& facet_index = facet.second;
-  const Bare_point& center = get_facet_surface_center(facet);
-  const Weighted_point& reference_point = cell->vertex((facet_index+1)&3)->point();
 
-  // facet is encroached if the new point is near from center than
-  // one vertex of the facet
-  return ( compare_distance(center, reference_point, point) != CGAL::SMALLER );
+  const Bare_point& center = get_facet_surface_center(facet);
+  const Weighted_point& reference_point = r_tr_.point(cell, (facet_index+1)&3);
+
+  // the facet is encroached if the new point is closer to the center than
+  // any vertex of the facet
+  return r_tr_.greater_or_equal_power_distance(center, reference_point, point);
 }
 
 template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>
@@ -1736,7 +1751,8 @@ is_encroached_facet_refinable(Facet& facet) const
 
   typename Gt::Compute_squared_radius_smallest_orthogonal_sphere_3 sq_radius =
     r_tr_.geom_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object();
-
+  typename Gt::Compute_weight_3 cw =
+    r_tr_.geom_traits().compute_weight_3_object();
   typename Gt::Compare_weighted_squared_radius_3 compare =
     r_tr_.geom_traits().compare_weighted_squared_radius_3_object();
 
@@ -1750,27 +1766,30 @@ is_encroached_facet_refinable(Facet& facet) const
   // Get number of weighted points, and ensure that they will be accessible
   // using k1...ki, if i is the number of weighted points.
   int wp_nb = 0;
-  if(c->vertex(k1)->point().weight() > FT(0))
+  const Weighted_point& wpk1 = r_tr_.point(c, k1);
+  if(compare(wpk1, FT(0)) == CGAL::SMALLER)
   {
     ++wp_nb;
   }
 
-  if(c->vertex(k2)->point().weight() > FT(0))
+  const Weighted_point& wpk2 = r_tr_.point(c, k2);
+  if(compare(wpk2, FT(0)) == CGAL::SMALLER)
   {
     if ( 0 == wp_nb ) { std::swap(k1,k2); }
     ++wp_nb;
   }
 
-  if(c->vertex(k3)->point().weight() > FT(0))
+  const Weighted_point& wpk3 = r_tr_.point(c, k3);
+  if(compare(wpk3, FT(0)) == CGAL::SMALLER)
   {
     if ( 0 == wp_nb ) { std::swap(k1,k3); }
     if ( 1 == wp_nb ) { std::swap(k2,k3); }
     ++wp_nb;
   }
 
-  const Weighted_point& p1 = c->vertex(k1)->point();
-  const Weighted_point& p2 = c->vertex(k2)->point();
-  const Weighted_point& p3 = c->vertex(k3)->point();
+  const Weighted_point& p1 = r_tr_.point(c, k1);
+  const Weighted_point& p2 = r_tr_.point(c, k2);
+  const Weighted_point& p3 = r_tr_.point(c, k3);
 
   const FT min_ratio (0.16); // (0.2*2)^2
 
@@ -1780,7 +1799,7 @@ is_encroached_facet_refinable(Facet& facet) const
     case 1:
     {
       FT r = (std::max)(sq_radius(p1,p2),sq_radius(p1,p3));
-      if ( r < min_ratio*p1.weight() ) { return false; }
+      if ( r < min_ratio * cw(p1) ) { return false; }
       break;
     }
 
@@ -1789,8 +1808,8 @@ is_encroached_facet_refinable(Facet& facet) const
       bool do_spheres_intersect = (compare(p1,p2,FT(0)) != CGAL::LARGER);
       if ( do_spheres_intersect )
       {
-        FT r13 = sq_radius(p1,p3) / p1.weight();
-        FT r23 = sq_radius(p2,p3) / p2.weight();
+        FT r13 = sq_radius(p1,p3) / cw(p1);
+        FT r23 = sq_radius(p2,p3) / cw(p1);
         FT r = (std::max)(r13,r23);
 
         if ( r < min_ratio ) { return false; }

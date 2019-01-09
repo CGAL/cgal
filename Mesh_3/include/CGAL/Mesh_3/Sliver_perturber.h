@@ -52,6 +52,7 @@
 #include <CGAL/Mesh_3/Null_perturber_visitor.h>
 #include <CGAL/Mesh_3/sliver_criteria.h>
 #include <CGAL/Has_timestamp.h>
+#include <CGAL/Hash_handles_with_or_without_timestamps.h>
 
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
 #include <CGAL/Mesh_3/Worksharing_data_structures.h>
@@ -83,31 +84,7 @@
 
 namespace CGAL {
 
-namespace internal { namespace Mesh_3 {
-
-  // Hash function for boost::unordered_map<Vertex_handle,...>
-  template <typename Tr, bool HasTimestamp>
-  struct VHash
-  {
-    typedef typename Tr::Vertex_handle Vertex_handle;
-    std::size_t operator()(Vertex_handle vh) const
-    {
-      return vh->time_stamp();
-    }
-  };
-  template <typename Tr>
-  struct VHash<Tr, false>
-  {
-    typedef typename Tr::Vertex_handle Vertex_handle;
-    std::size_t operator()(Vertex_handle vh) const
-    {
-      return boost::hash_value(&*vh);
-    }
-  };
-}} // end internal::Mesh_3
-
 namespace Mesh_3 {
-
 
 /**
 * @class PVertex
@@ -474,13 +451,15 @@ class Sliver_perturber
   typedef Sliver_perturber_base<
     typename C3T3::Triangulation, Concurrency_tag>                      Base;
 
-  typedef typename C3T3::Triangulation  Tr;
-  typedef typename Tr::Geom_traits      Gt;
+  typedef typename C3T3::Triangulation          Tr;
+  typedef typename Tr::Geom_traits              Gt;
 
   typedef typename Tr::Cell_handle              Cell_handle;
   typedef typename Base::Vertex_handle          Vertex_handle;
   typedef typename Tr::Vertex                   Vertex;
-  typedef typename MeshDomain::Point_3          Point_3;
+
+  typedef typename Tr::Bare_point               Bare_point;
+  typedef typename Tr::Weighted_point           Weighted_point;
 
   typedef typename std::vector<Cell_handle>     Cell_vector;
   typedef typename std::vector<Vertex_handle>   Vertex_vector;
@@ -509,7 +488,7 @@ private:
 
   typedef PVertex_<FT,
                    Vertex_handle,
-                   Point_3,
+                   Bare_point,
                    SliverCriterion,
                    Perturbation,
                    Concurrency_tag> PVertex;
@@ -1128,11 +1107,8 @@ build_priority_queue(const FT& sliver_bound, PQueue& pqueue) const
 
   int pqueue_size = 0;
 
-  typedef typename std::iterator_traits<Vertex_handle>::value_type Vertex;
-  typedef CGAL::internal::Has_timestamp<Vertex> Vertex_has_timestamp;
-  using CGAL::internal::Mesh_3::VHash;
-  typedef VHash<Tr, Vertex_has_timestamp::value> Hash_fct;
-  typedef boost::unordered_map<Vertex_handle,PVertex,Hash_fct> M;
+  typedef CGAL::Hash_handles_with_or_without_timestamps            Hash_fct;
+  typedef boost::unordered_map<Vertex_handle, PVertex, Hash_fct>   M;
 
   M vpm;
   for ( typename Tr::Finite_cells_iterator cit = tr_.finite_cells_begin();
@@ -1300,7 +1276,7 @@ perturb_vertex( PVertex pv
               , bool *could_lock_zone
               ) const
 {
-  typename Gt::Construct_point_3 wp2p = tr_.geom_traits().construct_point_3_object();
+  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
 
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
   static Profile_branch_counter_3 bcounter(
@@ -1315,9 +1291,9 @@ perturb_vertex( PVertex pv
     return;
   }
 
-  Point_3 p = wp2p(pv.vertex()->point());
+  Bare_point p = cp(pv.vertex()->point());
   if (!helper_.try_lock_point_no_spin(pv.vertex()->point()) ||
-      ! tr_.geom_traits().equal_3_object()(p, wp2p(pv.vertex()->point())))
+      ! tr_.geom_traits().equal_3_object()(p, cp(pv.vertex()->point())))
   {
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
     bcounter.increment_branch_2(); // THIS is an early withdrawal!
@@ -1561,7 +1537,7 @@ Sliver_perturber<C3T3,Md,Sc,V_>::
 initialize_vertices_id() const
 {
   int cur_id = 0;
-  for(typename Tr::Finite_vertices_iterator it = tr_.finite_vertices_begin(); 
+  for(typename Tr::Finite_vertices_iterator it = tr_.finite_vertices_begin();
       it != tr_.finite_vertices_end(); ++it) {
     it->set_meshing_info(cur_id++);
   }

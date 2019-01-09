@@ -36,7 +36,7 @@ class C3t3_rib_exporter_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "c3t3_rib_exporter_plugin.json")
 
 public:
   C3t3_rib_exporter_plugin();
@@ -704,7 +704,7 @@ void
 C3t3_rib_exporter_plugin::
 write_facets(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
 {
-  typedef Kernel::Oriented_side Side;
+  typedef EPICK::Oriented_side Side;
 
   Geom_traits::Construct_point_3 wp2p
     = c3t3.triangulation().geom_traits().construct_point_3_object();
@@ -869,7 +869,7 @@ void
 C3t3_rib_exporter_plugin::
 write_cells_intersecting_a_plane(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
 {
-  typedef Kernel::Oriented_side Side;
+  typedef EPICK::Oriented_side Side;
 
   Geom_traits::Construct_point_3 wp2p
     = c3t3.triangulation().geom_traits().construct_point_3_object();
@@ -917,7 +917,7 @@ void
 C3t3_rib_exporter_plugin::
 write_cells_on_the_positive_side_of_a_plane(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
 {
-  typedef Kernel::Oriented_side Side;
+  typedef EPICK::Oriented_side Side;
 
   Geom_traits::Construct_point_3 wp2p
     = c3t3.triangulation().geom_traits().construct_point_3_object();

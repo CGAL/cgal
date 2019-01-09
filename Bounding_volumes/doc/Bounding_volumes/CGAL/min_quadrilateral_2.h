@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBoundingVolumes
+\ingroup PkgBoundingVolumesRef
 
 The function computes a minimum area enclosing 
 parallelogram \f$ A(P)\f$ of a given convex point set \f$ P\f$. Note that 
@@ -72,7 +72,7 @@ Traits& t = Default_traits);
 namespace CGAL {
 
 /*!
-\ingroup PkgBoundingVolumes
+\ingroup PkgBoundingVolumesRef
 
 The function computes a minimum area enclosing rectangle 
 \f$ R(P)\f$ of a given convex point set \f$ P\f$. Note that \f$ R(P)\f$ is not 
@@ -141,7 +141,7 @@ Traits& t = Default_traits);
 namespace CGAL {
 
 /*!
-\ingroup PkgBoundingVolumes
+\ingroup PkgBoundingVolumesRef
 
 The function computes a minimum width enclosing strip 
 \f$ S(P)\f$ of a given convex point set \f$ P\f$. A strip is the closed region 

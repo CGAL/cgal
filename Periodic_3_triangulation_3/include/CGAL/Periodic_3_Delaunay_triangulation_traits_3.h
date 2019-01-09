@@ -36,16 +36,17 @@
 
 namespace CGAL {
 
-template < class K, class Off = typename CGAL::Periodic_3_offset_3 >
+template <class K_,
+          class Off_ = typename CGAL::Periodic_3_offset_3 >
 class Periodic_3_Delaunay_triangulation_traits_base_3
-  : public Periodic_3_triangulation_traits_3<K, Off>
+  : public Periodic_3_triangulation_traits_3<K_, Off_>
 {
-  typedef Periodic_3_Delaunay_triangulation_traits_base_3<K, Off>  Self;
-  typedef Periodic_3_triangulation_traits_3<K, Off>                Base;
+  typedef Periodic_3_Delaunay_triangulation_traits_base_3<K_, Off_>  Self;
+  typedef Periodic_3_triangulation_traits_3<K_, Off_>                Base;
 
 public:
-  typedef K                                   Kernel;
-  typedef Off                                 Offset;
+  typedef K_                                  Kernel;
+  typedef Off_                                Offset;
 
   typedef typename Base::RT                   RT;
   typedef typename Base::FT                   FT;
@@ -64,62 +65,60 @@ public:
 
 public:
   Periodic_3_Delaunay_triangulation_traits_base_3(const Iso_cuboid_3& domain,
-                                                  const K& k)
+                                                  const Kernel& k)
     : Base(domain, k)
   { }
 
   // Delaunay specific predicates
-  typedef Functor_with_offset_points_adaptor_3<Self, typename K::Side_of_oriented_sphere_3>
+  typedef Functor_with_offset_points_adaptor_3<Self, typename Kernel::Side_of_oriented_sphere_3>
       Side_of_oriented_sphere_3;
-  typedef Functor_with_offset_points_adaptor_3<Self, typename K::Compare_distance_3>
+  typedef Functor_with_offset_points_adaptor_3<Self, typename Kernel::Compare_distance_3>
       Compare_distance_3;
 
   // Required for Periodic_3_Delaunay_triangulation_remove_traits
-  typedef Functor_with_offset_points_adaptor_3<Self, typename K::Coplanar_orientation_3>
+  typedef Functor_with_offset_points_adaptor_3<Self, typename Kernel::Coplanar_orientation_3>
       Coplanar_orientation_3;
-  typedef Functor_with_offset_points_adaptor_3<Self, typename K::Coplanar_side_of_bounded_circle_3>
+  typedef Functor_with_offset_points_adaptor_3<Self, typename Kernel::Coplanar_side_of_bounded_circle_3>
       Coplanar_side_of_bounded_circle_3;
 
   // When is_Gabriel is used
-   typedef Functor_with_offset_points_adaptor_3<Self, typename K::Side_of_bounded_sphere_3>
+   typedef Functor_with_offset_points_adaptor_3<Self, typename Kernel::Side_of_bounded_sphere_3>
        Side_of_bounded_sphere_3;
 
   // Delaunay specific constructions
-  typedef Functor_with_offset_points_adaptor_3<Self, typename K::Construct_circumcenter_3>
+  typedef Functor_with_offset_points_adaptor_3<Self, typename Kernel::Construct_circumcenter_3>
       Construct_circumcenter_3;
-
-  using Base::construct_point_3_object;
 
   // Operations
   Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object() const {
     return Side_of_oriented_sphere_3(this->Base::side_of_oriented_sphere_3_object(),
-                                     construct_point_3_object());
+                                     this->construct_point_3_object());
   }
   Compare_distance_3 compare_distance_3_object() const {
     return Compare_distance_3(this->Base::compare_distance_3_object(),
-                              construct_point_3_object());
+                              this->construct_point_3_object());
   }
   Side_of_bounded_sphere_3 side_of_bounded_sphere_3_object() const {
     return Side_of_bounded_sphere_3(this->Base::side_of_bounded_sphere_3_object(),
-                                    construct_point_3_object());
+                                    this->construct_point_3_object());
   }
   Coplanar_orientation_3 coplanar_orientation_3_object() const {
     return Coplanar_orientation_3(this->Base::coplanar_orientation_3_object(),
-                                  construct_point_3_object());
+                                  this->construct_point_3_object());
   }
   Coplanar_side_of_bounded_circle_3 coplanar_side_of_bounded_circle_3_object() const {
     return Coplanar_side_of_bounded_circle_3(this->Base::coplanar_side_of_bounded_circle_3_object(),
-                                             construct_point_3_object());
+                                             this->construct_point_3_object());
   }
   Construct_circumcenter_3 construct_circumcenter_3_object() const {
     return Construct_circumcenter_3(this->Base::construct_circumcenter_3_object(),
-                                    construct_point_3_object());
+                                    this->construct_point_3_object());
   }
 };
 
-template < typename K,
-           typename Off = CGAL::Periodic_3_offset_3,
-           bool Has_filtered_predicates = internal::Has_filtered_predicates<K>::value >
+template <typename K_,
+          typename Off_ = CGAL::Periodic_3_offset_3,
+          bool Has_filtered_predicates_ = internal::Has_filtered_predicates<K_>::value >
 class Periodic_3_Delaunay_triangulation_traits_3;
 
 } //namespace CGAL
@@ -129,34 +128,36 @@ class Periodic_3_Delaunay_triangulation_traits_3;
 
 namespace CGAL {
 
-template < class K, class Off>
-class Periodic_3_Delaunay_triangulation_traits_3<K, Off, false>
-  : public Periodic_3_Delaunay_triangulation_traits_base_3<K, Off>
+template <class K_, class Off_>
+class Periodic_3_Delaunay_triangulation_traits_3<K_, Off_, false>
+  : public Periodic_3_Delaunay_triangulation_traits_base_3<K_, Off_>
 {
-  typedef Periodic_3_Delaunay_triangulation_traits_base_3<K, Off> Base;
+  typedef Periodic_3_Delaunay_triangulation_traits_base_3<K_, Off_> Base;
 
 public:
-  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
+  typedef K_                                                        Kernel;
+  typedef typename Kernel::Iso_cuboid_3                             Iso_cuboid_3;
 
   Periodic_3_Delaunay_triangulation_traits_3(const Iso_cuboid_3& domain = Iso_cuboid_3(0,0,0,1,1,1),
-                                             const K& k = K())
+                                             const Kernel& k = Kernel())
     : Base(domain, k)
   { }
 };
 
-template < typename K, typename Off >
-class Periodic_3_Delaunay_triangulation_traits_3<K, Off, true>
-    : public Periodic_3_Delaunay_triangulation_filtered_traits_3<
-    K, Off, internal::Has_static_filters<K>::value>
+template <class K_, class Off_>
+class Periodic_3_Delaunay_triangulation_traits_3<K_, Off_, true>
+  : public Periodic_3_Delaunay_triangulation_filtered_traits_3<
+             K_, Off_, internal::Has_static_filters<K_>::value>
 {
   typedef Periodic_3_Delaunay_triangulation_filtered_traits_3<
-  K, Off, internal::Has_static_filters<K>::value>      Base;
+            K_, Off_, internal::Has_static_filters<K_>::value>      Base;
 
 public:
-  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
+  typedef K_                                                        Kernel;
+  typedef typename Kernel::Iso_cuboid_3 Iso_cuboid_3;
 
   Periodic_3_Delaunay_triangulation_traits_3(const Iso_cuboid_3& domain = Iso_cuboid_3(0,0,0,1,1,1),
-                                             const K& k = K())
+                                             const Kernel& k = Kernel())
     : Base(domain, k)
   { }
 };

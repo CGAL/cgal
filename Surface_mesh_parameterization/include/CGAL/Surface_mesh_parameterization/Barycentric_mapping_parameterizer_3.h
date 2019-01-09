@@ -41,7 +41,7 @@ namespace CGAL {
 
 namespace Surface_mesh_parameterization {
 
-/// \ingroup PkgSurfaceParameterizationMethods
+/// \ingroup PkgSurfaceMeshParameterizationMethods
 ///
 /// The class `Barycentric_mapping_parameterizer_3` implements <i>Tutte Barycentric
 /// Mapping algorithm</i>. This algorithm is also called

@@ -30,7 +30,7 @@
 #include <CGAL/Qt/manipulatedCameraFrame.h>
 
 #include <QClipboard>
-#include <QOpenGLFunctions_2_1>
+#include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
@@ -45,6 +45,7 @@
 
 class QTabWidget;
 class QImage;
+class QOpenGLFramebufferObject;
 
 namespace CGAL{
 /*! \brief A versatile 3D OpenGL viewer based on QOpenGLWidget.
@@ -74,7 +75,7 @@ href="../examples/callback.html">callback example</a> for a complete
 implementation.
 
 \nosubgrouping */
-class CGAL_QT_EXPORT QGLViewer : public QOpenGLWidget, public QOpenGLFunctions_2_1 {
+class CGAL_QT_EXPORT QGLViewer : public QOpenGLWidget, public QOpenGLFunctions {
   Q_OBJECT
 
 public:  
@@ -377,26 +378,7 @@ public:
   Note that if the QGLViewer is embedded in an other QWidget, it returns \c true
   when the top level widget is in full screen mode. */
   bool isFullScreen() const { return fullScreen_; }
-  /*! Returns \c true if the viewer displays in stereo.
-
-  The QGLViewer object must be created with a stereo format to handle
-  stereovision: \code QGLFormat format; format.setStereoDisplay( TRUE );
-  QGLViewer viewer(format);
-  \endcode
-  The hardware needs to support stereo display. Try the <a
-  href="../examples/stereoViewer.html">stereoViewer example</a> to check.
-
-  Set by setStereoDisplay() or toggleStereoDisplay(). Default value is \c false.
-
-  Stereo is performed using the Parallel axis asymmetric frustum perspective
-  projection method. See Camera::loadProjectionMatrixStereo() and
-  Camera::loadModelViewMatrixStereo().
-
-  The stereo parameters are defined by the camera(). See
-  qglviewer::Camera::setIODistance(),
-  qglviewer::Camera::setPhysicalScreenWidth() and
-  qglviewer::Camera::setFocusDistance(). */
-  bool displaysInStereo() const { return stereo_; }
+  
   /*! Returns the recommended size for the QGLViewer. Default value is 600x400
    * pixels. */
   virtual QSize sizeHint() const { return QSize(600, 400); }
@@ -419,11 +401,8 @@ public:
 
 public Q_SLOTS:
   void setFullScreen(bool fullScreen = true);
-  void setStereoDisplay(bool stereo = true);
   /*! Toggles the state of isFullScreen(). See also setFullScreen(). */
   void toggleFullScreen() { setFullScreen(!isFullScreen()); }
-  /*! Toggles the state of displaysInStereo(). See setStereoDisplay(). */
-  void toggleStereoDisplay() { setStereoDisplay(!stereo_); }
   void toggleCameraMode();
 
 protected:
@@ -625,8 +604,6 @@ Q_SIGNALS:
   void textIsEnabledChanged(bool enabled);
   /*! This signal is emitted whenever cameraIsEdited() changes value.. */
   void cameraIsEditedChanged(bool edited);
-  /*! This signal is emitted whenever displaysInStereo() changes value. */
-  void stereoChanged(bool on);
   /*! Signal emitted by select().
 
   Connect this signal to your selection method or overload select(), or more
@@ -705,7 +682,6 @@ protected:
 
   virtual void paintGL();
   virtual void preDraw();
-  virtual void preDrawStereo(bool leftBuffer = true);
 
   /*! The core method of the viewer, that draws the scene.
 
@@ -944,6 +920,8 @@ public:
   QString stateFileName() const;
   virtual QDomElement domElement(const QString &name,
                                  QDomDocument &document) const;
+Q_SIGNALS:
+  void needNewContext();
 
 public Q_SLOTS:
   virtual void initFromDOMElement(const QDomElement &element);
@@ -1005,6 +983,7 @@ public:
 public:
   virtual void setVisualHintsMask(int mask, int delay = 2000);
   virtual void drawVisualHints();
+  QOpenGLFramebufferObject* getStoredFrameBuffer();
 
 public Q_SLOTS:
   virtual void resetVisualHints();
@@ -1046,7 +1025,6 @@ protected:
   bool gridIsDrawn_;    // world XY grid
   bool FPSIsDisplayed_; // Frame Per Seconds
   bool textIsEnabled_;  // drawText() actually draws text or not
-  bool stereo_;         // stereo display
   bool fullScreen_;     // full screen mode
   QPoint prevPos_;      // Previous window position, used for full screen mode
 
@@ -1216,7 +1194,7 @@ protected:
   std::size_t grid_size;
   std::size_t g_axis_size;
   std::size_t axis_size;
-
+  QOpenGLFramebufferObject* stored_fbo;
   //S n a p s h o t
   QImage* takeSnapshot(qglviewer::SnapShotBackground  background_color, 
                        QSize finalSize, double oversampling, bool expand);
@@ -1225,13 +1203,12 @@ protected:
   
   // O f f s e t
   qglviewer::Vec _offset;
-  
   //C o n t e x t
   bool is_ogl_4_3;
 public:
-  //! Is used to know if the openGL context is 4.3 or 2.1.
+  //! Is used to know if the openGL context is 4.3 or ES 2.0.
   //! @returns `true` if the context is 4.3.
-  //! @returns `false` if the context is 2.1.  
+  //! @returns `false` if the context is ES 2.0.  
   bool isOpenGL_4_3()const {return is_ogl_4_3; }
   
 };

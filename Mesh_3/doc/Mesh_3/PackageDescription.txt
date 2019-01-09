@@ -1,48 +1,49 @@
-/// \defgroup PkgMesh_3 3D Mesh Generation Reference
+/// \defgroup PkgMesh3Ref 3D Mesh Generation Reference
 
-/// \defgroup PkgMesh_3Concepts Main Concepts
-/// \ingroup PkgMesh_3
+/// \defgroup PkgMesh3Concepts Main Concepts
+/// \ingroup PkgMesh3Ref
 /// The main concepts of this package.
 
-/// \defgroup PkgMesh_3SecondaryConcepts Secondary Concepts
-/// \ingroup PkgMesh_3
+/// \defgroup PkgMesh3SecondaryConcepts Secondary Concepts
+/// \ingroup PkgMesh3Ref
 /// The concepts in this group are secondary concepts, related to the template parameters of some models of the main concept.
 
-/// \defgroup PkgMesh_3MeshClasses Mesh Classes
-/// \ingroup PkgMesh_3
+/// \defgroup PkgMesh3MeshClasses Mesh Classes
+/// \ingroup PkgMesh3Ref
+/// The classes in this group are the main classes involved in the mesh generation process.
 
-/// \defgroup PkgMesh_3Domains Domain Classes
-/// \ingroup PkgMesh_3
+/// \defgroup PkgMesh3Domains Domain Classes
+/// \ingroup PkgMesh3Ref
 /// The classes in this group are models of domain concepts and their associated classes.
 
-/// \defgroup PkgMesh_3Functions Mesh Generation Functions
-/// \ingroup PkgMesh_3
-/// The two main functions to generate a mesh are `make_mesh_3()` and `refine_mesh_3()`. 
+/// \defgroup PkgMesh3Functions Mesh Generation Functions
+/// \ingroup PkgMesh3Ref
+/// The two main functions to generate a mesh are `make_mesh_3()` and `refine_mesh_3()`.
 /// The other functions allow to optimize an existing mesh.
 
+/// \defgroup PkgMesh3Parameters Parameter Functions
+/// \ingroup PkgMesh3Ref
 
-/// \defgroup PkgMesh_3Parameters Parameter Functions
-/// \ingroup PkgMesh_3
+/// \defgroup PkgMesh3Enum Enumerations
+/// \ingroup PkgMesh3Ref
 
-
-
-/// \defgroup PkgMesh_3Enum Enumerations
-/// \ingroup PkgMesh_3
-
+/// \defgroup PkgMesh3IOFunctions Input/Output Functions
+/// \ingroup PkgMesh3Ref
+/// The free functions that can be used to read and write meshes.
 
 /*!
-\addtogroup PkgMesh_3
+\addtogroup PkgMesh3Ref
 \todo check generated documentation
-\cgalPkgDescriptionBegin{3D Mesh Generation,PkgMesh_3Summary}
+\cgalPkgDescriptionBegin{3D Mesh Generation,PkgMesh3}
 \cgalPkgPicture{Mesh_3/fig/multilabel_mesher_small.jpg}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Pierre Alliez, Clément Jamin, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec}
 \cgalPkgDesc{This package is devoted to the generation of isotropic simplicial meshes discretizing 3D domains. The domain to be meshed is a region of 3D space that has to be bounded. The region may be connected or composed of multiple components and/or subdivided in several subdomains. The domain is input as an oracle able to answer queries, of a few different types, on the domain. Boundary and subdivision surfaces are either smooth or piecewise smooth surfaces, formed with planar or curved surface patches. Surfaces may exhibit 1-dimensional features (e.g. crease edges) and 0-dimensional features (e.g. singular points as corners tips, cusps or darts), that have to be fairly approximated in the mesh. Optionally, the algorithms support multi-core shared-memory architectures to take advantage of available parallelism.}
-\cgalPkgManuals{Chapter_3D_Mesh_Generation,PkgMesh_3}
+\cgalPkgManuals{Chapter_3D_Mesh_Generation,PkgMesh3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.5}
-\cgalPkgDependsOn{\ref PkgTriangulation3Summary}
+\cgalPkgDependsOn{\ref PkgTriangulation3 and \ref thirdpartyEigen}
 \cgalPkgBib{cgal:rty-m3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
@@ -55,6 +56,7 @@
 
 Here are the main concepts of this package:
 
+- `MeshTriangulationTraits_3`
 - `MeshComplex_3InTriangulation_3`
 - `MeshComplexWithFeatures_3InTriangulation_3`
 - `MeshDomain_3`
@@ -106,34 +108,37 @@ and their associated classes:
 
 ## Function Templates ##
 
-- `CGAL::make_mesh_3`
-- `CGAL::refine_mesh_3`
-- `CGAL::exude_mesh_3`
-- `CGAL::perturb_mesh_3`
-- `CGAL::lloyd_optimize_mesh_3`
-- `CGAL::odt_optimize_mesh_3`
+- `CGAL::make_mesh_3()`
+- `CGAL::refine_mesh_3()`
+- `CGAL::exude_mesh_3()`
+- `CGAL::perturb_mesh_3()`
+- `CGAL::lloyd_optimize_mesh_3()`
+- `CGAL::odt_optimize_mesh_3()`
 - `CGAL::facets_in_complex_3_to_triangle_mesh()`
 
 ## CGAL::parameters Functions ##
 
-- `CGAL::parameters::features`
-- `CGAL::parameters::no_features`
-- `CGAL::parameters::exude`
-- `CGAL::parameters::no_exude`
-- `CGAL::parameters::perturb`
-- `CGAL::parameters::no_perturb`
-- `CGAL::parameters::lloyd`
-- `CGAL::parameters::no_lloyd`
-- `CGAL::parameters::odt`
-- `CGAL::parameters::no_odt`
-- `CGAL::parameters::manifold`
-- `CGAL::parameters::manifold_with_boundary`
-- `CGAL::parameters::non_manifold`
+- `CGAL::parameters::features()`
+- `CGAL::parameters::no_features()`
+- `CGAL::parameters::exude()`
+- `CGAL::parameters::no_exude()`
+- `CGAL::parameters::perturb()`
+- `CGAL::parameters::no_perturb()`
+- `CGAL::parameters::lloyd()`
+- `CGAL::parameters::no_lloyd()`
+- `CGAL::parameters::odt()`
+- `CGAL::parameters::no_odt()`
+- `CGAL::parameters::manifold()`
+- `CGAL::parameters::manifold_with_boundary()`
+- `CGAL::parameters::non_manifold()`
 
 ## Enumerations ##
 
 - `CGAL::Mesh_optimization_return_code`
 - `CGAL::Mesh_facet_topology`
+
+## Input/Output Functions ##
+- `CGAL::output_to_medit()`
 
 */
 

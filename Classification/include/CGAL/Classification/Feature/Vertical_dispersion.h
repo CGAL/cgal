@@ -27,6 +27,7 @@
 
 #include <CGAL/number_utils.h>
 #include <CGAL/Classification/Image.h>
+#include <CGAL/Classification/compressed_float.h>
 #include <CGAL/Classification/Planimetric_grid.h>
 #include <boost/algorithm/minmax_element.hpp>
 #include <CGAL/Classification/Feature_base.h>
@@ -63,15 +64,12 @@ namespace Feature {
 template <typename GeomTraits, typename PointRange, typename PointMap>
 class Vertical_dispersion : public Feature_base
 {
-  typedef Classification::Image<float> Image_float;
+  typedef Classification::Image<compressed_float> Image_cfloat;
   typedef Classification::Planimetric_grid<GeomTraits, PointRange, PointMap> Grid;
 
-#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
-  std::vector<float> vertical_dispersion;
-#else
   const Grid& grid;
-  Image_float Dispersion;
-#endif
+  Image_cfloat Dispersion;
+  std::vector<compressed_float> values;
   
 public:
   /*!
@@ -86,24 +84,22 @@ public:
                        PointMap point_map,
                        const Grid& grid,
                        float radius_neighbors = -1.)
-#ifndef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     : grid (grid)
-#endif
   {
     this->set_name ("vertical_dispersion");
     if (radius_neighbors < 0.)
       radius_neighbors = 5.f * grid.resolution();
 
-#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
-    Image_float Dispersion(grid.width(), grid.height());
-#else
-    Dispersion = Image_float(grid.width(), grid.height());
-#endif
-    
-    for (std::size_t j = 0; j < grid.height(); j++)	
-      for (std::size_t i = 0; i < grid.width(); i++)
-        if (grid.has_points(i,j))
-          Dispersion(i,j)=0;
+    if (grid.width() * grid.height() > input.size())
+      values.resize(input.size(), compressed_float(0));
+    else
+    {
+      Dispersion = Image_cfloat(grid.width(), grid.height());
+      for (std::size_t j = 0; j < grid.height(); j++)	
+        for (std::size_t i = 0; i < grid.width(); i++)
+          if (grid.has_points(i,j))
+            Dispersion(i,j) = compressed_float(0);
+    }
     
     std::size_t square = (std::size_t)(0.5 * radius_neighbors / grid.resolution()) + 1;
     typename GeomTraits::Vector_3 verti (0., 0., 1.);
@@ -154,31 +150,30 @@ public:
         for (std::size_t k = 0; k < occupy.size(); ++ k)
           if (occupy[k])
             ++ nb_occ;
-					
-        Dispersion(i,j)= 1.f - (nb_occ / (float)(occupy.size()));
-			
+
+        compressed_float v = compress_float (1.f - (nb_occ / (float)(occupy.size())));
+        if (values.empty())
+          Dispersion(i,j) = v;
+        else
+        {
+          typename Grid::iterator end = grid.indices_end(i,j);
+          for (typename Grid::iterator it = grid.indices_begin(i,j); it != end; ++ it)
+            values[*it] = v;
+        }
       }
 		
     }
-#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
-    for (std::size_t i = 0; i < input.size(); i++)
-    {
-      std::size_t I= grid.x(i);
-      std::size_t J= grid.y(i);
-      vertical_dispersion.push_back((float)Dispersion(I,J));
-    }
-#endif
   }
   /// \cond SKIP_IN_MANUAL
   virtual float value (std::size_t pt_index)
   {
-#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
-    return vertical_dispersion[pt_index];
-#else
-    std::size_t I = grid.x(pt_index);
-    std::size_t J = grid.y(pt_index);
-    return ((float)Dispersion(I,J));
-#endif
+    if (values.empty())
+    {
+      std::size_t I = grid.x(pt_index);
+      std::size_t J = grid.y(pt_index);
+      return decompress_float (Dispersion(I,J));
+    }
+    return decompress_float (values[pt_index]);
   }
   /// \endcond
 };

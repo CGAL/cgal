@@ -69,11 +69,11 @@ Nef_S2
 NewKernel_d 
 Number_types 
 OpenNL 
-Operations_on_polyhedra 
 Optimal_transportation_reconstruction_2 
 Optimisation_basic 
 Partition_2 
 Periodic_2_triangulation_2 
+Periodic_3_mesh_3 
 Periodic_3_triangulation_3 
 Point_set_2 
 Point_set_3 

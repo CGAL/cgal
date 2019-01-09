@@ -34,8 +34,8 @@ namespace Surface_mesh_parameterization {
 
 namespace internal {
 
-//                                                   ->  ->
-// Return cotangent of (P,Q,R) corner (i.e. cotan of QP, QR angle).
+//                                                                           ->  ->
+// Returns the cotangent of the corner (P,Q,R) (i.e. the cotan of the angle (QP, QR) ).
 template<typename K>
 typename K::FT cotangent(const typename K::Point_3& P,
                          const typename K::Point_3& Q,
@@ -46,18 +46,17 @@ typename K::FT cotangent(const typename K::Point_3& P,
 
   Vector_3 u = P - Q;
   Vector_3 v = R - Q;
-  // (u . v) / ((u x v).len)
-  NT dot = (u*v);
-  Vector_3 cross_vector = CGAL::cross_product(u,v);
+  NT dot = (u * v);
+  Vector_3 cross_vector = CGAL::cross_product(u, v);
   NT cross_norm = CGAL::sqrt(cross_vector * cross_vector);
-  if(cross_norm != 0.0)
+  if(cross_norm != NT(0))
     return (dot / cross_norm);
   else
-    return 0.0; // undefined
+    return 0; // undefined
 }
 
-//                                                   ->  ->
-// Return tangent of (P,Q,R) corner (i.e. tangent of QP, QR angle).
+//                                                                       ->  ->
+// Returns the tangent of the corner (P,Q,R) (i.e. the tangent of angle (QP, QR) ).
 template<typename K>
 typename K::FT tangent(const typename K::Point_3& P,
                        const typename K::Point_3& Q,
@@ -68,17 +67,16 @@ typename K::FT tangent(const typename K::Point_3& P,
 
   Vector_3 u = P - Q;
   Vector_3 v = R - Q;
-  // (u . v) / ((u x v).len)
   NT dot = (u * v);
   Vector_3 cross_vector = CGAL::cross_product(u, v);
   NT cross_norm = CGAL::sqrt(cross_vector * cross_vector);
-  if(dot != 0.0)
+  if(dot != NT(0))
     return (cross_norm / dot);
   else
-    return 0.0; // undefined
+    return 0; // undefined
 }
 
-// Fix sine to be within [-1;1].
+// Fixes the sine to be within [-1;1].
 template<typename K>
 typename K::FT fix_sine(typename K::FT sine)
 {
@@ -90,8 +88,8 @@ typename K::FT fix_sine(typename K::FT sine)
     return sine;
 }
 
-//                                                      ->  ->
-// Return angle (in radians) of of (P,Q,R) corner (i.e. QP, QR angle).
+//                                                                       ->  ->
+// Returns the angle (in radians) of the corner (P,Q,R) (i.e. the angle (QP, QR) ).
 template<typename K>
 typename K::FT compute_angle_rad(const typename K::Point_3& P,
                                  const typename K::Point_3& Q,
@@ -103,10 +101,9 @@ typename K::FT compute_angle_rad(const typename K::Point_3& P,
   Vector_3 u = P - Q;
   Vector_3 v = R - Q;
 
-  // check
   NT product = CGAL::sqrt(u * u) * CGAL::sqrt(v * v);
-  if(product == 0)
-    return 0.0;
+  if(product == NT(0))
+    return 0;
 
   // cosine
   NT dot = (u * v);
@@ -116,7 +113,7 @@ typename K::FT compute_angle_rad(const typename K::Point_3& P,
   Vector_3 w = CGAL::cross_product(u, v);
   NT abs_sine = CGAL::sqrt(w * w) / product;
 
-  if(cosine >= 0)
+  if(cosine >= NT(0))
     return std::asin(fix_sine<K>(abs_sine));
   else
     return CGAL_PI - std::asin(fix_sine<K>(abs_sine));

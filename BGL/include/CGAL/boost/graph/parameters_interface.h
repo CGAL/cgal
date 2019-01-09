@@ -33,6 +33,14 @@ CGAL_add_named_parameter(metis_options_t, METIS_options, METIS_options)
 CGAL_add_named_parameter(vertex_partition_id_t, vertex_partition_id, vertex_partition_id_map)
 CGAL_add_named_parameter(face_partition_id_t, face_partition_id, face_partition_id_map)
 
+CGAL_add_named_parameter(vertex_to_vertex_output_iterator_t, vertex_to_vertex_output_iterator, vertex_to_vertex_output_iterator)
+CGAL_add_named_parameter(halfedge_to_halfedge_output_iterator_t, halfedge_to_halfedge_output_iterator, halfedge_to_halfedge_output_iterator)
+CGAL_add_named_parameter(face_to_face_output_iterator_t, face_to_face_output_iterator, face_to_face_output_iterator)
+
+CGAL_add_named_parameter(vertex_to_vertex_map_t, vertex_to_vertex_map, vertex_to_vertex_map)
+CGAL_add_named_parameter(halfedge_to_halfedge_map_t, halfedge_to_halfedge_map, halfedge_to_halfedge_map)
+CGAL_add_named_parameter(face_to_face_map_t, face_to_face_map, face_to_face_map)
+
 // List of named parameters that we use in the package 'Mesh_3'
 CGAL_add_named_parameter(vertex_feature_degree_t, vertex_feature_degree, vertex_feature_degree_map)
 
@@ -65,7 +73,14 @@ CGAL_add_named_parameter(nb_points_per_distance_unit_t, nb_points_per_distance_u
 CGAL_add_named_parameter(outward_orientation_t, outward_orientation, outward_orientation)
 CGAL_add_named_parameter(overlap_test_t, overlap_test, do_overlap_test_of_bounded_sides)
 CGAL_add_named_parameter(preserve_genus_t, preserve_genus, preserve_genus)
+CGAL_add_named_parameter(apply_per_connected_component_t, apply_per_connected_component, apply_per_connected_component)
 CGAL_add_named_parameter(projection_functor_t, projection_functor, projection_functor)
+CGAL_add_named_parameter(throw_on_self_intersection_t, throw_on_self_intersection, throw_on_self_intersection)
+CGAL_add_named_parameter(clip_volume_t, clip_volume, clip_volume)
+CGAL_add_named_parameter(use_compact_clipper_t, use_compact_clipper, use_compact_clipper)
+CGAL_add_named_parameter(output_iterator_t, output_iterator, output_iterator)
+CGAL_add_named_parameter(erase_all_duplicates_t, erase_all_duplicates, erase_all_duplicates)
+CGAL_add_named_parameter(require_same_orientation_t, require_same_orientation, require_same_orientation)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
@@ -78,6 +93,7 @@ CGAL_add_named_parameter(do_project_t, do_project, do_project)
 
 //internal
 CGAL_add_named_parameter(weight_calculator_t, weight_calculator, weight_calculator)
+CGAL_add_named_parameter(use_bool_op_to_clip_surface_t, use_bool_op_to_clip_surface, use_bool_op_to_clip_surface)
 
 // List of named parameters used in the Point Set Processing package
 CGAL_add_named_parameter(point_t, point_map, point_map)
@@ -85,6 +101,7 @@ CGAL_add_named_parameter(query_point_t, query_point_map, query_point_map)
 CGAL_add_named_parameter(normal_t, normal_map, normal_map)
 CGAL_add_named_parameter(diagonalize_traits_t, diagonalize_traits, diagonalize_traits)
 CGAL_add_named_parameter(svd_traits_t, svd_traits, svd_traits)
+CGAL_add_named_parameter(callback_t, callback, callback)
 CGAL_add_named_parameter(sharpness_angle_t, sharpness_angle, sharpness_angle)
 CGAL_add_named_parameter(edge_sensitivity_t, edge_sensitivity, edge_sensitivity)
 CGAL_add_named_parameter(neighbor_radius_t, neighbor_radius, neighbor_radius)
@@ -100,3 +117,4 @@ CGAL_add_named_parameter(plane_t, plane_map, plane_map)
 CGAL_add_named_parameter(plane_index_t, plane_index_map, plane_index_map)
 CGAL_add_named_parameter(select_percentage_t, select_percentage, select_percentage)
 CGAL_add_named_parameter(require_uniform_sampling_t, require_uniform_sampling, require_uniform_sampling)
+CGAL_add_named_parameter(point_is_constrained_t, point_is_constrained, point_is_constrained_map)

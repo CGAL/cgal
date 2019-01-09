@@ -28,6 +28,7 @@
 #include <CGAL/value_type_traits.h>
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #endif
 #include <CGAL/utility.h>
@@ -759,7 +760,8 @@ public:
   typedef std::vector<Point_3>                                Polyline_3;
 
   typedef Triangulation_vertex_base_with_info_3<int, Kernel>  VB_with_id;
-  typedef Triangulation_data_structure_3<VB_with_id>          TDS;
+  typedef Delaunay_triangulation_cell_base_3<Kernel>          CB;
+  typedef Triangulation_data_structure_3<VB_with_id, CB>      TDS;
   typedef Delaunay_triangulation_3<Kernel, TDS>               Triangulation;
 
   typedef typename Triangulation::Finite_edges_iterator       Finite_edges_iterator;

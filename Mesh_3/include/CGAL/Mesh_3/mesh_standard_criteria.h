@@ -50,19 +50,19 @@ class Abstract_criterion
 
 public:
   typedef FT Quality;
-  typedef boost::optional<Quality> Badness;
+  typedef boost::optional<Quality>  Is_bad;
   typedef typename Visitor_::Handle Handle;
 
   /// Destructor
   virtual ~Abstract_criterion() {}
 
   void accept(Visitor_& v) const { do_accept(v); }
-  Badness is_bad(const Handle& h) const { return do_is_bad(h); }
+  Is_bad is_bad(const Tr& tr, const Handle& h) const { return do_is_bad(tr, h); }
   Self* clone() const { return do_clone(); }
 
 protected:
   virtual void do_accept(Visitor_& v) const = 0;
-  virtual Badness do_is_bad(const Handle& h) const = 0;
+  virtual Is_bad do_is_bad(const Tr& tr, const Handle& h) const = 0;
   virtual Self* do_clone() const = 0;
 
 };  // end class Abstract_criterion
@@ -90,26 +90,27 @@ protected:
 
 public:
   typedef std::pair<int, typename Criterion::Quality> Quality;
-  typedef boost::optional<Quality> Badness;
+  typedef boost::optional<Quality>                    Is_bad;
 
 
   // Constructor
-  Criterion_visitor(const Handle_& h)
-    : handle_(h)
-    , badness_()
+  Criterion_visitor(const Tr& tr, const Handle_& h)
+    : tr_(tr)
+    , handle_(h)
+    , is_bad_()
     , criterion_counter_(0) {}
 
   // Destructor
   ~Criterion_visitor() {}
 
-  Badness badness() const
+  Is_bad is_bad() const
   {
-    return badness_;
+    return is_bad_;
   }
 
   bool go_further() const
   {
-    return !badness_;
+    return !is_bad_;
   }
 
 protected:
@@ -118,28 +119,28 @@ protected:
     ++criterion_counter_;
   }
 
-  void set_badness(const Badness& badness)
+  void set_is_bad(const Is_bad& is_bad)
   {
-    badness_ = badness;
+    is_bad_ = is_bad;
   }
 
   template<typename Derived>
   void do_visit(const Abstract_criterion<Tr, Derived>& criterion)
   {
-    typedef typename Abstract_criterion<Tr, Derived>::Badness Badness;
+    typedef typename Abstract_criterion<Tr, Derived>::Is_bad Is_bad;
 
-    const Badness badness = criterion.is_bad(handle_);
-    if ( badness )
-      badness_ = std::make_pair(criterion_counter_, *badness);
+    const Is_bad is_bad = criterion.is_bad(tr_, handle_);
+    if ( is_bad )
+      is_bad_ = std::make_pair(criterion_counter_, *is_bad);
 
     increment_counter();
   }
 
 private:
+  const Tr& tr_;
   Handle_ handle_;
-  Badness badness_;
+  Is_bad is_bad_;
   int criterion_counter_;
-
 };  // end class Criterion_visitor
 
 
@@ -153,7 +154,7 @@ class Criteria
   typedef Abstract_criterion<Tr,Visitor_> Criterion;
   typedef boost::ptr_vector<Criterion> Criterion_vector;
   typedef typename Visitor_::Quality Quality;
-  typedef typename Visitor_::Badness Badness;
+  typedef typename Visitor_::Is_bad  Is_bad;
 
 public:
   /// Constructor
@@ -172,18 +173,20 @@ public:
     criterion_vector_.push_back(criterion);
   }
 
-  Badness operator()(const typename Visitor_::Handle& h) const
+  Is_bad operator()(const Tr& tr,
+                    const typename Visitor_::Handle& h) const
   {
-    Visitor_ visitor(h);
+    Visitor_ visitor(tr, h);
 
     typename Criterion_vector::const_iterator it = criterion_vector_.begin();
     for (  ; it != criterion_vector_.end() ; ++it )
     {
       it->accept(visitor);
-      if ( ! visitor.go_further() ) return visitor.badness();
+      if ( ! visitor.go_further() )
+        return visitor.is_bad();
     }
 
-    return visitor.badness();
+    return visitor.is_bad();
   }
 
 private:

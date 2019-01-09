@@ -313,7 +313,7 @@ operator<<(std::ostream &os,
   for(int i = 0; i < 4; ++i)
   {
     if(is_ascii(os))
-      os << ' ' << c.surface_patch_index(i);
+      os << ' ' << oformat(c.surface_patch_index(i));
     else
       write(os, c.surface_patch_index(i));
   }

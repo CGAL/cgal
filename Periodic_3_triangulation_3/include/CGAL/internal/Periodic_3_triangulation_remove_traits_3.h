@@ -82,14 +82,15 @@ private:
   Functor _functor;
 };
 
-template < class P3DTTraits, class Off = typename CGAL::Periodic_3_offset_3 >
-class Periodic_3_triangulation_remove_traits_3 : public P3DTTraits::K
+template < class P3DTTraits_, class Off_ = typename CGAL::Periodic_3_offset_3 >
+class Periodic_3_triangulation_remove_traits_3
+  : public P3DTTraits_::K
 {
 public:
-  typedef P3DTTraits                                            PT;
-  typedef typename P3DTTraits::K                                Base;
-  typedef Off                                                   Offset;
-  typedef Periodic_3_triangulation_remove_traits_3< PT,Offset > Self;  
+  typedef P3DTTraits_                                           PT;
+  typedef typename P3DTTraits_::K                               Base;
+  typedef Off_                                                  Offset;
+  typedef Periodic_3_triangulation_remove_traits_3<PT, Offset>  Self;
 
   typedef typename PT::RT                RT;
   typedef typename PT::FT                FT;
@@ -98,7 +99,8 @@ public:
   typedef typename PT::Iso_cuboid_3      Iso_cuboid_3;
 
   Periodic_3_triangulation_remove_traits_3(const Iso_cuboid_3& domain)
-    : _pt() {
+    : _pt()
+  {
     _pt.set_domain(domain);
   }
 

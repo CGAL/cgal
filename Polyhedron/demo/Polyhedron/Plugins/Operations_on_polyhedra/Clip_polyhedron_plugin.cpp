@@ -4,11 +4,10 @@
 #include <QAction>
 #include <QVector>
 #include "Scene_surface_mesh_item.h"
-#include "Scene_polyhedron_item.h"
 #include "Scene_plane_item.h"
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
-#include <CGAL/Polygon_mesh_processing/internal/clip.h>
+#include <CGAL/Polygon_mesh_processing/clip.h>
 
 #include "ui_Clip_polyhedron_plugin.h"
 #include "Viewer.h"
@@ -105,7 +104,7 @@ public :
     plane = NULL;
     //creates and link the actions
     actionClipPolyhedra = new QAction("Clip Polyhedra", mw);
-    actionClipPolyhedra->setProperty("subMenuName","Operations on Polyhedra");
+    actionClipPolyhedra->setProperty("subMenuName","Polygon Mesh Processing/Corefinement");
     dock_widget = new QDockWidget("Polyhedra Clipping", mw);
     dock_widget->setVisible(false); // do not show at the beginning
     ui_widget.setupUi(dock_widget);
@@ -122,8 +121,7 @@ public :
   {
     Q_FOREACH(int id, scene->selectionIndices())
     {
-      if(qobject_cast<Scene_surface_mesh_item*>(scene->item(id))
-         || qobject_cast<Scene_polyhedron_item*>(scene->item(id)))
+      if(qobject_cast<Scene_surface_mesh_item*>(scene->item(id)))
         return true;
     }
     return false;
@@ -139,28 +137,39 @@ public :
   {
     Mesh* neg_side = new Mesh(*item->face_graph());
 
-    CGAL::Polygon_mesh_processing::clip(*neg_side,
-                                        plane->plane(),
-                                        ui_widget.close_checkBox->isChecked());
-    Item* new_item = new Item(neg_side);
-    new_item->setName(QString("%1 on %2").arg(item->name()).arg("negative side"));
-    new_item->setColor(item->color());
-    new_item->setRenderingMode(item->renderingMode());
-    new_item->setVisible(item->visible());
-    scene->addItem(new_item);
-    new_item->invalidateOpenGLBuffers();
-    // part on the positive side
-    Mesh* pos_side = new Mesh(*item->face_graph());
-    CGAL::Polygon_mesh_processing::clip(*pos_side,
-                                        plane->plane().opposite(),
-                                        ui_widget.close_checkBox->isChecked());
-    new_item = new Item(pos_side);
-    new_item->setName(QString("%1 on %2").arg(item->name()).arg("positive side"));
-    new_item->setColor(item->color());
-    new_item->setRenderingMode(item->renderingMode());
-    new_item->setVisible(item->visible());
-    scene->addItem(new_item);
-    new_item->invalidateOpenGLBuffers();
+    try {
+      CGAL::Polygon_mesh_processing::clip(*neg_side,
+                                          plane->plane(),
+                                          CGAL::Polygon_mesh_processing::parameters::clip_volume(
+                                            ui_widget.close_checkBox->isChecked()).
+                                          throw_on_self_intersection(true));
+      Item* new_item = new Item(neg_side);
+      new_item->setName(QString("%1 on %2").arg(item->name()).arg("negative side"));
+      new_item->setColor(item->color());
+      new_item->setRenderingMode(item->renderingMode());
+      new_item->setVisible(item->visible());
+      scene->addItem(new_item);
+      new_item->invalidateOpenGLBuffers();
+      // part on the positive side
+      Mesh* pos_side = new Mesh(*item->face_graph());
+      CGAL::Polygon_mesh_processing::clip(*pos_side,
+                                          plane->plane().opposite(),
+                                          CGAL::Polygon_mesh_processing::parameters::clip_volume(
+                                            ui_widget.close_checkBox->isChecked()).
+                                          throw_on_self_intersection(true));
+
+      new_item = new Item(pos_side);
+      new_item->setName(QString("%1 on %2").arg(item->name()).arg("positive side"));
+      new_item->setColor(item->color());
+      new_item->setRenderingMode(item->renderingMode());
+      new_item->setVisible(item->visible());
+      scene->addItem(new_item);
+      new_item->invalidateOpenGLBuffers();
+    }
+    catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
+    {
+      messages->warning(tr("The requested operation is not possible due to the presence of self-intersections in the region handled."));
+    }
   }
 public Q_SLOTS:
   void on_plane_destroyed()
@@ -171,7 +180,7 @@ public Q_SLOTS:
   void pop_widget()
   {
     if(dock_widget->isVisible()) { dock_widget->hide(); }
-    else                         { dock_widget->show(); }
+    else                         { dock_widget->show(); dock_widget->raise();}
 
     //creates a new  cutting_plane;
     if(!plane)
@@ -213,34 +222,27 @@ public Q_SLOTS:
         {
           polyhedra << sm_item;
         }
-        else
-        {
-          Scene_polyhedron_item *poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(id));
-          if(poly_item && CGAL::is_triangle_mesh(*poly_item->polyhedron()))
-          {
-            polyhedra << poly_item;
-          }
-        }
       }
       //apply the clipping function
       Q_FOREACH(Scene_item* item, polyhedra)
       {
         Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item*>(item);
-        Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
 
         if (ui_widget.clip_radioButton->isChecked())
         {
-          if(sm_item)
-          {
-            CGAL::Polygon_mesh_processing::clip(*(sm_item->face_graph()),
-                                                plane->plane(),
-                                                ui_widget.close_checkBox->isChecked());
+          try{
+            if(sm_item)
+            {
+              CGAL::Polygon_mesh_processing::clip(*(sm_item->face_graph()),
+                                                  plane->plane(),
+                                                  CGAL::Polygon_mesh_processing::parameters::clip_volume(
+                                                    ui_widget.close_checkBox->isChecked()).
+                                                  throw_on_self_intersection(true));
+            }
           }
-          else
+          catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
           {
-            CGAL::Polygon_mesh_processing::clip(*(poly_item->face_graph()),
-                                                plane->plane(),
-                                                ui_widget.close_checkBox->isChecked());
+            messages->warning(tr("The requested operation is not possible due to the presence of self-intersections in the region handled."));
           }
           item->invalidateOpenGLBuffers();
           viewer->update();
@@ -251,10 +253,6 @@ public Q_SLOTS:
           if(sm_item)
           {
             apply<SMesh>(sm_item);
-          }
-          else
-          {
-            apply<Polyhedron>(poly_item);
           }
         }
       }

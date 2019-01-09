@@ -61,7 +61,7 @@ int main(int argc, char*argv[])
   
   // Mesh generation
   C3t3 c3t3;
-  CGAL::internal::Mesh_3::C3t3_initializer<C3t3,
+  CGAL::Mesh_3::internal::C3t3_initializer<C3t3,
                                            Mesh_domain,
                                            Mesh_criteria,
                                            false>()(c3t3, domain, criteria, false);

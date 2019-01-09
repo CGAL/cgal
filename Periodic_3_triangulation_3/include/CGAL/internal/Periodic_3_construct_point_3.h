@@ -29,13 +29,13 @@
 
 namespace CGAL {
 
-template < typename K, typename Construct_point_3_base>
+template <typename K_, typename Construct_point_3_base_>
 class Periodic_3_construct_point_3
-  : public Construct_point_3_base
+  : public Construct_point_3_base_
 {
-  typedef Construct_point_3_base             Base;
+  typedef Construct_point_3_base_            Base;
 
-  typedef K                                  Kernel;
+  typedef K_                                 Kernel;
 
   typedef typename Kernel::Point_3           Point;
   typedef typename Kernel::Weighted_point_3  Weighted_point;
@@ -44,7 +44,7 @@ class Periodic_3_construct_point_3
 
 public:
   Periodic_3_construct_point_3(const Iso_cuboid_3* dom,
-                               const Construct_point_3_base& cp)
+                               const Base& cp)
     : Base(cp), _dom(dom)
   { }
 
