@@ -17,13 +17,14 @@ typedef CGAL::Creator_uniform_2<FT, Point_2>                Creator;
 
 int main(int argc, char** argv)
 {
+  int N;
   if(argc < 2) {
     std::cout << "usage: " << argv[0] << " [number_of_points]" << std::endl;
-    return EXIT_FAILURE;
+    std::cout << "Defaulting to 100k points..." << std::endl;
+    N = 100000; 
+  } else {
+    N = atoi(argv[1]);
   }
-
-  int N = atoi(argv[1]);
-  std::cout << "Number of points: " << N << std::endl;
 
   CGAL::Timer timer;
   CGAL::Random_points_in_disc_2<Point_2, Creator> in_disc;
