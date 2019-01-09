@@ -63,6 +63,11 @@ public:
     : tmhd(tmhd), seam(seam)
   { }
 
+#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
+  Seam_mesh_halfedge_descriptor&
+  operator=(const Seam_mesh_halfedge_descriptor&)=default;
+#endif
+  
   bool operator==(const Seam_mesh_halfedge_descriptor& other) const
   {
     return (tmhd == other.tmhd) && (seam == other.seam);

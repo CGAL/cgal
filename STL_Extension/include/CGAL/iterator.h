@@ -1371,12 +1371,17 @@ public:
 
   Dispatch_output_iterator(O... o) : cpp11::tuple<O...>(o...) {}
 
+    
+#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
+  Dispatch_output_iterator(const Dispatch_output_iterator&)=default;
+#endif
+
   Self& operator=(const Self& s)
   {
     static_cast<Iterator_tuple&>(*this) = static_cast<const Iterator_tuple&>(s);
     return *this;
   }
-
+  
   template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
   Self& operator=(const boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) >& t) {
     internal::Output_visitor<Self> visitor(this);
