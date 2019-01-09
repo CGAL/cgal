@@ -18,8 +18,6 @@ function build_tests {
 function build_demo {
   mkdir -p build-travis
   cd build-travis
-    popd
-  fi
   EXTRA_CXX_FLAGS=
   case "$CC" in
     clang*)
