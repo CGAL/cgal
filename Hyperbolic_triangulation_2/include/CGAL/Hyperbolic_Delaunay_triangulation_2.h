@@ -249,6 +249,8 @@ public:
           ok = true;
         }
       } while (!ok);
+
+      return *this;
     }
 
 
@@ -278,6 +280,8 @@ public:
           ok = true;
         }
       } while (!ok);
+
+      return *this;
     }
 
     bool operator==(const Self &vc) const
@@ -355,8 +359,8 @@ public:
   {
     _gt = tr._gt;
     Base::tds().clear();
-    Base::tds() = tr.tds();
-    
+    Base::tds().copy_tds(tr.tds());
+    this->mark_finite_non_hyperbolic_faces();
   //  CGAL_triangulation_expensive_postcondition(*this == tr);
     return *this;
   }
