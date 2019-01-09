@@ -22,7 +22,7 @@ int main(int argc, char**argv)
 
 	HDTriangulation tri;
 	std::vector<Vertex_handle> verts;
-	for (int i = 0; i < pts.size(); ++i)
+	for (unsigned int i = 0; i < pts.size(); ++i)
 		verts.push_back(tri.insert(pts[i]));
 
 	int nv = tri.number_of_vertices();
@@ -35,7 +35,7 @@ int main(int argc, char**argv)
 	assert(tri.dimension() == 2);
 
 	std::cout << " -------- removing --------" << std::endl;
-	for (int i = 0; i < verts.size(); ++i) 
+	for (unsigned int i = 0; i < verts.size(); ++i) 
 	{
 		tri.remove(verts[i]);
 	}
@@ -50,7 +50,7 @@ int main(int argc, char**argv)
 
 	HDTriangulation tri2;
 	verts.clear();
-	for (int i = 0; i < pts.size(); ++i)
+	for (unsigned int i = 0; i < pts.size(); ++i)
 		verts.push_back(tri2.insert(pts[i]));
 	std::cout << " -------- inserting --------" << std::endl;
 	std::cout << "Vertices  in triangulation: " << tri2.number_of_vertices() 		 << std::endl;
