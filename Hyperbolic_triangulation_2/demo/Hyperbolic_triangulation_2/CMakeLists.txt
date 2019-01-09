@@ -28,13 +28,11 @@ include_directories (BEFORE include)
 qt5_wrap_ui( UIS Hyperbolic_triangulation_2_demo.ui )
 
 # qrc files (resources files, that contain icons, at least)
-qt5_add_resources ( RESOURCE_FILES ../../../GraphicsView/demo/icons/File.qrc ../../../GraphicsView/demo/icons/Input.qrc ../../../GraphicsView/demo/icons/Triangulation_2.qrc ../../../GraphicsView/demo/Triangulation_2/Delaunay_triangulation_2.qrc )
+qt5_add_resources ( RESOURCE_FILES resources/File.qrc resources/Input.qrc resources/Delaunay_triangulation_2.qrc )
 
 # cpp files
 
 add_executable ( Hyperbolic_Delaunay_triangulation_2_demo Hyperbolic_Delaunay_triangulation_2_demo.cpp ${RESOURCE_FILES} ${UIS})
 
 qt5_use_modules( Hyperbolic_Delaunay_triangulation_2_demo Widgets )
-
-target_link_libraries( Hyperbolic_Delaunay_triangulation_2_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${Boost_LIBRARIES} )
 

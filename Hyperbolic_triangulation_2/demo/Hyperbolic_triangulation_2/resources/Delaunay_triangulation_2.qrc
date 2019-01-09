@@ -1,0 +1,12 @@
+<RCC>
+  <qresource prefix="/cgal/Actions" >
+    <file>icons/conflict_zone.png</file>
+    <file>icons/moving_point.png</file>
+    <file>icons/triangulation.png</file>
+    <file>icons/circumcenter.png</file>
+  </qresource>
+  <qresource prefix="/cgal/help" >
+    <file alias="about_CGAL.html" >../resources/about_CGAL.html</file>
+    <file>about_Delaunay_triangulation_2.html</file>
+  </qresource>
+</RCC>
