@@ -17,7 +17,7 @@
 // SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Maxime Gimeno
-#if BOOST_VERSION >= 105600
+#if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
 
 #ifndef CGAL_IO_TRAITS_LINESTRING_H
 #define CGAL_IO_TRAITS_LINESTRING_H

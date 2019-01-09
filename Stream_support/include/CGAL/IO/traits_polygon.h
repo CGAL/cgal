@@ -20,7 +20,7 @@
 
 #ifndef CGAL_IO_TRAITS_POLYGON_H
 #define CGAL_IO_TRAITS_POLYGON_H
-#if BOOST_VERSION >= 105600
+#if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Point_2.h>

@@ -1,4 +1,4 @@
-#if BOOST_VERSION >= 105600
+#if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
 #include <iostream>
 #include <fstream>
 

@@ -11,7 +11,7 @@
 #include <CGAL/linear_least_squares_fitting_2.h>
 #include <CGAL/extremal_polygon_2.h>
 #include <CGAL/minkowski_sum_2.h>
-#if BOOST_VERSION >= 105600
+#if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
 #include <CGAL/IO/WKT.h>
 #endif
 
@@ -232,7 +232,7 @@ MainWindow::on_actionLoadPolygon_triggered()
 						  ".",
                                                   tr( "Polyline files (*.polygons.cgal);;"
                                                       "WSL files (*.wsl);;"
-                                                    #if BOOST_VERSION >= 105600
+                                                    #if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
                                                       "WKT files (*.wkt *.WKT);;"
                                                     #endif
                                                       "All file (*)"));
@@ -249,7 +249,7 @@ MainWindow::open(QString fileName)
   poly.clear();
   if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
   {
-#if BOOST_VERSION >= 105600
+#if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
     CGAL::Polygon_with_holes_2<K> P;
     CGAL::read_polygon_WKT(ifs, P);
     poly = Polygon2(P.outer_boundary().begin(), 
@@ -274,7 +274,7 @@ MainWindow::on_actionSavePolygon_triggered()
 						  tr("Save Polygon"),
 						  ".",
                                                   tr( "Polyline files (*.polygons.cgal);;"
-                                                    #if BOOST_VERSION >= 105600
+                                                    #if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
                                                       "WKT files (*.wkt *.WKT);;"
                                                     #endif
                                                       "All file (*)"));
@@ -282,7 +282,7 @@ MainWindow::on_actionSavePolygon_triggered()
     std::ofstream ofs(qPrintable(fileName));
     if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
     {
-#if BOOST_VERSION >= 105600
+#if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
       CGAL::Polygon_2<K> P(poly.begin(),
                            poly.end());
       CGAL::Polygon_with_holes_2<K> Pwh(P);

@@ -13,7 +13,7 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/min_quadrilateral_2.h>
 #include <CGAL/rectangular_p_center_2.h>
-#if BOOST_VERSION >= 105600
+#if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
 #include <CGAL/IO/WKT.h>
 #endif
 
@@ -477,7 +477,7 @@ MainWindow::on_actionLoadPoints_triggered()
 						  tr("Open Points file"),
                                                   ".",
                                                   tr("CGAL files (*.pts.cgal);;"
-                                                   #if BOOST_VERSION >= 105600
+                                                   #if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
                                                      "WKT files (*.WKT *.wkt);;"
                                                    #endif
                                                      "All files (*)"));
@@ -495,7 +495,7 @@ MainWindow::open(QString fileName)
   std::ifstream ifs(qPrintable(fileName));
   if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
   {
-#if BOOST_VERSION >= 105600
+#if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
     CGAL::read_multi_point_WKT(ifs, points);
     BOOST_FOREACH(K::Point_2 p, points)
     {
@@ -530,7 +530,7 @@ MainWindow::on_actionSavePoints_triggered()
 						  tr("Save points"),
                                                   ".",
                                                   tr("CGAL files (*.pts.cgal);;"
-                                                   #if BOOST_VERSION >= 105600
+                                                   #if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
                                                      "WKT files (*.WKT *.wkt);;"
                                                    #endif
                                                      "All files (*)"));
@@ -538,7 +538,7 @@ MainWindow::on_actionSavePoints_triggered()
     std::ofstream ofs(qPrintable(fileName));
     if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
     {
-#if BOOST_VERSION >= 105600
+#if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
       std::vector<K::Point_2> out_pts;
       out_pts.reserve(std::distance(mc.points_begin(),
                                     mc.points_end()));

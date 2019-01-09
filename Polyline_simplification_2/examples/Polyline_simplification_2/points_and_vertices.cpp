@@ -6,7 +6,7 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Polyline_simplification_2/simplify.h>
-#if BOOST_VERSION >= 105600
+#if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
 #include <CGAL/IO/WKT.h>
 #endif
 
@@ -53,7 +53,7 @@ void print(const CT& ct, Constraint_id cid)
 int main(int argc, char* argv[])
 {
   std::ifstream ifs( (argc==1)?"data/polygon.wkt":argv[1]);
-#if BOOST_VERSION >= 105600
+#if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
   const bool remove_points = false;
   CT ct;
   Polygon_with_holes_2 P;

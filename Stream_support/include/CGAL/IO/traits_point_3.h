@@ -20,7 +20,7 @@
 
 #ifndef CGAL_IO_TRAITS_POINT_3_H
 #define CGAL_IO_TRAITS_POINT_3_H
-#if BOOST_VERSION >= 105600
+#if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
 #include <CGAL/number_utils.h>
 #include <CGAL/Point_3.h>
 #include <boost/geometry/io/wkt/write.hpp>
