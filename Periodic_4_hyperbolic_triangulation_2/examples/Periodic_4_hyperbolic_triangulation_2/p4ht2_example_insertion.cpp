@@ -20,12 +20,14 @@ typedef CGAL::Creator_uniform_2<NT,Point>                                       
 
 int main(int argc, char** argv)
 {
+  int N;
   if(argc < 2) {
     std::cout << "usage: " << argv[0] << " [number_of_points_to_insert]" << std::endl;
-    return EXIT_FAILURE;
+    std::cout << "Defaulting to 100k points..." << std::endl;
+    N = 100000;
+  } else {
+    N = atoi(argv[1]);
   }
-
-  int N = atoi(argv[1]);
 
   int N1 = N/2;
   int N2 = N - N1;
