@@ -1065,7 +1065,7 @@ number_of_bad_elements_impl()
   {
     Facet facet = *facet_it;
     typename Rf_base::Facet_properties properties;
-    compute_facet_properties(facet, properties);
+    this->compute_facet_properties(facet, properties);
 
 #ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
     //facet.first->mark = 0;
@@ -1081,8 +1081,8 @@ number_of_bad_elements_impl()
 
         Cell_handle c = facet.first;
         int ind = facet.second;
-        Cell_handle mc = mirror_facet(facet).first;
-        int mind = mirror_facet(facet).second;
+        Cell_handle mc = this->mirror_facet(facet).first;
+        int mind = this->mirror_facet(facet).second;
 
 #ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
         c->mark2 = ind;
@@ -1107,7 +1107,7 @@ number_of_bad_elements_impl()
               c->mark = i;
 #endif
               typename Rf_base::Facet_properties properties;
-              compute_facet_properties(f1, properties);
+              this->compute_facet_properties(f1, properties);
               if (properties)
                 ++num_real_surface_facets_in_c;
               else
@@ -1155,9 +1155,9 @@ number_of_bad_elements_impl()
 
       }
 
-      const Surface_patch_index& surface_index = CGAL::cpp11::get<0>(*properties);
-      const Index& surface_center_index = CGAL::cpp11::get<1>(*properties);
-      const Bare_point& surface_center = CGAL::cpp11::get<2>(*properties);
+      //const Surface_patch_index& surface_index = CGAL::cpp11::get<0>(*properties);
+      //const Index& surface_center_index = CGAL::cpp11::get<1>(*properties);
+      //const Bare_point& surface_center = CGAL::cpp11::get<2>(*properties);
 
       // Facet is on surface: set facet properties
       //set_facet_surface_center(facet, surface_center, surface_center_index);
