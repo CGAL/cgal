@@ -827,7 +827,10 @@ public:
         output = f.output;
         filter = f.filter;
         return *this;
-      }
+      }  
+#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
+      Facet_it(const Facet_it&)=default;
+#endif      
     };
     Facet_it facet_it() {
       return Facet_it(output, filter);

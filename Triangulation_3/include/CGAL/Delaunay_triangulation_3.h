@@ -275,6 +275,10 @@ public:
     insert(first, last);
   }
 
+#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
+  Delaunay_triangulation_3& operator=(const Delaunay_triangulation_3&)=default;  
+#endif
+  
 private:
   #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
   std::vector<Vertex_handle>
