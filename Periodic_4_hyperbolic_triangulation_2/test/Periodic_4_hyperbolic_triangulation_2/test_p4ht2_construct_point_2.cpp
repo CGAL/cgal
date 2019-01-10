@@ -9,7 +9,7 @@
 typedef CORE::Expr                                                              NT;
 typedef CGAL::Cartesian<NT>                                                     Kernel;
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel,
-CGAL::Hyperbolic_octagon_translation>     Traits;
+									  CGAL::Hyperbolic_octagon_translation>     Traits;
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<Traits>            Triangulation;
 typedef Kernel::Point_2                                                         Point;
 

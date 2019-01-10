@@ -37,8 +37,8 @@ int main(int, char**)
   cplx res1(NT(3)/NT(10), NT(11)/NT(10));
   cplx res2(NT(3)/NT(13), NT(-11)/NT(13));
 
-  CGAL_assertion(mon == res1);
-  CGAL_assertion(nom == res2);
+  assert(mon == res1);
+  assert(nom == res2);
 
   std::cout << "n < m: " << (n < m ? "true" : "false") << std::endl;
 

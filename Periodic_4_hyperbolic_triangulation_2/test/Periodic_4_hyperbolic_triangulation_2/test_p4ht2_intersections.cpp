@@ -12,10 +12,8 @@
 
 #include <iostream>
 
-typedef CORE::Expr                                                              NT;
-typedef CGAL::Cartesian<NT>                                                     Kernel;
-typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel,
-                                      CGAL::Hyperbolic_octagon_translation>     Traits;
+typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<>           Traits;
+typedef Traits::FT                                                              NT;
 typedef Traits::Point_2                                                         Point;
 typedef Traits::Circle_2                                                        Circle;
 typedef Traits::Euclidean_line_2                                                Line;
@@ -25,42 +23,45 @@ int main(int /*argc*/, char** /*argv*/)
 {
   NT F2(2);
 
-  Line ell1(sqrt(F2), sqrt(F2 - sqrt(F2)), - sqrt(F2 + sqrt(F2)));
-  Line ell2(sqrt(F2), sqrt(F2), F2*sqrt(F2 + sqrt(F2)));
-  NT sx = -sqrt(F2 + sqrt(F2))*(sqrt(F2) + F2*sqrt(F2 - sqrt(F2)))/(sqrt(F2)*sqrt(F2-sqrt(F2)) - F2);
-  NT sy = NT(3)*sqrt(F2 + sqrt(F2))*sqrt(F2)/(sqrt(F2)*sqrt(F2 - sqrt(F2)) - F2);
+  Line ell1(NT(1),  sqrt(F2 - sqrt(F2)), NT(0));
+  Line ell2(NT(1), -sqrt(F2 + sqrt(F2)), NT(0));
+  
+  // In the Poincaré disk, all Euclidean lines pass through the origin
+  NT sx = NT(0);
+  NT sy = NT(0);
   Point sol(sx, sy);
 
   Point p = Construct_intersection_2()(ell1, ell2);
-  std::cout << "line-line intersection: " << p << std::endl;
-  CGAL_assertion(p == sol);
+  std::cout << "line-line intersection: " << p << ", solution is: " << sol << std::endl;
+  assert(p == sol);
   std::cout << "The solution is exact!" << std::endl;
 
-  NT root24 = sqrt(sqrt(F2));
-  NT root234 = root24*root24*root24;
-  NT x1  = (-NT(15815)*sqrt(F2) + NT(19119)*root24 + NT(13444)*root234 - NT(23479))*sqrt(NT(1)+sqrt(F2))/NT(542) + NT(24831)*sqrt(F2)/NT(542) - NT(14840)*root24/NT(271) - NT(10708)*root234/NT(271) + NT(17856)/NT(271);
-  NT y1  = (-NT(9090)*sqrt(F2) + NT(9803)*root24 + NT(8313)*root234 - NT(13801))*sqrt(NT(1)+sqrt(F2))/NT(542) + NT(14453)*sqrt(F2)/NT(542) - NT(8526)*root24/NT(271) - NT(6195)*root234/NT(271) + NT(9501)/NT(271);
-
-  NT r12 = (-NT("3028175552")*sqrt(F2) + NT("3601721772")*root24 + NT("2545971914")*root234 - NT("4279338600"))*sqrt(NT(1)+sqrt(F2))/NT(146882) + NT("4705259439")*sqrt(F2)/NT(146882) - NT("2797188994")*root24/NT(73441) - NT("1977303520")*root234/NT(73441) + NT("3327746973")/NT(73441);
-
-  Circle c1(Point(x1, y1), r12);
-
+  Point pc1(NT(2)/NT(10), NT(5)/NT(10));
+  Point pc2(-NT(3)/NT(10), NT(15)/NT(100));
+  Point pc3(NT(20)/NT(29), NT(50)/NT(29));
+  Circle c1(pc1, pc2, pc3);
   std::pair<Point, Point> ipt = Construct_intersection_2()(ell1, c1);
   Point ip1 = ipt.first, ip2 = ipt.second;
+
+  NT sq(sqrt(NT(2)));
+  NT nsq( sqrt( NT(2) - sqrt(NT(2)) ) );
+  NT sol1x( nsq*(NT(2438)+NT(1451)*nsq-sqrt(NT(3933846)-NT(31801)*sq+NT(7075076)*nsq))/(-NT(4320)+NT(1440)*sq) );
+  NT sol1y( (-NT(2438)-NT(1451)*nsq+sqrt(NT(3933846)-NT(31801)*sq+NT(7075076)*nsq))/(-NT(4320)+NT(1440)*sq) );
+  Point solution1(sol1x, sol1y);
+  
   std::cout << "Intersection of circle and line: " << ip1 << " and " << ip2 << std::endl;
-  CGAL_assertion(ip1 == sol || ip2 == sol);
+  std::cout << "Solution: " << solution1 << std::endl;
+  assert(ip1 == solution1 || ip2 == solution1);
   std::cout << "The solution is exact!" << std::endl;
 
-  NT x2  = (NT(203109)*sqrt(F2) - NT(54251)*root24 + NT(10397)*root234 + NT(223071))*sqrt(sqrt(F2) - NT(1))/NT(84386) - NT(48258)*sqrt(F2)/NT(42193) + NT(23571)*root24/NT(42193) + NT(106401)*root234/NT(84386) - NT(14511)/NT(42193);
-  NT y2  = (-NT(406218)*sqrt(F2) + NT(277274)*root24 + NT(105785)*root234 - NT(446142))*sqrt(F2 - sqrt(F2))/NT(168772) - NT(23571)*sqrt(F2)/NT(42193) + NT(14511)*root24/NT(42193) + NT(48258)*root234/NT(42193) - NT(106401)/NT(42193);
-  NT r22 = (-NT("38737365474")*sqrt(F2) + NT("62674657740")*root24 + NT("43541114565")*root234 - NT("69201833202"))*sqrt(NT(1)+sqrt(F2))/NT("3560498498") + NT("87751517789")*sqrt(F2)/NT("3560498498") - NT("35806387098")*root24/NT("1780249249") - NT("28113144981")*root234/NT("1780249249") + NT("125172318975")/NT("3560498498");
+  Point pc4(NT(2)/NT(10), -NT(15)/NT(100));
+  Circle c2(pc1, pc4, pc3);
 
-  Circle c2(Point(x2, y2), r22);
   std::pair<Point, Point> cpt = Construct_intersection_2()(c1, c2);
   ip1 = cpt.first;
   ip2 = cpt.second;
   std::cout << "Intersection of circles: " << ip1 << " and " << ip2 << std::endl;
-  CGAL_assertion(ip1 == sol || ip2 == sol);
+  assert(ip1 == pc1 || ip2 == pc1);
   std::cout << "The solution is exact!" << std::endl;
 
   return EXIT_SUCCESS;
