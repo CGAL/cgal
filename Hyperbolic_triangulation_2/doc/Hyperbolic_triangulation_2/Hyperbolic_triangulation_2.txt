@@ -48,7 +48,7 @@ unit disk, the combinatorial structure of the hyperbolic Delaunay
 triangulation of a set \f$\mathcal P\f$ of points in \f$\mathbb H^2\f$
 is a subset of the Euclidean Delaunay triangulation of \f$\mathcal
 P\f$ (see
-\cgalFigureRef{Hyperbolic_triangulation_2Euclidean_vs_hyperbolic}&nbsp;-&nbsp;Left). More
+\cgalFigureRef{Hyperbolic_triangulation_2Euclidean_vs_hyperbolic} - Left). More
 precisely, the hyperbolic Delaunay triangulation of \f$\mathcal P\f$ only
 contains the simplices of the Euclidean Delaunay triangulation that
 are <i>hyperbolic</i>:
@@ -64,7 +64,7 @@ are <i>hyperbolic</i>:
 In the Euclidean Delaunay triangulation, there is a bijection between
 non-hyperbolic faces and non-hyperbolic
 edges&nbsp;\cgalCite{cgal:bdt-hdcvd-14}, illustrated by
-\cgalFigureRef{Hyperbolic_triangulation_2Euclidean_vs_hyperbolic}&nbsp;-&nbsp;Right. 
+\cgalFigureRef{Hyperbolic_triangulation_2Euclidean_vs_hyperbolic} - Right. 
 
 \cgalFigureAnchor{Hyperbolic_triangulation_2Euclidean_vs_hyperbolic}
 <center>
