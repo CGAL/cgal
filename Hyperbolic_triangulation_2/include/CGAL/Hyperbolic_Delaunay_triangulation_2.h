@@ -357,11 +357,10 @@ public:
 
   Self& operator=(const Self &tr)
   {
-    _gt = tr._gt;
-    Base::tds().clear();
-    Base::tds().copy_tds(tr.tds());
-    this->mark_finite_non_hyperbolic_faces();
-  //  CGAL_triangulation_expensive_postcondition(*this == tr);
+
+    Self newone = Self(tr); 
+    this->swap(newone);
+
     return *this;
   }
 

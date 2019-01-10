@@ -20,10 +20,6 @@ int main(int argc, char**argv)
 	for (int i = 0; i < 75; ++i)
 		pts1.push_back(*(++gen));
 
-	std::vector<Point> pts2;
-	for (int i = 0; i < 150; ++i)
-		pts2.push_back(*(++gen));
-
 	HDTriangulation tri1;
 	tri1.insert(pts1.begin(), pts1.end());
 	std::cout << "Vertices  in tri1: " << tri1.number_of_vertices() 		<< std::endl;
