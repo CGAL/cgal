@@ -97,7 +97,6 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::face_normal).v == 36);
   assert(get_param(np, CGAL::internal_np::random_seed).v == 37);
   assert(get_param(np, CGAL::internal_np::do_project).v == 38);
-  assert(get_param(np, CGAL::internal_np::opengr_options).v == 9001);
 
     // Internal named parameters
   assert(get_param(np, CGAL::internal_np::weight_calculator).v == 39);
@@ -179,7 +178,6 @@ void test(const NamedParameters& np)
   check_same_type<36>(get_param(np, CGAL::internal_np::face_normal));
   check_same_type<37>(get_param(np, CGAL::internal_np::random_seed));
   check_same_type<38>(get_param(np, CGAL::internal_np::do_project));
-  check_same_type<9001>(get_param(np, CGAL::internal_np::opengr_options));
 
     // Internal named parameters
   check_same_type<39>(get_param(np, CGAL::internal_np::weight_calculator));
@@ -189,6 +187,34 @@ void test(const NamedParameters& np)
   check_same_type<42>(get_param(np, CGAL::internal_np::projection_functor));
   check_same_type<46>(get_param(np, CGAL::internal_np::apply_per_connected_component));
   check_same_type<47>(get_param(np, CGAL::internal_np::output_iterator));
+  
+  // Named parameters used in the package 'Point Set Processing'
+  check_same_type<9000>(get_param(np, CGAL::internal_np::point_map));
+  check_same_type<9001>(get_param(np, CGAL::internal_np::query_point_map));
+  check_same_type<9002>(get_param(np, CGAL::internal_np::normal_map));
+  check_same_type<9003>(get_param(np, CGAL::internal_np::diagonalize_traits));
+  check_same_type<9004>(get_param(np, CGAL::internal_np::svd_traits));
+  check_same_type<9005>(get_param(np, CGAL::internal_np::callback));
+  check_same_type<9006>(get_param(np, CGAL::internal_np::sharpness_angle));
+  check_same_type<9007>(get_param(np, CGAL::internal_np::edge_sensitivity));
+  check_same_type<9008>(get_param(np, CGAL::internal_np::neighbor_radius));
+  check_same_type<9009>(get_param(np, CGAL::internal_np::number_of_output_points));
+  check_same_type<9010>(get_param(np, CGAL::internal_np::size));
+  check_same_type<9011>(get_param(np, CGAL::internal_np::maximum_variation));
+  check_same_type<9012>(get_param(np, CGAL::internal_np::degree_fitting));
+  check_same_type<9013>(get_param(np, CGAL::internal_np::degree_monge));
+  check_same_type<9014>(get_param(np, CGAL::internal_np::threshold_percent));
+  check_same_type<9015>(get_param(np, CGAL::internal_np::threshold_distance));
+  check_same_type<9016>(get_param(np, CGAL::internal_np::attraction_factor));
+  check_same_type<9017>(get_param(np, CGAL::internal_np::plane_map));
+  check_same_type<9018>(get_param(np, CGAL::internal_np::plane_index_map));
+  check_same_type<9019>(get_param(np, CGAL::internal_np::select_percentage));
+  check_same_type<9020>(get_param(np, CGAL::internal_np::require_uniform_sampling));
+  check_same_type<9021>(get_param(np, CGAL::internal_np::point_is_constrained));
+  check_same_type<9022>(get_param(np, CGAL::internal_np::number_of_samples));
+  check_same_type<9023>(get_param(np, CGAL::internal_np::accuracy));
+  check_same_type<9024>(get_param(np, CGAL::internal_np::maximum_running_time));
+  check_same_type<9025>(get_param(np, CGAL::internal_np::overlap));
 }
 
 int main()
@@ -242,7 +268,6 @@ int main()
                          .face_normal_map(A<36>(36))
                          .random_seed(A<37>(37))
                          .do_project(A<38>(38))
-                         .opengr_options(A<>(9001))
                          .weight_calculator(A<39>(39))
                          .preserve_genus(A<40>(40))
                          .verbosity_level(A<41>(41))
@@ -257,6 +282,32 @@ int main()
                          .erase_all_duplicates(A<48>(48))
                          .require_same_orientation(A<49>(49))
                          .face_size_map(A<52>(52))
+                         .point_map(A<9000>(9000))
+                         .query_point_map(A<9001>(9001))
+                         .normal_map(A<9002>(9002))
+                         .diagonalize_traits(A<9003>(9003))
+                         .svd_traits(A<9004>(9004))
+                         .callback(A<9005>(9005))
+                         .sharpness_angle(A<9006>(9006))
+                         .edge_sensitivity(A<9007>(9007))
+                         .neighbor_radius(A<9008>(9008))
+                         .number_of_output_points(A<9009>(9009))
+                         .size(A<9010>(9010))
+                         .maximum_variation(A<9011>(9011))
+                         .degree_fitting(A<9012>(9012))
+                         .degree_monge(A<9013>(9013))
+                         .threshold_percent(A<9014>(9014))
+                         .threshold_distance(A<9015>(9015))
+                         .attraction_factor(A<9016>(9016))
+                         .plane_map(A<9017>(9017))
+                         .plane_index_map(A<9018>(9018))
+                         .select_percentage(A<9019>(9019))
+                         .require_uniform_sampling(A<9020>(9020))
+                         .point_is_constrained_map(A<9021>(9021))
+                         .number_of_samples(A<9022>(9022))
+                         .accuracy(A<9023>(9023))
+                         .maximum_running_time(A<9024>(9024))
+                         .overlap(A<9025>(9025))
        );
 
   return EXIT_SUCCESS;
