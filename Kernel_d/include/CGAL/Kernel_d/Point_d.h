@@ -78,13 +78,7 @@ public:
   Point_d(int d, InputIterator first, InputIterator last, const RT& D)
     : Base (d, first, last, D) {}
 
-  Point_d(const Self &p) : Base(p) {}
   Point_d(const Base& p) : Base(p) {}
-
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
-  Self&
-  operator=(const Self& v)=default;
-#endif
   
   Vector_d<R> operator-(const Origin& o) const 
   { return Base::operator-(o); }
