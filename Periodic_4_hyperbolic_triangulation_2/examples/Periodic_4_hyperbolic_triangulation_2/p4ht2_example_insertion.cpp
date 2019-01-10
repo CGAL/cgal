@@ -63,7 +63,7 @@ int main(int argc, char** argv)
   std::cout << "DONE! " << std::endl;
 
   // Total number of inserted points.
-  int N_inserted = N_batch_inserted + N_single_inserted;
+  std::size_t N_inserted = N_batch_inserted + N_single_inserted;
 
   // Finally, we try to manually remove all dummy points from the triangulation.
   std::cout << "Cleaning dummy points from the triangulation... "; std::cout.flush();
@@ -73,9 +73,9 @@ int main(int argc, char** argv)
   // Make sure that the triangulation is valid.
   CGAL_assertion(tr.is_valid());
 
-  int NV = tr.number_of_vertices();
-  int NF = tr.number_of_faces();
-  int NE = tr.number_of_edges();
+  std::size_t NV = tr.number_of_vertices();
+  std::size_t NF = tr.number_of_faces();
+  std::size_t NE = tr.number_of_edges();
 
   // This function `tr.number_of_dummy_points()` returns the number of dummy points that
   // are currently in the triangulation.

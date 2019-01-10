@@ -613,7 +613,7 @@ remove(Vertex_handle v)
     int bdrynb = 0;
     for(std::size_t i=0; i<new_f.size(); ++i)
     {
-      for(std::size_t k=0; k< 3; k++)
+      for(int k=0; k< 3; k++)
       {
         bool found_bdry = false;
         for(int j=0; j<static_cast<int>(bdry_verts.size()); ++j)
@@ -638,7 +638,7 @@ remove(Vertex_handle v)
             if(l == i)
               continue;
 
-            for(std::size_t j=0; j<3; ++j)
+            for(int j=0; j<3; ++j)
             {
               if(new_f[i]->vertex(ccw(k)) == new_f[l]->vertex(cw(j)) &&
                  new_f[i]->vertex(cw(k))  == new_f[l]->vertex(ccw(j)))
