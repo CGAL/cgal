@@ -369,11 +369,6 @@ public:
       is_line_optimization(false)
     {}
 
-    Polychainline_2(const Self& pcl)
-      : Base((Base) pcl), incoming(pcl.incoming),
-        is_line_optimization(pcl.is_line_optimization)
-    {}
-
     template <class InputIterator>
     Polychainline_2(IncomingDirection dinc,
 	            InputIterator first, InputIterator last,
