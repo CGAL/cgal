@@ -52,10 +52,6 @@ class Polychainsegment_2 : public Polygon_2<Traits_P, Container_P> {
 
     Polychainsegment_2() : Base() {}
 
-    Polychainsegment_2(
-        const Polychainsegment_2<Traits_P,Container_P>& pc)
-      : Base((Base) pc) {}
-
     template <class InputIterator>
     Polychainsegment_2(InputIterator first, InputIterator last,
                        Traits p_traits = Traits())
