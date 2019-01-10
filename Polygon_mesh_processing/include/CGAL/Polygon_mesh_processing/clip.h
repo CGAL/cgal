@@ -119,34 +119,47 @@ clip_to_bbox(const Plane_3& plane,
       int current_id = face_indices[4*i + k];
       int next_id = face_indices[4*i + (k+1)%4];
 
-      if ( orientations[ current_id ] != ON_POSITIVE_SIDE )
+      switch(orientations[ current_id ])
       {
-        all_out=false;
-        // point on or on the negative side
-        output_faces[i].push_back( current_id );
-        in_point_ids.insert( output_faces[i].back() );
-        // check for intersection of the edge
-        if (orientations[ current_id ] == ON_NEGATIVE_SIDE &&
-            orientations[ next_id ] == ON_POSITIVE_SIDE)
+        case ON_NEGATIVE_SIDE:
         {
-          output_faces[i].push_back(
-            inter_pt_index<Geom_traits>(current_id, next_id, plane, corners, id_map) );
+          all_out=false;
+          // point on or on the negative side
+          output_faces[i].push_back( current_id );
           in_point_ids.insert( output_faces[i].back() );
+          // check for intersection of the edge
+          if (orientations[ next_id ] == ON_POSITIVE_SIDE)
+          {
+            output_faces[i].push_back(
+              inter_pt_index<Geom_traits>(current_id, next_id, plane, corners, id_map) );
+            in_point_ids.insert( output_faces[i].back() );
+          }
+          break;
         }
-      }
-      else
-      {
-        all_in = false;
-        // check for intersection of the edge
-        if ( orientations[ next_id ] == ON_NEGATIVE_SIDE )
+        case ON_POSITIVE_SIDE:
         {
-          output_faces[i].push_back(
-            inter_pt_index<Geom_traits>(current_id, next_id, plane, corners, id_map) );
+          all_in = false;
+          // check for intersection of the edge
+          if ( orientations[ next_id ] == ON_NEGATIVE_SIDE )
+          {
+            output_faces[i].push_back(
+              inter_pt_index<Geom_traits>(current_id, next_id, plane, corners, id_map) );
+            in_point_ids.insert( output_faces[i].back() );
+          }
+          break;
+        }
+        case ON_ORIENTED_BOUNDARY:
+        {
+          output_faces[i].push_back( current_id );
           in_point_ids.insert( output_faces[i].back() );
         }
       }
     }
-    CGAL_assertion( output_faces[i].empty() || output_faces[i].size() >= 3 );
+    if (output_faces[i].size() < 3){
+      CGAL_assertion(output_faces[i].empty() ||
+                     (output_faces[i].front()<8 && output_faces[i].back()<8) );
+      output_faces[i].clear(); // edge of the bbox included in the plane
+    }
   }
 
   // the intersection is the full bbox

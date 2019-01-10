@@ -125,9 +125,9 @@ public:
       else                  { it->polyline->setWidth(3); }
 
       if(selected_holes.find(it) != selected_holes.end())
-      { it->polyline->setRbgColor(255, 0, 0); }
+      { it->polyline->setRgbColor(255, 0, 0); }
       else
-      { it->polyline->setRbgColor(0, 0, 255); }
+      { it->polyline->setRgbColor(0, 0, 255); }
 
       it->polyline->drawEdges(viewer);
     }

@@ -1160,6 +1160,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::advancing_front_reconstructi
       reco_item->setColor(Qt::lightGray);
       reco_item->setRenderingMode(FlatPlusEdges);
       reco_item->invalidateOpenGLBuffers();
+      scene->addItem(reco_item);
       QApplication::restoreOverrideCursor();
     }
 }

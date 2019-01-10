@@ -116,7 +116,6 @@ void project_points(C3T3& c3t3,
     const Weighted_point& vh_wp = c3t3.triangulation().point(vh);
     const Bare_point& vh_p = cp(vh_wp);
     const Bare_point new_point = helper.project_on_surface(vh, vh_p);
-    CGAL_assertion(new_point != Bare_point());
 
     const FT sq_d = CGAL::squared_distance(new_point, vh_p);
 
@@ -144,6 +143,11 @@ void project_points(C3T3& c3t3,
 
 } // namespace internal
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4003) // not enough actual parameters for macro
+#endif
+  
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
 // see <CGAL/boost/parameter.h>
@@ -180,6 +184,10 @@ BOOST_PARAMETER_FUNCTION(
 }
 
 CGAL_PRAGMA_DIAG_POP
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 /**
  * @brief This function refines the mesh c3t3 wrt domain & criteria
