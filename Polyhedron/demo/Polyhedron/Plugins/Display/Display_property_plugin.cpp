@@ -481,11 +481,13 @@ private Q_SLOTS:
         displayScaledJacobian(item);
         break;
     case 2:
-      displayHeatIntensity(item);
+      if(!displayHeatIntensity(item))
+        return;
       item->setRenderingMode(Gouraud);
       break;
     default:  // Heat Method (Intrinsic Delaunay)
-      displayHeatIntensity(item, true);  
+      if(!displayHeatIntensity(item, true))
+        return;
       item->setRenderingMode(Gouraud);
       break;
     }
@@ -777,9 +779,27 @@ private Q_SLOTS:
   }
 
   // AF: This function gets called when we click on the button "Colorize"
-  void displayHeatIntensity(Scene_surface_mesh_item* item, bool iDT = false)
-  {    
+  bool displayHeatIntensity(Scene_surface_mesh_item* item, bool iDT = false)
+  {
     SMesh& mesh = *item->face_graph();
+    bool found = false;
+    SMesh::Property_map<vertex_descriptor, bool> is_source ;
+    boost::tie(is_source, found)=
+        mesh.property_map<vertex_descriptor,bool>("v:heat_source");
+    if(!found
+       || ! source_points
+       || source_points->point_set()->is_empty())
+    {
+      QApplication::restoreOverrideCursor();
+      QMessageBox::warning(mw, "Warning","Source vertices are needed for this property.");
+      return false;
+    }
+    if(!is_triangle_mesh(mesh))
+    {
+      QApplication::restoreOverrideCursor();
+      QMessageBox::warning(mw,"Error","The mesh must be triangulated.");
+      return false;
+    }
     Heat_method * hm = NULL;
     Heat_method_idt * hm_idt = NULL;
     SMesh::Property_map<vertex_descriptor, double> heat_intensity =
@@ -817,17 +837,6 @@ private Q_SLOTS:
               );
     }
 
-    bool found = false;
-    SMesh::Property_map<vertex_descriptor, bool> is_source ;
-    boost::tie(is_source, found)=
-        mesh.property_map<vertex_descriptor,bool>("v:heat_source");
-    if(!found)
-    {
-      QApplication::restoreOverrideCursor();
-      QMessageBox::warning(mw, "Warning","Source vertices are needed for this property.");
-      return;
-    }
-
     // AF: So far we only deal with adding sources
     BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
       if(is_source[vd]){
@@ -835,6 +844,13 @@ private Q_SLOTS:
           hm_idt->add_source(vd);
         } else
           hm->add_source(vd);
+      }
+      else
+      {
+        if(iDT){
+          hm_idt->remove_source(vd);
+        } else
+          hm->remove_source(vd);
       }
     }
 
@@ -887,7 +903,9 @@ private Q_SLOTS:
       group = new Scene_group_item("Heat Visualization");
       scene->addItem(group);
       scene->changeGroup(item, group);
+      scene->changeGroup(source_points, group);
       group->lockChild(item);
+      group->lockChild(source_points);
     }
     mesh_heat_item_map[item] = new Scene_heat_item(item);
     mesh_heat_item_map[item]->setName(tr("%1 heat").arg(item->name()));
@@ -898,6 +916,7 @@ private Q_SLOTS:
     displayLegend();
     if(dock_widget->sourcePointsButton->isChecked())
       dock_widget->sourcePointsButton->toggle();
+    return true;
   }
 
   void replaceRamp()
@@ -1051,6 +1070,11 @@ private Q_SLOTS:
         return;
       }
       current_item = item;
+      connect(current_item, &Scene_surface_mesh_item::aboutToBeDestroyed,
+              this, [this]()
+      {
+        dock_widget->sourcePointsButton->setChecked(false);
+      });
       if(mesh_sources_map.find(item) == mesh_sources_map.end())
       {
         source_points = new Scene_points_with_normal_item();
