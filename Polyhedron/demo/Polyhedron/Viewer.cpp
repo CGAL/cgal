@@ -747,8 +747,10 @@ void Viewer::postSelection(const QPoint& pixel)
       orig = camera()->position() - offset();
       dir = point - orig;
     }
+    this->setProperty("performing_selection", true);
     Q_EMIT selectionRay(orig.x, orig.y, orig.z,
                         dir.x, dir.y, dir.z);
+    this->setProperty("performing_selection", false);
   }
 }
 bool CGAL::Three::Viewer_interface::readFrame(QString s, CGAL::qglviewer::Frame& frame)
