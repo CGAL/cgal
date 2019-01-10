@@ -1,4 +1,4 @@
-#if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <iostream>
 #include <fstream>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -17,7 +17,7 @@ typedef PS::Squared_distance_cost Cost;
 #endif
 int main(int argc, char* argv[])
 {
-  #if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
+  #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
   Polyline_2 polyline;
   std::ifstream ifs( (argc==1)?"data/polyline.wkt":argv[1]);
   CGAL::read_linestring_WKT(ifs, polyline);

@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/IO/WKT.h>
 
 #include <CGAL/Simple_cartesian.h>

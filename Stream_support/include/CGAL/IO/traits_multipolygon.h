@@ -20,7 +20,7 @@
 
 #ifndef CGAL_IO_TRAITS_MULTIPOLYGON_H
 #define CGAL_IO_TRAITS_MULTIPOLYGON_H
-#if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/internal/Geometry_container.h>
 #include <boost/geometry/io/wkt/write.hpp>
 #include <boost/geometry/io/wkt/read.hpp>

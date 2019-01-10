@@ -20,7 +20,7 @@
 
 #ifndef GEOMETRY_CONTAINER_H
 #define GEOMETRY_CONTAINER_H
-#if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <boost/geometry/io/wkt/write.hpp>
 #include <boost/geometry/io/wkt/read.hpp>
 #include <boost/shared_ptr.hpp>

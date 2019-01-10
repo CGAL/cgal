@@ -9,7 +9,7 @@
 #include <CGAL/assertions_behaviour.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Timer.h> 
-#if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/IO/WKT.h>
 #endif
 
@@ -343,7 +343,7 @@ MainWindow::open(QString fileName)
       this->addToRecentFiles(fileName);
     }
     else if(fileName.endsWith(".wkt")){
-#if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
       loadWKT(fileName);
       this->addToRecentFiles(fileName);
 #endif
@@ -357,7 +357,7 @@ MainWindow::on_actionLoadConstraints_triggered()
   QString fileName = QFileDialog::getOpenFileName(this,
                                                   tr("Open Constraint File"),
                                                   "../data"
-                                                #if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
+                                                #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                                   ,tr("Polylines (*.osm *.wkt);;")
                                                 #endif
                                                   );
@@ -377,12 +377,12 @@ std::string trim_right ( std::string str )
 }
 
 void MainWindow::loadWKT(QString 
-                         #if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
+                         #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                          fileName
                          #endif
                          )
 {
-#if BOOST_VERSION >= 105600 || BOOST_GCC < 40500
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
     typedef std::vector<Point_2> MultiPoint;
   
   typedef std::vector<Point_2> LineString;
