@@ -999,7 +999,7 @@ hyperbolic_periodic_locate(const Point& p,
     Point np0 = construct_point(construct_point(nf->vertex(0)->point(), nf->translation(0)) , tr);
     Point np1 = construct_point(construct_point(nf->vertex(1)->point(), nf->translation(1)) , tr);
     Point np2 = construct_point(construct_point(nf->vertex(2)->point(), nf->translation(2)) , tr);
-    Oriented_side os1 = side_of_hyperbolic_triangle(np0, np1, np2, p, lt, li);
+    CGAL_triangulation_assertion_code(Oriented_side os1 = side_of_hyperbolic_triangle(np0, np1, np2, p, lt, li));
     CGAL_triangulation_assertion(os1 == ON_POSITIVE_SIDE);
     lo = tr;
     return nf;
