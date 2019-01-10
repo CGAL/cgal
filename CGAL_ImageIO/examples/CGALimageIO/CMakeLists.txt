@@ -5,6 +5,10 @@ project( CGALimageIO_Examples )
 
 cmake_minimum_required(VERSION 3.1)
 
+if(POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW)
+endif()
+
 find_package(CGAL QUIET COMPONENTS ImageIO )
 
 if(CGAL_ImageIO_FOUND)

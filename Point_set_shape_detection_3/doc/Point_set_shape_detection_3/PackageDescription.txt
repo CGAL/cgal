@@ -1,6 +1,6 @@
-/*!
-\defgroup PkgPointSetShapeDetection3Ref Point Set Shape Detection Reference
+/// \defgroup PkgPointSetShapeDetection3Ref Point Set Shape Detection Reference
 
+/*!
 \defgroup PkgPointSetShapeDetection3Concepts Concepts
 \ingroup PkgPointSetShapeDetection3Ref
 

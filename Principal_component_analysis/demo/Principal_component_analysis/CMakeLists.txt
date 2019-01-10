@@ -8,6 +8,10 @@ if(NOT POLICY CMP0070 AND POLICY CMP0053)
   cmake_policy(SET CMP0053 OLD)
 endif()
 
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
+
 foreach(INCDIR ../../../STL_Extension/include ../../../GraphicsView/include ../../../filtered_kernel/include )
   if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR}")
     include_directories (BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR}")
