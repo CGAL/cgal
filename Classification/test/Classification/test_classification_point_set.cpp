@@ -50,7 +50,7 @@ int main (int, char**)
   Size_t_map echo_map;
   Color_map color_map;
 
-  map_added = pts.add_normal_map();
+  map_added = pts.add_normal_map().second;
   assert (map_added);
   normal_map = pts.normal_map();
   boost::tie (echo_map, map_added) = pts.add_property_map<std::size_t> ("echo");
