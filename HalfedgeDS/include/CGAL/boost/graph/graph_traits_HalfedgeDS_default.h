@@ -25,6 +25,7 @@
 #include <CGAL/Iterator_range.h>
 #include <CGAL/HalfedgeDS_decorator.h>
 #include <CGAL/HalfedgeDS_default.h>
+#include <CGAL/boost/graph/properties.h>
 
 namespace CGAL {
 
@@ -446,21 +447,6 @@ num_faces(const HalfedgeDS_default<T,I,A>& p)
 {
   return p.size_of_faces();
 }
-namespace internal {
-
-template<typename Handle, typename ValueType, typename Reference>
-struct HDS_Point_accessor
-  : boost::put_get_helper< Reference, HDS_Point_accessor<Handle, ValueType, Reference> >
-{
-  typedef boost::lvalue_property_map_tag category;
-  typedef Reference                      reference;
-  typedef ValueType                      value_type;
-  typedef Handle                         key_type;
-
-  reference operator[](Handle h) const { return h->point(); }
-};
-
-} // namespace internal
 
 template <class T>
 struct HDS_property_map;
@@ -471,13 +457,13 @@ struct HDS_property_map<vertex_point_t>
   template<class T, class I, class A>
   struct bind_
   {
-    typedef internal::HDS_Point_accessor<
+    typedef internal::Point_accessor<
       typename boost::graph_traits<
         HalfedgeDS_default<T, I, A>
         >::vertex_descriptor,
       typename T::Point_3, typename T::Point_3&> type;
 
-    typedef internal::HDS_Point_accessor<
+    typedef internal::Point_accessor<
       typename boost::graph_traits<
         HalfedgeDS_default<T, I, A>
         >::vertex_descriptor,

@@ -8,8 +8,8 @@ if ( Boost_VERSION GREATER 103400 )
   qt5_wrap_ui( meshingUI_FILES  Meshing_dialog.ui Smoother_dialog.ui Local_optimizers_dialog.ui )
   polyhedron_demo_plugin(mesh_3_plugin Mesh_3_plugin
                          Mesh_3_plugin_cgal_code.cpp Meshing_thread.cpp split_polylines.cpp
-                         ${meshingUI_FILES})
-  target_link_libraries(mesh_3_plugin PUBLIC scene_polyhedron_item scene_polygon_soup_item scene_polylines_item scene_implicit_function_item scene_image_item
+                         ${meshingUI_FILES} KEYWORDS Mesh_3)
+  target_link_libraries(mesh_3_plugin PUBLIC scene_polygon_soup_item scene_polylines_item scene_implicit_function_item scene_image_item
                         scene_surface_mesh_item scene_c3t3_item ${OPENGL_gl_LIBRARY} )
 
   set(VTK_LIBS "")
@@ -32,7 +32,7 @@ if ( Boost_VERSION GREATER 103400 )
   endif()
   if(Boost_FILESYSTEM_FOUND)
     qt5_wrap_ui( imgUI_FILES Image_res_dialog.ui raw_image.ui)
-    polyhedron_demo_plugin(io_image_plugin Io_image_plugin Volume_plane_intersection.cpp Raw_image_dialog.cpp ${imgUI_FILES} ${VOLUME_MOC_OUTFILES})
+    polyhedron_demo_plugin(io_image_plugin Io_image_plugin Volume_plane_intersection.cpp Raw_image_dialog.cpp ${imgUI_FILES} ${VOLUME_MOC_OUTFILES} KEYWORDS IO Mesh_3)
     target_link_libraries(io_image_plugin PUBLIC scene_image_item ${VTK_LIBS} )
     target_link_libraries(io_image_plugin PUBLIC CGAL::CGAL_ImageIO)
   else()
@@ -40,19 +40,19 @@ if ( Boost_VERSION GREATER 103400 )
   endif()
   polyhedron_demo_plugin(mesh_3_optimization_plugin Optimization_plugin
     Optimization_plugin_cgal_code.cpp Optimizer_thread.cpp
-    ${meshingUI_FILES})
-  target_link_libraries(mesh_3_optimization_plugin PUBLIC scene_c3t3_item scene_polyhedron_item scene_surface_mesh_item scene_image_item scene_implicit_function_item )
+    ${meshingUI_FILES} KEYWORDS Mesh_3)
+  target_link_libraries(mesh_3_optimization_plugin PUBLIC scene_c3t3_item scene_surface_mesh_item scene_image_item scene_implicit_function_item )
 
 
 
-  polyhedron_demo_plugin(c3t3_io_plugin C3t3_io_plugin)
+  polyhedron_demo_plugin(c3t3_io_plugin C3t3_io_plugin KEYWORDS IO Mesh_3)
   target_link_libraries(c3t3_io_plugin PUBLIC scene_c3t3_item)
 else( Boost_VERSION GREATER 103400 )
   message(STATUS "warning: the plugin mesh_3_plugin requires Boost>=1.34.1 and will not be compiled.")
 endif( Boost_VERSION GREATER 103400 )
 
 qt5_wrap_ui( ribUI_FILES  Rib_dialog.ui)
-polyhedron_demo_plugin(c3t3_rib_exporter_plugin C3t3_rib_exporter_plugin ${ribUI_FILES})
+polyhedron_demo_plugin(c3t3_rib_exporter_plugin C3t3_rib_exporter_plugin ${ribUI_FILES} KEYWORDS Mesh_3)
 target_link_libraries(c3t3_rib_exporter_plugin PUBLIC scene_c3t3_item)
 
 if(TBB_FOUND)

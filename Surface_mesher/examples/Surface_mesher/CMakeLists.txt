@@ -3,18 +3,17 @@
 
 project( Surface_mesher_Examples )
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
-
-include_directories(../../include)
+if(POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW)
+endif()
 
 find_package(CGAL QUIET COMPONENTS ImageIO)
 
 if ( CGAL_FOUND AND CGAL_ImageIO_FOUND )
 
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
+  include(${CGAL_USE_FILE})
 
   create_single_source_cgal_program( "mesh_a_3d_gray_image.cpp" )
   create_single_source_cgal_program( "mesh_an_implicit_function.cpp" )

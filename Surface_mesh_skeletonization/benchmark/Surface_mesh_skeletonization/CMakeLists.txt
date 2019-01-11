@@ -7,8 +7,7 @@ project( Mean_curvature_skeleton )
 #SET(GCC_COVERAGE_COMPILE_FLAGS "-fprofile-arcs -ftest-coverage")
 #SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}" )
 
-cmake_minimum_required(VERSION 2.8.11)
-
+cmake_minimum_required(VERSION 3.1)
 
 
 # CGAL and its components
@@ -20,10 +19,6 @@ if ( NOT CGAL_FOUND )
   return()  
 
 endif()
-
-# include helper file
-include( ${CGAL_USE_FILE} )
-
 
 # Boost and its components
 find_package( Boost REQUIRED )
@@ -39,8 +34,6 @@ endif()
 # include for local directory
 
 # include for local package
-include_directories( BEFORE ../../include )
-
 find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 
 if(NOT EIGEN3_FOUND)
@@ -52,8 +45,6 @@ endif(NOT EIGEN3_FOUND)
 
 # Creating entries for all .cpp/.C files with "main" routine
 # ##########################################################
-
-include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "solver_benchmark.cpp" )
 create_single_source_cgal_program( "mcf_scale_invariance.cpp" )

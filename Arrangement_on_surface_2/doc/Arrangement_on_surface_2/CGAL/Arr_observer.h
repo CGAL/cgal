@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2
+\ingroup PkgArrangementOnSurface2Ref
 
 \anchor arr_refarr_obs 
 
@@ -167,7 +167,7 @@ virtual void before_detach ();
 issued immediately after the observer has been detached from its 
 arrangement instance. 
 */ 
-virtual void after_attach (); 
+virtual void after_detach ();
 
 /// @} 
 

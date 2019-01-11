@@ -36,7 +36,7 @@ namespace CGAL {
 
 
 /**
-   \ingroup PkgPointSetProcessingIO
+   \ingroup PkgPointSetProcessing3IO
    Saves the range of `points` (positions + normals, if available) to a .off ASCII stream.
    The function writes for each point a line with the x y z position
    followed by the nx ny nz normal (if available).

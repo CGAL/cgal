@@ -71,7 +71,7 @@ class SimpleSurfaceMeshViewerQt : public Basic_viewer_qt
   typedef typename SM::Face_index face_descriptor;
   typedef typename SM::Edge_index edge_descriptor;
   typedef typename SM::Halfedge_index halfedge_descriptor;
-  
+
 public:
   /// Construct the viewer.
   /// @param amesh the surface mesh to view
@@ -156,40 +156,41 @@ protected:
   }
 
 protected:
-  typename Kernel::Vector_3 get_face_normal(halfedge_descriptor he)
+  Local_vector get_face_normal(halfedge_descriptor he)
   {
-    typename Kernel::Vector_3 normal=CGAL::NULL_VECTOR;
+    Local_vector normal=CGAL::NULL_VECTOR;
     halfedge_descriptor end=he;
     unsigned int nb=0;
     do
     {
-      internal::newell_single_step_3(sm.point(sm.source(he)),
-                                     sm.point(sm.target(he)), normal);
+      internal::newell_single_step_3
+        (internal::Geom_utils<Kernel>::get_local_point(sm.point(sm.source(he))),
+         internal::Geom_utils<Kernel>::get_local_point(sm.point(sm.target(he))), normal);
       ++nb;
       he=sm.next(he);
     }
     while (he!=end);
     assert(nb>0);
-    return (typename Kernel::Construct_scaled_vector_3()(normal, 1.0/nb));
+    return (typename Local_kernel::Construct_scaled_vector_3()(normal, 1.0/nb));
   }
   
-  typename Kernel::Vector_3 get_vertex_normal(halfedge_descriptor he)
+  Local_vector get_vertex_normal(halfedge_descriptor he)
   {
-    typename Kernel::Vector_3 normal=CGAL::NULL_VECTOR;
+    Local_vector normal=CGAL::NULL_VECTOR;
     halfedge_descriptor end=he;
     do
     {
       if (!sm.is_border(he))
       {
-        typename Kernel::Vector_3 n=get_face_normal(he);
-        normal=typename Kernel::Construct_sum_of_vectors_3()(normal, n);
+        Local_vector n=get_face_normal(he);
+        normal=typename Local_kernel::Construct_sum_of_vectors_3()(normal, n);
       }
       he=sm.next(sm.opposite(he));
     }
     while (he!=end);
     
-    if (!typename Kernel::Equal_3()(normal, CGAL::NULL_VECTOR))
-    { normal=(typename Kernel::Construct_scaled_vector_3()
+    if (!typename Local_kernel::Equal_3()(normal, CGAL::NULL_VECTOR))
+    { normal=(typename Local_kernel::Construct_scaled_vector_3()
               (normal, 1.0/CGAL::sqrt(normal.squared_length()))); }
     
     return normal;

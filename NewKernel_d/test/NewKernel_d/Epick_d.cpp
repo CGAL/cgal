@@ -633,6 +633,9 @@ void test3(){
   std::ostringstream output;
   output << showit;
   assert(output.str()=="3 1 2 4");
+  std::istringstream input("3 5 6 9");
+  input >> showit;
+  assert(ed(showit,cp(5,6,9)));
   P t1[]={cp(1,2,3),cp(3,2,1),cp(2,4,2)};
   assert(sbds(t1+0,t1+2,cp(2,2,3.414)) == CGAL::ON_BOUNDED_SIDE);
   assert(sbds(t1+0,t1+2,cp(1,2,3)) == CGAL::ON_BOUNDARY);
@@ -661,6 +664,14 @@ void test3(){
   WP tabw[]={cwp(x1,0),cwp(x2,0),cwp(x3,0),cwp(x4,0),cwp(x5,0)};
   assert(pt(tabw+0,tabw+4,tabw[4])==CGAL::ON_POSITIVE_SIDE);
   assert(ifpt(fo4,tabw+0,tabw+3,xw6)==CGAL::ON_POSITIVE_SIDE);
+  std::ostringstream swp; swp << wp; assert(swp.str()=="3 0 1 -1 2");
+  std::istringstream swp2("3 4 5 6 7");
+  swp2 >> wp;
+  assert(ed(wp.point(),cp(4,5,6)) && wp.weight()==7);
+
+  V v1=cv(3,2,1);
+  std::ostringstream sv1; sv1 << v1; assert(sv1.str()=="3 3 2 1");
+  std::istringstream sv2("3 4 5 6"); sv2 >> v1; assert(v1[0]==4&&v1[1]==5);
 }
 template struct CGAL::Epick_d<CGAL::Dimension_tag<2> >;
 template struct CGAL::Epick_d<CGAL::Dimension_tag<3> >;

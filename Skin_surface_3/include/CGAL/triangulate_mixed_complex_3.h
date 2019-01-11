@@ -1024,7 +1024,7 @@ get_weighted_circumcenter(Rt_Simplex const &s)
            r2t_converter_object(e.first->vertex(e.third)->point()));
     break;
   case 2:
-    f=s;
+    f= Rt_Facet(s);
     result = weighted_circumcenter_obj(
            r2t_converter_object(f.first->vertex((f.second+1)&3)->point()),
            r2t_converter_object(f.first->vertex((f.second+2)&3)->point()),

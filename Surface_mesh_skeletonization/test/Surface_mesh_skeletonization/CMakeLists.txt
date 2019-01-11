@@ -4,23 +4,17 @@
 
 project( Surface_mesh_skeletonization_Tests )
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
 
 find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
-
-find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
+  find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 
   if(EIGEN3_FOUND)
     include( ${EIGEN3_USE_FILE} )
-
-    include( CGAL_CreateSingleSourceCGALProgram )
-
-    include_directories (BEFORE "../../include")
 
     create_single_source_cgal_program( "MCF_Skeleton_test.cpp" )
     create_single_source_cgal_program( "skeleton_connectivity_test.cpp" )

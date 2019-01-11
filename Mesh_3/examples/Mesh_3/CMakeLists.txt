@@ -4,10 +4,9 @@
 
 project( Mesh_3_Examples )
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
 
-include_directories(../../include)
 add_definitions(-DCGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
                 -DCGAL_MESH_3_NO_DEPRECATED_C3T3_ITERATORS)
 
@@ -15,10 +14,15 @@ if ( MESH_3_VERBOSE )
   add_definitions(-DCGAL_MESH_3_VERBOSE)
 endif()
 
+if(POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW)
+endif()
+
 find_package(CGAL COMPONENTS ImageIO)
 
 if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
+
   find_package(Boost)
 
   # Activate concurrency ? (turned OFF by default)
@@ -64,8 +68,6 @@ if ( CGAL_FOUND )
 
 
   if ( Boost_FOUND AND Boost_VERSION GREATER 103400 )
-    include( CGAL_CreateSingleSourceCGALProgram )
-
     # Compilable examples
     create_single_source_cgal_program( "mesh_hybrid_mesh_domain.cpp" )
     create_single_source_cgal_program( "mesh_implicit_sphere.cpp" )

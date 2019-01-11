@@ -8,7 +8,11 @@ if(NOT POLICY CMP0070 AND POLICY CMP0053)
   cmake_policy(SET CMP0053 OLD)
 endif()
 
-foreach(INCDIR ../../include ../../../STL_Extension/include ../../../GraphicsView/include ../../../filtered_kernel/include )
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
+
+foreach(INCDIR ../../../STL_Extension/include ../../../GraphicsView/include ../../../filtered_kernel/include )
   if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR}")
     include_directories (BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR}")
   endif()
@@ -18,7 +22,6 @@ include_directories( ./ )
 
 # Find CGAL and CGAL Qt5
 find_package(CGAL COMPONENTS Qt5)
-include( ${CGAL_USE_FILE} )
 
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
 if (EIGEN3_FOUND)
@@ -33,6 +36,7 @@ find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL)
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND )
 
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
   qt5_wrap_ui( UI_FILES MainWindow.ui )
 
   include(AddFileDependencies)

@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgRangeSegmentTreesDTraitsClasses
+\ingroup PkgSearchStructuresTraitsClasses
 
 The class `Range_segment_tree_traits_set_2` is a range and segment tree traits class for the 
 2-dimensional point class from the \cgal kernel. The class is 
@@ -34,7 +34,7 @@ std::pair<Key, Key> Interval;
 namespace CGAL {
 
 /*!
-\ingroup PkgRangeSegmentTreesDTraitsClasses
+\ingroup PkgSearchStructuresTraitsClasses
 
 The class `Range_segment_tree_traits_set_3` is a range and segment tree traits class for the 3-dimensional 
 point class from the \cgal kernel. 
@@ -66,7 +66,7 @@ std::pair<Key, Key> Interval;
 namespace CGAL {
 
 /*!
-\ingroup PkgRangeSegmentTreesDTraitsClasses
+\ingroup PkgSearchStructuresTraitsClasses
 
 The class `Range_tree_traits_map_2` is a range tree traits class for the 
 2-dimensional point class from the \cgal kernel, where data of 
@@ -100,7 +100,7 @@ std::pair<R::Point_2, R::Point_2 > Interval;
 namespace CGAL {
 
 /*!
-\ingroup PkgRangeSegmentTreesDTraitsClasses
+\ingroup PkgSearchStructuresTraitsClasses
 
 The class `Range_tree_traits_map_3` is a range and segment tree traits class for the 3-dimensional 
 point class from the \cgal kernel, where data of 
@@ -134,7 +134,7 @@ std::pair<R::Point_3, R::Point_3> Interval;
 namespace CGAL {
 
 /*!
-\ingroup PkgRangeSegmentTreesDTraitsClasses
+\ingroup PkgSearchStructuresTraitsClasses
 
 The class `Segment_tree_traits_map_2` is a segment tree traits class for the 
 2-dimensional point class from the \cgal kernel, where data of 
@@ -168,7 +168,7 @@ std::pair<std::pair<Key,Key>,T> Interval;
 namespace CGAL {
 
 /*!
-\ingroup PkgRangeSegmentTreesDTraitsClasses
+\ingroup PkgSearchStructuresTraitsClasses
 
 The class `Segment_tree_traits_map_3` is a segment tree traits class for the 3-dimensional 
 point class from the \cgal kernel, where data of 

@@ -94,7 +94,7 @@ public Q_SLOTS:
   //! If b is true, facets will be ligted from both internal and external sides.
   //! If b is false, only the side that is exposed to the light source will be lighted.
   void setTwoSides(bool b) Q_DECL_OVERRIDE;
-  void SetOrthoProjection( bool b);
+  void SetOrthoProjection( bool b) Q_DECL_OVERRIDE;
   //! If b is true, some items are displayed in a simplified version when moving the camera.
   //! If b is false, items display is never altered, even when moving.
   void setFastDrawing(bool b) Q_DECL_OVERRIDE;
@@ -114,8 +114,6 @@ public Q_SLOTS:
   {
     setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, CGAL::qglviewer::SELECT);
   }
-  //!Prompt a dialog to set the number of passes for the transparency.
-  void setTotalPass_clicked();
   virtual void setNoBinding() Q_DECL_OVERRIDE
   {
     setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, CGAL::qglviewer::NO_CLICK_ACTION);

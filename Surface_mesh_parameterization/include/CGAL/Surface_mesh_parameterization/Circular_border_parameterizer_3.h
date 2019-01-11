@@ -45,7 +45,7 @@ namespace Surface_mesh_parameterization {
 // Class Circular_border_parameterizer_3
 //
 
-/// \ingroup PkgSurfaceParameterizationBorderParameterizationMethods
+/// \ingroup PkgSurfaceMeshParameterizationBorderParameterizationMethods
 ///
 /// This is the base class of strategies that parameterize the border
 /// of a 3D surface onto a circle.
@@ -179,7 +179,7 @@ public:
 // Class Circular_border_uniform_parameterizer_3
 //
 
-/// \ingroup PkgSurfaceParameterizationBorderParameterizationMethods
+/// \ingroup PkgSurfaceMeshParameterizationBorderParameterizationMethods
 ///
 /// This class parameterizes the border of a 3D surface onto a circle
 /// in a uniform manner: points are equally spaced.
@@ -231,7 +231,7 @@ public:
 // Class Circular_border_arc_length_parameterizer_3
 //
 
-/// \ingroup  PkgSurfaceParameterizationBorderParameterizationMethods
+/// \ingroup  PkgSurfaceMeshParameterizationBorderParameterizationMethods
 ///
 /// This class parameterizes the border of a 3D surface onto a circle,
 /// with an arc-length parameterization: the `(u,v)` values are proportional

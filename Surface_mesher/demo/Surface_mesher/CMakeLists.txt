@@ -21,6 +21,10 @@ if(POLICY CMP0072)
   cmake_policy(SET CMP0072 NEW)
 endif()
 
+if(POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW)
+endif()
+
 set(PACKAGE_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../..)
 
 # Add several CGAL packages to the include and link paths,
@@ -44,7 +48,6 @@ find_package(CGAL COMPONENTS ImageIO Qt5)
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
 
   add_definitions(-DQT_NO_KEYWORDS)
-  include( ${CGAL_USE_FILE} )
 
   find_package(Qt5 QUIET COMPONENTS OpenGL Xml Svg)
   find_package(OpenGL    )

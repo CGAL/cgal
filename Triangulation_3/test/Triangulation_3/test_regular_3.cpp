@@ -448,9 +448,10 @@ int main()
     CGAL::Parallel_tag >	                            Tds_parallel;
   typedef CGAL::Regular_triangulation_3<
     traits, Tds_parallel, Lock_ds>                    RT_parallel;
-  // The following test won't do things in parallel since it doesn't provide
-  // a lock data structure
+
+  // The following test won't do things in parallel since it doesn't provide a lock data structure
   test_RT<RT_parallel>();
+
   // This test performs parallel operations
   _test_cls_parallel_triangulation_3( RT_parallel() );
 #endif

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3Domains
+\ingroup PkgMesh3Domains
 
 The class `Mesh_constant_domain_field_3` is a model of concept `MeshDomainField_3`. It provides 
 a constant field accessible using queries on 3D-points. 

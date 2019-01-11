@@ -47,7 +47,7 @@ class Io_implicit_function_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "implicit_function_io_plugin.json")
 
 public:
   Io_implicit_function_plugin();
@@ -96,39 +96,22 @@ init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Mes
   this->scene = scene_interface;
   this->mw = mainWindow;
   
-  QAction* actionLoadFunction = new QAction("Load &Implicit Function", mw);
+  QAction* actionLoadFunction = new QAction("Generate &Implicit Function", mw);
   if( NULL != actionLoadFunction )
   {
     connect(actionLoadFunction, SIGNAL(triggered()), this, SLOT(load_function()));
   }
   
   QMenu* menuFile = mw->findChild<QMenu*>("menuFile");
-  if ( NULL != menuFile )
-  {
-    QList<QAction*> menuFileActions = menuFile->actions();
-    
-    // Look for action just after "Load..." action
-    QAction* actionAfterLoad = NULL;
-    for ( QList<QAction*>::iterator it_action = menuFileActions.begin(), 
-         end = menuFileActions.end() ; it_action != end ; ++ it_action ) //Q_FOREACH( QAction* action, menuFileActions)
-    {
-      if ( NULL != *it_action && (*it_action)->text().contains("Load") )
-      {
-        ++it_action;
-        if ( it_action != end && NULL != *it_action )
-        {
-          actionAfterLoad = *it_action;
-        }
-      }
-    }
-    
-    // Insert "Load implicit function" action
-    if ( NULL != actionAfterLoad )
-    {
-      menuFile->insertAction(actionAfterLoad,actionLoadFunction);      
-    }
-
+  QMenu* menu = menuFile->findChild<QMenu*>("menuGenerateObject");
+  if(!menu){
+    QAction* actionLoad = mw->findChild<QAction*>("actionLoadPlugin");
+    menu = new QMenu(tr("Generate &Objet"), menuFile);
+    menu->setObjectName("menuGenerateObject");
+    menuFile->insertMenu(actionLoad, menu);
   }
+  // Insert "Generate Implicit Function" action
+    menu->addAction(actionLoadFunction);
 }
 
 

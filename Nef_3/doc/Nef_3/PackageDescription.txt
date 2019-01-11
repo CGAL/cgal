@@ -1,22 +1,22 @@
-/// \defgroup PkgNef3 3D Boolean Operations on  Nef Polyhedra Reference
+/// \defgroup PkgNef3Ref 3D Boolean Operations on  Nef Polyhedra Reference
 ///
 /// \defgroup PkgNef3IOFunctions I/O Functions
-/// \ingroup PkgNef3
+/// \ingroup PkgNef3Ref
 
 
 /*!
-\addtogroup PkgNef3
+\addtogroup PkgNef3Ref
 \todo check generated documentation
-\cgalPkgDescriptionBegin{3D Boolean Operations on Nef Polyhedra,PkgNef3Summary}
+\cgalPkgDescriptionBegin{3D Boolean Operations on Nef Polyhedra,PkgNef3}
 \cgalPkgPicture{Nef_3-teaser.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Peter Hachenberger and Lutz Kettner}
 \cgalPkgDesc{3D Nef polyhedra, are a boundary representation for cell-complexes bounded by halfspaces that supports Boolean operations and topological operations in full generality including unbounded cells, mixed dimensional cells (e.g., isolated vertices and antennas). Nef polyhedra distinguish between open and closed sets and can represent non-manifold geometry.}
-\cgalPkgManuals{Chapter_3D_Boolean_Operations_on_Nef_Polyhedra,PkgNef3}
+\cgalPkgManuals{Chapter_3D_Boolean_Operations_on_Nef_Polyhedra,PkgNef3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.1}
-\cgalPkgDependsOn{\ref PkgNef2Summary\, \ref PkgNefS2Summary}
+\cgalPkgDependsOn{\ref PkgNef2\, \ref PkgNefS2}
 \cgalPkgBib{cgal:hk-bonp3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}

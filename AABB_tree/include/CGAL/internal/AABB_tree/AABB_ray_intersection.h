@@ -31,10 +31,18 @@
 #include <boost/type_traits/is_same.hpp>
 #include <boost/variant/apply_visitor.hpp>
 #if BOOST_VERSION >= 105000
-#include <boost/heap/priority_queue.hpp>
+#  if defined(BOOST_MSVC)
+#    pragma warning(push)
+#    pragma warning(disable: 4996)
+#  endif
+#  include <boost/heap/priority_queue.hpp>
+#  if defined(BOOST_MSVC)
+#    pragma warning(pop)
+#  endif
 #else
-#include <queue>
+#  include <queue>
 #endif
+
 #include <CGAL/assertions.h>
 
 namespace CGAL {

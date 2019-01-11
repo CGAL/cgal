@@ -22,7 +22,7 @@
 #define CGAL_BGL_PARTITION_H
 
 /**
-* \ingroup PkgBGL
+* \ingroup PkgBGLRef
 * \file CGAL/boost/graph/partition.h
 * Convenience header file including the headers for all the partitioning-related
 * free functions of this package.

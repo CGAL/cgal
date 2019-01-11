@@ -71,7 +71,7 @@ struct Get_eigen_matrix< ::Eigen::SparseLU<EigenMatrix, EigenOrdering >, FT>
 } //internal
 
 /*!
-\ingroup PkgSolver
+\ingroup PkgSolverInterfaceRef
 
 The class `Eigen_solver_traits` provides an interface to the sparse solvers of \ref thirdpartyEigen "Eigen".
 \ref thirdpartyEigen "Eigen" version 3.1 (or later) must be available on the system.

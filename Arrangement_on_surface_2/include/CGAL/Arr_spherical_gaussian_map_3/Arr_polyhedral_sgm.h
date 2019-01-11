@@ -204,9 +204,6 @@ private:
     /*! The number of facest */
     size_type m_num_facets;
 
-    /*! The type of the facets. */
-    size_type m_num_vertices_per_facet;
-
     /*! The index of the marked vertex */
     size_type m_marked_vertex_index;
 
@@ -223,13 +220,11 @@ private:
                   size_type num_points,
                   const CoordIndexIter& indices_begin,
                   const CoordIndexIter& indices_end,
-                  size_type num_facets,
-                  size_type num_vertices_per_facet = 0) :
+                  size_type num_facets) :
       m_points_begin(points_begin), m_points_end(points_end),
       m_num_points(num_points),
       m_indices_begin(indices_begin), m_indices_end(indices_end),
       m_num_facets(num_facets),
-      m_num_vertices_per_facet(num_vertices_per_facet),
       m_marked_vertex_index(0),
       m_marked_edge_index(0),
       m_marked_facet_index(0)
@@ -246,6 +241,11 @@ private:
 
     /*! Set the marked-face index */
     void set_marked_facet_index(size_type id) {m_marked_facet_index = id;}
+
+    /*! Add vertices to the current facet. */
+    template <typename Iterator, typename Builder>
+    void add_vertices_to_facet(Iterator begin, Iterator end, Builder& B)
+    { for (Iterator it = begin; it != end; ++it) B.add_vertex_to_facet(*it); }
 
     /*! builds the polyhedron */
     void operator()(HDS& hds)
@@ -264,51 +264,16 @@ private:
 
       // Add the facets:
       counter = 0;
-      switch (m_num_vertices_per_facet) {
-       case 0:          // '0' indicates variant number of vertices per facet
-        {
-         CoordIndexIter ii = m_indices_begin;
-         while (ii != m_indices_end) {
-           Polyhedron_facet_handle fh = B.begin_facet();
-           if (counter == m_marked_facet_index) fh->set_marked(true);
-           int index = *ii++;
-           while (index != -1) {
-             B.add_vertex_to_facet(index);
-             index = *ii++;
-           }
-           B.end_facet();
-           ++counter;
-         }
-        }
-        break;
-
-       case 3:
-        // Unfold for to improve preformance:
-        for (CoordIndexIter ii = m_indices_begin; ii != m_indices_end;
-             ii += m_num_vertices_per_facet)
-        {
-          Polyhedron_facet_handle fh = B.begin_facet();
-          if (counter == m_marked_facet_index) fh->set_marked(true);
-          B.add_vertex_to_facet(*ii);
-          B.add_vertex_to_facet(*(ii+1));
-          B.add_vertex_to_facet(*(ii+2));
-          B.end_facet();
-          ++counter;
-        }
-        break;
-
-       default:
-        for (CoordIndexIter ii = m_indices_begin; ii != m_indices_end;
-             ii += m_num_vertices_per_facet)
-        {
-          Polyhedron_facet_handle fh = B.begin_facet();
-          if (counter == m_marked_facet_index) fh->set_marked(true);
-          for (size_type i = 0; i < m_num_vertices_per_facet; ++i)
-            B.add_vertex_to_facet(*(ii + i));
-          B.end_facet();
-          ++counter;
-        }
-        break;
+      for (CoordIndexIter it = m_indices_begin; it != m_indices_end; ++it) {
+        Polyhedron_facet_handle fh = B.begin_facet();
+        if (counter == m_marked_facet_index) fh->set_marked(true);
+        //! \todo EF: when upgrading to C++11 enable the following code and
+        // remove add_vertices_to_facet().
+        // for (const auto& facet : *it) B.add_vertex_to_facet(facet);
+        // B.end_facet();
+        add_vertices_to_facet(it->begin(), it->end(), B);
+        B.end_facet();
+        ++counter;
       }
       B.end_surface();
     }
@@ -366,13 +331,12 @@ private:
                          size_type num_points,
                          const CoordIndexIter indices_begin,
                          const CoordIndexIter indices_end,
-                         size_type num_facets,
-                         size_type num_vertices_per_facet = 0)
+                         size_type num_facets)
   {
     /*! The builder */
     Build_surface<PointIterator, CoordIndexIter>
       surface(points_begin, points_end, num_points,
-              indices_begin, indices_end, num_facets, num_vertices_per_facet);
+              indices_begin, indices_end, num_facets);
     surface.set_marked_vertex_index(m_marked_vertex_index);
     surface.set_marked_edge_index(m_marked_edge_index);
     surface.set_marked_facet_index(m_marked_facet_index);
@@ -604,15 +568,13 @@ public:
                   const CoordIndexIter indices_begin,
                   const CoordIndexIter indices_end,
                   size_type num_facets,
-                  size_type num_vertices_per_facet = 0,
                   Visitor* visitor = NULL)
   {
     m_visitor = visitor;
 
     Polyhedron polyhedron;
     update_polyhedron(polyhedron, points_begin, points_end, num_points,
-                      indices_begin, indices_end, num_facets,
-                      num_vertices_per_facet);
+                      indices_begin, indices_end, num_facets);
 
 #if 0
     std::copy(polyhedron.points_begin(), polyhedron.points_end(),

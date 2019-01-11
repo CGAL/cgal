@@ -38,6 +38,7 @@
 #include <CGAL/is_streamable.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/property_map.h>
+#include <CGAL/internal/Mesh_3/indices_management.h>
 
 #include <vector>
 #include <set>
@@ -517,7 +518,7 @@ struct Display_incidences_to_curves_aux<MDwPF, false> {
 /// @endcond
 
 /*!
-\ingroup PkgMesh_3Domains
+\ingroup PkgMesh3Domains
 
 The class `Mesh_domain_with_polyline_features_3` is designed to allow the user
 to add some 0- and 1-dimensional
@@ -546,15 +547,19 @@ class Mesh_domain_with_polyline_features_3
 public:
 /// \name Types
 /// @{
-  typedef typename MeshDomain_3::Index    Index;
+  typedef typename MeshDomain_3::Surface_patch_index Surface_patch_index;
+  typedef typename MeshDomain_3::Subdomain_index     Subdomain_index;
+  typedef int                                        Curve_index;
+  typedef int                                        Corner_index;
 
-  typedef typename MeshDomain_3::Surface_patch_index
-                                  Surface_patch_index;
+  typedef typename Mesh_3::internal::Index_generator_with_features<
+    typename MeshDomain_3::Subdomain_index,
+    Surface_patch_index,
+    Curve_index,
+    Corner_index>::type                              Index;
 
-  typedef int                     Curve_index;
-  typedef int                     Corner_index;
-  typedef CGAL::Tag_true           Has_features;
-  typedef typename MeshDomain_3::R::FT          FT;
+  typedef CGAL::Tag_true                             Has_features;
+  typedef typename MeshDomain_3::R::FT               FT;
 /// @}
 
 #ifndef DOXYGEN_RUNNING
@@ -777,17 +782,46 @@ public:
                                 const Point_3& c1, const Point_3& c2,
                                 const FT sq_r1, const FT sq_r2) const;
 
+
+  /**
+   * Returns the index to be stored in a vertex lying on the surface identified
+   * by \c index.
+   */
+  Index index_from_surface_patch_index(const Surface_patch_index& index) const
+  { return Index(index); }
+
+  /**
+   * Returns the index to be stored in a vertex lying in the subdomain
+   * identified by \c index.
+   */
+  Index index_from_subdomain_index(const Subdomain_index& index) const
+  { return Index(index); }
+
   /// Returns an `Index` from a `Curve_index`
   Index index_from_curve_index(const Curve_index& index) const
   { return Index(index); }
 
-  /// Returns a `Curve_index` from an `Index`
-  Curve_index curve_index(const Index& index) const
-  { return boost::get<Curve_index>(index); }
-
   /// Returns an `Index` from a `Corner_index`
   Index index_from_corner_index(const Corner_index& index) const
   { return Index(index); }
+
+  /**
+   * Returns the \c Surface_patch_index of the surface patch
+   * where lies a vertex with dimension 2 and index \c index.
+   */
+  Surface_patch_index surface_patch_index(const Index& index) const
+  { return boost::get<Surface_patch_index>(index); }
+
+  /**
+   * Returns the index of the subdomain containing a vertex
+   *  with dimension 3 and index \c index.
+   */
+  Subdomain_index subdomain_index(const Index& index) const
+  { return boost::get<Subdomain_index>(index); }
+
+  /// Returns a `Curve_index` from an `Index`
+  Curve_index curve_index(const Index& index) const
+  { return boost::get<Curve_index>(index); }
 
   /// Returns a `Corner_index` from an `Index`
   Corner_index corner_index(const Index& index) const

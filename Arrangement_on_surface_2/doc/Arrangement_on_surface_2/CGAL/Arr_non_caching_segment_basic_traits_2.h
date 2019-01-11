@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2TraitsClasses
+\ingroup PkgArrangementOnSurface2TraitsClasses
 
 The traits class `Arr_non_caching_segment_basic_traits_2` is a model of the `ArrangementTraits_2` 
 concept that allow the construction and maintenance of arrangements of 

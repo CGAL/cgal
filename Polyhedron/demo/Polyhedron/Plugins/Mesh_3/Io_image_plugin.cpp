@@ -1,5 +1,8 @@
 #ifdef _MSC_VER
 #  pragma warning(disable:4244) // conversion with loss of data
+#  pragma warning(disable:4996) // boost_1_65_1\boost/iostreams/positioning.hpp(96):
+                                // warning C4996: 'std::fpos<_Mbstatet>::seekpos': warning STL4019:
+                                // The member std::fpos::seekpos() is non-Standard
 #endif
 
 #include "Volume_plane.h"
@@ -202,7 +205,7 @@ class Io_image_plugin :
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0" FILE "io_image_plugin.json")
 
 public:
 
@@ -221,7 +224,7 @@ public:
     z_control = NULL;
     current_control = NULL;
     planeSwitch = new QAction("Add Volume Planes", mw);
-    QAction *actionLoadDCM = new QAction("Open directory", mw);
+    QAction *actionLoadDCM = new QAction("Open Directory (for DCM files)", mw);
     connect(actionLoadDCM, SIGNAL(triggered()), this, SLOT(on_actionLoadDCM_triggered()));
     if(planeSwitch) {
       planeSwitch->setProperty("subMenuName", "3D Mesh Generation");
@@ -552,6 +555,7 @@ private:
     } else {
       layout = controlDockWidget->findChild<QLayout*>("vpSliderLayout");
       controlDockWidget->show();
+      controlDockWidget->raise();
     }
 
     return layout;

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStlExtensionAssertions
+\ingroup PkgSTLExtensionAssertions
 
 */
 

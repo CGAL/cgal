@@ -29,6 +29,7 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+#include <CGAL/Polygon_mesh_processing/orientation.h>
 
 #include <CGAL/AABB_triangle_primitive.h>
 
@@ -37,132 +38,6 @@ namespace Polygon_mesh_processing {
 
 namespace internal
 {
-template <class TriangleMesh,
-          class NamedParameters1,
-          class NamedParameters2>
-bool
-clip_open_impl(      TriangleMesh& tm,
-                     TriangleMesh& clipper,
-               const NamedParameters1& np_tm,
-               const NamedParameters2& np_c)
-{
-  typedef typename GetVertexPointMap<TriangleMesh,
-                                     NamedParameters1>::type Vpm;
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters2>::type GeomTraits;
-  typedef boost::graph_traits<TriangleMesh> GT;
-  typedef typename GT::halfedge_descriptor halfedge_descriptor;
-  typedef typename GT::face_descriptor face_descriptor;
-
-// First build an AABB-tree of the clipper triangles as it will be modified
-  typedef std::vector<typename GeomTraits::Triangle_3> Clipper_triangles;
-  typedef typename Clipper_triangles::iterator Tr_iterator;
-  typedef CGAL::AABB_triangle_primitive<GeomTraits, Tr_iterator> Primitive;
-  typedef CGAL::AABB_traits<GeomTraits, Primitive> AABB_triangle_traits;
-  typedef CGAL::AABB_tree<AABB_triangle_traits> Clipper_tree;
-
-  // vector of clipper triangles
-  Clipper_triangles clipper_triangles;
-  clipper_triangles.reserve( num_faces(clipper) );
-  Vpm vpm_c = boost::choose_param(boost::get_param(np_c, internal_np::vertex_point),
-                                  get_property_map(vertex_point, clipper));
-  BOOST_FOREACH(face_descriptor f, faces(clipper))
-  {
-    halfedge_descriptor h = halfedge(f, clipper);
-    clipper_triangles.push_back( typename GeomTraits::Triangle_3(
-      get(vpm_c, source(h, clipper)),
-      get(vpm_c, target(h, clipper)),
-      get(vpm_c, target(next(h, clipper), clipper)) ) );
-  }
-  // tree
-  Clipper_tree clipper_tree(clipper_triangles.begin(), clipper_triangles.end());
-  // predicate functor
-  Side_of_triangle_mesh<TriangleMesh, GeomTraits, Vpm, Clipper_tree> side_of(clipper_tree);
-
-// Second corefine the meshes
-  typedef CGAL::dynamic_edge_property_t<bool> Ecm_tag;
-  typedef typename boost::property_map<TriangleMesh, Ecm_tag>::type Ecm;
-  Ecm ecm = get(Ecm_tag(), tm);
-
-  corefine(tm, clipper, np_tm.edge_is_constrained_map(ecm), np_c);
-
-// Extract connected components
-  typedef typename GetFaceIndexMap<TriangleMesh,
-                                   NamedParameters1>::type Fid_map;
-
-  Fid_map fid_map = boost::choose_param(boost::get_param(np_tm, internal_np::face_index),
-                                        get_property_map(boost::face_index, tm));
-  Vpm vpm1 = boost::choose_param(boost::get_param(np_tm, internal_np::vertex_point),
-                                 get_property_map(vertex_point, tm));
-
-  typedef CGAL::dynamic_vertex_property_t<std::size_t> Vid_tag;
-  typedef typename boost::property_map<TriangleMesh, Vid_tag>::type Vid_map;
-  Vid_map vid_map = get(Vid_tag(), tm);
-
-  // init indices if needed
-  helpers::init_face_indices(tm, fid_map);
-  helpers::init_vertex_indices(tm, vid_map);
-
-  // set the connected component id of each face
-  std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
-  std::size_t nb_cc =
-    connected_components(tm,
-                         bind_property_maps(fid_map, make_property_map(face_cc)),
-                         parameters::face_index_map(fid_map).
-                         edge_is_constrained_map(ecm));
-
-
-  boost::dynamic_bitset<> cc_not_handled(nb_cc);
-  cc_not_handled.set();
-  std::vector <std::size_t> ccs_to_remove;
-
-  BOOST_FOREACH(face_descriptor f, faces(tm))
-  {
-    std::size_t cc_id = face_cc[ get(fid_map, f) ];
-    if ( !cc_not_handled.test(cc_id) ) continue;
-
-    halfedge_descriptor h=halfedge(f, tm);
-    for(int i=0;i<3;++i)
-    {
-      // look for a vertex not on a constrained edge
-      bool no_marked_edge=true;
-      BOOST_FOREACH(halfedge_descriptor h2, halfedges_around_target(h, tm))
-        if ( get(ecm, edge(h2, tm)) ){
-          no_marked_edge=false;
-          break;
-        }
-      if (no_marked_edge){
-        if ( side_of( get(vpm1, target(h, tm) ) ) == ON_UNBOUNDED_SIDE )
-          ccs_to_remove.push_back(cc_id);
-        cc_not_handled.reset(cc_id);
-        break;
-      }
-      h=next(h, tm);
-    }
-    if (!cc_not_handled.any()) break;
-  }
-
-  if (cc_not_handled.any())
-  {
-    // A patch without no vertex incident to a non-constrained edges
-    //  is a coplanar patch: drop it or keep it!
-    if (!boost::choose_param(boost::get_param(np_tm, internal_np::use_compact_clipper), true))
-    {
-      for (std::size_t cc_id = cc_not_handled.find_first();
-                       cc_id < cc_not_handled.npos;
-                       cc_id = cc_not_handled.find_next(cc_id))
-      {
-        ccs_to_remove.push_back(cc_id);
-      }
-    }
-  }
-// Filter out the cc
-  remove_connected_components(tm,
-    ccs_to_remove,
-    bind_property_maps(fid_map, make_property_map(face_cc)),
-    parameters::vertex_index_map(vid_map));
-
-  return true;
-}
 
 template <class Geom_traits, class Plane_3, class Point_3>
 int
@@ -244,34 +119,47 @@ clip_to_bbox(const Plane_3& plane,
       int current_id = face_indices[4*i + k];
       int next_id = face_indices[4*i + (k+1)%4];
 
-      if ( orientations[ current_id ] != ON_POSITIVE_SIDE )
+      switch(orientations[ current_id ])
       {
-        all_out=false;
-        // point on or on the negative side
-        output_faces[i].push_back( current_id );
-        in_point_ids.insert( output_faces[i].back() );
-        // check for intersection of the edge
-        if (orientations[ current_id ] == ON_NEGATIVE_SIDE &&
-            orientations[ next_id ] == ON_POSITIVE_SIDE)
+        case ON_NEGATIVE_SIDE:
         {
-          output_faces[i].push_back(
-            inter_pt_index<Geom_traits>(current_id, next_id, plane, corners, id_map) );
+          all_out=false;
+          // point on or on the negative side
+          output_faces[i].push_back( current_id );
           in_point_ids.insert( output_faces[i].back() );
+          // check for intersection of the edge
+          if (orientations[ next_id ] == ON_POSITIVE_SIDE)
+          {
+            output_faces[i].push_back(
+              inter_pt_index<Geom_traits>(current_id, next_id, plane, corners, id_map) );
+            in_point_ids.insert( output_faces[i].back() );
+          }
+          break;
         }
-      }
-      else
-      {
-        all_in = false;
-        // check for intersection of the edge
-        if ( orientations[ next_id ] == ON_NEGATIVE_SIDE )
+        case ON_POSITIVE_SIDE:
         {
-          output_faces[i].push_back(
-            inter_pt_index<Geom_traits>(current_id, next_id, plane, corners, id_map) );
+          all_in = false;
+          // check for intersection of the edge
+          if ( orientations[ next_id ] == ON_NEGATIVE_SIDE )
+          {
+            output_faces[i].push_back(
+              inter_pt_index<Geom_traits>(current_id, next_id, plane, corners, id_map) );
+            in_point_ids.insert( output_faces[i].back() );
+          }
+          break;
+        }
+        case ON_ORIENTED_BOUNDARY:
+        {
+          output_faces[i].push_back( current_id );
           in_point_ids.insert( output_faces[i].back() );
         }
       }
     }
-    CGAL_assertion( output_faces[i].empty() || output_faces[i].size() >= 3 );
+    if (output_faces[i].size() < 3){
+      CGAL_assertion(output_faces[i].empty() ||
+                     (output_faces[i].front()<8 && output_faces[i].back()<8) );
+      output_faces[i].clear(); // edge of the bbox included in the plane
+    }
   }
 
   // the intersection is the full bbox
@@ -414,7 +302,7 @@ clip_to_bbox(const Plane_3& plane,
   *   \cgalParamEnd
   *   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tm` (`clipper`).
   *     Note that if the property map is writable, the indices of the faces
-  *     of `tm` and `clipper` will be set after the refining `tm` with the intersection with `plane`.
+  *     of `tm` and `clipper` will be set after refining `tm` with the intersection with `clipper`.
   *   \cgalParamEnd
   *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
   *                            that is used to track the creation of new faces.
@@ -445,13 +333,14 @@ clip(      TriangleMesh& tm,
      const NamedParameters1& np_tm,
      const NamedParameters2& np_c)
 {
-  const bool close =
+  const bool clip_volume =
     boost::choose_param(boost::get_param(np_tm, internal_np::clip_volume), false);
 
-  if (close && is_closed(tm))
+  if (clip_volume && is_closed(tm))
     return corefine_and_compute_intersection(tm, clipper, tm, np_tm, np_c);
-
-  return internal::clip_open_impl(tm, clipper, np_tm, np_c);
+  return corefine_and_compute_intersection(tm, clipper, tm,
+                                           np_tm.use_bool_op_to_clip_surface(true),
+                                           np_c);
 }
 
 namespace internal{
@@ -530,14 +419,13 @@ bool clip(      TriangleMesh& tm,
   CGAL::Bbox_3 bbox = ::CGAL::Polygon_mesh_processing::bbox(tm);
 
   //extend the bbox a bit to avoid border cases
-  double xd=(bbox.xmax()-bbox.xmin())/100;
-  double yd=(bbox.ymax()-bbox.ymin())/100;
-  double zd=(bbox.zmax()-bbox.zmin())/100;
+  double xd=(std::max)(1.,(bbox.xmax()-bbox.xmin())/100);
+  double yd=(std::max)(1.,(bbox.ymax()-bbox.ymin())/100);
+  double zd=(std::max)(1.,(bbox.zmax()-bbox.zmin())/100);
   bbox=CGAL::Bbox_3(bbox.xmin()-xd, bbox.ymin()-yd, bbox.zmin()-zd,
                     bbox.xmax()+xd, bbox.ymax()+yd, bbox.zmax()+zd);
   TriangleMesh clipper;
   Oriented_side os = internal::clip_to_bbox(plane, bbox, clipper, parameters::all_default());
-
   switch(os)
   {
     case ON_NEGATIVE_SIDE:
