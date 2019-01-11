@@ -82,7 +82,7 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
 
   if(fileinfo.size() == 0)
   {
-    CGAL::Three::Three::messages()->warning( tr("The file you are trying to load is empty."));
+    CGAL::Three::Three::s_warning( tr("The file you are trying to load is empty."));
     return 0;
   }
   

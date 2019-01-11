@@ -77,7 +77,7 @@ CGAL::Three::Scene_item* Surf_io_plugin::actual_load(QFileInfo fileinfo)
 
   if(fileinfo.size() == 0)
   {
-    CGAL::Three::Three::messages()->warning( tr("The file you are trying to load is empty."));
+    CGAL::Three::Three::s_warning( tr("The file you are trying to load is empty."));
     Scene_group_item* item =
         new Scene_group_item(fileinfo.completeBaseName());
     return item;

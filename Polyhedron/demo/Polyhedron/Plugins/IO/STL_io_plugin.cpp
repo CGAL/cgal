@@ -75,7 +75,7 @@ Polyhedron_demo_stl_plugin::load(QFileInfo fileinfo) {
   }
   if(fileinfo.size() == 0)
   {
-    CGAL::Three::Three::messages()->warning( tr("The file you are trying to load is empty."));
+    CGAL::Three::Three::s_warning( tr("The file you are trying to load is empty."));
     Scene_surface_mesh_item* item = new Scene_surface_mesh_item();
     item->setName(fileinfo.completeBaseName());
     return item;

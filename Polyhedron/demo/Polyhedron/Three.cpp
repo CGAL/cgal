@@ -3,6 +3,8 @@
 #include <QMetaMethod>
 #include <QAction>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include "Messages_interface.h"
+
 using namespace CGAL::Three;
 
 QMainWindow* Three::s_mainwindow = NULL;
@@ -25,10 +27,6 @@ QObject* Three::connectableScene()
   return s_connectable_scene;
 }
 
-Three* Three::messages()
-{
-  return s_three;
-}
 
 Three::Three()
 {
@@ -129,4 +127,17 @@ void Three::autoConnectActions(Polyhedron_demo_plugin_interface *plugin)
       qDebug("ERROR: Failed to autoconnect the action \"%s\"!",
              action->objectName().toUtf8().data());
   } // end foreach action of actions()
+}
+
+void Three::s_information(QString s)
+{
+  qobject_cast<Messages_interface*>(mainWindow())->information(s);
+}
+void Three::s_warning(QString s)
+{
+  qobject_cast<Messages_interface*>(mainWindow())->warning(s);
+}
+void Three::s_error(QString s)
+{
+  qobject_cast<Messages_interface*>(mainWindow())->error(s);
 }

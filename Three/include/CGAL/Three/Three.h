@@ -47,7 +47,6 @@ public:
   static QMainWindow* mainWindow();
   static Scene_interface* scene();
   static QObject* connectableScene();
-  static Three* messages();
   
   /*!
    * Displays a text preceded by the mention "INFO :".
@@ -82,6 +81,15 @@ public:
    * in the plugin.
    */
   static void autoConnectActions(CGAL::Three::Polyhedron_demo_plugin_interface* plugin);
+  static void s_information(QString);
+  /*!
+   * Displays a blue text preceded by the mention "WARNING :".
+   */
+  static void s_warning(QString);
+  /*!
+   * Displays a red text preceded by the mention "ERROR :".
+   */
+  static void s_error(QString);
 protected:
   static QMainWindow* s_mainwindow;
   static Scene_interface* s_scene;

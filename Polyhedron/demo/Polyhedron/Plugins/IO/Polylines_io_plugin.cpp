@@ -103,7 +103,7 @@ Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo) {
 
   if(fileinfo.size() == 0)
   {
-    CGAL::Three::Three::messages()->warning( tr("The file you are trying to load is empty."));
+    CGAL::Three::Three::s_warning( tr("The file you are trying to load is empty."));
     Scene_polylines_item* item = new Scene_polylines_item;
     item->setName(fileinfo.completeBaseName());
     return item;

@@ -36,7 +36,7 @@ Polyhedron_demo_off_to_nef_plugin::load(QFileInfo fileinfo) {
   Scene_nef_polyhedron_item* item = new Scene_nef_polyhedron_item();
   if(fileinfo.size() == 0)
   {
-    CGAL::Three::Three::messages()->warning( tr("The file you are trying to load is empty."));
+    CGAL::Three::Three::s_warning( tr("The file you are trying to load is empty."));
     item->setName(fileinfo.completeBaseName());
     return item;
   }

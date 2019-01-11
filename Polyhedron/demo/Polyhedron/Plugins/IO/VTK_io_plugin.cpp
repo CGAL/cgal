@@ -367,7 +367,7 @@ public:
     
     if(fileinfo.size() == 0)
     {
-      CGAL::Three::Three::messages()->warning( tr("The file you are trying to load is empty."));
+      CGAL::Three::Three::s_warning( tr("The file you are trying to load is empty."));
       Scene_facegraph_item* item =
           new Scene_facegraph_item(poly);
       item->setName(fileinfo.completeBaseName());
