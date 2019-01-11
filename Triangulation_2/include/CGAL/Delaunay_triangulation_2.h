@@ -505,7 +505,7 @@ private:
         int j = fn->index(fh);
 
         // In the non-recursive version, we walk via 'ccw(j)' first. Here, we are filling the stack
-        // and the order is thus the opposite (we want the last element of the stack to be 'ccw(j)')
+        // and the order is thus the opposite (we want the top element of the stack to be 'ccw(j)')
         stack.push(std::make_pair(fn,cw(j)));
         stack.push(std::make_pair(fn,ccw(j)));
       }
