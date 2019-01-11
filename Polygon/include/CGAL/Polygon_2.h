@@ -443,11 +443,13 @@ class Polygon_2 {
     const Point_2& operator[](std::size_t i) const
       { return vertex(i); }
 
+    /// Returns a reference to the `i`-th vertex.
     Point_2& vertex(std::size_t i)
       {
         CGAL_precondition( i < d_container.size() );
         return *(cpp11::next(d_container.begin(), i));
       }
+    /// Returns a reference to the `i`-th vertex.
     Point_2& operator[](std::size_t i)
       { return vertex(i); }
 
@@ -472,28 +474,34 @@ class Polygon_2 {
     const Container_P& container() const
       { return d_container; }
 
+    /// Returns a reference to the sequence of vertices of the polygon.
     Container_P& container()
       { return d_container; }
 
+    /// Returns an iterator to the first vertex of the polygon.
     typename Container_P::iterator begin()
     {
        return container().begin();
     }
-
+    /// Returns an iterator to the element after the lastvertex of the polygon.
     typename Container_P::iterator end()
     {
        return container().end();
     }
+
+    /// Returns a const iterator to the first vertex of the polygon.
     const typename Container_P::const_iterator begin() const
     {
        return container().begin();
     }
 
+    /// Returns a const iterator to the element after the lastvertex of the polygon.
     const typename Container_P::const_iterator end() const
     {
        return container().end();
     }
 
+    /// Resizes the container. Calls `container().resize(s)`.
     void resize(std::size_t s)
     {
      container().resize(s);
