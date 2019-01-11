@@ -163,7 +163,7 @@ _test_cls_delaunay_triangulation_2( const Del & )
   double x, y;
   std::vector<Point> layer_pts;
 
-  std::ifstream in("data/layers.xyz");
+  std::ifstream in("data/layers.xy");
   assert(in);
   while(in >> x >> y)
     layer_pts.push_back(Point(x, y));
