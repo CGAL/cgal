@@ -107,7 +107,16 @@ extern "C" {
 #if  defined(__SSE2__) \
   || (defined(_M_IX86_FP) && _M_IX86_FP >= 2) \
   || defined(_M_X64)
-#  include <immintrin.h>
+#  include <emmintrin.h>
+#  if defined __SSE3__
+#    include <pmmintrin.h>
+#  endif
+#  if defined __SSE4_1__
+#    include <smmintrin.h>
+#  endif
+#  if defined __AVX__
+#    include <immintrin.h>
+#  endif
 #  define CGAL_HAS_SSE2 1
 #endif
 
