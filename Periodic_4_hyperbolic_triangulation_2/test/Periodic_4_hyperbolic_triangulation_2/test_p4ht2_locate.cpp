@@ -6,7 +6,6 @@
 #include <CGAL/Hyperbolic_octagon_translation.h>
 #include <CGAL/Algebraic_kernel_for_circles_2_2.h>
 #include <CGAL/Circular_kernel_2.h>
-#include <CGAL/determinant.h>
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/random/linear_congruential.hpp>

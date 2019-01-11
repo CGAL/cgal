@@ -4,8 +4,6 @@
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
 
-#include <CGAL/basic.h>
-
 typedef CORE::Expr                                                              NT;
 typedef CGAL::Cartesian<NT>                                                     Kernel;
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel,

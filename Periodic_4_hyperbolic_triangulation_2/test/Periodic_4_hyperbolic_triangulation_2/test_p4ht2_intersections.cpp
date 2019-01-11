@@ -1,9 +1,7 @@
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/basic.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Hyperbolic_octagon_translation.h>
-#include <CGAL/determinant.h>
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/random/linear_congruential.hpp>
