@@ -23,8 +23,13 @@ include(${CGAL_USE_FILE})
 
 find_package(Qt5 QUIET COMPONENTS Xml Script Help OpenGL Svg)
 
+if( Qt5Help_VERSION VERSION_LESS 5.12 )
+  set(CGAL_QCOLLECTIONGENERATOR_TARGET Qt5::qcollectiongenerator)
+else()
+  set(CGAL_QCOLLECTIONGENERATOR_TARGET Qt5::qhelpgenerator)
+endif()
 
-if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND TARGET Qt5::qcollectiongenerator )
+if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND TARGET ${CGAL_QCOLLECTIONGENERATOR_TARGET} )
 
   include_directories (BEFORE ../../include ./ )
 
@@ -43,7 +48,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND TARGET Qt5::qcollectiongene
   # generate QtAssistant collection file
   add_custom_command ( OUTPUT Periodic_Lloyd_3.qhc
       DEPENDS Periodic_Lloyd_3.qhp Periodic_Lloyd_3.qhcp
-      COMMAND Qt5::qcollectiongenerator
+      COMMAND ${CGAL_QCOLLECTIONGENERATOR_TARGET}
                 ${CMAKE_CURRENT_SOURCE_DIR}/Periodic_Lloyd_3.qhcp
                 -o ${CMAKE_CURRENT_BINARY_DIR}/Periodic_Lloyd_3.qhc
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
@@ -71,7 +76,7 @@ else( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND QT_QCOLLECTIONGENERATOR_EX
   endif()      	   
 
   if(NOT QT_QCOLLECTIONGENERATOR_EXECUTABLE)
-    set(PERIODIC_LLOYD_MISSING_DEPS "qcollectiongenerator, ${PERIODIC_LLOYD_MISSING_DEPS}")
+    set(PERIODIC_LLOYD_MISSING_DEPS "${CGAL_QCOLLECTIONGENERATOR_TARGET}, ${PERIODIC_LLOYD_MISSING_DEPS}")
   endif()
 
 
