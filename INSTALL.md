@@ -21,6 +21,7 @@ git clone https://github.com/CGAL/cgal.git /path/to/cgal.git
 cd /path/to/cgal.git
 mkdir -p build/debug
 cd build/debug
+rm ../../CMakeCache.txt (to avoid CGAL_error_if_detect_in_source_build)
 cmake -DCMAKE_BUILD_TYPE=Debug ../..
 make
 ```
@@ -31,6 +32,7 @@ git clone https://github.com/CGAL/cgal.git /path/to/cgal.git
 cd /path/to/cgal.git
 mkdir -p build/release
 cd build/release
+rm ../../CMakeCache.txt (to avoid CGAL_error_if_detect_in_source_build)
 cmake -DCMAKE_BUILD_TYPE=Release ../..
 make
 ```
@@ -45,6 +47,7 @@ of where you built the library (environment or cmake variable).
 Here is an example of how to build in debug the examples from the 3D Triangulations package:
 
 ``` {.bash}
+rm /path/to/cgal.git/CMakeCache.txt (to avoid error CMakeLists.txt" does not match the source "/path/to/cgal.git/CMakeLists.txt" used to generate cache)
  cmake -DCGAL_DIR:PATH=/path/to/cgal.git/build/debug /path/to/cgal.git/Triangulation_3/examples/Triangulation_3
  make
 ```
