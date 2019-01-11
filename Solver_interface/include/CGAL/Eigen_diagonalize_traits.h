@@ -158,6 +158,15 @@ public:
           eigenvectors[dim*i + j] = static_cast<FT>(eigenvectors_(j,i));
       }
     }
+    else{
+      for(std::size_t i=0; i<dim; ++i)
+      {
+        eigenvalues[i] = static_cast<FT>(0.);
+
+        for(std::size_t j=0; j<dim; ++j)
+          eigenvectors[dim*i + j] = static_cast<FT>(0.);
+      }
+    }
 
     return res;
   }

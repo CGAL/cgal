@@ -4,7 +4,7 @@
 project( Polygon_mesh_processing_Examples )
 
 
-cmake_minimum_required(VERSION 2.6.2)
+cmake_minimum_required(VERSION 3.1)
 if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
   if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
     cmake_policy(VERSION 2.8.4)
@@ -23,10 +23,6 @@ if ( NOT CGAL_FOUND )
   return()  
 
 endif()
-
-# include helper file
-include( ${CGAL_USE_FILE} )
-
 
 # Boost and its components
 find_package( Boost REQUIRED )
@@ -51,15 +47,11 @@ endif()
 # include for local directory
 
 # include for local package
-include_directories( BEFORE ../../include )
-
 find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 
 
 # Creating entries for all .cpp/.C files with "main" routine
 # ##########################################################
-
-include( CGAL_CreateSingleSourceCGALProgram )
 
 find_package( TBB )
 create_single_source_cgal_program( "hausdorff_distance_remeshing_example.cpp")

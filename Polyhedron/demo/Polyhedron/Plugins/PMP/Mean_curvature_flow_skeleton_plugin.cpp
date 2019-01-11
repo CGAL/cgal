@@ -429,6 +429,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
     
   }
   item_segmentation->setItemIsMulticolor(true);
+  item_segmentation->computeItemColorVectorAutomatically(true);
   item_segmentation->setProperty("NbPatchIds", nb_segment); //for join_and_split plugin
   item_segmentation->invalidateOpenGLBuffers();
   scene->addItem(item_segmentation);
@@ -871,7 +872,7 @@ Polyhedron_demo_mean_curvature_flow_skeleton_plugin::createContractedItem(Scene_
 {
   if(!item)
     return;
-  if(item->mcs == NULL)
+  if(item->mcs != NULL)
     delete item->mcs;
   double omega_H = ui->omega_H->value();
   double omega_P = ui->omega_P->value();

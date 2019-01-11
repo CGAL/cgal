@@ -17,7 +17,7 @@ class Polyhedron_demo_c3t3_binary_io_plugin :
     Q_OBJECT
     Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
     Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "c3t3_io_plugin.json")
 
 public:
   void init(QMainWindow*, CGAL::Three::Scene_interface* sc, Messages_interface*)

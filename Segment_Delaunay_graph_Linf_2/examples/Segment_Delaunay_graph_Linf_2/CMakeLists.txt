@@ -4,18 +4,12 @@
 
 project( Segment_Delaunay_graph_Linf_2_Examples )
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
 
 find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
-
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
-  include_directories (BEFORE "../../include")
 
   create_single_source_cgal_program( "sdg-count-sites-linf.cpp" )
   create_single_source_cgal_program( "sdg-fast-sp-linf.cpp" )

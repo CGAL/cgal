@@ -389,10 +389,10 @@ namespace CGAL {
 
     Intern_successors_type* new_border()
     {
-      nbe_pool.push_back(Next_border_elt());
+      nbe_pool.resize(nbe_pool.size()+1);
 
       Next_border_elt* p1 = & nbe_pool.back();
-      nbe_pool.push_back(Next_border_elt());
+      nbe_pool.resize(nbe_pool.size()+1);
       Next_border_elt* p2 = & nbe_pool.back();
 
       Intern_successors_type ist(p1,p2);

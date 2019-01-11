@@ -100,7 +100,7 @@ boost::shared_ptr<Target_skeleton> operator()( Source_skeleton const& s) const;
 \tparam SrcSs type of the source straight skeleton
 \tparam TgtSs type of the target straight skeleton
 \tparam NTConverter  a function object that must 
-provide `TgtSs:Traits::FT operator()(SrcSs::Traits::FT n)` that converts `n` to an 
+provide `TgtSs::Traits::FT operator()(SrcSs::Traits::FT n)` that converts `n` to an 
 `TgtSs::Traits::FT` which has the same value. The default value of this parameter is `NT_converter<SrcSs::Traits::FT, TgtSs::Traits::FT>`. 
 
 \cgalModels `StraightSkeletonItemsConverter_2`

@@ -1120,28 +1120,33 @@ public:
   
   bool join(const Surface_mesh& other)
   {
+    // increase capacity
     const size_type nv = num_vertices(), nh = num_halfedges(), nf = num_faces();
     resize(num_vertices()+  other.num_vertices(),
             num_edges()+  other.num_edges(),
             num_faces()+  other.num_faces());
 
+    // append properties in the free space created by resize
     vprops_.transfer(other.vprops_);
     hprops_.transfer(other.hprops_);
     fprops_.transfer(other.fprops_);
     eprops_.transfer(other.eprops_);
 
+    // translate halfedge index in vertex -> halfedge
     for(size_type i = nv; i < nv+other.num_vertices(); i++){
       Vertex_index vi(i);
       if(vconn_[vi].halfedge_ != null_halfedge()){
         vconn_[vi].halfedge_ = Halfedge_index(size_type(vconn_[vi].halfedge_)+nh);
       }
     }
+    // translate halfedge index in face -> halfedge
     for(size_type i = nf; i < nf+other.num_faces(); i++){
       Face_index fi(i);
       if(fconn_[fi].halfedge_ != null_halfedge()){
         fconn_[fi].halfedge_ = Halfedge_index(size_type(fconn_[fi].halfedge_)+nh);
       }
     }
+    // translate indices in halfedge -> face, halfedge -> target, halfedge -> prev, and halfedge -> next
     for(size_type i = nh; i < nh+other.num_halfedges(); i++){
       Halfedge_index hi(i);
       if(hconn_[hi].face_ != null_face()){
@@ -1158,43 +1163,50 @@ public:
       }
     }
     size_type inf_value = (std::numeric_limits<size_type>::max)();
+
+    // merge vertex free list
     if(other.vertices_freelist_ != inf_value){
-      if(vertices_freelist_ != inf_value){
-        Vertex_index vi(nv+other.vertices_freelist_);
-        Halfedge_index inf((std::numeric_limits<size_type>::max)());
-        while(vconn_[vi].halfedge_ != inf){
-          Vertex_index corrected_vi = Vertex_index(size_type(vconn_[vi].halfedge_)+nv-nh);
-          vconn_[vi].halfedge_ = Halfedge_index(corrected_vi);
-          vi = corrected_vi;
-        }
-        vconn_[vi].halfedge_ = Halfedge_index(vertices_freelist_);
+      Vertex_index vi(nv+other.vertices_freelist_);
+      Halfedge_index inf((std::numeric_limits<size_type>::max)());
+      // correct the indices in the linked list of free vertices copied (due to vconn_ translation)
+      while(vconn_[vi].halfedge_ != inf){
+        Vertex_index corrected_vi = Vertex_index(size_type(vconn_[vi].halfedge_)+nv-nh);
+        vconn_[vi].halfedge_ = Halfedge_index(corrected_vi);
+        vi = corrected_vi;
       }
+      // append the vertex free linked list of `this` to the copy of `other`
+      vconn_[vi].halfedge_ = Halfedge_index(vertices_freelist_);
+      // update the begin of the vertex free linked list
       vertices_freelist_ = nv + other.vertices_freelist_; 
     }
+    // merge face free list
     if(other.faces_freelist_ != inf_value){
-      if(faces_freelist_ != inf_value){
-        Face_index fi(nf+other.faces_freelist_);
-        Halfedge_index inf((std::numeric_limits<size_type>::max)());
-        while(fconn_[fi].halfedge_ != inf){
-          Face_index corrected_fi = Face_index(size_type(fconn_[fi].halfedge_)+nf-nh);
-          fconn_[fi].halfedge_ = Halfedge_index(corrected_fi);
-          fi = corrected_fi;
-        }
-        fconn_[fi].halfedge_ = Halfedge_index(faces_freelist_);
+      Face_index fi(nf+other.faces_freelist_);
+      Halfedge_index inf((std::numeric_limits<size_type>::max)());
+      // correct the indices in the linked list of free faces copied (due to fconn_ translation)
+      while(fconn_[fi].halfedge_ != inf){
+        Face_index corrected_fi = Face_index(size_type(fconn_[fi].halfedge_)+nf-nh);
+        fconn_[fi].halfedge_ = Halfedge_index(corrected_fi);
+        fi = corrected_fi;
       }
+      // append the face free linked list of `this` to the copy of `other`
+      fconn_[fi].halfedge_ = Halfedge_index(faces_freelist_);
+      // update the begin of the face free linked list
       faces_freelist_ = nf + other.faces_freelist_; 
     }
+    // merge edge free list
     if(other.edges_freelist_ != inf_value){
-      if(edges_freelist_ != inf_value){
-        Halfedge_index hi(nh+other.edges_freelist_);
-        Halfedge_index inf((std::numeric_limits<size_type>::max)());
-        while(hconn_[hi].next_halfedge_ != inf){
-          hi = hconn_[hi].next_halfedge_;
-        }
-        hconn_[hi].next_halfedge_ = Halfedge_index(edges_freelist_);
+      Halfedge_index hi(nh+other.edges_freelist_);
+      Halfedge_index inf((std::numeric_limits<size_type>::max)());
+      while(hconn_[hi].next_halfedge_ != inf){
+        hi = hconn_[hi].next_halfedge_;
       }
+      // append the halfedge free linked list of `this` to the copy of `other`
+      hconn_[hi].next_halfedge_ = Halfedge_index(edges_freelist_);
+      // update the begin of the halfedge free linked list
       edges_freelist_ = nh + other.edges_freelist_; 
     }
+    // update garbage infos
     garbage_ = garbage_ || other.garbage_;
     removed_vertices_ += other.removed_vertices_;
     removed_edges_ += other.removed_edges_;
@@ -1431,6 +1443,33 @@ public:
         if(!valid && verbose){
           std::cerr << "#faces: iterated: " << fcount << " vs number_of_faces(): " << number_of_faces()<< std::endl;
         }
+
+        size_type inf = (std::numeric_limits<size_type>::max)();
+        size_type vfl = vertices_freelist_;
+        size_type rv = 0;
+        while(vfl != inf){
+          vfl = (size_type)vconn_[Vertex_index(vfl)].halfedge_;
+          rv++;
+        }
+        valid = valid && ( rv == removed_vertices_ );
+
+
+        size_type efl = edges_freelist_;
+        size_type re = 0;
+        while(efl != inf){
+          efl = (size_type)hconn_[Halfedge_index(efl)].next_halfedge_;
+          re++;
+        }
+        valid = valid && ( re == removed_edges_ );
+
+        size_type ffl = faces_freelist_;
+        size_type rf = 0;
+        while(ffl != inf){
+          ffl = (size_type)fconn_[Face_index(ffl)].halfedge_;
+          rf++;
+        }
+        valid = valid && ( rf == removed_faces_ );
+
         return valid;
     }
 
@@ -2163,10 +2202,18 @@ private: //------------------------------------------------------- private data
     std::string off;
     is >> sm_skip_comments;
     is >> off;
-    CGAL_assertion( (off == "OFF") || (off == "COFF") || (off == "NOFF") || (off == "CNOFF"));
-
+    if(! (
+         (off == "OFF") || (off == "COFF") || (off == "NOFF") || (off == "CNOFF")
+         )
+       )
+    {
+      is.setstate(std::ios::failbit);
+      return false;
+    }
     is >> n >> f >> e;
-
+    if(!is){
+      return false;
+    }
     sm.reserve(sm.num_vertices()+n, sm.num_faces()+2*f, sm.num_edges()+e);
     std::vector<Vertex_index> vertexmap(n);
     P p;
@@ -2223,6 +2270,10 @@ private: //------------------------------------------------------- private data
     for(int i=0; i < f; i++){
       is >> sm_skip_comments;
       is >> d;
+      if(!is){
+        sm.clear();
+        return false;
+      }
       vr.resize(d);
       for(std::size_t j=0; j<d; j++){
         is >> vi;
@@ -2559,6 +2610,11 @@ void
 Surface_mesh<P>::
 collect_garbage()
 {
+    if (!has_garbage())
+    {
+      return;
+    }
+
     int  i, i0, i1,
     nV(num_vertices()),
     nE(num_edges()),

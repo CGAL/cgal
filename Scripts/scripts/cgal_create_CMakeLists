@@ -184,9 +184,6 @@ if ( NOT CGAL_FOUND )
 
 endif()
 
-# include helper file
-include( ${CGAL_USE_FILE} )
-
 EOF
   #---------------------------------------------------------------------------
 
@@ -240,9 +237,6 @@ EOF
   #---------------------------------------------------------------------------
 
   # includes for local package
-  if [ -d ../../include ] ; then
-    echo 'include_directories( BEFORE ../../include )'
-  fi
   if [ -d ../include ] ; then
     echo 'include_directories( BEFORE ../include )'
   fi
@@ -320,15 +314,6 @@ EOF
     #-------------------------------------------------------------------------
 
 
-    if [ "$qt4" = "y" ]; then
-
-      echo "include( CGAL_CreateSingleSourceCGALProgramQt4 )"
-
-    else
- 
-      echo "include( CGAL_CreateSingleSourceCGALProgram )"
-
-    fi
     # add a new line
     echo
 

@@ -180,6 +180,12 @@ gives the inverse transformation.
 Aff_transformation_3<Kernel> inverse() const; 
 
 /*!
+compares two affine transformations. 
+*/ 
+bool operator==(const Aff_transformation_3<Kernel> &s) const; 
+
+
+/*!
 returns `true`, if the transformation is not reflecting, 
 i.e.\ the determinant of the involved linear transformation is 
 non-negative. 

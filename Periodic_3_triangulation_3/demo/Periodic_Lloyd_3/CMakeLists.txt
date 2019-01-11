@@ -18,15 +18,13 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
 find_package(CGAL COMPONENTS Qt5)
-include(${CGAL_USE_FILE})
-
 
 find_package(Qt5 QUIET COMPONENTS Xml Script Help OpenGL Svg)
 
 
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND TARGET Qt5::qcollectiongenerator )
 
-  include_directories (BEFORE ../../include ./ )
+  include_directories (BEFORE ./ )
 
   # ui file, created wih Qt Designer
   qt5_wrap_ui( uis MainWindow.ui )

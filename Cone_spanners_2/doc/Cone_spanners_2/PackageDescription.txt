@@ -1,5 +1,3 @@
-// PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
-
 /// \defgroup PkgConeSpanners2Ref Cone-Based Spanners Reference
 
 /*!

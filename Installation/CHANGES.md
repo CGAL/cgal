@@ -38,12 +38,39 @@ Release date: March 2019
 -   Added the class `CGAL::Rigid_triangle_mesh_collision_detection` to detect intersections between meshes
     and volumes undergoing affine transformations.
 
+### Point Set Processing
+
+-   `CGAL::mst_orient_normals()` can now be called with a set of user-selected
+    seed points that are known to be already oriented. A new optional named
+    parameter `point_is_constrained_map` is added for this purpose. The
+    original behavior (using one unique and automatically selected seed) is
+    kept if this parameter is not used.
+
 ### 3D Fast Intersection and Distance Computation
 
 -   The primitives `AABB_face_graph_triangle_primitive` and
     `AABB_halfedge_graph_segment_primitive` now use as `Id` a pair of descriptor and
     graph pointer in the case they are configured to deal with a possible different
     graph per primitive (configuration set using a template tag).
+
+### 2D Arrangements
+
+-   Fixed a bug in the surface-sweep framework (`Surface_sweep_2`) that ensures
+    that an event is never left without (left or right) curves.
+
+-   Fixed a constructor of `Arr_counting_traits.h`. (In particular, added missing
+    const of a parameter).
+
+-   Fixed zone computation of a curve in cases where the lexicographic smallest
+    end of the curve lies on the parameter space.
+
+-   Implemented missing function object `Compare_x_near_boundary` of
+    `Arr_polyline_traits_2`, `Arr_polycurve_traits_2`, and
+    `Arr_polycurve_basic_traits_2`.
+
+### CGAL and the Boost Graph Library (BGL)
+
+-    Add function `write_wrl()` for writing into VRML 2.0 format.
 
 Release 4.13
 ------------

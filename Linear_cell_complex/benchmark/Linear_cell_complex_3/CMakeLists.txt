@@ -7,7 +7,6 @@ if(NOT POLICY CMP0070 AND POLICY CMP0053)
 endif()
 
 find_package(CGAL REQUIRED)
-include(${CGAL_USE_FILE})
 
 find_package(Boost 1.43.0)
 if(Boost_FOUND)
@@ -19,7 +18,6 @@ endif()
 add_subdirectory(openvolumemesh)
 
 include_directories(BEFORE openvolumemesh/src)
-include_directories(BEFORE "../../include")
 include_directories(BEFORE "./cgogn" "./cgogn/include")
 include_directories(BEFORE "/usr/include/libxml2/")
 include_directories(BEFORE "/usr/include/eigen3/")

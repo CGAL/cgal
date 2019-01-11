@@ -346,7 +346,7 @@ private:
       g = static_cast<unsigned char>(64 + rand.get_int(0, 192));
       b = static_cast<unsigned char>(64 + rand.get_int(0, 192));
 
-      point_item->setRbgColor(r, g, b);
+      point_item->setRgbColor(r, g, b);
 
       std::size_t nb_colored_pts = 0;
       if (dialog.generate_colored_point_set())

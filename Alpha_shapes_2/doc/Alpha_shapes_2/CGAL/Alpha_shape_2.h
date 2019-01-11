@@ -108,6 +108,10 @@ resorting to exact arithmetic). Access to the interval containing the exact valu
 with `Protected=true`. Access to the exact value is provided through the function
 `FT::Exact_nt exact() const` where `FT::Exact_nt` depends on the configuration of %CGAL
 (it is `Gmpq` if `gmp` is available and `Quotient<CGAL::MP_Float>` otherwise).
+An overload for the function `double to_double(FT)` is also available. Its
+precision is controlled through `FT::set_relative_precision_of_to_double()` in
+exactly the same way as with `Lazy_exact_nt<NT>`, so a call to `to_double` may
+trigger an exact evaluation.
 It must be noted that an object of type `FT` is valid as long as the alpha shapes class that creates
 it is valid and has not been modified.
 For convenience, classical comparison operators are provided for the type `FT`.

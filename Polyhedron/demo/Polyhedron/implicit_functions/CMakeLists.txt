@@ -10,6 +10,10 @@ if(NOT POLICY CMP0070 AND POLICY CMP0053)
   cmake_policy(SET CMP0053 OLD)
 endif()
 
+if(POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW)
+endif()
+
 # Let plugins be compiled in the same directory as the executable.
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
@@ -18,7 +22,6 @@ include_directories( BEFORE ${Mesh_3_implicit_functions_BINARY_DIR} ../include )
 
 # Find CGAL and CGAL Qt5
 find_package(CGAL COMPONENTS Qt5)
-include( ${CGAL_USE_FILE} )
 
 # Find Qt5 itself
 set( QT_USE_QTXML    TRUE )
@@ -39,9 +42,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(AddFileDependencies)
   remove_definitions(-DQT_STATICPLUGIN)
 
-  polyhedron_demo_plugin(p_sphere_function_plugin Sphere_implicit_function)
-  polyhedron_demo_plugin(p_tanglecube_function_plugin Tanglecube_implicit_function)
-  polyhedron_demo_plugin(p_klein_function_plugin Klein_implicit_function)
+  polyhedron_demo_plugin(p_sphere_function_plugin Sphere_implicit_function KEYWORDS Mesh_3)
+  polyhedron_demo_plugin(p_tanglecube_function_plugin Tanglecube_implicit_function KEYWORDS Mesh_3)
+  polyhedron_demo_plugin(p_klein_function_plugin Klein_implicit_function KEYWORDS Mesh_3)
 
 else (CGAL_Qt5_FOUND AND Qt5_FOUND)
 
