@@ -20,19 +20,20 @@
 // coordinator   : INRIA Sophia-Antipolis <Mariette Yvinec@sophia.inria.fr>
 // ============================================================================
 
-#include <iostream>
-#include <iterator>
-//#include <vector>
 #include <CGAL/_test_cls_triangulation_short_2.h>
 
+#include <cassert>
+#include <iostream>
+#include <iterator>
+#include <fstream>
+#include <vector>
 #include <cstdlib>
-using std::rand;
 
+using std::rand;
 
 template <class Del>
 void
 _test_delaunay_duality( const Del &T );
-
 
 template <class Del>
 void
@@ -136,14 +137,58 @@ _test_cls_delaunay_triangulation_2( const Del & )
   // test insertion through get_conflicts + star_hole
   conflicts.clear();
   hole_bd.clear();
-  T2.get_conflicts_and_boundary(Point(1,1,2), 
-				std::back_inserter(conflicts),
-				std::back_inserter(hole_bd));
+  Point query(1,1,2);
+  T2.get_conflicts_and_boundary(query,
+                                std::back_inserter(conflicts),
+                                std::back_inserter(hole_bd));
+
+  // check the sanity of the boundary (faces are not in conflict && edges are ccw ordered)
+  typename std::list<Edge>::iterator curr = hole_bd.begin(), last = --(hole_bd.end());
+  Vertex_handle prev_vh = last->first->vertex(T2.ccw(last->second));
+  do
+  {
+    assert(curr->first->vertex(T2.cw(curr->second)) == prev_vh);
+    assert(!T2.test_conflict(query, curr->first));
+    prev_vh = curr->first->vertex(T2.ccw(curr->second));
+    ++curr;
+  }
+  while(curr != hole_bd.end());
+
   T2.star_hole (Point(1,1,2), hole_bd.begin(), hole_bd.end(),
 		      conflicts.begin(), conflicts.end() );
   assert(T2.is_valid());
 
-  
+
+  // check get_conflict for a large enough point set (to use the non-recursive function)
+  double x, y;
+  std::vector<Point> layer_pts;
+
+  std::ifstream in("data/layers.xyz");
+  assert(in);
+  while(in >> x >> y)
+    layer_pts.push_back(Point(x, y));
+
+  Del T2b(layer_pts.begin(), layer_pts.end());
+
+  conflicts.clear();
+  hole_bd.clear();
+
+  query = Point(12.25, 0.031250);
+  T2b.get_conflicts_and_boundary(query,
+                                 std::back_inserter(conflicts),
+                                 std::back_inserter(hole_bd));
+
+  // check the sanity of the boundary (faces are not in conflict && edges are ccw ordered)
+  curr = hole_bd.begin(), last = --(hole_bd.end());
+  prev_vh = last->first->vertex(T2b.ccw(last->second));
+  do
+  {
+    assert(curr->first->vertex(T2b.cw(curr->second)) == prev_vh);
+    assert(!T2b.test_conflict(query, curr->first));
+    prev_vh = curr->first->vertex(T2b.ccw(curr->second));
+    ++curr;
+  }
+  while(curr != hole_bd.end());
 
   /********************/
   /***** Duality ******/
