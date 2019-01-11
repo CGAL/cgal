@@ -47,29 +47,23 @@ public:
   static QMainWindow* mainWindow();
   static Scene_interface* scene();
   static QObject* connectableScene();
-  
-  /*!
-   * Displays a text preceded by the mention "INFO :".
-   */
-  virtual void information(QString) = 0;
-  /*!
-   * Displays a blue text preceded by the mention "WARNING :".
-   */
-  virtual void warning(QString) = 0;
-  /*!
-   * Displays a red text preceded by the mention "ERROR :".
-   */
-  virtual void error(QString) = 0;
-
-  
+  static RenderingMode defaultSurfaceMeshRenderingMode();
+  static RenderingMode defaultPointSetRenderingMode();
+  static QString modeName(RenderingMode mode);
+  static RenderingMode modeFromName(QString name);
+  static int getDefaultPointSize();
+  static int getDefaultNormalLength();
+  static int getDefaultLinesWidth();
   /*! \brief Adds a dock widget to the interface
    *
-   * Adds a dock widget in the left section of the MainWindow. If the slot is already taken, the dock widgets will be tabified.
+   * Adds a dock widget in the left section of the MainWindow. If the slot is already 
+   * taken, the dock widgets will be tabified.
    */
   void addDockWidget(QDockWidget* dock_widget);
 
   /*! \brief Gets an item of the templated type.
-   * \returns the first `SceneType` item found in the scene's list of currently selected items;
+   * \returns the first `SceneType` item found in the scene's list of currently selected 
+   * items;
    * \returns NULL if there is no `SceneType` in the list.
    */
   template<class SceneType>
@@ -77,7 +71,8 @@ public:
 
   /*! \brief Automatically connects each action of `plugin` to the corresponding slot.
    *
-   * \attention Each action named `ActionName` in the plugin's `actions()` list must have a corresponding slot named `on_ActionsName_triggered()`
+   * \attention Each action named `ActionName` in the plugin's `actions()` list must have
+   *  a corresponding slot named `on_ActionsName_triggered()`
    * in the plugin.
    */
   static void autoConnectActions(CGAL::Three::Polyhedron_demo_plugin_interface* plugin);
@@ -95,6 +90,11 @@ protected:
   static Scene_interface* s_scene;
   static QObject* s_connectable_scene;
   static Three* s_three;
+  static RenderingMode s_defaultSMRM;
+  static RenderingMode s_defaultPSRM;
+  static int default_point_size;
+  static int default_normal_length;
+  static int default_lines_width;
 
 };
 }

@@ -1,19 +1,19 @@
-/// \defgroup PkgTriangulations dD Triangulations
+/// \defgroup PkgTriangulationsRef dD Triangulations Reference
 /// \defgroup PkgTriangulationsConcepts Concepts
-/// \ingroup PkgTriangulations
+/// \ingroup PkgTriangulationsRef
 
 /// \defgroup PkgTriangulationsTriangulationClasses Triangulation Classes
-/// \ingroup PkgTriangulations
+/// \ingroup PkgTriangulationsRef
 
 /// \defgroup PkgTriangulationsTraitsClasses Traits Classes
-/// \ingroup PkgTriangulations
+/// \ingroup PkgTriangulationsRef
 
 /// \defgroup PkgTriangulationsVertexCellClasses Vertex, Face and Cell Classes
-/// \ingroup PkgTriangulations
+/// \ingroup PkgTriangulationsRef
 
 /*!
-\addtogroup PkgTriangulations
-\cgalPkgDescriptionBegin{dD Triangulations,PkgTriangulationsSummary}
+\addtogroup PkgTriangulationsRef
+\cgalPkgDescriptionBegin{dD Triangulations,PkgTriangulations}
 \cgalPkgPicture{Hypertriangle.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Olivier Devillers, Samuel Hornus, and Clément Jamin}
@@ -23,7 +23,7 @@ can be specified at compile-time or at run-time. Specifically, it provides a
 data structure to store the triangulations, and two classes to handle
 triangulations and Delaunay triangulations of point sets. Point location and point 
 insertion are supported. The Delaunay triangulation also supports point removal.}
-\cgalPkgManuals{Chapter_Triangulations,PkgTriangulations}
+\cgalPkgManuals{Chapter_Triangulations,PkgTriangulationsRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.6}

@@ -18,7 +18,7 @@ class Polyhedron_demo_c3t3_binary_io_plugin :
     Q_OBJECT
     Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
     Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "c3t3_io_plugin.json")
 
 public:
   void init(QMainWindow*, CGAL::Three::Scene_interface* sc, Messages_interface*)
@@ -247,7 +247,7 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<
   Fake_mesh_domain::Corner_index,
   Fake_mesh_domain::Curve_index> Fake_c3t3;
 
-template <class Vb = CGAL::Triangulation_vertex_base_3<Kernel> >
+template <class Vb = CGAL::Triangulation_vertex_base_3<EPICK> >
 struct Fake_CDT_3_vertex_base : public Vb
 {
   typedef Vb Base;
@@ -299,7 +299,7 @@ operator>>( std::istream& is, Fake_CDT_3_vertex_base<Vb>& v)
   return is;
 }
 
-template <class Cb = CGAL::Triangulation_cell_base_3<Kernel> >
+template <class Cb = CGAL::Triangulation_cell_base_3<EPICK> >
 struct Fake_CDT_3_cell_base : public Cb
 {
   typedef Cb Base;
@@ -360,7 +360,7 @@ operator>>( std::istream& is, Fake_CDT_3_cell_base<Cb>& c) {
 }
 
 typedef CGAL::Triangulation_data_structure_3<Fake_CDT_3_vertex_base<>, Fake_CDT_3_cell_base<> > Fake_CDT_3_TDS;
-typedef CGAL::Triangulation_3<Kernel, Fake_CDT_3_TDS> Fake_CDT_3;
+typedef CGAL::Triangulation_3<EPICK, Fake_CDT_3_TDS> Fake_CDT_3;
 
 typedef Fake_mesh_domain::Surface_patch_index Fake_patch_id;
 

@@ -12,6 +12,7 @@
 #include <QString>
 #include <QColor>
 #include <QList>
+#include <QVector>
 #include <QMap>
 #include <QItemDelegate>
 #include <QPixmap>
@@ -128,6 +129,8 @@ public:
   // auxiliary public function for QMainWindow
   //Selects the row at index i in the sceneView.
   QItemSelection createSelection(int i);
+  //same fo lists
+  QItemSelection createSelection(QList<int> is);
   //Selects all the rows in the sceneView.
   QItemSelection createSelectionAll();
   //Connects specific signals to a group when it is added and
@@ -136,7 +139,13 @@ public:
 
   void zoomToPosition(QPoint point,
                         CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
-
+  void setUpdatesEnabled(bool b) Q_DECL_OVERRIDE
+  {
+    dont_emit_changes = b;
+    if(b)
+      allItemsChanged();
+  }
+  
 public Q_SLOTS:
   //!Specifies a group as Expanded for the Geometric Objects view
   void setExpanded(QModelIndex);
@@ -146,6 +155,7 @@ public Q_SLOTS:
   void itemChanged();
   void itemChanged(int i) Q_DECL_OVERRIDE;
   void itemChanged(CGAL::Three::Scene_item*) Q_DECL_OVERRIDE;
+  void allItemsChanged() Q_DECL_OVERRIDE;
   //!Transmits a CGAL::Three::Scene_item::itemVisibilityChanged() signal to the scene.
   void itemVisibilityChanged();
   void itemVisibilityChanged(CGAL::Three::Scene_item*) Q_DECL_OVERRIDE;
@@ -208,6 +218,7 @@ public Q_SLOTS:
   void setItemA(int i);
   //!Sets the item_B as the item at index i .
   void setItemB(int i);
+  void enableVisibilityRecentering(bool);
 
 Q_SIGNALS:
   //generated automatically by moc
@@ -228,6 +239,8 @@ Q_SIGNALS:
   void selectionRay(double, double, double, double, double, double);
   //! Used to update the selected item in the Geometric Objects view.
   void selectionChanged(int i);
+  //! Used to update the selected items in the Geometric Objects view.
+  void selectionChanged(QList<int> is);
   //! Used when you don't want to update the selectedItem in the Geometric Objects view.
   void itemIndexSelected(int i);
   //! Emit this to reset the collapsed state of all groups after the Geometric Objects view has been redrawn.
@@ -280,7 +293,10 @@ private:
   QOpenGLShaderProgram program;
   QOpenGLVertexArrayObject* vao;
   mutable QOpenGLBuffer vbo[2];
-
+  //the scene will ignore the itemChanged() signals while this is true. 
+  bool dont_emit_changes;
+  bool visibility_recentering_enabled;
+  bool sort_lists(QVector<QList<int> >&sorted_lists, bool up);
 }; // end class Scene
 
 class QAbstractProxyModel;

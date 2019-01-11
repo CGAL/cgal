@@ -246,6 +246,9 @@ public:
   //!
   int getId()const;
 
+  //! invalidates the context menu. Call it when supportsRenderingMode() changes, 
+  //! for example.
+  void resetMenu();
   //!Handles key press events.
   virtual bool keyPressEvent(QKeyEvent*){return false;}
 
@@ -313,7 +316,7 @@ public Q_SLOTS:
   virtual void setColor(QColor c) { color_ = c;}
   //!Setter for the RGB color of the item. Calls setColor(QColor).
   //!@see setColor(QColor c)
-  void setRbgColor(int r, int g, int b) { setColor(QColor(r, g, b)); }
+  void setRgbColor(int r, int g, int b) { setColor(QColor(r, g, b)); }
   //!Sets the name of the item.
   virtual void setName(QString n) { name_ = n; }
     //!Sets the visibility of the item.
@@ -322,6 +325,7 @@ public Q_SLOTS:
   //!This function is called by `Scene::changeGroup` and should not be
   //!called manually.
   virtual void moveToGroup(Scene_group_item* group);
+  void setRenderingMode(int m) { setRenderingMode((RenderingMode)m);}
   //!Sets the rendering mode of the item.
   //!@see RenderingMode
   virtual void setRenderingMode(RenderingMode m) { 
@@ -469,6 +473,13 @@ protected:
 
   /*! Compatibility function. Calls `viewer->getShaderProgram()`. */
   virtual QOpenGLShaderProgram* getShaderProgram(int name , CGAL::Three::Viewer_interface *viewer = 0) const;
+public:
+  //! \brief defaultSaveName returns the name to be used as default
+  //! when saving this item.
+  //! 
+  //! Default is `name()`.
+  //! \return A new name for the default value in the "save as" dialog.
+  virtual QString defaultSaveName() const { return name(); }
 }; // end class Scene_item
 }
 }

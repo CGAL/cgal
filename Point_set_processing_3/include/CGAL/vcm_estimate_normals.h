@@ -213,7 +213,7 @@ vcm_convolve (ForwardIterator first,
 // ----------------------------------------------------------------------------
 
 /**
-   \ingroup PkgPointSetProcessingAlgorithms
+   \ingroup PkgPointSetProcessing3Algorithms
    computes the Voronoi Covariance Measure (VCM) of a point cloud,
    a construction that can be used for normal estimation and sharp feature detection.
 
@@ -411,7 +411,7 @@ vcm_estimate_normals_internal (PointRange& points,
 
 
 /**  
-   \ingroup PkgPointSetProcessingAlgorithms
+   \ingroup PkgPointSetProcessing3Algorithms
    Estimates normal directions of the range of `points`
    using the Voronoi Covariance Measure with a radius for the convolution.
    The output normals are randomly oriented.
@@ -497,7 +497,7 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 
 
 /**
-   \ingroup PkgPointSetProcessingAlgorithms
+   \ingroup PkgPointSetProcessing3Algorithms
    Estimates normal directions of the range of `points`
    using the Voronoi Covariance Measure with a number of neighbors for the convolution.
    The output normals are randomly oriented.

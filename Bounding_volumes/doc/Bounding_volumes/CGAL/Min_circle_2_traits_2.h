@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBoundingVolumes
+\ingroup PkgBoundingVolumesRef
 
 The class `Min_circle_2_traits_2` is a traits class for `Min_circle_2<Traits>` 
 using the two-dimensional \cgal kernel. 

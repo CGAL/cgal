@@ -16,14 +16,10 @@ find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
-
   find_package(Eigen3 3.1.91) #(requires 3.2.0 or greater)
   if (EIGEN3_FOUND)
     include( ${EIGEN3_USE_FILE} )
-    include( CGAL_CreateSingleSourceCGALProgram )
 
-    include_directories (BEFORE "../../include")
     create_single_source_cgal_program( "deform_mesh_for_botsch08_format.cpp" )
 
   else()

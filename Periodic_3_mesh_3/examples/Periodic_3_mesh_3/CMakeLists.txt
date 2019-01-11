@@ -3,7 +3,7 @@
 
 project( Periodic_3_mesh_3_Examples )
 
-cmake_minimum_required( VERSION 2.8.11 )
+cmake_minimum_required(VERSION 3.1)
 
 # CGAL and its components
 find_package( CGAL QUIET )
@@ -13,11 +13,7 @@ if ( NOT CGAL_FOUND )
   return()
 endif()
 
-# include helper file
-include( ${CGAL_USE_FILE} )
-
 # include for local package
-include_directories( BEFORE ../../include )
 
 # Use Eigen
 find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
@@ -38,8 +34,6 @@ endif()
 
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
-
-include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "mesh_implicit_shape.cpp" )
 create_single_source_cgal_program( "mesh_implicit_multi_domain.cpp" )

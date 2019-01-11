@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgPolygonPartitioning2Concepts
+\ingroup PkgPartition2Concepts
 \cgalConcept
 
 Requirements of a traits class used 

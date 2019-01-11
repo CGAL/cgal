@@ -7,14 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>483</width>
-    <height>408</height>
+    <height>279</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>DockWidget</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
-   <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0,0,0">
+   <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0,0,0,0">
     <item>
      <widget class="QCheckBox" name="is_medially_centered">
       <property name="text">
@@ -186,6 +186,19 @@
        </widget>
       </item>
      </layout>
+    </item>
+    <item>
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
     </item>
    </layout>
   </widget>

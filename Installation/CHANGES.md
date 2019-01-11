@@ -1,10 +1,75 @@
 Release History
 ===============
 
+Release 4.14
+------------
+
+Release date: March 2019
+
+### Polygon Mesh Processing package
+-   Added the following new functions to detect and repair issues in polygon soups:
+    - `CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup()`, which detects and removes
+       points that are not used in any polygon of the soup.
+    - `CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup()`,
+       which detects and merges points that share the same geometric position.
+    - `CGAL::Polygon_mesh_processing::merge_duplicate_polygons_in_polygon_soup()`,
+       which detects and merges polygons that are identical.
+    - `CGAL::Polygon_mesh_processing::repair_polygon_soup()`,
+       which applies a number of repairing steps (a subset of which are the functions above)
+       to clean and repair a polygon soup.
+-   Added the following new functions to detect and repair degeneracies in polygon meshes:
+    - `CGAL::Polygon_mesh_processing::degenerate_edges()`
+    - `CGAL::Polygon_mesh_processing::degenerate_faces()`
+    - `CGAL::Polygon_mesh_processing::is_non_manifold_vertex()`
+    - `CGAL::Polygon_mesh_processing::is_degenerate_triangle_face()`
+    - `CGAL::Polygon_mesh_processing::is_degenerate_edge()`
+    - `CGAL::Polygon_mesh_processing::is_needle_triangle_face()`
+    - `CGAL::Polygon_mesh_processing::is_cap_triangle_face()`
+    - `CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices()`
+    - `CGAL::Polygon_mesh_processing::extract_boundary_cycles()`
+    - `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycle()`
+    - `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycles()`
+-   Added the class `CGAL::Rigid_triangle_mesh_collision_detection` to detect intersections between meshes
+    and volumes undergoing affine transformations.
+
+### Point Set Processing
+
+-   `CGAL::mst_orient_normals()` can now be called with a set of user-selected
+    seed points that are known to be already oriented. A new optional named
+    parameter `point_is_constrained_map` is added for this purpose. The
+    original behavior (using one unique and automatically selected seed) is
+    kept if this parameter is not used.
+
+### 3D Fast Intersection and Distance Computation
+
+-   The primitives `AABB_face_graph_triangle_primitive` and
+    `AABB_halfedge_graph_segment_primitive` now use as `Id` a pair of descriptor and
+    graph pointer in the case they are configured to deal with a possible different
+    graph per primitive (configuration set using a template tag).
+
+### 2D Arrangements
+
+-   Fixed a bug in the surface-sweep framework (`Surface_sweep_2`) that ensures
+    that an event is never left without (left or right) curves.
+
+-   Fixed a constructor of `Arr_counting_traits.h`. (In particular, added missing
+    const of a parameter).
+
+-   Fixed zone computation of a curve in cases where the lexicographic smallest
+    end of the curve lies on the parameter space.
+
+-   Implemented missing function object `Compare_x_near_boundary` of
+    `Arr_polyline_traits_2`, `Arr_polycurve_traits_2`, and
+    `Arr_polycurve_basic_traits_2`.
+
+### CGAL and the Boost Graph Library (BGL)
+
+-    Add function `write_wrl()` for writing into VRML 2.0 format.
+
 Release 4.13
 ------------
 
-Release date: September 2018
+Release date: October 2018
 
 ### 3D Periodic Mesh Generation (new package)
 
@@ -109,7 +174,7 @@ Release date: September 2018
 
 -   The concept `MeshEdgeCriteria_3` no longer requires the function
     `operator()(const Edge& e)`.
-g
+
 -   The concept `MeshComplexWithFeatures_3InTriangulation_3` no longer
     requires the functions `number_of_edges(Curve_index index)` and
     `number_of_corners(Corner_index index)`.
@@ -178,7 +243,7 @@ g
     `CGAL::wlop_simplify_and_regularize_point_set()`.
 
 
-### Classification 
+### Classification
 
 -   Added data structures to handle classification of Surface Meshes
     and of Clusters.
@@ -233,7 +298,7 @@ g
 -   The function `copy_face_graph()` now uses named parameters, some
     allowing it to use property maps instead of output iterators.
 
--   Addition of the following named parameters : 
+-   Addition of the following named parameters :
     -   vertex_to_vertex_output_iterator
     -   halfedge_to_halfedge_output_iterator
     -   face_to_face_output_iterator
@@ -252,6 +317,23 @@ g
 -   Added a read-write property map to convert on-the-fly geometric
     objects from Cartesian kernels.
 
+### 2D Arrangements
+
+-   Refracted and fixed the `graph_traits` for the dual of an arrangement of the
+    following types:
+    `Arrangement_on_surface_2`,
+    `Arrangement_2`,
+    `Arrangement_on_surface_with_history_2`, and
+    `Arrangement_with_history_2`.
+
+-   **Breaking change**: The old `<CGAL/graph_traits_Dual_Arrangement_2.h>`
+    header file has been replaced by the four header files below; each defines
+    the `graph_traits` for dual of the corresponding arrangement type.
+    `<CGAL/graph_traits_dual_arrangement_on_surface_2.h>`,
+    `<CGAL/graph_traits_dual_arrangement_2.h>`,
+    `<CGAL/graph_traits_dual_arrangement_on_surface_with_history_2.h>`, and
+    `<CGAL/graph_traits_dual_arrangement_with_history_2.h`.
+
 
 Release 4.12
 ------------
@@ -265,7 +347,7 @@ Release date: April 2018
     introduced by CMake 2.8.12 and CMake 3.0: instead of setting CMake
     variables, the script now defines imported targets and uses link
     interfaces.
-    
+
     That is mostly backward-compatible with existing usages of CGAL CMake
     scripts. The only non-compatible effect is that the `CMAKE_BUILD_TYPE`
     and compilation flags are no longer copied from the `CGAL_DIR` to the

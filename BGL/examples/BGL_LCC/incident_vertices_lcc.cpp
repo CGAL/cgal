@@ -46,10 +46,10 @@ OutputIterator adjacent_vertices_V2(const LCC& g,
 }
 
 
-int main(int, char** argv)
+int main(int argc, char** argv)
 {
   LCC lcc;
-  CGAL::read_off(argv[1], lcc);
+  CGAL::read_off((argc>1)?argv[1]:"cube.off", lcc);
 
   GraphTraits::vertex_iterator vi = vertices(lcc).first;
   std::list<vertex_descriptor> V;

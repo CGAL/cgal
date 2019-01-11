@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgHDSConcepts
+\ingroup PkgHalfedgeDSConcepts
 \cgalConcept
 
 The concept `HalfedgeDSFace` defines the requirements for the local `Face` 

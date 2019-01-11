@@ -15,7 +15,7 @@ class Polyhedron_demo_xyz_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0" FILE "xyz_io_plugin.json")
 
 public:
 
@@ -59,6 +59,9 @@ Polyhedron_demo_xyz_plugin::load(QFileInfo fileinfo)
     delete point_set_item;
     return NULL;
   }
+  if(point_set_item->has_normals())
+    point_set_item->setRenderingMode(CGAL::Three::Three::defaultPointSetRenderingMode());
+    
   return point_set_item;
 }
 

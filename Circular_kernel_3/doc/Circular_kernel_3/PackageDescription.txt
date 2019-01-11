@@ -1,31 +1,31 @@
-/// \defgroup PkgSphericalKernel3 3D Spherical Geometry Kernel Reference
+/// \defgroup PkgCircularKernel3Ref 3D Spherical Geometry Kernel Reference
 
-/// \defgroup PkgSphericalKernel3GeometricConcepts Geometric Concepts
-/// \ingroup PkgSphericalKernel3
+/// \defgroup PkgCircularKernel3GeometricConcepts Geometric Concepts
+/// \ingroup PkgCircularKernel3Ref
 
-/// \defgroup PkgSphericalKernel3GeometricClasses Geometric Kernel and Classes
-/// \ingroup PkgSphericalKernel3
-
-
-/// \defgroup PkgSphericalKernel3GeometricFunctions Geometric Global Functions
-/// \ingroup PkgSphericalKernel3
+/// \defgroup PkgCircularKernel3GeometricClasses Geometric Kernel and Classes
+/// \ingroup PkgCircularKernel3Ref
 
 
-/// \defgroup PkgSphericalKernel3AlgebraicConcepts Algebraic Concepts
-/// \ingroup PkgSphericalKernel3
+/// \defgroup PkgCircularKernel3GeometricFunctions Geometric Global Functions
+/// \ingroup PkgCircularKernel3Ref
 
 
-/// \defgroup PkgSphericalKernel3AlgebraicClasses Algebraic Kernel and Classes
-/// \ingroup PkgSphericalKernel3
+/// \defgroup PkgCircularKernel3AlgebraicConcepts Algebraic Concepts
+/// \ingroup PkgCircularKernel3Ref
+
+
+/// \defgroup PkgCircularKernel3AlgebraicClasses Algebraic Kernel and Classes
+/// \ingroup PkgCircularKernel3Ref
 
 /*!
-\addtogroup PkgSphericalKernel3
-\cgalPkgDescriptionBegin{3D Spherical Geometry Kernel,PkgSphericalKernel3Summary}
+\addtogroup PkgCircularKernel3Ref
+\cgalPkgDescriptionBegin{3D Spherical Geometry Kernel,PkgCircularKernel3}
 \cgalPkgPicture{segment_sphere_intersection_detail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Pedro Machado Manhães de Castro, Frédéric Cazals, Sébastien Loriot, and Monique Teillaud}
 \cgalPkgDesc{This package is an extension of the linear \cgal %Kernel. It offers functionalities on spheres, circles, circular arcs and line segments, in the 3D space or restricted on a reference sphere.}
-\cgalPkgManuals{Chapter_3D_Spherical_Geometry_Kernel,PkgSphericalKernel3}
+\cgalPkgManuals{Chapter_3D_Spherical_Geometry_Kernel,PkgCircularKernel3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.4}

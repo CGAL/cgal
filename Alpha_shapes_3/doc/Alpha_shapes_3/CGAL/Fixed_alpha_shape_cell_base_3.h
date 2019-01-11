@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgAlphaShapes3
+\ingroup PkgAlphaShapes3Ref
 
 The class `Fixed_alpha_shape_cell_base_3` is the default model for the concept 
 `FixedAlphaShapeCell_3`. 

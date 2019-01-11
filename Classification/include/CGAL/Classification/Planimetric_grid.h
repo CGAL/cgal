@@ -28,6 +28,8 @@
 
 #include <CGAL/Classification/Image.h>
 
+#include <CGAL/assertions.h>
+
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/cstdint.hpp>
 

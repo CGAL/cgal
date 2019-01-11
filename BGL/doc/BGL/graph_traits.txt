@@ -1,7 +1,7 @@
 /*!
 \defgroup PkgBGLTraits Specializations of boost::graph_traits
 
-\ingroup PkgBGL
+\ingroup PkgBGLRef
 
 The \sc{Bgl} defines the class template
 <A HREF="http://www.boost.org/libs/graph/doc/graph_traits.html">`boost::graph_traits`</A>

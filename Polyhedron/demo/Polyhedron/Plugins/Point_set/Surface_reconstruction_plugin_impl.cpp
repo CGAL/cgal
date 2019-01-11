@@ -23,7 +23,6 @@
 #include <math.h>
 
 #include "Kernel_type.h"
-#include "Polyhedron_type.h"
 #include "SMesh_type.h"
 #include "Scene_points_with_normal_item.h"
 
@@ -241,26 +240,6 @@ bool poisson_reconstruct(FaceGraph* graph,
 
       }
     return true;
-}
-
-Polyhedron* poisson_reconstruct_polyhedron(Point_set& points,
-                                           Kernel::FT sm_angle, // Min triangle angle (degrees).
-                                           Kernel::FT sm_radius, // Max triangle size w.r.t. point set average spacing.
-                                           Kernel::FT sm_distance, // Approximation error w.r.t. point set average spacing.
-                                           const QString& solver_name, // solver name
-                                           bool use_two_passes,
-                                           bool do_not_fill_holes)
-{
-  Polyhedron* res = new Polyhedron;
-
-  if(poisson_reconstruct<Polyhedron, Kernel>(res, points, sm_angle, sm_radius, sm_distance,
-                         solver_name, use_two_passes, do_not_fill_holes))
-    return res;
-  else
-  {
-    delete res;
-    return NULL;
-  }
 }
 
 SMesh* poisson_reconstruct_sm(Point_set& points,

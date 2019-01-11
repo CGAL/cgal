@@ -56,6 +56,7 @@
 #ifdef CGAL_LINKED_WITH_TBB
 # include <CGAL/point_generators_3.h>
 # include <tbb/parallel_for.h>
+# include <tbb/task_scheduler_init.h>
 # include <tbb/enumerable_thread_specific.h>
 # include <tbb/concurrent_vector.h>
 #endif

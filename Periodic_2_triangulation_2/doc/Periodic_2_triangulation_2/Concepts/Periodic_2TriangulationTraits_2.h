@@ -11,7 +11,7 @@ the geometric primitives used in the triangulation and some function
 object types for the required predicates on those primitives.
 
 It refines the concept
-`TriangulationTraits_2` from the \cgal \ref PkgTriangulation2 package. It redefines the
+`TriangulationTraits_2` from the \cgal \ref PkgTriangulation2Ref package. It redefines the
 geometric objects, predicates and constructions to work with
 point-offset pairs. In most cases the offsets will be (0,0) and the
 predicates from `TriangulationTraits_2` can be used

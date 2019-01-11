@@ -8,10 +8,8 @@
 #include <fstream>
 
 #include "Scene_polygon_soup_item.h"
-#include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_points_with_normal_item.h"
-#include "Polyhedron_type.h"
 #include "SMesh_type.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
@@ -104,14 +102,6 @@ struct Construct{
 
 
 // Poisson reconstruction method:
-// Reconstructs a surface mesh from a point set and returns it as a polyhedron.
-Polyhedron* poisson_reconstruct_polyhedron(Point_set& points,
-                                Kernel::FT sm_angle, // Min triangle angle (degrees).
-                                Kernel::FT sm_radius, // Max triangle size w.r.t. point set average spacing.
-                                Kernel::FT sm_distance, // Approximation error w.r.t. point set average spacing.
-                                const QString& solver_name, // solver name
-                                bool use_two_passes,
-                                bool do_not_fill_holes);
 // Reconstructs a surface mesh from a point set and returns it.
 SMesh* poisson_reconstruct_sm(Point_set& points,
                                 Kernel::FT sm_angle, // Min triangle angle (degrees).
@@ -875,44 +865,23 @@ private:
       local_timer.start();
 
       Priority_with_structure_coherence<Structuring> priority (structuring, 10. * op.cluster_epsilon);
-
-      if(mw->property("is_polyhedron_mode").toBool())
-      {
-        Scene_polyhedron_item* reco_item = new Scene_polyhedron_item(Polyhedron());
-        Polyhedron& P = * const_cast<Polyhedron*>(reco_item->polyhedron());
-        Construct<Polyhedron, Traits> construct(P,structured->point_set()->points().begin(),structured->point_set()->points().end());
-        CGAL::advancing_front_surface_reconstruction(structured->point_set()->points().begin(),
-                                                     structured->point_set()->points().end(),
-                                                     construct,
-                                                     priority,
-                                                     5.,
-                                                     0.52);
-        local_timer.stop();
-        std::cerr << "done in " << local_timer.time() << " second(s)" << std::endl;
-
-        reco_item->setName(tr("%1 (RANSAC-based reconstruction)").arg(scene->item(index)->name()));
-        reco_item->setColor(Qt::magenta);
-        reco_item->setRenderingMode(FlatPlusEdges);
-        scene->addItem(reco_item);
-      }
-      else
-      {
-        Scene_surface_mesh_item* reco_item = new Scene_surface_mesh_item(SMesh());
-        SMesh& P = * const_cast<SMesh*>(reco_item->polyhedron());
-        Construct<SMesh, Traits> construct(P,structured->point_set()->points().begin(),structured->point_set()->points().end());
-        CGAL::advancing_front_surface_reconstruction(structured->point_set()->points().begin(),
-                                                     structured->point_set()->points().end(),
-                                                     construct,
-                                                     priority,
-                                                     5.,
-                                                     0.52);
-        local_timer.stop();
-        std::cerr << "done in " << local_timer.time() << " second(s)" << std::endl;
-        reco_item->setName(tr("%1 (RANSAC-based reconstruction)").arg(scene->item(index)->name()));
-        reco_item->setColor(Qt::magenta);
-        reco_item->setRenderingMode(FlatPlusEdges);
-        scene->addItem(reco_item);
-      }
+      Scene_surface_mesh_item* reco_item = new Scene_surface_mesh_item(SMesh());
+      SMesh& P = * const_cast<SMesh*>(reco_item->polyhedron());
+      Construct<SMesh, Traits> construct(P,structured->point_set()->points().begin(),structured->point_set()->points().end());
+      CGAL::advancing_front_surface_reconstruction(structured->point_set()->points().begin(),
+                                                   structured->point_set()->points().end(),
+                                                   construct,
+                                                   priority,
+                                                   5.,
+                                                   0.52);
+      local_timer.stop();
+      std::cerr << "done in " << local_timer.time() << " second(s)" << std::endl;
+      reco_item->setName(tr("%1 (RANSAC-based reconstruction)").arg(scene->item(index)->name()));
+      reco_item->setColor(Qt::magenta);
+      reco_item->setRenderingMode(FlatPlusEdges);
+      reco_item->invalidateOpenGLBuffers();
+      scene->addItem(reco_item);
+      
       if (dialog.generate_structured ())
       {
         structured->setName(tr("%1 (structured)").arg(point_set_item->name()));
@@ -1082,27 +1051,15 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 	      std::cerr << "Advancing front reconstruction... ";
 	      time.restart();
 
-              if(mw->property("is_polyhedron_mode").toBool())
-              {
-                Scene_polyhedron_item* reco_item = new Scene_polyhedron_item(Polyhedron());
-                SurfaceReconstruction::advancing_front (*points, reco_item, 10. * (std::max)(noise_size, aniso_size));
-
-                reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
-                reco_item->setColor(Qt::lightGray);
-                reco_item->setRenderingMode(FlatPlusEdges);
-                scene->addItem(reco_item);
-              }
-              else
-              {
-                Scene_surface_mesh_item* reco_item = new Scene_surface_mesh_item(SMesh());
-                SurfaceReconstruction::advancing_front (*points, reco_item, 10. * (std::max)(noise_size, aniso_size));
-
-                reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
-                reco_item->setColor(Qt::lightGray);
-                reco_item->setRenderingMode(FlatPlusEdges);
-                scene->addItem(reco_item);
-              }
-	      std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
+              Scene_surface_mesh_item* reco_item = new Scene_surface_mesh_item(SMesh());
+              SurfaceReconstruction::advancing_front (*points, reco_item, 10. * (std::max)(noise_size, aniso_size));
+              
+              reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
+              reco_item->setColor(Qt::lightGray);
+              reco_item->setRenderingMode(FlatPlusEdges);
+              reco_item->invalidateOpenGLBuffers();
+              scene->addItem(reco_item);
+              std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 	    }
 
 	}
@@ -1113,26 +1070,14 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 	      std::cerr << "Advancing front reconstruction... ";
 	      time.restart();
 
-              if(mw->property("is_polyhedron_mode").toBool())
-              {
-                Scene_polyhedron_item* reco_item = new Scene_polyhedron_item(Polyhedron());
-                SurfaceReconstruction::advancing_front (*points, reco_item, 10. * (std::max)(noise_size, aniso_size));
-
-                reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
-                reco_item->setColor(Qt::lightGray);
-                reco_item->setRenderingMode(FlatPlusEdges);
-                scene->addItem(reco_item);
-              }
-              else
-              {
-                Scene_surface_mesh_item* reco_item = new Scene_surface_mesh_item(SMesh());
-                SurfaceReconstruction::advancing_front (*points, reco_item, 10. * (std::max)(noise_size, aniso_size));
-
-                reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
-                reco_item->setColor(Qt::lightGray);
-                reco_item->setRenderingMode(FlatPlusEdges);
-                scene->addItem(reco_item);
-              }
+              Scene_surface_mesh_item* reco_item = new Scene_surface_mesh_item(SMesh());
+              SurfaceReconstruction::advancing_front (*points, reco_item, 10. * (std::max)(noise_size, aniso_size));
+              
+              reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
+              reco_item->setColor(Qt::lightGray);
+              reco_item->setRenderingMode(FlatPlusEdges);
+              reco_item->invalidateOpenGLBuffers();
+              scene->addItem(reco_item);
 
 	      std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 	    }
@@ -1153,34 +1098,19 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 	      
 	      std::cerr << "Poisson reconstruction... ";
               time.restart();
-              Polyhedron* pRemesh = NULL;
               SMesh* smRemesh = NULL;
-              if(mw->property("is_polyhedron_mode").toBool())
-                pRemesh = poisson_reconstruct_polyhedron(*points,
-                                                         20,
-                                                         100 * (std::max)(noise_size, aniso_size),
-                                                         (std::max)(noise_size, aniso_size),
-                                                         QString ("Eigen - built-in CG"), false, false);
-              else
-                smRemesh = poisson_reconstruct_sm(*points,
-                                                  20,
-                                                  100 * (std::max)(noise_size, aniso_size),
-                                                  (std::max)(noise_size, aniso_size),
-                                                  QString ("Eigen - built-in CG"), false, false);
-              if(pRemesh)
-              {
-                // Add polyhedron to scene
-                Scene_polyhedron_item* reco_item = new Scene_polyhedron_item(pRemesh);
-                reco_item->setName(tr("%1 (poisson)").arg(pts_item->name()));
-                reco_item->setColor(Qt::lightGray);
-                scene->addItem(reco_item);
-              }
-              else if(smRemesh)
+              smRemesh = poisson_reconstruct_sm(*points,
+                                                20,
+                                                100 * (std::max)(noise_size, aniso_size),
+                                                (std::max)(noise_size, aniso_size),
+                                                QString ("Eigen - built-in CG"), false, false);
+              if(smRemesh)
               {
                 // Add polyhedron to scene
                 Scene_surface_mesh_item* reco_item = new Scene_surface_mesh_item(smRemesh);
                 reco_item->setName(tr("%1 (poisson)").arg(pts_item->name()));
                 reco_item->setColor(Qt::lightGray);
+                reco_item->invalidateOpenGLBuffers();
                 scene->addItem(reco_item);
               }
 
@@ -1220,34 +1150,17 @@ void Polyhedron_demo_surface_reconstruction_plugin::advancing_front_reconstructi
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
       std::cerr << "Advancing front reconstruction... ";
-
-      if(mw->property("is_polyhedron_mode").toBool())
-      {
-        Scene_polyhedron_item* reco_item = new Scene_polyhedron_item(Polyhedron());
-        SurfaceReconstruction::advancing_front (*points, reco_item,
-                                                dialog.longest_edge (),
-                                                dialog.radius_ratio_bound (),
-                                                CGAL_PI * dialog.beta_angle () / 180.);
-
-        reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
-        reco_item->setColor(Qt::lightGray);
-        reco_item->setRenderingMode(FlatPlusEdges);
-        scene->addItem(reco_item);
-      }
-      else
-      {
-        Scene_surface_mesh_item* reco_item = new Scene_surface_mesh_item(SMesh());
-        SurfaceReconstruction::advancing_front (*points, reco_item,
-                                                dialog.longest_edge (),
-                                                dialog.radius_ratio_bound (),
-                                                CGAL_PI * dialog.beta_angle () / 180.);
-
-        reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
-        reco_item->setColor(Qt::lightGray);
-        reco_item->setRenderingMode(FlatPlusEdges);
-        scene->addItem(reco_item);
-      }
-
+      Scene_surface_mesh_item* reco_item = new Scene_surface_mesh_item(SMesh());
+      SurfaceReconstruction::advancing_front (*points, reco_item,
+                                              dialog.longest_edge (),
+                                              dialog.radius_ratio_bound (),
+                                              CGAL_PI * dialog.beta_angle () / 180.);
+      
+      reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
+      reco_item->setColor(Qt::lightGray);
+      reco_item->setRenderingMode(FlatPlusEdges);
+      reco_item->invalidateOpenGLBuffers();
+      scene->addItem(reco_item);
       QApplication::restoreOverrideCursor();
     }
 }
@@ -1364,32 +1277,10 @@ void Polyhedron_demo_surface_reconstruction_plugin::poisson_reconstruction
 
 
       // Reconstruct point set as a polyhedron
-      Polyhedron* pRemesh = NULL;
       SMesh* smRemesh= NULL;
-      if(mw->property("is_polyhedron_mode").toBool())
-        pRemesh = poisson_reconstruct_polyhedron(*points, sm_angle, sm_radius, sm_distance, sm_solver, use_two_passes,
-                                                 do_not_fill_holes);
-      else
-        smRemesh = poisson_reconstruct_sm(*points, sm_angle, sm_radius, sm_distance, sm_solver, use_two_passes,
-                                          do_not_fill_holes);
-      if(pRemesh)
-      {
-        // Add polyhedron to scene
-        Scene_polyhedron_item* new_item = new Scene_polyhedron_item(pRemesh);
-        new_item->setName(tr("%1 Poisson (%2 %3 %4)")
-                          .arg(point_set_item->name())
-                          .arg(sm_angle)
-                          .arg(sm_radius)
-                          .arg(sm_distance));
-        new_item->setColor(Qt::lightGray);
-        scene->addItem(new_item);
-
-
-        // Hide point set
-        point_set_item->setVisible(false);
-        scene->itemChanged(index);
-      }
-      else if(smRemesh)
+      smRemesh = poisson_reconstruct_sm(*points, sm_angle, sm_radius, sm_distance, sm_solver, use_two_passes,
+                                        do_not_fill_holes);
+      if(smRemesh)
       {
         // Add polyhedron to scene
         Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(smRemesh);
