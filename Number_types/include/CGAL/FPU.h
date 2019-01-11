@@ -252,7 +252,13 @@ inline __m128d IA_opacify128(__m128d x)
   return x;
 # else
   volatile __m128d e = x;
+#  ifdef _MSC_VER
+  // With VS, __m128d is a union, where volatile doesn't disappear automatically
+  // However, this version generates wrong code with clang, check before enabling it for more compilers.
+  return *(__m128d*)&e;
+#  else
   return e;
+#  endif
 # endif
 }
 
@@ -267,8 +273,7 @@ inline __m128d IA_opacify128_weak(__m128d x)
 #  endif
   return x;
 # else
-  volatile __m128d e = x;
-  return e;
+  return IA_opacify128(x);
 # endif
 }
 
