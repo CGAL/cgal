@@ -164,7 +164,7 @@ public Q_SLOTS:
                   (on_boundary && res == CGAL::ON_BOUNDARY)     ||
                   (outside     && res == CGAL::ON_UNBOUNDED_SIDE) )
                 {
-                  point_set->select(point_it); ++nb_selected;
+                  point_set->select(*point_it); ++nb_selected;
                   -- pt; // Selection replaces current point with unselected one
                   selected = true;
                   break;//loop on i
