@@ -1199,8 +1199,9 @@ bool MainWindow::open(QString filename, QString loader_name) {
 CGAL::Three::Scene_item* MainWindow::loadItem(QFileInfo fileinfo, CGAL::Three::Polyhedron_demo_io_plugin_interface* loader) {
   CGAL::Three::Scene_item* item = NULL;
   if(!fileinfo.isFile() || !fileinfo.isReadable()) {
-    throw std::invalid_argument(QString("File %1 is not a readable file.")
-                                .arg(fileinfo.absoluteFilePath()).toStdString());
+    QMessageBox::warning(this, tr("Error"),
+                         QString("File %1 is not a readable file.")
+                         .arg(fileinfo.absoluteFilePath()));
   }
   //test if the file is empty.
   if(fileinfo.size() == 0) {
@@ -1213,8 +1214,10 @@ CGAL::Three::Scene_item* MainWindow::loadItem(QFileInfo fileinfo, CGAL::Three::P
   item = loader->load(fileinfo);
   QApplication::restoreOverrideCursor();
   if(!item) {
-    throw std::logic_error(QString("Could not load item from file %1 using plugin %2")
-                           .arg(fileinfo.absoluteFilePath()).arg(loader->name()).toStdString());
+      QMessageBox::warning(this, tr("Error"),
+                           QString("Could not load item from file %1 using plugin %2")
+                                                      .arg(fileinfo.absoluteFilePath()).arg(loader->name()));
+      return 0;
   }
 
   item->setProperty("source filename", fileinfo.absoluteFilePath());
