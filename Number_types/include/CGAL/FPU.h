@@ -276,7 +276,8 @@ inline __m128d IA_opacify128_weak(__m128d x)
 inline __m128d swap_m128d(__m128d x){
 # ifdef __llvm__
   return __builtin_shufflevector(x, x, 1, 0);
-# elif defined __GNUC__ && !defined __INTEL_COMPILER
+# elif defined __GNUC__ && !defined __INTEL_COMPILER \
+  && __GNUC__ * 100 + __GNUC_MINOR__ >= 407
   return __builtin_shuffle(x, (__m128i){ 1, 0 });
 # else
   return _mm_shuffle_pd(x, x, 1);
