@@ -68,7 +68,7 @@ namespace CGAL {
   really remove it from memory.
 
   For convenience, all functions of the package \ref
-  PkgPointSetProcessing automatically creates the right named
+  PkgPointSetProcessing3 automatically creates the right named
   parameters if called with a `CGAL::Point_set_3` object as argument.
 
 
