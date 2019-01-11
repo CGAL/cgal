@@ -1101,10 +1101,12 @@ namespace INTERN_INTERVAL_NT {
     double i = 0;
     if(d.inf() > 0){
       __m128d x = d.simd();
+      __m128d m = _mm_set_sd(-0.);
+      __m128d y = _mm_xor_pd(x, m);
       // We don't opacify because hopefully a rounded operation is explicit
       // enough that compilers won't mess with it, and it does not care about
       // fesetround.
-      __m128d vr = _mm_sqrt_round_sd(x, x, _MM_FROUND_TO_NEG_INF|_MM_FROUND_NO_EXC);
+      __m128d vr = _mm_sqrt_round_sd(y, y, _MM_FROUND_TO_NEG_INF|_MM_FROUND_NO_EXC);
       i = _mm_cvtsd_f64(vr);
       // We could compute the sqrt of d.sup() using _mm_sqrt_pd (same speed as
       // _sd except on broadwell) so it is already in the high part and we can
