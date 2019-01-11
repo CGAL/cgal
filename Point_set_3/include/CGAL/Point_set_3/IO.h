@@ -394,7 +394,10 @@ read_ply_point_set(
   internal::PLY::Point_set_3_filler<Point, Vector> filler(point_set);
   
   if (!(reader.init (stream)))
+  {
+    stream.setstate(std::ios::failbit);
     return false;
+  }
 
   if (comments != NULL)
     *comments = reader.comments();
@@ -415,8 +418,7 @@ read_ply_point_set(
       {
         internal::PLY::PLY_read_number* property = element.property(k);
         property->get (stream);
-
-        if (stream.eof())
+        if (stream.fail())
           return false;
       }
 
