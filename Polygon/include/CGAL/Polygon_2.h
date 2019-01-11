@@ -483,7 +483,7 @@ class Polygon_2 {
     {
        return container().begin();
     }
-    /// Returns an iterator to the element after the lastvertex of the polygon.
+    /// Returns an iterator to the element after the last vertex of the polygon.
     typename Container_P::iterator end()
     {
        return container().end();
@@ -495,7 +495,7 @@ class Polygon_2 {
        return container().begin();
     }
 
-    /// Returns a const iterator to the element after the lastvertex of the polygon.
+    /// Returns a const iterator to the element after the last vertex of the polygon.
     const typename Container_P::const_iterator end() const
     {
        return container().end();
