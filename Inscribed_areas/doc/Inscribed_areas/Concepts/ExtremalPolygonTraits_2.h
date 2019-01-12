@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgInscribedAreasConcepts
-\cgalConcept
+\cgalAdvancedConcept
 
 \cgalAdvancedBegin
 The concept `ExtremalPolygonTraits_2` provides the types and
