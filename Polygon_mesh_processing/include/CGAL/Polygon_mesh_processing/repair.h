@@ -582,7 +582,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
           degenerate_edges_to_remove.erase(edge(prev(opposite(h, tmesh), tmesh), tmesh));
         }
         //now remove the edge
-        CGAL::Euler::collapse_edge(*it, tmesh);
+        CGAL::Euler::collapse_edge(edge(h, tmesh), tmesh);
         // some_removed is not updated on purpose because if nothing
         //  happens below then nothing can be done
         it = degenerate_edges_to_remove.begin();
