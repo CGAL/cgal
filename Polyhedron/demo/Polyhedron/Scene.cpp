@@ -276,15 +276,15 @@ void Scene::remove_item_from_groups(Scene_item* item)
 }
 Scene::~Scene()
 {
-  Q_FOREACH(QOpenGLVertexArrayObject* vao, vaos.values())
-  {
-    vao->destroy();
-    delete vao;
-  }
   Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
   {
     removeViewer(static_cast<CGAL::Three::Viewer_interface*>(viewer));
     viewer->setProperty("is_destroyed", true);
+  }
+  Q_FOREACH(QOpenGLVertexArrayObject* vao, vaos.values())
+  {
+    vao->destroy();
+    delete vao;
   }
   
   Q_FOREACH(CGAL::Three::Scene_item* item_ptr, m_entries)
