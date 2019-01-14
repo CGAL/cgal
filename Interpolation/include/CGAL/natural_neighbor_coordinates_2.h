@@ -124,7 +124,7 @@ natural_neighbors_2(const Dt& dt,
   }
 
   std::list<Edge> hole;
-  dt.get_boundary_of_conflicts(p, std::back_inserter(hole), fh, false);
+  dt.get_boundary_of_conflicts(p, std::back_inserter(hole), fh);
 
   return natural_neighbors_2(dt, p, out, hole.begin(), hole.end());
 }
