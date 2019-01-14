@@ -413,7 +413,7 @@ compute_face_face_intersection(const FaceRange& face_range1,
   typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, face_descriptor> Box;
   
   CGAL::Bbox_3 b1 = CGAL::Polygon_mesh_processing::bbox(tm1, np1),
-      b2 = CGAL::Polygon_mesh_processing::bbox(tm2, np2);
+               b2 = CGAL::Polygon_mesh_processing::bbox(tm2, np2);
   
   if(!CGAL::do_overlap(b1, b2))
   {
@@ -533,14 +533,9 @@ compute_face_polyline_intersection( const FaceRange& face_range,
 
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
 
-  CGAL::Bbox_3 b1,b2;
-  b1 = CGAL::Polygon_mesh_processing::bbox(tm, np);
-  for(std::size_t i =0; i< polyline.size(); ++i)
-  {
-    b2 += CGAL::bbox_3(polyline[i].begin(), 
-                     polyline[i].end());
-  }
-  
+  CGAL::Bbox_3 b1 = CGAL::Polygon_mesh_processing::bbox(tm, np),
+               b2 = CGAL::bbox_3(polyline.begin(), polyline.end());
+
   if(!CGAL::do_overlap(b1,b2))
     return out;
   typedef TriangleMesh TM;
@@ -671,7 +666,7 @@ compute_face_polylines_intersection(const FaceRange& face_range,
   b1 = CGAL::Polygon_mesh_processing::bbox(tm, np);
   for(std::size_t i =0; i< polyline_range.size(); ++i)
   {
-      b2 += CGAL::bbox_3(polyline_range[i].begin(),
+    b2 += CGAL::bbox_3(polyline_range[i].begin(),
                        polyline_range[i].end());
   }
   
@@ -882,17 +877,14 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
   BOOST_FOREACH(Polyline poly, polylines1)
   {
     polylines_size += std::distance( boost::begin(poly), boost::end(poly) ) -1;
-    BOOST_FOREACH(Point p, poly)
-    {
-      b1 += p.bbox();
-    }
+    b1 += CGAL::bbox_3(poly.begin(), poly.end());
   }
   boxes1.reserve( polylines_size );
   polylines_size = 0;
   BOOST_FOREACH(Polyline poly, polylines2)
   {
     polylines_size += std::distance( boost::begin(poly), boost::end(poly) ) -1;
-      b2 += CGAL::bbox_3(poly.begin(), poly.end());
+    b2 += CGAL::bbox_3(poly.begin(), poly.end());
   }
   boxes2.reserve(polylines_size);
   
