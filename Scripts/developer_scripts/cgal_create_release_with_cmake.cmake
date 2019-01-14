@@ -7,6 +7,66 @@
 #   Must be followed by -beta<beta_number> if the release is a beta.
 # CGAL_VERSION_NR=release string used to update version.h. Must be something like 1041200033 , or 10412009<beta number>0
 # TESTSUITE=indicate if the release is meant to be used by the testsuite, default if OFF
+# GPL_PACKAGE_LIST=path to a file containing the list of GPL packages to include in the release. If not provided all of them are.
+
+if(POLICY CMP0009)
+  # http://www.cmake.org/cmake/help/v3.2/policy/CMP0009.html
+  cmake_policy(SET CMP0009 NEW)
+endif()
+
+function(process_package pkg)
+  if(VERBOSE)
+    message(STATUS "handling ${pkg}")
+  endif()
+
+  # gather all files from this package
+  set(all_files)
+  file(GLOB_RECURSE pkg_files RELATIVE ${pkg_dir} ${pkg_dir}/*)
+  # append the prefix
+  foreach(f ${pkg_files})
+    get_filename_component(fname ${f} NAME)
+    if (NOT "${fname}" STREQUAL "TODO") # skip TODO files
+      #make sure the target destination dir exists
+      set(afile ${pkg_dir}/${f})
+      get_filename_component(afile_dir_tmp ${afile} PATH)
+      string(REPLACE "${pkg_dir}" "" afile_dir ${afile_dir_tmp})
+      if(NOT IS_DIRECTORY ${release_dir}/${afile_dir})
+        file(MAKE_DIRECTORY ${release_dir}/${afile_dir})
+      endif()
+
+      #copy the file (replace $URL$ and $ID$ for *.h and *.hpp)
+      get_filename_component(fext ${fname} EXT)
+      if ("${fext}" STREQUAL ".h" OR "${fext}" STREQUAL ".hpp")
+        file(READ "${pkg_dir}/${f}" file_content)
+        string(REPLACE "$URL$" "$URL: ${GITHUB_PREFIX}/${pkg}/${f} $" file_content "${file_content}")
+        if(EXISTS ${GIT_REPO}/.git)
+          execute_process(
+            COMMAND git --git-dir=${GIT_REPO}/.git --work-tree=${GIT_REPO} log -n1 "--format=format:%h %aI %an" -- "${pkg}/${f}"
+            RESULT_VARIABLE RESULT_VAR
+            OUTPUT_VARIABLE OUT_VAR
+            )
+          string(REPLACE "$Id$" "$Id: ${fname} ${OUT_VAR}" file_content "${file_content}")
+        else()
+          string(REPLACE "$Id$" "This file is from the release ${CGAL_VERSION} of CGAL" file_content "${file_content}")
+        endif()
+        file(WRITE ${release_dir}/${afile_dir}/${fname} "${file_content}")
+      else()
+        file(COPY ${afile} DESTINATION ${release_dir}/${afile_dir})
+      endif()
+    endif()
+  endforeach()
+  if (EXISTS "${release_dir}/doc/${pkg}")
+    #generate filelist.txt used by doxygen ran on a release
+    file(GLOB_RECURSE includes LIST_DIRECTORIES false RELATIVE "${GIT_REPO}/${pkg}/include" "${GIT_REPO}/${pkg}/include/CGAL/*.h")
+    foreach(f ${includes})
+      file(APPEND "${release_dir}/doc/${pkg}/filelist.txt" "${f}\n")
+    endforeach()
+    #remove fig_src directory
+    if (IS_DIRECTORY "${release_dir}/doc/${pkg}/fig_src")
+      file(REMOVE_RECURSE "${release_dir}/doc/${pkg}/fig_src")
+    endif()
+  endif()
+endfunction()
 
 if (NOT GIT_REPO)
   set(GIT_REPO ${CMAKE_BINARY_DIR})
@@ -29,6 +89,13 @@ else()
   message(FATAL_ERROR "Cannot extract CGAL version number.")
 endif()
 
+set(FILTER_PACKAGES False)
+if (DEFINED GPL_PACKAGE_LIST)
+  set(FILTER_GPL_PACKAGES True)
+  if(NOT EXISTS ${GPL_PACKAGE_LIST})
+    message(FATAL_ERROR "File ${GPL_PACKAGE_LIST} does not exist.")
+  endif()
+endif()
 
 if (NOT DEFINED DESTINATION)
   SET(DESTINATION "/tmp")
@@ -45,6 +112,26 @@ else()
   message(STATUS "Creating an internal release ${CGAL_VERSION} in ${release_dir}")
 endif()
 
+if(FILTER_GPL_PACKAGES)
+  if (VERBOSE)
+    message("Copying only GPL packages from a provided list.")
+  endif()
+  file(READ ${GPL_PACKAGE_LIST} pkgs)
+  string(REPLACE " " ";" pkgs "${pkgs}")
+  string(REPLACE "\n" ";" pkgs "${pkgs}")
+  foreach(pkg ${pkgs})
+    set(pkg_dir ${GIT_REPO}/${pkg})
+    if(IS_DIRECTORY ${pkg_dir})
+      process_package(${pkg})
+    else()
+      message(FATAL_ERROR "${pkg} CGAL package cannot be found.")
+    endif()
+  endforeach()
+  if (VERBOSE)
+    message("Now handling non-GPL packages.")
+  endif()
+endif()
+
 file(MAKE_DIRECTORY "${release_dir}")
 file(GLOB files RELATIVE ${GIT_REPO} ${GIT_REPO}/*)
 
@@ -54,57 +141,15 @@ foreach(pkg ${files})
       AND (EXISTS ${pkg_dir}/package_info
            OR "${pkg}" STREQUAL "Documentation"
            OR "${pkg}" STREQUAL "Miscellany" ) ) # only consider packages
-    if(VERBOSE)
-      message(STATUS "handling ${pkg}")
-    endif()
-
-    # gather all files from this package
-    set(all_files)
-    file(GLOB_RECURSE pkg_files RELATIVE ${pkg_dir} ${pkg_dir}/*)
-    # append the prefix
-    foreach(f ${pkg_files})
-      get_filename_component(fname ${f} NAME)
-      if (NOT "${fname}" STREQUAL "TODO") # skip TODO files
-        #make sure the target destination dir exists
-        set(afile ${pkg_dir}/${f})
-        get_filename_component(afile_dir_tmp ${afile} PATH)
-        string(REPLACE "${pkg_dir}" "" afile_dir ${afile_dir_tmp})
-        if(NOT IS_DIRECTORY ${release_dir}/${afile_dir})
-          file(MAKE_DIRECTORY ${release_dir}/${afile_dir})
-        endif()
-
-        #copy the file (replace $URL$ and $ID$ for *.h and *.hpp)
-        get_filename_component(fext ${fname} EXT)
-        if ("${fext}" STREQUAL ".h" OR "${fext}" STREQUAL ".hpp")
-          file(READ "${pkg_dir}/${f}" file_content)
-          string(REPLACE "$URL$" "$URL: ${GITHUB_PREFIX}/${pkg}/${f} $" file_content "${file_content}")
-          if(EXISTS ${GIT_REPO}/.git)
-            execute_process(
-              COMMAND git --git-dir=${GIT_REPO}/.git --work-tree=${GIT_REPO} log -n1 "--format=format:%h %aI %an" -- "${pkg}/${f}"
-              RESULT_VARIABLE RESULT_VAR
-              OUTPUT_VARIABLE OUT_VAR
-              )
-            string(REPLACE "$Id$" "$Id: ${fname} ${OUT_VAR}" file_content "${file_content}")
-          else()
-            string(REPLACE "$Id$" "This file is from the release ${CGAL_VERSION} of CGAL" file_content "${file_content}")
-          endif()
-          file(WRITE ${release_dir}/${afile_dir}/${fname} "${file_content}")
-        else()
-          file(COPY ${afile} DESTINATION ${release_dir}/${afile_dir})
-        endif()
-      endif()
-    endforeach()
-    if (EXISTS "${release_dir}/doc/${pkg}")
-      #generate filelist.txt used by doxygen ran on a release
-      file(GLOB_RECURSE includes LIST_DIRECTORIES false RELATIVE "${GIT_REPO}/${pkg}/include" "${GIT_REPO}/${pkg}/include/CGAL/*.h")
-      foreach(f ${includes})
-        file(APPEND "${release_dir}/doc/${pkg}/filelist.txt" "${f}\n")
-      endforeach()
-      #remove fig_src directory
-      if (IS_DIRECTORY "${release_dir}/doc/${pkg}/fig_src")
-        file(REMOVE_RECURSE "${release_dir}/doc/${pkg}/fig_src")
+    if(FILTER_GPL_PACKAGES AND EXISTS ${pkg_dir}/package_info/${pkg}/license.txt)
+      file(READ "${pkg_dir}/package_info/${pkg}/license.txt" license_file_content)
+      string(REGEX MATCH "^GPL" GPL_PACKAGE "${license_file_content}")
+      if (GPL_PACKAGE)
+        continue()
       endif()
     endif()
+
+    process_package(${pkg})
   endif()
 endforeach()
 
