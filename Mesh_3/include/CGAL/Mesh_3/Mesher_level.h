@@ -1048,6 +1048,11 @@ public:
     {
       // Lock the element area on the grid
       Element element = derivd.extract_element_from_container_value(ce);
+
+      // This is safe to do with the concurrent compact container because even if the element `ce`
+      // gets removed from the TDS at this point, it is not actually deleted in the cells container and
+      // `ce->vertex(0-3)` still points to a vertex of the vertices container whose `.point()`
+      // can be safely accessed (even if that vertex has itself also been removed from the TDS).
       bool locked = derivd.try_lock_element(element, FIRST_GRID_LOCK_RADIUS);
 
       if( locked )

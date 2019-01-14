@@ -57,8 +57,7 @@ namespace CGAL {
   \cgalModels `QuadraticProgram`
   \cgalModels `LinearProgram`
 
-  Example 
-  -------------- 
+  \cgalHeading{Example} 
 
   \ref QP_solver/first_lp_from_iterators.cpp 
 
@@ -113,8 +112,7 @@ public:
 
   \returns an instance of `Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, C_it>`, constructed from the given iterators.
 
-  Example 
-  -------------- 
+  \cgalHeading{Example} 
 
   The following example demonstrates the typical usage of makers 
   with the simpler function `make_nonnegative_linear_program_from_iterators()`. 
@@ -160,8 +158,7 @@ make_linear_program_from_iterators (
   \returns an instance of `Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>`, constructed from the given iterators.
 
 
-  Example 
-  -------------- 
+  \cgalHeading{Example}
 
   `QP_solver/solve_convex_hull_containment_lp2.h` 
 
@@ -198,8 +195,7 @@ make_nonnegative_linear_program_from_iterators (
   `Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, D_it,C_it>`, 
   constructed from the given iterators.
 
-  Example 
-  -------------- 
+  \cgalHeading{Example} 
 
   The following example demonstrates the typical usage of makers 
   with the simpler function `make_nonnegative_linear_program_from_iterators()`. 
@@ -240,8 +236,7 @@ make_nonnegative_quadratic_program_from_iterators (
 
   \returns an instance of `Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>`, constructed from the given iterators.
 
-  Example 
-  -------------- 
+  \cgalHeading{Example}
 
   The following example demonstrates the typical usage of makers 
   with the simpler function `make_nonnegative_linear_program_from_iterators()`. 
@@ -330,8 +325,7 @@ make_quadratic_program_from_iterators (
   \cgalModels `NonnegativeQuadraticProgram`
   \cgalModels `NonnegativeLinearProgram`
 
-  Example 
-  -------------- 
+  \cgalHeading{Example}
 
   \ref QP_solver/first_nonnegative_lp_from_iterators.cpp 
 
@@ -422,8 +416,7 @@ public:
   \cgalModels `QuadraticProgram`
   \cgalModels `NonnegativeQuadraticProgram`
 
-  Example 
-  -------------- 
+  \cgalHeading{Example}
 
   \ref QP_solver/first_nonnegative_qp_from_iterators.cpp 
 
@@ -522,8 +515,7 @@ public:
 
   \cgalModels `QuadraticProgram`
 
-  Example 
-  -------------- 
+  \cgalHeading{Example}
 
   \ref QP_solver/first_qp_from_iterators.cpp 
 
@@ -630,8 +622,7 @@ public:
   \cgalModels `NonnegativeQuadraticProgram`
   \cgalModels `NonnegativeLinearProgram`
 
-  Example 
-  -------------- 
+  \cgalHeading{Example} 
 
   \ref QP_solver/first_qp_from_mps.cpp 
 
@@ -854,8 +845,7 @@ namespace CGAL {
   \cgalModels `NonnegativeQuadraticProgram`
   \cgalModels `NonnegativeLinearProgram`
 
-  Example 
-  -------------- 
+  \cgalHeading{Example} 
 
   \ref QP_solver/first_qp.cpp 
 

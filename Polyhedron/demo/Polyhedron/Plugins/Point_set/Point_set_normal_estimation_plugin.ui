@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>473</height>
+    <width>301</width>
+    <height>372</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -202,74 +202,6 @@
     </spacer>
    </item>
    <item>
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <spacer name="verticalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="buttonOrient">
-     <property name="text">
-      <string>Orient Estimated Normals</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QFrame" name="frame_4">
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QFormLayout" name="formLayout_5">
-      <property name="fieldGrowthPolicy">
-       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-      </property>
-      <item row="0" column="0">
-       <widget class="QLabel" name="neighborhoodSizeLabel">
-        <property name="text">
-         <string>Neighborhood Size</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QSpinBox" name="m_orient_neighbors">
-        <property name="suffix">
-         <string> Nearest Neighbors</string>
-        </property>
-        <property name="minimum">
-         <number>6</number>
-        </property>
-        <property name="maximum">
-         <number>100000000</number>
-        </property>
-        <property name="value">
-         <number>18</number>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -278,19 +210,6 @@
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
-   </item>
-   <item>
-    <spacer name="verticalSpacer_3">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>
@@ -341,22 +260,6 @@
     <hint type="destinationlabel">
      <x>199</x>
      <y>245</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonOrient</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>frame_4</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>199</x>
-     <y>316</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>199</x>
-     <y>355</y>
     </hint>
    </hints>
   </connection>
