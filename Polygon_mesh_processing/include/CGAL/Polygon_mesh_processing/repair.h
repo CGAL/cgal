@@ -326,10 +326,11 @@ OutputIterator degenerate_faces(const TriangleMesh& tm, OutputIterator out)
 // this function remove a border edge even if it does not satisfy the link condition.
 // The only limitation is that the length connected component of the boundary this edge
 // is strictly greater than 3
-template <class TriangleMesh>
+template <class TriangleMesh, class EdgeSet>
 typename boost::graph_traits<TriangleMesh>::vertex_descriptor
 remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor ed,
-                     TriangleMesh& tm)
+                     TriangleMesh& tm,
+                     EdgeSet& edge_set)
 {
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::edge_descriptor edge_descriptor;
@@ -349,7 +350,13 @@ remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor
   CGAL_assertion(next(next(next(opp_h, tm), tm), tm) !=opp_h); // not working for a hole make of 3 edges
 
   if (CGAL::Euler::does_satisfy_link_condition(edge(h,tm),tm))
+  {
+    edge_set.erase(ed);
+    halfedge_descriptor h=halfedge(ed, tm);
+    if ( is_border(h, tm) ) h = opposite(h, tm);
+    edge_set.erase(edge(prev(h, tm), tm));
     return CGAL::Euler::collapse_edge(ed, tm);
+  }
 
   // collect edges that have one vertex in the link of
   // the vertices of h and one of the vertex of h as other vertex
@@ -387,7 +394,7 @@ remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor
         boundary.push_back(back);
         continue;
       }
-      if ( !marked_faces.insert(fback).second )
+      if ( fback==GT::null_face() || !marked_faces.insert(fback).second )
         continue;
       queue.push_back( opposite(next(back,tm), tm) );
       queue.push_back( opposite(prev(back,tm), tm) );
@@ -395,9 +402,10 @@ remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor
     CGAL_assertion( boundary.size() == 2 );
     common_incident_edges.erase( edge(boundary[0], tm) );
     common_incident_edges.erase( edge(boundary[1], tm) );
-
-    queue.push_back(boundary[0]);
-    queue.push_back(boundary[1]);
+    if (!is_border(boundary[0], tm) || common_incident_edges.empty())
+      queue.push_back(boundary[0]);
+    if (!is_border(boundary[1], tm) || common_incident_edges.empty())
+      queue.push_back(boundary[1]);
   }
   while(!common_incident_edges.empty());
 
@@ -479,7 +487,10 @@ remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor
     remove_vertex(vd, tm);
   // remove edges
   BOOST_FOREACH(edge_descriptor ed, edges_to_remove)
+  {
+    edge_set.erase(ed);
     remove_edge(ed, tm);
+  }
   // remove faces
   BOOST_FOREACH(face_descriptor fd, marked_faces)
     remove_face(fd, tm);
@@ -501,12 +512,22 @@ remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor
   return vkept;
 }
 
+template <class TriangleMesh>
+typename boost::graph_traits<TriangleMesh>::vertex_descriptor
+remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor ed,
+                     TriangleMesh& tm)
+{
+  std::set<typename boost::graph_traits<TriangleMesh>::edge_descriptor> edge_set;
+  remove_a_border_edge(ed, tm, edge_set);
+}
+
 template <class EdgeRange, class TriangleMesh, class NamedParameters>
 bool remove_degenerate_edges(const EdgeRange& edge_range,
                                     TriangleMesh& tmesh,
                                     const NamedParameters& np)
 {
   CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
+  CGAL_assertion(CGAL::is_valid_polygon_mesh(tmesh));
 
   using boost::get_param;
   using boost::choose_param;
@@ -538,6 +559,42 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
 
   #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
     std::cout << "Found " << degenerate_edges_to_remove.size() << " null edges.\n";
+  #endif
+
+    // first try to remove all collapsable edges
+    typename std::set<edge_descriptor>::iterator it = degenerate_edges_to_remove.begin();
+    while (it!=degenerate_edges_to_remove.end())
+    {
+      if (CGAL::Euler::does_satisfy_link_condition(*it,tmesh))
+      {
+        halfedge_descriptor h = halfedge(*it, tmesh);
+        degenerate_edges_to_remove.erase(it);
+
+        // remove edges that could also be set for removal
+        if ( face(h, tmesh)!=GT::null_face() )
+        {
+          ++nb_deg_faces;
+          degenerate_edges_to_remove.erase(edge(prev(h, tmesh), tmesh));
+        }
+        if (face(opposite(h, tmesh), tmesh)!=GT::null_face())
+        {
+          ++nb_deg_faces;
+          degenerate_edges_to_remove.erase(edge(prev(opposite(h, tmesh), tmesh), tmesh));
+        }
+        //now remove the edge
+        CGAL::Euler::collapse_edge(*it, tmesh);
+        // some_removed is not updated on purpose because if nothing
+        //  happens below then nothing can be done
+        it = degenerate_edges_to_remove.begin();
+      }
+      else
+        ++it;
+    }
+
+    CGAL_assertion( is_valid_polygon_mesh(tmesh) );
+
+  #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+    std::cout << "Remaining " << degenerate_edges_to_remove.size() << " null edges to be handled.\n";
   #endif
 
     while (!degenerate_edges_to_remove.empty())
@@ -577,6 +634,8 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
             degenerate_edges_to_remove.insert(ed);
             continue;
           }
+          remove_a_border_edge(ed, tmesh, degenerate_edges_to_remove);
+          continue;
         }
         else
         {
@@ -593,6 +652,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
           }
           if (impossible)
           {
+            impossible=false;
             BOOST_FOREACH(halfedge_descriptor h, halfedges_around_source(hd, tmesh))
             {
               if (is_border(h, tmesh))
@@ -713,6 +773,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
             // try to extract one more face for a given cc
             do{
               CGAL_assertion( !exploration_finished[index] );
+              CGAL_assertion( !stacks_per_cc[index].empty() );
               halfedge_descriptor hd = stacks_per_cc[index].back();
               stacks_per_cc[index].pop_back();
               hd = opposite(hd, tmesh);
