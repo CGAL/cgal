@@ -59,7 +59,11 @@ class Hyperbolic_traits_with_translations_2_adaptor
 public:
   typedef typename Predicate::result_type                 result_type;
 
+#ifndef CGAL_CFG_MATCHING_BUG_6
   using Predicate::operator();
+#else
+
+#endif
 
   Hyperbolic_traits_with_translations_2_adaptor(const Predicate_ pred = Predicate_()) : Predicate_(pred) {}
 
@@ -119,9 +123,13 @@ private:
 
 public:
   typedef Point                                           result_type;
-
+ 
+#ifndef CGAL_CFG_MATCHING_BUG_6
   using Construct_point_base::operator();
+#else
 
+#endif
+  
   Periodic_4_construct_hyperbolic_point_2() { }
 
   Point operator()(const Point& pt, const Hyperbolic_translation& tr) const
@@ -539,7 +547,7 @@ class Side_of_original_octagon
       FT s1 (CGAL::sqrt(n2 + CGAL::sqrt(n2))); // CGAL::sqrt(2 + CGAL::sqrt(2))
       FT s2 (CGAL::sqrt(n2 - CGAL::sqrt(n2))); // CGAL::sqrt(2 - CGAL::sqrt(2))
       FT s3 (CGAL::sqrt(sq2 - FT(1))); // CGAL::sqrt(CGAL::sqrt(2) - 1)
-
+      _gt.construct_point_2_object()(s1*p34/n4, -s2*p34/n4);
       Hyperbolic_point_2 V0 = _gt.construct_hyperbolic_point_2_object()(_gt.construct_point_2_object()(s1*p34/n4, -s2*p34/n4));
       Hyperbolic_point_2 V1 = _gt.construct_hyperbolic_point_2_object()(_gt.construct_point_2_object()(p14*(s1+s2)/n4, p14*(s1-s2)/n4));
       Hyperbolic_point_2 V2 = _gt.construct_hyperbolic_point_2_object()(_gt.construct_point_2_object()(s2*p34/n4, s1*p34/n4));
