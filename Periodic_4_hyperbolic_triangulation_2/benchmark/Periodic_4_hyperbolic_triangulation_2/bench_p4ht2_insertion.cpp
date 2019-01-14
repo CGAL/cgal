@@ -17,14 +17,11 @@
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
 
-typedef CORE::Expr                                                              NT;
-typedef CGAL::Cartesian<NT>                                                     Kernel;
-
-typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel,
-                                    CGAL::Hyperbolic_octagon_translation>       Traits;
+typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<>           Traits;
+typedef Traits::FT                                                              NT;
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<Traits>            Triangulation;
 typedef CGAL::Hyperbolic_octagon_translation_matrix<NT>                         Octagon_matrix;
-typedef Kernel::Point_2                                                         Point;
+typedef Triangulation::Point                                                    Point;
 typedef Triangulation::Vertex_handle                                            Vertex_handle;
 typedef Traits::Side_of_original_octagon                                        Side_of_original_octagon;
 typedef Triangulation::Face_iterator                                            Face_iterator;
@@ -45,16 +42,20 @@ double time_remove_dp(0);
 
 int main(int argc, char** argv)
 {
+  int N, iters;
   if(argc < 2)
   {
     std::cout << "usage: " << argv[0] << " [number_of_points_to_insert] [optional: number_of_iterations]" << std::endl;
-    return EXIT_FAILURE;
+    std::cout << "Defaulting to 100k points, 10 iterations..." << std::endl;
+    iters = 10;
+    N = 100000;
+  } else {
+    N = atoi(argv[1]);
+    if (argc < 3)
+      iters = 10;
+    else 
+      iters = atoi(argv[2]);
   }
-
-  int N = atoi(argv[1]);
-  int iters = 1;
-  if(argc == 3)
-    iters = atoi(argv[2]);
 
   Side_of_original_octagon pred;
 

@@ -27,9 +27,6 @@
 #include <internal/Qt/TriangulationConflictZone.h>
 #include <internal/Qt/TriangulationPointInput.h>
 
-#include <CGAL/CORE_Expr.h>
-#include <CGAL/Cartesian.h>
-
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h> 
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h>
 
@@ -40,15 +37,10 @@
 
 #include <CGAL/Timer.h>
 
-
-//typedef CORE::Expr                                                              NT;
-//typedef CGAL::Cartesian<NT>                                                     Kernel;
-
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<>           Traits; 
 typedef Traits::Segment_2                                                       Segment_2;
 typedef Traits::Circle_2                                                        Circle_2;
 typedef Traits::Circular_arc_2                                                  Circular_arc_2;
-//typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<Traits>            Triangulation;
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<>                  Triangulation;
 typedef Triangulation::Point                                                    Point;
 typedef Triangulation::Vertex_handle                                            Vertex_handle;

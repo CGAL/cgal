@@ -1,4 +1,3 @@
-#include <CGAL/CORE_Expr.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h>
@@ -12,10 +11,7 @@
 
 #include <iostream>
 
-typedef CORE::Expr                                                                  NT;
-typedef CGAL::Cartesian<NT>                                                         Kernel;
-typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel,
-                                      CGAL::Hyperbolic_octagon_translation>         Traits;
+typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<>               Traits;
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<Traits>                Triangulation;
 typedef Triangulation::Face_iterator                                                Face_iterator;
 typedef Triangulation::Vertex_handle                                                Vertex_handle;

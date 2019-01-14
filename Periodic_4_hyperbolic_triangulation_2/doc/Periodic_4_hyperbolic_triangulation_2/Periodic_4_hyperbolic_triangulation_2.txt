@@ -278,7 +278,8 @@ package is the class `Periodic_4_hyperbolic_Delaunay_triangulation_traits_2`. Th
 one template parameter:
 <ul>
 	<li> A `Kernel` with a field number type `FT` that guarantees exact computations on algebraic numbers 
-  with nested square roots. The default value for this parameter is `CGAL::Cartesian<CORE::Expr>`.</li>
+  with nested square roots. The default value for this parameter is 
+  `CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt`.</li>
 </ul>
 
 

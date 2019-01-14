@@ -1,4 +1,3 @@
-#include <CGAL/CORE_Expr.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h>
@@ -13,10 +12,7 @@
 
 #include <iostream>
 
-typedef CORE::Expr                                                                  NT;
-typedef CGAL::Cartesian<NT>                                                         Kernel;
-typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel,
-                                      CGAL::Hyperbolic_octagon_translation>         Traits;
+typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<>               Traits;
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<Traits>                Triangulation;
 typedef Triangulation::Face_iterator                                                Face_iterator;
 typedef Triangulation::Vertex_handle                                                Vertex_handle;
@@ -27,13 +23,16 @@ typedef CGAL::Creator_uniform_2<double, Point_double >                          
 
 int main(int argc, char** argv)
 {
+  int iter;
   if(argc < 2)
   {
     std::cout << "usage: " << argv[0] << " [number_of_iterations]" << std::endl;
-    return EXIT_FAILURE;
+    std::cout << "defaulting to 10 iterations..." << std::endl;
+    iter = 10;
+  } else {
+    iter = atoi(argv[1]);
   }
-
-  int iter = atoi(argv[1]);
+  
   Side_of_original_octagon pred;
 
   int N = 500;

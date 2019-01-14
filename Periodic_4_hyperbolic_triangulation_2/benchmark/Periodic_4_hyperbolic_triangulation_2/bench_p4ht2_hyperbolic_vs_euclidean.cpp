@@ -1,7 +1,7 @@
-#include <CGAL/CORE_Expr.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 #include <CGAL/Hyperbolic_octagon_translation.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_2_Delaunay_triangulation_traits_2.h>
@@ -15,21 +15,20 @@
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
 
-typedef CORE::Expr                                                              NT;
-typedef CGAL::Cartesian<NT>                                                     Kernel;
-typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel,
-                                      CGAL::Hyperbolic_octagon_translation>     Traits;
+typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<>           Traits;
+typedef Traits::FT                                                              NT;
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<Traits>            Triangulation;
 typedef CGAL::Hyperbolic_octagon_translation_matrix<NT>                         Octagon_matrix;
-typedef Kernel::Point_2                                                         Point;
+typedef Triangulation::Point                                                    Point;
 typedef Triangulation::Vertex_handle                                            Vertex_handle;
 typedef Traits::Side_of_original_octagon                                        Side_of_original_octagon;
 
 typedef CGAL::Cartesian<double>::Point_2                                        Point_double;
 typedef CGAL::Creator_uniform_2<double, Point_double >                          Creator;
 
-typedef CGAL::Delaunay_triangulation_2<Kernel>                                  Euclidean_triangulation;
-typedef CGAL::Periodic_2_Delaunay_triangulation_traits_2<Kernel>                Ptraits;
+typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt             EKernel;
+typedef CGAL::Delaunay_triangulation_2<EKernel>                                 Euclidean_triangulation;
+typedef CGAL::Periodic_2_Delaunay_triangulation_traits_2<EKernel>               Ptraits;
 typedef CGAL::Periodic_2_Delaunay_triangulation_2<Ptraits>                      PEuclidean_triangulation;
 
 typedef double                                                                  dNT;

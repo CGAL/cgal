@@ -28,7 +28,6 @@
 #include <QEvent>
 #include <QPen>
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Qt/GraphicsViewInput.h>
 
 namespace CGAL {

@@ -14,7 +14,7 @@ the default traits class for the class `Periodic_4_hyperbolic_Delaunay_triangula
 
 \sa `Periodic_4_hyperbolic_Delaunay_triangulation_2`
 */
-template< class Kernel = CGAL::Cartesian<CORE::Expr> >
+template< class Kernel = CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt >
 class Periodic_4_hyperbolic_Delaunay_triangulation_traits_2 :
 	public Hyperbolic_Delaunay_triangulation_traits_2<Kernel>
 {

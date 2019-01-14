@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Periodic_4_hyperbolic_triangulation_2.h>
 
+#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 #include <CGAL/Hyperbolic_octagon_translation.h>
 #include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 
@@ -615,7 +616,7 @@ class Side_of_original_octagon
 } // end namespace internal 
 
 
-template <typename Kernel = CGAL::Cartesian<CORE::Expr>,
+template <typename Kernel = Exact_predicates_exact_constructions_kernel_with_sqrt,
           template<typename> class Translation_type = Hyperbolic_octagon_translation>
 class Periodic_4_hyperbolic_Delaunay_triangulation_traits_2
   : public Hyperbolic_Delaunay_triangulation_traits_2<Kernel>
