@@ -35,7 +35,6 @@ class Reflection_repC2: public Aff_transformation_rep_baseC2<R>
   friend class Rotation_repC2<R>;
   friend class Scaling_repC2<R>;
   friend class Aff_transformation_repC2<R>;
-  friend class Reflection_repC2<R>;
 
 public:
   typedef Aff_transformation_rep_baseC2<R> Aff_t_base;
