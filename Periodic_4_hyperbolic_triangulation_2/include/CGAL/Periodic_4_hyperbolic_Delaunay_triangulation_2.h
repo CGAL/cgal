@@ -406,7 +406,7 @@ is_removable(Vertex_handle v,
   // This is the exact value of the limit.
   // The systole is 2*acosh(1+sqrt(2)), and we want half of that.
   // The max _diameter_ of the hyperbolic circles must be less than this.
-  double factor(0.95); // percentage of the limit to consider -- failsafe!
+  double factor(0.9); // percentage of the limit to consider -- failsafe!
   double lim(factor*acosh(1. + sqrt(2.)));
 
   std::vector<Vertex_handle> bdry_verts;
@@ -633,7 +633,7 @@ remove(Vertex_handle v)
 
         if(!found_bdry)
         {
-          for(int l=0; l<static_cast<int>(new_f.size()); ++l)
+          for(unsigned int l=0; l<static_cast<int>(new_f.size()); ++l)
           {
             if(l == i)
               continue;
