@@ -3,6 +3,7 @@
 
 #include "Messages_interface.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 #include "Scene_polyhedron_selection_item.h"
 #include "ui_Fairing_widget.h"
 
@@ -42,7 +43,7 @@ public:
     return qobject_cast<Scene_facegraph_item*>(scene->item(scene->mainSelectionIndex()))
     || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));  
   }
-  void print_message(QString message) { messages->information(message);}
+  void print_message(QString message) { CGAL::Three::Three::information(message);}
   QList<QAction*> actions() const { return QList<QAction*>() << actionFairing; }
 
 

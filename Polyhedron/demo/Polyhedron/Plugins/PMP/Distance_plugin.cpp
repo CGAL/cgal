@@ -1,5 +1,6 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Scene_interface.h>
+#include <CGAL/Three/Three.h>
 #include <QApplication>
 #include <QObject>
 #include <QAction>
@@ -431,7 +432,7 @@ public Q_SLOTS:
     Scene_face_graph_item* itemB = qobject_cast<Scene_face_graph_item*>(scene->item(scene->selectionIndices().last()));
     if(! CGAL::is_triangle_mesh(*itemA->polyhedron()) ||
        !CGAL::is_triangle_mesh(*itemB->polyhedron()) ){
-      messageInterface->error(QString("Distance not computed. (Both polyhedra must be triangulated)"));
+      CGAL::Three::Three::error(QString("Distance not computed. (Both polyhedra must be triangulated)"));
       return;
     }
     QApplication::setOverrideCursor(Qt::WaitCursor);

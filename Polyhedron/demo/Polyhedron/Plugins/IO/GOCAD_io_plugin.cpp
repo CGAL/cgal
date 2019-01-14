@@ -73,7 +73,7 @@ Polyhedron_demo_gocad_plugin::load(QFileInfo fileinfo) {
   Scene_surface_mesh_item* item = new Scene_surface_mesh_item(new SMesh());
   if(fileinfo.size() == 0)
   {
-    CGAL::Three::Three::s_warning( tr("The file you are trying to load is empty."));
+    CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
     return item;
   }
   SMesh& P = * const_cast<SMesh*>(item->polyhedron());

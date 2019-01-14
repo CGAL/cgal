@@ -76,15 +76,15 @@ public:
    * in the plugin.
    */
   static void autoConnectActions(CGAL::Three::Polyhedron_demo_plugin_interface* plugin);
-  static void s_information(QString);
+  static void information(QString);
   /*!
    * Displays a blue text preceded by the mention "WARNING :".
    */
-  static void s_warning(QString);
+  static void warning(QString);
   /*!
    * Displays a red text preceded by the mention "ERROR :".
    */
-  static void s_error(QString);
+  static void error(QString);
 protected:
   static QMainWindow* s_mainwindow;
   static Scene_interface* s_scene;

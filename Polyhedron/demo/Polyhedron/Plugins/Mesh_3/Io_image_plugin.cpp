@@ -64,6 +64,7 @@
 #include <vtkImageGaussianSmooth.h>
 #include <vtkDemandDrivenPipeline.h>
 #endif
+#include <CGAL/Three/Three.h>
 
 // Covariant return types don't work for scalar types and we cannot
 // have templates here, hence this unfortunate hack.
@@ -365,7 +366,7 @@ public Q_SLOTS:
       }
     }
     if(group_map.keys().contains(seg_img))
-      this->message_interface->warning("This item already has volume planes.");
+      CGAL::Three::Three::warning("This item already has volume planes.");
     else
     {
       // Opens a modal Dialog to prevent the user from manipulating things that could mess with the planes creation and cause a segfault.
@@ -1153,7 +1154,7 @@ bool Io_image_plugin::loadDCM(QString dirname)
   {
     QMessageBox::warning(mw, mw->windowTitle(),
                          tr("Cannot read directory <tt>%1</tt>!").arg(dirname));
-    message_interface->warning(tr("Opening of directory %1 failed!").arg(dirname));
+    CGAL::Three::Three::warning(tr("Opening of directory %1 failed!").arg(dirname));
     result = false;
   }
   else
@@ -1204,12 +1205,12 @@ bool Io_image_plugin::loadDCM(QString dirname)
       {
         QMessageBox::warning(mw, mw->windowTitle(),
                              tr("Error with file <tt>%1/</tt>:\nunknown file format!").arg(dirname));
-        message_interface->warning(tr("Opening of file %1/ failed!").arg(dirname));
+        CGAL::Three::Three::warning(tr("Opening of file %1/ failed!").arg(dirname));
         result = false;
       }
       else
       {
-        message_interface->information(tr("File %1/ successfully opened.").arg(dirname));
+        CGAL::Three::Three::information(tr("File %1/ successfully opened.").arg(dirname));
       }
       if(result)
       {
@@ -1230,12 +1231,12 @@ bool Io_image_plugin::loadDCM(QString dirname)
       {
         QMessageBox::warning(mw, mw->windowTitle(),
                              tr("Error with file <tt>%1/</tt>:\nunknown file format!").arg(dirname));
-        message_interface->warning(tr("Opening of file %1/ failed!").arg(dirname));
+        CGAL::Three::Three::warning(tr("Opening of file %1/ failed!").arg(dirname));
         result = false;
       }
       else
       {
-        message_interface->information(tr("File %1/ successfully opened.").arg(dirname));
+        CGAL::Three::Three::information(tr("File %1/ successfully opened.").arg(dirname));
       }
       if(result)
       {

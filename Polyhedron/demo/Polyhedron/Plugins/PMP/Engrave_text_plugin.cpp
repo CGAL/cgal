@@ -734,7 +734,7 @@ public Q_SLOTS:
     if (PMP::does_self_intersect(text_mesh_complete))
     {
       QApplication::restoreOverrideCursor();
-      messages->information("Error: text mesh self-intersects!");
+      CGAL::Three::Three::information("Error: text mesh self-intersects!");
       return;
     }
     
@@ -745,7 +745,7 @@ public Q_SLOTS:
     if (!OK)
     {
       QApplication::restoreOverrideCursor();
-      messages->information("Error: the output mesh is not manifold!");
+      CGAL::Three::Three::information("Error: the output mesh is not manifold!");
       return;
     }
     

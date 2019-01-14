@@ -50,7 +50,7 @@ Polyhedron_demo_io_nef_plugin::load(QFileInfo fileinfo) {
   item->setName(fileinfo.baseName());
   if(fileinfo.size() == 0)
   {
-    CGAL::Three::Three::s_warning( tr("The file you are trying to load is empty."));
+    CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
     return item;
   }
   if(!item->load(in))

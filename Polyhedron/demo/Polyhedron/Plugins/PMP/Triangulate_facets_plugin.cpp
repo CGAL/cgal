@@ -3,6 +3,7 @@
 #include <QAction>
 #include "Messages_interface.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 #include "Scene_surface_mesh_item.h"
 
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
@@ -53,12 +54,12 @@ public Q_SLOTS:
       SMesh* pMesh = sm_item->polyhedron();
       if(!pMesh) continue;
       if(is_triangle_mesh(*pMesh)) {
-        messages->warning(tr("The polyhedron  \"%1\"  is already triangulated.")
+        CGAL::Three::Three::warning(tr("The polyhedron  \"%1\"  is already triangulated.")
                           .arg(sm_item->name()) );
         continue;
       }
       if(!CGAL::Polygon_mesh_processing::triangulate_faces(*pMesh))
-        messages->warning(tr("Some facets could not be triangulated."));
+        CGAL::Three::Three::warning(tr("Some facets could not be triangulated."));
       
       sm_item->invalidateOpenGLBuffers();
       scene->itemChanged(sm_item);

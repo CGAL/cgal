@@ -3,6 +3,7 @@
 
 #ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 #include "Messages_interface.h"
 
 #include <QObject>
@@ -623,7 +624,7 @@ meshing_done(Meshing_thread* thread)
     .arg(bbox.zmin())
     .arg(bbox.zmax()));
 
-  msg->information(qPrintable(str));
+  CGAL::Three::Three::information(qPrintable(str));
 
   // Treat new c3t3 item
   treat_result(*source_item_, result_item);

@@ -134,17 +134,17 @@ void Three::autoConnectActions(Polyhedron_demo_plugin_interface *plugin)
   } // end foreach action of actions()
 }
 
-void Three::s_information(QString s)
+void Three::information(QString s)
 {
-  qobject_cast<Messages_interface*>(mainWindow())->information(s);
+  qobject_cast<Messages_interface*>(mainWindow())->message_information(s);
 }
-void Three::s_warning(QString s)
+void Three::warning(QString s)
 {
-  qobject_cast<Messages_interface*>(mainWindow())->warning(s);
+  qobject_cast<Messages_interface*>(mainWindow())->message_warning(s);
 }
-void Three::s_error(QString s)
+void Three::error(QString s)
 {
-  qobject_cast<Messages_interface*>(mainWindow())->error(s);
+  qobject_cast<Messages_interface*>(mainWindow())->message_error(s);
 }
 RenderingMode Three::defaultSurfaceMeshRenderingMode()
 {

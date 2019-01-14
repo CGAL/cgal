@@ -9,6 +9,7 @@
 #include "Scene.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 #include "ui_Polyhedron_slicer_widget.h"
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -40,7 +41,7 @@ public:
     return qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex())); 
   }
 
-  void print_message(QString message) { messages->information(message);}
+  void print_message(QString message) { CGAL::Three::Three::information(message);}
 
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m);
   virtual void closure()

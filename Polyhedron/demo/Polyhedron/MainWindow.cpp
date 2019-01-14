@@ -893,17 +893,17 @@ void MainWindow::message(QString message, QString colorName, QString font) {
   ui->consoleTextEdit->verticalScrollBar()->setValue(ui->consoleTextEdit->verticalScrollBar()->maximum());
 }
 
-void MainWindow::information(QString text) {
+void MainWindow::message_information(QString text) {
   statusBar()->setStyleSheet("color: blue");
   this->message("INFO: " + text, "blue");
 }
 
-void MainWindow::warning(QString text) {
+void MainWindow::message_warning(QString text) {
   statusBar()->setStyleSheet("color: orange");
   this->message("WARNING: " + text, "orange");
 }
 
-void MainWindow::error(QString text) {
+void MainWindow::message_error(QString text) {
   statusBar()->setStyleSheet("color: red");
   this->message("ERROR: " + text, "red");
 }

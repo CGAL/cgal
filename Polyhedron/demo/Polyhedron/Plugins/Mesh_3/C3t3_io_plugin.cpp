@@ -70,7 +70,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
     
     if(fileinfo.size() == 0)
     {
-      CGAL::Three::Three::s_warning( tr("The file you are trying to load is empty."));
+      CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
       item->setName(fileinfo.completeBaseName());
       return item;
     }

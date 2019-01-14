@@ -220,15 +220,15 @@ public Q_SLOTS:
   /*!
    * Displays a text preceded by the mention "INFO :".
    */
-  void information(QString) Q_DECL_OVERRIDE;
+  void message_information(QString) Q_DECL_OVERRIDE;
   /*!
    * Displays a blue text preceded by the mention "WARNING :".
    */
-  void warning(QString) Q_DECL_OVERRIDE;
+  void message_warning(QString) Q_DECL_OVERRIDE;
   /*!
    * Displays a red text preceded by the mention "ERROR :".
    */
-  void error(QString) Q_DECL_OVERRIDE;
+  void message_error(QString) Q_DECL_OVERRIDE;
 
     //!Displays a text in the chosen html color with the chosen html font.
 
@@ -418,7 +418,7 @@ private:
   QAction* actionAddToGroup;
   QAction* actionResetDefaultLoaders;
   CGAL::Three::Three* three;
-  void print_message(QString message) { messages->information(message); }
+  void print_message(QString message) { messages->message_information(message); }
   Messages_interface* messages;
 
   QDialog *statistics_dlg;
