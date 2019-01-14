@@ -55,7 +55,7 @@ The Delaunay triangulation of a set of points \f$P\f$ in the hyperbolic plane \f
 - `CGAL::Hyperbolic_triangulation_face_base_2`
 
 Two models for the concept `HyperbolicDelaunayTriangulationTraits_2` are provided: 
-- `CGAL::Hyperbolic_Delaunay_triangulation_traits_2` is by default based upon `CGAL::Cartesian<CORE::Expr>` and guarantees exact constructions of Delaunay triangulations and dual objects for input points with algebraic coordinates. 
+- `CGAL::Hyperbolic_Delaunay_triangulation_traits_2` is by default based upon `CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt` and guarantees exact constructions of Delaunay triangulations and dual objects for input points with algebraic coordinates. 
 - `CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2` is based upon `CGAL::Circular_kernel_2` and guarantees exact constructions of Delaunay triangulations and dual objects when the input points have rational coordinates.
 
 The model `CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2` is faster than `CGAL::Hyperbolic_Delaunay_triangulation_traits_2` for points with rational coordinates.

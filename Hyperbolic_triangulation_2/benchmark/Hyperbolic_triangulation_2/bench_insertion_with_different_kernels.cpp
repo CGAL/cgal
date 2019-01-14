@@ -3,7 +3,7 @@
 #include <CGAL/Hyperbolic_Delaunay_triangulation_2.h>
 #include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
 #include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
-
+#include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Timer.h>
 
@@ -80,8 +80,7 @@ std::pair<double,double> insert_CK_points(const std::vector<NT_point>& dpts)
 template<typename NT_point>
 std::pair<double,double> insert_CORE_points(const std::vector<NT_point>& dpts)
 {
-  typedef CGAL::Cartesian<CORE::Expr>                             K;
-  typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<K>     Gt;
+  typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<>      Gt;
   typedef Gt::Point_2                                             Point_2;
   typedef CGAL::Hyperbolic_Delaunay_triangulation_2<Gt>           Dt;
 

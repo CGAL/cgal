@@ -1,6 +1,5 @@
 #include <CGAL/Hyperbolic_Delaunay_triangulation_2.h>
 #include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/point_generators_2.h>
                                     						
 typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<>  Traits;

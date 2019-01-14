@@ -14,8 +14,9 @@ offered by %CGAL.
 
 If `K` provides exact computations with square roots, then this class automatically 
 provides exact constructions and predicates. The default value for `K` is 
-`CGAL::Cartesian<CORE::Expr>`, which guarantees exact constructions of Delaunay 
-triangulations and dual objects for input points with algebraic coordinates. 
+`Exact_predicates_exact_constructions_kernel_with_sqrt`, which guarantees exact 
+constructions of Delaunay triangulations and dual objects for input points with 
+algebraic coordinates. 
 
 \sa Hyperbolic_Delaunay_triangulation_CK_traits_2
 

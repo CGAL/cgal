@@ -24,12 +24,10 @@
 #define CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_TRAITS_2_H
 
 #include <CGAL/license/Hyperbolic_triangulation_2.h>
-
+#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 #include <CGAL/basic.h>
 #include <CGAL/basic_constructions_2.h>
 #include <CGAL/Bbox_2.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/CORE_Expr.h>
 #include <CGAL/determinant.h>
 #include <CGAL/distance_predicates_2.h>
 #include <CGAL/internal/Exact_complex.h>
@@ -465,7 +463,9 @@ private:
 
 } // end namespace internal
 
-template<typename Kernel = CGAL::Cartesian<CORE::Expr> >
+//template<typename Kernel = CGAL::Cartesian<CORE::Expr> >
+
+template<typename Kernel = Exact_predicates_exact_constructions_kernel_with_sqrt>
 class Hyperbolic_Delaunay_triangulation_traits_2
   : public Kernel
 {
