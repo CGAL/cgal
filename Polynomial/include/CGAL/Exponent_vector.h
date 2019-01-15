@@ -62,7 +62,6 @@ public:
   };
     
   Exponent_vector(const std::vector<int>& v_): v(v_){};
-  Exponent_vector(const Exponent_vector& ev): v(ev.v){};
 
   template <class InputIterator>
   Exponent_vector(InputIterator begin , InputIterator end)
