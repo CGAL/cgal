@@ -9,10 +9,7 @@
 # TESTSUITE=indicate if the release is meant to be used by the testsuite, default if OFF
 # GPL_PACKAGE_LIST=path to a file containing the list of GPL packages to include in the release. If not provided all of them are.
 
-if(POLICY CMP0009)
-  # http://www.cmake.org/cmake/help/v3.2/policy/CMP0009.html
-  cmake_policy(SET CMP0009 NEW)
-endif()
+cmake_minimum_required(VERSION 3.1)
 
 function(process_package pkg)
   if(VERBOSE)
