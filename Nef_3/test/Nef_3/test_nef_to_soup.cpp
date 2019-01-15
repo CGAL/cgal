@@ -15,6 +15,7 @@ int main()
 { 
   typedef CGAL::Nef_polyhedron_3< EPEC > Nef_polyhedron;
   typedef CGAL::Polyhedron_3< EPEC >     Polyhedron;
+  typedef CGAL::Polyhedron_3< EPIC >     PolygonMesh;
   typedef typename EPIC::Point_3         Point;
   typedef std::list<std::list<std::size_t> > PolygonRange;
   typedef std::list<Point> PointRange;
@@ -38,11 +39,15 @@ int main()
   PolygonRange polygons;
     std::cout << "    convert...\n";
   CGAL::convert_nef_polyhedron_to_polygon_soup<
-      EPIC, 
-      Nef_polyhedron, 
-      PolygonRange,
-      PointRange>(nef, points, polygons);
+      EPIC>(nef, points, polygons);
   CGAL_assertion(points.size() == 4);
   CGAL_assertion(polygons.size() == 4);
+  PolygonMesh pm;
+  CGAL::convert_nef_polyhedron_to_polygon_mesh<
+      Nef_polyhedron, 
+      PolygonMesh,
+      std::vector<std::vector<std::size_t> >,
+      std::vector<Point> >(nef, pm);
+  
   return 0;
 }

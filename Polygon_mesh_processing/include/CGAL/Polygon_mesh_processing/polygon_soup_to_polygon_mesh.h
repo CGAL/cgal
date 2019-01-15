@@ -44,12 +44,12 @@ namespace Polygon_mesh_processing
 namespace internal
 {
 template <typename PM
-        , typename Point
-        , typename Polygon>
+        , typename PointRange
+        , typename PolygonRange>
 class Polygon_soup_to_polygon_mesh
 {
-  const std::vector<Point>& _points;
-  const std::vector<Polygon>& _polygons;
+  const PointRange& _points;
+  const PolygonRange& _polygons;
 
   typedef typename boost::property_map<PM, CGAL::vertex_point_t>::type Vpmap;
   typedef typename boost::property_traits<Vpmap>::value_type Point_3;
@@ -57,15 +57,17 @@ class Polygon_soup_to_polygon_mesh
   typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
+  typedef typename PolygonRange::value_type Polygon;
+  typedef typename PointRange::value_type Point;
 
 public:
   /**
   * The constructor for modifier object.
   * @param points points of the soup of polygons.
-  * @param polygons each element in the vector describes a polygon using the index of the points in the vector.
+  * @param polygons each element in the range describes a polygon using the index of the points in the range.
   */
-  Polygon_soup_to_polygon_mesh(const std::vector<Point>& points,
-                               const std::vector<Polygon>& polygons)
+  Polygon_soup_to_polygon_mesh(const PointRange& points,
+                               const PolygonRange& polygons)
     : _points(points),
       _polygons(polygons)
   { }
@@ -195,9 +197,12 @@ public:
   * @pre the input polygon soup describes a consistently oriented
   * polygon mesh.
   *
-  * @tparam PolygonMesh a model of `MutableFaceGraph` with an internal point property map
-  * @tparam Point a point type that has an operator `[]` to access coordinates
-  * @tparam Polygon a `std::vector<std::size_t>` containing the indices
+  * @tparam PolygonMesh a model of `MutableFaceGraph` with an internal point 
+  * property map
+  * @tparam PointRange a `RandomAccessContainer` with a value_type that has an 
+  * operator `[]` to access coordinates
+  * @tparam PolygonRange a `RandomAccessContainer` of `RandomAccessContainer` 
+  * of `std::size_t` containing the indices
   *         of the points of the face
   *
   * @param points points of the soup of polygons
@@ -211,16 +216,16 @@ public:
   * \sa `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()`
   *
   */
-  template<class PolygonMesh, class Point, class Polygon>
+  template<class PolygonMesh, class PointRange, class PolygonRange>
   void polygon_soup_to_polygon_mesh(
-    const std::vector<Point>& points,
-    const std::vector<Polygon>& polygons,
+    const PointRange& points,
+    const PolygonRange& polygons,
     PolygonMesh& out)
   {
     CGAL_precondition_msg(is_polygon_soup_a_polygon_mesh(polygons),
                           "Input soup needs to be a polygon mesh!");
 
-    internal::Polygon_soup_to_polygon_mesh<PolygonMesh, Point, Polygon>
+    internal::Polygon_soup_to_polygon_mesh<PolygonMesh, PointRange, PolygonRange>
       converter(points, polygons);
     converter(out);
   }
