@@ -100,7 +100,6 @@ public:
 
   Aff_transformation_2 compose(const Reflection &r) const
   {
-    FT ft0(0);
     return Aff_transformation_2(scalefactor_*r.cosinus_, scalefactor_*r.sinus_,-r.cosinus_*r.t.x()-r.sinus_*r.t.y()+r.t.x(),
                                 scalefactor_*r.sinus_, -scalefactor_*r.cosinus_, -r.sinus_*r.t.x()+r.cosinus_*r.t.y()-r.t.y());
   }
