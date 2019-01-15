@@ -251,13 +251,6 @@ public:
     : Tr_Base(p0, p1, p2, p3, gt, lock_ds)
   {}
 
-  // copy constructor duplicates vertices and cells
-  Delaunay_triangulation_3(const Delaunay_triangulation_3& tr)
-    : Tr_Base(tr)
-  {
-    CGAL_triangulation_postcondition(is_valid());
-  }
-
   template < typename InputIterator >
   Delaunay_triangulation_3(InputIterator first, InputIterator last,
                            const Gt& gt = Gt(), Lock_data_structure *lock_ds = NULL)
@@ -275,9 +268,6 @@ public:
     insert(first, last);
   }
 
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
-  Delaunay_triangulation_3& operator=(const Delaunay_triangulation_3&)=default;  
-#endif
   
 private:
   #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
