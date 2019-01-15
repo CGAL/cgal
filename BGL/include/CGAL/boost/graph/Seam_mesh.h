@@ -299,10 +299,6 @@ public:
       : hd(h)
     { }
 
-    vertex_descriptor(const vertex_descriptor& other)
-      : hd(other.hd)
-    { }
-
     bool operator==(const vertex_descriptor& other) const
     {
       return (hd == other.hd);
