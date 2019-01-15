@@ -371,14 +371,14 @@ void convert_nef_polyhedron_to_polygon_soup(const Nef_polyhedron& nef,
                                          triangulate_all_faces);
 }
 
-template <class Nef_polyhedron, class Polygon_mesh, typename PolygonRange, typename PointRange>
+template <class Nef_polyhedron, class Polygon_mesh>
 void convert_nef_polyhedron_to_polygon_mesh(const Nef_polyhedron& nef, Polygon_mesh& pm, bool triangulate_all_faces = false)
 {
   typedef typename boost::property_traits<typename boost::property_map<Polygon_mesh, vertex_point_t>::type>::value_type PM_Point;
   typedef typename Kernel_traits<PM_Point>::Kernel PM_Kernel;
 
-  PointRange points;
-  PolygonRange polygons;
+  std::vector<PM_Point> points;
+  std::vector<std::vector<std::size_t> > polygons;
   convert_nef_polyhedron_to_polygon_soup<PM_Kernel>(nef, points, polygons, triangulate_all_faces);
   Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, pm);
 }

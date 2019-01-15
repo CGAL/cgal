@@ -45,9 +45,7 @@ int main()
   PolygonMesh pm;
   CGAL::convert_nef_polyhedron_to_polygon_mesh<
       Nef_polyhedron, 
-      PolygonMesh,
-      std::vector<std::vector<std::size_t> >,
-      std::vector<Point> >(nef, pm);
+      PolygonMesh>(nef, pm);
   
   return 0;
 }
