@@ -21,8 +21,8 @@ int main(int argc, char**argv)
 	HDTriangulation tri;
 	tri.insert(pts.begin(), pts.end());
 
-	unsigned int nv = tri.number_of_vertices();
-	unsigned int nf = tri.number_of_hyperbolic_faces();
+        std::size_t nv = tri.number_of_vertices();
+        std::size_t nf = tri.number_of_hyperbolic_faces();
 
 	std::cout << " -------- inserting --------" << std::endl;
 	std::cout << "Vertices  in triangulation: " << nv << std::endl;

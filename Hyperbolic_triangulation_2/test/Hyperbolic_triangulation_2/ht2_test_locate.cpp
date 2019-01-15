@@ -26,8 +26,8 @@ int main(int argc, char**argv)
 	tri.insert(p4);
 	tri.insert(p5);
 
-	int nv = tri.number_of_vertices();
-	int nf = tri.number_of_hyperbolic_faces();
+        std::size_t nv = tri.number_of_vertices();
+        std::size_t nf = tri.number_of_hyperbolic_faces();
 
 	std::cout << " -------- inserting --------" << std::endl;
 	std::cout << "Vertices  in triangulation: " << nv << std::endl;
