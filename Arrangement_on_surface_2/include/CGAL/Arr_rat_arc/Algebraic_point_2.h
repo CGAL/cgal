@@ -374,10 +374,6 @@ public:
   Algebraic_point_2() :
     Base(static_cast<const Base &> (get_default_instance())) {}
 
-  // explicit copy-constructor, required by VC9
-  Algebraic_point_2 (const Self & p)
-    : Base(static_cast<const Base &> (p)) {}
-
   Comparison_result compare_xy_2(const Algebraic_point_2& other,
                                  const Cache& cache) const
   {
