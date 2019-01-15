@@ -560,7 +560,6 @@ remove(Vertex_handle v)
       bdry_nbrs.insert(Edge_neighbor(e, Neighbor_pair(nbf, nidx)));
       bdry_verts.push_back(nb->vertex(ccw(idx)));
 
-      //nb->store_translations(nb->translation(idx).inverse());
       for(int i=0; i<3; ++i)
         nb->vertex(i)->set_translation(nb->translation(idx).inverse() * nb->translation(i));
 
@@ -568,12 +567,6 @@ remove(Vertex_handle v)
       ++nb;
     }
     while(nb != done);
-
-    for(std::size_t i=0; i<bdry_edges.size(); ++i)
-    {
-      Edge e = bdry_edges[i];
-      Face_handle f = e.first;
-    }
 
     std::size_t n_verts = bdry_verts.size();
     std::vector<Face_handle> new_f;
@@ -633,7 +626,7 @@ remove(Vertex_handle v)
 
         if(!found_bdry)
         {
-          for(unsigned int l=0; l<static_cast<int>(new_f.size()); ++l)
+          for(unsigned int l=0; l<new_f.size(); ++l)
           {
             if(l == i)
               continue;
