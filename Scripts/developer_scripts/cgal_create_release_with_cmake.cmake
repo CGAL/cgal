@@ -90,7 +90,7 @@ else()
   message(FATAL_ERROR "Cannot extract CGAL version number.")
 endif()
 
-set(FILTER_PACKAGES False)
+set(FILTER_GPL_PACKAGES False)
 if (DEFINED GPL_PACKAGE_LIST)
   set(FILTER_GPL_PACKAGES True)
   if(NOT EXISTS ${GPL_PACKAGE_LIST})
