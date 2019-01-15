@@ -178,8 +178,7 @@ int main(int argc, char* argv[])
       ++i;
       continue;
     }
-    std::vector<int>* crash = nullptr;
-    crash->push_back(0);
+
     std::cout << "Testing " << argv[i] << " + " << argv[i+1] << std::endl;
     if (!read_polygon(argv[i], p)) return -1;
     if (!read_polygon(argv[i+1], q)) return -1;
