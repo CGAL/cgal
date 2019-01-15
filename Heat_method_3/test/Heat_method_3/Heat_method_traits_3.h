@@ -9,8 +9,7 @@ struct Heat_method_traits_3
     
     Point_3(double, double,double)
     {}
-    Point_3(const Point_3&)
-    {}
+  
   };
   
 
@@ -20,8 +19,7 @@ struct Heat_method_traits_3
 
     Vector_3(double, double, double)
     {}
-    Vector_3(const Vector_3&)
-    {}
+  
 
 
   };
