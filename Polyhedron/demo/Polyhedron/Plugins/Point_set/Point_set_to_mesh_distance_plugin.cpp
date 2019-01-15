@@ -194,7 +194,7 @@ private Q_SLOTS:
         it != item->point_set()->end(); ++ it)
    {
      if(distance <= distance_map[*it])
-       item->point_set()->select(it);
+       item->point_set()->select(*it);
    }
    item->invalidateOpenGLBuffers();
    item->itemChanged();
