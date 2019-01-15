@@ -733,15 +733,6 @@ public:
     Circulator_from_container( Container* c) : ctnr(c), i(c->begin()) {}
     Circulator_from_container( Container* c, iterator j)  : ctnr(c), i(j) {}
 
-#if 0
-// Gnu-bug workaround: define operator= explicitly.
-    Self& operator=( const Self& c) {
-        ctnr = c.ctnr;
-        i    = c.i;
-        return *this;
-    }
-#endif
-
 // OPERATIONS
 
     bool operator==( Nullptr_t p) const {
@@ -868,13 +859,6 @@ public:
         : ctnr(c), i(j) {}
     Const_circulator_from_container( const Mutable& c)
         : ctnr( c.container()), i( c.current_iterator()) {}
-
-// Gnu-bug workaround: define operator= explicitly.
-    Self& operator=( const Self& c) {
-        ctnr = c.ctnr;
-        i    = c.i;
-        return *this;
-    }
 
 // OPERATIONS
 
