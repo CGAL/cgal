@@ -13,6 +13,6 @@ namespace CGAL{
 //!
 template <class C3T3>
 void output_to_vtu(std::ostream& os,
-                             const C3T3& c3t3,
-               bool binary = true);
+                   const C3T3& c3t3,
+                   bool binary = true);
 }

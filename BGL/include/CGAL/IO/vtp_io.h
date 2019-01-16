@@ -50,18 +50,18 @@ write_polys(std::ostream& os,
   std::vector<std::size_t> connectivity_table;
   std::vector<std::size_t> offsets;
   std::vector<unsigned char> cell_type(num_faces(mesh),5);  // triangle == 5
-  
+
   std::size_t off = 0;
   for( face_iterator fit = faces(mesh).begin() ;
        fit != faces(mesh).end() ;
        ++fit )
-    {
-      off += 3;
-      offsets.push_back(off);
-      BOOST_FOREACH(vertex_descriptor v,
-                    vertices_around_face(halfedge(*fit, mesh), mesh))
-	connectivity_table.push_back(V[v]);
-    }
+  {
+    off += 3;
+    offsets.push_back(off);
+    BOOST_FOREACH(vertex_descriptor v,
+                  vertices_around_face(halfedge(*fit, mesh), mesh))
+        connectivity_table.push_back(V[v]);
+  }
   write_vector<std::size_t>(os,connectivity_table);
   write_vector<std::size_t>(os,offsets);
   write_vector<unsigned char>(os,cell_type);
@@ -105,13 +105,13 @@ write_polys_tag(std::ostream& os,
   else {
     os << "\">\n";   
     for( face_iterator fit = faces(mesh).begin() ;
-	 fit != faces(mesh).end() ;
-	 ++fit )
-      {
-	BOOST_FOREACH(vertex_descriptor v,
-                      vertices_around_face(halfedge(*fit, mesh), mesh))
-	  os << V[v] << " ";
-      }
+         fit != faces(mesh).end() ;
+         ++fit )
+    {
+      BOOST_FOREACH(vertex_descriptor v,
+                    vertices_around_face(halfedge(*fit, mesh), mesh))
+          os << V[v] << " ";
+    }
     os << "      </DataArray>\n";
   }
   
@@ -128,12 +128,12 @@ write_polys_tag(std::ostream& os,
     os << "\">\n";  
     std::size_t polys_offset = 0;
     for( face_iterator fit = faces(mesh).begin() ;
-	 fit != faces(mesh).end() ;
-	 ++fit )
-      {
-	polys_offset += 3;
-	os << polys_offset << " ";
-      }  
+         fit != faces(mesh).end() ;
+         ++fit )
+    {
+      polys_offset += 3;
+      os << polys_offset << " ";
+    }  
     os << "      </DataArray>\n";
   }
 

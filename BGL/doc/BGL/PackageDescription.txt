@@ -708,7 +708,7 @@ user might encounter.
 ## I/O Functions ##
 - \link PkgBGLIOFct CGAL::read_off() \endlink
 - \link PkgBGLIOFct CGAL::write_off() \endlink
-- \link PkgBGLIOFct `CGAL::write_VTP()` \endlink
+- \link PkgBGLIOFct CGAL::write_VTP() \endlink
 - \link PkgBGLIOFct CGAL::write_wrl() \endlink
 
 */
