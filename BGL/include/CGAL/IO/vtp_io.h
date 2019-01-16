@@ -33,7 +33,7 @@
 
 //todo try to factorize with functors
 namespace CGAL{
-// writes the polys appended data at the end of the .vtp file 
+// writes the polys appended data at the end of the .vtp file
 template <class Mesh,
           typename NamedParameters>
 void
@@ -46,7 +46,7 @@ write_polys(std::ostream& os,
   typedef typename CGAL::Polygon_mesh_processing::GetVertexIndexMap<Mesh, NamedParameters>::type Vimap;
   Vimap V = choose_param(get_param(np, CGAL::internal_np::vertex_index),
                            get_const_property_map(CGAL::internal_np::vertex_index, mesh));
-  
+
   std::vector<std::size_t> connectivity_table;
   std::vector<std::size_t> offsets;
   std::vector<unsigned char> cell_type(num_faces(mesh),5);  // triangle == 5
@@ -69,7 +69,7 @@ write_polys(std::ostream& os,
 //todo use named params for maps
 template <class Mesh,
           typename NamedParameters>
-void 
+void
 write_polys_tag(std::ostream& os,
                 const Mesh & mesh,
                 bool binary,
@@ -81,7 +81,7 @@ write_polys_tag(std::ostream& os,
   typedef typename CGAL::Polygon_mesh_processing::GetVertexIndexMap<Mesh, NamedParameters>::type Vimap;
   Vimap V = choose_param(get_param(np, CGAL::internal_np::vertex_index),
                            get_const_property_map(CGAL::internal_np::vertex_index, mesh));
-  
+
   std::string formatattribute =
     binary ? " format=\"appended\"" : " format=\"ascii\"";
 
@@ -96,14 +96,14 @@ write_polys_tag(std::ostream& os,
   os << "    <Polys>\n"
      << "      <DataArray Name=\"connectivity\""
      << formatattribute << typeattribute;
-  
+
   if (binary) { // if binary output, just write the xml tag
     os << " offset=\"" << offset << "\"/>\n";
     offset += (3 * num_faces(mesh)+ 1) * sizeof(std::size_t);
     // 3 indices (size_t) per triangle + length of the encoded data (size_t)
   }
   else {
-    os << "\">\n";   
+    os << "\">\n";
     for( face_iterator fit = faces(mesh).begin() ;
          fit != faces(mesh).end() ;
          ++fit )
@@ -114,18 +114,18 @@ write_polys_tag(std::ostream& os,
     }
     os << "      </DataArray>\n";
   }
-  
+
   // Write offsets
   os   << "      <DataArray Name=\"offsets\""
        << formatattribute << typeattribute;
-  
+
   if (binary) {  // if binary output, just write the xml tag
     os << " offset=\"" << offset << "\"/>\n";
     offset += (num_faces(mesh) + 1) * sizeof(std::size_t);
     // 1 offset (size_t) per triangle + length of the encoded data (size_t)
   }
   else {
-    os << "\">\n";  
+    os << "\">\n";
     std::size_t polys_offset = 0;
     for( face_iterator fit = faces(mesh).begin() ;
          fit != faces(mesh).end() ;
@@ -133,7 +133,7 @@ write_polys_tag(std::ostream& os,
     {
       polys_offset += 3;
       os << polys_offset << " ";
-    }  
+    }
     os << "      </DataArray>\n";
   }
 
@@ -147,7 +147,7 @@ write_polys_tag(std::ostream& os,
     // 1 unsigned char per cell + length of the encoded data (size_t)
   }
   else {
-    os << "\">\n";  
+    os << "\">\n";
     for(std::size_t i = 0; i< num_faces(mesh); ++i)
       os << "5 ";
     os << "      </DataArray>\n";
@@ -159,12 +159,12 @@ write_polys_tag(std::ostream& os,
 //overload for facegraph
 template <class Mesh,
           typename NamedParameters>
-void 
+void
 write_points_tag(std::ostream& os,
                  const Mesh & mesh,
                  bool binary,
                  std::size_t& offset,
-                 const NamedParameters& np) 
+                 const NamedParameters& np)
 {
   typedef typename boost::graph_traits<Mesh>::vertex_iterator vertex_iterator;
   typedef typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Mesh, NamedParameters>::const_type Vpmap;
@@ -182,12 +182,12 @@ write_points_tag(std::ostream& os,
      << format;
 
   if (binary) {
-    os << "\" offset=\"" << offset << "\"/>\n";    
+    os << "\" offset=\"" << offset << "\"/>\n";
     offset += 3 * num_vertices(mesh) * sizeof(FT) + sizeof(std::size_t);
     // 3 coords per points + length of the encoded data (size_t)
   }
   else {
-    os << "\">\n";  
+    os << "\">\n";
     for( vertex_iterator vit = vertices(mesh).begin();
          vit != vertices(mesh).end();
          ++vit)
@@ -201,7 +201,7 @@ write_points_tag(std::ostream& os,
 }
 
 
-// writes the points appended data at the end of the .vtp file 
+// writes the points appended data at the end of the .vtp file
 template <class Mesh,
           class NamedParameters>
 void
@@ -228,14 +228,37 @@ write_polys_points(std::ostream& os,
   write_vector<FT>(os,coordinates);
 }
 
-//public API
-
-template<class TriangleMesh, 
+/*!\ingroup PkgBGLIOFct
+ *
+ * \brief  writes a triangulated surface mesh in the `PolyData` XML format.
+ *
+ * \tparam TriangleMesh a model of `FaceListGraph` with only triangle faces.
+ * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ *
+ * \param os the stream used for writting.
+ * \param mesh the triangle mesh to be written.
+ * \param binary decides if the data should be written in binary (`true`)
+ *   or in ASCII (`false`).
+ * \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the
+ * ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to
+ * the vertices of `mesh`. If this parameter is omitted, an internal property map for
+ *       `CGAL::vertex_point_t` must be available in `TriangleMesh`.
+ *     \cgalParamEnd
+ *    \cgalParamBegin{vertex_index_map} the property map with the indices associated to
+ * the vertices of `mesh`. If this parameter is omitted, an internal property map for
+ *       `CGAL::vertex_index_t` must be available in `TriangleMesh`.
+ *     \cgalParamEnd
+ * \cgalNamedParamsEnd
+ */
+template<class TriangleMesh,
          class NamedParameters>
 void write_VTP(std::ostream& os,
-                    const TriangleMesh& mesh,
-                    bool binary,
-                    const NamedParameters& np)
+               const TriangleMesh& mesh,
+               bool binary,
+               const NamedParameters& np)
 {
   os << "<?xml version=\"1.0\"?>\n"
      << "<VTKFile type=\"PolyData\" version=\"0.1\"";
@@ -251,8 +274,8 @@ void write_VTP(std::ostream& os,
   }
   os << ">\n"
      << "  <PolyData>" << "\n";
-  
-  os << "  <Piece NumberOfPoints=\"" << num_vertices(mesh) 
+
+  os << "  <Piece NumberOfPoints=\"" << num_vertices(mesh)
      << "\" NumberOfPolys=\"" << num_faces(mesh) << "\">\n";
   std::size_t offset = 0;
   write_points_tag(os,mesh,binary,offset, np);
@@ -260,7 +283,7 @@ void write_VTP(std::ostream& os,
   os << "   </Piece>\n"
      << "  </PolyData>\n";
   if (binary) {
-    os << "<AppendedData encoding=\"raw\">\n_"; 
+    os << "<AppendedData encoding=\"raw\">\n_";
     write_polys_points(os,mesh, np);
     write_polys(os,mesh, np);
   }
