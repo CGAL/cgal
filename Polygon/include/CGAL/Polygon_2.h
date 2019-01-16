@@ -166,7 +166,9 @@ class Polygon_2 {
     }
   
 #ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
+#ifndef DOXYGEN_RUNNING
   Polygon_2& operator=(const Polygon_2&)=default;
+#endif
 #endif
   
     /// @}
