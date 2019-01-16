@@ -1339,15 +1339,30 @@ bool remove_degenerate_faces(      TriangleMesh& tmesh,
         }
       CGAL_assertion(side_one.size()==1);
 
+      bool non_monotone_border = false;
+
       while( get(vpmap, target(side_one.back(), tmesh)) != xtrm2 )
       {
         vertex_descriptor prev_vertex = target(side_one.back(), tmesh);
         BOOST_FOREACH(halfedge_descriptor hd, boundary_hedges)
           if ( source(hd, tmesh) == prev_vertex )
           {
+            if ( get(vpmap, target(hd, tmesh)) < get(vpmap, prev_vertex) )
+              non_monotone_border = true;
             side_one.push_back(hd);
             break;
           }
+        if (non_monotone_border) break;
+      }
+
+      if (non_monotone_border)
+      {
+        #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+        std::cout << "  WARNING: Cannot remove the component of degenerate faces: border not a monotonic cycle.\n";
+        #endif
+        BOOST_FOREACH(face_descriptor f, cc_faces)
+          degenerate_face_set.erase(f);
+        continue;
       }
 
       // look for the outgoing border halfedge of second extreme vertex
@@ -1365,9 +1380,22 @@ bool remove_degenerate_faces(      TriangleMesh& tmesh,
         BOOST_FOREACH(halfedge_descriptor hd, boundary_hedges)
           if ( source(hd, tmesh) == prev_vertex )
           {
+            if ( get(vpmap, target(hd, tmesh)) > get(vpmap, prev_vertex) )
+              non_monotone_border = true;
             side_two.push_back(hd);
             break;
           }
+        if (non_monotone_border) break;
+      }
+
+      if (non_monotone_border)
+      {
+        #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+        std::cout << "  WARNING: Cannot remove the component of degenerate faces: border not a monotonic cycle.\n";
+        #endif
+        BOOST_FOREACH(face_descriptor f, cc_faces)
+          degenerate_face_set.erase(f);
+        continue;
       }
 
       CGAL_assertion( side_one.size()+side_two.size()==boundary_hedges.size() );
