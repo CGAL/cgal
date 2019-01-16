@@ -44,7 +44,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/property_map.h>
 #include <CGAL/IO/Complex_3_in_triangulation_3_to_vtk.h>
-#include <CGAL/IO/vtk_io.h>
+#include <CGAL/IO/output_to_vtu.h>
 #include <CGAL/boost/graph/io.h>
 
 #include <vtkSmartPointer.h>

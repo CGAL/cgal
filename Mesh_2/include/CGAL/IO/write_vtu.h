@@ -21,8 +21,8 @@
 //
 // Author(s)     : Laurent RINEAU, Stephane Tayeb, Maxime Gimeno
 
-#ifndef CGAL_VTK_IO_H
-#define CGAL_VTK_IO_H
+#ifndef CGAL_WRITE_VTU_H
+#define CGAL_WRITE_VTU_H
 
 #include <fstream>
 #include <vector>
@@ -323,4 +323,4 @@ void write_vtu(std::ostream& os,
 }
 
 } //end CGAL
-#endif // CGAL_VTK_IO_H
+#endif // CGAL_WRITE_VTU_H

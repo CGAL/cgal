@@ -20,8 +20,8 @@
 //
 // Author(s)     : Laurent RINEAU, Stephane Tayeb, Maxime Gimeno
 
-#ifndef CGAL_VTK_IO_H
-#define CGAL_VTK_IO_H
+#ifndef CGAL_OUTPUT_TO_VTU_H
+#define CGAL_OUTPUT_TO_VTU_H
 
 #include <CGAL/license/Mesh_3.h>
 
@@ -257,8 +257,8 @@ write_attributes(std::ostream& os,
 //public API
 template <class C3T3>
 void output_to_vtu(std::ostream& os,
-               const C3T3& c3t3,
-               bool binary = true)
+                   const C3T3& c3t3,
+                   IO::Mode mode = IO::BINARY)
 {
   typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Vertex_handle Vertex_handle;
@@ -284,6 +284,7 @@ void output_to_vtu(std::ostream& os,
   os << "  <Piece NumberOfPoints=\"" << tr.number_of_vertices() 
      << "\" NumberOfCells=\"" << c3t3.number_of_cells() << "\">\n";
   std::size_t offset = 0;
+  const bool binary = (mode == IO::BINARY);
   write_points_tag(os,tr,V,binary,offset);
   write_cells_tag(os,c3t3,V,binary,offset);
   std::vector<float> mids;      
