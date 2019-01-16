@@ -16,7 +16,6 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-//
 // Author(s): Ron Wein          <wein@post.tau.ac.il>
 //            Efi Fogel         <efif@post.tau.ac.il>
 //            (based on old version by Eyal Flato)
@@ -40,6 +39,10 @@ template <typename Arrangement, typename ZoneVisitor>
 void Arrangement_zone_2<Arrangement, ZoneVisitor>::
 init_with_hint(const X_monotone_curve_2& cv, const Object& obj)
 {
+#if defined(ARR_ZONE_VERBOSE)
+  std::cout << "init_with_hint()" << std::endl;
+#endif
+
   // Set the curve and check whether its ends are bounded, therefore
   // associated with valid endpoints.
   m_cv = cv;
@@ -88,6 +91,10 @@ init_with_hint(const X_monotone_curve_2& cv, const Object& obj)
 template <typename Arrangement, typename ZoneVisitor>
 void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
 {
+#if defined(ARR_ZONE_VERBOSE)
+  std::cout << "compute_zone()" << std::endl;
+#endif
+
   // Initialize flags and set all handles to be invalid.
   bool done = false;
 
@@ -627,6 +634,9 @@ template <typename Arrangement, typename ZoneVisitor>
 bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _find_prev_around_vertex(Vertex_handle v, Halfedge_handle& he)
 {
+#if defined(ARR_ZONE_VERBOSE)
+  std::cout << "_find_prev_around_vertex()" << std::endl;
+#endif
 
   // Go over the incident halfedges of v, going in a clockwise order.
   typename Arrangement_2::Halfedge_around_vertex_circulator he_first =
@@ -706,6 +716,13 @@ _direct_intersecting_edge_to_right(const X_monotone_curve_2& cv_ins,
                                    const Point_2& cv_left_pt,
                                    Halfedge_handle query_he)
 {
+#if defined(ARR_ZONE_VERBOSE)
+  std::cout << "_direct_intersecting_edge_to_right() " << cv_left_pt
+            << std::endl;
+  std::cout << "  " << cv_ins << std::endl;
+  std::cout << "  " << query_he->curve() << std::endl;
+#endif
+
   // Make sure that the left endpoint of cv_ins lies on query_he.
   CGAL_exactness_assertion(m_geom_traits->compare_y_at_x_2_object()
                            (cv_left_pt, query_he->curve()) == EQUAL);
@@ -752,6 +769,10 @@ Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _direct_intersecting_edge_to_left(const X_monotone_curve_2& cv_ins,
                                   Halfedge_handle query_he)
 {
+#if defined(ARR_ZONE_VERBOSE)
+  std::cout << "_direct_intersecting_edge_to_left()" << std::endl;
+#endif
+
   // Make sure that the right endpoint of cv_ins lies on query_he.
   CGAL_exactness_assertion
     (m_geom_traits->compare_y_at_x_2_object()
@@ -815,6 +836,14 @@ _compute_next_intersection(Halfedge_handle he,
                            bool skip_first_point,
                            bool& intersection_on_right_boundary)
 {
+#if defined(ARR_ZONE_VERBOSE)
+  std::cout << "_compute_next_intersection(): " << he->curve() << std::endl;
+#endif
+
+  typename Traits_adaptor_2::Equal_2 equal = m_geom_traits->equal_2_object();
+  typename Traits_adaptor_2::Compare_xy_2 compare_xy =
+    m_geom_traits->compare_xy_2_object();
+
   // Get a pointer to the curve associated with the halfedge.
   const X_monotone_curve_2* p_curve = &(he->curve());
 
@@ -988,6 +1017,10 @@ bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _is_to_left_impl(const Point_2& p, Halfedge_handle he,
                  Arr_not_all_sides_oblivious_tag) const
 {
+#if defined(ARR_ZONE_VERBOSE)
+  std::cout << "_is_to_left_impl()" << std::endl;
+#endif
+
   // Check the boundary conditions of the minimal end of the curve associated
   // with the given halfedge.
   const Arr_parameter_space ps_x =
@@ -1017,7 +1050,7 @@ _is_to_left_impl(const Point_2& p, Halfedge_handle he,
 }
 
 //-----------------------------------------------------------------------------
-// Check if the given point lies completely to the right of the given egde.
+// Determine whether a given point lies completely to the right of a given egde.
 //
 template <typename Arrangement, typename ZoneVisitor>
 bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
@@ -1046,7 +1079,7 @@ _is_to_right_impl(const Point_2& p, Halfedge_handle he,
 
   // In case the maximal curve-end does not have boundary conditions, simply
   // compare p with the right endpoint of the curve.
-  Vertex_const_handle   v_right =
+  Vertex_const_handle v_right =
     (he->direction() == ARR_LEFT_TO_RIGHT) ? he->target() : he->source();
 
   return (m_geom_traits->compare_xy_2_object()(p, v_right->point()) == LARGER);
@@ -1252,6 +1285,10 @@ template <typename Arrangement, typename ZoneVisitor>
 bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _zone_in_face(Face_handle face, bool on_boundary)
 {
+#if defined(ARR_ZONE_VERBOSE)
+  std::cout << "_zone_in_face() " << on_boundary << std::endl;
+#endif
+
   // Obtain some geometry-traits functors.
   typename Traits_adaptor_2::Equal_2 equal = m_geom_traits->equal_2_object();
 
@@ -1478,26 +1515,31 @@ _zone_in_face(Face_handle face, bool on_boundary)
 template <typename Arrangement, typename ZoneVisitor>
 bool Arrangement_zone_2<Arrangement, ZoneVisitor>::_zone_in_overlap()
 {
+#if defined(ARR_ZONE_VERBOSE)
+  std::cout << "_zone_in_overlap()" << std::endl;
+#endif
+
   // Obtain some geometry-traits functors.
   typename Traits_adaptor_2::Equal_2 equal = m_geom_traits->equal_2_object();
+  typename Traits_adaptor_2::Is_closed_2 is_closed =
+    m_geom_traits->is_closed_2_object();
+  typename Traits_adaptor_2::Construct_max_vertex_2 ctr_max_vertex =
+    m_geom_traits->construct_max_vertex_2_object();
 
   // Check if the right end of m_overlap_cv is bounded. If so, compute its
   // right endpoint.
-  const bool cv_has_right_pt =
-    m_geom_traits->is_closed_2_object()(m_overlap_cv, ARR_MAX_END);
+  const bool cv_has_right_pt = is_closed(m_overlap_cv, ARR_MAX_END);
 
   Point_2 cv_right_pt;
-
   if (cv_has_right_pt)
-    cv_right_pt = m_geom_traits->construct_max_vertex_2_object()(m_overlap_cv);
+    cv_right_pt = ctr_max_vertex(m_overlap_cv);
 
   // Get right end-vertex of the overlapping halfedge m_intersect_he. Also make
   // sure that the overlapping halfedge is always directed to the right.
   Vertex_handle he_right_v;
 
-  if (m_intersect_he->direction() == ARR_LEFT_TO_RIGHT) {
+  if (m_intersect_he->direction() == ARR_LEFT_TO_RIGHT)
     he_right_v = m_intersect_he->target();
-  }
   else {
     he_right_v = m_intersect_he->source();
     m_intersect_he = m_intersect_he->twin();

@@ -98,9 +98,7 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::
 Arrangement_on_surface_2(const Self& arr) :
   m_geom_traits(NULL),
   m_own_traits(false)
-{
-  assign(arr);
-}
+{ assign(arr); }
 
 //-----------------------------------------------------------------------------
 // Constructor given a traits object.
@@ -175,16 +173,13 @@ void Arrangement_on_surface_2<GeomTraits, TopTraits>::assign(const Self& arr)
   m_topol_traits.assign(arr.m_topol_traits);
 
   // Go over the vertices and create duplicates of the stored points.
-  Point_2* dup_p;
-  DVertex* p_v;
-
   typename Dcel::Vertex_iterator vit;
   for (vit = _dcel().vertices_begin(); vit != _dcel().vertices_end(); ++vit) {
-    p_v = &(*vit);
+    DVertex* p_v = &(*vit);
 
     if (! p_v->has_null_point()) {
       // Create the duplicate point and store it in the points container.
-      dup_p = _new_point(p_v->point());
+      Point_2* dup_p = _new_point(p_v->point());
 
       // Associate the vertex with the duplicated point.
       p_v->set_point(dup_p);
@@ -298,15 +293,29 @@ insert_in_face_interior(const Point_2& p, Face_handle f)
   std::cout << "face : " << &(*f) << std::endl;
 #endif
 
+  // Obtain the boundary conditions:
+  const Arr_parameter_space ps_x =
+    m_geom_traits->parameter_space_in_x_2_object()(p);
+  const Arr_parameter_space ps_y =
+    m_geom_traits->parameter_space_in_y_2_object()(p);
+
   // Create a new vertex associated with the given point.
-  // We assume the point has no boundary conditions.
-  DVertex* v = _create_vertex(p);
-  Vertex_handle vh(v);
+  // The point is either the interior of the parameter space or on the boundary.
+  DVertex* v(NULL);
+  if ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR))
+    v = _create_vertex(p);
+  else {
+    v = _create_boundary_vertex(p, ps_x, ps_y);
+
+    // Notify the topology traits on the creation of the boundary vertex.
+    m_topol_traits.notify_on_boundary_vertex_creation(v, p, ps_x, ps_y);
+  }
 
   // Insert v as an isolated vertex inside the given face.
   _insert_isolated_vertex(p_f, v);
 
   // Return a handle to the new isolated vertex.
+  Vertex_handle vh(v);
   return vh;
 }
 
@@ -986,9 +995,9 @@ insert_at_vertices(const X_monotone_curve_2& cv,
          "One of the input vertices should be the left curve end.");
     }
     else {
-      Arr_parameter_space  ps_x1 =
+      Arr_parameter_space ps_x1 =
         m_geom_traits->parameter_space_in_x_2_object()(cv, ARR_MIN_END);
-      Arr_parameter_space  ps_y1 =
+      Arr_parameter_space ps_y1 =
         m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END);
 
       // Check which vertex should be associated with the minimal curve-end
@@ -1302,8 +1311,7 @@ template <typename GeomTraits, typename TopTraits>
 typename Arrangement_on_surface_2<GeomTraits, TopTraits>::Halfedge_handle
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
 insert_at_vertices(const X_monotone_curve_2& cv,
-                   Halfedge_handle prev1,
-                   Halfedge_handle prev2)
+                   Halfedge_handle prev1, Halfedge_handle prev2)
 {
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
   std::cout << "Aos_2: insert_at_vertices (interface)" << std::endl;
@@ -1329,7 +1337,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
   Comparison_result  res;
 
   if (! at_obnd1) {
-    CGAL_precondition_code(Vertex_handle  v_right);
+    CGAL_precondition_code(Vertex_handle v_right);
 
     if (! prev1->target()->is_at_open_boundary() &&
         m_geom_traits->equal_2_object()
@@ -1542,91 +1550,58 @@ split_edge(Halfedge_handle e,
 {
   CGAL_precondition_msg(! e->is_fictitious(), "The edge must be a valid one.");
 
-  // Get the split halfedge and its twin, its source and target.
+  // Find the point where we split the halfedge, and determine which curve
+  // should be associated with which pair of split halfedges.
   DHalfedge* he1 = _halfedge(e);
   DHalfedge* he2 = he1->opposite();
   DVertex* source = he2->vertex();
-  CGAL_precondition_code(DVertex* target = he1->vertex());
 
-  // Determine the point where we split the halfedge. We also determine which
-  // curve should be associated with he1 (and he2), which is the curve who
-  // has an endpoint that equals e's source, and which should be associated
-  // with the new pair of halfedges we are about to split (the one who has
-  // an endpoint which equals e's target).
-  if ((m_geom_traits->parameter_space_in_x_2_object()(cv1, ARR_MAX_END) ==
-       ARR_INTERIOR) &&
-      (m_geom_traits->parameter_space_in_y_2_object()(cv1, ARR_MAX_END) ==
-       ARR_INTERIOR))
-  {
-    const Point_2 & cv1_right =
-      m_geom_traits->construct_max_vertex_2_object()(cv1);
+  /* The halfedge we return and e must have a common source vertex.
+   * There are 4 cases:
+   */
 
-    if ((m_geom_traits->parameter_space_in_x_2_object()(cv2, ARR_MIN_END) ==
-         ARR_INTERIOR) &&
-        (m_geom_traits->parameter_space_in_y_2_object()(cv2, ARR_MIN_END) ==
-         ARR_INTERIOR) &&
-        m_geom_traits->equal_2_object()(m_geom_traits->
-                                        construct_min_vertex_2_object()(cv2),
-                                        cv1_right))
-    {
-      // cv1's right endpoint and cv2's left endpoint are equal, so this should
-      // be the split point. Now we check whether cv1 is incident to e's source
-      // and cv2 to its target, or vice versa.
-      if (_are_equal(source, cv1, ARR_MIN_END)) {
-        CGAL_precondition_msg
-          (_are_equal(target, cv2, ARR_MAX_END),
-           "The subcurve endpoints must match e's end vertices.");
-
-        return (Halfedge_handle(_split_edge(he1, cv1_right, cv1, cv2)));
-      }
-
-      CGAL_precondition_msg
-        (_are_equal(source, cv2, ARR_MAX_END) &&
-         _are_equal(target, cv1, ARR_MIN_END),
-         "The subcurve endpoints must match e's end vertices.");
-
-      return (Halfedge_handle(_split_edge(he1, cv1_right, cv2, cv1)));
-    }
+  // 1. o---cv1---o---cv2---o
+  //    o---------e-------->o
+  if (_are_equal(source, cv1, ARR_MIN_END)) {
+    const Point_2& p = m_geom_traits->construct_max_vertex_2_object()(cv1);
+    CGAL_postcondition_code
+      (const Point_2& q = m_geom_traits->construct_min_vertex_2_object()(cv2));
+    CGAL_precondition(m_geom_traits->equal_2_object()(p, q));
+    CGAL_precondition(_are_equal(he1->vertex(), cv2, ARR_MAX_END));
+    return (Halfedge_handle(_split_edge(he1, p, cv1, cv2)));
   }
 
-  if ((m_geom_traits->parameter_space_in_x_2_object()(cv1, ARR_MIN_END) ==
-       ARR_INTERIOR) &&
-      (m_geom_traits->parameter_space_in_y_2_object()(cv1, ARR_MIN_END) ==
-       ARR_INTERIOR))
-  {
-    const Point_2 & cv1_left =
-      m_geom_traits->construct_min_vertex_2_object()(cv1);
-
-    if ((m_geom_traits->parameter_space_in_x_2_object()(cv2, ARR_MAX_END) ==
-         ARR_INTERIOR) &&
-        (m_geom_traits->parameter_space_in_y_2_object()(cv2, ARR_MAX_END) ==
-         ARR_INTERIOR) &&
-        m_geom_traits->equal_2_object()(m_geom_traits->
-                                        construct_max_vertex_2_object()(cv2),
-                                        cv1_left))
-    {
-      // cv1's left endpoint and cv2's right endpoint are equal, so this should
-      // be the split point. Now we check whether cv1 is incident to e's source
-      // and cv2 to its target, or vice versa.
-      if (_are_equal(source, cv2, ARR_MIN_END)) {
-        CGAL_precondition_msg
-          (_are_equal(target, cv1, ARR_MAX_END),
-           "The subcurve endpoints must match e's end vertices.");
-
-        return (Halfedge_handle(_split_edge(he1, cv1_left, cv2, cv1)));
-      }
-
-      CGAL_precondition_msg
-        (_are_equal(source, cv1, ARR_MAX_END) &&
-         _are_equal(target, cv2, ARR_MIN_END),
-         "The subcurve endpoints must match e's end vertices.");
-
-      return (Halfedge_handle(_split_edge(he1, cv1_left, cv1, cv2)));
-    }
+  // 2. o---cv2---o---cv1---o
+  //    o<--------e---------o
+  if (_are_equal(source, cv1, ARR_MAX_END)) {
+    const Point_2& p = m_geom_traits->construct_min_vertex_2_object()(cv1);
+    CGAL_postcondition_code
+      (const Point_2& q = m_geom_traits->construct_max_vertex_2_object()(cv2));
+    CGAL_precondition(m_geom_traits->equal_2_object()(p, q));
+    CGAL_precondition(_are_equal(he1->vertex(), cv2, ARR_MIN_END));
+    return (Halfedge_handle(_split_edge(he1, p, cv1, cv2)));
   }
 
-  CGAL_error_msg("The two subcurves must have a common endpoint.");
-  return Halfedge_handle();
+  // 3. o---cv2---o---cv1---o
+  //    o---------e-------->o
+  if (_are_equal(source, cv2, ARR_MIN_END)) {
+    const Point_2& p = m_geom_traits->construct_max_vertex_2_object()(cv2);
+    CGAL_postcondition_code
+      (const Point_2& q = m_geom_traits->construct_min_vertex_2_object()(cv1));
+    CGAL_precondition(m_geom_traits->equal_2_object()(p, q));
+    CGAL_precondition(_are_equal(he1->vertex(), cv1, ARR_MAX_END));
+    return (Halfedge_handle(_split_edge(he1, p, cv2, cv1)));
+  }
+
+  // 4. o---cv1---o---cv2---o
+  //    o<--------e---------o
+  CGAL_precondition(_are_equal(source, cv2, ARR_MAX_END));
+  const Point_2& p = m_geom_traits->construct_min_vertex_2_object()(cv2);
+  CGAL_postcondition_code
+    (const Point_2& q = m_geom_traits->construct_max_vertex_2_object()(cv1));
+  CGAL_precondition(m_geom_traits->equal_2_object()(p, q));
+  CGAL_precondition(_are_equal(he1->vertex(), cv1, ARR_MIN_END));
+  return (Halfedge_handle(_split_edge(he1, p, cv2, cv1)));
 }
 
 //-----------------------------------------------------------------------------
@@ -2150,6 +2125,30 @@ _create_vertex(const Point_2& p)
   return v;
 }
 
+// Create a new vertex on boundary
+//
+template <typename GeomTraits, typename TopTraits>
+typename Arrangement_on_surface_2<GeomTraits, TopTraits>::DVertex*
+Arrangement_on_surface_2<GeomTraits, TopTraits>::
+_create_boundary_vertex(const Point_2& p,
+                        Arr_parameter_space ps_x, Arr_parameter_space ps_y)
+{
+  CGAL_precondition((ps_x != ARR_INTERIOR) || (ps_y != ARR_INTERIOR));
+
+  // Notify the observers that we are about to create a new boundary vertex.
+  _notify_before_create_boundary_vertex(p, ps_x, ps_y);
+
+  // Create a new vertex and set its boundary conditions.
+  DVertex* v = _dcel().new_vertex();
+  v->set_boundary(ps_x, ps_y);
+  v->set_point(_new_point(p));
+
+  // Notify the observers that we have just created a new boundary vertex.
+  _notify_after_create_boundary_vertex(Vertex_handle(v));
+
+  return v;
+}
+
 //-----------------------------------------------------------------------------
 // Create a new vertex on boundary
 //
@@ -2184,10 +2183,56 @@ _create_boundary_vertex(const X_monotone_curve_2& cv, Arr_curve_end ind,
   }
 
   // Notify the observers that we have just created a new boundary vertex.
-  Vertex_handle   vh(v);
-  _notify_after_create_boundary_vertex(vh);
+  _notify_after_create_boundary_vertex(Vertex_handle(v));
 
   return v;
+}
+
+//-----------------------------------------------------------------------------
+// Locate the DCEL features that will be used for inserting the given point,
+// which has a boundary condition, and set a proper vertex there.
+//
+template <typename GeomTraits, typename TopTraits>
+typename Arrangement_on_surface_2<GeomTraits, TopTraits>::DVertex*
+Arrangement_on_surface_2<GeomTraits, TopTraits>::
+_place_and_set_point(DFace* f, const Point_2& p,
+                     Arr_parameter_space ps_x, Arr_parameter_space ps_y)
+{
+  // Use the topology traits to locate the DCEL feature that contains the
+  // given point.
+  CGAL::Object obj = m_topol_traits.place_boundary_vertex(f, p, ps_x, ps_y);
+  DVertex* v;
+
+  // Act according to the result type.
+  DHalfedge* fict_he;
+  if (CGAL::assign(fict_he, obj)) {
+    // The point is located on a fictitious edge.
+    // Create a new vertex that corresponds to the point.
+    v = _create_boundary_vertex(p, ps_x, ps_y);
+
+    // Split the fictitious halfedge at the newly created vertex.
+    // The returned halfedge is the predecessor for the insertion of the curve
+    // end around v.
+    _notify_before_split_fictitious_edge(Halfedge_handle(fict_he),
+                                         Vertex_handle(v));
+    DHalfedge* p_pred = m_topol_traits.split_fictitious_edge(fict_he, v);
+    _notify_after_split_fictitious_edge(Halfedge_handle(p_pred),
+                                        Halfedge_handle((*p_pred)->next()));
+  }
+  else if (obj.is_empty()) {
+    // Create a new vertex that reprsents the given point.
+    v = _create_boundary_vertex(p, ps_x, ps_y);
+
+    // Notify the topology traits on the creation of the boundary vertex.
+    m_topol_traits.notify_on_boundary_vertex_creation(v, p, ps_x, ps_y);
+  }
+  else {
+    CGAL_assertion(CGAL::assign(v, obj));
+    // The vertex coincides with an existing vertex that represents the point.
+    // Do nothing.
+  }
+
+  return v;     // return the vertex that represents the point.
 }
 
 //-----------------------------------------------------------------------------
@@ -3009,7 +3054,7 @@ _insert_at_vertices(DHalfedge* he_to,
             // *oc_it is already closed, so we do a full round
             // (default = false)
             std::pair<Sign, Sign> signs_oc =
-              _compute_signs(*oc_it, Has_identified_sides_category());
+              _compute_signs(*oc_it, Has_identified_sides());
 
             bool move = false;
 
@@ -3194,6 +3239,9 @@ template <typename GeomTraits, typename TopTraits>
 void Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _relocate_isolated_vertices_in_new_face(DHalfedge* new_he)
 {
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+  std::cout << "Aos_2: _relocate_isolated_vertices_in_new_face" << std::endl;
+#endif
   // The given halfedge points to the new face, while its twin points to the
   // old face (the one that has just been split).
   DFace* new_face = (new_he->is_on_inner_ccb()) ?
@@ -3237,6 +3285,11 @@ template <typename GeomTraits, typename TopTraits>
 void Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _relocate_in_new_face(DHalfedge* new_he)
 {
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+  std::cout << "Aos_2 _relocate_in_new_face" << std::endl;
+  std::cout << "HeCv: " << new_he->curve() << std::endl;
+  std::cout << "HeDi: " << new_he->direction() << std::endl;
+#endif
   _relocate_inner_ccbs_in_new_face(new_he);
   _relocate_isolated_vertices_in_new_face(new_he);
 }
@@ -3317,8 +3370,20 @@ _split_edge(DHalfedge* e, const Point_2& p,
             const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2)
 {
   // Allocate a new vertex and associate it with the split point.
-  // Note that this point must not have any boundary conditions.
-  DVertex* v = _create_vertex(p);
+  // Obtain the boundary conditions:
+  const Arr_parameter_space ps_x =
+    m_geom_traits->parameter_space_in_x_2_object()(p);
+  const Arr_parameter_space ps_y =
+    m_geom_traits->parameter_space_in_y_2_object()(p);
+
+  DVertex* v(NULL);
+  if ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) v = _create_vertex(p);
+  else {
+    v = _create_boundary_vertex(p, ps_x, ps_y);
+
+    // Notify the topology traits on the creation of the boundary vertex.
+    m_topol_traits.notify_on_boundary_vertex_creation(v, p, ps_x, ps_y);
+  }
 
   // Split the edge from the given vertex.
   return (_split_edge(e, v, cv1, cv2));
@@ -3418,14 +3483,14 @@ _compute_indices(Arr_parameter_space /* ps_x_curr */,
                  Arr_parameter_space /* ps_x_next */,
                  Arr_parameter_space /* ps_y_next */,
                  int& /* x_index */, int& /* y_index */,
-                 boost::mpl::bool_<false>) const
+                 Arr_false) const
 { /* nothing if no identification */ }
 
 template <typename GeomTraits, typename TopTraits>
 void Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
                  Arr_parameter_space ps_x_next, Arr_parameter_space ps_y_next,
-                 int& x_index, int& y_index,  boost::mpl::bool_<true>) const
+                 int& x_index, int& y_index,  Arr_true) const
 {
   // If we cross the identification curve in x, then we must update the
   // x_index. Note that a crossing takes place in the following cases:
@@ -3558,7 +3623,7 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
   }
 
   _compute_indices(ps_x_curr, ps_y_curr, ps_x_next, ps_y_next,
-                   x_index, y_index, Has_identified_sides_category());
+                   x_index, y_index, Has_identified_sides());
 
   const DHalfedge* he = he_away;
   while (he != he_to) {
@@ -3590,7 +3655,7 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
       *local_mins_it++  = std::make_pair(he, x_index);
 
     _compute_indices(ps_x_curr, ps_y_curr, ps_x_next, ps_y_next,
-                     x_index, y_index, Has_identified_sides_category());
+                     x_index, y_index, Has_identified_sides());
 
     // Move to the next halfedge.
     he = he->next();
@@ -3609,7 +3674,7 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
     *local_mins_it++  = std::make_pair(he_to, x_index);
 
   _compute_indices(ps_x_curr, ps_y_curr, ps_x_next, ps_y_next, x_index, y_index,
-                   Has_identified_sides_category());
+                   Has_identified_sides());
 
   return (std::make_pair(CGAL::sign(x_index), CGAL::sign(y_index)));
 }
@@ -3620,7 +3685,7 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
 template <typename GeomTraits, typename TopTraits>
 std::pair<Sign, Sign>
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
-_compute_signs(const DHalfedge* /* he_anchor */, boost::mpl::bool_<false>) const
+_compute_signs(const DHalfedge* /* he_anchor */, Arr_false) const
 { return (std::make_pair(ZERO, ZERO)); }
 
   // Computes the signs of a closed ccb (loop) when deleting he_anchor and its
@@ -3628,7 +3693,7 @@ _compute_signs(const DHalfedge* /* he_anchor */, boost::mpl::bool_<false>) const
 template <typename GeomTraits, typename TopTraits>
 std::pair<Sign, Sign>
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
-_compute_signs(const DHalfedge* he_anchor, boost::mpl::bool_<true>) const
+_compute_signs(const DHalfedge* he_anchor, Arr_true) const
 {
   // We go over the sequence of vertices, starting from he_before's target
   // vertex, until reaching he_after's source vertex, and find the leftmost
@@ -3687,7 +3752,7 @@ _compute_signs(const DHalfedge* he_anchor, boost::mpl::bool_<true>) const
     ps_y_save = parameter_space_in_y(he_next->curve(), he_next_tgt_end);
 
     _compute_indices(ps_x_curr, ps_y_curr, ps_x_next, ps_y_next,
-                     x_index, y_index, Has_identified_sides_category());
+                     x_index, y_index, Has_identified_sides());
 
     // iterate
     he_curr = he_next;
@@ -3811,7 +3876,7 @@ _compute_signs_and_min(const DHalfedge* he_anchor,
     }
 
     _compute_indices(ps_x_curr, ps_y_curr, ps_x_next, ps_y_next,
-                     x_index, y_index, Has_identified_sides_category());
+                     x_index, y_index, Has_identified_sides());
 
     // iterate
     he_curr = he_next;
@@ -4011,6 +4076,7 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
                                InputIterator lm_begin,
                                InputIterator lm_end) const
 {
+  // std::cout << "_defines_outer_ccb_of_new_face" << std::endl;
   // Search for the leftmost vertex among the local minima
   typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
     m_geom_traits->parameter_space_in_x_2_object();
@@ -4134,7 +4200,7 @@ _is_above(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
     // Both current and next curves are incident to the identification curve.
     // As v_min is the leftmost vertex, we know that their left ends must have
     // a boundary condition of type identification in y.
-    Arr_parameter_space  ps_y2 =
+    Arr_parameter_space ps_y2 =
       m_geom_traits->parameter_space_in_y_2_object()(xcv2, ARR_MIN_END);
 
     // Check if the curves lie on opposite sides of the identification curve.
@@ -4175,9 +4241,19 @@ _is_above(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
   {
     // Compare the horizontal position of the two curve-ends at the point
     // of contraction.
-    Comparison_result x_res =
-      m_geom_traits->compare_x_curve_ends_2_object()(xcv1, ARR_MIN_END,
-                                                     xcv2, ARR_MIN_END);
+    typename Traits_adaptor_2::Compare_x_curve_ends_2 cmp_x_curve_ends =
+      m_geom_traits->compare_x_curve_ends_2_object();
+    typename Traits_adaptor_2::Parameter_space_in_x_2 ps_x_op =
+      m_geom_traits->parameter_space_in_x_2_object();
+
+    Arr_parameter_space ps_x1 = ps_x_op(xcv1, ARR_MIN_END);
+    Arr_parameter_space ps_x2 = ps_x_op(xcv2, ARR_MIN_END);
+    Comparison_result x_res = (ps_x1 != ps_x2) ?
+      ((ps_x1 == ARR_LEFT_BOUNDARY) ? SMALLER :
+       ((ps_x1 == ARR_RIGHT_BOUNDARY) ? LARGER :
+        ((ps_x2 == ARR_LEFT_BOUNDARY) ? LARGER : SMALLER))) :
+      ((ps_x1 != ARR_INTERIOR) ? EQUAL :
+       cmp_x_curve_ends(xcv1, ARR_MIN_END, xcv2, ARR_MIN_END));
 
     // Observe that if x_res == EQUAL the given subsequence is always exterior.
     return (((ps_y1 == ARR_BOTTOM_BOUNDARY) && (x_res == SMALLER)) ||
@@ -4872,13 +4948,13 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
     // assumes that non of the (other) boundaries is open. A 3rd version
     // that supports the remaining case, (for example the cylinder), should
     // be developed and used.
-    signs1 = _compute_signs(he1, Has_identified_sides_category());
+    signs1 = _compute_signs(he1, Has_identified_sides());
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
       std::cout << "signs1.x: " << signs1.first << std::endl;
       std::cout << "signs1.y: " << signs1.second << std::endl;
 #endif
 
-      signs2 = _compute_signs(he2, Has_identified_sides_category());
+      signs2 = _compute_signs(he2, Has_identified_sides());
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
       std::cout << "signs2.x: " << signs2.first << std::endl;
       std::cout << "signs2.y: " << signs2.second << std::endl;

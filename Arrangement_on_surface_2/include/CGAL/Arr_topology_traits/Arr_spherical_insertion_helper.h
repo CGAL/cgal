@@ -30,6 +30,7 @@
  * Definition of the Arr_spherical_insertion_helper class-template.
  */
 
+#include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_topology_traits/Arr_spherical_construction_helper.h>
 
 namespace CGAL {
@@ -58,6 +59,17 @@ private:
                                                         Self;
   typedef Arr_spherical_construction_helper<Gt2, Arrangement_2, Event, Subcurve>
                                                         Base;
+
+  typedef typename Gt2::Left_side_category              Left_side_category;
+  typedef typename Gt2::Bottom_side_category            Bottom_side_category;
+  typedef typename Gt2::Top_side_category               Top_side_category;
+  typedef typename Gt2::Right_side_category             Right_side_category;
+
+  typedef typename Arr_all_sides_oblivious_category<Left_side_category,
+                                                    Bottom_side_category,
+                                                    Top_side_category,
+                                                    Right_side_category>::result
+    All_sides_oblivious_category;
 
 public:
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
@@ -91,7 +103,7 @@ public:
     this->m_spherical_face = Face_handle(this->m_top_traits->south_face());
   }
 
-  /*! A notification invoked before the sweep-line starts handling a given
+  /*! A notification invoked before the surface-sweep starts handling a given
    * event.
    */
   virtual void before_handle_event(Event* event);
@@ -101,6 +113,21 @@ public:
 
   /*! Get the current top face. */
   virtual Face_handle top_face() const;
+
+private:
+  /* A notification invoked before the surface-sweep starts handling a given
+   * event.
+   * This is the implementation for the case where all 4 boundary sides are
+   * oblivious.
+   */
+  void before_handle_event_imp(Event* event, Arr_all_sides_oblivious_tag);
+
+  /* A notification invoked before the surface-sweep starts handling a given
+   * event.
+   * This is the implementation for the case where all 4 boundary sides are
+   * not oblivious.
+   */
+  void before_handle_event_imp(Event* event, Arr_not_all_sides_oblivious_tag);
 };
 
 //-----------------------------------------------------------------------------
@@ -114,11 +141,33 @@ public:
 template <typename Tr, typename Arr, typename Evnt, typename Sbcv>
 void Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::
 before_handle_event(Event* event)
+{ before_handle_event_imp(event, All_sides_oblivious_category()); }
+
+/* A notification invoked before the surface-sweep starts handling a given
+ * event.
+ * This is the implementation for the case where all 4 boundary sides are
+ * oblivious.
+ */
+template <typename Tr, typename Arr, typename Evnt, typename Sbcv>
+void Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::
+before_handle_event_imp(Event* event, Arr_all_sides_oblivious_tag)
+{ return; }
+
+/* A notification invoked before the surface-sweep starts handling a given
+ * event.
+ * This is the implementation for the case where all 4 boundary sides are
+ * not oblivious.
+ */
+template <typename Tr, typename Arr, typename Evnt, typename Sbcv>
+void Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::
+before_handle_event_imp(Event* event, Arr_not_all_sides_oblivious_tag)
 {
   // Ignore events that do not have boundary conditions.
   const Arr_parameter_space ps_x = event->parameter_space_in_x();
   const Arr_parameter_space ps_y = event->parameter_space_in_y();
   if ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) return;
+
+  if (event->is_isolated()) return;
 
   if (ps_y == ARR_BOTTOM_BOUNDARY) {
     // Process bootom contraction boundary:
@@ -165,11 +214,10 @@ before_handle_event(Event* event)
     // Process left discontinuity boundary:
     // The event has only right curves, as there is exactly one curve
     // incident to an event with boundary conditions.
-    CGAL_assertion((event->number_of_left_curves() == 0) &&
-                   (event->number_of_right_curves() >= 1));
+    // CGAL_assertion((event->number_of_left_curves() == 0) &&
+    //                (event->number_of_right_curves() >= 1));
     const X_monotone_curve_2& xc =
       (*(event->right_curves_begin()))->last_curve();
-
     if (xc.halfedge_handle() != Halfedge_handle()) {
       // Update the current top face.
       this->m_spherical_face = xc.halfedge_handle()->twin()->face();
@@ -203,7 +251,8 @@ before_handle_event(Event* event)
   }
 }
 
-/*! A notification invoked when a new subcurve is created. */
+/*! A notification invoked when a new subcurve is created.
+ */
 template <typename Tr, typename Arr, typename Evnt, typename Sbcv>
 void Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::
 add_subcurve(Halfedge_handle he, Subcurve* /* sc */)

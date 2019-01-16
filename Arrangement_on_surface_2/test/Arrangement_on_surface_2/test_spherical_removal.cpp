@@ -13,6 +13,7 @@
 
 typedef CGAL::Exact_rational                                 Number_type;
 typedef CGAL::Cartesian<Number_type>                         Kernel;
+typedef Kernel::Direction_3                                  Direction_3;
 typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>    Geom_traits_2;
 typedef Geom_traits_2::Point_2                               Point_2;
 typedef Geom_traits_2::Curve_2                               Curve_2;
@@ -26,14 +27,23 @@ typedef Arrangement_2::Halfedge_iterator                     Halfedge_iterator;
 
 bool test_one_file(std::ifstream& in_file, bool /* verbose */)
 {
+  Geom_traits_2 geom_traits;
+  Geom_traits_2::Construct_point_2 ctr_point =
+    geom_traits.construct_point_2_object();
+  Geom_traits_2::Construct_x_monotone_curve_2 ctr_xcv =
+    geom_traits.construct_x_monotone_curve_2_object();
+
   unsigned int i;
 
   // Read the points:
   unsigned int num_of_points;
   in_file >> num_of_points;
   std::vector<Point_2> points(num_of_points);
-  for (i = 0; i < num_of_points; ++i)
-    in_file >> points[i];
+  for (i = 0; i < num_of_points; ++i) {
+    Direction_3 d;
+    in_file >> d;
+    points[i] = ctr_point(d);
+  }
 
   // Read the curves:
   unsigned int num_of_curves;
@@ -60,7 +70,7 @@ bool test_one_file(std::ifstream& in_file, bool /* verbose */)
   Arrangement_2::Size num_vertices_left, num_edges_left, num_faces_left;
   in_file >> num_vertices_left >> num_edges_left >> num_faces_left;
 
-  Arrangement_2 arr;
+  Arrangement_2 arr(&geom_traits);;
   std::vector<Halfedge_handle> halfedges;
   std::vector<std::pair<unsigned int, unsigned int> >::const_iterator cit;
 
@@ -78,7 +88,7 @@ bool test_one_file(std::ifstream& in_file, bool /* verbose */)
   // Insert the curves aggregately.
   std::list<X_monotone_curve_2> xcurves;
   for (cit = curves.begin(); cit != curves.end(); ++cit) {
-    X_monotone_curve_2 xcv(points[cit->first], points[cit->second]);
+    X_monotone_curve_2 xcv = ctr_xcv(points[cit->first], points[cit->second]);
     xcurves.push_back(xcv);
   }
   std::cout << "inserting " << " ... ";

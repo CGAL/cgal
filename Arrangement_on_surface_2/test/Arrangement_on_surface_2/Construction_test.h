@@ -152,18 +152,18 @@ protected:
   typedef typename Geom_traits::Top_side_category       Top_side_category;
   typedef typename Geom_traits::Right_side_category     Right_side_category;
   typedef typename
-  CGAL::Arr_are_all_sides_non_open_tag<Left_side_category,
-                                       Bottom_side_category,
-                                       Top_side_category,
-                                       Right_side_category>::result
-    Arr_are_all_sides_non_open_category;
+  CGAL::Arr_all_sides_not_open_category<Left_side_category,
+                                        Bottom_side_category,
+                                        Top_side_category,
+                                        Right_side_category>::result
+    All_sides_not_open_category;
 
   bool is_open() const
-  { return is_open(Arr_are_all_sides_non_open_category()); }
+  { return is_open(All_sides_not_open_category()); }
 
-  bool is_open(CGAL::Arr_all_sides_non_open_tag) const { return false; }
+  bool is_open(CGAL::Arr_all_sides_not_open_tag) const { return false; }
 
-  bool is_open(CGAL::Arr_not_all_sides_non_open_tag) const { return true; }
+  bool is_open(CGAL::Arr_not_all_sides_not_open_tag) const { return true; }
 };
 
 /*! Constructor */

@@ -122,6 +122,16 @@ public:
 
   typedef typename Base::Subcurve_alloc                 Subcurve_alloc;
 protected:
+  typedef typename Base::All_sides_oblivious_category
+    All_sides_oblivious_category;
+
+  // Parameter spaces that are either oblivious or open cannot have points
+  // on the boundary, and in particular intersection points. In other words,
+  // intersection points of an oblivious or open parameter space is interior
+  // by definition.
+  typedef typename Base::Sides_category
+    Sides_category;
+
   // Data members:
   Subcurve_container m_overlap_subCurves;
                                      // Contains all of the new sub-curves
@@ -133,8 +143,8 @@ protected:
   std::vector<Object> m_x_objects;   // Auxiliary vector for storing the
                                      // intersection objects.
 
-  X_monotone_curve_2 sub_cv1;        // Auxiliary varibales
-  X_monotone_curve_2 sub_cv2;        // (for splitting curves).
+  X_monotone_curve_2 m_sub_cv1;      // Auxiliary varibales
+  X_monotone_curve_2 m_sub_cv2;      // (for splitting curves).
 
 public:
   /*! Constructor.
@@ -222,8 +232,8 @@ protected:
   /*! Create an intersection-point event between two curves.
    * \param xp The intersection point.
    * \param mult Its multiplicity.
-   * \param curve1 The first curve.
-   * \param curve2 The second curve.
+   * \param c1 The first curve.
+   * \param c2 The second curve.
    */
   void _create_intersection_point(const Point_2& xp,
                                   unsigned int mult,

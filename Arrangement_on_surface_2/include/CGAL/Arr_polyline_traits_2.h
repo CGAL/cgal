@@ -78,8 +78,8 @@ public:
   typedef typename Base::Top_side_category            Top_side_category;
   typedef typename Base::Right_side_category          Right_side_category;
 
-  typedef typename Base::Are_all_sides_oblivious_tag
-    Are_all_sides_oblivious_tag;
+  typedef typename Base::All_sides_oblivious_category
+    All_sides_oblivious_category;
 
   typedef typename Base::X_monotone_subcurve_2        X_monotone_subcurve_2;
   typedef typename Base::Subcurve_2                   Subcurve_2;
@@ -105,9 +105,7 @@ public:
   typedef typename Base::Parameter_space_in_x_2       Parameter_space_in_x_2;
   typedef typename Base::Parameter_space_in_y_2       Parameter_space_in_y_2;
   typedef typename Base::Compare_x_on_boundary_2      Compare_x_on_boundary_2;
-  typedef typename Base::Compare_x_at_limit_2         Compare_x_at_limit_2;
   typedef typename Base::Compare_x_near_boundary_2    Compare_x_near_boundary_2;
-  typedef typename Base::Compare_x_near_limit_2       Compare_x_near_limit_2;
   typedef typename Base::Compare_y_on_boundary_2      Compare_y_on_boundary_2;
   typedef typename Base::Compare_y_near_boundary_2    Compare_y_near_boundary_2;
   typedef typename Base::Is_on_y_identification_2     Is_on_y_identification_2;

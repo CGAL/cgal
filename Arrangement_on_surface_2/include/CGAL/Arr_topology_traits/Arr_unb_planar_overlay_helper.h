@@ -135,7 +135,7 @@ before_sweep()
   // vertices in both red and blue arrangements. If there are no vertices
   // at x = -oo, we take the halfedge incident to the top-left vertex that
   // lies on the top edge of the fictitious face.
-  Vertex_handle_red   v_red_bl =
+  Vertex_handle_red v_red_bl =
     Vertex_handle_red(m_red_top_traits->bottom_left_vertex());
 
   m_red_th = v_red_bl->incident_halfedges();
@@ -145,7 +145,7 @@ before_sweep()
 
   if (m_red_th->source() == v_red_tl) m_red_th = m_red_th->prev();
 
-  Vertex_handle_blue  v_blue_bl =
+  Vertex_handle_blue v_blue_bl =
     Vertex_handle_blue(m_blue_top_traits->bottom_left_vertex());
 
   m_blue_th = v_blue_bl->incident_halfedges();
@@ -174,7 +174,8 @@ before_handle_event(Event* e)
       (e->parameter_space_in_x() == ARR_INTERIOR &&
        e->parameter_space_in_y() == ARR_TOP_BOUNDARY))
   {
-    switch (e->curve().color()) {
+    Arr_curve_end ce;
+    switch (e->boundary_touching_curve(ce).color()) {
     case (Gt2::RED) :
       // Update the red top fictitious halfedge.
       m_red_th = m_red_th->twin()->next()->twin();

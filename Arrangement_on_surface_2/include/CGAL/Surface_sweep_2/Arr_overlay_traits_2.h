@@ -95,6 +95,12 @@ public:
   typedef typename internal::Arr_complete_right_side_category<Gt2>::Category
                                                         Right_side_category;
 
+  // Used by:
+  // 1. parameter_space_in_x
+  typedef typename Arr_two_sides_category<Left_side_category,
+                                          Right_side_category>::result
+    Left_or_right_sides_category;
+
   /* Overlay is implemented as sweep-line visitor. The sweep-line algorithm
    * never uses Compare_y_at_x_left_2, and it never performs merging of curves.
    * Thus, AreMergeable_2 and Merge_2 are not needed either.
@@ -501,7 +507,7 @@ public:
   class Split_2 {
   protected:
     //! The base operator.
-    Base_split_2    m_base_split;
+    Base_split_2 m_base_split;
 
     /*! Constructor.
      * The constructor is declared protected to allow only the functor
@@ -815,7 +821,7 @@ public:
   class Compare_y_at_x_right_2 {
   protected:
     //! The base operator.
-    Base_compare_y_at_x_right_2    m_base_cmp_y_at_x_right;
+    Base_compare_y_at_x_right_2 m_base_cmp_y_at_x_right;
 
     /*! Constructor.
      * The constructor is declared protected to allow only the functor
@@ -866,13 +872,81 @@ public:
   public:
     Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
                                    Arr_curve_end ce) const
-    { return m_base->parameter_space_in_x_2_object()(xcv.base(), ce); }
+    {
+      // The function is implemented based on the tag dispatching
+      // If the traits class does not support special boundaries, we just
+      // return ARR_INTERIOR.
+      return parameter_space_in_x(xcv, ce, Left_or_right_sides_category());
+    }
 
     Arr_parameter_space operator()(const Point_2& p) const
-    { return m_base->parameter_space_in_x_2_object()(p.base()); }
+    {
+      // The function is implemented based on the tag dispatching
+      // If the traits class does not support special boundaries, we just
+      // return ARR_INTERIOR.
+      return parameter_space_in_x(p, Left_or_right_sides_category());
+    }
 
     Arr_parameter_space operator()(const X_monotone_curve_2& xcv) const
     { return m_base->parameter_space_in_x_2_object()(xcv.base()); }
+
+  private:
+    /*! Implementation of the operator() in case the base should be used. */
+    Arr_parameter_space parameter_space_in_x(const X_monotone_curve_2& xcv,
+                                             Arr_curve_end ind,
+                                             Arr_has_identified_side_tag) const
+    {
+      // If the curve completely lies on the left-right identification, return
+      // ARR_LEFT_BOUNDARY as an arbitrary but consistent choice.
+      if (m_base->is_on_y_identification_2_object()(xcv))
+        return ARR_LEFT_BOUNDARY;
+      return (m_base->parameter_space_in_x_2_object()(xcv, ind));
+    }
+
+    /*! Implementation of the operator() in case the base should be used. */
+    Arr_parameter_space parameter_space_in_x(const X_monotone_curve_2& xcv,
+                                             Arr_curve_end ind,
+                                             Arr_boundary_cond_tag) const
+    { return (m_base->parameter_space_in_x_2_object()(xcv, ind)); }
+
+    /*! Implementation of the operator() in case the dummy should be used. */
+    Arr_parameter_space parameter_space_in_x(const X_monotone_curve_2&,
+                                             Arr_curve_end,
+                                             Arr_all_sides_oblivious_tag) const
+    {
+      /*! \todo ideally we should call CGAL_error() here and avoid invocation
+       * of the functor for traits classes that have oblivious boundary
+       * conditions
+       */
+      return ARR_INTERIOR;
+    }
+
+     /*! Implementation of the operator() in case the base should be used. */
+    Arr_parameter_space parameter_space_in_x(const Point_2& p,
+                                             Arr_has_identified_side_tag) const
+    {
+      // if the point lies on the left-right identification, return
+      // ARR_LEFT_BOUNDARY as an arbitrary but consistent choice
+      if (m_base->is_on_y_identification_2_object()(p))
+        return ARR_LEFT_BOUNDARY;
+      return m_base->parameter_space_in_x_2_object()(p);
+    }
+
+    /*! Implementation of the operator() in case the base should be used. */
+    Arr_parameter_space parameter_space_in_x(const Point_2& p,
+                                             Arr_boundary_cond_tag) const
+    { return m_base->parameter_space_in_x_2_object()(p); }
+
+    /*! Implementation of the operator() in case the dummy should be used. */
+    Arr_parameter_space parameter_space_in_x(const Point_2&,
+                                             Arr_all_sides_oblivious_tag) const
+    {
+      /*! \todo ideally we should call CGAL_error() here and avoid invocation
+       * of the functor for traits classes that have oblivious boundary
+       * conditions
+       */
+      return ARR_INTERIOR;
+    }
   };
 
   /*! Obtain an Parameter_space_in_x_2 functor object. */
@@ -898,10 +972,10 @@ public:
     friend class Arr_overlay_traits_2<Gt2, Ar2, Ab2>;
 
   public:
-    Arr_parameter_space operator()(const Point_2& p) const
+    bool operator()(const Point_2& p) const
     { return m_base->is_on_x_identification_2_object()(p.base()); }
 
-    Arr_parameter_space operator()(const X_monotone_curve_2& xcv) const
+    bool operator()(const X_monotone_curve_2& xcv) const
     { return m_base->is_on_x_identification_2_object()(xcv.base()); }
   };
 
@@ -1030,90 +1104,16 @@ public:
     friend class Arr_overlay_traits_2<Gt2, Ar2, Ab2>;
 
   public:
-    Arr_parameter_space operator()(const Point_2& p) const
+    bool operator()(const Point_2& p) const
     { return m_base->is_on_y_identification_2_object()(p.base()); }
 
-    Arr_parameter_space operator()(const X_monotone_curve_2& xcv) const
+    bool operator()(const X_monotone_curve_2& xcv) const
     { return m_base->is_on_y_identification_2_object()(xcv.base()); }
   };
 
   /*! Obtain an Is_on_y_identification_2 functor object. */
   Is_on_y_identification_2 is_on_y_identification_2_object() const
   { return Is_on_y_identification_2(m_base_traits); }
-
-  /*! A functor that compares the x-limits of curve ends on the
-   * boundary of the parameter space.
-   */
-  class Compare_x_at_limit_2 {
-  protected:
-    //! The base traits.
-    const Gt2* m_base;
-
-    /*! Constructor.
-     * \param base The base traits class. It must be passed, to handle the
-     *             case it is not stateless (e.g., it stores data).
-     * The constructor is declared protected to allow only the functor
-     * obtaining function, which is a member of the nesting class,
-     * constructing it.
-     */
-    Compare_x_at_limit_2(const Gt2* base) : m_base(base) {}
-
-    //! Allow its functor obtaining function calling the protected constructor.
-    friend class Arr_overlay_traits_2<Gt2, Ar2, Ab2>;
-
-  public:
-    Comparison_result operator()(const Point_2& p,
-                                 const X_monotone_curve_2& xcv,
-                                 Arr_curve_end ce) const
-    { return m_base->compare_x_at_limit_2_object()(p.base(), xcv.base(), ce); }
-
-    Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 Arr_curve_end ce1,
-                                 const X_monotone_curve_2& xcv2,
-                                 Arr_curve_end ce2) const
-    {
-      return m_base->compare_x_at_limit_2_object()(xcv1.base(), ce1,
-                                                   xcv2.base(), ce2);
-    }
-  };
-
-  /*! Obtain a Compare_x_at_limit_2 functor. */
-  Compare_x_at_limit_2 compare_x_at_limit_2_object() const
-  { return Compare_x_at_limit_2(m_base_traits); }
-
-  /*! A functor that compares the x-coordinates of curve ends near the
-   * boundary of the parameter space.
-   */
-  class Compare_x_near_limit_2 {
-  protected:
-    //! The base traits.
-    const Gt2* m_base;
-
-    /*! Constructor.
-     * \param base The base traits class. It must be passed, to handle the
-     *             case it is not stateless (e.g., it stores data).
-     * The constructor is declared protected to allow only the functor
-     * obtaining function, which is a member of the nesting class,
-     * constructing it.
-     */
-    Compare_x_near_limit_2(const Gt2* base) : m_base(base) {}
-
-    //! Allow its functor obtaining function calling the protected constructor.
-    friend class Arr_overlay_traits_2<Gt2, Ar2, Ab2>;
-
-  public:
-    Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 const X_monotone_curve_2& xcv2,
-                                 Arr_curve_end ce) const
-    {
-      return m_base->compare_x_near_limit_2_object()(xcv1.base(), xcv2.base(),
-                                                     ce);
-    }
-  };
-
-  /*! Obtain a Compare_x_near_limit_2 functor. */
-  Compare_x_near_limit_2 compare_x_near_limit_2_object() const
-  { return Compare_x_near_limit_2(m_base_traits); }
 
   /*! A functor that compares the y-values of pointss on the
    * boundary of the parameter space.

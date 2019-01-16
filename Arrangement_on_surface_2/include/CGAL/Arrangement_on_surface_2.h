@@ -26,6 +26,7 @@
 //                                      Ester Ezra,
 //                                      Shai Hirsch,
 //                                      and Eugene Lipovetsky)
+
 #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_H
 #define CGAL_ARRANGEMENT_ON_SURFACE_2_H
 
@@ -94,22 +95,22 @@ public:
 
 public:
   typedef Arrangement_on_surface_2<Geometry_traits_2, Topology_traits>
-  Self;
+                                                          Self;
 
   typedef typename Geometry_traits_2::Point_2             Point_2;
   typedef typename Geometry_traits_2::X_monotone_curve_2  X_monotone_curve_2;
 
   // maybe remove this in a future version (that supports complete handling
   // of all sides)
-  typedef typename Arr_are_all_sides_oblivious_tag<Left_side_category,
-                                                   Bottom_side_category,
-                                                   Top_side_category,
-                                                   Right_side_category>::result
+  typedef typename Arr_all_sides_oblivious_category<Left_side_category,
+                                                    Bottom_side_category,
+                                                    Top_side_category,
+                                                    Right_side_category>::result
     Are_all_sides_oblivious_category;
 
   typedef typename Arr_has_identified_sides<Left_side_category,
                                             Bottom_side_category>::result
-    Has_identified_sides_category;
+    Has_identified_sides;
 
   typedef typename Arr_two_sides_category<Bottom_side_category,
                                           Top_side_category>::result
@@ -1808,7 +1809,7 @@ protected:
   void
   _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
                    Arr_parameter_space ps_x_next, Arr_parameter_space ps_y_next,
-                   int& x_index, int& y_index,  boost::mpl::bool_<true>) const;
+                   int& x_index, int& y_index,  Arr_true) const;
 
   /*!
    * Update the indices according to boundary locations (i.e. does nothing)
@@ -1816,7 +1817,7 @@ protected:
   void
   _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
                    Arr_parameter_space ps_x_next, Arr_parameter_space ps_y_next,
-                   int& x_index, int& y_index,  boost::mpl::bool_<false>) const;
+                   int& x_index, int& y_index,  Arr_false) const;
 
   /*!
    * Is the first given x-monotone curve above the second given?
@@ -1918,16 +1919,14 @@ protected:
    *     POSITIVE if the ccb is perimetric and oriented in positive direction,
    *     NEGATIVE if the ccb is perimetric and oriented in negative direction).
    */
-  std::pair<Sign, Sign> _compute_signs(const DHalfedge* he,
-                                       boost::mpl::bool_<true>) const;
+  std::pair<Sign, Sign> _compute_signs(const DHalfedge* he, Arr_true) const;
 
   /*! Compute the signs (in left/right and bottom/top) of a closed ccb (loop)
    * represented by a given halfedge for the case where non of the boundaries
    * is identified.
    * \return the pair (ZERO, ZERO)
    */
-  std::pair<Sign, Sign> _compute_signs(const DHalfedge* he,
-                                       boost::mpl::bool_<false>) const;
+  std::pair<Sign, Sign> _compute_signs(const DHalfedge* he, Arr_false) const;
 
   /*!
    * Given two predecessor halfedges that will be used for inserting a
@@ -2010,6 +2009,18 @@ protected:
 
   /*!
    * Create a new boundary vertex.
+   * \param p The point on the boundary.
+   * \param bx The boundary condition in x.
+   * \param by The boundary condition in y.
+   * \pre Either bx or by does not equal ARR_INTERIOR.
+   * \return A pointer to the newly created vertex.
+   */
+  DVertex* _create_boundary_vertex(const Point_2& p,
+                                   Arr_parameter_space bx,
+                                   Arr_parameter_space by);
+
+  /*!
+   * Create a new boundary vertex.
    * \param cv The curve incident to the boundary.
    * \param ind The relevant curve-end.
    * \param bx The boundary condition in x.
@@ -2021,6 +2032,20 @@ protected:
                                    Arr_curve_end ind,
                                    Arr_parameter_space bx,
                                    Arr_parameter_space by);
+
+  /*!
+   * Locate the DCEL features that will be used for inserting the given point,
+   * which has a boundary condition, and set a proper vertex there.
+   * \param f The face that contains the point.
+   * \param p The point.
+   * \param bx The boundary condition at the point x-coordinate.
+   * \param by The boundary condition at the point y-coordinate.
+   * \return The vertex that corresponds to the point.
+   */
+  DVertex* _place_and_set_point(DFace* f,
+                                const Point_2& p,
+                                Arr_parameter_space bx,
+                                Arr_parameter_space by);
 
   /*!
    * Locate the DCEL features that will be used for inserting the given curve
@@ -2358,6 +2383,17 @@ protected:
     Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_create_vertex(v);
+  }
+
+  void _notify_before_create_boundary_vertex(const Point_2& p,
+                                             Arr_parameter_space bx,
+                                             Arr_parameter_space by)
+  {
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
+
+    for (iter = m_observers.begin(); iter != end; ++iter)
+      (*iter)->before_create_boundary_vertex(p, bx, by);
   }
 
   void _notify_before_create_boundary_vertex(const X_monotone_curve_2& cv,

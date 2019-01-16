@@ -16,7 +16,6 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-//
 // Author(s): Ron Wein          <wein@post.tau.ac.il>
 //            Efi Fogel         <efif@post.tau.ac.il>
 //            (based on old version by Eyal Flato)
@@ -96,15 +95,15 @@ public:
   typedef typename Geometry_traits_2::Multiplicity       Multiplicity;
 
 protected:
-  typedef typename Arr_are_all_sides_oblivious_tag<Left_side_category,
-                                                   Bottom_side_category,
-                                                   Top_side_category,
-                                                   Right_side_category>::result
+  typedef typename Arr_all_sides_oblivious_category<Left_side_category,
+                                                    Bottom_side_category,
+                                                    Top_side_category,
+                                                    Right_side_category>::result
     Are_all_sides_oblivious_category;
 
-  typedef typename Arrangement_2::Vertex_const_handle    Vertex_const_handle;
-  typedef typename Arrangement_2::Halfedge_const_handle  Halfedge_const_handle;
-  typedef typename Arrangement_2::Face_const_handle      Face_const_handle;
+  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
+  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
   typedef typename Arrangement_2::Ccb_halfedge_circulator
     Ccb_halfedge_circulator;
@@ -207,7 +206,7 @@ public:
     const Arr_parameter_space by1 =
       m_geom_traits->parameter_space_in_y_2_object()(m_cv, ARR_MIN_END);
 
-    if (bx1 == ARR_INTERIOR && by1 == ARR_INTERIOR) {
+    if ((bx1 == ARR_INTERIOR) && (by1 == ARR_INTERIOR)) {
       // The curve has a finite left endpoint with no boundary conditions:
       // locate it in the arrangement.
       m_has_left_pt = true;
@@ -219,7 +218,6 @@ public:
     else {
       // The left end of the curve has boundary conditions: use the topology
       // traits use the arrangement accessor to locate it.
-      // Note that if the curve-end is unbounded, m_left_pt does not exist.
       // Note that if the curve-end is unbounded, m_left_pt does not exist.
       m_has_left_pt = m_geom_traits->is_closed_2_object()(m_cv, ARR_MIN_END);
       m_left_on_boundary = true;
@@ -401,7 +399,7 @@ private:
    * \pre The list of intersections with the curve of he has already been
    *      computed, and it is not empty.
    */
-  void _remove_next_intersection (Halfedge_handle he);
+  void _remove_next_intersection(Halfedge_handle he);
 
   /*! Check whether the given point lies completely to the left of the given
    * egde.
@@ -411,9 +409,7 @@ private:
    * \return Whether p lies entirely to the left of the edge.
    */
   bool _is_to_left(const Point_2& p, Halfedge_handle he) const
-  {
-    return (_is_to_left_impl(p, he, Are_all_sides_oblivious_category()));
-  }
+  { return (_is_to_left_impl(p, he, Are_all_sides_oblivious_category())); }
 
   bool _is_to_left_impl(const Point_2& p, Halfedge_handle he,
                         Arr_all_sides_oblivious_tag) const
@@ -434,12 +430,10 @@ private:
    * \param p The point.
    * \param he The halfedge.
    * \pre he is not a fictitious edge.
-   * \return Whether p lies entirely to the right of the edge.
+   * \return if p entirely lies to the right of the edge true; otherwise false.
    */
   bool _is_to_right(const Point_2& p, Halfedge_handle he) const
-  {
-    return (_is_to_right_impl(p, he, Are_all_sides_oblivious_category()));
-  }
+  { return (_is_to_right_impl(p, he, Are_all_sides_oblivious_category())); }
 
   bool _is_to_right_impl(const Point_2& p, Halfedge_handle he,
                          Arr_all_sides_oblivious_tag) const

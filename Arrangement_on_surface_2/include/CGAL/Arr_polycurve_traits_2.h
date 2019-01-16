@@ -69,8 +69,8 @@ public:
   typedef typename Base::Top_side_category            Top_side_category;
   typedef typename Base::Right_side_category          Right_side_category;
 
-  typedef typename Base::Are_all_sides_oblivious_tag
-    Are_all_sides_oblivious_tag;
+  typedef typename Base::All_sides_oblivious_category
+    All_sides_oblivious_category;
 
   typedef typename Base::X_monotone_subcurve_2        X_monotone_subcurve_2;
   typedef typename Base::Size                         Size;
@@ -96,9 +96,7 @@ public:
   typedef typename Base::Parameter_space_in_x_2       Parameter_space_in_x_2;
   typedef typename Base::Parameter_space_in_y_2       Parameter_space_in_y_2;
   typedef typename Base::Compare_x_on_boundary_2      Compare_x_on_boundary_2;
-  typedef typename Base::Compare_x_at_limit_2         Compare_x_at_limit_2;
   typedef typename Base::Compare_x_near_boundary_2    Compare_x_near_boundary_2;
-  typedef typename Base::Compare_x_near_limit_2       Compare_x_near_limit_2;
   typedef typename Base::Compare_y_on_boundary_2      Compare_y_on_boundary_2;
   typedef typename Base::Compare_y_near_boundary_2    Compare_y_near_boundary_2;
   typedef typename Base::Is_on_y_identification_2     Is_on_y_identification_2;
@@ -490,7 +488,7 @@ public:
 public:
     template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
-    { return operator_impl(cv, oi, Are_all_sides_oblivious_tag()); }
+    { return operator_impl(cv, oi, All_sides_oblivious_category()); }
   };
 
   /*! Obtain a Make_x_monotone_2 functor object. */
@@ -755,7 +753,7 @@ public:
         // Locate the index i1 of the subcurve in cv1 which contains cv2's
         // left endpoint.
         i1 = m_poly_traits.locate_impl(cv1, cv2[i2], ARR_MIN_END,
-                                       Are_all_sides_oblivious_tag());
+                                       All_sides_oblivious_category());
         if (i1 == Polycurve_traits_2::INVALID_INDEX) return oi;
 
         if (equal(max_vertex(cv1[i1]), min_vertex(cv2[i2]))) {
@@ -777,7 +775,7 @@ public:
         // Locate the index i2 of the subcurve in cv2 which contains cv1's
         // left endpoint.
         i2 = m_poly_traits.locate_impl(cv2, cv1[i1], ARR_MIN_END,
-                                       Are_all_sides_oblivious_tag());
+                                       All_sides_oblivious_category());
         if (i2 == Polycurve_traits_2::INVALID_INDEX) return oi;
 
         if (equal(max_vertex(cv2[i2]), min_vertex(cv1[i1]))) {

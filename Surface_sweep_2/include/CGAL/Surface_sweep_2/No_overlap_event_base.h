@@ -284,16 +284,19 @@ public:
   { return m_left_curves.rend(); }
 
   /*! Return the number of curves defined to the left of the event. */
-  size_t number_of_left_curves() { return m_left_curves.size(); }
+  size_t number_of_left_curves() const { return m_left_curves.size(); }
 
   /*! Return the number of curves defined to the right of the event. */
-  size_t number_of_right_curves() { return (m_right_curves.size()); }
+  size_t number_of_right_curves() const { return (m_right_curves.size()); }
 
   /*! Check whether at least one curve is defined to the left of the event. */
   bool has_left_curves() const { return (! m_left_curves.empty()); }
 
   /*! Checks if at least one curve is defined to the right of the event. */
   bool has_right_curves() const { return (! m_right_curves.empty()); }
+
+  /*! Returns whether an event has no incident curves */
+  bool is_isolated() const { return m_left_curves.empty() && m_right_curves.empty(); }
 
   /*! Obtain the actual event point (const version).
    * \pre The event is associated with a valid point.
@@ -314,14 +317,38 @@ public:
   }
 
   /*! Obtain a curve associated with the event (const version).
-   * \pre The event has incident curves.
+   *
+   * \pre The event does not lie on the boundary.
+   * \pre The event is not isolated.
    */
   const X_monotone_curve_2& curve() const
   {
+    CGAL_precondition(!this->is_on_boundary());
+    CGAL_precondition(!this->is_isolated());
     if (has_left_curves()) return (m_left_curves.front()->last_curve());
 
     CGAL_assertion(has_right_curves());
     return (m_right_curves.front()->last_curve());
+  }
+
+  /*!
+   * Get a curve associated with the event and writes as side-effect the respective end to \param ce
+   * (const version).
+   * \param ce reference to a curve-end that is written as side-effect.
+   * \pre The event lies on the boundary.
+   * \pre The event is not isolated.
+   */
+  const X_monotone_curve_2& boundary_touching_curve(Arr_curve_end& ce) const {
+    CGAL_precondition(this->is_on_boundary());
+    CGAL_precondition(!this->is_isolated());
+    if (has_left_curves()) {
+      ce = ARR_MAX_END;
+      return m_left_curves.front()->last_curve();
+    }
+
+    CGAL_assertion(has_right_curves());
+    ce = ARR_MIN_END;
+    return m_right_curves.front()->last_curve();
   }
 
   /*! Set the event point. */
@@ -415,13 +442,13 @@ public:
   }
 
 #ifdef CGAL_SS_VERBOSE
-  void Print();
+  void Print() const;
 #endif
 };
 
 #ifdef CGAL_SS_VERBOSE
 template <typename Traits, typename Subcurve>
-void No_overlap_event_base<Traits, Subcurve>::Print()
+void No_overlap_event_base<Traits, Subcurve>::Print() const
 {
   std::cout << "\tEvent info: "  << "\n" ;
   if (this->is_closed()) std::cout << "\t" << m_point << "\n" ;

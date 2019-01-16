@@ -40,7 +40,6 @@ int main()
 
 int main()
 {
-
   // bool UNTESTED_TRAITS_AS_GMP_OR_MPFI_IS_NOT_INSTALLED;
   std::cout << std::endl
 	    << "NOTE: GMP and/or MPFI are not installed, "
@@ -72,7 +71,7 @@ int main()
 // Define Geom_traits to be the curve-data-traits of the base geom traits.
 typedef CGAL::Arr_curve_data_traits_2<Base_geom_traits,
                                       unsigned int,
-                                      std::plus<unsigned int> >  
+                                      std::plus<unsigned int> >
                                                         Geom_traits;
 typedef Geom_traits::Point_2            Point_2;
 typedef Geom_traits::Curve_2            Curve_2;
@@ -115,7 +114,7 @@ int main(int argc, char* argv[])
       i += 2;
     }
   }
-  
+
   int success = 0;
   for (; i < argc; ++i) {
     const char* filename = argv[i];
@@ -125,7 +124,7 @@ int main(int argc, char* argv[])
       success = -1;
     }
   }
-    
+
   return success;
 }
 

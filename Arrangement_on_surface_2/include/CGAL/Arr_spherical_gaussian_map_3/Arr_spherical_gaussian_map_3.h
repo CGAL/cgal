@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 // Author(s): Efi Fogel         <efif@post.tau.ac.il>
 //            Naama mayer       <naamamay@post.tau.ac.il>
 
@@ -69,7 +69,7 @@ public:
   /*! Normalize the coordinates of the given point, but in fact does
    * nothing.
    * \param p the point which coordinates are to be normalized
-   */ 
+   */
   void operator()(Point_2 &) {}
 };
 
@@ -122,7 +122,7 @@ public:
 
   /*! Destructor */
   virtual ~Arr_sgm_initializer() {}
-  
+
   /*! Insert a great arc whose angle is less than Pi and is represented by two
    * normals into the SGM. Each normal defines an end point of the greate arc.
    * \param normal1 represents the source normal.
@@ -142,12 +142,16 @@ public:
                                  const Vector_3 & normal2,
                                  OutputIterator oi)
   {
-    Curve_2 cv(normal1.direction(), normal2.direction());
-    const Geometry_traits_2 * traits = this->m_sgm.geometry_traits();
-    oi = traits->make_x_monotone_2_object()(cv, oi);
+    const Geometry_traits_2* traits = this->m_sgm.geometry_traits();
+    typename Traits::Construct_point_2 ctr_point =
+      traits->construct_point_2_object();
+    Curve_2 cv =
+      traits->construct_curve_2_object()(ctr_point(normal1.direction()),
+                                         ctr_point(normal2.direction()));
+    *oi++ = traits->make_x_monotone_2_object()(cv, oi);
     return oi;
   }
-  
+
   /*! Insert a great arc whose angle is less than Pi and is represented by two
    * normals into the SGM. Each normal defines an end point of the greate arc.
    * \param normal1 represents the source normal.
@@ -181,7 +185,7 @@ public:
     std::cout << "1.b. insert_from_vertex(" << *xc << ")" << std::endl;
 #endif
     *oi++ = (xc->is_directed_right()) ?
-      m_sgm.insert_from_left_vertex(*xc, he->target()) :     
+      m_sgm.insert_from_left_vertex(*xc, he->target()) :
       m_sgm.insert_from_right_vertex(*xc, he->target());
     return oi;
   }
@@ -236,7 +240,7 @@ public:
    * represented by normal1 toward the endpoint represented by normal2
    */
   template<typename OutputIterator>
-  OutputIterator insert(const Vector_3 & normal1, 
+  OutputIterator insert(const Vector_3 & normal1,
                         const Vector_3 & normal2, Vertex_handle vertex2,
                         OutputIterator oi)
   {
@@ -342,12 +346,12 @@ class Arr_spherical_gaussian_map_3 :
 {
 private:
   typedef Arr_spherical_gaussian_map_3<T_Traits, T_Dcel>    Self;
-  
+
 public:
   typedef T_Traits                                          Traits;
   typedef Traits                                            Geometry_traits_2;
-  
-  typedef Arrangement_on_surface_2<Traits, 
+
+  typedef Arrangement_on_surface_2<Traits,
 	Arr_spherical_topology_traits_2<Traits, T_Dcel<Traits> > >
 															Base;
 
@@ -371,7 +375,7 @@ public:
   {
     CGAL_error_msg( "Not implemented yet!");
   }
-  
+
   /*! returns true if the representation is empty */
   bool is_empty() const
   {
@@ -389,7 +393,7 @@ public:
     return vh->degree();
   }
 #endif
-  
+
   /*! Print statistics */
   void print_stat()
   {

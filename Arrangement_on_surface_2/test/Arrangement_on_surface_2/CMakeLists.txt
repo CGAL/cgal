@@ -8,6 +8,16 @@ enable_testing()
 
 cmake_minimum_required(VERSION 3.1)
 
+list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_generalized_initializers has_cpp11)
+if (has_cpp11 LESS 0)
+  message(STATUS "NOTICE: These examples requires a C++11 compiler and will not be compiled.")
+  return()
+endif()
+
+# Use C++11 for this directory and its sub-directories.
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+
 find_package(CGAL QUIET COMPONENTS Core)
 
 if ( CGAL_FOUND )

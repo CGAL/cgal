@@ -100,30 +100,20 @@ Transform {
 		aosMarkedEdgeIndex 100
 		aosMarkedVertexIndex 100
 		aosMarkedVertexStyle "none"
-		coord DEF COORD ExactCoordinate {
-		  ratPoint [
-			    0, 0, 1	# 0
-			    -1, -1, -1	# 1
-			    1, -3, 1	# 2
-			    3, -1, -1	# 3
-			    1, 0, 0	# 4
-			    2, 0, 2	# 5
-			    3, 1, -1	# 6
-			    1, 3, 1	# 7
-			    -1, 1, -1	# 8
-			   ]
+		coord DEF COORD EpecCoordinate {
+		  exactPoint [ 0,  0,  1	# 0
+                              -1, -1, -1	# 1
+                               1, -3,  1	# 2
+                               3, -1, -1	# 3
+                               1,  0,  0	# 4
+                               2,  0,  2	# 5
+                               3,  1, -1	# 6
+                               1,  3,  1	# 7
+                              -1,  1, -1	# 8
+                              ]
 		}
 		# pointIndex [6 7]
-		curveIndex [
-			    0 1
-			    2 1
-			    3 2
-			    4 3
-			    6 4
-			    7 6
-			    8 7
-			    0 8
-			   ]
+		curveIndex [0 1 2 1 3 2 4 3 6 4 7 6 8 7 0 8]
 	      }
 	    }
 
@@ -149,26 +139,14 @@ Transform {
 		aosMarkedEdgeIndex 100
 		aosMarkedVertexIndex 100
 		aosMarkedVertexStyle "none"
-		coord DEF COORD2 ExactCoordinate {
-		  ratPoint [
-			    3, -1, -1
-			    3, 1, -1
-			    2, 2, 0
-			    0, 0, 2
-			    2, -2, 0
-			   ]
+		coord DEF COORD2 EpecCoordinate {
+		  exactPoint [3, -1, -1 3, 1, -1 2, 2, 0 0, 0, 2 2, -2, 0]
 		}
 		# pointIndex [6 7]
-		curveIndex [
-			    1 0
-			    2 1
-			    3 2
-			    4 3
-			    0 4
-			   ]
+		curveIndex [1 0 2 1 3 2 4 3 0 4]
 	      }
 	    }
-	    
+
 	   ]
 	}
        ]
@@ -195,7 +173,14 @@ Transform {
 	      }
 	    }
 	    Shape {
-	      appearance USE AXES_APP
+              appearance DEF AXES_APP Appearance {
+                material Material {
+                  # ambientIntensity 1
+                  diffuseColor 0.4 0.4 0.4
+                  # specularColor 0.3 0.3 0.3
+                  # transparency 0.0001
+                }
+              }
 	      geometry Sphere {
     	        center 0 0 -1
 	        radius 0.05
@@ -257,20 +242,13 @@ Transform {
 	}
        ]
     }
-    
+
     # The axes:
     DEF AXES Transform {
       scale 0.1 0.1 0.1
       children [
 	Shape {
-	  appearance DEF AXES_APP Appearance {
-	    material Material {
-	      # ambientIntensity 1
-	      diffuseColor 0.4 0.4 0.4
-	      # specularColor 0.3 0.3 0.3
-	      # transparency 0.0001
-	    }
-	  }
+          appearance USE AXES_APP
 	  geometry Sphere { radius 0.1 }
 	}
 	DEF CS_AXIS Transform {

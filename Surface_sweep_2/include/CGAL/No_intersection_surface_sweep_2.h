@@ -23,14 +23,18 @@
 #ifndef CGAL_NO_INTERSECTION_SURFACE_SWEEP_2_H
 #define CGAL_NO_INTERSECTION_SURFACE_SWEEP_2_H
 
+#include <CGAL/license/Surface_sweep_2.h>
+
 /*! \file
  *
  * Definition of the No_intersection_surface_sweep_2 class.
  */
 
+#include <vector>
+#include <algorithm>
+#include <iterator>
 #include <boost/mpl/assert.hpp>
 
-#include <CGAL/license/Surface_sweep_2.h>
 #include <CGAL/assertions.h>
 #include <CGAL/memory.h>
 #include <CGAL/Surface_sweep_2/Event_comparer.h>
@@ -38,9 +42,6 @@
 #include <CGAL/Multiset.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Arr_tags.h>
-#include <vector>
-#include <algorithm>
-#include <iterator>
 
 #ifndef CGAL_SS_VERBOSE
 
@@ -144,14 +145,25 @@ public:
   );
 
 protected:
-  typedef typename Arr_are_all_sides_oblivious_tag<
-    Left_side_category, Bottom_side_category,
-    Top_side_category, Right_side_category >::result
-    Are_all_sides_oblivious_category;
+  /*!
+   */
+  typedef typename Arr_all_sides_oblivious_category<Left_side_category,
+                                                    Bottom_side_category,
+                                                    Top_side_category,
+                                                    Right_side_category>::result
+    All_sides_oblivious_category;
+
+  /*!
+   */
+  typedef typename Arr_sides_category<Left_side_category,
+                                      Bottom_side_category,
+                                      Top_side_category,
+                                      Right_side_category>::result
+    Sides_category;
 
 public:
   typedef CGAL::Surface_sweep_2::Event_comparer<Traits_adaptor_2, Event>
-                                                        Event_comparer;
+    Event_comparer;
   typedef Multiset<Event*, Event_comparer, Allocator>   Event_queue;
   typedef typename Event_queue::iterator                Event_queue_iterator;
 
@@ -273,8 +285,8 @@ public:
    * \param curves_begin  An iterator for the first x-monotone curve in the
    *                      range.
    * \param curves_end A past-the-end iterator for this range.
-   * \param points_begin An iterator for the first point in the range.
-   * \param points_end A past-the-end iterator for this range.
+   * \param action_points_begin An iterator for the first point in the range.
+   * \param action_points_end A past-the-end iterator for this range.
    * \pre The value-type of XCurveInputIterator is the traits-class
    *      X_monotone_curve_2, and the value-type of PointInputIterator is the
    *      traits-class Point_2.
@@ -301,20 +313,22 @@ public:
    * \param curves_begin An iterator for the first x-monotone curve in the
    *                     range.
    * \param curves_end A past-the-end iterator for this range.
-   * \param points_begin An iterator for the first point in the range.
-   * \param points_end A past-the-end iterator for this range.
+   * \param action_points_begin An iterator for the first point in the range.
+   * \param action_points_end A past-the-end iterator for this range.
+   * \param query_points_begin An iterator for the first point in the range.
+   * \param query_points_end A past-the-end iterator for this range.
    * \pre The value-type of XCurveInputIterator is the traits-class
-   *      X_monotone_curve_2, and the value-type of PointInputIterator is the
-   *      traits-class Point_2.
+   *      X_monotone_curve_2, and the value-type of ActionPointIterator
+   *      and QueryPointIterator is the traits-class Point_2.
    */
-  template <typename CurveInputIterator, typename ActionPointItr,
-            typename QueryPointItr>
+  template <typename CurveInputIterator, typename ActionPointIterator,
+            typename QueryPointIterator>
   void sweep(CurveInputIterator curves_begin,
              CurveInputIterator curves_end,
-             ActionPointItr action_points_begin,
-             ActionPointItr action_points_end,
-             QueryPointItr query_points_begin,
-             QueryPointItr query_points_end)
+             ActionPointIterator action_points_begin,
+             ActionPointIterator action_points_end,
+             QueryPointIterator query_points_begin,
+             QueryPointIterator query_points_end)
   {
     m_visitor->before_sweep();
     _init_sweep(curves_begin, curves_end);
@@ -428,7 +442,9 @@ protected:
    * \param sc The subcurve corresponding to cv.
    */
   void _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind,
-                       Subcurve* sc);
+                       Subcurve* sc, Arr_all_sides_oblivious_tag);
+  void _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind,
+                       Subcurve* sc, Arr_not_all_sides_oblivious_tag);
 
   /*! Handle the subcurves that are to the left of the event point (i.e.,
    * subcurves that we are done with).
@@ -439,7 +455,9 @@ protected:
    * Such an event is usually the left endpoint of its incident right
    * subcurves, and we locate their position in the status line.
    */
-  void _handle_event_without_left_curves();
+  void _handle_event_without_left_curves(Arr_all_sides_oblivious_tag);
+  void _handle_event_without_left_curves(Arr_all_sides_not_finite_tag);
+  void _handle_event_without_left_curves(Arr_not_all_sides_not_finite_tag);
 
   /*! Sort the left subcurves of an event point according to their order in
    * their status line (no geometric comparisons are needed).
@@ -526,7 +544,7 @@ protected:
                                       bool is_new)
   {
     _update_event_at_open_boundary(e, cv, ind, is_new,
-                                   Are_all_sides_oblivious_category());
+                                   All_sides_oblivious_category());
   }
 
   void _update_event_at_open_boundary(Event* e,
