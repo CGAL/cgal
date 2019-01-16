@@ -199,11 +199,11 @@ public:
   *
   * @tparam PolygonMesh a model of `MutableFaceGraph` with an internal point 
   * property map
-  * @tparam PointRange a `RandomAccessContainer` with a value_type that has an 
-  * operator `[]` to access coordinates
-  * @tparam PolygonRange a `RandomAccessContainer` of `RandomAccessContainer` 
-  * of `std::size_t` containing the indices
-  *         of the points of the face
+  * @tparam PointRange a model of the concepts `RandomAccessContainer` and 
+  * `BackInsertionSequence` whose value type is the point type
+  * @tparam PolygonRange a model of the concept `RandomAccessContainer` whose 
+  * `value_type` is a model of the concept `RandomAccessContainer` whose `value_type` is `std::size_t`.
+
   *
   * @param points points of the soup of polygons
   * @param polygons each element in the vector describes a polygon using the index of the points in `points`
