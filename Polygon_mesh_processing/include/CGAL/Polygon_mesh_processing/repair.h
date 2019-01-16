@@ -438,7 +438,7 @@ remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor
 
   vertex_descriptor vkept=source(hk1,tm);
 
-  //back-up next, prev halfedge to be restore pointers after removal
+  //back-up next, prev halfedge pointers to be restored after removal
   halfedge_descriptor hp=prev(opp_h, tm);
   halfedge_descriptor hn=next(opp_h, tm);
   halfedge_descriptor hk1_opp_next = next(hk2, tm);
@@ -509,6 +509,7 @@ remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor
     set_next(hk1_opp_prev, opposite(hk1, tm), tm);
     set_next(opposite(hk1, tm), hn, tm);
   }
+  CGAL_assertion(is_valid_polygon_mesh(tm));
   return vkept;
 }
 
@@ -518,7 +519,7 @@ remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor
                      TriangleMesh& tm)
 {
   std::set<typename boost::graph_traits<TriangleMesh>::edge_descriptor> edge_set;
-  remove_a_border_edge(ed, tm, edge_set);
+  return remove_a_border_edge(ed, tm, edge_set);
 }
 
 template <class EdgeRange, class TriangleMesh, class NamedParameters>
