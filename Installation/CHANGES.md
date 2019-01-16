@@ -63,15 +63,17 @@ Release date: March 2019
     `Arr_polycurve_basic_traits_2`.
 
 ### 2D and 3D Mesh Generation
--   Added 3 functions for writing in XML VTK formats:
-    - `CGAL::output_to_vtu()`,
+
+-   Added two functions for writing in XML VTK formats:
     - `CGAL::write_vtu()`, that writes a 2D mesh in a `.vtu` file,
-    - `CGAL::write_vtp()`, that writes a triangulated face graph in a
-      `.vtp` file.
+    - `CGAL::output_to_vtu()`, that writes a 3D mesh in a `.vtu` file.
 
 ### CGAL and the Boost Graph Library (BGL)
 
--    Add function `write_wrl()` for writing into VRML 2.0 format.
+-   Added function `write_wrl()` for writing into VRML 2.0 format.
+-   Added functions `CGAL::write_vtp()` for writing a triangulated
+      face graph in a `.vtp` file (XML VTK format).
+
 
 Release 4.13
 ------------
