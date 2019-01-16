@@ -262,6 +262,7 @@ struct Arr_is_side_oblivious {
   typedef ArrSideCategory                                       Side_cat;
   typedef boost::is_same<Side_cat, Arr_oblivious_side_tag>      Is_same;
   typedef boost::mpl::if_<Is_same, Arr_true, Arr_false>         result;
+  typedef typename result::type                                 type;
 };
 
 template <typename ArrSideCategory>
@@ -269,6 +270,7 @@ struct Arr_is_side_open {
   typedef ArrSideCategory                                       Side_cat;
   typedef boost::is_same<Side_cat, Arr_open_side_tag>           Is_same;
   typedef boost::mpl::if_<Is_same, Arr_true, Arr_false>         result;
+  typedef typename result::type                                 type;
 };
 
 template <typename ArrSideCategory>
@@ -276,6 +278,7 @@ struct Arr_is_side_identified {
   typedef ArrSideCategory                                       Side_cat;
   typedef boost::is_same<Side_cat, Arr_identified_side_tag>     Is_same;
   typedef boost::mpl::if_<Is_same, Arr_true, Arr_false>         result;
+  typedef typename result::type                                 type;
 };
 
 template <typename ArrSideCategory>
@@ -283,6 +286,7 @@ struct Arr_is_side_contracted {
   typedef ArrSideCategory                                       Side_cat;
   typedef boost::is_same<Side_cat, Arr_contracted_side_tag>     Is_same;
   typedef boost::mpl::if_<Is_same, Arr_true, Arr_false>         result;
+  typedef typename result::type                                 type;
 };
 
 template <typename ArrSideCategory>
@@ -290,6 +294,7 @@ struct Arr_is_side_closed {
   typedef ArrSideCategory                                       Side_cat;
   typedef boost::is_same<Side_cat, Arr_closed_side_tag>         Is_same;
   typedef boost::mpl::if_<Is_same, Arr_true, Arr_false>         result;
+  typedef typename result::type                                 type;
 };
 
 /*! Struct to determine whether all side tags are "oblivious"
