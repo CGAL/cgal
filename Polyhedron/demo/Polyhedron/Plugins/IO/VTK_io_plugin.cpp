@@ -45,7 +45,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/IO/Complex_3_in_triangulation_3_to_vtk.h>
 #include <CGAL/IO/vtk_io.h>
-#include <CGAL/IO/vtp_io.h>
+#include <CGAL/boost/graph/io.h>
 
 #include <vtkSmartPointer.h>
 #include <vtkDataSetReader.h>
@@ -329,7 +329,7 @@ public:
         std::ofstream os(output_filename.data());
         os << std::setprecision(16);
         //write header
-        CGAL::write_VTP(os, *mesh);
+        CGAL::write_vtp(os, *mesh);
       }
     }
     else

@@ -66,7 +66,8 @@ Release date: March 2019
 -   Added 3 functions for writing in XML VTK formats:
     - `CGAL::output_to_vtu()`
     - `CGAL::write_VTU()`
-    - `CGAL::write_VTP()`
+    - `CGAL::write_vtp()`, that writes a triangulated face graph in a
+      `.vtp` file.
 
 ### CGAL and the Boost Graph Library (BGL)
 
