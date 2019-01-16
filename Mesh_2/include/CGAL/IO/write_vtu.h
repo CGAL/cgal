@@ -275,9 +275,9 @@ write_points(std::ostream& os,
 
 
 template <class CDT>
-void write_VTU(std::ostream& os,
-                               const CDT& tr,
-                               bool binary = true)
+void write_vtu(std::ostream& os,
+               const CDT& tr,
+               IO::Mode mode = IO::BINARY)
 {
   typedef typename CDT::Vertex_handle Vertex_handle;
   std::map<Vertex_handle, std::size_t> V;
@@ -309,6 +309,7 @@ void write_VTU(std::ostream& os,
   os << "  <Piece NumberOfPoints=\"" << tr.number_of_vertices() 
      << "\" NumberOfCells=\"" << number_of_triangles + std::distance(tr.constrained_edges_begin(), tr.constrained_edges_end()) << "\">\n";
   std::size_t offset = 0;
+  const bool binary = (mode == IO::BINARY);
   write_points_tag(os,tr,V,binary,offset);
   write_cells_tag_2(os,tr,number_of_triangles, V,binary,offset);
   os << "   </Piece>\n"

@@ -22,7 +22,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Timer.h>
-#include <CGAL/IO/vtk_io_2.h>
+#include <CGAL/IO/write_vtu.h>
 
 // Qt headers
 #include <QtGui>
@@ -676,7 +676,7 @@ MainWindow::saveConstraints(QString fileName)
     output << cdt;
   else if (output)
   {
-    CGAL::write_VTU(output, cdt);
+    CGAL::write_vtu(output, cdt);
   }
 }
 

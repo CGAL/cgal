@@ -64,8 +64,8 @@ Release date: March 2019
 
 ### 2D and 3D Mesh Generation
 -   Added 3 functions for writing in XML VTK formats:
-    - `CGAL::output_to_vtu()`
-    - `CGAL::write_VTU()`
+    - `CGAL::output_to_vtu()`,
+    - `CGAL::write_vtu()`, that writes a 2D mesh in a `.vtu` file,
     - `CGAL::write_vtp()`, that writes a triangulated face graph in a
       `.vtp` file.
 
