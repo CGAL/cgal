@@ -324,8 +324,7 @@ OutputIterator degenerate_faces(const TriangleMesh& tm, OutputIterator out)
 }
 
 // this function remove a border edge even if it does not satisfy the link condition.
-// The only limitation is that the length connected component of the boundary this edge
-// is strictly greater than 3
+// null_vertex() is returned if the removal changes the topology of the input
 template <class TriangleMesh, class EdgeSet>
 typename boost::graph_traits<TriangleMesh>::vertex_descriptor
 remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor ed,
@@ -421,7 +420,22 @@ remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor
   CGAL_assertion( source(hk1,tm)==source(h,tm) );
   CGAL_assertion( target(hk2,tm)==target(h,tm) );
 
+  CGAL_assertion(is_valid_polygon_mesh(tm));
+  if (!is_selection_a_topological_disk(marked_faces, tm))
+  {
+    #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+    std::cout << "The region to be removed is not a topological disk, not handled for now.\n";
+    #endif
+    return GT::null_vertex();
 
+  }
+  if (next(opp_h, tm) == hk1 && prev(opp_h, tm)==hk2)
+  {
+    #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+    std::cout << "The region to be removed is an isolated region, not handled for now.\n";
+    #endif
+    return GT::null_vertex();
+  }
   // collect vertices and edges to remove and do remove faces
   std::set<edge_descriptor> edges_to_remove;
   std::set<vertex_descriptor> vertices_to_remove;
@@ -635,7 +649,14 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
             degenerate_edges_to_remove.insert(ed);
             continue;
           }
-          remove_a_border_edge(ed, tmesh, degenerate_edges_to_remove);
+          #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+          std::cout << "Calling remove_a_border_edge\n";
+          #endif
+          vertex_descriptor vd = remove_a_border_edge(ed, tmesh, degenerate_edges_to_remove);
+          if (vd == GT::null_vertex())
+            all_removed=false;
+          else
+            some_removed=true;
           continue;
         }
         else
@@ -671,8 +692,9 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
         }
 
         // When the edge does not satisfy the link condition, it means that it cannot be
-        // collapsed as is. In the following we assume that there is no topological issue
-        // with contracting the edge (no volume will disappear).
+        // collapsed as is. In the following if there is a topological issue
+        // with contracting the edge (component or geometric feature that disappears),
+        // nothing is done.
         // We start by marking the faces that are incident to an edge endpoint.
         // If the set of marked faces is a topologically disk, then we simply remove all the simplicies
         // inside the disk and star the hole with the edge vertex kept.
@@ -680,8 +702,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
         // on its boundary. We need to mark additional faces to make it a topological disk.
         // We can then apply the star hole procedure.
         // Right now we additionally mark the smallest connected components of non-marked faces
-        // (using the numnber of faces)
-        some_removed = true;
+        // (using the number of faces)
 
         //backup central point
         typename Traits::Point_3 pt = get(vpmap, source(ed, tmesh));
@@ -702,13 +723,20 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
           {
             halfedge_descriptor hd_opp = opposite(hd, tmesh);
             if ( is_border(hd_opp, tmesh) ||
-                 marked_faces.count( face(hd, tmesh) )!=
-                 marked_faces.count( face(hd_opp, tmesh) ) )
+                 marked_faces.count( face(hd_opp, tmesh) ) == 0 )
             {
               border.push_back( hd );
             }
           }
-        CGAL_assertion( !border.empty() ); // a whole connected component got selected and will disappear (not handled for now)
+        if (border.empty() )
+        {
+          // a whole connected component (without boundary) got selected and will disappear (not handled for now)
+          #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+            std::cout << "Trying to remove a whole connected component, not handled yet\n";
+          #endif
+          all_removed=false;
+          continue;
+        }
         // define cc of border halfedges: two halfedges are in the same cc
         // if they are on the border of the cc of non-marked faces.
         typedef CGAL::Union_find<halfedge_descriptor> UF_ds;
@@ -767,6 +795,15 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
             faces_per_cc[ insert_res.first->second ].insert( face(opp_hedge, tmesh) );
           }
 
+          if (index != nb_cc)
+          {
+            // most probably, one cc is a cycle of border edges
+            #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+            std::cout << "Trying to remove a component with a cycle of halfedges (nested hole or whole component), not handled yet.\n";
+            #endif
+            all_removed=false;
+            continue;
+          }
           std::size_t nb_ccs_to_be_explored = nb_cc;
           index=0;
           //explore the cc's
@@ -774,6 +811,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
             // try to extract one more face for a given cc
             do{
               CGAL_assertion( !exploration_finished[index] );
+              CGAL_assertion( !stacks_per_cc.empty() );
               CGAL_assertion( !stacks_per_cc[index].empty() );
               halfedge_descriptor hd = stacks_per_cc[index].back();
               stacks_per_cc[index].pop_back();
@@ -808,6 +846,17 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
             }
         }
 
+        // make sure the selection is a topological disk (otherwise we need another treatment)
+        if (!is_selection_a_topological_disk(marked_faces, tmesh))
+        {
+          #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+            std::cout << "Trying to handle a non-topological disk, do nothing\n";
+          #endif
+          all_removed=false;
+          continue;
+        }
+
+        some_removed = true;
         // collect simplices to be removed
         std::set<vertex_descriptor> vertices_to_keep;
         std::set<halfedge_descriptor> halfedges_to_keep;
@@ -968,6 +1017,7 @@ bool remove_degenerate_faces(      TriangleMesh& tmesh,
   degenerate_faces(tmesh, std::inserter(degenerate_face_set, degenerate_face_set.begin()), np);
 
 // start by filtering out border faces
+// TODO: shall we avoid doing that in case a non-manifold vertex on the boundary or if a whole component disappear?
   std::set<face_descriptor> border_deg_faces;
   BOOST_FOREACH(face_descriptor f, degenerate_face_set)
   {
@@ -991,9 +1041,9 @@ bool remove_degenerate_faces(      TriangleMesh& tmesh,
     halfedge_descriptor h = halfedge(f_to_rm, tmesh);
     for (int i=0; i<3; ++i)
     {
-      if (is_border(h, tmesh) )
+      face_descriptor f = face(opposite(h, tmesh), tmesh);
+      if ( f!=GT::null_face() )
       {
-        face_descriptor f = face(opposite(h, tmesh), tmesh);
         if (is_degenerate_triangle_face(f, tmesh, np) )
           border_deg_faces.insert(f);
       }
