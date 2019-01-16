@@ -205,7 +205,7 @@ MainWindow::animate() {
     //std::cout << "  ..checking generators "; std::cout.flush();
     std::vector<Hyperbolic_translation> gens;
     Hyperbolic_translation::generators(gens);
-    for(int i=0; i<gens.size(); ++i) {
+    for(unsigned int i=0; i<gens.size(); ++i) {
       o = gens[i];
       if(check(dt.construct_point(p,o)) == CGAL::ON_BOUNDED_SIDE) {
         found = true;
@@ -222,7 +222,7 @@ MainWindow::animate() {
     if(!found) {
       std::vector<Hyperbolic_translation> tr;
       get_all_translations(tr);
-      for(int i=0; i<tr.size(); ++i) {
+      for(unsigned int i=0; i<tr.size(); ++i) {
         o = tr[i];
         if(check(dt.construct_point(p,o)) == CGAL::ON_BOUNDED_SIDE) {
           found = true;

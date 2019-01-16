@@ -484,7 +484,7 @@ public:
 
     if (dim_was_2) 
     {
-      for (int i = 0; i < nbr.size(); ++i) 
+      for (unsigned int i = 0; i < nbr.size(); ++i) 
       {
         mark_star_faces(nbr[i]);
         ensure_hyperbolic_face_handle(nbr[i]);
@@ -670,8 +670,7 @@ private:
   {
     if(const Face_data* td = object_cast<Face_data>(&f->tds_data()))
     {
-      Face_data fd = object_cast<Face_data>(f->tds_data());
-      return !fd.get_is_Delaunay_hyperbolic();
+      return !td->get_is_Delaunay_hyperbolic();
     }
     else
     {

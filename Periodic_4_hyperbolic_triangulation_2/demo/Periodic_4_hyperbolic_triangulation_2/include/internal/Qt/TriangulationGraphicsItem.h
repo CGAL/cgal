@@ -146,20 +146,20 @@ public:
     std::vector<Matrix> gens;
     T::Hyperbolic_translation::generators(gens);
     std::vector<Matrix> tmp;
-    for(int j=0; j<gens.size(); ++j) {
+    for(unsigned int j=0; j<gens.size(); ++j) {
       tmp.push_back(gens[j]);
     }
 
     for(int j=0; j<3; ++j) {
-      int N = tmp.size();
-      for(int i=0; i<N; ++i) {
-        for(int k=0; k< gens.size(); k++) {
+      std::size_t N = tmp.size();
+      for(unsigned int i=0; i<N; ++i) {
+        for(unsigned int k=0; k< gens.size(); k++) {
           tmp.push_back(gens[k]*tmp[i]);
         }
       }
     }
 
-    for(int k=0; k< tmp.size(); k++) {
+    for(unsigned int k=0; k< tmp.size(); k++) {
       if(std::find(trans.begin(), trans.end(), tmp[k]) == trans.end()) {
         trans.push_back(tmp[k]);
       }
@@ -332,7 +332,7 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
       //   std::cout << "painting copies" << std::endl;
       //   typename Geom_traits::Point_2 pts[] = {fit->translation(Triangulation_cw_ccw_2::ccw(0)).apply(fit->vertex(Triangulation_cw_ccw_2::ccw(k))->point());
       //   typename Geom_traits::Point_2 tgt = fit->translation(Triangulation_cw_ccw_2::cw(k)).apply(fit->vertex(Triangulation_cw_ccw_2::cw(k))->point());
-        for(int j=0; j<trans.size(); ++j) {
+        for(unsigned int j=0; j<trans.size(); ++j) {
           painterostream << t->construct_hyperbolic_segment( CP2()(pts[0], trans[j]), CP2()(pts[1], trans[j]) );
           painterostream << t->construct_hyperbolic_segment( CP2()(pts[1], trans[j]), CP2()(pts[2], trans[j]) );
           painterostream << t->construct_hyperbolic_segment( CP2()(pts[2], trans[j]), CP2()(pts[0], trans[j]) );
@@ -397,7 +397,7 @@ TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
       painter->drawPoint(point);
       
       if(visible_copies) {
-        for(int k=0; k< trans.size(); k++) {
+        for(unsigned int k=0; k< trans.size(); k++) {
           typedef typename Geom_traits::Construct_hyperbolic_point_2 CP2;
           typename Geom_traits::Point_2 img = CP2()(it->point(), trans[k]);
 
