@@ -429,7 +429,7 @@ remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor
     return GT::null_vertex();
 
   }
-  if (next(opp_h, tm) == hk1 && prev(opp_h, tm)==hk2)
+  if (is_border(hk1, tm) && is_border(hk2, tm))
   {
     #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
     std::cout << "The region to be removed is an isolated region, not handled for now.\n";
@@ -1125,8 +1125,7 @@ bool remove_degenerate_faces(      TriangleMesh& tmesh,
       CGAL::read_OFF(in, points, triangles);
       if (!CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(triangles))
       {
-        std::cerr << "ERROR: got a polygon soup!\n";
-        exit(EXIT_FAILURE);
+        std::cerr << "Warning: got a polygon soup (may simply be a non-manifold vertex)!\n";
       }
     }
     #endif
