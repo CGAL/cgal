@@ -172,20 +172,39 @@ void Surface_mesh_item_classification::change_color (int index, float* vmin, flo
       float min = std::numeric_limits<float>::max();
       float max = -std::numeric_limits<float>::max();
       
-      BOOST_FOREACH(face_descriptor fd, faces(*(m_mesh->polyhedron())))
+      if (vmin != NULL && vmax != NULL
+          && *vmin != std::numeric_limits<float>::infinity()
+          && *vmax != std::numeric_limits<float>::infinity())
       {
-        if (feature->value(fd) > max)
-          max = feature->value(fd);
-        if (feature->value(fd) < min)
-          min = feature->value(fd);
+        min = *vmin;
+        max = *vmax;
       }
-
+      else
+      {
+        BOOST_FOREACH(face_descriptor fd, faces(*(m_mesh->polyhedron())))
+        {
+          if (feature->value(fd) > max)
+            max = feature->value(fd);
+          if (feature->value(fd) < min)
+            min = feature->value(fd);
+        }
+      }
+      
       BOOST_FOREACH(face_descriptor fd, faces(*(m_mesh->polyhedron())))
       {
         float v = (feature->value(fd) - min) / (max - min);
+        if (v < 0.f) v = 0.f;
+        if (v > 1.f) v = 1.f;
+        
         m_color[fd] = CGAL::Color((unsigned char)(ramp.r(v) * 255),
                                   (unsigned char)(ramp.g(v) * 255),
                                   (unsigned char)(ramp.b(v) * 255));
+      }
+      
+      if (vmin != NULL && vmax != NULL)
+      {
+        *vmin = min;
+        *vmax = max;
       }
     }
   }

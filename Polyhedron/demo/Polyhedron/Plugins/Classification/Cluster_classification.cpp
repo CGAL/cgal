@@ -549,19 +549,29 @@ void Cluster_classification::change_color (int index, float* vmin, float* vmax)
         float min = std::numeric_limits<float>::max();
         float max = -std::numeric_limits<float>::max();
       
-        for (Point_set::const_iterator it = m_points->point_set()->begin();
-             it != m_points->point_set()->first_selected(); ++ it)
+        if (vmin != NULL && vmax != NULL
+            && *vmin != std::numeric_limits<float>::infinity()
+            && *vmax != std::numeric_limits<float>::infinity())
         {
-          int cid = m_cluster_id[*it];
-          if (cid != -1)
+          min = *vmin;
+          max = *vmax;
+        }
+        else
+        {
+          for (Point_set::const_iterator it = m_points->point_set()->begin();
+               it != m_points->point_set()->first_selected(); ++ it)
           {
-            if (feature->value(cid) > max)
-              max = feature->value(cid);
-            if (feature->value(cid) < min)
-              min = feature->value(cid);
+            int cid = m_cluster_id[*it];
+            if (cid != -1)
+            {
+              if (feature->value(cid) > max)
+                max = feature->value(cid);
+              if (feature->value(cid) < min)
+                min = feature->value(cid);
+            }
           }
         }
-
+        
         for (Point_set::const_iterator it = m_points->point_set()->begin();
              it != m_points->point_set()->first_selected(); ++ it)
         {
@@ -569,10 +579,19 @@ void Cluster_classification::change_color (int index, float* vmin, float* vmax)
           if (cid != -1)
           {
             float v = (feature->value(cid) - min) / (max - min);
+            if (v < 0.f) v = 0.f;
+            if (v > 1.f) v = 1.f;
+            
             m_points->point_set()->set_color(*it, ramp.r(v) * 255, ramp.g(v) * 255, ramp.b(v) * 255);
           }
           else
             m_points->point_set()->set_color(*it);
+        }
+
+        if (vmin != NULL && vmax != NULL)
+        {
+          *vmin = min;
+          *vmax = max;
         }
       }
     }
