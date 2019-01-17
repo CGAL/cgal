@@ -1,0 +1,657 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>714</width>
+    <height>495</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>RobustRemeshing</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="robust_remeshing.qrc">
+    <normaloff>:/cgal/icons/resources/cgal_logo.xpm</normaloff>:/cgal/icons/resources/cgal_logo.xpm</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <property name="locale">
+   <locale language="English" country="UnitedStates"/>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="1" column="0">
+     <widget class="Viewer" name="viewer" native="true">
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="autoFillBackground">
+       <bool>true</bool>
+      </property>
+      <property name="locale">
+       <locale language="English" country="UnitedStates"/>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>714</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionFile_open"/>
+    <addaction name="actionFile_open_input"/>
+    <addaction name="actionFile_open_remesh"/>
+    <addaction name="actionFile_save_remesh_as"/>
+    <addaction name="separator"/>
+    <addaction name="actionFile_quit"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <widget class="QMenu" name="menuView_facet_sample_properties">
+     <property name="title">
+      <string>Facet sample properties</string>
+     </property>
+     <addaction name="actionView_facet_feature_intensities"/>
+     <addaction name="actionView_facet_capacities"/>
+     <addaction name="actionView_facet_weights"/>
+    </widget>
+    <widget class="QMenu" name="menuView_all_sample_properties">
+     <property name="title">
+      <string>All sample properties</string>
+     </property>
+     <addaction name="actionView_all_sample_feature_intensities"/>
+     <addaction name="actionView_all_sample_capacities"/>
+     <addaction name="actionView_all_sample_weights"/>
+    </widget>
+    <widget class="QMenu" name="menuView_vertex_sample_properties">
+     <property name="title">
+      <string>Vertex sample properties</string>
+     </property>
+     <addaction name="actionView_vertex_feature_intensities"/>
+     <addaction name="actionView_vertex_capacities"/>
+     <addaction name="actionView_vertex_weights"/>
+    </widget>
+    <widget class="QMenu" name="menuView_edge_sample_properties">
+     <property name="title">
+      <string>Edge sample properties</string>
+     </property>
+     <addaction name="actionView_edge_feature_intensities"/>
+     <addaction name="actionView_edge_capacities"/>
+     <addaction name="actionView_edge_weights"/>
+    </widget>
+    <widget class="QMenu" name="menuView_polyhedron_properties">
+     <property name="title">
+      <string>Polyhedron properties</string>
+     </property>
+     <widget class="QMenu" name="menuView_samples_and_links">
+      <property name="title">
+       <string>Samples and links</string>
+      </property>
+      <addaction name="actionView_facet_in_start_points"/>
+      <addaction name="actionView_facet_in_end_points"/>
+      <addaction name="actionView_facet_in_links"/>
+      <addaction name="actionView_facet_out_start_points"/>
+      <addaction name="actionView_facet_out_end_points"/>
+      <addaction name="actionView_facet_out_links"/>
+      <addaction name="separator"/>
+      <addaction name="actionView_edge_in_start_points"/>
+      <addaction name="actionView_edge_in_end_points"/>
+      <addaction name="actionView_edge_in_links"/>
+      <addaction name="actionView_edge_out_start_points"/>
+      <addaction name="actionView_edge_out_end_points"/>
+      <addaction name="actionView_edge_out_links"/>
+      <addaction name="separator"/>
+      <addaction name="actionView_vertex_in_start_points"/>
+      <addaction name="actionView_vertex_in_end_points"/>
+      <addaction name="actionView_vertex_in_links"/>
+      <addaction name="actionView_vertex_out_start_points"/>
+      <addaction name="actionView_vertex_out_end_points"/>
+      <addaction name="actionView_vertex_out_links"/>
+     </widget>
+     <addaction name="actionView_minimal_angle"/>
+     <addaction name="separator"/>
+     <addaction name="actionView_polyhedron_facets_plain"/>
+     <addaction name="actionView_polyhedron_facets_errors"/>
+     <addaction name="separator"/>
+     <addaction name="menuView_samples_and_links"/>
+    </widget>
+    <widget class="QMenu" name="menuView_feature_intensities">
+     <property name="title">
+      <string>Feature intensities</string>
+     </property>
+     <addaction name="actionView_polyhedron_facets_ifi"/>
+     <addaction name="actionView_element_classifications"/>
+     <addaction name="separator"/>
+     <addaction name="actionView_gaussian_curvatures"/>
+     <addaction name="actionView_maximal_normal_dihedrals"/>
+     <addaction name="separator"/>
+     <addaction name="actionView_normal_dihedrals"/>
+    </widget>
+    <addaction name="actionView_input"/>
+    <addaction name="actionView_remesh"/>
+    <addaction name="actionView_toggle_input_remesh"/>
+    <addaction name="separator"/>
+    <addaction name="actionView_polyhedron_edges"/>
+    <addaction name="menuView_feature_intensities"/>
+    <addaction name="menuView_polyhedron_properties"/>
+    <addaction name="separator"/>
+    <addaction name="menuView_all_sample_properties"/>
+    <addaction name="menuView_vertex_sample_properties"/>
+    <addaction name="menuView_edge_sample_properties"/>
+    <addaction name="menuView_facet_sample_properties"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menuInput">
+    <property name="title">
+     <string>Input</string>
+    </property>
+    <addaction name="actionInput_eliminate_degenerations"/>
+    <addaction name="actionInput_split_long_edges"/>
+    <addaction name="separator"/>
+    <addaction name="actionInput_properties"/>
+   </widget>
+   <widget class="QMenu" name="menuRemesh">
+    <property name="title">
+     <string>Remesh</string>
+    </property>
+    <addaction name="actionRemesh_reset_from_input"/>
+    <addaction name="actionRemesh_generate_links"/>
+    <addaction name="separator"/>
+    <addaction name="actionRemesh_properties"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionEdit_copy_snapshot"/>
+    <addaction name="actionEdit_save_snapshot"/>
+    <addaction name="separator"/>
+    <addaction name="actionEdit_parameter_settings"/>
+   </widget>
+   <widget class="QMenu" name="menuIsotropic">
+    <property name="title">
+     <string>Isotropic</string>
+    </property>
+    <widget class="QMenu" name="menuGreedy_improve_angle">
+     <property name="title">
+      <string>Greedy improve angle</string>
+     </property>
+     <addaction name="actionIsotropic_split_local_longest_edge"/>
+     <addaction name="actionIsotropic_increase_minimal_angle"/>
+     <addaction name="actionIsotropic_maximize_minimal_angle"/>
+    </widget>
+    <addaction name="actionIsotropic_remeshing"/>
+    <addaction name="separator"/>
+    <addaction name="actionIsotropic_initial_mesh_simplification"/>
+    <addaction name="menuGreedy_improve_angle"/>
+    <addaction name="actionIsotropic_final_Vertex_relocation"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuInput"/>
+   <addaction name="menuRemesh"/>
+   <addaction name="menuIsotropic"/>
+   <addaction name="menuView"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionIsotropic_initial_mesh_simplification"/>
+   <addaction name="separator"/>
+   <addaction name="actionIsotropic_increase_minimal_angle"/>
+   <addaction name="actionIsotropic_maximize_minimal_angle"/>
+   <addaction name="separator"/>
+   <addaction name="actionIsotropic_final_Vertex_relocation"/>
+  </widget>
+  <action name="actionFile_quit">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionEdit_save_snapshot">
+   <property name="text">
+    <string>Save snapshot...</string>
+   </property>
+  </action>
+  <action name="actionEdit_copy_snapshot">
+   <property name="text">
+    <string>Copy snapshot</string>
+   </property>
+  </action>
+  <action name="actionEdit_parameter_settings">
+   <property name="text">
+    <string>Options...</string>
+   </property>
+   <property name="shortcut">
+    <string>O</string>
+   </property>
+  </action>
+  <action name="actionView_input">
+   <property name="text">
+    <string>Input</string>
+   </property>
+   <property name="shortcut">
+    <string>I</string>
+   </property>
+  </action>
+  <action name="actionView_remesh">
+   <property name="text">
+    <string>Remesh</string>
+   </property>
+   <property name="shortcut">
+    <string>R</string>
+   </property>
+  </action>
+  <action name="actionView_toggle_input_remesh">
+   <property name="text">
+    <string>Toggle input/remesh</string>
+   </property>
+   <property name="shortcut">
+    <string>Space</string>
+   </property>
+  </action>
+  <action name="actionFile_open">
+   <property name="text">
+    <string>Open...</string>
+   </property>
+  </action>
+  <action name="actionRemesh_reset_from_input">
+   <property name="text">
+    <string>Reset from input</string>
+   </property>
+  </action>
+  <action name="actionFile_save_remesh_as">
+   <property name="text">
+    <string>Save remesh as...</string>
+   </property>
+  </action>
+  <action name="actionInput_eliminate_degenerations">
+   <property name="text">
+    <string>Eliminate degenerations</string>
+   </property>
+  </action>
+  <action name="actionInput_properties">
+   <property name="text">
+    <string>Properties...</string>
+   </property>
+  </action>
+  <action name="actionRemesh_properties">
+   <property name="text">
+    <string>Properties...</string>
+   </property>
+  </action>
+  <action name="actionView_facet_in_start_points">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Facet in start points</string>
+   </property>
+  </action>
+  <action name="actionView_facet_in_end_points">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Facet in end points</string>
+   </property>
+  </action>
+  <action name="actionView_facet_in_links">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Facet in links</string>
+   </property>
+  </action>
+  <action name="actionView_facet_out_start_points">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Facet out start points</string>
+   </property>
+  </action>
+  <action name="actionView_facet_out_end_points">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Facet out end points</string>
+   </property>
+  </action>
+  <action name="actionView_facet_out_links">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Facet out links</string>
+   </property>
+  </action>
+  <action name="actionView_edge_in_start_points">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Edge in start points</string>
+   </property>
+  </action>
+  <action name="actionView_edge_in_end_points">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Edge in end points</string>
+   </property>
+  </action>
+  <action name="actionView_edge_in_links">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Edge in links</string>
+   </property>
+  </action>
+  <action name="actionView_edge_out_start_points">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Edge out start points</string>
+   </property>
+  </action>
+  <action name="actionView_edge_out_end_points">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Edge out end points</string>
+   </property>
+  </action>
+  <action name="actionView_edge_out_links">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Edge out links</string>
+   </property>
+  </action>
+  <action name="actionView_vertex_in_start_points">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Vertex in start points</string>
+   </property>
+  </action>
+  <action name="actionView_vertex_in_end_points">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Vertex in end points</string>
+   </property>
+  </action>
+  <action name="actionView_vertex_in_links">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Vertex in links</string>
+   </property>
+  </action>
+  <action name="actionView_vertex_out_start_points">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Vertex out start points</string>
+   </property>
+  </action>
+  <action name="actionView_vertex_out_end_points">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Vertex out end points</string>
+   </property>
+  </action>
+  <action name="actionView_vertex_out_links">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Vertex out links</string>
+   </property>
+  </action>
+  <action name="actionRemesh_generate_links">
+   <property name="text">
+    <string>Generate links</string>
+   </property>
+   <property name="shortcut">
+    <string>G</string>
+   </property>
+  </action>
+  <action name="actionView_minimal_angle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Minimal angle</string>
+   </property>
+   <property name="shortcut">
+    <string>M</string>
+   </property>
+  </action>
+  <action name="actionView_gaussian_curvatures">
+   <property name="text">
+    <string>Vertex Gaussian curvatures</string>
+   </property>
+  </action>
+  <action name="actionView_maximal_normal_dihedrals">
+   <property name="text">
+    <string>Vertex maximal normal dihedrals</string>
+   </property>
+  </action>
+  <action name="actionView_polyhedron_facets_ifi">
+   <property name="text">
+    <string>Interpolated feature intensities</string>
+   </property>
+  </action>
+  <action name="actionView_normal_dihedrals">
+   <property name="text">
+    <string>Edge normal dihedrals</string>
+   </property>
+  </action>
+  <action name="actionView_vertex_feature_intensities">
+   <property name="text">
+    <string>Feature intensities</string>
+   </property>
+  </action>
+  <action name="actionView_vertex_capacities">
+   <property name="text">
+    <string>Capacities</string>
+   </property>
+  </action>
+  <action name="actionView_vertex_weights">
+   <property name="text">
+    <string>Weights</string>
+   </property>
+  </action>
+  <action name="actionView_edge_feature_intensities">
+   <property name="text">
+    <string>Feature intensities</string>
+   </property>
+  </action>
+  <action name="actionView_edge_capacities">
+   <property name="text">
+    <string>Capacities</string>
+   </property>
+  </action>
+  <action name="actionView_edge_weights">
+   <property name="text">
+    <string>Weights</string>
+   </property>
+  </action>
+  <action name="actionView_facet_feature_intensities">
+   <property name="text">
+    <string>Feature intensities</string>
+   </property>
+  </action>
+  <action name="actionView_facet_capacities">
+   <property name="text">
+    <string>Capacities</string>
+   </property>
+  </action>
+  <action name="actionView_facet_weights">
+   <property name="text">
+    <string>Weights</string>
+   </property>
+  </action>
+  <action name="actionView_all_sample_feature_intensities">
+   <property name="text">
+    <string>Feature intensities</string>
+   </property>
+  </action>
+  <action name="actionView_all_sample_capacities">
+   <property name="text">
+    <string>Capacities</string>
+   </property>
+  </action>
+  <action name="actionView_all_sample_weights">
+   <property name="text">
+    <string>Weights</string>
+   </property>
+  </action>
+  <action name="actionView_polyhedron_facets_plain">
+   <property name="text">
+    <string>Plain</string>
+   </property>
+   <property name="shortcut">
+    <string>P</string>
+   </property>
+  </action>
+  <action name="actionView_element_classifications">
+   <property name="text">
+    <string>Element classifications</string>
+   </property>
+  </action>
+  <action name="actionView_polyhedron_edges">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Polyhedron edges</string>
+   </property>
+   <property name="shortcut">
+    <string>E</string>
+   </property>
+  </action>
+  <action name="actionInput_split_long_edges">
+   <property name="text">
+    <string>Split long edges</string>
+   </property>
+  </action>
+  <action name="actionIsotropic_increase_minimal_angle">
+   <property name="text">
+    <string>Increase minimal angle</string>
+   </property>
+   <property name="shortcut">
+    <string>S</string>
+   </property>
+  </action>
+  <action name="actionIsotropic_maximize_minimal_angle">
+   <property name="text">
+    <string>Maximize minimal angle</string>
+   </property>
+   <property name="shortcut">
+    <string>A</string>
+   </property>
+  </action>
+  <action name="actionIsotropic_initial_mesh_simplification">
+   <property name="text">
+    <string>Initial mesh simplification</string>
+   </property>
+  </action>
+  <action name="actionIsotropic_final_Vertex_relocation">
+   <property name="text">
+    <string>Final Vertex relocation</string>
+   </property>
+  </action>
+  <action name="actionIsotropic_remeshing">
+   <property name="text">
+    <string>Isotropic remeshing</string>
+   </property>
+  </action>
+  <action name="actionView_polyhedron_facets_errors">
+   <property name="text">
+    <string>Facet errors</string>
+   </property>
+  </action>
+  <action name="actionFile_open_input">
+   <property name="text">
+    <string>Open input...</string>
+   </property>
+  </action>
+  <action name="actionFile_open_remesh">
+   <property name="text">
+    <string>Open remesh...</string>
+   </property>
+  </action>
+  <action name="actionIsotropic_split_local_longest_edge">
+   <property name="text">
+    <string>Split local longest edge</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Viewer</class>
+   <extends>QWidget</extends>
+   <header>viewer.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="robust_remeshing.qrc"/>
+ </resources>
+ <connections/>
+</ui>
