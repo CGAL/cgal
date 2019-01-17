@@ -611,14 +611,15 @@ write_polys_points(std::ostream& os,
  * \tparam TriangleMesh a model of `FaceListGraph` with only triangle faces.
  * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
- * \param os the stream used for writting.
+ * \param os the stream used for writing.
  * \param mesh the triangle mesh to be written.
- * \param mode decides if the data should be written in binary (`IO::BINARY`)
- *   or in ASCII (`IO::ASCII`). `IO::BINARY` is the default.
  * \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the
  * ones listed below
  *
  * \cgalNamedParamsBegin
+ *    \cgalParamBegin{use_binary_mode} a Boolean indicating if the
+ *    data should be written in binary (`true`, the default) or in ASCII (`false`).
+ *     \cgalParamEnd
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to
  * the vertices of `mesh`. If this parameter is omitted, an internal property map for
  *       `CGAL::vertex_point_t` must be available in `TriangleMesh`.
@@ -633,7 +634,6 @@ template<class TriangleMesh,
          class NamedParameters>
 void write_vtp(std::ostream& os,
                const TriangleMesh& mesh,
-               IO::Mode mode,
                const NamedParameters& np)
 {
   os << "<?xml version=\"1.0\"?>\n"
@@ -654,7 +654,7 @@ void write_vtp(std::ostream& os,
   os << "  <Piece NumberOfPoints=\"" << num_vertices(mesh)
      << "\" NumberOfPolys=\"" << num_faces(mesh) << "\">\n";
   std::size_t offset = 0;
-  const bool binary = (mode == IO::BINARY);
+  const bool binary = boost::choose_param(boost::get_param(np, internal_np::use_binary_mode), true);
   internal::write_vtp::write_points_tag(os,mesh,binary,offset, np);
   internal::write_vtp::write_polys_tag(os,mesh,binary,offset, np);
   os << "   </Piece>\n"
@@ -667,17 +667,11 @@ void write_vtp(std::ostream& os,
   os << "</VTKFile>\n";
 }
 
-/*! \ingroup PkgBGLIOFct
- *  Overload that implements the default arguments
- *
- *  Calls `write_vtp(os, mesh, mode, parameters::all_default())`.
- */
 template<class TriangleMesh>
 void write_vtp(std::ostream& os,
-                      const TriangleMesh& mesh,
-               IO::Mode mode = IO::BINARY)
+               const TriangleMesh& mesh)
 {
-  write_vtp(os, mesh, mode, CGAL::parameters::all_default());
+  write_vtp(os, mesh, CGAL::parameters::all_default());
 }
 
 } // namespace CGAL

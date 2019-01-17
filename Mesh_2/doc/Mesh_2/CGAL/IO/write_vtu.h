@@ -7,7 +7,7 @@ namespace CGAL{
 //! the edges are those for which `ConstrainedTriangulationFaceBase_2::is_constrained()` returns `true`.
 //! \tparam CDT a `Constrained_Delaunay_triangulation_2` with face type model of `DelaunayMeshFaceBase_2`.
 //!
-//! \param os the stream used for writting.
+//! \param os the stream used for writing.
 //! \param tr the triangulated domain to be written.
 //! \param mode decides if the data should be written in binary (`IO::BINARY`)
 //!   or in ASCII (`IO::ASCII`).

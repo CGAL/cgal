@@ -5,7 +5,7 @@ namespace CGAL{
 //!
 //! \tparam C3T3 a model of `MeshComplexWithFeatures_3InTriangulation_3`.
 //!
-//! \param os the stream used for writting.
+//! \param os the stream used for writing.
 //! \param c3t3 the instance of `C3T3` to be written.
 //! \param mode decides if the data should be written in binary (`IO::BINARY`)
 //!   or in ASCII (`IO::ASCII`).
