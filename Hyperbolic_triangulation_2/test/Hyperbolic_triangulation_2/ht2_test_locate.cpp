@@ -10,7 +10,7 @@ typedef HDTriangulation::Face_handle 						Face_handle;
 typedef HDTriangulation::Locate_type 						Locate_type;
 typedef HDTriangulation::Hyperbolic_segment 				Hyperbolic_segment;
 
-int main(int argc, char**argv) 
+int main() 
 {
 	FT F100(100);
 	Point p1(-FT(81)/F100, -FT(35)/F100	);

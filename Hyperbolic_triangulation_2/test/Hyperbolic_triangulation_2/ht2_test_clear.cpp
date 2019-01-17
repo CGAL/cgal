@@ -10,7 +10,7 @@ typedef CGAL::Random_points_in_square_2<
     	Point,
      	CGAL::Creator_uniform_2< double, Point > > 			Point_generator;
 
-int main(int argc, char**argv) 
+int main() 
 {
 
 	Point_generator gen(1.);
