@@ -1,3 +1,23 @@
+// Copyright (c) 2019  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s)     : Kaimo Hu
+
 #ifndef _BVD_H_
 #define _BVD_H_
 
@@ -6,11 +26,11 @@
 
 // STL
 #include <list>
-#include <vector> 
+#include <vector>
 // CGAL
 #include <CGAL/basic.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/intersections.h> 
+#include <CGAL/intersections.h>
 #include <CGAL/Polygon_2.h>
 // local
 #include "polygon_kernel.h"
@@ -336,7 +356,7 @@ private:
   }
   //
   // Visual elements
-  // 
+  //
   void compute_bounded_cell_and_boundaries(Vertex_handle v,
     const Vector_3 &normal, const CGAL::Color &color,
     std::vector<float> *pos_faces, std::vector<float> *pos_face_normals,
@@ -434,7 +454,7 @@ private:
       std::cerr << red << "polygon with degree < 3" << white << std::endl;
       return;
     }
-    Point_2 p0 = polygon[0]; // pivot 
+    Point_2 p0 = polygon[0]; // pivot
     int nb_triangles = int(polygon.size() - 2);
     for (int i = 0; i < nb_triangles; i++) {
       Point_2 p1 = polygon[(i + 1) % polygon.size()];

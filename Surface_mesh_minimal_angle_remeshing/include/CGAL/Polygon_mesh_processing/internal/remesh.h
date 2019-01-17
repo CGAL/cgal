@@ -1,3 +1,23 @@
+// Copyright (c) 2019  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s)     : Kaimo Hu
+
 #ifndef REMESH_H_
 #define REMESH_H_
 
@@ -16,25 +36,25 @@ class Remesh {
   typedef typename Polyhedron::Vector Vector;
   typedef typename Polyhedron::Normal Normal;
   // iterators
-  typedef typename Polyhedron::Edge_iterator Edge_iterator;             
+  typedef typename Polyhedron::Edge_iterator Edge_iterator;
   typedef typename Polyhedron::Vertex_iterator Vertex_iterator;
   typedef typename Polyhedron::Facet_iterator Facet_iterator;
   typedef typename Polyhedron::Halfedge_iterator Halfedge_iterator;
   // handles
-  typedef typename Polyhedron::Facet_handle Facet_handle;               
+  typedef typename Polyhedron::Facet_handle Facet_handle;
   typedef typename Polyhedron::Facet_const_handle Facet_const_handle;
   typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
   typedef typename Polyhedron::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Polyhedron::Vertex_handle Vertex_handle;
   typedef typename Polyhedron::Vertex_const_handle Vertex_const_handle;
   // circulators
-  typedef typename Polyhedron::Halfedge_around_vertex_circulator        
+  typedef typename Polyhedron::Halfedge_around_vertex_circulator
                                Halfedge_around_vertex_circulator;
   typedef typename Polyhedron::Halfedge_around_vertex_const_circulator
                                Halfedge_around_vertex_const_circulator;
   // point list
-  typedef typename Polyhedron::Point_Comp Point_Comp;                   
-  typedef typename Polyhedron::Point Point;                             
+  typedef typename Polyhedron::Point_Comp Point_Comp;
+  typedef typename Polyhedron::Point Point;
   typedef typename Polyhedron::Point_list Point_list;
   typedef typename Polyhedron::Point_iter Point_iter;
   typedef typename Polyhedron::Point_const_iter Point_const_iter;
@@ -47,7 +67,7 @@ class Remesh {
   typedef typename Polyhedron::Facet_const_list Facet_const_list;
   typedef typename Polyhedron::Facet_const_iter Facet_const_iter;
   // Dynamic priority queues
-  typedef CPHalfedge<FT, Halfedge_handle> PHalfedge;       
+  typedef CPHalfedge<FT, Halfedge_handle> PHalfedge;
   typedef CDPQueue_long<PHalfedge> DPQueue_halfedge_long;
   typedef CDPQueue_short<PHalfedge> DPQueue_halfedge_short;
   typedef CPVertex<FT, Vertex_handle> PVertex;
@@ -58,7 +78,7 @@ class Remesh {
   typedef CDPQueue_short<PFacet> DPQueue_facet_short;
   // visit list and iterator
   typedef typename std::list<std::pair<Point, FT>> Visit_list;
-  typedef typename std::list<std::pair<Point, FT>>::iterator Visit_iter;      
+  typedef typename std::list<std::pair<Point, FT>>::iterator Visit_iter;
 
   // life cycle
   Remesh() {
@@ -110,7 +130,7 @@ class Remesh {
   }
 
   Remesh(FT max_error_threshold,  // general parameters
-    FT min_angle_threshold, 
+    FT min_angle_threshold,
     int max_mesh_complexity,
     FT smooth_angle_delta,
     bool apply_edge_flip,
@@ -119,33 +139,33 @@ class Remesh {
     bool relocate_after_local_operations,
     RelocateStrategy relocate_strategy,
     bool keep_vertex_in_one_ring,
-    bool use_local_aabb_tree, 
+    bool use_local_aabb_tree,
     int collapse_list_size,
     bool decrease_max_errors,
     bool track_information,
     bool apply_initial_mesh_simplification,
     bool apply_final_vertex_relocation,
     int samples_per_facet_in,         // sample parameters
-    int samples_per_facet_out, 
-    int max_samples_per_area, 
-    int min_samples_per_triangle, 
+    int samples_per_facet_out,
+    int max_samples_per_area,
+    int min_samples_per_triangle,
     int bvd_iteration_count,
-    SampleNumberStrategy sample_number_strategy, 
+    SampleNumberStrategy sample_number_strategy,
     SampleStrategy sample_strategy,
     bool use_stratified_sampling,
     FT sum_theta,                 // feature intensity parameters
-    FT sum_delta, 
-    FT dihedral_theta, 
+    FT sum_delta,
+    FT dihedral_theta,
     FT dihedral_delta,
     FT feature_difference_delta,
-    FT feature_control_delta, 
+    FT feature_control_delta,
     bool inherit_element_types,
     bool use_feature_intensity_weights,
     int vertex_optimize_count,      // vertex optimization parameters
-    FT vertex_optimize_ratio, 
+    FT vertex_optimize_ratio,
     int stencil_ring_size,
     OptimizeStrategy optimize_strategy,
-    OptimizeType facet_optimize_type, 
+    OptimizeType facet_optimize_type,
     OptimizeType edge_optimize_type,
     OptimizeType vertex_optimize_type,
     bool optimize_after_local_operations)
@@ -207,25 +227,25 @@ class Remesh {
   void set_smooth_angle_delta(FT value) { m_smooth_angle_delta = value; }
   bool get_apply_edge_flip() const { return m_apply_edge_flip; }
   void set_apply_edge_flip(bool value) { m_apply_edge_flip = value; }
-  EdgeFlipStrategy get_edge_flip_strategy() const 
+  EdgeFlipStrategy get_edge_flip_strategy() const
       { return m_edge_flip_strategy; }
-  void set_edge_flip_strategy(EdgeFlipStrategy value) 
+  void set_edge_flip_strategy(EdgeFlipStrategy value)
       { m_edge_flip_strategy = value; }
-  bool get_flip_after_split_and_collapse() const 
+  bool get_flip_after_split_and_collapse() const
       { return m_flip_after_split_and_collapse; }
-  void set_flip_after_split_and_collapse(bool value) 
+  void set_flip_after_split_and_collapse(bool value)
       { m_flip_after_split_and_collapse = value; }
-  bool get_relocate_after_local_operations() const 
+  bool get_relocate_after_local_operations() const
       { return m_relocate_after_local_operations; }
   void set_relocate_after_local_operations(bool value)
       { m_relocate_after_local_operations = value; }
-  RelocateStrategy get_relocate_strategy() const 
+  RelocateStrategy get_relocate_strategy() const
       { return m_relocate_strategy; }
-  void set_relocate_strategy(RelocateStrategy value) 
+  void set_relocate_strategy(RelocateStrategy value)
       { m_relocate_strategy = value; }
-  bool get_keep_vertex_in_one_ring() const 
+  bool get_keep_vertex_in_one_ring() const
       { return m_keep_vertex_in_one_ring; }
-  void set_keep_vertex_in_one_ring(bool value) 
+  void set_keep_vertex_in_one_ring(bool value)
       { m_keep_vertex_in_one_ring = value; }
   bool get_use_local_aabb_tree() const { return m_use_local_aabb_tree; }
   void set_use_local_aabb_tree(bool value) { m_use_local_aabb_tree = value; }
@@ -243,7 +263,7 @@ class Remesh {
       { return m_apply_final_vertex_relocation; }
   void set_apply_final_vertex_relocation(bool value)
       { m_apply_final_vertex_relocation = value; }
-  
+
   int get_samples_per_facet_in() const { return m_samples_per_facet_in; }
   void set_samples_per_facet_in(int value) { m_samples_per_facet_in = value; }
   int get_samples_per_facet_out() const { return m_samples_per_facet_out; }
@@ -251,21 +271,21 @@ class Remesh {
       { m_samples_per_facet_out = value; }
   int get_max_samples_per_area() const { return m_max_samples_per_area; }
   void set_max_samples_per_area(int value) { m_max_samples_per_area = value; }
-  int get_min_samples_per_triangle() const 
+  int get_min_samples_per_triangle() const
       { return m_min_samples_per_triangle; }
   void set_min_samples_per_triangle(int value)
       { m_min_samples_per_triangle = value; }
   int get_bvd_iteration_count() const { return m_bvd_iteration_count; }
   void set_bvd_iteration_count(int value) { m_bvd_iteration_count = value; }
-  SampleNumberStrategy get_sample_number_strategy() const 
+  SampleNumberStrategy get_sample_number_strategy() const
       { return m_sample_number_strategy; }
-  void set_sample_number_strategy(SampleNumberStrategy value) 
+  void set_sample_number_strategy(SampleNumberStrategy value)
       { m_sample_number_strategy = value; }
   SampleStrategy get_sample_strategy() const { return m_sample_strategy; }
   void set_sample_strategy(SampleStrategy value) { m_sample_strategy = value; }
-  bool get_use_stratified_sampling() const 
+  bool get_use_stratified_sampling() const
       { return m_use_stratified_sampling; }
-  void set_use_stratified_sampling(bool value) 
+  void set_use_stratified_sampling(bool value)
       { m_use_stratified_sampling = value; }
 
   FT get_sum_theta() const { return m_sum_theta; }
@@ -276,20 +296,20 @@ class Remesh {
   void set_dihedral_theta(FT value) { m_dihedral_theta = value; }
   FT get_dihedral_delta() const { return m_dihedral_delta; }
   void set_dihedral_delta(FT value) { m_dihedral_delta = value; }
-  FT get_feature_difference_delta() const 
+  FT get_feature_difference_delta() const
       { return m_feature_difference_delta; }
-  void set_feature_difference_delta(FT value) 
+  void set_feature_difference_delta(FT value)
       { m_feature_difference_delta = value; }
   FT get_feature_control_delta() const { return m_feature_control_delta; }
   void set_feature_control_delta(FT value) { m_feature_control_delta = value; }
   bool get_inherit_element_types() const { return m_inherit_element_types; }
-  void set_inherit_element_types(bool value) 
+  void set_inherit_element_types(bool value)
       { m_inherit_element_types = value; }
   bool get_use_feature_intensity_weights() const
       { return m_use_feature_intensity_weights; }
   void set_use_feature_intensity_weights(bool value)
       { m_use_feature_intensity_weights = value; }
-  
+
   int get_vertex_optimize_count() const { return m_vertex_optimize_count; }
   void set_vertex_optimize_count(int value)
       { m_vertex_optimize_count = value; }
@@ -297,20 +317,20 @@ class Remesh {
   void set_vertex_optimize_ratio(FT value) { m_vertex_optimize_ratio = value; }
   int get_stencil_ring_size() const { return m_stencil_ring_size; }
   void set_stencil_ring_size(int value) { m_stencil_ring_size = value; }
-  OptimizeStrategy get_optimize_strategy() const 
+  OptimizeStrategy get_optimize_strategy() const
       { return m_optimize_strategy; }
   void set_optimize_strategy(OptimizeStrategy value)
       { m_optimize_strategy = value; }
-  OptimizeType get_facet_optimize_type() const 
+  OptimizeType get_facet_optimize_type() const
       { return m_facet_optimize_type; }
-  void set_facet_optimize_type(OptimizeType value) 
+  void set_facet_optimize_type(OptimizeType value)
       { m_facet_optimize_type = value; }
   OptimizeType get_edge_optimize_type() const { return m_edge_optimize_type; }
-  void set_edge_optimize_type(OptimizeType value) 
+  void set_edge_optimize_type(OptimizeType value)
       { m_edge_optimize_type = value; }
-  OptimizeType get_vertex_optimize_type() const 
+  OptimizeType get_vertex_optimize_type() const
       { return m_vertex_optimize_type; }
-  void set_vertex_optimize_type(OptimizeType value) 
+  void set_vertex_optimize_type(OptimizeType value)
       { m_vertex_optimize_type = value; }
   bool get_optimize_after_local_operations() const
       { return m_optimize_after_local_operations; }
@@ -327,7 +347,7 @@ class Remesh {
     FT radian_threshold = MIN_VALUE;
     // step 1: fill all the degenerated facets in the dynamic priority queue
     DPQueue_facet_long degenerated_facets;
-    fill_degenerated_facets_queue(radian_threshold, 
+    fill_degenerated_facets_queue(radian_threshold,
                                   &degenerated_facets, polyhedron);
     // step 2: eliminate these degenerations one by one
     int nb_eliminations = static_cast<int>(degenerated_facets.size());
@@ -401,7 +421,7 @@ class Remesh {
   }
 
   // isotropic remeshing
-  void isotropic_remeshing(const Facet_tree &input_facet_tree, 
+  void isotropic_remeshing(const Facet_tree &input_facet_tree,
                            const Bbox &bbox, Polyhedron *m_pRemesh) {
     CGAL::Timer timer;
     timer.start();
@@ -430,7 +450,7 @@ class Remesh {
     CGAL::Timer timer;
     timer.start();
     std::cout << "Initial mesh simplification..." << std::endl;
-    std::cout << "(max error threshold = " << max_error_threshold 
+    std::cout << "(max error threshold = " << max_error_threshold
               << ")" << std::endl;
     DPQueue_halfedge_long large_error_queue;
     DPQueue_halfedge_short collapse_candidate_queue;
@@ -451,7 +471,7 @@ class Remesh {
           std::cout << ++index << ": error queue size = "
             << large_error_queue.size() << " ";
         }
-        greedy_reduce_error(input_facet_tree, max_error_threshold, max_error, 
+        greedy_reduce_error(input_facet_tree, max_error_threshold, max_error,
             m_track_information, true, &large_error_queue,
             &collapse_candidate_queue, max_error_halfedge, m_pRemesh);
       }
@@ -545,9 +565,9 @@ class Remesh {
     CGAL::Timer timer;
     timer.start();
     std::cout << "Greedy angles improvement..." << std::endl;
-    std::cout << "(max error threshold = " << max_error_threshold 
-              << ", min angle threshold = " << m_min_angle_threshold 
-              << "бу, max mesh complexity = " << m_max_mesh_complexity 
+    std::cout << "(max error threshold = " << max_error_threshold
+              << ", min angle threshold = " << m_min_angle_threshold
+              << "бу, max mesh complexity = " << m_max_mesh_complexity
               << ")" << std::endl;
     FT max_error = 0, min_radian = CGAL_PI;
     Halfedge_handle max_error_halfedge, min_radian_halfedge;
@@ -705,7 +725,7 @@ class Remesh {
 
   // links
   void generate_links(const Facet_tree &input_facet_tree,
-      const Facet_tree &remesh_facet_tree, Polyhedron *m_pInput, 
+      const Facet_tree &remesh_facet_tree, Polyhedron *m_pInput,
       Polyhedron *m_pRemesh) const {
     // step 1: clear all the links
     clear_links(m_pInput, m_pRemesh);
@@ -747,7 +767,7 @@ class Remesh {
        std::pow(bbox.zmax() - bbox.zmin(), 2));
      return diagonal * m_max_error_threshold * 0.01;
   }
-  
+
   // links
   void generate_out_links(const Facet_tree &input_facet_tree,
                           Polyhedron *m_pRemesh) const {
@@ -856,7 +876,7 @@ class Remesh {
     polyhedron->clear_local_links(hh, in_link_facets);
     // step 3: generate local out links
     generate_local_out_links(input_facet_tree, hh, polyhedron);
-    // step 4: generate local in links 
+    // step 4: generate local in links
     generate_local_in_links(in_link_facets,
       facet_in_links, edge_in_links, vertex_in_links, polyhedron);
   }
@@ -873,7 +893,7 @@ class Remesh {
     polyhedron->clear_local_links(vh, in_link_facets);
     // step 3: generate local out links
     generate_local_out_links(input_facet_tree, vh, polyhedron);
-    // step 4: generate local in links 
+    // step 4: generate local in links
     generate_local_in_links(in_link_facets,
       facet_in_links, edge_in_links, vertex_in_links, polyhedron);
   }
@@ -1002,7 +1022,7 @@ class Remesh {
   }
 
   void generate_edge_links(const Facet_tree &facet_tree,
-      bool is_in_link, const Halfedge_list &edges, 
+      bool is_in_link, const Halfedge_list &edges,
       Polyhedron *polyhedron) const {
     // precondition: the number of samples per facets has been calculated
     for (auto it = edges.begin(); it != edges.end(); ++it) {
@@ -1144,7 +1164,7 @@ class Remesh {
   void backup_local_in_links(const std::set<Facet_handle> &extended_facets,
       Link_iter_list *facet_in_links, Point_list *facet_in_end_points,
       Link_iter_list *edge_in_links, Point_list *edge_in_end_points,
-      Link_pointer_list *vertex_in_links, 
+      Link_pointer_list *vertex_in_links,
       Point_list *vertex_in_end_points) const {
     // step 1: store the in link iterations
     backup_local_in_links(extended_facets, facet_in_links,
@@ -1393,7 +1413,7 @@ class Remesh {
   }
 
   void fill_relocate_candidate_vertices(
-      DPQueue_vertex_short *relocate_candidate_queue, 
+      DPQueue_vertex_short *relocate_candidate_queue,
       Polyhedron *m_pRemesh) const {
     for (Vertex_iterator vi = m_pRemesh->vertices_begin();
       vi != m_pRemesh->vertices_end(); ++vi) {
@@ -1646,7 +1666,7 @@ class Remesh {
   }
 
   void greedy_reduce_error(const Facet_tree &input_facet_tree,
-      FT max_error_threshold, FT max_error, bool track_information, 
+      FT max_error_threshold, FT max_error, bool track_information,
       bool reduce_complexity, DPQueue_halfedge_long *large_error_queue,
       DPQueue_halfedge_short *small_value_queue,
       Halfedge_handle max_error_halfedge, Polyhedron *m_pRemesh) const {
@@ -1654,7 +1674,7 @@ class Remesh {
     // 1) If flip reduces the max_error, flip and return;
     // 2) If relocate reduces the max_error, relocate and return;
     // 3) Otherwise, split the max_error_halfedge.
-    // 2. if improve_min_radian is true, small_value_queue is the 
+    // 2. if improve_min_radian is true, small_value_queue is the
     //    small_radian_queue; otherwise, it is the collapse_candidate_queue.
     // step 1: try to flip
     if (m_apply_edge_flip && flip_edge(input_facet_tree, -1.0, max_error,
@@ -1685,7 +1705,7 @@ class Remesh {
 
   // split
   Vertex_handle split_edge(const Facet_tree &input_facet_tree,
-      FT max_error_threshold, FT max_error, FT min_radian, 
+      FT max_error_threshold, FT max_error, FT min_radian,
       bool reduce_complexity, DPQueue_halfedge_long *large_error_queue,
       DPQueue_halfedge_short *small_value_queue,
       Halfedge_handle hh, Polyhedron *m_pRemesh) const {
@@ -1902,8 +1922,8 @@ class Remesh {
       const std::set<Facet_handle> &one_ring_facets,
       const std::set<Facet_handle> &extended_facets,
       Halfedge_list *halfedges, Halfedge_handle hh, bool is_ring,
-      Link_iter_list *facet_in_links, Link_iter_list *edge_in_links, 
-      Link_pointer_list *vertex_in_links, FT *error, FT *radian, 
+      Link_iter_list *facet_in_links, Link_iter_list *edge_in_links,
+      Link_pointer_list *vertex_in_links, FT *error, FT *radian,
       Point *new_point) const {
     // step 1: construct the local Remesh
     Polyhedron local_mesh;
@@ -2179,9 +2199,9 @@ class Remesh {
   }
 
   Halfedge_handle flip_edge(const Facet_tree &input_facet_tree,
-      FT max_error_threshold, FT max_error, FT min_radian, 
+      FT max_error_threshold, FT max_error, FT min_radian,
       bool reduce_complexity, DPQueue_halfedge_long *large_error_queue,
-      DPQueue_halfedge_short *small_value_queue, Halfedge_handle hh, 
+      DPQueue_halfedge_short *small_value_queue, Halfedge_handle hh,
       Polyhedron *m_pRemesh) const {
     // max_error > 0 means we want to reduce error; otherwise improve radian
     // step 1: topology constraints and min_radian constraints check
@@ -2251,7 +2271,7 @@ class Remesh {
           m_pRemesh);
       }
     }
-    // step 8: update the normals 
+    // step 8: update the normals
     std::set<Vertex_handle> one_ring_vertices;
     m_pRemesh->collect_vertices(one_ring_facets, &one_ring_vertices);
     m_pRemesh->calculate_local_normals(&one_ring_facets, &one_ring_vertices);
@@ -2297,7 +2317,7 @@ class Remesh {
   }
 
   int relocate_vertices(const Facet_tree &input_facet_tree,
-      FT max_error_threshold, FT max_error, FT min_radian, 
+      FT max_error_threshold, FT max_error, FT min_radian,
       bool reduce_complexity, DPQueue_halfedge_long *large_error_queue,
       DPQueue_halfedge_short *small_radian_queue,
       std::set<Vertex_handle> *vertices, Polyhedron *m_pRemesh) const {
@@ -2325,8 +2345,8 @@ class Remesh {
   }
 
   Point get_initial_point_for_relocate(const Facet_tree &facet_tree,
-      bool inherit_element_types, FT max_samples_per_area, 
-      FT feature_control_delta, Vertex_handle vh, 
+      bool inherit_element_types, FT max_samples_per_area,
+      FT feature_control_delta, Vertex_handle vh,
       Polyhedron *m_pRemesh) const {
     FT sum_area = 0.0;
     Halfedge_around_vertex_const_circulator vcirc = vh->vertex_begin();

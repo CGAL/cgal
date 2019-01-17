@@ -1,3 +1,23 @@
+// Copyright (c) 2019  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s)     : Kaimo Hu
+
 #ifndef _DYNAMICS_PRIORITY_QUEUE_H_
 #define _DYNAMICS_PRIORITY_QUEUE_H_ 1
 
@@ -14,23 +34,23 @@
 
 template <class T>
 class DynamicPriorityQueue {
-protected:  
+protected:
     typedef std::map<T, int> Map;
     std::vector<T> _queue;
     Map _elements;
-    
+
 public:
     DynamicPriorityQueue() {
     }
-    
+
     virtual ~DynamicPriorityQueue() {
         clean();
     }
-    
+
     bool empty() const {
         return _queue.empty();
     }
-    
+
     /*unsigned int size() const {
         return _queue.size();
     }*/
@@ -38,22 +58,22 @@ public:
 	size_t size() const {
         return _queue.size();
     }
-    
+
     const T& get_element(int i) const {
         assert(i >= 0);
         assert(i < (int)size());
         return _queue[i];
     }
-    
+
     bool contains(const T& x) {
         return (get_position(x) >= 0);
     }
-    
+
     void clean() {
         _queue.clear();
         _elements.clear();
     }
-    
+
     void push(const T& x) {
         int pos = insert(x);
         move_up(pos);
@@ -66,17 +86,17 @@ public:
 		else
 			push(x);
 	}
-    
+
     bool update_if_better(const T& x) {
         int pos = get_position(x);
         if (pos < 0) return false;
-        
+
         const T& old = get_element(pos);
         if (compare(old, x)) return false;
-        
+
         return update(x);
     }
- 
+
 
 
     bool update(const T& x) {
@@ -84,100 +104,100 @@ public:
         if (ok) push(x);
         return ok;
     }
-    
+
     bool remove(const T& x) {
         int pos = get_position(x);
         if (pos < 0) return false;
-        
+
         T old = get_element(pos);
         erase(pos);
-        
+
         if (size() < 2) return true;
         if (pos == size()) return true;
-        
+
         if (compare(old, get_element(pos)))
             move_down(pos);
-        else 
+        else
             move_up(pos);
         return true;
     }
-    
+
     bool extract(T& x) {
         if (empty()) return false;
         x = top();
         pop();
         return true;
     }
-    
+
     T top() const {
         return _queue.front();
     }
-    
+
     void pop() {
         if (empty()) return;
         erase(0);
         if (empty()) return;
         move_down(0);
     }
-    
+
     virtual bool compare(const T& a, const T& b) const = 0;
-    
+
 protected:
     int get_position(const T& x) {
         typename Map::const_iterator it = _elements.find(x);
         if (it == _elements.end()) return -1;
         return it->second;
     }
-    
+
     int insert(const T& x) {
         int pos = int( size() );
         _queue.push_back(x);
         _elements[x] = pos;
         return pos;
     }
-    
+
     void erase(int pos) {
         swap(pos, (int)size()-1);
         drop_last_element();
     }
-    
+
     void drop_last_element() {
         T last = _queue.back();
         _queue.pop_back();
         _elements.erase(last);
     }
-    
+
     void swap(int i, int j) {
         T x_i = get_element(i);
         T x_j = get_element(j);
         place(x_i, j);
         place(x_j, i);
     }
-    
+
     void place(const T& x, int i) {
         _queue[i] = x;
         _elements[x] = i;
     }
-    
+
     int parent(int i) const {
         if (i%2 == 0) return (i-2)/2;
         return (i-1)/2;
     }
-    
+
     int left(int i) const {
         return 2*i + 1;
     }
-    
+
     int right(int i) const {
         return 2*i + 2;
     }
-    
+
     void move_down(int i) {
         int pos = i;
         int l = left(pos);
         int r = right(pos);
         T moving = get_element(pos);
-        
+
         int better;
         int N = int(size());
         while (l < N) {
@@ -185,9 +205,9 @@ protected:
                 better = r;
             else
                 better = l;
-            
+
             if ( compare(moving, get_element(better)) ) break;
-            
+
             place(get_element(better), pos);
             pos = better;
             l = left(pos);
@@ -195,12 +215,12 @@ protected:
         }
         if (pos != i) place(moving, pos);
     }
-    
+
     void move_up(int i) {
         int pos = i;
         int p = parent(pos);
         T moving = get_element(pos);
-        
+
         while (pos > 0 && compare(moving, get_element(p))) {
             place(get_element(p), pos);
             pos = p;

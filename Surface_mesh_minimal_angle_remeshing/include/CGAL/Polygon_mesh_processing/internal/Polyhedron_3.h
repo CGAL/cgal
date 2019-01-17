@@ -560,7 +560,7 @@ public:
     typedef N_step_adaptor_derived<Halfedge_const_iterator, 2>
                                                   Edge_const_iterator;
   */
-  
+
     // All face related types get a related facet type name.
     typedef Face                                  Facet;
     typedef Face_handle                           Facet_handle;

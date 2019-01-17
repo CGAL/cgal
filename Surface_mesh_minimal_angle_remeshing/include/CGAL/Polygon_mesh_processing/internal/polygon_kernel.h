@@ -1,3 +1,23 @@
+// Copyright (c) 2019  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s)     : Kaimo Hu
+
 #ifndef POLYGON_KERNEL_H
 #define POLYGON_KERNEL_H
 
@@ -42,18 +62,18 @@ public:
 		return true;
 	}
 
-	template <class OutputIterator> 
+	template <class OutputIterator>
 	void kernel_from_dual_points(std::list<Point>& dual_points,
 		                           const Vector& translate,
 															 OutputIterator out)
 	{
     // compute convex hull in dual space (result is ccw)
     std::vector<Point> hull;
-    CGAL::convex_hull_2(dual_points.begin(), 
-			                  dual_points.end(), 
+    CGAL::convex_hull_2(dual_points.begin(),
+			                  dual_points.end(),
 												std::back_inserter(hull));
 
-    // dualize and translate back 
+    // dualize and translate back
     for(unsigned int i=0;i<hull.size();i++)
     {
       const Point& a = hull[i];
@@ -71,7 +91,7 @@ public:
     const Point a = segment[0] + translate;
     const Point b = segment[1] + translate;
     Vector normal = unit_normal(b-a);
-    Line line(a,b); 
+    Line line(a,b);
 
 		// flip normal if required
 		// project origin
@@ -86,7 +106,7 @@ public:
 			// std::cerr << red << "dual: null distance to origin" << white << std::endl;
 			const FT a_lot = 1e10; // std::numeric_limits<FT>::max();
 			CGAL::ORIGIN + normal * a_lot;
-			return CGAL::ORIGIN; 
+			return CGAL::ORIGIN;
 		}
 		else
 			return CGAL::ORIGIN + normal / d_origin;
@@ -105,7 +125,7 @@ public:
 
   Vector unit_normal(const Vector& v)
   {
-    Vector normal(v.y(), -v.x()); // 90 deg CW rotation 
+    Vector normal(v.y(), -v.x()); // 90 deg CW rotation
     return normalize(normal);
   }
 

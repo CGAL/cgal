@@ -1,3 +1,23 @@
+// Copyright (c) 2019  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s)     : Kaimo Hu
+
 #ifndef _PHALFEDGE_H_
 #define _PHALFEDGE_H_
 
@@ -8,7 +28,7 @@ class CPHalfedge {
 protected:
   Halfedge_handle m_halfedge;
   FT              m_priority;
-  //Point			      m_point;		
+  //Point			      m_point;
   FT m_x, m_y, m_z;   // for simulated edge collapse: the destination after relocation.
 
 public:

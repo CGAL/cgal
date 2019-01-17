@@ -1,3 +1,23 @@
+// Copyright (c) 2019  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s)     : Kaimo Hu
+
 #ifndef ENRICHEDPOLYHEDRON_H_
 #define ENRICHEDPOLYHEDRON_H_
 
@@ -20,9 +40,9 @@
 
 enum SampleNumberStrategy {
   // #samples per facet is roughtly fixed (with respect to the sample strategy)
-  k_fixed = 0,  
+  k_fixed = 0,
   // #samples per facet is variable with respect to size_of_facets()
-  k_variable    
+  k_variable
 };
 
 enum SampleStrategy {
@@ -125,7 +145,7 @@ namespace CGAL {
     Link_iter_list& edge_in_links() { return m_edge_in_links; }
     const Link_iter_list& edge_in_links() const { return m_edge_in_links; }
     Link_pointer_list& vertex_in_links() { return m_vertex_in_links; }
-    const Link_pointer_list& vertex_in_links() const 
+    const Link_pointer_list& vertex_in_links() const
         { return m_vertex_in_links; }
 
    private:
@@ -137,7 +157,7 @@ namespace CGAL {
     Link_iter_list m_facet_in_links;  // point links to this facet
     Link_iter_list m_edge_in_links;
     Link_pointer_list m_vertex_in_links;
-  };  
+  };
 
   // a refined halfedge with a general tag
   template <class Refs, class Tprev, class Tvertex, class Tface, class Norm>
@@ -263,7 +283,7 @@ namespace CGAL {
     };
   };
 
-  // compute facet normal	
+  // compute facet normal
   struct Facet_normal { 	// (functor)
     template <class	Facet>
     void operator()(Facet& f) {
@@ -290,7 +310,7 @@ namespace CGAL {
     }
   };
 
-  // compute vertex	normal 
+  // compute vertex	normal
   struct Vertex_normal {   //	(functor)
     template <class	Vertex>
     void operator()(Vertex&	v) {
@@ -530,7 +550,7 @@ namespace CGAL {
 
     // feature intensities
     void calculate_feature_intensities(const std::string &name,
-        FT dihedral_theta, FT dihedral_delta, FT sum_theta, FT sum_delta, 
+        FT dihedral_theta, FT dihedral_delta, FT sum_theta, FT sum_delta,
         bool inherit_element_types, FT feature_control_delta) {
       std::cout << "Computing " << name << " feature intensities...";
       calculate_edge_feature_intensities(dihedral_theta, dihedral_delta);
@@ -541,7 +561,7 @@ namespace CGAL {
       std::cout << "Done" << std::endl;
     }
 
-    void update_local_feature_intensity(Vertex_handle vh, 
+    void update_local_feature_intensity(Vertex_handle vh,
         bool reset_normal_dihedral, FT dihedral_theta, FT dihedral_delta,
         FT sum_theta, FT sum_delta) {
       Vertex_list incident_vertices;
@@ -583,7 +603,7 @@ namespace CGAL {
       }
     }
 
-    void clear_local_links(Halfedge_handle hh, 
+    void clear_local_links(Halfedge_handle hh,
                            std::set<Facet_handle> *in_link_facets) const {
       // step 1: clear all in link_facets
       clear_local_in_links(in_link_facets);
@@ -670,7 +690,7 @@ namespace CGAL {
     }
 
     void generate_random_samples(bool use_stratified_sampling, int nb_samples,
-        int bvd_iteration_count, Facet_const_handle fh, 
+        int bvd_iteration_count, Facet_const_handle fh,
         Point_list *inner_samples, std::list<double> *feature_weights) const {
       // step 1: generate the samples
       inner_samples->clear();
@@ -762,7 +782,7 @@ namespace CGAL {
         //Random random;
         //srand(time(NULL));
         //Vector ab = b - a, ac = c - a;  // edge vectors
-        //while (samples.size() < 
+        //while (samples.size() <
         //    nb_samples + disturbed_border_samples.size()) {
         //  FT u = 0.0, v = 0.0;
         //  u = random.random_value<double>(0.0, 1.0);
@@ -786,14 +806,14 @@ namespace CGAL {
         //// step 5: pick the inner samples
         //inner_samples->clear();
         //std::set<Point, Point_Comp>::iterator sit;
-        //for (Point_iter it = all_samples.begin(); 
+        //for (Point_iter it = all_samples.begin();
         //  it != all_samples.end(); ++it) {
         //  sit = disturbed_border_samples.find(*it);
         //  if (sit == disturbed_border_samples.end()) {
         //    inner_samples->push_back(*it);
         //  }
         //}
-        //if (all_samples.size() != 
+        //if (all_samples.size() !=
         //  inner_samples->size() + disturbed_border_samples.size()) {
         //  std::cout << std::endl << "all samples: " << all_samples.size()
         //            << " inner samples: " << inner_samples->size()
@@ -827,7 +847,7 @@ namespace CGAL {
     }
 
     // split
-    Halfedge_handle split_long_edge(const Point &new_point, 
+    Halfedge_handle split_long_edge(const Point &new_point,
                                     Halfedge_handle hh) {
       Halfedge_handle hnew = split_edge(hh);
       hnew->vertex()->point() = new_point;
@@ -880,7 +900,7 @@ namespace CGAL {
           return false;
         }
       }
-      return check_link_test(hh);         // link condition     
+      return check_link_test(hh);         // link condition
     }
 
     bool collapse_would_cause_wrinkle(const Halfedge_list &halfedges,
@@ -999,7 +1019,7 @@ namespace CGAL {
     }
 
     // flip
-    bool is_flippable(bool inherit_element_types, 
+    bool is_flippable(bool inherit_element_types,
         EdgeFlipStrategy edge_flip_strategy, Halfedge_const_handle hh) const {
       // step 1: check whether it is border edge or the new_edge already exist
       if (hh->is_border_edge()) {
@@ -1623,7 +1643,7 @@ namespace CGAL {
       }
     }
 
-    void collect_one_ring_facets_incident_to_vertex(Vertex_handle vh, 
+    void collect_one_ring_facets_incident_to_vertex(Vertex_handle vh,
         std::set<Facet_handle> *facets) const {
       Halfedge_around_vertex_circulator vcirc = vh->vertex_begin();
       Halfedge_around_vertex_circulator vend = vcirc;
@@ -1836,7 +1856,7 @@ namespace CGAL {
         << size_of_facets() << " 0\n";
       std::copy(points_begin(), points_end(),
         std::ostream_iterator<Point>(ofs, "\n"));
-      for (Facet_const_iterator fi = facets_begin(); 
+      for (Facet_const_iterator fi = facets_begin();
         fi != facets_end(); ++fi) {
         Halfedge_around_facet_const_circulator j = fi->facet_begin();
         CGAL_assertion(CGAL::circulator_size(j) >= 3);
@@ -1942,8 +1962,8 @@ namespace CGAL {
     static int same_side(const Point &a, const Point &b, const Point &c,
                          const Point &p) {
       // determine whether c and p lays on the same side of ab
-      // 1: the same side; 
-      // 0: c or p is on the line ab or projected on the line; 
+      // 1: the same side;
+      // 0: c or p is on the line ab or projected on the line;
       // -1: the opposite side
 
       // precondition: a, b, c and p are on the same plane
@@ -1984,12 +2004,12 @@ namespace CGAL {
 
     // visual elements
     void compute_facets(DrawType draw_type, RenderType render_type,
-        bool inherit_element_types, FT feature_control_delta, 
+        bool inherit_element_types, FT feature_control_delta,
         FT sum_theta_value, FT dihedral_theta_value,
         FT max_error_threshold_value, bool is_input,
         std::vector<float> *pos_faces, std::vector<float> *pos_face_normals,
-        std::vector<float> *pos_face_colors, 
-        std::vector<float> *pos_boundaries, 
+        std::vector<float> *pos_face_colors,
+        std::vector<float> *pos_boundaries,
         std::vector<float> *pos_samples) const {
       pos_faces->resize(0);
       pos_face_normals->resize(0);
@@ -2350,7 +2370,7 @@ namespace CGAL {
       }
     }
 
-    void calculate_vertex_feature_intensity(Vertex_handle vh, 
+    void calculate_vertex_feature_intensity(Vertex_handle vh,
                                             FT sum_theta, FT sum_delta) {
       bool on_boundary = false;
       FT sum_radian = 0.0;
@@ -2725,7 +2745,7 @@ namespace CGAL {
       return nb;
     }
 
-    void tag_component(Facet_handle pSeedFacet, 
+    void tag_component(Facet_handle pSeedFacet,
                        const int tag_free, const int tag_done) {
       pSeedFacet->tag() = tag_done;
       Facet_list facets;
@@ -2775,7 +2795,7 @@ namespace CGAL {
       }
     }
 
-    void get_incident_facets(Facet_handle fh, 
+    void get_incident_facets(Facet_handle fh,
                              std::set<Facet_handle> *facets) const {
       Halfedge_handle hh = fh->halfedge();
       // the first vertex
@@ -3091,8 +3111,8 @@ namespace CGAL {
     void compute_all_voronois(RenderType render_type,
         FT sum_theta_value, FT dihedral_theta_value,
         std::vector<float> *pos_faces, std::vector<float> *pos_face_normals,
-        std::vector<float> *pos_face_colors, 
-        std::vector<float> *pos_boundaries, 
+        std::vector<float> *pos_face_colors,
+        std::vector<float> *pos_boundaries,
         std::vector<float> *pos_samples) const {
       // step 1: compute all the minimal value and maximal value
       FT min_value = 0.0, max_value = 0.0;
@@ -3129,7 +3149,7 @@ namespace CGAL {
         bool inherit_element_types, FT feature_control_delta,
         FT sum_theta_value, FT dihedral_theta_value,
         std::vector<float> *pos_faces, std::vector<float> *pos_face_normals,
-        std::vector<float> *pos_face_colors, 
+        std::vector<float> *pos_face_colors,
         std::vector<float> *pos_boundaries,
         std::vector<float> *pos_samples) const {
       // step 1: comput the minimal and maximal value
@@ -3197,7 +3217,7 @@ namespace CGAL {
     void compute_edge_voronois(RenderType render_type,
         FT sum_theta_value, FT dihedral_theta_value,
         std::vector<float> *pos_faces, std::vector<float> *pos_face_normals,
-        std::vector<float> *pos_face_colors, 
+        std::vector<float> *pos_face_colors,
         std::vector<float> *pos_boundaries,
         std::vector<float> *pos_samples) const {
       if (render_type == RenderType::k_normal_dihedral) {
@@ -3216,7 +3236,7 @@ namespace CGAL {
     void compute_facet_voronois(RenderType render_type,
         FT sum_theta_value, FT dihedral_theta_value,
         std::vector<float> *pos_faces, std::vector<float> *pos_face_normals,
-        std::vector<float> *pos_face_colors, 
+        std::vector<float> *pos_face_colors,
         std::vector<float> *pos_boundaries,
         std::vector<float> *pos_samples) const {
       // step 1: compute the minimal and maximal values
@@ -4137,7 +4157,7 @@ void render_vertex_voronoi_cells(RenderType render_type,
   // step 2: render the voronoi cells
   Color color;
   ::glBegin(GL_TRIANGLES);
-  for (Vertex_const_iterator vi = vertices_begin(); 
+  for (Vertex_const_iterator vi = vertices_begin();
       vi != vertices_end(); ++vi) {
     const Point &p = vi->point();
     Halfedge_around_vertex_const_circulator vcirc = vi->vertex_begin();
