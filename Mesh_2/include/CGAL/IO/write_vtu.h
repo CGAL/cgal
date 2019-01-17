@@ -24,11 +24,14 @@
 #ifndef CGAL_WRITE_VTU_H
 #define CGAL_WRITE_VTU_H
 
-#include <fstream>
-#include <vector>
-
 #include <CGAL/license/Mesh_2.h>
 
+#include <iostream>
+#include <vector>
+#include <string>
+#include <map>
+#include <CGAL/assertions.h>
+#include <CGAL/IO/io.h>
 
 //todo try to factorize with functors
 namespace CGAL{

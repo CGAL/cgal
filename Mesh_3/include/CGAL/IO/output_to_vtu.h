@@ -26,8 +26,11 @@
 #include <CGAL/license/Mesh_3.h>
 
 
-#include <fstream>
+#include <iostream>
 #include <vector>
+#include <map>
+#include <CGAL/assertions.h>
+#include <CGAL/IO/io.h>
 #include <CGAL/IO/write_vtk.h>
 
 //todo try to factorize with functors
