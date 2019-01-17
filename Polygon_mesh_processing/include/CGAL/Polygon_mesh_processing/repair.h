@@ -1926,8 +1926,8 @@ remove_self_intersections_one_step(TriangleMesh& tm,
   // indicates if a removal was not possible because the region handle has
   // some boundary cycle of halfedges
   bool topology_issue = false;
-  if (verbose)
 
+  if (verbose)
   {
     std::cout << "  DEBUG: is_valid in one_step(tm)? ";
     std::cout.flush();
@@ -2014,6 +2014,7 @@ remove_self_intersections_one_step(TriangleMesh& tm,
       //  visited more than once along a hole border (pinched surface)
       //  We save the size of boundary_hedges to make sur halfedges added
       //  from non_filled_hole are not removed.
+      bool non_manifold_vertex_remaining_in_selection = false;
       do{
         bool non_manifold_vertex_removed = false; //here non-manifold is for the 1D polyline
         std::vector<halfedge_descriptor> boundary_hedges;
@@ -2052,15 +2053,28 @@ remove_self_intersections_one_step(TriangleMesh& tm,
             }
             if (any_face_added)
               non_manifold_vertex_removed=true;
+            else
+              non_manifold_vertex_remaining_in_selection=true;
           }
         }
 
         if (!non_manifold_vertex_removed)
-        {
           break;
-        }
       }
       while(true);
+
+      if (preserve_genus && non_manifold_vertex_remaining_in_selection)
+      {
+        topology_issue = true;
+        if(verbose)
+          std::cout << "  DEBUG: CC not handled due to the presence at least one non-manifold vertex\n";
+        continue; // cannot replace a patch containing a nm vertex by a disk
+      }
+
+      // before running this function if preserve_genus=false, we duplicated
+      // all of them
+      CGAL_assertion( !non_manifold_vertex_remaining_in_selection );
+
 
       // Collect halfedges on the boundary of the region to be selected
       // (pointing inside the domain to be remeshed)
@@ -2159,7 +2173,7 @@ remove_self_intersections_one_step(TriangleMesh& tm,
           if (nbc!=1){
             if(verbose)
               std::cout << "  DEBUG: CC not handled because it is not a topological disk("
-                        << nbc << " boundary cycles)<<\n";
+                        << nbc << " boundary cycles)\n";
             all_fixed = false;
             continue;
           }
@@ -2413,6 +2427,9 @@ bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np)
 
   // first handle the removal of degenerate faces
   remove_degenerate_faces(tm, np);
+
+  if (!preserve_genus)
+    duplicate_non_manifold_vertices(tm, np);
 
   if (verbose)
     std::cout << "DEBUG: After degenerate faces removal, is_valid(tm)? " << is_valid_polygon_mesh(tm) << "\n";
