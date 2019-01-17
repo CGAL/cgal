@@ -203,13 +203,11 @@ public:
 
     Polychainray_2(): Base(), outgoing() {}
 
-    Polychainray_2(const Polychainray_2<Traits_P,Container_P>& pcr)
-      : Base((Base) pcr), outgoing(pcr.outgoing) {}
 
     template <class InputIterator>
     Polychainray_2(InputIterator first, InputIterator last,
 	           OutgoingDirection d,
-              Traits p_traits = Traits())
+                   Traits p_traits = Traits())
         : Base(first, last, p_traits), outgoing(d)
     {
     }
