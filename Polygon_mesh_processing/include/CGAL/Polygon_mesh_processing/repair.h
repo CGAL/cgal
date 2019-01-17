@@ -2042,14 +2042,16 @@ remove_self_intersections_one_step(TriangleMesh& tm,
         BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
         {
           if (!border_vertices.insert(target(h,tm)).second){
+            bool any_face_added = false;
             BOOST_FOREACH(halfedge_descriptor hh, halfedges_around_target(h,tm)){
               if (!is_border(hh, tm))
               {
-                cc_faces.insert(face(hh, tm)); // add the face to the current selection
+                any_face_added |= cc_faces.insert(face(hh, tm)).second; // add the face to the current selection
                 faces_to_remove.erase(face(hh, tm));
               }
             }
-            non_manifold_vertex_removed=true;
+            if (any_face_added)
+              non_manifold_vertex_removed=true;
           }
         }
 
