@@ -6,6 +6,12 @@ Release 4.14
 
 Release date: March 2019
 
+### The Heat Method (new package)
+-   This package provides an algorithm that solves the single- or multiple-source
+    shortest path problem by returning an approximation of the geodesic distance
+    for all vertices of a triangle mesh to the closest vertex in a given set of
+    source vertices. 
+
 ### Polygon Mesh Processing package
 -   Added the following new functions to detect and repair issues in polygon soups:
     - `CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup()`, which detects and removes
