@@ -300,7 +300,6 @@ public:
         Isolated_vertex_iterator() : Ibase() {}
         Isolated_vertex_iterator(const Ibase& b) : Ibase(b) {}
 
-            : Ibase(i) {}  
         operator Vertex_handle() const { return Ibase::operator*(); }
         Vertex& operator*() { return *(Ibase::operator*()); }
         Vertex_handle operator->() { return Ibase::operator*(); }
