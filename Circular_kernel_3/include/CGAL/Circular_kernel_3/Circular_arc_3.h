@@ -282,7 +282,15 @@ namespace CGAL {
         const double dz = z2-z1;
         const double d_sq = dx*dx + dy*dy + dz*dz;
         const double r_sq = to_double(squared_radius());
-        const double ap_ang = 2.0 * std::asin(0.5 * std::sqrt(d_sq / r_sq));
+        const double s = 0.5 * std::sqrt(d_sq / r_sq);
+        double ap_ang;
+        if(std::abs(s)<=1) {
+          ap_ang = 2.0 * std::asin(s);
+        } else {
+          // We only allow a small rounding error
+          CGAL_assertion(std::abs(s)<=1.0001);
+          ap_ang = (s < 0) ? -CGAL_PI : CGAL_PI;
+        }
         if(sign_cross_product() == NEGATIVE) return 2.0 * CGAL_PI - ap_ang;
         else return ap_ang;
       }

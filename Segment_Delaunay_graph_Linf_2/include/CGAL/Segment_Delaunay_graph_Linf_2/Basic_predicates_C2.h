@@ -332,8 +332,8 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
   Line_2 compute_linf_perpendicular(const Line_2& l, const Point_2& p)
   {
     RT a, b, c;
-    a = RT( - CGAL::sign(l.b()) );
-    b = RT( CGAL::sign(l.a()) );
+    a = RT( - (int) CGAL::sign(l.b()) );
+    b = RT( (int) CGAL::sign(l.a()) );
     c = - a * p.x() - b * p.y();
     return Line_2(a, b, c);
   }
@@ -810,8 +810,8 @@ public:
 
       const RT one(1);
 
-      const Point_2 displaced ( corner.x() + (-cmpypq)*one ,
-                                corner.y() + cmpxpq * one   );
+      const Point_2 displaced ( corner.x() + (-(int)cmpypq)*one ,
+                                corner.y() + (int)cmpxpq * one   );
 
       const Line_2 l = compute_line_from_to(corner, displaced);
 
@@ -928,8 +928,8 @@ public:
 
       RT one(1);
 
-      Point_2 displaced ( corner.x() + (-cmpypq)*one ,
-                          corner.y() + cmpxpq * one   );
+      Point_2 displaced ( corner.x() + (-(int)cmpypq)*one ,
+                          corner.y() + (int)cmpxpq * one   );
 
       Line_2 l = compute_line_from_to(corner, displaced);
 
@@ -1808,9 +1808,9 @@ public:
   {
     CGAL_precondition(bside % 2 == 1);
     const FT ax = (bside % 4 == 1) ?
-      RT(2)*c.x() + c.y() - d.y() : c.x() + d.x();
+      FT(RT(2)*c.x() + c.y() - d.y()) : FT(c.x() + d.x());
     const FT ay = (bside % 4 == 1) ?
-      c.y() + d.y() : RT(2)*c.y() + d.x() - c.y();
+      FT(c.y() + d.y()) : FT(RT(2)*c.y() + d.x() - c.y());
     return Point_2(ax, ay, RT(2));
   }
 
