@@ -40,13 +40,6 @@ private:
   FT m_total_weight;
 
 public:
-  Cost()
-  : m_norm(0),
-    m_tang(0),
-    m_max_norm(0),
-    m_max_tang(0),
-    m_total_weight(0)
-  {}
 
   Cost(const FT norm = FT(0), const FT tang = FT(0))
   : m_norm(norm),
