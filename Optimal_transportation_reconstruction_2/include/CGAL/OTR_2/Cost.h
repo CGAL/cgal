@@ -48,24 +48,13 @@ public:
     m_total_weight(0)
   {}
 
-  Cost(const FT norm, const FT tang)
+  Cost(const FT norm = FT(0), const FT tang = FT(0))
   : m_norm(norm),
     m_tang(tang),
     m_max_norm(norm),
     m_max_tang(tang),
     m_total_weight(0)
   {}
-
-  ~Cost() {}
-
-  Cost& operator= (const Cost& cost)
-  {
-    m_norm = cost.norm();
-    m_tang = cost.tang();
-    m_max_norm = cost.max_norm();
-    m_max_tang = cost.max_tang();
-    return *this;
-  }
 
   const FT norm() const { return m_norm; }
 
