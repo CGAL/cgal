@@ -1,5 +1,7 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
+INPUT += ${CGAL_Surface_mesh_minimal_angle_remeshing_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/minimal_angle_remeshing.h
+
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Polygon Mesh Processing"
 # custom options for this package
 EXTRACT_ALL                =  false
