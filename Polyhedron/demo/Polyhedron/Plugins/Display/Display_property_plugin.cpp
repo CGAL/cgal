@@ -151,14 +151,9 @@ public:
     }
     
     typedef FacetTriangulator<SMesh, EPICK, boost::graph_traits<SMesh>::vertex_descriptor> FT;
-    double diagonal;
-    if(diagonalBbox() != std::numeric_limits<double>::infinity())
-      diagonal = diagonalBbox();
-    else
-      diagonal = 0.0;
     const CGAL::qglviewer::Vec off = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     EPICK::Vector_3 offset(off.x,off.y,off.z);
-    FT triangulation(fd,normal,sm,diagonal, offset);
+    FT triangulation(fd,normal,sm, offset);
     //iterates on the internal faces
     for(FT::CDT::Finite_faces_iterator
         ffit = triangulation.cdt->finite_faces_begin(),
