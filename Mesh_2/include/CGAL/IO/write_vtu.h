@@ -252,10 +252,10 @@ write_cdt_points_tag(std::ostream& os,
 // writes the points appended data at the end of the .vtu file 
 template <class Tr>
 void
-write_points(std::ostream& os,
-	     const Tr & tr,
-	     std::map<typename Tr::Vertex_handle, 
-             std::size_t> & V)
+write_cdt_points(std::ostream& os,
+                 const Tr & tr,
+                 std::map<typename Tr::Vertex_handle,
+                 std::size_t> & V)
 {
   std::size_t dim = 2;
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
@@ -319,7 +319,7 @@ void write_vtu(std::ostream& os,
      << "  </UnstructuredGrid>\n";
   if (binary) {
     os << "<AppendedData encoding=\"raw\">\n_"; 
-    write_points(os,tr,V);  // write points before cells to fill the std::map V
+    write_cdt_points(os,tr,V);  // write points before cells to fill the std::map V
     write_cells_2(os,tr, number_of_triangles, V);
   }
   os << "</VTKFile>\n";
