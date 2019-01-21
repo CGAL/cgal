@@ -16,6 +16,7 @@
 #include <QFileInfo>
 #include <QStringList>
 #include <QSet>
+#include <QMap>
 #include <QModelIndex>
 #include <QLineEdit>
 
@@ -71,7 +72,7 @@ public:
    * Then it creates and initializes the scene and do the
    * connexions with the UI. Finally it loads the plugins.*/
 
-  MainWindow(bool verbose = false,QWidget* parent = 0);
+  MainWindow(const QStringList& keywords, bool verbose = false,QWidget* parent = 0);
   ~MainWindow();
 
   /*! Finds an IO plugin.
@@ -400,7 +401,7 @@ private:
   void setMenus(QString, QString, QAction *a);
   /// plugin black-list
   QSet<QString> plugin_blacklist;
-  QMap<QString, std::vector<QString> > PathNames_map; //For each non-empty plugin directory, contains a vector of plugin names
+  QMap<QString, QString > PathNames_map; //For each non-empty plugin directory, contains a vector of plugin names
   QMap<QString, QString > pluginsStatus_map; //For each non-empty plugin directory, contains a vector of plugin names
   Scene* scene;
   Viewer* viewer;
@@ -439,13 +440,19 @@ public:
                              const QString & fileName = QString());
 #endif
 public Q_SLOTS:
+  void on_actionSa_ve_Scene_as_Script_triggered();
   void toggleFullScreen();
   void setDefaultSaveDir();
+  void invalidate_bbox(bool do_recenter);
 private:
   QList<QDockWidget *> visibleDockWidgets;
   QLineEdit operationSearchBar;
   QWidgetAction* searchAction;
   QString def_save_dir;
+  bool bbox_need_update;
+  QMap<QString, QPair<QStringList, QString> >plugin_metadata_map;
+  QMap<QString, bool> ignored_map;
+  const QStringList& accepted_keywords;
 };
 
 #endif // ifndef MAINWINDOW_H

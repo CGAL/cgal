@@ -41,6 +41,16 @@
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
 
+#include <CGAL/boost_mp.h>
+//Currently already included in boost_mp.h
+//#ifdef CGAL_USE_BOOST_MP
+//# include <boost/multiprecision/cpp_int.hpp>
+//// After some CGAL includes so we get a chance to define CGAL_USE_GMP.
+//# ifdef CGAL_USE_GMP
+//#  include <boost/multiprecision/gmp.hpp>
+//# endif
+//#endif
+
 // Routines to output to MPS format:
 namespace QP_from_mps_detail {
 
@@ -58,6 +68,20 @@ namespace QP_from_mps_detail {
   struct MPS_type_name<int> {
     static const char *name() { return "integer"; }
   };
+#ifdef CGAL_USE_BOOST_MP
+  template <class Backend, boost::multiprecision::expression_template_option Eto>
+  struct MPS_type_name<boost::multiprecision::number<Backend, Eto> > {
+    typedef boost::multiprecision::number<Backend, Eto> NT;
+    static const char *name() {
+      if (boost::multiprecision::number_category<NT>::value == boost::multiprecision::number_kind_integer)
+	return "integer";
+      else if (boost::multiprecision::number_category<NT>::value == boost::multiprecision::number_kind_rational)
+	return "rational";
+      else
+	return 0;
+    }
+  };
+#endif
 #ifdef CGAL_USE_GMPXX
   template<>
   struct MPS_type_name<mpq_class> {
@@ -80,7 +104,9 @@ namespace QP_from_mps_detail {
   template<>
   struct MPS_type_name<CGAL::Quotient<CGAL::MP_Float> > {
     static const char *name() { return "rational"; }
-  }; template<typename IT>
+  };
+
+  template<typename IT>
   struct IT_to_ET {
   };
   
@@ -88,6 +114,12 @@ namespace QP_from_mps_detail {
   struct IT_to_ET<double> {
     typedef CGAL::MP_Float ET;
   };
+#ifdef CGAL_USE_BOOST_MP
+  template<>
+  struct IT_to_ET<boost::multiprecision::cpp_rational> {
+    typedef boost::multiprecision::cpp_rational ET;
+  };
+#endif
 
 #ifdef CGAL_USE_GMP
 #ifdef CGAL_USE_GMPXX
@@ -99,6 +131,16 @@ namespace QP_from_mps_detail {
   template<>
   struct IT_to_ET<mpq_class> {
     typedef mpq_class ET;
+  };
+#elif defined CGAL_USE_BOOST_MP
+  template<>
+  struct IT_to_ET<int> {
+    typedef boost::multiprecision::mpz_int ET;
+  };
+
+  template<>
+  struct IT_to_ET<boost::multiprecision::mpq_rational> {
+    typedef boost::multiprecision::mpq_rational ET;
   };
 #else
   template<>
@@ -114,10 +156,13 @@ namespace QP_from_mps_detail {
 #endif
 
 #ifdef CGAL_USE_LEDA
+// Pick one arbitrarily if we have both LEDA and GMP
+#ifndef CGAL_USE_GMP
   template<>
   struct IT_to_ET<int> {
     typedef leda::integer ET;
   };
+#endif
   
   template<>
   struct IT_to_ET<leda::rational> {
@@ -129,6 +174,13 @@ namespace QP_from_mps_detail {
     typedef CGAL::Quotient<CGAL::MP_Float> ET;
   };
 
+#if defined CGAL_USE_BOOST_MP && !defined CGAL_USE_GMP && !defined CGAL_USE_LEDA
+  // Last chance for int
+  template<>
+  struct IT_to_ET<int> {
+    typedef boost::multiprecision::cpp_int ET;
+  };
+#endif
 } // QP_from_mps_detail
 
 template<typename QP>

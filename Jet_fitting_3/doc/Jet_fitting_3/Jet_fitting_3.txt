@@ -77,13 +77,11 @@ the surface can locally be written as the graph of a bivariate
 function. Letting \f$ h.o.t.\f$ stand for <I>higher order terms</I>, one
 has :
 
-\f[
-\begin{equation}
+\f{equation}{
 z(x,y)=J_{B,d}(x,y) + h.o.t. \ ; \quad 
 J_{B,d}(x,y)=\ccSum{k=0}{d}{(\ccSum{i=0}{i}{
 \frac{B_{k-i,i}x^{k-i}y^{i}}{i!(k-i)!}})}.
-\end{equation}
-\f]
+\f}
 
 The degree \f$ d\f$ polynomial \f$ J_{B,d}\f$ is the Taylor expansion of the
 function \f$ z\f$, and is called its <I>\f$ d\f$-jet</I>. Notice that a \f$ d\f$-jet contains
@@ -343,12 +341,10 @@ The fitting process consists of finding the coefficients
 \f$ A_{i,j}\f$ of the degree \f$ d\f$ polynomial 
 
 \anchor eqanswer
-\f[
-\begin{equation}
+\f{equation}{
 J_{A,d}= \ccSum{k=0}{d}{(\ccSum{i=0}{k}{
 \frac{A_{k-i,i}x^{k-i}y^{i}}{i!(k-i)!}})}.
-\end{equation}
-\f]
+\f}
 
 Denote \f$ p_i=(x_i,y_i,z_i), \ i=1,\ldots , N\f$ the coordinates of the
 sample points of \f$ P^+\f$.
@@ -362,7 +358,7 @@ given by
  A =  & (A_{0,0}, A_{1,0},A_{0,1}, \ldots , A_{0,d})^T \\ 
  Z=  &(z_1, z_2,\ldots , z_N)^T \\ 
  M=  &(1,x_i,\ y_i,\ \frac{x_i^2}{2},\ldots ,
-\ \frac{x_iy_i^{d-1}}{(d-1)!},\ \frac{y_i^d}{d!})_{i=1,...,N}\\
+\ \frac{x_iy_i^{d-1}}{(d-1)!},\ \frac{y_i^d}{d!})_{i=1,...,N}
 \f}
 
 The equations for interpolation become \f$ MA=Z\f$. For approximation, the
@@ -395,8 +391,7 @@ The number \f$ r\f$, which is the number of non zero singular values, is
 strictly lower than \f$ N_d\f$ if the system is under constrained. In any
 case, the unique solution which minimize \f$ ||A||_2\f$ is given by:
 
-\f[
-\begin{equation}
+\f{equation}{
 A= V
 \left( \begin{array}{cc}
 D_r^{-1} & 0_{N_d-r,\ r}\\
@@ -404,8 +399,7 @@ D_r^{-1} & 0_{N_d-r,\ r}\\
 \end{array} 
 \right)
  U^TZ.
-\end{equation}
-\f]
+\f}
 
 One can provide the condition number of the matrix \f$ M\f$ (after
 preconditioning) which is the ratio of the maximal and the minimal
@@ -491,22 +485,18 @@ We use explicit formula. The implicit equation of the fitted
 polynomial surface in the fitting-basis with origin the point
 \f$ (0,0,A_{0,0})\f$ is \f$ Q=0\f$ with
 
-\f[
-\begin{equation}
+\f{equation}{
 Q=-w-A_{0,0}  +\ccSum{i,j}{}{\frac{A_{i,j}u^iv^j}{i!j!}}.
-\end{equation}
-\f]
+\f}
 
 The equation in the Monge basis is obtained by substituting \f$ (u,v,w)\f$
 by \f$ P^T_{F\rightarrow M}(x,y,z)\f$. Denote \f$ f(x,y,z)=0\f$ this implicit
 equation. By definition of the Monge basis, we have locally (at
 \f$ (0,0,0)\f$)
 
-\f[ 
-\begin{equation}
+\f{equation}{
 f(x,y,z)=0 \Leftrightarrow z=g(x,y)
-\end{equation}
-\f]
+\f}
 
 and the Taylor expansion of \f$ g\f$ at \f$ (0,0)\f$ are the Monge coefficients
 sought.
@@ -526,7 +516,7 @@ f_{0,0,1} ^{2}}}
 \\
 &b_1=g_{2,1}=-{\frac {-  f_{0,1,1}      f_{2,0,0}    +  f_{2,1,0}    f_{0,0,1}  }{  f_{0,0,1}    ^{2}}}
 \\
-& .... \\
+& ....
 \f}
 
 

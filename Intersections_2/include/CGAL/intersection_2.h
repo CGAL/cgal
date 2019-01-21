@@ -28,8 +28,40 @@
 #ifndef CGAL_INTERSECTION_2_H
 #define CGAL_INTERSECTION_2_H
 
-#include <CGAL/intersection_2_1.h>
-#include <CGAL/intersection_2_2.h>
-#include <CGAL/intersection_2_3.h>
+#include <CGAL/Intersections_2/Bbox_2_Circle_2.h>
+#include <CGAL/Intersections_2/Bbox_2_Point_2.h>
+
+#include <CGAL/Intersections_2/Circle_2_Iso_rectangle_2.h>
+#include <CGAL/Intersections_2/Circle_2_Circle_2.h>
+#include <CGAL/Intersections_2/Circle_2_Line_2.h>
+#include <CGAL/Intersections_2/Circle_2_Point_2.h>
+
+#include <CGAL/Intersections_2/Iso_rectangle_2_Iso_rectangle_2.h>
+#include <CGAL/Intersections_2/Iso_rectangle_2_Line_2.h>
+#include <CGAL/Intersections_2/Iso_rectangle_2_Point_2.h>
+#include <CGAL/Intersections_2/Iso_rectangle_2_Ray_2.h>
+#include <CGAL/Intersections_2/Iso_rectangle_2_Segment_2.h>
+#include <CGAL/Intersections_2/Iso_rectangle_2_Triangle_2.h>
+
+#include <CGAL/Intersections_2/Line_2_Line_2.h>
+#include <CGAL/Intersections_2/Line_2_Point_2.h>
+#include <CGAL/Intersections_2/Line_2_Ray_2.h>
+#include <CGAL/Intersections_2/Line_2_Segment_2.h>
+#include <CGAL/Intersections_2/Line_2_Triangle_2.h>
+
+#include <CGAL/Intersections_2/Point_2_Ray_2.h>
+#include <CGAL/Intersections_2/Point_2_Segment_2.h>
+#include <CGAL/Intersections_2/Point_2_Point_2.h>
+#include <CGAL/Intersections_2/Point_2_Triangle_2.h>
+
+#include <CGAL/Intersections_2/Ray_2_Ray_2.h>
+#include <CGAL/Intersections_2/Ray_2_Segment_2.h>
+#include <CGAL/Intersections_2/Ray_2_Triangle_2.h>
+
+#include <CGAL/Intersections_2/Segment_2_Segment_2.h>
+#include <CGAL/Intersections_2/Segment_2_Triangle_2.h>
+
+#include <CGAL/Intersections_2/Triangle_2_Triangle_2.h>
+
 
 #endif // CGAL_INTERSECTION_2_H

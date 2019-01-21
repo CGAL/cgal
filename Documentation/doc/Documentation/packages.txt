@@ -125,7 +125,7 @@ h1 {
 \package_listing{Point_set_shape_detection_3}
 \package_listing{Stream_lines_2}
 \package_listing{Classification}
-
+\package_listing{Heat_method_3}
 
 \section PartSearchStructures Spatial Searching and Sorting
 

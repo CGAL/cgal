@@ -1,4 +1,4 @@
-/// \defgroup PkgSurfaceSubdivisionMethod3Ref 3D Surface Subdivision Methods
+/// \defgroup PkgSurfaceSubdivisionMethod3Ref 3D Surface Subdivision Methods Reference
 
 /// \defgroup PkgSurfaceSubdivisionMethod3Concepts Concepts
 /// \ingroup PkgSurfaceSubdivisionMethod3Ref

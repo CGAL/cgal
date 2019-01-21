@@ -15,6 +15,11 @@ if(POLICY CMP0072)
   cmake_policy(SET CMP0072 NEW)
 endif()
 
+if(POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW)
+endif()
+
+
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -133,7 +138,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
   qt5_wrap_ui( statisticsUI_FILES Statistics_on_item_dialog.ui)
   qt5_wrap_ui( FileLoaderDialogUI_files FileLoaderDialog.ui )
   qt5_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
-  qt5_wrap_ui( PreferencesUI_FILES   Preferences.ui )
+  qt5_wrap_ui( PreferencesUI_FILES   Preferences.ui Details.ui)
   qt5_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
   qt5_wrap_ui( ViewerUI_FILES  LightingDialog.ui)
   qt5_generate_moc( "File_loader_dialog.h" "${CMAKE_CURRENT_BINARY_DIR}/File_loader_dialog_moc.cpp" )
@@ -347,7 +352,13 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
 
   add_subdirectory( implicit_functions )
 
-
+#
+# EXECUTABLES
+#
+add_executable  ( CGAL_Mesh_3 Mesh_3.cpp )
+add_dependencies(CGAL_Mesh_3 Mesh_3)
+target_link_libraries( CGAL_Mesh_3 PRIVATE polyhedron_demo )
+add_to_cached_list( CGAL_EXECUTABLE_TARGETS CGAL_Mesh_3 )
 #
 # Exporting
 #

@@ -228,7 +228,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
       PatchIDMap pidmap = get(CGAL::face_patch_id_t<int>(), *item->face_graph());
       int nb_patch_ids = CGAL::Polygon_mesh_processing::connected_components(*item->face_graph(),
                                                                              pidmap);
-
+      item->computeItemColorVectorAutomatically(true);
       item->invalidateOpenGLBuffers();
       item->setProperty("NbPatchIds", nb_patch_ids);
       scene->itemChanged(item);

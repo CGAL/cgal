@@ -288,8 +288,10 @@ int main()
   Polyhedron polyhedron;
 
   // A cube
-  make_hexahedron(Point_3(-0.5,-0.5,-0.5), Point_3(0.5,-0.5,-0.5), Point_3(0.5,0.5,-0.5), Point_3(-0.5,0.5,-0.5),
-                  Point_3(-0.5,0.5,0.5), Point_3(-0.5,-0.5,0.5), Point_3(0.5,-0.5,0.5), Point_3(0.5,0.5,0.5),
+  make_hexahedron(
+        Point_3(-0.5,-0.5,-0.5), Point_3(0.5,-0.5,-0.5), Point_3(0.5,0.5,-0.5),
+        Point_3(-0.5,0.5,-0.5), Point_3(-0.5,0.5,0.5), Point_3(-0.5,-0.5,0.5),
+        Point_3(0.5,-0.5,0.5), Point_3(0.5,0.5,0.5),
                   polyhedron);
 
   boost::graph_traits<Polyhedron>::halfedge_descriptor facets[6];

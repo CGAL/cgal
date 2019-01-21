@@ -160,7 +160,7 @@ namespace CGAL {
 
 Implements the <I>midpoint of max spread</I> splitting rule. 
 A rectangle is cut through \f$ (\mathrm{Mind}+\mathrm{Maxd})/2\f$ orthogonal 
-to the dimension with the maximum point spread \f$ [\mathrm{Mind},\matrm{Maxd}]\f$. 
+to the dimension with the maximum point spread \f$ [\mathrm{Mind},\mathrm{Maxd}]\f$.
 
 \cgalHeading{Parameters}
 

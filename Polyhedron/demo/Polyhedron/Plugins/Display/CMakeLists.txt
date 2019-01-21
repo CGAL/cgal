@@ -1,5 +1,6 @@
 include( polyhedron_demo_macros )
-
-qt5_wrap_ui( display_propertyUI_FILES Display_property.ui )
-polyhedron_demo_plugin(display_property_plugin Display_property_plugin ${display_propertyUI_FILES})
-target_link_libraries(display_property_plugin PUBLIC scene_surface_mesh_item scene_color_ramp)
+if(EIGEN3_FOUND)
+  qt5_wrap_ui( display_propertyUI_FILES Display_property.ui )
+  polyhedron_demo_plugin(display_property_plugin Display_property_plugin ${display_propertyUI_FILES})
+  target_link_libraries(display_property_plugin PUBLIC scene_surface_mesh_item scene_points_with_normal_item scene_color_ramp)
+endif(EIGEN3_FOUND)
