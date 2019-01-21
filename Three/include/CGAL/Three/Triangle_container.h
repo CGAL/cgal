@@ -58,6 +58,7 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
     VColors,            //!< Designates the buffer that contains the colors of the smooth vertices.
     FColors,            //!< Designates the buffer that contains the colors of the flat vertices.
     Texture_map,        //!< Designates the buffer that contains the UV map for the texture.
+    Distances,
     NbOfVbos            //!< Designates the size of the VBOs vector for `Triangle_container`s
   };
 

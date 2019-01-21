@@ -41,6 +41,7 @@ void Triangle_container::initGL( Viewer_interface* viewer)
   }
   else
   {
+    
     if(!getVao(viewer))
       setVao(viewer, new Vao(viewer->getShaderProgram(getProgram())));
     if(isDataIndexed())
@@ -69,6 +70,15 @@ void Triangle_container::initGL( Viewer_interface* viewer)
                new Vbo("colors",
                        Vbo::COLORS));
       getVao(viewer)->addVbo(getVbo(VColors));
+      if(viewer->getShaderProgram(getProgram())->property("hasDistanceValues").toBool())
+      {
+        if(!getVbo(Distances))
+          setVbo(Distances,
+                 new Vbo("distance",
+                         Vbo::COLORS,
+                         QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1));
+        getVao(viewer)->addVbo(getVbo(Distances));
+      }
     }
     else
     {

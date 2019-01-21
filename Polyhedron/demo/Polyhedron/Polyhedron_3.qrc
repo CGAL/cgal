@@ -98,6 +98,10 @@
         <file>resources/compatibility_shaders/shader_without_light.v</file>
         <file>resources/shader_dark_spheres.v</file>
         <file>resources/compatibility_shaders/shader_dark_spheres.v</file>
+        <file>resources/heat_intensity_shader.f</file>
+        <file>resources/heat_intensity_shader.v</file>
+        <file>resources/compatibility_shaders/heat_intensity_shader.f</file>
+        <file>resources/compatibility_shaders/heat_intensity_shader.v</file>
     </qresource>
     <qresource prefix="/cgal/cursors">
         <file>resources/rotate_around_cursor.png</file>

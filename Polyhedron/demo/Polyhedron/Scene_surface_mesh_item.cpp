@@ -924,14 +924,9 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
   }
   
   typedef FacetTriangulator<SMesh, EPICK, boost::graph_traits<SMesh>::vertex_descriptor> FT;
-  double diagonal;
-  if(item->diagonalBbox() != std::numeric_limits<double>::infinity())
-    diagonal = item->diagonalBbox();
-  else
-    diagonal = 0.0;
   const CGAL::qglviewer::Vec off = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   EPICK::Vector_3 offset(off.x,off.y,off.z);
-  FT triangulation(fd,normal,smesh_,diagonal, offset);
+  FT triangulation(fd,normal,smesh_, offset);
   //iterates on the internal faces
   for(FT::CDT::Finite_faces_iterator
       ffit = triangulation.cdt->finite_faces_begin(),
@@ -1074,7 +1069,8 @@ void* Scene_surface_mesh_item_priv::get_aabb_tree()
       BOOST_FOREACH( face_descriptor f, faces(*sm))
       {
         //if face is degenerate, skip it
-        if (CGAL::is_triangle(halfedge(f, *sm), *sm) && CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, *sm))
+        if (CGAL::is_triangle(halfedge(f, *sm), *sm) 
+            && CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, *sm))
           continue;
         //if face not triangle, triangulate corresponding primitive before adding it to the tree
         if(!CGAL::is_triangle(halfedge(f, *sm), *sm))
@@ -1290,12 +1286,7 @@ QList<EPICK::Triangle_3> Scene_surface_mesh_item_priv::triangulate_primitive(fac
     qDebug()<<"Warning in triangulation of the selection item: normal contains NaN values and is not valid.";
     return QList<EPICK::Triangle_3>();
   }
-  double diagonal;
-  if(item->diagonalBbox() != std::numeric_limits<double>::infinity())
-    diagonal = item->diagonalBbox();
-  else
-    diagonal = 0.0;
-  FT triangulation(fit,normal,smesh_,diagonal);
+  FT triangulation(fit,normal,smesh_);
   //iterates on the internal faces to add the vertices to the positions
   //and the normals to the appropriate vectors
   for( FT::CDT::Finite_faces_iterator
