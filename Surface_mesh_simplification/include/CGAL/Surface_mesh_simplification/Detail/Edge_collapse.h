@@ -113,7 +113,8 @@ public:
       // NOTE: A cost is an optional<> value.
       // Absent optionals are ordered first; that is, "none < T" and "T > none" for any defined T != none.
       // In consequence, edges with undefined costs will be promoted to the top of the priority queue and poped out first.
-      return mAlgorithm->get_data(a).cost() < mAlgorithm->get_data(b).cost();
+      // NOTE : in the fibonacci heap from boost, the highest the value, the lesser the priority.
+      return mAlgorithm->get_data(a).cost() > mAlgorithm->get_data(b).cost();
     }
     
     Self const* mAlgorithm ;
@@ -136,8 +137,8 @@ public:
   } ;
   
   
-  typedef Modifiable_priority_queue<halfedge_descriptor,Compare_cost,edge_id> PQ ;
-  typedef typename PQ::handle pq_handle ;
+  typedef boost::heap::fibonacci_heap<halfedge_descriptor, boost::heap::compare<Compare_cost> > PQ ;
+  typedef typename PQ::handle_type pq_handle ;
   
   // An Edge_data is associated with EVERY _ edge in the mesh (collapsable or not).
   // It relates the edge with the PQ-handle needed to update the priority queue
@@ -153,11 +154,11 @@ public:
     
     pq_handle PQ_handle() const { return mPQHandle ;}
     
-    bool is_in_PQ() const { return mPQHandle != PQ::null_handle() ; }
+    bool is_in_PQ() const { return mPQHandle != typename PQ::handle_type() ; }
     
     void set_PQ_handle( pq_handle h ) { mPQHandle = h ; }
     
-    void reset_PQ_handle() { mPQHandle = PQ::null_handle() ; }
+    void reset_PQ_handle() { mPQHandle = typename PQ::handle_type() ; }
     
   private:  
     
@@ -285,41 +286,45 @@ private:
   {
     CGAL_SURF_SIMPL_TEST_assertion(is_primary_edge(aEdge)) ;
     CGAL_SURF_SIMPL_TEST_assertion(!aData.is_in_PQ());
-    CGAL_SURF_SIMPL_TEST_assertion(!mPQ->contains(aEdge) ) ;
+    //CGAL_SURF_SIMPL_TEST_assertion(!mPQ->contains(aEdge) ) ;
 
     aData.set_PQ_handle(mPQ->push(aEdge));
 
     CGAL_SURF_SIMPL_TEST_assertion(aData.is_in_PQ());
-    CGAL_SURF_SIMPL_TEST_assertion(mPQ->contains(aEdge) ) ;
+   //CGAL_SURF_SIMPL_TEST_assertion(mPQ->contains(aEdge) ) ;
   }
   
   void update_in_PQ( halfedge_descriptor const& aEdge, Edge_data& aData )
   {
     CGAL_SURF_SIMPL_TEST_assertion(is_primary_edge(aEdge)) ;
     CGAL_SURF_SIMPL_TEST_assertion(aData.is_in_PQ());
-    CGAL_SURF_SIMPL_TEST_assertion(mPQ->contains(aEdge) ) ;
-
-    aData.set_PQ_handle(mPQ->update(aEdge,aData.PQ_handle())) ; 
+ //   CGAL_SURF_SIMPL_TEST_assertion(mPQ->contains(aEdge) ) ;
+    mPQ->update(aData.PQ_handle(), aEdge);
+    //aData.set_PQ_handle(aEdge.) ; 
 
     CGAL_SURF_SIMPL_TEST_assertion(aData.is_in_PQ());
-    CGAL_SURF_SIMPL_TEST_assertion(mPQ->contains(aEdge) ) ;
+ //   CGAL_SURF_SIMPL_TEST_assertion(mPQ->contains(aEdge) ) ;
   }   
   
   void remove_from_PQ( halfedge_descriptor const& aEdge, Edge_data& aData )
   {
     CGAL_SURF_SIMPL_TEST_assertion(is_primary_edge(aEdge)) ;
     CGAL_SURF_SIMPL_TEST_assertion(aData.is_in_PQ());
-    CGAL_SURF_SIMPL_TEST_assertion(mPQ->contains(aEdge) ) ;
-
-    aData.set_PQ_handle(mPQ->erase(aEdge,aData.PQ_handle()));
+    //CGAL_SURF_SIMPL_TEST_assertion(mPQ->contains(aEdge) ) ;
+    mPQ->erase(aData.PQ_handle());
+    aData.set_PQ_handle(typename PQ::handle_type());
 
     CGAL_SURF_SIMPL_TEST_assertion(!aData.is_in_PQ());
-    CGAL_SURF_SIMPL_TEST_assertion(!mPQ->contains(aEdge) ) ;
+    //CGAL_SURF_SIMPL_TEST_assertion(!mPQ->contains(aEdge) ) ;
   }   
   
   optional<halfedge_descriptor> pop_from_PQ() 
   {
-    optional<halfedge_descriptor> rEdge = mPQ->extract_top();
+    optional<halfedge_descriptor> rEdge;
+    if(!mPQ->empty()){
+      rEdge = mPQ->top();
+      mPQ->pop();
+    }
     if ( rEdge )
     {
       CGAL_SURF_SIMPL_TEST_assertion(is_primary_edge(*rEdge) ) ;
@@ -328,7 +333,7 @@ private:
       get_data(*rEdge).reset_PQ_handle();
 
       CGAL_SURF_SIMPL_TEST_assertion(!get_data(*rEdge).is_in_PQ() ) ;
-      CGAL_SURF_SIMPL_TEST_assertion(!mPQ->contains(*rEdge)) ;
+      //CGAL_SURF_SIMPL_TEST_assertion(!mPQ->contains(*rEdge)) ;
     }  
     return rEdge ;  
   }

@@ -120,7 +120,7 @@ namespace Surface_mesh_simplification
   
   mEdgeDataArray.reset( new Edge_data[lSize] ) ;
   
-  mPQ.reset( new PQ (lSize, Compare_cost(this), edge_id(this) ) ) ;
+  mPQ.reset( new PQ (Compare_cost(this))) ;
   
   std::size_t id = 0 ;
   

@@ -44,7 +44,8 @@
 
 #include <CGAL/algorithm.h>
 #include <CGAL/Cartesian/MatrixC33.h>
-#include <CGAL/Modifiable_priority_queue.h>
+//#include <CGAL/Modifiable_priority_queue.h>
+#include <boost/heap/fibonacci_heap.hpp>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/iterator.h>
 
