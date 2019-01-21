@@ -289,18 +289,18 @@ void output_to_vtu(std::ostream& os,
   std::size_t offset = 0;
   const bool binary = (mode == IO::BINARY);
   write_c3t3_points_tag(os,tr,V,binary,offset);
-  write_cells_tag(os,c3t3,V,binary,offset);
+  write_cells_tag(os,c3t3,V,binary,offset); // fills V if the mode is ASCII
   std::vector<float> mids;      
-    os << "   <CellData Domain=\"MeshDomain";
-    os << "\">\n";
-    write_attribute_tag(os,"MeshDomain",mids,binary,offset);
-    os << "    </CellData>\n";
+  os << "   <CellData Domain=\"MeshDomain";
+  os << "\">\n";
+  write_attribute_tag(os,"MeshDomain",mids,binary,offset);
+  os << "    </CellData>\n";
   os << "   </Piece>\n"
      << "  </UnstructuredGrid>\n";
   if (binary) {
     os << "<AppendedData encoding=\"raw\">\n_"; 
-    write_c3t3_points(os,tr,V);  // write points before cells to fill the std::map V
-    write_cells(os,c3t3,V, mids);//todo mids should be filled by write_attribute_tag
+    write_c3t3_points(os,tr,V); // fills V if the mode is BINARY
+    write_cells(os,c3t3,V, mids);
     write_attributes(os,mids);
   }
   os << "</VTKFile>\n";
