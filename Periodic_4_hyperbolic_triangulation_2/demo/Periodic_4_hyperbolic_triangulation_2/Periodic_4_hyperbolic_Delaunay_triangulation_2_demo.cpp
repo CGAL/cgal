@@ -437,8 +437,6 @@ MainWindow::on_actionRecenter_triggered()
 }
 
 
-#include "Periodic_4_hyperbolic_Delaunay_triangulation_2_demo.moc"
-
 int main(int argc, char **argv)
 {
 
@@ -453,3 +451,5 @@ int main(int argc, char **argv)
 
   return app.exec();
 }
+
+#include "Periodic_4_hyperbolic_Delaunay_triangulation_2_demo.moc"
