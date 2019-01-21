@@ -113,20 +113,16 @@ The Taylor expansion of \f$ k_1\f$ (resp. \f$ k_2\f$) along the max
 by \f$ x\f$ (resp. \f$ y\f$) are:
 
 \anchor eqtaylor_along_line
-\f[
-\begin{equation}
+\f{equation}{
 k_1(x) = k_1 + b_0x + \frac{P_1}{2(k_1-k_2)}x^2 + ... , \quad \quad \quad
 P_1= 3b_1^2+(k_1-k_2)(c_0-3k_1^3).
-\end{equation}
-\f]
+\f}
 
 \anchor eqtaylor_along_red_line
-\f[
-\begin{equation}
+\f{equation}{
 k_2(y) = k_2 + b_3y + \frac{P_2}{2(k_2-k_1)}y^2 + ... , \quad \quad \quad
 P_2= 3b_2^2+(k_2-k_1)(c_4-3k_2^3).
-\end{equation}
-\f]
+\f}
 
 Notice also that switching from one to the other of the two
 afore-mentioned coordinate systems reverts the sign of all the odd

@@ -8,10 +8,10 @@
 #include <CGAL/Three/exceptions.h>
 #include <CGAL/Qt/debug.h>
 
+#include <QJsonArray>
 #include <QtDebug>
 #include <QFileDialog>
 #include <QFileInfo>
-#include <QSettings>
 #include <QHeaderView>
 #include <QMenu>
 #include <QMenuBar>
@@ -30,8 +30,6 @@
 #include <QInputDialog>
 #include <QTreeView>
 #include <QSortFilterProxyModel>
-#include <QMap>
-#include <QSet>
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <QTreeWidgetItem>
@@ -39,8 +37,10 @@
 #include <QDockWidget>
 #include <QSpinBox>
 #include <stdexcept>
+#include <fstream>
 #include <QTime>
 #include <QWidgetAction>
+
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptValue>
 #  ifdef QT_SCRIPTTOOLS_LIB
@@ -54,6 +54,7 @@
 #include <CGAL/Three/Scene_item_with_properties.h>
 #include "ui_MainWindow.h"
 #include "ui_Preferences.h"
+#include "ui_Details.h"
 #include "ui_Statistics_on_item_dialog.h"
 #include "Show_point_dialog.h"
 #include "File_loader_dialog.h"
@@ -131,9 +132,11 @@ MainWindow::~MainWindow()
   delete ui;
   delete statistics_ui;
 }
-MainWindow::MainWindow(bool verbose, QWidget* parent)
-  : CGAL::Qt::DemosMainWindow(parent)
+MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* parent)
+  : CGAL::Qt::DemosMainWindow(parent),
+    accepted_keywords(keywords)
 {
+  bbox_need_update = true;
   ui = new Ui::MainWindow;
   ui->setupUi(this);
   menuBar()->setNativeMenuBar(false);
@@ -207,7 +210,7 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
           this, SLOT(removeManipulatedFrame(CGAL::Three::Scene_item*)));
 
   connect(scene, SIGNAL(updated_bbox(bool)),
-          this, SLOT(updateViewerBBox(bool)));
+          this, SLOT(invalidate_bbox(bool)));
 
   connect(scene, SIGNAL(selectionChanged(int)),
           this, SLOT(selectSceneItem(int)));
@@ -568,9 +571,10 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
       if(blacklisted)
       {
         if ( plugin_blacklist.contains(name) ){
-          pluginsStatus_map[name] = QString("ignored");
+          pluginsStatus_map[name] = QString("Blacklisted.");
+          ignored_map[name] = true;
           //qDebug("### Ignoring plugin \"%s\".", qPrintable(fileName));
-          PathNames_map[fileinfo.absoluteDir().absolutePath()].push_back(name);
+          PathNames_map[name].push_back(fileinfo.absoluteDir().absolutePath());
           return true;
         }
       }
@@ -579,8 +583,28 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
         qdebug << "### Loading \"" << fileName.toUtf8().data() << "\"... ";
       QPluginLoader loader;
       loader.setFileName(fileinfo.absoluteFilePath());
+      QJsonArray keywords = loader.metaData().value("MetaData").toObject().value("Keywords").toArray();
+      QString date = loader.metaData().value("MetaData").toObject().value("ConfigDate").toString();
+      QStringList s_keywords;
+      for(int i = 0; i < keywords.size(); ++i)
+      {
+        s_keywords.append(keywords[i].toString());
+      }
+      plugin_metadata_map[name] = qMakePair(s_keywords, date);
       QObject *obj = loader.instance();
-      if(obj) {
+      bool do_load = accepted_keywords.empty();
+      if(!do_load)
+      {
+        Q_FOREACH(QString k, s_keywords)
+        {
+          if(accepted_keywords.contains(k))
+          {
+            do_load = true;
+            break;
+          }
+        }
+      }
+      if(do_load && obj) {
         obj->setObjectName(name);
         bool init1 = initPlugin(obj);
         bool init2 = initIOPlugin(obj);
@@ -593,12 +617,17 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
           //qdebug << "success";
           pluginsStatus_map[name] = QString("success");
       }
-      else {
+      else if(!do_load)
+      {
+        pluginsStatus_map[name]="Wrong Keywords.";
+        ignored_map[name] = true;
+      }
+      else{
         //qdebug << "error: " << qPrintable(loader.errorString());
         pluginsStatus_map[name] = loader.errorString();
 
       }
-      PathNames_map[fileinfo.absoluteDir().absolutePath()].push_back(name);
+      PathNames_map[name].push_back(fileinfo.absoluteDir().absolutePath());
       return true;
     }
     return false;
@@ -881,50 +910,54 @@ void MainWindow::error(QString text) {
 
 void MainWindow::updateViewerBBox(bool recenter = true)
 {
-  const Scene::Bbox bbox = scene->bbox();
+  if(bbox_need_update)
+  {
+    const Scene::Bbox bbox = scene->bbox();
     CGAL::qglviewer::Vec center = viewer->camera()->pivotPoint();
-  const double xmin = bbox.xmin();
-  const double ymin = bbox.ymin();
-  const double zmin = bbox.zmin();
-  const double xmax = bbox.xmax();
-  const double ymax = bbox.ymax();
-  const double zmax = bbox.zmax();
-
-
-  CGAL::qglviewer::Vec
-    vec_min(xmin, ymin, zmin),
-    vec_max(xmax, ymax, zmax),
-    bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
-  CGAL::qglviewer::Vec offset(0,0,0);
-  double l_dist = (std::max)((std::abs)(bbox_center.x - viewer->offset().x),
-                      (std::max)((std::abs)(bbox_center.y - viewer->offset().y),
-                          (std::abs)(bbox_center.z - viewer->offset().z)));
-  if((std::log2)(l_dist) > 13.0 )
-    for(int i=0; i<3; ++i)
+    const double xmin = bbox.xmin();
+    const double ymin = bbox.ymin();
+    const double zmin = bbox.zmin();
+    const double xmax = bbox.xmax();
+    const double ymax = bbox.ymax();
+    const double zmax = bbox.zmax();
+    
+    
+    CGAL::qglviewer::Vec
+        vec_min(xmin, ymin, zmin),
+        vec_max(xmax, ymax, zmax),
+        bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
+    CGAL::qglviewer::Vec offset(0,0,0);
+    double l_dist = (std::max)((std::abs)(bbox_center.x - viewer->offset().x),
+                               (std::max)((std::abs)(bbox_center.y - viewer->offset().y),
+                                          (std::abs)(bbox_center.z - viewer->offset().z)));
+    if((std::log2)(l_dist) > 13.0 )
+      for(int i=0; i<3; ++i)
+      {
+        offset[i] = -bbox_center[i];
+        
+      }
+    if(offset != viewer->offset())
     {
-      offset[i] = -bbox_center[i];
-
+      viewer->setOffset(offset);
+      for(int i=0; i<scene->numberOfEntries(); ++i)
+      {
+        scene->item(i)->invalidateOpenGLBuffers();
+        scene->item(i)->itemChanged();
+      }
     }
-  if(offset != viewer->offset())
-  {
-    viewer->setOffset(offset);
-    for(int i=0; i<scene->numberOfEntries(); ++i)
+    
+    
+    viewer->setSceneBoundingBox(vec_min,
+                                vec_max);
+    if(recenter)
     {
-      scene->item(i)->invalidateOpenGLBuffers();
-      scene->item(i)->itemChanged();
+      viewer->camera()->showEntireScene();
     }
-  }
-
-
-  viewer->setSceneBoundingBox(vec_min,
-                              vec_max);
-  if(recenter)
-  {
-    viewer->camera()->showEntireScene();
-  }
-  else
-  {
-    viewer->camera()->setPivotPoint(center);
+    else
+    {
+      viewer->camera()->setPivotPoint(center);
+    }
+    bbox_need_update = false;
   }
 }
 
@@ -1100,6 +1133,7 @@ void MainWindow::open(QString filename)
           qobject_cast<CGAL::Three::Scene_group_item*>(scene_item);
   if(group)
     scene->redraw_model();
+  updateViewerBBox(true);
 }
 
 bool MainWindow::open(QString filename, QString loader_name) {
@@ -1593,7 +1627,6 @@ void MainWindow::updateDisplayInfo() {
 
 void MainWindow::readSettings()
 {
-    QSettings settings;
     viewer->setAntiAliasing(settings.value("antialiasing", false).toBool());
     viewer->setFastDrawing(settings.value("quick_camera_mode", true).toBool());
     scene->enableVisibilityRecentering(settings.value("offset_update", true).toBool());
@@ -1616,7 +1649,6 @@ void MainWindow::writeSettings()
 {
   this->writeState("MainWindow");
   {
-    QSettings settings;
     //setting plugin blacklist
     QStringList blacklist;
     Q_FOREACH(QString name,plugin_blacklist){ blacklist << name; }
@@ -1944,13 +1976,16 @@ void MainWindow::on_actionDuplicate_triggered()
 
 void MainWindow::on_actionShowHide_triggered()
 {
+  scene->setUpdatesEnabled(false);
   Q_FOREACH(QModelIndex index, sceneView->selectionModel()->selectedRows())
   {
     int i = scene->getIdFromModelIndex(proxyModel->mapToSource(index));
     CGAL::Three::Scene_item* item = scene->item(i);
     item->setVisible(!item->visible());
-    scene->itemChanged(i);
+    item->redraw();
   }
+  scene->setUpdatesEnabled(true);
+  updateViewerBBox(false);
 }
 
 void MainWindow::on_actionSetPolyhedronA_triggered()
@@ -1969,7 +2004,6 @@ void MainWindow::on_actionPreferences_triggered()
 {
   QDialog dialog(this);
   Ui::PreferencesDialog prefdiag;
-  QSettings settings;
   prefdiag.setupUi(&dialog);
   
   float lineWidth[2];
@@ -2048,43 +2082,68 @@ void MainWindow::on_actionPreferences_triggered()
           this, [this](const QString& text){
     this->s_defaultPSRM = CGAL::Three::Three::modeFromName(text);
   });
+  
   std::vector<QTreeWidgetItem*> items;
   QBrush successBrush(Qt::green),
       errorBrush(Qt::red),
       ignoredBrush(Qt::lightGray);
 
   //add blacklisted plugins
-  Q_FOREACH (QString path, PathNames_map.keys())
+  Q_FOREACH (QString name, PathNames_map.keys())
   {
-    QTreeWidgetItem* pluginItem = new QTreeWidgetItem(prefdiag.treeWidget);
-    pluginItem->setText(1, path);
-    prefdiag.treeWidget->setItemExpanded(pluginItem, true);
-    QFont boldFont = pluginItem->font(1);
-    boldFont.setBold(true);
-    pluginItem->setFont(1, boldFont);
-    Q_FOREACH(QString name, PathNames_map[path])
-    {
-      QTreeWidgetItem *item = new QTreeWidgetItem(pluginItem);
-      item->setText(1, name);
-      if(plugin_blacklist.contains(name)){
-        item->setCheckState(0, Qt::Unchecked);
-      }
-      else{
-        item->setCheckState(0, Qt::Checked);
-      }
-      if(pluginsStatus_map[name] == QString("success"))
-        item->setBackground(1, successBrush);
-      else if(pluginsStatus_map[name] == QString("ignored")){
-        item->setBackground(1, ignoredBrush);
-        item->setToolTip(1, QString("This plugin is currently blacklisted, so it has been ignored."));
-      }
-      else{
-        item->setBackground(1, errorBrush);
-        item->setToolTip(1, pluginsStatus_map[name]);
-      }
-      items.push_back(item);
+    QTreeWidgetItem *item = new QTreeWidgetItem(prefdiag.treeWidget);
+    item->setText(1, name);
+    if(plugin_blacklist.contains(name)){
+      item->setCheckState(0, Qt::Unchecked);
     }
+    else{
+      item->setCheckState(0, Qt::Checked);
+    }
+    if(pluginsStatus_map[name] == QString("success"))
+      item->setBackground(1, successBrush);
+    else if(ignored_map[name]){
+      item->setBackground(1, ignoredBrush);
+    }
+    else{
+      item->setBackground(1, errorBrush);
+    }
+    items.push_back(item);
   }
+  connect(prefdiag.detailsPushButton, &QPushButton::clicked,
+          this, [this, prefdiag](){
+    QStringList titles;
+    titles << "Name" << "Keywords" << "ConfigDate";
+    QDialog dialog(this);
+    Ui::DetailsDialog detdiag;
+    detdiag.setupUi(&dialog);
+    QTreeWidgetItem *header = new QTreeWidgetItem(titles);
+    detdiag.treeWidget->setHeaderItem(header);
+    Q_FOREACH(QTreeWidgetItem* plugin_item, prefdiag.treeWidget->selectedItems())
+    {
+      QString name = plugin_item->text(1);
+      QString keywords = plugin_metadata_map[name].first.join(", ");
+      QString date = plugin_metadata_map[name].second;
+      QStringList values;
+      values << name << keywords << date;
+      new QTreeWidgetItem(detdiag.treeWidget, values);
+    }
+    for(int i=0; i<3; ++i)
+    {
+      detdiag.treeWidget->resizeColumnToContents(i);
+    }
+    connect(detdiag.treeWidget, &QTreeWidget::clicked,
+            this, [this, detdiag](){
+      if(detdiag.treeWidget->selectedItems().isEmpty())
+        detdiag.textBrowser->setText("");
+      else {
+        QString name = detdiag.treeWidget->selectedItems().first()->text(0);
+        QString status = pluginsStatus_map[name];
+        QString path = PathNames_map[name];
+        detdiag.textBrowser->setText(QString("Path: %1 \nStatus: %2").arg(path).arg(status));
+      }
+    });
+    dialog.exec();
+  });
   dialog.exec();
 
   if ( dialog.result() )
@@ -2219,7 +2278,9 @@ void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
 
 void MainWindow::on_actionRecenterScene_triggered()
 {
-  updateViewerBBox();
+  //force the recomputaion of the bbox
+  bbox_need_update = true;
+  updateViewerBBox(true);
   viewer->camera()->showEntireScene();
 }
 
@@ -2534,6 +2595,88 @@ void MainWindow::propagate_action()
     }
   }
 }
+
+void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
+{
+  QString filename =
+      QFileDialog::getSaveFileName(this,
+                                   "Save the Scene as a Script File",
+                                   last_saved_dir,
+                                   "Qt Script files (*.js)");
+  std::ofstream os(filename.toUtf8());
+  if(!os)
+    return;
+  std::vector<QString> names;
+  std::vector<QString> loaders;
+  std::vector<QColor> colors;
+  std::vector<int> rendering_modes;
+  QStringList not_saved;
+  for(int i = 0; i < scene->numberOfEntries(); ++i)
+  {
+    Scene_item* item = scene->item(i);
+    QString loader = item->property("loader_name").toString();
+    QString source = item->property("source filename").toString();
+    if(loader.isEmpty())
+    {
+      not_saved.push_back(item->name());
+      continue;
+    }
+    names.push_back(source);
+    loaders.push_back(loader);
+    colors.push_back(item->color());
+    rendering_modes.push_back(item->renderingMode());
+  }
+  //path
+  os << "var camera = \""<<viewer->dumpCameraCoordinates().toStdString()<<"\";\n";
+  os << "var items = [";
+  for(std::size_t i = 0; i< names.size() -1; ++i)
+  {
+    os << "\'" << names[i].toStdString() << "\', ";
+  }
+  os<<"\'"<<names.back().toStdString()<<"\'];\n";
+  
+  //plugin
+  os << "var loaders = [";
+  for(std::size_t i = 0; i< names.size() -1; ++i)
+  {
+    os << "\'" << loaders[i].toStdString() << "\', ";
+  }
+  os<<"\'"<<loaders.back().toStdString()<<"\'];\n";
+  
+  //color
+  os << "var colors = [";
+  for(std::size_t i = 0; i< names.size() -1; ++i)
+  {
+    os << "[" << colors[i].red() <<", "<< colors[i].green() <<", "<< colors[i].blue() <<"], ";
+  }
+  os<<"[" << colors.back().red() <<", "<< colors.back().green() <<", "<< colors.back().blue() <<"]];\n";
+  
+  //rendering mode
+  os << "var rendering_modes = [";
+  for(std::size_t i = 0; i< names.size() -1; ++i)
+  {
+    os << rendering_modes[i] << ", ";
+  }
+  os << rendering_modes.back()<<"];\n";
+  os <<"var initial_scene_size = scene.numberOfEntries;\n";
+  os << "items.forEach(function(item, index, array){\n";
+  os << "        main_window.open(item, loaders[index]);\n";
+  os << "        var it = scene.item(initial_scene_size+index);\n";
+  os << "        var r = colors[index][0];\n";
+  os << "        var g = colors[index][1];\n";
+  os << "        var b = colors[index][2];\n";
+  os << "        it.setRgbColor(r,g,b);\n";
+  os << "        it.setRenderingMode(rendering_modes[index]);\n";
+  os << "});\n";
+  os << "viewer.moveCameraToCoordinates(camera, 0.05);\n";
+  os.close();
+  if(!not_saved.empty())
+    QMessageBox::warning(this,
+                         "Items Not  Saved",
+                         QString("The following items could not be saved: %1").arg(
+                           not_saved.join(", ")));
+}
+
 void MainWindow::setTransparencyPasses(int val)
 {
   viewer->setTotalPass(val);
@@ -2569,6 +2712,13 @@ void MainWindow::setDefaultSaveDir()
   QString dirpath = QFileDialog::getExistingDirectory(this, "Set Default Save as Directory", def_save_dir);
   if(!dirpath.isEmpty())
     def_save_dir = dirpath;
-  QSettings settings;
   settings.setValue("default_saveas_dir", def_save_dir);
+}
+
+void MainWindow::invalidate_bbox(bool do_recenter)
+{
+  bbox_need_update = true;
+  if(do_recenter)
+    updateViewerBBox(true);
+  
 }

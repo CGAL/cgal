@@ -49,6 +49,7 @@
     <addaction name="actionEraseAll"/>
     <addaction name="actionDuplicate"/>
     <addaction name="actionSaveAs"/>
+    <addaction name="actionSa_ve_Scene_as_Script"/>
     <addaction name="actionSaveSnapshot"/>
     <addaction name="separator"/>
     <addaction name="actionLoadScript"/>
@@ -490,6 +491,11 @@
   <action name="actionColorItems">
    <property name="text">
     <string>Set Different Colors for Selected Items</string>
+   </property>
+  </action>
+  <action name="actionSa_ve_Scene_as_Script">
+   <property name="text">
+    <string>Sa&amp;ve the Scene as a Script File...</string>
    </property>
   </action>
  </widget>

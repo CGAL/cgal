@@ -39,6 +39,7 @@ Geomview
 GraphicsView 
 HalfedgeDS 
 Hash_map 
+Heat_method_3 
 Homogeneous_kernel 
 Hyperbolic_triangulation_2 
 Inscribed_areas 

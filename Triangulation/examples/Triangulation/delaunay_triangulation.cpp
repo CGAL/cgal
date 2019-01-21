@@ -24,7 +24,7 @@ int main()
     { 100, 100, 100, 100, 100, 100, 100 }
   };
 
-  typedef CGAL::Triangulation<CGAL::Epick_d< CGAL::Dimension_tag<7> > >      T;
+  typedef CGAL::Delaunay_triangulation<CGAL::Epick_d< CGAL::Dimension_tag<7> > >      T;
   T dt(7);
 
   std::vector<T::Point> points;

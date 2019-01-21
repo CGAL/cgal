@@ -11,7 +11,10 @@
 #include "Scene_surface_mesh_item.h"
 #include "SMesh_type.h"
 #include <CGAL/subdivision_method_3.h>
+
 using namespace CGAL::Three;
+namespace params = CGAL::parameters;
+
 class Polyhedron_demo_subdivision_methods_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
@@ -81,7 +84,7 @@ void Polyhedron_demo_subdivision_methods_plugin::apply_loop(FaceGraphItem* item,
   time.start();
   messages->information("Loop subdivision...");
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  CGAL::Subdivision_method_3::Loop_subdivision(*graph, nb_steps);
+  CGAL::Subdivision_method_3::Loop_subdivision(*graph, params::number_of_iterations(nb_steps));
   messages->information(QString("ok (%1 ms)").arg(time.elapsed()));
   QApplication::restoreOverrideCursor();
   item->invalidateOpenGLBuffers();
@@ -113,7 +116,7 @@ void Polyhedron_demo_subdivision_methods_plugin::apply_catmullclark(FaceGraphIte
   time.start();
   messages->information("Catmull-Clark subdivision...");
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  CGAL::Subdivision_method_3::CatmullClark_subdivision(*graph, nb_steps);
+  CGAL::Subdivision_method_3::CatmullClark_subdivision(*graph, params::number_of_iterations(nb_steps));
   messages->information(QString("ok (%1 ms)").arg(time.elapsed()));
   QApplication::restoreOverrideCursor();
   item->invalidateOpenGLBuffers();
@@ -143,7 +146,7 @@ void Polyhedron_demo_subdivision_methods_plugin::apply_sqrt3(FaceGraphItem* item
   time.start();
   messages->information("Sqrt-3 subdivision...");
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  CGAL::Subdivision_method_3::Sqrt3_subdivision(*graph, nb_steps);
+  CGAL::Subdivision_method_3::Sqrt3_subdivision(*graph, params::number_of_iterations(nb_steps));
   messages->information(QString("ok (%1 ms)").arg(time.elapsed()));
   QApplication::restoreOverrideCursor();
   item->invalidateOpenGLBuffers();
@@ -175,7 +178,7 @@ void Polyhedron_demo_subdivision_methods_plugin::apply_doosabin(FaceGraphItem* i
   time.start();
   messages->information("Doo-Sabin subdivision...");
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  CGAL::Subdivision_method_3::DooSabin_subdivision(*graph, nb_steps);
+  CGAL::Subdivision_method_3::DooSabin_subdivision(*graph, params::number_of_iterations(nb_steps));
   messages->information(QString("ok (%1 ms)").arg(time.elapsed()));
   QApplication::restoreOverrideCursor();
   item->invalidateOpenGLBuffers();

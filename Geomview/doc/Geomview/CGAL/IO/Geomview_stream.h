@@ -363,19 +363,6 @@ operator<<(Geomview_stream& gs, const Bbox_2& b);
 Geomview_stream&
 operator<<(Geomview_stream& gs, const Bbox_3& b);
 
-/*!
-  Inserts the bounding box `b` into the stream `gs`.
-  \relates Geomview_stream
-*/
-Geomview_stream&
-operator<<(Geomview_stream& gs, const Bbox_3& b);
-
-/*!
-  Inserts the bounding box `b` into the stream `gs`.
-  \relates Geomview_stream
-*/
-Geomview_stream&
-operator<<(Geomview_stream& gs, const Bbox_3& b);
 
 /// @}
 

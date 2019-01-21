@@ -10,7 +10,7 @@ typedef HDTriangulation::Vertex_handle 						Vertex_handle;
 typedef HDTriangulation::Vertex_circulator 					Vertex_circulator;
 
 
-int main(int argc, char**argv) 
+int main() 
 {
 	HDTriangulation tri;
 

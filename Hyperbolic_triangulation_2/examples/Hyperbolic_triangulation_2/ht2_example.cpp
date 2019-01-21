@@ -2,7 +2,6 @@
 #include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 
 #include <CGAL/point_generators_2.h>
-#include <CGAL/CORE_Expr.h>
 #include <CGAL/Timer.h>
 
 #include <iostream>

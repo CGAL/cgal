@@ -1,6 +1,6 @@
-/*!
-\defgroup PkgClassificationRef Classification Reference
+/// \defgroup PkgClassificationRef Classification Reference
 
+/*!
 \defgroup PkgClassificationConcepts Concepts
 \ingroup PkgClassificationRef
 

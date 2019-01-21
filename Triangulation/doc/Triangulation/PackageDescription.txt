@@ -1,4 +1,4 @@
-/// \defgroup PkgTriangulationsRef dD Triangulations
+/// \defgroup PkgTriangulationsRef dD Triangulations Reference
 /// \defgroup PkgTriangulationsConcepts Concepts
 /// \ingroup PkgTriangulationsRef
 

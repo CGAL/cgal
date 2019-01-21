@@ -8,6 +8,10 @@ if(NOT POLICY CMP0070 AND POLICY CMP0053)
   cmake_policy(SET CMP0053 OLD)
 endif()
 
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
+
 find_package(CGAL COMPONENTS Core Qt5 )
 
 find_package( Qt5 QUIET COMPONENTS Gui Widgets)

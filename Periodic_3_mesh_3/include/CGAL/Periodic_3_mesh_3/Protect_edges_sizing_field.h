@@ -772,7 +772,6 @@ get_positions_with_vertex_at_extremity(const Bare_point& known_point,
             << " inverted order ? " << std::boolalpha << inverted_return_order << std::endl;
 #endif
 
-  CGAL_precondition(known_point != Bare_point());
   CGAL_precondition(!domain_.is_loop(curve_index));
   CGAL_precondition(extremity_points.size() == 2);
 

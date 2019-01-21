@@ -839,6 +839,7 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_WITH_LIGHT:
     case PROGRAM_SPHERES:
     case PROGRAM_CUTPLANE_SPHERES:
+    case PROGRAM_HEAT_INTENSITY:
       
       program->setUniformValue("alpha", 1.0f); //overriden in item draw() if necessary
     }
@@ -854,6 +855,7 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_SPHERES:
     case PROGRAM_OLD_FLAT:
     case PROGRAM_FLAT:
+    case PROGRAM_HEAT_INTENSITY:
         program->setUniformValue("light_pos", light_pos);
         program->setUniformValue("light_diff",d->diffuse);
         program->setUniformValue("light_spec", d->specular);
@@ -872,6 +874,7 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_SPHERES:
     case PROGRAM_OLD_FLAT:
     case PROGRAM_FLAT:
+    case PROGRAM_HEAT_INTENSITY:
       program->setUniformValue("mv_matrix", mv_mat);
       break;
     case PROGRAM_WITHOUT_LIGHT:
@@ -1071,6 +1074,18 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     program->setProperty("hasNormals", true);
     program->setProperty("hasTransparency", true);
     program->setProperty("hasFMatrix", true);
+    return program;
+  }
+  case PROGRAM_HEAT_INTENSITY:
+  {
+    QOpenGLShaderProgram* program = isOpenGL_4_3() 
+        ? declare_program(name, ":/cgal/Polyhedron_3/resources/heat_intensity_shader.v" , ":/cgal/Polyhedron_3/resources/heat_intensity_shader.f")
+        : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/heat_intensity_shader.v" , 
+                          ":/cgal/Polyhedron_3/resources/compatibility_shaders/heat_intensity_shader.f");
+    program->setProperty("hasLight", true);
+    program->setProperty("hasNormals", true);
+    program->setProperty("hasTransparency", true);
+    program->setProperty("hasDistanceValues", true);
     return program;
   }
   case PROGRAM_WITHOUT_LIGHT:

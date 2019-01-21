@@ -210,48 +210,20 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
     //Computes the normal of the facet
     Traits::Vector_3 normal = CGAL::NULL_VECTOR;
 
-    // The three first vertices may be aligned, we need to test other
-    // combinations
-    Point_3 pa, pb, pc;
-    for (std::size_t i = 0; i < pit->size() - 2; ++ i)
-    {
-       pa = soup->points[pit->at(i)];
-       pb = soup->points[pit->at(i+1)];
-       pc = soup->points[pit->at(i+2)];
-       if (!CGAL::collinear (pa, pb, pc))
-       {
-          normal = CGAL::cross_product(pb-pa, pc -pa);
-          break;
-       }
+    //Newell's method
+    for (std::size_t i = 0; i < pit->size() ; ++ i){
+      const Point_3& pa = soup->points[pit->at(i)];
+      const Point_3& pb = soup->points[pit->at((i+1)%pit->size())];
+      double x = normal.x() + (pa.y()-pb.y())*(pa.z()+pb.z());
+      double y = normal.y() + (pa.z()-pb.z())*(pa.x()+pb.x());
+      double z = normal.z() + (pa.x()-pb.x())*(pa.y()+pb.y());
+      normal = Traits::Vector_3(x,y,z);
     }
-
     if (normal == CGAL::NULL_VECTOR) // No normal could be computed, return
       return;
-
-    normal = normal / std::sqrt (normal * normal);
-
-    // If the 3 points used to estimate the normal form a concavity,
-    // then the normal is wrongly oriented. To address this, we
-    // compute the resulting projected 2D polygon and check if it
-    // correctly oriented (counterclockwise). If it's not, we invert
-    // the normal.
-    {
-        EPICK::Plane_3 plane (pa, normal);
-        CGAL::Polygon_2<EPICK> poly;
-        for (std::size_t i = 0; i < pit->size(); ++ i)
-            poly.push_back (plane.to_2d(soup->points[pit->at(i)]));
-
-        if (poly.is_simple() && poly.is_clockwise_oriented())
-            normal = -normal;
-    }
-
+    
     typedef FacetTriangulator<SMesh, EPICK, std::size_t> FT;
 
-    double diagonal;
-    if(item->diagonalBbox() != std::numeric_limits<double>::infinity())
-      diagonal = item->diagonalBbox();
-    else
-      diagonal = 0.0;
     std::size_t it = 0;
     std::size_t it_end =pit->size();
     std::vector<FT::PointAndId> pointIds;
@@ -276,7 +248,7 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
       }
      }
     }
-    FT triangulation(pointIds,normal,diagonal);
+    FT triangulation(pointIds,normal);
     //iterates on the internal faces to add the vertices to the positions
     //and the normals to the appropriate vectors
     for(FT::CDT::Finite_faces_iterator
