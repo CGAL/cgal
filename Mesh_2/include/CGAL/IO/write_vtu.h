@@ -206,11 +206,11 @@ write_cells_2(std::ostream& os,
 // writes the points tags before binary data is appended
 template <class Tr>
 void 
-write_points_tag(std::ostream& os,
-                 const Tr & tr,
-                 std::map<typename Tr::Vertex_handle, std::size_t> & V,
-                 bool binary,
-                 std::size_t& offset) 
+write_cdt_points_tag(std::ostream& os,
+                     const Tr & tr,
+                     std::map<typename Tr::Vertex_handle, std::size_t> & V,
+                     bool binary,
+                     std::size_t& offset)
 {
   std::size_t dim = 2;
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
@@ -313,7 +313,7 @@ void write_vtu(std::ostream& os,
      << "\" NumberOfCells=\"" << number_of_triangles + std::distance(tr.constrained_edges_begin(), tr.constrained_edges_end()) << "\">\n";
   std::size_t offset = 0;
   const bool binary = (mode == IO::BINARY);
-  write_points_tag(os,tr,V,binary,offset);
+  write_cdt_points_tag(os,tr,V,binary,offset);
   write_cells_tag_2(os,tr,number_of_triangles, V,binary,offset);
   os << "   </Piece>\n"
      << "  </UnstructuredGrid>\n";

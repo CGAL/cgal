@@ -150,11 +150,11 @@ write_cells(std::ostream& os,
 
 template <class Tr>
 void 
-write_points_tag(std::ostream& os,
-                 const Tr & tr,
-                 std::map<typename Tr::Vertex_handle, std::size_t> & V,
-                 bool binary,
-                 std::size_t& offset) 
+write_c3t3_points_tag(std::ostream& os,
+                      const Tr & tr,
+                      std::map<typename Tr::Vertex_handle, std::size_t> & V,
+                      bool binary,
+                      std::size_t& offset)
 {
   std::size_t dim = 3;
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
@@ -288,7 +288,7 @@ void output_to_vtu(std::ostream& os,
      << "\" NumberOfCells=\"" << c3t3.number_of_cells() << "\">\n";
   std::size_t offset = 0;
   const bool binary = (mode == IO::BINARY);
-  write_points_tag(os,tr,V,binary,offset);
+  write_c3t3_points_tag(os,tr,V,binary,offset);
   write_cells_tag(os,c3t3,V,binary,offset);
   std::vector<float> mids;      
     os << "   <CellData Domain=\"MeshDomain";
