@@ -90,7 +90,7 @@ public:
   PainterOstream& operator << (Hyperbolic_segment_2 s)
   {
     if(const Euclidean_segment_2* seg = boost::get<Euclidean_segment_2>(&s)) {
-      operator << (*seg);
+		CGAL::Qt::PainterOstream<K>::operator << (*seg);
       return *this;
     }
 
@@ -98,7 +98,7 @@ public:
 
     if(arc->squared_radius() > 100) {
       Euclidean_segment_2 seg(arc->source(), arc->target());
-      operator << (seg);
+	  CGAL::Qt::PainterOstream<K>::operator << (seg);
       return *this;
     }
 
