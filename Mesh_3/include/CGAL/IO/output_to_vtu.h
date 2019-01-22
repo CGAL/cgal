@@ -124,8 +124,7 @@ template <class C3T3>
 void
 write_cells(std::ostream& os,
             const C3T3 & c3t3,
-            std::map<typename C3T3::Triangulation::Vertex_handle, std::size_t> & V,
-            std::vector<float>& mids)
+            std::map<typename C3T3::Triangulation::Vertex_handle, std::size_t> & V)
 {
   typedef typename C3T3::Cells_in_complex_iterator Cell_iterator;
   std::vector<std::size_t> connectivity_table;
@@ -140,7 +139,6 @@ write_cells(std::ostream& os,
       offsets.push_back(off);
       for (int i=0; i<4; i++)
 	connectivity_table.push_back(V[cit->vertex(i)]);
-      mids.push_back(cit->subdomain_index());
     }
   write_vector<std::size_t>(os,connectivity_table);
   write_vector<std::size_t>(os,offsets);
@@ -294,7 +292,15 @@ void output_to_vtu(std::ostream& os,
   const bool binary = (mode == IO::BINARY);
   write_c3t3_points_tag(os,tr,number_of_vertices,V,binary,offset);
   write_cells_tag(os,c3t3,V,binary,offset); // fills V if the mode is ASCII
-  std::vector<float> mids;      
+
+  std::vector<float> mids;
+  mids.reserve(c3t3.number_of_cells_in_complex());
+  for( typename C3T3::Cell_iterator cit = c3t3.cells_in_complex_begin() ;
+       cit != c3t3.cells_in_complex_end() ;
+       ++cit ) {
+    mids.push_back(cit->subdomain_index());
+  }
+
   os << "   <CellData Scalars=\"MeshDomain";
   os << "\">\n";
   write_attribute_tag(os,"MeshDomain",mids,binary,offset);
@@ -304,7 +310,7 @@ void output_to_vtu(std::ostream& os,
   if (binary) {
     os << "<AppendedData encoding=\"raw\">\n_"; 
     write_c3t3_points(os,tr,V); // fills V if the mode is BINARY
-    write_cells(os,c3t3,V, mids);
+    write_cells(os,c3t3,V);
     write_attributes(os,mids);
   }
   os << "</VTKFile>\n";
