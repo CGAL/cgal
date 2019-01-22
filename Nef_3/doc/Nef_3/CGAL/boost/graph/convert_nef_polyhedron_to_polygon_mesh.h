@@ -29,7 +29,8 @@ namespace CGAL {
   /// `value_type` is a model of the concept `RandomAccessContainer` whose `value_type` is `std::size_t`.
   /// 
   /// @param nef the input.
-  /// @param pm the output.
+  /// @param points the output points of the soup
+  /// @param polygons the output polygons of the soup. 
   /// @param triangulate_all_faces indicates whether all polygons must be triangulated.
   template <class Output_kernel, class Nef_polyhedron, typename PolygonRange, typename PointRange>
   void convert_nef_polyhedron_to_polygon_soup(const Nef_polyhedron& nef,

@@ -1,5 +1,13 @@
 Release History
 ===============
+Release 4.15
+------------
+
+Release date: September 2019
+
+###3D Boolean Operations on Nef Polyhedra
+-   Added a function to convert a Nef_polyhedron to a polygon soup:
+    - `CGAL::convert_nef_to_polygon_soup()`
 
 Release 4.14
 ------------
