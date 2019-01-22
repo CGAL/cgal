@@ -114,6 +114,7 @@ Stream_lines_2
 Stream_support 
 Subdivision_method_3 
 Surface_mesh 
+Surface_mesh_approximation 
 Surface_mesh_deformation 
 Surface_mesher 
 Surface_mesh_parameterization 

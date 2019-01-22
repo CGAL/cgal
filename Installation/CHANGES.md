@@ -25,6 +25,11 @@ Release date: March 2019
     for all vertices of a triangle mesh to the closest vertex in a given set of
     source vertices. 
 
+### Triangulated Surface Mesh Approximation (new package)
+
+-   This package implements the Variational Shape Approximation method to approximate
+    an input surface triangle mesh by a simpler surface triangle mesh.
+
 ### Polygon Mesh Processing package
 -   Added the following new functions to detect and repair issues in polygon soups:
     - `CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup()`, which detects and removes
@@ -81,9 +86,16 @@ Release date: March 2019
     `Arr_polyline_traits_2`, `Arr_polycurve_traits_2`, and
     `Arr_polycurve_basic_traits_2`.
 
+### 2D Minkowski Sums
+
+-   Fixed a bug in the function that computed the Minkowski sum using the
+    reduced-convolution method. In particular, correctly handled the case where
+    one of the summands does not have an outer boundaey.
+
 ### CGAL and the Boost Graph Library (BGL)
 
 -    Add function `write_wrl()` for writing into VRML 2.0 format.
+
 
 Release 4.13
 ------------
