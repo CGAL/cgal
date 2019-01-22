@@ -62,11 +62,11 @@ int main(int argc, char** argv)
 
   // Finally, we try to manually remove all dummy points from the triangulation.
   std::cout << "Cleaning dummy points from the triangulation... "; std::cout.flush();
-  int DP_remaining = tr.try_to_remove_dummy_vertices();
+  tr.try_to_remove_dummy_vertices();
   std::cout << "DONE! " << std::endl;
 
   // Make sure that the triangulation is valid.
-  CGAL_assertion(tr.is_valid());
+  assert(tr.is_valid());
 
   std::size_t NV = tr.number_of_vertices();
   std::size_t NF = tr.number_of_faces();
@@ -75,9 +75,6 @@ int main(int argc, char** argv)
   // This function `tr.number_of_dummy_points()` returns the number of dummy points that
   // are currently in the triangulation.
   int NDP = tr.number_of_dummy_points();
-
-  // The result must be identical.
-  CGAL_assertion(NDP == DP_remaining);
 
   std::cout << std::endl;
   std::cout << "-------------- STATS --------------" << std::endl;
@@ -94,11 +91,11 @@ int main(int argc, char** argv)
 
   // The number of vertices in the triangulation must equal the number of points
   // inserted, plus the dummy points in the triangulation.
-  CGAL_assertion(N_inserted + NDP == NV);
+  assert(N_inserted + NDP == NV);
   std::cout << "Number of vertices is correct!     " << std::endl;
 
   // Note that the Euler relation is already verified by the function `is_valid()`.
-  CGAL_assertion((2 + NE - NV - NF) / 2 == 2);
+  assert((2 + NE - NV - NF) / 2 == 2);
   std::cout << "Euler relation verified!           " << std::endl << std::endl;
 
   return EXIT_SUCCESS;

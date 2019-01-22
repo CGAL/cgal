@@ -197,7 +197,6 @@ public:
 
   void operator()(Int idx, Int val)
   {
-    CGAL_precondition(idx >= 0 && idx <= 3);
     switch (idx) {
       case 0:
         w0 = val;
@@ -219,7 +218,6 @@ public:
 
   Int operator()(Int i) const
   {
-    CGAL_precondition(i >= 0 && i <= 3);
     switch (i) {
       case 0:
         return w0;
@@ -234,7 +232,6 @@ public:
 
   bool b(Int i) const
   {
-    CGAL_precondition(i >= 0 && i <= 3);
     switch (i) {
       case 0:
         return b0;
