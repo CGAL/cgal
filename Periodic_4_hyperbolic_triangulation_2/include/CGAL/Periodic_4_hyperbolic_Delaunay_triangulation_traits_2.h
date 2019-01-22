@@ -63,6 +63,10 @@ public:
 #ifndef CGAL_CFG_MATCHING_BUG_6
   using Predicate::operator();
 #else
+  result_type operator()(const Point& p0, const Point& p1) const
+  {
+	  return Predicate()(p0, p1);
+  }
   result_type operator()(const Point& p0, const Point& p1, const Point& p2) const
   {
     return Predicate()(p0,p1,p2);
