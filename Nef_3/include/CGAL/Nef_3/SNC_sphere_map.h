@@ -153,7 +153,6 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
   ~SNC_sphere_map() { if(destruct) delete this->sncp(); }
 
   SNC_sphere_map(const Base& v) : Base(v), destruct(false) {}
-  SNC_sphere_map(const Self& M) : Base((Base) M), destruct(M.destruct) {}
 
   Self& operator=(const Self& M) {
     destruct = M.destruct;
