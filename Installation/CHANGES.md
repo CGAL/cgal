@@ -6,6 +6,17 @@ Release 4.14
 
 Release date: March 2019
 
+### The Heat Method (new package)
+-   This package provides an algorithm that solves the single- or multiple-source
+    shortest path problem by returning an approximation of the geodesic distance
+    for all vertices of a triangle mesh to the closest vertex in a given set of
+    source vertices. 
+
+### Triangulated Surface Mesh Approximation (new package)
+
+-   This package implements the Variational Shape Approximation method to approximate
+    an input surface triangle mesh by a simpler surface triangle mesh.
+
 ### Polygon Mesh Processing package
 -   Added the following new functions to detect and repair issues in polygon soups:
     - `CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup()`, which detects and removes
@@ -68,11 +79,18 @@ Release date: March 2019
     - `CGAL::write_vtu()`, that writes a 2D mesh in a `.vtu` file,
     - `CGAL::output_to_vtu()`, that writes a 3D mesh in a `.vtu` file.
 
+### 2D Minkowski Sums
+
+-   Fixed a bug in the function that computed the Minkowski sum using the
+    reduced-convolution method. In particular, correctly handled the case where
+    one of the summands does not have an outer boundaey.
+
 ### CGAL and the Boost Graph Library (BGL)
 
 -   Added function `write_wrl()` for writing into VRML 2.0 format.
 -   Added functions `CGAL::write_vtp()` for writing a triangulated
       face graph in a `.vtp` file (XML VTK format).
+
 
 
 Release 4.13

@@ -289,8 +289,8 @@ protected:
     RT x3 = p3.x(), y3 = p3.y();
     RT x4 = p4.x(), y4 = p4.y();
 
-    RT D = determinant(x2 - x1, x4 - x3, y2 - y1, y4 - y3);
-    RT Dt = determinant(x3 - x1, x4 - x3, y3 - y1, y4 - y3);
+    RT D = determinant<RT>(x2 - x1, x4 - x3, y2 - y1, y4 - y3);
+    RT Dt = determinant<RT>(x3 - x1, x4 - x3, y3 - y1, y4 - y3);
 
     RT t = Dt / D;
 

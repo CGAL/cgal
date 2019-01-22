@@ -23,6 +23,8 @@
 //                 Kaspar Fischer
 
 #include <CGAL/QP_solver/Initialization.h>
+#include <boost/bind.hpp>
+#include <CGAL/NT_converter.h>
 
 namespace CGAL {
 
@@ -67,9 +69,13 @@ transition( )
 
     // initialize exact version of `-qp_c' (implicit conversion to ET)
     C_by_index_accessor  c_accessor( qp_c);
+    typedef typename std::iterator_traits<C_by_index_iterator>::value_type RT;
     std::transform( C_by_index_iterator( B_O.begin(), c_accessor),
                     C_by_index_iterator( B_O.end  (), c_accessor),
-                    minus_c_B.begin(), std::negate<ET>());
+                    minus_c_B.begin(),
+		    boost::bind(
+		      NT_converter<RT,ET>(),
+		      boost::bind(std::negate<RT>(), _1)));
     
     // compute initial solution of phase II
     compute_solution(Is_nonnegative());
@@ -419,7 +425,8 @@ ratio_test_init__A_Cj( Value_iterator A_Cj_it, int j_, Tag_true)
     // store exact version of `A_Cj' (implicit conversion)
     if ( j_ < qp_n) {                                   // original variable
 
-	CGAL::cpp11::copy_n( *(qp_A + j_), qp_m, A_Cj_it);
+	CGAL::transform_n( *(qp_A + j_), qp_m, A_Cj_it,
+	    NT_converter<A_entry,ET>());
 
     } else {                                            // artificial variable
 
@@ -437,9 +444,11 @@ ratio_test_init__A_Cj( Value_iterator A_Cj_it, int j_, Tag_false)
     // store exact version of `A_Cj' (implicit conversion)
     if ( j_ < qp_n) {                                   // original variable
       A_by_index_accessor  a_accessor( *(qp_A + j_));
-      std::copy( A_by_index_iterator( C.begin(), a_accessor),
-                 A_by_index_iterator( C.end  (), a_accessor),
-                 A_Cj_it);
+      typedef typename std::iterator_traits<A_by_index_iterator>::value_type RT;
+      std::transform(A_by_index_iterator( C.begin(), a_accessor),
+		     A_by_index_iterator( C.end  (), a_accessor),
+		     A_Cj_it,
+		     NT_converter<RT,ET>());
 
     } else {
       unsigned int  k = j_;
@@ -461,9 +470,11 @@ ratio_test_init__A_Cj( Value_iterator A_Cj_it, int j_, Tag_false)
 
         } else {                                        // special art.
           S_by_index_accessor  s_accessor( art_s.begin());
-          std::copy( S_by_index_iterator( C.begin(), s_accessor),
-                     S_by_index_iterator( C.end  (), s_accessor),
-                     A_Cj_it);
+	  typedef typename std::iterator_traits<S_by_index_iterator>::value_type RT;
+          std::transform(S_by_index_iterator( C.begin(), s_accessor),
+			 S_by_index_iterator( C.end  (), s_accessor),
+			 A_Cj_it,
+			 NT_converter<RT,ET>());
         }	
       }
     }
@@ -1347,7 +1358,7 @@ replace_variable_original_original( )
 
     minus_c_B[ k] = 
       ( is_phaseI ? 
-	( j < qp_n ? et0 : -aux_c[j-qp_n-slack_A.size()]) : -ET( *(qp_c+ j)));
+	( j < qp_n ? et0 : ET(-aux_c[j-qp_n-slack_A.size()])) : -ET( *(qp_c+ j)));
 
     if ( is_phaseI) {
 	if ( j >= qp_n) ++art_basic;
@@ -1437,9 +1448,11 @@ replace_variable_slack_slack( )
     // update basis inverse
     A_row_by_index_accessor  a_accessor =
       boost::bind( A_accessor( qp_A, 0, qp_n), _1, new_row);
-    std::copy( A_row_by_index_iterator( B_O.begin(), a_accessor),
-	       A_row_by_index_iterator( B_O.end  (), a_accessor),
-	       tmp_x.begin());
+    typedef typename std::iterator_traits<A_row_by_index_iterator>::value_type RT;
+    std::transform(A_row_by_index_iterator( B_O.begin(), a_accessor),
+		   A_row_by_index_iterator( B_O.end  (), a_accessor),
+		   tmp_x.begin(),
+		   NT_converter<RT,ET>());
     if ( art_s_i > 0) {                                 // special artificial
 	tmp_x[ in_B[ art_s_i]] = ET( art_s[ new_row]);
     }
@@ -1557,7 +1570,7 @@ replace_variable_original_slack( )
 
     minus_c_B[ B_O.size()]
       = ( is_phaseI ? 
-	  ( j < qp_n ? et0 : -aux_c[j-qp_n-slack_A.size()]) 
+	  ( j < qp_n ? et0 : ET(-aux_c[j-qp_n-slack_A.size()]))
 	  : -ET( *(qp_c+ j)));
     
 
@@ -1588,9 +1601,11 @@ replace_variable_original_slack( )
     // update basis inverse
     A_row_by_index_accessor  a_accessor =
       boost::bind (A_accessor( qp_A, 0, qp_n), _1, new_row);
-    std::copy( A_row_by_index_iterator( B_O.begin(), a_accessor),
-	       A_row_by_index_iterator( B_O.end  (), a_accessor),
-	       tmp_x.begin());
+    typedef typename std::iterator_traits<A_row_by_index_iterator>::value_type RT;
+    std::transform(A_row_by_index_iterator( B_O.begin(), a_accessor),
+		   A_row_by_index_iterator( B_O.end  (), a_accessor),
+		   tmp_x.begin(),
+		   NT_converter<RT,ET>());
     if ( art_s_i > 0) {                                 // special art.
 	tmp_x[ in_B[ art_s_i]] = ET( art_s[ new_row]);
     }
@@ -2618,7 +2633,8 @@ multiply__A_S_BxB_O(Value_iterator in, Value_iterator out) const
       // foreach row of A in S_B
       for ( row_it = S_B.begin(); row_it != S_B.end(); ++row_it,
 	      ++out_it) {
-	*out_it += ET( a_col[ *row_it]) * in_value;
+	A_entry x = a_col[*row_it];
+	*out_it += ET(x) * in_value;
       }
     } else {
       if ( *col_it == art_s_i) {                  // special artificial
