@@ -36,8 +36,7 @@
 #include <CGAL/IO/read_las_points.h>
 #include <CGAL/IO/write_las_points.h>
 #endif // LAS
-#include <CGAL/IO/read_ply_points.h>
-#include <CGAL/IO/write_ply_points.h>
+#include <CGAL/IO/PLY.h>
 #endif // CXX11
 
 namespace CGAL {
