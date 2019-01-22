@@ -203,11 +203,18 @@ struct RET_boost_mp_base
         : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
         std::pair<double, double>
         operator()(const Type& x) const {
+            // See if https://github.com/boostorg/multiprecision/issues/108 suggests anything better
             // assume the conversion is within 1 ulp
             // adding IA::smallest() doesn't work because inf-e=inf, even rounded down.
-            double d = x.template convert_to<double>();
+            double i = x.template convert_to<double>();
+            double s = i;
             double inf = std::numeric_limits<double>::infinity();
-            return std::pair<double, double> (nextafter (d, -inf), nextafter (d, inf));
+            int cmp = x.compare(i);
+            if (cmp > 0)
+              s = nextafter(s, +inf);
+            else if (cmp < 0)
+              i = nextafter(i, -inf);
+            return std::pair<double, double> (i, s);
         }
     };
 };
@@ -234,28 +241,28 @@ struct RET_boost_mp <boost::multiprecision::mpz_int>
         std::pair<double, double>
         operator()(const Type& x) const {
 #if MPFR_VERSION_MAJOR >= 3
-	  MPFR_DECL_INIT (y, 53); /* Assume IEEE-754 */
-	  int r = mpfr_set_z (y, x.backend().data(), MPFR_RNDA);
-	  double i = mpfr_get_d (y, MPFR_RNDA); /* EXACT but can overflow */
-	  if (r == 0 && is_finite (i))
-	    return std::pair<double, double>(i, i);
-	  else
-	  {
-	    double s = nextafter (i, 0);
-	    if (i < 0)
-	      return std::pair<double, double>(i, s);
-	    else
-	      return std::pair<double, double>(s, i);
-	  }
+          MPFR_DECL_INIT (y, 53); /* Assume IEEE-754 */
+          int r = mpfr_set_z (y, x.backend().data(), MPFR_RNDA);
+          double i = mpfr_get_d (y, MPFR_RNDA); /* EXACT but can overflow */
+          if (r == 0 && is_finite (i))
+            return std::pair<double, double>(i, i);
+          else
+          {
+            double s = nextafter (i, 0);
+            if (i < 0)
+              return std::pair<double, double>(i, s);
+            else
+              return std::pair<double, double>(s, i);
+          }
 #else
-	  mpfr_t y;
-	  mpfr_init2 (y, 53); /* Assume IEEE-754 */
-	  mpfr_set_z (y, x.backend().data(), GMP_RNDD);
-	  double i = mpfr_get_d (y, GMP_RNDD); /* EXACT but can overflow */
-	  mpfr_set_z (y, x.backend().data(), GMP_RNDU);
-	  double s = mpfr_get_d (y, GMP_RNDU); /* EXACT but can overflow */
-	  mpfr_clear (y);
-	  return std::pair<double, double>(i, s);
+          mpfr_t y;
+          mpfr_init2 (y, 53); /* Assume IEEE-754 */
+          mpfr_set_z (y, x.backend().data(), GMP_RNDD);
+          double i = mpfr_get_d (y, GMP_RNDD); /* EXACT but can overflow */
+          mpfr_set_z (y, x.backend().data(), GMP_RNDU);
+          double s = mpfr_get_d (y, GMP_RNDU); /* EXACT but can overflow */
+          mpfr_clear (y);
+          return std::pair<double, double>(i, s);
 #endif
         }
     };
@@ -269,33 +276,33 @@ struct RET_boost_mp <boost::multiprecision::mpq_rational>
         std::pair<double, double>
         operator()(const Type& x) const {
 # if MPFR_VERSION_MAJOR >= 3
-	    mpfr_exp_t emin = mpfr_get_emin();
-	    mpfr_set_emin(-1073);
-	    MPFR_DECL_INIT (y, 53); /* Assume IEEE-754 */
-	    int r = mpfr_set_q (y, x.backend().data(), MPFR_RNDA);
-	    r = mpfr_subnormalize (y, r, MPFR_RNDA); /* Round subnormals */
-	    double i = mpfr_get_d (y, MPFR_RNDA); /* EXACT but can overflow */
-	    mpfr_set_emin(emin); /* Restore old value, users may care */
-	    // With mpfr_set_emax(1024) we could drop the is_finite test
-	    if (r == 0 && is_finite (i))
-	      return std::pair<double, double>(i, i);
-	    else
-	    {
-	      double s = nextafter (i, 0);
-	      if (i < 0)
-		return std::pair<double, double>(i, s);
-	      else
-		return std::pair<double, double>(s, i);
-	    }
+            mpfr_exp_t emin = mpfr_get_emin();
+            mpfr_set_emin(-1073);
+            MPFR_DECL_INIT (y, 53); /* Assume IEEE-754 */
+            int r = mpfr_set_q (y, x.backend().data(), MPFR_RNDA);
+            r = mpfr_subnormalize (y, r, MPFR_RNDA); /* Round subnormals */
+            double i = mpfr_get_d (y, MPFR_RNDA); /* EXACT but can overflow */
+            mpfr_set_emin(emin); /* Restore old value, users may care */
+            // With mpfr_set_emax(1024) we could drop the is_finite test
+            if (r == 0 && is_finite (i))
+              return std::pair<double, double>(i, i);
+            else
+            {
+              double s = nextafter (i, 0);
+              if (i < 0)
+                return std::pair<double, double>(i, s);
+              else
+                return std::pair<double, double>(s, i);
+            }
 # else
-	    mpfr_t y;
-	    mpfr_init2 (y, 53); /* Assume IEEE-754 */
-	    mpfr_set_q (y, x.backend().data(), GMP_RNDD);
-	    double i = mpfr_get_d (y, GMP_RNDD); /* EXACT but can overflow */
-	    mpfr_set_q (y, x.backend().data(), GMP_RNDU);
-	    double s = mpfr_get_d (y, GMP_RNDU); /* EXACT but can overflow */
-	    mpfr_clear (y);
-	    return std::pair<double, double>(i, s);
+            mpfr_t y;
+            mpfr_init2 (y, 53); /* Assume IEEE-754 */
+            mpfr_set_q (y, x.backend().data(), GMP_RNDD);
+            double i = mpfr_get_d (y, GMP_RNDD); /* EXACT but can overflow */
+            mpfr_set_q (y, x.backend().data(), GMP_RNDU);
+            double s = mpfr_get_d (y, GMP_RNDU); /* EXACT but can overflow */
+            mpfr_clear (y);
+            return std::pair<double, double>(i, s);
 # endif
         }
     };
