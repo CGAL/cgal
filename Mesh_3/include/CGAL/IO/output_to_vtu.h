@@ -152,6 +152,7 @@ template <class Tr>
 void 
 write_c3t3_points_tag(std::ostream& os,
                       const Tr & tr,
+                      std::size_t size_of_vertices,
                       std::map<typename Tr::Vertex_handle, std::size_t> & V,
                       bool binary,
                       std::size_t& offset)
@@ -171,7 +172,7 @@ write_c3t3_points_tag(std::ostream& os,
 
   if (binary) {
     os << "\" offset=\"" << offset << "\"/>\n";    
-    offset += 3 * tr.number_of_vertices() * sizeof(FT) + sizeof(std::size_t);
+    offset += 3 * size_of_vertices * sizeof(FT) + sizeof(std::size_t);
     // dim coords per points + length of the encoded data (size_t)
   }
   else {
@@ -180,14 +181,15 @@ write_c3t3_points_tag(std::ostream& os,
          vit != tr.finite_vertices_end();
          ++vit)
     {
+      if(vit->in_dimension() <= -1) continue;
       V[vit] = inum++;
-        os << vit->point()[0] << " ";
-        os << vit->point()[1] << " ";
-        if(dim == 3) 
-          os << vit->point()[2] << " ";
-        else
-          os << 0.0 << " ";
-      }
+      os << vit->point()[0] << " ";
+      os << vit->point()[1] << " ";
+      if(dim == 3)
+        os << vit->point()[2] << " ";
+      else
+        os << 0.0 << " ";
+    }
     os << "      </DataArray>\n";
   }
   os << "    </Points>\n";
@@ -212,6 +214,7 @@ write_c3t3_points(std::ostream& os,
        vit != tr.finite_vertices_end();
        ++vit)
     {
+      if(vit->in_dimension() <= -1) continue;
       V[vit] = inum++;  // binary output => the map has not been filled yet
       coordinates.push_back(vit->point()[0]);
       coordinates.push_back(vit->point()[1]);
@@ -283,12 +286,13 @@ void output_to_vtu(std::ostream& os,
   }
   os << ">\n"
      << "  <UnstructuredGrid>" << "\n";
-  
-  os << "  <Piece NumberOfPoints=\"" << tr.number_of_vertices() 
+  const std::size_t number_of_vertices =
+    tr.number_of_vertices() -  c3t3.number_of_far_points();
+  os << "  <Piece NumberOfPoints=\"" << number_of_vertices
      << "\" NumberOfCells=\"" << c3t3.number_of_cells() << "\">\n";
   std::size_t offset = 0;
   const bool binary = (mode == IO::BINARY);
-  write_c3t3_points_tag(os,tr,V,binary,offset);
+  write_c3t3_points_tag(os,tr,number_of_vertices,V,binary,offset);
   write_cells_tag(os,c3t3,V,binary,offset); // fills V if the mode is ASCII
   std::vector<float> mids;      
   os << "   <CellData Domain=\"MeshDomain";
