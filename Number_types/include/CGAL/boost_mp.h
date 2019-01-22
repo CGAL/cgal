@@ -57,6 +57,9 @@
 
 # include <CGAL/enable_warnings.h>
 #endif
+#ifdef CGAL_USE_MPFR
+# include <mpfr.h>
+#endif
 
 // TODO: work on the coercions (end of the file)
 
@@ -136,6 +139,13 @@ struct AST_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_rat
     };
 };
 
+template <class Backend, boost::multiprecision::expression_template_option Eto>
+struct Algebraic_structure_traits<boost::multiprecision::number<Backend, Eto> >
+: AST_boost_mp <boost::multiprecision::number<Backend, Eto> > {};
+template <class T1,class T2,class T3,class T4,class T5>
+struct Algebraic_structure_traits<boost::multiprecision::detail::expression<T1,T2,T3,T4,T5> >
+: Algebraic_structure_traits<typename boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>::result_type > {};
+
 // Real_embeddable_traits
 
 template <class NT>
@@ -211,26 +221,58 @@ struct RET_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_int
 
 template <class NT>
 struct RET_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_rational> >
-    : RET_boost_mp_base <NT> {
-#if BOOST_VERSION < 105700
-    typedef NT Type;
+    : RET_boost_mp_base <NT> {};
+
+#ifdef CGAL_USE_MPFR
+// Because of this full specialization, things get instantiated more eagerly. Make it artificially partial if necessary.
+template <>
+struct RET_boost_mp <boost::multiprecision::mpq_rational, boost::mpl::int_<boost::multiprecision::number_kind_rational> >
+    : RET_boost_mp_base <boost::multiprecision::mpq_rational> {
+    typedef boost::multiprecision::mpq_rational Type;
     struct To_interval
         : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
         std::pair<double, double>
         operator()(const Type& x) const {
-            std::pair<double,double> p_num = CGAL::to_interval (numerator (x));
-            std::pair<double,double> p_den = CGAL::to_interval (denominator (x));
-            typedef Interval_nt<false> IA;
-            IA::Protector P;
-            // assume the conversion is within 1 ulp for integers, but the conversion from rational may be unsafe, see boost trac #10085
-            IA i_num (p_num.first, p_num.second);
-            IA i_den (p_den.first, p_den.second);
-            IA i = i_num / i_den;
-            return std::pair<double, double>(i.inf(), i.sup());
+# if MPFR_VERSION_MAJOR >= 3
+	    mpfr_exp_t emin = mpfr_get_emin();
+	    mpfr_set_emin(-1073);
+	    MPFR_DECL_INIT (y, 53); /* Assume IEEE-754 */
+	    int r = mpfr_set_q (y, x.backend().data(), MPFR_RNDA);
+	    r = mpfr_subnormalize (y, r, MPFR_RNDA); /* Round subnormals */
+	    double i = mpfr_get_d (y, MPFR_RNDA); /* EXACT but can overflow */
+	    mpfr_set_emin(emin); /* Restore old value, users may care */
+	    // With mpfr_set_emax(1024) we could drop the is_finite test
+	    if (r == 0 && is_finite (i))
+	      return std::pair<double, double>(i, i);
+	    else
+	    {
+	      double s = nextafter (i, 0);
+	      if (i < 0)
+		return std::pair<double, double>(i, s);
+	      else
+		return std::pair<double, double>(s, i);
+	    }
+# else
+	    mpfr_t y;
+	    mpfr_init2 (y, 53); /* Assume IEEE-754 */
+	    mpfr_set_q (y, x.backend().data(), GMP_RNDD);
+	    double i = mpfr_get_d (y, GMP_RNDD); /* EXACT but can overflow */
+	    mpfr_set_q (y, x.backend().data(), GMP_RNDU);
+	    double s = mpfr_get_d (y, GMP_RNDU); /* EXACT but can overflow */
+	    mpfr_clear (y);
+	    return std::pair<double, double>(i, s);
+# endif
         }
     };
-#endif
 };
+#endif
+
+template <class Backend, boost::multiprecision::expression_template_option Eto>
+struct Real_embeddable_traits<boost::multiprecision::number<Backend, Eto> >
+: RET_boost_mp <boost::multiprecision::number<Backend, Eto> > {};
+template <class T1,class T2,class T3,class T4,class T5>
+struct Real_embeddable_traits<boost::multiprecision::detail::expression<T1,T2,T3,T4,T5> >
+: Real_embeddable_traits<typename boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>::result_type > {};
 
 // Modular_traits
 
@@ -262,6 +304,13 @@ struct MT_boost_mp <T, boost::mpl::int_<boost::multiprecision::number_kind_integ
   };
 };
 
+template <class Backend, boost::multiprecision::expression_template_option Eto>
+struct Modular_traits<boost::multiprecision::number<Backend, Eto> >
+: MT_boost_mp <boost::multiprecision::number<Backend, Eto> > {};
+template <class T1,class T2,class T3,class T4,class T5>
+struct Modular_traits<boost::multiprecision::detail::expression<T1,T2,T3,T4,T5> >
+: Modular_traits<typename boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>::result_type > {};
+
 // Split_double
 
 template <class NT, class = boost::mpl::int_<boost::multiprecision::number_category<NT>::value> >
@@ -283,6 +332,13 @@ struct SD_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_inte
     den = NT(p.second);
   }
 };
+
+template <class Backend, boost::multiprecision::expression_template_option Eto>
+struct Split_double<boost::multiprecision::number<Backend, Eto> >
+: SD_boost_mp <boost::multiprecision::number<Backend, Eto> > {};
+template <class T1,class T2,class T3,class T4,class T5>
+struct Split_double<boost::multiprecision::detail::expression<T1,T2,T3,T4,T5> >
+: Split_double<typename boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>::result_type > {};
 
 
 // Fraction_traits
@@ -336,39 +392,11 @@ struct FT_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_rati
 };
 
 template <class Backend, boost::multiprecision::expression_template_option Eto>
-struct Algebraic_structure_traits<boost::multiprecision::number<Backend, Eto> >
-: AST_boost_mp <boost::multiprecision::number<Backend, Eto> > {};
-template <class T1,class T2,class T3,class T4,class T5>
-struct Algebraic_structure_traits<boost::multiprecision::detail::expression<T1,T2,T3,T4,T5> >
-: Algebraic_structure_traits<typename boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>::result_type > {};
-
-template <class Backend, boost::multiprecision::expression_template_option Eto>
-struct Real_embeddable_traits<boost::multiprecision::number<Backend, Eto> >
-: RET_boost_mp <boost::multiprecision::number<Backend, Eto> > {};
-template <class T1,class T2,class T3,class T4,class T5>
-struct Real_embeddable_traits<boost::multiprecision::detail::expression<T1,T2,T3,T4,T5> >
-: Real_embeddable_traits<typename boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>::result_type > {};
-
-template <class Backend, boost::multiprecision::expression_template_option Eto>
-struct Modular_traits<boost::multiprecision::number<Backend, Eto> >
-: MT_boost_mp <boost::multiprecision::number<Backend, Eto> > {};
-template <class T1,class T2,class T3,class T4,class T5>
-struct Modular_traits<boost::multiprecision::detail::expression<T1,T2,T3,T4,T5> >
-: Modular_traits<typename boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>::result_type > {};
-
-template <class Backend, boost::multiprecision::expression_template_option Eto>
 struct Fraction_traits<boost::multiprecision::number<Backend, Eto> >
 : FT_boost_mp <boost::multiprecision::number<Backend, Eto> > {};
 template <class T1,class T2,class T3,class T4,class T5>
 struct Fraction_traits<boost::multiprecision::detail::expression<T1,T2,T3,T4,T5> >
 : Fraction_traits<typename boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>::result_type > {};
-
-template <class Backend, boost::multiprecision::expression_template_option Eto>
-struct Split_double<boost::multiprecision::number<Backend, Eto> >
-: SD_boost_mp <boost::multiprecision::number<Backend, Eto> > {};
-template <class T1,class T2,class T3,class T4,class T5>
-struct Split_double<boost::multiprecision::detail::expression<T1,T2,T3,T4,T5> >
-: Split_double<typename boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>::result_type > {};
 
 
 // Coercions
