@@ -295,7 +295,7 @@ void output_to_vtu(std::ostream& os,
   write_c3t3_points_tag(os,tr,number_of_vertices,V,binary,offset);
   write_cells_tag(os,c3t3,V,binary,offset); // fills V if the mode is ASCII
   std::vector<float> mids;      
-  os << "   <CellData Domain=\"MeshDomain";
+  os << "   <CellData Scalars=\"MeshDomain";
   os << "\">\n";
   write_attribute_tag(os,"MeshDomain",mids,binary,offset);
   os << "    </CellData>\n";
