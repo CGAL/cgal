@@ -210,10 +210,14 @@ struct RET_boost_mp_base
             double s = i;
             double inf = std::numeric_limits<double>::infinity();
             int cmp = x.compare(i);
-            if (cmp > 0)
+            if (cmp > 0) {
               s = nextafter(s, +inf);
-            else if (cmp < 0)
+              CGAL_assertion(x.compare(s) < 0);
+            }
+            else if (cmp < 0) {
               i = nextafter(i, -inf);
+              CGAL_assertion(x.compare(i) > 0);
+            }
             return std::pair<double, double> (i, s);
         }
     };
