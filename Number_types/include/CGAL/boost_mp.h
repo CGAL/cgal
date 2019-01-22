@@ -503,7 +503,7 @@ typename boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>::result_type,
 boost::multiprecision::number<B, E> >
 { };
 
-// TODO: coercion with expressions, fix existing coercions
+// TODO: fix existing coercions
 // (double -> rational is implicit only for 1.56+, see ticket #10082)
 // The real solution would be to avoid specializing Coercion_traits for all pairs of number types and let it auto-detect what works, so only broken types need an explicit specialization.
 
@@ -521,7 +521,13 @@ struct Coercion_traits<boost::multiprecision::number<B1, E1>, int> { \
 }; \
 template <class B1, boost::multiprecision::expression_template_option E1> \
 struct Coercion_traits<int, boost::multiprecision::number<B1, E1> > \
-: Coercion_traits<boost::multiprecision::number<B1, E1>, int> {}
+: Coercion_traits<boost::multiprecision::number<B1, E1>, int> {}; \
+template <class T1, class T2, class T3, class T4, class T5> \
+struct Coercion_traits<boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>, int> \
+: Coercion_traits<typename boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>::result_type, int>{}; \
+template <class T1, class T2, class T3, class T4, class T5> \
+struct Coercion_traits<int, boost::multiprecision::detail::expression<T1,T2,T3,T4,T5> > \
+: Coercion_traits<typename boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>::result_type, int>{}
 
 CGAL_COERCE_INT(short);
 CGAL_COERCE_INT(int);
@@ -542,7 +548,13 @@ struct Coercion_traits<boost::multiprecision::number<B1, E1>, float> { \
 }; \
 template <class B1, boost::multiprecision::expression_template_option E1> \
 struct Coercion_traits<float, boost::multiprecision::number<B1, E1> > \
-: Coercion_traits<boost::multiprecision::number<B1, E1>, float> {}
+: Coercion_traits<boost::multiprecision::number<B1, E1>, float> {}; \
+template <class T1, class T2, class T3, class T4, class T5> \
+struct Coercion_traits<boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>, float> \
+: Coercion_traits<typename boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>::result_type, float>{}; \
+template <class T1, class T2, class T3, class T4, class T5> \
+struct Coercion_traits<float, boost::multiprecision::detail::expression<T1,T2,T3,T4,T5> > \
+: Coercion_traits<typename boost::multiprecision::detail::expression<T1,T2,T3,T4,T5>::result_type, float>{}
 
 CGAL_COERCE_FLOAT(float);
 CGAL_COERCE_FLOAT(double);
