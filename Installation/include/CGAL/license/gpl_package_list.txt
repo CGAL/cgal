@@ -74,6 +74,7 @@ Stream_lines_2 2D Placement of Streamlines
 Surface_mesh_deformation Triangulated Surface Mesh Deformation
 Surface_mesher 3D Surface Mesh Generation
 Surface_mesh Surface Mesh
+Surface_mesh_approximation Triangulated Surface Mesh Approximation
 Surface_mesh_parameterization Triangulated Surface Mesh Parameterization
 Surface_mesh_segmentation Triangulated Surface Mesh Segmentation
 Surface_mesh_shortest_path Triangulated Surface Mesh Shortest Paths

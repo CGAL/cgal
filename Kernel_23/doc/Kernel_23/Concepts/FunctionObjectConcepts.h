@@ -7395,6 +7395,7 @@ public:
     the types `Type1` and 
     `Type2` can be any of the following: 
 
+    - `Kernel::Point_2`
     - `Kernel::Plane_3` 
     - `Kernel::Line_3` 
     - `Kernel::Ray_3` 
