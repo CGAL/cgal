@@ -118,6 +118,20 @@ void test_surface_mesh_cc(const char* fname)
   std::cout << "OK\n";
 }
 
+void bug_test()
+{
+  typedef CGAL::Simple_cartesian<double> K;
+  typedef K::Point_3 Point_3;
+  CGAL::Surface_mesh<Point_3> tm;
+
+  CGAL::make_triangle(Point_3(0,0,0), Point_3(1,0,0), Point_3(0,1,0), tm);
+  CGAL::make_triangle(Point_3(0,0,0), Point_3(1,0,0), Point_3(0,1,0), tm);
+  CGAL::make_triangle(Point_3(0,0,0), Point_3(1,0,0), Point_3(0,1,0), tm);
+  CGAL::make_triangle(Point_3(0,0,0), Point_3(1,0,0), Point_3(0,1,0), tm);
+
+  CGAL::Polygon_mesh_processing::stitch_borders(tm);
+}
+
 int main()
 {
   test_stitch_boundary_cycles("data_stitching/boundary_cycle.off");
@@ -149,6 +163,8 @@ int main()
   test_surface_mesh("data_stitching/deg_border.off");
   test_surface_mesh("data_stitching/non_manifold.off");
   test_surface_mesh_cc("data_stitching/nm_cubes.off");
+
+  bug_test();
 
   return EXIT_SUCCESS;
 }

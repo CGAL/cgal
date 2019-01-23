@@ -11,11 +11,6 @@ get_filename_component(CGAL_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 set(CGAL_HEADER_ONLY TRUE)
 
-# Save the current source directory. That variable can be changed by
-# a `CMakeLists.txt`, for `CMakeLists.txt` files that are created in
-# the binary directory.
-set(CGAL_CURRENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-
 function(cgal_detect_branch_build VAR_NAME)
   if(IS_DIRECTORY ${CGAL_CONFIG_DIR}/../../../../Installation/package_info/Installation/)
     set(${VAR_NAME} TRUE PARENT_SCOPE)
@@ -72,6 +67,9 @@ endif()
 include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_Common.cmake)
+
+set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
+
 
 if(CGAL_BUILDING_LIBS)
   foreach(comp ${CGAL_FIND_COMPONENTS})
@@ -145,8 +143,6 @@ endforeach()
 
 # Temporary? Change the CMAKE module path
 cgal_setup_module_path()
-
-set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
 
 include("${CGAL_MODULES_DIR}/CGAL_parse_version_h.cmake")
 cgal_parse_version_h( "${CGAL_INSTALLATION_PACKAGE_DIR}/include/CGAL/version.h"
