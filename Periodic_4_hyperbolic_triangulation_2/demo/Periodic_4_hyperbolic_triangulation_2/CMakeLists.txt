@@ -20,7 +20,7 @@ find_package(CGAL QUIET COMPONENTS Core Qt5)
 include(${CGAL_USE_FILE})
 
 find_package(Qt5 QUIET COMPONENTS Widgets)
-if(CGAL_FOUND AND CGAL_Core_FOUND AND Qt5_FOUND)
+if(CGAL_FOUND AND CGAL_Core_FOUND AND Qt5_FOUND AND CGAL_Qt5_FOUND)
 
   find_package( Boost REQUIRED )
   include_directories(${Boost_INCLUDE_DIRS})
@@ -28,23 +28,23 @@ if(CGAL_FOUND AND CGAL_Core_FOUND AND Qt5_FOUND)
   include_directories (BEFORE include )
 
   # ui files, created with Qt Designer
-  qt5_wrap_ui( UIS Periodic_4_hyperbolic_Delaunay_triangulation_2.ui )
+  qt5_wrap_ui( UIS P4HDT2.ui )
 
   # qrc files (resources files, that contain icons, at least)
   qt5_add_resources ( RESOURCE_FILES Main_resources.qrc )
 
   # cpp files
 
-  add_executable ( Periodic_4_hyperbolic_Delaunay_triangulation_2_demo
-  Periodic_4_hyperbolic_Delaunay_triangulation_2_demo.cpp ${RESOURCE_FILES} ${UIS})
+  add_executable ( P4HDT2_demo
+  P4HDT2.cpp ${RESOURCE_FILES} ${UIS})
 
   #add_executable ( Periodic_4_hyperbolic_billiards_demo
   #Periodic_4_hyperbolic_billiards_demo.cpp ${RESOURCE_FILES} )
 
-  qt5_use_modules( Periodic_4_hyperbolic_Delaunay_triangulation_2_demo Widgets )
+  qt5_use_modules( P4HDT2_demo Widgets )
   #qt5_use_modules( Periodic_4_hyperbolic_billiards_demo Widgets )
 
-  target_link_libraries( Periodic_4_hyperbolic_Delaunay_triangulation_2_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${Boost_LIBRARIES} )
+  target_link_libraries( P4HDT2_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${Boost_LIBRARIES} )
 
   #target_link_libraries( Periodic_4_hyperbolic_billiards_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${Boost_LIBRARIES} )
 endif()

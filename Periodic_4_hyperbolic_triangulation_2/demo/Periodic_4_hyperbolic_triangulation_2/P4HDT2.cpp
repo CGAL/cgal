@@ -33,7 +33,7 @@
 #include <CGAL/Hyperbolic_octagon_translation.h>
 
 // the two base classes
-#include "ui_Periodic_4_hyperbolic_Delaunay_triangulation_2.h"
+#include "ui_P4HDT2.h"
 
 #include <CGAL/Timer.h>
 
@@ -452,4 +452,4 @@ int main(int argc, char **argv)
   return app.exec();
 }
 
-#include "Periodic_4_hyperbolic_Delaunay_triangulation_2_demo.moc"
+#include "P4HDT2.moc"
