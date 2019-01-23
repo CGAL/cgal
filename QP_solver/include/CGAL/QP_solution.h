@@ -314,6 +314,11 @@ public:
     : Handle_for<const QP_solver_base<ET>*>(s), et0(0)
   {}
 
+  Quadratic_program_solution(const Quadratic_program_solution& rhs)
+  {
+    *this = rhs;
+  }
+ 
   Quadratic_program_solution& 
   operator= (const Quadratic_program_solution& sol)
   {
