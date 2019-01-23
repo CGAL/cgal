@@ -291,7 +291,7 @@ struct Shell_polygons_visitor
       queue.pop_back();
       if (e.first->info().visited) continue;
       e.first->info().visited=true;
-      polygons.resize(polygons.size()+1);
+      polygons.push_back(Polygon());
       if (is_marked)
         for (int i=2; i>=0; --i)
           polygons.back().push_back(e.first->vertex(i)->info());
@@ -346,7 +346,7 @@ void collect_polygon_mesh_info(
 
 } //end of namespace nef_to_pm
 
-template <class Output_kernel, class Nef_polyhedron, typename PolygonRange, typename PointRange>
+template < class Nef_polyhedron, typename PolygonRange, typename PointRange>
 void convert_nef_polyhedron_to_polygon_soup(const Nef_polyhedron& nef,
                                                   PointRange& points,
                                                   PolygonRange& polygons,
@@ -354,6 +354,9 @@ void convert_nef_polyhedron_to_polygon_soup(const Nef_polyhedron& nef,
 {
   typedef typename Nef_polyhedron::Point_3 Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel Nef_Kernel;
+  typedef typename PointRange::value_type Out_Point;
+  typedef typename Kernel_traits<Out_Point>::Kernel Output_kernel;
+  
   typedef Cartesian_converter<Nef_Kernel, Output_kernel> Converter;
   typename Nef_polyhedron::Volume_const_iterator vol_it = nef.volumes_begin(),
                                                  vol_end = nef.volumes_end();
@@ -379,7 +382,7 @@ void convert_nef_polyhedron_to_polygon_mesh(const Nef_polyhedron& nef, Polygon_m
 
   std::vector<PM_Point> points;
   std::vector<std::vector<std::size_t> > polygons;
-  convert_nef_polyhedron_to_polygon_soup<PM_Kernel>(nef, points, polygons, triangulate_all_faces);
+  convert_nef_polyhedron_to_polygon_soup(nef, points, polygons, triangulate_all_faces);
   Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, pm);
 }
 

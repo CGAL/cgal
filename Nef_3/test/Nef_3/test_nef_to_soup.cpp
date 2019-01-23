@@ -38,8 +38,7 @@ int main()
   PointRange points;
   PolygonRange polygons;
     std::cout << "    convert...\n";
-  CGAL::convert_nef_polyhedron_to_polygon_soup<
-      EPIC>(nef, points, polygons);
+  CGAL::convert_nef_polyhedron_to_polygon_soup(nef, points, polygons);
   CGAL_assertion(points.size() == 4);
   CGAL_assertion(polygons.size() == 4);
   PolygonMesh pm;
