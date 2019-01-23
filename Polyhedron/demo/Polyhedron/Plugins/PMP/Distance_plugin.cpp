@@ -211,12 +211,7 @@ private:
       BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor f, faces(*poly)) {
         Vector nf = get(nf_pmap, f);
         typedef FacetTriangulator<Face_graph, Kernel, boost::graph_traits<Face_graph>::vertex_descriptor> FT;
-        double diagonal;
-        if(this->diagonalBbox() != std::numeric_limits<double>::infinity())
-          diagonal = this->diagonalBbox();
-        else
-          diagonal = 0.0;
-
+        
         //compute distance with other polyhedron
         //sample facet
         std::vector<Kernel::Point_3> sampled_points;
@@ -232,7 +227,7 @@ private:
         sampled_points.push_back(r);
 
         //triangle facets with sample points for color display
-        FT triangulation(f,sampled_points,nf,poly,diagonal);
+        FT triangulation(f,sampled_points,nf,poly);
 
         if(triangulation.cdt->dimension() != 2 )
         {

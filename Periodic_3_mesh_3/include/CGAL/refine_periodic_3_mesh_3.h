@@ -116,7 +116,6 @@ void project_points(C3T3& c3t3,
     const Weighted_point& vh_wp = c3t3.triangulation().point(vh);
     const Bare_point& vh_p = cp(vh_wp);
     const Bare_point new_point = helper.project_on_surface(vh, vh_p);
-    CGAL_assertion(new_point != Bare_point());
 
     const FT sq_d = CGAL::squared_distance(new_point, vh_p);
 

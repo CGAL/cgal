@@ -1,5 +1,8 @@
 #ifdef _MSC_VER
 #  pragma warning(disable:4244) // conversion with loss of data
+#  pragma warning(disable:4996) // boost_1_65_1\boost/iostreams/positioning.hpp(96):
+                                // warning C4996: 'std::fpos<_Mbstatet>::seekpos': warning STL4019:
+                                // The member std::fpos::seekpos() is non-Standard
 #endif
 
 #include "Volume_plane.h"
@@ -55,6 +58,7 @@
 #ifdef CGAL_USE_VTK
 #include <CGAL/read_vtk_image_data.h>
 
+#include <vtkNew.h>
 #include <vtkImageData.h>
 #include <vtkDICOMImageReader.h>
 #include <vtkImageReader.h>
@@ -486,12 +490,6 @@ public Q_SLOTS:
   }
 private:
   CGAL::qglviewer::Vec first_offset;
-#ifdef CGAL_USE_VTK
-  vtkImageData* vtk_image;
-  vtkDICOMImageReader* dicom_reader;
-  vtkDemandDrivenPipeline* executive;
-  vtkImageGaussianSmooth* smoother;
-#endif // CGAL_USE_VTK
   bool is_gray;
   Messages_interface* message_interface;
   QMessageBox msgBox;
@@ -1253,24 +1251,24 @@ Image* Io_image_plugin::createDCMImage(QString dirname)
 {
   Image* image = NULL;
 #ifdef CGAL_USE_VTK
-  dicom_reader = vtkDICOMImageReader::New();
+  vtkNew<vtkDICOMImageReader> dicom_reader;
   dicom_reader->SetDirectoryName(dirname.toUtf8());
 
-  executive =
+  auto executive =
     vtkDemandDrivenPipeline::SafeDownCast(dicom_reader->GetExecutive());
   if (executive)
   {
     executive->SetReleaseDataFlag(0, 0); // where 0 is the port index
   }
 
-  smoother = vtkImageGaussianSmooth::New();
+  vtkNew<vtkImageGaussianSmooth> smoother;
   smoother->SetStandardDeviations(1., 1., 1.);
   smoother->SetInputConnection(dicom_reader->GetOutputPort());
   smoother->Update();
-  vtk_image = smoother->GetOutput();
+  auto vtk_image = smoother->GetOutput();
   vtk_image->Print(std::cerr);
   image = new Image;
-  *image = CGAL::read_vtk_image_data(vtk_image);
+  *image = CGAL::read_vtk_image_data(vtk_image); // copy the image data
 #else
   message_interface->warning("You need VTK to read a DCM file");
   CGAL_USE(dirname);

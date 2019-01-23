@@ -6,6 +6,17 @@ Release 4.14
 
 Release date: March 2019
 
+### The Heat Method (new package)
+-   This package provides an algorithm that solves the single- or multiple-source
+    shortest path problem by returning an approximation of the geodesic distance
+    for all vertices of a triangle mesh to the closest vertex in a given set of
+    source vertices. 
+
+### Triangulated Surface Mesh Approximation (new package)
+
+-   This package implements the Variational Shape Approximation method to approximate
+    an input surface triangle mesh by a simpler surface triangle mesh.
+
 ### Polygon Mesh Processing package
 -   Added the following new functions to detect and repair issues in polygon soups:
     - `CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup()`, which detects and removes
@@ -32,6 +43,14 @@ Release date: March 2019
 -   Added the class `CGAL::Rigid_triangle_mesh_collision_detection` to detect intersections between meshes
     and volumes undergoing affine transformations.
 
+### Point Set Processing
+
+-   `CGAL::mst_orient_normals()` can now be called with a set of user-selected
+    seed points that are known to be already oriented. A new optional named
+    parameter `point_is_constrained_map` is added for this purpose. The
+    original behavior (using one unique and automatically selected seed) is
+    kept if this parameter is not used.
+
 ### 3D Fast Intersection and Distance Computation
 
 -   The primitives `AABB_face_graph_triangle_primitive` and
@@ -53,6 +72,17 @@ Release date: March 2019
 -   Implemented missing function object `Compare_x_near_boundary` of
     `Arr_polyline_traits_2`, `Arr_polycurve_traits_2`, and
     `Arr_polycurve_basic_traits_2`.
+
+### 2D Minkowski Sums
+
+-   Fixed a bug in the function that computed the Minkowski sum using the
+    reduced-convolution method. In particular, correctly handled the case where
+    one of the summands does not have an outer boundaey.
+
+### CGAL and the Boost Graph Library (BGL)
+
+-    Add function `write_wrl()` for writing into VRML 2.0 format.
+
 
 Release 4.13
 ------------

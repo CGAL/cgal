@@ -55,7 +55,7 @@ static const VTK_to_ImageIO_type_mapper VTK_to_ImageIO_type[VTK_ID_TYPE] =
 
 inline 
 Image_3
-read_vtk_image_data(vtkImageData* vtk_image)
+read_vtk_image_data(vtkImageData* vtk_image, Image_3::Own owning = Image_3::OWN_THE_DATA)
 {
   if(!vtk_image)
     return Image_3();
@@ -63,6 +63,7 @@ read_vtk_image_data(vtkImageData* vtk_image)
   _image* image = ::_initImage();
   const int* dims = vtk_image->GetDimensions();
   const double* spacing = vtk_image->GetSpacing();
+  const double* offset = vtk_image->GetOrigin();
   image->vectMode = VM_SCALAR;
   image->xdim = dims[0];
   image->ydim = dims[1];
@@ -71,6 +72,9 @@ read_vtk_image_data(vtkImageData* vtk_image)
   image->vx = spacing[0];
   image->vy = spacing[1];
   image->vz = spacing[2];
+  image->tx = offset[0];
+  image->ty = offset[1];
+  image->tz = offset[2];
   image->endianness = ::_getEndianness();
   int vtk_type = vtk_image->GetScalarType();
   if(vtk_type == VTK_SIGNED_CHAR) vtk_type = VTK_CHAR;
@@ -81,16 +85,21 @@ read_vtk_image_data(vtkImageData* vtk_image)
   image->wdim = imageio_type.wdim;
   image->wordKind = imageio_type.wordKind;
   image->sign = imageio_type.sign;
-  image->data = ::ImageIO_alloc(dims[0]*dims[1]*dims[2]*image->wdim);
-  std::cerr << "GetNumberOfTuples()=" << vtk_image->GetPointData()->GetScalars()->GetNumberOfTuples()
-            << "\nimage->size()=" << dims[0]*dims[1]*dims[2]
-            << "\nwdim=" << image->wdim << '\n';
   CGAL_assertion(vtk_image->GetPointData()->GetScalars()->GetNumberOfTuples() == dims[0]*dims[1]*dims[2]);
-  vtk_image->GetPointData()->GetScalars()->ExportToVoidPointer(image->data);
+  if(owning == Image_3::OWN_THE_DATA) {
+    image->data = ::ImageIO_alloc(dims[0]*dims[1]*dims[2]*image->wdim);
+    // std::cerr << "GetNumberOfTuples()=" << vtk_image->GetPointData()->GetScalars()->GetNumberOfTuples()
+    //           << "\nimage->size()=" << dims[0]*dims[1]*dims[2]
+    //           << "\nwdim=" << image->wdim << '\n';
+    vtk_image->GetPointData()->GetScalars()->ExportToVoidPointer(image->data);
+  } else {
+    image->data = vtk_image->GetPointData()->GetScalars()->GetVoidPointer(0);
+  }
 
-  return Image_3(image);
+  return Image_3(image, owning);
 }
 
 } // namespace CGAL
+
 
 #endif // CGAL_READ_VTK_IMAGE_DATA_H

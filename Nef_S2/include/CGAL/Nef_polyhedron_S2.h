@@ -350,6 +350,11 @@ public:
             f->mark() == true);
   }
 
+  bool is_sphere() const
+  {
+    return is_plane();
+  }
+
   void extract_complement()
   { CGAL_NEF_TRACEN("extract complement");
     if ( this->is_shared() ) clone_rep();
@@ -390,7 +395,7 @@ public:
     CGAL_forall_svertices(v,D) v->mark() = true;
     CGAL_forall_sedges(e,D)    e->mark() = true;
     CGAL_forall_sfaces(f,D)    f->mark() = false;
-    if ( D.has_shalfloop() )       D.shalfloop()->mark() = D.shalfoop()->twin() = true;
+    if ( D.has_shalfloop() )       D.shalfloop()->mark() = D.shalfoop()->twin()->mark() = true;
     D.simplify();
   }
 

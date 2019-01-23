@@ -3,9 +3,24 @@
 zmodload zsh/stat
 set -e
 
-git=git
+if [ "x$1" = "x--help" -o "x$1" = "x-h" ]; then
+    cat <<EOF
+Usage: $0
+ [HEAD] [BASE]
 
-base=${1:-HEAD}
+List the commits in the range BASE..HEAD, with --first-parent
+and show for each the weight of the commit.
+
+[HEAD] is the head of the branch you want to display.
+Its default value is 'HEAD'.
+
+[BASE] is the base of the range. Its default value is 'cgal/master'.
+EOF
+    exit 0
+fi
+
+commit=${1:-HEAD}
+base=${2:-cgal/master}
 
 function reset() {
     git update-ref -d refs/cgal/git-show-content
@@ -14,7 +29,7 @@ function reset() {
 
 trap reset ERR EXIT KILL TERM INT
 
-for c in $(git --no-pager log --pretty='%h' --first-parent cgal/master..$base); do
+for c in $(git --no-pager log --pretty='%h' --first-parent ${base}..${commit}); do
     git update-ref refs/cgal/git-show-content $c
     git bundle create bundle ${c}^..refs/cgal/git-show-content > /dev/null 2>&1
     gzip -f bundle
