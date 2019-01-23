@@ -667,21 +667,21 @@ void process_properties (PLY_element& element, OutputValueType& new_element,
                       std::forward<PropertyMapBinders>(properties)...);
 }
 
-template <typename T> void property_header_type (std::ostream& stream)
+template <typename T> inline void property_header_type (std::ostream& stream)
 {
   CGAL_assertion_msg (false, "Unknown PLY type");
   stream << "undefined_type";
 }
 
-template <> void property_header_type<char> (std::ostream& stream) { stream << "char"; }
-template <> void property_header_type<signed char> (std::ostream& stream) { stream << "char"; }
-template <> void property_header_type<unsigned char> (std::ostream& stream) { stream << "uchar"; }
-template <> void property_header_type<short> (std::ostream& stream) { stream << "short"; }
-template <> void property_header_type<unsigned short> (std::ostream& stream) { stream << "ushort"; }
-template <> void property_header_type<int> (std::ostream& stream) { stream << "int"; }
-template <> void property_header_type<unsigned int> (std::ostream& stream) { stream << "uint"; }
-template <> void property_header_type<float> (std::ostream& stream) { stream << "float"; }
-template <> void property_header_type<double> (std::ostream& stream) { stream << "double"; }
+template <> inline void property_header_type<char> (std::ostream& stream) { stream << "char"; }
+template <> inline void property_header_type<signed char> (std::ostream& stream) { stream << "char"; }
+template <> inline void property_header_type<unsigned char> (std::ostream& stream) { stream << "uchar"; }
+template <> inline void property_header_type<short> (std::ostream& stream) { stream << "short"; }
+template <> inline void property_header_type<unsigned short> (std::ostream& stream) { stream << "ushort"; }
+template <> inline void property_header_type<int> (std::ostream& stream) { stream << "int"; }
+template <> inline void property_header_type<unsigned int> (std::ostream& stream) { stream << "uint"; }
+template <> inline void property_header_type<float> (std::ostream& stream) { stream << "float"; }
+template <> inline void property_header_type<double> (std::ostream& stream) { stream << "double"; }
     
 template <typename T>
 void property_header (std::ostream& stream, const PLY_property<T>& prop)
@@ -773,10 +773,10 @@ void property_write (std::ostream& stream, ForwardIterator it, PropertyMap map)
 }
 
 template <typename T>
-T no_char_character (const T& t) { return t; }
-int no_char_character (const char& t) { return int(t); }
-int no_char_character (const signed char& t) { return int(t); }
-int no_char_character (const unsigned char& t) { return int(t); }
+inline T no_char_character (const T& t) { return t; }
+inline int no_char_character (const char& t) { return int(t); }
+inline int no_char_character (const signed char& t) { return int(t); }
+inline int no_char_character (const unsigned char& t) { return int(t); }
 
 template <typename ForwardIterator,
           typename PropertyMap,
@@ -880,6 +880,80 @@ void output_properties (std::ostream& stream,
   output_properties (stream, it, std::forward<NextPropertyHandler>(next),
                      std::forward<PropertyHandler>(properties)...);
 }
+
+
+// Printer classes used by Point_set_3 and Surface_mesh (translate a
+// property map to a PLY property)
+
+template <typename Index>
+class Abstract_property_printer
+{
+public:
+  virtual ~Abstract_property_printer() { }
+  virtual void print (std::ostream& stream, const Index& index) = 0;
+};
+
+template <typename Index, typename PropertyMap>
+class Property_printer : public Abstract_property_printer<Index>
+{
+  PropertyMap m_pmap;
+public:
+  Property_printer (const PropertyMap& pmap) : m_pmap (pmap)
+  {
+
+  }
+    
+  virtual void print(std::ostream& stream, const Index& index)
+  {
+    stream << get(m_pmap, index);
+  }
+};
+
+template <typename Index, typename PropertyMap>
+class Simple_property_printer : public Abstract_property_printer<Index>
+{
+  typedef typename PropertyMap::value_type Type;
+  PropertyMap m_pmap;
+public:
+  Simple_property_printer (const PropertyMap& pmap) : m_pmap (pmap)
+  {
+
+  }
+    
+  virtual void print(std::ostream& stream, const Index& index)
+  {
+    if (get_mode(stream) == IO::ASCII)
+      stream << get(m_pmap, index);
+    else
+    {
+      Type t = get (m_pmap, index);
+      stream.write (reinterpret_cast<char*>(&t), sizeof(t));
+    }
+  }
+};
+
+template <typename Index, typename PropertyMap>
+class Char_property_printer : public Abstract_property_printer<Index>
+{
+  typedef typename PropertyMap::value_type Type;
+  PropertyMap m_pmap;
+public:
+  Char_property_printer (const PropertyMap& pmap) : m_pmap (pmap)
+  {
+
+  }
+    
+  virtual void print(std::ostream& stream, const Index& index)
+  {
+    if (get_mode(stream) == IO::ASCII)
+      stream << int(get(m_pmap, index));
+    else
+    {
+      Type t = get (m_pmap, index);
+      stream.write (reinterpret_cast<char*>(&t), sizeof(t));
+    }
+  }
+};
 
 } // namespace PLY
 
