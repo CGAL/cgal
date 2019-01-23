@@ -2214,9 +2214,18 @@ private: //------------------------------------------------------- private data
 
       if (vprop[i] == "v:point")
       {
-        os << "property double x" << std::endl
-           << "property double y" << std::endl
-           << "property double z" << std::endl;
+        if (boost::is_same<typename Get_FT_from_map<Point_map>::type, float>::value)
+        {
+          os << "property float x" << std::endl
+             << "property float y" << std::endl
+             << "property float z" << std::endl;
+        }
+        else
+        {
+          os << "property double x" << std::endl
+             << "property double y" << std::endl
+             << "property double z" << std::endl;
+        }
         vprinters.push_back (new internal::PLY::Property_printer<VIndex,Point_map>(sm.points()));
         continue;
       }
