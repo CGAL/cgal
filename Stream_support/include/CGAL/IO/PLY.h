@@ -909,10 +909,10 @@ public:
   }
 };
 
-template <typename Index, typename PropertyMap>
+template <typename Index, typename PropertyMap,
+          typename Type = typename PropertyMap::value_type>
 class Simple_property_printer : public Abstract_property_printer<Index>
 {
-  typedef typename PropertyMap::value_type Type;
   PropertyMap m_pmap;
 public:
   Simple_property_printer (const PropertyMap& pmap) : m_pmap (pmap)
@@ -926,7 +926,7 @@ public:
       stream << get(m_pmap, index);
     else
     {
-      Type t = get (m_pmap, index);
+      Type t = Type(get (m_pmap, index));
       stream.write (reinterpret_cast<char*>(&t), sizeof(t));
     }
   }

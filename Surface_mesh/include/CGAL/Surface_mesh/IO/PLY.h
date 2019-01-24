@@ -35,6 +35,8 @@ template <typename Point>
 class Surface_mesh_filler
 {
 public:
+  typedef typename Kernel_traits<Point>::Kernel Kernel;
+  typedef typename Kernel::Vector_3 Vector;
   typedef Surface_mesh<Point> Surface_mesh;
   typedef typename Surface_mesh::Vertex_index Vertex_index;
   typedef typename Surface_mesh::Face_index Face_index;
@@ -57,7 +59,7 @@ private:
     PLY_property_to_surface_mesh_property (Surface_mesh& sm, const std::string& name)
       : m_name (name)
     {
-      m_map = sm.template add_property_map<Simplex, Type>(name).first;
+      m_map = sm.template add_property_map<Simplex, Type>(prefix(Simplex()) + name).first;
     }
     
     virtual void assign (PLY_element& element, std::size_t index)
@@ -66,10 +68,19 @@ private:
       element.assign (t, m_name.c_str());
       put(m_map, Simplex(index), t);
     }
+
+    std::string prefix(Vertex_index) const { return "v:"; }
+    std::string prefix(Face_index) const { return "f:"; }
   };
   
   Surface_mesh& m_mesh;
   bool m_use_floats;
+  int m_normals;
+  typename Surface_mesh::template Property_map<Vertex_index, Vector> m_normal_map;
+  int m_vcolors;
+  typename Surface_mesh::template Property_map<Vertex_index, CGAL::Color> m_vcolor_map;
+  int m_fcolors;
+  typename Surface_mesh::template Property_map<Face_index, CGAL::Color> m_fcolor_map;
   bool m_use_int32_t;
   std::string m_index_tag;
   std::vector<Abstract_ply_property_to_surface_mesh_property*> m_vertex_properties;
@@ -78,7 +89,7 @@ private:
 public:
   
   Surface_mesh_filler (Surface_mesh& mesh)
-    : m_mesh (mesh), m_use_floats (false)
+    : m_mesh (mesh), m_use_floats (false), m_normals(0), m_vcolors(0), m_fcolors(0)
   { }
 
   ~Surface_mesh_filler()
@@ -100,6 +111,24 @@ public:
         m_use_floats = true;
       return true;
     }
+    if (name == "nx" ||
+        name == "ny" ||
+        name == "nz")
+    {
+      ++ m_normals;
+      if (m_normals == 3)
+        m_normal_map = m_mesh.template add_property_map<Vertex_index, Vector>("v:normal").first;
+      return true;
+    }
+    if (name == "red" ||
+        name == "green" ||
+        name == "blue")
+    {
+      ++ m_vcolors;
+      if (m_vcolors == 3)
+        m_vcolor_map = m_mesh.template add_property_map<Vertex_index, CGAL::Color>("v:color").first;
+      return true;
+    }
     return false;
   }
 
@@ -111,6 +140,15 @@ public:
       m_index_tag  = name;
       m_use_int32_t = dynamic_cast<PLY_read_typed_list<boost::int32_t>*>(property);
       CGAL_assertion (dynamic_cast<PLY_read_typed_list<boost::uint32_t>*>(property));
+      return true;
+    }
+    if (name == "red" ||
+        name == "green" ||
+        name == "blue")
+    {
+      ++ m_fcolors;
+      if (m_fcolors == 3)
+        m_fcolor_map = m_mesh.template add_property_map<Face_index, CGAL::Color>("f:color").first;
       return true;
     }
     
@@ -207,12 +245,31 @@ public:
   template <typename FT>
   void process_line (PLY_element& element, Vertex_index& vi)
   {
-    FT x = (FT)0.,y = (FT)0., z = (FT)0.;
+    FT x = (FT)0.,y = (FT)0., z = (FT)0.,
+      nx = (FT)0., ny = (FT)0., nz = (FT)0.;
     element.assign (x, "x");
     element.assign (y, "y");
     element.assign (z, "z");
     Point point (x, y, z);
     vi = m_mesh.add_vertex(point);
+    
+    if (m_normals == 3)
+    {
+      element.assign (nx, "nx");
+      element.assign (ny, "ny");
+      element.assign (nz, "nz");
+      Vector normal (nx, ny, nz);
+      m_normal_map[vi] = normal;
+    }
+
+    if (m_vcolors == 3)
+    {
+      unsigned char r, g, b;
+      element.assign (r, "red");
+      element.assign (g, "green");
+      element.assign (b, "blue");
+      m_vcolor_map[vi] = CGAL::Color (r, g, b);
+    }
   }
 
   bool process_face_line (PLY_element& element)
@@ -244,6 +301,15 @@ public:
       vertices.push_back (Vertex_index (indices[i]));
 
     fi = m_mesh.add_face(vertices);
+
+    if (m_fcolors == 3)
+    {
+      unsigned char r, g, b;
+      element.assign (r, "red");
+      element.assign (g, "green");
+      element.assign (b, "blue");
+      m_fcolor_map[fi] = CGAL::Color (r, g, b);
+    }
   }
 
 };

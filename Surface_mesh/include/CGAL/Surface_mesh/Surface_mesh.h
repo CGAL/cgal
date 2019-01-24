@@ -2166,24 +2166,37 @@ private: //------------------------------------------------------- private data
   bool write_ply(std::ostream& os, const Surface_mesh<P>& sm, const std::string& comments = std::string())
   {
     typedef Surface_mesh<P> SMesh;
+    typedef typename Kernel_traits<P>::Kernel K;
+    typedef typename K::Vector_3 Vector;
     typedef typename SMesh::Vertex_index VIndex;
     typedef typename SMesh::Face_index FIndex;
     typedef typename SMesh::Halfedge_index HIndex;
-    typedef typename SMesh::template Property_map<VIndex, P> Point_map;
 
+    typedef typename SMesh::template Property_map<VIndex, P> Point_map;
+    typedef typename SMesh::template Property_map<VIndex, Vector> Vector_map;
+    typedef typename SMesh::template Property_map<VIndex, Color> Vcolor_map;
+    
     typedef typename SMesh::template Property_map<VIndex, boost::int8_t> Int8_map_v;
     typedef typename SMesh::template Property_map<VIndex, boost::uint8_t> Uint8_map_v;
     typedef typename SMesh::template Property_map<VIndex, boost::int16_t> Int16_map_v;
     typedef typename SMesh::template Property_map<VIndex, boost::uint16_t> Uint16_map_v;
     typedef typename SMesh::template Property_map<VIndex, boost::int32_t> Int32_map_v;
+    typedef typename SMesh::template Property_map<VIndex, boost::uint32_t> Uint32_map_v;
+    typedef typename SMesh::template Property_map<VIndex, boost::int64_t> Int64_map_v;
+    typedef typename SMesh::template Property_map<VIndex, boost::uint64_t> Uint64_map_v;
     typedef typename SMesh::template Property_map<VIndex, float> Float_map_v;
     typedef typename SMesh::template Property_map<VIndex, double> Double_map_v;
 
+    typedef typename SMesh::template Property_map<FIndex, Color> Fcolor_map;
+    
     typedef typename SMesh::template Property_map<FIndex, boost::int8_t> Int8_map_f;
     typedef typename SMesh::template Property_map<FIndex, boost::uint8_t> Uint8_map_f;
     typedef typename SMesh::template Property_map<FIndex, boost::int16_t> Int16_map_f;
     typedef typename SMesh::template Property_map<FIndex, boost::uint16_t> Uint16_map_f;
     typedef typename SMesh::template Property_map<FIndex, boost::int32_t> Int32_map_f;
+    typedef typename SMesh::template Property_map<FIndex, boost::uint32_t> Uint32_map_f;
+    typedef typename SMesh::template Property_map<FIndex, boost::int64_t> Int64_map_f;
+    typedef typename SMesh::template Property_map<FIndex, boost::uint64_t> Uint64_map_f;
     typedef typename SMesh::template Property_map<FIndex, float> Float_map_f;
     typedef typename SMesh::template Property_map<FIndex, double> Double_map_f;
     
@@ -2231,12 +2244,55 @@ private: //------------------------------------------------------- private data
       }
       
       bool okay = false;
+      if (vprop[i] == "v:normal")
+      {
+        Vector_map pmap;
+        boost::tie (pmap, okay) = sm.template property_map<VIndex,Vector>(vprop[i]);
+        if (okay)
+        {
+          if (boost::is_same<typename Get_FT_from_map<Vector_map>::type, float>::value)
+          {
+            os << "property float nx" << std::endl
+               << "property float ny" << std::endl
+               << "property float nz" << std::endl;
+          }
+          else
+          {
+            os << "property double nx" << std::endl
+               << "property double ny" << std::endl
+               << "property double nz" << std::endl;
+          }
+          vprinters.push_back (new internal::PLY::Property_printer<VIndex,Vector_map>(pmap));
+          continue;
+        }
+      }
+      
+      if (vprop[i] == "v:color")
+      {
+        Vcolor_map pmap;
+        boost::tie (pmap, okay) = sm.template property_map<VIndex,Color>(vprop[i]);
+        if (okay)
+        {
+          os << "property uchar red" << std::endl
+             << "property uchar green" << std::endl
+             << "property uchar blue" << std::endl;
+
+          vprinters.push_back (new internal::PLY::Property_printer<VIndex,Vcolor_map>(pmap));
+          continue;
+        }
+      }
+
+      // Cut the "v:" prefix
+      std::string name = vprop[i];
+      if (name.rfind("v:",0) == 0)
+        name = std::string (vprop[i].begin() + 2, vprop[i].end());
+      
       {
         Int8_map_v pmap;
         boost::tie (pmap, okay) = sm.template property_map<VIndex,boost::int8_t>(vprop[i]);
         if (okay)
         {
-          os << "property char " << vprop[i] << std::endl;
+          os << "property char " << name << std::endl;
           vprinters.push_back (new internal::PLY::Char_property_printer<VIndex,Int8_map_v>(pmap));
           continue;
         }
@@ -2246,7 +2302,7 @@ private: //------------------------------------------------------- private data
         boost::tie (pmap, okay) = sm.template property_map<VIndex,boost::uint8_t>(vprop[i]);
         if (okay)
         {
-          os << "property uchar " << vprop[i] << std::endl;
+          os << "property uchar " << name << std::endl;
           vprinters.push_back (new internal::PLY::Char_property_printer<VIndex,Uint8_map_v>(pmap));
           continue;
         }
@@ -2256,7 +2312,7 @@ private: //------------------------------------------------------- private data
         boost::tie (pmap, okay) = sm.template property_map<VIndex,boost::int16_t>(vprop[i]);
         if (okay)
         {
-          os << "property short " << vprop[i] << std::endl;
+          os << "property short " << name << std::endl;
           vprinters.push_back (new internal::PLY::Simple_property_printer<VIndex,Int16_map_v>(pmap));
           continue;
         }
@@ -2266,7 +2322,7 @@ private: //------------------------------------------------------- private data
         boost::tie (pmap, okay) = sm.template property_map<VIndex,boost::uint16_t>(vprop[i]);
         if (okay)
         {
-          os << "property ushort " << vprop[i] << std::endl;
+          os << "property ushort " << name << std::endl;
           vprinters.push_back (new internal::PLY::Simple_property_printer<VIndex,Uint16_map_v>(pmap));
           continue;
         }
@@ -2276,8 +2332,38 @@ private: //------------------------------------------------------- private data
         boost::tie (pmap, okay) = sm.template property_map<VIndex,boost::int32_t>(vprop[i]);
         if (okay)
         {
-          os << "property int " << vprop[i] << std::endl;
+          os << "property int " << name << std::endl;
           vprinters.push_back (new internal::PLY::Simple_property_printer<VIndex,Int32_map_v>(pmap));
+          continue;
+        }
+      }
+      {
+        Uint32_map_v pmap;
+        boost::tie (pmap, okay) = sm.template property_map<VIndex,boost::uint32_t>(vprop[i]);
+        if (okay)
+        {
+          os << "property uint " << name << std::endl;
+          vprinters.push_back (new internal::PLY::Simple_property_printer<VIndex,Uint32_map_v>(pmap));
+          continue;
+        }
+      }
+      {
+        Int64_map_v pmap;
+        boost::tie (pmap, okay) = sm.template property_map<VIndex,boost::int64_t>(vprop[i]);
+        if (okay)
+        {
+          os << "property int " << name << std::endl;
+          vprinters.push_back (new internal::PLY::Simple_property_printer<VIndex,Int64_map_v,boost::int32_t>(pmap));
+          continue;
+        }
+      }
+      {
+        Uint64_map_v pmap;
+        boost::tie (pmap, okay) = sm.template property_map<VIndex,boost::uint64_t>(vprop[i]);
+        if (okay)
+        {
+          os << "property uint " << name << std::endl;
+          vprinters.push_back (new internal::PLY::Simple_property_printer<VIndex,Uint64_map_v,boost::uint32_t>(pmap));
           continue;
         }
       }
@@ -2286,7 +2372,7 @@ private: //------------------------------------------------------- private data
         boost::tie (pmap, okay) = sm.template property_map<VIndex,float>(vprop[i]);
         if (okay)
         {
-          os << "property float " << vprop[i] << std::endl;
+          os << "property float " << name << std::endl;
           vprinters.push_back (new internal::PLY::Simple_property_printer<VIndex,Float_map_v>(pmap));
           continue;
         }
@@ -2296,7 +2382,7 @@ private: //------------------------------------------------------- private data
         boost::tie (pmap, okay) = sm.template property_map<VIndex,double>(vprop[i]);
         if (okay)
         {
-          os << "property double " << vprop[i] << std::endl;
+          os << "property double " << name << std::endl;
           vprinters.push_back (new internal::PLY::Simple_property_printer<VIndex,Double_map_v>(pmap));
           continue;
         }
@@ -2315,12 +2401,31 @@ private: //------------------------------------------------------- private data
         continue;
       
       bool okay = false;
+      if (fprop[i] == "f:color")
+      {
+        Fcolor_map pmap;
+        boost::tie (pmap, okay) = sm.template property_map<FIndex,Color>(fprop[i]);
+        if (okay)
+        {
+          os << "property uchar red" << std::endl
+             << "property uchar green" << std::endl
+             << "property uchar blue" << std::endl;
+
+          fprinters.push_back (new internal::PLY::Property_printer<FIndex,Fcolor_map>(pmap));
+          continue;
+        }
+      }
+      
+      // Cut the "f:" prefix
+      std::string name = fprop[i];
+      if (name.rfind("f:",0) == 0)
+        name = std::string (fprop[i].begin() + 2, fprop[i].end());
       {
         Int8_map_f pmap;
         boost::tie (pmap, okay) = sm.template property_map<FIndex,boost::int8_t>(fprop[i]);
         if (okay)
         {
-          os << "property char " << fprop[i] << std::endl;
+          os << "property char " << name << std::endl;
           fprinters.push_back (new internal::PLY::Char_property_printer<FIndex,Int8_map_f>(pmap));
           continue;
         }
@@ -2330,7 +2435,7 @@ private: //------------------------------------------------------- private data
         boost::tie (pmap, okay) = sm.template property_map<FIndex,boost::uint8_t>(fprop[i]);
         if (okay)
         {
-          os << "property uchar " << fprop[i] << std::endl;
+          os << "property uchar " << name << std::endl;
           fprinters.push_back (new internal::PLY::Char_property_printer<FIndex,Uint8_map_f>(pmap));
           continue;
         }
@@ -2340,7 +2445,7 @@ private: //------------------------------------------------------- private data
         boost::tie (pmap, okay) = sm.template property_map<FIndex,boost::int16_t>(fprop[i]);
         if (okay)
         {
-          os << "property short " << fprop[i] << std::endl;
+          os << "property short " << name << std::endl;
           fprinters.push_back (new internal::PLY::Simple_property_printer<FIndex,Int16_map_f>(pmap));
           continue;
         }
@@ -2350,7 +2455,7 @@ private: //------------------------------------------------------- private data
         boost::tie (pmap, okay) = sm.template property_map<FIndex,boost::uint16_t>(fprop[i]);
         if (okay)
         {
-          os << "property ushort " << fprop[i] << std::endl;
+          os << "property ushort " << name << std::endl;
           fprinters.push_back (new internal::PLY::Simple_property_printer<FIndex,Uint16_map_f>(pmap));
           continue;
         }
@@ -2360,8 +2465,38 @@ private: //------------------------------------------------------- private data
         boost::tie (pmap, okay) = sm.template property_map<FIndex,boost::int32_t>(fprop[i]);
         if (okay)
         {
-          os << "property int " << fprop[i] << std::endl;
+          os << "property int " << name << std::endl;
           fprinters.push_back (new internal::PLY::Simple_property_printer<FIndex,Int32_map_f>(pmap));
+          continue;
+        }
+      }
+      {
+        Uint32_map_f pmap;
+        boost::tie (pmap, okay) = sm.template property_map<FIndex,boost::uint32_t>(fprop[i]);
+        if (okay)
+        {
+          os << "property uint " << name << std::endl;
+          fprinters.push_back (new internal::PLY::Simple_property_printer<FIndex,Uint32_map_f>(pmap));
+          continue;
+        }
+      }
+      {
+        Int64_map_f pmap;
+        boost::tie (pmap, okay) = sm.template property_map<FIndex,boost::int64_t>(fprop[i]);
+        if (okay)
+        {
+          os << "property int " << name << std::endl;
+          fprinters.push_back (new internal::PLY::Simple_property_printer<FIndex,Int64_map_f,boost::int32_t>(pmap));
+          continue;
+        }
+      }
+      {
+        Uint64_map_f pmap;
+        boost::tie (pmap, okay) = sm.template property_map<FIndex,boost::uint64_t>(fprop[i]);
+        if (okay)
+        {
+          os << "property uint " << name << std::endl;
+          fprinters.push_back (new internal::PLY::Simple_property_printer<FIndex,Uint64_map_f,boost::uint32_t>(pmap));
           continue;
         }
       }
@@ -2370,7 +2505,7 @@ private: //------------------------------------------------------- private data
         boost::tie (pmap, okay) = sm.template property_map<FIndex,float>(fprop[i]);
         if (okay)
         {
-          os << "property float " << fprop[i] << std::endl;
+          os << "property float " << name << std::endl;
           fprinters.push_back (new internal::PLY::Simple_property_printer<FIndex,Float_map_f>(pmap));
           continue;
         }
@@ -2380,7 +2515,7 @@ private: //------------------------------------------------------- private data
         boost::tie (pmap, okay) = sm.template property_map<FIndex,double>(fprop[i]);
         if (okay)
         {
-          os << "property double " << fprop[i] << std::endl;
+          os << "property double " << name << std::endl;
           fprinters.push_back (new internal::PLY::Simple_property_printer<FIndex,Double_map_f>(pmap));
           continue;
         }
