@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
 {
 
   for(int i= 1;i < argc; i++){
-    test<Cost1>(argv[i]);
+    //test<Cost1>(argv[i]);
     test<Cost2>(argv[i]);
   }
 
