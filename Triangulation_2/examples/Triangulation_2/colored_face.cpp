@@ -22,11 +22,11 @@ int main() {
   t.insert(Point(2,2));
 
   Finite_faces_iterator fc = t.finite_faces_begin();
-  for( ; fc != t.finite_faces_end(); ++fc)  fc->info() = CGAL::BLUE;
+  for( ; fc != t.finite_faces_end(); ++fc)  fc->info() = CGAL::blue();
 
   Point p(0.5,0.5);
   Face_handle fh = t.locate(p);
-  fh->info() = CGAL::RED;
+  fh->info() = CGAL::red();
 
   return 0;
 }

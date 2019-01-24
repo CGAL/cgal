@@ -287,14 +287,14 @@ int main(int ,  char** )
 
   std::cout << "The data points are displayed in blue in the geomview"
 	    << " application." << std::endl;
-  gv << CGAL::BLUE;
+  gv << CGAL::blue();
   visu_points(gv,sample_3);
 
   //show the gradients
   if(method>0){
     std::cout << "The function gradients are displayed by red lines "
 	      <<" in the geomview application." << std::endl;
-    gv <<CGAL::RED;
+    gv <<CGAL::red();
     gv << Segment_3(Point_3(h/3,h/3,w),Point_3(h/3,h/3,w)+ Vector_3(-g,-g,0));
     gv << Segment_3(Point_3(-h/3,h/3,w),Point_3(-h/3,h/3,w)+Vector_3(g,-g,0));
     gv << Segment_3(Point_3(-h/3,-h/3,w),Point_3(-h/3,-h/3,w)+Vector_3(g,g,0));
