@@ -27,6 +27,11 @@
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#ifdef __GNUC__
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wdeprecated-copy"
+#endif
+
 #include <QApplication>
 #include <QKeyEvent>
 
@@ -36,6 +41,10 @@
 #include <QOpenGLVertexArrayObject>
 #include <QGLBuffer>
 #include <QOpenGLShaderProgram>
+
+#ifdef __GNUC__
+#  pragma GCC diagnostic pop
+#endif
 
 #include <vector>
 #include <cstdlib>
