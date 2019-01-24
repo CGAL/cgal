@@ -37,113 +37,6 @@ public:
   bool save(const CGAL::Three::Scene_item*, QFileInfo fileinfo);
 
 private:
-  void set_vcolors(SMesh* smesh)
-  {
-    typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
-    typedef SMesh::Property_map<vertex_descriptor, CGAL::Color> Color_map;
-    typedef SMesh::Property_map<vertex_descriptor, unsigned char> Uchar_map;
-
-    Uchar_map r, g, b;
-    bool okay = false;
-    boost::tie (r, okay) = smesh->property_map<vertex_descriptor, unsigned char>("red");
-    if (!okay)
-      return;
-    boost::tie (g, okay) = smesh->property_map<vertex_descriptor, unsigned char>("green");
-    if (!okay)
-      return;
-    boost::tie (b, okay) = smesh->property_map<vertex_descriptor, unsigned char>("blue");
-    if (!okay)
-      return;
-    
-    SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors
-      = smesh->add_property_map<SMesh::Vertex_index,CGAL::Color>("v:color",CGAL::Color(0,0,0)).first;
-    
-    BOOST_FOREACH(vertex_descriptor vd, vertices(*smesh))
-      vcolors[vd] = CGAL::Color (r[vd], g[vd], b[vd]);
-    
-    smesh->remove_property_map<vertex_descriptor, unsigned char>(r);
-    smesh->remove_property_map<vertex_descriptor, unsigned char>(g);
-    smesh->remove_property_map<vertex_descriptor, unsigned char>(b);
-  }
-
-  void set_fcolors(SMesh* smesh)
-  {
-    typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
-    typedef SMesh::Property_map<face_descriptor, CGAL::Color> Color_map;
-    typedef SMesh::Property_map<face_descriptor, unsigned char> Uchar_map;
-
-    Uchar_map r, g, b;
-    bool okay = false;
-    boost::tie (r, okay) = smesh->property_map<face_descriptor, unsigned char>("red");
-    if (!okay)
-      return;
-    boost::tie (g, okay) = smesh->property_map<face_descriptor, unsigned char>("green");
-    if (!okay)
-      return;
-    boost::tie (b, okay) = smesh->property_map<face_descriptor, unsigned char>("blue");
-    if (!okay)
-      return;
-    
-    SMesh::Property_map<face_descriptor, CGAL::Color> fcolors
-      = smesh->add_property_map<SMesh::Face_index,CGAL::Color>("f:color",CGAL::Color(0,0,0)).first;
-    
-    BOOST_FOREACH(face_descriptor fd, faces(*smesh))
-      fcolors[fd] = CGAL::Color (r[fd], g[fd], b[fd]);
-
-    smesh->remove_property_map<face_descriptor, unsigned char>(r);
-    smesh->remove_property_map<face_descriptor, unsigned char>(g);
-    smesh->remove_property_map<face_descriptor, unsigned char>(b);
-  }
-
-  void set_vrgb(SMesh* smesh)
-  {
-    typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
-    typedef SMesh::Property_map<vertex_descriptor, CGAL::Color> Color_map;
-    typedef SMesh::Property_map<vertex_descriptor, unsigned char> Uchar_map;
-
-    SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors;
-    bool okay = false;
-    boost::tie (vcolors, okay) = smesh->property_map<SMesh::Vertex_index,CGAL::Color>("v:color");
-    if (!okay)
-      return;
-    
-    Uchar_map r, g, b;
-    r = smesh->add_property_map<vertex_descriptor, unsigned char>("red").first;
-    g = smesh->add_property_map<vertex_descriptor, unsigned char>("green").first;
-    b = smesh->add_property_map<vertex_descriptor, unsigned char>("blue").first;
-
-    BOOST_FOREACH(vertex_descriptor vd, vertices(*smesh))
-    {
-      r[vd] = vcolors[vd].red();
-      g[vd] = vcolors[vd].green();
-      b[vd] = vcolors[vd].blue();
-    }
-  }
-
-  void set_frgb(SMesh* smesh)
-  {
-    typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
-    typedef SMesh::Property_map<face_descriptor, CGAL::Color> Color_map;
-    typedef SMesh::Property_map<face_descriptor, unsigned char> Uchar_map;
-
-    SMesh::Property_map<face_descriptor, CGAL::Color> fcolors;
-    bool okay = false;
-    boost::tie (fcolors, okay) = smesh->property_map<SMesh::Face_index,CGAL::Color>("f:color");
-    if (!okay)
-      return;
-    
-    Uchar_map r, g, b;
-    r = smesh->add_property_map<face_descriptor, unsigned char>("red").first;
-    g = smesh->add_property_map<face_descriptor, unsigned char>("green").first;
-    b = smesh->add_property_map<face_descriptor, unsigned char>("blue").first;
-
-    BOOST_FOREACH(face_descriptor fd, faces(*smesh))
-    {
-      r[fd] = fcolors[fd].red();
-      g[fd] = fcolors[fd].green();
-      b[fd] = fcolors[fd].blue();
-    }
-  }
 };
 
 bool Polyhedron_demo_ply_plugin::canLoad() const {
@@ -195,9 +88,6 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
 
     if (CGAL::read_ply (in, *surface_mesh))
     {
-      set_vcolors(surface_mesh);
-      set_fcolors(surface_mesh);
-      
       Scene_surface_mesh_item* sm_item = new Scene_surface_mesh_item(surface_mesh);
       sm_item->setName(fileinfo.completeBaseName());
       QApplication::restoreOverrideCursor();
@@ -288,14 +178,8 @@ bool Polyhedron_demo_ply_plugin::save(const CGAL::Three::Scene_item* item, QFile
   Scene_surface_mesh_item* sm_item =
     const_cast<Scene_surface_mesh_item*>(qobject_cast<const Scene_surface_mesh_item*>(item));
   if (sm_item)
-  {
-    set_vrgb (sm_item->polyhedron());
-    set_frgb (sm_item->polyhedron());
-    bool success = CGAL::write_ply (out, *(sm_item->polyhedron()));
-    set_vcolors (sm_item->polyhedron());
-    set_fcolors (sm_item->polyhedron());
-    return success;
-  }
+    return CGAL::write_ply (out, *(sm_item->polyhedron()));
+
   return false;
 }
 
