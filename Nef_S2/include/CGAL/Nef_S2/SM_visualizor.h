@@ -44,11 +44,11 @@ class SM_BooleColor
   typedef typename Map_::Mark Mark;   
 public:
   Color color(SVertex_const_handle, Mark m) const
-  { return ( m ? CGAL::BLACK : CGAL::WHITE ); }
+  { return ( m ? CGAL::black() : CGAL::white() ); }
   Color color(SHalfedge_const_handle, Mark m) const
-  { return ( m ? CGAL::BLACK : CGAL::WHITE ); }
+  { return ( m ? CGAL::black() : CGAL::white() ); }
   Color color(SHalfloop_const_handle, Mark m) const
-  { return ( m ? CGAL::BLACK : CGAL::WHITE ); }
+  { return ( m ? CGAL::black() : CGAL::white() ); }
   Color color(SFace_const_handle, Mark m) const
   { return ( m ? CGAL_NEF_DGREY : CGAL_NEF_LGREY ); }
 };
