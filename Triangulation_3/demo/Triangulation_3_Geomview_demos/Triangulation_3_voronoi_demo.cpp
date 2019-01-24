@@ -74,7 +74,7 @@ int main()
   gv << T;
 
   std::cout <<"          Visualizing the Voronoi edges" << std::endl;
-  gv << CGAL::RED;
+  gv << CGAL::red();
   T.draw_dual(gv);
 
   char ch;
