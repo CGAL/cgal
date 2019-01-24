@@ -396,9 +396,9 @@ std::ostream& operator<<( std::ostream& out, const Color& col)
 		   << static_cast<int>(col.green()) << ' '
 		   << static_cast<int>(col.blue());
     case IO::BINARY :
-        write(out, static_cast<int>(col.red()));
-        write(out, static_cast<int>(col.green()));
-        write(out, static_cast<int>(col.blue()));
+        write(out, col.red());
+        write(out, col.green());
+        write(out, col.blue());
         return out;
     default:
         return out << "Color(" << static_cast<int>(col.red()) << ", "
