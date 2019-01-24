@@ -34,7 +34,7 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
   # cpp files
   
   add_executable ( Hyperbolic_Delaunay_triangulation_2_demo Hyperbolic_Delaunay_triangulation_2_demo.cpp ${RESOURCE_FILES} ${UIS})
-  target_link_libraries ( Hyperbolic_Delaunay_triangulation_2_demo CGAL::CGAL CGAL::CGAL_Qt5)
+  target_link_libraries ( Hyperbolic_Delaunay_triangulation_2_demo CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_Core)
   qt5_use_modules( Hyperbolic_Delaunay_triangulation_2_demo Widgets )
 else()
   message(STATUS "NOTICE: This demo requires Qt5 and will not be compiled.")
