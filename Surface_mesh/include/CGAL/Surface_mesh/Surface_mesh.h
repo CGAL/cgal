@@ -2161,7 +2161,9 @@ private: //------------------------------------------------------- private data
 
   /// \relates Surface_mesh
   /// Inserts the surface mesh in an output stream in PLY format.
-  /// All vertex and face properties with simple types are inserted in the stream.
+  /// If found, "v:normal", "v:color" and "f:color" are inserted in the stream.
+  /// All other vertex and face properties with simple types are inserted in the stream.
+  /// \relates Surface_mesh
   template <typename P>
   bool write_ply(std::ostream& os, const Surface_mesh<P>& sm, const std::string& comments = std::string())
   {
@@ -2275,7 +2277,8 @@ private: //------------------------------------------------------- private data
         {
           os << "property uchar red" << std::endl
              << "property uchar green" << std::endl
-             << "property uchar blue" << std::endl;
+             << "property uchar blue" << std::endl
+             << "property uchar alpha" << std::endl;
 
           vprinters.push_back (new internal::PLY::Property_printer<VIndex,Vcolor_map>(pmap));
           continue;
@@ -2409,7 +2412,8 @@ private: //------------------------------------------------------- private data
         {
           os << "property uchar red" << std::endl
              << "property uchar green" << std::endl
-             << "property uchar blue" << std::endl;
+             << "property uchar blue" << std::endl
+             << "property uchar alpha" << std::endl;
 
           fprinters.push_back (new internal::PLY::Property_printer<FIndex,Fcolor_map>(pmap));
           continue;
@@ -2754,11 +2758,26 @@ private: //------------------------------------------------------- private data
 
   /// \relates Surface_mesh
   /// Extracts the surface mesh from an input stream in Ascii or
-  /// Binary PLY format and appends it to the surface mesh `sm`.  The
-  /// operator reads all properties for vertices and faces found in
-  /// the PLY input.
+  /// Binary PLY format and appends it to the surface mesh `sm`.
+  ///
+  /// - the operator reads the vertex `point` property and the face
+  ///   `vertex_index` (or `vertex_indices`) property;
+  /// - if three PLY properties `nx`, `ny` and `nz` with type `float`
+  ///   or `double` are found for vertices, a "v:normal" vertex
+  ///   property map is added;
+  /// - if three PLY properties `red`, `green` and `blue` with type
+  ///   `uchar` are found for vertices, a "v:color" vertex property
+  ///   map is added;
+  /// - if three PLY properties `red`, `green` and `blue` with type
+  ///   `uchar` are found for faces, a "f:color" face property map is
+  ///   added;
+  /// - if any other PLY property is found, a "[s]:[name]" property map is
+  ///   added, where `[s]` is `v` for vertex and `f` for face, and
+  ///   `[name]` is the name of PLY property.
+  ///
   /// \pre The data in the stream must represent a two-manifold. If this is not the case
   ///      the `failbit` of `is` is set and the mesh cleared.
+  /// \relates Surface_mesh
 
   template <typename P>
   bool read_ply(std::istream& is, Surface_mesh<P>& sm, std::string& comments)
