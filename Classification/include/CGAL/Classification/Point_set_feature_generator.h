@@ -293,64 +293,6 @@ public:
   /// @}
   
   /// \cond SKIP_IN_MANUAL
-  
-#ifndef CGAL_NO_DEPRECATED_CODE
-  // deprecated
-  template <typename VectorMap = Default,
-            typename ColorMap = Default,
-            typename EchoMap = Default>
-  CGAL_DEPRECATED_MSG("you are using a deprecated constructor of CGAL::Classification::Point_set_feature_generator, please update your code")
-  Point_set_feature_generator(Feature_set& features,
-                              const PointRange& input,
-                              PointMap point_map,
-                              std::size_t nb_scales,
-                              VectorMap normal_map = VectorMap(),
-                              ColorMap color_map = ColorMap(),
-                              EchoMap echo_map = EchoMap(),
-                              float voxel_size = -1.f)
-    : m_input (input), m_point_map (point_map)
-  {
-    m_bbox = CGAL::bounding_box
-      (boost::make_transform_iterator (m_input.begin(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)),
-       boost::make_transform_iterator (m_input.end(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)));
-
-    CGAL::Real_timer t; t.start();
-    
-    m_scales.reserve (nb_scales);
-    
-    m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, voxel_size));
-
-    if (voxel_size == -1.f)
-      voxel_size = m_scales[0]->grid_resolution();
-    
-    for (std::size_t i = 1; i < nb_scales; ++ i)
-    {
-      voxel_size *= 2;
-      m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, voxel_size, m_scales[i-1]->grid));
-    }
-    t.stop();
-    CGAL_CLASSIFICATION_CERR << "Scales computed in " << t.time() << " second(s)" << std::endl;
-    t.reset();
-
-    typedef typename Default::Get<VectorMap, typename GeomTraits::Vector_3 >::type
-      Vmap;
-    typedef typename Default::Get<ColorMap, CGAL::Color >::type
-      Cmap;
-    typedef typename Default::Get<EchoMap, std::size_t >::type
-      Emap;
-
-    generate_point_based_features (features);
-    generate_normal_based_features (features, get_parameter<Vmap>(normal_map));
-    generate_color_based_features (features, get_parameter<Cmap>(color_map));
-    generate_echo_based_features (features, get_parameter<Emap>(echo_map));
-  }
-
-  // Functions to remove when deprecated constructor is removed
-  void generate_normal_based_features(const CGAL::Constant_property_map<Iterator, typename GeomTraits::Vector_3>&) { }
-  void generate_color_based_features(const CGAL::Constant_property_map<Iterator, CGAL::Color>&) { }
-  void generate_echo_based_features(const CGAL::Constant_property_map<Iterator, std::size_t>&) { }
-#endif
-  
   virtual ~Point_set_feature_generator()
   {
     clear();
