@@ -34,7 +34,8 @@
 #include <CGAL/Polyline_simplification_2/Stop_below_count_ratio_threshold.h>
 #include <CGAL/Polyline_simplification_2/Stop_below_count_threshold.h>
 #include <CGAL/Polyline_simplification_2/Stop_above_cost_threshold.h>
-#include <CGAL/Modifiable_priority_queue.h>
+//#include <CGAL/Modifiable_priority_queue.h>
+#include <boost/heap/fibonacci_heap.hpp>
 #include <CGAL/algorithm.h>
 
 // Needed for Polygon_2
@@ -85,32 +86,21 @@ public:
     bool operator() ( Vertices_in_constraint_iterator const& x, 
                       Vertices_in_constraint_iterator const& y ) const 
     { 
-      return (*x)->cost() < (*y)->cost(); 
+      return (*x)->cost() > (*y)->cost(); 
     }
   } ;
   
-  struct Id_map : public boost::put_get_helper<std::size_t, Id_map>
-  { 
-    typedef boost::readable_property_map_tag category;
-    typedef std::size_t                      value_type;
-    typedef value_type                       reference;
-    typedef Vertices_in_constraint_iterator  key_type;
-    
-    reference operator[] ( key_type const& x ) const { return x.base()->id ; }
-  } ;
-  
-  typedef CGAL::Modifiable_priority_queue<Vertices_in_constraint_iterator,Compare_cost,Id_map> MPQ ;
+  typedef boost::heap::fibonacci_heap<Vertices_in_constraint_iterator,boost::heap::compare<Compare_cost> > MPQ ;
   
   MPQ* mpq;
-
+  std::map<Vertices_in_constraint_iterator,typename MPQ::handle_type> h;
   Polyline_simplification_2(PCT& pct, CostFunction cost, StopFunction stop)
     : pct(pct), cost(cost), stop(stop), pct_initial_number_of_vertices(pct.number_of_vertices()), number_of_unremovable_vertices(0)
   {
-    int m = initialize_indices();
+    initialize_indices();
     initialize_unremovable();
     Compare_cost cc;
-    Id_map idm;
-    mpq =  new MPQ(m, cc, idm);
+    mpq =  new MPQ(cc);
     initialize_costs();
   }
 
@@ -120,8 +110,7 @@ public:
     int m = initialize_indices(cid);
     initialize_unremovable();
     Compare_cost cc;
-    Id_map idm;
-    mpq =  new MPQ(m, cc, idm);
+    mpq =  new MPQ(cc);
     initialize_costs(cid);
   }
 
@@ -164,7 +153,7 @@ public:
         boost::optional<FT> dist = cost(pct, it);
         if(dist){
           (*it)->set_cost(*dist);
-          (*mpq).push(it);
+          h[it]=(*mpq).push(it);
           ++n;
         } else {
           // no need to set the costs as this vertex is not in the priority queue
@@ -273,16 +262,19 @@ operator()()
       boost::optional<FT> dist = cost(pct, u);
       if(! dist){
         // cost is undefined
-        if( mpq->contains(u) ){
-          mpq->erase(u);
+        if( h.find(u) != h.end()){
+          mpq->erase(h[u]);
+          h.erase(u);
         }
       } else {
+        typename MPQ::handle_type ex_h = h[u];
         (*u)->set_cost(*dist);
-        if(mpq->contains(u)){
-          mpq->update(u, true);
+        if(h.find(u) != h.end()){
+          mpq->update(ex_h);
+          h[u] = ex_h;
         }
         else{
-          mpq->push(u);
+          h[u]=mpq->push(u);
         }
       }
     }
@@ -291,16 +283,19 @@ operator()()
       boost::optional<FT> dist = cost(pct, w);
       if(! dist){
         // cost is undefined
-        if( mpq->contains(w) ){
-          mpq->erase(w);
+        if(h.find(w) != h.end()){
+          mpq->erase(h[w]);
+          h.erase(w);
         }
       } else {
+        typename MPQ::handle_type ex_h = h[w];
         (*w)->set_cost(*dist);
-        if(mpq->contains(w)){
-          mpq->update(w, true);
+        if(h.find(w) != h.end()){
+          mpq->update(ex_h);
+          h[w]=ex_h;
         }
         else{
-          mpq->push(w);
+          h[u]=mpq->push(w);
         }
 
       }
