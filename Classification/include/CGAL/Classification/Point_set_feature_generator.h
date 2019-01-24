@@ -154,8 +154,6 @@ public:
   typedef Classification::Feature::Gradient_of_feature
   <PointRange, PointMap, Neighbor_query>                Gradient_of_feature;
 #endif
-  
-  typedef typename Classification::RGB_Color RGB_Color;
   /// \endcond
     
 private:
@@ -336,7 +334,7 @@ public:
 
     typedef typename Default::Get<VectorMap, typename GeomTraits::Vector_3 >::type
       Vmap;
-    typedef typename Default::Get<ColorMap, RGB_Color >::type
+    typedef typename Default::Get<ColorMap, CGAL::Color >::type
       Cmap;
     typedef typename Default::Get<EchoMap, std::size_t >::type
       Emap;
@@ -349,7 +347,7 @@ public:
 
   // Functions to remove when deprecated constructor is removed
   void generate_normal_based_features(const CGAL::Constant_property_map<Iterator, typename GeomTraits::Vector_3>&) { }
-  void generate_color_based_features(const CGAL::Constant_property_map<Iterator, RGB_Color>&) { }
+  void generate_color_based_features(const CGAL::Constant_property_map<Iterator, CGAL::Color>&) { }
   void generate_echo_based_features(const CGAL::Constant_property_map<Iterator, std::size_t>&) { }
 #endif
   
@@ -435,7 +433,7 @@ public:
 
     \tparam ColorMap model of `ReadablePropertyMap`  whose key type is
     the value type of the iterator of `PointRange` and value type is
-    `CGAL::Classification::RGB_Color`.
+    `CGAL::Color`.
 
     \param features the feature set where the features are instantiated.
     \param color_map property map to access the colors of the input points (if any).
