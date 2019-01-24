@@ -123,7 +123,14 @@ public:
   */ 
   unsigned char& alpha() { return m_data[3]; }
 
-  /// @} 
+  /// \cond SKIP_IN_MANUAL
+  unsigned char r() const { return red(); }
+  unsigned char g() const { return green(); }
+  unsigned char b() const { return blue(); }
+  unsigned char a() const { return alpha(); }
+  /// \endcond
+  
+  /// @}
 
   /// \name Array Access
   /// @{
@@ -334,9 +341,6 @@ inline Color white() { return Color(255,255,255); }
   \relates Color
 */
 inline Color yellow() { return Color(255,255,0); }
-
-
-};
 
 
 } //namespace CGAL
