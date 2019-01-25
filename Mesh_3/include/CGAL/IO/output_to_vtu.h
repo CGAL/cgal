@@ -258,11 +258,11 @@ write_attributes(std::ostream& os,
   write_vector(os,att);
 }
 
-//public API
 template <class C3T3>
-void output_to_vtu(std::ostream& os,
-                   const C3T3& c3t3,
-                   IO::Mode mode = IO::BINARY)
+void output_to_vtu_with_attributes(std::ostream& os,
+                                   const C3T3& c3t3,
+                                   std::vector<std::pair<const char*, std::vector<double>*> >& attributes,
+                                   IO::Mode mode = IO::BINARY)
 {
   typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Vertex_handle Vertex_handle;
@@ -289,21 +289,16 @@ void output_to_vtu(std::ostream& os,
   os << "  <Piece NumberOfPoints=\"" << number_of_vertices
      << "\" NumberOfCells=\"" << c3t3.number_of_cells() << "\">\n";
   std::size_t offset = 0;
+  
+  
   const bool binary = (mode == IO::BINARY);
   write_c3t3_points_tag(os,tr,number_of_vertices,V,binary,offset);
   write_cells_tag(os,c3t3,V,binary,offset); // fills V if the mode is ASCII
-
-  std::vector<float> mids;
-  mids.reserve(c3t3.number_of_cells_in_complex());
-  for( typename C3T3::Cell_iterator cit = c3t3.cells_in_complex_begin() ;
-       cit != c3t3.cells_in_complex_end() ;
-       ++cit ) {
-    mids.push_back(cit->subdomain_index());
+  os << "    <CellData>\n";
+  for(std::size_t i = 0; i< attributes.size(); ++i)
+  {
+    write_attribute_tag(os,attributes[i].first, *attributes[i].second, binary,offset);
   }
-
-  os << "   <CellData Scalars=\"MeshDomain";
-  os << "\">\n";
-  write_attribute_tag(os,"MeshDomain",mids,binary,offset);
   os << "    </CellData>\n";
   os << "   </Piece>\n"
      << "  </UnstructuredGrid>\n";
@@ -311,9 +306,33 @@ void output_to_vtu(std::ostream& os,
     os << "<AppendedData encoding=\"raw\">\n_"; 
     write_c3t3_points(os,tr,V); // fills V if the mode is BINARY
     write_cells(os,c3t3,V);
-    write_attributes(os,mids);
+    for(std::size_t i = 0; i< attributes.size(); ++i)
+      write_attributes(os, *attributes[i].second);
   }
   os << "</VTKFile>\n";
+}
+
+
+
+//public API
+template <class C3T3>
+void output_to_vtu(std::ostream& os,
+               const C3T3& c3t3,
+               IO::Mode mode = IO::BINARY)
+{
+  typedef typename C3T3::Triangulation Tr;
+  typedef typename C3T3::Cells_in_complex_iterator Cell_iterator;
+  typedef typename Tr::Vertex_handle Vertex_handle;
+  std::vector<double> mids;      
+  for( Cell_iterator cit = c3t3.cells_in_complex_begin() ;
+       cit != c3t3.cells_in_complex_end() ;
+       ++cit )
+    {
+      mids.push_back(cit->subdomain_index());
+    }
+  std::vector<std::pair<const char*, std::vector<double>* > > atts;
+  atts.push_back(std::make_pair("MeshDomain", &mids));
+  output_to_vtu_with_attributes(os, c3t3, atts, mode);
 }
 
 } //end CGAL
