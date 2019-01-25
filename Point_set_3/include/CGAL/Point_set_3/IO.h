@@ -379,6 +379,9 @@ write_ply_point_set(
   typedef typename Point_set::template Property_map<boost::int16_t> Int16_map;
   typedef typename Point_set::template Property_map<boost::uint16_t> Uint16_map;
   typedef typename Point_set::template Property_map<boost::int32_t> Int32_map;
+  typedef typename Point_set::template Property_map<boost::uint32_t> Uint32_map;
+  typedef typename Point_set::template Property_map<boost::int64_t> Int64_map;
+  typedef typename Point_set::template Property_map<boost::uint64_t> Uint64_map;
   typedef typename Point_set::template Property_map<float> Float_map;
   typedef typename Point_set::template Property_map<double> Double_map;
     
@@ -490,6 +493,36 @@ write_ply_point_set(
           {
             stream << "property int " << prop[i] << std::endl;
             printers.push_back (new internal::PLY::Simple_property_printer<Index,Int32_map>(pmap));
+            continue;
+          }
+      }
+      {
+        Uint32_map pmap;
+        boost::tie (pmap, okay) = point_set.template property_map<boost::uint32_t>(prop[i]);
+        if (okay)
+          {
+            stream << "property uint " << prop[i] << std::endl;
+            printers.push_back (new internal::PLY::Simple_property_printer<Index,Uint32_map>(pmap));
+            continue;
+          }
+      }
+      {
+        Int64_map pmap;
+        boost::tie (pmap, okay) = point_set.template property_map<boost::int64_t>(prop[i]);
+        if (okay)
+          {
+            stream << "property int " << prop[i] << std::endl;
+            printers.push_back (new internal::PLY::Simple_property_printer<Index,Int64_map,boost::int32_t>(pmap));
+            continue;
+          }
+      }
+      {
+        Uint64_map pmap;
+        boost::tie (pmap, okay) = point_set.template property_map<boost::uint64_t>(prop[i]);
+        if (okay)
+          {
+            stream << "property uint " << prop[i] << std::endl;
+            printers.push_back (new internal::PLY::Simple_property_printer<Index,Uint64_map,boost::uint32_t>(pmap));
             continue;
           }
       }
