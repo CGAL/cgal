@@ -261,7 +261,7 @@ write_attributes(std::ostream& os,
 template <class C3T3>
 void output_to_vtu_with_attributes(std::ostream& os,
                                    const C3T3& c3t3,
-                                   std::vector<std::pair<const char*, std::vector<double>*> >& attributes,
+                                   std::vector<std::pair<const char*, const std::vector<double>*> >& attributes,
                                    IO::Mode mode = IO::BINARY)
 {
   typedef typename C3T3::Triangulation Tr;
@@ -289,12 +289,11 @@ void output_to_vtu_with_attributes(std::ostream& os,
   os << "  <Piece NumberOfPoints=\"" << number_of_vertices
      << "\" NumberOfCells=\"" << c3t3.number_of_cells() << "\">\n";
   std::size_t offset = 0;
-  
-  
+
   const bool binary = (mode == IO::BINARY);
   write_c3t3_points_tag(os,tr,number_of_vertices,V,binary,offset);
   write_cells_tag(os,c3t3,V,binary,offset); // fills V if the mode is ASCII
-  os << "    <CellData>\n";
+  os << "    <CellData Scalars=\""<<attributes.front().first<<"\">\n";
   for(std::size_t i = 0; i< attributes.size(); ++i)
   {
     write_attribute_tag(os,attributes[i].first, *attributes[i].second, binary,offset);
