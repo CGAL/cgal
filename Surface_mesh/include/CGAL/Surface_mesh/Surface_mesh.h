@@ -2413,7 +2413,7 @@ private: //------------------------------------------------------- private data
     if(!is){
       return false;
     }
-    sm.reserve(sm.num_vertices()+n, sm.num_faces()+2*f, sm.num_edges()+e);
+    sm.reserve(sm.num_vertices()+n, sm.num_edges()+e, sm.num_faces()+f);
     std::vector<Vertex_index> vertexmap(n);
     P p;
     Vector_3 v;
@@ -2582,12 +2582,22 @@ private: //------------------------------------------------------- private data
       bool is_edge = false;
       bool is_halfedge = false;
       if (is_vertex)
+      {
+        sm.reserve(sm.number_of_vertices() + element.number_of_items(),
+                   sm.number_of_edges(),
+                   sm.number_of_faces());
         filler.instantiate_vertex_properties (element);
+      }
       else
         is_face = (element.name() == "face" || element.name() == "faces");
 
       if (is_face)
+      {
+        sm.reserve(sm.number_of_vertices(),
+                   sm.number_of_edges(),
+                   sm.number_of_faces() + element.number_of_items());
         filler.instantiate_face_properties (element);
+      }
       else
         is_edge = (element.name() == "edge");
 

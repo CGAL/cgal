@@ -78,6 +78,7 @@ private:
   };
   
   Surface_mesh& m_mesh;
+  std::vector<Vertex_index> m_map_v2v;
   bool m_use_floats;
   int m_normals;
   typename Surface_mesh::template Property_map<Vertex_index, Vector> m_normal_map;
@@ -183,6 +184,7 @@ public:
 
   void instantiate_vertex_properties (PLY_element& element)
   {
+    m_map_v2v.reserve(element.number_of_items());
     instantiate_properties<Vertex_index> (element, m_vertex_properties);
   }
   
@@ -288,6 +290,7 @@ public:
     element.assign (z, "z");
     Point point (x, y, z);
     vi = m_mesh.add_vertex(point);
+    m_map_v2v.push_back(vi);
     
     if (m_normals == 3)
     {
@@ -334,7 +337,7 @@ public:
     std::vector<Vertex_index> vertices;
     vertices.reserve(indices.size());
     for (std::size_t i = 0; i < indices.size(); ++ i)
-      vertices.push_back (Vertex_index (indices[i]));
+      vertices.push_back (m_map_v2v[std::size_t(indices[i])]);
 
     fi = m_mesh.add_face(vertices);
     if (fi == m_mesh.null_face())
@@ -375,7 +378,8 @@ public:
     element.assign (v0, "v0");
     element.assign (v1, "v1");
 
-    Halfedge_index hi = m_mesh.halfedge(Vertex_index(v0), Vertex_index(v1));
+    Halfedge_index hi = m_mesh.halfedge(m_map_v2v[std::size_t(v0)],
+                                        m_map_v2v[std::size_t(v1)]);
     if (hi == m_mesh.null_halfedge())
       return;
     
@@ -406,7 +410,7 @@ public:
     IntType source, target;
     element.assign (source, "source");
     element.assign (target, "target");
-    hi = m_mesh.halfedge(Vertex_index(source), Vertex_index(target));
+    hi = m_mesh.halfedge(m_map_v2v[std::size_t(source)], m_map_v2v[std::size_t(target)]);
   }
 
 };

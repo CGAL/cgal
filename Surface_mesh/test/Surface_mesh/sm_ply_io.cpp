@@ -34,6 +34,10 @@ int main()
   mesh.add_property_map<SMesh::Halfedge_index, float>("u", 13.f);
   mesh.add_property_map<SMesh::Halfedge_index, float>("v", 37.f);
 
+  // Append second mesh
+  std::ifstream in2 ("tetra.ply");
+  CGAL::read_ply (in2, mesh);
+
   std::ofstream out ("out.ply");
 //  CGAL::set_binary_mode(out);
   CGAL::write_ply (out, mesh);
