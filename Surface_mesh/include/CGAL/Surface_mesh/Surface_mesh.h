@@ -2163,6 +2163,10 @@ private: //------------------------------------------------------- private data
   /// Inserts the surface mesh in an output stream in PLY format.
   /// If found, "v:normal", "v:color" and "f:color" are inserted in the stream.
   /// All other vertex and face properties with simple types are inserted in the stream.
+  /// Edges are only inserted in the stream if they have at least one
+  /// property with simple type: if they do, all edge properties with
+  /// simple types are inserted in the stream. The halfedges follow
+  /// the same behavior.
   /// \relates Surface_mesh
   template <typename P>
   bool write_ply(std::ostream& os, const Surface_mesh<P>& sm, const std::string& comments = std::string())
@@ -2172,22 +2176,8 @@ private: //------------------------------------------------------- private data
     typedef typename K::Vector_3 Vector;
     typedef typename SMesh::Vertex_index VIndex;
     typedef typename SMesh::Face_index FIndex;
+    typedef typename SMesh::Edge_index EIndex;
     typedef typename SMesh::Halfedge_index HIndex;
-
-    typedef typename SMesh::template Property_map<VIndex, P> Point_map;
-    typedef typename SMesh::template Property_map<VIndex, Vector> Vector_map;
-    typedef typename SMesh::template Property_map<VIndex, Color> Vcolor_map;
-    
-    typedef typename SMesh::template Property_map<VIndex, boost::int8_t> Int8_map_v;
-    typedef typename SMesh::template Property_map<VIndex, boost::uint8_t> Uint8_map_v;
-    typedef typename SMesh::template Property_map<VIndex, boost::int16_t> Int16_map_v;
-    typedef typename SMesh::template Property_map<VIndex, boost::uint16_t> Uint16_map_v;
-    typedef typename SMesh::template Property_map<VIndex, boost::int32_t> Int32_map_v;
-    typedef typename SMesh::template Property_map<VIndex, boost::uint32_t> Uint32_map_v;
-    typedef typename SMesh::template Property_map<VIndex, boost::int64_t> Int64_map_v;
-    typedef typename SMesh::template Property_map<VIndex, boost::uint64_t> Uint64_map_v;
-    typedef typename SMesh::template Property_map<VIndex, float> Float_map_v;
-    typedef typename SMesh::template Property_map<VIndex, double> Double_map_v;
 
     typedef typename SMesh::template Property_map<FIndex, Color> Fcolor_map;
     
@@ -2218,314 +2208,33 @@ private: //------------------------------------------------------- private data
     }
   
     os << "element vertex " << sm.number_of_vertices() << std::endl;
-    std::vector<std::string> vprop = sm.template properties<VIndex>();
+
     std::vector<internal::PLY::Abstract_property_printer<VIndex>*> vprinters;
-  
-    for (std::size_t i = 0; i < vprop.size(); ++ i)
-    {
-      if (vprop[i] == "v:connectivity" ||
-          vprop[i] == "v:removed")
-        continue;
-
-      if (vprop[i] == "v:point")
-      {
-        if (boost::is_same<typename Get_FT_from_map<Point_map>::type, float>::value)
-        {
-          os << "property float x" << std::endl
-             << "property float y" << std::endl
-             << "property float z" << std::endl;
-        }
-        else
-        {
-          os << "property double x" << std::endl
-             << "property double y" << std::endl
-             << "property double z" << std::endl;
-        }
-        vprinters.push_back (new internal::PLY::Property_printer<VIndex,Point_map>(sm.points()));
-        continue;
-      }
-      
-      bool okay = false;
-      if (vprop[i] == "v:normal")
-      {
-        Vector_map pmap;
-        boost::tie (pmap, okay) = sm.template property_map<VIndex,Vector>(vprop[i]);
-        if (okay)
-        {
-          if (boost::is_same<typename Get_FT_from_map<Vector_map>::type, float>::value)
-          {
-            os << "property float nx" << std::endl
-               << "property float ny" << std::endl
-               << "property float nz" << std::endl;
-          }
-          else
-          {
-            os << "property double nx" << std::endl
-               << "property double ny" << std::endl
-               << "property double nz" << std::endl;
-          }
-          vprinters.push_back (new internal::PLY::Property_printer<VIndex,Vector_map>(pmap));
-          continue;
-        }
-      }
-      
-      if (vprop[i] == "v:color")
-      {
-        Vcolor_map pmap;
-        boost::tie (pmap, okay) = sm.template property_map<VIndex,Color>(vprop[i]);
-        if (okay)
-        {
-          os << "property uchar red" << std::endl
-             << "property uchar green" << std::endl
-             << "property uchar blue" << std::endl
-             << "property uchar alpha" << std::endl;
-
-          vprinters.push_back (new internal::PLY::Property_printer<VIndex,Vcolor_map>(pmap));
-          continue;
-        }
-      }
-
-      // Cut the "v:" prefix
-      std::string name = vprop[i];
-      if (name.rfind("v:",0) == 0)
-        name = std::string (vprop[i].begin() + 2, vprop[i].end());
-      
-      {
-        Int8_map_v pmap;
-        boost::tie (pmap, okay) = sm.template property_map<VIndex,boost::int8_t>(vprop[i]);
-        if (okay)
-        {
-          os << "property char " << name << std::endl;
-          vprinters.push_back (new internal::PLY::Char_property_printer<VIndex,Int8_map_v>(pmap));
-          continue;
-        }
-      }
-      {
-        Uint8_map_v pmap;
-        boost::tie (pmap, okay) = sm.template property_map<VIndex,boost::uint8_t>(vprop[i]);
-        if (okay)
-        {
-          os << "property uchar " << name << std::endl;
-          vprinters.push_back (new internal::PLY::Char_property_printer<VIndex,Uint8_map_v>(pmap));
-          continue;
-        }
-      }
-      {
-        Int16_map_v pmap;
-        boost::tie (pmap, okay) = sm.template property_map<VIndex,boost::int16_t>(vprop[i]);
-        if (okay)
-        {
-          os << "property short " << name << std::endl;
-          vprinters.push_back (new internal::PLY::Simple_property_printer<VIndex,Int16_map_v>(pmap));
-          continue;
-        }
-      }
-      {
-        Uint16_map_v pmap;
-        boost::tie (pmap, okay) = sm.template property_map<VIndex,boost::uint16_t>(vprop[i]);
-        if (okay)
-        {
-          os << "property ushort " << name << std::endl;
-          vprinters.push_back (new internal::PLY::Simple_property_printer<VIndex,Uint16_map_v>(pmap));
-          continue;
-        }
-      }
-      {
-        Int32_map_v pmap;
-        boost::tie (pmap, okay) = sm.template property_map<VIndex,boost::int32_t>(vprop[i]);
-        if (okay)
-        {
-          os << "property int " << name << std::endl;
-          vprinters.push_back (new internal::PLY::Simple_property_printer<VIndex,Int32_map_v>(pmap));
-          continue;
-        }
-      }
-      {
-        Uint32_map_v pmap;
-        boost::tie (pmap, okay) = sm.template property_map<VIndex,boost::uint32_t>(vprop[i]);
-        if (okay)
-        {
-          os << "property uint " << name << std::endl;
-          vprinters.push_back (new internal::PLY::Simple_property_printer<VIndex,Uint32_map_v>(pmap));
-          continue;
-        }
-      }
-      {
-        Int64_map_v pmap;
-        boost::tie (pmap, okay) = sm.template property_map<VIndex,boost::int64_t>(vprop[i]);
-        if (okay)
-        {
-          os << "property int " << name << std::endl;
-          vprinters.push_back (new internal::PLY::Simple_property_printer<VIndex,Int64_map_v,boost::int32_t>(pmap));
-          continue;
-        }
-      }
-      {
-        Uint64_map_v pmap;
-        boost::tie (pmap, okay) = sm.template property_map<VIndex,boost::uint64_t>(vprop[i]);
-        if (okay)
-        {
-          os << "property uint " << name << std::endl;
-          vprinters.push_back (new internal::PLY::Simple_property_printer<VIndex,Uint64_map_v,boost::uint32_t>(pmap));
-          continue;
-        }
-      }
-      {
-        Float_map_v pmap;
-        boost::tie (pmap, okay) = sm.template property_map<VIndex,float>(vprop[i]);
-        if (okay)
-        {
-          os << "property float " << name << std::endl;
-          vprinters.push_back (new internal::PLY::Simple_property_printer<VIndex,Float_map_v>(pmap));
-          continue;
-        }
-      }
-      {
-        Double_map_v pmap;
-        boost::tie (pmap, okay) = sm.template property_map<VIndex,double>(vprop[i]);
-        if (okay)
-        {
-          os << "property double " << name << std::endl;
-          vprinters.push_back (new internal::PLY::Simple_property_printer<VIndex,Double_map_v>(pmap));
-          continue;
-        }
-      }
-    }
+    internal::PLY::fill_header (os, sm, vprinters);
     
     os << "element face " << sm.number_of_faces() << std::endl;
     os << "property list uchar int vertex_indices" << std::endl;
-    std::vector<std::string> fprop = sm.template properties<FIndex>();
     std::vector<internal::PLY::Abstract_property_printer<FIndex>*> fprinters;
-  
-    for (std::size_t i = 0; i < fprop.size(); ++ i)
-    {
-      if (fprop[i] == "f:connectivity" ||
-          fprop[i] == "f:removed")
-        continue;
-      
-      bool okay = false;
-      if (fprop[i] == "f:color")
-      {
-        Fcolor_map pmap;
-        boost::tie (pmap, okay) = sm.template property_map<FIndex,Color>(fprop[i]);
-        if (okay)
-        {
-          os << "property uchar red" << std::endl
-             << "property uchar green" << std::endl
-             << "property uchar blue" << std::endl
-             << "property uchar alpha" << std::endl;
+    internal::PLY::fill_header (os, sm, fprinters);
 
-          fprinters.push_back (new internal::PLY::Property_printer<FIndex,Fcolor_map>(pmap));
-          continue;
-        }
-      }
-      
-      // Cut the "f:" prefix
-      std::string name = fprop[i];
-      if (name.rfind("f:",0) == 0)
-        name = std::string (fprop[i].begin() + 2, fprop[i].end());
-      {
-        Int8_map_f pmap;
-        boost::tie (pmap, okay) = sm.template property_map<FIndex,boost::int8_t>(fprop[i]);
-        if (okay)
-        {
-          os << "property char " << name << std::endl;
-          fprinters.push_back (new internal::PLY::Char_property_printer<FIndex,Int8_map_f>(pmap));
-          continue;
-        }
-      }
-      {
-        Uint8_map_f pmap;
-        boost::tie (pmap, okay) = sm.template property_map<FIndex,boost::uint8_t>(fprop[i]);
-        if (okay)
-        {
-          os << "property uchar " << name << std::endl;
-          fprinters.push_back (new internal::PLY::Char_property_printer<FIndex,Uint8_map_f>(pmap));
-          continue;
-        }
-      }
-      {
-        Int16_map_f pmap;
-        boost::tie (pmap, okay) = sm.template property_map<FIndex,boost::int16_t>(fprop[i]);
-        if (okay)
-        {
-          os << "property short " << name << std::endl;
-          fprinters.push_back (new internal::PLY::Simple_property_printer<FIndex,Int16_map_f>(pmap));
-          continue;
-        }
-      }
-      {
-        Uint16_map_f pmap;
-        boost::tie (pmap, okay) = sm.template property_map<FIndex,boost::uint16_t>(fprop[i]);
-        if (okay)
-        {
-          os << "property ushort " << name << std::endl;
-          fprinters.push_back (new internal::PLY::Simple_property_printer<FIndex,Uint16_map_f>(pmap));
-          continue;
-        }
-      }
-      {
-        Int32_map_f pmap;
-        boost::tie (pmap, okay) = sm.template property_map<FIndex,boost::int32_t>(fprop[i]);
-        if (okay)
-        {
-          os << "property int " << name << std::endl;
-          fprinters.push_back (new internal::PLY::Simple_property_printer<FIndex,Int32_map_f>(pmap));
-          continue;
-        }
-      }
-      {
-        Uint32_map_f pmap;
-        boost::tie (pmap, okay) = sm.template property_map<FIndex,boost::uint32_t>(fprop[i]);
-        if (okay)
-        {
-          os << "property uint " << name << std::endl;
-          fprinters.push_back (new internal::PLY::Simple_property_printer<FIndex,Uint32_map_f>(pmap));
-          continue;
-        }
-      }
-      {
-        Int64_map_f pmap;
-        boost::tie (pmap, okay) = sm.template property_map<FIndex,boost::int64_t>(fprop[i]);
-        if (okay)
-        {
-          os << "property int " << name << std::endl;
-          fprinters.push_back (new internal::PLY::Simple_property_printer<FIndex,Int64_map_f,boost::int32_t>(pmap));
-          continue;
-        }
-      }
-      {
-        Uint64_map_f pmap;
-        boost::tie (pmap, okay) = sm.template property_map<FIndex,boost::uint64_t>(fprop[i]);
-        if (okay)
-        {
-          os << "property uint " << name << std::endl;
-          fprinters.push_back (new internal::PLY::Simple_property_printer<FIndex,Uint64_map_f,boost::uint32_t>(pmap));
-          continue;
-        }
-      }
-      {
-        Float_map_f pmap;
-        boost::tie (pmap, okay) = sm.template property_map<FIndex,float>(fprop[i]);
-        if (okay)
-        {
-          os << "property float " << name << std::endl;
-          fprinters.push_back (new internal::PLY::Simple_property_printer<FIndex,Float_map_f>(pmap));
-          continue;
-        }
-      }
-      {
-        Double_map_f pmap;
-        boost::tie (pmap, okay) = sm.template property_map<FIndex,double>(fprop[i]);
-        if (okay)
-        {
-          os << "property double " << name << std::endl;
-          fprinters.push_back (new internal::PLY::Simple_property_printer<FIndex,Double_map_f>(pmap));
-          continue;
-        }
-      }
+    std::vector<internal::PLY::Abstract_property_printer<EIndex>*> eprinters;
+    if (sm.template properties<EIndex>().size() > 1)
+    {
+      os << "element edge " << sm.number_of_edges() << std::endl;
+      os << "property int v0" << std::endl;
+      os << "property int v1" << std::endl;
+      internal::PLY::fill_header (os, sm, eprinters);
     }
-    
+
+    std::vector<internal::PLY::Abstract_property_printer<HIndex>*> hprinters;
+    if (sm.template properties<HIndex>().size() > 1)
+    {
+      os << "element halfedge " << sm.number_of_halfedges() << std::endl;
+      os << "property int source" << std::endl;
+      os << "property int target" << std::endl;
+      internal::PLY::fill_header (os, sm, hprinters);
+    }
+
     os << "end_header" << std::endl;  
 
     BOOST_FOREACH(VIndex vi, sm.vertices())
@@ -2577,10 +2286,66 @@ private: //------------------------------------------------------- private data
         os << std::endl;
     }
 
+    if (!eprinters.empty())
+    {
+      BOOST_FOREACH(EIndex ei, sm.edges())
+      {
+        if (get_mode (os) == IO::ASCII)
+          os << int(sm.vertex(ei,0)) << " " << int(sm.vertex(ei,1)) << " ";
+        else
+        {
+          int v0 = int(sm.vertex(ei,0));
+          int v1 = int(sm.vertex(ei,1));
+          os.write (reinterpret_cast<char*>(&v0), sizeof(v0));
+          os.write (reinterpret_cast<char*>(&v1), sizeof(v1));
+        }
+      
+        for (std::size_t i = 0; i < eprinters.size(); ++ i)
+        {
+          eprinters[i]->print(os, ei);
+          if (get_mode (os) == IO::ASCII)
+            os << " ";
+        }
+      
+        if (get_mode (os) == IO::ASCII)
+          os << std::endl;
+      }
+    }
+    
+    if (!hprinters.empty())
+    {
+      BOOST_FOREACH(HIndex hi, sm.halfedges())
+      {
+        if (get_mode (os) == IO::ASCII)
+          os << int(sm.source(hi)) << " " << int(sm.target(hi)) << " ";
+        else
+        {
+          int source = int(sm.source(hi));
+          int target = int(sm.target(hi));
+          os.write (reinterpret_cast<char*>(&source), sizeof(source));
+          os.write (reinterpret_cast<char*>(&target), sizeof(target));
+        }
+      
+        for (std::size_t i = 0; i < hprinters.size(); ++ i)
+        {
+          hprinters[i]->print(os, hi);
+          if (get_mode (os) == IO::ASCII)
+            os << " ";
+        }
+      
+        if (get_mode (os) == IO::ASCII)
+          os << std::endl;
+      }
+    }
+    
     for (std::size_t i = 0; i < vprinters.size(); ++ i)
       delete vprinters[i];
     for (std::size_t i = 0; i < fprinters.size(); ++ i)
       delete fprinters[i];
+    for (std::size_t i = 0; i < eprinters.size(); ++ i)
+      delete eprinters[i];
+    for (std::size_t i = 0; i < hprinters.size(); ++ i)
+      delete hprinters[i];
     
     return true;
   }
@@ -2805,6 +2570,8 @@ private: //------------------------------------------------------- private data
 
       bool is_vertex = (element.name() == "vertex" || element.name() == "vertices");
       bool is_face = false;
+      bool is_edge = false;
+      bool is_halfedge = false;
       if (is_vertex)
         filler.instantiate_vertex_properties (element);
       else
@@ -2812,6 +2579,16 @@ private: //------------------------------------------------------- private data
 
       if (is_face)
         filler.instantiate_face_properties (element);
+      else
+        is_edge = (element.name() == "edge");
+
+      if (is_edge)
+        filler.instantiate_edge_properties (element);
+      else
+        is_halfedge = (element.name() == "halfedge");
+
+      if (is_halfedge)
+        filler.instantiate_halfedge_properties (element);
   
       for (std::size_t j = 0; j < element.number_of_items(); ++ j)
       {
@@ -2833,6 +2610,10 @@ private: //------------------------------------------------------- private data
             return false;
           }
         }
+        else if (is_edge)
+          filler.process_edge_line (element);
+        else if (is_halfedge)
+          filler.process_halfedge_line (element);
       }
     }
 

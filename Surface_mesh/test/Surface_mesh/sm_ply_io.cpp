@@ -30,9 +30,12 @@ int main()
   for (std::size_t i = 0; i < properties.size(); ++ i)
     std::cerr << " * " << properties[i] << std::endl;
 
+  mesh.add_property_map<SMesh::Edge_index, short>("id", 42);
+  mesh.add_property_map<SMesh::Halfedge_index, float>("u", 13.f);
+  mesh.add_property_map<SMesh::Halfedge_index, float>("v", 37.f);
 
   std::ofstream out ("out.ply");
-  CGAL::set_binary_mode(out);
+//  CGAL::set_binary_mode(out);
   CGAL::write_ply (out, mesh);
 
   return 0;
