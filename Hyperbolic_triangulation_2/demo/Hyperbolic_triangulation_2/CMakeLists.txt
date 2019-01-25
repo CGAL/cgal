@@ -24,18 +24,18 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 include_directories (BEFORE include)
 
-if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
+if(Boost_FOUND AND CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
   # ui files, created with Qt Designer
-  qt5_wrap_ui( UIS Hyperbolic_triangulation_2_demo.ui )
+  qt5_wrap_ui( UIS HDT2.ui )
   
   # qrc files (resources files, that contain icons, at least)
   qt5_add_resources ( RESOURCE_FILES resources/File.qrc resources/Input.qrc resources/Delaunay_triangulation_2.qrc )
   
   # cpp files
   
-  add_executable ( Hyperbolic_Delaunay_triangulation_2_demo Hyperbolic_Delaunay_triangulation_2_demo.cpp ${RESOURCE_FILES} ${UIS})
-  target_link_libraries ( Hyperbolic_Delaunay_triangulation_2_demo CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_Core)
-  qt5_use_modules( Hyperbolic_Delaunay_triangulation_2_demo Widgets )
+  add_executable ( HDT2_demo HDT2.cpp ${RESOURCE_FILES} ${UIS})
+  target_link_libraries ( HDT2_demo CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_Core)
+  qt5_use_modules( HDT2_demo Widgets )
 else()
-  message(STATUS "NOTICE: This demo requires Qt5 and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires CGAL, Boost and Qt5 and will not be compiled.")
 endif()
