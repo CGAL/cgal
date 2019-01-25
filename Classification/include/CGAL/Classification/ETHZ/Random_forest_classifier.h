@@ -66,7 +66,7 @@ namespace ETHZ {
 /*!
   \ingroup PkgClassificationClassifiersETHZ
 
-  \brief %Classifier based on the ETH Zurich version of random forest algorithm \cgalCite{cgal:w-erftl-14}.
+  \brief %Classifier based on the ETH Zurich version of the random forest algorithm \cgalCite{cgal:w-erftl-14}.
 
   \note This classifier is distributed under the MIT license.
 
@@ -88,7 +88,7 @@ public:
   /// @{
   
   /*!
-    \brief Instantiate the classifier using the sets of `labels` and `features`.
+    \brief Instantiates the classifier using the sets of `labels` and `features`.
 
   */
   Random_forest_classifier (const Label_set& labels,
@@ -262,7 +262,7 @@ public:
     respect to a training set: if a feature is used a lot, that means
     that it has a strong discriminative power with respect to how the
     labels are represented by the feature set; on the contrary, if a
-    feature is not used very often, it's discriminative power is
+    feature is not used very often, its discriminative power is
     probably low; if a feature is _never_ used, it likely has no
     interest at all and is completely uncorrelated to the label
     segmentation of the training set.

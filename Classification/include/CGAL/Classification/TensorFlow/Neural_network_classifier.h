@@ -55,7 +55,8 @@ namespace TFops = tensorflow::ops;
 /*!
   \ingroup PkgClassificationClassifiersTensorFlow
 
-  \brief %Classifier based on the TensorFlow version of neural network.
+  \brief %Classifier based on the TensorFlow version of the neural
+  network algorithm.
 
   This class provides an interface to a feature-based neural network:
   a set of features is used as an input layer followed by a
@@ -65,14 +66,14 @@ namespace TFops = tensorflow::ops;
 
   \warning This feature is still experimental: it may not be stable
   and is likely to undergo substantial changes in future releases of
-  \cgal. Use at your own risk.
+  \cgal. The API changes will be announced in the release notes.
 
   \note This class requires the \ref thirdpartyTensorFlow library.
 
   \tparam ActivationFunction Chosen activation function for the hidden
-  layers. Relu is used as default. The following functions can be used
-  (please refer to the documentation of TensorFlow for more
-  information):
+  layers. `Relu` is used as default. The following functions can be
+  used (please refer to the documentation of \ref thirdpartyTensorFlow
+  for more information):
    - `tensorflow::ops::Elu`
    - `tensorflow::ops::Relu6`
    - `tensorflow::ops::Relu`
@@ -122,7 +123,7 @@ public:
   /// @{
   
   /*!
-    \brief Instantiate the classifier using the sets of `labels` and `features`.
+    \brief Instantiates the classifier using the sets of `labels` and `features`.
 
   */
   Neural_network_classifier (const Label_set& labels,
@@ -230,7 +231,7 @@ public:
     information should be given the value `-1`.
 
     \param restart_from_scratch should be set to `false` if the user
-    wants to continue adjusting weights and bias based, and kept to
+    wants to continue adjusting weights and bias based, and set to
     `true` if the neural network should be re-created from scratch
     (discarding all previous training results).
 

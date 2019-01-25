@@ -42,7 +42,7 @@ namespace OpenCV {
 /*!
   \ingroup PkgClassificationClassifiersOpenCV
 
-  \brief %Classifier based on the OpenCV version of random forest algorithm.
+  \brief %Classifier based on the OpenCV version of the random forest algorithm.
 
   \note This class requires the \ref thirdpartyOpenCV library.
 
@@ -70,7 +70,7 @@ public:
   /// @{
   
 /*!
-  \brief Instantiate the classifier using the sets of `labels` and `features`.
+  \brief Instantiates the classifier using the sets of `labels` and `features`.
 
   Parameters documentation is copy-pasted from [the official documentation of OpenCV](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html). For more details on this method, please refer to it.
 

@@ -203,6 +203,10 @@ Example of cluster classification mesh (left: input, middle: clusters computed f
 
 \cgal provides four models for this concept, [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier), [OpenCV::Random_forest_classifier](@ref CGAL::Classification::OpenCV::Random_forest_classifier), [TensorFlow::Neural_network_classifier](@ref CGAL::Classification::TensorFlow::Neural_network_classifier) and [Sum_of_weighted_features_classifier](@ref CGAL::Classification::Sum_of_weighted_features_classifier).
 
+\note Currently, [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier)
+is the best classifier available in \cgal and we strongly advise users
+to use it.
+
 To perform classification based on four classifiers, please refer to \ref Classification_classification_functions.
 
 \subsection Classification_ETHZ_random_forest ETHZ Random Forest
@@ -214,9 +218,6 @@ distributed under the MIT license and is included with the \cgal release,
 the user does not have to install anything more). This classifier uses
 a ground truth training set to construct several decision trees that
 are then used to assign a label to each input item.
-
-__This classifier is currently the best available in \cgal and we
-strongly advise users to use it.__
 
 This classifier cannot be set up by hand and requires a ground truth
 training set. The training algorithm is fast but usually requires a
@@ -239,7 +240,6 @@ package.
 
 Note that this classifier usually produces results with a lower
 quality than [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier).
-
 It is provided for the sake of completeness and for testing purposes,
 but if you are not sure what to use, we advise using the ETHZ Random
 Forest instead.
@@ -257,7 +257,7 @@ It uses the C++ API of the \ref thirdpartyTensorFlow library.
 
 \warning This feature is still experimental: it may not be stable
 and is likely to undergo substantial changes in future releases of
-\cgal. Use at your own risk.
+\cgal. The API changes will be announced in the release notes.
 
 The provided interface is a feature-based neural network: a set of
 features is used as an input layer followed by a user-specified number
@@ -364,7 +364,7 @@ Top-Left: input point set. Top-Right: raw output classification represented by a
 
 Mathematical details are provided hereafter.
 
-\subsection Classification_classify Raw classification
+\subsection Classification_classify Raw Classification
 
 - `CGAL::Classification::classify()`: this is the fastest method
 that provides acceptable but usually noisy results (see Figure
@@ -520,7 +520,9 @@ The following example shows how to use the classifier [OpenCV::Random_forest_cla
 
 \subsection Classification_example_tensorflow_neural_network TensorFlow Neural Network
 
-The following example shows how to use the classifier [TensorFlow::Neural_network_classifier](@ref CGAL::Classification::TensorFlow::Neural_network_classifier) using an input training set.
+The following example shows how to use the classifier
+[TensorFlow::Neural_network_classifier](@ref CGAL::Classification::TensorFlow::Neural_network_classifier)
+using an input training set.
 
 \cgalExample{Classification/example_tensorflow_neural_network.cpp}
 
