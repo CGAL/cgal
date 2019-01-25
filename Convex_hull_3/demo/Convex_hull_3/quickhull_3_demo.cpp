@@ -67,7 +67,7 @@ void draw_points_and_hull(const std::vector<Point_3>& points,
    std::vector<Point_3>::const_iterator p_it;
 
    CGAL::Geomview_stream geomview;
-   geomview << CGAL::RED;
+   geomview << CGAL::red();
    for (p_it = points.begin(); p_it != points.end(); p_it++)
    {
       geomview << *p_it;
@@ -78,7 +78,7 @@ void draw_points_and_hull(const std::vector<Point_3>& points,
    Point_3          point;
    Polyhedron_3     polyhedron;
 
-   geomview << CGAL::BLUE;
+   geomview << CGAL::blue();
    if ( CGAL::assign(point, object) )
       geomview << point;
    else if ( CGAL::assign(segment, object) )

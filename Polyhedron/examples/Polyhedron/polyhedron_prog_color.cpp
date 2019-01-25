@@ -23,6 +23,6 @@ typedef Polyhedron::Halfedge_handle           Halfedge_handle;
 int main() {
     Polyhedron P;
     Halfedge_handle h = P.make_tetrahedron();
-    h->facet()->color = CGAL::RED;
+    h->facet()->color = CGAL::red();
     return 0;
 }

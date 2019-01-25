@@ -25,7 +25,6 @@
 
 #include <vector>
 
-#include <CGAL/Classification/Color.h>
 #include <CGAL/Classification/Feature_base.h>
 
 namespace CGAL {
@@ -65,7 +64,7 @@ namespace Feature {
     `ColorMap`.
     \tparam ColorMap model of `ReadablePropertyMap` whose key
     type is the value type of the iterator of `PointRange` and value type
-    is `CGAL::Classification::RGB_Color`.
+    is `CGAL::Color`.
   */
 template <typename GeomTraits, typename PointRange, typename ColorMap>
 class Color_channel : public Feature_base
@@ -82,9 +81,6 @@ public:
 
 private:
   
-  typedef typename Classification::RGB_Color RGB_Color;
-  typedef typename Classification::HSV_Color HSV_Color;
-
   const PointRange& input;
   ColorMap color_map;
   Channel m_channel;
@@ -111,8 +107,8 @@ public:
   /// \cond SKIP_IN_MANUAL
   virtual float value (std::size_t pt_index)
   {
-    HSV_Color c = Classification::rgb_to_hsv (get(color_map, *(input.begin()+pt_index)));
-    return c[std::size_t(m_channel)];
+    cpp11::array<double, 3> c = get(color_map, *(input.begin()+pt_index)).to_hsv();
+    return float(c[std::size_t(m_channel)]);
   }
   /// \endcond
 };
