@@ -2167,6 +2167,11 @@ private: //------------------------------------------------------- private data
   /// property with simple type: if they do, all edge properties with
   /// simple types are inserted in the stream. The halfedges follow
   /// the same behavior.
+  ///
+  /// If provided, the `comments` string is included line by line in
+  /// the header of the PLY stream (each line will be precedeed by
+  /// "comment ").
+  ///
   /// \relates Surface_mesh
   template <typename P>
   bool write_ply(std::ostream& os, const Surface_mesh<P>& sm, const std::string& comments = std::string())
@@ -2521,7 +2526,6 @@ private: //------------------------------------------------------- private data
   }
   /// \endcond
 
-  /// \relates Surface_mesh
   /// Extracts the surface mesh from an input stream in Ascii or
   /// Binary PLY format and appends it to the surface mesh `sm`.
   ///
@@ -2539,6 +2543,11 @@ private: //------------------------------------------------------- private data
   /// - if any other PLY property is found, a "[s]:[name]" property map is
   ///   added, where `[s]` is `v` for vertex and `f` for face, and
   ///   `[name]` is the name of PLY property.
+  ///
+  /// The `comments` parameter can be omitted. If provided, it will be
+  /// used to store the potential comments found in the PLY
+  /// header. Each line starting by "comment " in the header is
+  /// appended to the `comments` string (without the "comment " word).
   ///
   /// \pre The data in the stream must represent a two-manifold. If this is not the case
   ///      the `failbit` of `is` is set and the mesh cleared.
