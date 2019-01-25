@@ -295,7 +295,8 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
   approx.initialize_seeds(CGAL::parameters::seeding_method(
     static_cast<VSA::Seeding_method>(ui_widget.comboMethod->currentIndex()))
     .max_number_of_proxies(ui_widget.nb_proxies->value())
-    .min_error_drop(ui_widget.error_drop->value())
+    .min_error_drop(
+      ui_widget.enable_error_drop->isChecked() ? ui_widget.error_drop->value() : -1.0)
     .number_of_relaxations(ui_widget.nb_relaxations->value()));
   approx.run(ui_widget.nb_iterations->value());
 
