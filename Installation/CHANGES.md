@@ -12,6 +12,11 @@ Release date: March 2019
     for all vertices of a triangle mesh to the closest vertex in a given set of
     source vertices. 
 
+### Triangulated Surface Mesh Approximation (new package)
+
+-   This package implements the Variational Shape Approximation method to approximate
+    an input surface triangle mesh by a simpler surface triangle mesh.
+
 ### Polygon Mesh Processing package
 -   Added the following new functions to detect and repair issues in polygon soups:
     - `CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup()`, which detects and removes
@@ -68,9 +73,43 @@ Release date: March 2019
     `Arr_polyline_traits_2`, `Arr_polycurve_traits_2`, and
     `Arr_polycurve_basic_traits_2`.
 
+### 2D Minkowski Sums
+
+-   Fixed a bug in the function that computed the Minkowski sum using the
+    reduced-convolution method. In particular, correctly handled the case where
+    one of the summands does not have an outer boundaey.
+
+### 3D Point Set
+
+-   Added a method `copy_properties()` that allows to copy the
+    properties from a point set to another one (without copying the
+    content);
+
+-   Added a method `insert(const Point_set&, const Index&)` to copy a
+    point along with all its associated properties from another point
+    set;
+
+-   `remove()` methods now only invalidate the `end()` iterator
+    instead of invalidating all iterators;
+
+-   Added a method `is_removed()` that takes an index as argument;
+
+-   Added a method `cancel_removals()` to restore removed points (if
+    no point was inserted since then an garbage was not collected);
+
+-   **Breaking change:** unified API of method `add_normal_map()` with
+    `add_property_map()`: it now returns a pair of property map + bool
+    (that tells if the property was added) instead of just the
+    property map;
+
+-   Added a method `properties_and_types()` in addition to
+    `properties()`: this new one returns pairs of `std::string` +
+    `std::type_info` in order to also know the type of each property.
+
 ### CGAL and the Boost Graph Library (BGL)
 
 -    Add function `write_wrl()` for writing into VRML 2.0 format.
+
 
 Release 4.13
 ------------
