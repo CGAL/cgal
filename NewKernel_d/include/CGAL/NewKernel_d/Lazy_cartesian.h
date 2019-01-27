@@ -79,7 +79,6 @@ struct Lazy_cartesian_types
 	    typedef Lazy<
 		    typename Get_type<AK_,T>::type,
 		    typename Get_type<EK_,T>::type,
-		    typename Get_type<EK_, FT_tag>::type,
 		    E2A_> type;
     };
     template <class T> struct Type<T,Number_tag> {
