@@ -61,42 +61,42 @@ template <class E,
           class K>
 class Lazy_kernel_base;
   
-template <typename AT, typename ET, typename EFT, typename E2A> class Lazy;
+template <typename AT, typename ET, typename E2A> class Lazy;
 
 template <typename ET_>
 class Lazy_exact_nt;
 
-template <typename AT, typename ET, typename EFT, typename E2A>
+template <typename AT, typename ET, typename E2A>
 inline
 const AT&
-approx(const Lazy<AT,ET, EFT, E2A>& l)
+approx(const Lazy<AT,ET,E2A>& l)
 {
   return l.approx();
 }
 
 // Where is this one (non-const) needed ?  Is it ?
-template <typename AT, typename ET, typename EFT, typename E2A>
+template <typename AT, typename ET, typename E2A>
 inline
 AT&
-approx(Lazy<AT,ET, EFT, E2A>& l)
+approx(Lazy<AT,ET,E2A>& l)
 {
   return l.approx();
 }
 
 
-template <typename AT, typename ET, typename EFT, typename E2A>
+template <typename AT, typename ET, typename E2A>
 inline
 const ET&
-exact(const Lazy<AT,ET,EFT,E2A>& l)
+exact(const Lazy<AT,ET,E2A>& l)
 {
   return l.exact();
 }
 
 
-template <typename AT, typename ET, typename EFT, typename E2A>
+template <typename AT, typename ET, typename E2A>
 inline
 unsigned
-depth(const Lazy<AT,ET,EFT,E2A>& l)
+depth(const Lazy<AT,ET,E2A>& l)
 {
   return l.depth();
 }
@@ -158,10 +158,10 @@ print_at(std::ostream& os, const std::pair<T1,T2> & at)
 }
 
 
-template <typename AT, typename ET, typename EFT, typename E2A>
+template <typename AT, typename ET, typename E2A>
 inline
 void
-print_dag(const Lazy<AT,ET,EFT,E2A>& l, std::ostream& os, int level = 0)
+print_dag(const Lazy<AT,ET,E2A>& l, std::ostream& os, int level = 0)
 {
   l.print_dag(os, level);
 }
@@ -723,7 +723,7 @@ public:
 
 //____________________________________________________________
 // The handle class
-template <typename AT_, typename ET_, typename EFT, typename E2A>
+template <typename AT_, typename ET_, typename E2A>
 class Lazy : public Handle
 {
   template <class Exact_kernel_,
@@ -739,7 +739,7 @@ class Lazy : public Handle
   
 public :
 
-  typedef Lazy<AT_, ET_, EFT, E2A>  Self;
+  typedef Lazy<AT_, ET_, E2A>  Self;
   typedef Lazy_rep<AT_, ET_, E2A>   Self_rep;
 
   typedef AT_ AT; // undocumented
@@ -1098,7 +1098,7 @@ public:
 // In a first version we assume that the references are of type Lazy<Something>,
 // and that the result type is void
 
-template <typename LK, typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
+template <typename AC, typename EC, typename E2A>
 struct Lazy_functor_2_1
 {
   static const bool Protection = true;
@@ -1166,7 +1166,6 @@ struct Lazy_functor_2_2
   typedef void result_type;
   typedef typename LK::Approximate_kernel AK;
   typedef typename LK::Exact_kernel EK;
-  typedef typename EK::FT EFT;
   typedef typename LK::E2A E2A;
 
   AC ac;
@@ -1178,12 +1177,12 @@ public:
   void
   operator()(const L1& l1, const L2& l2, R1& r1, R2& r2) const
   {
-    typedef Lazy<typename R1::AT, typename R1::ET, EFT, E2A> Handle_1;
-    typedef Lazy<typename R2::AT, typename R2::ET, EFT, E2A> Handle_2;
+    typedef Lazy<typename R1::AT, typename R1::ET, E2A> Handle_1;
+    typedef Lazy<typename R2::AT, typename R2::ET, E2A> Handle_2;
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     Protect_FPU_rounding<Protection> P;
     try {
-      typedef Lazy<std::pair<typename R1::AT, typename R2::AT>, std::pair<typename R1::ET, typename R2::ET>, EFT, E2A> Lazy_pair;
+      typedef Lazy<std::pair<typename R1::AT, typename R2::AT>, std::pair<typename R1::ET, typename R2::ET>, E2A> Lazy_pair;
       Lazy_pair lv(new Lazy_rep_2_2<AC, EC, E2A, L1, L2, R1, R2>(ac, ec, l1, l2));
       // lv->approx() is a std::pair<R1::AT, R2::AT>;
       r1 = R1(Handle_1(new Lazy_rep_1<void, void, First<std::pair<typename R1::AT, typename R2::AT> >, First<std::pair<typename R1::ET, typename R2::ET> >, E2A, Lazy_pair>(First<std::pair<typename R1::AT, typename R2::AT> >(), First<std::pair<typename R1::ET, typename R2::ET> >(), lv)));
@@ -1208,11 +1207,10 @@ struct Lazy_intersect_with_iterators
   static const bool Protection = true;
   typedef typename LK::Approximate_kernel AK;
   typedef typename LK::Exact_kernel EK;
-  typedef typename EK::FT EFT;
   typedef typename LK::E2A E2A;
   typedef void result_type;
-  typedef Lazy<Object, Object, EFT, E2A> Lazy_object;
-  typedef Lazy<std::vector<Object>, std::vector<Object>, EFT, E2A> Lazy_vector;
+  typedef Lazy<Object, Object, E2A> Lazy_object;
+  typedef Lazy<std::vector<Object>, std::vector<Object>, E2A> Lazy_vector;
 
   AC ac;
   EC ec;
@@ -1287,13 +1285,12 @@ struct Lazy_construction_object
 
   typedef typename LK::Approximate_kernel AK;
   typedef typename LK::Exact_kernel EK;
-  typedef typename EK::FT EFT;
   typedef typename LK::E2A E2A;
   typedef typename AC::result_type AT;
   typedef typename EC::result_type ET;
   typedef Object result_type;
 
-  typedef Lazy<Object, Object, EFT, E2A> Lazy_object;
+  typedef Lazy<Object, Object, E2A> Lazy_object;
 
   AC ac;
   EC ec;
@@ -1535,7 +1532,6 @@ struct Lazy_construction_variant {
 
   typedef typename LK::Approximate_kernel AK;
   typedef typename LK::Exact_kernel EK;
-  typedef typename EK::FT EFT;
   typedef typename LK::E2A E2A;
 
 
@@ -1569,7 +1565,7 @@ struct Lazy_construction_variant {
     Protect_FPU_rounding<Protection> P;
 
     try {
-      Lazy<AT, ET, EFT, E2A> lazy(new Lazy_rep_2<AT, ET, AC, EC, E2A, L1, L2>(AC(), EC(), l1, l2));
+      Lazy<AT, ET, E2A> lazy(new Lazy_rep_2<AT, ET, AC, EC, E2A, L1, L2>(AC(), EC(), l1, l2));
 
       // the approximate result requires the trait with types from the AK 
       AT approx_v = lazy.approx();
@@ -1582,7 +1578,7 @@ struct Lazy_construction_variant {
       }
 
       // the static visitor fills the result_type with the correct unwrapped type
-      internal::Fill_lazy_variant_visitor_2< result_type, AK, LK, EK, Lazy<AT, ET, EFT, E2A> > visitor(res, lazy);
+      internal::Fill_lazy_variant_visitor_2< result_type, AK, LK, EK, Lazy<AT, ET, E2A> > visitor(res, lazy);
       boost::apply_visitor(visitor, *approx_v);
       
       return res;
@@ -1618,7 +1614,7 @@ struct Lazy_construction_variant {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     Protect_FPU_rounding<Protection> P;
     try {
-      Lazy<AT, ET, EFT, E2A> lazy(new Lazy_rep_3<AT, ET, AC, EC, E2A, L1, L2, L3>(AC(), EC(), l1, l2, l3));
+      Lazy<AT, ET, E2A> lazy(new Lazy_rep_3<AT, ET, AC, EC, E2A, L1, L2, L3>(AC(), EC(), l1, l2, l3));
 
       // the approximate result requires the trait with types from the AK 
       AT approx_v = lazy.approx();
@@ -1631,7 +1627,7 @@ struct Lazy_construction_variant {
       }
 
       // the static visitor fills the result_type with the correct unwrapped type
-      internal::Fill_lazy_variant_visitor_2< result_type, AK, LK, EK, Lazy<AT, ET, EFT, E2A> > visitor(res, lazy);
+      internal::Fill_lazy_variant_visitor_2< result_type, AK, LK, EK, Lazy<AT, ET, E2A> > visitor(res, lazy);
       boost::apply_visitor(visitor, *approx_v);
       
       return res;
@@ -1670,7 +1666,6 @@ struct Lazy_construction<LK, AC, EC, E2A_, true> {
   typedef typename boost::remove_cv< 
     typename boost::remove_reference < typename EC::result_type >::type >::type  ET;
 
-  typedef typename EK::FT EFT;
   typedef typename Default::Get<E2A_, typename LK::E2A>::type E2A;
   
   typedef typename Type_mapper<AT, AK, LK>::type result_type;
@@ -1682,7 +1677,7 @@ struct Lazy_construction<LK, AC, EC, E2A_, true> {
   template<BOOST_PP_ENUM_PARAMS(n, class L)>                            \
   result_type                                                           \
   operator()( BOOST_PP_ENUM(n, CGAL_LARGS, _) ) const {                 \
-    typedef Lazy< AT, ET, EFT, E2A> Handle;                             \
+    typedef Lazy< AT, ET, E2A> Handle;                                  \
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp); \
     Protect_FPU_rounding<Protection> P;                                 \
     try {                                                               \
@@ -1701,7 +1696,7 @@ struct Lazy_construction<LK, AC, EC, E2A_, true> {
   result_type
   operator()() const
   {
-    typedef Lazy<AT, ET, EFT, E2A> Handle;
+    typedef Lazy<AT, ET, E2A> Handle;
     return result_type( Handle(new Lazy_rep_0<AT,ET,E2A>()) );
   }
 
@@ -1717,7 +1712,6 @@ struct Lazy_construction<LK, AC, EC, E2A_, false>
 
   typedef typename LK::Approximate_kernel AK;
   typedef typename LK::Exact_kernel EK;
-  typedef typename EK::FT EFT;
   typedef typename Default::Get<E2A_, typename LK::E2A>::type E2A;
 
   template<typename>
@@ -1749,7 +1743,7 @@ struct result<F( BOOST_PP_ENUM_PARAMS(n, T) )> { \
                                         typename cpp11::result_of< EC(BOOST_PP_ENUM_PARAMS(n, E)) >::type >::type >::type ET; \
     typedef typename boost::remove_cv< typename boost::remove_reference < \
                                         typename cpp11::result_of< AC(BOOST_PP_ENUM_PARAMS(n, A)) >::type >::type >::type AT; \
-    typedef Lazy< AT, ET, EFT, E2A> Handle; \
+    typedef Lazy< AT, ET, E2A> Handle; \
     typedef typename cpp11::result_of<Lazy_construction(BOOST_PP_ENUM_PARAMS(n, L))>::type result_type; \
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp); \
     Protect_FPU_rounding<Protection> P;                                   \
@@ -1771,7 +1765,7 @@ struct result<F( BOOST_PP_ENUM_PARAMS(n, T) )> { \
   {
     typedef typename cpp11::result_of<AC()>::type AT;
     typedef typename cpp11::result_of<EC()>::type ET;
-    typedef Lazy<AT, ET, EFT, E2A> Handle;
+    typedef Lazy<AT, ET, E2A> Handle;
     typedef typename Type_mapper< typename cpp11::result_of<AC()>::type ,AK, LK>::type result_type;
 
     return result_type( Handle(new Lazy_rep_0<AT,ET,E2A>()) );

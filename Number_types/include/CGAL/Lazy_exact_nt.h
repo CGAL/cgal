@@ -344,14 +344,14 @@ struct Lazy_exact_Max : public Lazy_exact_binary<ET>
 // The real number type, handle class
 template <typename ET_>
 class Lazy_exact_nt
-  : public Lazy<Interval_nt<false>, ET_, Lazy_exact_nt<ET_>, To_interval<ET_> >
+  : public Lazy<Interval_nt<false>, ET_, To_interval<ET_> >
   , boost::ordered_euclidian_ring_operators2< Lazy_exact_nt<ET_>, int >
   , boost::ordered_euclidian_ring_operators2< Lazy_exact_nt<ET_>, double >
 {
 public:
 
   typedef Lazy_exact_nt<ET_> Self;
-  typedef Lazy<Interval_nt<false>, ET_, Self, To_interval<ET_> > Base;
+  typedef Lazy<Interval_nt<false>, ET_, To_interval<ET_> > Base;
   typedef typename Base::Self_rep  Self_rep;
 
   typedef typename Base::ET ET; // undocumented

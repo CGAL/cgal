@@ -164,7 +164,7 @@ public:
   typedef CGAL::Object Object_3;
 
 #define CGAL_Kernel_obj(X) \
-  typedef Lazy<typename Approximate_kernel::X, typename Exact_kernel::X, typename Exact_kernel::FT, E2A>  X;
+  typedef Lazy<typename Approximate_kernel::X, typename Exact_kernel::X, E2A>  X;
 
   CGAL_Kernel_obj(Data_accessor_2)
   CGAL_Kernel_obj(Conic_2)
