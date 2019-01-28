@@ -1444,6 +1444,10 @@ class Dispatch_or_drop_output_iterator < cpp11::tuple<V...>, cpp11::tuple<O...> 
 public:
 
   Dispatch_or_drop_output_iterator(O... o) : Base(o...) {}
+  
+#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
+  Dispatch_or_drop_output_iterator(const Dispatch_or_drop_output_iterator&)=default;
+#endif
 
   using Base::operator=;
 
