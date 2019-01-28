@@ -89,6 +89,15 @@ public:
     _rational_function(rational_function),
     _x_coordinate(x_coordinate) {}
 
+  Algebraic_point_2_rep(const Algebraic_point_2_rep& other)
+  {
+    if (this != &other) // protect against invalid self-assignment
+    {
+      _rational_function = other._rational_function;
+      _x_coordinate = other._x_coordinate;
+    } 
+  }
+  
   //assignment oparator
   Algebraic_point_2_rep& operator=(const Algebraic_point_2_rep& other)
   {
