@@ -159,7 +159,6 @@ public:
 
   Self operator*(const Self& rh) const { return Self(this->_wrd * rh._wrd); }
   Self operator-(const Self& other) const { return Self(this->_wrd - other._wrd); }
-  Self& operator=(const Self& other) { this->_wrd = other._wrd; return *this; }
 
   bool operator==(const Hyperbolic_octagon_translation<FT>& other) const {
     return this->_wrd == other._wrd;
