@@ -2542,7 +2542,7 @@ private: //------------------------------------------------------- private data
   ///   added;
   /// - if any other PLY property is found, a "[s]:[name]" property map is
   ///   added, where `[s]` is `v` for vertex and `f` for face, and
-  ///   `[name]` is the name of PLY property.
+  ///   `[name]` is the name of the PLY property.
   ///
   /// The `comments` parameter can be omitted. If provided, it will be
   /// used to store the potential comments found in the PLY

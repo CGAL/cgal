@@ -310,6 +310,15 @@ read_ply_point_set(
 /*!
   \ingroup PkgPointSet3IO
 
+  Reads a point set with properties from an input stream in Ascii or
+  Binary PLY format.
+
+  - the operator reads the vertex `point` property;
+  - if three PLY properties `nx`, `ny` and `nz` with type `float`
+     or `double` are found, the normal map is added;
+  - if any other PLY property is found, a "[name]" property map is
+    added, where `[name]` is the name of the PLY property.
+
   The `comments` parameter can be omitted. If provided, it will be
   used to store the potential comments found in the PLY
   header. Each line starting by "comment " in the header is
@@ -370,6 +379,12 @@ read_ply_point_set(
   
 /*!
   \ingroup PkgPointSet3IO
+
+  Writes a point set with properties in an output stream in PLY
+  format.
+
+  If found, the normal map is inserted to the stream.  All other
+  properties with simple types are inserted in the stream.
 
   If provided, the `comments` string is included line by line in
   the header of the PLY stream (each line will be precedeed by
