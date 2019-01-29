@@ -181,12 +181,20 @@ public:
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
       priors[i] = 1.;
 
-    CvRTParams params (m_max_depth, m_min_sample_count,
-                       0, false, m_max_categories, priors, false, 0,
-                       m_max_number_of_trees_in_the_forest,
-                       m_forest_accuracy,
-                       CV_TERMCRIT_ITER | CV_TERMCRIT_EPS
-      );
+    CvRTParams params;
+
+    if (m_forest_accuracy == 0.f)
+      params = CvRTParams
+        (m_max_depth, m_min_sample_count,
+         0, false, m_max_categories, priors, false, 0,
+         m_max_number_of_trees_in_the_forest,
+         m_forest_accuracy, CV_TERMCRIT_ITER);
+    else
+      params = CvRTParams
+        (m_max_depth, m_min_sample_count,
+         0, false, m_max_categories, priors, false, 0,
+         m_max_number_of_trees_in_the_forest,
+         m_forest_accuracy, CV_TERMCRIT_EPS | CV_TERMCRIT_ITER);
 
     cv::Mat var_type (m_features.size() + 1, 1, CV_8U);
     var_type.setTo (cv::Scalar(CV_VAR_NUMERICAL));
@@ -206,8 +214,13 @@ public:
     rtree->setUseSurrogates(false);
     rtree->setPriors(cv::Mat());
     rtree->setCalculateVarImportance(false);
+
+    cv::TermCriteria criteria;
+    if (m_forest_accuracy == 0.f)
+      criteria = cv::TermCriteria (cv::TermCriteria::COUNT, m_max_number_of_trees_in_the_forest, m_forest_accuracy);
+    else
+      criteria = cv::TermCriteria (cv::TermCriteria::EPS + cv::TermCriteria::COUNT, m_max_number_of_trees_in_the_forest, m_forest_accuracy);
     
-    cv::TermCriteria criteria (cv::TermCriteria::EPS + cv::TermCriteria::COUNT, m_max_number_of_trees_in_the_forest, 0.01f);
     rtree->setTermCriteria (criteria);
 
     cv::Ptr<cv::ml::TrainData> tdata = cv::ml::TrainData::create
