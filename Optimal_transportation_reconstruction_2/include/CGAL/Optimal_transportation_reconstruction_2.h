@@ -609,6 +609,11 @@ public:
         // std::cerr << "simulation: failed (make collapsible)" << std::endl;
         return false;
       }
+      ok = copy.check_validity_test(copy_edge);
+      if (!ok) {
+        std::cerr << "simulation: failed (validity test)" << std::endl;
+        return false;
+      }
     }
 
     ok = copy.check_kernel_test(copy_edge);
@@ -618,6 +623,12 @@ public:
     }
 
     copy.collapse(copy_edge, m_verbose);
+
+    ok = copy.check_validity_test(copy_edge);
+    if (!ok) {
+      std::cerr << "simulation: failed (validity test)" << std::endl;
+      return false;
+    }
 
     Sample_vector samples;
     m_dt.collect_samples_from_vertex(s, samples, false);
