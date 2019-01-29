@@ -179,6 +179,10 @@ public:
 
     std::vector<int> gt;
     std::vector<float> ft;
+
+#ifdef CGAL_CLASSIFICATION_VERBOSE
+    std::vector<std::size_t> count (m_labels.size(), 0);
+#endif
     
     for (std::size_t i = 0; i < ground_truth.size(); ++ i)
     {
@@ -188,10 +192,17 @@ public:
         for (std::size_t f = 0; f < m_features.size(); ++ f)
           ft.push_back(m_features[f]->value(i));
         gt.push_back(g);
+#ifdef CGAL_CLASSIFICATION_VERBOSE
+        count[std::size_t(g)] ++;
+#endif
       }
     }
 
-    CGAL_CLASSIFICATION_CERR << "Using " << gt.size() << " inliers" << std::endl;
+    CGAL_CLASSIFICATION_CERR << "Using " << gt.size() << " inliers:" << std::endl;
+#ifdef CGAL_CLASSIFICATION_VERBOSE
+    for (std::size_t i = 0; i < m_labels.size(); ++ i)
+      std::cerr << " * " << m_labels[i]->name() << ": " << count[i] << " inlier(s)" << std::endl;
+#endif
 
     CGAL::internal::liblearning::DataView2D<int> label_vector (&(gt[0]), gt.size(), 1);    
     CGAL::internal::liblearning::DataView2D<float> feature_vector(&(ft[0]), gt.size(), ft.size() / gt.size());
