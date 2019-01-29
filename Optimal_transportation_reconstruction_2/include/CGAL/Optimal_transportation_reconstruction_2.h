@@ -606,19 +606,22 @@ public:
       ok = copy.make_collapsible(copy_edge, copy_hull.begin(),
           copy_hull.end(), m_verbose);
       if (!ok) {
-        // std::cerr << "simulation: failed (make collapsible)" << std::endl;
+        if (m_verbose > 1)
+          std::cerr << "simulation: failed (make collapsible)" << std::endl;
         return false;
       }
       ok = copy.check_validity_test(copy_edge);
       if (!ok) {
-        std::cerr << "simulation: failed (validity test)" << std::endl;
+        if (m_verbose > 1)
+          std::cerr << "simulation: failed (validity test)" << std::endl;
         return false;
       }
     }
 
     ok = copy.check_kernel_test(copy_edge);
     if (!ok) {
-      std::cerr << "simulation: failed (kernel test)" << std::endl;
+      if (m_verbose > 1)
+        std::cerr << "simulation: failed (kernel test)" << std::endl;
       return false;
     }
 
@@ -626,7 +629,8 @@ public:
 
     ok = copy.check_validity_test(copy_edge);
     if (!ok) {
-      std::cerr << "simulation: failed (validity test)" << std::endl;
+      if (m_verbose > 1)
+        std::cerr << "simulation: failed (validity test)" << std::endl;
       return false;
     }
 
