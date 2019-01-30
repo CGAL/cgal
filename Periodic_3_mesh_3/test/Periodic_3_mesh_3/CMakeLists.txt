@@ -5,9 +5,10 @@ project( Periodic_3_mesh_3_Tests )
 
 cmake_minimum_required(VERSION 3.1)
 
-find_package( CGAL QUIET )
+find_package( CGAL QUIET COMPONENTS ImageIO )
 
 if ( CGAL_FOUND )
+  include( ${CGAL_USE_FILE} )
 
   # Use Eigen
   find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
