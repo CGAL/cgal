@@ -357,6 +357,7 @@ void write_vtu_with_attributes(std::ostream& os,
   {
     write_attribute_tag_2(os,attributes[i].first, *attributes[i].second, binary,offset);
   }
+  os << "    </CellData>\n";
   os << "   </Piece>\n"
      << "  </UnstructuredGrid>\n";
   if (binary) {
