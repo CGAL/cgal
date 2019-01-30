@@ -1315,6 +1315,14 @@ namespace Eigen {
       };
       result_type operator()(CGAL::Interval_nt<b> const&x)const{return abs(x);}
     };
+    template<typename> struct functor_traits;
+    template<bool b> struct functor_traits<scalar_score_coeff_op<CGAL::Interval_nt<b> > >
+    {
+      enum {
+        Cost = 10,
+        PacketAccess = false
+      };
+    };
   }
 }
 
