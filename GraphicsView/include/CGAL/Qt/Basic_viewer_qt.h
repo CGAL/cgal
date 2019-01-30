@@ -27,9 +27,11 @@
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
-#ifdef __GNUC__
+#ifdef __GNUC__ 
+#if  __GNUC__ >= 9
 #  pragma GCC diagnostic push
 #  pragma GCC diagnostic ignored "-Wdeprecated-copy"
+#endif
 #endif
 
 #include <QApplication>
@@ -42,8 +44,10 @@
 #include <QGLBuffer>
 #include <QOpenGLShaderProgram>
 
-#ifdef __GNUC__
+#ifdef __GNUC__ 
+#if __GNUC__ >= 9
 #  pragma GCC diagnostic pop
+#endif
 #endif
 
 #include <vector>
