@@ -235,7 +235,7 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
       std::cerr << "Estimates normal direction by Jet Fitting (k=" << dialog.jet_neighbors() <<")...\n";
 
       // Estimates normals direction.
-      Jet_estimate_normals_functor functor (points, dialog.pca_neighbors());
+      Jet_estimate_normals_functor functor (points, dialog.jet_neighbors());
       run_with_qprogressdialog (functor, "Estimating normals by jet fitting...", mw);
 
       std::size_t memory = CGAL::Memory_sizer().virtual_size();
