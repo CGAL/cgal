@@ -446,11 +446,12 @@ public:
     };
 
     //! \brief Copy constructor
+#ifdef DOXYGEN_RUNNING 
     Curve_pair_analysis_2(const Self& alg_curve_pair)
         : Base(static_cast<const Base&>(alg_curve_pair)) 
     {
     }
-
+#endif
     // Assignable
     
     /*!
