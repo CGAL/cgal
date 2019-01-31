@@ -16,6 +16,11 @@ if(POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
 endif()
 
+if( (CMAKE_CXX_COMPILER_ID STREQUAL "GNU") AND
+    (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "9" OR CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL "9") )
+  set(CMAKE_CXX_FLAGS "-Wno-deprecated-copy  ${CMAKE_CXX_FLAGS}")                          
+endif()
+
 # Include this package's headers first
 include_directories( BEFORE ./ ./include )
 
