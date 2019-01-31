@@ -566,8 +566,10 @@ private:
         log_eps_       = n.log_eps_;
         log_C_eps_     = n.log_C_eps_;
     }
-
-    // const Self& operator= (const Self&); // assignment is forbidden
+  
+#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
+    Self& operator= (const Self&)=delete;
+#endif  
 }; // struct Bitstream_descartes_rndl_node
 
 
