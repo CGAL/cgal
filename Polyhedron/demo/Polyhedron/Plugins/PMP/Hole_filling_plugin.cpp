@@ -366,6 +366,7 @@ protected:
 
   void change_poly_item_by_blocking(Scene_face_graph_item* poly_item, Scene_hole_visualizer* collection) {
     if(collection) collection->block_poly_item_changed = true;
+    poly_item->resetColors();
     poly_item->invalidateOpenGLBuffers();
     poly_item->redraw();
     if(collection) collection->block_poly_item_changed = false;
@@ -860,7 +861,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
     last_active_item = edge_selection->polyhedron_item();
     accept_reject_toggle(true);
   }
-
+  edge_selection->polyhedron_item()->resetColors();
   edge_selection->polyhedron_item()->invalidateOpenGLBuffers();
   edge_selection->polyhedron_item()->itemChanged();
 }

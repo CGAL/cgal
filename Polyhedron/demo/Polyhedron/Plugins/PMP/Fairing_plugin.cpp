@@ -103,6 +103,7 @@ public Q_SLOTS:
       CGAL::Polygon_mesh_processing::fair(*selection_item->polyhedron(),
         selection_item->selected_vertices,
         CGAL::Polygon_mesh_processing::parameters::fairing_continuity(continuity));
+    selection_item->polyhedron_item()->resetColors();
     selection_item->changed_with_poly_item();
     selection_item->invalidateOpenGLBuffers();
     QApplication::restoreOverrideCursor();
@@ -128,6 +129,7 @@ public Q_SLOTS:
     for(std::vector<boost::graph_traits<FaceGraph>::face_descriptor>::iterator it = new_facets.begin(); it != new_facets.end(); ++it) {
       selection_item->selected_facets.insert(*it);
     }
+    selection_item->polyhedron_item()->resetColors();
     selection_item->changed_with_poly_item();
     selection_item->invalidateOpenGLBuffers();
     QApplication::restoreOverrideCursor();

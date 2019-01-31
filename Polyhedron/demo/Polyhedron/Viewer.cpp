@@ -331,7 +331,14 @@ Viewer::~Viewer()
                              .arg(d->specular.z()));
     viewer_settings.setValue("spec_power",
                              d->spec_power);
+    if(d->_recentFunctions)
+      delete d->_recentFunctions;
+    if(d->painter)
+      delete d->painter;
+    if(d->textRenderer)
+      d->textRenderer->deleteLater();
   delete d;
+
 }
 
 void Viewer::setScene(CGAL::Three::Scene_draw_interface* scene)
@@ -708,12 +715,27 @@ void Viewer::drawWithNames()
 void Viewer::postSelection(const QPoint& pixel)
 {
   Q_EMIT selected(this->selectedName());
-  bool found = false;
-  CGAL::qglviewer::Vec point = camera()->pointUnderPixel(pixel, found) - offset();
+  CGAL::qglviewer::Vec point;
+  bool found = true;
+  if(property("picked_point").isValid()) {
+    if(!property("picked_point").toList().isEmpty())
+    {
+      QList<QVariant> picked_point = property("picked_point").toList();
+      point = CGAL::qglviewer::Vec (picked_point[0].toDouble(),
+          picked_point[1].toDouble(),
+          picked_point[2].toDouble());
+    }
+    else{
+      found = false;
+    }
+  }
+  else{
+    point = camera()->pointUnderPixel(pixel, found) - offset();
+  }
   if(found) {
     Q_EMIT selectedPoint(point.x,
-                       point.y,
-                       point.z);
+                         point.y,
+                         point.z);
     CGAL::qglviewer::Vec dir;
     CGAL::qglviewer::Vec orig;
     if(d->projection_is_ortho)
@@ -725,8 +747,10 @@ void Viewer::postSelection(const QPoint& pixel)
       orig = camera()->position() - offset();
       dir = point - orig;
     }
+    this->setProperty("performing_selection", true);
     Q_EMIT selectionRay(orig.x, orig.y, orig.z,
-                      dir.x, dir.y, dir.z);
+                        dir.x, dir.y, dir.z);
+    this->setProperty("performing_selection", false);
   }
 }
 bool CGAL::Three::Viewer_interface::readFrame(QString s, CGAL::qglviewer::Frame& frame)
@@ -990,6 +1014,7 @@ void Viewer::drawVisualHints()
     
     if (d->_displayMessage)
       d->textRenderer->removeText(message_text);
+    delete message_text;
 }
 
 QOpenGLShaderProgram* Viewer::declare_program(int name,

@@ -137,6 +137,11 @@ public:
     dock_widget->setWindowTitle(tr(
                                   "Surface Mesh Selection"
                                   ));
+    connect(dock_widget, &QDockWidget::visibilityChanged,
+            this, [this](bool b){
+      if(!b)
+        this->set_operation_mode(-1);
+    });
 
     addDockWidget(dock_widget);
 
@@ -771,7 +776,8 @@ public Q_SLOTS:
       bool is_valid = true;
       BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor fd, faces(*selection_item->polyhedron()))
       {
-        if (CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(fd, *selection_item->polyhedron()))
+        if (is_triangle(halfedge(fd, *selection_item->polyhedron()), *selection_item->polyhedron())
+            && CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(fd, *selection_item->polyhedron()))
         {
           is_valid = false;
           break;
