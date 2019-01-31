@@ -198,6 +198,7 @@ if (TESTSUITE)
 endif()
 
 # removal of extra directories and files
+file(REMOVE_RECURSE ${release_dir}/applications)
 file(REMOVE_RECURSE ${release_dir}/benchmark)
 file(REMOVE_RECURSE ${release_dir}/archive)
 file(REMOVE ${release_dir}/include/CGAL/license/generate_files.cmake)

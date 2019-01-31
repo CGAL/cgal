@@ -4,7 +4,9 @@
 
 Concept providing functions to extract eigenvectors and eigenvalues
 from covariance matrices represented by an array `a`, using symmetric
-diagonalization. For example, a matrix of dimension 3 is defined as
+diagonalization.
+
+For example, a matrix of dimension 3 is defined as
 follows:
 <center>
 \f$ \begin{bmatrix}
