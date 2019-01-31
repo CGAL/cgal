@@ -19,12 +19,11 @@ find_package(CGAL QUIET COMPONENTS Core Qt5)
 
 find_package(Qt5 QUIET COMPONENTS Widgets)
 
-find_package( Boost REQUIRED )
+find_package( Boost REQUIRED COMPONENTS thread )
 include_directories(${Boost_INCLUDE_DIRS})
-
 include_directories (BEFORE include)
 
-if(Boost_FOUND AND CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
+if(Boost_FOUND AND CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
   # ui files, created with Qt Designer
   qt5_wrap_ui( UIS HDT2.ui )
   
@@ -32,7 +31,7 @@ if(Boost_FOUND AND CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
   qt5_add_resources ( RESOURCE_FILES resources/File.qrc resources/Input.qrc resources/Delaunay_triangulation_2.qrc )
   
   # cpp files
-  
+  message("RESOURCES :  ${RESOURCE_FILES}")
   add_executable ( HDT2_demo HDT2.cpp ${RESOURCE_FILES} ${UIS})
   target_link_libraries ( HDT2_demo CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_Core)
   qt5_use_modules( HDT2_demo Widgets )
