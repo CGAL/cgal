@@ -105,6 +105,11 @@ namespace CGAL {
             return idx_ < _rhs.idx_;
         }
 
+        // Compatibility with OpenMesh handle
+        size_type idx() const {
+          return idx_;
+        }
+
         /// increments the internal index. This operation does not
         /// guarantee that the index is valid or undeleted after the
         /// increment.
@@ -213,6 +218,9 @@ namespace CGAL {
 
         // returns the underlying index of this index.
         operator size_type() const { return (size_type)halfedge_ / 2; }
+
+        // compatibility with OpenMesh handles
+        size_type idx() const { return (size_type)halfedge_ / 2; }
 
         // resets index to be invalid (index=std::numeric_limits<size_type>::max())
         void reset() { halfedge_.reset(); }

@@ -9,7 +9,7 @@
 # |  |  |  |  |
 # *  *  *  *  *  command to be executed
 
-PATH=/bin:/usr/bin:/home/lrineau/bin
+PATH=/home/lrineau/bin-cmake3:/bin:/usr/bin:/home/lrineau/bin
 LC_CTYPE=en_US.UTF-8
 
 # Update testsuite result pages

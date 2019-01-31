@@ -15,6 +15,7 @@
 #include <CGAL/Three/Scene_group_item.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 #include <CGAL/convex_hull_2.h>
 
 #include <map>
@@ -276,7 +277,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
   Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(
     scene->item(sm_id));
   if (!sm_item) {
-    mi->information(QString("No surface mesh item selected."));
+    CGAL::Three::Three::information(QString("No surface mesh item selected."));
     return;
   }
 
@@ -324,7 +325,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
 
   update_seeds_item(approx, pmesh);
 
-  mi->information(QString("Done, #proxies = %1. (%2 ms)").arg(
+  CGAL::Three::Three::information(QString("Done, #proxies = %1. (%2 ms)").arg(
     approx.number_of_proxies()).arg(time.elapsed()));
   sm_item->color_vector() = approx.proxy_colors();
   sm_item->setItemIsMulticolor(true);
@@ -345,12 +346,12 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonFit_clicked() {
   Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(
     scene->item(scene->mainSelectionIndex()));
   if (!sm_item) {
-    mi->information(QString("No surface mesh item selected."));
+    CGAL::Three::Three::information(QString("No surface mesh item selected."));
     return;
   }
   SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
   if (search == m_sm_wrapper_map.end() || !search->second->initialized()) {
-    mi->information(QString("Please initialize seeds first."));
+    CGAL::Three::Three::information(QString("Please initialize seeds first."));
     return;
   }
   SMesh *pmesh = search->first->face_graph();
@@ -363,7 +364,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonFit_clicked() {
   approx.output(CGAL::parameters::face_proxy_map(pidmap));
   update_seeds_item(approx, pmesh);
 
-  mi->information(QString("Fit one iteration, #proxies = %1.").arg(approx.number_of_proxies()));
+  CGAL::Three::Three::information(QString("Fit one iteration, #proxies = %1.").arg(approx.number_of_proxies()));
 
   sm_item->color_vector() = approx.proxy_colors();
   sm_item->setItemIsMulticolor(true);
@@ -392,12 +393,12 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonAdd_clicked() {
   Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(
     scene->item(scene->mainSelectionIndex()));
   if (!sm_item) {
-    mi->information(QString("No surface mesh item selected."));
+    CGAL::Three::Three::information(QString("No surface mesh item selected."));
     return;
   }
   SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
   if (search == m_sm_wrapper_map.end() || !search->second->initialized()) {
-    mi->information(QString("Please initialize seeds first."));
+    CGAL::Three::Three::information(QString("Please initialize seeds first."));
     return;
   }
   SMesh *pmesh = search->first->face_graph();
@@ -406,11 +407,11 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonAdd_clicked() {
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   if (approx.add_one_proxy() == 0) {
-    mi->information(QString("No proxy added, #proxies = %1.").arg(approx.number_of_proxies()));
+    CGAL::Three::Three::information(QString("No proxy added, #proxies = %1.").arg(approx.number_of_proxies()));
     QApplication::restoreOverrideCursor();
     return;
   }
-  mi->information(QString("One proxy added, #proxies = %1.").arg(approx.number_of_proxies()));
+  CGAL::Three::Three::information(QString("One proxy added, #proxies = %1.").arg(approx.number_of_proxies()));
 
   Patch_id_pmap pidmap(get(CGAL::face_patch_id_t<int>(), *pmesh));
   approx.output(CGAL::parameters::face_proxy_map(pidmap));
@@ -443,12 +444,12 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonTeleport_clicke
   Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(
     scene->item(scene->mainSelectionIndex()));
   if (!sm_item) {
-    mi->information(QString("No surface mesh item selected."));
+    CGAL::Three::Three::information(QString("No surface mesh item selected."));
     return;
   }
   SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
   if (search == m_sm_wrapper_map.end() || !search->second->initialized()) {
-    mi->information(QString("Please initialize seeds first."));
+    CGAL::Three::Three::information(QString("Please initialize seeds first."));
     return;
   }
   SMesh *pmesh = search->first->face_graph();
@@ -457,7 +458,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonTeleport_clicke
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   if (approx.teleport_one_proxy() == 0) {
-    mi->information(QString("No proxy teleported, #proxies = %1.").arg(approx.number_of_proxies()));
+    CGAL::Three::Three::information(QString("No proxy teleported, #proxies = %1.").arg(approx.number_of_proxies()));
     QApplication::restoreOverrideCursor();
     return;
   }
@@ -465,7 +466,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonTeleport_clicke
   approx.output(CGAL::parameters::face_proxy_map(pidmap));
   update_seeds_item(approx, pmesh);
 
-  mi->information(QString("One proxy teleported, #proxies = %1.").arg(approx.number_of_proxies()));
+  CGAL::Three::Three::information(QString("One proxy teleported, #proxies = %1.").arg(approx.number_of_proxies()));
 
   sm_item->color_vector() = approx.proxy_colors();
   sm_item->setItemIsMulticolor(true);
@@ -494,12 +495,12 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSplit_clicked()
   Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(
     scene->item(scene->mainSelectionIndex()));
   if (!sm_item) {
-    mi->information(QString("No surface mesh item selected."));
+    CGAL::Three::Three::information(QString("No surface mesh item selected."));
     return;
   }
   SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
   if (search == m_sm_wrapper_map.end() || !search->second->initialized()) {
-    mi->information(QString("Please initialize seeds first."));
+    CGAL::Three::Three::information(QString("Please initialize seeds first."));
     return;
   }
   SMesh *pmesh = search->first->face_graph();
@@ -510,11 +511,11 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSplit_clicked()
   if (!approx.split(ui_widget.split_proxy_idx->value(),
     ui_widget.split_nb_sections->value(),
     ui_widget.split_nb_relaxations->value())) {
-    mi->information(QString("No proxy splitted, #proxies = %1.").arg(approx.number_of_proxies()));
+    CGAL::Three::Three::information(QString("No proxy splitted, #proxies = %1.").arg(approx.number_of_proxies()));
     QApplication::restoreOverrideCursor();
     return;
   }
-  mi->information(QString("One proxy splitted, #proxies = %1.").arg(approx.number_of_proxies()));
+  CGAL::Three::Three::information(QString("One proxy splitted, #proxies = %1.").arg(approx.number_of_proxies()));
 
   Patch_id_pmap pidmap(get(CGAL::face_patch_id_t<int>(), *pmesh));
   approx.output(CGAL::parameters::face_proxy_map(pidmap));
@@ -547,12 +548,12 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
   Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(
     scene->item(scene->mainSelectionIndex()));
   if (!sm_item) {
-    mi->information(QString("No surface mesh item selected."));
+    CGAL::Three::Three::information(QString("No surface mesh item selected."));
     return;
   }
   SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);
   if (search == m_sm_wrapper_map.end() || !search->second->initialized()) {
-    mi->information(QString("Please initialize seeds first."));
+    CGAL::Three::Three::information(QString("Please initialize seeds first."));
     return;
   }
   SMesh *pmesh = search->first->face_graph();
@@ -607,7 +608,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
 
   sm_item->setVisible(false);
 
-  mi->information(QString("Meshing done."));
+  CGAL::Three::Three::information(QString("Meshing done."));
 
   QApplication::restoreOverrideCursor();
 }
@@ -616,7 +617,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_comboMetric_currentIn
   Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item *>(
     scene->item(scene->mainSelectionIndex()));
   if (!sm_item) {
-    mi->information(QString("No surface mesh item selected."));
+    CGAL::Three::Three::information(QString("No surface mesh item selected."));
     return;
   }
   SM_wrapper_map::iterator search = m_sm_wrapper_map.find(sm_item);

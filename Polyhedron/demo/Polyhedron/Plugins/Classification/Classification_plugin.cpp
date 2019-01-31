@@ -19,6 +19,7 @@
 
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 
 #include <CGAL/Random.h>
 #include <CGAL/Real_timer.h>
@@ -129,7 +130,7 @@ public:
         qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()))
         || qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
   }
-  void print_message(QString message) { messages->information(message); }
+  void print_message(QString message) { CGAL::Three::Three::information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionClassification; }
   
   using Polyhedron_demo_plugin_helper::init;
