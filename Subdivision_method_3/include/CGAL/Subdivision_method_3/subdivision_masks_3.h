@@ -215,13 +215,13 @@ public:
   /// computes the Catmull-Clark vertex-point `pt` of the vertex `vertex`.
   void vertex_node(vertex_descriptor vertex, Point& pt) {
     Halfedge_around_target_circulator<Mesh> vcir(vertex, *(this->pmesh));
-    typename boost::graph_traits<Mesh>::degree_size_type n = degree(vertex, *(this->pmesh));
+    int n = static_cast<int>(degree(vertex, *(this->pmesh)));
 
     FT Q[] = {0.0, 0.0, 0.0}, R[] = {0.0, 0.0, 0.0};
     Point_ref S = get(this->vpmap,vertex);
 
     Point q;
-    for (typename boost::graph_traits<Mesh>::degree_size_type i = 0; i < n; i++, ++vcir) {
+    for (int i = 0; i < n; i++, ++vcir) {
       Point_ref p2 = get(this->vpmap, target(opposite(*vcir, *(this->pmesh)), *(this->pmesh)));
       R[0] += (S[0] + p2[0]) / 2;
       R[1] += (S[1] + p2[1]) / 2;
