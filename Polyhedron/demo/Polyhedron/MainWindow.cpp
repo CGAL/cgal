@@ -261,8 +261,10 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
 
   connect(viewer, SIGNAL(requestContextMenu(QPoint)),
           this, SLOT(contextMenuRequested(QPoint)));
-  connect(viewer, SIGNAL(sendMessage(QString)),
-          this, SLOT(information(QString)));
+  connect(viewer, &Viewer::sendMessage,
+          this, [this](QString s){
+    information(s);
+  });
 
   // The contextMenuPolicy of infoLabel is now the default one, so that one
   // can easily copy-paste its text.
