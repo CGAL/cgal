@@ -85,7 +85,7 @@ class RC_vertex_d
 public:
   RC_vertex_d(Simplex_handle s, int i, const Point_d& p) :
     s_(s), index_(i), point_(p) {}
-  RC_vertex_d(const Point_d& p) : point_(p), index_(-42), pp(NULL) {}
+  RC_vertex_d(const Point_d& p) : index_(-42), point_(p), pp(NULL) {}
   RC_vertex_d() :  s_(), index_(-42), pp(NULL) {}
   // beware that ass_point was initialized here by nil_point
   ~RC_vertex_d() {}
