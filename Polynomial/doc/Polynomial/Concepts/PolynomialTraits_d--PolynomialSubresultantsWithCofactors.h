@@ -3,8 +3,6 @@
 \ingroup PkgPolynomialConcepts
 \cgalConcept
 
-<B>Note:</B> This functor is optional! 
-
 Computes the polynomial subresultant of two polynomials \f$ p\f$ and \f$ q\f$ of degree 
 \f$ n\f$ and \f$ m\f$, respectively, 
 as defined in the documentation of `PolynomialTraits_d::PolynomialSubresultants`. 
@@ -15,6 +13,8 @@ the <I>cofactors</I> of \f$ \mathrm{Sres}_i(p,q)\f$.
 
 The result is written in three output ranges, each of length \f$ \min\{n,m\}+1\f$, 
 starting with the \f$ 0\f$-th subresultant and the corresponding cofactors. 
+
+\note This functor is optional.
 
 \cgalRefines `AdaptableBinaryFunction` 
 \cgalRefines `CopyConstructible` 
