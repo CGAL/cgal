@@ -1,8 +1,6 @@
 #include <QtCore/qglobal.h>
 #include <QMessageBox>
 
-
-#include "Messages_interface.h"
 #include "Kernel_type.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polyhedron_selection_item.h"
@@ -10,6 +8,7 @@
 #include "Scene_polylines_item.h"
 
 #include <CGAL/Three/Scene_interface.h>
+#include <CGAL/Three/Three.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Three.h>
@@ -118,7 +117,7 @@ public:
     return qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex()))
         || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex())); 
   }
-  void print_message(QString message) { messages->information(message); }
+  void print_message(QString message) { CGAL::Three::Three::information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionSelection; }
 
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m) {

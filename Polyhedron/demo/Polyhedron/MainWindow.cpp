@@ -893,17 +893,17 @@ void MainWindow::message(QString message, QString colorName, QString font) {
   ui->consoleTextEdit->verticalScrollBar()->setValue(ui->consoleTextEdit->verticalScrollBar()->maximum());
 }
 
-void MainWindow::information(QString text) {
+void MainWindow::message_information(QString text) {
   statusBar()->setStyleSheet("color: blue");
   this->message("INFO: " + text, "blue");
 }
 
-void MainWindow::warning(QString text) {
+void MainWindow::message_warning(QString text) {
   statusBar()->setStyleSheet("color: orange");
   this->message("WARNING: " + text, "orange");
 }
 
-void MainWindow::error(QString text) {
+void MainWindow::message_error(QString text) {
   statusBar()->setStyleSheet("color: red");
   this->message("ERROR: " + text, "red");
 }
@@ -1171,12 +1171,6 @@ CGAL::Three::Scene_item* MainWindow::loadItem(QFileInfo fileinfo, CGAL::Three::P
   if(!fileinfo.isFile() || !fileinfo.isReadable()) {
     throw std::invalid_argument(QString("File %1 is not a readable file.")
                                 .arg(fileinfo.absoluteFilePath()).toStdString());
-  }
-  //test if the file is empty.
-  if(fileinfo.size() == 0) {
-    QMessageBox::warning(this, tr("Error"),
-                         tr("The file you are trying to load is empty.\n"));
-    return 0;
   }
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
