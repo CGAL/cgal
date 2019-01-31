@@ -374,7 +374,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonFit_clicked() {
 
   if (ui_widget.checkAutomatic->isChecked()) {
     if (!approx.visual_items().has_meshing_items) {
-      mi->information(QString("Please meshing before checking auto meshing."));
+      CGAL::Three::Three::information(QString("Please mesh before checking auto meshing."));
       QApplication::restoreOverrideCursor();
       return;
     }
@@ -425,7 +425,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonAdd_clicked() {
 
   if (ui_widget.checkAutomatic->isChecked()) {
     if (!approx.visual_items().has_meshing_items) {
-      mi->information(QString("Please meshing before checking auto meshing."));
+      CGAL::Three::Three::information(QString("Please mesh before checking auto meshing."));
       QApplication::restoreOverrideCursor();
       return;
     }
@@ -476,7 +476,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonTeleport_clicke
 
   if (ui_widget.checkAutomatic->isChecked()) {
     if (!approx.visual_items().has_meshing_items) {
-      mi->information(QString("Please meshing before checking auto meshing."));
+      CGAL::Three::Three::information(QString("Please mesh before checking auto meshing."));
       QApplication::restoreOverrideCursor();
       return;
     }
@@ -529,7 +529,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSplit_clicked()
 
   if (ui_widget.checkAutomatic->isChecked()) {
     if (!approx.visual_items().has_meshing_items) {
-      mi->information(QString("Please meshing before checking auto meshing."));
+      CGAL::Three::Three::information(QString("Please mesh before checking auto meshing."));
       QApplication::restoreOverrideCursor();
       return;
     }
