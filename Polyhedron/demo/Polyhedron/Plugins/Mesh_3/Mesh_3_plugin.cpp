@@ -462,6 +462,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
       QMessageBox::critical(mw, tr(""), tr("ERROR: there are isolated vertices in this mesh."));
       return;
     }
+     get(CGAL::face_patch_id_t<int>(), *pMesh);
     Scene_polylines_item::Polylines_container plc;
     SMesh *pBMesh = (bounding_sm_item == NULL) ? NULL
                     : bounding_sm_item->polyhedron();
