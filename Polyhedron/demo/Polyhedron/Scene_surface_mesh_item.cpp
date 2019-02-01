@@ -537,7 +537,12 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
         Point p = positions[source(hd, *smesh_)];
         EPICK::Vector_3 n = fnormals[fd];
         CGAL::Color *c;
-        if(has_fcolors)
+        if(has_fpatch_id)
+        {
+          QColor color = item->color_vector()[fpatch_id_map[fd] - min_patch_id]; 
+          c = new CGAL::Color(color.red(),color.green(),color.blue());
+        }
+        else if(has_fcolors)
           c= &fcolors[fd];
         else
           c = 0;
@@ -572,6 +577,8 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
             ,fnormals[fd]
             , c
             , name);
+        if(has_fpatch_id)
+          delete c;
       }
       else if(is_convex)
       {
@@ -855,7 +862,12 @@ void Scene_surface_mesh_item_priv::triangulate_convex_facet(face_descriptor fd,
     if(!index)
     {
       CGAL::Color* color;
-      if(has_fcolors)
+      if(has_fpatch_id)
+      {
+        QColor c = item->color_vector()[fpatch_id_map[fd] - min_patch_id]; 
+        color = new CGAL::Color(c.red(),c.green(),c.blue());
+      }
+      else if(has_fcolors)
         color = &(*fcolors)[fd];
       else
         color = 0;
@@ -872,6 +884,8 @@ void Scene_surface_mesh_item_priv::triangulate_convex_facet(face_descriptor fd,
                   (*fnormals)[fd],
                   color,
                   name);
+      if(has_fpatch_id)
+        delete color;
     }
     else if(name.testFlag(Scene_item_rendering_helper::GEOMETRY))
     {
@@ -940,7 +954,12 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
     if(!index)
     {
       CGAL::Color* color;
-      if(has_fcolors)
+      if(has_fpatch_id)
+      {
+        QColor c= item->color_vector()[fpatch_id_map[fd] - min_patch_id]; 
+        color = new CGAL::Color(c.red(),c.green(),c.blue());
+      }
+      else if(has_fcolors)
         color = &(*fcolors)[fd];
       else
         color = 0;
@@ -958,6 +977,8 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
                   (*fnormals)[fd],
                   color,
                   name);
+      if(has_fpatch_id)
+        delete color;
     }
     //adds the indices to the appropriate vector
     else
