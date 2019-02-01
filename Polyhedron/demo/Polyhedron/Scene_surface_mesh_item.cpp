@@ -1251,6 +1251,7 @@ void Scene_surface_mesh_item::invalidate(Gl_data_names name)
   Q_EMIT item_is_about_to_be_changed();
   if(name.testFlag(GEOMETRY))
   {
+    is_bbox_computed = false;
     delete_aabb_tree(this);
     d->smesh_->collect_garbage();
     d->invalidate_stats();
