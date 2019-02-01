@@ -1,5 +1,4 @@
-#if defined(__GNUC__) && defined(__GNUC_MINOR__) && (__GNUC__ <= 4) && (__GNUC_MINOR__ < 4)
-
+#if defined(__GNUC__) && not defined (__clang__) && defined(__GNUC_MINOR__) && (__GNUC__ <= 4) && (__GNUC_MINOR__ < 4)
 #include <iostream>
 int main()
 {
@@ -7,7 +6,6 @@ int main()
 }
 
 #else
-
 #include <CGAL/Epick_d.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Triangulation.h>
