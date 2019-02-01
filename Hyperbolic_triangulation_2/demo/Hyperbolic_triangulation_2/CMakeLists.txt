@@ -19,11 +19,11 @@ find_package(CGAL QUIET COMPONENTS Core Qt5)
 
 find_package(Qt5 QUIET COMPONENTS Widgets)
 
-find_package( Boost REQUIRED COMPONENTS thread )
+find_package( Boost COMPONENTS thread )
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories (BEFORE include)
 
-if(Boost_FOUND AND CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
+if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
   # ui files, created with Qt Designer
   qt5_wrap_ui( UIS HDT2.ui )
   
