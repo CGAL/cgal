@@ -2767,3 +2767,20 @@ void MainWindow::invalidate_bbox(bool do_recenter)
     updateViewerBBox(true);
   
 }
+
+void MainWindow::on_action_Save_triggered()
+{
+  if(QMessageBox::question(this, "Save", "Are you sure you want to override these files ?") 
+     == QMessageBox::No)
+    return;
+  Scene_item* item = nullptr;
+  Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
+  {
+    item = scene->item(id);
+    if(!item->property("source filename").toString().isEmpty())
+    {
+      QString filename = item->property("source filename").toString();
+      save(filename, item);
+    }
+  }
+}
