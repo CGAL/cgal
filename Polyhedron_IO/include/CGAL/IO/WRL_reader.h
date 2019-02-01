@@ -23,6 +23,8 @@
 #ifndef CGAL_IO_WRL_READER_H
 #define CGAL_IO_WRL_READER_H
 
+#include <CGAL/license/Polyhedron.h>
+
 #include <CGAL/assertions.h>
 #include <CGAL/array.h>
 #include <CGAL/IO/io.h>
@@ -204,53 +206,6 @@ void merge_polygon_soups(const std::vector<Point>& points,
   }
 }
 
-// The function below does NOT merge the shapes together
-template <typename Point, typename Face>
-void write_shapes_to_OFF(const std::string filename,
-                         const std::vector<std::vector<Point> >& points,
-                         const std::vector<std::vector<Face> >& meshes,
-                         const bool verbose = false)
-{
-  std::size_t number_of_shapes = points.size();
-
-  CGAL_precondition(points.size() == meshes.size());
-  const int d = digit_counter(number_of_shapes);
-  CGAL_USE(d);
-
-  for(std::size_t i=0; i<number_of_shapes; ++i)
-  {
-    const std::vector<Point>& single_shape_points = points[i];
-    const std::vector<Face>& single_shape_facets = meshes[i];
-
-    std::stringstream oss;
-    if(meshes.size() > 1)
-      oss << filename << "_" << std::setfill('0') << std::setw(d) << i+1 << ".off" << std::ends;
-    else
-      oss << filename << ".off" << std::ends;
-
-    if(verbose)
-      std::cout << "Writing (OFF) to: " << oss.str() << std::endl;
-
-    std::ofstream out(oss.str().c_str());
-
-    out << "OFF\n" << single_shape_points.size() << " " << single_shape_facets.size() << " 0" << '\n';
-
-    for(std::size_t pi=0; pi<single_shape_points.size(); ++pi)
-      out << single_shape_points[pi][0] << " "
-          << single_shape_points[pi][1] << " "
-          << single_shape_points[pi][2] << '\n';
-
-    for(std::size_t fi=0; fi<single_shape_facets.size(); ++fi)
-    {
-      std::size_t facet_size = single_shape_facets[fi].size();
-      out << facet_size << " ";
-      for(std::size_t sfi=0; sfi<facet_size; ++sfi)
-        out << single_shape_facets[fi][sfi] << " ";
-      out << "\n";
-    }
-  }
-}
-
 // @todo could probably be merged with the function below
 template <typename Point, typename Face>
 bool read_WRL_and_merge_shapes(std::istream& input,
@@ -306,27 +261,6 @@ bool read_WRL(std::istream& input,
 
   if(verbose)
     std::cout << "Read " << meshes.size() << " shapes" << std::endl;
-
-  return true;
-}
-
-bool convert_WRL_to_OFF(const char* filename)
-{
-  std::cout << "convert: " << filename << std::endl;
-
-  std::vector<std::vector<CGAL::cpp11::array<double, 3> > > points;
-  std::vector<std::vector<std::vector<int> > > shapes;
-
-  std::ifstream in(filename);
-  if(!in.good() || !read_WRL(in, points, shapes, false))
-  {
-    std::cerr << "Could not read file: " << filename << std::endl;
-    return false;
-  }
-
-  std::string filename_core(filename);
-  filename_core = filename_core.substr(0, filename_core.find_last_of('.'));
-  write_shapes_to_OFF(filename_core, points, shapes);
 
   return true;
 }
