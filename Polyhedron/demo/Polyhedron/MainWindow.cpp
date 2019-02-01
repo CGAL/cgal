@@ -262,7 +262,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   connect(viewer, SIGNAL(requestContextMenu(QPoint)),
           this, SLOT(contextMenuRequested(QPoint)));
   connect(viewer, &Viewer::sendMessage,
-          this, [this](QString s){
+          this, [](QString s){
     information(s);
   });
 
