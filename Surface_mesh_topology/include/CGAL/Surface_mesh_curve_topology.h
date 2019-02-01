@@ -310,7 +310,7 @@ namespace CGAL {
       if (m_map.number_of_darts()==4)
       { // Case of torus
         Path_on_surface<CMap_for_surface_mesh_curve_topology>
-          pt=transform_original_path_into_quad_surface(p);
+          pt=transform_original_path_into_quad_surface_for_torus(p);
 
         int a, b;
         count_edges_of_path_on_torus(pt, a, b);
@@ -363,14 +363,17 @@ namespace CGAL {
       if (m_map.number_of_darts()==4)
       { // Case of torus
         Path_on_surface<CMap_for_surface_mesh_curve_topology>
-          pt1=transform_original_path_into_quad_surface(p1);
+          pt1=transform_original_path_into_quad_surface_for_torus(p1);
         Path_on_surface<CMap_for_surface_mesh_curve_topology>
-          pt2=transform_original_path_into_quad_surface(p2);
+          pt2=transform_original_path_into_quad_surface_for_torus(p2);
 
         int a1, a2, b1, b2;
         count_edges_of_path_on_torus(pt1, a1, b1);
         count_edges_of_path_on_torus(pt2, a2, b2);
         res=(a1==a2 && b1==b2);
+
+        // std::cout<<"Path1: length="<<pt1.length()<<"; (#a,b)=("<<a1<<", "<<b1<<"); "<<std::endl
+        //          <<"Path2: length="<<pt2.length()<<"; (#a,b)=("<<a2<<", "<<b2<<")."<<std::endl;
       }
       else
       {
@@ -455,20 +458,10 @@ namespace CGAL {
     (const Path_on_surface<CMap_for_surface_mesh_curve_topology>& path,
      int& a, int& b) const
     {
+      CGAL_assertion(m_map.number_of_darts()==4);
+      
       Dart_const_handle dha=m_map.darts().begin();
-      if (dha>m_map.template beta<2>(dha)) { dha=m_map.template beta<2>(dha); }
-
-      Dart_const_handle dhb=NULL;
-      auto it=m_map.darts().begin();
-      while(dhb==NULL)
-      {
-        if (it!=dha && it!=m_map.template beta<2>(dha)) { dhb=it; }
-        else { ++it; }
-      }
-
-      if (dhb>m_map.template beta<2>(dhb)) { dhb=m_map.template beta<2>(dhb); }
-
-      if (dha<dhb) { std::swap(dha, dhb); }
+      Dart_const_handle dhb=m_map.template beta<1>(dha);
 
       a=0; b=0;
       for (std::size_t i=0; i<path.length(); ++i)
@@ -481,17 +474,25 @@ namespace CGAL {
     }
 
     Path_on_surface<CMap_for_surface_mesh_curve_topology>
-    transform_original_path_into_quad_surface(const Path_on_surface<Map>& path) const
+    transform_original_path_into_quad_surface_for_torus(const Path_on_surface<Map>& path) const
     {
+      CGAL_assertion(m_map.number_of_darts()==4);
+      
       Path_on_surface<CMap_for_surface_mesh_curve_topology> res(m_map);
       if (path.is_empty()) return res;
 
+      Dart_const_handle cur;
       for (std::size_t i=0; i<path.length(); ++i)
       {
         if (!m_original_map.is_marked(path[i], m_mark_T))
         {
-          res.push_back(get_first_dart_of_the_path(path[i]), false);
-          res.push_back(get_second_dart_of_the_path(path[i]), false);
+          cur=get_first_dart_of_the_path(path[i]);
+          do
+          {
+            res.push_back(cur, false);
+            cur=m_map.template beta<1>(cur);
+          }
+          while(cur!=get_second_dart_of_the_path(path[i]));
         }
       }
       res.update_is_closed();
