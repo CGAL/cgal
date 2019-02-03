@@ -31,6 +31,7 @@ template <class R_> class Weighted_point {
 	FT_ w_;
 
 	public:
+	Weighted_point(){}
 	Weighted_point(Point_ const&p, FT_ const&w): c_(p), w_(w) {}
 	// TODO: Add a piecewise constructor?
 

@@ -330,7 +330,7 @@ public:
     FT operator()(const Weighted_point_2& p) const
     {
 
-      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_2,
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_2,
                          typename Exact_kernel::Weighted_point_2,
                          typename Approximate_kernel::Construct_weighted_point_2,
                          typename Exact_kernel::Construct_weighted_point_2,
@@ -360,7 +360,7 @@ public:
     FT operator()(const Weighted_point_3& p) const
     {
 
-      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_3,
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_3,
                          typename Exact_kernel::Weighted_point_3,
                          typename Approximate_kernel::Construct_weighted_point_3,
                          typename Exact_kernel::Construct_weighted_point_3,
@@ -408,7 +408,7 @@ public:
     
     Point_2 operator()(const Weighted_point_2& p) const
     {
-      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_2,
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_2,
                          typename Exact_kernel::Weighted_point_2,
                          typename Approximate_kernel::Construct_weighted_point_2,
                          typename Exact_kernel::Construct_weighted_point_2,
@@ -418,7 +418,7 @@ public:
                          FT
                          > LR;
 
-      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_2,
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_2,
                          typename Exact_kernel::Weighted_point_2,
                          typename Approximate_kernel::Construct_weighted_point_2,
                          typename Exact_kernel::Construct_weighted_point_2,
@@ -470,7 +470,7 @@ public:
     
     Point_3 operator()(const Weighted_point_3& p) const
     {
-      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_3,
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_3,
                          typename Exact_kernel::Weighted_point_3,
                          typename Approximate_kernel::Construct_weighted_point_3,
                          typename Exact_kernel::Construct_weighted_point_3,
@@ -480,7 +480,7 @@ public:
                          FT
                          > LR;
       
-      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_3,
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_3,
                          typename Exact_kernel::Weighted_point_3,
                          typename Approximate_kernel::Construct_weighted_point_3,
                          typename Exact_kernel::Construct_weighted_point_3,

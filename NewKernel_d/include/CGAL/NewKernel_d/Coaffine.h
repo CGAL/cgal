@@ -321,6 +321,12 @@ template<class R_> struct In_flat_power_side_of_power_sphere_raw : private Store
 
 
 }
+
+// For the lazy kernel
+inline CartesianDKernelFunctors::Flat_orientation const& exact(CartesianDKernelFunctors::Flat_orientation const& o){return o;}
+inline CartesianDKernelFunctors::Flat_orientation const& approx(CartesianDKernelFunctors::Flat_orientation const& o){return o;}
+inline unsigned depth(CartesianDKernelFunctors::Flat_orientation const&){return 0;}
+
 CGAL_KD_DEFAULT_TYPE(Flat_orientation_tag,(CGAL::CartesianDKernelFunctors::Flat_orientation),(),());
 CGAL_KD_DEFAULT_FUNCTOR(In_flat_orientation_tag,(CartesianDKernelFunctors::In_flat_orientation<K>),(Point_tag),(Compute_point_cartesian_coordinate_tag,Point_dimension_tag));
 CGAL_KD_DEFAULT_FUNCTOR(In_flat_side_of_oriented_sphere_tag,(CartesianDKernelFunctors::In_flat_side_of_oriented_sphere<K>),(Point_tag),(Compute_point_cartesian_coordinate_tag,Point_dimension_tag));

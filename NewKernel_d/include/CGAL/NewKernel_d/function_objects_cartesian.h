@@ -462,7 +462,7 @@ template<class R_> struct Linear_base : private Store_kernel<R_> {
 	typedef typename R::LA::Dynamic_matrix Matrix;
 
 	template<class Iter, class Oter>
-	result_type operator()(Iter f, Iter e, Oter&o)const{
+	result_type operator()(Iter f, Iter e, Oter o)const{
 		typename Get_functor<R, Compute_vector_cartesian_coordinate_tag>::type c(this->kernel());
 		typename Get_functor<R, Point_dimension_tag>::type vd(this->kernel());
 		typename Get_functor<R, Construct_ttag<Vector_tag> >::type cv(this->kernel());

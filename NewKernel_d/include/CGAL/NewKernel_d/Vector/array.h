@@ -162,6 +162,8 @@ BOOST_PP_REPEAT_FROM_TO(1, 11, CGAL_CODE, _ )
 	}
 
 };
+// Do not try to instantiate the above
+template<class NT_,class Max_dim_> struct Array_vector<NT_,Dynamic_dimension_tag,Max_dim_> {};
 
 }
 #endif

@@ -28,6 +28,7 @@
 #include <CGAL/NewKernel_d/Filtered_predicate2.h>
 #include <CGAL/iterator_from_indices.h>
 #include <CGAL/NewKernel_d/Define_kernel_types.h>
+#include <boost/function_output_iterator.hpp>
 
 namespace CGAL {
 
@@ -60,6 +61,47 @@ namespace internal {
       typedef Lazy_construction_nt<A,B,C> type;
     };
 }
+
+template<typename T, typename LK>
+struct Lazy_construction2 {
+  static const bool Protection = true;
+
+  typedef typename LK::Approximate_kernel AK;
+  typedef typename LK::Exact_kernel EK;
+  typedef typename LK::E2A E2A;
+  typedef typename Get_functor<AK, T>::type AC;
+  typedef typename Get_functor<EK, T>::type EC;
+  typedef typename map_result_tag<T>::type result_tag;
+  typedef typename Get_type<AK, result_tag>::type AT;
+  typedef typename Get_type<EK, result_tag>::type ET;
+  typedef typename Get_type<LK, result_tag>::type result_type;
+  // same as Handle = Lazy< AT, ET, E2A>
+
+  Lazy_construction2(){}
+  Lazy_construction2(LK const&k):ac(k.approximate_kernel()),ec(k.exact_kernel()){}
+  CGAL_NO_UNIQUE_ADDRESS AC ac;
+  CGAL_NO_UNIQUE_ADDRESS EC ec;
+
+  template<class...L>
+  std::enable_if_t<(sizeof...(L)>0), result_type> operator()(L const&...l) const {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Protect_FPU_rounding<Protection> P;
+    try {
+      return new Lazy_rep_n<AT, ET, AC, EC, E2A, L...>(ac, ec, l...);
+    } catch (Uncertain_conversion_exception&) {
+      CGAL_BRANCH_PROFILER_BRANCH(tmp);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+      return new Lazy_rep_0<AT,ET,E2A>(ec(CGAL::exact(l)...));
+    }
+  }
+  // FIXME: this forces us to have default constructors for all types, try to make its instantiation lazier
+  result_type operator()() const
+  {
+    return new Lazy_rep_0<AT,ET,E2A>();
+  }
+
+#undef CGAL_CONSTRUCTION_OPERATOR
+};
 
 template <class EK_, class AK_, class E2A_, class Kernel_>
 struct Lazy_cartesian_types
@@ -103,20 +145,30 @@ struct Lazy_cartesian_types
 };
 
 template <class EK_, class AK_, class E2A_/*, class Kernel_=Default*/>
-struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>,
+struct Lazy_cartesian :
   Lazy_cartesian_types<EK_,AK_,E2A_,Lazy_cartesian<EK_,AK_,E2A_> >
 {
-    //CGAL_CONSTEXPR Lazy_cartesian(){}
-    //CGAL_CONSTEXPR Lazy_cartesian(int d):Base_(d){}
+    CGAL_CONSTEXPR Lazy_cartesian(){}
+    CGAL_CONSTEXPR Lazy_cartesian(int d):ak(d),ek(d){}
 
     //TODO: Do we want to store an AK and an EK? Or just references?
     //FIXME: references would be better I guess.
     //TODO: In any case, make sure that we don't end up storing this kernel for
     //nothing (it is not empty but references empty kernels or something)
-    AK_ ak; EK_ ek;
+    CGAL_NO_UNIQUE_ADDRESS AK_ ak;
+    CGAL_NO_UNIQUE_ADDRESS EK_ ek;
     AK_ const& approximate_kernel()const{return ak;}
     EK_ const& exact_kernel()const{return ek;}
 
+    int dimension()const{return ak.dimension();}
+    void set_dimension(int dim){ak.set_dimension(dim);ek.set_dimension(dim);}
+
+    // For compilers that do not handle [[no_unique_address]]
+    typedef boost::mpl::and_<
+      internal::Do_not_store_kernel<AK_>,
+      internal::Do_not_store_kernel<EK_> > Do_not_store_kernel;
+
+    typedef typename EK_::Dimension Dimension; // ?
     typedef Lazy_cartesian Self;
     typedef Lazy_cartesian_types<EK_,AK_,E2A_,Self> Base;
     //typedef typename Default::Get<Kernel_,Self>::type Kernel;
@@ -124,8 +176,18 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>,
     typedef AK_   Approximate_kernel;
     typedef EK_   Exact_kernel;
     typedef E2A_  E2A;
-    typedef Approx_converter<Kernel, Approximate_kernel>   C2A;
-    typedef Exact_converter<Kernel, Exact_kernel>    C2E;
+    //typedef Approx_converter<Kernel, Approximate_kernel>   C2A;
+    //typedef Exact_converter<Kernel, Exact_kernel>    C2E;
+    struct C2A {
+      C2A(){}
+      C2A(Kernel const&, Approximate_kernel const&){}
+      template<class T>decltype(auto)operator()(T const&t)const{return CGAL::approx(t);}
+    };
+    struct C2E {
+      C2E(){}
+      C2E(Kernel const&, Exact_kernel const&){}
+      template<class T>decltype(auto)operator()(T const&t)const{return  CGAL::exact(t);}
+    };
 
     typedef typename Exact_kernel::Rep_tag Rep_tag;
     typedef typename Exact_kernel::Kernel_tag Kernel_tag;
@@ -151,12 +213,58 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>,
     template<class T,class D> struct Functor<T,D,Construct_tag> {
 	    typedef typename Get_functor<Approximate_kernel, T>::type FA;
 	    typedef typename Get_functor<Exact_kernel, T>::type FE;
-	    typedef Lazy_construction<Kernel,FA,FE> type;
+	    typedef Lazy_construction2<T,Kernel> type;
+    };
+    template<class D> struct Functor<Point_dimension_tag,D,Misc_tag> {
+	    typedef typename Get_functor<Approximate_kernel, Point_dimension_tag>::type FA;
+	    struct type {
+	      FA fa;
+	      type(){}
+	      type(Kernel const&k):fa(k.approximate_kernel()){}
+	      template<class P>
+	      int operator()(P const&p)const{return fa(CGAL::approx(p));}
+	    };
+    };
+    template<class D> struct Functor<Vector_dimension_tag,D,Misc_tag> {
+	    typedef typename Get_functor<Approximate_kernel, Vector_dimension_tag>::type FA;
+	    struct type {
+	      FA fa;
+	      type(){}
+	      type(Kernel const&k):fa(k.approximate_kernel()){}
+	      template<class V>
+	      int operator()(V const&v)const{return fa(CGAL::approx(v));}
+	    };
+    };
+    template<class D> struct Functor<Linear_base_tag,D,Misc_tag> {
+      // Don't filter that one, as there is no guarantee that the interval
+      // basis would be in any way related to the exact basis, the most obvious
+      // difference being the order of the vectors.
+      // Don't try to be generic until we have more than just this one.
+      typedef typename Get_functor<Exact_kernel, Linear_base_tag>::type FE;
+      typedef typename Get_type<Approximate_kernel, Vector_tag>::type AT;
+      typedef typename Get_type<Exact_kernel, Vector_tag>::type ET;
+      typedef typename Base::template Type<Vector_tag>::type V; // Lazy<AT, ET, E2A>
+      struct type {
+	FE fe;
+	type(){}
+	type(Kernel const&k):fe(k.exact_kernel()){}
+	template<class Iter, class Oter>
+	void operator()(Iter i, Iter e, Oter o)const{
+	  fe(CGAL::exact(i), CGAL::exact(e),
+	      boost::make_function_output_iterator(
+		[&o](ET const&v){
+		  *o++ = V(new Lazy_rep_0<AT,ET,E2A>(v));
+		}
+	      )
+	  );
+	}
+      };
     };
 
-    //typedef typename Iterator<Point_cartesian_const_iterator_tag>::type Point_cartesian_const_iterator;
-    //typedef typename Iterator<Vector_cartesian_const_iterator_tag>::type Vector_cartesian_const_iterator;
+    typedef typename Base::template Iterator<Point_cartesian_const_iterator_tag>::type Point_cartesian_const_iterator;
+    typedef typename Base::template Iterator<Vector_cartesian_const_iterator_tag>::type Vector_cartesian_const_iterator;
 
+    // This is really specific to point/vector coordinate iterators
     template<class U>
     struct Construct_iter : private Store_kernel<Kernel> {
 	    Construct_iter(){}
@@ -169,7 +277,8 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>,
 	    }
 	    template<class T>
 	    result_type operator()(T const& t,End_tag)const{
-		    return result_type(t,Self().dimension(),this->kernel());
+	            typedef typename Get_functor<Approximate_kernel, Point_dimension_tag>::type PD;
+		    return result_type(t,PD(this->kernel().approximate_kernel())(CGAL::approx(t)),this->kernel());
 	    }
     };
     template<class T,class D> struct Functor<T,D,Construct_iterator_tag> {

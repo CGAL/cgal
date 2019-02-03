@@ -88,6 +88,7 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
       ::add<Hyperplane_tag>::type
       ::add<Sphere_tag>::type
       ::add<Weighted_point_tag>::type
+      ::add<Iso_box_tag>::type
       Object_list;
 
     typedef typeset< Point_cartesian_const_iterator_tag>::type

@@ -11,6 +11,7 @@ int main()
 
 //#define BOOST_RESULT_OF_USE_DECLTYPE 1
 #include <CGAL/Epick_d.h>
+#include <CGAL/Epeck_d.h>
 #include <typeinfo>
 
 #include <CGAL/NewKernel_d/Cartesian_base.h>
@@ -121,7 +122,6 @@ void test2(){
   typedef typename K1::Oriented_side_d OS;
   typedef typename K1::Orthogonal_vector_d OV;
   typedef typename K1::Point_dimension_d PD;
-  typedef typename K1::Point_of_sphere_d PS;
   typedef typename K1::Point_to_vector_d PV;
   typedef typename K1::Vector_to_point_d VP;
   typedef typename K1::Barycentric_coordinates_d BC;
@@ -190,7 +190,6 @@ void test2(){
   OS os Kinit(oriented_side_d_object);
   OV ov Kinit(orthogonal_vector_d_object);
   PD pd Kinit(point_dimension_d_object);
-  PS ps Kinit(point_of_sphere_d_object);
   PV pv Kinit(point_to_vector_d_object);
   VP vp Kinit(vector_to_point_d_object);
   BC bc Kinit(barycentric_coordinates_d_object);
@@ -356,6 +355,8 @@ void test2(){
 #endif
   P z0=cp( 0+2,5-3);
   P z1=cp(-5+2,0-3);
+  assert(abs(sd(z0,z1)-50)<.0001);
+  assert(ed(z0,z0) && !ed(z0,z1));
   P z2=cp( 3+2,4-3);
   P tabz[]={z0,z1,z2};
   Sp sp = csp(tabz+0,tabz+3);
@@ -368,6 +369,8 @@ void test2(){
   assert(abs(sp.squared_radius()-25)<.0001);
 #if 1
   // Fails for an exact kernel
+  typedef typename K1::Point_of_sphere_d PS;
+  PS ps Kinit(point_of_sphere_d_object);
   P psp0=ps(sp,0);
   P psp1=ps(sp,1);
   P psp2=ps(sp,2);
@@ -423,12 +426,15 @@ template<class CP> struct Construct_point3_helper {
   Construct_point3_helper(CP const& x) : cp(x) {}
   template<class T1,class T2,class T3>
   typename CP::result_type operator()(T1 const&t1, T2 const&t2, T3 const&t3)const{
-    double tab[]={(double)t1,(double)t2,(double)t3};
+    //double tab[]={(double)t1,(double)t2,(double)t3};
+    // The lazy kernel stores iterators, not a vector<double>, so the array must stay alive until update_exact()! For the tests I am keeping the memory leak for now, it is more convenient.
+    double*tab=new double[3]{(double)t1,(double)t2,(double)t3};
     return cp(tab+0,tab+3);
   }
   template<class T1,class T2,class T3,class T4>
   typename CP::result_type operator()(T1 const&t1, T2 const&t2, T3 const&t3, T4 const&t4)const{
-    double tab[]={(double)t1,(double)t2,(double)t3};
+    // Same discussion as above
+    double*tab=new double[3]{(double)t1,(double)t2,(double)t3};
     return cp(tab+0,tab+3,t4);
   }
 };
@@ -690,6 +696,9 @@ int main(){
   test2<Ker2>();
   test3<Ker3>();
   test3<Kerd>();
+  //test2<CGAL::Epeck_d<CGAL::Dimension_tag<2>>>();
+  //test3<CGAL::Epeck_d<CGAL::Dimension_tag<3>>>();
+  //test3<CGAL::Epeck_d<CGAL::Dynamic_dimension_tag>>();
 }
 
 #endif

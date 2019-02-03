@@ -95,6 +95,18 @@ template <class K1, class K2> struct KO_converter<Segment_tag,K1,K2>{
 	}
 };
 
+template <class K1, class K2> struct KO_converter<Iso_box_tag,K1,K2>{
+	typedef typename Get_type<K1, Iso_box_tag>::type	argument_type;
+	typedef typename Get_type<K2, Iso_box_tag>::type	result_type;
+	template <class C>
+	result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& s) const {
+		typename Get_functor<K1, Construct_min_vertex_tag>::type f(k1);
+		typename Get_functor<K1, Construct_max_vertex_tag>::type g(k1);
+		typename Get_functor<K2, Construct_ttag<Iso_box_tag> >::type cib(k2);
+		return cib(conv(f(s)),conv(g(s)));
+	}
+};
+
 template <class K1, class K2> struct KO_converter<Hyperplane_tag,K1,K2>{
   typedef typename Get_type<K1, Hyperplane_tag>::type	argument_type;
   typedef typename Get_type<K2, Hyperplane_tag>::type	result_type;

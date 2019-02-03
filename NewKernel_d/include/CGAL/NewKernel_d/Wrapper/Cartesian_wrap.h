@@ -145,9 +145,8 @@ struct Cartesian_wrap : public Base_
 		    B b;
 		    type(){}
 		    type(Self const&k):b(k){}
-		    typedef typename B::result_type result_type;
 #ifdef CGAL_CXX11
-		    template<class...U> result_type operator()(U&&...u)const{
+		    template<class...U> decltype(auto) operator()(U&&...u)const{
 			    return b(internal::Forward_rep()(u)...);
 		    }
 #else

@@ -156,6 +156,13 @@ public:
     return PDBase()(rep());
   }
 
+  friend auto operator==(Point_d const&p, Point_d const&q) {
+    typedef typename Get_functor<Kbase, Equal_points_tag>::type EPBase;
+    return EPBase()(p.rep(), q.rep());
+  }
+
+  friend auto operator!=(Point_d const&p, Point_d const&q) { return !(p==q); }
+
   /*
   Direction_d direction() const
   {

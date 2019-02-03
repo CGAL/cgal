@@ -30,6 +30,7 @@ template <class R_> class Sphere {
 	FT_ r2_;
 
 	public:
+	Sphere(){}
 	Sphere(Point_ const&p, FT_ const&r2): c_(p), r2_(r2) {}
 	// TODO: Add a piecewise constructor?
 
