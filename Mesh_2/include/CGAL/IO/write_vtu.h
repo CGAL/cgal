@@ -352,7 +352,10 @@ void write_vtu_with_attributes(std::ostream& os,
   const bool binary = (mode == IO::BINARY);
   write_cdt_points_tag(os,tr,V,binary,offset);
   write_cells_tag_2(os,tr,number_of_triangles, V,binary,offset);
-  os << "    <CellData Scalars=\""<<attributes.front().first<<"\">\n";
+  if(attributes.empty())
+      os << "    <CellData >\n";
+  else
+    os << "    <CellData Scalars=\""<<attributes.front().first<<"\">\n";
   for(std::size_t i = 0; i< attributes.size(); ++i)
   {
     write_attribute_tag_2(os,attributes[i].first, *attributes[i].second, binary,offset);
@@ -376,47 +379,8 @@ void write_vtu(std::ostream& os,
                const CDT& tr,
                IO::Mode mode = IO::BINARY)
 {
-  typedef typename CDT::Vertex_handle Vertex_handle;
-  std::map<Vertex_handle, std::size_t> V;
-  //write header
-  os << "<?xml version=\"1.0\"?>\n"
-     << "<VTKFile type=\"UnstructuredGrid\" version=\"0.1\"";
-#ifdef CGAL_LITTLE_ENDIAN
-  os << " byte_order=\"LittleEndian\"";
-#else // CGAL_BIG_ENDIAN
-  os << " byte_order=\"BigEndian\"";
-#endif
-  
-  switch(sizeof(std::size_t)) {
-  case 4: os << " header_type=\"UInt32\""; break;
-  case 8: os << " header_type=\"UInt64\""; break;
-  default: CGAL_error_msg("Unknown size of std::size_t");
-  }
-  os << ">\n"
-     << "  <UnstructuredGrid>" << "\n";
-  
-  int number_of_triangles = 0;
-  for(typename CDT::Finite_faces_iterator 
-      fit = tr.finite_faces_begin(),
-      end = tr.finite_faces_end();
-      fit != end; ++fit)
-  {
-    if(fit->is_in_domain()) ++number_of_triangles;
-  }
-  os << "  <Piece NumberOfPoints=\"" << tr.number_of_vertices() 
-     << "\" NumberOfCells=\"" << number_of_triangles + std::distance(tr.constrained_edges_begin(), tr.constrained_edges_end()) << "\">\n";
-  std::size_t offset = 0;
-  const bool binary = (mode == IO::BINARY);
-  write_cdt_points_tag(os,tr,V,binary,offset);
-  write_cells_tag_2(os,tr,number_of_triangles, V,binary,offset);
-  os << "   </Piece>\n"
-     << "  </UnstructuredGrid>\n";
-  if (binary) {
-    os << "<AppendedData encoding=\"raw\">\n_"; 
-    write_cdt_points(os,tr,V);  // write points before cells to fill the std::map V
-    write_cells_2(os,tr, number_of_triangles, V);
-  }
-  os << "</VTKFile>\n";
+  std::vector<std::pair<const char*, const std::vector<double>*> > dummy_atts;
+  write_vtu_with_attributes(os, tr, dummy_atts, mode);
 }
 
 } //end CGAL
