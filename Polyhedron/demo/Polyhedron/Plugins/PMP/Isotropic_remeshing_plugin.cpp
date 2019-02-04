@@ -275,13 +275,16 @@ public:
   {
     std::vector<edge_descriptor> p_edges;
     if(!selection_item->selected_facets.empty()){
-      BOOST_FOREACH(edge_descriptor e, selection_item->selected_edges)
+      BOOST_FOREACH(edge_descriptor e, edges(pmesh))
       {
-        if (selection_item->selected_facets.find(face(halfedge(e, pmesh), pmesh))
-            != selection_item->selected_facets.end()
-            || selection_item->selected_facets.find(face(opposite(halfedge(e, pmesh), pmesh), pmesh))
-            != selection_item->selected_facets.end())
-          p_edges.push_back(e);
+        if(get(selection_item->constrained_edges_pmap(), e))
+        {
+          if (selection_item->selected_facets.find(face(halfedge(e, pmesh), pmesh))
+              != selection_item->selected_facets.end()
+              || selection_item->selected_facets.find(face(opposite(halfedge(e, pmesh), pmesh), pmesh))
+              != selection_item->selected_facets.end())
+            p_edges.push_back(e);
+        }
       }
       BOOST_FOREACH(face_descriptor f, selection_item->selected_facets)
       {
@@ -394,13 +397,29 @@ public Q_SLOTS:
                  4. / 3. * target_length))
             {
               QApplication::restoreOverrideCursor();
-              if(QMessageBox::question(mw, tr("Error"),
-                                       tr("Isotropic remeshing : protect_constraints cannot be set to"
-                                          " true with constraints larger than 4/3 * target_edge_length."
-                                          " Do you wish to split the constrained edges ?")) != 
-                 QMessageBox::Yes)
+              //If facets are selected, splitting edges will add facets that won't be selected, and it will mess up the rest.
+              //If there is only edges, it will work fine because new edges are dealt with in the code, so we can directly 
+              //split and continue.
+              // Possibility todo: check if the barycenter of a new face is inside an old selected face to 
+              //select it again.
+              if(!selection_item->selected_facets.empty())
+              {
+                QMessageBox::warning(mw, tr("Error"),
+                                      tr("Isotropic remeshing : protect_constraints cannot be set to"
+                                         " true with constraints larger than 4/3 * target_edge_length."
+                                         " Aborting."));
                 return;
-              do_split_edges(selection_item, pmesh, target_length);
+              }
+              else if(QMessageBox::question(mw, tr("Error"),
+                                            tr("Isotropic remeshing : protect_constraints cannot be set to"
+                                               " true with constraints larger than 4/3 * target_edge_length."
+                                               " Do you wish to split the constrained edges ?")) != 
+                      QMessageBox::Yes)
+              {
+                return;
+              }
+              else
+                do_split_edges(selection_item, pmesh, target_length);
             }
 
             if (selection_item->selected_facets.empty() && !selection_item->isEmpty())
@@ -423,9 +442,9 @@ public Q_SLOTS:
                    , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
                    .protect_constraints(protect)
                    .edge_is_constrained_map(selection_item->constrained_edges_pmap())
-                   //.relax_constraints(smooth_features)
-                   //.number_of_relaxation_steps(nb_smooth)
-                   //.vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
+                   .relax_constraints(smooth_features)
+                   .number_of_relaxation_steps(nb_smooth)
+                   .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
                                                                    );
             }
             else //selected_facets not empty
