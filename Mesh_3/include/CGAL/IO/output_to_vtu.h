@@ -319,9 +319,7 @@ void output_to_vtu(std::ostream& os,
                const C3T3& c3t3,
                IO::Mode mode = IO::BINARY)
 {
-  typedef typename C3T3::Triangulation Tr;
   typedef typename C3T3::Cells_in_complex_iterator Cell_iterator;
-  typedef typename Tr::Vertex_handle Vertex_handle;
   std::vector<double> mids;      
   for( Cell_iterator cit = c3t3.cells_in_complex_begin() ;
        cit != c3t3.cells_in_complex_end() ;
