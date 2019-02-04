@@ -73,7 +73,7 @@ Point_d(double x0, double x1, ...);
 /*! introduces a point with coordinate set `[first,end)`.
     \pre If `DimensionTag` is a fixed dimension, it matches `distance(first,end)`.
     \tparam ForwardIterator has its value type that is convertible to `double`.
-    \bug{Lazy construction} This constructor stores the iterators and may use
+    \bug This constructor stores the iterators and may use
     them at any later time, when an exact construction is needed. This means
     that if `[first,end)` points to some buffer, it has to remain alive at
     least as long as the point.
