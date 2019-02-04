@@ -5,7 +5,7 @@ namespace CGAL {
 \ingroup PkgKernelDKernels
 
 A model for `Kernel_d`, minus `Kernel_d::Point_of_sphere_d`, that uses %Cartesian coordinates to represent the
-geometric objects. 
+geometric objects.
 
 This kernel is default constructible and copyable. It does not carry any
 state so it is possible to use objects created by one instance with
