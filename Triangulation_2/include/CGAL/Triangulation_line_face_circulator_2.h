@@ -266,7 +266,7 @@ Triangulation_line_face_circulator_2(const Point& pp,
       int in;
       switch(pqs) {
       case LEFT_TURN:
-	*this = Line_face_circulator();
+        pos = Face_handle();
 	return;
       case COLLINEAR:
 	fn = fc->neighbor(i);
@@ -306,7 +306,7 @@ Triangulation_line_face_circulator_2(const Point& pp,
 
    // if line (p,q) does not intersect the convex hull in an edge
    // the circulator has a singular value
-   *this=Line_face_circulator();
+   pos=Face_handle();
    return;
 }
 
@@ -368,7 +368,7 @@ Triangulation_line_face_circulator_2(const Point& pp,
 	  return;
 	} else {
            // singular value
-	  *this = Line_face_circulator();
+          pos=Face_handle();
 	  return;
 	}
       case LEFT_TURN :

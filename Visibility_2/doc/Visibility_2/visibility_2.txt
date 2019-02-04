@@ -129,7 +129,6 @@ does not require preprocessing is advantageous.
 The following example shows how to obtain the regularized and non-regularized visibility regions.
 
 \cgalFigureBegin{simple_example, simple_example.png}
-
 The visibility region of \f$ q \f$ in a simple polygon: (1) non-regularized visibility; and (2) regularized visibility.
 \cgalFigureEnd
 \cgalExample{Visibility_2/simple_polygon_visibility_2.cpp}

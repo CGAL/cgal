@@ -4,6 +4,7 @@
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 #include "Messages_interface.h"
 
 #include <QAction>
@@ -125,7 +126,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveIsolatedVertices_t
     std::size_t nbv =
       CGAL::Polygon_mesh_processing::remove_isolated_vertices(
         *poly_item->polyhedron());
-    messages->information(tr(" %1 isolated vertices have been removed.")
+    CGAL::Three::Three::information(tr(" %1 isolated vertices have been removed.")
       .arg(nbv));
     poly_item->invalidateOpenGLBuffers();
     Q_EMIT poly_item->itemChanged();
@@ -150,11 +151,11 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveDegenerateFaces_tr
     std::size_t nbv = num_faces(*poly_item->polyhedron());
       CGAL::Polygon_mesh_processing::remove_degenerate_faces(
       *poly_item->polyhedron());
-      poly_item->invalidateOpenGLBuffers();
-      Q_EMIT poly_item->itemChanged();
-      nbv -= num_faces(*poly_item->polyhedron());
-      messages->information(tr(" %1 degenerate faces have been removed.")
-                            .arg(nbv));
+    nbv -= num_faces(*poly_item->polyhedron());
+    CGAL::Three::Three::information(tr(" %1 degenerate faces have been removed.")
+      .arg(nbv));
+    poly_item->invalidateOpenGLBuffers();
+    Q_EMIT poly_item->itemChanged();
   }
 }
 
@@ -177,7 +178,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveSelfIntersections_
       CGAL::Polygon_mesh_processing::remove_self_intersections(
       *poly_item->polyhedron());
     if (!solved)
-      messages->information(tr("Some self-intersection could not be fixed"));
+      CGAL::Three::Three::information(tr("Some self-intersection could not be fixed"));
     poly_item->invalidateOpenGLBuffers();
     Q_EMIT poly_item->itemChanged();
   }
@@ -203,7 +204,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionAutorefine_triggered(Sce
     }
     catch(CGAL::Polygon_mesh_processing::Corefinement::Triple_intersection_exception)
     {
-      messages->warning(tr("The result of the requested operation is not handled (triple intersection)."));
+      CGAL::Three::Three::warning(tr("The result of the requested operation is not handled (triple intersection)."));
     }
     poly_item->invalidateOpenGLBuffers();
     Q_EMIT poly_item->itemChanged();
@@ -230,11 +231,11 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionAutorefineAndRMSelfInter
         CGAL::Polygon_mesh_processing::experimental::
           autorefine_and_remove_self_intersections(*poly_item->polyhedron());
       if (!solved)
-        messages->information(tr("Self-intersection could not be removed due to non-manifold edges in the output"));
+        CGAL::Three::Three::information(tr("Self-intersection could not be removed due to non-manifold edges in the output"));
     }
     catch(CGAL::Polygon_mesh_processing::Corefinement::Triple_intersection_exception)
     {
-      messages->warning(tr("The result of the requested operation is not handled (triple intersection)."));
+      CGAL::Three::Three::warning(tr("The result of the requested operation is not handled (triple intersection)."));
     }
     poly_item->invalidateOpenGLBuffers();
     Q_EMIT poly_item->itemChanged();
@@ -269,7 +270,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionStitchCloseBorderHalfedg
                                                  get(boost::vertex_point, *poly_item->polyhedron()),
                                                  halfedges_to_stitch);
     PMP::stitch_borders(*poly_item->polyhedron(), halfedges_to_stitch);
-    messages->information(tr(" %1 pairs of halfedges stitched.").arg(halfedges_to_stitch.size()));
+    CGAL::Three::Three::information(tr(" %1 pairs of halfedges stitched.").arg(halfedges_to_stitch.size()));
     poly_item->invalidateOpenGLBuffers();
     Q_EMIT poly_item->itemChanged();
   }
@@ -291,7 +292,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionDuplicateNMVertices_trig
   if (Item* poly_item = qobject_cast<Item*>(scene->item(index)))
   {
     std::size_t nb_vd = PMP::duplicate_non_manifold_vertices(*poly_item->polyhedron());
-    messages->information(tr(" %1 vertices created").arg(nb_vd));
+    CGAL::Three::Three::information(tr(" %1 vertices created").arg(nb_vd));
     if (nb_vd)
     {
       poly_item->invalidateOpenGLBuffers();

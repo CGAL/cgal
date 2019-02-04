@@ -25,10 +25,10 @@ int main()
         Point_3(1,-1,-1),
         Point_3(1,1,-1),
         Point_3(-1,1,-1),
+        Point_3(-1,1,1),
         Point_3(-1,-1,1),
         Point_3(1,-1,1),
         Point_3(1,1,1),
-        Point_3(-1,1,1),
         sm
         );
 
@@ -45,10 +45,10 @@ int main()
         Point_3(0.5,-0.5,-0.5),
         Point_3(0.5,0.5,-0.5),
         Point_3(-0.5,0.5,-0.5),
+        Point_3(-0.5,0.5,0.5),
         Point_3(-0.5,-0.5,0.5),
         Point_3(0.5,-0.5,0.5),
         Point_3(0.5,0.5,0.5),
-        Point_3(-0.5,0.5,0.5),
         poly
         );
   pvertex_descriptor pvd = *  vertices(pmesh).first;

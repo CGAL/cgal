@@ -389,7 +389,9 @@ public:
             hit->reset_fcit();
         for (Isolated_vertex_iterator vit = iv_begin(); vit!=iv_end(); ++vit) 
             vit->reset_ivit();
-        FC.clear(); IV.clear(); }
+        FC.clear(); IV.clear();
+        _e=Halfedge_handle();
+          }
 
     /*{\Mtext There are the same iterator ranges defined for the const
       iterators |Hole_const_iterator|, |Isolated_vertex_const_iterator|.

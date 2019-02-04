@@ -539,7 +539,7 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
           viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
         item.draw(viewer);
-        
+
         if(with_names) {
           
           //    read depth buffer at pick location;

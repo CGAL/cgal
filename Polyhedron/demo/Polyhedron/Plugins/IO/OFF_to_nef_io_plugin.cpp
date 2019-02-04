@@ -2,6 +2,7 @@
 #include "Nef_type.h"
 
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 #include <fstream>
 using namespace CGAL::Three;
 class Polyhedron_demo_off_to_nef_plugin :
@@ -33,7 +34,12 @@ Polyhedron_demo_off_to_nef_plugin::load(QFileInfo fileinfo) {
   if(!in)
     std::cerr << "Error!\n";
   Scene_nef_polyhedron_item* item = new Scene_nef_polyhedron_item();
-
+  if(fileinfo.size() == 0)
+  {
+    CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
+    item->setName(fileinfo.completeBaseName());
+    return item;
+  }
   if(!item->load_from_off(in))
   {
     delete item;

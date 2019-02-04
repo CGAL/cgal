@@ -61,6 +61,7 @@ struct Get_eigen_matrix< ::Eigen::SimplicialCholesky<EigenMatrix>, FT>
   typedef Eigen_sparse_symmetric_matrix<FT>   type;
 };
 
+
 #if EIGEN_VERSION_AT_LEAST(3, 1, 91)
 template <class FT, class EigenMatrix, class EigenOrdering>
 struct Get_eigen_matrix< ::Eigen::SparseLU<EigenMatrix, EigenOrdering >, FT>
@@ -118,7 +119,11 @@ public:
   typedef EigenSolverT                                                Solver;
   typedef Scalar                                                      NT;
   typedef CGAL::Eigen_vector<NT>                                      Vector;
-
+#if EIGEN_VERSION_AT_LEAST(3, 3, 0)
+  typedef Eigen::Index                                                Index;
+#else
+  typedef Eigen::DenseIndex                                                  Index;
+#endif
   /// If `T` is `Eigen::ConjugateGradient<M>` or `Eigen::SimplicialCholesky<M>`,
   /// `Matrix` is `CGAL::Eigen_sparse_symmetric_matrix<T>`, and `CGAL::Eigen_sparse_matrix<T>` otherwise.
 #ifdef DOXYGEN_RUNNING
@@ -182,6 +187,16 @@ public:
   {
     CGAL_precondition(m_mat != NULL); // factor should have been called first
     X = solver().solve(B);
+    return solver().info() == Eigen::Success;
+  }
+  
+  /// Solve the sparse linear system \f$ A \times X = B\f$, with \f$ A \f$ being the matrix
+  /// provided in `factor()`.
+  /// \return `true` if the solver is successful and `false` otherwise.
+  bool linear_solver(const Matrix& B, Vector& X)
+  {
+    CGAL_precondition(m_mat != NULL); // factor should have been called first
+    X = solver().solve(B.eigen_object());
     return solver().info() == Eigen::Success;
   }
 

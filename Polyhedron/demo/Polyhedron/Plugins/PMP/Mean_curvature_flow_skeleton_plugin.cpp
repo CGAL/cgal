@@ -877,7 +877,7 @@ Polyhedron_demo_mean_curvature_flow_skeleton_plugin::createContractedItem(Scene_
 {
   if(!item)
     return;
-  if(item->mcs == NULL)
+  if(item->mcs != NULL)
     delete item->mcs;
   double omega_H = ui->omega_H->value();
   double omega_P = ui->omega_P->value();

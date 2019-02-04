@@ -30,7 +30,8 @@ int main( int argc, char *argv[] )
   assert( ifs );
 
   SDG2          sdg;
-  SDG2::Site_2  site;
+  SDG2::Site_2  site =
+    SDG2::Site_2::construct_site_2(Rep::Point_2(CGAL::ORIGIN));
 
   // read the sites and insert them in the segment Delaunay graph
   while ( ifs >> site ) {

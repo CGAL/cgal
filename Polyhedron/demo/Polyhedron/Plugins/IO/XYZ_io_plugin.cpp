@@ -43,6 +43,15 @@ Polyhedron_demo_xyz_plugin::load(QFileInfo fileinfo)
     return NULL;
   }
 
+  
+  if(fileinfo.size() == 0)
+  {
+    CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
+    Scene_points_with_normal_item* item =
+        new Scene_points_with_normal_item();
+    item->setName(fileinfo.completeBaseName());
+    return item;
+  }
   // Read .xyz in a point set
   Scene_points_with_normal_item* point_set_item = new Scene_points_with_normal_item;
   point_set_item->setName(fileinfo.completeBaseName());

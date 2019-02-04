@@ -199,7 +199,7 @@ Monge_via_jet_fitting();
 This operator performs all the computations. The \f$ N\f$ input points are 
 given by the `InputIterator` parameters which value-type are 
 `Data_kernel::Point_3`, `d` is the degree of the fitted 
-polynomial, `d'` is the degree of the expected Monge 
+polynomial, \c d' is the degree of the expected Monge
 coefficients. \pre \f$ N \geq N_{d}:=(d+1)(d+2)/2\f$, \f$ 1 \leq d' \leq\min(d,4) \f$. 
 */ 
 template <class InputIterator> Monge_form 
