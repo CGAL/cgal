@@ -17,6 +17,10 @@ if(CGAL_SetupGMP_included OR CGAL_DISABLE_GMP)
 endif()
 set(CGAL_SetupGMP_included TRUE)
 
+# Locally setting of CMAKE_MODULE_PATH, not exported to parent scope.
+# That is required to find the FindGMP and FindMPFR modules.
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_MODULES_DIR})
+
 find_package(GMP REQUIRED)
 find_package(MPFR REQUIRED)
 
