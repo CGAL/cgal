@@ -27,6 +27,7 @@
 #include <CGAL/internal/Hyperbolic_octagon_translation_word.h>
 #include <CGAL/internal/Exact_complex.h>
 #include <CGAL/CORE_Expr.h>
+#include <CGAL/tss.h>
 
 #include <iostream>
 #include <vector>
@@ -58,14 +59,18 @@ private:
 
   Word _wrd;
 
-  static std::map<std::string, Matrix> gmap;
 
-  static std::map<std::string, Matrix> init_gmap()
+
+  static const Matrix& gmap(const std::string& s)
   {
+    typedef std::map<std::string, Matrix>  M;
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(M, m);
+
+    if(m.empty()){
+
     std::vector<Matrix> g;
     Matrix::generators(g);
 
-    std::map<std::string, Matrix> m;
     m["_"] = Matrix();
 
     m["0527"] = g[A]*g[B]*g[C]*g[D];
@@ -123,8 +128,8 @@ private:
     m["7"] = g[D];
     m["72"] = g[D]*g[C];
     m["725"] = g[D]*g[C]*g[B];
-
-    return m;
+    }
+    return m[s];
   }
 
 public:
@@ -137,7 +142,7 @@ public:
 
   std::pair<FT,FT> alpha() const
   {
-    Matrix _m = gmap[_wrd.to_string()];
+    const Matrix& _m = gmap(_wrd.to_string());
     ECplx _a = _m.alpha();
     FT ax = _a.real();
     FT ay = _a.imag();
@@ -147,7 +152,7 @@ public:
 
   std::pair<FT,FT> beta() const
   {
-    Matrix _m = gmap[_wrd.to_string()];
+    const Matrix& _m = gmap(_wrd.to_string());
     ECplx _b = _m.beta();
     FT bx = _b.real();
     FT by = _b.imag();
@@ -187,9 +192,6 @@ public:
   }
 };
 
-template <typename FT>
-std::map<std::string, Hyperbolic_octagon_translation_matrix<Exact_complex<FT> > >
-Hyperbolic_octagon_translation<FT>::gmap = init_gmap();
 
 template <typename FT>
 std::ostream& operator<<(std::ostream& s, const Hyperbolic_octagon_translation<FT>& tr) {
