@@ -29,9 +29,6 @@ concepts for the rest.
 
 \attention Known bugs: the functor `Intersect_d` is not yet implemented. `Contained_in_affine_hull` assumes that the iterators refer to an affinely independent family. `Orientation_d` only works for points, not vectors.
 
-\attention Ancient compilers like gcc-4.2 or icc 14 are not supported, but gcc-4.4 and
-icc 15 work.
-
 \attention This kernel requires the \ref thirdpartyEigen "Eigen" library.
 
 
