@@ -108,6 +108,7 @@ public:
 
 int main()
 {
+    CGAL::get_default_random() = CGAL::Random(1549369946);
   Image_tester<> test_epic;
   std::cerr << "Mesh generation from a 3D image:\n";
   test_epic.image();

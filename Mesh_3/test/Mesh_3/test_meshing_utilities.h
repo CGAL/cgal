@@ -40,6 +40,7 @@
 #include <CGAL/Triangle_accessor_3.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
+#include <CGAL/Real_timer.h>
 
 #include <CGAL/disable_warnings.h>
 
@@ -105,6 +106,9 @@ struct Tester
               const std::size_t min_cells_expected = 0,
               const std::size_t max_cells_expected = STD_SIZE_T_MAX) const
   {
+    CGAL::Real_timer timer;
+    timer.start();
+    
     typedef typename C3t3::size_type size_type;
 
     // Store mesh properties
@@ -125,7 +129,7 @@ struct Tester
     double hdist = compute_hausdorff_distance(c3t3, domain, domain_type);
 
     // Refine again and verify nothing changed
-    std::cerr << "Refining again...\n";
+    std::cerr << "Refining again..." << timer.time() << std::endl;
     refine_mesh_3(c3t3,domain,criteria,
                   CGAL::parameters::no_exude(),
                   CGAL::parameters::no_perturb(),
@@ -161,7 +165,7 @@ struct Tester
     // Facet number should not change as exuder preserves boundary facets
     // Quality should increase
     C3t3 exude_c3t3(c3t3);
-    std::cerr << "Exude...\n";
+    std::cerr << "Exude..." << timer.time() << std::endl;
     CGAL::exude_mesh_3(exude_c3t3);
     verify_c3t3(exude_c3t3,domain,domain_type,v,v,f,f);
     verify_c3t3_quality(c3t3,exude_c3t3);
@@ -172,7 +176,7 @@ struct Tester
     // Vertex number should not change (obvious)
     // Quality should increase
     C3t3 perturb_c3t3(c3t3);
-    std::cerr << "Perturb...\n";
+    std::cerr << "Perturb..." << timer.time() << std::endl;
     CGAL::perturb_mesh_3(perturb_c3t3, domain, CGAL::parameters::time_limit=5);
     verify_c3t3(perturb_c3t3,domain,domain_type,v,v);
     verify_c3t3_quality(c3t3,perturb_c3t3);
@@ -182,7 +186,7 @@ struct Tester
     // ODT-smoothing
     // Vertex number should not change (obvious)
     C3t3 odt_c3t3(c3t3);
-    std::cerr << "Odt...\n";
+    std::cerr << "Odt..." << timer.time() << std::endl;
     CGAL::odt_optimize_mesh_3(odt_c3t3, domain, CGAL::parameters::time_limit=5,
                               CGAL::parameters::convergence=0.001, CGAL::parameters::freeze_bound=0.0005);
     verify_c3t3(odt_c3t3,domain,domain_type,v,v);
@@ -192,12 +196,13 @@ struct Tester
     // Lloyd-smoothing
     // Vertex number should not change (obvious)
     C3t3 lloyd_c3t3(c3t3);
-    std::cerr << "Lloyd...\n";
+    std::cerr << "Lloyd..." << timer.time() << std::endl;
     CGAL::lloyd_optimize_mesh_3(lloyd_c3t3, domain, CGAL::parameters::time_limit=5,
                                 CGAL::parameters::convergence=0.001, CGAL::parameters::freeze_bound=0.0005);
     verify_c3t3(lloyd_c3t3,domain,domain_type,v,v);
     verify_c3t3_volume(lloyd_c3t3, volume*0.95, volume*1.05);
     verify_c3t3_hausdorff_distance(lloyd_c3t3, domain, domain_type, hdist);
+    std::cerr << "Before returning from verify() " << timer.time() << std::endl;
   }
 
   template<typename C3t3, typename Domain, typename Domain_type_tag>
