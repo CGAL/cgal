@@ -24,8 +24,8 @@
 
 #include "Scene_surface_mesh_item.h"
 #include "Scene_c3t3_item.h"
-#include "Scene_points_with_normal_item.h"
 #include "Scene_polylines_item.h"
+#include "Scene_points_with_normal_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
@@ -154,6 +154,8 @@ namespace CGAL{
     //extract cells
     for (vtkIdType i = 0; i<nb_cells; ++i)
     {
+      if(poly_data->GetCellType(i) == 10)//skip tetrahedra
+        continue;
       vtkCell* cell_ptr = poly_data->GetCell(i);
 
       vtkIdType nb_vertices = cell_ptr->GetNumberOfPoints();
@@ -191,7 +193,7 @@ namespace CGAL{
       vtkCell* cell_ptr = poly_data->GetCell(i);
 
       vtkIdType nb_vertices = cell_ptr->GetNumberOfPoints();
-      if (nb_vertices !=2) continue;
+      if (nb_vertices !=2) continue ;
       segments.push_back( std::vector<Point_3>() );
       segments.back().push_back(point_map[cell_ptr->GetPointId(0)]);
       segments.back().push_back(point_map[cell_ptr->GetPointId(1)]);
@@ -357,10 +359,12 @@ public:
     {
       CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
       Scene_facegraph_item* item =
-          new Scene_facegraph_item(poly);
+          new Scene_facegraph_item();
       item->setName(fileinfo.completeBaseName());
       return item;
     }
+    
+    
     vtkSmartPointer<vtkPointSet> data;
     vtkSmartPointer<CGAL::ErrorObserverVtk> obs =
       vtkSmartPointer<CGAL::ErrorObserverVtk>::New();
@@ -432,12 +436,11 @@ public:
     }
     else if (extension=="vtu")
     {
-      vtkUnstructuredGrid* data_vtu = vtkUnstructuredGrid::SafeDownCast(data);
       bool all_tri(true);
       
-      for(int i = 0; i< data_vtu->GetNumberOfCells(); ++i)
+      for(int i = 0; i< data->GetNumberOfCells(); ++i)
       {
-        if(data_vtu->GetCellType(i) != 5)
+        if(data->GetCellType(i) != 5)
           all_tri = false;
       }
       
@@ -453,20 +456,20 @@ public:
       c3t3_item->set_valid(false);
       //build a triangulation from data:
       std::vector<Tr::Point> points;
-      vtkPoints* dataP = data_vtu->GetPoints();;
-      for(int i = 0; i< data_vtu->GetNumberOfPoints(); ++i)
+      vtkPoints* dataP = data->GetPoints();;
+      for(int i = 0; i< data->GetNumberOfPoints(); ++i)
       {
         double *p = dataP->GetPoint(i);
         points.push_back(Tr::Point(p[0],p[1],p[2]));
       }
       std::vector<Tet_with_ref> finite_cells;
-      bool has_mesh_domain = data_vtu->GetCellData()->HasArray("MeshDomain");
-      vtkDataArray* domains = data_vtu->GetCellData()->GetArray("MeshDomain");
-      for(int i = 0; i< data_vtu->GetNumberOfCells(); ++i)
+      bool has_mesh_domain = data->GetCellData()->HasArray("MeshDomain");
+      vtkDataArray* domains = data->GetCellData()->GetArray("MeshDomain");
+      for(int i = 0; i< data->GetNumberOfCells(); ++i)
       {
-        if(data_vtu->GetCellType(i) != 10 )
+        if(data->GetCellType(i) != 10 )
           continue;
-        vtkIdList* pids = data_vtu->GetCell(i)->GetPointIds();
+        vtkIdList* pids = data->GetCell(i)->GetPointIds();
         Tet_with_ref cell;
         for(int j = 0; j<4; ++j)
           cell[j] = pids->GetId(j);
@@ -474,24 +477,13 @@ public:
                                   :1;
         finite_cells.push_back(cell);
       }
-      std::map<Facet, int> border_facets;
-      if(finite_cells.empty())//then there is no triangles either, only display points
+      //if no finite_cell, then only display edges : go to end of function
+      if(finite_cells.empty())
       {
-        QApplication::restoreOverrideCursor();
-        QMessageBox::warning(CGAL::Three::Three::mainWindow(), "No cells",
-                             "This file does not hold"
-                             " a 3D triangulation nore "
-                             "a polygon mesh. Displaying points only.");
-        Scene_points_with_normal_item* pi = new Scene_points_with_normal_item();
-        BOOST_FOREACH(const Tr::Point& p, points)
-        {
-          pi->point_set()->insert(Point_3(p.x(), p.y(), p.z()));
-        }
-        pi->setName(QString("%1_points").arg(fileinfo.baseName()));
         delete c3t3_item;
-        return pi;
-        
+        goto polylines_only;
       }
+      std::map<Facet, int> border_facets;
       CGAL::build_triangulation<Tr, true>(c3t3_item->c3t3().triangulation(), points, finite_cells, border_facets);
       
       for( C3t3::Triangulation::Finite_cells_iterator
@@ -537,18 +529,35 @@ public:
       c3t3_item->setName(fileinfo.baseName());
       return c3t3_item;
     }
-    else{
-      // extract only segments
-      std::vector< std::vector<Point> > segments;
-      extract_segments_from_vtkPointSet(data,segments);
-      if (segments.empty()) return NULL; /// TODO handle point sets
+polylines_only: // if no other cell type was found
+    // extract only segments
+    std::vector< std::vector<Point> > segments;
+    extract_segments_from_vtkPointSet(data,segments);
+    if (segments.empty()) return NULL; /// TODO handle point sets
+    if(!segments.empty())
+    {
       Scene_polylines_item* polyline_item = new Scene_polylines_item();
-      polyline_item->setName(fileinfo.fileName());
       BOOST_FOREACH(const std::vector<Point>& segment, segments)
-        polyline_item->polylines.push_back(segment);
+          polyline_item->polylines.push_back(segment);
+      polyline_item->setName(fileinfo.fileName());
       return polyline_item;
     }
-    return NULL;
+    
+    //if nothing else worked, display at least the points
+    QApplication::restoreOverrideCursor();
+    QMessageBox::warning(CGAL::Three::Three::mainWindow(),
+                         "Problematic file",
+                         "This program does probably not support the type of cell"
+                         "of this file. Only points will be displayed.");
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    Scene_points_with_normal_item* point_item = new Scene_points_with_normal_item();
+    for(int i=0; i< data->GetNumberOfPoints(); ++i)
+    {
+      double* p = data->GetPoint(i);
+      point_item->point_set()->insert(Point_3(p[0], p[1], p[2]));
+    }
+    point_item->setName(fileinfo.baseName());
+    return point_item;
   }
 }; // end Polyhedron_demo_vtk_plugin
 
