@@ -154,7 +154,9 @@ namespace CGAL{
     //extract cells
     for (vtkIdType i = 0; i<nb_cells; ++i)
     {
-      if(poly_data->GetCellType(i) == 10)//skip tetrahedra
+      if(poly_data->GetCellType(i) != 5
+         && poly_data->GetCellType(i) != 7
+         && poly_data->GetCellType(i) != 9) //only supported cells are triangles, quads and polygons
         continue;
       vtkCell* cell_ptr = poly_data->GetCell(i);
 
@@ -190,13 +192,17 @@ namespace CGAL{
     //extract segments
     for (vtkIdType i = 0; i<nb_cells; ++i)
     {
+      if(poly_data->GetCellType(i) != 3
+         && poly_data->GetCellType(i) != 4)
+        continue;
       vtkCell* cell_ptr = poly_data->GetCell(i);
 
       vtkIdType nb_vertices = cell_ptr->GetNumberOfPoints();
-      if (nb_vertices !=2) continue ;
       segments.push_back( std::vector<Point_3>() );
-      segments.back().push_back(point_map[cell_ptr->GetPointId(0)]);
-      segments.back().push_back(point_map[cell_ptr->GetPointId(1)]);
+      for(int j = 0; j < nb_vertices; ++j)
+      {
+        segments.back().push_back(point_map[cell_ptr->GetPointId(j)]);
+      }
     }
   }
 
@@ -352,9 +358,7 @@ public:
 
     std::string fname = fileinfo.absoluteFilePath().toStdString();
 
-    FaceGraph* poly = new FaceGraph();
     // Try to read .vtk in a facegraph
-    
     if(fileinfo.size() == 0)
     {
       CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
@@ -363,7 +367,6 @@ public:
       item->setName(fileinfo.completeBaseName());
       return item;
     }
-    
     
     vtkSmartPointer<vtkPointSet> data;
     vtkSmartPointer<CGAL::ErrorObserverVtk> obs =
@@ -428,28 +431,50 @@ public:
       msgBox.exec();
     }
 
-    if (extension!="vtu" && CGAL::vtkPointSet_to_polygon_mesh(data, *poly))
+    //check celltypes
+    bool is_polygon_mesh(false),
+        is_c3t3(false),
+        is_polyline(false);
+    for(int i = 0; i< data->GetNumberOfCells(); ++i)
     {
-      Scene_facegraph_item* poly_item = new Scene_facegraph_item(poly);
-      poly_item->setName(fileinfo.fileName());
-      return poly_item;
+      int t = data->GetCellType(i);
+      if( t == 5 || t == 7 || t == 9) //tri, quad or polygon
+        is_polygon_mesh = true;
+      else if(t == 10) //tetrahedron
+        is_c3t3 = true;
+      else if( t == 3 || t == 4) //line or polyline
+        is_polyline = true;
     }
-    else if (extension=="vtu")
+    Scene_group_item* group = nullptr;
+    if((is_polygon_mesh && is_c3t3)
+       || (is_polygon_mesh && is_polyline)
+       || (is_c3t3 && is_polyline) )
     {
-      bool all_tri(true);
-      
-      for(int i = 0; i< data->GetNumberOfCells(); ++i)
-      {
-        if(data->GetCellType(i) != 5)
-          all_tri = false;
-      }
-      
-      if(all_tri && CGAL::vtkPointSet_to_polygon_mesh(data, *poly))
+      group = new Scene_group_item(fileinfo.baseName());
+      group->setScene(CGAL::Three::Three::scene());
+    }
+  
+    if(is_polygon_mesh)
+    {
+      FaceGraph* poly = new FaceGraph();
+      if (CGAL::vtkPointSet_to_polygon_mesh(data, *poly))
       {
         Scene_facegraph_item* poly_item = new Scene_facegraph_item(poly);
-        poly_item->setName(fileinfo.fileName());
-        return poly_item;
+        if(group)
+        {
+          poly_item->setName(QString("%1_faces").arg(fileinfo.baseName()));
+          CGAL::Three::Three::scene()->addItem(poly_item);
+          CGAL::Three::Three::scene()->changeGroup(poly_item, group);
+        }
+        else{
+          poly_item->setName(fileinfo.baseName());
+          return poly_item;
+        }
       }
+    }
+    
+    if (is_c3t3)
+    {
       typedef boost::array<int, 3> Facet; // 3 = id
       typedef boost::array<int, 5> Tet_with_ref; // first 4 = id, fifth = reference
       Scene_c3t3_item* c3t3_item = new Scene_c3t3_item();
@@ -476,12 +501,6 @@ public:
         cell[4] = has_mesh_domain ? static_cast<int>(domains->GetComponent(i,0))
                                   :1;
         finite_cells.push_back(cell);
-      }
-      //if no finite_cell, then only display edges : go to end of function
-      if(finite_cells.empty())
-      {
-        delete c3t3_item;
-        goto polylines_only;
       }
       std::map<Facet, int> border_facets;
       CGAL::build_triangulation<Tr, true>(c3t3_item->c3t3().triangulation(), points, finite_cells, border_facets);
@@ -526,29 +545,44 @@ public:
       }
       c3t3_item->c3t3_changed();
       c3t3_item->resetCutPlane();
-      c3t3_item->setName(fileinfo.baseName());
-      return c3t3_item;
+      if(group)
+      {
+        c3t3_item->setName(QString("%1_tetrahedra").arg(fileinfo.baseName()));
+        CGAL::Three::Three::scene()->addItem(c3t3_item);
+        CGAL::Three::Three::scene()->changeGroup(c3t3_item, group);
+      }
+      else{
+        c3t3_item->setName(fileinfo.baseName());
+        return c3t3_item;
+      }
     }
-polylines_only: // if no other cell type was found
-    // extract only segments
-    std::vector< std::vector<Point> > segments;
-    extract_segments_from_vtkPointSet(data,segments);
-    if (segments.empty()) return NULL; /// TODO handle point sets
-    if(!segments.empty())
+    
+    if(is_polyline)
     {
+      std::vector< std::vector<Point> > segments;
+      extract_segments_from_vtkPointSet(data,segments);
       Scene_polylines_item* polyline_item = new Scene_polylines_item();
       BOOST_FOREACH(const std::vector<Point>& segment, segments)
           polyline_item->polylines.push_back(segment);
-      polyline_item->setName(fileinfo.fileName());
-      return polyline_item;
+      if(group)
+      {
+        polyline_item->setName(QString("%1_lines").arg(fileinfo.baseName()));
+        CGAL::Three::Three::scene()->addItem(polyline_item);
+        CGAL::Three::Three::scene()->changeGroup(polyline_item, group);
+      }
+      else{
+        polyline_item->setName(fileinfo.baseName());
+        return polyline_item;
+      }
     }
     
-    //if nothing else worked, display at least the points
+    if(group)
+      return group;
+    
     QApplication::restoreOverrideCursor();
     QMessageBox::warning(CGAL::Three::Three::mainWindow(),
                          "Problematic file",
-                         "This program does probably not support the type of cell"
-                         "of this file. Only points will be displayed.");
+                         "Cell type not recognized. Only points will be displayed.");
     QApplication::setOverrideCursor(Qt::WaitCursor);
     Scene_points_with_normal_item* point_item = new Scene_points_with_normal_item();
     for(int i=0; i< data->GetNumberOfPoints(); ++i)
