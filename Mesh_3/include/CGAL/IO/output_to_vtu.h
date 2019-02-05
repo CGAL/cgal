@@ -327,7 +327,7 @@ void output_to_vtu(std::ostream& os,
     {
       mids.push_back(cit->subdomain_index());
     }
-  std::vector<std::pair<const char*, std::vector<double>* > > atts;
+  std::vector<std::pair<const char*, const std::vector<double>* > > atts;
   atts.push_back(std::make_pair("MeshDomain", &mids));
   output_to_vtu_with_attributes(os, c3t3, atts, mode);
 }
