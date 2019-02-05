@@ -20,10 +20,11 @@
 //
 
 #include <CGAL/Mesh_3/io_signature.h>
-#include "Scene_c3t3_item.h"
 #include <QtCore/qglobal.h>
 
 #include "Scene_surface_mesh_item.h"
+#include "Scene_c3t3_item.h"
+#include "Scene_points_with_normal_item.h"
 #include "Scene_polylines_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
@@ -45,6 +46,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/property_map.h>
 #include <CGAL/IO/Complex_3_in_triangulation_3_to_vtk.h>
+#include <CGAL/Mesh_3/tet_soup_to_c3t3.h>
 
 #include <vtkSmartPointer.h>
 #include <vtkDataSetReader.h>
@@ -422,11 +424,118 @@ public:
       msgBox.exec();
     }
 
-    if (CGAL::vtkPointSet_to_polygon_mesh(data, *poly))
+    if (extension!="vtu" && CGAL::vtkPointSet_to_polygon_mesh(data, *poly))
     {
       Scene_facegraph_item* poly_item = new Scene_facegraph_item(poly);
       poly_item->setName(fileinfo.fileName());
       return poly_item;
+    }
+    else if (extension=="vtu")
+    {
+      vtkUnstructuredGrid* data_vtu = vtkUnstructuredGrid::SafeDownCast(data);
+      bool all_tri(true);
+      
+      for(int i = 0; i< data_vtu->GetNumberOfCells(); ++i)
+      {
+        if(data_vtu->GetCellType(i) != 5)
+          all_tri = false;
+      }
+      
+      if(all_tri && CGAL::vtkPointSet_to_polygon_mesh(data, *poly))
+      {
+        Scene_facegraph_item* poly_item = new Scene_facegraph_item(poly);
+        poly_item->setName(fileinfo.fileName());
+        return poly_item;
+      }
+      typedef boost::array<int, 3> Facet; // 3 = id
+      typedef boost::array<int, 5> Tet_with_ref; // first 4 = id, fifth = reference
+      Scene_c3t3_item* c3t3_item = new Scene_c3t3_item();
+      c3t3_item->set_valid(false);
+      //build a triangulation from data:
+      std::vector<Tr::Point> points;
+      vtkPoints* dataP = data_vtu->GetPoints();;
+      for(int i = 0; i< data_vtu->GetNumberOfPoints(); ++i)
+      {
+        double *p = dataP->GetPoint(i);
+        points.push_back(Tr::Point(p[0],p[1],p[2]));
+      }
+      std::vector<Tet_with_ref> finite_cells;
+      bool has_mesh_domain = data_vtu->GetCellData()->HasArray("MeshDomain");
+      vtkDataArray* domains = data_vtu->GetCellData()->GetArray("MeshDomain");
+      for(int i = 0; i< data_vtu->GetNumberOfCells(); ++i)
+      {
+        if(data_vtu->GetCellType(i) != 10 )
+          continue;
+        vtkIdList* pids = data_vtu->GetCell(i)->GetPointIds();
+        Tet_with_ref cell;
+        for(int j = 0; j<4; ++j)
+          cell[j] = pids->GetId(j);
+        cell[4] = has_mesh_domain ? static_cast<int>(domains->GetComponent(i,0))
+                                  :1;
+        finite_cells.push_back(cell);
+      }
+      std::map<Facet, int> border_facets;
+      if(finite_cells.empty())//then there is no triangles either, only display points
+      {
+        QApplication::restoreOverrideCursor();
+        QMessageBox::warning(CGAL::Three::Three::mainWindow(), "No cells",
+                             "This file does not hold"
+                             " a 3D triangulation nore "
+                             "a polygon mesh. Displaying points only.");
+        Scene_points_with_normal_item* pi = new Scene_points_with_normal_item();
+        BOOST_FOREACH(const Tr::Point& p, points)
+        {
+          pi->point_set()->insert(Point_3(p.x(), p.y(), p.z()));
+        }
+        pi->setName(QString("%1_points").arg(fileinfo.baseName()));
+        delete c3t3_item;
+        return pi;
+        
+      }
+      CGAL::build_triangulation<Tr, true>(c3t3_item->c3t3().triangulation(), points, finite_cells, border_facets);
+      
+      for( C3t3::Triangulation::Finite_cells_iterator
+           cit = c3t3_item->c3t3().triangulation().finite_cells_begin();
+           cit != c3t3_item->c3t3().triangulation().finite_cells_end();
+           ++cit)
+      {
+        CGAL_assertion(cit->info() >= 0);
+        c3t3_item->c3t3().add_to_complex(cit, cit->info());
+        for(int i=0; i < 4; ++i)
+        {
+          if(cit->surface_patch_index(i)>0)
+          {
+            c3t3_item->c3t3().add_to_complex(cit, i, cit->surface_patch_index(i));
+          }
+        }
+      }
+      
+      //if there is no facet in the complex, we add the border facets.
+      if(c3t3_item->c3t3().number_of_facets_in_complex() == 0)
+      {
+        for( C3t3::Triangulation::Finite_facets_iterator
+             fit = c3t3_item->c3t3().triangulation().finite_facets_begin();
+             fit != c3t3_item->c3t3().triangulation().finite_facets_end();
+             ++fit)
+        {
+          typedef C3t3::Triangulation::Cell_handle      Cell_handle;
+          
+          Cell_handle c = fit->first;
+          Cell_handle nc = c->neighbor(fit->second);
+          
+          // By definition, Subdomain_index() is supposed to be the id of the exterior
+          if(c->subdomain_index() != C3t3::Triangulation::Cell::Subdomain_index() &&
+             nc->subdomain_index() == C3t3::Triangulation::Cell::Subdomain_index())
+          {
+            // Color the border facet with the index of its cell
+            c3t3_item->c3t3().add_to_complex(c, fit->second, c->subdomain_index());
+          }
+        }
+      }
+      c3t3_item->c3t3_changed();
+      c3t3_item->resetCutPlane();
+      c3t3_item->setName(fileinfo.baseName());
+      return c3t3_item;
     }
     else{
       // extract only segments
