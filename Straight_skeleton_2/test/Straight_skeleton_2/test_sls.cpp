@@ -547,25 +547,25 @@ void dump_to_dxf ( TestCase const& aCase )
     {
       if ( sVerbose )
         cout << "    Dumping input region. " << endl ;
-      dump_region_to_dxf(*aCase.Inner.Input,BLUE,"Input",lDxf);
+      dump_region_to_dxf(*aCase.Inner.Input,blue(),"Input",lDxf);
     }
     
     if ( aCase.Inner.PartialSkeleton )
     {
       if ( sVerbose )
         cout << "    Dumping inner skeleton." << endl ;
-      dump_skeleton_to_dxf(*aCase.Inner.PartialSkeleton,YELLOW,GREEN,PURPLE,GRAY,"InnerSkeleton",lDxf);
+      dump_skeleton_to_dxf(*aCase.Inner.PartialSkeleton,yellow(),green(),purple(),gray(),"InnerSkeleton",lDxf);
     }
       
     if ( aCase.Outer.PartialSkeleton )
     {
       if ( sVerbose )
         cout << "    Dumping outer skeleton." << endl ;
-      dump_skeleton_to_dxf(*aCase.Outer.PartialSkeleton,YELLOW,GREEN,PURPLE,GRAY,"OuterSkeleton",lDxf);
+      dump_skeleton_to_dxf(*aCase.Outer.PartialSkeleton,yellow(),green(),purple(),gray(),"OuterSkeleton",lDxf);
     }
           
-    dump_region_to_dxf(aCase.Inner.Contours,GRAY,"InnerOffset",lDxf);
-    dump_region_to_dxf(aCase.Outer.Contours,GRAY,"OuterOffset",lDxf);
+    dump_region_to_dxf(aCase.Inner.Contours,gray(),"InnerOffset",lDxf);
+    dump_region_to_dxf(aCase.Outer.Contours,gray(),"OuterOffset",lDxf);
     
   }
   
