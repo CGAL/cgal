@@ -124,6 +124,7 @@ void read_WRL_single_shape(std::istream& input,
         }
       }
       CGAL_assertion(met_closing_bracket);
+      CGAL_USE(met_closing_bracket);
     }
     else if(s == "coordIndex")
     {
@@ -161,6 +162,7 @@ void read_WRL_single_shape(std::istream& input,
       }
 
       CGAL_assertion(met_closing_bracket);
+      CGAL_USE(met_closing_bracket);
       break; // finished reading facets means we are done reading the shape
     }
   }
@@ -168,7 +170,7 @@ void read_WRL_single_shape(std::istream& input,
 
   int digit_counter(std::size_t i)
 {
-  CGAL_precondition(i >= 0);
+  //CGAL_precondition(i >= 0); std::size_t is always >=0
   int n = 1;
   while(i/=10)
     ++n;
@@ -198,7 +200,7 @@ void merge_polygon_soups(const std::vector<Point>& points,
 
     for(std::size_t sfi=0; sfi<facet_size; ++sfi)
     {
-      int new_id = apn + faces.at(fi).at(sfi);
+      int new_id = static_cast<int>(apn + faces.at(fi).at(sfi));
       face.push_back(new_id);
     }
 

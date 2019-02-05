@@ -124,12 +124,12 @@ WRL_io_plugin::load(QFileInfo fileinfo) {
   return item;
 }
 
-bool WRL_io_plugin::canSave(const CGAL::Three::Scene_item* item)
+bool WRL_io_plugin::canSave(const CGAL::Three::Scene_item* )
 {
   return false;
 }
 
-bool WRL_io_plugin::save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
+bool WRL_io_plugin::save(const CGAL::Three::Scene_item* , QFileInfo )
 {
   return false;
 }
