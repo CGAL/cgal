@@ -86,7 +86,7 @@ public:
   RC_vertex_d(Simplex_handle s, int i, const Point_d& p) :
     s_(s), index_(i), point_(p) {}
   RC_vertex_d(const Point_d& p) : index_(-42), point_(p), pp(NULL) {}
-  RC_vertex_d() :  s_(), pp(NULL) {}
+  RC_vertex_d() :  s_(),  index_(-42), pp(NULL) {}
   // beware that ass_point was initialized here by nil_point
   ~RC_vertex_d() {}
 
@@ -514,9 +514,7 @@ Vertex_handle  new_vertex()
         is the point |Regular_complex_d::nil_point| which is a static
         member of class |Regular_complex_d.|}*/
 { 
-  Vertex v(nil_point);
-  Vertex_handle h = vertices_.insert(v);
-  return h; 
+  return vertices_.emplace(nil_point); 
 }
 
 Vertex_handle  new_vertex(const Point_d& p) 
@@ -524,7 +522,7 @@ Vertex_handle  new_vertex(const Point_d& p)
         has |p| as the associated point, but is has no associated
         simplex nor index yet.}*/
 { 
-  return vertices_.emplace(p);;
+  return vertices_.emplace(p);
 }
 
 void associate_vertex_with_simplex(Simplex_handle s, int i, Vertex_handle v)
