@@ -372,8 +372,8 @@ namespace CGAL {
         count_edges_of_path_on_torus(pt2, a2, b2);
         res=(a1==a2 && b1==b2);
 
-        // std::cout<<"Path1: length="<<pt1.length()<<"; (#a,b)=("<<a1<<", "<<b1<<"); "<<std::endl
-        //          <<"Path2: length="<<pt2.length()<<"; (#a,b)=("<<a2<<", "<<b2<<")."<<std::endl;
+        std::cout<<"Path1: length="<<pt1.length()<<"; (#a,b)=("<<a1<<", "<<b1<<"); "<<std::endl
+                  <<"Path2: length="<<pt2.length()<<"; (#a,b)=("<<a2<<", "<<b2<<")."<<std::endl;
       }
       else
       {
@@ -487,12 +487,11 @@ namespace CGAL {
         if (!m_original_map.is_marked(path[i], m_mark_T))
         {
           cur=get_first_dart_of_the_path(path[i]);
-          do
+          while(cur!=get_second_dart_of_the_path(path[i]))
           {
             res.push_back(cur, false);
             cur=m_map.template beta<1>(cur);
           }
-          while(cur!=get_second_dart_of_the_path(path[i]));
         }
       }
       res.update_is_closed();
