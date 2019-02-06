@@ -35,6 +35,7 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
 #include <vector>
+#include <type_traits>
 #include <CGAL/Default.h>
 #include<CGAL/tss.h>
 #include <CGAL/is_iterator.h>
@@ -237,7 +238,7 @@ struct Depth_base {
 template <typename AT_, typename ET, typename E2A>
 class Lazy_rep : public Rep, public Depth_base
 {
-  Lazy_rep (const Lazy_rep&); // cannot be copied.
+  Lazy_rep (const Lazy_rep&) = delete; // cannot be copied.
 
 public:
 
@@ -247,13 +248,15 @@ public:
   mutable ET *et;
 
   Lazy_rep ()
-    : at(), et(NULL){}
+    : at(), et(nullptr){}
 
-  Lazy_rep (const AT& a)
-      : at(a), et(NULL){}
+  template<class A>
+  Lazy_rep (A&& a)
+      : at(std::forward<A>(a)), et(nullptr){}
 
-  Lazy_rep (const AT& a, const ET& e)
-      : at(a), et(new ET(e)) {}
+  template<class A, class E>
+  Lazy_rep (A&& a, E&& e)
+      : at(std::forward<A>(a)), et(new ET(std::forward<E>(e))) {}
 
   const AT& approx() const
   {
@@ -332,8 +335,9 @@ class Lazy_rep_n :
   void update_exact() const {
     update_exact_helper(std::make_index_sequence<sizeof...(L)>{});
   }
-  Lazy_rep_n(const AC& ac, const EC& ec, L const&...ll) :
-    Lazy_rep<AT, ET, E2A>(ac(CGAL::approx(ll)...)), EC(ec), l(ll...)
+  template<class...LL>
+  Lazy_rep_n(const AC& ac, const EC& ec, LL&&...ll) :
+    Lazy_rep<AT, ET, E2A>(ac(CGAL::approx(ll)...)), EC(ec), l(std::forward<LL>(ll)...)
   {
     this->set_depth(std::max({ -1, (int)CGAL::depth(ll)...}) + 1);
   }
@@ -377,14 +381,23 @@ public:
   Lazy_rep_0()
     : Lazy_rep<AT,ET, E2A>() {}
 
-  Lazy_rep_0(const AT& a, const ET& e)
-    : Lazy_rep<AT,ET,E2A>(a, e) {}
+  template<class A, class E>
+  Lazy_rep_0(A&& a, E&& e)
+    : Lazy_rep<AT,ET,E2A>(std::forward<A>(a), std::forward<E>(e)) {}
 
+#if 0
+  // unused. Find a less ambiguous placeholder if necessary
   Lazy_rep_0(const AT& a, void*)
     : Lazy_rep<AT,ET,E2A>(a) {}
+#endif
 
-  Lazy_rep_0(const ET& e)
-    : Lazy_rep<AT,ET,E2A>(E2A()(e), e) {}
+  // E2A()(e) and std::forward<E>(e) could be evaluated in any order, but
+  // that's ok, "forward" itself does not modify e, it may only mark it as
+  // modifyable by the outer call, which is obviously sequenced after the inner
+  // call E2A()(e).
+  template<class E>
+  Lazy_rep_0(E&& e)
+    : Lazy_rep<AT,ET,E2A>(E2A()(e), std::forward<E>(e)) {}
 
   void
   print_dag(std::ostream& os, int level) const
@@ -720,6 +733,11 @@ public :
   Lazy(const ET& e)
   {
     PTR = new Lazy_rep_0<AT,ET,E2A>(e);
+  }
+
+  Lazy(ET&& e)
+  {
+    PTR = new Lazy_rep_0<AT,ET,E2A>(std::move(e));
   }
 
   const AT& approx() const

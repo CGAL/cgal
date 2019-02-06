@@ -311,7 +311,8 @@ operator>>(std::istream &is, Point_d<K> & p)
     for(int i=0;i<dim;++i)
       read(is, coords[i]);
   }
-  
+
+  // FIXME: with Epeck_d, currently, this stores pointers to coords which will soon be dead.
   if(is)
     p = P(coords.begin(), coords.end());
   return is;

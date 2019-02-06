@@ -211,8 +211,6 @@ struct Lazy_cartesian :
 	    typedef Lazy_construction_nt<Kernel,FA,FE> type;
     };
     template<class T,class D> struct Functor<T,D,Construct_tag> {
-	    typedef typename Get_functor<Approximate_kernel, T>::type FA;
-	    typedef typename Get_functor<Exact_kernel, T>::type FE;
 	    typedef Lazy_construction2<T,Kernel> type;
     };
     template<class D> struct Functor<Point_dimension_tag,D,Misc_tag> {
