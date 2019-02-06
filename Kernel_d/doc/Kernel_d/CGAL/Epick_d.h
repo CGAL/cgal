@@ -26,7 +26,7 @@ or `Dynamic_dimension_tag`. In the latter case, the dimension of the space is sp
 \attention Only the interfaces specific to this class are listed below. Refer to the
 concepts for the rest.
 
-\attention Known bugs: the functor `Intersect_d` is not yet implemented. `Contained_in_affine_hull` assumes that the iterators refer to an affinely independent family. `Orientation_d` only works for points, not vectors.
+\attention Known bugs: the functor `Kernel_d::Intersect_d` is not yet implemented. `Kernel_d::Contained_in_affine_hull` assumes that the iterators refer to an affinely independent family. `Kernel_d::Orientation_d` only works for points, not vectors.
 
 \attention This kernel requires the \ref thirdpartyEigen "Eigen" library.
 
