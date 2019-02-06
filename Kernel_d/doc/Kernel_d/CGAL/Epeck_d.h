@@ -16,10 +16,11 @@ This kernel supports construction of points from `double` %Cartesian
 coordinates. It provides exact geometric predicates and constructions. The
 geometric predicates are made exact without sacrificing speed thanks to the use
 of filters. The geometric constructions are made exact without sacrificing
-speed thanks to a lazy mechanism, similar to `Epeck`. A construction creates an
+speed thanks to a lazy mechanism, similar to
+`Exact_predicates_exact_constructions_kernel`. A construction creates an
 approximate object, and stores a directed acyclic graph (DAG) of the operation
 and arguments used. When an operation needs more precision on an object than is
-currently available, which should be rare, CGAL reconstructs exactly all the
+currently available, which should be rare, %CGAL reconstructs exactly all the
 ancestors of the object and replaces this part of the graph with exact objects.
 This should be transparent for users, those details do not affect the
 functionality, but they can cause surprising running time where the costly part
@@ -37,7 +38,7 @@ or `Dynamic_dimension_tag`. In the latter case, the dimension of the space is sp
 \attention Only the interfaces specific to this class are listed below. Refer to the
 concepts for the rest.
 
-\attention Known bugs: the functor `Intersect_d` is not yet implemented. `Contained_in_affine_hull` assumes that the iterators refer to an affinely independent family. `Orientation_d` only works for points, not vectors. Constructing a `Point_d` with iterators is done lazily, see below.
+\attention Known bugs: the functor `Kernel_d::Intersect_d` is not yet implemented. `Kernel_d::Contained_in_affine_hull` assumes that the iterators refer to an affinely independent family. `Kernel_d::Orientation_d` only works for points, not vectors. Constructing a `Point_d` with iterators is done lazily, see below.
 
 \attention This kernel requires the \ref thirdpartyEigen "Eigen" library.
 

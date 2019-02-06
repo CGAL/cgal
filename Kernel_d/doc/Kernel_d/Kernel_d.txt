@@ -228,7 +228,7 @@ Note that it provides few interfaces in addition to those documented in the
 \subsection Kernel_dEpeckKernel Epeck_d Kernel
 
 The kernel `Epeck_d<DimensionTag>`, short for <em>Exact Predicates Exact
-Constructions Kernel</em> is a kernel particularly useful when the dimension of
+Constructions %Kernel</em> is a kernel particularly useful when the dimension of
 the space is known at compile-time; The template parameter `DimensionTag` is then
 `Dimension_tag<d>` where `d` is an integer representing the dimension. It
 may also be used with parameter `Dynamic_dimension_tag`, in which case the
