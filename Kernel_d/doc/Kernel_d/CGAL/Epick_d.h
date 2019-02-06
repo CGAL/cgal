@@ -4,7 +4,6 @@ namespace CGAL {
 /*!
 \ingroup PkgKernelDKernels
 
-\cgalModifBegin
 A model for `Kernel_d` that uses %Cartesian coordinates to represent the
 geometric objects.
 
@@ -125,4 +124,3 @@ Construct_circumcenter_d construct_circumcenter_d_object();
 Compute_squared_radius_d compute_squared_radius_d_object();
 }; /* end Epick_d */
 } /* end namespace CGAL */
-/// \cgalModifEnd
