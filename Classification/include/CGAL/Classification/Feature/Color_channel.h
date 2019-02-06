@@ -26,6 +26,7 @@
 #include <vector>
 
 #include <CGAL/Classification/Feature_base.h>
+#include <CGAL/array.h>
 
 namespace CGAL {
 
