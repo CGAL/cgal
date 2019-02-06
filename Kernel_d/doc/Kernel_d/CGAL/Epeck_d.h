@@ -123,7 +123,7 @@ public:
     \tparam ForwardIterator has `Epeck_d::Point_d` as value type.
     */
 template<class ForwardIterator>
-Point_d operator()(ForwardIterator first, ForwardIterator last);
+FT operator()(ForwardIterator first, ForwardIterator last);
 };
 /*! \cgalModels `Kernel_d::Side_of_bounded_sphere_d`
  */
