@@ -2008,9 +2008,11 @@ bool MainWindow::on_actionErase_triggered()
 
 void MainWindow::on_actionEraseAll_triggered()
 {
-  scene->setSelectedItem(0);
-  while(on_actionErase_triggered()) {
-  }
+  QList<int> all_ids;
+  for(int i = 0; i < scene->numberOfEntries(); ++i)
+    all_ids.push_back(i);
+  scene->setSelectedItemsList(all_ids);
+  on_actionErase_triggered();
 }
 
 void MainWindow::on_actionDuplicate_triggered()
