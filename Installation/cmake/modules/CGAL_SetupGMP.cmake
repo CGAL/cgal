@@ -27,11 +27,9 @@ find_package(MPFR REQUIRED)
 if(NOT DEFINED WITH_GMPXX)
   option(CGAL_WITH_GMPXX "Use CGAL with GMPXX: use C++ classes of GNU MP instead of CGAL wrappers" OFF)
 endif()
-set(CGAL_GMPXX_find_package_keyword QUIET)
 if(WITH_GMPXX OR CGAL_WITH_GMPXX)
-  set(CGAL_GMPXX_find_package_keyword REQUIRED)
+  find_package(GMPXX REQUIRED)
 endif()
-find_package(GMPXX ${CGAL_GMPXX_find_package_keyword})
 
 #.rst:
 # Provided Functions
