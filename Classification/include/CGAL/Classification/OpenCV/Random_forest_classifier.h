@@ -37,16 +37,18 @@ namespace CGAL {
 
 namespace Classification {
 
-/*!
-  \ingroup PkgClassificationClassifiers
+namespace OpenCV {
 
-  \brief %Classifier based on the OpenCV version of random forest algorithm.
+/*!
+  \ingroup PkgClassificationClassifiersOpenCV
+
+  \brief %Classifier based on the OpenCV version of the random forest algorithm.
 
   \note This class requires the \ref thirdpartyOpenCV library.
 
   \cgalModels `CGAL::Classification::Classifier`
 */
-class OpenCV_random_forest_classifier
+class Random_forest_classifier
 {
   const Label_set& m_labels;
   const Feature_set& m_features;
@@ -68,7 +70,7 @@ public:
   /// @{
   
 /*!
-  \brief Instantiate the classifier using the sets of `labels` and `features`.
+  \brief Instantiates the classifier using the sets of `labels` and `features`.
 
   Parameters documentation is copy-pasted from [the official documentation of OpenCV](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html). For more details on this method, please refer to it.
 
@@ -80,13 +82,13 @@ public:
   \param max_number_of_trees_in_the_forest The maximum number of trees in the forest (surprise, surprise). Typically the more trees you have the better the accuracy. However, the improvement in accuracy generally diminishes and asymptotes pass a certain number of trees. Also to keep in mind, the number of tree increases the prediction time linearly.
   \param forest_accuracy Sufficient accuracy (OOB error).
 */
-  OpenCV_random_forest_classifier (const Label_set& labels,
-                                   const Feature_set& features,
-                                   int max_depth = 20,
-                                   int min_sample_count = 5,
-                                   int max_categories = 15,
-                                   int max_number_of_trees_in_the_forest = 100,
-                                   float forest_accuracy = 0.01f)
+  Random_forest_classifier (const Label_set& labels,
+                            const Feature_set& features,
+                            int max_depth = 20,
+                            int min_sample_count = 5,
+                            int max_categories = 15,
+                            int max_number_of_trees_in_the_forest = 100,
+                            float forest_accuracy = 0.01f)
     : m_labels (labels), m_features (features),
       m_max_depth (max_depth), m_min_sample_count (min_sample_count),
       m_max_categories (max_categories),
@@ -98,7 +100,7 @@ public:
   {  }
 
   /// \cond SKIP_IN_MANUAL
-  ~OpenCV_random_forest_classifier ()
+  ~Random_forest_classifier ()
   {
 #if (CV_MAJOR_VERSION < 3)
     if (rtree != NULL)
@@ -295,6 +297,13 @@ public:
 
 
 };
+
+}
+
+/// \cond SKIP_IN_MANUAL
+// Backward compatibility
+typedef OpenCV::Random_forest_classifier OpenCV_random_forest_classifier;
+/// \endcond
 
 }
 

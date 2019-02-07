@@ -110,6 +110,7 @@ Scene_polylines_item_private::computeElements() const
     QApplication::setOverrideCursor(Qt::WaitCursor);
     positions_lines.resize(0);
     double mean = 0;
+    bool all_equal=true;
     //Fills the VBO with the lines
     for(std::list<std::vector<Point_3> >::const_iterator it = item->polylines.begin();
         it != item->polylines.end();
@@ -122,6 +123,8 @@ Scene_polylines_item_private::computeElements() const
         {
             const Point_3& a = (*it)[i];
             const Point_3& b = (*it)[i+1];
+            if(a!=b)
+              all_equal = false;
             if(!computed_stats)
             {
               ++nb_edges;
@@ -148,6 +151,8 @@ Scene_polylines_item_private::computeElements() const
         }
 
     }
+    if(all_equal)
+      item->setPointsMode();
     if(!computed_stats)
       mean_length = mean/double(nb_edges);
     computed_stats = true;
@@ -446,7 +451,9 @@ Scene_polylines_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
       d->computeElements();
       d->initializeBuffers(viewer);
     }
-    
+    GLfloat point_size;
+    viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
+    viewer->setGlPointSize(GLfloat(5));
     vaos[Scene_polylines_item_private::Edges]->bind();
     attribBuffers(viewer, PROGRAM_NO_SELECTION);
     QOpenGLShaderProgram *program = getShaderProgram(PROGRAM_NO_SELECTION);
@@ -457,6 +464,7 @@ Scene_polylines_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
     // Clean-up
     vaos[Scene_polylines_item_private::Edges]->release();
     program->release();
+    viewer->setGlPointSize(point_size);
   }
    if(d->draw_extremities)
    {

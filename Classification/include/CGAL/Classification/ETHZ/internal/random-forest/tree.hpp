@@ -27,6 +27,7 @@
 // Modifications from original library:
 //  * changed inclusion protection tag
 //  * moved to namespace CGAL::internal::
+//  * add a method to get feature usage
 
 #ifndef CGAL_INTERNAL_LIBLEARNING_RANDOMFOREST_TREE_H
 #define CGAL_INTERNAL_LIBLEARNING_RANDOMFOREST_TREE_H
@@ -134,6 +135,10 @@ public:
     {
         ar & BOOST_SERIALIZATION_NVP(params);
         ar & BOOST_SERIALIZATION_NVP(root_node);
+    }
+    void get_feature_usage (std::vector<std::size_t>& count) const
+    {
+      root_node->get_feature_usage(count);
     }
 };
 

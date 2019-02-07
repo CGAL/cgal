@@ -327,6 +327,8 @@ protected Q_SLOTS:
   //Preferences edition
   //!Opens the Preferences dialog.
   void on_actionPreferences_triggered();
+  //!Save selected items if able.
+  void on_action_Save_triggered(); 
   // save as...
   //!Opens a dialog to save selected item if able.
   void on_actionSaveAs_triggered(); 

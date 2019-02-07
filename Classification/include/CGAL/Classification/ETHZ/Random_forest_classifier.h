@@ -25,6 +25,7 @@
 
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Label_set.h>
+#include <CGAL/Classification/internal/verbosity.h>
 
 #ifdef CGAL_CLASSIFICATION_VERBOSE
 #define VERBOSE_TREE_PROGRESS 1
@@ -41,8 +42,10 @@
 #  pragma warning(disable:4996)
 #endif
 
-#include <CGAL/Classification/internal/auxiliary/random-forest/node-gini.hpp>
-#include <CGAL/Classification/internal/auxiliary/random-forest/forest.hpp>
+#include <CGAL/Classification/ETHZ/internal/random-forest/node-gini.hpp>
+#include <CGAL/Classification/ETHZ/internal/random-forest/forest.hpp>
+
+#include <CGAL/tags.h>
 
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
@@ -58,16 +61,18 @@ namespace CGAL {
 
 namespace Classification {
 
-/*!
-  \ingroup PkgClassificationClassifiers
+namespace ETHZ {
 
-  \brief %Classifier based on the ETH Zurich version of random forest algorithm \cgalCite{cgal:w-erftl-14}.
+/*!
+  \ingroup PkgClassificationClassifiersETHZ
+
+  \brief %Classifier based on the ETH Zurich version of the random forest algorithm \cgalCite{cgal:w-erftl-14}.
 
   \note This classifier is distributed under the MIT license.
 
   \cgalModels `CGAL::Classification::Classifier`
 */
-class ETHZ_random_forest_classifier
+class Random_forest_classifier
 {
   typedef CGAL::internal::liblearning::RandomForest::RandomForest
   < CGAL::internal::liblearning::RandomForest::NodeGini
@@ -83,16 +88,36 @@ public:
   /// @{
   
   /*!
-    \brief Instantiate the classifier using the sets of `labels` and `features`.
+    \brief Instantiates the classifier using the sets of `labels` and `features`.
 
   */
-  ETHZ_random_forest_classifier (const Label_set& labels,
-                                 const Feature_set& features)
+  Random_forest_classifier (const Label_set& labels,
+                            const Feature_set& features)
     : m_labels (labels), m_features (features), m_rfc (NULL)
   { }
   
+  /*!
+    \brief Copies the `other` classifier's configuration using another
+    set of `features`.
+
+    This constructor can be used to apply a trained random forest to
+    another data set.
+
+    \warning The feature set should be composed of the same features
+    than the ones used by `other`, and in the same order.
+
+  */
+  Random_forest_classifier (const Random_forest_classifier& other,
+                            const Feature_set& features)
+    : m_labels (other.m_labels), m_features (features), m_rfc (NULL)
+  {
+    std::stringstream stream;
+    other.save_configuration(stream);
+    this->load_configuration(stream);
+  }
+  
   /// \cond SKIP_IN_MANUAL
-  ~ETHZ_random_forest_classifier ()
+  ~Random_forest_classifier ()
   {
     if (m_rfc != NULL)
       delete m_rfc;
@@ -102,8 +127,23 @@ public:
   /// @}
 
   /// \name Training
-  
   /// @{
+
+  /// \cond SKIP_IN_MANUAL
+  template <typename LabelIndexRange>
+  void train (const LabelIndexRange& ground_truth,
+              bool reset_trees = true,
+              std::size_t num_trees = 25,
+              std::size_t max_depth = 20)
+  {
+#ifdef CGAL_LINKED_WITH_TBB
+    train<CGAL::Parallel_tag>(ground_truth, reset_trees, num_trees, max_depth);
+#else
+    train<CGAL::Sequential_tag>(ground_truth, reset_trees, num_trees, max_depth);
+#endif
+  }
+  /// \endcond
+    
   /*!
     \brief Runs the training algorithm.
 
@@ -113,6 +153,11 @@ public:
 
     \pre At least one ground truth item should be assigned to each
     label.
+
+    \tparam ConcurrencyTag enables sequential versus parallel
+    algorithm. Possible values are `Parallel_tag` (default value is
+    %CGAL is linked with TBB) or `Sequential_tag` (default value
+    otherwise).
 
     \param ground_truth vector of label indices. It should contain for
     each input item, in the same order as the input set, the index of
@@ -135,7 +180,7 @@ public:
     will underfit the test data and conversely an overly high value
     will likely overfit.
   */
-  template <typename LabelIndexRange>
+  template <typename ConcurrencyTag, typename LabelIndexRange>
   void train (const LabelIndexRange& ground_truth,
               bool reset_trees = true,
               std::size_t num_trees = 25,
@@ -159,7 +204,7 @@ public:
       }
     }
 
-    std::cerr << "Using " << gt.size() << " inliers" << std::endl;
+    CGAL_CLASSIFICATION_CERR << "Using " << gt.size() << " inliers" << std::endl;
 
     CGAL::internal::liblearning::DataView2D<int> label_vector (&(gt[0]), gt.size(), 1);    
     CGAL::internal::liblearning::DataView2D<float> feature_vector(&(ft[0]), gt.size(), ft.size() / gt.size());
@@ -175,7 +220,8 @@ public:
 
     CGAL::internal::liblearning::RandomForest::AxisAlignedRandomSplitGenerator generator;
     
-    m_rfc->train(feature_vector, label_vector, CGAL::internal::liblearning::DataView2D<int>(), generator, 0, false, reset_trees);
+    m_rfc->train<ConcurrencyTag>
+      (feature_vector, label_vector, CGAL::internal::liblearning::DataView2D<int>(), generator, 0, reset_trees, m_labels.size());
   }
 
   /// \cond SKIP_IN_MANUAL
@@ -195,7 +241,43 @@ public:
     for (std::size_t i = 0; i < out.size(); ++ i)
       out[i] = (std::min) (1.f, (std::max) (0.f, prob[i]));
   }
+
   /// \endcond
+  
+  /// @}
+
+  /// \name Miscellaneous
+  /// @{
+  
+  /*!
+    \brief Computes, for each feature, how many nodes in the forest
+    uses it as a split criterion.
+
+    Each tree of the random forest recursively splits the training
+    data set using at each node one of the input features. This method
+    counts, for each feature, how many times it was selected by the
+    training algorithm as a split criterion.
+
+    This method allows to evaluate how useful a feature was with
+    respect to a training set: if a feature is used a lot, that means
+    that it has a strong discriminative power with respect to how the
+    labels are represented by the feature set; on the contrary, if a
+    feature is not used very often, its discriminative power is
+    probably low; if a feature is _never_ used, it likely has no
+    interest at all and is completely uncorrelated to the label
+    segmentation of the training set.
+
+    \param count vector where the result is stored. After running the
+    method, it contains, for each feature, the number of nodes in the
+    forest that use it as a split criterion, in the same order as the
+    feature set order.
+  */
+  void get_feature_usage (std::vector<std::size_t>& count) const
+  {
+    count.clear();
+    count.resize(m_features.size(), 0);
+    return m_rfc->get_feature_usage(count);
+  }
   
   /// @}
 
@@ -211,7 +293,7 @@ public:
     The output file is written in an GZIP container that is readable
     by the `load_configuration()` method.
   */
-  void save_configuration (std::ostream& output)
+  void save_configuration (std::ostream& output) const
   {
     boost::iostreams::filtering_ostream outs;
     outs.push(boost::iostreams::gzip_compressor());
@@ -244,6 +326,13 @@ public:
   }
 
 };
+
+}
+
+/// \cond SKIP_IN_MANUAL
+// Backward compatibility
+typedef ETHZ::Random_forest_classifier ETHZ_random_forest_classifier;
+/// \endcond
 
 }
 
