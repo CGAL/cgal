@@ -94,7 +94,6 @@ if( WIN32 )
   endif()
 endif()
 
-find_package(OpenCV QUIET)
 if (OpenCV_FOUND)
   message(STATUS "Found OpenCV ${OpenCV_VERSION}")
   include_directories(${OpenCV_INCLUDE_DIRS})
