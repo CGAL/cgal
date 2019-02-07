@@ -387,6 +387,7 @@ public:
       QPalette palette(minColor);
       dock_widget->minColorButton->setPalette(palette);
       dock_widget->minColorButton->update();
+      replaceRamp();
     });
     connect(dock_widget->maxColorButton, &QPushButton::pressed,
             this, [this]()
@@ -401,6 +402,7 @@ public:
 
       dock_widget->maxColorButton->setPalette(palette);
       dock_widget->maxColorButton->update();
+      replaceRamp();
     });
 
     connect(dock_widget->sourcePointsButton, SIGNAL(toggled(bool)),
