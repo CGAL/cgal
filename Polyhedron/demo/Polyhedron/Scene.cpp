@@ -98,16 +98,15 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
             this, SLOT(callDraw()));
     CGAL::Three::Scene_group_item* group =
             qobject_cast<CGAL::Three::Scene_group_item*>(m_entries[index]);
+    QList<Scene_item*> group_children;
     if(group)
     {
-      QList<int> group_children;
       Q_FOREACH(Item_id id, group->getChildren())
       {
         CGAL::Three::Scene_item* child = group->getChild(id);
         group->unlockChild(child);
-        group_children << item_id(child);
+        group_children << child;
       }
-      erase(group_children);
     }
     CGAL::Three::Scene_group_item* parent = m_entries[index]->parentGroup();
     bool is_locked = false;
@@ -148,6 +147,10 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
     Q_EMIT restoreCollapsedState();
     redraw_model();
     Q_EMIT selectionChanged(index);
+    Q_FOREACH(Scene_item* child, group_children)
+    {
+      erase(item_id(child));
+    }
     return item;
 }
 
