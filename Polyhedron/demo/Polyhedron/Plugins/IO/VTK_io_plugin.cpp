@@ -503,6 +503,22 @@ public:
         finite_cells.push_back(cell);
       }
       std::map<Facet, int> border_facets;
+      //Preprocessing for build_triangulation
+      //check for orientation and swap in cells if not good.
+      for(std::size_t i=0; i<finite_cells.size(); ++i)
+      {
+        Point_3 test_points[4];
+        for (int j = 0; j < 4; ++j)
+        {
+          Tr::Point tp = points[finite_cells[i][j]];
+          test_points[j] = Point_3(tp.x(), tp.y(), tp.z());
+        }
+        if(CGAL::orientation(test_points[0], test_points[1], test_points[2], test_points[3])
+                             != CGAL::POSITIVE)
+        {
+          std::swap(finite_cells[i][1], finite_cells[i][3]);
+        }
+      }
       CGAL::build_triangulation<Tr, true>(c3t3_item->c3t3().triangulation(), points, finite_cells, border_facets);
       
       for( C3t3::Triangulation::Finite_cells_iterator
