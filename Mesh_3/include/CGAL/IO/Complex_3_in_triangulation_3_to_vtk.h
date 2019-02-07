@@ -50,7 +50,7 @@ output_c3t3_to_vtk_unstructured_grid(const C3T3& c3t3,
   vtkCellArray* const vtk_facets = vtkCellArray::New();
   vtkCellArray* const vtk_cells = vtkCellArray::New();
 
-  vtk_points->Allocate(c3t3.triangulation().number_of_vertices());
+  vtk_points->Allocate(c3t3.triangulation().number_of_vertices()- c3t3.number_of_far_points());
   vtk_facets->Allocate(c3t3.number_of_facets_in_complex());
   vtk_cells->Allocate(c3t3.number_of_cells_in_complex());
 
@@ -64,11 +64,14 @@ output_c3t3_to_vtk_unstructured_grid(const C3T3& c3t3,
       ++vit)
   {
     typedef typename Triangulation::Weighted_point Weighted_point;
-    const Weighted_point& p = tr.point(vit);
-    vtk_points->InsertNextPoint(CGAL::to_double(p.x()),
-                                CGAL::to_double(p.y()),
-                                CGAL::to_double(p.z()));
-    V[vit] = inum++;
+    if(vit->in_dimension() > -1)
+    {
+      const Weighted_point& p = tr.point(vit);
+      vtk_points->InsertNextPoint(CGAL::to_double(p.x()),
+                                  CGAL::to_double(p.y()),
+                                  CGAL::to_double(p.z()));
+      V[vit] = inum++;
+    }
   }
   for(typename C3T3::Facets_in_complex_iterator 
         fit = c3t3.facets_in_complex_begin(),

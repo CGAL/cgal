@@ -28,6 +28,7 @@ CGAL_add_named_parameter(edge_is_constrained_t, edge_is_constrained, edge_is_con
 CGAL_add_named_parameter(first_index_t, first_index, first_index)
 CGAL_add_named_parameter(number_of_iterations_t, number_of_iterations, number_of_iterations)
 CGAL_add_named_parameter(verbosity_level_t, verbosity_level, verbosity_level)
+CGAL_add_named_parameter(use_binary_mode_t, use_binary_mode, use_binary_mode)
 
 CGAL_add_named_parameter(metis_options_t, METIS_options, METIS_options)
 CGAL_add_named_parameter(vertex_partition_id_t, vertex_partition_id, vertex_partition_id_map)
