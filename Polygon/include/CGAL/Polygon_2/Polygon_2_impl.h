@@ -95,15 +95,20 @@ operator>>(std::istream &is, Polygon_2<Traits_P,Container_P>& p)
   int n = 0; // number of vertices
   is >> n;
   typename Traits_P::Point_2 point;
- 
+  
   if (is) {
-      p.erase(p.vertices_begin(),p.vertices_end());
-      for (int i=0; i<n; i++) {
-        is >> point;
+    p.erase(p.vertices_begin(),p.vertices_end());
+    for (int i=0; i<n; i++) {
+      if( is >> point )
+      {
         p.push_back(point);
       }
+      else
+      {
+        return is;
+      }
+    }
   }
- 
   return is;
 }
 
