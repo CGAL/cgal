@@ -225,7 +225,7 @@ MainWindow::MainWindow()
   this->addNavigation(this->graphicsView);
   this->setupStatusBar();
   this->setupOptionsMenu();
-  this->addAboutDemo(":/cgal/help/about_Triangulation_triangulation_2.html");
+  this->addAboutDemo(":/cgal/help/icons/about_P4HD_Triangulation_2.html");
   this->addAboutCGAL();
 
 }

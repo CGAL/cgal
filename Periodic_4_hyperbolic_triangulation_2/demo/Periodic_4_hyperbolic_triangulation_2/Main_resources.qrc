@@ -16,4 +16,7 @@
     <file alias="bgd.png">icons/bgd.png</file>
     <file>icons/Voronoi_diagram_2.png</file>
   </qresource>
+  <qresource prefix="/cgal/help" >
+    <file>icons/about_P4HD_Triangulation_2.html</file>
+  </qresource>
 </RCC>
