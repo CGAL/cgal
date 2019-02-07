@@ -44,7 +44,7 @@ struct Progress_to_std_cerr_callback
     // Avoid calling time() at every single iteration, which could
     // impact performances very badly
     ++ nb;
-    if (advancement != 1 && nb % 10000 != 0)
+    if (advancement != 1 && nb % 100 != 0)
       return true;
 
     double t = timer.time();
@@ -65,11 +65,11 @@ struct Progress_to_std_cerr_callback
 
 int main ()
 {
-  // Generate 1000000 points on a sphere of radius 100.
+  // Generate 10000 points on a sphere of radius 100.
   std::vector<Point> points;
-  points.reserve (1000000);
+  points.reserve (10000);
   Generator generator(100.);
-  CGAL::cpp11::copy_n (generator, 1000000, std::back_inserter(points));
+  CGAL::cpp11::copy_n (generator, 10000, std::back_inserter(points));
 
   // Compute average spacing
   FT average_spacing = CGAL::compute_average_spacing<Concurrency_tag>
