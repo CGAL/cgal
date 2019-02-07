@@ -216,7 +216,7 @@ MainWindow::MainWindow()
 
   this->setupStatusBar();
   this->setupOptionsMenu();
-  this->addAboutDemo(":/cgal/help/about_Delaunay_triangulation_2.html");
+  this->addAboutDemo(":/cgal/help/about_Hyperbolic_Delaunay_triangulation_2.html");
   this->addAboutCGAL();
 
   this->addRecentFiles(this->menuFile, this->actionQuit);

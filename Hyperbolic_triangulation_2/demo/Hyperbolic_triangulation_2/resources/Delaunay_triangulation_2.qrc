@@ -7,6 +7,6 @@
   </qresource>
   <qresource prefix="/cgal/help" >
     <file alias="about_CGAL.html" >../resources/about_CGAL.html</file>
-    <file>about_Delaunay_triangulation_2.html</file>
+    <file>about_Hyperbolic_Delaunay_triangulation_2.html</file>
   </qresource>
 </RCC>
