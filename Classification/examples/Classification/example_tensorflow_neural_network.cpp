@@ -68,12 +68,13 @@ int main (int argc, char** argv)
   t.start();
   Feature_generator generator (pts, pts.point_map(),
                                5);  // using 5 scales
-
+  
 #ifdef CGAL_LINKED_WITH_TBB
   features.begin_parallel_additions();
 #endif
   
   generator.generate_point_based_features (features);
+
 #ifdef CGAL_LINKED_WITH_TBB
   features.end_parallel_additions();
 #endif
@@ -89,13 +90,15 @@ int main (int argc, char** argv)
 
   std::vector<int> label_indices(pts.size(), -1);
   
-  std::cerr << "Using OpenCV Random Forest Classifier" << std::endl;
-  Classification::OpenCV::Random_forest_classifier classifier (labels, features);
+  std::cerr << "Using TensorFlow neural network Classifier" << std::endl;
+  Classification::TensorFlow::Neural_network_classifier<> classifier (labels, features);
   
   std::cerr << "Training" << std::endl;
   t.reset();
   t.start();
-  classifier.train (ground_truth);
+  classifier.train (ground_truth,
+                    true, // restart from scratch
+                    100); // 100 iterations
   t.stop();
   std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
 
