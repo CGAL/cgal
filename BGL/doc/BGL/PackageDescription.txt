@@ -709,6 +709,7 @@ user might encounter.
 - \link PkgBGLIOFct CGAL::read_off() \endlink
 - \link PkgBGLIOFct CGAL::write_off() \endlink
 - \link PkgBGLIOFct CGAL::write_wrl() \endlink
+- `CGAL::write_vtp()`
 
 */
 

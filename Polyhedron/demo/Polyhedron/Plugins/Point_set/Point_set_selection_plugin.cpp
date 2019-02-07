@@ -427,6 +427,7 @@ public:
     rg_cluster_epsilon = -1;
     rg_normal_threshold = 20;
     actionPointSetSelection = new QAction(tr("Selection"), mw);
+    actionPointSetSelection->setObjectName("actionPointSetSelection");
     connect(actionPointSetSelection, SIGNAL(triggered()), this, SLOT(selection_action()));
 
     dock_widget = new QDockWidget("Point Set Selection", mw);

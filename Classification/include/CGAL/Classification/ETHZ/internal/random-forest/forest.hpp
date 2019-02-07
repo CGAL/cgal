@@ -29,6 +29,12 @@
 //  * moved to namespace CGAL::internal::
 //  * add parameter "reset_trees" to train() to be able to construct
 //    forest with several iterations
+//  * training algorithm has been parallelized with Intel TBB
+//  * remove the unused feature "register_obb"
+//  * add option to not count labels (if it's know before)
+//  * fix the randomization of input (which was implicitly losing
+//    samples)
+//  * add method to get feature usage
 
 #ifndef CGAL_INTERNAL_LIBLEARNING_RANDOMFOREST_FOREST_H
 #define CGAL_INTERNAL_LIBLEARNING_RANDOMFOREST_FOREST_H
@@ -39,10 +45,79 @@
 #include <cstdio>
 #endif
 
+#include <CGAL/tags.h>
+
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
+#include <tbb/scalable_allocator.h>
+#include <tbb/mutex.h>
+#endif // CGAL_LINKED_WITH_TBB
+
+
 namespace CGAL { namespace internal {
+
+
 
 namespace liblearning {
 namespace RandomForest {
+
+template <typename NodeT, typename SplitGenerator>
+class Tree_training_functor
+{
+  typedef typename NodeT::ParamType ParamType;
+  typedef typename NodeT::FeatureType FeatureType;
+  typedef Tree<NodeT> TreeType;
+  
+  std::size_t seed_start;
+  const std::vector<int>& sample_idxes;
+  boost::ptr_vector<Tree<NodeT> >& trees;
+  DataView2D<FeatureType> samples;
+  DataView2D<int> labels;
+  std::size_t n_in_bag_samples;
+  const SplitGenerator& split_generator;
+  
+public:
+
+  Tree_training_functor(std::size_t seed_start,
+                        const std::vector<int>& sample_idxes,
+                        boost::ptr_vector<Tree<NodeT> >& trees,
+                        DataView2D<FeatureType> samples,
+                        DataView2D<int> labels,
+                        std::size_t n_in_bag_samples,
+                        const SplitGenerator& split_generator)
+    : seed_start (seed_start)
+    , sample_idxes (sample_idxes)
+    , trees (trees)
+    , samples (samples)
+    , labels (labels)
+    , n_in_bag_samples(n_in_bag_samples)
+    , split_generator(split_generator)
+  { }
+    
+#ifdef CGAL_LINKED_WITH_TBB
+  void operator()(const tbb::blocked_range<std::size_t>& r) const
+  {
+    for (std::size_t s = r.begin(); s != r.end(); ++ s)
+      apply(s);
+  }
+#endif // CGAL_LINKED_WITH_TBB
+    
+  inline void apply (std::size_t i_tree) const
+  {
+    // initialize random generator with sequential seeds (one for each
+    // tree)
+    RandomGen gen(seed_start + i_tree);
+    std::vector<int> in_bag_samples = sample_idxes;
+
+    // Bagging: draw random sample indexes used for this tree
+    std::random_shuffle (in_bag_samples.begin(),in_bag_samples.end());
+
+    // Train the tree
+    trees[i_tree].train(samples, labels, &in_bag_samples[0], n_in_bag_samples, split_generator, gen);
+  }
+
+};
 
 template <typename NodeT>
 class RandomForest {
@@ -52,28 +127,29 @@ public:
     typedef Tree<NodeT> TreeType;
     ParamType params;
 
-    std::vector<uint8_t> was_oob_data;
-    DataView2D<uint8_t> was_oob;
-
     boost::ptr_vector< Tree<NodeT> > trees;
 
     RandomForest() {}
     RandomForest(ParamType const& params) : params(params) {}
 
-    template<typename SplitGenerator>
+    template<typename ConcurrencyTag, typename SplitGenerator>
     void train(DataView2D<FeatureType> samples, 
                DataView2D<int> labels, 
                DataView2D<int> train_sample_idxes, 
                SplitGenerator const& split_generator,
                size_t seed_start = 1,
-               bool register_oob = true,
-               bool reset_trees = true
+               bool reset_trees = true,
+               std::size_t n_classes = std::size_t(-1)
                ) 
     {
         if (reset_trees)
           trees.clear();
 
-        params.n_classes  = *std::max_element(&labels(0,0), &labels(0,0)+labels.num_elements()) + 1;
+        if (n_classes == std::size_t(-1))
+          params.n_classes = *std::max_element(&labels(0,0), &labels(0,0)+labels.num_elements()) + 1;
+        else
+          params.n_classes = n_classes;
+        
         params.n_features = samples.cols;
         params.n_samples  = samples.rows;
 
@@ -93,42 +169,31 @@ public:
         size_t n_idxes = sample_idxes.size();
         params.n_in_bag_samples = n_idxes * (1 - params.sample_reduction);
 
-        // Random distribution over indexes
-        UniformIntDist dist(0, n_idxes - 1);
-
-        // Store for each sample and each tree if sample was used for tree
-        if (register_oob) {
-            was_oob_data.assign(n_idxes*params.n_trees, 1);
-            was_oob = DataView2D<uint8_t>(&was_oob_data[0], n_idxes, params.n_trees);
-        }
-
         std::size_t nb_trees = trees.size();
-        for (size_t i_tree = nb_trees; i_tree < nb_trees + params.n_trees; ++i_tree) {
+        for (std::size_t i_tree = nb_trees; i_tree < nb_trees + params.n_trees; ++ i_tree)
+          trees.push_back (new TreeType(&params));
+        
+        Tree_training_functor<NodeT, SplitGenerator>
+          f (seed_start, sample_idxes, trees, samples, labels, params.n_in_bag_samples, split_generator);
+
+#ifndef CGAL_LINKED_WITH_TBB
+        CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+                                   "Parallel_tag is enabled but TBB is unavailable.");
+#else
+        if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
+        {
+          tbb::parallel_for(tbb::blocked_range<size_t>(nb_trees, nb_trees + params.n_trees), f);
+        }
+        else
+#endif
+        {
+          for (size_t i_tree = nb_trees; i_tree < nb_trees + params.n_trees; ++i_tree)
+          {
 #if VERBOSE_TREE_PROGRESS
             std::printf("Training tree %zu/%zu, max depth %zu\n", i_tree+1, nb_trees + params.n_trees, params.max_depth);
 #endif
-            // new tree
-            trees.push_back(new TreeType(&params));
-            // initialize random generator with sequential seeds (one for each
-            // tree)
-            RandomGen gen(seed_start + i_tree);
-            // Bagging: draw random sample indexes used for this tree
-            std::vector<int> in_bag_samples(params.n_in_bag_samples);
-            for (size_t i_sample = 0; i_sample < in_bag_samples.size(); ++i_sample) {
-                int random_idx = dist(gen);
-                in_bag_samples[i_sample] = sample_idxes[random_idx];
-                if (register_oob && was_oob(random_idx, i_tree)) {
-                    was_oob(random_idx, i_tree) = 0;
-                }
-            }
-#ifdef TREE_GRAPHVIZ_STREAM
-            TREE_GRAPHVIZ_STREAM << "digraph Tree {" << std::endl;
-#endif
-            // Train the tree
-            trees.back().train(samples, labels, &in_bag_samples[0], in_bag_samples.size(), split_generator, gen);
-#ifdef TREE_GRAPHVIZ_STREAM
-            TREE_GRAPHVIZ_STREAM << "}" << std::endl << std::endl;
-#endif
+            f.apply(i_tree);
+          }
         }
     }
     int evaluate(FeatureType const* sample, float* results) {
@@ -176,6 +241,12 @@ public:
     {
         ar & BOOST_SERIALIZATION_NVP(params);
         ar & BOOST_SERIALIZATION_NVP(trees);
+    }
+
+    void get_feature_usage (std::vector<std::size_t>& count) const
+    {
+      for (std::size_t i_tree = 0; i_tree < trees.size(); ++i_tree)
+        trees[i_tree].get_feature_usage(count);
     }
 };
 

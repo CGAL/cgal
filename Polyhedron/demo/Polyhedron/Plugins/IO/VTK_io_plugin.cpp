@@ -45,6 +45,8 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/property_map.h>
 #include <CGAL/IO/Complex_3_in_triangulation_3_to_vtk.h>
+#include <CGAL/IO/output_to_vtu.h>
+#include <CGAL/boost/graph/io.h>
 
 #include <vtkSmartPointer.h>
 #include <vtkDataSetReader.h>
@@ -52,6 +54,7 @@
 #include <vtkPolyDataWriter.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkXMLUnstructuredGridReader.h>
+#include <vtkXMLUnstructuredGridWriter.h>
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkPolyData.h>
 #include <vtkIdTypeArray.h>
@@ -71,10 +74,16 @@
 #include <vtkCommand.h>
 #include <vtkXMLUnstructuredGridWriter.h>
 
-
+#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 typedef Scene_surface_mesh_item Scene_facegraph_item;
 typedef Scene_facegraph_item::Face_graph FaceGraph;
-typedef boost::property_traits<boost::property_map<FaceGraph, CGAL::vertex_point_t>::type>::value_type Point;
+typedef boost::property_traits<boost::property_map<FaceGraph, 
+CGAL::vertex_point_t>::type>::value_type Point;
+
+
+
+
 namespace CGAL{
 
   class ErrorObserverVtk : public vtkCommand
@@ -237,13 +246,13 @@ namespace CGAL{
       cell->Delete();
     }
 
-    vtkSmartPointer<vtkPolyData> polydata =
-      vtkSmartPointer<vtkPolyData>::New();
+    vtkSmartPointer<vtkUnstructuredGrid> usg =
+      vtkSmartPointer<vtkUnstructuredGrid>::New();
 
-    polydata->SetPoints(vtk_points);
+    usg->SetPoints(vtk_points);
     vtk_points->Delete();
 
-    polydata->SetPolys(vtk_cells);
+    usg->SetCells(5,vtk_cells);
     vtk_cells->Delete();
 
     // Combine the two data sets
@@ -260,7 +269,7 @@ namespace CGAL{
     vtkSmartPointer<VtkWriter> writer =
       vtkSmartPointer<VtkWriter>::New();
     writer->SetFileName(filename);
-    writer->SetInputData(polydata);
+    writer->SetInputData(usg);
     writer->Write();
   }
 }//end namespace CGAL
@@ -287,6 +296,8 @@ public:
     return (qobject_cast<const Scene_facegraph_item*>(item)
             || qobject_cast<const Scene_c3t3_item*>(item));
   }
+  
+  
   bool save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
   {
     std::string extension = fileinfo.suffix().toLower().toStdString();
@@ -301,13 +312,26 @@ public:
     if (poly_item)
     {
       if (extension != "vtp")
-        CGAL::polygon_mesh_to_vtkUnstructured<vtkPolyDataWriter>(
+      {
+        if(!CGAL::is_triangle_mesh(*poly_item->polyhedron()))
+        {
+          QMessageBox::warning(0, "Error",
+                               "Cannot save a mesh in vtu format if "
+                               "it is not pure triangle.");
+          return false;
+        }
+        CGAL::polygon_mesh_to_vtkUnstructured<vtkXMLUnstructuredGridWriter>(
           *poly_item->polyhedron(),
           output_filename.data());
+      }
       else
-        CGAL::polygon_mesh_to_vtkUnstructured<vtkXMLPolyDataWriter>(
-        *poly_item->polyhedron(),
-        output_filename.data());
+      {
+        const FaceGraph* mesh = poly_item->face_graph();
+        std::ofstream os(output_filename.data());
+        os << std::setprecision(16);
+        //write header
+        CGAL::write_vtp(os, *mesh);
+      }
     }
     else
     {
@@ -315,12 +339,12 @@ public:
           qobject_cast<const Scene_c3t3_item*>(item);
       if(!c3t3_item || extension != "vtu")
         return false;
-
-      vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer =
-          vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
-      writer->SetFileName( output_filename.data());
-      writer->SetInputData(CGAL::output_c3t3_to_vtk_unstructured_grid(c3t3_item->c3t3()));
-      writer->Write();
+      
+      std::ofstream os(output_filename.data());
+      os << std::setprecision(16);
+      const C3t3& c3t3 = c3t3_item->c3t3();
+      
+      CGAL::output_to_vtu(os, c3t3);
     }
     return true;
   }

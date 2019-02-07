@@ -261,8 +261,10 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
 
   connect(viewer, SIGNAL(requestContextMenu(QPoint)),
           this, SLOT(contextMenuRequested(QPoint)));
-  connect(viewer, SIGNAL(sendMessage(QString)),
-          this, SLOT(information(QString)));
+  connect(viewer, &Viewer::sendMessage,
+          this, [](QString s){
+    information(s);
+  });
 
   // The contextMenuPolicy of infoLabel is now the default one, so that one
   // can easily copy-paste its text.
@@ -2006,9 +2008,11 @@ bool MainWindow::on_actionErase_triggered()
 
 void MainWindow::on_actionEraseAll_triggered()
 {
-  scene->setSelectedItem(0);
-  while(on_actionErase_triggered()) {
-  }
+  QList<int> all_ids;
+  for(int i = 0; i < scene->numberOfEntries(); ++i)
+    all_ids.push_back(i);
+  scene->setSelectedItemsList(all_ids);
+  on_actionErase_triggered();
 }
 
 void MainWindow::on_actionDuplicate_triggered()
@@ -2766,4 +2770,21 @@ void MainWindow::invalidate_bbox(bool do_recenter)
   if(do_recenter)
     updateViewerBBox(true);
   
+}
+
+void MainWindow::on_action_Save_triggered()
+{
+  if(QMessageBox::question(this, "Save", "Are you sure you want to override these files ?") 
+     == QMessageBox::No)
+    return;
+  Scene_item* item = nullptr;
+  Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
+  {
+    item = scene->item(id);
+    if(!item->property("source filename").toString().isEmpty())
+    {
+      QString filename = item->property("source filename").toString();
+      save(filename, item);
+    }
+  }
 }

@@ -28,6 +28,11 @@
 //  * changed inclusion protection tag
 //  * moved to namespace CGAL::internal::
 
+//  * improve sorting algorithm by only comparing the first of pair
+//    (second is useless)
+
+
+
 #ifndef CGAL_INTERNAL_LIBLEARNING_RANDOMFOREST_NODE_GINI_H
 #define CGAL_INTERNAL_LIBLEARNING_RANDOMFOREST_NODE_GINI_H
 #include "node.hpp"
@@ -79,7 +84,13 @@ public:
             n_r += 1;
         }
         // sort data so thresholding is easy based on position in array
-        std::sort(data_points.begin(), data_points.end());
+        std::sort(data_points.begin(), data_points.end(),
+                  [&](const std::pair<float, int>& a,
+                      const std::pair<float, int>& b) -> bool
+                  {
+                    return a.first < b.first;
+                  });
+                      
         // loop over data, update class distributions left&right
         for (size_t i_point = 1; i_point < data_points.size(); ++i_point) {
             int cls = data_points[i_point-1].second;

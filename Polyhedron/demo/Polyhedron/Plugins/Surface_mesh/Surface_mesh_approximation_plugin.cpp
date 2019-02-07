@@ -244,11 +244,6 @@ public:
     BOOST_FOREACH(const QColor &c, approx.proxy_colors())
       fcolors.push_back(CGAL::Color(c.red(), c.green(), c.blue()));
     approx.visual_items().planes->load(cvx_hull_points, cvx_hulls, fcolors, std::vector<CGAL::Color>());
-
-    approx.visual_items().triangles->setVisible(true);
-    approx.visual_items().polygons->setVisible(true);
-    approx.visual_items().anchors->setVisible(false);
-    approx.visual_items().planes->setVisible(false);
   }
 
 public Q_SLOTS:
@@ -301,15 +296,16 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
   approx.initialize_seeds(CGAL::parameters::seeding_method(
     static_cast<VSA::Seeding_method>(ui_widget.comboMethod->currentIndex()))
     .max_number_of_proxies(ui_widget.nb_proxies->value())
-    .min_error_drop(ui_widget.error_drop->value())
+    .min_error_drop(
+      ui_widget.enable_error_drop->isChecked() ? ui_widget.error_drop->value() : -1.0)
     .number_of_relaxations(ui_widget.nb_relaxations->value()));
   approx.run(ui_widget.nb_iterations->value());
 
   Patch_id_pmap pidmap(get(CGAL::face_patch_id_t<int>(), *sm_item->face_graph()));
   approx.output(CGAL::parameters::face_proxy_map(pidmap));
 
-  // TODO: previous items
   // new group items
+  // leave the memory management to the scene
   Scene_group_item *group = new Scene_group_item(tr("Approximation of %1").arg(sm_item->name()));
   scene->addItem(group);
 
@@ -319,42 +315,13 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
   scene->addItem(seeds_item);
   scene->changeGroup(seeds_item, group);
 
-  Scene_polygon_soup_item *triangles_item = new Scene_polygon_soup_item();
-  triangles_item->setName(tr("Triangle soup"));
-  triangles_item->setColor(Qt::lightGray);
-  triangles_item->setRenderingMode(FlatPlusEdges);
-  triangles_item->setVisible(false);
-  scene->addItem(triangles_item);
-  scene->changeGroup(triangles_item, group);
-
-  Scene_polylines_item *polygons_item = new Scene_polylines_item();
-  polygons_item->setName(tr("Patch polygons"));
-  polygons_item->setColor(Qt::red);
-  polygons_item->setVisible(false);
-  scene->addItem(polygons_item);
-  scene->changeGroup(polygons_item, group);
-
-  Scene_polylines_item *anchors_item = new Scene_polylines_item();
-  anchors_item->setName(tr("Anchors"));
-  anchors_item->setColor(Qt::blue);
-  anchors_item->setVisible(false);
-  scene->addItem(anchors_item);
-  scene->changeGroup(anchors_item, group);
-
-  Scene_polygon_soup_item *planes_item = new Scene_polygon_soup_item();
-  planes_item->setName(tr("Patch planes"));
-  planes_item->setColor(Qt::yellow);
-  planes_item->setRenderingMode(FlatPlusEdges);
-  planes_item->setVisible(false);
-  scene->addItem(planes_item);
-  scene->changeGroup(planes_item, group);
-
   approx.visual_items().group = group;
   approx.visual_items().seeds = seeds_item;
-  approx.visual_items().triangles = triangles_item;
-  approx.visual_items().polygons = polygons_item;
-  approx.visual_items().anchors = anchors_item;
-  approx.visual_items().planes = planes_item;
+  approx.visual_items().has_meshing_items = false;
+  approx.visual_items().triangles = NULL;
+  approx.visual_items().polygons = NULL;
+  approx.visual_items().anchors = NULL;
+  approx.visual_items().planes = NULL;
 
   update_seeds_item(approx, pmesh);
 
@@ -367,14 +334,8 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
   sm_item->invalidateOpenGLBuffers();
   scene->itemChanged(scene->item_id(sm_item));
 
-  if (ui_widget.checkAutomatic->isChecked()) {
-    update_meshing_items(approx, pmesh,
-      CGAL::parameters::subdivision_ratio(ui_widget.chord_error->value())
-        .relative_to_chord(ui_widget.comboRelative->currentIndex() == 1)
-        .with_dihedral_angle(ui_widget.with_dihedral_angle->isChecked())
-        .optimize_anchor_location(ui_widget.if_optimize_anchor_location->isChecked())
-        .pca_plane(ui_widget.pca_plane->isChecked()));
-  }
+  // default non auto-meshing
+  ui_widget.checkAutomatic->setChecked(false);
 
   scene->setSelectedItem(sm_id);
 
@@ -406,18 +367,17 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonFit_clicked() {
   CGAL::Three::Three::information(QString("Fit one iteration, #proxies = %1.").arg(approx.number_of_proxies()));
 
   sm_item->color_vector() = approx.proxy_colors();
-
-  sm_item->color_vector() = approx.proxy_colors();
-
-  sm_item->color_vector() = approx.proxy_colors();
-
-  sm_item->color_vector() = approx.proxy_colors();
   sm_item->setItemIsMulticolor(true);
   sm_item->computeItemColorVectorAutomatically(false);
   sm_item->invalidateOpenGLBuffers();
   scene->itemChanged(scene->item_id(sm_item));
 
   if (ui_widget.checkAutomatic->isChecked()) {
+    if (!approx.visual_items().has_meshing_items) {
+      CGAL::Three::Three::information(QString("Please mesh before checking auto meshing."));
+      QApplication::restoreOverrideCursor();
+      return;
+    }
     update_meshing_items(approx, pmesh,
       CGAL::parameters::subdivision_ratio(ui_widget.chord_error->value())
         .relative_to_chord(ui_widget.comboRelative->currentIndex() == 1)
@@ -458,18 +418,17 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonAdd_clicked() {
   update_seeds_item(approx, pmesh);
 
   sm_item->color_vector() = approx.proxy_colors();
-
-  sm_item->color_vector() = approx.proxy_colors();
-
-  sm_item->color_vector() = approx.proxy_colors();
-
-  sm_item->color_vector() = approx.proxy_colors();
   sm_item->setItemIsMulticolor(true);
   sm_item->computeItemColorVectorAutomatically(false);
   sm_item->invalidateOpenGLBuffers();
   scene->itemChanged(scene->item_id(sm_item));
 
   if (ui_widget.checkAutomatic->isChecked()) {
+    if (!approx.visual_items().has_meshing_items) {
+      CGAL::Three::Three::information(QString("Please mesh before checking auto meshing."));
+      QApplication::restoreOverrideCursor();
+      return;
+    }
     update_meshing_items(approx, pmesh,
       CGAL::parameters::subdivision_ratio(ui_widget.chord_error->value())
         .relative_to_chord(ui_widget.comboRelative->currentIndex() == 1)
@@ -510,18 +469,17 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonTeleport_clicke
   CGAL::Three::Three::information(QString("One proxy teleported, #proxies = %1.").arg(approx.number_of_proxies()));
 
   sm_item->color_vector() = approx.proxy_colors();
-
-  sm_item->color_vector() = approx.proxy_colors();
-
-  sm_item->color_vector() = approx.proxy_colors();
-
-  sm_item->color_vector() = approx.proxy_colors();
   sm_item->setItemIsMulticolor(true);
   sm_item->computeItemColorVectorAutomatically(false);
   sm_item->invalidateOpenGLBuffers();
   scene->itemChanged(scene->item_id(sm_item));
 
   if (ui_widget.checkAutomatic->isChecked()) {
+    if (!approx.visual_items().has_meshing_items) {
+      CGAL::Three::Three::information(QString("Please mesh before checking auto meshing."));
+      QApplication::restoreOverrideCursor();
+      return;
+    }
     update_meshing_items(approx, pmesh,
       CGAL::parameters::subdivision_ratio(ui_widget.chord_error->value())
         .relative_to_chord(ui_widget.comboRelative->currentIndex() == 1)
@@ -564,18 +522,17 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSplit_clicked()
   update_seeds_item(approx, pmesh);
 
   sm_item->color_vector() = approx.proxy_colors();
-
-  sm_item->color_vector() = approx.proxy_colors();
-
-  sm_item->color_vector() = approx.proxy_colors();
-
-  sm_item->color_vector() = approx.proxy_colors();
   sm_item->setItemIsMulticolor(true);
   sm_item->computeItemColorVectorAutomatically(false);
   sm_item->invalidateOpenGLBuffers();
   scene->itemChanged(scene->item_id(sm_item));
 
   if (ui_widget.checkAutomatic->isChecked()) {
+    if (!approx.visual_items().has_meshing_items) {
+      CGAL::Three::Three::information(QString("Please mesh before checking auto meshing."));
+      QApplication::restoreOverrideCursor();
+      return;
+    }
     update_meshing_items(approx, pmesh,
       CGAL::parameters::subdivision_ratio(ui_widget.chord_error->value())
         .relative_to_chord(ui_widget.comboRelative->currentIndex() == 1)
@@ -603,6 +560,44 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonMeshing_clicked
   VSA_wrapper &approx = *search->second;
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  // and meshing items to group
+  CGAL::Three::Scene_group_item *group = approx.visual_items().group;
+  Scene_polygon_soup_item *triangles_item = new Scene_polygon_soup_item();
+  triangles_item->setName(tr("Triangle soup"));
+  triangles_item->setColor(Qt::lightGray);
+  triangles_item->setRenderingMode(FlatPlusEdges);
+  triangles_item->setVisible(true);
+  scene->addItem(triangles_item);
+  scene->changeGroup(triangles_item, group);
+
+  Scene_polylines_item *polygons_item = new Scene_polylines_item();
+  polygons_item->setName(tr("Patch polygons"));
+  polygons_item->setColor(Qt::red);
+  polygons_item->setVisible(true);
+  scene->addItem(polygons_item);
+  scene->changeGroup(polygons_item, group);
+
+  Scene_polylines_item *anchors_item = new Scene_polylines_item();
+  anchors_item->setName(tr("Anchors"));
+  anchors_item->setColor(Qt::blue);
+  anchors_item->setVisible(true);
+  scene->addItem(anchors_item);
+  scene->changeGroup(anchors_item, group);
+
+  Scene_polygon_soup_item *planes_item = new Scene_polygon_soup_item();
+  planes_item->setName(tr("Patch planes"));
+  planes_item->setColor(Qt::yellow);
+  planes_item->setRenderingMode(FlatPlusEdges);
+  planes_item->setVisible(true);
+  scene->addItem(planes_item);
+  scene->changeGroup(planes_item, group);
+
+  approx.visual_items().has_meshing_items = true;
+  approx.visual_items().triangles = triangles_item;
+  approx.visual_items().polygons = polygons_item;
+  approx.visual_items().anchors = anchors_item;
+  approx.visual_items().planes = planes_item;
 
   update_meshing_items(approx, pmesh,
     CGAL::parameters::subdivision_ratio(ui_widget.chord_error->value())

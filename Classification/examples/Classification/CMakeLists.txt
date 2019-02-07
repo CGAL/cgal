@@ -94,7 +94,6 @@ if( WIN32 )
   endif()
 endif()
 
-find_package(OpenCV QUIET)
 if (OpenCV_FOUND)
   message(STATUS "Found OpenCV ${OpenCV_VERSION}")
   include_directories(${OpenCV_INCLUDE_DIRS})
@@ -107,6 +106,21 @@ if (OpenCV_FOUND)
 else()
   message(STATUS "NOTICE: OpenCV was not found. OpenCV random forest predicate for classification won't be available.")
 endif()
+
+find_package(TensorFlow QUIET)
+if (TensorFlow_FOUND)
+  message(STATUS "Found TensorFlow")
+  include_directories( ${TensorFlow_INCLUDE_DIR} )
+  set(classification_linked_libraries ${classification_linked_libraries}
+    ${TensorFlow_LIBRARY})
+  set(classification_compile_definitions ${classification_compile_definitions}
+    "-DCGAL_LINKED_WITH_TENSORFLOW")
+  
+  set(targets ${targets} example_tensorflow_neural_network)
+else()
+  message(STATUS "NOTICE: TensorFlow not found, Neural Network predicate for classification won't be available.")
+endif()
+
 
 # Creating targets with correct libraries and flags
 foreach(target ${targets})

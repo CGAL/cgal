@@ -14,6 +14,21 @@ Functions that perform classification based on a set of labels and a classifier,
 
 Classifiers are functors that, given a label set and an input item, associate this input item with an energy for each label. This energy measures the likelihood of the item to belong to this label.
 
+\defgroup PkgClassificationClassifiersETHZ ETHZ
+\ingroup PkgClassificationClassifiers
+
+Classifiers that use the ETHZ library.
+
+\defgroup PkgClassificationClassifiersOpenCV OpenCV
+\ingroup PkgClassificationClassifiers
+
+Classifiers that use the \ref thirdpartyOpenCV library.
+
+\defgroup PkgClassificationClassifiersTensorFlow TensorFlow
+\ingroup PkgClassificationClassifiers
+
+Classifiers that use the \ref thirdpartyTensorFlow library.
+
 \defgroup PkgClassificationDataStructures Common Data Structures
 \ingroup PkgClassificationRef
 
@@ -86,9 +101,10 @@ Data structures specialized to classify clusters.
 
 ## Classifiers ##
 
+- `CGAL::Classification::ETHZ::Random_forest_classifier`
+- `CGAL::Classification::OpenCV::Random_forest_classifier`
+- `CGAL::Classification::TensorFlow::Neural_network_classifier<ActivationFunction>`
 - `CGAL::Classification::Sum_of_weighted_features_classifier`
-- `CGAL::Classification::ETHZ_random_forest_classifier`
-- `CGAL::Classification::OpenCV_random_forest_classifier`
 
 ## Common Data Structures ##
 
@@ -115,8 +131,11 @@ Data structures specialized to classify clusters.
 - `CGAL::Classification::Feature::Echo_scatter<GeomTraits, PointRange, PointMap, EchoMap>`
 - `CGAL::Classification::Feature::Eigenvalue`
 - `CGAL::Classification::Feature::Elevation<GeomTraits, PointRange, PointMap>`
+- `CGAL::Classification::Feature::Height_above<GeomTraits, PointRange, PointMap>`
+- `CGAL::Classification::Feature::Height_below<GeomTraits, PointRange, PointMap>`
 - `CGAL::Classification::Feature::Simple_feature<InputRange, PropertyMap>`
 - `CGAL::Classification::Feature::Vertical_dispersion<GeomTraits, PointRange, PointMap>`
+- `CGAL::Classification::Feature::Vertical_range<GeomTraits, PointRange, PointMap>`
 - `CGAL::Classification::Feature::Verticality<GeomTraits>`
 
 ## Point Set Classification ##
