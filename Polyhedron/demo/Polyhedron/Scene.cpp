@@ -1016,10 +1016,13 @@ Scene::setData(const QModelIndex &index,
     {
         RenderingMode rendering_mode = static_cast<RenderingMode>(value.toInt());
         // Find next supported rendering mode
+        int counter = 0;
         while ( ! item->supportsRenderingMode(rendering_mode)
                 )
         {
             rendering_mode = static_cast<RenderingMode>( (rendering_mode+1) % NumberOfRenderingMode );
+            if(counter++ == NumberOfRenderingMode)
+              break;
         }
         item->setRenderingMode(rendering_mode);
         QModelIndex nindex = createIndex(m_entries.size()-1,RenderingModeColumn+1);
