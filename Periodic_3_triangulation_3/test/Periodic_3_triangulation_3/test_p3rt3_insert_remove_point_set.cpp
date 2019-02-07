@@ -79,13 +79,13 @@ public:
 
       std::size_t hidden_point_count = 0;
       for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
-        hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+        hidden_point_count += iter->hidden_points().size();
 
       Vertex_handle vh = p3rt3.insert(p);
 
       std::size_t hidden_point_count_2 = 0;
       for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
-        hidden_point_count_2 += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+        hidden_point_count_2 += iter->hidden_points().size();
       assert(hidden_point_count <= hidden_point_count_2);
       assert(hidden_point_count_2 + p3rt3.number_of_vertices() == cnt);
 #ifdef REALLY_VERBOSE
@@ -121,7 +121,7 @@ public:
 #endif
       std::size_t hidden_point_count = 0;
       for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
-        hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
+        hidden_point_count += iter->hidden_points().size();
 
       assert(hidden_point_count + cnt + p3rt3.number_of_vertices() == insert_set.size());
     }
