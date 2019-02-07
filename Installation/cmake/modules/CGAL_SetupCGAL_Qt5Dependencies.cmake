@@ -123,7 +123,7 @@ function(CGAL_setup_CGAL_Qt5_dependencies target)
   # version 5.12, has a lot of [-Wdeprecated-copy] warnings.
   if( CMAKE_CXX_COMPILER_ID STREQUAL "GNU"
       AND NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS "9" )
-    target_compile_options( ${target} ${keyword} "-Wno-deprecated-copy" )
+    target_compile_options( ${target} ${keyword} "-Wno-deprecated-copy" "-Wno-cast-function-type" )
   endif()
 
 endfunction()
