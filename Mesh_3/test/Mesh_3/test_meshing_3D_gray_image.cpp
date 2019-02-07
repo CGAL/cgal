@@ -1,3 +1,5 @@
+#define  CGAL_MESH_3_EXUDER_VERBOSE
+#define CGAL_CONCURRENT_MESH_3_PROFILING
 // Copyright (c) 2015 GeometryFactory (France).
 // All rights reserved.
 //
@@ -108,11 +110,12 @@ public:
 
 int main()
 {
-    CGAL::get_default_random() = CGAL::Random(1549369946);
+  CGAL::get_default_random() = CGAL::Random(1549369946);
   Image_tester<> test_epic;
   std::cerr << "Mesh generation from a 3D image:\n";
   test_epic.image();
 
+  
 #ifdef CGAL_LINKED_WITH_TBB
   Image_tester<CGAL::Parallel_tag> test_epic_p;
   std::cerr << "Parallel mesh generation from a 3D image:\n";

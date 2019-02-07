@@ -42,6 +42,7 @@
 #include <CGAL/internal/Has_member_visited.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Real_timer.h>
+#include <CGAL/Profile_counter.h>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
@@ -927,7 +928,6 @@ pump_vertices(FT sliver_criterion_limit,
   if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     this->create_root_task();
-
     while (!this->cells_queue_empty())
     {
       Queue_value_type front = *(this->cells_queue_front());
@@ -1044,10 +1044,15 @@ Slivers_exuder<C3T3,SC,V_>::
 pump_vertex(const Vertex_handle& pumped_vertex,
             bool *could_lock_zone)
 {
+  static Profile_counter pcA("pump_vertex");
+  static Profile_counter pcB("pump fails (could_lock_zone)");
   // Get best_weight
+  ++pcA;
   FT best_weight = get_best_weight(pumped_vertex, could_lock_zone);
-  if (could_lock_zone && *could_lock_zone == false)
+  if (could_lock_zone && *could_lock_zone == false){
+    ++pcB;
     return false;
+  }
 
   typename Gt::Compare_weighted_squared_radius_3 compare_sq_radius =
     tr_.geom_traits().compare_weighted_squared_radius_3_object();
@@ -1536,6 +1541,7 @@ restore_internal_facets(const Umbrella& umbrella,
 }
 
 
+
 template <typename C3T3, typename SC, typename V_>
 template <bool pump_vertices_on_surfaces>
 bool
@@ -1560,17 +1566,24 @@ update_mesh(const Weighted_point& new_point,
                      std::back_inserter(internal_facets),
                      could_lock_zone);
 
-  if (could_lock_zone && *could_lock_zone == false)
+  static Profile_counter pc("update_mesh");
+  static Profile_counter pcA("update_mesh() fails (could_lock_zone)");
+  static Profile_counter pcB("update_mesh() fails (no umbrella)");
+  ++pc;
+  if (could_lock_zone && *could_lock_zone == false){
+    ++pcA;
     return false;
+  }
 
   // Get some datas to restore mesh
   Boundary_facets_from_outside boundary_facets_from_outside =
     get_boundary_facets_from_outside(boundary_facets);
 
   boost::optional<Umbrella> umbrella = get_umbrella(internal_facets, old_vertex);
-  if(umbrella == boost::none)
+  if(umbrella == boost::none){
+    ++pcB;
     return false; //abort pumping this vertex
-
+  }
   // Delete old cells from queue (they aren't in the triangulation anymore)
   this->delete_cells_from_queue(deleted_cells);
 
