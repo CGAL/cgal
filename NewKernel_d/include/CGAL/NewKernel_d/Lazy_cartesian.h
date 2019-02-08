@@ -100,6 +100,103 @@ struct Lazy_construction2 {
     return new Lazy_rep_0<AT,ET,E2A>();
   }
 };
+#if 0
+// Experiment how we can store ranges
+template<typename AT, typename ET, typename AC, typename EC, typename E2A, typename T>
+class Lazy_rep_XXX :
+  public Lazy_rep< AT, ET, E2A >, private EC
+{
+  int ld;
+  mutable std::vector<T> lr;
+  const EC& ec() const { return *this; }
+  public:
+  void update_exact() const {
+    this->et = new ET(ec()(ld, CGAL::exact(std::begin(lr)), CGAL::exact(std::end(lr))));
+    this->at = E2A()(*(this->et));
+    lr = std::vector<T>(); // lr.clear(); lr.shrink_to_fit(); generates worse code
+  }
+  template<class Iter>
+  Lazy_rep_XXX(const AC& ac, const EC& ec, int d, Iter const& f, Iter const& e) :
+    Lazy_rep<AT, ET, E2A>(ac(d, CGAL::approx(f), CGAL::approx(e))), EC(ec), ld(d), lr(f, e)
+  {
+    this->set_depth(1); // ??? Who cares
+  }
+};
+template<typename AT, typename ET, typename AC, typename EC, typename E2A, typename T, typename L>
+class Lazy_rep_YYY :
+  public Lazy_rep< AT, ET, E2A >, private EC
+{
+  mutable std::vector<T> lr;
+  mutable L l;
+  const EC& ec() const { return *this; }
+  public:
+  void update_exact() const {
+    this->et = new ET(ec()(CGAL::exact(std::begin(lr)), CGAL::exact(std::end(lr)), CGAL::exact(l)));
+    this->at = E2A()(*(this->et));
+    lr = std::vector<T>(); // lr.clear(); lr.shrink_to_fit(); generates worse code
+    l = L();
+  }
+  template<class Iter>
+  Lazy_rep_YYY(const AC& ac, const EC& ec, Iter const& f, Iter const& e, L const& ll) :
+    Lazy_rep<AT, ET, E2A>(ac(CGAL::approx(f), CGAL::approx(e), CGAL::approx(ll))), EC(ec), lr(f, e), l(ll)
+  {
+    this->set_depth(1); // ??? Who cares
+  }
+};
+template<typename LK>
+struct Lazy_construction2<Construct_ttag<Point_tag>, LK> {
+  static const bool Protection = true;
+  typedef Construct_ttag<Point_tag> T;
+  typedef typename LK::Approximate_kernel AK;
+  typedef typename LK::Exact_kernel EK;
+  typedef typename LK::E2A E2A;
+  typedef typename Get_functor<AK, T>::type AC;
+  typedef typename Get_functor<EK, T>::type EC;
+  typedef typename map_result_tag<T>::type result_tag;
+  typedef typename Get_type<AK, result_tag>::type AT;
+  typedef typename Get_type<EK, result_tag>::type ET;
+  typedef typename Get_type<LK, result_tag>::type result_type;
+  // same as Handle = Lazy< AT, ET, E2A>
+  typedef typename Get_type<LK, FT_tag>::type FT;
+
+  Lazy_construction2(){}
+  Lazy_construction2(LK const&k):ac(k.approximate_kernel()),ec(k.exact_kernel()){}
+  CGAL_NO_UNIQUE_ADDRESS AC ac;
+  CGAL_NO_UNIQUE_ADDRESS EC ec;
+
+  template<class...L>
+  std::enable_if_t<(sizeof...(L)>0&&Constructible_from_each<FT,L...>::value), result_type> operator()(L const&...l) const {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Protect_FPU_rounding<Protection> P;
+    try {
+      return new Lazy_rep_n<AT, ET, AC, EC, E2A, L...>(ac, ec, l...);
+    } catch (Uncertain_conversion_exception&) {
+      CGAL_BRANCH_PROFILER_BRANCH(tmp);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+      return new Lazy_rep_0<AT,ET,E2A>(ec(CGAL::exact(l)...));
+    }
+  }
+  template<class Iter>
+  std::enable_if_t<is_iterator<Iter>::value,result_type> operator()(int d, Iter const& f, Iter const& e) const {
+    typedef typename std::iterator_traits<Iter>::value_type TT;
+    return new Lazy_rep_XXX<AT, ET, AC, EC, E2A, TT>(ac, ec, d, f, e);
+  }
+  template<class Iter, class L>
+  std::enable_if_t<is_iterator<Iter>::value,result_type> operator()(Iter const& f, Iter const& e, L const&l) const {
+    typedef typename std::iterator_traits<Iter>::value_type TT;
+    return new Lazy_rep_YYY<AT, ET, AC, EC, E2A, TT, L>(ac, ec, f, e, l);
+  }
+  template<class Iter>
+  std::enable_if_t<is_iterator<Iter>::value,result_type> operator()(Iter const& f, Iter const& e) const {
+    return operator()(std::distance(f, e), f, e);
+  }
+  // FIXME: this forces us to have default constructors for all types, try to make its instantiation lazier
+  result_type operator()() const
+  {
+    return new Lazy_rep_0<AT,ET,E2A>();
+  }
+};
+#endif
 
 template <class EK_, class AK_, class E2A_, class Kernel_>
 struct Lazy_cartesian_types
