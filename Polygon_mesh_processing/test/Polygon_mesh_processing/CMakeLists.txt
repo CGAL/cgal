@@ -99,6 +99,7 @@ endif()
   create_single_source_cgal_program("test_shape_predicates.cpp")
   create_single_source_cgal_program("test_pmp_collision_detection.cpp")
   create_single_source_cgal_program("test_snap.cpp")
+  create_single_source_cgal_program("test_non_conform_snap.cpp")
 
   if( TBB_FOUND )
     CGAL_target_use_TBB(test_pmp_distance)
