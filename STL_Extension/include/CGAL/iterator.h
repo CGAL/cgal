@@ -1445,7 +1445,7 @@ public:
 
   Dispatch_or_drop_output_iterator(O... o) : Base(o...) {}
   
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
+#if( (! defined(CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS) ) && ( ( ! defined BOOST_MSVC) || (BOOST_MSVC > 1800) ) )
   Dispatch_or_drop_output_iterator(const Dispatch_or_drop_output_iterator&)=default;
   Dispatch_or_drop_output_iterator& operator=(const Dispatch_or_drop_output_iterator&)=default;
 #endif
