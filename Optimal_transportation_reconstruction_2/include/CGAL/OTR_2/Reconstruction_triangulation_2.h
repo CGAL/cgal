@@ -921,7 +921,7 @@ public:
     return true;
   }
 
-  bool check_validity_test (const Edge& edge)
+  bool check_validity_test () const
   {
     for(Finite_faces_iterator it = Base::finite_faces_begin();
         it != Base::finite_faces_end(); it++)

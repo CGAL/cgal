@@ -610,7 +610,7 @@ public:
           std::cerr << "simulation: failed (make collapsible)" << std::endl;
         return false;
       }
-      ok = copy.check_validity_test(copy_edge);
+      ok = copy.check_validity_test();
       if (!ok) {
         if (m_verbose > 1)
           std::cerr << "simulation: failed (validity test)" << std::endl;
@@ -627,7 +627,7 @@ public:
 
     copy.collapse(copy_edge, m_verbose);
 
-    ok = copy.check_validity_test(copy_edge);
+    ok = copy.check_validity_test();
     if (!ok) {
       if (m_verbose > 1)
         std::cerr << "simulation: failed (validity test)" << std::endl;
