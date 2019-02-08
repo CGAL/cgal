@@ -131,79 +131,72 @@ public:
   decltype(auto) squared_length()const{
 	  return SLBase()(rep());
   }
+
+  friend std::ostream& operator <<(std::ostream& os, const Vector_d& v)
+  {
+    auto b = v.cartesian_begin();
+    auto e = v.cartesian_end();
+    if(is_ascii(os))
+    {
+      os << v.dimension();
+      for(; b != e; ++b){
+	os << " " << *b;
+      }
+    }
+    else
+    {
+      write(os, v.dimension());
+      for(; b != e; ++b){
+	write(os, *b);
+      }
+    }
+
+    return os;
+  }
+
+  friend std::istream & operator>>(std::istream &is, Vector_d & v)
+  {
+    int dim;
+    if( is_ascii(is) )
+      is >> dim;
+    else
+    {
+      read(is, dim);
+    }
+    if(!is) return is;
+
+    std::vector<FT_> coords(dim);
+    if(is_ascii(is))
+    {
+      for(int i=0;i<dim;++i)
+	is >> iformat(coords[i]);
+    }
+    else
+    {
+      for(int i=0;i<dim;++i)
+	read(is, coords[i]);
+    }
+
+    if(is)
+      v = Vector_d(coords.begin(), coords.end());
+    return is;
+  }
+
+
+  friend Vector_d operator+(const Vector_d& v,const Vector_d& w)
+  {
+    return typename Get_functor<R, Sum_of_vectors_tag>::type()(v,w);
+  }
+
+  friend Vector_d operator-(const Vector_d& v,const Vector_d& w)
+  {
+    return typename Get_functor<R, Difference_of_vectors_tag>::type()(v,w);
+  }
 };
 #if 0
 template <class R_> Vector_d<R_>::Vector_d(Vector_d &)=default;
 #endif
 
-template <class R_>
-std::ostream& operator <<(std::ostream& os, const Vector_d<R_>& v)
-{
-  auto b = v.cartesian_begin();
-  auto e = v.cartesian_end();
-  if(is_ascii(os))
-  {
-    os << v.dimension();
-    for(; b != e; ++b){
-      os << " " << *b;
-    }
-  }
-  else
-  {
-    write(os, v.dimension());
-    for(; b != e; ++b){
-      write(os, *b);
-    }
-  }
-  
-  return os;
-}
-
-
-template<typename K>
-std::istream &
-operator>>(std::istream &is, Vector_d<K> & v)
-{
-  typedef typename Get_type<K, Vector_tag>::type V;
-  typedef typename Get_type<K, FT_tag>::type   FT;
-  int dim;
-  if( is_ascii(is) )
-    is >> dim;
-  else
-  {
-    read(is, dim);
-  }
-  if(!is) return is;
-
-  std::vector<FT> coords(dim);
-  if(is_ascii(is))
-  {
-    for(int i=0;i<dim;++i)
-      is >> iformat(coords[i]);
-  }
-  else
-  {
-    for(int i=0;i<dim;++i)
-      read(is, coords[i]);
-  }
-
-  if(is)
-    v = V(coords.begin(), coords.end());
-  return is;
-}
-
-
-template <class R_>
-Vector_d<R_> operator+(const Vector_d<R_>& v,const Vector_d<R_>& w)
-{
-	return typename Get_functor<R_, Sum_of_vectors_tag>::type()(v,w);
-}
-
-template <class R_>
-Vector_d<R_> operator-(const Vector_d<R_>& v,const Vector_d<R_>& w)
-{
-	return typename Get_functor<R_, Difference_of_vectors_tag>::type()(v,w);
-}
 
 } //namespace Wrap
 } //namespace CGAL

@@ -130,66 +130,61 @@ public:
 
   friend auto operator!=(Point_d const&p, Point_d const&q) { return !(p==q); }
 
+  friend std::ostream& operator <<(std::ostream& os, const Point_d& p)
+  {
+    auto b = p.cartesian_begin();
+    auto e = p.cartesian_end();
+    if(is_ascii(os))
+    {
+      os << p.dimension();
+      for(; b != e; ++b){
+	os << " " << *b;
+      }
+    }
+    else
+    {
+      write(os, p.dimension());
+      for(; b != e; ++b){
+	write(os, *b);
+      }
+    }
+    return os;
+  }
+
+  // TODO: test if the stream is binary or text?
+  friend std::istream& operator>>(std::istream &is, Point_d & p)
+  {
+    int dim;
+    if( is_ascii(is) )
+      is >> dim;
+    else
+    {
+      read(is, dim);
+    }
+
+    if(!is) return is;
+    std::vector<FT_> coords(dim);
+    if(is_ascii(is))
+    {
+      for(int i=0;i<dim;++i)
+	is >> iformat(coords[i]);
+    }
+    else
+    {
+      for(int i=0;i<dim;++i)
+	read(is, coords[i]);
+    }
+
+    // FIXME: with Epeck_d, currently, this stores pointers to coords which will soon be dead.
+    if(is)
+      p = Point_d(coords.begin(), coords.end());
+    return is;
+  }
 };
 #if 0
 template <class R_> Point_d<R_>::Point_d(Point_d &)=default;
 #endif
 
-template <class R_>
-std::ostream& operator <<(std::ostream& os, const Point_d<R_>& p)
-{
-  auto b = p.cartesian_begin();
-  auto e = p.cartesian_end();
-  if(is_ascii(os))
-  {
-    os << p.dimension();
-    for(; b != e; ++b){
-      os << " " << *b;
-    }
-  }
-  else
-  {
-    write(os, p.dimension());
-    for(; b != e; ++b){
-      write(os, *b);
-    }
-  }
-  return os;
-}
-
-// TODO: test if the stream is binary or text?
-template<typename K>
-std::istream &
-operator>>(std::istream &is, Point_d<K> & p)
-{
-  typedef typename Get_type<K, Point_tag>::type P;
-  typedef typename Get_type<K, FT_tag>::type   FT;
-  int dim;
-  if( is_ascii(is) )
-    is >> dim;
-  else
-  {
-    read(is, dim);
-  }
-  
-  if(!is) return is;
-  std::vector<FT> coords(dim);
-  if(is_ascii(is))
-  {
-    for(int i=0;i<dim;++i)
-      is >> iformat(coords[i]);
-  }
-  else
-  {
-    for(int i=0;i<dim;++i)
-      read(is, coords[i]);
-  }
-
-  // FIXME: with Epeck_d, currently, this stores pointers to coords which will soon be dead.
-  if(is)
-    p = P(coords.begin(), coords.end());
-  return is;
-}
 
 //template <class R_>
 //Vector_d<R_> operator+(const Vector_d<R_>& v,const Vector_d<R_>& w) const
