@@ -274,42 +274,26 @@ public:
                       double target_length)
   {
     std::vector<edge_descriptor> p_edges;
-    if(!selection_item->selected_facets.empty()){
-      BOOST_FOREACH(edge_descriptor e, edges(pmesh))
-      {
-        if(get(selection_item->constrained_edges_pmap(), e))
-        {
-          if (selection_item->selected_facets.find(face(halfedge(e, pmesh), pmesh))
-              != selection_item->selected_facets.end()
-              || selection_item->selected_facets.find(face(opposite(halfedge(e, pmesh), pmesh), pmesh))
-              != selection_item->selected_facets.end())
-            p_edges.push_back(e);
-        }
-      }
-      BOOST_FOREACH(face_descriptor f, selection_item->selected_facets)
-      {
-        BOOST_FOREACH(halfedge_descriptor he, halfedges_around_face(halfedge(f, pmesh), pmesh))
-        {
-          if (selection_item->selected_facets.find(face(opposite(he, pmesh), pmesh))
-              == selection_item->selected_facets.end())
-            p_edges.push_back(edge(he, pmesh));
-        }
-      }
-    }
-    else
+    BOOST_FOREACH(edge_descriptor e, selection_item->selected_edges)
     {
-      BOOST_FOREACH(edge_descriptor e, edges(pmesh))
+      p_edges.push_back(e);
+    }
+    BOOST_FOREACH(face_descriptor f, selection_item->selected_facets)
+    {
+      BOOST_FOREACH(halfedge_descriptor he, halfedges_around_face(halfedge(f, pmesh), pmesh))
       {
-        if(get(selection_item->constrained_edges_pmap(), e))
-          p_edges.push_back(e);
+        if (selection_item->selected_facets.find(face(opposite(he, pmesh), pmesh))
+            == selection_item->selected_facets.end())
+          p_edges.push_back(edge(he, pmesh));
       }
     }
     if (!p_edges.empty())
       CGAL::Polygon_mesh_processing::split_long_edges(
-        p_edges
-        , target_length
-        , *selection_item->polyhedron()
-        , PMP::parameters::edge_is_constrained_map(selection_item->constrained_edges_pmap()));
+            p_edges
+            , target_length
+            , *selection_item->polyhedron()
+            , PMP::parameters::geom_traits(EPICK())
+            .edge_is_constrained_map(selection_item->constrained_edges_pmap()));
     else
       std::cout << "No selected or boundary edges to be split" << std::endl;
   }
