@@ -1,3 +1,5 @@
+#define CGAL_PMP_SNAP_DEBUG
+
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -50,10 +52,13 @@ void test()
   std::cout << border_vertices.size() << " border vertices" << std::endl;
 
   // one empty mesh
+  std::cout << "Empty meshes tests..." << std::endl;
   res = PMP::internal::snap_border_vertices_onto_vertex_range(fg_source, fg_target);
+  std::cout << "res: " << res << " (expected 0)" << std::endl;
   assert(res == 0);
 
   res = PMP::internal::snap_border_vertices_onto_vertex_range(fg_target, halfedges(fg_source), fg_source);
+  std::cout << "res: " << res << " (expected 0)" << std::endl;
   assert(res == 0);
 
   std::ifstream target_input("data_snapping/border_snapping_target.off");
@@ -70,10 +75,10 @@ void test()
   CGAL::Constant_property_map<vertex_descriptor, FT> tol_map_small(0.000000001);
   res = PMP::internal::snap_border_vertices_onto_vertex_range(fg_source_cpy, fg_target, tol_map_small);
   res = PMP::internal::snap_border_vertices_onto_vertex_range(fg_source_cpy, halfedges(fg_target), fg_target, tol_map_small);
-  std::cout << "Moved: " << res << " vertices" << std::endl;
+  std::cout << "res: " << res << " (expected 0)" << std::endl;
   assert(res == 0);
 
-  // this epsilon value is too big to get a 1-to-1 snapping
+  // this epsilon value is too big; everything gets snapped!
   std::cout << "*********************** EPS = 0.1 *************** " << std::endl;
   CGAL::Constant_property_map<vertex_descriptor, FT> tol_map_big(0.1);
   fg_source_cpy = fg_source;
@@ -84,8 +89,9 @@ void test()
   res = PMP::internal::snap_vertex_range_onto_vertex_range(border_vertices, fg_source_cpy,
                                                            halfedges(fg_target), fg_target, tol_map_big,
                                                            params::geom_traits(Kernel()), params::all_default());
-  std::cout << "Moved: " << res << " vertices" << std::endl;
-  assert(res == 2);
+
+  std::cout << "res: " << res << " (expected 154)" << std::endl;
+  assert(res == 154);
 
   // this is a good value of 'epsilon', but not all expected vertices are projected
   // because the sampling of the border of the source mesh is not uniform
@@ -98,7 +104,7 @@ void test()
 
   res = PMP::internal::snap_vertex_range_onto_vertex_range(border_vertices, fg_source_cpy,
                                                            halfedges(fg_target), fg_target, tol_map_good);
-  std::cout << "Moved: " << res << " vertices" << std::endl;
+  std::cout << "res: " << res << " vertices" << std::endl;
   assert(res == 76);
 
   std::ofstream partial_snap_out("partially_snapped_mesh.off");
@@ -108,7 +114,7 @@ void test()
   std::cout << "*********************** EPS = LOCALLY COMPUTED *************** " << std::endl;
   fg_source_cpy = fg_source;
   res = PMP::internal::snap_border_vertices_onto_vertex_range(fg_source_cpy, fg_target);
-  std::cout << "Moved: " << res << " vertices" << std::endl;
+  std::cout << "res: " << res << " vertices" << std::endl;
   assert(res == 77);
 
   std::ofstream full_snap_out("snapped_mesh.off");
