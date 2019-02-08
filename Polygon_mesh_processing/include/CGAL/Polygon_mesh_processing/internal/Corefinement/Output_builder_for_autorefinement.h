@@ -997,7 +997,8 @@ public:
     // Merge patches to keep only 2: one we keep (1) and one we remove (0)
     const std::size_t PATCH_ID_KEPT = 1;
     BOOST_FOREACH(std::size_t& patch_id, patch_ids)
-      patch_id = patches_to_keep.test(patch_id) ? 1 : 0;
+      if (patch_id != NID)
+        patch_id = patches_to_keep.test(patch_id) ? 1 : 0;
     nb_patches=2;
     patches_to_keep=boost::dynamic_bitset<>(2,0);
     patches_to_keep.set(PATCH_ID_KEPT);
