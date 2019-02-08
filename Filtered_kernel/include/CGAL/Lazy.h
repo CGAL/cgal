@@ -787,8 +787,8 @@ struct Lazy_construction_bbox
   typedef typename LK::Exact_kernel EK;
   typedef typename AC::result_type result_type;
 
-  AC ac;
-  EC ec;
+  CGAL_NO_UNIQUE_ADDRESS AC ac;
+  CGAL_NO_UNIQUE_ADDRESS EC ec;
 
   template <typename L1>
   result_type operator()(const L1& l1) const
@@ -818,8 +818,8 @@ struct Lazy_construction_nt {
   typedef typename LK::Exact_kernel EK;
   typedef typename LK::E2A E2A;
 
-  AC ac;
-  EC ec;
+  CGAL_NO_UNIQUE_ADDRESS AC ac;
+  CGAL_NO_UNIQUE_ADDRESS EC ec;
 
   template<typename>
   struct result { };
@@ -993,8 +993,8 @@ struct Lazy_cartesian_const_iterator_2
   typedef typename LK::Exact_kernel EK;
   typedef typename LK::Cartesian_const_iterator_2 result_type;
 
-  AC ac;
-  EC ec;
+  CGAL_NO_UNIQUE_ADDRESS AC ac;
+  CGAL_NO_UNIQUE_ADDRESS EC ec;
 
 public:
 
@@ -1022,8 +1022,8 @@ struct Lazy_cartesian_const_iterator_3
   typedef typename LK::Exact_kernel EK;
   typedef typename LK::Cartesian_const_iterator_3 result_type;
 
-  AC ac;
-  EC ec;
+  CGAL_NO_UNIQUE_ADDRESS AC ac;
+  CGAL_NO_UNIQUE_ADDRESS EC ec;
 
 public:
 
@@ -1054,8 +1054,8 @@ struct Lazy_functor_2_1
   static const bool Protection = true;
   typedef void result_type;
 
-  AC ac;
-  EC ec;
+  CGAL_NO_UNIQUE_ADDRESS AC ac;
+  CGAL_NO_UNIQUE_ADDRESS EC ec;
 
 public:
 
@@ -1118,8 +1118,8 @@ struct Lazy_functor_2_2
   typedef typename LK::Exact_kernel EK;
   typedef typename LK::E2A E2A;
 
-  AC ac;
-  EC ec;
+  CGAL_NO_UNIQUE_ADDRESS AC ac;
+  CGAL_NO_UNIQUE_ADDRESS EC ec;
 
 public:
 
@@ -1162,8 +1162,8 @@ struct Lazy_intersect_with_iterators
   typedef Lazy<Object, Object, E2A> Lazy_object;
   typedef Lazy<std::vector<Object>, std::vector<Object>, E2A> Lazy_vector;
 
-  AC ac;
-  EC ec;
+  CGAL_NO_UNIQUE_ADDRESS AC ac;
+  CGAL_NO_UNIQUE_ADDRESS EC ec;
 
 public:
 
@@ -1242,8 +1242,8 @@ struct Lazy_construction_object
 
   typedef Lazy<Object, Object, E2A> Lazy_object;
 
-  AC ac;
-  EC ec;
+  CGAL_NO_UNIQUE_ADDRESS AC ac;
+  CGAL_NO_UNIQUE_ADDRESS EC ec;
 
 public:
 
@@ -1620,8 +1620,8 @@ struct Lazy_construction<LK, AC, EC, E2A_, true> {
   
   typedef typename Type_mapper<AT, AK, LK>::type result_type;
 
-  AC ac;
-  EC ec;
+  CGAL_NO_UNIQUE_ADDRESS AC ac;
+  CGAL_NO_UNIQUE_ADDRESS EC ec;
 
 #define CGAL_CONSTRUCTION_OPERATOR(z, n, d  )                           \
   template<BOOST_PP_ENUM_PARAMS(n, class L)>                            \
@@ -1670,8 +1670,8 @@ struct Lazy_construction<LK, AC, EC, E2A_, false>
     // you are on your own
   };
 
-  AC ac;
-  EC ec;
+  CGAL_NO_UNIQUE_ADDRESS AC ac;
+  CGAL_NO_UNIQUE_ADDRESS EC ec;
 
   // acquire the result_type of the approximate kernel, map it back to the lazy kernel object
 #define CGAL_RESULT(z, n, d) \

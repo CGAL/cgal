@@ -55,10 +55,10 @@ class Filtered_predicate2
 //TODO: pack (at least use a tuple)
 //FIXME: is it better to store those, or just store enough to recreate them
 //(i.e. possibly references to the kernels)?
-  EP  ep;
-  AP  ap;
-  C2E c2e;
-  C2A c2a;
+  CGAL_NO_UNIQUE_ADDRESS EP  ep;
+  CGAL_NO_UNIQUE_ADDRESS AP  ap;
+  CGAL_NO_UNIQUE_ADDRESS C2E c2e;
+  CGAL_NO_UNIQUE_ADDRESS C2A c2a;
 
 public:
 
