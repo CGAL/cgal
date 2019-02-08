@@ -1413,7 +1413,7 @@ void Scene::gl_draw_location() {
                 Point p = tet_to_draw.vertex((i+1)&3);
                 Point q = tet_to_draw.vertex((i+2)&3);
                 Point r = tet_to_draw.vertex((i+3)&3);
-                Vector c= (Vector(Point(),p)+Vector(Point(),q)+Vector(Point(),r))/3.;
+                Vector c= (Vector(Point(0,0,0),p)+Vector(Point(0,0,0),q)+Vector(Point(0,0,0),r))/3.;
                 Point cp = Point(c.x(),c.y(),c.z());
                 // project facet center
                 double px,py,pz;
@@ -1524,7 +1524,7 @@ void Scene::gl_draw_conflict() {
                 Point p = tri_to_draw.vertex(0);
                 Point q = tri_to_draw.vertex(1);
                 Point r = tri_to_draw.vertex(2);
-                Vector c= (Vector(Point(),p)+Vector(Point(),q)+Vector(Point(),r))/3.;
+                Vector c= (Vector(Point(0,0,0),p)+Vector(Point(0,0,0),q)+Vector(Point(0,0,0),r))/3.;
                 Point cp = Point(c.x(),c.y(),c.z());
                 // project facet center
                 double px,py,pz;
