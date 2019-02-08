@@ -49,15 +49,15 @@ template <int d, class K1, class K2>
 struct Point_converter_help<Dimension_tag<d>,K1,K2> {
 	typedef typename Get_type<K1, Point_tag>::type	argument_type;
 	typedef typename Get_type<K2, Point_tag>::type	result_type;
-	template <class C,int...I>
-	result_type help(Indices<I...>, K1 const& k1, K2 const& k2, C const& conv, argument_type const& p) const {
+	template <class C,std::size_t...I>
+	result_type help(std::index_sequence<I...>, K1 const& k1, K2 const& k2, C const& conv, argument_type const& p) const {
 		typename Get_functor<K1, Compute_point_cartesian_coordinate_tag>::type cc(k1);
 		typename Get_functor<K2, Construct_ttag<Point_tag> >::type cp(k2);
 		return cp(conv(cc(p,I))...);
 	}
 	template <class C>
 	result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& p) const {
-		return help(typename N_increasing_indices<d>::type(),k1,k2,conv,p);
+		return help(std::make_index_sequence<d>(),k1,k2,conv,p);
 	}
 };
 }

@@ -149,32 +149,23 @@ struct Has_type_different_from <T, No, true>
 		template<class It> struct result<Dereference_functor(It)> {
 			typedef typename std::iterator_traits<It>::reference type;
 		};
-		template<class It> typename result<Dereference_functor(It)>::type
+		template<class It> decltype(auto)
 			operator()(It const&i)const{
 				return *i;
 			}
 	};
 
-	template<int...> struct Indices{};
-	template<class> struct Next_increasing_indices;
-	template<int...I> struct Next_increasing_indices<Indices<I...> > {
-		typedef Indices<I...,sizeof...(I)> type;
-	};
-	template<int N> struct N_increasing_indices {
-		typedef typename Next_increasing_indices<typename N_increasing_indices<N-1>::type>::type type;
-	};
-	template<> struct N_increasing_indices<0> { typedef Indices<> type; };
 	namespace internal {
-	template<class F,class...U,int...I> inline typename std::result_of<F&&(U...)>::type
-	do_call_on_tuple_elements(F&&f, std::tuple<U...>&&t, Indices<I...>&&) {
+	template<class F,class...U,std::size_t...I> inline decltype(auto)
+	do_call_on_tuple_elements(F&&f, std::tuple<U...>&&t, std::index_sequence<I...>&&) {
 		return f(std::get<I>(std::move(t))...);
 	}
 	} // internal
-	template<class/*result type, ignored*/,class F,class...U>
-	inline typename std::result_of<F&&(U...)>::type
+	template<class F,class...U>
+	inline decltype(auto)
 	call_on_tuple_elements(F&&f, std::tuple<U...>&&t) {
 		return internal::do_call_on_tuple_elements(std::forward<F>(f),std::move(t),
-				typename N_increasing_indices<sizeof...(U)>::type());
+				std::make_index_sequence<sizeof...(U)>());
 	}
 
 	template<class A> struct Factory {

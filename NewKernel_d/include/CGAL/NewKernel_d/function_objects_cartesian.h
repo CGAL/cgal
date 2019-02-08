@@ -91,7 +91,7 @@ template<class R_,int d> struct Orientation_of_points<R_,Dimension_tag<d>,true> 
 	typedef typename Get_type<R, Point_tag>::type Point;
 	typedef typename Get_type<R, Orientation_tag>::type result_type;
 	template<class>struct Help;
-	template<int...I>struct Help<Indices<I...> > {
+	template<std::size_t...I>struct Help<std::index_sequence<I...> > {
 		template<class C,class P,class T> result_type operator()(C const&c,P const&x,T&&t)const{
 			return sign_of_determinant<RT>(c(std::get<I/d>(t),I%d)-c(x,I%d)...);
 		}
@@ -99,7 +99,7 @@ template<class R_,int d> struct Orientation_of_points<R_,Dimension_tag<d>,true> 
 	template<class P0,class...P> result_type operator()(P0 const&x,P&&...p)const{
 		static_assert(d==sizeof...(P),"Wrong number of arguments");
 		typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
-		return Help<typename N_increasing_indices<d*d>::type>()(c,x,std::forward_as_tuple(std::forward<P>(p)...));
+		return Help<std::make_index_sequence<d*d>>()(c,x,std::forward_as_tuple(std::forward<P>(p)...));
 	}
 
 

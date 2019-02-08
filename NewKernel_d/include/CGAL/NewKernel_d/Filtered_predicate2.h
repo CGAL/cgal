@@ -60,8 +60,6 @@ class Filtered_predicate2
   C2E c2e;
   C2A c2a;
 
-  typedef typename AP::result_type  Ares;
-
 public:
 
   typedef AP    Approximate_predicate;
@@ -92,7 +90,7 @@ public:
       try
 	{
 	  // No forward here, the arguments may still be needed
-	  Ares res = ap(c2a(args)...);
+	  auto res = ap(c2a(args)...);
 	  if (is_certain(res))
 	    return get_certain(res);
 	}
