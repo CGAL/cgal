@@ -269,14 +269,15 @@ public:
       PMP::triangulate_face(f_and_p.first, *f_and_p.second);
   }
 
-  bool do_split_edges(Scene_polyhedron_selection_item* selection_item,
+  void do_split_edges(Scene_polyhedron_selection_item* selection_item,
                       SMesh& pmesh,
                       double target_length)
   {
     std::vector<edge_descriptor> p_edges;
-    BOOST_FOREACH(edge_descriptor e, selection_item->selected_edges)
+    BOOST_FOREACH(edge_descriptor e, edges(pmesh))
     {
-      p_edges.push_back(e);
+      if(get(selection_item->constrained_edges_pmap(), e))
+        p_edges.push_back(e);
     }
     BOOST_FOREACH(face_descriptor f, selection_item->selected_facets)
     {
@@ -343,7 +344,6 @@ public Q_SLOTS:
       time.start();
 
       typedef boost::graph_traits<FaceGraph>::edge_descriptor edge_descriptor;
-      typedef boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
       typedef boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
 
       FaceGraph& pmesh = (poly_item != NULL)
@@ -403,7 +403,10 @@ public Q_SLOTS:
                 return;
               }
               else
+              {
+                QApplication::setOverrideCursor(Qt::WaitCursor);
                 do_split_edges(selection_item, pmesh, target_length);
+              }
             }
 
             if (selection_item->selected_facets.empty() && !selection_item->isEmpty())
@@ -569,6 +572,21 @@ public Q_SLOTS:
               edges_to_protect.insert(e);
           }
 
+          if(protect &&
+             !CGAL::Polygon_mesh_processing::internal::constraints_are_short_enough(
+               pmesh,
+               ecm,
+               get(CGAL::vertex_point, pmesh),
+               CGAL::Static_property_map<face_descriptor, std::size_t>(1),
+               4. / 3. * target_length))
+          {
+            QApplication::restoreOverrideCursor();
+            QMessageBox::warning(mw, tr("Error"),
+                                 tr("Isotropic remeshing : protect_constraints cannot be set to"
+                                    " true with constraints larger than 4/3 * target_edge_length."
+                                    " Aborting."));
+            return;
+          }
           if (fpmap_valid)
             CGAL::Polygon_mesh_processing::isotropic_remeshing(
                  faces(*poly_item->polyhedron())
