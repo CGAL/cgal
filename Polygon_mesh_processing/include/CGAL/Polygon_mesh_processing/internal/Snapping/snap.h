@@ -190,17 +190,17 @@ private:
   const GeomTraits& gt;
 };
 
-// This is the function if you know what you're doing with the ranges
-//
 // \ingroup PMP_repairing_grp
 //
 // Attempts to snap the vertices in `source_hrange` onto the vertices in `target_hrange`.
 // A vertex of the source range is only snapped to a vertex of the target mesh
 // if its distance to the target mesh vertex is smaller than a user-chosen bound.
-// If any source vertex can be snapped onto multiple vertices of the target
-// range, the closest one is chosen.
-// If multiple vertices within the source range are to be snapped to the same target vertex,
-// then the snapping is not performed for these vertices.
+// If a source vertex can be snapped onto multiple vertices of the target
+// range, the closest target vertex is used.
+// If multiple vertices within the source range could be snapped onto the same target vertex,
+// the source vertex closest to the target vertex will be snapped. Other source vertices will try to snap
+// to free target vertices until they find a valid target, or until there is no more target
+// to snap to (within the tolerance).
 //
 // @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 // @tparam SourceHalfedgeRange a model of `Range` with value type `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
@@ -322,7 +322,7 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
     target_boxes.push_back(Box(gt.construct_bbox_3_object()(p), vd));
   }
 
-  // Use a multi index to sort easily by sources, targets, AND distance.
+  // Use a multi_index to sort easily by sources, targets, AND distance.
   // Then, look up the distances in increasing order, and snap whenever the source and the target
   // have both not been snapped yet.
   typedef Snapping_pair<PolygonMesh, GT>                                              Snapping_pair;
@@ -344,7 +344,7 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
   Snapping_pair_container snapping_pairs;
   Reporter vpr(snapping_pairs, svpm, smesh, tvpm, tmesh, tol_pmap, gt);
 
-  // Shenanigans to pass a reference as callback(which is copied by value by 'box_intersection_d')
+  // Shenanigans to pass a reference as callback (which is copied by value by 'box_intersection_d')
   boost::function<void(const Box&, const Box&)> callback(boost::ref(vpr));
 
   CGAL::box_intersection_d(boxes.begin(), boxes.end(),
@@ -365,7 +365,6 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
 
   std::size_t counter = 0;
 
-  // Now, move the source vertices when the mapping is surjective
   CGAL_assertion_code(FT prev = -1;)
   while(!container_by_dist.empty())
   {
@@ -492,8 +491,10 @@ std::size_t snap_border_vertices_onto_border_vertices(PolygonMesh& smesh,
 // if its distance to the target mesh vertex is smaller than a user-chosen bound.
 // If any source vertex can be snapped onto multiple vertices of the target
 // range, the closest one is chosen.
-// If multiple vertices within the source range are to be snapped to the same target vertex,
-// then the snapping is not performed for these vertices.
+// If multiple vertices within the source range could be snapped onto the same target vertex,
+// the source vertex closest to the target vertex will be snapped. Other source vertices will try to snap
+// to free target vertices until they find a valid target, or until there is no more target
+// to snap to (within the tolerance).
 //
 // @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 // @tparam ToleranceMap a model of `ReadablePropertyMap` with key type `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
