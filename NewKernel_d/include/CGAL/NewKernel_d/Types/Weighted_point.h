@@ -186,11 +186,11 @@ template <class R_> struct Power_center : Store_kernel<R_> {
     CGAL_assertion (i == d);
     Vec res = typename CVec::Dimension()(d);;
     //std::cout << "Mat: " << m << "\n Vec: " << one << std::endl;
-    LA::solve(res, CGAL_MOVE(m), CGAL_MOVE(b));
+    LA::solve(res, std::move(m), std::move(b));
     //std::cout << "Sol: " << res << std::endl;
     Point center = cp(d,LA::vector_begin(res),LA::vector_end(res));
     FT const& r2 = pdp (wp0, center);
-    return cwp(CGAL_MOVE(center), r2);
+    return cwp(std::move(center), r2);
   }
 };
 }

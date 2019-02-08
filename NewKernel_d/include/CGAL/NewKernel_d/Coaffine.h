@@ -215,7 +215,7 @@ template<class R_> struct In_flat_orientation : private Store_kernel<R_> {
 			if(*it != d) m(i,1+*it)=1;
 		}
 
-		result_type ret = LA::sign_of_determinant(CGAL_MOVE(m));
+		result_type ret = LA::sign_of_determinant(std::move(m));
 		if(o.reverse) ret=-ret;
 		return ret;
 	}
@@ -264,7 +264,7 @@ template<class R_> struct In_flat_side_of_oriented_sphere : private Store_kernel
 			m(d+1,d+1)+=CGAL_NTS square(m(d+1,j+1));
 		}
 
-		result_type ret = -LA::sign_of_determinant(CGAL_MOVE(m));
+		result_type ret = -LA::sign_of_determinant(std::move(m));
 		if(o.reverse) ret=-ret;
 		return ret;
 	}
@@ -313,7 +313,7 @@ template<class R_> struct In_flat_power_side_of_power_sphere_raw : private Store
 			m(d+1,d+1)+=CGAL_NTS square(m(d+1,j+1));
 		}
 
-		result_type ret = -LA::sign_of_determinant(CGAL_MOVE(m));
+		result_type ret = -LA::sign_of_determinant(std::move(m));
 		if(o.reverse) ret=-ret;
 		return ret;
 	}

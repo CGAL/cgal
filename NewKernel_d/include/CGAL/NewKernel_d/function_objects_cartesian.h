@@ -68,7 +68,7 @@ template<class R_,class D_=typename R_::Default_ambient_dimension,bool=internal:
 		    // should we cache the coordinates of p0 in case they are computed?
 		  }
 		}
-		return R::LA::sign_of_determinant(CGAL_MOVE(m));
+		return R::LA::sign_of_determinant(std::move(m));
 	}
 
 	// Since the dimension is at least 2, there are at least 3 points and no ambiguity with iterators.
@@ -164,7 +164,7 @@ template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
 			m(i,j)=c(v,j);
 		}
 		}
-		return R::LA::sign_of_determinant(CGAL_MOVE(m));
+		return R::LA::sign_of_determinant(std::move(m));
 	}
 
 	template <class...U,class=typename std::enable_if<(sizeof...(U)>=3)>::type>
@@ -208,7 +208,7 @@ template<class R_> struct Linear_rank : private Store_kernel<R_> {
 		    m(j,i)=c(v,j);
 		  }
 		}
-		return R::LA::rank(CGAL_MOVE(m));
+		return R::LA::rank(std::move(m));
 	}
 };
 }
@@ -264,7 +264,7 @@ template<class R_> struct Contained_in_linear_hull : private Store_kernel<R_> {
 		int r1 = R::LA::rank(m);
 		// FIXME: Don't use eigen directly, go through an interface in LA...
 		m.conservativeResize(Eigen::NoChange, n);
-		int r2 = R::LA::rank(CGAL_MOVE(m));
+		int r2 = R::LA::rank(std::move(m));
 		return r1 == r2;
 		// TODO: This is very very far from optimal...
 	}
@@ -298,7 +298,7 @@ template<class R_> struct Affine_rank : private Store_kernel<R_> {
 		    // TODO: cache p0[j] in case it is computed?
 		  }
 		}
-		return R::LA::rank(CGAL_MOVE(m));
+		return R::LA::rank(std::move(m));
 	}
 };
 }
@@ -363,8 +363,8 @@ template<class R_> struct Contained_in_simplex : private Store_kernel<R_> {
 		}
 		// If the simplex has full dimension, there must be a solution, only the signs need to be checked.
 		if (n == d+1)
-		  LA::solve(a,CGAL_MOVE(m),CGAL_MOVE(b));
-		else if (!LA::solve_and_check(a,CGAL_MOVE(m),CGAL_MOVE(b)))
+		  LA::solve(a,std::move(m),std::move(b));
+		else if (!LA::solve_and_check(a,std::move(m),std::move(b)))
 		  return false;
 		for(int i=0;i<n;++i){
 		  if (a[i]<0) return false;
@@ -415,7 +415,7 @@ template<class R_> struct Linear_base : private Store_kernel<R_> {
 		    m(i,j)=c(v,j);
 		  }
 		}
-		Matrix b = R::LA::basis(CGAL_MOVE(m));
+		Matrix b = R::LA::basis(std::move(m));
 		for(int i=0; i < R::LA::columns(b); ++i){
 		  //*o++ = Vector(b.col(i));
 		  typedef
@@ -529,9 +529,9 @@ template<class R_> struct Power_side_of_power_sphere_raw : private Store_kernel<
 	    }
 	  }
 	  if(d%2)
-	    return -LA::sign_of_determinant(CGAL_MOVE(m));
+	    return -LA::sign_of_determinant(std::move(m));
 	  else
-	    return LA::sign_of_determinant(CGAL_MOVE(m));
+	    return LA::sign_of_determinant(std::move(m));
 	}
 };
 }
@@ -587,9 +587,9 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 	    }
 	  }
 	  if(d%2)
-	    return -LA::sign_of_determinant(CGAL_MOVE(m));
+	    return -LA::sign_of_determinant(std::move(m));
 	  else
-	    return LA::sign_of_determinant(CGAL_MOVE(m));
+	    return LA::sign_of_determinant(std::move(m));
 	}
 
 	template <class...U,class=typename std::enable_if<(sizeof...(U)>=4)>::type>
@@ -644,7 +644,7 @@ template <class R_> struct Construct_circumcenter : Store_kernel<R_> {
       CGAL_assertion (i == d);
       Vec res = typename CVec::Dimension()(d);;
       //std::cout << "Mat: " << m << "\n Vec: " << one << std::endl;
-      LA::solve(res, CGAL_MOVE(m), CGAL_MOVE(b));
+      LA::solve(res, std::move(m), std::move(b));
       //std::cout << "Sol: " << res << std::endl;
       return cp(d,LA::vector_begin(res),LA::vector_end(res));
     }
@@ -688,7 +688,7 @@ template <class R_> struct Construct_circumcenter : Store_kernel<R_> {
       for(j=0;j<k;++j) m(0,j)=1;
       b(0)=1;
 
-      LAd::solve(l,CGAL_MOVE(m),CGAL_MOVE(b));
+      LAd::solve(l,std::move(m),std::move(b));
 
       typename LA::Vector center=typename LA::Construct_vector::Dimension()(d);
       for(i=0;i<d;++i) center(i)=0;
