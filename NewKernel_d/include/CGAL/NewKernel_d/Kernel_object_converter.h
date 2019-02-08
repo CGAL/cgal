@@ -42,7 +42,7 @@ struct Point_converter_help {
 		return cp(conv(i(p,Begin_tag())),conv(i(p,End_tag())));
 	}
 };
-#ifdef CGAL_CXX11
+
 // This doesn't seem so useful, the compiler should be able to handle
 // the iterators just as efficiently.
 template <int d, class K1, class K2>
@@ -60,7 +60,6 @@ struct Point_converter_help<Dimension_tag<d>,K1,K2> {
 		return help(typename N_increasing_indices<d>::type(),k1,k2,conv,p);
 	}
 };
-#endif
 }
 template <class K1, class K2> struct KO_converter<Point_tag,K1,K2>
 : internal::Point_converter_help<typename K1::Default_ambient_dimension,K1,K2>

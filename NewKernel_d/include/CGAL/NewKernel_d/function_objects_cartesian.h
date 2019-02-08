@@ -35,9 +35,7 @@
 #include <CGAL/NewKernel_d/functor_properties.h>
 #include <CGAL/predicates/sign_of_determinant.h>
 #include <functional>
-#ifdef CGAL_CXX11
 #include <initializer_list>
-#endif
 
 namespace CGAL {
 namespace CartesianDKernelFunctors {
@@ -73,7 +71,6 @@ template<class R_,class D_=typename R_::Default_ambient_dimension,bool=internal:
 		return R::LA::sign_of_determinant(CGAL_MOVE(m));
 	}
 
-#ifdef CGAL_CXX11
 	// Since the dimension is at least 2, there are at least 3 points and no ambiguity with iterators.
 	// template <class...U,class=typename std::enable_if<std::is_same<Dimension_tag<sizeof...(U)-1>,typename R::Default_ambient_dimension>::value>::type>
 	template <class...U,class=typename std::enable_if<(sizeof...(U)>=3)>::type>
@@ -85,28 +82,8 @@ template<class R_,class D_=typename R_::Default_ambient_dimension,bool=internal:
 	result_type operator()(std::initializer_list<P> l) const {
 		return operator()(l.begin(),l.end());
 	}
-#else
-	//should we make it template to avoid instantiation for wrong dim?
-	//or iterate outside the class?
-#define CGAL_VAR(Z,J,I) m(I,J)=c(p##I,J)-c(x,J);
-#define CGAL_VAR2(Z,I,N) BOOST_PP_REPEAT(N,CGAL_VAR,I)
-#define CGAL_CODE(Z,N,_) \
-	result_type operator()(Point const&x, BOOST_PP_ENUM_PARAMS(N,Point const&p)) const { \
-		typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel()); \
-		Matrix m(N,N); \
-		BOOST_PP_REPEAT(N,CGAL_VAR2,N) \
-		return R::LA::sign_of_determinant(CGAL_MOVE(m)); \
-	}
-
-BOOST_PP_REPEAT_FROM_TO(7, 10, CGAL_CODE, _ )
-	// No need to do it for <=6, since that uses a different code path
-#undef CGAL_CODE
-#undef CGAL_VAR2
-#undef CGAL_VAR
-#endif
 };
 
-#ifdef CGAL_CXX11
 template<class R_,int d> struct Orientation_of_points<R_,Dimension_tag<d>,true> : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Orientation_of_points)
 	typedef R_ R;
@@ -139,40 +116,6 @@ template<class R_,int d> struct Orientation_of_points<R_,Dimension_tag<d>,true> 
 		return help2(Dimension_tag<d+1>(),f,e);
 	}
 };
-#else
-#define CGAL_VAR(Z,J,I) c(p##I,J)-x##J
-#define CGAL_VAR2(Z,I,N) BOOST_PP_ENUM(N,CGAL_VAR,I)
-#define CGAL_VAR3(Z,N,_) Point const&p##N=*++f;
-#define CGAL_VAR4(Z,N,_) RT const&x##N=c(x,N);
-#define CGAL_CODE(Z,N,_) \
-template<class R_> struct Orientation_of_points<R_,Dimension_tag<N>,true> : private Store_kernel<R_> { \
-	CGAL_FUNCTOR_INIT_STORE(Orientation_of_points) \
-	typedef R_ R; \
-	typedef typename Get_type<R, RT_tag>::type RT; \
-	typedef typename Get_type<R, Point_tag>::type Point; \
-	typedef typename Get_type<R, Orientation_tag>::type result_type; \
-	result_type operator()(Point const&x, BOOST_PP_ENUM_PARAMS(N,Point const&p)) const { \
-		typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel()); \
-		BOOST_PP_REPEAT(N,CGAL_VAR4,) \
-		return sign_of_determinant<RT>(BOOST_PP_ENUM(N,CGAL_VAR2,N)); \
-	} \
-	template<class Iter> \
-	result_type operator()(Iter f, Iter CGAL_assertion_code(e))const{ \
-		Point const&x=*f; \
-		BOOST_PP_REPEAT(N,CGAL_VAR3,) \
-		CGAL_assertion(++f==e); \
-		return operator()(x,BOOST_PP_ENUM_PARAMS(N,p)); \
-	} \
-};
-
-	BOOST_PP_REPEAT_FROM_TO(2, 7, CGAL_CODE, _ )
-#undef CGAL_CODE
-#undef CGAL_VAR4
-#undef CGAL_VAR3
-#undef CGAL_VAR2
-#undef CGAL_VAR
-
-#endif
 
 template<class R_> struct Orientation_of_points<R_,Dimension_tag<1>,true> : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Orientation_of_points)
@@ -224,7 +167,6 @@ template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
 		return R::LA::sign_of_determinant(CGAL_MOVE(m));
 	}
 
-#ifdef CGAL_CXX11
 	template <class...U,class=typename std::enable_if<(sizeof...(U)>=3)>::type>
 	result_type operator()(U&&...u) const {
 		return operator()({std::forward<U>(u)...});
@@ -234,9 +176,6 @@ template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
 	result_type operator()(std::initializer_list<V> l) const {
 		return operator()(l.begin(),l.end());
 	}
-#else
-	//TODO
-#endif
 };
 }
 
@@ -480,11 +419,7 @@ template<class R_> struct Linear_base : private Store_kernel<R_> {
 		for(int i=0; i < R::LA::columns(b); ++i){
 		  //*o++ = Vector(b.col(i));
 		  typedef
-#ifdef CGAL_CXX11
 		    decltype(std::declval<const Matrix>()(0,0))
-#else
-		    FT
-#endif
 		    Ref;
 		  typedef Iterator_from_indices<Matrix, FT, Ref,
 			  internal::Matrix_col_access<Ref> > IFI;
@@ -657,7 +592,6 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 	    return LA::sign_of_determinant(CGAL_MOVE(m));
 	}
 
-#ifdef CGAL_CXX11
 	template <class...U,class=typename std::enable_if<(sizeof...(U)>=4)>::type>
 	result_type operator()(U&&...u) const {
 		return operator()({std::forward<U>(u)...});
@@ -667,9 +601,6 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 	result_type operator()(std::initializer_list<P> l) const {
 		return operator()(l.begin(),l.end());
 	}
-#else
-	//TODO
-#endif
 };
 }
 
@@ -816,7 +747,6 @@ template<class R_> struct Side_of_bounded_sphere : private Store_kernel<R_> {
 	  return enum_cast<Bounded_side> (sos (f, e, p0) * op (f, e));
 	}
 
-#ifdef CGAL_CXX11
 	template <class...U,class=typename std::enable_if<(sizeof...(U)>=4)>::type>
 	result_type operator()(U&&...u) const {
 		return operator()({std::forward<U>(u)...});
@@ -826,9 +756,6 @@ template<class R_> struct Side_of_bounded_sphere : private Store_kernel<R_> {
 	result_type operator()(std::initializer_list<P> l) const {
 		return operator()(l.begin(),l.end());
 	}
-#else
-	//TODO
-#endif
 };
 }
 
@@ -1213,15 +1140,9 @@ template<class R_> struct Compare_lexicographically : private Store_kernel<R_> {
 		CI c(this->kernel());
 
 
-#ifdef CGAL_CXX11
                 auto a_begin=c(a,Begin_tag());
                 auto b_begin=c(b,Begin_tag());
                 auto a_end=c(a,End_tag());
-#else
-                typename CI::result_type a_begin=c(a,Begin_tag());
-                typename CI::result_type b_begin=c(b,Begin_tag());
-                typename CI::result_type a_end=c(a,End_tag());
-#endif
 		result_type res;
 		// can't we do slightly better for Uncertain<*> ?
 		// after res=...; if(is_uncertain(res))return indeterminate<result_type>();
@@ -1285,15 +1206,9 @@ template<class R_> struct Equal_points : private Store_kernel<R_> {
 		CI c(this->kernel());
 
 
-#ifdef CGAL_CXX11
                 auto a_begin=c(a,Begin_tag());
                 auto b_begin=c(b,Begin_tag());
                 auto a_end=c(a,End_tag());
-#else
-                typename CI::result_type a_begin=c(a,Begin_tag());
-                typename CI::result_type b_begin=c(b,Begin_tag());
-                typename CI::result_type a_end=c(a,End_tag());
-#endif
 
 		result_type res = true;
 		// Is using CGAL::possibly for Uncertain really an optimization?

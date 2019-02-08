@@ -31,9 +31,6 @@
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
-#ifndef CGAL_CXX11
-#include <boost/preprocessor/repetition.hpp>
-#endif
 #include <boost/utility/result_of.hpp>
 
 namespace CGAL {
@@ -75,7 +72,6 @@ public:
 
   typedef          R_                       R;
 
-#ifdef CGAL_CXX11
   template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Vector_d> >::value>::type> explicit Vector_d(U&&...u)
 	  : Rep(CVBase()(std::forward<U>(u)...)){}
 
@@ -105,34 +101,6 @@ public:
   Vector_d(Null_vector&& v)
     : Rep(CVBase()(std::move(v))) {}
 
-#else
-
-  Vector_d() : Rep(CVBase()()) {}
-
-  Vector_d(Rep const& v) : Rep(v) {} // try not to use it
-
-#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class T)> \
-  explicit Vector_d(BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
-  : Rep(CVBase()( \
-	BOOST_PP_ENUM_PARAMS(N,t))) {} \
-  \
-  template<class F,BOOST_PP_ENUM_PARAMS(N,class T)> \
-  Vector_d(Eval_functor,F const& f,BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
-  : Rep(f(BOOST_PP_ENUM_PARAMS(N,t))) {}
-  /*
-  template<BOOST_PP_ENUM_PARAMS(N,class T)> \
-  Vector_d(Eval_functor,BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
-  : Rep(Eval_functor(), BOOST_PP_ENUM_PARAMS(N,t)) {}
-  */
-
-  BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
-#undef CGAL_CODE
-
-  // this one should be implicit
-  Vector_d(Null_vector const& v)
-    : Rep(CVBase()(v)) {}
-
-#endif
 
   typename boost::result_of<CCBase(Rep,int)>::type cartesian(int i)const{
 	  return CCBase()(rep(),i);

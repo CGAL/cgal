@@ -105,48 +105,21 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct Array_vector {
 		};
 
 		struct Values {
-#ifdef CGAL_CXX11
 			template<class...U>
 				Vector operator()(U&&...u) const {
 					static_assert(sizeof...(U)<=d_,"too many arguments");
 					Vector a={{forward_safe<NT,U>(u)...}};
 					return a;
 				}
-#else
-
-#define CGAL_CODE(Z,N,_) Vector operator()(BOOST_PP_ENUM_PARAMS(N,NT const& t)) const { \
-	CGAL_assertion(N<=d_); \
-	Vector a={{BOOST_PP_ENUM_PARAMS(N,t)}}; \
-	return a; \
-}
-BOOST_PP_REPEAT_FROM_TO(1, 11, CGAL_CODE, _ )
-#undef CGAL_CODE
-
-#endif
 		};
 
 		struct Values_divide {
-#ifdef CGAL_CXX11
 			template<class H,class...U>
 				Vector operator()(H const& h,U&&...u) const {
 					static_assert(sizeof...(U)<=d_,"too many arguments");
 					Vector a={{Rational_traits<NT>().make_rational(std::forward<U>(u),h)...}};
 					return a;
 				}
-#else
-
-#define CGAL_VAR(Z,N,_) Rational_traits<NT>().make_rational( t##N , h)
-#define CGAL_CODE(Z,N,_) template <class H> Vector \
-			operator()(H const&h, BOOST_PP_ENUM_PARAMS(N,NT const& t)) const { \
-				CGAL_assertion(N<=d_); \
-				Vector a={{BOOST_PP_ENUM(N,CGAL_VAR,_)}}; \
-				return a; \
-			}
-			BOOST_PP_REPEAT_FROM_TO(1, 11, CGAL_CODE, _ )
-#undef CGAL_CODE
-#undef CGAL_VAR
-
-#endif
 		};
 	};
 
