@@ -338,6 +338,8 @@ public:
     this->current_item = NULL;
 
     QAction *actionDisplayAngles= new QAction(QString("Display Properties"), mw);
+    QAction *actionHeatMethod= new QAction(QString("Heat Method"), mw);
+    actionHeatMethod->setProperty("submenuName", "Color");
 
     rm = 1.0;
     rM = 0.0;
@@ -350,7 +352,16 @@ public:
     if(actionDisplayAngles) {
       connect(actionDisplayAngles, SIGNAL(triggered()),
               this, SLOT(openDialog()));
+      if(actionHeatMethod)
+      {
+        connect(actionHeatMethod, &QAction::triggered,
+                this, [this](){
+          this->dock_widget->propertyBox->setCurrentIndex(2);
+          this->dock_widget->show();
+        });
+      }
       _actions << actionDisplayAngles;
+      _actions << actionHeatMethod;
 
     }
     dock_widget = new DockWidget("Property Displaying", mw);
