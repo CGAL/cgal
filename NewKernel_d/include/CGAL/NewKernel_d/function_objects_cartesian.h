@@ -551,11 +551,13 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 	typedef typename R::LA::template Rebind_dimension<D1,D2>::Other LA;
 	typedef typename LA::Square_matrix Matrix;
 
+	/* Undocumented, removed
 	template<class Iter>
 	result_type operator()(Iter f, Iter const& e)const{
 	  Point const& p0=*f++; // *--e ?
 	  return this->operator()(f,e,p0);
 	}
+	*/
 
 	template<class Iter>
 	result_type operator()(Iter f, Iter const& e, Point const& p0) const {

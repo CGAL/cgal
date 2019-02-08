@@ -537,7 +537,7 @@ void test3(){
   assert(abs(sd(e,a)-32)<.0001);
   P tab[]={a,b,c,d,e};
   std::cout << po (&tab[0],tab+4) << ' ';
-  std::cout << sos(&tab[0],tab+5) << ' ';
+  std::cout << sos(&tab[1],tab+5,tab[0]) << ' ';
   std::cout << sbs(tab+1,tab+5,tab[0]) << std::endl;
   FO fo=cfo(&tab[0],tab+3);
   std::cout << fo;
@@ -570,13 +570,13 @@ void test3(){
   std::cout << ifsos(fo3,yy+0,yy+3,yy[3]) << ' ';
   std::cout << ifsos(fo3,yy+1,yy+4,yy[0]) << '\n';
   P buf[]={cp(100,900,0),y[0],y[1],y[2],y[3]};
-  std::cout << sos(buf+0,buf+5) << ' ';
+  std::cout << sos(buf+1,buf+5,buf[0]) << ' ';
   buf[1]=y[1];buf[2]=y[2];buf[3]=y[3];buf[4]=y[0];
-  std::cout << sos(buf+0,buf+5) << ' ';
+  std::cout << sos(buf+1,buf+5,buf[0]) << ' ';
   buf[1]=yy[0];buf[2]=yy[1];buf[3]=yy[2];buf[4]=yy[3];
-  std::cout << sos(buf+0,buf+5) << ' ';
+  std::cout << sos(buf+1,buf+5,buf[0]) << ' ';
   buf[1]=yy[1];buf[2]=yy[2];buf[3]=yy[3];buf[4]=yy[0];
-  std::cout << sos(buf+0,buf+5) << '\n';
+  std::cout << sos(buf+1,buf+5,buf[0]) << '\n';
   assert(cah(y+0,y+3,y[3]));
   assert(!cah(y+0,y+3,buf[0]));
   assert(cl(a,a)==CGAL::EQUAL);
