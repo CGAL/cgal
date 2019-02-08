@@ -31,7 +31,6 @@
 
 #include <type_traits>
 #include <utility>
-#define CGAL_FORWARDABLE(T) T&&
 #define CGAL_FORWARD(T,t) std::forward<T>(t)
 #include <boost/utility/enable_if.hpp>
 #include <boost/preprocessor/repetition.hpp>

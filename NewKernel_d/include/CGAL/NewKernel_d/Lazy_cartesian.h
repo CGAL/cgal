@@ -37,7 +37,7 @@ struct Nth_iterator_element : private Store_kernel<K> {
   Nth_iterator_element(){}
   Nth_iterator_element(K const&k):Store_kernel<K>(k){}
   typedef typename Get_type<K, typename iterator_tag_traits<T>::value_tag>::type result_type;
-  template<class U> result_type operator()(CGAL_FORWARDABLE(U) u, int i) const {
+  template<class U> result_type operator()(U&& u, int i) const {
     typename Get_functor<K, Construct_ttag<T> >::type ci(this->kernel());
     return *cpp0x::next(ci(CGAL_FORWARD(U,u),Begin_tag()),i);
   }

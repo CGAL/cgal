@@ -73,7 +73,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct Vector_vector {
 
 		struct Iterator_and_last {
 			template<typename Iter,typename T>
-				Vector operator()(int d,Iter const& f,Iter const& e,CGAL_FORWARDABLE(T) t) const {
+				Vector operator()(int d,Iter const& f,Iter const& e,T&& t) const {
 					CGAL_assertion(d==std::distance(f,e)+1);
 					Vector a;
 					a.reserve(d+1);

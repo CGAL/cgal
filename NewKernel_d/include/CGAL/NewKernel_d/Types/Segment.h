@@ -82,7 +82,7 @@ template<class R_> struct Construct_segment : Store_kernel<R_> {
 	}
 	// T should only be std::piecewise_construct_t, but we shouldn't fail if it doesn't exist.
 	template<class T,class U,class V>
-	result_type operator()(CGAL_FORWARDABLE(T),CGAL_FORWARDABLE(U) u,CGAL_FORWARDABLE(V) v)const{
+	result_type operator()(T&&, U&& u, V&& v)const{
 		CP cp(this->kernel());
 		result_type r = {{
 			call_on_tuple_elements<Point>(cp, CGAL_FORWARD(U,u)),
