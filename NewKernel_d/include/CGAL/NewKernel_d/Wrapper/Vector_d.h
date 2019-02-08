@@ -102,19 +102,19 @@ public:
     : Rep(CVBase()(std::move(v))) {}
 
 
-  typename boost::result_of<CCBase(Rep,int)>::type cartesian(int i)const{
+  decltype(auto) cartesian(int i)const{
 	  return CCBase()(rep(),i);
   }
 
-  typename boost::result_of<CCBase(Rep,int)>::type operator[](int i)const{
+  decltype(auto) operator[](int i)const{
 	  return CCBase()(rep(),i);
   }
 
-  typename boost::result_of<CVI(Rep,Begin_tag)>::type cartesian_begin()const{
+  decltype(auto) cartesian_begin()const{
 	  return CVI()(rep(),Begin_tag());
   }
 
-  typename boost::result_of<CVI(Rep,End_tag)>::type cartesian_end()const{
+  decltype(auto) cartesian_end()const{
 	  return CVI()(rep(),End_tag());
   }
 
@@ -123,99 +123,12 @@ public:
     return typename Get_functor<R, Opposite_vector_tag>::type()(*this);
   }
 
-  /*
-  Direction_d direction() const
-  {
-    return R().construct_direction_d_object()(*this);
-  }
-
-  Vector_d transform(const Aff_transformation_d &t) const
-  {
-    return t.transform(*this);
-  }
-
-  Vector_d operator/(const RT& c) const
-  {
-   return R().construct_divided_vector_d_object()(*this,c);
-  }
-
-  Vector_d operator/(const typename First_if_different<FT_,RT>::Type & c) const
-  {
-   return R().construct_divided_vector_d_object()(*this,c);
-  }
-
-  typename Qualified_result_of<typename R::Compute_x_3, Vector_3>::type
-  x() const
-  {
-    return R().compute_x_3_object()(*this);
-  }
-
-  typename Qualified_result_of<typename R::Compute_y_3, Vector_3>::type
-  y() const
-  {
-    return R().compute_y_3_object()(*this);
-  }
-
-  typename Qualified_result_of<typename R::Compute_z_3, Vector_3>::type
-  z() const
-  {
-    return R().compute_z_3_object()(*this);
-  }
-
-  typename Qualified_result_of<typename R::Compute_hx_3, Vector_3>::type
-  hx() const
-  {
-    return R().compute_hx_3_object()(*this);
-  }
-
-  typename Qualified_result_of<typename R::Compute_hy_3, Vector_3>::type
-  hy() const
-  {
-    return R().compute_hy_3_object()(*this);
-  }
-
-  typename Qualified_result_of<typename R::Compute_hz_3, Vector_3>::type
-  hz() const
-  {
-    return R().compute_hz_3_object()(*this);
-  }
-
-  typename Qualified_result_of<typename R::Compute_hw_3, Vector_3>::type
-  hw() const
-  {
-    return R().compute_hw_3_object()(*this);
-  }
-
-  typename Qualified_result_of<typename R::Compute_x_3, Vector_3>::type
-  cartesian(int i) const
-  {
-    CGAL_kernel_precondition( (i == 0) || (i == 1) || (i == 2) );
-    if (i==0) return x();
-    if (i==1) return y();
-    return z();
-  }
-
-  typename Qualified_result_of<typename R::Compute_hw_3, Vector_3>::type
-  homogeneous(int i) const
-  {
-    CGAL_kernel_precondition( (i >= 0) || (i <= 3) );
-    if (i==0) return hx();
-    if (i==1) return hy();
-    if (i==2) return hz();
-    return hw();
-  }
-
-  int dimension() const // bad idea?
-  {
-      return rep.dimension();
-  }
-*/
   int dimension() const {
     typedef typename Get_functor<Kbase, Vector_dimension_tag>::type VDBase;
     return VDBase()(rep());
   }
 
-  typename boost::result_of<SLBase(Rep)>::type squared_length()const{
+  decltype(auto) squared_length()const{
 	  return SLBase()(rep());
   }
 };
@@ -226,14 +139,8 @@ template <class R_> Vector_d<R_>::Vector_d(Vector_d &)=default;
 template <class R_>
 std::ostream& operator <<(std::ostream& os, const Vector_d<R_>& v)
 {
-  typedef typename R_::Kernel_base Kbase;
-  typedef typename Get_functor<Kbase, Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CVI;
-  // Should just be "auto"...
-  typename CGAL::decay<typename boost::result_of<
-        CVI(typename Vector_d<R_>::Rep,Begin_tag)
-      >::type>::type
-    b = v.cartesian_begin(),
-    e = v.cartesian_end();
+  auto b = v.cartesian_begin();
+  auto e = v.cartesian_end();
   if(is_ascii(os))
   {
     os << v.dimension();
