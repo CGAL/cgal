@@ -208,8 +208,7 @@ template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
 	template<class Iter>
 	result_type operator()(Iter f, Iter e)const{
 		typename Get_functor<R, Compute_vector_cartesian_coordinate_tag>::type c(this->kernel());
-		typename Get_functor<R, Point_dimension_tag>::type vd(this->kernel());
-		// FIXME: Uh? Using it on a vector ?!
+		typename Get_functor<R, Vector_dimension_tag>::type vd(this->kernel());
 		Vector const& v0=*f;
 		int d=vd(v0);
 		Matrix m(d,d);
@@ -241,7 +240,7 @@ template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
 };
 }
 
-CGAL_KD_DEFAULT_FUNCTOR(Orientation_of_vectors_tag,(CartesianDKernelFunctors::Orientation_of_vectors<K>),(Vector_tag),(Point_dimension_tag,Compute_vector_cartesian_coordinate_tag));
+CGAL_KD_DEFAULT_FUNCTOR(Orientation_of_vectors_tag,(CartesianDKernelFunctors::Orientation_of_vectors<K>),(Vector_tag),(Vector_dimension_tag,Compute_vector_cartesian_coordinate_tag));
 
 namespace CartesianDKernelFunctors {
 template<class R_> struct Linear_rank : private Store_kernel<R_> {
@@ -255,11 +254,10 @@ template<class R_> struct Linear_rank : private Store_kernel<R_> {
 	template<class Iter>
 	result_type operator()(Iter f, Iter e)const{
 		typename Get_functor<R, Compute_vector_cartesian_coordinate_tag>::type c(this->kernel());
-		typename Get_functor<R, Point_dimension_tag>::type vd(this->kernel());
+		typename Get_functor<R, Vector_dimension_tag>::type vd(this->kernel());
 		std::ptrdiff_t n=std::distance(f,e);
 		if (n==0) return 0;
 		Vector const& v0 = *f;
-		// FIXME: Uh? Using it on a vector ?!
 		int d=vd(v0);
 		Matrix m(d,n);
 		for(int j=0;j<d;++j){
@@ -276,7 +274,7 @@ template<class R_> struct Linear_rank : private Store_kernel<R_> {
 };
 }
 
-CGAL_KD_DEFAULT_FUNCTOR(Linear_rank_tag,(CartesianDKernelFunctors::Linear_rank<K>),(Vector_tag),(Point_dimension_tag,Compute_vector_cartesian_coordinate_tag));
+CGAL_KD_DEFAULT_FUNCTOR(Linear_rank_tag,(CartesianDKernelFunctors::Linear_rank<K>),(Vector_tag),(Vector_dimension_tag,Compute_vector_cartesian_coordinate_tag));
 
 namespace CartesianDKernelFunctors {
 template<class R_> struct Linearly_independent : private Store_kernel<R_> {
@@ -286,9 +284,8 @@ template<class R_> struct Linearly_independent : private Store_kernel<R_> {
 
 	template<class Iter>
 	result_type operator()(Iter f, Iter e)const{
-		typename Get_functor<R, Point_dimension_tag>::type vd(this->kernel());
+		typename Get_functor<R, Vector_dimension_tag>::type vd(this->kernel());
 		std::ptrdiff_t n=std::distance(f,e);
-		// FIXME: Uh? Using it on a vector ?!
 		int d=vd(*f);
 		if (n>d) return false;
 		typename Get_functor<R, Linear_rank_tag>::type lr(this->kernel());
@@ -297,7 +294,7 @@ template<class R_> struct Linearly_independent : private Store_kernel<R_> {
 };
 }
 
-CGAL_KD_DEFAULT_FUNCTOR(Linearly_independent_tag,(CartesianDKernelFunctors::Linearly_independent<K>),(Vector_tag),(Point_dimension_tag,Linear_rank_tag));
+CGAL_KD_DEFAULT_FUNCTOR(Linearly_independent_tag,(CartesianDKernelFunctors::Linearly_independent<K>),(Vector_tag),(Vector_dimension_tag,Linear_rank_tag));
 
 namespace CartesianDKernelFunctors {
 template<class R_> struct Contained_in_linear_hull : private Store_kernel<R_> {
@@ -311,10 +308,9 @@ template<class R_> struct Contained_in_linear_hull : private Store_kernel<R_> {
 	template<class Iter,class V>
 	result_type operator()(Iter f, Iter e,V const&w)const{
 		typename Get_functor<R, Compute_vector_cartesian_coordinate_tag>::type c(this->kernel());
-		typename Get_functor<R, Point_dimension_tag>::type vd(this->kernel());
+		typename Get_functor<R, Vector_dimension_tag>::type vd(this->kernel());
 		std::ptrdiff_t n=std::distance(f,e);
 		if (n==0) return false;
-		// FIXME: Uh? Using it on a vector ?!
 		int d=vd(w);
 		Matrix m(d,n+1);
 		for(int i=0; f!=e; ++f,++i){
@@ -336,7 +332,7 @@ template<class R_> struct Contained_in_linear_hull : private Store_kernel<R_> {
 };
 }
 
-CGAL_KD_DEFAULT_FUNCTOR(Contained_in_linear_hull_tag,(CartesianDKernelFunctors::Contained_in_linear_hull<K>),(Vector_tag),(Point_dimension_tag,Compute_vector_cartesian_coordinate_tag));
+CGAL_KD_DEFAULT_FUNCTOR(Contained_in_linear_hull_tag,(CartesianDKernelFunctors::Contained_in_linear_hull<K>),(Vector_tag),(Vector_dimension_tag,Compute_vector_cartesian_coordinate_tag));
 
 namespace CartesianDKernelFunctors {
 template<class R_> struct Affine_rank : private Store_kernel<R_> {
@@ -464,12 +460,11 @@ template<class R_> struct Linear_base : private Store_kernel<R_> {
 	template<class Iter, class Oter>
 	result_type operator()(Iter f, Iter e, Oter o)const{
 		typename Get_functor<R, Compute_vector_cartesian_coordinate_tag>::type c(this->kernel());
-		typename Get_functor<R, Point_dimension_tag>::type vd(this->kernel());
+		typename Get_functor<R, Vector_dimension_tag>::type vd(this->kernel());
 		typename Get_functor<R, Construct_ttag<Vector_tag> >::type cv(this->kernel());
 		std::ptrdiff_t n=std::distance(f,e);
 		if (n==0) return;
 		Vector const& v0 = *f;
-		// FIXME: Uh? Using it on a vector ?!
 		int d=vd(v0);
 		Matrix m(d,n);
 		for(int j=0;j<d;++j){
@@ -499,7 +494,7 @@ template<class R_> struct Linear_base : private Store_kernel<R_> {
 };
 }
 
-CGAL_KD_DEFAULT_FUNCTOR(Linear_base_tag,(CartesianDKernelFunctors::Linear_base<K>),(Vector_tag),(Point_dimension_tag,Compute_vector_cartesian_coordinate_tag));
+CGAL_KD_DEFAULT_FUNCTOR(Linear_base_tag,(CartesianDKernelFunctors::Linear_base<K>),(Vector_tag),(Vector_dimension_tag,Compute_vector_cartesian_coordinate_tag));
 
 #if 0
 namespace CartesianDKernelFunctors {
