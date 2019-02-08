@@ -292,6 +292,10 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
   TVPM tvpm = choose_param(get_param(tnp, internal_np::vertex_point),
                            get_const_property_map(vertex_point, tmesh));
 
+#ifdef CGAL_PMP_SNAP_DEBUG
+  std::cout << "Snapping vertices to vertices" << std::endl;
+#endif
+
   // Try to snap vertices
   std::vector<Box> boxes;
   CGAL::cpp11::unordered_set<vertex_descriptor> unique_vertices;
@@ -357,11 +361,6 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
   Container_by_target& container_by_target = snapping_pairs.template get<1>();
   Container_by_distance& container_by_dist = snapping_pairs.template get<2>();
 
-#ifdef CGAL_PMP_SNAP_VERBOSE
-  for(const auto& ele : container_by_dist)
-    std::cout << "vs: " << ele.vs << " vt: " << ele.vt << " sq_dist: " << ele.sq_dist << std::endl;
-#endif
-
   std::size_t counter = 0;
 
   // Now, move the source vertices when the mapping is surjective
@@ -374,7 +373,7 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
     CGAL_assertion(sp.sq_dist >= prev);
     CGAL_assertion_code(prev = sp.sq_dist;)
 
-#ifdef CGAL_PMP_SNAP_VERBOSE
+#ifdef CGAL_PMP_SNAP_DEBUG
     std::cout << "Snapping " << vs << " (" << get(svpm, vs) << ") "
               << " to " << vt << " (" << get(tvpm, vt) << ") at dist: " << sp.sq_dist << std::endl;
 #endif
@@ -654,6 +653,10 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
   // start by snapping vertices together to simplify things
   snapped_n = snap_vertex_range_onto_vertex_range(source_hrange, pms, target_hrange, pmt, tol_pmap, nps, npt);
 
+#ifdef CGAL_PMP_SNAP_DEBUG
+  std::cout << "Snapping vertices to edges" << std::endl;
+#endif
+
   typedef std::map<Point, std::set<vertex_descriptor /*target vd*/> >     Occurence_map;
   Occurence_map occurrences_as_target;
   BOOST_FOREACH(halfedge_descriptor hd, target_hrange)
@@ -716,7 +719,7 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
     const Point& closest_p = traversal_traits.closest_point();
     const FT sq_dist_to_closest = gt.compute_squared_distance_3_object()(query, closest_p);
 
-#ifdef CGAL_PMP_SNAP_VERBOSE
+#ifdef CGAL_PMP_SNAP_DEBUG
     std::cout << "  Query: (" << query << ") [vd: " << vd << "] has closest point: (" << closest_p << ")" << std::endl
               << "    at distance " << gt.compute_squared_distance_3_object()(query, closest_p)
               << "  with a tolerance of " << sq_eps << std::endl;
@@ -775,14 +778,14 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
     const halfedge_descriptor mt_hd_opp = opposite(mt_hd, pmt);
     CGAL_assertion(!is_border(mt_hd_opp, pmt));
 
-#ifdef CGAL_PMP_SNAP_VERBOSE
+#ifdef CGAL_PMP_SNAP_DEBUG
     std::cout << "  mthds: " << get(vpmt, source(mt_hd, pmt)) << std::endl;
     std::cout << "  mthdt: " << get(vpmt, target(mt_hd, pmt)) << std::endl;
 #endif
 
     if(mt.second.size() > 1)
     {
-#ifdef CGAL_PMP_SNAP_VERBOSE
+#ifdef CGAL_PMP_SNAP_DEBUG
       std::cout << " MUST SORT ON BORDER!" << std::endl;
 #endif
       /// \todo Sorting the projected positions is too simple (for example, this doesn't work
@@ -797,8 +800,10 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
     halfedge_descriptor hd_to_split = mt_hd;
     BOOST_FOREACH(const Point& p, mt.second)
     {
-#ifdef CGAL_PMP_SNAP_VERBOSE
-      std::cout << "  split " << pmt.point(source(hd_to_split, pmt)) << " --- " << pmt.point(target(hd_to_split, pmt)) << std::endl;
+#ifdef CGAL_PMP_SNAP_DEBUG
+      std::cout << "  split " << hd_to_split
+                << " vs " << source(hd_to_split, pmt) << " (" << pmt.point(source(hd_to_split, pmt)) << ")"
+                << " --- vt " << target(hd_to_split, pmt) << " (" << pmt.point(target(hd_to_split, pmt)) << ")" << std::endl;
       std::cout << "  with pos " << p << std::endl;
 #endif
 
@@ -831,7 +836,7 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
       const Point opp = get(vpmt, target(next(opposite(res, pmt), pmt), pmt));
 
       // Check if 'p' is "visible" from 'opp' (i.e. its projection on the plane 'Pl(left, opp, right)'
-      // falls in the cone with appex 'opp' and sides given by 'left' and 'right')
+      // falls in the cone with apex 'opp' and sides given by 'left' and 'right')
       const Vector n = gt.construct_orthogonal_vector_3_object()(right_pt, left_pt, opp);
 
       const Point trans_left_pt = gt.construct_translated_point_3_object()(left_pt, n);
@@ -844,7 +849,8 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
 
       if(is_visible)
       {
-        halfedge_descriptor new_hd = CGAL::Euler::split_face(hd_to_split_opp, prev(prev(mt_hd_opp, pmt), pmt), pmt);
+        halfedge_descriptor new_hd = CGAL::Euler::split_face(hd_to_split_opp,
+                                                             prev(prev(mt_hd_opp, pmt), pmt), pmt);
         hd_to_split = opposite(prev(new_hd, pmt), pmt);
       }
       else
