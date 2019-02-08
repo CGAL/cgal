@@ -469,7 +469,6 @@ private Q_SLOTS:
     replaceRamp();
     item->face_graph()->collect_garbage();
 
-    item->face_graph()->collect_garbage();
     switch(dock_widget->propertyBox->currentIndex()){
     case 0:
       displayAngles(item);
@@ -834,7 +833,6 @@ private Q_SLOTS:
               );
     }
 
-    // AF: So far we only deal with adding sources
     BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
       if(is_source[vd]){
         if(iDT){

@@ -1429,18 +1429,18 @@ void Scene_surface_mesh_item::setItemIsMulticolor(bool b)
 
 void Scene_surface_mesh_item::show_feature_edges(bool b)
 {
+  d->has_feature_edges = b;
   if(b)
   {
     d->e_is_feature_map = d->smesh_->add_property_map<boost::graph_traits<SMesh>::edge_descriptor,bool>("e:is_feature").first;
     invalidate(COLORS);
     itemChanged();
   }
-  d->has_feature_edges = b;
 }
 
 bool Scene_surface_mesh_item::isItemMulticolor()
 {
-  return d->has_fcolors;
+  return d->has_fcolors || d->has_vcolors;
 }
 
 bool Scene_surface_mesh_item::hasPatchIds()
