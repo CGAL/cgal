@@ -28,7 +28,7 @@ typedef CGAL::Polyhedron_3<EPICK, CGAL::Polyhedron_items_with_id_3>   Polyhedron
 typedef CGAL::Surface_mesh<EPICK::Point_3>                            Surface_mesh;
 
 template <typename Kernel, typename Mesh>
-void test()
+void test_1()
 {
   typedef typename Kernel::FT                                         FT;
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor       vertex_descriptor;
@@ -121,16 +121,51 @@ void test()
   full_snap_out << std::setprecision(17) << fg_source_cpy;
 }
 
+template <typename Kernel, typename Mesh>
+void test_2()
+{
+  typedef typename Kernel::FT                                         FT;
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor       vertex_descriptor;
+  typedef typename boost::graph_traits<Mesh>::halfedge_descriptor     halfedge_descriptor;
+
+  Mesh fg_source, fg_target;
+
+  std::ifstream source_input("data_snapping/border_snapping_source_2.off");
+  if(!source_input || !(source_input >> fg_source))
+  {
+    std::cerr << "Error: cannot open source mesh\n";
+    return;
+  }
+
+  std::ifstream target_input("data_snapping/border_snapping_target_2.off");
+  if(!target_input || !(target_input >> fg_target))
+  {
+    std::cerr << "Error: cannot open target mesh\n";
+    return;
+  }
+
+  // This configuration has three vertices close to a target vertex, it just to make sure that
+  // if a target vertex is already occupied, the source vertex will go to the next one that is
+  // within tolerance and is available
+  CGAL::Constant_property_map<vertex_descriptor, FT> tol_map(0.5);
+  std::size_t res = PMP::internal::snap_border_vertices_onto_vertex_range(fg_source, fg_target, tol_map);
+  std::cout << "res: " << res << " vertices" << std::endl;
+  assert(res == 3);
+}
+
 int main(int, char**)
 {
+//  std::cout << "TEST EPECK POLYHEDRON" << std::endl;
+//  test_1<EPECK, Exact_polyhedron>();
+
+//  std::cout << std::endl << "TEST EPICK POLYHEDRON" << std::endl;
+//  test_1<EPICK, Polyhedron>();
+
+//  std::cout << std::endl << "TEST EPICK SURFACE MESH" << std::endl;
+//  test_1<EPICK, Surface_mesh>();
+
   std::cout << "TEST EPECK POLYHEDRON" << std::endl;
-  test<EPECK, Exact_polyhedron>();
-
-  std::cout << std::endl << "TEST EPICK POLYHEDRON" << std::endl;
-  test<EPICK, Polyhedron>();
-
-  std::cout << std::endl << "TEST EPICK SURFACE MESH" << std::endl;
-  test<EPICK, Surface_mesh>();
+  test_2<EPECK, Exact_polyhedron>();
 
   return EXIT_SUCCESS;
 }
