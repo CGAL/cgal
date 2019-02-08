@@ -43,8 +43,6 @@
 #include <boost/mpl/not.hpp>
 #include <boost/type_traits.hpp>
 
-#define CGAL_BOOSTD std::
-
 namespace CGAL {
 namespace internal {
 	BOOST_MPL_HAS_XXX_TRAIT_DEF(type)

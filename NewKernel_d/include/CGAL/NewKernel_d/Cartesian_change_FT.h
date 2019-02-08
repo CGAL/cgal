@@ -48,7 +48,7 @@ struct Cartesian_change_FT_base : public
     typedef transforming_iterator<FT_converter,typename Kernel_base::Vector_cartesian_const_iterator> Vector_cartesian_const_iterator;
     //FIXME: use Iterator_list!
     /*
-    template<class T,bool=CGAL_BOOSTD is_same<typename iterator_tag_traits<T>::value_tag,FT_tag>::value>
+    template<class T,bool= std::is_same<typename iterator_tag_traits<T>::value_tag,FT_tag>::value>
     struct Iterator : Get_type<Kernel_base,T> {};
     template<class T> struct Iterator<T,true> {
       typedef transforming_iterator<FT_converter,typename Get_type<Kernel_base,T>::type> type;
