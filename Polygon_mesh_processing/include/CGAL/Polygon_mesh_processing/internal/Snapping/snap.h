@@ -293,7 +293,9 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
                            get_const_property_map(vertex_point, tmesh));
 
 #ifdef CGAL_PMP_SNAP_DEBUG
-  std::cout << "Snapping vertices to vertices" << std::endl;
+  std::cout << "Vertex-to-Vertex snapping with ranges of size: "
+            << std::distance(source_hrange.begin(), source_hrange.end()) << " and "
+            << std::distance(target_hrange.begin(), target_hrange.end()) << std::endl;
 #endif
 
   // Try to snap vertices
@@ -374,8 +376,8 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
     CGAL_assertion_code(prev = sp.sq_dist;)
 
 #ifdef CGAL_PMP_SNAP_DEBUG
-    std::cout << "Snapping " << vs << " (" << get(svpm, vs) << ") "
-              << " to " << vt << " (" << get(tvpm, vt) << ") at dist: " << sp.sq_dist << std::endl;
+    std::cout << "Snapping (" << get(svpm, vs) << ") "
+              << " to (" << get(tvpm, vt) << ") at dist: " << sp.sq_dist << std::endl;
 #endif
 
     // Collect all the source vertices projecting onto that target vertex
@@ -654,7 +656,9 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
   snapped_n = snap_vertex_range_onto_vertex_range(source_hrange, pms, target_hrange, pmt, tol_pmap, nps, npt);
 
 #ifdef CGAL_PMP_SNAP_DEBUG
-  std::cout << "Snapping vertices to edges" << std::endl;
+  std::cout << "Vertex-to-Edge snapping with ranges of size: "
+            << std::distance(source_hrange.begin(), source_hrange.end()) << " and "
+            << std::distance(target_hrange.begin(), target_hrange.end()) << std::endl;
 #endif
 
   typedef std::map<Point, std::set<vertex_descriptor /*target vd*/> >     Occurence_map;
@@ -720,7 +724,7 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
     const FT sq_dist_to_closest = gt.compute_squared_distance_3_object()(query, closest_p);
 
 #ifdef CGAL_PMP_SNAP_DEBUG
-    std::cout << "  Query: (" << query << ") [vd: " << vd << "] has closest point: (" << closest_p << ")" << std::endl
+    std::cout << "  Query: (" << query << ") has closest point: (" << closest_p << ")" << std::endl
               << "    at distance " << gt.compute_squared_distance_3_object()(query, closest_p)
               << "  with a tolerance of " << sq_eps << std::endl;
 #endif
@@ -801,9 +805,8 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
     BOOST_FOREACH(const Point& p, mt.second)
     {
 #ifdef CGAL_PMP_SNAP_DEBUG
-      std::cout << "  split " << hd_to_split
-                << " vs " << source(hd_to_split, pmt) << " (" << pmt.point(source(hd_to_split, pmt)) << ")"
-                << " --- vt " << target(hd_to_split, pmt) << " (" << pmt.point(target(hd_to_split, pmt)) << ")" << std::endl;
+      std::cout << "  split hd: (" << get(vpmt, source(hd_to_split, pmt)) << ")"
+                << " --- (" << get(vpmt, target(hd_to_split, pmt)) << ")" << std::endl;
       std::cout << "  with pos " << p << std::endl;
 #endif
 
