@@ -7,6 +7,7 @@
 #include <QColorDialog>
 #include <QPalette>
 #include <QColor>
+#include <QStyleFactory>
 #include <QMessageBox>
 
 #include <CGAL/boost/graph/helpers.h>
@@ -369,10 +370,12 @@ public:
     addDockWidget(dock_widget);
     QPalette palette(Qt::red);
     dock_widget->minColorButton->setPalette(palette);
+    dock_widget->minColorButton->setStyle(QStyleFactory::create("Fusion"));
     dock_widget->minColorButton->update();
 
     palette = QPalette(Qt::green);
     dock_widget->maxColorButton->setPalette(palette);
+    dock_widget->maxColorButton->setStyle(QStyleFactory::create("Fusion"));
     dock_widget->maxColorButton->update();
     connect(dock_widget->colorizeButton, SIGNAL(clicked(bool)),
             this, SLOT(colorize()));
