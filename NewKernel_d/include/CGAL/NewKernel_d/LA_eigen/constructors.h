@@ -94,7 +94,7 @@ namespace CGAL {
 	  CGAL_assertion(d==std::distance(f,e)+1);
 	  result_type a(d);
 	  std::copy(f,e,&a[0]);
-	  a[d-1]=CGAL_FORWARD(T,t);
+	  a[d-1]=std::forward<T>(t);
 	  return a;
 	}
     };

@@ -85,8 +85,8 @@ template<class R_> struct Construct_segment : Store_kernel<R_> {
 	result_type operator()(T&&, U&& u, V&& v)const{
 		CP cp(this->kernel());
 		result_type r = {{
-			call_on_tuple_elements<Point>(cp, CGAL_FORWARD(U,u)),
-			call_on_tuple_elements<Point>(cp, CGAL_FORWARD(V,v)) }};
+			call_on_tuple_elements<Point>(cp, std::forward<U>(u)),
+			call_on_tuple_elements<Point>(cp, std::forward<V>(v)) }};
 		return r;
 	}
 };

@@ -99,7 +99,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct Array_vector {
 					//TODO: optimize for forward iterators
 					Vector a;
 					std::copy(f,e,a.begin());
-					a.back()=CGAL_FORWARD(T,t);
+					a.back()=std::forward<T>(t);
 					return a;
 				}
 		};

@@ -169,7 +169,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	  CGAL_FUNCTOR_INIT_STORE(Compute_squared_radius_d)
 	  typedef FT result_type;
 	  template<class S> FT operator()(S&& s)const{
-	    return typename Get_functor<Base, Squared_radius_tag>::type(this->kernel())(CGAL_FORWARD(S,s));
+	    return typename Get_functor<Base, Squared_radius_tag>::type(this->kernel())(std::forward<S>(s));
 	  }
 	  template<class I> FT operator()(I b, I e)const{
 	    return typename Get_functor<Base, Squared_circumradius_tag>::type(this->kernel())(b,e);

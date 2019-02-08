@@ -39,7 +39,7 @@ struct Nth_iterator_element : private Store_kernel<K> {
   typedef typename Get_type<K, typename iterator_tag_traits<T>::value_tag>::type result_type;
   template<class U> result_type operator()(U&& u, int i) const {
     typename Get_functor<K, Construct_ttag<T> >::type ci(this->kernel());
-    return *cpp0x::next(ci(CGAL_FORWARD(U,u),Begin_tag()),i);
+    return *cpp0x::next(ci(std::forward<U>(u),Begin_tag()),i);
   }
 };
       //typedef typename Functor<typename iterator_tag_traits<T>::nth_element>::type nth_elem;

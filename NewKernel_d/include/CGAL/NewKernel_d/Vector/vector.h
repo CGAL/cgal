@@ -78,7 +78,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct Vector_vector {
 					Vector a;
 					a.reserve(d+1);
 					a.insert(a.end(),f,e);
-					a.push_back(CGAL_FORWARD(T,t));
+					a.push_back(std::forward<T>(t));
 					return a;
 				}
 		};

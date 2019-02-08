@@ -31,7 +31,6 @@
 
 #include <type_traits>
 #include <utility>
-#define CGAL_FORWARD(T,t) std::forward<T>(t)
 #include <boost/utility/enable_if.hpp>
 #include <boost/preprocessor/repetition.hpp>
 #include <CGAL/Rational_traits.h>
@@ -83,7 +82,7 @@ struct Has_type_different_from <T, No, true>
 		template<class FT>
 		decltype(auto) operator()(FT&& x)const
 		{
-			return scale*CGAL_FORWARD(FT,x);
+			return scale*std::forward<FT>(x);
 		}
 	};
 	template<class NT,class T> struct Divide {
@@ -104,7 +103,7 @@ struct Has_type_different_from <T, No, true>
 		NT operator()(FT&& x)const
 		{
 			return Rational_traits<NT>().
-				make_rational(CGAL_FORWARD(FT,x),scale);
+				make_rational(std::forward<FT>(x),scale);
 		}
 	};
 
@@ -120,7 +119,7 @@ struct Has_type_different_from <T, No, true>
 		template<class A,class B>
 		decltype(auto) operator()(A&&a,B&&b)const
 		{
-			return CGAL_FORWARD(A,a)*CGAL_FORWARD(B,b);
+			return std::forward<A>(a)*std::forward<B>(b);
 		}
 	};
 	template < class Ret >
@@ -128,7 +127,7 @@ struct Has_type_different_from <T, No, true>
 		template<class A,class B>
 		decltype(auto) operator()(A&&a,B&&b)const
 		{
-			return CGAL_FORWARD(A,a)/CGAL_FORWARD(B,b);
+			return std::forward<A>(a)/std::forward<B>(b);
 		}
 	};
 
