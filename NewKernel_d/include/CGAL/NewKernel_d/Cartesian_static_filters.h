@@ -69,14 +69,14 @@ template <class Base_,class R_> struct Orientation_of_points_2 : private Store_k
 
 template <class Dim_ /* should be implicit */, class R_, class Derived_=Default>
 struct Cartesian_static_filters : public R_ {
-  CGAL_CONSTEXPR Cartesian_static_filters(){}
-  CGAL_CONSTEXPR Cartesian_static_filters(int d):R_(d){}
+  constexpr Cartesian_static_filters(){}
+  constexpr Cartesian_static_filters(int d):R_(d){}
 };
 
 template <class R_, class Derived_>
 struct Cartesian_static_filters<Dimension_tag<2>, R_, Derived_> : public R_ {
-  CGAL_CONSTEXPR Cartesian_static_filters(){}
-  CGAL_CONSTEXPR Cartesian_static_filters(int d):R_(d){}
+  constexpr Cartesian_static_filters(){}
+  constexpr Cartesian_static_filters(int d):R_(d){}
 	typedef Cartesian_static_filters<Dimension_tag<2>, R_, Derived_> Self;
 	typedef typename Default::Get<Derived_,Self>::type Derived;
 	template <class T, class=void> struct Functor : Inherit_functor<R_, T> {};

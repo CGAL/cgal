@@ -29,8 +29,8 @@
 
 namespace CGAL {
 template <class Base_> struct Kernel_d_interface : public Base_ {
-  CGAL_CONSTEXPR Kernel_d_interface(){}
-  CGAL_CONSTEXPR Kernel_d_interface(int d):Base_(d){}
+  constexpr Kernel_d_interface(){}
+  constexpr Kernel_d_interface(int d):Base_(d){}
 
 	typedef Base_ Base;
 	typedef Kernel_d_interface<Base> Kernel;

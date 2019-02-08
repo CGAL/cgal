@@ -32,8 +32,8 @@ template < typename Base_, typename FT_, typename LA_=CGAL::LA_eigen<FT_,typenam
 struct Cartesian_change_FT_base : public
 	Base_
 {
-    CGAL_CONSTEXPR Cartesian_change_FT_base(){}
-    CGAL_CONSTEXPR Cartesian_change_FT_base(int d):Base_(d){}
+    constexpr Cartesian_change_FT_base(){}
+    constexpr Cartesian_change_FT_base(int d):Base_(d){}
 
     typedef Cartesian_change_FT_base Self;
     typedef Base_ Kernel_base;
@@ -109,8 +109,8 @@ template < typename Base_, typename FT_>
 struct Cartesian_change_FT : public
 	Cartesian_change_FT_base<Base_,FT_>
 {
-    CGAL_CONSTEXPR Cartesian_change_FT(){}
-    CGAL_CONSTEXPR Cartesian_change_FT(int d):Cartesian_change_FT_base<Base_,FT_>(d){}
+    constexpr Cartesian_change_FT(){}
+    constexpr Cartesian_change_FT(int d):Cartesian_change_FT_base<Base_,FT_>(d){}
 };
 
 } //namespace CGAL

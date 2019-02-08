@@ -46,8 +46,8 @@ template<class Dim>
 struct Epeck_d
 : CGAL_BASE
 {
-  CGAL_CONSTEXPR Epeck_d(){}
-  CGAL_CONSTEXPR Epeck_d(int d):CGAL_BASE(d){}
+  constexpr Epeck_d(){}
+  constexpr Epeck_d(int d):CGAL_BASE(d){}
 };
 #undef CGAL_BASE
 }

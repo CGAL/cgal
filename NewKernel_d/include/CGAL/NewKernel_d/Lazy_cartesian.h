@@ -148,8 +148,8 @@ template <class EK_, class AK_, class E2A_/*, class Kernel_=Default*/>
 struct Lazy_cartesian :
   Lazy_cartesian_types<EK_,AK_,E2A_,Lazy_cartesian<EK_,AK_,E2A_> >
 {
-    CGAL_CONSTEXPR Lazy_cartesian(){}
-    CGAL_CONSTEXPR Lazy_cartesian(int d):ak(d),ek(d){}
+    constexpr Lazy_cartesian(){}
+    constexpr Lazy_cartesian(int d):ak(d),ek(d){}
 
     //TODO: Do we want to store an AK and an EK? Or just references?
     //FIXME: references would be better I guess.

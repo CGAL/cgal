@@ -122,8 +122,8 @@ CGAL_REGISTER_OBJECT_WRAPPER(Weighted_point);
 template < typename Base_ , typename Derived_ = Default >
 struct Cartesian_wrap : public Base_
 {
-    CGAL_CONSTEXPR Cartesian_wrap(){}
-    CGAL_CONSTEXPR Cartesian_wrap(int d):Base_(d){}
+    constexpr Cartesian_wrap(){}
+    constexpr Cartesian_wrap(int d):Base_(d){}
     typedef Base_ Kernel_base;
     typedef Cartesian_wrap Self;
     // TODO: pass the 2 types Self and Derived to the wrappers, they can use Self for most purposes and Derived only for Kernel_traits' typedef R.
@@ -178,8 +178,8 @@ struct Cartesian_wrap : public Base_
 template < typename Base_ >
 struct Cartesian_refcount : public Base_
 {
-    CGAL_CONSTEXPR Cartesian_refcount(){}
-    CGAL_CONSTEXPR Cartesian_refcount(int d):Base_(d){}
+    constexpr Cartesian_refcount(){}
+    constexpr Cartesian_refcount(int d):Base_(d){}
     typedef Base_ Kernel_base;
     typedef Cartesian_refcount Self;
 

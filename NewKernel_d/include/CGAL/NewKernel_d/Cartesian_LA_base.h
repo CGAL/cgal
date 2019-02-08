@@ -170,8 +170,8 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
 	    typedef CartesianDVectorBase::Identity_functor<Self> type;
     };
 
-    CGAL_CONSTEXPR Cartesian_LA_base_d(){}
-    CGAL_CONSTEXPR Cartesian_LA_base_d(int d):Dimension_base<Dim_>(d){}
+    constexpr Cartesian_LA_base_d(){}
+    constexpr Cartesian_LA_base_d(int d):Dimension_base<Dim_>(d){}
 };
 
 } //namespace CGAL

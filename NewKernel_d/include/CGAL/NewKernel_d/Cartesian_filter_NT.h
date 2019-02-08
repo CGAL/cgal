@@ -30,8 +30,8 @@ namespace CGAL {
 template < typename Base_ >
 struct Cartesian_filter_NT : public Base_
 {
-    CGAL_CONSTEXPR Cartesian_filter_NT(){}
-    CGAL_CONSTEXPR Cartesian_filter_NT(int d):Base_(d){}
+    constexpr Cartesian_filter_NT(){}
+    constexpr Cartesian_filter_NT(int d):Base_(d){}
     typedef Base_ Kernel_base;
     typedef Cartesian_change_FT<Kernel_base,Interval_nt_advanced> K1;
     typedef typename internal::Exact_field_selector<typename Get_type<Kernel_base, FT_tag>::type>::Type  Exact_nt;

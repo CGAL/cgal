@@ -34,7 +34,6 @@
 #define CGAL_FORWARDABLE(T) T&&
 #define CGAL_FORWARD(T,t) std::forward<T>(t)
 #define CGAL_MOVE(t) std::move(t)
-#define CGAL_CONSTEXPR constexpr
 #include <boost/utility/enable_if.hpp>
 #include <boost/preprocessor/repetition.hpp>
 #include <CGAL/Rational_traits.h>
