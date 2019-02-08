@@ -99,8 +99,6 @@ struct Lazy_construction2 {
   {
     return new Lazy_rep_0<AT,ET,E2A>();
   }
-
-#undef CGAL_CONSTRUCTION_OPERATOR
 };
 
 template <class EK_, class AK_, class E2A_, class Kernel_>
