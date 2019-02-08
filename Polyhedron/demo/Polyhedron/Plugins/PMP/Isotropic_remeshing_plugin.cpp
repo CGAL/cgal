@@ -534,23 +534,35 @@ public Q_SLOTS:
       }
       else if (poly_item)
       {
+        boost::property_map<FaceGraph, CGAL::edge_is_feature_t>::type eif
+          = get(CGAL::edge_is_feature, pmesh);
         if (edges_only)
         {
-          std::vector<halfedge_descriptor> border;
-          CGAL::Polygon_mesh_processing::border_halfedges(
-            faces(*poly_item->polyhedron()),
-            pmesh,
-            std::back_inserter(border));
-          std::vector<edge_descriptor> border_edges;
-          BOOST_FOREACH(halfedge_descriptor h, border)
-            border_edges.push_back(edge(h, pmesh));
+          std::vector<edge_descriptor> edges_to_split;
+          for(edge_descriptor e : edges(pmesh))
+          {
+            if( is_border(e, pmesh) || get(eif, e) )
+              edges_to_split.push_back(e);
+          }
 
-          if (!border_edges.empty())
-            CGAL::Polygon_mesh_processing::split_long_edges(
-              border_edges
-              , target_length
-              , *poly_item->polyhedron()
-              , PMP::parameters::geom_traits(EPICK()));
+          if (!edges_to_split.empty())
+          {
+            if (fpmap_valid)
+              CGAL::Polygon_mesh_processing::split_long_edges(
+                edges_to_split
+                , target_length
+                , pmesh
+                , PMP::parameters::geom_traits(EPICK())
+                . edge_is_constrained_map(eif)
+                . face_patch_map(fpmap));
+            else
+              CGAL::Polygon_mesh_processing::split_long_edges(
+                edges_to_split
+                , target_length
+                , pmesh
+                , PMP::parameters::geom_traits(EPICK())
+                . edge_is_constrained_map(eif));
+          }
           else
             std::cout << "No border to be split" << std::endl;
         }
@@ -567,6 +579,11 @@ public Q_SLOTS:
            
           }
           Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> ecm(&edges_to_protect);
+          for(edge_descriptor e : edges(pmesh))
+          {
+            if (eif[e])
+              edges_to_protect.insert(e);
+          }
 
           if (fpmap_valid)
             CGAL::Polygon_mesh_processing::isotropic_remeshing(
@@ -589,10 +606,15 @@ public Q_SLOTS:
                .number_of_relaxation_steps(nb_smooth)
                .edge_is_constrained_map(ecm)
                .relax_constraints(smooth_features));
-
         }
-        //destroys the patch_id_map for the Surface_mesh_item to avoid assertions.
-        poly_item->resetColors();
+        if (fpmap_valid)
+        {
+          PMP::connected_components(pmesh, fpmap, PMP::parameters::edge_is_constrained_map(eif));
+          poly_item->setItemIsMulticolor(true);
+          poly_item->show_feature_edges(true);
+        }
+        else
+          poly_item->setItemIsMulticolor(false);
 
         poly_item->invalidateOpenGLBuffers();
 
