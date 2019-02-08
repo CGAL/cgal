@@ -23,11 +23,6 @@
 #include <CGAL/config.h>
 #include <CGAL/NewKernel_d/functor_tags.h>
 #include <CGAL/typeset.h>
-#ifdef CGAL_CXX11
-#include <type_traits>
-#else
-#include <boost/type_traits.hpp>
-#endif
 
 namespace CGAL {
   namespace internal {

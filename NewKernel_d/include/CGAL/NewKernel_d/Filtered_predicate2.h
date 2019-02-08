@@ -81,7 +81,6 @@ public:
     : ep(k.exact_kernel()), ap(k.approximate_kernel()), c2e(k,k.exact_kernel()), c2a(k,k.approximate_kernel())
   {}
 
-#ifdef CGAL_CXX11
   template <typename... Args>
   result_type
   operator()(Args&&... args) const
@@ -103,34 +102,6 @@ public:
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
     return ep(c2e(std::forward<Args>(args))...);
   }
-#else
-
-#define CGAL_VAR(Z,N,C) C(a##N)
-#define CGAL_CODE(Z,N,_) \
-  template <BOOST_PP_ENUM_PARAMS(N,class A)> \
-  result_type \
-  operator()(BOOST_PP_ENUM_BINARY_PARAMS(N, A, const& a)) const \
-  { \
-    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp); \
-    { \
-      Protect_FPU_rounding<Protection> p; \
-      try \
-	{ \
-	  Ares res = ap(BOOST_PP_ENUM(N,CGAL_VAR,c2a)); \
-	  if (is_certain(res)) \
-	    return get_certain(res); \
-	} \
-      catch (Uncertain_conversion_exception&) {} \
-    } \
-    CGAL_BRANCH_PROFILER_BRANCH(tmp); \
-    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST); \
-    return ep(BOOST_PP_ENUM(N,CGAL_VAR,c2e)); \
-  }
-  BOOST_PP_REPEAT_FROM_TO(1, 10, CGAL_CODE, _ )
-#undef CGAL_CODE
-#undef CGAL_VAR
-
-#endif
 };
 
 } //namespace CGAL

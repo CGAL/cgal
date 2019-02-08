@@ -31,35 +31,9 @@
 
 namespace CGAL {
 namespace CartesianDVectorBase {
-#ifndef CGAL_CXX11
-namespace internal {
-template<class R_,class Dim_> struct Construct_LA_vector_ {
-	struct Never_use {};
-	void operator()(Never_use)const;
-};
-#define CGAL_CODE(Z,N,_) template<class R> struct Construct_LA_vector_<R,Dimension_tag<N> > { \
-	typedef typename R::Constructor Constructor; \
-	typedef typename Get_type<R, RT_tag>::type RT; \
-	typedef typename R::Vector_ result_type; \
-	result_type operator() \
-	(BOOST_PP_ENUM_PARAMS(N,RT const& t)) const { \
-	return typename Constructor::Values()(BOOST_PP_ENUM_PARAMS(N,t)); \
-	} \
-	result_type operator() \
-	(BOOST_PP_ENUM_PARAMS(BOOST_PP_INC(N),RT const& t)) const { \
-	return typename Constructor::Values_divide()(t##N,BOOST_PP_ENUM_PARAMS(N,t)); \
-	} \
-	};
-BOOST_PP_REPEAT_FROM_TO(2, 11, CGAL_CODE, _ )
-#undef CGAL_CODE
-}
-#endif
 
 template<class R_,class Zero_> struct Construct_LA_vector
 : private Store_kernel<R_>
-#ifndef CGAL_CXX11
-, public internal::Construct_LA_vector_<R_,typename R_::Default_ambient_dimension>
-#endif
 {
 	//CGAL_FUNCTOR_INIT_IGNORE(Construct_LA_vector)
 	CGAL_FUNCTOR_INIT_STORE(Construct_LA_vector)
@@ -87,12 +61,9 @@ template<class R_,class Zero_> struct Construct_LA_vector
 	result_type operator()(result_type const& v)const{
 		return v;
 	}
-#ifdef CGAL_CXX11
 	result_type operator()(result_type&& v)const{
 		return std::move(v);
 	}
-#endif
-#ifdef CGAL_CXX11
 	template<class...U>
 	typename std::enable_if<Constructible_from_each<RT,U...>::value &&
 		boost::is_same<Dimension_tag<sizeof...(U)>, Dimension>::value,
@@ -108,9 +79,6 @@ template<class R_,class Zero_> struct Construct_LA_vector
 	operator()(U&&...u)const{
 		return Apply_to_last_then_rest()(typename Constructor::Values_divide(),std::forward<U>(u)...);
 	}
-#else
-	using internal::Construct_LA_vector_<R_,typename R::Default_ambient_dimension>::operator();
-#endif
 	template<class Iter> inline
 	  typename boost::enable_if<is_iterator_type<Iter,std::forward_iterator_tag>,result_type>::type operator()
 		(Iter f,Iter g,Cartesian_tag t)const
@@ -178,13 +146,7 @@ template<class R_> struct Compute_cartesian_coordinate {
 	typedef typename R::Vector_ first_argument_type;
 	typedef int second_argument_type;
 	typedef Tag_true Is_exact;
-#ifdef CGAL_CXX11
 	typedef decltype(std::declval<const first_argument_type>()[0]) result_type;
-#else
-	typedef RT const& result_type;
-	// RT const& doesn't work with some LA (Eigen2 for instance) so we
-	// should use plain RT or find a way to detect this.
-#endif
 
 	result_type operator()(first_argument_type const& v,int i)const{
 		return v[i];

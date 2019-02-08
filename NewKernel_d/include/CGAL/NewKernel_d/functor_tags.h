@@ -22,10 +22,8 @@
 #define CGAL_FUNCTOR_TAGS_H
 #include <CGAL/tags.h> // for Null_tag
 #include <CGAL/NewKernel_d/utils.h>
-#ifdef CGAL_CXX11
 #include <type_traits>
 #include <utility>
-#endif
 #include <boost/type_traits.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/mpl/not.hpp>
@@ -42,10 +40,8 @@ namespace CGAL {
     : K::template Type<T> {};
   template <class K, class F, class O=void, class=void> struct Get_functor
     : K::template Functor<F, O> {};
-#ifdef CGAL_CXX11
   template <class K, class T> using Type = typename Get_type<K, T>::type;
   template <class K, class T> using Functor = typename Get_functor<K, T>::type;
-#endif
 
   class Null_type {~Null_type();}; // no such object should be created
 

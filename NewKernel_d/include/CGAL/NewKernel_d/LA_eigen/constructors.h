@@ -99,7 +99,6 @@ namespace CGAL {
 	}
     };
 
-#ifdef CGAL_CXX11
     struct Initializer_list {
       // Fix T==NT?
       template<class T>
@@ -107,7 +106,6 @@ namespace CGAL {
 	  return Iterator()(l.size(),l.begin(),l.end());
 	}
     };
-#endif
 
     struct Values {
 #ifdef CGAL_CXX11
