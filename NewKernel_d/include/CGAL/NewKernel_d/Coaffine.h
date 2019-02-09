@@ -282,7 +282,7 @@ template<class R_> struct In_flat_power_side_of_power_sphere_raw : private Store
 	typedef typename LA::Square_matrix Matrix;
 
         template<class Iter, class IterW, class Wt>
-        result_type operator()(Flat_orientation const&o, Iter f, Iter e, IterW fw, Point const&x, Wt const&w) const {
+        result_type operator()(Flat_orientation const&o, Iter f, Iter const&e, IterW fw, IterW const&/*ew*/, Point const&x, Wt const&w) const {
 		// TODO: can't work in the projection, but we should at least remove the row of 1s.
                 typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
                 typename Get_functor<R, Point_dimension_tag>::type pd(this->kernel());

@@ -499,7 +499,7 @@ template<class R_> struct Power_side_of_power_sphere_raw : private Store_kernel<
 	typedef typename LA::Square_matrix Matrix;
 
 	template<class IterP, class IterW, class Pt, class Wt>
-	result_type operator()(IterP f, IterP const& e, IterW fw, Pt const& p0, Wt const& w0) const {
+	result_type operator()(IterP f, IterP const& e, IterW fw, IterW const&/*ew*/, Pt const& p0, Wt const& w0) const {
 	  typedef typename Get_functor<R, Squared_distance_to_origin_tag>::type Sqdo;
 	  typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
 	  typename Get_functor<R, Point_dimension_tag>::type pd(this->kernel());

@@ -118,6 +118,7 @@ template<class R_> struct Power_side_of_power_sphere : private Store_kernel<R_> 
 	  make_transforming_iterator (f, pdw),
 	  make_transforming_iterator (e, pdw),
 	  make_transforming_iterator (f, pw),
+	  make_transforming_iterator (e, pw),
 	  pdw (p0),
 	  pw (p0));
     }
@@ -138,6 +139,7 @@ template<class R_> struct In_flat_power_side_of_power_sphere : private Store_ker
 	  make_transforming_iterator (f, pdw),
 	  make_transforming_iterator (e, pdw),
 	  make_transforming_iterator (f, pw),
+	  make_transforming_iterator (e, pw),
 	  pdw (p0),
 	  pw (p0));
     }
