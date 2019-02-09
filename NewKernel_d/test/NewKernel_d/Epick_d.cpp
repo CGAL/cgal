@@ -367,20 +367,6 @@ void test2(){
   assert(abs(cent1[0]-2)<.0001);
   assert(abs(cent1[1]+3)<.0001);
   assert(abs(sp.squared_radius()-25)<.0001);
-#if 1
-  // Fails for an exact kernel
-  typedef typename K1::Point_of_sphere_d PS;
-  PS ps Kinit(point_of_sphere_d_object);
-  P psp0=ps(sp,0);
-  P psp1=ps(sp,1);
-  P psp2=ps(sp,2);
-  assert(!ed(psp0,psp1));
-  assert(!ed(psp0,psp2));
-  assert(!ed(psp2,psp1));
-  assert(abs(sd(cent0,psp0)-25)<.0001);
-  assert(abs(sd(cent0,psp1)-25)<.0001);
-  assert(abs(sd(cent0,psp2)-25)<.0001);
-#endif
   P x2py1 = tp(x2,y1);
   assert(x2py1[1]==-2);
   WP tw[]={cwp(cp(5,0),1.5),cwp(cp(2,std::sqrt(3)),1),cwp(cp(2,-std::sqrt(3)),1)};
@@ -416,6 +402,46 @@ void test2(){
   D un10; CGAL_USE(un10);
 }
 
+// Fails for an exact kernel, so I split it here
+template<class Ker>
+void test2i(){
+  typedef Ker K1;
+  typedef typename K1::Point_d P;
+  typedef typename K1::Sphere_d Sp;
+  typedef typename K1::Point_of_sphere_d PS;
+  typedef typename K1::Construct_point_d CP;
+  typedef typename K1::Construct_sphere_d CSp;
+  typedef typename K1::Equal_d E;
+  typedef typename K1::Squared_distance_d SD;
+  typedef typename K1::Center_of_sphere_d COS;
+  Ker k
+#if 0
+    (2)
+#endif
+    ;
+  CP cp Kinit(construct_point_d_object);
+  PS ps Kinit(point_of_sphere_d_object);
+  CSp csp Kinit(construct_sphere_d_object);
+  E ed Kinit(equal_d_object);
+  SD sd Kinit(squared_distance_d_object);
+  COS cos Kinit(center_of_sphere_d_object);
+  P z0=cp( 0+2,5-3);
+  P z1=cp(-5+2,0-3);
+  P z2=cp( 3+2,4-3);
+  P tabz[]={z0,z1,z2};
+  Sp sp = csp(tabz+0,tabz+3);
+  P cent0=cos(sp);
+  P psp0=ps(sp,0);
+  P psp1=ps(sp,1);
+  P psp2=ps(sp,2);
+  assert(!ed(psp0,psp1));
+  assert(!ed(psp0,psp2));
+  assert(!ed(psp2,psp1));
+  assert(abs(sd(cent0,psp0)-25)<.0001);
+  assert(abs(sd(cent0,psp1)-25)<.0001);
+  assert(abs(sd(cent0,psp2)-25)<.0001);
+}
+
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable: 4512)
@@ -426,15 +452,12 @@ template<class CP> struct Construct_point3_helper {
   Construct_point3_helper(CP const& x) : cp(x) {}
   template<class T1,class T2,class T3>
   typename CP::result_type operator()(T1 const&t1, T2 const&t2, T3 const&t3)const{
-    //double tab[]={(double)t1,(double)t2,(double)t3};
-    // The lazy kernel stores iterators, not a vector<double>, so the array must stay alive until update_exact()! For the tests I am keeping the memory leak for now, it is more convenient.
-    double*tab=new double[3]{(double)t1,(double)t2,(double)t3};
+    double tab[]={(double)t1,(double)t2,(double)t3};
     return cp(tab+0,tab+3);
   }
   template<class T1,class T2,class T3,class T4>
   typename CP::result_type operator()(T1 const&t1, T2 const&t2, T3 const&t3, T4 const&t4)const{
-    // Same discussion as above
-    double*tab=new double[3]{(double)t1,(double)t2,(double)t3};
+    double tab[]={(double)t1,(double)t2,(double)t3};
     return cp(tab+0,tab+3,t4);
   }
 };
@@ -693,12 +716,12 @@ CGAL_static_assertion((boost::is_same<CGAL::Dimension_tag<3>,CGAL::Ambient_dimen
 int main(){
   //Broken with Linear_base_d (output iterator)
   //test2<CGAL::Kernel_d_interface<KK> >();
-  test2<Ker2>();
+  test2<Ker2>(); test2i<Ker2>();
   test3<Ker3>();
   test3<Kerd>();
-  //test2<CGAL::Epeck_d<CGAL::Dimension_tag<2>>>();
-  //test3<CGAL::Epeck_d<CGAL::Dimension_tag<3>>>();
-  //test3<CGAL::Epeck_d<CGAL::Dynamic_dimension_tag>>();
+  test2<CGAL::Epeck_d<CGAL::Dimension_tag<2>>>();
+  test3<CGAL::Epeck_d<CGAL::Dimension_tag<3>>>();
+  test3<CGAL::Epeck_d<CGAL::Dynamic_dimension_tag>>();
 }
 
 #endif
