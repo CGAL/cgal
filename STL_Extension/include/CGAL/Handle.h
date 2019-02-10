@@ -58,6 +58,14 @@ class Handle
       PTR->count++;
     }
 
+    // When the counter becomes atomic, this may avoid a few atomic operations.
+    Handle(Handle&& x)
+    {
+      CGAL_precondition( x.PTR != static_cast<Rep*>(0) );
+      PTR = x.PTR;
+      x.PTR = nullptr;
+    }
+
     ~Handle()
     {
 	if ( PTR && (--PTR->count == 0))
@@ -72,6 +80,14 @@ class Handle
       if ( PTR && (--PTR->count == 0))
 	  delete PTR;
       PTR = x.PTR;
+      return *this;
+    }
+
+    Handle&
+    operator=(Handle&& x)
+    {
+      CGAL_precondition( x.PTR != static_cast<Rep*>(0) );
+      std::swap(PTR, x.PTR);
       return *this;
     }
 
