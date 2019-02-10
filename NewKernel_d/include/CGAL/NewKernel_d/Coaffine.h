@@ -37,13 +37,11 @@ struct Flat_orientation {
 // For debugging purposes
 inline std::ostream& operator<< (std::ostream& o, Flat_orientation const& f) {
   o << "Proj: ";
-  for(std::vector<int>::const_iterator i=f.proj.begin();
-      i!=f.proj.end(); ++i)
-    o << *i << ' ';
+  for(int i : f.proj)
+    o << i << ' ';
   o << "\nRest: ";
-  for(std::vector<int>::const_iterator i=f.rest.begin();
-      i!=f.rest.end(); ++i)
-    o << *i << ' ';
+  for(int i : f.rest)
+    o << i << ' ';
   o << "\nInv: " << f.reverse;
   return o << '\n';
 }
@@ -155,8 +153,8 @@ template<class R_> struct Contained_in_affine_hull : private Store_kernel<R_> {
 			int d = (int)proj.size()+1;
 			Matrix m (d, d);
 			for(int i=0; i<d; ++i)
-			for(int j=0; j<d-1; ++j)
-				m(i,j) = coord(i, proj[j]);
+			  for(int j=0; j<d-1; ++j)
+			    m(i,j) = coord(i, proj[j]);
 			for(std::vector<int>::iterator it=rest.begin();it!=rest.end();++it) {
 				for(int i=0; i<d; ++i) m(i,d-1) = coord(i, *it);
 				if(LA::sign_of_determinant(m)!=0) {
@@ -171,10 +169,10 @@ template<class R_> struct Contained_in_affine_hull : private Store_kernel<R_> {
 			int d = (int)proj.size()+1;
 			Matrix m (d, d);
 			for(int i=0; i<d; ++i)
-			for(int j=0; j<d-1; ++j)
-				m(i,j) = coord(i, proj[j]);
-			for(std::vector<int>::iterator it=rest.begin();it!=rest.end();++it) {
-				for(int i=0; i<d; ++i) m(i,d-1) = coord(i, *it);
+			  for(int j=0; j<d-1; ++j)
+			    m(i,j) = coord(i, proj[j]);
+			for(int j : rest) {
+				for(int i=0; i<d; ++i) m(i,d-1) = coord(i, j);
 				if(LA::sign_of_determinant(m)!=0) return false;
 			}
 			return true;
