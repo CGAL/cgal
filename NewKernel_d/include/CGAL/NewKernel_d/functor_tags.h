@@ -199,7 +199,11 @@ namespace CGAL {
 	  typedef Null_tag value_tag;
 	};
 
+	template<class>struct map_result_tag{typedef Null_type type;};
+	template<class T>struct map_result_tag<Construct_ttag<T> >{typedef T type;};
+
 #define CGAL_DECL_COMPUTE(X) struct X##_tag {}; \
+	template<>struct map_result_tag<X##_tag>{typedef FT_tag type;}; \
 	template<class A,class B,class C>struct Get_functor_category<A,X##_tag,B,C>{typedef Compute_tag type;}
 	CGAL_DECL_COMPUTE(Compute_point_cartesian_coordinate);
 	CGAL_DECL_COMPUTE(Compute_vector_cartesian_coordinate);
@@ -236,9 +240,6 @@ namespace CGAL {
 	CGAL_DECL_ITER_OBJ(Vector_cartesian_const_iterator, FT, Compute_vector_cartesian_coordinate, Vector);
 	CGAL_DECL_ITER_OBJ(Point_cartesian_const_iterator, FT, Compute_point_cartesian_coordinate, Point);
 #undef CGAL_DECL_ITER_OBJ
-
-	template<class>struct map_result_tag{typedef Null_type type;};
-	template<class T>struct map_result_tag<Construct_ttag<T> >{typedef T type;};
 
 	template<class A,class T,class B,class C>struct Get_functor_category<A,Construct_ttag<T>,B,C> :
 	  boost::mpl::if_c<iterator_tag_traits<T>::is_iterator,

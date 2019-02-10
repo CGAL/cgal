@@ -63,7 +63,6 @@ namespace internal {
 }
 
 // Whenever a construction takes iterator pairs as input, whether they point to double of Lazy objects, copy the ranges inside the lazy result so they are available for update_exact(). We analyze the input to try and guess where iterator pairs are. I would prefer if each functor had a specific signature (no overload in this layer) so we wouldn't have to guess.
-// FIXME: Lazy_construct_nt is also a construction and needs the same treatment.
 namespace Lazy_internal {
 template<class...>struct typelist{};
 template<int>struct arg_i{};
@@ -155,13 +154,14 @@ class Lazy_rep_XXX :
   }
   // TODO: print_dag needs a specific implementation for Lazy_rep_XXX
 };
+template<class Tag, class LK, class ET>struct Select_converter { typedef typename LK::E2A type; };
+template<class LK, class ET>struct Select_converter<Compute_tag,LK,ET> { typedef To_interval<ET> type; };
 template<typename T, typename LK>
 struct Lazy_construction2 {
   static const bool Protection = true;
 
   typedef typename LK::Approximate_kernel AK;
   typedef typename LK::Exact_kernel EK;
-  typedef typename LK::E2A E2A;
   typedef typename Get_functor<AK, T>::type AC;
   typedef typename Get_functor<EK, T>::type EC;
   typedef typename map_result_tag<T>::type result_tag;
@@ -169,6 +169,7 @@ struct Lazy_construction2 {
   typedef typename Get_type<EK, result_tag>::type ET;
   typedef typename Get_type<LK, result_tag>::type result_type;
   // same as Handle = Lazy< AT, ET, E2A>
+  typedef typename Select_converter<typename Get_functor_category<LK,T>::type, LK, ET>::type E2A;
 
   Lazy_construction2(){}
   Lazy_construction2(LK const&k):ac(k.approximate_kernel()),ec(k.exact_kernel()){}
@@ -225,6 +226,7 @@ struct Lazy_cartesian_types
       typedef typename Select_nth_element_functor<AK_,T>::type AF;
       typedef typename Select_nth_element_functor<EK_,T>::type EF;
 
+      // TODO: we should use Lazy_construction2, but this seems ok for now, we never construct iterators from iterators.
       typedef typename internal::Lazy_construction_maybe_nt<
 	Kernel_, AF, EF, is_NT_tag<Vt>::value
 	>::type nth_elem;
@@ -298,9 +300,7 @@ struct Lazy_cartesian :
 	    typedef Filtered_predicate2<FE,FA,C2E,C2A> type;
     };
     template<class T,class D> struct Functor<T,D,Compute_tag> {
-	    typedef typename Get_functor<Approximate_kernel, T>::type FA;
-	    typedef typename Get_functor<Exact_kernel, T>::type FE;
-	    typedef Lazy_construction_nt<Kernel,FA,FE> type;
+	    typedef Lazy_construction2<T,Kernel> type;
     };
     template<class T,class D> struct Functor<T,D,Construct_tag> {
 	    typedef Lazy_construction2<T,Kernel> type;
