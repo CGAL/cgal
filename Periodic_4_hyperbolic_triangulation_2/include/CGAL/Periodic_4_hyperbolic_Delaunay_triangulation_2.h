@@ -406,7 +406,7 @@ is_removable(Vertex_handle v,
   // This is the exact value of the limit.
   // The systole is 2*acosh(1+sqrt(2)), and we want half of that.
   // The max _diameter_ of the hyperbolic circles must be less than this.
-  double factor(0.85); // percentage of the limit to consider -- failsafe!
+  double factor(1.0); // percentage of the limit to consider -- failsafe! iordanov 10/02/19: additional failsafe in remove(), this can be 1.0 now
   double lim(factor*acosh(1. + sqrt(2.)));
 
   std::vector<Vertex_handle> bdry_verts;
@@ -428,7 +428,7 @@ is_removable(Vertex_handle v,
 
   int n_verts = static_cast<int>(bdry_verts.size());
   double max_diam = 0.;
-  for(Finite_Delaunay_faces_iterator fit = dt.finite_faces_begin();
+  for(Finite_Delaunay_faces_iterator fit  = dt.finite_faces_begin();
                                      fit != dt.finite_faces_end(); ++fit)
   {
     bool is_good = true;
@@ -602,6 +602,12 @@ remove(Vertex_handle v)
       }
     }
 
+    typedef std::pair<Face_handle, int>       Nbr_entry;
+    typedef std::pair<Nbr_entry, Nbr_entry>   Nbr_pair;
+    typedef std::vector<Nbr_pair>             Nbr_history;
+
+    Nbr_history failsafe;
+
     int internb = 0;
     int bdrynb = 0;
     for(std::size_t i=0; i<new_f.size(); ++i)
@@ -618,6 +624,16 @@ remove(Vertex_handle v)
             Neighbor_pair nb = bdry_nbrs[bdry_edges[j]];
             Face_handle nbf = nb.first;
             int nbidx = nb.second;
+
+            Nbr_entry side1(nbf, nbidx);
+            Nbr_entry side2(nbf->neighbor(nbidx), nbf->neighbor(nbidx)->index(nbf));
+            
+            CGAL_triangulation_assertion(side1.first->neighbor(side1.second) == side2.first);
+            CGAL_triangulation_assertion(side2.first->neighbor(side2.second) == side1.first);  
+            
+            Nbr_pair hist(side1, side2);
+            failsafe.push_back(hist);
+
             tds().set_adjacency(nbf, nbidx, new_f[i], k);
             bdrynb++;
             break;
@@ -640,6 +656,45 @@ remove(Vertex_handle v)
                 internb++;
                 break;
               }
+            }
+          }
+        }
+      }
+    }
+
+    /*
+      This is a failsafe check: make sure that there are no cycles of length 2 before 
+      deleting the old faces. If everything is OK, then proceed with the actual removal 
+      and keep the new faces. Otherwise the new objects are deleted and the operation 
+      is canceled.
+    */
+    for (Face_iterator fit = this->faces_begin(); fit != this->faces_end(); ++fit) {
+      if (std::find(nbrs.begin(), nbrs.end(), fit) == nbrs.end()) {
+        for (int ii = 0; ii < 3; ii++) {
+          for (int jj = ii+1; jj < 3; jj++) {
+            if ( fit->neighbor(ii) == fit->neighbor(jj) ) {
+
+              for (unsigned int safeit = 0; safeit < failsafe.size(); ++safeit) {
+                Nbr_pair hist = failsafe[safeit];
+                Nbr_entry side1 = hist.first;
+                Nbr_entry side2 = hist.second;
+                tds().set_adjacency(side1.first, side1.second, side2.first, side2.second);
+              }
+
+              for (unsigned int canit = 0; canit < nbrs.size(); ++canit) {
+                for (int iit = 0; iit < 3; ++iit) {
+                  nbrs[canit]->vertex(iit)->clear_translation();
+                }
+                this->make_canonical(nbrs[canit]);
+              }
+
+              for (unsigned int rit = 0; rit < new_f.size(); rit++) {
+                tds().delete_face(new_f[rit]);
+              }
+
+              CGAL_triangulation_assertion(this->is_valid(true)); 
+
+              return false;
             }
           }
         }
