@@ -64,7 +64,6 @@ int main(int argc, char** argv)
 
     tr.try_to_remove_dummy_vertices();
     assert(tr.is_valid());
-    assert(tr.number_of_dummy_points() == 0);
 
     tr.remove(vh.begin(), vh.end());
 

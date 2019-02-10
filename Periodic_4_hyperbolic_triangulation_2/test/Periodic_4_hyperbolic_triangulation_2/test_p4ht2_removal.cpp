@@ -61,21 +61,12 @@ int main(int argc, char** argv)
 
     tr.try_to_remove_dummy_vertices();
     assert(tr.is_valid());
-    assert(tr.number_of_dummy_points() == 0);
-
-    bool again;
-    do
-    {
-      again = false;
-      for(Iter it = tr.vertices_begin(); it != tr.vertices_end(); ++it)
-      {
-        if(tr.remove(it))
-          again = true;
-
-      }
+    
+    cnt = 0;
+    for(Iter it = tr.vertices_begin(); it != tr.vertices_end(); ++it) {
+      tr.remove(it);
     }
-    while(again);
-
+    
     std::cout << "Final count of vertices: " << tr.number_of_vertices() << std::endl;
     assert(tr.is_valid());
   }
