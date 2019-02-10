@@ -38,7 +38,7 @@ or `Dynamic_dimension_tag`. In the latter case, the dimension of the space is sp
 \attention Only the interfaces specific to this class are listed below. Refer to the
 concepts for the rest.
 
-\attention Known bugs: the functor `Kernel_d::Intersect_d` is not yet implemented. `Kernel_d::Contained_in_affine_hull` assumes that the iterators refer to an affinely independent family. `Kernel_d::Orientation_d` only works for points, not vectors. Constructing a `Point_d` with iterators is done lazily, see below.
+\attention Known bugs: the functor `Kernel_d::Intersect_d` is not yet implemented. `Kernel_d::Contained_in_affine_hull` assumes that the iterators refer to an affinely independent family. `Kernel_d::Orientation_d` only works for points, not vectors.
 
 \attention This kernel requires the \ref thirdpartyEigen "Eigen" library.
 
@@ -72,10 +72,6 @@ Point_d(double x0, double x1, ...);
 /*! introduces a point with coordinate set `[first,end)`.
     \pre If `DimensionTag` is a fixed dimension, it matches `distance(first,end)`.
     \tparam ForwardIterator has its value type that is convertible to `double`.
-    \bug This constructor stores the iterators and may use
-    them at any later time, when an exact construction is needed. This means
-    that if `[first,end)` points to some buffer, it has to remain alive at
-    least as long as the point.
     */
 template<typename ForwardIterator>
 Point_d(ForwardIterator first, ForwardIterator end);
