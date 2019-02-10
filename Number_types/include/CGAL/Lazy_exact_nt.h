@@ -165,6 +165,11 @@ struct Lazy_exact_Ex_Cst : public Lazy_exact_nt_rep<ET>
   {
     this->et = new ET(e);
   }
+  Lazy_exact_Ex_Cst (ET&& e)
+      : Lazy_exact_nt_rep<ET>(CGAL_NTS to_interval(e))
+  {
+    this->et = new ET(std::move(e));
+  }
 
   void update_exact() const { CGAL_error(); }
 };
@@ -376,6 +381,8 @@ public :
 
   Lazy_exact_nt (const ET & e)
     : Base(new Lazy_exact_Ex_Cst<ET>(e)){}
+  Lazy_exact_nt (ET&& e)
+    : Base(new Lazy_exact_Ex_Cst<ET>(std::move(e))){}
 
   template <class ET1>
   Lazy_exact_nt (const Lazy_exact_nt<ET1> &x,
