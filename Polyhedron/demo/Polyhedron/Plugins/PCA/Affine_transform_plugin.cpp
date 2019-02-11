@@ -541,7 +541,6 @@ void Polyhedron_demo_affine_transform_plugin::start(Scene_points_with_normal_ite
 
 
 void Polyhedron_demo_affine_transform_plugin::end(){
-  QApplication::restoreOverrideCursor();
   double matrix[16];
   transformMatrix(&matrix[0]);
   const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
@@ -600,6 +599,7 @@ void Polyhedron_demo_affine_transform_plugin::end(){
     transform_points_item = NULL;
   }
   dock_widget->hide();
+  QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_affine_transform_plugin::updateUiMatrix()
