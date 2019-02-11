@@ -140,7 +140,7 @@ CGAL_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::edge_is_feature_t)
 inline get(CGAL::edge_is_feature_t, const Surface_mesh<P>& smesh)
 {
   typedef typename boost::graph_traits<Surface_mesh<P> >::edge_descriptor edge_descriptor;
-  return smesh. template property_map<edge_descriptor,bool>("e:is_feature", false).first;
+  return smesh. template property_map<edge_descriptor,bool>("e:is_feature").first;
 }
 
 
