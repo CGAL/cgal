@@ -197,7 +197,7 @@ private:
 
 
   //  The debug version of the VC++ testsuite gets a timeout when using TBB, so let's disable it
-#if defined( CGAL_LINKED_WITH_TBB ) && ( (! defined (BOOST_MSVC)) || ( defined (BOOST_MSVC)  && defined( _DEBUG ) && (! defined ( CGAL_TEST_SUITE ) ) ) )
+#if defined( CGAL_LINKED_WITH_TBB ) && ( !defined (BOOST_MSVC) || !defined( _DEBUG ) || !defined (CGAL_TEST_SUITE) )
 
 // Parallel
 template <typename Tr>
