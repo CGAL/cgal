@@ -221,6 +221,7 @@ namespace CGAL {
       Circular_arc_3(const Point_3 &begin,
 		     const Point_3 &middle,
 		     const Point_3 &end)
+        : _full(false)
       {
 	CGAL_kernel_precondition(!typename SK::Collinear_3()(begin, middle, end));
 	const Circle_3 c = Circle_3(begin, middle, end);
