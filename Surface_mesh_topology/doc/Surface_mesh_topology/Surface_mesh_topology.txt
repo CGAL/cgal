@@ -12,16 +12,16 @@ This package provides an algorithm to test if a curve on a surface mesh can be c
 
 \section SMTopology Introduction
 
-Given a curve drawn on a surface one can ask if the curve can be continuously deformed to a zero length curve, or in other words, to a point. Here, we require that the curve stays on the surface during the deformation. Curves that deform to a point are said contractible. All curves on a sphere are contractible but this not true for all curves on a torus or on a surface with more complicated topology. One intuitive way to check  that a curve is contractible could be to view the curve as a rope and to try to tighten the rope as much as possible until it collapses to a point. However, if the surface is not flat but contains peaks or more complicated shapes, the rope may get stucked making the test fail.
+Given a curve drawn on a surface one can ask if the curve can be continuously deformed to a zero length curve (i.e. a point). Here, we require that the curve stays on the surface during the deformation. Curves that deform to a point are said <em>contractible</em>. All curves on a sphere are contractible but this not true for all curves on a torus or on a surface with more complicated topology. One intuitive way to check  that a curve is contractible could be to view the curve as a rope and to try to tighten the rope as much as possible until it collapses to a point. However, if the surface is not flat but contains peaks or more complicated shapes, the rope may get stucked making the test fail.
 
 The algorithm implemented in this package builds a data structure to efficiently answer queries of the following form: 
-- Given a surface mesh \f$\cal{M}\f$, and a closed curve specified as a sequence of edges of \f$\cal{M}\f$, decide if the curve is contractible on \f$\cal{M}\f$,
-- Given a surface mesh \f$\cal{M}\f$, and two closed curves on \f$\cal{M}\f$, decide if the two curves are related by a continuous transformation,
-- Given a surface mesh \f$\cal{M}\f$, and two non-necessarily closed curves on \f$\cal{M}\f$, decide if the two curves are related by a continuous transformation that fixes the curve extremities.
+- Given a surface mesh \f$\cal{M}\f$ and a closed curve specified as a sequence of edges of \f$\cal{M}\f$, decide if the curve is contractible on \f$\cal{M}\f$,
+- Given a surface mesh \f$\cal{M}\f$ and two closed curves on \f$\cal{M}\f$, decide if the two curves are related by a continuous transformation,
+- Given a surface mesh \f$\cal{M}\f$ and two non-necessarily closed curves on \f$\cal{M}\f$, decide if the two curves are related by a continuous transformation that fixes the curve extremities.
 
 The second query asks if the curves are <em>freely homotopic</em> while the third one asks if the curves are <em>homotopic with basepoints</em>. The three queries are globally refered to as <em>homotopy tests</em>. 
 
-The algorithms used are based on a paper by Erickson and Whittlesey \cgalCite{ew-tcsr-13}, providing a linear time algorithm for the above homotopy tests. This is a simplified version of the earlier results by Lazarus and Rivaud \cgalCite{lr-hts-12}.
+The algorithms used are based on a paper by Erickson and Whittlesey \cgalCite{ew-tcsr-13}, providing a linear time algorithm for the above homotopy tests. This is a simplified version of the linear time algorithm  by Lazarus and Rivaud \cgalCite{lr-hts-12}.
 
 \section SMTopology_HowToUse  User Interface Description
 
