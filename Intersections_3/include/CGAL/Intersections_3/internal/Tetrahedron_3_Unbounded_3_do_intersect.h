@@ -33,60 +33,75 @@ namespace Intersections {
 namespace internal {
 
 template<typename K, class Unbounded>
-bool do_intersect_tetrahedron_unbounded(const typename K::Tetrahedron_3& tet,
-                                        const Unbounded& unb,
-                                        const K& k) {
+typename K::Boolean
+do_intersect_tetrahedron_unbounded(const typename K::Tetrahedron_3& tet,
+                                   const Unbounded& unb,
+                                   const K& k) {
   typedef typename K::Triangle_3 Triangle;
-  if (do_intersect(unb,Triangle(tet[0], tet[1], tet[2]), k)) return true;
-  if (do_intersect(unb, Triangle(tet[0], tet[1], tet[3]), k)) return true;
-  if (do_intersect(unb, Triangle(tet[0], tet[2], tet[3]), k)) return true;
-  if (do_intersect(unb, Triangle(tet[1], tet[2], tet[3]), k)) return true;
-  return false;
+  typedef typename K::Boolean Boolean;
+  Boolean result = false;
+  for (int i = 0; i < 4; ++i)
+  {
+    const Boolean b = do_intersect(unb,
+                                   Triangle(tet[i],
+                                            tet[(i+1)%4],
+                                            tet[(i+2)%4]),
+                                   k);
+    if(certainly(b)) return b;
+    if(is_indeterminate(b)) result = b;
+  }
+  return result;
 }
 
 
 
 template<typename K>
-bool do_intersect(const typename K::Plane_3& unb,
-                  const typename K::Tetrahedron_3& tet,
-                  const K& k) {
+typename K::Boolean
+do_intersect(const typename K::Plane_3& unb,
+             const typename K::Tetrahedron_3& tet,
+             const K& k) {
   return do_intersect_tetrahedron_unbounded(tet, unb, k);
 }
 
 template<typename K>
-bool do_intersect(const typename K::Tetrahedron_3& tet,
-                  const typename K::Plane_3& unb,
-                  const K& k) {
-  return do_intersect_tetrahedron_unbounded(tet, unb, k);
-}
-
-
-template<typename K>
-bool do_intersect(const typename K::Line_3& unb,
-                  const typename K::Tetrahedron_3& tet,
-                  const K& k) {
-  return do_intersect_tetrahedron_unbounded(tet, unb, k);
-}
-
-template<typename K>
-bool do_intersect(const typename K::Tetrahedron_3& tet,
-                  const typename K::Line_3& unb,
-                  const K& k) {
+typename K::Boolean
+do_intersect(const typename K::Tetrahedron_3& tet,
+             const typename K::Plane_3& unb,
+             const K& k) {
   return do_intersect_tetrahedron_unbounded(tet, unb, k);
 }
 
 
 template<typename K>
-bool do_intersect(const typename K::Ray_3& unb,
-                  const typename K::Tetrahedron_3& tet,
-                  const K& k) {
+typename K::Boolean
+do_intersect(const typename K::Line_3& unb,
+             const typename K::Tetrahedron_3& tet,
+             const K& k) {
   return do_intersect_tetrahedron_unbounded(tet, unb, k);
 }
 
 template<typename K>
-bool do_intersect(const typename K::Tetrahedron_3& tet,
-                  const typename K::Ray_3& unb,
-                  const K& k) {
+typename K::Boolean
+do_intersect(const typename K::Tetrahedron_3& tet,
+             const typename K::Line_3& unb,
+             const K& k) {
+  return do_intersect_tetrahedron_unbounded(tet, unb, k);
+}
+
+
+template<typename K>
+typename K::Boolean
+do_intersect(const typename K::Ray_3& unb,
+             const typename K::Tetrahedron_3& tet,
+             const K& k) {
+  return do_intersect_tetrahedron_unbounded(tet, unb, k);
+}
+
+template<typename K>
+typename K::Boolean
+do_intersect(const typename K::Tetrahedron_3& tet,
+             const typename K::Ray_3& unb,
+             const K& k) {
   return do_intersect_tetrahedron_unbounded(tet, unb, k);
 }
 
