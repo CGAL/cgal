@@ -49,7 +49,8 @@ namespace CGAL
         typename Point_from_cell_iterator_proprety_map<GeomTraits, Iterator>::reference
         get(Point_from_cell_iterator_proprety_map<GeomTraits, Iterator>, Iterator it)
       {
-        return it->vertex(1)->point().point();
+        typename GeomTraits::Construct_point_3 point;
+        return point(it->vertex(1)->point());
       }
     };
 
@@ -66,10 +67,11 @@ namespace CGAL
         reference
         get(Tet_from_cell_iterator_proprety_map<GeomTraits, Iterator>, key_type it)
       {
-        return value_type(it->vertex(0)->point().point(),
-                          it->vertex(1)->point().point(),
-                          it->vertex(2)->point().point(),
-                          it->vertex(3)->point().point());
+        typename GeomTraits::Construct_point_3 point;
+        return value_type(point(it->vertex(0)->point()),
+                          point(it->vertex(1)->point()),
+                          point(it->vertex(2)->point()),
+                          point(it->vertex(3)->point()));
       }
     };
 
