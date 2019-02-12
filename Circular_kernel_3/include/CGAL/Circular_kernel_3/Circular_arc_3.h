@@ -52,7 +52,7 @@ namespace CGAL {
       typedef typename SK::template Handle<Rep>::type Base;
 
       Base base;
-      mutable bool _full;
+      bool _full;
       // It is the sign of the cross product 
       // of the vector (Center -> S) x (Center -> T)
       // it saves execution time for the has_on functor
@@ -141,7 +141,7 @@ namespace CGAL {
       // This is the one of the two cases we want that s == t
       // that makes the is_full() correct and complete
       Circular_arc_3(const Circle_3 &c)
-      : _full(true)
+        : _full(true), _sign_cross_product(CGAL::ZERO)
       {
         const Plane_3 &p = c.supporting_plane();
         if(is_zero(p.b()) && is_zero(p.c())) {
@@ -153,9 +153,6 @@ namespace CGAL {
 	    SphericalFunctors::x_extremal_point<SK>(c,true);
           base = Rep(c,v,v);
         }
-        /* don't matter
-        _sign_cross_product = 0;
-        */
       }
 
       // This is the second case where we want that s == t
