@@ -406,6 +406,12 @@ public:
     /// that returns `true` in order to skip the primitive.
     /// Defaults to a functor that always returns `false`.
     ///
+    /// \note `skip` might be given some primitives that are not intersected by `query`
+    ///       because the intersection test is done after the skip test. Also note that
+    ///       the order the primitives are given to `skip` is not necessarily the
+    ///       intersection order with `query`.
+    ///
+    ///
     /// `AABBTraits` must be a model of `AABBRayIntersectionTraits` to
     /// call this member function.
     template<typename Ray, typename SkipFunctor>
