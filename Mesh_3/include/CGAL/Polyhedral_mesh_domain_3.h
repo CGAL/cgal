@@ -261,14 +261,9 @@ public:
     }
 
     static Surface_patch_index get_index(const typename type::Id primitive_id) {
-      if(get(face_patch_id_t<Patch_id>(),
-             *primitive_id.graph) != NULL)
-        return get(get(face_patch_id_t<Patch_id>(),
-                       *primitive_id.graph),
-                   primitive_id.face_descriptor);
-      else {
-        return 1;
-      }
+      return get(get(face_patch_id_t<Patch_id>(),
+                     *primitive_id.graph),
+                 primitive_id.face_descriptor);
     }
   }; // Primitive_type (for non-Polyhedron_3)
 
