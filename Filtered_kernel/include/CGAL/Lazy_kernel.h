@@ -343,7 +343,7 @@ public:
             
       LR * lr = dynamic_cast<LR*>(p.ptr());
       if(lr && (! lr->et)){
-        return lr->l2;
+        return std::get<2>(lr->l);
       }
       return BaseClass().compute_weight_2_object()(p);
     }
@@ -373,7 +373,7 @@ public:
             
       LR * lr = dynamic_cast<LR*>(p.ptr());
       if(lr && (! lr->et)){
-        return lr->l2;
+        return std::get<2>(lr->l);
       }
       return BaseClass().compute_weight_3_object()(p);
     }
@@ -430,11 +430,11 @@ public:
 
       LR * lr = dynamic_cast<LR*>(p.ptr());
       if(lr && (! lr->et)){
-        return lr->l1;
+        return std::get<1>(lr->l);
       } else {
         LRint* lrint = dynamic_cast<LRint*>(p.ptr());
         if(lrint && (! lrint->et)){
-          return lrint->l1;
+          return std::get<1>(lrint->l);
         }
       }
 
@@ -493,11 +493,11 @@ public:
       
       LR * lr = dynamic_cast<LR*>(p.ptr());
       if(lr && (! lr->et)){
-        return lr->l1;
+        return std::get<1>(lr->l);
       }else{
         LRint* lrint = dynamic_cast<LRint*>(p.ptr());
         if(lrint && (! lrint->et)){
-          return lrint->l1;
+          return std::get<1>(lrint->l);
         }
       }
       return BaseClass().construct_point_3_object()(p);
