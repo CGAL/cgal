@@ -1,5 +1,5 @@
 language: cpp 
-dist: trusty 
+dist: xenial 
 sudo: required 
 git: 
  depth: 3
@@ -51,19 +51,19 @@ env:
     - PACKAGE='Three Triangulation Triangulation_2 ' 
     - PACKAGE='Triangulation_3 Union_find Visibility_2 ' 
     - PACKAGE='Voronoi_diagram_2 wininst ' 
-compiler: clang-3.6
+compiler: clang
 install: 
   - echo "$PWD"
   - if [ -n "$TRAVIS_PULL_REQUEST" ] && [ "$PACKAGE" != CHECK ]; then  DO_IGNORE=FALSE;  for ARG in $(echo "$PACKAGE");do if [ "$ARG" = "Maintenance" ]; then continue; fi; . $PWD/.travis/test_package.sh "$PWD" "$ARG";  echo "DO_IGNORE is $DO_IGNORE";  if [ "$DO_IGNORE" = "FALSE" ]; then  break; fi; done; if [ "$DO_IGNORE" = "TRUE" ]; then travis_terminate 0; fi;fi
   - bash .travis/install.sh 
-  - export CXX=clang++-3.6 CC=clang-3.6;
+  - export CXX=clang++ CC=clang;
 before_script: 
 - wget -O doxygen_exe https://cgal.geometryfactory.com/~mgimeno/doxygen_exe
 - sudo mv doxygen_exe /usr/bin/doxygen
 - sudo chmod +x /usr/bin/doxygen
 - mkdir -p build 
 - cd build 
-- cmake -DCMAKE_CXX_FLAGS="-std=c++11" -DCGAL_HEADER_ONLY=ON -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" -DQt5Svg_DIR="/opt/qt55/lib/cmake/Qt5Svg" -DQt5OpenGL_DIR="/opt/qt55/lib/cmake/Qt5OpenGL" -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG -DWITH_examples=ON -DWITH_demos=ON -DWITH_tests=ON .. 
+- cmake -DCMAKE_CXX_FLAGS="-std=c++11" -DCGAL_HEADER_ONLY=ON -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG -DWITH_examples=ON -DWITH_demos=ON -DWITH_tests=ON .. 
 - make 
 - sudo make install &>/dev/null
 - cd ..
