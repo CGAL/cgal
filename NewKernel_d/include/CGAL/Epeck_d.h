@@ -27,7 +27,9 @@
 #include <CGAL/NewKernel_d/Wrapper/Cartesian_wrap.h>
 #include <CGAL/NewKernel_d/Kernel_d_interface.h>
 #include <CGAL/NewKernel_d/Lazy_cartesian.h>
+#include <CGAL/NewKernel_d/KernelD_converter.h>
 #include <CGAL/internal/Exact_type_selector.h>
+#include <CGAL/NewKernel_d/Types/Weighted_point.h>
 
 // TODO: add static filters somewhere
 namespace CGAL {
