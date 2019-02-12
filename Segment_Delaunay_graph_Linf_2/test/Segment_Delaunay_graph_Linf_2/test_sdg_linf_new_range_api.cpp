@@ -7,12 +7,14 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_filtered_traits_2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2.h>
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Field_with_sqrt_tag MTag;
 typedef CGAL::Integral_domain_without_division_tag EMTag;
-typedef CGAL::Simple_cartesian<CGAL::Gmpq> EK;
+typedef CGAL::Exact_rational Number_type;
+
+typedef CGAL::Simple_cartesian<Number_type> EK;
 
 typedef CGAL::Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2<K, MTag, EK, EMTag>  Gt;
 typedef CGAL::Segment_Delaunay_graph_Linf_2<Gt>  SDG;

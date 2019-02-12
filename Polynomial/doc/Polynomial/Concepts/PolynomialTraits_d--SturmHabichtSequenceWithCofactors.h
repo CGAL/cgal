@@ -3,8 +3,6 @@
 \ingroup PkgPolynomialConcepts
 \cgalConcept
 
-<B>Note:</B> This functor is optional! 
-
 Computes the Sturm-Habicht polynomials of a polynomial \f$ f\f$ of degree \f$ n\f$, 
 as defined in the documentation of `PolynomialTraits_d::SturmHabichtSequence`. 
 Moreover, for \f$ \mathrm{Stha}_i(f)\f$, polynomials \f$ u_i\f$ and \f$ v_i\f$ 
@@ -15,6 +13,8 @@ the <I>cofactors</I> of \f$ \mathrm{Stha}_i(f)\f$.
 The result is written in three output ranges, each of length \f$ \min\{n,m\}+1\f$, 
 starting with the \f$ 0\f$-th Sturm-Habicht polynomial \f$ \mathrm{Stha_0(f)}\f$ 
 and the corresponding cofactors. 
+
+\note This functor is optional.
 
 \cgalRefines `AdaptableBinaryFunction` 
 \cgalRefines `CopyConstructible` 

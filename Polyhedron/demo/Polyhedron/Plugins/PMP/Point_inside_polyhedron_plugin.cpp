@@ -5,7 +5,7 @@
 #include "Scene_surface_mesh_item.h"
 #include "Scene_points_with_normal_item.h"
 #include <CGAL/Three/Scene_interface.h>
-
+#include <CGAL/Three/Three.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 
 #include <CGAL/Timer.h>
@@ -52,7 +52,7 @@ public:
     //if the loop ends without returning true, return false
     return false;
   }
-  void print_message(QString message) { messages->information(message); }
+  void print_message(QString message) { CGAL::Three::Three::information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionPointInsidePolyhedron; }
 
 

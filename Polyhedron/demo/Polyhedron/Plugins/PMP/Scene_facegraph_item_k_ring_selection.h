@@ -134,6 +134,8 @@ public Q_SLOTS:
   // slots are called by signals of polyhedron_item
   void vertex_has_been_selected(void* void_ptr) 
   {
+    if((*CGAL::QGLViewer::QGLViewerPool().begin())->property("performing_selection").toBool())
+      return;
     is_active=true;
     if(active_handle_type == Active_handle::VERTEX || active_handle_type == Active_handle::PATH)
     {
@@ -145,6 +147,8 @@ public Q_SLOTS:
   }
   void facet_has_been_selected(void* void_ptr)
   {
+    if((*CGAL::QGLViewer::QGLViewerPool().begin())->property("performing_selection").toBool())
+      return;
     is_active=true;
     if (active_handle_type == Active_handle::FACET
       || active_handle_type == Active_handle::CONNECTED_COMPONENT)
@@ -157,6 +161,8 @@ public Q_SLOTS:
   }
   void edge_has_been_selected(void* void_ptr) 
   {
+    if((*CGAL::QGLViewer::QGLViewerPool().begin())->property("performing_selection").toBool())
+      return;
     is_active=true;
     if(active_handle_type == Active_handle::EDGE)
     {

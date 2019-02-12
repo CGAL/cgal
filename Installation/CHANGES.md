@@ -64,6 +64,24 @@ Release date: March 2019
     original behavior (using one unique and automatically selected seed) is
     kept if this parameter is not used.
 
+### Classification
+
+-   Added a new experimental classifier
+    `TensorFlow::Neural_network_classifier`.
+
+-   For uniformity, `ETHZ_random_forest_classifier` is renamed
+    `ETHZ::Random_forest_classifier` and `OpenCV_random_forest_classifier`
+    is renamed `OpenCV::Random_forest_classifier`.
+
+-   The training algorithm of `ETHZ::Random_forest_classifier` was
+    parallelized.
+
+-   Added a constructor to copy a `ETHZ::Random_forest_classifier` using a
+    different data set as input.
+
+-   Added 3 new geometric features, `Height_above`, `Height_below` and
+    `Vertical_range`.
+
 ### 3D Fast Intersection and Distance Computation
 
 -   The primitives `AABB_face_graph_triangle_primitive` and
@@ -86,6 +104,12 @@ Release date: March 2019
     `Arr_polyline_traits_2`, `Arr_polycurve_traits_2`, and
     `Arr_polycurve_basic_traits_2`.
 
+### 2D and 3D Mesh Generation
+
+-   Added two functions for writing in XML VTK formats:
+    - `CGAL::write_vtu()`, that writes a 2D mesh in a `.vtu` file,
+    - `CGAL::output_to_vtu()`, that writes a 3D mesh in a `.vtu` file.
+
 ### 2D Minkowski Sums
 
 -   Fixed a bug in the function that computed the Minkowski sum using the
@@ -94,7 +118,10 @@ Release date: March 2019
 
 ### CGAL and the Boost Graph Library (BGL)
 
--    Add function `write_wrl()` for writing into VRML 2.0 format.
+-   Added function `write_wrl()` for writing into VRML 2.0 format.
+-   Added functions `CGAL::write_vtp()` for writing a triangulated
+      face graph in a `.vtp` file (XML VTK format).
+
 
 
 Release 4.13

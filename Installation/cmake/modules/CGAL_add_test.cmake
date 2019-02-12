@@ -3,6 +3,8 @@ if(CGAL_add_test_included)
 endif(CGAL_add_test_included)
 set(CGAL_add_test_included TRUE)
 
+option(BUILD_TESTING "Build the testing tree." OFF)
+
 if(NOT POLICY CMP0064)
   # CMake <= 3.3
   if(BUILD_TESTING)
@@ -19,7 +21,9 @@ if(NOT POLICY CMP0064)
   return()
 endif()
 
-include(CTest)
+if(BUILD_TESTING)
+  enable_testing()
+endif()
 
 cmake_policy(SET CMP0064 NEW)
 

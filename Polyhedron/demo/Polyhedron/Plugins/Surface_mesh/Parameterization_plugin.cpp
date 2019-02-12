@@ -9,6 +9,7 @@
 #include "SMesh_type.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 #include "Scene.h"
 #include <QTime>
 #include <QGraphicsScene>
@@ -316,6 +317,10 @@ public:
     return _actions;
   }
 
+  ~Polyhedron_demo_parameterization_plugin()
+  {
+    delete navigation;
+  }
   void init(QMainWindow* mainWindow,
             Scene_interface* scene_interface,
             Messages_interface* msg)
@@ -540,14 +545,14 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
 
   if(!poly_item)
   {
-    messages->error("Selected item is not of the right type.");
+    CGAL::Three::Three::error("Selected item is not of the right type.");
     return;
   }
 
   Face_graph* pMesh = poly_item->face_graph();
   if(!pMesh)
   {
-    messages->error("Selected item has no valid polyhedron.");
+    CGAL::Three::Three::error("Selected item has no valid polyhedron.");
     return;
   }
   Scene_polyhedron_selection_item* sel_item = NULL;
@@ -579,7 +584,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
 
   if(!is_seamed && is_closed(*pMesh))
   {
-    messages->error("The selected mesh has no (real or virtual) border.");
+    CGAL::Three::Three::error("The selected mesh has no (real or virtual) border.");
     return;
   }
 
@@ -824,6 +829,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       if (i == QDialog::Rejected)
       {
         std::cout << "Aborting parameterization" << std::endl;
+        QApplication::restoreOverrideCursor();
         return;
       }
 
@@ -836,6 +842,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
         std::cerr << "Error: incompatible orbifold type and number of cones" << std::endl;
         std::cerr << "Types I, II & III require 3 selected vertices" << std::endl;
         std::cerr << "Type IV requires 4 selected vertices" << std::endl;
+        QApplication::restoreOverrideCursor();
         return;
       }
 
@@ -847,6 +854,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       if(!SMP::locate_unordered_cones(sMesh, unordered_cones.begin(), unordered_cones.end(), cmap))
       {
         std::cerr << "Error: invalid cone or seam selection" << std::endl;
+        QApplication::restoreOverrideCursor();
         return;
       }
 
@@ -881,6 +889,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       std::cout << "success (in " << time.elapsed() << " ms)" << std::endl;
     } else {
       std::cerr << "failure: " << SMP::get_error_message(status) << std::endl;
+      QApplication::restoreOverrideCursor();
       return;
     }
 
