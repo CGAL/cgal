@@ -1,5 +1,6 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 #include <QApplication>
 #include <QDockWidget>
 #include <QObject>
@@ -184,7 +185,7 @@ private Q_SLOTS:
     if(!item ||
        !item->point_set()->has_property_map<double>("distance"))
     {
-      messageInterface->warning("You must select the resulting point set.");
+      CGAL::Three::Three::warning("You must select the resulting point set.");
       return;
     }
     PMap distance_map;

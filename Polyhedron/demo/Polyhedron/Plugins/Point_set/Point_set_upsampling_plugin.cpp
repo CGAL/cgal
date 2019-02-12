@@ -3,6 +3,7 @@
 #include "Messages_interface.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/edge_aware_upsample_point_set.h>
@@ -86,7 +87,7 @@ void Polyhedron_demo_point_set_upsampling_plugin::on_actionEdgeAwareUpsampling_t
     {
       if (!(item->has_normals ()))
 	{
-          message_interface->error("Error: upsampling algorithm requires point set with normals.");
+          CGAL::Three::Three::error("Error: upsampling algorithm requires point set with normals.");
 	  return;
 	}
       

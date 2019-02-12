@@ -258,7 +258,7 @@ namespace Polygon_mesh_processing {
     return border_counter;
   }
 
-  /// @ingroup PkgPolygonMeshProcessing
+  /// @ingroup PkgPolygonMeshProcessingRef
   /// extracts boundary cycles as a list of halfedges, with one halfedge per border.
   ///
   /// @tparam PolygonMesh a model of `HalfedgeListGraph`

@@ -10,6 +10,7 @@
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 
 #include <CGAL/Polyhedron_copy_3.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
@@ -168,7 +169,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
       if (new_polyhedra.size()==1)
       {
         delete new_polyhedra.front();
-        msg_interface->information( tr("%1 has only one connected component").arg(item->name()) );
+        CGAL::Three::Three::information( tr("%1 has only one connected component").arg(item->name()) );
         QApplication::restoreOverrideCursor();
         continue;
       }

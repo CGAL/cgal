@@ -25,6 +25,7 @@
 
 #include <boost/function_output_iterator.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <CGAL/Three/Three.h>
 
 
 struct Face : public CGAL::cpp11::array<int,3>
@@ -48,7 +49,7 @@ class Polyhedron_demo_hole_filling_polyline_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
   bool applicable(QAction *) const { return qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex())); }
-  void print_message(QString message) { messages->information(message); }
+  void print_message(QString message) { CGAL::Three::Three::information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionHoleFillingPolyline; }
 
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m){

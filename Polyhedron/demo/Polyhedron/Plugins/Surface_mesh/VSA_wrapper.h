@@ -111,6 +111,7 @@ public:
     Visual_items() :
       group(NULL),
       seeds(NULL),
+      has_meshing_items(false),
       triangles(NULL),
       polygons(NULL),
       anchors(NULL),
@@ -118,6 +119,7 @@ public:
 
     CGAL::Three::Scene_group_item *group;
     Scene_polylines_item *seeds;
+    bool has_meshing_items;
     Scene_polygon_soup_item *triangles;
     Scene_polylines_item *polygons;
     Scene_polylines_item *anchors;

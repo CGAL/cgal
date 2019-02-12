@@ -488,6 +488,7 @@ create_mst_graph(
     CGAL_USE(point_map);
     CGAL_USE(k);
     CGAL_USE(kernel);
+    CGAL_USE(index_map);
 
     // Bring private stuff to scope
     using namespace internal;

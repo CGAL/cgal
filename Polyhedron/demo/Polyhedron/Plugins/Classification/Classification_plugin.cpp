@@ -19,6 +19,7 @@
 
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 
 #include <CGAL/Random.h>
 #include <CGAL/Real_timer.h>
@@ -32,6 +33,7 @@
 #include <QMainWindow>
 #include <QApplication>
 #include <QCheckBox>
+#include <QRadioButton>
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QSpinBox>
@@ -42,6 +44,11 @@
 
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
+
+#define CGAL_CLASSIFICATION_ETHZ_ID "Random Forest (ETHZ)"
+#define CGAL_CLASSIFICATION_TENSORFLOW_ID "Neural Network (TensorFlow)"
+#define CGAL_CLASSIFICATION_OPENCV_ID "Random Forest (OpenCV)"
+#define CGAL_CLASSIFICATION_SOWF_ID "Sum of Weighted Features"
 
 using namespace CGAL::Three;
 
@@ -120,6 +127,7 @@ class Polyhedron_demo_classification_plugin :
       color_button->setStyleSheet(s);
       color_button->update();
     }
+
   };
 
 
@@ -129,7 +137,7 @@ public:
         qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()))
         || qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
   }
-  void print_message(QString message) { messages->information(message); }
+  void print_message(QString message) { CGAL::Three::Three::information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionClassification; }
   
   using Polyhedron_demo_plugin_helper::init;
@@ -185,81 +193,86 @@ public:
     addDockWidget(dock_widget);
     addDockWidget(dock_widget_adv);
 
-#ifdef CGAL_LINKED_WITH_OPENCV
-    ui_widget.classifier->addItem (tr("Random Forest (OpenCV %1.%2)")
-                                   .arg(CV_MAJOR_VERSION)
-                                   .arg(CV_MINOR_VERSION));
-#endif
-
     color_att = QColor (75, 75, 77);
 
-    ui_widget.menu->setMenu (new QMenu("Classification Menu", ui_widget.menu));
-
-    connect(ui_widget.classifier,  SIGNAL(currentIndexChanged(int)), this,
-            SLOT(on_classifier_changed(int)));
-    
-    QAction* compute_features = ui_widget.menu->menu()->addAction ("Compute features");
+    QAction* compute_features = ui_widget.features_menu->addAction ("Compute features...");
     connect(compute_features,  SIGNAL(triggered()), this,
             SLOT(on_compute_features_button_clicked()));
 
-    ui_widget.menu->menu()->addSection ("Training");
+    action_statistics = ui_widget.features_menu->addAction ("Show feature statistics");
+    connect(action_statistics,  SIGNAL(triggered()), this,
+            SLOT(on_statistics_clicked()));
 
-    action_train = ui_widget.menu->menu()->addAction ("Train classifier");
-    action_train->setShortcut(Qt::SHIFT | Qt::Key_T);
-    connect(action_train,  SIGNAL(triggered()), this,
-            SLOT(on_train_clicked()));
-    
-    action_reset_local = ui_widget.menu->menu()->addAction ("Reset training set of selection");
+    action_reset_local = ui_widget.training_menu->addAction ("Reset training set of selection");
     connect(action_reset_local,  SIGNAL(triggered()), this,
             SLOT(on_reset_training_set_of_selection_clicked()));
     
-    action_reset = ui_widget.menu->menu()->addAction ("Reset all training sets");
+    action_reset = ui_widget.training_menu->addAction ("Reset all training sets");
     connect(action_reset,  SIGNAL(triggered()), this,
             SLOT(on_reset_training_sets_clicked()));
 
-    action_random_region = ui_widget.menu->menu()->addAction ("Select random region");
+    action_random_region = ui_widget.training_menu->addAction ("Select random region");
     action_random_region->setShortcut(Qt::SHIFT | Qt::Key_S);
     connect(action_random_region,  SIGNAL(triggered()), this,
             SLOT(on_select_random_region_clicked()));
 
-    action_validate = ui_widget.menu->menu()->addAction ("Validate labels of current selection as training sets");
+    action_validate = ui_widget.training_menu->addAction ("Validate labels of current selection as training sets");
     connect(action_validate,  SIGNAL(triggered()), this,
             SLOT(on_validate_selection_clicked()));
 
-    action_save_config = ui_widget.menu->menu()->addAction ("Save classifier's current configuration");
-    action_load_config = ui_widget.menu->menu()->addAction ("Load configuration for classifier");
+    classifier = ui_widget.classifier_menu->addSection (CGAL_CLASSIFICATION_ETHZ_ID);
+
+    action_train = ui_widget.classifier_menu->addAction ("Train...");
+    action_train->setShortcut(Qt::SHIFT | Qt::Key_T);
+    connect(action_train,  SIGNAL(triggered()), this,
+            SLOT(on_train_clicked()));
+    
+    ui_widget.classifier_menu->addSeparator();
+
+    action_run = ui_widget.classifier_menu->addAction ("Classify");
+    connect(action_run,  SIGNAL(triggered()), this,
+            SLOT(on_run_button_clicked()));
+
+    action_run_smoothed = ui_widget.classifier_menu->addAction ("Classify with local smoothing...");
+    connect(action_run_smoothed,  SIGNAL(triggered()), this,
+            SLOT(on_run_smoothed_button_clicked()));
+
+    action_run_graphcut = ui_widget.classifier_menu->addAction ("Classify with Graph Cut...");
+    connect(action_run_graphcut,  SIGNAL(triggered()), this,
+            SLOT(on_run_graphcut_button_clicked()));
+
+    ui_widget.classifier_menu->addSeparator();
+
+    action_save_config = ui_widget.classifier_menu->addAction ("Save current configuration...");
+    action_load_config = ui_widget.classifier_menu->addAction ("Load configuration...");
     connect(action_save_config,  SIGNAL(triggered()), this,
             SLOT(on_save_config_button_clicked()));
     connect(action_load_config,  SIGNAL(triggered()), this,
             SLOT(on_load_config_button_clicked()));
 
-    ui_widget.menu->menu()->addSection ("Algorithms");
-
-    action_run = ui_widget.menu->menu()->addAction ("Classification");
-    connect(action_run,  SIGNAL(triggered()), this,
-            SLOT(on_run_button_clicked()));
-
-    action_run_smoothed = ui_widget.menu->menu()->addAction ("Classification with local smoothing");
-    connect(action_run_smoothed,  SIGNAL(triggered()), this,
-            SLOT(on_run_smoothed_button_clicked()));
-
-    action_run_graphcut = ui_widget.menu->menu()->addAction ("Classification with Graph Cut");
-    connect(action_run_graphcut,  SIGNAL(triggered()), this,
-            SLOT(on_run_graphcut_button_clicked()));
-
-    ui_widget.menu->menu()->addSeparator();
-
-    QAction* close = ui_widget.menu->menu()->addAction ("Close");
-    connect(close,  SIGNAL(triggered()), this,
-            SLOT(ask_for_closing()));
-
+    ui_widget.classifier_menu->addSeparator();
+    
+    QAction* switch_classifier = ui_widget.classifier_menu->addAction ("Switch to another classifier...");
+    connect(switch_classifier,  SIGNAL(triggered()), this,
+            SLOT(on_switch_classifier_clicked()));
+    
     connect(ui_widget.display,  SIGNAL(currentIndexChanged(int)), this,
             SLOT(on_display_button_clicked(int)));
+
+    connect(ui_widget.minDisplay,  SIGNAL(released()), this,
+            SLOT(on_min_display_button_clicked()));
+    connect(ui_widget.maxDisplay,  SIGNAL(released()), this,
+            SLOT(on_max_display_button_clicked()));
 
     connect(ui_widget_adv.selected_feature,  SIGNAL(currentIndexChanged(int)), this,
             SLOT(on_selected_feature_changed(int)));
     connect(ui_widget_adv.feature_weight,  SIGNAL(valueChanged(int)), this,
             SLOT(on_feature_weight_changed(int)));
+
+    connect(ui_widget.help,  SIGNAL(clicked()), this,
+            SLOT(on_help_clicked()));
+    connect(ui_widget.close,  SIGNAL(clicked()), this,
+            SLOT(ask_for_closing()));
 
     QObject* scene_obj = dynamic_cast<QObject*>(scene_interface);
     if(scene_obj)
@@ -296,10 +309,26 @@ public Q_SLOTS:
     dock_widget->raise();
     if (Scene_points_with_normal_item* points_item
              = qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex())))
+    {
       create_from_item(points_item);
+      QAction* ps_selection = mw->findChild<QAction*>("actionPointSetSelection");
+      if (ps_selection)
+        ps_selection->trigger();
+      else
+        print_message("Warning: can't find Point Set Selection plugin");
+    }
     else if (Scene_surface_mesh_item* mesh_item
              = qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex())))
+    {
       create_from_item(mesh_item);
+      QAction* sm_selection = mw->findChild<QAction*>("actionSelection");
+      if (sm_selection)
+        sm_selection->trigger();
+      else
+        print_message("Warning: can't find Surface Mesh Selection plugin");
+    }
+    
+    on_help_clicked();
   }
 
 
@@ -342,31 +371,39 @@ public Q_SLOTS:
 
   void disable_everything ()
   {
-    ui_widget.menu->setEnabled(false);
-    ui_widget.display->setEnabled(false);
-    ui_widget.classifier->setEnabled(false);
+    ui_widget.features_menu->setEnabled(false);
+    ui_widget.training_menu->setEnabled(false);
+    ui_widget.classifier_menu->setEnabled(false);
+    ui_widget.view->setEnabled(false);
     ui_widget.frame->setEnabled(false);
   }
 
   void enable_computation()
   {
-    ui_widget.menu->setEnabled(true);
+    ui_widget.features_menu->setEnabled(true);
+    ui_widget.training_menu->setEnabled(true);
+    ui_widget.classifier_menu->setEnabled(false);
+    action_statistics->setEnabled(false);
     action_train->setEnabled(false);
-    action_reset_local->setEnabled(false);
-    action_reset->setEnabled(false);
-    action_random_region->setEnabled(false);
-    action_validate->setEnabled(false);
+    action_reset_local->setEnabled(true);
+    action_reset->setEnabled(true);
+    action_random_region->setEnabled(true);
+    action_validate->setEnabled(true);
     action_save_config->setEnabled(false);
     action_load_config->setEnabled(false);
     action_run->setEnabled(false);
     action_run_smoothed->setEnabled(false);
     action_run_graphcut->setEnabled(false);
-    ui_widget.display->setEnabled(true);
-    ui_widget.classifier->setEnabled(true);
+    ui_widget.view->setEnabled(true);
+    ui_widget.frame->setEnabled(true);
   }
 
   void enable_classif()
   {
+    ui_widget.features_menu->setEnabled(true);
+    ui_widget.training_menu->setEnabled(true);
+    ui_widget.classifier_menu->setEnabled(true);
+    action_statistics->setEnabled(true);
     action_train->setEnabled(true);
     action_reset_local->setEnabled(true);
     action_reset->setEnabled(true);
@@ -420,9 +457,15 @@ public Q_SLOTS:
         ui_widget_adv.selected_feature->clear();
         classif->fill_display_combo_box(ui_widget.display, ui_widget_adv.selected_feature);
         if (index >= ui_widget.display->count())
+        {
           ui_widget.display->setCurrentIndex(1);
+          change_color (classif, 1);
+        }
         else
+        {
           ui_widget.display->setCurrentIndex(index);
+          change_color (classif, index);
+        }
         ui_widget_adv.selected_feature->setCurrentIndex(0);
       }
   }
@@ -448,12 +491,6 @@ public Q_SLOTS:
         dynamic_cast<Surface_mesh_item_classification*>(it->second)->set_selection_item(selection_item);
       return it->second;
     }
-    else if (Scene_points_with_normal_item* points_item
-             = qobject_cast<Scene_points_with_normal_item*>(item))
-      return create_from_item(points_item);
-    else if (Scene_surface_mesh_item* mesh_item
-             = qobject_cast<Scene_surface_mesh_item*>(item))
-      return create_from_item(mesh_item);
 
     return NULL;
   }
@@ -504,25 +541,68 @@ public Q_SLOTS:
     update_plugin_from_item(classif);
     return classif;
   }
+
+  int get_classifier ()
+  {
+    if (classifier->text() == QString(CGAL_CLASSIFICATION_ETHZ_ID))
+      return 1;
+    if (classifier->text() == QString(CGAL_CLASSIFICATION_TENSORFLOW_ID))
+      return 3;
+    if (classifier->text() == QString(CGAL_CLASSIFICATION_OPENCV_ID))
+      return 2;
+    if (classifier->text() == QString(CGAL_CLASSIFICATION_SOWF_ID))
+      return 0;
+
+    std::cerr << "Error: unknown classifier" << std::endl;
+    return -1;
+  }
   
   void run (Item_classification_base* classif, int method,
             std::size_t subdivisions = 1,
             double smoothing = 0.5)
   {
-    classif->run (method, ui_widget.classifier->currentIndex(), subdivisions, smoothing);
+    classif->run (method, get_classifier(), subdivisions, smoothing);
   }
 
-  void on_classifier_changed (int index)
+  void on_help_clicked()
   {
-    if (index == 0)
-    {
-      dock_widget_adv->show();
-      dock_widget_adv->raise();
-    }
-    else
-      dock_widget_adv->hide();
+    QMessageBox::information(dock_widget, QString("Classification"),
+                             QString("Classification\n"
+                                     "\n"
+                                     "Welcome to CGAL Classification! Please read carefully this notice\n"
+                                     "before using the plugin.\n"
+                                     "\n"
+                                     "[QUICK INTRODUCTION]\n"
+                                     "\n"
+                                     "In order to classify, you need to perform the following steps:\n"
+                                     "\n"
+                                     "1. Compute the features\n"
+                                     "2. Set up the labels (ground, vegetation, etc.) that you need\n"
+                                     "3. Select a training set for each of these labels\n"
+                                     "4. Train the classifier\n"
+                                     "\n"
+                                     "You can then either select more inliers for training and train again\n"
+                                     "to improve the results, classify with or without regularization or\n"
+                                     "save the classifier's configuration.\n"
+                                     "\n"
+                                     "When loading a classifier's configuration, the computed features\n"
+                                     "should be the same (same number of scales, etc.) and the labels should\n"
+                                     "be the same as when the classifier's configuration was saved.\n"
+                                     "\n"
+                                     "For more information, please refer to the CGAL manual.\n"
+                                     "\n"
+                                     "[IMPORTANT NOTICE ON SAVING CLASSIFIED ITEMS]\n"
+                                     "\n"
+                                     "If you intend to save the file after classifying, PLEASE CLOSE THE\n"
+                                     "CLASSIFICATION PLUGIN FIRST: for visualization, colors are saved in\n"
+                                     "the point set. If you do not close the classification plugin, colors\n"
+                                     "will be saved and might overwrite existing colors of the point cloud.\n"
+                                     "\n"
+                                     "Classification results will be saved if you use the PLY or LAS\n"
+                                     "formats. Training will be saved if you use the PLY format.\n"));
+
   }
-    
+
   void on_compute_features_button_clicked()
   {
     Item_classification_base* classif
@@ -533,17 +613,26 @@ public Q_SLOTS:
         return; 
       }
     
-    bool ok = false;
-    int nb_scales = QInputDialog::getInt((QWidget*)mw,
-                                         tr("Compute Features"), // dialog title
-                                         tr("Number of scales:"), // field label
-                                         5, 1, 99, 1, &ok);
-    if (!ok)
+    QMultipleInputDialog dialog ("Compute Features", mw);
+    QSpinBox* scales = dialog.add<QSpinBox> ("Number of scales:");
+    scales->setRange (1, 99);
+    scales->setValue (5);
+
+    QDoubleSpinBox* voxel_size = dialog.add<QDoubleSpinBox> ("Voxel size (0 for automatic):");
+    voxel_size->setRange (0.0, 10000.0);
+    voxel_size->setValue (0.0);
+    voxel_size->setSingleStep (0.01);
+
+    if (dialog.exec() != QDialog::Accepted)
       return;
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    classif->compute_features (std::size_t(nb_scales));
+    float vsize = float(voxel_size->value());
+    if (vsize == 0.f)
+      vsize = -1.f; // auto value
+    
+    classif->compute_features (std::size_t(scales->value()), vsize);
 
     update_plugin_from_item(classif);
     QApplication::restoreOverrideCursor();
@@ -562,18 +651,19 @@ public Q_SLOTS:
 
     QString filename;
 
-    if (ui_widget.classifier->currentIndex() == 0)
+    int classifier = get_classifier();
+    if (classifier == 0) // Sum of Weighted Featuers
       filename = QFileDialog::getSaveFileName(mw,
                                               tr("Save classification configuration"),
                                               tr("%1 (CGAL classif config).xml").arg(classif->item()->name()),
                                               "CGAL classification configuration (*.xml);;");
-    else if (ui_widget.classifier->currentIndex() == 1)
+    else if (classifier == 1) // Random Forest (ETHZ)
       filename = QFileDialog::getSaveFileName(mw,
                                               tr("Save classification configuration"),
                                               tr("%1 (ETHZ random forest config).gz").arg(classif->item()->name()),
                                               "Compressed ETHZ random forest configuration (*.gz);;");
 #ifdef CGAL_LINKED_WITH_OPENCV
-    else if (ui_widget.classifier->currentIndex() == 2)
+    else if (classifier == 2) // Random Forest (OpenCV)
       filename = QFileDialog::getSaveFileName(mw,
                                               tr("Save classification configuration"),
                                               tr("%1 (OpenCV %2.%3 random forest config).xml")
@@ -584,6 +674,13 @@ public Q_SLOTS:
                                               .arg(CV_MAJOR_VERSION)
                                               .arg(CV_MINOR_VERSION));
 #endif
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+    else if (classifier == 3) // Neural Network (TensorFlow)
+      filename = QFileDialog::getSaveFileName(mw,
+                                              tr("Save classification configuration"),
+                                              tr("%1 (CGAL Neural Network config).xml").arg(classif->item()->name()),
+                                              "CGAL TensorFlow Neural Network classification configuration (*.xml);;");
+#endif
     
     if (filename == QString())
       return;
@@ -591,8 +688,7 @@ public Q_SLOTS:
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    classif->save_config (filename.toStdString().c_str(),
-                          ui_widget.classifier->currentIndex());
+    classif->save_config (filename.toStdString().c_str(), classifier);
     
     QApplication::restoreOverrideCursor();
 
@@ -609,18 +705,19 @@ public Q_SLOTS:
       }
     QString filename;
 
-    if (ui_widget.classifier->currentIndex() == 0)
+    int classifier = get_classifier();
+    if (classifier == 0) // SOWF
       filename = QFileDialog::getOpenFileName(mw,
                                               tr("Open CGAL classification configuration"),
                                               ".",
                                               "CGAL classification configuration (*.xml);;All Files (*)");
-    else if (ui_widget.classifier->currentIndex() == 1)
+    else if (classifier == 1) // ETHZ
       filename = QFileDialog::getOpenFileName(mw,
                                               tr("Open ETHZ random forest configuration"),
                                               ".",
                                               "Compressed ETHZ random forest configuration (*.gz);;All Files (*)");
 #ifdef CGAL_LINKED_WITH_OPENCV
-    else if (ui_widget.classifier->currentIndex() == 2)
+    else if (classifier == 2) // OpenCV
       filename = QFileDialog::getOpenFileName(mw,
                                               tr("Open OpenCV %2.%3 random forest configuration")
                                               .arg(CV_MAJOR_VERSION)
@@ -630,14 +727,21 @@ public Q_SLOTS:
                                               .arg(CV_MAJOR_VERSION)
                                               .arg(CV_MINOR_VERSION));
 #endif
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+    else if (classifier == 3) // TensorFlow
+      filename = QFileDialog::getOpenFileName(mw,
+                                              tr("Open CGAL Neural Network classification configuration"),
+                                              ".",
+                                              tr("CGAL Neural Network classification configuration (*.xml);;All Files (*)"));
+#endif
 
     if (filename == QString())
       return;
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    classif->load_config (filename.toStdString().c_str(),
-                          ui_widget.classifier->currentIndex());
+    classif->load_config (filename.toStdString().c_str(), classifier);
+
     update_plugin_from_item(classif);
     run (classif, 0);
     
@@ -645,7 +749,32 @@ public Q_SLOTS:
     item_changed(classif->item());
   }
 
+  void change_color (Item_classification_base* classif, int index)
+  {
+    float vmin = std::numeric_limits<float>::infinity();
+    float vmax = std::numeric_limits<float>::infinity();
+    
+    classif->change_color (index, &vmin, &vmax);
 
+    if (vmin == std::numeric_limits<float>::infinity() || vmax == std::numeric_limits<float>::infinity())
+    {
+      ui_widget.minDisplay->setEnabled(false);
+      ui_widget.minDisplay->setText("Min");
+      ui_widget.maxDisplay->setEnabled(false);
+      ui_widget.maxDisplay->setText("Max");
+    }
+    else
+    {
+      ui_widget.minDisplay->setEnabled(true);
+      ui_widget.minDisplay->setText(tr("Min (%1)").arg(vmin));
+      ui_widget.maxDisplay->setEnabled(true);
+      ui_widget.maxDisplay->setText(tr("Max (%1)").arg(vmax));
+    }
+    
+    item_changed(classif->item());
+  }
+
+  
   void on_display_button_clicked(int index)
   {
     Item_classification_base* classif
@@ -653,7 +782,87 @@ public Q_SLOTS:
     if(!classif)
       return; 
 
-    classif->change_color (index);
+    change_color (classif, index);
+  }
+
+  float display_button_value (QPushButton* button)
+  {
+    std::string text = button->text().toStdString();
+
+    std::size_t pos1 = text.find('(');
+    if (pos1 == std::string::npos)
+      return std::numeric_limits<float>::infinity();
+    std::size_t pos2 = text.find(')');
+    if (pos2 == std::string::npos)
+      return std::numeric_limits<float>::infinity();
+
+    std::string fstring (text.begin() + pos1 + 1,
+                         text.begin() + pos2);
+
+    return float (std::atof(fstring.c_str()));
+  }
+
+  void on_min_display_button_clicked()
+  {
+    Item_classification_base* classif
+      = get_classification();
+    if(!classif)
+      return;
+
+    float vmin = display_button_value (ui_widget.minDisplay);
+    float vmax = display_button_value (ui_widget.maxDisplay);
+
+    if (vmin == std::numeric_limits<float>::infinity()
+        || vmax ==  std::numeric_limits<float>::infinity())
+      return;
+    
+    bool ok = false;
+    vmin = float(QInputDialog::getDouble((QWidget*)mw,
+                                         tr("Set display ramp minimum value (saturate under):"),
+                                         tr("Minimum value (pale blue):"),
+                                         double(vmin),
+                                         -10000000.0,
+                                         double(vmax), 5, &ok));
+    if (!ok)
+      return;
+
+    int index = ui_widget.display->currentIndex();
+    
+    classif->change_color (index, &vmin, &vmax);
+    ui_widget.minDisplay->setText(tr("Min* (%1)").arg(vmin));
+    
+    item_changed(classif->item());
+  }
+  
+  void on_max_display_button_clicked()
+  {
+    Item_classification_base* classif
+      = get_classification();
+    if(!classif)
+      return;
+
+    float vmin = display_button_value (ui_widget.minDisplay);
+    float vmax = display_button_value (ui_widget.maxDisplay);
+
+    if (vmin == std::numeric_limits<float>::infinity()
+        || vmax ==  std::numeric_limits<float>::infinity())
+      return;
+    
+    bool ok = false;
+    vmax = float(QInputDialog::getDouble((QWidget*)mw,
+                                         tr("Set display ramp maximum value (saturate over):"),
+                                         tr("Maximum value (dark red):"),
+                                         double(vmax),
+                                         double(vmin),
+                                         10000000.0, 5, &ok));
+    if (!ok)
+      return;
+
+    int index = ui_widget.display->currentIndex();
+    
+    classif->change_color (index, &vmin, &vmax);
+    ui_widget.maxDisplay->setText(tr("Max* (%1)").arg(vmax));
+    
     item_changed(classif->item());
   }
 
@@ -845,6 +1054,7 @@ public Q_SLOTS:
       add_new_label (classif, n);
 
     add_label_button();
+    update_plugin_from_item(classif);
   }
 
   void on_use_config_building_clicked()
@@ -1065,6 +1275,68 @@ public Q_SLOTS:
                                                      (bbox.zmin() + bbox.zmax()) / 2.) + offset);
   }
 
+  void on_statistics_clicked()
+  {
+    Item_classification_base* classif
+      = get_classification();
+    if(!classif)
+    {
+      print_message("Error: there is no point set classification item!");
+      return; 
+    }
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    std::string str = classif->feature_statistics();
+    QApplication::restoreOverrideCursor();
+
+    QMultipleInputDialog dialog ("Feature Statistics", mw);
+    QLabel* text = dialog.add<QLabel> ("");
+    text->setText(str.c_str());
+    dialog.exec_no_cancel();
+  }
+
+  void on_switch_classifier_clicked()
+  {
+    QMultipleInputDialog dialog ("Which classifier do you want to use?", mw);
+
+    QRadioButton* ethz = dialog.add<QRadioButton> (CGAL_CLASSIFICATION_ETHZ_ID);
+    ethz->setChecked(true);
+    
+    QRadioButton* sowf = dialog.add<QRadioButton> (CGAL_CLASSIFICATION_SOWF_ID);
+
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+    QRadioButton* tensorflow = dialog.add<QRadioButton> (CGAL_CLASSIFICATION_TENSORFLOW_ID);
+#endif
+    
+#ifdef CGAL_LINKED_WITH_OPENCV
+    QRadioButton* opencv = dialog.add<QRadioButton> (CGAL_CLASSIFICATION_OPENCV_ID);
+#endif
+
+    if (dialog.exec() != QDialog::Accepted)
+      return;
+    
+    if (ethz->isChecked())
+      classifier->setText(CGAL_CLASSIFICATION_ETHZ_ID);
+    else if (sowf->isChecked())
+      classifier->setText(CGAL_CLASSIFICATION_SOWF_ID);
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+    else if (tensorflow->isChecked())
+      classifier->setText(CGAL_CLASSIFICATION_TENSORFLOW_ID);
+#endif
+#ifdef CGAL_LINKED_WITH_OPENCV
+    else if (opencv->isChecked())
+      classifier->setText(CGAL_CLASSIFICATION_OPENCV_ID);
+#endif
+
+    if (sowf->isChecked())
+    {
+      dock_widget_adv->show();
+      dock_widget_adv->raise();
+    }
+    else
+      dock_widget_adv->hide();
+  }
+  
   void on_train_clicked()
   {
     Item_classification_base* classif
@@ -1075,41 +1347,48 @@ public Q_SLOTS:
         return; 
       }
 
-    int nb_trials = 0;
-    int num_trees = 0;
-    int max_depth = 0;
-
-    if (ui_widget.classifier->currentIndex() == 0)
+    QMultipleInputDialog dialog ("Train Classifier", mw);
+    
+    int classifier = get_classifier();
+    if (classifier == 0) // SOWF
     {
-      bool ok = false;
-      nb_trials = QInputDialog::getInt((QWidget*)mw,
-                                       tr("Train Classifier"), // dialog title
-                                       tr("Number of trials:"), // field label
-                                       800, 1, 99999, 50, &ok);
-      if (!ok)
-        return;
+      QSpinBox* trials = dialog.add<QSpinBox> ("Number of trials: ", "trials");
+      trials->setRange (1, 99999);
+      trials->setValue (800);
     }
-    else
+    else if (classifier == 1 || classifier == 2) // random forest
     {
-      QMultipleInputDialog dialog ("Train Random Forest Classifier", mw);
-      QSpinBox* trees = dialog.add<QSpinBox> ("Number of trees: ");
+      QSpinBox* trees = dialog.add<QSpinBox> ("Number of trees: ", "num_trees");
       trees->setRange (1, 9999);
       trees->setValue (25);
-      QSpinBox* depth = dialog.add<QSpinBox> ("Maximum depth of tree: ");
+      QSpinBox* depth = dialog.add<QSpinBox> ("Maximum depth of tree: ", "max_depth");
       depth->setRange (1, 9999);
       depth->setValue (20);
-
-      if (dialog.exec() != QDialog::Accepted)
-        return;
-      num_trees = trees->value();
-      max_depth = depth->value();
     }
+    else if (classifier == 3) // neural network
+    {
+      QSpinBox* trials = dialog.add<QSpinBox> ("Number of trials: ", "trials");
+      trials->setRange (1, 99999);
+      trials->setValue (500);
+      QDoubleSpinBox* rate = dialog.add<QDoubleSpinBox> ("Learning rate: ", "learning_rate");
+      rate->setRange (0.00001, 10000.0);
+      rate->setValue (0.001);
+      rate->setDecimals (5);
+      QSpinBox* batch = dialog.add<QSpinBox> ("Batch size: ", "batch_size");
+      batch->setRange (1, 2000000000);
+      batch->setValue (1000);
+      dialog.add<QLineEdit> ("Hidden layer size(s): ", "hidden_layers");
+      QCheckBox* restart = dialog.add<QCheckBox> ("Restart from scratch: ", "restart");
+      restart->setChecked (false);
+    }
+    
+    if (dialog.exec() != QDialog::Accepted)
+      return;
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
     CGAL::Real_timer t;
     t.start();
-    classif->train(ui_widget.classifier->currentIndex(), nb_trials,
-                   num_trees, max_depth);
+    classif->train(classifier, dialog);
     t.stop();
     std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
     QApplication::restoreOverrideCursor();
@@ -1169,6 +1448,10 @@ public Q_SLOTS:
     QAction* change_color = label_buttons.back().menu->addAction ("Change color");
     connect(change_color,  SIGNAL(triggered()), this,
             SLOT(on_color_changed_clicked()));
+
+    QAction* change_name = label_buttons.back().menu->addAction ("Change name");
+    connect(change_name,  SIGNAL(triggered()), this,
+            SLOT(on_name_changed_clicked()));
 
     QAction* create = label_buttons.back().menu->addAction ("Create point set item from labeled points");
     connect(create,  SIGNAL(triggered()), this,
@@ -1244,7 +1527,7 @@ public Q_SLOTS:
       label_buttons.erase (label_buttons.begin() + position);
       add_label_button();
     }
-
+    update_plugin_from_item(classif);
     item_changed(classif->item());
   }
 
@@ -1270,11 +1553,56 @@ public Q_SLOTS:
       int position = row_index * 3 + column_index;
     
       QColor color = label_buttons[position].color;
-      color = QColorDialog::getColor(color, (QWidget*)mw, "Change of color of label");
+      color = QColorDialog::getColor(color, (QWidget*)mw, "Change color of label");
+
+      if (!color.isValid())
+        return;
+      
       label_buttons[position].change_color (color);
       classif->change_label_color (position,
                                    color);
     }
+    classif->update_color ();
+    item_changed(classif->item());
+  }
+
+  void on_name_changed_clicked()
+  {
+    Item_classification_base* classif
+      = get_classification();
+    if(!classif)
+    {
+      print_message("Error: there is no point set classification item!");
+      return; 
+    }
+
+    QPushButton* label_clicked = qobject_cast<QPushButton*>(QObject::sender()->parent()->parent());
+    if (label_clicked == NULL)
+      std::cerr << "Error" << std::endl;
+    else
+    {
+      int index = ui_widget.labelGrid->indexOf(label_clicked);
+      int row_index, column_index, row_span, column_span;
+      ui_widget.labelGrid->getItemPosition(index, &row_index, &column_index, &row_span, &column_span);
+
+      int position = row_index * 3 + column_index;
+      
+      bool ok;
+      QString name =
+        QInputDialog::getText((QWidget*)mw,
+                              tr("Change name of label"), // dialog title
+                              tr("New name:"), // field label
+                              QLineEdit::Normal,
+                              classif->label(position)->name().c_str(),
+                              &ok);
+
+      if (!ok)
+        return;
+
+      classif->change_label_name (position, name.toStdString());
+    }
+    
+    update_plugin_from_item(classif);
     classif->update_color ();
     item_changed(classif->item());
   }
@@ -1311,10 +1639,7 @@ public Q_SLOTS:
     Item_classification_base* classif
       = get_classification();
     if(!classif)
-      {
-        print_message("Error: there is no point set classification item!");
         return; 
-      }
 
     if (classif->number_of_features() <= (std::size_t)v)
       return;
@@ -1407,16 +1732,19 @@ private:
 
   QDockWidget* dock_widget;
   QDockWidget* dock_widget_adv;
-  QAction* action_train;
+  QAction* action_statistics;
   QAction* action_reset_local;
   QAction* action_reset;
   QAction* action_random_region;
   QAction* action_validate;
-  QAction* action_save_config;
-  QAction* action_load_config;
+
+  QAction* classifier;
+  QAction* action_train;
   QAction* action_run;
   QAction* action_run_smoothed;
   QAction* action_run_graphcut;
+  QAction* action_save_config;
+  QAction* action_load_config;
   
   std::vector<LabelButton> label_buttons;
   QPushButton* label_button;
