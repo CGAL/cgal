@@ -276,7 +276,7 @@ public:
         return Iso_rectangle_2();
       }
       
-      for (int i=0;i<get_IpePage()->count();++i){
+      for (int i=0;i<static_cast<int>(get_IpePage()->count());++i){
         if (get_IpePage()->select(i)==ipe::ENotSelected)
           continue;
         
