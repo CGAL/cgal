@@ -26,6 +26,7 @@
 #include "triangulate_primitive.h"
 #include <CGAL/Buffer_for_vao.h>
 #include <CGAL/Three/Triangle_container.h>
+#include <CGAL/Dynamic_property_map.h>
 
 #define ARBITRARY_DBL_MIN 1.0E-30
 #define ARBITRARY_DBL_MAX 1.0E+30
@@ -34,6 +35,9 @@
 //Item for heat values
 typedef CGAL::Three::Triangle_container Tri;
 typedef CGAL::Three::Viewer_interface VI;
+typedef CGAL::dynamic_vertex_property_t<bool>                        Vertex_source_tag;
+typedef typename boost::property_map<SMesh, Vertex_source_tag>::type Vertex_source_map;
+
 class Scene_heat_item
     : public CGAL::Three::Scene_item_rendering_helper
 {
@@ -568,12 +572,6 @@ private Q_SLOTS:
     {
       smesh.remove_property_map(angles);
     }
-    SMesh::Property_map<vertex_descriptor, bool> is_source;
-    boost::tie(is_source, found) = smesh.property_map<vertex_descriptor,bool>("v:heat_source");
-    if(found)
-    {
-      smesh.remove_property_map(is_source);
-    }
   }
 
   void displayScaledJacobian(Scene_surface_mesh_item* item)
@@ -792,10 +790,7 @@ private Q_SLOTS:
   bool displayHeatIntensity(Scene_surface_mesh_item* item, bool iDT = false)
   {
     SMesh& mesh = *item->face_graph();
-    bool found = false;
-    SMesh::Property_map<vertex_descriptor, bool> is_source ;
-    boost::tie(is_source, found)=
-        mesh.property_map<vertex_descriptor,bool>("v:heat_source");
+    bool found = is_source.find(item) != is_source.end();
     if(!found
        || ! source_points
        || source_points->point_set()->is_empty())
@@ -848,7 +843,7 @@ private Q_SLOTS:
     }
 
     BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
-      if(is_source[vd]){
+      if(get(is_source[item], vd)){
         if(iDT){
           hm_idt->add_source(vd);
         } else
@@ -1112,13 +1107,20 @@ private Q_SLOTS:
         source_points=mesh_sources_map[current_item];
       }
       connect(item, SIGNAL(selected_vertex(void*)), this, SLOT(on_vertex_selected(void*)));
-      bool non_init;
-      SMesh::Property_map<vertex_descriptor, bool> is_source;
-      boost::tie(is_source, non_init) = current_item->face_graph()->add_property_map<vertex_descriptor, bool>("v:heat_source", false);
+      bool non_init = is_source.find(item) == is_source.end();
       if(non_init)
       {
+        Vertex_source_map map = get(Vertex_source_tag(), *item->face_graph());
+        is_source.insert(std::make_pair(item, map));
         connect(item, &Scene_surface_mesh_item::itemChanged,
                 this, &DisplayPropertyPlugin::resetProperty);
+        connect(item, &Scene_surface_mesh_item::aboutToBeDestroyed,
+                [this, item](){
+          if(is_source.find(item) != is_source.end())
+          {
+            is_source.erase(item);
+          }
+        });
       }
     }
     else
@@ -1135,19 +1137,17 @@ private Q_SLOTS:
     typedef boost::graph_traits<SMesh>::vertices_size_type size_type;
     size_type h = static_cast<size_type>(reinterpret_cast<std::size_t>(void_ptr));
     vertex_descriptor vd = static_cast<vertex_descriptor>(h) ;
-    bool found;
-    SMesh::Property_map<vertex_descriptor, bool> is_source;
-    boost::tie(is_source, found) = current_item->face_graph()->property_map<vertex_descriptor,bool>("v:heat_source");
+    bool found = is_source.find(current_item) != is_source.end();
     if(found)
     {
-      if(!is_source[vd])
+      if(!get(is_source[current_item], vd))
       {
-        is_source[vd]=true;
+        put(is_source[current_item], vd, true);
         source_points->point_set()->insert(current_item->face_graph()->point(vd));
       }
       else
       {
-        is_source[vd]=false;
+        put(is_source[current_item], vd, false);
         Point_set::iterator it;
         for(it = source_points->point_set()->begin(); it != source_points->point_set()->end(); ++it)
           if(source_points->point_set()->point(*it) == current_item->face_graph()->point(vd))
@@ -1238,6 +1238,7 @@ private:
 
   boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_min;
   boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_max;
+  boost::unordered_map<Scene_surface_mesh_item*, Vertex_source_map> is_source;
 
 
   double minBox;
