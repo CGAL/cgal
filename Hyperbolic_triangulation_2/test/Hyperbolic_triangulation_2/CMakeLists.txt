@@ -20,6 +20,7 @@ if ( CGAL_FOUND )
   	create_single_source_cgal_program( "ht2_test_swap.cpp" )
   	create_single_source_cgal_program( "ht2_test_copy.cpp" )
   	create_single_source_cgal_program( "ht2_test_hyperbolic_circulator.cpp" )
+    create_single_source_cgal_program( "ht2_test_insert_degenerate.cpp" )
 
 else()
   
