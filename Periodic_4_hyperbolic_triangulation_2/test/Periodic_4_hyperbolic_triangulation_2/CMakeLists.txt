@@ -21,6 +21,7 @@ if ( CGAL_FOUND AND CGAL_Core_FOUND )
     create_single_source_cgal_program( "test_p4ht2_matrix.cpp" )
     create_single_source_cgal_program( "test_p4ht2_removal_iterator.cpp" )
     create_single_source_cgal_program( "test_p4ht2_removal.cpp" )
+    create_single_source_cgal_program( "test_p4ht2_insert_degenerate.cpp" )
     
 else()
   
