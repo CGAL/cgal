@@ -921,6 +921,22 @@ public:
     return true;
   }
 
+  bool check_validity_test () const
+  {
+    for(Finite_faces_iterator it = Base::finite_faces_begin();
+        it != Base::finite_faces_end(); it++)
+    {
+      typename Traits_::Orientation s
+        = orientation(it->vertex(0)->point(),
+                      it->vertex(1)->point(),
+                      it->vertex(2)->point());
+      if (s != LEFT_TURN)
+        return false;
+    }
+
+    return true;  
+  }
+
   // COLLAPSE //
 
   // (s,a,b) + (s,b,c) -> (s,a,c) + (a,b,c)
