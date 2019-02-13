@@ -12,10 +12,6 @@ if ( CGAL_FOUND )
 
 include_directories (BEFORE include)
 include_directories (BEFORE ../../../Kernel_23/test/Kernel_23/include)
-include_directories (BEFORE ../Kernel_23/include)
-include_directories (BEFORE ../Cartesian_kernel/include)
-include_directories (BEFORE ../Homogeneous_kernel/include)
-include_directories (BEFORE ../Intersections_2/include)
 
 create_single_source_cgal_program( "test_Circular_kernel.cpp" )
 create_single_source_cgal_program( "test_Lazy_circular_kernel.cpp" )
