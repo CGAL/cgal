@@ -28,13 +28,14 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_triangulation_3_triangle_primitive.h>
+#include <CGAL/AABB_triangulation_3_cell_primitive.h>
 #include <CGAL/IO/facets_in_complex_3_to_triangle_mesh.h>
 
 #include "Scene_polygon_soup_item.h"
 
 
-typedef CGAL::AABB_triangulation_3_triangle_primitive<EPICK,C3t3> Primitive;
+typedef CGAL::AABB_triangulation_3_cell_primitive<EPICK,
+                                                  C3t3::Triangulation> Primitive;
 typedef CGAL::AABB_traits<EPICK, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 typedef Tree::Point_and_primitive_id Point_and_primitive_id;
@@ -399,25 +400,19 @@ struct Scene_c3t3_item_priv {
     CGAL::Real_timer timer;
     timer.start();
     tree.clear();
-    for (Tr::Finite_facets_iterator
-           fit = c3t3.triangulation().finite_facets_begin(),
-           end = c3t3.triangulation().finite_facets_end();
-         fit != end; ++fit)
+    for (Tr::Finite_cells_iterator
+           cit = c3t3.triangulation().finite_cells_begin(),
+           end = c3t3.triangulation().finite_cells_end();
+         cit != end; ++cit)
     {
-      Tr::Cell_handle ch = fit->first, nh =ch->neighbor(fit->second);
+      Tr::Cell_handle ch = cit;
 
-      if( (!c3t3.is_in_complex(ch)) &&  (!c3t3.is_in_complex(nh)) )
-        continue;
+      if(!c3t3.is_in_complex(ch)) continue;
 
-      if(c3t3.is_in_complex(ch)){
-        tree.insert(Primitive(fit));
-      } else{
-        int ni = nh->index(ch);
-        tree.insert(Primitive(Tr::Facet(nh,ni)));
-      }
+      tree.insert(Primitive(cit));
     }
     tree.build();
-    std::cerr << "C3t3 facets AABB tree built in " << timer.time()
+    std::cerr << "C3t3 cells AABB tree built in " << timer.time()
               << " wall-clock seconds\n";
 
     is_aabb_tree_built = true;
@@ -517,7 +512,6 @@ struct Scene_c3t3_item_priv {
   typedef std::set<int> Indices;
   Indices surface_patch_indices_;
   Indices subdomain_indices_;
-  std::set<Tr::Cell_handle> intersected_cells;
   QSlider* tet_Slider;
 
   //!Allows OpenGL 2.0 context to get access to glDrawArraysInstanced.
@@ -1481,52 +1475,26 @@ void Scene_c3t3_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *view
 
 
 
-void Scene_c3t3_item_priv::computeIntersection(const Primitive& facet)
+void Scene_c3t3_item_priv::computeIntersection(const Primitive& cell)
 {
   Geom_traits::Construct_point_3 wp2p
     = c3t3.triangulation().geom_traits().construct_point_3_object();
 
   typedef unsigned char UC;
-  Tr::Cell_handle ch = facet.id().first;
-  if(intersected_cells.find(ch) == intersected_cells.end())
-  {
-    QColor c = this->colors_subdomains[ch->subdomain_index()].light(50);
+  Tr::Cell_handle ch = cell.id();
+  QColor c = this->colors_subdomains[ch->subdomain_index()].light(50);
 
-    const Tr::Bare_point& pa = wp2p(ch->vertex(0)->point());
-    const Tr::Bare_point& pb = wp2p(ch->vertex(1)->point());
-    const Tr::Bare_point& pc = wp2p(ch->vertex(2)->point());
-    const Tr::Bare_point& pd = wp2p(ch->vertex(3)->point());
+  const Tr::Bare_point& pa = wp2p(ch->vertex(0)->point());
+  const Tr::Bare_point& pb = wp2p(ch->vertex(1)->point());
+  const Tr::Bare_point& pc = wp2p(ch->vertex(2)->point());
+  const Tr::Bare_point& pd = wp2p(ch->vertex(3)->point());
 
-    CGAL::Color color(UC(c.red()), UC(c.green()), UC(c.blue()));
+  CGAL::Color color(UC(c.red()), UC(c.green()), UC(c.blue()));
 
-    intersection->addTriangle(pb, pa, pc, color);
-    intersection->addTriangle(pa, pb, pd, color);
-    intersection->addTriangle(pa, pd, pc, color);
-    intersection->addTriangle(pb, pc, pd, color);
-    intersected_cells.insert(ch);
-  }
-  {
-    Tr::Cell_handle nh = ch->neighbor(facet.id().second);
-    if(c3t3.is_in_complex(nh)){
-      if(intersected_cells.find(nh) == intersected_cells.end())
-      {
-        const Tr::Bare_point& pa = wp2p(nh->vertex(0)->point());
-        const Tr::Bare_point& pb = wp2p(nh->vertex(1)->point());
-        const Tr::Bare_point& pc = wp2p(nh->vertex(2)->point());
-        const Tr::Bare_point& pd = wp2p(nh->vertex(3)->point());
-
-        QColor c = this->colors_subdomains[nh->subdomain_index()].light(50);
-
-        CGAL::Color color(UC(c.red()), UC(c.green()), UC(c.blue()));
-
-        intersection->addTriangle(pb, pa, pc, color);
-        intersection->addTriangle(pa, pb, pd, color);
-        intersection->addTriangle(pa, pd, pc, color);
-        intersection->addTriangle(pb, pc, pd, color);
-        intersected_cells.insert(nh);
-      }
-    }
-  }
+  intersection->addTriangle(pb, pa, pc, color);
+  intersection->addTriangle(pa, pb, pd, color);
+  intersection->addTriangle(pa, pd, pc, color);
+  intersection->addTriangle(pb, pc, pd, color);
 }
 
 struct ComputeIntersection {
@@ -1555,7 +1523,6 @@ void Scene_c3t3_item_priv::computeIntersections()
   const Geom_traits::Plane_3& plane = item->plane(offset);
   tree.all_intersected_primitives(plane,
         boost::make_function_output_iterator(ComputeIntersection(*this)));
-  intersected_cells.clear();
 }
 
 void Scene_c3t3_item_priv::computeSpheres()

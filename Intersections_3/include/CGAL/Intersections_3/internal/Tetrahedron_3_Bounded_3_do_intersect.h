@@ -55,17 +55,26 @@ do_intersect_tetrahedron_bounded(const Bounded &tr,
                                  const K & k)
 {
     typedef typename K::Triangle_3 Triangle;
+    typedef typename K::Boolean Boolean;
 
     CGAL_kernel_precondition( ! k.is_degenerate_3_object() (tr) );
     CGAL_kernel_precondition( ! k.is_degenerate_3_object() (tet) );
 
-    typedef typename K::Triangle_3 Triangle;
-    if (do_intersect(tr, Triangle(tet[0], tet[1], tet[2]), k)) return true;
-    if (do_intersect(tr, Triangle(tet[0], tet[1], tet[3]), k)) return true;
-    if (do_intersect(tr, Triangle(tet[0], tet[2], tet[3]), k)) return true;
-    if (do_intersect(tr, Triangle(tet[1], tet[2], tet[3]), k)) return true;
-
-    return k.has_on_bounded_side_3_object()(tet, p);
+    Boolean result = false;
+    for (int i = 0; i < 4; ++i)
+    {
+      const Boolean b = do_intersect(tr,
+                                     Triangle(tet[i],
+                                              tet[(i+1)%4],
+                                              tet[(i+2)%4]),
+                                     k);
+      if(certainly(b)) return b;
+      if(is_indeterminate(b)) result = b;
+    }
+    const Boolean b = k.has_on_bounded_side_3_object()(tet, p);
+    if(certainly(b)) return b;
+    if(is_indeterminate(b)) result = b;
+    return result;
 }
 
 
