@@ -592,16 +592,16 @@ void Scene_image_item_priv::compile_shaders()
   }
   else
   {
-    if(!rendering_program.addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/no_interpolation_shader.v"))
+    if(!rendering_program.addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/no_interpolation_shader.vert"))
     {
       std::cerr<<"adding vertex shader FAILED"<<std::endl;
     }
 
-    if(!rendering_program.addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/no_interpolation_shader.f"))
+    if(!rendering_program.addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/no_interpolation_shader.frag"))
     {
       std::cerr<<"adding fragment shader FAILED"<<std::endl;
     }
-    if(!rendering_program.addShaderFromSourceFile(QOpenGLShader::Geometry,":/cgal/Polyhedron_3/resources/no_interpolation_shader.g"))
+    if(!rendering_program.addShaderFromSourceFile(QOpenGLShader::Geometry,":/cgal/Polyhedron_3/resources/no_interpolation_shader.geom"))
     {
       std::cerr<<"adding geometry shader FAILED"<<std::endl;
     }

@@ -16,6 +16,7 @@
 
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 #include "ui_Point_set_selection_widget.h"
 #include <Plugins/PCA/Scene_edit_box_item.h>
 #include "Point_set_3.h"
@@ -415,7 +416,7 @@ public:
   bool applicable(QAction*) const { 
       return qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
   }
-  void print_message(QString message) { messages->information(message); }
+  void print_message(QString message) { CGAL::Three::Three::information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionPointSetSelection; }
 
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m) {
@@ -426,6 +427,7 @@ public:
     rg_cluster_epsilon = -1;
     rg_normal_threshold = 20;
     actionPointSetSelection = new QAction(tr("Selection"), mw);
+    actionPointSetSelection->setObjectName("actionPointSetSelection");
     connect(actionPointSetSelection, SIGNAL(triggered()), this, SLOT(selection_action()));
 
     dock_widget = new QDockWidget("Point Set Selection", mw);
@@ -615,7 +617,7 @@ protected:
       
       Neighbor_search search(tree, Point(point.x, point.y, point.z), 1);
       Point res = search.begin()->first;
-      messages->information(QString("Selected point : (%1, %2, %3)").arg(res.x()).arg(res.y()).arg(res.z()));
+      CGAL::Three::Three::information(QString("Selected point : (%1, %2, %3)").arg(res.x()).arg(res.y()).arg(res.z()));
     }
     return false;
   }

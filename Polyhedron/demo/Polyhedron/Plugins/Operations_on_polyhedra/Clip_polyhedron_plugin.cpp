@@ -7,6 +7,7 @@
 #include "Scene_plane_item.h"
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 #include <CGAL/Polygon_mesh_processing/clip.h>
 
 #include "ui_Clip_polyhedron_plugin.h"
@@ -168,7 +169,7 @@ public :
     }
     catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
     {
-      messages->warning(tr("The requested operation is not possible due to the presence of self-intersections in the region handled."));
+      CGAL::Three::Three::warning(tr("The requested operation is not possible due to the presence of self-intersections in the region handled."));
     }
   }
 public Q_SLOTS:
@@ -242,7 +243,7 @@ public Q_SLOTS:
           }
           catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
           {
-            messages->warning(tr("The requested operation is not possible due to the presence of self-intersections in the region handled."));
+            CGAL::Three::Three::warning(tr("The requested operation is not possible due to the presence of self-intersections in the region handled."));
           }
           item->invalidateOpenGLBuffers();
           viewer->update();

@@ -50,6 +50,10 @@ public:
   Label (std::string name) : m_name (name) { }
 
   const std::string& name() const { return m_name; }
+
+  /// \cond SKIP_IN_MANUAL
+  void set_name (const std::string& name) { m_name = name; }
+  /// \endcond
 };
 
 #ifdef DOXYGEN_RUNNING
