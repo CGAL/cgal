@@ -78,9 +78,7 @@ public:
   Kd_tree_element(const Base& p, unsigned int id=0)
     : Base(p), index(id)
   {}
-  Kd_tree_element(const Kd_tree_element& other)
-    : Base(other), index(other.index)
-  {}
+
 };
 
 // Helper class for the Kd-tree

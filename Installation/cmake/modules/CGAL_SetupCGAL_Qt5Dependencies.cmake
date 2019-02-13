@@ -118,5 +118,13 @@ function(CGAL_setup_CGAL_Qt5_dependencies target)
     target_link_libraries( ${target} ${keyword} CGAL::Qt5_moc_and_resources)
   endif()
   target_link_libraries( ${target} ${keyword} Qt5::OpenGL Qt5::Svg Qt5::Xml)
+
+  # Remove -Wdeprecated-copy, for g++ >= 9.0, because Qt5, as of
+  # version 5.12, has a lot of [-Wdeprecated-copy] warnings.
+  if( CMAKE_CXX_COMPILER_ID STREQUAL "GNU"
+      AND NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS "9" )
+    target_compile_options( ${target} ${keyword} "-Wno-deprecated-copy" "-Wno-cast-function-type" )
+  endif()
+
 endfunction()
 

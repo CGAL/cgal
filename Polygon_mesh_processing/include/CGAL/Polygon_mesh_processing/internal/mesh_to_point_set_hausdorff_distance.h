@@ -51,11 +51,7 @@ public:
     m_point = p;
     m_hausdorff = h;
   }
-  CPointH (const CPointH& p)
-  {
-    m_point = p ();
-    m_hausdorff = p.hausdorff ();
-  }
+
 
   const Point& operator() () const { return m_point; }
   Point& operator() () { return m_point; }
@@ -130,16 +126,6 @@ public:
     }
   }
 
-  CRefTriangle (const CRefTriangle& t)
-  {
-    m_point[0] = t.points ()[0];
-    m_point[1] = t.points ()[1];
-    m_point[2] = t.points ()[2];
-    m_edge = t.edge ();
-    m_lower_bound = t.lower_bound ();
-    m_upper_bound = t.upper_bound ();
-    m_bisector = t.bisector ();
-  }
 
   FT lower_bound () const
   {

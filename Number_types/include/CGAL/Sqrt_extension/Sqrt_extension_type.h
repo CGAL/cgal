@@ -153,13 +153,7 @@ public:
     explicit Sqrt_extension(const NTX& i)
         : a0_(NT(i)), a1_(NT(0)), root_(ROOT(0)), is_extended_(false) {}
 
-    /*! \brief copy constructor  */
-    Sqrt_extension(const Self& x)
-        : a0_(x.a0()),
-          a1_(x.a1()),
-          root_(x.root()),
-          is_extended_(x.is_extended()){}
-
+ 
 
     /*! \brief Expicite constructor of Sqrt_extension, from
      *  \c Sqrt_extension<NTX,ROOTX>.
