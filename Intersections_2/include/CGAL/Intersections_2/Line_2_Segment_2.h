@@ -125,6 +125,7 @@ Segment_2_Line_2_pair<K>::intersection_type() const
     Line_2_Line_2_pair<K> linepair(&l1, _line);
     switch ( linepair.intersection_type()) {
     case Line_2_Line_2_pair<K>::NO_INTERSECTION:
+    default:
         _result = NO_INTERSECTION;
         break;
     case Line_2_Line_2_pair<K>::POINT:
