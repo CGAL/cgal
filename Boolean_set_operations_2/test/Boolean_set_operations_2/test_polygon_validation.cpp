@@ -49,7 +49,7 @@ typedef Traits_2::Polygon_with_holes_2             Polygon_with_holes_2;
  * is displayed if the validation result does't equal is_valid.
  */
 
-bool test(const std::string& filename, std::ofstream& outfile, bool is_valid)
+bool test(const std::string& filename, std::ofstream& outfile)
 {
   std::ifstream input_file(filename.c_str());
 
@@ -60,12 +60,14 @@ bool test(const std::string& filename, std::ofstream& outfile, bool is_valid)
   // Read a polygon with holes from a file.
   Polygon_2 outer_pgn;
   size_t num_holes;
+  bool is_valid;
 
   input_file >> outer_pgn;
   input_file >> num_holes;
-
   std::vector<Polygon_2> holes(num_holes);
   for (size_t k = 0; k < num_holes; ++k) input_file >> holes[k];
+  input_file >> is_valid;
+
   Polygon_with_holes_2 P(outer_pgn, holes.begin(), holes.end());
   Traits_2 tr;
   bool test_valid = CGAL::is_valid_polygon_with_holes(P, tr);
@@ -114,9 +116,7 @@ int main()
     strs << i;
     strs >> si;
     std::string filename = testfile_prefix + si + testfile_suffix;
-    bool is_valid_pgn = false;
-    if (i > 7) is_valid_pgn = true;
-    bool res =  test(filename, output_file, is_valid_pgn);
+    bool res =  test(filename, output_file);
     if (!res) {
       std::cout << "test " << i << " failed" << std::endl;
       result = 1;
