@@ -1463,15 +1463,10 @@ void Scene::gl_draw_conflict() {
     std::vector<Cell_handle> cic;
     std::vector<Facet> boundary_facets;
     // Find the conflict region
-    Cell_handle c = p3dt.locate(moving_point);
-    Point _a(c->vertex(0)->point()),
-          _b(c->vertex(1)->point()),
-          _c(c->vertex(2)->point()),
-          _d(c->vertex(3)->point());
-    if(!( moving_point == _a
-       || moving_point == _b
-       || moving_point == _c
-       || moving_point == _d))
+    P3DT::Locate_type t;
+    int li, lj;
+    Cell_handle c = p3dt.locate(moving_point,t,li,lj);
+    if(t != P3DT::VERTEX)
       p3dt.find_conflicts(moving_point,c,std::back_inserter(boundary_facets),std::back_inserter(cic),CGAL::Emptyset_iterator());
 
     std::vector<Projected_triangle> bfm;
