@@ -164,7 +164,6 @@ OutputIterator partition_approx_convex_2(InputIterator first,
    } while (++c != first_c);
 
    Segment_2 edge;
-   Circulator source, target, before_s, after_s;
 
 #ifdef CGAL_PARTITION_APPROX_CONVEX_DEBUG
    std::cout << "Inserting diagonals: " << std::endl;
@@ -201,10 +200,10 @@ OutputIterator partition_approx_convex_2(InputIterator first,
              if (!triangles.is_infinite(*e_circ)) 
              {
                 edge = triangles.segment((*e_circ).first, (*e_circ).second);
-                source = edge.source();
-                target = edge.target();
-                before_s = source; before_s--;
-                after_s = source; after_s++;
+                Circulator source = edge.source();
+                Circulator target = edge.target();
+                Circulator before_s = source; before_s--;
+                Circulator after_s = source; after_s++;
 #ifdef CGAL_PARTITION_APPROX_CONVEX_DEBUG
                 std::cout << "considering " << *source << " " << *target 
                           << "...";

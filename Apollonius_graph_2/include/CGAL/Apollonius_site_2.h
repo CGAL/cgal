@@ -47,10 +47,6 @@ public:
   Apollonius_site_2(const Point_2& p = Point_2(),
 		    const Weight& w = Weight(0))
     : _p(p), _w(w) {}
-
-  Apollonius_site_2(const Apollonius_site_2& other)
-    : _p(other._p), _w(other._w) {}
-
   
   const Point_2& point() const { return _p; }
   const Weight&  weight() const { return _w; }

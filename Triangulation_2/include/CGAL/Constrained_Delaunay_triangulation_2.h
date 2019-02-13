@@ -128,9 +128,6 @@ public:
   Constrained_Delaunay_triangulation_2(const Geom_traits& gt=Geom_traits()) 
     : Ctr(gt) { }
 
-  Constrained_Delaunay_triangulation_2(const CDt& cdt)
-    : Ctr(cdt) {}
-
   Constrained_Delaunay_triangulation_2(const List_constraints& lc,
 				       const Geom_traits& gt=Geom_traits())
     : Ctr(gt) 
