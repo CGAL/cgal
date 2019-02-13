@@ -24,11 +24,6 @@
 #include <CGAL/config.h>
 #include <utility>
 
-#ifndef CGAL_CXX11
-#include <boost/preprocessor/repetition.hpp>
-#include <boost/utility/result_of.hpp>
-#endif
-
 namespace CGAL {
 namespace internal {
 
