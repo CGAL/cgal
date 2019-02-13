@@ -72,6 +72,7 @@ both inside and outside the original domain we store additional
 offset information for each vertex of a face. These offsets are models
 of the concept `Periodic_2Offset_2`.
 
+\cgalClassifedRefPages
 
 ## Concepts ##
 

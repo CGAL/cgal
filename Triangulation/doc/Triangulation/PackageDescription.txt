@@ -69,7 +69,7 @@ indexed  in such a way that the neighbor indexed by \f$ i\f$
 is opposite to the vertex with the same index.
 --->
 
-# Reference Pages Sorted by Type #
+\cgalClassifedRefPages
 
 ## Concepts ##
 
