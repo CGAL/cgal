@@ -49,13 +49,13 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `CellAttributeWithPoint`
 - `LinearCellComplexItems`
 - `LinearCellComplexTraits`
 - `LinearCellComplex`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Linear_cell_complex_for_combinatorial_map<d,d2,LCCTraits,Items,Alloc>`
 - `CGAL::Linear_cell_complex_for_generalized_map<d,d2,LCCTraits,Items,Alloc>`
 - `CGAL::Linear_cell_complex_min_items<d>`
@@ -64,7 +64,7 @@
 - `CGAL::Cell_attribute_with_point_and_id<LCC,Info_,Tag,OnMerge,OnSplit>`
 - `CGAL::Linear_cell_complex<d,d2,LCCTraits,Items,Alloc>`
 
-## Global Functions ##
+\cgalCRPSection{Global Functions}
 \cgalCRPSubsection{Constructions for Linear Cell Complex}
 - `CGAL::import_from_plane_graph<LCC>`
 - `CGAL::import_from_triangulation_3<LCC,Triangulation>`

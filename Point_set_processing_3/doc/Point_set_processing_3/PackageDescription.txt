@@ -44,7 +44,7 @@ format.
 
 \cgalClassifedRefPages
 
-## Algorithms ##
+\cgalCRPSection{Algorithms}
 
 - `CGAL::compute_average_spacing()`
 - `CGAL::estimate_global_k_neighbor_scale()`

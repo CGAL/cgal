@@ -51,11 +51,11 @@ surface can be used without knowing the halfedge data structure.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `PolyhedronTraits_3`
 - `PolyhedronItems_3`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Polyhedron_3<Traits>`
 - \link CGAL::Polyhedron_3::Vertex `CGAL::Polyhedron_3<Traits>::Vertex` \endlink
 - \link CGAL::Polyhedron_3::Halfedge `CGAL::Polyhedron_3<Traits>::Halfedge` \endlink
@@ -66,13 +66,13 @@ surface can be used without knowing the halfedge data structure.
 - `CGAL::Polyhedron_min_items_3`
 - `CGAL::Polyhedron_incremental_builder_3<HDS>`
 
-## Functions ##
+\cgalCRPSection{Functions}
 - \link PkgPolyhedronIOFunc `CGAL::operator<<()` \endlink
 - \link PkgPolyhedronIOFunc `CGAL::operator>>()` \endlink
 - \link PkgPolyhedronIOFunc `write_off()` \endlink   
 - \link PkgPolyhedronIOFunc `read_off()` \endlink
 
-## Draw a Polyhedron 3 ##
+\cgalCRPSection{Draw a Polyhedron 3}
 - `CGAL::draw<POLY>`
 
 */

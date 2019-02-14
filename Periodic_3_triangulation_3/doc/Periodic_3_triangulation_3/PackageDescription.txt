@@ -71,7 +71,7 @@ of the concept `Periodic_3Offset_3`.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `Periodic_3TriangulationTraits_3`
 - `Periodic_3DelaunayTriangulationTraits_3`
@@ -87,7 +87,7 @@ of the concept `Periodic_3Offset_3`.
 
 - `Periodic_3Offset_3`
 
-## Classes ##
+\cgalCRPSection{Classes}
 
 \cgalCRPSubsection{Main Classes}
 
@@ -107,7 +107,7 @@ of the concept `Periodic_3Offset_3`.
 - `CGAL::Periodic_3_Delaunay_triangulation_traits_3<Traits,Periodic_3Offset_3>`
 - `CGAL::Periodic_3_regular_triangulation_traits_3<Traits,Periodic_3Offset_3>`
 
-## Enums ##
+\cgalCRPSection{Enums}
 
 - `CGAL::Periodic_3_triangulation_3::Iterator_type`
 - `CGAL::Periodic_3_triangulation_3::Locate_type`

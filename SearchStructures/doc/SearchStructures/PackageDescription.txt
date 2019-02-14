@@ -35,12 +35,12 @@ and segment trees in the same data structure.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `RangeSegmentTreeTraits_k`
 - `Sublayer`
 
-## Traits Classes ##
+\cgalCRPSection{Traits Classes}
 
 - `CGAL::Range_segment_tree_traits_set_2<R>`
 - `CGAL::Range_segment_tree_traits_set_3<R>`
@@ -51,7 +51,7 @@ and segment trees in the same data structure.
 - `CGAL::tree_interval_traits`
 - `CGAL::tree_point_traits`
 
-## Search Structure Classes ##
+\cgalCRPSection{Search Structure Classes}
 
 - `CGAL::Range_tree_d<Data, Window, Traits>`
 - `CGAL::Range_tree_k<Traits>`

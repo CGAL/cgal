@@ -70,7 +70,7 @@ are described in Chapter \ref PkgTDS2Ref "2D Triangulation Data Structure".
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `TriangulationTraits_2`
 - `DelaunayTriangulationTraits_2`
 - `RegularTriangulationTraits_2`
@@ -85,7 +85,7 @@ are described in Chapter \ref PkgTDS2Ref "2D Triangulation Data Structure".
 - `TriangulationHierarchyVertexBase_2`
 - `TriangulationVertexBaseWithInfo_2`
 
-## Classes ##
+\cgalCRPSection{Classes}
 
 - `CGAL::Triangulation_2<Traits,Tds>`
 - `CGAL::Delaunay_triangulation_2<Traits,Tds>`
@@ -109,10 +109,10 @@ are described in Chapter \ref PkgTDS2Ref "2D Triangulation Data Structure".
 
 - `CGAL::Triangulation_cw_ccw_2`
 
-## Enum ##
+\cgalCRPSection{Enum}
 - \link CGAL::Triangulation_2::Locate_type `CGAL::Triangulation_2<Traits,Tds>::Locate_type` \endlink
 
-## Draw a Triangulation 2 ##
+\cgalCRPSection{Draw a Triangulation 2}
 - `CGAL::draw<T2>`
 
 */

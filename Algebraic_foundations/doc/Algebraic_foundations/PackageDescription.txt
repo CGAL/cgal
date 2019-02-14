@@ -23,7 +23,7 @@
 
 \cgalClassifedRefPages
 
-## Algebraic Structures ##
+\cgalCRPSection{Algebraic Structures}
 
 \cgalCRPSubsection{Concepts}
 
@@ -82,7 +82,7 @@
 - `CGAL::kth_root()`
 - `CGAL::root_of()`
 
-## Real Embeddable ##
+\cgalCRPSection{Real Embeddable}
 
 \cgalCRPSubsection{Concepts}
 
@@ -113,14 +113,14 @@
 - `CGAL::to_double()`
 - `CGAL::to_interval()`
 
-## Real Number Types ##
+\cgalCRPSection{Real Number Types}
 
 \cgalCRPSubsection{Concepts}
 
 - `RingNumberType`
 - `FieldNumberType`
 
-## Interoperability ##
+\cgalCRPSection{Interoperability}
 
 \cgalCRPSubsection{Concepts}
 
@@ -131,7 +131,7 @@
 
 - `CGAL::Coercion_traits<A,B>`
 
-## Fractions ##
+\cgalCRPSection{Fractions}
 
 \cgalCRPSubsection{Concepts}
 
@@ -145,7 +145,7 @@
 
 - `CGAL::Fraction_traits<T>`
 
-## Miscellaneous ##
+\cgalCRPSection{Miscellaneous}
 
 \cgalCRPSubsection{Concepts}
 - `FromIntConstructible`

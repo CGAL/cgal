@@ -22,14 +22,14 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `BarycentricTraits_2`
 - `BarycentricCoordinates_2`
 
-## Namespaces ##
+\cgalCRPSection{Namespaces}
 - `CGAL::Barycentric_coordinates`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Barycentric_coordinates::Segment_coordinates_2<Traits>`
 - `CGAL::Barycentric_coordinates::Triangle_coordinates_2<Traits>`
 - `CGAL::Barycentric_coordinates::Generalized_barycentric_coordinates_2<Coordinate_2, Traits>`
@@ -39,7 +39,7 @@
 - `CGAL::Barycentric_coordinates::Mean_value_2<Traits>`
 - `CGAL::Barycentric_coordinates::Discrete_harmonic_2<Traits>`
 
-## Enumerations ##
+\cgalCRPSection{Enumerations}
 - `CGAL::Barycentric_coordinates::Query_point_location`
 - `CGAL::Barycentric_coordinates::Type_of_algorithm`
 

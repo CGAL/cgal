@@ -28,16 +28,16 @@ diagram cell is unique.
 
 \cgalClassifedRefPages
 
-## Functions ##
+\cgalCRPSection{Functions}
 - `CGAL::lower_envelope_3`
 - `CGAL::upper_envelope_3`
 - `CGAL::lower_envelope_xy_monotone_3`
 - `CGAL::upper_envelope_xy_monotone_3`
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `EnvelopeTraits_3`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Envelope_diagram_2<EnvTraits>`
 
 - `CGAL::Env_triangle_traits_3<Kernel>`

@@ -60,14 +60,14 @@ found in \cgalCite{k-ugpdd-99}.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `HalfedgeDS<Traits,Items,Alloc>`
 - `HalfedgeDSItems`
 - `HalfedgeDSVertex`
 - `HalfedgeDSHalfedge`
 - `HalfedgeDSFace`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::HalfedgeDS_default<Traits,HalfedgeDSItems,Alloc>`
 - `CGAL::HalfedgeDS_list<Traits,HalfedgeDSItems,Alloc>`
 - `CGAL::HalfedgeDS_vector<Traits,HalfedgeDSItems,Alloc>`

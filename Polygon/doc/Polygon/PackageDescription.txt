@@ -24,23 +24,23 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-## Assertions ##
+\cgalCRPSection{Assertions}
 
 The assertion flags for the polygons and polygon operations use 
 `POLYGON` in their names (<I>e.g.</I>, `CGAL_POLYGON_NO_ASSERTIONS`).
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `PolygonTraits_2`
 - `GeneralPolygonWithHoles_2`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Polygon_2<PolygonTraits_2, Container>`
 - `CGAL::Polygon_with_holes_2<PolygonTraits_2,Container>`
 - `CGAL::General_polygon_with_holes_2<General_polygon>`
 
-## Global Functions ##
+\cgalCRPSection{Global Functions}
 - `CGAL::area_2()`
 - `CGAL::bottom_vertex_2()`
 - `CGAL::bounded_side_2()`

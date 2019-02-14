@@ -36,7 +36,7 @@
 
 \cgalClassifedRefPages
 
-## Geometric Concepts ##
+\cgalCRPSection{Geometric Concepts}
 
 - `SphericalKernel`
 
@@ -87,7 +87,7 @@
 - `SphericalKernel::ComputeApproximateAngle_3`
 - `SphericalKernel::GetEquation`
 
-## Geometric Kernels and Classes ##
+\cgalCRPSection{Geometric Kernels and Classes}
 
 \cgalCRPSubsection{Kernels}
 
@@ -103,11 +103,11 @@
 - `CGAL::Line_arc_3<SphericalKernel>`
 - `CGAL::Circular_arc_3<SphericalKernel>`
 
-## Constants and Enumerations ##
+\cgalCRPSection{Constants and Enumerations}
 
 - `CGAL::Circle_type`
 
-## Geometric Global Functions ##
+\cgalCRPSection{Geometric Global Functions}
 
 - \link compare_x_spherical_grp `CGAL::compare_x()` \endlink
 - \link compare_y_spherical_grp `CGAL::compare_y()` \endlink
@@ -129,7 +129,7 @@
 - \link do_intersect_grp `CGAL::do_intersect()` \endlink
 - \link intersection_grp `CGAL::intersection()` \endlink
 
-## Algebraic Concepts ##
+\cgalCRPSection{Algebraic Concepts}
 
 - `AlgebraicKernelForSpheres`
 
@@ -149,7 +149,7 @@
 - `AlgebraicKernelForSpheres::ZCriticalPoints`
 - `AlgebraicKernelForSpheres::Solve`
 
-## Algebraic %Kernel and Classes ##
+\cgalCRPSection{Algebraic %Kernel and Classes}
 
 \cgalCRPSubsection{%Kernel}
 

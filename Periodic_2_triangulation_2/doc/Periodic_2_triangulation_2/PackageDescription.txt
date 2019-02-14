@@ -74,7 +74,7 @@ of the concept `Periodic_2Offset_2`.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `Periodic_2TriangulationTraits_2`
 - `Periodic_2DelaunayTriangulationTraits_2`
@@ -82,7 +82,7 @@ of the concept `Periodic_2Offset_2`.
 - `Periodic_2TriangulationVertexBase_2`
 - `Periodic_2Offset_2`
 
-## Classes ##
+\cgalCRPSection{Classes}
 
 \cgalCRPSubsection{Main Classes}
 
@@ -98,7 +98,7 @@ of the concept `Periodic_2Offset_2`.
 - `CGAL::Periodic_2_triangulation_traits_2<Traits,Periodic_2Offset_2>`
 - `CGAL::Periodic_2_Delaunay_triangulation_traits_2<Traits,Periodic_2Offset_2>`
 
-## Enums ##
+\cgalCRPSection{Enums}
 
 - `CGAL::Periodic_2_triangulation_2::Iterator_type`
 - `CGAL::Periodic_2_triangulation_2::Locate_type`

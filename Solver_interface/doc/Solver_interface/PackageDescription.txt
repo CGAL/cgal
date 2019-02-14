@@ -22,14 +22,14 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `DiagonalizeTraits`
 - `SparseLinearAlgebraTraits_d`
 - `SparseLinearAlgebraWithFactorTraits_d`
 - `SvdTraits`
 
-## Classes ##
+\cgalCRPSection{Classes}
 
 - `CGAL::Eigen_solver_traits`
 - `CGAL::Eigen_diagonalize_traits`

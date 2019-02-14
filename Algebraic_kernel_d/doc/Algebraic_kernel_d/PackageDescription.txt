@@ -34,7 +34,7 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 \cgalCRPSubsection{Univariate Algebraic %Kernel}
 
@@ -95,7 +95,7 @@
 - `AlgebraicKernel_d_2::BoundBetweenX_2`
 - `AlgebraicKernel_d_2::BoundBetweenY_2`
 
-## Models ##
+\cgalCRPSection{Models}
 
 - `CGAL::Algebraic_kernel_d_1<Coeff>`
 - `CGAL::Algebraic_kernel_d_2<Coeff>`

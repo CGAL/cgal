@@ -40,7 +40,7 @@
 
 \cgalClassifedRefPages
 
-## Geometric Concepts ##
+\cgalCRPSection{Geometric Concepts}
 
 - `CircularKernel`
 
@@ -80,7 +80,7 @@
 - `CircularKernel::Split_2`
 - `CircularKernel::GetEquation`
 
-## Geometric Kernels and Classes ##
+\cgalCRPSection{Geometric Kernels and Classes}
 
 \cgalCRPSubsection{Kernels}
 
@@ -96,7 +96,7 @@
 - `CGAL::Circular_arc_2<CircularKernel>`
 - `CGAL::Line_arc_2<CircularKernel>`
 
-## Geometric Global Functions ##
+\cgalCRPSection{Geometric Global Functions}
 
 - \link compare_x_circular_grp `CGAL::compare_x()` \endlink
 - \link compare_y_circular_grp `CGAL::compare_y()` \endlink
@@ -114,7 +114,7 @@
 - `CGAL::make_x_monotone()`
 - `CGAL::make_xy_monotone()`
 
-## Algebraic Concepts ##
+\cgalCRPSection{Algebraic Concepts}
 
 - `AlgebraicKernelForCircles`
 
@@ -131,7 +131,7 @@
 - `AlgebraicKernelForCircles::YCriticalPoints`
 - `AlgebraicKernelForCircles::Solve`
 
-## Algebraic %Kernel and Classes ##
+\cgalCRPSection{Algebraic %Kernel and Classes}
 
 \cgalCRPSubsection{%Kernel}
 

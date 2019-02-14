@@ -46,7 +46,7 @@ Section  \ref TDS3secintro.)
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `TriangulationDataStructure_3`
 - `TriangulationDataStructure_3::Cell`
@@ -54,7 +54,7 @@ Section  \ref TDS3secintro.)
 - `TriangulationDSCellBase_3`
 - `TriangulationDSVertexBase_3`
 
-## Classes ##
+\cgalCRPSection{Classes}
 
 - `CGAL::Triangulation_data_structure_3<TriangulationDSVertexBase_3,TriangulationDSCellBase_3,Vertex_container_strategy,Cell_container_strategy,Concurrency_tag>` is a model for the concept of the 3D-triangulation data structure `TriangulationDataStructure_3`. It is templated by base classes for vertices and cells.
 
@@ -63,7 +63,7 @@ Section  \ref TDS3secintro.)
 - `CGAL::Triangulation_ds_cell_base_3<TDS>`
 - `CGAL::Triangulation_ds_vertex_base_3<TDS>`
 
-## Helper Classes ##
+\cgalCRPSection{Helper Classes}
 
 - `CGAL::Triangulation_utils_3` defines operations on the indices of vertices and neighbors within
 a cell of a triangulation.
