@@ -1,13 +1,9 @@
 // 2D intersection tests.
 
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Homogeneous.h>
+
 #include <CGAL/Intersection_traits_2.h>
-#include <CGAL/Object.h>
-#include <CGAL/Line_2.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Segment_2.h>
-#include <CGAL/Ray_2.h>
-#include <CGAL/Triangle_2.h>
-#include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Intersections_2/Segment_2_Segment_2.h>
 #include <CGAL/Intersections_2/Line_2_Line_2.h>
 #include <CGAL/Intersections_2/Ray_2_Ray_2.h>
@@ -20,8 +16,6 @@
 #include <CGAL/Intersections_2/Circle_2_Iso_rectangle_2.h>
 #include <CGAL/Intersections_2/Circle_2_Point_2.h>
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Homogeneous.h>
 
 #include <vector>
 #include <iostream>
@@ -370,7 +364,7 @@ check_no_intersection  (L(p(0, 0), p(10,10)), L(p(8,7), p(1, 0)));
 
 int main()
 {
-	Test< CGAL::Cartesian<double>   >().run();
+	Test< CGAL::Simple_cartesian<double>   >().run();
 	Test< CGAL::Homogeneous<double> >().run();
 	// TODO : test more kernels.
 }
