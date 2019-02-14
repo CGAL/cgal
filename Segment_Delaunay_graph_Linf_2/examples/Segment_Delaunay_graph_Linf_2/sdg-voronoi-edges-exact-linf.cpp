@@ -29,7 +29,6 @@ typedef CGAL::Quotient<exact_ring_t>   exact_field_t;
 
 #endif
 
-//typedef exact_ring_t   ring_number_t;
 typedef exact_field_t  field_number_t;
 
 #include <CGAL/Simple_cartesian.h>
@@ -37,7 +36,6 @@ typedef exact_field_t  field_number_t;
 #include <CGAL/Segment_Delaunay_graph_Linf_2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_traits_2.h>
 
-//struct K_ring  : public CGAL::Simple_cartesian<ring_number_t> {};
 typedef CGAL::Simple_cartesian<field_number_t> K_field;
 
 typedef CGAL::Field_tag  MTag;
