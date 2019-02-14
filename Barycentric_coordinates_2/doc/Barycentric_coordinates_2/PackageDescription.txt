@@ -29,12 +29,12 @@
 \cgalCRPSection{Namespaces}
 - `CGAL::Barycentric_coordinates`
 
-\cgalCRPSection{Classes}
+\cgalCRPSection{General Classes}
 - `CGAL::Barycentric_coordinates::Segment_coordinates_2<Traits>`
 - `CGAL::Barycentric_coordinates::Triangle_coordinates_2<Traits>`
 - `CGAL::Barycentric_coordinates::Generalized_barycentric_coordinates_2<Coordinate_2, Traits>`
 
-## ##
+\cgalCRPSection{Models of `BarycentricCoordinates_2`}
 - `CGAL::Barycentric_coordinates::Wachspress_2<Traits>`
 - `CGAL::Barycentric_coordinates::Mean_value_2<Traits>`
 - `CGAL::Barycentric_coordinates::Discrete_harmonic_2<Traits>`

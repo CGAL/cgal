@@ -37,7 +37,7 @@ computing the nearest and furthest site Delaunay triangulation.
 
 \cgalClassifedRefPages
 
-## Concepts #
+\cgalCRPSection{Concepts}
 - `ConvexHullTraits_d`
 - `DelaunayLiftedTraits_d`
 - `DelaunayTraits_d`

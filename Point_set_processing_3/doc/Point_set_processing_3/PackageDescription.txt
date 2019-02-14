@@ -67,14 +67,14 @@ format.
 - `CGAL::vcm_is_on_feature_edge()`
 - `CGAL::structure_point_set()`
 
-## IO (XYZ/OFF Formats) ##
+\cgalCRPSection{IO (XYZ/OFF Formats)}
 
 - `CGAL::read_off_points()`
 - `CGAL::read_xyz_points()`
 - `CGAL::write_off_points()`
 - `CGAL::write_xyz_points()`
 
-## IO (PLY Format) ##
+\cgalCRPSection{IO (PLY Format)}
 
 - `CGAL::read_ply_points()`
 - `CGAL::read_ply_points_with_properties()`
@@ -86,7 +86,7 @@ format.
 - `CGAL::make_ply_normal_reader()`
 - `CGAL::make_ply_normal_writer()`
 
-## IO (LAS Format) ##
+\cgalCRPSection{IO (LAS Format)}
 
 - `CGAL::read_las_points()`
 - `CGAL::read_las_points_with_properties()`

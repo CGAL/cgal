@@ -94,7 +94,7 @@ The following functions handle the generation of a periodic mesh:
 - `CGAL::lloyd_optimize_periodic_3_mesh_3()`
 - `CGAL::odt_optimize_periodic_3_mesh_3()`
 
-## Classes and Functions of `Mesh_3` ##
+\cgalCRPSection{Classes and Functions of `Mesh_3`}
 
 Many classes and functions used by this package are defined within the package
 \ref PkgMesh3, see \ref PkgMesh3MeshClasses, \ref PkgMesh3Domains,
