@@ -72,14 +72,14 @@ namespace CGAL{
     }
  
     void delete_selected_objects_() const {
-      for (unsigned i=static_cast<int>(get_IpePage()->count());i>0;--i)
+      for (unsigned i=static_cast<unsigned>(get_IpePage()->count());i>0;--i)
         if (get_IpePage()->select(i-1)!=ipe::ENotSelected)
           get_IpePage()->remove(i-1);
     }  
     
     void group_selected_objects_() const {
       ipe::Group* grp=new ipe::Group();
-      for (unsigned i=static_cast<int>(get_IpePage()->count());i>0;--i)
+      for (unsigned i=static_cast<unsigned>(get_IpePage()->count());i>0;--i)
         if (get_IpePage()->select(i-1)!=ipe::ENotSelected){
           grp->push_back( get_IpePage()->object(i-1)->clone() );      
           //~ grp->push_back( get_IpePage()->object(i-1) );      
