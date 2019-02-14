@@ -14,8 +14,7 @@ an association of the vertex with a geometric point.
 
 \cgalHasModel `CGAL::Triangulation_vertex<TriangulationTraits_, Data, TriangulationDSVertex_>`
 
-Input/Output 
--------------- 
+\cgalHeading{Input/Output}
 
 These operators can be used directly and are called by the I/O 
 operator of class `Triangulation`. 

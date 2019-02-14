@@ -86,8 +86,7 @@ The class `Eigen_solver_traits` provides an interface to the sparse solvers of \
 \sa `CGAL::Eigen_vector<T>`
 \sa http://eigen.tuxfamily.org
 
-Example
--------------- 
+\cgalHeading{Instantiation Example}
 
 The instantiation of this class assumes an \ref thirdpartyEigen "Eigen" sparse solver is provided. Here are few examples:
 
