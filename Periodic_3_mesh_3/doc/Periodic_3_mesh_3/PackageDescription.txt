@@ -42,7 +42,7 @@ flexibility that is offered in the \ref PkgMesh3 package.}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-### Relation to the 3D Mesh Generation and 3D Periodic Triangulations Packages ###
+\cgalHeading{Relation to the 3D Mesh Generation and 3D Periodic Triangulations Packages}
 
 A periodic mesh extends, by definition, infinitely in space. To avoid storing and
 manipulating duplicate points, well-chosen "dummy" points are inserted

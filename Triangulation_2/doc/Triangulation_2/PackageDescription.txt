@@ -112,7 +112,7 @@ are described in Chapter \ref PkgTDS2Ref "2D Triangulation Data Structure".
 ## Enum ##
 - \link CGAL::Triangulation_2::Locate_type `CGAL::Triangulation_2<Traits,Tds>::Locate_type` \endlink
 
-### Draw a Triangulation 2 ###
+## Draw a Triangulation 2 ##
 - `CGAL::draw<T2>`
 
 */

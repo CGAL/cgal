@@ -117,7 +117,7 @@ is opposite to the vertex with the same index. See
 
 - `CGAL::Triangulation_3::Locate_type`
 
-### Draw a Triangulation 3 ###
+## Draw a Triangulation 3 ##
 - `CGAL::draw<T3>`
 
 */

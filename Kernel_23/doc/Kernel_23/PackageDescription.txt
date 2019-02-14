@@ -497,7 +497,7 @@
 - `Kernel::SideOfOrientedCircle_2`
 - `Kernel::SideOfOrientedSphere_3`
 
-## Dimension handling tools ##
+## Dimension Handling Tools ##
 
 - `CGAL::Ambient_dimension<T, K>`
 - `CGAL::Feature_dimension<T, K>`

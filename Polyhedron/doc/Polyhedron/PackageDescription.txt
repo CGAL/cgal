@@ -72,7 +72,7 @@ surface can be used without knowing the halfedge data structure.
 - \link PkgPolyhedronIOFunc `write_off()` \endlink   
 - \link PkgPolyhedronIOFunc `read_off()` \endlink
 
-### Draw a Polyhedron 3 ###
+## Draw a Polyhedron 3 ##
 - `CGAL::draw<POLY>`
 
 */

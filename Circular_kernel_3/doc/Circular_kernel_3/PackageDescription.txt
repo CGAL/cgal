@@ -103,7 +103,7 @@
 - `CGAL::Line_arc_3<SphericalKernel>`
 - `CGAL::Circular_arc_3<SphericalKernel>`
 
-### Constants and Enumerations ###
+## Constants and Enumerations ##
 
 - `CGAL::Circle_type`
 
