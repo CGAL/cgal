@@ -26,7 +26,7 @@
 // ============================================================================
 
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/HalfedgeDS_default.h>
 #include <CGAL/HalfedgeDS_min_items.h>
 #include <CGAL/Polyhedron_items_3.h>
@@ -34,7 +34,7 @@
 #include <cstddef>
 #include <cassert>
 
-typedef CGAL::Cartesian<double>   Kernel;
+typedef CGAL::Simple_cartesian<double>   Kernel;
 struct Dummy_traits_3 {
     typedef Kernel::Point_3    Point_3;
     typedef Kernel::Plane_3    Plane_3;
