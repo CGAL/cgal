@@ -1,8 +1,8 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Iterator_range.h>
-#include <boost/foreach.hpp>
 
+#include <boost/foreach.hpp>
 
 #include <iostream>
 #include <fstream>

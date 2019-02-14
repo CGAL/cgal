@@ -14,7 +14,6 @@ typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::vertex_iterator   vertex_iterator;
 
 
-
 int main(int argc, char** argv) {
 
   Polyhedron P;  
