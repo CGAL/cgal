@@ -40,7 +40,7 @@
 
 - `SphericalKernel`
 
-\cgalCRPSubsection{Object types}
+\cgalCRPSubsection{Object Types}
 
 - `SphericalKernel::CircularArc_3`
 - `SphericalKernel::CircularArcPoint_3`

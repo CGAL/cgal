@@ -88,11 +88,11 @@ User Manual \endlink.
 - `CGAL::Interpolation_traits_2<K>`
 - `CGAL::Interpolation_gradient_fitting_traits_2<K>`
 
-\cgalCRPSection{Natural neighbor coordinate computation}
+\cgalCRPSection{Natural Neighbor Coordinate Computation}
 - `CGAL::natural_neighbor_coordinates_2()`
 - `CGAL::regular_neighbor_coordinates_2()`
 
-\cgalCRPSection{Surface neighbor and surface neighbor coordinate computation}
+\cgalCRPSection{Surface Neighbor and Surface Neighbor Coordinate Computation}
 - `CGAL::Voronoi_intersection_2_traits_3<K>`
 - `CGAL::surface_neighbor_coordinates_3()`
 - `CGAL::surface_neighbors_3()`

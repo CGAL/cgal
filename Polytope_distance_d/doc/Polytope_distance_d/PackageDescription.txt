@@ -27,7 +27,7 @@ checking off, cf. Section  \ref secchecks.
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{All furthest neighbors}
+\cgalCRPSection{All Furthest Neighbors}
 
 - `CGAL::all_furthest_neighbors_2`
 - `AllFurthestNeighborsTraits_2`

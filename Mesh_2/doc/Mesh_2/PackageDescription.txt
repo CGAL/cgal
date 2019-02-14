@@ -57,7 +57,7 @@ The package can handle intersecting input constraints  and set no restriction on
 - `CGAL::Delaunay_mesh_size_criteria_2<CDT>`
 - `CGAL::Mesh_2::Face_badness`
 
-\cgalCRPSection{Global functions}
+\cgalCRPSection{Global Functions}
 - `CGAL::make_conforming_Delaunay_2`
 - `CGAL::make_conforming_Gabriel_2`
 - `CGAL::refine_Delaunay_mesh_2`

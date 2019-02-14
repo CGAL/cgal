@@ -74,7 +74,7 @@
 - `CGAL::compute_normal_of_cell_0<LCC>`
 - `CGAL::compute_normal_of_cell_2<LCC>`
 
-\cgalCRPSubsection{Draw a Linear cell complex}
+\cgalCRPSubsection{Draw a Linear Cell Complex}
 - `CGAL::draw<LCC>`
 
 */
