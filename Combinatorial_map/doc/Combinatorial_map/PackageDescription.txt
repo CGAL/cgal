@@ -54,13 +54,13 @@
 - `CGAL::Generic_map_min_items`
 
 ## Global Functions ##
-### Constructions for Combinatorial Maps ###
+\cgalCRPSubsection{Constructions for Combinatorial Maps}
 - `CGAL::make_edge<CMap>`
 - `CGAL::make_combinatorial_polygon<CMap>`
 - `CGAL::make_combinatorial_tetrahedron<CMap>`
 - `CGAL::make_combinatorial_hexahedron<CMap>`
 
-### Operations for Combinatorial Maps ###
+\cgalCRPSubsection{Operations for Combinatorial Maps}
 - `CGAL::is_removable<CMap,i>`
 - `CGAL::remove_cell<CMap,i>`
 - `CGAL::is_insertable_cell_1_in_cell_2<CMap>`

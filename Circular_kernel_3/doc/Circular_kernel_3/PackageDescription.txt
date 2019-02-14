@@ -40,13 +40,13 @@
 
 - `SphericalKernel`
 
-### Object types ###
+\cgalCRPSubsection{Object types}
 
 - `SphericalKernel::CircularArc_3`
 - `SphericalKernel::CircularArcPoint_3`
 - `SphericalKernel::LineArc_3`
 
-### Functors ###
+\cgalCRPSubsection{Functors}
 
 - `SphericalKernel::ConstructPlane_3`
 - `SphericalKernel::ConstructSphere_3`
@@ -89,16 +89,16 @@
 
 ## Geometric Kernels and Classes ##
 
-### Kernels ###
+\cgalCRPSubsection{Kernels}
 
 - `CGAL::Spherical_kernel_3<Kernel,AlgebraicKernelForSpheres>`
 - `CGAL::Exact_spherical_kernel_3`
 
-### Points ###
+\cgalCRPSubsection{Points}
 
 - `CGAL::Circular_arc_point_3<SphericalKernel>`
 
-### Arcs ###
+\cgalCRPSubsection{Arcs}
 
 - `CGAL::Line_arc_3<SphericalKernel>`
 - `CGAL::Circular_arc_3<SphericalKernel>`
@@ -133,7 +133,7 @@
 
 - `AlgebraicKernelForSpheres`
 
-### Functors ###
+\cgalCRPSubsection{Functors}
 
 - `AlgebraicKernelForSpheres::ConstructPolynomial_1_3`
 - `AlgebraicKernelForSpheres::ConstructPolynomialForSpheres_2_3`
@@ -151,17 +151,17 @@
 
 ## Algebraic %Kernel and Classes ##
 
-### %Kernel ###
+\cgalCRPSubsection{%Kernel}
 
 - `CGAL::Algebraic_kernel_for_spheres_2_3<RT>`
 
-### Polynomials ###
+\cgalCRPSubsection{Polynomials}
 
 - `CGAL::Polynomial_1_3<RT>`
 - `CGAL::Polynomial_for_spheres_2_3<FT>`
 - `CGAL::Polynomials_for_lines_3<FT>`
 
-### Roots of Polynomials ###
+\cgalCRPSubsection{Roots of Polynomials}
 
 - `CGAL::Sqrt_extension<NT,ROOT>`
 - `CGAL::Root_for_spheres_2_3<RT>`

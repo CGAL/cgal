@@ -60,21 +60,21 @@
 - \link double.h `double` \endlink
 - \link long_double.h `long double` \endlink
 
-### %CORE ###
+\cgalCRPSubsection{%CORE}
 
 - `CORE::BigInt`
 - `CORE::BigRat`
 - `CORE::BigFloat`
 - `CORE::Expr`
 
-### LEDA ###
+\cgalCRPSubsection{LEDA}
 
 - `leda_integer`
 - `leda_rational`
 - `leda_bigfloat`
 - `leda_real`
 
-### GMP ###
+\cgalCRPSubsection{GMP}
 
 - `mpz_class`
 - `mpq_class`
@@ -85,7 +85,7 @@
 - `CGAL::Gmpfr`
 - `CGAL::Gmpfi`
 
-### %CGAL ###
+\cgalCRPSubsection{%CGAL}
 
 - `CGAL::MP_Float`
 - `CGAL::Interval_nt<Protected>`

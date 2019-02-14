@@ -36,7 +36,7 @@
 
 ## Concepts ##
 
-### Univariate Algebraic %Kernel ###
+\cgalCRPSubsection{Univariate Algebraic %Kernel}
 
 - `AlgebraicKernel_d_1`
 
@@ -58,7 +58,7 @@
 - `AlgebraicKernel_d_1::ApproximateAbsolute_1`
 - `AlgebraicKernel_d_1::ApproximateRelative_1`
 
-### Bivariate Algebraic %Kernel ###
+\cgalCRPSubsection{Bivariate Algebraic %Kernel}
 
 - `AlgebraicKernel_d_2`
 

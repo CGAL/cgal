@@ -65,16 +65,16 @@
 - `CGAL::Linear_cell_complex<d,d2,LCCTraits,Items,Alloc>`
 
 ## Global Functions ##
-### Constructions for Linear Cell Complex ###
+\cgalCRPSubsection{Constructions for Linear Cell Complex}
 - `CGAL::import_from_plane_graph<LCC>`
 - `CGAL::import_from_triangulation_3<LCC,Triangulation>`
 - `CGAL::import_from_polyhedron_3<LCC,Polyhedron>`
 
-### Operations for Linear Cell Complex ###
+\cgalCRPSubsection{Operations for Linear Cell Complex}
 - `CGAL::compute_normal_of_cell_0<LCC>`
 - `CGAL::compute_normal_of_cell_2<LCC>`
 
-### Draw a Linear cell complex ###
+\cgalCRPSubsection{Draw a Linear cell complex}
 - `CGAL::draw<LCC>`
 
 */

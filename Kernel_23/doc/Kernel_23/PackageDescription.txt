@@ -80,7 +80,7 @@
 
 ## %Kernel Objects ##
 
-### Two-dimensional Objects ###
+\cgalCRPSubsection{Two-dimensional Objects}
 
 - `CGAL::Aff_transformation_2<Kernel>`
 - `CGAL::Bbox_2`
@@ -95,7 +95,7 @@
 - `CGAL::Vector_2<Kernel>`
 - `CGAL::Weighted_point_2<Kernel>`
 
-### Three-dimensional Objects ###
+\cgalCRPSubsection{Three-dimensional Objects}
 
 - `CGAL::Bbox_3`
 - `CGAL::Aff_transformation_3<Kernel>`

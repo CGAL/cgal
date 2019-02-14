@@ -25,7 +25,7 @@
 
 ## Algebraic Structures ##
 
-### Concepts ###
+\cgalCRPSubsection{Concepts}
 
 - `IntegralDomainWithoutDivision`
 - `IntegralDomain`
@@ -54,7 +54,7 @@
 - `AlgebraicStructureTraits_::KthRoot`
 - `AlgebraicStructureTraits_::RootOf`
 
-### Classes ###
+\cgalCRPSubsection{Classes}
 
 - `CGAL::Algebraic_structure_traits<T>`
 - `CGAL::Integral_domain_without_division_tag`
@@ -64,7 +64,7 @@
 - `CGAL::Unique_factorization_domain_tag`
 - `CGAL::Euclidean_ring_tag`
 
-### Global Functions ###
+\cgalCRPSubsection{Global Functions}
 
 - `CGAL::is_zero()`
 - `CGAL::is_one()`
@@ -84,7 +84,7 @@
 
 ## Real Embeddable ##
 
-### Concepts ###
+\cgalCRPSubsection{Concepts}
 
 - `RealEmbeddable`
 
@@ -98,11 +98,11 @@
 - `RealEmbeddableTraits_::ToDouble`
 - `RealEmbeddableTraits_::ToInterval`
 
-### Classes ###
+\cgalCRPSubsection{Classes}
 
 - `CGAL::Real_embeddable_traits<T>`
 
-### Global Functions ###
+\cgalCRPSubsection{Global Functions}
 
 - `CGAL::is_zero()`
 - `CGAL::abs()`
@@ -115,25 +115,25 @@
 
 ## Real Number Types ##
 
-### Concepts ###
+\cgalCRPSubsection{Concepts}
 
 - `RingNumberType`
 - `FieldNumberType`
 
 ## Interoperability ##
 
-### Concepts ###
+\cgalCRPSubsection{Concepts}
 
 - `ExplicitInteroperable`
 - `ImplicitInteroperable`
 
-### Classes ###
+\cgalCRPSubsection{Classes}
 
 - `CGAL::Coercion_traits<A,B>`
 
 ## Fractions ##
 
-### Concepts ###
+\cgalCRPSubsection{Concepts}
 
 - `Fraction`
 - `FractionTraits`
@@ -141,13 +141,13 @@
 - `FractionTraits_::Compose`
 - `FractionTraits_::CommonFactor`
 
-### Classes ###
+\cgalCRPSubsection{Classes}
 
 - `CGAL::Fraction_traits<T>`
 
 ## Miscellaneous ##
 
-### Concepts ###
+\cgalCRPSubsection{Concepts}
 - `FromIntConstructible`
 - `FromDoubleConstructible`
 

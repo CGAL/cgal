@@ -89,7 +89,7 @@ of the concept `Periodic_3Offset_3`.
 
 ## Classes ##
 
-### Main Classes ###
+\cgalCRPSubsection{Main Classes}
 
 - `CGAL::Periodic_3_triangulation_3<PT,TDS>`
 - `CGAL::Periodic_3_Delaunay_triangulation_3<PT,TDS>`
@@ -101,7 +101,7 @@ of the concept `Periodic_3Offset_3`.
 - `CGAL::Periodic_3_triangulation_ds_cell_base_3<>`
 - `CGAL::Periodic_3_offset_3`
 
-### Traits Classes ###
+\cgalCRPSubsection{Traits Classes}
 
 - `CGAL::Periodic_3_triangulation_traits_3<Traits,Periodic_3Offset_3>`
 - `CGAL::Periodic_3_Delaunay_triangulation_traits_3<Traits,Periodic_3Offset_3>`
