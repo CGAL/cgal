@@ -6,7 +6,7 @@
 
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Homogeneous.h>
+#include <CGAL/Simple_homogeneous.h>
 
 #include <vector>
 #include <iostream>
@@ -291,6 +291,6 @@ struct Test {
 int main()
 {
 	Test< CGAL::Simple_cartesian<double>   >().run();
-	Test< CGAL::Homogeneous<double> >().run();
+	Test< CGAL::Simple_homogeneous<double> >().run();
 	// TODO : test more kernels.
 }
