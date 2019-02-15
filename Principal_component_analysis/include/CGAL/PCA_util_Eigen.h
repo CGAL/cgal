@@ -467,74 +467,67 @@ assemble_covariance_matrix_3(InputIterator first,
 			     const Eigen_diagonalize_traits<typename K::FT, 3>&)
 {
   typedef typename K::FT          FT;
+  typedef typename K::Point_3     Point_3;
+  typedef typename K::Vector_3    Vector_3;
   typedef typename K::Tetrahedron_3  Tetrahedron;
   typedef typename Eigen::Matrix<FT, 3, 3> Matrix;
+  typedef typename Eigen::Matrix<FT, 3, 1> Vector;
 
   // assemble covariance matrix as a semi-definite matrix. 
   // Matrix numbering:
   // 0 1 2
   //   3 4
   //     5          
-  //Final combined covariance matrix for all tetrahedrons and their combined mass
-  FT mass = 0.0;
-
   // assemble 2nd order moment about the origin.  
   Matrix moment;
   moment << 1.0/60.0,  1.0/120.0, 1.0/120.0,
             1.0/120.0, 1.0/60.0,  1.0/120.0,
             1.0/120.0, 1.0/120.0, 1.0/60.0;
-  for(InputIterator it = first;
-      it != beyond;
-      it++)
-  {
-    // Now for each tetrahedron, construct the 2nd order moment about the origin.
-    // assemble the transformation matrix.
-    const Tetrahedron& t = *it;
+
+	Matrix accum; // zero by default
+  accum << 0, 0, 0, 0, 0, 0, 0, 0, 0;
+	for (InputIterator it = first;  it != beyond; it++)
+	{
+		const Tetrahedron& t = *it;
 
     // defined for convenience.
     FT x0 = t[0].x();
     FT y0 = t[0].y();
     FT z0 = t[0].z();
 
-    FT delta[9] = {t[1].x()-x0, t[2].x()-x0, t[3].x()-x0, 
-                   t[1].y()-y0, t[2].y()-y0, t[3].y()-y0,
-                   t[1].z()-z0, t[2].z()-z0, t[3].z()-z0};
-    Matrix transformation (delta);
+    Matrix transformation;
+    transformation << t[1].x()-x0, t[2].x()-x0, t[3].x()-x0, 
+                      t[1].y()-y0, t[2].y()-y0, t[3].y()-y0,
+                      t[1].z()-z0, t[2].z()-z0, t[3].z()-z0;
     FT volume = CGAL::abs(t.volume());
 
 		// skip zero measure primitives
     if(volume == (FT)0.0)
 			continue;
 
-    // Find the 2nd order moment for the tetrahedron wrt to the origin by an affine transformation.
+		// affine transform
+    transformation = 6. * volume * transformation * moment * transformation.transpose();
+
+		Vector_3 d = t[0] - c; // delta
+    Vector vec_d;
+    vec_d << d.x(), d.y(), d.z();
+      
+		Point_3 C = CGAL::centroid(t) - (t[0] - CGAL::ORIGIN); // careful, local centroid
+    Vector vec_c;
+    vec_c << C.x(), C.y(), C.z();
     
-    // Transform the standard 2nd order moment using the transformation matrix
-    transformation = 6 * volume * transformation * moment * transformation.transpose();
-    
-    // Translate the 2nd order moment to the center of the tetrahedron.
-    FT xav0 = (delta[0]+delta[1]+delta[2])/4.0;
-    FT yav0 = (delta[3]+delta[4]+delta[5])/4.0;
-    FT zav0 = (delta[6]+delta[7]+delta[8])/4.0;
+		Matrix M = vec_c * vec_d.transpose() + vec_d * vec_c.transpose() + vec_d * vec_d.transpose();
 
-    // and add to covariance matrix
-    covariance[0] += transformation(0,0) + volume * (2*x0*xav0 + x0*x0);
-    covariance[1] += transformation(1,0) + volume * (xav0*y0 + yav0*x0 + x0*y0);
-    covariance[2] += transformation(2,0) + volume * (x0*zav0 + xav0*z0 + x0*z0);
-    covariance[3] += transformation(1,1) + volume * (2*y0*yav0 + y0*y0);
-    covariance[4] += transformation(2,1) + volume * (yav0*z0 + y0*zav0 + z0*y0);
-    covariance[5] += transformation(2,2) + volume * (2*zav0*z0 + z0*z0);
-
-    mass += volume;
-  }
-
-  // Translate the 2nd order moment calculated about the origin to
-  // the center of mass to get the covariance.
-  covariance[0] += mass * (-1.0 * c.x() * c.x());
-  covariance[1] += mass * (-1.0 * c.x() * c.y());
-  covariance[2] += mass * (-1.0 * c.z() * c.x());
-  covariance[3] += mass * (-1.0 * c.y() * c.y());
-  covariance[4] += mass * (-1.0 * c.z() * c.y());
-  covariance[5] += mass * (-1.0 * c.z() * c.z());
+    accum += transformation + volume * M;
+	}
+  
+  covariance[0] = accum(0,0);
+  covariance[1] = accum(1,0);
+  covariance[2] = accum(2,0);
+  covariance[3] = accum(1,1);
+  covariance[4] = accum(2,1);
+  covariance[5] = accum(2,2);
+  
 }
 
 // assemble covariance matrix from a segment set 
