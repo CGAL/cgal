@@ -500,7 +500,7 @@ assemble_covariance_matrix_3(InputIterator first,
                    t[1].y()-y0, t[2].y()-y0, t[3].y()-y0,
                    t[1].z()-z0, t[2].z()-z0, t[3].z()-z0};
     Matrix transformation (delta);
-    FT volume = t.volume();
+    FT volume = CGAL::abs(t.volume());
 
 		// skip zero measure primitives
     if(volume == (FT)0.0)
