@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <CGAL/IO/io.h>
 #include <CGAL/Algebraic_structure_traits.h>
 

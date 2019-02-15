@@ -28,7 +28,6 @@
 // ============================================================================
 
 
-#include <CGAL/basic.h>
 #include <cstddef>
 #include <cassert>
 #include <iterator>

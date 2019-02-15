@@ -58,13 +58,13 @@ inline double to_nt(int d)
 template < typename K >
 struct Test {
 
-  typedef CGAL::Point_2< K >          P;
-  typedef CGAL::Line_2< K >           L;
-  typedef CGAL::Segment_2< K >        S;
-  typedef CGAL::Ray_2< K >            R;
-  typedef CGAL::Triangle_2< K >       T;
-  typedef CGAL::Iso_rectangle_2< K >  Rec;
-  typedef CGAL::Circle_2< K >         C;
+  typedef typename K::Point_2               P;
+  typedef typename K::Line_2                L;
+  typedef typename K::Segment_2             S;
+  typedef typename K::Ray_2                 R;
+  typedef typename K::Triangle_2            T;
+  typedef typename K::Iso_rectangle_2       Rec;
+  typedef typename K::Circle_2              C;
   typedef std::vector<P>              Pol;
 
 
