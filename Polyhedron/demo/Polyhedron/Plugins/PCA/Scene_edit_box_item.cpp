@@ -199,7 +199,6 @@ struct Scene_edit_box_item_priv{
     for(int i=0; i<8; ++i)
       for(int j=0; j<3; ++j)
         last_pool[i][j] = vertices[i][j];
-
     reset_selection();
     last_picked_id = -1;
     last_picked_type = -1;

@@ -11,6 +11,7 @@
 #include <CGAL/Three/Three.h>
 #include <CGAL/Three/Scene_item_rendering_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 #include "ui_Hole_filling_widget.h"
 
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
@@ -341,7 +342,7 @@ class Polyhedron_demo_hole_filling_plugin :
 public:
   bool applicable(QAction*) const { return qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex())) ||
         qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex())); }
-  void print_message(QString message) { messages->information(message); }
+  void print_message(QString message) { CGAL::Three::Three::information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionHoleFilling; }
 
 

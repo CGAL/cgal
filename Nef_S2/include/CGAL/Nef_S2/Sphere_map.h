@@ -150,7 +150,7 @@ public:
   public:
     SFace_cycle_iterator() : Ibase() {}
     SFace_cycle_iterator(const Ibase& b) : Ibase(b) {}
-    SFace_cycle_iterator(const SFace_cycle_iterator& i) : Ibase(i) {}  
+
     bool is_svertex() const 
     { SVertex_handle v; return CGAL::assign(v,Ibase::operator*()); }
     bool is_shalfedge() const
@@ -177,8 +177,7 @@ public:
   public:
     SFace_cycle_const_iterator() : Ibase() {}
     SFace_cycle_const_iterator(const Ibase& b) : Ibase(b) {}
-    SFace_cycle_const_iterator(const SFace_cycle_const_iterator& i) 
-      : Ibase(i) {}  
+
     bool is_svertex() const 
     { SVertex_handle v; return CGAL::assign(v,Ibase::operator*()); }
     bool is_shalfedge() const

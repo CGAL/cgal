@@ -1,4 +1,5 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 #include <QApplication>
 #include <QObject>
 #include <QAction>
@@ -377,7 +378,7 @@ private Q_SLOTS:
       pMesh = new Face_graph();
       if(!sel_item->export_selected_facets_as_polyhedron(pMesh))
       {
-        messageInterface->error("Face selection is not valid. Aborting.");
+        CGAL::Three::Three::error("Face selection is not valid. Aborting.");
         
         return; 
       }
@@ -393,7 +394,7 @@ private Q_SLOTS:
       return;
     if(CGAL::is_closed(*pMesh))
     {
-      messageInterface->error("The face graph must be open. Aborting.");
+      CGAL::Three::Three::error("The face graph must be open. Aborting.");
       return;
     }
     std::vector<Triangle> triangles;

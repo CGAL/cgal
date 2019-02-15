@@ -55,6 +55,7 @@
     <addaction name="actionErase"/>
     <addaction name="actionEraseAll"/>
     <addaction name="actionDuplicate"/>
+    <addaction name="action_Save"/>
     <addaction name="actionSaveAs"/>
     <addaction name="actionSa_ve_Scene_as_Script"/>
     <addaction name="actionSaveSnapshot"/>
@@ -464,6 +465,11 @@
   <action name="actionSa_ve_Scene_as_Script">
    <property name="text">
     <string>Sa&amp;ve the Scene as a Script File...</string>
+   </property>
+  </action>
+  <action name="action_Save">
+   <property name="text">
+    <string>&amp;Save</string>
    </property>
   </action>
  </widget>

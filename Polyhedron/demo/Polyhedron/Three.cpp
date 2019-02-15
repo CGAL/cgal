@@ -5,6 +5,7 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <QMdiArea>
 #include <QMdiSubWindow>
+#include "Messages_interface.h"
 using namespace CGAL::Three;
 
 QMainWindow* Three::s_mainwindow = NULL;
@@ -49,10 +50,6 @@ QObject* Three::connectableScene()
   return s_connectable_scene;
 }
 
-Three* Three::messages()
-{
-  return s_three;
-}
 
 Three::Three()
 {
@@ -155,6 +152,18 @@ void Three::autoConnectActions(Polyhedron_demo_plugin_interface *plugin)
   } // end foreach action of actions()
 }
 
+void Three::information(QString s)
+{
+  qobject_cast<Messages_interface*>(mainWindow())->message_information(s);
+}
+void Three::warning(QString s)
+{
+  qobject_cast<Messages_interface*>(mainWindow())->message_warning(s);
+}
+void Three::error(QString s)
+{
+  qobject_cast<Messages_interface*>(mainWindow())->message_error(s);
+}
 RenderingMode Three::defaultSurfaceMeshRenderingMode()
 {
   return s_defaultSMRM;

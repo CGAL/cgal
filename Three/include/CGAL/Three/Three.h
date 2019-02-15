@@ -51,7 +51,6 @@ public:
   static Viewer_interface* activeViewer();
   static Scene_interface* scene();
   static QObject* connectableScene();
-  static Three* messages();
   static RenderingMode defaultSurfaceMeshRenderingMode();
   static RenderingMode defaultPointSetRenderingMode();
   static QString modeName(RenderingMode mode);
@@ -81,6 +80,15 @@ public:
    * in the plugin.
    */
   static void autoConnectActions(CGAL::Three::Polyhedron_demo_plugin_interface* plugin);
+  static void information(QString);
+  /*!
+   * Displays a blue text preceded by the mention "WARNING :".
+   */
+  static void warning(QString);
+  /*!
+   * Displays a red text preceded by the mention "ERROR :".
+   */
+  static void error(QString);
 protected:
   static QMainWindow* s_mainwindow;
   static Viewer_interface* s_mainviewer;
@@ -96,8 +104,7 @@ protected:
 public:
   struct CursorScopeGuard
   {
-    CursorScopeGuard(){}
-    void setCursor(QCursor cursor)
+    CursorScopeGuard(QCursor cursor)
     {
       QApplication::setOverrideCursor(cursor);
     }

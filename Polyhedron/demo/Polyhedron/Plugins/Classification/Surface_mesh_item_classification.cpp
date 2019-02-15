@@ -6,6 +6,8 @@
 
 #include <CGAL/Three/Viewer_interface.h>
 
+#include <QLineEdit>
+
 #include <set>
 #include <stack>
 #include <algorithm>
@@ -31,9 +33,12 @@ Surface_mesh_item_classification::Surface_mesh_item_classification(Scene_surface
     m_label_colors.push_back (this->get_new_label_color (m_labels[i]->name()));
   
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
-  m_ethz = new ETHZ_random_forest (m_labels, m_features);
+  m_ethz = NULL;
 #ifdef CGAL_LINKED_WITH_OPENCV
-  m_random_forest = new Random_forest (m_labels, m_features);
+  m_random_forest = NULL;
+#endif
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+  m_neural_network = NULL;
 #endif
 }
 
@@ -47,6 +52,10 @@ Surface_mesh_item_classification::~Surface_mesh_item_classification()
 #ifdef CGAL_LINKED_WITH_OPENCV
   if (m_random_forest != NULL)
     delete m_random_forest;
+#endif
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+  if (m_neural_network != NULL)
+    delete m_neural_network;
 #endif
   if (m_generator != NULL)
     delete m_generator;
@@ -71,14 +80,7 @@ void Surface_mesh_item_classification::backup_existing_colors_and_add_new()
       m_mesh->polyhedron()->add_property_map<face_descriptor, CGAL::Color>("f:color", CGAL::Color(128,128,128)).first;
 }
 
-bool Surface_mesh_item_classification::write_output(std::ostream& )
-{
-  // TODO
-  return true;
-}
-
-
-void Surface_mesh_item_classification::change_color (int index)
+void Surface_mesh_item_classification::change_color (int index, float* vmin, float* vmax)
 {
   m_index_color = index;
   int index_color = index;
@@ -132,28 +134,90 @@ void Surface_mesh_item_classification::change_color (int index)
   }
   else
   {
-    Feature_handle feature = m_features[index_color - 3];
-
-    float max = 0.;
-    BOOST_FOREACH(face_descriptor fd, faces(*(m_mesh->polyhedron())))
+    std::size_t corrected_index = index_color - 3;
+    if (corrected_index < m_labels.size()) // Display label probabilities
     {
-      if (feature->value(fd) > max)
-        max = feature->value(fd);
+      if (m_label_probabilities.size() <= corrected_index ||
+          m_label_probabilities[corrected_index].size() != num_faces(*(m_mesh->polyhedron())))
+      {
+        BOOST_FOREACH(face_descriptor fd, faces(*(m_mesh->polyhedron())))
+        {
+          m_color[fd] = CGAL::Color((unsigned char)(128),
+                                    (unsigned char)(128),
+                                    (unsigned char)(128));
+        }
+      }
+      else
+      {
+        BOOST_FOREACH(face_descriptor fd, faces(*(m_mesh->polyhedron())))
+        {
+          float v = std::max (0.f, std::min(1.f, m_label_probabilities[corrected_index][fd]));
+          m_color[fd] = CGAL::Color((unsigned char)(ramp.r(v) * 255),
+                                    (unsigned char)(ramp.g(v) * 255),
+                                    (unsigned char)(ramp.b(v) * 255));
+        }
+      }
     }
-
-    BOOST_FOREACH(face_descriptor fd, faces(*(m_mesh->polyhedron())))
+    else
     {
-      float v = std::max (0.f, feature->value(fd) / max);
-      m_color[fd] = CGAL::Color((unsigned char)(ramp.r(v) * 255),
-                                (unsigned char)(ramp.g(v) * 255),
-                                (unsigned char)(ramp.b(v) * 255));
+      corrected_index -= m_labels.size();
+      if (corrected_index >= m_features.size())
+      {
+        std::cerr << "Error: trying to access feature " << corrected_index << " out of " << m_features.size() << std::endl;
+        return;
+      }
+    
+      Feature_handle feature = m_features[corrected_index];
+
+      float min = std::numeric_limits<float>::max();
+      float max = -std::numeric_limits<float>::max();
+      
+      if (vmin != NULL && vmax != NULL
+          && *vmin != std::numeric_limits<float>::infinity()
+          && *vmax != std::numeric_limits<float>::infinity())
+      {
+        min = *vmin;
+        max = *vmax;
+      }
+      else
+      {
+        BOOST_FOREACH(face_descriptor fd, faces(*(m_mesh->polyhedron())))
+        {
+          if (feature->value(fd) > max)
+            max = feature->value(fd);
+          if (feature->value(fd) < min)
+            min = feature->value(fd);
+        }
+      }
+      
+      BOOST_FOREACH(face_descriptor fd, faces(*(m_mesh->polyhedron())))
+      {
+        float v = (feature->value(fd) - min) / (max - min);
+        if (v < 0.f) v = 0.f;
+        if (v > 1.f) v = 1.f;
+        
+        m_color[fd] = CGAL::Color((unsigned char)(ramp.r(v) * 255),
+                                  (unsigned char)(ramp.g(v) * 255),
+                                  (unsigned char)(ramp.b(v) * 255));
+      }
+      
+      if (vmin != NULL && vmax != NULL)
+      {
+        *vmin = min;
+        *vmax = max;
+      }
     }
   }
 }
 
-void Surface_mesh_item_classification::compute_features (std::size_t nb_scales)
+void Surface_mesh_item_classification::compute_features (std::size_t nb_scales, float voxel_size)
 {
-  std::cerr << "Computing features with " << nb_scales << " scale(s)" << std::endl;
+  std::cerr << "Computing features with " << nb_scales << " scale(s) and ";
+  if (voxel_size == -1)
+    std::cerr << "automatic voxel size" << std::endl;
+  else
+    std::cerr << "voxel size = " << voxel_size << std::endl;
+  
   m_features.clear();
 
   if (m_generator != NULL)
@@ -161,7 +225,7 @@ void Surface_mesh_item_classification::compute_features (std::size_t nb_scales)
 
   Face_center_map fc_map (m_mesh->polyhedron());
   
-  m_generator = new Generator (*(m_mesh->polyhedron()), fc_map, nb_scales);
+  m_generator = new Generator (*(m_mesh->polyhedron()), fc_map, nb_scales, voxel_size);
   
 #ifdef CGAL_LINKED_WITH_TBB
   m_features.begin_parallel_additions();
@@ -176,22 +240,40 @@ void Surface_mesh_item_classification::compute_features (std::size_t nb_scales)
   
   delete m_sowf;
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
+  if (m_ethz != NULL)
+  {
+    delete m_ethz;
+    m_ethz = NULL;
+  }
 #ifdef CGAL_LINKED_WITH_OPENCV
-  delete m_random_forest;
-  m_random_forest = new Random_forest (m_labels, m_features);
+  if (m_random_forest != NULL)
+  {
+    delete m_random_forest;
+    m_random_forest = NULL;
+  }
+#endif
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+  if (m_neural_network != NULL)
+  {
+    delete m_neural_network;
+    m_neural_network = NULL;
+  }
 #endif
   std::cerr << "Features = " << m_features.size() << std::endl;
 }
 
-void Surface_mesh_item_classification::train
-(int classifier, unsigned int nb_trials,
- std::size_t num_trees, std::size_t max_depth)
+void Surface_mesh_item_classification::train (int classifier, const QMultipleInputDialog& dialog)
 {
   if (m_features.size() == 0)
   {
     std::cerr << "Error: features not computed" << std::endl;
     return;
   }
+
+  m_label_probabilities.clear();
+  m_label_probabilities.resize (m_labels.size());
+  for (std::size_t i = 0; i < m_label_probabilities.size(); ++ i)
+    m_label_probabilities[i].resize (num_faces(*(m_mesh->polyhedron())));
 
   std::vector<std::size_t> training (num_faces(*(m_mesh->polyhedron())), std::size_t(-1));
   std::vector<std::size_t> indices (num_faces(*(m_mesh->polyhedron())), std::size_t(-1));
@@ -216,31 +298,81 @@ void Surface_mesh_item_classification::train
   
   if (classifier == 0)
   {
-    m_sowf->train<Concurrency_tag>(training, nb_trials);
+    m_sowf->train<Concurrency_tag>(training, dialog.get<QSpinBox>("trials")->value());
     CGAL::Classification::classify<Concurrency_tag> (m_mesh->polyhedron()->faces(),
                                                      m_labels, *m_sowf,
-                                                     indices);
+                                                     indices, m_label_probabilities);
   }
   else if (classifier == 1)
   {
-    m_ethz->train(training, true, num_trees, max_depth);
+    if (m_ethz != NULL)
+      delete m_ethz;
+    m_ethz = new ETHZ_random_forest (m_labels, m_features);
+    m_ethz->train<Concurrency_tag>(training, true,
+                                   dialog.get<QSpinBox>("num_trees")->value(),
+                                   dialog.get<QSpinBox>("max_depth")->value());
     CGAL::Classification::classify<Concurrency_tag> (m_mesh->polyhedron()->faces(),
                                                      m_labels, *m_ethz,
-                                                     indices);
+                                                     indices, m_label_probabilities);
   }
-  else
+  else if (classifier == 2)
   {
 #ifdef CGAL_LINKED_WITH_OPENCV
     if (m_random_forest != NULL)
       delete m_random_forest;
     m_random_forest = new Random_forest (m_labels, m_features,
-                                         int(max_depth), 5, 15,
-                                         int(num_trees));
+                                         dialog.get<QSpinBox>("max_depth")->value(), 5, 15,
+                                         dialog.get<QSpinBox>("num_trees")->value());
     m_random_forest->train (training);
 
     CGAL::Classification::classify<Concurrency_tag> (m_mesh->polyhedron()->faces(),
                                                      m_labels, *m_random_forest,
-                                                     indices);
+                                                     indices, m_label_probabilities);
+#endif
+  }
+  else if (classifier == 3)
+  {
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+    if (m_neural_network != NULL)
+    {
+      if (m_neural_network->initialized())
+      {
+        if (dialog.get<QCheckBox>("restart")->isChecked())
+        {
+          delete m_neural_network;
+          m_neural_network = new Neural_network (m_labels, m_features);
+        }
+      }
+      else
+      {
+        delete m_neural_network;
+        m_neural_network = new Neural_network (m_labels, m_features);
+      }
+    }
+    else
+      m_neural_network = new Neural_network (m_labels, m_features);
+
+    std::vector<std::size_t> hidden_layers;
+
+    std::string hl_input = dialog.get<QLineEdit>("hidden_layers")->text().toStdString();
+    if (hl_input != "")
+    {
+      std::istringstream iss(hl_input);
+      int s;
+      while (iss >> s)
+        hidden_layers.push_back (std::size_t(s));
+    }
+    
+    m_neural_network->train (training,
+                             dialog.get<QCheckBox>("restart")->isChecked(),
+                             dialog.get<QSpinBox>("trials")->value(),
+                             dialog.get<QDoubleSpinBox>("learning_rate")->value(),
+                             dialog.get<QSpinBox>("batch_size")->value(),
+                             hidden_layers);
+      
+    CGAL::Classification::classify<Concurrency_tag> (m_mesh->polyhedron()->faces(),
+                                                     m_labels, *m_neural_network,
+                                                     indices, m_label_probabilities);
 #endif
   }
 
@@ -263,11 +395,36 @@ bool Surface_mesh_item_classification::run (int method, int classifier,
   if (classifier == 0)
     run (method, *m_sowf, subdivisions, smoothing);
   else if (classifier == 1)
+  {
+    if (m_ethz == NULL)
+    {
+      std::cerr << "Error: ETHZ Random Forest must be trained or have a configuration loaded first" << std::endl;
+      return false;
+    }
     run (method, *m_ethz, subdivisions, smoothing);
+  }
+  else if (classifier == 2)
+  {
 #ifdef CGAL_LINKED_WITH_OPENCV
-  else
+    if (m_random_forest == NULL)
+    {
+      std::cerr << "Error: OpenCV Random Forest must be trained or have a configuration loaded first" << std::endl;
+      return false;
+    }
     run (method, *m_random_forest, subdivisions, smoothing);
 #endif
+  }
+  else if (classifier == 3)
+  {
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+    if (m_neural_network == NULL)
+    {
+      std::cerr << "Error: TensorFlow Neural Network must be trained or have a configuration loaded first" << std::endl;
+      return false;
+    }
+    run (method, *m_neural_network, subdivisions, smoothing);
+#endif
+  }
   
   return true;
 }

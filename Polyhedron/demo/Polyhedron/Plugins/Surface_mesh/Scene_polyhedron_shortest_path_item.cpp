@@ -12,6 +12,7 @@
 #include <fstream>
 
 #include <CGAL/Surface_mesh_shortest_path/function_objects.h>
+#include <CGAL/Three/Three.h>
 #include <QString>
 using namespace CGAL::Three;
 typedef Viewer_interface Vi;
@@ -250,9 +251,9 @@ void Scene_polyhedron_shortest_path_item_priv::ensure_shortest_paths_tree()
 {
   if (!m_shortestPaths->changed_since_last_build())
   {
-    m_messages->information("Recomputing shortest paths tree...");
+    CGAL::Three::Three::information("Recomputing shortest paths tree...");
     m_shortestPaths->build_sequence_tree();
-    m_messages->information("Done.");
+    CGAL::Three::Three::information("Done.");
   }
 }
   
@@ -415,7 +416,7 @@ bool Scene_polyhedron_shortest_path_item_priv::run_point_select(const Ray_3& ray
   
   if (faceLocation.first == GraphTraits::null_face())
   {
-    m_messages->information(QObject::tr("Shortest Paths: No face under cursor."));
+    CGAL::Three::Three::information(QObject::tr("Shortest Paths: No face under cursor."));
     QApplication::restoreOverrideCursor();
     return false;
   }
@@ -423,11 +424,10 @@ bool Scene_polyhedron_shortest_path_item_priv::run_point_select(const Ray_3& ray
   {
     boost::property_map<Face_graph, CGAL::face_index_t>::type fimap
         = get(CGAL::face_index, *item->polyhedron());
-    m_messages->information(
-          QObject::tr(
-            "Shortest Paths: Selected Face: %1; Barycentric coordinates: %2 %3 %4")
-          .arg(get(fimap, faceLocation.first))
-          .arg(double(faceLocation.second[0]))
+
+    CGAL::Three::Three::information(QObject::tr("Shortest Paths: Selected Face: %1; Barycentric coordinates: %2 %3 %4")
+                            .arg(get(fimap, faceLocation.first))
+                            .arg(double(faceLocation.second[0]))
         .arg(double(faceLocation.second[1]))
         .arg(double(faceLocation.second[2])));
     switch (m_selectionMode)
@@ -472,7 +472,7 @@ bool Scene_polyhedron_shortest_path_item_priv::run_point_select(const Ray_3& ray
 
         polylines->polylines.push_back(Scene_polylines_item::Polyline());
 
-        m_messages->information(QObject::tr("Computing shortest path polyline..."));
+        CGAL::Three::Three::information(QObject::tr("Computing shortest path polyline..."));
 
         QTime time;
         time.start();
@@ -496,8 +496,7 @@ bool Scene_polyhedron_shortest_path_item_priv::run_point_select(const Ray_3& ray
       }
       else
       {
-        m_messages->warning(
-              QObject::tr("No source points to compute shortest paths from."));
+        CGAL::Three::Three::warning(QObject::tr("No source points to compute shortest paths from."));
       }
       break;
     }

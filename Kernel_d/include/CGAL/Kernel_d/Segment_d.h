@@ -95,7 +95,7 @@ Segment_d(const Point_d<R>& p, const Vector_d<R>& v)
 is initialized to the segment |(p,p+v)|. }*/
  : Base( Pair(p,p+v) ) {}
 
-Segment_d(const Segment_d<R>& s) : Base(s) {}     
+
 
 /*{\Moperations 3 3}*/
 

@@ -9,6 +9,7 @@
 #include "SMesh_type.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 #include "Scene.h"
 #include <QTime>
 #include <QGraphicsScene>
@@ -550,14 +551,14 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
 
   if(!poly_item)
   {
-    messages->error("Selected item is not of the right type.");
+    CGAL::Three::Three::error("Selected item is not of the right type.");
     return;
   }
 
   Face_graph* pMesh = poly_item->face_graph();
   if(!pMesh)
   {
-    messages->error("Selected item has no valid polyhedron.");
+    CGAL::Three::Three::error("Selected item has no valid polyhedron.");
     return;
   }
   Scene_polyhedron_selection_item* sel_item = NULL;
@@ -589,7 +590,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
 
   if(!is_seamed && is_closed(*pMesh))
   {
-    messages->error("The selected mesh has no (real or virtual) border.");
+    CGAL::Three::Three::error("The selected mesh has no (real or virtual) border.");
     return;
   }
 

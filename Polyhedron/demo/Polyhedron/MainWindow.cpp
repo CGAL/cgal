@@ -901,17 +901,17 @@ void MainWindow::message(QString message, QString colorName, QString font) {
   ui->consoleTextEdit->verticalScrollBar()->setValue(ui->consoleTextEdit->verticalScrollBar()->maximum());
 }
 
-void MainWindow::information(QString text) {
+void MainWindow::message_information(QString text) {
   statusBar()->setStyleSheet("color: blue");
   this->message("INFO: " + text, "blue");
 }
 
-void MainWindow::warning(QString text) {
+void MainWindow::message_warning(QString text) {
   statusBar()->setStyleSheet("color: orange");
   this->message("WARNING: " + text, "orange");
 }
 
-void MainWindow::error(QString text) {
+void MainWindow::message_error(QString text) {
   statusBar()->setStyleSheet("color: red");
   this->message("ERROR: " + text, "red");
 }
@@ -1194,22 +1194,19 @@ bool MainWindow::open(QString filename, QString loader_name) {
 CGAL::Three::Scene_item* MainWindow::loadItem(QFileInfo fileinfo, CGAL::Three::Polyhedron_demo_io_plugin_interface* loader) {
   CGAL::Three::Scene_item* item = NULL;
   if(!fileinfo.isFile() || !fileinfo.isReadable()) {
-    throw std::invalid_argument(QString("File %1 is not a readable file.")
-                                .arg(fileinfo.absoluteFilePath()).toStdString());
-  }
-  //test if the file is empty.
-  if(fileinfo.size() == 0) {
     QMessageBox::warning(this, tr("Error"),
-                         tr("The file you are trying to load is empty.\n"));
-    return 0;
+                         QString("File %1 is not a readable file.")
+                         .arg(fileinfo.absoluteFilePath()));
   }
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   item = loader->load(fileinfo);
   QApplication::restoreOverrideCursor();
   if(!item) {
-    throw std::logic_error(QString("Could not load item from file %1 using plugin %2")
-                           .arg(fileinfo.absoluteFilePath()).arg(loader->name()).toStdString());
+      QMessageBox::warning(this, tr("Error"),
+                           QString("Could not load item from file %1 using plugin %2")
+                                                      .arg(fileinfo.absoluteFilePath()).arg(loader->name()));
+      return 0;
   }
 
   item->setProperty("source filename", fileinfo.absoluteFilePath());
@@ -2058,9 +2055,11 @@ bool MainWindow::on_actionErase_triggered()
 
 void MainWindow::on_actionEraseAll_triggered()
 {
-  scene->setSelectedItem(0);
-  while(on_actionErase_triggered()) {
-  }
+  QList<int> all_ids;
+  for(int i = 0; i < scene->numberOfEntries(); ++i)
+    all_ids.push_back(i);
+  scene->setSelectedItemsList(all_ids);
+  on_actionErase_triggered();
 }
 
 void MainWindow::on_actionDuplicate_triggered()
@@ -2858,8 +2857,10 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer)
           scene, SIGNAL(selectionRay(double, double, double,
                                      double, double, double)));
   
-  connect(viewer, SIGNAL(sendMessage(QString)),
-          this, SLOT(information(QString)));
+  connect(viewer, &Viewer::sendMessage,
+          this, [](QString s){
+    information(s);
+  });
   
 }
 
@@ -3114,4 +3115,21 @@ void MainWindow::invalidate_bbox(bool do_recenter)
   bbox_need_update = true;
   if(do_recenter)
     updateViewersBboxes(true);
+}
+
+void MainWindow::on_action_Save_triggered()
+{
+  if(QMessageBox::question(this, "Save", "Are you sure you want to override these files ?") 
+     == QMessageBox::No)
+    return;
+  Scene_item* item = nullptr;
+  Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
+  {
+    item = scene->item(id);
+    if(!item->property("source filename").toString().isEmpty())
+    {
+      QString filename = item->property("source filename").toString();
+      save(filename, item);
+    }
+  }
 }

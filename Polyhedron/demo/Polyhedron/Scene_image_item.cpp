@@ -482,10 +482,6 @@ Scene_image_item::~Scene_image_item()
   delete m_image;
 }
 
-/**************************************************
-****************SHADER FUNCTIONS******************/
-
-
 void
 Scene_image_item::compute_bbox() const
 {

@@ -51,12 +51,13 @@
     std::size_t last;
   };
 #endif // CGAL_LINKED_WITH_TBB
+#include <CGAL/Three/Three.h>
 
 using namespace CGAL::Three;
 typedef Edge_container Ec;
 typedef Triangle_container Tc;
 typedef Viewer_interface Vi;
-  
+
 typedef CGAL::Simple_cartesian<double> Simple_kernel;
 typedef Simple_kernel::FT FT;
 typedef Simple_kernel::Point_3 Point;
@@ -1043,12 +1044,12 @@ void Polyhedron_demo_cut_plugin::apply(Item* item, QMap< QObject*, Facets_tree*>
   const Mesh& mesh = *item->polyhedron();
   if(!CGAL::is_triangle_mesh(mesh))
   {
-    messages->warning(QString("%1 ignored (not a triangulated mesh)").arg(item->name()));
+    CGAL::Three::Three::warning(QString("%1 ignored (not a triangulated mesh)").arg(item->name()));
     return;
   }
   if(!CGAL::is_closed(mesh))
   {
-    messages->warning(QString("%1 is not closed. Signed function will not be displayed.").arg(item->name()));
+    CGAL::Three::Three::warning(QString("%1 is not closed. Signed function will not be displayed.").arg(item->name()));
   }
   if(f_trees.find(item) == f_trees.end()) {
     PPMAP<Mesh> pmap(item->polyhedron());
@@ -1246,7 +1247,7 @@ void Polyhedron_demo_cut_plugin::computeIntersection()
     }
   }
   if(does_intersect)
-    messages->information(QString("cut (%1 ms). %2 edges.").arg(time.elapsed()).arg(edges_item->edges.size()));
+    CGAL::Three::Three::information(QString("cut (%1 ms). %2 edges.").arg(time.elapsed()).arg(edges_item->edges.size()));
   edges_item->invalidateOpenGLBuffers();
   edges_item->itemChanged();
   ready_to_cut = false;

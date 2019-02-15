@@ -1,10 +1,11 @@
+
 // Author(s) : Camille Wormser, Pierre Alliez
 // Example of an AABB tree used with a simple list of 
 // triangles (a triangle soup) stored into an array of points.
 
 #include <iostream>
 #include <vector>
-#include <boost/iterator.hpp>
+#include <boost/iterator/iterator_adaptor.hpp>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/AABB_tree.h>
