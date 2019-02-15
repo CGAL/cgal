@@ -25,6 +25,7 @@
 ## Concepts ##
 
 - `DiagonalizeTraits`
+- `NormalEquationSparseLinearAlgebraTraits_d`
 - `SparseLinearAlgebraTraits_d`
 - `SparseLinearAlgebraWithFactorTraits_d`
 - `SvdTraits`
