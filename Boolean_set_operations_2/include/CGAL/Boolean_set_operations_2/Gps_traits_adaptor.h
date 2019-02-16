@@ -16,7 +16,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+// Author(s): Baruch Zukerman <baruchzu@post.tau.ac.il>
+//            Efi Fogel       <efifogel@gmail.com>
 
 #ifndef CGAL_GPS_TRAITS_ADAPTOR_H
 #define CGAL_GPS_TRAITS_ADAPTOR_H
@@ -105,76 +106,58 @@ public:
     friend class Gps_traits_adaptor<Base>;
 
   public:
-    template <class CurveInputIteraor>
-    Orientation operator()(CurveInputIteraor begin,
-                           CurveInputIteraor end) const
+    template <typename CurveInputIteraor>
+    Orientation operator()(CurveInputIteraor begin, CurveInputIteraor end) const
     {
       Compare_xy_2 cmp_xy = m_traits.compare_xy_2_object();
       Compare_y_at_x_right_2 cmp_y_at_x_right =
         m_traits.compare_y_at_x_right_2_object();
       Construct_vertex_2 ctr_v = m_traits.construct_vertex_2_object();
 
-      CurveInputIteraor from_left_most = begin;
-      CurveInputIteraor into_left_most = end;
+      CurveInputIteraor from_leftmost = begin;
+      CurveInputIteraor into_leftmost = end;
 
-      Point_2 left_most_v = ctr_v(*from_left_most, 0);
+      Point_2 leftmost_v = ctr_v(*from_leftmost, 0);
 
-      --into_left_most;
+      --into_leftmost;
 
-      CurveInputIteraor ci = from_left_most;
+      CurveInputIteraor ci = from_leftmost;
 
       for (++ci ; ci != end; ++ci) {
-        Comparison_result res_xy = cmp_xy( ctr_v(*ci, 0), left_most_v);
+        Comparison_result res_xy = cmp_xy( ctr_v(*ci, 0), leftmost_v);
         if (res_xy == LARGER) continue;
         if (res_xy == SMALLER) {
-          left_most_v =  ctr_v(*ci, 0);
-          from_left_most = into_left_most = ci;
-          --into_left_most;
+          leftmost_v =  ctr_v(*ci, 0);
+          from_leftmost = into_leftmost = ci;
+          --into_leftmost;
+          continue;
         }
-        else {
-          // res_xy == EQUAL
-          CurveInputIteraor tmp_from_left_most = ci;
-          CurveInputIteraor tmp_into_left_most = ci;
-          --tmp_into_left_most;
 
-          Comparison_result res_from = cmp_y_at_x_right(*from_left_most,
-                                                        *tmp_from_left_most,
-                                                        left_most_v);
+        // res_xy == EQUAL
+        CurveInputIteraor new_from_leftmost = ci;
+        CurveInputIteraor new_into_leftmost = ci;
+        --new_into_leftmost;
 
-          Comparison_result res_to = cmp_y_at_x_right(*into_left_most,
-                                                      *tmp_into_left_most,
-                                                      left_most_v);
+        Comparison_result res_from_new_into =
+          cmp_y_at_x_right(*from_leftmost, *new_into_leftmost, leftmost_v);
 
-          CGAL_assertion(res_from != EQUAL && res_to != EQUAL);
-          if(res_from == LARGER && res_to == SMALLER)
-          {
-            if(cmp_y_at_x_right(*tmp_from_left_most,
-                                *into_left_most,
-                                left_most_v) == LARGER)
-            {
-              from_left_most = tmp_from_left_most;
-              into_left_most = tmp_into_left_most;
-            }
-          }
-          else
-            if (res_from == SMALLER && res_to == LARGER) {
-              if (cmp_y_at_x_right(*tmp_into_left_most,
-                                   *from_left_most,
-                                   left_most_v) == LARGER)
-              {
-                from_left_most = tmp_from_left_most;
-                into_left_most = tmp_into_left_most;
-              }
-            }
+        Comparison_result res_into_new_from =
+          cmp_y_at_x_right(*into_leftmost, *new_from_leftmost, leftmost_v);
+        CGAL_assertion((res_from_new_into != EQUAL) &&
+                       (res_from_new_into != res_into_new_from));
+        Comparison_result res_into_from =
+          cmp_y_at_x_right(*into_leftmost, *from_leftmost, leftmost_v);
+        CGAL_assertion(res_into_from != EQUAL);
+
+        if (res_into_from == res_from_new_into) {
+          from_leftmost = new_from_leftmost;
+          into_leftmost = new_into_leftmost;
         }
-      }// end for
-      Comparison_result res = cmp_y_at_x_right(*into_left_most,
-                                              *from_left_most,
-                                              left_most_v);
+      }
+      Comparison_result res =
+        cmp_y_at_x_right(*into_leftmost, *from_leftmost, leftmost_v);
       CGAL_assertion(res != EQUAL);
-      if(res == SMALLER)
-        return (CLOCKWISE);
-      return (COUNTERCLOCKWISE);
+      return (res == SMALLER) ? CLOCKWISE : COUNTERCLOCKWISE;
     }
   };
 
