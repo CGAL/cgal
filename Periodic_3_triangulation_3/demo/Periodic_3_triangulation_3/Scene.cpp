@@ -814,9 +814,10 @@ void Scene::draw() {
     glEnable(GL_DEPTH_TEST);
     if(!are_buffers_initialized)
         initialize_buffers();
-    gl_draw_location();
-
-    gl_draw_conflict();
+    if(dlocate)
+      gl_draw_location();
+    if(dconflict)
+      gl_draw_conflict();
 
     //// Draw the triangulation itself that is stored in the list.
 
@@ -1461,8 +1462,11 @@ void Scene::gl_draw_conflict() {
     std::vector<Cell_handle> cic;
     std::vector<Facet> boundary_facets;
     // Find the conflict region
-    Cell_handle c = p3dt.locate(moving_point);
-    p3dt.find_conflicts(moving_point,c,std::back_inserter(boundary_facets),std::back_inserter(cic),CGAL::Emptyset_iterator());
+    P3DT::Locate_type t;
+    int li, lj;
+    Cell_handle c = p3dt.locate(moving_point,t,li,lj);
+    if(t != P3DT::VERTEX)
+      p3dt.find_conflicts(moving_point,c,std::back_inserter(boundary_facets),std::back_inserter(cic),CGAL::Emptyset_iterator());
 
     std::vector<Projected_triangle> bfm;
 
