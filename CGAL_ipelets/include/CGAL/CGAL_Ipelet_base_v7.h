@@ -66,20 +66,20 @@ namespace CGAL{
     ipe::TSelect get_selection_type() const { return get_IpePage()->primarySelection()==-1 ? ipe::EPrimarySelected : ipe::ESecondarySelected;}  
     //ipe6 compatibility
     void transform_selected_objects_(const IpeMatrix& tfm) const {
-      for (int i=0;i<get_IpePage()->count();++i)
+      for (int i=0;i<static_cast<int>(get_IpePage()->count());++i)
         if (get_IpePage()->select(i)!=ipe::ENotSelected)
           get_IpePage()->transform(i,tfm);      
     }
  
     void delete_selected_objects_() const {
-      for (unsigned i=get_IpePage()->count();i>0;--i)
+      for (unsigned i=static_cast<unsigned>(get_IpePage()->count());i>0;--i)
         if (get_IpePage()->select(i-1)!=ipe::ENotSelected)
           get_IpePage()->remove(i-1);
     }  
     
     void group_selected_objects_() const {
       ipe::Group* grp=new ipe::Group();
-      for (unsigned i=get_IpePage()->count();i>0;--i)
+      for (unsigned i=static_cast<unsigned>(get_IpePage()->count());i>0;--i)
         if (get_IpePage()->select(i-1)!=ipe::ENotSelected){
           grp->push_back( get_IpePage()->object(i-1)->clone() );      
           //~ grp->push_back( get_IpePage()->object(i-1) );      
@@ -276,7 +276,7 @@ public:
         return Iso_rectangle_2();
       }
       
-      for (int i=0;i<get_IpePage()->count();++i){
+      for (int i=0;i<static_cast<int>(static_cast<int>(get_IpePage()->count()));++i){
         if (get_IpePage()->select(i)==ipe::ENotSelected)
           continue;
         
@@ -308,7 +308,7 @@ public:
     create_polygon_with_holes(bool delete_underlying_polygons=false) const
     {
       std::list<ipe::SubPath*> SSPqu;
-      for (int i=0;i<get_IpePage()->count();++i){
+      for (int i=0;i<static_cast<int>(get_IpePage()->count());++i){
         if (get_IpePage()->select(i)!=ipe::ENotSelected && get_IpePage()->object(i)->asPath()->shape().subPath(0)->closed() ){
           ipe::SubPath* ssp=new ipe::Curve(*get_IpePage()->object(i)->asPath()->shape().subPath(0)->asCurve());
           SSPqu.push_back(ssp);
@@ -329,7 +329,7 @@ public:
     {
       ipe::Vector paper_size=get_paper_size();
       ipe::Matrix tfm (1,0,0,1,paper_size.x/2.,paper_size.y/2.);
-      for (int i=0;i<get_IpePage()->count();++i)
+      for (int i=0;i<static_cast<int>(get_IpePage()->count());++i)
         if (get_IpePage()->select(i)!=ipe::ENotSelected )
           get_IpePage()->transform(i,tfm);
     }
