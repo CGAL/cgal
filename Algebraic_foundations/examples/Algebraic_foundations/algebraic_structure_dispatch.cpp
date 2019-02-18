@@ -1,5 +1,6 @@
 #include <CGAL/IO/io.h>
 #include <CGAL/Algebraic_structure_traits.h>
+#include <CGAL/number_type_basic.h>
 
 template< typename NT > NT unit_part(const NT& x);
 template< typename NT > 
