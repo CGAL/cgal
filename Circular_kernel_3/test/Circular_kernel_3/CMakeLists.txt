@@ -13,7 +13,13 @@ if ( CGAL_FOUND )
 include(${CGAL_USE_FILE})
 
 include_directories (BEFORE include)
+
+# The following `include_directories` is used in the git layout
 include_directories (BEFORE ../../../Kernel_23/test/Kernel_23/include)
+
+# The following `include_directories` is used in the layout of the
+# internal releases tarballs
+include_directories (BEFORE ../Kernel_23/include)
 
 create_single_source_cgal_program( "test_Spherical_kernel.cpp" )
 create_single_source_cgal_program( "test_Spherical_kernel_basics.cpp" )

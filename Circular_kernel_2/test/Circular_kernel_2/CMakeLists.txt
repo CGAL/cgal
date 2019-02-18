@@ -11,7 +11,13 @@ find_package(CGAL QUIET)
 if ( CGAL_FOUND )
 
 include_directories (BEFORE include)
+
+# The following `include_directories` is used in the git layout
 include_directories (BEFORE ../../../Kernel_23/test/Kernel_23/include)
+
+# The following `include_directories` is used in the layout of the
+# internal releases tarballs
+include_directories (BEFORE ../Kernel_23/include)
 
 create_single_source_cgal_program( "test_Circular_kernel.cpp" )
 create_single_source_cgal_program( "test_Lazy_circular_kernel.cpp" )
