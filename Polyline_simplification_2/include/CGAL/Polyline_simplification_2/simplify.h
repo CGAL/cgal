@@ -154,10 +154,6 @@ public:
         boost::optional<FT> dist = cost(pct, it);
         if(dist){
           (*it)->set_cost(*dist);
-          if(it.base()->id == 880)
-          {
-            int plouf = 0;
-          }
           h[it.base()->id]= mpq->push(it);
           ++n;
         } else {
@@ -273,14 +269,14 @@ operator()()
           h.erase(u.base()->id);
         }
       } else {
-        typename MPQ::handle_type ex_h = h[u.base()->id];
-        (*u)->set_cost(*dist);
         if(h.find(u.base()->id) != h.end()){
-          //std::cout<<u.base()->id<<std::endl;
+          typename MPQ::handle_type ex_h = h[u.base()->id];
+          (*u)->set_cost(*dist);
           mpq->update(ex_h);
           h[u.base()->id] = ex_h;
         }
         else{
+          (*u)->set_cost(*dist);
           h[u.base()->id]=mpq->push(u);
         }
       }
@@ -295,13 +291,14 @@ operator()()
           h.erase(w.base()->id);
         }
       } else {
-        typename MPQ::handle_type ex_h = h[w.base()->id];
-        (*w)->set_cost(*dist);
         if(h.find(w.base()->id) != h.end()){
+          typename MPQ::handle_type ex_h = h[w.base()->id];
+          (*w)->set_cost(*dist);
           mpq->update(ex_h);
           h[w.base()->id]=ex_h;
         }
         else{
+          (*w)->set_cost(*dist);
           h[w.base()->id]=mpq->push(w);
         }
 
