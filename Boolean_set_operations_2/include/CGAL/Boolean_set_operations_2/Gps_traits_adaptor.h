@@ -141,8 +141,9 @@ public:
         Comparison_result res_from_new_into =
           cmp_y_at_x_right(*from_leftmost, *new_into_leftmost, leftmost_v);
 
-        Comparison_result res_into_new_from =
-          cmp_y_at_x_right(*into_leftmost, *new_from_leftmost, leftmost_v);
+        CGAL_assertion_code
+          (Comparison_result res_into_new_from =
+           cmp_y_at_x_right(*into_leftmost, *new_from_leftmost, leftmost_v));
         CGAL_assertion((res_from_new_into != EQUAL) &&
                        (res_from_new_into != res_into_new_from));
         Comparison_result res_into_from =
