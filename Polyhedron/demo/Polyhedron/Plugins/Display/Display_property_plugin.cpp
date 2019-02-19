@@ -35,8 +35,6 @@
 //Item for heat values
 typedef CGAL::Three::Triangle_container Tri;
 typedef CGAL::Three::Viewer_interface VI;
-typedef CGAL::dynamic_vertex_property_t<bool>                        Vertex_source_tag;
-typedef typename boost::property_map<SMesh, Vertex_source_tag>::type Vertex_source_map;
 
 class Scene_heat_item
     : public CGAL::Three::Scene_item_rendering_helper
@@ -314,6 +312,8 @@ class DisplayPropertyPlugin :
   typedef SMesh::Property_map<boost::graph_traits<SMesh>::vertex_descriptor, double> Vertex_distance_map;
   typedef CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<SMesh> Heat_method;
   typedef CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<SMesh, CGAL::Heat_method_3::Intrinsic_Delaunay> Heat_method_idt;
+  typedef CGAL::dynamic_vertex_property_t<bool>                        Vertex_source_tag;
+  typedef typename boost::property_map<SMesh, Vertex_source_tag>::type Vertex_source_map;
   
 public:
 
