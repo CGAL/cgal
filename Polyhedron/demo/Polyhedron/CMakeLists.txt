@@ -249,9 +249,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
 
   # special
 
-  add_item(scene_polylines_item Scene_polylines_item.cpp)
-  target_link_libraries(scene_polylines_item PUBLIC scene_basic_objects)
-
   add_item(scene_item_decorator Scene_polyhedron_item_decorator.cpp )
   target_link_libraries(scene_item_decorator PUBLIC scene_surface_mesh_item)
  
@@ -302,6 +299,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
     CGAL_target_use_TBB(scene_points_with_normal_item)
   endif()
 
+  add_item(scene_polylines_item Scene_polylines_item.cpp)
+  target_link_libraries(scene_polylines_item PUBLIC scene_basic_objects scene_points_with_normal_item)
 
   foreach( lib 
       demo_framework

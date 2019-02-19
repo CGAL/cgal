@@ -1,5 +1,6 @@
 #include "Scene_polylines_item.h"
 #include "Scene_spheres_item.h"
+#include "Scene_points_with_normal_item.h"
 
 #include <CGAL/bounding_box.h>
 #include <CGAL/Three/Three.h>
@@ -503,6 +504,11 @@ QMenu* Scene_polylines_item::contextMenu()
 
         menu->setProperty(prop_name, true);
         container->menuAction()->setProperty("is_groupable", true);
+        QAction* actionCreatePointSet = 
+            menu->addAction(tr("Create Point Set from Polyline"));
+        actionCreatePointSet->setObjectName("actionCreatePointSet");
+        connect(actionCreatePointSet, &QAction::triggered,
+                this, &Scene_polylines_item::point_set_from_polyline);
     }
     return menu;
 }
@@ -764,4 +770,26 @@ void Scene_polylines_item::initializeBuffers(Viewer_interface *v) const
 void Scene_polylines_item::computeElements() const
 {
   d->computeElements();
+}
+
+void Scene_polylines_item::point_set_from_polyline()
+{
+  Scene_points_with_normal_item* new_ps_item 
+      = new Scene_points_with_normal_item();
+  for(auto it = polylines.begin();
+      it != polylines.end();
+      ++it)
+  {
+    std::size_t length = it->size();
+    for(std::size_t id = 0; id < length; ++id)
+    {
+      if(id != length - 1
+         || it->at(id) != it->front())
+        new_ps_item->point_set()->insert(it->at(id));
+    }
+  }
+  new_ps_item->setName(tr("Points from %1").arg(name()));
+  CGAL::Three::Three::scene()->addItem(new_ps_item);
+  new_ps_item->invalidateOpenGLBuffers();
+  new_ps_item->redraw();
 }
