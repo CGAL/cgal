@@ -243,6 +243,8 @@ public:
             this, &Polyhedron_demo_affine_transform_plugin::clear);
     connect(ui.undoButton, &QPushButton::clicked,
             this, &Polyhedron_demo_affine_transform_plugin::undo);
+    connect(ui.validatePushButton, &QPushButton::clicked, 
+            this, &Polyhedron_demo_affine_transform_plugin::end);
   }
 
   void start(FaceGraph *facegraph, const QString name, const Scene_item::Bbox&);
@@ -474,6 +476,7 @@ void Polyhedron_demo_affine_transform_plugin::go(){
     }
     else if(points_item)
       start(points_item);
+    ui.validatePushButton->setEnabled(true);
   }
   else
     end();
@@ -545,6 +548,7 @@ void Polyhedron_demo_affine_transform_plugin::start(Scene_points_with_normal_ite
 
 
 void Polyhedron_demo_affine_transform_plugin::end(){
+  ui.validatePushButton->setEnabled(false);
   QApplication::restoreOverrideCursor();
   double matrix[16];
   transformMatrix(&matrix[0]);
