@@ -209,10 +209,9 @@ void test_5()
   // call all versions of the function
   std::cout<<"Test 5"<<std::endl;
   std::cout << "fit 3D plane...";
-	Line line;
-	Plane plane;
+  Plane plane;
   Point centroid;
-  FT quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::Dimension_tag<1>());
+  FT quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,CGAL::Dimension_tag<1>());
   std::cout << "done, quality: " << quality << std::endl;
 
   if(!plane.has_on(segments[0].supporting_line()))
