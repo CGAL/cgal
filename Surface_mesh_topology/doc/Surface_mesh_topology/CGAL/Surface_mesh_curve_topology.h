@@ -5,7 +5,7 @@ namespace CGAL {
     
     The class `Surface_mesh_curve_topology` represents a combinatorial map internally represented as a quadrangulation. Each object in this class is constructed from an external combinatorial map. It maintains a correspondence between this combinatorial map and its internal quadrangulation.
     
-    \tparam Map a `CombinatorialMap`
+    \tparam Map a model of `CombinatorialMap`
   */
   template<typename Map>
   class Surface_mesh_curve_topology
