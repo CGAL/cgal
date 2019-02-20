@@ -3,15 +3,15 @@ namespace CGAL {
   /*!
     \ingroup PkgSurfaceMeshTopologyClasses
     
-    The class `Path_on_surface` represents XXX
+    The class `Path_on_surface` represents a walk in the vertex-edge graph of a `CombinatorialMap`. Each object in this class is constructed from an external combinatorial map on which the path should lie. A path is represented as a sequence of darts, each dart representing an oriented edge in the path. The class `Path_on_surface` behaves as a container for this sequence of darts. Darts are added one at a time to the path thanks to the `push_back()` method.
     
-    \tparam Map XXX
+    \tparam Map a model of  `CombinatorialMap`
   */
   template<typename Map_>
   class Path_on_surface
   {
   public:
-    /*! XXX
+    /*! Constructor. Creates a Surface_mesh_curve_topology object using amap as input.
      */
     Path_on_surface(const Map& amap);
 
