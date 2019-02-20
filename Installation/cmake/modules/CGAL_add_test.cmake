@@ -43,6 +43,11 @@ if(ANDROID)
   set(ANDROID_DIR_PREFIX /data/local/tmp/)
   find_program(adb_executable adb)
 endif()
+if(SSH)
+  set(SSH_DIR_PREFIX /home/pi/CGAL/)
+  find_program(ssh_executable ssh)
+  find_program(scp_executable scp)
+endif()
 
 # Process a list, and replace items contains a file pattern (like
 # `*.off`) by the sublist that corresponds to the globbing of the
@@ -128,6 +133,13 @@ function(cgal_setup_test_properties test_name)
           APPEND PROPERTY DEPENDS ${PROJECT_NAME}_SetupFixture)
         set_property(TEST ${PROJECT_NAME}_copy_GMP_MPFR
           PROPERTY FIXTURES_SETUP ${PROJECT_NAME})
+      elseif(SSH)
+        add_test(NAME ${PROJECT_NAME}_SetupFixture
+          COMMAND
+          ${scp_executable} -r
+          ${CMAKE_CURRENT_SOURCE_DIR}
+          ${SSH_HOST}:${SSH_DIR_PREFIX}${PROJECT_NAME}
+          )
       else()
         add_test(NAME ${PROJECT_NAME}_SetupFixture
           COMMAND
@@ -145,6 +157,12 @@ function(cgal_setup_test_properties test_name)
           ${adb_executable} shell rm -rf
           ${ANDROID_DIR_PREFIX}${PROJECT_NAME}
           )
+      elseif(SSH)
+        add_test(NAME ${PROJECT_NAME}_CleanupFixture
+          COMMAND
+          ${ssh_executable} ${SSH_HOST} rm -rf
+          ${SSH_DIR_PREFIX}${PROJECT_NAME}
+          )
       else()
         add_test(NAME ${PROJECT_NAME}_CleanupFixture
           COMMAND
@@ -159,11 +177,12 @@ function(cgal_setup_test_properties test_name)
         ${PROJECT_NAME}_CleanupFixture ${PROJECT_NAME}_SetupFixture
         APPEND PROPERTY LABELS "${PROJECT_NAME}")
     endif()
-    if(NOT ANDROID)
+    if(NOT ANDROID AND NOT SSH)
       set_property(TEST "${test_name}"
         PROPERTY
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir)
     endif()
+    
     set_property(TEST "${test_name}"
       APPEND PROPERTY FIXTURES_REQUIRED "${PROJECT_NAME}")
     if(exe_name)
@@ -171,13 +190,22 @@ function(cgal_setup_test_properties test_name)
         APPEND PROPERTY FIXTURES_REQUIRED "${exe_name}")
       set_property(TEST "compilation_of__${exe_name}"
         PROPERTY FIXTURES_SETUP "${exe_name}")
-      if(ANDROID)
-        add_test(NAME "push_of__${exe_name}"
-          COMMAND ${adb_executable} push $<TARGET_FILE:${exe_name}> ${ANDROID_DIR_PREFIX}${PROJECT_NAME}/${exe_name})
-        set_property(TEST "push_of__${exe_name}"
-          APPEND PROPERTY FIXTURES_SETUP "${exe_name}")
-        set_property(TEST "push_of__${exe_name}"
-          APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
+      if(NOT TEST push_of__${exe_name})
+        if(ANDROID)
+          add_test(NAME "push_of__${exe_name}"
+            COMMAND ${adb_executable} push $<TARGET_FILE:${exe_name}> ${ANDROID_DIR_PREFIX}${PROJECT_NAME}/${exe_name})
+          set_property(TEST "push_of__${exe_name}"
+            APPEND PROPERTY FIXTURES_SETUP "${exe_name}")
+          set_property(TEST "push_of__${exe_name}"
+            APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
+        elseif(SSH)
+          add_test(NAME "push_of__${exe_name}"
+            COMMAND ${scp_executable} $<TARGET_FILE:${exe_name}> ${SSH_HOST}:${SSH_DIR_PREFIX}${PROJECT_NAME}/${exe_name})
+          set_property(TEST "push_of__${exe_name}"
+            APPEND PROPERTY FIXTURES_SETUP "${exe_name}")
+          set_property(TEST "push_of__${exe_name}"
+            APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
+        endif()
       endif()
     endif()
   endif() # end CMake 3.7 or later
@@ -209,6 +237,7 @@ function(cgal_add_test exe_name)
       -DCMD:STRING=$<TARGET_FILE:${exe_name}>
       -DCIN:STRING=${cin_file}
       -DANDROID_DIR_PREFIX=${ANDROID_DIR_PREFIX}
+      -DSSH_DIR_PREFIX=${SSH_DIR_PREFIX}
       -DPROJECT_NAME=${PROJECT_NAME}
       -P "${CGAL_MODULES_DIR}/run_test_with_cin.cmake")
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -242,6 +271,8 @@ function(cgal_add_test exe_name)
     #	message(STATUS "add test: ${exe_name} ${ARGS}")
     if(ANDROID)
       add_test(NAME ${test_name} COMMAND ${TIME_COMMAND} ${adb_executable} shell cd ${ANDROID_DIR_PREFIX}${PROJECT_NAME} && LD_LIBRARY_PATH=${ANDROID_DIR_PREFIX}${PROJECT_NAME} ${ANDROID_DIR_PREFIX}${PROJECT_NAME}/${exe_name} ${ARGS})
+    elseif(SSH)
+      add_test(NAME ${test_name} COMMAND ${TIME_COMMAND} ${ssh_executable} ${SSH_HOST} cd ${SSH_DIR_PREFIX}${PROJECT_NAME} && LD_LIBRARY_PATH=${SSH_DIR_PREFIX}/lib ${SSH_DIR_PREFIX}${PROJECT_NAME}/${exe_name} ${ARGS})
     else()
       add_test(NAME ${test_name} COMMAND ${TIME_COMMAND} $<TARGET_FILE:${exe_name}> ${ARGS})
     endif()
