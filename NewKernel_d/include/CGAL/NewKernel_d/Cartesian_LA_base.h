@@ -20,7 +20,8 @@
 
 #ifndef CGAL_KERNEL_D_CARTESIAN_LA_BASE_H
 #define CGAL_KERNEL_D_CARTESIAN_LA_BASE_H
-
+#  pragma warning(push)
+#  pragma warning(disable: 4309)
 #include <CGAL/basic.h>
 #include <CGAL/Origin.h>
 #include <boost/type_traits/integral_constant.hpp>
@@ -28,8 +29,10 @@
 #include <CGAL/NewKernel_d/functor_tags.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/typeset.h>
+
 #include <CGAL/NewKernel_d/Dimension_base.h>
 #include <CGAL/NewKernel_d/Cartesian_LA_functors.h>
+
 #include <CGAL/NewKernel_d/Vector/array.h>
 #include <CGAL/NewKernel_d/Vector/vector.h>
 #include <CGAL/NewKernel_d/Vector/mix.h>
@@ -174,5 +177,5 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
 };
 
 } //namespace CGAL
-
+#  pragma warning(pop)
 #endif // CGAL_KERNEL_D_CARTESIAN_LA_BASE_H
