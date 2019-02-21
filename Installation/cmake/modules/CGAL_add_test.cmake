@@ -190,7 +190,7 @@ function(cgal_setup_test_properties test_name)
         APPEND PROPERTY FIXTURES_REQUIRED "${exe_name}")
       set_property(TEST "compilation_of__${exe_name}"
         PROPERTY FIXTURES_SETUP "${exe_name}")
-      if(NOT TEST push_of__${exe_name})
+      if((ANDROID OR SSH) AND NOT TEST push_of__${exe_name})
         if(ANDROID)
           add_test(NAME "push_of__${exe_name}"
             COMMAND ${adb_executable} push $<TARGET_FILE:${exe_name}> ${ANDROID_DIR_PREFIX}${PROJECT_NAME}/${exe_name})
@@ -201,10 +201,10 @@ function(cgal_setup_test_properties test_name)
         set_property(TEST "push_of__${exe_name}"
           APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
         set_property(TEST "push_of__${exe_name}"
+          APPEND PROPERTY FIXTURES_SETUP "${exe_name}")
+        set_property(TEST "push_of__${exe_name}"
           APPEND PROPERTY FIXTURES_REQUIRED "${PROJECT_NAME}")
       endif()
-      set_property(TEST "${test_name}"
-        APPEND PROPERTY DEPENDS "push_of__${exe_name}")
     endif()
   endif() # end CMake 3.7 or later
 endfunction(cgal_setup_test_properties)
@@ -283,28 +283,6 @@ function(cgal_add_test exe_name)
     endif()
   endif()
   cgal_setup_test_properties(${test_name} ${exe_name})
-  return()
-
-  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cin")
-    set(ARGS "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cin")
-  elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${ARGV2}.cmd")
-    file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/${ARGV2}.cmd"
-      ARGS LIMIT_COUNT 1)
-  elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${ARGV1}.cmd")
-    file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/${ARGV1}.cmd"
-      ARGS LIMIT_COUNT 1)
-  elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cmd")
-    file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cmd"
-      ARGS LIMIT_COUNT 1)
-    # TODO: handle multi-lines .cmd files
-    # see https://github.com/CGAL/cgal/pull/1295/files/c65d3abe17bb3e677b8077996cdaf8672f9c4c6f#r71705451
-  endif()
-  string(REPLACE ";" " " args_str "${ARGS}")
-  add_test(NAME ${test_name}
-    COMMAND ${TIME_COMMAND} $<TARGET_FILE:${exe_name}> ${ARGS}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-  set_property(TEST "${test_name}"
-    APPEND PROPERTY LABELS "${PROJECT_NAME}")
 endfunction()
 
 function(CGAL_add_compilation_tests_for_all_targets)
