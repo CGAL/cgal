@@ -194,19 +194,17 @@ function(cgal_setup_test_properties test_name)
         if(ANDROID)
           add_test(NAME "push_of__${exe_name}"
             COMMAND ${adb_executable} push $<TARGET_FILE:${exe_name}> ${ANDROID_DIR_PREFIX}${PROJECT_NAME}/${exe_name})
-          set_property(TEST "push_of__${exe_name}"
-            APPEND PROPERTY FIXTURES_SETUP "${exe_name}")
-          set_property(TEST "push_of__${exe_name}"
-            APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
         elseif(SSH)
           add_test(NAME "push_of__${exe_name}"
-            COMMAND ${scp_executable} $<TARGET_FILE:${exe_name}> ${SSH_HOST}:${SSH_DIR_PREFIX}${PROJECT_NAME}/${exe_name})
-          set_property(TEST "push_of__${exe_name}"
-            APPEND PROPERTY FIXTURES_SETUP "${exe_name}")
-          set_property(TEST "push_of__${exe_name}"
-            APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
+            COMMAND ${scp_executable} $<TARGET_FILE:${exe_name}> ${SSH_HOST}:${SSH_DIR_PREFIX}${PROJECT_NAME}/)
         endif()
+        set_property(TEST "push_of__${exe_name}"
+          APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
       endif()
+      set_property(TEST "push_of__${exe_name}"
+        APPEND PROPERTY FIXTURES_SETUP "${exe_name}")
+      set_property(TEST "push_of__${exe_name}"
+        APPEND PROPERTY FIXTURES_REQUIRED "${PROJECT_NAME}")
     endif()
   endif() # end CMake 3.7 or later
 endfunction(cgal_setup_test_properties)
@@ -232,11 +230,18 @@ function(cgal_add_test exe_name)
 #  message("Add test ${test_name}")
   set(cin_file "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cin")
   if(NOT ARGS AND EXISTS ${cin_file})
+    if(ANDROID OR SSH)
+      set(cmd ${exe_name})
+    else()
+      set(cmd $<TARGET_FILE:${exe_name}>)
+    endif()
     add_test(NAME ${test_name}
       COMMAND ${TIME_COMMAND} ${CMAKE_COMMAND}
-      -DCMD:STRING=$<TARGET_FILE:${exe_name}>
+      -DCMD:STRING=${cmd}
       -DCIN:STRING=${cin_file}
       -DANDROID_DIR_PREFIX=${ANDROID_DIR_PREFIX}
+      -DSSH=${SSH}
+      -DSSH_HOST=${SSH_HOST}
       -DSSH_DIR_PREFIX=${SSH_DIR_PREFIX}
       -DPROJECT_NAME=${PROJECT_NAME}
       -P "${CGAL_MODULES_DIR}/run_test_with_cin.cmake")
