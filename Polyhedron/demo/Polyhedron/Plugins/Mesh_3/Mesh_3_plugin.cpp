@@ -444,9 +444,6 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   const float inside_is_less =  float(ui.inside_is_less_checkBox->isChecked());
   as_facegraph = surface_only ? ui.facegraphCheckBox->isChecked() : false;
 
-
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-
   Meshing_thread* thread = NULL;
   if ( NULL != sm_item )
   {
@@ -569,8 +566,12 @@ launch_thread(Meshing_thread* mesh_thread)
   QAbstractButton* cancelButton = message_box_->button(QMessageBox::Cancel);
   cancelButton->setText(tr("Stop"));
 
-  QObject::connect(cancelButton, SIGNAL(clicked()),
-                   mesh_thread,  SLOT(stop()));
+  QObject::connect(cancelButton, &QAbstractButton::clicked,
+                   this, [this, mesh_thread](){
+    mesh_thread->stop();
+    mesh_thread->wait();
+    QApplication::restoreOverrideCursor();
+  });
 
   message_box_->open();
 
