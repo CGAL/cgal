@@ -203,8 +203,8 @@ function(cgal_setup_test_properties test_name)
         set_property(TEST "push_of__${exe_name}"
           APPEND PROPERTY FIXTURES_REQUIRED "${PROJECT_NAME}")
       endif()
-      set_property(TEST "push_of__${exe_name}"
-        APPEND PROPERTY FIXTURES_SETUP "${test_name}")
+      set_property(TEST "${test_name}"
+        APPEND PROPERTY DEPENDS "push_of__${exe_name}")
     endif()
   endif() # end CMake 3.7 or later
 endfunction(cgal_setup_test_properties)
