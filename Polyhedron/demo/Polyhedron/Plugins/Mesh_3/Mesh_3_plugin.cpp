@@ -681,6 +681,8 @@ treat_result(Scene_item& source_item,
     scene->itemChanged(index);
     scene->setSelectedItem(-1);
     Scene_interface::Item_id new_item_id = scene->addItem(new_item);
+    new_item->invalidateOpenGLBuffers();
+    new_item->redraw();
     scene->setSelectedItem(new_item_id);
     delete result_item;
   }
