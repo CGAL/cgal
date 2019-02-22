@@ -100,7 +100,7 @@ int main(){
 #else
 
 int main (){
-  std::cout << " This examples needs GMP! " << std::endl; 
+  std::cout << " This example needs GMP! " << std::endl; 
 }
 
 #endif 
