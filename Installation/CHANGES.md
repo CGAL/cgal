@@ -6,6 +6,19 @@ Release 4.14
 
 Release date: March 2019
 
+### 2D Periodic Hyperbolic Triangulations (new package)
+ 
+ -   This package allows the computation of Delaunay triangulations of the Bolza surface. 
+     The Bolza surface is the most symmetric hyperbolic surface of genus 2. Its fundamental 
+     domain is the regular hyperbolic octagon with angles π/4 centered at the origin of the 
+     Poincaré disk. Triangulations of the Bolza surface can be seen as triangulations of the 
+     hyperbolic plane that are periodic in the four directions defined by the sides of this 
+     regular octagon.
+
+### 2D Hyperbolic Triangulations (new package)
+ -   This package allows the computation of Delaunay Triangulations of sets of points in the 
+     Poincaré disk, which is one of the conformal models for the hyperbolic plane.
+
 ### The Heat Method (new package)
 -   This package provides an algorithm that solves the single- or multiple-source
     shortest path problem by returning an approximation of the geodesic distance

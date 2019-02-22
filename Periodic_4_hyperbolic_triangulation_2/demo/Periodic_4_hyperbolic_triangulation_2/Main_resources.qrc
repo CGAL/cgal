@@ -1,0 +1,22 @@
+<RCC>
+  <qresource prefix="icon">
+    <file>icons/play.png</file>
+    <file>icons/conflict_zone.png</file>
+    <file>icons/fit-page-32.png</file>
+    <file>icons/octagon.png</file>
+    <file>icons/inputPoint.png</file>
+    <file>icons/about_CGAL.html</file>
+    <file>icons/cgal_logo.xpm</file>
+    <file>icons/CGAL.qrc</file>
+    <file>icons/circumcenter.png</file>
+    <file>icons/fileNew.png</file>
+    <file>icons/fileOpen.png</file>
+    <file>icons/fileSave.png</file>
+    <file>icons/triangulation.png</file>
+    <file alias="bgd.png">icons/bgd.png</file>
+    <file>icons/Voronoi_diagram_2.png</file>
+  </qresource>
+  <qresource prefix="/cgal/help" >
+    <file>icons/about_P4HD_Triangulation_2.html</file>
+  </qresource>
+</RCC>
