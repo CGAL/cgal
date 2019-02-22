@@ -68,10 +68,18 @@ struct PLY_property
   PLY_property (const char* name) : name (name) { }
 };
 
+// Use a double property for all kernels...
+template <typename FT> struct Convert_FT        { typedef double type; };
+// ...except if kernel uses type float
+template <>            struct Convert_FT<float> { typedef float type;  };
+    
 template <typename PointOrVectorMap>
 struct Get_FT_from_map
 {
-  typedef typename Kernel_traits<typename boost::property_traits<PointOrVectorMap>::value_type>::Kernel::FT type;
+  typedef typename
+  <typename Kernel_traits
+   <typename boost::property_traits
+    <PointOrVectorMap>::value_type>::Kernel::FT>::type type;
 };
 
 template <typename PointMap>
