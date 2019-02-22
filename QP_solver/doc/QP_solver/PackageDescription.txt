@@ -89,7 +89,7 @@ Programs can be written to an output stream in MPSFormat, using one of the follo
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `QuadraticProgram` (for quadratic programs with variable bounds l <= x <= u)
 - `LinearProgram` (for linear programs with variable bounds l <= x <= u)
 - `NonnegativeQuadraticProgram` (for quadratic programs with variable bounds x >= 0)
@@ -97,7 +97,7 @@ Programs can be written to an output stream in MPSFormat, using one of the follo
 
 - `MPSFormat` (the format used for reading and writing linear and quadratic programs)
 
-## Classes ##
+\cgalCRPSection{Classes}
 
 There is a class that represents the solution of a linear or quadratic program.
 An instance of this class is returned by any of the solution functions below.
@@ -124,7 +124,7 @@ no further copying of data.
 - `CGAL::Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, D_it, C_it>` (for nonnegative quadratic programs, wrapping given iterators)
 - `CGAL::Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>` (for nonnegative linear programs, wrapping given iterators)
 
-## Functions ##
+\cgalCRPSection{Functions}
 
 In case you want to construct a program from complicated iterators
 (whose types you don't know, or simply don't want to bother with),

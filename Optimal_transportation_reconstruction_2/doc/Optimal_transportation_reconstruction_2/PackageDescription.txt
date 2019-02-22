@@ -28,10 +28,10 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `OptimalTransportationReconstructionTraits_2`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Optimal_transportation_reconstruction_2<Traits, PointPMap, MassPMap>`
 
 */

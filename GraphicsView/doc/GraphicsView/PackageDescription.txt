@@ -31,21 +31,21 @@ View Framework</A>.
 
 \cgalClassifedRefPages
 
-## GraphicsItem Classes ##
+\cgalCRPSection{GraphicsItem Classes}
 
 - `CGAL::Qt::GraphicsItem`
 - `CGAL::Qt::TriangulationGraphicsItem<T>`
 - `CGAL::Qt::ConstrainedTriangulationGraphicsItem<CT>`
 - `CGAL::Qt::VoronoiGraphicsItem<DT>`
 
-## Input Classes ##
+\cgalCRPSection{Input Classes}
 - `CGAL::Qt::GraphicsViewInput`
 - `CGAL::Qt::GraphicsViewCircleInput<K>`
 - `CGAL::Qt::GraphicsViewCircularArcInput<K>`
 - `CGAL::Qt::GraphicsViewIsoRectangleInput<K>`
 - `CGAL::Qt::GraphicsViewPolylineInput<K>`
 
-## Miscellaneous Classes ##
+\cgalCRPSection{Miscellaneous Classes}
 - `CGAL::Qt::Converter<K>`
 - `CGAL::Qt::PainterOstream<K>`
 - `CGAL::Qt::GraphicsViewNavigation`
