@@ -262,7 +262,6 @@ protected:
   template <typename Func>
   void enqueue_work(Func f, FT value) const
   {
-    std::cout << "enqueue_work" << std::endl;
     CGAL_assertion(m_empty_root_task != 0);
     m_worksharing_ds.enqueue_work(f, value, *m_empty_root_task);
   }
