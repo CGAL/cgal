@@ -26,7 +26,6 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Spherical_kernel_3.h>
 #include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
-#include <CGAL/Quotient.h>
 #include <CGAL/Exact_rational.h>
 #include <CGAL/_test_sphere_predicates.h>
 #include <CGAL/_test_sphere_constructions.h>
