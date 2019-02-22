@@ -570,7 +570,7 @@ launch_thread(Meshing_thread* mesh_thread)
                    this, [this, mesh_thread](){
     mesh_thread->stop();
     mesh_thread->wait();
-    QApplication::restoreOverrideCursor();
+    QApplication::restoreOverrideCursor(); // restores cursor set in mesh_thread stop() function
   });
 
   message_box_->open();

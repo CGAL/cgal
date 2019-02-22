@@ -75,7 +75,7 @@ Meshing_thread::
 stop()
 {
   f_->stop();
-  QApplication::setOverrideCursor(Qt::WaitCursor);
+  QApplication::setOverrideCursor(Qt::WaitCursor); //restored in mesh_3_plugin lambda
 }
 
 
