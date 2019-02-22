@@ -158,7 +158,7 @@ namespace CGAL {
       // This is the second case where we want that s == t
       // that makes the is_full() correct and complete
       Circular_arc_3(const Circle_3 &c,const Circular_arc_point_3& point)
-      : base(Rep(c,point,point)),_full(true)
+      : base(Rep(c,point,point)),_full(true), _sign_cross_product(CGAL::ZERO)
       {CGAL_kernel_precondition(SK().has_on_3_object()(c,point));}
       
       Circular_arc_3(const Circle_3 &c, 
