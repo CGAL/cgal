@@ -22,6 +22,9 @@ Release date: March 2019
 -   Added the class `CGAL::Rigid_triangle_mesh_collision_detection` to detect intersections between meshes
     and volumes undergoing affine transformations.
 
+### Regularzed Boolean Set Operations in 2D package
+-   Fixed the validation of orientation of relative simple polygons.
+
 Release 4.13
 ------------
 

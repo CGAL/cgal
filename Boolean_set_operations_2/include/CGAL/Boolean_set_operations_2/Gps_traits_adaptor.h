@@ -113,50 +113,78 @@ public:
       Compare_y_at_x_right_2 cmp_y_at_x_right =
         m_traits.compare_y_at_x_right_2_object();
       Construct_vertex_2 ctr_v = m_traits.construct_vertex_2_object();
+      Compare_endpoints_xy_2 cmp_endpoints_xy =
+        m_traits.compare_endpoints_xy_2_object();
 
-      CurveInputIteraor from_leftmost = begin;
       CurveInputIteraor into_leftmost = end;
+      CurveInputIteraor from_leftmost = end;
 
-      Point_2 leftmost_v = ctr_v(*from_leftmost, 0);
+      CurveInputIteraor into = end;
+      --into;
+      for (CurveInputIteraor ci = begin; ci != end; ++ci) {
+        CurveInputIteraor from = ci;
 
-      --into_leftmost;
+        /* We are only concerned with the following case:
+         *    o
+         *   / <= from or into
+         *  /
+         * o
+         *  \
+         *   \ <= into or from, resp.
+         *    o
+         */
+        Comparison_result res_from = cmp_endpoints_xy(*from);
+        Comparison_result res_into = cmp_endpoints_xy(*into);
+        if ((SMALLER != res_from) || (LARGER != res_into)) {
+          into = from;
+          continue;
+        }
 
-      CurveInputIteraor ci = from_leftmost;
+        if (from_leftmost == end) {
+          // First occurance
+          from_leftmost = from;
+          into_leftmost = into;
+          into = from;
+          continue;
+        }
 
-      for (++ci ; ci != end; ++ci) {
-        Comparison_result res_xy = cmp_xy( ctr_v(*ci, 0), leftmost_v);
-        if (res_xy == LARGER) continue;
+        const Point_2& v = ctr_v(*from, 0);
+        const Point_2& v_leftmost = ctr_v(*from_leftmost, 0);
+        Comparison_result res_xy = cmp_xy(v, v_leftmost);
+        if (res_xy == LARGER) {
+          into = from;
+          continue;
+        }
         if (res_xy == SMALLER) {
-          leftmost_v =  ctr_v(*ci, 0);
-          from_leftmost = into_leftmost = ci;
-          --into_leftmost;
+          from_leftmost = from;
+          into_leftmost = into;
+          into = from;
           continue;
         }
 
         // res_xy == EQUAL
-        CurveInputIteraor new_from_leftmost = ci;
-        CurveInputIteraor new_into_leftmost = ci;
-        --new_into_leftmost;
-
-        Comparison_result res_from_new_into =
-          cmp_y_at_x_right(*from_leftmost, *new_into_leftmost, leftmost_v);
+        Comparison_result res_from_leftmost_into =
+          cmp_y_at_x_right(*from_leftmost, *into, v_leftmost);
 
         CGAL_assertion_code
-          (Comparison_result res_into_new_from =
-           cmp_y_at_x_right(*into_leftmost, *new_from_leftmost, leftmost_v));
-        CGAL_assertion((res_from_new_into != EQUAL) &&
-                       (res_from_new_into != res_into_new_from));
+          (Comparison_result res_into_leftmost_from =
+           cmp_y_at_x_right(*into_leftmost, *from, v_leftmost));
+        CGAL_assertion((res_from_leftmost_into != EQUAL) &&
+                       (res_from_leftmost_into != res_into_leftmost_from));
         Comparison_result res_into_from =
-          cmp_y_at_x_right(*into_leftmost, *from_leftmost, leftmost_v);
+          cmp_y_at_x_right(*into_leftmost, *from_leftmost, v_leftmost);
         CGAL_assertion(res_into_from != EQUAL);
 
-        if (res_into_from == res_from_new_into) {
-          from_leftmost = new_from_leftmost;
-          into_leftmost = new_into_leftmost;
+        if (res_into_from == res_from_leftmost_into) {
+          from_leftmost = from;
+          into_leftmost = into;
         }
+        into = from;
       }
+
+      const Point_2& v_leftmost = ctr_v(*from_leftmost, 0);
       Comparison_result res =
-        cmp_y_at_x_right(*into_leftmost, *from_leftmost, leftmost_v);
+        cmp_y_at_x_right(*into_leftmost, *from_leftmost, v_leftmost);
       CGAL_assertion(res != EQUAL);
       return (res == SMALLER) ? CLOCKWISE : COUNTERCLOCKWISE;
     }
