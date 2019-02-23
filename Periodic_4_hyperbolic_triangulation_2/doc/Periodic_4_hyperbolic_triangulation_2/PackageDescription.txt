@@ -61,14 +61,14 @@ the hyperbolic plane.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `Periodic_4HyperbolicTriangulationTraits_2` adds supplementary requirements to the concept `HyperbolicDelaunayTriangulationTraits_2` that are necessary for periodic hyperbolic triangulations.
 - `Periodic_4HyperbolicDelaunayTriangulationTraits_2` refines the concept `Periodic_4HyperbolicTriangulationTraits_2` by adding requirements necessary for the computation of periodic hyperbolic Delaunay triangulations.
 - `Periodic_4HyperbolicTriangulationFaceBase_2` describes the requirements for faces to store hyperbolic translations.
 - `Periodic_4HyperbolicTriangulationVertexBase_2` describes the requirements for vertices to store hyperbolic translations.
 
-## Classes ##
+\cgalCRPSection{Classes}
 
 - `CGAL::Periodic_4_hyperbolic_triangulation_2` gives access 
 to the elements of the triangulation (vertices, edges, and faces), and functionality common to 

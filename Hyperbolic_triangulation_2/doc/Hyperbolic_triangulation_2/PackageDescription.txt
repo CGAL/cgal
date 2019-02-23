@@ -43,13 +43,13 @@ The Delaunay triangulation of a set of points \f$P\f$ in the hyperbolic plane \f
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `HyperbolicDelaunayTriangulationTraits_2` describes the requirements for an interface for geometric objects, constructions, and predicates in the hyperbolic plane.
 - `HyperbolicTriangulationFaceBase_2` describes the requirements for faces of the hyperbolic Delaunay triangulation to be filtered from the faces of the Euclidean Delaunay triangulation.
 
 
-## Classes ##
+\cgalCRPSection{Classes}
 
 - `CGAL::Hyperbolic_Delaunay_triangulation_2` is the main class of the 2D Hyperbolic Triangulation package. It enables the constructions of Delaunay triangulations in the hyperbolic plane. It offers all the functionalities provided by `CGAL::Delaunay_triangulation_2`, such as point location, insertion, and removal. Construction of the dual Voronoi diagram is also provided. 
 - `CGAL::Hyperbolic_triangulation_face_base_2`
