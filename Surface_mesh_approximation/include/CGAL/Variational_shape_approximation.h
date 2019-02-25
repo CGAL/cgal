@@ -38,6 +38,7 @@
 
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
+#include <boost/math/special_functions/fpclassify.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
@@ -240,7 +241,6 @@ private:
   const Error_metric *m_metric;
 
   Construct_vector_3 vector_functor;
-  Construct_point_3 point_functor;
   Construct_scaled_vector_3 scale_functor;
   Construct_sum_of_vectors_3 sum_functor;
   Compute_scalar_product_3 scalar_product_functor;
@@ -290,7 +290,6 @@ public:
 
     Geom_traits traits;
     vector_functor = traits.construct_vector_3_object();
-    point_functor = traits.construct_point_3_object();
     scale_functor = traits.construct_scaled_vector_3_object();
     sum_functor = traits.construct_sum_of_vectors_3_object();
     scalar_product_functor = traits.compute_scalar_product_3_object();
@@ -1430,12 +1429,19 @@ private:
         const Point_3 &p1 = m_vpoint_map[target(he, *m_ptm)];
         const Point_3 &p2 = m_vpoint_map[target(next(he, *m_ptm), *m_ptm)];
         const FT farea(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
-        const Vector_3 fnorm = CGAL::unit_normal(p0, p1, p2);
+        const Vector_3 fnorm =
+          CGAL::collinear(p0, p1, p2) ? CGAL::NULL_VECTOR : CGAL::unit_normal(p0, p1, p2);
 
         norm = sum_functor(norm, scale_functor(fnorm, farea));
         area += farea;
       }
-      norm = scale_functor(norm, FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
+      const FT inv_len = FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length())));
+      if ((boost::math::isnormal)(inv_len))
+        norm = scale_functor(norm, inv_len);
+      else
+        norm = Vector_3(FT(0.0), FT(0.0), FT(1.0));
+
+      std::cout << inv_len << " # " << norm << " # " << area << std::endl;
 
       m_px_planes.push_back(Proxy_plane(fit_plane, norm, area));
     }
@@ -1910,7 +1916,7 @@ private:
 
       // projection
       FT sum_area(0.0);
-      Vector_3 vec = vector_functor(CGAL::ORIGIN, point_functor(CGAL::ORIGIN));
+      Vector_3 vec = CGAL::NULL_VECTOR;
       const Point_3 vtx_pt = m_vpoint_map[v];
       BOOST_FOREACH(const std::size_t px_idx, px_set) {
         const Vector_3 proj = vector_functor(
@@ -1919,9 +1925,13 @@ private:
         vec = sum_functor(vec, scale_functor(proj, area));
         sum_area += area;
       }
-      vec = scale_functor(vec, FT(1.0) / sum_area);
-
-      a.pos = translate_point_functor(CGAL::ORIGIN, vec);
+      const FT inv_sum_area = FT(1.0) / sum_area;
+      if ((boost::math::isnormal)(inv_sum_area))
+        a.pos = translate_point_functor(
+          CGAL::ORIGIN,
+          scale_functor(vec, inv_sum_area));
+      else
+        a.pos = vtx_pt;
     }
   }
 
@@ -1965,15 +1975,21 @@ private:
 
       Vector_3 vec = vector_functor(CGAL::ORIGIN, CGAL::centroid(p0, p1, p2));
       FT farea(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
-      Vector_3 fnorm = CGAL::unit_normal(p0, p1, p2);
+      Vector_3 fnorm =
+        CGAL::collinear(p0, p1, p2) ? CGAL::NULL_VECTOR : CGAL::unit_normal(p0, p1, p2);
 
       norm = sum_functor(norm, scale_functor(fnorm, farea));
       cent = sum_functor(cent, scale_functor(vec, farea));
       sum_area += farea;
     }
-    norm = scale_functor(norm,
-      FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
-    cent = scale_functor(cent, FT(1.0) / sum_area);
+    const FT inv_len = FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length())));
+    if ((boost::math::isnormal)(inv_len))
+      norm = scale_functor(norm, inv_len);
+    else
+      norm = Vector_3(FT(0.0), FT(0.0), FT(1.0));
+    const FT inv_sum_area = FT(1.0) / sum_area;
+    if ((boost::math::isnormal)(inv_sum_area))
+      cent = scale_functor(cent, inv_sum_area);
 
     return Plane_3(CGAL::ORIGIN + cent, norm);
   }

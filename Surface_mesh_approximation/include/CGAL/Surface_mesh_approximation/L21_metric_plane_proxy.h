@@ -29,6 +29,7 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Dynamic_property_map.h>
 
+#include <boost/math/special_functions/fpclassify.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/unordered_map.hpp>
 
@@ -97,7 +98,12 @@ public:
       const Point_3 &p0 = vpmap[source(he, tm)];
       const Point_3 &p1 = vpmap[target(he, tm)];
       const Point_3 &p2 = vpmap[target(next(he, tm), tm)];
-      put(m_fnmap, f, CGAL::unit_normal(p0, p1, p2));
+      if (CGAL::collinear(p0, p1, p2)) {
+        std::cout << CGAL::unit_normal(p0, p1, p2) << std::endl;
+        put(m_fnmap, f, CGAL::NULL_VECTOR);
+      }
+      else
+        put(m_fnmap, f, CGAL::unit_normal(p0, p1, p2));
       put(m_famap, f, std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
     }
   }
@@ -134,8 +140,9 @@ public:
       norm = m_sum_functor(norm,
         m_scale_functor(get(m_fnmap, f), get(m_famap, f)));
     }
-    norm = m_scale_functor(norm,
-      FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
+    const FT inv_len = FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length())));
+    if ((boost::math::isnormal)(inv_len))
+      norm = m_scale_functor(norm, inv_len);
 
     return norm;
   }
