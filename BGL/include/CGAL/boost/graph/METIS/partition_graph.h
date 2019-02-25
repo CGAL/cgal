@@ -34,6 +34,8 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/tuple/tuple.hpp>
 
+#include <cstdlib>
+
 namespace CGAL {
 
 namespace METIS {
@@ -76,7 +78,8 @@ struct Output_face_partition_ids
 };
 
 template<typename TriangleMesh, typename METIS_options, typename NamedParameters>
-void partition_graph(const TriangleMesh& tm, int nparts,
+void partition_graph(const TriangleMesh& tm,
+                     int nparts,
                      METIS_options options, // pointer to the options array
                      const NamedParameters& np)
 {
@@ -125,11 +128,11 @@ void partition_graph(const TriangleMesh& tm, int nparts,
   idx_t objval;
 
   // partition info for the nodes
-  idx_t* npart = (idx_t*) calloc(nn, sizeof(idx_t));
+  idx_t* npart = (idx_t*) calloc(num_vertices(tm), sizeof(idx_t));
   CGAL_assertion(npart != NULL);
 
   // partition info for the elements
-  idx_t* epart = (idx_t*) calloc(ne, sizeof(idx_t));
+  idx_t* epart = (idx_t*) calloc(num_faces(tm), sizeof(idx_t));
   CGAL_assertion(epart != NULL);
 
   // do not support Fortran-style arrays
@@ -150,6 +153,12 @@ void partition_graph(const TriangleMesh& tm, int nparts,
   Output_face_partition_ids fo;
   vo(tm, indices, npart, get_param(np, internal_np::vertex_partition_id));
   fo(tm, epart, get_param(np, internal_np::face_partition_id));
+
+  delete[] eptr;
+  delete[] eind;
+
+  std::free(npart);
+  std::free(epart);
 }
 
 template<typename TriangleMesh, typename NamedParameters>

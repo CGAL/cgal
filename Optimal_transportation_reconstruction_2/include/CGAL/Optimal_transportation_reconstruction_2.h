@@ -606,18 +606,33 @@ public:
       ok = copy.make_collapsible(copy_edge, copy_hull.begin(),
           copy_hull.end(), m_verbose);
       if (!ok) {
-        // std::cerr << "simulation: failed (make collapsible)" << std::endl;
+        if (m_verbose > 1)
+          std::cerr << "simulation: failed (make collapsible)" << std::endl;
+        return false;
+      }
+      ok = copy.check_validity_test();
+      if (!ok) {
+        if (m_verbose > 1)
+          std::cerr << "simulation: failed (validity test)" << std::endl;
         return false;
       }
     }
 
     ok = copy.check_kernel_test(copy_edge);
     if (!ok) {
-      std::cerr << "simulation: failed (kernel test)" << std::endl;
+      if (m_verbose > 1)
+        std::cerr << "simulation: failed (kernel test)" << std::endl;
       return false;
     }
 
     copy.collapse(copy_edge, m_verbose);
+
+    ok = copy.check_validity_test();
+    if (!ok) {
+      if (m_verbose > 1)
+        std::cerr << "simulation: failed (validity test)" << std::endl;
+      return false;
+    }
 
     Sample_vector samples;
     m_dt.collect_samples_from_vertex(s, samples, false);
@@ -839,7 +854,7 @@ public:
 
 
   bool random_pedge(Rec_edge_2& pedge) {
-    for (unsigned i = 0; i < 10; ++i) {
+    for (unsigned int i = 0; i < 10; ++i) {
       Edge edge = m_dt.random_finite_edge();
       if (m_dt.is_pinned(edge))
         continue;
@@ -926,6 +941,9 @@ public:
 
   // edge must not be pinned or have cyclic target
   Edge copy_star(const Edge& edge, Triangulation& copy) {
+    copy.tds().clear();
+    Vertex_handle vinf = copy.tds().create_vertex();
+    copy.set_infinite_vertex (vinf);
     copy.tds().set_dimension(2);
     copy.infinite_vertex()->pinned() = true;
 
@@ -944,10 +962,9 @@ public:
     {
       Vertex_handle v = vcirc;
       CGAL_assertion(v!=m_dt.infinite_vertex());
-      if (cvmap.find(v) == cvmap.end()) {
-        Vertex_handle cv = copy.tds().create_vertex();
-        cvmap[v] = copy_vertex(v, cv);
-      }
+      CGAL_assertion (cvmap.find(v) == cvmap.end());
+      Vertex_handle cv = copy.tds().create_vertex();
+      cvmap[v] = copy_vertex(v, cv);
     }
 
     // copy faces
@@ -992,9 +1009,11 @@ public:
   Face_handle copy_face(
     Face_handle f0, Face_handle f1, Vertex_handle_map& vmap) const 
   {
-    for (unsigned i = 0; i < 3; ++i) {
+    for (unsigned int i = 0; i < 3; ++i) {
       Vertex_handle v0i = f0->vertex(i);
+      CGAL_assertion (vmap.find(v0i) != vmap.end());
       Vertex_handle v1i = vmap[v0i];
+      CGAL_assertion (v1i != Vertex_handle());
       f1->set_vertex(i, v1i);
       v1i->set_face(f1);
     }
@@ -1014,7 +1033,7 @@ public:
       cf->set_neighbor(i, cfi);
     }
 
-    for (unsigned j = 0; j < 2; ++j) {
+    for (unsigned int j = 0; j < 2; ++j) {
       i = (i + 1) % 3;
       Face_handle fi = f->neighbor(i);
       Face_handle cfi = fmap[fi];
@@ -1049,8 +1068,8 @@ public:
       outer_faces.push_back(outer);
     }
 
-    for (unsigned i = 0; i < outer_faces.size(); ++i) {
-      unsigned j = (i + 1) % outer_faces.size();
+    for (unsigned int i = 0; i < outer_faces.size(); ++i) {
+      unsigned int j = (i + 1) % outer_faces.size();
       outer_faces[i]->set_neighbor(2, outer_faces[j]);
       outer_faces[j]->set_neighbor(1, outer_faces[i]);
     }
@@ -1534,15 +1553,15 @@ public:
     `false` if the algorithm was prematurely ended because no more
     edge collapse was possible.
    */
-  bool run(const unsigned steps) {
+  bool run(const unsigned int steps) {
     m_tolerance = (FT)(-1.);
     CGAL::Real_timer timer;
     if (m_verbose > 0)
       std::cerr << "reconstruct " << steps;
 
     timer.start();
-    unsigned performed = 0;
-    for (unsigned i = 0; i < steps; ++i) {
+    unsigned int performed = 0;
+    for (unsigned int i = 0; i < steps; ++i) {
       bool ok = decimate();
       if (!ok)
         break;
@@ -1579,7 +1598,7 @@ public:
       std::cerr << "reconstruct under tolerance " << tolerance;
 
     timer.start();
-    unsigned performed = 0;
+    unsigned int performed = 0;
     while (decimate ())
       performed++;
 

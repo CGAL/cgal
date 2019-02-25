@@ -34,13 +34,15 @@ typedef Kernel::Point_3 Point;
 
 namespace euler =  CGAL::Euler;
 using namespace CGAL::Three;
+namespace params = CGAL::parameters;
+
 class Q_DECL_EXPORT Basic_generator_plugin :
     public QObject,
     public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "basic_generator_plugin.json")
 public :
   void init(QMainWindow* mainWindow,
             CGAL::Three::Scene_interface* scene_interface,
@@ -548,7 +550,7 @@ void Basic_generator_plugin::generateSphere()
   typedef typename boost::property_map<typename Facegraph_item::Face_graph, CGAL::vertex_point_t>::type VPMap;
   if(precision !=0)
     CGAL::Subdivision_method_3::Sqrt3_subdivision(sphere,
-                                                  precision);
+                                                  params::number_of_iterations(precision));
   VPMap vpmap = get(CGAL::vertex_point, sphere);
   //emplace the points back on the sphere
   BOOST_FOREACH(typename boost::graph_traits<typename Facegraph_item::Face_graph>::vertex_descriptor vd, vertices(sphere))
@@ -742,11 +744,11 @@ struct Point_generator
                   const Point& ur)
     :w(w), h(h), bl(bl), ur(ur)
   {}
-  Point operator()(std::size_t i, std::size_t j, std::size_t k) const
+  Point operator()(std::size_t i, std::size_t j) const
   {
     return Point(bl.x() + i*(ur.x()-bl.x())/(w-1),
                  bl.y() + j*(ur.y()-bl.y())/(h-1),
-                 k);
+                 0);
   }
 };
 template<class Facegraph_item>

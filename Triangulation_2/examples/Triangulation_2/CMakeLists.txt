@@ -11,6 +11,10 @@ if(NOT POLICY CMP0070 AND POLICY CMP0053)
   cmake_policy(SET CMP0053 OLD)
 endif()
 
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
+
 find_package(CGAL COMPONENTS Qt5)
 
 if(CGAL_Qt5_FOUND)
@@ -18,12 +22,6 @@ if(CGAL_Qt5_FOUND)
 endif()
 
 if ( CGAL_FOUND )
-
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
-  include_directories (BEFORE "../../include")
 
   # create a target per cppfile
   file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)

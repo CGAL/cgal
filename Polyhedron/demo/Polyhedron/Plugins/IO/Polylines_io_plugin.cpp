@@ -4,6 +4,7 @@
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 #include <fstream>
 #include <QVariant>
 #include <boost/foreach.hpp>
@@ -16,7 +17,7 @@ class Polyhedron_demo_polylines_io_plugin :
 {
   Q_OBJECT
     Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface CGAL::Three::Polyhedron_demo_io_plugin_interface)
-    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "polylines_io_plugin.json")
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
 
 
@@ -100,6 +101,14 @@ Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo) {
     return NULL;
   }
 
+  if(fileinfo.size() == 0)
+  {
+    CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
+    Scene_polylines_item* item = new Scene_polylines_item;
+    item->setName(fileinfo.completeBaseName());
+    return item;
+  }
+  
   std::list<std::vector<Scene_polylines_item::Point_3> > polylines;
   QStringList polylines_metadata;
 

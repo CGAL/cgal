@@ -4,18 +4,12 @@
 
 project( Solver_interface_Examples )
 
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 3.1)
 
 find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
-  include_directories (BEFORE "../include")
-  
   # Use Eigen
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
 

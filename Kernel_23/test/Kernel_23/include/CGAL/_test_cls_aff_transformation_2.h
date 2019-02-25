@@ -577,6 +577,13 @@ _test_cls_aff_transformation_2(const R& )
  assert( ident.homogeneous(1,2) == ident.hm(1,2) );
  assert( gscale.homogeneous(1,1) == gscale.hm(1,1) );
 
+ //equality
+ CGAL::Aff_transformation_2<R> a2(0,1,0,1),
+     a3(0,1,0,1), a4(0,0,1,1);
+ assert(a2 == a3);
+ assert(a3 != a4);
+ 
+
  std::cout << "done" << std::endl;
  return true;
 }

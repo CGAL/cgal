@@ -77,6 +77,8 @@ h1 {
 \package_listing{Triangulation_2}
 \package_listing{TDS_2}
 \package_listing{Periodic_2_triangulation_2}
+\package_listing{Hyperbolic_triangulation_2}
+\package_listing{Periodic_4_hyperbolic_triangulation_2}
 \package_listing{Triangulation_3}
 \package_listing{TDS_3}
 \package_listing{Periodic_3_triangulation_3}
@@ -116,6 +118,7 @@ h1 {
 \package_listing{Surface_mesh_parameterization}
 \package_listing{Surface_mesh_shortest_path}
 \package_listing{Surface_mesh_skeletonization}
+\package_listing{Surface_mesh_approximation}
 \package_listing{Ridges_3}
 \package_listing{Jet_fitting_3}
 \package_listing{Point_set_3}
@@ -123,7 +126,7 @@ h1 {
 \package_listing{Point_set_shape_detection_3}
 \package_listing{Stream_lines_2}
 \package_listing{Classification}
-
+\package_listing{Heat_method_3}
 
 \section PartSearchStructures Spatial Searching and Sorting
 

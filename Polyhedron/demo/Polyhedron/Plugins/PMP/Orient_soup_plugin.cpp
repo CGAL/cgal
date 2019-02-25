@@ -14,6 +14,7 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/array.h>
+#include <CGAL/Three/Three.h>
 #include "Messages_interface.h"
 using namespace CGAL::Three;
 class Polyhedron_demo_orient_soup_plugin : 
@@ -73,7 +74,7 @@ void Polyhedron_demo_orient_soup_plugin::init(QMainWindow* mainWindow,
   scene = scene_interface;
   mw = mainWindow;
   messages = m;
-  actionOrientSM = new QAction(tr("&Orient Polygon Soup (as a surface_mesh)"), mainWindow);
+  actionOrientSM = new QAction(tr("&Orient Polygon Soup"), mainWindow);
   actionOrientSM->setObjectName("actionOrientSM");
   actionOrientSM->setProperty("subMenuName", "Polygon Mesh Processing");
   connect(actionOrientSM, SIGNAL(triggered()),
@@ -174,7 +175,7 @@ void Polyhedron_demo_orient_soup_plugin::orientSM()
       QApplication::restoreOverrideCursor();
     }
     else{
-      messages->warning(tr("This function is only applicable on polygon soups."));
+      CGAL::Three::Three::warning(tr("This function is only applicable on polygon soups."));
     }
   }
 }
@@ -251,7 +252,7 @@ void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline()
     if(nm_vertices.empty())
     {
       delete points;
-      messages->information(tr("There is no non-manifold vertex in this soup."));
+      CGAL::Three::Three::information(tr("There is no non-manifold vertex in this soup."));
     }
     else
     {
@@ -286,7 +287,7 @@ void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline()
     }
     else
     {
-      messages->information(tr("There is no non-manifold edge in this soup."));
+      CGAL::Three::Three::information(tr("There is no non-manifold edge in this soup."));
     }
     QApplication::restoreOverrideCursor();
     if(!items_created)

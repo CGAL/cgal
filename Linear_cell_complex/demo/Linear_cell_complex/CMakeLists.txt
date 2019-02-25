@@ -36,7 +36,6 @@ add_definitions(-DCGAL_PROFILE_LCC_DEMO)
 
 ##################
 find_package(CGAL COMPONENTS Qt5)
-include(${CGAL_USE_FILE})
 
 find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
 
@@ -47,9 +46,7 @@ if ( NOT (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND ) )
 
 else()
 
-add_definitions(-DQT_NO_KEYWORDS)
-
-include_directories(BEFORE . ../../include/)
+add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
 
 # ui file, created wih Qt Designer
 qt5_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui
@@ -67,7 +64,7 @@ add_executable(Linear_cell_complex_3_demo
 
 add_to_cached_list(CGAL_EXECUTABLE_TARGETS Linear_cell_complex_3_demo)
 
-target_link_libraries(Linear_cell_complex_3_demo PRIVATE
+target_link_libraries(Linear_cell_complex_3_demo PUBLIC
   CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui Qt5::OpenGL)
 
 include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)

@@ -149,7 +149,6 @@ public:
   /// @{
   Construct_point_2 construct_point_2_object();
   Construct_vector_2 construct_vector_2_object();
-  Construct_vector_2 construct_vector_2_object();
   Construct_line_2 construct_line_2_object();
   Construct_translated_point_2 construct_translated_point_2_object();
   Construct_scaled_vector_2 construct_scaled_vector_2_object();

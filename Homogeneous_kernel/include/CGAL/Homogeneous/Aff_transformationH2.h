@@ -605,6 +605,21 @@ public:
 
     Aff_transformationH2<R>
     operator*(const Aff_transformationH2<R>& right_argument ) const;
+    
+    
+    bool operator==(const Aff_transformationH2 &t)const
+    {
+      for(int i=0; i<3; ++i)
+        for(int j = 0; j< 3; ++j)
+          if(homogeneous(i,j)!=t.homogeneous(i,j))
+            return false;
+      return true;
+    }
+    
+    bool operator!=(const Aff_transformationH2 &t)const
+    {
+      return !(*this == t);
+    }
 
 };
 

@@ -19,7 +19,7 @@ class Polyhedron_demo_ply_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0" FILE "ply_io_plugin.json")
 
 public:
   bool isDefaultLoader(const CGAL::Three::Scene_item *item) const 
@@ -79,6 +79,12 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
+  if(fileinfo.size() == 0)
+  {
+    CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
+    return 0;
+  }
+  
   // Test if input is mesh or point set
   bool input_is_mesh = false;
   std::string line;

@@ -20,8 +20,9 @@
 
 #ifndef CGAL_WRAPPER_POINT_D_H
 #define CGAL_WRAPPER_POINT_D_H
-
 #include <ostream>
+#include <istream>
+#include <CGAL/IO/io.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/representation_tags.h>
@@ -76,9 +77,18 @@ public:
   typedef          R_                       R;
 
 #ifdef CGAL_CXX11
+#if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
+#  pragma warning(push)
+#  pragma warning(disable: 4309)
+#endif
+  
   template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Point_d> >::value>::type> explicit Point_d(U&&...u)
 	  : Rep(CPBase()(std::forward<U>(u)...)){}
 
+#if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
+#  pragma warning(pop)
+#endif
+  
 //  // called from Construct_point_d
 //  template<class...U> explicit Point_d(Eval_functor&&,U&&...u)
 //	  : Rep(Eval_functor(), std::forward<U>(u)...){}
@@ -247,8 +257,6 @@ public:
 template <class R_> Point_d<R_>::Point_d(Point_d &)=default;
 #endif
 
-//TODO: IO
-
 template <class R_>
 std::ostream& operator <<(std::ostream& os, const Point_d<R_>& p)
 {
@@ -259,12 +267,55 @@ std::ostream& operator <<(std::ostream& os, const Point_d<R_>& p)
         CPI(typename Point_d<R_>::Rep,Begin_tag)
       >::type>::type
     b = p.cartesian_begin(),
-    e = p.cartesian_end();
-  os << p.dimension();
-  for(; b != e; ++b){
-    os << " " << *b;
+      e = p.cartesian_end();
+  if(is_ascii(os))
+  {
+    os << p.dimension();
+    for(; b != e; ++b){
+      os << " " << *b;
+    }
+  }
+  else
+  {
+    write(os, p.dimension());
+    for(; b != e; ++b){
+      write(os, *b);
+    }
   }
   return os;
+}
+
+// TODO: test if the stream is binary or text?
+template<typename K>
+std::istream &
+operator>>(std::istream &is, Point_d<K> & p)
+{
+  typedef typename Get_type<K, Point_tag>::type P;
+  typedef typename Get_type<K, FT_tag>::type   FT;
+  int dim;
+  if( is_ascii(is) )
+    is >> dim;
+  else
+  {
+    read(is, dim);
+  }
+  
+  if(!is) return is;
+  std::vector<FT> coords(dim);
+  if(is_ascii(is))
+  {
+    for(int i=0;i<dim;++i)
+      is >> iformat(coords[i]);
+  }
+  else
+  {
+    for(int i=0;i<dim;++i)
+      read(is, coords[i]);
+  }
+  
+  if(is)
+    p = P(coords.begin(), coords.end());
+  return is;
 }
 
 //template <class R_>
@@ -281,5 +332,4 @@ std::ostream& operator <<(std::ostream& os, const Point_d<R_>& p)
 
 } //namespace Wrap
 } //namespace CGAL
-
 #endif // CGAL_WRAPPER_POINT_D_H

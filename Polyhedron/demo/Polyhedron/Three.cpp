@@ -3,6 +3,8 @@
 #include <QMetaMethod>
 #include <QAction>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include "Messages_interface.h"
+
 using namespace CGAL::Three;
 
 QMainWindow* Three::s_mainwindow = NULL;
@@ -11,6 +13,9 @@ QObject* Three::s_connectable_scene = NULL;
 Three* Three::s_three = NULL;
 RenderingMode Three::s_defaultSMRM;
 RenderingMode Three::s_defaultPSRM;
+int Three::default_point_size;
+int Three::default_normal_length;
+int Three::default_lines_width;
 
 QMainWindow* Three::mainWindow()
 {
@@ -27,10 +32,6 @@ QObject* Three::connectableScene()
   return s_connectable_scene;
 }
 
-Three* Three::messages()
-{
-  return s_three;
-}
 
 Three::Three()
 {
@@ -133,6 +134,18 @@ void Three::autoConnectActions(Polyhedron_demo_plugin_interface *plugin)
   } // end foreach action of actions()
 }
 
+void Three::information(QString s)
+{
+  qobject_cast<Messages_interface*>(mainWindow())->message_information(s);
+}
+void Three::warning(QString s)
+{
+  qobject_cast<Messages_interface*>(mainWindow())->message_warning(s);
+}
+void Three::error(QString s)
+{
+  qobject_cast<Messages_interface*>(mainWindow())->message_error(s);
+}
 RenderingMode Three::defaultSurfaceMeshRenderingMode()
 {
   return s_defaultSMRM;
@@ -184,3 +197,17 @@ RenderingMode Three::modeFromName(QString name) {
   return Points;
 }
 
+int Three::getDefaultPointSize()
+{
+  return default_point_size;
+}
+
+int Three::getDefaultNormalLength()
+{
+  return default_normal_length;
+}
+
+int Three::getDefaultLinesWidth()
+{
+  return default_lines_width;
+}

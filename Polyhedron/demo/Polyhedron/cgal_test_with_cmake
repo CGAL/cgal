@@ -203,6 +203,7 @@ selection_plugin \
 selection_sm_plugin \
 self_intersection_plugin \
 shortest_path_plugin \
+surface_mesh_approximation_plugin \
 stl_plugin \
 subdivision_methods_plugin \
 surface_mesh_io_plugin \

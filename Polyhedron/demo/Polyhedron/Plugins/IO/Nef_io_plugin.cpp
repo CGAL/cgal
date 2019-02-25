@@ -1,6 +1,7 @@
 #include "Scene_nef_polyhedron_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 #include <fstream>
 #include <limits>
 
@@ -11,7 +12,7 @@ class Polyhedron_demo_io_nef_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "nef_io_plugin.json")
 
 public:
   QString nameFilters() const;
@@ -47,6 +48,11 @@ Polyhedron_demo_io_nef_plugin::load(QFileInfo fileinfo) {
   // Try to read .nef3 in a polyhedron
   Scene_nef_polyhedron_item* item = new Scene_nef_polyhedron_item();
   item->setName(fileinfo.baseName());
+  if(fileinfo.size() == 0)
+  {
+    CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
+    return item;
+  }
   if(!item->load(in))
   {
     delete item;

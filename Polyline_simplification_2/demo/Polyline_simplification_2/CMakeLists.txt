@@ -9,9 +9,11 @@ if(NOT POLICY CMP0070 AND POLICY CMP0053)
   cmake_policy(SET CMP0053 OLD)
 endif()
 
-find_package(CGAL COMPONENTS Qt5)
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
 
-include(${CGAL_USE_FILE})
+find_package(CGAL COMPONENTS Qt5)
 
 find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Widgets Svg)
 

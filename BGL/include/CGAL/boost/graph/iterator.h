@@ -1281,7 +1281,7 @@ template <typename Graph>
 Iterator_range<Vertex_around_target_iterator<Graph> >
 adjacent_vertices(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
-  typedef Vertex_around_face_iterator<Graph> I;
+  typedef Vertex_around_target_iterator<Graph> I;
   return make_range(I(h,g), I(h,g,1));
 }
 
@@ -1290,7 +1290,7 @@ template <typename Graph>
 Iterator_range<Vertex_around_target_iterator<Graph> >
 adjacent_vertices(typename boost::graph_traits<Graph>::vertex_descriptor v, const Graph& g)
 {
-  typedef Vertex_around_face_iterator<Graph> I;
+  typedef Vertex_around_target_iterator<Graph> I;
   return make_range(I(halfedge(v,g),g), I(halfedge(v,g),g,1));
 }
 

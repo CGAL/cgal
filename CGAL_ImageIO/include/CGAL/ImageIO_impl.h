@@ -168,7 +168,7 @@ unsigned int ImageIO_limit_len(size_t to_be_read)
 CGAL_INLINE_FUNCTION
 size_t ImageIO_write(const _image *im, const void *buf, size_t len) {
   size_t to_be_written = len;
-  int l = -1;
+  std::ptrdiff_t l = -1;
   char *b = (char*)buf;
 
   switch(im->openMode) {
@@ -1079,7 +1079,11 @@ _image *_readImageHeaderAndGetError( const char *name_to_be_read, int *error )
   _openReadImage(im, name);	
 
   if(!im->fd) {
-    fprintf(stderr, "_readImageHeaderAndGetError: error: unable to open file \'%s\'\n", name);
+    if(name == NULL) {
+      fprintf(stderr, "_readImageHeaderAndGetError: error: NULL file name\n");
+    }  else {
+      fprintf(stderr, "_readImageHeaderAndGetError: error: unable to open file \'%s\'\n", name);
+    }
     _freeImage(im);
     *error = ImageIO_OPENING;
     if ( name != NULL ) free( name );

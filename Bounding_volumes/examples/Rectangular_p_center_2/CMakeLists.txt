@@ -1,23 +1,16 @@
 project( Rectangular_p_center_2_Examples )
 
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 3.1)
 
 find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
-
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
-  include_directories (BEFORE "../../include")
 
   # create a target per cppfile
   file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
   foreach(cppfile ${cppfiles})
     create_single_source_cgal_program( "${cppfile}" )
   endforeach()
-
 
 else()
   

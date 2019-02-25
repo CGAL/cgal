@@ -32,8 +32,6 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Filtered_bbox_circular_kernel_2.h>
-#include <CGAL/intersections.h>
-#include <iostream>
 
 typedef CGAL::MP_Float RT;
 typedef CGAL::Quotient<RT> NT1;

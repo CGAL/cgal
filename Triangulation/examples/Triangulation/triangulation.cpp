@@ -1,5 +1,5 @@
-#if defined(__GNUC__) && defined(__GNUC_MINOR__) && (__GNUC__ <= 4) && (__GNUC_MINOR__ < 4)
-
+#include <CGAL/config.h>
+#if defined(BOOST_GCC) && (__GNUC__ <= 4) && (__GNUC_MINOR__ < 4)
 #include <iostream>
 int main()
 {

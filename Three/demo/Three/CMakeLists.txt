@@ -4,21 +4,14 @@
 
 project( Three_Demo )
 
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 3.1)
 
 set(CMAKE_CXX_STANDARD 14)
 
 find_package(CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
-
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
-  include_directories (BEFORE "../../include")
-
-
+    include(${CGAL_USE_FILE})
 else()
   
     message(STATUS "This program requires the CGAL library, and will not be compiled.")

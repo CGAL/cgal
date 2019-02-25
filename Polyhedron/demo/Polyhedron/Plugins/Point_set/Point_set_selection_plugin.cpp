@@ -1,6 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Bbox_2.h>
-#include <CGAL/Polygon_2.h>
 #include <QtCore/qglobal.h>
 #include <CGAL/Qt/manipulatedCameraFrame.h>
 #include <CGAL/Search_traits_3.h>
@@ -17,6 +16,7 @@
 
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 #include "ui_Point_set_selection_widget.h"
 #include <Plugins/PCA/Scene_edit_box_item.h>
 #include "Point_set_3.h"
@@ -36,7 +36,7 @@
 #include <map>
 #include <fstream>
 #include <boost/make_shared.hpp>
-
+#include "Selection_visualizer.h"
 
 //#undef  CGAL_LINKED_WITH_TBB
 #ifdef CGAL_LINKED_WITH_TBB
@@ -46,158 +46,7 @@
 #include <tbb/scalable_allocator.h>  
 #endif // CGAL_LINKED_WITH_TBB
 
-// Class for visualizing selection 
-// provides mouse selection functionality
-class Q_DECL_EXPORT Scene_point_set_selection_visualizer
-{
 
- private:
-  typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-  typedef K::Point_2 Point_2;
-  typedef K::Point_3 Point_3;
-  typedef CGAL::Polygon_2<K> Polygon_2;
-  typedef std::vector<Point_2> Polyline_2;
-  typedef std::vector<Polyline_2> Polylines;
-  typedef Scene_item::Bbox Bbox;
-  
-  bool rectangle;
-  std::vector<Point_2> contour_2d;
-  Polylines* polyline;
-  Scene_item::Bbox point_set_bbox;
-  CGAL::Bbox_2 domain_rectangle;
-  Polygon_2 domain_freeform;
-  
-public:
-
-  Scene_point_set_selection_visualizer(bool rectangle, const Bbox& point_set_bbox)
-    : rectangle (rectangle), point_set_bbox (point_set_bbox)
-  {
-    polyline = new Polylines(0);
-    polyline->push_back(Polyline_2());
-  }
-  ~Scene_point_set_selection_visualizer() {
-  }
-
-  void render(QImage& image) const {
-
-    CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(*CGAL::QGLViewer::QGLViewerPool().begin());
-
-    QPen pen;
-    pen.setColor(QColor(Qt::green));
-    pen.setWidth(5);
-    QImage temp(image);
-
-    QPainter *painter = new QPainter(&temp);
-    painter->setPen(pen);
-    for(std::size_t i=0; i<polyline->size(); ++i)
-    {
-      Polyline_2 poly = (*polyline)[i];
-      if(!poly.empty())
-        for(std::size_t j=0; j<poly.size()-1; ++j)
-        {
-          painter->drawLine(poly[j].x(), poly[j].y(), poly[j+1].x(), poly[j+1].y());
-        }
-    }
-    painter->end();
-    delete painter;
-    viewer->set2DSelectionMode(true);
-    viewer->setStaticImage(temp);
-    viewer->update();
-  }
-
-  Polyline_2& poly() const
-  { return polyline->front(); }
-  
-  bool update_polyline () const
-  {
-    if (contour_2d.size() < 2 ||
-        (!(poly().empty()) && contour_2d.back () == poly().back()))
-      return false;
-    
-    if (rectangle)
-      {
-	poly().clear();
-	
-        poly().push_back ( Point_2 (domain_rectangle.xmin(),
-                                domain_rectangle.ymin()));
-        poly().push_back ( Point_2 (domain_rectangle.xmax(),
-                                domain_rectangle.ymin()));
-        poly().push_back ( Point_2 (domain_rectangle.xmax(),
-                                domain_rectangle.ymax()));
-        poly().push_back ( Point_2 (domain_rectangle.xmin(),
-                                domain_rectangle.ymax()));
-        poly().push_back ( Point_2 (domain_rectangle.xmin(),
-                                                domain_rectangle.ymin()));
-
-      }
-    else
-      {
-        if (!(poly().empty()) && contour_2d.back () == poly().back())
-	  return false;
-
-	poly().clear();
-
-	for (unsigned int i = 0; i < contour_2d.size (); ++ i)
-          poly().push_back (contour_2d[i]);
-      }
-    return true;
-  }
-
-  
-  void sample_mouse_path(QImage& image)
-  {
-    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
-    const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
-    
-    if (rectangle && contour_2d.size () == 2)
-      {
-	contour_2d[1] = Point_2 (p.x (), p.y ());
-	domain_rectangle = CGAL::bbox_2 (contour_2d.begin (), contour_2d.end ());
-      }
-    else
-      contour_2d.push_back (Point_2 (p.x (), p.y ()));
-
-    if (update_polyline ())
-      {
-
-        render(image);
-      }
-  }
-
-  void apply_path()
-  {
-    update_polyline ();
-    domain_rectangle = CGAL::bbox_2 (contour_2d.begin (), contour_2d.end ());    
-    if (!rectangle)
-      domain_freeform = Polygon_2 (contour_2d.begin (), contour_2d.end ());
-  }
-
-  bool is_selected (CGAL::qglviewer::Vec& p)
-  {
-    if (domain_rectangle.xmin () < p.x &&
-	p.x < domain_rectangle.xmax () &&
-	domain_rectangle.ymin () < p.y &&
-	p.y < domain_rectangle.ymax ())
-      {
-	if (rectangle)
-	  return true;
-/*
- * domain_freeform.has_on_bounded_side() requires the polygon to be simple, which is never the case.
- * However, it works very well even if the polygon is not simple, so we use this instead to avoid
- * the cgal_assertion on is_simple().*/
-
-
-        if (CGAL::bounded_side_2(domain_freeform.container().begin(),
-                                 domain_freeform.container().end(),
-                                 Point_2(p.x, p.y),
-                                 domain_freeform.traits_member())  == CGAL::ON_BOUNDED_SIDE)
-          return true;
-      }
-    return false;
-  }
-
-
-}; // end class Scene_point_set_selection_visualizer
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -208,7 +57,7 @@ class Selection_test {
   CGAL::qglviewer::Camera* camera;
   const CGAL::qglviewer::Vec offset;
   Scene_edit_box_item* edit_box;
-  Scene_point_set_selection_visualizer* visualizer;
+  Selection_visualizer* visualizer;
   const Ui::PointSetSelection& ui_widget;
 
   
@@ -219,7 +68,7 @@ public:
                  CGAL::qglviewer::Camera* camera,
                  const CGAL::qglviewer::Vec offset,
                  Scene_edit_box_item* edit_box,
-                 Scene_point_set_selection_visualizer* visualizer,
+                 Selection_visualizer* visualizer,
                  const Ui::PointSetSelection& ui_widget)
     : point_set (point_set)
     , selected (selected)
@@ -241,10 +90,9 @@ public:
 
   void apply (std::size_t i) const
   {
-    Point_set::const_iterator it = point_set->begin() + i;
-    bool already_selected = point_set->is_selected (it);
+    Point_set::Index idx = *(point_set->begin() + i);
 
-    const Kernel::Point_3& p = point_set->point (*it);
+    const Kernel::Point_3& p = point_set->point (idx);
     CGAL::qglviewer::Vec vp (p.x (), p.y (), p.z ());
     bool now_selected = false;
     if(!ui_widget.box->isChecked())
@@ -267,13 +115,17 @@ public:
     }
 
     if (ui_widget.new_selection->isChecked())
-      selected[i] = now_selected;
-    else if (ui_widget.union_selection->isChecked())
-      selected[i] = (already_selected || now_selected);
-    else if (ui_widget.intersection->isChecked())
-      selected[i] = (already_selected && now_selected);
-    else if (ui_widget.diff->isChecked())
-      selected[i] = (already_selected && !now_selected);
+      selected[idx] = now_selected;
+    else
+    {
+      bool already_selected = point_set->is_selected (idx);
+      if (ui_widget.union_selection->isChecked())
+        selected[idx] = (already_selected || now_selected);
+      else if (ui_widget.intersection->isChecked())
+        selected[idx] = (already_selected && now_selected);
+      else if (ui_widget.diff->isChecked())
+        selected[idx] = (already_selected && !now_selected);
+    }
   }
 };
 
@@ -335,26 +187,13 @@ public:
         selected_bitmap[nit->first] = true;
     }
 
-    std::vector<Point_set::Index> unselected, selected;
-    
-    for(Point_set::iterator it = points_item->point_set()->begin ();
-	it != points_item->point_set()->end(); ++ it)
-      if (points_item->point_set()->is_selected(it) || selected_bitmap[*it])
-        selected.push_back (*it);
-      else
-        unselected.push_back (*it);
-
-    for (std::size_t i = 0; i < unselected.size(); ++ i)
-      *(points_item->point_set()->begin() + i) = unselected[i];
-    for (std::size_t i = 0; i < selected.size(); ++ i)
-      *(points_item->point_set()->begin() + (unselected.size() + i)) = selected[i];
-
-    if (selected.empty ())
-      points_item->point_set()->unselect_all();
-    else
+    Point_set::iterator it = points_item->point_set()->begin ();
+    while (it != points_item->point_set()->first_selected())
     {
-      points_item->point_set()->set_first_selected
-        (points_item->point_set()->begin() + unselected.size());
+      if (selected_bitmap[*it])
+        points_item->point_set()->select(*it);
+      else
+        ++ it;
     }
 
     points_item->invalidateOpenGLBuffers();
@@ -387,29 +226,14 @@ public:
         }
     }
 
-    std::vector<Point_set::Index> unselected, selected;
+    Point_set::iterator it = points_item->point_set()->first_selected ();
+    while (it != points_item->point_set()->end())
+    {
+      if (!selected_bitmap[*it])
+        points_item->point_set()->unselect(*it);
 
-    for(Point_set::iterator it = points_item->point_set()->begin ();
-	it != points_item->point_set()->end(); ++ it)
-      if (points_item->point_set()->is_selected(it) && selected_bitmap[*it])
-        selected.push_back (*it);
-      else
-        unselected.push_back (*it);
-
-    for (std::size_t i = 0; i < unselected.size(); ++ i)
-      *(points_item->point_set()->begin() + i) = unselected[i];
-    for (std::size_t i = 0; i < selected.size(); ++ i)
-      *(points_item->point_set()->begin() + (unselected.size() + i)) = selected[i];
-
-    if (selected.empty ())
-      {
-	points_item->point_set()->unselect_all();
-      }
-    else
-      {
-	points_item->point_set()->set_first_selected
-	  (points_item->point_set()->begin() + unselected.size());
-      }
+      ++ it;
+    }
 
     points_item->invalidateOpenGLBuffers();
     points_item->itemChanged();
@@ -567,7 +391,7 @@ public:
   bool applicable(QAction*) const { 
       return qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
   }
-  void print_message(QString message) { messages->information(message); }
+  void print_message(QString message) { CGAL::Three::Three::information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionPointSetSelection; }
 
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m) {
@@ -578,6 +402,7 @@ public:
     rg_cluster_epsilon = -1;
     rg_normal_threshold = 20;
     actionPointSetSelection = new QAction(tr("Selection"), mw);
+    actionPointSetSelection->setObjectName("actionPointSetSelection");
     connect(actionPointSetSelection, SIGNAL(triggered()), this, SLOT(selection_action()));
 
     dock_widget = new QDockWidget("Point Set Selection", mw);
@@ -697,7 +522,7 @@ protected:
             if (viewer->camera()->frame()->isSpinning())
               viewer->camera()->frame()->stopSpinning();
 	
-            visualizer = new Scene_point_set_selection_visualizer(ui_widget.rectangle->isChecked(),
+            visualizer = new Selection_visualizer(ui_widget.rectangle->isChecked(),
                                                                   point_set_item->bbox());
 
             visualizer->sample_mouse_path(background);
@@ -767,7 +592,7 @@ protected:
       
       Neighbor_search search(tree, Point(point.x, point.y, point.z), 1);
       Point res = search.begin()->first;
-      messages->information(QString("Selected point : (%1, %2, %3)").arg(res.x()).arg(res.y()).arg(res.z()));
+      CGAL::Three::Three::information(QString("Selected point : (%1, %2, %3)").arg(res.x()).arg(res.y()).arg(res.z()));
     }
     return false;
   }
@@ -804,32 +629,25 @@ protected Q_SLOTS:
       selection_test.apply(i);
 #endif
 
-    std::vector<Point_set::Index> unselected, selected;
-    for (std::size_t i = 0; i < points->size(); ++ i)
+    Point_set::iterator it = points->begin ();
+    Point_set::iterator first_selected = points->first_selected ();
+    while (it != points->first_selected())
     {
-      Point_set::Index idx = *(points->begin() + i);
-      if (selected_bitmap[i])
-        selected.push_back (idx);
+      if (selected_bitmap[*it])
+        points->select(*it);
       else
-        unselected.push_back (idx);
+        ++ it;
     }
-    delete[] selected_bitmap;
-    
-    for (std::size_t i = 0; i < unselected.size(); ++ i)
-      *(points->begin() + i) = unselected[i];
-    for (std::size_t i = 0; i < selected.size(); ++ i)
-      *(points->begin() + (unselected.size() + i)) = selected[i];
 
-    if (selected.empty ())
-      {
-	points->unselect_all();
-      }
-    else
-      {
-	points->set_first_selected
-	  (points->begin() + unselected.size());
-      }
-    
+    it = first_selected;
+    while (it != points->end())
+    {
+      if (!selected_bitmap[*it])
+        points->unselect(*it);
+
+      ++ it;
+    }
+
     point_set_item->invalidateOpenGLBuffers();
     point_set_item->itemChanged();
   }
@@ -937,57 +755,25 @@ public Q_SLOTS:
       return;
     }
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    Scene_points_with_normal_item* new_item = new Scene_points_with_normal_item();
+    Scene_points_with_normal_item* new_item = new Scene_points_with_normal_item;
+    new_item->point_set()->copy_properties (*(point_set_item->point_set()));
+    new_item->point_set()->check_colors();
+
     new_item->setName(QString("%1 (selected points)").arg(point_set_item->name()));
-    if (point_set_item->has_normals())
-      new_item->point_set()->add_normal_map();
-    Point_set::Byte_map red, green, blue;
-    Point_set::Double_map fred, fgreen, fblue;
-    if (point_set_item->point_set()->has_colors())
-      {
-        if (point_set_item->point_set()->has_byte_colors())
-          {
-            red = new_item->point_set()->add_property_map<unsigned char>("red", 0).first;
-            green = new_item->point_set()->add_property_map<unsigned char>("green", 0).first;
-            blue = new_item->point_set()->add_property_map<unsigned char>("blue", 0).first;
-          }
-        else
-          {
-            fred = new_item->point_set()->add_property_map<double>("red", 0).first;
-            fgreen = new_item->point_set()->add_property_map<double>("green", 0).first;
-            fblue = new_item->point_set()->add_property_map<double>("blue", 0).first;
-          }
-        new_item->point_set()->check_colors(); 
-      }
     
     new_item->setColor(point_set_item->color());
     new_item->setRenderingMode(point_set_item->renderingMode());
     new_item->setVisible(point_set_item->visible());
+    
+    std::cerr << point_set_item->point_set()->info() << std::endl;
+    std::cerr << new_item->point_set()->info() << std::endl;
 
     typedef Point_set_3<Kernel> Point_set;
     for(Point_set::iterator it = point_set_item->point_set()->first_selected ();
-	it != point_set_item->point_set()->end(); ++ it)
-      {
-        Point_set::iterator new_point =
-          new_item->point_set()->insert(point_set_item->point_set()->point(*it));
-        if (point_set_item->has_normals())
-          new_item->point_set()->normal(*new_point) = point_set_item->point_set()->normal(*it);
-        if (point_set_item->point_set()->has_colors())
-          {
-            if (point_set_item->point_set()->has_byte_colors())
-              {
-                red[*new_point] = (unsigned char)(255. * point_set_item->point_set()->red(*it));
-                green[*new_point] = (unsigned char)(255. * point_set_item->point_set()->green(*it));
-                blue[*new_point] = (unsigned char)(255. * point_set_item->point_set()->blue(*it));
-              }
-            else
-              {
-                fred[*new_point] = point_set_item->point_set()->red(*it);
-                fgreen[*new_point] = point_set_item->point_set()->green(*it);
-                fblue[*new_point] = point_set_item->point_set()->blue(*it);
-              }
-          }
-      }
+        it != point_set_item->point_set()->end(); ++ it)
+    {
+      new_item->point_set()->insert (*(point_set_item->point_set()), *it);
+    }
     new_item->resetSelection();
     new_item->invalidateOpenGLBuffers();
 
@@ -1035,7 +821,7 @@ private:
   QAction* add_box;
   
   Ui::PointSetSelection ui_widget;
-  Scene_point_set_selection_visualizer* visualizer;
+  Selection_visualizer* visualizer;
   Neighborhood neighborhood;
   bool shift_pressing;
   bool ctrl_pressing;

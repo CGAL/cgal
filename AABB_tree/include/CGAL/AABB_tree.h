@@ -156,7 +156,29 @@ namespace CGAL {
     /// `build()` explicitly to ensure that the next call to
     /// query functions will not trigger the reconstruction of the
     /// data structure.
+    /// A call to `AABBTraits::set_shared_data(t...)`
+    /// is made using the internally stored traits.
+    /// For compilers that do not support variadic templates,
+    /// overloads up to 5 template arguments are provided.
+#if !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)
+    template<typename ... T>
+    void build(T&& ...);
+#ifndef DOXYGEN_RUNNING
     void build();
+#endif
+#else
+    void build();
+    template<typename T1>
+    void build(T1& t1);
+    template<typename T1, typename T2>
+    void build(T1& t1, T2& t2);
+    template<typename T1, typename T2,typename T3>
+    void build(T1& t1, T2& t2, T3& t3);
+    template<typename T1, typename T2,typename T3,typename T4>
+    void build(T1& t1, T2& t2, T3& t3, T4& t4);
+    template<typename T1, typename T2,typename T3,typename T4,typename T5>
+    void build(T1& t1, T2& t2, T3& t3, T4& t4, T5& t5);
+#endif
     ///@}
 
 		/// \name Operations
@@ -406,6 +428,12 @@ public:
     /// `bool operator()(const Primitive_id& id) const`
     /// that returns `true` in order to skip the primitive.
     /// Defaults to a functor that always returns `false`.
+    ///
+    /// \note `skip` might be given some primitives that are not intersected by `query`
+    ///       because the intersection test is done after the skip test. Also note that
+    ///       the order the primitives are given to `skip` is not necessarily the
+    ///       intersection order with `query`.
+    ///
     ///
     /// `AABBTraits` must be a model of `AABBRayIntersectionTraits` to
     /// call this member function.
@@ -740,7 +768,7 @@ public:
                              ConstPrimitiveIterator beyond,
                              T&& ... t)
 	{
-    set_shared_data(std::forward<T>(t)...);
+		set_shared_data(std::forward<T>(t)...);
 		while(first != beyond)
 		{
 			m_primitives.push_back(Primitive(first,std::forward<T>(t)...));
@@ -764,6 +792,14 @@ public:
 
     build();
 	}  
+        
+        template<typename Tr>
+        template<typename ... T>
+        void AABB_tree<Tr>::build(T&& ... t)
+        {
+          set_shared_data(std::forward<T>(t)...);
+          build();
+        }
   #else
   //=============constructor======================
 	template<typename Tr>
@@ -1045,7 +1081,43 @@ public:
 
     build();
 	}
-  #endif
+        //overloads calling set_shared_data()
+        template<typename Tr>
+        template<typename T1>
+        void AABB_tree<Tr>::build(T1& t1)
+        {
+          set_shared_data(t1);
+          build();
+        }
+        template<typename Tr>
+        template<typename T1, typename T2>
+        void AABB_tree<Tr>::build(T1& t1, T2& t2)
+        {
+          set_shared_data(t1, t2);
+          build();
+        }
+        template<typename Tr>
+        template<typename T1, typename T2, typename T3>
+        void AABB_tree<Tr>::build(T1& t1, T2& t2, T3& t3)
+        {
+          set_shared_data(t1, t2, t3);
+          build();
+        }
+        template<typename Tr>
+        template<typename T1, typename T2, typename T3, typename T4>
+        void AABB_tree<Tr>::build(T1& t1, T2& t2, T3& t3, T4& t4)
+        {
+          set_shared_data(t1, t2, t3, t4);
+          build();
+        }
+        template<typename Tr>
+        template<typename T1, typename T2, typename T3, typename T4, typename T5>
+        void AABB_tree<Tr>::build(T1& t1, T2& t2, T3& t3, T4& t4, T5& t5)
+        {
+          set_shared_data(t1, t2, t3, t4, t5);
+          build();
+        }
+#endif
 
 	template<typename Tr>
 	void AABB_tree<Tr>::insert(const Primitive& p)
@@ -1074,7 +1146,7 @@ public:
 
 			// constructs the tree
 			m_p_root_node->expand(m_primitives.begin(), m_primitives.end(),
-														m_primitives.size(), m_traits);
+					      m_primitives.size(), m_traits);
 		}
 
 

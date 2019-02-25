@@ -1,5 +1,5 @@
-#if defined(__GNUC__) && defined(__GNUC_MINOR__) && (__GNUC__ <= 4) && (__GNUC_MINOR__ < 4)
-
+#include <CGAL/config.h>
+#if defined(BOOST_GCC) && (__GNUC__ <= 4) && (__GNUC_MINOR__ < 4)
 #include <iostream>
 int main()
 {
@@ -7,7 +7,6 @@ int main()
 }
 
 #else
-
 #include <CGAL/Epick_d.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Triangulation.h>
@@ -15,6 +14,8 @@ int main()
 #include <vector>
 #include <string>
 #include <fstream>
+#include <sstream>
+#include <CGAL/IO/Triangulation_off_ostream.h>
 
 using namespace std;
 
@@ -91,11 +92,32 @@ void test(const int d, const string & type, int N)
     assert( tri.number_of_vertices() == tri2.number_of_vertices() );
     assert( tri.number_of_full_cells() == tri2.number_of_full_cells() );
 
+    std::stringstream buffer;
+    buffer << tri;
+
     // CLEAR
     tri.clear();
     assert(-1==tri.current_dimension());
     assert(tri.empty());
     assert( tri.is_valid() );
+
+    buffer >> tri;
+    assert( tri.current_dimension() == tri2.current_dimension() );
+    assert( tri.maximal_dimension() == tri2.maximal_dimension() );
+    assert( tri.number_of_vertices() == tri2.number_of_vertices() );
+    assert( tri.number_of_full_cells() == tri2.number_of_full_cells() );
+    
+    std::ofstream ofs("tri", std::ios::binary);
+    ofs << tri;
+    ofs.close();
+    
+    std::ifstream ifs("tri", std::ios::binary);
+    ifs >> tri2;
+    ifs.close();
+    assert( tri.current_dimension() == tri2.current_dimension() );
+    assert( tri.maximal_dimension() == tri2.maximal_dimension() );
+    assert( tri.number_of_vertices() == tri2.number_of_vertices() );
+    assert( tri.number_of_full_cells() == tri2.number_of_full_cells() );
 }
 
 /*#define test_static(DIM) {  \

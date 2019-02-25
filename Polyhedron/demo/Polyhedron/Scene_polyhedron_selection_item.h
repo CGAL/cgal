@@ -384,21 +384,21 @@ public:
     std::string line;
     std::size_t id, id2;
 
-    if(!std::getline(in, line)) { return true; }
+    if(!std::getline(in, line)) { compute_normal_maps(); return true; }
     std::istringstream vertex_line(line);
     while(vertex_line >> id) {
       if(id >= all_vertices.size()) { return false; }
       selected_vertices.insert(all_vertices[id]);
     }
 
-    if(!std::getline(in, line)) { return true; }
+    if(!std::getline(in, line)) { compute_normal_maps(); return true; }
     std::istringstream facet_line(line);
     while(facet_line >> id) {
       if(id >= all_facets.size()) { return false; }
       selected_facets.insert(all_facets[id]);
     }
 
-    if(!std::getline(in, line)) { return true; }
+    if(!std::getline(in, line)) { compute_normal_maps(); return true; }
     std::istringstream edge_line(line);
     while(edge_line >> id >> id2) {
       if(id >= all_edges.size() || id2 >= all_edges.size()) { return false; }
@@ -793,6 +793,7 @@ public:
 
   void setItemIsMulticolor(bool b) {
     poly_item->setItemIsMulticolor(b);
+    poly_item->computeItemColorVectorAutomatically(b);
   }
 
   void selection_changed(bool b);
@@ -832,6 +833,7 @@ public Q_SLOTS:
     remove_erased_handles<fg_vertex_descriptor>();
     remove_erased_handles<fg_edge_descriptor>();
     remove_erased_handles<fg_face_descriptor>();
+    compute_normal_maps();
   }
   void endSelection(){
     Q_EMIT simplicesSelected(this);

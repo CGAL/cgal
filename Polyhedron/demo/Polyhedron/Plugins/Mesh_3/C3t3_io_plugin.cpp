@@ -3,6 +3,7 @@
 #include <CGAL/Mesh_3/tet_soup_to_c3t3.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 #include <CGAL/IO/File_avizo.h>
 #include <iostream>
 #include <fstream>
@@ -17,7 +18,7 @@ class Polyhedron_demo_c3t3_binary_io_plugin :
     Q_OBJECT
     Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
     Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "c3t3_io_plugin.json")
 
 public:
   void init(QMainWindow*, CGAL::Three::Scene_interface* sc, Messages_interface*)
@@ -66,6 +67,13 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
       return NULL;
     }
     Scene_c3t3_item* item = new Scene_c3t3_item();
+    
+    if(fileinfo.size() == 0)
+    {
+      CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
+      item->setName(fileinfo.completeBaseName());
+      return item;
+    }
     if(fileinfo.suffix().toLower() == "cgal")
     {
         item->setName(fileinfo.baseName());

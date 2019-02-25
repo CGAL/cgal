@@ -3,6 +3,7 @@
 #include <QAction>
 #include "Messages_interface.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 #include "Scene_surface_mesh_item.h"
 
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
@@ -138,12 +139,12 @@ private:
   void apply_corefine(Item* item1, Item* item2)
   {
     if(! CGAL::is_triangle_mesh(*item1->face_graph())) {
-      messages->warning(tr("The face graph \"%1\" is not triangulated.")
+      CGAL::Three::Three::warning(tr("The face graph \"%1\" is not triangulated.")
                         .arg(item1->name()));
       return;
     }
     if(! CGAL::is_triangle_mesh(*item2->face_graph())) {
-      messages->warning(tr("The face graph \"%1\" is not triangulated.")
+      CGAL::Three::Three::warning(tr("The face graph \"%1\" is not triangulated.")
                         .arg(item2->name()));
       return;
     }
@@ -151,6 +152,8 @@ private:
     QApplication::setOverrideCursor(Qt::WaitCursor);
     try{
       PMP::corefine(*item1->face_graph(), *item2->face_graph(), params::throw_on_self_intersection(true));
+      item1->resetColors();
+      item2->resetColors();
       item1->invalidateOpenGLBuffers();
       item2->invalidateOpenGLBuffers();
       scene->itemChanged(item2);
@@ -158,7 +161,7 @@ private:
     }
     catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
     {
-      messages->warning(tr("The requested operation is not possible due to the presence of self-intersections in the neighborhood of the intersection."));
+      CGAL::Three::Three::warning(tr("The requested operation is not possible due to the presence of self-intersections in the neighborhood of the intersection."));
     }
     // default cursor
     QApplication::restoreOverrideCursor();
@@ -169,12 +172,12 @@ private:
   {
     typedef typename Item::Face_graph FaceGraph;
     if(! CGAL::is_triangle_mesh(*first_item->face_graph())) {
-      messages->warning(tr("The polyhedron \"%1\" is not triangulated.")
+      CGAL::Three::Three::warning(tr("The polyhedron \"%1\" is not triangulated.")
                         .arg(first_item->name()));
       return;
     }
     if(! CGAL::is_triangle_mesh(*item->face_graph())) {
-      messages->warning(tr("The polyhedron \"%1\" is not triangulated.")
+      CGAL::Three::Three::warning(tr("The polyhedron \"%1\" is not triangulated.")
                         .arg(item->name()));
       return;
     }
@@ -191,7 +194,7 @@ private:
           if (! PMP::corefine_and_compute_union(P, Q, *new_poly, params::throw_on_self_intersection(true)) )
           {
             delete new_poly;
-            messages->warning(tr("The result of the requested operation is not manifold and has not been computed."));
+            CGAL::Three::Three::warning(tr("The result of the requested operation is not manifold and has not been computed."));
             // default cursor
             QApplication::restoreOverrideCursor();
             return;
@@ -203,7 +206,7 @@ private:
           if (! PMP::corefine_and_compute_intersection(P, Q, *new_poly, params::throw_on_self_intersection(true)) )
           {
             delete new_poly;
-            messages->warning(tr("The result of the requested operation is not manifold and has not been computed."));
+            CGAL::Three::Three::warning(tr("The result of the requested operation is not manifold and has not been computed."));
             // default cursor
             QApplication::restoreOverrideCursor();
             return;
@@ -218,7 +221,7 @@ private:
           if (! PMP::corefine_and_compute_difference(P, Q, *new_poly, params::throw_on_self_intersection(true)) )
           {
             delete new_poly;
-            messages->warning(tr("The result of the requested operation is not manifold and has not been computed."));
+            CGAL::Three::Three::warning(tr("The result of the requested operation is not manifold and has not been computed."));
             // default cursor
             QApplication::restoreOverrideCursor();
             return;
@@ -228,7 +231,7 @@ private:
     }
     catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
     {
-      messages->warning(tr("The requested operation is not possible due to the presence of self-intersections in the neighborhood of the intersection."));
+      CGAL::Three::Three::warning(tr("The requested operation is not possible due to the presence of self-intersections in the neighborhood of the intersection."));
       QApplication::restoreOverrideCursor();
     }
 

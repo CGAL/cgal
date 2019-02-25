@@ -3,6 +3,8 @@ if(CGAL_add_test_included)
 endif(CGAL_add_test_included)
 set(CGAL_add_test_included TRUE)
 
+option(BUILD_TESTING "Build the testing tree." OFF)
+
 if(NOT POLICY CMP0064)
   # CMake <= 3.3
   if(BUILD_TESTING)
@@ -19,7 +21,9 @@ if(NOT POLICY CMP0064)
   return()
 endif()
 
-include(CTest)
+if(BUILD_TESTING)
+  enable_testing()
+endif()
 
 cmake_policy(SET CMP0064 NEW)
 
@@ -42,7 +46,7 @@ endif()
 
 # Process a list, and replace items contains a file pattern (like
 # `*.off`) by the sublist that corresponds to the globbing of the
-# pattern in the directory `${CGAL_CURRENT_SOURCE_DIR}`.
+# pattern in the directory `${CMAKE_CURRENT_SOURCE_DIR}`.
 #
 #
 # For example: the `file
@@ -71,7 +75,7 @@ function(expand_list_with_globbing list_name)
     list(GET input_list ${n} item_n)
 #    message(STATUS "argument ${n} is ${item_n}")
     if(item_n MATCHES ".*\\*.*")
-      file(GLOB files RELATIVE ${CGAL_CURRENT_SOURCE_DIR} ${item_n})
+      file(GLOB files RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${item_n})
       list(APPEND output_list ${files})
     else()
       list(APPEND output_list ${item_n})
@@ -97,7 +101,7 @@ function(cgal_setup_test_properties test_name)
   endif()
   set_property(TEST "${test_name}"
     APPEND PROPERTY LABELS "${PROJECT_NAME}")
-  #      message(STATUS "  working dir: ${CGAL_CURRENT_SOURCE_DIR}")
+  #      message(STATUS "  working dir: ${CMAKE_CURRENT_SOURCE_DIR}")
   set_property(TEST "${test_name}"
     PROPERTY WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   if(exe_name)
@@ -198,7 +202,7 @@ function(cgal_add_test exe_name)
     return()
   endif()
 #  message("Add test ${test_name}")
-  set(cin_file "${CGAL_CURRENT_SOURCE_DIR}/${exe_name}.cin")
+  set(cin_file "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cin")
   if(NOT ARGS AND EXISTS ${cin_file})
     add_test(NAME ${test_name}
       COMMAND ${TIME_COMMAND} ${CMAKE_COMMAND}
@@ -213,11 +217,11 @@ function(cgal_add_test exe_name)
   else()
     if(NOT ARGS AND NOT cgal_add_test_TEST_NAME)
       if(ARGC GREATER 2 AND ARGV2)
-        set(cmd_file "${CGAL_CURRENT_SOURCE_DIR}/${ARGV2}.cmd")
+        set(cmd_file "${CMAKE_CURRENT_SOURCE_DIR}/${ARGV2}.cmd")
       elseif(ARGC GREATER 1 AND ARGV1 AND NOT EXISTS ${cmd_file})
-        set(cmd_file "${CGAL_CURRENT_SOURCE_DIR}/${ARGV1}.cmd")
+        set(cmd_file "${CMAKE_CURRENT_SOURCE_DIR}/${ARGV1}.cmd")
       elseif(NOT EXISTS ${cmd_file})
-        set(cmd_file "${CGAL_CURRENT_SOURCE_DIR}/${exe_name}.cmd")
+        set(cmd_file "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cmd")
       endif()
       if(EXISTS ${cmd_file})
         file(STRINGS "${cmd_file}" CMD_LINES)

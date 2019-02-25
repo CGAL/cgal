@@ -13,7 +13,7 @@ get_filename_component(CGAL_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 set(CGAL_HEADER_ONLY "@CGAL_HEADER_ONLY@" )
 
 # CGAL_DIR is the directory where this CGALConfig.cmake is installed
-string(REPLACE "@CGAL_INSTALL_CMAKE_DIR@" "" CGAL_INSTALL_PREFIX "${CGAL_CONFIG_DIR}")
+string(REPLACE "/@CGAL_INSTALL_CMAKE_DIR@" "" CGAL_INSTALL_PREFIX "${CGAL_CONFIG_DIR}")
 
  if(NOT EXISTS "${CGAL_INSTALL_PREFIX}/@CGAL_INSTALL_CMAKE_DIR@/CGALConfig.cmake")
     # Cannot compute CGAL_INSTALL_PREFIX!
@@ -111,6 +111,14 @@ macro(check_cgal_component COMPONENT)
           else()
             set( CGAL_Qt5_FOUND TRUE )
           endif()
+        elseif("${CGAL_LIB}" STREQUAL "CGAL_Core")
+          include("${CGAL_MODULES_DIR}/CGAL_SetupCGAL_CoreDependencies.cmake")
+          if(CGAL_Core_MISSING_DEPS)
+            set( CGAL_Core_FOUND FALSE )
+            message(STATUS "libCGAL_Core is missing the dependencies: ${CGAL_Core_MISSING_DEPS} cannot be configured.")
+          else()
+            set( CGAL_Core_FOUND TRUE )
+          endif()
         else("${CGAL_LIB}" STREQUAL "CGAL_Qt5")
           # Librairies that have no dependencies
           set( ${CGAL_LIB}_FOUND TRUE )
@@ -154,6 +162,7 @@ set(CGAL_DISABLE_GMP "@CGAL_DISABLE_GMP@")
 
 include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
+include(${CGAL_MODULES_DIR}/CGAL_Common.cmake)
 
 # Temporary? Change the CMAKE module path
 cgal_setup_module_path()

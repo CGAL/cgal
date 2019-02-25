@@ -411,6 +411,14 @@ compute_face_face_intersection(const FaceRange& face_range1,
   typedef TriangleMesh TM;
   typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
   typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, face_descriptor> Box;
+  
+  CGAL::Bbox_3 b1 = CGAL::Polygon_mesh_processing::bbox(tm1, np1),
+               b2 = CGAL::Polygon_mesh_processing::bbox(tm2, np2);
+  
+  if(!CGAL::do_overlap(b1, b2))
+  {
+    return out;
+  }
 
   // make one box per facet
   std::vector<Box> boxes1;
@@ -525,6 +533,11 @@ compute_face_polyline_intersection( const FaceRange& face_range,
 
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
 
+  CGAL::Bbox_3 b1 = CGAL::Polygon_mesh_processing::bbox(tm, np),
+               b2 = CGAL::bbox_3(polyline.begin(), polyline.end());
+
+  if(!CGAL::do_overlap(b1,b2))
+    return out;
   typedef TriangleMesh TM;
   typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
   typedef typename GetVertexPointMap<TM, NamedParameters>::const_type VertexPointMap;
@@ -648,7 +661,18 @@ compute_face_polylines_intersection(const FaceRange& face_range,
   using boost::get_param;
 
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
-
+  
+  CGAL::Bbox_3 b1,b2;
+  b1 = CGAL::Polygon_mesh_processing::bbox(tm, np);
+  for(std::size_t i =0; i< polyline_range.size(); ++i)
+  {
+    b2 += CGAL::bbox_3(polyline_range[i].begin(),
+                       polyline_range[i].end());
+  }
+  
+  if(!CGAL::do_overlap(b1,b2))
+    return out;
+  
   typedef TriangleMesh TM;
   typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
   typedef typename GetVertexPointMap<TM, NamedParameters>::const_type VertexPointMap;
@@ -849,18 +873,23 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
   std::vector<Box> boxes1;
   std::vector<Box> boxes2;
   std::size_t polylines_size = 0;
+  CGAL::Bbox_3 b1, b2;
   BOOST_FOREACH(Polyline poly, polylines1)
   {
     polylines_size += std::distance( boost::begin(poly), boost::end(poly) ) -1;
+    b1 += CGAL::bbox_3(poly.begin(), poly.end());
   }
   boxes1.reserve( polylines_size );
   polylines_size = 0;
   BOOST_FOREACH(Polyline poly, polylines2)
   {
     polylines_size += std::distance( boost::begin(poly), boost::end(poly) ) -1;
+    b2 += CGAL::bbox_3(poly.begin(), poly.end());
   }
   boxes2.reserve(polylines_size);
-
+  
+  if(!CGAL::do_overlap(b1,b2))
+    return out;
   std::size_t range_size = std::distance( boost::begin(polylines1), boost::end(polylines1) );
   for(std::size_t j = 0; j < range_size; ++j)
   {
@@ -1207,7 +1236,6 @@ bool do_intersect(const TriangleMesh& tm1,
 {
   using boost::choose_param;
   using boost::get_param;
-
   bool test_overlap =  choose_param(get_param(np1, internal_np::overlap_test),false) ||
                        choose_param(get_param(np2, internal_np::overlap_test),false);
 
@@ -1298,7 +1326,6 @@ bool do_intersect(const TriangleMesh& tm,
                  )
 {
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
-
   try
   {
     typedef boost::function_output_iterator<internal::Throw_at_first_output> OutputIterator;
@@ -1354,7 +1381,6 @@ bool do_intersect(const TriangleMesh& tm,
                  )
 {
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
-
   try
   {
     typedef boost::function_output_iterator<internal::Throw_at_first_output> OutputIterator;
@@ -1381,7 +1407,6 @@ bool do_intersect(const TriangleMesh& tm,
                   >::type* = 0)
 {
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
-
   return CGAL::Polygon_mesh_processing::do_intersect(tm, polylines, parameters::all_default());
 }
 
@@ -1404,7 +1429,6 @@ bool do_intersect(const TriangleMesh& tm,
                   >::type* = 0)
 {
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
-
   return CGAL::Polygon_mesh_processing::do_intersect(tm, polyline, parameters::all_default());
 }
 
