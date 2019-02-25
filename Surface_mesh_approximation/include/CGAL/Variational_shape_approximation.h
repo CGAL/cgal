@@ -1550,21 +1550,36 @@ private:
         const_cast<Boundary_cycle &>(bcycle).num_anchors = count;
         continue;
       }
+      std::cout << "#anchors: " << count << std::endl;
 
-      FT dist_max(0.0);
-      halfedge_descriptor he_max;
+      halfedge_descriptor he_max = bcycle.he_head;
       Vector_3 chord_vec = vector_functor(pt_begin, pt_end);
-      chord_vec = scale_functor(chord_vec,
-        FT(1.0 / std::sqrt(CGAL::to_double(chord_vec.squared_length()))));
-      BOOST_FOREACH(const halfedge_descriptor &he, chord) {
-        Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(he, *m_ptm)]);
-        vec = CGAL::cross_product(chord_vec, vec);
-        FT dist(std::sqrt(CGAL::to_double(vec.squared_length())));
-        if (dist > dist_max) {
-          dist_max = dist;
-          he_max = he;
+      const FT inv_len = FT(1.0) / CGAL::sqrt(chord_vec.squared_length());
+      if ((boost::math::isnormal)(inv_len)) {
+        FT dist_max(0.0);
+        chord_vec = scale_functor(chord_vec, inv_len);
+        BOOST_FOREACH(const halfedge_descriptor &he, chord) {
+          Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(he, *m_ptm)]);
+          vec = CGAL::cross_product(chord_vec, vec);
+          FT dist(std::sqrt(CGAL::to_double(vec.squared_length())));
+          if (dist > dist_max) {
+            dist_max = dist;
+            he_max = he;
+          }
         }
       }
+      else {
+        FT dist_max(0.0);
+        BOOST_FOREACH(const halfedge_descriptor &he, chord) {
+          const FT dist = CGAL::sqrt(CGAL::squared_distance(
+            pt_begin, m_vpoint_map[target(he, *m_ptm)]));
+          if (dist > dist_max) {
+            dist_max = dist;
+            he_max = he;
+          }
+        }
+      }
+
       // add one anchors to this boundary cycle
       attach_anchor(he_max);
       const_cast<Boundary_cycle &>(bcycle).num_anchors++;
@@ -1784,7 +1799,7 @@ private:
       return 1;
 
     bool if_subdivide = false;
-    Boundary_chord_iterator chord_max;
+    Boundary_chord_iterator chord_max = chord_begin;
     const Point_3 &pt_begin = m_vpoint_map[source(he_first, *m_ptm)];
     const Point_3 &pt_end = m_vpoint_map[target(he_last, *m_ptm)];
     if (anchor_first == anchor_last) {
@@ -1807,20 +1822,34 @@ private:
       FT dist_max(0.0);
       Vector_3 chord_vec = vector_functor(pt_begin, pt_end);
       FT chord_len(std::sqrt(CGAL::to_double(chord_vec.squared_length())));
-      chord_vec = scale_functor(chord_vec, FT(1.0) / chord_len);
-
-      for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
-        Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(*citr, *m_ptm)]);
-        vec = CGAL::cross_product(chord_vec, vec);
-        FT dist(std::sqrt(CGAL::to_double(vec.squared_length())));
-        if (dist > dist_max) {
-          chord_max = citr;
-          dist_max = dist;
+      const FT inv_len = FT(1.0) / chord_len;
+      bool degenerate_chord = false;
+      if ((boost::math::isnormal)(inv_len)) {
+        chord_vec = scale_functor(chord_vec, inv_len);
+        for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
+          Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(*citr, *m_ptm)]);
+          vec = CGAL::cross_product(chord_vec, vec);
+          const FT dist(std::sqrt(CGAL::to_double(vec.squared_length())));
+          if (dist > dist_max) {
+            chord_max = citr;
+            dist_max = dist;
+          }
+        }
+      }
+      else {
+        degenerate_chord = true;
+        for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
+          const FT dist = CGAL::sqrt(CGAL::squared_distance(
+            pt_begin, m_vpoint_map[target(*citr, *m_ptm)]));
+          if (dist > dist_max) {
+            chord_max = citr;
+            dist_max = dist;
+          }
         }
       }
 
       FT criterion = dist_max;
-      if (relative_to_chord)
+      if (relative_to_chord && !degenerate_chord)
         criterion /= chord_len;
       else
         criterion /= m_average_edge_length;
