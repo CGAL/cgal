@@ -136,14 +136,14 @@ public:
   /// @{
 
   /*!
-    returns the i^{th} component of the rgb color (the 0^{th} is red,
-    the 1^{st} is blue, etc.).
+    returns the \f$i^{th}\f$ component of the rgb color (the
+    \f$0^{th}\f$ is red, the \f$1^{st}\f$ is blue, etc.).
   */ 
   unsigned char operator[] (std::size_t i) const { return m_data[i]; }
   
   /*!
-    returns a reference on the i^{th} component of `c` (the 0^{th} is
-    red, the 1^{st} is blue, etc.).
+    returns a reference on the \f$i^{th}\f$ component of `c` (the
+    \f$0^{th}\f$ is red, the \f$1^{st}\f$ is blue, etc.).
   */ 
   unsigned char& operator[] (std::size_t i)  { return m_data[i]; }
 
@@ -277,6 +277,7 @@ public:
   
 
 /*!
+
   Constructs Color(0,0,0).
   \relates Color
 */
