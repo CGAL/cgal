@@ -193,8 +193,20 @@ public:
       EPICK::Plane_3 fit_plane;
       CGAL::linear_least_squares_fitting_3(
         tris.begin(), tris.end(), fit_plane, CGAL::Dimension_tag<2>());
+      if (!(boost::math::isfinite)(fit_plane.a()) ||
+        !(boost::math::isfinite)(fit_plane.b()) ||
+        !(boost::math::isfinite)(fit_plane.c()) ||
+        !(boost::math::isfinite)(fit_plane.d())) {
+        // PCA may return plane with NaN efficients
+        // we replace it with an inaccurate plane
+        std::cout << "WARNING: Replacing invalide plane." << std::endl;
+        fit_plane = EPICK::Plane_3(
+          tris.front().vertex(0),
+          EPICK::Vector_3(0.0, 0.0, 1.0));
+      }
       patch_planes.push_back(fit_plane);
     }
+
     std::vector<std::vector<Point_3> > patch_points(approx.number_of_proxies());
     BOOST_FOREACH(vertex_descriptor v, vertices(*pmesh)) {
       BOOST_FOREACH(halfedge_descriptor h, CGAL::halfedges_around_target(v, *pmesh)) {
