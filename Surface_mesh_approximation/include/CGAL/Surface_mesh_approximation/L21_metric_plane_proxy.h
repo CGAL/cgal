@@ -102,7 +102,7 @@ public:
         put(m_fnmap, f, CGAL::NULL_VECTOR);
       else
         put(m_fnmap, f, CGAL::unit_normal(p0, p1, p2));
-      put(m_famap, f, std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
+      put(m_famap, f, CGAL::approximate_sqrt(CGAL::squared_area(p0, p1, p2)));
     }
   }
   /// @}
@@ -138,9 +138,9 @@ public:
       norm = m_sum_functor(norm,
         m_scale_functor(get(m_fnmap, f), get(m_famap, f)));
     }
-    const FT inv_len = FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length())));
-    if ((boost::math::isnormal)(inv_len))
-      norm = m_scale_functor(norm, inv_len);
+    if (norm.squared_length() > FT(0.0))
+      norm = m_scale_functor(norm,
+        FT(1.0) / CGAL::approximate_sqrt(norm.squared_length()));
 
     return norm;
   }
