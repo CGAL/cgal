@@ -36,8 +36,7 @@ struct Compact_metric_point_proxy {
   // defined as the Euclidean distance between
   // the face center of mass and proxy point.
   FT compute_error(const face_descriptor &f, const Mesh &, const Proxy &px) const {
-    return FT(std::sqrt(CGAL::to_double(
-      CGAL::squared_distance(center_pmap[f], px))));
+    return CGAL::approximate_sqrt(CGAL::squared_distance(center_pmap[f], px));
   }
 
   // template functor to compute a best-fit
