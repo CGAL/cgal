@@ -100,6 +100,7 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
       return sm_item;
     }
 
+    in.clear();
     in.seekg(0);
 
     // else try polygon soup
