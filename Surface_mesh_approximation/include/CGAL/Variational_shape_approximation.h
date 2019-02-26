@@ -1441,8 +1441,6 @@ private:
       else
         norm = Vector_3(FT(0.0), FT(0.0), FT(1.0));
 
-      std::cout << inv_len << " # " << norm << " # " << area << std::endl;
-
       m_px_planes.push_back(Proxy_plane(fit_plane, norm, area));
     }
   }
@@ -1550,7 +1548,6 @@ private:
         const_cast<Boundary_cycle &>(bcycle).num_anchors = count;
         continue;
       }
-      std::cout << "#anchors: " << count << std::endl;
 
       CGAL_assertion(!chord.empty());
       halfedge_descriptor he_max = *chord.begin();
@@ -1682,7 +1679,7 @@ private:
 
       const sg_vertex_descriptor source = glocal.global_to_local(vpatch.back());
       VertexVector pred(num_vertices(glocal),
-        boost::graph_traits<TriangleMesh>::null_vertex());
+        boost::graph_traits<SubGraph>::null_vertex());
       boost::dijkstra_shortest_paths(glocal, source,
         boost::predecessor_map(&pred[0]).weight_map(local_eweight_map));
 

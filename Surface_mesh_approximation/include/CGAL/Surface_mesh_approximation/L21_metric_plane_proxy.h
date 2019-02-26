@@ -98,10 +98,8 @@ public:
       const Point_3 &p0 = vpmap[source(he, tm)];
       const Point_3 &p1 = vpmap[target(he, tm)];
       const Point_3 &p2 = vpmap[target(next(he, tm), tm)];
-      if (CGAL::collinear(p0, p1, p2)) {
-        std::cout << CGAL::unit_normal(p0, p1, p2) << std::endl;
+      if (CGAL::collinear(p0, p1, p2))
         put(m_fnmap, f, CGAL::NULL_VECTOR);
-      }
       else
         put(m_fnmap, f, CGAL::unit_normal(p0, p1, p2));
       put(m_famap, f, std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
