@@ -1648,15 +1648,28 @@ private:
       const sg_vertex_descriptor superv = add_vertex(gmain);
       global_vanchor_map[superv] = CGAL_VSA_INVALID_TAG;
       global_vtag_map[superv] = CGAL_VSA_INVALID_TAG;
+      int anchor_count = 0;
       BOOST_FOREACH(sg_vertex_descriptor v, vpatch) {
-        if (is_anchor_attached(v, global_vanchor_map))
+        if (is_anchor_attached(v, global_vanchor_map)) {
           add_edge(superv, v, FT(0.0), gmain);
+          anchor_count++;
+        }
       }
-      vpatch.push_back(superv);
+      CGAL_assertion(anchor_count >=3 || anchor_count == 0);
+      // ball patch has no boundary or anchor, usually are small floating parts
+      // push dummy source vertex in the patch
+      if (anchor_count == 0)
+        vpatch.push_back(boost::graph_traits<SubGraph>::null_vertex());
+      else
+        vpatch.push_back(superv);
     }
 
     // multi-source Dijkstra's shortest path algorithm applied to each proxy patch
     BOOST_FOREACH(VertexVector &vpatch, vertex_patches) {
+      // ignore ball patch
+      if (vpatch.back() == boost::graph_traits<SubGraph>::null_vertex())
+        continue;
+
       // construct subgraph
       SubGraph &glocal = gmain.create_subgraph();
       BOOST_FOREACH(sg_vertex_descriptor v, vpatch)
@@ -1668,7 +1681,8 @@ private:
       EdgeWeightMap local_eweight_map = get(boost::edge_weight, glocal);
 
       const sg_vertex_descriptor source = glocal.global_to_local(vpatch.back());
-      VertexVector pred(num_vertices(glocal));
+      VertexVector pred(num_vertices(glocal),
+        boost::graph_traits<TriangleMesh>::null_vertex());
       boost::dijkstra_shortest_paths(glocal, source,
         boost::predecessor_map(&pred[0]).weight_map(local_eweight_map));
 
