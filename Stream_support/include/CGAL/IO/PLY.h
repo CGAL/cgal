@@ -76,7 +76,7 @@ template <>            struct Convert_FT<float> { typedef float type;  };
 template <typename PointOrVectorMap>
 struct Get_FT_from_map
 {
-  typedef typename
+  typedef typename Convert_FT
   <typename Kernel_traits
    <typename boost::property_traits
     <PointOrVectorMap>::value_type>::Kernel::FT>::type type;
