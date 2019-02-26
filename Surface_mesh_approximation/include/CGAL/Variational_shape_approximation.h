@@ -1552,7 +1552,8 @@ private:
       }
       std::cout << "#anchors: " << count << std::endl;
 
-      halfedge_descriptor he_max = bcycle.he_head;
+      CGAL_assertion(!chord.empty());
+      halfedge_descriptor he_max = *chord.begin();
       Vector_3 chord_vec = vector_functor(pt_begin, pt_end);
       const FT inv_len = FT(1.0) / CGAL::sqrt(chord_vec.squared_length());
       if ((boost::math::isnormal)(inv_len)) {
