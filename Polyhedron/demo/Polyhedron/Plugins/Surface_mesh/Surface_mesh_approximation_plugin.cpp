@@ -225,8 +225,8 @@ public:
 
       EPICK::Vector_3 base1 = plane.base1();
       EPICK::Vector_3 base2 = plane.base2();
-      base1 = base1 / CGAL::approxiamte_sqrt(base1.squared_length());
-      base2 = base2 / CGAL::approxiamte_sqrt(base2.squared_length());
+      base1 = base1 / CGAL::approximate_sqrt(base1.squared_length());
+      base2 = base2 / CGAL::approximate_sqrt(base2.squared_length());
 
       EPICK::Line_3 base_linex(origin, base1);
       EPICK::Line_3 base_liney(origin, base2);
@@ -236,8 +236,8 @@ public:
         const Point_3 point = plane.projection(p);
         EPICK::Vector_3 vecx(origin, base_linex.projection(point));
         EPICK::Vector_3 vecy(origin, base_liney.projection(point));
-        double x = CGAL::approxiamte_sqrt(vecx.squared_length());
-        double y = CGAL::approxiamte_sqrt(vecy.squared_length());
+        double x = CGAL::approximate_sqrt(vecx.squared_length());
+        double y = CGAL::approximate_sqrt(vecy.squared_length());
         x = vecx * base1 < 0 ? -x : x;
         y = vecy * base2 < 0 ? -y : y;
         pts_2d.push_back(EPICK::Point_2(x, y));
