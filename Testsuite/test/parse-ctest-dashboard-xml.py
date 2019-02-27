@@ -4,9 +4,9 @@ import xml.etree.ElementTree as ET
 import os
 import errno
 import re
+import sys
 
 result_file_name='{dir}/results_{tester}_{platform}.txt'
-result_info_file_name='{dir}/results_{tester}_{platform}.info'
 test_report_filename='{dir}/TestReport_{tester}_{platform}'
 
 xml = open("Test.xml", 'rb').read();
@@ -31,6 +31,8 @@ for t in testlist:
 
 tests = {}
 labels = set()
+tester_name=sys.argv[1]
+platform_name=sys.argv[2]
 for t in testing.findall('Test'):
     tests[tests_ids[t.find('FullName').text]] = \
          { \
@@ -40,23 +42,6 @@ for t in testing.findall('Test'):
            "Labels": [l.text for l in t.find('Labels').findall('Label')] if t.find('Labels') is not None else ['UNKNOWN_LABEL'], \
          }
 
-print("""
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-""", file=open(result_info_file_name.format(dir=os.getcwd(),
-                                            tester="me",
-                                            platform="Mon Linux"), 'w'))
-
 tests_per_label = defaultdict(list)
 for t_id in range(0, len(tests)):
     t = tests[t_id]
@@ -65,8 +50,8 @@ for t_id in range(0, len(tests)):
         tests_per_label[label].append(t)
 
 with open_file_create_dir(result_file_name.format(dir=os.getcwd(),
-                                                  tester="me",
-                                                  platform="Mon Linux"), 'w') as results:
+                                                  tester=tester_name,
+                                                  platform=platform_name), 'a+') as results:
     for label, tests in tests_per_label.items():
         result_for_label='y'
         with open_file_create_dir("{}/error.txt".format(label), 'w') as error:
@@ -86,15 +71,15 @@ with open_file_create_dir(result_file_name.format(dir=os.getcwd(),
 
 for label, tests in tests_per_label.items():
         with open_file_create_dir(test_report_filename.format(dir=label,
-                                                              tester="me",
-                                                              platform="Mon Linux"), 'w') as label_report:
+                                                              tester=tester_name,
+                                                              platform=platform_name), 'w') as label_report:
             print("""
 ------------------------------------------------------------------
 - Error output from platform {platform}
 ------------------------------------------------------------------
 
 {error_txt}
-"""               .format(platform="Mon Linux",
+"""               .format(platform=platform_name,
                          error_txt=open("{}/error.txt".format(label), 'r').read()), file=label_report)
             for t in tests:
                 filename="{}/ProgramOutput.{}".format(label, t['Name'])
