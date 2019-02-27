@@ -11,7 +11,7 @@ import gzip
 
 result_file_name='{dir}/results_{tester}_{platform}.txt'
 result_info_file_name='{dir}/results_{tester}_{platform}.info'
-test_report_filename='{dir}/TestReport_{tester}_{platform}.gz'
+test_report_filename='{dir}/TestReport_{tester}_{platform}'
 
 xml = open("Test.xml", 'rb').read()
 
@@ -59,7 +59,8 @@ for t in testing.findall('Test'):
 tests_per_label = defaultdict(list)
 for t_id in range(0, len(tests)):
     t = tests[t_id]
-    for label in t['Labels']:
+    for l in t['Labels']:
+        label = l.replace("_Tests","")
         labels.add(label)
         tests_per_label[label].append(t)
 
