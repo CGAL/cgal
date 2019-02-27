@@ -513,7 +513,7 @@ private:
   #ifdef CGAL_MESH_3_USE_RELAXED_HEAP
   typedef boost::relaxed_heap<PVertex, less_PVertex, PVertex_id> PQueue;
   #else
-  typedef ::CGAL::internal::mutable_queue_with_remove<PVertex,std::vector<PVertex>, less_PVertex, PVertex_id> PQueue;
+  typedef ::CGAL::Modifiable_priority_queue<PVertex, less_PVertex, PVertex_id> PQueue;
   #endif //CGAL_MESH_3_USE_RELAXED_HEAP
 
 public:
@@ -788,7 +788,7 @@ operator()(Visitor visitor)
 #endif
 
   // Build priority queue (we use one queue for all steps)
-  PQueue pqueue(tr_.number_of_vertices());
+  PQueue pqueue(less_PVertex());
 
   // Initialize vertices ids
   initialize_vertices_id();

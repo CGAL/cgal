@@ -34,8 +34,7 @@
 #include <CGAL/Polyline_simplification_2/Stop_below_count_ratio_threshold.h>
 #include <CGAL/Polyline_simplification_2/Stop_below_count_threshold.h>
 #include <CGAL/Polyline_simplification_2/Stop_above_cost_threshold.h>
-//#include <CGAL/Modifiable_priority_queue.h>
-#include <boost/heap/fibonacci_heap.hpp>
+#include <CGAL/Modifiable_priority_queue.h>
 #include <boost/unordered_map.hpp>
 #include <CGAL/algorithm.h>
 
@@ -87,21 +86,31 @@ public:
     bool operator() ( Vertices_in_constraint_iterator const& x,
                       Vertices_in_constraint_iterator const& y ) const 
     { 
-      return (*x)->cost() > (*y)->cost(); 
+      return (*x)->cost() < (*y)->cost(); 
     }
   } ;
+  struct Id_map : public boost::put_get_helper<std::size_t, Id_map>
+  { 
+    typedef boost::readable_property_map_tag category;
+    typedef std::size_t                      value_type;
+    typedef value_type                       reference;
+    typedef Vertices_in_constraint_iterator  key_type;
+    
+    reference operator[] ( key_type const& x ) const { return x.base()->id ; }
+  } ;
   
-  typedef boost::heap::fibonacci_heap<Vertices_in_constraint_iterator,boost::heap::compare<Compare_cost> > MPQ ;
+  typedef CGAL::Modifiable_priority_queue<Vertices_in_constraint_iterator,Compare_cost,Id_map> MPQ ;
   
   MPQ* mpq;
-  boost::unordered_map<int,typename MPQ::handle_type> h;
+  boost::unordered_map<int,typename MPQ::handle> h;
   Polyline_simplification_2(PCT& pct, CostFunction cost, StopFunction stop)
     : pct(pct), cost(cost), stop(stop), pct_initial_number_of_vertices(pct.number_of_vertices()), number_of_unremovable_vertices(0)
   {
-    initialize_indices();
+    int m = initialize_indices();
     initialize_unremovable();
     Compare_cost cc;
-    mpq =  new MPQ(cc);
+    Id_map idm;
+    mpq =  new MPQ(m, cc, idm);
     initialize_costs();
   }
 
@@ -265,14 +274,14 @@ operator()()
       if(! dist){
         // cost is undefined
         if( h.find(u.base()->id) != h.end()){
-          mpq->erase(h[u.base()->id]);
+          mpq->erase(u, h[u.base()->id]);
           h.erase(u.base()->id);
         }
       } else {
         if(h.find(u.base()->id) != h.end()){
-          typename MPQ::handle_type ex_h = h[u.base()->id];
+          typename MPQ::handle ex_h = h[u.base()->id];
           (*u)->set_cost(*dist);
-          mpq->update(ex_h);
+          mpq->update(u, ex_h);
           h[u.base()->id] = ex_h;
         }
         else{
@@ -287,14 +296,14 @@ operator()()
       if(! dist){
         // cost is undefined
         if(h.find(w.base()->id) != h.end()){
-          mpq->erase(h[w.base()->id]);
+          mpq->erase(w, h[w.base()->id]);
           h.erase(w.base()->id);
         }
       } else {
         if(h.find(w.base()->id) != h.end()){
-          typename MPQ::handle_type ex_h = h[w.base()->id];
+          typename MPQ::handle ex_h = h[w.base()->id];
           (*w)->set_cost(*dist);
-          mpq->update(ex_h);
+          mpq->update(w, ex_h);
           h[w.base()->id]=ex_h;
         }
         else{
