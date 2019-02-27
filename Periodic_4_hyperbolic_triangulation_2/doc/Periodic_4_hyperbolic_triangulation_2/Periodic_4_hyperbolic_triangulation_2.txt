@@ -12,7 +12,7 @@ namespace CGAL {
 \author Iordan Iordanov and Monique Teillaud
 
 <center>
-<img src="new-triangulation-350px.png" style="max-width:50%; width=50%;"/>
+<img src="new-triangulation-350px.png" style="max-width:50%; width:50%;"/>
 </center>
 
 
@@ -64,9 +64,9 @@ by \f$\pi\f$ onto the same point of the surface \f$\mathcal M\f$.
 
 \cgalFigureAnchor{P4HTriangulationOctagonId}
 <center>
-  <img src="octagon_identification.svg" style="max-width:25%; width=25%; display: inline-block;"/>
-  <img src="periodicity.png" style="max-width:25%; width=25%; display: inline-block;"/>
-  <img src="original_domain.svg" style="max-width:25%; width=25%; display: inline-block;"/>
+  <img src="octagon_identification.svg" style="max-width:25%; width:25%; display: inline-block;"/>
+  <img src="periodicity.png" style="max-width:25%; width:25%; display: inline-block;"/>
+  <img src="original_domain.svg" style="max-width:25%; width:25%; display: inline-block;"/>
 </center>
 \cgalFigureCaptionBegin{P4HTriangulationOctagonId}
   <b>Left:</b> The hyperbolic translations \f$a,b,c,d\f$ and their inverses identify opposite 
@@ -92,7 +92,7 @@ D\f$ under the action of \f$\mathcal G\f$.
 
 \cgalFigureAnchor{P4HTDoubleTorusConstruction}
 <center>
-  <img src="dt-construction.svg" style="max-width:60%; width=60%; display: inline-block;"/>
+  <img src="dt-construction.svg" style="max-width:60%; width:60%; display: inline-block;"/>
 </center>
 \cgalFigureCaptionBegin{P4HTDoubleTorusConstruction}
   Topological construction of a genus-2 surface from the original domain \f$\mathcal D\f$ 
@@ -165,7 +165,7 @@ translation \f$abcd\f$.  The canonical representative in
 
 \cgalFigureAnchor{P4HTriangulationCanonicalRepExample}
 <center>
-  <img src="periodic_face.svg" style="max-width:45%; width=45%; display: inline-block;"/>
+  <img src="periodic_face.svg" style="max-width:45%; width:45%; display: inline-block;"/>
 </center>
 \cgalFigureCaptionBegin{P4HTriangulationCanonicalRepExample}
 Among the three faces in the orbit that have at least one vertex in
@@ -198,7 +198,7 @@ instance, a single point does not define a triangulation of
 
 \cgalFigureAnchor{P4HNonSimplicialExample}
 <center>
-  <img src="non-triangulation.svg" style="max-width:33%; width=33%; display: inline-block;"/>
+  <img src="non-triangulation.svg" style="max-width:33%; width:33%; display: inline-block;"/>
 </center>
 \cgalFigureCaptionBegin{P4HNonSimplicialExample}
   The three 
@@ -220,7 +220,7 @@ complex for any set of input points \f$\mathcal{P}\f$
 
 \cgalFigureAnchor{P4HTriangulationDummyPoints}
 <center>
-  <img src="dummy-points.png" style="max-width:35%; width=35%; display: inline-block;"/>
+  <img src="dummy-points.png" style="max-width:35%; width:35%; display: inline-block;"/>
 </center>
 \cgalFigureCaptionBegin{P4HTriangulationDummyPoints}
   Delaunay triangulation of \f$\mathcal M\f$ defined by the 14 dummy
@@ -361,7 +361,7 @@ the number of random points inserted. Results are shown in \cgalFigureRef{P4HDum
 
 \cgalFigureAnchor{P4HDummyPointsHistogram}
 <center>
-  <img src="histogram-dummy-points.png" style="max-width:85%; width=85%; display: inline-block;"/>
+  <img src="histogram-dummy-points.png" style="max-width:85%; width:85%; display: inline-block;"/>
 </center>
 \cgalFigureCaptionBegin{P4HDummyPointsHistogram}
   Histogram of the number of random input points needed to remove all dummy points in a
