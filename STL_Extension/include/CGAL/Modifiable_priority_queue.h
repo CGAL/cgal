@@ -25,43 +25,7 @@
 #ifdef CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
 #include <boost/pending/relaxed_heap.hpp>
 #else
-#include <CGAL/internal/boost/mutable_queue.hpp>
-
-
-namespace CGAL {
-  namespace internal {
-template <class IndexedType, 
-          class RandomAccessContainer = std::vector<IndexedType>, 
-          class Comp = std::less<typename RandomAccessContainer::value_type>,
-          class ID = ::boost::identity_property_map >
-class mutable_queue_with_remove : public internal::boost_::mutable_queue<IndexedType,RandomAccessContainer,Comp,ID>
-{
-  typedef internal::boost_::mutable_queue<IndexedType,RandomAccessContainer,Comp,ID> Base;
-public:
-  typedef typename Base::size_type size_type;
-  typedef typename Base::Node Node;
-
-  mutable_queue_with_remove(size_type n, const Comp& x=Comp(), const ID& _id=ID()) : Base(n,x,_id,true) 
-  {}
-
-  void remove(const IndexedType& x){
-    //first place element at the top
-    size_type current_pos = this->index_array[ get(this->id, x) ];
-    this->c[current_pos] = x;
-
-    Node node(this->c.begin(), this->c.end(), this->c.begin()+current_pos, this->id);
-    while (node.has_parent())
-      node.swap(node.parent(), this->index_array);
-    //then pop it
-    this->pop();
-  }
-  
-  bool contains(const IndexedType& x) const {
-    return this->index_array[ get(this->id, x) ] !=this->index_array.size();
-  }
-};
-
-} } //namespace CGAL::internal
+#include <boost/heap/fibonacci_heap.hpp>
 #endif //CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
 
 namespace CGAL {
@@ -80,34 +44,49 @@ public:
   typedef Compare_     Compare;
   typedef ID_          ID ;
   
-  #ifdef CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
+#ifdef CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
   typedef boost::relaxed_heap<IndexedType,Compare,ID> Heap;
-  #else
-  typedef  internal::mutable_queue_with_remove<IndexedType,std::vector<IndexedType>,Compare,ID> Heap;
-  #endif //CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
-  typedef typename Heap::value_type value_type;
-  typedef typename Heap::size_type  size_type;
-  
   typedef bool handle ;
-  
-public:
 
   Modifiable_priority_queue( size_type largest_ID, Compare const& c, ID const& id ) : mHeap(largest_ID,c,id) {}
-  
+  typedef typename Heap::value_type value_type;
+  typedef typename Heap::size_type  size_type;
   handle push ( value_type const& v ) { mHeap.push(v) ; return handle(true) ; }
-  
-  handle update ( value_type const& v, handle h ) { mHeap.update(v); return h ; }
-  
   handle erase ( value_type const& v, handle  ) { mHeap.remove(v); return null_handle() ; }
   handle erase ( value_type const& v  ) { mHeap.remove(v); return null_handle() ; }
+  bool contains ( value_type const& v ) { return mHeap.contains(v) ; }
+  handle update ( value_type const& v, handle h ) { mHeap.update(v); return h ; }
+  static handle null_handle() { return handle(false); }
+#else
+  struct Reverse_compare{
+    const Compare c;
+    Reverse_compare(){}
+    Reverse_compare(Compare const& c):c(c){}
+    template<typename T>
+     bool operator() (T const& a, T const& b) const
+     {
+       return !c(a,b);
+     }
+  };
+  typedef boost::heap::fibonacci_heap<IndexedType,boost::heap::compare<Reverse_compare> > Heap;
+  typedef typename Heap::handle_type handle;
+  //the fibonacci_heap uses the inverse of the compare used in the relaxed heap.
+  typedef typename Heap::value_type value_type;
+  typedef typename Heap::size_type  size_type;
+public:
+  Modifiable_priority_queue( size_type, Compare const& c, ID const& ):mHeap(Reverse_compare(c)) {}
+  handle push ( value_type const& v ) { return mHeap.push(v) ;}
+  handle erase ( value_type const& v, handle h) { mHeap.erase(h); return null_handle() ; }
+  handle update ( value_type const& v, handle h ) { mHeap.update(h,v); return h ; }
+  static handle null_handle() { return handle(); }
+#endif //CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
+
 
   value_type top() const { return mHeap.top() ; }
   
   void pop() { mHeap.pop(); }
   
   bool empty() const { return mHeap.empty() ; }
-
-  bool contains ( value_type const& v ) { return mHeap.contains(v) ; }
 
   boost::optional<value_type> extract_top()
   {
@@ -120,8 +99,6 @@ public:
     }  
     return r ;
   }
-  
-  static handle null_handle() { return handle(false); }
   
 private:
 
