@@ -57,6 +57,7 @@ class L21_metric_plane_proxy {
   typedef typename GeomTraits::Construct_scaled_vector_3 Construct_scaled_vector_3;
   typedef typename GeomTraits::Construct_sum_of_vectors_3 Construct_sum_of_vectors_3;
   typedef typename GeomTraits::Compute_scalar_product_3 Compute_scalar_product_3;
+  typedef typename GeomTraits::Collinear_3 Collinear_3;
 
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
@@ -91,6 +92,7 @@ public:
     m_scalar_product_functor = traits.compute_scalar_product_3_object();
     m_sum_functor = traits.construct_sum_of_vectors_3_object();
     m_scale_functor = traits.construct_scaled_vector_3_object();
+    m_collinear_functor = traits.collinear_3_object();
 
     // construct internal face normal & area map
     BOOST_FOREACH(face_descriptor f, faces(tm)) {
@@ -151,6 +153,7 @@ private:
   Construct_scaled_vector_3 m_scale_functor;
   Compute_scalar_product_3 m_scalar_product_functor;
   Construct_sum_of_vectors_3 m_sum_functor;
+  Collinear_3 m_collinear_functor;
 };
 
 } // namespace Surface_mesh_approximation

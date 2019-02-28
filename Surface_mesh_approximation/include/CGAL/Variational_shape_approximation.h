@@ -139,6 +139,8 @@ private:
   typedef typename Geom_traits::Construct_scaled_vector_3 Construct_scaled_vector_3;
   typedef typename Geom_traits::Construct_sum_of_vectors_3 Construct_sum_of_vectors_3;
   typedef typename Geom_traits::Construct_translated_point_3 Construct_translated_point_3;
+  typedef typename Geom_traits::Construct_cross_product_vector_3 Construct_cross_product_vector_3;
+  typedef typename Geom_traits::Collinear_3 Collinear_3;
 
   // graph_traits typedefs
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
@@ -242,6 +244,8 @@ private:
   Construct_scaled_vector_3 scale_functor;
   Construct_sum_of_vectors_3 sum_functor;
   Construct_translated_point_3 translate_point_functor;
+  Construct_cross_product_vector_3 cross_product_functor;
+  Collinear_3 collinear_functor;
 
   // Proxies.
   std::vector<Proxy_wrapper> m_proxies;
@@ -290,6 +294,8 @@ public:
     scale_functor = traits.construct_scaled_vector_3_object();
     sum_functor = traits.construct_sum_of_vectors_3_object();
     translate_point_functor = traits.construct_translated_point_3_object();
+    cross_product_functor = traits.construct_cross_product_vector_3_object();
+    collinear_functor = traits.collinear_3_object();
   }
   /// @}
 
@@ -1428,7 +1434,7 @@ private:
         const Point_3 &p2 = m_vpoint_map[target(next(he, *m_ptm), *m_ptm)];
         const FT farea = CGAL::approximate_sqrt(CGAL::squared_area(p0, p1, p2));
         const Vector_3 fnorm =
-          CGAL::collinear(p0, p1, p2) ? CGAL::NULL_VECTOR : CGAL::unit_normal(p0, p1, p2);
+          collinear_functor(p0, p1, p2) ? CGAL::NULL_VECTOR : CGAL::unit_normal(p0, p1, p2);
 
         norm = sum_functor(norm, scale_functor(fnorm, farea));
         area += farea;
@@ -1555,7 +1561,7 @@ private:
           FT(1.0) / CGAL::approximate_sqrt(chord_vec.squared_length()));
         BOOST_FOREACH(const halfedge_descriptor he, chord) {
           Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(he, *m_ptm)]);
-          vec = CGAL::cross_product(chord_vec, vec);
+          vec = cross_product_functor(chord_vec, vec);
           const FT dist = CGAL::approximate_sqrt(vec.squared_length());
           if (dist > dist_max) {
             dist_max = dist;
@@ -1836,7 +1842,7 @@ private:
         chord_vec = scale_functor(chord_vec, FT(1.0) / chord_len);
         for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
           Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(*citr, *m_ptm)]);
-          vec = CGAL::cross_product(chord_vec, vec);
+          vec = cross_product_functor(chord_vec, vec);
           const FT dist = CGAL::approximate_sqrt(vec.squared_length());
           if (dist > dist_max) {
             chord_max = citr;
@@ -1870,7 +1876,7 @@ private:
           px_right = get(m_fproxy_map, face(opposite(he_first, *m_ptm), *m_ptm));
         FT norm_sin(1.0);
         if (!CGAL::is_border(opposite(he_first, *m_ptm), *m_ptm)) {
-          Vector_3 vec = CGAL::cross_product(
+          Vector_3 vec = cross_product_functor(
             m_px_planes[px_left].normal, m_px_planes[px_right].normal);
           norm_sin = CGAL::approximate_sqrt(vec.squared_length());
         }
@@ -2012,7 +2018,7 @@ private:
       Vector_3 vec = vector_functor(CGAL::ORIGIN, CGAL::centroid(p0, p1, p2));
       const FT farea = CGAL::approximate_sqrt(CGAL::squared_area(p0, p1, p2));
       Vector_3 fnorm =
-        CGAL::collinear(p0, p1, p2) ? CGAL::NULL_VECTOR : CGAL::unit_normal(p0, p1, p2);
+        collinear_functor(p0, p1, p2) ? CGAL::NULL_VECTOR : CGAL::unit_normal(p0, p1, p2);
 
       norm = sum_functor(norm, scale_functor(fnorm, farea));
       cent = sum_functor(cent, scale_functor(vec, farea));
