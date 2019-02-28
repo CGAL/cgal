@@ -23,8 +23,7 @@ example).
 
 \cgalModels `TriangulationDSVertex`
 
-Rebind Mechanism 
--------------- 
+\cgalHeading{Rebind mechanism}
 
 In case of derivation from that class, the nested class 
 `Rebind_TDS` need to be provided in the derived class. 

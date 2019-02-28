@@ -32,10 +32,10 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `#SegmentationGeomTraits`
 
-## Main Functions ##
+\cgalCRPSection{Main Functions}
 - `#CGAL::sdf_values()`
 - `#CGAL::sdf_values_postprocessing()`
 - `#CGAL::segmentation_from_sdf_values()`

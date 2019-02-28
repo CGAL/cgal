@@ -1,0 +1,50 @@
+==== new ====
+
+add operator == for triangulations (?)
+
+** traits bisectors
+
+class Construct_hyperbolic_bisector_2
+Hyperbolic_segment_2 operator()(Point_2 p, Point_2 q, Point_2 r)
+at the end
+the following lines are giving the wrong arc (wrong orientation), aren't they?
+      CGAL_triangulation_assertion(assign(pair,inters[1]));
+      if ( Orientation_2()(approx_c,approx_a,approx_pinf) == POSITIVE )
+	return Circular_arc_2( *c_pq, pair.first, a);
+      return Circular_arc_2( *c_pq, a, pair.first);
+but this is what works on the demo...
+understand why
+
+remove variant for supporting circle or line of bisector
+call it only when we know that it is a circle
+it will simplyfy the code of Construct_hyperbolic_bisector_2 at least in some cases
+
+test bisectors dual functions in special cases of euclidean line segments
+
+** Hyperbolic_random_points_in_disc
+
+see with Olivier: small feature to add new object generator?
+
+
+========== demo
+
+--- fix bugs:
+- conflict regions (when inserting or in mode 'show conflict zone)
+show Euclidean triangles instead of hyperbolic triangles  
+ 
+- However, we could think to add a specific mode allowing to show
+triangles that are not hyperbolic. Not sure whether this is interesting. 
+
+--- PainterOstream
+Is it clean for CGAL to have a local file?
+
+I have to ask Laurent to make some members of PainterOstream protected.
+It allows me to have a local file with partial specialization of 
+the class PainterOstream.
+I have to discuss with Laurent.
+
+========== future
+
+--- make Constrained_delaunay_... work with Hyperbolic_triangulation_2
+--- make Mesh_2 work with Hyperbolic_triangulation_2
+O.Faugeras and his student are waiting for it. 

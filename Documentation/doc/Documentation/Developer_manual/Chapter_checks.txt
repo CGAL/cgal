@@ -169,7 +169,7 @@ reference manual.
 
 For a new package you will first have to create a suitable header file
 with all macro definitions.  This is done with the shell script
-<TT>cgal_create_assertions.sh</TT>, to be found in the in the
+<TT>cgal_create_assertions.sh</TT>, to be found in the 
 <TT>scripts</TT> directory.
 
 The following command will create a file <TT>optimisation_assertions.h</TT>:

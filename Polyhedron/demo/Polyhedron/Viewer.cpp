@@ -15,6 +15,7 @@
 #include <cmath>
 #include <QApplication>
 #include <QOpenGLDebugLogger>
+#include <QStyleFactory>
 
 #include "ui_LightingDialog.h"
 
@@ -122,18 +123,21 @@ public:
                    255*d->ambient.z());
     palette.setColor(QPalette::Button,ambient);
     ambientButton->setPalette(palette);
+    ambientButton->setStyle(QStyleFactory::create("Fusion"));
     
     diffuse=QColor(255*d->diffuse.x(), 
                    255*d->diffuse.y(), 
                    255*d->diffuse.z());
     palette.setColor(QPalette::Button,diffuse);
     diffuseButton->setPalette(palette);
+    diffuseButton->setStyle(QStyleFactory::create("Fusion"));
     
     specular=QColor(255*d->specular.x(), 
                     255*d->specular.y(), 
                     255*d->specular.z());
     palette.setColor(QPalette::Button,specular);
     specularButton->setPalette(palette);
+    specularButton->setStyle(QStyleFactory::create("Fusion"));
     spec_powrSlider->setValue(static_cast<int>(d->spec_power));
     
     connect(&ambient_dial, &QColorDialog::currentColorChanged, this, &LightingDialog::ambient_changed );

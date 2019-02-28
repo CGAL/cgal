@@ -52,12 +52,12 @@ construct the streamlines, and should be instantiated by a model of the concept
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `StreamLinesTraits_2`
 - `Integrator_2`
 - `VectorField_2`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Stream_lines_2<VectorField_2,Integrator_2>`
 - `CGAL::Euler_integrator_2<VectorField_2>`
 - `CGAL::Runge_kutta_integrator_2<VectorField_2>`

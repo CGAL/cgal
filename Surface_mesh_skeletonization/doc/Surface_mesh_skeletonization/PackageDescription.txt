@@ -28,12 +28,12 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `MeanCurvatureSkeletonizationTraits`
 - `NormalEquationSparseLinearAlgebraTraits_d`
 
-## Classes ##
+\cgalCRPSection{Classes}
 
  - `CGAL::Mean_curvature_flow_skeletonization`
  

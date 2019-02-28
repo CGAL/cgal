@@ -17,8 +17,6 @@ if ( CGAL_FOUND )
 
   find_package( TBB QUIET )
 
-  include_directories (BEFORE ../../../AABB_tree/include)
-
   # Use Eigen
   find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
   if (NOT EIGEN3_FOUND)

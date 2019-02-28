@@ -141,8 +141,8 @@ private:
     }
     if(last_inserted == typename CDT::Vertex_handle())
       return false;
-    
-    cdt->insert_constraint(previous, first);
+    if(previous != first)
+      cdt->insert_constraint(previous, first);
     // sets mark is_external
     for(typename CDT::All_faces_iterator
         fit2 = cdt->all_faces_begin(),

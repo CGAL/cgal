@@ -31,28 +31,28 @@
 
 \cgalClassifedRefPages
 
-## Concept ##
+\cgalCRPSection{Concept}
 - `ShapeDetectionTraits`
 
-## Main Classes ##
+\cgalCRPSection{Main Classes}
 - `CGAL::Shape_detection_3::Shape_detection_traits`
 - `CGAL::Shape_detection_3::Efficient_RANSAC<Traits>`
 - `CGAL::Shape_detection_3::Region_growing<Traits>`
 
-## Shape Interface ##
+\cgalCRPSection{Shape Interface}
 - `CGAL::Shape_detection_3::Shape_base<Traits>`
 
-## Shape Classes ##
+\cgalCRPSection{Shape Classes}
 - `CGAL::Shape_detection_3::Plane<Traits>`
 - `CGAL::Shape_detection_3::Sphere<Traits>`
 - `CGAL::Shape_detection_3::Cylinder<Traits>`
 - `CGAL::Shape_detection_3::Cone<Traits>`
 - `CGAL::Shape_detection_3::Torus<Traits>`
 
-## Functions ##
+\cgalCRPSection{Functions}
 - `CGAL::regularize_planes()`
 
-## Property Maps ##
+\cgalCRPSection{Property Maps}
 - `CGAL::Shape_detection_3::Plane_map<Traits>`
 - `CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>`
 

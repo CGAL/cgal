@@ -88,43 +88,43 @@ Data structures specialized to classify clusters.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `CGAL::Classification::Classifier`
 - `CGAL::Classification::NeighborQuery`
 
-## Main Functions ##
+\cgalCRPSection{Main Functions}
 
 - `CGAL::Classification::classify()`
 - `CGAL::Classification::classify_with_local_smoothing()`
 - `CGAL::Classification::classify_with_graphcut()`
 
-## Classifiers ##
+\cgalCRPSection{Classifiers}
 
 - `CGAL::Classification::ETHZ::Random_forest_classifier`
 - `CGAL::Classification::OpenCV::Random_forest_classifier`
 - `CGAL::Classification::TensorFlow::Neural_network_classifier<ActivationFunction>`
 - `CGAL::Classification::Sum_of_weighted_features_classifier`
 
-## Common Data Structures ##
+\cgalCRPSection{Common Data Structures}
 
 - `CGAL::Classification::Local_eigen_analysis`
 - `CGAL::Classification::Planimetric_grid<GeomTraits, PointRange, PointMap>`
 - `CGAL::Classification::Evaluation`
 
-## Label ##
+\cgalCRPSection{Label}
 
 - `CGAL::Classification::Label`
 - `CGAL::Classification::Label_handle`
 - `CGAL::Classification::Label_set`
 
-## Feature ##
+\cgalCRPSection{Feature}
 
 - `CGAL::Classification::Feature_base`
 - `CGAL::Classification::Feature_handle`
 - `CGAL::Classification::Feature_set`
 
-## Predefined Features ##
+\cgalCRPSection{Predefined Features}
 
 - `CGAL::Classification::Feature::Color_channel<GeomTraits, PointRange, ColorMap>`
 - `CGAL::Classification::Feature::Distance_to_plane<PointRange, PointMap>`
@@ -138,19 +138,19 @@ Data structures specialized to classify clusters.
 - `CGAL::Classification::Feature::Vertical_range<GeomTraits, PointRange, PointMap>`
 - `CGAL::Classification::Feature::Verticality<GeomTraits>`
 
-## Point Set Classification ##
+\cgalCRPSection{Point Set Classification}
 
 - `CGAL::Classification::Point_set_feature_generator<GeomTraits, PointRange, PointMap, ConcurrencyTag, DiagonalizeTraits>`
 - `CGAL::Classification::Point_set_neighborhood<GeomTraits, PointRange, PointMap>`
 
-## Mesh Classification ##
+\cgalCRPSection{Mesh Classification}
 
 - `CGAL::Classification::Mesh_feature_generator<GeomTraits, FaceGraph, PointMap, ConcurrencyTag, DiagonalizeTraits>`
 - `CGAL::Classification::Mesh_neighborhood<FaceListGraph>`
 - `CGAL::Classification::Face_descriptor_to_center_of_mass_map<FaceListGraph, VertexPointMap>`
 - `CGAL::Classification::Face_descriptor_to_face_descriptor_with_bbox_map<FaceListGraph, VertexPointMap>`
 
-## Cluster Classification ##
+\cgalCRPSection{Cluster Classification}
 
 - `CGAL::Classification::Cluster<ItemRange, ItemMap>`
 - `CGAL::Classification::create_clusters_from_indices()`

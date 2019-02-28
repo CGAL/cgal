@@ -39,16 +39,16 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `BoxIntersectionBox_d`
 - `BoxIntersectionTraits_d`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Box_intersection_d::Box_d<NT,int D,IdPolicy>`
 - `CGAL::Box_intersection_d::Box_with_handle_d<NT, int D, Handle, IdPolicy>`
 - `CGAL::Box_intersection_d::Box_traits_d<BoxHandle>`
 
-## Functions ##
+\cgalCRPSection{Functions}
 - `CGAL::box_intersection_d`
 - `CGAL::box_self_intersection_d`
 

@@ -19,7 +19,7 @@
 
 \cgalClassifedRefPages
 
-## Functions ##
+\cgalCRPSection{Functions}
 - `CGAL::convex_decomposition_3(Nef_polyhedron_3& N)`
 
 */

@@ -26,19 +26,19 @@ The API is flexible and can be extended to user-defined proxies and error metric
 
 \cgalClassifedRefPages
 
-## Parameters ##
+\cgalCRPSection{Parameters}
 Optional parameters of the functions of this package
 are implemented as BGL named parameters.
 The page \ref vsa_namedparameters describes their usage
 and provides the list of parameters used in this package.
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `ErrorMetricProxy`
 
-## Main Functions ##
+\cgalCRPSection{Main Functions}
 - `CGAL::Surface_mesh_approximation::approximate_triangle_mesh()`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Surface_mesh_approximation::L21_metric_plane_proxy`
 - `CGAL::Surface_mesh_approximation::L2_metric_plane_proxy`
 - `CGAL::Variational_shape_approximation`

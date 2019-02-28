@@ -47,8 +47,7 @@ We call a \f$ 0\f$-simplex a <I>vertex</I>, a \f$ (d-1)\f$-simplex a <I>facet</I
 Two full cells are <I>neighbors</I> if they share a facet. Two faces are
 <I>incident</I> if one is included in the other.
 
-Input/Output
---------------
+\cgalHeading{Input/Output}
 
 The information stored in the `iostream` is:
 
