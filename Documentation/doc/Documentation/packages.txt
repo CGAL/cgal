@@ -2,15 +2,6 @@
 
 \page packages Package Overview
 
-\htmlonly
-<style type="text/css">
-h1 {
-	font-size: 150%;
-    background-color: #EEEDF2;
-}
-</style>
-\endhtmlonly
-
 \section PartAlgebraicFoundations Arithmetic and Algebra
 
 \package_listing{Algebraic_foundations}
