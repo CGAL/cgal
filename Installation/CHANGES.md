@@ -56,6 +56,9 @@ Release date: March 2019
 -   Added the class `CGAL::Rigid_triangle_mesh_collision_detection` to detect intersections between meshes
     and volumes undergoing affine transformations.
 
+### Regularized Boolean Set Operations in 2D package
+-   Fixed the validation of orientation of relative simple polygons.
+
 ### Point Set Processing
 
 -   `CGAL::mst_orient_normals()` can now be called with a set of user-selected
@@ -148,7 +151,6 @@ Release date: March 2019
 -   Added function `write_wrl()` for writing into VRML 2.0 format.
 -   Added functions `CGAL::write_vtp()` for writing a triangulated
       face graph in a `.vtp` file (XML VTK format).
-
 
 
 Release 4.13
