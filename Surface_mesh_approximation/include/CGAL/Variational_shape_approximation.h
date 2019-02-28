@@ -342,6 +342,8 @@ public:
 
     // initialize proxies and the proxy map to prepare for insertion
     bootstrap_from_connected_components();
+    if (max_nb_proxies <= m_proxies.size())
+      return m_proxies.size();
     switch (method) {
       case Surface_mesh_approximation::RANDOM:
         return init_random(max_nb_proxies, min_error_drop, nb_relaxations);
