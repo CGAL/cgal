@@ -1,4 +1,3 @@
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <OpenMesh/Core/IO/MeshIO.hh>
@@ -9,7 +8,6 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 
 #include <CGAL/mesh_segmentation.h>
-
 #include <CGAL/property_map.h>
 
 #include <iostream>

@@ -12,7 +12,6 @@
 // ============================================================================
 
 
-#include <CGAL/basic.h>
 #include <cassert>
 #include <CGAL/Cache.h>
 #include <CGAL/Handle_with_policy.h>

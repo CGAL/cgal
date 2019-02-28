@@ -1,4 +1,3 @@
-#include <CGAL/Cartesian.h>
 #include <list>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/test_macros.h>

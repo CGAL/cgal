@@ -3,12 +3,11 @@
 #include <CGAL/Random.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/double.h>
-#include <CGAL/Triangle_3.h>
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <cassert>
 typedef double RT;
 
-typedef CGAL::Cartesian<RT>					K;
+typedef CGAL::Simple_cartesian<RT>				K;
 typedef K::Point_3 						Point_3;
 typedef K::Vector_3 						Vector_3;
 typedef K::Tetrahedron_3 					Tetrahedron_3;

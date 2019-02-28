@@ -1,7 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
-
 #include <CGAL/Surface_mesh.h>
-
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/partition.h>
 
