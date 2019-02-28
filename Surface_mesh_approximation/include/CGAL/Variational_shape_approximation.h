@@ -211,7 +211,7 @@ private:
 
   // The anchor attached to a vertex.
   struct Anchor {
-    Anchor(const vertex_descriptor &vtx_, const Point_3 pos_)
+    Anchor(const vertex_descriptor vtx_, const Point_3 pos_)
       : vtx(vtx_), pos(pos_) {}
 
     vertex_descriptor vtx; // The associated vertex.
@@ -221,7 +221,7 @@ private:
   // The boundary cycle of a region.
   // One region may have multiple boundary cycles.
   struct Boundary_cycle {
-    Boundary_cycle(const halfedge_descriptor &h)
+    Boundary_cycle(const halfedge_descriptor h)
       : he_head(h), num_anchors(0) {}
 
     halfedge_descriptor he_head; // Heading halfedge of the boundary cycle.
@@ -1505,7 +1505,7 @@ private:
         std::cerr << "#chord_anchor " << m_bcycles.back().num_anchors << std::endl;
 #endif
 
-        BOOST_FOREACH(const halfedge_descriptor &he, chord)
+        BOOST_FOREACH(const halfedge_descriptor he, chord)
           he_candidates.erase(he);
       } while (he_start != he_mark);
     }
@@ -1553,7 +1553,7 @@ private:
         FT dist_max(0.0);
         chord_vec = scale_functor(chord_vec,
           FT(1.0) / CGAL::approximate_sqrt(chord_vec.squared_length()));
-        BOOST_FOREACH(const halfedge_descriptor &he, chord) {
+        BOOST_FOREACH(const halfedge_descriptor he, chord) {
           Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(he, *m_ptm)]);
           vec = CGAL::cross_product(chord_vec, vec);
           const FT dist = CGAL::approximate_sqrt(vec.squared_length());
@@ -1565,7 +1565,7 @@ private:
       }
       else {
         FT dist_max(0.0);
-        BOOST_FOREACH(const halfedge_descriptor &he, chord) {
+        BOOST_FOREACH(const halfedge_descriptor he, chord) {
           const FT dist = CGAL::approximate_sqrt(CGAL::squared_distance(
             pt_begin, m_vpoint_map[target(he, *m_ptm)]));
           if (dist > dist_max) {
@@ -1901,7 +1901,7 @@ private:
    * @param he a halfedge descriptor
    * @return `true` is attached with an anchor, and `false` otherwise.
    */
-  bool is_anchor_attached(const halfedge_descriptor &he) const {
+  bool is_anchor_attached(const halfedge_descriptor he) const {
     return is_anchor_attached(target(he, *m_ptm), m_vanchor_map);
   }
 
@@ -1914,7 +1914,7 @@ private:
    */
   template<typename VertexAnchorIndexMap>
   bool is_anchor_attached(
-    const typename boost::property_traits<VertexAnchorIndexMap>::key_type &vtx,
+    const typename boost::property_traits<VertexAnchorIndexMap>::key_type vtx,
     const VertexAnchorIndexMap &vanchor_map) const {
     return get(vanchor_map, vtx) != CGAL_VSA_INVALID_TAG;
   }
@@ -1923,7 +1923,7 @@ private:
    * @brief attaches an anchor to the vertex.
    * @param vtx vertex
    */
-  void attach_anchor(const vertex_descriptor &vtx) {
+  void attach_anchor(const vertex_descriptor vtx) {
     put(m_vanchor_map, vtx, m_anchors.size());
     // default anchor location is the vertex point
     m_anchors.push_back(Anchor(vtx, m_vpoint_map[vtx]));
@@ -1933,7 +1933,7 @@ private:
    * @brief attaches an anchor to the target vertex of the halfedge.
    * @param he halfedge
    */
-  void attach_anchor(const halfedge_descriptor &he) {
+  void attach_anchor(const halfedge_descriptor he) {
     attach_anchor(target(he, *m_ptm));
   }
 
