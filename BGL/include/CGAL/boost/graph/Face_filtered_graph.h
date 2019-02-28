@@ -655,6 +655,17 @@ template<typename Graph,
          typename VIMap,
          typename HIMap>
 typename boost::graph_traits<Graph>::degree_size_type
+degree(typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::face_descriptor f,
+       const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
+{
+  return degree(f, w.graph());
+}
+
+template<typename Graph,
+         typename FIMap,
+         typename VIMap,
+         typename HIMap>
+typename boost::graph_traits<Graph>::degree_size_type
 out_degree(typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::vertex_descriptor v,
            const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
