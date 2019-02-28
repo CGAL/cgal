@@ -12,7 +12,7 @@ namespace CGAL {
 \author Mikhail Bogdanov, Iordan Iordanov, and Monique Teillaud
 
 <center>
-<img src="header.png" style="max-width:50%; width=50%;"/>
+<img src="header.png" style="max-width:50%; width:50%;"/>
 </center>
 
 This package enables the computation of Delaunay triangulations of 
@@ -33,7 +33,7 @@ are not the same as its Euclidean center and radius.
 
 \cgalFigureAnchor{Hyperbolic_triangulation_2Poincare_disk}
 <center>
-<img src="poincare-disk.svg" style="max-width:27%; width=27%;"/>
+<img src="poincare-disk.svg" style="max-width:27%; width:27%;"/>
 </center>
 \cgalFigureCaptionBegin{Hyperbolic_triangulation_2Poincare_disk}
 The Poincar&eacute; disk model for the hyperbolic plane. The figure shows 
@@ -68,8 +68,8 @@ edges&nbsp;\cgalCite{cgal:bdt-hdcvd-14}, illustrated by
 
 \cgalFigureAnchor{Hyperbolic_triangulation_2Euclidean_vs_hyperbolic}
 <center>
-	<img src="hyperbolic-vs-euclidean.svg" style="max-width:27%; width=27%; display: inline-block; text-align:right;"/>
-	<img src="ht-empty-disks.svg" style="max-width:30%; width=30%; display: inline-block; text-align:left;"/>
+	<img src="hyperbolic-vs-euclidean.svg" style="max-width:27%; width:27%; display: inline-block; text-align:right;"/>
+	<img src="ht-empty-disks.svg" style="max-width:30%; width:30%; display: inline-block; text-align:left;"/>
 </center>
 \cgalFigureCaptionBegin{Hyperbolic_triangulation_2Euclidean_vs_hyperbolic}
 <b>Left:</b> The Euclidean (red) and hyperbolic (black) Delaunay triangulations 
