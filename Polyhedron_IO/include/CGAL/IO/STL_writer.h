@@ -75,7 +75,8 @@ write_STL(const TriangleMesh& tm, std::ostream& out)
   }
   else
   {
-    out << "solid\n";
+    out << "solid\n";    
+    out << std::scientific << std::setprecision(17);
     BOOST_FOREACH(face_descriptor f, faces(tm))
     {
       halfedge_descriptor h = halfedge(f, tm);
@@ -85,12 +86,13 @@ write_STL(const TriangleMesh& tm, std::ostream& out)
 
       Vector_3 n = collinear(p,q,r) ? Vector_3(1,0,0):
                                       unit_normal(p,q,r);
-      out << std::scientific << std::setprecision(6);
-      out << "facet normal " << n << "\n    outer loop\n";
+      out << "facet normal " << n << "\n;
+      out << "    outer loop\n";
       out << "        vertex " << p << "\n";
       out << "        vertex " << q << "\n";
       out << "        vertex " << r << "\n";
-      out << "    endloop\nendfacet\n";
+      out << "    endloop\n";
+      out << "endfacet\n";
     }
     out << "endsolid\n";
   }
