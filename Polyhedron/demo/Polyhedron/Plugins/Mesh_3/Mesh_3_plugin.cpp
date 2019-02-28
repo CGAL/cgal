@@ -567,7 +567,7 @@ launch_thread(Meshing_thread* mesh_thread)
   cancelButton->setText(tr("Stop"));
 
   QObject::connect(cancelButton, &QAbstractButton::clicked,
-                   this, [this, mesh_thread](){
+                   this, [mesh_thread](){
     mesh_thread->stop();
     mesh_thread->wait();
     QApplication::restoreOverrideCursor(); // restores cursor set in mesh_thread stop() function
