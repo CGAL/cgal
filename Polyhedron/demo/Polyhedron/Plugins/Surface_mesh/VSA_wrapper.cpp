@@ -15,7 +15,7 @@ VSA_wrapper::VSA_wrapper(const SMesh &mesh) :
     const Point_3 &p2 = vpm[target(next(he, mesh), mesh)];
 
     put(m_center_pmap, f, CGAL::centroid(p0, p1, p2));
-    put(m_area_pmap, f, std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
+    put(m_area_pmap, f, CGAL::sqrt(CGAL::squared_area(p0, p1, p2)));
   }
 
   m_pl21_metric = new L21_metric(mesh, vpm);

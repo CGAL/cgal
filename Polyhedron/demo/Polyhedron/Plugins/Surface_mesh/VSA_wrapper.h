@@ -65,8 +65,7 @@ class VSA_WRAPPER_EXPORT VSA_wrapper {
       : center_pmap(center_pmap_), area_pmap(area_pmap_) {}
 
     FT compute_error(const face_descriptor f, const SMesh &, const Proxy &px) const {
-      return FT(std::sqrt(CGAL::to_double(
-        CGAL::squared_distance(get(center_pmap, f), px))));
+      return CGAL::sqrt(CGAL::squared_distance(get(center_pmap, f), px));
     }
 
     template <typename FaceRange>
