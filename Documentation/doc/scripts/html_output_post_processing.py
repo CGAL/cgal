@@ -328,11 +328,6 @@ removes some unneeded files, and performs minor repair on some glitches.''')
 
     re_replace_in_file('\[external\]', '', os.path.join('Manual','annotated.html'))
 
-    # replace h1 tag with some special style properties
-
-    re_replace_in_file("<h1>", "<h1 style=\"font-size: 150%; background-color: #EEEDF2;\">",
-                       os.path.join('Manual','packages.html') )
-
     # fix class/concept mismatch in generated pages
     relationship_pages=list(package_glob('./*/hasModels.html'))
     relationship_pages.extend(package_glob('./*/generalizes.html'))
