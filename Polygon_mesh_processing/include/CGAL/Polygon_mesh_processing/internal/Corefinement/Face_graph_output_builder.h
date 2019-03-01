@@ -1255,20 +1255,22 @@ public:
     if (used_to_clip_a_surface)
     {
       // special code to handle non-manifold vertices on the boundary
-      BOOST_FOREACH(halfedge_descriptor h, halfedges(tm1))
+      typedef std::pair<vertex_descriptor, Node_id> V_and_id;
+      BOOST_FOREACH (const V_and_id& v_and_id, vertex_to_node_id1)
       {
-        if ( intersection_edges1.count(edge(h, tm1))==1 && is_border(h, tm1) )
+        boost::optional<halfedge_descriptor> op_h = is_border(v_and_id.first, tm1);
+        if (op_h == boost::none) continue;
+        halfedge_descriptor h = *op_h;
+        CGAL_assertion( target(h, tm1) == v_and_id.first);
+        // check if the target of h is a non-manifold vertex
+        halfedge_descriptor nh = prev( opposite(h, tm1), tm1 );
+        while (!is_border( opposite(nh, tm1), tm1 ) )
         {
-          // check if the target of h is a non-manifold vertex
-          halfedge_descriptor nh = prev( opposite(h, tm1), tm1 );
-          while (!is_border( opposite(nh, tm1), tm1 ) )
-          {
-            nh = prev( opposite(nh, tm1), tm1 );
-          }
-          nh = opposite(nh, tm1);
-          if (next(h, tm1) != nh)
-            border_nm_vertices.insert(target(h, tm1));
+          nh = prev( opposite(nh, tm1), tm1 );
         }
+        nh = opposite(nh, tm1);
+        if (next(h, tm1) != nh)
+          border_nm_vertices.insert(target(h, tm1));
       }
     }
 
