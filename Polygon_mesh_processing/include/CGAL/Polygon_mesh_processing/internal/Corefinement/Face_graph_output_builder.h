@@ -1251,6 +1251,27 @@ public:
                             FaceIdMap,
                             Intersection_edge_map> Patches;
 
+    boost::unordered_set<vertex_descriptor> border_nm_vertices; // only used if used_to_clip_a_surface == true
+    if (used_to_clip_a_surface)
+    {
+      // special code to handle non-manifold vertices on the boundary
+      BOOST_FOREACH(halfedge_descriptor h, halfedges(tm1))
+      {
+        if ( intersection_edges1.count(edge(h, tm1))==1 && is_border(h, tm1) )
+        {
+          // check if the target of h is a non-manifold vertex
+          halfedge_descriptor nh = prev( opposite(h, tm1), tm1 );
+          while (!is_border( opposite(nh, tm1), tm1 ) )
+          {
+            nh = prev( opposite(nh, tm1), tm1 );
+          }
+          nh = opposite(nh, tm1);
+          if (next(h, tm1) != nh)
+            border_nm_vertices.insert(target(h, tm1));
+        }
+      }
+    }
+
     //store the patch description in a container to avoid recomputing it several times
     Patches patches_of_tm1( tm1, tm1_patch_ids, fids1, intersection_edges1, nb_patches_tm1),
             patches_of_tm2( tm2, tm2_patch_ids, fids2, intersection_edges2, nb_patches_tm2);
@@ -1598,6 +1619,77 @@ public:
                 if ( !border_vertices.count( source(h,tm1) ) )
                   patches_of_tm1[i].interior_vertices.insert( source(h,tm1) );
               }
+            }
+          }
+
+          // Code dedicated to the handling of non-manifold vertices
+          BOOST_FOREACH(vertex_descriptor vd, border_nm_vertices)
+          {
+            // first check if at least one incident patch will be kept
+            boost::unordered_set<std::size_t> id_p_rm;
+            bool all_removed=true;
+            BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(vd, tm1))
+            {
+              face_descriptor f = face(h, tm1);
+              if ( f != GT::null_face() )
+              {
+                const std::size_t p_id = tm1_patch_ids[ get(fids1, f) ];
+                if ( patches_to_remove.test(p_id) )
+                  id_p_rm.insert(p_id);
+                else
+                  all_removed=false;
+              }
+            }
+            if (all_removed)
+              id_p_rm.erase(id_p_rm.begin());
+            // remove the vertex from the interior vertices of patches to be removed
+            BOOST_FOREACH(std::size_t pid, id_p_rm)
+              patches_of_tm1[pid].interior_vertices.erase(vd);
+
+            // we now need to update the next/prev relationship induced by the future removal of patches
+            if (!id_p_rm.empty())
+            {
+              typedef std::pair<halfedge_descriptor, halfedge_descriptor> Hedge_pair;
+              std::vector< Hedge_pair> hedges_to_link;
+              BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(vd, tm1))
+              {
+                if ( is_border(h, tm1) &&
+                     !patches_to_remove.test( tm1_patch_ids[ get(fids1, face(opposite(h, tm1), tm1)) ] ) )
+                {
+                  halfedge_descriptor start = h;
+
+                  do{
+                    halfedge_descriptor nh = next(h, tm1);
+                    CGAL_assertion( source(nh, tm1) == target(start, tm1) );
+                    if ( patches_to_remove.test( tm1_patch_ids[ get(fids1, face(opposite(nh, tm1), tm1)) ] ) )
+                    {
+                      // we need to find a new next for h
+                      do{
+                        nh = next( opposite( next(opposite(nh, tm1), tm1), tm1 ), tm1 );
+                        CGAL_assertion( source(nh, tm1) == target(start, tm1) );
+                      }
+                      while ( !is_border(nh, tm1) ||
+                              !patches_to_remove.test( tm1_patch_ids[ get(fids1, face(opposite(nh, tm1), tm1)) ] ) );
+                      hedges_to_link.push_back( Hedge_pair(h, nh) );
+                    }
+
+                    // look for the next hedge to proceed
+                    h = opposite( next( opposite(nh, tm1), tm1), tm1);
+                    CGAL_assertion( target(h, tm1) == target(start, tm1) );
+                    while( !is_border(h, tm1) ||
+                           patches_to_remove.test( tm1_patch_ids[ get(fids1, face(opposite(h, tm1), tm1)) ] ) )
+                    {
+                      h = opposite( next( h, tm1), tm1);
+                      CGAL_assertion( target(h, tm1) == target(start, tm1) );
+                    }
+                  }
+                  while( h != start );
+                  break;
+                }
+              }
+
+              BOOST_FOREACH ( const Hedge_pair& p, hedges_to_link)
+                set_next(p.first, p.second, tm1);
             }
           }
         }
