@@ -2,6 +2,7 @@ from __future__ import print_function
 from collections import defaultdict
 import xml.etree.ElementTree as ET
 import os
+import io
 import errno
 import re
 import sys
@@ -77,7 +78,8 @@ with open_file_create_dir(result_file_name.format(dir=os.getcwd(),
                 elif t['Output'] != None and re.search(r'(^|[^a-zA-Z_,:-])warning', t['Output'], flags=re.IGNORECASE):
                     result_for_label='w'
 
-                with open("{}/ProgramOutput.{}".format(label, t['Name']), 'w') as f:
+                with io.open("{}/ProgramOutput.{}".format(label, t['Name']), mode="w", encoding="utf-8") as f:
+                    print("{}/ProgramOutput.{}".format(label, t['Name']))
                     f.write(t['Output'] if t['Output'] != None else "")
 
 
