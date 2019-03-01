@@ -124,6 +124,19 @@ public:
   unsigned char& alpha() { return m_data[3]; }
 
   /// \cond SKIP_IN_MANUAL
+
+  bool operator==(const Color &c) const
+  {
+    return ( (red() == c.red()) &&
+             (green() == c.green()) &&
+             (blue() == c.blue()) );
+  }
+
+  bool operator!=(const Color &c) const
+  {
+    return !( (*this) == c);
+  }
+  
   unsigned char r() const { return red(); }
   unsigned char g() const { return green(); }
   unsigned char b() const { return blue(); }
