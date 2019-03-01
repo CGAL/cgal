@@ -1103,8 +1103,9 @@ public:
               // triangle which is tangent at its 3 vertices
               // \todo improve this part which is not robust with a kernel
               // with inexact constructions.
-              Bounded_side position = inside_tm2(midpoint(get(vpm1, source(h, tm1)),
-                                                          get(vpm1, target(h, tm1)) ));
+              Bounded_side position = inside_tm2(centroid(get(vpm1, source(h, tm1)),
+                                                          get(vpm1, target(h, tm1)),
+                                                          get(vpm1, target(next(h, tm1), tm1)) ));
               CGAL_assertion( position != ON_BOUNDARY);
               if ( position == in_tm2 )
                 is_patch_inside_tm2.set(patch_id);
