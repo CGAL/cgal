@@ -1254,23 +1254,29 @@ public:
     boost::unordered_set<vertex_descriptor> border_nm_vertices; // only used if used_to_clip_a_surface == true
     if (used_to_clip_a_surface)
     {
-      // special code to handle non-manifold vertices on the boundary
-      typedef std::pair<vertex_descriptor, Node_id> V_and_id;
-      BOOST_FOREACH (const V_and_id& v_and_id, vertex_to_node_id1)
+      if (!is_tm1_closed)
       {
-        boost::optional<halfedge_descriptor> op_h = is_border(v_and_id.first, tm1);
-        if (op_h == boost::none) continue;
-        halfedge_descriptor h = *op_h;
-        CGAL_assertion( target(h, tm1) == v_and_id.first);
-        // check if the target of h is a non-manifold vertex
-        halfedge_descriptor nh = prev( opposite(h, tm1), tm1 );
-        while (!is_border( opposite(nh, tm1), tm1 ) )
+        // \todo Note a loop over vertex_to_node_id1 would be sufficient
+        // if we merge the patch-id of patches to be removed (that way
+        // non-manifold vertices would not be duplicated in interior
+        // vertices of patche)
+        // special code to handle non-manifold vertices on the boundary
+        BOOST_FOREACH (vertex_descriptor vd, vertices(tm1))
         {
-          nh = prev( opposite(nh, tm1), tm1 );
+          boost::optional<halfedge_descriptor> op_h = is_border(vd, tm1);
+          if (op_h == boost::none) continue;
+          halfedge_descriptor h = *op_h;
+          CGAL_assertion( target(h, tm1) == vd);
+          // check if the target of h is a non-manifold vertex
+          halfedge_descriptor nh = prev( opposite(h, tm1), tm1 );
+          while (!is_border( opposite(nh, tm1), tm1 ) )
+          {
+            nh = prev( opposite(nh, tm1), tm1 );
+          }
+          nh = opposite(nh, tm1);
+          if (next(h, tm1) != nh)
+            border_nm_vertices.insert(target(h, tm1));
         }
-        nh = opposite(nh, tm1);
-        if (next(h, tm1) != nh)
-          border_nm_vertices.insert(target(h, tm1));
       }
     }
 
