@@ -2092,6 +2092,9 @@ private: //------------------------------------------------------- private data
   /// If an alternative vertex_point map is given through `np`, 
   /// then it  will be used instead of the default one.
   /// \pre `operator<<(std::ostream&,const P&)` must be defined.
+  /// \note The <A HREF="https://en.cppreference.com/w/cpp/io/ios_base/precision">`precision()`</A> 
+  ///       of the output stream might not be sufficient depending on the data to be written.
+   
   template <typename P, typename NamedParameters>
   bool write_off(std::ostream& os, const Surface_mesh<P>& sm, const NamedParameters& np) {
     typedef Surface_mesh<P> Mesh;

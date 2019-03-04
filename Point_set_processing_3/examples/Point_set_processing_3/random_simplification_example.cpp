@@ -34,6 +34,7 @@ int main(int argc, char*argv[])
 
   // Saves point set.
   std::ofstream out((argc>2)?argv[2]:"Three_lady_copy.xyz");
+  out.precision(17);
   if (!out ||
 	  !CGAL::write_xyz_points(
             out, points))

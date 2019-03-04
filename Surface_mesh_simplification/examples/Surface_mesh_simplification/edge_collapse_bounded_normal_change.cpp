@@ -44,7 +44,9 @@ typedef SMS::Bounded_normal_change_placement<SMS::LindstromTurk_placement<Surfac
                         .get_placement(Placement())
                       );
 
-  std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ; os << surface_mesh ;
+  std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ;
+  os.precision(17);
+  os << surface_mesh ;
 
   return 0 ;      
 }
