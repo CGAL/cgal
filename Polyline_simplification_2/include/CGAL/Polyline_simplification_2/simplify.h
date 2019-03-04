@@ -271,44 +271,44 @@ operator()()
     
     if((*u)->is_removable()){
       boost::optional<FT> dist = cost(pct, u);
-      boost::unordered_map<int,typename MPQ::handle>::iterator find_result_u = 
+      typename boost::unordered_map<int,typename MPQ::handle>::iterator find_result_u = 
           h.find(u.base()->id);
       if(! dist){
         // cost is undefined
         if( find_result_u != h.end()){
-          mpq->erase(u, h[u.base()->id]);
+          mpq->erase(u, find_result_u->second);
           h.erase(u.base()->id);
         }
       } else {
         if(find_result_u != h.end()){
-          typename MPQ::handle ex_h = h[u.base()->id];
+          typename MPQ::handle ex_h = find_result_u->second;
           (*u)->set_cost(*dist);
           mpq->update(u, ex_h);
-          h[u.base()->id] = ex_h;
+          find_result_u->second = ex_h;
         }
         else{
           (*u)->set_cost(*dist);
-          h[u.base()->id]=mpq->push(u);
+          find_result_u->second=mpq->push(u);
         }
       }
     }
     
     if((*w)->is_removable()){
       boost::optional<FT> dist = cost(pct, w);
-      boost::unordered_map<int,typename MPQ::handle>::iterator find_result_w = 
+      typename boost::unordered_map<int,typename MPQ::handle>::iterator find_result_w = 
           h.find(w.base()->id);
       if(! dist){
         // cost is undefined
         if(find_result_w != h.end()){
-          mpq->erase(w, h[w.base()->id]);
+          mpq->erase(w, find_result_w->second);
           h.erase(w.base()->id);
         }
       } else {
         if(find_result_w != h.end()){
-          typename MPQ::handle ex_h = h[w.base()->id];
+          typename MPQ::handle ex_h = find_result_w->second;
           (*w)->set_cost(*dist);
           mpq->update(w, ex_h);
-          h[w.base()->id]=ex_h;
+          find_result_w->second=ex_h;
         }
         else{
           (*w)->set_cost(*dist);
