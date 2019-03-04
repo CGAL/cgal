@@ -298,6 +298,8 @@ ALIASES+= "cgalCRPSubsection{1}=<h3>\1</h3>"
 
 ALIASES+= "cgalCite{1}=<!-- -->\cite \1"
 
+ALIASES+= "cgalPackageSection{2}=\htmlonly <div style=\"background-color: #EEEDF2;\">\endhtmlonly \section \1 \2 \n \htmlonly </div>\endhtmlonly"
+
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding
 # "class=itcl::class" will allow you to use the command class in the
