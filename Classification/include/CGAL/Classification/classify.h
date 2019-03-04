@@ -498,8 +498,8 @@ namespace internal {
           (CGAL::Bbox_3 (bbox.xmin() + Dx * (x / double(nb_x)),
                          bbox.ymin() + Dy * (y / double(nb_y)),
                          bbox.zmin(),
-                         bbox.xmin() + Dx * ((x+1) / double(nb_x)),
-                         bbox.ymin() + Dy * ((y+1) / double(nb_y)),
+                         (x == nb_x - 1 ? bbox.xmax() : bbox.xmin() + Dx * ((x+1) / double(nb_x))),
+                         (y == nb_y - 1 ? bbox.ymax() : bbox.ymin() + Dy * ((y+1) / double(nb_y))),
                          bbox.zmax()));
       }
 
