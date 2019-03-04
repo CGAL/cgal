@@ -125,6 +125,7 @@ struct Scene_surface_mesh_item_priv{
     alphaSlider = NULL;
     has_vcolors = false;
     has_fcolors = false;
+    item->setProperty("classname", QString("surface_mesh"));
   }
 
   Scene_surface_mesh_item_priv(SMesh* sm, Scene_surface_mesh_item *parent):
@@ -151,6 +152,7 @@ struct Scene_surface_mesh_item_priv{
     alphaSlider = NULL;
     has_vcolors = false;
     has_fcolors = false;
+    item->setProperty("classname", QString("surface_mesh"));
   }
 
   ~Scene_surface_mesh_item_priv()

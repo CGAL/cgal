@@ -2435,7 +2435,10 @@ QString MainWindow::get_item_stats()
   QList<QString> classnames;
   Q_FOREACH(int id, scene->selectionIndices())
   {
-    QString classname = scene->item(id)->metaObject()->className();
+    Scene_item* item = scene->item(id);
+    QString classname = item->property("classname").toString(); 
+    if(classname.isEmpty())
+       classname = item->metaObject()->className();
     if(!classnames.contains(classname))
       classnames << classname;
   }
@@ -2446,11 +2449,17 @@ QString MainWindow::get_item_stats()
   {
     Scene_item* s_item = scene->item(id);
     for(int i=0; i<items.size(); i++)
-      if(classnames.at(i).contains(s_item->metaObject()->className()))
+    {
+      Scene_item* item = scene->item(id);
+      QString classname = item->property("classname").toString(); 
+      if(classname.isEmpty())
+         classname = item->metaObject()->className();
+      if(classnames.at(i).contains(classname))
       {
         items[i] << s_item;
         break;
       }
+    }
   }
   //last step :: making tables for each type of item
   QString str;
