@@ -2001,7 +2001,7 @@ namespace internal { namespace TDS_2{
   struct Default_vertex_converter
   {
     Vertex_tgt operator()(const Vertex_src& src) const {
-      return Vertex_src( src.point() );
+      return Vertex_tgt( src.point() );
     }
     
     void operator()(const Vertex_src&,Vertex_tgt&) const {}
