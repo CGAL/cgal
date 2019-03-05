@@ -251,6 +251,8 @@ ALIASES += "cgalAdvancedBegin=\htmlonly <div class=\"CGALAdvanced\"> <div>Advanc
 ALIASES += "cgalAdvancedEnd=\htmlonly </div> \endhtmlonly"
 ALIASES += "cgalAdvancedFunction=This is an advanced function."
 ALIASES += "cgalAdvancedClass=This is an advanced class."
+ALIASES += "cgalAdvancedType=This is an advanced type."
+ALIASES += "cgalAdvancedConcept=This is an advanced concept."
 
 ALIASES += "cgalRequiresCPP11=\warning This function requires a C++11 compiler."
 
