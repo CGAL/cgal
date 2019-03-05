@@ -689,14 +689,16 @@ void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
     viewer->glEnable(GL_BLEND);
     viewer->glEnable(GL_LINE_SMOOTH);
     viewer->glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-    viewer->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //viewer->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    viewer->glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
   }
   else
   {
     viewer->glDisable(GL_BLEND);
     viewer->glDisable(GL_LINE_SMOOTH);
     viewer->glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
-    viewer->glBlendFunc(GL_ONE, GL_ZERO);
+    //viewer->glBlendFunc(GL_ONE, GL_ZERO);
+    viewer->glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
   }
   inDrawWithNames = with_names;
   if(with_names)
