@@ -39,6 +39,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/properties.h>
+#include <CGAL/boost/graph/helpers.h>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
 #include <CGAL/tags.h>
@@ -1421,19 +1422,46 @@ private:
     {
       vertex_descriptor vs = source(h, mesh_);
       vertex_descriptor vt = target(h, mesh_);
-      
+
+      //collect normals to faces around vs AND vt
+      boost::unordered_map<halfedge_descriptor, Vector_3> normals_before_collapse;
+
+      BOOST_FOREACH(halfedge_descriptor hd,
+        boost::range::join(halfedges_around_target(h, mesh_),
+                           halfedges_around_target(opposite(h, mesh_), mesh_)))
+      {
+        normals_before_collapse[hd] = compute_normal(face(hd, mesh_));
+        //note `compute_normal()` returns CGAL::NULL_VECTOR for degenerate faces
+      }
+
       //backup source point
       Point ps = get(vpmap_, vs);
       //move source at target
       put(vpmap_, vs, get(vpmap_, vt));
 
-      //collect normals to faces around vs AND vt
-      //vertices are at the same location, but connectivity is still be same,
+      //now vertices are at the same location, but connectivity is still the same,
       //with plenty of degenerate triangles (which are common to both stars)
-      bool res = check_normals(
-                   boost::range::join(
-                     halfedges_around_target(h, mesh_),
-                     halfedges_around_target(opposite(h, mesh_), mesh_)));
+      //check that normals to non-degenerate faces have not been inverted
+      //(i.e. they are still pointing in the same direction)
+      bool res = true;
+      BOOST_FOREACH(halfedge_descriptor hd,
+                    boost::range::join(
+                      halfedges_around_target(h, mesh_),
+                      halfedges_around_target(opposite(h, mesh_), mesh_)))
+      {
+        face_descriptor fd = face(hd, mesh_);
+        if ( fd == boost::graph_traits<PM>::null_face()
+          || is_degenerate_triangle_face(fd, mesh_, vpmap_, GeomTraits()))
+          continue;
+
+        Vector_3 n_after  = compute_normal(face(hd, mesh_)); //deals with degenerate faces
+        Vector_3 n_before = normals_before_collapse[hd];
+        if (n_after * n_before <= 0)
+        {
+          res = false;
+          break;
+        }
+      }
 
       //restore position
       put(vpmap_, vs, ps);
