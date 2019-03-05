@@ -57,7 +57,7 @@ induced by the ambient Euclidean space, and \f$ dk_1\f$, \f$ dk_2\f$ the
 gradients of the principal curvatures. Ridges, illustrated in
 \cgalFigureRef{ellipsoidridges} for the standard ellipsoid, are defined by:
 
-<B>Definition.</B> <EM>\anchor defridgeextrema
+<B>Definition.</B> \anchor defridgeextrema
 A non umbilical point is called
 <UL>
 <LI>a max ridge point, if the <I>extremality coefficient</I> \f$ b_0=\langle
@@ -67,7 +67,6 @@ dk_1,d_1 \rangle\f$ vanishes, i.e.\ \f$ b_0=0\f$.
 \f$ b_3=\langle dk_2,d_2 \rangle\f$ vanishes, i.e.\ \f$ b_3=0\f$
 \cgalFootnote{Notations \f$ b_0, b_3\f$ comes from Equation \ref eqmonge }.
 </UL>
-</EM>
 
 The previous characterization of ridges involves third-order
 differential properties. Using fourth-order differential quantities, a
