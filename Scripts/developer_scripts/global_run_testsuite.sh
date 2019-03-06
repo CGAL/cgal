@@ -254,8 +254,8 @@ if [ "${WITH_DOCKER}" = "y" ]; then
   echo "export LOGS_DIR=/cgal_root/AUTOTEST_LOGS">> env.sh
   echo "export LOCK_FILE=/cgal_root/autotest_cgal_with_cmake.lock">> env.sh
   echo "export ACTUAL_LOGFILE=/cgal_root/\`basename \${0}\`.log">> env.sh
-  docker build -t debian:cross-compilation ${DOCKER_DIR_PATH}
-  docker run --rm  -t -e CGAL_LAST=CGAL-4.14-Ic-140 -v ~/foutoir/ssh_testsuite/ssh:/tmp_ssh -v ~/3rdPartyLibs/RPi_libs:/deps -v ${CGAL_ROOT}/:/cgal_root debian:cross-compilation
+  docker pull cgal/testsuite-docker:debian-for-arm
+  docker run --rm  -t -e CGAL_LAST=${CGAL_RELEASE_ID} -v ${CGAL_ROOT}/ssh:/tmp_ssh -v ${DEPS_DIR}:/deps -v ${CGAL_ROOT}/:/cgal_root cgal/testsuite-docker:debian-for-arm
 else
   bash ${CGAL_DIR}/developer_scripts/run_testsuite_with_cmake
 fi
