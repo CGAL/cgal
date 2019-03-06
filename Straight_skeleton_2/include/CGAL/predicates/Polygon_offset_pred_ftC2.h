@@ -39,7 +39,7 @@ Uncertain<Comparison_result> compare_offset_against_isec_timeC2 ( typename K::FT
 {
   typedef typename K::FT FT ;
   
-  typedef Rational<FT> Rational ;
+  typedef Rational_time<FT> Rational ;
   typedef Quotient<FT> Quotient ;
   
   typedef optional<Rational> Optional_rational ;

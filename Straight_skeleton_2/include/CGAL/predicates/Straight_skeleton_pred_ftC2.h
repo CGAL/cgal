@@ -179,7 +179,7 @@ template<class K, class FT>
 Uncertain<bool> exist_offset_lines_isec2 ( intrusive_ptr< Trisegment_2<K> > const& tri, optional<FT> const& aMaxTime )
 {
   
-  typedef Rational<FT>       Rational ;
+  typedef Rational_time<FT>       Rational ;
   typedef optional<Rational> Optional_rational ;
   typedef Quotient<FT>       Quotient ;
   
@@ -241,8 +241,7 @@ Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( intrusive_ptr< 
 {
   typedef typename K::FT FT ;
 
-  typedef Rational<FT>       Rational ;
-  typedef Quotient<FT>       Quotient ;
+  typedef Rational_time<FT>       Rational ;
   typedef optional<Rational> Optional_rational ;
   
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
@@ -252,11 +251,10 @@ Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( intrusive_ptr< 
   
   if ( mt_ && nt_ )
   {
-    Quotient mt = mt_->to_quotient();
-    Quotient nt = nt_->to_quotient();
-   
-    if ( CGAL_NTS certified_is_positive(mt) && CGAL_NTS certified_is_positive(nt) ) 
-      rResult = CGAL_NTS certified_compare(mt,nt);
+    // study sign?
+    CGAL_assertion(mt_.get().to_nt()>=0);
+    CGAL_assertion(nt_.get().to_nt()>=0);
+    rResult = mt_.get().compare(nt_.get());
   }
   
   return rResult ;
@@ -489,9 +487,8 @@ Uncertain<bool> are_events_simultaneousC2 ( intrusive_ptr< Trisegment_2<K> > con
   
   typedef Point_2<K> Point_2 ;
   
-  typedef Rational<FT> Rational ;
-  typedef Quotient<FT> Quotient ;
-  
+  typedef Rational_time<FT> Rational ;
+
   typedef optional<Rational> Optional_rational ;
   typedef optional<Point_2>  Optional_point_2 ;
   
@@ -499,32 +496,26 @@ Uncertain<bool> are_events_simultaneousC2 ( intrusive_ptr< Trisegment_2<K> > con
 
   Optional_rational lt_ = compute_offset_lines_isec_timeC2(l);
   Optional_rational rt_ = compute_offset_lines_isec_timeC2(r);
-  
+
   if ( lt_ && rt_ )
   {
-    Quotient lt = lt_->to_quotient();
-    Quotient rt = rt_->to_quotient();
-
-    if ( CGAL_NTS certified_is_positive(lt) && CGAL_NTS certified_is_positive(rt) ) 
+    CGAL_assertion(lt_.get().to_nt()>=0);
+    CGAL_assertion(rt_.get().to_nt()>=0);
+    if ( lt_.get().compare(rt_.get()) == EQUAL )
     {
-      Uncertain<bool> equal_times = CGAL_NTS certified_is_equal(lt,rt);
-      
-      if ( is_certain(equal_times) )
-      {
-        if ( equal_times )
-        {
-          Optional_point_2 li = construct_offset_lines_isecC2(l);
-          Optional_point_2 ri = construct_offset_lines_isecC2(r);
-  
-          if ( li && ri )
-            rResult = CGAL_NTS logical_and( CGAL_NTS certified_is_equal(li->x(),ri->x())
-                                          , CGAL_NTS certified_is_equal(li->y(),ri->y())
-                                          ) ;
-        }
-        else rResult = false;
-      }
-    }
+      Optional_point_2 li = construct_offset_lines_isecC2(l);
+      Optional_point_2 ri = construct_offset_lines_isecC2(r);
 
+//TODO Not a predicate
+      if ( li && ri )
+        rResult = CGAL_NTS logical_and( CGAL_NTS certified_is_equal(li->x(),ri->x())
+                                      , CGAL_NTS certified_is_equal(li->y(),ri->y())
+                                      ) ;
+      else
+        rResult = false;
+    }
+    else
+      rResult = false;
   }
   return rResult;
 }

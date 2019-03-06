@@ -202,7 +202,7 @@ optional< Line_2<K> > compute_line_ceoffC2( Segment_2<K> const& e )
 }
 
 template<class FT>
-Rational<FT> squared_distance_from_point_to_lineC2( FT const& px, FT const& py, FT const& sx, FT const& sy, FT const& tx, FT const& ty )
+Rational_time<FT> squared_distance_from_point_to_lineC2( FT const& px, FT const& py, FT const& sx, FT const& sy, FT const& tx, FT const& ty )
 {
   FT ldx = tx - sx ;
   FT ldy = ty - sy ;
@@ -212,7 +212,7 @@ Rational<FT> squared_distance_from_point_to_lineC2( FT const& px, FT const& py, 
   FT n = CGAL_NTS square(ldx * rdy - rdx * ldy);
   FT d = CGAL_NTS square(ldx) + CGAL_NTS square(ldy);
   
-  return Rational<FT>(n,d) ;
+  return Rational_time<FT>(n,d) ;
 }
 
 //
@@ -254,7 +254,7 @@ intrusive_ptr< Trisegment_2<K> > construct_trisegment ( Segment_2<K> const& e0
 // NOTE: The segments (e0,e1,e2) are stored in the argument as the trisegment st.event()
 //
 template<class K>
-optional< Rational< typename K::FT> > compute_normal_offset_lines_isec_timeC2 ( intrusive_ptr< Trisegment_2<K> > const& tri )
+optional< Rational_time< typename K::FT> > compute_normal_offset_lines_isec_timeC2 ( intrusive_ptr< Trisegment_2<K> > const& tri )
 {
   typedef typename K::FT  FT ;
   
@@ -263,8 +263,6 @@ optional< Rational< typename K::FT> > compute_normal_offset_lines_isec_timeC2 ( 
   typedef optional<Line_2> Optional_line_2 ;
   
   CGAL_STSKEL_TRAITS_TRACE("Computing normal offset lines isec time for: " << tri ) ;
-  
-  FT num(0.0), den(0.0) ;
   
   // DETAILS:
   //
@@ -281,39 +279,32 @@ optional< Rational< typename K::FT> > compute_normal_offset_lines_isec_timeC2 ( 
   //      ---------------------------------------------------------------
   //             -a2*b1 + a2*b0 + b2*a1 - b2*a0 + b1*a0 - b0*a1 ;
 
-  bool ok = false ;
-  
   Optional_line_2 l0 = compute_line_ceoffC2(tri->e0()) ;
   Optional_line_2 l1 = compute_line_ceoffC2(tri->e1()) ;
   Optional_line_2 l2 = compute_line_ceoffC2(tri->e2()) ;
 
   if ( l0 && l1 && l2 )
   {
-    num = (l2->a()*l0->b()*l1->c())
-         -(l2->a()*l1->b()*l0->c())
-         -(l2->b()*l0->a()*l1->c())
-         +(l2->b()*l1->a()*l0->c())
-         +(l1->b()*l0->a()*l2->c())
-         -(l0->b()*l1->a()*l2->c());
+    FT num = (l2->a()*l0->b()*l1->c())
+             -(l2->a()*l1->b()*l0->c())
+             -(l2->b()*l0->a()*l1->c())
+             +(l2->b()*l1->a()*l0->c())
+             +(l1->b()*l0->a()*l2->c())
+             -(l0->b()*l1->a()*l2->c());
 
     FT sum_sq_0 = square(l0->a()) + square(l0->b());
     FT sum_sq_1 = square(l1->a()) + square(l1->b());
     FT sum_sq_2 = square(l2->a()) + square(l2->b());
 
-    FT r0 = CGAL_SS_i::inexact_sqrt(sum_sq_0);
-    FT r1 = CGAL_SS_i::inexact_sqrt(sum_sq_1);
-    FT r2 = CGAL_SS_i::inexact_sqrt(sum_sq_2);
-
-    den = r0 * (l2->b()*l1->a() - l2->a()*l1->b()) +
-          r1 * (l2->a()*l0->b() - l2->b()*l0->a()) +
-          r2 * (l1->b()*l0->a() - l0->b()*l1->a());
-
-    ok = CGAL_NTS is_finite(num) && CGAL_NTS is_finite(den);     
+    return boost::make_optional(
+      Rational_time<FT>(num,
+                        l2->b()*l1->a() - l2->a()*l1->b(),
+                        l2->a()*l0->b() - l2->b()*l0->a(),
+                        l1->b()*l0->a() - l0->b()*l1->a(),
+                        sum_sq_0, sum_sq_1, sum_sq_2));
   }
-  
-  CGAL_STSKEL_TRAITS_TRACE("Event time (normal): n=" << num << " d=" << den << " n/d=" << Rational<FT>(num,den)  )
 
-  return cgal_make_optional(ok,Rational<FT>(num,den)) ;
+  return boost::none;
 }
 
 // Given two oriented straight line segments e0 and e1 such that e-next follows e-prev, returns
@@ -432,7 +423,7 @@ optional< Point_2<K> > compute_degenerate_seed_pointC2 ( intrusive_ptr< Trisegme
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
 template<class K>
-optional< Rational< typename K::FT> > compute_degenerate_offset_lines_isec_timeC2 ( intrusive_ptr< Trisegment_2<K> > const& tri )
+optional< Rational_time< typename K::FT> > compute_degenerate_offset_lines_isec_timeC2 ( intrusive_ptr< Trisegment_2<K> > const& tri )
 {
   typedef typename K::FT FT ;
   
@@ -479,14 +470,13 @@ optional< Rational< typename K::FT> > compute_degenerate_offset_lines_isec_timeC
   //   for t gives the result we want.
   //
   //
-  bool ok = false ;
+  Optional_line_2 l0 = compute_line_ceoffC2(tri->collinear_edge()) ;
+  Optional_line_2 l2 = compute_line_ceoffC2(tri->non_collinear_edge()) ;
 
-  Optional_line_2 l0 = compute_normalized_line_ceoffC2(tri->collinear_edge    ()) ;
-  Optional_line_2 l2 = compute_normalized_line_ceoffC2(tri->non_collinear_edge()) ;
+  FT sum_sq_0 = square(l0->a()) + square(l0->b());
+  FT sum_sq_2 = square(l2->a()) + square(l2->b());
 
   Optional_point_2 q = compute_degenerate_seed_pointC2(tri);
-  
-  FT num(0.0), den(0.0) ;
 
   if ( l0 && l2 && q )
   {
@@ -497,31 +487,34 @@ optional< Rational< typename K::FT> > compute_degenerate_offset_lines_isec_timeC
     
     if ( ! CGAL_NTS is_zero(l0->b()) ) // Non-vertical
     {
-      num = (l2->a() * l0->b() - l0->a() * l2->b() ) * px + l0->b() * l2->c() - l2->b() * l0->c() ;
-      den = (l0->a() * l0->a() - 1) * l2->b() + ( 1 - l2->a() * l0->a() ) * l0->b() ;
+      FT num = (l2->a() * l0->b() - l0->a() * l2->b() ) * px + l0->b() * l2->c() - l2->b() * l0->c();
       
-      CGAL_STSKEL_TRAITS_TRACE("Event time (degenerate, non-vertical) n=" << n2str(num) << " d=" << n2str(den) << " n/d=" << Rational<FT>(num,den) )
+      return boost::make_optional(
+        Rational_time<FT>(num,
+                          l0->b(), -l2->b(), l0->a() * ( l0->a()*l2->b() - l2->a()*l0->b() ),
+                          sum_sq_2, sum_sq_0, FT(1)/sum_sq_0 )
+      );
     }
     else
     {
-      num = (l2->a() * l0->b() - l0->a() * l2->b() ) * py - l0->a() * l2->c() + l2->a() * l0->c() ;
-      den = l0->a() * l0->b() * l2->b() - l0->b() * l0->b() * l2->a() + l2->a() - l0->a() ;
-      
-      CGAL_STSKEL_TRAITS_TRACE("Event time (degenerate, vertical) n=" << n2str(num) << " d=" << n2str(den) << " n/d=" << Rational<FT>(num,den) )
-    }
-    
-    ok = CGAL_NTS is_finite(num) && CGAL_NTS is_finite(den);     
-  }
-  
+      FT num = (l2->a() * l0->b() - l0->a() * l2->b() ) * py - l0->a() * l2->c() + l2->a() * l0->c() ;
 
-  return cgal_make_optional(ok,Rational<FT>(num,den)) ;
+      return boost::make_optional(
+        Rational_time<FT>(num,
+                          l2->a(), - l0->a(), l0->b()*(l0->a() * l2->b() - l0->b() * l2->a() ),
+                          sum_sq_0, sum_sq_2, FT(1)/sum_sq_0)
+      );
+    }
+  }
+
+  return boost::none;
 }
 
 //
 // Calls the appropiate function depending on the collinearity of the edges.
 //
 template<class K>
-optional< Rational< typename K::FT > > compute_offset_lines_isec_timeC2 ( intrusive_ptr< Trisegment_2<K> > const& tri )
+optional< Rational_time< typename K::FT > > compute_offset_lines_isec_timeC2 ( intrusive_ptr< Trisegment_2<K> > const& tri )
 {
   CGAL_precondition ( tri->collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
  
