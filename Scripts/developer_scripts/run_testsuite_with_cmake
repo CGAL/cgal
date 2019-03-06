@@ -5,6 +5,15 @@
 ####   LAUNCH CTEST   ####
 ##########################
 
+source "${CGAL_DIR}/developer_scripts/log.sh"
+# Load settings
+echo "CGAL_ROOT is $CGAL_ROOT"
+if [ -f "$CGAL_ROOT/.autocgalrc" ]; then
+  . "$CGAL_ROOT/.autocgalrc"
+else
+  echo "CONFIGURATION FILE  .autocgalrc NOT FOUND" >&2;
+  exit 1
+fi
 
 # ----------------------------------------------------------------------------------------
 # function to print the value of variable $1
@@ -113,8 +122,7 @@ build_platforms_list()
 setup_dirs()
 {
   # dir for the actual release
-  CGAL_DIR=`readlink "${CGAL_ROOT}/CGAL-I"`
-
+  
   CGAL_TEST_DIR=${CGAL_DIR}/test
 
   if [ ! -d "${CGAL_DIR}/cmake" ]; then
@@ -162,8 +170,6 @@ setup_dirs()
     collect_all_reference_platforms
   fi
   
-  #todo
-  PLATFORMS="raspberry"
   for PLATFORM in ${PLATFORMS}; do
 
     CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
@@ -239,16 +245,15 @@ run_test_on_host_and_platform()
 
   NUMBER_OF_PROCESSORS="`value_of PROCESSORS_${HOST}`"
   CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
-  if [ -d "${REFERENCE_PLATFORMS_DIR}/${PLATFORM}" ] ; then
-    if [ -f "${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/init.cmake" ]; then
-      INIT_FILE="${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/init.cmake"
-    fi
-  fi
   cd "${CGAL_BINARY_DIR}"
   log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "Testing on host ${HOST} and platform ${PLATFORM}"
-  #todo : check if that still works
-  cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' -DBUILD_TESTING=OFF -DWITH_tests=OFF -DWITH_CGAL_Qt5=OFF -DCGAL_HEADER_ONLY=ON $CGAL_DIR > installation.log
-  cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' VERBOSE=1 $CGAL_DIR 
+  cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' -DBUILD_TESTING=OFF -DWITH_tests=OFF -DWITH_CGAL_Qt5=OFF -DCGAL_HEADER_ONLY=ON $CGAL_DIR > installation.log 2>&1
+  rm CMakeCache.txt
+  if [ -z "${SHOW_PROGRESS}" ]; then
+    cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' VERBOSE=1 $CGAL_DIR >/dev/null 2>&1
+  else
+    cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' VERBOSE=1 $CGAL_DIR
+  fi
   LIST_TEST_FILE="${CGAL_ROOT}/list_test_packages"
   LIST_TEST_PACKAGES=$(source ${LIST_TEST_FILE})
   TO_TEST=""
@@ -261,8 +266,7 @@ run_test_on_host_and_platform()
     TO_TEST="${TO_TEST}|$pkg"
   fi
   done
-  NUMBER_OF_PROCESSORS="`value_of PROCESSORS_localhost`"
-  
+
   CTEST_OPTS="-T Start -T Test  -j${NUMBER_OF_PROCESSORS} ${DO_NOT_TEST:+-E execution___of__} --timeout 1200"
   if [ -z "${SHOW_PROGRESS}" ]; then
     ctest  ${CTEST_OPTS} ${TO_TEST:+-L ${TO_TEST} } ${KEEP_TESTS:+-FC .}> tmp.txt
@@ -273,6 +277,7 @@ run_test_on_host_and_platform()
   ##   GET RESULTS   ##
   #####################
   TAG_DIR=$(awk '/^Create new tag: /{print $4F}' tmp.txt)
+  rm tmp.txt
   cd Testing/${TAG_DIR}
   #python $CGAL_DIR/test/parse-ctest-dashboard-xml.py $CGAL_TESTER $PLATFORM
   RESULT_FILE=./"results_${CGAL_TESTER}_${PLATFORM}.txt"
@@ -287,13 +292,14 @@ run_test_on_host_and_platform()
   #echo "Host-specific installation log file: ../installation.log"  >> "$RESULT_FILE"
   grep -e "^-- USING " "${CGAL_BINARY_DIR}/installation.log" >> $RESULT_FILE 
   echo "------------" >> "$RESULT_FILE"
-  python3 /home/gimeno/CGAL/Testsuite/test/parse-ctest-dashboard-xml.py $CGAL_TESTER $PLATFORM
+  python3 ${CGAL_DIR}/test/parse-ctest-dashboard-xml.py $CGAL_TESTER $PLATFORM
   
   for file in $(ls|grep _Tests); do
     mv $file "$(echo "$file" | sed 's/_Tests//g')"
   done
   OUTPUT_FILE=results_${CGAL_TESTER}_${PLATFORM}.tar
   TEST_REPORT="TestReport_${CGAL_TESTER}_${PLATFORM}"
+  
   rm -f $OUTPUT_FILE $OUTPUT_FILE.gz
   tar cf $OUTPUT_FILE results_${CGAL_TESTER}_${PLATFORM}.txt */"$TEST_REPORT"
   echo
@@ -306,10 +312,7 @@ run_test_on_host_and_platform()
 run_test_on_host()
 {
   HOST=${1}
-
-  #todo
   PLATFORMS=`value_of COMPILERS_${HOST}`
-  PLATFORMS="raspberry"
   if [ "${PLATFORMS}" = "all" ]; then
     collect_all_current_platforms "${CGAL_BINARY_DIR_BASE}"
   fi
@@ -344,7 +347,7 @@ log "${ACTUAL_LOGFILE}" "running the testsuites"
 if [ -n "${CONSOLE_OUTPUT}" ]; then
     printf "\n-------------------------------------------------------\n"
 fi
-
 for HOST in ${BUILD_HOSTS}; do
-  run_test_on_host ${HOST} &
+  run_test_on_host ${HOST} 
 done
+
