@@ -38,10 +38,7 @@
 #include <boost/optional/optional.hpp>
 #include <boost/none.hpp>
 
-
-#ifdef CGAL_USE_CORE
-#  include <CGAL/CORE_BigFloat.h>  
-#endif
+#include <CGAL/Straight_skeleton_2/nt_utils.h>
 
 namespace CGAL {
 
