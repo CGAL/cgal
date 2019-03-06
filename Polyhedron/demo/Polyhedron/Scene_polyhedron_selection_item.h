@@ -1031,9 +1031,9 @@ public:
     MEAN_ANGLE
   };
 
-  bool has_stats()const Q_DECL_OVERRIDE{return true;}
-  QString computeStats(int type)Q_DECL_OVERRIDE;
-  CGAL::Three::Scene_item::Header_data header() const Q_DECL_OVERRIDE;
+  bool has_stats()const {return true;}
+  QString computeStats(int type);
+  CGAL::Three::Scene_item::Header_data header() const ;
 };
 
 #endif
