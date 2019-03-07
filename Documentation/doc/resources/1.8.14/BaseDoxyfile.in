@@ -267,6 +267,8 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "cgalAdvancedEnd=\htmlonly </div> \endhtmlonly" \
                          "cgalAdvancedFunction=This is an advanced function." \
                          "cgalAdvancedClass=This is an advanced class." \
+                         "cgalAdvancedType=This is an advanced type." \
+                         "cgalAdvancedConcept=This is an advanced concept." \
                          "cgalRequiresCPP11=\warning This function requires a C++11 compiler." \
                          "cgalPkgPicture{1}=<div class=\"PkgImage\"> ^^ \image html \1 ^^</div>" \
                          "cgalPkgSummaryBegin=<div class=\"PkgSummary\">" \
