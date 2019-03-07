@@ -1,9 +1,6 @@
 // 3D intersection tests.
 
-#include <CGAL/Object.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Iso_cuboid_3.h>
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/MP_Float.h>
 
@@ -593,7 +590,7 @@ struct Test {
 
 int main()
 {
-	Test< CGAL::Cartesian<double>   >().run();
+	Test< CGAL::Simple_cartesian<double>   >().run();
 	Test< CGAL::Homogeneous<CGAL::MP_Float> >().run();
 	// TODO : test more kernels.
 }

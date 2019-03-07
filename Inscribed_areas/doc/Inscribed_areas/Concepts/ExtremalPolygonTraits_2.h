@@ -3,11 +3,9 @@
 \ingroup PkgInscribedAreasConcepts
 \cgalConcept
 
-\cgalAdvancedBegin
 The concept `ExtremalPolygonTraits_2` provides the types and
 operations needed to compute a maximal \f$ k\f$-gon that can be
 inscribed into a given convex polygon.
-\cgalAdvancedEnd
 
 \note `ExtremalPolygonTraits_2::Less_xy_2` and 
 `ExtremalPolygonTraits_2::Orientation_2` are used for (expensive) 

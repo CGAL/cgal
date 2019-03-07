@@ -23,7 +23,7 @@ typedef CGAL::Filtered_exact<inexact_type,exact_type>  number_t;
 #include <CGAL/Simple_cartesian.h>
 
 #ifndef DNOT_USE_FILTERED_EXACT
-struct Kernel : public CGAL::Simple_cartesian<number_t> {};
+typedef CGAL::Simple_cartesian<number_t> K;
 #endif
 
 typedef CGAL::Integral_domain_without_division_tag Method_tag;
@@ -31,8 +31,8 @@ typedef CGAL::Integral_domain_without_division_tag Method_tag;
 #include "./include/test.h"
 
 
-struct CK : public CGAL::Simple_cartesian<inexact_type> {};
-struct EK : public CGAL::Simple_cartesian<exact_type> {};
+typedef CGAL::Simple_cartesian<inexact_type> CK;
+typedef CGAL::Simple_cartesian<exact_type> EK;
 
 
 int main()

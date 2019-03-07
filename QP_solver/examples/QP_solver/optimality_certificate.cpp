@@ -1,6 +1,6 @@
 // example: extracting and verifying a proof of optimality from the solution
 #include <cassert>
-#include <CGAL/basic.h>
+
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
 

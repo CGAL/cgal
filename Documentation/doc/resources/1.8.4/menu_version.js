@@ -3,10 +3,11 @@
 
   var url_re =  /(cgal\.geometryfactory\.com\/CGAL\/doc\/|doc\.cgal\.org\/)(master|latest|(\d\.\d+|\d\.\d+\.\d+))\//;
   var url_local =  /.*\/doc_output\//;
-  var current_version_local = '4.13-beta1'
+  var current_version_local = '4.14-beta1'
   var all_versions = [
     'master',
     'latest',
+    '4.14-beta1',
     '4.13',
     '4.12.1',
     '4.11.3',

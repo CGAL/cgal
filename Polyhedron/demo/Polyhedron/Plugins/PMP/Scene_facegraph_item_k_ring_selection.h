@@ -249,6 +249,7 @@ public Q_SLOTS:
     if(face_sel.empty())
     {
       contour_2d.clear();
+      qobject_cast<CGAL::Three::Viewer_interface*>(viewer)->set2DSelectionMode(false);
       return;
     }
     //get border edges of the selected patches

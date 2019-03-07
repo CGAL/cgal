@@ -608,6 +608,7 @@ void Polyhedron_demo_affine_transform_plugin::end(){
     transform_points_item = NULL;
   }
   dock_widget->hide();
+  QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_affine_transform_plugin::updateUiMatrix()

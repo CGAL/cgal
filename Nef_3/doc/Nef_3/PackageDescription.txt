@@ -46,7 +46,7 @@ a simple OpenGL visualization for debugging and illustrations.
 
 \cgalClassifedRefPages
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Nef_polyhedron_3<Traits>`
 - \link CGAL::Nef_polyhedron_3::Vertex `CGAL::Nef_polyhedron_3<Traits>::Vertex` \endlink
 - \link CGAL::Nef_polyhedron_3::Halfedge `CGAL::Nef_polyhedron_3<Traits>::Halfedge` \endlink
@@ -57,7 +57,7 @@ a simple OpenGL visualization for debugging and illustrations.
 - \link CGAL::Nef_polyhedron_3::SFace `CGAL::Nef_polyhedron_3<Traits>::SFace` \endlink
 - \link CGAL::Nef_polyhedron_3::SFace_cycle_iterator `CGAL::Nef_polyhedron_3<Traits>::SFace_cycle_iterator` \endlink
 
-## Functions ##
+\cgalCRPSection{Functions}
 - `CGAL::OFF_to_nef_3()`
 - `CGAL::convert_nef_polyhedron_to_polygon_mesh()`
 - \link PkgNef3IOFunctions `CGAL::operator<<()` \endlink

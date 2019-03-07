@@ -138,8 +138,9 @@ private:
   typedef typename Geom_traits::Construct_point_3 Construct_point_3;
   typedef typename Geom_traits::Construct_scaled_vector_3 Construct_scaled_vector_3;
   typedef typename Geom_traits::Construct_sum_of_vectors_3 Construct_sum_of_vectors_3;
-  typedef typename Geom_traits::Compute_scalar_product_3 Compute_scalar_product_3;
   typedef typename Geom_traits::Construct_translated_point_3 Construct_translated_point_3;
+  typedef typename Geom_traits::Construct_cross_product_vector_3 Construct_cross_product_vector_3;
+  typedef typename Geom_traits::Collinear_3 Collinear_3;
 
   // graph_traits typedefs
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
@@ -212,7 +213,7 @@ private:
 
   // The anchor attached to a vertex.
   struct Anchor {
-    Anchor(const vertex_descriptor &vtx_, const Point_3 pos_)
+    Anchor(const vertex_descriptor vtx_, const Point_3 pos_)
       : vtx(vtx_), pos(pos_) {}
 
     vertex_descriptor vtx; // The associated vertex.
@@ -222,7 +223,7 @@ private:
   // The boundary cycle of a region.
   // One region may have multiple boundary cycles.
   struct Boundary_cycle {
-    Boundary_cycle(const halfedge_descriptor &h)
+    Boundary_cycle(const halfedge_descriptor h)
       : he_head(h), num_anchors(0) {}
 
     halfedge_descriptor he_head; // Heading halfedge of the boundary cycle.
@@ -240,11 +241,11 @@ private:
   const Error_metric *m_metric;
 
   Construct_vector_3 vector_functor;
-  Construct_point_3 point_functor;
   Construct_scaled_vector_3 scale_functor;
   Construct_sum_of_vectors_3 sum_functor;
-  Compute_scalar_product_3 scalar_product_functor;
   Construct_translated_point_3 translate_point_functor;
+  Construct_cross_product_vector_3 cross_product_functor;
+  Collinear_3 collinear_functor;
 
   // Proxies.
   std::vector<Proxy_wrapper> m_proxies;
@@ -290,11 +291,11 @@ public:
 
     Geom_traits traits;
     vector_functor = traits.construct_vector_3_object();
-    point_functor = traits.construct_point_3_object();
     scale_functor = traits.construct_scaled_vector_3_object();
     sum_functor = traits.construct_sum_of_vectors_3_object();
-    scalar_product_functor = traits.compute_scalar_product_3_object();
     translate_point_functor = traits.construct_translated_point_3_object();
+    cross_product_functor = traits.construct_cross_product_vector_3_object();
+    collinear_functor = traits.collinear_3_object();
   }
   /// @}
 
@@ -347,6 +348,8 @@ public:
 
     // initialize proxies and the proxy map to prepare for insertion
     bootstrap_from_connected_components();
+    if (max_nb_proxies <= m_proxies.size())
+      return m_proxies.size();
     switch (method) {
       case Surface_mesh_approximation::RANDOM:
         return init_random(max_nb_proxies, min_error_drop, nb_relaxations);
@@ -1429,13 +1432,17 @@ private:
         const Point_3 &p0 = m_vpoint_map[source(he, *m_ptm)];
         const Point_3 &p1 = m_vpoint_map[target(he, *m_ptm)];
         const Point_3 &p2 = m_vpoint_map[target(next(he, *m_ptm), *m_ptm)];
-        const FT farea(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
-        const Vector_3 fnorm = CGAL::unit_normal(p0, p1, p2);
+        const FT farea = CGAL::approximate_sqrt(CGAL::squared_area(p0, p1, p2));
+        const Vector_3 fnorm =
+          collinear_functor(p0, p1, p2) ? CGAL::NULL_VECTOR : CGAL::unit_normal(p0, p1, p2);
 
         norm = sum_functor(norm, scale_functor(fnorm, farea));
         area += farea;
       }
-      norm = scale_functor(norm, FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
+      if (norm.squared_length() > FT(0.0))
+        norm = scale_functor(norm, FT(1.0) / CGAL::approximate_sqrt(norm.squared_length()));
+      else
+        norm = Vector_3(FT(0.0), FT(0.0), FT(1.0));
 
       m_px_planes.push_back(Proxy_plane(fit_plane, norm, area));
     }
@@ -1504,7 +1511,7 @@ private:
         std::cerr << "#chord_anchor " << m_bcycles.back().num_anchors << std::endl;
 #endif
 
-        BOOST_FOREACH(const halfedge_descriptor &he, chord)
+        BOOST_FOREACH(const halfedge_descriptor he, chord)
           he_candidates.erase(he);
       } while (he_start != he_mark);
     }
@@ -1545,20 +1552,35 @@ private:
         continue;
       }
 
-      FT dist_max(0.0);
-      halfedge_descriptor he_max;
+      CGAL_assertion(!chord.empty());
+      halfedge_descriptor he_max = *chord.begin();
       Vector_3 chord_vec = vector_functor(pt_begin, pt_end);
-      chord_vec = scale_functor(chord_vec,
-        FT(1.0 / std::sqrt(CGAL::to_double(chord_vec.squared_length()))));
-      BOOST_FOREACH(const halfedge_descriptor &he, chord) {
-        Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(he, *m_ptm)]);
-        vec = CGAL::cross_product(chord_vec, vec);
-        FT dist(std::sqrt(CGAL::to_double(vec.squared_length())));
-        if (dist > dist_max) {
-          dist_max = dist;
-          he_max = he;
+      if (chord_vec.squared_length() > FT(0.0)) {
+        FT dist_max(0.0);
+        chord_vec = scale_functor(chord_vec,
+          FT(1.0) / CGAL::approximate_sqrt(chord_vec.squared_length()));
+        BOOST_FOREACH(const halfedge_descriptor he, chord) {
+          Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(he, *m_ptm)]);
+          vec = cross_product_functor(chord_vec, vec);
+          const FT dist = CGAL::approximate_sqrt(vec.squared_length());
+          if (dist > dist_max) {
+            dist_max = dist;
+            he_max = he;
+          }
         }
       }
+      else {
+        FT dist_max(0.0);
+        BOOST_FOREACH(const halfedge_descriptor he, chord) {
+          const FT dist = CGAL::approximate_sqrt(CGAL::squared_distance(
+            pt_begin, m_vpoint_map[target(he, *m_ptm)]));
+          if (dist > dist_max) {
+            dist_max = dist;
+            he_max = he;
+          }
+        }
+      }
+
       // add one anchors to this boundary cycle
       attach_anchor(he_max);
       const_cast<Boundary_cycle &>(bcycle).num_anchors++;
@@ -1604,10 +1626,10 @@ private:
       vmap.insert(std::pair<vertex_descriptor, sg_vertex_descriptor>(v, sgv));
     }
     BOOST_FOREACH(edge_descriptor e, edges(*m_ptm)) {
-      vertex_descriptor vs = source(e, *m_ptm);
-      vertex_descriptor vt = target(e, *m_ptm);
-      FT len(std::sqrt(CGAL::to_double(
-        CGAL::squared_distance(m_vpoint_map[vs], m_vpoint_map[vt]))));
+      const vertex_descriptor vs = source(e, *m_ptm);
+      const vertex_descriptor vt = target(e, *m_ptm);
+      const FT len = CGAL::approximate_sqrt(CGAL::squared_distance(
+        m_vpoint_map[vs], m_vpoint_map[vt]));
       add_edge(to_sgv_map[vs], to_sgv_map[vt], len, gmain);
     }
 
@@ -1626,15 +1648,28 @@ private:
       const sg_vertex_descriptor superv = add_vertex(gmain);
       global_vanchor_map[superv] = CGAL_VSA_INVALID_TAG;
       global_vtag_map[superv] = CGAL_VSA_INVALID_TAG;
+      int anchor_count = 0;
       BOOST_FOREACH(sg_vertex_descriptor v, vpatch) {
-        if (is_anchor_attached(v, global_vanchor_map))
+        if (is_anchor_attached(v, global_vanchor_map)) {
           add_edge(superv, v, FT(0.0), gmain);
+          anchor_count++;
+        }
       }
-      vpatch.push_back(superv);
+      CGAL_assertion(anchor_count >=3 || anchor_count == 0);
+      // ball patch has no boundary or anchor, usually are small floating parts
+      // push dummy source vertex in the patch
+      if (anchor_count == 0)
+        vpatch.push_back(boost::graph_traits<SubGraph>::null_vertex());
+      else
+        vpatch.push_back(superv);
     }
 
     // multi-source Dijkstra's shortest path algorithm applied to each proxy patch
     BOOST_FOREACH(VertexVector &vpatch, vertex_patches) {
+      // ignore ball patch
+      if (vpatch.back() == boost::graph_traits<SubGraph>::null_vertex())
+        continue;
+
       // construct subgraph
       SubGraph &glocal = gmain.create_subgraph();
       BOOST_FOREACH(sg_vertex_descriptor v, vpatch)
@@ -1646,7 +1681,8 @@ private:
       EdgeWeightMap local_eweight_map = get(boost::edge_weight, glocal);
 
       const sg_vertex_descriptor source = glocal.global_to_local(vpatch.back());
-      VertexVector pred(num_vertices(glocal));
+      VertexVector pred(num_vertices(glocal),
+        boost::graph_traits<SubGraph>::null_vertex());
       boost::dijkstra_shortest_paths(glocal, source,
         boost::predecessor_map(&pred[0]).weight_map(local_eweight_map));
 
@@ -1778,7 +1814,7 @@ private:
       return 1;
 
     bool if_subdivide = false;
-    Boundary_chord_iterator chord_max;
+    Boundary_chord_iterator chord_max = chord_begin;
     const Point_3 &pt_begin = m_vpoint_map[source(he_first, *m_ptm)];
     const Point_3 &pt_end = m_vpoint_map[target(he_last, *m_ptm)];
     if (anchor_first == anchor_last) {
@@ -1787,8 +1823,8 @@ private:
 
       FT dist_max(0.0);
       for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
-        FT dist = CGAL::squared_distance(pt_begin, m_vpoint_map[target(*citr, *m_ptm)]);
-        dist = FT(std::sqrt(CGAL::to_double(dist)));
+        const FT dist = CGAL::approximate_sqrt(CGAL::squared_distance(
+          pt_begin, m_vpoint_map[target(*citr, *m_ptm)]));
         if (dist > dist_max) {
           chord_max = citr;
           dist_max = dist;
@@ -1800,21 +1836,34 @@ private:
     else {
       FT dist_max(0.0);
       Vector_3 chord_vec = vector_functor(pt_begin, pt_end);
-      FT chord_len(std::sqrt(CGAL::to_double(chord_vec.squared_length())));
-      chord_vec = scale_functor(chord_vec, FT(1.0) / chord_len);
-
-      for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
-        Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(*citr, *m_ptm)]);
-        vec = CGAL::cross_product(chord_vec, vec);
-        FT dist(std::sqrt(CGAL::to_double(vec.squared_length())));
-        if (dist > dist_max) {
-          chord_max = citr;
-          dist_max = dist;
+      const FT chord_len = CGAL::approximate_sqrt(chord_vec.squared_length());
+      bool degenerate_chord = false;
+      if (chord_len > FT(0.0)) {
+        chord_vec = scale_functor(chord_vec, FT(1.0) / chord_len);
+        for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
+          Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(*citr, *m_ptm)]);
+          vec = cross_product_functor(chord_vec, vec);
+          const FT dist = CGAL::approximate_sqrt(vec.squared_length());
+          if (dist > dist_max) {
+            chord_max = citr;
+            dist_max = dist;
+          }
+        }
+      }
+      else {
+        degenerate_chord = true;
+        for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
+          const FT dist = CGAL::approximate_sqrt(CGAL::squared_distance(
+            pt_begin, m_vpoint_map[target(*citr, *m_ptm)]));
+          if (dist > dist_max) {
+            chord_max = citr;
+            dist_max = dist;
+          }
         }
       }
 
       FT criterion = dist_max;
-      if (relative_to_chord)
+      if (relative_to_chord && !degenerate_chord)
         criterion /= chord_len;
       else
         criterion /= m_average_edge_length;
@@ -1827,9 +1876,9 @@ private:
           px_right = get(m_fproxy_map, face(opposite(he_first, *m_ptm), *m_ptm));
         FT norm_sin(1.0);
         if (!CGAL::is_border(opposite(he_first, *m_ptm), *m_ptm)) {
-          Vector_3 vec = CGAL::cross_product(
+          Vector_3 vec = cross_product_functor(
             m_px_planes[px_left].normal, m_px_planes[px_right].normal);
-          norm_sin = FT(std::sqrt(CGAL::to_double(scalar_product_functor(vec, vec))));
+          norm_sin = CGAL::approximate_sqrt(vec.squared_length());
         }
         criterion *= norm_sin;
       }
@@ -1858,7 +1907,7 @@ private:
    * @param he a halfedge descriptor
    * @return `true` is attached with an anchor, and `false` otherwise.
    */
-  bool is_anchor_attached(const halfedge_descriptor &he) const {
+  bool is_anchor_attached(const halfedge_descriptor he) const {
     return is_anchor_attached(target(he, *m_ptm), m_vanchor_map);
   }
 
@@ -1871,7 +1920,7 @@ private:
    */
   template<typename VertexAnchorIndexMap>
   bool is_anchor_attached(
-    const typename boost::property_traits<VertexAnchorIndexMap>::key_type &vtx,
+    const typename boost::property_traits<VertexAnchorIndexMap>::key_type vtx,
     const VertexAnchorIndexMap &vanchor_map) const {
     return get(vanchor_map, vtx) != CGAL_VSA_INVALID_TAG;
   }
@@ -1880,7 +1929,7 @@ private:
    * @brief attaches an anchor to the vertex.
    * @param vtx vertex
    */
-  void attach_anchor(const vertex_descriptor &vtx) {
+  void attach_anchor(const vertex_descriptor vtx) {
     put(m_vanchor_map, vtx, m_anchors.size());
     // default anchor location is the vertex point
     m_anchors.push_back(Anchor(vtx, m_vpoint_map[vtx]));
@@ -1890,7 +1939,7 @@ private:
    * @brief attaches an anchor to the target vertex of the halfedge.
    * @param he halfedge
    */
-  void attach_anchor(const halfedge_descriptor &he) {
+  void attach_anchor(const halfedge_descriptor he) {
     attach_anchor(target(he, *m_ptm));
   }
 
@@ -1910,7 +1959,7 @@ private:
 
       // projection
       FT sum_area(0.0);
-      Vector_3 vec = vector_functor(CGAL::ORIGIN, point_functor(CGAL::ORIGIN));
+      Vector_3 vec = CGAL::NULL_VECTOR;
       const Point_3 vtx_pt = m_vpoint_map[v];
       BOOST_FOREACH(const std::size_t px_idx, px_set) {
         const Vector_3 proj = vector_functor(
@@ -1919,9 +1968,12 @@ private:
         vec = sum_functor(vec, scale_functor(proj, area));
         sum_area += area;
       }
-      vec = scale_functor(vec, FT(1.0) / sum_area);
-
-      a.pos = translate_point_functor(CGAL::ORIGIN, vec);
+      if (sum_area > FT(0.0))
+        a.pos = translate_point_functor(
+          CGAL::ORIGIN,
+          scale_functor(vec, FT(1.0) / sum_area));
+      else
+        a.pos = vtx_pt;
     }
   }
 
@@ -1937,8 +1989,8 @@ private:
     BOOST_FOREACH(edge_descriptor e, edges(tm)) {
       const vertex_descriptor vs = source(e, tm);
       const vertex_descriptor vt = target(e, tm);
-      sum += FT(std::sqrt(CGAL::to_double(
-        CGAL::squared_distance(vpoint_map[vs], vpoint_map[vt]))));
+      sum += CGAL::approximate_sqrt(CGAL::squared_distance(
+        vpoint_map[vs], vpoint_map[vt]));
     }
     return sum / num_edges(tm);
   }
@@ -1964,16 +2016,20 @@ private:
       const Point_3 &p2 = m_vpoint_map[target(next(he, *m_ptm), *m_ptm)];
 
       Vector_3 vec = vector_functor(CGAL::ORIGIN, CGAL::centroid(p0, p1, p2));
-      FT farea(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
-      Vector_3 fnorm = CGAL::unit_normal(p0, p1, p2);
+      const FT farea = CGAL::approximate_sqrt(CGAL::squared_area(p0, p1, p2));
+      Vector_3 fnorm =
+        collinear_functor(p0, p1, p2) ? CGAL::NULL_VECTOR : CGAL::unit_normal(p0, p1, p2);
 
       norm = sum_functor(norm, scale_functor(fnorm, farea));
       cent = sum_functor(cent, scale_functor(vec, farea));
       sum_area += farea;
     }
-    norm = scale_functor(norm,
-      FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
-    cent = scale_functor(cent, FT(1.0) / sum_area);
+    if (norm.squared_length() > FT(0.0))
+      norm = scale_functor(norm, FT(1.0) / CGAL::approximate_sqrt(norm.squared_length()));
+    else
+      norm = Vector_3(FT(0.0), FT(0.0), FT(1.0));
+    if (sum_area > FT(0.0))
+      cent = scale_functor(cent, FT(1.0) / sum_area);
 
     return Plane_3(CGAL::ORIGIN + cent, norm);
   }

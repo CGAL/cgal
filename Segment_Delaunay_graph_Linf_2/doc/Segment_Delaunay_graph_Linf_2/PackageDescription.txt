@@ -44,11 +44,11 @@ are models of the `SegmentDelaunayGraphLinfTraits_2` concept.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `SegmentDelaunayGraphLinfTraits_2`
 
-## Classes ##
+\cgalCRPSection{Classes}
 
 - `CGAL::Segment_Delaunay_graph_Linf_2<Gt,DS>`
 - `CGAL::Segment_Delaunay_graph_Linf_hierarchy_2<Gt,STag,DS>`

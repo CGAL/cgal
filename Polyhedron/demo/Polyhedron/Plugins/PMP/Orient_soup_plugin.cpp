@@ -74,7 +74,7 @@ void Polyhedron_demo_orient_soup_plugin::init(QMainWindow* mainWindow,
   scene = scene_interface;
   mw = mainWindow;
   messages = m;
-  actionOrientSM = new QAction(tr("&Orient Polygon Soup (as a surface_mesh)"), mainWindow);
+  actionOrientSM = new QAction(tr("&Orient Polygon Soup"), mainWindow);
   actionOrientSM->setObjectName("actionOrientSM");
   actionOrientSM->setProperty("subMenuName", "Polygon Mesh Processing");
   connect(actionOrientSM, SIGNAL(triggered()),

@@ -1,6 +1,6 @@
 //! \file examples/Arrangement_on_surface_2/conics.cpp
 // Constructing an arrangement of various conic arcs.
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #ifndef CGAL_USE_CORE
 #include <iostream>

@@ -1,8 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/box_intersection_d.h>
-#include <CGAL/Bbox_3.h>
-#include <CGAL/intersections.h>
 #include <CGAL/Timer.h>
 #include <iostream>
 #include <algorithm>

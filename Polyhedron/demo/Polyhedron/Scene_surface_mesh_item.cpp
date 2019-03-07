@@ -1423,18 +1423,18 @@ void Scene_surface_mesh_item::setItemIsMulticolor(bool b)
 
 void Scene_surface_mesh_item::show_feature_edges(bool b)
 {
+  d->has_feature_edges = b;
   if(b)
   {
     d->e_is_feature_map = d->smesh_->add_property_map<boost::graph_traits<SMesh>::edge_descriptor,bool>("e:is_feature").first;
     invalidate(COLORS);
     itemChanged();
   }
-  d->has_feature_edges = b;
 }
 
 bool Scene_surface_mesh_item::isItemMulticolor()
 {
-  return d->has_fcolors;
+  return d->has_fcolors || d->has_vcolors;
 }
 
 bool Scene_surface_mesh_item::hasPatchIds()
@@ -1703,7 +1703,7 @@ CGAL::Three::Scene_item::Header_data Scene_surface_mesh_item::header() const
   data.titles.append(QString("#Border Edges"));
   data.titles.append(QString("Pure Triangle"));
   data.titles.append(QString("Pure Quad"));
-  data.titles.append(QString("#Degenerated Faces"));
+  data.titles.append(QString("#Degenerate Faces"));
   data.titles.append(QString("Connected Components of the Boundary"));
   data.titles.append(QString("Area"));
   data.titles.append(QString("Volume"));
@@ -1723,7 +1723,7 @@ CGAL::Three::Scene_item::Header_data Scene_surface_mesh_item::header() const
   data.titles.append(QString("Maximum Length"));
   data.titles.append(QString("Median Length"));
   data.titles.append(QString("Mean Length"));
-  data.titles.append(QString("#Null Length"));
+  data.titles.append(QString("#Degenerate Edges"));
   data.titles.append(QString("Minimum"));
   data.titles.append(QString("Maximum"));
   data.titles.append(QString("Average"));

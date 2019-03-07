@@ -2451,7 +2451,7 @@ QString MainWindow::get_item_stats()
 {
   //1st step : get all classnames of the selected items
   QList<QString> classnames;
-  Q_FOREACH(int id, getSelectedSceneItemIndices())
+  Q_FOREACH(int id, scene->selectionIndices())
   {
     QString classname = scene->item(id)->metaObject()->className();
     if(!classnames.contains(classname))
@@ -2460,7 +2460,7 @@ QString MainWindow::get_item_stats()
   //2nd step : separate the selection in lists corresponding to their classname
   QVector< QList<Scene_item*> > items;
   items.resize(classnames.size());
-  Q_FOREACH(int id, getSelectedSceneItemIndices())
+  Q_FOREACH(int id, scene->selectionIndices())
   {
     Scene_item* s_item = scene->item(id);
     for(int i=0; i<items.size(); i++)

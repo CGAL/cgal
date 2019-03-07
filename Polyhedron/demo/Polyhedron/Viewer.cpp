@@ -15,6 +15,7 @@
 #include <cmath>
 #include <QApplication>
 #include <QOpenGLDebugLogger>
+#include <QStyleFactory>
 
 #include "ui_LightingDialog.h"
 
@@ -126,18 +127,21 @@ public:
                    255*d->ambient.z());
     palette.setColor(QPalette::Button,ambient);
     ambientButton->setPalette(palette);
+    ambientButton->setStyle(QStyleFactory::create("Fusion"));
     
     diffuse=QColor(255*d->diffuse.x(), 
                    255*d->diffuse.y(), 
                    255*d->diffuse.z());
     palette.setColor(QPalette::Button,diffuse);
     diffuseButton->setPalette(palette);
+    diffuseButton->setStyle(QStyleFactory::create("Fusion"));
     
     specular=QColor(255*d->specular.x(), 
                     255*d->specular.y(), 
                     255*d->specular.z());
     palette.setColor(QPalette::Button,specular);
     specularButton->setPalette(palette);
+    specularButton->setStyle(QStyleFactory::create("Fusion"));
     spec_powrSlider->setValue(static_cast<int>(d->spec_power));
     
     connect(&ambient_dial, &QColorDialog::currentColorChanged, this, &LightingDialog::ambient_changed );
@@ -714,14 +718,16 @@ void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
     viewer->glEnable(GL_BLEND);
     viewer->glEnable(GL_LINE_SMOOTH);
     viewer->glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-    viewer->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //viewer->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    viewer->glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
   }
   else
   {
     viewer->glDisable(GL_BLEND);
     viewer->glDisable(GL_LINE_SMOOTH);
     viewer->glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
-    viewer->glBlendFunc(GL_ONE, GL_ZERO);
+    //viewer->glBlendFunc(GL_ONE, GL_ZERO);
+    viewer->glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
   }
   inDrawWithNames = with_names;
   if(with_names)
@@ -1273,9 +1279,9 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
   case PROGRAM_DARK_SPHERES:
   {
     QOpenGLShaderProgram* program = isOpenGL_4_3() 
-        ?declare_program(name, ":/cgal/Polyhedron_3/resources/shader_dark_spheres.v" , ":/cgal/Polyhedron_3/resources/shader_no_light_no_selection.f")
-       : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_dark_spheres.v" ,
-                         ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_no_light_no_selection.f");
+        ?declare_program(name, ":/cgal/Polyhedron_3/resources/shader_dark_spheres.vert" , ":/cgal/Polyhedron_3/resources/shader_no_light_no_selection.frag")
+       : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_dark_spheres.vert" ,
+                         ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_no_light_no_selection.frag");
     program->setProperty("hasCenter", true);
     program->setProperty("hasRadius", true);
     program->setProperty("isInstanced", true);

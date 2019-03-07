@@ -3,7 +3,6 @@
 #include <CGAL/Random.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/double.h>
-#include <CGAL/Triangle_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <cassert>
 

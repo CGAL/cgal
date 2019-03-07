@@ -159,8 +159,8 @@ In order to build the \cgal libraries, you need a \cpp compiler.
 | :------- | :--------------- |
 |\sc{Gnu} `g++` 4.1 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} | Linux / MacOS X |
 |          | \sc{MS} Windows | 
-|\sc{MS} Visual `C++` 12.0, 14.0, 15.7 (\sc{Visual Studio} 2013, 2015, and 2017)\cgalFootnote{<A HREF="http://msdn.microsoft.com/en-us/vstudio/">`http://msdn.microsoft.com/en-us/vstudio/`</A>} | \sc{MS} Windows |
-| `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">`http://clang.llvm.org/`</A>} compiler version 6.0.0 | Linux  |
+|\sc{MS} Visual `C++` 12.0, 14.0, 15.9 (\sc{Visual Studio} 2013, 2015, and 2017)\cgalFootnote{<A HREF="http://msdn.microsoft.com/en-us/vstudio/">`http://msdn.microsoft.com/en-us/vstudio/`</A>} | \sc{MS} Windows |
+| `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">`http://clang.llvm.org/`</A>} compiler version 7.0.1 | Linux  |
 | Apple `Clang` compiler version 7.0.2 | MacOS X |
 
 It may work for older versions of the above listed compilers.

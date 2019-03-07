@@ -1,7 +1,7 @@
 #include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
 
 // Example program for the linear_least_square_fitting function on set of triangles in 3D
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Diagonalize_traits.h>
@@ -9,12 +9,12 @@
 
 #include <list>
 
-typedef double               FT;
-typedef CGAL::Cartesian<FT>  Kernel;
-typedef Kernel::Line_3       Line;
-typedef Kernel::Plane_3      Plane;
-typedef Kernel::Point_3      Point;
-typedef Kernel::Triangle_3   Triangle;
+typedef double                      FT;
+typedef CGAL::Simple_cartesian<FT>  Kernel;
+typedef Kernel::Line_3              Line;
+typedef Kernel::Plane_3             Plane;
+typedef Kernel::Point_3             Point;
+typedef Kernel::Triangle_3          Triangle;
 
 int main()
 {

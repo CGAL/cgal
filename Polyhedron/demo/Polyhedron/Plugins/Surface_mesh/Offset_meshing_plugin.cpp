@@ -24,6 +24,7 @@
 
 #include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
+#include <CGAL/Polygon_mesh_processing/orientation.h>
 
 #include <CGAL/Timer.h>
 #include <CGAL/make_mesh_3.h>
@@ -312,6 +313,12 @@ SMesh* cgal_off_meshing(QWidget*,
     MeshGuard guard(pRemesh);
     CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, *pRemesh);
     guard.setDone();
+    if(CGAL::is_closed(*pRemesh)
+       && ! CGAL::Polygon_mesh_processing::is_outward_oriented(*pRemesh))
+    {
+      CGAL::Polygon_mesh_processing::reverse_face_orientations(*pRemesh);
+    }
+    
     return pRemesh;
   }
   else
