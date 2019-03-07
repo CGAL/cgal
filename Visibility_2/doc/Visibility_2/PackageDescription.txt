@@ -27,10 +27,10 @@ the visibility area of a point within polygonal regions in two dimensions.}
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `Visibility_2`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Simple_polygon_visibility_2<Arrangement_2, Regularization_tag>`
 - `CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>` 
 - `CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_tag>`

@@ -25,10 +25,10 @@ the printing mode.
 
 \cgalClassifedRefPages
 
-## Enum ##
+\cgalCRPSection{Enum}
 - `CGAL::IO::Mode`
 
-## Functions ##
+\cgalCRPSection{Functions}
 - `CGAL::get_mode()`
 - `CGAL::is_ascii()`
 - `CGAL::is_binary()`
@@ -42,7 +42,7 @@ the printing mode.
 - `CGAL::iformat()`
 - `CGAL::oformat()`
 
-## WKT I/O Functions ##
+\cgalCRPSection{WKT I/O Functions}
 - `CGAL::read_point_WKT()`
 - `GCAL::read_multi_point_WKT()`
 - `GCAL::read_linestring_WKT()`
@@ -57,7 +57,7 @@ the printing mode.
 - `CGAL::write_multi_polygon_WKT()`
 - `CGAL::write_multi_linestring_WKT()`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Color`
 - `CGAL::Istream_iterator<T,Stream>`
 - `CGAL::Ostream_iterator<T,Stream>`

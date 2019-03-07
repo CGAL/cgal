@@ -22,6 +22,7 @@
 
 #include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
+#include <CGAL/Polygon_mesh_processing/orientation.h>
 
 #include <CGAL/Timer.h>
 #include <CGAL/make_mesh_3.h>
@@ -297,7 +298,13 @@ CGAL::Three::Scene_item* cgal_off_meshing(QWidget*,
     // add remesh as new polyhedron
     Result_mesh *pRemesh = new Result_mesh;
     CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, *pRemesh);
-      return make_item(pRemesh);
+    if(CGAL::is_closed(*pRemesh)
+       && ! CGAL::Polygon_mesh_processing::is_outward_oriented(*pRemesh))
+    {
+      CGAL::Polygon_mesh_processing::reverse_face_orientations(*pRemesh);
+    }
+    
+    return make_item(pRemesh);
   }
   else
     return 0;
@@ -436,6 +443,7 @@ if(sm_item)
                       .arg(offset_value));
     new_item->setColor(Qt::magenta);
     new_item->setRenderingMode(item->renderingMode());
+    
     scene->addItem(new_item);
     item->setVisible(false);
     scene->itemChanged(index);

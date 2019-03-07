@@ -27,7 +27,7 @@
 
 
 #include <CGAL/Bbox_3.h>
-#include <CGAL/Triangle_3_Ray_3_do_intersect.h>
+#include <CGAL/Intersections_3/Ray_3_Triangle_3.h>
 #include <CGAL/internal/AABB_tree/Primitive_helper.h>
 #include <CGAL/enum.h>
 

@@ -10,10 +10,6 @@ find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
 
-  if (MSVC AND ( CMAKE_SIZEOF_VOID_P EQUAL 4 ) )
-     SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4244")
-  endif()
-
   # create a target per cppfile
   file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
   foreach(cppfile ${cppfiles})

@@ -21,10 +21,10 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `ExtendedKernelTraits_2`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Extended_cartesian<FT>`
 - `CGAL::Extended_homogeneous<RT>`
 - `CGAL::Filtered_extended_homogeneous<RT>`

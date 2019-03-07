@@ -173,7 +173,7 @@ public:
   
 /*!
 
-  \brief Instantiate the classifier using the sets of `labels` and `features`.
+  \brief Instantiates the classifier using the sets of `labels` and `features`.
 
   \note If the label set of the feature set are modified after
   instantiating this object (addition of removal of a label and/or of

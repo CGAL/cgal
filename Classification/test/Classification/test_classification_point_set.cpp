@@ -50,7 +50,7 @@ int main (int, char**)
   Size_t_map echo_map;
   Color_map color_map;
 
-  map_added = pts.add_normal_map();
+  map_added = pts.add_normal_map().second;
   assert (map_added);
   normal_map = pts.normal_map();
   boost::tie (echo_map, map_added) = pts.add_property_map<std::size_t> ("echo");
@@ -91,7 +91,7 @@ int main (int, char**)
 #endif
   
   assert (generator.number_of_scales() == 5);
-  assert (features.size() == 44);
+  assert (features.size() == 59);
 
   Label_set labels;
 

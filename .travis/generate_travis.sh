@@ -60,7 +60,7 @@ done
 COPY=0
 for LINE in $(cat "$PWD/.travis/template.txt")
 do
-	if [ "$LINE" = "compiler: clang-3.6" ]
+	if [ "$LINE" = "compiler: clang" ]
 	then
 		COPY=1
 	fi

@@ -17,17 +17,19 @@ if(CGAL_SetupGMP_included OR CGAL_DISABLE_GMP)
 endif()
 set(CGAL_SetupGMP_included TRUE)
 
+# Locally setting of CMAKE_MODULE_PATH, not exported to parent scope.
+# That is required to find the FindGMP and FindMPFR modules.
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_MODULES_DIR})
+
 find_package(GMP REQUIRED)
 find_package(MPFR REQUIRED)
 
 if(NOT DEFINED WITH_GMPXX)
   option(CGAL_WITH_GMPXX "Use CGAL with GMPXX: use C++ classes of GNU MP instead of CGAL wrappers" OFF)
 endif()
-set(CGAL_GMPXX_find_package_keyword QUIET)
 if(WITH_GMPXX OR CGAL_WITH_GMPXX)
-  set(CGAL_GMPXX_find_package_keyword REQUIRED)
+  find_package(GMPXX REQUIRED)
 endif()
-find_package(GMPXX ${CGAL_GMPXX_find_package_keyword})
 
 #.rst:
 # Provided Functions

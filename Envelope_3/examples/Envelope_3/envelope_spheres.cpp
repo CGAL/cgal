@@ -1,7 +1,7 @@
-//! \file examples/Envelope_3/ex_envelope_spheres.cpp
+//! \file examples/Envelope_3/envelope_spheres.cpp
 // Constructing the lower envelope of a set of spheres read from a file.
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #ifndef CGAL_USE_CORE
 #include <iostream>

@@ -1,0 +1,48 @@
+// The Heat Method
+
+/// \defgroup PkgHeatMethod Heat Method Reference
+
+/// \defgroup PkgHeatMethodConcepts Concepts
+/// \ingroup PkgHeatMethod
+
+
+/*!
+\addtogroup PkgHeatMethod
+
+\cgalPkgDescriptionBegin{The Heat Method,PkgHeatMethodSummary}
+\cgalPkgPicture{heat-method-small.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Keenan Crane, Christina Vaz, Andreas Fabri}
+\cgalPkgDesc{The package provides an algorithm that solves the single- or
+multiple-source shortest path problem by returning an approximation of the geodesic distance
+for all vertices of a triangle mesh to the closest vertex in a given set of
+source vertices. }
+\cgalPkgManuals{Chapter_HeatMethod,PkgHeatMethod}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.14}
+\cgalPkgDependsOn{ \ref PkgSolverInterface}
+\cgalPkgBib{cgal:cvf-hm3}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+- `HeatMethodTraits_3`
+
+\cgalCRPSection{Classes}
+- `CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3`
+- `CGAL::Heat_method_3::Direct`
+- `CGAL::Heat_method_3::Intrinsic_Delaunay`
+
+\cgalCRPSection{Functions}
+
+- `CGAL::Heat_method_3::estimate_geodesic_distances()`
+
+*/
+

@@ -1,5 +1,5 @@
-
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
+#include <iostream>
 
 #ifdef CGAL_USE_GMP
 
@@ -100,7 +100,7 @@ int main(){
 #else
 
 int main (){
-  std::cout << " This examples needs GMP! " << std::endl; 
+  std::cout << " This example needs GMP! " << std::endl; 
 }
 
 #endif 

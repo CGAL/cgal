@@ -39,7 +39,7 @@ else()
 endif()
 
 
-polyhedron_demo_plugin(orient_soup_plugin Orient_soup_plugin)
+polyhedron_demo_plugin(orient_soup_plugin Orient_soup_plugin KEYWORDS Classification)
 target_link_libraries(orient_soup_plugin PUBLIC scene_polygon_soup_item scene_surface_mesh_item scene_polylines_item scene_points_with_normal_item)
 
 
@@ -64,7 +64,7 @@ polyhedron_demo_plugin(polyhedron_stitching_plugin Polyhedron_stitching_plugin)
 target_link_libraries(polyhedron_stitching_plugin PUBLIC scene_surface_mesh_item scene_polylines_item)
 
 qt5_wrap_ui( selectionUI_FILES Selection_widget.ui)
-polyhedron_demo_plugin(selection_plugin Selection_plugin ${selectionUI_FILES} KEYWORDS PolygonMesh IO)
+polyhedron_demo_plugin(selection_plugin Selection_plugin ${selectionUI_FILES} KEYWORDS PolygonMesh IO Classification)
 target_link_libraries(selection_plugin PUBLIC scene_selection_item scene_points_with_normal_item scene_polylines_item)
 
 polyhedron_demo_plugin(self_intersection_plugin Self_intersection_plugin)

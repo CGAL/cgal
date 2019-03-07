@@ -40,7 +40,7 @@ typedef CGAL::Integral_domain_without_division_tag  MTag;
 typedef CGAL::Simple_cartesian<NT>      K;
 typedef CGAL::Simple_cartesian<double>  DK;
 
-struct Gt : public CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<DK> {};
+typedef CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<DK> Gt;
 
 //CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>  Gt;
 

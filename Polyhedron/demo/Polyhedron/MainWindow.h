@@ -102,7 +102,7 @@ public Q_SLOTS:
   //! If `b` is true, recenters the scene.
   void updateViewerBBox(bool b);
   //! Opens a script or a file with the default loader if there is.
-  void open(QString);
+  void open(QString) Q_DECL_OVERRIDE;
   //! Is called when the up button is pressed.
   void on_upButton_pressed();
   //! Is called when the down button is pressed.
@@ -220,15 +220,15 @@ public Q_SLOTS:
   /*!
    * Displays a text preceded by the mention "INFO :".
    */
-  void information(QString);
+  void message_information(QString) Q_DECL_OVERRIDE;
   /*!
    * Displays a blue text preceded by the mention "WARNING :".
    */
-  void warning(QString);
+  void message_warning(QString) Q_DECL_OVERRIDE;
   /*!
    * Displays a red text preceded by the mention "ERROR :".
    */
-  void error(QString);
+  void message_error(QString) Q_DECL_OVERRIDE;
 
     //!Displays a text in the chosen html color with the chosen html font.
 
@@ -327,6 +327,8 @@ protected Q_SLOTS:
   //Preferences edition
   //!Opens the Preferences dialog.
   void on_actionPreferences_triggered();
+  //!Save selected items if able.
+  void on_action_Save_triggered(); 
   // save as...
   //!Opens a dialog to save selected item if able.
   void on_actionSaveAs_triggered(); 
@@ -384,7 +386,7 @@ protected:
    * Calls writeSettings() and set the flag accepted for the event.
    * @see writeSettings()
    */
-  void closeEvent(QCloseEvent *event);
+  void closeEvent(QCloseEvent *event)Q_DECL_OVERRIDE;
   /*! Returns the currently selected item in the Geometric Objects view. Returns -1
    * if none is selected.
    */
@@ -418,7 +420,7 @@ private:
   QAction* actionAddToGroup;
   QAction* actionResetDefaultLoaders;
   CGAL::Three::Three* three;
-  void print_message(QString message) { messages->information(message); }
+  void print_message(QString message) { messages->message_information(message); }
   Messages_interface* messages;
 
   QDialog *statistics_dlg;
@@ -453,6 +455,9 @@ private:
   QMap<QString, QPair<QStringList, QString> >plugin_metadata_map;
   QMap<QString, bool> ignored_map;
   const QStringList& accepted_keywords;
+
+private:
+  QMap<QAction*, QMenu*> action_menu_map;
 };
 
 #endif // ifndef MAINWINDOW_H

@@ -72,8 +72,9 @@ both inside and outside the original domain we store additional
 offset information for each vertex of a face. These offsets are models
 of the concept `Periodic_2Offset_2`.
 
+\cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `Periodic_2TriangulationTraits_2`
 - `Periodic_2DelaunayTriangulationTraits_2`
@@ -81,9 +82,9 @@ of the concept `Periodic_2Offset_2`.
 - `Periodic_2TriangulationVertexBase_2`
 - `Periodic_2Offset_2`
 
-## Classes ##
+\cgalCRPSection{Classes}
 
-### Main Classes ###
+\cgalCRPSubsection{Main Classes}
 
 - `CGAL::Periodic_2_triangulation_2<PT,TDS>`
 - `CGAL::Periodic_2_Delaunay_triangulation_2<PT,TDS>`
@@ -92,12 +93,12 @@ of the concept `Periodic_2Offset_2`.
 - `CGAL::Periodic_2_triangulation_vertex_base_2<>`
 - `CGAL::Periodic_2_offset_2`
 
-### Traits Classes ###
+\cgalCRPSubsection{Traits Classes}
 
 - `CGAL::Periodic_2_triangulation_traits_2<Traits,Periodic_2Offset_2>`
 - `CGAL::Periodic_2_Delaunay_triangulation_traits_2<Traits,Periodic_2Offset_2>`
 
-## Enums ##
+\cgalCRPSection{Enums}
 
 - `CGAL::Periodic_2_triangulation_2::Iterator_type`
 - `CGAL::Periodic_2_triangulation_2::Locate_type`
