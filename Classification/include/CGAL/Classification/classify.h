@@ -480,11 +480,11 @@ namespace internal {
       (boost::make_transform_iterator (input.begin(), CGAL::Property_map_to_unary_function<ItemMap>(item_map)),
        boost::make_transform_iterator (input.end(), CGAL::Property_map_to_unary_function<ItemMap>(item_map)));
 
-    float Dx = float(bbox.xmax() - bbox.xmin());
-    float Dy = float(bbox.ymax() - bbox.ymin());
-    float A = Dx * Dy;
-    float a = A / min_number_of_subdivisions;
-    float l = std::sqrt(a);
+    double Dx = double(bbox.xmax() - bbox.xmin());
+    double Dy = double(bbox.ymax() - bbox.ymin());
+    double A = Dx * Dy;
+    double a = A / min_number_of_subdivisions;
+    double l = std::sqrt(a);
     std::size_t nb_x = std::size_t(Dx / l) + 1;
     std::size_t nb_y = std::size_t((A / nb_x) / a) + 1;
     std::size_t nb = nb_x * nb_y;
@@ -495,11 +495,11 @@ namespace internal {
       for (std::size_t y = 0; y < nb_y; ++ y)
       {
         bboxes.push_back
-          (CGAL::Bbox_3 (bbox.xmin() + Dx * (x / float(nb_x)),
-                         bbox.ymin() + Dy * (y / float(nb_y)),
+          (CGAL::Bbox_3 (bbox.xmin() + Dx * (x / double(nb_x)),
+                         bbox.ymin() + Dy * (y / double(nb_y)),
                          bbox.zmin(),
-                         bbox.xmin() + Dx * ((x+1) / float(nb_x)),
-                         bbox.ymin() + Dy * ((y+1) / float(nb_y)),
+                         (x == nb_x - 1 ? bbox.xmax() : bbox.xmin() + Dx * ((x+1) / double(nb_x))),
+                         (y == nb_y - 1 ? bbox.ymax() : bbox.ymin() + Dy * ((y+1) / double(nb_y))),
                          bbox.zmax()));
       }
 
@@ -514,14 +514,16 @@ namespace internal {
     for (std::size_t s = 0; s < input.size(); ++ s)
     {
       CGAL::Bbox_3 b = get(item_map, *(input.begin() + s)).bbox();
-        
-      for (std::size_t i = 0; i < bboxes.size(); ++ i)
+
+      std::size_t i = 0;
+      for (; i < bboxes.size(); ++ i)
         if (CGAL::do_overlap (b, bboxes[i]))
         {
           input_to_indices[s] = std::make_pair (i, indices[i].size());
           indices[i].push_back (s);
           break;
         }
+      CGAL_assertion_msg (i != bboxes.size(), "Point was not assigned to any subdivision.");
     }
 
     internal::Classify_functor_graphcut<ItemRange, ItemMap, Classifier, NeighborQuery, LabelIndexRange>
