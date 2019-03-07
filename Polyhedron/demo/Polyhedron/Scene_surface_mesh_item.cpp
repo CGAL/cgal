@@ -1512,7 +1512,7 @@ QString Scene_surface_mesh_item::computeStats(int type)
     edges_length(d->smesh_, minl, maxl, meanl, midl, d->number_of_null_length_edges);
   }
 
-  double mini, maxi, ave;
+  double mini(0), maxi(0), ave(0);
   switch (type)
   {
   case MIN_ANGLE:
