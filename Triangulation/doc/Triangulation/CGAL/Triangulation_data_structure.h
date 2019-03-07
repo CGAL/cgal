@@ -74,6 +74,7 @@ bool is_valid(bool verbose = true) const;
 /// @{
 
 /*!
+\cgalAdvancedType
 \cgalAdvancedBegin
 This template class allows to get the type of a triangulation
 data structure that only changes the vertex type. It has to define a type
@@ -103,6 +104,7 @@ using Rebind_full_cell = unspecified_type;
 /// @{
 
 /*!
+\cgalAdvancedFunction
 \cgalAdvancedBegin
 A set `C` of full cells satisfying the same condition as in method 
 `Triangulation_data_structure::insert_in_hole()` is assumed to be marked. This 

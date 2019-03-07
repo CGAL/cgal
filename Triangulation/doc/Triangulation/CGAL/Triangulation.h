@@ -254,6 +254,7 @@ Returns a const reference to the underlying triangulation data structure.
 const Triangulation_ds & tds() const;
 
 /*!
+\cgalAdvancedFunction
 \cgalAdvancedBegin
 Returns a non-const
 reference to the underlying triangulation data structure.

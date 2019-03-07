@@ -939,6 +939,7 @@ public:
 
   
 #ifdef DOXYGEN_RUNNING
+  /// \cgalAdvancedType
   /// \cgalAdvancedBegin  
   /// Model of `OutputIterator` used to insert elements by defining
   /// the value of the property `Property`.
@@ -946,6 +947,7 @@ public:
   template <class Property>
   using Property_back_inserter = unspecified_type;
 
+  /// \cgalAdvancedType
   /// \cgalAdvancedBegin  
   /// Model of `WritablePropertyMap` based on `Property` and that
   /// is allowed to push new items to the point set if needed.
@@ -1025,26 +1027,30 @@ public:
   };
   /// \endcond      
 
+  /// \cgalAdvancedType
   /// \cgalAdvancedBegin
   /// Back inserter on indices
   /// \cgalAdvancedEnd
   typedef Property_back_inserter<Index_map> Index_back_inserter; 
+  /// \cgalAdvancedType
   /// \cgalAdvancedBegin
   /// Back inserter on points
   /// \cgalAdvancedEnd
   typedef Property_back_inserter<Point_map> Point_back_inserter;
+  /// \cgalAdvancedType
   /// \cgalAdvancedBegin
   /// Property map for pushing new points
   /// \cgalAdvancedEnd
   typedef Push_property_map<Point_map> Point_push_map;
+  /// \cgalAdvancedType
   /// \cgalAdvancedBegin
   /// Property map for pushing new vectors
   /// \cgalAdvancedEnd
   typedef Push_property_map<Vector_map> Vector_push_map;
 
   /*!
-    \cgalAdvancedBegin
     \cgalAdvancedFunction
+    \cgalAdvancedBegin
     \brief Returns the push property map of the given property.
 
     \tparam T type of the property.
@@ -1063,8 +1069,8 @@ public:
     return Push_property_map<Property_map<T> > (this, &prop, size());
   }
   /*!
-    \cgalAdvancedBegin
     \cgalAdvancedFunction
+    \cgalAdvancedBegin
     \brief Returns the push property map of the point property.
     \cgalAdvancedEnd
   */
@@ -1073,8 +1079,8 @@ public:
     return Point_push_map (this, &m_points, size());
   }
   /*!
-    \cgalAdvancedBegin
     \cgalAdvancedFunction
+    \cgalAdvancedBegin
     \brief Returns the push property map of the normal property.
 
     \note The normal property must have been added to the point set
@@ -1086,8 +1092,8 @@ public:
     return Vector_push_map (this, &m_normals, size());
   }
   /*!
-    \cgalAdvancedBegin
     \cgalAdvancedFunction
+    \cgalAdvancedBegin
     \brief Returns the back inserter on the index property.
     \cgalAdvancedEnd
   */
@@ -1096,8 +1102,8 @@ public:
     return Index_back_inserter (this, &m_indices, size());
   }
   /*!
-    \cgalAdvancedBegin
     \cgalAdvancedFunction
+    \cgalAdvancedBegin
     \brief Returns the back inserter on the point property.
     \cgalAdvancedEnd
   */
