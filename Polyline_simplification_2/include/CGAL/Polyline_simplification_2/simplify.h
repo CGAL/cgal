@@ -120,7 +120,8 @@ public:
     int m = initialize_indices(cid);
     initialize_unremovable();
     Compare_cost cc;
-    mpq =  new MPQ(cc);
+    Id_map idm;
+    mpq =  new MPQ(m, cc, idm);
     initialize_costs(cid);
   }
 
