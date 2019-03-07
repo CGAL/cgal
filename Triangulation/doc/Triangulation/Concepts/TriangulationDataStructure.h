@@ -431,6 +431,7 @@ Inserts a vertex in the triangulation data structure by subdividing the
 Vertex_handle insert_in_facet(const Facet & ft);
 
 /*!
+\cgalAdvancedFunction
 \cgalAdvancedBegin
 Removes the full cells in the range \f$ C=\f$`[s, e)`, inserts a vertex 
 at position `p` and fills the hole by connecting

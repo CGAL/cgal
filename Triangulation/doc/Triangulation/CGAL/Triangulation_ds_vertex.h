@@ -40,6 +40,7 @@ public:
 /// @{
 
 /*! 
+\cgalAdvancedFunction
 \cgalAdvancedBegin
 Implements the validity checks required by the concept 
 `TriangulationDSVertex`. Does not implement additional checks. 
