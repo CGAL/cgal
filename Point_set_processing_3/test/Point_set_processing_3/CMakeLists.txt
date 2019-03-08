@@ -38,16 +38,6 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "edge_aware_upsample_test.cpp" )
   create_single_source_cgal_program( "structuring_test.cpp" )
 
-  # Deprecated tests
-  create_single_source_cgal_program( "deprecated_read_test.cpp" )
-  create_single_source_cgal_program( "deprecated_read_test_with_different_pmaps.cpp" )
-  create_single_source_cgal_program( "deprecated_analysis_test.cpp" )
-  create_single_source_cgal_program( "deprecated_remove_outliers_test.cpp" )
-  create_single_source_cgal_program( "deprecated_wlop_simplify_and_regularize_test.cpp" )
-  create_single_source_cgal_program( "deprecated_bilateral_smoothing_test.cpp" )
-  create_single_source_cgal_program( "deprecated_edge_aware_upsample_test.cpp" )
-  create_single_source_cgal_program( "deprecated_structuring_test.cpp" )
-
   # Use Eigen or BLAS and LAPACK (optional)
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
   if (NOT EIGEN3_FOUND)
@@ -68,15 +58,6 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "vcm_plane_test.cpp" )
     create_single_source_cgal_program( "vcm_all_test.cpp" )
     create_single_source_cgal_program( "jet_pointer_as_property_map.cpp" )
-
-    # Deprecated tests
-    create_single_source_cgal_program( "deprecated_normal_estimation_test.cpp" )
-    create_single_source_cgal_program( "deprecated_hierarchy_simplification_test.cpp" )
-    create_single_source_cgal_program( "deprecated_smoothing_test.cpp" )
-    create_single_source_cgal_program( "deprecated_vcm_plane_test.cpp" )
-    create_single_source_cgal_program( "deprecated_vcm_all_test.cpp" )
-    create_single_source_cgal_program( "deprecated_jet_pointer_as_property_map.cpp" )
-
   else(EIGEN3_FOUND OR LAPACK_FOUND)
 
     message(STATUS "NOTICE: This program requires either Eigen 3.1 (or greater) or LAPACK, and will not be compiled.")
