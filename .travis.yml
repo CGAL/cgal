@@ -56,7 +56,7 @@ compiler: clang
 install: 
   - echo "$PWD"
   - if [ -n "$TRAVIS_PULL_REQUEST" ] && [ "$PACKAGE" != CHECK ]; then  DO_IGNORE=FALSE;  for ARG in $(echo "$PACKAGE");do if [ "$ARG" = "Maintenance" ]; then continue; fi; . $PWD/.travis/test_package.sh "$PWD" "$ARG";  echo "DO_IGNORE is $DO_IGNORE";  if [ "$DO_IGNORE" = "FALSE" ]; then  break; fi; done; if [ "$DO_IGNORE" = "TRUE" ]; then travis_terminate 0; fi;fi
-  - bash .travis/install.sh 
+  - time bash .travis/install.sh
   - export CXX=clang++ CC=clang;
 before_script: 
 - wget -O doxygen_exe https://cgal.geometryfactory.com/~mgimeno/doxygen_exe
@@ -64,13 +64,13 @@ before_script:
 - sudo chmod +x /usr/bin/doxygen
 - mkdir -p build 
 - cd build 
-- cmake -DCMAKE_CXX_FLAGS="-std=c++11" -DCGAL_HEADER_ONLY=ON -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG -DWITH_examples=ON -DWITH_demos=ON -DWITH_tests=ON .. 
-- make 
-- sudo make install &>/dev/null
+- time cmake -DCMAKE_CXX_FLAGS="-std=c++11" -DCGAL_HEADER_ONLY=ON -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG -DWITH_examples=ON -DWITH_demos=ON -DWITH_tests=ON .. 
+- time make
+- time sudo make install &>/dev/null
 - cd ..
 script: 
 - cd ./.travis
-- bash ./build_package.sh $PACKAGE
+- time bash ./build_package.sh $PACKAGE
 notifications:
   email:
     on_success: change # default: always
