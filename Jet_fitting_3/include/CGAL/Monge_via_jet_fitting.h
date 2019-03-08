@@ -32,10 +32,6 @@
 #include <utility>
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_svd.h>
-#else
-#ifdef CGAL_LAPACK_ENABLED
-#include <CGAL/Lapack_svd.h>
-#endif
 #endif
 
 namespace CGAL {
@@ -51,11 +47,7 @@ unsigned int fact(unsigned int n){
 #ifdef CGAL_EIGEN3_ENABLED
 template < class DataKernel, class LocalKernel = Simple_cartesian<double>, class SvdTraits = Eigen_svd >
 #else
-#ifdef CGAL_LAPACK_ENABLED
-template < class DataKernel, class LocalKernel = Simple_cartesian<double>, class SvdTraits = Lapack_svd>  
-#else
 template < class DataKernel, class LocalKernel, class SvdTraits >  
-#endif
 #endif
   class Monge_via_jet_fitting {
  public:

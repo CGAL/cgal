@@ -28,7 +28,7 @@ if ( CGAL_FOUND )
 
   find_package( TBB QUIET )
 
-  # Executables that do *not* require LAPACK
+  # Executables that do *not* require Eigen
   create_single_source_cgal_program( "read_test.cpp" )
   create_single_source_cgal_program( "read_test_with_different_pmaps.cpp" )
   create_single_source_cgal_program( "analysis_test.cpp" )
@@ -38,31 +38,20 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "edge_aware_upsample_test.cpp" )
   create_single_source_cgal_program( "structuring_test.cpp" )
 
-  # Use Eigen or BLAS and LAPACK (optional)
+  # Use Eigen
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-  if (NOT EIGEN3_FOUND)
-    find_package(LAPACK)
-    if(LAPACK_FOUND)
-      include( ${LAPACK_USE_FILE} )
-    endif(LAPACK_FOUND)
-  else()
+  if (EIGEN3_FOUND)
     include( ${EIGEN3_USE_FILE} )
-  endif()
-  
-  
-  if(EIGEN3_FOUND OR LAPACK_FOUND)
-    # Executables that require Eigen or BLAS and LAPACK
+    # Executables that require Eigen
     create_single_source_cgal_program( "normal_estimation_test.cpp" )
     create_single_source_cgal_program( "hierarchy_simplification_test.cpp" )
     create_single_source_cgal_program( "smoothing_test.cpp" )
     create_single_source_cgal_program( "vcm_plane_test.cpp" )
     create_single_source_cgal_program( "vcm_all_test.cpp" )
     create_single_source_cgal_program( "jet_pointer_as_property_map.cpp" )
-  else(EIGEN3_FOUND OR LAPACK_FOUND)
-
-    message(STATUS "NOTICE: This program requires either Eigen 3.1 (or greater) or LAPACK, and will not be compiled.")
-
-  endif(EIGEN3_FOUND OR LAPACK_FOUND)
+  else()
+    message(STATUS "NOTICE: This program requires Eigen 3.1 (or greater) and will not be compiled.")
+  endif()
 
   foreach(target
       analysis_test
