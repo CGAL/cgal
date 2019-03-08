@@ -8,6 +8,8 @@ The class `Range_segment_tree_set_traits_2` is a range and segment tree traits c
 2-dimensional point class from the \cgal kernel. The class is 
 parameterized with a representation class `R`. 
 
+\cgalModels `RangeSegmentTreeTraits_k`
+
 */
 template< typename R >
 class Range_segment_tree_set_traits_2 {
@@ -19,12 +21,12 @@ public:
 /*!
 
 */ 
-Point_2<R> Key; 
+  typedef R::Point_2 Key; 
 
 /*!
 
 */ 
-std::pair<Key, Key> Interval; 
+typedef std::pair<Key, Key> Interval; 
 
 /// @}
 
@@ -40,6 +42,8 @@ The class `Range_segment_tree_set_traits_3` is a range and segment tree traits c
 point class from the \cgal kernel. 
 The class is parameterized with a representation class `R`. 
 
+\cgalModels `RangeSegmentTreeTraits_k`
+
 */
 template< typename R >
 class Range_segment_tree_set_traits_3 {
@@ -51,12 +55,12 @@ public:
 /*!
 
 */ 
-Point_3<R> Key; 
+  typedef R::Point_3 Key; 
 
 /*!
 
 */ 
-std::pair<Key, Key> Interval; 
+typedef std::pair<Key, Key> Interval; 
 
 /// @}
 
@@ -74,6 +78,8 @@ type `T` is associated to each key. The class is
 parameterized with a representation class `R` and the type of 
 the associated data `T`. 
 
+\cgalModels `RangeSegmentTreeTraits_k`
+
 */
 template< typename R, typename T >
 class Range_tree_map_traits_2 {
@@ -85,12 +91,12 @@ public:
 /*!
 
 */ 
-std::pair<R::Point_2,T> Key; 
+typedef std::pair<R::Point_2,T> Key; 
 
 /*!
 
 */ 
-std::pair<R::Point_2, R::Point_2 > Interval; 
+typedef std::pair<R::Point_2, R::Point_2 > Interval; 
 
 /// @}
 
@@ -108,6 +114,8 @@ type `T` is associated to each key.
 The class is parameterized with a representation class `R` and the type of 
 the associated data `T`. 
 
+\cgalModels `RangeSegmentTreeTraits_k`
+
 */
 template< typename R, typename T >
 class Range_tree_map_traits_3 {
@@ -119,12 +127,12 @@ public:
 /*!
 
 */ 
-std::pair<R::Point_3,T> Key; 
+typedef std::pair<R::Point_3,T> Key; 
 
 /*!
 
 */ 
-std::pair<R::Point_3, R::Point_3> Interval; 
+typedef std::pair<R::Point_3, R::Point_3> Interval; 
 
 /// @}
 
@@ -142,6 +150,8 @@ type `T` is associated to each interval. The class is
 parameterized with a representation class `R` and the type of 
 the associated data `T`. 
 
+\cgalModels `RangeSegmentTreeTraits_k`
+
 */
 template< typename R, typename T >
 class Segment_tree_map_traits_2 {
@@ -153,12 +163,12 @@ public:
 /*!
 
 */ 
-R::Point_2 Key; 
+typedef R::Point_2 Key; 
 
 /*!
 
 */ 
-std::pair<std::pair<Key,Key>,T> Interval; 
+typedef std::pair<std::pair<Key,Key>,T> Interval; 
 
 /// @}
 
@@ -176,6 +186,8 @@ type `T` is associated to each interval.
 The class is parameterized with a representation class `R` and the type of 
 the associated data `T`. 
 
+\cgalModels `RangeSegmentTreeTraits_k`
+
 */
 template< typename R, typename T >
 class Segment_tree_map_traits_3 {
@@ -187,12 +199,12 @@ public:
 /*!
 
 */ 
-std::pair<R::Point_3 > Key; 
+typedef std::pair<R::Point_3 > Key; 
 
 /*!
 
 */ 
-std::pair<std::pair<Key, Key>,T> Interval; 
+typedef std::pair<std::pair<Key, Key>,T> Interval; 
 
 /// @}
 
