@@ -39,7 +39,6 @@
 #include <CGAL/iterator.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/properties.h>
-#include <CGAL/boost/graph/helpers.h>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
 #include <CGAL/tags.h>
@@ -721,11 +720,11 @@ namespace internal {
           can_swap=false;
         }
 
-        if(!collapse_does_not_invert_face(he))
+        if(collapse_would_invert_face(he))
         {
           if (can_swap//if swap allowed (no constrained vertices)
               && (!is_vb_on_constrained_polyline || is_va_on_constrained_polyline)
-              && collapse_does_not_invert_face(opposite(he, mesh_)))
+              && !collapse_would_invert_face(opposite(he, mesh_)))
           {
             he = opposite(he, mesh_);
             e=edge(he, mesh_);
@@ -734,7 +733,7 @@ namespace internal {
           else
             continue;//both directions invert a face
         }
-        CGAL_assertion(collapse_does_not_invert_face(he));
+        CGAL_assertion(!collapse_would_invert_face(he));
         CGAL_assertion(is_collapse_allowed(e, collapse_constraints));
 
         if (!CGAL::Euler::does_satisfy_link_condition(e, mesh_))//necessary to collapse
@@ -1418,54 +1417,38 @@ private:
       return end;
     }
 
-    bool collapse_does_not_invert_face(const halfedge_descriptor& h) const
+    bool collapse_would_invert_face(const halfedge_descriptor& h) const
     {
-      vertex_descriptor vs = source(h, mesh_);
-      vertex_descriptor vt = target(h, mesh_);
+      const Point& src = get(vpmap_, source(h, mesh_));
+      const Point& tgt = get(vpmap_, target(h, mesh_));
 
-      //collect normals to faces around vs AND vt
-      boost::unordered_map<halfedge_descriptor, Vector_3> normals_before_collapse;
+      typename GeomTraits::Construct_normal_3 normal
+        = GeomTraits().construct_normal_3_object();
 
+      //check if collapsing the edge [src; tgt] towards tgt
+      //would inverse the normal to the considered face
+      //src and tgt are the endpoints of the edge to be collapsed
+      //p and q are the vertices that form the face to be tested
+      //along with src before collapse, and with tgt after collapse
       BOOST_FOREACH(halfedge_descriptor hd,
-        boost::range::join(halfedges_around_target(h, mesh_),
-                           halfedges_around_target(opposite(h, mesh_), mesh_)))
+                    halfedges_around_target(opposite(h, mesh_), mesh_))
       {
-        normals_before_collapse[hd] = compute_normal(face(hd, mesh_));
-        //note `compute_normal()` returns CGAL::NULL_VECTOR for degenerate faces
-      }
-
-      //backup source point
-      Point ps = get(vpmap_, vs);
-      //move source at target
-      put(vpmap_, vs, get(vpmap_, vt));
-
-      //now vertices are at the same location, but connectivity is still the same,
-      //with plenty of degenerate triangles (which are common to both stars)
-      //check that normals to non-degenerate faces have not been inverted
-      //(i.e. they are still pointing in the same direction)
-      bool res = true;
-      BOOST_FOREACH(halfedge_descriptor hd,
-                    boost::range::join(
-                      halfedges_around_target(h, mesh_),
-                      halfedges_around_target(opposite(h, mesh_), mesh_)))
-      {
-        face_descriptor fd = face(hd, mesh_);
-        if ( fd == boost::graph_traits<PM>::null_face()
-          || is_degenerate_triangle_face(fd, mesh_, vpmap_, GeomTraits()))
+        if (face(hd, mesh_) == boost::graph_traits<PM>::null_face())
           continue;
 
-        Vector_3 n_after  = compute_normal(face(hd, mesh_)); //deals with degenerate faces
-        Vector_3 n_before = normals_before_collapse[hd];
-        if (n_after * n_before <= 0)
-        {
-          res = false;
-          break;
-        }
-      }
+        const Point& p = get(vpmap_, target(next(hd, mesh_), mesh_));
+        const Point& q = get(vpmap_, target(next(next(hd, mesh_), mesh_), mesh_));
 
-      //restore position
-      put(vpmap_, vs, ps);
-      return res;
+        if (Triangle_3(tgt, p, q).is_degenerate())
+          continue;
+
+        Vector_3 normal_before_collapse = normal(src, p, q);
+        Vector_3 normal_after_collapse  = normal(tgt, p, q);
+
+        if (normal_before_collapse * normal_after_collapse <= 0)
+          return true;
+      }
+      return false;
     }
 
     bool is_constrained(const vertex_descriptor& v) const
