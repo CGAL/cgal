@@ -26,6 +26,7 @@
 #include <boost/pending/relaxed_heap.hpp>
 #else
 #include <boost/heap/fibonacci_heap.hpp>
+#include <boost/graph/properties.hpp>
 #endif //CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
 
 namespace CGAL {
@@ -77,7 +78,7 @@ public:
   Modifiable_priority_queue( size_type, Compare const& c, ID const& ):mHeap(Reverse_compare(c)) {}
   handle push ( value_type const& v ) { return mHeap.push(v) ;}
   handle erase ( value_type const& v, handle h) { mHeap.erase(h); return null_handle() ; }
-  handle update ( value_type const& v, handle h ) { mHeap.update(h,v); return h ; }
+  handle update ( value_type const& v, handle h ) { mHeap.update(h); return h ; }
   static handle null_handle() { return handle(); }
 #endif //CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
 

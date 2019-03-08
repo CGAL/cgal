@@ -1,6 +1,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/Modifiable_priority_queue.h>
+#include <boost/unordered_map.hpp>
 #include <iostream>
 #include <functional> 
 
@@ -27,16 +28,9 @@ struct Less{
   };
 };
 
-template <class Queue>
-int queue_size(Queue& q,int n){
-  int k=0;
-  Type* t=new Type();
-  for (int i=0;i<n;++i){
-    *t = Type(i,0);
-    if ( q.contains(t) ) ++k;
-  }
-  delete t;
-  return k;
+template <class Map>
+int queue_size(Map& m, int n){
+  return m.size();
 }
 
 int main()
@@ -44,8 +38,10 @@ int main()
   #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
   //testing min-heap
   typedef CGAL::Modifiable_priority_queue<Type*,Less,First_of_pair> Queue;
+  typedef boost::unordered_map<Type*, Queue::handle> Heap_map;
   Queue q(45,Queue::Compare(),Queue::ID());
-  assert( queue_size(q,45) == 0 );
+  Heap_map h;
+  assert( queue_size(h,45) == 0 );
   assert( q.empty() );
   
   std::vector<Type> data;
@@ -57,73 +53,95 @@ int main()
   data.push_back(Type(4,1));
   data.push_back(Type(5,2));
   
-  q.push(&data[0]);
-  q.push(&data[0]+1);
-  q.push(&data[0]+2);
-  q.push(&data[0]+3);
+  h[&data[0]] = q.push(&data[0]);
+  h[&data[0]+1] = q.push(&data[0]+1);
+  h[&data[0]+2] = q.push(&data[0]+2);
+  h[&data[0]+3] = q.push(&data[0]+3);
   
   assert( q.top()->first == 0 );
-  assert( queue_size(q,45) == 4 );
+  assert( queue_size(h,45) == 4 );
   
+  Type *top = q.top();
   q.pop();
+  h.erase(top);
   assert( q.top()->first == 1 );
-  assert( queue_size(q,45) == 3 );
+  assert( queue_size(h,45) == 3 );
   
-  q.push(&data[0]+4);
+  h[&data[0]+4] = q.push(&data[0]+4);
+  
   assert( q.top()->first == 4 );
-  assert( queue_size(q,45) == 4 );
+  assert( queue_size(h,45) == 4 );
+
+  q.erase(&data[0]+4, h[&data[0]+4]);
+  h.erase(&data[0]+4);
   
-  q.erase(&data[0]+4,false);
   assert( q.top()->first == 1 );
-  assert( queue_size(q,45) == 3 ); 
+  assert( queue_size(h,45) == 3 ); 
   
-  q.push(&data[0]+5);
+  h[&data[0]+5] = q.push(&data[0]+5);
+  
   assert( q.top()->first == 5 );
-  assert( queue_size(q,45) == 4 );
+  assert( queue_size(h,45) == 4 );
   
+  Queue::handle ex_h = h[&data[0]+5];
   data[5].second=43;
-  q.update(&data[0]+5,true);
+  q.update(&data[0]+5,ex_h);
+  h[&data[0]+5] = ex_h;
+  
   assert( q.top()->first == 1 );
-  assert( queue_size(q,45) == 4 );  
+  assert( queue_size(h,45) == 4 );  
   
+  top = q.top();
   q.pop();
+  h.erase(top);
+  
   assert( q.top()->first == 2 );
-  assert( queue_size(q,45) == 3 );  
+  assert( queue_size(h,45) == 3 );  
 
+  top=q.top();
   q.pop();
+  h.erase(top);
   assert( q.top()->first == 3 );
-  assert( queue_size(q,45) == 2 );  
+  assert( queue_size(h,45) == 2 );  
 
+  top = q.top();
   q.pop();
+  h.erase(top);
   assert( q.top()->first == 5 );
-  assert( queue_size(q,45) == 1 );  
+  assert( queue_size(h,45) == 1 );  
   
+  top=q.top();
   q.pop();
-  assert( queue_size(q,45) == 0 );
+  h.erase(top);
+  assert( queue_size(h,45) == 0 );
   assert( q.empty() );
   
-  q.push(&data[0]);
-  q.push(&data[0]+1);
-  q.push(&data[0]+2);
-  q.push(&data[0]+3);
+  h[&data[0]] = q.push(&data[0]);
+  h[&data[0]+1] = q.push(&data[0]+1);
+  h[&data[0]+2] = q.push(&data[0]+2);
+  h[&data[0]+3] = q.push(&data[0]+3);
   
   assert( q.top()->first == 0 );
-  assert( queue_size(q,45) == 4 );
+  assert( queue_size(h,45) == 4 );
   
-  q.erase(&data[0]+1,true);
+  q.erase(&data[0]+1,h[&data[0]+1]);
+  h.erase(&data[0]+1);
   assert( q.top()->first == 0 );
-  assert( queue_size(q,45) == 3 );
+  assert( queue_size(h,45) == 3 );
 
-  q.erase(&data[0]+2,true);
+  q.erase(&data[0]+2,h[&data[0]+2]);
+  h.erase(&data[0]+2);
   assert( q.top()->first == 0 );
-  assert( queue_size(q,45) == 2 );
+  assert( queue_size(h,45) == 2 );
 
-  q.erase(&data[0],true);
+  q.erase(&data[0],h[&data[0]]);
+  h.erase(&data[0]);
   assert( q.top()->first == 3 );
-  assert( queue_size(q,45) == 1 );
+  assert( queue_size(h,45) == 1 );
   
-  q.erase(&data[0]+3,true);
-  assert( queue_size(q,45) == 0 );
+  q.erase(&data[0]+3,h[&data[0]+3]);
+  h.erase(&data[0]+3);
+  assert( queue_size(h,45) == 0 );
   assert( q.empty() );  
 
 //testing correctness of the order
@@ -133,12 +151,14 @@ int main()
   data.reserve(10);
   for (int i=0;i<10;++i){
     data.push_back(Type(i,array[i]));
-    q.push(&data[0]+i);
+    h[&data[0]+i] = q.push(&data[0]+i);
   }
   
   for (int i=0;i<10;++i){
-    assert(q.top()->second==i);
+    top = q.top();
+    assert(top->second==i);
     q.pop();
+    h.erase(top);
   }
   assert( q.empty() );
   
@@ -147,19 +167,22 @@ int main()
   data.reserve(10);
   for (int i=0;i<10;++i){
     data.push_back(Type(i,10+i));
-    q.push(&data[0]+i);
+    h[&data[0]+i] = q.push(&data[0]+i);
   }
-
+  
   for (unsigned int i=0;i<10;++i){
+    ex_h = h[&data[0]+i];
     data[i].second=9-i;
-    q.update(&data[0]+i,true);
+    q.update(&data[0]+i,ex_h);
+    h[&data[0]+i] = ex_h;
     assert(q.top()->first==i);
   }
 
 //testing contains
   for (int i=0;i<10;++i){
-    q.erase(&data[0]+i,true);
-    assert(queue_size(q,45)==9-i);
+    q.erase(&data[0]+i,h[&data[0]+i]);
+    h.erase(&data[0]+i);
+    assert(queue_size(h,45)==9-i);
   }
   
 //testing update (decrease key of top)
@@ -167,25 +190,30 @@ int main()
   data.reserve(10);
   for (int i=0;i<10;++i){
     data.push_back(Type(i,i));
-    q.push(&data[0]+i);
+    h[&data[0]+i] = q.push(&data[0]+i);
   }
 
   for (unsigned int i=0;i<9;++i){
+    ex_h = h[&data[0]+i];
     data[i].second=10+i;
-    q.update(&data[0]+i,true);
+    q.update(&data[0]+i,ex_h);
+    h[&data[0]+i] = ex_h;
     assert(q.top()->first==i+1);
   }
   
 //revert order
   for (unsigned int i=0;i<10;++i){
+    ex_h = h[&data[0]+9-i];
     data[9-i].second=i;
-    q.update(&data[0]+9-i,true);
+    q.update(&data[0]+9-i,ex_h);
+    h[&data[0]+9-i] = ex_h;
     assert(q.top()->first==9);
   }  
 //testing remove (emulate pop)  
   for (std::size_t i=0;i<10;++i){
     assert(q.top()->first==9-i);
-    q.erase(&data[0]-i+9,true);
+    q.erase(&data[0]-i+9,h[&data[0]+9-i]);
+    h.erase(&data[0]+9-i);
   }
   assert( q.empty() );
   
@@ -194,16 +222,17 @@ int main()
   data.reserve(10);
   for (int i=0;i<10;++i){
     data.push_back(Type(i,i));
-    q.push(&data[0]+i);
+    h[&data[0]+i] = q.push(&data[0]+i);
   }
   
   for (std::size_t i=0;i<10;++i){
     assert(q.top()->first==0);
-    q.erase(&data[0]-i+9,true);
+    q.erase(&data[0]-i+9,h[&data[0]-i+9]);
+    h.erase(&data[0]-i+9);
     for (std::size_t k=0;k<9-i;++k)
-      assert(q.contains(&data[0]+k)==true);
+      assert(h.find(&data[0]+k) != h.end());
     for (std::size_t k=0;k<i+1;++k)
-      assert(q.contains(&data[0]+9-k)==false);
+      assert(h.find(&data[0]+9-k) == h.end());
   }
   assert( q.empty() );
   
