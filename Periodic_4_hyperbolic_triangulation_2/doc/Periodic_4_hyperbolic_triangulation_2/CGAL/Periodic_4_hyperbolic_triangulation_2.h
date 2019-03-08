@@ -13,10 +13,10 @@ modification of the triangulation (insertion or removal).
 
 The class expects two template parameters.
 
-\tparam GT 	Geometric Traits parameter. Must be a model of the concept 
+\tparam GT 	Geometric traits parameter. Must be a model of the concept 
 			`Periodic_4HyperbolicTriangulationTraits_2`. This parameter has no
 			default value.
-\tparam	TDS %Triangulation Data Structure parameter. Must be a model of the concept
+\tparam	TDS %Triangulation data structure parameter. Must be a model of the concept
 		`TriangulationDataStructure_2` with some additional functionality in the vertices 
 		and faces, following the concepts `Periodic_4HyperbolicTriangulationVertexBase_2` and
 		`Periodic_4HyperbolicTriangulationFaceBase_2`, respectively. The default value for 
