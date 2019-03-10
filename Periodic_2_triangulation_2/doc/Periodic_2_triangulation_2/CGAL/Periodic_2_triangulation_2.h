@@ -515,6 +515,7 @@ public:
   Converts the current triangulation into the same periodic
   triangulation in the 1-sheeted covering space.
   \pre `is_triangulation_in_1_sheet()`
+
   \cgalAdvancedEnd
   */
   void convert_to_1_sheeted_covering();
@@ -991,6 +992,7 @@ public:
   `f`. Face `f` is modified,
   two new faces are created. If the triangulation contains periodic copies, a point is inserted in all periodic copies.
   \pre The point in vertex `v` lies inside face `f`.
+
   \cgalAdvancedEnd
   */
   Vertex_handle insert_in_face(const Point& p, Face_handle f);
@@ -1000,6 +1002,7 @@ public:
   \cgalAdvancedBegin
   Removes a vertex of degree three. Two of the incident faces are
   destroyed, the third one is modified. \pre Vertex `v` is a vertex with degree three.
+
   \cgalAdvancedEnd
   */
   void remove_degree_3(Vertex_handle v);
@@ -1023,6 +1026,7 @@ public:
   `[edge_begin, edge_end]`. Returns a handle to the new vertex.
 
   \pre The triangulation is a triangulation of 1 sheet
+
     \cgalAdvancedEnd
   */
   template<class EdgeIt>
@@ -1038,6 +1042,7 @@ public:
   and create new ones only when the sequence is exhausted.
 
   \pre The triangulation is a triangulation of 1 sheet
+
   \cgalAdvancedEnd
   */
   template<class EdgeIt, class FaceIt>

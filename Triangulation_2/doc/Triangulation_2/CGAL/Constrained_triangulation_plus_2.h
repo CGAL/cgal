@@ -405,6 +405,7 @@ The simplification algorithm uses the following types and functions.
 /// @{
 
 /*!
+\cgalAdvancedType
 \cgalAdvancedBegin
 An iterator on the points of the original constraint
 before simplification steps are applied. The value type of this iterator is `Point`.
@@ -449,6 +450,7 @@ constraints based on a cost and stop function.
 \pre The vertex referred by vicq is not contained in any other constraint.
 \pre Let `vip` and `vir` be defined as `vip = std::prev(vicq)` and `vir = std::next(vicr)`.
 \pre The line segment between `*vicp->point()` and `*vicr->point()` must not intersect any constraint.
+
 \cgalAdvancedEnd
  */
 void

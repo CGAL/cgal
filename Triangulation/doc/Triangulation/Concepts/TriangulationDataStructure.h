@@ -450,6 +450,8 @@ All vertices of cells of \f$ C\f$ are on \f$ \partial H\f$.
 \cgalFigureBegin{triangulationfiginserthole,insert-in-hole.png}
 Insertion in a hole, \f$ d=2\f$
 \cgalFigureEnd
+
+\cgalAdvancedEnd
 */
 template< class ForwardIterator > Vertex_handle
 insert_in_hole(ForwardIterator start, ForwardIterator end, Facet f);
