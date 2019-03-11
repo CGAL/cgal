@@ -90,6 +90,7 @@ get_cgal()
   fi
 
   CGAL_RELEASE_ID=`echo $CGAL_ZIPFILE | sed "s/.tar.gz//"`
+  echo ${CGAL_RELEASE_ID} > last_release_id
   if [ ! "${CGAL_RELEASE_ID}" = "${CGAL_ZIPFILE}" ]; then
     USE_TARGZ="y"
   else
@@ -225,7 +226,7 @@ if [ -z "${USE_LATEST_UNZIPPED}" ]; then
   get_cgal
   unzip_cgal
 fi
-
+CGAL_RELEASE_ID=$(cat last_release_id)
 if [ "${WITH_DOCKER}" = "y" ]; then
   #launch docker container
   echo "export SHOW_PROGRESS=$SHOW_PROGRESS"> env.sh
@@ -254,8 +255,11 @@ if [ "${WITH_DOCKER}" = "y" ]; then
   echo "export LOGS_DIR=/cgal_root/AUTOTEST_LOGS">> env.sh
   echo "export LOCK_FILE=/cgal_root/autotest_cgal_with_cmake.lock">> env.sh
   echo "export ACTUAL_LOGFILE=/cgal_root/\`basename \${0}\`.log">> env.sh
-  docker pull cgal/testsuite-docker:debian-for-arm
-  docker run --rm  -t -e CGAL_LAST=${CGAL_RELEASE_ID} -v ${CGAL_ROOT}/ssh:/tmp_ssh -v ${DEPS_DIR}:/deps -v ${CGAL_ROOT}/:/cgal_root cgal/testsuite-docker:debian-for-arm
+
+  echo "CGAL_DIR is ${CGAL_RELEASE_ID}"
+
+  docker pull cgal/testsuite-docker:debian-stable-cross-compilation-for-arm
+  docker run --rm  -t -e CGAL_LAST="${CGAL_RELEASE_ID}" -v ${CGAL_ROOT}/ssh:/tmp_ssh -v ${DEPS_DIR}:/deps -v ${CGAL_ROOT}:/cgal_root cgal/testsuite-docker:debian-stable-cross-compilation-for-arm
 else
   bash ${CGAL_DIR}/developer_scripts/run_testsuite_with_cmake
 fi
