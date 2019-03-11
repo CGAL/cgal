@@ -1419,11 +1419,10 @@ private:
 
     bool collapse_would_invert_face(const halfedge_descriptor& h) const
     {
-      const Point& src = get(vpmap_, source(h, mesh_));
-      const Point& tgt = get(vpmap_, target(h, mesh_));
-
-      typename GeomTraits::Construct_normal_3 normal
-        = GeomTraits().construct_normal_3_object();
+      typename boost::property_traits<VertexPointMap>::reference
+        s = get(vpmap_, source(h, mesh_)); //s for source
+      typename boost::property_traits<VertexPointMap>::reference
+        t = get(vpmap_, target(h, mesh_)); //t for target
 
       //check if collapsing the edge [src; tgt] towards tgt
       //would inverse the normal to the considered face
@@ -1436,16 +1435,17 @@ private:
         if (face(hd, mesh_) == boost::graph_traits<PM>::null_face())
           continue;
 
-        const Point& p = get(vpmap_, target(next(hd, mesh_), mesh_));
-        const Point& q = get(vpmap_, target(next(next(hd, mesh_), mesh_), mesh_));
+        typename boost::property_traits<VertexPointMap>::reference
+          p = get(vpmap_, target(next(hd, mesh_), mesh_));
+        typename boost::property_traits<VertexPointMap>::reference
+          q = get(vpmap_, target(next(next(hd, mesh_), mesh_), mesh_));
 
-        if (Triangle_3(tgt, p, q).is_degenerate())
+        if (GeomTraits().collinear_3_object()(t, p, q))
           continue;
 
-        Vector_3 normal_before_collapse = normal(src, p, q);
-        Vector_3 normal_after_collapse  = normal(tgt, p, q);
-
-        if (normal_before_collapse * normal_after_collapse <= 0)
+        if(CGAL::sign(CGAL::cross_product(Vector_3(s, p), Vector_3(s, q))
+                    * CGAL::cross_product(Vector_3(t, p), Vector_3(t, q)))
+          != CGAL::POSITIVE)
           return true;
       }
       return false;
