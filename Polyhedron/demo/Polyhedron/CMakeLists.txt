@@ -301,7 +301,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
 
   add_item(scene_polylines_item Scene_polylines_item.cpp)
   target_link_libraries(scene_polylines_item PUBLIC scene_basic_objects scene_points_with_normal_item)
-
+  
+  add_item(scene_lcc_item Scene_lcc_item.cpp)
+  
   foreach( lib 
       demo_framework
       scene_basic_objects
