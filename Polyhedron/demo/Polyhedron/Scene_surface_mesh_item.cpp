@@ -125,6 +125,7 @@ struct Scene_surface_mesh_item_priv{
     alphaSlider = NULL;
     has_vcolors = false;
     has_fcolors = false;
+    item->setProperty("classname", QString("surface_mesh"));
   }
 
   Scene_surface_mesh_item_priv(SMesh* sm, Scene_surface_mesh_item *parent):
@@ -151,6 +152,7 @@ struct Scene_surface_mesh_item_priv{
     alphaSlider = NULL;
     has_vcolors = false;
     has_fcolors = false;
+    item->setProperty("classname", QString("surface_mesh"));
   }
 
   ~Scene_surface_mesh_item_priv()
@@ -1510,7 +1512,7 @@ QString Scene_surface_mesh_item::computeStats(int type)
     edges_length(d->smesh_, minl, maxl, meanl, midl, d->number_of_null_length_edges);
   }
 
-  double mini, maxi, ave;
+  double mini(0), maxi(0), ave(0);
   switch (type)
   {
   case MIN_ANGLE:
