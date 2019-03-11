@@ -959,12 +959,7 @@ void MainWindow::computeViewerBBox(CGAL::qglviewer::Vec& min, CGAL::qglviewer::V
   if((std::log2)(l_dist) > 13.0 )
     for(int i=0; i<3; ++i)
     {
-      viewer->setOffset(offset);
-      for(int i=0; i<scene->numberOfEntries(); ++i)
-      {
-        scene->item(i)->invalidateOpenGLBuffers();
-        scene->item(i)->itemChanged();
-      }
+      offset[i] = -bbox_center[i];
     }
   if(offset != viewer->offset())
   {

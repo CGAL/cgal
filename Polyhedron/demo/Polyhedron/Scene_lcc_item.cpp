@@ -29,6 +29,7 @@ struct lcc_priv{
 
   void compute_face(Dart_const_handle dh)
   {
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     // We fill only closed faces.
     Dart_const_handle cur=dh;
     Dart_const_handle min=dh;
@@ -65,9 +66,9 @@ struct lcc_priv{
           pt != pts_in_face.end();
           ++pt)
       {
-        faces.push_back(pt->x());
-        faces.push_back(pt->y());
-        faces.push_back(pt->z());    
+        faces.push_back(pt->x() + offset.x);
+        faces.push_back(pt->y() + offset.y);
+        faces.push_back(pt->z() + offset.z);    
       }
     }
     else if (CGAL::Buffer_for_vao<float, std::size_t>::is_facet_convex(pts_in_face,normal))
@@ -75,30 +76,30 @@ struct lcc_priv{
       if (pts_in_face.size()==4)
       {
         Point p = pts_in_face[0];
-        faces.push_back(p.x());
-        faces.push_back(p.y());
-        faces.push_back(p.z());
+        faces.push_back(p.x() + offset.x);
+        faces.push_back(p.y() + offset.y);
+        faces.push_back(p.z() + offset.z);
         p = pts_in_face[1];
-        faces.push_back(p.x());
-        faces.push_back(p.y());
-        faces.push_back(p.z());
+        faces.push_back(p.x() + offset.x);
+        faces.push_back(p.y() + offset.y);
+        faces.push_back(p.z() + offset.z);
         p = pts_in_face[2];
-        faces.push_back(p.x());
-        faces.push_back(p.y());
-        faces.push_back(p.z());
+        faces.push_back(p.x() + offset.x);
+        faces.push_back(p.y() + offset.y);
+        faces.push_back(p.z() + offset.z);
         
         p = pts_in_face[0];
-        faces.push_back(p.x());
-        faces.push_back(p.y());
-        faces.push_back(p.z());
+        faces.push_back(p.x() + offset.x);
+        faces.push_back(p.y() + offset.y);
+        faces.push_back(p.z() + offset.z);
         p = pts_in_face[2];
-        faces.push_back(p.x());
-        faces.push_back(p.y());
-        faces.push_back(p.z());
+        faces.push_back(p.x() + offset.x);
+        faces.push_back(p.y() + offset.y);
+        faces.push_back(p.z() + offset.z);
         p = pts_in_face[3];
-        faces.push_back(p.x());
-        faces.push_back(p.y());
-        faces.push_back(p.z());
+        faces.push_back(p.x() + offset.x);
+        faces.push_back(p.y() + offset.y);
+        faces.push_back(p.z() + offset.z);
       }
       else 
       {
@@ -109,15 +110,15 @@ struct lcc_priv{
           Point& p2 = pts_in_face[i+1];
   
           // (1) add points
-          faces.push_back(p0.x());
-          faces.push_back(p0.y());
-          faces.push_back(p0.z());
-          faces.push_back(p1.x());
-          faces.push_back(p1.y());
-          faces.push_back(p1.z());
-          faces.push_back(p2.x());
-          faces.push_back(p2.y());
-          faces.push_back(p2.z());
+          faces.push_back(p0.x() + offset.x);
+          faces.push_back(p0.y() + offset.y);
+          faces.push_back(p0.z() + offset.z);
+          faces.push_back(p1.x() + offset.x);
+          faces.push_back(p1.y() + offset.y);
+          faces.push_back(p1.z() + offset.z);
+          faces.push_back(p2.x() + offset.x);
+          faces.push_back(p2.y() + offset.y);
+          faces.push_back(p2.z() + offset.z);
         }
       } // Convex face with > 4 vertices
     }
@@ -230,9 +231,9 @@ struct lcc_priv{
             for(unsigned int i=0; i<3; ++i)
             {            
               Point p = ffit->vertex(i)->point();
-              faces.push_back(p.x());
-              faces.push_back(p.y());
-              faces.push_back(p.z());
+              faces.push_back(p.x() + offset.x);
+              faces.push_back(p.y() + offset.y);
+              faces.push_back(p.z() + offset.z);
             }
           }
         }
@@ -377,7 +378,8 @@ void Scene_lcc_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 void Scene_lcc_item::computeElements() const
 {
   CGAL::Three::Three::CursorScopeGuard guard(QCursor(Qt::WaitCursor));
-  
+  const CGAL::qglviewer::Vec offset = CGAL::Three::Three::mainViewer()->offset();
+  qDebug()<<offset.x<<", "<<offset.y<<", "<<offset.z;
   typename LCC::size_type markvolumes  = d->lcc.get_new_mark();
   typename LCC::size_type markfaces    = d->lcc.get_new_mark();
   typename LCC::size_type markedges    = d->lcc.get_new_mark();
@@ -408,13 +410,13 @@ void Scene_lcc_item::computeElements() const
               Point p1 = d->lcc.point(itf);
               LCC::Dart_const_handle d2 = d->lcc.other_extremity(itf);
               Point p2 = d->lcc.point(d2);
-              d->lines.push_back(p1.x());
-              d->lines.push_back(p1.y());
-              d->lines.push_back(p1.z());
+              d->lines.push_back(p1.x() + offset.x);
+              d->lines.push_back(p1.y() + offset.y);
+              d->lines.push_back(p1.z() + offset.z);
               
-              d->lines.push_back(p2.x());
-              d->lines.push_back(p2.y());
-              d->lines.push_back(p2.z());
+              d->lines.push_back(p2.x() + offset.x);
+              d->lines.push_back(p2.y() + offset.y);
+              d->lines.push_back(p2.z() + offset.z);
               
               for (typename LCC::template Dart_of_cell_basic_range<1>::
                    const_iterator ite=d->lcc.template darts_of_cell_basic<1>(itf, markedges).begin(),
@@ -425,9 +427,9 @@ void Scene_lcc_item::computeElements() const
                 if ( !d->lcc.is_marked(ite, markvertices))
                 {
                   Point p1 = d->lcc.point(ite);
-                  d->vertices.push_back(p1.x());
-                  d->vertices.push_back(p1.y());
-                  d->vertices.push_back(p1.z());
+                  d->vertices.push_back(p1.x() + offset.x);
+                  d->vertices.push_back(p1.y() + offset.y);
+                  d->vertices.push_back(p1.z() + offset.z);
                   CGAL::mark_cell<LCC, 0>(d->lcc, ite, markvertices);
                 }
               }
