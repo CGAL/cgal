@@ -1440,8 +1440,25 @@ private:
         typename boost::property_traits<VertexPointMap>::reference
           q = get(vpmap_, target(next(next(hd, mesh_), mesh_), mesh_));
 
+#ifdef CGAL_PMP_REMESHING_DEBUG
+        CGAL_assertion((Triangle_3(t, p, q).is_degenerate())
+                     == GeomTraits().collinear_3_object()(t, p, q));
+#endif
+
         if (GeomTraits().collinear_3_object()(t, p, q))
           continue;
+
+#ifdef CGAL_PMP_REMESHING_DEBUG
+        typename GeomTraits::Construct_normal_3 normal
+          = GeomTraits().construct_normal_3_object();
+        Vector_3 normal_before_collapse = normal(s, p, q);
+        Vector_3 normal_after_collapse  = normal(t, p, q);
+
+        CGAL::Sign s1 = CGAL::sign(normal_before_collapse * normal_after_collapse);
+        CGAL::Sign s2 = CGAL::sign(CGAL::cross_product(Vector_3(s, p), Vector_3(s, q))
+                                 * CGAL::cross_product(Vector_3(t, p), Vector_3(t, q)));
+        CGAL_assertion(s1 == s2);
+#endif
 
         if(CGAL::sign(CGAL::cross_product(Vector_3(s, p), Vector_3(s, q))
                     * CGAL::cross_product(Vector_3(t, p), Vector_3(t, q)))
