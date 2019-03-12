@@ -377,7 +377,7 @@ void Scene_lcc_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 
 void Scene_lcc_item::computeElements() const
 {
-  CGAL::Three::Three::CursorScopeGuard guard(QCursor(Qt::WaitCursor));
+  CGAL::Three::Three::CursorScopeGuard guard{QCursor(Qt::WaitCursor)};
   const CGAL::qglviewer::Vec offset = CGAL::Three::Three::mainViewer()->offset();
   qDebug()<<offset.x<<", "<<offset.y<<", "<<offset.z;
   typename LCC::size_type markvolumes  = d->lcc.get_new_mark();
