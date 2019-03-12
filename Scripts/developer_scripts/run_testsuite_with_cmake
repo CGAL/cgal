@@ -7,7 +7,6 @@
 
 source "${CGAL_DIR}/developer_scripts/log.sh"
 # Load settings
-echo "CGAL_ROOT is $CGAL_ROOT"
 if [ -f "$CGAL_ROOT/.autocgalrc" ]; then
   . "$CGAL_ROOT/.autocgalrc"
 else
@@ -255,7 +254,9 @@ run_test_on_host_and_platform()
     cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' VERBOSE=1 $CGAL_DIR
   fi
   LIST_TEST_FILE="${CGAL_ROOT}/list_test_packages"
-  LIST_TEST_PACKAGES=$(source ${LIST_TEST_FILE})
+  if [ -f ${LIST_TEST_FILE} ]; then
+    LIST_TEST_PACKAGES=$(source ${LIST_TEST_FILE})
+  fi
   TO_TEST=""
   INIT=""
   for pkg in $LIST_TEST_PACKAGES; do

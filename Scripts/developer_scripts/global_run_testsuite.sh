@@ -226,6 +226,8 @@ if [ -z "${USE_LATEST_UNZIPPED}" ]; then
   get_cgal
   unzip_cgal
 fi
+#reset CGAL-DIR with the updated CGAL-I
+CGAL_DIR=`readlink "${CGAL_ROOT}/CGAL-I"`
 CGAL_RELEASE_ID=$(cat last_release_id)
 if [ "${WITH_DOCKER}" = "y" ]; then
   #launch docker container
