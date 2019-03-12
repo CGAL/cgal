@@ -2005,6 +2005,7 @@ namespace CGAL {
     {
       // initilisation de la variable globale K: qualite d'echantillonnage requise
       K = K_init; // valeur d'initialisation de K pour commencer prudemment...
+      coord_type K_prev = K;
 
       Vertex_handle v1, v2;
       if (_ordered_border.empty()){
@@ -2069,12 +2070,12 @@ namespace CGAL {
             }
           while((!_ordered_border.empty())&&
                 (_ordered_border.begin()->first < STANDBY_CANDIDATE_BIS));
-
+          K_prev = K;
           K += (std::max)(K_step, min_K - K + eps);
           // on augmente progressivement le K mais on a deja rempli sans
           // faire des betises auparavant...
         }
-      while((!_ordered_border.empty())&&(K <= K)&&(min_K != infinity()));
+      while((!_ordered_border.empty())&&(K <= K)&&(min_K != infinity())&&(K!=K_prev));
 
 #ifdef VERBOSE
       if ((min_K < infinity())&&(!_ordered_border.empty())) {
