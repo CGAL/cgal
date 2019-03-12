@@ -1445,7 +1445,8 @@ private:
                      == GeomTraits().collinear_3_object()(t, p, q));
 #endif
 
-        if (GeomTraits().collinear_3_object()(t, p, q))
+        if ( GeomTraits().collinear_3_object()(s, p, q)
+          || GeomTraits().collinear_3_object()(t, p, q))
           continue;
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
