@@ -194,24 +194,10 @@ function(run_test_alt name datafile)
   endif()
   cgal_debug_message(STATUS "#     run_test_alt(${ARGN})")
   cgal_debug_message(STATUS "#       -> ./${name} ${datafile} ${ARGN}")
-  set(command ${name} ${datafile} ${ARGN})
   string(MAKE_C_IDENTIFIER "${name}  ${ARGV4}  ${ARGV5}" test_name)
-  add_test(NAME ${test_name} COMMAND ${command}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-  set_property(TEST "${test_name}"
-    APPEND PROPERTY DEPENDS "compilation_of__${name}")
-  if(POLICY CMP0066) # CMake 3.7 or later
-    set_tests_properties("${test_name}"
-      PROPERTIES
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
-      FIXTURES_REQUIRED ${PROJECT_NAME})
-  endif()
-  cgal_debug_message(STATUS "#       .. depends on compilation_of__${name}")
-
-#  message("   successful execution of ${name}  ${ARGV4} ${ARGV5}")
-  set_property(TEST "${test_name}"
-    APPEND PROPERTY LABELS "${PROJECT_NAME}")
-  cgal_debug_message(STATUS "add test \"${test_name}\": ${name} ${datafile} ${ARGN}")
+  cgal_add_test(${name}
+    TEST_NAME ${test_name}
+    ARGUMENTS ${datafile} ${ARGN})
 endfunction()
 
 function(run_trapped_test name datafile)

@@ -40,8 +40,13 @@ if(CGAL_CTEST_DISPLAY_MEM_AND_TIME)
 endif()
 
 if(ANDROID)
-  set(ANDROID_DIR_PREFIX /data/local/tmp/)
+  set(CGAL_REMOTE_TEST_DIR_PREFIX /data/local/tmp/ CACHE PATH "Path to the directory where the tests will be executed in a remote testsuite.")
   find_program(adb_executable adb)
+endif()
+if(CGAL_RUN_TESTS_THROUGH_SSH)
+  set(CGAL_REMOTE_TEST_DIR_PREFIX /home/pi/CGAL/ CACHE PATH "Path to the directory where the tests will be executed in a remote testsuite.")
+  find_program(ssh_executable ssh)
+  find_program(scp_executable scp)
 endif()
 
 # Process a list, and replace items contains a file pattern (like
@@ -116,18 +121,25 @@ function(cgal_setup_test_properties test_name)
           COMMAND
           ${adb_executable} push
           ${CMAKE_CURRENT_SOURCE_DIR}
-          ${ANDROID_DIR_PREFIX}${PROJECT_NAME}
+          ${CGAL_REMOTE_TEST_DIR_PREFIX}${PROJECT_NAME}
           )
         add_test(NAME ${PROJECT_NAME}_copy_GMP_MPFR
           COMMAND
           ${adb_executable} push
           ${GMP_LIBRARIES} ${MPFR_LIBRARIES}
-          ${ANDROID_DIR_PREFIX}${PROJECT_NAME}
+          ${CGAL_REMOTE_TEST_DIR_PREFIX}${PROJECT_NAME}
           )
         set_property(TEST ${PROJECT_NAME}_copy_GMP_MPFR
           APPEND PROPERTY DEPENDS ${PROJECT_NAME}_SetupFixture)
         set_property(TEST ${PROJECT_NAME}_copy_GMP_MPFR
           PROPERTY FIXTURES_SETUP ${PROJECT_NAME})
+      elseif(CGAL_RUN_TESTS_THROUGH_SSH)
+        add_test(NAME ${PROJECT_NAME}_SetupFixture
+          COMMAND
+          ${scp_executable} -r
+          ${CMAKE_CURRENT_SOURCE_DIR}
+          ${SSH_HOST}:${CGAL_REMOTE_TEST_DIR_PREFIX}${PROJECT_NAME}
+          )
       else()
         add_test(NAME ${PROJECT_NAME}_SetupFixture
           COMMAND
@@ -143,7 +155,13 @@ function(cgal_setup_test_properties test_name)
         add_test(NAME ${PROJECT_NAME}_CleanupFixture
           COMMAND
           ${adb_executable} shell rm -rf
-          ${ANDROID_DIR_PREFIX}${PROJECT_NAME}
+          ${CGAL_REMOTE_TEST_DIR_PREFIX}${PROJECT_NAME}
+          )
+      elseif(CGAL_RUN_TESTS_THROUGH_SSH)
+        add_test(NAME ${PROJECT_NAME}_CleanupFixture
+          COMMAND
+          ${ssh_executable} ${SSH_HOST} rm -rf
+          ${CGAL_REMOTE_TEST_DIR_PREFIX}${PROJECT_NAME}
           )
       else()
         add_test(NAME ${PROJECT_NAME}_CleanupFixture
@@ -159,11 +177,12 @@ function(cgal_setup_test_properties test_name)
         ${PROJECT_NAME}_CleanupFixture ${PROJECT_NAME}_SetupFixture
         APPEND PROPERTY LABELS "${PROJECT_NAME}")
     endif()
-    if(NOT ANDROID)
+    if(NOT ANDROID AND NOT CGAL_RUN_TESTS_THROUGH_SSH)
       set_property(TEST "${test_name}"
         PROPERTY
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir)
     endif()
+    
     set_property(TEST "${test_name}"
       APPEND PROPERTY FIXTURES_REQUIRED "${PROJECT_NAME}")
     if(exe_name)
@@ -171,13 +190,22 @@ function(cgal_setup_test_properties test_name)
         APPEND PROPERTY FIXTURES_REQUIRED "${exe_name}")
       set_property(TEST "compilation_of__${exe_name}"
         PROPERTY FIXTURES_SETUP "${exe_name}")
-      if(ANDROID)
-        add_test(NAME "push_of__${exe_name}"
-          COMMAND ${adb_executable} push $<TARGET_FILE:${exe_name}> ${ANDROID_DIR_PREFIX}${PROJECT_NAME}/${exe_name})
+      if((ANDROID OR CGAL_RUN_TESTS_THROUGH_SSH) AND NOT TEST push_of__${exe_name})
+        if(ANDROID)
+          add_test(NAME "push_of__${exe_name}"
+            COMMAND ${adb_executable} push $<TARGET_FILE:${exe_name}> ${CGAL_REMOTE_TEST_DIR_PREFIX}${PROJECT_NAME}/${exe_name})
+        elseif(CGAL_RUN_TESTS_THROUGH_SSH)
+          add_test(NAME "push_of__${exe_name}"
+            COMMAND ${scp_executable} $<TARGET_FILE:${exe_name}> ${SSH_HOST}:${CGAL_REMOTE_TEST_DIR_PREFIX}${PROJECT_NAME}/)
+        endif()
+        set_property(TEST "push_of__${exe_name}"
+          APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
         set_property(TEST "push_of__${exe_name}"
           APPEND PROPERTY FIXTURES_SETUP "${exe_name}")
         set_property(TEST "push_of__${exe_name}"
-          APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
+          APPEND PROPERTY FIXTURES_REQUIRED "${PROJECT_NAME}")
+        set_property(TEST "push_of__${exe_name}"
+          APPEND PROPERTY LABELS "${PROJECT_NAME}")
       endif()
     endif()
   endif() # end CMake 3.7 or later
@@ -204,11 +232,19 @@ function(cgal_add_test exe_name)
 #  message("Add test ${test_name}")
   set(cin_file "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cin")
   if(NOT ARGS AND EXISTS ${cin_file})
+    if(ANDROID OR CGAL_RUN_TESTS_THROUGH_SSH)
+      set(cmd ${exe_name})
+    else()
+      set(cmd $<TARGET_FILE:${exe_name}>)
+    endif()
     add_test(NAME ${test_name}
       COMMAND ${TIME_COMMAND} ${CMAKE_COMMAND}
-      -DCMD:STRING=$<TARGET_FILE:${exe_name}>
+      -DCMD:STRING=${cmd}
       -DCIN:STRING=${cin_file}
-      -DANDROID_DIR_PREFIX=${ANDROID_DIR_PREFIX}
+      -DCGAL_REMOTE_TEST_DIR_PREFIX=${CGAL_REMOTE_TEST_DIR_PREFIX}
+      -DSSH=${SSH}
+      -DSSH_HOST=${SSH_HOST}
+      -DCGAL_REMOTE_TEST_DIR_PREFIX=${CGAL_REMOTE_TEST_DIR_PREFIX}
       -DPROJECT_NAME=${PROJECT_NAME}
       -P "${CGAL_MODULES_DIR}/run_test_with_cin.cmake")
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -241,34 +277,15 @@ function(cgal_add_test exe_name)
     endif()
     #	message(STATUS "add test: ${exe_name} ${ARGS}")
     if(ANDROID)
-      add_test(NAME ${test_name} COMMAND ${TIME_COMMAND} ${adb_executable} shell cd ${ANDROID_DIR_PREFIX}${PROJECT_NAME} && LD_LIBRARY_PATH=${ANDROID_DIR_PREFIX}${PROJECT_NAME} ${ANDROID_DIR_PREFIX}${PROJECT_NAME}/${exe_name} ${ARGS})
+      add_test(NAME ${test_name} COMMAND ${TIME_COMMAND} ${adb_executable} shell cd ${CGAL_REMOTE_TEST_DIR_PREFIX}${PROJECT_NAME} && LD_LIBRARY_PATH=${CGAL_REMOTE_TEST_DIR_PREFIX}${PROJECT_NAME} ${CGAL_REMOTE_TEST_DIR_PREFIX}${PROJECT_NAME}/${exe_name} ${ARGS})
+    elseif(CGAL_RUN_TESTS_THROUGH_SSH)
+      STRING(REPLACE ";" " " arg_str "${ARGS}")
+      add_test(NAME ${test_name} COMMAND bash -c "${TIME_COMMAND} ${ssh_executable}  ${SSH_HOST} \"cd ${CGAL_REMOTE_TEST_DIR_PREFIX}${PROJECT_NAME} && ${CGAL_REMOTE_TEST_DIR_PREFIX}${PROJECT_NAME}/${exe_name} ${arg_str} 3< <(cat; kill -INT 0)\" <&1")
     else()
       add_test(NAME ${test_name} COMMAND ${TIME_COMMAND} $<TARGET_FILE:${exe_name}> ${ARGS})
     endif()
   endif()
   cgal_setup_test_properties(${test_name} ${exe_name})
-  return()
-
-  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cin")
-    set(ARGS "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cin")
-  elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${ARGV2}.cmd")
-    file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/${ARGV2}.cmd"
-      ARGS LIMIT_COUNT 1)
-  elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${ARGV1}.cmd")
-    file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/${ARGV1}.cmd"
-      ARGS LIMIT_COUNT 1)
-  elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cmd")
-    file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cmd"
-      ARGS LIMIT_COUNT 1)
-    # TODO: handle multi-lines .cmd files
-    # see https://github.com/CGAL/cgal/pull/1295/files/c65d3abe17bb3e677b8077996cdaf8672f9c4c6f#r71705451
-  endif()
-  string(REPLACE ";" " " args_str "${ARGS}")
-  add_test(NAME ${test_name}
-    COMMAND ${TIME_COMMAND} $<TARGET_FILE:${exe_name}> ${ARGS}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-  set_property(TEST "${test_name}"
-    APPEND PROPERTY LABELS "${PROJECT_NAME}")
 endfunction()
 
 function(CGAL_add_compilation_tests_for_all_targets)
