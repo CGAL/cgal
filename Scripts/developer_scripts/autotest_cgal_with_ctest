@@ -264,3 +264,8 @@ for HOST in ${BUILD_HOSTS}; do
     HOST=$HOST bash ${CGAL_DIR}/developer_scripts/run_testsuite_with_cmake
   fi
 done
+
+cd "${CGAL_ROOT}"
+if [ -e "LATEST" ]; then
+  mv LATEST RELEASE_NR
+fi
