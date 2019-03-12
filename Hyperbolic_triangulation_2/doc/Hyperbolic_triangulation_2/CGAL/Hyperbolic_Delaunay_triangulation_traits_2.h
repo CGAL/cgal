@@ -18,9 +18,9 @@ provides exact constructions and predicates. The default value for `K` is
 constructions of Delaunay triangulations and dual objects for input points with 
 algebraic coordinates. 
 
-\sa Hyperbolic_Delaunay_triangulation_CK_traits_2
+\sa `Hyperbolic_Delaunay_triangulation_CK_traits_2`
 
-\cgalModels HyperbolicDelaunayTriangulationTraits_2
+\cgalModels `HyperbolicDelaunayTriangulationTraits_2`
 */
 
 template< class K >

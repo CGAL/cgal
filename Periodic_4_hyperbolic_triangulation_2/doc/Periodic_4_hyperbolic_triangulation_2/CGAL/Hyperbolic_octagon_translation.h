@@ -11,7 +11,7 @@ The class `Hyperbolic_octagon_translation` defines an object to represent a hype
 translation of the fundamental group of the Bolza surface \f$\mathcal M\f$. It accepts 
 one template parameter:
 
-\tparam FT 	%Field number Type. Must provide exact computations with algebraic numbers, 
+\tparam FT 	%Field number type. Must provide exact computations with algebraic numbers, 
 			notably with nested square roots. The default value for this parameter is 
 			`CORE::Expr`.
 
