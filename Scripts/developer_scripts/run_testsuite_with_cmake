@@ -157,13 +157,8 @@ setup_dirs()
   # directories existing in the reference release are added to $PLATFORMS
   #
   PLATFORMS=""
-
-  for HOST in ${BUILD_HOSTS}; do
-
-    build_platforms_list "`value_of BUILD_ON_${HOST}`"
-    build_platforms_list "`value_of COMPILERS_${HOST}`"
-
-  done
+  build_platforms_list "`value_of BUILD_ON_${HOST}`"
+  build_platforms_list "`value_of COMPILERS_${HOST}`"
 
   if [ -n "${USE_REFERENCE_PLATFORMS}" ]; then
     collect_all_reference_platforms
@@ -198,8 +193,7 @@ put_on_web()
 
 publish_results()
 {
-  HOST=${1}
-  PLATFORM=${2}
+  PLATFORM=${1}
   #
   # collect results and put them on the web
   #
@@ -237,15 +231,19 @@ publish_results()
   fi
 
 }
-run_test_on_host_and_platform()
+run_test_on_platform()
 {
-  HOST=${1}
-  PLATFORM=${2}
+  PLATFORM=${1}
 
   NUMBER_OF_PROCESSORS="`value_of PROCESSORS_${HOST}`"
   CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
   cd "${CGAL_BINARY_DIR}"
   log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "Testing on host ${HOST} and platform ${PLATFORM}"
+  INIT_FILE="${CGAL_ROOT}/${REFERENCE_PLATFORMS_DIR}/${PLATFORM}.cmake"
+  if [ ! -f "${INIT_FILE}" ]; then
+    echo "error NEED A INIT FILE !"
+  fi
+  
   cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' -DBUILD_TESTING=OFF -DWITH_tests=OFF -DWITH_CGAL_Qt5=OFF -DCGAL_HEADER_ONLY=ON $CGAL_DIR > installation.log 2>&1
   rm CMakeCache.txt
   if [ -z "${SHOW_PROGRESS}" ]; then
@@ -312,15 +310,14 @@ run_test_on_host_and_platform()
 # ----------------------------------------------------------------------------------------
 run_test_on_host()
 {
-  HOST=${1}
   PLATFORMS=`value_of COMPILERS_${HOST}`
   if [ "${PLATFORMS}" = "all" ]; then
     collect_all_current_platforms "${CGAL_BINARY_DIR_BASE}"
   fi
 
   for PLATFORM in ${PLATFORMS}; do
-    run_test_on_host_and_platform "${HOST}" "${PLATFORM}"
-    publish_results "${HOST}" "${PLATFORM}"
+    run_test_on_platform "${PLATFORM}"
+    publish_results "${PLATFORM}"
   done
 }
 
@@ -348,7 +345,4 @@ log "${ACTUAL_LOGFILE}" "running the testsuites"
 if [ -n "${CONSOLE_OUTPUT}" ]; then
     printf "\n-------------------------------------------------------\n"
 fi
-for HOST in ${BUILD_HOSTS}; do
-  run_test_on_host ${HOST} 
-done
-
+run_test_on_host

@@ -20,9 +20,8 @@ export CGAL_URL="https://cgal.geometryfactory.com/CGAL/Members/Releases"
 export UPLOAD_RESULT_DESTINATION="cgaltest@cgaltest.geometryfactory.com:incoming"
 export LATEST_LOCATION="${CGAL_URL}/LATEST"
 export TAR="tar"
-export GZIP="gzip"
 export GUNZIP="gunzip"
-export COMPRESSOR="${GZIP}"
+export COMPRESSOR="gzip"
 export CONSOLE_OUTPUT="y"
 export CGAL_ROOT=`pwd`
 export USE_TARGZ="n"
@@ -34,7 +33,6 @@ export LIST_TEST_PACKAGES=""
 export ACTUAL_LOGFILE=""
 export CGAL_DIR=""
 USE_LATEST_UNZIPPED=""
-WITH_DOCKER="n"
 
 # ----------------------------------------------------------------------------------------
 # Downloads the file "LATEST" whose contents indicates which release to test
@@ -135,6 +133,7 @@ unzip_cgal()
   fi
 
   log "${ACTUAL_LOGFILE}" "untarring CGAL"
+  ${DECOMPRESSOR} -c "${CGAL_ZIPFILE}" > /dev/null
   ${DECOMPRESSOR} -c "${CGAL_ZIPFILE}" | ${TAR} xf - >> "${ACTUAL_LOGFILE}" 2>&1
   if [ ${?} != 0 ]; then
     error "Could not untar CGAL"
@@ -184,10 +183,6 @@ do
       echo "Compiled test/ directory will be kept."
       KEEP_TESTS="y"
       ;;
-    "-d")
-      echo "The testsuite will be launched through docker"
-      WITH_DOCKER="y"
-      ;;
     *)
       CGAL_LOCATION=$arg
   esac
@@ -229,39 +224,43 @@ fi
 #reset CGAL-DIR with the updated CGAL-I
 CGAL_DIR=`readlink "${CGAL_ROOT}/CGAL-I"`
 CGAL_RELEASE_ID=$(cat last_release_id)
-if [ "${WITH_DOCKER}" = "y" ]; then
-  #launch docker container
-  echo "export SHOW_PROGRESS=$SHOW_PROGRESS"> env.sh
-  echo "export KEEP_TESTS=$KEEP_TESTS">> env.sh
-  echo "export DO_NOT_UPLOAD=$DO_NOT_UPLOAD">> env.sh
-  echo "export DO_NOT_TEST=$DO_NOT_TEST">> env.sh
-  echo "export SCP=$SCP">> env.sh
-  echo "export WGET=$WGET">> env.sh
-  echo "export WGET_OPTS=\"$WGET_OPTS\"">> env.sh
-  echo "export CURL=$CURL">> env.sh
-  echo "export CURL_OPTS=\"$CURL_OPTS\"">> env.sh
-  echo "export CGAL_URL=$CGAL_URL">> env.sh
-  echo "export UPLOAD_RESULT_DESTINATION=$UPLOAD_RESULT_DESTINATION">> env.sh
-  echo "export LATEST_LOCATION=$LATEST_LOCATION">> env.sh
-  echo "export TAR=$TAR">> env.sh
-  echo "export GZIP=$GZIP">> env.sh
-  echo "export GUNZIP=$GUNZIP">> env.sh
-  echo "export COMPRESSOR=$COMPRESSOR">> env.sh
-  echo "export CONSOLE_OUTPUT=$CONSOLE_OUTPUT">> env.sh
-  echo "export CGAL_ROOT=/cgal_root">> env.sh
-  echo "export USE_TARGZ=$USE_TARGZ">> env.sh
-  echo "export USE_TARBZ=$USE_TARBZ">> env.sh
-  echo "export CGAL_RELEASE=$CGAL_RELEASE">> env.sh
-  echo "export CGAL_DIR=/cgal_root/\${CGAL_LAST}">>env.sh
-  echo "export LIST_TEST_PACKAGES=/cgal_root/list_test_packages">> env.sh
-  echo "export LOGS_DIR=/cgal_root/AUTOTEST_LOGS">> env.sh
-  echo "export LOCK_FILE=/cgal_root/autotest_cgal_with_cmake.lock">> env.sh
-  echo "export ACTUAL_LOGFILE=/cgal_root/\`basename \${0}\`.log">> env.sh
 
-  echo "CGAL_DIR is ${CGAL_RELEASE_ID}"
-
-  docker pull cgal/testsuite-docker:debian-stable-cross-compilation-for-arm
-  docker run --rm  -t -e CGAL_LAST="${CGAL_RELEASE_ID}" -v ${CGAL_ROOT}/ssh:/tmp_ssh -v ${DEPS_DIR}:/deps -v ${CGAL_ROOT}:/cgal_root cgal/testsuite-docker:debian-stable-cross-compilation-for-arm
-else
-  bash ${CGAL_DIR}/developer_scripts/run_testsuite_with_cmake
-fi
+PLATFORMS=`value_of COMPILERS_${HOST}`
+#setup dir
+setup_dirs
+for HOST in ${BUILD_HOSTS}; do
+  if [ "$HOST" != "localhost" ]; then
+    #launch docker container
+    echo "export SHOW_PROGRESS=$SHOW_PROGRESS"> env.sh
+    echo "export KEEP_TESTS=$KEEP_TESTS">> env.sh
+    echo "export DO_NOT_UPLOAD=$DO_NOT_UPLOAD">> env.sh
+    echo "export DO_NOT_TEST=$DO_NOT_TEST">> env.sh
+    echo "export SCP=$SCP">> env.sh
+    echo "export WGET=$WGET">> env.sh
+    echo "export WGET_OPTS=\"$WGET_OPTS\"">> env.sh
+    echo "export CURL=$CURL">> env.sh
+    echo "export CURL_OPTS=\"$CURL_OPTS\"">> env.sh
+    echo "export CGAL_URL=$CGAL_URL">> env.sh
+    echo "export UPLOAD_RESULT_DESTINATION=$UPLOAD_RESULT_DESTINATION">> env.sh
+    echo "export LATEST_LOCATION=$LATEST_LOCATION">> env.sh
+    echo "export TAR=$TAR">> env.sh
+    echo "export GUNZIP=$GUNZIP">> env.sh
+    echo "export COMPRESSOR=$COMPRESSOR">> env.sh
+    echo "export CONSOLE_OUTPUT=$CONSOLE_OUTPUT">> env.sh
+    echo "export CGAL_ROOT=/cgal_root">> env.sh
+    echo "export USE_TARGZ=$USE_TARGZ">> env.sh
+    echo "export USE_TARBZ=$USE_TARBZ">> env.sh
+    echo "export CGAL_RELEASE=$CGAL_RELEASE">> env.sh
+    echo "export CGAL_DIR=/cgal_root/\${CGAL_LAST}">>env.sh
+    echo "export LIST_TEST_PACKAGES=/cgal_root/list_test_packages">> env.sh
+    echo "export LOGS_DIR=/cgal_root/AUTOTEST_LOGS">> env.sh
+    echo "export LOCK_FILE=/cgal_root/autotest_cgal_with_cmake.lock">> env.sh
+    echo "export ACTUAL_LOGFILE=/cgal_root/\`basename \${0}\`.log">> env.sh
+    echo "export REFERENCE_PLATFORMS_DIR=$REFERENCE_PLATFORMS_DIR">>env.sh
+    
+    docker pull cgal/testsuite-docker:debian-stable-cross-compilation-for-arm
+    docker run --rm  -t -e CGAL_LAST="${CGAL_RELEASE_ID}" -e HOST="${HOST}" -v ${CGAL_ROOT}/ssh:/tmp_ssh -v ${DEPS_DIR}:/deps -v ${CGAL_ROOT}:/cgal_root cgal/testsuite-docker:debian-stable-cross-compilation-for-arm
+  else
+    HOST=$HOST bash ${CGAL_DIR}/developer_scripts/run_testsuite_with_cmake
+  fi
+done
