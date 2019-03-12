@@ -54,7 +54,7 @@ defined by the geometric traits class of the triangulation.
 typedef unspecified_type Point;
 
 /*!
-Iterator of value type Point 
+Iterator of value type `Point` 
 */ 
 typedef unspecified_type Point_iterator; 
 
@@ -86,7 +86,7 @@ void hide_point(const Point & p);
 
 /// @}
 
-/// \name Access functions
+/// \name Access Functions
 /// @{
 /*!
 Returns the weighted circumcenter of the cell, with no weight. 
