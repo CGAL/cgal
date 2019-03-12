@@ -187,8 +187,6 @@ void Clipping_box_plugin::clip(bool b)
 
 void Clipping_box_plugin::tab_change()
 {
-  CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(
-        *CGAL::QGLViewer::QGLViewerPool().begin());
   QAction* action = mw->findChild<QAction*>("actionSwitchProjection");
   if(dock_widget->tabWidget->currentIndex() == 1)
   {
