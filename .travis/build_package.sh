@@ -4,6 +4,10 @@ set -e
 
 CXX_FLAGS="-DCGAL_NDEBUG -ftemplate-backtrace-limit=0"
 
+function time {
+  /usr/bin/time -f "Spend time of %C: %E real" "$@"
+}
+
 function build_examples {
   mkdir -p build-travis
   cd build-travis
