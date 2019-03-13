@@ -247,9 +247,9 @@ run_test_on_platform()
   cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' -DBUILD_TESTING=OFF -DWITH_tests=OFF -DWITH_CGAL_Qt5=OFF -DCGAL_HEADER_ONLY=ON $CGAL_DIR > installation.log 2>&1
   rm CMakeCache.txt
   if [ -z "${SHOW_PROGRESS}" ]; then
-    cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' VERBOSE=1 $CGAL_DIR >/dev/null 2>&1
+    cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' -DRUNNING_CGAL_AUTO_TEST=TRUE VERBOSE=1 $CGAL_DIR >/dev/null 2>&1
   else
-    cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' VERBOSE=1 $CGAL_DIR
+    cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' -DRUNNING_CGAL_AUTO_TEST=TRUE VERBOSE=1 $CGAL_DIR
   fi
   LIST_TEST_FILE="${CGAL_ROOT}/list_test_packages"
   if [ -f ${LIST_TEST_FILE} ]; then
