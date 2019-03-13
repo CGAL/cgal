@@ -162,7 +162,11 @@ void Scene_textured_surface_mesh_item::common_constructor()
   setEdgeContainer(0, new Ec(Vi::PROGRAM_WITH_TEXTURED_EDGES, false));//edges
   getTriangleContainer(0)->setTextureSize(QSize(d->texture.GetWidth(), d->texture.GetHeight()));
   getEdgeContainer(0)->setTextureSize(QSize(d->texture.GetWidth(), d->texture.GetHeight()));
-  initGL();
+  BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+  {
+    CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
+    initGL(viewer);
+  }
   d->nb_face_verts = 0; 
   d->nb_edge_verts = 0; 
   d->nb_border_verts = 0;
@@ -237,8 +241,8 @@ Scene_textured_surface_mesh_item::toolTip() const
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
 void Scene_textured_surface_mesh_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {
@@ -254,8 +258,8 @@ void Scene_textured_surface_mesh_item::draw(CGAL::Three::Viewer_interface* viewe
 }
 void Scene_textured_surface_mesh_item::drawEdges(
     CGAL::Three::Viewer_interface* viewer) const {
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {

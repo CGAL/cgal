@@ -107,8 +107,8 @@ void Volume_plane_intersection_priv::initializeBuffers(Viewer_interface* viewer)
 }
 
 void Volume_plane_intersection::draw(Viewer_interface* viewer) const {
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {

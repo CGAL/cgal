@@ -5,6 +5,7 @@
 #include <CGAL/Three/Scene_print_item_interface.h>
 #include <CGAL/Three/Scene_transparent_interface.h>
 #include <CGAL/Three/Scene_zoomable_item_interface.h>
+#include <CGAL/Three/Three.h>
 
 #include  <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Scene_print_item_interface.h>
@@ -519,7 +520,6 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
                         bool writing_depth,
                         QOpenGLFramebufferObject *fbo)
 {
-
   viewer->setCurrentPass(pass);
   viewer->setDepthWriting(writing_depth);
   viewer->setDepthPeelingFbo(fbo);
@@ -533,11 +533,9 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
       item.selection_changed(true);
     }
     else
-
     {
       item.selection_changed(false);
     }
-
     if(group ||item.visible())
     {
       if( group || item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
@@ -547,7 +545,6 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
           viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
         item.draw(viewer);
-
         if(with_names) {
           
           //    read depth buffer at pick location;

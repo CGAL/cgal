@@ -307,8 +307,12 @@ Scene_alpha_shape_item::Scene_alpha_shape_item(Scene_points_with_normal_item *po
     vertices.push_back(it->point().y()+offset.y);
     vertices.push_back(it->point().z()+offset.z);
   }
-  if(!isInit())
-    initGL();
+  BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+  {
+    CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
+    if(!isInit(viewer))
+      initGL(viewer);
+  }
   getPointContainer(0)->allocate(Pc::Vertices,
                                  vertices.data(),
                                  static_cast<GLsizei>(vertices.size()*sizeof(float)));

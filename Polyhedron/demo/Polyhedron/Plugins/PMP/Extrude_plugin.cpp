@@ -62,8 +62,8 @@ public :
   //Displays the item
   void draw(Viewer_interface* viewer) const Q_DECL_OVERRIDE
   {
-    if(!isInit())
-      initGL();
+    if(!isInit(viewer))
+      initGL(viewer);
     if (! getBuffersInit(viewer))
     {
       initializeBuffers(viewer);

@@ -64,7 +64,11 @@ public:
                  bbox.xmax(),bbox.ymax(),bbox.zmax()));
     
     nb_points = points.size();
-    initGL();
+    BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+    {
+      CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
+      initGL(viewer);
+    }
     Pc* pc = getPointContainer(0);
     pc->allocate(Pc::Vertices,
                  points.data(),

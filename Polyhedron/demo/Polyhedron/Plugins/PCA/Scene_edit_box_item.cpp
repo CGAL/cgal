@@ -326,8 +326,8 @@ void Scene_edit_box_item::drawSpheres(Viewer_interface *viewer, const QMatrix4x4
 
 void Scene_edit_box_item::draw(Viewer_interface *viewer) const
 {
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {
@@ -350,8 +350,8 @@ void Scene_edit_box_item::draw(Viewer_interface *viewer) const
 
 void Scene_edit_box_item::drawEdges(Viewer_interface* viewer) const
 {
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {
@@ -1153,8 +1153,8 @@ void Scene_edit_box_item::drawTransparent(CGAL::Three::Viewer_interface*viewer)c
 {
   if(renderingMode() != FlatPlusEdges)
     return;
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {

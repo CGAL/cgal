@@ -385,8 +385,8 @@ void
 Scene_polylines_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   if(!visible())
     return;
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {
@@ -413,8 +413,8 @@ Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
   if(renderingMode() == Wireframe
      || renderingMode() == FlatPlusEdges)
   {
-    if(!isInit())
-      initGL();
+    if(!isInit(viewer))
+      initGL(viewer);
     if ( getBuffersFilled() &&
          ! getBuffersInit(viewer))
     {
@@ -448,8 +448,8 @@ Scene_polylines_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
     return;
   if(renderingMode() == Points)
   {
-    if(!isInit())
-      initGL();
+    if(!isInit(viewer))
+      initGL(viewer);
     if ( getBuffersFilled() &&
          ! getBuffersInit(viewer))
     {

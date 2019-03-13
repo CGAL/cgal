@@ -10,6 +10,7 @@ using namespace CGAL::Three;
 
 QMainWindow* Three::s_mainwindow = NULL;
 Viewer_interface* Three::s_mainviewer = NULL;
+Viewer_interface* Three::s_currentviewer = NULL;
 Scene_interface* Three::s_scene = NULL;
 QObject* Three::s_connectable_scene = NULL;
 Three* Three::s_three = NULL;
@@ -27,6 +28,16 @@ QMainWindow* Three::mainWindow()
 Viewer_interface* Three::mainViewer()
 {
   return s_mainviewer;
+}
+
+Viewer_interface* Three::currentViewer()
+{
+  return s_currentviewer;
+}
+
+void Three::setCurrentViewer(Viewer_interface *viewer)
+{
+  s_currentviewer = viewer;
 }
 
 Viewer_interface* Three::activeViewer()

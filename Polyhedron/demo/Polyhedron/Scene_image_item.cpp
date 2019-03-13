@@ -501,8 +501,8 @@ Scene_image_item::draw(Viewer_interface* viewer) const
 {
   if(m_image)
   {
-    if(!isInit())
-      initGL();
+    if(!isInit(viewer))
+      initGL(viewer);
     if ( getBuffersFilled() &&
          ! getBuffersInit(viewer))
     {
@@ -678,8 +678,8 @@ void Scene_image_item_priv::draw_Bbox(Scene_item::Bbox bbox, std::vector<float> 
 
 void Scene_image_item::drawEdges(Viewer_interface *viewer) const
 { 
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {

@@ -720,8 +720,8 @@ void Scene_points_with_normal_item::drawEdges(CGAL::Three::Viewer_interface* vie
     if (viewer->inFastDrawing () &&
         (d->nb_lines/6 > limit_fast_drawing)) // arbitrary large value
       ratio_displayed = 6 * limit_fast_drawing / (double)(d->nb_lines);
-    if(!isInit())
-      initGL();
+    if(!isInit(viewer))
+      initGL(viewer);
     if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
     {
@@ -749,8 +749,8 @@ drawPoints(CGAL::Three::Viewer_interface* viewer) const
       &&((d->nb_points )/3 > limit_fast_drawing)) // arbitrary large value
     ratio_displayed = 3 * limit_fast_drawing / (double)(d->nb_points);
 
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
      ! getBuffersInit(viewer))
   {

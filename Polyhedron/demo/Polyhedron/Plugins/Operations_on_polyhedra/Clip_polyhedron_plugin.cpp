@@ -35,8 +35,8 @@ public:
 
   void draw(CGAL::Three::Viewer_interface* viewer)const
   {
-    if(!isInit())
-      initGL();
+    if(!isInit(viewer))
+      initGL(viewer);
     if ( getBuffersFilled() &&
          ! getBuffersInit(viewer))
     {

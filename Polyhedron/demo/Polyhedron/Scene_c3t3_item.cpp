@@ -75,8 +75,8 @@ public :
   
   void gl_initialization(Vi* viewer)
   {
-    if(!isInit())
-      initGL();
+    if(!isInit(viewer))
+      initGL(viewer);
     computeElements();
     initializeBuffers(viewer);
   }
@@ -347,7 +347,6 @@ struct Scene_c3t3_item_priv {
     spheres_are_shown = false;
     cnc_are_shown = false;
     is_aabb_tree_built = false;
-    are_intersection_buffers_filled = false;
     alphaSlider = NULL;
   }
   void computeIntersection(const Primitive& facet);
@@ -391,7 +390,7 @@ struct Scene_c3t3_item_priv {
   void initialize_intersection_buffers(CGAL::Three::Viewer_interface *viewer);
   void computeSpheres();
   void computeElements();
-  void computeIntersections();
+  void computeIntersections(CGAL::Three::Viewer_interface* viewer);
 
   void invalidate_stats()
   {
@@ -433,7 +432,13 @@ struct Scene_c3t3_item_priv {
   bool is_grid_shown;
   CGAL::qglviewer::ManipulatedFrame* frame;
   bool need_changed;
-  mutable bool are_intersection_buffers_filled;
+  mutable std::map<CGAL::Three::Viewer_interface*, bool> are_intersection_buffers_filled;
+  bool areInterBufFilled(CGAL::Three::Viewer_interface* viewer)
+  {
+    if(are_intersection_buffers_filled.find(viewer) != are_intersection_buffers_filled.end())
+      return are_intersection_buffers_filled[viewer];
+    return false;
+  }
   Scene_spheres_item *spheres;
   Scene_intersection_item *intersection;
   bool spheres_are_shown;
@@ -526,7 +531,10 @@ void Scene_c3t3_item::common_constructor(bool is_surface)
   setEdgeContainer(Grid_edges, new Ec(Vi::PROGRAM_NO_SELECTION, false));
   setEdgeContainer(C3t3_edges, new Ec(Vi::PROGRAM_C3T3_EDGES, false));
   setPointContainer(C3t3_points, new Pc(Vi::PROGRAM_C3T3_EDGES, false));
-  Three::mainViewer()->installEventFilter(this);
+  BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+  {
+    v->installEventFilter(this);
+  }
 }
 Scene_c3t3_item::Scene_c3t3_item(bool is_surface)
   : Scene_group_item("unnamed")
@@ -602,7 +610,11 @@ void Scene_c3t3_item::updateCutPlane()
   if(!d)
     return;
   if(d->need_changed) {
-    d->are_intersection_buffers_filled = false;
+    BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+    {
+      CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
+      d->are_intersection_buffers_filled[viewer] = false;
+    }
     d->need_changed = false;
   }
 }
@@ -902,8 +914,9 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   if(!visible())
     return;
   Scene_c3t3_item* ncthis = const_cast<Scene_c3t3_item*>(this);
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
+  //viewer->makeCurrent();
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {
@@ -915,7 +928,6 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     computeElements();
     initializeBuffers(viewer);
   }
-  
   if(renderingMode() == Flat ||
      renderingMode() == FlatPlusEdges)
   {
@@ -926,10 +938,8 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     // positions_poly_size is the number of total facets in the C3T3
     // it is only computed once and positions_poly is emptied at the end
     getTriangleContainer(C3t3_faces)->setAlpha(alpha());
-    
     getTriangleContainer(C3t3_faces)->setIsSurface(d->is_surface);
     getTriangleContainer(C3t3_faces)->draw(viewer, false);
-    
     if(d->show_tetrahedra){
       ncthis->show_intersection(true);
       if(!d->frame->isManipulated())
@@ -937,11 +947,11 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
       else
         d->intersection->setFast(true);
       
-      if(!d->frame->isManipulated() && !d->are_intersection_buffers_filled)
+      if(!d->frame->isManipulated() && !d->areInterBufFilled(viewer))
       {
         //initGL
-        ncthis->d->computeIntersections();
-        d->are_intersection_buffers_filled = true;
+        ncthis->d->computeIntersections(viewer);
+        d->are_intersection_buffers_filled[viewer] = true;
         ncthis->show_intersection(true);
       }
     }
@@ -975,8 +985,8 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
       if(renderMode == GL_SELECT) return;
     }
     Scene_c3t3_item* ncthis = const_cast<Scene_c3t3_item*>(this);
-    if(!isInit())
-      initGL();
+    if(!isInit(viewer))
+      initGL(viewer);
     if ( getBuffersFilled() &&
          ! getBuffersInit(viewer))
     {
@@ -1009,10 +1019,10 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
         d->intersection->setFast(false);
       else
         d->intersection->setFast(true);
-      if(!d->frame->isManipulated() && !d->are_intersection_buffers_filled)
+      if(!d->frame->isManipulated() && !d->areInterBufFilled(viewer))
       {
-        ncthis->d->computeIntersections();
-        d->are_intersection_buffers_filled = true;
+        ncthis->d->computeIntersections(viewer);
+        d->are_intersection_buffers_filled[viewer]=true;
       }
     }
     if(d->spheres_are_shown)
@@ -1033,8 +1043,8 @@ void Scene_c3t3_item::drawPoints(CGAL::Three::Viewer_interface * viewer) const
     return;
   if(renderingMode() == Points)
   {
-    if(!isInit())
-      initGL();
+    if(!isInit(viewer))
+      initGL(viewer);
     if ( getBuffersFilled() &&
          ! getBuffersInit(viewer))
     {
@@ -1356,7 +1366,7 @@ struct ComputeIntersection {
   }
 };
 
-void Scene_c3t3_item_priv::computeIntersections()
+void Scene_c3t3_item_priv::computeIntersections(CGAL::Three::Viewer_interface* viewer)
 {
   const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
   if(!is_aabb_tree_built) fill_aabb_tree();
@@ -1369,10 +1379,7 @@ void Scene_c3t3_item_priv::computeIntersections()
   const Geom_traits::Plane_3& plane = item->plane(offset);
   tree.all_intersected_primitives(plane,
         boost::make_function_output_iterator(ComputeIntersection(*this)));  
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
-  {
-    intersection->gl_initialization(static_cast<Vi*>(v));
-  }
+  intersection->gl_initialization(viewer);
 }
 
 void Scene_c3t3_item_priv::computeSpheres()
@@ -1573,7 +1580,11 @@ Scene_c3t3_item::setColor(QColor c)
   d->compute_color_map(c);
   invalidateOpenGLBuffers();
   d->invalidate_stats();
-  d->are_intersection_buffers_filled = false;
+  BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+  {
+    CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
+    d->are_intersection_buffers_filled[viewer] = false;
+  }
 }
 
 void Scene_c3t3_item::show_grid(bool b)
@@ -1626,7 +1637,11 @@ void Scene_c3t3_item::show_intersection(bool b)
     scene->addItem(d->intersection);
     scene->changeGroup(d->intersection, this);
     lockChild(d->intersection);
-    d->are_intersection_buffers_filled = false;
+    BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+    {
+      CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
+      d->are_intersection_buffers_filled[viewer] = false;
+    }
   }
   else if (!b && d->intersection!=NULL)
   {
@@ -2097,7 +2112,7 @@ void Scene_c3t3_item::newViewer(Viewer_interface *viewer)
   if(d->intersection)
   {
     d->intersection->newViewer(viewer);
-    d->computeIntersections();
+    d->computeIntersections(viewer);
   }
 }
 #include "Scene_c3t3_item.moc"

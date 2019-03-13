@@ -99,8 +99,8 @@ void Scene_spheres_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *v
 
 void Scene_spheres_item::draw(Viewer_interface *viewer) const
 {
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {
@@ -123,8 +123,8 @@ void Scene_spheres_item::draw(Viewer_interface *viewer) const
 
 void Scene_spheres_item::drawEdges(Viewer_interface *viewer) const
 {
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {
@@ -244,8 +244,8 @@ void Scene_spheres_item::computeElements() const
 
 void Scene_spheres_item::gl_initialization(Vi* viewer)
 {
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {

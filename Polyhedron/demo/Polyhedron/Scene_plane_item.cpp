@@ -110,8 +110,8 @@ void Scene_plane_item::computeElements() const
 
 void Scene_plane_item::draw(Viewer_interface* viewer)const
 {
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {
@@ -135,8 +135,8 @@ void Scene_plane_item::draw(Viewer_interface* viewer)const
 
 void Scene_plane_item::drawEdges(CGAL::Three::Viewer_interface* viewer)const
 {
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {

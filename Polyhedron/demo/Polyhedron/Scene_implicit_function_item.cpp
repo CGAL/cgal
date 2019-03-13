@@ -379,8 +379,8 @@ Scene_implicit_function_item::draw(CGAL::Three::Viewer_interface* viewer) const
       }
   }
   
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {
@@ -407,8 +407,8 @@ Scene_implicit_function_item::draw(CGAL::Three::Viewer_interface* viewer) const
 void
 Scene_implicit_function_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 {
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {

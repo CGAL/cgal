@@ -159,6 +159,8 @@ void Edge_container::draw(Viewer_interface *viewer,
       getVao(viewer)->program->setAttributeValue("colors", getColor());
     if(viewer->getShaderProgram(getProgram())->property("hasCutPlane").toBool())
       getVao(viewer)->program->setUniformValue("cutplane", d->plane);
+    if(getVao(viewer)->program->property("hasSurfaceMode").toBool())
+      getVao(viewer)->program->setUniformValue("is_surface", d->is_surface);
     if(getVao(viewer)->program->property("hasFMatrix").toBool())
       getVao(viewer)->program->setUniformValue("f_matrix", getFrameMatrix());
     

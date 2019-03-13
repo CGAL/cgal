@@ -89,8 +89,8 @@ public:
   QString toolTip() const {return QString("Item %1 with color indicating distance with %2").arg(this->name()).arg(other_poly);}
   void draw(Viewer_interface *viewer) const
   {
-    if(!isInit())
-      initGL();
+    if(!isInit(viewer))
+      initGL(viewer);
     if ( getBuffersFilled() &&
          ! getBuffersInit(viewer))
     {

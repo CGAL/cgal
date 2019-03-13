@@ -258,7 +258,11 @@ public:
       is_tree_empty = tree.empty();
       nb_lines = positions_lines.size();
       setEdgeContainer(0, new Ec(Vi::PROGRAM_NO_SELECTION, false));
-      initGL();
+      BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+      {
+        CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
+        initGL(viewer);
+      }
       invalidateOpenGLBuffers();
   }
 
@@ -443,8 +447,8 @@ private:
     }
     void drawEdges(CGAL::Three::Viewer_interface* viewer) const
     {
-      if(!isInit())
-        initGL();
+      if(!isInit(viewer))
+        initGL(viewer);
       if ( getBuffersFilled() &&
            ! getBuffersInit(viewer))
       {
@@ -484,7 +488,11 @@ public:
     setEdgeContainer(0, new Ec(Vi::PROGRAM_NO_SELECTION, false));
     texture = new ::Texture(m_grid_size,m_grid_size);
     getTriangleContainer(0)->setTextureSize(QSize(m_grid_size, m_grid_size));
-    initGL();
+    BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+    {
+      CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
+      initGL(viewer);
+    }
     //UV Mapping
     tex_map.push_back(0.0f);
     tex_map.push_back(0.0f);
@@ -532,8 +540,8 @@ public:
   }
   void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE
   {
-    if(!isInit())
-      initGL();
+    if(!isInit(viewer))
+      initGL(viewer);
     if ( getBuffersFilled() &&
          ! getBuffersInit(viewer))
     {
@@ -569,8 +577,8 @@ public:
   }
   void drawEdges(CGAL::Three::Viewer_interface *viewer) const Q_DECL_OVERRIDE
   {
-    if(!isInit())
-      initGL();
+    if(!isInit(viewer))
+      initGL(viewer);
     if ( getBuffersFilled() &&
          ! getBuffersInit(viewer))
     {

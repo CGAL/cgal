@@ -296,8 +296,8 @@ void Scene_lcc_item::compute_bbox() const
 
 void Scene_lcc_item::draw(CGAL::Three::Viewer_interface* viewer) const
 {
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {
@@ -316,8 +316,8 @@ void Scene_lcc_item::draw(CGAL::Three::Viewer_interface* viewer) const
 
 void Scene_lcc_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 {
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {
@@ -353,8 +353,8 @@ void Scene_lcc_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 {
   if(!visible())
     return;
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {
@@ -379,7 +379,6 @@ void Scene_lcc_item::computeElements() const
 {
   CGAL::Three::Three::CursorScopeGuard guard{QCursor(Qt::WaitCursor)};
   const CGAL::qglviewer::Vec offset = CGAL::Three::Three::mainViewer()->offset();
-  qDebug()<<offset.x<<", "<<offset.y<<", "<<offset.z;
   typename LCC::size_type markvolumes  = d->lcc.get_new_mark();
   typename LCC::size_type markfaces    = d->lcc.get_new_mark();
   typename LCC::size_type markedges    = d->lcc.get_new_mark();

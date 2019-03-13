@@ -287,6 +287,7 @@ public:
   virtual int currentPass()const = 0;
   virtual bool isDepthWriting()const = 0;
   virtual QOpenGLFramebufferObject* depthPeelingFbo() = 0;
+  virtual void makeCurrent() = 0;
 }; // end class Viewer_interface
 }
 }

@@ -431,8 +431,8 @@ Scene_nef_polyhedron_item::toolTip() const
 
 void Scene_nef_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const
 {
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {
@@ -456,8 +456,8 @@ void Scene_nef_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) cons
 }
 void Scene_nef_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 {
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {
@@ -480,8 +480,8 @@ void Scene_nef_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer)
 
 void Scene_nef_polyhedron_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 {
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {

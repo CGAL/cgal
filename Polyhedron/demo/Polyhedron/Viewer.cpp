@@ -17,6 +17,8 @@
 #include <QOpenGLDebugLogger>
 #include <QStyleFactory>
 
+#include <CGAL/Three/Three.h>
+
 #include "ui_LightingDialog.h"
 
 #if defined(_WIN32)
@@ -1779,5 +1781,12 @@ void Viewer::initializeGL()
   QGLViewer::initializeGL();
   doneInitGL(this);
 }
+
+void Viewer::makeCurrent()
+{
+  CGAL::Three::Three::setCurrentViewer(this);
+  QOpenGLWidget::makeCurrent();
+}
+
 #include "Viewer.moc"
 

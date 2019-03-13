@@ -531,8 +531,8 @@ Scene_polygon_soup_item::toolTip() const
 void
 Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     if(d->soup == 0) return;
-    if(!isInit())
-      initGL();
+    if(!isInit(viewer))
+      initGL(viewer);
     if ( getBuffersFilled() &&
          ! getBuffersInit(viewer))
     {
@@ -564,8 +564,8 @@ void
 Scene_polygon_soup_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
     
     if(d->soup == 0) return;
-    if(!isInit())
-      initGL();
+    if(!isInit(viewer))
+      initGL(viewer);
     if ( getBuffersFilled() &&
          ! getBuffersInit(viewer))
     {
@@ -584,8 +584,8 @@ Scene_polygon_soup_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 void
 Scene_polygon_soup_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     if(d->soup == 0) return;
-    if(!isInit())
-      initGL();
+    if(!isInit(viewer))
+      initGL(viewer);
     if ( getBuffersFilled() &&
          ! getBuffersInit(viewer))
     {

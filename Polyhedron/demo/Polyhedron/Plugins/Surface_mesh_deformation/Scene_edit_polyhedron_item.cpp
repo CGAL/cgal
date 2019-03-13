@@ -1912,8 +1912,8 @@ void Scene_edit_polyhedron_item::initializeBuffers(Viewer_interface *v) const
 
 void Scene_edit_polyhedron_item::init(Vi* viewer)const
 {
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {

@@ -132,8 +132,8 @@ public:
   // threads without gl-context
   void init(Viewer_interface* viewer)
   {
-    if(!isInit())
-      initGL();
+    if(!isInit(viewer))
+      initGL(viewer);
     viewer->makeCurrent();
     getTriangleContainer(1)->reset_vbos(ALL);
     drawSpheres(*this);
@@ -502,8 +502,8 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
     setBuffersInit(viewer, false);
     viewer->setProperty("need_update", false);
   }
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   {
     setBuffersInit(viewer, false);
   }

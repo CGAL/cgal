@@ -546,8 +546,8 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
 {
   GLfloat offset_factor;
   GLfloat offset_units;
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {
@@ -584,8 +584,8 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
 void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 {
   
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {

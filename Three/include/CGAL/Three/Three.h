@@ -48,6 +48,8 @@ public:
   virtual ~Three(){}
   static QMainWindow* mainWindow();
   static Viewer_interface* mainViewer();
+  static Viewer_interface* currentViewer();
+  static void setCurrentViewer(CGAL::Three::Viewer_interface* viewer);
   static Viewer_interface* activeViewer();
   static Scene_interface* scene();
   static QObject* connectableScene();
@@ -92,6 +94,7 @@ public:
 protected:
   static QMainWindow* s_mainwindow;
   static Viewer_interface* s_mainviewer;
+  static Viewer_interface* s_currentviewer;
   static Scene_interface* s_scene;
   static QObject* s_connectable_scene;
   static Three* s_three;

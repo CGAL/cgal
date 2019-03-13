@@ -198,8 +198,8 @@ protected:
   //!Returns a pointer to the slider initialized in initGL();
   QSlider* alphaSlider();
 
-  //!Returns`true` if `initGL()` was called.
-  bool isInit()const;
+  //!Returns`true` if `initGL()` was called for `viewer`.
+  bool isInit(CGAL::Three::Viewer_interface* viewer)const;
 
   //!Returns the float alpha value of an item.
   //! This value is between 0.0f and 1.0f.
@@ -209,8 +209,8 @@ protected:
      */
   virtual void initializeBuffers(Viewer_interface*)const{}
 
-  //!Creates the VAOs and VBOs for each existing viewer.
-  virtual void initGL() const;
+  //!Creates the VAOs and VBOs for viewer.
+  virtual void initGL(CGAL::Three::Viewer_interface* viewer) const;
   //!
   //! Computes the items Bbox and stores the result. Must be overridden.
   //!@todo must replace the one from Scene_item eventually.

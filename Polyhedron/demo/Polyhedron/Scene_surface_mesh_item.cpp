@@ -727,8 +727,8 @@ void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interfa
 
 void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
 {
-  if(!isInit() && viewer->context()->isValid())
-    initGL();
+  if(!isInit(viewer) && viewer->context()->isValid())
+    initGL(viewer);
   if (getBuffersFilled() )
     if(!getBuffersInit(viewer))
     {
@@ -755,8 +755,8 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
 
 void Scene_surface_mesh_item::drawEdges(CGAL::Three::Viewer_interface *viewer) const
 {
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
      ! getBuffersInit(viewer))
   {
@@ -776,8 +776,8 @@ void Scene_surface_mesh_item::drawEdges(CGAL::Three::Viewer_interface *viewer) c
 
 void Scene_surface_mesh_item::drawPoints(CGAL::Three::Viewer_interface *viewer) const
 {
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
      ! getBuffersInit(viewer))
   {
@@ -1271,10 +1271,18 @@ void Scene_surface_mesh_item::invalidate(Gl_data_names name)
   getEdgeContainer(1)->reset_vbos(name);
   getEdgeContainer(0)->reset_vbos(name);
   getPointContainer(0)->reset_vbos(name);
-  if(isInit())
+  bool has_been_init = false;
+  BOOST_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  {
+    CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
+    if(!isInit(viewer))
+    {
+      initGL(viewer);
+      has_been_init = true;
+    }
+  }
+  if(!has_been_init)
     processData(name);
-  else
-    initGL();
   if(!d->all_displayed)
     d->killIds();
   else

@@ -171,8 +171,8 @@ void Scene_polyhedron_shortest_path_item::draw(CGAL::Three::Viewer_interface* vi
 
 void Scene_polyhedron_shortest_path_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 {
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {

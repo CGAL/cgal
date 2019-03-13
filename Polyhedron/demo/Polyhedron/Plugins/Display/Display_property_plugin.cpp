@@ -81,8 +81,8 @@ public:
   {
     if(!visible())
       return;
-    if(!isInit())
-      initGL();
+    if(!isInit(viewer))
+      initGL(viewer);
     if ( getBuffersFilled() &&
          ! getBuffersInit(viewer))
     {

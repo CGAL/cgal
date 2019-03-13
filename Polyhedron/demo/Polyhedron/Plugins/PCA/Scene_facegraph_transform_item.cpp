@@ -79,8 +79,8 @@ void Scene_facegraph_transform_item_priv::compute_elements() const
 
 void Scene_facegraph_transform_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 {
-  if(!isInit())
-    initGL();
+  if(!isInit(viewer))
+    initGL(viewer);
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {
