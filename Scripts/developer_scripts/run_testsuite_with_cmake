@@ -277,11 +277,10 @@ run_test_on_platform()
   TAG_DIR=$(awk '/^Create new tag: /{print $4F}' tmp.txt)
   rm tmp.txt
   cd Testing/${TAG_DIR}
-  #python $CGAL_DIR/test/parse-ctest-dashboard-xml.py $CGAL_TESTER $PLATFORM
   RESULT_FILE=./"results_${CGAL_TESTER}_${PLATFORM}.txt"
   rm -f "$RESULT_FILE"
   touch "$RESULT_FILE"
-  sed -n '/CGAL_VERSION /s/#define //p' < "$CGAL_DIR/include/CGAL/version.h" >> "$RESULT_FILE"
+  sed -n '/CGAL_VERSION /s/#define //p' < "$CGAL_DIR/${INSTALLATION_DIR}include/CGAL/version.h" >> "$RESULT_FILE"
   echo "TESTER ${CGAL_TESTER}" >> "$RESULT_FILE"
   echo "TESTER_NAME ${CGAL_TESTER_NAME}" >> "$RESULT_FILE"
   echo "TESTER_ADDRESS ${TESTER_ADDRESS}" >> "$RESULT_FILE"
@@ -290,7 +289,7 @@ run_test_on_platform()
   #echo "Host-specific installation log file: ../installation.log"  >> "$RESULT_FILE"
   grep -e "^-- USING " "${CGAL_BINARY_DIR}/installation.log" >> $RESULT_FILE 
   echo "------------" >> "$RESULT_FILE"
-  python3 ${CGAL_DIR}/test/parse-ctest-dashboard-xml.py $CGAL_TESTER $PLATFORM
+  python3 ${CGAL_DIR}/${TESTSUITE_DIR}test/parse-ctest-dashboard-xml.py $CGAL_TESTER $PLATFORM
   
   for file in $(ls|grep _Tests); do
     mv $file "$(echo "$file" | sed 's/_Tests//g')"

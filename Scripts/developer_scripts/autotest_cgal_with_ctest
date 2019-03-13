@@ -32,6 +32,8 @@ export LOCK_FILE=""
 export LIST_TEST_PACKAGES=""
 export ACTUAL_LOGFILE=""
 export CGAL_DIR=""
+export INSTALLATION_DIR=""
+export TESTSUITE_DIR=""
 USE_LATEST_UNZIPPED=""
 
 # ----------------------------------------------------------------------------------------
@@ -182,6 +184,10 @@ do
       echo "Compiled test/ directory will be kept."
       KEEP_TESTS="y"
       ;;
+      "-g")
+      echo "Run testsuite from GIT branch"
+      INSTALLATION_DIR="Installation/"
+      TESTSUITE_DIR="Testsuite/"
     *)
       CGAL_LOCATION=$arg
   esac
@@ -247,15 +253,27 @@ for HOST in ${BUILD_HOSTS}; do
     echo "export USE_TARGZ=$USE_TARGZ">> env.sh
     echo "export USE_TARBZ=$USE_TARBZ">> env.sh
     echo "export CGAL_RELEASE=$CGAL_RELEASE">> env.sh
-    echo "export CGAL_DIR=/cgal_root/\${CGAL_LAST}">>env.sh
     echo "export LIST_TEST_PACKAGES=/cgal_root/list_test_packages">> env.sh
     echo "export LOGS_DIR=/cgal_root/AUTOTEST_LOGS">> env.sh
     echo "export LOCK_FILE=/cgal_root/autotest_cgal_with_cmake.lock">> env.sh
     echo "export ACTUAL_LOGFILE=/cgal_root/\`basename \${0}\`.log">> env.sh
     echo "export REFERENCE_PLATFORMS_DIR=$REFERENCE_PLATFORMS_DIR">>env.sh
-    
+    echo "export INSTALLATION_DIR=$INSTALLATION_DIR">>env.sh
+    echo "export TESTSUITE_DIR=$TESTSUITE_DIR">>env.sh
+
     docker pull cgal/testsuite-docker:debian-stable-cross-compilation-for-arm
-    docker run --rm  -t -e CGAL_LAST="${CGAL_RELEASE_ID}" -e HOST="${HOST}" -v ${CGAL_ROOT}/ssh:/tmp_ssh -v ${DEPS_DIR}:/deps -v ${CGAL_ROOT}:/cgal_root cgal/testsuite-docker:debian-stable-cross-compilation-for-arm
+    if [ -z "${CGAL_RELEASE_ID}" ]; then #if not frmom branch
+      echo "export CGAL_DIR=/cgal_root/\${CGAL_LAST}">>env.sh
+      docker run --rm  -t -e CGAL_LAST="${CGAL_RELEASE_ID}" -e HOST="${HOST}" -v ${CGAL_ROOT}/ssh:/tmp_ssh -v ${DEPS_DIR}:/deps -v ${CGAL_ROOT}:/cgal_root cgal/testsuite-docker:debian-stable-cross-compilation-for-arm
+    else
+      #read number from file and increase
+      if [ ! -r last_dev_id \; then
+        echo "0" > last_dev_id
+      fi
+      DEV_ID=$(cat last_dev_id)
+      echo "export CGAL_DIR=/cgal_root/CGAL-0.${DEV_ID}-dev">>env.sh
+      docker run --rm  -t -e HOST="${HOST}" -v ${CGAL_ROOT}/ssh:/tmp_ssh -v ${DEPS_DIR}:/deps -v ${CGAL_ROOT}:/cgal_root -v${CGAL_DIR}:/cgal_root/CGAL-0.${DEV_ID}-dev cgal/testsuite-docker:debian-stable-cross-compilation-for-arm
+    fi
   else
     HOST=$HOST bash ${CGAL_DIR}/developer_scripts/run_testsuite_with_cmake
   fi
