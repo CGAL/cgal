@@ -255,7 +255,6 @@ run_test_on_platform()
   if [ -f ${LIST_TEST_FILE} ]; then
     LIST_TEST_PACKAGES=$(source ${LIST_TEST_FILE})
   fi
-  TO_TEST=""
   INIT=""
   for pkg in $LIST_TEST_PACKAGES; do
   if [ -z "$INIT" ]; then 
@@ -268,9 +267,9 @@ run_test_on_platform()
 
   CTEST_OPTS="-T Start -T Test  -j${NUMBER_OF_PROCESSORS} ${DO_NOT_TEST:+-E execution___of__} --timeout 1200"
   if [ -z "${SHOW_PROGRESS}" ]; then
-    ctest  ${CTEST_OPTS} ${TO_TEST:+-L ${TO_TEST} } ${KEEP_TESTS:+-FC .}> tmp.txt
+    ctest  ${CTEST_OPTS} ${TO_TEST:+"-L ${TO_TEST}" } ${KEEP_TESTS:+-FC .}> tmp.txt
   else
-    ctest ${CTEST_OPTS} ${TO_TEST:+-L ${TO_TEST}} ${KEEP_TESTS:+-FC .}|tee tmp.txt
+    ctest ${CTEST_OPTS} ${TO_TEST:+"-L ${TO_TEST}" } ${KEEP_TESTS:+-FC .}|tee tmp.txt
   fi
   #####################
   ##   GET RESULTS   ##
