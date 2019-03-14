@@ -285,10 +285,10 @@ public:
   void clear();
 
   /// Serialize the triangulation to an output stream
-  std::ostream& save(std::ostream& os) const;
+//  std::ostream& save(std::ostream& os) const;
 
   /// Deserialize the triangulation from an input stream
-  std::istream& load(std::istream& is);
+//  std::istream& load(std::istream& is);
 
   //\}
 
@@ -391,10 +391,10 @@ public:
 
   /// Convert a 9 sheeted cover (used for sparse triangulations) to a single sheeted cover.
   /// \pre !is_1_cover();
-  void convert_to_1_sheeted_covering();
+//  void convert_to_1_sheeted_covering();
   /// Convert a single sheeted cover (used for dense triangulations) to a 9 sheeted cover.
   /// \pre is_1_cover();
-  void convert_to_9_sheeted_covering();
+//  void convert_to_9_sheeted_covering();
   // \}
 
   /// \name Geometric access functions
@@ -503,19 +503,19 @@ public:
   }
   //\}
 
-  Point move_in_domain(const Point &p)
-  {
-    typename Gt::FT x = p.x();
-    typename Gt::FT y = p.y();
+//  Point move_in_domain(const Point &p)
+//  {
+//    typename Gt::FT x = p.x();
+//    typename Gt::FT y = p.y();
 
-    while (x < _domain.xmin()) x += _domain.xmax() - _domain.xmin();
-    while (x >= _domain.xmax()) x -= _domain.xmax() - _domain.xmin();
+//    while (x < _domain.xmin()) x += _domain.xmax() - _domain.xmin();
+//    while (x >= _domain.xmax()) x -= _domain.xmax() - _domain.xmin();
 
-    while (y < _domain.ymin()) y += _domain.ymax() - _domain.ymin();
-    while (y >= _domain.ymax()) y -= _domain.ymax() - _domain.ymin();
+//    while (y < _domain.ymin()) y += _domain.ymax() - _domain.ymin();
+//    while (y >= _domain.ymax()) y -= _domain.ymax() - _domain.ymin();
 
-    return Point(x, y);
-  }
+//    return Point(x, y);
+//  }
 
   /// \name Queries on simplices
   // \{
@@ -788,7 +788,7 @@ public:
   //\{
 
   /// Insert the first vertex in the triangulation and creates the 9-cover.
-  Vertex_handle insert_first(const Point& p);
+//  Vertex_handle insert_first(const Point& p);
   /// Inserts p in the face f and sets the offsets of the newly created faces
   /// Insert periodic copies in all periodic copies of the domain
   Vertex_handle insert_in_face(const Point& p, Face_handle f);
@@ -814,6 +814,8 @@ public:
     clear();
     _domain = domain;
     _gt.set_domain(_domain);
+
+    // @todo hardcode value for now
     _edge_length_threshold =
       FT(0.166) * (_domain.xmax() - _domain.xmin()) * (_domain.xmax() - _domain.xmin());
   }
@@ -980,18 +982,33 @@ public:
       return Offset();
   }
 
+
+
   /// Converts an offset to a bit pattern where bit1==offx and bit0==offy.
-  int off_to_int(const Offset & off) const
+//  int off_to_int(const Offset & off) const
+//  {
+//    CGAL_triangulation_assertion( off.x() == 0 || off.x() == 1 );
+//    CGAL_triangulation_assertion( off.y() == 0 || off.y() == 1 );
+//    int i = ((off.x() & 1) << 1) + (off.y() & 1);
+//    return i;
+//  }
+
+  // @fixme
+  Offset off_to_int(const Offset & off)
   {
-    CGAL_triangulation_assertion( off.x() == 0 || off.x() == 1 );
-    CGAL_triangulation_assertion( off.y() == 0 || off.y() == 1 );
-    int i = ((off.x() & 1) << 1) + (off.y() & 1);
-    return i;
+    return off;
   }
+
   /// Creates an offset from a bit pattern.
-  Offset int_to_off(int i) const
+//  Offset int_to_off(int i) const
+//  {
+//    return Offset((i >> 1) & 1, i & 1);
+//  }
+
+  // @fixme hacking around
+  Offset int_to_off(const Offset& off) const
   {
-    return Offset((i >> 1) & 1, i & 1);
+    return off;
   }
 
   // \}
@@ -1053,7 +1070,8 @@ protected:
     if (_too_long_edge_counter == 0 && !is_1_cover())
       {
         CGAL_triangulation_expensive_assertion( is_valid() );
-        this->convert_to_1_sheeted_covering();
+        CGAL_assertion(false);
+//        this->convert_to_1_sheeted_covering();
         CGAL_triangulation_expensive_assertion( is_valid() );
       }
   }
@@ -1251,8 +1269,9 @@ protected:
           {
             if (((cumm_off | (~i)) & 3) == 3)
               {
-                if (bounded_side(*pts[0], *pts[1], *pts[2], p, off[0], off[1],
-                                 off[2], combine_offsets(o, int_to_off(i))) != ON_UNBOUNDED_SIDE)
+                if (bounded_side(*pts[0], *pts[1], *pts[2], p,
+                                 off[0], off[1], off[2], combine_offsets(o, int_to_off(i)))
+                      != ON_UNBOUNDED_SIDE)
                   {
                     return int_to_off(i);
                   }
@@ -1263,61 +1282,66 @@ protected:
     return Offset();
   }
 
-  /// Assigns the offsets to the vertices of the face f, and makes the offset minimal in each direction.
-  void set_offsets(Face_handle f, int o0, int o1, int o2)
+  void set_offsets(Face_handle f, const Offset& o0, const Offset& o1, const Offset& o2)
   {
-    int off0[2] = { (o0 >> 1) & 1, (o0 & 1) };
-    int off1[2] = { (o1 >> 1) & 1, (o1 & 1) };
-    int off2[2] = { (o2 >> 1) & 1, (o2 & 1) };
-    // Make sure that there is at least one zero offset in every direction
-    for (int i = 0; i < 2; i++)
-      {
-        int min_off = (std::min)((std::min)(off0[i], off1[i]), off2[i]);
-        if (min_off != 0)
-          {
-            off0[i] -= min_off;
-            off1[i] -= min_off;
-            off2[i] -= min_off;
-          }
-      }
-    o0 = ((off0[0] & 1) << 1) + (off0[1] & 1);
-    o1 = ((off1[0] & 1) << 1) + (off1[1] & 1);
-    o2 = ((off2[0] & 1) << 1) + (off2[1] & 1);
     f->set_offsets(o0, o1, o2);
   }
 
   /// Assigns the offsets to the vertices of the face f, and makes the offset minimal in each direction.
-  template<class Offset>
-  void set_offsets(Face_handle f, const Offset &o0, const Offset &o1, const Offset &o2)
-  {
-    int off0[2] = { o0.x(), o0.y() };
-    int off1[2] = { o1.x(), o1.y() };
-    int off2[2] = { o2.x(), o2.y() };
-    for (int i = 0; i < 2; i++)
-      {
-        int min_off = (std::min)((std::min)(off0[i], off1[i]), off2[i]);
-        if (min_off != 0)
-          {
-            off0[i] -= min_off;
-            off1[i] -= min_off;
-            off2[i] -= min_off;
-          }
-      }
+//  void set_offsets(Face_handle f, int o0, int o1, int o2)
+//  {
+//    int off0[2] = { (o0 >> 1) & 1, (o0 & 1) };
+//    int off1[2] = { (o1 >> 1) & 1, (o1 & 1) };
+//    int off2[2] = { (o2 >> 1) & 1, (o2 & 1) };
+//    // Make sure that there is at least one zero offset in every direction
+//    for (int i = 0; i < 2; i++)
+//      {
+//        int min_off = (std::min)((std::min)(off0[i], off1[i]), off2[i]);
+//        if (min_off != 0)
+//          {
+//            off0[i] -= min_off;
+//            off1[i] -= min_off;
+//            off2[i] -= min_off;
+//          }
+//      }
+//    o0 = ((off0[0] & 1) << 1) + (off0[1] & 1);
+//    o1 = ((off1[0] & 1) << 1) + (off1[1] & 1);
+//    o2 = ((off2[0] & 1) << 1) + (off2[1] & 1);
+//    f->set_offsets(o0, o1, o2);
+//  }
 
-    CGAL_triangulation_assertion((std::min)((std::min)(off0[0], off1[0]), off2[0]) == 0);
-    CGAL_triangulation_assertion((std::min)((std::min)(off0[1], off1[1]), off2[1]) == 0);
-    CGAL_triangulation_assertion((0 <= off0[0]) && (off0[0] < 2));
-    CGAL_triangulation_assertion((0 <= off1[0]) && (off1[0] < 2));
-    CGAL_triangulation_assertion((0 <= off2[0]) && (off2[0] < 2));
-    CGAL_triangulation_assertion((0 <= off0[1]) && (off0[1] < 2));
-    CGAL_triangulation_assertion((0 <= off1[1]) && (off1[1] < 2));
-    CGAL_triangulation_assertion((0 <= off2[1]) && (off2[1] < 2));
+  /// Assigns the offsets to the vertices of the face f, and makes the offset minimal in each direction.
+//  template<class Offset>
+//  void set_offsets(Face_handle f, const Offset &o0, const Offset &o1, const Offset &o2)
+//  {
+//    int off0[2] = { o0.x(), o0.y() };
+//    int off1[2] = { o1.x(), o1.y() };
+//    int off2[2] = { o2.x(), o2.y() };
+//    for (int i = 0; i < 2; i++)
+//      {
+//        int min_off = (std::min)((std::min)(off0[i], off1[i]), off2[i]);
+//        if (min_off != 0)
+//          {
+//            off0[i] -= min_off;
+//            off1[i] -= min_off;
+//            off2[i] -= min_off;
+//          }
+//      }
 
-    int o0i = ((off0[0] & 1) << 1) + (off0[1] & 1);
-    int o1i = ((off1[0] & 1) << 1) + (off1[1] & 1);
-    int o2i = ((off2[0] & 1) << 1) + (off2[1] & 1);
-    f->set_offsets(o0i, o1i, o2i);
-  }
+//    CGAL_triangulation_assertion((std::min)((std::min)(off0[0], off1[0]), off2[0]) == 0);
+//    CGAL_triangulation_assertion((std::min)((std::min)(off0[1], off1[1]), off2[1]) == 0);
+//    CGAL_triangulation_assertion((0 <= off0[0]) && (off0[0] < 2));
+//    CGAL_triangulation_assertion((0 <= off1[0]) && (off1[0] < 2));
+//    CGAL_triangulation_assertion((0 <= off2[0]) && (off2[0] < 2));
+//    CGAL_triangulation_assertion((0 <= off0[1]) && (off0[1] < 2));
+//    CGAL_triangulation_assertion((0 <= off1[1]) && (off1[1] < 2));
+//    CGAL_triangulation_assertion((0 <= off2[1]) && (off2[1] < 2));
+
+//    int o0i = ((off0[0] & 1) << 1) + (off0[1] & 1);
+//    int o1i = ((off1[0] & 1) << 1) + (off1[1] & 1);
+//    int o2i = ((off2[0] & 1) << 1) + (off2[1] & 1);
+//    f->set_offsets(o0i, o1i, o2i);
+//  }
   //\}
 
   /// Checks the too_long_edges bookkeeping
@@ -1968,12 +1992,12 @@ void Periodic_2_triangulation_2<Gt, Tds>::flip(Face_handle f, int i)
             vh2_copy = v2s[i2 - 1];
 
           bool found = is_edge(vh1_copy, vh2_copy, fh, index);
-	  CGAL_USE(found);
+          CGAL_USE(found);
           CGAL_assertion(found);
-	  if (found)
-	    flip_single_edge(fh, index);
-        }
-    }
+          if (found)
+            flip_single_edge(fh, index);
+      }
+  }
 
   try_to_convert_to_one_cover();
 }
@@ -2001,7 +2025,7 @@ void Periodic_2_triangulation_2<Gt, Tds>::flip_single_edge(Face_handle f, int i)
     }
 
   int nb_index = nb->index(f);
-  int offsets[4];
+  Offset offsets[4];
   offsets[0] = f->offset(i);
   offsets[1] = f->offset(cw(i));
   offsets[2] = f->offset(ccw(i));
@@ -2010,40 +2034,43 @@ void Periodic_2_triangulation_2<Gt, Tds>::flip_single_edge(Face_handle f, int i)
   // Move the offsets of f and nb in the same space by correcting for nb_offset
   Offset nb_offset = get_neighbor_offset(f, i, nb, nb_index);
   if (nb_offset.x() != 0)
+  {
+    if (nb_offset.x() == 1)
     {
-      if (nb_offset.x() == 1)
-        {
-          CGAL_assertion(((offsets[0] & 2) | (offsets[1] & 2) | (offsets[2] & 2)) == 0);
-          offsets[0] |= 2;
-          offsets[1] |= 2;
-          offsets[2] |= 2;
-        }
-      else
-        {
-          CGAL_triangulation_assertion(nb_offset.x() == -1);
-          CGAL_assertion((offsets[3] & 2) == 0);
-          offsets[3] |= 2;
-        }
+      CGAL_assertion(((offsets[0] & 2) | (offsets[1] & 2) | (offsets[2] & 2)) == 0);
+      offsets[0] |= 2;
+      offsets[1] |= 2;
+      offsets[2] |= 2;
     }
+    else
+    {
+      CGAL_triangulation_assertion(nb_offset.x() == -1);
+      CGAL_assertion((offsets[3] & 2) == 0);
+      offsets[3] |= 2;
+    }
+  }
+
   if (nb_offset.y() != 0)
+  {
+    if (nb_offset.y() == 1)
     {
-      if (nb_offset.y() == 1)
-        {
-          CGAL_assertion(((offsets[0] & 1) | (offsets[1] & 1) | (offsets[2] & 1)) == 0);
-          offsets[0] |= 1;
-          offsets[1] |= 1;
-          offsets[2] |= 1;
-        }
-      else
-        {
-          CGAL_triangulation_assertion(nb_offset.y() == -1);
-          CGAL_assertion((offsets[3] & 1) == 0);
-          offsets[3] |= 1;
-        }
+      CGAL_assertion(((offsets[0] & 1) | (offsets[1] & 1) | (offsets[2] & 1)) == 0);
+      offsets[0] |= 1;
+      offsets[1] |= 1;
+      offsets[2] |= 1;
     }
+    else
+    {
+      CGAL_triangulation_assertion(nb_offset.y() == -1);
+      CGAL_assertion((offsets[3] & 1) == 0);
+      offsets[3] |= 1;
+    }
+  }
+
   CGAL_assertion((offsets[0] & offsets[1] & offsets[2] & offsets[3]) == 0);
   CGAL_triangulation_assertion_code(Vertex_handle vh = f->vertex(i));
   CGAL_triangulation_assertion_code(Vertex_handle vh_ccw = f->vertex(ccw(i)));
+
   _tds.flip(f, i);
   // Combinatorial checks
   CGAL_triangulation_assertion(vh == f->vertex(i));
@@ -2052,7 +2079,7 @@ void Periodic_2_triangulation_2<Gt, Tds>::flip_single_edge(Face_handle f, int i)
   CGAL_triangulation_assertion(f->vertex(cw(i)) == nb->vertex(nb_index));
 
   // Restore the offsets
-  int new_off[3];
+  Offset new_off[3];
   // For face f
   new_off[i] = offsets[0];
   new_off[ccw(i)] = offsets[2];
@@ -2083,138 +2110,138 @@ Periodic_2_triangulation_2<Gt, Tds>::remove_from_virtual_copies(Vertex_handle v)
   _virtual_vertices_reverse.erase(rev_it);
 }
 
-template<class Gt, class Tds>
-typename Periodic_2_triangulation_2<Gt, Tds>::Vertex_handle Periodic_2_triangulation_2 <
-Gt, Tds >::insert_first(const Point& p)
-{
-  CGAL_assertion(empty());
-  // The empty triangulation has a single sheeted cover
-  _cover = make_array(3, 3);
+//template<class Gt, class Tds>
+//typename Periodic_2_triangulation_2<Gt, Tds>::Vertex_handle Periodic_2_triangulation_2 <
+//Gt, Tds >::insert_first(const Point& p)
+//{
+//  CGAL_assertion(empty());
+//  // The empty triangulation has a single sheeted cover
+//  _cover = make_array(3, 3);
 
-  /// Virtual vertices, one per periodic domain
-  Vertex_handle vir_vertices[3][3];
-  /// Virtual faces, two per periodic domain
-  Face_handle faces[3][3][2];
+//  /// Virtual vertices, one per periodic domain
+//  Vertex_handle vir_vertices[3][3];
+//  /// Virtual faces, two per periodic domain
+//  Face_handle faces[3][3][2];
 
-  // Initialise vertices:
-  vir_vertices[0][0] = _tds.create_vertex();
-  vir_vertices[0][0]->set_point(p);
-  _virtual_vertices_reverse[vir_vertices[0][0]] = std::vector<Vertex_handle>();
-  for (int i = 0; i < _cover[0]; i++)
-    {
-      for (int j = 0; j < _cover[1]; j++)
-        {
-          if ((i != 0) || (j != 0))
-            {
-              // Initialise virtual vertices out of the domain for debugging
-              vir_vertices[i][j] = _tds.create_vertex();
-              vir_vertices[i][j]->set_point(p); //+Offset(i,j));
-              _virtual_vertices[vir_vertices[i][j]] = Virtual_vertex(
-                  vir_vertices[0][0], Offset(i, j));
-              _virtual_vertices_reverse[vir_vertices[0][0]].push_back(
-                vir_vertices[i][j]);
-            }
-        }
-    }
+//  // Initialise vertices:
+//  vir_vertices[0][0] = _tds.create_vertex();
+//  vir_vertices[0][0]->set_point(p);
+//  _virtual_vertices_reverse[vir_vertices[0][0]] = std::vector<Vertex_handle>();
+//  for (int i = 0; i < _cover[0]; i++)
+//    {
+//      for (int j = 0; j < _cover[1]; j++)
+//        {
+//          if ((i != 0) || (j != 0))
+//            {
+//              // Initialise virtual vertices out of the domain for debugging
+//              vir_vertices[i][j] = _tds.create_vertex();
+//              vir_vertices[i][j]->set_point(p); //+Offset(i,j));
+//              _virtual_vertices[vir_vertices[i][j]] = Virtual_vertex(
+//                  vir_vertices[0][0], Offset(i, j));
+//              _virtual_vertices_reverse[vir_vertices[0][0]].push_back(
+//                vir_vertices[i][j]);
+//            }
+//        }
+//    }
 
-  // Create faces:
-  for (int i = 0; i < _cover[0]; i++)
-    {
-      for (int j = 0; j < _cover[1]; j++)
-        {
-          for (int f = 0; f < 2; f++)
-            {
-              // f faces per 'rectangle'
-              faces[i][j][f] = _tds.create_face();
-            }
-        }
-    }
+//  // Create faces:
+//  for (int i = 0; i < _cover[0]; i++)
+//    {
+//      for (int j = 0; j < _cover[1]; j++)
+//        {
+//          for (int f = 0; f < 2; f++)
+//            {
+//              // f faces per 'rectangle'
+//              faces[i][j][f] = _tds.create_face();
+//            }
+//        }
+//    }
 
-  // table containing the vertex information
-  // index to the right vertex: [number of faces][vertex][offset]
-  int vertex_ind[2][3][2] = { { { 0, 0 }, { 1, 1 }, { 0, 1 } }, { { 0, 0 }, {
-        1, 0
-      }, { 1, 1 }
-    }
-  };
-  // Table containing the neighbor information
-  // [number of faces][neighbor][offset,face]
-  int neighb_ind[2][3][3] = { { { 0, 1, 1 }, { -1, 0, 1 }, { 0, 0, 1 } }, { {
-        1, 0, 0
-      }, { 0, 0, 0 }, { 0, -1, 0 }
-    }
-  };
-  for (int i = 0; i < _cover[0]; i++)
-    {
-      for (int j = 0; j < _cover[1]; j++)
-        {
-          int offset =
-            ((i == _cover[0] - 1 ? 2 : 0) | (j == _cover[1] - 1 ? 1 : 0));
-          for (int f = 0; f < 2; f++)
-            {
-              faces[i][j][f]->set_vertices(vir_vertices[(i + vertex_ind[f][0][0])
-                                           % _cover[0]][(j + vertex_ind[f][0][1]) % _cover[1]],
-                                           vir_vertices[(i + vertex_ind[f][1][0]) % _cover[0]][(j
-                                               + vertex_ind[f][1][1]) % _cover[1]], vir_vertices[(i
-                                                   + vertex_ind[f][2][0]) % _cover[0]][(j + vertex_ind[f][2][1])
-                                                       % _cover[1]]);
-              set_offsets(faces[i][j][f], offset & (vertex_ind[f][0][0] * 2
-                                                    + vertex_ind[f][0][1] * 1), offset & (vertex_ind[f][1][0] * 2
-                                                        + vertex_ind[f][1][1] * 1), offset & (vertex_ind[f][2][0] * 2
-                                                            + vertex_ind[f][2][1] * 1));
-              faces[i][j][f]->set_neighbors(faces[(i + _cover[0]
-                                                   + neighb_ind[f][0][0]) % _cover[0]][(j + _cover[1]
-                                                       + neighb_ind[f][0][1]) % _cover[1]][neighb_ind[f][0][2]], faces[(i
-                                                           + _cover[0] + neighb_ind[f][1][0]) % _cover[0]][(j + _cover[1]
-                                                               + neighb_ind[f][1][1]) % _cover[1]][neighb_ind[f][1][2]], faces[(i
-                                                                   + _cover[0] + neighb_ind[f][2][0]) % _cover[0]][(j + _cover[1]
-                                                                       + neighb_ind[f][2][1]) % _cover[1]][neighb_ind[f][2][2]]);
-            }
-        }
-    }
-  // set pointers from the vertices to incident faces.
-  for (int i = 0; i < _cover[0]; i++)
-    {
-      for (int j = 0; j < _cover[1]; j++)
-        {
-          vir_vertices[i][j]->set_face(faces[i][j][0]);
-        }
-    }
+//  // table containing the vertex information
+//  // index to the right vertex: [number of faces][vertex][offset]
+//  int vertex_ind[2][3][2] = { { { 0, 0 }, { 1, 1 }, { 0, 1 } }, { { 0, 0 }, {
+//        1, 0
+//      }, { 1, 1 }
+//    }
+//  };
+//  // Table containing the neighbor information
+//  // [number of faces][neighbor][offset,face]
+//  int neighb_ind[2][3][3] = { { { 0, 1, 1 }, { -1, 0, 1 }, { 0, 0, 1 } }, { {
+//        1, 0, 0
+//      }, { 0, 0, 0 }, { 0, -1, 0 }
+//    }
+//  };
+//  for (int i = 0; i < _cover[0]; i++)
+//    {
+//      for (int j = 0; j < _cover[1]; j++)
+//        {
+//          int offset =
+//            ((i == _cover[0] - 1 ? 2 : 0) | (j == _cover[1] - 1 ? 1 : 0));
+//          for (int f = 0; f < 2; f++)
+//            {
+//              faces[i][j][f]->set_vertices(vir_vertices[(i + vertex_ind[f][0][0])
+//                                           % _cover[0]][(j + vertex_ind[f][0][1]) % _cover[1]],
+//                                           vir_vertices[(i + vertex_ind[f][1][0]) % _cover[0]][(j
+//                                               + vertex_ind[f][1][1]) % _cover[1]], vir_vertices[(i
+//                                                   + vertex_ind[f][2][0]) % _cover[0]][(j + vertex_ind[f][2][1])
+//                                                       % _cover[1]]);
+//              set_offsets(faces[i][j][f], offset & (vertex_ind[f][0][0] * 2
+//                                                    + vertex_ind[f][0][1] * 1), offset & (vertex_ind[f][1][0] * 2
+//                                                        + vertex_ind[f][1][1] * 1), offset & (vertex_ind[f][2][0] * 2
+//                                                            + vertex_ind[f][2][1] * 1));
+//              faces[i][j][f]->set_neighbors(faces[(i + _cover[0]
+//                                                   + neighb_ind[f][0][0]) % _cover[0]][(j + _cover[1]
+//                                                       + neighb_ind[f][0][1]) % _cover[1]][neighb_ind[f][0][2]], faces[(i
+//                                                           + _cover[0] + neighb_ind[f][1][0]) % _cover[0]][(j + _cover[1]
+//                                                               + neighb_ind[f][1][1]) % _cover[1]][neighb_ind[f][1][2]], faces[(i
+//                                                                   + _cover[0] + neighb_ind[f][2][0]) % _cover[0]][(j + _cover[1]
+//                                                                       + neighb_ind[f][2][1]) % _cover[1]][neighb_ind[f][2][2]]);
+//            }
+//        }
+//    }
+//  // set pointers from the vertices to incident faces.
+//  for (int i = 0; i < _cover[0]; i++)
+//    {
+//      for (int j = 0; j < _cover[1]; j++)
+//        {
+//          vir_vertices[i][j]->set_face(faces[i][j][0]);
+//        }
+//    }
 
-  _tds.set_dimension(2);
+//  _tds.set_dimension(2);
 
-  // create the base for too_long_edges;
-  CGAL_triangulation_assertion(_too_long_edges.empty() );
-  CGAL_triangulation_assertion(_too_long_edge_counter == 0);
+//  // create the base for too_long_edges;
+//  CGAL_triangulation_assertion(_too_long_edges.empty() );
+//  CGAL_triangulation_assertion(_too_long_edge_counter == 0);
 
-  // Insert all vertices as the first vertex in the _too_long_edges list
-  int k = 0;
-  std::list<Vertex_handle> empty_list;
-  for (Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++vit)
-    {
-      _too_long_edges[vit] = empty_list;
-      k++;
-    }
+//  // Insert all vertices as the first vertex in the _too_long_edges list
+//  int k = 0;
+//  std::list<Vertex_handle> empty_list;
+//  for (Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++vit)
+//    {
+//      _too_long_edges[vit] = empty_list;
+//      k++;
+//    }
 
-  // Insert all edges as all edges are too long
-  _too_long_edge_counter = 0;
-  for (Edge_iterator eit = edges_begin(); eit != edges_end(); eit++)
-    {
-      Vertex_handle vh1 = eit->first->vertex(ccw(eit->second));
-      Vertex_handle vh2 = eit->first->vertex(cw(eit->second));
-      if (&*vh1 < &*vh2)
-        {
-          _too_long_edges[vh1].push_back(vh2);
-        }
-      else
-        {
-          _too_long_edges[vh2].push_back(vh1);
-        }
-      _too_long_edge_counter++;
-    }
+//  // Insert all edges as all edges are too long
+//  _too_long_edge_counter = 0;
+//  for (Edge_iterator eit = edges_begin(); eit != edges_end(); eit++)
+//    {
+//      Vertex_handle vh1 = eit->first->vertex(ccw(eit->second));
+//      Vertex_handle vh2 = eit->first->vertex(cw(eit->second));
+//      if (&*vh1 < &*vh2)
+//        {
+//          _too_long_edges[vh1].push_back(vh2);
+//        }
+//      else
+//        {
+//          _too_long_edges[vh2].push_back(vh1);
+//        }
+//      _too_long_edge_counter++;
+//    }
 
-  return vir_vertices[0][0];
-}
+//  return vir_vertices[0][0];
+//}
 
 template<class Gt, class Tds>
 typename Periodic_2_triangulation_2<Gt, Tds>::Vertex_handle
@@ -2270,13 +2297,12 @@ Periodic_2_triangulation_2<Gt, Tds>::insert_in_face(const Point& p, const Offset
 
   const bool simplicity_criterion = f->has_zero_offsets() && o.is_zero();
 
-
   Offset current_off;
 
   // Save the neighbors and the offsets
   Face_handle nb[3];
   int nb_index[3];
-  int offsets[3];
+  Offset offsets[3];
   CGAL_triangulation_assertion_code( Vertex_handle vertices[3]; )
 
   if (!simplicity_criterion)
@@ -2302,8 +2328,8 @@ Periodic_2_triangulation_2<Gt, Tds>::insert_in_face(const Point& p, const Offset
   if (!simplicity_criterion)
     {
       // Update the offsets
-      int v_offset = off_to_int(current_off);
-      int new_offsets[3];
+      Offset v_offset = off_to_int(current_off);
+      Offset new_offsets[3];
       for (int i = 0; i < 3; ++i)
         {
           Face_handle new_face = nb[i]->neighbor(nb_index[i]);
@@ -2338,15 +2364,10 @@ template<class Gt, class Tds>
 typename Periodic_2_triangulation_2<Gt, Tds>::Vertex_handle
 Periodic_2_triangulation_2<Gt, Tds>::insert(const Point &p, Face_handle start)
 {
-  CGAL_triangulation_assertion((_domain.xmin() <= p.x()) &&
-                               (p.x() < _domain.xmax()));
-  CGAL_triangulation_assertion((_domain.ymin() <= p.y()) &&
-                               (p.y() < _domain.ymax()));
-
-  if (number_of_stored_vertices() == 0)
-    {
-      return insert_first(p);
-    }
+//  if (number_of_stored_vertices() == 0)
+//    {
+//      return insert_first(p);
+//    }
 
   if (start == Face_handle())
     {
@@ -2369,10 +2390,10 @@ typename Periodic_2_triangulation_2<Gt, Tds>::Vertex_handle
 Periodic_2_triangulation_2<Gt, Tds>::insert(const Point& p,
     Locate_type lt, Face_handle loc, int li)
 {
-  if (number_of_stored_vertices() == 0)
-    {
-      return insert_first(p);
-    }
+//  if (number_of_stored_vertices() == 0)
+//    {
+//      return insert_first(p);
+//    }
 
   // vstart is a vertex incident to the Face_handle start that will be used as
   // for creating a start point for the virtual vertices.
@@ -2456,11 +2477,11 @@ Gt, Tds >::insert(const Point& p, const Offset &o, Locate_type lt,
       CGAL_assertion(vh == Vertex_handle());
       return loc->vertex(li);
     }
-    case EMPTY:
-    {
-      result = insert_first(p);
-      break;
-    }
+//    case EMPTY:
+//    {
+//      result = insert_first(p);
+//      break;
+//    }
     default:
     {
       CGAL_triangulation_assertion(false); // locate step failed
@@ -2771,17 +2792,16 @@ march_locate_2D(Face_handle f, const Point& query,
   boost::uniform_smallint<> two(0, 1);
   boost::variate_generator<boost::rand48&, boost::uniform_smallint<> > coin(rng, two);
 
+  // @tmp ignore the 'best possible' can we do that?
   // Give the point the best start-offset possible
-  if (is_1_cover() && !f->has_zero_offsets())
-    {
-      int cumm_off = f->offset(0) | f->offset(1) | f->offset(2);
-      if (((cumm_off & 2) == 2) &&
-          (FT(2) * query.x() < (_domain.xmax() + _domain.xmin())))
-        off_query += Offset(1, 0);
-      if (((cumm_off & 1) == 1) &&
-          (FT(2) * query.y() < (_domain.ymax() + _domain.ymin())))
-        off_query += Offset(0, 1);
-    }
+//  if (is_1_cover() && !f->has_zero_offsets())
+//  {
+//    int cumm_off = f->offset(0) | f->offset(1) | f->offset(2);
+//    if (((cumm_off & 2) == 2) && (FT(2) * query.x() < (_domain.xmax() + _domain.xmin())))
+//      off_query += Offset(1, 0);
+//    if (((cumm_off & 1) == 1) && (FT(2) * query.y() < (_domain.ymax() + _domain.ymin())))
+//      off_query += Offset(0, 1);
+//  }
 
   Face_handle prev = Face_handle();
   int prev_index = 0;
@@ -2967,11 +2987,6 @@ typename Periodic_2_triangulation_2<Gt, Tds>::Face_handle Periodic_2_triangulati
 Gt, Tds >::locate(const Point& p, const Offset &o, Locate_type& lt, int& li,
                   Face_handle start) const
 {
-  CGAL_triangulation_assertion((_domain.xmin() <= p.x()) &&
-                               (p.x() < _domain.xmax()));
-  CGAL_triangulation_assertion((_domain.ymin() <= p.y()) &&
-                               (p.y() < _domain.ymax()));
-
   if (dimension() <= 0)
     {
       lt = EMPTY;
@@ -2999,493 +3014,489 @@ Gt, Tds >::locate(const Point& p, const Offset &o, Locate_type& lt, int& li,
  *  -# Face iteration: delete all faces marked in the 1. iteration
  *  -# Vertex iteration: delete all vertices outside the original domain.
  */
-template<class Gt, class Tds>
-void Periodic_2_triangulation_2<Gt, Tds>::convert_to_1_sheeted_covering()
-{
-  // ###################################################################
-  // ### First face iteration ##########################################
-  // ###################################################################
-  {
-    if (is_1_cover())
-      return;
-    CGAL_triangulation_expensive_assertion(is_triangulation_in_1_sheet());
+//template<class Gt, class Tds>
+//void Periodic_2_triangulation_2<Gt, Tds>::convert_to_1_sheeted_covering()
+//{
+//  // ###################################################################
+//  // ### First face iteration ##########################################
+//  // ###################################################################
+//  {
+//    if (is_1_cover())
+//      return;
+//    CGAL_triangulation_expensive_assertion(is_triangulation_in_1_sheet());
 
-    bool to_delete, has_simplifiable_offset;
-    Virtual_vertex_map_it vvmit;
-    // First iteration over all faces: Mark the faces that are to delete.
-    // Faces are to delete if they cannot be translated anymore in the
-    // direction of one of the axes without yielding negative offsets.
-    for (Face_iterator it = all_faces_begin(); it != all_faces_end(); ++it)
-      {
-        to_delete = false;
-        // for all directions in 2D Space
-        for (int j = 0; j < 2; j++)
-          {
-            has_simplifiable_offset = true;
-            // for all vertices of face it
-            for (int i = 0; i < 3; i++)
-              {
-                vvmit = _virtual_vertices.find(it->vertex(i));
-                if (vvmit == _virtual_vertices.end())
-                  {
-                    // if it->vertex(i) lies inside the original domain:
+//    bool to_delete, has_simplifiable_offset;
+//    Virtual_vertex_map_it vvmit;
+//    // First iteration over all faces: Mark the faces that are to delete.
+//    // Faces are to delete if they cannot be translated anymore in the
+//    // direction of one of the axes without yielding negative offsets.
+//    for (Face_iterator it = all_faces_begin(); it != all_faces_end(); ++it)
+//      {
+//        to_delete = false;
+//        // for all directions in 2D Space
+//        for (int j = 0; j < 2; j++)
+//          {
+//            has_simplifiable_offset = true;
+//            // for all vertices of face it
+//            for (int i = 0; i < 3; i++)
+//              {
+//                vvmit = _virtual_vertices.find(it->vertex(i));
+//                if (vvmit == _virtual_vertices.end())
+//                  {
+//                    // if it->vertex(i) lies inside the original domain:
 
-                    // the face cannot be moved any more because if we did, then
-                    // it->vertex(i) will get at least one negative offset.
-                    has_simplifiable_offset = false;
-                  }
-                else
-                  {
-                    // if it->vertex(i) lies outside the original domain:
+//                    // the face cannot be moved any more because if we did, then
+//                    // it->vertex(i) will get at least one negative offset.
+//                    has_simplifiable_offset = false;
+//                  }
+//                else
+//                  {
+//                    // if it->vertex(i) lies outside the original domain:
 
-                    // The face can certainly be deleted if the offset contains a 2
-                    to_delete |= (vvmit->second.second[j] == 2);
-                    // The face can be moved into one direction only if the offset of
-                    // all for vertices is >=1 for this direction. Since we already
-                    // tested for 2 it is sufficient to test here for 1.
-                    has_simplifiable_offset &= (vvmit->second.second[j] == 1);
-                  }
-              }
-            // if the offset can be simplified, i.e. the face can be moved, then
-            // it can be deleted.
-            if (has_simplifiable_offset)
-              to_delete = true;
-          }
-        // Mark all faces that are to delete. They cannot be deleted yet,
-        // because neighboring information still needs to be extracted.
-        it->set_additional_flag(to_delete ? 1 : 0);
-      }
-  }
+//                    // The face can certainly be deleted if the offset contains a 2
+//                    to_delete |= (vvmit->second.second[j] == 2);
+//                    // The face can be moved into one direction only if the offset of
+//                    // all for vertices is >=1 for this direction. Since we already
+//                    // tested for 2 it is sufficient to test here for 1.
+//                    has_simplifiable_offset &= (vvmit->second.second[j] == 1);
+//                  }
+//              }
+//            // if the offset can be simplified, i.e. the face can be moved, then
+//            // it can be deleted.
+//            if (has_simplifiable_offset)
+//              to_delete = true;
+//          }
+//        // Mark all faces that are to delete. They cannot be deleted yet,
+//        // because neighboring information still needs to be extracted.
+//        it->set_additional_flag(to_delete ? 1 : 0);
+//      }
+//  }
 
-  // ###################################################################
-  // ### Second face iteration #########################################
-  // ###################################################################
-  {
-    Vertex_handle vert[3], nbv[3];
-    Offset off[3];
-    Face_handle nb, new_neighbor;
-    std::vector<Triple<Face_handle, int, Face_handle> > new_neighbor_relations;
+//  // ###################################################################
+//  // ### Second face iteration #########################################
+//  // ###################################################################
+//  {
+//    Vertex_handle vert[3], nbv[3];
+//    Offset off[3];
+//    Face_handle nb, new_neighbor;
+//    std::vector<Triple<Face_handle, int, Face_handle> > new_neighbor_relations;
 
-    // Second iteration over all faces: redirect neighbors where necessary
-    for (Face_iterator it = all_faces_begin(); it != all_faces_end(); ++it)
-      {
-        // Skip all faces that are to delete.
-        if (it->get_additional_flag() == 1)
-          continue;
+//    // Second iteration over all faces: redirect neighbors where necessary
+//    for (Face_iterator it = all_faces_begin(); it != all_faces_end(); ++it)
+//      {
+//        // Skip all faces that are to delete.
+//        if (it->get_additional_flag() == 1)
+//          continue;
 
-        // Redirect neighbors: Only neighbors that are marked by the
-        // additional_flag have to be substituted by one of their periodic
-        // copies. The unmarked neighbors stay the same.
-        for (int i = 0; i < 3; i++)
-          {
-            if (it->neighbor(i)->get_additional_flag() != 1)
-              continue;
+//        // Redirect neighbors: Only neighbors that are marked by the
+//        // additional_flag have to be substituted by one of their periodic
+//        // copies. The unmarked neighbors stay the same.
+//        for (int i = 0; i < 3; i++)
+//          {
+//            if (it->neighbor(i)->get_additional_flag() != 1)
+//              continue;
 
-            nb = it->neighbor(i);
+//            nb = it->neighbor(i);
 
-            for (int j = 0; j < 3; j++)
-              {
-                off[j] = Offset();
-                get_vertex(nb, j, vert[j], off[j]);
-              }
-            int x, y;
-            x = (std::min)((std::min)(off[0][0], off[1][0]), off[2][0]);
-            y = (std::min)((std::min)(off[0][1], off[1][1]), off[2][1]);
+//            for (int j = 0; j < 3; j++)
+//              {
+//                off[j] = Offset();
+//                get_vertex(nb, j, vert[j], off[j]);
+//              }
+//            int x, y;
+//            x = (std::min)((std::min)(off[0][0], off[1][0]), off[2][0]);
+//            y = (std::min)((std::min)(off[0][1], off[1][1]), off[2][1]);
 
-            // The vector from nb to the "original" periodic copy of nb, that is
-            // the copy that will not be deleted.
-            Offset difference_offset(x, y);
-            CGAL_triangulation_assertion( !difference_offset.is_null() );
+//            // The vector from nb to the "original" periodic copy of nb, that is
+//            // the copy that will not be deleted.
+//            Offset difference_offset(x, y);
+//            CGAL_triangulation_assertion( !difference_offset.is_null() );
 
-            // We now have to find the "original" periodic copy of nb from
-            // its vertices. Therefore, we first have to find the vertices.
-            for (int j = 0; j < 3; j++)
-              {
-                CGAL_triangulation_assertion( (off[j] - difference_offset)[0] >= 0);
-                CGAL_triangulation_assertion( (off[j] - difference_offset)[1] >= 0);
-                CGAL_triangulation_assertion( (off[j] - difference_offset)[0] < 3);
-                CGAL_triangulation_assertion( (off[j] - difference_offset)[1] < 3);
+//            // We now have to find the "original" periodic copy of nb from
+//            // its vertices. Therefore, we first have to find the vertices.
+//            for (int j = 0; j < 3; j++)
+//              {
+//                CGAL_triangulation_assertion( (off[j] - difference_offset)[0] >= 0);
+//                CGAL_triangulation_assertion( (off[j] - difference_offset)[1] >= 0);
+//                CGAL_triangulation_assertion( (off[j] - difference_offset)[0] < 3);
+//                CGAL_triangulation_assertion( (off[j] - difference_offset)[1] < 3);
 
-                // find the Vertex_handles of the vertices of the "original"
-                // periodic copy of nb. If the vertex is inside the original
-                // domain, there is nothing to do
-                if ((off[j] - difference_offset).is_null())
-                  {
-                    nbv[j] = vert[j];
-                    // If the vertex is outside the original domain, we have to search
-                    // in _virtual_vertices in the "wrong" direction. That means, we
-                    // cannot use _virtual_vertices.find but have to use
-                    // _virtual_vertices_reverse.
-                  }
-                else
-                  {
-                    Offset nbo = off[j] - difference_offset;
-                    nbv[j] = _virtual_vertices_reverse.find(vert[j]) ->second[nbo[0]
-                             * 3 + nbo[1] - 1];
-                  }
-              }
-            // Find the new neighbor by its 4 vertices
-            new_neighbor = get_face(nbv);
+//                // find the Vertex_handles of the vertices of the "original"
+//                // periodic copy of nb. If the vertex is inside the original
+//                // domain, there is nothing to do
+//                if ((off[j] - difference_offset).is_null())
+//                  {
+//                    nbv[j] = vert[j];
+//                    // If the vertex is outside the original domain, we have to search
+//                    // in _virtual_vertices in the "wrong" direction. That means, we
+//                    // cannot use _virtual_vertices.find but have to use
+//                    // _virtual_vertices_reverse.
+//                  }
+//                else
+//                  {
+//                    Offset nbo = off[j] - difference_offset;
+//                    nbv[j] = _virtual_vertices_reverse.find(vert[j]) ->second[nbo[0]
+//                             * 3 + nbo[1] - 1];
+//                  }
+//              }
+//            // Find the new neighbor by its 4 vertices
+//            new_neighbor = get_face(nbv);
 
-            // Store the new neighbor relation. This cannot be applied yet because
-            // it would disturb the functioning of get_face( ... )
-            new_neighbor_relations.push_back(make_triple(it, i, new_neighbor));
-          }
-      }
-    // Apply the new neighbor relations now.
-    for (unsigned int i = 0; i < new_neighbor_relations.size(); i++)
-      {
-        new_neighbor_relations[i].first->set_neighbor(
-          new_neighbor_relations[i].second, new_neighbor_relations[i].third);
-      }
-  }
+//            // Store the new neighbor relation. This cannot be applied yet because
+//            // it would disturb the functioning of get_face( ... )
+//            new_neighbor_relations.push_back(make_triple(it, i, new_neighbor));
+//          }
+//      }
+//    // Apply the new neighbor relations now.
+//    for (unsigned int i = 0; i < new_neighbor_relations.size(); i++)
+//      {
+//        new_neighbor_relations[i].first->set_neighbor(
+//          new_neighbor_relations[i].second, new_neighbor_relations[i].third);
+//      }
+//  }
 
-  // ###################################################################
-  // ### Third face iteration ##########################################
-  // ###################################################################
-  {
-    Vertex_handle vert[3];
-    Offset off[3];
-    // Third iteration over all faces: redirect vertices where necessary
-    for (Face_iterator it = all_faces_begin(); it != all_faces_end(); ++it)
-      {
-        // Skip all faces that are marked to delete
-        if (it->get_additional_flag() == 1)
-          continue;
-        // Find the corresponding vertices of it in the original domain
-        // and set them as new vertices of it.
-        for (int i = 0; i < 3; i++)
-          {
-            off[i] = Offset();
-            get_vertex(it, i, vert[i], off[i]);
-            it->set_vertex(i, vert[i]);
-            CGAL_triangulation_assertion(vert[i]->point()[0] < _domain.xmax());
-            CGAL_triangulation_assertion(vert[i]->point()[1] < _domain.ymax());
-            CGAL_triangulation_assertion(vert[i]->point()[0] >= _domain.xmin());
-            CGAL_triangulation_assertion(vert[i]->point()[1] >= _domain.ymin());
+//  // ###################################################################
+//  // ### Third face iteration ##########################################
+//  // ###################################################################
+//  {
+//    Vertex_handle vert[3];
+//    Offset off[3];
+//    // Third iteration over all faces: redirect vertices where necessary
+//    for (Face_iterator it = all_faces_begin(); it != all_faces_end(); ++it)
+//      {
+//        // Skip all faces that are marked to delete
+//        if (it->get_additional_flag() == 1)
+//          continue;
+//        // Find the corresponding vertices of it in the original domain
+//        // and set them as new vertices of it.
+//        for (int i = 0; i < 3; i++)
+//          {
+//            off[i] = Offset();
+//            get_vertex(it, i, vert[i], off[i]);
+//            it->set_vertex(i, vert[i]);
 
-            // redirect also the face pointer of the vertex.
-            it->vertex(i)->set_face(it);
-          }
-        // Set the offsets.
-        set_offsets(it, off[0], off[1], off[2]);
-        CGAL_triangulation_assertion( int_to_off(it->offset(0)) == off[0] );
-        CGAL_triangulation_assertion( int_to_off(it->offset(1)) == off[1] );
-        CGAL_triangulation_assertion( int_to_off(it->offset(2)) == off[2] );
-      }
-  }
+//            // redirect also the face pointer of the vertex.
+//            it->vertex(i)->set_face(it);
+//          }
+//        // Set the offsets.
+//        set_offsets(it, off[0], off[1], off[2]);
+//        CGAL_triangulation_assertion( int_to_off(it->offset(0)) == off[0] );
+//        CGAL_triangulation_assertion( int_to_off(it->offset(1)) == off[1] );
+//        CGAL_triangulation_assertion( int_to_off(it->offset(2)) == off[2] );
+//      }
+//  }
 
-  // ###################################################################
-  // ### Fourth face iteration #########################################
-  // ###################################################################
-  {
-    // Delete the marked faces.
-    std::vector<Face_handle> faces_to_delete;
-    for (Face_iterator fit = all_faces_begin(); fit != all_faces_end(); ++fit)
-      {
-        if (fit->get_additional_flag() == 1)
-          faces_to_delete.push_back(fit);
-      }
-    for (typename std::vector<Face_handle>::iterator it =
-           faces_to_delete.begin(); it != faces_to_delete.end(); ++it)
-      {
-        _tds.delete_face(*it);
-      }
-  }
+//  // ###################################################################
+//  // ### Fourth face iteration #########################################
+//  // ###################################################################
+//  {
+//    // Delete the marked faces.
+//    std::vector<Face_handle> faces_to_delete;
+//    for (Face_iterator fit = all_faces_begin(); fit != all_faces_end(); ++fit)
+//      {
+//        if (fit->get_additional_flag() == 1)
+//          faces_to_delete.push_back(fit);
+//      }
+//    for (typename std::vector<Face_handle>::iterator it =
+//           faces_to_delete.begin(); it != faces_to_delete.end(); ++it)
+//      {
+//        _tds.delete_face(*it);
+//      }
+//  }
 
-  // ###################################################################
-  // ### Vertex iteration ##############################################
-  // ###################################################################
-  {
-    // Delete all the vertices in _virtual_vertices, that is all vertices
-    // outside the original domain.
-    std::vector<Vertex_handle> vertices_to_delete;
-    for (Vertex_iterator vit = all_vertices_begin(); vit != all_vertices_end(); ++vit)
-      {
-        if (_virtual_vertices.count(vit) != 0)
-          {
-            CGAL_triangulation_assertion( _virtual_vertices.count( vit ) == 1 );
-            vertices_to_delete.push_back(vit);
-          }
-      }
-    for (typename std::vector<Vertex_handle>::iterator it =
-           vertices_to_delete.begin(); it != vertices_to_delete.end(); ++it)
-      {
-        _tds.delete_vertex(*it);
-      }
-  }
+//  // ###################################################################
+//  // ### Vertex iteration ##############################################
+//  // ###################################################################
+//  {
+//    // Delete all the vertices in _virtual_vertices, that is all vertices
+//    // outside the original domain.
+//    std::vector<Vertex_handle> vertices_to_delete;
+//    for (Vertex_iterator vit = all_vertices_begin(); vit != all_vertices_end(); ++vit)
+//      {
+//        if (_virtual_vertices.count(vit) != 0)
+//          {
+//            CGAL_triangulation_assertion( _virtual_vertices.count( vit ) == 1 );
+//            vertices_to_delete.push_back(vit);
+//          }
+//      }
+//    for (typename std::vector<Vertex_handle>::iterator it =
+//           vertices_to_delete.begin(); it != vertices_to_delete.end(); ++it)
+//      {
+//        _tds.delete_vertex(*it);
+//      }
+//  }
 
-  _cover = make_array(1, 1);
-  _virtual_vertices.clear();
-  _virtual_vertices_reverse.clear();
-  _too_long_edge_counter = 0;
-  _too_long_edges.clear();
+//  _cover = make_array(1, 1);
+//  _virtual_vertices.clear();
+//  _virtual_vertices_reverse.clear();
+//  _too_long_edge_counter = 0;
+//  _too_long_edges.clear();
 
-  CGAL_triangulation_assertion(is_1_cover());
-}
+//  CGAL_triangulation_assertion(is_1_cover());
+//}
 
-template<class Gt, class Tds>
-void Periodic_2_triangulation_2<Gt, Tds>::convert_to_9_sheeted_covering()
-{
-  if (_cover == make_array(3, 3))
-    return;
-  CGAL_triangulation_precondition(is_1_cover());
+//template<class Gt, class Tds>
+//void Periodic_2_triangulation_2<Gt, Tds>::convert_to_9_sheeted_covering()
+//{
+//  if (_cover == make_array(3, 3))
+//    return;
+//  CGAL_triangulation_precondition(is_1_cover());
 
-  // Create 9 copies of each vertex and write virtual_vertices and
-  // virtual_vertices_reverse
-  std::list<Vertex_handle> original_vertices;
-  // try to use std::copy instead of the following loop.
-  for (Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++vit)
-    original_vertices.push_back(vit);
-  for (typename std::list<Vertex_handle>::iterator vit =
-         original_vertices.begin(); vit != original_vertices.end(); ++vit)
-    {
-      Vertex_handle v_cp;
-      std::vector<Vertex_handle> copies;
-      for (int i = 0; i < 3; i++)
-        for (int j = 0; j < 3; j++)
-          {
-            if (i == 0 && j == 0)
-              continue;
-            v_cp = _tds.create_vertex(*vit);
-            copies.push_back(v_cp);
-            _virtual_vertices.insert(std::make_pair(v_cp, std::make_pair(*vit,
-                                                    Offset(i, j))));
-          }
-      _virtual_vertices_reverse.insert(std::make_pair(*vit, copies));
-    }
+//  // Create 9 copies of each vertex and write virtual_vertices and
+//  // virtual_vertices_reverse
+//  std::list<Vertex_handle> original_vertices;
+//  // try to use std::copy instead of the following loop.
+//  for (Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++vit)
+//    original_vertices.push_back(vit);
+//  for (typename std::list<Vertex_handle>::iterator vit =
+//         original_vertices.begin(); vit != original_vertices.end(); ++vit)
+//    {
+//      Vertex_handle v_cp;
+//      std::vector<Vertex_handle> copies;
+//      for (int i = 0; i < 3; i++)
+//        for (int j = 0; j < 3; j++)
+//          {
+//            if (i == 0 && j == 0)
+//              continue;
+//            v_cp = _tds.create_vertex(*vit);
+//            copies.push_back(v_cp);
+//            _virtual_vertices.insert(std::make_pair(v_cp, std::make_pair(*vit,
+//                                                    Offset(i, j))));
+//          }
+//      _virtual_vertices_reverse.insert(std::make_pair(*vit, copies));
+//    }
 
-  // Create 9 copies of each face from the respective copies of the
-  // vertices and write virtual_faces and virtual_faces_reverse.
-  typedef std::map<Face_handle, std::pair<Face_handle, Offset> >
-  Virtual_face_map;
-  typedef std::map<Face_handle, std::vector<Face_handle> >
-  Virtual_face_reverse_map;
-  typedef typename Virtual_face_reverse_map::const_iterator VCRMIT;
+//  // Create 9 copies of each face from the respective copies of the
+//  // vertices and write virtual_faces and virtual_faces_reverse.
+//  typedef std::map<Face_handle, std::pair<Face_handle, Offset> >
+//  Virtual_face_map;
+//  typedef std::map<Face_handle, std::vector<Face_handle> >
+//  Virtual_face_reverse_map;
+//  typedef typename Virtual_face_reverse_map::const_iterator VCRMIT;
 
-  Virtual_face_map virtual_faces;
-  Virtual_face_reverse_map virtual_faces_reverse;
+//  Virtual_face_map virtual_faces;
+//  Virtual_face_reverse_map virtual_faces_reverse;
 
-  std::list<Face_handle> original_faces;
-  for (Face_iterator fit = faces_begin(); fit != faces_end(); ++fit)
-    original_faces.push_back(fit);
+//  std::list<Face_handle> original_faces;
+//  for (Face_iterator fit = faces_begin(); fit != faces_end(); ++fit)
+//    original_faces.push_back(fit);
 
-  // Store vertex offsets in a separate data structure
-  std::list<Offset> off_v;
-  for (typename std::list<Vertex_handle>::iterator vit =
-         original_vertices.begin(); vit != original_vertices.end(); ++vit)
-    {
-      Face_handle ccc = (*vit)->face();
-      int v_index = ccc->index(*vit);
-      off_v.push_back(int_to_off(ccc->offset(v_index)));
-    }
+//  // Store vertex offsets in a separate data structure
+//  std::list<Offset> off_v;
+//  for (typename std::list<Vertex_handle>::iterator vit =
+//         original_vertices.begin(); vit != original_vertices.end(); ++vit)
+//    {
+//      Face_handle ccc = (*vit)->face();
+//      int v_index = ccc->index(*vit);
+//      off_v.push_back(int_to_off(ccc->offset(v_index)));
+//    }
 
-  // Store neighboring offsets in a separate data structure
-  std::list<array<Offset, 3> > off_nb;
-  for (typename std::list<Face_handle>::iterator fit = original_faces.begin(); fit
-       != original_faces.end(); ++fit)
-    {
-      array<Offset, 3> off_nb_f;
-      for (int i = 0; i < 3; i++)
-        {
-          Face_handle fff = *fit;
-          Face_handle nnn = fff->neighbor(i);
-          off_nb_f[i] = get_neighbor_offset(fff, i, nnn, nnn->index(fff));
-        }
-      off_nb.push_back(off_nb_f);
-    }
+//  // Store neighboring offsets in a separate data structure
+//  std::list<array<Offset, 3> > off_nb;
+//  for (typename std::list<Face_handle>::iterator fit = original_faces.begin(); fit
+//       != original_faces.end(); ++fit)
+//    {
+//      array<Offset, 3> off_nb_f;
+//      for (int i = 0; i < 3; i++)
+//        {
+//          Face_handle fff = *fit;
+//          Face_handle nnn = fff->neighbor(i);
+//          off_nb_f[i] = get_neighbor_offset(fff, i, nnn, nnn->index(fff));
+//        }
+//      off_nb.push_back(off_nb_f);
+//    }
 
-  // Create copies of faces
-  for (typename std::list<Face_handle>::iterator fit = original_faces.begin(); fit
-       != original_faces.end(); ++fit)
-    {
-      Face_handle c_cp;
-      Vertex_handle v0, v1, v2;
-      std::vector<Face_handle> copies;
-      Virtual_vertex_reverse_map_it vvrmit[3];
-      Offset vvoff[3];
-      for (int i = 0; i < 3; i++)
-        {
-          vvrmit[i] = _virtual_vertices_reverse.find((*fit)->vertex(i));
-          CGAL_triangulation_assertion(
-            vvrmit[i] != _virtual_vertices_reverse.end());
-          vvoff[i] = int_to_off((*fit)->offset(i));
-        }
-      Vertex_handle vvh[3];
-      for (int n = 0; n < 8; n++)   // iterate over faces
-        {
-          for (int i = 0; i < 3; i++)   // iterate over vertices of the face
-            {
-              // Decomposition of n into an offset (nx,ny):
-              // nx = ((n+1)/3)%3, ny = (n+1)%3
-              int o_i = ((n + 1) / 3 + vvoff[i].x() + 3) % 3;
-              int o_j = ((n + 1) + vvoff[i].y() + 3) % 3;
-              int n_c = 3 * o_i + o_j - 1;
-              CGAL_triangulation_assertion(n_c >= -1);
-              if (n_c == -1)
-                vvh[i] = (*fit)->vertex(i);
-              else
-                vvh[i] = vvrmit[i]->second[n_c];
-            }
-          c_cp = _tds.create_face(vvh[0], vvh[1], vvh[2]);
-          copies.push_back(c_cp);
-        }
-      virtual_faces_reverse.insert(std::make_pair(*fit, copies));
-    }
+//  // Create copies of faces
+//  for (typename std::list<Face_handle>::iterator fit = original_faces.begin(); fit
+//       != original_faces.end(); ++fit)
+//    {
+//      Face_handle c_cp;
+//      Vertex_handle v0, v1, v2;
+//      std::vector<Face_handle> copies;
+//      Virtual_vertex_reverse_map_it vvrmit[3];
+//      Offset vvoff[3];
+//      for (int i = 0; i < 3; i++)
+//        {
+//          vvrmit[i] = _virtual_vertices_reverse.find((*fit)->vertex(i));
+//          CGAL_triangulation_assertion(
+//            vvrmit[i] != _virtual_vertices_reverse.end());
+//          vvoff[i] = int_to_off((*fit)->offset(i));
+//        }
+//      Vertex_handle vvh[3];
+//      for (int n = 0; n < 8; n++)   // iterate over faces
+//        {
+//          for (int i = 0; i < 3; i++)   // iterate over vertices of the face
+//            {
+//              // Decomposition of n into an offset (nx,ny):
+//              // nx = ((n+1)/3)%3, ny = (n+1)%3
+//              int o_i = ((n + 1) / 3 + vvoff[i].x() + 3) % 3;
+//              int o_j = ((n + 1) + vvoff[i].y() + 3) % 3;
+//              int n_c = 3 * o_i + o_j - 1;
+//              CGAL_triangulation_assertion(n_c >= -1);
+//              if (n_c == -1)
+//                vvh[i] = (*fit)->vertex(i);
+//              else
+//                vvh[i] = vvrmit[i]->second[n_c];
+//            }
+//          c_cp = _tds.create_face(vvh[0], vvh[1], vvh[2]);
+//          copies.push_back(c_cp);
+//        }
+//      virtual_faces_reverse.insert(std::make_pair(*fit, copies));
+//    }
 
-  // Set new vertices of boundary faces of the original domain.
-  for (typename std::list<Face_handle>::iterator fit = original_faces.begin(); fit
-       != original_faces.end(); ++fit)
-    {
-      for (int i = 0; i < 3; i++)
-        {
-          Virtual_vertex_reverse_map_it vvrmit = _virtual_vertices_reverse.find(
-              (*fit)->vertex(i));
-          CGAL_triangulation_assertion(vvrmit != _virtual_vertices_reverse.end());
-          Offset vvoff = int_to_off((*fit)->offset(i));
-          if (!vvoff.is_null())
-            {
-              int n_f = 3 * vvoff.x() + vvoff.y() - 1;
-              CGAL_triangulation_assertion(n_f >= 0);
-              CGAL_triangulation_assertion(static_cast<unsigned int>(n_f) < vvrmit->second.size());
-              (*fit)->set_vertex(i, vvrmit->second[n_f]);
-            }
-        }
-    }
+//  // Set new vertices of boundary faces of the original domain.
+//  for (typename std::list<Face_handle>::iterator fit = original_faces.begin(); fit
+//       != original_faces.end(); ++fit)
+//    {
+//      for (int i = 0; i < 3; i++)
+//        {
+//          Virtual_vertex_reverse_map_it vvrmit = _virtual_vertices_reverse.find(
+//              (*fit)->vertex(i));
+//          CGAL_triangulation_assertion(vvrmit != _virtual_vertices_reverse.end());
+//          Offset vvoff = int_to_off((*fit)->offset(i));
+//          if (!vvoff.is_null())
+//            {
+//              int n_f = 3 * vvoff.x() + vvoff.y() - 1;
+//              CGAL_triangulation_assertion(n_f >= 0);
+//              CGAL_triangulation_assertion(static_cast<unsigned int>(n_f) < vvrmit->second.size());
+//              (*fit)->set_vertex(i, vvrmit->second[n_f]);
+//            }
+//        }
+//    }
 
-  // Set neighboring relations of face copies
-  typename std::list<array<Offset, 3> >::iterator oit = off_nb.begin();
-  for (typename std::list<Face_handle>::iterator fit = original_faces.begin(); fit
-       != original_faces.end(); ++fit, ++oit)
-    {
-      CGAL_triangulation_assertion( oit != off_nb.end() );
-      VCRMIT c_cp = virtual_faces_reverse.find(*fit);
-      CGAL_triangulation_assertion(c_cp != virtual_faces_reverse.end());
-      for (int i = 0; i < 3; i++)
-        {
-          Face_handle fit_nb = (*fit)->neighbor(i);
-          VCRMIT c_cp_nb = virtual_faces_reverse.find(fit_nb);
-          CGAL_triangulation_assertion(c_cp_nb != virtual_faces_reverse.end());
-          Offset nboff = (*oit)[i];
-          for (int n = 0; n < 8; n++)
-            {
-              int n_nb;
-              if (nboff.is_null())
-                n_nb = n;
-              else
-                {
-                  int o_i = ((n + 1) / 3 - nboff.x() + 3) % 3;
-                  int o_j = (n + 1 - nboff.y() + 3) % 3;
-                  n_nb = 3 * o_i + o_j - 1;
-                }
-              if (n_nb == -1)
-                {
-                  CGAL_triangulation_assertion(fit_nb->has_vertex(c_cp->second[n]->vertex(ccw(i))) );
-                  CGAL_triangulation_assertion(fit_nb->has_vertex(c_cp->second[n]->vertex( cw(i))) );
-                  c_cp->second[n]->set_neighbor(i, fit_nb);
-                }
-              else
-                {
-                  CGAL_triangulation_assertion(n_nb >= 0);
-                  CGAL_triangulation_assertion(static_cast<unsigned int>(n_nb) <= c_cp_nb->second.size());
-                  CGAL_triangulation_assertion(c_cp_nb->second[n_nb]->has_vertex(c_cp->second[n]->vertex(ccw(i))) );
-                  CGAL_triangulation_assertion(c_cp_nb->second[n_nb]->has_vertex(c_cp->second[n]->vertex( cw(i))) );
-                  c_cp->second[n]->set_neighbor(i, c_cp_nb->second[n_nb]);
-                }
-            }
-        }
-    }
+//  // Set neighboring relations of face copies
+//  typename std::list<array<Offset, 3> >::iterator oit = off_nb.begin();
+//  for (typename std::list<Face_handle>::iterator fit = original_faces.begin(); fit
+//       != original_faces.end(); ++fit, ++oit)
+//    {
+//      CGAL_triangulation_assertion( oit != off_nb.end() );
+//      VCRMIT c_cp = virtual_faces_reverse.find(*fit);
+//      CGAL_triangulation_assertion(c_cp != virtual_faces_reverse.end());
+//      for (int i = 0; i < 3; i++)
+//        {
+//          Face_handle fit_nb = (*fit)->neighbor(i);
+//          VCRMIT c_cp_nb = virtual_faces_reverse.find(fit_nb);
+//          CGAL_triangulation_assertion(c_cp_nb != virtual_faces_reverse.end());
+//          Offset nboff = (*oit)[i];
+//          for (int n = 0; n < 8; n++)
+//            {
+//              int n_nb;
+//              if (nboff.is_null())
+//                n_nb = n;
+//              else
+//                {
+//                  int o_i = ((n + 1) / 3 - nboff.x() + 3) % 3;
+//                  int o_j = (n + 1 - nboff.y() + 3) % 3;
+//                  n_nb = 3 * o_i + o_j - 1;
+//                }
+//              if (n_nb == -1)
+//                {
+//                  CGAL_triangulation_assertion(fit_nb->has_vertex(c_cp->second[n]->vertex(ccw(i))) );
+//                  CGAL_triangulation_assertion(fit_nb->has_vertex(c_cp->second[n]->vertex( cw(i))) );
+//                  c_cp->second[n]->set_neighbor(i, fit_nb);
+//                }
+//              else
+//                {
+//                  CGAL_triangulation_assertion(n_nb >= 0);
+//                  CGAL_triangulation_assertion(static_cast<unsigned int>(n_nb) <= c_cp_nb->second.size());
+//                  CGAL_triangulation_assertion(c_cp_nb->second[n_nb]->has_vertex(c_cp->second[n]->vertex(ccw(i))) );
+//                  CGAL_triangulation_assertion(c_cp_nb->second[n_nb]->has_vertex(c_cp->second[n]->vertex( cw(i))) );
+//                  c_cp->second[n]->set_neighbor(i, c_cp_nb->second[n_nb]);
+//                }
+//            }
+//        }
+//    }
 
-  // Set neighboring relations of original faces
-  oit = off_nb.begin();
-  for (typename std::list<Face_handle>::iterator fit = original_faces.begin(); fit
-       != original_faces.end(); ++fit, ++oit)
-    {
-      CGAL_triangulation_assertion( oit != off_nb.end() );
-      for (int i = 0; i < 3; i++)
-        {
-          Offset nboff = (*oit)[i];
-          if (!nboff.is_null())
-            {
-              Face_handle fit_nb = (*fit)->neighbor(i);
-              VCRMIT c_cp_nb = virtual_faces_reverse.find(fit_nb);
-              CGAL_triangulation_assertion(c_cp_nb != virtual_faces_reverse.end());
-              int o_i = (3 - nboff.x()) % 3;
-              int o_j = (3 - nboff.y()) % 3;
-              int n_nb = 3 * o_i + o_j - 1;
-              CGAL_triangulation_assertion(n_nb >= 0);
-              CGAL_triangulation_assertion(static_cast<unsigned int>(n_nb) <= c_cp_nb->second.size());
-              CGAL_triangulation_assertion(c_cp_nb->second[n_nb]->has_vertex((*fit)->vertex(ccw(i))) );
-              CGAL_triangulation_assertion(c_cp_nb->second[n_nb]->has_vertex((*fit)->vertex( cw(i))) );
-              (*fit)->set_neighbor(i, c_cp_nb->second[n_nb]);
-            }
-        }
-    }
+//  // Set neighboring relations of original faces
+//  oit = off_nb.begin();
+//  for (typename std::list<Face_handle>::iterator fit = original_faces.begin(); fit
+//       != original_faces.end(); ++fit, ++oit)
+//    {
+//      CGAL_triangulation_assertion( oit != off_nb.end() );
+//      for (int i = 0; i < 3; i++)
+//        {
+//          Offset nboff = (*oit)[i];
+//          if (!nboff.is_null())
+//            {
+//              Face_handle fit_nb = (*fit)->neighbor(i);
+//              VCRMIT c_cp_nb = virtual_faces_reverse.find(fit_nb);
+//              CGAL_triangulation_assertion(c_cp_nb != virtual_faces_reverse.end());
+//              int o_i = (3 - nboff.x()) % 3;
+//              int o_j = (3 - nboff.y()) % 3;
+//              int n_nb = 3 * o_i + o_j - 1;
+//              CGAL_triangulation_assertion(n_nb >= 0);
+//              CGAL_triangulation_assertion(static_cast<unsigned int>(n_nb) <= c_cp_nb->second.size());
+//              CGAL_triangulation_assertion(c_cp_nb->second[n_nb]->has_vertex((*fit)->vertex(ccw(i))) );
+//              CGAL_triangulation_assertion(c_cp_nb->second[n_nb]->has_vertex((*fit)->vertex( cw(i))) );
+//              (*fit)->set_neighbor(i, c_cp_nb->second[n_nb]);
+//            }
+//        }
+//    }
 
-  // Set incident faces
-  for (Face_iterator fit = faces_begin(); fit != faces_end(); ++fit)
-    {
-      for (int i = 0; i < 3; i++)
-        {
-          fit->vertex(i)->set_face(fit);
-        }
-    }
+//  // Set incident faces
+//  for (Face_iterator fit = faces_begin(); fit != faces_end(); ++fit)
+//    {
+//      for (int i = 0; i < 3; i++)
+//        {
+//          fit->vertex(i)->set_face(fit);
+//        }
+//    }
 
-  // Set offsets where necessary
-  for (typename std::list<Face_handle>::iterator fit = original_faces.begin(); fit
-       != original_faces.end(); ++fit)
-    {
-      VCRMIT c_cp = virtual_faces_reverse.find(*fit);
-      CGAL_triangulation_assertion( c_cp != virtual_faces_reverse.end());
-      Offset off[3];
-      for (int i = 0; i < 3; i++)
-        off[i] = int_to_off((*fit)->offset(i));
-      if (off[0].is_null() && off[1].is_null() && off[2].is_null())
-        continue;
-      for (int n = 0; n < 8; n++)
-        {
-          Offset off_cp[4];
-          int o_i = ((n + 1) / 3) % 3;
-          int o_j = (n + 1) % 3;
-          if (o_i != 2 && o_j != 2)
-            continue;
-          for (int i = 0; i < 3; i++)
-            {
-              off_cp[i] = Offset((o_i == 2) ? off[i].x() : 0, (o_j == 2) ? off[i].y()
-                                 : 0);
-              CGAL_triangulation_assertion(off_cp[i].x() == 0 || off_cp[i].x() == 1);
-              CGAL_triangulation_assertion(off_cp[i].y() == 0 || off_cp[i].y() == 1);
-            }
-          set_offsets(c_cp->second[n], off_cp[0], off_cp[1], off_cp[2]);
-        }
-    }
+//  // Set offsets where necessary
+//  for (typename std::list<Face_handle>::iterator fit = original_faces.begin(); fit
+//       != original_faces.end(); ++fit)
+//    {
+//      VCRMIT c_cp = virtual_faces_reverse.find(*fit);
+//      CGAL_triangulation_assertion( c_cp != virtual_faces_reverse.end());
+//      Offset off[3];
+//      for (int i = 0; i < 3; i++)
+//        off[i] = int_to_off((*fit)->offset(i));
+//      if (off[0].is_null() && off[1].is_null() && off[2].is_null())
+//        continue;
+//      for (int n = 0; n < 8; n++)
+//        {
+//          Offset off_cp[4];
+//          int o_i = ((n + 1) / 3) % 3;
+//          int o_j = (n + 1) % 3;
+//          if (o_i != 2 && o_j != 2)
+//            continue;
+//          for (int i = 0; i < 3; i++)
+//            {
+//              off_cp[i] = Offset((o_i == 2) ? off[i].x() : 0, (o_j == 2) ? off[i].y()
+//                                 : 0);
+//              CGAL_triangulation_assertion(off_cp[i].x() == 0 || off_cp[i].x() == 1);
+//              CGAL_triangulation_assertion(off_cp[i].y() == 0 || off_cp[i].y() == 1);
+//            }
+//          set_offsets(c_cp->second[n], off_cp[0], off_cp[1], off_cp[2]);
+//        }
+//    }
 
-  // Iterate over all original faces and reset offsets.
-  for (typename std::list<Face_handle>::iterator fit = original_faces.begin(); fit
-       != original_faces.end(); ++fit)
-    {
-      //This statement does not seem to have any effect
-      set_offsets(*fit, 0, 0, 0);
-      CGAL_triangulation_assertion((*fit)->offset(0) == 0);
-      CGAL_triangulation_assertion((*fit)->offset(1) == 0);
-      CGAL_triangulation_assertion((*fit)->offset(2) == 0);
-    }
+//  // Iterate over all original faces and reset offsets.
+//  for (typename std::list<Face_handle>::iterator fit = original_faces.begin(); fit
+//       != original_faces.end(); ++fit)
+//    {
+//      //This statement does not seem to have any effect
+//      set_offsets(*fit, 0, 0, 0);
+//      CGAL_triangulation_assertion((*fit)->offset(0) == 0);
+//      CGAL_triangulation_assertion((*fit)->offset(1) == 0);
+//      CGAL_triangulation_assertion((*fit)->offset(2) == 0);
+//    }
 
-  _cover = make_array(3, 3);
+//  _cover = make_array(3, 3);
 
-  // Set up too long edges data structure
-  int i = 0;
-  for (Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++vit)
-    {
-      _too_long_edges[vit] = std::list<Vertex_handle>();
-      ++i;
-    }
-  _too_long_edge_counter = find_too_long_edges(_too_long_edges);
+//  // Set up too long edges data structure
+//  int i = 0;
+//  for (Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++vit)
+//    {
+//      _too_long_edges[vit] = std::list<Vertex_handle>();
+//      ++i;
+//    }
+//  _too_long_edge_counter = find_too_long_edges(_too_long_edges);
 
-  CGAL_triangulation_expensive_assertion(is_valid());
+//  CGAL_triangulation_expensive_assertion(is_valid());
 
-  CGAL_triangulation_assertion(!is_1_cover());
-}
+//  CGAL_triangulation_assertion(!is_1_cover());
+//}
 
 // iterate over all edges and store the ones that are longer than
 // edge_length_threshold in edges. Return the number of too long edges.
@@ -3562,10 +3573,6 @@ inline void Periodic_2_triangulation_2<GT, Tds>::get_vertex(Vertex_handle vh_i,
       // otherwise it has to be looked up as well as its offset.
       vh = it->second.first;
       off += it->second.second;
-      CGAL_triangulation_assertion(vh->point().x() < _domain.xmax());
-      CGAL_triangulation_assertion(vh->point().y() < _domain.ymax());
-      CGAL_triangulation_assertion(vh->point().x() >= _domain.xmin());
-      CGAL_triangulation_assertion(vh->point().y() >= _domain.ymin());
     }
 }
 
@@ -4131,333 +4138,332 @@ inline bool Periodic_2_triangulation_2<GT, Tds>::is_triangulation_in_1_sheet() c
   return true;
 }
 
-template<class Gt, class Tds>
-std::ostream&
-Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
-{
-  // writes :
-  // the number of vertices
-  // the domain as four coordinates: xmin ymin ymax zmax
-  // the current covering that guarantees the triangulation to be a
-  //     simplicial complex
-  // the non combinatorial information on vertices (points in case of 1-sheeted
-  //     covering, point-offset pairs otherwise)
-  //     ALL PERIODIC COPIES OF ONE VERTEX MUST BE STORED CONSECUTIVELY
-  // the number of faces
-  // the faces by the indices of their vertices in the preceding list
-  // of vertices, plus the non combinatorial information on each face
-  // the neighbors of each face by their index in the preceding list of faces
+//template<class Gt, class Tds>
+//std::ostream&
+//Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
+//{
+//  // writes :
+//  // the number of vertices
+//  // the domain as four coordinates: xmin ymin ymax zmax
+//  // the current covering that guarantees the triangulation to be a
+//  //     simplicial complex
+//  // the non combinatorial information on vertices (points in case of 1-sheeted
+//  //     covering, point-offset pairs otherwise)
+//  //     ALL PERIODIC COPIES OF ONE VERTEX MUST BE STORED CONSECUTIVELY
+//  // the number of faces
+//  // the faces by the indices of their vertices in the preceding list
+//  // of vertices, plus the non combinatorial information on each face
+//  // the neighbors of each face by their index in the preceding list of faces
 
-  // outputs dimension, domain and number of vertices
-  Covering_sheets cover = number_of_sheets();
-  size_type n = number_of_vertices();
+//  // outputs dimension, domain and number of vertices
+//  Covering_sheets cover = number_of_sheets();
+//  size_type n = number_of_vertices();
 
 
-  if (is_ascii(os))
-    os << domain() << std::endl
-       << cover[0] << " " << cover[1] << std::endl
-       << n*cover[0]*cover[1] << std::endl;
-  else
-    {
-      os << domain();
-      write(os, cover[0]);
-      write(os, cover[1]);
-      write(os, n * cover[0]*cover[1]);
-    }
-  std::cout << "Line:" << __LINE__ << " cover[0]:" << cover[0] << " cover[1]:" << cover[1] << " n*c0*c1:" << (n * cover[0]*cover[1]) << std::endl;
+//  if (is_ascii(os))
+//    os << domain() << std::endl
+//       << cover[0] << " " << cover[1] << std::endl
+//       << n*cover[0]*cover[1] << std::endl;
+//  else
+//    {
+//      os << domain();
+//      write(os, cover[0]);
+//      write(os, cover[1]);
+//      write(os, n * cover[0]*cover[1]);
+//    }
+//  std::cout << "Line:" << __LINE__ << " cover[0]:" << cover[0] << " cover[1]:" << cover[1] << " n*c0*c1:" << (n * cover[0]*cover[1]) << std::endl;
 
-  std::cout << "save, #Vertices: " << n << std::endl;
+//  std::cout << "save, #Vertices: " << n << std::endl;
 
-  if (n == 0)
-    return os;
+//  if (n == 0)
+//    return os;
 
-  // write the vertices
-  Unique_hash_map<Vertex_handle, std::size_t > V;
-  std::size_t i = 0;
-  if (is_1_cover())
-    {
-      for (Vertex_iterator it = vertices_begin(); it != vertices_end(); ++it)
-        {
-          V[it] = i++;
-          os << it->point();
-          if (is_ascii(os))
-            os << std::endl;
-        }
-    }
-  else
-    {
-      Virtual_vertex_map_it vit, vvit;
-      std::vector<Vertex_handle> vv;
-      for (Vertex_iterator it = vertices_begin(); it != vertices_end(); ++it)
-        {
-          vit = _virtual_vertices.find(it);
-          if (vit != _virtual_vertices.end()) continue;
-          V[it] = i++;
-          if (is_ascii(os))
-            os << it->point() << std::endl
-               << Offset(0, 0) << std::endl;
-          else
-            os << it->point() << Offset(0, 0);
-          CGAL_triangulation_assertion(_virtual_vertices_reverse.find(it)
-                                       != _virtual_vertices_reverse.end());
-          vv = _virtual_vertices_reverse.find(it)->second;
-          CGAL_triangulation_assertion(vv.size() == 8);
-          for (std::size_t j = 0; j < vv.size(); j++)
-            {
-              vvit = _virtual_vertices.find(vv[j]);
-              CGAL_triangulation_assertion(vvit != _virtual_vertices.end());
-              V[vv[j]] = i++;
-              if (is_ascii(os))
-                os << vv[j]->point() << std::endl
-                   << vvit->second.second << std::endl;
-              else os << vv[j]->point() << vvit->second.second;
-            }
-        }
-    }
-  CGAL_triangulation_postcondition(i == _cover[0]*_cover[1]*n);
+//  // write the vertices
+//  Unique_hash_map<Vertex_handle, std::size_t > V;
+//  std::size_t i = 0;
+//  if (is_1_cover())
+//    {
+//      for (Vertex_iterator it = vertices_begin(); it != vertices_end(); ++it)
+//        {
+//          V[it] = i++;
+//          os << it->point();
+//          if (is_ascii(os))
+//            os << std::endl;
+//        }
+//    }
+//  else
+//    {
+//      Virtual_vertex_map_it vit, vvit;
+//      std::vector<Vertex_handle> vv;
+//      for (Vertex_iterator it = vertices_begin(); it != vertices_end(); ++it)
+//        {
+//          vit = _virtual_vertices.find(it);
+//          if (vit != _virtual_vertices.end()) continue;
+//          V[it] = i++;
+//          if (is_ascii(os))
+//            os << it->point() << std::endl
+//               << Offset(0, 0) << std::endl;
+//          else
+//            os << it->point() << Offset(0, 0);
+//          CGAL_triangulation_assertion(_virtual_vertices_reverse.find(it)
+//                                       != _virtual_vertices_reverse.end());
+//          vv = _virtual_vertices_reverse.find(it)->second;
+//          CGAL_triangulation_assertion(vv.size() == 8);
+//          for (std::size_t j = 0; j < vv.size(); j++)
+//            {
+//              vvit = _virtual_vertices.find(vv[j]);
+//              CGAL_triangulation_assertion(vvit != _virtual_vertices.end());
+//              V[vv[j]] = i++;
+//              if (is_ascii(os))
+//                os << vv[j]->point() << std::endl
+//                   << vvit->second.second << std::endl;
+//              else os << vv[j]->point() << vvit->second.second;
+//            }
+//        }
+//    }
+//  CGAL_triangulation_postcondition(i == _cover[0]*_cover[1]*n);
 
-  Unique_hash_map<Face_handle, std::size_t> F;
-  int inum = 0;
-  // asks the tds for the combinatorial information
-  // vertices of the faces
-  size_type m = _tds.number_of_faces();
-  if (is_ascii(os)) os << std::endl << m << std::endl;
-  else write(os, m);
-  std::cout << "save, #Faces: " << m << std::endl;
+//  Unique_hash_map<Face_handle, std::size_t> F;
+//  int inum = 0;
+//  // asks the tds for the combinatorial information
+//  // vertices of the faces
+//  size_type m = _tds.number_of_faces();
+//  if (is_ascii(os)) os << std::endl << m << std::endl;
+//  else write(os, m);
+//  std::cout << "save, #Faces: " << m << std::endl;
 
-  for( Face_iterator ib = faces_begin();
-       ib != faces_end(); ++ib)
-    {
-      F[ib] = inum++;
-      for(int j = 0; j < 3 ; ++j)
-        {
-          if(is_ascii(os)) os << V[ib->vertex(j)] << " ";
-          else write(os, V[ib->vertex(j)]);
-        }
-      os << *ib ;
-      if(is_ascii(os)) os << "\n";
-    }
-  if(is_ascii(os)) os << "\n";
+//  for( Face_iterator ib = faces_begin();
+//       ib != faces_end(); ++ib)
+//    {
+//      F[ib] = inum++;
+//      for(int j = 0; j < 3 ; ++j)
+//        {
+//          if(is_ascii(os)) os << V[ib->vertex(j)] << " ";
+//          else write(os, V[ib->vertex(j)]);
+//        }
+//      os << *ib ;
+//      if(is_ascii(os)) os << "\n";
+//    }
+//  if(is_ascii(os)) os << "\n";
 
-  std::cout << "save, face check: " << inum << " == " << m << std::endl;
-  CGAL_assertion(m == (size_type)inum);
+//  std::cout << "save, face check: " << inum << " == " << m << std::endl;
+//  CGAL_assertion(m == (size_type)inum);
 
-  // neighbor pointers of the  faces
-  for( Face_iterator it = faces_begin();
-       it != faces_end(); ++it)
-    {
-      for(int j = 0; j < 3; ++j)
-        {
-          CGAL_assertion(F.is_defined(it->neighbor(j)));
-          if(is_ascii(os))  os << F[it->neighbor(j)] << " ";
-          else write(os, F[it->neighbor(j)]);
-        }
-      if(is_ascii(os)) os << "\n";
-    }
+//  // neighbor pointers of the  faces
+//  for( Face_iterator it = faces_begin();
+//       it != faces_end(); ++it)
+//    {
+//      for(int j = 0; j < 3; ++j)
+//        {
+//          CGAL_assertion(F.is_defined(it->neighbor(j)));
+//          if(is_ascii(os))  os << F[it->neighbor(j)] << " ";
+//          else write(os, F[it->neighbor(j)]);
+//        }
+//      if(is_ascii(os)) os << "\n";
+//    }
 
-  // write offsets
-  //for (unsigned int i=0 ; i<number_of_faces() ; i++) {
-  for (Face_iterator it = faces_begin(); it != faces_end(); ++it)
-    {
-      //Face_handle ch = std::find(faces_begin(), faces_end(), i);
-      Face_handle ch(it);
-      for (int j = 0; j < 3; j++)
-        {
-          if(is_ascii(os))
-            {
-              os << ch->offset(j);
-              if ( j == 3 )
-                os << std::endl;
-              else
-                os << ' ';
-            }
-          else write(os, ch->offset(j));
-        }
-    }
+//  // write offsets
+//  //for (unsigned int i=0 ; i<number_of_faces() ; i++) {
+//  for (Face_iterator it = faces_begin(); it != faces_end(); ++it)
+//    {
+//      //Face_handle ch = std::find(faces_begin(), faces_end(), i);
+//      Face_handle ch(it);
+//      for (int j = 0; j < 3; j++)
+//        {
+//          if(is_ascii(os))
+//            {
+//              os << ch->offset(j);
+//              if ( j == 3 )
+//                os << std::endl;
+//              else
+//                os << ' ';
+//            }
+//          else write(os, ch->offset(j));
+//        }
+//    }
 
-  // write the non combinatorial information on the faces
-  // using the << operator of Face
-  // works because the iterator of the tds traverses the faces in the
-  // same order as the iterator of the triangulation
-  if(number_of_vertices() != 0)
-    {
-      for(Face_iterator it = faces_begin(); it != faces_end(); ++it)
-        {
-          os << *it; // other information
-          if(is_ascii(os))
-            os << std::endl;
-        }
-    }
+//  // write the non combinatorial information on the faces
+//  // using the << operator of Face
+//  // works because the iterator of the tds traverses the faces in the
+//  // same order as the iterator of the triangulation
+//  if(number_of_vertices() != 0)
+//    {
+//      for(Face_iterator it = faces_begin(); it != faces_end(); ++it)
+//        {
+//          os << *it; // other information
+//          if(is_ascii(os))
+//            os << std::endl;
+//        }
+//    }
 
-  return os;
-}
+//  return os;
+//}
 
-template<class Gt, class Tds>
-std::istream&
-Periodic_2_triangulation_2<Gt, Tds>::load(std::istream& is)
-{
-  // reads
-  // the current covering that guarantees the triangulation to be a
-  //     simplicial complex
-  // the number of vertices
-  // the non combinatorial information on vertices (points in case of 1-sheeted
-  //     covering, point-offset pairs otherwise)
-  //     ALL PERIODIC COPIES OF ONE VERTEX MUST BE STORED CONSECUTIVELY
-  // the number of faces
-  // the faces by the indices of their vertices in the preceding list
-  // of vertices, plus the non combinatorial information on each face
-  // the neighbors of each face by their index in the preceding list of face
-  CGAL_triangulation_precondition(is.good());
+//template<class Gt, class Tds>
+//std::istream&
+//Periodic_2_triangulation_2<Gt, Tds>::load(std::istream& is)
+//{
+//  // reads
+//  // the current covering that guarantees the triangulation to be a
+//  //     simplicial complex
+//  // the number of vertices
+//  // the non combinatorial information on vertices (points in case of 1-sheeted
+//  //     covering, point-offset pairs otherwise)
+//  //     ALL PERIODIC COPIES OF ONE VERTEX MUST BE STORED CONSECUTIVELY
+//  // the number of faces
+//  // the faces by the indices of their vertices in the preceding list
+//  // of vertices, plus the non combinatorial information on each face
+//  // the neighbors of each face by their index in the preceding list of face
+//  CGAL_triangulation_precondition(is.good());
 
-  clear();
+//  clear();
 
-  Iso_rectangle domain(0, 0, 1, 1);
-  int cx = 0, cy = 0;
-  size_type n = 0;
+//  Iso_rectangle domain(0, 0, 1, 1);
+//  int cx = 0, cy = 0;
+//  size_type n = 0;
 
-  if (is_ascii(is))
-  {
-    is >> domain;
-    is >> cx >> cy >> n;
-  }
-  else
-  {
-    is >> domain;
-    read(is, cx);
-    read(is, cy);
-    read(is, n);
-  }
-  std::cout << "Line:" << __LINE__ << " cx:" << cx << " cy:" << cy << " n:" << n << std::endl;
+//  if (is_ascii(is))
+//  {
+//    is >> domain;
+//    is >> cx >> cy >> n;
+//  }
+//  else
+//  {
+//    is >> domain;
+//    read(is, cx);
+//    read(is, cy);
+//    read(is, n);
+//  }
+//  std::cout << "Line:" << __LINE__ << " cx:" << cx << " cy:" << cy << " n:" << n << std::endl;
 
-  CGAL_triangulation_assertion((n / (cx * cy))*cx*cy == n);
+//  CGAL_triangulation_assertion((n / (cx * cy))*cx*cy == n);
 
-  tds().set_dimension((n == 0 ? -2 : 2));
-  _domain = domain;
-  _gt.set_domain(domain);
-  _cover = make_array(cx, cy);
+//  tds().set_dimension((n == 0 ? -2 : 2));
+//  _domain = domain;
+//  _gt.set_domain(domain);
+//  _cover = make_array(cx, cy);
 
-  if ( n == 0 ) return is;
+//  if ( n == 0 ) return is;
 
-  std::map< std::size_t, Vertex_handle > V;
+//  std::map< std::size_t, Vertex_handle > V;
 
-  if (cx == 1 && cy == 1)
-    {
-      Point p;
-      for (std::size_t i = 0; i < n; i++)
-        {
-          V[i] = tds().create_vertex();
-          is >> p;
-          V[i]->set_point(p);
-        }
-    }
-  else
-    {
-      Vertex_handle v, w;
-      std::vector<Vertex_handle> vv;
-      Offset off;
-      Point p;
-      for (std::size_t i = 0; i < n; i++)
-        {
-          v = tds().create_vertex();
-          V[i] = v;
-          is >> p >> off;
-          V[i]->set_point(p);
-          vv.clear();
-          for (int j = 1; j < cx * cy; j++)
-            {
-              i++;
-              w = tds().create_vertex();
-              V[i] = w;
-              is >> p >> off;
-              V[i]->set_point(p);
-              vv.push_back(w);
-              _virtual_vertices[w] = std::make_pair(v, off);
-            }
-          _virtual_vertices_reverse[v] = vv;
-        }
-    }
+//  if (cx == 1 && cy == 1)
+//    {
+//      Point p;
+//      for (std::size_t i = 0; i < n; i++)
+//        {
+//          V[i] = tds().create_vertex();
+//          is >> p;
+//          V[i]->set_point(p);
+//        }
+//    }
+//  else
+//    {
+//      Vertex_handle v, w;
+//      std::vector<Vertex_handle> vv;
+//      Offset off;
+//      Point p;
+//      for (std::size_t i = 0; i < n; i++)
+//        {
+//          v = tds().create_vertex();
+//          V[i] = v;
+//          is >> p >> off;
+//          V[i]->set_point(p);
+//          vv.clear();
+//          for (int j = 1; j < cx * cy; j++)
+//            {
+//              i++;
+//              w = tds().create_vertex();
+//              V[i] = w;
+//              is >> p >> off;
+//              V[i]->set_point(p);
+//              vv.push_back(w);
+//              _virtual_vertices[w] = std::make_pair(v, off);
+//            }
+//          _virtual_vertices_reverse[v] = vv;
+//        }
+//    }
 
-  // Creation of the faces
-  std::size_t index;
-  size_type m;
-  if (is_ascii(is)) is >> m;
-  else read(is, m);
-  std::vector<Face_handle> F(m);
-  std::cout << "load, #Faces: " << m << std::endl;
-  {
-    for(size_t i = 0; i < m; ++i)
-      {
-        F[i] = _tds.create_face() ;
-        for(int j = 0; j < 3 ; ++j)
-          {
-            if (is_ascii(is)) is >> index;
-            else read(is, index);
-            CGAL_assertion(index < V.size());
-            F[i]->set_vertex(j, V[index]);
-            // The face pointer of vertices is set too often,
-            // but otherwise we had to use one more map
-            V[index]->set_face(F[i]);
-          }
-        // read in non combinatorial info of the face
-        is >> *(F[i]) ;
-      }
-  }
+//  // Creation of the faces
+//  std::size_t index;
+//  size_type m;
+//  if (is_ascii(is)) is >> m;
+//  else read(is, m);
+//  std::vector<Face_handle> F(m);
+//  std::cout << "load, #Faces: " << m << std::endl;
+//  {
+//    for(size_t i = 0; i < m; ++i)
+//      {
+//        F[i] = _tds.create_face() ;
+//        for(int j = 0; j < 3 ; ++j)
+//          {
+//            if (is_ascii(is)) is >> index;
+//            else read(is, index);
+//            CGAL_assertion(index < V.size());
+//            F[i]->set_vertex(j, V[index]);
+//            // The face pointer of vertices is set too often,
+//            // but otherwise we had to use one more map
+//            V[index]->set_face(F[i]);
+//          }
+//        // read in non combinatorial info of the face
+//        is >> *(F[i]) ;
+//      }
+//  }
 
-  // Setting the neighbor pointers
-  {
-    for(size_t i = 0; i < m; ++i)
-      {
-        for(int j = 0; j < 3; ++j)
-          {
-            if (is_ascii(is)) is >> index;
-            else read(is, index);
-            if (index >= F.size()) {
-              std::cout << __FILE__ << ", " << __FUNCTION__ << ", l:" << __LINE__ << "  f="
-                        << i << "<" << m << ", index=" << j << " nb=" << index << " #F=" << F.size()
-                        << std::endl;
-            }
-            CGAL_assertion(i < F.size());
-            CGAL_assertion(index < F.size());
-            F[i]->set_neighbor(j, F[index]);
-          }
-      }
-  }
+//  // Setting the neighbor pointers
+//  {
+//    for(size_t i = 0; i < m; ++i)
+//      {
+//        for(int j = 0; j < 3; ++j)
+//          {
+//            if (is_ascii(is)) is >> index;
+//            else read(is, index);
+//            if (index >= F.size()) {
+//              std::cout << __FILE__ << ", " << __FUNCTION__ << ", l:" << __LINE__ << "  f="
+//                        << i << "<" << m << ", index=" << j << " nb=" << index << " #F=" << F.size()
+//                        << std::endl;
+//            }
+//            CGAL_assertion(i < F.size());
+//            CGAL_assertion(index < F.size());
+//            F[i]->set_neighbor(j, F[index]);
+//          }
+//      }
+//  }
 
-  // read offsets
-  int off[3] = {0, 0, 0};
-  for (std::size_t j = 0 ; j < m; j++)
-    {
-      if (is_ascii(is))
-        is >> off[0] >> off[1] >> off[2];
-      else
-        {
-          read(is, off[0]);
-          read(is, off[1]);
-          read(is, off[2]);
-        }
-      set_offsets(F[j], off[0], off[1], off[2]);
-    }
+//  // read offsets
+//  int off[3] = {0, 0, 0};
+//  for (std::size_t j = 0 ; j < m; j++)
+//    {
+//      if (is_ascii(is))
+//        is >> off[0] >> off[1] >> off[2];
+//      else
+//        {
+//          read(is, off[0]);
+//          read(is, off[1]);
+//          read(is, off[2]);
+//        }
+//      set_offsets(F[j], off[0], off[1], off[2]);
+//    }
 
-  // read potential other information
-  for (std::size_t j = 0 ; j < m; j++)
-    is >> *(F[j]);
+//  // read potential other information
+//  for (std::size_t j = 0 ; j < m; j++)
+//    is >> *(F[j]);
 
-  int i = 0;
-  for (Vertex_iterator vi = vertices_begin();
-       vi != vertices_end(); ++vi)
-    {
-      _too_long_edges[vi] = std::list<Vertex_handle>();
-      ++i;
-    }
+//  int i = 0;
+//  for (Vertex_iterator vi = vertices_begin();
+//       vi != vertices_end(); ++vi)
+//    {
+//      _too_long_edges[vi] = std::list<Vertex_handle>();
+//      ++i;
+//    }
 
-  _edge_length_threshold = FT(0.166) * (_domain.xmax() - _domain.xmin())
-                           * (_domain.xmax() - _domain.xmin());
-  _too_long_edge_counter = find_too_long_edges(_too_long_edges);
+//  _edge_length_threshold = FT(0.166) * (_domain.xmax() - _domain.xmin())
+//                           * (_domain.xmax() - _domain.xmin());
+//  _too_long_edge_counter = find_too_long_edges(_too_long_edges);
 
-  CGAL_triangulation_expensive_assertion( is_valid() );
-  return is;
-}
-
+//  CGAL_triangulation_expensive_assertion( is_valid() );
+//  return is;
+//}
 
 namespace internal
 {
@@ -4544,130 +4550,129 @@ test_next(const Periodic_2_triangulation_2<GT, Tds1> &t1,
 
 } // namespace internal
 
+//template<class Gt, class Tds>
+//std::istream&
+//operator>>(std::istream& is, Periodic_2_triangulation_2<Gt, Tds> &tr)
+//{
+//  return tr.load(is);
+//}
+//template<class Gt, class Tds>
+//std::ostream&
+//operator<<(std::ostream& os, Periodic_2_triangulation_2<Gt, Tds> &tr)
+//{
+//  return tr.save(os);
+//}
 
-template<class Gt, class Tds>
-std::istream&
-operator>>(std::istream& is, Periodic_2_triangulation_2<Gt, Tds> &tr)
-{
-  return tr.load(is);
-}
-template<class Gt, class Tds>
-std::ostream&
-operator<<(std::ostream& os, Periodic_2_triangulation_2<Gt, Tds> &tr)
-{
-  return tr.save(os);
-}
+//template < class GT, class Tds1, class Tds2  >
+//bool
+//operator==(const Periodic_2_triangulation_2<GT, Tds1> &t1,
+//           const Periodic_2_triangulation_2<GT, Tds2> &t2)
+//{
+//  typedef typename Periodic_2_triangulation_2<GT, Tds1>::Vertex_handle
+//  Vertex_handle1;
+//  typedef typename Periodic_2_triangulation_2<GT, Tds1>::Face_handle
+//  Face_handle1;
+//  typedef typename Periodic_2_triangulation_2<GT, Tds2>::Vertex_handle
+//  Vertex_handle2;
+//  typedef typename Periodic_2_triangulation_2<GT, Tds2>::Vertex_handle
+//  Vertex_iterator2;
+//  typedef typename Periodic_2_triangulation_2<GT, Tds2>::Face_handle
+//  Face_handle2;
+//  typedef typename Periodic_2_triangulation_2<GT, Tds2>::Face_circulator
+//  Face_circulator2;
 
-template < class GT, class Tds1, class Tds2  >
-bool
-operator==(const Periodic_2_triangulation_2<GT, Tds1> &t1,
-           const Periodic_2_triangulation_2<GT, Tds2> &t2)
-{
-  typedef typename Periodic_2_triangulation_2<GT, Tds1>::Vertex_handle
-  Vertex_handle1;
-  typedef typename Periodic_2_triangulation_2<GT, Tds1>::Face_handle
-  Face_handle1;
-  typedef typename Periodic_2_triangulation_2<GT, Tds2>::Vertex_handle
-  Vertex_handle2;
-  typedef typename Periodic_2_triangulation_2<GT, Tds2>::Vertex_handle
-  Vertex_iterator2;
-  typedef typename Periodic_2_triangulation_2<GT, Tds2>::Face_handle
-  Face_handle2;
-  typedef typename Periodic_2_triangulation_2<GT, Tds2>::Face_circulator
-  Face_circulator2;
+//  typedef typename Periodic_2_triangulation_2<GT, Tds1>::Point      Point;
+//  typedef typename Periodic_2_triangulation_2<GT, Tds1>::Offset     Offset;
 
-  typedef typename Periodic_2_triangulation_2<GT, Tds1>::Point      Point;
-  typedef typename Periodic_2_triangulation_2<GT, Tds1>::Offset     Offset;
+//  // Some quick checks.
+//  if (   t1.domain()           != t2.domain()
+//         || t1.number_of_sheets() != t2.number_of_sheets())
+//    return false;
 
-  // Some quick checks.
-  if (   t1.domain()           != t2.domain()
-         || t1.number_of_sheets() != t2.number_of_sheets())
-    return false;
+//  if (   t1.number_of_vertices() != t2.number_of_vertices()
+//         || t1.number_of_faces() != t2.number_of_faces())
+//    return false;
 
-  if (   t1.number_of_vertices() != t2.number_of_vertices()
-         || t1.number_of_faces() != t2.number_of_faces())
-    return false;
+//  // Special case for empty triangulations
+//  if (t1.number_of_vertices() == 0)
+//    return true;
 
-  // Special case for empty triangulations
-  if (t1.number_of_vertices() == 0)
-    return true;
+//  // We will store the mapping between the 2 triangulations vertices and
+//  // faces in 2 maps.
+//  std::map<Vertex_handle1, Vertex_handle2> Vmap;
+//  std::map<Face_handle1, Face_handle2> Cmap;
 
-  // We will store the mapping between the 2 triangulations vertices and
-  // faces in 2 maps.
-  std::map<Vertex_handle1, Vertex_handle2> Vmap;
-  std::map<Face_handle1, Face_handle2> Cmap;
+//  // find a common point
+//  Vertex_handle1 v1 = static_cast<Vertex_handle1>(t1.vertices_begin());
+//  Vertex_handle2 iv2;
+//  for (Vertex_iterator2 vit2 = t2.vertices_begin() ;
+//       vit2 != t2.vertices_end(); ++vit2)
+//    {
+//      if (t1.compare_xy(vit2->point(), v1->point(),
+//                        t2.get_offset(vit2), t1.get_offset(v1)) != EQUAL)
+//        continue;
+//      iv2 = static_cast<Vertex_handle2>(vit2);
+//      break;
+//    }
+//  if (iv2 == Vertex_handle2())
+//    return false;
+//  Vmap.insert(std::make_pair(v1, iv2));
 
-  // find a common point
-  Vertex_handle1 v1 = static_cast<Vertex_handle1>(t1.vertices_begin());
-  Vertex_handle2 iv2;
-  for (Vertex_iterator2 vit2 = t2.vertices_begin() ;
-       vit2 != t2.vertices_end(); ++vit2)
-    {
-      if (t1.compare_xy(vit2->point(), v1->point(),
-                        t2.get_offset(vit2), t1.get_offset(v1)) != EQUAL)
-        continue;
-      iv2 = static_cast<Vertex_handle2>(vit2);
-      break;
-    }
-  if (iv2 == Vertex_handle2())
-    return false;
-  Vmap.insert(std::make_pair(v1, iv2));
+//  // We pick one face of t1, and try to match it against the
+//  // faces of t2.
+//  Face_handle1 c = v1->face();
+//  Vertex_handle1 v2 = c->vertex(t1.cw(c->index(v1)));
+//  Vertex_handle1 v3 = c->vertex(t1.ccw(c->index(v1)));
+//  Point p2 = v2->point();
+//  Point p3 = v3->point();
+//  Offset o2 = t1.get_offset(v2);
+//  Offset o3 = t1.get_offset(v3);
 
-  // We pick one face of t1, and try to match it against the
-  // faces of t2.
-  Face_handle1 c = v1->face();
-  Vertex_handle1 v2 = c->vertex(t1.cw(c->index(v1)));
-  Vertex_handle1 v3 = c->vertex(t1.ccw(c->index(v1)));
-  Point p2 = v2->point();
-  Point p3 = v3->point();
-  Offset o2 = t1.get_offset(v2);
-  Offset o3 = t1.get_offset(v3);
+//  Face_circulator2 fc = t2.incident_faces(iv2), done(fc);
+//  do
+//    {
+//      int inf = fc->index(iv2);
 
-  Face_circulator2 fc = t2.incident_faces(iv2), done(fc);
-  do
-    {
-      int inf = fc->index(iv2);
+//      if (t1.compare_xy(p2, fc->vertex((inf + 1) % 3)->point(),
+//                        o2, t2.get_offset(fc->vertex((inf + 1) % 3))) == EQUAL)
+//        Vmap.insert(std::make_pair(v2, fc->vertex((inf + 1) % 3)));
+//      else if (t1.compare_xy(p2, fc->vertex((inf + 2) % 3)->point(),
+//                             o2, t2.get_offset(fc->vertex((inf + 2) % 3))) == EQUAL)
+//        Vmap.insert(std::make_pair(v2, fc->vertex((inf + 2) % 3)));
+//      else
+//        continue; // None matched v2.
 
-      if (t1.compare_xy(p2, fc->vertex((inf + 1) % 3)->point(),
-                        o2, t2.get_offset(fc->vertex((inf + 1) % 3))) == EQUAL)
-        Vmap.insert(std::make_pair(v2, fc->vertex((inf + 1) % 3)));
-      else if (t1.compare_xy(p2, fc->vertex((inf + 2) % 3)->point(),
-                             o2, t2.get_offset(fc->vertex((inf + 2) % 3))) == EQUAL)
-        Vmap.insert(std::make_pair(v2, fc->vertex((inf + 2) % 3)));
-      else
-        continue; // None matched v2.
+//      if (t1.compare_xy(p3, fc->vertex((inf + 1) % 3)->point(),
+//                        o3, t2.get_offset(fc->vertex((inf + 1) % 3))) == EQUAL)
+//        Vmap.insert(std::make_pair(v3, fc->vertex((inf + 1) % 3)));
+//      else if (t1.compare_xy(p3, fc->vertex((inf + 2) % 3)->point(),
+//                             o3, t2.get_offset(fc->vertex((inf + 2) % 3))) == EQUAL)
+//        Vmap.insert(std::make_pair(v3, fc->vertex((inf + 2) % 3)));
+//      else
+//        continue; // None matched v3.
 
-      if (t1.compare_xy(p3, fc->vertex((inf + 1) % 3)->point(),
-                        o3, t2.get_offset(fc->vertex((inf + 1) % 3))) == EQUAL)
-        Vmap.insert(std::make_pair(v3, fc->vertex((inf + 1) % 3)));
-      else if (t1.compare_xy(p3, fc->vertex((inf + 2) % 3)->point(),
-                             o3, t2.get_offset(fc->vertex((inf + 2) % 3))) == EQUAL)
-        Vmap.insert(std::make_pair(v3, fc->vertex((inf + 2) % 3)));
-      else
-        continue; // None matched v3.
+//      // Found it !
+//      Cmap.insert(std::make_pair(c, fc));
+//      break;
+//    }
+//  while (++fc != done);
 
-      // Found it !
-      Cmap.insert(std::make_pair(c, fc));
-      break;
-    }
-  while (++fc != done);
+//  if (Cmap.size() == 0)
+//    return false;
 
-  if (Cmap.size() == 0)
-    return false;
+//  // We now have one face, we need to propagate recursively.
+//  return internal::test_next(t1, t2,
+//                             Cmap.begin()->first, Cmap.begin()->second, Cmap, Vmap);
+//}
 
-  // We now have one face, we need to propagate recursively.
-  return internal::test_next(t1, t2,
-                             Cmap.begin()->first, Cmap.begin()->second, Cmap, Vmap);
-}
-
-template < class GT, class Tds1, class Tds2 >
-inline
-bool
-operator!=(const Periodic_2_triangulation_2<GT, Tds1> &t1,
-           const Periodic_2_triangulation_2<GT, Tds2> &t2)
-{
-  return ! (t1 == t2);
-}
+//template < class GT, class Tds1, class Tds2 >
+//inline
+//bool
+//operator!=(const Periodic_2_triangulation_2<GT, Tds1> &t1,
+//           const Periodic_2_triangulation_2<GT, Tds2> &t2)
+//{
+//  return ! (t1 == t2);
+//}
 
 #define CGAL_INCLUDE_FROM_PERIODIC_2_TRIANGULATION_2_H
 #include <CGAL/Periodic_2_triangulation_dummy_12.h>

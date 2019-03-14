@@ -102,7 +102,10 @@ protected:
     {
       for (typename T2::Finite_faces_iterator it=t2.finite_faces_begin();
            it!=t2.finite_faces_end(); ++it)
-      { compute_face(it); } 
+      {
+        if(it->get_canonical_flag())
+          compute_face(it);
+      }
     }
     
     for (typename T2::Finite_edges_iterator it=t2.finite_edges_begin();

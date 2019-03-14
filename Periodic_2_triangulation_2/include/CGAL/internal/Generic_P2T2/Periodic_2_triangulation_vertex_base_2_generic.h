@@ -28,7 +28,7 @@ public:
   typedef typename Tds::Vertex_handle                   Vertex_handle;
   typedef typename Tds::Face_handle                     Face_handle;
   typedef typename Gt::Point_2                          Point;
-  typedef Periodic_2_offset_2                           Offset;
+  typedef Periodic_2_offset_2                           Offset; // @fixme should be given in the traits
 
   template < typename Tds2 >
   struct Rebind_TDS

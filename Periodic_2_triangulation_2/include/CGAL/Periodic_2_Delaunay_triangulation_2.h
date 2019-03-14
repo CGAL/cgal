@@ -969,11 +969,6 @@ typename Periodic_2_Delaunay_triangulation_2<Gt, Tds>::Vertex_handle
 Periodic_2_Delaunay_triangulation_2<Gt, Tds>::
 insert(const Point  &p,  Face_handle start)
 {
-  CGAL_triangulation_assertion((domain().xmin() <= p.x()) &&
-                               (p.x() < domain().xmax()));
-  CGAL_triangulation_assertion((domain().ymin() <= p.y()) &&
-                               (p.y() < domain().ymax()));
-
   if (empty())
     {
       return this->insert_first(p);

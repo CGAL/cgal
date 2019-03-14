@@ -10,6 +10,8 @@
 #include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Dummy_tds_2.h>
 
+#include <CGAL/Periodic_2_offset_2.h>
+
 namespace CGAL
 {
 
@@ -26,6 +28,7 @@ public:
   typedef Tds                                           Triangulation_data_structure;
   typedef typename Tds::Vertex_handle                   Vertex_handle;
   typedef typename Tds::Face_handle                     Face_handle;
+  typedef Periodic_2_offset_2                           Offset;
 
   template < typename TDS2 >
   struct Rebind_TDS
@@ -35,80 +38,50 @@ public:
   };
 
 public:
-  Periodic_2_triangulation_face_base_2_generic()
-    : Fb(), _off(0) {}
+  Periodic_2_triangulation_face_base_2_generic() : Fb(), is_canonical(false) { }
 
   Periodic_2_triangulation_face_base_2_generic(Vertex_handle v0,
-                                       Vertex_handle v1,
-                                       Vertex_handle v2)
-    : Fb(v0, v1, v2) , _off(0) {}
+                                               Vertex_handle v1,
+                                               Vertex_handle v2)
+    : Fb(v0, v1, v2), is_canonical(false)
+  { }
 
   Periodic_2_triangulation_face_base_2_generic(Vertex_handle v0,
-                                       Vertex_handle v1,
-                                       Vertex_handle v2,
-                                       Face_handle n0,
-                                       Face_handle n1,
-                                       Face_handle n2)
-    : Fb(v0, v1, v2, n0, n1, n2), _off(0) {}
+                                               Vertex_handle v1,
+                                               Vertex_handle v2,
+                                               Face_handle n0,
+                                               Face_handle n1,
+                                               Face_handle n2)
+    : Fb(v0, v1, v2, n0, n1, n2), is_canonical(false)
+  { }
 
   /// Periodic functions
-  int offset(int i) const
+  Offset offset(int i) const
   {
     CGAL_triangulation_precondition( i >= 0 && i < 3 );
-    return ((_off >> 2 * i) & 3);
+    return _off[i];
   }
+
   bool has_zero_offsets() const
   {
-    return (_off & 63) == 0;
+    return (_off[0] == Offset(0,0) &&
+            _off[1] == Offset(0,0) &&
+            _off[2] == Offset(0,0));
   }
 
-  void set_offsets(unsigned int o0, unsigned int o1, unsigned int o2)
+  void set_offsets(const Offset& o0, const Offset& o1, const Offset& o2)
   {
-    // 192=11000000
-    _off = _off | 192;
-    unsigned int off0[2] = {(o0 >> 1) & 1, (o0 & 1)};
-    unsigned int off1[2] = {(o1 >> 1) & 1, (o1 & 1)};
-    unsigned int off2[2] = {(o2 >> 1) & 1, (o2 & 1)};
-    for (int i = 0; i < 2; i++)
-      {
-        unsigned int _off0 = ( _off    & 3);
-        unsigned int _off1 = ((_off >> 2) & 3);
-        unsigned int _off2 = ((_off >> 4) & 3);
-
-        _off0 = ( (_off0 << 1) + off0[i]);
-        _off1 = ( (_off1 << 1) + off1[i]);
-        _off2 = ( (_off2 << 1) + off2[i]);
-
-        // 252=11111100
-        // 243=11110011
-        // 207=11001111
-        _off = ((_off & 252) | (_off0   ));
-        _off = ((_off & 243) | (_off1 << 2));
-        _off = ((_off & 207) | (_off2 << 4));
-      }
+    _off[0] = o0;
+    _off[1] = o1;
+    _off[2] = o2;
   }
 
-  void set_additional_flag(unsigned char b)
-  {
-    CGAL_assertion(b < 4);
-    // 63=00111111
-    _off = ((_off & 63) | (b << 6));
-  }
-  unsigned char get_additional_flag()
-  {
-    return (_off >> 6);
-  }
+  void set_canonical_flag(const bool b) { is_canonical = b; }
+  bool get_canonical_flag() const { return is_canonical; }
 
 private:
-  // 2 respective bits are the _offset in x and y
-  // right to left:
-  // bit[0]-bit[1]: vertex(0),
-  // bit[2]-bit[3]: vertex(1) and
-  // bit[4]-bit[5]: vertex(2)
-  // Thus the underlying data type needs to have at least 6 bit,
-  // which is true for an unsigned char.
-  // bit[6]: Used to convert 9 sheeted covering to a 1 sheeted covering
-  unsigned char _off;
+  bool is_canonical;
+  cpp11::array<Offset, 3> _off;
 };
 
 template < class Tds >
