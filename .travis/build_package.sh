@@ -4,11 +4,15 @@ set -e
 
 CXX_FLAGS="-DCGAL_NDEBUG -ftemplate-backtrace-limit=0"
 
+function mytime {
+  /usr/bin/time -f "Spend time of %C: %E (real)" "$@"
+}
+
 function build_examples {
   mkdir -p build-travis
   cd build-travis
-  cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DCMAKE_CXX_FLAGS="${CXX_FLAGS}" ..
-  make -j2
+  mytime cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DCMAKE_CXX_FLAGS="${CXX_FLAGS}" ..
+  mytime make -j2
 }
 
 function build_tests {
@@ -24,8 +28,8 @@ function build_demo {
       EXTRA_CXX_FLAGS="-Werror=inconsistent-missing-override"
       ;;
   esac
-  cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" ..
-  make -j2
+  mytime cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" ..
+  mytime make -j2
 }
 old_IFS=$IFS
 IFS=$' '
@@ -42,20 +46,20 @@ cd $ROOT
      [ "$ARG" = Polygon_mesh_processing ] || [ "$ARG" = Property_map ] ||\
      [ "$ARG" = Surface_mesh_deformation ] || [ "$ARG" = Surface_mesh_shortest_path ] ||\
      [ "$ARG" = Surface_mesh_simplification ]; then
-    sudo bash .travis/install_openmesh.sh
+    mytime sudo bash .travis/install_openmesh.sh
   fi
 
 
   if [ "$ARG" = "CHECK" ]
   then
     cd .travis
-    ./generate_travis.sh --check
+    mytime ./generate_travis.sh --check
     cd ..
     IFS=$old_IFS
-    zsh $ROOT/Scripts/developer_scripts/test_merge_of_branch HEAD
+    mytime zsh $ROOT/Scripts/developer_scripts/test_merge_of_branch HEAD
     #test dependencies 
     cd $ROOT
-    bash Scripts/developer_scripts/cgal_check_dependencies.sh --check_headers /usr/bin/doxygen
+    mytime bash Scripts/developer_scripts/cgal_check_dependencies.sh --check_headers /usr/bin/doxygen
 
     cd .travis
   	#parse current matrix and check that no package has been forgotten
@@ -92,8 +96,8 @@ cd $ROOT
     cd $ROOT
     mkdir build_test
     cd build_test
-    cmake -DCMAKE_INSTALL_PREFIX=install/ ..
-    make install
+    mytime cmake -DCMAKE_INSTALL_PREFIX=install/ ..
+    mytime make install
     # test install with minimal downstream example
     mkdir installtest
     cd installtest
@@ -106,7 +110,7 @@ cd $ROOT
     echo 'target_link_libraries(${PROJECT_NAME} CGAL::CGAL)' >> CMakeLists.txt
     echo '#include "CGAL/remove_outliers.h"' >> main.cpp
     cd build
-    cmake -DCMAKE_INSTALL_PREFIX=../../install ..
+    mytime cmake -DCMAKE_INSTALL_PREFIX=../../install ..
     cd ..
     exit 0
   fi
