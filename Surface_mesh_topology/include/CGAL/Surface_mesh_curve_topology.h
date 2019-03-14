@@ -323,7 +323,6 @@ namespace CGAL {
 
         pt.canonize();
         res=pt.is_empty();
-        std::cout<<"Length of reduced paths: "<<pt.length()<<std::endl;
       }
 
       if (display_time)
