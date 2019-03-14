@@ -22,6 +22,7 @@
 #define CGAL_PATH_ON_SURFACE_H 1
 
 #include <CGAL/Combinatorial_map_operations.h>
+#include <CGAL/Combinatorial_map.h>
 #include <CGAL/Random.h>
 #include <boost/algorithm/searching/knuth_morris_pratt.hpp>
 #include <utility>
@@ -164,6 +165,11 @@ public:
     return m_path.back();
   }
 
+  /// @return the index of the last dart of the path.
+  /// @pre !is_empty()
+  std::size_t back_index() const
+  { return get_map().darts().index(back()); }
+  
   /// @return true iff df can be added at the end of the path.
   bool can_be_pushed(Dart_const_handle dh) const
   {
@@ -174,19 +180,28 @@ public:
     return CGAL::template belong_to_same_cell<Map, 0>
       (m_map, m_map.other_extremity(back()), dh);
   }
+
+  /// @return true iff the ith dart can be added at the end of the path.
+  bool can_be_pushed_by_index(std::size_t i) const
+  { return can_be_pushed(get_map().darts().iterator_to(get_map().darts()[i])); }
   
   /// Add the given dart at the end of this path.
   /// @pre can_be_pushed(dh)
   void push_back(Dart_const_handle dh, bool update_isclosed=true)
   {
     CGAL_assertion(dh!=Map::null_handle);
-    /* This assert is too long, it is tested in the is_valid method.
-       CGAL_assertion(can_be_pushed(dh)); */
+    /* This assert is too long, it is tested in the is_valid method. */
+    //  CGAL_assertion(can_be_pushed(dh)); 
 
     m_path.push_back(dh);
     if (update_isclosed) { update_is_closed(); }
   }
 
+  /// Add the given ith dart at the end of this path. 
+  void push_back_by_index(std::size_t i)
+  { push_back(get_map().darts().iterator_to(get_map().darts()[i])); }
+  
+  
   Self& operator+=(const Self& other)
   {
     m_path.reserve(m_path.size()+other.m_path.size());
