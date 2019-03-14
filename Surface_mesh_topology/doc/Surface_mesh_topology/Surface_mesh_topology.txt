@@ -27,15 +27,25 @@ The algorithms used are based on a paper by Erickson and Whittlesey \cgalCite{ew
 
 \subsection SMTopology_Input Specifying the Input Surface and Curves
 
-The homotopy tests are performed on a surface represented as a model of combinatorial map. The input surface mesh is supposed to be a connected closed orientable surface. This input surface is provided to conctruct a `Surface_mesh_curve_topology`. This class computes an internal representation of the surface as described below.
+The homotopy tests are performed on a surface represented as a model of \ref ChapterCombinatorialMap "combinatorial map" or `HalfedgeGraph`. The input surface mesh is supposed to be a connected closed orientable surface. This input surface is provided to conctruct a `Surface_mesh_curve_topology`. This class computes an internal representation of the surface as described below.
 
-Each curve on this surface is contained in an instance of the class `Path_on_surface`. An object in this class should be constructed with the same input surface as the  `Surface_mesh_curve_topology` container. A `Path_on_surface` behaves as a list. This list is initially empty and the darts corresponding to the sequence of oriented edges of an input curve should be pushed back in order in this list.
+Each curve on this surface is contained in an instance of the class `Path_on_surface`. An object in this class should be constructed with the same input surface as the  `Surface_mesh_curve_topology` container.
+
+A `Path_on_surface` behaves as a list. This list is initially empty and the darts or halfedges corresponding to the sequence of consecutive oriented edges of an input curve should be pushed back in this list. The class provides three ways for extending a nonempty path.
+- Simply push the next dart or halfedge using the \ref Path_on_surface::push_back "push_back()" member function.
+- When the surface is represented by a combinatorial map or a `Surface_mesh` the user may push the index of the next dart/halfedge instead of the dart/halfedge itself with the member function \ref Path_on_surface::push_back_by_index "push_back_by_index()". This may however be at the cost of an overhead computation mapping the index to the actual dart/halfedge.
+- The path may be extended with the member function \ref Path_on_surface::extend_positive_turn "extend_positive_turn()" by specifying the next dart/halfedge thanks to a number of positive turns with respect to the previous dart/halfedge in the path.
+
+In the two first cases, the source vertex of the added dart/halfedge  should coincide with the target vertex of the last dart/halfedge in the path. The user is responsible for ensuring this condition. The member functions \ref Path_on_surface::can_be_pushed "can_be_pushed" and \ref Path_on_surface::can_be_pushed_by_index "can_be_pushed_by_index()" return true if and only if the condition is satisfied.
+
+In addition to these functionalities, we provide an intuitive mesh builder `Combinatorial_map_2_incremental_builder`. The user can add facets to the mesh one at a time. Each facet is specified by the sequence of its oriented edge labels given as a string where the labels are words separated by blank spaces. The label of the opposite of an oriented edge is preceded by a minus. For example, the opposite of 'a1' is '-a1'. See \ref SMTopology_Example_II "examples below". Note that all the facets should be oriented the same way to form an oriented surface. This builder includes a path creator where the sequence of darts of the path is given as a string of oriented edge labels, similarly to the facets.
 
 \subsection SMTopology_DS Data Structure Presentation
 
 \subsubsection SMTopology_Build Building the Internal Surface Representation
 
-A common first step in the homotopy test algorithms is to transform the input surface mesh into a simplified mesh. This preprocessing step is done once for all for a given mesh. The simplified surface is a quadrangulation, every face of which is a quadrilateral, stored in a `Surface_mesh_curve_topology`. The user should not modify the input surface as long as homotopy tests should be performed with this `Surface_mesh_curve_topology`.
+A common first step in the homotopy test algorithms is to transform the input surface mesh into a simplified mesh. This preprocessing step is done once for all for a given mesh. The simplified surface is a quadrangulation, every face of which is a quadrilateral, stored in a `Surface_mesh_curve_topology`.
+\note The user should not modify the input surface as long as homotopy tests should be performed with this `Surface_mesh_curve_topology`.
 
 Each time a `Path_on_surface` is provided for a homotopy test, it is first transformed to an equivalent path in the quadrangulation stored by the `Surface_mesh_curve_topology`. This transformation is transparent to the user who has never access to the quadrangulation.
 
@@ -47,11 +57,27 @@ Given two `Path_on_surface` \f$p_1\f$ and \f$p_2\f$, the class `Surface_mesh_cur
 
 - `are_freely_homotopic`(\f$p_1\f$, \f$p_2\f$) returns true if the closed curves \f$p_1\f$ and \f$p_2\f$ are freely homotopic.
 
-- `are_base_point_homotopic`(\f$p_1\f$, \f$p_2\f$) returns true if the paths \f$p_1\f$ and \f$p_2\f$ are homotopic with fixed endpoints. This call is equivalent to `is_contractible`(\f$p_1\cdot \bar{p_2}\f$), where \f$p_1\cdot \bar{p_2}\f$ is the concatenation of \f$p_1\f$ and the reverse of \f$p_2\f$.
+- `are_base_point_homotopic`(\f$p_1\f$, \f$p_2\f$) returns true if the paths \f$p_1\f$ and \f$p_2\f$ are homotopic with fixed endpoints. This call is equivalent to `is_contractible`(\f$p_1\cdot \overline{p_2}\f$), where \f$p_1\cdot \overline{p_2}\f$ is the concatenation of \f$p_1\f$ and the reverse of \f$p_2\f$.
 
 
 
 \section SMTopology_Examples Examples
+\subsection SMTopology_Example_I Simple Example
+The following example shows how to load an off file and how to create three closed paths on this surface. Contractibility and free homotopy tests are then performed. The example also shows how to use the CGAL viewer if CGAL was compiled with Qt5.
+\cgalExample{Surface_mesh_topology/basic_example_surface_mesh_topology.cpp}
+
+\subsection SMTopology_Example_II Mesh Builder Examples
+Here, we show with two examples how to create a surface from a list of faces specified by edge label sequences.
+In this first example, we build a genus two torus surface from a single face, also called a polygonal schema. Two closed paths are then created. The paths are freely homotopic but not homotopic with fixed endpoint. 
+\cgalExample{Surface_mesh_topology/path_homotopy_with_symbols.cpp}
+
+In this second example, we build a genus two torus surface from a set of three squares. The first two faces are added each with a single call to the member function add_facet(). The third face is build incrementally by adding its edge labels one at a time. We then create a contractible closed path.
+\cgalExample{Surface_mesh_topology/path_homotopy_with_symbols_2.cpp}
+
+\subsection SMTopology_Example_III Open Path Example
+
+In this third example, we create non closed paths on the same mesh as in the first example and perform homotopy tests with fixed endpoints.
+\cgalExample{Surface_mesh_topology/open_path_homotopy.cpp}
 
 \section SMTopology_Benchmarks Benchmarks
 

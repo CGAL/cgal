@@ -26,7 +26,7 @@ int main()
   { p1.extend_positive_turn(2); } // Extend the path
   
   CGAL::Path_on_surface<LCC_3_cmap> p2(lcc); // A second path
-  p2.push_back_by_index(202); // 408); // Its starting dart
+  p2.push_back_by_index(202);  // Its starting dart
   for (int i=0; i<3; ++i)
   { p2.extend_negative_turn(2); } // Extend the path
   

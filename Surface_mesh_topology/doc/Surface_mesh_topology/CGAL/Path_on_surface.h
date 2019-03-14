@@ -11,8 +11,7 @@ namespace CGAL {
   class Path_on_surface
   {
   public:
-    /*! Constructor. Creates a Surface_mesh_curve_topology object using amap as input.
-     */
+    /// Constructor. Creates an empty path object which should lie on amap.
     Path_on_surface(const Map& amap);
 
     /// @return true iff the path is empty
@@ -33,18 +32,31 @@ namespace CGAL {
   
     /// Add the given dart at the end of this path.
     /// @pre can_be_pushed(dh)
-    void push_back(Dart_const_handle dh, bool update_isclosed=true);
+    void push_back(Dart_const_handle dh);
 
-    /*!
-     */
+    /// Add the dart with given index i at the end of this path.
+    /// @pre can_be_pushed_by_index(i)
+    void push_back_by_index(std::size_t i);
+
+    /// @return true iff the dart with index i can be added at the end of the path.
+    bool can_be_pushed_by_index(std::size_t i) const;
+
+    /// Add the dart obtained by turning nb times around the target vertex of the last dart in this path, in the positive circular order.
+    /// @pre !is_empty()
+    void extend_positive_turn(std::size_t nb); 
+
+    /// Add the dart obtained by turning nb times around the target vertex of the last dart in this path, in the negative circular order.
+    /// @pre !is_empty()
+    void extend_negative_turn(std::size_t nb); 
+
+    /// Concatenation operator. Concatenates other to this path.
+    /// @pre the last vertex of this path should coincide with the first vertex of other.
     Self& operator+=(const Self& other);
 
-    /*!
-     */
-    void generate_random_path(std::size_t length, CGAL::Random& random=CGAL::get_default_random());
+    /// Creates a random open path with lenght darts.
+    void generate_random_path(std::size_t lenght, CGAL::Random& random=CGAL::get_default_random());
 
-     /*!
-     */
+    /// Creates a random closed path with at least lenght darts.
     void generate_random_closed_path(std::size_t length, CGAL::Random& random=CGAL::get_default_random());
     
     /// Reverse the path (i.e. negate its orientation).
