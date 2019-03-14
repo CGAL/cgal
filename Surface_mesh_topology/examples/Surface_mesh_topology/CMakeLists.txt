@@ -24,6 +24,7 @@ if ( CGAL_FOUND )
     target_link_libraries(path_homotopy PUBLIC CGAL::CGAL_Qt5)
     target_link_libraries(basic_example_surface_mesh_topology PUBLIC CGAL::CGAL_Qt5)
     target_link_libraries(open_path_homotopy PUBLIC CGAL::CGAL_Qt5)
+    target_link_libraries(surface_mesh_topology_with_sm_and_polyhedron PUBLIC CGAL::CGAL_Qt5)
   endif()
 
 else()

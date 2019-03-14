@@ -74,7 +74,7 @@ namespace CGAL {
     typedef boost::unordered_map<Dart_const_handle, std::size_t> TDartIds;
 #endif //CGAL_PWRLE_TURN_V2
 
-    Surface_mesh_curve_topology(Map& amap, bool display_time=false) :
+    Surface_mesh_curve_topology(const Map& amap, bool display_time=false) :
       m_original_map(amap)
     {
       if (!m_map.is_without_boundary(1))
