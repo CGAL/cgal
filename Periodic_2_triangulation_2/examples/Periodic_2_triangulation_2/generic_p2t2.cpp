@@ -42,10 +42,10 @@ int main()
 //  PDT::Vertex_handle vh = T.insert(Point(12345.6, 5432.1));
 //  std::set<PDT::Face_handle> incident_faces = T.incident_faces(vh);
 
-//  draw(T.dt2, "Post-Insertion");
+  draw(T.dt2, "Post-Insertion");
 
-  T.convert_to_p2t2();
-  T.p2t2.insert(Point(0.3, 0.12));
+//  T.convert_to_p2t2();
+//  T.p2t2.insert(Point(0.3, 0.12));
 
   return EXIT_SUCCESS;
 }
