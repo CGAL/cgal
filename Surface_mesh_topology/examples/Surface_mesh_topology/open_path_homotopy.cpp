@@ -26,9 +26,9 @@ int main()
   { p1.extend_positive_turn(2); } // Extend the path
   
   CGAL::Path_on_surface<LCC_3_cmap> p2(lcc); // A second path
-  p2.push_back_by_index(314); // Its starting dart
+  p2.push_back_by_index(202); // 408); // Its starting dart
   for (int i=0; i<3; ++i)
-  { p2.extend_positive_turn(2); } // Extend the path
+  { p2.extend_negative_turn(2); } // Extend the path
   
   CGAL::Path_on_surface<LCC_3_cmap> p3(lcc); // A third path
   p3.push_back_by_index(411); // Its starting dart
@@ -38,10 +38,10 @@ int main()
   p3.extend_positive_turn(1);
   
   bool res1=smct.are_base_point_homotopic(p1, p2);
-  std::cout<<"The two paths p1 and p2 "<<(res1?"ARE":"ARE NOT")<<" base point homotopic."<<std::endl;
+  std::cout<<"Path p1 (pink) "<<(res1?"IS":"IS NOT")<<" base point homotopic with path p2 (green)."<<std::endl;
 
-  bool res2=smct.are_freely_homotopic(p1, p3);
-  std::cout<<"The two paths p1 and p3 "<<(res2?"ARE":"ARE NOT")<<" base point homotopic."<<std::endl;
+  bool res2=smct.are_base_point_homotopic(p1, p3);
+  std::cout<<"Path p1 (pink) "<<(res2?"IS":"IS NOT")<<" base point homotopic with path p3 (orange)."<<std::endl;
 
 #ifdef CGAL_USE_BASIC_VIEWER
   std::vector<CGAL::Path_on_surface<LCC_3_cmap> > paths;
