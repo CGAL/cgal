@@ -32,7 +32,7 @@
 #include <CGAL/Path_on_surface.h>
 #include <CGAL/Path_on_surface_with_rle.h>
 #include <CGAL/Path_generators.h>
-#include <CGAL/Combinatorial_map_basic_operations.h>
+#include <CGAL/Combinatorial_map_operations.h>
 #include <CGAL/Timer.h>
 #include <boost/unordered_map.hpp>
 #include <stack>
@@ -417,10 +417,11 @@ namespace CGAL {
       if (p1.is_empty() && p2.is_empty()) { return true; }
       if (p1.is_empty() || p2.is_empty()) { return false; }
 
-      if (!CGAL::belong_to_same_cell<Map,0>(m_map,
-                                            p1.front(), p2.front()) ||
-          !CGAL::belong_to_same_cell<Map,0>(m_map,
-                                            p1.back(), p2.back()))
+      if (!CGAL::template belong_to_same_cell<Map,0>(m_original_map,
+                                                     p1.front(), p2.front()) ||
+          !CGAL::template belong_to_same_cell<Map,0>(m_original_map,
+                                                     m_original_map.other_extremity(p1.back()),
+                                                     m_original_map.other_extremity(p2.back())))
       {
         std::cerr<<"Error: are_base_point_homotopic requires two paths that"
                  <<" share the same vertices as extremities."<<std::endl;
@@ -435,7 +436,7 @@ namespace CGAL {
       { t.start(); }
 
       Path_on_surface<Map> path=p1;
-      Path_on_surface<Map> path2=p2; p2.reverse();
+      Path_on_surface<Map> path2=p2; path2.reverse();
       path+=path2;
 
       bool res=is_contractible(path);
@@ -486,8 +487,8 @@ namespace CGAL {
       {
         if (!m_original_map.is_marked(path[i], m_mark_T))
         {
-          cur=get_first_dart_of_the_path(path[i]);
-          while(cur!=get_second_dart_of_the_path(path[i]))
+          cur=get_first_dart_of_the_path(path[i], false);
+          while(cur!=get_second_dart_of_the_path(path[i], false))
           {
             res.push_back(cur, false);
             cur=m_map.template beta<1>(cur);
@@ -925,7 +926,7 @@ namespace CGAL {
     }
 
     Dart_const_handle get_first_dart_of_the_path
-    (typename Map::Dart_const_handle adart) const
+    (typename Map::Dart_const_handle adart, bool withopposite=true) const
     {
       CGAL_assertion(!m_original_map.is_marked(adart, m_mark_T));
       CGAL_assertion(is_edge_has_path(adart));
@@ -941,11 +942,11 @@ namespace CGAL {
 
       const std::pair<Dart_const_handle, Dart_const_handle>&
           p=paths.find(opposite)->second;
-      return m_map.template beta<2>(p.second);
+      return (withopposite?m_map.template beta<2>(p.second):p.second);
     }
 
     Dart_const_handle get_second_dart_of_the_path
-    (typename Map::Dart_const_handle adart) const
+    (typename Map::Dart_const_handle adart, bool withopposite=true) const
     {
       CGAL_assertion(!m_original_map.is_marked(adart, m_mark_T));
       CGAL_assertion(is_edge_has_path(adart));
@@ -961,7 +962,7 @@ namespace CGAL {
 
       const std::pair<Dart_const_handle, Dart_const_handle>&
           p=paths.find(opposite)->second;
-      return m_map.template beta<2>(p.first);
+      return (withopposite?m_map.template beta<2>(p.first):p.first);
     }
 
     /// Test if paths are valid, i.e.:
