@@ -194,7 +194,6 @@ do
       CGAL_LOCATION=$arg
   esac
 done
-
 # Load settings
 if [ -f "$CGAL_ROOT/.autocgalrc" ]; then
   . "$CGAL_ROOT/.autocgalrc"
@@ -202,7 +201,6 @@ else
   echo "CONFIGURATION FILE  .autocgalrc NOT FOUND" >&2;
   exit 1
 fi
-
 
 if [ -n "${SCRIPTS_DIR}" ]; then
   CGAL_DIR=`readlink "${CGAL_ROOT}/CGAL-git"`
@@ -276,13 +274,6 @@ for HOST in ${BUILD_HOSTS}; do
       echo "export CGAL_DIR=/cgal_root/\${CGAL_LAST}">>env.sh
       docker run --rm  -t -e CGAL_LAST="${CGAL_RELEASE_ID}" -e HOST="${HOST}" -v ${CGAL_ROOT}/ssh:/tmp_ssh -v ${DEPS_DIR}:/deps -v ${CGAL_ROOT}:/cgal_root cgal/testsuite-docker:debian-stable-cross-compilation-for-arm
     else
-      #read number from file and increase
-      #if [ ! -r last_dev_id ]; then
-      #  echo "0" > last_dev_id
-      #fi
-      #DEV_ID=$(cat last_dev_id)
-      #echo "$((${DEV_ID}+1))" > last_dev_id
-      #echo "export CGAL_DIR=/cgal_root/CGAL-0.${DEV_ID}-dev">>env.sh
       echo "export CGAL_DIR=/cgal_root/CGAL-git">>env.sh
       docker run --rm  -t -e HOST="${HOST}" -v ${CGAL_ROOT}/ssh:/tmp_ssh -v ${DEPS_DIR}:/deps -v ${CGAL_ROOT}:/cgal_root -v${CGAL_DIR}:/cgal_root/CGAL-git cgal/testsuite-docker:debian-stable-cross-compilation-for-arm
     fi

@@ -123,16 +123,20 @@ setup_dirs()
   # dir for the actual release
   if [ ! -d ${CGAL_DIR}/test ]; then
     mkdir ${CGAL_DIR}/test
+    #give all rights so that, if it is first created by docker, it is still editable without root access by the local user.
+    chmod 777 ${CGAL_DIR}/test
   fi
   CGAL_TEST_DIR=${CGAL_DIR}/test
 
   if [ ! -d "${CGAL_DIR}/cmake" ]; then
     mkdir "${CGAL_DIR}/cmake"
+    chmod 777 "${CGAL_DIR}/cmake"
     log "${ACTUAL_LOGFILE}" "Creating ${CGAL_DIR}/cmake"
   fi
 
   if [ ! -d "${CGAL_DIR}/cmake/platforms" ]; then
     mkdir "${CGAL_DIR}/cmake/platforms"
+    chmod 777 "${CGAL_DIR}/cmake/platforms"
     log "${ACTUAL_LOGFILE}" "Creating ${CGAL_DIR}/cmake/platforms"
   fi
 
@@ -141,7 +145,8 @@ setup_dirs()
     CGAL_RELEASE_ID=`basename "${CGAL_RELEASE_DIR}"`
   else
     CGAL_GIT_VERSION=$(sed -n '/CGAL_VERSION /s/#define CGAL_VERSION //p'<"$CGAL_DIR/${INSTALLATION_DIR}include/CGAL/version.h" | sed -n 's/-\w*//p')
-    CGAL_GIT_VERSION="${CGAL_GIT_VERSION}-Ic-20190314"
+    MINIMALIST_DATE=$(date +%y%m%d)
+    CGAL_GIT_VERSION="${CGAL_GIT_VERSION}-Ic-${MINIMALIST_DATE}"
     CGAL_RELEASE_ID="CGAL-${CGAL_GIT_VERSION}"
   fi
 
@@ -153,6 +158,7 @@ setup_dirs()
 
   if [ ! -r "${LOGS_DIR}" ]; then
     mkdir "$LOGS_DIR"
+    chmod 777 "$LOGS_DIR"
   fi
 
   #
@@ -178,6 +184,7 @@ setup_dirs()
     if [ ! -d "${CGAL_BINARY_DIR}" ]; then
       log "${ACTUAL_LOGFILE}" "Creating platform directory ${CGAL_BINARY_DIR}"
       mkdir "${CGAL_BINARY_DIR}"
+      chmod 777 "${CGAL_BINARY_DIR}"
     fi
 
   done
@@ -258,10 +265,9 @@ run_test_on_platform()
     CMAKE_OPTS="${CMAKE_OPTS} -DWITH_examples=ON -DWITH_demos=ON -DCGAL_TEST_SUITE=ON"
   fi
   if [ -z "${SHOW_PROGRESS}" ]; then
-    cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' ${CMAKE_OPTS} $CGAL_DIR >package_installation.log 2>&1
+    cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' ${CMAKE_OPTS} $CGAL_DIR  2>&1 >package_installation.log
   else
-  CMAKE_EXEC_CMD=$(echo "cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' ${CMAKE_OPTS} $CGAL_DIR")
-  cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' ${CMAKE_OPTS} $CGAL_DIR 2>&1 |tee package_installation.log
+    cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' ${CMAKE_OPTS} $CGAL_DIR 2>&1 |tee package_installation.log
   fi
   LIST_TEST_FILE="${CGAL_ROOT}/list_test_packages"
   if [ -f ${LIST_TEST_FILE} ]; then
@@ -280,7 +286,8 @@ run_test_on_platform()
   if [ -z "${SHOW_PROGRESS}" ]; then
     ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} ${KEEP_TESTS:+-FC .}> tmp.txt
   else
-    ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} ${KEEP_TESTS:+-FC .}|tee tmp.txt
+    echo "ctest ${CTEST_OPTS} ${TO_TEST:+-L ${TO_TEST}} ${KEEP_TESTS:+-FC .}|tee tmp.txt"
+    ctest ${CTEST_OPTS} ${TO_TEST:+-L ${TO_TEST}} ${KEEP_TESTS:+-FC .}|tee tmp.txt
   fi
   #####################
   ##   GET RESULTS   ##
@@ -310,6 +317,7 @@ run_test_on_platform()
   OUTPUT_FILE=results_${CGAL_TESTER}_${PLATFORM}.tar
   TEST_REPORT="TestReport_${CGAL_TESTER}_${PLATFORM}"
   mkdir -p Installation
+  chmod 777 Installation
   cp "${CGAL_BINARY_DIR}/package_installation.log" "Installation/${TEST_REPORT}"
   
   rm -f $OUTPUT_FILE $OUTPUT_FILE.gz
@@ -328,9 +336,12 @@ run_test_on_host()
     collect_all_current_platforms "${CGAL_BINARY_DIR_BASE}"
   fi
 
-  for PLATFORM in ${PLATFORMS}; do
+  for PLATFORM in ${PLATFORMS}; do  
     run_test_on_platform "${PLATFORM}"
     publish_results "${PLATFORM}"
+    if [ -z "${KEEP_TESTS}" ]; then
+      rm -rf $CGAL_DIR/cmake/platforms/${PLATFORM}
+    fi
   done
 }
 
