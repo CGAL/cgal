@@ -516,18 +516,17 @@ transform(const Transformation& t, const Polygon_2<Traits_P,Container_P>& p);
 /// followed by the output of the coordinates of the vertices.
 /// @{
 
-/// Inserts the polygon `p` into the stream `os`. \pre The insert
-/// operator must be defined for `Point_2`.
+/// Reads a polygon from stream `is` and assigns it to `p`.
+/// \pre The extract operator must be defined for `Point_2`.
 /// \memberof Polygon_2
 template <class Traits_P, class Container_P>
 std::istream &operator>>(std::istream &is, Polygon_2<Traits_P,Container_P>& p);
 
-/// Reads a polygon from stream `is` and assigns it
-/// to `p`. \pre The extract operator must be defined for `Point_2`.
+/// Inserts the polygon `p` into the stream `os`.
+/// \pre The insert operator must be defined for `Point_2`.
 /// \memberof Polygon_2
 template <class Traits_P, class Container_P>
-std::ostream
-&operator<<(std::ostream &os, const Polygon_2<Traits_P,Container_P>& p);
+std::ostream &operator<<(std::ostream &os, const Polygon_2<Traits_P,Container_P>& p);
 
 /// @} // IO
 
