@@ -31,7 +31,7 @@ void test(const Mesh& mesh)
   
   CGAL::Path_on_surface<Mesh> p2(mesh); // A second path
   std::vector<std::size_t> indices={202, 206, 335, 317, 322, 69, 62, 414}; // All the indices of the darts
-  for (int i=0; i<indices.size(); ++i)
+  for (std::size_t i=0; i<indices.size(); ++i)
   { p2.push_back_by_index(indices[i]); }
 
   bool res1=smct.is_contractible(p1);
@@ -71,6 +71,8 @@ int main()
       std::cout<<"ERROR reading file data/double-torus-example.off for polyhedron."<<std::endl;
       exit(EXIT_FAILURE);
     }
+
+    CGAL::Path_on_surface<Polyhedron> path(p);
   }
 
   {

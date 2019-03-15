@@ -22,10 +22,12 @@ int main()
   CGAL::Surface_mesh_curve_topology<CMap> smct(cm);
 
   bool res1=smct.are_freely_homotopic(p1, p2);
-  std::cout<<"Paths p1 and p2 "<<(res1?"ARE":"ARE NOT")<<" freely homotopic."<<std::endl;
+  std::cout<<"Paths p1 and p2 "<<(res1?"ARE":"ARE NOT")
+           <<" freely homotopic."<<std::endl;
 
   bool res2=smct.are_base_point_homotopic(p1, p2);
-  std::cout<<"Paths p1 and p2 "<<(res2?"ARE":"ARE NOT")<<" base point homotopic."<<std::endl;
+  std::cout<<"Paths p1 and p2 "<<(res2?"ARE":"ARE NOT")
+           <<" base point homotopic."<<std::endl;
 
   return EXIT_SUCCESS;
 }
