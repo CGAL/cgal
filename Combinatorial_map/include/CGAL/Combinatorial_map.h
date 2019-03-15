@@ -50,6 +50,8 @@
 #include <deque>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/unordered_map.hpp>
+#include <boost/graph/graph_traits.hpp>
+
 #include <CGAL/config.h>
 
 #if defined( __INTEL_COMPILER )
@@ -448,15 +450,15 @@ namespace CGAL {
     }
 
     /** Import the given hds which should be a model of an halfedge graph. */
-    /*    template<class HEG, class PointConverter>
+    template<class HEG, class PointConverter>
     void import_from_halfedge_graph(const HEG& heg              ,
                                     const PointConverter& pointconverter,
                                     boost::unordered_map
-                                    <typename boost::graph_traits<HEG>::halfedge_descriptor halfedge_descriptor,
+                                    <typename boost::graph_traits<HEG>::halfedge_descriptor,
                                     Dart_handle>* origin_to_copy=NULL,
                                     boost::unordered_map
                                     <Dart_handle,
-                                    typename boost::graph_traits<HEG>::halfedge_descriptor halfedge_descriptor>*
+                                    typename boost::graph_traits<HEG>::halfedge_descriptor>*
                                     copy_to_origin=NULL)
 
     {
@@ -464,38 +466,41 @@ namespace CGAL {
       // (here we cannot use CGAL::Unique_hash_map because it does not provide
       // iterators...
       boost::unordered_map
-        <typename boost::graph_traits<HEG>::halfedge_descriptor halfedge_descriptor,
+        <typename boost::graph_traits<HEG>::halfedge_descriptor,
          Dart_handle> local_dartmap; 
       if (origin_to_copy==NULL) // Used local_dartmap if user does not provides its own unordered_map
       { origin_to_copy=&local_dartmap; }
 
       Dart_handle new_dart;
-      for (auto it=begin_halfedges(heg), itend=end_halfedges(); it!=itend; ++it)
+      for (auto it=halfedges(heg).begin(), itend=halfedges(heg).end(); it!=itend; ++it)
       {
-        new_dart=mdarts.emplace();
-        (*origin_to_copy)[it]=new_dart;
-        if (copy_to_origin!=NULL) { (*copy_to_origin)[new_dart]=it; }
+        if (!is_border(heg, it))
+        {
+          new_dart=mdarts.emplace();
+          (*origin_to_copy)[it]=new_dart;
+          if (copy_to_origin!=NULL) { (*copy_to_origin)[new_dart]=it; }
+        }
       }
 
-      boost::unordered_map
-        <typename boost::graph_traits<HEG>::halfedge_descriptor halfedge_descriptor,
+      typename boost::unordered_map
+        <typename boost::graph_traits<HEG>::halfedge_descriptor,
          Dart_handle>::iterator dartmap_iter, dartmap_iter_end=origin_to_copy->end();
       for (dartmap_iter=origin_to_copy->begin(); dartmap_iter!=dartmap_iter_end;
            ++dartmap_iter)
       {
-        for (unsigned int i=0; i<=2; i++)
+        basic_link_beta(dartmap_iter->second,
+                        (*origin_to_copy)[next(dartmap_iter->first, heg)], 1);
+        
+        if (!is_border_edge(heg, dartmap_iter->first) &&
+            (dartmap_iter->first)<opposite(dartmap_iter->first, heg))
         {
-          if (!amap.is_free(dartmap_iter->first,i) &&
-              (dartmap_iter->first)<(amap.beta(dartmap_iter->first,i)))
-          {
-            basic_link_beta(dartmap_iter->second,
-                            (*origin_to_copy)[amap.beta(dartmap_iter->first,i)], i);
-          }
+          basic_link_beta(dartmap_iter->second,
+                          (*origin_to_copy)[opposite(dartmap_iter->first), heg], 2);
         }
       }
 
       CGAL_assertion (is_valid());
-      }*/
+    }
     
     /** Clear the combinatorial map. Remove all darts and all attributes.
      *  Note that reserved marks are not free.

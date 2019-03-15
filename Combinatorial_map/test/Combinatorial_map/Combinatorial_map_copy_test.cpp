@@ -579,6 +579,14 @@ bool testCopy()
   return true;
 }
 
+bool testImportFromHalfedge()
+{
+
+  Map1 map1;
+  Map2 map2;
+  Map3 map3;
+}
+
 int main()
 {
   std::cout<<"Combinatorial map copy test (v1)."<<std::flush;
