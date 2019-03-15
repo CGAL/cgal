@@ -489,7 +489,7 @@ class Polygon_2 {
 /// Test for equality: two polygons are equal iff there exists a
 /// cyclic permutation of the vertices of `p2` such that they are
 /// equal to the vertices of `p1`. Note that the template argument
-/// `Container` of `p1` and `p2` may be different.
+/// `%Container` of `p1` and `p2` may be different.
 /// \memberof Polygon_2
 template <class Traits_P, class Container1_P, class Container2_P>
 bool operator==( const Polygon_2<Traits_P,Container1_P> &p1,
