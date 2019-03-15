@@ -264,7 +264,7 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "cgalDebugEnd=\htmlonly[block] </div> \endhtmlonly" \
                          "cgalDebugFunction=This is a function for debugging purpose." \
                          "cgalAdvancedBegin=^^ \htmlonly[block] <div class=\"CGALAdvanced\"> <div>Advanced</div> \endhtmlonly ^^" \
-                         "cgalAdvancedEnd=\htmlonly[block] </div> \endhtmlonly" \
+                         "cgalAdvancedEnd=^^ \htmlonly[block] </div> \endhtmlonly" \
                          "cgalAdvancedFunction=This is an advanced function." \
                          "cgalAdvancedClass=This is an advanced class." \
                          "cgalAdvancedType=This is an advanced type." \
