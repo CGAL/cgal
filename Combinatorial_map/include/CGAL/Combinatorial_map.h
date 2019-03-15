@@ -51,6 +51,9 @@
 #include <boost/type_traits/is_same.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/graph/graph_traits.hpp>
+#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 
 #include <CGAL/config.h>
 
@@ -450,9 +453,8 @@ namespace CGAL {
     }
 
     /** Import the given hds which should be a model of an halfedge graph. */
-    template<class HEG, class PointConverter>
-    void import_from_halfedge_graph(const HEG& heg              ,
-                                    const PointConverter& pointconverter,
+    template<class HEG>
+    void import_from_halfedge_graph(const HEG& heg,
                                     boost::unordered_map
                                     <typename boost::graph_traits<HEG>::halfedge_descriptor,
                                     Dart_handle>* origin_to_copy=NULL,
@@ -472,13 +474,15 @@ namespace CGAL {
       { origin_to_copy=&local_dartmap; }
 
       Dart_handle new_dart;
-      for (auto it=halfedges(heg).begin(), itend=halfedges(heg).end(); it!=itend; ++it)
+      for (typename boost::graph_traits<HEG>::halfedge_iterator
+           it=halfedges(heg).begin(), itend=halfedges(heg).end();
+           it!=itend; ++it)
       {
-        if (!is_border(heg, it))
+        if (!CGAL::is_border(*it, heg))
         {
           new_dart=mdarts.emplace();
-          (*origin_to_copy)[it]=new_dart;
-          if (copy_to_origin!=NULL) { (*copy_to_origin)[new_dart]=it; }
+          (*origin_to_copy)[*it]=new_dart;
+          if (copy_to_origin!=NULL) { (*copy_to_origin)[new_dart]=*it; }
         }
       }
 
@@ -489,13 +493,15 @@ namespace CGAL {
            ++dartmap_iter)
       {
         basic_link_beta(dartmap_iter->second,
-                        (*origin_to_copy)[next(dartmap_iter->first, heg)], 1);
+                        (*origin_to_copy)[CGAL::next(dartmap_iter->first, heg)],
+            1);
         
-        if (!is_border_edge(heg, dartmap_iter->first) &&
-            (dartmap_iter->first)<opposite(dartmap_iter->first, heg))
+        if (!CGAL::is_border(CGAL::opposite(dartmap_iter->first, heg), heg) &&
+            (dartmap_iter->first)<CGAL::opposite(dartmap_iter->first, heg))
         {
           basic_link_beta(dartmap_iter->second,
-                          (*origin_to_copy)[opposite(dartmap_iter->first), heg], 2);
+                          (*origin_to_copy)
+                          [CGAL::opposite(dartmap_iter->first, heg)], 2);
         }
       }
 

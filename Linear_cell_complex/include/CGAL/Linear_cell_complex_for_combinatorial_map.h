@@ -26,6 +26,7 @@
 #include <CGAL/Linear_cell_complex_min_items.h>
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/CMap_linear_cell_complex_storages.h>
+#include <CGAL/boost/graph/properties.h>
 
 namespace CGAL {
 
@@ -155,6 +156,66 @@ namespace CGAL {
        const PointConverter& pointconverter) :
         Base(alcc, converters, dartinfoconverter, pointconverter)
       {}
+
+      /** Import the given hds which should be a model of an halfedge graph. */
+      template<class HEG, class PointConverter>
+      void import_from_halfedge_graph(const HEG& heg              ,
+                                      const PointConverter& pointconverter,
+                                      boost::unordered_map
+                                      <typename boost::graph_traits<HEG>::halfedge_descriptor,
+                                      Dart_handle>* origin_to_copy=NULL,
+                                      boost::unordered_map
+                                      <Dart_handle,
+                                      typename boost::graph_traits<HEG>::halfedge_descriptor>*
+                                      copy_to_origin=NULL)
+
+      {
+        boost::unordered_map
+            <typename boost::graph_traits<HEG>::halfedge_descriptor,
+            Dart_handle> local_dartmap;
+        if (origin_to_copy==NULL) // Used local_dartmap if user does not provides its own unordered_map
+        { origin_to_copy=&local_dartmap; }
+
+        Base::import_from_halfedge_graph(heg, origin_to_copy, copy_to_origin);
+
+        typedef typename boost::property_map<HEG,vertex_point_t>::const_type
+            Point_property_map;
+        Point_property_map ppmap = get(CGAL::vertex_point, heg);
+
+        typename boost::unordered_map
+          <typename boost::graph_traits<HEG>::halfedge_descriptor,
+           Dart_handle>::iterator dartmap_iter, dartmap_iter_end=origin_to_copy->end();
+        for (dartmap_iter=origin_to_copy->begin(); dartmap_iter!=dartmap_iter_end;
+             ++dartmap_iter)
+        {
+          if (this->vertex_attribute(dartmap_iter->second)==NULL)
+          {
+            this->set_vertex_attribute(dartmap_iter->second,
+                                 this->create_vertex_attribute());
+            pointconverter.run(ppmap[source(dartmap_iter->first, heg)],
+                this->point(dartmap_iter->second));
+          }
+        }
+      }
+
+      /** Import the given hds which should be a model of an halfedge graph. */
+      template<class HEG>
+      void import_from_halfedge_graph(const HEG& heg,
+                                      boost::unordered_map
+                                      <typename boost::graph_traits<HEG>::halfedge_descriptor,
+                                      Dart_handle>* origin_to_copy=NULL,
+                                      boost::unordered_map
+                                      <Dart_handle,
+                                      typename boost::graph_traits<HEG>::halfedge_descriptor>*
+                                      copy_to_origin=NULL)
+      {
+         typedef typename boost::property_traits<typename boost::property_map
+            <HEG, vertex_point_t>::type>::value_type HEG_point;
+
+        CGAL::internal::Set_point_if_possible_cmap<HEG_point, Point> default_point_converter;
+        import_from_halfedge_graph(heg, default_point_converter,
+                                   origin_to_copy, copy_to_origin);
+      }
 
     };
 
