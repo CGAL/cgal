@@ -1,12 +1,27 @@
-// Author(s)     : 
+// Copyright (c) 1997, 2012, 2019 INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the Licenxse, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s)     : Mariette Yvinec, Claudia Werner
 
 #ifndef CGAL_DELAUNAY_TRIANGULATION_SPHERE_FILTERED_TRAITS_2_H
 #define CGAL_DELAUNAY_TRIANGULATION_SPHERE_FILTERED_TRAITS_2_H
 
-#include <CGAL/basic.h>
 #include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
-#include <CGAL/Filtered_predicate.h>
-//#include <CGAL/static_in_cone_ntC3.h>
 
 namespace CGAL { 
 
@@ -34,15 +49,12 @@ struct Delaunay_weighted_converter_2
     return Target_wp(Converter::operator()(wp.point()),
                      Converter::operator()(wp.weight()));
   }*/
-	Target_wp
-	operator()(const Source_wp &wp) const
-	{
-	  return Converter::operator()(wp);
-	}
+
+  Target_wp operator()(const Source_wp &wp) cons { return Converter::operator()(wp); }
 };
 
-	/*
-	
+  /*
+  
 // The argument is supposed to be a Filtered_kernel like kernel.
 template < typename K >
 class Delaunay_triangulation_sphere_filtered_traits_2
@@ -99,7 +111,7 @@ public:
             Delaunay_weighted_converter_2<C2F> >  In_cone_3;
 
   Power_test_2 power_test_2_object() const
-	{ return Power_test_2();}
+  { return Power_test_2(); }
 
   Compare_power_distance_2 compare_power_distance_2_object() const
   { return Compare_power_distance_2(); }
@@ -112,7 +124,7 @@ public:
   }
 
   Side_of_oriented_circle_2
-		side_of_oriented_circle_2_object() const {
+    side_of_oriented_circle_2_object() const {
     return Side_of_oriented_circle_2();
   }
 
