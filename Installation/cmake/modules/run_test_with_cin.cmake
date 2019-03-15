@@ -1,4 +1,4 @@
-if(NOT CMD OR NOT EXISTS ${CMD})
+if(NOT CMD OR (NOT ANDROID AND NOT SSH AND NOT EXISTS ${CMD}))
   message(FATAL_ERROR
     "The variable `CMD` should be defined to the test program to run!")
 endif()
@@ -10,7 +10,12 @@ endif()
 
 if(ANDROID)
   execute_process(
-    COMMAND adb shell "cd ${ANDROID_DIR_PREFIX}${PROJECT_NAME} && ${ANDROID_DIR_PREFIX}${CMD}"
+    COMMAND adb shell "cd ${ANDROID_DIR_PREFIX}${PROJECT_NAME} && ${ANDROID_DIR_PREFIX}${PROJECT_NAME}/${CMD}"
+    INPUT_FILE ${CIN}
+    RESULT_VARIABLE error_result)
+elseif(SSH)
+  execute_process(
+    COMMAND ssh ${SSH_HOST} "cd ${SSH_DIR_PREFIX}${PROJECT_NAME} && LD_LIBRARY_PATH=${SSH_DIR_PREFIX}/lib ${SSH_DIR_PREFIX}${PROJECT_NAME}/${CMD}"
     INPUT_FILE ${CIN}
     RESULT_VARIABLE error_result)
 else()

@@ -1,4 +1,4 @@
-#version 120
+
 varying highp vec4 color;
 varying highp float out_dist;
 void main(void) {

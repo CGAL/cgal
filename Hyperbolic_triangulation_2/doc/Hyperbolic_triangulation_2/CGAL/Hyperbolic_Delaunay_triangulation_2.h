@@ -15,9 +15,9 @@ The hyperbolic plane is represented in the Poincaré disk model.
 \tparam Tds must be a model of `TriangulationDataStructure_2`. By default, this parameter is instantiated with 
 `Triangulation_data_structure_2< Triangulation_vertex_base_2<Gt>, Hyperbolic_triangulation_face_base_2<Gt> >`
 
-\sa HyperbolicDelaunayTriangulationTraits_2
-\sa TriangulationDataStructure_2
-\sa Delaunay_triangulation_2
+\sa `HyperbolicDelaunayTriangulationTraits_2`
+\sa `TriangulationDataStructure_2`
+\sa `Delaunay_triangulation_2`
 
 */
 
