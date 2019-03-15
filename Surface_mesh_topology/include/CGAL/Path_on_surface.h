@@ -474,7 +474,7 @@ public:
   void generate_random_closed_path(std::size_t length)
   {
     CGAL::Random& random=get_default_random();
-    generate_random_closed_path(random, length);
+    generate_random_closed_path(length, random);
   }
 
   void generate_random_closed_path(CGAL::Random& random)
