@@ -19,20 +19,15 @@ typedef Kernel::Point_3  Point_3;
 typedef CGAL::Surface_mesh<Point_3> SM;
 
 ///////////////////////////////////////////////////////////////////////////////
-template<typename Mesh>
-void test(const Mesh& mesh)
+void test(const LCC_3_cmap& mesh)
 {
-  CGAL::Surface_mesh_curve_topology<Mesh> smct(mesh);
+  CGAL::Surface_mesh_curve_topology<LCC_3_cmap> smct(mesh);
 
-  CGAL::Path_on_surface<Mesh> p1(mesh); // A first path
-  p1.push_back_by_index(14); // Its starting dart
-  for (int i=0; i<7; ++i)
-  { p1.extend_positive_turn(2); } // Extend the path
-  
-  CGAL::Path_on_surface<Mesh> p2(mesh); // A second path
-  std::vector<std::size_t> indices={202, 206, 335, 317, 322, 69, 62, 414}; // All the indices of the darts
-  for (std::size_t i=0; i<indices.size(); ++i)
-  { p2.push_back_by_index(indices[i]); }
+  CGAL::Path_on_surface<LCC_3_cmap> p1(mesh); // A first path
+  p1.generate_random_closed_path(10);
+
+  CGAL::Path_on_surface<LCC_3_cmap> p2(mesh); // A second path
+  p2.generate_random_closed_path(10);
 
   bool res1=smct.is_contractible(p1);
   std::cout<<"Path p1 (pink) "<<(res1?"IS":"IS NOT")<<" contractible."<<std::endl;
@@ -40,48 +35,48 @@ void test(const Mesh& mesh)
   bool res2=smct.are_freely_homotopic(p1, p2);
   std::cout<<"Path p1 (pink) "<<(res2?"IS":"IS NOT")<<" homotopic with path p2 (green)."<<std::endl;
 
-  bool res3=smct.are_base_point_homotopic(p1, p2);
-  std::cout<<"Path p1 (pink) "<<(res3?"IS":"IS NOT")<<" base point homotopic with path p3 (orange)."<<std::endl;
+#ifdef CGAL_USE_BASIC_VIEWER
+    std::vector<CGAL::Path_on_surface<LCC_3_cmap> > paths;
+    paths.push_back(p1);
+    paths.push_back(p2);
+    CGAL::draw(mesh, paths); // Enable only if CGAL was compiled with Qt5 */
+#endif // CGAL_USE_BASIC_VIEWER
 }
 ///////////////////////////////////////////////////////////////////////////////
-int main()
+int main(int argc, char** argv)
 {
+  std::string file=(argc==1?"data/3torus-smooth.off":argv[1]);
   {
     LCC_3_cmap lcc;
-    if (!CGAL::load_off(lcc, "data/double-torus-example.off"))
+    if (!CGAL::load_off(lcc, file.c_str()))
     {
-      std::cout<<"ERROR reading file data/double-torus-example.off for linear cell complex."<<std::endl;
+      std::cout<<"ERROR reading file "<<file<<" for linear cell complex."<<std::endl;
       exit(EXIT_FAILURE);
     }
     test(lcc);
-
-#ifdef CGAL_USE_BASIC_VIEWER
-    /*  TODO SOMETHING std::vector<CGAL::Path_on_surface<LCC_3_cmap> > paths;
-  paths.push_back(p1);
-  paths.push_back(p2);  
-  paths.push_back(p3);  
-  CGAL::draw(lcc, paths); // Enable only if CGAL was compiled with Qt5 */
-#endif // CGAL_USE_BASIC_VIEWER
   }
   
   {
     Polyhedron p;
-    if (!CGAL::read_off(std::string("data/double-torus-example.off"), p))
+    if (!CGAL::read_off(file, p))
     {
-      std::cout<<"ERROR reading file data/double-torus-example.off for polyhedron."<<std::endl;
+      std::cout<<"ERROR reading file "<<file<<" for polyhedron."<<std::endl;
       exit(EXIT_FAILURE);
     }
 
-    CGAL::Path_on_surface<Polyhedron> path(p);
+    LCC_3_cmap lcc; lcc.import_from_halfedge_graph(p);
+    test(lcc);
   }
 
   {
     SM sm;
-    if (!CGAL::read_off(std::string("data/double-torus-example.off"), sm))
+    if (!CGAL::read_off(file, sm))
     {
-      std::cout<<"ERROR reading file data/double-torus-example.off for surface mesh."<<std::endl;
+      std::cout<<"ERROR reading file "<<file<<" for surface mesh."<<std::endl;
       exit(EXIT_FAILURE);
     }
+    LCC_3_cmap lcc; lcc.import_from_halfedge_graph(sm);
+    test(lcc);
   }
   
   return EXIT_SUCCESS;
