@@ -1216,8 +1216,9 @@ bool do_intersect(const Polyline& polyline1,
  * @param np2 optional sequence of \ref pmp_namedparameters for `tm2`, among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm1` (tm2`).
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm1` (`tm2`).
  *   \attention The two property maps must have the same `value_type`.
+ *
  *   If this parameter is omitted, an internal property map for
  *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
