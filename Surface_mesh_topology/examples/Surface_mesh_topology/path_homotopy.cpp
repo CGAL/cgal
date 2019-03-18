@@ -14,15 +14,15 @@ typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3> LCC_3_cmap;
 ///////////////////////////////////////////////////////////////////////////////
 [[ noreturn ]] void usage(int /*argc*/, char** argv)
 {
-  std::cout<<"usage: "<<argv[0]<<" file [-draw] [-nbdefo D] [-nbfaces F] "
-           <<" [-nbtests N] [-seed S] [-time]"<<std::endl
+  std::cout<<"usage: "<<argv[0]<<" file [-draw] [-L l1 l2] [-D d1 d2] "
+           <<" [-N n] [-seed S] [-time]"<<std::endl
            <<"   Load the given off file, compute one random path, deform it "
            <<"into a second path and test that the two paths are isotopic."
            <<std::endl
            <<"   -draw: draw mesh and the two paths." <<std::endl
-           <<"   -nbdefo D: use D deformations to generate the second path (by default a random number between 10 and 100)."<<std::endl
-           <<"   -nbfaces F: use F connected random faces to generate the initial path (by default a random number beween 10 and 100)."<<std::endl
-           <<"   -nbtests N: do N tests of isotopy (using 2*N random paths) (by default 1)."<<std::endl
+           <<"   -L l1 l2: create a path of length >= l: a random number between [l1, l2] (by default [10, 100])."<<std::endl
+           <<"   -D d1 d2: use d deformations to generate the second path: d is a random number between [d1, d2] (by default [10, 100]."<<std::endl
+           <<"   -N n: do n tests of isotopy (using 2*n random paths) (by default 1)."<<std::endl
            <<"   -seed S: uses S as seed of random generator. Otherwise use a different seed at each run (based on time)."<<std::endl
            <<"   -time: display computation times."<<std::endl
            <<std::endl;
@@ -38,10 +38,10 @@ typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3> LCC_3_cmap;
 void process_command_line(int argc, char** argv,
                           std::string& file,
                           bool& draw,
-                          bool& withD,
-                          unsigned int& D,
-                          bool& withF,
-                          unsigned int& F,
+                          unsigned int& l1,
+                          unsigned int& l2,
+                          unsigned int& d1,
+                          unsigned int& d2,
                           unsigned int& N,
                           CGAL::Random& random,
                           bool& time)
@@ -52,21 +52,21 @@ void process_command_line(int argc, char** argv,
     arg=argv[i];
     if (arg=="-draw")
     { draw=true; }
-    else if (arg=="-nbdefo")
+    else if (arg=="-D")
     {
-     if (i==argc-1)
-     { error_command_line(argc, argv, "Error: no number after -nbdefo option."); }
-     withD=true;
-     D=static_cast<unsigned int>(std::stoi(std::string(argv[++i])));
+     if (i+2>=argc)
+     { error_command_line(argc, argv, "Error: not enough number after -D option."); }
+     d1=static_cast<unsigned int>(std::stoi(std::string(argv[++i])));
+     d2=static_cast<unsigned int>(std::stoi(std::string(argv[++i])));
     }
-    else if (arg=="-nbfaces")
+    else if (arg=="-L")
     {
-     if (i==argc-1)
-     { error_command_line(argc, argv, "Error: no number after -nbfaces option."); }
-     withF=true;
-     F=static_cast<unsigned int>(std::stoi(std::string(argv[++i])));
+     if (i+2>=argc)
+     { error_command_line(argc, argv, "Error: not enough number after -L option."); }
+     l1=static_cast<unsigned int>(std::stoi(std::string(argv[++i])));
+     l2=static_cast<unsigned int>(std::stoi(std::string(argv[++i])));
     }
-    else if (arg=="-nbtests")
+    else if (arg=="-N")
     {
       if (i==argc-1)
       { error_command_line(argc, argv, "Error: no number after -nbtests option."); }
@@ -89,21 +89,21 @@ void process_command_line(int argc, char** argv,
   }
 
   if (N==0) { N=1; }
+  if (l2<l1) l2=l1;
+  if (d2<d1) d2=d1;
 }
 ///////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv)
 {
   std::string file="data/3torus-smooth.off";  
   bool draw=false;
-  bool withD=false;
-  unsigned int D=0;
-  bool withF=false;
-  unsigned int F=0;
+  unsigned int l1=10, l2=100;
+  unsigned int d1=10, d2=100;
   unsigned int N=1;
   CGAL::Random random; // Used when user do not provide its own seed.
   bool time=false;
 
-  process_command_line(argc, argv, file, draw, withD, D, withF, F, N, random, time);
+  process_command_line(argc, argv, file, draw, l1, l2, d1, d2, N, random, time);
 
   LCC_3_cmap lcc;
   if (!CGAL::load_off(lcc, file.c_str()))
@@ -123,7 +123,8 @@ int main(int argc, char** argv)
    
   unsigned int nbcontractible=0;
   std::vector<std::size_t> errors_seeds;
-
+  unsigned int length, defo;
+  
   for (unsigned int i=0; i<N; ++i)
   {
     // TEMPO POUR DEBUG
@@ -136,31 +137,22 @@ int main(int argc, char** argv)
     }
     std::cout<<"Random seed: "<<random.get_seed()<<std::endl;
 
-    if (!withF)
-    { F=static_cast<unsigned int>(random.get_int
-                                  (10, std::max(std::size_t(11),
-                                                lcc.number_of_darts()/10))); }
-
-    if (!withD)
-    { D=static_cast<unsigned int>(random.get_int
-                                  (10, std::max(std::size_t(11),
-                                                lcc.number_of_darts()/10))); }
-
-
-
+    length=static_cast<unsigned int>(random.get_int(l1, l2+1));
+    defo=static_cast<unsigned int>(random.get_int(d1, d2+1));
+    
     std::vector<CGAL::Path_on_surface<LCC_3_cmap> > paths;
     std::vector<CGAL::Path_on_surface<LCC_3_cmap> > transformed_paths;
 
     CGAL::Path_on_surface<LCC_3_cmap> path1(lcc);
-    path1.generate_random_closed_path(F, random);
+    path1.generate_random_closed_path(length, random);
 
     //if (path1.length()<100000) { // TEMPO FOR DEBUG
-    std::cout<<"Path1 size: "<<path1.length()<<" (from "<<F<<" darts); ";
+    std::cout<<"Path1 size: "<<path1.length()<<" (from "<<length<<" darts); ";
     paths.push_back(path1);
 
     CGAL::Path_on_surface<LCC_3_cmap> path2(path1);
-    path2.update_path_randomly(D, random);
-    std::cout<<"Path2 size: "<<path2.length()<<" (from "<<D<<" deformations): ";
+    path2.update_path_randomly(defo, random);
+    std::cout<<"Path2 size: "<<path2.length()<<" (from "<<defo<<" deformations): ";
     paths.push_back(path2);
     std::cout<<std::flush;
 
