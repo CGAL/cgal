@@ -470,7 +470,7 @@ protected:
             : fragment_source_color_comp;
     
     QOpenGLShader *fragment_shader_face= new QOpenGLShader(QOpenGLShader::Fragment);
-    if(!fragment_shader_face->compileSourceCode(fragment_source_color))
+    if(!fragment_shader_face->compileSourceCode(source_))
     { std::cerr<<"Compiling fragmentsource FAILED"<<std::endl; }
 
     if(!rendering_program_face.addShader(vertex_shader_face))
