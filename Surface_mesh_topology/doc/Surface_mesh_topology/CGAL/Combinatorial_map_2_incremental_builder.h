@@ -14,9 +14,9 @@ namespace CGAL {
     /// Dart_handle type.
     typedef typename CMap::Dart_handle Dart_handle;
     
-    /*! Constructor. Creates a Combinatorial_map_2_incremental_builder object, using amap.
+    /*! Constructor. Creates a Combinatorial_map_2_incremental_builder object, to create amap.
      */
-    Surface_mesh_curve_topology(CMap& amap);
+    Combinatorial_map_2_incremental_builder(CMap& amap);
     
     /// Start a new surface
     void begin_surface();
