@@ -258,12 +258,20 @@ write_attributes(std::ostream& os,
   write_vector(os,att);
 }
 
+enum VTU_ATTRIBUTE_TYPE{
+  DOUBLE=0,
+  UNIT_8,
+  SIZE_TYPE
+};
+
 template <class C3T3>
 void output_to_vtu_with_attributes(std::ostream& os,
                                    const C3T3& c3t3,
-                                   std::vector<std::pair<const char*, const std::vector<double>*> >& attributes,
+                                   std::vector<std::pair<const char*, const boost::variant<std::vector<double>, std::vector<uint8_t>, std::vector<std::size_t> >*> >& attributes,
+                              //     std::vector<CGAL::VTU_ATTRIBUTE_TYPE>& attribute_types,
                                    IO::Mode mode = IO::BINARY)
 {
+  //CGAL_assertion(attributes.size() == attribute_types.size());
   typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Vertex_handle Vertex_handle;
   const Tr& tr = c3t3.triangulation();
@@ -296,7 +304,17 @@ void output_to_vtu_with_attributes(std::ostream& os,
   os << "    <CellData Scalars=\""<<attributes.front().first<<"\">\n";
   for(std::size_t i = 0; i< attributes.size(); ++i)
   {
-    write_attribute_tag(os,attributes[i].first, *attributes[i].second, binary,offset);
+    switch(attributes[i].second->which()){
+    case 0:
+      write_attribute_tag(os,attributes[i].first, *boost::get<std::vector<double> >(attributes[i].second), binary,offset);
+      break;
+    case 1:
+      write_attribute_tag(os,attributes[i].first, *boost::get<std::vector<uint8_t> >(attributes[i].second), binary,offset);
+      break;
+    default:
+      write_attribute_tag(os,attributes[i].first, *boost::get<std::vector<std::size_t> >(attributes[i].second), binary,offset);
+      break;
+    }
   }
   os << "    </CellData>\n";
   os << "   </Piece>\n"
@@ -306,7 +324,17 @@ void output_to_vtu_with_attributes(std::ostream& os,
     write_c3t3_points(os,tr,V); // fills V if the mode is BINARY
     write_cells(os,c3t3,V);
     for(std::size_t i = 0; i< attributes.size(); ++i)
-      write_attributes(os, *attributes[i].second);
+      switch(attributes[i].second->which()){
+      case 0:
+        write_attributes(os, *boost::get<std::vector<double> >(attributes[i].second));
+        break;
+      case 1:
+        write_attributes(os, *boost::get<std::vector<uint8_t> >(attributes[i].second));
+        break;
+      default:
+        write_attributes(os, *boost::get<std::vector<std::size_t> >(attributes[i].second));
+        break;
+      }
   }
   os << "</VTKFile>\n";
 }
@@ -324,11 +352,13 @@ void output_to_vtu(std::ostream& os,
   for( Cell_iterator cit = c3t3.cells_in_complex_begin() ;
        cit != c3t3.cells_in_complex_end() ;
        ++cit )
-    {
-      mids.push_back(cit->subdomain_index());
-    }
-  std::vector<std::pair<const char*, const std::vector<double>* > > atts;
-  atts.push_back(std::make_pair("MeshDomain", &mids));
+  {
+    double v = cit->subdomain_index();
+    mids.push_back(v);
+  }
+  std::vector<std::pair<const char*, const boost::variant<std::vector<double>, std::vector<uint8_t>, std::vector<std::size_t> >* > > atts;
+  boost::variant<std::vector<double>, std::vector<uint8_t>, std::vector<std::size_t> > v = mids;
+  atts.push_back(std::make_pair("MeshDomain", &v));
   output_to_vtu_with_attributes(os, c3t3, atts, mode);
 }
 

@@ -318,7 +318,7 @@ public:
 
     const Scene_facegraph_item* poly_item =
       qobject_cast<const Scene_facegraph_item*>(item);
-
+    
     if (poly_item)
     {
       if (extension != "vtp")
