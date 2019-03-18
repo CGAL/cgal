@@ -283,7 +283,7 @@ public:
 
     void get_feature_usage (std::vector<std::size_t>& count) const
     {
-      if (!is_leaf)
+      if (!is_leaf && splitter.feature != -1)
       {
         count[std::size_t(splitter.feature)] ++;
         left->get_feature_usage(count);
