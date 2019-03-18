@@ -24,5 +24,6 @@
 ## Classes ##
 - `CGAL::Surface_mesh_curve_topology<CMap>`
 - `CGAL::Path_on_surface<CMap>`
+- `CGAL::Combinatorial_map_2_incremental_builder<CMap>`
 
 */

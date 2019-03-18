@@ -5,14 +5,14 @@ namespace CGAL {
     
     The class `Path_on_surface` represents a walk in the vertex-edge graph of a `CombinatorialMap`. Each object in this class is constructed from an external combinatorial map on which the path should lie. A path is represented as a sequence of darts, each dart representing an oriented edge in the path. The class `Path_on_surface` behaves as a container for this sequence of darts. Darts are added one at a time to the path thanks to the `push_back()` method.
     
-    \tparam Map a model of  `CombinatorialMap`
+    \tparam CMap a model of  `CombinatorialMap`
   */
-  template<typename Map_>
+  template<typename CMap_>
   class Path_on_surface
   {
   public:
     /// Constructor. Creates an empty path object which should lie on amap.
-    Path_on_surface(const Map& amap);
+    Path_on_surface(const CMap& amap);
 
     /// @return true iff the path is empty
     bool is_empty() const;
@@ -53,13 +53,14 @@ namespace CGAL {
     /// @pre the last vertex of this path should coincide with the first vertex of other.
     Self& operator+=(const Self& other);
 
+    /// Reverse the path (i.e. negate its orientation).
+    void reverse();
+
     /// Creates a random open path with lenght darts.
     void generate_random_path(std::size_t lenght, CGAL::Random& random=CGAL::get_default_random());
 
     /// Creates a random closed path with at least lenght darts.
     void generate_random_closed_path(std::size_t length, CGAL::Random& random=CGAL::get_default_random());
     
-    /// Reverse the path (i.e. negate its orientation).
-    void reverse();
    };
 }
