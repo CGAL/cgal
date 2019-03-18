@@ -82,7 +82,7 @@ public:
   typedef CFlat<Map>                      Flat;
   typedef std::list<Flat>                 List_of_flats;
   typedef typename List_of_flats::iterator List_iterator;
-  // typedef typename List_of_dart_length::const_iterator List_const_iterator;
+  // TODO typedef typename List_of_dart_length::const_iterator List_const_iterator;
 
   typedef Path_on_surface_with_rle<Map> Self;
 
@@ -1176,7 +1176,7 @@ public:
     List_iterator it2;
     CGAL_assertion(is_negative_bracket(it1, it2)); // Here it2 is unused
 
-    if (it1==it3)
+    if (size_of_list()==1) // it1==it3)
     { // Case of cyclic bracket
       CGAL_assertion(size_of_list()==1);
       CGAL_assertion(flat_length(it1)<0);
@@ -1224,7 +1224,7 @@ public:
     List_iterator it2;
     CGAL_assertion(is_positive_bracket(it1, it2)); // Here it2 is unused
 
-    if (it1==it3)
+    if (size_of_list()==1) // it1==it3)
     { // Case of cyclic bracket
       CGAL_assertion(size_of_list()==1);
       CGAL_assertion(flat_length(it1)>0);

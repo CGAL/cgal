@@ -495,7 +495,7 @@ namespace CGAL {
         }
       }
       res.update_is_closed();
-      CGAL_assertion(res.is_closed());
+      CGAL_assertion(res.is_empty() || res.is_closed());
       CGAL_assertion(res.is_valid());
       return res;
     }
