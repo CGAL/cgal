@@ -24,9 +24,6 @@
 #include <CGAL/license/Point_set_processing_3.h>
 
 #include <CGAL/config.h>
-#if defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) || defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
-#error CGAL LAS reader requires a C++11 compiler
-#endif
 
 #include <tuple>
 
