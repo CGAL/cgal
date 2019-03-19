@@ -231,7 +231,20 @@ write_attribute_tag(std::ostream& os,
 		    std::size_t& offset)
 {
   std::string format = binary ? "appended" : "ascii";
-  std::string type = (sizeof(T) == 8) ? "Float64" : "Float32";
+  std::string type = "";
+  if(std::is_floating_point<T>::value)
+  {
+    type = (sizeof(T) == 8) ? "Float64" : "Float32";
+  }
+  else
+  {
+    if(sizeof(T) == 1)
+      type =  "UInt8";
+    else if(sizeof(T) == 4)
+      type = "UInt32";
+    else
+      type = "UInt64";
+  }
   os << "      <DataArray type=\"" << type << "\" Name=\"" << attr_name << "\" format=\"" << format; 
 
   if (binary) {
@@ -268,7 +281,6 @@ template <class C3T3>
 void output_to_vtu_with_attributes(std::ostream& os,
                                    const C3T3& c3t3,
                                    std::vector<std::pair<const char*, const boost::variant<std::vector<double>, std::vector<uint8_t>, std::vector<std::size_t> >*> >& attributes,
-                              //     std::vector<CGAL::VTU_ATTRIBUTE_TYPE>& attribute_types,
                                    IO::Mode mode = IO::BINARY)
 {
   //CGAL_assertion(attributes.size() == attribute_types.size());
@@ -348,7 +360,8 @@ void output_to_vtu(std::ostream& os,
                IO::Mode mode = IO::BINARY)
 {
   typedef typename C3T3::Cells_in_complex_iterator Cell_iterator;
-  std::vector<double> mids;      
+  std::vector<double> mids;
+  std::size_t id = 0;
   for( Cell_iterator cit = c3t3.cells_in_complex_begin() ;
        cit != c3t3.cells_in_complex_end() ;
        ++cit )
@@ -356,6 +369,7 @@ void output_to_vtu(std::ostream& os,
     double v = cit->subdomain_index();
     mids.push_back(v);
   }
+  
   std::vector<std::pair<const char*, const boost::variant<std::vector<double>, std::vector<uint8_t>, std::vector<std::size_t> >* > > atts;
   boost::variant<std::vector<double>, std::vector<uint8_t>, std::vector<std::size_t> > v = mids;
   atts.push_back(std::make_pair("MeshDomain", &v));
