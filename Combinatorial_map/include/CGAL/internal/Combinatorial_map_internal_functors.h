@@ -984,7 +984,6 @@ struct Reverse_orientation_of_connected_component_functor<CMap, CGAL::Void>
 };
 // ****************************************************************************
 // Beta functor, used to combine several beta.
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 template<typename CMap, typename Dart_handle, typename ... Betas>
 struct Beta_functor;
 
@@ -1036,7 +1035,6 @@ struct Beta_functor_static<CMap, Dart_handle, B, Betas...>
   { return Beta_functor_static<CMap, Dart_handle, Betas...>::
         run(AMap, AMap.template get_beta<B>(ADart)); }
 };
-#endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 // ****************************************************************************
 template<typename Container, class WitdId=
          typename Container::value_type::Has_id>
