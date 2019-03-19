@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
 
 
  std::cout << "edges of the finite dual graph" << std::endl;
- for(boost::graph_traits<FiniteDual>::edge_descriptor e : edges(finite_dual)) {
+ for(boost::graph_traits<FiniteDual>::edge_descriptor e : CGAL::make_range(edges(finite_dual))) {
    std::cout << e << "  " << source(e,primal) << " " << source(e,finite_dual)  << std::endl;
  }
 

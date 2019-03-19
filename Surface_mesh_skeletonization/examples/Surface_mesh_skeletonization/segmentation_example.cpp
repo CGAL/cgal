@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
 
   //for each input vertex compute its distance to the skeleton
   std::vector<double> distances(num_vertices(tmesh));
-  for(Skeleton_vertex v : vertices(skeleton) )
+  for(Skeleton_vertex v : CGAL::make_range(vertices(skeleton)) )
   {
     const Point& skel_pt = skeleton[v].point;
     for(vertex_descriptor mesh_v : skeleton[v].vertices)

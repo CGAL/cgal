@@ -1686,7 +1686,7 @@ private:
         boost::predecessor_map(&pred[0]).weight_map(local_eweight_map));
 
       // backtrack to the anchor and tag each vertex in the local patch graph
-      for(sg_vertex_descriptor v : vertices(glocal)) {
+      for(sg_vertex_descriptor v : make_range(vertices(glocal))) {
         // skip the added super source vertex in the patch
         if (v == source)
           continue;

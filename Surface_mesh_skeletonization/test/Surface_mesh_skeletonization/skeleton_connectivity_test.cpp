@@ -78,7 +78,7 @@ int main()
 // check all vertices are seen exactly once
 {
   std::set<vertex_descriptor> visited;
-  for(vertex_desc v : vertices(skeleton))
+  for(vertex_desc v : CGAL::make_range(vertices(skeleton)))
   {
     for(vertex_descriptor vd : skeleton[v].vertices)
       if (!visited.insert(vd).second)
@@ -111,7 +111,7 @@ int main()
     vertex_desc cur = qu.front();
     qu.pop();
 
-    for(edge_desc ed : in_edges(cur, skeleton))
+    for(edge_desc ed : CGAL::make_range(in_edges(cur, skeleton)))
     {
       vertex_desc next = source(ed, skeleton);
       if (visited.insert(next).second)
@@ -119,7 +119,7 @@ int main()
     }
   }
 
-  for(vertex_desc vd : vertices(skeleton))
+  for(vertex_desc vd : CGAL::make_range(vertices(skeleton)))
   {
     if (!visited.count(vd))
     {

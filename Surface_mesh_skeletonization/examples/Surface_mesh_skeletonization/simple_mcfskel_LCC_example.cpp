@@ -67,7 +67,7 @@ int main()
 
   // Output skeleton points and the corresponding surface points
   output.open("correspondance-lcc.cgal");
-  for(Skeleton_vertex v : vertices(skeleton))
+  for(Skeleton_vertex v : CGAL::make_range(vertices(skeleton)))
     for(vertex_descriptor vd : skeleton[v].vertices)
       output << "2 " << skeleton[v].point << " "
                      << get(CGAL::vertex_point, lcc, vd)  << "\n";

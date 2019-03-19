@@ -934,8 +934,8 @@ void Volume::display_surface_mesher_result()
     points_out.precision(18);
     points_out << "OFF\n" << c2t3.triangulation().number_of_vertices() << " 0 0\n";
     for(const Tr::Vertex& v :
-                  std::make_pair(c2t3.triangulation().vertices_begin(),
-                                 c2t3.triangulation().vertices_end()))
+                  CGAL::make_range(c2t3.triangulation().vertices_begin(),
+                                   c2t3.triangulation().vertices_end()))
     {
       points_out << v.point() << std::endl;
     }

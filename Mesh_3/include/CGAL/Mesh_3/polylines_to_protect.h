@@ -368,7 +368,7 @@ void snap_graph_vertices(Graph& graph,
   if(tree.size() == 0) return;
 
   for(typename boost::graph_traits<Graph>::vertex_descriptor v :
-                vertices(graph))
+                make_range(vertices(graph)))
   {
     const typename K::Point_3 p = graph[v].point;
     NN_search nn(tree, p);

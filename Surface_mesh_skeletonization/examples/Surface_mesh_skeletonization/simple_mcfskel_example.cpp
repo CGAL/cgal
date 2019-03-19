@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
 
   // Output skeleton points and the corresponding surface points
   output.open("correspondance-poly.cgal");
-  for(Skeleton_vertex v : vertices(skeleton))
+  for(Skeleton_vertex v : CGAL::make_range(vertices(skeleton)))
     for(vertex_descriptor vd : skeleton[v].vertices)
       output << "2 " << skeleton[v].point << " "
                      << get(CGAL::vertex_point, tmesh, vd)  << "\n";

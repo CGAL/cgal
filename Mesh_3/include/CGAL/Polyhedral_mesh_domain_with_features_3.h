@@ -455,7 +455,7 @@ add_featured_edges_to_graph(const Polyhedron& p,
 
   typedef typename boost::property_map<Polyhedron,vertex_point_t>::const_type Vpm;
   Vpm vpm = get(vertex_point, p);
-  for(Graph_vertex_descriptor v : vertices(graph)){
+  for(Graph_vertex_descriptor v : make_range(vertices(graph))){
     vertex_descriptor vc;
     typename P2vmap::iterator it = p2vmap.find(get(vpm,v));
     if(it == p2vmap.end()) {
@@ -468,7 +468,7 @@ add_featured_edges_to_graph(const Polyhedron& p,
   typedef typename boost::property_map<Polyhedron,face_patch_id_t<Tag_> >::type Face_patch_id_pmap;
   Face_patch_id_pmap fpm = get(face_patch_id_t<Tag_>(),p);
 
-  for(Graph_edge_descriptor e : edges(graph)){
+  for(Graph_edge_descriptor e : make_range(edges(graph))){
     vertex_descriptor vs = p2vmap[get(vpm,source(e,graph))];
     vertex_descriptor vt = p2vmap[get(vpm,target(e,graph))];
     CGAL_warning_msg(vs != vt, "ignore self loop");

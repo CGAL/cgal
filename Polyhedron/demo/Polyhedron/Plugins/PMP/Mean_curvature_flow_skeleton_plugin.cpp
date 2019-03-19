@@ -384,7 +384,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   boost::property_map<Face_graph,CGAL::vertex_point_t>::type vpm
     = get(CGAL::vertex_point,*smesh);
 
-  for(boost::graph_traits<Skeleton>::vertex_descriptor v : vertices(item->skeleton_curve) )
+  for(boost::graph_traits<Skeleton>::vertex_descriptor v : CGAL::make_range(vertices(item->skeleton_curve)) )
   {
     const Point& skel_pt = item->skeleton_curve[v].point;
     for(vertex_descriptor mesh_v : item->skeleton_curve[v].vertices)

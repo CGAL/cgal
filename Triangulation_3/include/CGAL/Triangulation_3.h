@@ -1859,7 +1859,7 @@ public:
         Cell_handle next = c->neighbor(i);
         if(!this->try_lock_cell(next)) // LOCK
         {
-          for(Cell_handle& ch : std::make_pair(cells.begin(), cells.end()))
+          for(Cell_handle ch : cells)
           {
             ch->tds_data().clear();
           }
@@ -1878,7 +1878,7 @@ public:
     }
     while(head != tail);
 
-    for(Cell_handle& ch : std::make_pair(cells.begin(), cells.end()))
+    for(Cell_handle ch : cells)
     {
       ch->tds_data().clear();
     }
@@ -1914,7 +1914,7 @@ public:
         Cell_handle next = c->neighbor(i);
         if(!this->try_lock_cell(next)) // LOCK
         {
-          for(Cell_handle& ch : std::make_pair(cells.begin(), cells.end()))
+          for(Cell_handle ch : cells)
           {
             ch->tds_data().clear();
           }
@@ -1933,7 +1933,7 @@ public:
     while(head != tail);
 
     std::set<Vertex_handle> tmp_vertices;
-    for(Cell_handle& ch : std::make_pair(cells.begin(), cells.end()))
+    for(Cell_handle ch : cells)
     {
       ch->tds_data().clear();
       for(int i = 0;  i < 4; ++i)
@@ -3636,12 +3636,12 @@ insert_in_conflict(const Point& p,
 
         if(*could_lock_zone == false)
         {
-          for(Cell_handle ch : std::make_pair(cells.begin(), cells.end()))
+          for(Cell_handle ch : cells)
           {
             ch->tds_data().clear();
           }
 
-          for(Facet f : std::make_pair(facets.begin(), facets.end()))
+          for(Facet& f : facets)
           {
             f.first->neighbor(f.second)->tds_data().clear();
           }

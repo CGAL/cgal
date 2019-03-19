@@ -3623,8 +3623,7 @@ try_lock_and_get_incident_cells(const Vertex_handle& v,
 
         if (!try_lock_element(next)) // LOCK
         {
-          for(Cell_handle& ch :
-            std::make_pair(cells.begin(), cells.end()))
+          for(Cell_handle ch : cells)
           {
             ch->tds_data().clear();
           }
@@ -3640,7 +3639,7 @@ try_lock_and_get_incident_cells(const Vertex_handle& v,
       }
       ++head;
     } while(head != tail);
-    for(Cell_handle& ch : std::make_pair(cells.begin(), cells.end()))
+    for(Cell_handle ch : cells)
     {
       ch->tds_data().clear();
     }
@@ -3660,8 +3659,7 @@ try_lock_and_get_incident_cells(const Vertex_handle& v,
   bool ret = try_lock_and_get_incident_cells(v, tmp_cells);
   if (ret)
   {
-    for(Cell_handle& ch :
-                  std::make_pair(tmp_cells.begin(), tmp_cells.end()))
+    for(Cell_handle ch : tmp_cells)
     {
       if (filter(ch))
         cells.push_back(ch);
