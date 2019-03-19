@@ -889,13 +889,13 @@ public:
   /*!
   returns the vertex of the \f$ i^{th}\f$ neighbor of `f` that is
   opposite to `f`.
-  \pre $0 \\leqle i \\leqle 2$.
+  \pre \f$ 0 \leq i \leq 2\f$.
   */
   Vertex_handle mirror_vertex(Face_handle f, int i) const;
 
   /*!
   returns the index of `f` in its \f$ i^{th}\f$ neighbor.
-  \pre $0 \\leqle i \\leqle 2$.
+  \pre \f$0 \leq i \leq 2\f$.
   */
   int mirror_index(Face_handle f, int i) const;
 
@@ -1062,12 +1062,12 @@ public:
 /// @{
 
   /*!
-  Returns \f$ i+1\f$ modulo 3.\pre $0 \\leqle i \\leqle 2$.
+  Returns \f$ i+1\f$ modulo 3.\pre \f$0 \leq i \leq 2\f$.
   */
   int ccw(int i) const;
 
   /*!
-  Returns \f$ i+2\f$ modulo 3.\pre $0 \\leqle i \\leqle 2$.
+  Returns \f$ i+2\f$ modulo 3.\pre \f$0 \leq i \leq 2\f$.
   */
   int cw(int i) const;
 
