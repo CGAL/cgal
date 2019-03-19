@@ -158,28 +158,16 @@ namespace internal {
 // the real type.
 // Overloads for empty returns are also provided.
 #if CGAL_INTERSECTION_VERSION < 2
-  #if defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)
-    template<typename, typename, typename, typename T>
-    inline
-    CGAL::Object intersection_return(const T& t) { return CGAL::make_object(t); }
-  #else
-    template<typename, typename, typename, typename T>
-    inline
-    CGAL::Object intersection_return(T&& t) { return CGAL::make_object(std::forward<T>(t)); }
-  #endif // CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
+  template<typename, typename, typename, typename T>
+  inline
+  CGAL::Object intersection_return(T&& t) { return CGAL::make_object(std::forward<T>(t)); }
   template<typename, typename, typename>
   inline
   CGAL::Object intersection_return() { return CGAL::Object(); }
 #else
-#if defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)
-    template<typename F, typename A, typename B, typename T>
-    inline typename cpp11::result_of<F(A, B)>::type
-    intersection_return(const T& t) { return typename cpp11::result_of<F(A, B)>::type(t); }
-  #else
-    template<typename F, typename A, typename B, typename T>
-    inline typename cpp11::result_of<F(A, B)>::type
-    intersection_return(T&& t) { return typename cpp11::result_of<F(A, B)>::type(std::forward<T>(t)); }
-  #endif // CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
+  template<typename F, typename A, typename B, typename T>
+  inline typename cpp11::result_of<F(A, B)>::type
+  intersection_return(T&& t) { return typename cpp11::result_of<F(A, B)>::type(std::forward<T>(t)); }
   template<typename F, typename A, typename B>
   inline typename cpp11::result_of<F(A, B)>::type
   intersection_return() { return typename cpp11::result_of<F(A, B)>::type(); }

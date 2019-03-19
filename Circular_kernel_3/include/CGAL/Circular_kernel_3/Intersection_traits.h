@@ -201,28 +201,16 @@ namespace internal{
 // the real type.
 // Overloads for empty returns are also provided.
 #if CGAL_INTERSECTION_VERSION < 2
-  #if defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)
-    template<typename, typename T>
-    inline
-    CGAL::Object sk3_intersection_return(const T& t) { return CGAL::make_object(t); }
-  #else
-    template<typename, typename T>
-    inline
-    CGAL::Object sk3_intersection_return(T&& t) { return CGAL::make_object(std::forward<T>(t)); }
-  #endif // CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
+  template<typename, typename T>
+  inline
+  CGAL::Object sk3_intersection_return(T&& t) { return CGAL::make_object(std::forward<T>(t)); }
   template<typename>
   inline
   CGAL::Object sk3_intersection_return() { return CGAL::Object(); }
 #else
-  #if defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)
-    template<typename RT, typename T>
-    inline RT
-    sk3_intersection_return(const T& t) { return RT(t); }
-  #else
-    template<typename RT, typename T>
-    inline RT
-    sk3_intersection_return(T&& t) { return RT(std::forward<T>(t)); }
-  #endif // CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
+  template<typename RT, typename T>
+  inline RT
+  sk3_intersection_return(T&& t) { return RT(std::forward<T>(t)); }
   template<typename RT>
   inline RT
   sk3_intersection_return() { return RT(); }

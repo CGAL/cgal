@@ -16,11 +16,9 @@
 #include <boost/timer.hpp>
 #include <boost/lexical_cast.hpp>
 
-#if !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_TUPLE)
 #include <tuple>
 #include <functional>
 #include <CGAL/Overload.h>
-#endif
 
 // Intersection_traits
 template<typename, typename, typename>
@@ -208,7 +206,6 @@ struct Do_f : Vec_holder {
   }
 };
 
-#if !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_TUPLE)
 cpp0x::tuple<int, int, int> intersect_each_variant_overload(const Vector& segs) {
   cpp0x::tuple<int, int, int> ret = cpp0x::make_tuple(0, 0, 0);
   typedef Intersection_traits<K, Segment, Segment> Traits;
@@ -236,7 +233,6 @@ cpp0x::tuple<int, int, int> intersect_each_variant_overload(const Vector& segs) 
   
   return ret;
 }
-#endif
 
 int main(int argc, char* argv[]) {
   int repeats = 100;
