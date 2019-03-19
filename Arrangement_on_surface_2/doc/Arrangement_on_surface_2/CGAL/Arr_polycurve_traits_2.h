@@ -1,12 +1,3 @@
-/// \ingroup PkgArrangement2Macros
-/// @{
-/*!
- * If the macro is set to one, then \f$x\f$-monotone curves are always
- * directed from left-to-right.
- */
-#define CGAL_ALWAYS_LEFT_TO_RIGHT
-/// @}
-
 namespace CGAL {
   /*! \ingroup PkgArrangement2TraitsClasses
    *
