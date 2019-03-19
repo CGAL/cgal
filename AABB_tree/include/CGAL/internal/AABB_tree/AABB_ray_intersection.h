@@ -180,7 +180,14 @@ private:
 
   struct as_ray_param_visitor {
     typedef FT result_type;
-    as_ray_param_visitor(const Ray* ray) : ray(ray) {}
+    as_ray_param_visitor(const Ray* ray)
+     : ray(ray), max_i(0)
+    {
+      typename AABB_traits::Geom_traits::Vector_3 v = ray->to_vector();
+      for (int i=1; i<3; ++i)
+        if( CGAL::abs(v[i]) > CGAL::abs(v[max_i]) )
+          max_i = i;
+    }
 
     template<typename T>
     FT operator()(const T& s)
@@ -196,16 +203,11 @@ private:
       typename AABB_traits::Geom_traits::Vector_3 x(ray->source(), point);
       typename AABB_traits::Geom_traits::Vector_3 v = ray->to_vector();
 
-      for(int i = 0; i < 3; ++i) {
-        if(v[i] != FT(0.)) {
-          return x[i] / v[i];
-        }
-      }
-      CGAL_assertion(false); // should never end-up here
-      return FT(0.);
+      return x[max_i] / v[max_i];
     }
 
     const Ray* ray;
+    int max_i;
   };
 };
 
