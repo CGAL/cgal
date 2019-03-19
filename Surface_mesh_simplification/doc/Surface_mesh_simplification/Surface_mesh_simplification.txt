@@ -31,8 +31,8 @@ is met, such as reaching the desired number of edges.
 The algorithm implemented here is generic in the sense that it does not require the surface mesh 
 to be of a particular type but to be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 
-The design is <A HREF="http://en.wikipedia.org/wiki/Policy-based_design"><I>policy-based</I></A>
-(<A HREF="http://en.wikipedia.org/wiki/Policy-based_design"><TT>http://en.wikipedia.org/wiki/Policy-based_design</TT></A>),
+The design is <A HREF="https://en.wikipedia.org/wiki/Policy-based_design"><I>policy-based</I></A>
+(<A HREF="https://en.wikipedia.org/wiki/Policy-based_design"><TT>https://en.wikipedia.org/wiki/Policy-based_design</TT></A>),
 meaning that you can customize some aspects of the process by passing a set of
 <I>policy objects</I>. Each policy object specifies a particular aspect of the algorithm,
 such as how edges are selected and where the replacement vertex is placed. All policies have 
