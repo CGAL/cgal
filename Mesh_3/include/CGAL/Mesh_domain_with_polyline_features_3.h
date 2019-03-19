@@ -593,7 +593,6 @@ public:
     , current_curve_index_(1)
     , curves_aabb_tree_is_built(false) {}
 
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   template <typename T1, typename T2, typename ... T>
   Mesh_domain_with_polyline_features_3(const T1& o1, const T2& o2, const T& ...o)
     : MeshDomain_3(o1, o2, o...)
@@ -601,32 +600,6 @@ public:
     , current_curve_index_(1)
     , curves_aabb_tree_is_built(false) {}
 /// @}
-#else
-  /// Constructors
-  /// Call the base class constructor
-  template <typename T1, typename T2>
-  Mesh_domain_with_polyline_features_3(const T1& o1, const T2& o2)
-    : MeshDomain_3(o1, o2)
-    , current_corner_index_(1)
-    , current_curve_index_(1)
-    , curves_aabb_tree_is_built(false) {}
-
-  template <typename T1, typename T2, typename T3>
-  Mesh_domain_with_polyline_features_3(const T1& o1, const T2& o2,
-                                       const T3& o3)
-    : MeshDomain_3(o1, o2, o3)
-    , current_corner_index_(1)
-    , current_curve_index_(1)
-    , curves_aabb_tree_is_built(false) {}
-
-  template <typename T1, typename T2, typename T3, typename T4>
-  Mesh_domain_with_polyline_features_3(const T1& o1, const T2& o2,
-                                       const T3& o3, const T4& o4)
-    : MeshDomain_3(o1, o2, o3, o4)
-    , current_corner_index_(1)
-    , current_curve_index_(1)
-    , curves_aabb_tree_is_built(false) {}
-#endif
 
 /// \name Operations
 /// @{
