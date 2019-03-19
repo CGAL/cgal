@@ -261,8 +261,9 @@ run_test_on_platform()
   fi
   cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' -DBUILD_TESTING=OFF -DWITH_tests=OFF -DWITH_CGAL_Qt5=OFF -DCGAL_HEADER_ONLY=ON $CGAL_DIR>installation.log 2>&1
   rm CMakeCache.txt
+  CMAKE_OPTS="-DCGAL_TEST_SUITE=ON"
   if [ -n "${SCRIPTS_DIR}" ]; then
-    CMAKE_OPTS="${CMAKE_OPTS} -DWITH_examples=ON -DWITH_demos=ON -DCGAL_TEST_SUITE=ON"
+    CMAKE_OPTS="${CMAKE_OPTS} -DWITH_examples=ON -DWITH_demos=ON"
   fi
   if [ -z "${SHOW_PROGRESS}" ]; then
     cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' ${CMAKE_OPTS} $CGAL_DIR  2>&1 >package_installation.log
@@ -304,7 +305,7 @@ run_test_on_platform()
     echo "CGAL_VERSION ${CGAL_GIT_VERSION}">> "$RESULT_FILE"
   fi
   echo "TESTER ${CGAL_TESTER}" >> "$RESULT_FILE"
-  echo "TESTER_NAME ${CGAL_TESTER_NAME}" >> "$RESULT_FILE"
+  echo "TESTER_NAME ${CGAL_TESTER}" >> "$RESULT_FILE"
   echo "TESTER_ADDRESS ${TESTER_ADDRESS}" >> "$RESULT_FILE"
   echo "CGAL_TEST_PLATFORM ${PLATFORM}" >> "$RESULT_FILE"
   grep -e "^-- USING " "${CGAL_BINARY_DIR}/installation.log" >> $RESULT_FILE 
