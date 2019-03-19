@@ -41,15 +41,7 @@ namespace CGAL {
 
 namespace SegmentDelaunayGraphLinf_2 {
 
-#ifndef CGAL_CFG_NO_CPP0X_TUPLE
-#if (defined(_MSC_VER) && (_MSC_VER < 1700))
-#define sdg_tuple_maker cpp11::make_tuple
-#else
 #define sdg_tuple_maker std::forward_as_tuple
-#endif
-#else
-#define sdg_tuple_maker cpp11::make_tuple
-#endif
 
 template<class K>
 class Voronoi_vertex_ring_C2
