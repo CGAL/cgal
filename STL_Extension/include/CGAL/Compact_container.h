@@ -403,7 +403,6 @@ public:
 
   // Special insert methods that construct the objects in place
   // (just forward the arguments to the constructor, to optimize a copy).
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   template < typename... Args >
   iterator
   emplace(const Args&... args)
@@ -419,157 +418,6 @@ public:
     time_stamper->set_time_stamp(ret);
     return iterator(ret, 0);
   }
-#else
-  // inserts a default constructed item.
-  iterator emplace()
-  {
-    if (free_list == NULL)
-      allocate_new_block();
-
-    pointer ret = free_list;
-    free_list = clean_pointee(ret);
-    new (ret) value_type();
-    CGAL_assertion(type(ret) == USED);
-    ++size_;
-    time_stamper->set_time_stamp(ret);
-    return iterator(ret, 0);
-  }
-
-  template < typename T1 >
-  iterator
-  emplace(const T1 &t1)
-  {
-    if (free_list == NULL)
-      allocate_new_block();
-
-    pointer ret = free_list;
-    free_list = clean_pointee(ret);
-    new (ret) value_type(t1);
-    CGAL_assertion(type(ret) == USED);
-    ++size_;
-    time_stamper->set_time_stamp(ret);
-    return iterator(ret, 0);
-  }
-
-  template < typename T1, typename T2 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2)
-  {
-    if (free_list == NULL)
-      allocate_new_block();
-
-    pointer ret = free_list;
-    free_list = clean_pointee(ret);
-    new (ret) value_type(t1, t2);
-    CGAL_assertion(type(ret) == USED);
-    ++size_;
-    time_stamper->set_time_stamp(ret);
-    return iterator(ret, 0);
-  }
-
-  template < typename T1, typename T2, typename T3 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3)
-  {
-    if (free_list == NULL)
-      allocate_new_block();
-
-    pointer ret = free_list;
-    free_list = clean_pointee(ret);
-    new (ret) value_type(t1, t2, t3);
-    CGAL_assertion(type(ret) == USED);
-    ++size_;
-    time_stamper->set_time_stamp(ret);
-    return iterator(ret, 0);
-  }
-
-  template < typename T1, typename T2, typename T3, typename T4 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4)
-  {
-    if (free_list == NULL)
-      allocate_new_block();
-
-    pointer ret = free_list;
-    free_list = clean_pointee(ret);
-    new (ret) value_type(t1, t2, t3, t4);
-    CGAL_assertion(type(ret) == USED);
-    ++size_;
-    time_stamper->set_time_stamp(ret);
-    return iterator(ret, 0);
-  }
-
-  template < typename T1, typename T2, typename T3, typename T4, typename T5 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-          const T5 &t5)
-  {
-    if (free_list == NULL)
-      allocate_new_block();
-
-    pointer ret = free_list;
-    free_list = clean_pointee(ret);
-    new (ret) value_type(t1, t2, t3, t4, t5);
-    CGAL_assertion(type(ret) == USED);
-    ++size_;
-    time_stamper->set_time_stamp(ret);
-    return iterator(ret, 0);
-  }
-
-  template < typename T1, typename T2, typename T3, typename T4,
-             typename T5, typename T6 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-          const T5 &t5, const T6 &t6)
-  {
-    if (free_list == NULL)
-      allocate_new_block();
-
-    pointer ret = free_list;
-    free_list = clean_pointee(ret);
-    new (ret) value_type(t1, t2, t3, t4, t5, t6);
-    CGAL_assertion(type(ret) == USED);
-    ++size_;
-    time_stamper->set_time_stamp(ret);
-    return iterator(ret, 0);
-  }
-
-  template < typename T1, typename T2, typename T3, typename T4,
-             typename T5, typename T6, typename T7 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-          const T5 &t5, const T6 &t6, const T7 &t7)
-  {
-    if (free_list == NULL)
-      allocate_new_block();
-
-    pointer ret = free_list;
-    free_list = clean_pointee(ret);
-    new (ret) value_type(t1, t2, t3, t4, t5, t6, t7);
-    CGAL_assertion(type(ret) == USED);
-    ++size_;
-    time_stamper->set_time_stamp(ret);
-    return iterator(ret, 0);
-  }
-
-  template < typename T1, typename T2, typename T3, typename T4,
-             typename T5, typename T6, typename T7, typename T8 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-          const T5 &t5, const T6 &t6, const T7 &t7, const T8 &t8)
-  {
-    if (free_list == NULL)
-      allocate_new_block();
-
-    pointer ret = free_list;
-    free_list = clean_pointee(ret);
-    new (ret) value_type(t1, t2, t3, t4, t5, t6, t7, t8);
-    CGAL_assertion(type(ret) == USED);
-    ++size_;
-    time_stamper->set_time_stamp(ret);
-    return iterator(ret, 0);
-  }
-#endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
   iterator insert(const T &t)
   {
@@ -578,11 +426,7 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
-#ifdef CGAL_CXX11
     std::allocator_traits<allocator_type>::construct(alloc, ret, t);
-#else
-    alloc.construct(ret, t);
-#endif
     CGAL_assertion(type(ret) == USED);
     ++size_;
     time_stamper->set_time_stamp(ret);

@@ -74,8 +74,6 @@ using cpp11::array;
 
 // It's also untrue that this is not documented...  It is !
 
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-
 template< typename T, typename... Args >
 inline
 cpp11::array< T, 1 + sizeof...(Args) >
@@ -95,107 +93,6 @@ struct Construct_array
     return make_array (t, args...);
   }
 };
-
-#else // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-
-template < typename T > inline
-cpp11::array<T, 1>
-make_array(const T& b1)
-{
-  cpp11::array<T, 1> a = { { b1 } };
-  return a;
-}
-
-template < typename T > inline
-cpp11::array<T, 2>
-make_array(const T& b1, const T& b2)
-{
-  cpp11::array<T, 2> a = { { b1, b2 } };
-  return a;
-}
-
-template < typename T > inline
-cpp11::array<T, 3>
-make_array(const T& b1, const T& b2, const T& b3)
-{
-  cpp11::array<T, 3> a = { { b1, b2, b3 } };
-  return a;
-}
-
-template < typename T > inline
-cpp11::array<T, 4>
-make_array(const T& b1, const T& b2, const T& b3, const T& b4)
-{
-  cpp11::array<T, 4> a = { { b1, b2, b3, b4 } };
-  return a;
-}
-
-template < typename T > inline
-cpp11::array<T, 5>
-make_array(const T& b1, const T& b2, const T& b3, const T& b4, const T& b5)
-{
-  cpp11::array<T, 5> a = { { b1, b2, b3, b4, b5 } };
-  return a;
-}
-
-template < typename T > inline
-cpp11::array<T, 6>
-make_array(const T& b1, const T& b2, const T& b3, const T& b4, const T& b5,
-           const T& b6)
-{
-  cpp11::array<T, 6> a = { { b1, b2, b3, b4, b5, b6 } };
-  return a;
-}
-
-// Functor version
-struct Construct_array
-{
-  template < typename T >
-  cpp11::array<T, 1>
-  operator()(const T& b1)
-  {
-    return make_array (b1);
-  }
-
-  template < typename T >
-  cpp11::array<T, 2>
-  operator()(const T& b1, const T& b2)
-  {
-    return make_array (b1, b2);
-  }
-
-  template < typename T >
-  cpp11::array<T, 3>
-  operator()(const T& b1, const T& b2, const T& b3)
-  {
-    return make_array (b1, b2, b3);
-  }
-
-  template < typename T >
-  cpp11::array<T, 4>
-  operator()(const T& b1, const T& b2, const T& b3, const T& b4)
-  {
-    return make_array (b1, b2, b3, b4);
-  }
-
-  template < typename T >
-  cpp11::array<T, 5>
-  operator()(const T& b1, const T& b2, const T& b3, const T& b4, const T& b5)
-  {
-    return make_array (b1, b2, b3, b4, b5);
-  }
-
-  template < typename T >
-  cpp11::array<T, 6>
-  operator()(const T& b1, const T& b2, const T& b3, const T& b4, const T& b5,
-             const T& b6)
-  {
-    return make_array (b1, b2, b3, b4, b5, b6);
-  }
-};
-
-  
-#endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
 } //namespace CGAL
 
