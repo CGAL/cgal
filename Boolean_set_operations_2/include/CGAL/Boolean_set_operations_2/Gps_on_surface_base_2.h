@@ -1112,6 +1112,15 @@ protected:
       }
     }
     while(something_was_updated);
+    // last loop, if some tags are not set it means that they are the only ccb
+    // of the face and that they have to be the outer ccb
+    BOOST_FOREACH(Halfedge_handle h, halfedges_that_was_on_an_outer_ccb)
+    {
+      if (h->flag()!=NOT_VISITED) continue;
+      std::size_t face_master_id=(*uf_faces.find(face_handles[h->face()->id()]))->id();
+      set_flag_of_halfedges_of_final_argt(h,ON_OUTER_CCB);
+      face_outer_ccb_set[face_master_id]=true;
+    }
     // at this position there might be some bits in face_outer_ccb_set not set
     // but they are corresponding to the unbounded face
   // End tagging ccbs
