@@ -26,7 +26,6 @@
 #include <map> 
 #include <vector>
 #include <utility>
-#include <boost/foreach.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/assertions.h>
 #include <CGAL/tags.h>
@@ -158,7 +157,7 @@ void duplicate_terminal_vertices(Graph& graph,
   vertex_iterator b,e;
   boost::tie(b,e) = vertices(graph);
   std::vector<vertex_descriptor> V(b,e);
-  BOOST_FOREACH(vertex_descriptor v, V)
+  for(vertex_descriptor v : V)
   {
     typename boost::graph_traits<OrigGraph>::vertex_descriptor orig_v = graph[v];
     typename boost::graph_traits<Graph>::degree_size_type deg = degree(v, graph);
@@ -186,12 +185,12 @@ void duplicate_terminal_vertices(Graph& graph,
   // check all vertices are of degree 1 or 2 and that the source
   // and target of each edge are different vertices with different ids
   CGAL_assertion_code(
-                      BOOST_FOREACH(vertex_descriptor v, vertices(graph)){
+                      for(vertex_descriptor v : vertices(graph)){
                         typename boost::graph_traits<Graph>::degree_size_type
                           n = degree(v, graph);
                         CGAL_assertion( n == 0 || n == 1 || n == 2);
                       }
-                      BOOST_FOREACH(edge_descriptor e, edges(graph)){
+                      for(edge_descriptor e : edges(graph)){
                         vertex_descriptor v = target(e, graph);
                         vertex_descriptor w = source(e, graph);
                         CGAL_assertion(v != w);
@@ -267,13 +266,13 @@ split_graph_into_polylines(const Graph& graph,
                      typename graph_traits<G_copy>::vertex_descriptor> V2vmap;
     V2vmap v2vmap;
     
-    BOOST_FOREACH(Graph_vertex_descriptor v, vertices(graph)){
+    for(Graph_vertex_descriptor v : vertices(graph)){
       vertex_descriptor vc = add_vertex(g_copy);
       g_copy[vc] = v;
       v2vmap[v] = vc; 
     }
 
-    BOOST_FOREACH(Graph_edge_descriptor e, edges(graph)){
+    for(Graph_edge_descriptor e : edges(graph)){
       Graph_vertex_descriptor vs = source(e,graph);
       Graph_vertex_descriptor vt = target(e,graph);
       CGAL_warning_msg(vs != vt, "ignore self loops");
@@ -294,7 +293,7 @@ split_graph_into_polylines(const Graph& graph,
   G_copy_less g_copy_less(g_copy, less);
   std::set<vertex_descriptor, G_copy_less> terminal(g_copy_less);
 
-  BOOST_FOREACH(vertex_descriptor v, vertices(g_copy)){
+  for(vertex_descriptor v : vertices(g_copy)){
     typename graph_traits<G_copy>::degree_size_type n = degree(v, g_copy);
     if ( n == 1 ) terminal.insert(v);
     if ( n ==0 ){

@@ -36,7 +36,6 @@
 #include <list>
 #include <utility>
 #include <limits>
-#include <boost/foreach.hpp>
 
 /*
 #define CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SCALE // define it to activate optimal scale calculation,
@@ -113,7 +112,7 @@ struct Types_selectors<TriangleMesh, CGAL::SRE_ARAP> {
       // calculate area
       m_area = 0;
       typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
-      BOOST_FOREACH(face_descriptor f, faces(triangle_mesh))
+      for(face_descriptor f : faces(triangle_mesh))
       {
         typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
           h = halfedge(f, triangle_mesh);
@@ -825,7 +824,7 @@ public:
     region_of_solution(); // since we are using original vector
 
     //restore the current positions to be the original positions
-    BOOST_FOREACH(vertex_descriptor vd, roi_vertices())
+    for(vertex_descriptor vd : roi_vertices())
     {
       put(vertex_point_map, vd, original[ros_id(vd)]);
       solution[ros_id(vd)]=original[ros_id(vd)];
@@ -859,14 +858,14 @@ public:
 
     region_of_solution(); // the roi should be preprocessed since we are using original_position vec
 
-    BOOST_FOREACH(vertex_descriptor vd, roi_vertices())
+    for(vertex_descriptor vd : roi_vertices())
     {
       original[ros_id(vd)] = get(vertex_point_map, vd);
     }
 
     // now I need to compute weights for halfedges incident to roi vertices
     std::vector<bool> is_weight_computed(2*num_edges(m_triangle_mesh), false);
-    BOOST_FOREACH(vertex_descriptor vd, roi_vertices())
+    for(vertex_descriptor vd : roi_vertices())
     {
       in_edge_iterator e, e_end;
       for (cpp11::tie(e,e_end) = in_edges(vd, m_triangle_mesh); e != e_end; e++)

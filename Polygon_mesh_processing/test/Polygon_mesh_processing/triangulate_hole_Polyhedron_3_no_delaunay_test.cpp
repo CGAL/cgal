@@ -43,7 +43,7 @@ void detect_borders(Polyhedron& poly, std::vector<Halfedge_handle>& border_reps)
   typedef CGAL::Halfedge_around_face_circulator<Polyhedron> Halfedge_around_facet_circulator;
   border_reps.clear();
   std::set<Halfedge_handle> border_map;
-  BOOST_FOREACH(Halfedge_handle h,  halfedges(poly)){
+  for(Halfedge_handle h :  halfedges(poly)){
     if(face(h,poly)== boost::graph_traits<Polyhedron>::null_face() && border_map.find(h) == border_map.end()){
       border_reps.push_back(h);
       Halfedge_around_facet_circulator hf_around_facet(h,poly), done(hf_around_facet);
@@ -362,7 +362,7 @@ void generate_elephant_with_hole()
   Polyhedron poly;
   read_poly("data/elephant.off", poly);
   int i=0;
-  BOOST_FOREACH(Facet_handle fd, faces(poly))
+  for(Facet_handle fd : faces(poly))
     if (++i==229)
     {
       Halfedge_handle nh=opposite(halfedge(fd,poly), poly);

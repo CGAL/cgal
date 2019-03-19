@@ -178,7 +178,7 @@ namespace CGAL {
                        boost::make_optional(Point(CGAL::ORIGIN)));
 
                     // apply f to the triangles on the boundary of P
-                    BOOST_FOREACH(typename boost::graph_traits<Polyhedron>::face_descriptor fd, faces(P))
+                    for(typename boost::graph_traits<Polyhedron>::face_descriptor fd : faces(P))
                     {
                       Halfedge_around_face_circulator<Polyhedron>
                         h0(halfedge(fd,P),P), hf = h0--, hs = cpp11::next(hf);

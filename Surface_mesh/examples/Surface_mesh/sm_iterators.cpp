@@ -1,6 +1,5 @@
 #include <vector>
 
-#include <boost/foreach.hpp>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
@@ -52,7 +51,7 @@ int main()
     
     // Instead of the classical for loop one can use
     // the boost macro for a range
-    BOOST_FOREACH(vertex_descriptor vd, m.vertices()){
+    for(vertex_descriptor vd : m.vertices()){
       std::cout << vd << std::endl;
     }
 

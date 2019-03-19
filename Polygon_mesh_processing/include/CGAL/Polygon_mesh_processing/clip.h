@@ -173,7 +173,7 @@ clip_to_bbox(const Plane_3& plane,
   typedef typename graph_traits::face_descriptor face_descriptor;
 
   std::map<int, vertex_descriptor> out_vertices;
-  BOOST_FOREACH(int i, in_point_ids)
+  for(int i : in_point_ids)
   {
     vertex_descriptor v = add_vertex(tm_out);
     out_vertices.insert( std::make_pair(i, v ) );
@@ -183,7 +183,7 @@ clip_to_bbox(const Plane_3& plane,
   std::map< std::pair<int,int>, halfedge_descriptor> hedge_map;
   const halfedge_descriptor null_hedge = graph_traits::null_halfedge();
   const face_descriptor null_fd = graph_traits::null_face();
-  BOOST_FOREACH( const std::vector<int>& findices, output_faces)
+  for(const std::vector<int>& findices : output_faces)
   {
     if (findices.empty()) continue;
     const face_descriptor fd=add_face(tm_out);
@@ -192,7 +192,7 @@ clip_to_bbox(const Plane_3& plane,
     // create of recover face boundary halfedges
     std::vector<halfedge_descriptor> hedges;
     hedges.reserve(findices.size());
-    BOOST_FOREACH( int current_id, findices)
+    for(int current_id : findices)
     {
       vertex_descriptor src = out_vertices[prev_id], tgt = out_vertices[current_id];
 
@@ -226,7 +226,7 @@ clip_to_bbox(const Plane_3& plane,
 
     // set next/prev relationship
     halfedge_descriptor prev_h=hedges.back();
-    BOOST_FOREACH(halfedge_descriptor h, hedges)
+    for(halfedge_descriptor h : hedges)
     {
       set_next(prev_h, h, tm_out);
       prev_h = h;
@@ -237,7 +237,7 @@ clip_to_bbox(const Plane_3& plane,
   // look for a border halfedge and reconstruct the face of the plane
   // by turning around vertices inside the mesh constructed above
   // until we reach another border halfedge
-  BOOST_FOREACH(halfedge_descriptor h, halfedges(tm_out))
+  for(halfedge_descriptor h : halfedges(tm_out))
   {
     if (face(h, tm_out) == null_fd)
     {

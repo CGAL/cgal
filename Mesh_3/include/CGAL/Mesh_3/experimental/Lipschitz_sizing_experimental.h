@@ -265,7 +265,7 @@ private:
   std::vector<Subdomain_index> incident_subdomains(const Patches_ids& ids) const
   {
     std::vector<Subdomain_index> vec;
-    BOOST_FOREACH(Surface_patch_index spi, ids)
+    for(Surface_patch_index spi : ids)
     {
       const std::pair<Subdomain_index, Subdomain_index>& subdomains
         = m_params.incident_subdomains(spi);
@@ -282,7 +282,7 @@ private:
   FT min_size_in_incident_subdomains(const Patches_ids& ids) const
   {
     FT size = static_cast<FT>((std::numeric_limits<double>::max)());
-    BOOST_FOREACH(Surface_patch_index spi, ids)
+    for(Surface_patch_index spi : ids)
     {
       const std::pair<Subdomain_index, Subdomain_index>& subdomains
         = m_params.incident_subdomains(spi);
@@ -402,16 +402,16 @@ private:
     typedef typename MeshDomain::Polyhedron Polyhedron;
     if(m_kd_tree.get() == 0) {
       m_kd_tree.reset(new Kd_tree);
-      BOOST_FOREACH(std::size_t poly_id, m_domain.inside_polyhedra()) {
+      for(std::size_t poly_id : m_domain.inside_polyhedra()) {
         const Polyhedron& poly = m_domain.polyhedra()[poly_id];
-        BOOST_FOREACH(typename Polyhedron::Vertex_handle v, vertices(poly))
+        for(typename Polyhedron::Vertex_handle v : vertices(poly))
         {
           m_kd_tree->insert(v->point());
         }
       }
-      BOOST_FOREACH(std::size_t poly_id, m_domain.boundary_polyhedra()) {
+      for(std::size_t poly_id : m_domain.boundary_polyhedra()) {
         const Polyhedron& poly = m_domain.polyhedra()[poly_id];
-        BOOST_FOREACH(typename Polyhedron::Vertex_handle v, vertices(poly))
+        for(typename Polyhedron::Vertex_handle v : vertices(poly))
         {
           if(!is_on_cube_boundary(v->point()))
             m_kd_tree->insert(v->point());

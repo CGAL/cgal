@@ -183,7 +183,7 @@ class Face_graph_output_builder
     if ( is_node_of_degree_one.test(src_id) )
     {
       bool res=true;
-      BOOST_FOREACH(halfedge_descriptor h, halfedges_around_source(hedge, tm))
+      for(halfedge_descriptor h : halfedges_around_source(hedge, tm))
         if (is_border(h, tm))
         {
           res = false;
@@ -193,7 +193,7 @@ class Face_graph_output_builder
     }
     if ( is_node_of_degree_one.test(tgt_id) )
     {
-      BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(hedge, tm))
+      for(halfedge_descriptor h : halfedges_around_target(hedge, tm))
         if (is_border(h, tm))
           return false;
       return true;
@@ -275,7 +275,7 @@ class Face_graph_output_builder
   void mark_edges(const EdgeMarkMap& edge_mark_map,
                   const std::vector<edge_descriptor>& edges)
   {
-    BOOST_FOREACH(edge_descriptor ed, edges)
+    for(edge_descriptor ed : edges)
       put(edge_mark_map, ed, true);
   }
 
@@ -312,7 +312,7 @@ class Face_graph_output_builder
   {
     std::vector<edge_descriptor> edges;
     edges.reserve(edge_map.size());
-    BOOST_FOREACH(edge_descriptor ed, edge_map)
+    for(edge_descriptor ed : edge_map)
       edges.push_back(ed);
 
     CGAL_assertion(tuple_id < 4 && tuple_id >= 0);
@@ -610,9 +610,9 @@ public:
       else
         ++epp_it;
     }
-    BOOST_FOREACH(edge_descriptor ed, inter_edges_to_remove1)
+    for(edge_descriptor ed : inter_edges_to_remove1)
       intersection_edges1.erase(ed);
-    BOOST_FOREACH(edge_descriptor ed, inter_edges_to_remove2)
+    for(edge_descriptor ed : inter_edges_to_remove2)
       intersection_edges2.erase(ed);
 
     // (1) Assign a patch id to each facet indicating in which connected
@@ -628,7 +628,7 @@ public:
                                 .face_index_map(fids1));
 
     std::vector <std::size_t> tm1_patch_sizes(nb_patches_tm1, 0);
-    BOOST_FOREACH(std::size_t i, tm1_patch_ids)
+    for(std::size_t i : tm1_patch_ids)
       if(i!=NID)
         ++tm1_patch_sizes[i];
     // ... for tm2
@@ -642,7 +642,7 @@ public:
                                 .face_index_map(fids2));
 
     std::vector <std::size_t> tm2_patch_sizes(nb_patches_tm2, 0);
-    BOOST_FOREACH(Node_id i, tm2_patch_ids)
+    for(Node_id i : tm2_patch_ids)
       if(i!=NID)
         ++tm2_patch_sizes[i];
 
@@ -1072,7 +1072,7 @@ public:
 
       Inside_poly_test inside_tm2(tm2, vpm2);
 
-      BOOST_FOREACH(face_descriptor f, faces(tm1))
+      for(face_descriptor f : faces(tm1))
       {
         const std::size_t f_id = get(fids1, f);
         const std::size_t patch_id = tm1_patch_ids[ f_id ];
@@ -1132,7 +1132,7 @@ public:
                                 ? ON_UNBOUNDED_SIDE : ON_BOUNDED_SIDE;
 
       Inside_poly_test inside_tm1(tm1, vpm1);
-      BOOST_FOREACH(face_descriptor f, faces(tm2))
+      for(face_descriptor f : faces(tm2))
       {
         const std::size_t f_id = get(fids2, f);
         std::size_t patch_id=tm2_patch_ids[ f_id ];
@@ -1374,7 +1374,7 @@ public:
     }
 
     /// first handle operations in a mesh that is neither tm1 nor tm2
-    BOOST_FOREACH(Boolean_operation_type operation, out_of_place_operations)
+    for(Boolean_operation_type operation : out_of_place_operations)
     {
       TriangleMesh& output = *(*requested_output[operation]);
       CGAL_assertion(&tm1!=&output && &tm2!=&output);
@@ -1576,7 +1576,7 @@ public:
             if (!to_rm.empty())
             {
               std::reverse(to_rm.begin(), to_rm.end());
-              BOOST_FOREACH(Hedge_iterator it, to_rm)
+              for(Hedge_iterator it : to_rm)
               {
                 patches_of_tm1[i].interior_edges.push_back(*it);
                 if (it!=cpp11::prev(patches_of_tm1[i].shared_edges.end()))
@@ -1585,13 +1585,13 @@ public:
               }
               //now update interior vertices
               std::set<vertex_descriptor> border_vertices;
-              BOOST_FOREACH(halfedge_descriptor h, patches_of_tm1[i].shared_edges)
+              for(halfedge_descriptor h : patches_of_tm1[i].shared_edges)
               {
                 border_vertices.insert( target(h,tm1) );
                 border_vertices.insert( source(h,tm1) );
               }
 
-              BOOST_FOREACH(halfedge_descriptor h, patches_of_tm1[i].interior_edges)
+              for(halfedge_descriptor h : patches_of_tm1[i].interior_edges)
               {
                 if ( !border_vertices.count( target(h,tm1) ) )
                   patches_of_tm1[i].interior_vertices.insert( target(h,tm1) );

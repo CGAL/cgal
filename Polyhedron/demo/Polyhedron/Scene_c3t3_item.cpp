@@ -24,7 +24,6 @@
 #include <CGAL/Qt/qglviewer.h>
 
 #include <boost/function_output_iterator.hpp>
-#include <boost/foreach.hpp>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>

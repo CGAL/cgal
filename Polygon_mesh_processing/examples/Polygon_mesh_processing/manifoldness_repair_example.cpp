@@ -5,7 +5,6 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/IO/OFF_reader.h>
 
-#include <boost/foreach.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -25,7 +24,7 @@ void merge_vertices(vertex_descriptor v_keep, vertex_descriptor v_rm, Mesh& mesh
 {
   std::cout << "merging vertices " << v_keep << " and " << v_rm << std::endl;
 
-  BOOST_FOREACH(halfedge_descriptor h, CGAL::halfedges_around_target(v_rm, mesh)){
+  for(halfedge_descriptor h : CGAL::halfedges_around_target(v_rm, mesh)){
     set_target(h, v_keep, mesh); // to ensure that no halfedge points at the deleted vertex
   }
 
@@ -51,7 +50,7 @@ int main(int argc, char* argv[])
 
   // Count non manifold vertices
   int counter = 0;
-  BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
+  for(vertex_descriptor v : vertices(mesh))
   {
     if(PMP::is_non_manifold_vertex(v, mesh))
     {

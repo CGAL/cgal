@@ -165,7 +165,7 @@ void Clipping_box_plugin::clip(bool b)
         m);
     QVector4D planes[6];
     int fid=0;
-    BOOST_FOREACH(Mesh::Facet_iterator f, faces(m))
+    for(Mesh::Facet_iterator f : faces(m))
     {
       Kernel::Vector_3 normal = CGAL::Polygon_mesh_processing::compute_face_normal(f,m);
       double norm = normal.squared_length()*normal.squared_length();

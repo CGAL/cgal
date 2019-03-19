@@ -33,8 +33,6 @@
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Image_3.h>
 
-#include <boost/foreach.hpp>
-
 #include <iostream>
 #include <queue>
 
@@ -156,7 +154,7 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
       }
     }
 
-    BOOST_FOREACH(const Vector_3& v, directions)
+    for(const Vector_3& v : directions)
     {
       const Bare_point test = it->first + v;
       const typename Mesh_domain::Intersection intersect =
@@ -207,7 +205,7 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
         }
 
         bool pi_inside_protecting_sphere = false;
-        BOOST_FOREACH(Vertex_handle cv, conflict_vertices)
+        for(Vertex_handle cv : conflict_vertices)
         {
           if(tr.is_infinite(cv))
             continue;

@@ -46,7 +46,6 @@
 #include <tbb/atomic.h>
 #endif // CGAL_LINKED_WITH_TBB
 
-#include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
 
 namespace CGAL{
@@ -147,7 +146,7 @@ double approximate_Hausdorff_distance_impl(
 #endif
   {
     double hdist = 0;
-    BOOST_FOREACH(const typename Kernel::Point_3& pt, sample_points)
+    for(const typename Kernel::Point_3& pt : sample_points)
     {
       hint = tree.closest_point(pt, hint);
       typename Kernel::Compute_squared_distance_3 squared_distance;
@@ -186,7 +185,7 @@ sample_triangles(const FaceRange& triangles,
   boost::unordered_set<typename GT::edge_descriptor> sampled_edges;
   boost::unordered_set<typename GT::vertex_descriptor> endpoints;
 
-  BOOST_FOREACH(face_descriptor fd, triangles)
+  for(face_descriptor fd : triangles)
   {
     // sample edges but skip endpoints
     halfedge_descriptor hd = halfedge(fd, tm);
@@ -388,7 +387,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
       double grid_spacing_ = (std::numeric_limits<double>::max)();
       typedef typename boost::graph_traits<TriangleMesh>
         ::edge_descriptor edge_descriptor;
-      BOOST_FOREACH(edge_descriptor ed, edges(tm))
+      for(edge_descriptor ed : edges(tm))
       {
         double el = std::sqrt(
           to_double( typename Geom_traits::Compute_squared_distance_3()(
@@ -417,7 +416,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
     {
       typedef typename boost::graph_traits<TriangleMesh>
         ::edge_descriptor edge_descriptor;
-      BOOST_FOREACH(edge_descriptor ed, edges(tm))
+      for(edge_descriptor ed : edges(tm))
       {
         double el = std::sqrt(
           to_double( squared_distance(get(pmap, source(ed, tm)),
@@ -434,7 +433,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
       if (nb_points_per_face == 0 && nb_pts_a_u ==0.)
         nb_pts_a_u = 2. / CGAL::square(min_edge_length);
 
-      BOOST_FOREACH(face_descriptor f, faces(tm))
+      for(face_descriptor f : faces(tm))
       {
         std::size_t nb_points = nb_points_per_face;
         if (nb_points == 0)
@@ -464,7 +463,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
     {
       if (nb_points_per_edge == 0 && nb_pts_l_u == 0)
         nb_pts_l_u = 1. / min_edge_length;
-      BOOST_FOREACH(edge_descriptor ed, edges(tm))
+      for(edge_descriptor ed : edges(tm))
       {
         std::size_t nb_points = nb_points_per_edge;
         if (nb_points == 0)
@@ -729,7 +728,7 @@ double approximate_max_distance_to_point_set(const TriangleMesh& tm,
   typedef typename Knn::Tree Tree;
   Tree tree(points.begin(), points.end());
   CRefiner<Geom_traits> ref;
-  BOOST_FOREACH(typename GT::face_descriptor f, faces(tm))
+  for(typename GT::face_descriptor f : faces(tm))
   {
     typename Geom_traits::Point_3 points[3];
     typename GT::halfedge_descriptor hd(halfedge(f,tm));

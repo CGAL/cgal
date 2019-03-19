@@ -114,7 +114,7 @@ void set_vcolors(SMesh* smesh, std::vector<CGAL::Color> colors)
   boost::tie(vcolors, created) = smesh->add_property_map<SMesh::Vertex_index,CGAL::Color>("v:color",CGAL::Color(0,0,0));
   assert(colors.size()==smesh->number_of_vertices());
   int color_id = 0;
-  BOOST_FOREACH(vertex_descriptor vd, vertices(*smesh))
+  for(vertex_descriptor vd : vertices(*smesh))
       vcolors[vd] = colors[color_id++];
 }
 
@@ -128,7 +128,7 @@ void set_fcolors(SMesh* smesh, std::vector<CGAL::Color> colors)
    boost::tie(fcolors, created) = smesh->add_property_map<SMesh::Face_index,CGAL::Color>("f:color",CGAL::Color(0,0,0));
   assert(colors.size()==smesh->number_of_faces());
   int color_id = 0;
-  BOOST_FOREACH(face_descriptor fd, faces(*smesh))
+  for(face_descriptor fd : faces(*smesh))
       fcolors[fd] = colors[color_id++];
 }
 
@@ -182,7 +182,7 @@ void Polyhedron_demo_orient_soup_plugin::orientSM()
 
 void Polyhedron_demo_orient_soup_plugin::shuffle()
 {
-  BOOST_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
+  for(CGAL::Three::Scene_interface::Item_id index : scene->selectionIndices())
   {
     Scene_polygon_soup_item* soup_item =
         qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
@@ -257,7 +257,7 @@ void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline()
     else
     {
         items_created = true;
-      BOOST_FOREACH(std::size_t id, nm_vertices)
+      for(std::size_t id : nm_vertices)
       {
         points->point_set()->insert(item->points()[id]);
       }
@@ -271,7 +271,7 @@ void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline()
     {
       Scene_polylines_item* poly = 
           new Scene_polylines_item();
-      BOOST_FOREACH(Polygon_soup::Edge edge, nm_edges)
+      for(Polygon_soup::Edge edge : nm_edges)
       {
         Point_3 a(item->points()[edge[0]]), b(item->points()[edge[1]]);
         Scene_polylines_item::Polyline new_edge;
@@ -314,7 +314,7 @@ void Polyhedron_demo_orient_soup_plugin::getNMPoints(
   std::size_t nb_polygons=item->polygons().size();
   for(std::size_t ip=0; ip<nb_polygons; ++ip)
   {
-    BOOST_FOREACH(std::size_t iv, item->polygons()[ip])
+    for(std::size_t iv : item->polygons()[ip])
       incident_polygons_per_vertex[iv].push_back(ip);
   }
 
@@ -328,7 +328,7 @@ void Polyhedron_demo_orient_soup_plugin::getNMPoints(
     std::set<std::size_t> visited_polygons;
 
     bool first_pass = true;
-    BOOST_FOREACH(std::size_t p_id, incident_polygons)
+    for(std::size_t p_id : incident_polygons)
     {
       if ( !visited_polygons.insert(p_id).second ) continue; // already visited
 
@@ -373,7 +373,7 @@ void Polyhedron_demo_orient_soup_plugin::getNMPoints(
   
   //remove vertices already in NM edges
   //check edges of p_id. 
-  BOOST_FOREACH(Scene_polygon_soup_item::Edge edge, item->non_manifold_edges())
+  for(Scene_polygon_soup_item::Edge edge : item->non_manifold_edges())
   {
     vertices_to_duplicate.erase(edge[0]);
     vertices_to_duplicate.erase(edge[1]);

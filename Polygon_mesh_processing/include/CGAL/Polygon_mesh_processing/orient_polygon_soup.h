@@ -30,7 +30,6 @@
 #include <CGAL/tuple.h>
 #include <CGAL/array.h>
 #include <CGAL/assertions.h>
-#include <boost/foreach.hpp>
 #include <boost/container/flat_set.hpp>
 
 #include <set>
@@ -136,7 +135,7 @@ struct Polygon_soup_orienter
     V_ID old_index,
     V_ID new_index)
   {
-    BOOST_FOREACH(V_ID& i, polygons[polygon_id])
+    for(V_ID& i : polygons[polygon_id])
       if( i==old_index )
         i=new_index;
   }
@@ -149,7 +148,7 @@ struct Polygon_soup_orienter
     P_ID nb_polygons=polygons.size();
     for(P_ID ip=0; ip<nb_polygons; ++ip)
     {
-      BOOST_FOREACH(V_ID iv, polygons[ip])
+      for(V_ID iv : polygons[ip])
         incident_polygons_per_vertex[iv].push_back(ip);
     }
   }
@@ -331,7 +330,7 @@ struct Polygon_soup_orienter
       std::set<P_ID> visited_polygons;
 
       bool first_pass = true;
-      BOOST_FOREACH(P_ID p_id, incident_polygons)
+      for(P_ID p_id : incident_polygons)
       {
         if ( !visited_polygons.insert(p_id).second ) continue; // already visited
 
@@ -377,11 +376,11 @@ struct Polygon_soup_orienter
 
     /// now duplicate the vertices
     typedef std::pair<V_ID, std::vector<P_ID> > V_ID_and_Polygon_ids;
-    BOOST_FOREACH(const V_ID_and_Polygon_ids& vid_and_pids, vertices_to_duplicate)
+    for(const V_ID_and_Polygon_ids& vid_and_pids : vertices_to_duplicate)
     {
       V_ID new_index = static_cast<V_ID>(points.size());
       points.push_back( points[vid_and_pids.first] );
-      BOOST_FOREACH(P_ID polygon_id, vid_and_pids.second)
+      for(P_ID polygon_id : vid_and_pids.second)
         replace_vertex_index_in_polygon(polygon_id, vid_and_pids.first, new_index);
     }
   }
@@ -405,7 +404,7 @@ struct Polygon_soup_orienter
       std::set<P_ID> visited_polygons;
 
       bool first_pass = true;
-      BOOST_FOREACH(P_ID p_id, incident_polygons)
+      for(P_ID p_id : incident_polygons)
       {
         if ( !visited_polygons.insert(p_id).second ) continue; // already visited
 

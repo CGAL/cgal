@@ -37,7 +37,6 @@
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/Heat_method_3/internal/V2V.h>
 
-#include <boost/foreach.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/unordered_map.hpp>
 
@@ -373,7 +372,7 @@ private:
     Index edge_i = 0;
     VertexPointMap vpm_intrinsic_tm = get(boost::vertex_point,m_intrinsic_tm);
 
-    BOOST_FOREACH(edge_descriptor ed, edges(m_intrinsic_tm)) {
+    for(edge_descriptor ed : edges(m_intrinsic_tm)) {
       edge_lengths[edge_i] = CGAL::sqrt(to_double(squared_distance(get(vpm_intrinsic_tm, source(ed,m_intrinsic_tm)),
                                                                    get(vpm_intrinsic_tm, target(ed,m_intrinsic_tm)))));
         //  Polygon_mesh_processing::edge_length(halfedge(ed,m_intrinsic_tm),m_intrinsic_tm);
@@ -383,7 +382,7 @@ private:
     loop_over_edges(stack, mark_edges);
     //now that edges are calculated, go through and for each face, calculate the vertex positions around it
 
-    BOOST_FOREACH(face_descriptor f, faces(m_intrinsic_tm)) {
+    for(face_descriptor f : faces(m_intrinsic_tm)) {
       CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
 
       boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,m_intrinsic_tm),m_intrinsic_tm);

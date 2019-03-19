@@ -14,7 +14,6 @@
 #include <iterator>
 #include <list>
 
-#include <boost/foreach.hpp>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -34,7 +33,7 @@ void test_pmesh(const Mesh& pmesh)
 
   bool has_border = false;
   halfedge_descriptor border_he;
-  BOOST_FOREACH(halfedge_descriptor h, halfedges(pmesh))
+  for(halfedge_descriptor h : halfedges(pmesh))
   {
     if (is_border(h, pmesh))
     {
@@ -50,7 +49,7 @@ void test_pmesh(const Mesh& pmesh)
 
   face_descriptor valid_patch_face;
   unsigned int count = 0;
-  BOOST_FOREACH(halfedge_descriptor h, halfedges(pmesh))
+  for(halfedge_descriptor h : halfedges(pmesh))
   {
     if (is_border(h, pmesh) || is_border(opposite(h, pmesh), pmesh))
       continue;
@@ -74,7 +73,7 @@ void test_pmesh(const Mesh& pmesh)
   {
     face_descriptor f = patch.front();
     patch.pop_front();
-    BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(f, pmesh), pmesh))
+    for(halfedge_descriptor h : halfedges_around_face(halfedge(f, pmesh), pmesh))
     {
       if (boost::graph_traits<Mesh>::null_halfedge() != opposite(h, pmesh))
         patch.push_back(face(opposite(h, pmesh), pmesh));
@@ -110,15 +109,15 @@ void test_pmesh(const Mesh& pmesh)
   std::cout << "     z[" << bb.zmin() << "; " << bb.zmax() << "]" << std::endl;
 
   CGAL::Bbox_3 bb_v;
-  BOOST_FOREACH(vertex_descriptor vd, vertices(pmesh))
+  for(vertex_descriptor vd : vertices(pmesh))
     bb_v+=PMP::vertex_bbox(vd, pmesh);
 
   CGAL::Bbox_3 bb_f;
-  BOOST_FOREACH(face_descriptor fd, faces(pmesh))
+  for(face_descriptor fd : faces(pmesh))
     bb_f+=PMP::face_bbox(fd, pmesh);
 
   CGAL::Bbox_3 bb_e;
-  BOOST_FOREACH(edge_descriptor ed, edges(pmesh))
+  for(edge_descriptor ed : edges(pmesh))
     bb_e+=PMP::edge_bbox(ed, pmesh);
 
   assert(bb==bb_v);

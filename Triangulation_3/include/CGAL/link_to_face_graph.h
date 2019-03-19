@@ -27,7 +27,6 @@
 #include <CGAL/license/Triangulation_3.h>
 
 
-#include <boost/foreach.hpp>
 #include <boost/unordered_map.hpp>
 #include <CGAL/array.h>
 #include <CGAL/boost/graph/Euler_operations.h>
@@ -60,7 +59,7 @@ link_to_face_graph(const Triangulation_3& t,
   typename boost::property_map<FG, CGAL::vertex_point_t>::type vpm
     = get(CGAL::vertex_point, fg);
 
-  BOOST_FOREACH(Cell_handle ch, cells){
+  for(Cell_handle ch : cells){
     bool infinite_face = false;
     int vhi = ch->index(vh);
     for(int i=0; i<3; i++){

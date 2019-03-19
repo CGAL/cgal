@@ -75,7 +75,7 @@ class VSA_WRAPPER_EXPORT VSA_wrapper {
       // fitting center
       Vector_3 center = CGAL::NULL_VECTOR;
       FT area(0.0);
-      BOOST_FOREACH(const face_descriptor f, faces) {
+      for(const face_descriptor f : faces) {
         center = center + (get(center_pmap, f) - CGAL::ORIGIN) * get(area_pmap, f);
         area += get(area_pmap, f);
       }
@@ -226,7 +226,7 @@ public:
     typedef typename Approx::Proxy_wrapper Proxy_wrapper;
     std::vector<Proxy_wrapper> pxwrapper;
     approx.wrapped_proxies(std::back_inserter(pxwrapper));
-    BOOST_FOREACH(const Proxy_wrapper &pxw, pxwrapper)
+    for(const Proxy_wrapper& pxw : pxwrapper)
       *out_itr++ = pxw.seed;
   }
 

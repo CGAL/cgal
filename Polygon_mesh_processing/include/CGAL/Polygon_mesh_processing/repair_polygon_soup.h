@@ -754,7 +754,7 @@ struct Duplicate_collector
   void dump(OutputIterator out)
   {
     typedef std::pair<const ValueType, std::vector<ValueType> > Pair_type;
-    BOOST_FOREACH(const Pair_type& p, collections)
+    for(const Pair_type& p : collections)
       *out++ = p.second;
   }
 

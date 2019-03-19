@@ -34,7 +34,6 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
@@ -581,7 +580,7 @@ public:
     m_learning_rate = tree.get<float>("classification.metadata.learning_rate");
 
     std::size_t idx = 0;
-    BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.features"))
+    for(boost::property_tree::ptree::value_type& v : tree.get_child("classification.features"))
     {
       std::string name = v.second.get<std::string>("name");
 
@@ -606,7 +605,7 @@ public:
     }
 
     idx = 0;
-    BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.labels"))
+    for(boost::property_tree::ptree::value_type& v : tree.get_child("classification.labels"))
     {
       std::string name = v.second.get<std::string>("name");
       if (name != m_labels[idx]->name())
@@ -630,7 +629,7 @@ public:
     m_bias.resize (nb_layers);
 
     std::vector<std::size_t> hidden_layers;
-    BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.layers"))
+    for(boost::property_tree::ptree::value_type& v : tree.get_child("classification.layers"))
     {
       if (idx >= nb_layers)
       {

@@ -36,7 +36,6 @@
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/property_map.h>
 
-#include <boost/foreach.hpp>
 #include <boost/graph/graph_traits.hpp>
 
 #include <iostream>
@@ -55,7 +54,7 @@ void dump_graph_edges(std::ostream& out, const Graph& g)
   typedef typename boost::graph_traits<Graph>::edge_descriptor edge_descriptor;
 
   out.precision(17);
-  BOOST_FOREACH(edge_descriptor e, edges(g))
+  for(edge_descriptor e : edges(g))
   {
     vertex_descriptor s = source(e, g);
     vertex_descriptor t = target(e, g);

@@ -61,7 +61,6 @@
 #  include <tbb/scalable_allocator.h>
 #endif
 
-#include <boost/foreach.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 
 namespace CGAL {

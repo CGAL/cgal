@@ -11,12 +11,12 @@ typedef CGAL::Surface_mesh_simplification::Edge_profile<Mesh> Profile;
 
 void naive_all_triangles(Mesh::Halfedge_index h, Mesh& m, std::set<Mesh::Face_index>& triangles)
 {
-  BOOST_FOREACH(Mesh::Halfedge_index hh, CGAL::halfedges_around_source(h, m))
+  for(Mesh::Halfedge_index hh : CGAL::halfedges_around_source(h, m))
   {
     if (!is_border(hh, m))
       triangles.insert(face(hh,m));
   }
-  BOOST_FOREACH(Mesh::Halfedge_index hh, CGAL::halfedges_around_target(h, m))
+  for(Mesh::Halfedge_index hh : CGAL::halfedges_around_target(h, m))
   {
     if (!is_border(hh, m))
       triangles.insert(face(hh,m));
@@ -27,9 +27,9 @@ void naive_link_vertices(Mesh::Halfedge_index h, Mesh& m,
                          const std::set<Mesh::Face_index>& triangles,
                          std::set<Mesh::Vertex_index>& link_vertices)
 {
-  BOOST_FOREACH(Mesh::Face_index f, triangles)
+  for(Mesh::Face_index f : triangles)
   {
-    BOOST_FOREACH(Mesh::Halfedge_index h, CGAL::halfedges_around_face(halfedge(f, m), m))
+    for(Mesh::Halfedge_index h : CGAL::halfedges_around_face(halfedge(f, m), m))
     {
       link_vertices.insert(target(h, m));
     }
@@ -70,7 +70,7 @@ void test(const char* fname)
   assert(num_vertices(m)!=0);
   A a;
 
-  BOOST_FOREACH(Mesh::Halfedge_index h, halfedges(m))
+  for(Mesh::Halfedge_index h : halfedges(m))
   {
     std::set<Mesh::Face_index> triangles;
     naive_all_triangles(h, m, triangles);
@@ -86,7 +86,7 @@ void test(const char* fname)
                                            profile.link().end()).size()
               == link_vertices.size() );
 
-      BOOST_FOREACH(const Mesh::Vertex_index& v, profile.link())
+      for(const Mesh::Vertex_index& v : profile.link())
       {
         assert( link_vertices.count(v) == 1 );
       }
@@ -94,11 +94,11 @@ void test(const char* fname)
 
     assert(triangles.size() == profile.triangles().size());
     std::set<boost::tuple<Mesh::Vertex_index, Mesh::Vertex_index, Mesh::Vertex_index> > triple_set;
-    BOOST_FOREACH(const Profile::Triangle& t, profile.triangles())
+    for(const Profile::Triangle& t : profile.triangles())
     {
       triple_set.insert( make_canonical_tuple(t) );
     }
-    BOOST_FOREACH(Mesh::Face_index f, triangles)
+    for(Mesh::Face_index f : triangles)
     {
       assert( triple_set.count( make_canonical_tuple(f, m) ) == 1 );
     }

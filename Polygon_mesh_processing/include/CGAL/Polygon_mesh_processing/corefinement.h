@@ -70,7 +70,7 @@ bool recursive_does_bound_a_volume(const TriangleMesh& tm,
 
 // get all cc that are inside xtrm_cc_id
   std::vector<face_descriptor> cc_faces;
-  BOOST_FOREACH(face_descriptor fd, faces(tm))
+  for(face_descriptor fd : faces(tm))
   {
     if(face_cc[get(fid_map, fd)]==xtrm_cc_id)
       cc_faces.push_back(fd);
@@ -213,7 +213,7 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
 
   // extract a vertex with max z coordinate for each connected component
   std::vector<vertex_descriptor> xtrm_vertices(nb_cc, GT::null_vertex());
-  BOOST_FOREACH(vertex_descriptor vd, vertices(tm))
+  for(vertex_descriptor vd : vertices(tm))
   {
     std::size_t cc_id = face_cc[get(fid_map, face(halfedge(vd, tm), tm))];
     if (xtrm_vertices[cc_id]==GT::null_vertex())

@@ -143,7 +143,7 @@ class Rigid_triangle_mesh_collision_detection
     typename K::Construct_vector_3  vector_functor;
     typedef typename Traversal_traits::Transformed_tree_helper Helper;
 
-    BOOST_FOREACH(const typename K::Point_3& q, m_points_per_cc[id_B])
+    for(const typename K::Point_3& q : m_points_per_cc[id_B])
     {
       if( internal::Point_inside_vertical_ray_cast<K, Tree, Helper>(m_traversal_traits[id_A].get_helper())(
             m_traversal_traits[id_B].transformation()( q ), *m_aabb_trees[id_A],
@@ -335,7 +335,7 @@ public:
     std::vector<std::size_t> res;
 
     // TODO: use a non-naive version
-    BOOST_FOREACH(std::size_t k, ids)
+    for(std::size_t k : ids)
     {
       CGAL_assertion(m_aabb_trees[k] != NULL);
       if(k==mesh_id) continue;
@@ -389,7 +389,7 @@ public:
     std::vector<std::pair<std::size_t, bool> > res;
 
     // TODO: use a non-naive version
-    BOOST_FOREACH(std::size_t k, ids)
+    for(std::size_t k : ids)
     {
       CGAL_assertion(m_aabb_trees[k] != NULL);
       if(k==mesh_id) continue;
@@ -568,7 +568,7 @@ public:
         std::vector<typename GrTr::vertex_descriptor>
           vertex_per_cc(nb_cc, GrTr::null_vertex());
 
-        BOOST_FOREACH(typename GrTr::face_descriptor f, faces(tm))
+        for(typename GrTr::face_descriptor f : faces(tm))
         {
           std::size_t cc_id = cc_ids[get(fid_map, f)];
           if  (vertex_per_cc[cc_id] == GrTr::null_vertex())

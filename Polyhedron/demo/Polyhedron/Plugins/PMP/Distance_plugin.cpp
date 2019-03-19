@@ -209,7 +209,7 @@ private:
       PMP::compute_normals(*poly, nv_pmap, nf_pmap);
       std::vector<Kernel::Point_3> total_points(0);
 
-      BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor f, faces(*poly)) {
+      for(boost::graph_traits<Face_graph>::face_descriptor f : faces(*poly)) {
         Vector nf = get(nf_pmap, f);
         typedef FacetTriangulator<Face_graph, Kernel, boost::graph_traits<Face_graph>::vertex_descriptor> FT;
         
@@ -302,7 +302,7 @@ private:
       typedef Kernel::Point_3		Point;
       typedef boost::graph_traits<Face_graph>::edge_descriptor	edge_descriptor;
 
-      BOOST_FOREACH(edge_descriptor he, edges(*poly)){
+      for(edge_descriptor he : edges(*poly)){
         const Point& a = get(vpmap,target(he,*poly));
         const Point& b = get(vpmap,source(he,*poly));
         {

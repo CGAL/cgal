@@ -44,7 +44,6 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #include <boost/range/size.hpp>
-#include <boost/foreach.hpp>
 
 #include <queue>
 #include <vector>
@@ -291,7 +290,7 @@ public:
     std::vector<Point> hole_points;
     std::vector<vertex_descriptor> border_vertices;
     CGAL_assertion(CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh).size() > 0);
-    BOOST_FOREACH(halfedge_descriptor h, CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh))
+    for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh))
     {
       vertex_descriptor v = source(h, pmesh);
       hole_points.push_back( get(_vpmap, v) );
@@ -310,7 +309,7 @@ public:
     // triangulate the hole
     std::map< std::pair<int, int> , halfedge_descriptor > halfedge_map;
     int i=0;
-    BOOST_FOREACH(halfedge_descriptor h, CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh))
+    for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh))
     {
       int j = std::size_t(i+1) == hole_points.size() ? 0 : i+1;
       halfedge_map[ std::make_pair(i, j) ] = h;
@@ -320,7 +319,7 @@ public:
     bool first = true;
     std::vector<halfedge_descriptor> hedges;
     hedges.reserve(4);
-    BOOST_FOREACH(const Face_indices& triangle, patch)
+    for(const Face_indices& triangle : patch)
     {
       if (first)
         first=false;
@@ -370,13 +369,13 @@ public:
     facets.reserve(std::distance(boost::begin(face_range), boost::end(face_range)));
 
     //only consider non-triangular faces
-    BOOST_FOREACH(face_descriptor fit, face_range)
+    for(face_descriptor fit : face_range)
       if ( next( next( halfedge(fit, pmesh), pmesh), pmesh)
         !=       prev( halfedge(fit, pmesh), pmesh) )
         facets.push_back(fit);
 
     // Iterates on the vector of face descriptors
-    BOOST_FOREACH(face_descriptor f, facets)
+    for(face_descriptor f : facets)
     {
      if(!this->triangulate_face(f, pmesh, use_cdt))
        result = false;
@@ -394,7 +393,7 @@ public:
     CGAL_assertion(!is_border(h, pmesh));
     face_descriptor fd = face(h, pmesh);
 
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(h, pmesh))
+    for(halfedge_descriptor hd : halfedges_around_face(h, pmesh))
     {
       CGAL::internal::set_border(hd, pmesh);
     }

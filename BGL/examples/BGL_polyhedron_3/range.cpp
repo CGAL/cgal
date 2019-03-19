@@ -2,7 +2,6 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Iterator_range.h>
 
-#include <boost/foreach.hpp>
 
 #include <iostream>
 #include <fstream>
@@ -40,12 +39,7 @@ void fct(const Polyhedron& p)
   for(vertex_descriptor vd : vr){
     std::cout << vd->point() << std::endl;
   }
-  
-  std::cout << "BOOST_FOREACH" << std::endl;
-  BOOST_FOREACH(vertex_descriptor vd, vr){
-    std::cout << vd->point() << std::endl;
-  }
-  
+    
   std::cout << "boost::tie + std::for_each" << std::endl;
   vertex_iterator vb, ve;
   

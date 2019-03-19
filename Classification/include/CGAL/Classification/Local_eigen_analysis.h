@@ -379,7 +379,7 @@ public:
     else
 #endif
     {
-      BOOST_FOREACH(face_descriptor fd, range)
+      for(face_descriptor fd : range)
       {
         std::vector<face_index> neighbors;
         neighbor_query (fd, std::back_inserter (neighbors));
@@ -522,7 +522,7 @@ private:
     typedef typename boost::graph_traits<FaceListGraph>::halfedge_descriptor halfedge_descriptor;
     
     float out = 0.f;
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, g), g))
+    for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, g), g))
     {
       out = (std::max)(out,
                        float(CGAL::squared_distance (get(get (CGAL::vertex_point, g), source(hd,g)),

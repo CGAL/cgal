@@ -35,7 +35,6 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/Labeled_mesh_domain_3.h> // for CGAL::Null_subdomain_index
 #include <boost/utility.hpp> // for boost::prior
-#include <boost/foreach.hpp>
 #include <boost/optional.hpp>
 
 #include <CGAL/Search_traits_3.h>
@@ -267,10 +266,10 @@ struct Polyline_visitor
 #if CGAL_MESH_3_PROTECTION_DEBUG > 1
     std::ofstream og("polylines_graph.polylines.txt");
     og.precision(17);
-    BOOST_FOREACH(const std::vector<P>& poly, polylines)
+    for(const std::vector<P>& poly : polylines)
     {
       og << poly.size() << " ";
-      BOOST_FOREACH(const P& p, poly)
+      for(const P& p : poly)
         og << p << " ";
       og << std::endl;
     }
@@ -368,7 +367,7 @@ void snap_graph_vertices(Graph& graph,
   }
   if(tree.size() == 0) return;
 
-  BOOST_FOREACH(typename boost::graph_traits<Graph>::vertex_descriptor v,
+  for(typename boost::graph_traits<Graph>::vertex_descriptor v :
                 vertices(graph))
   {
     const typename K::Point_3 p = graph[v].point;

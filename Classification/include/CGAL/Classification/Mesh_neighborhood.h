@@ -203,7 +203,7 @@ private:
   template <typename OutputIterator>
   void direct_neighbors (const face_descriptor& query, OutputIterator output) const
   {
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(query, m_mesh), m_mesh))
+    for(halfedge_descriptor hd : halfedges_around_face(halfedge(query, m_mesh), m_mesh))
       {
         *(output ++ ) = face(opposite(hd, m_mesh), m_mesh);
       }

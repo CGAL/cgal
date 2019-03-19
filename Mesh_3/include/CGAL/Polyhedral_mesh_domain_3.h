@@ -138,7 +138,7 @@ class Get_face_index_pmap<Polyhedron_type, false> {
 public:
   Get_face_index_pmap(const Polyhedron_type& polyhedron) {
     int id = 0;
-    BOOST_FOREACH(face_descriptor f, faces(polyhedron))
+    for(face_descriptor f : faces(polyhedron))
     {
       face_ids[f] = id++;
     }

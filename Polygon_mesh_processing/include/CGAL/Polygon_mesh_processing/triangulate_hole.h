@@ -122,7 +122,7 @@ namespace Polygon_mesh_processing {
   template<typename PM, typename VertexRange>
   void test_in_edges(const PM& pmesh, const VertexRange& patch)
   {
-    BOOST_FOREACH(typename boost::graph_traits<PM>::vertex_descriptor v0, patch)
+    for(typename boost::graph_traits<PM>::vertex_descriptor v0 : patch)
     {
       typename boost::graph_traits<PM>::in_edge_iterator e, e_end;
       for (boost::tie(e, e_end) = in_edges(v0, pmesh); e != e_end; e++)

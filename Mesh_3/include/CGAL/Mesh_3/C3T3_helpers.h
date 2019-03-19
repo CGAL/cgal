@@ -45,7 +45,6 @@
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
 
-#include <boost/foreach.hpp>
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
 #include <boost/optional.hpp>
@@ -3624,7 +3623,7 @@ try_lock_and_get_incident_cells(const Vertex_handle& v,
 
         if (!try_lock_element(next)) // LOCK
         {
-          BOOST_FOREACH(Cell_handle& ch,
+          for(Cell_handle& ch :
             std::make_pair(cells.begin(), cells.end()))
           {
             ch->tds_data().clear();
@@ -3641,7 +3640,7 @@ try_lock_and_get_incident_cells(const Vertex_handle& v,
       }
       ++head;
     } while(head != tail);
-    BOOST_FOREACH(Cell_handle& ch, std::make_pair(cells.begin(), cells.end()))
+    for(Cell_handle& ch : std::make_pair(cells.begin(), cells.end()))
     {
       ch->tds_data().clear();
     }
@@ -3661,7 +3660,7 @@ try_lock_and_get_incident_cells(const Vertex_handle& v,
   bool ret = try_lock_and_get_incident_cells(v, tmp_cells);
   if (ret)
   {
-    BOOST_FOREACH(Cell_handle& ch,
+    for(Cell_handle& ch :
                   std::make_pair(tmp_cells.begin(), tmp_cells.end()))
     {
       if (filter(ch))
