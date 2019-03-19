@@ -356,14 +356,8 @@ private:
   std::vector<double> scales;
 #endif
 
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
 public:
   Surface_mesh_deformation(const Self&) = delete; // no copy
-#else
-private:
-  Surface_mesh_deformation(const Self&); // no copy
-#endif
-
 
 // Public methods
 public:
