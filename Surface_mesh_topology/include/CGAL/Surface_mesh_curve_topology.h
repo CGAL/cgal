@@ -370,9 +370,6 @@ namespace CGAL {
         count_edges_of_path_on_torus(pt1, a1, b1);
         count_edges_of_path_on_torus(pt2, a2, b2);
         res=(a1==a2 && b1==b2);
-
-        std::cout<<"Path1: length="<<pt1.length()<<"; (#a,b)=("<<a1<<", "<<b1<<"); "<<std::endl
-                  <<"Path2: length="<<pt2.length()<<"; (#a,b)=("<<a2<<", "<<b2<<")."<<std::endl;
       }
       else
       {
