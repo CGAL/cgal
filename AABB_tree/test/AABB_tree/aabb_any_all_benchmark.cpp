@@ -1,5 +1,3 @@
-#define CGAL_INTERSECTION_VERSION 2
-
 #include <iostream>
 #include <fstream>
 #include <algorithm>
@@ -40,11 +38,7 @@ struct FilterP {
 template<typename ForwardIterator, typename Tree>
 std::size_t intersect(ForwardIterator b, ForwardIterator e, const Tree& tree, long& counter) {
       typedef
-#if CGAL_INTERSECTION_VERSION < 2
-        typename Tree::Object_and_primitive_id
-#else
         typename Tree::AABB_traits::template Intersection_and_primitive_id<typename ForwardIterator::value_type>::Type
-#endif
         Obj_type;
 
   std::vector<Obj_type> v;

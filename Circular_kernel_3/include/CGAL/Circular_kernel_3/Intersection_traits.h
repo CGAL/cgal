@@ -22,10 +22,7 @@
 #ifndef CGAL_CIRCULAR_KERNEL_3_INTERSECTION_TRAITS_H
 #define CGAL_CIRCULAR_KERNEL_3_INTERSECTION_TRAITS_H
 
-//this include is needed to know the value of CGAL_INTERSECTION_VERSION
 #include <CGAL/Intersection_traits.h>
-
-#if !(CGAL_INTERSECTION_VERSION < 2)
 
 #include <boost/variant.hpp>
 #include <utility>
@@ -179,16 +176,6 @@ struct SK3_Intersection_traits<SK, typename SK::Sphere_3, typename SK::Plane_3, 
 
 } //end of namespace CGAL
 
-#else
-
-#include <CGAL/Object.h>
-
-template <typename CK, typename T1, typename T2, typename T3=void*>
-struct SK3_Intersection_traits
-{ typedef CGAL::Object type; };
-
-#endif
-
 namespace CGAL{
 namespace internal{
 
@@ -200,21 +187,12 @@ namespace internal{
 // _could_ come with conversion overhead and so we rather go for
 // the real type.
 // Overloads for empty returns are also provided.
-#if CGAL_INTERSECTION_VERSION < 2
-  template<typename, typename T>
-  inline
-  CGAL::Object sk3_intersection_return(T&& t) { return CGAL::make_object(std::forward<T>(t)); }
-  template<typename>
-  inline
-  CGAL::Object sk3_intersection_return() { return CGAL::Object(); }
-#else
   template<typename RT, typename T>
   inline RT
   sk3_intersection_return(T&& t) { return RT(std::forward<T>(t)); }
   template<typename RT>
   inline RT
   sk3_intersection_return() { return RT(); }
-#endif // CGAL_INTERSECTION_VERSION < 2
 
 } } //end of namespace CGAL::internal
 

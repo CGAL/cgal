@@ -284,11 +284,7 @@ public:
     /// for which `do_intersect` predicates
     /// and intersections are defined in the traits class AABBTraits.
 		template <typename Query>
-    #if CGAL_INTERSECTION_VERSION < 2 && !defined(DOXYGEN_RUNNING)
-		boost::optional<Object_and_primitive_id> 
-    #else
     boost::optional< typename Intersection_and_primitive_id<Query>::Type >
-    #endif
     any_intersection(const Query& query) const;
 
 
@@ -846,11 +842,7 @@ public:
 
 	template <typename Tr>
 	template <typename Query>
-  #if CGAL_INTERSECTION_VERSION < 2
-	boost::optional<typename AABB_tree<Tr>::Object_and_primitive_id>
-  #else
   boost::optional< typename AABB_tree<Tr>::template Intersection_and_primitive_id<Query>::Type >
-  #endif
 		AABB_tree<Tr>::any_intersection(const Query& query) const
 	{
     using namespace CGAL::internal::AABB_tree;

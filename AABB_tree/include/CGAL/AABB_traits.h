@@ -365,20 +365,6 @@ public:
   public:
     Intersection(const AABB_traits<GeomTraits,AABBPrimitive,BboxMap>& traits)
       :m_traits(traits) {}
-    #if CGAL_INTERSECTION_VERSION < 2
-    template<typename Query>
-    boost::optional<typename AT::Object_and_primitive_id>
-    operator()(const Query& query, const typename AT::Primitive& primitive) const
-    {
-      typedef boost::optional<Object_and_primitive_id> Intersection;
-
-      CGAL::Object object = GeomTraits().intersect_3_object()(internal::Primitive_helper<AT>::get_datum(primitive,m_traits),query);
-      if ( object.empty() )
-        return Intersection();
-      else
-        return Intersection(Object_and_primitive_id(object,primitive.id()));
-    }
-    #else
     template<typename Query>
     boost::optional< typename Intersection_and_primitive_id<Query>::Type >
     operator()(const Query& query, const typename AT::Primitive& primitive) const {
@@ -388,7 +374,6 @@ public:
         return boost::none;
       return boost::make_optional( std::make_pair(*inter_res, primitive.id()) );
     }
-    #endif
   };
 
   Intersection intersection_object() const {return Intersection(*this);}

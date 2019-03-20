@@ -31,25 +31,6 @@
 #include <boost/type_traits/is_same.hpp>
 #include <boost/variant.hpp>
 
-// The macro CGAL_INTERSECTION_VERSION controls which version of the
-// intersection is used.
-// Currently two values are supported:
-// - 1, which means intersections with CGAL::Object
-// - 2, which means intersections with Intersection_traits and the 
-//      corresponding APIs in other modules
-// The default value is 2.
-
-#if !defined(CGAL_INTERSECTION_VERSION)
-#define CGAL_INTERSECTION_VERSION 2
-#endif
-
-#if CGAL_INTERSECTION_VERSION < 2
-
-#define CGAL_INTERSECTION_TRAITS_2(A, B, R1, R2)
-#define CGAL_INTERSECTION_TRAITS_3(A, B, R1, R2, R3)
-
-#else
-
 #define CGAL_INTERSECTION_TRAITS_2(A, B, R1, R2)                \
   template<typename K>     \
   struct Intersection_traits<K, typename K::A, typename K::B>  { \
@@ -65,10 +46,6 @@
                                     typename K::R3> variant_type;       \
     typedef typename boost::optional< variant_type > result_type;       \
   };                                                                    
-
-#endif
-
-
 
 #define CGAL_INTERSECTION_FUNCTION(A, B, DIM)                           \
   template<typename K>                                                  \
@@ -118,9 +95,6 @@ template<typename, typename, typename>
 struct Intersection_traits {
   // This defaults to Object, if we use VERSION < 2 and do nothing
   // otherwise.
-  #if CGAL_INTERSECTION_VERSION < 2
-  typedef CGAL::Object result_type;
-  #endif
 };
 
 
@@ -157,21 +131,12 @@ namespace internal {
 // _could_ come with conversion overhead and so we rather go for
 // the real type.
 // Overloads for empty returns are also provided.
-#if CGAL_INTERSECTION_VERSION < 2
-  template<typename, typename, typename, typename T>
-  inline
-  CGAL::Object intersection_return(T&& t) { return CGAL::make_object(std::forward<T>(t)); }
-  template<typename, typename, typename>
-  inline
-  CGAL::Object intersection_return() { return CGAL::Object(); }
-#else
   template<typename F, typename A, typename B, typename T>
   inline typename cpp11::result_of<F(A, B)>::type
   intersection_return(T&& t) { return typename cpp11::result_of<F(A, B)>::type(std::forward<T>(t)); }
   template<typename F, typename A, typename B>
   inline typename cpp11::result_of<F(A, B)>::type
   intersection_return() { return typename cpp11::result_of<F(A, B)>::type(); }
-#endif // CGAL_INTERSECTION_VERSION < 2
 
 // Something similar to wrap around boost::get and object_cast to
 // prevent ifdefing too much. Another way could be to introduce an
