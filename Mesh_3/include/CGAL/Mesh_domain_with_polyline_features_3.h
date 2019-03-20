@@ -717,7 +717,7 @@ public:
   OutputIterator get_corners(OutputIterator out) const;
 
   /// Implements `MeshDomainWithFeatures_3::get_curves()`.
-  /// OutputIterator value type is CGAL::cpp11::tuple<Curve_index,
+  /// OutputIterator value type is std::tuple<Curve_index,
   /// std::pair<Point_3,Index>, std::pair<Point_3,Index> >
   template <typename OutputIterator>
   OutputIterator get_curves(OutputIterator out) const;
@@ -971,7 +971,7 @@ get_curves(OutputIterator out) const
       q_index = p_index;
     }
 
-    *out++ = CGAL::cpp11::make_tuple(eit->first,
+    *out++ = std::make_tuple(eit->first,
                                      std::make_pair(p,p_index),
                                      std::make_pair(q,q_index));
   }

@@ -43,7 +43,7 @@ template <class Base_> struct Kernel_2_interface : public Base_ {
 	typedef typename Get_type<Base, Point_tag>::type  Point_2;
 	typedef typename Get_type<Base, Vector_tag>::type Vector_2;
 	typedef typename Get_type<Base, Segment_tag>::type Segment_2;
-	typedef cpp0x::tuple<Point_2,Point_2,Point_2> Triangle_2; // triangulation insists...
+	typedef std::tuple<Point_2,Point_2,Point_2> Triangle_2; // triangulation insists...
 	template <class T,int i> struct Help_2p_i {
 		typedef typename Get_functor<Base, T>::type LT;
 		typedef typename LT::result_type result_type;

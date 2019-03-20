@@ -2462,7 +2462,7 @@ bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np)
       break;
     }
 
-    cpp11::tie(all_fixed, topology_issue) =
+    std::tie(all_fixed, topology_issue) =
       remove_self_intersections_one_step(tm, faces_to_remove, vpm, step, preserve_genus, verbose);
     if (all_fixed && topology_issue)
     {

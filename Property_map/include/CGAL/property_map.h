@@ -347,7 +347,7 @@ struct Nth_of_tuple_property_map<N,std::tuple<T...> >
 {
   typedef std::tuple<T...> Tuple;
   typedef Tuple key_type;
-  typedef typename cpp11::tuple_element<N,Tuple>::type value_type;
+  typedef typename std::tuple_element<N,Tuple>::type value_type;
   typedef const value_type& reference;
   typedef boost::lvalue_property_map_tag category;
 

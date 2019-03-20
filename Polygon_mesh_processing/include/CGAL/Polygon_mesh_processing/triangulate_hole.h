@@ -246,7 +246,7 @@ namespace Polygon_mesh_processing {
            typename FaceOutputIterator,
            typename VertexOutputIterator,
            typename NamedParameters>
-  CGAL::cpp11::tuple<bool, FaceOutputIterator, VertexOutputIterator>
+  std::tuple<bool, FaceOutputIterator, VertexOutputIterator>
   triangulate_refine_and_fair_hole(PolygonMesh& pmesh,
     typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
     FaceOutputIterator face_out,
@@ -267,13 +267,13 @@ namespace Polygon_mesh_processing {
     bool fair_success = fair(pmesh, patch, np);
 
     vertex_out = std::copy(patch.begin(), patch.end(), vertex_out);
-    return CGAL::cpp11::make_tuple(fair_success, face_out, vertex_out);
+    return std::make_tuple(fair_success, face_out, vertex_out);
   }
 
   template<typename PolygonMesh,
            typename FaceOutputIterator,
            typename VertexOutputIterator>
-  CGAL::cpp11::tuple<bool, FaceOutputIterator, VertexOutputIterator>
+  std::tuple<bool, FaceOutputIterator, VertexOutputIterator>
   triangulate_refine_and_fair_hole(PolygonMesh& pmesh,
         typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
         FaceOutputIterator face_out,

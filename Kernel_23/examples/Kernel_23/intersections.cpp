@@ -48,7 +48,7 @@ int main()
   std::vector<Segment> segments;
 
   typedef CGAL::Dispatch_output_iterator<
-    CGAL::cpp11::tuple<Point,Segment>, CGAL::cpp11::tuple< std::back_insert_iterator<std::vector<Point> >,
+    std::tuple<Point,Segment>, std::tuple< std::back_insert_iterator<std::vector<Point> >,
                                                std::back_insert_iterator<std::vector<Segment> > > >
     Dispatcher;
 

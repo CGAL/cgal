@@ -1233,9 +1233,9 @@ private:
 
       Intersection intersection = construct_intersection(dual);
       Surface_patch surface =
-        (CGAL::cpp0x::get<2>(intersection) == 0) ? Surface_patch() :
+        (std::get<2>(intersection) == 0) ? Surface_patch() :
         Surface_patch(
-          domain_.surface_patch_index(CGAL::cpp0x::get<1>(intersection)));
+          domain_.surface_patch_index(std::get<1>(intersection)));
 
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
@@ -1259,7 +1259,7 @@ private:
 #endif // NOT CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
           // Update facet surface center
-          Bare_point surface_center = CGAL::cpp0x::get<0>(intersection);
+          Bare_point surface_center = std::get<0>(intersection);
           facet.first->set_facet_surface_center(facet.second, surface_center);
           facet_m.first->set_facet_surface_center(facet_m.second, surface_center);
         }
@@ -3392,7 +3392,7 @@ project_on_surface_aux(const Bare_point& p,
     domain_.do_intersect_surface_object();
 
   if ( do_intersect(proj_segment) )
-    return CGAL::cpp0x::get<0>(construct_intersection(proj_segment));
+    return std::get<0>(construct_intersection(proj_segment));
   else
     return ref_point;
 
@@ -3400,8 +3400,8 @@ project_on_surface_aux(const Bare_point& p,
 
   typedef typename MD::Intersection Intersection;
   Intersection intersection = construct_intersection(proj_segment);
-  if(CGAL::cpp0x::get<2>(intersection) == 2)
-    return CGAL::cpp0x::get<0>(intersection);
+  if(std::get<2>(intersection) == 2)
+    return std::get<0>(intersection);
   else
     return ref_point;
 

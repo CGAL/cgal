@@ -86,7 +86,7 @@ class Face_graph_output_builder
     Ecm_bind<TriangleMesh, No_mark<TriangleMesh> >
       >::type                                          EdgeMarkMapBind;
   typedef typename Default::Get<EdgeMarkMapTuple_,
-    cpp11::tuple< No_mark<TriangleMesh>,
+    std::tuple< No_mark<TriangleMesh>,
                   No_mark<TriangleMesh>,
                   No_mark<TriangleMesh>,
                   No_mark<TriangleMesh> > >::type     EdgeMarkMapTuple;
@@ -292,16 +292,16 @@ class Face_graph_output_builder
     switch (tuple_id)
     {
     case 0:
-      mark_edges(cpp11::get<0>(edge_mark_maps),edges);
+      mark_edges(std::get<0>(edge_mark_maps),edges);
     break;
     case 1:
-      mark_edges(cpp11::get<1>(edge_mark_maps),edges);
+      mark_edges(std::get<1>(edge_mark_maps),edges);
     break;
     case 2:
-      mark_edges(cpp11::get<2>(edge_mark_maps),edges);
+      mark_edges(std::get<2>(edge_mark_maps),edges);
     break;
     default:
-      mark_edges(cpp11::get<3>(edge_mark_maps),edges);
+      mark_edges(std::get<3>(edge_mark_maps),edges);
     }
   }
 
@@ -319,20 +319,20 @@ class Face_graph_output_builder
     switch (tuple_id)
     {
     case 0:
-      mark_edges(cpp11::get<0>(edge_mark_maps),edges);
+      mark_edges(std::get<0>(edge_mark_maps),edges);
     break;
     case 1:
-      mark_edges(cpp11::get<1>(edge_mark_maps),edges);
+      mark_edges(std::get<1>(edge_mark_maps),edges);
     break;
     case 2:
-      mark_edges(cpp11::get<2>(edge_mark_maps),edges);
+      mark_edges(std::get<2>(edge_mark_maps),edges);
     break;
     default:
-      mark_edges(cpp11::get<3>(edge_mark_maps),edges);
+      mark_edges(std::get<3>(edge_mark_maps),edges);
     }
   }
 
-  void mark_edges(const cpp11::tuple<No_mark<TriangleMesh>,
+  void mark_edges(const std::tuple<No_mark<TriangleMesh>,
                                      No_mark<TriangleMesh>,
                                      No_mark<TriangleMesh>,
                                      No_mark<TriangleMesh> >&,
@@ -340,7 +340,7 @@ class Face_graph_output_builder
                  int)
   {} // nothing to do
 
-  void mark_edges(const cpp11::tuple<No_mark<TriangleMesh>,
+  void mark_edges(const std::tuple<No_mark<TriangleMesh>,
                                      No_mark<TriangleMesh>,
                                      No_mark<TriangleMesh>,
                                      No_mark<TriangleMesh> >&,
@@ -1400,10 +1400,10 @@ public:
           BO_type == TM2_MINUS_TM1, BO_type == TM1_MINUS_TM2, \
           polylines, \
           intersection_edges1, intersection_edges2, \
-          vpm1, vpm2, *cpp11::get<BO_type>(output_vpms), \
+          vpm1, vpm2, *std::get<BO_type>(output_vpms), \
           marks_on_input_edges.ecm1, \
           marks_on_input_edges.ecm2, \
-          cpp11::get<BO_type>(out_edge_mark_maps), \
+          std::get<BO_type>(out_edge_mark_maps), \
           shared_edges, \
           user_visitor \
         )
@@ -1486,7 +1486,7 @@ public:
           vpm1, vpm2, \
           marks_on_input_edges.ecm1, \
           marks_on_input_edges.ecm2, \
-          cpp11::get<BO_type>(out_edge_mark_maps), \
+          std::get<BO_type>(out_edge_mark_maps), \
           disconnected_patches_edge_to_tm2_edge, \
           user_visitor)
         CGAL_COREF_FUNCTION_CALL(inplace_operation_tm1)
@@ -1505,7 +1505,7 @@ public:
                                      vpm1, \
                                      marks_on_input_edges.ecm2, \
                                      marks_on_input_edges.ecm1, \
-                                     cpp11::get<BO_type>(out_edge_mark_maps), \
+                                     std::get<BO_type>(out_edge_mark_maps), \
                                      disconnected_patches_edge_to_tm2_edge, \
                                      user_visitor)
         CGAL_COREF_FUNCTION_CALL(inplace_operation_tm2)
@@ -1526,7 +1526,7 @@ public:
         #define CGAL_COREF_FUNCTION_CALL_DEF(BO_type) \
           copy_edge_mark<TriangleMesh>( \
           tm1, marks_on_input_edges.ecm1, \
-          cpp11::get<BO_type>(out_edge_mark_maps))
+          std::get<BO_type>(out_edge_mark_maps))
         CGAL_COREF_FUNCTION_CALL(inplace_operation_tm1)
         #undef CGAL_COREF_FUNCTION_CALL_DEF
 
@@ -1614,7 +1614,7 @@ public:
             vpm2, \
             marks_on_input_edges.ecm1, \
             marks_on_input_edges.ecm2, \
-            cpp11::get<BO_type>(out_edge_mark_maps), \
+            std::get<BO_type>(out_edge_mark_maps), \
             polylines, \
             user_visitor \
           )
@@ -1656,7 +1656,7 @@ public:
                                      vpm1, \
                                      marks_on_input_edges.ecm2, \
                                      marks_on_input_edges.ecm1, \
-                                     cpp11::get<BO_type>(out_edge_mark_maps), \
+                                     std::get<BO_type>(out_edge_mark_maps), \
                                      polylines, \
                                      user_visitor);
         CGAL_COREF_FUNCTION_CALL(inplace_operation_tm2)

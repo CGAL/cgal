@@ -14,7 +14,7 @@ typedef Kernel::Vector_3 Vector;
 typedef CGAL::cpp11::array<unsigned char, 3> Color;
 
 // Point with normal, color and intensity
-typedef CGAL::cpp11::tuple<Point, Vector, Color, int> PNCI;
+typedef std::tuple<Point, Vector, Color, int> PNCI;
 typedef CGAL::Nth_of_tuple_property_map<0, PNCI> Point_map;
 typedef CGAL::Nth_of_tuple_property_map<1, PNCI> Normal_map;
 typedef CGAL::Nth_of_tuple_property_map<2, PNCI> Color_map;

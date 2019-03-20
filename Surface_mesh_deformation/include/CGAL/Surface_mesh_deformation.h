@@ -128,7 +128,7 @@ struct Types_selectors<TriangleMesh, CGAL::SRE_ARAP> {
       TriangleMesh& hg)
     {
       typename boost::graph_traits<TriangleMesh>::in_edge_iterator e, e_end;
-      cpp11::tie(e,e_end) = in_edges(vi, hg);
+      std::tie(e,e_end) = in_edges(vi, hg);
       m_nb_edges_incident=(double) std::distance(e,e_end);
     }
 
@@ -466,7 +466,7 @@ private:
     // compute halfedge weights
     halfedge_iterator eb, ee;
     hedge_weight.reserve(2*num_edges(m_triangle_mesh));
-    for(cpp11::tie(eb, ee) = halfedges(m_triangle_mesh); eb != ee; ++eb)
+    for(std::tie(eb, ee) = halfedges(m_triangle_mesh); eb != ee; ++eb)
     {
       hedge_weight.push_back(
         this->weight_calculator(*eb, m_triangle_mesh, Wrapper(vertex_point_map)));
@@ -868,7 +868,7 @@ public:
     for(vertex_descriptor vd : roi_vertices())
     {
       in_edge_iterator e, e_end;
-      for (cpp11::tie(e,e_end) = in_edges(vd, m_triangle_mesh); e != e_end; e++)
+      for (std::tie(e,e_end) = in_edges(vd, m_triangle_mesh); e != e_end; e++)
       {
         halfedge_descriptor he = halfedge(*e, m_triangle_mesh);
         std::size_t id_e = id(he);
@@ -977,7 +977,7 @@ private:
                              std::vector<vertex_descriptor>& push_vector)
   {
     in_edge_iterator e, e_end;
-    for (cpp11::tie(e,e_end) = in_edges(vd, m_triangle_mesh); e != e_end; e++)
+    for (std::tie(e,e_end) = in_edges(vd, m_triangle_mesh); e != e_end; e++)
     {
       vertex_descriptor vt = source(*e, m_triangle_mesh);
       if(ros_id(vt) == (std::numeric_limits<std::size_t>::max)())  // neighboring vertex which is outside of roi and not visited previously (i.e. need an id)
@@ -1132,7 +1132,7 @@ private:
       {
         double diagonal = 0;
         in_edge_iterator e, e_end;
-        for (cpp11::tie(e,e_end) = in_edges(vi, m_triangle_mesh); e != e_end; e++)
+        for (std::tie(e,e_end) = in_edges(vi, m_triangle_mesh); e != e_end; e++)
         {
           halfedge_descriptor he = halfedge(*e, m_triangle_mesh);
           vertex_descriptor vj = source(he, m_triangle_mesh);
@@ -1175,7 +1175,7 @@ private:
       {
         double diagonal = 0;
         out_edge_iterator e, e_end;
-        for (cpp11::tie(e,e_end) = out_edges(vi, m_triangle_mesh); e != e_end; e++)
+        for (std::tie(e,e_end) = out_edges(vi, m_triangle_mesh); e != e_end; e++)
         {
           halfedge_descriptor he = halfedge(*e, m_triangle_mesh);
           double total_weight = 0;
@@ -1243,7 +1243,7 @@ private:
 
       arap_visitor.rotation_matrix_pre(vi, m_triangle_mesh);
 
-      for (cpp11::tie(e,e_end) = in_edges(vi, m_triangle_mesh); e != e_end; e++)
+      for (std::tie(e,e_end) = in_edges(vi, m_triangle_mesh); e != e_end; e++)
       {
         halfedge_descriptor he=halfedge(*e, m_triangle_mesh);
         vertex_descriptor vj = source(he, m_triangle_mesh);
@@ -1277,7 +1277,7 @@ private:
 
       //iterate through all triangles
       out_edge_iterator e, e_end;
-      for (cpp11::tie(e,e_end) = out_edges(vi, m_triangle_mesh); e != e_end; e++)
+      for (std::tie(e,e_end) = out_edges(vi, m_triangle_mesh); e != e_end; e++)
       {
         halfedge_descriptor he = halfedge(*e, m_triangle_mesh);
         if(is_border(he, m_triangle_mesh)) { continue; } // no facet
@@ -1314,7 +1314,7 @@ private:
       double eT_eR = 0, eRT_eR = 0;
 
       in_edge_iterator e, e_end;
-      for (cpp11::tie(e,e_end) = in_edges(vi, m_triangle_mesh); e != e_end; e++)
+      for (std::tie(e,e_end) = in_edges(vi, m_triangle_mesh); e != e_end; e++)
       {
         halfedge_descriptor he = *e;
         vertex_descriptor vj = source(he, m_triangle_mesh);
@@ -1368,7 +1368,7 @@ private:
         CR_vector xyz = cr_traits.vector(0, 0, 0);
 
         in_edge_iterator e, e_end;
-        for (cpp11::tie(e,e_end) = in_edges(vi, m_triangle_mesh); e != e_end; e++)
+        for (std::tie(e,e_end) = in_edges(vi, m_triangle_mesh); e != e_end; e++)
         {
           halfedge_descriptor he = halfedge(*e, m_triangle_mesh);
           vertex_descriptor vj = source(he, m_triangle_mesh);
@@ -1432,7 +1432,7 @@ private:
         CR_vector xyz = cr_traits.vector(0, 0, 0);
 
         out_edge_iterator e, e_end;
-        for (cpp11::tie(e,e_end) = out_edges(vi, m_triangle_mesh); e != e_end; e++)
+        for (std::tie(e,e_end) = out_edges(vi, m_triangle_mesh); e != e_end; e++)
         {
           halfedge_descriptor he = halfedge(*e, m_triangle_mesh);
           vertex_descriptor vj = target(he, m_triangle_mesh);
@@ -1519,7 +1519,7 @@ private:
       std::size_t vi_id = ros_id(vi);
 
       in_edge_iterator e, e_end;
-      for (cpp11::tie(e,e_end) = in_edges(vi, m_triangle_mesh); e != e_end; e++)
+      for (std::tie(e,e_end) = in_edges(vi, m_triangle_mesh); e != e_end; e++)
       {
         halfedge_descriptor he = halfedge(*e, m_triangle_mesh);
         vertex_descriptor vj = source(he, m_triangle_mesh);
@@ -1548,7 +1548,7 @@ private:
       std::size_t vi_id = ros_id(vi);
       //iterate through all triangles
       out_edge_iterator e, e_end;
-      for (cpp11::tie(e,e_end) = out_edges(vi, m_triangle_mesh); e != e_end; e++)
+      for (std::tie(e,e_end) = out_edges(vi, m_triangle_mesh); e != e_end; e++)
       {
         halfedge_descriptor he = halfedge(*e, m_triangle_mesh);
         if(is_border(he, m_triangle_mesh)) { continue; } // no facet

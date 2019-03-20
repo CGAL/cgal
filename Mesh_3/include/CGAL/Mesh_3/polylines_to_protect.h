@@ -492,8 +492,8 @@ polylines_to_protect
         {
 
           using CGAL::cpp11::array;
-          using CGAL::cpp11::tuple;
-          using CGAL::cpp11::get;
+          using std::tuple;
+          using std::get;
 
           typedef array<int, 3> Pixel;
 

@@ -107,7 +107,7 @@ void fill_pairs(const Halfedge& he,
 {
   typename Border_halfedge_map::iterator set_it;
   bool insertion_ok;
-  CGAL::cpp11::tie(set_it, insertion_ok)
+  std::tie(set_it, insertion_ok)
       = border_halfedge_map.insert(std::make_pair(he,std::make_pair(1,0)));
   
   if ( !insertion_ok ){ // we found already a halfedge with the points

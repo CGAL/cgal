@@ -174,7 +174,7 @@ void test_bool_op_no_copy(
                                                output,
                                                params::edge_is_constrained_map(ecm1),
                                                params::edge_is_constrained_map(ecm2),
-                                               CGAL::cpp11::make_tuple(params::edge_is_constrained_map(ecm_out_union),
+                                               std::make_tuple(params::edge_is_constrained_map(ecm_out_union),
                                                                        params::edge_is_constrained_map(ecm_out_inter),
                                                                        params::no_parameters(params::edge_is_constrained_map(ecm_out_union)),
                                                                        params::no_parameters(params::edge_is_constrained_map(ecm_out_union))));

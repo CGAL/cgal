@@ -314,7 +314,7 @@ public:
   // access Function type from inherited class
   typedef Function Fct;
 
-  typedef CGAL::cpp11::tuple<Point_3,Index,int> Intersection;
+  typedef std::tuple<Point_3,Index,int> Intersection;
 
 
   typedef typename BGT::FT FT;
@@ -979,7 +979,7 @@ Construct_initial_points::operator()(OutputIterator pts,
     Surface_patch surface = r_domain_.do_intersect_surface_object()(random_seg);
     if ( surface )
     {
-      const Point_3 intersect_pt = CGAL::cpp11::get<0>(
+      const Point_3 intersect_pt = std::get<0>(
           r_domain_.construct_intersection_object()(random_seg));
       *pts++ = std::make_pair(intersect_pt,
                               r_domain_.index_from_surface_patch_index(*surface));

@@ -17,7 +17,7 @@ int main()
   CGAL::cpp11::array<int, 3> arr2;
 
   CGAL::cpp0x::tuple<double, int> tuple;
-  CGAL::cpp11::tuple<double, int> tuple2;
+  std::tuple<double, int> tuple2;
 
   CGAL_USE(tuple);
   CGAL_USE(tuple2);

@@ -159,9 +159,9 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
       const Bare_point test = it->first + v;
       const typename Mesh_domain::Intersection intersect =
         construct_intersection(Segment_3(it->first, test));
-      if (CGAL::cpp11::get<2>(intersect) != 0)
+      if (std::get<2>(intersect) != 0)
       {
-        const Bare_point& bpi = CGAL::cpp11::get<0>(intersect);
+        const Bare_point& bpi = std::get<0>(intersect);
         Weighted_point pi = cwp(bpi);
 
         // This would cause trouble to optimizers
@@ -223,7 +223,7 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
         }
         if (pi_inside_protecting_sphere)
           continue;
-        const typename Mesh_domain::Index index = CGAL::cpp11::get<1>(intersect);
+        const typename Mesh_domain::Index index = std::get<1>(intersect);
 
         /// The following lines show how to insert initial points in the
         /// `c3t3` object. [insert initial points]

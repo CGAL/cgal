@@ -350,7 +350,7 @@ void Polyhedron_demo_orient_soup_plugin::getNMPoints(
 
       do{
         std::size_t other_p_id;
-        CGAL::cpp11::tie(next, other_p_id) = PSO::next_cw_vertex_around_source(v_id, next, item->polygons(), edges, m_edges);
+        std::tie(next, other_p_id) = PSO::next_cw_vertex_around_source(v_id, next, item->polygons(), edges, m_edges);
         if (next==v_id) break;
         visited_polygons.insert(other_p_id);
       }
@@ -361,7 +361,7 @@ void Polyhedron_demo_orient_soup_plugin::getNMPoints(
         next = neighbors[0];
         do{
           std::size_t other_p_id;
-          CGAL::cpp11::tie(next, other_p_id) = PSO::next_ccw_vertex_around_target(next, v_id, item->polygons(), edges, m_edges);
+          std::tie(next, other_p_id) = PSO::next_ccw_vertex_around_target(next, v_id, item->polygons(), edges, m_edges);
           if (next==v_id) break;
           visited_polygons.insert(other_p_id);
         }

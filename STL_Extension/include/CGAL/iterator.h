@@ -1286,7 +1286,7 @@ struct Output_visitor : boost::static_visitor<OutputIterator&> {
 
 namespace internal {
 
-template < typename D, typename V = cpp11::tuple<>, typename O = cpp11::tuple<> >
+template < typename D, typename V = std::tuple<>, typename O = std::tuple<> >
 struct Derivator
 {
   typedef Derivator<D, V, O> Self;
@@ -1297,11 +1297,11 @@ struct Derivator
 };
 
 template < typename D, typename V1, typename O1, typename... V, typename... O>
-struct Derivator<D, cpp11::tuple<V1, V...>, cpp11::tuple<O1, O...> >
-  : public Derivator<D, cpp11::tuple<V...>, cpp11::tuple<O...> >
+struct Derivator<D, std::tuple<V1, V...>, std::tuple<O1, O...> >
+  : public Derivator<D, std::tuple<V...>, std::tuple<O...> >
 {
-  typedef Derivator<D, cpp11::tuple<V1, V...>, cpp11::tuple<O1, O...> > Self;
-  typedef Derivator<D, cpp11::tuple<V...>, cpp11::tuple<O...> > Base;
+  typedef Derivator<D, std::tuple<V1, V...>, std::tuple<O1, O...> > Self;
+  typedef Derivator<D, std::tuple<V...>, std::tuple<O...> > Base;
 
   Self& operator=(const Self&) = delete;
 
@@ -1309,15 +1309,15 @@ struct Derivator<D, cpp11::tuple<V1, V...>, cpp11::tuple<O1, O...> >
   
   D& operator=(const V1& v)
   {
-    * cpp11::get< D::size - sizeof...(V) - 1 >(static_cast<typename D::Iterator_tuple&>(static_cast<D&>(*this))) ++ = v;
+    * std::get< D::size - sizeof...(V) - 1 >(static_cast<typename D::Iterator_tuple&>(static_cast<D&>(*this))) ++ = v;
     return static_cast<D&>(*this);
   }
 
   template <class Tuple>
   void tuple_dispatch(const Tuple& t)
   {
-    * cpp11::get< D::size - sizeof...(V) - 1 >(static_cast<typename D::Iterator_tuple&>(static_cast<D&>(*this))) ++ = 
-        cpp11::get< D::size - sizeof...(V) - 1 >(t);
+    * std::get< D::size - sizeof...(V) - 1 >(static_cast<typename D::Iterator_tuple&>(static_cast<D&>(*this))) ++ = 
+        std::get< D::size - sizeof...(V) - 1 >(t);
     static_cast<Base&>(*this).tuple_dispatch(t);
   }
 };
@@ -1331,9 +1331,9 @@ template < typename V, typename O >
 class Dispatch_output_iterator;
 
 template < typename... V, typename... O >
-class Dispatch_output_iterator < cpp11::tuple<V...>, cpp11::tuple<O...> >
- : private internal::Derivator<Dispatch_output_iterator< cpp11::tuple<V...>, cpp11::tuple<O...> >, cpp11::tuple<V...>, cpp11::tuple<O...> >
- , public cpp11::tuple<O...>
+class Dispatch_output_iterator < std::tuple<V...>, std::tuple<O...> >
+ : private internal::Derivator<Dispatch_output_iterator< std::tuple<V...>, std::tuple<O...> >, std::tuple<V...>, std::tuple<O...> >
+ , public std::tuple<O...>
 {
   CGAL_static_assertion_msg(sizeof...(V) == sizeof...(O),
                 "The number of explicit template parameters has to match the number of arguments");
@@ -1345,8 +1345,8 @@ class Dispatch_output_iterator < cpp11::tuple<V...>, cpp11::tuple<O...> >
 
 public:
 
-  typedef cpp11::tuple<O...>               Iterator_tuple;
-  typedef cpp11::tuple<V...>               Value_type_tuple;
+  typedef std::tuple<O...>               Iterator_tuple;
+  typedef std::tuple<V...>               Value_type_tuple;
 
   typedef std::output_iterator_tag  iterator_category;
   typedef void                      value_type;
@@ -1364,7 +1364,7 @@ public:
   using Base::operator=;
   using Base::tuple_dispatch;
 
-  Dispatch_output_iterator(O... o) : cpp11::tuple<O...>(o...) {}
+  Dispatch_output_iterator(O... o) : std::tuple<O...>(o...) {}
 
     
   Dispatch_output_iterator(const Dispatch_output_iterator&)=default;
@@ -1403,7 +1403,7 @@ public:
 
   const Iterator_tuple& get_iterator_tuple() const { return *this; }
   
-  Self& operator=(const cpp11::tuple<V...>& t)
+  Self& operator=(const std::tuple<V...>& t)
   {
     tuple_dispatch(t);
     return *this;
@@ -1411,10 +1411,10 @@ public:
 };
 
 template < typename... V, typename... O>
-Dispatch_output_iterator<cpp11::tuple<V...>, cpp11::tuple<O...> >
+Dispatch_output_iterator<std::tuple<V...>, std::tuple<O...> >
 dispatch_output(O... o)
 {
-  return Dispatch_output_iterator<cpp11::tuple<V...>, cpp11::tuple<O...> > (o...);
+  return Dispatch_output_iterator<std::tuple<V...>, std::tuple<O...> > (o...);
 }
 
 
@@ -1425,11 +1425,11 @@ template < typename V, typename O >
 class Dispatch_or_drop_output_iterator;
 
 template < typename... V, typename... O >
-class Dispatch_or_drop_output_iterator < cpp11::tuple<V...>, cpp11::tuple<O...> >
- : public Dispatch_output_iterator< cpp11::tuple<V...>, cpp11::tuple<O...> >
+class Dispatch_or_drop_output_iterator < std::tuple<V...>, std::tuple<O...> >
+ : public Dispatch_output_iterator< std::tuple<V...>, std::tuple<O...> >
 {
   typedef Dispatch_or_drop_output_iterator Self;
-  typedef Dispatch_output_iterator< cpp11::tuple<V...>, cpp11::tuple<O...> > Base;
+  typedef Dispatch_output_iterator< std::tuple<V...>, std::tuple<O...> > Base;
 
   template <typename D, typename V_, typename O_>
   friend struct internal::Derivator;
@@ -1454,10 +1454,10 @@ public:
 
 template < typename... V, typename... O>
 inline
-Dispatch_or_drop_output_iterator<cpp11::tuple<V...>, cpp11::tuple<O...> >
+Dispatch_or_drop_output_iterator<std::tuple<V...>, std::tuple<O...> >
 dispatch_or_drop_output(O... o)
 {
-  return Dispatch_or_drop_output_iterator<cpp11::tuple<V...>, cpp11::tuple<O...> >(o...);
+  return Dispatch_or_drop_output_iterator<std::tuple<V...>, std::tuple<O...> >(o...);
 }
 
 } //namespace CGAL

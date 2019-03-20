@@ -349,7 +349,7 @@ struct Polygon_soup_orienter
 
         do{
           P_ID other_p_id;
-          cpp11::tie(next, other_p_id) = next_cw_vertex_around_source(v_id, next, polygons, edges, marked_edges);
+          std::tie(next, other_p_id) = next_cw_vertex_around_source(v_id, next, polygons, edges, marked_edges);
           if (next==v_id) break;
           visited_polygons.insert(other_p_id);
           if( !first_pass)
@@ -362,7 +362,7 @@ struct Polygon_soup_orienter
           next = neighbors[0];
           do{
             P_ID other_p_id;
-            cpp11::tie(next, other_p_id) = next_ccw_vertex_around_target(next, v_id, polygons, edges, marked_edges);
+            std::tie(next, other_p_id) = next_ccw_vertex_around_target(next, v_id, polygons, edges, marked_edges);
             if (next==v_id) break;
             visited_polygons.insert(other_p_id);
             if( !first_pass)
@@ -417,7 +417,7 @@ struct Polygon_soup_orienter
 
         do{
           P_ID other_p_id;
-          cpp11::tie(next, other_p_id) = next_cw_vertex_around_source(v_id, next, polygons, edges, marked_edges);
+          std::tie(next, other_p_id) = next_cw_vertex_around_source(v_id, next, polygons, edges, marked_edges);
           if (next==v_id) break;
           visited_polygons.insert(other_p_id);
         }
@@ -428,7 +428,7 @@ struct Polygon_soup_orienter
           next = neighbors[0];
           do{
             P_ID other_p_id;
-            cpp11::tie(next, other_p_id) = next_ccw_vertex_around_target(next, v_id, polygons, edges, marked_edges);
+            std::tie(next, other_p_id) = next_ccw_vertex_around_target(next, v_id, polygons, edges, marked_edges);
             if (next==v_id) break;
             visited_polygons.insert(other_p_id);
           }

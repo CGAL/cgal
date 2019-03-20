@@ -269,7 +269,7 @@ namespace CGAL {
     void copy(const GMap2& amap,
               boost::unordered_map<typename GMap2::Dart_const_handle, Dart_handle>* dart_mapping=NULL)
     {
-      CGAL::cpp11::tuple<> converters;
+      std::tuple<> converters;
       Default_converter_dart_info<GMap2, Refs> dartinfoconverter;
       Default_converter_cmap_0attributes_with_point<GMap2, Refs> pointconverter;
       copy(amap, converters, dartinfoconverter, pointconverter, dart_mapping);
@@ -1136,7 +1136,7 @@ namespace CGAL {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
      typename Attribute_handle<i>::type res=
-       CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+       std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).emplace(args...);
      // Reinitialize the ref counting of the new attribute. This is normally
      // not required except if create_attribute is used as "copy contructor".
@@ -1151,7 +1151,7 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "erase_attribute<i> but i-attributes are disabled");
-      CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+      std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).erase(h);
     }
 
@@ -1161,7 +1161,7 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                                 "is_attribute_used<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+      return std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).is_used(ah);
     }
 
@@ -1171,7 +1171,7 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "number_of_attributes<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+      return std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).size();
     }
 
@@ -1200,7 +1200,7 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                                 "attributes<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+      return std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers);
     }
 
@@ -1209,7 +1209,7 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                                 "attributes<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+      return std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers);
     }
 
@@ -1225,7 +1225,7 @@ namespace CGAL {
            "onsplit_functor<i> but "
            "i-attributes are disabled");
 
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+      return std::get<Helper::template Dimension_index<i>::value>
         (m_onsplit_functors);
     }
 
@@ -1241,7 +1241,7 @@ namespace CGAL {
            "onsplit_functor<i> but "
            "i-attributes are disabled");
 
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+      return std::get<Helper::template Dimension_index<i>::value>
         (m_onsplit_functors);
     }
 
@@ -1257,7 +1257,7 @@ namespace CGAL {
            "onsplit_functor<i> but "
            "i-attributes are disabled");
 
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+      return std::get<Helper::template Dimension_index<i>::value>
         (m_onmerge_functors);
     }
     // Get the ith dynamic onmerge functor (by reference so that we can
@@ -1272,7 +1272,7 @@ namespace CGAL {
            "onsplit_functor<i> but "
            "i-attributes are disabled");
 
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+      return std::get<Helper::template Dimension_index<i>::value>
         (m_onmerge_functors);
     }
 

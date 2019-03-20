@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
       output,
       params::all_default(), // mesh1 named parameters
       params::all_default(), // mesh2 named parameters
-      CGAL::cpp11::make_tuple(
+      std::make_tuple(
         params::vertex_point_map(get(boost::vertex_point, out_union)), // named parameters for out_union
         params::vertex_point_map(get(boost::vertex_point, out_intersection)), // named parameters for out_intersection
         params::all_default(), // named parameters for mesh1-mesh2 not used

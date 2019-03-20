@@ -198,16 +198,16 @@ struct Do_f : Vec_holder {
 
   void operator()(const Segment& s1, const Segment& s2) {
 
-    CGAL::Dispatch_or_drop_output_iterator<CGAL::cpp0x::tuple<Point,Segment>,
-                                           CGAL::cpp0x::tuple<Iter1,Iter2>
+    CGAL::Dispatch_or_drop_output_iterator<std::tuple<Point,Segment>,
+                                           std::tuple<Iter1,Iter2>
                                            > do_it(std::back_inserter(*p), std::back_inserter(*s));
     
     intersect_do_iterator(s1, s2, K(), do_it);
   }
 };
 
-cpp0x::tuple<int, int, int> intersect_each_variant_overload(const Vector& segs) {
-  cpp0x::tuple<int, int, int> ret = cpp0x::make_tuple(0, 0, 0);
+std::tuple<int, int, int> intersect_each_variant_overload(const Vector& segs) {
+  std::tuple<int, int, int> ret = std::make_tuple(0, 0, 0);
   typedef Intersection_traits<K, Segment, Segment> Traits;
   typedef Traits::result_type result_type;
 
@@ -220,13 +220,13 @@ cpp0x::tuple<int, int, int> intersect_each_variant_overload(const Vector& segs) 
  	// with c++0x
         auto v = make_overload(
           std::make_tuple(std::function<void(const Segment&)>(
-                            [&ret](const Segment& s) { (void)s; ++(cpp0x::get<1>(ret)); }),
+                            [&ret](const Segment& s) { (void)s; ++(std::get<1>(ret)); }),
                           std::function<void(const Point&)>(
-                            [&ret](const Point& p) { (void)p; ++(cpp0x::get<0>(ret)); })));
+                            [&ret](const Point& p) { (void)p; ++(std::get<0>(ret)); })));
 
         boost::apply_visitor(v, *obj);
       } else {
-	++(cpp0x::get<2>(ret));
+	++(std::get<2>(ret));
       }
     }
   }

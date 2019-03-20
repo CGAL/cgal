@@ -114,9 +114,9 @@ struct Swap_attributes_functor
   template<unsigned int i>
   static void run( CMap& cmap1,
                    CMap& cmap2)
-  { CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
+  { std::get<CMap::Helper::template Dimension_index<i>::value>
         (cmap1.mattribute_containers).swap(
-          CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
+          std::get<CMap::Helper::template Dimension_index<i>::value>
           (cmap2.mattribute_containers));
    }
 };
@@ -159,9 +159,9 @@ struct Call_split_functor
       run(amap.template get_attribute<i>(a1),
           amap.template get_attribute<i>(a2));
     // Dynamic version
-    if ( CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
+    if ( std::get<CMap::Helper::template Dimension_index<i>::value>
          (amap.m_onsplit_functors) )
-      CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
+      std::get<CMap::Helper::template Dimension_index<i>::value>
         (amap.m_onsplit_functors) (amap.template get_attribute<i>(a1),
                                     amap.template get_attribute<i>(a2));
   }
@@ -196,9 +196,9 @@ struct Call_merge_functor
       run(amap.template get_attribute<i>(a1),
           amap.template get_attribute<i>(a2));
     // Dynamic version
-    if ( CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
+    if ( std::get<CMap::Helper::template Dimension_index<i>::value>
          (amap.m_onmerge_functors) )
-      CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
+      std::get<CMap::Helper::template Dimension_index<i>::value>
         (amap.m_onmerge_functors) (amap.template get_attribute<i>(a1),
                                    amap.template get_attribute<i>(a2));
   }

@@ -239,7 +239,7 @@ class Polygon_mesh_slicer
 
       if (face(hd, m_tmesh)!=graph_traits::null_face())
       {
-        cpp11::tie(itm, new_insertion) =
+        std::tie(itm, new_insertion) =
           al_edge_map.insert( std::pair< halfedge_descriptor, AL_vertex_pair >
             (hd, AL_vertex_pair(vd, AL_graph::null_vertex())) );
         if (!new_insertion)
@@ -255,7 +255,7 @@ class Polygon_mesh_slicer
       hd=opposite(hd, m_tmesh);
       if (face(hd, m_tmesh)!=graph_traits::null_face())
       {
-        cpp11::tie(itm, new_insertion) =
+        std::tie(itm, new_insertion) =
           al_edge_map.insert( std::pair< halfedge_descriptor, AL_vertex_pair >
             (hd, AL_vertex_pair(vd, AL_graph::null_vertex())) );
         if (!new_insertion)
@@ -460,7 +460,7 @@ public:
 
         // Each coplanar edge is connecting two nodes
         //  handle source
-        cpp11::tie(it_insert1, is_new) =
+        std::tie(it_insert1, is_new) =
           vertices.insert(
               Vertex_pair(
                 source(ed,m_tmesh), AL_graph::null_vertex()
@@ -472,7 +472,7 @@ public:
           al_graph[it_insert1->second]=it_insert1->first;
         }
         //  handle target
-        cpp11::tie(it_insert2, is_new) =
+        std::tie(it_insert2, is_new) =
           vertices.insert(
               Vertex_pair(
                 target(ed,m_tmesh), AL_graph::null_vertex()

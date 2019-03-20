@@ -35,7 +35,7 @@
 #include <boost/functional/hash.hpp>
 
 // The Triple and Quadruple classes are NOT RECOMMENDED anymore.
-// We recommend that you use cpp11::tuple or cpp11::array instead
+// We recommend that you use std::tuple or cpp11::array instead
 // for new uses.
 
 namespace CGAL {
