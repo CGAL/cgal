@@ -411,9 +411,9 @@ range of points will be performed in parallel, and the individual
 insert/remove operations will be optionally thread-safe.
 
 Parallel algorithms require the program to be linked against 
-the <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
 To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
 for more details.
 
 \section Triangulation3secexamples Examples 

@@ -73,7 +73,7 @@ or if Qt5 are desired
 sudo port install cgal +qt5 +universal +demos
 </PRE>
 
-The setup is similar for <a href="http://mxcl.github.com/homebrew/"><tt>homebrew</tt></a> .
+The setup is similar for <a href="https://mxcl.github.com/homebrew/"><tt>homebrew</tt></a> .
 
 \subsection sseccgaldebian CGAL on Linux 
 
@@ -159,7 +159,7 @@ In order to build the \cgal libraries, you need a \cpp compiler.
 | :------- | :--------------- |
 |\sc{Gnu} `g++` 4.1 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} | Linux / MacOS X |
 |          | \sc{MS} Windows | 
-|\sc{MS} Visual `C++` 12.0, 14.0, 15.9 (\sc{Visual Studio} 2013, 2015, and 2017)\cgalFootnote{<A HREF="http://msdn.microsoft.com/en-us/vstudio/">`http://msdn.microsoft.com/en-us/vstudio/`</A>} | \sc{MS} Windows |
+|\sc{MS} Visual `C++` 12.0, 14.0, 15.9 (\sc{Visual Studio} 2013, 2015, and 2017)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">`https://visualstudio.microsoft.com/`</A>} | \sc{MS} Windows |
 | `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">`http://clang.llvm.org/`</A>} compiler version 7.0.1 | Linux  |
 | Apple `Clang` compiler version 7.0.2 | MacOS X |
 
@@ -502,7 +502,7 @@ algorithms. Like \sc{Core}, \leda offers a real number data type.
 In \cgal this library is optional, and its number types can 
 be used as an alternative to \sc{Gmp}, \sc{Mpfr}, and \sc{Core}.
 
-Free and commercial editions of \leda are available from <A HREF="http://www.algorithmic-solutions.com/leda/index.html">`http://www.algorithmic-solutions.com/leda/index.html`</A>.
+Free and commercial editions of \leda are available from <A HREF="https://www.algorithmic-solutions.com/leda/index.html">`https://www.algorithmic-solutions.com/leda/index.html`</A>.
 
 \subsection thirdpartyMPFI MPFI
 

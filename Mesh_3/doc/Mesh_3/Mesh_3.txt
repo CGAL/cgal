@@ -1200,7 +1200,7 @@ vertices/second
 View of 3d image mesh generation result (size = 4).
 \cgalFigureEnd
 
-We mesh image number 2 from the 3D-IRCADb-01 (available at <A href="http://www.ircad.fr/softwares/3Dircadb/3Dircadb1/index.php">http://www.ircad.fr/softwares/3Dircadb/3Dircadb1/index.php</A>) public database.
+We mesh image number 2 from the 3D-IRCADb-01 (available at <A href="https://www.ircad.fr/softwares/3Dircadb/3Dircadb1/index.php">https://www.ircad.fr/softwares/3Dircadb/3Dircadb1/index.php</A>) public database.
 The size of this image is 512x512x172 voxels (about 45M voxels). The size of the voxels
 is 0.78mm x 0.78mm x 1.6mm. \cgalFigureRef{figuremesh_3_benchmark_3d_image}
 shows the mesh obtained for size set to 4.

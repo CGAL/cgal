@@ -235,7 +235,7 @@ to README provided in the [ETH Zurich's code archive](https://www.ethz.ch/conten
 
 The second classifier is [OpenCV::Random_forest_classifier](@ref CGAL::Classification::OpenCV::Random_forest_classifier).
 It uses the \ref thirdpartyOpenCV library, more specifically the
-[Random Trees](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
+[Random Trees](https://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
 package.
 
 Note that this classifier usually produces results with a lower
@@ -246,7 +246,7 @@ Forest instead.
 
 An [example](\ref Classification_example_opencv_random_forest) shows how to
 use this classifier. For more details about the algorithm, please refer
-to [the official documentation](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
+to [the official documentation](https://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
 of OpenCV.
 
 \subsection Classification_TensorFlow_neural_network TensorFlow Neural Network
