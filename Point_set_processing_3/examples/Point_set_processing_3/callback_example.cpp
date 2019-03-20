@@ -25,7 +25,7 @@ typedef CGAL::Sequential_tag Concurrency_tag;
 #endif
 
 
-// instance of CGAL::cpp11::function<bool(double)>
+// instance of std::function<bool(double)>
 struct Progress_to_std_cerr_callback
 {
   mutable std::size_t nb;

@@ -634,7 +634,7 @@ point set:
 
 \section Point_set_processing_3Callbacks Callbacks
 
-Several functions of this package provide a callback mechanism that enables the user to track the progress of the algorithms and to interrupt them if needed. A callback, in this package, is an instance of `CGAL::cpp11::function<bool(double)>` that takes the advancement as a parameter (between 0. when the algorithm begins to 1. when the algorithm is completed) and that returns `true` if the algorithm should carry on, `false` otherwise. It is passed as a named parameter with an empty function as default.
+Several functions of this package provide a callback mechanism that enables the user to track the progress of the algorithms and to interrupt them if needed. A callback, in this package, is an instance of `std::function<bool(double)>` that takes the advancement as a parameter (between 0. when the algorithm begins to 1. when the algorithm is completed) and that returns `true` if the algorithm should carry on, `false` otherwise. It is passed as a named parameter with an empty function as default.
 
 Algorithms that support this mechanism are detailed in the [Reference Manual](@ref PkgPointSetProcessing3Ref), along with the effect that an early interruption has on the output.
 

@@ -41,7 +41,7 @@
 #include <CGAL/Origin.h>
 
 #include <CGAL/result_of.h>
-#include <CGAL/function.h>
+#include <functional>
 
 #include <CGAL/internal/Mesh_3/Handle_IO_for_pair_of_int.h>
 #include <CGAL/internal/Mesh_3/indices_management.h>
@@ -228,18 +228,18 @@ protected:
   {}
 
   /// The function which answers subdomain queries
-  typedef CGAL::cpp11::function<Subdomain_index(const Point_3&)> Function;
+  typedef std::function<Subdomain_index(const Point_3&)> Function;
   Function function_;
   /// The bounding box
   const Iso_cuboid_3 bbox_;
 
-  typedef CGAL::cpp11::function<
+  typedef std::function<
     Surface_patch_index(Subdomain_index,
                         Subdomain_index)> Construct_surface_patch_index;
   Construct_surface_patch_index cstr_s_p_index;
   /// The functor that decides which sub-domain indices correspond to the
   /// outside of the domain.
-  typedef CGAL::cpp11::function<bool(Subdomain_index)> Null;
+  typedef std::function<bool(Subdomain_index)> Null;
   Null null;
   /// The random number generator used by Construct_initial_points
   CGAL_Random_share_ptr_t p_rng_;
