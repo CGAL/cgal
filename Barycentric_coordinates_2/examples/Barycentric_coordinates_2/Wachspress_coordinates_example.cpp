@@ -30,7 +30,7 @@ int main()
 
     // Generate a set of random points.
     CGAL::Random_points_in_square_2<Point,Creator> point_generator(1.0);
-    CGAL::cpp11::copy_n(point_generator, number_of_points, std::back_inserter(points));
+    std::copy_n(point_generator, number_of_points, std::back_inserter(points));
 
     // Find the convex hull of the generated set of points.
     // This convex hull gives the vertices of a convex polygon that contains all the generated points.

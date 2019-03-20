@@ -288,7 +288,7 @@ void _test_interpolation_functions_2_Delaunay_without_OutputFunctor(const Dt&, c
 
   // Create n+m-4 points within a disc of radius 2
   CGAL::Random_points_in_square_2<Point> g(r);
-  CGAL::cpp11::copy_n(g, n+m, std::back_inserter(points));
+  std::copy_n(g, n+m, std::back_inserter(points));
 
   CGAL::Random random;
 
@@ -467,7 +467,7 @@ void _test_interpolation_functions_2_Delaunay_with_OutputFunctor(const Dt&, cons
 
   // Create n+m-4 points within a disc of radius 2
   CGAL::Random_points_in_square_2<Point> g(r);
-  CGAL::cpp11::copy_n(g, n+m, std::back_inserter(points));
+  std::copy_n(g, n+m, std::back_inserter(points));
 
   CGAL::Random random;
 

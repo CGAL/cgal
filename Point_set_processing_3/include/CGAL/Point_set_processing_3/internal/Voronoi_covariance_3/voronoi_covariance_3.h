@@ -181,7 +181,7 @@ namespace CGAL {
                     for(typename boost::graph_traits<Polyhedron>::face_descriptor fd : faces(P))
                     {
                       Halfedge_around_face_circulator<Polyhedron>
-                        h0(halfedge(fd,P),P), hf = h0--, hs = cpp11::next(hf);
+                        h0(halfedge(fd,P),P), hf = h0--, hs = std::next(hf);
 
                         while(hs != h0)
                         {

@@ -8156,7 +8156,7 @@ void test_prev_next()
   V.push_back(2);
   V.push_back(3);
 
-  assert(cpp11::next(cpp11::next(V.begin())) == cpp11::prev(V.end()));
+  assert(std::next(std::next(V.begin())) == std::prev(V.end()));
 }
 
 void test_copy_n() {
@@ -8165,7 +8165,7 @@ void test_copy_n() {
     V.push_back(i);
 
   std::vector<int> V2(5);
-  cpp11::copy_n(V.begin(), 5, V2.begin());
+  std::copy_n(V.begin(), 5, V2.begin());
   
   assert(std::equal(V2.begin(), V2.end(), V.begin()));
 }

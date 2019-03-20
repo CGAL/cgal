@@ -58,7 +58,7 @@ ch__recursive_eddy(List& L,
     != b_it );
 
 
-  ListIterator f_it = cpp11::next(a_it);
+  ListIterator f_it = std::next(a_it);
   Less_dist less_dist = ch_traits.less_signed_distance_to_line_2_object();
   ListIterator 
       c_it = std::min_element( f_it, b_it,  // max before
@@ -70,11 +70,11 @@ ch__recursive_eddy(List& L,
   c_it = L.insert(c_it, c);
   L.erase( f_it, b_it );
 
-  if ( cpp11::next(a_it) != c_it )
+  if ( std::next(a_it) != c_it )
   {
       ch__recursive_eddy( L, a_it, c_it, ch_traits);
   }
-  if ( cpp11::next(c_it) != b_it )
+  if ( std::next(c_it) != b_it )
   {
       ch__recursive_eddy( L, c_it, b_it, ch_traits);
   }
@@ -117,7 +117,7 @@ ch_eddy(InputIterator first, InputIterator last,
   L.push_front(wp);
   e = L.insert(e, ep);
 
-  if ( cpp11::next(L.begin()) != e )
+  if ( std::next(L.begin()) != e )
   {
       ch__recursive_eddy( L, L.begin(), e, ch_traits);
   }

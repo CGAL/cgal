@@ -222,7 +222,7 @@ private:
         Kernel::Point_3 &q = get(vpmap,target(next(halfedge(f,*poly),*poly),*poly));
         Kernel::Point_3 &r = get(vpmap,target(next(next(halfedge(f,*poly),*poly),*poly),*poly));
         CGAL::Random_points_in_triangle_3<Kernel::Point_3> g(p, q, r);
-        CGAL::cpp11::copy_n(g, nb_points, std::back_inserter(sampled_points));
+        std::copy_n(g, nb_points, std::back_inserter(sampled_points));
         sampled_points.push_back(p);
         sampled_points.push_back(q);
         sampled_points.push_back(r);

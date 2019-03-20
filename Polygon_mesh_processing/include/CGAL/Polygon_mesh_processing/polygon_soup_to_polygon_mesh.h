@@ -163,7 +163,7 @@ public:
       if (nb_edges<3) return false;
 
       std::set<V_ID> polygon_vertices;
-      V_ID prev= *cpp11::prev(boost::end(polygon));
+      V_ID prev= *std::prev(boost::end(polygon));
       for(V_ID id : polygon)
       {
         if (max_id<id) max_id=id;

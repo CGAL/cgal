@@ -705,7 +705,7 @@ class Intersection_of_triangle_meshes
         CGAL_precondition(all_edges[0]==h_1 || all_edges[0]==opposite(h_1,tm1));
 
         // #ifdef USE_DETECTION_MULTIPLE_DEFINED_EDGES
-        // check_coplanar_edges(cpp11::next(all_edges.begin()),
+        // check_coplanar_edges(std::next(all_edges.begin()),
         //                      all_edges.end(),CGAL::cpp11::get<1>(res),type);
         // #endif
 
@@ -981,8 +981,8 @@ class Intersection_of_triangle_meshes
                   // with the point found.
                   typename Faces_to_nodes_map::iterator it_seg3 = find_it;
                   // first check if there is only one such edge (no test is needed then)
-                  if (cpp11::next(it_seg3)!=f_to_node.end() &&
-                      cpp11::next(it_seg3)->first.first == it_seg3->first.first)
+                  if (std::next(it_seg3)!=f_to_node.end() &&
+                      std::next(it_seg3)->first.first == it_seg3->first.first)
                   {
                     while(true)
                     {

@@ -1579,7 +1579,7 @@ public:
               for(Hedge_iterator it : to_rm)
               {
                 patches_of_tm1[i].interior_edges.push_back(*it);
-                if (it!=cpp11::prev(patches_of_tm1[i].shared_edges.end()))
+                if (it!=std::prev(patches_of_tm1[i].shared_edges.end()))
                   std::swap(patches_of_tm1[i].shared_edges.back(), *it);
                 patches_of_tm1[i].shared_edges.pop_back();
               }

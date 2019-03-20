@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
   Generator gen(100.0);
 
   // generate num points and copy them to a vector
-  CGAL::cpp11::copy_n( gen, num, std::back_inserter(points) );
+  std::copy_n( gen, num, std::back_inserter(points) );
 
   // define object to hold convex hull
   CGAL::Object ch_object;

@@ -40,7 +40,7 @@ int main()
 
   // Create segments.
   Seg_iterator g( p1, p2);
-  CGAL::cpp11::copy_n( g, 200, std::back_inserter(input));
+  std::copy_n( g, 200, std::back_inserter(input));
 
 
   // splitting results with Dispatch_output_iterator

@@ -122,10 +122,10 @@ void detect_identical_mergeable_vertices(
   if (hedges_with_identical_point_target.empty()) return;
   std::set< std::pair<std::size_t, std::size_t> >::iterator it1 = intervals.begin(),
                                                             end2 = intervals.end(),
-                                                            end1 = cpp11::prev(end2),
+                                                            end1 = std::prev(end2),
                                                             it2;
   for (; it1!=end1; ++it1)
-    for(it2=cpp11::next(it1); it2!= end2; ++it2 )
+    for(it2=std::next(it1); it2!= end2; ++it2 )
     {
       CGAL_assertion(it1->first<it2->first);
       CGAL_assertion(it1->first < it1->second && it2->first < it2->second);

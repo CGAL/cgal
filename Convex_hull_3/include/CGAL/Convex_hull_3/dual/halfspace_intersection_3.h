@@ -209,7 +209,7 @@ namespace CGAL
 
                 // Look for two non-parallel planes
                 PlaneIterator plane1_it = planes.begin();
-                PlaneIterator plane2_it = cpp11::next(planes.begin());
+                PlaneIterator plane2_it = std::next(planes.begin());
 
                 while (plane2_it != planes.end() &&
                        collinear_plane(*plane1_it, *plane2_it)) {
@@ -218,7 +218,7 @@ namespace CGAL
 
                 if (plane2_it == planes.end()) return false;
 
-                PlaneIterator plane3_it = cpp11::next(plane2_it);
+                PlaneIterator plane3_it = std::next(plane2_it);
 
                 // Look for a triple of planes intersecting in a point
                 while (plane3_it != planes.end() &&

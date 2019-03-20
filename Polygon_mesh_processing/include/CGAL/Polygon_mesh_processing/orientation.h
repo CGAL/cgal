@@ -197,7 +197,7 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
   internal::Compare_vertex_points_z_3<GT, VPMap> less_z(vpmap, gt);
   typename boost::graph_traits<PolygonMesh>::vertex_descriptor v_max = *(vertices(pmesh).first);
   for (typename boost::graph_traits<PolygonMesh>::vertex_iterator
-          vit=cpp11::next(vertices(pmesh).first), vit_end = vertices(pmesh).second;
+          vit=std::next(vertices(pmesh).first), vit_end = vertices(pmesh).second;
           vit!=vit_end; ++vit)
   {
     // skip isolated vertices

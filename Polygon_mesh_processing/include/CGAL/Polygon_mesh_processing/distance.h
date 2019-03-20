@@ -455,7 +455,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
         // sample the triangle face
         Random_points_in_triangle_3<typename Geom_traits::Point_3, Creator>
           g(points[0], points[1], points[2]);
-        out=CGAL::cpp11::copy_n(g, nb_points, out);
+        out=std::copy_n(g, nb_points, out);
       }
     }
     // sample edges
@@ -477,7 +477,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
         // now do the sampling of the edge
         Random_points_on_segment_3<typename Geom_traits::Point_3, Creator>
           g(get(pmap, source(ed,tm)), get(pmap, target(ed,tm)));
-        out=CGAL::cpp11::copy_n(g, nb_points, out);
+        out=std::copy_n(g, nb_points, out);
       }
     }
   }
@@ -498,7 +498,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
           nb_points = static_cast<std::size_t>(
             std::ceil(g.mesh_area()*nb_pts_a_u) );
       }
-      out = CGAL::cpp11::copy_n(g, nb_points, out);
+      out = std::copy_n(g, nb_points, out);
     }
     // sample edges
     if (smpl_dgs)
@@ -514,7 +514,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
           nb_points = static_cast<std::size_t>(
             std::ceil( g.mesh_length()*nb_pts_a_u) );
       }
-      out = CGAL::cpp11::copy_n(g, nb_points, out);
+      out = std::copy_n(g, nb_points, out);
     }
   }
 

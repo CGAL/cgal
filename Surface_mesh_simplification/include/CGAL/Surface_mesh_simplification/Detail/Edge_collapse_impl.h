@@ -675,12 +675,12 @@ bool EdgeCollapse<M,SP,VIM,VPM,EIM,ECTM,CF,PF,V>::Is_collapse_geometrically_vali
     typedef typename Profile::vertex_descriptor_vector::const_iterator link_iterator ;
     link_iterator linkb = aProfile.link().begin();
     link_iterator linke = aProfile.link().end  ();
-    link_iterator linkl = cpp11::prev(linke) ;
+    link_iterator linkl = std::prev(linke) ;
     
     for ( link_iterator l = linkb ; l != linke && rR ; ++ l )
     {
-      link_iterator pv = ( l == linkb ? linkl : cpp11::prev (l) );
-      link_iterator nx = ( l == linkl ? linkb : cpp11::next  (l) ) ;
+      link_iterator pv = ( l == linkb ? linkl : std::prev (l) );
+      link_iterator nx = ( l == linkl ? linkb : std::next  (l) ) ;
       
       // k0,k1 and k3 are three consecutive vertices along the link.
       vertex_descriptor k1 = *pv ;

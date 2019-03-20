@@ -25,11 +25,11 @@ int main()
   CGAL::copy_n(arr.begin(), 3, arr2.begin());
 
   CGAL::cpp0x::copy_n(arr.begin(), 3, arr2.begin());
-  CGAL::cpp11::copy_n(arr.begin(), 3, arr2.begin());
+  std::copy_n(arr.begin(), 3, arr2.begin());
   
   CGAL::cpp0x::prev(arr.end());
-  CGAL::cpp11::prev(arr.end());
+  std::prev(arr.end());
   CGAL::cpp0x::next(arr.begin());
-  CGAL::cpp11::next(arr.begin());
+  std::next(arr.begin());
   return 0;
 }

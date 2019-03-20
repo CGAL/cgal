@@ -1322,10 +1322,10 @@ bool remove_degenerate_faces(      TriangleMesh& tmesh,
                                                         sorted_points.end()).size());
 
       CGAL_assertion( get( vpmap, *ref_vertices.first)==*sorted_points.begin() );
-      CGAL_assertion( get( vpmap, *ref_vertices.second)==*cpp11::prev(sorted_points.end()) );
+      CGAL_assertion( get( vpmap, *ref_vertices.second)==*std::prev(sorted_points.end()) );
 
       const typename Traits::Point_3& xtrm1 = *sorted_points.begin();
-      const typename Traits::Point_3& xtrm2 = *cpp11::prev(sorted_points.end());
+      const typename Traits::Point_3& xtrm2 = *std::prev(sorted_points.end());
 
       // recover halfedges on the hole, bounded by the reference vertices
       std::vector<halfedge_descriptor> side_one, side_two;
@@ -1440,8 +1440,8 @@ bool remove_degenerate_faces(      TriangleMesh& tmesh,
       CGAL_assertion( target(side_one.back(), tmesh) == *ref_vertices.second );
       CGAL_assertion( target(side_two.back(), tmesh) == *ref_vertices.second );
 
-      typename Sorted_point_set::iterator it_pt = cpp11::next(sorted_points.begin()),
-                                          it_pt_end = cpp11::prev(sorted_points.end());
+      typename Sorted_point_set::iterator it_pt = std::next(sorted_points.begin()),
+                                          it_pt_end = std::prev(sorted_points.end());
 
       bool non_collapsable = false;
       typename std::vector<halfedge_descriptor>::iterator side_one_it = side_one.begin();
@@ -1530,10 +1530,10 @@ bool remove_degenerate_faces(      TriangleMesh& tmesh,
       // now split each side to contains the same sequence of points
       //    first side
       int hi=0;
-      for (typename Sorted_point_set::iterator it=cpp11::next(sorted_points.begin()),
+      for (typename Sorted_point_set::iterator it=std::next(sorted_points.begin()),
                                                it_end=sorted_points.end(); it!=it_end; ++it)
       {
-        CGAL_assertion( *cpp11::prev(it) == get(vpmap, source(side_one[hi], tmesh) ) );
+        CGAL_assertion( *std::prev(it) == get(vpmap, source(side_one[hi], tmesh) ) );
         if( *it != get(vpmap, target(side_one[hi], tmesh) ) ){
           // split the edge and update the point
           halfedge_descriptor h1 = next(opposite(side_one[hi], tmesh), tmesh);
@@ -1554,10 +1554,10 @@ bool remove_degenerate_faces(      TriangleMesh& tmesh,
       }
       //    second side
       hi=0;
-      for (typename Sorted_point_set::iterator it=cpp11::next(sorted_points.begin()),
+      for (typename Sorted_point_set::iterator it=std::next(sorted_points.begin()),
                                                it_end=sorted_points.end(); it!=it_end; ++it)
       {
-        CGAL_assertion( *cpp11::prev(it) == get(vpmap, source(side_two[hi], tmesh) ) );
+        CGAL_assertion( *std::prev(it) == get(vpmap, source(side_two[hi], tmesh) ) );
         if( *it != get(vpmap, target(side_two[hi], tmesh) ) ){
           // split the edge and update the point
           halfedge_descriptor h2 = Euler::split_edge(side_two[hi], tmesh);

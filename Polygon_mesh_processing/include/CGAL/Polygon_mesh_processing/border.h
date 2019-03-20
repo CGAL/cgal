@@ -113,7 +113,7 @@ namespace Polygon_mesh_processing {
                          boost::true_type>::value)
       {
         typename boost::range_iterator<const FaceRange>::type it = boost::const_begin(faces);
-        if (get(fmap, *it) == get(fmap, *cpp11::next(it)))
+        if (get(fmap, *it) == get(fmap, *std::next(it)))
         {
           std::cerr << "WARNING : the internal property map for CGAL::face_index_t" << std::endl
                     << "          is not properly initialized." << std::endl

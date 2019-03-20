@@ -78,7 +78,7 @@ boost::tuple<std::size_t, std::size_t, std::size_t, long> test(const char* name)
   
   std::vector<Point> points;
   points.reserve(elements * 2);
-  CGAL::cpp11::copy_n(g, elements * 2, std::back_inserter(points));
+  std::copy_n(g, elements * 2, std::back_inserter(points));
   
   // generate a bunch of happy random primitives
   std::vector<Line> lines;
