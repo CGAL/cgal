@@ -337,11 +337,11 @@ The result type can be obtained with `CGAL::cpp11::result_of`. It looks simpler
 if you use a C++ compiler which supports `auto`,
 but you must anyways know that the result type is a `boost::optional<boost::variant<..> >`, in order to unpack the point or segment.
 
-<A HREF="http://www.boost.org/libs/optional/">`boost::optional`</A> comes in
-as there might be no intersection. <A HREF="http://www.boost.org/libs/variant/">`boost::variant`</A> comes in
+<A HREF="https://www.boost.org/libs/optional/">`boost::optional`</A> comes in
+as there might be no intersection. <A HREF="https://www.boost.org/libs/variant/">`boost::variant`</A> comes in
 as, if there is an intersection, it is either a point or a segment.
 
-As explained in the boost manual pages for <A HREF="http://www.boost.org/libs/variant/">`boost::variant`</A>, there are two ways to access the variants. The first examples uses `boost::get`.
+As explained in the boost manual pages for <A HREF="https://www.boost.org/libs/variant/">`boost::variant`</A>, there are two ways to access the variants. The first examples uses `boost::get`.
 
 \cgalExample{Kernel_23/intersection_get.cpp}
 

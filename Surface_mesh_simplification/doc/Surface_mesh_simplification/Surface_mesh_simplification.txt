@@ -214,7 +214,7 @@ returns `true` the algorithm terminates.
 
 \subsection Surface_mesh_simplificationOptionalNamed Optional Named Parameters
 
-The notion of <I>named parameters</I> was also introduced in the <span class="textsc">Bgl</span>. You can read about it in \cgalCite{cgal:sll-bgl-02} or the following site: <A HREF="http://www.boost.org/libs/graph/doc/bgl_named_params.html"><TT>http://www.boost.org/libs/graph/doc/bgl_named_params.html</TT></A>. Named parameters allow the user to specify only those parameters which are really needed, by name, making the parameter ordering unimportant.
+The notion of <I>named parameters</I> was also introduced in the <span class="textsc">Bgl</span>. You can read about it in \cgalCite{cgal:sll-bgl-02} or the following site: <A HREF="https://www.boost.org/libs/graph/doc/bgl_named_params.html"><TT>https://www.boost.org/libs/graph/doc/bgl_named_params.html</TT></A>. Named parameters allow the user to specify only those parameters which are really needed, by name, making the parameter ordering unimportant.
 
 Say there is a function `f()` that takes 3 parameters called `name`, `age` and `gender`, and you have variables `n,a and g` to pass as parameters to that function. Without named parameters, you would call it like this: `f(n,a,g)`, but with named parameters, you call it like this: `f(name(n).age(a).gender(g))`.
 
