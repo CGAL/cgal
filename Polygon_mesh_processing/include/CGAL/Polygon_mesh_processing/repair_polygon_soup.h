@@ -28,7 +28,6 @@
 
 #include <CGAL/iterator.h>
 #include <CGAL/Kernel_traits.h>
-#include <CGAL/unordered.h>
 
 #include <boost/dynamic_bitset.hpp>
 #include <boost/functional/hash.hpp>
@@ -41,6 +40,8 @@
 #include <set>
 #include <vector>
 #include <utility>
+#include <unordered_map>
+#include <unordered_set>
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
   #ifndef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
@@ -758,7 +759,7 @@ struct Duplicate_collector
       *out++ = p.second;
   }
 
-  CGAL::cpp11::unordered_map<ValueType, std::vector<ValueType> > collections;
+  std::unordered_map<ValueType, std::vector<ValueType> > collections;
 };
 
 template <typename ValueType>
@@ -800,7 +801,7 @@ DuplicateOutputIterator collect_duplicate_polygons(const PointRange& points,
   typedef boost::dynamic_bitset<>                                                 Reversed_markers;
   typedef internal::Polygon_equality_tester<PointRange, PolygonRange,
                                             Reversed_markers, Traits>             Equality;
-  typedef CGAL::cpp11::unordered_set<P_ID, Hasher, Equality>                      Unique_polygons;
+  typedef std::unordered_set<P_ID, Hasher, Equality>                      Unique_polygons;
 
   const std::size_t polygons_n = polygons.size();
 

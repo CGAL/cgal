@@ -27,11 +27,12 @@
 
 #include <boost/iterator/counting_iterator.hpp>
 #include <CGAL/boost/graph/selection.h>
-#include <CGAL/unordered.h>
 #include <CGAL/Handle_hash_function.h>
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/array.h>
+
+#include <unordered_set>
 
 namespace CGAL {
 
@@ -63,7 +64,7 @@ private:
     typedef bool value_type;
     typedef bool reference;
     typedef boost::read_write_property_map_tag category;
-    typedef typename CGAL::cpp11::unordered_set<face_descriptor, CGAL::Handle_hash_function> Set;
+    typedef typename std::unordered_set<face_descriptor, CGAL::Handle_hash_function> Set;
   private:
     Set* m_set;
     

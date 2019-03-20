@@ -38,16 +38,15 @@
 #include <CGAL/array.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Union_find.h>
-#include <CGAL/unordered.h>
 #include <CGAL/utility.h>
 
 #include <boost/range.hpp>
-#include <boost/unordered_map.hpp>
 
 #include <iterator>
 #include <map>
 #include <vector>
 #include <utility>
+#include <unordered_set>
 
 #ifdef DOXYGEN_RUNNING
 #define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
@@ -572,7 +571,7 @@ std::size_t stitch_boundary_cycles(PolygonMesh& pm,
   //                         |          |
   //                        v3 ------- v4
   // so we mark which edges have been stitched
-  cpp11::unordered_set<halfedge_descriptor> stitched_hedges;
+  std::unordered_set<halfedge_descriptor> stitched_hedges;
 
   for(halfedge_descriptor h : boundary_cycles)
   {

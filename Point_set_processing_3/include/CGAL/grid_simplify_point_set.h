@@ -28,7 +28,6 @@
 #include <CGAL/property_map.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/point_set_processing_assertions.h>
-#include <CGAL/unordered.h>
 #include <CGAL/Iterator_range.h>
 #include <functional>
 #include <boost/functional/hash.hpp>
@@ -40,6 +39,7 @@
 #include <deque>
 #include <algorithm>
 #include <cmath>
+#include <unordered_set>
 
 namespace CGAL {
 
@@ -140,14 +140,14 @@ public:
 
 template <class Point_3, class PointMap>
 class Epsilon_point_set_3
-  : public cpp11::unordered_set<Point_3,
+  : public std::unordered_set<Point_3,
                                 internal::Hash_epsilon_points_3<Point_3, PointMap>,
                                 internal::Equal_epsilon_points_3<Point_3, PointMap> >
 {
 private:
 
     // superclass
-    typedef cpp11::unordered_set<Point_3,
+    typedef std::unordered_set<Point_3,
                                 internal::Hash_epsilon_points_3<Point_3, PointMap>,
                                 internal::Equal_epsilon_points_3<Point_3, PointMap> > Base;
 
