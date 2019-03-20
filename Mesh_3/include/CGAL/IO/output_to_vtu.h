@@ -277,10 +277,12 @@ enum VTU_ATTRIBUTE_TYPE{
   SIZE_TYPE
 };
 
+typedef boost::variant<std::vector<double>, std::vector<uint8_t>, std::vector<std::size_t> > Vtu_attributes;
+
 template <class C3T3>
 void output_to_vtu_with_attributes(std::ostream& os,
                                    const C3T3& c3t3,
-                                   std::vector<std::pair<const char*, const boost::variant<std::vector<double>, std::vector<uint8_t>, std::vector<std::size_t> >*> >& attributes,
+                                   std::vector<std::pair<const char*, const Vtu_attributes*> >&attributes,
                                    IO::Mode mode = IO::BINARY)
 {
   //CGAL_assertion(attributes.size() == attribute_types.size());
