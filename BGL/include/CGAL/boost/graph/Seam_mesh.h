@@ -1107,7 +1107,7 @@ public:
   ///
   /// \returns one of the halfedges of the seam mesh that is on a seam.
   ///
-  /// \pre filename should be the name of a \cgal selection filee with file extension "*.selection.txt":
+  /// \pre filename should be the name of a \cgal selection file with file extension "*.selection.txt":
   ///      edges are described by pairs of integers, on the third line of the file.
   TM_halfedge_descriptor add_seams(const char* filename)
   {
