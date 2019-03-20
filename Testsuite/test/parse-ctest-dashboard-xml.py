@@ -16,7 +16,7 @@ test_report_filename='{dir}/TestReport_{tester}_{platform}'
 
 xml = open("Test.xml", 'rb').read()
 
-def open_file_create_dir(filename, mode, *args, **kwargs):
+def open_file_create_dir(filename, mode_, *args, **kwargs):
     if not os.path.exists(os.path.dirname(filename)):
         try:
             os.makedirs(os.path.dirname(filename))
@@ -24,9 +24,9 @@ def open_file_create_dir(filename, mode, *args, **kwargs):
             if exc.errno != errno.EEXIST:
                 raise
     if kwargs.get('gzip', None) == True:
-        return gzip.open(filename, mode)
+        return gzip.open(filename, mode=mode_, encoding="utf-8")
     else:
-        return open(filename, mode)
+        return io.open(filename, mode=mode_, encoding="utf-8")
 
 root=ET.fromstring(xml)
 testing = root.find('Testing')
@@ -85,7 +85,6 @@ with open_file_create_dir(result_file_name.format(dir=os.getcwd(),
 
             print("{label} {result}".format(label=label, result=result_for_label), file=results)
 
-
 for label, tests in tests_per_label.items():
         with open_file_create_dir(test_report_filename.format(dir=label,
                                                               tester=tester_name,
@@ -94,13 +93,12 @@ for label, tests in tests_per_label.items():
 ------------------------------------------------------------------
 - Error output from platform {platform}
 ------------------------------------------------------------------
-
 {error_txt}
 """               .format(platform=platform_name,
                          error_txt=open("{}/error.txt".format(label), 'r').read()), file=label_report)
             for t in tests:
                 filename="{}/ProgramOutput.{}".format(label, t['Name'])
-                with open(filename, 'r') as f:
+                with io.open(filename, mode="r", encoding="utf-8") as f:
                     print("""
 ------------------------------------------------------------------
 - {file}
