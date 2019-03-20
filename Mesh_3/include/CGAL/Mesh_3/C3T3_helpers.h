@@ -1496,7 +1496,7 @@ private:
     }
 
   private:
-    typedef CGAL::cpp11::array<std::size_t, 4> IndexMap;
+    typedef std::array<std::size_t, 4> IndexMap;
 
     void restore(Cell_handle c,
                  const IndexMap& index_map,//new_to_old_indices
@@ -1564,9 +1564,9 @@ private:
     Cell_from_ids cell_ids_;
     FT sliver_value_;
     Subdomain_index subdomain_index_;
-    CGAL::cpp11::array<Surface_patch_index, 4> surface_index_table_;
-    CGAL::cpp11::array<Bare_point, 4> facet_surface_center_;
-    CGAL::cpp11::array<Index, 4> surface_center_index_table_;
+    std::array<Surface_patch_index, 4> surface_index_table_;
+    std::array<Bare_point, 4> facet_surface_center_;
+    std::array<Index, 4> surface_center_index_table_;
   };
 
 private:

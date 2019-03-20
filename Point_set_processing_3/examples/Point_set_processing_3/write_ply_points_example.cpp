@@ -11,7 +11,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
-typedef CGAL::cpp11::array<unsigned char, 4> Color;
+typedef std::array<unsigned char, 4> Color;
 
 // Point with normal, color and intensity
 typedef std::tuple<Point, Color, int> PCI;

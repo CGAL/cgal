@@ -62,7 +62,7 @@ struct Interval_evaluate_1 : public CGAL::cpp98::binary_function
   }
   
   result_type operator()(const Polynomial_1& p,
-                         const CGAL::cpp11::array< Bound, 2 >& b) const {
+                         const std::array< Bound, 2 >& b) const {
     
     typename CT::Cast cast;
   

@@ -2281,7 +2281,7 @@ remove_self_intersections_one_step(TriangleMesh& tm,
       bool non_manifold_edge_found = false;
       for(const Face_indices& triangle : patch)
       {
-        cpp11::array<int, 6> edges =
+        std::array<int, 6> edges =
           make_array(triangle.first, triangle.second,
                      triangle.second, triangle.third,
                      triangle.third, triangle.first);
@@ -2340,7 +2340,7 @@ remove_self_intersections_one_step(TriangleMesh& tm,
           face_stack.pop_back();
         }
 
-        cpp11::array<int, 4> indices =
+        std::array<int, 4> indices =
           make_array( triangle.first,
                       triangle.second,
                       triangle.third,

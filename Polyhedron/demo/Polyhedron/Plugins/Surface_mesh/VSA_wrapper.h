@@ -103,7 +103,7 @@ class VSA_WRAPPER_EXPORT VSA_wrapper {
 public:
   enum Metric { L21, L2, Compact };
 
-  typedef CGAL::cpp11::array<std::size_t, 3> Indexed_triangle;
+  typedef std::array<std::size_t, 3> Indexed_triangle;
 
   // visual items
   struct Visual_items {

@@ -107,7 +107,7 @@ private:
   const MeshDomain& m_domain;
   Parameters m_params;
 
-  const CGAL::cpp11::array<double, 3>& m_vxyz;
+  const std::array<double, 3>& m_vxyz;
   const CGAL::Bbox_3& m_bbox;
   const bool m_domain_is_a_box;
 
@@ -130,7 +130,7 @@ public:
 
   Lipschitz_sizing(const MeshDomain& domain
     , const Tree* ptree
-    , const CGAL::cpp11::array<double, 3>& vxyz
+    , const std::array<double, 3>& vxyz
     , const CGAL::Bbox_3& bbox
     , const bool domain_is_a_box
 #ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS

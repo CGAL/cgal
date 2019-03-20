@@ -45,7 +45,7 @@ namespace CGAL {
       };
     template<class T, int D>
       struct Array_or_vector_selector<T, Dimension_tag<D> > {
-	typedef cpp11::array<T,D> type;
+	typedef std::array<T,D> type;
 	static void resize(type&, std::size_t CGAL_assertion_code(d)) { CGAL_assertion(d==D); }
       };
   }

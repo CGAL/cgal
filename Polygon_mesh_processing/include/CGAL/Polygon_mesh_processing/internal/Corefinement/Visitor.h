@@ -494,8 +494,8 @@ public:
 
   //update the id of input mesh vertex that are also a node
   void update_face_indices(
-    cpp11::array<vertex_descriptor,3>& f_vertices,
-    cpp11::array<Node_id,3>& f_indices,
+    std::array<vertex_descriptor,3>& f_vertices,
+    std::array<Node_id,3>& f_indices,
     Vertex_to_node_id& vertex_to_node_id)
   {
     for (int k=0;k<3;++k){
@@ -816,9 +816,9 @@ public:
         std::map<std::pair<Node_id,Node_id>,halfedge_descriptor> edge_to_hedge;
 
         // the vertices of f
-        cpp11::array<vertex_descriptor,3> f_vertices;
+        std::array<vertex_descriptor,3> f_vertices;
         // the node_id of an input vertex or a fake id (>=nb_nodes)
-        cpp11::array<Node_id,3> f_indices = {{nb_nodes,nb_nodes+1,nb_nodes+2}};
+        std::array<Node_id,3> f_indices = {{nb_nodes,nb_nodes+1,nb_nodes+2}};
         if (it_fb!=face_boundaries.end()){ //the boundary of the triangle face was refined
           f_vertices[0]=it_fb->second.vertices[0];
           f_vertices[1]=it_fb->second.vertices[1];
@@ -848,7 +848,7 @@ public:
         CDT cdt(traits);
 
         // insert triangle points
-        cpp11::array<CDT_Vertex_handle,3> triangle_vertices;
+        std::array<CDT_Vertex_handle,3> triangle_vertices;
         //we can do this to_exact because these are supposed to be input points.
         triangle_vertices[0]=cdt.insert_outside_affine_hull(p);
         triangle_vertices[1]=cdt.insert_outside_affine_hull(q);

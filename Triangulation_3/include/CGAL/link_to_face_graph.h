@@ -54,7 +54,7 @@ link_to_face_graph(const Triangulation_3& t,
   Vertex_map vertex_map;
   std::vector<Cell_handle>  cells;
   t.incident_cells(t.infinite_vertex(),std::back_inserter(cells));
-  CGAL::cpp11::array<vertex_descriptor,3> face;
+  std::array<vertex_descriptor,3> face;
 
   typename boost::property_map<FG, CGAL::vertex_point_t>::type vpm
     = get(CGAL::vertex_point, fg);

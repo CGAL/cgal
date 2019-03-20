@@ -30,23 +30,6 @@
 
 namespace CGAL {
 
-namespace cpp11 {
-
-#ifndef CGAL_CFG_NO_CPP0X_ARRAY
-using std::array;
-#else
-using boost::array;
-#endif
-
-} // cpp11
-
-namespace cpp0x = cpp11;
-
-// This using is just for short-term backward-compat, people should take the
-// habit to use CGAL::cpp11::array.
-using cpp11::array;
-
-
 // The make_array() function simply constructs an std::array.
 // It is needed for cases where a std::array is used as a class data
 // member and you want to initialize it in the member initializers list.
@@ -76,10 +59,10 @@ using cpp11::array;
 
 template< typename T, typename... Args >
 inline
-cpp11::array< T, 1 + sizeof...(Args) >
+std::array< T, 1 + sizeof...(Args) >
 make_array(const T & t, const Args & ... args)
 {
-  cpp11::array< T, 1 + sizeof...(Args) > a = { { t, static_cast<T>(args)... } };
+  std::array< T, 1 + sizeof...(Args) > a = { { t, static_cast<T>(args)... } };
   return a;
 }
 
@@ -88,7 +71,7 @@ make_array(const T & t, const Args & ... args)
 struct Construct_array
 {
   template <typename T, typename... Args>
-  cpp11::array<T, 1 + sizeof...(Args)> operator()(const T& t, const Args& ... args)
+  std::array<T, 1 + sizeof...(Args)> operator()(const T& t, const Args& ... args)
   {
     return make_array (t, args...);
   }

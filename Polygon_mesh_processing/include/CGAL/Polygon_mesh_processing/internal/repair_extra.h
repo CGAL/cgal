@@ -216,7 +216,7 @@ void collect_close_stitchable_boundary_edges(PM& pm,
   std::size_t nb_pairs_to_remove=0;
   for(const Halfedge_pair& p : halfedges_to_stitch)
   {
-    cpp11::array<halfedge_descriptor, 4> hedges = {{ p.first, p.second, opposite(p.first, pm), opposite(p.second, pm) }};
+    std::array<halfedge_descriptor, 4> hedges = {{ p.first, p.second, opposite(p.first, pm), opposite(p.second, pm) }};
     bool null_edge_found=false;
 
     for(halfedge_descriptor h : hedges)

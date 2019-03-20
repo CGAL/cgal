@@ -90,7 +90,7 @@ struct Polygon_soup_orienter
     marked_edges.insert(canonical_edge(i,j));
   }
 
-  static cpp11::array<V_ID,3>
+  static std::array<V_ID,3>
   get_neighbor_vertices(V_ID v_id, P_ID polygon_index, const Polygons& polygons)
   {
     std::size_t nbv = polygons[polygon_index].size(), pvid=0;
@@ -340,7 +340,7 @@ struct Polygon_soup_orienter
           vertices_to_duplicate.back().first=v_id;
         }
 
-        const cpp11::array<V_ID,3>& neighbors = get_neighbor_vertices(v_id,p_id,polygons);
+        const std::array<V_ID,3>& neighbors = get_neighbor_vertices(v_id,p_id,polygons);
 
         V_ID next = neighbors[2];
 
@@ -411,7 +411,7 @@ struct Polygon_soup_orienter
         if (!first_pass)
           return false; //there will be duplicate vertices
 
-        const cpp11::array<V_ID,3>& neighbors = get_neighbor_vertices(v_id,p_id,polygons);
+        const std::array<V_ID,3>& neighbors = get_neighbor_vertices(v_id,p_id,polygons);
 
         V_ID next = neighbors[2];
 

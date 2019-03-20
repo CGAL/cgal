@@ -119,7 +119,7 @@ private:
 
   struct Edge
   {
-    CGAL::cpp11::array<std::size_t, 2> planes;
+    std::array<std::size_t, 2> planes;
     std::vector<std::size_t> indices; // Points belonging to intersection
     Line support;
     bool active;
@@ -330,7 +330,7 @@ public:
     `f` with respect to the underlying structure.
 
    */
-  Coherence_type facet_coherence (const CGAL::cpp11::array<std::size_t, 3>& f) const
+  Coherence_type facet_coherence (const std::array<std::size_t, 3>& f) const
   {
     // O- FREEFORM CASE
     if (m_status[f[0]] == POINT &&

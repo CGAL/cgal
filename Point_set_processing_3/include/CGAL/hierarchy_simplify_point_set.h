@@ -220,7 +220,7 @@ namespace CGAL {
 	  }
 
 	// Compute the covariance matrix of the set
-	cpp11::array<FT, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
+	std::array<FT, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
 
 	for (typename std::list<Input_type>::iterator it = current_cluster->first.begin ();
 	     it != current_cluster->first.end (); ++ it)
@@ -235,8 +235,8 @@ namespace CGAL {
 	    covariance[5] += d.z () * d.z ();
 	  }
 
-	cpp11::array<FT, 3> eigenvalues = {{ 0., 0., 0. }};
-	cpp11::array<FT, 9> eigenvectors = {{ 0., 0., 0.,
+	std::array<FT, 3> eigenvalues = {{ 0., 0., 0. }};
+	std::array<FT, 9> eigenvectors = {{ 0., 0., 0.,
 					      0., 0., 0.,
 					      0., 0., 0. }};
 	// Linear algebra = get eigenvalues and eigenvectors for

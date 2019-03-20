@@ -348,11 +348,11 @@ template <class TriangleMesh,
           class NamedParametersOut1,
           class NamedParametersOut2,
           class NamedParametersOut3>
-cpp11::array<bool,4>
+std::array<bool,4>
 corefine_and_compute_boolean_operations(
         TriangleMesh& tm1,
         TriangleMesh& tm2,
-  const cpp11::array< boost::optional<TriangleMesh*>,4>& output,
+  const std::array< boost::optional<TriangleMesh*>,4>& output,
   const NamedParameters1& np1,
   const NamedParameters2& np2,
   const std::tuple<NamedParametersOut0,
@@ -589,11 +589,11 @@ corefine_and_compute_boolean_operations(
 }
 
 template <class TriangleMesh>
-cpp11::array<bool,4>
+std::array<bool,4>
 corefine_and_compute_boolean_operations(
         TriangleMesh& tm1,
         TriangleMesh& tm2,
-  const cpp11::array< boost::optional<TriangleMesh*>,4>& output)
+  const std::array< boost::optional<TriangleMesh*>,4>& output)
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
   return corefine_and_compute_boolean_operations(tm1, tm2, output,
@@ -603,11 +603,11 @@ corefine_and_compute_boolean_operations(
 }
 
 template <class TriangleMesh, class NamedParameters1>
-cpp11::array<bool,4>
+std::array<bool,4>
 corefine_and_compute_boolean_operations(
         TriangleMesh& tm1,
         TriangleMesh& tm2,
-  const cpp11::array< boost::optional<TriangleMesh*>,4>& output,
+  const std::array< boost::optional<TriangleMesh*>,4>& output,
   const NamedParameters1& np1)
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
@@ -618,11 +618,11 @@ corefine_and_compute_boolean_operations(
 }
 
 template <class TriangleMesh, class NamedParameters1, class NamedParameters2>
-cpp11::array<bool,4>
+std::array<bool,4>
 corefine_and_compute_boolean_operations(
         TriangleMesh& tm1,
         TriangleMesh& tm2,
-  const cpp11::array< boost::optional<TriangleMesh*>,4>& output,
+  const std::array< boost::optional<TriangleMesh*>,4>& output,
   const NamedParameters1& np1,
   const NamedParameters2& np2)
 {
@@ -715,7 +715,7 @@ corefine_and_compute_union(      TriangleMesh& tm1,
                            const NamedParametersOut& np_out)
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
-  cpp11::array< boost::optional<TriangleMesh*>,4> output;
+  std::array< boost::optional<TriangleMesh*>,4> output;
   output[Corefinement::UNION]=&tm_out;
 
   return
@@ -747,7 +747,7 @@ corefine_and_compute_intersection(      TriangleMesh& tm1,
                                   const NamedParametersOut& np_out)
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
-  cpp11::array< boost::optional<TriangleMesh*>,4> output;
+  std::array< boost::optional<TriangleMesh*>,4> output;
   output[Corefinement::INTERSECTION]=&tm_out;
 
   return
@@ -780,7 +780,7 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
   using namespace CGAL::Polygon_mesh_processing::Corefinement;
-  cpp11::array< boost::optional<TriangleMesh*>,4> output;
+  std::array< boost::optional<TriangleMesh*>,4> output;
   output[TM1_MINUS_TM2]=&tm_out;
 
   return

@@ -76,7 +76,7 @@ void Polyhedron_demo_features_detection_plugin::on_actionDetectFeatures_triggere
       return;
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    typedef CGAL::cpp11::array<double,6> Covariance;
+    typedef std::array<double,6> Covariance;
     std::vector<Covariance> cov;
 
     std::cerr << "Compute VCM (offset_radius="

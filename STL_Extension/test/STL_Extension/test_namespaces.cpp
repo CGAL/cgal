@@ -14,7 +14,7 @@
 int main()
 {
   CGAL::cpp0x::array<int, 3> arr;
-  CGAL::cpp11::array<int, 3> arr2;
+  std::array<int, 3> arr2;
 
   CGAL::cpp0x::tuple<double, int> tuple;
   std::tuple<double, int> tuple2;

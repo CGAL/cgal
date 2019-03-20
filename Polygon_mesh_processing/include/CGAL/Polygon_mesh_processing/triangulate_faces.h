@@ -326,7 +326,7 @@ public:
       else
         f=add_face(pmesh);
 
-      cpp11::array<int, 4> indices =
+      std::array<int, 4> indices =
         make_array( triangle.first,
                     triangle.second,
                     triangle.third,

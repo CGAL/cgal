@@ -307,7 +307,7 @@ is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor
   const FT sq_threshold = threshold * threshold;
   const halfedge_descriptor h0 = halfedge(f, tm);
 
-  cpp11::array<FT, 3> sq_lengths;
+  std::array<FT, 3> sq_lengths;
   int pos = 0;
   for(halfedge_descriptor h : halfedges_around_face(h0, tm))
   {

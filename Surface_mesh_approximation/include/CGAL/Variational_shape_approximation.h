@@ -123,7 +123,7 @@ public:
   typedef typename Error_metric::Proxy Proxy;
 
   /// Indexed triangle type
-  typedef CGAL::cpp11::array<std::size_t, 3> Indexed_triangle;
+  typedef std::array<std::size_t, 3> Indexed_triangle;
   /// @}
 
 // private typedefs and data member
@@ -1734,7 +1734,7 @@ private:
       std::size_t j = global_vtag_map[to_sgv_map[target(he, *m_ptm)]];
       std::size_t k = global_vtag_map[to_sgv_map[target(next(he, *m_ptm), *m_ptm)]];
       if (i != j && i != k && j != k) {
-        CGAL::cpp11::array<std::size_t, 3> t;
+        std::array<std::size_t, 3> t;
         t[0] = i;
         t[1] = j;
         t[2] = k;

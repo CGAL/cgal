@@ -344,7 +344,7 @@ void Polyhedron_demo_orient_soup_plugin::getNMPoints(
       CGAL_assertion( pvid!=nbv );
       std::size_t p = item->polygons()[p_id][ (pvid+nbv-1)%nbv ];
       std::size_t n = item->polygons()[p_id][ (pvid+1)%nbv ];
-      const CGAL::cpp11::array<std::size_t,3>& neighbors = CGAL::make_array(p,v_id,n);
+      const std::array<std::size_t,3>& neighbors = CGAL::make_array(p,v_id,n);
 
       std::size_t next = neighbors[2];
 

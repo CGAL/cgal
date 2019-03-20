@@ -219,7 +219,7 @@ private:
   void n_ring_neighbors (const face_descriptor& query, OutputIterator output, const std::size_t n) const
   {
     *(output ++) = get(get(CGAL::face_index, m_mesh), query);
-    CGAL::cpp11::array<face_descriptor,1> init = {{ query }};
+    std::array<face_descriptor,1> init = {{ query }};
     typename Is_face_selected::Set done;
     done.insert(query);
     std::vector<face_descriptor> desc;

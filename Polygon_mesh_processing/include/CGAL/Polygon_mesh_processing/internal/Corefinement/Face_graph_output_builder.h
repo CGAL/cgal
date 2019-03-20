@@ -130,7 +130,7 @@ class Face_graph_output_builder
   Node_id_map vertex_to_node_id1, vertex_to_node_id2;
 
   // output meshes
-  const cpp11::array<boost::optional<TriangleMesh*>, 4>& requested_output;
+  const std::array<boost::optional<TriangleMesh*>, 4>& requested_output;
   // input meshes closed ?
   /// \todo do we really need this?
   bool is_tm1_closed;
@@ -360,7 +360,7 @@ public:
                             const VpmOutTuple& output_vpms,
                                   EdgeMarkMapTuple& out_edge_mark_maps,
                                   UserVisitor& user_visitor,
-                            const cpp11::array<
+                            const std::array<
                               boost::optional<TriangleMesh*>, 4 >& requested_output)
     : tm1(tm1), tm2(tm2)
     , vpm1(vpm1), vpm2(vpm2)

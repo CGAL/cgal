@@ -85,7 +85,7 @@ clip_to_bbox(const Plane_3& plane,
   corners[6] = Point_3(bbox.xmax(),bbox.ymax(),bbox.zmax());
   corners[7] = Point_3(bbox.xmax(),bbox.ymin(),bbox.zmax());
 
-  cpp11::array<CGAL::Oriented_side,8> orientations = {{
+  std::array<CGAL::Oriented_side,8> orientations = {{
     plane.oriented_side(corners[0]),
     plane.oriented_side(corners[1]),
     plane.oriented_side(corners[2]),
@@ -97,7 +97,7 @@ clip_to_bbox(const Plane_3& plane,
   }};
 
   // description of faces of the bbox
-  cpp11::array<int, 24> face_indices =
+  std::array<int, 24> face_indices =
     {{ 0, 1, 2, 3,
        2, 1, 5, 6,
        3, 2, 6, 7,

@@ -31,8 +31,8 @@ namespace CGAL{
 template <class HDS>
 class Polyhedron_builder_from_STL : public CGAL::Modifier_base<HDS> {
   typedef typename HDS::Vertex::Point Point_3;
-  typedef std::vector<cpp11::array<double, 3> > Points_3;
-  typedef cpp11::array<int,3> Facet;
+  typedef std::vector<std::array<double, 3> > Points_3;
+  typedef std::array<int,3> Facet;
   typedef std::vector<Facet> Surface;
 
   std::istream& is;

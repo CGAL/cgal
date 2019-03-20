@@ -57,17 +57,17 @@ public:
 
   typedef typename Gt::Periodic_2_offset_2     Offset;
   typedef typename Gt::Iso_rectangle_2         Iso_rectangle;
-  typedef array<int, 2>                        Covering_sheets;
+  typedef std::array<int, 2>                   Covering_sheets;
 
   typedef typename Gt::FT                      FT;
   typedef typename Gt::Point_2                 Point;
   typedef typename Gt::Segment_2               Segment;
   typedef typename Gt::Triangle_2              Triangle;
 
-  typedef std::pair<Point, Offset>              Periodic_point;
-  typedef array< std::pair<Point, Offset>, 2>   Periodic_segment;
-  typedef array< std::pair<Point, Offset>, 3>   Periodic_triangle;
-  typedef array< std::pair<Point, Offset>, 4>   Periodic_tetrahedron;
+  typedef std::pair<Point, Offset>                   Periodic_point;
+  typedef std::array< std::pair<Point, Offset>, 2>   Periodic_segment;
+  typedef std::array< std::pair<Point, Offset>, 3>   Periodic_triangle;
+  typedef std::array< std::pair<Point, Offset>, 4>   Periodic_tetrahedron;
 
   typedef typename Base::size_type              size_type;
   typedef typename Base::Locate_type            Locate_type;

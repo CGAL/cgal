@@ -750,7 +750,7 @@ struct Triangle_mesh_extension_helper<TriangleMesh, true>
            : opposite(halfedge(key_and_value.second, output), output);
   }
 
-  cpp11::array<halfedge_descriptor,3>
+  std::array<halfedge_descriptor,3>
   halfedges(face_descriptor f)
   {
      halfedge_descriptor h=halfedge(f,tm);
@@ -791,7 +791,7 @@ struct Triangle_mesh_extension_helper<TriangleMesh, false>
            : opposite(halfedge(key_and_value.second, output), output);
   }
 
-  cpp11::array<halfedge_descriptor,3>
+  std::array<halfedge_descriptor,3>
   halfedges(face_descriptor f)
   {
      halfedge_descriptor h=halfedge(f,tm);
@@ -892,7 +892,7 @@ void append_patches_to_triangle_mesh(
     //create faces and connect halfedges
     for(face_descriptor f : patch.faces)
     {
-      cpp11::array<halfedge_descriptor,3> hedges = helper.halfedges(f);
+      std::array<halfedge_descriptor,3> hedges = helper.halfedges(f);
 
       user_visitor.before_face_copy(f, patches.pm, output);
       face_descriptor new_f = add_face(output);

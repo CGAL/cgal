@@ -491,7 +491,7 @@ polylines_to_protect
         for(int k = 0; k < zdim; k+= (axis == 2 ? (std::max)(1, zdim-1) : 1 ) )
         {
 
-          using CGAL::cpp11::array;
+          using std::array;
           using std::tuple;
           using std::get;
 
