@@ -27,16 +27,16 @@ The algorithms used are based on a paper by Erickson and Whittlesey \cgalCite{ew
 
 \subsection SMTopology_Input Specifying the Input Surface and Curves
 
-The homotopy tests are performed on a surface represented as a model of \ref ChapterCombinatorialMap "combinatorial map" or `HalfedgeGraph`. The input surface mesh is supposed to be a connected closed orientable surface. This input surface is provided to conctruct a `Surface_mesh_curve_topology`. This class computes an internal representation of the surface as described below.
+The homotopy tests are performed on a surface represented as a model of \ref ChapterCombinatorialMap "combinatorial map". The input surface mesh is supposed to be a connected closed orientable surface. This input surface is provided to conctruct a `Surface_mesh_curve_topology`. This class computes an internal representation of the surface as described below.
 
 Each curve on this surface is contained in an instance of the class `Path_on_surface`. An object in this class should be constructed with the same input surface as the  `Surface_mesh_curve_topology` container.
 
-A `Path_on_surface` behaves as a list. This list is initially empty and the darts or halfedges corresponding to the sequence of consecutive oriented edges of an input curve should be pushed back in this list. The class provides three ways for extending a nonempty path.
-- Simply push the next dart or halfedge using the \ref Path_on_surface::push_back "push_back()" member function.
-- When the surface is represented by a combinatorial map or a `Surface_mesh` the user may push the index of the next dart/halfedge instead of the dart/halfedge itself with the member function \ref Path_on_surface::push_back_by_index "push_back_by_index()". This may however be at the cost of an overhead computation mapping the index to the actual dart/halfedge.
+A `Path_on_surface` behaves as a list. This list is initially empty and the darts corresponding to the sequence of consecutive oriented edges of an input curve should be pushed back in this list. The class provides three ways for extending a nonempty path.
+- Simply push the next dart using the \ref Path_on_surface::push_back "push_back()" member function.
+- The user may push the index of the next dart instead of the dart itself with the member function \ref Path_on_surface::push_back_by_index "push_back_by_index()". This may however be at the cost of an overhead computation mapping the index to the actual dart.
 - The path may be extended with the member function \ref Path_on_surface::extend_positive_turn "extend_positive_turn()" by specifying the next dart/halfedge thanks to a number of positive turns with respect to the previous dart/halfedge in the path.
 
-In the two first cases, the source vertex of the added dart/halfedge  should coincide with the target vertex of the last dart/halfedge in the path. The user is responsible for ensuring this condition. The member functions \ref Path_on_surface::can_be_pushed "can_be_pushed" and \ref Path_on_surface::can_be_pushed_by_index "can_be_pushed_by_index()" return true if and only if the condition is satisfied.
+In the two first cases, the source vertex of the added dart  should coincide with the target vertex of the last dart in the path. The user is responsible for ensuring this condition. The member functions \ref Path_on_surface::can_be_pushed "can_be_pushed" and \ref Path_on_surface::can_be_pushed_by_index "can_be_pushed_by_index()" return true if and only if the condition is satisfied.
 
 In addition to these functionalities, we provide an intuitive mesh builder `Combinatorial_map_2_incremental_builder`. The user can add facets to the mesh one at a time. Each facet is specified by the sequence of its oriented edge labels given as a string where the labels are words separated by blank spaces. The label of the opposite of an oriented edge is preceded by a minus. For example, the opposite of 'a1' is '-a1'. See \ref SMTopology_Example_II "examples below". Note that all the facets should be oriented the same way to form an oriented surface. This builder includes a path creator where the sequence of darts of the path is given as a string of oriented edge labels, similarly to the facets.
 
@@ -85,9 +85,9 @@ The machine used is a PC running Ubuntu 18.04 with an Intel CPU Core i7-4790 CPU
 
 \subsection SMTopology_bench1 Surface Mesh Topology Computation Time
 
-When we create a `Surface_mesh_topology` object, given a surface, we build a special quadrangulation of the surface as internal representation (as explained in Section \ref SMTopology_Theory "Implementation Details"). The complexity of this operation is linear in number of darts of the input surface, as we can see in \cgalFigureRef{fig_sm_topology_bench1}.
+When we create a `Surface_mesh_topology` object, given a surface, we build a special quadrangulation of the surface as internal representation (as explained in Section \ref SMTopology_Theory "Implementation Details"). The complexity of this operation is linear in the number of darts of the input surface, as we can see in \cgalFigureRef{fig_sm_topology_bench1}.
 
-For this benchmark, we computed 22 `Surface_mesh_topology` objects for different input surfaces having different number of darts (between 9,000 and 30,000,000) and show in the figure the computation time of the quadrangulation accoring to the number of darts of the input surface. We remind that this computation can be done only once if you want to do several path homotopy tests. 
+For this benchmark, we computed 22 `Surface_mesh_topology` objects for different input surfaces with different number of darts (between 9,000 and 30,000,000) and show in the figure the computation time of the quadrangulation according to the number of darts of the input surface. We remind that this computation needs be done only once if you want to perform several path homotopy tests on the same surface. 
 
 \cgalFigureBegin{fig_sm_topology_bench1, computation-time-reduce-surface.svg}
  Computation time of `Surface_mesh_topology` constructions, according to the number of darts or the input surface.
@@ -95,13 +95,20 @@ For this benchmark, we computed 22 `Surface_mesh_topology` objects for different
 
 \subsection SMTopology_bench2 Path Homotopy Tests
 
-In this second benchmark, we use a surface having 3,263,148 darts, 543,652 vertices, 1,631,574 edges and 1,087,716 faces as input, and generate 100 random pair of closed paths. The first path is generated randomly, with a lower bound for its length given by a random number between 100 and 40,000. The second path is generated from a sequence of deformations of the first path, so that the two paths are homotopic. The number of deformations is a random number bteween 100 and 10,000.
+In this second benchmark, we use a surface with 543,652 vertices, 1,631,574 edges (giving twice as many darts) and 1,087,716 faces as input, and generate 100 random pairs of closed paths. The first path is generated randomly, with a lower bound for its length given by a random number between 100 and 40,000: passed the lower bound, the path is randomly extended until it returns to its origin vertex. The second path is generated from a sequence of elementary deformations of the first path, so that the two paths are homotopic. The number of elementary deformations is a random number between 100 and 10,000.
 
 The computation time of the 100 `are_freely_homotopic` tests are given in \cgalFigureRef{fig_sm_topology_bench2}, according to the number of darts of the two input paths. 
 
 \cgalFigureBegin{fig_sm_topology_bench2, computation-time-path-homotopy.svg}
  Computation time of `are_freely_homotopic` tests, according to the number of darts or the input paths.
 \cgalFigureEnd
+
+The third benchmark is similar to the previous one, except that we use a genus 5 surface with one vertex, 10 edges and 1 face. The length of the paths to be tested is varied between 10 and 30,000,000. A log-log scale is used for the plot of the results in  \cgalFigureRef{fig_sm_topology_bench3}. The free homotopy test takes 10 seconds for paths of length 10,000,000.
+\cgalFigureBegin{fig_sm_topology_bench3, computation-time-path-homotopy-2.svg}
+ Computation time of `are_freely_homotopic` tests, according to the number of darts or the input paths for random paths on the canonical reduced surface of genus five.
+\cgalFigureEnd
+
+Note that the linear time implementation of the algorithms is remarkably observed in each benchmark. 
 
 \section SMTopology_Theory Implementation Details
 
@@ -156,7 +163,7 @@ In order to test if two input curves \f$C\f$ and \f$D\f$ in \f$\cal{M}\f$ are ho
 The canonical form of a curve is obtained by flattening its brackets, removing its spurs and pushing its right L-shapes to the right until the curve has no more brackets, spurs or L-shapes. This can be done in time proportional to the number of edges of the curve. Note that the above three operations preserve the homotopy class of the curve.
 
 \subsection SMTopology_Homotopy_Test Homotopy Test 
-It can be proved that the canonical form is uniquely defined and only depends on the homotopy class of the curve. Hence, the curves \f$C'\f$ and \f$D'\f$ in \f$\cal{Q}\f$ are homotopic if and only if their canonical forms are equal. Since each curve is defined as a sequence of edges up to a cyclic permutation, we resort to the Knuth-Morris-Pratt algorithm to decide in linear time if the canonical forms are the same up to a cyclic permutation.
+It can be proved that the canonical form is uniquely defined and only depends on the homotopy class of the curve. Hence, the curves \f$C'\f$ and \f$D'\f$ in \f$\cal{Q}\f$ are homotopic if and only if their canonical forms are equal. Since each curve is defined as a sequence of (oriented) edges up to a cyclic permutation, we resort to the Knuth-Morris-Pratt algorithm to decide in linear time if the canonical forms are the same up to a cyclic permutation.
 
 \section SMTopology_History Implementation History
 
