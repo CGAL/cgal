@@ -182,12 +182,26 @@ void test_centroid(const char* filename)
   input >> sm;
  
   typename K::Point_3 p = PMP::centroid(sm);
-  
+
+  // For data/elephant.off
   // compare with centroid of 1.000.000 points inside the mesh:
   //  0.00772887 -0.134923 0.011703
   assert (p.x() > 0.007 && p.x() < 0.008);
   assert (p.y() > -0.14 && p.y() < -0.13);
   assert (p.z() > 0.01 && p.z() < 0.02);
+
+  typename K::Vector_3 v(10,20,30);
+  for(typename boost::graph_traits<Surface_mesh>::vertex_descriptor vd : vertices(sm)){
+    sm.point(vd) = sm.point(vd) + v;
+  }
+
+  p = PMP::centroid(sm);
+  p = p - v;
+  assert (p.x() > 0.007 && p.x() < 0.008);
+  assert (p.y() > -0.14 && p.y() < -0.13);
+  assert (p.z() > 0.01 && p.z() < 0.02);
+
+
 }
 
 int main(int argc, char* argv[])

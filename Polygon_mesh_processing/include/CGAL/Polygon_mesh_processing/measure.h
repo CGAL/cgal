@@ -538,31 +538,6 @@ volume(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
       CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
-  namespace internal {
-  template <typename TriangleMesh, typename Vpm, typename Point, typename Tetrahedron, typename Construct_tetrahedron>
-  struct Face2Tet {
-
-    typedef Tetrahedron result_type;
-    const TriangleMesh& tmesh;
-    const Vpm& vpm;
-
-    Face2Tet(const TriangleMesh& tmesh, const Vpm& vpm)
-      : tmesh(tmesh), vpm(vpm)
-    {}
-    
-    template <typename Fd>
-    Tetrahedron operator()(Fd fd) const
-    {
-      Point origin(0,0,0),
-        p(get(vpm, target(halfedge(fd, tmesh), tmesh))),
-        q(get(vpm, target(next(halfedge(fd, tmesh), tmesh), tmesh))),
-        r(get(vpm, target(prev(halfedge(fd, tmesh), tmesh), tmesh)));
-      return Construct_tetrahedron()(origin,p,q,r);
-    }
-
-  };
-  } // namespace internal
-  
 /**
   * \ingroup measure_grp
   * computes the centroid of the domain bounded by
@@ -597,7 +572,9 @@ volume(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
   typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type::Point_3
 #endif
 centroid(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
-  {
+{
+  // See: http://www2.imperial.ac.uk/~rn/centroid.pdf
+    
   CGAL_assertion(is_triangle_mesh(tmesh));
   CGAL_assertion(is_closed(tmesh));
 
@@ -609,18 +586,46 @@ centroid(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
                          get_const_property_map(CGAL::vertex_point, tmesh));
   typedef typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type Kernel;
   typedef typename Kernel::Point_3 Point_3;
+  typedef typename Kernel::Vector_3 Vector_3;
   typedef typename Kernel::Tetrahedron_3 Tetrahedron_3;
-  typedef typename Kernel::Construct_tetrahedron_3 Construct_tetrahedron_3;
+  typedef typename Kernel::Construct_translated_point_3 Construct_translated_point_3;
+  typedef typename Kernel::Construct_vector_3 Construct_vector_3;
+  typedef typename Kernel::Compute_scalar_product_3 Scalar_product;
+  typedef typename Kernel::Construct_cross_product_vector_3 Cross_product;
+  typedef typename Kernel::Construct_scaled_vector_3 Scale;
+  typedef typename Kernel::Construct_sum_of_vectors_3 Sum;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
-  typedef typename boost::graph_traits<TriangleMesh>::face_iterator face_iterator;
+  typename Kernel::FT volume = 0.;
 
-  internal::Face2Tet<TriangleMesh,Vpm,Point_3,Tetrahedron_3,Construct_tetrahedron_3> f2t(tmesh, vpm);
+  Vector_3 centroid(NULL_VECTOR);
 
-  std::pair<face_iterator,face_iterator> range = faces(tmesh);
+  Construct_translated_point_3 point;
+  Construct_vector_3 vector;
+  Scalar_product scalar_product;
+  Cross_product cross_product;
+  Scale scale;
+  Sum sum;
 
-  return centroid(boost::make_transform_iterator(range.first, f2t),
-                  boost::make_transform_iterator(range.second, f2t),
-                  Kernel(),Dimension_tag<3>());
+  for(face_descriptor fd : faces(tmesh)){
+    Vector_3 vp = vector(ORIGIN, get(vpm, target(halfedge(fd, tmesh), tmesh))),
+      vq = vector(ORIGIN, get(vpm, target(next(halfedge(fd, tmesh), tmesh), tmesh))),
+      vr = vector(ORIGIN, get(vpm, target(prev(halfedge(fd, tmesh), tmesh), tmesh)));
+    Vector_3 n = cross_product((vq-vp),(vr-vp));
+    volume += (scalar_product(n,vp))/6.;
+    n = scale(n, 1.0/24.0);
+
+    Vector_3 v2 = sum(vp, vq);
+    Vector_3 v3 = Vector_3(square(v2.x()), square(v2.y()), square(v2.z()));
+    v2 = sum(vq, vr);
+    v3 = sum(v3, Vector_3(square(v2.x()), square(v2.y()), square(v2.z())));
+    v2 = sum(vp, vr);
+    v3 = sum(v3, Vector_3(square(v2.x()), square(v2.y()), square(v2.z())));
+              
+    centroid = sum(centroid, Vector_3(n.x() * v3.x(), n.y() * v3.y(), n.z() * v3.z())); 
+  }
+  centroid = scale(centroid, 1./(2.*volume));
+  return point(ORIGIN, centroid);
   
 }
 
