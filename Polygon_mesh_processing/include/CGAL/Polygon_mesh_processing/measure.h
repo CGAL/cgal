@@ -39,7 +39,6 @@
 #include <CGAL/Kernel/global_functions_3.h>
 
 #include <CGAL/Lazy.h> // needed for CGAL::exact(FT)/CGAL::exact(Lazy_exact_nt<T>)
-#include <CGAL/centroid.h>
 
 #include <utility>
 
