@@ -30,6 +30,7 @@ is met, such as reaching the desired number of edges.
 
 The algorithm implemented here is generic in the sense that it does not require the surface mesh 
 to be of a particular type but to be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
+We give examples for `Surface_mesh`, `Polyhedron_3`, and OpenMesh.
 
 The design is <A HREF="http://en.wikipedia.org/wiki/Policy-based_design"><I>policy-based</I></A>
 (<A HREF="http://en.wikipedia.org/wiki/Policy-based_design"><TT>http://en.wikipedia.org/wiki/Policy-based_design</TT></A>),
@@ -254,24 +255,31 @@ int r = edge_collapse(surface_mesh
 
 \subsection Surface_mesh_simplificationExamples Examples
 
-\subsection Surface_mesh_simplificationExampleUsinga Example Using a Default Polyhedron
+\subsubsection Surface_mesh_simplificationExampleUsingSurfaceMesh Example Using a Surface_mesh
 
-The following example illustrates the simplest of the cases. It uses
-an ordinary polyhedron and only one of the optional parameters.
+The following example illustrates the simplification of a `Surface_mesh`.
 The unspecified cost strategy defaults to Lindstrom-Turk.
+
+\cgalExample{Surface_mesh_simplification/edge_collapse_surface_mesh.cpp}
+
+
+\subsubsection Surface_mesh_simplificationExampleUsinga Example Using a Default Polyhedron
+
+The following example illustrates the simplification of a `Polyhedron_3` with default
+vertices, halfedges, and faces. 
+The unspecified cost strategy defaults to Lindstrom-Turk.
+
 \cgalExample{Surface_mesh_simplification/edge_collapse_polyhedron.cpp}
 
-\subsection Surface_mesh_simplificationExampleUsingan Example Using an Enriched Polyhedron
+\subsubsection Surface_mesh_simplificationExampleUsingan Example Using an Enriched Polyhedron
 
 The following example is equivalent to the previous example but using an
 enriched polyhedron whose halfedges support an `id` field to
-store the edge index needed by the algorithm. It also shows how to
-explicitly specify a cost strategy (other than the default)
-and how to use a visitor object to track the simplification process.
+store the edge index needed by the algorithm.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_enriched_polyhedron.cpp}
 
-\subsection Surface_mesh_simplificationExampleOpenMesh Example for Simplification of OpenMesh
+\subsubsection Surface_mesh_simplificationExampleOpenMesh Example for Simplification of OpenMesh
 
 The following example shows how the mesh simplification package can be applied
 on a mesh data structure which is not part of \cgal, but a model of `FaceGraph`.
@@ -282,17 +290,17 @@ What is particular in this example is the property map that allows to associate
 \cgalExample{Surface_mesh_simplification/edge_collapse_OpenMesh.cpp}
 
 
-\subsection Surface_mesh_simplificationExamplewithedges Example with Edges Marked as Non-Removable
+\subsubsection Surface_mesh_simplificationExamplewithedges Example with Edges Marked as Non-Removable
 
 The following example shows how to use the optional named parameter `edge_is_constrained_map` to prevent
 edges from being removed. Edges marked as constrained are guaranteed to be in the final surface mesh. However,
 the vertices of the constrained edges may change and the placement may change the points.
 The wrapper `CGAL::Surface_mesh_simplification::Constrained_placement` guarantees that these points are not changed.
 
-\cgalExample{Surface_mesh_simplification/edge_collapse_constrained_border_polyhedron.cpp}
+\cgalExample{Surface_mesh_simplification/edge_collapse_constrained_border_surface_mesh.cpp}
 
 
-\subsection Surface_mesh_simplificationExamplewithBoundedNormal Example with Bounded Change of Face Normals
+\subsubsection Surface_mesh_simplificationExamplewithBoundedNormal Example with Bounded Change of Face Normals
 
 The surface mesh simplification does not guarantee that the resulting surface
 has no self intersections. Even the rather trivial mesh shown in \cgalFigureRef{SMS-selfintersection}
@@ -310,6 +318,12 @@ rejects this placement by returning `boost::none`.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_bounded_normal_change.cpp}
 
+\subsubsection Surface_mesh_simplificationExamplewithVisitor Example with Visitor
+
+The last example shows how to use a visitor with callbacks that are called at the different
+steps of the simplification algorithm.
+
+\cgalExample{Surface_mesh_simplification/edge_collapse_visitor_surface_mesh.cpp}
 
 */ 
 } /* namespace CGAL */
