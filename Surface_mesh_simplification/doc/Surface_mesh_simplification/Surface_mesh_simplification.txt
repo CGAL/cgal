@@ -253,9 +253,9 @@ int r = edge_collapse(surface_mesh
 
 \endcode
 
-\subsection Surface_mesh_simplificationExamples Examples
+\section Surface_mesh_simplificationExamples Examples
 
-\subsubsection Surface_mesh_simplificationExampleUsingSurfaceMesh Example Using a Surface_mesh
+\subsection Surface_mesh_simplificationExampleUsingSurfaceMesh Example Using a Surface_mesh
 
 The following example illustrates the simplification of a `Surface_mesh`.
 The unspecified cost strategy defaults to Lindstrom-Turk.
@@ -263,7 +263,7 @@ The unspecified cost strategy defaults to Lindstrom-Turk.
 \cgalExample{Surface_mesh_simplification/edge_collapse_surface_mesh.cpp}
 
 
-\subsubsection Surface_mesh_simplificationExampleUsinga Example Using a Default Polyhedron
+\subsection Surface_mesh_simplificationExampleUsinga Example Using a Default Polyhedron
 
 The following example illustrates the simplification of a `Polyhedron_3` with default
 vertices, halfedges, and faces. 
@@ -271,7 +271,7 @@ The unspecified cost strategy defaults to Lindstrom-Turk.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_polyhedron.cpp}
 
-\subsubsection Surface_mesh_simplificationExampleUsingan Example Using an Enriched Polyhedron
+\subsection Surface_mesh_simplificationExampleUsingan Example Using an Enriched Polyhedron
 
 The following example is equivalent to the previous example but using an
 enriched polyhedron whose halfedges support an `id` field to
@@ -279,7 +279,7 @@ store the edge index needed by the algorithm.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_enriched_polyhedron.cpp}
 
-\subsubsection Surface_mesh_simplificationExampleOpenMesh Example for Simplification of OpenMesh
+\subsection Surface_mesh_simplificationExampleOpenMesh Example for Simplification of OpenMesh
 
 The following example shows how the mesh simplification package can be applied
 on a mesh data structure which is not part of \cgal, but a model of `FaceGraph`.
@@ -290,7 +290,7 @@ What is particular in this example is the property map that allows to associate
 \cgalExample{Surface_mesh_simplification/edge_collapse_OpenMesh.cpp}
 
 
-\subsubsection Surface_mesh_simplificationExamplewithedges Example with Edges Marked as Non-Removable
+\subsection Surface_mesh_simplificationExamplewithedges Example with Edges Marked as Non-Removable
 
 The following example shows how to use the optional named parameter `edge_is_constrained_map` to prevent
 edges from being removed. Edges marked as constrained are guaranteed to be in the final surface mesh. However,
@@ -300,7 +300,7 @@ The wrapper `CGAL::Surface_mesh_simplification::Constrained_placement` guarantee
 \cgalExample{Surface_mesh_simplification/edge_collapse_constrained_border_surface_mesh.cpp}
 
 
-\subsubsection Surface_mesh_simplificationExamplewithBoundedNormal Example with Bounded Change of Face Normals
+\subsection Surface_mesh_simplificationExamplewithBoundedNormal Example with Bounded Change of Face Normals
 
 The surface mesh simplification does not guarantee that the resulting surface
 has no self intersections. Even the rather trivial mesh shown in \cgalFigureRef{SMS-selfintersection}
@@ -318,7 +318,7 @@ rejects this placement by returning `boost::none`.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_bounded_normal_change.cpp}
 
-\subsubsection Surface_mesh_simplificationExamplewithVisitor Example with Visitor
+\subsection Surface_mesh_simplificationExamplewithVisitor Example with Visitor
 
 The last example shows how to use a visitor with callbacks that are called at the different
 steps of the simplification algorithm.
