@@ -254,16 +254,6 @@ public:
     Point_2 y_part;// the y coordinate of the point
     Point_2 original;
 
-    Internal_point &
-     operator=(const Internal_point &other)
-    {
-      x_part = other.x_part;
-      y_part = other.y_part;
-      original = other.original;
-
-      return(*this);
-    }
-
     Internal_point() // no real value - just to allow construction of LER
       : x_part(Point_2(0,0)), y_part(Point_2(0,0)), original(Point_2(0,0)) {}
 

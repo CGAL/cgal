@@ -384,21 +384,21 @@ public:
     std::string line;
     std::size_t id, id2;
 
-    if(!std::getline(in, line)) { return true; }
+    if(!std::getline(in, line)) { compute_normal_maps(); return true; }
     std::istringstream vertex_line(line);
     while(vertex_line >> id) {
       if(id >= all_vertices.size()) { return false; }
       selected_vertices.insert(all_vertices[id]);
     }
 
-    if(!std::getline(in, line)) { return true; }
+    if(!std::getline(in, line)) { compute_normal_maps(); return true; }
     std::istringstream facet_line(line);
     while(facet_line >> id) {
       if(id >= all_facets.size()) { return false; }
       selected_facets.insert(all_facets[id]);
     }
 
-    if(!std::getline(in, line)) { return true; }
+    if(!std::getline(in, line)) { compute_normal_maps(); return true; }
     std::istringstream edge_line(line);
     while(edge_line >> id >> id2) {
       if(id >= all_edges.size() || id2 >= all_edges.size()) { return false; }
@@ -996,6 +996,44 @@ public:
 protected :
   friend struct Scene_polyhedron_selection_item_priv;
   Scene_polyhedron_selection_item_priv *d;
+  
+public:
+  //statistics
+  enum STATS {
+    NB_VERTICES = 0,
+    NB_CONNECTED_COMPOS,
+    NB_BORDER_EDGES,
+    IS_PURE_TRIANGLE,
+    IS_PURE_QUAD,
+    NB_DEGENERATED_FACES,
+    HOLES,
+    AREA,
+    VOLUME,
+    SELFINTER,
+    NB_FACETS,
+    MIN_AREA,
+    MAX_AREA,
+    MED_AREA,
+    MEAN_AREA,
+    MIN_ALTITUDE,
+    MIN_ASPECT_RATIO,
+    MAX_ASPECT_RATIO,
+    MEAN_ASPECT_RATIO,
+    GENUS,
+    NB_EDGES,
+    MIN_LENGTH,
+    MAX_LENGTH,
+    MID_LENGTH,
+    MEAN_LENGTH,
+    NB_NULL_LENGTH,
+    MIN_ANGLE,
+    MAX_ANGLE,
+    MEAN_ANGLE
+  };
+
+  bool has_stats()const {return true;}
+  QString computeStats(int type);
+  CGAL::Three::Scene_item::Header_data header() const ;
 };
 
 #endif

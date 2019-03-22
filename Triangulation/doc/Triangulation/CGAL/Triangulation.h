@@ -37,8 +37,7 @@ The triangulation deduces its maximal dimension from the type
 the dimension returned by
 `TriangulationDataStructure_::maximal_dimension()`.
 
-Input/Output
---------------
+\cgalHeading{Input/Output}
 
 The information in the `iostream` is: the current dimension, the number of
 finite vertices, the non-combinatorial information about vertices (point,
@@ -254,6 +253,7 @@ Returns a const reference to the underlying triangulation data structure.
 const Triangulation_ds & tds() const;
 
 /*!
+\cgalAdvancedFunction
 \cgalAdvancedBegin
 Returns a non-const
 reference to the underlying triangulation data structure.

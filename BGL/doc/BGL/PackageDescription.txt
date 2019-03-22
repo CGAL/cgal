@@ -558,7 +558,7 @@ Methods to read and write graphs.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `VertexListGraph`
 - `EdgeListGraph`
 - `HalfedgeGraph`
@@ -568,14 +568,14 @@ Methods to read and write graphs.
 - `FaceListGraph`
 - `MutableFaceGraph`
 
-## Properties ##
+\cgalCRPSection{Properties}
 - `boost::vertex_index_t`
 - `boost::halfedge_index_t`
 - `boost::edge_index_t`
 - `boost::face_index_t`
 - `boost::vertex_point_t`
 
-## %CGAL Classes Adapted for the Graph API ##
+\cgalCRPSection{%CGAL Classes Adapted for the Graph API}
 
 Different \cgal types have been adapted as graphs for the \sc{Bgl}. All
 adapted types are listed here. The pages document which concepts they
@@ -591,7 +591,7 @@ user might encounter.
 - \link BGLOMPAK `boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >` \endlink
 - \link BGLOMTMAK `boost::graph_traits<OpenMesh::TriMesh_ArrayKernelT<K> >` \endlink
 
-## Helper Classes ##
+\cgalCRPSection{Helper Classes}
 - `CGAL::Triangulation_vertex_base_with_id_2`
 - `CGAL::Arr_vertex_index_map`
 - `CGAL::Arr_face_index_map`
@@ -603,7 +603,7 @@ user might encounter.
 - `CGAL::Linear_cell_complex_bgl_min_items`
 - `CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper`
 
-## Helper Functions ##
+\cgalCRPSection{Helper Functions}
 - `CGAL::is_border()`
 - `CGAL::is_border_edge()`
 - `CGAL::is_bivalent()`
@@ -636,7 +636,7 @@ user might encounter.
 - `CGAL::clear()`
 - `CGAL::copy_face_graph()`
 
-## Iterators ##
+\cgalCRPSection{Iterators}
 - `CGAL::Halfedge_around_source_iterator`
 - `CGAL::Halfedge_around_target_iterator`
 - `CGAL::Halfedge_around_face_iterator`
@@ -652,7 +652,7 @@ user might encounter.
 - `CGAL::vertices_around_face()`
 - `CGAL::vertices_around_target()`
 
-## Circulators ##
+\cgalCRPSection{Circulators}
 - `CGAL::Halfedge_around_source_circulator`
 - `CGAL::Halfedge_around_target_circulator`
 - `CGAL::Halfedge_around_face_circulator`
@@ -660,7 +660,7 @@ user might encounter.
 - `CGAL::Face_around_target_circulator`
 - `CGAL::Face_around_face_circulator`
 
-## Euler Operations ##
+\cgalCRPSection{Euler Operations}
 - `CGAL::Euler::add_center_vertex()`
 - `CGAL::Euler::add_edge()`
 - `CGAL::Euler::add_face()`
@@ -681,7 +681,7 @@ user might encounter.
 - `CGAL::Euler::split_loop()`
 - `CGAL::Euler::split_vertex()`
 
-## Selection ##
+\cgalCRPSection{Selection}
 - `CGAL::expand_face_selection()`
 - `CGAL::reduce_face_selection()`
 - `CGAL::expand_edge_selection()`
@@ -691,24 +691,25 @@ user might encounter.
 - `CGAL::select_incident_faces()`
 - `CGAL::expand_face_selection_for_removal()`
 
-## Conversion Functions ##
+\cgalCRPSection{Conversion Functions}
 - `CGAL::split_graph_into_polylines()`
 
-## Graph Adaptors ##
+\cgalCRPSection{Graph Adaptors}
 - `CGAL::Dual`
 - `CGAL::Face_filtered_graph`
 - `CGAL::Graph_with_descriptor_with_graph`
 - `CGAL::Graph_with_descriptor_with_graph_property_map`
 - `CGAL::Seam_mesh`
 
-## Partitioning Methods ##
+\cgalCRPSection{Partitioning Methods}
 - `CGAL::METIS::partition_graph()`
 - `CGAL::METIS::partition_dual_graph()`
 
-## I/O Functions ##
+\cgalCRPSection{I/O Functions}
 - \link PkgBGLIOFct CGAL::read_off() \endlink
 - \link PkgBGLIOFct CGAL::write_off() \endlink
 - \link PkgBGLIOFct CGAL::write_wrl() \endlink
+- `CGAL::write_vtp()`
 
 */
 

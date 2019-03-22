@@ -22,8 +22,6 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
-#include <CGAL/_test_types.h>
-
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Triangulation_hierarchy_2.h>
 

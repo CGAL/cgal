@@ -18,11 +18,35 @@
 #include <map>
 #include <vector>
 
-template<typename Mesh>
-void angles(Mesh* poly, double& mini, double& maxi, double& ave)
+template<typename Set>
+struct Angles_test_with_set
+{
+  const Set& set;
+  typedef typename Set::value_type value_type;
+  Angles_test_with_set(const Set& set):set(set) {}
+  
+  bool operator()(const value_type& f)
+  {
+    return (set.find(f) == set.end());
+  }
+};
+
+struct Angles_test
+{
+  Angles_test() {}
+  template<typename T>
+  bool operator()(const T&)
+  {
+    return false;
+  }
+};
+
+template<typename Mesh, typename Tester>
+void compute_angles(Mesh* poly,Tester tester , double& mini, double& maxi, double& ave)
 {
   using namespace boost::accumulators;
   typedef typename boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<Mesh>::face_descriptor face_descriptor;
   typedef typename boost::property_map<Mesh, CGAL::vertex_point_t>::type VPMap;
   typedef typename CGAL::Kernel_traits< typename boost::property_traits<VPMap>::value_type >::Kernel Traits;
   double rad_to_deg = 180. / CGAL_PI;
@@ -33,7 +57,9 @@ void angles(Mesh* poly, double& mini, double& maxi, double& ave)
   VPMap vpmap = get(CGAL::vertex_point, *poly);
   BOOST_FOREACH(halfedge_descriptor h, halfedges(*poly))
   {
-    if (face(h, *poly) == boost::graph_traits<Mesh>::null_face())
+    face_descriptor f = face(h, *poly);
+    if (f == boost::graph_traits<Mesh>::null_face()
+        || tester(f))
       continue;
 
     typename Traits::Point_3 a = get(vpmap, source(h, *poly));
@@ -54,7 +80,22 @@ void angles(Mesh* poly, double& mini, double& maxi, double& ave)
 }
 
 template<typename Mesh>
-void edges_length(Mesh* poly,
+void angles(Mesh* poly, double& mini, double& maxi, double& ave)
+{
+  compute_angles(poly, Angles_test(), mini, maxi, ave);
+}
+
+template<typename Mesh, typename Face_set>
+void angles(Mesh* poly, const Face_set& faces, double& mini, double& maxi, double& ave)
+{
+  Angles_test_with_set<Face_set> tester(faces);
+  compute_angles(poly, tester, mini, maxi, ave);
+}
+
+
+
+template<typename Mesh, typename Edge_range>
+void edges_length(Mesh* poly, const Edge_range& range,
   double& mini, double& maxi, double& mean, double& mid,
   unsigned int& nb_degen)
 {
@@ -69,7 +110,7 @@ void edges_length(Mesh* poly,
 
   VPMap vpmap = get(CGAL::vertex_point, *poly);
   nb_degen = 0;
-  BOOST_FOREACH(edge_descriptor e, edges(*poly))
+  BOOST_FOREACH(edge_descriptor e, range)
   {
     halfedge_descriptor h = halfedge(e, *poly);
     Point a = get(vpmap, source(h, *poly));
@@ -86,6 +127,13 @@ void edges_length(Mesh* poly,
 }
 
 template<typename Mesh>
+void edges_length(Mesh* poly,
+  double& mini, double& maxi, double& mean, double& mid,
+  unsigned int& nb_degen)
+{
+  edges_length(poly, edges(*poly), mini, maxi, mean, mid, nb_degen);
+}
+template<typename Mesh>
 unsigned int nb_degenerate_faces(Mesh* poly)
 {
   typedef typename boost::graph_traits<Mesh>::face_descriptor face_descriptor;
@@ -96,11 +144,9 @@ unsigned int nb_degenerate_faces(Mesh* poly)
   return static_cast<unsigned int>(degenerate_faces.size());
 }
 
-template<typename Mesh>
-unsigned int nb_holes(Mesh* poly)
+template<typename Mesh, typename IDMap>
+unsigned int nb_holes(Mesh* poly, IDMap idmap)
 {
-  typedef typename boost::property_map<Mesh, boost::halfedge_index_t>::type IDMap;
-  IDMap idmap = get(boost::halfedge_index, *poly);
 
   //gets the number of holes
   //if is_closed is false, then there are borders (= holes)
@@ -138,9 +184,15 @@ unsigned int nb_holes(Mesh* poly)
   //}
   return n;
 }
-
 template<typename Mesh>
-void faces_area(Mesh* poly,
+unsigned int nb_holes(Mesh* poly)
+{
+  typedef typename boost::property_map<Mesh, boost::halfedge_index_t>::type IDMap;
+  IDMap idmap = get(boost::halfedge_index, *poly);
+  return nb_holes(poly, idmap);
+}
+template<typename Mesh, typename Face_range>
+void faces_area(Mesh* poly, const Face_range& range,
   double& mini, double& maxi, double& mean, double& mid)
 {
   using namespace boost::accumulators;
@@ -153,7 +205,7 @@ void faces_area(Mesh* poly,
     features< tag::min, tag::max, tag::mean , tag::median> > acc;
 
   VPMap vpmap = get(CGAL::vertex_point, *poly);
-  BOOST_FOREACH(face_descriptor f, faces(*poly))
+  BOOST_FOREACH(face_descriptor f, range)
   {
     halfedge_descriptor h = halfedge(f, *poly);
     Point a = get(vpmap, target(h, *poly));
@@ -169,7 +221,14 @@ void faces_area(Mesh* poly,
 }
 
 template<typename Mesh>
-void faces_aspect_ratio(Mesh* poly,
+void faces_area(Mesh* poly,
+  double& mini, double& maxi, double& mean, double& mid)
+{
+  faces_area(poly, faces(*poly), mini, maxi, mean, mid);
+}
+
+template<typename Mesh, typename Face_range>
+void faces_aspect_ratio(Mesh* poly, const Face_range& range,
   double& min_altitude, double& mini, double& maxi, double& mean)
 {
   using namespace boost::accumulators;
@@ -185,7 +244,7 @@ void faces_aspect_ratio(Mesh* poly,
   min_altitude = std::numeric_limits<double>::infinity();
   typename boost::property_map<Mesh, CGAL::vertex_point_t>::type
     vpmap = get(CGAL::vertex_point, *poly);
-  BOOST_FOREACH(face_descriptor f, faces(*poly))
+  BOOST_FOREACH(face_descriptor f, range)
   {
     halfedge_descriptor h = halfedge(f, *poly);
     typename Traits::Point_3 points[3];
@@ -211,6 +270,14 @@ void faces_aspect_ratio(Mesh* poly,
   mini = extract_result< tag::min >(acc);
   maxi = extract_result< tag::max >(acc);
   mean = extract_result< tag::mean >(acc);
+}
+
+
+template<typename Mesh>
+void faces_aspect_ratio(Mesh* poly,
+  double& min_altitude, double& mini, double& maxi, double& mean)
+{
+  faces_aspect_ratio(poly, faces(*poly), min_altitude,  mini, maxi, mean);
 }
 #endif // POLYHEDRON_DEMO_STATISTICS_HELPERS_H
 

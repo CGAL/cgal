@@ -61,15 +61,6 @@ public:
     return !( (*this) == c);
   }
 
-  Color& operator=(const Color &c)
-  {
-    _red = c.red();
-    _green = c.green();
-    _blue = c.blue();
-    _alpha = c.alpha();
-    return *this;
-  }
-
 private:
   unsigned char _red;
   unsigned char _green;

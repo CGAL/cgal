@@ -57,6 +57,7 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
     Radius,             //!< Designates the buffer that contains the radius of the spheres.
     VColors,            //!< Designates the buffer that contains the colors of the smooth vertices.
     FColors,            //!< Designates the buffer that contains the colors of the flat vertices.
+    Distances,
     NbOfVbos            //!< Designates the size of the VBOs vector for `Triangle_container`s
   };
 

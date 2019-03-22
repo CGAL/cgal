@@ -55,10 +55,6 @@ public:
     : tmhd(), seam(false)
   { }
 
-  Seam_mesh_halfedge_descriptor(const Seam_mesh_halfedge_descriptor& other)
-    : tmhd(other.tmhd), seam(other.seam)
-  { }
-
   Seam_mesh_halfedge_descriptor(TM_halfedge_descriptor tmhd, bool seam = false)
     : tmhd(tmhd), seam(seam)
   { }
@@ -301,10 +297,6 @@ public:
 
     vertex_descriptor(const halfedge_descriptor& h)
       : hd(h)
-    { }
-
-    vertex_descriptor(const vertex_descriptor& other)
-      : hd(other.hd)
     { }
 
     bool operator==(const vertex_descriptor& other) const

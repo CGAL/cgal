@@ -50,7 +50,7 @@ public:
   CGAL::Three::Scene_item* item() { return m_mesh; }
   void erase_item() { m_mesh = NULL; }
 
-  void compute_features (std::size_t nb_scales);
+  void compute_features (std::size_t nb_scales, float voxel_size);
   
   void add_selection_to_training_set (std::size_t label)
   {
@@ -116,12 +116,11 @@ public:
     if (m_index_color == 1 || m_index_color == 2)
       change_color (m_index_color);
   }
-  void train(int classifier, unsigned int nb_trials,
-             std::size_t num_trees, std::size_t max_depth);
+  void train(int classifier, const QMultipleInputDialog& dialog);
   bool run (int method, int classifier, std::size_t subdivisions, double smoothing);
 
   void update_color() { change_color (m_index_color); }
-  void change_color (int index);
+  void change_color (int index, float* vmin = NULL, float* vmax = NULL);
   CGAL::Three::Scene_item* generate_one_item (const char* /* name */,
                                               int /* label */) const
   {
@@ -135,8 +134,6 @@ public:
     // TODO
     std::cerr << "Warning: operation not yet available for meshes." << std::endl;
   }
-
-  bool write_output(std::ostream& out);
 
   void set_selection_item (Scene_polyhedron_selection_item* selection)
   {
@@ -209,6 +206,8 @@ protected:
   Mesh::Property_map<face_descriptor, std::size_t> m_classif;
   Mesh::Property_map<face_descriptor, CGAL::Color> m_color;
   Mesh::Property_map<face_descriptor, CGAL::Color> m_real_color;
+
+  std::vector<std::vector<float> > m_label_probabilities;
 
   Generator* m_generator;
   int m_index_color;

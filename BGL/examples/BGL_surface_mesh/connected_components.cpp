@@ -1,5 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
+
 #include <iostream>
 #include <fstream>
 

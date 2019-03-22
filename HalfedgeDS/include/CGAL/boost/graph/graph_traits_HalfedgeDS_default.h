@@ -32,7 +32,7 @@ namespace CGAL {
 template <class Traits_, class HalfedgeDSItems, 
           class Alloc>
 class HalfedgeDS_default;
-}; // namespace CGAL
+} // namespace CGAL
 
 namespace boost {
 

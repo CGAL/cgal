@@ -1,8 +1,6 @@
 #include <QtCore/qglobal.h>
 #include <QMessageBox>
 
-
-#include "Messages_interface.h"
 #include "Kernel_type.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polyhedron_selection_item.h"
@@ -10,6 +8,7 @@
 #include "Scene_polylines_item.h"
 
 #include <CGAL/Three/Scene_interface.h>
+#include <CGAL/Three/Three.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Three.h>
@@ -118,7 +117,7 @@ public:
     return qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex()))
         || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex())); 
   }
-  void print_message(QString message) { messages->information(message); }
+  void print_message(QString message) { CGAL::Three::Three::information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionSelection; }
 
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m) {
@@ -128,6 +127,7 @@ public:
     actionSelection = new QAction(
           QString("Surface Mesh Selection")
           , mw);
+    actionSelection->setObjectName("actionSelection");
     connect(actionSelection, SIGNAL(triggered()), this, SLOT(selection_action()));
     last_mode = 0;
     dock_widget = new QDockWidget(
@@ -138,6 +138,11 @@ public:
     dock_widget->setWindowTitle(tr(
                                   "Surface Mesh Selection"
                                   ));
+    connect(dock_widget, &QDockWidget::visibilityChanged,
+            this, [this](bool b){
+      if(!b)
+        this->set_operation_mode(-1);
+    });
 
     addDockWidget(dock_widget);
 
@@ -772,7 +777,8 @@ public Q_SLOTS:
       bool is_valid = true;
       BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor fd, faces(*selection_item->polyhedron()))
       {
-        if (CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(fd, *selection_item->polyhedron()))
+        if (is_triangle(halfedge(fd, *selection_item->polyhedron()), *selection_item->polyhedron())
+            && CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(fd, *selection_item->polyhedron()))
         {
           is_valid = false;
           break;
@@ -783,7 +789,7 @@ public Q_SLOTS:
         QMessageBox::warning(mw,
                              tr("Degenerated Face_graph"),
                              tr("Degenerated faces have been detected. Problems may occur "
-                                "for operations other tha \"Move point\". "));
+                                "for operations other than \"Move point\". "));
       }
       //remove lasso mode
       selection_item->set_lasso_mode(false);

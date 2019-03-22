@@ -102,6 +102,7 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::weight_calculator).v == 39);
   assert(get_param(np, CGAL::internal_np::preserve_genus).v == 40);
   assert(get_param(np, CGAL::internal_np::verbosity_level).v == 41);
+  assert(get_param(np, CGAL::internal_np::use_binary_mode).v == 51);
   assert(get_param(np, CGAL::internal_np::projection_functor).v == 42);
   assert(get_param(np, CGAL::internal_np::apply_per_connected_component).v == 46);
   assert(get_param(np, CGAL::internal_np::output_iterator).v == 47);
@@ -182,6 +183,7 @@ void test(const NamedParameters& np)
   check_same_type<39>(get_param(np, CGAL::internal_np::weight_calculator));
   check_same_type<40>(get_param(np, CGAL::internal_np::preserve_genus));
   check_same_type<41>(get_param(np, CGAL::internal_np::verbosity_level));
+  check_same_type<51>(get_param(np, CGAL::internal_np::use_binary_mode));
   check_same_type<42>(get_param(np, CGAL::internal_np::projection_functor));
   check_same_type<46>(get_param(np, CGAL::internal_np::apply_per_connected_component));
   check_same_type<47>(get_param(np, CGAL::internal_np::output_iterator));
@@ -241,6 +243,7 @@ int main()
                          .weight_calculator(A<39>(39))
                          .preserve_genus(A<40>(40))
                          .verbosity_level(A<41>(41))
+                         .use_binary_mode(A<51>(51))
                          .projection_functor(A<42>(42))
                          .throw_on_self_intersection(A<43>(43))
                          .clip_volume(A<44>(44))

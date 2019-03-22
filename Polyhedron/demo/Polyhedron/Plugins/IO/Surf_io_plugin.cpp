@@ -6,6 +6,7 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Scene_group_item.h>
+#include <CGAL/Three/Three.h>
 
 #include <CGAL/IO/read_surf_trianglemesh.h>
 
@@ -69,6 +70,13 @@ CGAL::Three::Scene_item* Surf_io_plugin::actual_load(QFileInfo fileinfo)
     return NULL;
   }
 
+  if(fileinfo.size() == 0)
+  {
+    CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
+    Scene_group_item* item =
+        new Scene_group_item(fileinfo.completeBaseName());
+    return item;
+  }
   std::vector<FaceGraph> patches;
   std::vector<MaterialData> material_data;
   CGAL::Bbox_3 grid_box;

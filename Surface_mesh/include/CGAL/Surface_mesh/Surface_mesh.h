@@ -105,6 +105,11 @@ namespace CGAL {
             return idx_ < _rhs.idx_;
         }
 
+        // Compatibility with OpenMesh handle
+        size_type idx() const {
+          return idx_;
+        }
+
         /// increments the internal index. This operation does not
         /// guarantee that the index is valid or undeleted after the
         /// increment.
@@ -213,6 +218,9 @@ namespace CGAL {
 
         // returns the underlying index of this index.
         operator size_type() const { return (size_type)halfedge_ / 2; }
+
+        // compatibility with OpenMesh handles
+        size_type idx() const { return (size_type)halfedge_ / 2; }
 
         // resets index to be invalid (index=std::numeric_limits<size_type>::max())
         void reset() { halfedge_.reset(); }
@@ -2084,6 +2092,9 @@ private: //------------------------------------------------------- private data
   /// If an alternative vertex_point map is given through `np`, 
   /// then it  will be used instead of the default one.
   /// \pre `operator<<(std::ostream&,const P&)` must be defined.
+  /// \note The <A HREF="https://en.cppreference.com/w/cpp/io/ios_base/precision">`precision()`</A> 
+  ///       of the output stream might not be sufficient depending on the data to be written.
+   
   template <typename P, typename NamedParameters>
   bool write_off(std::ostream& os, const Surface_mesh<P>& sm, const NamedParameters& np) {
     typedef Surface_mesh<P> Mesh;

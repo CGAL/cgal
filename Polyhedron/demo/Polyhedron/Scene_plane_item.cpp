@@ -1,5 +1,7 @@
 #include "Scene_plane_item.h"
 #include <QApplication>
+#include <CGAL/Three/Three.h>
+
 using namespace CGAL::Three;
 
 
@@ -186,7 +188,10 @@ Scene_plane_item* Scene_plane_item::clone() const {
 }
 
 QString Scene_plane_item::toolTip() const {
-  const CGAL::qglviewer::Vec& pos = frame->position();
+  
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+  
+  const CGAL::qglviewer::Vec& pos = frame->position() - offset;
   const CGAL::qglviewer::Vec& n = frame->inverseTransformOf(CGAL::qglviewer::Vec(0.f, 0.f, 1.f));
   return
     tr("<p><b>%1</b> (mode: %2, color: %3)<br />")

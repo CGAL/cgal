@@ -51,7 +51,7 @@ int main(int, char**)
                                                                  (unsigned char)(64 / (i + 1))),
                                                i));
 
-  std::ofstream f("out.ply");
+  std::ofstream f("out.ply", std::ios::binary);
   CGAL::set_binary_mode(f); // The PLY file will be written in the binary format
   
   CGAL::write_ply_points_with_properties

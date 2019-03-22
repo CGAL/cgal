@@ -709,11 +709,11 @@ namespace internal {
           can_swap=false;
         }
 
-        if(!collapse_does_not_invert_face(he))
+        if(collapse_would_invert_face(he))
         {
           if (can_swap//if swap allowed (no constrained vertices)
               && (!is_vb_on_constrained_polyline || is_va_on_constrained_polyline)
-              && collapse_does_not_invert_face(opposite(he, mesh_)))
+              && !collapse_would_invert_face(opposite(he, mesh_)))
           {
             he = opposite(he, mesh_);
             e=edge(he, mesh_);
@@ -722,7 +722,7 @@ namespace internal {
           else
             continue;//both directions invert a face
         }
-        CGAL_assertion(collapse_does_not_invert_face(he));
+        CGAL_assertion(!collapse_would_invert_face(he));
         CGAL_assertion(is_collapse_allowed(e, collapse_constraints));
 
         if (!CGAL::Euler::does_satisfy_link_condition(e, mesh_))//necessary to collapse
@@ -817,9 +817,9 @@ namespace internal {
       CGAL_expensive_assertion(is_triangle_mesh(mesh_));
       debug_status_map();
       debug_self_intersections();
-      CGAL_assertion(0 == PMP::remove_degenerate_faces(mesh_,
-                                                       parameters::vertex_point_map(vpmap_)
-                                                                  .geom_traits(gt_)));
+      CGAL_assertion(PMP::remove_degenerate_faces(mesh_,
+                            parameters::vertex_point_map(vpmap_)
+                           .geom_traits(gt_)));
 #endif
     }
 
@@ -922,9 +922,9 @@ namespace internal {
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
       debug_status_map();
-      CGAL_assertion(0 == PMP::remove_degenerate_faces(mesh_
-                            , PMP::parameters::vertex_point_map(vpmap_)
-                                              .geom_traits(gt_)));
+      CGAL_assertion(PMP::remove_degenerate_faces(mesh_,
+                             PMP::parameters::vertex_point_map(vpmap_)
+                            .geom_traits(gt_)));
       debug_self_intersections();
 #endif
 
@@ -1407,27 +1407,56 @@ private:
       return end;
     }
 
-    bool collapse_does_not_invert_face(const halfedge_descriptor& h) const
+    bool collapse_would_invert_face(const halfedge_descriptor& h) const
     {
-      vertex_descriptor vs = source(h, mesh_);
-      vertex_descriptor vt = target(h, mesh_);
-      
-      //backup source point
-      Point ps = get(vpmap_, vs);
-      //move source at target
-      put(vpmap_, vs, get(vpmap_, vt));
+      typename boost::property_traits<VertexPointMap>::reference
+        s = get(vpmap_, source(h, mesh_)); //s for source
+      typename boost::property_traits<VertexPointMap>::reference
+        t = get(vpmap_, target(h, mesh_)); //t for target
 
-      //collect normals to faces around vs AND vt
-      //vertices are at the same location, but connectivity is still be same,
-      //with plenty of degenerate triangles (which are common to both stars)
-      bool res = check_normals(
-                   boost::range::join(
-                     halfedges_around_target(h, mesh_),
-                     halfedges_around_target(opposite(h, mesh_), mesh_)));
+      //check if collapsing the edge [src; tgt] towards tgt
+      //would inverse the normal to the considered face
+      //src and tgt are the endpoints of the edge to be collapsed
+      //p and q are the vertices that form the face to be tested
+      //along with src before collapse, and with tgt after collapse
+      BOOST_FOREACH(halfedge_descriptor hd,
+                    halfedges_around_target(opposite(h, mesh_), mesh_))
+      {
+        if (face(hd, mesh_) == boost::graph_traits<PM>::null_face())
+          continue;
 
-      //restore position
-      put(vpmap_, vs, ps);
-      return res;
+        typename boost::property_traits<VertexPointMap>::reference
+          p = get(vpmap_, target(next(hd, mesh_), mesh_));
+        typename boost::property_traits<VertexPointMap>::reference
+          q = get(vpmap_, target(next(next(hd, mesh_), mesh_), mesh_));
+
+#ifdef CGAL_PMP_REMESHING_DEBUG
+        CGAL_assertion((Triangle_3(t, p, q).is_degenerate())
+                     == GeomTraits().collinear_3_object()(t, p, q));
+#endif
+
+        if ( GeomTraits().collinear_3_object()(s, p, q)
+          || GeomTraits().collinear_3_object()(t, p, q))
+          continue;
+
+#ifdef CGAL_PMP_REMESHING_DEBUG
+        typename GeomTraits::Construct_normal_3 normal
+          = GeomTraits().construct_normal_3_object();
+        Vector_3 normal_before_collapse = normal(s, p, q);
+        Vector_3 normal_after_collapse  = normal(t, p, q);
+
+        CGAL::Sign s1 = CGAL::sign(normal_before_collapse * normal_after_collapse);
+        CGAL::Sign s2 = CGAL::sign(CGAL::cross_product(Vector_3(s, p), Vector_3(s, q))
+                                 * CGAL::cross_product(Vector_3(t, p), Vector_3(t, q)));
+        CGAL_assertion(s1 == s2);
+#endif
+
+        if(CGAL::sign(CGAL::cross_product(Vector_3(s, p), Vector_3(s, q))
+                    * CGAL::cross_product(Vector_3(t, p), Vector_3(t, q)))
+          != CGAL::POSITIVE)
+          return true;
+      }
+      return false;
     }
 
     bool is_constrained(const vertex_descriptor& v) const

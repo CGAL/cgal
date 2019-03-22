@@ -3,6 +3,7 @@
 
 #ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 #include "Messages_interface.h"
 
 #include <QObject>
@@ -443,9 +444,6 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   const float inside_is_less =  float(ui.inside_is_less_checkBox->isChecked());
   as_facegraph = surface_only ? ui.facegraphCheckBox->isChecked() : false;
 
-
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-
   Meshing_thread* thread = NULL;
   if ( NULL != sm_item )
   {
@@ -568,8 +566,12 @@ launch_thread(Meshing_thread* mesh_thread)
   QAbstractButton* cancelButton = message_box_->button(QMessageBox::Cancel);
   cancelButton->setText(tr("Stop"));
 
-  QObject::connect(cancelButton, SIGNAL(clicked()),
-                   mesh_thread,  SLOT(stop()));
+  QObject::connect(cancelButton, &QAbstractButton::clicked,
+                   this, [mesh_thread](){
+    mesh_thread->stop();
+    mesh_thread->wait();
+    QApplication::restoreOverrideCursor(); // restores cursor set in mesh_thread stop() function
+  });
 
   message_box_->open();
 
@@ -623,7 +625,7 @@ meshing_done(Meshing_thread* thread)
     .arg(bbox.zmin())
     .arg(bbox.zmax()));
 
-  msg->information(qPrintable(str));
+  CGAL::Three::Three::information(qPrintable(str));
 
   // Treat new c3t3 item
   treat_result(*source_item_, result_item);
@@ -671,7 +673,7 @@ treat_result(Scene_item& source_item,
   {
     Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item;
     CGAL::facets_in_complex_3_to_triangle_mesh(result_item->c3t3(), *new_item->face_graph());
-    new_item->setName(tr("%1 [Remeshed as Surface_mesh]").arg(source_item.name()));
+    new_item->setName(tr("%1 [Remeshed]").arg(source_item.name()));
     Q_FOREACH(int ind, scene->selectionIndices()) {
       scene->item(ind)->setVisible(false);
     }
@@ -679,6 +681,8 @@ treat_result(Scene_item& source_item,
     scene->itemChanged(index);
     scene->setSelectedItem(-1);
     Scene_interface::Item_id new_item_id = scene->addItem(new_item);
+    new_item->invalidateOpenGLBuffers();
+    new_item->redraw();
     scene->setSelectedItem(new_item_id);
     delete result_item;
   }

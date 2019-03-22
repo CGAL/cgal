@@ -119,7 +119,6 @@ Line_d(const Ray_d<R>& r) : Base(r) {}
 /*{\Mcreate introduces a variable |\Mvar| of type |\Mname| and 
 initializes it to the line through |r.point(1)| and |r.point(2)|. }*/
 
-Line_d(const Line_d<R>& l) : Base(l) {}
 
 /*{\Moperations 3 3}*/
 

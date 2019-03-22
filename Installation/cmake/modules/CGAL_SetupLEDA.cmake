@@ -42,7 +42,7 @@ function(use_CGAL_LEDA_support target)
     return()
   endif()
   separate_arguments(LIST_LEDA_CXX_FLAGS UNIX_COMMAND "${LEDA_CXX_FLAGS}")
-  separate_arguments(LIST_LEDA_DEFINITIONS UNIX_COMMAND "${LEDA_DEFINITIONS}")
+  separate_arguments(LIST_LEDA_DEFINITIONS UNIX_COMMAND "${LEDA_DEFINITIONS} -DCGAL_USE_LEDA")
 
   if(CMAKE_VERSION VERSION_LESS 3.3)
     target_compile_options(${target} ${keyword} ${LIST_LEDA_CXX_FLAGS})

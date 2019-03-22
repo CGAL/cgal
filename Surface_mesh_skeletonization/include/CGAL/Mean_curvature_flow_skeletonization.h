@@ -463,6 +463,7 @@ public:
   /// \name Vertex Motion Parameters
   /// @{
 
+  /// \cgalAdvancedFunction
   /// \cgalAdvancedBegin
   /// Controls the velocity of movement and approximation quality:
   /// decreasing this value makes the mean curvature flow based contraction converge
@@ -482,7 +483,8 @@ public:
   {
     return m_is_medially_centered;
   }
-
+  
+  /// \cgalAdvancedFunction
   /// \cgalAdvancedBegin
   /// Controls the smoothness of the medial approximation:
   /// increasing this value results in a (less smooth) skeleton closer

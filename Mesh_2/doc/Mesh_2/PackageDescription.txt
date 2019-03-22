@@ -11,6 +11,11 @@
 /// \defgroup PkgMesh2Enum Enumerations
 /// \ingroup PkgMesh2Ref
 
+/// \defgroup PkgMesh2IO I/O Functions
+/// \ingroup PkgMesh2Ref
+/// In addition to the stream extraction and insertion operators for
+/// %CGAL 2D triangulations, the following functions can be used.
+
 /*!
 \addtogroup PkgMesh2Ref
 \cgalPkgDescriptionBegin{2D Conforming Triangulations and Meshes,PkgMesh2}
@@ -36,14 +41,14 @@ The package can handle intersecting input constraints  and set no restriction on
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `ConformingDelaunayTriangulationTraits_2`
 - `DelaunayMeshTraits_2`
 - `MeshingCriteria_2`
 - `DelaunayMeshFaceBase_2`
 - `DelaunayMeshVertexBase_2`
 
-## Classes##
+\cgalCRPSection{Classes}
 - `CGAL::Triangulation_conformer_2<CDT>`
 - `CGAL::Delaunay_mesher_2<CDT, Criteria>`
 - `CGAL::Delaunay_mesh_face_base_2<Traits, Fb>`
@@ -52,13 +57,16 @@ The package can handle intersecting input constraints  and set no restriction on
 - `CGAL::Delaunay_mesh_size_criteria_2<CDT>`
 - `CGAL::Mesh_2::Face_badness`
 
-## Global functions ##
+\cgalCRPSection{Global Functions}
 - `CGAL::make_conforming_Delaunay_2`
 - `CGAL::make_conforming_Gabriel_2`
 - `CGAL::refine_Delaunay_mesh_2`
 - `CGAL::lloyd_optimize_mesh_2`
 
-## Enumerations ##
+\cgalCRPSection{I/O Functions}
+- `CGAL::write_vtu()`
+
+\cgalCRPSection{Enumerations}
 - `CGAL::Mesh_optimization_return_code`
 
 */

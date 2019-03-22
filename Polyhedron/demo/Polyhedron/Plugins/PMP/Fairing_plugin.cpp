@@ -3,6 +3,7 @@
 
 #include "Messages_interface.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 #include "Scene_polyhedron_selection_item.h"
 #include "ui_Fairing_widget.h"
 
@@ -42,7 +43,7 @@ public:
     return qobject_cast<Scene_facegraph_item*>(scene->item(scene->mainSelectionIndex()))
     || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));  
   }
-  void print_message(QString message) { messages->information(message);}
+  void print_message(QString message) { CGAL::Three::Three::information(message);}
   QList<QAction*> actions() const { return QList<QAction*>() << actionFairing; }
 
 
@@ -102,6 +103,7 @@ public Q_SLOTS:
       CGAL::Polygon_mesh_processing::fair(*selection_item->polyhedron(),
         selection_item->selected_vertices,
         CGAL::Polygon_mesh_processing::parameters::fairing_continuity(continuity));
+    selection_item->polyhedron_item()->resetColors();
     selection_item->changed_with_poly_item();
     selection_item->invalidateOpenGLBuffers();
     QApplication::restoreOverrideCursor();
@@ -127,6 +129,7 @@ public Q_SLOTS:
     for(std::vector<boost::graph_traits<FaceGraph>::face_descriptor>::iterator it = new_facets.begin(); it != new_facets.end(); ++it) {
       selection_item->selected_facets.insert(*it);
     }
+    selection_item->polyhedron_item()->resetColors();
     selection_item->changed_with_poly_item();
     selection_item->invalidateOpenGLBuffers();
     QApplication::restoreOverrideCursor();

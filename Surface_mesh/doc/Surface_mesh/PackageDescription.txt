@@ -34,11 +34,11 @@ and faces is much simpler and can be used at runtime and not at compile time.}
 
 
 
-## Classes ##
+\cgalCRPSection{Classes}
 
 - `CGAL::Surface_mesh<P>`
                 
-### Draw a Surface Mesh ###
+\cgalCRPSection{Draw a Surface Mesh}
 - `CGAL::draw<SM>`
 
 */

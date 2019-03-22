@@ -26,7 +26,7 @@
 
 
 #include <boost/graph/graph_traits.hpp>
-#include <CGAL/internal/Intersections_3/Triangle_3_Segment_3_intersection.h>
+#include <CGAL/Intersections_3/Segment_3_Triangle_3.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Intersection_type.h>
 #include <CGAL/property_map.h>
 
@@ -165,7 +165,7 @@ intersection_type(
       // the segment is coplanar with the triangle's supporting plane
       // we test whether the segment intersects the triangle in the common
       // supporting plane
-      if ( ::CGAL::internal::do_intersect_coplanar(a,b,c,p,q,Kernel()) )
+      if ( ::CGAL::Intersections::internal::do_intersect_coplanar(a,b,c,p,q,Kernel()) )
         return result_type(COPLANAR_TRIANGLES,GT::null_halfedge(),true,true);
       return result_type(EMPTY,GT::null_halfedge(),true,true);
 

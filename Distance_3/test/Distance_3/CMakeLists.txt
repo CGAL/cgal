@@ -10,6 +10,13 @@ find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
 
+ if (MSVC)
+    # Turn off a VC++ warning on a potential division by zero
+    # in Cartesian_kernel/include/CGAL/constructions/kernel_ftC3.h
+    # where CGAL_assume() does not help
+    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4723")
+  endif()
+  
   # create a target per cppfile
   file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
   foreach(cppfile ${cppfiles})

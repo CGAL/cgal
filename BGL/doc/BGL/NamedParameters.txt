@@ -81,6 +81,13 @@ being marked or not.\n
 <b>Default:</b> a default property map where no edge is constrained
 \cgalNPEnd
 
+\cgalNPBegin{use_binary_mode} \anchor BGL_use_binary_mode
+is a Boolean indicating whether the binary mode or the ASCII mode should be used
+when writing data into a stream.\n
+<b>Type:</b> `bool`\n
+<b>Default:</b> Function specific.
+\cgalNPEnd
+
 \cgalNPBegin{METIS_options} \anchor BGL_METIS_options
 is a parameter used in `partition_graph()` and `partition_dual_graph()`
 to pass options to the METIS graph partitioner. The many options of METIS

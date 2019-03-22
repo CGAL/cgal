@@ -79,6 +79,12 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
+  if(fileinfo.size() == 0)
+  {
+    CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
+    return 0;
+  }
+  
   // Test if input is mesh or point set
   bool input_is_mesh = false;
   std::string line;

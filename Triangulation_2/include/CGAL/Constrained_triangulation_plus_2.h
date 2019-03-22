@@ -650,9 +650,8 @@ public:
       if(! is_subconstraint(*it, *succ)){ // this checks whether other constraints pass
 	Face_handle fh;
 	int i;
-        CGAL_triangulation_assertion_code(bool b =)
-          Triangulation::is_edge(*it, *succ, fh, i);
-	CGAL_triangulation_assertion(b);
+	bool b = Triangulation::is_edge(*it, *succ, fh, i);
+	CGAL_assume(b);
 	Triangulation::remove_constrained_edge(fh,i, out); // this does also flipping if necessary.
       }
     }

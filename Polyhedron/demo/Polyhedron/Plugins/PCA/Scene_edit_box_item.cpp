@@ -203,13 +203,13 @@ struct Scene_edit_box_item_priv{
 
     if(QOpenGLContext::currentContext()->format().majorVersion() >= 3)
     {
-      pick_sphere_program.addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_spheres.v");
-      pick_sphere_program.addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_without_light.f");
+      pick_sphere_program.addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_spheres.vert");
+      pick_sphere_program.addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_without_light.frag");
     }
     else
     {
-      pick_sphere_program.addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_spheres.v");
-      pick_sphere_program.addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_without_light.f");
+      pick_sphere_program.addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_spheres.vert");
+      pick_sphere_program.addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_without_light.frag");
     }
     pick_sphere_program.bindAttributeLocation("colors", 1);
     pick_sphere_program.link();

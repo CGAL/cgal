@@ -359,6 +359,11 @@ add_executable  ( CGAL_Mesh_3 Mesh_3.cpp )
 add_dependencies(CGAL_Mesh_3 Mesh_3)
 target_link_libraries( CGAL_Mesh_3 PRIVATE polyhedron_demo )
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS CGAL_Mesh_3 )
+
+add_executable  ( CGAL_Classification Classification.cpp )
+add_dependencies(CGAL_Classification Classification)
+target_link_libraries( CGAL_Classification PRIVATE polyhedron_demo )
+add_to_cached_list( CGAL_EXECUTABLE_TARGETS CGAL_Classification )
 #
 # Exporting
 #
