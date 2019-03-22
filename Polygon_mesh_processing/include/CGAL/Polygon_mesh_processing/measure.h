@@ -31,7 +31,6 @@
 #include <CGAL/boost/graph/properties.h>
 #include <boost/unordered_set.hpp>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/iterator/transform_iterator.hpp>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
