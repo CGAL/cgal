@@ -1785,7 +1785,7 @@ public:
   /*!
     returns an approximation of the angle between `u` and `v`.
     The angle is given in degrees.
-    \pre `u`and `v` are not equal to the null vector.
+    \pre `u` and `v` are not equal to the null vector.
   */
   Kernel::FT operator()(const Kernel::Vector_3& u,
                         const Kernel::Vector_3& v) const;
