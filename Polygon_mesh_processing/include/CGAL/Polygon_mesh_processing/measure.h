@@ -590,7 +590,7 @@ centroid(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
   typedef typename Kernel::Construct_sum_of_vectors_3 Sum;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 typedef typename Kernel::FT FT;
-  typename Kernel::FT volume = 0.;
+  FT volume = 0.;
 
   Vector_3 centroid(NULL_VECTOR);
 
