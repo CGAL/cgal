@@ -607,7 +607,7 @@ typedef typename Kernel::FT FT;
       vr = vector(ORIGIN, get(vpm, target(prev(halfedge(fd, tmesh), tmesh), tmesh)));
     Vector_3 n = cross_product((vq-vp),(vr-vp));
     volume += (scalar_product(n,vp))/6.;
-    n = scale(n, 1.0/24.0);
+    n = scale(n, FT(1)/FT(24));
 
     Vector_3 v2 = sum(vp, vq);
     Vector_3 v3 = Vector_3(square(v2.x()), square(v2.y()), square(v2.z()));
