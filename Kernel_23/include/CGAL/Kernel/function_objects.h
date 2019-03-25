@@ -845,7 +845,7 @@ namespace CommonKernelFunctors {
      typename K::Compute_scalar_product_3 scalar_product =
        k.compute_scalar_product_3_object();
 
-     double product = CGAL::sqrt(to_double(scalar_product(u,u))) * CGAL::sqrt(to_double(scalar_product(v,v)));
+     double product = CGAL::sqrt(to_double(scalar_product(u,u)) * to_double(scalar_product(v,v)));
      
      if(product == 0)
        return 0;
