@@ -71,6 +71,10 @@ set(CORE_INT_NT 15)
 set(CORE_RAT_NT 16)
 
 if($ENV{CGAL_DISABLE_GMP})
+  set(CGAL_DISABLE_GMP ON)
+endif()
+
+if(CGAL_DISABLE_GMP)
   message(STATUS "GMP is disable. Try to use LEDA instead.")
   set(GMPZ_NT ${LEDA_INT_NT})
   set(QUOTIENT_CGAL_GMPZ_NT ${LEDA_RAT_NT})
