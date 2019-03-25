@@ -32,6 +32,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/IO/io.h>
 #include <CGAL/IO/write_vtk.h>
+#include <boost/variant.hpp>
 
 //todo try to factorize with functors
 namespace CGAL{
