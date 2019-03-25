@@ -541,7 +541,7 @@ volume(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
   * computes the centroid of the domain bounded by
   * a closed triangulated surface mesh.
   *
-  * @tparam TriangleMesh a model of `HalfedgeGraph`
+  * @tparam TriangleMesh a model of `FaceListGraph`
   * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
   *
   * @param tmesh the closed triangulated surface mesh bounding the volume
