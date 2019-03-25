@@ -618,7 +618,7 @@ typedef typename Kernel::FT FT;
               
     centroid = sum(centroid, Vector_3(n.x() * v3.x(), n.y() * v3.y(), n.z() * v3.z())); 
   }
-  centroid = scale(centroid, 1./(2.*volume));
+  centroid = scale(centroid, FT(1)/(FT(2)*volume));
   return point(ORIGIN, centroid);
   
 }
