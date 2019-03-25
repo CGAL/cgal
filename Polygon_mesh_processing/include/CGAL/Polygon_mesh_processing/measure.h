@@ -538,7 +538,7 @@ volume(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
 
 /**
   * \ingroup measure_grp
-  * computes the centroid of the domain bounded by
+  * computes the centroid of a volume bounded by
   * a closed triangulated surface mesh.
   *
   * @tparam TriangleMesh a model of `FaceListGraph`
