@@ -584,8 +584,8 @@ centroid(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
   typedef typename Kernel::Tetrahedron_3 Tetrahedron_3;
   typedef typename Kernel::Construct_translated_point_3 Construct_translated_point_3;
   typedef typename Kernel::Construct_vector_3 Construct_vector_3;
+  typedef typename Kernel::Construct_normal_3 Construct_normal_3;
   typedef typename Kernel::Compute_scalar_product_3 Scalar_product;
-  typedef typename Kernel::Construct_cross_product_vector_3 Cross_product;
   typedef typename Kernel::Construct_scaled_vector_3 Scale;
   typedef typename Kernel::Construct_sum_of_vectors_3 Sum;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
@@ -596,16 +596,19 @@ typedef typename Kernel::FT FT;
 
   Construct_translated_point_3 point;
   Construct_vector_3 vector;
+  Construct_normal_3 normal;
   Scalar_product scalar_product;
-  Cross_product cross_product;
   Scale scale;
   Sum sum;
 
   for(face_descriptor fd : faces(tmesh)){
-    Vector_3 vp = vector(ORIGIN, get(vpm, target(halfedge(fd, tmesh), tmesh))),
-      vq = vector(ORIGIN, get(vpm, target(next(halfedge(fd, tmesh), tmesh), tmesh))),
-      vr = vector(ORIGIN, get(vpm, target(prev(halfedge(fd, tmesh), tmesh), tmesh)));
-    Vector_3 n = cross_product((vq-vp),(vr-vp));
+    const Point_3& p = get(vpm, target(halfedge(fd, tmesh), tmesh));
+    const Point_3& q = get(vpm, target(next(halfedge(fd, tmesh), tmesh), tmesh));
+    const Point_3& r = get(vpm, target(prev(halfedge(fd, tmesh), tmesh), tmesh));
+    Vector_3 vp = vector(ORIGIN, p),
+      vq = vector(ORIGIN, q),
+      vr = vector(ORIGIN, r);
+    Vector_3 n = normal(p, q, r);
     volume += (scalar_product(n,vp))/FT(6);
     n = scale(n, FT(1)/FT(24));
 
