@@ -7,8 +7,9 @@ project( Periodic_4_hyperbolic_triangulation_2_Tests )
 cmake_minimum_required(VERSION 2.8.10)
 
 find_package(CGAL QUIET COMPONENTS Core )
+find_package(LEDA QUIET)
 
-if ( CGAL_FOUND AND CGAL_Core_FOUND )
+if ( CGAL_FOUND AND (CGAL_Core_FOUND OR LEDA_FOUND) )
 
   	include( ${CGAL_USE_FILE} )
 
