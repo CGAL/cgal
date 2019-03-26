@@ -13,9 +13,9 @@
 #include <CGAL/Exact_algebraic.h>
 #endif
 
-#if defined(CGAL_USE_GMP) || defined(CGAL_USE_LEDA)
 #include <CGAL/Exact_rational.h>
-#endif
+#include <CGAL/Exact_integer.h>
+
 
 typedef CGAL::Simple_cartesian<double>      Double_Kernel;
 typedef CGAL::Simple_cartesian<CGAL::Interval_nt<true> >   IT_Kernel;
@@ -26,10 +26,8 @@ typedef CGAL::Simple_cartesian<double>      Double_Kernel;
 typedef CGAL::Simple_cartesian<CGAL::Exact_algebraic>  Algebraic_Kernel;
 #endif
 
-#if defined(CGAL_USE_GMP) || defined(CGAL_USE_LEDA)
-typedef CGAL::Simple_cartesian<CGAL::Gmpq>  Gmpq_Kernel;
-typedef CGAL::Simple_cartesian<CGAL::Gmpz>  Gmpz_Kernel;
-#endif
+typedef CGAL::Simple_cartesian<CGAL::Exact_rational>  Rational_Kernel;
+typedef CGAL::Simple_cartesian<CGAL::Exact_integer>  Integer_Kernel;
 
 typedef CGAL::Integral_domain_without_division_tag        Ring;
 typedef CGAL::Field_tag       Field;
@@ -108,20 +106,18 @@ Algebraic_Sqrt_Gt;
 
 //----------------------------------------------------------------------
 
-#if defined(CGAL_USE_GMP) || defined(CGAL_USE_LEDA)
 typedef CGAL::Segment_Delaunay_graph_traits_without_intersections_2
-<Gmpz_Kernel,Ring>
-Gmpz_Ring_Gtwi;
+<Integer_Kernel,Ring>
+Integer_Ring_Gtwi;
 
 //----------------------------------------------------------------------
 
 typedef CGAL::Segment_Delaunay_graph_traits_without_intersections_2
-<Gmpq_Kernel,Ring>
-Gmpq_Ring_Gtwi;
+<Rational_Kernel,Ring>
+Rational_Ring_Gtwi;
 
-typedef CGAL::Segment_Delaunay_graph_traits_2<Gmpq_Kernel,Field>
-Gmpq_Field_Gt;
-#endif
+typedef CGAL::Segment_Delaunay_graph_traits_2<Rational_Kernel,Field>
+Rational_Field_Gt;
 
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
@@ -146,21 +142,19 @@ F_Algebraic_Sqrt_Gt;
 
 //----------------------------------------------------------------------
 
-#if defined(CGAL_USE_GMP) || defined(CGAL_USE_LEDA)
 typedef CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2
-<Double_Kernel,Sqrt,Gmpz_Kernel,Ring>
-F_Gmpz_Ring_Gtwi;
+<Double_Kernel,Sqrt,Integer_Kernel,Ring>
+F_Integer_Ring_Gtwi;
 
 //----------------------------------------------------------------------
 
 typedef CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2
-<Double_Kernel,Sqrt,Gmpq_Kernel,Ring>
-F_Gmpq_Ring_Gtwi;
+<Double_Kernel,Sqrt,Rational_Kernel,Ring>
+F_Rational_Ring_Gtwi;
 
 typedef CGAL::Segment_Delaunay_graph_filtered_traits_2
-<Double_Kernel,Sqrt,Gmpq_Kernel,Field>
-F_Gmpq_Field_Gt;
-#endif
+<Double_Kernel,Sqrt,Rational_Kernel,Field>
+F_Rational_Field_Gt;
 
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
@@ -271,12 +265,10 @@ int main(int , char**)
   test_traits<Algebraic_Sqrt_Gt>("Algebraic Sqrt");
 #endif
 
-#if defined(CGAL_USE_GMP) || defined(CGAL_USE_LEDA)
-  test_traits<Gmpz_Ring_Gtwi>("Gmpz Ring WI");
+  test_traits<Integer_Ring_Gtwi>("Integer Ring WI");
 
-  test_traits<Gmpq_Ring_Gtwi>("Gmpq Ring WI");
-  test_traits<Gmpq_Field_Gt>("Gmpq Field");
-#endif
+  test_traits<Rational_Ring_Gtwi>("Rational Ring WI");
+  test_traits<Rational_Field_Gt>("Rational Field");
 
   std::cout << std::endl;
   std::cout << "************************************"
@@ -291,12 +283,10 @@ int main(int , char**)
   test_traits<F_Algebraic_Sqrt_Gt>("F Algebraic Sqrt");
 #endif
 
-#if defined(CGAL_USE_GMP) || defined(CGAL_USE_LEDA)
-  test_traits<F_Gmpz_Ring_Gtwi>("F Gmpz Ring WI");
+  test_traits<F_Integer_Ring_Gtwi>("F Integer Ring WI");
 
-  test_traits<F_Gmpq_Ring_Gtwi>("F Gmpq Ring WI");
-  test_traits<F_Gmpq_Field_Gt>("F Gmpq Field");
-#endif
+  test_traits<F_Rational_Ring_Gtwi>("F Rational Ring WI");
+  test_traits<F_Rational_Field_Gt>("F Rational Field");
 
   std::cout << std::endl;
   std::cout << "************************************"
