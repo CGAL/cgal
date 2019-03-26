@@ -261,7 +261,7 @@ run_test_on_platform()
   fi
   cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' -DBUILD_TESTING=OFF -DWITH_tests=OFF -DWITH_CGAL_Qt5=OFF -DCGAL_HEADER_ONLY=ON $CGAL_DIR>installation.log 2>&1
   rm CMakeCache.txt
-  CMAKE_OPTS="-DCGAL_TEST_SUITE=ON"
+  CMAKE_OPTS="-DCGAL_TEST_SUITE=ON -DCMAKE_VERBOSE_MAKEFILE=ON"
   if [ -n "${SCRIPTS_DIR}" ]; then
     CMAKE_OPTS="${CMAKE_OPTS} -DWITH_examples=ON -DWITH_demos=ON"
   fi
