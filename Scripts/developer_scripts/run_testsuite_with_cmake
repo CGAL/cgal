@@ -266,9 +266,9 @@ run_test_on_platform()
     CMAKE_OPTS="${CMAKE_OPTS} -DWITH_examples=ON -DWITH_demos=ON"
   fi
   if [ -z "${SHOW_PROGRESS}" ]; then
-    cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' ${CMAKE_OPTS} $CGAL_DIR  2>&1 >package_installation.log
+    cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR  2>&1 >package_installation.log
   else
-    cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' ${CMAKE_OPTS} $CGAL_DIR 2>&1 |tee package_installation.log
+    cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}'  -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR 2>&1 |tee package_installation.log
   fi
   LIST_TEST_FILE="${CGAL_ROOT}/list_test_packages"
   if [ -f ${LIST_TEST_FILE} ]; then
