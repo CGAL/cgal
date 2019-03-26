@@ -7,8 +7,9 @@ project( Cone_spanners_2_Examples )
 cmake_minimum_required(VERSION 3.1)
 
 find_package(CGAL QUIET COMPONENTS Core)
+find_package(LEDA QUIET)
 
-if ( CGAL_FOUND AND CGAL_Core_FOUND)
+if ( CGAL_FOUND AND ( CGAL_Core_FOUND OR LEDA_FOUND ) )
   include(${CGAL_USE_FILE})
   if (MSVC)
     # Turn off a boost related warning that appears with VC2015
