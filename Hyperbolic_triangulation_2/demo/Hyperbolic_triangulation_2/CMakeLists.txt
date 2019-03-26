@@ -9,12 +9,12 @@ set(CMAKE_AUTOMOC ON)
 cmake_minimum_required(VERSION 3.1...3.13)
 
 find_package(CGAL QUIET COMPONENTS Core Qt5)
-
+find_package(LEDA QUIET)
 find_package(Qt5 QUIET COMPONENTS Widgets)
 
 include_directories (BEFORE include)
 
-if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
+if(CGAL_FOUND AND (CGAL_Qt5_FOUND OR LEDA_FOUND) AND Qt5_FOUND AND CGAL_Core_FOUND)
   # ui files, created with Qt Designer
   qt5_wrap_ui( UIS HDT2.ui )
   
