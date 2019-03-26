@@ -133,7 +133,7 @@ def gen_txt_entry(title, authors, bib, anchor,k):
  In <em>%CGAL User and Reference Manual</em>. %CGAL Editorial Board,\n\
   ${CGAL_CREATED_VERSION_NUM} edition, ${CGAL_BUILD_YEAR4}.\n\
 [&nbsp;<a href=\"how_to_cite.html#"+bib+"-${CGAL_RELEASE_YEAR_ID}\">bib</a>&nbsp;| \n\
-<a href=\"https://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#"+anchor+"\">http</a>&nbsp;]\n\
+<a href=\"packages.html#"+anchor+"\">http</a>&nbsp;]\n\
 \n\
 </td>\n\
 </tr>\n\n\n"
