@@ -1,32 +1,32 @@
-#include <CGAL/basic.h>
-
 #include <iostream>
 #include <fstream>
 #include <cassert>
 #include <vector>
 
+#include <CGAL/basic.h>
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Segment_Delaunay_graph_traits_2.h>
 #include <CGAL/Segment_Delaunay_graph_filtered_traits_2.h>
 
-#ifdef CGAL_USE_CORE
-#include <CGAL/CORE_Expr.h>
+#if defined(CGAL_USE_CORE) || defined(CGAL_USE_LEDA)
+#include <CGAL/Exact_algebraic.h>
 #endif
 
-#ifdef CGAL_USE_GMP
-#include <CGAL/Gmpq.h>
-#include <CGAL/Gmpz.h>
+#if defined(CGAL_USE_GMP) || defined(CGAL_USE_LEDA)
+#include <CGAL/Exact_rational.h>
 #endif
 
 typedef CGAL::Simple_cartesian<double>      Double_Kernel;
 typedef CGAL::Simple_cartesian<CGAL::Interval_nt<true> >   IT_Kernel;
 typedef CGAL::Simple_cartesian<CGAL::Interval_nt<false> >  IF_Kernel;
 typedef CGAL::Simple_cartesian<double>      Double_Kernel;
-#ifdef CGAL_USE_CORE
-typedef CGAL::Simple_cartesian<CORE::Expr>  CORE_Kernel;
+
+#if defined(CGAL_USE_CORE) || defined(CGAL_USE_LEDA)
+typedef CGAL::Simple_cartesian<CGAL::Exact_algebraic>  Algebraic_Kernel;
 #endif
-#ifdef CGAL_USE_GMP
+
+#if defined(CGAL_USE_GMP) || defined(CGAL_USE_LEDA)
 typedef CGAL::Simple_cartesian<CGAL::Gmpq>  Gmpq_Kernel;
 typedef CGAL::Simple_cartesian<CGAL::Gmpz>  Gmpz_Kernel;
 #endif
@@ -90,25 +90,25 @@ IF_Sqrt_Gt;
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
 
-#ifdef CGAL_USE_CORE
+#if defined(CGAL_USE_CORE) || defined(CGAL_USE_LEDA)
 typedef CGAL::Segment_Delaunay_graph_traits_without_intersections_2
-<CORE_Kernel,Ring>
-CORE_Ring_Gtwi;
+<Algebraic_Kernel,Ring>
+Algebraic_Ring_Gtwi;
 
 typedef CGAL::Segment_Delaunay_graph_traits_without_intersections_2
-<CORE_Kernel,Sqrt>
-CORE_Sqrt_Gtwi;
+<Algebraic_Kernel,Sqrt>
+Algebraic_Sqrt_Gtwi;
 
-typedef CGAL::Segment_Delaunay_graph_traits_2<CORE_Kernel,Field>
-CORE_Field_Gt;
+typedef CGAL::Segment_Delaunay_graph_traits_2<Algebraic_Kernel,Field>
+Algebraic_Field_Gt;
 
-typedef CGAL::Segment_Delaunay_graph_traits_2<CORE_Kernel,Sqrt>
-CORE_Sqrt_Gt;
+typedef CGAL::Segment_Delaunay_graph_traits_2<Algebraic_Kernel,Sqrt>
+Algebraic_Sqrt_Gt;
 #endif
 
 //----------------------------------------------------------------------
 
-#ifdef CGAL_USE_GMP
+#if defined(CGAL_USE_GMP) || defined(CGAL_USE_LEDA)
 typedef CGAL::Segment_Delaunay_graph_traits_without_intersections_2
 <Gmpz_Kernel,Ring>
 Gmpz_Ring_Gtwi;
@@ -126,27 +126,27 @@ Gmpq_Field_Gt;
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
 
-#ifdef CGAL_USE_CORE
+#if defined(CGAL_USE_CORE) || defined(CGAL_USE_LEDA)
 typedef CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2
-<Double_Kernel,Sqrt,CORE_Kernel,Ring>
-F_CORE_Ring_Gtwi;
+<Double_Kernel,Sqrt,Algebraic_Kernel,Ring>
+F_Algebraic_Ring_Gtwi;
 
 typedef CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2
-<Double_Kernel,Sqrt,CORE_Kernel,Sqrt>
-F_CORE_Sqrt_Gtwi;
+<Double_Kernel,Sqrt,Algebraic_Kernel,Sqrt>
+F_Algebraic_Sqrt_Gtwi;
 
 typedef CGAL::Segment_Delaunay_graph_filtered_traits_2
-<Double_Kernel,Sqrt,CORE_Kernel,Field>
-F_CORE_Field_Gt;
+<Double_Kernel,Sqrt,Algebraic_Kernel,Field>
+F_Algebraic_Field_Gt;
 
 typedef CGAL::Segment_Delaunay_graph_filtered_traits_2
-<Double_Kernel,Sqrt,CORE_Kernel,Sqrt>
-F_CORE_Sqrt_Gt;
+<Double_Kernel,Sqrt,Algebraic_Kernel,Sqrt>
+F_Algebraic_Sqrt_Gt;
 #endif
 
 //----------------------------------------------------------------------
 
-#ifdef CGAL_USE_GMP
+#if defined(CGAL_USE_GMP) || defined(CGAL_USE_LEDA)
 typedef CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2
 <Double_Kernel,Sqrt,Gmpz_Kernel,Ring>
 F_Gmpz_Ring_Gtwi;
@@ -263,15 +263,15 @@ int main(int , char**)
   std::cout << std::endl;
 #endif
 
-#ifdef CGAL_USE_CORE
-  test_traits<CORE_Ring_Gtwi>("CORE Ring WI");
-  test_traits<CORE_Sqrt_Gtwi>("CORE Sqrt WI");
+#if defined(CGAL_USE_CORE) || defined(CGAL_USE_LEDA)
+  test_traits<Algebraic_Ring_Gtwi>("Algebraic Ring WI");
+  test_traits<Algebraic_Sqrt_Gtwi>("Algebraic Sqrt WI");
 
-  test_traits<CORE_Field_Gt>("CORE Field");
-  test_traits<CORE_Sqrt_Gt>("CORE Sqrt");
+  test_traits<Algebraic_Field_Gt>("Algebraic Field");
+  test_traits<Algebraic_Sqrt_Gt>("Algebraic Sqrt");
 #endif
 
-#ifdef CGAL_USE_GMP
+#if defined(CGAL_USE_GMP) || defined(CGAL_USE_LEDA)
   test_traits<Gmpz_Ring_Gtwi>("Gmpz Ring WI");
 
   test_traits<Gmpq_Ring_Gtwi>("Gmpq Ring WI");
@@ -283,15 +283,15 @@ int main(int , char**)
 	    << "************************************" << std::endl;
   std::cout << std::endl;
 
-#ifdef CGAL_USE_CORE
-  test_traits<F_CORE_Ring_Gtwi>("F CORE Ring WI");
-  test_traits<F_CORE_Sqrt_Gtwi>("F CORE Sqrt WI");
+#if defined(CGAL_USE_CORE) || defined(CGAL_USE_LEDA)
+  test_traits<F_Algebraic_Ring_Gtwi>("F Algebraic Ring WI");
+  test_traits<F_Algebraic_Sqrt_Gtwi>("F Algebraic Sqrt WI");
 
-  test_traits<F_CORE_Field_Gt>("F CORE Field");
-  test_traits<F_CORE_Sqrt_Gt>("F CORE Sqrt");
+  test_traits<F_Algebraic_Field_Gt>("F Algebraic Field");
+  test_traits<F_Algebraic_Sqrt_Gt>("F Algebraic Sqrt");
 #endif
 
-#ifdef CGAL_USE_GMP
+#if defined(CGAL_USE_GMP) || defined(CGAL_USE_LEDA)
   test_traits<F_Gmpz_Ring_Gtwi>("F Gmpz Ring WI");
 
   test_traits<F_Gmpq_Ring_Gtwi>("F Gmpq Ring WI");
