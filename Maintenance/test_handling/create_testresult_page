@@ -103,7 +103,8 @@ sub write_select()
      print OUTPUTV '<option value="', $_, '">';
      ($filename) = m/results-(.*?)\.shtml\s*/;
 #     printf OUTPUTV "%-20s (last modified: %s)</option>\n", $filename, $date;
-     printf OUTPUTV '%2$s: %1$s</option>\n', $filename, $date;
+     printf OUTPUTV '%2$s: %1$s</option>
+', $filename, $date;
   }
   print OUTPUTV "</select></td>";
 }

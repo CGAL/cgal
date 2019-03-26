@@ -118,6 +118,7 @@ Can be `CGAL::Sequential_tag` or `CGAL::Parallel_tag`. If it is
 typedef unspecified_type Concurrency_tag;
 
 /*!
+\cgalAdvancedType
 \cgalAdvancedBegin
 This template class allows to get the type of a triangulation 
 data structure that only changes the vertex type. It has to define a type 
@@ -130,6 +131,7 @@ template <typename Vb2>
 using Rebind_vertex = unspecified_type;
 
 /*!
+\cgalAdvancedType
 \cgalAdvancedBegin
 This template class allows to get the type of a triangulation 
 data structure that only changes the cell type. It has to define a type 

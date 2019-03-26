@@ -59,7 +59,8 @@ public:
 /// \name Validity Check 
 /// @{
 
-/*! 
+/*!
+\cgalAdvancedFunction
 \cgalAdvancedBegin
 Implements the validity checks required by the concept 
 `TriangulationDSFullCell`.

@@ -386,8 +386,5 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     canonical_link="<link rel=\"canonical\" href=\"https://doc.cgal.org/latest/Manual/how_to_cite.html\"/>\n"
     re_replace_first_in_file(r'<body>', r'<head>\n'+canonical_link+"</head>\n<body>", os.path.join("Manual","how_to_cite.html"))
 
-    #copy deprecated.html
-    shutil.copy(path.join(resources_absdir,"deprecated.html"),path.join("Manual/", "deprecated.html"))
-
 if __name__ == "__main__":
     main()
