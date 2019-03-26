@@ -568,6 +568,31 @@ protected:
   }
 
 protected Q_SLOTS:
+
+  bool is_inside(QVector4D* box, const Kernel::Point_3& p)
+  {
+    if(!static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->isClipping()){
+      return true;
+    }
+    double x = p.x(),
+        y = p.y(),
+        z = p.z();
+
+      if(box[0][0]*x+box[0][1]*y+box[0][2]*z+box[0][3]>0)
+        return false;
+      if(box[1][0]*x+box[1][1]*y+box[1][2]*z+box[1][3]>0)
+        return false;
+      if(box[2][0]*x+box[2][1]*y+box[2][2]*z+box[2][3]>0)
+        return false;
+      if(box[3][0]*x+box[3][1]*y+box[3][2]*z+box[3][3]>0)
+        return false;
+      if(box[4][0]*x+box[4][1]*y+box[4][2]*z+box[4][3]>0)
+        return false;
+      if(box[5][0]*x+box[5][1]*y+box[5][2]*z+box[5][3]>0)
+        return false;
+      return true;
+  }
+  
   void select_points()
   {
     Scene_points_with_normal_item* point_set_item = getSelectedItem<Scene_points_with_normal_item>();
@@ -604,6 +629,15 @@ protected Q_SLOTS:
                        [&] (const Point_set::Index& idx) -> bool
                        { return !selected_bitmap[idx]; }));
     
+    QVector4D* clipbox = static_cast<CGAL::Three::Viewer_interface*>(viewer)->clipBox();
+       for(Point_set::iterator it = points->first_selected();
+           it != points->end();
+           ++it)
+       {
+         if(!is_inside(clipbox, points->point(*it)))
+           points->unselect(*it);
+       }
+       
     point_set_item->invalidateOpenGLBuffers();
     point_set_item->itemChanged();
   }

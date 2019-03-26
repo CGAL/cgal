@@ -1683,5 +1683,15 @@ void Viewer::setGlPointSize(const GLfloat &p) { d->gl_point_size = p; }
 
 const GLfloat& Viewer::getGlPointSize() const { return d->gl_point_size; }
 
+QVector4D* Viewer::clipBox() const
+{
+  return d->clipbox;
+}
+
+bool Viewer::isClipping() const
+{
+  return d->clipping;
+}
+
 #include "Viewer.moc"
 

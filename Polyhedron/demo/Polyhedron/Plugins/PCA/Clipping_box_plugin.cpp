@@ -85,8 +85,6 @@ void Clipping_box_plugin::init(QMainWindow* mainWindow, CGAL::Three::Scene_inter
   connect(dock_widget->pushButton, SIGNAL(toggled(bool)),
           this, SLOT(clip(bool)));
   
-  CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();  
-  
   item = NULL;
   visualizer = NULL;
   shift_pressing = false;
@@ -126,7 +124,6 @@ void Clipping_box_plugin::clipbox()
           this, &Clipping_box_plugin::tab_change);
   item->setName("Clipping box");
   item->setRenderingMode(FlatPlusEdges);
-  CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
   scene->addItem(item);
   actionClipbox->setEnabled(false);
 
