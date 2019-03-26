@@ -7,7 +7,8 @@ project( Surface_mesh_shortest_path_Tests )
 cmake_minimum_required(VERSION 3.1)
 
 
-find_package(CGAL QUIET COMPONENTS Core )
+find_package(CGAL QUIET COMPONENTS Core)
+find_package(LEDA QUIET)
 
 if ( CGAL_FOUND )
 
@@ -31,7 +32,7 @@ if ( CGAL_FOUND )
     endif()
     add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
     list(APPEND CGAL_3RD_PARTY_LIBRARIES ${Boost_PROGRAM_OPTIONS_LIBRARY})
-    if(CGAL_Core_FOUND)
+    if(CGAL_Core_FOUND OR LEDA_FOUND)
       create_single_source_cgal_program( "TestMesh.cpp" )
     else()
       message(STATUS "NOTICE: Example TestMesh.cpp requires CGAL_Core library and will not be compiled.")
