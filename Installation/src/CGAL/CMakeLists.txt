@@ -1,12 +1,8 @@
 message("Configuring libCGAL")
 
-include(CGAL_SetupCGALDependencies)
-
-if(TARGET Exact_rational_support)
-  set(CGAL_EXTRA_TARGET Exact_rational_support)
-endif()
-
 collect_cgal_library(CGAL "")
+
+include(CGAL_SetupCGALDependencies)
 
 if(CGAL_HEADER_ONLY)
   set(keyword "INTERFACE")

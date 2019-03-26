@@ -19,10 +19,6 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "${cppfile}" )
   endforeach()
 
-  if(CGAL_Core_FOUND OR TARGET CGAL::Exact_rational_support)
-    # Link with either CGAL_Core or LEDA
-    target_link_libraries(test_sdg_traits_2 PRIVATE CGAL::Exact_rational_support)
-  endif()
 else()
   
     message(STATUS "This program requires the CGAL library, and will not be compiled.")

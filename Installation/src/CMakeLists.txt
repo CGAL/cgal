@@ -89,11 +89,9 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
       endif()
     endif()
   endif()
-  if(LIBRARY_NAME STREQUAL CGAL_Core)
-    CGAL_Core_create_alias_Exact_rational_support()
-  endif()
+
   if (NOT CGAL_HEADER_ONLY)
-    install(TARGETS ${LIBRARY_NAME} ${${LIBRARY_NAME}_EXTRA_TARGET} EXPORT ${LIBRARY_NAME}Exports
+    install(TARGETS ${LIBRARY_NAME} EXPORT ${LIBRARY_NAME}Exports
       RUNTIME DESTINATION "${CGAL_INSTALL_BIN_DIR}"
       LIBRARY DESTINATION "${CGAL_INSTALL_LIB_DIR}"
       ARCHIVE DESTINATION "${CGAL_INSTALL_LIB_DIR}")
@@ -220,7 +218,6 @@ CGAL_add_if_target(CGAL)
 CGAL_add_if_target(CGAL_Core)
 CGAL_add_if_target(CGAL_ImageIO)
 CGAL_add_if_target(CGAL_Qt5)
-CGAL_add_if_target(Exact_rational_support)
 
 cache_set(CGAL_ACTUAL_CONFIGURED_LIBRARIES "${CGAL_ACTUAL_CONFIGURED_LIBRARIES}")
 
