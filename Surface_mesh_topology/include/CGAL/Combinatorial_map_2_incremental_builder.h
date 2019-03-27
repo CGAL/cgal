@@ -322,7 +322,7 @@ namespace CGAL {
     { return first_dart; }
 
     /// Start a path on the surface
-    void start_path()
+    void begin_path()
     {
       if (path_started)
       {
@@ -431,7 +431,7 @@ namespace CGAL {
     /// or edge labels, if the map was built by adding edges
     CGAL::Path_on_surface<CMap> create_path(const std::string& s)
     {
-      start_path();
+      begin_path();
 
       std::istringstream iss(s);
       for (std::string token; std::getline(iss, token, ' '); )

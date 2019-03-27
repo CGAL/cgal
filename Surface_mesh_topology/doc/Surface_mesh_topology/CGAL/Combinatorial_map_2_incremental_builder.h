@@ -3,7 +3,7 @@ namespace CGAL {
   /*!
     \ingroup PkgSurfaceMeshTopologyClasses
 
-    The class `Combinatorial_map_2_incremental_builder` is a tool allowing to build incrementally a 2D combinatorial map.
+    The class `Combinatorial_map_2_incremental_builder` is a tool enabling to build incrementally a 2D combinatorial map.
 
     \tparam CMap a model of `CombinatorialMap`
   */
@@ -46,7 +46,7 @@ namespace CGAL {
     void add_facet(const std::string& s);
       
    /// Start a path on the surface
-   void start_path();
+   void begin_path();
     
     /// End the current path.
     /// @return The path created.
@@ -57,7 +57,7 @@ namespace CGAL {
     /// @pre A path is under creation.
     void add_edge_to_path(const std::string& e);
     
-    /// A shortcut allowing to create a path directly with a sequence of edge labels
+    /// A shortcut enabling to create a path directly with a sequence of edge labels
     /// @return The path created.
     CGAL::Path_on_surface<CMap> create_path(const std::string& s);
     

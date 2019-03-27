@@ -14,20 +14,20 @@ namespace CGAL {
     /// Constructor. Creates an empty path object which should lie on amap.
     Path_on_surface(const CMap& amap);
 
-    /// @return true iff the path is empty
+    /// @return `true` iff the path is empty
     bool is_empty() const;
 
-    /// @return true iff the path is closed.
+    /// @return `true` iff the path is closed.
     bool is_closed() const;
 
-    /// @return true iff the path does not pass twice through a same edge
+    /// @return `true` iff the path does not pass twice through a same edge
     ///              or a same vertex.
     bool is_simple() const;
 
   /// clear the path.
     void clear();
     
-    /// @return true iff df can be added at the end of the path.
+    /// @return `true` iff df can be added at the end of the path.
     bool can_be_pushed(Dart_const_handle dh) const;
   
     /// Add the given dart at the end of this path.
@@ -38,7 +38,7 @@ namespace CGAL {
     /// @pre can_be_pushed_by_index(i)
     void push_back_by_index(std::size_t i);
 
-    /// @return true iff the dart with index i can be added at the end of the path.
+    /// @return `true` iff the dart with index i can be added at the end of the path.
     bool can_be_pushed_by_index(std::size_t i) const;
 
     /// Add the dart obtained by turning nb times around the target vertex of the last dart in this path, in the positive circular order.

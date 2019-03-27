@@ -50,7 +50,7 @@ void construct_map_from_vertices()
   b.add_vertex_to_facet(3); b.add_vertex_to_facet(2); b.add_vertex_to_facet(1);
   b.end_facet();
 
-  b.start_path();
+  b.begin_path();
   b.add_vertex_to_path(0);
   b.add_vertex_to_path(3);
   b.add_vertex_to_path(2);

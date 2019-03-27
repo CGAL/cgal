@@ -16,17 +16,17 @@ namespace CGAL {
      */
     Surface_mesh_curve_topology(const CMap& amap);
 
-    /*! Returns true if the closed paths p1 and p2 are freely homotopic.
+    /*! Returns `true` if the closed paths p1 and p2 are freely homotopic.
      */
     bool are_freely_homotopic(const Path_on_surface<CMap>& p1,
                               const Path_on_surface<CMap>& p2) const;
 
-    /*! Returns true if the paths p1 and p2 are homotopic with fixed endpoints. The paths p1 and p2 should have the same endpoints but need not be closed. Equivalent to `is_contractible` (q) where q is the concatenation of p1 and the reverse of p2.
+    /*! Returns `true` if the paths p1 and p2 are homotopic with fixed endpoints. The paths p1 and p2 must have the same endpoints but must not be closed. Equivalent to `Surface_mesh_curve_topology::is_contractible` (q) where q is the concatenation of p1 and the reverse of p2.
      */
     bool are_base_point_homotopic(const Path_on_surface<CMap>& p1,
                                   const Path_on_surface<CMap>& p2) const;
 
-    /*! Returns true if the closed path p is contractible.
+    /*! Returns `true` if the closed path p is contractible.
      */
     bool is_contractible(const Path_on_surface<CMap>& p) const;    
   };

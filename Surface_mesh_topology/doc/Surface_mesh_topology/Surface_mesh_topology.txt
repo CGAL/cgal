@@ -36,7 +36,7 @@ A `Path_on_surface` behaves as a list. This list is initially empty and the dart
 - The user may push the index of the next dart instead of the dart itself with the member function \ref Path_on_surface::push_back_by_index "push_back_by_index()". This may however be at the cost of an overhead computation mapping the index to the actual dart.
 - The path may be extended with the member function \ref Path_on_surface::extend_positive_turn "extend_positive_turn()" by specifying the next dart/halfedge thanks to a number of positive turns with respect to the previous dart/halfedge in the path.
 
-In the two first cases, the source vertex of the added dart  should coincide with the target vertex of the last dart in the path. The user is responsible for ensuring this condition. The member functions \ref Path_on_surface::can_be_pushed "can_be_pushed" and \ref Path_on_surface::can_be_pushed_by_index "can_be_pushed_by_index()" return true if and only if the condition is satisfied.
+In the two first cases, the source vertex of the added dart  should coincide with the target vertex of the last dart in the path. The user is responsible for ensuring this condition. The member functions \ref Path_on_surface::can_be_pushed "can_be_pushed" and \ref Path_on_surface::can_be_pushed_by_index "can_be_pushed_by_index()" return `true` if and only if the condition is satisfied.
 
 In addition to these functionalities, we provide an intuitive mesh builder `Combinatorial_map_2_incremental_builder`. The user can add facets to the mesh one at a time. Each facet is specified by the sequence of its oriented edge labels given as a string where the labels are words separated by blank spaces. The label of the opposite of an oriented edge is preceded by a minus. For example, the opposite of 'a1' is '-a1'. See \ref SMTopology_Example_II "examples below". Note that all the facets should be oriented the same way to form an oriented surface. This builder includes a path creator where the sequence of darts of the path is given as a string of oriented edge labels, similarly to the facets.
 
@@ -44,7 +44,7 @@ In addition to these functionalities, we provide an intuitive mesh builder `Comb
 
 \subsubsection SMTopology_Build Building the Internal Surface Representation
 
-A common first step in the homotopy test algorithms is to transform the input surface mesh into a simplified mesh. This preprocessing step is done once for all for a given mesh. The simplified surface is a quadrangulation, every face of which is a quadrilateral, stored in a `Surface_mesh_curve_topology`.
+A common first step in the homotopy test algorithms is to build a simplified mesh from the input surface mesh. This preprocessing step is done once for all for a given mesh. The simplified surface is a quadrangulation, every face of which is a quadrilateral, stored in a `Surface_mesh_curve_topology`.
 \note The user should not modify the input surface as long as homotopy tests should be performed with this `Surface_mesh_curve_topology`.
 
 Each time a `Path_on_surface` is provided for a homotopy test, it is first transformed to an equivalent path in the quadrangulation stored by the `Surface_mesh_curve_topology`. This transformation is transparent to the user who has never access to the quadrangulation.
@@ -53,17 +53,17 @@ Each time a `Path_on_surface` is provided for a homotopy test, it is first trans
 
 Given two `Path_on_surface` \f$p_1\f$ and \f$p_2\f$, the class `Surface_mesh_curve_topology` provides the following three functions:
 
-- `is_contractible`(\f$p_1\f$) returns true if the closed curve \f$p_1\f$ contractible.
+- \ref Surface_mesh_curve_topology::is_contractible "is_contractible"(\f$p_1\f$) returns `true` if the closed curve \f$p_1\f$ contractible.
 
-- `are_freely_homotopic`(\f$p_1\f$, \f$p_2\f$) returns true if the closed curves \f$p_1\f$ and \f$p_2\f$ are freely homotopic.
+- \ref Surface_mesh_curve_topology::are_freely_homotopic "are_freely_homotopic"(\f$p_1\f$, \f$p_2\f$) returns `true` if the closed curves \f$p_1\f$ and \f$p_2\f$ are freely homotopic.
 
-- `are_base_point_homotopic`(\f$p_1\f$, \f$p_2\f$) returns true if the paths \f$p_1\f$ and \f$p_2\f$ are homotopic with fixed endpoints. This call is equivalent to `is_contractible`(\f$p_1\cdot \overline{p_2}\f$), where \f$p_1\cdot \overline{p_2}\f$ is the concatenation of \f$p_1\f$ and the reverse of \f$p_2\f$.
+- \ref Surface_mesh_curve_topology::are_base_point_homotopic "are_base_point_homotopic"(\f$p_1\f$, \f$p_2\f$) returns `true` if the paths \f$p_1\f$ and \f$p_2\f$ are homotopic with fixed endpoints. This call is equivalent to \ref Surface_mesh_curve_topology::is_contractible "is_contractible"(\f$p_1\cdot \overline{p_2}\f$), where \f$p_1\cdot \overline{p_2}\f$ is the concatenation of \f$p_1\f$ and the reverse of \f$p_2\f$.
 
 
 
 \section SMTopology_Examples Examples
 \subsection SMTopology_Example_I Simple Example
-The following example shows how to load an off file and how to create three closed paths on this surface. Contractibility and free homotopy tests are then performed. The example also shows how to use the CGAL viewer if CGAL was compiled with Qt5.
+The following example shows how to load an off file and how to create three closed paths on this surface. Contractibility and free homotopy tests are then performed. The example also shows how to use the \cgal viewer if \cgal was compiled with Qt5.
 \cgalExample{Surface_mesh_topology/basic_example_surface_mesh_topology.cpp}
 
 \subsection SMTopology_Example_II Mesh Builder Examples
@@ -163,7 +163,7 @@ In order to test if two input curves \f$C\f$ and \f$D\f$ in \f$\cal{M}\f$ are ho
 The canonical form of a curve is obtained by flattening its brackets, removing its spurs and pushing its right L-shapes to the right until the curve has no more brackets, spurs or L-shapes. This can be done in time proportional to the number of edges of the curve. Note that the above three operations preserve the homotopy class of the curve.
 
 \subsection SMTopology_Homotopy_Test Homotopy Test 
-It can be proved that the canonical form is uniquely defined and only depends on the homotopy class of the curve. Hence, the curves \f$C'\f$ and \f$D'\f$ in \f$\cal{Q}\f$ are homotopic if and only if their canonical forms are equal. Since each curve is defined as a sequence of (oriented) edges up to a cyclic permutation, we resort to the Knuth-Morris-Pratt algorithm to decide in linear time if the canonical forms are the same up to a cyclic permutation.
+It can be proven that the canonical form is uniquely defined and only depends on the homotopy class of the curve. Hence, the curves \f$C'\f$ and \f$D'\f$ in \f$\cal{Q}\f$ are homotopic if and only if their canonical forms are equal. Since each curve is defined as a sequence of (oriented) edges up to a cyclic permutation, we resort to the Knuth-Morris-Pratt algorithm to decide in linear time if the canonical forms are the same up to a cyclic permutation.
 
 \section SMTopology_History Implementation History
 
