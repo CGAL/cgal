@@ -70,17 +70,21 @@ void Clipping_box_plugin::init(QMainWindow* mainWindow, CGAL::Three::Scene_inter
   scene = scene_interface;
   mw = mainWindow;
   actionClipbox = new QAction(tr("Create Clipping Box"), mainWindow);
-  connect(actionClipbox, SIGNAL(triggered()),
-          this, SLOT(clipbox()));
 
   dock_widget = new ClipWidget("Clip box", mw);
   dock_widget->setVisible(false); // do not show at the beginning
   addDockWidget(dock_widget);
+  
+  
+  connect(actionClipbox, &QAction::triggered,
+          this, [this](){
+    dock_widget->show();
+    dock_widget->raise();
+    tab_change();
+  });
   connect(dock_widget->pushButton, SIGNAL(toggled(bool)),
           this, SLOT(clip(bool)));
   
-  CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();  
-  viewer->installEventFilter(this);
   item = NULL;
   visualizer = NULL;
   shift_pressing = false;
@@ -95,10 +99,11 @@ void Clipping_box_plugin::clipbox()
       return;
   }
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  dock_widget->show();
-  dock_widget->raise();
   if(!item)
+  {
     item = new Scene_edit_box_item(scene);
+    CGAL::QGLViewer::QGLViewerPool().first()->installEventFilter(item);
+  }
   connect(item, SIGNAL(destroyed()),
           this, SLOT(enableAction()));
   connect(item, &Scene_edit_box_item::aboutToBeDestroyed,
@@ -111,7 +116,7 @@ void Clipping_box_plugin::clipbox()
           this, [this](){
     dock_widget->unclipButton->setDisabled(true);
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(
-          *CGAL::QGLViewer::QGLViewerPool().begin());
+          CGAL::QGLViewer::QGLViewerPool().first());
     viewer->disableClippingBox();
     viewer->update();
   });
@@ -119,8 +124,6 @@ void Clipping_box_plugin::clipbox()
           this, &Clipping_box_plugin::tab_change);
   item->setName("Clipping box");
   item->setRenderingMode(FlatPlusEdges);
-  CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
-  viewer->installEventFilter(item);
   scene->addItem(item);
   actionClipbox->setEnabled(false);
 
@@ -196,6 +199,12 @@ void Clipping_box_plugin::tab_change()
       item = NULL;
     }
     action->setChecked(true);
+    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
+    connect(dock_widget->clipButton, &QPushButton::toggled,
+            this, [this, viewer](){
+      viewer->setFocus();
+      viewer->installEventFilter(this);
+    });
   }
   else
   {
@@ -207,7 +216,8 @@ void Clipping_box_plugin::tab_change()
 
 bool Clipping_box_plugin::eventFilter(QObject *, QEvent *event) {
   static QImage background;
-  if (dock_widget->isHidden() || !(dock_widget->isActiveWindow()) || dock_widget->tabWidget->currentIndex() != 1)
+  if (dock_widget->isHidden() || !(dock_widget->isActiveWindow()) || dock_widget->tabWidget->currentIndex() != 1
+      || (dock_widget->tabWidget->currentIndex() == 1 && !dock_widget->clipButton->isChecked()))
     return false;
   
   if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)
@@ -317,6 +327,7 @@ bool Clipping_box_plugin::eventFilter(QObject *, QEvent *event) {
     
     viewer->enableClippingBox(planes);
     dock_widget->unclipButton->setEnabled(true);
+    dock_widget->clipButton->setChecked(false);
     visualizer = NULL;
     QApplication::restoreOverrideCursor();
     static_cast<CGAL::Three::Viewer_interface*>(viewer)->set2DSelectionMode(false);
