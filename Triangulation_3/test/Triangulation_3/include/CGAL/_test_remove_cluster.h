@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_3.h>

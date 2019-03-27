@@ -31,12 +31,8 @@
 #ifndef CGAL_TEST_REAL_COMPARABLE_H
 #define CGAL_TEST_REAL_COMPARABLE_H
 
-#include <CGAL/basic.h>
 #include <cassert>
 #include <CGAL/tags.h>
-/*#include <NiX/basic.h>
-#include <NiX/NT_traits.h>
-#include <NiX/number_type_utils.h>*/
 #include <cstddef>
 #include <CGAL/assertions.h>
 #include <boost/type_traits.hpp>

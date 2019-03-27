@@ -1,5 +1,5 @@
-#include <CGAL/basic.h>
 #include <CGAL/function_objects.h>
+#include <CGAL/int.h>
 #include <boost/functional.hpp>
 #include <functional>
 #include <algorithm>

@@ -26,7 +26,7 @@
 #ifndef CGAL_TEST_ARITHMETIC_KERNEL_H
 #define CGAL_TEST_ARITHMETIC_KERNEL_H
 
-#include <CGAL/basic.h>
+
 #include <CGAL/Test/_test_coercion_traits.h>
 
 namespace CGAL { 

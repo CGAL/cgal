@@ -21,7 +21,6 @@
 //
 // ============================================================================
 
-#include <CGAL/basic.h>
 #include <cassert>
 #include <CGAL/use.h>
 #include <CGAL/Test/_test_real_embeddable.h>

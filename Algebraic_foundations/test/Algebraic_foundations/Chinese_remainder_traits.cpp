@@ -29,7 +29,6 @@
 // ============================================================================
 
 #undef NDEBUG
-#include <CGAL/basic.h>
 #include <CGAL/Chinese_remainder_traits.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/CORE_arithmetic_kernel.h>
