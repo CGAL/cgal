@@ -66,7 +66,7 @@ The %CGAL Project.
  <em>%CGAL User and Reference Manual</em>.
  %CGAL Editorial Board, ${CGAL_CREATED_VERSION_NUM} edition, ${CGAL_BUILD_YEAR4}.
 [&nbsp;<a href="how_to_cite.html#cgal:eb-${CGAL_RELEASE_YEAR_ID}">bib</a>&nbsp;| 
-<a href="https://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html">http</a>&nbsp;]
+<a href="packages.html">http</a>&nbsp;]
 
 </td>
 </tr>
