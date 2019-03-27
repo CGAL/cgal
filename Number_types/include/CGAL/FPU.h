@@ -383,7 +383,8 @@ typedef unsigned int FPU_CW_t;
 #define CGAL_FE_TOWARDZERO   _RC_CHOP
 #define CGAL_FE_UPWARD       _RC_UP
 #define CGAL_FE_DOWNWARD     _RC_DOWN
-
+# elif (defined __VFP_FP__ && !defined __SOFTFP__) || defined __aarch64__
+//to do
 #else
 // This is a version following the ISO C99 standard, which aims at portability.
 // The drawbacks are speed on one hand, and also, on x86, it doesn't fix the
