@@ -383,7 +383,7 @@ typedef unsigned int FPU_CW_t;
 #define CGAL_FE_TOWARDZERO   _RC_CHOP
 #define CGAL_FE_UPWARD       _RC_UP
 #define CGAL_FE_DOWNWARD     _RC_DOWN
-# elif defined  __arm__
+# elif defined  __VFP_FP__
 #define CGAL_IA_SETFPCW(CW) asm volatile ("VMSR FPSCR, %0" : :"r" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("VMRS %0, FPSCR" : "=r" (CW)); CW &= CGAL_FE_TOWARDZERO
 typedef unsigned int FPU_CW_t;
