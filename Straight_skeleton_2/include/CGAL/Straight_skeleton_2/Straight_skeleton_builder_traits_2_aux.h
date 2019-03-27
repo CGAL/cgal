@@ -67,6 +67,7 @@ NT const& validate( NT const& n )
 template<class T> optional<T> cgal_make_optional( T const& v ) { return optional<T>(v) ; }
 template<class T> optional<T> cgal_make_optional( bool cond, T const& v ) { return cond ? optional<T>(v) : optional<T>() ; }
 
+// TODO: update this!
 template<class K>
 struct Is_filtering_kernel
 {
@@ -206,12 +207,8 @@ public:
   }
 };
 
-
-//
-// This number type is provided because unlike Quotient<> is allows you to create it
-// with a zero denominator. Of course you can't evaluate it in that case, but is convenient because it allows client code
-// to handle the "error" itself, which in this context is useful.
-//
+// Represents numbers of the form N/(d0*sqrt(r0)+d1*sqrt(r1)+d2*sqrt(r2))
+// used to represent the time of trisegments
 template<class NT, bool has_sqrt = is_same_or_derived<Field_with_sqrt_tag,
                                                       typename Algebraic_structure_traits<NT>::Algebraic_category>::value >
 class Rational_time
@@ -244,7 +241,7 @@ class Rational_time
                           mD2*CGAL_SS_i::inexact_sqrt(mR2) ; }
 
     CGAL::Quotient<NT> to_quotient() const { return CGAL::Quotient<NT>(n(),d()) ; }
-    
+
     NT to_nt() const { return mN / d() ; }
 
     friend std::ostream& operator << ( std::ostream& os, Rational_time<NT> const& rat )
@@ -266,6 +263,12 @@ class Rational_time
     compare(const Rational_time<NT>& other) const
     {
       return CGAL::sign( assemble() - other.assemble() );
+    }
+
+    Sign
+    sign() const
+    {
+      return CGAL::sign( assemble() );
     }
 
   private:
@@ -306,6 +309,133 @@ class Rational_time< NT, true >
     compare(const Rational_time<NT>& other) const
     {
       return CGAL::compare( to_nt(), other.to_nt() );
+    }
+
+    Sign
+    sign() const
+    {
+      return CGAL::sign( to_nt() );
+    }
+
+  private:
+
+    NT mN, mD;
+};
+
+// Represents numbers of the form N/(d0*sqrt(r0)+d1*sqrt(r1)+d2*sqrt(r2)+d3*sqrt(r3))
+// used to represent the intersection of the bisectors each from a pair of segments
+template<class NT, bool has_sqrt = is_same_or_derived<Field_with_sqrt_tag,
+                                                      typename Algebraic_structure_traits<NT>::Algebraic_category>::value >
+class Rational_time_4
+{
+  public:
+
+    Rational_time_4( NT aN, NT aD0, NT aD1, NT aD2, NT aD3, NT aR0, NT aR1, NT aR2, NT aR3 )
+      : mN(aN)
+      , mD0(aD0)
+      , mD1(aD1)
+      , mD2(aD2)
+      , mD3(aD3)
+      , mR0(aR0)
+      , mR1(aR1)
+      , mR2(aR2)
+      , mR3(aR3)
+    {}
+
+    Rational_time_4( NT aN, NT aD)
+      : mN(aN)
+      , mD0(aD)
+      , mD1(0)
+      , mD2(0)
+      , mD3(0)
+      , mR0(1)
+      , mR1(0)
+      , mR2(0)
+      , mR3(0)
+    {}
+
+    NT n() const { return mN ; }
+    NT d() const { return mD0*CGAL_SS_i::inexact_sqrt(mR0)+
+                          mD1*CGAL_SS_i::inexact_sqrt(mR1)+
+                          mD2*CGAL_SS_i::inexact_sqrt(mR2)+
+                          mD3*CGAL_SS_i::inexact_sqrt(mR3) ; }
+
+    CGAL::Quotient<NT> to_quotient() const { return CGAL::Quotient<NT>(n(),d()) ; }
+
+    NT to_nt() const { return mN / d() ; }
+
+    friend std::ostream& operator << ( std::ostream& os, Rational_time_4<NT> const& rat )
+    {
+      if ( ! CGAL_NTS is_zero(rat.d()) )
+           return os << n2str(rat.n()/rat.d());
+      else return os << "INF_RATIONAL" ;
+    }
+
+    CORE::Expr assemble() const
+    {
+      return CORE::Expr( to_BigFloat(mN) ) / (
+        CORE::Expr(to_BigFloat(mD0)) * sqrt(to_BigFloat(mR0)) +
+        CORE::Expr(to_BigFloat(mD1)) * sqrt(to_BigFloat(mR1)) +
+        CORE::Expr(to_BigFloat(mD2)) * sqrt(to_BigFloat(mR2)) +
+        CORE::Expr(to_BigFloat(mD3)) * sqrt(to_BigFloat(mR3)) );
+    }
+
+    Comparison_result
+    compare(const Rational_time<NT>& other) const
+    {
+      return CGAL::sign( assemble() - other.assemble() );
+    }
+
+    Sign
+    sign() const
+    {
+      return CGAL::sign( assemble() );
+    }
+
+  private:
+
+    NT mN, mD0, mD1, mD2, mD3, mR0, mR1, mR2, mR3 ;
+};
+
+template <class NT>
+class Rational_time_4< NT, true >
+{
+  public:
+
+    Rational_time_4( NT aN, NT aD0, NT aD1, NT aD2, NT aD3, NT aR0, NT aR1, NT aR2, NT aR3 )
+      : mN(aN)
+      , mD( aD0*sqrt(aR0)+aD1*sqrt(aR1)+aD2*sqrt(aR2)+aD3*sqrt(aR3) )
+    {}
+
+    Rational_time_4( NT aN, NT aD)
+      : mN(aN)
+      , mD(aD)
+    {}
+
+    NT n() const { return mN ; }
+    NT d() const { return mD ; }
+
+    CGAL::Quotient<NT> to_quotient() const { return CGAL::Quotient<NT>(n(),d()) ; }
+
+    NT to_nt() const { CGAL_assertion(d()!=0); return mN / d() ; }
+
+    friend std::ostream& operator << ( std::ostream& os, Rational_time_4<NT> const& rat )
+    {
+      if ( ! CGAL_NTS is_zero(rat.d()) )
+           return os << rat.n()/rat.d();
+      else return os << "INF_RATIONAL" ;
+    }
+
+    Comparison_result
+    compare(const Rational_time<NT>& other) const
+    {
+      return CGAL::compare( to_nt(), other.to_nt() );
+    }
+
+    Sign
+    sign() const
+    {
+      return CGAL::sign( to_nt() );
     }
 
   private:

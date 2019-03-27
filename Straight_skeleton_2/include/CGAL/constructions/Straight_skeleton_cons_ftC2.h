@@ -307,6 +307,64 @@ optional< Rational_time< typename K::FT> > compute_normal_offset_lines_isec_time
   return boost::none;
 }
 
+// compute the time of the intersection of the bisector of (e0,e1) with the bisector of (e2,e3) on the bisector of (e0,e1)
+// in the case the bisector are not collinear
+template<class K>
+optional< Rational_time_4< typename K::FT> > compute_normal_offset_lines_isec_timeC2 ( const typename K::Segment_2& e0,
+                                                                                       const typename K::Segment_2& e1,
+                                                                                       const typename K::Segment_2& e2,
+                                                                                       const typename K::Segment_2& e3)
+{
+  typedef typename K::FT FT;
+  typedef Line_2<K> Line_2;
+  typedef optional<Line_2> Optional_line_2 ;
+
+  Optional_line_2 l0 = compute_line_ceoffC2(e0) ;
+  Optional_line_2 l1 = compute_line_ceoffC2(e1) ;
+  Optional_line_2 l2 = compute_line_ceoffC2(e2) ;
+  Optional_line_2 l3 = compute_line_ceoffC2(e3) ;
+
+  if ( l0 && l1 && l2 && l3)
+  {
+    FT sum_sq_0 = square(l0->a()) + square(l0->b());
+    FT sum_sq_1 = square(l1->a()) + square(l1->b());
+    FT sum_sq_2 = square(l2->a()) + square(l2->b());
+    FT sum_sq_3 = square(l3->a()) + square(l3->b());
+
+    const FT a0b1_a1b1 = l0->a()*l1->b() - l1->a()*l0->b(),
+             a0b2_a2b0 = l0->a()*l2->b() - l2->a()*l0->b(),
+             a2b0_a0b2 = l2->a()*l0->b() - l0->a()*l2->b(),
+             a1b2_a2b1 = l1->a()*l2->b() - l2->a()*l1->b(),
+             a3b0_a0b3 = l3->a()*l0->b() - l0->a()*l3->b(),
+             a1b3_a3b1 = l1->a()*l3->b() - l3->a()*l1->b(),
+             a0b3_a3b0 = l0->a()*l3->b() - l3->a()*l0->b(),
+             a3b1_a1b3 = l3->a()*l1->b() - l1->a()*l3->b(),
+             a2b1_a0b2 = l2->a()*l1->b() - l1->a()*l2->b(),
+             a2b3_a3b2 = l2->a()*l3->b() - l3->a()*l2->b(),
+             d01_exp1 = (a0b1_a1b1 * l3->c() + a3b0_a0b3 * l1->c() + a1b3_a3b1 * l0->c()) * sum_sq_2,
+             d01_exp2 = (a0b1_a1b1 * l2->c() + a2b0_a0b2 * l1->c() + a1b2_a2b1 * l0->c()) * sum_sq_3,
+             two(2);
+
+   const FT num = ( (a0b1_a1b1 * (a0b1_a1b1 * l2->c() + two * a2b0_a0b2 * l1->c() + two * a1b2_a2b1 * l0->c()) ) * l2->c()
+                +   (a0b2_a2b0 * (a0b2_a2b0 * l1->c() + two * a2b1_a0b2 * l0->c() ) ) * l1->c()
+                +    square(a1b2_a2b1 * l0->c()) ) * sum_sq_3
+                + (( -a0b1_a1b1 * (a0b1_a1b1 * l3->c() + two * a3b0_a0b3 * l1->c() + two * a1b3_a3b1 * l0->c()) ) * l3->c()
+                + (  -a0b3_a3b0 * (a0b3_a3b0 * l1->c() + two * a3b1_a1b3 * l0->c())) * l1->c()
+                +   - square(a1b3_a3b1 * l0->c())) * sum_sq_2,
+            d0 =  a1b2_a2b1 * d01_exp2 - a1b3_a3b1 * d01_exp1,
+            d1 = -a0b2_a2b0 * d01_exp2 + a0b3_a3b0 * d01_exp1,
+            d2 = -a0b1_a1b1 * ( a0b2_a2b0 * l3->c() + a3b0_a0b3 * l2->c() + a2b3_a3b2 * l0->c() ),
+            d3 =  a0b1_a1b1 * ( a1b2_a2b1 * l3->c() + a3b1_a1b3 * l2->c() + a2b3_a3b2 * l1->c() );
+
+    return boost::make_optional(
+      Rational_time_4<FT>(num,
+                         d0, d1, d2, d3,
+                         sum_sq_0, sum_sq_1, sum_sq_1 * sum_sq_2 * sum_sq_3, sum_sq_0 * sum_sq_2* sum_sq_3) );
+  }
+
+  return boost::none;
+}
+
 // Given two oriented straight line segments e0 and e1 such that e-next follows e-prev, returns
 // the coordinates of the midpoint of the segment between e-prev and e-next.
 // NOTE: the edges can be oriented e0->e1 or e1->e0
@@ -511,7 +569,7 @@ optional< Rational_time< typename K::FT> > compute_degenerate_offset_lines_isec_
 }
 
 //
-// Calls the appropiate function depending on the collinearity of the edges.
+// Calls the appropriate function depending on the collinearity of the edges.
 //
 template<class K>
 optional< Rational_time< typename K::FT > > compute_offset_lines_isec_timeC2 ( intrusive_ptr< Trisegment_2<K> > const& tri )
@@ -520,6 +578,20 @@ optional< Rational_time< typename K::FT > > compute_offset_lines_isec_timeC2 ( i
  
   return tri->collinearity() == TRISEGMENT_COLLINEARITY_NONE ? compute_normal_offset_lines_isec_timeC2    (tri)
                                                              : compute_degenerate_offset_lines_isec_timeC2(tri);
+}
+
+//
+// Calls the appropriate function depending on the collinearity of the segments.
+//
+template<class K>
+optional< Rational_time_4< typename K::FT> > compute_offset_lines_isec_timeC2 ( const typename K::Segment_2& e0,
+                                                                                const typename K::Segment_2& e1,
+                                                                                const typename K::Segment_2& e2,
+                                                                                const typename K::Segment_2& e3)
+{
+
+  // TODO: handle degenerate cases (compute_degenerate_offset_lines_isec_timeC2 equivalent)
+  return compute_normal_offset_lines_isec_timeC2<K>(e0, e1, e2, e3);
 }
 
 

@@ -43,6 +43,7 @@ Uncertain<bool> certified_collinearC2( Point_2<K> const& p
                                      , Point_2<K> const& r 
                                      )
 {
+  // TODO use CGAL kernel filtered predicate
   return CGAL_NTS certified_is_equal( ( q.x() - p.x() ) * ( r.y() - p.y() )
                                     , ( r.x() - p.x() ) * ( q.y() - p.y() )
                                     );
@@ -58,6 +59,7 @@ Uncertain<bool> certified_collinear_are_ordered_along_lineC2( Point_2<K> const& 
                                                             , Point_2<K> const& r 
                                                             )
 {
+  // TODO use CGAL kernel filtered predicate
   if ( CGAL_NTS certainly(p.x() < q.x()) ) return !(r.x() < q.x());
   if ( CGAL_NTS certainly(q.x() < p.x()) ) return !(q.x() < r.x());
   if ( CGAL_NTS certainly(p.y() < q.y()) ) return !(r.y() < q.y());
@@ -81,6 +83,7 @@ template<class K>
 inline
 Uncertain<bool> are_edges_parallelC2( Segment_2<K> const& e0, Segment_2<K> const& e1 )
 {
+  //TODO use CGAL kernel
   Uncertain<Sign> s = certified_sign_of_determinant2x2(e0.target().x() - e0.source().x()
                                                       ,e0.target().y() - e0.source().y()
                                                       ,e1.target().x() - e1.source().x()
@@ -98,6 +101,7 @@ template<class K>
 inline
 Uncertain<bool> are_parallel_edges_equally_orientedC2( Segment_2<K> const& e0, Segment_2<K> const& e1 )
 {
+  //TODO use CGAL kernel predicate
   return CGAL_NTS certified_sign( (e0.target() - e0.source()) * (e1.target() - e1.source()) ) == POSITIVE;
 }
 
@@ -107,6 +111,7 @@ Uncertain<bool> are_parallel_edges_equally_orientedC2( Segment_2<K> const& e0, S
 template<class K>
 Uncertain<bool> are_edges_orderly_collinearC2( Segment_2<K> const& e0, Segment_2<K> const& e1 )
 {
+  // TODO use CGAL kernel predicate
   return are_edges_collinearC2(e0,e1) & are_parallel_edges_equally_orientedC2(e0,e1);
 }
 
@@ -114,6 +119,7 @@ template <class FT>
 inline
 Uncertain<Sign> certified_side_of_oriented_lineC2(const FT &a, const FT &b, const FT &c, const FT &x, const FT &y)
 {
+  // TODO use kernel predicate
   return CGAL_NTS certified_sign(a*x+b*y+c);
 }
 
@@ -199,6 +205,7 @@ Uncertain<bool> exist_offset_lines_isec2 ( intrusive_ptr< Trisegment_2<K> > cons
         {
           Quotient tq = t->to_quotient() ;
           
+// TODO make the test robust
           rResult = CGAL_NTS certified_is_positive(tq) ;
           
           if ( aMaxTime && CGAL_NTS certainly(rResult) )
@@ -251,7 +258,7 @@ Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( intrusive_ptr< 
   
   if ( mt_ && nt_ )
   {
-    // study sign?
+    // TODO: put back the if?
     CGAL_assertion(mt_.get().to_nt()>=0);
     CGAL_assertion(nt_.get().to_nt()>=0);
     rResult = mt_.get().compare(nt_.get());
@@ -273,6 +280,7 @@ Uncertain<bool> is_edge_facing_pointC2 ( optional< Point_2<K> > const& aP, Segme
   if ( aP )
   {
     FT a,b,c ;
+    // TODO use a Kernel predicate
     line_from_pointsC2(aEdge.source().x(),aEdge.source().y(),aEdge.target().x(),aEdge.target().y(),a,b,c); 
     rResult = certified_side_of_oriented_lineC2(a,b,c,aP->x(),aP->y()) == make_uncertain(POSITIVE) ;
   }
@@ -349,9 +357,117 @@ inline Uncertain<bool> is_edge_facing_offset_lines_isecC2 ( intrusive_ptr< Trise
 //   If e0 and e1 are not consecutive in the input, v01_event is the event that defined they very first offset vertex.
 //   If e0 and e1 are consecutive, v01_event is null.
 //
+
 template<class K>
 Uncertain<Oriented_side>
-oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2<K> > const& event
+oriented_side_of_event_point_wrt_bisectorC2_new ( intrusive_ptr< Trisegment_2<K> > const& event
+                                            , Segment_2<K>                     const& e0
+                                            , Segment_2<K>                     const& e1
+                                            , intrusive_ptr< Trisegment_2<K> > const& /* v01_event */ // can be null
+                                            , bool                                    /* primary_is_0 */
+                                            )
+{
+#ifdef SS_DEBUG_NEW_PREDICATES
+  std::cout << *event << "\n";
+  std::cout << "event->e0: " << event->e0()[0] << " 0 " << event->e0()[1] <<" 0\n";
+  std::cout << "event->e1: " << event->e1()[0] << " 0 " << event->e1()[1] << " 0\n";
+  std::cout << "e0: " << e0[0] << " 0 " << e0[1] <<" 0\n";
+  std::cout << "e1: " << e1[0] << " 0 " << e1[1] << " 0\n";
+
+  std::cout << "e0==event->e0() " << (e0==event->e0())  << "\n";
+  std::cout << "e1==event->e0() " << (e1==event->e0())  << "\n";
+  std::cout << "e0==event->e1() " << (e0==event->e1())  << "\n";
+  std::cout << "e1==event->e1() " << (e1==event->e1())  << "\n";
+  std::cout << "e0==event->e2() " << (e0==event->e2())  << "\n";
+  std::cout << "e1==event->e2() " << (e1==event->e2())  << "\n";
+#endif
+
+  //TODO handle degenerate cases
+CGAL_assertion ( !certainly( are_edges_parallelC2(e0,e1) ) );
+
+  typedef typename K::FT FT ;
+  typedef typename K::Line_2 Line_2;
+  typedef typename K::Point_2 Point_2;
+  typedef optional<Rational_time<FT> > Optional_rational;
+  typedef optional<Rational_time_4<FT> > Optional_rational_4;
+
+  Optional_rational t_event = compute_offset_lines_isec_timeC2(event);
+  Optional_rational_4 t_l0l1_e0e1 = compute_offset_lines_isec_timeC2<K>(event->e0(), event->e1(), e0, e1);
+
+  Comparison_result time_sign = t_l0l1_e0e1->compare(*t_event);
+
+#ifdef SS_DEBUG_NEW_PREDICATES
+std::cout << "t_event " << t_event->to_nt() << "\n";
+std::cout << "t_l0l1_e0e1 " << t_l0l1_e0e1->to_nt() << "\n";
+#endif
+
+  if (time_sign==EQUAL)
+    return ON_ORIENTED_BOUNDARY;
+
+  typename cpp11::result_of<typename K::Intersect_2(Line_2,Line_2)>::type
+    res = typename K::Intersect_2()(Line_2(event->e0()),
+                                    Line_2(event->e1()));
+
+  CGAL_assertion( res != boost::none); // TODO handle deg case
+  const Point_2* event_pt = boost::get<Point_2>(&(*res));
+  CGAL_assertion(event_pt != NULL);
+
+
+  // construct the bisector of e0 and e1
+  typename cpp11::result_of<typename K::Intersect_2(Line_2,Line_2)>::type
+    res2 = typename K::Intersect_2()(Line_2(e0), Line_2(e1));
+  CGAL_assertion( res2 != boost::none); // TODO handle deg case
+  const Point_2* bisector_pt = boost::get<Point_2>(&(*res2));
+  CGAL_assertion(bisector_pt != NULL);
+
+  typename K::Vector_2 n1 =    e0.to_vector(),
+                       n2 =    e1.to_vector();
+
+  if ( CGAL::compare( n1.x()*n2.y(), n2.x()*n1.y() ) == SMALLER )
+    n2=-n2;
+  else
+    n1=-n1;
+
+  const FT sq_norm1 = n1.squared_length(),
+           sq_norm2 = n2.squared_length();
+
+  const FT v1 = n1.x() * (event_pt->y()-bisector_pt->y()) - n1.y() * (event_pt->x()-bisector_pt->x());
+  const FT v2 = n2.x() * (event_pt->y()-bisector_pt->y()) - n2.y() * (event_pt->x()-bisector_pt->x());
+  // we want to evaluate the sign of (v1/ sqrt(sq_norm1) + v2/sqrt(sq_norm2))
+  //TODO: expand the computation here instead of relying on Sqrt_extension?
+  CGAL::Sign common_pt_position = CGAL::compare(v1 * make_sqrt(FT(1)/sq_norm1), - v2 * make_sqrt(FT(1)/sq_norm2));
+
+#ifdef SS_DEBUG_NEW_PREDICATES
+std::cout << "full exp " << to_double(v1 * make_sqrt(FT(1)/sq_norm2) + v2 * make_sqrt(FT(1)/sq_norm1)) << "\n";
+std::cout << "orientation " << orientation(*bisector_pt, (*bisector_pt + n1/sqrt(sq_norm1) + n2/sqrt(sq_norm2) ), * event_pt) << "\n";
+std::cout << "event_pt " << * event_pt << " 0\n";
+std::cout << "bisector_pt " << * bisector_pt << " 0\n";
+std::cout << "second bisector_pt " << (*bisector_pt + n1/sqrt(sq_norm1) + n2/sqrt(sq_norm2) )<< " 0 \n";
+std::cout << "common_pt_position " << common_pt_position << "\n";
+std::cout << "time_sign " << time_sign << "\n";
+#endif
+
+  if (common_pt_position == POSITIVE)
+  {
+    if (t_l0l1_e0e1->sign()==POSITIVE)
+      return time_sign==POSITIVE?ON_POSITIVE_SIDE:ON_NEGATIVE_SIDE;
+    else
+      return time_sign==NEGATIVE?ON_POSITIVE_SIDE:ON_NEGATIVE_SIDE;
+  }
+  else
+  {
+    if (t_l0l1_e0e1->sign()==POSITIVE)
+      return time_sign==NEGATIVE?ON_POSITIVE_SIDE:ON_NEGATIVE_SIDE;
+    else
+      return time_sign==POSITIVE?ON_POSITIVE_SIDE:ON_NEGATIVE_SIDE;
+  }
+
+  return Uncertain<Oriented_side>::indeterminate();
+}
+
+template<class K>
+Uncertain<Oriented_side>
+oriented_side_of_event_point_wrt_bisectorC2_old ( intrusive_ptr< Trisegment_2<K> > const& event
                                             , Segment_2<K>                     const& e0
                                             , Segment_2<K>                     const& e1
                                             , intrusive_ptr< Trisegment_2<K> > const& v01_event // can be null
@@ -362,9 +478,9 @@ oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2<K> > c
   
   typedef Point_2     <K> Point_2 ;
   typedef Line_2      <K> Line_2 ;
-  
+
   Uncertain<Oriented_side> rResult = Uncertain<Oriented_side>::indeterminate();
-  
+
   try
   {
     Point_2 p = validate(construct_offset_lines_isecC2(event));
@@ -472,6 +588,32 @@ oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2<K> > c
 
 }
 
+template<class K>
+Uncertain<Oriented_side>
+oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2<K> > const& event
+                                            , Segment_2<K>                     const& e0
+                                            , Segment_2<K>                     const& e1
+                                            , intrusive_ptr< Trisegment_2<K> > const& v01_event // can be null
+                                            , bool                                    primary_is_0
+                                            )
+{
+  Uncertain<Oriented_side> new_res = oriented_side_of_event_point_wrt_bisectorC2_new(event, e0, e1, v01_event, primary_is_0);
+#ifdef SS_DEBUG_NEW_PREDICATES
+  Uncertain<Oriented_side> old_res = oriented_side_of_event_point_wrt_bisectorC2_old(event, e0, e1, v01_event, primary_is_0);
+  CGAL_assertion(is_certain(old_res));
+  CGAL_assertion(is_certain(new_res));
+
+  if (old_res != new_res)
+  {
+    std::cout << "old_res " << old_res << "\n";
+    std::cout << "new_res " << new_res << "\n";
+  }
+  CGAL_assertion(old_res == new_res);
+
+  return old_res;
+#endif
+  return new_res;
+}
 
 // Given 2 triples of oriented straight line segments (l0,l1,l2) and (r0,r1,r2), such that 
 // the offsets at time 'tl' for triple 'l' intersects in a point (lx,ly) and 
@@ -484,13 +626,10 @@ template<class K>
 Uncertain<bool> are_events_simultaneousC2 ( intrusive_ptr< Trisegment_2<K> > const& l, intrusive_ptr< Trisegment_2<K> > const& r )
 {
   typedef typename K::FT FT ;
-  
-  typedef Point_2<K> Point_2 ;
-  
+
   typedef Rational_time<FT> Rational ;
 
   typedef optional<Rational> Optional_rational ;
-  typedef optional<Point_2>  Optional_point_2 ;
   
   Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
 
@@ -503,14 +642,15 @@ Uncertain<bool> are_events_simultaneousC2 ( intrusive_ptr< Trisegment_2<K> > con
     CGAL_assertion(rt_.get().to_nt()>=0);
     if ( lt_.get().compare(rt_.get()) == EQUAL )
     {
-      Optional_point_2 li = construct_offset_lines_isecC2(l);
-      Optional_point_2 ri = construct_offset_lines_isecC2(r);
+      // TODO Mael need to check bool correctness
+      Uncertain<Oriented_side> s0 =
+            oriented_side_of_event_point_wrt_bisectorC2(l, r->e0(), r->e1(), r->child_l(), false);
+      Uncertain<Oriented_side> s1 =
+            oriented_side_of_event_point_wrt_bisectorC2(l, r->e1(), r->e2(), r->child_r(), true);
 
-//TODO Not a predicate
-      if ( li && ri )
-        rResult = CGAL_NTS logical_and( CGAL_NTS certified_is_equal(li->x(),ri->x())
-                                      , CGAL_NTS certified_is_equal(li->y(),ri->y())
-                                      ) ;
+      //TODO do it the lazy way both only if needed
+      if ( is_certain(s0) && is_certain(s1) )
+        rResult = (s0 == ON_ORIENTED_BOUNDARY && s1 == ON_ORIENTED_BOUNDARY);
       else
         rResult = false;
     }
