@@ -1,5 +1,6 @@
 #include <iostream>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
@@ -8,7 +9,8 @@
 
 namespace PS = CGAL::Polyline_simplification_2;
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
+typedef CGAL::Projection_traits_xy_3<Epic>  K;
 typedef CGAL::Polygon_2<K>                                  Polygon_2;
 
 typedef PS::Vertex_base_2<K> Vb;
