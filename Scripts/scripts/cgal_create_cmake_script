@@ -40,19 +40,17 @@ create_cmake_script()
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-
+cmake_minimum_required(VERSION 3.1...3.13)
 project( ${PROJECT}_${TYPE} )
 EOF
   cat <<'EOF'
-
-cmake_minimum_required(VERSION 2.8.10)
 
 set(CMAKE_CXX_STANDARD 14)
 
 EOF
   
     cat <<'EOF'
-find_package(CGAL QUIET COMPONENTS Core )
+find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core )
 
 if ( CGAL_FOUND )
 

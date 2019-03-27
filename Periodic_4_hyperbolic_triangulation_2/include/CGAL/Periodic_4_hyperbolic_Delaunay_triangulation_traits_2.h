@@ -31,7 +31,6 @@
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/CORE_Expr.h>
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/variant.hpp>
