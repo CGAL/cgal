@@ -8,8 +8,13 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON) 
 
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
+
 find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core Qt5)
 find_package(LEDA QUIET)
+
 find_package(Qt5 QUIET COMPONENTS Widgets)
 
 include_directories (BEFORE include)

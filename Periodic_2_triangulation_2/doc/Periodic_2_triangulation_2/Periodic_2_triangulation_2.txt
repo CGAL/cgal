@@ -234,7 +234,7 @@ is also a model for the concept `TriangulationTraits_2`.
 
 The kernels `Cartesian`, `Homogeneous`,
 `Simple_cartesian`, `Simple_homogeneous` and
-`Filtered_kernel` can all be used as \cgalModels for
+`Filtered_kernel` can all be used as models for
 `Traits`. `Periodic_2_triangulation_traits_2` provides exact
 predicates and exact constructions if `Traits` does. It provides
 exact predicates but not exact constructions if

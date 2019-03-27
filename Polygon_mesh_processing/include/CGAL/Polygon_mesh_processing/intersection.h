@@ -1108,8 +1108,8 @@ bool is_mesh2_in_mesh1(const TriangleMesh& tm1,
 
 /**
  * \ingroup PMP_predicates_grp
- * returns `true` if any segment of any polyline of `polylines1` intersects
- * any segment of any polyline of `polylines2`, and `false` otherwise.
+ * returns `true` if there exists a segment of a polyline of `polylines1`
+ * and a segment of a polyline of `polylines2` which intersect, and `false` otherwise.
  * This function depends on the package \ref PkgBoxIntersectionD.
  *
  * \tparam PolylineRange a `RandomAccessRange` of `RandomAccessRange` of points.
@@ -1151,7 +1151,8 @@ bool do_intersect(const PolylineRange& polylines1,
 
 /**
  * \ingroup PMP_predicates_grp
- * returns `true` if any segment of `polyline1` intersects any segment of `polyline2`, and `false` otherwise.
+ * returns `true` if there exists a segment of `polyline1` and a segment of `polyline2` which intersect,
+ * and `false` otherwise.
  * This function depends on the package \ref PkgBoxIntersectionD.
  *
  * \tparam Polyline a `RandomAccessRange` of points.
@@ -1196,7 +1197,7 @@ bool do_intersect(const Polyline& polyline1,
 
 /**
  * \ingroup PMP_predicates_grp
- * returns `true` if any face of `tm1` intersects any face of `tm2`, and `false` otherwise.
+ * returns `true` if there exists a face of `tm1` and a face of `tm2` which intersect, and `false` otherwise.
  * If `do_overlap_test_of_bounded_sides` is set to `true`, the overlap of bounded sides are tested as well. In that case, the meshes must be closed.
  * This function depends on the package \ref PkgBoxIntersectionD.
  *
@@ -1215,8 +1216,9 @@ bool do_intersect(const Polyline& polyline1,
  * @param np2 optional sequence of \ref pmp_namedparameters for `tm2`, among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm1` (tm2`).
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm1` (`tm2`).
  *   \attention The two property maps must have the same `value_type`.
+ *
  *   If this parameter is omitted, an internal property map for
  *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
@@ -1284,7 +1286,8 @@ bool do_intersect(const TriangleMesh& tm1,
 
 /**
  * \ingroup PMP_predicates_grp
- * returns `true` if any face of `tm` and any segment of any polyline of `polylines` intersects, and `false` otherwise.
+ * returns `true` if there exists a face of `tm` and a segment of a polyline of `polylines` which intersect,
+ * and `false` otherwise.
  * This function depends on the package \ref PkgBoxIntersectionD.
  * @pre `CGAL::is_triangle_mesh(tm)`
  *
@@ -1339,7 +1342,7 @@ bool do_intersect(const TriangleMesh& tm,
 
 /**
  * \ingroup PMP_predicates_grp
- * returns `true` if any face of `tm` and any segment of `polyline` intersects, and `false` otherwise.
+ * returns `true` if there exists a face of `tm` and a segment of `polyline` which intersect, and `false` otherwise.
  * This function depends on the package \ref PkgBoxIntersectionD.
  * @pre `CGAL::is_triangle_mesh(tm)`
  *

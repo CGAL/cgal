@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <map>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
@@ -24,7 +23,7 @@ typedef CGAL::Surface_mesh<Point_3> Surface_mesh;
 typedef boost::graph_traits<Surface_mesh>::halfedge_descriptor halfedge_descriptor;
 typedef boost::graph_traits<Surface_mesh>::edge_descriptor edge_descriptor;
 
-namespace SMS = CGAL::Surface_mesh_simplification ;
+namespace SMS = CGAL::Surface_mesh_simplification;
 
 //
 // BGL property map which indicates whether an edge is marked as non-removable
@@ -66,7 +65,7 @@ int main( int argc, char** argv )
     return EXIT_FAILURE;
   }
 
-  is >> surface_mesh  ;
+  is >> surface_mesh ;
   if (!CGAL::is_triangle_mesh(surface_mesh)){
     std::cerr << "Input geometry is not triangulated." << std::endl;
     return EXIT_FAILURE;
@@ -100,11 +99,11 @@ int main( int argc, char** argv )
             );
 
   std::cout << "\nFinished...\n" << r << " edges removed.\n"
-            << surface_mesh.number_of_edges() << " final edges.\n" ;
+            << surface_mesh.number_of_edges() << " final edges.\n";
 
-  std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ;
+  std::ofstream os( argc > 2 ? argv[2] : "out.off" );
   os.precision(17);
-  os << surface_mesh ;
+  os << surface_mesh;
 
   // now check!
   BOOST_FOREACH(halfedge_descriptor hd, halfedges(surface_mesh)){
@@ -119,5 +118,5 @@ int main( int argc, char** argv )
   }
   assert( nb_border_edges==0 );
 
-  return EXIT_SUCCESS ;
+  return EXIT_SUCCESS;
 }
