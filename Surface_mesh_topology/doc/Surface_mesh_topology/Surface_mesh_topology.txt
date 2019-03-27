@@ -1,0 +1,171 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_Surface_Mesh_Topology
+\anchor ChapterSurfaceMeshTopology
+
+\cgalAutoToc
+\author Guillaume Damiand and Francis Lazarus
+
+This package provides an algorithm to test if a curve on a surface mesh can be continuously deformed to another curve.
+
+\section SMTopology Introduction
+
+Given a curve drawn on a surface one can ask if the curve can be continuously deformed to a point (i.e. a zero length curve). Here, we require that the curve stays on the surface during the deformation. Curves that deform to a point are said <em>contractible</em>. All curves on a sphere are contractible but this not true for all curves on a torus or on a surface with more complicated topology. One intuitive way to check  that a curve is contractible could be to view the curve as a rope and to try to tighten the rope on the surface as much as possible until it collapses to a point. However, if the surface is not flat but contains peaks or more complicated shapes, the rope may get stucked making the test fail.
+
+The algorithm implemented in this package builds a data structure to efficiently answer queries of the following form: 
+- Given a surface mesh \f$\cal{M}\f$ and a closed curve specified as a sequence of edges of \f$\cal{M}\f$, decide if the curve is contractible on \f$\cal{M}\f$,
+- Given a surface mesh \f$\cal{M}\f$ and two closed curves on \f$\cal{M}\f$, decide if the two curves are related by a continuous transformation,
+- Given a surface mesh \f$\cal{M}\f$ and two non-necessarily closed curves on \f$\cal{M}\f$, decide if the two curves are related by a continuous transformation that fixes the curve extremities.
+
+The second query asks if the curves are <em>freely homotopic</em> while the third one asks if the curves are <em>homotopic with basepoints</em>. The three queries are globally refered to as <em>homotopy tests</em>. 
+
+The algorithms used are based on a paper by Erickson and Whittlesey \cgalCite{ew-tcsr-13}, providing a linear time algorithm for the above homotopy tests. This is a simplified version of the linear time algorithm  by Lazarus and Rivaud \cgalCite{lr-hts-12}.
+
+\section SMTopology_HowToUse  User Interface Description
+
+\subsection SMTopology_Input Specifying the Input Surface and Curves
+
+The homotopy tests are performed on a surface represented as a model of \ref ChapterCombinatorialMap "combinatorial map". The input surface mesh is supposed to be a connected closed orientable surface. This input surface is provided to conctruct a `Surface_mesh_curve_topology`. This class computes an internal representation of the surface as described below.
+
+Each curve on this surface is contained in an instance of the class `Path_on_surface`. An object in this class should be constructed with the same input surface as the  `Surface_mesh_curve_topology` container.
+
+A `Path_on_surface` behaves as a list. This list is initially empty and the darts corresponding to the sequence of consecutive oriented edges of an input curve should be pushed back in this list. The class provides three ways for extending a nonempty path.
+- Simply push the next dart using the \ref Path_on_surface::push_back "push_back()" member function.
+- The user may push the index of the next dart instead of the dart itself with the member function \ref Path_on_surface::push_back_by_index "push_back_by_index()". This may however be at the cost of an overhead computation mapping the index to the actual dart.
+- The path may be extended with the member function \ref Path_on_surface::extend_positive_turn "extend_positive_turn()" by specifying the next dart/halfedge thanks to a number of positive turns with respect to the previous dart/halfedge in the path.
+
+In the two first cases, the source vertex of the added dart  should coincide with the target vertex of the last dart in the path. The user is responsible for ensuring this condition. The member functions \ref Path_on_surface::can_be_pushed "can_be_pushed" and \ref Path_on_surface::can_be_pushed_by_index "can_be_pushed_by_index()" return true if and only if the condition is satisfied.
+
+In addition to these functionalities, we provide an intuitive mesh builder `Combinatorial_map_2_incremental_builder`. The user can add facets to the mesh one at a time. Each facet is specified by the sequence of its oriented edge labels given as a string where the labels are words separated by blank spaces. The label of the opposite of an oriented edge is preceded by a minus. For example, the opposite of 'a1' is '-a1'. See \ref SMTopology_Example_II "examples below". Note that all the facets should be oriented the same way to form an oriented surface. This builder includes a path creator where the sequence of darts of the path is given as a string of oriented edge labels, similarly to the facets.
+
+\subsection SMTopology_DS Data Structure Presentation
+
+\subsubsection SMTopology_Build Building the Internal Surface Representation
+
+A common first step in the homotopy test algorithms is to transform the input surface mesh into a simplified mesh. This preprocessing step is done once for all for a given mesh. The simplified surface is a quadrangulation, every face of which is a quadrilateral, stored in a `Surface_mesh_curve_topology`.
+\note The user should not modify the input surface as long as homotopy tests should be performed with this `Surface_mesh_curve_topology`.
+
+Each time a `Path_on_surface` is provided for a homotopy test, it is first transformed to an equivalent path in the quadrangulation stored by the `Surface_mesh_curve_topology`. This transformation is transparent to the user who has never access to the quadrangulation.
+
+\subsection SMTopology_Queries Testing Homotopy
+
+Given two `Path_on_surface` \f$p_1\f$ and \f$p_2\f$, the class `Surface_mesh_curve_topology` provides the following three functions:
+
+- `is_contractible`(\f$p_1\f$) returns true if the closed curve \f$p_1\f$ contractible.
+
+- `are_freely_homotopic`(\f$p_1\f$, \f$p_2\f$) returns true if the closed curves \f$p_1\f$ and \f$p_2\f$ are freely homotopic.
+
+- `are_base_point_homotopic`(\f$p_1\f$, \f$p_2\f$) returns true if the paths \f$p_1\f$ and \f$p_2\f$ are homotopic with fixed endpoints. This call is equivalent to `is_contractible`(\f$p_1\cdot \overline{p_2}\f$), where \f$p_1\cdot \overline{p_2}\f$ is the concatenation of \f$p_1\f$ and the reverse of \f$p_2\f$.
+
+
+
+\section SMTopology_Examples Examples
+\subsection SMTopology_Example_I Simple Example
+The following example shows how to load an off file and how to create three closed paths on this surface. Contractibility and free homotopy tests are then performed. The example also shows how to use the CGAL viewer if CGAL was compiled with Qt5.
+\cgalExample{Surface_mesh_topology/basic_example_surface_mesh_topology.cpp}
+
+\subsection SMTopology_Example_II Mesh Builder Examples
+Here, we show with two examples how to create a surface from a list of faces specified by edge label sequences.
+In this first example, we build a genus two torus surface from a single face, also called a polygonal schema. Two closed paths are then created. The paths are freely homotopic but not homotopic with fixed endpoint. 
+\cgalExample{Surface_mesh_topology/path_homotopy_with_symbols.cpp}
+
+In this second example, we build a genus two torus surface from a set of three squares. The first two faces are added each with a single call to the member function add_facet(). The third face is build incrementally by adding its edge labels one at a time. We then create a contractible closed path.
+\cgalExample{Surface_mesh_topology/path_homotopy_with_symbols_2.cpp}
+
+\subsection SMTopology_Example_III Open Path Example
+
+In this third example, we create non closed paths on the same mesh as in the first example and perform homotopy tests with fixed endpoints.
+\cgalExample{Surface_mesh_topology/open_path_homotopy.cpp}
+
+\section SMTopology_Benchmarks Benchmarks
+
+The machine used is a PC running Ubuntu 18.04 with an Intel CPU Core i7-4790 CPU clocked at 3.60GHz with 32GB of RAM.
+
+\subsection SMTopology_bench1 Surface Mesh Topology Computation Time
+
+When we create a `Surface_mesh_topology` object, given a surface, we build a special quadrangulation of the surface as internal representation (as explained in Section \ref SMTopology_Theory "Implementation Details"). The complexity of this operation is linear in the number of darts of the input surface, as we can see in \cgalFigureRef{fig_sm_topology_bench1}.
+
+For this benchmark, we computed 22 `Surface_mesh_topology` objects for different input surfaces with different number of darts (between 9,000 and 30,000,000) and show in the figure the computation time of the quadrangulation according to the number of darts of the input surface. We remind that this computation needs be done only once if you want to perform several path homotopy tests on the same surface. 
+
+\cgalFigureBegin{fig_sm_topology_bench1, computation-time-reduce-surface.svg}
+ Computation time of `Surface_mesh_topology` constructions, according to the number of darts or the input surface.
+\cgalFigureEnd
+
+\subsection SMTopology_bench2 Path Homotopy Tests
+
+In this second benchmark, we use a surface with 543,652 vertices, 1,631,574 edges (giving twice as many darts) and 1,087,716 faces as input, and generate 100 random pairs of closed paths. The first path is generated randomly, with a lower bound for its length given by a random number between 100 and 40,000: passed the lower bound, the path is randomly extended until it returns to its origin vertex. The second path is generated from a sequence of elementary deformations of the first path, so that the two paths are homotopic. The number of elementary deformations is a random number between 100 and 10,000.
+
+The computation time of the 100 `are_freely_homotopic` tests are given in \cgalFigureRef{fig_sm_topology_bench2}, according to the number of darts of the two input paths. 
+
+\cgalFigureBegin{fig_sm_topology_bench2, computation-time-path-homotopy.svg}
+ Computation time of `are_freely_homotopic` tests, according to the number of darts or the input paths.
+\cgalFigureEnd
+
+The third benchmark is similar to the previous one, except that we use a genus 5 surface with one vertex, 10 edges and 1 face. The length of the paths to be tested is varied between 10 and 30,000,000. A log-log scale is used for the plot of the results in  \cgalFigureRef{fig_sm_topology_bench3}. The free homotopy test takes 10 seconds for paths of length 10,000,000.
+\cgalFigureBegin{fig_sm_topology_bench3, computation-time-path-homotopy-2.svg}
+ Computation time of `are_freely_homotopic` tests, according to the number of darts or the input paths for random paths on the canonical reduced surface of genus five.
+\cgalFigureEnd
+
+Note that the linear time implementation of the algorithms is remarkably observed in each benchmark. 
+
+\section SMTopology_Theory Implementation Details
+
+\subsection SMTopology_Quad_System Reducing to a Quadrangulation
+
+A <em>quadrangulation</em> is a combinatorial map whose faces are quadrilaterals, i.e. have four sides. 
+For efficiency of the homotopy test, the input surface mesh \f$\cal{M}\f$ is first turned into a quadrangulation with only two vertices. The transformation is performed as follows.
+-# A spanning tree of the graph composed of the vertices and edges of \f$\cal{M}\f$ is computed. See \cgalFigureRef{fig_spanning_tree}.
+ \cgalFigureBegin{fig_spanning_tree,spanning_tree.svg}
+  Left, a combinatorial map with three faces (red, yellow, green). Right, a spanning tree of its graph.
+  \cgalFigureEnd
+  
+-# The edges of the spanning are contracted. The resulting surface has the same topology as \f$\cal{M}\f$ and has a single vertex.
+ \cgalFigureBegin{fig_contract_tree,contract_tree.svg}
+  The contraction of a spanning tree merges all the vertices into a single vertex.
+  \cgalFigureEnd
+
+-# The faces are merged into a single face by iteratively erasing edges incident to distinct faces. Those edges corresponds to a spanning tree of the dual combinatorial map.
+  \cgalFigureBegin{fig_merge_faces,merge_faces.svg}
+  The green, red and yellow faces are merged by removing edges. The resulting <em>reduced surface</em> has a single vertex and a single face.
+  \cgalFigureEnd
+Cutting through the graph of the reduced surface, we obtain a face that can be flattened into the plane.
+ \cgalFigureBegin{fig_cut-open,cut-open.svg}
+ If \f$\cal{M}\f$ is obtained by gluing \f$g\f$ tori, i.e. \f$\cal{M}\f$ has genus \f$g\f$, the cut-open reduced surface has \f$4g\f$ sides.
+    \cgalFigureEnd
+
+-# A vertex is introduced in the middle of this unique face and joined by new edges to the corners of this face to form a triangulation with \f$4g\f$ triangles. Gluing back along the  (old) edges of the reduced surface and deleting them amounts to merge the triangles by pairs. We thus obtain a quadrangulated surface \f$\cal{Q}\f$ with  \f$2g\f$ quadrilaterals, \f$4g\f$ edges and 2 vertices.
+ \cgalFigureBegin{fig_quad_mesh,quad_mesh.svg}
+ Triangles of the same color are merged into quadrilaterals. All the light blue vertices correspond to a same vertex on the glued surface.
+    \cgalFigureEnd
+
+This quadrangulation \f$\cal{Q}\f$ is stored in a `Surface_mesh_curve_topology`. In order to perform a homotopy test, each input curve \f$C\f$ is transformed into a (closed) path in \f$\cal{Q}\f$ as follows. If an edge of \f$C\f$ is part of the contracted spanning tree, we simply ignore that edge. Otherwise the edge can be replaced by two consecutive edges of \f$\cal{Q}\f$ to obtain a new path \f$C'\f$ in the vertex-edge graph of \f$\cal{Q}\f$ so that \f$C'\f$ is a continuous deformation of \f$C\f$. Hence, deciding if \f$C\f$ is contractible in \f$\cal{M}\f$ is equivalent to test if \f$C'\f$ is contractible in \f$\cal{Q}\f$.
+
+\subsection SMTopology_Canonical Canonical Form
+
+In order to test if two input curves \f$C\f$ and \f$D\f$ in \f$\cal{M}\f$ are homotopic they are first replaced by curves \f$C'\f$ and \f$D'\f$ in \f$\cal{Q}\f$ as above. Those curves are further transformed into <em>canonical forms</em> that only depend on their homotopy classes. The transformation to canonical form relies on three basic operations that we now describe.
+-# A <em>bracket</em> in a curve is a subsequence of edges along a row of quadrilaterals, surrounded by two edges along the end sides of the row. A bracket can be flattened by replacing the corresponding subpath with a shorter subpath going along the other long side of the row. See \cgalFigureRef{fig_bracket}. 
+\cgalFigureBegin{fig_bracket,bracket.svg}
+ Left, a blue curve in a quadrangulation (for clarity the quadrangulation has more than two vertices). Middle, a bracket of the blue curve. Right, the bracket has been flattened.
+    \cgalFigureEnd
+
+-# A <em>spur</em> in a curve is a subsequence of two opposite edges. A spur can be deleted to shorten the curve. See \cgalFigureRef{fig_spur}. 
+\cgalFigureBegin{fig_spur,spur.svg}
+ Removing a spur.
+    \cgalFigureEnd
+
+-# A <em>right L-shape</em> in a curve is a subsequence of edges going along the exterior side of a sequence of quadrilaterals forming an L, with the interior of the L to its right. This notion takes into account the traversal direction of the curve. A right L-shape subpath can be pushed to the right by replacing it with the other side of the L-shaped sequence of quadrilaterals. See \cgalFigureRef{fig_push_right}
+\cgalFigureBegin{fig_push_right,push_right.svg}
+ Pushing an L-shaped subpath to its right.
+    \cgalFigureEnd
+
+The canonical form of a curve is obtained by flattening its brackets, removing its spurs and pushing its right L-shapes to the right until the curve has no more brackets, spurs or L-shapes. This can be done in time proportional to the number of edges of the curve. Note that the above three operations preserve the homotopy class of the curve.
+
+\subsection SMTopology_Homotopy_Test Homotopy Test 
+It can be proved that the canonical form is uniquely defined and only depends on the homotopy class of the curve. Hence, the curves \f$C'\f$ and \f$D'\f$ in \f$\cal{Q}\f$ are homotopic if and only if their canonical forms are equal. Since each curve is defined as a sequence of (oriented) edges up to a cyclic permutation, we resort to the Knuth-Morris-Pratt algorithm to decide in linear time if the canonical forms are the same up to a cyclic permutation.
+
+\section SMTopology_History Implementation History
+
+*/
+} /* namespace CGAL */

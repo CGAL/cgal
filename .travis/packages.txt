@@ -122,6 +122,7 @@ Surface_mesh_segmentation
 Surface_mesh_shortest_path 
 Surface_mesh_simplification 
 Surface_mesh_skeletonization 
+Surface_mesh_topology 
 Surface_sweep_2 
 TDS_2 
 TDS_3 

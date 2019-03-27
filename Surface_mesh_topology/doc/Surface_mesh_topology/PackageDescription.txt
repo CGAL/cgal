@@ -1,0 +1,29 @@
+/// \defgroup PkgSurfaceMeshTopology Surface Mesh Topology Reference
+
+/// \defgroup PkgSurfaceMeshTopologyClasses Classes
+/// \ingroup PkgSurfaceMeshTopology
+
+/*!
+\addtogroup PkgSurfaceMeshTopology
+\cgalPkgDescriptionBegin{Surface Mesh Topology,PkgSurfaceMeshTopologySummary}
+\cgalPkgPicture{surface-mesh-topology-logo.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Guillaume Damiand, Francis Lazarus}
+\cgalPkgDesc{This package provides methods for testing if two (closed) paths on a combinatorial surface are homotopic. The user can choose between free homotopy and homotopy with fixed endpoints. The algorithms are based on a paper by Erickson and Whittlesey \cgalCite{ew-tcsr-13}. If the input surface has size \f$n\f$, the construction of a `Surface_mesh_curve_topology` takes \f$O(n)\f$ time. The homotopy tests are then linear in the size of the input curves.}
+\cgalPkgManuals{Chapter_Surface_Mesh_Topology,PkgSurfaceMeshTopology}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.XX}
+\cgalPkgBib{cgal:d-smtopology}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Classes ##
+- `CGAL::Surface_mesh_curve_topology<CMap>`
+- `CGAL::Path_on_surface<CMap>`
+- `CGAL::Combinatorial_map_2_incremental_builder<CMap>`
+
+*/
