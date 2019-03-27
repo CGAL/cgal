@@ -4,7 +4,7 @@
   test for number type modul 
 */
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <cassert>
 #include <CGAL/Residue.h>
 #include <CGAL/FPU.h>
