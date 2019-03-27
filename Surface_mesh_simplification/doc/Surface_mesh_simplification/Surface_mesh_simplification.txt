@@ -32,8 +32,8 @@ The algorithm implemented here is generic in the sense that it does not require 
 to be of a particular type but to be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 We give examples for `Surface_mesh`, `Polyhedron_3`, and OpenMesh.
 
-The design is <A HREF="http://en.wikipedia.org/wiki/Policy-based_design"><I>policy-based</I></A>
-(<A HREF="http://en.wikipedia.org/wiki/Policy-based_design"><TT>http://en.wikipedia.org/wiki/Policy-based_design</TT></A>),
+The design is <A HREF="https://en.wikipedia.org/wiki/Policy-based_design"><I>policy-based</I></A>
+(<A HREF="https://en.wikipedia.org/wiki/Policy-based_design"><TT>https://en.wikipedia.org/wiki/Policy-based_design</TT></A>),
 meaning that you can customize some aspects of the process by passing a set of
 <I>policy objects</I>. Each policy object specifies a particular aspect of the algorithm,
 such as how edges are selected and where the replacement vertex is placed. All policies have 
@@ -215,7 +215,7 @@ returns `true` the algorithm terminates.
 
 \subsection Surface_mesh_simplificationOptionalNamed Optional Named Parameters
 
-The notion of <I>named parameters</I> was also introduced in the <span class="textsc">Bgl</span>. You can read about it in \cgalCite{cgal:sll-bgl-02} or the following site: <A HREF="http://www.boost.org/libs/graph/doc/bgl_named_params.html"><TT>http://www.boost.org/libs/graph/doc/bgl_named_params.html</TT></A>. Named parameters allow the user to specify only those parameters which are really needed, by name, making the parameter ordering unimportant.
+The notion of <I>named parameters</I> was also introduced in the <span class="textsc">Bgl</span>. You can read about it in \cgalCite{cgal:sll-bgl-02} or the following site: <A HREF="https://www.boost.org/libs/graph/doc/bgl_named_params.html"><TT>https://www.boost.org/libs/graph/doc/bgl_named_params.html</TT></A>. Named parameters allow the user to specify only those parameters which are really needed, by name, making the parameter ordering unimportant.
 
 Say there is a function `f()` that takes 3 parameters called `name`, `age` and `gender`, and you have variables `n,a and g` to pass as parameters to that function. Without named parameters, you would call it like this: `f(n,a,g)`, but with named parameters, you call it like this: `f(name(n).age(a).gender(g))`.
 
