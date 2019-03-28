@@ -555,6 +555,53 @@ optional< Rational_time< typename K::FT> > compute_degenerate_offset_lines_isec_
   return boost::none;
 }
 
+// compute the time of the intersection of the bisector of (e0,e1) with the bisector of (e2,e3) on the bisector of (e0,e1)
+// in the case the bisector are not collinear and e2 and e3 are collinear
+template<class K>
+optional< Rational_time_4< typename K::FT> > compute_degenerate_offset_lines_isec_timeC2 ( const typename K::Segment_2& e0,
+                                                                                           const typename K::Segment_2& e1,
+                                                                                           const typename K::Segment_2& e2,
+                                                                                           const typename K::Segment_2& e3)
+{
+  typedef typename K::FT FT ;
+
+  typedef Point_2<K> Point_2 ;
+  typedef Line_2 <K> Line_2 ;
+
+  typedef optional<Line_2>  Optional_line_2 ;
+
+  Optional_line_2 l0 = compute_line_ceoffC2(e0) ;
+  Optional_line_2 l1 = compute_line_ceoffC2(e1) ;
+  Optional_line_2 l2 = compute_line_ceoffC2(e2) ;
+
+  if ( l0 && l1 && l2)
+  {
+    // define the bisector of e2 and e3 (free from roots)
+    Point_2 bisector_pt = e2.target() == e3.source()
+                        ? e2.target()
+                        : validate( compute_oriented_midpoint(e2, e3) ) ;
+
+
+    // (a,b,c) is a line perpedincular to the primary edge through bisector_pt.
+    // If e0 and e1 are collinear this line is the actual perpendicular bisector.
+    FT a = -l2->b(),
+       b = l2->a(),
+       c = - a * bisector_pt.x() - b * bisector_pt.y();
+
+    FT sum_sq_0 = square(l0->a()) + square(l0->b());
+    FT sum_sq_1 = square(l1->a()) + square(l1->b());
+
+    return boost::make_optional(
+      Rational_time_4<FT>(   ( a * l0->b() - l0->a() * b ) * l1->c()
+                           + ( l1->a() * b - a * l1->b() ) * l0->c()
+                           + ( l0->a() * l1->b() - l1->a() * l0->b() ) * c,
+                         ( l1->a() * b - a * l1->b() ), a * l0->b() - l0->a() * b, 0, 0,
+                         sum_sq_0, sum_sq_1, 0, 0) );
+  }
+
+  return boost::none;
+}
+
 //
 // Calls the appropriate function depending on the collinearity of the edges.
 //
@@ -576,9 +623,12 @@ optional< Rational_time_4< typename K::FT> > compute_offset_lines_isec_timeC2 ( 
                                                                                 const typename K::Segment_2& e2,
                                                                                 const typename K::Segment_2& e3)
 {
+  CGAL_assertion( !collinear(e0[0], e0[1], e1[0]) || !collinear(e0[0], e0[1], e1[1]) );
 
-  // TODO: handle degenerate cases (compute_degenerate_offset_lines_isec_timeC2 equivalent)
-  return compute_normal_offset_lines_isec_timeC2<K>(e0, e1, e2, e3);
+  if ( !collinear(e2[0], e2[1], e3[0]) || !collinear(e2[0], e2[1], e3[1]) )
+    return compute_normal_offset_lines_isec_timeC2<K>(e0, e1, e2, e3);
+  else
+    return compute_degenerate_offset_lines_isec_timeC2<K>(e0, e1, e2, e3);
 }
 
 
