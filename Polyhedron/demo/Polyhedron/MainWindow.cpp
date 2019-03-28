@@ -1716,7 +1716,7 @@ void MainWindow::readSettings()
 {
     viewer->setAntiAliasing(settings.value("antialiasing", false).toBool());
     viewer->setFastDrawing(settings.value("quick_camera_mode", true).toBool());
-    scene->enableVisibilityRecentering(settings.value("offset_update", true).toBool());
+    scene->enableVisibilityRecentering(settings.value("offset_update", false).toBool());
     viewer->textRenderer()->setMax(settings.value("max_text_items", 10000).toInt());
     viewer->setTotalPass(settings.value("transparency_pass_number", 4).toInt());
     CGAL::Three::Three::s_defaultSMRM = CGAL::Three::Three::modeFromName(
@@ -2107,7 +2107,7 @@ void MainWindow::on_actionPreferences_triggered()
   prefdiag.linesHorizontalSlider->setMaximum(lineWidth[1]);
   
   prefdiag.offset_updateCheckBox->setChecked(
-        settings.value("offset_update", true).toBool());
+        settings.value("offset_update", false).toBool());
   connect(prefdiag.offset_updateCheckBox, SIGNAL(toggled(bool)),
           scene, SLOT(enableVisibilityRecentering(bool)));
   
