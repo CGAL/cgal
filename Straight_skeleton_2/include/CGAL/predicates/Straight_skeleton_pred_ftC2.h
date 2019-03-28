@@ -382,6 +382,8 @@ oriented_side_of_event_point_wrt_bisectorC2_new ( intrusive_ptr< Trisegment_2<K>
   std::cout << "e1==event->e2() " << (e1==event->e2())  << "\n";
 #endif
 
+// TODO: optimisation in case e0/e1 is in event --> same algo but using a Rational_time instead of Rational_time_4
+
   //TODO handle degenerate cases
 CGAL_assertion ( !certainly( are_edges_parallelC2(e0,e1) ) );
 
@@ -391,8 +393,13 @@ CGAL_assertion ( !certainly( are_edges_parallelC2(e0,e1) ) );
   typedef optional<Rational_time<FT> > Optional_rational;
   typedef optional<Rational_time_4<FT> > Optional_rational_4;
 
+  const Segment_2<K>& ee0 = event->collinearity() == TRISEGMENT_COLLINEARITY_NONE
+                          ? event->e0() : event->collinear_edge();
+  const Segment_2<K>& ee1 = event->collinearity() == TRISEGMENT_COLLINEARITY_NONE
+                          ? event->e1() : event->non_collinear_edge();
+
   Optional_rational t_event = compute_offset_lines_isec_timeC2(event);
-  Optional_rational_4 t_l0l1_e0e1 = compute_offset_lines_isec_timeC2<K>(event->e0(), event->e1(), e0, e1);
+  Optional_rational_4 t_l0l1_e0e1 = compute_offset_lines_isec_timeC2<K>(ee0, ee1, e0, e1);
 
   Comparison_result time_sign = t_l0l1_e0e1->compare(*t_event);
 
@@ -405,10 +412,10 @@ std::cout << "t_l0l1_e0e1 " << t_l0l1_e0e1->to_nt() << "\n";
     return ON_ORIENTED_BOUNDARY;
 
   typename cpp11::result_of<typename K::Intersect_2(Line_2,Line_2)>::type
-    res = typename K::Intersect_2()(Line_2(event->e0()),
-                                    Line_2(event->e1()));
+    res = typename K::Intersect_2()(Line_2(ee0),
+                                    Line_2(ee1));
 
-  CGAL_assertion( res != boost::none); // TODO handle deg case
+  CGAL_assertion( res != boost::none);
   const Point_2* event_pt = boost::get<Point_2>(&(*res));
   CGAL_assertion(event_pt != NULL);
 
