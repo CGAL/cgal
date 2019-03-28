@@ -363,7 +363,7 @@ Uncertain<Oriented_side>
 oriented_side_of_event_point_wrt_bisectorC2_new ( intrusive_ptr< Trisegment_2<K> > const& event
                                             , Segment_2<K>                     const& e0
                                             , Segment_2<K>                     const& e1
-                                            , intrusive_ptr< Trisegment_2<K> > const& /* v01_event */ // can be null
+                                            , intrusive_ptr< Trisegment_2<K> > const& v01_event // can be null
                                             , bool                                    /* primary_is_0 */
                                             )
 {
@@ -420,15 +420,24 @@ std::cout << "t_l0l1_e0e1 " << t_l0l1_e0e1->to_nt() << "\n";
   CGAL_assertion(event_pt != NULL);
 
 
+
   // construct the bisector of e0 and e1
-  typename cpp11::result_of<typename K::Intersect_2(Line_2,Line_2)>::type
-    res2 = typename K::Intersect_2()(Line_2(e0), Line_2(e1));
-  CGAL_assertion( res2 != boost::none); // TODO handle deg case
-  const Point_2* bisector_pt = boost::get<Point_2>(&(*res2));
-  CGAL_assertion(bisector_pt != NULL);
+  Point_2 bisector_pt;
+  if (!v01_event)
+  {
+    bisector_pt = e1.source();
+    CGAL_assertion( e0.target()==bisector_pt );
+  }
+  else
+  {
+    typename cpp11::result_of<typename K::Intersect_2(Line_2,Line_2)>::type
+      res2 = typename K::Intersect_2()(Line_2(e0), Line_2(e1));
+    CGAL_assertion( res2 != boost::none && boost::get<Point_2>(&(*res2))!=NULL );
+    bisector_pt = boost::get<Point_2>(*res2);
+  }
 
   typename K::Vector_2 n1 =    e0.to_vector(),
-                       n2 =    e1.to_vector();
+                         n2 =    e1.to_vector();
 
   if ( CGAL::compare( n1.x()*n2.y(), n2.x()*n1.y() ) == SMALLER )
     n2=-n2;
@@ -438,8 +447,8 @@ std::cout << "t_l0l1_e0e1 " << t_l0l1_e0e1->to_nt() << "\n";
   const FT sq_norm1 = n1.squared_length(),
            sq_norm2 = n2.squared_length();
 
-  const FT v1 = n1.x() * (event_pt->y()-bisector_pt->y()) - n1.y() * (event_pt->x()-bisector_pt->x());
-  const FT v2 = n2.x() * (event_pt->y()-bisector_pt->y()) - n2.y() * (event_pt->x()-bisector_pt->x());
+  const FT v1 = n1.x() * (event_pt->y()-bisector_pt.y()) - n1.y() * (event_pt->x()-bisector_pt.x());
+  const FT v2 = n2.x() * (event_pt->y()-bisector_pt.y()) - n2.y() * (event_pt->x()-bisector_pt.x());
   // we want to evaluate the sign of (v1/ sqrt(sq_norm1) + v2/sqrt(sq_norm2))
   //TODO: expand the computation here instead of relying on Sqrt_extension?
   CGAL::Sign common_pt_position = CGAL::compare(v1 * make_sqrt(FT(1)/sq_norm1), - v2 * make_sqrt(FT(1)/sq_norm2));
