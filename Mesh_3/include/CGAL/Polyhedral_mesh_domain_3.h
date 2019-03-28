@@ -211,7 +211,7 @@ public:
 
   BOOST_MPL_HAS_XXX_TRAIT_DEF(HalfedgeDS)
 
-  template <typename P, bool is_a_CGAL_Polyhedron_3 = has_HalfedgeDS<P>::value>
+  template <typename P>
   struct Primitive_type {
       //setting OneFaceGraphPerTree to false transforms the id type into 
       //std::pair<FD, const FaceGraph*>.
@@ -230,41 +230,7 @@ public:
     }
   }; // Primitive_type (for non-Polyhedron_3)
 
-  template <typename P> struct Primitive_type<P, true> {
-    typedef AABB_face_graph_triangle_primitive<P > type;
-
-    static
-    typename IGT_::Triangle_3 datum(const typename type::Id face_handle) {
-      typedef typename IGT_::Point_3 Point;
-      const Point& a = face_handle->halfedge()->vertex()->point();
-      const Point& b = face_handle->halfedge()->next()->vertex()->point();
-      const Point& c = face_handle->halfedge()->next()->next()->vertex()->point();
-      return typename IGT_::Triangle_3(a,b,c);
-    }
-
-    static Surface_patch_index get_index(const typename type::Id face_handle,
-                                         Tag_false)
-    {
-      typename boost::property_map<P, face_patch_id_t<Patch_id> >::type pmap;
-      return get(pmap, face_handle);
-    }
-
-    static Surface_patch_index get_index(const typename type::Id,
-                                         Tag_true)
-    {
-      return Surface_patch_index(0,1);
-    }
-
-    static Surface_patch_index get_index(const typename type::Id face_handle)
-    {
-      namespace m = boost::mpl;
-      return get_index(face_handle,
-                       Boolean_tag<m::or_<boost::is_same<Patch_id, void>,
-                                          boost::is_same<Patch_id, Tag_false>
-                       >::value>());
-    }
-  }; // Primitive_type specialized for CGAL::Polyehdron_3
-
+ 
 public:
   typedef typename Primitive_type<Polyhedron>::type       Ins_fctor_primitive;
   typedef CGAL::AABB_traits<IGT, Ins_fctor_primitive>     Ins_fctor_traits;
