@@ -374,33 +374,20 @@ optional< Rational_time_4< typename K::FT> > compute_normal_offset_lines_isec_ti
 template<class K>
 optional< Point_2<K> > compute_oriented_midpoint ( Segment_2<K> const& e0, Segment_2<K> const& e1 )
 {
-  bool ok = false ;
-  
-  typedef typename K::FT FT ;
-  
-  FT delta01 = CGAL::squared_distance(e0.target(),e1.source());
-  FT delta10 = CGAL::squared_distance(e1.target(),e0.source());
-  
-  Point_2<K> mp ;
-   
-  if ( CGAL_NTS is_finite(delta01) &&  CGAL_NTS is_finite(delta10) )
-  {
-    if ( delta01 <= delta10 )
-         mp = CGAL::midpoint(e0.target(),e1.source());
-    else mp = CGAL::midpoint(e1.target(),e0.source());
-    
-    CGAL_STSKEL_TRAITS_TRACE("Computing oriented midpoint between:"
-                             << "\ne0: " << s2str(e0)
-                             << "\ne1: " << s2str(e1)
-                             << "\nmp=" << p2str(mp)
-                            );
-                            
-    ok = CGAL_NTS is_finite(mp.x()) && CGAL_NTS is_finite(mp.y());
-  }
-  
+  Point_2<K> mp = CGAL::compare_distance(e0.target(), e1.source(), e1.target(), e0.source())
+                ? CGAL::midpoint(e0.target(),e1.source())
+                : CGAL::midpoint(e1.target(),e0.source());
+
+  CGAL_STSKEL_TRAITS_TRACE("Computing oriented midpoint between:"
+                           << "\ne0: " << s2str(e0)
+                           << "\ne1: " << s2str(e1)
+                           << "\nmp=" << p2str(mp)
+                          );
+
+  bool ok = CGAL_NTS is_finite(mp.x()) && CGAL_NTS is_finite(mp.y());
+
   return cgal_make_optional(ok,mp);
 }
-
 
 //
 // Given 3 oriented straight line segments: e0, e1, e2 and the corresponding offseted segments: e0*, e1* and e2*,
