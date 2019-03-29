@@ -879,6 +879,8 @@ public:
         --removed_edges_;
         eremoved_[Edge_index(Halfedge_index(idx))] = false;
         hprops_.reset(Halfedge_index(idx));
+        hprops_.reset(opposite(Halfedge_index(idx)));
+        eprops_.reset(Edge_index(Halfedge_index(idx)));
         return Halfedge_index(idx);
       } else {
         eprops_.push_back();
