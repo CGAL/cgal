@@ -550,12 +550,18 @@ int zoomToId(const Mesh& mesh,
     bool found = false;
     BOOST_FOREACH(vertex_descriptor vh, vertices(mesh))
     {
-      if(get(vidmap, vh) == id)
+      std::size_t cur_id = get(vidmap, vh);
+      if( cur_id == id)
       {
         p = Point(get(ppmap, vh).x() + offset.x,
                   get(ppmap, vh).y() + offset.y,
                   get(ppmap, vh).z() + offset.z);
-        selected_fh = face(halfedge(vh, mesh), mesh);
+        typename boost::graph_traits<Mesh>::halfedge_descriptor hf = halfedge(vh, mesh);
+        if(CGAL::is_border_edge(hf, mesh))
+        {
+          hf = opposite(hf, mesh);
+        }
+        selected_fh = face(hf, mesh);
         normal = CGAL::Polygon_mesh_processing::compute_vertex_normal(vh, mesh);
         found = true;
         break;
@@ -573,17 +579,27 @@ int zoomToId(const Mesh& mesh,
     {
       if(get(eidmap, halfedge(e, mesh))/2 == id)
       {
+        typename boost::graph_traits<Mesh>::halfedge_descriptor hf = halfedge(e, mesh);
         const Point& p1 = get(ppmap, source(e, mesh));
         const Point& p2 = get(ppmap, target(e, mesh));
         p = Point((float)(p1.x() + p2.x()) / 2 + offset.x,
                   (float)(p1.y() + p2.y()) / 2 + offset.y,
                   (float)(p1.z() + p2.z()) / 2 + offset.z );
-        typename Traits::Vector_3 normal1 = CGAL::Polygon_mesh_processing::compute_face_normal(face(halfedge(e, mesh),mesh),
-                                                                                               mesh);
-        typename Traits::Vector_3 normal2 = CGAL::Polygon_mesh_processing::compute_face_normal(face(opposite(halfedge(e, mesh), mesh), mesh),
-                                                                                               mesh);
+        typename Traits::Vector_3 normal1(0,0,0);
+        if(!is_border(hf, mesh))
+        {
+          normal1= CGAL::Polygon_mesh_processing::compute_face_normal(face(hf,mesh),
+                                                                      mesh);
+          selected_fh = face(hf, mesh);
+        }
+        typename Traits::Vector_3 normal2(0,0,0);
+        if(!is_border(opposite(hf, mesh), mesh))
+        {
+          normal2 = CGAL::Polygon_mesh_processing::compute_face_normal(face(opposite(hf, mesh), mesh),
+                                                                       mesh);
+          selected_fh = face(hf, mesh);
+        }
         normal = 0.5*normal1+0.5*normal2;
-        selected_fh = face(halfedge(e, mesh), mesh);
         found = true;
         break;
       }
