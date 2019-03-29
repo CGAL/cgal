@@ -1273,6 +1273,27 @@ namespace CGAL {
       mnb_times_reserved_marks[amark]=0;
     }
 
+    template <unsigned int i, unsigned int d=dimension>
+    bool belong_to_same_cell(Dart_const_handle adart1,
+                             Dart_const_handle adart2) const
+    { return CGAL::belong_to_same_cell<Self, i, d>(*this, adart1, adart2); }
+  
+    template <unsigned int i, unsigned int d=dimension>
+    bool is_whole_cell_unmarked(Dart_const_handle adart, size_type amark) const
+    { return CGAL::is_whole_cell_unmarked<Self, i, d>(*this, adart, amark); }
+
+    template <unsigned int i, unsigned int d=dimension>
+    bool is_whole_cell_marked(Dart_const_handle adart, size_type amark) const
+    { return CGAL::is_whole_cell_marked<Self, i, d>(*this, adart, amark); }
+
+    template <unsigned int i, unsigned int d=dimension>
+    size_type mark_cell(Dart_const_handle adart, size_type amark) const
+    { return CGAL::mark_cell<Self, i, d>(*this, adart, amark); }
+
+    template <unsigned int i, unsigned int d=dimension>
+    size_type unmark_cell(Dart_const_handle adart, size_type amark) const
+    { return CGAL::unmark_cell<Self, i, d>(*this, adart, amark); }
+
     /** Test if this map is without boundary for a given dimension.
      * @param i the dimension.
      * @return true iff all the darts are not i-free.
@@ -2910,9 +2931,8 @@ namespace CGAL {
     {
       CGAL_assertion((!this->template is_free<1>(d1)));
       CGAL_assertion((!this->template is_free<2>(d1)));
-      /* CGAL_assertion((belong_to_same_cell<Self, 0>(*this,
-                                                   this->template beta<1>(d1),
-                                                   d2))); */
+      /* CGAL_assertion((belong_to_same_cell<0>(this->template beta<1>(d1),
+                                                d2))); */
       
       if (d2==beta<2>(d1)) { return 0; }
       
@@ -2937,9 +2957,8 @@ namespace CGAL {
     {
       CGAL_assertion((!this->template is_free<1>(d1)));
       CGAL_assertion((!this->template is_free<2>(d1)));
-      /* CGAL_assertion((belong_to_same_cell<Self, 0>(*this,
-                                                   this->template beta<1>(d1),
-                                                   d2))); */
+      /* CGAL_assertion((belong_to_same_cell<0>(this->template beta<1>(d1),
+                                                d2))); */
       
       if (d2==beta<2>(d1)) { return 0; }
 
@@ -4342,12 +4361,12 @@ namespace CGAL {
            !is_face_combinatorial_polygon(d4, 3) ) return false;
 
       // TODO do better with marks (?).
-      if ( belong_to_same_cell<Self,2,1>(*this, d1, d2) ||
-           belong_to_same_cell<Self,2,1>(*this, d1, d3) ||
-           belong_to_same_cell<Self,2,1>(*this, d1, d4) ||
-           belong_to_same_cell<Self,2,1>(*this, d2, d3) ||
-           belong_to_same_cell<Self,2,1>(*this, d2, d4) ||
-           belong_to_same_cell<Self,2,1>(*this, d3, d4) ) return false;
+      if ( belong_to_same_cell<2,1>(d1, d2) ||
+           belong_to_same_cell<2,1>(d1, d3) ||
+           belong_to_same_cell<2,1>(d1, d4) ||
+           belong_to_same_cell<2,1>(d2, d3) ||
+           belong_to_same_cell<2,1>(d2, d4) ||
+           belong_to_same_cell<2,1>(d3, d4) ) return false;
 
       if ( beta(d1,1,2)!=beta(d3,0) ||
            beta(d4,0,2)!=beta(d3,1) ||
@@ -4440,21 +4459,21 @@ namespace CGAL {
           !is_face_combinatorial_polygon(d6, 4) ) return false;
 
       // TODO do better with marks.
-      if ( belong_to_same_cell<Self,2,1>(*this, d1, d2) ||
-           belong_to_same_cell<Self,2,1>(*this, d1, d3) ||
-           belong_to_same_cell<Self,2,1>(*this, d1, d4) ||
-           belong_to_same_cell<Self,2,1>(*this, d1, d5) ||
-           belong_to_same_cell<Self,2,1>(*this, d1, d6) ||
-           belong_to_same_cell<Self,2,1>(*this, d2, d3) ||
-           belong_to_same_cell<Self,2,1>(*this, d2, d4) ||
-           belong_to_same_cell<Self,2,1>(*this, d2, d5) ||
-           belong_to_same_cell<Self,2,1>(*this, d2, d6) ||
-           belong_to_same_cell<Self,2,1>(*this, d3, d4) ||
-           belong_to_same_cell<Self,2,1>(*this, d3, d5) ||
-           belong_to_same_cell<Self,2,1>(*this, d3, d6) ||
-           belong_to_same_cell<Self,2,1>(*this, d4, d5) ||
-           belong_to_same_cell<Self,2,1>(*this, d4, d6) ||
-           belong_to_same_cell<Self,2,1>(*this, d5, d6) )
+      if ( belong_to_same_cell<2,1>(d1, d2) ||
+           belong_to_same_cell<2,1>(d1, d3) ||
+           belong_to_same_cell<2,1>(d1, d4) ||
+           belong_to_same_cell<2,1>(d1, d5) ||
+           belong_to_same_cell<2,1>(d1, d6) ||
+           belong_to_same_cell<2,1>(d2, d3) ||
+           belong_to_same_cell<2,1>(d2, d4) ||
+           belong_to_same_cell<2,1>(d2, d5) ||
+           belong_to_same_cell<2,1>(d2, d6) ||
+           belong_to_same_cell<2,1>(d3, d4) ||
+           belong_to_same_cell<2,1>(d3, d5) ||
+           belong_to_same_cell<2,1>(d3, d6) ||
+           belong_to_same_cell<2,1>(d4, d5) ||
+           belong_to_same_cell<2,1>(d4, d6) ||
+           belong_to_same_cell<2,1>(d5, d6) )
         return false;
 
       if ( beta(d1,2)    !=beta(d4,1,1) ||
@@ -5042,7 +5061,7 @@ namespace CGAL {
           if ( od==null_handle ) return false;
 
           // of and *it must belong to the same vertex of the same volume
-          if ( !belong_to_same_cell<Self, 0, 2>(*this, od, *it) )
+          if ( !belong_to_same_cell<0, 2>(od, *it) )
             return false;
         }
         prec = *it;
@@ -5052,7 +5071,7 @@ namespace CGAL {
       od = other_extremity(prec);
       if ( od==null_handle ) return false;
 
-      if (!belong_to_same_cell<Self, 0, 2>(*this, od, *afirst))
+      if (!belong_to_same_cell<0, 2>(od, *afirst))
         return false;
 
       return true;
