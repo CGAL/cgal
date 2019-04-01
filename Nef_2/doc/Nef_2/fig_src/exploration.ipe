@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
-<ipe version="70206" creator="Ipe 7.2.11">
-<info created="D:20190401141158" modified="D:20190401141158"/>
+<ipe version="70206" creator="Ipe 7.2.7">
+<info created="D:20190401141158" modified="D:20190401143746"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -254,7 +254,14 @@ h
 <page>
 <layer name="alpha"/>
 <view layers="alpha" active="alpha"/>
-<text layer="alpha" matrix="1 0 0 1 324.825 -94.51" transformations="translations" pos="208 752" stroke="black" type="label" valign="baseline" style="math">(\infty,\infty)</text>
+<path layer="alpha" fill="lightgreen" tiling="rising">
+128 640 m
+128 512 l
+512 512 l
+512 640 l
+h
+</path>
+<text matrix="1 0 0 1 292.084 -82.9105" transformations="translations" pos="208 752" stroke="black" type="label" width="65.023" height="15.477" depth="5.15" valign="baseline" size="huge" style="math">(\infty,\infty)</text>
 <path stroke="red" fill="lightgreen" dash="dashed" pen="fat" tiling="rising">
 128 640 m
 128 256 l
@@ -262,49 +269,28 @@ h
 512 640 l
 h
 </path>
-<path stroke="red" rarrow="normal/normal">
+<path stroke="red" pen="fat" rarrow="normal/normal">
 112 656 m
 128 640 l
 </path>
-<path stroke="1 0 0" arrow="normal/normal">
+<path stroke="1 0 0" pen="fat" arrow="normal/normal">
 512 256 m
 528 240 l
 </path>
-<path stroke="1 0 0" arrow="normal/normal">
+<path stroke="1 0 0" pen="fat" arrow="normal/normal">
 128 256 m
 112 240 l
 </path>
-<path stroke="red" arrow="normal/normal">
+<path stroke="red" pen="fat" arrow="normal/normal">
 512 640 m
 528 656 l
 </path>
-<path stroke="blue" fill="lightgreen" pen="fat" rarrow="normal/normal" tiling="falling">
-320 576 m
-320 320 l
-</path>
-<path stroke="blue" fill="lightgreen" pen="fat" arrow="normal/normal" tiling="falling">
-192 448 m
-448 448 l
-</path>
-<text matrix="1 0 0 1 -25.3308 -20.1157" transformations="translations" pos="135.457 646.568" stroke="blue" type="label" valign="baseline" style="math">v_0
-</text>
-<text matrix="1 0 0 1 -26.8214 -385.178" transformations="translations" pos="135.457 646.568" stroke="blue" type="label" valign="baseline" style="math">v_1</text>
-<text matrix="1 0 0 1 383.687 -385.178" transformations="translations" pos="135.457 646.568" stroke="blue" type="label" valign="baseline" style="math">v_2
-</text>
-<text matrix="1 0 0 1 382.942 -21.606" transformations="translations" pos="135.457 646.568" stroke="blue" type="label" valign="baseline" style="math">v_3
-</text>
-<text matrix="1 0 0 1 -26.8214 -125.91" transformations="translations" pos="135.457 646.568" stroke="blue" type="label" valign="baseline" style="math">v_4
-</text>
-<text matrix="1 0 0 1 385.177 -125.91" transformations="translations" pos="135.457 646.568" stroke="blue" type="label" valign="baseline" style="math">v_5
-
-</text>
-<path fill="lightgreen" tiling="rising">
-128 640 m
-128 512 l
-512 512 l
-512 640 l
-h
-</path>
+<text matrix="1 0 0 1 -31.8403 -19.6131" transformations="translations" pos="135.457 646.568" stroke="black" type="label" width="17.303" height="8.896" depth="3.1" valign="baseline" size="huge">$v_0$</text>
+<text matrix="1 0 0 1 -31.1243 -383.266" transformations="translations" pos="135.457 646.568" stroke="black" type="label" width="17.303" height="8.896" depth="3.1" valign="baseline" size="huge">$v_1$</text>
+<text matrix="1 0 0 1 384.563 -383.374" transformations="translations" pos="135.457 646.568" stroke="black" type="label" width="17.303" height="8.896" depth="3.1" valign="baseline" size="huge">$v_2$</text>
+<text matrix="1 0 0 1 384.731 -19.3815" transformations="translations" pos="135.457 646.568" stroke="black" type="label" width="17.303" height="8.896" depth="3.1" valign="baseline" size="huge">$v_3$</text>
+<text matrix="1 0 0 1 -31.298 -123.581" transformations="translations" pos="135.457 646.568" stroke="black" type="label" width="17.303" height="8.896" depth="3.1" valign="baseline" size="huge">$v_4$</text>
+<text matrix="1 0 0 1 384.701 -123.471" transformations="translations" pos="135.457 646.568" stroke="black" type="label" width="17.303" height="8.896" depth="3.1" valign="baseline" size="huge">$v_5$</text>
 <path stroke="lightgreen" fill="lightgreen" pen="fat" tiling="falling">
 512 512 m
 128 512 l
@@ -317,10 +303,18 @@ h
 512 512 m
 544 512 l
 </path>
-<text transformations="translations" pos="432 432" stroke="red" type="label" valign="baseline">x</text>
-<text transformations="translations" pos="304 560" stroke="red" type="label" valign="baseline">y</text>
-<text matrix="1 0 0 1 -103.565 -90.7846" transformations="translations" pos="208 752" stroke="black" type="label" valign="baseline" style="math">(-\infty,\infty)</text>
-<text matrix="1 0 0 1 -125.915 -523.644" transformations="translations" pos="208 752" stroke="black" type="label" valign="baseline" style="math">(-\infty,-\infty)</text>
-<text matrix="1 0 0 1 328.55 -525.134" transformations="translations" pos="208 752" stroke="black" type="label" valign="baseline" style="math">(\infty,-\infty)</text>
+<text matrix="1 0 0 1 -155.63 -82.9888" transformations="translations" pos="208 752" stroke="black" type="label" width="81.094" height="15.477" depth="5.15" valign="baseline" size="huge" style="math">(-\infty,\infty)</text>
+<text matrix="1 0 0 1 -139.864 -534.994" transformations="translations" pos="208 752" stroke="black" type="label" width="97.165" height="15.477" depth="5.15" valign="baseline" size="huge" style="math">(-\infty,-\infty)</text>
+<text matrix="1 0 0 1 292.266 -534.895" transformations="translations" pos="208 752" stroke="black" type="label" width="81.094" height="15.477" depth="5.15" valign="baseline" size="huge" style="math">(\infty,-\infty)</text>
+<text transformations="translations" pos="304 560" stroke="blue" type="label" width="10.606" height="8.894" depth="4.02" valign="baseline" size="huge">$y$</text>
+<text transformations="translations" pos="432 432" stroke="blue" type="label" width="11.497" height="8.896" depth="0" valign="baseline" size="huge">$x$</text>
+<path stroke="blue" fill="lightgreen" pen="fat" arrow="normal/normal" tiling="falling">
+192 448 m
+448 448 l
+</path>
+<path stroke="blue" fill="lightgreen" pen="fat" rarrow="normal/normal" tiling="falling">
+320 576 m
+320 320 l
+</path>
 </page>
 </ipe>
