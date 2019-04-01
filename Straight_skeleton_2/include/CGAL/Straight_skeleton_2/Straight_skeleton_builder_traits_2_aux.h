@@ -207,6 +207,25 @@ public:
   }
 };
 
+//  TODO need an overload for false_type
+template <class NT>
+bool is_sum_of_roots_zero_impl(const NT& a, const NT& b, const NT& c, const NT& d,
+                               const NT& ext_a, const NT& ext_b, const NT& ext_c, const NT& ext_d,
+                               boost::mpl::true_)
+{
+  return a * sqrt(ext_a) + b * sqrt(ext_b) + c * sqrt(ext_c) + d * sqrt(ext_d) == 0;
+}
+
+template <class NT>
+bool is_sum_of_roots_zero(const NT& a, const NT& b, const NT& c, const NT& d,
+                          const NT& ext_a, const NT& ext_b, const NT& ext_c, const NT& ext_d)
+{
+  typedef typename is_same_or_derived<Field_with_sqrt_tag,
+                                      typename Algebraic_structure_traits<NT>::Algebraic_category>::type AT_tag;
+  return is_sum_of_roots_zero_impl(a,b,c,d, ext_a, ext_b, ext_c, ext_d,
+                                   AT_tag());
+}
+
 // Represents numbers of the form N/(d0*sqrt(r0)+d1*sqrt(r1)+d2*sqrt(r2))
 // used to represent the time of trisegments
 template<class NT, bool has_sqrt = is_same_or_derived<Field_with_sqrt_tag,

@@ -398,7 +398,9 @@ oriented_side_of_event_point_wrt_bisectorC2_new ( intrusive_ptr< Trisegment_2<K>
   Optional_rational t_event = compute_offset_lines_isec_timeC2(event);
   Optional_rational_4 t_l0l1_e0e1 = compute_offset_lines_isec_timeC2<K>(ee0, ee1, e0, e1);
 
-  Comparison_result time_sign = t_l0l1_e0e1->compare(*t_event);
+  bool bisectors_are_parallel = t_l0l1_e0e1==boost::none;
+
+  Comparison_result time_sign = bisectors_are_parallel ? SMALLER : t_l0l1_e0e1->compare(*t_event);
 
 #ifdef SS_DEBUG_NEW_PREDICATES
 std::cout << "t_event " << t_event->to_nt() << "\n";
@@ -424,12 +426,12 @@ std::cout << "t_l0l1_e0e1 " << t_l0l1_e0e1->to_nt() << "\n";
 
     Point_2 bisector_pt = v01_event
                         ? validate( compute_oriented_midpoint(e0, e1) )
-                        : e1.source() ;
+                        : e1.source();
 
     Line_2 l0 = validate(compute_line_ceoffC2(e0)) ;
     Line_2 l1 = validate(compute_line_ceoffC2(e1)) ;
 
-    // (a,b,c) is a line perpedincular to the primary edge through bisector_pt.
+    // (a,b,c) is a line perpendicular to the primary edge through bisector_pt.
     // If e0 and e1 are collinear this line is the actual perpendicular bisector.
     FT a = primary_is_0 ? -l0.b() : -l1.b(),
        b = primary_is_0 ? l0.a() : l1.a(),
@@ -472,6 +474,11 @@ std::cout << "t_l0l1_e0e1 " << t_l0l1_e0e1->to_nt() << "\n";
     // we want to evaluate the sign of (v1/ sqrt(sq_norm1) + v2/sqrt(sq_norm2))
     //TODO: expand the computation here instead of relying on Sqrt_extension?
     common_pt_position = CGAL::compare(v1 * make_sqrt(FT(1)/sq_norm1), - v2 * make_sqrt(FT(1)/sq_norm2));
+  }
+
+  if (bisectors_are_parallel)
+  {
+    return common_pt_position;
   }
 
 #ifdef SS_DEBUG_NEW_PREDICATES
