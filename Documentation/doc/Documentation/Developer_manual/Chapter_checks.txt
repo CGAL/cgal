@@ -238,7 +238,7 @@ Some parts of the library use exceptions, but there is no general specific
 policy concerning exception handling in \cgal.  It is nevertheless good to
 target exception safety, as much as possible.  Good references on exception
 safety are: Appendix E of \cgalCite{cgal:s-cpl-97} (also available at
-<A HREF="http://www.research.att.com/~bs/3rd_safe0.html"><TT>http://www.research.att.com/~bs/3rd_safe0.html</TT></A>),
+<A HREF="http://www.stroustrup.com/3rd_safe0.html"><TT>http://www.stroustrup.com/3rd_safe0.html</TT></A>),
 and \cgalCite{cgal:a-esgc-98} (also available at
 <A HREF="https://www.boost.org/more/generic_exception_safety.html"><TT>https://www.boost.org/more/generic_exception_safety.html</TT></A>).
 Any destructor which might throw an exception, including a destructor which
