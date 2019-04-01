@@ -208,13 +208,27 @@ public:
   }
 };
 
-//  TODO need an overload for false_type
+template <class NT>
+bool is_sum_of_4_roots_zero(const NT& a, const NT& b, const NT& c, const NT& d,
+                          const NT& ext_a, const NT& ext_b, const NT& ext_c, const NT& ext_d);
+
 template <class NT>
 bool is_sum_of_4_roots_zero_impl(const NT& a, const NT& b, const NT& c, const NT& d,
                                  const NT& ext_a, const NT& ext_b, const NT& ext_c, const NT& ext_d,
                                  boost::mpl::true_)
 {
   return a * sqrt(ext_a) + b * sqrt(ext_b) + c * sqrt(ext_c) + d * sqrt(ext_d) == 0;
+}
+
+template <class NT>
+bool is_sum_of_4_roots_zero_impl(const NT& a, const NT& b, const NT& c, const NT& d,
+                                 const NT& ext_a, const NT& ext_b, const NT& ext_c, const NT& ext_d,
+                                 boost::mpl::false_)
+{
+  return is_sum_of_4_roots_zero(CORE::Expr(to_BigFloat(a)), CORE::Expr(to_BigFloat(b)),
+                                CORE::Expr(to_BigFloat(c)), CORE::Expr(to_BigFloat(d)),
+                                CORE::Expr(to_BigFloat(ext_a)), CORE::Expr(to_BigFloat(ext_b)),
+                                CORE::Expr(to_BigFloat(ext_c)), CORE::Expr(to_BigFloat(ext_d)));
 }
 
 template <class NT>
