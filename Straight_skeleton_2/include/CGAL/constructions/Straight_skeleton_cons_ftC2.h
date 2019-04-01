@@ -336,8 +336,8 @@ optional< Rational_time_4< typename K::FT> > compute_normal_offset_lines_isec_ti
              a0b3_a3b0 = l0->a()*l3->b() - l3->a()*l0->b(),
              a1b3_a3b1 = l1->a()*l3->b() - l3->a()*l1->b();
 
-    if ( is_sum_of_roots_zero(a0b2_a2b0, a2b1_a1b2, - a0b3_a3b0, a1b3_a3b1,
-                              sum_sq_1 * sum_sq_3, sum_sq_0 * sum_sq_3, sum_sq_1 * sum_sq_2, sum_sq_0 * sum_sq_2) )
+    if ( is_sum_of_4_roots_zero(a0b2_a2b0, a2b1_a1b2, - a0b3_a3b0, a1b3_a3b1,
+                                sum_sq_1 * sum_sq_3, sum_sq_0 * sum_sq_3, sum_sq_1 * sum_sq_2, sum_sq_0 * sum_sq_2) )
     {
       // bisectors are coplanar
       return boost::none;
@@ -356,7 +356,7 @@ optional< Rational_time_4< typename K::FT> > compute_normal_offset_lines_isec_ti
     const FT n1 = -(a0b1_a1b0*l2->c()-a0b2_a2b0*l1->c()+a1b2_a2b1*l0->c()),
              n2 = -(-a0b1_a1b0*l3->c()+a0b3_a3b0*l1->c()-a1b3_a3b1*l0->c());
 
-    if ( n1 * n1 * sum_sq_3 != n2 * n2 * sum_sq_2) // TODO write this in another form?
+    if ( !is_sum_of_2_roots_zero(n1, -n2, sum_sq_3, sum_sq_2) )
     {
       const FT num = ( (a0b1_a1b0 * (a0b1_a1b0 * l2->c() + two * a2b0_a0b2 * l1->c() + two * a1b2_a2b1 * l0->c()) ) * l2->c()
                    +   (a0b2_a2b0 * (a0b2_a2b0 * l1->c() + two * a2b1_a1b2 * l0->c() ) ) * l1->c()

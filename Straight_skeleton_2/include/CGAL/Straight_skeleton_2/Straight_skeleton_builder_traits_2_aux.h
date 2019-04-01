@@ -32,6 +32,7 @@
 #include <CGAL/Unfiltered_predicate_adaptor.h>
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Root_of_traits.h>
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/intrusive_ptr.hpp>
@@ -209,21 +210,31 @@ public:
 
 //  TODO need an overload for false_type
 template <class NT>
-bool is_sum_of_roots_zero_impl(const NT& a, const NT& b, const NT& c, const NT& d,
-                               const NT& ext_a, const NT& ext_b, const NT& ext_c, const NT& ext_d,
-                               boost::mpl::true_)
+bool is_sum_of_4_roots_zero_impl(const NT& a, const NT& b, const NT& c, const NT& d,
+                                 const NT& ext_a, const NT& ext_b, const NT& ext_c, const NT& ext_d,
+                                 boost::mpl::true_)
 {
   return a * sqrt(ext_a) + b * sqrt(ext_b) + c * sqrt(ext_c) + d * sqrt(ext_d) == 0;
 }
 
 template <class NT>
-bool is_sum_of_roots_zero(const NT& a, const NT& b, const NT& c, const NT& d,
+bool is_sum_of_4_roots_zero(const NT& a, const NT& b, const NT& c, const NT& d,
                           const NT& ext_a, const NT& ext_b, const NT& ext_c, const NT& ext_d)
 {
   typedef typename is_same_or_derived<Field_with_sqrt_tag,
                                       typename Algebraic_structure_traits<NT>::Algebraic_category>::type AT_tag;
-  return is_sum_of_roots_zero_impl(a,b,c,d, ext_a, ext_b, ext_c, ext_d,
-                                   AT_tag());
+  return is_sum_of_4_roots_zero_impl(a,b,c,d, ext_a, ext_b, ext_c, ext_d,
+                                     AT_tag());
+}
+
+template <class NT>
+bool is_sum_of_2_roots_zero(const NT& a, const NT& b,
+                            const NT& ext_a, const NT& ext_b)
+{
+  typedef typename CGAL::Root_of_traits<NT>::Root_of_2 RO_2;
+
+  return CGAL::compare(RO_2(a) * CGAL::make_sqrt(ext_a),
+                       RO_2(-b) * CGAL::make_sqrt(ext_b)) == EQUAL;
 }
 
 // Represents numbers of the form N/(d0*sqrt(r0)+d1*sqrt(r1)+d2*sqrt(r2))
