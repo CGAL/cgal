@@ -22,16 +22,11 @@
 #define CGAL_FACE_GRAPH_WRAPPER_H 1
 
 #include <CGAL/Functors_for_face_graph_wrapper.h>
+#include <CGAL/Combinatorial_map_iterators_base.h>
+
 
 namespace CGAL
 {
-
-  template<typename HEG>
-  struct My_halfedge_iterator: public boost::graph_traits<HEG>::halfedge_iterator 
-  {
-    bool operator==(Nullptr_t CGAL_assertion_code(n))
-    { return *this==boost::graph_traits<HEG>::halfedge_iterator(); }
-  };
   
 ////////////////////////////////////////////////////////////////////////////////
 /** Class Face_graph_wrapper: to wrap any model of FaceGraph into a Combinatorial map.
@@ -47,20 +42,19 @@ public:
 
   struct Dart_container
   {
-    // typedef typename boost::graph_traits<HEG>::halfedge_iterator iterator;
-    // typedef typename boost::graph_traits<HEG>::halfedge_iterator const_iterator; // TODO ?
-    typedef My_halfedge_iterator<HEG> iterator;
-    typedef My_halfedge_iterator<HEG> const_iterator; // TODO ?
+    typedef typename boost::graph_traits<HEG>::halfedge_iterator iterator;
+    typedef typename boost::graph_traits<HEG>::halfedge_iterator const_iterator; // TODO ?
+    // typedef My_halfedge_iterator<HEG> iterator;
+    // typedef My_halfedge_iterator<HEG> const_iterator; // TODO ?
   };
   
   typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_handle;
   typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
 
-  typedef Dart_handle Null_handle_type;
-  static const Dart_handle null_handle; //=Dart_handle();
-  static const Dart_handle null_dart_handle; //=Dart_handle();
-  // static const void* null_handle; //=Dart_handle();
-  // static const void* null_dart_handle; //=Dart_handle();
+   typedef Dart_handle Null_handle_type;
+  // typedef CGAL::Void* Null_handle_type;
+   static const Null_handle_type null_handle; //=Dart_handle();
+   static const Null_handle_type null_dart_handle; //=Dart_handle();
 
   /// Number of marks
   static const size_type NB_MARKS = 32;
@@ -83,7 +77,7 @@ public:
 
   
   Face_graph_wrapper(const HEG& f) : m_fg(f),
-                                     mdarts(f),
+                                     mdarts(*this),
                                      mnb_used_marks(0),
                                      m_nb_darts(0)
 
@@ -116,16 +110,16 @@ public:
 
   Dart_const_handle get_beta(Dart_const_handle ADart, int B1) const
   {
-    CGAL_assertion(ADart!=NULL && B1>=0 && B1<=(int)dimension);
-    if (B1==1) return Get_beta<HEG, 1>(ADart);
-    if (B1==2) return Get_beta<HEG, 2>(ADart); 
-    return Get_beta<HEG, 0>(ADart);
+    CGAL_assertion(B1>=0 && B1<=(int)dimension);
+    if (B1==1) return Get_beta<HEG, 1>::value(m_fg, ADart);
+    if (B1==2) return Get_beta<HEG, 2>::value(m_fg, ADart); 
+    return Get_beta<HEG, 0>::value(m_fg, ADart);
   }
   template<int B1>
   Dart_const_handle get_beta(Dart_const_handle ADart) const
   {
-    CGAL_assertion(ADart!=NULL && B1>=0 && B1<=(int)dimension);
-    return Get_beta<HEG, B1>(ADart);
+    CGAL_assertion(B1>=0 && B1<=(int)dimension);
+    return Get_beta<HEG, B1>::value(m_fg, ADart);
   }
 
   bool is_empty() const
@@ -148,7 +142,7 @@ public:
 
   template<unsigned int dim>
   Dart_const_handle opposite(Dart_const_handle ADart) const
-  { return get_beta<dim>(ADart); }
+  { return this->template get_beta<dim>(ADart); }
   Dart_const_handle other_orientation(Dart_const_handle ADart) const
   { return ADart; }  
 
@@ -158,7 +152,7 @@ public:
   { return true; }
   template<unsigned int dim>
   bool is_opposite_exist(Dart_const_handle ADart) const
-  { return !is_free<dim>(ADart); }
+  { return !this->template is_free<dim>(ADart); }
 
   template<typename ...Betas>
   Dart_handle beta(Dart_handle ADart, Betas... betas)
@@ -239,6 +233,18 @@ public:
     return m;
   }
   
+  void share_a_mark(size_type amark) const
+  {
+    CGAL_assertion( is_reserved(amark) );
+    ++mnb_times_reserved_marks[amark];
+  }
+
+  size_type get_number_of_times_mark_reserved(size_type amark) const
+  {
+    CGAL_assertion( amark<NB_MARKS );
+    return mnb_times_reserved_marks[amark];
+  }
+
   void negate_mark(size_type amark) const
   {
     CGAL_assertion(is_reserved(amark));
@@ -246,16 +252,19 @@ public:
     mnb_marked_darts[amark]=number_of_darts()-mnb_marked_darts[amark];
     mmask_marks.flip(amark);
   }
+
+  void mark_null_dart( size_type /*amark*/) const
+  {}
   
   bool get_dart_mark(Dart_const_handle ADart, size_type amark) const
   {
-    return m_marks[amark][ADart];
+    return (*(m_marks[amark]))[ADart];
   }
   void set_dart_mark(Dart_const_handle ADart, size_type amark, bool avalue) const
-  { m_marks[amark][ADart]=avalue; }
+  { (*(m_marks[amark]))[ADart]=avalue; }
 
   void flip_dart_mark(Dart_const_handle ADart, size_type amark) const
-  { m_marks[amark][ADart]=!m_marks[amark][ADart]; }
+  { set_dart_mark(ADart, amark, !get_dart_mark(ADart, amark)); }
 
   bool is_marked(Dart_const_handle adart, size_type amark) const
   {
@@ -310,7 +319,7 @@ public:
     {
       for ( typename Dart_range::const_iterator it(darts().begin()),
               itend(darts().end()); it!=itend; ++it)
-        unmark(it, amark);
+        unmark(*it, amark);
     }
     CGAL_assertion(is_whole_map_unmarked(amark));
       }
@@ -348,7 +357,7 @@ public:
     CGAL_assertion(1<=i && i<=dimension);
     if (i==1) return true;
     
-    for ( typename Dart_const_range::const_iterator it(darts().begin()),
+    for ( typename Dart_range::const_iterator it(darts().begin()),
             itend(darts().end()); it!=itend; ++it)
     { if (is_free<2>(it)) return false; }
     return true;
@@ -359,54 +368,52 @@ public:
 
   //**************************************************************************
   // Dart_of_cell_range
-  template<unsigned int i,int dim=Self::dimension>
-  struct Dart_of_cell_range: public CGAL::CMap_range
-  <Self,CMap_dart_iterator_of_cell<Self,i,dim>,
-   CGAL::CMap_dart_const_iterator_of_cell<Self,i,dim> >
+  template<unsigned int i>
+  struct Dart_of_cell_range
   {
-    typedef CGAL::CMap_range
-    <Self,CMap_dart_iterator_of_cell<Self,i,dim>,
-     CGAL::CMap_dart_const_iterator_of_cell<Self,i,dim> > Base;
-    
-    Dart_of_cell_range(Self &amap, Dart_handle adart) :
-      Base(amap, adart)
+    typedef CGAL::FGW_cell_iterator<Self, i> iterator;
+    typedef CGAL::FGW_cell_iterator<Self, i> const_iterator;
+    Dart_of_cell_range(const Self &amap, Dart_handle adart) : mmap(amap),
+                                                              m_initdart(adart),
+                                                              msize(0)
     {}
+    const_iterator begin() const { return const_iterator(mmap, m_initdart); }
+    const_iterator end() const   { return const_iterator(mmap, m_initdart, mmap.null_handle); }
+    size_type size() const
+    {
+      if (msize==0)
+      {
+        for (const_iterator it=begin(), itend=end(); it!=itend; ++it)
+        { ++msize; }
+      }
+      return msize;
+    }
+    
+    bool empty() const
+    { return mmap.is_empty(); }
+  private:
+    const Self & mmap;
+    Dart_handle m_initdart;
+    mutable typename Self::size_type msize;
   };
   //**************************************************************************
   // Dart_of_cell_const_range
-  template<unsigned int i,int dim=Self::dimension>
-  struct Dart_of_cell_const_range: public CMap_const_range
-  <Self, CGAL::CMap_dart_const_iterator_of_cell<Self,i,dim> >
-  {
-    typedef CMap_const_range
-    <Self, CGAL::CMap_dart_const_iterator_of_cell<Self,i,dim> > Base;
-    
-    Dart_of_cell_const_range(const Self &amap, Dart_const_handle adart) :
-      Base(amap, adart)
-    {}
-  };
-  //--------------------------------------------------------------------------
-  template<unsigned int i, int dim>
-  Dart_of_cell_range<i,dim> darts_of_cell(Dart_handle adart)
-  { return Dart_of_cell_range<i,dim>(*this,adart); }
-  //--------------------------------------------------------------------------
-  template<unsigned int i, int dim>
-  Dart_of_cell_const_range<i,dim> darts_of_cell(Dart_const_handle adart) const
-  { return Dart_of_cell_const_range<i,dim>(*this,adart); }
+  /*  template<unsigned int i,int dim=Self::dimension>
+  struct Dart_of_cell_const_range // TODO REMOVE ??
+  {}; */
   //--------------------------------------------------------------------------
   template<unsigned int i>
-  Dart_of_cell_range<i,Self::dimension> darts_of_cell(Dart_handle adart)
-  { return darts_of_cell<i,Self::dimension>(adart); }
+  Dart_of_cell_range<i> darts_of_cell(Dart_handle adart)
+  { return Dart_of_cell_range<i>(*this,adart); }
   //--------------------------------------------------------------------------
   template<unsigned int i>
-  Dart_of_cell_const_range<i,Self::dimension>
-  darts_of_cell(Dart_const_handle adart) const
-  { return darts_of_cell<i,Self::dimension>(adart); }
+  Dart_of_cell_range<i> darts_of_cell(Dart_const_handle adart) const
+  { return Dart_of_cell_range<i>(*this,adart); } // Before it was Dart_of_cell_const_range<i>
   //**************************************************************************
-  // Dart_basic_range
+  // Dart_range
   struct Dart_range {
     typedef CGAL::FGW_dart_iterator_basic_of_all<Self> iterator;
-    typedef CGAL::FGW_dart_iterator_basic_of_all<Self, true> const_iterator;
+    typedef CGAL::FGW_dart_iterator_basic_of_all<Self> const_iterator;
     Dart_range(const Self &amap) : mmap(amap), msize(0)
     {}
     iterator begin() { return iterator(mmap); }
@@ -429,8 +436,8 @@ public:
     mutable typename Self::size_type msize;
   };
   //**************************************************************************
-  // Dart_basic_const_range
-  struct Dart_const_range {
+  // Dart_const_range // TODO REMOVE ?
+  /*  struct Dart_const_range {
     typedef CGAL::FGW_dart_iterator_basic_of_all<Self, true> const_iterator;
     Dart_const_range(const Self &amap) : mmap(amap), msize(0)
     {}
@@ -451,55 +458,72 @@ public:
   private:
     const Self & mmap;
     mutable typename Self::size_type msize;
-  };
+    };*/
   //**************************************************************************
   Dart_range darts()
   { return Dart_range(*this); }
   //--------------------------------------------------------------------------
-  Dart_const_range darts() const
-  { return Dart_const_range(*this); }
+  Dart_range darts() const
+  { return Dart_range(*this); } // Before it was Dart_const_range(*this)
   //**************************************************************************
 
   template <unsigned int i>
   bool belong_to_same_cell(Dart_const_handle adart1,
                            Dart_const_handle adart2) const
   {
-    // TODO return XXX
+    for (typename Dart_of_cell_range<i>::iterator it=darts_of_cell<i>(adart1).begin(),
+           itend=darts_of_cell<i>(adart1).begin(); it!=itend; ++it)
+    { if (*it==adart2) { return true; } }
+    return false;
   }
   
   template <unsigned int i>
   bool is_whole_cell_unmarked(Dart_const_handle adart, size_type amark) const
   {
-    // TODO return XXX
+    for (typename Dart_of_cell_range<i>::iterator it=darts_of_cell<i>(adart).begin(),
+           itend=darts_of_cell<i>(adart).begin(); it!=itend; ++it)
+    { if (is_marked(*it, amark)) { return false; } }
+    return true;
   }
 
   template <unsigned int i>
   bool is_whole_cell_marked(Dart_const_handle adart, size_type amark) const
   {
-    // TODO  return XXX
+    for (typename Dart_of_cell_range<i>::iterator it=darts_of_cell<i>(adart).begin(),
+           itend=darts_of_cell<i>(adart).end(); it!=itend; ++it)
+    { if (!is_marked(*it, amark)) { return false; } }
+    return true;
   }
 
   template <unsigned int i>
   size_type mark_cell(Dart_const_handle adart, size_type amark) const
   {
-    // TODO  return XXX
-  }
+    size_type res=0;
+    for (typename Dart_of_cell_range<i>::iterator it=darts_of_cell<i>(adart).begin(),
+           itend=darts_of_cell<i>(adart).end(); it!=itend; ++it)
+    { mark(*it, amark); ++res; }
+    return res;
+}
 
   size_type mark_cell(Dart_const_handle adart, unsigned int i, size_type amark) const
   {
-    if (i==0) { mark_cell<0>(adart, amark); }
-    else if (i==1) { mark_cell<1>(adart, amark); }
-    mark_cell<2>(adart, amark);
-  }
+    if (i==0) { return mark_cell<0>(adart, amark); }
+    else if (i==1) { return mark_cell<1>(adart, amark); }
+    return mark_cell<2>(adart, amark);
+  } 
 
   template <unsigned int i>
   size_type unmark_cell(Dart_const_handle adart, size_type amark) const
   {
-    // TODO  return XXX
+    size_type res=0;
+    for (typename Dart_of_cell_range<i>::iterator it=darts_of_cell<i>(adart).begin(),
+           itend=darts_of_cell<i>(adart).end(); it!=itend; ++it)
+    { unmark(*it, amark); ++res; }
+    return res;
   }
 
   std::vector<unsigned int>
-    count_marked_cells(size_type amark, const std::vector<unsigned int>& acells) const
+  count_marked_cells(size_type amark, const std::vector<unsigned int>& acells) const
   {
     std::vector<unsigned int> res(dimension+2);
     std::vector<size_type> marks(dimension+2);
@@ -526,13 +550,14 @@ public:
     for (typename Dart_range::const_iterator it(darts().begin()),
            itend(darts().end()); it!=itend; ++it)
     {
-      if (is_marked(it, amark))
+      if (is_marked(*it, amark))
       {
         for (unsigned int i=0; i<acells.size(); ++i)
         {
-          if (!is_marked())
+          if (!is_marked(*it, marks[acells[i]]))
           {
-            // TODO  mark_cell
+            mark_cell(*it, acells[i], marks[acells[i]]);
+            ++res[acells[i]];
           }
         }
       }
@@ -555,7 +580,7 @@ public:
              itend(darts().end()); it!=itend; ++it)
       {
         for (unsigned int i=0; i<tounmark.size(); ++i)
-        { unmark(it, tounmark[i]); }
+        { unmark(*it, tounmark[i]); }
       }
       for (unsigned int i=0; i<tounmark.size(); ++i)
       {
@@ -568,7 +593,7 @@ public:
   }
 
   std::vector<unsigned int>
-    count_cells(const std::vector<unsigned int>& acells) const
+  count_cells(const std::vector<unsigned int>& acells) const
   {
     std::vector<unsigned int> res;
     size_type m=get_new_mark();
@@ -584,9 +609,9 @@ public:
 
   std::vector<unsigned int> count_all_cells() const
   {
-    std::vector<unsigned int> dim(dimension+2);
+    std::vector<unsigned int> dim(dimension+1);
     
-    for ( unsigned int i=0; i<dimension+2; ++i)
+    for ( unsigned int i=0; i<=dimension; ++i)
     { dim[i]=i; }
     
     return count_cells(dim);
@@ -594,8 +619,8 @@ public:
 
   std::ostream& display_characteristics(std::ostream & os) const
   {
-    std::vector<unsigned int> cells(dimension+2);
-    for ( unsigned int i=0; i<=dimension+1; ++i)
+    std::vector<unsigned int> cells(dimension+1);
+    for ( unsigned int i=0; i<=dimension; ++i)
     { cells[i]=i; }
     
     std::vector<unsigned int> res=count_cells(cells);
@@ -603,35 +628,14 @@ public:
     os<<"#Darts="<<number_of_darts();
     for (unsigned int i=0; i<=dimension; ++i)
       os<<", #"<<i<<"-cells="<<res[i];
-    os<<", #ccs="<<res[dimension+1];
+    //  os<<", #ccs="<<res[dimension+1];
 
     return os;
   }
 
-  /*  struct Dart_const_range
-  {
-    typedef typename boost::graph_traits<HEG>::Halfedge_iterator const_iterator;
-
-    Dart_const_range(const HEG& f) : m_fg(f)
-    {}
-
-    const_iterator begin() const { return CGAL::halfedges(m_fg).begin(); }
-    const_iterator end() const   { return CGAL::halfedges(m_fg).end(); }
-
-    std::size_t size() const
-    {}
-    bool empty() const
-    {}
-    
-  protected:
-    const HEG& m_fg;
-    };
-  
-    Dart_const_range& darts() const { return mdarts; } */
-
 protected:
   const HEG& m_fg;
-  Dart_const_range mdarts;
+  Dart_range mdarts;
   std::size_t m_nb_darts;
   
   /// Number of times each mark is reserved. 0 if the mark is free.
@@ -671,16 +675,18 @@ protected:
 
   /// null_handle
   // template <typename HEG>
-  // const void* Face_graph_wrapper<HEG>::null_handle=nullptr;
+  // const typename Face_graph_wrapper<HEG>::Null_handle_type
+  // Face_graph_wrapper<HEG>::null_handle=nullptr;
   template <typename HEG>
-  const typename Face_graph_wrapper<HEG>::Dart_handle
+  const typename Face_graph_wrapper<HEG>::Null_handle_type
   Face_graph_wrapper<HEG>::null_handle=typename Face_graph_wrapper<HEG>::Dart_handle();
 
   /// null_dart_handle
   // template <typename HEG>
-  // const void* Face_graph_wrapper<HEG>::null_dart_handle=nullptr;
+  // const typename Face_graph_wrapper<HEG>::Null_handle_type
+  // Face_graph_wrapper<HEG>::null_dart_handle=nullptr;
   template <typename HEG>
-  const typename Face_graph_wrapper<HEG>::Dart_handle
+  const typename Face_graph_wrapper<HEG>::Null_handle_type
   Face_graph_wrapper<HEG>::null_dart_handle=typename Face_graph_wrapper<HEG>::Dart_handle();
 
 } // Namespace CGAL

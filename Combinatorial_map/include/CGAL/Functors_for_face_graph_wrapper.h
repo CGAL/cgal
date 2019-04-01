@@ -33,18 +33,13 @@
          operator() (const HEG& heg, Dart_const_handle dh)
  * Get_beta<typename HEG, unsigned int i>::
          operator() (const HEG& heg, Dart_const_handle dh)
- // The following functors are not needed: we can use directly the ones in CMap
- // * Belong_to_same_cell<unsigned int i>::    // TODO add second parameter unsigned int d
- //         operator() (const HEG& heg, Dart_const_handle dh1, Dart_const_handle dh2)
- // * Mark_cell<unsigned int i>::              // TODO add second parameter unsigned int d
- //         operator() (const HEG& heg, Dart_const_handle dh)
- // * Unmark_cell<unsigned int i>::            // TODO add second parameter unsigned int d
- //         operator() (const HEG& heg, Dart_const_handle dh)
 */
 ////////////////////////////////////////////////////////////////////////////////
+namespace CGAL 
+{
 /// Is_free
 template<typename HEG, unsigned int i>
-class Is_free
+struct Is_free
 {
   typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
 
@@ -52,7 +47,7 @@ class Is_free
   { CGAL_static_assertion(i==0 || i==1); return false; }
 };
 template<typename HEG>
-class Is_free<HEG, 2>
+struct Is_free<HEG, 2>
 {
   typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
   static bool value(const HEG& heg, Dart_const_handle dh) 
@@ -61,7 +56,7 @@ class Is_free<HEG, 2>
 ////////////////////////////////////////////////////////////////////////////////
 /// Get_beta
 template<typename HEG, unsigned int i>
-class Get_beta
+struct Get_beta
 {
   typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
 
@@ -73,109 +68,31 @@ class Get_beta
   }
 };
 template<typename HEG>
-class Get_beta<HEG, 0>
+struct Get_beta<HEG, 0>
 {
   typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
   static Dart_const_handle value(const HEG& heg, Dart_const_handle dh) 
   { return CGAL::prev(dh, heg); }
 };
 template<typename HEG>
-class Get_beta<HEG, 1>
+struct Get_beta<HEG, 1>
 {
   typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
   static Dart_const_handle value(const HEG& heg, Dart_const_handle dh) 
   { return CGAL::next(dh, heg); }
 };
 template<typename HEG>
-class Get_beta<HEG, 2>
+struct Get_beta<HEG, 2>
 {
   typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
   static Dart_const_handle value(const HEG& heg, Dart_const_handle dh) 
   {
-    if (Is_free<HEG, 2>::value(heg, dh)) return nullptr;
+    if (Is_free<HEG, 2>::value(heg, dh)) return Dart_const_handle();
     return CGAL::opposite(dh, heg);
   }
 };
-// ////////////////////////////////////////////////////////////////////////////////
-// /// Belong_to_same_cell
-// template<typename HEG, unsigned int i>
-// class Belong_to_same_cell
-// {
-//   typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
-
-//   static bool value(const HEG& /*heg*/,
-//                     Dart_const_handle /*dh1*/, Dart_const_handle /*dh2*/) 
-//   {  /* CGAL_static_assertion(false);*/
-//     std::cout<<"ERROR Belong_to_same_cell<HEG, "<<i<<">"<<std::endl;
-//     CGAL_assertion(false);
-//     return false;
-//   }
-// };
-// template<typename HEG>
-// class Belong_to_same_cell<HEG, 0>
-// {
-//   typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
-
-//   static bool value(const HEG& heg,
-//                           Dart_const_handle dh1, Dart_const_handle dh2) 
-//   {
-//     bool onborder=false;
-//     Dart_const_handle curd=dh1;
-//     do
-//     {
-//       if (curd==dh2) { return true; }
-//       if (Is_free<HEG, 2>::value(heg, curd)) { onborder=true; }
-//       else { curd=Get_beta<HEG, 1>::value(heg, Get_beta<HEG, 2>(curd)); }
-//     }
-//     while(curd!=dh1 && !onborder);
-
-//     if (onborder)
-//     { // We need to iterate in the other way
-//       Dart_const_handle curd=dh1;
-//       do
-//       {
-//         if (curd==dh2) { return true; }
-//         if (Is_free<HEG, 2>::value(heg, curd)) { onborder=true; }
-//         else { curd=Get_beta<HEG, 2>::value(heg, Get_beta<HEG, 0>(curd)); }
-//         CGAL_assertion(curd!=dh1);
-//       }
-//       while(!onborder);
-//     }
-    
-//     return false;
-//   }
-// };
-// template<typename HEG>
-// class Belong_to_same_cell<HEG, 1>
-// {
-//   typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
-
-//   static bool value(const HEG& heg,
-//                     Dart_const_handle dh1, Dart_const_handle dh2) 
-//   {
-//     return dh1==dh2 ||
-//       (!Is_free<HEG, 2>::value(dh1) && Get_beta<HEG, 2>::value(dh1)==dh2);
-//   }
-// };
-// template<typename HEG>
-// class Belong_to_same_cell<HEG, 2>
-// {
-//   typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
-
-//   static bool value(const HEG& heg,
-//                     Dart_const_handle dh1, Dart_const_handle dh2) 
-//   {
-//     Dart_const_handle curd=dh1;
-//     do
-//     {
-//       if (curd==dh2) { return true; }
-//       curd=Get_beta<HEG, 1>::value(heg, curd);
-//     }
-//     while(curd!=dh1);
-//     return false;
-//   }
-// };
 ////////////////////////////////////////////////////////////////////////////////
-
+} // namespace CGAL
+  
 #endif // CGAL_FUNCTORS_FOR_FACE_GRAPH_WRAPPER_H //
 // EOF //

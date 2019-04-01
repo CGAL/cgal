@@ -1,8 +1,5 @@
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/Cell_attribute.h>
-#include <CGAL/HalfedgeDS_default.h>
-#include <CGAL/HalfedgeDS_decorator.h>
-#include <CGAL/Face_graph_wrapper.h>
 #include "Combinatorial_map_test_iterators.h"
 
 #include <iostream>
@@ -599,11 +596,7 @@ bool testImportFromHalfedge()
   Map2 map2; map2.import_from_halfedge_graph(hds);
   Map3 map3; map3.import_from_halfedge_graph(hds);
 
-  CGAL::Face_graph_wrapper<HDS> fgw(hds);
-  if (fgw.number_of_darts()!=map1.number_of_darts())
-  { res=false; }
-  
-  return res; // What to test ?
+  return res; // TODO compare number of darts/cells
 }
 
 int main()

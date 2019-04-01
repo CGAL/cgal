@@ -1,5 +1,8 @@
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/Cell_attribute.h>
+#include <CGAL/Face_graph_wrapper.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Surface_mesh.h>
 
 #include "Combinatorial_map_2_test.h"
 #include "Combinatorial_map_3_test.h"
@@ -193,6 +196,29 @@ bool test_get_new_mark()
   return true;
 }
 
+bool test_face_graph_wrapper()
+{
+  // TODO the same for CGAL::Polyhedron_3<typename LCC::Traits> P;
+  
+  typedef CGAL::Simple_cartesian<double>                       Kernel;
+  typedef Kernel::Point_3                                      Point;
+  typedef CGAL::Surface_mesh<Point>                            Mesh;
+  
+  Mesh m;
+  std::ifstream in("data/head.off");
+  if ( in.fail() )
+  {
+    std::cout<<"Error: impossible to open 'data/head.off'"<<std::endl;
+    return false;
+  }
+  in >> m;
+  
+  CGAL::Face_graph_wrapper<Mesh> fgw(m);
+  fgw.display_characteristics(std::cout)<<std::endl;  
+
+  return true;
+}
+
 int main()
 {
   if ( !test_get_new_mark() )
@@ -255,5 +281,11 @@ int main()
     return EXIT_FAILURE;
   }
 
+  if (!test_face_graph_wrapper())
+  {
+    std::cout<<"ERROR during test_face_graph_wrapper."<<std::endl;
+    return EXIT_FAILURE;
+  }
+  
   return EXIT_SUCCESS;
 }
