@@ -84,19 +84,19 @@ int main() {
   Nef_polyhedron N1(l,Nef_polyhedron::INCLUDED);
   explore("line", N1);
   
-  Point p1(0,0), p2(10,0), p3(10,10);
+  Point p1(1,1), p2(10,1), p3(10,10);
   Point triangle[3] = { p1, p2, p3 };
   Nef_polyhedron N2(triangle, triangle+3);
   explore("triangle", N2);
 
   {
-    Point p1(5,1), p2(6,1), p3(6,2);
+    Point p1(4,2), p2(6,2), p3(6,4);
     Point triangle[3] = { p1, p2, p3 };
     Nef_polyhedron N3(triangle, triangle+3);
     N2 -= N3;
   }
   {
-    Point p1(8,1), p2(9,1), p3(9,2);
+    Point p1(7,2), p2(9,2), p3(9,6);
     Point triangle[3] = { p1, p2, p3 };
     Nef_polyhedron N3(triangle, triangle+3);
     N2 -= N3;
