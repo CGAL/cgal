@@ -82,12 +82,13 @@ public:
       std::unique(this->begin(), this->end());
    
       // front() is the point with the largest x coordinate
-   
+
+      Point_2 p;
       // push the point p_minus_infinity; the coordinates should never be used
-      push_back(Point_2( 1, -1));
+      push_back(p);
 
       // push the point p_infinity; the coordinates should never be used
-      push_back(Point_2(1, 1));
+      push_back(p);
    
       _p_inf = this->end();  // record the iterators to these extreme points
       _p_inf--;
