@@ -1,4 +1,4 @@
-// Copyright (c) 2000  Max-Planck-Institute Saarbruecken (Germany).
+// Copyright (c) 2019  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -17,7 +17,7 @@
 // SPDX-License-Identifier: GPL-3.0+
 // 
 //
-// Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
+// Author(s)     : Andreas Fabri
 
 #ifndef CGAL_PAIR_PARTITION_TRAITS_2_H
 #define CGAL_PAIR_PARTITION_TRAITS_2_H
@@ -72,6 +72,31 @@ namespace CGAL {
     }
   };
 
+  template <typename Pair, typename K>
+  struct Pair_collinear_are_ordered_along_line_2 {
+
+    Pair_collinear_are_ordered_along_line_2()
+    {}
+    
+    typename K::Collinear_are_ordered_along_line_2 fct;
+    
+    Pair_collinear_are_ordered_along_line_2(typename K::Collinear_are_ordered_along_line_2 fct)
+      : fct(fct)
+    {}
+    
+    typename K::Collinear_are_ordered_along_line_2::result_type
+    operator()(const Pair& p, const Pair& q, const typename K::Point_2& r) const
+    {
+      return fct(p.first, q.first, r);
+    }
+    
+    typename K::Collinear_are_ordered_along_line_2::result_type
+    operator()(const Pair& p, const Pair& q, const Pair& r) const
+    {
+      return fct(p.first, q.first, r.first);
+    }
+  };
+
   
 template <class Kernel_>
 class Pair_partition_traits_2
@@ -110,14 +135,13 @@ public:
   // needed by Indirect_edge_compare, used in y_monotone and greene_approx
   typedef typename Kernel::Line_2                     Line_2;
   typedef Pair_functor<Point_2, typename Kernel::Construct_line_2>           Construct_line_2;
-  typedef Pair_compare_x_at_y_2<Point_2,typename Kernel>            Compare_x_at_y_2;
+  typedef Pair_compare_x_at_y_2<Point_2,Kernel>            Compare_x_at_y_2;
   typedef typename Kernel::Is_horizontal_2            Is_horizontal_2;
   
 #if 1
   // needed by visibility graph and thus by optimal convex
   typedef typename Kernel::Ray_2                      Ray_2; 
-  typedef Pair_functor<Point_2,typename Kernel::Collinear_are_ordered_along_line_2>
-  Collinear_are_ordered_along_line_2;
+  typedef Pair_collinear_are_ordered_along_line_2<Point_2,Kernel>  Collinear_are_ordered_along_line_2;
   typedef Pair_functor<Point_2,typename Kernel::Are_strictly_ordered_along_line_2>
   Are_strictly_ordered_along_line_2;
   typedef typename Kernel::Intersect_2                Intersect_2;
