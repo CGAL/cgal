@@ -35,16 +35,16 @@ if(CGAL_FOUND AND CGAL_Core_FOUND AND Qt5_FOUND AND CGAL_Qt5_FOUND)
 
   # cpp files
 
-  add_executable ( P4HDT2_demo
+  add_executable ( P4HDT2
   P4HDT2.cpp ${RESOURCE_FILES} ${UIS})
 
   #add_executable ( Periodic_4_hyperbolic_billiards_demo
   #Periodic_4_hyperbolic_billiards_demo.cpp ${RESOURCE_FILES} )
 
-  qt5_use_modules( P4HDT2_demo Widgets )
+  qt5_use_modules( P4HDT2 Widgets )
   #qt5_use_modules( Periodic_4_hyperbolic_billiards_demo Widgets )
 
-  target_link_libraries( P4HDT2_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${Boost_LIBRARIES} )
+  target_link_libraries( P4HDT2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${Boost_LIBRARIES} )
 
   #target_link_libraries( Periodic_4_hyperbolic_billiards_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${Boost_LIBRARIES} )
 else()
