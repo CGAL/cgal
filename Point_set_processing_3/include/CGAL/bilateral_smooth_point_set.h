@@ -92,6 +92,10 @@ public:
   Kd_tree_element(const Kd_tree_element& other)
     : Base(other), index(other.index)
   {}
+  
+#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
+  Kd_tree_element& operator=(const Kd_tree_element&)=default;
+#endif  
 };
 
 

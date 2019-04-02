@@ -12,7 +12,6 @@
 // ============================================================================
 
 
-#include <CGAL/basic.h>
 #include <cassert>
 #include <CGAL/Cache.h>
 #include <CGAL/Handle_with_policy.h>
@@ -41,7 +40,9 @@ struct Int_t : public CGAL::Handle_with_policy< Int_rep, Unify > {
     // This is needed to prevent VC7.1 and VC8 to call
     // the explicit templated constructor in Base instead of its copy-ctor.
     Int_t( Int_t const& rhs ) : Base( static_cast<Base const&>(rhs) ) {}
-
+#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
+  Int_t& operator=(Int_t const&)=default;
+#endif  
     int  value() const { return this->ptr()->val; }
     void set_value( int i) {
         this->copy_on_write();

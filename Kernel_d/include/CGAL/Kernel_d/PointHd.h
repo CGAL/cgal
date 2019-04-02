@@ -164,7 +164,6 @@ $3$-dimensional space.}*/
   if (w < 0) invert_rep();
 }
 
-PointHd(const PointHd<RT,LA>& p) : Base(p) {}
 ~PointHd() {}     
 
 /*{\Moperations 4 3}*/

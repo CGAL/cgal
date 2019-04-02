@@ -232,6 +232,10 @@ public:
   Rational_function (const Self & r)
     : Base(static_cast<const Base &> (r)) {}
 
+#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
+  Self& operator=(const Self&)=default;
+#endif
+  
   CGAL::Sign sign_at(const Algebraic_real_1& x,
                      CGAL::Sign epsilon = CGAL::ZERO) const
   {

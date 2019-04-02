@@ -77,6 +77,7 @@ public:
    PROGRAM_FLAT,                /** Used to render flat shading without pre computing normals*/
    PROGRAM_OLD_FLAT,            /** Used to render flat shading without pre computing normals without geometry shader*/
    PROGRAM_SOLID_WIREFRAME,     //! Used to render edges with width superior to 1.
+   PROGRAM_HEAT_INTENSITY,      //! Used to render special item in Display_property_plugin
    NB_OF_PROGRAMS               //! Holds the number of different programs in this enum.
   };
 
@@ -275,6 +276,8 @@ public:
   virtual int currentPass()const = 0;
   virtual bool isDepthWriting()const = 0;
   virtual QOpenGLFramebufferObject* depthPeelingFbo() = 0;
+  virtual QVector4D* clipBox() const =0;
+  virtual bool isClipping() const = 0;
 }; // end class Viewer_interface
 }
 }

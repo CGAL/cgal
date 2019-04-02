@@ -53,6 +53,7 @@
 
 #include <boost/format.hpp>
 #include <boost/optional.hpp>
+#include <boost/optional/optional_io.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/mpl/if.hpp>
 #include <CGAL/tuple.h>
@@ -1047,6 +1048,7 @@ int
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::
 number_of_bad_elements_impl()
 {
+  typedef typename MD::Subdomain Subdomain;
   typedef typename Tr::Finite_facets_iterator Finite_facet_iterator;
 
   int count = 0, count_num_bad_surface_facets = 0;
@@ -1063,7 +1065,7 @@ number_of_bad_elements_impl()
   {
     Facet facet = *facet_it;
     typename Rf_base::Facet_properties properties;
-    compute_facet_properties(facet, properties);
+    this->compute_facet_properties(facet, properties);
 
 #ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
     //facet.first->mark = 0;
@@ -1079,8 +1081,8 @@ number_of_bad_elements_impl()
 
         Cell_handle c = facet.first;
         int ind = facet.second;
-        Cell_handle mc = mirror_facet(facet).first;
-        int mind = mirror_facet(facet).second;
+        Cell_handle mc = this->mirror_facet(facet).first;
+        int mind = this->mirror_facet(facet).second;
 
 #ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
         c->mark2 = ind;
@@ -1099,13 +1101,13 @@ number_of_bad_elements_impl()
             const Facet f1(c, i);
             if (this->is_facet_on_surface(f1))
             {
-              std::cerr << "*** f1 is " << (this->r_criteria_(f1) ? "bad" : "good") << std::endl;
+              std::cerr << "*** f1 is " << (this->r_criteria_(this->r_tr_, f1) ? "bad" : "good") << std::endl;
 
 #ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
               c->mark = i;
 #endif
               typename Rf_base::Facet_properties properties;
-              compute_facet_properties(f1, properties);
+              this->compute_facet_properties(f1, properties);
               if (properties)
                 ++num_real_surface_facets_in_c;
               else
@@ -1117,7 +1119,7 @@ number_of_bad_elements_impl()
             const Facet f2(c, i);
             if (this->is_facet_on_surface(f2))
             {
-              std::cerr << "*** f2 is " << (this->r_criteria_(f2) ? "bad" : "good") << std::endl;
+              std::cerr << "*** f2 is " << (this->r_criteria_(this->r_tr_, f2) ? "bad" : "good") << std::endl;
 
 #ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
               mc->mark = i;
@@ -1138,13 +1140,13 @@ number_of_bad_elements_impl()
           << "*** Num of real surface facets in c: " << num_real_surface_facets_in_c << std::endl
           << "*** Num of real surface facets in mc: " << num_real_surface_facets_in_mc << std::endl;
 
-        const bool is_c_in_domain = this->r_oracle_.is_in_domain_object()(this->r_tr_.dual(c));
-        const bool is_mc_in_domain = this->r_oracle_.is_in_domain_object()(this->r_tr_.dual(mc));
+        const Subdomain c_subdomain = this->r_oracle_.is_in_domain_object()(this->r_tr_.dual(c));
+        const Subdomain mc_subdomain = this->r_oracle_.is_in_domain_object()(this->r_tr_.dual(mc));
 
         std::cerr << "*** Is in complex? c is marked in domain: " << this->r_c3t3_.is_in_complex(c)
-          << " / c is really in domain: " << is_c_in_domain
+          << " / c is really in subdomain: " << c_subdomain
           << " / mc is marked in domain: " << this->r_c3t3_.is_in_complex(mc)
-          << " / mc is really in domain: " << is_mc_in_domain
+          << " / mc is really in subdomain: " << mc_subdomain
           << std::endl;
 
 
@@ -1153,15 +1155,15 @@ number_of_bad_elements_impl()
 
       }
 
-      const Surface_patch_index& surface_index = CGAL::cpp11::get<0>(*properties);
-      const Index& surface_center_index = CGAL::cpp11::get<1>(*properties);
-      const Bare_point& surface_center = CGAL::cpp11::get<2>(*properties);
+      //const Surface_patch_index& surface_index = CGAL::cpp11::get<0>(*properties);
+      //const Index& surface_center_index = CGAL::cpp11::get<1>(*properties);
+      //const Bare_point& surface_center = CGAL::cpp11::get<2>(*properties);
 
       // Facet is on surface: set facet properties
       //set_facet_surface_center(facet, surface_center, surface_center_index);
       //set_facet_on_surface(facet, surface_index);
 
-      const typename Rf_base::Is_facet_bad is_facet_bad = this->r_criteria_(facet);
+      const typename Rf_base::Is_facet_bad is_facet_bad = this->r_criteria_(this->r_tr_, facet);
       if ( is_facet_bad )
       {
         ++count;

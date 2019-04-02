@@ -68,6 +68,8 @@
 
 #endif
 
+
+
 #define CGAL_INTERSECTION_FUNCTION(A, B, DIM)                           \
   template<typename K>                                                  \
   inline                                                                \
@@ -143,6 +145,8 @@ template<typename B>
 class IT<Bbox_3, B> : public Intersection_traits< typename Kernel_traits<B>::Kernel, CGAL::Bbox_3, B >
 { };
 
+  
+namespace Intersections {
 namespace internal {
 
 // this function is used to call either make_object or a
@@ -246,8 +250,9 @@ do_intersect_impl(const A& a, const B& b, Dynamic_dimension_tag) {
   return Kernel().do_intersect_d_object()(a, b);
 }
 
-} // internal
-
+} // namespace internal
+} // namespace Intersections
+  
 // See overloads in the respective header files
 
 // template<typename A, typename B>

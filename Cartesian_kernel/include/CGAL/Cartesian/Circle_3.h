@@ -81,7 +81,7 @@ public:
     CGAL_kernel_assertion((p.a() * center.x() +
                            p.b() * center.y() +
                            p.c() * center.z() +
-                           p.d()) == CGAL::ZERO);
+                           p.d()) == 0);
     CGAL_kernel_assertion(squared_r >= FT(0));
     base = Rep(Sphere_3(center,squared_r), p);
   }

@@ -1079,7 +1079,11 @@ _image *_readImageHeaderAndGetError( const char *name_to_be_read, int *error )
   _openReadImage(im, name);	
 
   if(!im->fd) {
-    fprintf(stderr, "_readImageHeaderAndGetError: error: unable to open file \'%s\'\n", name);
+    if(name == NULL) {
+      fprintf(stderr, "_readImageHeaderAndGetError: error: NULL file name\n");
+    }  else {
+      fprintf(stderr, "_readImageHeaderAndGetError: error: unable to open file \'%s\'\n", name);
+    }
     _freeImage(im);
     *error = ImageIO_OPENING;
     if ( name != NULL ) free( name );

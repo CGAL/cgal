@@ -43,8 +43,7 @@ vertices as a source and target. It is possible to filter border edges
 using `boost::filtered_graph` as shown in example
 \ref BGL_surface_mesh/surface_mesh_dual.cpp
 
-Property forwarding
--------------------
+\cgalHeading{Property Forwarding}
 \cgalAdvancedBegin
 Edge properties of the underlying graph are forwarded directly. For
 faces and vertices only the `face_index` and `vertex_index` properties

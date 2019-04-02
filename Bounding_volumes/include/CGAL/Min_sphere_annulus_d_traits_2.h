@@ -67,9 +67,6 @@ class Min_sphere_annulus_d_traits_2 {
     // typedef  typename K::Construct_point_2    Construct_point_d;
     typedef  _Construct_point_2<K>       Construct_point_d;
 
-    // creation
-    Min_sphere_annulus_d_traits_2( ) { }
-    Min_sphere_annulus_d_traits_2( const Min_sphere_annulus_d_traits_2<K_,ET_,NT_>&) {}
 
     // operations
     Access_dimension_d

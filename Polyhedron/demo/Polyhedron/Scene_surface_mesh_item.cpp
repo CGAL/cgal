@@ -125,6 +125,7 @@ struct Scene_surface_mesh_item_priv{
     alphaSlider = NULL;
     has_vcolors = false;
     has_fcolors = false;
+    item->setProperty("classname", QString("surface_mesh"));
   }
 
   Scene_surface_mesh_item_priv(SMesh* sm, Scene_surface_mesh_item *parent):
@@ -151,6 +152,7 @@ struct Scene_surface_mesh_item_priv{
     alphaSlider = NULL;
     has_vcolors = false;
     has_fcolors = false;
+    item->setProperty("classname", QString("surface_mesh"));
   }
 
   ~Scene_surface_mesh_item_priv()
@@ -537,7 +539,12 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
         Point p = positions[source(hd, *smesh_)];
         EPICK::Vector_3 n = fnormals[fd];
         CGAL::Color *c;
-        if(has_fcolors)
+        if(has_fpatch_id)
+        {
+          QColor color = item->color_vector()[fpatch_id_map[fd] - min_patch_id]; 
+          c = new CGAL::Color(color.red(),color.green(),color.blue());
+        }
+        else if(has_fcolors)
           c= &fcolors[fd];
         else
           c = 0;
@@ -572,6 +579,8 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
             ,fnormals[fd]
             , c
             , name);
+        if(has_fpatch_id)
+          delete c;
       }
       else if(is_convex)
       {
@@ -855,7 +864,12 @@ void Scene_surface_mesh_item_priv::triangulate_convex_facet(face_descriptor fd,
     if(!index)
     {
       CGAL::Color* color;
-      if(has_fcolors)
+      if(has_fpatch_id)
+      {
+        QColor c = item->color_vector()[fpatch_id_map[fd] - min_patch_id]; 
+        color = new CGAL::Color(c.red(),c.green(),c.blue());
+      }
+      else if(has_fcolors)
         color = &(*fcolors)[fd];
       else
         color = 0;
@@ -872,6 +886,8 @@ void Scene_surface_mesh_item_priv::triangulate_convex_facet(face_descriptor fd,
                   (*fnormals)[fd],
                   color,
                   name);
+      if(has_fpatch_id)
+        delete color;
     }
     else if(name.testFlag(Scene_item_rendering_helper::GEOMETRY))
     {
@@ -895,11 +911,10 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
   if(normal == CGAL::NULL_VECTOR)
   {
     boost::graph_traits<SMesh>::halfedge_descriptor start = prev(halfedge(fd, *smesh_), *smesh_);
-    boost::graph_traits<SMesh>::halfedge_descriptor next_;
+    boost::graph_traits<SMesh>::halfedge_descriptor hd = halfedge(fd, *smesh_);
+    boost::graph_traits<SMesh>::halfedge_descriptor next_=next(hd, *smesh_);
     do
     {
-      boost::graph_traits<SMesh>::halfedge_descriptor hd = halfedge(fd, *smesh_);
-       next_ =next(hd, *smesh_);
       const Point_3& pa = smesh_->point(target(hd, *smesh_));
       const Point_3& pb = smesh_->point(target(next_, *smesh_));
       const Point_3& pc = smesh_->point(target(prev(hd, *smesh_), *smesh_));
@@ -908,6 +923,7 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
         normal = CGAL::cross_product(pb-pa, pc -pa);
         break;
       }
+      next_ =next(next_, *smesh_);
     }while(next_ != start);
     
     if (normal == CGAL::NULL_VECTOR) // No normal could be computed, return
@@ -924,14 +940,9 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
   }
   
   typedef FacetTriangulator<SMesh, EPICK, boost::graph_traits<SMesh>::vertex_descriptor> FT;
-  double diagonal;
-  if(item->diagonalBbox() != std::numeric_limits<double>::infinity())
-    diagonal = item->diagonalBbox();
-  else
-    diagonal = 0.0;
   const CGAL::qglviewer::Vec off = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   EPICK::Vector_3 offset(off.x,off.y,off.z);
-  FT triangulation(fd,normal,smesh_,diagonal, offset);
+  FT triangulation(fd,normal,smesh_, offset);
   //iterates on the internal faces
   for(FT::CDT::Finite_faces_iterator
       ffit = triangulation.cdt->finite_faces_begin(),
@@ -945,7 +956,12 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
     if(!index)
     {
       CGAL::Color* color;
-      if(has_fcolors)
+      if(has_fpatch_id)
+      {
+        QColor c= item->color_vector()[fpatch_id_map[fd] - min_patch_id]; 
+        color = new CGAL::Color(c.red(),c.green(),c.blue());
+      }
+      else if(has_fcolors)
         color = &(*fcolors)[fd];
       else
         color = 0;
@@ -963,6 +979,8 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
                   (*fnormals)[fd],
                   color,
                   name);
+      if(has_fpatch_id)
+        delete color;
     }
     //adds the indices to the appropriate vector
     else
@@ -1074,7 +1092,8 @@ void* Scene_surface_mesh_item_priv::get_aabb_tree()
       BOOST_FOREACH( face_descriptor f, faces(*sm))
       {
         //if face is degenerate, skip it
-        if (CGAL::is_triangle(halfedge(f, *sm), *sm) && CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, *sm))
+        if (CGAL::is_triangle(halfedge(f, *sm), *sm) 
+            && CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, *sm))
           continue;
         //if face not triangle, triangulate corresponding primitive before adding it to the tree
         if(!CGAL::is_triangle(halfedge(f, *sm), *sm))
@@ -1234,6 +1253,7 @@ void Scene_surface_mesh_item::invalidate(Gl_data_names name)
   Q_EMIT item_is_about_to_be_changed();
   if(name.testFlag(GEOMETRY))
   {
+    is_bbox_computed = false;
     delete_aabb_tree(this);
     d->smesh_->collect_garbage();
     d->invalidate_stats();
@@ -1296,12 +1316,7 @@ QList<EPICK::Triangle_3> Scene_surface_mesh_item_priv::triangulate_primitive(fac
     qDebug()<<"Warning in triangulation of the selection item: normal contains NaN values and is not valid.";
     return QList<EPICK::Triangle_3>();
   }
-  double diagonal;
-  if(item->diagonalBbox() != std::numeric_limits<double>::infinity())
-    diagonal = item->diagonalBbox();
-  else
-    diagonal = 0.0;
-  FT triangulation(fit,normal,smesh_,diagonal);
+  FT triangulation(fit,normal,smesh_);
   //iterates on the internal faces to add the vertices to the positions
   //and the normals to the appropriate vectors
   for( FT::CDT::Finite_faces_iterator
@@ -1416,18 +1431,18 @@ void Scene_surface_mesh_item::setItemIsMulticolor(bool b)
 
 void Scene_surface_mesh_item::show_feature_edges(bool b)
 {
+  d->has_feature_edges = b;
   if(b)
   {
     d->e_is_feature_map = d->smesh_->add_property_map<boost::graph_traits<SMesh>::edge_descriptor,bool>("e:is_feature").first;
     invalidate(COLORS);
     itemChanged();
   }
-  d->has_feature_edges = b;
 }
 
 bool Scene_surface_mesh_item::isItemMulticolor()
 {
-  return d->has_fcolors;
+  return d->has_fcolors || d->has_vcolors;
 }
 
 bool Scene_surface_mesh_item::hasPatchIds()
@@ -1497,7 +1512,7 @@ QString Scene_surface_mesh_item::computeStats(int type)
     edges_length(d->smesh_, minl, maxl, meanl, midl, d->number_of_null_length_edges);
   }
 
-  double mini, maxi, ave;
+  double mini(0), maxi(0), ave(0);
   switch (type)
   {
   case MIN_ANGLE:
@@ -1696,7 +1711,7 @@ CGAL::Three::Scene_item::Header_data Scene_surface_mesh_item::header() const
   data.titles.append(QString("#Border Edges"));
   data.titles.append(QString("Pure Triangle"));
   data.titles.append(QString("Pure Quad"));
-  data.titles.append(QString("#Degenerated Faces"));
+  data.titles.append(QString("#Degenerate Faces"));
   data.titles.append(QString("Connected Components of the Boundary"));
   data.titles.append(QString("Area"));
   data.titles.append(QString("Volume"));
@@ -1716,7 +1731,7 @@ CGAL::Three::Scene_item::Header_data Scene_surface_mesh_item::header() const
   data.titles.append(QString("Maximum Length"));
   data.titles.append(QString("Median Length"));
   data.titles.append(QString("Mean Length"));
-  data.titles.append(QString("#Null Length"));
+  data.titles.append(QString("#Degenerate Edges"));
   data.titles.append(QString("Minimum"));
   data.titles.append(QString("Maximum"));
   data.titles.append(QString("Average"));

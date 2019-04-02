@@ -2,7 +2,7 @@
  * Using the traits adaptor to generate a traits class for Bezier polygons.
  */
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #ifndef CGAL_USE_CORE
 #include <iostream>

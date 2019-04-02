@@ -248,6 +248,8 @@ public:
   typedef typename R::Point_2   Point_2; 
   typedef typename R::Line_3    Line_3; 
   typedef typename R::Line_2    Line_2;
+  typedef typename R::Segment_3 Segment_3;
+  typedef typename R::Segment_2 Segment_2;
   typedef typename R::FT        RT;
   typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
@@ -269,6 +271,13 @@ public:
     Point_2 p2(project(p));
     Line_2 l2(project(l.point(0)), project(l.point(1)));
     return squared_distance(p2, l2);
+  }
+  
+  RT operator()(const Segment_3& s, const Point_3& p) const
+  {
+    Point_2 p2(project(p));
+    Segment_2 s2(project(s.source()), project(s.target()));
+    return squared_distance(p2, s2);
   }
 };
 

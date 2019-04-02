@@ -581,7 +581,7 @@ work by Samuel Hornus, Olivier Devillers and Clément Jamin. In 2017, Clément
 Jamin added the regular triangulations.
 
 Clément Jamin's work was supported by the
-<a href="http://cordis.europa.eu/project/rcn/111529_en.html">Advanced Grant of the European Research Council GUDHI</a>
+<a href="https://cordis.europa.eu/project/rcn/111529_en.html">Advanced Grant of the European Research Council GUDHI</a>
 (Geometric Understanding in Higher Dimensions).
 
 

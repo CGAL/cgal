@@ -644,8 +644,13 @@ private:
     const FT sidelen = CGAL::abs(qcoord-rcoord);
     const int sgn = (bside < 4) ? -1 : +1;
     const RT two(2);
-    ux_ = side_ver ? (two*pcoord + sgn*sidelen) : (qcoord+rcoord);
-    uy_ = side_ver ? (qcoord+rcoord) : (two*pcoord + sgn*sidelen);
+    if(side_ver) {
+      ux_ = two*pcoord + sgn*sidelen;
+      uy_ = qcoord+rcoord;
+    } else {
+      ux_ = qcoord+rcoord;
+      uy_ = two*pcoord + sgn*sidelen;
+    }
     uz_ = two;
   }
 
@@ -977,12 +982,12 @@ private:
     const Comparison_result cmp = CGAL::compare(dx, dy);
     if (cmp == LARGER) {
       ux_ = is_q_hor ? (r_coord + p_coord_r) : (q_coord + p_coord_q);
-      uy_ = is_q_hor ? (RT(2)*q_coord + CGAL::sign(sdistq)*dx) :
-                       (RT(2)*r_coord + CGAL::sign(sdistr)*dx) ;
+      uy_ = is_q_hor ? (RT(2)*q_coord + (int)CGAL::sign(sdistq)*dx) :
+                       (RT(2)*r_coord + (int)CGAL::sign(sdistr)*dx) ;
     } else if (cmp == SMALLER) {
       uy_ = is_r_hor ? (r_coord + p_coord_r) : (q_coord + p_coord_q);
-      ux_ = is_r_hor ? (RT(2)*q_coord + CGAL::sign(sdistq)*dy) :
-                       (RT(2)*r_coord + CGAL::sign(sdistr)*dy) ;
+      ux_ = is_r_hor ? (RT(2)*q_coord + (int)CGAL::sign(sdistq)*dy) :
+                       (RT(2)*r_coord + (int)CGAL::sign(sdistr)*dy) ;
     } else {
       ux_ = is_q_hor ? (r_coord + p_coord_r) : (q_coord + p_coord_q);
       uy_ = is_q_hor ? (q_coord + p_coord_q) : (r_coord + p_coord_r);
@@ -1056,7 +1061,7 @@ private:
       uz_ = RT(2);
     } else {
       upar = Apar;
-      uort = Aort - CGAL::sign(dort)*absdpar;
+      uort = Aort - (int)CGAL::sign(dort)*absdpar;
       uz_ = RT(1);
     }
   }
@@ -1124,7 +1129,7 @@ private:
       Comparison_result comp = CGAL::compare(pqdist, CGAL::abs(signrdist));
       upar = is_r_horizontal ? pp.x() + qq.x() : pp.y() + qq.y();
       if (comp == LARGER) {
-        uort = RT(2)*coordr + CGAL::sign(signrdist)*pqdist;
+        uort = RT(2)*coordr + (int)CGAL::sign(signrdist)*pqdist;
       } else {
         uort = coordr + (is_r_horizontal ? pp.y() : pp.x());
       }
@@ -1156,7 +1161,7 @@ private:
       uort = RT(2)*coordr + sdistf;
     } else {
       upar = is_r_horizontal ? pp.x() + qq.x() : pp.y() + qq.y();
-      uort = RT(2)*coordr + CGAL::sign(sdistf)*pqdist;
+      uort = RT(2)*coordr + (int)CGAL::sign(sdistf)*pqdist;
     }
     uz_ = RT(2);
     return;
@@ -1240,8 +1245,8 @@ private:
         Point_2(pcoord, lineval) : Point_2(lineval, pcoord);
       const RT sidelen = (CGAL::max)(CGAL::abs(corner.x() - q.point().x()),
                                      CGAL::abs(corner.y() - q.point().y()));
-      ux_ = RT(2)*corner.x() + signla*sidelen;
-      uy_ = RT(2)*corner.y() + signlb*sidelen;
+      ux_ = RT(2)*corner.x() + (int)signla*sidelen;
+      uy_ = RT(2)*corner.y() + (int)signlb*sidelen;
       uz_ = RT(2);
       return;
     }
@@ -1252,8 +1257,8 @@ private:
         Point_2(lineval, qcoord) : Point_2(qcoord, lineval);
       const RT sidelen = (CGAL::max)(CGAL::abs(corner.x() - p.point().x()),
                                      CGAL::abs(corner.y() - p.point().y()));
-      ux_ = RT(2)*corner.x() + signla*sidelen;
-      uy_ = RT(2)*corner.y() + signlb*sidelen;
+      ux_ = RT(2)*corner.x() + (int)signla*sidelen;
+      uy_ = RT(2)*corner.y() + (int)signlb*sidelen;
       uz_ = RT(2);
       return;
     }
@@ -1281,8 +1286,8 @@ private:
       // is shorter than Linf p, q distance
       const Point_2 corner = pos_slope?
         Point_2(pcoord, plineval) : Point_2(plineval, pcoord);
-      ux_ = RT(2)*corner.x() + signla*pqdist;
-      uy_ = RT(2)*corner.y() + signlb*pqdist;
+      ux_ = RT(2)*corner.x() + (int)signla*pqdist;
+      uy_ = RT(2)*corner.y() + (int)signlb*pqdist;
       uz_ = RT(2);
       return;
     }
@@ -1298,8 +1303,8 @@ private:
       // is shorter than Linf p, q distance
       const Point_2 corner = pos_slope?
         Point_2(qlineval, qcoord) : Point_2(qcoord, qlineval);
-      ux_ = RT(2)*corner.x() + signla*pqdist;
-      uy_ = RT(2)*corner.y() + signlb*pqdist;
+      ux_ = RT(2)*corner.x() + (int)signla*pqdist;
+      uy_ = RT(2)*corner.y() + (int)signlb*pqdist;
       uz_ = RT(2);
       return;
     }

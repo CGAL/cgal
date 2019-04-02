@@ -98,6 +98,11 @@ class Polyhedron_demo_mean_curvature_flow_skeleton_plugin :
 
 public:
 
+  ~Polyhedron_demo_mean_curvature_flow_skeleton_plugin()
+  {
+    delete ui;
+  }
+  
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
 
     this->mw = mainWindow;

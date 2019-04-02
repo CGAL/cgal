@@ -55,13 +55,13 @@ performing this adaptation.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `DelaunayGraph_2`
 - `AdaptationTraits_2`
 - `AdaptationPolicy_2`
 
-## Classes ##
+\cgalCRPSection{Classes}
 
 - `CGAL::Voronoi_diagram_2<DG,AT,AP>`
 - \link CGAL::Voronoi_diagram_2::Halfedge `CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge` \endlink

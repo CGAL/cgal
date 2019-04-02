@@ -141,8 +141,8 @@ public:
                         CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
   void setUpdatesEnabled(bool b) Q_DECL_OVERRIDE
   {
-    dont_emit_changes = b;
-    if(b)
+    dont_emit_changes = !b;
+    if(!b)
       allItemsChanged();
   }
   

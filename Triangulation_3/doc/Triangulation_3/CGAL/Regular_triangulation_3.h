@@ -103,7 +103,7 @@ Regular_triangulation_3(const Regular_triangulation_3 & rt1);
 Equivalent to constructing an empty triangulation with the optional 
 traits class argument and calling `insert(first,last)`. 
 If parallelism is enabled, the points will be inserted in parallel.
-\tparam InputIterator must be an input iterator with value type `Weighted_point`. 
+\tparam InputIterator must be an input iterator with value type \link Regular_triangulation_3::Weighted_point `Weighted_point` \endlink.
 */ 
 template < class InputIterator > 
 Regular_triangulation_3 (InputIterator first, InputIterator last,
@@ -176,7 +176,7 @@ following the order of `InputIterator`, as `spatial_sort()`
 is used to improve efficiency. 
 If parallelism is enabled, the points will be inserted in parallel.
 
-\tparam InputIterator must be an input iterator with value type `Weighted_point`. 
+\tparam InputIterator must be an input iterator with value type \link Regular_triangulation_3::Weighted_point `Weighted_point` \endlink.
 */ 
 template < class InputIterator > 
 std::ptrdiff_t 
