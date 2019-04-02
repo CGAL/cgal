@@ -26,6 +26,7 @@
 #include <boost/function_output_iterator.hpp>
 
 #include <CGAL/KSR/utils.h>
+#include <CGAL/KSR/verbosity.h>
 #include <CGAL/KSR_2/Support_line.h>
 #include <CGAL/KSR_2/Segment.h>
 #include <CGAL/KSR_2/Vertex.h>
@@ -84,6 +85,33 @@ public:
   std::size_t number_of_vertices() const { return m_vertices.size(); }
   std::size_t number_of_segments() const { return m_segments.size(); }
 
+  // Easy access to data structures
+  inline Point_2 point_of_vertex (std::size_t vertex_idx) const
+  { return m_support_lines[std::size_t(m_vertices[vertex_idx].support_line())].to_2d(m_vertices[vertex_idx].point()); }
+  inline Vector_2 vector_of_vertex (std::size_t vertex_idx) const
+  { return KSR::normalize(m_support_lines[std::size_t(m_vertices[vertex_idx].support_line())].to_ray(m_vertices[vertex_idx]).to_vector()); }
+  
+  inline const Segment& segment_of_vertex (std::size_t vertex_idx) const
+  { return m_segments[std::size_t(m_vertices[vertex_idx].segment())]; }
+  inline Segment& segment_of_vertex (std::size_t vertex_idx)
+  { return m_segments[std::size_t(m_vertices[vertex_idx].segment())]; }
+  
+  inline const Support_line& support_line_of_vertex (const Vertex& vertex) const
+  { return m_support_lines[m_segments[std::size_t(vertex.segment())].support_line()]; }
+  inline Support_line& support_line_of_vertex (const Vertex& vertex)
+  { return m_support_lines[m_segments[std::size_t(vertex.segment())].support_line()]; }
+  
+  inline const Support_line& support_line_of_vertex (std::size_t vertex_idx) const
+  { return support_line_of_vertex(m_vertices[vertex_idx]); }
+  inline Support_line& support_line_of_vertex (std::size_t vertex_idx)
+  { return support_line_of_vertex(m_vertices[vertex_idx]); }
+  
+  const Vertex& vertex_of_event (const Event& ev) const
+  { return m_vertices[ev.vertex()]; }
+  Vertex& vertex_of_event (const Event& ev)
+  { return m_vertices[ev.vertex()]; }
+
+  
   Segment_2 segment (std::size_t segment_idx) const
   {
     const Segment& segment = m_segments[segment_idx];
@@ -134,11 +162,6 @@ public:
     }
   }
 
-  void compute_support_lines()
-  {
-    // TODO
-  }
-
   void make_segments_intersection_free()
   {
     // TODO
@@ -155,8 +178,7 @@ public:
 
       vertex.remaining_intersections() = k;
 
-      Segment& segment = m_segments[vertex.segment()];
-      Support_line& sli = m_support_lines[segment.support_line()];
+      Support_line& sli = support_line_of_vertex(vertex);
 
       Ray_2 ray = sli.to_ray (vertex);
 
@@ -173,7 +195,7 @@ public:
           continue;
 
         FT dist = CGAL::approximate_sqrt (CGAL::squared_distance (sli.to_2d(vertex.point()), point));
-        FT time = dist / CGAL::abs(vertex.speed());
+        FT time = dist / vertex.speed();
         
         m_queue.push (Event (i, j, time));
       }
@@ -190,7 +212,7 @@ public:
     while (!m_queue.empty())
     {
       Event ev = m_queue.pop();
-//      std::cerr << " * Applying " << ev << std::endl;
+      CGAL_KSR_CERR << " * Applying " << ev << std::endl;
 
       FT ellapsed_time = ev.time() - latest_time;
       latest_time = ev.time();
@@ -199,38 +221,45 @@ public:
 
       if (stop_vertex_if_intersection(ev.vertex(), ev.intersection_line()))
       {
-//        std::cerr << "  -> Intersection happened" << std::endl;
+        CGAL_KSR_CERR << "  -> Intersection happened" << std::endl;
 
-        m_vertices[ev.vertex()].remaining_intersections() --;
+        vertex_of_event(ev).remaining_intersections() --;
         if (is_bbox_segment (ev.intersection_line()))
-          m_vertices[ev.vertex()].remaining_intersections() = 0;
+          vertex_of_event(ev).remaining_intersections() = 0;
+        CGAL_KSR_CERR << " -> Remaining intersections = " << vertex_of_event(ev).remaining_intersections() << std::endl;
         
         // If there are still intersections to be made
-        if (m_vertices[ev.vertex()].remaining_intersections() != 0)
+        if (vertex_of_event(ev).remaining_intersections() != 0)
         {
           // Create a new segment and transfer events
-          m_segments.push_back (m_vertices[ev.vertex()].support_line());
-          m_support_lines[m_vertices[ev.vertex()].support_line()].segments().push_back (m_segments.size() - 1);
+          m_segments.push_back (vertex_of_event(ev).support_line());
+          support_line_of_vertex(vertex_of_event(ev)).segments().push_back (m_segments.size() - 1);
           
-          m_vertices.push_back (Vertex (m_vertices[ev.vertex()]));
-          m_vertices.push_back (Vertex (m_vertices[ev.vertex()]));
+          m_vertices.push_back (Vertex (vertex_of_event(ev)));
+          m_vertices.push_back (Vertex (vertex_of_event(ev)));
+
           
           m_segments.back().source() = m_vertices.size() - 2;
           m_segments.back().target() = m_vertices.size() - 1;
+
+          // Freeze other end
+          m_vertices[m_vertices.size() - 2].remaining_intersections() = 0;
+          m_vertices[m_vertices.size() - 2].direction() = 0.;
           
-          m_vertices[m_vertices.size() - 2].speed() = 0.; // Freeze other end
-          
+          CGAL_KSR_CERR << m_vertices[m_vertices.size() - 2].remaining_intersections() << " / "
+                        << m_vertices[m_vertices.size() - 1].remaining_intersections() << std::endl;
+
           m_queue.transfer_vertex_events (ev.vertex(), m_vertices.size() - 1);
         }
         else
           m_queue.remove_vertex_events (ev.vertex());
 
-        m_vertices[ev.vertex()].speed() = 0.;
+        vertex_of_event(ev).direction() = 0.;
         
       }
       else
       {
-//        std::cerr << "  -> Nothing happened" << std::endl;
+        CGAL_KSR_CERR << "  -> Nothing happened" << std::endl;
       }
       
       ++ iterations;
@@ -270,13 +299,13 @@ private:
 
     if (Vector_2 (psource, ptarget) * support_line.line().to_vector() > 0.)
     {
-      source.speed() = -1;
-      target.speed() = 1;
+      source.direction() = -1;
+      target.direction() = 1;
     }
     else
     {
-      source.speed() = 1;
-      target.speed() = -1;
+      source.direction() = 1;
+      target.direction() = -1;
     }
     
   }
@@ -288,7 +317,7 @@ private:
       if (v.is_frozen())
         continue;
 
-      v.point() = v.point() + time * v.speed();
+      v.point() = v.point() + time * v.direction();
 
     }
   }

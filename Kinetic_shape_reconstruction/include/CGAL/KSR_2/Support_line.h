@@ -74,7 +74,7 @@ public:
 
   Ray_2 to_ray (const Vertex& vertex) const
   {
-    return Ray_2 (to_2d(vertex.point()), m_vector * vertex.speed());
+    return Ray_2 (to_2d(vertex.point()), m_vector * vertex.direction());
   }
 
 };

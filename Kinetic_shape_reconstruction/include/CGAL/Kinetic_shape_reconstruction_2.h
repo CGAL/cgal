@@ -66,7 +66,6 @@ public:
     m_data.add_bbox_as_segments (bbox);
     
     m_data.add_segments (segments, segment_map);
-    m_data.compute_support_lines();
     m_data.make_segments_intersection_free();
     m_data.initialize_queue(k);
     

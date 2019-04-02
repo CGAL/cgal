@@ -44,7 +44,7 @@ public:
 private:
 
   FT m_point;
-  FT m_speed;
+  FT m_direction;
   KSR::size_t m_segment;
   KSR::size_t m_support_line;
   unsigned int m_remaining_intersections;
@@ -53,11 +53,12 @@ public:
 
   Vertex (FT point,
           KSR::size_t segment = KSR::no_element(),
-          KSR::size_t support_line = KSR::no_element())
-    : m_point (point), m_speed (0)
+          KSR::size_t support_line = KSR::no_element(),
+          unsigned int remaining_intersections = 0)
+    : m_point (point), m_direction (0)
     , m_segment (segment)
     , m_support_line (support_line)
-    , m_remaining_intersections(0)
+    , m_remaining_intersections(remaining_intersections)
   { }
 
   KSR::size_t segment() const { return m_segment; }
@@ -66,13 +67,22 @@ public:
   
   const FT& point() const { return m_point; }
   FT& point() { return m_point; }
-  const FT& speed() const { return m_speed; }
-  FT& speed() { return m_speed; }
+  const FT& direction() const { return m_direction; }
+  FT& direction() { return m_direction; }
+
+  FT speed() const { return CGAL::abs (m_direction); }
 
   const unsigned int& remaining_intersections() const { return m_remaining_intersections; }
   unsigned int& remaining_intersections() { return m_remaining_intersections; }
 
-  bool is_frozen() const { return (m_speed == FT(0)); }
+  bool is_frozen() const { return (m_direction == FT(0)); }
+
+  friend std::ostream& operator<< (std::ostream& os, const Vertex& vertex)
+  {
+    os << "vertex(" << vertex.m_point << "," << vertex.m_direction << ") on line " << vertex.m_support_line << " with "
+       << vertex.m_remaining_intersections << " remaining intersection(s)";
+    return os;
+  }
 
 };
 
