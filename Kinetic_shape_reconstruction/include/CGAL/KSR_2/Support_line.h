@@ -50,7 +50,7 @@ private:
 
   Point_2 m_origin;
   Vector_2 m_vector;
-  std::vector<KSR::size_t> m_segments;
+  std::vector<KSR::size_t> m_segments_idx;
 
 public:
 
@@ -62,8 +62,8 @@ public:
 
   Line_2 line() const { return Line_2 (m_origin, m_vector); }
 
-  const std::vector<KSR::size_t>& segments() const { return m_segments; }
-  std::vector<KSR::size_t>& segments() { return m_segments; }
+  const std::vector<KSR::size_t>& segments_idx() const { return m_segments_idx; }
+  std::vector<KSR::size_t>& segments_idx() { return m_segments_idx; }
 
   FT to_1d (const Point_2& point) const
   {

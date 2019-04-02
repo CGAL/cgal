@@ -73,7 +73,7 @@ public:
   Event pop ()
   {
     Event out = *(m_queue.begin());
-    remove_vertex_event (out.vertex(), m_queue.begin());
+    remove_vertex_event (out.vertex_idx(), m_queue.begin());
     m_queue.erase (m_queue.begin());
 //    remove_vertex_events(out.vertex());
     return out;
@@ -100,7 +100,7 @@ public:
   {
     std::vector<iterator>& vec = m_map_vertices[old_vertex];
     for (iterator iter : vec)
-      push (Event (new_vertex, iter->intersection_line(), iter->time()));
+      push (Event (new_vertex, iter->intersection_line_idx(), iter->time()));
 
     remove_vertex_events (old_vertex);
   }
@@ -115,7 +115,7 @@ private:
 
   void save_vertex_event (iterator it)
   {
-    KSR::size_t vertex = it->vertex();
+    KSR::size_t vertex = it->vertex_idx();
     Map_iterator mit = m_map_vertices.insert (std::make_pair (vertex, std::vector<iterator>())).first;
     mit->second.push_back(it);
   }

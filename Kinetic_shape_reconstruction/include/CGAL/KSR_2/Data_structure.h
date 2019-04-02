@@ -83,41 +83,78 @@ public:
   Vertices& vertices() { return m_vertices; }
 
   std::size_t number_of_vertices() const { return m_vertices.size(); }
+  const Vertex& vertex (std::size_t idx) const { return m_vertices[idx]; }
+  Vertex& vertex (std::size_t idx) { return m_vertices[idx]; }
+  
   std::size_t number_of_segments() const { return m_segments.size(); }
+  const Segment& segment (std::size_t idx) const { return m_segments[idx]; }
+  Segment& segment (std::size_t idx) { return m_segments[idx]; }
 
-  // Easy access to data structures
+  std::size_t number_of_support_lines() const { return m_support_lines.size(); }
+  const Support_line& support_line (std::size_t idx) const { return m_support_lines[idx]; }
+  Support_line& support_line (std::size_t idx) { return m_support_lines[idx]; }
+
+  // Vertex/idx -> Point_2
+  inline Point_2 point_of_vertex (const Vertex& vertex) const
+  { return support_line_of_vertex(vertex).to_2d(vertex.point()); }
   inline Point_2 point_of_vertex (std::size_t vertex_idx) const
-  { return m_support_lines[std::size_t(m_vertices[vertex_idx].support_line())].to_2d(m_vertices[vertex_idx].point()); }
-  inline Vector_2 vector_of_vertex (std::size_t vertex_idx) const
-  { return KSR::normalize(m_support_lines[std::size_t(m_vertices[vertex_idx].support_line())].to_ray(m_vertices[vertex_idx]).to_vector()); }
-  
+  { return point_of_vertex (m_vertices[vertex_idx]); }
+
+  // Vertex/idx -> Segment
+  inline const Segment& segment_of_vertex (const Vertex& vertex) const
+  { return m_segments[vertex.segment_idx()]; }
+  inline Segment& segment_of_vertex(const Vertex& vertex)
+  { return m_segments[vertex.segment_idx()]; }
   inline const Segment& segment_of_vertex (std::size_t vertex_idx) const
-  { return m_segments[std::size_t(m_vertices[vertex_idx].segment())]; }
+  { return segment_of_vertex(m_vertices[vertex_idx]); }
   inline Segment& segment_of_vertex (std::size_t vertex_idx)
-  { return m_segments[std::size_t(m_vertices[vertex_idx].segment())]; }
+  { return segment_of_vertex(m_vertices[vertex_idx]); }
+
+  // Segment -> source Vertex
+  inline const Vertex& source_of_segment (const Segment& segment) const
+  { return m_vertices[segment.source_idx()]; }
+  inline Vertex& source_of_segment (const Segment& segment)
+  { return m_vertices[segment.source_idx()]; }
+
+  // Segment -> target Vertex
+  inline const Vertex& target_of_segment (const Segment& segment) const
+  { return m_vertices[segment.target_idx()]; }
+  inline Vertex& target_of_segment (const Segment& segment)
+  { return m_vertices[segment.target_idx()]; }
+
+  // Segment/idx -> Support_line
+  inline const Support_line& support_line_of_segment (const Segment& segment) const
+  { return m_support_lines[segment.support_line_idx()]; }
+  inline Support_line& support_line_of_segment (const Segment& segment)
+  { return m_support_lines[segment.support_line_idx()]; }
+  inline const Support_line& support_line_of_segment (std::size_t segment_idx) const
+  { return support_line_of_segment(m_segments[segment_idx]); }
+  inline Support_line& support_line_of_segment (std::size_t segment_idx)
+  { return support_line_of_segment(m_segments[segment_idx]); }
   
+  // Vertex/idx -> Support_line
   inline const Support_line& support_line_of_vertex (const Vertex& vertex) const
-  { return m_support_lines[m_segments[std::size_t(vertex.segment())].support_line()]; }
+  { return support_line_of_segment(vertex.segment_idx()); }
   inline Support_line& support_line_of_vertex (const Vertex& vertex)
-  { return m_support_lines[m_segments[std::size_t(vertex.segment())].support_line()]; }
-  
+  { return support_line_of_segment(vertex.segment_idx()); }
   inline const Support_line& support_line_of_vertex (std::size_t vertex_idx) const
   { return support_line_of_vertex(m_vertices[vertex_idx]); }
   inline Support_line& support_line_of_vertex (std::size_t vertex_idx)
   { return support_line_of_vertex(m_vertices[vertex_idx]); }
-  
-  const Vertex& vertex_of_event (const Event& ev) const
-  { return m_vertices[ev.vertex()]; }
-  Vertex& vertex_of_event (const Event& ev)
-  { return m_vertices[ev.vertex()]; }
 
-  
-  Segment_2 segment (std::size_t segment_idx) const
+  // Event -> Vertex
+  const Vertex& vertex_of_event (const Event& ev) const
+  { return m_vertices[ev.vertex_idx()]; }
+  Vertex& vertex_of_event (const Event& ev)
+  { return m_vertices[ev.vertex_idx()]; }
+
+  // idx -> Segment_2
+  Segment_2 segment_2 (std::size_t segment_idx) const
   {
     const Segment& segment = m_segments[segment_idx];
-    const Support_line& support_line = m_support_lines[segment.support_line()];
-    const Vertex& source = m_vertices[segment.source()];
-    const Vertex& target = m_vertices[segment.target()];
+    const Support_line& support_line = m_support_lines[segment.support_line_idx()];
+    const Vertex& source = m_vertices[segment.source_idx()];
+    const Vertex& target = m_vertices[segment.target_idx()];
     
     return Segment_2 (support_line.to_2d(source.point()), support_line.to_2d(target.point()));
   }
@@ -127,188 +164,53 @@ public:
     return segment_idx < 4;
   }
 
-  void add_bbox_as_segments (const CGAL::Bbox_2& bbox)
+  KSR::size_t add_support_line (const Segment_2& segment)
   {
-    FT xmed = (bbox.xmin() + bbox.xmax()) / 2.;
-    FT ymed = (bbox.ymin() + bbox.ymax()) / 2.;
-    FT dx = (bbox.xmax() - bbox.xmin()) / 2.;
-    FT dy = (bbox.ymax() - bbox.ymin()) / 2.;
-
-    FT ratio = 1.1;
-    FT xmin = xmed - ratio * dx;
-    FT xmax = xmed + ratio * dx;
-    FT ymin = ymed - ratio * dy;
-    FT ymax = ymed + ratio * dy;
-    
-    std::array<Point_2, 4> bbox_points
-      = { Point_2 (xmin, ymin),
-          Point_2 (xmin, ymax),
-          Point_2 (xmax, ymin),
-          Point_2 (xmax, ymax) };
-    
-    add_segment (Segment_2 (bbox_points[0], bbox_points[1]));
-    add_segment (Segment_2 (bbox_points[1], bbox_points[3]));
-    add_segment (Segment_2 (bbox_points[3], bbox_points[2]));
-    add_segment (Segment_2 (bbox_points[2], bbox_points[0]));
-  }
-  
-  template <typename SegmentRange, typename SegmentMap>
-  void add_segments (const SegmentRange& segments, SegmentMap segment_map)
-  {
-    for (const typename SegmentRange::const_iterator::value_type& vt : segments)
-    {
-      add_segment (get (segment_map, vt));
-      initialize_vertices_directions(m_segments.size() - 1);
-    }
+    m_support_lines.push_back (Support_line(segment));
+    return KSR::size_t(m_support_lines.size() - 1);
   }
 
-  void make_segments_intersection_free()
-  {
-    // TODO
-  }
-
-  void initialize_queue(unsigned int k)
-  {
-    // Loop over vertices and schedule events
-    for (std::size_t i = 0; i < m_vertices.size(); ++ i)
-    {
-      Vertex& vertex = m_vertices[i];
-      if (vertex.is_frozen())
-        continue;
-
-      vertex.remaining_intersections() = k;
-
-      Support_line& sli = support_line_of_vertex(vertex);
-
-      Ray_2 ray = sli.to_ray (vertex);
-
-      for (std::size_t j = 0; j < m_support_lines.size(); ++ j)
-      {
-        if (j == vertex.support_line())
-          continue;
-
-        Support_line& slj_line = m_support_lines[j];
-        Line_2 line = slj_line.line();
-
-        Point_2 point;
-        if (!KSR::intersection_2 (ray, line, point))
-          continue;
-
-        FT dist = CGAL::approximate_sqrt (CGAL::squared_distance (sli.to_2d(vertex.point()), point));
-        FT time = dist / vertex.speed();
-        
-        m_queue.push (Event (i, j, time));
-      }
-    }
-
-//    m_queue.print();
-  }
-
-  void run()
-  {
-    FT latest_time = FT(0);
-
-    std::size_t iterations = 0;
-    while (!m_queue.empty())
-    {
-      Event ev = m_queue.pop();
-      CGAL_KSR_CERR << " * Applying " << ev << std::endl;
-
-      FT ellapsed_time = ev.time() - latest_time;
-      latest_time = ev.time();
-
-      advance_time (ellapsed_time);
-
-      if (stop_vertex_if_intersection(ev.vertex(), ev.intersection_line()))
-      {
-        CGAL_KSR_CERR << "  -> Intersection happened" << std::endl;
-
-        vertex_of_event(ev).remaining_intersections() --;
-        if (is_bbox_segment (ev.intersection_line()))
-          vertex_of_event(ev).remaining_intersections() = 0;
-        CGAL_KSR_CERR << " -> Remaining intersections = " << vertex_of_event(ev).remaining_intersections() << std::endl;
-        
-        // If there are still intersections to be made
-        if (vertex_of_event(ev).remaining_intersections() != 0)
-        {
-          // Create a new segment and transfer events
-          m_segments.push_back (vertex_of_event(ev).support_line());
-          support_line_of_vertex(vertex_of_event(ev)).segments().push_back (m_segments.size() - 1);
-          
-          m_vertices.push_back (Vertex (vertex_of_event(ev)));
-          m_vertices.push_back (Vertex (vertex_of_event(ev)));
-
-          
-          m_segments.back().source() = m_vertices.size() - 2;
-          m_segments.back().target() = m_vertices.size() - 1;
-
-          // Freeze other end
-          m_vertices[m_vertices.size() - 2].remaining_intersections() = 0;
-          m_vertices[m_vertices.size() - 2].direction() = 0.;
-          
-          CGAL_KSR_CERR << m_vertices[m_vertices.size() - 2].remaining_intersections() << " / "
-                        << m_vertices[m_vertices.size() - 1].remaining_intersections() << std::endl;
-
-          m_queue.transfer_vertex_events (ev.vertex(), m_vertices.size() - 1);
-        }
-        else
-          m_queue.remove_vertex_events (ev.vertex());
-
-        vertex_of_event(ev).direction() = 0.;
-        
-      }
-      else
-      {
-        CGAL_KSR_CERR << "  -> Nothing happened" << std::endl;
-      }
-      
-      ++ iterations;
-      // if (iterations == 6)
-      //   break;
-    }
-  }
-  
-
-private:
-
-  void add_segment (const Segment_2 segment)
+  Segment& add_segment (const Segment_2 segment)
   {
     m_support_lines.push_back (Support_line(segment));
     m_segments.push_back (m_support_lines.size() - 1);
-    m_support_lines.back().segments().push_back (m_segments.size() - 1);
+    m_support_lines.back().segments_idx().push_back (m_segments.size() - 1);
 
     m_vertices.push_back (Vertex (m_support_lines.back().to_1d (segment.source()),
                                   m_segments.size() - 1, m_support_lines.size() - 1));
     m_vertices.push_back (Vertex (m_support_lines.back().to_1d (segment.target()),
                                   m_segments.size() - 1, m_support_lines.size() - 1));
 
-    m_segments.back().source() = m_vertices.size() - 2;
-    m_segments.back().target() = m_vertices.size() - 1;
+    m_segments.back().source_idx() = m_vertices.size() - 2;
+    m_segments.back().target_idx() = m_vertices.size() - 1;
+    return m_segments.back();
   }
 
-  void initialize_vertices_directions (std::size_t segment_idx)
+  Segment& propagate_segment (const Vertex& vertex)
   {
-    Segment& segment = m_segments[segment_idx];
-    Support_line& support_line = m_support_lines[segment.support_line()];
-
-    Vertex& source = m_vertices[segment.source()];
-    Vertex& target = m_vertices[segment.target()];
-
-    Point_2 psource = support_line.to_2d (source.point());
-    Point_2 ptarget = support_line.to_2d (target.point());
-
-    if (Vector_2 (psource, ptarget) * support_line.line().to_vector() > 0.)
-    {
-      source.direction() = -1;
-      target.direction() = 1;
-    }
-    else
-    {
-      source.direction() = 1;
-      target.direction() = -1;
-    }
+    // Create a new segment and transfer events
+    m_segments.push_back (Segment(segment_of_vertex(vertex).support_line_idx()));
+    support_line_of_vertex(vertex).segments_idx().push_back (m_segments.size() - 1);
     
+    m_vertices.push_back (Vertex (vertex));
+    m_vertices.push_back (Vertex (vertex));
+          
+    m_segments.back().source_idx() = m_vertices.size() - 2;
+    m_segments.back().target_idx() = m_vertices.size() - 1;
+
+    // Freeze one end
+    m_vertices[m_vertices.size() - 2].remaining_intersections() = 0;
+    m_vertices[m_vertices.size() - 2].direction() = 0.;
+    
+    return m_segments.back();
   }
+
+  void push_to_queue (const Event& ev) { m_queue.push(ev); }
+  bool queue_is_empty() const { return m_queue.empty(); }
+  Event queue_pop() { return m_queue.pop(); }
+  void transfer_events (std::size_t old_vertex, std::size_t new_vertex)
+  { m_queue.transfer_vertex_events (old_vertex, new_vertex); }
+  void remove_events (std::size_t vertex_idx) { m_queue.remove_vertex_events (vertex_idx); };
 
   void advance_time (FT time)
   {
@@ -322,41 +224,6 @@ private:
     }
   }
 
-  bool stop_vertex_if_intersection (std::size_t vertex_idx, std::size_t line_idx)
-  {
-    const Vertex& vertex = m_vertices[vertex_idx];
-    const Support_line& intersecting = m_support_lines[vertex.support_line()];
-    const Support_line& intersected = m_support_lines[line_idx];
-
-    Point_2 point_inter = KSR::intersection_2<Point_2> (intersecting.line(), intersected.line());
-
-    KSR::size_t intersected_segment = KSR::no_element();
-    
-    for (KSR::size_t sg : intersected.segments())
-    {
-      const Segment& segment = m_segments[sg];
-
-      FT source = m_vertices[segment.source()].point();
-      FT target = m_vertices[segment.target()].point();
-      
-      FT point = intersected.to_1d (point_inter);
-
-      if ((source <= point && point <= target) ||
-          (target <= point && point <= source))
-      {
-        intersected_segment = sg;
-        break;
-      }
-    }
-
-    if (intersected_segment == KSR::no_element()) // No intersection happened
-      return false;
-
-    m_vertices[vertex_idx].point() = intersecting.to_1d(point_inter);
-    return true;
-  }
-
-  
 };
 
 

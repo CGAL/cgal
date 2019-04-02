@@ -40,19 +40,20 @@ public:
 
 private:
 
-  KSR::size_t m_source;
-  KSR::size_t m_target;
-  KSR::size_t m_support_line;
+  KSR::size_t m_source_idx;
+  KSR::size_t m_target_idx;
+  KSR::size_t m_support_line_idx;
 
 public:
 
-  Segment (KSR::size_t support_line) : m_support_line (support_line) { }
+  Segment (KSR::size_t support_line_idx) : m_support_line_idx (support_line_idx) { }
 
-  const KSR::size_t& source() const { return m_source; }
-  KSR::size_t& source() { return m_source; }
-  const KSR::size_t& target() const { return m_target; }
-  KSR::size_t& target() { return m_target; }
-  KSR::size_t support_line() const { return m_support_line; }
+  const KSR::size_t& source_idx() const { return m_source_idx; }
+  KSR::size_t& source_idx() { return m_source_idx; }
+  const KSR::size_t& target_idx() const { return m_target_idx; }
+  KSR::size_t& target_idx() { return m_target_idx; }
+  const KSR::size_t& support_line_idx() const { return m_support_line_idx; }
+  KSR::size_t& support_line_idx() { return m_support_line_idx; }
 
 };
 

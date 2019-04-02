@@ -40,19 +40,19 @@ public:
 
 private:
 
-  KSR::size_t m_vertex;
-  KSR::size_t m_intersection_line;
+  KSR::size_t m_vertex_idx;
+  KSR::size_t m_intersection_line_idx;
 
   FT m_time;
 
 public:
 
-  Event(KSR::size_t vertex, KSR::size_t intersection_line, FT time)
-    : m_vertex (vertex), m_intersection_line (intersection_line), m_time (time)
+  Event(KSR::size_t vertex_idx, KSR::size_t intersection_line_idx, FT time)
+    : m_vertex_idx (vertex_idx), m_intersection_line_idx (intersection_line_idx), m_time (time)
   { }
 
-  KSR::size_t vertex() const { return m_vertex; }
-  KSR::size_t intersection_line() const { return m_intersection_line; }
+  KSR::size_t vertex_idx() const { return m_vertex_idx; }
+  KSR::size_t intersection_line_idx() const { return m_intersection_line_idx; }
   FT time() const { return m_time; }
 
   // Compare two events
@@ -60,16 +60,16 @@ public:
   {
     if (this->m_time == other.m_time)
     {
-      if (this->m_vertex == other.m_vertex)
-        return this->m_intersection_line < other.m_intersection_line;
-      return this->m_vertex < other.m_vertex;
+      if (this->m_vertex_idx == other.m_vertex_idx)
+        return this->m_intersection_line_idx < other.m_intersection_line_idx;
+      return this->m_vertex_idx < other.m_vertex_idx;
     }
     return this->m_time < other.m_time;
   }
 
   friend std::ostream& operator<< (std::ostream& os, const Event& ev)
   {
-    os << "Event at t=" << ev.m_time << " between vertex " << ev.m_vertex << " and line " << ev.m_intersection_line;
+    os << "Event at t=" << ev.m_time << " between vertex " << ev.m_vertex_idx << " and line " << ev.m_intersection_line_idx;
     return os;
   }
 

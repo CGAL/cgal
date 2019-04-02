@@ -45,25 +45,20 @@ private:
 
   FT m_point;
   FT m_direction;
-  KSR::size_t m_segment;
-  KSR::size_t m_support_line;
+  KSR::size_t m_segment_idx;
   unsigned int m_remaining_intersections;
 
 public:
 
   Vertex (FT point,
-          KSR::size_t segment = KSR::no_element(),
-          KSR::size_t support_line = KSR::no_element(),
+          KSR::size_t segment_idx = KSR::no_element(),
           unsigned int remaining_intersections = 0)
     : m_point (point), m_direction (0)
-    , m_segment (segment)
-    , m_support_line (support_line)
+    , m_segment_idx (segment_idx)
     , m_remaining_intersections(remaining_intersections)
   { }
 
-  KSR::size_t segment() const { return m_segment; }
-  
-  KSR::size_t support_line() const { return m_support_line; }
+  KSR::size_t segment_idx() const { return m_segment_idx; }
   
   const FT& point() const { return m_point; }
   FT& point() { return m_point; }
@@ -79,7 +74,7 @@ public:
 
   friend std::ostream& operator<< (std::ostream& os, const Vertex& vertex)
   {
-    os << "vertex(" << vertex.m_point << "," << vertex.m_direction << ") on line " << vertex.m_support_line << " with "
+    os << "vertex(" << vertex.m_point << "," << vertex.m_direction << ") on segment " << vertex.m_segment << " with "
        << vertex.m_remaining_intersections << " remaining intersection(s)";
     return os;
   }
