@@ -82,6 +82,11 @@ Scene::addItem(CGAL::Three::Scene_item* item)
             qobject_cast<CGAL::Three::Scene_group_item*>(item);
     if(group)
         addGroup(group);
+    //init the item for the mainViewer to avoid using unexisting 
+    //VAOs if the mainViewer is not the first to be drawn.
+    item->draw(CGAL::Three::Three::mainViewer());
+    item->drawEdges(CGAL::Three::Three::mainViewer());
+    item->drawPoints(CGAL::Three::Three::mainViewer());
     return id;
 }
 
