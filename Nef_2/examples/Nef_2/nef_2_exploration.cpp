@@ -5,10 +5,11 @@
 typedef CGAL::Exact_integer RT;
 typedef CGAL::Filtered_extended_homogeneous<RT> Extended_kernel;
 typedef CGAL::Nef_polyhedron_2<Extended_kernel> Nef_polyhedron;
+
 typedef Nef_polyhedron::Point Point;  // a standard point
 typedef Nef_polyhedron::Line  Line;
 typedef Nef_polyhedron::Explorer Explorer;
-typedef Extended_kernel::Standard_point_2 S;
+
 typedef Explorer::Face_const_iterator Face_const_iterator;
 typedef Explorer::Hole_const_iterator Hole_const_iterator;
 typedef Explorer::Halfedge_around_face_const_circulator Halfedge_around_face_const_circulator;
@@ -69,8 +70,7 @@ void explore(std::string s, const Nef_polyhedron&  poly)
         std::cout << " ( f = frame edge, e = ordinary edge)" << std::endl;
       }
     }
-  }
-    
+  } 
   std::cout << "done\n" << std::endl;
 }
 
