@@ -78,6 +78,15 @@ namespace CGAL {
     return begin()==end();
   }
 
+  operator std::tuple<I&, I&>()
+  {
+    return std::tuple<I&, I&>{this->first, this->second};
+  }
+
+  operator std::tuple<const I&, const I&>() const 
+  {
+    return std::tuple<const I&, const I&>{this->first, this->second};
+  }
 };
 
   template <typename T>
