@@ -72,6 +72,7 @@ public:
 
   void operator()(PM& pmesh, const bool insert_isolated_vertices = true)
   {
+    reserve(pmesh, _points.size(), 2*_polygons.size(), _polygons.size());
     Vpmap vpmap = get(CGAL::vertex_point, pmesh);
 
     boost::dynamic_bitset<> not_isolated;

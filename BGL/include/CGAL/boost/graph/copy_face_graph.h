@@ -373,6 +373,7 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
                      V2V v2v, H2H h2h, F2F f2f,
                      Src_vpm sm_vpm, Tgt_vpm tm_vpm )
 {
+  reserve(tm, vertices(sm).size(), edges(sm).size(), faces(sm).size());
   internal::copy_face_graph(sm, tm,
                             CGAL::graph_has_property<SourceMesh,boost::halfedge_index_t>(),
                             v2v, h2h, f2f,
