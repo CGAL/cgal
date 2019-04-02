@@ -256,7 +256,7 @@ if (NOT CGAL_CREATED_VERSION_NUM)
     #read version.h and get the line with CGAL_VERSION
     file(STRINGS "${CGAL_ROOT}/include/CGAL/version.h" CGAL_VERSION_LINE REGEX "CGAL_VERSION ")
     #extract release id
-    string(REGEX MATCH "[0-9]+\\.[0-9]+\\.?[0-9]*(-Ic-)?[0-9]*" CGAL_CREATED_VERSION_NUM "${CGAL_VERSION_LINE}")
+    string(REGEX MATCH "[0-9]+\\.[0-9]+\\.?[0-9]*" CGAL_CREATED_VERSION_NUM "${CGAL_VERSION_LINE}")
   endif()
 endif()
 

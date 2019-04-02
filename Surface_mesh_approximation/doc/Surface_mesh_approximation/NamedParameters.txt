@@ -5,7 +5,7 @@
 \cgalHeading{How to use BGL Optional Named Parameters}
 
 The notion of named parameters was introduced in the BGL.
-Details can be found from: http://www.boost.org/libs/graph/doc/bgl_named_params.html.
+Details can be found from: https://www.boost.org/libs/graph/doc/bgl_named_params.html.
 Named parameters enable the user to specify only those parameters which are really needed, by name, making the parameter ordering not required.
 See also \ref bgl_namedparameters.
 

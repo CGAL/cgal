@@ -5,7 +5,7 @@
 ####   LAUNCH CTEST   ####
 ##########################
 
-source "${CGAL_DIR}/developer_scripts/log.sh"
+source "${CGAL_DIR}/${SCRIPTS_DIR}developer_scripts/log.sh"
 # Load settings
 if [ -f "$CGAL_ROOT/.autocgalrc" ]; then
   . "$CGAL_ROOT/.autocgalrc"
@@ -121,22 +121,34 @@ build_platforms_list()
 setup_dirs()
 {
   # dir for the actual release
-  
+  if [ ! -d ${CGAL_DIR}/test ]; then
+    mkdir ${CGAL_DIR}/test
+    #give all rights so that, if it is first created by docker, it is still editable without root access by the local user.
+    chmod 777 ${CGAL_DIR}/test
+  fi
   CGAL_TEST_DIR=${CGAL_DIR}/test
 
   if [ ! -d "${CGAL_DIR}/cmake" ]; then
     mkdir "${CGAL_DIR}/cmake"
+    chmod 777 "${CGAL_DIR}/cmake"
     log "${ACTUAL_LOGFILE}" "Creating ${CGAL_DIR}/cmake"
   fi
 
   if [ ! -d "${CGAL_DIR}/cmake/platforms" ]; then
     mkdir "${CGAL_DIR}/cmake/platforms"
+    chmod 777 "${CGAL_DIR}/cmake/platforms"
     log "${ACTUAL_LOGFILE}" "Creating ${CGAL_DIR}/cmake/platforms"
   fi
 
   CGAL_RELEASE_DIR="${CGAL_DIR}"
-
-  CGAL_RELEASE_ID=`basename "${CGAL_RELEASE_DIR}"`
+  if [ -z "$SCRIPTS_DIR" ]; then
+    CGAL_RELEASE_ID=`basename "${CGAL_RELEASE_DIR}"`
+  else
+    CGAL_GIT_VERSION=$(sed -n '/CGAL_VERSION /s/#define CGAL_VERSION //p'<"$CGAL_DIR/${INSTALLATION_DIR}include/CGAL/version.h" | sed -n 's/-\w*//p')
+    MINIMALIST_DATE=$(date +%y%m%d)
+    CGAL_GIT_VERSION="${CGAL_GIT_VERSION}-Ic-${MINIMALIST_DATE}"
+    CGAL_RELEASE_ID="CGAL-${CGAL_GIT_VERSION}"
+  fi
 
   #todo : too complicated for nothing. Take a simpler outsource build dir
   CGAL_BINARY_DIR_BASE=${CGAL_RELEASE_DIR}/cmake/platforms
@@ -146,6 +158,7 @@ setup_dirs()
 
   if [ ! -r "${LOGS_DIR}" ]; then
     mkdir "$LOGS_DIR"
+    chmod 777 "$LOGS_DIR"
   fi
 
   #
@@ -171,6 +184,7 @@ setup_dirs()
     if [ ! -d "${CGAL_BINARY_DIR}" ]; then
       log "${ACTUAL_LOGFILE}" "Creating platform directory ${CGAL_BINARY_DIR}"
       mkdir "${CGAL_BINARY_DIR}"
+      chmod 777 "${CGAL_BINARY_DIR}"
     fi
 
   done
@@ -211,8 +225,10 @@ publish_results()
 
   ${TAR} cf "test_results-${HOST}_${PLATFORM}.tar" "results_${CGAL_TESTER}_${PLATFORM}.tar.gz" "results_${CGAL_TESTER}_${PLATFORM}.txt"
   ${COMPRESSOR} -9f "test_results-${HOST}_${PLATFORM}.tar"
-  COMPILER=`printf "%s" "$2" | tr -c '[A-Za-z0-9]./[=-=]*_\'\''\":?() ' 'x'`
+  COMPILER=`printf "%s" "$1" | tr -c '[A-Za-z0-9]./[=-=]*_\'\''\":?() ' 'x'`
+  
   FILENAME="${CGAL_RELEASE_ID}_${CGAL_TESTER}-test`datestr`-${COMPILER}-cmake.tar.gz"
+  
   LOGFILENAME="${CGAL_RELEASE_ID}-log`datestr`-${HOST}.gz"
   ${COMPRESSOR} -9f "${ACTUAL_LOGFILE}.test.${PLATFORM}"
   mv "${ACTUAL_LOGFILE}.test.${PLATFORM}.gz" "${LOGS_DIR}/${LOGFILENAME}"
@@ -243,33 +259,35 @@ run_test_on_platform()
   if [ ! -f "${INIT_FILE}" ]; then
     echo "error NEED A INIT FILE !"
   fi
-  
-  cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' -DBUILD_TESTING=OFF -DWITH_tests=OFF -DWITH_CGAL_Qt5=OFF -DCGAL_HEADER_ONLY=ON $CGAL_DIR > installation.log 2>&1
+  cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' -DBUILD_TESTING=OFF -DWITH_tests=OFF -DWITH_CGAL_Qt5=OFF -DCGAL_HEADER_ONLY=ON $CGAL_DIR>installation.log 2>&1
   rm CMakeCache.txt
+  CMAKE_OPTS="-DCGAL_TEST_SUITE=ON -DCMAKE_VERBOSE_MAKEFILE=ON"
+  if [ -n "${SCRIPTS_DIR}" ]; then
+    CMAKE_OPTS="${CMAKE_OPTS} -DWITH_examples=ON -DWITH_demos=ON"
+  fi
   if [ -z "${SHOW_PROGRESS}" ]; then
-    cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' VERBOSE=1 $CGAL_DIR >/dev/null 2>&1
+    cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR  2>&1 >package_installation.log
   else
-    cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' VERBOSE=1 $CGAL_DIR
+    cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}'  -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR 2>&1 |tee package_installation.log
   fi
   LIST_TEST_FILE="${CGAL_ROOT}/list_test_packages"
   if [ -f ${LIST_TEST_FILE} ]; then
     LIST_TEST_PACKAGES=$(source ${LIST_TEST_FILE})
   fi
-  TO_TEST=""
   INIT=""
   for pkg in $LIST_TEST_PACKAGES; do
-  if [ -z "$INIT" ]; then 
-    TO_TEST=$pkg
-    INIT="y"
-  else
-    TO_TEST="${TO_TEST}|$pkg"
-  fi
+    if [ -z "$INIT" ]; then 
+      TO_TEST=$pkg
+      INIT="y"
+    else
+      TO_TEST="${TO_TEST}|$pkg"
+    fi
   done
-
-  CTEST_OPTS="-T Start -T Test  -j${NUMBER_OF_PROCESSORS} ${DO_NOT_TEST:+-E execution___of__} --timeout 1200"
+  CTEST_OPTS="-T Start -T Test -j${NUMBER_OF_PROCESSORS} ${DO_NOT_TEST:+-E execution___of__} --timeout 1200"
   if [ -z "${SHOW_PROGRESS}" ]; then
-    ctest  ${CTEST_OPTS} ${TO_TEST:+-L ${TO_TEST} } ${KEEP_TESTS:+-FC .}> tmp.txt
+    ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} ${KEEP_TESTS:+-FC .}> tmp.txt
   else
+    echo "ctest ${CTEST_OPTS} ${TO_TEST:+-L ${TO_TEST}} ${KEEP_TESTS:+-FC .}|tee tmp.txt"
     ctest ${CTEST_OPTS} ${TO_TEST:+-L ${TO_TEST}} ${KEEP_TESTS:+-FC .}|tee tmp.txt
   fi
   #####################
@@ -278,26 +296,30 @@ run_test_on_platform()
   TAG_DIR=$(awk '/^Create new tag: /{print $4F}' tmp.txt)
   rm tmp.txt
   cd Testing/${TAG_DIR}
-  #python $CGAL_DIR/test/parse-ctest-dashboard-xml.py $CGAL_TESTER $PLATFORM
   RESULT_FILE=./"results_${CGAL_TESTER}_${PLATFORM}.txt"
   rm -f "$RESULT_FILE"
   touch "$RESULT_FILE"
-  sed -n '/CGAL_VERSION /s/#define //p' < "$CGAL_DIR/include/CGAL/version.h" >> "$RESULT_FILE"
+  if [ -z "${SCRIPTS_DIR}" ]; then
+    sed -n '/CGAL_VERSION /s/#define //p' < "$CGAL_DIR/${INSTALLATION_DIR}include/CGAL/version.h" >> "$RESULT_FILE"
+  else
+    echo "CGAL_VERSION ${CGAL_GIT_VERSION}">> "$RESULT_FILE"
+  fi
   echo "TESTER ${CGAL_TESTER}" >> "$RESULT_FILE"
-  echo "TESTER_NAME ${CGAL_TESTER_NAME}" >> "$RESULT_FILE"
+  echo "TESTER_NAME ${CGAL_TESTER}" >> "$RESULT_FILE"
   echo "TESTER_ADDRESS ${TESTER_ADDRESS}" >> "$RESULT_FILE"
   echo "CGAL_TEST_PLATFORM ${PLATFORM}" >> "$RESULT_FILE"
-  #echo "General installation log file: ${GENERAL_BUILD_LOGFILE}"  >> "$RESULT_FILE"
-  #echo "Host-specific installation log file: ../installation.log"  >> "$RESULT_FILE"
   grep -e "^-- USING " "${CGAL_BINARY_DIR}/installation.log" >> $RESULT_FILE 
   echo "------------" >> "$RESULT_FILE"
-  python3 ${CGAL_DIR}/test/parse-ctest-dashboard-xml.py $CGAL_TESTER $PLATFORM
+  python3 ${CGAL_DIR}/${TESTSUITE_DIR}test/parse-ctest-dashboard-xml.py $CGAL_TESTER $PLATFORM
   
   for file in $(ls|grep _Tests); do
     mv $file "$(echo "$file" | sed 's/_Tests//g')"
   done
   OUTPUT_FILE=results_${CGAL_TESTER}_${PLATFORM}.tar
   TEST_REPORT="TestReport_${CGAL_TESTER}_${PLATFORM}"
+  mkdir -p Installation
+  chmod 777 Installation
+  cp "${CGAL_BINARY_DIR}/package_installation.log" "Installation/${TEST_REPORT}"
   
   rm -f $OUTPUT_FILE $OUTPUT_FILE.gz
   tar cf $OUTPUT_FILE results_${CGAL_TESTER}_${PLATFORM}.txt */"$TEST_REPORT"
@@ -315,9 +337,12 @@ run_test_on_host()
     collect_all_current_platforms "${CGAL_BINARY_DIR_BASE}"
   fi
 
-  for PLATFORM in ${PLATFORMS}; do
+  for PLATFORM in ${PLATFORMS}; do  
     run_test_on_platform "${PLATFORM}"
     publish_results "${PLATFORM}"
+    if [ -z "${KEEP_TESTS}" ]; then
+      rm -rf $CGAL_DIR/cmake/platforms/${PLATFORM}
+    fi
   done
 }
 

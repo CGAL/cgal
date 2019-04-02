@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>430</width>
+    <width>328</width>
     <height>413</height>
    </rect>
   </property>
@@ -160,11 +160,20 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_3">
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,1,1,1,1">
               <item>
                <widget class="QComboBox" name="transfo_ComboBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="toolTip">
                  <string>Angle, axis coordinates</string>
+                </property>
+                <property name="currentIndex">
+                 <number>1</number>
                 </property>
                 <item>
                  <property name="text">
@@ -234,20 +243,10 @@
                 </property>
                </widget>
               </item>
-              <item>
-               <widget class="QPushButton" name="applyTransfo_Button">
-                <property name="toolTip">
-                 <string>Saves the current state and applies the transformation.</string>
-                </property>
-                <property name="text">
-                 <string>Apply</string>
-                </property>
-               </widget>
-              </item>
              </layout>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1,0">
+             <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1,0,0">
               <item>
                <widget class="QPushButton" name="undoButton">
                 <property name="toolTip">
@@ -270,6 +269,16 @@
                  </size>
                 </property>
                </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="applyTransfo_Button">
+                <property name="toolTip">
+                 <string>Saves the current state and applies the transformation.</string>
+                </property>
+                <property name="text">
+                 <string>Apply</string>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QPushButton" name="clearButton">

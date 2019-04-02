@@ -249,6 +249,8 @@ public:
             this, &Polyhedron_demo_affine_transform_plugin::undo);
     connect(ui.validatePushButton, &QPushButton::clicked, 
             this, &Polyhedron_demo_affine_transform_plugin::end);
+    //initial state is Translation: no need for this one
+    ui.lineEditA->hide();
   }
 
   void start(FaceGraph *facegraph, const QString name, const Scene_item::Bbox&);

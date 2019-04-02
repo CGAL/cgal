@@ -1788,5 +1788,15 @@ void Viewer::makeCurrent()
   QOpenGLWidget::makeCurrent();
 }
 
+QVector4D* Viewer::clipBox() const
+{
+  return d->clipbox;
+}
+
+bool Viewer::isClipping() const
+{
+  return d->clipping;
+}
+
 #include "Viewer.moc"
 
