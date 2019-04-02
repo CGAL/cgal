@@ -23,7 +23,8 @@
 
 #include <CGAL/Functors_for_face_graph_wrapper.h>
 #include <CGAL/Combinatorial_map_iterators_base.h>
-
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Polyhedron_3.h>
 
 namespace CGAL
 {
@@ -90,7 +91,7 @@ public:
       mindex_marks[i]            =i;
       mnb_marked_darts[i]        =0;
       mnb_times_reserved_marks[i]=0;
-      m_marks[i]                 =nullptr;
+      // m_marks[i]                 =nullptr;
     }
 
     m_nb_darts=darts().size(); // Store locally the number of darts: the HEG must not be modified
@@ -225,11 +226,15 @@ public:
     ++mnb_used_marks;
     CGAL_assertion(is_whole_map_unmarked(m));
 
-    m_marks[m]=new std::vector<bool>(CGAL::num_halfedges(m_fg),  mmask_marks[m]); // TODO use property map
-       /* m_marks[m]
-    std::vector<bool>(CGAL::num_halfedges(m_fg), mmask_marks[m]); */
+    // m_marks[m]=new std::vector<bool>(CGAL::num_halfedges(m_fg),  mmask_marks[m]); // TODO use property map
     // CGAL::num_halfedges is an upper bound; depending on the removed halfedges
-    
+
+    m_marks_new[m]=get(CGAL::dynamic_halfedge_property_t<bool>(),
+                       const_cast<HEG&>(m_fg)); // Strange...
+    for (typename Dart_range::const_iterator it(darts().begin()),
+         itend(darts().end()); it!=itend; ++it)
+    { set_dart_mark(*it, m, mmask_marks[m]); }
+
     return m;
   }
   
@@ -258,10 +263,13 @@ public:
   
   bool get_dart_mark(Dart_const_handle ADart, size_type amark) const
   {
-    return (*(m_marks[amark]))[ADart];
+    // return (*(m_marks[amark]))[ADart];
+    return get(m_marks_new[amark], ADart);
   }
   void set_dart_mark(Dart_const_handle ADart, size_type amark, bool avalue) const
-  { (*(m_marks[amark]))[ADart]=avalue; }
+  { // (*(m_marks[amark]))[ADart]=avalue;
+    put(m_marks_new[amark], ADart, avalue);
+  }
 
   void flip_dart_mark(Dart_const_handle ADart, size_type amark) const
   { set_dart_mark(ADart, amark, !get_dart_mark(ADart, amark)); }
@@ -317,12 +325,12 @@ public:
     }
     else if ( !is_whole_map_unmarked(amark) )
     {
-      for ( typename Dart_range::const_iterator it(darts().begin()),
-              itend(darts().end()); it!=itend; ++it)
+      for (typename Dart_range::const_iterator it(darts().begin()),
+           itend(darts().end()); it!=itend; ++it)
         unmark(*it, amark);
     }
     CGAL_assertion(is_whole_map_unmarked(amark));
-      }
+  }
   
   void free_mark(size_type amark) const
   {
@@ -349,7 +357,9 @@ public:
     
     mnb_times_reserved_marks[amark]=0;
 
-    delete m_marks[amark]; m_marks[amark]=nullptr; // TODO use property map
+    // delete m_marks[amark]; m_marks[amark]=nullptr; // TODO use property map
+    m_marks_new[amark]=get(CGAL::dynamic_halfedge_property_t<bool>(),
+                           const_cast<HEG&>(m_fg)); // To erase the property map ??
   }
   
   bool is_without_boundary(unsigned int i) const
@@ -660,17 +670,10 @@ protected:
   mutable size_type mnb_marked_darts[NB_MARKS];
 
   /// Array of property maps; one for each reserved mark.
-  // TODO UNCLEAR HOW TO CREATE AND INITIALIZE A PROPERTY MAP WITH NEW ??
-  mutable std::vector<bool>* m_marks[NB_MARKS];
-  /*
-  typedef boost::property_map<HEG, CGAL::dynamic_halfedge_property_t<bool> >::type MarkPMap;
-  mutable MarkPMap* m_marks[NB_MARKS];
-
-  TrafficDensityMap tdm = get(CGAL::dynamic_halfedge_property_t<double>(), mesh);
-
-  typedef boost::property_map<HEG, CGAL::dynamic_vertex_property_t<std::string> >::type VertexNameMap;
-  VertexNameMap vnm  = get(CGAL::dynamic_vertex_property_t<std::string>(), mesh);
-  */ 
+  // mutable std::vector<bool>* m_marks[NB_MARKS];
+  typedef typename boost::property_map
+              <HEG, CGAL::dynamic_halfedge_property_t<bool> >::type MarkPMap;
+  mutable MarkPMap m_marks_new[NB_MARKS];
 };
 
   /// null_handle
