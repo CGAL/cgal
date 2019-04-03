@@ -14,7 +14,7 @@ if ( CGAL_FOUND )
   # use Eigen
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
   if (EIGEN3_FOUND)
-    
+    include( ${EIGEN3_USE_FILE} )
     # Link with Boost.ProgramOptions (optional)
     find_package(Boost QUIET COMPONENTS program_options)
     if(Boost_PROGRAM_OPTIONS_FOUND)
