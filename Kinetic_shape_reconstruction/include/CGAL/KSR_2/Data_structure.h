@@ -182,11 +182,15 @@ public:
   inline Support_line& support_line_of_vertex (std::size_t vertex_idx)
   { return support_line_of_vertex(m_vertices[vertex_idx]); }
 
-  // Vertex -> Meta_vertex
+  // Vertex/idx -> Meta_vertex
   inline const Meta_vertex& meta_vertex_of_vertex (const Vertex& vertex) const
   { return m_meta_vertices[vertex.meta_vertex_idx()]; }
   inline Meta_vertex& meta_vertex_of_vertex (const Vertex& vertex)
   { return m_meta_vertices[vertex.meta_vertex_idx()]; }
+  inline const Meta_vertex& meta_vertex_of_vertex (std::size_t vertex_idx) const
+  { return meta_vertex_of_vertex(m_vertices[vertex_idx]); }
+  inline Meta_vertex& meta_vertex_of_vertex (std::size_t vertex_idx)
+  { return meta_vertex_of_vertex(m_vertices[vertex_idx]); }
 
   // Event -> Vertex
   const Vertex& vertex_of_event (const Event& ev) const
@@ -310,15 +314,15 @@ public:
 
   }
 
-  Segment& propagate_segment (const Vertex& vertex)
+  Segment& propagate_segment (std::size_t vertex_idx)
   {
     // Create a new segment
-    m_segments.push_back (Segment(segment_of_vertex(vertex).support_line_idx()));
-    support_line_of_vertex(vertex).segments_idx().push_back (m_segments.size() - 1);
+    m_segments.push_back (Segment(segment_of_vertex(vertex_idx).support_line_idx()));
+    support_line_of_vertex(vertex_idx).segments_idx().push_back (m_segments.size() - 1);
 
     // Create new vertices
-    m_vertices.push_back (Vertex (vertex));
-    m_vertices.push_back (Vertex (vertex));
+    m_vertices.push_back (Vertex (m_vertices[vertex_idx]));
+    m_vertices.push_back (Vertex (m_vertices[vertex_idx]));
 
     // Connect segments and vertices
     m_segments.back().source_idx() = m_vertices.size() - 2;
@@ -327,7 +331,7 @@ public:
     m_vertices[m_vertices.size() - 1].segment_idx() = m_segments.size() - 1;
 
     // Freeze one end
-    m_meta_vertices[vertex.meta_vertex_idx()].vertices_idx().push_back (m_vertices.size() - 2);
+    meta_vertex_of_vertex(vertex_idx).vertices_idx().push_back (m_vertices.size() - 2);
     m_vertices[m_vertices.size() - 2].remaining_intersections() = 0;
     m_vertices[m_vertices.size() - 2].direction() = 0.;
     

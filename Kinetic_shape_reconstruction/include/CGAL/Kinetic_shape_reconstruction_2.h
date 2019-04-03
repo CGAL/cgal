@@ -66,7 +66,8 @@ public:
 
 
   template <typename SegmentRange, typename SegmentMap>
-  void partition (const SegmentRange& segments, SegmentMap segment_map, unsigned int k = 2)
+  void partition (const SegmentRange& segments, SegmentMap segment_map,
+                  unsigned int k = 2, FT enlarge_bbox_ratio = 1.1)
   {
     CGAL::Bbox_2 bbox;
     for (const auto& vt : segments)
@@ -76,7 +77,7 @@ public:
     }
 
     CGAL_KSR_CERR << "Adding bbox as segments" << std::endl;
-    add_bbox_as_segments (bbox);
+    add_bbox_as_segments (bbox, enlarge_bbox_ratio);
 
     CGAL_KSR_CERR << "Adding input as segments" << std::endl;
     // Add input as segments
@@ -426,14 +427,13 @@ public:
 
 private:
   
-  void add_bbox_as_segments (const CGAL::Bbox_2& bbox)
+  void add_bbox_as_segments (const CGAL::Bbox_2& bbox, FT ratio)
   {
     FT xmed = (bbox.xmin() + bbox.xmax()) / 2.;
     FT ymed = (bbox.ymin() + bbox.ymax()) / 2.;
     FT dx = (bbox.xmax() - bbox.xmin()) / 2.;
     FT dy = (bbox.ymax() - bbox.ymin()) / 2.;
 
-    FT ratio = 1.1;
     FT xmin = xmed - ratio * dx;
     FT xmax = xmed + ratio * dx;
     FT ymin = ymed - ratio * dy;
@@ -567,13 +567,14 @@ private:
         m_data.vertex_of_event(ev).remaining_intersections() --;
         if (m_data.is_bbox_segment (ev.intersection_line_idx()))
           m_data.vertex_of_event(ev).remaining_intersections() = 0;
-        CGAL_KSR_CERR << " -> Remaining intersections = " << m_data.vertex_of_event(ev).remaining_intersections() << std::endl;
+        
+        CGAL_KSR_CERR << "  -> Remaining intersections = " << m_data.vertex_of_event(ev).remaining_intersections() << std::endl;
         
         // If there are still intersections to be made
         if (m_data.vertex_of_event(ev).remaining_intersections() != 0)
         {
           // Create a new segment
-          Segment& segment = m_data.propagate_segment (m_data.vertex_of_event(ev));
+          Segment& segment = m_data.propagate_segment (ev.vertex_idx());
 
           // Transfer events to new moving vertex
           m_data.transfer_events (ev.vertex_idx(), segment.target_idx());
@@ -617,6 +618,11 @@ private:
           (target <= point && point <= source))
       {
         intersected_segment = sg;
+        if (source == point || target == point)
+        {
+          CGAL_KSR_CERR << "Warning: intersection at point exactly" << std::endl;
+        }
+
         break;
       }
     }

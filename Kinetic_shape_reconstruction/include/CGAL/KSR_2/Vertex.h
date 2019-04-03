@@ -92,7 +92,8 @@ public:
 
   friend std::ostream& operator<< (std::ostream& os, const Vertex& vertex)
   {
-    os << "vertex(" << vertex.m_point << "," << vertex.m_direction << ") on segment " << vertex.m_segment << " with "
+    os << "vertex(" << vertex.m_point << "," << vertex.m_direction << ") on segment " << vertex.m_segment_idx
+       << " and meta vertex " << vertex.meta_vertex_idx() << " with "
        << vertex.m_remaining_intersections << " remaining intersection(s)";
     return os;
   }
