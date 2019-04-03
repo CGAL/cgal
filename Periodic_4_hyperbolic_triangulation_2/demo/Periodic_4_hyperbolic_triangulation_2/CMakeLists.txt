@@ -10,15 +10,10 @@ include_directories( ${CMAKE_BINARY_DIR} )
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON) 
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.1...3.13)
 
 if(POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
-endif()
-
-
-if(POLICY CMP0054)
-  cmake_policy(SET CMP0054 NEW)
 endif()
 
 find_package(CGAL QUIET COMPONENTS Core Qt5)

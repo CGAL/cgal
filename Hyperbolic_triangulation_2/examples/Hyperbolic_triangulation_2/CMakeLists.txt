@@ -4,11 +4,7 @@
 
 project( Hyperbolic_triangulation_2_Examples )
 
-cmake_minimum_required(VERSION 2.8.10)
-
-if(POLICY CMP0054)
-  cmake_policy(SET CMP0054 NEW)
-endif()
+cmake_minimum_required(VERSION 3.1...3.13)
 
 find_package(CGAL QUIET COMPONENTS Core )
 
