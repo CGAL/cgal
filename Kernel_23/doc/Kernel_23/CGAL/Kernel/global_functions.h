@@ -78,7 +78,13 @@ Angle angle(const CGAL::Point_3<Kernel>&p,
             const CGAL::Point_3<Kernel>&r,
             const CGAL::Vector_3<Kernel>&v);
 
+/// @}
 
+
+
+/// \defgroup approximate_angle_grp CGAL::approximate_angle()
+/// \ingroup kernel_global_function
+/// @{
 
 /*!
 returns an approximation of the angle between `p-q` and `r-q`.
@@ -98,7 +104,13 @@ The angle is given in degrees.
 template <typename Kernel>
 Kernel::FT approximate_angle(const CGAL::Vector_3<Kernel>& u,
                              const CGAL::Vector_3<Kernel>& v);
-   
+ /// @}
+
+
+
+/// \defgroup approximate_dihedral_angle_grp CGAL::approximate_dihedral_angle()
+/// \ingroup kernel_global_function
+/// @{  
 /*!
 returns an approximation of the signed dihedral angle in the tetrahedron `pqrs` of edge `pq`.
 The sign is negative if `orientation(p,q,r,s)` is `CGAL::NEGATIVE` and positive otherwise.
