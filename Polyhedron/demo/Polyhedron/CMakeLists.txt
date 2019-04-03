@@ -142,7 +142,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
 
   qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES Polyhedron_3.qrc )
   find_path(CGAL_THREE_HEADERS_PATH
-    NAME CGAL/Three/Scene_item.h
+    NAMES CGAL/Three/Scene_item.h
     HINTS ${CGAL_INCLUDE_DIRS}
     NO_DEFAULT_PATH
     DOC "Path to CGAL/Three/Scene_item.h")
