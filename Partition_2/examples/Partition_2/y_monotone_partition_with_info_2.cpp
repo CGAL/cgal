@@ -8,7 +8,8 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_2> Surface_mesh;
-typedef CGAL::Pair_partition_traits_2<K>            Traits;
+typedef boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
+typedef CGAL::Pair_partition_traits_2<K,vertex_descriptor>  Traits;
 typedef Traits::Point_2                                     Point_2;
 
 typedef Traits::Polygon_2                                   Polygon_2;

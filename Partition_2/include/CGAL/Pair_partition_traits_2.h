@@ -98,65 +98,58 @@ namespace CGAL {
   };
 
   
-template <class Kernel_>
+template <class Kernel_, class Info>
 class Pair_partition_traits_2
 {
 private:
   typedef Kernel_                                     Kernel;
-  typedef Pair_partition_traits_2<Kernel_>    Self;
-  typedef Surface_mesh<typename Kernel::Point_2>      Surface_mesh;
+  typedef Pair_partition_traits_2<Kernel_,Info>       Self;
   
 public:
 
   Pair_partition_traits_2()
   {}
 
-  
-  typedef typename boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
-
   typedef typename Kernel::FT FT;
-  typedef typename boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
-  typedef std::pair<typename Kernel::Point_2, vertex_descriptor> Point_2;
-  typedef ::std::list<Point_2>                        Container;
+  typedef std::pair<typename Kernel::Point_2, Info> Point_2;
+  typedef ::std::list<Point_2>                      Container;
   typedef CGAL::Polygon_2<Self, Container>          Polygon_2;
 
   
-  typedef Pair_functor<Point_2, typename Kernel::Equal_2>                Equal_2;
-
+  typedef Pair_functor<Point_2, typename Kernel::Equal_2>                    Equal_2;
   typedef Pair_functor<Point_2, typename Kernel::Less_yx_2>                  Less_yx_2;
   typedef Pair_functor<Point_2, typename Kernel::Less_xy_2>                  Less_xy_2;
-  typedef Pair_functor<Point_2, typename Kernel::Left_turn_2>                 Left_turn_2;
+  typedef Pair_functor<Point_2, typename Kernel::Left_turn_2>                Left_turn_2;
   typedef Pair_functor<Point_2, typename Kernel::Orientation_2>              Orientation_2;
   typedef Pair_functor<Point_2, typename Kernel::Compare_y_2>                Compare_y_2;
   typedef Pair_functor<Point_2, typename Kernel::Compare_x_2>                Compare_x_2;
-  typedef CGAL::Is_convex_2<Self>                     Is_convex_2;
-  typedef CGAL::Is_y_monotone_2<Self>                 Is_y_monotone_2;
+  typedef CGAL::Is_convex_2<Self>                                            Is_convex_2;
+  typedef CGAL::Is_y_monotone_2<Self>                                        Is_y_monotone_2;
 
   // needed by Indirect_edge_compare, used in y_monotone and greene_approx
-  typedef typename Kernel::Line_2                     Line_2;
+  typedef typename Kernel::Line_2                                            Line_2;
   typedef Pair_functor<Point_2, typename Kernel::Construct_line_2>           Construct_line_2;
-  typedef Pair_compare_x_at_y_2<Point_2,Kernel>            Compare_x_at_y_2;
-  typedef typename Kernel::Is_horizontal_2            Is_horizontal_2;
+  typedef Pair_compare_x_at_y_2<Point_2,Kernel>                              Compare_x_at_y_2;
+  typedef typename Kernel::Is_horizontal_2                                   Is_horizontal_2;
   
-#if 1
   // needed by visibility graph and thus by optimal convex
-  typedef typename Kernel::Ray_2                      Ray_2; 
-  typedef Pair_collinear_are_ordered_along_line_2<Point_2,Kernel>  Collinear_are_ordered_along_line_2;
+  typedef typename Kernel::Ray_2                                             Ray_2; 
+  typedef Pair_collinear_are_ordered_along_line_2<Point_2,Kernel>            Collinear_are_ordered_along_line_2;
   typedef Pair_functor<Point_2,typename Kernel::Are_strictly_ordered_along_line_2>
-  Are_strictly_ordered_along_line_2;
-  typedef typename Kernel::Intersect_2                Intersect_2;
-  typedef typename Kernel::Assign_2                   Assign_2;
-  typedef typename Kernel::Object_2                   Object_2;
+                                                                             Are_strictly_ordered_along_line_2;
+  typedef typename Kernel::Intersect_2                                       Intersect_2;
+  typedef typename Kernel::Assign_2                                          Assign_2;
+  typedef typename Kernel::Object_2                                          Object_2;
 
   // needed by approx_convex (for constrained triangulation)
   // and optimal convex (for vis. graph)
-#endif  
-  typedef typename Kernel::Segment_2                  Segment_2;
-#if 1 
+
+  typedef typename Kernel::Segment_2                                        Segment_2;
+
   // needed by optimal convex (for vis. graph)
   typedef Pair_functor<Point_2,typename Kernel::Construct_segment_2>        Construct_segment_2;
   typedef Pair_functor<Point_2,typename Kernel::Construct_ray_2>            Construct_ray_2;
-#endif
+
   Equal_2
   equal_2_object() const
   { return Equal_2(Kernel().equal_2_object()); }
@@ -165,40 +158,35 @@ public:
   orientation_2_object() const
   { return Orientation_2(Kernel().orientation_2_object()); }
 
-
-
-    Less_yx_2
-    less_yx_2_object() const
-    { return Less_yx_2(Kernel().less_yx_2_object()); }
-
-    Less_xy_2
-    less_xy_2_object() const
-    { return Less_xy_2(Kernel().less_xy_2_object()); }
-
-    Left_turn_2
-    left_turn_2_object() const
-    { return Left_turn_2(Kernel().left_turn_2_object()); }
-
-    Compare_y_2
-    compare_y_2_object() const
-    {  return Compare_y_2(Kernel().compare_y_2_object()); }
-
-    Compare_x_2
-    compare_x_2_object() const
-    {  return Compare_x_2(Kernel().compare_x_2_object()); }
-
+  Less_yx_2
+  less_yx_2_object() const
+  { return Less_yx_2(Kernel().less_yx_2_object()); }
+  
+  Less_xy_2
+  less_xy_2_object() const
+  { return Less_xy_2(Kernel().less_xy_2_object()); }
+  
+  Left_turn_2
+  left_turn_2_object() const
+  { return Left_turn_2(Kernel().left_turn_2_object()); }
+  
+  Compare_y_2
+  compare_y_2_object() const
+  {  return Compare_y_2(Kernel().compare_y_2_object()); }
+  
+  Compare_x_2
+  compare_x_2_object() const
+  {  return Compare_x_2(Kernel().compare_x_2_object()); }
   
   
   Construct_line_2
   construct_line_2_object() const
   {  return Construct_line_2(Kernel().construct_line_2_object()); }
-
+  
   Compare_x_at_y_2
   compare_x_at_y_2_object() const
   { return Compare_x_at_y_2(Kernel().compare_x_at_y_2_object()); }
 
-
-#if 1
 
   Construct_segment_2
   construct_segment_2_object() const
@@ -216,7 +204,6 @@ public:
   are_strictly_ordered_along_line_2_object() const
   { return Are_strictly_ordered_along_line_2(); }
 
-#endif
   
   Is_horizontal_2
   is_horizontal_2_object() const
@@ -230,7 +217,7 @@ public:
   is_y_monotone_2_object(const Self& traits) const
   {  return Is_y_monotone_2(traits); }
 
-#if 1
+
   Intersect_2
   intersect_2_object() const
   {  return Intersect_2(); }
@@ -238,7 +225,7 @@ public:
   Assign_2
   assign_2_object() const
   {  return Assign_2(); }
-#endif  
+
 };
 
 }
