@@ -344,16 +344,10 @@ public:
   { m_queue.transfer_vertex_events (old_vertex, new_vertex); }
   void remove_events (std::size_t vertex_idx) { m_queue.remove_vertex_events (vertex_idx); };
 
-  void advance_time (FT time)
+  void update_positions (FT time)
   {
     for (Vertex& v : m_vertices)
-    {
-      if (v.is_frozen())
-        continue;
-
-      v.point() = v.point() + time * v.direction();
-
-    }
+      v.update_position(time);
   }
 
 };

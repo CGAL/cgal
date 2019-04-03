@@ -43,6 +43,7 @@ public:
 
 private:
 
+  const FT m_initial_point;
   FT m_point;
   FT m_direction;
   KSR::size_t m_segment_idx;
@@ -54,7 +55,9 @@ public:
   Vertex (FT point,
           KSR::size_t segment_idx = KSR::no_element(),
           unsigned int remaining_intersections = 0)
-    : m_point (point), m_direction (0)
+    : m_initial_point (point)
+    , m_point (point)
+    , m_direction (0)
     , m_segment_idx (segment_idx)
     , m_remaining_intersections(remaining_intersections)
     , m_meta_vertex_idx (KSR::no_element())
@@ -78,6 +81,14 @@ public:
   KSR::size_t& meta_vertex_idx() { return m_meta_vertex_idx; }
   
   bool is_frozen() const { return (m_direction == FT(0)); }
+
+  void update_position(FT time)
+  {
+    if (is_frozen())
+      return;
+
+    m_point = m_initial_point + time * m_direction;
+  }
 
   friend std::ostream& operator<< (std::ostream& os, const Vertex& vertex)
   {

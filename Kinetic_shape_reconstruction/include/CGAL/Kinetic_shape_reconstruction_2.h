@@ -549,8 +549,6 @@ private:
 
   void run()
   {
-    FT latest_time = FT(0);
-
     std::size_t iterations = 0;
     while (!m_data.queue_is_empty())
     {
@@ -558,10 +556,9 @@ private:
 
       CGAL_KSR_CERR << " * Applying " << ev << std::endl;
 
-      FT ellapsed_time = ev.time() - latest_time;
-      latest_time = ev.time();
+      FT current_time = ev.time();
 
-      m_data.advance_time (ellapsed_time);
+      m_data.update_positions (current_time);
 
       if (stop_vertex_if_intersection(ev.vertex_idx(), ev.intersection_line_idx()))
       {
