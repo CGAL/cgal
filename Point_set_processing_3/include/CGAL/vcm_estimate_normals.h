@@ -308,6 +308,202 @@ compute_vcm (const PointRange& points,
   compute_vcm (points, ccov, offset_radius, convolution_radius,
                CGAL::Point_set_processing_3::parameters::all_default (points));
 }
+
+
+/// \endcond
+  
+/// \cond SKIP_IN_MANUAL
+template <typename PointRange,
+          typename NamedParameters
+>
+void
+vcm_estimate_normals_internal (PointRange& points,
+                               double offset_radius, ///< offset radius.
+                               double convolution_radius, ///< convolution radius.
+                               const NamedParameters& np,
+                               int nb_neighbors_convolve = -1 ///< number of neighbors used during the convolution.
+)
+{
+    using boost::choose_param;
+    // basic geometric types
+    typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
+    typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
+    typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+    typedef typename GetDiagonalizeTraits<NamedParameters, double, 3>::type DiagonalizeTraits;
+
+    CGAL_static_assertion_msg(!(boost::is_same<NormalMap,
+                                typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
+                              "Error: no normal map");
+
+    PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
+    NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
+    
+    typedef cpp11::array<double, 6> Covariance;
+    
+    // Compute the VCM and convolve it
+    std::vector<Covariance> cov;
+    if (nb_neighbors_convolve == -1) {
+        compute_vcm(points,
+                    cov,
+                    offset_radius,
+                    convolution_radius,
+                    np);
+    } else {
+        internal::vcm_offset(points.begin(), points.end(),
+                             point_map,
+                             cov,
+                             offset_radius,
+                             20,
+                             Kernel());
+
+        if (nb_neighbors_convolve > 0)
+        {
+          std::vector<Covariance> ccov;
+          ccov.reserve(cov.size());
+          internal::vcm_convolve(points.begin(), points.end(),
+                                 point_map,
+                                 cov,
+                                 ccov,
+                                 (unsigned int) nb_neighbors_convolve,
+                                 Kernel());
+
+          cov.clear();
+          std::copy(ccov.begin(), ccov.end(), std::back_inserter(cov));
+        }
+    }
+
+    // And finally, compute the normals
+    int i = 0;
+    for (typename PointRange::iterator it = points.begin(); it != points.end(); ++it) {
+        cpp11::array<double, 3> enormal = {{ 0,0,0 }};
+        DiagonalizeTraits::extract_largest_eigenvector_of_covariance_matrix
+          (cov[i], enormal);
+
+        typename Kernel::Vector_3 normal(enormal[0],
+                                         enormal[1],
+                                         enormal[2]);
+        put(normal_map, *it, normal);
+        i++;
+    }
+}
+/// @endcond
+
+
+/**  
+   \ingroup PkgPointSetProcessing3Algorithms
+   Estimates normal directions of the range of `points`
+   using the Voronoi Covariance Measure with a radius for the convolution.
+   The output normals are randomly oriented.
+
+   See `compute_vcm()` for a detailed description of the parameters `offset_radius` and `convolution_radius`
+   and of the Voronoi Covariance Measure.
+
+   \tparam PointRange is a model of `Range`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+
+   \param points input point range.
+   \param offset_radius offset_radius.
+   \param convolution_radius convolution_radius.
+   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+
+   \cgalNamedParamsBegin
+     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
+     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{normal_map} a model of `WritablePropertyMap` with value type
+     `geom_traits::Vector_3`.\cgalParamEnd
+       \cgalParamBegin{diagonalize_traits} a model of `DiagonalizeTraits`. It can be omitted:
+       if Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined then an overload
+       using `Eigen_diagonalize_traits` is provided. Otherwise, the internal implementation
+       `CGAL::Diagonalize_traits` is used.\cgalParamEnd
+     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+   \cgalNamedParamsEnd
+
+*/
+template <typename PointRange,
+          typename NamedParameters
+>
+void
+vcm_estimate_normals (PointRange& points,
+                      double offset_radius,
+                      double convolution_radius,
+                      const NamedParameters& np
+)
+{
+  vcm_estimate_normals_internal(points, offset_radius, convolution_radius, np);
+}
+
+/// \cond SKIP_IN_MANUAL
+// variant with default NP
+template <typename PointRange>
+void
+vcm_estimate_normals (PointRange& points,
+                      double offset_radius, ///< offset radius.
+                      double convolution_radius) ///< convolution radius.
+{
+  return vcm_estimate_normals
+    (points, offset_radius, convolution_radius,
+     CGAL::Point_set_processing_3::parameters::all_default(points));
+}
+
+/// \endcond
+
+
+/**
+   \ingroup PkgPointSetProcessing3Algorithms
+   Estimates normal directions of the range of `points`
+   using the Voronoi Covariance Measure with a number of neighbors for the convolution.
+   The output normals are randomly oriented.
+
+   See `compute_vcm()` for a detailed description of the parameter `offset_radius`
+   and of the Voronoi Covariance Measure.
+
+   \tparam PointRange is a model of `Range`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+
+   \param points input point range.
+   \param offset_radius offset_radius.
+   \param k number of neighbor points used for convolution.
+   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+
+   \cgalNamedParamsBegin
+     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
+     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{normal_map} a model of `WritablePropertyMap` with value type
+     `geom_traits::Vector_3`.\cgalParamEnd
+       \cgalParamBegin{diagonalize_traits} a model of `DiagonalizeTraits`. It can be omitted:
+       if Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined then an overload
+       using `Eigen_diagonalize_traits` is provided. Otherwise, the internal implementation
+       `CGAL::Diagonalize_traits` is used.\cgalParamEnd
+     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+   \cgalNamedParamsEnd
+*/
+template < typename PointRange,
+           typename NamedParameters
+>
+void
+vcm_estimate_normals (PointRange& points,
+                      double offset_radius,
+                      unsigned int k,
+                      const NamedParameters& np
+)
+{
+  vcm_estimate_normals_internal(points, offset_radius, 0, np, k);
+}
+
+/// \cond SKIP_IN_MANUAL
+// variant with default NP
+template <typename PointRange>
+void
+vcm_estimate_normals (PointRange& points,
+                      double offset_radius, ///< offset radius.
+                      unsigned int k)
+{
+  return vcm_estimate_normals
+    (points, offset_radius, k,
+     CGAL::Point_set_processing_3::parameters::all_default(points));
+}
+
+
 /// \endcond
 
 } // namespace CGAL
