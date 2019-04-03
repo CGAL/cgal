@@ -160,7 +160,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
     qt5_generate_moc( "${CGAL_THREE_HEADERS_PATH}/CGAL/Three/TextRenderer.h"
       "${CMAKE_CURRENT_BINARY_DIR}/TextRenderer_moc.cpp" )
   else()
-    message(FATAL_ERROR "Cannot find <CGAL/Three/Viewer_interface.h>")
+    message(FATAL_ERROR "Cannot find <CGAL/Three/Scene_item.h>")
   endif()
 
   unset(CGAL_THREE_HEADERS_PATH CACHE)
