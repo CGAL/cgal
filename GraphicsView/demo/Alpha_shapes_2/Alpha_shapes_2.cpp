@@ -1,5 +1,6 @@
 #include <fstream>
-
+#include <boost/config.hpp>
+#include <boost/version.hpp>
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>

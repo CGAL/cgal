@@ -1,4 +1,5 @@
-
+#include <boost/config.hpp>
+#include <boost/version.hpp>
 #include <fstream>
 
 // CGAL headers

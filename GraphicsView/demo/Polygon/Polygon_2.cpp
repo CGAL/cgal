@@ -11,6 +11,8 @@
 #include <CGAL/linear_least_squares_fitting_2.h>
 #include <CGAL/extremal_polygon_2.h>
 #include <CGAL/minkowski_sum_2.h>
+#include <boost/config.hpp>
+#include <boost/version.hpp>
 #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/IO/WKT.h>
 #endif

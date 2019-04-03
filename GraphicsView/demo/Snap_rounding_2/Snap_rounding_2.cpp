@@ -1,5 +1,7 @@
 #include <fstream>
 
+#include <boost/config.hpp>
+#include <boost/version.hpp>
 // CGAL headers
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Snap_rounding_traits_2.h>

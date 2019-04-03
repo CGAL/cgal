@@ -5,6 +5,8 @@
 #include <fstream>
 #include <vector>
 #include <list>
+#include <boost/config.hpp>
+#include <boost/version.hpp>
 
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

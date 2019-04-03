@@ -8,7 +8,8 @@
 #include "svd-typedefs.h"
 
 #include <CGAL/Timer.h>
-
+#include <boost/config.hpp>
+#include <boost/version.hpp>
 // Qt headers
 #include <QtGui>
 #include <QString>

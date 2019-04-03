@@ -1,5 +1,7 @@
 #include <fstream>
 #include <cmath>
+#include <boost/config.hpp>
+#include <boost/version.hpp>
 
 // CGAL headers
 #include <CGAL/Cartesian.h>

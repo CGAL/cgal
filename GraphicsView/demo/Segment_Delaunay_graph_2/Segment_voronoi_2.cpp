@@ -6,7 +6,8 @@
 // CGAL headers
 
 #include "svd-typedefs.h"
-
+#include <boost/config.hpp>
+#include <boost/version.hpp>
 #include <CGAL/Timer.h>
 
 // Qt headers

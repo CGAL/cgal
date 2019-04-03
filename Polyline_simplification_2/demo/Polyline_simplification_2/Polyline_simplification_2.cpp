@@ -3,6 +3,8 @@
 #include <fstream>
 #include <vector>
 #include <deque>
+#include <boost/config.hpp>
+#include <boost/version.hpp>
 
 // CGAL headers
 #include <CGAL/Bbox_2.h>
