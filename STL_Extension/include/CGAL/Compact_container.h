@@ -28,7 +28,7 @@
 #include <CGAL/Default.h>
 
 #include <cmath>
-#include <cstdint>
+#include <cstddef>
 #include <iterator>
 #include <algorithm>
 #include <vector>
@@ -816,8 +816,8 @@ private:
 
   static char * clean_pointer(char * p)
   {
-    return reinterpret_cast<char*>(reinterpret_cast<std::uintptr_t>(p) &
-                                   ~ (std::uintptr_t) START_END);
+    return reinterpret_cast<char*>(reinterpret_cast<std::ptrdiff_t>(p) &
+                                   ~ (std::ptrdiff_t) START_END);
   }
 
   // Returns the pointee, cleaned up from the squatted bits.
@@ -830,8 +830,8 @@ private:
   static Type type(const_pointer ptr)
   {
     char * p = (char *) Traits::pointer(*ptr);
-    return (Type) (reinterpret_cast<std::uintptr_t>(p) -
-                   reinterpret_cast<std::uintptr_t>(clean_pointer(p)));
+    return (Type) (reinterpret_cast<std::ptrdiff_t>(p) -
+                   reinterpret_cast<std::ptrdiff_t>(clean_pointer(p)));
   }
 
   // Sets the pointer part and the type of the pointee.
@@ -841,7 +841,7 @@ private:
     // unnecessary warnings.
     // CGAL_precondition(0 <= t && t < 4);
     Traits::pointer(*ptr) = reinterpret_cast<void *>
-      (reinterpret_cast<std::uintptr_t>(clean_pointer((char *) p)) + (int) t);
+      (reinterpret_cast<std::ptrdiff_t>(clean_pointer((char *) p)) + (int) t);
   }
 
 public:
