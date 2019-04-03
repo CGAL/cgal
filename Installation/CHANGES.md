@@ -1,6 +1,13 @@
 Release History
 ===============
 
+Release 5.0
+------------
+
+### IO Streams
+
+ -   **Breaking change:** The API of `CGAL::Color` has been cleaned up.
+
 Release 4.14
 ------------
 
@@ -37,7 +44,7 @@ Release date: March 2019
     to approximate an input surface triangle mesh by a simpler surface
     triangle mesh.
 
-### Polygon Mesh Processing package
+### Polygon Mesh Processing
 
 -   Added the following new functions to detect and repair issues in
     polygon soups:
@@ -71,7 +78,7 @@ Release date: March 2019
     detect intersections between meshes and volumes undergoing affine
     transformations.
 
-### Regularized Boolean Set Operations in 2D package
+### Regularized Boolean Set Operations in 2D
 
 -   Fixed the validation of orientation of relative simple polygons.
 
