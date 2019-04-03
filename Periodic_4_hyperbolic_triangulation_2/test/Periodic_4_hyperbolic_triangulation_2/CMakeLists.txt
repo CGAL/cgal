@@ -6,6 +6,10 @@ project( Periodic_4_hyperbolic_triangulation_2_Tests )
 
 cmake_minimum_required(VERSION 2.8.10)
 
+if(POLICY CMP0054)
+  cmake_policy(SET CMP0054 NEW)
+endif()
+
 find_package(CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND AND CGAL_Core_FOUND )
