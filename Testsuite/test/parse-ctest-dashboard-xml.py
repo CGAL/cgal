@@ -16,7 +16,7 @@ test_report_filename='{dir}/TestReport_{tester}_{platform}'
 
 xml = open("Test.xml", 'rb').read()
 
-def open_file_create_dir(filename, mode, *args, **kwargs):
+def open_file_create_dir(filename, mode_, *args, **kwargs):
     if not os.path.exists(os.path.dirname(filename)):
         try:
             os.makedirs(os.path.dirname(filename))
@@ -24,9 +24,9 @@ def open_file_create_dir(filename, mode, *args, **kwargs):
             if exc.errno != errno.EEXIST:
                 raise
     if kwargs.get('gzip', None) == True:
-        return gzip.open(filename, mode)
+        return gzip.open(filename, mode=mode_, encoding="utf-8")
     else:
-        return open(filename, mode)
+        return io.open(filename, mode=mode_, encoding="utf-8")
 
 root=ET.fromstring(xml)
 testing = root.find('Testing')
@@ -42,7 +42,15 @@ labels = set()
 tester_name=sys.argv[1]
 platform_name=sys.argv[2]
 for t in testing.findall('Test'):
-    t_output = t.find('Results').find('Measurement').find('Value')
+    nm = t.find('Results')
+    t_exit_value=""
+    ex_time = ""
+    for ec in nm.findall("*/[@name='Execution Time']"):
+      ex_time=ec.find('Value').text
+    for ec in nm.findall("*/[@name='Exit Code']"):
+      t_exit_value=ec.find('Value').text
+    #t_exit_value=nm.find("*/[@name='Exit Code']").find('Value').text
+    t_output = nm.find('Measurement').find('Value')
     t_output_value = t_output.text
     if t_output_value != None:
         if 'encoding' in t_output.attrib and t_output.attrib['encoding'] == 'base64':
@@ -55,6 +63,8 @@ for t in testing.findall('Test'):
            "Status": t.attrib['Status'], \
            "Output": t_output_value, \
            "Labels": [l.text for l in t.find('Labels').findall('Label')] if t.find('Labels') is not None else ['UNKNOWN_LABEL'], \
+           "ExitValue": t_exit_value, \
+           "ExecutionTime": ex_time, \
          }
 
 tests_per_label = defaultdict(list)
@@ -72,7 +82,7 @@ with open_file_create_dir(result_file_name.format(dir=os.getcwd(),
         result_for_label='y'
         with open_file_create_dir("{}/error.txt".format(label), 'w') as error:
             for t in tests:
-                print("   {} {}".format("successful " if (t['Status'] == 'passed') else "ERROR:     ", t['Name']), file=error)
+                print("   {result} {name} in {time} s : {value} ".format(result = "successful " if (t['Status'] == 'passed') else "ERROR:     ", name = t['Name'], value = t['ExitValue'] if(t['ExitValue'] != "") else "SUCCESS" , time = t['ExecutionTime']), file=error)
                 if t['Status'] != 'passed':
                     result_for_label='n'
                 elif t['Output'] != None and re.search(r'(^|[^a-zA-Z_,:-])warning', t['Output'], flags=re.IGNORECASE):
@@ -85,7 +95,6 @@ with open_file_create_dir(result_file_name.format(dir=os.getcwd(),
 
             print("{label} {result}".format(label=label, result=result_for_label), file=results)
 
-
 for label, tests in tests_per_label.items():
         with open_file_create_dir(test_report_filename.format(dir=label,
                                                               tester=tester_name,
@@ -94,13 +103,12 @@ for label, tests in tests_per_label.items():
 ------------------------------------------------------------------
 - Error output from platform {platform}
 ------------------------------------------------------------------
-
 {error_txt}
 """               .format(platform=platform_name,
                          error_txt=open("{}/error.txt".format(label), 'r').read()), file=label_report)
             for t in tests:
                 filename="{}/ProgramOutput.{}".format(label, t['Name'])
-                with open(filename, 'r') as f:
+                with io.open(filename, mode="r", encoding="utf-8") as f:
                     print("""
 ------------------------------------------------------------------
 - {file}

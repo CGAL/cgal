@@ -9,8 +9,8 @@ namespace CGAL {
 This component implements the algorithm described in \cgalCite{cgal:lm-clscm-12} (section 2), generalized to handle different types of data, multiple features and multiple labels. It classifies a data set into a user-defined set of labels, such as _ground_, _vegetation_ and _buildings_. A flexible API is provided so that users can classify any type of data which they can index and for which they can compute relevant features, compute their own local features on the input data set and define their own labels.
 
 \note This component requires C++11 and depends on the Boost libraries
-[Serialization](http://www.boost.org/libs/serialization) and
-[IO Streams](http://www.boost.org/libs/iostreams) (compiled with the GZIP dependency).
+[Serialization](https://www.boost.org/libs/serialization) and
+[IO Streams](https://www.boost.org/libs/iostreams) (compiled with the GZIP dependency).
 
 \section Classification_Organization Package Organization
 
@@ -235,7 +235,7 @@ to README provided in the [ETH Zurich's code archive](https://www.ethz.ch/conten
 
 The second classifier is [OpenCV::Random_forest_classifier](@ref CGAL::Classification::OpenCV::Random_forest_classifier).
 It uses the \ref thirdpartyOpenCV library, more specifically the
-[Random Trees](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
+[Random Trees](https://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
 package.
 
 Note that this classifier usually produces results with a lower
@@ -246,7 +246,7 @@ Forest instead.
 
 An [example](\ref Classification_example_opencv_random_forest) shows how to
 use this classifier. For more details about the algorithm, please refer
-to [the official documentation](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
+to [the official documentation](https://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
 of OpenCV.
 
 \subsection Classification_TensorFlow_neural_network TensorFlow Neural Network

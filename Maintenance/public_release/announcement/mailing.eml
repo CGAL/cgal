@@ -1,35 +1,51 @@
-Subject: CGAL 4.13 Released, Computational Geometry Algorithms Library
+Subject: CGAL 4.14 Released, Computational Geometry Algorithms Library
 Content-Type: text/plain; charset="utf-8"
 Body: 
 
-The CGAL Open Source Project is pleased to announce the release 4.13
+The CGAL Open Source Project is pleased to announce the release 4.14
 of CGAL, the Computational Geometry Algorithms Library.
 
+This release will be the last one supporting C++98/C++03 compilers,
+and the next release, CGAL version 5.0, will require support for
+C++14.
 
-Besides fixes and general enhancement to existing packages, the following
-has changed since CGAL 4.12:
-
-
-### 3D Periodic Mesh Generation (new package)
-
--   This package generates 3-dimensional periodic meshes. It computes
-    isotropic simplicial meshes for domains described through implicit
-    functional boundaries over the flat torus (which can also seen in
-    the Euclidean space as a periodic cube). The output is a periodic
-    3D mesh of the domain volume and conformal surface meshes for all
-    the boundary and subdividing surfaces.  The package is closely
-    related to the 3D Mesh Generation package, with similar concepts,
-    classes, and API.
+Besides fixes and general enhancement to existing packages, the
+following has changed since CGAL 4.13:
 
 
-### Classification 
+### 2D Periodic Hyperbolic Triangulations (new package)
 
--   This package can now handle classification of surface meshes and
-    clusters, and can compute features in parallel.
+-   This package allows the computation of Delaunay triangulations of
+    the Bolza surface.  The Bolza surface is the most symmetric
+    hyperbolic surface of genus 2. Its fundamental domain is the
+    regular hyperbolic octagon with angles π/4 centered at the origin
+    of the Poincaré disk. Triangulations of the Bolza surface can be
+    seen as triangulations of the hyperbolic plane that are periodic
+    in the four directions defined by the sides of this regular
+    octagon.
+
+### 2D Hyperbolic Triangulations (new package)
+
+-   This package allows the computation of Delaunay Triangulations of
+    sets of points in the Poincaré disk, which is one of the
+    conformal models for the hyperbolic plane.
+
+### The Heat Method (new package)
+
+-   This package provides an algorithm that solves the single- or
+    multiple-source shortest path problem by returning an
+    approximation of the geodesic distance for all vertices of a
+    triangle mesh to the closest vertex in a given set of source
+    vertices.
+
+### Triangulated Surface Mesh Approximation (new package)
+
+-   This package implements the Variational Shape Approximation method
+    to approximate an input surface triangle mesh by a simpler surface
+    triangle mesh.
 
 
-
-See https://www.cgal.org/2018/10/01/cgal413 / for a complete list of
+See https://www.cgal.org/2019/03/29/cgal414/ for a complete list of
 changes.
 
 

@@ -2151,6 +2151,11 @@ void Scene_c3t3_item::setAlpha(int alpha)
   redraw();
 }
 
-QSlider* Scene_c3t3_item::alphaSlider() { return d->alphaSlider; }
+QSlider* Scene_c3t3_item::alphaSlider() {
+  if(!d->alphaSlider)
+    d->computeElements();
+  return d->alphaSlider;
+}
+
 
 #include "Scene_c3t3_item.moc"

@@ -73,7 +73,7 @@ or if Qt5 are desired
 sudo port install cgal +qt5 +universal +demos
 </PRE>
 
-The setup is similar for <a href="http://mxcl.github.com/homebrew/"><tt>homebrew</tt></a> .
+The setup is similar for <a href="https://mxcl.github.com/homebrew/"><tt>homebrew</tt></a> .
 
 \subsection sseccgaldebian CGAL on Linux 
 
@@ -136,7 +136,7 @@ contains the following subdirectories:
 
 
 The directories `include/CGAL/CORE` and `src/CGALCore` contain a
-distribution of the \sc{Core} library\cgalFootnote{<A HREF="http://www.cs.nyu.edu/exact/">`http://www.cs.nyu.edu/exact/`</A>} version 1.7 for
+distribution of the \sc{Core} library\cgalFootnote{<A HREF="https://www.cs.nyu.edu/exact/">`https://www.cs.nyu.edu/exact/`</A>} version 1.7 for
 dealing with algebraic numbers. \sc{Core} is not part of \cgal and has its
 own license.
 
@@ -159,7 +159,7 @@ In order to build the \cgal libraries, you need a \cpp compiler.
 | :------- | :--------------- |
 |\sc{Gnu} `g++` 4.1 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} | Linux / MacOS X |
 |          | \sc{MS} Windows | 
-|\sc{MS} Visual `C++` 12.0, 14.0, 15.9 (\sc{Visual Studio} 2013, 2015, and 2017)\cgalFootnote{<A HREF="http://msdn.microsoft.com/en-us/vstudio/">`http://msdn.microsoft.com/en-us/vstudio/`</A>} | \sc{MS} Windows |
+|\sc{MS} Visual `C++` 12.0, 14.0, 15.9 (\sc{Visual Studio} 2013, 2015, and 2017)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">`https://visualstudio.microsoft.com/`</A>} | \sc{MS} Windows |
 | `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">`http://clang.llvm.org/`</A>} compiler version 7.0.1 | Linux  |
 | Apple `Clang` compiler version 7.0.2 | MacOS X |
 
@@ -170,11 +170,11 @@ It may work for older versions of the above listed compilers.
 
 In order to configure, build, and install the \cgal libraries, examples and
 demos, you need CMake, a cross-platform "makefile generator".
-If CMake is not installed already you can obtain it from <A HREF="http://www.cmake.org/">`http://www.cmake.org/`</A>.
+If CMake is not installed already you can obtain it from <A HREF="https://www.cmake.org/">`https://www.cmake.org/`</A>.
 CMake version 3.1 or higher is required.
 This manual explains only those features of
 CMake which are needed in order to build \cgal. Please refer to the 
-CMake documentation at <A HREF="http://www.cmake.org/">`http://www.cmake.org/`</A> for further details.
+CMake documentation at <A HREF="https://www.cmake.org/">`https://www.cmake.org/`</A> for further details.
 
 Before building \cgal you have to choose the compiler/linker, 
 set compiler and linker flags, specify which
@@ -405,8 +405,8 @@ not depend on the DLL's of those two libraries.
 In \cgal some demos and examples depend on `Boost.Program_options`.
 
 In case the \sc{Boost} libraries are not installed on your system already, you
-can obtain them from <A HREF="http://www.boost.org/">`http://www.boost.org/`</A>. For Visual C++ you can download precompiled libraries
-from <A HREF="http://sourceforge.net/projects/boost/files/boost-binaries/">`http://sourceforge.net/projects/boost/files/boost-binaries/`</A>.
+can obtain them from <A HREF="https://www.boost.org/">`https://www.boost.org/`</A>. For Visual C++ you can download precompiled libraries
+from <A HREF="https://sourceforge.net/projects/boost/files/boost-binaries/">`https://sourceforge.net/projects/boost/files/boost-binaries/`</A>.
 For Visual C++ versions prior to 2015  `Boost.Thread` is required, so make sure to either install the precompiled 
 libraries for your compiler or build `libboost-thread` and `libboost-system`.
 
@@ -428,7 +428,7 @@ solution, and we recommend to use them.
 
 Having \sc{Gmp} version 4.2 or higher and \sc{Mpfr} version 2.2.1 or higher
 installed is recommended. These libraries can be obtained from
-<A HREF="http://gmplib.org/">`http://gmplib.org/`</A> and <A HREF="http://www.mpfr.org/">`http://www.mpfr.org/`</A>, respectively.
+<A HREF="https://gmplib.org/">`https://gmplib.org/`</A> and <A HREF="https://www.mpfr.org/">`https://www.mpfr.org/`</A>, respectively.
 
 As Visual \cpp is not properly
 supported by the \sc{Gmp} and \sc{Mpfr} projects, we provide precompiled versions
@@ -461,7 +461,7 @@ Qt is a cross-platform application and UI framework.
 
 The component libCGAL_Qt5 requires \sc{Qt}5 installed on your system. 
 In case \sc{Qt} is not yet installed on your system, you can download 
-it from <A HREF="http://qt-project.org/">`http://qt-project.org/`</A>.
+it from <A HREF="http://www.qt-project.org/">`http://www.qt-project.org/`</A>.
 
 
 The exhaustive list of \sc{Qt}5 components used in demos is:
@@ -502,7 +502,7 @@ algorithms. Like \sc{Core}, \leda offers a real number data type.
 In \cgal this library is optional, and its number types can 
 be used as an alternative to \sc{Gmp}, \sc{Mpfr}, and \sc{Core}.
 
-Free and commercial editions of \leda are available from <A HREF="http://www.algorithmic-solutions.com/leda/index.html">`http://www.algorithmic-solutions.com/leda/index.html`</A>.
+Free and commercial editions of \leda are available from <A HREF="https://www.algorithmic-solutions.com/leda/index.html">`https://www.algorithmic-solutions.com/leda/index.html`</A>.
 
 \subsection thirdpartyMPFI MPFI
 
@@ -591,7 +591,7 @@ vision, computer graphics and machine learning.
 
 In \cgal, \sc{OpenCV} is used by the \ref PkgClassificationRef package.
 
-The \sc{OpenCV} web site is <A HREF="http://opencv.org/">`http://opencv.org/`</A>.
+The \sc{OpenCV} web site is <A HREF="https://opencv.org/">`https://opencv.org/`</A>.
 
 \subsection thirdpartyTensorFlow TensorFlow
 
@@ -616,7 +616,7 @@ and designed to partition graphs and produce fill-reducing matrix orderings.
 
 \cgal offers wrappers around some of the methods of the \sc{METIS} library
 to allow the partitioning of graphs that are models of the concepts of the
-<A HREF="http://www.boost.org/libs/graph/doc/index.html">Boost Graph Library</A>,
+<A HREF="https://www.boost.org/libs/graph/doc/index.html">Boost Graph Library</A>,
 and, by extension, of surface meshes (see Section \ref BGLPartitioning of the package \ref PkgBGL).
 
 More information is available on the METIS library

@@ -367,13 +367,16 @@ endif()
 #   CGAL-4.11  : 13.0.1 (Nothing different in CGAL compiled libraries.)
 #   CGAL-4.12  : 13.0.2 (Nothing different in CGAL compiled libraries.)
 #   CGAL-4.14  : 14.0.0 , but only for CGAL_ImageIO (ABI broken in CGAL::Image_3.)
-#   CGAL-4.14  :   13.0.3 , for other libraries
+#                              and for CGAL_Qt5 (ABI broken in DemoMainWindow)
+#   CGAL-4.14  : 13.0.3 , for other libraries
 # ¹) According to http://upstream-tracker.org/versions/cgal.html
 
 set( CGAL_SONAME_VERSION         "13"     )
 set( CGAL_SOVERSION              "13.0.3" )
 set( CGAL_ImageIO_SONAME_VERSION "14"     )
 set( CGAL_ImageIO_SOVERSION      "14.0.0" )
+set( CGAL_Qt5_SONAME_VERSION     "14"     )
+set( CGAL_Qt5_SOVERSION          "14.0.0" )
 
 message( STATUS "CGAL_SONAME_VERSION=${CGAL_SONAME_VERSION}" )
 message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )

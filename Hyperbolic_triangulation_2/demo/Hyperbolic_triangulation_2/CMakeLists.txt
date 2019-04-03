@@ -8,6 +8,10 @@ set(CMAKE_AUTOMOC ON)
 
 cmake_minimum_required(VERSION 3.1...3.13)
 
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
+
 find_package(CGAL QUIET COMPONENTS Core Qt5)
 
 find_package(Qt5 QUIET COMPONENTS Widgets)

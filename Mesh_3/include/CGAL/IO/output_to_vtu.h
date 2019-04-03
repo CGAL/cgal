@@ -67,7 +67,7 @@ write_cells_tag(std::ostream& os,
     // 4 indices (size_t) per cell + length of the encoded data (size_t)
   }
   else {
-    os << "\">\n";   
+    os << ">\n";
     for( Cell_iterator cit = c3t3.cells_in_complex_begin() ;
          cit != c3t3.cells_in_complex_end() ;
          ++cit )
@@ -75,7 +75,7 @@ write_cells_tag(std::ostream& os,
       for (int i=0; i<4; i++)
         os << V[cit->vertex(i)] << " ";
     }
-    os << "      </DataArray>\n";
+    os << "\n      </DataArray>\n";
   }
   
   // Write offsets
@@ -88,7 +88,7 @@ write_cells_tag(std::ostream& os,
     // 1 offset (size_t) per cell + length of the encoded data (size_t)
   }
   else {
-    os << "\">\n";  
+    os << ">\n";
     std::size_t cells_offset = 0;
     for( Cell_iterator cit = c3t3.cells_in_complex_begin() ;
 	 cit != c3t3.cells_in_complex_end() ;
@@ -97,7 +97,7 @@ write_cells_tag(std::ostream& os,
 	cells_offset += 4;
 	os << cells_offset << " ";
       }  
-    os << "      </DataArray>\n";
+    os << "\n      </DataArray>\n";
   }
 
   // Write cell type (tetrahedra == 10)
@@ -110,12 +110,12 @@ write_cells_tag(std::ostream& os,
     // 1 unsigned char per cell + length of the encoded data (size_t)
   }
   else {
-    os << "\">\n";  
+    os << ">\n";
     for( Cell_iterator cit = c3t3.cells_in_complex_begin() ;
 	 cit != c3t3.cells_in_complex_end() ;
 	 ++cit )
       os << "10 ";
-    os << "      </DataArray>\n";
+    os << "\n      </DataArray>\n";
   }
   os << "    </Cells>\n";
 }
@@ -189,7 +189,7 @@ write_c3t3_points_tag(std::ostream& os,
       else
         os << 0.0 << " ";
     }
-    os << "      </DataArray>\n";
+    os << "\n      </DataArray>\n";
   }
   os << "    </Points>\n";
 }
@@ -259,7 +259,7 @@ write_attribute_tag(std::ostream& os,
 	 it != attribute.end();
 	 ++it )
       os << *it << " ";
-    os << "      </DataArray>\n";
+    os << "\n      </DataArray>\n";
   }
 }
 
