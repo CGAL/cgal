@@ -47,6 +47,7 @@ private:
   FT m_direction;
   KSR::size_t m_segment_idx;
   unsigned int m_remaining_intersections;
+  KSR::size_t m_meta_vertex_idx;
 
 public:
 
@@ -56,9 +57,12 @@ public:
     : m_point (point), m_direction (0)
     , m_segment_idx (segment_idx)
     , m_remaining_intersections(remaining_intersections)
-  { }
+    , m_meta_vertex_idx (KSR::no_element())
+  {
+  }
 
-  KSR::size_t segment_idx() const { return m_segment_idx; }
+  const KSR::size_t& segment_idx() const { return m_segment_idx; }
+  KSR::size_t& segment_idx() { return m_segment_idx; }
   
   const FT& point() const { return m_point; }
   FT& point() { return m_point; }
@@ -70,6 +74,9 @@ public:
   const unsigned int& remaining_intersections() const { return m_remaining_intersections; }
   unsigned int& remaining_intersections() { return m_remaining_intersections; }
 
+  const KSR::size_t& meta_vertex_idx() const { return m_meta_vertex_idx; }
+  KSR::size_t& meta_vertex_idx() { return m_meta_vertex_idx; }
+  
   bool is_frozen() const { return (m_direction == FT(0)); }
 
   friend std::ostream& operator<< (std::ostream& os, const Vertex& vertex)
