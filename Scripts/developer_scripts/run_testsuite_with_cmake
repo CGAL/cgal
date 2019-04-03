@@ -321,6 +321,9 @@ run_test_on_platform()
   chmod 777 Installation
   cp "${CGAL_BINARY_DIR}/package_installation.log" "Installation/${TEST_REPORT}"
   
+  #call the python script to complete the results report.
+  python3 ${CGAL_DIR}/${TESTSUITE_DIR}test/get_deactivated_packages_info.py Installation/${TEST_REPORT} ${TEST_REPORT} results_${CGAL_TESTER}_${PLATFORM}.txt
+  
   rm -f $OUTPUT_FILE $OUTPUT_FILE.gz
   tar cf $OUTPUT_FILE results_${CGAL_TESTER}_${PLATFORM}.txt */"$TEST_REPORT"
   echo
