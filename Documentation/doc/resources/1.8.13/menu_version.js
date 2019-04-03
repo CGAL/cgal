@@ -7,7 +7,7 @@
   var all_versions = [
     'master',
     'latest',
-    '4.14-beta1',
+    '4.14',
     '4.13',
     '4.12.1',
     '4.11.3',
