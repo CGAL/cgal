@@ -124,7 +124,7 @@ namespace CGAL{
           internal::PLY::process_properties (element, new_vertex,
                                              make_ply_point_reader (CGAL::Identity_property_map<Point_3>()));
       
-          points.push_back (get<0>(new_vertex));
+          points.push_back (new_vertex);
         }
       }
       else if (element.name() == "face" || element.name() == "faces")
