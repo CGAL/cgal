@@ -39,10 +39,9 @@ with open(report_file, "rt") as test_report:
         elif rx_examples.match(myline):
           name="{str}_Examples".format(str=name)
 
-        if not os.path.isdir(name):
-          os.mkdir(name)
-          test_report=open("{dir}/{file}".format(dir=name, file=report_name), "w+")
-          is_writing=True
+        os.mkdir(name)
+        test_report=open("{dir}/{file}".format(dir=name, file=report_name), "w+")
+        is_writing=True
 if is_writing:
     is_writing=False
     test_report.close()
