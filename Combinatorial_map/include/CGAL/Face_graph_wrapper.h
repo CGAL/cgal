@@ -68,6 +68,7 @@ public:
 
   /// The dimension of the combinatorial map.
   static const unsigned int dimension=2;
+  static const unsigned int ambient_dimension=3;
 
   typedef typename boost::graph_traits<HEG>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<HEG>::edge_descriptor   edge_descriptor;
@@ -824,6 +825,49 @@ protected:
     typedef const LCC& storage_type;
     Get_map(const LCC& heg): m_map(heg) {}
     storage_type m_map;
+  };
+
+  template<class Mesh_>
+  struct Get_traits
+  {
+    typedef Mesh_ Mesh;
+    typedef typename Mesh::Traits Kernel;
+    typedef typename Mesh::Point Point;
+    typedef typename Mesh::Vector Vector;
+
+    template<class Dart_handle>
+    static const Point& get_point(const Mesh& m, Dart_handle dh)
+    { return m.point(dh); }
+  };
+
+  template<class P>
+  struct Get_traits<CGAL::Surface_mesh<P> >
+  {
+    typedef CGAL::Surface_mesh<P> Mesh;
+    typedef typename CGAL::Kernel_traits<P>::Kernel Kernel;
+    typedef typename Kernel::Point_3 Point;
+    typedef typename Kernel::Vector_3 Vector;
+
+    template<class Dart_handle>
+    static const Point& get_point(const Mesh& m, Dart_handle dh)
+    { return m.point(m.source(dh)); }
+  };
+
+  template<class PolyhedronTraits_3,
+      class PolyhedronItems_3,
+      template<class T, class I, class A> class T_HDS,
+      class Alloc>
+  struct Get_traits<CGAL::Polyhedron_3<PolyhedronTraits_3,
+      PolyhedronItems_3, T_HDS, Alloc> >
+  {
+    typedef CGAL::Polyhedron_3<PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> Mesh;
+    typedef PolyhedronTraits_3 Kernel;
+    typedef typename Kernel::Point_3 Point;
+    typedef typename Kernel::Vector_3 Vector;
+
+    template<class Dart_handle>
+    static const Point& get_point(const Mesh& /*m*/, Dart_handle dh)
+    { return dh->vertex()->point(); }
   };
 
 } // Namespace CGAL
