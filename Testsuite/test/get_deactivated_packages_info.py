@@ -6,7 +6,7 @@ import os
 report_file=sys.argv[1]
 report_name=sys.argv[2]
 global_report_name=sys.argv[3]
-rx=re.compile('(.*Configuring (examples|demo|test)*( in )*(test\/|examples\/|demo\/)*)\w+')
+rx=re.compile('(.*Configuring (examples|demo|test)*( in )*(test\/|examples\/|demo\/)*)((?!done)\w+)')
 rx_demo=re.compile('.*in demo\/')
 rx_examples=re.compile('.*in examples\/')
 
@@ -39,8 +39,12 @@ with open(report_file, "rt") as test_report:
         elif rx_examples.match(myline):
           name="{str}_Examples".format(str=name)
 
-        os.mkdir(name)
-        test_report=open("{dir}/{file}".format(dir=name, file=report_name), "w+")
+        if not os.path.isdir(name):
+          os.mkdir(name)
+          test_report=open("{dir}/{file}".format(dir=name, file=report_name), "w+")
+        else:
+          test_report=open("{dir}/{file}".format(dir=name, file=report_name), "a+")
+          test_report.write(" --- CMake Results: --- \n\n")
         is_writing=True
 if is_writing:
     is_writing=False

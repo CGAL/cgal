@@ -23,7 +23,7 @@ export TAR="tar"
 export GUNZIP="gunzip"
 export COMPRESSOR="gzip"
 export CONSOLE_OUTPUT="y"
-export CGAL_ROOT=`pwd`
+export CGAL_HOME=`pwd`
 export USE_TARGZ="n"
 export USE_TARBZ="n"
 export CGAL_RELEASE=""
@@ -121,7 +121,7 @@ get_cgal()
 # ----------------------------------------------------------------------------------------
 unzip_cgal()
 {
-  cd "${CGAL_ROOT}"
+  cd "${CGAL_HOME}"
 
   log "${ACTUAL_LOGFILE}" "unzipping CGAL"
   if [ "${USE_TARGZ}" = "y" ]; then
@@ -140,18 +140,18 @@ unzip_cgal()
   fi
 
   # check, if CGAL_DIR exists
-  if [ -d "${CGAL_ROOT}/${CGAL_RELEASE_ID}" ]; then
+  if [ -d "${CGAL_HOME}/${CGAL_RELEASE_ID}" ]; then
     # Reset CGAL-I symlink
-    log "${ACTUAL_LOGFILE}" "Resetting CGAL-I symlink to ${CGAL_ROOT}/${CGAL_RELEASE_ID}"
+    log "${ACTUAL_LOGFILE}" "Resetting CGAL-I symlink to ${CGAL_HOME}/${CGAL_RELEASE_ID}"
     rm -f CGAL-I
-    ln -s "${CGAL_ROOT}/${CGAL_RELEASE_ID}" CGAL-I
+    ln -s "${CGAL_HOME}/${CGAL_RELEASE_ID}" CGAL-I
     # Reset CGAL-3.x-I symlink
     CGAL_RELEASE=`echo "${CGAL_RELEASE_ID}" | sed 's/I\([^-]*\)-.*/I\1/'`
-    log "${ACTUAL_LOGFILE}" "Resetting ${CGAL_RELEASE} symlink to ${CGAL_ROOT}/${CGAL_RELEASE_ID}"
+    log "${ACTUAL_LOGFILE}" "Resetting ${CGAL_RELEASE} symlink to ${CGAL_HOME}/${CGAL_RELEASE_ID}"
     rm -f "${CGAL_RELEASE}"
-    ln -s "${CGAL_ROOT}/${CGAL_RELEASE_ID}" "${CGAL_RELEASE}"
+    ln -s "${CGAL_HOME}/${CGAL_RELEASE_ID}" "${CGAL_RELEASE}"
   else
-    error "directory ${CGAL_ROOT}/${CGAL_RELEASE_ID} does not exist"
+    error "directory ${CGAL_HOME}/${CGAL_RELEASE_ID} does not exist"
   fi
 
   log_done "${ACTUAL_LOGFILE}"
@@ -195,30 +195,30 @@ do
   esac
 done
 # Load settings
-if [ -f "$CGAL_ROOT/.autocgalrc" ]; then
-  . "$CGAL_ROOT/.autocgalrc"
+if [ -f "$CGAL_HOME/.autocgalrc" ]; then
+  . "$CGAL_HOME/.autocgalrc"
 else
   echo "CONFIGURATION FILE  .autocgalrc NOT FOUND" >&2;
   exit 1
 fi
 
 if [ -n "${SCRIPTS_DIR}" ]; then
-  CGAL_DIR=`readlink "${CGAL_ROOT}/CGAL-git"`
+  CGAL_DIR=`readlink "${CGAL_HOME}/CGAL-git"`
 else
-  CGAL_DIR=`readlink "${CGAL_ROOT}/CGAL-I"`
+  CGAL_DIR=`readlink "${CGAL_HOME}/CGAL-I"`
 fi
 
 source "${CGAL_DIR}/${SCRIPTS_DIR}developer_scripts/log.sh"
-LOGS_DIR="${CGAL_ROOT}/AUTOTEST_LOGS"
-LOCK_FILE="${CGAL_ROOT}/autotest_cgal_with_cmake.lock"
+LOGS_DIR="${CGAL_HOME}/AUTOTEST_LOGS"
+LOCK_FILE="${CGAL_HOME}/autotest_cgal_with_cmake.lock"
 
 # Setup logfile
-ACTUAL_LOGFILE="${CGAL_ROOT}/`basename ${0}`.log"
+ACTUAL_LOGFILE="${CGAL_HOME}/`basename ${0}`.log"
 rm -f "${ACTUAL_LOGFILE}"
 
 echo "Running `basename ${0}` "'$Revision$' >> "${ACTUAL_LOGFILE}" 
 
-cd "$CGAL_ROOT"
+cd "$CGAL_HOME"
 
 # Starts the process
 
@@ -232,9 +232,9 @@ if [ -z "${USE_LATEST_UNZIPPED}" -a -z "${SCRIPTS_DIR}" ]; then
 fi
 #reset CGAL-DIR with the updated CGAL-I
 if [ -n "${SCRIPTS_DIR}" ]; then
-  CGAL_DIR=`readlink "${CGAL_ROOT}/CGAL-git"`
+  CGAL_DIR=`readlink "${CGAL_HOME}/CGAL-git"`
 else
-  CGAL_DIR=`readlink "${CGAL_ROOT}/CGAL-I"`
+  CGAL_DIR=`readlink "${CGAL_HOME}/CGAL-I"`
 fi
 
 CGAL_RELEASE_ID=$(cat last_release_id)
@@ -257,13 +257,13 @@ for HOST in ${BUILD_HOSTS}; do
     echo "export GUNZIP=$GUNZIP">> env.sh
     echo "export COMPRESSOR=$COMPRESSOR">> env.sh
     echo "export CONSOLE_OUTPUT=$CONSOLE_OUTPUT">> env.sh
-    echo "export CGAL_ROOT=/cgal_root">> env.sh
+    echo "export CGAL_HOME=/CGAL_HOME">> env.sh
     echo "export USE_TARGZ=$USE_TARGZ">> env.sh
     echo "export USE_TARBZ=$USE_TARBZ">> env.sh
     echo "export CGAL_RELEASE=$CGAL_RELEASE">> env.sh
-    echo "export LOGS_DIR=/cgal_root/AUTOTEST_LOGS">> env.sh
-    echo "export LOCK_FILE=/cgal_root/autotest_cgal_with_cmake.lock">> env.sh
-    echo "export ACTUAL_LOGFILE=/cgal_root/\`basename \${0}\`.log">> env.sh
+    echo "export LOGS_DIR=/CGAL_HOME/AUTOTEST_LOGS">> env.sh
+    echo "export LOCK_FILE=/CGAL_HOME/autotest_cgal_with_cmake.lock">> env.sh
+    echo "export ACTUAL_LOGFILE=/CGAL_HOME/\`basename \${0}\`.log">> env.sh
     echo "export REFERENCE_PLATFORMS_DIR=$REFERENCE_PLATFORMS_DIR">>env.sh
     echo "export INSTALLATION_DIR=$INSTALLATION_DIR">>env.sh
     echo "export TESTSUITE_DIR=$TESTSUITE_DIR">>env.sh
@@ -271,18 +271,18 @@ for HOST in ${BUILD_HOSTS}; do
 
     docker pull cgal/testsuite-docker:debian-stable-cross-compilation-for-arm
     if [ -z "${SCRIPTS_DIR}" ]; then #if not from branch
-      echo "export CGAL_DIR=/cgal_root/\${CGAL_LAST}">>env.sh
-      docker run --rm  -t -e CGAL_LAST="${CGAL_RELEASE_ID}" -e HOST="${HOST}" -v ${CGAL_ROOT}/ssh:/tmp_ssh -v ${DEPS_DIR}:/deps -v ${CGAL_ROOT}:/cgal_root cgal/testsuite-docker:debian-stable-cross-compilation-for-arm
+      echo "export CGAL_DIR=/CGAL_HOME/\${CGAL_LAST}">>env.sh
+      docker run --rm  -t -e CGAL_LAST="${CGAL_RELEASE_ID}" -e HOST="${HOST}" -v ${CGAL_HOME}/ssh:/tmp_ssh -v ${DEPS_DIR}:/deps -v ${CGAL_HOME}:/CGAL_HOME cgal/testsuite-docker:debian-stable-cross-compilation-for-arm
     else
-      echo "export CGAL_DIR=/cgal_root/CGAL-git">>env.sh
-      docker run --rm  -t -e HOST="${HOST}" -v ${CGAL_ROOT}/ssh:/tmp_ssh -v ${DEPS_DIR}:/deps -v ${CGAL_ROOT}:/cgal_root -v${CGAL_DIR}:/cgal_root/CGAL-git cgal/testsuite-docker:debian-stable-cross-compilation-for-arm
+      echo "export CGAL_DIR=/CGAL_HOME/CGAL-git">>env.sh
+      docker run --rm  -t -e HOST="${HOST}" -v ${CGAL_HOME}/ssh:/tmp_ssh -v ${DEPS_DIR}:/deps -v ${CGAL_HOME}:/CGAL_HOME -v${CGAL_DIR}:/CGAL_HOME/CGAL-git cgal/testsuite-docker:debian-stable-cross-compilation-for-arm
     fi
   else
     HOST=$HOST bash -$- ${CGAL_DIR}/${SCRIPTS_DIR}developer_scripts/run_testsuite_with_cmake
   fi
 done
 
-cd "${CGAL_ROOT}"
+cd "${CGAL_HOME}"
 if [ -e "LATEST" ]; then
   mv LATEST RELEASE_NR
 fi

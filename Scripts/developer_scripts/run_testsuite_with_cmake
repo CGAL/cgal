@@ -7,8 +7,8 @@
 
 source "${CGAL_DIR}/${SCRIPTS_DIR}developer_scripts/log.sh"
 # Load settings
-if [ -f "$CGAL_ROOT/.autocgalrc" ]; then
-  . "$CGAL_ROOT/.autocgalrc"
+if [ -f "$CGAL_HOME/.autocgalrc" ]; then
+  . "$CGAL_HOME/.autocgalrc"
 else
   echo "CONFIGURATION FILE  .autocgalrc NOT FOUND" >&2;
   exit 1
@@ -255,7 +255,7 @@ run_test_on_platform()
   CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
   cd "${CGAL_BINARY_DIR}"
   log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "Testing on host ${HOST} and platform ${PLATFORM}"
-  INIT_FILE="${CGAL_ROOT}/${REFERENCE_PLATFORMS_DIR}/${PLATFORM}.cmake"
+  INIT_FILE="${CGAL_HOME}/${REFERENCE_PLATFORMS_DIR}/${PLATFORM}.cmake"
   if [ ! -f "${INIT_FILE}" ]; then
     echo "error NEED A INIT FILE !"
   fi
@@ -266,11 +266,11 @@ run_test_on_platform()
     CMAKE_OPTS="${CMAKE_OPTS} -DWITH_examples=ON -DWITH_demos=ON"
   fi
   if [ -z "${SHOW_PROGRESS}" ]; then
-    cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR  2>&1 >package_installation.log
+    cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR  >package_installation.log 2>&1 
   else
     cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}'  -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR 2>&1 |tee package_installation.log
   fi
-  LIST_TEST_FILE="${CGAL_ROOT}/list_test_packages"
+  LIST_TEST_FILE="${CGAL_HOME}/list_test_packages"
   if [ -f ${LIST_TEST_FILE} ]; then
     LIST_TEST_PACKAGES=$(source ${LIST_TEST_FILE})
   fi
