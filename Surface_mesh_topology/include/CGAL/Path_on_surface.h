@@ -568,7 +568,10 @@ public:
     return boost::algorithm::knuth_morris_pratt_search(p2.m_path.begin(),
                                                        p2.m_path.end(),
                                                        other.m_path.begin(),
-                                                       other.m_path.end()).first
+                                                       other.m_path.end())
+#if BOOST_VERSION>=106200
+      .first
+#endif
         !=p2.m_path.end();
   }
   bool operator!=(const Self&  other) const
