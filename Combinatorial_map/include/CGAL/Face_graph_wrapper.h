@@ -22,7 +22,12 @@
 #define CGAL_FACE_GRAPH_WRAPPER_H 1
 
 #include <CGAL/Functors_for_face_graph_wrapper.h>
-#include <CGAL/Combinatorial_map_iterators_base.h>
+#include <CGAL/Iterators_for_face_graph_wrapper.h>
+#include <CGAL/Combinatorial_map.h>
+#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
+#include <CGAL/Generalized_map.h>
+#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
+#include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
 
@@ -136,9 +141,9 @@ public:
   { return get_beta<0>(ADart); }  
   Dart_const_handle next(Dart_const_handle ADart) const
   { return get_beta<1>(ADart); }
-  Dart_const_handle opposite(Dart_const_handle dh)
+  Dart_const_handle opposite(Dart_const_handle dh) const
   { return get_beta<2>(dh); }
-  Dart_const_handle other_extremity(Dart_const_handle dh)
+  Dart_const_handle other_extremity(Dart_const_handle dh) const
   { return get_beta<1>(dh); }
 
   template<unsigned int dim>
@@ -441,6 +446,22 @@ public:
     }
     bool empty() const
     { return mmap.is_empty(); }
+
+    size_type capacity() const
+    { CGAL::num_halfedges(mmap.get_fg()); }
+
+    bool is_used(size_type i) const
+    {
+      for (typename boost::template graph_traits<typename Self::HEG>::halfedge_iterator
+           it=CGAL::halfedges(mmap.get_fg()).begin(),
+           itend=CGAL::halfedges(mmap.get_fg()).end(); it!=itend; ++it)
+      {
+        if (i==0) { return !CGAL::is_border(*it, mmap.get_fg()); }
+        --i;
+      }
+      return false;
+    }
+
   private:
     const Self & mmap;
     mutable typename Self::size_type msize;
@@ -470,19 +491,45 @@ public:
     mutable typename Self::size_type msize;
     };*/
   //**************************************************************************
-  Dart_range darts()
-  { return Dart_range(*this); }
+  Dart_range& darts()
+  { return mdarts; }
   //--------------------------------------------------------------------------
-  Dart_range darts() const
-  { return Dart_range(*this); } // Before it was Dart_const_range(*this)
+  const Dart_range& darts() const
+  { return mdarts; } // Before it was Dart_const_range(*this)
   //**************************************************************************
+  Dart_handle dart_handle(size_type i)
+  {
+    CGAL_assertion(darts().is_used(i));
+    for (typename boost::template graph_traits<typename Self::HEG>::halfedge_iterator
+         it=CGAL::halfedges(get_fg()).begin(),
+         itend=CGAL::halfedges(get_fg()).end(); it!=itend; ++it)
+    {
+      if (i==0) { return *it; }
+      --i;
+    }
+    CGAL_assertion(false);
+    return Dart_handle();
+  }
+  Dart_const_handle dart_handle(size_type i) const
+  {
+    CGAL_assertion(darts().is_used(i));
+    for (typename boost::template graph_traits<typename Self::HEG>::halfedge_iterator
+         it=CGAL::halfedges(get_fg()).begin(),
+         itend=CGAL::halfedges(get_fg()).end(); it!=itend; ++it)
+    {
+      if (i==0) { return *it; }
+      --i;
+    }
+    CGAL_assertion(false);
+    return Dart_const_handle();
+  }
 
   template <unsigned int i>
   bool belong_to_same_cell(Dart_const_handle adart1,
                            Dart_const_handle adart2) const
   {
     for (typename Dart_of_cell_range<i>::iterator it=darts_of_cell<i>(adart1).begin(),
-           itend=darts_of_cell<i>(adart1).begin(); it!=itend; ++it)
+           itend=darts_of_cell<i>(adart1).end(); it!=itend; ++it)
     { if (*it==adart2) { return true; } }
     return false;
   }
@@ -491,7 +538,7 @@ public:
   bool is_whole_cell_unmarked(Dart_const_handle adart, size_type amark) const
   {
     for (typename Dart_of_cell_range<i>::iterator it=darts_of_cell<i>(adart).begin(),
-           itend=darts_of_cell<i>(adart).begin(); it!=itend; ++it)
+           itend=darts_of_cell<i>(adart).end(); it!=itend; ++it)
     { if (is_marked(*it, amark)) { return false; } }
     return true;
   }
@@ -691,6 +738,93 @@ protected:
   template <typename HEG>
   const typename Face_graph_wrapper<HEG>::Null_handle_type
   Face_graph_wrapper<HEG>::null_dart_handle=typename Face_graph_wrapper<HEG>::Dart_handle();
+
+  template<class Base, class HEG>
+  struct Get_map
+  {
+    typedef Face_graph_wrapper<HEG> type;
+    typedef const Face_graph_wrapper<HEG> storage_type;
+    Get_map(const HEG& heg): m_map(heg) {}
+    storage_type m_map;
+  };
+
+  template <unsigned int d, typename Refs, typename Items, typename Alloc,
+            typename Storage, class Map>
+  struct Get_map<CGAL::Combinatorial_map_base<d, Refs, Items, Alloc, Storage>, Map>
+  {
+    typedef Map type;
+    typedef const Map& storage_type;
+    Get_map(const Map& heg): m_map(heg) {}
+    storage_type m_map;
+  };
+
+  template <unsigned int d, typename Refs, typename Items, typename Alloc,
+            typename Storage, class Map>
+  struct Get_map<CGAL::Generalized_map_base<d, Refs, Items, Alloc, Storage>, Map>
+  {
+    typedef Map type;
+    typedef const Map& storage_type;
+    Get_map(const Map& heg): m_map(heg) {}
+    storage_type m_map;
+  };
+
+  template <unsigned int d, unsigned int d2, typename Traits, typename Items,
+            typename Alloc,
+            template<unsigned int,class,class,class,class>
+            class Map, typename Refs, typename Storage, class LCC>
+  struct Get_map<CGAL::Linear_cell_complex_base<d, d2, Traits, Items, Alloc, Map, Refs, Storage>, LCC>
+  {
+    typedef LCC type;
+    typedef const LCC& storage_type;
+    Get_map(const LCC& heg): m_map(heg) {}
+    storage_type m_map;
+  };
+
+  template <unsigned int d, typename Items, typename Alloc,
+            typename Storage, class Map>
+  struct Get_map<CGAL::Combinatorial_map<d, Items, Alloc, Storage>, Map>
+  {
+    typedef Map type;
+    typedef const Map& storage_type;
+    Get_map(const Map& heg): m_map(heg) {}
+    storage_type m_map;
+  };
+
+  template <unsigned int d, typename Items, typename Alloc,
+            typename Storage, class Map>
+  struct Get_map<CGAL::Generalized_map<d, Items, Alloc, Storage>, Map>
+  {
+    typedef Map type;
+    typedef const Map& storage_type;
+    Get_map(const Map& heg): m_map(heg) {}
+    storage_type m_map;
+  };
+
+  template <unsigned int d, unsigned int d2, typename Traits, typename Items,
+            typename Alloc,
+            template<unsigned int,class,class,class,class>
+            class Map, typename Storage, class LCC>
+  struct Get_map<CGAL::Linear_cell_complex_for_combinatorial_map
+      <d, d2, Traits, Items, Alloc, Map, Storage>, LCC>
+  {
+    typedef LCC type;
+    typedef const LCC& storage_type;
+    Get_map(const LCC& heg): m_map(heg) {}
+    storage_type m_map;
+  };
+
+  template <unsigned int d, unsigned int d2, typename Traits, typename Items,
+            typename Alloc,
+            template<unsigned int,class,class,class,class>
+            class Map, typename Storage, class LCC>
+  struct Get_map<CGAL::Linear_cell_complex_for_generalized_map
+      <d, d2, Traits, Items, Alloc, Map, Storage>, LCC>
+  {
+    typedef LCC type;
+    typedef const LCC& storage_type;
+    Get_map(const LCC& heg): m_map(heg) {}
+    storage_type m_map;
+  };
 
 } // Namespace CGAL
 

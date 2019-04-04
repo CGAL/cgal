@@ -60,6 +60,9 @@ namespace CGAL
       m_it(other.m_it)      
     {}
     
+    operator Dart_handle() const
+    { return operator*(); }
+
     bool operator==(const Self& other) const
     { return &mmap==&(other.mmap) && m_it==other.m_it; }
 
@@ -85,7 +88,7 @@ namespace CGAL
     Self operator++(int)
     { Self res=*this; operator ++(); return res; }
 
-    Dart_handle operator*()
+    Dart_handle operator*() const
     {
       CGAL_assertion(m_it!=CGAL::halfedges(this->mmap.get_fg()).end());
       return *m_it;
@@ -128,7 +131,10 @@ namespace CGAL
     bool operator!=(const Self& other) const
     { return !(this->operator==(other)); }
     
-    Dart_handle operator*()
+    operator Dart_handle() const
+    { return operator*(); }
+
+    Dart_handle operator*() const
     {
       CGAL_assertion(m_curdart!=Dart_handle());
       return m_curdart;

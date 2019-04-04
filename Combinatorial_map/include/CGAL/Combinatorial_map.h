@@ -706,6 +706,16 @@ namespace CGAL {
     { return mdarts.iterator_to(adart); }
     Dart_const_handle dart_handle(const Dart& adart) const
     { return mdarts.iterator_to(adart); }
+    Dart_handle dart_handle(size_type i)
+    {
+      CGAL_assertion(darts().is_used(i));
+      return mdarts.iterator_to(darts()[i]);
+    }
+    Dart_const_handle dart_handle(size_type i) const
+    {
+      CGAL_assertion(darts().is_used(i));
+      return mdarts.iterator_to(darts()[i]);
+    }
 
     /** Return the highest dimension for which dh is not free.
      * @param dh a dart handle

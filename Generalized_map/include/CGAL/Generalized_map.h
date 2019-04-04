@@ -1115,7 +1115,7 @@ namespace CGAL {
 
     template <unsigned int i, unsigned int d=dimension>
     bool is_whole_cell_marked(Dart_const_handle adart, size_type amark) const
-    { return CGAL::is_whole_cell_marked<Self, i, d>::(*this, adart, amark); }
+    { return CGAL::is_whole_cell_marked<Self, i, d>(*this, adart, amark); }
 
     template <unsigned int i, unsigned int d=dimension>
     size_type mark_cell(Dart_const_handle adart, size_type amark) const

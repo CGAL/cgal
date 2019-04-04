@@ -70,21 +70,20 @@ public:
   int length; // Length of the flat, positive flat if >0, negative flat if <0
 };
 
-template<typename Map_>
+template<typename Mesh>
 class Path_on_surface_with_rle
 {
-  friend class Path_on_surface<Map_>;
+  friend class Path_on_surface<Mesh>;
 
 public:
-  typedef Map_ Map;
-  typedef typename Map::Dart_handle       Dart_handle;
-  typedef typename Map::Dart_const_handle Dart_const_handle;
-  typedef CFlat<Map>                      Flat;
-  typedef std::list<Flat>                 List_of_flats;
-  typedef typename List_of_flats::iterator List_iterator;
+  typedef Path_on_surface_with_rle<Mesh>     Self;
+  typedef typename Get_map<Mesh, Mesh>::type Map;
+  typedef typename Map::Dart_handle          Dart_handle;
+  typedef typename Map::Dart_const_handle    Dart_const_handle;
+  typedef CFlat<Map>                         Flat;
+  typedef std::list<Flat>                    List_of_flats;
+  typedef typename List_of_flats::iterator   List_iterator;
   // TODO typedef typename List_of_dart_length::const_iterator List_const_iterator;
-
-  typedef Path_on_surface_with_rle<Map> Self;
 
   struct List_iterator_hash
   {
@@ -101,7 +100,7 @@ public:
 #endif //CGAL_PWRLE_TURN_V2
 
   /// Constructor
-  Path_on_surface_with_rle(const Map& amap
+  Path_on_surface_with_rle(const Mesh& amap
                          #ifdef CGAL_PWRLE_TURN_V2
                            , const TDartIds & darts_ids
                          #endif //CGAL_PWRLE_TURN_V2
@@ -125,7 +124,7 @@ public:
   /// +2 as turn, and thus these parameters are useless.
   /// However, this case can occured for our unit tests on the cube, this is
   /// the reason of these parameters.
-  Path_on_surface_with_rle(const Path_on_surface<Map>& apath,
+  Path_on_surface_with_rle(const Path_on_surface<Mesh>& apath,
                          #ifdef CGAL_PWRLE_TURN_V2
                            const TDartIds & darts_ids,
                          #endif //CGAL_PWRLE_TURN_V2
@@ -326,9 +325,8 @@ public:
     Dart_const_handle prev=(is_closed()?back():NULL); // Last dart of the path
     for (auto it=m_path.begin(); it!=m_path.end(); ++it)
     {
-      if (prev!=NULL && !CGAL::belong_to_same_cell<Map, 0>
-          (m_map, m_map.template beta<1>(prev),
-           begin_of_flat(it)))
+      if (prev!=NULL && !m_map.template belong_to_same_cell<0>
+          (m_map.template beta<1>(prev), begin_of_flat(it)))
       {
         std::cerr<<"ERROR: The path is not valid: flat in position "<<i
                  <<" does not follow the previous dart."<<std::endl;
@@ -421,8 +419,8 @@ public:
 
     if (is_empty()) return true;
 
-    return CGAL::template belong_to_same_cell<Map, 0>
-      (m_map, m_map.other_extremity(back()), dh);
+    return m_map.template belong_to_same_cell<0>
+      (m_map.other_extremity(back()), dh);
   }
 
   /// Add the given dart at the end of this path.
@@ -462,7 +460,7 @@ public:
       Dart_const_handle pend=m_map.other_extremity(back());
       if (pend==Map::null_handle) { m_is_closed=false; }
       else
-      { m_is_closed=CGAL::belong_to_same_cell<Map,0>(m_map, front(), pend); }
+      { m_is_closed=m_map.template belong_to_same_cell<0>(front(), pend); }
     }
   }
 
@@ -1730,7 +1728,7 @@ public:
   }
 
 protected:
-  const Map& m_map; // The underlying map
+  const typename Get_map<Mesh, Mesh>::storage_type m_map; // The underlying map
   List_of_flats m_path; // The sequence of flats (a flat part is a pair of darts with positive or negative turn == 2). If negative value k, -k is the length of the flat part, for negative turns (-2).
   bool m_is_closed; // True iff the path is a cycle
   std::size_t m_length;
