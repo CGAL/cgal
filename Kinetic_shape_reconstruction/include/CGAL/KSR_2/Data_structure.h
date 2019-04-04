@@ -84,10 +84,13 @@ private:
 
   // Helping data structures
   std::map<Point_2, KSR::size_t> m_meta_map;
+  FT m_latest_time;
   
 public:
 
-  Data_structure() { }
+  Data_structure() : m_latest_time(0) { }
+
+  const FT& latest_time() const { return m_latest_time; }
 
   const Support_lines& support_lines() const { return m_support_lines; }
   const Vertices& vertices() const { return m_vertices; }
@@ -110,12 +113,32 @@ public:
   std::size_t number_of_meta_vertices() const { return m_meta_vertices.size(); }
   const Meta_vertex& meta_vertex (std::size_t idx) const { return m_meta_vertices[idx]; }
   Meta_vertex& meta_vertex (std::size_t idx) { return m_meta_vertices[idx]; }
+
   
+  std::string segment_str (std::size_t segment_idx) const
+  {
+    return "Segment[" + std::to_string(segment_idx)
+      + "](v" + std::to_string(segment(segment_idx).source_idx())
+      + "->v" + std::to_string(segment(segment_idx).target_idx())
+      + ")";
+  }
+  std::string vertex_str (std::size_t vertex_idx) const
+  {
+    return "Vertex[" + std::to_string(vertex_idx) + "]";
+  }
+
   // Vertex/idx -> Point_2
   inline Point_2 point_of_vertex (const Vertex& vertex) const
   { return support_line_of_vertex(vertex).to_2d(vertex.point()); }
   inline Point_2 point_of_vertex (std::size_t vertex_idx) const
   { return point_of_vertex (m_vertices[vertex_idx]); }
+
+  // Vertex/idx -> Vector_2
+  inline Vector_2 direction_of_vertex (const Vertex& vertex) const
+  { return Vector_2 (support_line_of_vertex(vertex).to_2d(vertex.point()),
+                     support_line_of_vertex(vertex).to_2d(vertex.point() + vertex.direction())); }
+  inline Vector_2 direction_of_vertex (std::size_t vertex_idx) const
+  { return direction_of_vertex (m_vertices[vertex_idx]); }
 
   // Vertex/idx -> Segment
   inline const Segment& segment_of_vertex (const Vertex& vertex) const
@@ -192,12 +215,34 @@ public:
   inline Meta_vertex& meta_vertex_of_vertex (std::size_t vertex_idx)
   { return meta_vertex_of_vertex(m_vertices[vertex_idx]); }
 
+  inline bool meta_vertex_exists (const Point_2& point) const
+  { return m_meta_map.find(point) != m_meta_map.end(); }
+
   // Event -> Vertex
   const Vertex& vertex_of_event (const Event& ev) const
   { return m_vertices[ev.vertex_idx()]; }
   Vertex& vertex_of_event (const Event& ev)
   { return m_vertices[ev.vertex_idx()]; }
 
+  inline CGAL::Bbox_2 bbox (const Vertex& vertex) const
+  {
+    return point_of_vertex(vertex).bbox();
+  }
+  inline CGAL::Bbox_2 bbox (const Support_line& support_line) const
+  {
+    return std::accumulate (support_line.segments_idx().begin(), support_line.segments_idx().end(),
+                            CGAL::Bbox_2(),
+                            [&](const CGAL::Bbox_2& bbox_2, const KSR::size_t& segment_idx) -> CGAL::Bbox_2
+                            {
+                              return bbox_2
+                                + bbox(source_of_segment(segment_idx))
+                                + bbox(target_of_segment(segment_idx));
+                            });
+  }
+
+  bool is_segment_frozen (std::size_t segment_idx) const
+  { return (source_of_segment(segment_idx).is_frozen() && target_of_segment(segment_idx).is_frozen()); }
+  
   // idx -> Segment_2
   Segment_2 segment_2 (std::size_t segment_idx) const
   {
@@ -256,6 +301,12 @@ public:
     add_meta_vertex (point_of_vertex(vertex_idx), vertex_idx);
   }
 
+  void cut_segment (KSR::size_t segment_idx)
+  {
+    std::vector<Point_2> vec;
+    cut_segment (segment_idx, vec);
+  }
+    
   void cut_segment (KSR::size_t segment_idx, const Point_2& point)
   {
     std::vector<Point_2> vec (1, point);
@@ -264,6 +315,8 @@ public:
     
   void cut_segment (KSR::size_t segment_idx, std::vector<Point_2>& points)
   {
+    CGAL_KSR_CERR << "Cutting " << segment_str(segment_idx) << std::endl;
+
     Segment& segment = m_segments[segment_idx];
     KSR::size_t source_idx = segment.source_idx();
     KSR::size_t target_idx = segment.target_idx();
@@ -279,6 +332,13 @@ public:
                  return support_line.to_1d(a) < support_line.to_1d(b);
                });
 
+    CGAL_assertion ((point_of_vertex(source_idx) == points.front()
+                     && point_of_vertex(target_idx) == points.back())
+                    || (point_of_vertex(source_idx) == points.back()
+                        && point_of_vertex(target_idx) == points.front()));
+
+    std::size_t nb_segments_before = m_segments.size();
+    std::size_t nb_vertices_before = m_vertices.size();
     for (std::size_t i = 0; i < points.size() - 1; ++ i)
     {
       KSR::size_t sidx = segment_idx;
@@ -312,10 +372,21 @@ public:
       }
     }
 
+    CGAL_KSR_CERR << " -> new vertices:";
+    for (std::size_t i = nb_vertices_before; i < m_vertices.size(); ++ i)
+      CGAL_KSR_CERR << " " << vertex_str(i);
+    CGAL_KSR_CERR << std::endl;
+    
+    CGAL_KSR_CERR << " -> new segments: " << segment_str(segment_idx);
+    for (std::size_t i = nb_segments_before; i < m_segments.size(); ++ i)
+      CGAL_KSR_CERR << " " << segment_str(i);
+    CGAL_KSR_CERR << std::endl;
   }
 
   Segment& propagate_segment (std::size_t vertex_idx)
   {
+    CGAL_KSR_CERR << "Propagating " << vertex_str(vertex_idx) << std::endl;
+
     // Create a new segment
     m_segments.push_back (Segment(segment_of_vertex(vertex_idx).support_line_idx()));
     support_line_of_vertex(vertex_idx).segments_idx().push_back (m_segments.size() - 1);
@@ -338,6 +409,9 @@ public:
     // Release other end
     m_vertices[m_vertices.size() - 1].meta_vertex_idx() = KSR::no_element();
     
+    CGAL_KSR_CERR << " -> new vertices: " << vertex_str (m_vertices.size() - 2)
+                  << " " << vertex_str (m_vertices.size() - 1) << std::endl;
+    CGAL_KSR_CERR << " -> new segment: " << segment_str(m_segments.size() - 1) << std::endl;
     return m_segments.back();
   }
 
@@ -347,9 +421,11 @@ public:
   void transfer_events (std::size_t old_vertex, std::size_t new_vertex)
   { m_queue.transfer_vertex_events (old_vertex, new_vertex); }
   void remove_events (std::size_t vertex_idx) { m_queue.remove_vertex_events (vertex_idx); };
+  void print_queue() const { m_queue.print(); }
 
   void update_positions (FT time)
   {
+    m_latest_time = time;
     for (Vertex& v : m_vertices)
       v.update_position(time);
   }

@@ -66,8 +66,11 @@ public:
 
   void push (const Event& ev)
   {
-    iterator it = m_queue.insert (ev).first;
-    save_vertex_event(it);
+    iterator iter;
+    bool inserted;
+    std::tie (iter, inserted) = m_queue.insert (ev);
+    if (inserted)
+      save_vertex_event(iter);
   }
 
   Event pop ()
@@ -79,7 +82,7 @@ public:
     return out;
   }
 
-  void print()
+  void print() const
   {
     for (const Event& e : m_queue)
       std::cerr << e << std::endl;
@@ -98,6 +101,8 @@ public:
 
   void transfer_vertex_events (KSR::size_t old_vertex, KSR::size_t new_vertex)
   {
+    CGAL_assertion (m_map_vertices.find(old_vertex) != m_map_vertices.end());
+
     std::vector<iterator>& vec = m_map_vertices[old_vertex];
     for (iterator iter : vec)
       push (Event (new_vertex, iter->intersection_line_idx(), iter->time()));

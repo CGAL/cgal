@@ -66,7 +66,8 @@ public:
 
   const KSR::size_t& segment_idx() const { return m_segment_idx; }
   KSR::size_t& segment_idx() { return m_segment_idx; }
-  
+
+  const FT& initial_point() const { return m_initial_point; }
   const FT& point() const { return m_point; }
   FT& point() { return m_point; }
   const FT& direction() const { return m_direction; }
@@ -87,7 +88,12 @@ public:
     if (is_frozen())
       return;
 
-    m_point = m_initial_point + time * m_direction;
+    m_point = point_at_time(time);
+  }
+
+  FT point_at_time (FT time) const
+  {
+    return m_initial_point + time * m_direction;
   }
 
   friend std::ostream& operator<< (std::ostream& os, const Vertex& vertex)

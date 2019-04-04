@@ -84,17 +84,42 @@ public:
     for (const typename SegmentRange::const_iterator::value_type& vt : segments)
     {
       Segment& segment = m_data.add_segment (get (segment_map, vt));
-      initialize_vertices_directions (segment);
+      initialize_vertices_directions (segment, k);
     }
 
     CGAL_KSR_CERR << "Making input segments intersection free" << std::endl;
     make_segments_intersection_free();
 
+//#define FULL_QUEUE
+#ifdef FULL_QUEUE
     CGAL_KSR_CERR << "Initializing priority queue" << std::endl;
-    initialize_queue(k);
+    initialize_queue();
 
     CGAL_KSR_CERR << "Unstacking priority queue" << std::endl;
     run();
+#else
+    FT time_step = CGAL::approximate_sqrt(CGAL::squared_distance(Point_2 (bbox.xmin(), bbox.ymin()),
+                                                                 Point_2 (bbox.xmax(), bbox.ymax())));
+    time_step /= 50;
+    
+    FT min_time = 0;
+
+    CGAL::Real_timer tinit, trun;
+
+    tinit.start();
+    while (initialize_queue(min_time, min_time + time_step))
+    {
+      tinit.stop();
+      trun.start();
+      run();
+      trun.stop();
+      min_time += time_step;
+      tinit.start();
+    }
+    tinit.stop();
+    std::cerr << "T_init = " << tinit.time() << std::endl
+              << "T_run = " << trun.time() << std::endl;
+#endif
   }
 
   
@@ -220,9 +245,6 @@ public:
         if (verbose)
           std::cerr << "ERROR: Vertex[" << i
                     << "] has meta vertex Meta_vertex[-1]" << std::endl;
-
-        std::ofstream test ("metavertex.xyz");
-        test << m_data.point_of_vertex(i) << " 0" << std::endl;
         return false;
       }
       if (m_data.segment_of_vertex(vertex).source_idx() != i
@@ -453,12 +475,15 @@ private:
       m_data.add_meta_vertex(i);
   }
 
-  void initialize_vertices_directions (Segment& segment)
+  void initialize_vertices_directions (Segment& segment, unsigned int k)
   {
     const Support_line& support_line = m_data.support_line_of_segment (segment);
 
     Vertex& source = m_data.source_of_segment (segment);
     Vertex& target = m_data.target_of_segment (segment);
+
+    source.remaining_intersections() = k;
+    target.remaining_intersections() = k;
 
     Point_2 psource = m_data.point_of_vertex(source);
     Point_2 ptarget = m_data.point_of_vertex(target);
@@ -512,7 +537,7 @@ private:
       m_data.cut_segment (iter->first, iter->second);
   }
 
-  void initialize_queue(unsigned int k)
+  void initialize_queue()
   {
     // Loop over vertices and schedule events
     for (std::size_t i = 0; i < m_data.number_of_vertices(); ++ i)
@@ -520,8 +545,6 @@ private:
       Vertex& vertex = m_data.vertex(i);
       if (vertex.is_frozen())
         continue;
-
-      vertex.remaining_intersections() = k;
 
       Support_line& sli = m_data.support_line_of_vertex(vertex);
 
@@ -539,7 +562,7 @@ private:
         if (!KSR::intersection_2 (ray, line, point))
           continue;
 
-        FT dist = CGAL::approximate_sqrt (CGAL::squared_distance (sli.to_2d(vertex.point()), point));
+        FT dist = CGAL::approximate_sqrt (CGAL::squared_distance (sli.to_2d(vertex.initial_point()), point));
         FT time = dist / vertex.speed();
         
         m_data.push_to_queue (Event (i, j, time));
@@ -547,9 +570,94 @@ private:
     }
   }
 
+  bool initialize_queue(FT min_time, FT max_time)
+  {
+    // Simulate change of position
+    m_data.update_positions(max_time);
+
+    bool still_running = false;
+
+    // Precompute segments and bboxes
+    std::vector<Segment_2> segments_2;
+    segments_2.reserve (m_data.number_of_segments());
+    std::vector<CGAL::Bbox_2> segment_bboxes;
+    segment_bboxes.reserve (m_data.number_of_segments());
+    for (std::size_t i = 0; i < m_data.number_of_segments(); ++ i)
+    {
+      segments_2.push_back (m_data.segment_2(i));
+      segment_bboxes.push_back (segments_2.back().bbox());
+    }
+    
+    
+    for (std::size_t i = 0; i < m_data.number_of_vertices(); ++ i)
+    {
+      const Vertex& vertex = m_data.vertex(i);
+      if (vertex.is_frozen())
+        continue;
+      
+      still_running = true;
+
+      Segment_2 si (m_data.support_line_of_vertex(vertex).to_2d(vertex.point_at_time(min_time)),
+                    m_data.point_of_vertex(vertex));
+
+      for (std::size_t j = 0; j < m_data.number_of_support_lines(); ++ j)
+      {
+        if (m_data.segment_of_vertex(vertex).support_line_idx() == j)
+          continue;
+
+        const Support_line& support_line = m_data.support_line(j);
+
+        for (KSR::size_t segment_idx : support_line.segments_idx())
+        {
+          Segment_2 sj = m_data.segment_2 (segment_idx);
+          if (!CGAL::do_overlap(si.bbox(), segment_bboxes[segment_idx]))
+            continue;
+          
+          Point_2 point;
+          if (!KSR::intersection_2 (si, segments_2[segment_idx], point))
+            continue;
+
+          Support_line& sli = m_data.support_line_of_vertex(vertex);
+          FT dist = CGAL::approximate_sqrt (CGAL::squared_distance (sli.to_2d(vertex.initial_point()), point));
+          FT time = dist / vertex.speed();
+
+          if (time > min_time)
+            m_data.push_to_queue (Event (i, j, time));
+          break;
+        }
+      }
+    }
+
+    m_data.update_positions(min_time);
+
+
+//    m_data.print_queue();
+
+    // {
+    //   static int nb = 0;
+    //   ++ nb;
+      
+    //   std::vector<Segment_2> segments;
+    //   output_partition_edges_to_segment_soup(std::back_inserter(segments));
+      
+    //   std::ofstream output_file ("output" + std::to_string(nb) + ".polylines.txt");
+    //   for (const Segment_2& s : segments)
+    //     output_file << "2 " << s.source() << " 0 " << s.target() << " 0" << std::endl;
+      
+    //   std::ofstream dbg("moving_points" + std::to_string(nb) + ".polylines.txt");
+    //   for (std::size_t i = 0; i < m_data.number_of_vertices(); ++ i)
+    //     if (!m_data.vertex(i).is_frozen())
+    //       dbg << "2 " << m_data.point_of_vertex(i) << " 0 "
+    //           << m_data.point_of_vertex(i) + 0.1 * m_data.direction_of_vertex(i) << " 0" << std::endl;
+    // }
+
+    return still_running;
+  }
+
   void run()
   {
     std::size_t iterations = 0;
+
     while (!m_data.queue_is_empty())
     {
       Event ev = m_data.queue_pop();
@@ -617,12 +725,12 @@ private:
       if ((source <= point && point <= target) ||
           (target <= point && point <= source))
       {
-        intersected_segment = sg;
         if (source == point || target == point)
         {
-          CGAL_KSR_CERR << "Warning: intersection at point exactly" << std::endl;
+          CGAL_KSR_CERR << "Warning!" << std::endl;
         }
 
+        intersected_segment = sg;
         break;
       }
     }
@@ -633,7 +741,7 @@ private:
     vertex.point() = intersecting.to_1d(point_inter);
 
     m_data.cut_segment(intersected_segment, point_inter);
-
+    
     m_data.add_meta_vertex(point_inter, vertex_idx);
 
     return true;
