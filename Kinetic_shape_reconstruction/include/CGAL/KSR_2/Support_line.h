@@ -41,10 +41,7 @@ public:
   typedef typename Kernel::Point_2 Point_2;
   typedef typename Kernel::Vector_2 Vector_2;
   typedef typename Kernel::Line_2 Line_2;
-  typedef typename Kernel::Ray_2 Ray_2;
   typedef typename Kernel::Segment_2 Segment_2;
-
-  typedef KSR_2::Vertex<GeomTraits> Vertex;
 
 private:
 
@@ -71,12 +68,6 @@ public:
   }
   
   Point_2 to_2d (const FT& point) const { return m_origin + point * m_vector; }
-
-  Ray_2 to_ray (const Vertex& vertex) const
-  {
-    return Ray_2 (to_2d(vertex.point()), m_vector * vertex.direction());
-  }
-
 };
 
 

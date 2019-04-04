@@ -29,15 +29,8 @@ namespace CGAL
 namespace KSR_2
 {
 
-template <typename GeomTraits>
 class Segment
 {
-public:
-  typedef GeomTraits Kernel;
-  typedef typename Kernel::FT FT;
-  typedef typename Kernel::Point_2 Point_2;
-  typedef typename Kernel::Vector_2 Vector_2;
-
 private:
 
   KSR::size_t m_source_idx;
@@ -54,7 +47,6 @@ public:
   KSR::size_t& target_idx() { return m_target_idx; }
   const KSR::size_t& support_line_idx() const { return m_support_line_idx; }
   KSR::size_t& support_line_idx() { return m_support_line_idx; }
-
 };
 
 

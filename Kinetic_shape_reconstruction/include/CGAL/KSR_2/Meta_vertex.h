@@ -31,16 +31,9 @@ namespace CGAL
 namespace KSR_2
 {
 
-template <typename GeomTraits>
+template <typename Point_2>
 class Meta_vertex
 {
-public:
-  typedef GeomTraits Kernel;
-  typedef typename Kernel::FT FT;
-  typedef typename Kernel::Point_2 Point_2;
-  typedef typename Kernel::Vector_2 Vector_2;
-  typedef typename Kernel::Ray_2 Ray_2;
-
 private:
 
   Point_2 m_point;

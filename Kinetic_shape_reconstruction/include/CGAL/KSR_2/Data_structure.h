@@ -57,10 +57,10 @@ public:
   typedef typename Kernel::Segment_2 Segment_2;
 
   typedef KSR_2::Support_line<Kernel> Support_line;
-  typedef KSR_2::Segment<Kernel> Segment;
-  typedef KSR_2::Vertex<Kernel> Vertex;
+  typedef KSR_2::Segment Segment;
+  typedef KSR_2::Vertex<FT> Vertex;
   
-  typedef KSR_2::Meta_vertex<Kernel> Meta_vertex;
+  typedef KSR_2::Meta_vertex<Point_2> Meta_vertex;
 
   typedef std::vector<Support_line> Support_lines;
   typedef std::vector<Segment> Segments;
@@ -84,13 +84,13 @@ private:
 
   // Helping data structures
   std::map<Point_2, KSR::size_t> m_meta_map;
-  FT m_latest_time;
+  FT m_current_time;
   
 public:
 
-  Data_structure() : m_latest_time(0) { }
+  Data_structure() : m_current_time(0) { }
 
-  const FT& latest_time() const { return m_latest_time; }
+  const FT& current_time() const { return m_current_time; }
 
   const Support_lines& support_lines() const { return m_support_lines; }
   const Vertices& vertices() const { return m_vertices; }
@@ -129,16 +129,20 @@ public:
 
   // Vertex/idx -> Point_2
   inline Point_2 point_of_vertex (const Vertex& vertex) const
-  { return support_line_of_vertex(vertex).to_2d(vertex.point()); }
+  { return support_line_of_vertex(vertex).to_2d(vertex.point(m_current_time)); }
   inline Point_2 point_of_vertex (std::size_t vertex_idx) const
   { return point_of_vertex (m_vertices[vertex_idx]); }
 
   // Vertex/idx -> Vector_2
   inline Vector_2 direction_of_vertex (const Vertex& vertex) const
-  { return Vector_2 (support_line_of_vertex(vertex).to_2d(vertex.point()),
-                     support_line_of_vertex(vertex).to_2d(vertex.point() + vertex.direction())); }
+  { return Vector_2 (support_line_of_vertex(vertex).to_2d(vertex.point(m_current_time)),
+                     support_line_of_vertex(vertex).to_2d(vertex.point(m_current_time) + vertex.direction())); }
   inline Vector_2 direction_of_vertex (std::size_t vertex_idx) const
   { return direction_of_vertex (m_vertices[vertex_idx]); }
+
+  // Vertex/idx -> Ray_2
+  inline Ray_2 ray_of_vertex (const Vertex& vertex) const
+  { return Ray_2 (point_of_vertex(vertex), direction_of_vertex(vertex)); }
 
   // Vertex/idx -> Segment
   inline const Segment& segment_of_vertex (const Vertex& vertex) const
@@ -251,7 +255,7 @@ public:
     const Vertex& source = m_vertices[segment.source_idx()];
     const Vertex& target = m_vertices[segment.target_idx()];
     
-    return Segment_2 (support_line.to_2d(source.point()), support_line.to_2d(target.point()));
+    return Segment_2 (support_line.to_2d(source.point(m_current_time)), support_line.to_2d(target.point(m_current_time)));
   }
 
   bool is_bbox_segment (std::size_t segment_idx) const
@@ -403,8 +407,7 @@ public:
 
     // Freeze one end
     meta_vertex_of_vertex(vertex_idx).vertices_idx().push_back (m_vertices.size() - 2);
-    m_vertices[m_vertices.size() - 2].remaining_intersections() = 0;
-    m_vertices[m_vertices.size() - 2].direction() = 0.;
+    m_vertices[m_vertices.size() - 2].freeze(m_current_time);
     
     // Release other end
     m_vertices[m_vertices.size() - 1].meta_vertex_idx() = KSR::no_element();
@@ -425,9 +428,7 @@ public:
 
   void update_positions (FT time)
   {
-    m_latest_time = time;
-    for (Vertex& v : m_vertices)
-      v.update_position(time);
+    m_current_time = time;
   }
 
 };

@@ -90,36 +90,16 @@ public:
     CGAL_KSR_CERR << "Making input segments intersection free" << std::endl;
     make_segments_intersection_free();
 
-//#define FULL_QUEUE
-#ifdef FULL_QUEUE
-    CGAL_KSR_CERR << "Initializing priority queue" << std::endl;
-    initialize_queue();
-
-    CGAL_KSR_CERR << "Unstacking priority queue" << std::endl;
-    run();
-#else
     FT time_step = CGAL::approximate_sqrt(CGAL::squared_distance(Point_2 (bbox.xmin(), bbox.ymin()),
                                                                  Point_2 (bbox.xmax(), bbox.ymax())));
     time_step /= 50;
     
     FT min_time = 0;
-
-    CGAL::Real_timer tinit, trun;
-
-    tinit.start();
     while (initialize_queue(min_time, min_time + time_step))
     {
-      tinit.stop();
-      trun.start();
       run();
-      trun.stop();
       min_time += time_step;
-      tinit.start();
     }
-    tinit.stop();
-    std::cerr << "T_init = " << tinit.time() << std::endl
-              << "T_run = " << trun.time() << std::endl;
-#endif
   }
 
   
@@ -537,39 +517,6 @@ private:
       m_data.cut_segment (iter->first, iter->second);
   }
 
-  void initialize_queue()
-  {
-    // Loop over vertices and schedule events
-    for (std::size_t i = 0; i < m_data.number_of_vertices(); ++ i)
-    {
-      Vertex& vertex = m_data.vertex(i);
-      if (vertex.is_frozen())
-        continue;
-
-      Support_line& sli = m_data.support_line_of_vertex(vertex);
-
-      Ray_2 ray = sli.to_ray (vertex);
-
-      for (std::size_t j = 0; j < m_data.number_of_support_lines(); ++ j)
-      {
-        if (j == m_data.segment_of_vertex(vertex).support_line_idx())
-          continue;
-
-        Support_line& slj_line = m_data.support_line(j);
-        Line_2 line = slj_line.line();
-
-        Point_2 point;
-        if (!KSR::intersection_2 (ray, line, point))
-          continue;
-
-        FT dist = CGAL::approximate_sqrt (CGAL::squared_distance (sli.to_2d(vertex.initial_point()), point));
-        FT time = dist / vertex.speed();
-        
-        m_data.push_to_queue (Event (i, j, time));
-      }
-    }
-  }
-
   bool initialize_queue(FT min_time, FT max_time)
   {
     // Simulate change of position
@@ -587,7 +534,18 @@ private:
       segments_2.push_back (m_data.segment_2(i));
       segment_bboxes.push_back (segments_2.back().bbox());
     }
-    
+    std::vector<CGAL::Bbox_2> support_line_bboxes;
+    support_line_bboxes.reserve (m_data.number_of_support_lines());
+    for (std::size_t i = 0; i < m_data.number_of_support_lines(); ++ i)
+      support_line_bboxes.push_back
+        (std::accumulate (m_data.support_line(i).segments_idx().begin(),
+                          m_data.support_line(i).segments_idx().end(),
+                          CGAL::Bbox_2(),
+                          [&](const CGAL::Bbox_2& b, const KSR::size_t& segment_idx) -> CGAL::Bbox_2
+                          {
+                            return b + segment_bboxes[segment_idx];
+                          }));
+      
     
     for (std::size_t i = 0; i < m_data.number_of_vertices(); ++ i)
     {
@@ -597,8 +555,9 @@ private:
       
       still_running = true;
 
-      Segment_2 si (m_data.support_line_of_vertex(vertex).to_2d(vertex.point_at_time(min_time)),
+      Segment_2 si (m_data.support_line_of_vertex(vertex).to_2d(vertex.point(min_time)),
                     m_data.point_of_vertex(vertex));
+      CGAL::Bbox_2 si_bbox = si.bbox();
 
       for (std::size_t j = 0; j < m_data.number_of_support_lines(); ++ j)
       {
@@ -607,10 +566,12 @@ private:
 
         const Support_line& support_line = m_data.support_line(j);
 
+        if (!CGAL::do_overlap(si_bbox, support_line_bboxes[j]))
+          continue;
+
         for (KSR::size_t segment_idx : support_line.segments_idx())
         {
-          Segment_2 sj = m_data.segment_2 (segment_idx);
-          if (!CGAL::do_overlap(si.bbox(), segment_bboxes[segment_idx]))
+          if (!CGAL::do_overlap(si_bbox, segment_bboxes[segment_idx]))
             continue;
           
           Point_2 point;
@@ -618,7 +579,7 @@ private:
             continue;
 
           Support_line& sli = m_data.support_line_of_vertex(vertex);
-          FT dist = CGAL::approximate_sqrt (CGAL::squared_distance (sli.to_2d(vertex.initial_point()), point));
+          FT dist = CGAL::approximate_sqrt (CGAL::squared_distance (sli.to_2d(vertex.point(0)), point));
           FT time = dist / vertex.speed();
 
           if (time > min_time)
@@ -690,7 +651,7 @@ private:
         else
           m_data.remove_events (ev.vertex_idx());
 
-        m_data.vertex_of_event(ev).direction() = 0.;
+        m_data.vertex_of_event(ev).freeze(m_data.current_time());
       }
       else
       {
@@ -717,8 +678,8 @@ private:
     {
       const Segment& segment = m_data.segment(sg);
 
-      FT source = m_data.source_of_segment(segment).point();
-      FT target = m_data.target_of_segment(segment).point();
+      FT source = m_data.source_of_segment(segment).point(m_data.current_time());
+      FT target = m_data.target_of_segment(segment).point(m_data.current_time());
       
       FT point = intersected.to_1d (point_inter);
 
@@ -737,8 +698,6 @@ private:
 
     if (intersected_segment == KSR::no_element()) // No intersection happened
       return false;
-
-    vertex.point() = intersecting.to_1d(point_inter);
 
     m_data.cut_segment(intersected_segment, point_inter);
     

@@ -1,6 +1,6 @@
 #include <fstream>
 
-#define CGAL_KSR_VERBOSE
+//#define CGAL_KSR_VERBOSE
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/IO/PLY_writer.h>
 #include <CGAL/Kinetic_shape_reconstruction_2.h>
@@ -23,13 +23,23 @@ int main (int argc, char** argv)
 {
   CGAL::Random rand(0);
   std::vector<Segment_2> segments;
-  
+
   unsigned int nb_lines = 30;
   if (argc > 1)
     nb_lines = std::atoi(argv[1]);
   unsigned int k = 2;
   if (argc > 2)
     k = std::atoi(argv[2]);
+#define REGULAR_CASE
+#ifdef REGULAR_CASE
+  segments.push_back (Segment_2(Point_2 (0, 1), Point_2 (0, 3)));
+  segments.push_back (Segment_2(Point_2 (0, 5), Point_2 (0, 7)));
+  segments.push_back (Segment_2(Point_2 (4, 1), Point_2 (4, 3)));
+  segments.push_back (Segment_2(Point_2 (4, 6), Point_2 (4, 7)));
+  segments.push_back (Segment_2(Point_2 (1, 0), Point_2 (3, 0)));
+  segments.push_back (Segment_2(Point_2 (2, 4), Point_2 (3, 4)));
+  segments.push_back (Segment_2(Point_2 (1.2, 8), Point_2 (2.5, 8)));
+#else
   
   for (unsigned int i = 0; i < nb_lines; ++ i)
   {
@@ -38,7 +48,8 @@ int main (int argc, char** argv)
     Point_2 target = source + vec;
     segments.push_back (Segment_2(source, target));
   }
-
+#endif
+  
   std::ofstream input_file ("input.polylines.txt");
   for (const Segment_2& s : segments)
     input_file << "2 " << s.source() << " 0 " << s.target() << " 0" << std::endl;
@@ -66,6 +77,8 @@ int main (int argc, char** argv)
 
   if (reconstruction.output_partition_cells_to_face_graph(mesh))
   {
+    std::cerr << mesh.number_of_vertices() << " vertices and " << mesh.number_of_faces() << " faces" << std::endl;
+    
     std::ofstream output_shapes_file ("out.ply");
     output_shapes_file << "ply" << std::endl
                        << "format ascii 1.0" << std::endl

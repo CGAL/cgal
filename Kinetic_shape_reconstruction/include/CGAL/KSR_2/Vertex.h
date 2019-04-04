@@ -31,19 +31,11 @@ namespace CGAL
 namespace KSR_2
 {
 
-template <typename GeomTraits>
+template <typename FT>
 class Vertex
 {
-public:
-  typedef GeomTraits Kernel;
-  typedef typename Kernel::FT FT;
-  typedef typename Kernel::Point_2 Point_2;
-  typedef typename Kernel::Vector_2 Vector_2;
-  typedef typename Kernel::Ray_2 Ray_2;
-
 private:
 
-  const FT m_initial_point;
   FT m_point;
   FT m_direction;
   KSR::size_t m_segment_idx;
@@ -55,8 +47,7 @@ public:
   Vertex (FT point,
           KSR::size_t segment_idx = KSR::no_element(),
           unsigned int remaining_intersections = 0)
-    : m_initial_point (point)
-    , m_point (point)
+    : m_point (point)
     , m_direction (0)
     , m_segment_idx (segment_idx)
     , m_remaining_intersections(remaining_intersections)
@@ -67,12 +58,9 @@ public:
   const KSR::size_t& segment_idx() const { return m_segment_idx; }
   KSR::size_t& segment_idx() { return m_segment_idx; }
 
-  const FT& initial_point() const { return m_initial_point; }
-  const FT& point() const { return m_point; }
-  FT& point() { return m_point; }
+  FT point(FT time) const { return m_point + time * m_direction; }
   const FT& direction() const { return m_direction; }
   FT& direction() { return m_direction; }
-
   FT speed() const { return CGAL::abs (m_direction); }
 
   const unsigned int& remaining_intersections() const { return m_remaining_intersections; }
@@ -82,18 +70,11 @@ public:
   KSR::size_t& meta_vertex_idx() { return m_meta_vertex_idx; }
   
   bool is_frozen() const { return (m_direction == FT(0)); }
-
-  void update_position(FT time)
+  void freeze(FT time)
   {
-    if (is_frozen())
-      return;
-
-    m_point = point_at_time(time);
-  }
-
-  FT point_at_time (FT time) const
-  {
-    return m_initial_point + time * m_direction;
+    m_point = m_point + time * m_direction;
+    m_direction = FT(0);
+    m_remaining_intersections = 0;
   }
 
   friend std::ostream& operator<< (std::ostream& os, const Vertex& vertex)
