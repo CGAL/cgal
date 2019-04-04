@@ -105,7 +105,7 @@ public:
       Base_traits::Less_signed_distance_to_line_2(base),ppmap_(ppmap){}
     const PointPropertyMap& ppmap_;
     bool operator()(Arg_type p,Arg_type q, Arg_type r, Arg_type s) const {
-      return static_cast<const typename Base_traits::Less_signed_distance_to_line_2 _2*>(this)->operator()(get(ppmap_,p),get(ppmap_,q),get(ppmap_,r),get(ppmap_,s));
+      return static_cast<const typename Base_traits::Less_signed_distance_to_line_2*>(this)->operator()(get(ppmap_,p),get(ppmap_,q),get(ppmap_,r),get(ppmap_,s));
     }
   };
   
