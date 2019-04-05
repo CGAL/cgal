@@ -510,7 +510,7 @@ private:
       }
     }
 
-    CGAL_KSR_CERR << "Found " << nb_inter << " intersection(s) at initialization" << std::endl;
+    CGAL_KSR_CERR << "* Found " << nb_inter << " intersection(s) at initialization" << std::endl;
 
     for (typename std::map<KSR::size_t, std::vector<Point_2> >::iterator
            iter = todo.begin(); iter != todo.end(); ++ iter)
@@ -519,6 +519,66 @@ private:
 
   bool initialize_queue(FT min_time, FT max_time)
   {
+    CGAL_KSR_CERR << "* Initializing queue for events in [" << min_time << ";" << max_time << "]" << std::endl;
+    
+    m_data.update_positions(min_time);
+    
+    // First, handle degenerate cases where a collision occur along a
+    // same Support_line
+    for (std::size_t i = 0; i < m_data.number_of_support_lines(); ++ i)
+    {
+      const Support_line& support_line = m_data.support_line(i);
+      if (support_line.segments_idx().size() < 2)
+        continue;
+
+      std::vector<KSR::size_t> vertices_idx;
+      vertices_idx.reserve (support_line.segments_idx().size() * 2);
+      for (KSR::size_t segment_idx : support_line.segments_idx())
+      {
+        vertices_idx.push_back (m_data.segment(segment_idx).source_idx());
+        vertices_idx.push_back (m_data.segment(segment_idx).target_idx());
+      }
+
+      std::sort (vertices_idx.begin(), vertices_idx.end(),
+                 [&](const KSR::size_t& a, const KSR::size_t& b) -> bool
+                 { return m_data.vertex(a).point(m_data.current_time())
+                     < m_data.vertex(b).point(m_data.current_time()); });
+
+      for (std::size_t j = 1; j < vertices_idx.size() - 2; ++ j)
+      {
+        const Vertex& a = m_data.vertex (vertices_idx[j]);
+        const Vertex& b = m_data.vertex (vertices_idx[j+1]);
+        if (a.segment_idx() == b.segment_idx())
+          continue;
+        if (a.is_frozen() && b.is_frozen())
+          continue;
+
+        if (a.direction() < 0 || b.direction() > 0)
+          continue;
+
+        FT time_to_collision = b.point(m_data.current_time()) - a.point(m_data.current_time());
+        Point_2 point;
+        if (!a.is_frozen() && ! b.is_frozen())
+          time_to_collision /= 2.;
+
+        if (time_to_collision < (max_time-min_time))
+        {
+          if (!a.is_frozen())
+          {
+            Event ev (vertices_idx[j], i, min_time + time_to_collision);
+            CGAL_KSR_CERR << "** Pushing Parallel " << ev << std::endl;
+            m_data.push_to_queue (ev);
+          }
+          if (!b.is_frozen())
+          {
+            Event ev (vertices_idx[j+1], i, min_time + time_to_collision);
+            CGAL_KSR_CERR << "** Pushing Parallel " << ev << std::endl;
+            m_data.push_to_queue (ev);
+          }
+        }
+      }
+    }
+    
     // Simulate change of position
     m_data.update_positions(max_time);
 
@@ -531,8 +591,16 @@ private:
     segment_bboxes.reserve (m_data.number_of_segments());
     for (std::size_t i = 0; i < m_data.number_of_segments(); ++ i)
     {
-      segments_2.push_back (m_data.segment_2(i));
-      segment_bboxes.push_back (segments_2.back().bbox());
+      if (m_data.segment(i).is_active())
+      {
+        segments_2.push_back (m_data.segment_2(i));
+        segment_bboxes.push_back (segments_2.back().bbox());
+      }
+      else
+      {
+        segments_2.push_back (Segment_2());
+        segment_bboxes.push_back (CGAL::Bbox_2());
+      }
     }
     std::vector<CGAL::Bbox_2> support_line_bboxes;
     support_line_bboxes.reserve (m_data.number_of_support_lines());
@@ -550,7 +618,7 @@ private:
     for (std::size_t i = 0; i < m_data.number_of_vertices(); ++ i)
     {
       const Vertex& vertex = m_data.vertex(i);
-      if (vertex.is_frozen())
+      if (vertex.is_frozen() || !vertex.is_active())
         continue;
       
       still_running = true;
@@ -583,34 +651,17 @@ private:
           FT time = dist / vertex.speed();
 
           if (time > min_time)
-            m_data.push_to_queue (Event (i, j, time));
-          break;
+          {
+            Event ev (i, j, time);
+            CGAL_KSR_CERR << "** Pushing " << ev << std::endl;
+            m_data.push_to_queue (ev);
+            break;
+          }
         }
       }
     }
 
     m_data.update_positions(min_time);
-
-
-//    m_data.print_queue();
-
-    // {
-    //   static int nb = 0;
-    //   ++ nb;
-      
-    //   std::vector<Segment_2> segments;
-    //   output_partition_edges_to_segment_soup(std::back_inserter(segments));
-      
-    //   std::ofstream output_file ("output" + std::to_string(nb) + ".polylines.txt");
-    //   for (const Segment_2& s : segments)
-    //     output_file << "2 " << s.source() << " 0 " << s.target() << " 0" << std::endl;
-      
-    //   std::ofstream dbg("moving_points" + std::to_string(nb) + ".polylines.txt");
-    //   for (std::size_t i = 0; i < m_data.number_of_vertices(); ++ i)
-    //     if (!m_data.vertex(i).is_frozen())
-    //       dbg << "2 " << m_data.point_of_vertex(i) << " 0 "
-    //           << m_data.point_of_vertex(i) + 0.1 * m_data.direction_of_vertex(i) << " 0" << std::endl;
-    // }
 
     return still_running;
   }
@@ -623,40 +674,13 @@ private:
     {
       Event ev = m_data.queue_pop();
 
-      CGAL_KSR_CERR << " * Applying " << ev << std::endl;
+      CGAL_KSR_CERR << "* Applying " << ev << std::endl;
 
       FT current_time = ev.time();
 
       m_data.update_positions (current_time);
 
-      if (stop_vertex_if_intersection(ev.vertex_idx(), ev.intersection_line_idx()))
-      {
-        CGAL_KSR_CERR << "  -> Intersection happened" << std::endl;
-
-        m_data.vertex_of_event(ev).remaining_intersections() --;
-        if (m_data.is_bbox_segment (ev.intersection_line_idx()))
-          m_data.vertex_of_event(ev).remaining_intersections() = 0;
-        
-        CGAL_KSR_CERR << "  -> Remaining intersections = " << m_data.vertex_of_event(ev).remaining_intersections() << std::endl;
-        
-        // If there are still intersections to be made
-        if (m_data.vertex_of_event(ev).remaining_intersections() != 0)
-        {
-          // Create a new segment
-          Segment& segment = m_data.propagate_segment (ev.vertex_idx());
-
-          // Transfer events to new moving vertex
-          m_data.transfer_events (ev.vertex_idx(), segment.target_idx());
-        }
-        else
-          m_data.remove_events (ev.vertex_idx());
-
-        m_data.vertex_of_event(ev).freeze(m_data.current_time());
-      }
-      else
-      {
-        CGAL_KSR_CERR << "  -> Nothing happened" << std::endl;
-      }
+      apply_event (ev.vertex_idx(), ev.intersection_line_idx());
       
       ++ iterations;
       // if (iterations == 6)
@@ -664,48 +688,139 @@ private:
     }
   }
   
-  bool stop_vertex_if_intersection (std::size_t vertex_idx, std::size_t line_idx)
+  void apply_event (std::size_t vertex_idx, std::size_t line_idx)
   {
-    Vertex& vertex = m_data.vertex(vertex_idx);
-    const Support_line& intersecting = m_data.support_line_of_vertex(vertex);
-    const Support_line& intersected = m_data.support_line(line_idx);
-
-    Point_2 point_inter = KSR::intersection_2<Point_2> (intersecting.line(), intersected.line());
-
-    KSR::size_t intersected_segment = KSR::no_element();
-    
-    for (KSR::size_t sg : intersected.segments_idx())
+    if (m_data.segment_of_vertex(vertex_idx).support_line_idx() == line_idx)
     {
-      const Segment& segment = m_data.segment(sg);
-
-      FT source = m_data.source_of_segment(segment).point(m_data.current_time());
-      FT target = m_data.target_of_segment(segment).point(m_data.current_time());
+      CGAL_KSR_CERR << "** Parallel event" << std::endl;
       
-      FT point = intersected.to_1d (point_inter);
+      const Support_line& support_line = m_data.support_line(line_idx);
 
-      if ((source <= point && point <= target) ||
-          (target <= point && point <= source))
+      FT point = m_data.vertex(vertex_idx).point(m_data.current_time());
+      KSR::size_t other_vertex_idx = KSR::no_element();
+      for (KSR::size_t segment_idx : support_line.segments_idx())
       {
-        if (source == point || target == point)
+        if (segment_idx == m_data.vertex(vertex_idx).segment_idx())
+          continue;
+
+        std::cerr << m_data.source_of_segment(segment_idx).point(m_data.current_time())
+                  << " < " << point << " < "
+                  << m_data.target_of_segment(segment_idx).point(m_data.current_time()) << std::endl;
+        
+        if (m_data.source_of_segment(segment_idx).point(m_data.current_time()) == point)
         {
-          CGAL_KSR_CERR << "Warning!" << std::endl;
+          other_vertex_idx = m_data.segment(segment_idx).source_idx();
+          break;
+        }
+        if (m_data.target_of_segment(segment_idx).point(m_data.current_time()) == point)
+        {
+          other_vertex_idx = m_data.segment(segment_idx).target_idx();
+          break;
         }
 
-        intersected_segment = sg;
-        break;
+      }
+      if (other_vertex_idx == KSR::no_element())
+      {
+        std::cerr << "** Nothing happened" << std::endl;
+        return;
+      }
+
+      std::cerr << "** Merging vertices " << vertex_idx << " and " << other_vertex_idx << std::endl;
+      m_data.remove_events (vertex_idx);
+      m_data.remove_events (other_vertex_idx);
+      m_data.merge_segments_of_vertices (vertex_idx, other_vertex_idx);
+    }
+    else
+    {
+      Vertex& vertex = m_data.vertex(vertex_idx);
+      const Support_line& intersecting = m_data.support_line_of_vertex(vertex);
+      const Support_line& intersected = m_data.support_line(line_idx);
+
+      Point_2 point_inter = KSR::intersection_2<Point_2> (intersecting.line(), intersected.line());
+
+      KSR::size_t intersected_segment = KSR::no_element();
+      KSR::size_t intersected_vertex = KSR::no_element();
+    
+      for (KSR::size_t sg : intersected.segments_idx())
+      {
+        const Segment& segment = m_data.segment(sg);
+
+        FT source = m_data.source_of_segment(segment).point(m_data.current_time());
+        FT target = m_data.target_of_segment(segment).point(m_data.current_time());
+      
+        FT point = intersected.to_1d (point_inter);
+
+        if ((source <= point && point <= target) ||
+            (target <= point && point <= source))
+        {
+          if (source == point)
+            intersected_vertex = segment.source_idx();
+          else if (target == point)
+            intersected_vertex = segment.target_idx();
+
+          intersected_segment = sg;
+          break;
+        }
+      }
+
+      if (intersected_segment == KSR::no_element()) // No intersection happened
+      {
+        CGAL_KSR_CERR << "** Nothing happened" << std::endl;
+        return;
+      }
+
+      if (intersected_vertex != KSR::no_element()) // intersection at border
+      {
+        CGAL_KSR_CERR << "** Border event" << std::endl;
+        m_data.connect_vertices(vertex_idx, intersected_vertex, point_inter);
+
+        // Remove mirror event
+        m_data.remove_event (intersected_vertex, m_data.segment_of_vertex(vertex_idx).support_line_idx());
+        
+        if (m_data.is_bbox_segment (m_data.vertex(intersected_vertex).segment_idx()))
+          m_data.vertex(vertex_idx).remaining_intersections() = 0;
+        freeze_and_propagate_vertex (vertex_idx);
+        
+        if (m_data.is_bbox_segment (m_data.vertex(vertex_idx).segment_idx()))
+          m_data.vertex(intersected_vertex).remaining_intersections() = 0;
+        freeze_and_propagate_vertex (intersected_vertex);
+      }
+      else // regular intersection
+      {
+        CGAL_KSR_CERR << "** Regular event" << std::endl;
+        m_data.cut_segment(intersected_segment, point_inter);
+    
+        m_data.add_meta_vertex(point_inter, vertex_idx);
+
+        if (m_data.is_bbox_support_line (line_idx))
+          m_data.vertex(vertex_idx).remaining_intersections() = 0;
+
+        freeze_and_propagate_vertex (vertex_idx);
       }
     }
-
-    if (intersected_segment == KSR::no_element()) // No intersection happened
-      return false;
-
-    m_data.cut_segment(intersected_segment, point_inter);
-    
-    m_data.add_meta_vertex(point_inter, vertex_idx);
-
-    return true;
   }
 
+  void freeze_and_propagate_vertex (KSR::size_t vertex_idx)
+  {
+    if (m_data.vertex(vertex_idx).remaining_intersections() != 0)
+      m_data.vertex(vertex_idx).remaining_intersections() --;
+        
+    CGAL_KSR_CERR << "** Remaining intersections = " << m_data.vertex(vertex_idx).remaining_intersections() << std::endl;
+
+    // If there are still intersections to be made
+    if (m_data.vertex(vertex_idx).remaining_intersections() != 0)
+    {
+      // Create a new segment
+      Segment& segment = m_data.propagate_segment (vertex_idx);
+
+      // Transfer events to new moving vertex
+      m_data.transfer_events (vertex_idx, segment.target_idx());
+    }
+    else
+      m_data.remove_events (vertex_idx);
+
+    m_data.vertex(vertex_idx).freeze(m_data.current_time());
+  }
 };
 
 

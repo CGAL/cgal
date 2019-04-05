@@ -91,12 +91,28 @@ public:
   void remove_vertex_events (KSR::size_t vertex)
   {
     Map_iterator mit = m_map_vertices.find (vertex);
-    CGAL_assertion (mit != m_map_vertices.end());
+    if (mit == m_map_vertices.end())
+      return;
 
     for (const iterator& it : mit->second)
       m_queue.erase(it);
 
     m_map_vertices.erase(mit);
+  }
+
+  void remove_vertex_event (KSR::size_t vertex, KSR::size_t intersected)
+  {
+    Map_iterator mit = m_map_vertices.find (vertex);
+    if (mit == m_map_vertices.end())
+      return;
+
+    for (const iterator& it : mit->second)
+      if (it->intersection_line_idx() == intersected)
+      {
+        remove_vertex_event (vertex, it);
+        m_queue.erase(it);
+        break;
+      }
   }
 
   void transfer_vertex_events (KSR::size_t old_vertex, KSR::size_t new_vertex)

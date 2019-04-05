@@ -36,6 +36,9 @@ typedef boost::uint32_t size_t;
 // Use -1 as no element identifier
 inline size_t no_element() { return size_t(-1); }
 
+// Use -2 as special invalid identifier
+inline size_t invalid() { return size_t(-2); }
+
 // Vector normalization
 template <typename Vector>
 inline Vector normalize (const Vector& v)

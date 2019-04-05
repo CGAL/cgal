@@ -55,6 +55,8 @@ public:
   {
   }
 
+  bool is_active() const { return m_meta_vertex_idx != KSR::invalid(); }
+
   const KSR::size_t& segment_idx() const { return m_segment_idx; }
   KSR::size_t& segment_idx() { return m_segment_idx; }
 

@@ -1,23 +1,53 @@
 #include <fstream>
 
-//#define CGAL_KSR_VERBOSE
+#define CGAL_KSR_VERBOSE 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/IO/PLY_writer.h>
 #include <CGAL/Kinetic_shape_reconstruction_2.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Random.h>
+#include <CGAL/Aff_transformation_2.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_2 Point_2;
 typedef Kernel::Point_3 Point_3;
 typedef Kernel::Vector_2 Vector_2;
 typedef Kernel::Segment_2 Segment_2;
+typedef CGAL::Aff_transformation_2<Kernel> Transform;
 
 typedef CGAL::Surface_mesh<Point_2> Mesh;
 
 typedef CGAL::Kinetic_shape_reconstruction_2<Kernel> Reconstruction;
 
+void add_regular_case (std::vector<Segment_2>& segments, CGAL::Random& rand)
+{
+  std::size_t size_before = segments.size();
+  segments.push_back (Segment_2(Point_2 (0, 1), Point_2 (0, 3)));
+  segments.push_back (Segment_2(Point_2 (0, 5), Point_2 (0, 7)));
+  segments.push_back (Segment_2(Point_2 (4, 1), Point_2 (4, 3)));
+  segments.push_back (Segment_2(Point_2 (4, 6), Point_2 (4, 7)));
+  segments.push_back (Segment_2(Point_2 (1, 0), Point_2 (3, 0)));
+  segments.push_back (Segment_2(Point_2 (2, 4), Point_2 (3, 4)));
+  segments.push_back (Segment_2(Point_2 (1.2, 8), Point_2 (2.5, 8)));
+
+  // Random rotation
+  double sine = rand.get_double(-1.1);
+  double cosine = std::sqrt(1. - sine * sine);
+  Transform rotate (CGAL::Rotation(), sine, cosine);
+  Transform scale (CGAL::Scaling(), rand.get_double(0.1, 10));
+  Transform translate (CGAL::Translation(), Vector_2 (rand.get_double(-5, 5),
+                                                      rand.get_double(-5, 5)));
+  
+  Transform transform = scale * rotate * translate;
+
+  for (std::size_t i = size_before; i < segments.size(); ++ i)
+  {
+    Point_2 source = transform.transform(segments[i].source());
+    Point_2 target = transform.transform(segments[i].target());
+    segments[i] = Segment_2 (source, target);
+  }
+}
 
 int main (int argc, char** argv)
 {
@@ -30,15 +60,10 @@ int main (int argc, char** argv)
   unsigned int k = 2;
   if (argc > 2)
     k = std::atoi(argv[2]);
+
 #define REGULAR_CASE
 #ifdef REGULAR_CASE
-  segments.push_back (Segment_2(Point_2 (0, 1), Point_2 (0, 3)));
-  segments.push_back (Segment_2(Point_2 (0, 5), Point_2 (0, 7)));
-  segments.push_back (Segment_2(Point_2 (4, 1), Point_2 (4, 3)));
-  segments.push_back (Segment_2(Point_2 (4, 6), Point_2 (4, 7)));
-  segments.push_back (Segment_2(Point_2 (1, 0), Point_2 (3, 0)));
-  segments.push_back (Segment_2(Point_2 (2, 4), Point_2 (3, 4)));
-  segments.push_back (Segment_2(Point_2 (1.2, 8), Point_2 (2.5, 8)));
+  add_regular_case (segments, rand);
 #else
   
   for (unsigned int i = 0; i < nb_lines; ++ i)
