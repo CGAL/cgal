@@ -48,7 +48,11 @@ class Dijkstra_end_exception : public std::exception
 {
   const char* what() const throw ()
   {
+#ifdef CGAL_SMP_ORBIFOLD_DEBUG
     return "Dijkstra: reached the target vertex";
+#else
+    return "";
+#endif
   }
 };
 
@@ -197,7 +201,9 @@ void compute_shortest_paths_between_cones(const TriangleMesh& mesh,
   }
 
   std::ofstream out("shortest_path.selection.txt");
+#ifdef CGAL_SMP_ORBIFOLD_DEBUG
   internal::output_shortest_paths_to_selection_file(mesh, seams, out);
+#endif
 }
 
 } // namespace Surface_mesh_parameterization
