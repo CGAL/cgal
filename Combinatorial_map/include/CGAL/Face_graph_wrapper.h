@@ -867,7 +867,7 @@ protected:
 
     template<class Dart_handle>
     static const Point& get_point(const Mesh& /*m*/, Dart_handle dh)
-    { return dh->vertex()->point(); }
+    { return dh->opposite()->vertex()->point(); }
   };
 
 } // Namespace CGAL

@@ -34,15 +34,50 @@ template<class Mesh, class Kernel>
 struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Kernel, 3>
 {
   static typename Kernel::Vector_3
+  get_face_normal(const CGAL::Face_graph_wrapper<Mesh>& mesh,
+                  typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_handle dh)
+  {
+    typename Get_traits<Mesh>::Vector normal(CGAL::NULL_VECTOR);
+    const typename Get_traits<Mesh>::Point*
+        curr=&Get_traits<Mesh>::get_point(mesh.get_fg(), dh); // mesh.other_extremity(dh));
+    typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_handle adart=dh;
+    unsigned int nb=0;
+
+    do
+    {
+      const typename Get_traits<Mesh>::Point*
+          next=&Get_traits<Mesh>::get_point(mesh.get_fg(), mesh.other_extremity(adart));
+      internal::newell_single_step_3_for_lcc(*curr, *next, normal);
+      ++nb;
+      curr=next;
+      adart=mesh.next(adart);
+    }
+    while(adart!=dh);
+
+    assert(nb>0);
+    return (typename Get_traits<Mesh>::Kernel::
+            Construct_scaled_vector_3()(normal, 1.0/nb));
+  }
+  static typename Kernel::Vector_3
   get_vertex_normal(const CGAL::Face_graph_wrapper<Mesh>& mesh,
                     typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_handle dh)
   {
-    typename Kernel::Vector_3 n; // TODO  =
-    // we can use mesh.get_fg() to retreine the initial mesh
-        //internal::Geom_utils<typename LCC::Traits>::
-      //get_local_vector(CGAL::compute_normal_of_cell_0<LCC>(lcc,dh));
-    n = n/(CGAL::sqrt(n*n));
-    return n;
+    typename Get_traits<Mesh>::Vector normal(CGAL::NULL_VECTOR);
+    unsigned int nb = 0;
+
+    // dh=mesh.other_extremity(dh);
+    for ( typename CGAL::Face_graph_wrapper<Mesh>::template Dart_of_cell_range<0>::
+          const_iterator it=mesh.template darts_of_cell<0>(dh).begin(),
+          itend=mesh.template darts_of_cell<0>(dh).end(); it!=itend; ++it )
+    {
+      normal=typename Get_traits<Mesh>::Kernel::Construct_sum_of_vectors_3()
+          (normal, get_face_normal(mesh, it));
+      ++nb;
+    }
+
+    if ( nb<2 ) return normal;
+    return (typename Get_traits<Mesh>::Kernel::
+            Construct_scaled_vector_3()(normal, 1.0/nb));
   }
 };
 
