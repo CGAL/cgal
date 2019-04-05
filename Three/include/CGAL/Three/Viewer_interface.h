@@ -114,7 +114,7 @@ public:
   //! \brief Constructor for the secondary viewers.
   //!
   //! \param parent the parent widget. It usually is the MainWindow.
-  //! \param sharedWidget the main viewer of the Application. This will share the
+  //! \param shared_widget the main viewer of the Application. This will share the
   //!  context and allow synchronized rendering of multiple views.
   //!
   Viewer_interface(QWidget* parent, QOpenGLWidget* shared_widget) 
