@@ -163,7 +163,6 @@ struct Polygon_soup_orienter
 //filling containers
   static void fill_edge_map(Edge_map& edges, Marked_edges& marked_edges, const Polygons& polygons) {
     // Fill edges
-    edges.clear();
     for (P_ID i = 0; i < polygons.size(); ++i)
     {
       const P_ID size = polygons[i].size();
