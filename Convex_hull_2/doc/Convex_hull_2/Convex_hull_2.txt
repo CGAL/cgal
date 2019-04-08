@@ -79,6 +79,21 @@ functions such as `ch_bykat()`.
 
 \cgalExample{Convex_hull_2/ch_from_cin_to_cout.cpp}
 
+
+\section Convex_hull_2ExampleIndex  Example using a Property Map
+
+In the following example we have as input a vector of points,
+and we retrieve the indices of of the points which are on the convex hull.
+The convex hull function takes as fourth argument a traits class
+that must be model of the concept `ConvexHullTraits_2`. It provides
+predicates such as orientation tests.
+The class `Convex_hull_traits_adapter_2` in combination with a
+`Pointer_property_map`, is a model. The indices `i` are then "points",
+and the adapter performs the predicates on `points[i]`.
+
+\cgalExample{Convex_hull_2/convex_hull_indices_2.cpp}
+
+
 \section Convex_hull_2Extreme Extreme Points and Hull Subsequences
 
 In addition to the functions for producing convex hulls, there are a
