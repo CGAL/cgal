@@ -412,12 +412,9 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Delaunay_triangulation_2 demo");
 
-  // Import resources from libCGALQt4.
-  // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  Q_INIT_RESOURCE(File);
-  Q_INIT_RESOURCE(Triangulation_2);
-  Q_INIT_RESOURCE(Input);
-  Q_INIT_RESOURCE(CGAL);
+  // Import resources from libCGALQt5
+  // See http://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE
+  CGAL_Qt_init_resources();// that function is in a DLL
 
   MainWindow mainWindow;
   mainWindow.show();

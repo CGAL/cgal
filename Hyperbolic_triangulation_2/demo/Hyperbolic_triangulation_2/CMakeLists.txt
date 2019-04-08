@@ -26,8 +26,8 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
   qt5_add_resources ( RESOURCE_FILES resources/Delaunay_triangulation_2.qrc )
   
   # cpp files
-  add_executable ( HDT2_demo HDT2.cpp ${CGAL_Qt5_RESOURCE_FILES} ${RESOURCE_FILES} ${UIS})
-  target_link_libraries ( HDT2_demo CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_Core Qt5::Widgets)
+  add_executable ( HDT2 HDT2.cpp ${CGAL_Qt5_RESOURCE_FILES} ${RESOURCE_FILES} ${UIS})
+  target_link_libraries ( HDT2 CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_Core Qt5::Widgets)
 else()
   message(STATUS "NOTICE: This demo requires CGAL, CGAL_Core, and Qt5 and will not be compiled.")
 endif()
