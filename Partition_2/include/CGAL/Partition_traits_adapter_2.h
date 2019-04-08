@@ -19,73 +19,96 @@
 //
 // Author(s)     : Andreas Fabri
 
-#ifndef CGAL_PAIR_PARTITION_TRAITS_2_H
-#define CGAL_PAIR_PARTITION_TRAITS_2_H
+#ifndef CGAL_PARTITION_TRAITS_ADAPTER_2_H
+#define CGAL_PARTITION_TRAITS_ADAPTER_2_H
 
 #include <CGAL/license/Partition_2.h>
 
+#include <boost/call_traits.hpp>
+
+#include <CGAL/property_map.h>
 #include <CGAL/polygon_function_objects.h>
 #include <CGAL/Polygon_2.h>
 #include <list>
 
 namespace CGAL {
 
+  
+template <class Base_traits,class PointPropertyMap>
+class Partition_traits_adapter_2 : public Base_traits
+{
+private:
+  typedef Kernel_                                     Kernel;
+  typedef Partition_traits_adapter_2<Base_traits,PointPropertyMap>       Self;
+  
+  PointPropertyMap ppmap;
+public:
 
-  template <typename Pair, typename Functor>
-  struct Pair_functor {
-    Functor fct;
+  Partition_traits_adapter_2(Base_traits base=Base_traits())
+    : Base_traits(base)
+  {}
+  
+  Partition_traits_adapter_2(const PointPropertyMap& ppmap,Base_traits base=Base_traits())
+  : Base_traits(base),ppmap(ppmap)
+  {}
+  
+  typedef typename Kernel::FT FT;
+  typedef typename boost::property_traits<PointPropertyMap>::key_type Point_2;
+  typedef typename boost::call_traits<Point_2>::param_type Arg_type;
 
-    Pair_functor()
-      : fct()
+  typedef ::std::list<Point_2>                      Container;
+  typedef CGAL::Polygon_2<Self, Container>          Polygon_2;
+
+  
+  template <typename BaseFct>
+  struct Pmap_fct : public BaseFct {
+    Pmap_fct(const PointPropertyMap& ppmap, const BaseFct& base)
+      : BaseFct(base),ppmap(ppmap)
     {}
     
-    Pair_functor(const Functor fct)
-      : fct(fct)
-    {}
+    const PointPropertyMap& ppmap;
 
-    typename Functor::result_type
-    operator()(const Pair& p, const Pair& q)const
-    {
-      return fct(p.first,q.first);
+    bool operator()(Arg_type p,Arg_type q) const {
+      return static_cast<const typename BaseFct*>(this)->operator()(get(ppmap,p),get(ppmap,q));
     }
-    
-    typename Functor::result_type
-    operator()(const Pair& p, const Pair& q, const Pair& r)const
-    {
-      return fct(p.first,q.first,r.first);
+    bool operator()(Arg_type p,Arg_type q,Arg_type r) const {
+      return static_cast<const typename Base_Fct*>(this)->operator()(get(ppmap,p),get(ppmap,q),get(ppmap,r));
     }
   };
 
-  template <typename Pair, typename K>
-  struct Pair_compare_x_at_y_2 {
+    template <typename PointPropertyMap, typename K>
+  struct Pmap_compare_x_at_y_2 {
     
+    PointPropertyMap ppmap;
     typename K::Compare_x_at_y_2 fct;
     
-    Pair_compare_x_at_y_2(typename K::Compare_x_at_y_2 fct)
-      : fct(fct)
+    Pmap_compare_x_at_y_2(const PointPropertyMap& ppmap,typename K::Compare_x_at_y_2 fct)
+      : ppmap(ppmap), fct(fct)
     {}
     
     typename K::Compare_x_at_y_2::result_type
-    operator()(const Pair& p, const typename K::Line_2& line) const
+    operator()(Arg_type p, const typename K::Line_2& line) const
     {
-      return fct(p.first,line);
+      return fct(get(ppmap,p),line);
     }
   };
 
-  template <typename Pair, typename K>
-  struct Pair_collinear_are_ordered_along_line_2 {
 
-    Pair_collinear_are_ordered_along_line_2()
-    {}
-    
+  
+  template <typename PointPropertyMap, typename K>
+  struct Pmap_collinear_are_ordered_along_line_2 {
+
+    PointPropertyMap ppmap;
     typename K::Collinear_are_ordered_along_line_2 fct;
     
-    Pair_collinear_are_ordered_along_line_2(typename K::Collinear_are_ordered_along_line_2 fct)
-      : fct(fct)
+    Pmap_collinear_are_ordered_along_line_2(const PointPropertyMap& ppmap,typename K::Collinear_are_ordered_along_line_2 fct)
+      : ppmap(ppmap), fct(fct) 
     {}
     
+    
+    
     typename K::Collinear_are_ordered_along_line_2::result_type
-    operator()(const Pair& p, const Pair& q, const typename K::Point_2& r) const
+    operator()(Arg_type p, Arg_type q, const typename K::Point_2& r) const
     {
       return fct(p.first, q.first, r);
     }
@@ -93,49 +116,31 @@ namespace CGAL {
     typename K::Collinear_are_ordered_along_line_2::result_type
     operator()(const Pair& p, const Pair& q, const Pair& r) const
     {
-      return fct(p.first, q.first, r.first);
+      return fct(get(ppmap,p), get(ppmap,q), r.first);
     }
   };
 
   
-template <class Kernel_, class Info>
-class Pair_partition_traits_2
-{
-private:
-  typedef Kernel_                                     Kernel;
-  typedef Pair_partition_traits_2<Kernel_,Info>       Self;
-  
-public:
-
-  Pair_partition_traits_2()
-  {}
-
-  typedef typename Kernel::FT FT;
-  typedef std::pair<typename Kernel::Point_2, Info> Point_2;
-  typedef ::std::list<Point_2>                      Container;
-  typedef CGAL::Polygon_2<Self, Container>          Polygon_2;
-
-  
-  typedef Pair_functor<Point_2, typename Kernel::Equal_2>                    Equal_2;
-  typedef Pair_functor<Point_2, typename Kernel::Less_yx_2>                  Less_yx_2;
-  typedef Pair_functor<Point_2, typename Kernel::Less_xy_2>                  Less_xy_2;
-  typedef Pair_functor<Point_2, typename Kernel::Left_turn_2>                Left_turn_2;
-  typedef Pair_functor<Point_2, typename Kernel::Orientation_2>              Orientation_2;
-  typedef Pair_functor<Point_2, typename Kernel::Compare_y_2>                Compare_y_2;
-  typedef Pair_functor<Point_2, typename Kernel::Compare_x_2>                Compare_x_2;
+  typedef Pmap_fct<typename Kernel::Equal_2>                    Equal_2;
+  typedef Pmap_fct<typename Kernel::Less_yx_2>                  Less_yx_2;
+  typedef Pmap_fct<typename Kernel::Less_xy_2>                  Less_xy_2;
+  typedef Pmap_fct<typename Kernel::Left_turn_2>                Left_turn_2;
+  typedef Pmap_fct<typename Kernel::Orientation_2>              Orientation_2;
+  typedef Pmap_fct<typename Kernel::Compare_y_2>                Compare_y_2;
+  typedef Pmap_fct<typename Kernel::Compare_x_2>                Compare_x_2;
   typedef CGAL::Is_convex_2<Self>                                            Is_convex_2;
   typedef CGAL::Is_y_monotone_2<Self>                                        Is_y_monotone_2;
 
   // needed by Indirect_edge_compare, used in y_monotone and greene_approx
   typedef typename Kernel::Line_2                                            Line_2;
-  typedef Pair_functor<Point_2, typename Kernel::Construct_line_2>           Construct_line_2;
-  typedef Pair_compare_x_at_y_2<Point_2,Kernel>                              Compare_x_at_y_2;
+  typedef Pmap_fct<typename Kernel::Construct_line_2>           Construct_line_2;
+  typedef Pmap_compare_x_at_y_2<PointPropertyMap,Kernel>                              Compare_x_at_y_2;
   typedef typename Kernel::Is_horizontal_2                                   Is_horizontal_2;
   
   // needed by visibility graph and thus by optimal convex
   typedef typename Kernel::Ray_2                                             Ray_2; 
-  typedef Pair_collinear_are_ordered_along_line_2<Point_2,Kernel>            Collinear_are_ordered_along_line_2;
-  typedef Pair_functor<Point_2,typename Kernel::Are_strictly_ordered_along_line_2>
+  typedef Pmap_collinear_are_ordered_along_line_2<PointPropertyMap,Kernel>            Collinear_are_ordered_along_line_2;
+  typedef Pmap_fct<typename Kernel::Are_strictly_ordered_along_line_2>
                                                                              Are_strictly_ordered_along_line_2;
   typedef typename Kernel::Intersect_2                                       Intersect_2;
   typedef typename Kernel::Assign_2                                          Assign_2;
@@ -147,8 +152,8 @@ public:
   typedef typename Kernel::Segment_2                                        Segment_2;
 
   // needed by optimal convex (for vis. graph)
-  typedef Pair_functor<Point_2,typename Kernel::Construct_segment_2>        Construct_segment_2;
-  typedef Pair_functor<Point_2,typename Kernel::Construct_ray_2>            Construct_ray_2;
+  typedef Pmap_fct<Point_2,typename Kernel::Construct_segment_2>        Construct_segment_2;
+  typedef Pmap_fct<Point_2,typename Kernel::Construct_ray_2>            Construct_ray_2;
 
   Equal_2
   equal_2_object() const
@@ -230,4 +235,4 @@ public:
 
 }
 
-#endif // CGAL_PAIR_PARTITION_TRAITS_2_H
+#endif // CGAL_PARTITION_TRAITS_ADAPTER_2_H
