@@ -66,7 +66,7 @@ void create_strip(const BorderHalfedgesRange& input_halfedges,
     halfedge_descriptor h = input_halfedges[i];
     face_descriptor nf = add_face(mesh);
 
-    CGAL::cpp11::array<halfedge_descriptor, 4> hedges;
+    std::array<halfedge_descriptor, 4> hedges;
     for (int k=0; k<4; ++k)
     {
       hedges[k]=h;

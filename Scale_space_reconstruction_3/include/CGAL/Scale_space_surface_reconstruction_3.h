@@ -61,7 +61,7 @@ public:
 
   typedef typename Geom_traits::FT              FT;                              ///< defines the field number type.
   typedef typename Geom_traits::Point_3         Point;                           ///< defines the point type.
-  typedef cpp11::array<std::size_t, 3> Facet;                           ///< defines a facet of the surface (triple of point indices).
+  typedef std::array<std::size_t, 3> Facet;                           ///< defines a facet of the surface (triple of point indices).
 
 #ifdef DOXYGEN_RUNNING
   typedef unspecified_type                      Point_iterator;         ///< defines an iterator over the points.
@@ -305,13 +305,13 @@ std::ostream& operator<< (std::ostream& os, const CGAL::Scale_space_surface_reco
 
 template< typename T >
 std::ostream&
-operator<<( std::ostream& os, const CGAL::cpp11::array< T, 3 >& t ) {
+operator<<( std::ostream& os, const std::array< T, 3 >& t ) {
     return os << t[0] << " " << t[1] << " " << t[2];
 }
 
 template< typename T >
 std::istream&
-operator>>( std::istream& is, CGAL::cpp11::array< T, 3 >& t ) {
+operator>>( std::istream& is, std::array< T, 3 >& t ) {
     return is >> get<0>(t) >> get<1>(t) >> get<2>(t);
 }
 

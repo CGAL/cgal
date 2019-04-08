@@ -33,7 +33,6 @@ int format_output(const char* lib, const char* container, const char* to, int n,
 struct std_tag {};
 struct cgal_tag {};
 
-#ifndef CGAL_CFG_NO_CPP0X_COPY_N
 template <typename ForwardIterator, typename Size, typename OutputIterator>
 inline double test(ForwardIterator it, Size n, OutputIterator result, int repeats, std_tag) {
   boost::timer timer;
@@ -41,7 +40,6 @@ inline double test(ForwardIterator it, Size n, OutputIterator result, int repeat
   for (int i = 0; i < repeats; ++i) { std::copy_n(it, n, result); }
   return (double)n*repeats/timer.elapsed()/1.0E6;
 }
-#endif
 
 template <typename ForwardIterator, typename Size, typename OutputIterator>
 inline double test(ForwardIterator it, Size n, OutputIterator result, int repeats, cgal_tag) {

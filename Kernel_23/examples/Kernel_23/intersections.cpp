@@ -40,7 +40,7 @@ int main()
 
   // Create segments.
   Seg_iterator g( p1, p2);
-  CGAL::cpp11::copy_n( g, 200, std::back_inserter(input));
+  std::copy_n( g, 200, std::back_inserter(input));
 
 
   // splitting results with Dispatch_output_iterator
@@ -48,7 +48,7 @@ int main()
   std::vector<Segment> segments;
 
   typedef CGAL::Dispatch_output_iterator<
-    CGAL::cpp11::tuple<Point,Segment>, CGAL::cpp11::tuple< std::back_insert_iterator<std::vector<Point> >,
+    std::tuple<Point,Segment>, std::tuple< std::back_insert_iterator<std::vector<Point> >,
                                                std::back_insert_iterator<std::vector<Segment> > > >
     Dispatcher;
 

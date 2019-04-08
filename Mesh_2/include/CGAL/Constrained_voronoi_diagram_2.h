@@ -44,8 +44,8 @@ public:
   typedef typename Cdt::Geom_traits::Ray_2        Ray;
   typedef typename Cdt::Geom_traits::Point_2      Point;
   typedef CGAL::Dispatch_output_iterator<
-    CGAL::cpp11::tuple<Segment, Ray>,
-    CGAL::cpp11::tuple<std::back_insert_iterator<std::vector<Segment> >,
+    std::tuple<Segment, Ray>,
+    std::tuple<std::back_insert_iterator<std::vector<Segment> >,
                        std::back_insert_iterator<std::vector<Ray> > >
     > Construction_dispatcher;
 

@@ -25,7 +25,6 @@
 #include <CGAL/property_map.h>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/foreach.hpp>
 #include <boost/type_traits/is_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 #include <CGAL/Dynamic_property_map.h>
@@ -132,7 +131,7 @@ void init_face_indices(PolygonMesh& pm,
                        Tag)
 {
   typename boost::property_traits<FaceIndexMap>::value_type i = 0;
-  BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::face_descriptor fd,
+  for(typename boost::graph_traits<PolygonMesh>::face_descriptor fd :
                 faces(pm))
   {
     put(fid, fd, i);
@@ -146,7 +145,7 @@ void init_vertex_indices(PolygonMesh& pm,
                          Tag)
 {
   typename boost::property_traits<VertexIndexMap>::value_type i = 0;
-  BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd,
+  for(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd :
                 vertices(pm))
   {
     put(vid, vd, i);
@@ -160,7 +159,7 @@ void init_halfedge_indices(PolygonMesh& pm,
                            Tag)
 {
   typename boost::property_traits<HalfedgeIndexMap>::value_type i = 0;
-  BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor hd,
+  for(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor hd :
                 halfedges(pm))
   {
     put(hid, hd, i);

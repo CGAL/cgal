@@ -81,7 +81,7 @@ void rotate_vector (Vector& vector, int axis, double angle)
 std::vector<Plane> get_ransac_planes (const Efficient_ransac& ransac)
 {
   std::vector<Plane> out;
-  BOOST_FOREACH(boost::shared_ptr<Efficient_ransac::Shape> shape, ransac.shapes())
+  for(boost::shared_ptr<Efficient_ransac::Shape> shape : ransac.shapes())
     {
       out.push_back ((Plane)(*(dynamic_cast<CGAL::Shape_detection_3::Plane<Traits>*>(shape.get ()))));
     }

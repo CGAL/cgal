@@ -2,7 +2,6 @@
 #include <CGAL/Iterator_range.h>
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 
-#include <boost/foreach.hpp>
 
 #include <iostream>
 #include <fstream>
@@ -37,15 +36,8 @@ void fct(const LCC& lcc)
 {
   vertex_range vr(vertices(lcc));
   
-#ifndef CGAL_CFG_NO_CPP0X_RANGE_BASED_FOR
   std::cout << "new for loop" << std::endl;
   for(vertex_descriptor vd : vr){
-    std::cout << vd->point() << std::endl;
-  }
-#endif
-  
-  std::cout << "BOOST_FOREACH" << std::endl;
-  BOOST_FOREACH(vertex_descriptor vd, vr){
     std::cout << vd->point() << std::endl;
   }
   

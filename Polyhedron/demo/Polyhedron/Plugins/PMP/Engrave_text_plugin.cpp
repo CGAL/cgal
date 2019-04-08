@@ -575,10 +575,10 @@ public Q_SLOTS:
         * EPICK::Aff_transformation_2(CGAL::TRANSLATION,
                                       EPICK::Vector_2(-(xmax-xmin)/2-xmin,
                                                       -(ymax-ymin)/2-ymin));
-    BOOST_FOREACH(const std::vector<EPICK::Point_2>& polyline, polylines)
+    for(const std::vector<EPICK::Point_2>& polyline : polylines)
     {
       visu_item->polylines.push_back(std::vector<Point_3>());
-      BOOST_FOREACH(const EPICK::Point_2& p, polyline)
+      for(const EPICK::Point_2& p : polyline)
       {
         EPICK::Point_2 p_2 = transfo.transform(p);
         
@@ -712,12 +712,12 @@ public Q_SLOTS:
         CGAL::Face_filtered_graph<SMesh> fmesh(text_mesh_bottom, 
                                                static_cast<int>(cc),
                                                fcmap);
-        BOOST_FOREACH(vertex_descriptor vd, vertices(fmesh))
+        for(vertex_descriptor vd : vertices(fmesh))
         {
           normal += CGAL::Polygon_mesh_processing::compute_vertex_normal(vd, fmesh);
         }
         normal /= CGAL::sqrt(normal.squared_length());
-        BOOST_FOREACH(vertex_descriptor vd, vertices(fmesh))
+        for(vertex_descriptor vd : vertices(fmesh))
         {
           put(vnormals, vd, normal);
         }
@@ -864,7 +864,7 @@ private:
          fit!=fit_end; ++fit)
     {
       if (!fit->info().in_domain()) continue;
-      CGAL::cpp11::array<vertex_descriptor,3> vds;
+      std::array<vertex_descriptor,3> vds;
       for(int i=0; i<3; ++i)
       {
         typename Map::iterator it;

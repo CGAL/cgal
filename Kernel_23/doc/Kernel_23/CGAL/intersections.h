@@ -1,21 +1,5 @@
 /// \file intersections.h
 
-/*!
-\def CGAL_INTERSECTION_VERSION
-
-\ingroup intersection_grp
-
-The macro `CGAL_INTERSECTION_VERSION` can be used to configure
-which version of the \ref intersection_grp function should be used and
-enables the corresponding APIs in other \cgal packages. It should be
-defined before any \cgal header is included.
-
-- `CGAL_INTERSECTION_VERSION == 1` \ref intersection_grp uses `Object`
-- `CGAL_INTERSECTION_VERSION == 2` \ref intersection_grp uses `boost::optional< boost::variant< T... > >`
-
-*/
-#define CGAL_INTERSECTION_VERSION
-
 namespace CGAL {
 
 /*!
@@ -93,20 +77,6 @@ bool do_intersect(Type1<Kernel> obj1, Type2<Kernel> obj2);
 \details Depending on which \cgal kernel is used, different overloads of this global
 function are available.
 
-\cgalHeading{Notes on Backward Compatibility}
-
-The \ref intersection_grp function used to return an `Object`, but starting with
-\cgal 4.2 the
-return type is determined by a metafunction defined by the kernel. To
-preserve backward compatibility `Object` can be
-constructed from the new return types implicitly, but switching to the
-new style is recommended. To enable the old style without any overhead,
-the macro \link CGAL_INTERSECTION_VERSION `CGAL_INTERSECTION_VERSION` \endlink must be defined to
-`1` before any \cgal header is included.
-
-\sa \ref upgrading_object
-\sa \ref do_intersect_grp
-\sa CGAL_INTERSECTION_VERSION
 */
 
 /*!

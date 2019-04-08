@@ -233,14 +233,14 @@ struct Has_type_different_from <T, No, true>
 				typename N_increasing_indices<sizeof...(U)>::type());
 	}
 #else
-#define CGAL_VAR(Z,N,_) cpp0x::get<N>(t)
+#define CGAL_VAR(Z,N,_) std::get<N>(t)
 #define CGAL_CODE(Z,N,_) template<class Res, class F BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_PARAMS(N,class U)> \
 	inline Res call_on_tuple_elements(F const&f, \
-			cpp0x::tuple<BOOST_PP_ENUM_PARAMS(N,U)> const&t) { \
+			std::tuple<BOOST_PP_ENUM_PARAMS(N,U)> const&t) { \
 		return f(BOOST_PP_ENUM(N,CGAL_VAR,)); \
 	}
 	template<class Res, class F>
-	inline Res call_on_tuple_elements(F const&f, cpp0x::tuple<>) {
+	inline Res call_on_tuple_elements(F const&f, std::tuple<>) {
 		return f();
 	}
 BOOST_PP_REPEAT_FROM_TO(1, 8, CGAL_CODE, _ )

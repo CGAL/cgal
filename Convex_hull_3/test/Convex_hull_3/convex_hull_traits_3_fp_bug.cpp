@@ -32,7 +32,7 @@ int main()
   CGAL::Side_of_triangle_mesh<CGAL::Polyhedron_3<EK>, EK> sotm(s);
   
   
-  BOOST_FOREACH(K::Point_3 p, pointset)
+  for(K::Point_3 p : pointset)
   {
     assert(sotm(to_EK(p)) != CGAL::ON_UNBOUNDED_SIDE);
   }

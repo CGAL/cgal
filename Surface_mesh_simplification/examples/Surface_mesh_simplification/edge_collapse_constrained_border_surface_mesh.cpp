@@ -76,7 +76,7 @@ int main( int argc, char** argv )
   constrained_halfedges = surface_mesh.add_property_map<halfedge_descriptor,std::pair<Point_3, Point_3> >("h:vertices").first;
 
   std::size_t nb_border_edges=0;
-  BOOST_FOREACH(halfedge_descriptor hd, halfedges(surface_mesh)){
+  for(halfedge_descriptor hd : halfedges(surface_mesh)){
     if(CGAL::is_border(hd,surface_mesh)){
       constrained_halfedges[hd] = std::make_pair(surface_mesh.point(source(hd,surface_mesh)),
                                                  surface_mesh.point(target(hd,surface_mesh)));
@@ -106,7 +106,7 @@ int main( int argc, char** argv )
   os << surface_mesh;
 
   // now check!
-  BOOST_FOREACH(halfedge_descriptor hd, halfedges(surface_mesh)){
+  for(halfedge_descriptor hd : halfedges(surface_mesh)){
     if(CGAL::is_border(hd,surface_mesh)){
       --nb_border_edges;
       if(constrained_halfedges[hd] != std::make_pair(surface_mesh.point(source(hd,surface_mesh)),

@@ -236,7 +236,7 @@ namespace CGAL{
     std::map<vertex_descriptor, vtkIdType> Vids;
     vtkIdType inum = 0;
 
-    BOOST_FOREACH(vertex_descriptor v, vertices(pmesh))
+    for(vertex_descriptor v : vertices(pmesh))
     {
       const Point_3& p = get(vpmap, v);
       vtk_points->InsertNextPoint(CGAL::to_double(p.x()),
@@ -244,10 +244,10 @@ namespace CGAL{
                                   CGAL::to_double(p.z()));
       Vids[v] = inum++;
     }
-    BOOST_FOREACH(face_descriptor f, faces(pmesh))
+    for(face_descriptor f : faces(pmesh))
     {
       vtkIdList* cell = vtkIdList::New();
-      BOOST_FOREACH(halfedge_descriptor h,
+      for(halfedge_descriptor h :
                     halfedges_around_face(halfedge(f, pmesh), pmesh))
       {
         cell->InsertNextId(Vids[target(h, pmesh)]);
@@ -602,7 +602,7 @@ public:
       std::vector< std::vector<Point> > segments;
       extract_segments_from_vtkPointSet(data,segments);
       Scene_polylines_item* polyline_item = new Scene_polylines_item();
-      BOOST_FOREACH(const std::vector<Point>& segment, segments)
+      for(const std::vector<Point>& segment : segments)
           polyline_item->polylines.push_back(segment);
       if(group)
       {

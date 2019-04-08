@@ -28,7 +28,7 @@
 #include <CGAL/Three/Three.h>
 
 
-struct Face : public CGAL::cpp11::array<int,3>
+struct Face : public std::array<int,3>
 {
   Face(int i, int j, int k)
   {

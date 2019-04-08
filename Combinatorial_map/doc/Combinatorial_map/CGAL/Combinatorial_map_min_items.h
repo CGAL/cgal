@@ -22,7 +22,7 @@ struct Combinatorial_map_min_items
   struct Dart_wrapper
   {
     typedef CGAL::Dart<d, CMap> Dart;
-    typedef CGAL::cpp11::tuple<> Attributes;
+    typedef std::tuple<> Attributes;
   };
 };
 \endcode

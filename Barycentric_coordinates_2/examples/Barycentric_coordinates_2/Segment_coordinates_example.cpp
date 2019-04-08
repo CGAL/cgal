@@ -10,7 +10,7 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 typedef Kernel::FT      Scalar;
 typedef Kernel::Point_2 Point;
 
-typedef CGAL::cpp11::array<Scalar,2> Pair;
+typedef std::array<Scalar,2> Pair;
 
 using std::cout; using std::endl; using std::string;
 
@@ -29,7 +29,7 @@ int main()
                                   };
 
     // Compute segment coordinates for all the defined points.
-    // We use a global function and return the segment coordinates stored in an array of the type CGAL::cpp11::array<FT,2>.
+    // We use a global function and return the segment coordinates stored in an array of the type std::array<FT,2>.
     cout << endl << "Computed segment coordinates: " << endl << endl;
     for(int i = 0; i < 5; ++i) {
         const Pair pair = BC::compute_segment_coordinates_2(first_vertex, second_vertex, query_points[i], Kernel());

@@ -24,7 +24,7 @@ int main()
 
   // output indexed triangles
   std::vector<Kernel::Point_3> anchors;
-  std::vector<CGAL::cpp11::array<std::size_t, 3> > triangles; // triplets of indices
+  std::vector<std::array<std::size_t, 3> > triangles; // triplets of indices
 
   // free function interface with named parameters
   bool is_manifold = VSA::approximate_triangle_mesh(mesh,
