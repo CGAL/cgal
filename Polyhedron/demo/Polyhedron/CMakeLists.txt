@@ -142,9 +142,10 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
 
   qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES Polyhedron_3.qrc )
   find_path(CGAL_THREE_HEADERS_PATH
-    NAME CGAL/Three/Scene_item.h
+    NAMES CGAL/Three/Scene_item.h
     HINTS ${CGAL_INCLUDE_DIRS}
     NO_DEFAULT_PATH
+    NO_CMAKE_FIND_ROOT_PATH
     DOC "Path to CGAL/Three/Scene_item.h")
   
   if(CGAL_THREE_HEADERS_PATH)
@@ -159,7 +160,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
     qt5_generate_moc( "${CGAL_THREE_HEADERS_PATH}/CGAL/Three/TextRenderer.h"
       "${CMAKE_CURRENT_BINARY_DIR}/TextRenderer_moc.cpp" )
   else()
-    message(FATAL_ERROR "Cannot find <CGAL/Three/Viewer_interface.h>")
+    message(FATAL_ERROR "Cannot find <CGAL/Three/Scene_item.h>")
   endif()
 
   unset(CGAL_THREE_HEADERS_PATH CACHE)
