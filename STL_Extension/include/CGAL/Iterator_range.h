@@ -77,6 +77,18 @@ namespace CGAL {
   {
     return begin()==end();
   }
+#ifndef CGAL_CFG_NO_CPP0X_TUPLE
+
+  operator std::tuple<I&, I&>()
+  {
+    return std::tuple<I&, I&>{this->first, this->second};
+  }
+
+  operator std::tuple<const I&, const I&>() const 
+  {
+    return std::tuple<const I&, const I&>{this->first, this->second};
+  }
+#endif
 
 };
 
