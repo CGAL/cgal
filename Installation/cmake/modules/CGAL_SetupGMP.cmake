@@ -54,14 +54,14 @@ function(use_CGAL_GMP_support target)
     return()
   endif()
 
-  if(NOT GMP_IN_CGAL_AUXILIARY)
+  if(NOT GMP_INCLUDE_DIR STREQUAL "${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/include")
     target_include_directories(${target} SYSTEM ${keyword} ${GMP_INCLUDE_DIR})
   else()
     target_include_directories(${target} SYSTEM ${keyword}
       $<BUILD_INTERFACE:${GMP_INCLUDE_DIR}>
       $<INSTALL_INTERFACE:include>)
   endif()
-  if(NOT MPFR_IN_CGAL_AUXILIARY)
+  if(NOT MPFR_INCLUDE_DIR STREQUAL "${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/include")
     target_include_directories(${target} SYSTEM ${keyword} ${MPFR_INCLUDE_DIR})
   else()
     target_include_directories(${target} SYSTEM ${keyword}
