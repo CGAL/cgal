@@ -910,7 +910,7 @@ install(PROGRAMS ${scripts} DESTINATION ${CGAL_INSTALL_BIN_DIR})
 install(DIRECTORY ${CGAL_MODULES_REL_DIR}/                DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 install(FILES     ${CGAL_MODULES_REL_DIR}/UseCGAL.cmake   DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 
-if ( GMP_IN_CGAL_AUXILIARY OR MPFR_IN_CGAL_AUXILIARY )
+if ( IS_DIRECTORY auxiliary/gmp/include AND IS_DIRECTORY auxiliary/gmp/lib )
   install(DIRECTORY auxiliary/gmp/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
   install(DIRECTORY auxiliary/gmp/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
 endif()
