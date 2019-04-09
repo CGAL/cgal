@@ -7,8 +7,8 @@
 
 source "${CGAL_DIR}/${SCRIPTS_DIR}developer_scripts/log.sh"
 # Load settings
-if [ -f "$CGAL_HOME/.autocgalrc" ]; then
-  . "$CGAL_HOME/.autocgalrc"
+if [ -f "${CGAL_HOME}/.autocgalrc" ]; then
+  . "${CGAL_HOME}/.autocgalrc"
 else
   echo "CONFIGURATION FILE  .autocgalrc NOT FOUND" >&2;
   exit 1

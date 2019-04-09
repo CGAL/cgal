@@ -19,6 +19,7 @@ rx_examples=re.compile('.*in examples\/')
 
 name=""
 is_writing=False
+is_ignored=False
 global_report=open(global_report_name, "a+")
 with open(report_file, "rt") as test_report:
   for myline in test_report:
@@ -28,7 +29,9 @@ with open(report_file, "rt") as test_report:
       if m:
         is_writing=False
         test_report.close()
-        print("{label} {result}".format(label=name, result='r'), file=global_report)
+        if is_ignored:
+          print("{label} {result}".format(label=name, result='r'), file=global_report)
+          is_ignored=False
       else:
         test_report.write(myline)
     if not is_writing:
@@ -40,14 +43,18 @@ with open(report_file, "rt") as test_report:
           name="{str}_Examples".format(str=name)
 
         if not os.path.isdir(name):
+          is_ignored=True
           os.mkdir(name)
           test_report=open("{dir}/{file}".format(dir=name, file=report_name), "w+")
         else:
+          is_ignored=False
           test_report=open("{dir}/{file}".format(dir=name, file=report_name), "a+")
           test_report.write(" --- CMake Results: --- \n\n")
         is_writing=True
 if is_writing:
     is_writing=False
     test_report.close()
-    print("{label} {result}".format(label=name, result='r'), file=global_report)
+    if is_ignored:
+      print("{label} {result}".format(label=name, result='r'), file=global_report)
+      is_ignored=False
 global_report.close()
