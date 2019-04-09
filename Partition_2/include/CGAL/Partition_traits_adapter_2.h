@@ -117,7 +117,7 @@ public:
     typename K::Collinear_are_ordered_along_line_2::result_type
     operator()(Arg_type p, Arg_type q, Arg_type r) const
     {
-      return fct(get(ppmap,p), get(ppmap,q), r.first);
+      return fct(get(ppmap,p), get(ppmap,q), get(ppmap,r));
     }
   };
 
@@ -140,7 +140,7 @@ public:
   
   // needed by visibility graph and thus by optimal convex
   typedef typename Kernel::Ray_2                                             Ray_2; 
-  typedef Pmap_collinear_are_ordered_along_line_2<PointPropertyMap,Kernel>            Collinear_are_ordered_along_line_2;
+  typedef Pmap_collinear_are_ordered_along_line_2<PointPropertyMap,Kernel>   Collinear_are_ordered_along_line_2;
   typedef Pmap_fct<typename Kernel::Are_strictly_ordered_along_line_2>
                                                                              Are_strictly_ordered_along_line_2;
   typedef typename Kernel::Intersect_2                                       Intersect_2;
@@ -204,11 +204,11 @@ public:
 
   Collinear_are_ordered_along_line_2
   collinear_are_ordered_along_line_2_object() const
-  { return Collinear_are_ordered_along_line_2(); }
+  { return Collinear_are_ordered_along_line_2(ppmap,static_cast<const Base_traits*>(this)->collinear_are_ordered_along_line_2_object()); }
 
   Are_strictly_ordered_along_line_2
   are_strictly_ordered_along_line_2_object() const
-  { return Are_strictly_ordered_along_line_2(); }
+  { return Are_strictly_ordered_along_line_2(ppmap,static_cast<const Base_traits*>(this)->are_strictly_ordered_along_line_2_object()); }
 
   
   Is_horizontal_2

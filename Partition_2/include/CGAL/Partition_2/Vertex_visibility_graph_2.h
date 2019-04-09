@@ -96,11 +96,11 @@ private:
                                             Collinear_are_ordered_along_line_2;
    typedef typename Traits::Are_strictly_ordered_along_line_2 
                                             Are_strictly_ordered_along_line_2;
-   typedef typename Traits::Construct_segment_2 
-                                            Construct_segment_2; 
-   typedef typename Traits::Construct_ray_2   Construct_ray_2; 
-   typedef typename Traits::Intersect_2       Intersect_2; 
-   typedef typename Traits::Assign_2          Assign_2; 
+  //   typedef typename Traits::Construct_segment_2 
+  //                                          Construct_segment_2; 
+  //   typedef typename Traits::Construct_ray_2   Construct_ray_2; 
+  //  typedef typename Traits::Intersect_2       Intersect_2; 
+  // typedef typename Traits::Assign_2          Assign_2; 
    typedef CGAL::Segment_less_yx_2<Traits>    Segment_less_yx_2;
 
    typedef Rotation_tree_2<Traits>            Tree;
@@ -140,10 +140,10 @@ public:
      are_strictly_ordered_along_line_2(
            traits.are_strictly_ordered_along_line_2_object()),
      less_xy_2(traits.less_xy_2_object()),
-     construct_segment_2(traits.construct_segment_2_object()),
-     construct_ray_2(traits.construct_ray_2_object()),
-     intersect_2(traits.intersect_2_object()),
-     assign_2(traits.assign_2_object()),
+     //     construct_segment_2(traits.construct_segment_2_object()),
+     //construct_ray_2(traits.construct_ray_2_object()),
+     //intersect_2(traits.intersect_2_object()),
+     //assign_2(traits.assign_2_object()),
      edges(Point_pair_compare(traits))
    {
      build(first, beyond, traits);
@@ -156,8 +156,8 @@ public:
       Polygon         polygon(first,beyond);
       Tree            tree(polygon.begin(), polygon.end(),traits);
 
-      Vertex_map  vertex_map;
-      initialize_vertex_map(polygon, vertex_map,traits);
+      Vertex_map  vertex_map(less_xy_2);
+      initialize_vertex_map(polygon, vertex_map, traits);
    
       // NOTE:  use the std::list as the basis here because otherwise the basis
       //        is a deque, which is buggy under MSVC++
@@ -421,10 +421,10 @@ private:
    Collinear_are_ordered_along_line_2    collinear_ordered_2;
    Are_strictly_ordered_along_line_2     are_strictly_ordered_along_line_2;
    Less_xy_2                             less_xy_2;
-   Construct_segment_2                   construct_segment_2;
-   Construct_ray_2                       construct_ray_2;
-   Intersect_2                           intersect_2;
-   Assign_2                              assign_2;
+  //   Construct_segment_2                   construct_segment_2;
+  // Construct_ray_2                       construct_ray_2;
+  //Intersect_2                           intersect_2;
+  // Assign_2                              assign_2;
    Edge_set                              edges;
 };
 

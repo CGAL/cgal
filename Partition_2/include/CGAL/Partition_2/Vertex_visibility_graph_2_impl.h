@@ -522,6 +522,8 @@ void Vertex_visibility_graph_2<Traits>::update_visibility(
       // don't need to do this for the previous visibility point since
       // if it were closer to p than q when looking from p to q, q would
       // not be visible.
+
+ #if 0     
       Segment_2 next_seg = construct_segment_2(*(*p_it).second.second, 
                                                *next_v_p);
       Ray_2 ray = construct_ray_2((*p_it).first, (*q_it).first);
@@ -535,18 +537,7 @@ void Vertex_visibility_graph_2<Traits>::update_visibility(
          if (collinear_ordered_2((*p_it).first, (*q_it).first, i_point))
          {
             (*p_it).second.second = (*q_it).second.first;
-#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-            std::cout << "p sees something in direction of q, but q is closer;"
-                      << " p sees q" << std::endl;
-#endif 
          }
-#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-         else 
-         {
-            std::cout << "p sees something in direction of q that's closer "
-                      << "than q; p doesn't see  q" << std::endl;
-         }
-#endif 
       }
       else if (assign_2(i_seg, next_result))
       {
@@ -554,27 +545,57 @@ void Vertex_visibility_graph_2<Traits>::update_visibility(
              collinear_ordered_2((*p_it).first,(*q_it).first,i_seg.target()))
          {
             (*p_it).second.second = (*q_it).second.first;
-#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-            std::cout << "p sees something in direction of q, but q is closer;"
-                      << " p sees q" << std::endl;
-#endif 
          }
-#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-         else 
-         {
-            std::cout << "p sees something in direction of q that's closer "
-                      << " than q; p doesn't see  q" << std::endl;
-         }
-#endif 
+ 
       }
       else
       {
          (*p_it).second.second = (*q_it).second.first;
-#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-         std::cout << "p doesn't see something in direction of q; p sees q" 
-                   << std::endl;
-#endif 
       }
+#else
+      // Segment ab  and Ray pq
+      Point_2 a = *(*p_it).second.second;
+      Point_2 b =  *next_v_p;
+      Point_2 p = (*p_it).first;
+      Point_2 q = (*q_it).first;
+      Orientation pqa = orientation_2(p,q,a);
+      Orientation pqb = orientation_2(p,q,b);
+      Orientation abp = orientation_2(a,b,p);
+      Orientation abq = orientation_2(a,b,q);
+      bool change = false;
+      if((pqa == COLLINEAR)&& (pqb == COLLINEAR)){
+        // the segment lies on the supporting line of the ray
+        if(collinear_ordered_2(p,q,a) && collinear_ordered_2(p,q,b)){
+          change = true;
+        }
+      } else if (pqa == COLLINEAR){
+        if (collinear_ordered_2(p,q,a)){ // forget about b as it is not collinear
+          change = true;
+        }
+      } else if (pqb == COLLINEAR){
+        if (collinear_ordered_2(p,q,b)){ // forget about a
+          change = true;
+        }
+      }else if(pqa == pqb){
+        // no intersection as the segment is completely to the left or to the right of the ray
+      }else if((abp == COLLINEAR) || (abq == COLLINEAR) ){
+        // do nothing because when a ray point lies on the segment collinear_ordered_2 will be false
+      } else if (abp != abq){
+        // do nothing as i between p and q
+      } else if(pqb == RIGHT_TURN){
+        if(abp == RIGHT_TURN){
+          change = true;
+        }
+      } else {
+        CGAL_assertion(pqa == RIGHT_TURN);
+        if(abp == LEFT_TURN){
+          change = true;
+        }
+      }
+      if(change){
+        (*p_it).second.second = (*q_it).second.first;
+      }
+#endif      
    }
    else // p sees what q sees
    {
