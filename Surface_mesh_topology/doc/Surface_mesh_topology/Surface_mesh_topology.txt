@@ -19,20 +19,25 @@ The algorithm implemented in this package builds a data structure to efficiently
 - Given a surface mesh \f$\cal{M}\f$ and two closed curves on \f$\cal{M}\f$, decide if the two curves are related by a continuous transformation,
 - Given a surface mesh \f$\cal{M}\f$ and two non-necessarily closed curves on \f$\cal{M}\f$, decide if the two curves are related by a continuous transformation that fixes the curve extremities.
 
-The second query asks if the curves are <em>freely homotopic</em> while the third one asks if the curves are <em>homotopic with basepoints</em>. The three queries are globally refered to as <em>homotopy tests</em>. 
+The second query asks if the curves are <em>freely homotopic</em> while the third one asks if the curves are <em>homotopic with fixed endpoints</em>. The three queries are globally refered to as <em>homotopy tests</em>. Figure \cgalFigureRef{fig_sm_topology_homotopy} below illustrates the three types of queries.
 
-The algorithms used are based on a paper by Erickson and Whittlesey \cgalCite{ew-tcsr-13}, providing a linear time algorithm for the above homotopy tests. This is a simplified version of the linear time algorithm  by Lazarus and Rivaud \cgalCite{lr-hts-12}.
+\cgalFigureBegin{fig_sm_topology_homotopy, free-vs-fixed-endpoints.svg}
+ On the upper left surface the green curve is contractible. The red and blue curves share the same (green) endpoint. (Being closed, their two endpoints coincide.) Although these last two curves are not homotopic with fixed endpoint they are freely homotopic as shown by the suggested continuous transformation of the blue curve.
+\cgalFigureEnd
+
+The algorithms used are based on a paper by Erickson and Whittlesey \cgalCite{ew-tcsr-13}, providing a linear time algorithm for the above homotopy tests. This is a simplified version of the linear time algorithm  by Lazarus and Rivaud \cgalCite{lr-hts-12}. We point out that the algorithms are purely topological and do not assume any geometry on the input surface. In particular, the surface need not be embedded in a Euclidean space.
 
 \section SMTopology_HowToUse  User Interface Description
 
 \subsection SMTopology_Input Specifying the Input Surface and Curves
 
-The homotopy tests are performed on a surface represented as a model of \ref ChapterCombinatorialMap "combinatorial map". The input surface mesh is supposed to be a connected closed orientable surface. This input surface is provided to conctruct a `Surface_mesh_curve_topology`. This class computes an internal representation of the surface as described below.
+The homotopy tests are performed on a surface represented as a model of \ref ChapterCombinatorialMap "combinatorial map" or any model of `FaceGraph`. Note that combinatorial maps are based on darts and FaceGraphs are based on halfedges. To avoid repetitions we use the terms darts and halfedges interchangeably in the sequel.
+The input surface mesh is supposed to be a connected closed orientable surface. This input surface is provided to construct a `Surface_mesh_curve_topology`. This class computes an internal representation of the surface as described below.
 
 Each curve on this surface is contained in an instance of the class `Path_on_surface`. An object in this class should be constructed with the same input surface as the  `Surface_mesh_curve_topology` container.
 
 A `Path_on_surface` behaves as a list. This list is initially empty and the darts corresponding to the sequence of consecutive oriented edges of an input curve should be pushed back in this list. The class provides three ways for extending a nonempty path.
-- Simply push the next dart using the \ref Path_on_surface::push_back "push_back()" member function.
+- Simply push the next dart/halfedge using the \ref Path_on_surface::push_back "push_back()" member function.
 - The user may push the index of the next dart instead of the dart itself with the member function \ref Path_on_surface::push_back_by_index "push_back_by_index()". This may however be at the cost of an overhead computation mapping the index to the actual dart.
 - The path may be extended with the member function \ref Path_on_surface::extend_positive_turn "extend_positive_turn()" by specifying the next dart/halfedge thanks to a number of positive turns with respect to the previous dart/halfedge in the path.
 
