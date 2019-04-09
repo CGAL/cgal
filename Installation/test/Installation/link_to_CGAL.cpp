@@ -1,10 +1,9 @@
 // Use something defined not in headers but in the CGAL library to test that is was indeed properly built and linked to,
 
-#include <CGAL/IO/Color.h>
+#include <CGAL/Random.h>
 
 int main()
 {
-  volatile const CGAL::Color* c = &CGAL::BLACK;
-  
-  return (c != 0) ? 0 : 1;
+  volatile const CGAL::Random* r = &CGAL::get_default_random();
+  return int(r != 0);
 }

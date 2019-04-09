@@ -152,8 +152,6 @@ public:
   typedef Classification::Feature::Verticality
   <GeomTraits>                                          Verticality;
   typedef Classification::Feature::Eigenvalue           Eigenvalue;
-
-  typedef typename Classification::RGB_Color RGB_Color;
   /// \endcond
     
 private:
