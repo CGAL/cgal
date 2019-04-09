@@ -222,8 +222,8 @@ partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
 
    Partition_is_valid_traits_2<Traits, Is_valid>   validity_traits;
 
-   return partition_is_valid_2(point_first, point_last,
-                               poly_first, poly_last, validity_traits);
+   return internal::partition_is_valid_2(point_first, point_last,
+                                         poly_first, poly_last, validity_traits);
 }
 
   
@@ -233,9 +233,9 @@ partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
                       FowardIterator poly_first, FowardIterator poly_last,
                       const Traits& traits)
 {
-   typedef typename std::iterator_traits<InputIterator>::value_type   Point_2;
-   typedef typename Kernel_traits<Point_2>::Kernel     K;
-   typedef Partition_traits_2<K>                       Traits;
+  //typedef typename std::iterator_traits<InputIterator>::value_type   Point_2;
+   //typedef typename Kernel_traits<Point_2>::Kernel     K;
+   //typedef Partition_traits_2<K>                       Traits;
    typedef Is_vacuously_valid<Traits>                  Is_valid;
 
    Partition_is_valid_traits_2<Traits, Is_valid>   validity_traits(traits);

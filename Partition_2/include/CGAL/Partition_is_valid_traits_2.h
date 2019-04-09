@@ -39,6 +39,9 @@ public:
 
    typedef PolygonIsValid                   Is_valid;
 
+  Partition_is_valid_traits_2()
+  {}
+  
   Partition_is_valid_traits_2(const Traits& traits)
     : Traits(traits)
   {}

@@ -48,21 +48,18 @@ int main( )
                                std::back_inserter(partition_polys),
                                traits);
 
-   std::list<Polygon_2>::const_iterator   poly_it;
-   for (poly_it = partition_polys.begin(); poly_it != partition_polys.end();
-        poly_it++)
-   {
-     for(Point_2 p : poly_it->container()){
+   for (const Polygon_2& poly : partition_polys){
+     for(Point_2 p : poly.container()){
         std::cout << "points[" << p << "] =  " << points[p] << ", ";
       }
      std::cout << std::endl;
    }
-   /*
+   
    assert(CGAL::partition_is_valid_2(polygon.vertices_begin(),
                                      polygon.vertices_end(),
                                      partition_polys.begin(),
                                      partition_polys.end(),
                                      traits));
-   */
+   
    return 0;
 }
