@@ -132,6 +132,8 @@ polygons_are_equal(Circulator1 orig_first, Circulator2 new_first)
 }
 
 
+namespace internal {
+
 template<class InputIterator, class ForwardIterator, class Traits> 
 bool
 partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
@@ -157,7 +159,7 @@ partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
    CGAL_partition_precondition(orientation_2(orig_poly.begin(),orig_poly.end(),
                                              traits) == COUNTERCLOCKWISE);
 
-   P_Vertex_map  output_vertex_set(poly_first, poly_last);
+   P_Vertex_map  output_vertex_set(poly_first, poly_last, traits);
 
    if (output_vertex_set.polygons_overlap()) return false;
 
@@ -206,7 +208,8 @@ partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
      return polygons_w_steiner_are_equal(orig_poly_circ, union_poly_circ,
                                          traits);
 }
-
+} // namespace internal
+  
 template<class InputIterator, class FowardIterator>
 bool
 partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
@@ -223,6 +226,25 @@ partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
                                poly_first, poly_last, validity_traits);
 }
 
+  
+template<class InputIterator, class FowardIterator, class Traits>
+bool
+partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
+                      FowardIterator poly_first, FowardIterator poly_last,
+                      const Traits& traits)
+{
+   typedef typename std::iterator_traits<InputIterator>::value_type   Point_2;
+   typedef typename Kernel_traits<Point_2>::Kernel     K;
+   typedef Partition_traits_2<K>                       Traits;
+   typedef Is_vacuously_valid<Traits>                  Is_valid;
+
+   Partition_is_valid_traits_2<Traits, Is_valid>   validity_traits(traits);
+
+   return internal::partition_is_valid_2(point_first, point_last,
+                               poly_first, poly_last, validity_traits);
+}
+  
+
 
 template<class InputIterator, class ForwardIterator, class Traits>
 bool 
@@ -230,13 +252,13 @@ convex_partition_is_valid_2(InputIterator point_first,
                             InputIterator point_last,
                             ForwardIterator poly_first,
                             ForwardIterator poly_last,
-                            const Traits& )
+                            const Traits& traits)
 {
    typedef typename Traits::Is_convex_2                 Is_convex_2;
-   Partition_is_valid_traits_2<Traits, Is_convex_2>     validity_traits;
+   Partition_is_valid_traits_2<Traits, Is_convex_2>     validity_traits(traits);
 
-   return partition_is_valid_2(point_first, point_last, poly_first, poly_last,
-                               validity_traits);
+   return internal::partition_is_valid_2(point_first, point_last, poly_first, poly_last,
+                                         validity_traits);
 }
 
 template<class InputIterator, class ForwardIterator>
@@ -260,14 +282,14 @@ y_monotone_partition_is_valid_2(InputIterator point_first,
                                 InputIterator point_last,
                                 ForwardIterator poly_first,
                                 ForwardIterator poly_last,
-                                const Traits& )
+                                const Traits& traits)
 {
    typedef typename Traits::Is_y_monotone_2                Is_y_monotone_2;
 
-   Partition_is_valid_traits_2<Traits, Is_y_monotone_2>    validity_traits;
+   Partition_is_valid_traits_2<Traits, Is_y_monotone_2>    validity_traits(traits);
 
-   return partition_is_valid_2(point_first, point_last, poly_first, poly_last,
-                               validity_traits);
+   return internal::partition_is_valid_2(point_first, point_last, poly_first, poly_last,
+                                         validity_traits);
 }
 
 template<class InputIterator, class ForwardIterator>

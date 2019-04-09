@@ -436,7 +436,7 @@ OutputIterator partition_y_monotone_2(InputIterator first,
    Tee_for_output_iterator<OutputIterator, Polygon_2>      res(result);
 #endif // no postcondition
 
-   P_Polygon_2 polygon(first, beyond);
+   P_Polygon_2 polygon(first, beyond, traits);
    CGAL_partition_precondition(
     orientation_2(polygon.begin(), polygon.end(), traits) == COUNTERCLOCKWISE);
 
@@ -457,9 +457,10 @@ OutputIterator partition_y_monotone_2(InputIterator first,
    std::cout << std::endl;
 #endif
 
-   typedef std::map<Circulator, Circulator, 
-                    Indirect_edge_compare<Circulator, Traits> > Tree;
-   Tree tree;
+   typedef Indirect_edge_compare<Circulator, Traits> Cmp;
+   typedef std::map<Circulator, Circulator, Cmp> Tree;
+   Cmp cmp(traits);
+   Tree tree(cmp);
 
    typename std::vector<Circulator>::iterator it = circulators.begin();
    for (; it != circulators.end(); it++) {

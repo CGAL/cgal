@@ -38,6 +38,7 @@ class Partition_traits_2  : public Partition_traits_2_base<Kernel_>
   private:
     typedef Kernel_                                     Kernel;
     typedef Partition_traits_2<Kernel_>                 Self;
+  
   public:
     typedef typename Kernel::Point_2                    Point_2;
     typedef ::std::list<Point_2>                        Container;

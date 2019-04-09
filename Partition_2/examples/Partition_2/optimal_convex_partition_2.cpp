@@ -44,7 +44,7 @@ int main()
    Polygon_2             polygon;
    Polygon_list          partition_polys;
    Traits                partition_traits;
-   Validity_traits       validity_traits;
+   Validity_traits       validity_traits(partition_traits);
 
 /*
    CGAL::random_polygon_2(50, std::back_inserter(polygon),

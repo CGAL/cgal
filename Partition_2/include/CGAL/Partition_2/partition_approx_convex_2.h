@@ -145,7 +145,7 @@ OutputIterator partition_approx_convex_2(InputIterator first,
    typedef typename Constrained_tri_2::Vertex_handle   Vertex_handle;
    typedef typename Gt::Segment_2                      Segment_2;
 
-   P_Polygon_2 polygon(first, beyond);
+   P_Polygon_2 polygon(first, beyond,traits);
 
    CGAL_partition_precondition(
     orientation_2(polygon.begin(), polygon.end(), traits) == COUNTERCLOCKWISE);

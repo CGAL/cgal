@@ -134,9 +134,9 @@ A valid partition is one in
 which the polygons are nonoverlapping and the union of the polygons is the 
 same as the original polygon and each polygon is \f$ y\f$-monotone 
 
-\pre P
+\pre
 The function returns `true` iff the partition is valid and otherwise
-returns false.
+returns ` false`.
 
 
 

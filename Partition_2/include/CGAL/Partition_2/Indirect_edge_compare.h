@@ -45,12 +45,12 @@ class Indirect_edge_compare
      typedef typename Traits::Line_2             Line_2;
      typedef typename Traits::Point_2            Point_2;
 
-     Indirect_edge_compare() : 
-          _compare_y_2(Traits().compare_y_2_object()),
-          _compare_x_2(Traits().compare_x_2_object()),
-          _construct_line_2(Traits().construct_line_2_object()),
-          _compare_x_at_y_2(Traits().compare_x_at_y_2_object()),
-          _is_horizontal_2(Traits().is_horizontal_2_object())
+     Indirect_edge_compare(const Traits& traits) : 
+          _compare_y_2(traits.compare_y_2_object()),
+          _compare_x_2(traits.compare_x_2_object()),
+          _construct_line_2(traits.construct_line_2_object()),
+          _compare_x_at_y_2(traits.compare_x_at_y_2_object()),
+          _is_horizontal_2(traits.is_horizontal_2_object())
      { }
      
      // determines if the edge (edge_vtx_1, edge_vtx_1++) has a larger

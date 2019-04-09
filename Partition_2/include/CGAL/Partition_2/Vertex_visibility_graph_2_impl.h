@@ -56,8 +56,9 @@ Vertex_visibility_graph_2<Traits>::is_valid(ForwardIterator first,
 // one that begins at the other endpoint of the edge.
 template <class Traits>
 void 
-Vertex_visibility_graph_2<Traits>::initialize_vertex_map(
-                              const Polygon& polygon, Vertex_map& vertex_map)
+Vertex_visibility_graph_2<Traits>::initialize_vertex_map(const Polygon& polygon,
+                                                         Vertex_map& vertex_map,
+                                                         const Traits& traits)
 {
    typedef typename Vertex_map::value_type           Map_pair;
 
@@ -67,12 +68,12 @@ Vertex_visibility_graph_2<Traits>::initialize_vertex_map(
 
    // Sort the event list (iterators to points) from left to right 
    // (using less_xy)
-   iterator_list.sort(Indirect_less_xy_2<Traits>());
+   iterator_list.sort(Indirect_less_xy_2<Traits>(traits));
    // Create an ordered list of edge endpoints (iterators), initially empty
    typedef std::set< Point_pair, Segment_less_yx_2 > Ordered_edge_set;
    typedef typename Ordered_edge_set::iterator       Ordered_edge_set_iterator;
-
-   Ordered_edge_set              ordered_edges;
+   Segment_less_yx_2 less_xy(traits);
+   Ordered_edge_set              ordered_edges(less_xy);
    Ordered_edge_set_iterator     edge_it;
    Vertex_map_iterator   vm_it;
    Vertex_map_iterator   vis_it;

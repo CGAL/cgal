@@ -72,12 +72,12 @@ public:
 
    // constructor
    template<class ForwardIterator>
-   Rotation_tree_2(ForwardIterator first, ForwardIterator beyond)
+   Rotation_tree_2(ForwardIterator first, ForwardIterator beyond, const Traits& traits)
    {
       for (ForwardIterator it = first; it != beyond; it++)
          push_back(*it);
 
-      Greater greater (Traits().less_xy_2_object());
+      Greater greater (traits.less_xy_2_object());
       std::sort(this->begin(), this->end(), greater);
       std::unique(this->begin(), this->end());
    

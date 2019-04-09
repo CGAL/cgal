@@ -45,12 +45,14 @@ int main()
                           Point_generator(100));
 */
    make_polygon(polygon);
+   Traits traits;
    CGAL::approx_convex_partition_2(polygon.vertices_begin(),
                                    polygon.vertices_end(),
-                                   std::back_inserter(partition_polys));
+                                   std::back_inserter(partition_polys), traits);
    assert(CGAL::convex_partition_is_valid_2(polygon.vertices_begin(),
                                             polygon.vertices_end(),
                                             partition_polys.begin(),
-                                            partition_polys.end()));
+                                            partition_polys.end(),
+                                            traits));
    return 0;
 }
