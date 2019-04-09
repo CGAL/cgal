@@ -9,9 +9,9 @@ on the points associated to the keys.
 
 
 
-\tparam Base_traits must be a model for `PartitionTraits_2`. 
+\tparam BaseTraits must be a model for `PartitionTraits_2`. 
 \tparam PointPropertyMap must be a model of `ReadablePropertyMap`
-with value type `Base_traits::Point_2`.
+with value type `BaseTraits::Point_2`.
 
 \cgalModels `PartitionTraits_2`
 */
