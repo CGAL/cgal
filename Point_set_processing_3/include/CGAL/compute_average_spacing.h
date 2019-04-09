@@ -291,65 +291,6 @@ compute_average_spacing(
   return compute_average_spacing<ConcurrencyTag>
     (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
-
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API
-template <typename ConcurrencyTag,
-	  typename InputIterator,
-          typename PointMap,
-          typename Kernel
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::compute_average_spacing(), please update your code")
-typename Kernel::FT
-compute_average_spacing(
-  InputIterator first,  ///< iterator over the first input point.
-  InputIterator beyond, ///< past-the-end iterator over the input points.
-  PointMap point_map, ///< property map: value_type of InputIterator -> Point_3
-  unsigned int k, ///< number of neighbors.
-  const Kernel& /*kernel*/) ///< geometric traits.
-{
-  return compute_average_spacing<ConcurrencyTag>(
-    CGAL::make_range (first,beyond),
-    k,
-    CGAL::parameters::point_map (point_map).geom_traits (Kernel()));
-}
-
-  
-
-// deprecated API
-template <typename ConcurrencyTag,
-	  typename InputIterator,
-          typename PointMap
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::compute_average_spacing(), please update your code")
-typename Kernel_traits<typename boost::property_traits<PointMap>::value_type>::Kernel::FT
-compute_average_spacing(
-  InputIterator first,    ///< iterator over the first input point.
-  InputIterator beyond,   ///< past-the-end iterator over the input points.
-  PointMap point_map, ///< property map: value_type of InputIterator -> Point_3
-  unsigned int k) ///< number of neighbors
-{
-  return compute_average_spacing<ConcurrencyTag>(
-    CGAL::make_range (first,beyond),
-    k,
-    CGAL::parameters::point_map (point_map));
-}
-
-// deprecated API
-template < typename ConcurrencyTag, typename InputIterator >
-typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel::FT
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::compute_average_spacing(), please update your code")
-compute_average_spacing(
-  InputIterator first,    ///< iterator over the first input point.
-  InputIterator beyond,   ///< past-the-end iterator over the input points.
-  unsigned int k) ///< number of neighbors.
-{
-  return compute_average_spacing<ConcurrencyTag>(
-    CGAL::make_range (first,beyond), k);
-}
-#endif // CGAL_NO_DEPRECATED_CODE
-  
 /// \endcond
 
 
