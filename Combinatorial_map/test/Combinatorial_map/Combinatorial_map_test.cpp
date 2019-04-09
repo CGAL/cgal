@@ -1,5 +1,10 @@
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/Cell_attribute.h>
+#include <CGAL/Face_graph_wrapper.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/IO/Polyhedron_iostream.h>
 
 #include "Combinatorial_map_2_test.h"
 #include "Combinatorial_map_3_test.h"
@@ -193,8 +198,60 @@ bool test_get_new_mark()
   return true;
 }
 
+bool test_face_graph_wrapper()
+{
+  bool res=true;
+
+  typedef CGAL::Surface_mesh<CGAL::Simple_cartesian<double>::Point_3> SMesh;
+  SMesh m;
+  std::ifstream in1("data/head.off");
+  if (in1.fail())
+  {
+    std::cout<<"Error: impossible to open 'data/head.off'"<<std::endl;
+    return false;
+  }
+  in1>>m;
+  
+  CGAL::Face_graph_wrapper<SMesh> fgw1(m);
+  std::vector<unsigned int> cells=fgw1.count_all_cells();
+  if (cells[0]!=1539 || cells[1]!=4434 || cells[2]!=2894 ||
+      fgw1.number_of_darts()!=8810)
+  {
+    std::cout<<"Error: incorrect number of cells in test_face_graph_wrapper "
+             <<"for Surface_mesh."<<std::endl;
+    res=false;
+  }
+
+  typedef CGAL::Polyhedron_3<CGAL::Simple_cartesian<double> > Polyhedron;
+  Polyhedron p;
+  std::ifstream in2("data/head.off");
+  if (in2.fail())
+  {
+    std::cout<<"Error: impossible to open 'data/head.off'"<<std::endl;
+    return false;
+  }
+  in2>>p;
+  CGAL::Face_graph_wrapper<Polyhedron> fgw2(p);
+  cells=fgw2.count_all_cells();
+  if (cells[0]!=1539 || cells[1]!=4434 || cells[2]!=2894 ||
+      fgw2.number_of_darts()!=8810)
+  {
+    std::cout<<"Error: incorrect number of cells in test_face_graph_wrapper "
+             <<"for Polyhedron."<<std::endl;
+    res=false;
+  }
+
+  return res;
+}
+
 int main()
 {
+  if (!test_face_graph_wrapper())
+  {
+    std::cout<<"ERROR during test_face_graph_wrapper."<<std::endl;
+    return EXIT_FAILURE;
+  }
+
   if ( !test_get_new_mark() )
   {
     std::cout<<"ERROR during test_get_new_mark."<<std::endl;

@@ -34,29 +34,30 @@
 #include <CGAL/Path_generators.h>
 #include <CGAL/Combinatorial_map_operations.h>
 #include <CGAL/Timer.h>
+#include <CGAL/Face_graph_wrapper.h>
 #include <boost/unordered_map.hpp>
 #include <stack>
 #include <iostream>
 
 namespace CGAL {
-  
-  template<typename Map>
+
+struct CMap_for_surface_mesh_curve_topology_items
+{
+  template <class CMap>
+  struct Dart_wrapper
+  {
+#ifdef CGAL_PWRLE_TURN_V3
+    typedef std::size_t Dart_info;
+#endif // CGAL_PWRLE_TURN_V3
+    typedef CGAL::cpp11::tuple<> Attributes;
+  };
+};
+typedef CGAL::Combinatorial_map<2, CMap_for_surface_mesh_curve_topology_items>
+CMap_for_surface_mesh_curve_topology;
+
+  template<typename Mesh>
   class Surface_mesh_curve_topology
   {
-    struct CMap_for_surface_mesh_curve_topology_items
-    {
-      template <class CMap>
-      struct Dart_wrapper
-      {
-#ifdef CGAL_PWRLE_TURN_V3
-        typedef std::size_t Dart_info;
-#endif // CGAL_PWRLE_TURN_V3
-        typedef CGAL::cpp11::tuple<> Attributes;
-      };
-    };
-    typedef CGAL::Combinatorial_map<2, CMap_for_surface_mesh_curve_topology_items>
-    CMap_for_surface_mesh_curve_topology;
-
   public:
     typedef typename CMap_for_surface_mesh_curve_topology::Dart_handle
                                 Dart_handle;
@@ -64,6 +65,11 @@ namespace CGAL {
                                 Dart_const_handle;
     typedef CGAL::Union_find<Dart_handle> UFTree;
     typedef typename UFTree::handle UFTree_handle;
+
+    typedef typename Get_map<Mesh, Mesh>::type Map;
+
+    typedef CGAL::Union_find<typename Map::Dart_const_handle> UFTree2;
+    typedef typename UFTree2::handle UFTree_handle2;
 
     // Associate each dart of the original map, not removed, a pair of darts in the
     // reduced map.
@@ -74,7 +80,7 @@ namespace CGAL {
     typedef boost::unordered_map<Dart_const_handle, std::size_t> TDartIds;
 #endif //CGAL_PWRLE_TURN_V2
 
-    Surface_mesh_curve_topology(const Map& amap, bool display_time=false) :
+    Surface_mesh_curve_topology(const Mesh& amap, bool display_time=false) :
       m_original_map(amap)
     {
       if (!m_map.is_without_boundary(1))
@@ -105,7 +111,7 @@ namespace CGAL {
                         copy_to_origin;
 
       // We copy the original map, while keeping mappings between darts.
-      m_map.copy(m_original_map, &origin_to_copy, &copy_to_origin);
+      // m_map.copy(m_original_map, &origin_to_copy, &copy_to_origin);
 
       if (display_time)
       {
@@ -287,7 +293,7 @@ namespace CGAL {
     }
 
     /// @return true iff 'path' is contractible.
-    bool is_contractible(const Path_on_surface<Map>& p,
+    bool is_contractible(const Path_on_surface<Mesh>& p,
                          bool display_time=false) const
     {
       if (p.is_empty())
@@ -336,8 +342,8 @@ namespace CGAL {
     }
 
     /// @return true iff 'path1' and 'path2' are freely homotopic.
-    bool are_freely_homotopic(const Path_on_surface<Map>& p1,
-                              const Path_on_surface<Map>& p2,
+    bool are_freely_homotopic(const Path_on_surface<Mesh>& p1,
+                              const Path_on_surface<Mesh>& p2,
                               bool display_time=false) const
     {
       if (p1.is_empty() && p2.is_empty()) { return true; }
@@ -406,8 +412,8 @@ namespace CGAL {
     }
 
     /// @return true iff 'path1' and 'path2' are base point freely homotopic.
-    bool are_base_point_homotopic(const Path_on_surface<Map>& p1,
-                                  const Path_on_surface<Map>& p2,
+    bool are_base_point_homotopic(const Path_on_surface<Mesh>& p1,
+                                  const Path_on_surface<Mesh>& p2,
                                   bool display_time=false) const
     {
       if (p1.is_empty() && p2.is_empty()) { return true; }
@@ -471,7 +477,7 @@ namespace CGAL {
     }
 
     Path_on_surface<CMap_for_surface_mesh_curve_topology>
-    transform_original_path_into_quad_surface_for_torus(const Path_on_surface<Map>& path) const
+    transform_original_path_into_quad_surface_for_torus(const Path_on_surface<Mesh>& path) const
     {
       CGAL_assertion(m_map.number_of_darts()==4);
       
@@ -499,7 +505,7 @@ namespace CGAL {
 
     Path_on_surface_with_rle<CMap_for_surface_mesh_curve_topology>
     transform_original_path_into_quad_surface_with_rle
-    (const Path_on_surface<Map>& path) const
+    (const Path_on_surface<Mesh>& path) const
     {
       Path_on_surface_with_rle<CMap_for_surface_mesh_curve_topology>
           res(m_map
@@ -525,33 +531,34 @@ namespace CGAL {
       return res;
     }
 
-    void initialize_vertices(UFTree& uftrees,
-                             boost::unordered_map<Dart_const_handle, UFTree_handle>&
+    void initialize_vertices(UFTree2& uftrees,
+                             boost::unordered_map
+                             <typename Map::Dart_const_handle, UFTree_handle2>&
                              vertices)
     {
       uftrees.clear();
       vertices.clear();
 
-      typename Map::size_type treated=m_map.get_new_mark();
-      for (typename CMap_for_surface_mesh_curve_topology::Dart_range::iterator
-             it=m_map.darts().begin(), itend=m_map.darts().end(); it!=itend;
-           ++it)
+      typename Map::size_type treated=m_original_map.get_new_mark();
+      for (typename Map::Dart_range::const_iterator
+             it=m_original_map.darts().begin(), itend=m_original_map.darts().end();
+           it!=itend; ++it)
       {
-        if (!m_map.is_marked(it, treated))
+        if (!m_original_map.is_marked(it, treated))
         {
-          UFTree_handle newuf=uftrees.make_set(it);
-          for (typename CMap_for_surface_mesh_curve_topology::
-                 template Dart_of_cell_basic_range<0>::iterator
-               itv=m_map.template darts_of_cell_basic<0>(it, treated).begin(),
-               itvend=m_map.template darts_of_cell_basic<0>(it, treated).end();
+          UFTree_handle2 newuf=uftrees.make_set(it);
+          for (typename Map::
+                 template Dart_of_cell_range<0>::const_iterator
+               itv=m_original_map.template darts_of_cell<0>(it).begin(),
+               itvend=m_original_map.template darts_of_cell<0>(it).end();
                itv!=itvend; ++itv)
           {
             vertices[itv]=newuf;
-            m_map.mark(itv, treated);
+            m_original_map.mark(itv, treated);
           }
         }
       }
-      m_map.free_mark(treated);
+      m_original_map.free_mark(treated);
     }
 
     void initialize_faces(UFTree& uftrees,
@@ -593,6 +600,16 @@ namespace CGAL {
       return uftrees.find(mapdhtouf.find(dh)->second);
     }
 
+    UFTree_handle2 get_uftree2(const UFTree2& uftrees,
+                               const boost::unordered_map<typename Map::Dart_const_handle,
+                               UFTree_handle2>& mapdhtouf,
+                               typename Map::Dart_const_handle dh) const
+    {
+      // CGAL_assertion(dh!=NULL);
+      CGAL_assertion(mapdhtouf.find(dh)!=mapdhtouf.end());
+      return uftrees.find(mapdhtouf.find(dh)->second);
+    }
+
     /// Mark the edge containing adart in the original map.
     void mark_edge(const Map& amap, typename Map::Dart_const_handle adart,
                    std::size_t amark)
@@ -628,12 +645,12 @@ namespace CGAL {
      boost::unordered_map<Dart_handle, typename Map::Dart_const_handle>&
      copy_to_origin)
     {
-      UFTree uftrees; // uftree of vertices; one tree for each vertex,
+      UFTree2 uftrees; // uftree of vertices; one tree for each vertex,
                       // contains one dart of the vertex
-      boost::unordered_map<Dart_const_handle, UFTree_handle> vertices;
+      boost::unordered_map<typename Map::Dart_const_handle, UFTree_handle2> vertices;
       initialize_vertices(uftrees, vertices);
 
-      m_map.set_automatic_attributes_management(false);
+  /*    m_map.set_automatic_attributes_management(false);
 
       for (typename CMap_for_surface_mesh_curve_topology::Dart_range::iterator
              it=m_map.darts().begin(), itend=m_map.darts().end();
@@ -660,7 +677,54 @@ namespace CGAL {
         }
       }
 
-      m_map.set_automatic_attributes_management(true);
+      m_map.set_automatic_attributes_management(true); */
+
+    /* New version that does not need to first copy the map before to simplify it
+     */
+      Dart_handle d1, d2;
+      for (typename Map::Dart_range::const_iterator
+           it=m_original_map.darts().begin(), itend=m_original_map.darts().end();
+           it!=itend; ++it)
+      {
+        if (typename Map::Dart_const_handle(it)<m_original_map.template beta<2>(it))
+        {
+          if (get_uftree2(uftrees, vertices, it)!=
+              get_uftree2(uftrees, vertices, m_original_map.template beta<2>(it)))
+          {
+            m_original_map.mark(m_original_map.template beta<2>(it), m_mark_T);
+            m_original_map.mark(it, m_mark_T);
+
+            uftrees.unify_sets(get_uftree2(uftrees, vertices, it),
+                               get_uftree2(uftrees, vertices,
+                                          m_original_map.template beta<2>(it)));
+          }
+          else
+          {
+            d1=m_map.create_dart();
+            d2=m_map.create_dart();
+            m_map.template basic_link_beta_for_involution<2>(d1, d2);
+            origin_to_copy[it]=d1;
+            origin_to_copy[m_original_map.template beta<2>(it)]=d2;
+            copy_to_origin[d1]=it;
+            copy_to_origin[d2]=m_original_map.template beta<2>(it);
+          }
+        }
+      }
+
+      /// Now we only need to do the basic_link_beta_1
+      typename Map::Dart_const_handle dd1;
+      for (typename Map::Dart_range::const_iterator
+             it=m_original_map.darts().begin(), itend=m_original_map.darts().end();
+           it!=itend; ++it)
+      {
+        if (!m_original_map.is_marked(it, m_mark_T))
+        {
+          dd1=m_original_map.template beta<1>(it);
+          while(m_original_map.is_marked(dd1, m_mark_T))
+          { dd1=m_original_map.template beta<1>(dd1); }
+          m_map.basic_link_beta_1(origin_to_copy[it], origin_to_copy[dd1]);
+        }
+      }
     }
 
     /// Step 2) Compute, for each edge of m_original_map not in the spanning
@@ -680,7 +744,7 @@ namespace CGAL {
         if (!m_original_map.is_marked(it, m_mark_T))
         {
           CGAL_assertion(!m_original_map.template is_free<2>(it));
-          if (it<m_original_map.template beta<2>(it))
+          if (typename Map::Dart_const_handle(it)<m_original_map.template beta<2>(it))
           {
             paths[it]=std::make_pair
                 (origin_to_copy.at(it),
@@ -832,7 +896,7 @@ namespace CGAL {
       {
         if (!m_original_map.is_marked(it, m_mark_T) &&
             !m_original_map.is_marked(it, m_mark_L) &&
-            it<m_original_map.template beta<2>(it))
+            typename Map::Dart_const_handle(it)<m_original_map.template beta<2>(it))
         { // Surviving dart => belongs to the border of the face
           std::pair<Dart_const_handle, Dart_const_handle>& p=paths[it];
 
@@ -1079,7 +1143,7 @@ namespace CGAL {
     }
 
   protected:
-    const Map& m_original_map; /// The original surface; not modified
+    const typename Get_map<Mesh, Mesh>::storage_type m_original_map; // The original map
     CMap_for_surface_mesh_curve_topology m_map; /// the transformed map
     TPaths paths; /// Pair of edges associated with each edge of m_original_map
                   /// (except the edges that belong to the spanning tree T).

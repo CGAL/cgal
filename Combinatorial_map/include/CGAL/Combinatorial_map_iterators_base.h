@@ -115,7 +115,7 @@ namespace CGAL {
     {
       return ( ((*this==mmap->null_handle) && (aiterator==mmap->null_handle)) ||
                (mfirst_dart == aiterator.mfirst_dart &&
-               static_cast<const Base&>(*this)==
+                static_cast<const Base&>(*this)==
                 static_cast<const Base&>(aiterator)) );
     }
 

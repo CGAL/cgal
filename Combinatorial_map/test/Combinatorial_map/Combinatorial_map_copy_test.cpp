@@ -152,6 +152,10 @@ typedef CGAL::Combinatorial_map<4, Map_dart_items_4> Map8;
 // info=char, int, int, int, int, double
 typedef CGAL::Combinatorial_map<4, Map_dart_max_items_4> Map9;
 
+struct Traits { typedef int Point_2; typedef int Point_3; };
+typedef CGAL::HalfedgeDS_default<Traits> HDS;
+
+////////////////////////////////////////////////////////////////////////////////
 template<typename Map, unsigned int i, typename Attr=typename Map::
          template Attribute_type<i>::type>
 struct CreateAttributes
@@ -581,10 +585,18 @@ bool testCopy()
 
 bool testImportFromHalfedge()
 {
+  bool res=true;
+  
+  HDS hds;
+  CGAL::HalfedgeDS_decorator<HDS> decorator(hds);
+  decorator.create_loop();
+  decorator.create_segment();
+  
+  Map1 map1; map1.import_from_halfedge_graph(hds);
+  Map2 map2; map2.import_from_halfedge_graph(hds);
+  Map3 map3; map3.import_from_halfedge_graph(hds);
 
-  Map1 map1;
-  Map2 map2;
-  Map3 map3;
+  return res; // TODO compare number of darts/cells
 }
 
 int main()

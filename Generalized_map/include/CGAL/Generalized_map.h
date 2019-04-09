@@ -1104,6 +1104,27 @@ namespace CGAL {
       mnb_times_reserved_marks[amark]=0;
     }
 
+    template <unsigned int i, unsigned int d=dimension>
+    bool belong_to_same_cell(Dart_const_handle adart1,
+                             Dart_const_handle adart2) const
+    { return CGAL::belong_to_same_cell<Self, i, d>(*this, adart1, adart2); }
+  
+    template <unsigned int i, unsigned int d=dimension>
+    bool is_whole_cell_unmarked(Dart_const_handle adart, size_type amark) const
+    { return CGAL::is_whole_cell_unmarked<Self, i, d>(*this, adart, amark); }
+
+    template <unsigned int i, unsigned int d=dimension>
+    bool is_whole_cell_marked(Dart_const_handle adart, size_type amark) const
+    { return CGAL::is_whole_cell_marked<Self, i, d>(*this, adart, amark); }
+
+    template <unsigned int i, unsigned int d=dimension>
+    size_type mark_cell(Dart_const_handle adart, size_type amark) const
+    { return CGAL::mark_cell<Self, i, d>(*this, adart, amark); }
+
+    template <unsigned int i, unsigned int d=dimension>
+    size_type unmark_cell(Dart_const_handle adart, size_type amark) const
+    { return CGAL::unmark_cell<Self, i, d>(*this, adart, amark); }
+
     /** Test if this map is without boundary for a given dimension.
      * @param i the dimension.
      * @return true iff all the darts are not i-free.
@@ -3430,12 +3451,12 @@ namespace CGAL {
            !is_face_combinatorial_polygon(d4, 3) ) return false;
 
       // TODO do better with marks (?).
-      if ( belong_to_same_cell<Self,2,1>(*this, d1, d2) ||
-           belong_to_same_cell<Self,2,1>(*this, d1, d3) ||
-           belong_to_same_cell<Self,2,1>(*this, d1, d4) ||
-           belong_to_same_cell<Self,2,1>(*this, d2, d3) ||
-           belong_to_same_cell<Self,2,1>(*this, d2, d4) ||
-           belong_to_same_cell<Self,2,1>(*this, d3, d4) ) return false;
+      if ( belong_to_same_cell<2,1>(d1, d2) ||
+           belong_to_same_cell<2,1>(d1, d3) ||
+           belong_to_same_cell<2,1>(d1, d4) ||
+           belong_to_same_cell<2,1>(d2, d3) ||
+           belong_to_same_cell<2,1>(d2, d4) ||
+           belong_to_same_cell<2,1>(d3, d4) ) return false;
 
       if ( alpha(d1, 0,1,2)!=alpha(d3,1) ||
            alpha(d4, 1,2)!=alpha(d3,0,1) ||
@@ -3511,21 +3532,21 @@ namespace CGAL {
           !is_face_combinatorial_polygon(d6, 4) ) return false;
 
       // TODO do better with marks.
-      if ( belong_to_same_cell<Self,2,1>(*this, d1, d2) ||
-           belong_to_same_cell<Self,2,1>(*this, d1, d3) ||
-           belong_to_same_cell<Self,2,1>(*this, d1, d4) ||
-           belong_to_same_cell<Self,2,1>(*this, d1, d5) ||
-           belong_to_same_cell<Self,2,1>(*this, d1, d6) ||
-           belong_to_same_cell<Self,2,1>(*this, d2, d3) ||
-           belong_to_same_cell<Self,2,1>(*this, d2, d4) ||
-           belong_to_same_cell<Self,2,1>(*this, d2, d5) ||
-           belong_to_same_cell<Self,2,1>(*this, d2, d6) ||
-           belong_to_same_cell<Self,2,1>(*this, d3, d4) ||
-           belong_to_same_cell<Self,2,1>(*this, d3, d5) ||
-           belong_to_same_cell<Self,2,1>(*this, d3, d6) ||
-           belong_to_same_cell<Self,2,1>(*this, d4, d5) ||
-           belong_to_same_cell<Self,2,1>(*this, d4, d6) ||
-           belong_to_same_cell<Self,2,1>(*this, d5, d6) )
+      if ( belong_to_same_cell<2,1>(d1, d2) ||
+           belong_to_same_cell<2,1>(d1, d3) ||
+           belong_to_same_cell<2,1>(d1, d4) ||
+           belong_to_same_cell<2,1>(d1, d5) ||
+           belong_to_same_cell<2,1>(d1, d6) ||
+           belong_to_same_cell<2,1>(d2, d3) ||
+           belong_to_same_cell<2,1>(d2, d4) ||
+           belong_to_same_cell<2,1>(d2, d5) ||
+           belong_to_same_cell<2,1>(d2, d6) ||
+           belong_to_same_cell<2,1>(d3, d4) ||
+           belong_to_same_cell<2,1>(d3, d5) ||
+           belong_to_same_cell<2,1>(d3, d6) ||
+           belong_to_same_cell<2,1>(d4, d5) ||
+           belong_to_same_cell<2,1>(d4, d6) ||
+           belong_to_same_cell<2,1>(d5, d6) )
         return false;
 
       if ( alpha(d1,2)      !=alpha(d4,1,0,1) ||
@@ -4005,14 +4026,14 @@ namespace CGAL {
       if (prec!=null_handle)
       {
         // prec and *it must belong to the same vertex of the same volume
-        if ( !CGAL::belong_to_same_cell<Self, 0, 2>(*this,  prec, *it) )
+        if ( !CGAL::belong_to_same_cell<0, 2>(prec, *it) )
           return false;
       }
       prec = this->template alpha<0>(*it);
     }
 
     // The path must be closed.
-    if (!CGAL::belong_to_same_cell<Self, 0, 2>(*this, prec, *afirst))
+    if (!CGAL::belong_to_same_cell<0, 2>(prec, *afirst))
       return false;
 
     return true;

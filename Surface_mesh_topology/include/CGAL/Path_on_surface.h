@@ -24,6 +24,7 @@
 #include <CGAL/Combinatorial_map_operations.h>
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/Random.h>
+#include <CGAL/Face_graph_wrapper.h>
 #include <boost/algorithm/searching/knuth_morris_pratt.hpp>
 #include <utility>
 #include <string>
@@ -33,23 +34,23 @@
 
 namespace CGAL {
 
-template<typename Map_>
+template<typename Mesh>
 class Path_on_surface_with_rle;
 
-template<typename Map_>
+template<typename Mesh>
 class Path_on_surface
 {
-  friend class Path_on_surface_with_rle<Map_>;
+  friend class Path_on_surface_with_rle<Mesh>;
 
 public:
-  typedef Path_on_surface<Map_>           Self;
-  typedef Map_                            Map;
+  typedef Path_on_surface<Mesh>           Self;
+  typedef typename Get_map<Mesh, Mesh>::type Map;
   typedef typename Map::Dart_const_handle Dart_const_handle;
 
-  Path_on_surface(const Map& amap) : m_map(amap), m_is_closed(false)
+  Path_on_surface(const Mesh& amap) : m_map(amap), m_is_closed(false)
   {}
 
-  Path_on_surface(const Path_on_surface_with_rle<Map>& apath) :
+  Path_on_surface(const Path_on_surface_with_rle<Mesh>& apath) :
     m_map(apath.get_map()),
     m_is_closed(apath.is_closed())
   {
@@ -177,8 +178,8 @@ public:
 
     if (is_empty()) return true;
 
-    return CGAL::template belong_to_same_cell<Map, 0>
-      (m_map, m_map.other_extremity(back()), dh);
+    return m_map.template belong_to_same_cell<0>(m_map.other_extremity(back()),
+                                                 dh);
   }
 
   /// @return true iff the ith dart can be added at the end of the path.
@@ -224,7 +225,7 @@ public:
   {
     if (n>=length()) return;
     m_path.resize(n);
-    if (update_isclosed) { update_isclosed; }
+    if (update_isclosed) { update_is_closed(); }
   }
 
   /// copy all darts starting from begin and going to the dart before end
@@ -367,7 +368,7 @@ public:
     for (std::size_t j=0; j<p2.length(); ++j)
     { push_back(p2[j], false); }
 
-    if (update_isclosed) { update_isclosed; }
+    if (update_isclosed) { update_is_closed(); }
   }
 
   /// Push back a random dart, if the path is empty.
@@ -382,8 +383,7 @@ public:
       ++index;
       if (index==get_map().darts().capacity()) index=0;
     }
-    push_back(get_map().darts().iterator_to(get_map().darts()[index]),
-              update_isclosed);
+    push_back(get_map().dart_handle(index), update_isclosed);
     return true;
   }
 
@@ -497,7 +497,7 @@ public:
     {
       push_around_face(random.get_int(0, length()), false);
     }
-    if (update_isclosed) { update_isclosed; }
+    if (update_isclosed) { update_is_closed(); }
   }
 
   void update_path_randomly(CGAL::Random& random,
@@ -568,7 +568,10 @@ public:
     return boost::algorithm::knuth_morris_pratt_search(p2.m_path.begin(),
                                                        p2.m_path.end(),
                                                        other.m_path.begin(),
-                                                       other.m_path.end()).first
+                                                       other.m_path.end())
+#if BOOST_VERSION>=106200
+      .first
+#endif
         !=p2.m_path.end();
   }
   bool operator!=(const Self&  other) const
@@ -637,21 +640,21 @@ public:
       Dart_const_handle pend=m_map.other_extremity(m_path[i-1]);
       if (pend==Map::null_handle) { return false; }
 
-      if (!CGAL::template belong_to_same_cell<Map,0>(m_map, m_path[i], pend))
+      if (!m_map.template belong_to_same_cell<0>(m_path[i], pend))
       { return false; }
     }
     if (is_closed())
     {
       Dart_const_handle pend=m_map.other_extremity(back());
       if (pend==Map::null_handle) { return false; }
-      if (!CGAL::template belong_to_same_cell<Map,0>(m_map, pend, front()))
+      if (!m_map.template belong_to_same_cell<0>(pend, front()))
       { return false; }
     }
     else
     {
       Dart_const_handle pend=m_map.other_extremity(back());
       if (pend==Map::null_handle) { return true; }
-      if (CGAL::template belong_to_same_cell<Map,0>(m_map, pend, front()))
+      if (m_map.template belong_to_same_cell<0>(pend, front()))
       { return false; }
     }
 
@@ -670,7 +673,7 @@ public:
       Dart_const_handle pend=m_map.other_extremity(back());
       if (pend==Map::null_handle) { m_is_closed=false; }
       else
-      { m_is_closed=CGAL::belong_to_same_cell<Map,0>(m_map, m_path[0], pend); }
+      { m_is_closed=m_map.template belong_to_same_cell<0>(m_path[0], pend); }
     }
   }
 
@@ -882,7 +885,7 @@ public:
   }
 
 protected:
-  const Map& m_map;                      /// The underlying map
+  const typename Get_map<Mesh, Mesh>::storage_type m_map; // The underlying map
   std::vector<Dart_const_handle> m_path; /// The sequence of darts
   bool m_is_closed;                      /// True iff the path is a cycle
 };

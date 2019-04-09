@@ -216,8 +216,13 @@ namespace CGAL {
       }
       used_add_edge=true;
 
-      assert(edge_label_to_dart.count(s)==0); // Since we have an orientable surface,
-                                              // we cannot use a same edge twice.
+      if (edge_label_to_dart.count(s)!=0)
+      {
+        std::cerr<<"Combinatorial_map_incremental_builder ERROR: "
+                 <<"since the surface is oriented, you cannot add the "
+                 <<"same label twice."<<std::endl;
+        return;
+      }
 
       Dart_handle cur = Map_incremental_builder_tools<CMap>::
           add_edge_to_face(cmap, prev_dart);
