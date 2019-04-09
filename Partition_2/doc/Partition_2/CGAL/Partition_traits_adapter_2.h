@@ -15,8 +15,8 @@ with value type `Base_traits::Point_2`.
 
 \cgalModels `PartitionTraits_2`
 */
-template< typename Base_traits, typename PointPropertyMap >
-class Partition_traits_adapter_2 : public Base_traits {
+template< typename BaseTraits, typename PointPropertyMap >
+class Partition_traits_adapter_2 : public BaseTraits {
 public:
 
 /// \name Types 
@@ -35,12 +35,12 @@ typdef boost::property_traits<PointPropertyMap>::key_type Point_2;
 /*!
 
 */ 
-Partition_traits_adapter_2(Base_traits base=Base_traits()); 
+Partition_traits_adapter_2(BaseTraits base=BaseTraits()); 
 
 /*!
 
 */ 
-Partition_traits_adapter_2(const PointPropertyMap& ppmap,Base_traits base=Base_traits()); 
+Partition_traits_adapter_2(const PointPropertyMap& ppmap,BaseTraits base=BaseTraits()); 
 
 /// @} 
 
