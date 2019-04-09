@@ -89,6 +89,10 @@ public:
   Face_graph*       face_graph() { return polyhedron(); }
   const Face_graph* face_graph() const { return polyhedron(); }
 
+  // Gets PLY comments (empty if mesh not originated from PLY input)
+  std::string& comments();
+  const std::string& comments() const;
+  
   void invalidate_aabb_tree();
   void invalidateOpenGLBuffers()Q_DECL_OVERRIDE;
   void invalidate(Gl_data_names name);

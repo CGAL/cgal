@@ -91,11 +91,13 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
   {
     // First try mesh
     SMesh *surface_mesh = new SMesh();
-
-    if (CGAL::read_ply (in, *surface_mesh))
+    std::string comments;
+    
+    if (CGAL::read_ply (in, *surface_mesh, comments))
     {
       Scene_surface_mesh_item* sm_item = new Scene_surface_mesh_item(surface_mesh);
       sm_item->setName(fileinfo.completeBaseName());
+      sm_item->comments() = comments;
       QApplication::restoreOverrideCursor();
       return sm_item;
     }
@@ -185,7 +187,7 @@ bool Polyhedron_demo_ply_plugin::save(const CGAL::Three::Scene_item* item, QFile
   Scene_surface_mesh_item* sm_item =
     const_cast<Scene_surface_mesh_item*>(qobject_cast<const Scene_surface_mesh_item*>(item));
   if (sm_item)
-    return CGAL::write_ply (out, *(sm_item->polyhedron()));
+    return CGAL::write_ply (out, *(sm_item->polyhedron()), sm_item->comments());
 
   return false;
 }
