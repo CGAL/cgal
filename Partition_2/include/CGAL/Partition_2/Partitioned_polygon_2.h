@@ -315,19 +315,19 @@ private:
     typedef typename Diagonal_list::iterator              Diagonal_iterator;
 
   //default constructor added for EPECK
-  Partition_vertex() // : Base_point()
+  Partition_vertex()
   {
     current_diag = diag_endpoint_refs.end() ;
   }
 
   Partition_vertex(Base_point p)
-    : /* Base_ */  point(p) 
+    : point(p) 
   { 
     current_diag = diag_endpoint_refs.end() ; 
   }
 
     Partition_vertex(const Partition_vertex& other)
-      : /* Base_ */ point(other.point) 
+      : point(other.point) 
   { 
     // No need to deep copy.
     // We initialize in order to avoid problem with g++ safe STL
