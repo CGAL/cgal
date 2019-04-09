@@ -294,8 +294,10 @@ private:
 };
 
 template <class Traits_>
-class Partition_vertex : public Traits_::Point_2
+class Partition_vertex //: public Traits_::Point_2
 {
+private:
+  typename Traits_::Point_2 point;
   public:
     typedef Traits_                                              Traits;
     typedef typename Traits::Point_2                             Base_point;
@@ -313,25 +315,30 @@ class Partition_vertex : public Traits_::Point_2
     typedef typename Diagonal_list::iterator              Diagonal_iterator;
 
   //default constructor added for EPECK
-  Partition_vertex(): Base_point()
+  Partition_vertex() // : Base_point()
   {
     current_diag = diag_endpoint_refs.end() ;
   }
 
   Partition_vertex(Base_point p)
-    : Base_point(p) 
+    : /* Base_ */  point(p) 
   { 
     current_diag = diag_endpoint_refs.end() ; 
   }
 
     Partition_vertex(const Partition_vertex& other)
-      : Base_point(other) 
+      : /* Base_ */ point(other.point) 
   { 
     // No need to deep copy.
     // We initialize in order to avoid problem with g++ safe STL
     current_diag = diag_endpoint_refs.end() ; 
   }
 
+  operator Base_point() const
+  {
+    return point;
+  }
+  
 #ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
     Partition_vertex& operator=(const Partition_vertex&)=default;
 #endif

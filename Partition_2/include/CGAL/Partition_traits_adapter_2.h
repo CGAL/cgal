@@ -38,7 +38,7 @@ template <class Base_traits,class PointPropertyMap>
 class Partition_traits_adapter_2 : public Base_traits
 {
 private:
-  typedef Kernel_                                     Kernel;
+  typedef typename Base_traits::Kernel                                   Kernel;
   typedef Partition_traits_adapter_2<Base_traits,PointPropertyMap>       Self;
   
   PointPropertyMap ppmap;
@@ -68,11 +68,12 @@ public:
     
     const PointPropertyMap& ppmap;
 
-    bool operator()(Arg_type p,Arg_type q) const {
+    typename BaseFct::result_type operator()(Arg_type p, Arg_type q) const {
       return static_cast<const typename BaseFct*>(this)->operator()(get(ppmap,p),get(ppmap,q));
     }
-    bool operator()(Arg_type p,Arg_type q,Arg_type r) const {
-      return static_cast<const typename Base_Fct*>(this)->operator()(get(ppmap,p),get(ppmap,q),get(ppmap,r));
+    
+    typename BaseFct::result_type operator()(Arg_type p, Arg_type q, Arg_type r) const {
+      return static_cast<const typename BaseFct*>(this)->operator()(get(ppmap,p),get(ppmap,q),get(ppmap,r));
     }
   };
 
@@ -114,7 +115,7 @@ public:
     }
     
     typename K::Collinear_are_ordered_along_line_2::result_type
-    operator()(const Pair& p, const Pair& q, const Pair& r) const
+    operator()(Arg_type p, Arg_type q, Arg_type r) const
     {
       return fct(get(ppmap,p), get(ppmap,q), r.first);
     }
@@ -152,45 +153,45 @@ public:
   typedef typename Kernel::Segment_2                                        Segment_2;
 
   // needed by optimal convex (for vis. graph)
-  typedef Pmap_fct<Point_2,typename Kernel::Construct_segment_2>        Construct_segment_2;
-  typedef Pmap_fct<Point_2,typename Kernel::Construct_ray_2>            Construct_ray_2;
+  typedef Pmap_fct<typename Kernel::Construct_segment_2>        Construct_segment_2;
+  typedef Pmap_fct<typename Kernel::Construct_ray_2>            Construct_ray_2;
 
   Equal_2
   equal_2_object() const
-  { return Equal_2(Kernel().equal_2_object()); }
+  { return Equal_2(ppmap,static_cast<const Base_traits*>(this)->equal_2_object()); }
 
   Orientation_2
   orientation_2_object() const
-  { return Orientation_2(Kernel().orientation_2_object()); }
+  { return Orientation_2(ppmap,static_cast<const Base_traits*>(this)->orientation_2_object()); }
 
   Less_yx_2
   less_yx_2_object() const
-  { return Less_yx_2(Kernel().less_yx_2_object()); }
+  { return Less_yx_2(ppmap,static_cast<const Base_traits*>(this)->less_yx_2_object()); }
   
   Less_xy_2
   less_xy_2_object() const
-  { return Less_xy_2(Kernel().less_xy_2_object()); }
+  { return Less_xy_2(ppmap,static_cast<const Base_traits*>(this)->less_xy_2_object()); }
   
   Left_turn_2
   left_turn_2_object() const
-  { return Left_turn_2(Kernel().left_turn_2_object()); }
+  { return Left_turn_2(ppmap,static_cast<const Base_traits*>(this)->left_turn_2_object()); }
   
   Compare_y_2
   compare_y_2_object() const
-  {  return Compare_y_2(Kernel().compare_y_2_object()); }
+  {  return Compare_y_2(ppmap,static_cast<const Base_traits*>(this)->compare_y_2_object()); }
   
   Compare_x_2
   compare_x_2_object() const
-  {  return Compare_x_2(Kernel().compare_x_2_object()); }
+  {  return Compare_x_2(ppmap,static_cast<const Base_traits*>(this)->compare_x_2_object()); }
   
   
   Construct_line_2
   construct_line_2_object() const
-  {  return Construct_line_2(Kernel().construct_line_2_object()); }
+  {  return Construct_line_2(ppmap,static_cast<const Base_traits*>(this)->construct_line_2_object()); }
   
   Compare_x_at_y_2
   compare_x_at_y_2_object() const
-  { return Compare_x_at_y_2(Kernel().compare_x_at_y_2_object()); }
+  { return Compare_x_at_y_2(ppmap,static_cast<const Base_traits*>(this)->compare_x_at_y_2_object()); }
 
 
   Construct_segment_2
