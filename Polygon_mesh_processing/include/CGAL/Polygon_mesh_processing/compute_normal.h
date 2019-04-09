@@ -49,7 +49,12 @@ namespace internal {
   {
     typename GT::FT norm = CGAL::approximate_sqrt(
         traits.compute_squared_length_3_object()(v));
-    v = traits.construct_divided_vector_3_object()(v, norm);
+    //If the vector is small enough, approx_sqrt might return 0, and then we get nan values. 
+    //To avoid that, we check the resulted norm. If it is 0, we don't normalize.
+    if(norm != 0)
+    {
+      v = traits.construct_divided_vector_3_object()(v, norm );
+    }
   }
 
   template<typename Point
@@ -132,22 +137,23 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
                     , const PolygonMesh& pmesh
                     , const NamedParameters& np)
 {
-  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
-  typedef typename GT::Point_3 Point;
-  typedef typename GT::Vector_3 Vector;
-
   using boost::choose_param;
   using boost::get_param;
 
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
   GT traits = choose_param(get_param(np, internal_np::geom_traits), GT());
 
-  Vector normal = traits.construct_vector_3_object()(CGAL::NULL_VECTOR);
-  sum_normals<Point>(pmesh, f
-    , choose_param(get_param(np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, pmesh))
-    , normal
-    , traits);
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPMap;
+  VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
+                             get_const_property_map(vertex_point, pmesh));
 
-  if (!typename GT::Equal_3()(normal, CGAL::NULL_VECTOR))
+  typedef typename GT::Point_3 Point;
+  typedef typename GT::Vector_3 Vector;
+
+  Vector normal = traits.construct_vector_3_object()(CGAL::NULL_VECTOR);
+  sum_normals<Point>(pmesh, f, vpmap, normal, traits);
+
+  if (!traits.equal_3_object()(normal, CGAL::NULL_VECTOR))
     internal::normalize(normal, traits);
 
   return normal;
@@ -186,8 +192,7 @@ compute_face_normals(const PolygonMesh& pmesh
 {
   typedef typename GetGeomTraits<PolygonMesh,NamedParameters>::type Kernel;
 
-  typename boost::graph_traits<PolygonMesh>::face_descriptor f;
-  BOOST_FOREACH(f, faces(pmesh)){
+  for(typename boost::graph_traits<PolygonMesh>::face_descriptor f : faces(pmesh)){
     typename Kernel::Vector_3 vec = compute_face_normal(f, pmesh, np);
     put(fnm, f, vec);
   }
@@ -265,7 +270,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
     he = opposite(next(he, pmesh), pmesh);
   } while (he != end);
 
-  if ( ! typename GT::Equal_3()(normal, CGAL::NULL_VECTOR))
+  if ( ! traits.equal_3_object()(normal, CGAL::NULL_VECTOR))
     internal::normalize(normal, traits);
   return normal;
 }
@@ -305,8 +310,7 @@ compute_vertex_normals(const PolygonMesh& pmesh
 {
   typedef typename GetGeomTraits<PolygonMesh,NamedParameters>::type Kernel;
 
-  typename boost::graph_traits<PolygonMesh>::vertex_descriptor v;
-  BOOST_FOREACH(v, vertices(pmesh)){
+  for(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v : vertices(pmesh)){
     typename Kernel::Vector_3 vec = compute_vertex_normal(v, pmesh, np);
     put(vnm, v, vec);
   }

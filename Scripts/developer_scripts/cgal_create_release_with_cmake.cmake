@@ -107,7 +107,7 @@ if(EXISTS ${release_dir})
   file(REMOVE_RECURSE ${release_dir})
 endif()
 
-if (PUBLIC)
+if (PUBLIC AND NOT TESTSUITE)
   message(STATUS "Creating a public release ${CGAL_VERSION} in ${release_dir}")
 else()
   message(STATUS "Creating an internal release ${CGAL_VERSION} in ${release_dir}")
@@ -274,7 +274,7 @@ file(REMOVE ${release_dir}/include/CGAL/license/README.md)
 file(REMOVE ${release_dir}/include/CGAL/license/gpl.h.in)
 file(REMOVE ${release_dir}/include/CGAL/license/package_list.txt)
 
-if(PUBLIC) # we are not creating an internal release.
+if(PUBLIC AND NOT TESTSUITE) # we are not creating an internal release.
   # Taken from create_new_release.
   file(REMOVE_RECURSE ${release_dir}/test)
   file(REMOVE_RECURSE ${release_dir}/package_info)

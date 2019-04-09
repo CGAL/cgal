@@ -28,7 +28,6 @@
 #include <CGAL/Random.h>
 #include <CGAL/property_map.h>
 
-#include <boost/foreach.hpp>
 
 #include <vector>
 
@@ -67,7 +66,7 @@ public:
 
     // fill the weights
     double total_weight = 0;
-    BOOST_FOREACH(Id id, input)
+    for(Id id : input)
     {
       //create a geometric object
       Geometric_object object = object_from_id_map(id);

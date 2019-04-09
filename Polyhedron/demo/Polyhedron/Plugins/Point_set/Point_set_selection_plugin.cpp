@@ -58,6 +58,7 @@ class Selection_test {
   const CGAL::qglviewer::Vec offset;
   Scene_edit_box_item* edit_box;
   Selection_visualizer* visualizer;
+  QVector4D* clipbox;
   const Ui::PointSetSelection& ui_widget;
 
   
@@ -69,6 +70,7 @@ public:
                  const CGAL::qglviewer::Vec offset,
                  Scene_edit_box_item* edit_box,
                  Selection_visualizer* visualizer,
+                 QVector4D* clipbox,
                  const Ui::PointSetSelection& ui_widget)
     : point_set (point_set)
     , selected (selected)
@@ -76,6 +78,7 @@ public:
     , offset (offset)
     , edit_box (edit_box)
     , visualizer (visualizer)
+    , clipbox (clipbox)
     , ui_widget (ui_widget)
   {
   }
@@ -90,10 +93,16 @@ public:
 
   void apply (std::size_t i) const
   {
-    Point_set::const_iterator it = point_set->begin() + i;
-    bool already_selected = point_set->is_selected (it);
+    Point_set::Index idx = *(point_set->begin() + i);
+    const Kernel::Point_3& p = point_set->point (idx);
 
-    const Kernel::Point_3& p = point_set->point (*it);
+    // Points outside clipbox are not affected
+    if (!is_inside_clipbox (p))
+    {
+      selected[idx] = point_set->is_selected (point_set->begin() + i);
+      return;
+    }
+
     CGAL::qglviewer::Vec vp (p.x (), p.y (), p.z ());
     bool now_selected = false;
     if(!ui_widget.box->isChecked())
@@ -116,14 +125,34 @@ public:
     }
 
     if (ui_widget.new_selection->isChecked())
-      selected[i] = now_selected;
-    else if (ui_widget.union_selection->isChecked())
-      selected[i] = (already_selected || now_selected);
-    else if (ui_widget.intersection->isChecked())
-      selected[i] = (already_selected && now_selected);
-    else if (ui_widget.diff->isChecked())
-      selected[i] = (already_selected && !now_selected);
+      selected[idx] = now_selected;
+    else
+    {
+      bool already_selected = point_set->is_selected (point_set->begin() + i);
+      if (ui_widget.union_selection->isChecked())
+        selected[idx] = (already_selected || now_selected);
+      else if (ui_widget.intersection->isChecked())
+        selected[idx] = (already_selected && now_selected);
+      else if (ui_widget.diff->isChecked())
+        selected[idx] = (already_selected && !now_selected);
+    }
   }
+  
+  bool is_inside_clipbox (const Kernel::Point_3& p) const
+  {
+    if(!static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->isClipping())
+      return true;
+
+    double x = p.x(), y = p.y(), z = p.z();
+
+    return !(clipbox[0][0]*x+clipbox[0][1]*y+clipbox[0][2]*z+clipbox[0][3]>0 ||
+             clipbox[1][0]*x+clipbox[1][1]*y+clipbox[1][2]*z+clipbox[1][3]>0 ||
+             clipbox[2][0]*x+clipbox[2][1]*y+clipbox[2][2]*z+clipbox[2][3]>0 ||
+             clipbox[3][0]*x+clipbox[3][1]*y+clipbox[3][2]*z+clipbox[3][3]>0 ||
+             clipbox[4][0]*x+clipbox[4][1]*y+clipbox[4][2]*z+clipbox[4][3]>0 ||
+             clipbox[5][0]*x+clipbox[5][1]*y+clipbox[5][2]*z+clipbox[5][3]>0);
+  }
+  
 };
 
 
@@ -184,27 +213,10 @@ public:
         selected_bitmap[nit->first] = true;
     }
 
-    std::vector<Point_set::Index> unselected, selected;
-    
-    for(Point_set::iterator it = points_item->point_set()->begin ();
-	it != points_item->point_set()->end(); ++ it)
-      if (points_item->point_set()->is_selected(it) || selected_bitmap[*it])
-        selected.push_back (*it);
-      else
-        unselected.push_back (*it);
-
-    for (std::size_t i = 0; i < unselected.size(); ++ i)
-      *(points_item->point_set()->begin() + i) = unselected[i];
-    for (std::size_t i = 0; i < selected.size(); ++ i)
-      *(points_item->point_set()->begin() + (unselected.size() + i)) = selected[i];
-
-    if (selected.empty ())
-      points_item->point_set()->unselect_all();
-    else
-    {
-      points_item->point_set()->set_first_selected
-        (points_item->point_set()->begin() + unselected.size());
-    }
+    points_item->point_set()->set_first_selected
+      (std::partition (points_item->point_set()->begin(), points_item->point_set()->end(),
+                       [&] (const Point_set::Index& idx) -> bool
+                       { return !selected_bitmap[idx]; }));
 
     points_item->invalidateOpenGLBuffers();
     points_item->itemChanged();
@@ -215,51 +227,10 @@ public:
     if (points_item->point_set()->nb_selected_points() == 0)
       return;
 
-    Distance tr_dist(points_item->point_set()->point_map());
+    points_item->invertSelection();
+    expand();
+    points_item->invertSelection();
     
-    std::set<Point_set::Index> selection;
-    for (Point_set::iterator it = points_item->point_set()->first_selected();
-         it != points_item->point_set()->end(); ++ it)
-      selection.insert (*it);
-
-    std::vector<bool> selected_bitmap (points_item->point_set()->size(), true);
-      
-    for (Point_set::iterator it = points_item->point_set()->first_selected();
-         it != points_item->point_set()->end(); ++ it)
-    {
-      Neighbor_search search(*tree, points_item->point_set()->point(*it), 6, 0, true, tr_dist);
-      for (Neighbor_search::iterator nit = search.begin(); nit != search.end(); ++ nit)
-        if (selection.find(nit->first) == selection.end())
-        {
-          selected_bitmap[*it] = false;
-          break;
-        }
-    }
-
-    std::vector<Point_set::Index> unselected, selected;
-
-    for(Point_set::iterator it = points_item->point_set()->begin ();
-	it != points_item->point_set()->end(); ++ it)
-      if (points_item->point_set()->is_selected(it) && selected_bitmap[*it])
-        selected.push_back (*it);
-      else
-        unselected.push_back (*it);
-
-    for (std::size_t i = 0; i < unselected.size(); ++ i)
-      *(points_item->point_set()->begin() + i) = unselected[i];
-    for (std::size_t i = 0; i < selected.size(); ++ i)
-      *(points_item->point_set()->begin() + (unselected.size() + i)) = selected[i];
-
-    if (selected.empty ())
-      {
-	points_item->point_set()->unselect_all();
-      }
-    else
-      {
-	points_item->point_set()->set_first_selected
-	  (points_item->point_set()->begin() + unselected.size());
-      }
-
     points_item->invalidateOpenGLBuffers();
     points_item->itemChanged();
   }
@@ -623,6 +594,7 @@ protected:
   }
 
 protected Q_SLOTS:
+
   void select_points()
   {
     Scene_points_with_normal_item* point_set_item = getSelectedItem<Scene_points_with_normal_item>();
@@ -645,7 +617,9 @@ protected Q_SLOTS:
     bool* selected_bitmap = new bool[points->size()]; // std::vector<bool> is not thread safe
 
     Selection_test selection_test (points, selected_bitmap,
-                                   camera, offset, edit_box, visualizer, ui_widget);
+                                   camera, offset, edit_box, visualizer,
+                                   static_cast<CGAL::Three::Viewer_interface*>(viewer)->clipBox(),
+                                   ui_widget);
 #ifdef CGAL_LINKED_WITH_TBB
     tbb::parallel_for(tbb::blocked_range<size_t>(0, points->size()),
                       selection_test);
@@ -654,31 +628,10 @@ protected Q_SLOTS:
       selection_test.apply(i);
 #endif
 
-    std::vector<Point_set::Index> unselected, selected;
-    for (std::size_t i = 0; i < points->size(); ++ i)
-    {
-      Point_set::Index idx = *(points->begin() + i);
-      if (selected_bitmap[i])
-        selected.push_back (idx);
-      else
-        unselected.push_back (idx);
-    }
-    delete[] selected_bitmap;
-    
-    for (std::size_t i = 0; i < unselected.size(); ++ i)
-      *(points->begin() + i) = unselected[i];
-    for (std::size_t i = 0; i < selected.size(); ++ i)
-      *(points->begin() + (unselected.size() + i)) = selected[i];
-
-    if (selected.empty ())
-      {
-	points->unselect_all();
-      }
-    else
-      {
-	points->set_first_selected
-	  (points->begin() + unselected.size());
-      }
+    points->set_first_selected
+      (std::partition (points->begin(), points->end(),
+                       [&] (const Point_set::Index& idx) -> bool
+                       { return !selected_bitmap[idx]; }));
     
     point_set_item->invalidateOpenGLBuffers();
     point_set_item->itemChanged();
@@ -787,57 +740,25 @@ public Q_SLOTS:
       return;
     }
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    Scene_points_with_normal_item* new_item = new Scene_points_with_normal_item();
+    Scene_points_with_normal_item* new_item = new Scene_points_with_normal_item;
+    new_item->point_set()->copy_properties (*(point_set_item->point_set()));
+    new_item->point_set()->check_colors();
+
     new_item->setName(QString("%1 (selected points)").arg(point_set_item->name()));
-    if (point_set_item->has_normals())
-      new_item->point_set()->add_normal_map();
-    Point_set::Byte_map red, green, blue;
-    Point_set::Double_map fred, fgreen, fblue;
-    if (point_set_item->point_set()->has_colors())
-      {
-        if (point_set_item->point_set()->has_byte_colors())
-          {
-            red = new_item->point_set()->add_property_map<unsigned char>("red", 0).first;
-            green = new_item->point_set()->add_property_map<unsigned char>("green", 0).first;
-            blue = new_item->point_set()->add_property_map<unsigned char>("blue", 0).first;
-          }
-        else
-          {
-            fred = new_item->point_set()->add_property_map<double>("red", 0).first;
-            fgreen = new_item->point_set()->add_property_map<double>("green", 0).first;
-            fblue = new_item->point_set()->add_property_map<double>("blue", 0).first;
-          }
-        new_item->point_set()->check_colors(); 
-      }
     
     new_item->setColor(point_set_item->color());
     new_item->setRenderingMode(point_set_item->renderingMode());
     new_item->setVisible(point_set_item->visible());
+    
+    std::cerr << point_set_item->point_set()->info() << std::endl;
+    std::cerr << new_item->point_set()->info() << std::endl;
 
     typedef Point_set_3<Kernel> Point_set;
     for(Point_set::iterator it = point_set_item->point_set()->first_selected ();
-	it != point_set_item->point_set()->end(); ++ it)
-      {
-        Point_set::iterator new_point =
-          new_item->point_set()->insert(point_set_item->point_set()->point(*it));
-        if (point_set_item->has_normals())
-          new_item->point_set()->normal(*new_point) = point_set_item->point_set()->normal(*it);
-        if (point_set_item->point_set()->has_colors())
-          {
-            if (point_set_item->point_set()->has_byte_colors())
-              {
-                red[*new_point] = (unsigned char)(255. * point_set_item->point_set()->red(*it));
-                green[*new_point] = (unsigned char)(255. * point_set_item->point_set()->green(*it));
-                blue[*new_point] = (unsigned char)(255. * point_set_item->point_set()->blue(*it));
-              }
-            else
-              {
-                fred[*new_point] = point_set_item->point_set()->red(*it);
-                fgreen[*new_point] = point_set_item->point_set()->green(*it);
-                fblue[*new_point] = point_set_item->point_set()->blue(*it);
-              }
-          }
-      }
+        it != point_set_item->point_set()->end(); ++ it)
+    {
+      new_item->point_set()->insert (*(point_set_item->point_set()), *it);
+    }
     new_item->resetSelection();
     new_item->invalidateOpenGLBuffers();
 

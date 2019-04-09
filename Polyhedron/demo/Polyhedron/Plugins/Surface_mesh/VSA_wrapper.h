@@ -65,8 +65,7 @@ class VSA_WRAPPER_EXPORT VSA_wrapper {
       : center_pmap(center_pmap_), area_pmap(area_pmap_) {}
 
     FT compute_error(const face_descriptor f, const SMesh &, const Proxy &px) const {
-      return FT(std::sqrt(CGAL::to_double(
-        CGAL::squared_distance(get(center_pmap, f), px))));
+      return CGAL::sqrt(CGAL::squared_distance(get(center_pmap, f), px));
     }
 
     template <typename FaceRange>
@@ -76,7 +75,7 @@ class VSA_WRAPPER_EXPORT VSA_wrapper {
       // fitting center
       Vector_3 center = CGAL::NULL_VECTOR;
       FT area(0.0);
-      BOOST_FOREACH(const face_descriptor f, faces) {
+      for(const face_descriptor f : faces) {
         center = center + (get(center_pmap, f) - CGAL::ORIGIN) * get(area_pmap, f);
         area += get(area_pmap, f);
       }
@@ -104,7 +103,7 @@ class VSA_WRAPPER_EXPORT VSA_wrapper {
 public:
   enum Metric { L21, L2, Compact };
 
-  typedef CGAL::cpp11::array<std::size_t, 3> Indexed_triangle;
+  typedef std::array<std::size_t, 3> Indexed_triangle;
 
   // visual items
   struct Visual_items {
@@ -227,7 +226,7 @@ public:
     typedef typename Approx::Proxy_wrapper Proxy_wrapper;
     std::vector<Proxy_wrapper> pxwrapper;
     approx.wrapped_proxies(std::back_inserter(pxwrapper));
-    BOOST_FOREACH(const Proxy_wrapper &pxw, pxwrapper)
+    for(const Proxy_wrapper& pxw : pxwrapper)
       *out_itr++ = pxw.seed;
   }
 

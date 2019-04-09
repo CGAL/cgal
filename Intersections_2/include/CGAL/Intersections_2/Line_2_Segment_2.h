@@ -135,6 +135,8 @@ Segment_2_Line_2_pair<K>::intersection_type() const
     case Line_2_Line_2_pair<K>::LINE:
         _result = SEGMENT;
         break;
+    default:
+      CGAL_assume(false);
     }
     return _result;
 }

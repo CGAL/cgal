@@ -629,7 +629,7 @@ public Q_SLOTS:
       }
       boost::unordered_map<fg_face_descriptor, bool> is_selected_map;
       int index = 0;
-      BOOST_FOREACH(fg_face_descriptor fh, faces(*selection_item->polyhedron()))
+      for(fg_face_descriptor fh : faces(*selection_item->polyhedron()))
       {
         if(selection_item->selected_facets.find(fh)
            == selection_item->selected_facets.end())
@@ -644,7 +644,7 @@ public Q_SLOTS:
                                               *selection_item->polyhedron(),
                                         boost::make_assoc_property_map(is_selected_map));
 
-      BOOST_FOREACH(fg_face_descriptor fh, faces(*selection_item->polyhedron()))
+      for(fg_face_descriptor fh : faces(*selection_item->polyhedron()))
       {
         if (is_selected_map[fh])
           selection_item->selected_facets.insert(fh);
@@ -666,7 +666,7 @@ public Q_SLOTS:
         return;
       }
       const Face_graph& poly = *selection_item->polyhedron();
-      BOOST_FOREACH(Scene_polyhedron_selection_item::fg_edge_descriptor ed, selection_item->selected_edges)
+      for(Scene_polyhedron_selection_item::fg_edge_descriptor ed : selection_item->selected_edges)
       {
         if(!is_border(halfedge(ed,poly), poly)){
           selection_item->selected_facets.insert(face(halfedge(ed, poly), poly));
@@ -693,7 +693,7 @@ public Q_SLOTS:
       }
       const Face_graph& poly = *selection_item->polyhedron();
 
-      BOOST_FOREACH(Scene_polyhedron_selection_item::fg_edge_descriptor ed, selection_item->selected_edges)
+      for(Scene_polyhedron_selection_item::fg_edge_descriptor ed : selection_item->selected_edges)
       {
         selection_item->selected_vertices.insert(target(halfedge(ed, poly), poly));
         selection_item->selected_vertices.insert(source(halfedge(ed, poly), poly));
@@ -717,7 +717,7 @@ public Q_SLOTS:
       const Face_graph& poly = *selection_item->polyhedron();
       std::vector<Scene_polyhedron_selection_item::fg_halfedge_descriptor> boundary_edges;
       CGAL::Polygon_mesh_processing::border_halfedges(selection_item->selected_facets, poly, std::back_inserter(boundary_edges));
-      BOOST_FOREACH(Scene_polyhedron_selection_item::fg_halfedge_descriptor h, boundary_edges)
+      for(Scene_polyhedron_selection_item::fg_halfedge_descriptor h : boundary_edges)
       {
         selection_item->selected_edges.insert(edge(h, poly));
       }
@@ -738,9 +738,9 @@ public Q_SLOTS:
         return;
       }
       const Face_graph& poly = *selection_item->polyhedron();
-      BOOST_FOREACH(Scene_polyhedron_selection_item::fg_face_descriptor fh, selection_item->selected_facets)
+      for(Scene_polyhedron_selection_item::fg_face_descriptor fh : selection_item->selected_facets)
       {
-        BOOST_FOREACH(Scene_polyhedron_selection_item::fg_halfedge_descriptor h, CGAL::halfedges_around_face(halfedge(fh,poly), poly) )
+        for(Scene_polyhedron_selection_item::fg_halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(fh,poly), poly) )
         {
           selection_item->selected_vertices.insert(target(h, poly));
         }
@@ -775,7 +775,7 @@ public Q_SLOTS:
     case 1:
     {
       bool is_valid = true;
-      BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor fd, faces(*selection_item->polyhedron()))
+      for(boost::graph_traits<Face_graph>::face_descriptor fd : faces(*selection_item->polyhedron()))
       {
         if (is_triangle(halfedge(fd, *selection_item->polyhedron()), *selection_item->polyhedron())
             && CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(fd, *selection_item->polyhedron()))
@@ -789,7 +789,7 @@ public Q_SLOTS:
         QMessageBox::warning(mw,
                              tr("Degenerated Face_graph"),
                              tr("Degenerated faces have been detected. Problems may occur "
-                                "for operations other tha \"Move point\". "));
+                                "for operations other than \"Move point\". "));
       }
       //remove lasso mode
       selection_item->set_lasso_mode(false);

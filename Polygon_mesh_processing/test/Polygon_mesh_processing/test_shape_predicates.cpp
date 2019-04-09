@@ -102,7 +102,7 @@ void test_vertex_non_manifoldness(const char* fname)
 
   assert(num_vertices(mesh) == ini_nv - 1);
 
-  BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
+  for(vertex_descriptor v : vertices(mesh))
   {
     if(v == vertex_to_merge_onto)
       assert(CGAL::Polygon_mesh_processing::is_non_manifold_vertex(v, mesh));

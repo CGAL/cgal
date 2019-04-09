@@ -39,6 +39,7 @@ int main(int argc, char*argv[])
     // Note: write_xyz_points() requires property maps to access each
     // point position and normal.
     std::ofstream out("oni_copy.xyz");
+    out.precision(17);
     if (!out ||
         !CGAL::write_xyz_points(
           out, points,

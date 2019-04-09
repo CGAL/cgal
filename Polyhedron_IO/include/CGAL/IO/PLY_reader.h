@@ -58,7 +58,7 @@ namespace CGAL{
             return false;
         }
 
-        cpp11::tuple<std::vector<Integer>, boost::uint8_t, boost::uint8_t, boost::uint8_t> new_face; 
+        std::tuple<std::vector<Integer>, boost::uint8_t, boost::uint8_t, boost::uint8_t> new_face; 
 
         if (has_colors)
         {
@@ -225,7 +225,7 @@ namespace CGAL{
               return false;
           }
 
-          cpp11::tuple<Point_3, boost::uint8_t, boost::uint8_t, boost::uint8_t> new_vertex;
+          std::tuple<Point_3, boost::uint8_t, boost::uint8_t, boost::uint8_t> new_vertex;
 
           if (has_colors)
           {

@@ -20,7 +20,6 @@
 
 #ifndef CGAL_WRAPPER_POINT_D_H
 #define CGAL_WRAPPER_POINT_D_H
-
 #include <ostream>
 #include <istream>
 #include <CGAL/IO/io.h>
@@ -73,9 +72,14 @@ public:
 
   typedef          R_                       R;
 
+
   template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Point_d> >::value>::type> explicit Point_d(U&&...u)
 	  : Rep(CPBase()(std::forward<U>(u)...)){}
 
+#if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
+#  pragma warning(pop)
+#endif
+  
 //  // called from Construct_point_d
 //  template<class...U> explicit Point_d(Eval_functor&&,U&&...u)
 //	  : Rep(Eval_functor(), std::forward<U>(u)...){}
@@ -200,5 +204,4 @@ template <class R_> Point_d<R_>::Point_d(Point_d &)=default;
 
 } //namespace Wrap
 } //namespace CGAL
-
 #endif // CGAL_WRAPPER_POINT_D_H

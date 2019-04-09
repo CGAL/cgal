@@ -116,11 +116,15 @@ Scene_polylines_item_private::computeElements() const
         it != item->polylines.end();
         ++it)
     {
-        if(it->empty()) continue;
+      if(it->empty()) continue;
+      if(it->front() == it->back())
+        nb_vertices += it->size() - 1;
+      else 
         nb_vertices += it->size();
-        for(size_t i = 0, end = it->size()-1;
-            i < end; ++i)
-        {
+      
+      for(size_t i = 0, end = it->size()-1;
+          i < end; ++i)
+      {
             const Point_3& a = (*it)[i];
             const Point_3& b = (*it)[i+1];
             if(a!=b)

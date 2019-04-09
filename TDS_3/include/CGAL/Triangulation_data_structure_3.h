@@ -61,7 +61,6 @@
 #  include <tbb/scalable_allocator.h>
 #endif
 
-#include <boost/foreach.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 
 namespace CGAL {
@@ -831,7 +830,8 @@ public:
         output = f.output;
         filter = f.filter;
         return *this;
-      }
+      }  
+      Facet_it(const Facet_it&)=default;
     };
     Facet_it facet_it() {
       return Facet_it(output, filter);

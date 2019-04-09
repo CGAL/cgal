@@ -479,7 +479,7 @@ Image_3::labellized_trilinear_interpolation
   const int i2 = i1 + 1;
   const int j2 = j1 + 1;
 
-  CGAL::cpp11::array<std::size_t,8> index;
+  std::array<std::size_t,8> index;
   index[0] = (i1 * dimy + j1) * dimx + k1;
   index[1] = index[0] + 1;
   index[2] = (i1 * dimy + j2) * dimx + k1;
@@ -489,7 +489,7 @@ Image_3::labellized_trilinear_interpolation
   index[6] = (i2 * dimy + j2) * dimx + k1;
   index[7] = index[6] + 1;
 
-  CGAL::cpp11::array<Image_word_type,8> labels;
+  std::array<Image_word_type,8> labels;
   
   labels[0] = ((Image_word_type*)image()->data)[index[0]];
   int lc = 1;

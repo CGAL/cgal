@@ -30,7 +30,7 @@
 #include <CGAL/Shape_detection_3/Shape_base.h>
 #include <CGAL/Shape_detection_3/Plane.h>
 #include <CGAL/Random.h>
-#include <CGAL/function.h>
+#include <functional>
 
 //for octree ------------------------------
 #include <boost/iterator/filter_iterator.hpp>
@@ -446,8 +446,8 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
               input data has been set. Otherwise, `false` is returned.
     */ 
     bool detect(const Parameters &options = Parameters(),
-                const cpp11::function<bool(double)>& callback
-                = cpp11::function<bool(double)>())
+                const std::function<bool(double)>& callback
+                = std::function<bool(double)>())
     {
       m_options = options;
 

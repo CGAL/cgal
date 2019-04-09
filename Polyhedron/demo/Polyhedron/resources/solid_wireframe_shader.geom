@@ -24,8 +24,10 @@ out GS_OUT
 void main(void)
 {
   ;
-  //linearized arbitrary Z offset to keep the widelines in front of the edges as much as possible
-  float z_offset = (2.0 * near) / (far + near - 0.01f * (far - near)) - (2.0 * near) / (far + near);
+  //linearized arbitrary Z offset to keep the widelines in front of the edges as much as possible 
+  //Problem if coef is not 0, edges might be visible through faces.
+  float coef = 0.0f;
+  float z_offset = (2.0 * near) / (far + near - coef * (far - near)) - (2.0 * near) / (far + near);
   vec3 ndc0 = gl_in[0].gl_Position.xyz / gl_in[0].gl_Position.w;
   vec3 ndc1 = gl_in[1].gl_Position.xyz / gl_in[1].gl_Position.w;
   

@@ -42,7 +42,6 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/subgraph.hpp>
-#include <boost/foreach.hpp>
 #include <boost/optional.hpp>
 
 #include <CGAL/boost/graph/named_function_params.h>
@@ -124,7 +123,7 @@ public:
   typedef typename Error_metric::Proxy Proxy;
 
   /// Indexed triangle type
-  typedef CGAL::cpp11::array<std::size_t, 3> Indexed_triangle;
+  typedef std::array<std::size_t, 3> Indexed_triangle;
   /// @}
 
 // private typedefs and data member
@@ -138,8 +137,9 @@ private:
   typedef typename Geom_traits::Construct_point_3 Construct_point_3;
   typedef typename Geom_traits::Construct_scaled_vector_3 Construct_scaled_vector_3;
   typedef typename Geom_traits::Construct_sum_of_vectors_3 Construct_sum_of_vectors_3;
-  typedef typename Geom_traits::Compute_scalar_product_3 Compute_scalar_product_3;
   typedef typename Geom_traits::Construct_translated_point_3 Construct_translated_point_3;
+  typedef typename Geom_traits::Construct_cross_product_vector_3 Construct_cross_product_vector_3;
+  typedef typename Geom_traits::Collinear_3 Collinear_3;
 
   // graph_traits typedefs
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
@@ -212,7 +212,7 @@ private:
 
   // The anchor attached to a vertex.
   struct Anchor {
-    Anchor(const vertex_descriptor &vtx_, const Point_3 pos_)
+    Anchor(const vertex_descriptor vtx_, const Point_3 pos_)
       : vtx(vtx_), pos(pos_) {}
 
     vertex_descriptor vtx; // The associated vertex.
@@ -222,7 +222,7 @@ private:
   // The boundary cycle of a region.
   // One region may have multiple boundary cycles.
   struct Boundary_cycle {
-    Boundary_cycle(const halfedge_descriptor &h)
+    Boundary_cycle(const halfedge_descriptor h)
       : he_head(h), num_anchors(0) {}
 
     halfedge_descriptor he_head; // Heading halfedge of the boundary cycle.
@@ -240,11 +240,11 @@ private:
   const Error_metric *m_metric;
 
   Construct_vector_3 vector_functor;
-  Construct_point_3 point_functor;
   Construct_scaled_vector_3 scale_functor;
   Construct_sum_of_vectors_3 sum_functor;
-  Compute_scalar_product_3 scalar_product_functor;
   Construct_translated_point_3 translate_point_functor;
+  Construct_cross_product_vector_3 cross_product_functor;
+  Collinear_3 collinear_functor;
 
   // Proxies.
   std::vector<Proxy_wrapper> m_proxies;
@@ -290,11 +290,11 @@ public:
 
     Geom_traits traits;
     vector_functor = traits.construct_vector_3_object();
-    point_functor = traits.construct_point_3_object();
     scale_functor = traits.construct_scaled_vector_3_object();
     sum_functor = traits.construct_sum_of_vectors_3_object();
-    scalar_product_functor = traits.compute_scalar_product_3_object();
     translate_point_functor = traits.construct_translated_point_3_object();
+    cross_product_functor = traits.construct_cross_product_vector_3_object();
+    collinear_functor = traits.collinear_3_object();
   }
   /// @}
 
@@ -347,6 +347,8 @@ public:
 
     // initialize proxies and the proxy map to prepare for insertion
     bootstrap_from_connected_components();
+    if (max_nb_proxies <= m_proxies.size())
+      return m_proxies.size();
     switch (method) {
       case Surface_mesh_approximation::RANDOM:
         return init_random(max_nb_proxies, min_error_drop, nb_relaxations);
@@ -367,7 +369,7 @@ public:
   FT run(std::size_t nb_iterations = 1) {
     for (std::size_t i = 0; i < nb_iterations; ++i) {
       // tag the whole surface
-      BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
+      for(face_descriptor f : faces(*m_ptm))
         put(m_fproxy_map, f, CGAL_VSA_INVALID_TAG);
 
       partition(m_proxies.begin(), m_proxies.end());
@@ -421,7 +423,7 @@ public:
    */
   FT compute_total_error() {
     FT sum_error(0.0);
-    BOOST_FOREACH(const Proxy_wrapper &pxw, m_proxies)
+    for(const Proxy_wrapper& pxw : m_proxies)
       sum_error += pxw.err;
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
@@ -475,7 +477,7 @@ public:
       const double avg_face =
         static_cast<double>(m_nb_of_faces) / static_cast<double>(nb_proxies);
       std::vector<double> px_size(m_proxies.size(), 0.0);
-      BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
+      for(face_descriptor f : faces(*m_ptm))
         px_size[get(m_fproxy_map, f)] += 1.0;
       double residual = 0.0;
       for (std::size_t i = 0; i < m_proxies.size(); ++i) {
@@ -512,7 +514,7 @@ public:
     }
 
     std::size_t num_added = 0;
-    BOOST_FOREACH(face_descriptor f, faces(*m_ptm)) {
+    for(face_descriptor f : faces(*m_ptm)) {
       const std::size_t px_id = get(m_fproxy_map, f);
       if (m_proxies[px_id].seed == f)
         continue;
@@ -560,7 +562,7 @@ public:
       }
       bool found = false;
       face_descriptor tele_to;
-      BOOST_FOREACH(face_descriptor f, faces(*m_ptm)) {
+      for(face_descriptor f : faces(*m_ptm)) {
         if (get(m_fproxy_map, f) == px_worst && f != m_proxies[px_worst].seed) {
           // teleport to anywhere but the seed
           tele_to = f;
@@ -582,7 +584,7 @@ public:
       // teleport to a face of the worst region
       // update merged proxies
       std::list<face_descriptor> merged_patch;
-      BOOST_FOREACH(face_descriptor f, faces(*m_ptm)) {
+      for(face_descriptor f : faces(*m_ptm)) {
         std::size_t px_idx = get(m_fproxy_map, f);
         if (px_idx == best_proxies->first || px_idx == best_proxies->second) {
           put(m_fproxy_map, f, best_proxies->first);
@@ -622,7 +624,7 @@ public:
     const FT pre_err = m_proxies[px0].err + m_proxies[px1].err;
     // merge px1 to px0
     std::list<face_descriptor> merged_patch;
-    BOOST_FOREACH(face_descriptor f, faces(*m_ptm)) {
+    for(face_descriptor f : faces(*m_ptm)) {
       std::size_t px_idx = get(m_fproxy_map, f);
       if (px_idx == px1 || px_idx == px0) {
         put(m_fproxy_map, f, px0);
@@ -636,7 +638,7 @@ public:
     for (std::size_t i = 0; i < m_proxies.size(); ++i)
       m_proxies[i].idx = i;
     // keep face proxy map valid
-    BOOST_FOREACH(face_descriptor f, faces(*m_ptm)) {
+    for(face_descriptor f : faces(*m_ptm)) {
       if (get(m_fproxy_map, f) > px1)
         put(m_fproxy_map, f, get(m_fproxy_map, f) - 1);
     }
@@ -660,14 +662,14 @@ public:
 
     std::size_t px0 = 0, px1 = 0;
     std::vector<std::list<face_descriptor> > px_faces(m_proxies.size());
-    BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
+    for(face_descriptor f : faces(*m_ptm))
       px_faces[get(m_fproxy_map, f)].push_back(f);
 
     // find best merge
     Pair_set merged_set;
     FT min_error_change = FT(0.0);
     bool first_merge = true;
-    BOOST_FOREACH(edge_descriptor e, edges(*m_ptm)) {
+    for(edge_descriptor e : edges(*m_ptm)) {
       if (CGAL::is_border(e, *m_ptm))
         continue;
       std::size_t pxi = get(m_fproxy_map, face(halfedge(e, *m_ptm), *m_ptm));
@@ -682,7 +684,7 @@ public:
       merged_set.insert(Proxy_pair(pxi, pxj));
       // simulated merge
       std::list<face_descriptor> merged_patch(px_faces[pxi]);
-      BOOST_FOREACH(face_descriptor f, px_faces[pxj])
+      for(face_descriptor f : px_faces[pxj])
         merged_patch.push_back(f);
       const Proxy_wrapper pxw_tmp = fit_proxy_from_patch(merged_patch, CGAL_VSA_INVALID_TAG);
 
@@ -728,7 +730,7 @@ public:
 
     // collect confined proxy area
     std::list<face_descriptor> confined_area;
-    BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
+    for(face_descriptor f : faces(*m_ptm))
       if (get(m_fproxy_map, f) == px_idx)
         confined_area.push_back(f);
     // not enough faces to split
@@ -741,7 +743,7 @@ public:
 
     // select seed faces in the confined area
     std::size_t count = 1;
-    BOOST_FOREACH(face_descriptor f, confined_area) {
+    for(face_descriptor f : confined_area) {
       if (count >= n)
         break;
 
@@ -755,7 +757,7 @@ public:
 
     // relaxation on confined area and proxies
     for (std::size_t i = 0; i < nb_relaxations; ++i) {
-      BOOST_FOREACH(face_descriptor f, confined_area)
+      for(face_descriptor f : confined_area)
         put(m_fproxy_map, f, CGAL_VSA_INVALID_TAG);
 
       partition(confined_proxies.begin(), confined_proxies.end());
@@ -763,7 +765,7 @@ public:
     }
 
     // copy back
-    BOOST_FOREACH(const Proxy_wrapper &pxw, confined_proxies)
+    for(const Proxy_wrapper& pxw : confined_proxies)
       m_proxies[pxw.idx] = pxw;
 
     return true;
@@ -808,7 +810,7 @@ public:
     m_average_edge_length = compute_averaged_edge_length(*m_ptm, m_vpoint_map);
 
     // initialize all vertex anchor status
-    BOOST_FOREACH(vertex_descriptor v, vertices(*m_ptm))
+    for(vertex_descriptor v : vertices(*m_ptm))
       put(m_vanchor_map, v, CGAL_VSA_INVALID_TAG);
     m_anchors.clear();
     m_bcycles.clear();
@@ -887,7 +889,7 @@ public:
    */
   template <typename FaceProxyMap>
   void proxy_map(FaceProxyMap face_proxy_map) const {
-    BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
+    for(face_descriptor f : faces(*m_ptm))
       put(face_proxy_map, f, get(m_fproxy_map, f));
   }
 
@@ -907,7 +909,7 @@ public:
     if (px_idx >= m_proxies.size())
       return;
 
-    BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
+    for(face_descriptor f : faces(*m_ptm))
       if (get(m_fproxy_map, f) == px_idx)
         *out++ = f;
   }
@@ -919,7 +921,7 @@ public:
    */
   template <typename OutputIterator>
   void proxies(OutputIterator out) const {
-    BOOST_FOREACH(const Proxy_wrapper &pxw, m_proxies)
+    for(const Proxy_wrapper& pxw : m_proxies)
       *out++ = pxw.px;
   }
 
@@ -935,7 +937,7 @@ public:
    */
   template <typename OutputIterator>
   void wrapped_proxies(OutputIterator out) const {
-    BOOST_FOREACH(const Proxy_wrapper &pxw, m_proxies)
+    for(const Proxy_wrapper& pxw : m_proxies)
       *out++ = pxw;
   }
 
@@ -946,7 +948,7 @@ public:
    */
   template <typename OutputIterator>
   void anchor_points(OutputIterator out) const {
-    BOOST_FOREACH(const Anchor &a, m_anchors)
+    for(const Anchor& a : m_anchors)
       *out++ = a.pos;
   }
 
@@ -962,7 +964,7 @@ public:
    */
   template <typename OutputIterator>
   void anchor_vertices(OutputIterator out) const {
-    BOOST_FOREACH(const Anchor &a, m_anchors)
+    for(const Anchor& a : m_anchors)
       *out++ = a.vtx;
   }
 
@@ -974,7 +976,7 @@ public:
    */
   template <typename OutputIterator>
   void indexed_triangles(OutputIterator out) const {
-    BOOST_FOREACH(const Indexed_triangle &t, m_tris)
+    for(const Indexed_triangle& t : m_tris)
       *out++ = t;
   }
 
@@ -990,7 +992,7 @@ public:
    */
   template <typename OutputIterator>
   void indexed_boundary_polygons(OutputIterator out) const {
-    BOOST_FOREACH(const Boundary_cycle &bcycle, m_bcycles) {
+    for(const Boundary_cycle& bcycle : m_bcycles) {
       std::vector<std::size_t> plg;
       halfedge_descriptor he = bcycle.he_head;
       do {
@@ -1025,7 +1027,7 @@ private:
       // pick from current non seed faces randomly
       std::vector<face_descriptor> picked_seeds;
       if (random_pick_non_seed_faces(max_nb_proxies - m_proxies.size(), picked_seeds)) {
-        BOOST_FOREACH(face_descriptor f, picked_seeds)
+        for(face_descriptor f : picked_seeds)
           add_one_proxy_at(f);
         run(nb_relaxations);
       }
@@ -1045,7 +1047,7 @@ private:
       if (!random_pick_non_seed_faces(nb_to_add, picked_seeds))
         return m_proxies.size();
 
-      BOOST_FOREACH(face_descriptor f, picked_seeds)
+      for(face_descriptor f : picked_seeds)
         add_one_proxy_at(f);
       const FT err = run(nb_relaxations);
       error_drop = err / initial_err;
@@ -1130,7 +1132,7 @@ private:
       face_descriptor f = pxw_itr->seed;
       put(m_fproxy_map, f, pxw_itr->idx);
 
-      BOOST_FOREACH(face_descriptor fadj, faces_around_face(halfedge(f, *m_ptm), *m_ptm)) {
+      for(face_descriptor fadj : faces_around_face(halfedge(f, *m_ptm), *m_ptm)) {
         if (fadj != boost::graph_traits<TriangleMesh>::null_face()
             && get(m_fproxy_map, fadj) == CGAL_VSA_INVALID_TAG) {
           face_pqueue.push(Face_to_integrate(
@@ -1144,7 +1146,7 @@ private:
       face_pqueue.pop();
       if (get(m_fproxy_map, c.f) == CGAL_VSA_INVALID_TAG) {
         put(m_fproxy_map, c.f, c.px);
-        BOOST_FOREACH(face_descriptor fadj, faces_around_face(halfedge(c.f, *m_ptm), *m_ptm)) {
+        for(face_descriptor fadj : faces_around_face(halfedge(c.f, *m_ptm), *m_ptm)) {
           if (fadj != boost::graph_traits<TriangleMesh>::null_face()
             && get(m_fproxy_map, fadj) == CGAL_VSA_INVALID_TAG) {
             face_pqueue.push(Face_to_integrate(
@@ -1165,7 +1167,7 @@ private:
   template<typename ProxyWrapperIterator>
   void fit(const ProxyWrapperIterator beg, const ProxyWrapperIterator end, const CGAL::Sequential_tag &) {
     std::vector<std::list<face_descriptor> > px_faces(m_proxies.size());
-    BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
+    for(face_descriptor f : faces(*m_ptm))
       px_faces[get(m_fproxy_map, f)].push_back(f);
 
     // update proxy parameters and seed
@@ -1186,7 +1188,7 @@ private:
   template<typename ProxyWrapperIterator>
   void fit(const ProxyWrapperIterator beg, const ProxyWrapperIterator end, const CGAL::Parallel_tag &) {
     std::vector<std::list<face_descriptor> > px_faces(m_proxies.size());
-    BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
+    for(face_descriptor f : faces(*m_ptm))
       px_faces[get(m_fproxy_map, f)].push_back(f);
 
     // update proxy parameters and seed
@@ -1219,7 +1221,7 @@ private:
 
     face_descriptor fworst;
     bool first = true;
-    BOOST_FOREACH(face_descriptor f, faces(*m_ptm)) {
+    for(face_descriptor f : faces(*m_ptm)) {
       std::size_t px_idx = get(m_fproxy_map, f);
       if (px_idx != px_worst || f == m_proxies[px_idx].seed)
         continue;
@@ -1261,7 +1263,7 @@ private:
     face_descriptor seed = *px_patch.begin();
     FT err_min = m_metric->compute_error(seed, *m_ptm, px);
     FT sum_error(0.0);
-    BOOST_FOREACH(face_descriptor f, px_patch) {
+    for(face_descriptor f : px_patch) {
       const FT err = m_metric->compute_error(f, *m_ptm, px);
       sum_error += err;
       if (err < err_min) {
@@ -1320,13 +1322,13 @@ private:
       return false;
 
     std::set<face_descriptor> seed_faces_set;
-    BOOST_FOREACH(const Proxy_wrapper &pxw, m_proxies)
+    for(const Proxy_wrapper& pxw : m_proxies)
       seed_faces_set.insert(pxw.seed);
 
     const std::size_t nb_nsf = m_nb_of_faces - m_proxies.size();
     std::vector<face_descriptor> non_seed_faces;
     non_seed_faces.reserve(nb_nsf);
-    BOOST_FOREACH(face_descriptor f, faces(*m_ptm)) {
+    for(face_descriptor f : faces(*m_ptm)) {
       if (seed_faces_set.find(f) != seed_faces_set.end())
         continue;
       non_seed_faces.push_back(f);
@@ -1356,7 +1358,7 @@ private:
    */
   void bootstrap_from_connected_components() {
     // set all faces invalid to mark as unvisited / untagged
-    BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
+    for(face_descriptor f : faces(*m_ptm))
       put(m_fproxy_map, f, CGAL_VSA_INVALID_TAG);
 
     // prepare for connected components visiting
@@ -1374,7 +1376,7 @@ private:
       while (!fstack.empty()) {
         face_descriptor active_face = fstack.top();
         fstack.pop();
-        BOOST_FOREACH(face_descriptor fadj,
+        for(face_descriptor fadj :
           faces_around_face(halfedge(active_face, *m_ptm), *m_ptm)) {
           if (fadj != boost::graph_traits<TriangleMesh>::null_face()
             && get(m_fproxy_map, fadj) == CGAL_VSA_INVALID_TAG) {
@@ -1387,7 +1389,7 @@ private:
       cc_patches.push_back(cc_patch);
       // check if all visited
       if_all_visited = true;
-      BOOST_FOREACH(face_descriptor f, faces(*m_ptm)) {
+      for(face_descriptor f : faces(*m_ptm)) {
         if (get(m_fproxy_map, f) == CGAL_VSA_INVALID_TAG) {
           if_all_visited = false;
           ++cc_idx;
@@ -1398,7 +1400,7 @@ private:
     }
 
     m_proxies.clear();
-    BOOST_FOREACH(const std::list<face_descriptor> &cc_patch, cc_patches)
+    for(const std::list<face_descriptor>& cc_patch : cc_patches)
       m_proxies.push_back(fit_proxy_from_patch(cc_patch, m_proxies.size()));
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
     std::cerr << "#cc " << m_proxies.size() << std::endl;
@@ -1414,28 +1416,32 @@ private:
   void compute_proxy_planes(const bool if_pca_plane) {
     // fit proxy planes, areas, normals
     std::vector<std::list<face_descriptor> > px_faces(m_proxies.size());
-    BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
+    for(face_descriptor f : faces(*m_ptm))
       px_faces[get(m_fproxy_map, f)].push_back(f);
 
-    BOOST_FOREACH(const std::list<face_descriptor> &px_patch, px_faces) {
+    for(const std::list<face_descriptor>& px_patch : px_faces) {
       Plane_3 fit_plane = if_pca_plane ?
         fit_plane_pca(px_patch.begin(), px_patch.end()) :
           fit_plane_area_averaged(px_patch.begin(), px_patch.end());
 
       Vector_3 norm = CGAL::NULL_VECTOR;
       FT area(0.0);
-      BOOST_FOREACH(face_descriptor f, px_patch) {
+      for(face_descriptor f : px_patch) {
         halfedge_descriptor he = halfedge(f, *m_ptm);
         const Point_3 &p0 = m_vpoint_map[source(he, *m_ptm)];
         const Point_3 &p1 = m_vpoint_map[target(he, *m_ptm)];
         const Point_3 &p2 = m_vpoint_map[target(next(he, *m_ptm), *m_ptm)];
-        const FT farea(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
-        const Vector_3 fnorm = CGAL::unit_normal(p0, p1, p2);
+        const FT farea = CGAL::approximate_sqrt(CGAL::squared_area(p0, p1, p2));
+        const Vector_3 fnorm =
+          collinear_functor(p0, p1, p2) ? CGAL::NULL_VECTOR : CGAL::unit_normal(p0, p1, p2);
 
         norm = sum_functor(norm, scale_functor(fnorm, farea));
         area += farea;
       }
-      norm = scale_functor(norm, FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
+      if (norm.squared_length() > FT(0.0))
+        norm = scale_functor(norm, FT(1.0) / CGAL::approximate_sqrt(norm.squared_length()));
+      else
+        norm = Vector_3(FT(0.0), FT(0.0), FT(1.0));
 
       m_px_planes.push_back(Proxy_plane(fit_plane, norm, area));
     }
@@ -1445,10 +1451,10 @@ private:
    * @brief finds the anchors.
    */
   void find_anchors() {
-    BOOST_FOREACH(vertex_descriptor vtx, vertices(*m_ptm)) {
+    for(vertex_descriptor vtx : vertices(*m_ptm)) {
       std::size_t border_count = 0;
 
-      BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(vtx, *m_ptm)) {
+      for(halfedge_descriptor h : halfedges_around_target(vtx, *m_ptm)) {
         if (CGAL::is_border_edge(h, *m_ptm))
           ++border_count;
         else if (get(m_fproxy_map, face(h, *m_ptm)) != get(m_fproxy_map, face(opposite(h, *m_ptm), *m_ptm)))
@@ -1471,7 +1477,7 @@ private:
     const bool with_dihedral_angle) {
     // collect candidate halfedges in a set
     std::set<halfedge_descriptor> he_candidates;
-    BOOST_FOREACH(halfedge_descriptor h, halfedges(*m_ptm)) {
+    for(halfedge_descriptor h : halfedges(*m_ptm)) {
       if (!CGAL::is_border(h, *m_ptm)
         && (CGAL::is_border(opposite(h, *m_ptm), *m_ptm)
           || get(m_fproxy_map, face(h, *m_ptm)) != get(m_fproxy_map, face(opposite(h, *m_ptm), *m_ptm))))
@@ -1504,7 +1510,7 @@ private:
         std::cerr << "#chord_anchor " << m_bcycles.back().num_anchors << std::endl;
 #endif
 
-        BOOST_FOREACH(const halfedge_descriptor &he, chord)
+        for(const halfedge_descriptor he : chord)
           he_candidates.erase(he);
       } while (he_start != he_mark);
     }
@@ -1514,7 +1520,7 @@ private:
    * @brief adds anchors to the boundary cycles with only 2 anchors.
    */
   void add_anchors() {
-    BOOST_FOREACH(const Boundary_cycle &bcycle, m_bcycles) {
+    for(const Boundary_cycle& bcycle : m_bcycles) {
       if (bcycle.num_anchors > 2)
         continue;
 
@@ -1545,20 +1551,35 @@ private:
         continue;
       }
 
-      FT dist_max(0.0);
-      halfedge_descriptor he_max;
+      CGAL_assertion(!chord.empty());
+      halfedge_descriptor he_max = *chord.begin();
       Vector_3 chord_vec = vector_functor(pt_begin, pt_end);
-      chord_vec = scale_functor(chord_vec,
-        FT(1.0 / std::sqrt(CGAL::to_double(chord_vec.squared_length()))));
-      BOOST_FOREACH(const halfedge_descriptor &he, chord) {
-        Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(he, *m_ptm)]);
-        vec = CGAL::cross_product(chord_vec, vec);
-        FT dist(std::sqrt(CGAL::to_double(vec.squared_length())));
-        if (dist > dist_max) {
-          dist_max = dist;
-          he_max = he;
+      if (chord_vec.squared_length() > FT(0.0)) {
+        FT dist_max(0.0);
+        chord_vec = scale_functor(chord_vec,
+          FT(1.0) / CGAL::approximate_sqrt(chord_vec.squared_length()));
+        for(const halfedge_descriptor he : chord) {
+          Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(he, *m_ptm)]);
+          vec = cross_product_functor(chord_vec, vec);
+          const FT dist = CGAL::approximate_sqrt(vec.squared_length());
+          if (dist > dist_max) {
+            dist_max = dist;
+            he_max = he;
+          }
         }
       }
+      else {
+        FT dist_max(0.0);
+        for(const halfedge_descriptor he : chord) {
+          const FT dist = CGAL::approximate_sqrt(CGAL::squared_distance(
+            pt_begin, m_vpoint_map[target(he, *m_ptm)]));
+          if (dist > dist_max) {
+            dist_max = dist;
+            he_max = he;
+          }
+        }
+      }
+
       // add one anchors to this boundary cycle
       attach_anchor(he_max);
       const_cast<Boundary_cycle &>(bcycle).num_anchors++;
@@ -1597,47 +1618,60 @@ private:
     VertexIndex1Map global_vanchor_map = get(boost::vertex_index1, gmain);
     VertexIndex2Map global_vtag_map = get(boost::vertex_index2, gmain);
     EdgeWeightMap global_eweight_map = get(boost::edge_weight, gmain);
-    BOOST_FOREACH(vertex_descriptor v, vertices(*m_ptm)) {
+    for(vertex_descriptor v : vertices(*m_ptm)) {
       sg_vertex_descriptor sgv = add_vertex(gmain);
       global_vanchor_map[sgv] = get(m_vanchor_map, v);
       global_vtag_map[sgv] = get(m_vanchor_map, v);
       vmap.insert(std::pair<vertex_descriptor, sg_vertex_descriptor>(v, sgv));
     }
-    BOOST_FOREACH(edge_descriptor e, edges(*m_ptm)) {
-      vertex_descriptor vs = source(e, *m_ptm);
-      vertex_descriptor vt = target(e, *m_ptm);
-      FT len(std::sqrt(CGAL::to_double(
-        CGAL::squared_distance(m_vpoint_map[vs], m_vpoint_map[vt]))));
+    for(edge_descriptor e : edges(*m_ptm)) {
+      const vertex_descriptor vs = source(e, *m_ptm);
+      const vertex_descriptor vt = target(e, *m_ptm);
+      const FT len = CGAL::approximate_sqrt(CGAL::squared_distance(
+        m_vpoint_map[vs], m_vpoint_map[vt]));
       add_edge(to_sgv_map[vs], to_sgv_map[vt], len, gmain);
     }
 
     std::vector<VertexVector> vertex_patches(m_proxies.size());
-    BOOST_FOREACH(vertex_descriptor v, vertices(*m_ptm)) {
+    for(vertex_descriptor v : vertices(*m_ptm)) {
       std::set<std::size_t> px_set;
-      BOOST_FOREACH(face_descriptor f, faces_around_target(halfedge(v, *m_ptm), *m_ptm)) {
+      for(face_descriptor f : faces_around_target(halfedge(v, *m_ptm), *m_ptm)) {
         if (f != boost::graph_traits<TriangleMesh>::null_face())
           px_set.insert(get(m_fproxy_map, f));
       }
-      BOOST_FOREACH(std::size_t p, px_set)
+      for(std::size_t p : px_set)
         vertex_patches[p].push_back(to_sgv_map[v]);
     }
-    BOOST_FOREACH(VertexVector &vpatch, vertex_patches) {
+    for(VertexVector& vpatch : vertex_patches) {
       // add a super vertex connecting to its boundary anchors in each patch
       const sg_vertex_descriptor superv = add_vertex(gmain);
       global_vanchor_map[superv] = CGAL_VSA_INVALID_TAG;
       global_vtag_map[superv] = CGAL_VSA_INVALID_TAG;
-      BOOST_FOREACH(sg_vertex_descriptor v, vpatch) {
-        if (is_anchor_attached(v, global_vanchor_map))
+      int anchor_count = 0;
+      for(sg_vertex_descriptor v : vpatch) {
+        if (is_anchor_attached(v, global_vanchor_map)) {
           add_edge(superv, v, FT(0.0), gmain);
+          anchor_count++;
+        }
       }
-      vpatch.push_back(superv);
+      CGAL_assertion(anchor_count >=3 || anchor_count == 0);
+      // ball patch has no boundary or anchor, usually are small floating parts
+      // push dummy source vertex in the patch
+      if (anchor_count == 0)
+        vpatch.push_back(boost::graph_traits<SubGraph>::null_vertex());
+      else
+        vpatch.push_back(superv);
     }
 
     // multi-source Dijkstra's shortest path algorithm applied to each proxy patch
-    BOOST_FOREACH(VertexVector &vpatch, vertex_patches) {
+    for(VertexVector& vpatch : vertex_patches) {
+      // ignore ball patch
+      if (vpatch.back() == boost::graph_traits<SubGraph>::null_vertex())
+        continue;
+
       // construct subgraph
       SubGraph &glocal = gmain.create_subgraph();
-      BOOST_FOREACH(sg_vertex_descriptor v, vpatch)
+      for(sg_vertex_descriptor v : vpatch)
         add_vertex(v, glocal);
 
       // most subgraph functions work with local descriptors
@@ -1646,12 +1680,13 @@ private:
       EdgeWeightMap local_eweight_map = get(boost::edge_weight, glocal);
 
       const sg_vertex_descriptor source = glocal.global_to_local(vpatch.back());
-      VertexVector pred(num_vertices(glocal));
+      VertexVector pred(num_vertices(glocal),
+        boost::graph_traits<SubGraph>::null_vertex());
       boost::dijkstra_shortest_paths(glocal, source,
         boost::predecessor_map(&pred[0]).weight_map(local_eweight_map));
 
       // backtrack to the anchor and tag each vertex in the local patch graph
-      BOOST_FOREACH(sg_vertex_descriptor v, vertices(glocal)) {
+      for(sg_vertex_descriptor v : make_range(vertices(glocal))) {
         // skip the added super source vertex in the patch
         if (v == source)
           continue;
@@ -1663,7 +1698,7 @@ private:
     }
 
     // tag all boundary chords
-    BOOST_FOREACH(const Boundary_cycle &bcycle, m_bcycles) {
+    for(const Boundary_cycle& bcycle : m_bcycles) {
       halfedge_descriptor he = bcycle.he_head;
       do {
         Boundary_chord chord;
@@ -1671,7 +1706,7 @@ private:
 
         std::vector<FT> vdist;
         vdist.push_back(FT(0.0));
-        BOOST_FOREACH(halfedge_descriptor h, chord) {
+        for(halfedge_descriptor h : chord) {
           FT elen = global_eweight_map[edge(
             to_sgv_map[source(h, *m_ptm)],
             to_sgv_map[target(h, *m_ptm)],
@@ -1693,13 +1728,13 @@ private:
     }
 
     // collect triangles
-    BOOST_FOREACH(face_descriptor f, faces(*m_ptm)) {
+    for(face_descriptor f : faces(*m_ptm)) {
       halfedge_descriptor he = halfedge(f, *m_ptm);
       std::size_t i = global_vtag_map[to_sgv_map[source(he, *m_ptm)]];
       std::size_t j = global_vtag_map[to_sgv_map[target(he, *m_ptm)]];
       std::size_t k = global_vtag_map[to_sgv_map[target(next(he, *m_ptm), *m_ptm)]];
       if (i != j && i != k && j != k) {
-        CGAL::cpp11::array<std::size_t, 3> t;
+        std::array<std::size_t, 3> t;
         t[0] = i;
         t[1] = j;
         t[2] = k;
@@ -1743,7 +1778,7 @@ private:
    */
   void walk_to_next_border_halfedge(halfedge_descriptor &he_start) const {
     const std::size_t px_idx = get(m_fproxy_map, face(he_start, *m_ptm));
-    BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(he_start, *m_ptm)) {
+    for(halfedge_descriptor h : halfedges_around_target(he_start, *m_ptm)) {
       if (CGAL::is_border(h, *m_ptm) || get(m_fproxy_map, face(h, *m_ptm)) != px_idx) {
         he_start = opposite(h, *m_ptm);
         return;
@@ -1778,7 +1813,7 @@ private:
       return 1;
 
     bool if_subdivide = false;
-    Boundary_chord_iterator chord_max;
+    Boundary_chord_iterator chord_max = chord_begin;
     const Point_3 &pt_begin = m_vpoint_map[source(he_first, *m_ptm)];
     const Point_3 &pt_end = m_vpoint_map[target(he_last, *m_ptm)];
     if (anchor_first == anchor_last) {
@@ -1787,8 +1822,8 @@ private:
 
       FT dist_max(0.0);
       for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
-        FT dist = CGAL::squared_distance(pt_begin, m_vpoint_map[target(*citr, *m_ptm)]);
-        dist = FT(std::sqrt(CGAL::to_double(dist)));
+        const FT dist = CGAL::approximate_sqrt(CGAL::squared_distance(
+          pt_begin, m_vpoint_map[target(*citr, *m_ptm)]));
         if (dist > dist_max) {
           chord_max = citr;
           dist_max = dist;
@@ -1800,21 +1835,34 @@ private:
     else {
       FT dist_max(0.0);
       Vector_3 chord_vec = vector_functor(pt_begin, pt_end);
-      FT chord_len(std::sqrt(CGAL::to_double(chord_vec.squared_length())));
-      chord_vec = scale_functor(chord_vec, FT(1.0) / chord_len);
-
-      for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
-        Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(*citr, *m_ptm)]);
-        vec = CGAL::cross_product(chord_vec, vec);
-        FT dist(std::sqrt(CGAL::to_double(vec.squared_length())));
-        if (dist > dist_max) {
-          chord_max = citr;
-          dist_max = dist;
+      const FT chord_len = CGAL::approximate_sqrt(chord_vec.squared_length());
+      bool degenerate_chord = false;
+      if (chord_len > FT(0.0)) {
+        chord_vec = scale_functor(chord_vec, FT(1.0) / chord_len);
+        for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
+          Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(*citr, *m_ptm)]);
+          vec = cross_product_functor(chord_vec, vec);
+          const FT dist = CGAL::approximate_sqrt(vec.squared_length());
+          if (dist > dist_max) {
+            chord_max = citr;
+            dist_max = dist;
+          }
+        }
+      }
+      else {
+        degenerate_chord = true;
+        for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
+          const FT dist = CGAL::approximate_sqrt(CGAL::squared_distance(
+            pt_begin, m_vpoint_map[target(*citr, *m_ptm)]));
+          if (dist > dist_max) {
+            chord_max = citr;
+            dist_max = dist;
+          }
         }
       }
 
       FT criterion = dist_max;
-      if (relative_to_chord)
+      if (relative_to_chord && !degenerate_chord)
         criterion /= chord_len;
       else
         criterion /= m_average_edge_length;
@@ -1827,9 +1875,9 @@ private:
           px_right = get(m_fproxy_map, face(opposite(he_first, *m_ptm), *m_ptm));
         FT norm_sin(1.0);
         if (!CGAL::is_border(opposite(he_first, *m_ptm), *m_ptm)) {
-          Vector_3 vec = CGAL::cross_product(
+          Vector_3 vec = cross_product_functor(
             m_px_planes[px_left].normal, m_px_planes[px_right].normal);
-          norm_sin = FT(std::sqrt(CGAL::to_double(scalar_product_functor(vec, vec))));
+          norm_sin = CGAL::approximate_sqrt(vec.squared_length());
         }
         criterion *= norm_sin;
       }
@@ -1858,7 +1906,7 @@ private:
    * @param he a halfedge descriptor
    * @return `true` is attached with an anchor, and `false` otherwise.
    */
-  bool is_anchor_attached(const halfedge_descriptor &he) const {
+  bool is_anchor_attached(const halfedge_descriptor he) const {
     return is_anchor_attached(target(he, *m_ptm), m_vanchor_map);
   }
 
@@ -1871,7 +1919,7 @@ private:
    */
   template<typename VertexAnchorIndexMap>
   bool is_anchor_attached(
-    const typename boost::property_traits<VertexAnchorIndexMap>::key_type &vtx,
+    const typename boost::property_traits<VertexAnchorIndexMap>::key_type vtx,
     const VertexAnchorIndexMap &vanchor_map) const {
     return get(vanchor_map, vtx) != CGAL_VSA_INVALID_TAG;
   }
@@ -1880,7 +1928,7 @@ private:
    * @brief attaches an anchor to the vertex.
    * @param vtx vertex
    */
-  void attach_anchor(const vertex_descriptor &vtx) {
+  void attach_anchor(const vertex_descriptor vtx) {
     put(m_vanchor_map, vtx, m_anchors.size());
     // default anchor location is the vertex point
     m_anchors.push_back(Anchor(vtx, m_vpoint_map[vtx]));
@@ -1890,7 +1938,7 @@ private:
    * @brief attaches an anchor to the target vertex of the halfedge.
    * @param he halfedge
    */
-  void attach_anchor(const halfedge_descriptor &he) {
+  void attach_anchor(const halfedge_descriptor he) {
     attach_anchor(target(he, *m_ptm));
   }
 
@@ -1899,29 +1947,32 @@ private:
    * the anchor vertex to the incident proxy plane.
    */
   void optimize_anchor_location() {
-    BOOST_FOREACH(Anchor &a, m_anchors) {
+    for(Anchor& a : m_anchors) {
       const vertex_descriptor v = a.vtx;
       // incident proxy set
       std::set<std::size_t> px_set;
-      BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, *m_ptm)) {
+      for(halfedge_descriptor h : halfedges_around_target(v, *m_ptm)) {
         if (!CGAL::is_border(h, *m_ptm))
           px_set.insert(get(m_fproxy_map, face(h, *m_ptm)));
       }
 
       // projection
       FT sum_area(0.0);
-      Vector_3 vec = vector_functor(CGAL::ORIGIN, point_functor(CGAL::ORIGIN));
+      Vector_3 vec = CGAL::NULL_VECTOR;
       const Point_3 vtx_pt = m_vpoint_map[v];
-      BOOST_FOREACH(const std::size_t px_idx, px_set) {
+      for(const std::size_t px_idx : px_set) {
         const Vector_3 proj = vector_functor(
           CGAL::ORIGIN, m_px_planes[px_idx].plane.projection(vtx_pt));
         const FT area = m_px_planes[px_idx].area;
         vec = sum_functor(vec, scale_functor(proj, area));
         sum_area += area;
       }
-      vec = scale_functor(vec, FT(1.0) / sum_area);
-
-      a.pos = translate_point_functor(CGAL::ORIGIN, vec);
+      if (sum_area > FT(0.0))
+        a.pos = translate_point_functor(
+          CGAL::ORIGIN,
+          scale_functor(vec, FT(1.0) / sum_area));
+      else
+        a.pos = vtx_pt;
     }
   }
 
@@ -1934,11 +1985,11 @@ private:
   FT compute_averaged_edge_length(const TriangleMesh &tm, const VertexPointMap &vpoint_map) const {
     // compute average edge length
     FT sum(0.0);
-    BOOST_FOREACH(edge_descriptor e, edges(tm)) {
+    for(edge_descriptor e : edges(tm)) {
       const vertex_descriptor vs = source(e, tm);
       const vertex_descriptor vt = target(e, tm);
-      sum += FT(std::sqrt(CGAL::to_double(
-        CGAL::squared_distance(vpoint_map[vs], vpoint_map[vt]))));
+      sum += CGAL::approximate_sqrt(CGAL::squared_distance(
+        vpoint_map[vs], vpoint_map[vt]));
     }
     return sum / num_edges(tm);
   }
@@ -1964,16 +2015,20 @@ private:
       const Point_3 &p2 = m_vpoint_map[target(next(he, *m_ptm), *m_ptm)];
 
       Vector_3 vec = vector_functor(CGAL::ORIGIN, CGAL::centroid(p0, p1, p2));
-      FT farea(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
-      Vector_3 fnorm = CGAL::unit_normal(p0, p1, p2);
+      const FT farea = CGAL::approximate_sqrt(CGAL::squared_area(p0, p1, p2));
+      Vector_3 fnorm =
+        collinear_functor(p0, p1, p2) ? CGAL::NULL_VECTOR : CGAL::unit_normal(p0, p1, p2);
 
       norm = sum_functor(norm, scale_functor(fnorm, farea));
       cent = sum_functor(cent, scale_functor(vec, farea));
       sum_area += farea;
     }
-    norm = scale_functor(norm,
-      FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));
-    cent = scale_functor(cent, FT(1.0) / sum_area);
+    if (norm.squared_length() > FT(0.0))
+      norm = scale_functor(norm, FT(1.0) / CGAL::approximate_sqrt(norm.squared_length()));
+    else
+      norm = Vector_3(FT(0.0), FT(0.0), FT(1.0));
+    if (sum_area > FT(0.0))
+      cent = scale_functor(cent, FT(1.0) / sum_area);
 
     return Plane_3(CGAL::ORIGIN + cent, norm);
   }

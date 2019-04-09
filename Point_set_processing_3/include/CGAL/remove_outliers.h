@@ -29,7 +29,7 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
-#include <CGAL/function.h>
+#include <functional>
 
 #include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -134,7 +134,7 @@ compute_avg_knn_sq_distance_3(
      \cgalParamBegin{threshold_distance} minimum distance for a point to be considered as outlier
      (distance here is the square root of the average squared distance to K nearest neighbors).\cgalParamEnd
      \cgalParamBegin{callback} an instance of
-      `cpp11::function<bool(double)>`. It is called regularly when the
+      `std::function<bool(double)>`. It is called regularly when the
       algorithm is running: the current advancement (between 0. and
       1.) is passed as parameter. If it returns `true`, then the
       algorithm continues its execution normally; if it returns
@@ -171,8 +171,8 @@ remove_outliers(
   PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
   double threshold_percent = choose_param(get_param(np, internal_np::threshold_percent), 10.);
   double threshold_distance = choose_param(get_param(np, internal_np::threshold_distance), 0.);
-  const cpp11::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
-                                                               cpp11::function<bool(double)>());
+  const std::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+                                                               std::function<bool(double)>());
   
   typedef typename Kernel::FT FT;
   

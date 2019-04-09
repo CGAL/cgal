@@ -98,14 +98,15 @@ namespace CGAL {
         }
         else
             scanner.skip_to_next_vertex(i);
+        if(!in)
+          return false;
     }
-    if(!in)
-      return false;
     bool has_fcolors = false;
     for (std::size_t i = 0; i < scanner.size_of_facets(); ++i) {
       std::size_t no;
       scanner.scan_facet( no, i);
-
+      if(!in)
+        return false;
       IO::internal::resize(polygons[i], no);
       for(std::size_t j = 0; j < no; ++j) {
         std::size_t id;

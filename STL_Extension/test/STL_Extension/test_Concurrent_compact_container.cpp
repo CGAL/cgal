@@ -14,7 +14,6 @@ int main()
 
 #else
 
-#include <CGAL/basic.h>
 #include <cassert>
 #include <cstddef>
 #include <list>
@@ -22,7 +21,7 @@ int main()
 #include <CGAL/Compact_container.h>
 #include <CGAL/Concurrent_compact_container.h>
 #include <CGAL/Random.h>
-#include <CGAL/Testsuite/use.h>
+#include <CGAL/use.h>
 
 # include <tbb/task_scheduler_init.h>
 # include <tbb/parallel_for.h>

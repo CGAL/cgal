@@ -98,16 +98,15 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
             this, SLOT(callDraw()));
     CGAL::Three::Scene_group_item* group =
             qobject_cast<CGAL::Three::Scene_group_item*>(m_entries[index]);
+    QList<Scene_item*> group_children;
     if(group)
     {
-      QList<int> group_children;
       Q_FOREACH(Item_id id, group->getChildren())
       {
         CGAL::Three::Scene_item* child = group->getChild(id);
         group->unlockChild(child);
-        group_children << item_id(child);
+        group_children << child;
       }
-      erase(group_children);
     }
     CGAL::Three::Scene_group_item* parent = m_entries[index]->parentGroup();
     bool is_locked = false;
@@ -148,6 +147,10 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
     Q_EMIT restoreCollapsedState();
     redraw_model();
     Q_EMIT selectionChanged(index);
+    Q_FOREACH(Scene_item* child, group_children)
+    {
+      erase(item_id(child));
+    }
     return item;
 }
 
@@ -1013,10 +1016,13 @@ Scene::setData(const QModelIndex &index,
     {
         RenderingMode rendering_mode = static_cast<RenderingMode>(value.toInt());
         // Find next supported rendering mode
+        int counter = 0;
         while ( ! item->supportsRenderingMode(rendering_mode)
                 )
         {
             rendering_mode = static_cast<RenderingMode>( (rendering_mode+1) % NumberOfRenderingMode );
+            if(counter++ == NumberOfRenderingMode)
+              break;
         }
         item->setRenderingMode(rendering_mode);
         QModelIndex nindex = createIndex(m_entries.size()-1,RenderingModeColumn+1);

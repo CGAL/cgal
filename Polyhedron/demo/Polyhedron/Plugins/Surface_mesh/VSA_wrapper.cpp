@@ -8,14 +8,14 @@ VSA_wrapper::VSA_wrapper(const SMesh &mesh) :
 {
   Vertex_point_map vpm = get(boost::vertex_point, const_cast<SMesh &>(mesh));
 
-  BOOST_FOREACH(face_descriptor f, faces(mesh)) {
+  for(face_descriptor f : faces(mesh)) {
     const halfedge_descriptor he = halfedge(f, mesh);
     const Point_3 &p0 = vpm[source(he, mesh)];
     const Point_3 &p1 = vpm[target(he, mesh)];
     const Point_3 &p2 = vpm[target(next(he, mesh), mesh)];
 
     put(m_center_pmap, f, CGAL::centroid(p0, p1, p2));
-    put(m_area_pmap, f, std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
+    put(m_area_pmap, f, CGAL::sqrt(CGAL::squared_area(p0, p1, p2)));
   }
 
   m_pl21_metric = new L21_metric(mesh, vpm);

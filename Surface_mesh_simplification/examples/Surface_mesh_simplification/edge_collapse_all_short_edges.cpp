@@ -48,7 +48,9 @@ int main( int argc, char** argv )
   std::cout << "\nFinished...\n" << r << " edges removed.\n"
             << (surface_mesh.size_of_halfedges()/2) << " final edges.\n" ;
 
-  std::ofstream os( argc > 3 ? argv[3] : "out.off" ) ; os << surface_mesh ;
+  std::ofstream os( argc > 3 ? argv[3] : "out.off" ) ;
+  os.precision(17);
+  os << surface_mesh ;
 
   return EXIT_SUCCESS ;
 }

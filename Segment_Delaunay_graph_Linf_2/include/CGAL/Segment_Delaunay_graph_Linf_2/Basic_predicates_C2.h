@@ -391,7 +391,7 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
     Comparison_result cmpxqp = cmpx(q,p);
     CGAL_assertion(cmpxqp != EQUAL);
     b = (cmpxqp == SMALLER) ? RT(-1) : RT(1);
-    c = (cmpxqp == SMALLER) ? p.y() : -p.y();
+    c = (cmpxqp == SMALLER) ? p.y() : RT(-p.y());
     return Line_2(RT(0), b, c);
   }
 
@@ -405,7 +405,7 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
     CGAL_assertion(cmpypq != EQUAL);
     a = (cmpypq == SMALLER) ? RT(-1) : RT(1);
     //a = RT(CGAL::sign(p.y() - q.y()));
-    c = (cmpypq == SMALLER) ? p.x() : -p.x();
+    c = (cmpypq == SMALLER) ? p.x() : RT(-p.x());
     return Line_2(a, RT(0), c);
   }
 
@@ -457,7 +457,7 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
     const RT nomin = CGAL::abs(l.a() * p.x() + l.b() * p.y() + l.c());
     const RT denom = CGAL::abs(
           l.a() +
-          ( CGAL::sign(l.a()) == CGAL::sign(l.b())? l.b() : -l.b() ) );
+          ( CGAL::sign(l.a()) == CGAL::sign(l.b())? l.b() : RT(-l.b()) ) );
     return std::pair<RT,RT>(nomin, denom);
   }
 

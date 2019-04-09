@@ -75,6 +75,10 @@ public:
   template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Vector_d> >::value>::type> explicit Vector_d(U&&...u)
 	  : Rep(CVBase()(std::forward<U>(u)...)){}
 
+#if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
+#  pragma warning(pop)
+#endif
+  
 //  // called from Construct_vector_d
 //  template<class...U> explicit Vector_d(Eval_functor&&,U&&...u)
 //	  : Rep(Eval_functor(), std::forward<U>(u)...){}

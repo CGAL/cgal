@@ -1,13 +1,9 @@
 // 2D intersection tests.
 
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Homogeneous.h>
+
 #include <CGAL/Intersection_traits_2.h>
-#include <CGAL/Object.h>
-#include <CGAL/Line_2.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Segment_2.h>
-#include <CGAL/Ray_2.h>
-#include <CGAL/Triangle_2.h>
-#include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Intersections_2/Segment_2_Segment_2.h>
 #include <CGAL/Intersections_2/Line_2_Line_2.h>
 #include <CGAL/Intersections_2/Ray_2_Ray_2.h>
@@ -19,9 +15,7 @@
 #include <CGAL/Intersections_2/Bbox_2_Point_2.h>
 #include <CGAL/Intersections_2/Circle_2_Iso_rectangle_2.h>
 #include <CGAL/Intersections_2/Circle_2_Point_2.h>
-
-#include <CGAL/Cartesian.h>
-#include <CGAL/Homogeneous.h>
+#include <CGAL/Intersections_2/Point_2_Point_2.h>
 
 #include <vector>
 #include <iostream>
@@ -64,13 +58,13 @@ inline double to_nt(int d)
 template < typename K >
 struct Test {
 
-  typedef CGAL::Point_2< K >          P;
-  typedef CGAL::Line_2< K >           L;
-  typedef CGAL::Segment_2< K >        S;
-  typedef CGAL::Ray_2< K >            R;
-  typedef CGAL::Triangle_2< K >       T;
-  typedef CGAL::Iso_rectangle_2< K >  Rec;
-  typedef CGAL::Circle_2< K >         C;
+  typedef typename K::Point_2               P;
+  typedef typename K::Line_2                L;
+  typedef typename K::Segment_2             S;
+  typedef typename K::Ray_2                 R;
+  typedef typename K::Triangle_2            T;
+  typedef typename K::Iso_rectangle_2       Rec;
+  typedef typename K::Circle_2              C;
   typedef std::vector<P>              Pol;
 
 
@@ -298,6 +292,13 @@ check_no_intersection  (L(p(0, 0), p(10,10)), L(p(8,7), p(1, 0)));
     check_intersection<S>  (S(p(-10, -10), p(  0,  10)), T(p(   -9,   9), p(  14,   8), p(-2,-16)));
   }
 
+  void P_P()
+  {
+    std::cout << "Point - Point\n";
+    check_no_intersection<P>  (p(  8, 4), p(-4,  8));
+    check_intersection<P>     (p(  8, 4), p( 8,  4));
+  }
+
   void P_T()
   {
     std::cout << "Point - Triangle\n";
@@ -359,6 +360,7 @@ check_no_intersection  (L(p(0, 0), p(10,10)), L(p(8,7), p(1, 0)));
     R_T();
     S_T();
     P_T();
+    P_P();
     L_Rec();
     R_Rec();
     S_Rec();
@@ -370,7 +372,7 @@ check_no_intersection  (L(p(0, 0), p(10,10)), L(p(8,7), p(1, 0)));
 
 int main()
 {
-	Test< CGAL::Cartesian<double>   >().run();
+	Test< CGAL::Simple_cartesian<double>   >().run();
 	Test< CGAL::Homogeneous<double> >().run();
 	// TODO : test more kernels.
 }

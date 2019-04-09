@@ -132,7 +132,7 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
   Scene_surface_mesh_item* item = new Scene_surface_mesh_item(surface_mesh);
   item->setName(fileinfo.completeBaseName());
   std::size_t isolated_v = 0;
-  BOOST_FOREACH(vertex_descriptor v, vertices(*surface_mesh))
+  for(vertex_descriptor v : vertices(*surface_mesh))
   {
     if(surface_mesh->is_isolated(v))
     {

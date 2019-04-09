@@ -31,14 +31,12 @@
 #include <CGAL/IO/write_off_points.h>
 
 #include <CGAL/config.h>
-#if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
 #ifdef CGAL_LINKED_WITH_LASLIB
 #include <CGAL/IO/read_las_points.h>
 #include <CGAL/IO/write_las_points.h>
 #endif // LAS
 #include <CGAL/IO/read_ply_points.h>
 #include <CGAL/IO/write_ply_points.h>
-#endif // CXX11
 
 namespace CGAL {
 
@@ -119,7 +117,6 @@ namespace internal
     }
   };
   
-#if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
 namespace PLY
 {
 
@@ -300,7 +297,6 @@ public:
 };
 
 }
-#endif
 
 }
 
@@ -369,7 +365,6 @@ read_off_point_set(
 }
 
 
-#if (!defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)) || defined(DOXYGEN_RUNNING)
 /*!
   \ingroup PkgPointSet3IO
  */
@@ -473,9 +468,18 @@ write_ply_point_set(
 
       if (prop[i] == "point")
         {
-          stream << "property double x" << std::endl
-                 << "property double y" << std::endl
-                 << "property double z" << std::endl;
+          if (boost::is_same<typename GetFTFromMap<typename Point_set::Point_map>::type, float>::value)
+          {
+            stream << "property float x" << std::endl
+                   << "property float y" << std::endl
+                   << "property float z" << std::endl;
+          }
+          else
+          {
+            stream << "property double x" << std::endl
+                   << "property double y" << std::endl
+                   << "property double z" << std::endl;
+          }
           printers.push_back (new internal::Property_printer<Point,Vector,Point>(point_set.point_map()));
           continue;
         }
@@ -859,40 +863,6 @@ write_las_point_set(
 }
   
 #endif // LAS
-#else // CXX11
-template<typename T>
-struct template_tag_false : public CGAL::Tag_false
-{ };
-  
-template <typename Point, typename Vector>
-bool
-read_ply_point_set(std::istream&, CGAL::Point_set_3<Point, Vector>&, std::string* = NULL)
-{
-  CGAL_static_assertion_msg (template_tag_false<Point>::value, "CGAL PLY reader requires a C++11 compiler");
-  return false;
-}
-template <typename Point, typename Vector>
-bool
-write_ply_point_set(std::ostream&, const CGAL::Point_set_3<Point, Vector>&, std::string* = NULL)
-{
-  CGAL_static_assertion_msg (template_tag_false<Point>::value, "CGAL PLY writer requires a C++11 compiler");
-  return false;
-}
-template <typename Point, typename Vector>
-bool
-read_las_point_set(std::istream&, CGAL::Point_set_3<Point, Vector>&)
-{
-  CGAL_static_assertion_msg (template_tag_false<Point>::value, "CGAL LAS reader requires a C++11 compiler");
-  return false;
-}
-template <typename Point, typename Vector>
-bool
-write_las_point_set(std::ostream&, const CGAL::Point_set_3<Point, Vector>&)
-{
-  CGAL_static_assertion_msg (template_tag_false<Point>::value, "CGAL LAS writer requires a C++11 compiler");
-  return false;
-}
-#endif // CXX11
   
 /*!
   \ingroup PkgPointSet3IO
@@ -963,14 +933,12 @@ std::istream& operator>>(std::istream& is,
   is.seekg(0);
   if (line.find("OFF") == 0 || line.find("NOFF") == 0)
     CGAL::read_off_point_set (is, ps);
-#if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
   else if (line.find("ply") == 0)
     CGAL::read_ply_point_set (is, ps);
 #ifdef CGAL_LINKED_WITH_LASLIB
   else if (line.find("LASF") == 0)
     CGAL::read_las_point_set (is, ps);
 #endif // LAS
-#endif // CXX11
   else
     CGAL::read_xyz_point_set (is, ps);
     

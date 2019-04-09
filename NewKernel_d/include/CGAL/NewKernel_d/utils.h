@@ -167,7 +167,6 @@ struct Has_type_different_from <T, No, true>
 		return internal::do_call_on_tuple_elements(std::forward<F>(f),std::move(t),
 				std::make_index_sequence<sizeof...(U)>());
 	}
-
 	template<class A> struct Factory {
 	  typedef A result_type;
 	  template<class...U> result_type operator()(U&&...u)const{

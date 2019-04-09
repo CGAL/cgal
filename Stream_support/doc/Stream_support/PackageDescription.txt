@@ -25,10 +25,10 @@ the printing mode.
 
 \cgalClassifedRefPages
 
-## Enum ##
+\cgalCRPSection{Enum}
 - `CGAL::IO::Mode`
 
-## Functions ##
+\cgalCRPSection{Functions}
 - `CGAL::get_mode()`
 - `CGAL::is_ascii()`
 - `CGAL::is_binary()`
@@ -42,7 +42,7 @@ the printing mode.
 - `CGAL::iformat()`
 - `CGAL::oformat()`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Color`
 - `CGAL::Istream_iterator<T,Stream>`
 - `CGAL::Ostream_iterator<T,Stream>`
