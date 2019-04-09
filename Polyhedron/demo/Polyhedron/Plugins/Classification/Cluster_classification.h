@@ -27,7 +27,6 @@ class Cluster_classification : public Item_classification_base
  public:
   typedef Kernel::Point_3 Point_3;
   typedef Kernel::Vector_3 Vector_3;
-  typedef CGAL::Classification::RGB_Color Color;
   
   typedef Point_set::Point_map Point_map;
   typedef Point_set::Vector_map Vector_map;
@@ -382,7 +381,10 @@ class Cluster_classification : public Item_classification_base
 
   std::vector<Cluster> m_clusters;
 
-  Point_set::Property_map<Color> m_color;
+  Point_set::Property_map<unsigned char> m_red;
+  Point_set::Property_map<unsigned char> m_green;
+  Point_set::Property_map<unsigned char> m_blue;
+  Point_set::Property_map<CGAL::Color> m_color;
   Point_set::Property_map<int> m_cluster_id;
   Point_set::Property_map<int> m_training;
   Point_set::Property_map<int> m_classif;
