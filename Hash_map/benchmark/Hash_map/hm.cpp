@@ -40,7 +40,7 @@ run(const G& g)
   std::vector<vertex_descriptor> V, V2;
   std::vector<Point_3> P1, P2;
 
-  BOOST_FOREACH(vertex_descriptor vd, vertices(g)){
+  for(vertex_descriptor vd : vertices(g)){
     V.push_back(vd);
     V2.push_back(vd);
   }
@@ -53,7 +53,7 @@ run(const G& g)
 #if 0
   t.start();
   Map vm;
-  BOOST_FOREACH(vertex_descriptor vd, V){
+  for(vertex_descriptor vd : V){
     vm[vd] = get(vpm,vd);
   }
   t.stop();  std::cerr << "Insertion:  " << t.time() << " sec.     " << std::endl;
@@ -63,10 +63,10 @@ run(const G& g)
   std::size_t st=0;
 
 #if 0
-  std::cerr << "BOOST_FOREACH std::vector<vertex_descriptor)\n";
+  std::cerr << "foreach std::vector<vertex_descriptor)\n";
   t.reset(); t.start();
   for(int i=0; i<100; i++){
-  BOOST_FOREACH(vertex_descriptor vd, V2){ 
+  for(vertex_descriptor vd : V2){ 
 #ifdef NOHASH    
     st += std::size_t(vd);
 #else 
@@ -80,13 +80,13 @@ run(const G& g)
 #endif 
 
 #if 1
-  std::cerr << "BOOST_FOREACH boost::iterator_range r = vertices(g))\n";
+  std::cerr << "foreach boost::iterator_range r = vertices(g))\n";
 
   t.reset(); t.start();
   for(int i=0; i<100; i++){
   boost::iterator_range<typename boost::graph_traits<G>::vertex_iterator> r = vertices(g);
 
-  BOOST_FOREACH(vertex_descriptor vd, r) {
+  for(vertex_descriptor vd : r) {
 #ifdef NOHASH    
     st += std::size_t(vd);
     // v = v + (get(vpm,vd) - CGAL::ORIGIN);
@@ -101,11 +101,11 @@ run(const G& g)
 
 
 #if 1
-   std::cerr << "BOOST_FOREACH CGAL::Iterator_range r = vertices(g))\n";
+   std::cerr << "foreach CGAL::Iterator_range r = vertices(g))\n";
   t.reset(); t.start();
   for(int i=0; i<100; i++){
   CGAL::Iterator_range<typename boost::graph_traits<G>::vertex_iterator> ir = vertices(g);
-  BOOST_FOREACH(vertex_descriptor vd, ir) {
+  for(vertex_descriptor vd : ir) {
 #ifdef NOHASH
     st += std::size_t(vd);
     //v = v + (get(vpm,vd) - CGAL::ORIGIN);
@@ -121,10 +121,10 @@ run(const G& g)
 
 
 #if 1 
-  std::cerr << "BOOST_FOREACH vertices(g))\n";
+  std::cerr << "foreach vertices(g))\n";
   t.reset(); t.start();
   for(int i=0; i<100; i++){
-  BOOST_FOREACH(vertex_descriptor vd, vertices(g)) {
+  for(vertex_descriptor vd : vertices(g)) {
 #ifdef NOHASH
     st += std::size_t(vd);
     //v = v + (get(vpm,vd) - CGAL::ORIGIN);

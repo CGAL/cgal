@@ -154,9 +154,7 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
 
   SNC_sphere_map(const Base& v) : Base(v), destruct(false) {}
 
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
   SNC_sphere_map(const SNC_sphere_map&)=default;
-#endif
   
   Self& operator=(const Self& M) {
     destruct = M.destruct;

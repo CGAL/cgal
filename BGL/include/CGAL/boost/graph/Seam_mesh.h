@@ -29,7 +29,6 @@
 #include <CGAL/circulator.h>
 #include <CGAL/Unique_hash_map.h>
 
-#include <boost/foreach.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/unordered_set.hpp>
 

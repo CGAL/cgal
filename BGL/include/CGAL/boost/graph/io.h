@@ -22,7 +22,6 @@
 #define CGAL_BOOST_GRAPH_IO_H
 
 #include <boost/container/flat_map.hpp>
-#include <boost/foreach.hpp>
 
 #include <iostream>
 #include <algorithm>
@@ -87,15 +86,15 @@ bool write_wrl(std::ostream& os,
     "coord  Coordinate {\n"
     "point [\n";
 
-  BOOST_FOREACH(vertex_descriptor v, vertices(g)){
+  for(vertex_descriptor v : vertices(g)){
     os <<  get(vpm,v) << ",\n";
       reindex[v]=n++;
   }
   os << "] #point\n"
     "} #coord Coordinate\n"
     "coordIndex  [\n";
-   BOOST_FOREACH(face_descriptor f, faces(g)){
-    BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f,g),g)){
+   for(face_descriptor f : faces(g)){
+    for(vertex_descriptor v : vertices_around_face(halfedge(f,g),g)){
       os << reindex[v] << ",";
     }
     os << "-1,\n";
@@ -152,14 +151,14 @@ bool write_off(std::ostream& os,
   os << "OFF\n" << nv << " " << nf << " 0\n";
   boost::container::flat_map<vertex_descriptor,vertices_size_type> reindex;
   int n = 0;
-  BOOST_FOREACH(vertex_descriptor v, vertices(g)){
+  for(vertex_descriptor v : vertices(g)){
     os << get(vpm,v) << '\n';
     reindex[v]=n++;
   }
   
-  BOOST_FOREACH(face_descriptor f, faces(g)){
+  for(face_descriptor f : faces(g)){
     os << degree(f,g);
-    BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f,g),g)){
+    for(vertex_descriptor v : vertices_around_face(halfedge(f,g),g)){
       os << " " << reindex[v];
     }
     os << '\n';
@@ -376,16 +375,16 @@ bool write_inp(std::ostream& os,
   os << "*Part, name=" << name << "\n*Node\n";
   boost::container::flat_map<vertex_descriptor,vertices_size_type> reindex;
   int n = 1;
-  BOOST_FOREACH(vertex_descriptor v, vertices(g)){
+  for(vertex_descriptor v : vertices(g)){
     Point_3 p =  get(vpm,v);
     os << n << ", " << p.x() << ", " << p.y() << ", " << p.z() << '\n';
     reindex[v]=n++;
   }
   n = 1;
   os << "*Element, type=" << type << std::endl;
-  BOOST_FOREACH(face_descriptor f, faces(g)){
+  for(face_descriptor f : faces(g)){
     os << n++;
-    BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f,g),g)){
+    for(vertex_descriptor v : vertices_around_face(halfedge(f,g),g)){
       os << ", " << reindex[v];
     }
     os << '\n';
@@ -431,7 +430,7 @@ write_polys(std::ostream& os,
   {
     off += 3;
     offsets.push_back(off);
-    BOOST_FOREACH(vertex_descriptor v,
+    for(vertex_descriptor v :
                   vertices_around_face(halfedge(*fit, mesh), mesh))
         connectivity_table.push_back(V[v]);
   }
@@ -481,7 +480,7 @@ write_polys_tag(std::ostream& os,
          fit != faces(mesh).end() ;
          ++fit )
     {
-      BOOST_FOREACH(vertex_descriptor v,
+      for(vertex_descriptor v :
                     vertices_around_face(halfedge(*fit, mesh), mesh))
           os << V[v] << " ";
     }

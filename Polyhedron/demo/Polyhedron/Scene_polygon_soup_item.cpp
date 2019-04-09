@@ -134,7 +134,7 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
     {
      FT::PointAndId pid = pid_stack.back();
      pid_stack.pop_back();
-     BOOST_FOREACH(FT::PointAndId poai, pid_stack)
+     for(FT::PointAndId poai : pid_stack)
      {
       if (pid.point== poai.point)
       {
@@ -276,7 +276,7 @@ Scene_polygon_soup_item_priv::compute_normals_and_vertices() const{
     }
 
     //Non manifold edges
-    BOOST_FOREACH(const Polygon_soup::Edge& edge,
+    for(const Polygon_soup::Edge& edge :
                     soup->non_manifold_edges)
     {
 
@@ -367,7 +367,7 @@ void polygon_mesh_to_soup(PolygonMesh& mesh, Polygon_soup& soup)
       faces(mesh).begin(); fit != faces(mesh).end(); ++fit)
   {
     Polygon_soup::Polygon_3 polygon;
-    BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor hd,
+    for(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor hd :
                   CGAL::halfedges_around_face(halfedge(*fit, mesh), mesh))
     {
       polygon.push_back(vim[target(hd, mesh)]);
@@ -433,11 +433,11 @@ Scene_polygon_soup_item::orient()
   //first skip degenerate polygons
   Polygon_soup::Polygons valid_polygons;
   valid_polygons.reserve(d->soup->polygons.size());
-  BOOST_FOREACH(Polygon_soup::Polygon_3& polygon, d->soup->polygons)
+  for(Polygon_soup::Polygon_3& polygon : d->soup->polygons)
   {
     std::set<std::size_t> vids;
     bool to_remove=false;
-    BOOST_FOREACH(std::size_t id, polygon)
+    for(std::size_t id : polygon)
     {
       if (!vids.insert(id).second){
         to_remove=true;
@@ -671,7 +671,7 @@ void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::
 
     /// add points
     d->soup->points.reserve(points.size());
-    BOOST_FOREACH(const Point& p, points)
+    for(const Point& p : points)
             d->soup->points.push_back( Point_3(p[0], p[1], p[2]) );
 
     /// add polygons
@@ -701,8 +701,8 @@ void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::
 }
 // Force the instanciation of the template function for the types used in the STL_io_plugin. This is needed
 // because the d-pointer forbid the definition in the .h for this function.
-template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<CGAL::cpp11::array<double, 3>, CGAL::cpp11::array<int, 3> >
-(const std::vector<CGAL::cpp11::array<double, 3> >& points, const std::vector<CGAL::cpp11::array<int, 3> >& polygons);
+template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<std::array<double, 3>, std::array<int, 3> >
+(const std::vector<std::array<double, 3> >& points, const std::vector<std::array<int, 3> >& polygons);
 template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<CGAL::Epick::Point_3, std::vector<std::size_t> >
 (const std::vector<CGAL::Epick::Point_3>& points, const std::vector<std::vector<std::size_t> >& polygons);
 template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<CGAL::Epick::Point_3, std::vector<std::size_t> >

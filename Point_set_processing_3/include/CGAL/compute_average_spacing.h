@@ -31,7 +31,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/assertions.h>
-#include <CGAL/function.h>
+#include <functional>
 
 #include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -168,7 +168,7 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
      \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
      If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
      \cgalParamBegin{callback} an instance of
-      `cpp11::function<bool(double)>`. It is called regularly when the
+      `std::function<bool(double)>`. It is called regularly when the
       algorithm is running: the current advancement (between 0. and
       1.) is passed as parameter. If it returns `true`, then the
       algorithm continues its execution normally; if it returns
@@ -205,8 +205,8 @@ compute_average_spacing(
   typedef typename Kernel::Point_3 Point;
 
   PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-  const cpp11::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
-                                                               cpp11::function<bool(double)>());
+  const std::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+                                                               std::function<bool(double)>());
   
   // types for K nearest neighbors search structure
   typedef typename Kernel::FT FT;

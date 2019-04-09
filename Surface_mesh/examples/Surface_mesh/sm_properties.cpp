@@ -3,7 +3,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <boost/foreach.hpp>
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
@@ -50,12 +49,12 @@ int main()
 
   // retrieve the point property for which exists a convenience function
   Mesh::Property_map<vertex_descriptor, K::Point_3> location = m.points();
-  BOOST_FOREACH( vertex_descriptor vd, m.vertices()) { 
+  for(vertex_descriptor vd : m.vertices()) { 
     std::cout << name[vd] << " @ " << location[vd] << std::endl;
   }
 
   std::vector<std::string> props = m.properties<vertex_descriptor>();
-  BOOST_FOREACH(std::string p, props){
+  for(std::string p : props){
     std::cout << p << std::endl;
   }
   

@@ -120,7 +120,7 @@ namespace CGAL{
     }
     out << "end_header" << std::endl;
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh))
+    for(vertex_descriptor vd : vertices(mesh))
     {
       Point_3 p = get(get(CGAL::vertex_point, mesh), vd);
       internal::PLY::output_properties (out, &p,
@@ -129,11 +129,10 @@ namespace CGAL{
     
 
     std::vector<std::size_t> polygon;
-    BOOST_FOREACH(face_descriptor fd, faces(mesh))
+    for(face_descriptor fd : faces(mesh))
     {
       polygon.clear();
-      
-      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, mesh), mesh))
+      for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, mesh), mesh))
         polygon.push_back (get(get(boost::vertex_index, mesh), target(hd,mesh)));
 
       internal::PLY::output_properties (out, &polygon,

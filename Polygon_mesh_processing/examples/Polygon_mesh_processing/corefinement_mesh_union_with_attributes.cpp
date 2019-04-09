@@ -71,9 +71,9 @@ int main(int argc, char* argv[])
     out_id = out.add_property_map<Mesh::Face_index, int>("f:id", -1).first;
 
   // init the face ids (for the purpose of the example but choosing 1 (2) as default value of the map would avoid the loop)
-  BOOST_FOREACH(Mesh::Face_index f, faces(mesh1))
+  for(Mesh::Face_index f : faces(mesh1))
     mesh1_id[f] = 1;
-  BOOST_FOREACH(Mesh::Face_index f, faces(mesh2))
+  for(Mesh::Face_index f : faces(mesh2))
     mesh2_id[f] = 2;
 
   Visitor visitor;
@@ -83,11 +83,11 @@ int main(int argc, char* argv[])
 
   bool valid_union = PMP::corefine_and_compute_union(mesh1, mesh2, out, PMP::parameters::visitor(visitor));
 
-  BOOST_FOREACH(Mesh::Face_index f, faces(mesh1))
+  for(Mesh::Face_index f : faces(mesh1))
     assert( mesh1_id[f] == 1 );
-  BOOST_FOREACH(Mesh::Face_index f, faces(mesh2))
+  for(Mesh::Face_index f : faces(mesh2))
     assert( mesh2_id[f] == 2 );
-  BOOST_FOREACH(Mesh::Face_index f, faces(out))
+  for(Mesh::Face_index f : faces(out))
     assert( out_id[f]==1 || out_id[f]==2);
 
   if (valid_union)

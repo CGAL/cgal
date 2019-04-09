@@ -114,7 +114,7 @@ public:
     seeds_item->polylines.clear();
     std::vector<face_descriptor> seeds;
     approx.proxy_seeds(std::back_inserter(seeds));
-    BOOST_FOREACH(face_descriptor f, seeds) {
+    for(face_descriptor f : seeds) {
       const halfedge_descriptor h = halfedge(f, *pmesh);
       const Point_3 center = CGAL::centroid(
         pmesh->point(source(h, *pmesh)),
@@ -150,7 +150,7 @@ public:
 
     // update triangles item
     std::vector<std::vector<std::size_t> > polygons;
-    BOOST_FOREACH(const Indexed_triangle &t, indexed_triangles) {
+    for(const Indexed_triangle& t : indexed_triangles) {
       std::vector<std::size_t> polygon;
       polygon.push_back(t[0]);
       polygon.push_back(t[1]);
@@ -161,7 +161,7 @@ public:
 
     // update border polygons item
     approx.visual_items().polygons->polylines.clear();
-    BOOST_FOREACH(const std::vector<std::size_t> &border, patch_polygons) {
+    for(const std::vector<std::size_t>& border : patch_polygons) {
       std::vector<Point_3> polyline;
       for (std::size_t i = 0; i <= border.size(); ++i)
         polyline.push_back(anchor_points[border[i % border.size()]]);
@@ -181,7 +181,7 @@ public:
 
     // update patch planes item
     std::vector<std::vector<EPICK::Triangle_3> > patch_triangles(approx.number_of_proxies());
-    BOOST_FOREACH(face_descriptor f, faces(*pmesh)) {
+    for(face_descriptor f : faces(*pmesh)) {
       halfedge_descriptor h = halfedge(f, *pmesh);
       patch_triangles[get(pidmap, f)].push_back(EPICK::Triangle_3(
         pmesh->point(source(h, *pmesh)),
@@ -189,7 +189,7 @@ public:
         pmesh->point(target(next(h, *pmesh), *pmesh))));
     }
     std::vector<EPICK::Plane_3> patch_planes;
-    BOOST_FOREACH(const std::vector<EPICK::Triangle_3> &tris, patch_triangles) {
+    for(const std::vector<EPICK::Triangle_3>& tris : patch_triangles) {
       EPICK::Plane_3 fit_plane;
       CGAL::linear_least_squares_fitting_3(
         tris.begin(), tris.end(), fit_plane, CGAL::Dimension_tag<2>());
@@ -208,8 +208,8 @@ public:
     }
 
     std::vector<std::vector<Point_3> > patch_points(approx.number_of_proxies());
-    BOOST_FOREACH(vertex_descriptor v, vertices(*pmesh)) {
-      BOOST_FOREACH(halfedge_descriptor h, CGAL::halfedges_around_target(v, *pmesh)) {
+    for(vertex_descriptor v : vertices(*pmesh)) {
+      for(halfedge_descriptor h : CGAL::halfedges_around_target(v, *pmesh)) {
         if (!CGAL::is_border(h, *pmesh)) {
           const std::size_t fidx = get(pidmap, face(h, *pmesh));
           patch_points[fidx].push_back(pmesh->point(v));
@@ -232,7 +232,7 @@ public:
       EPICK::Line_3 base_liney(origin, base2);
 
       std::vector<EPICK::Point_2> pts_2d;
-      BOOST_FOREACH(const Point_3 &p, pts) {
+      for(const Point_3& p : pts) {
         const Point_3 point = plane.projection(p);
         EPICK::Vector_3 vecx(origin, base_linex.projection(point));
         EPICK::Vector_3 vecy(origin, base_liney.projection(point));
@@ -247,13 +247,13 @@ public:
       CGAL::convex_hull_2(pts_2d.begin(), pts_2d.end(), std::back_inserter(cvx_hull_2d));
 
       cvx_hulls.push_back(std::vector<std::size_t>());
-      BOOST_FOREACH(const EPICK::Point_2 &p, cvx_hull_2d) {
+      for(const EPICK::Point_2& p : cvx_hull_2d) {
         cvx_hulls.back().push_back(cvx_hull_points.size());
         cvx_hull_points.push_back(origin + p.x() * base1 + p.y() * base2);
       }
     }
     std::vector<CGAL::Color> fcolors;
-    BOOST_FOREACH(const QColor &c, approx.proxy_colors())
+    for(const QColor& c : approx.proxy_colors())
       fcolors.push_back(CGAL::Color(c.red(), c.green(), c.blue()));
     approx.visual_items().planes->load(cvx_hull_points, cvx_hulls, fcolors, std::vector<CGAL::Color>());
   }

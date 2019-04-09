@@ -34,7 +34,7 @@
 
 #include <CGAL/Image_3.h>
 #include <CGAL/function_objects.h>
-#include <CGAL/function.h>
+#include <functional>
 #include <boost/mpl/if.hpp>
 
 namespace CGAL {
@@ -56,7 +56,7 @@ template<typename Image_word_type = unsigned char,
 class Image_to_labeled_function_wrapper
 {
 public:
-  typedef CGAL::cpp11::function<Return_type(Interpolation_type)>
+  typedef std::function<Return_type(Interpolation_type)>
                                                     Image_values_to_labels;
 
   // Types

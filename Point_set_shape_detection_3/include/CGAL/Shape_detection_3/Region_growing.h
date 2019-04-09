@@ -32,7 +32,7 @@
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/squared_distance_3.h>
-#include <CGAL/function.h>
+#include <functional>
 
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
@@ -477,8 +477,8 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
               input data has been set. Otherwise, `false` is returned.
     */
     bool detect(const Parameters &options = Parameters(),
-                const cpp11::function<bool(double)>& callback
-                = cpp11::function<bool(double)>())
+                const std::function<bool(double)>& callback
+                = std::function<bool(double)>())
     {
       // No shape types for detection or no points provided, exit
       if (m_shape_factories.size() == 0 ||

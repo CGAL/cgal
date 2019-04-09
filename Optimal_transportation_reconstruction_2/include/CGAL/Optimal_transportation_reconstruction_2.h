@@ -1678,7 +1678,7 @@ public:
     typename PointOutputIterator,
     typename IndexOutputIterator,
     typename IndexPairOutputIterator>
-  CGAL::cpp11::tuple<
+  std::tuple<
     PointOutputIterator, 
     IndexOutputIterator,
     IndexPairOutputIterator>
@@ -1736,7 +1736,7 @@ public:
       *segments++ = std::make_pair(pos_a, pos_b);
     }
 
-    return CGAL::cpp11::make_tuple(points, isolated_points, segments);
+    return std::make_tuple(points, isolated_points, segments);
   }
 
   /*!

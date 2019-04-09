@@ -97,9 +97,9 @@ void Scene_movable_sm_item_priv::compute_elements() const
   flat_normals.clear();
   edges_vertices.clear();
   //faces
-  BOOST_FOREACH(face_descriptor fd, faces(*facegraph))
+  for(face_descriptor fd : faces(*facegraph))
   {
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, *facegraph),*facegraph))
+    for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, *facegraph),*facegraph))
     {
       Point p = positions[source(hd, *facegraph)] + offset;
       EPICK::Point_3 pc(p.x() - center_.x,
@@ -111,7 +111,7 @@ void Scene_movable_sm_item_priv::compute_elements() const
     }
   }
   //edges
-  BOOST_FOREACH(edge_descriptor ed, edges(*facegraph))
+  for(edge_descriptor ed : edges(*facegraph))
   {
     Point p = positions[source(ed, *facegraph)] + offset;
     EPICK::Point_3 pc(p.x() - center_.x,
@@ -177,7 +177,7 @@ Scene_movable_sm_item::compute_bbox() const {
   SMesh::Property_map<vertex_descriptor, Point_3> pprop = d->facegraph->points();
   CGAL::Bbox_3 bbox ;
   
-  BOOST_FOREACH(vertex_descriptor vd,vertices(*d->facegraph))
+  for(vertex_descriptor vd :vertices(*d->facegraph))
   {
     bbox = bbox + pprop[vd].bbox();
   }

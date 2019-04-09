@@ -339,7 +339,7 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
         p_normals.push_back(nf.z());
 
 
-        BOOST_FOREACH(fg_halfedge_descriptor he, halfedges_around_face(halfedge(f,*polyhedron()), *polyhedron()))
+        for(fg_halfedge_descriptor he : halfedges_around_face(halfedge(f,*polyhedron()), *polyhedron()))
         {
           const Point& p = get(vpm,target(he,*poly));
           p_facets.push_back(p.x()+offset.x);
@@ -797,11 +797,11 @@ bool Scene_polyhedron_selection_item::treat_classic_selection(const HandleRange&
   Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
   bool any_change = false;
   if(is_insert) {
-    BOOST_FOREACH(HandleType h, selection)
+    for(HandleType h : selection)
         any_change |= tr.container().insert(h).second;
   }
   else{
-    BOOST_FOREACH(HandleType h, selection)
+    for(HandleType h : selection)
         any_change |= (tr.container().erase(h)!=0);
   }
   if(any_change) { invalidateOpenGLBuffers(); Q_EMIT itemChanged(); }
@@ -871,7 +871,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_d
       if(!d->first_selected)
       {
           //Is the vertex on the face ?
-        BOOST_FOREACH(fg_halfedge_descriptor hafc, halfedges_around_face(halfedge(d->to_split_fh,*polyhedron()), *polyhedron()))
+        for(fg_halfedge_descriptor hafc : halfedges_around_face(halfedge(d->to_split_fh,*polyhedron()), *polyhedron()))
           {
             if(target(hafc,*polyhedron())==vh)
             {
@@ -900,7 +900,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_d
         for(int i=0; i<1; i++) //seems useless but allow the use of break.
         {
           //Is the vertex on the face ?
-          BOOST_FOREACH(fg_halfedge_descriptor hafc, halfedges_around_face(halfedge(d->to_split_fh,*polyhedron()), *polyhedron()))
+          for(fg_halfedge_descriptor hafc : halfedges_around_face(halfedge(d->to_split_fh,*polyhedron()), *polyhedron()))
             if(target(hafc,*polyhedron())==vh)
           {
             h2 = hafc;
@@ -964,7 +964,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_d
     case 8:
     {
       bool has_hole = false;
-      BOOST_FOREACH(fg_halfedge_descriptor hc, halfedges_around_target(vh,*polyhedron()))
+      for(fg_halfedge_descriptor hc : halfedges_around_target(vh,*polyhedron()))
       {
         if(is_border(hc,*polyhedron()))
         {
@@ -1318,7 +1318,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_face_des
       {
           bool found = false;
           //test preco
-          BOOST_FOREACH(fg_halfedge_descriptor hafc, halfedges_around_face(halfedge(fh,*polyhedron()),*polyhedron()))
+          for(fg_halfedge_descriptor hafc : halfedges_around_face(halfedge(fh,*polyhedron()),*polyhedron()))
           {
             if(target(hafc,*polyhedron())==d->to_split_vh)
             {
@@ -1344,7 +1344,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_face_des
           //get the right halfedges
           fg_halfedge_descriptor h2;
           bool found = false;
-          BOOST_FOREACH(fg_halfedge_descriptor hafc, halfedges_around_face(halfedge(fh,*polyhedron()),*polyhedron()))
+          for(fg_halfedge_descriptor hafc : halfedges_around_face(halfedge(fh,*polyhedron()),*polyhedron()))
           {
             if(target(hafc,*polyhedron())==d->to_split_vh)
             {
@@ -1422,8 +1422,8 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_face_des
         SMesh* mesh = polyhedron();
           double x(0), y(0), z(0);
           int total(0);
-
-          BOOST_FOREACH(fg_halfedge_descriptor hafc, halfedges_around_face(halfedge(fh,*mesh),*mesh))
+          
+          for(fg_halfedge_descriptor hafc : halfedges_around_face(halfedge(fh,*mesh),*mesh))
           {
             fg_vertex_descriptor vd = target(hafc,*mesh);
             Point_3& p = get(vpm,vd);
@@ -1835,7 +1835,7 @@ void Scene_polyhedron_selection_item::setPathSelection(bool b) {
     int ind = 0;
     boost::property_map<Face_graph,CGAL::vertex_selection_t>::type vsm =
       get(CGAL::vertex_selection,*polyhedron());
-    BOOST_FOREACH(fg_vertex_descriptor vd, vertices(*polyhedron())){
+    for(fg_vertex_descriptor vd : vertices(*polyhedron())){
       put(vsm,vd, ind++);
     }
   }
@@ -2155,7 +2155,7 @@ void Scene_polyhedron_selection_item::init(Scene_face_graph_item* poly_item, QMa
 
 void Scene_polyhedron_selection_item::select_all_NT()
 {
-  BOOST_FOREACH(fg_face_descriptor fd, faces(*polyhedron())){
+  for(fg_face_descriptor fd : faces(*polyhedron())){
     if(! is_triangle(halfedge(fd,*polyhedron()), *polyhedron()))
     selected_facets.insert(fd);
   }
@@ -2219,7 +2219,7 @@ bool Scene_polyhedron_selection_item::shouldDisplayIds(CGAL::Three::Scene_item *
 void Scene_polyhedron_selection_item::select_boundary()
 {
   Face_graph* fg = polyhedron_item()->face_graph();
-  BOOST_FOREACH(fg_halfedge_descriptor hd, halfedges(*fg))
+  for(fg_halfedge_descriptor hd : halfedges(*fg))
   {
     if(is_border_edge(hd, *fg))
     {
@@ -2384,7 +2384,7 @@ QString Scene_polyhedron_selection_item::computeStats(int type)
   case NB_BORDER_EDGES:
   {
     int i=0;
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges(*d->poly))
+    for(halfedge_descriptor hd : halfedges(*d->poly))
     {
       if(is_border(hd, *d->poly)
          && selected_edges.find(edge(hd, *d->poly)) != selected_edges.end())

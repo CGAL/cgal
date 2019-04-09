@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
  std::vector<std::size_t> cc_size(num,0);
 
 
- BOOST_FOREACH(face_descriptor f , faces(sm)){
+ for(face_descriptor f : faces(sm)){
  //  std::cout  << f << " in connected component " << fccmap[f] << std::endl;
     std::size_t ccid=fccmap[f];
     if (++cc_size[ccid]==1)

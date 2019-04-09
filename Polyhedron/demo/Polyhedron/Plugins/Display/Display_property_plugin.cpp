@@ -103,7 +103,7 @@ public:
     SMesh::Property_map<vertex_descriptor, Point_3> pprop = sm->points();
     CGAL::Bbox_3 bbox ;
     
-    BOOST_FOREACH(vertex_descriptor vd,vertices(*sm))
+    for(vertex_descriptor vd :vertices(*sm))
     {
       bbox = bbox + pprop[vd].bbox();
     }
@@ -215,11 +215,11 @@ public:
         im = get(boost::vertex_index, *sm);
     
     idx.reserve(num_faces(*sm) * 3);
-    BOOST_FOREACH(face_descriptor fd, faces(*sm))
+    for(face_descriptor fd : faces(*sm))
     {
       if(is_triangle(halfedge(fd,*sm),*sm))
       {
-        BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, *sm),*sm))
+        for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, *sm),*sm))
         {
           idx.push_back(source(hd, *sm));
         }
@@ -227,7 +227,7 @@ public:
       else
       {
         std::vector<Point> facet_points;
-        BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, *sm),*sm))
+        for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, *sm),*sm))
         {
           facet_points.push_back(positions[target(hd, *sm)]);
         }
@@ -256,7 +256,7 @@ public:
         }
       }
     }
-    BOOST_FOREACH(vertex_descriptor vd, vertices(*sm))
+    for(vertex_descriptor vd : vertices(*sm))
     {
       CGAL::Color c = vcolors[vd];
       colors.push_back((float)c.red()/255);
@@ -720,7 +720,7 @@ private Q_SLOTS:
 
         std::vector<float> local_angles;
         local_angles.reserve(degree(*fit, smesh));
-        BOOST_FOREACH(halfedge_descriptor hd,
+        for(halfedge_descriptor hd :
                       halfedges_around_face(halfedge(*fit, smesh),smesh))
         {
           halfedge_descriptor hdn = next(hd, smesh);
@@ -857,7 +857,7 @@ private Q_SLOTS:
               );
     }
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
+    for(vertex_descriptor vd : vertices(mesh)){
       if(get(is_source[item], vd)){
         if(iDT){
           hm_idt->add_source(vd);
@@ -882,7 +882,7 @@ private Q_SLOTS:
     double max = 0;
     double min = (std::numeric_limits<double>::max)();
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
+    for(vertex_descriptor vd : vertices(mesh)){
       double hi = heat_intensity[vd];
       if(hi < min)
         min = hi;
@@ -1287,7 +1287,7 @@ private:
         pmap = get(boost::vertex_point, mesh);
     std::vector<double> corner_areas(degree(f, mesh));
     std::vector<EPICK::Vector_3> edges;
-    BOOST_FOREACH(halfedge_descriptor hd, CGAL::halfedges_around_face(halfedge(f, mesh), mesh))
+    for(halfedge_descriptor hd : CGAL::halfedges_around_face(halfedge(f, mesh), mesh))
     {
       edges.push_back(EPICK::Vector_3(get(pmap, source(hd, mesh)), get(pmap, target(hd, mesh))));
     }

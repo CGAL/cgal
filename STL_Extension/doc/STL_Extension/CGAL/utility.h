@@ -14,7 +14,7 @@ model of container, though, because it does not support the standard
 methods (such as iterators) for accessing the elements of a
 container.
 
-`CGAL::cpp11::tuple` or `CGAL::cpp11::array` instead for new uses.
+`std::tuple` or `std::array` instead for new uses.
 
 
 
@@ -237,7 +237,7 @@ elements. It is not actually a model of container, though, because
 it does not support the standard methods (such as iterators) for
 accessing the elements of a container.
 
-`CGAL::cpp11::tuple` or `CGAL::cpp11::array` instead for new uses.
+`std::tuple` or `std::array` instead for new uses.
 
 
 

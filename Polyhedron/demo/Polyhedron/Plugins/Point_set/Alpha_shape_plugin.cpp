@@ -232,11 +232,11 @@ public Q_SLOTS:
     as_item->createPolygonSoup(points, polys);
     Scene_polygon_soup_item* new_item = new Scene_polygon_soup_item();
     new_item->init_polygon_soup(points.size(), polys.size());
-    BOOST_FOREACH(const Kernel::Point_3& p, points)
+    for(const Kernel::Point_3& p : points)
     {
       new_item->new_vertex(p.x(), p.y(), p.z());
     }
-    BOOST_FOREACH(const std::vector<std::size_t>& poly, polys)
+    for(const std::vector<std::size_t>& poly : polys)
     {
       new_item->new_triangle(poly[0], poly[1], poly[2]);
     }

@@ -4,7 +4,6 @@
 #include  <CGAL/Three/Scene_item_rendering_helper.h>
 #include "SMesh_type.h"
 
-#include <boost/foreach.hpp>
 #include <boost/array.hpp>
 
 #include <iostream>

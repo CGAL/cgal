@@ -29,7 +29,6 @@
 #include <fstream>
 #include <math.h>
 
-#include <boost/foreach.hpp>
 
 #include <CGAL/disable_warnings.h>
 
@@ -125,7 +124,7 @@ int main(int argc, char * argv[])
 
       // Converts Polyhedron vertices to point set.
       // Computes vertices normal from connectivity.
-      BOOST_FOREACH(boost::graph_traits<Polyhedron>::vertex_descriptor v, 
+      for(boost::graph_traits<Polyhedron>::vertex_descriptor v :
                     vertices(input_mesh)){
         const Point& p = v->point();
         Vector n = CGAL::Polygon_mesh_processing::compute_vertex_normal(v,input_mesh);

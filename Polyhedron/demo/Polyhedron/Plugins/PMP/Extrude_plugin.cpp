@@ -285,7 +285,7 @@ CGAL::Bbox_3 triangles(const TriangleMesh& mesh,
   CGAL::Bbox_3 bb;
   typename boost::property_map<TriangleMesh,CGAL::vertex_point_t>::const_type vpm =
       get(CGAL::vertex_point, mesh);
-  BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::face_descriptor fd, faces(mesh)){
+  for(typename boost::graph_traits<TriangleMesh>::face_descriptor fd : faces(mesh)){
     typename boost::graph_traits<TriangleMesh>::halfedge_descriptor hd = halfedge(fd,mesh);
     Triangle t(get(vpm,source(hd,mesh)),
                get(vpm,target(hd,mesh)),
@@ -300,7 +300,7 @@ Vector estimate_normals(const std::vector<Triangle>& tris)
 {
   Vector moy(0,0,0);
   
-  BOOST_FOREACH(const Triangle& tri, tris)
+  for(const Triangle& tri : tris)
   {
     Vector norm = CGAL::Polygon_mesh_processing::internal::triangle_normal(
           tri[0], tri[1], tri[2], Kernel());

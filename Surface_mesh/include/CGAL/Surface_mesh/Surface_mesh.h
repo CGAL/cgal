@@ -42,7 +42,6 @@
 #include <boost/cstdint.hpp>
 #include <boost/array.hpp>
 #include <boost/iterator/iterator_facade.hpp>
-#include <boost/foreach.hpp>
 #include <CGAL/property_map.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/circulator.h>
@@ -1830,7 +1829,7 @@ public:
   /// of the surface mesh.
   void set_vertex_halfedge_to_border_halfedge()
   {
-    BOOST_FOREACH(Halfedge_index h, halfedges()){
+    for(Halfedge_index h : halfedges()){
       if(is_border(h)){
           set_halfedge(target(h),h);
         }
@@ -2124,7 +2123,7 @@ private: //------------------------------------------------------- private data
                            get_const_property_map(CGAL::vertex_point, sm));
     reindex.resize(sm.num_vertices());
     int n = 0;
-    BOOST_FOREACH(Vertex_index v, sm.vertices()){
+    for(Vertex_index v : sm.vertices()){
       
       os << get(vpm, v);
       if(has_vcolors)
@@ -2136,9 +2135,9 @@ private: //------------------------------------------------------- private data
       reindex[v]=n++;
     }
 
-    BOOST_FOREACH(Face_index f, sm.faces()){
+    for(Face_index f : sm.faces()){
       os << sm.degree(f);
-      BOOST_FOREACH(Vertex_index v, CGAL::vertices_around_face(sm.halfedge(f),sm)){
+      for(Vertex_index v : CGAL::vertices_around_face(sm.halfedge(f),sm)){
         os << " " << reindex[v];
       }
       if(has_fcolors)

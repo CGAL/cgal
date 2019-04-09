@@ -59,10 +59,10 @@ typedef CGAL::Scale_space_reconstruction_3::Alpha_shape_mesher<Kernel> ScaleSpac
 typedef CGAL::Scale_space_reconstruction_3::Jet_smoother<Kernel> ScaleSpaceJS;
 typedef CGAL::Scale_space_reconstruction_3::Weighted_PCA_smoother<Kernel> ScaleSpaceWPS;
 
-typedef CGAL::cpp11::array<std::size_t,3> Facet;
+typedef std::array<std::size_t,3> Facet;
 template<class Mesh, typename Traits>
 struct Construct{
-  typedef CGAL::cpp11::array<std::size_t,3> Facet;
+  typedef std::array<std::size_t,3> Facet;
   typedef typename Traits::Point_3  Point_3;
   typedef typename boost::property_map<Mesh, boost::vertex_point_t>::type VPmap;
   Mesh& mesh;

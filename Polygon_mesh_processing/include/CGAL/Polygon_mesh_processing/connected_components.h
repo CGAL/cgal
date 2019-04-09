@@ -32,7 +32,6 @@
 #include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/foreach.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/connected_components.hpp>
 #include <boost/property_map/vector_property_map.hpp>
@@ -156,7 +155,7 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
       stack.pop_back();
       if (!already_processed.insert(seed_face).second) continue;
       *out++=seed_face;
-      BOOST_FOREACH(halfedge_descriptor hd,
+      for(halfedge_descriptor hd :
                     CGAL::halfedges_around_face(halfedge(seed_face, pmesh), pmesh) )
       {
         if(! get(ecmap, edge(hd, pmesh))){
@@ -324,7 +323,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh
   for(std::size_t i=0; i < num; i++)
     component_size[i] = std::make_pair(i,0);
 
-  BOOST_FOREACH(face_descriptor f, faces(pmesh))
+  for(face_descriptor f : faces(pmesh))
     ++component_size[face_cc[f]].second;
 
   // we sort the range [0, num) by component size
@@ -395,7 +394,7 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh
   for(std::size_t i=0; i < num; i++)
     component_size[i] = std::make_pair(i,0);
 
-  BOOST_FOREACH(face_descriptor f, faces(pmesh))
+  for(face_descriptor f : faces(pmesh))
     ++component_size[face_cc[f]].second;
 
 
@@ -450,23 +449,23 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
                                     get_const_property_map(boost::vertex_index, pmesh));
 
   std::set<std::size_t> cc_to_keep;
-  BOOST_FOREACH(std::size_t i, components_to_keep)
+  for(std::size_t i : components_to_keep)
     cc_to_keep.insert(i);
 
   boost::vector_property_map<bool, VertexIndexMap> keep_vertex(vim);
-  BOOST_FOREACH(vertex_descriptor v, vertices(pmesh)){
+  for(vertex_descriptor v : vertices(pmesh)){
     keep_vertex[v] = false;
   }
-  BOOST_FOREACH(face_descriptor f, faces(pmesh)){
+  for(face_descriptor f : faces(pmesh)){
     if (cc_to_keep.find(get(fcm,f)) != cc_to_keep.end())
       put(fcm, f, keep ? 1 : 0);
     else
       put(fcm, f, keep ? 0 : 1);
   }
 
-  BOOST_FOREACH(face_descriptor f, faces(pmesh)){
+  for(face_descriptor f : faces(pmesh)){
     if (get(fcm, f) == 1){
-      BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(f, pmesh), pmesh)){
+      for(halfedge_descriptor h : halfedges_around_face(halfedge(f, pmesh), pmesh)){
         vertex_descriptor v = target(h, pmesh);
         keep_vertex[v] = true;
       }
@@ -697,7 +696,7 @@ void remove_connected_components(PolygonMesh& pmesh
   connected_components(pmesh, face_cc, np);
 
   std::vector<std::size_t> cc_to_remove;
-  BOOST_FOREACH(face_descriptor f, components_to_remove)
+  for(face_descriptor f : components_to_remove)
     cc_to_remove.push_back( face_cc[f] );
 
   remove_connected_components(pmesh, cc_to_remove, face_cc, np);
@@ -755,7 +754,7 @@ void keep_connected_components(PolygonMesh& pmesh
   connected_components(pmesh, face_cc, np);
 
   std::vector<std::size_t> cc_to_keep;
-  BOOST_FOREACH(face_descriptor f, components_to_keep)
+  for(face_descriptor f : components_to_keep)
     cc_to_keep.push_back( face_cc[f] );
 
   keep_connected_components(pmesh, cc_to_keep, face_cc, np);

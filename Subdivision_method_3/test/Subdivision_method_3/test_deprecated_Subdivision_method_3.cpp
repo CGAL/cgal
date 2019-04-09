@@ -338,7 +338,7 @@ void test_Subdivision_surface_3_SM_NP() {
     VPM vpm = get(vertex_point, P);
 
     // some arbitrary new coordinates (different from the internal vpm)
-    BOOST_FOREACH(vertex_descriptor vd, vertices(P)) {
+    for(vertex_descriptor vd : vertices(P)) {
       boost::property_traits<VPM>::reference pt = get(vpm, vd);
       Vector v = pt - Point(0., 0., -3.);
       put(apm, vd, pt + 0.5*v);
