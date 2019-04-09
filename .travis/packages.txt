@@ -125,7 +125,6 @@ Surface_mesh_skeletonization
 Surface_sweep_2 
 TDS_2 
 TDS_3 
-TestPackage 
 Testsuite 
 Three 
 Triangulation 
