@@ -4,14 +4,11 @@ namespace CGAL {
 \ingroup PkgConvexHull2Traits
 
 The class `Convex_hull_traits_adapter_2` serves as a traits class for all the two-dimensional 
-convex hull and extreme point calculation function. This class corresponds 
-to the default traits class for these functions. 
+convex hull and extreme point calculation functions.
 
 Given a property map associating a key to a point, the class `Convex_hull_traits_adapter_2` enables
-to compute the sequence of keys for which the associted points are the convex hull points , 
-the predicates being computed on the associated points. 
-In other words, the traits provides to a convex hull algorithm a point type which is a key, 
-while the actual point type is `Base_traits::Point_2`. 
+to compute the sequence of keys for which the associted points form a convex hull, 
+performing the predicates of the base traits class on the points associated to the keys. 
 
 \cgalModels `ConvexHullTraits_2`
 
@@ -21,7 +18,7 @@ while the actual point type is `Base_traits::Point_2`.
 \sa `CGAL::Projection_traits_xz_3<K>`
 
 */
-template< typename Base_traits, typename PointPropertyMap >
+template< typename BaseTraits, typename PointPropertyMap >
 class Convex_hull_traits_adapter_2 {
 public:
 
@@ -40,11 +37,11 @@ typedef boost::property_traits<PointPropertyMap>::key_type Point_2;
 
 /*!
 */ 
-Convex_hull_traits_2(Base_traits base=Base_traits()); 
+Convex_hull_traits_2(BaseTraits base=BaseTraits()); 
 
 /*!
 */ 
-Convex_hull_traits_2(const PointPropertyMap& ppmap, Base_traits base=Base_traits()); 
+Convex_hull_traits_2(const PointPropertyMap& ppmap, BaseTraits base=BaseTraits()); 
 /// @} 
 
 /// \name Operations 
@@ -58,5 +55,5 @@ const PointPropertyMap& point_property_map() const;
 
 /// @}
 
-}; /* end Convex_hull_traits_2 */
+}; /* end Convex_hull_traits_adapter_2 */
 } /* end namespace CGAL */
