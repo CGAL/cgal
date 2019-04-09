@@ -1,13 +1,8 @@
 #ifndef SCENE_FACEGRAPH_ITEM_K_RING_SELECTION_H
 #define SCENE_FACEGRAPH_ITEM_K_RING_SELECTION_H
 #include "Scene_facegraph_item_k_ring_selection_config.h"
-#ifdef USE_SURFACE_MESH
 #include "Scene_surface_mesh_item.h"
 #include <CGAL/iterator.h>
-#else
-#include "Scene_polyhedron_item.h"
-#include "Polyhedron_type.h"
-#endif
 #include <set>
 #include <CGAL/Qt/qglviewer.h>
 #include <QKeyEvent>
@@ -26,13 +21,8 @@
 
 #include <CGAL/Polygon_2.h>
 
-#ifdef USE_SURFACE_MESH
 typedef Scene_surface_mesh_item Scene_facegraph_item;
 typedef EPICK FG_Traits;
-#else
-typedef Scene_polyhedron_item Scene_facegraph_item;
-typedef Kernel FG_Traits;
-#endif
 
 typedef Scene_facegraph_item::Face_graph FaceGraph;
 typedef boost::graph_traits<FaceGraph>::vertex_descriptor fg_vertex_descriptor;
@@ -126,10 +116,6 @@ public:
     is_ready_to_paint_select = true;
     is_lasso_active = false;
 
-#ifndef USE_SURFACE_MESH
-    poly_item->enable_facets_picking(true);
-    poly_item->set_color_vector_read_only(true);
-#endif
     CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
     viewer->installEventFilter(this);
     mw->installEventFilter(this);
@@ -148,51 +134,45 @@ public Q_SLOTS:
   // slots are called by signals of polyhedron_item
   void vertex_has_been_selected(void* void_ptr) 
   {
+    if((*CGAL::QGLViewer::QGLViewerPool().begin())->property("performing_selection").toBool())
+      return;
     is_active=true;
     if(active_handle_type == Active_handle::VERTEX || active_handle_type == Active_handle::PATH)
     {
-#ifdef USE_SURFACE_MESH
       typedef boost::graph_traits<FaceGraph>::vertices_size_type size_type;
       size_type h = static_cast<size_type>(reinterpret_cast<std::size_t>(void_ptr));
       process_selection( static_cast<fg_vertex_descriptor>(h) );
-#else
-      process_selection( static_cast<Polyhedron::Vertex*>(void_ptr)->halfedge()->vertex() );
-#endif
     }
     updateIsTreated();
   }
   void facet_has_been_selected(void* void_ptr)
   {
+    if((*CGAL::QGLViewer::QGLViewerPool().begin())->property("performing_selection").toBool())
+      return;
     is_active=true;
     if (active_handle_type == Active_handle::FACET
       || active_handle_type == Active_handle::CONNECTED_COMPONENT)
     {
-#ifdef USE_SURFACE_MESH
       typedef boost::graph_traits<FaceGraph>::faces_size_type size_type;
       size_type h = static_cast<size_type>(reinterpret_cast<std::size_t>(void_ptr));
       process_selection( static_cast<fg_face_descriptor>(h) );
-#else
-      process_selection( static_cast<Polyhedron::Facet*>(void_ptr)->halfedge()->facet() );
-#endif
     }
     updateIsTreated();
   }
   void edge_has_been_selected(void* void_ptr) 
   {
+    if((*CGAL::QGLViewer::QGLViewerPool().begin())->property("performing_selection").toBool())
+      return;
     is_active=true;
     if(active_handle_type == Active_handle::EDGE)
     {
-#ifdef USE_SURFACE_MESH
       typedef boost::graph_traits<FaceGraph>::edges_size_type size_type;
       size_type h = static_cast<size_type>(reinterpret_cast<std::size_t>(void_ptr));
       process_selection( static_cast<fg_edge_descriptor>(h) );
-#else
-      process_selection( edge(static_cast<Polyhedron::Halfedge*>(void_ptr)->opposite()->opposite(), *poly_item->polyhedron()) );
-#endif
     }
     updateIsTreated();
   }
-
+  
   void paint_selection()
   {
     if(is_ready_to_paint_select)
@@ -238,9 +218,9 @@ public Q_SLOTS:
     std::set<fg_face_descriptor> face_sel;
     boost::property_map<FaceGraph,CGAL::vertex_point_t>::const_type vpmap = get(boost::vertex_point, poly);
     //select all faces if their screen projection is inside the lasso
-    BOOST_FOREACH(fg_face_descriptor f, faces(poly))
+    for(fg_face_descriptor f : faces(poly))
     {
-      BOOST_FOREACH(fg_vertex_descriptor v, CGAL::vertices_around_face(halfedge(f, poly), poly))
+      for(fg_vertex_descriptor v : CGAL::vertices_around_face(halfedge(f, poly), poly))
       {
         FG_Traits::Point_3 p = get(vpmap, v);
         CGAL::qglviewer::Vec vp(p.x(), p.y(), p.z());
@@ -255,6 +235,7 @@ public Q_SLOTS:
     if(face_sel.empty())
     {
       contour_2d.clear();
+      qobject_cast<CGAL::Three::Viewer_interface*>(viewer)->set2DSelectionMode(false);
       return;
     }
     //get border edges of the selected patches
@@ -264,7 +245,7 @@ public Q_SLOTS:
     boost::property_map<FaceGraph, boost::edge_index_t>::type edge_index
       = get(boost::edge_index, poly);
     FG_is_selected_edge_property_map spmap(mark, &edge_index);
-    BOOST_FOREACH(fg_halfedge_descriptor h, boundary_edges)
+    for(fg_halfedge_descriptor h : boundary_edges)
       put(spmap, edge(h, poly), true);
 
     boost::vector_property_map<int,
@@ -279,7 +260,7 @@ public Q_SLOTS:
           , CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(spmap));
     std::vector<bool> is_cc_done(nb_cc, false);
 
-    BOOST_FOREACH(fg_face_descriptor f, face_sel)
+    for(fg_face_descriptor f : face_sel)
     {
       int cc_id = get(fccmap, f);
       if(is_cc_done[cc_id])
@@ -324,7 +305,7 @@ public Q_SLOTS:
         is_cc_done[cc_id] = true;
       }
     }
-    BOOST_FOREACH(fg_face_descriptor f, faces(poly))
+    for(fg_face_descriptor f : faces(poly))
     {
       if(is_cc_done[get(fccmap, f)])
         final_sel.insert(f);
@@ -337,9 +318,9 @@ public Q_SLOTS:
     case Active_handle::EDGE:
     {
       std::set<fg_edge_descriptor> e_sel;
-      BOOST_FOREACH(fg_face_descriptor f, final_sel)
+      for(fg_face_descriptor f : final_sel)
       {
-        BOOST_FOREACH(fg_halfedge_descriptor h, CGAL::halfedges_around_face(halfedge(f, poly), poly))
+        for(fg_halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, poly), poly))
         {
           FG_Traits::Point_3 p = get(vpmap, target(h, poly));
           CGAL::qglviewer::Vec vp1(p.x(), p.y(), p.z());
@@ -357,9 +338,9 @@ public Q_SLOTS:
     case Active_handle::VERTEX:
     {
       std::set<fg_vertex_descriptor> v_sel;
-      BOOST_FOREACH(fg_face_descriptor f, final_sel)
+      for(fg_face_descriptor f : final_sel)
       {
-        BOOST_FOREACH(fg_vertex_descriptor v, CGAL::vertices_around_face(halfedge(f, poly), poly))
+        for(fg_vertex_descriptor v : CGAL::vertices_around_face(halfedge(f, poly), poly))
         {
           FG_Traits::Point_3 p = get(vpmap, v);
           CGAL::qglviewer::Vec vp(p.x(), p.y(), p.z());

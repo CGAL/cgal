@@ -14,13 +14,8 @@
 #include "Kernel_type.h"
 #include "Scene_polyhedron_selection_item.h"
 
-#ifdef USE_SURFACE_MESH
 #include "Scene_surface_mesh_item.h"
 typedef Scene_surface_mesh_item Scene_face_graph_item;
-#else
-#include "Scene_polyhedron_item.h"
-typedef Scene_polyhedron_item Scene_face_graph_item;
-#endif
 
 typedef Scene_face_graph_item::Face_graph Face_graph;
 typedef Kernel::Triangle_3 Triangle;
@@ -112,11 +107,11 @@ void Polyhedron_demo_self_intersection_plugin::on_actionSelfIntersection_trigger
         selection_item->selected_facets.insert(fb->second);
 
         //add the edges
-        BOOST_FOREACH(halfedge_descriptor he_circ, halfedges_around_face( halfedge(fb->first, *mesh), *mesh))
+        for(halfedge_descriptor he_circ : halfedges_around_face( halfedge(fb->first, *mesh), *mesh))
         {
           selection_item->selected_edges.insert(edge(he_circ, *mesh));
         }
-        BOOST_FOREACH(halfedge_descriptor he_circ, halfedges_around_face( halfedge(fb->second, *mesh), *mesh))
+        for(halfedge_descriptor he_circ : halfedges_around_face( halfedge(fb->second, *mesh), *mesh))
         {
           selection_item->selected_edges.insert(edge(he_circ, *mesh));
         }

@@ -7,7 +7,6 @@
 #include "Color_ramp.h"
 #include "Messages_interface.h"
 #include "Scene_plane_item.h"
-#include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
@@ -23,8 +22,6 @@
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/bounding_box.h>
-
-#include "Polyhedron_type.h"
 
 #include <QTime>
 
@@ -50,7 +47,7 @@
     std::size_t last;
   };
 #endif // CGAL_LINKED_WITH_TBB
-
+#include <CGAL/Three/Three.h>
 typedef CGAL::Simple_cartesian<double> Simple_kernel;
 typedef Simple_kernel::FT FT;
 typedef Simple_kernel::Point_3 Point;
@@ -74,23 +71,22 @@ Simple_kernel::Vector_3 random_vector()
 
 
 //functor for tbb parallelization
-template <typename Tree, typename SM_Tree>
+template <typename SM_Tree>
 class FillGridSize {
   std::size_t grid_size;
   Point_distance (&distance_function)[100][100];
   FT diag;
   FT& max_distance_function;
-  std::vector<Tree*>&trees;
   std::vector<SM_Tree*>&sm_trees;
   bool is_signed;
   CGAL::qglviewer::ManipulatedFrame* frame;
 public:
   FillGridSize(std::size_t grid_size, FT diag, Point_distance (&distance_function)[100][100],
-  FT& max_distance_function, std::vector<Tree*>& trees, std::vector<SM_Tree*>& sm_trees,
+  FT& max_distance_function, std::vector<SM_Tree*>& sm_trees,
   bool is_signed, CGAL::qglviewer::ManipulatedFrame* frame)
   : grid_size(grid_size), distance_function (distance_function), diag(diag),
     max_distance_function(max_distance_function),
-    trees(trees), sm_trees(sm_trees), is_signed(is_signed), frame(frame)
+    sm_trees(sm_trees), is_signed(is_signed), frame(frame)
   {
   }
   template<typename Range>
@@ -104,7 +100,6 @@ public:
     const FT dy = 2*diag;
     const FT z (0);
     const FT fd =  FT(1);
-    Tree *min_tree = NULL ;
     SM_Tree *min_sm_tree = NULL;
     for( std::size_t t = r.begin(); t != r.end(); ++t)
     {
@@ -116,24 +111,12 @@ public:
         Simple_kernel::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
         Point query = transfo( Point(x,y,z))-offset;
         FT min = DBL_MAX;
-        bool is_min_sm = false;
-        Q_FOREACH(Tree *tree, trees)
-        {
-          FT dist = CGAL::sqrt( tree->squared_distance(query) );
-          if(dist < min)
-          {
-            min = dist;
-            if(is_signed)
-              min_tree = tree;
-          }
-        }
         Q_FOREACH(SM_Tree *tree, sm_trees)
         {
           FT dist = CGAL::sqrt( tree->squared_distance(query) );
           if(dist < min)
           {
             min = dist;
-            is_min_sm = true;
             if(is_signed)
               min_sm_tree = tree;
           }
@@ -144,13 +127,13 @@ public:
 
         if(is_signed)
         {
-          if(!min_tree && !min_sm_tree)
+          if(!min_sm_tree)
           {
             distance_function[i][j] = Point_distance(query,DBL_MAX);
             max_distance_function = DBL_MAX;//(std::max)(min, max_distance_function);
             continue;
           }
-          typedef typename Tree::size_type size_type;
+          typedef typename SM_Tree::size_type size_type;
           Simple_kernel::Vector_3 random_vec = random_vector();
 
           const Simple_kernel::Point_3& p = distance_function[i][j].first;
@@ -158,8 +141,7 @@ public:
 
           // get sign through ray casting (random vector)
           Simple_kernel::Ray_3  ray(p, random_vec);
-          size_type nbi = (is_min_sm) ? min_sm_tree->number_of_intersected_primitives(ray)
-                                      : min_tree->number_of_intersected_primitives(ray);
+          size_type nbi =  min_sm_tree->number_of_intersected_primitives(ray);
 
           FT sign ( (nbi&1) == 0 ? 1 : -1);
           distance_function[i][j].second = sign * unsigned_distance;
@@ -226,18 +208,6 @@ struct PPMAP
   }
 };
 
-typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron, PPMAP<Polyhedron> > Facet_primitive;
-typedef CGAL::AABB_traits<Simple_kernel, Facet_primitive>           Facet_traits;
-typedef CGAL::AABB_tree<Facet_traits>                               Facet_tree;
-
-typedef CGAL::AABB_halfedge_graph_segment_primitive<Polyhedron, PPMAP<Polyhedron> > Edge_primitive;
-typedef CGAL::AABB_traits<Simple_kernel, Edge_primitive>              Edge_traits;
-typedef CGAL::AABB_tree<Edge_traits>                                Edge_tree;
-
-
-typedef QMap<QObject*, Facet_tree*>                   Facet_trees;
-typedef QMap<QObject*, Edge_tree*>                    Edge_trees;
-
 typedef CGAL::AABB_face_graph_triangle_primitive<SMesh, PPMAP<SMesh> > Facet_sm_primitive;
 typedef CGAL::AABB_traits<Simple_kernel, Facet_sm_primitive>           Facet_sm_traits;
 typedef CGAL::AABB_tree<Facet_sm_traits>                               Facet_sm_tree;
@@ -254,31 +224,6 @@ class Q_DECL_EXPORT Scene_aabb_item : public CGAL::Three::Scene_item
 {
   Q_OBJECT
 public:
-  Scene_aabb_item(const Facet_tree& tree) : CGAL::Three::Scene_item(1,1)
-  {
-    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
-    positions_lines.clear();
-
-    CGAL::AABB_drawing_traits<Facet_primitive, CGAL::AABB_node<Facet_traits> > traits;
-    traits.v_edges = &positions_lines;
-    for(int i=0; i<3; ++i)
-      traits.offset[i] = offset[i];
-
-    tree.traversal(0, traits);
-    const CGAL::Bbox_3 bbox = tree.bbox();
-    _bbox = Bbox(bbox.xmin(),
-                bbox.ymin(),
-                bbox.zmin(),
-                bbox.xmax(),
-                bbox.ymax(),
-                bbox.zmax());
-    qDebug()<<this->name()<<" at creation: "<<bbox.xmin()<<", "<<bbox.xmax()<<", "<<bbox.ymin()<<", "<<bbox.ymax()<<", "
-              <<bbox.zmin()<<", "<<bbox.zmax();
-    tree_size = tree.size();
-    is_tree_empty = tree.empty();
-    invalidateOpenGLBuffers();
-  }
-
   Scene_aabb_item(const Facet_sm_tree& tree) : CGAL::Three::Scene_item(1,1)
   {
       const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
@@ -308,7 +253,7 @@ public:
     {
     }
 
-  bool isFinite() const { return true; }
+  bool isFinite() const { return false; }
   bool isEmpty() const { return is_tree_empty; }
   //computed in constructor
   void compute_bbox() const {}
@@ -664,16 +609,6 @@ public:
       texture = new Texture(m_grid_size,m_grid_size);
   }
 
-  void set_facet_trees(Facet_trees *facet_trees)
-  {
-    this->facet_trees = facet_trees;
-  }
-
-  void set_edge_trees(Edge_trees *edge_trees)
-  {
-    this->edge_trees = edge_trees;
-  }
-
   void set_facet_sm_trees(Facet_sm_trees *facet_trees)
   {
     this->facet_sm_trees = facet_trees;
@@ -755,8 +690,6 @@ public:
   void setCutPlaneType(Cut_planes_types type){ m_cut_plane = type;}
   Cut_planes_types cutPlaneType()const {return m_cut_plane;}
 private:
-  Edge_trees* edge_trees;
-  Facet_trees* facet_trees;
   Edge_sm_trees* edge_sm_trees;
   Facet_sm_trees* facet_sm_trees;
   enum VAOs{
@@ -779,7 +712,7 @@ private:
   mutable Point_distance m_distance_function[100][100];
   mutable GLuint textureId;
   mutable Texture *texture;
-  // An aabb_tree indexing polyhedron facets/segments
+  // An aabb_tree indexing surface_mesh facets/segments
   mutable Color_ramp m_red_ramp;
   mutable Color_ramp m_blue_ramp;
   mutable Color_ramp m_thermal_ramp;
@@ -787,29 +720,23 @@ private:
   mutable std::vector<float> tex_map;
   mutable Cut_planes_types m_cut_plane;
   mutable std::vector<QOpenGLBuffer> buffers;
-  template <typename Tree, typename SM_Tree>
-
-
-  void compute_distance_function(QMap<QObject*, Tree*> *trees, QMap<QObject*, SM_Tree*> *sm_trees, bool is_signed = false)const
+  template <typename SM_Tree>
+  void compute_distance_function(QMap<QObject*, SM_Tree*> *sm_trees, bool is_signed = false)const
   {
 
     m_max_distance_function = FT(0);
 
     FT diag = scene_diag();
-    std::vector<Tree*> closed_trees;
     std::vector<SM_Tree*> closed_sm_trees;
-    Q_FOREACH(Tree *tree, trees->values())
-    if(!(is_signed && !qobject_cast<Scene_polyhedron_item*>(trees->key(tree))->polyhedron()->is_closed()))
-      closed_trees.push_back(tree);
     Q_FOREACH(SM_Tree *sm_tree, sm_trees->values())
-    if(!(is_signed && !CGAL::is_closed(*qobject_cast<Scene_surface_mesh_item*>(sm_trees->key(sm_tree))->polyhedron())))
-      closed_sm_trees.push_back(sm_tree);
+      if(!(is_signed && !CGAL::is_closed(*qobject_cast<Scene_surface_mesh_item*>(sm_trees->key(sm_tree))->polyhedron())))
+        closed_sm_trees.push_back(sm_tree);
 #ifndef CGAL_LINKED_WITH_TBB
-    FillGridSize<Tree, SM_Tree> f(m_grid_size, diag, m_distance_function, m_max_distance_function, closed_trees, closed_sm_trees, is_signed, frame);
+    FillGridSize<SM_Tree> f(m_grid_size, diag, m_distance_function, m_max_distance_function, closed_sm_trees, is_signed, frame);
     HackRange range(0, static_cast<std::size_t>(m_grid_size*m_grid_size));
     f(range);
 #else
-    FillGridSize<Tree, SM_Tree> f(m_grid_size, diag, m_distance_function, m_max_distance_function, closed_trees, closed_sm_trees, is_signed, frame);
+    FillGridSize<SM_Tree> f(m_grid_size, diag, m_distance_function, m_max_distance_function, closed_sm_trees, is_signed, frame);
     tbb::parallel_for(tbb::blocked_range<size_t>(0, m_grid_size*m_grid_size), f);
 #endif
   }
@@ -857,17 +784,17 @@ private:
     switch(m_cut_plane)
     {
     case UNSIGNED_FACETS:
-      if ( facet_trees->empty() && facet_sm_trees->empty() ) { return; }
-      compute_distance_function(facet_trees, facet_sm_trees);
+      if ( facet_sm_trees->empty() ) { return; }
+      compute_distance_function(facet_sm_trees);
       break;
     case SIGNED_FACETS:
-      if ( facet_trees->empty() && facet_sm_trees->empty() ) { return; }
-      compute_distance_function(facet_trees, facet_sm_trees, true);
+      if (facet_sm_trees->empty() ) { return; }
+      compute_distance_function( facet_sm_trees, true);
 
       break;
     case UNSIGNED_EDGES:
-      if ( edge_trees->empty() && edge_sm_trees->empty()) { return; }
-      compute_distance_function(edge_trees, edge_sm_trees);
+      if ( edge_sm_trees->empty()) { return; }
+      compute_distance_function( edge_sm_trees);
       break;
     default:
       break;
@@ -1014,11 +941,10 @@ public:
   virtual ~Polyhedron_demo_cut_plugin();
 
   bool applicable(QAction*) const {
-    // returns true if one polyhedron is in the entries
+    // returns true if one surface_mesh is in the entries
     for (int i=0; i< scene->numberOfEntries(); ++i)
     {
-      if ( qobject_cast<Scene_polyhedron_item*>(scene->item(i))
-        || qobject_cast<Scene_surface_mesh_item*>(scene->item(i)) )
+      if ( qobject_cast<Scene_surface_mesh_item*>(scene->item(i)) )
         return true;
     }
     return false;
@@ -1139,59 +1065,30 @@ public Q_SLOTS:
   }
   void deleteTrees(CGAL::Three::Scene_item* sender)
   {
-    Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(sender);
-    if(item)
+    Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(sender);
+    if(!sm_item)
+      return;
+    if(facet_sm_trees.keys().contains(sm_item))
     {
-      if(facet_trees.keys().contains(item))
-      {
-        delete facet_trees[item];
-        facet_trees.remove(item);
-      }
-      if(edge_trees.keys().contains(item))
-      {
-        delete edge_trees[item];
-        edge_trees.remove(item);
-      }
-      if(facet_trees.empty())
-      {
-        if(plane_item)
-          scene->erase(scene->item_id(plane_item));
-        if(edges_item)
-          scene->erase(scene->item_id(edges_item));
-      }
-      else
-      {
-        ready_to_cut = true;
-        cut();
-      }
+      delete facet_sm_trees[sm_item];
+      facet_sm_trees.remove(sm_item);
+    }
+    if(edge_sm_trees.keys().contains(sm_item))
+    {
+      delete edge_sm_trees[sm_item];
+      edge_sm_trees.remove(sm_item);
+    }
+    if(facet_sm_trees.empty())
+    {
+      if(plane_item)
+        scene->erase(scene->item_id(plane_item));
+      if(edges_item)
+        scene->erase(scene->item_id(edges_item));
     }
     else
     {
-      Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(sender);
-      if(!sm_item)
-        return;
-      if(facet_sm_trees.keys().contains(sm_item))
-      {
-        delete facet_sm_trees[sm_item];
-        facet_sm_trees.remove(sm_item);
-      }
-      if(edge_sm_trees.keys().contains(sm_item))
-      {
-        delete edge_sm_trees[sm_item];
-        edge_sm_trees.remove(sm_item);
-      }
-      if(facet_sm_trees.empty())
-      {
-        if(plane_item)
-          scene->erase(scene->item_id(plane_item));
-        if(edges_item)
-          scene->erase(scene->item_id(edges_item));
-      }
-      else
-      {
-        ready_to_cut = true;
-        cut();
-      }
+      ready_to_cut = true;
+      cut();
     }
   }
   void updateTrees(int id);
@@ -1208,8 +1105,6 @@ private:
   QAction* actionUnsignedEdges;
 
   bool ready_to_cut;
-  Facet_trees facet_trees;
-  Edge_trees edge_trees;
 
   Facet_sm_trees facet_sm_trees;
   Edge_sm_trees edge_sm_trees;
@@ -1220,11 +1115,11 @@ private:
 
 Polyhedron_demo_cut_plugin::~Polyhedron_demo_cut_plugin()
 {
-  Q_FOREACH(Facet_tree *tree, facet_trees.values())
+  Q_FOREACH(Facet_sm_tree *tree, facet_sm_trees.values())
   {
     delete tree;
   }
-    Q_FOREACH(Edge_tree *tree, edge_trees.values())
+    Q_FOREACH(Edge_sm_tree *tree, edge_sm_trees.values())
     {
       delete tree;
     }
@@ -1288,8 +1183,7 @@ QList<QAction*> Polyhedron_demo_cut_plugin::actions() const {
 void Polyhedron_demo_cut_plugin::updateTrees(int id)
 {
 if(plane_item &&
-   (qobject_cast<Scene_polyhedron_item*>(scene->item(id))
-   || qobject_cast<Scene_surface_mesh_item*>(scene->item(id))))
+   qobject_cast<Scene_surface_mesh_item*>(scene->item(id)))
   createCutPlane();
 }
 
@@ -1299,12 +1193,12 @@ void Polyhedron_demo_cut_plugin::apply(Item* item, QMap< QObject*, Facets_tree*>
   const Mesh& mesh = *item->polyhedron();
   if(!CGAL::is_triangle_mesh(mesh))
   {
-    messages->warning(QString("%1 ignored (not a triangulated mesh)").arg(item->name()));
+    CGAL::Three::Three::warning(QString("%1 ignored (not a triangulated mesh)").arg(item->name()));
     return;
   }
   if(!CGAL::is_closed(mesh))
   {
-    messages->warning(QString("%1 is not closed. Signed function will not be displayed.").arg(item->name()));
+    CGAL::Three::Three::warning(QString("%1 is not closed. Signed function will not be displayed.").arg(item->name()));
   }
   if(f_trees.find(item) == f_trees.end()) {
     PPMAP<Mesh> pmap(item->polyhedron());
@@ -1379,13 +1273,10 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
   }
   else
     scene->addItem(plane_item);
-  // Hide polyhedrons and call cut() (avoid that nothing shows up until user
+  // Hide surface_meshes and call cut() (avoid that nothing shows up until user
   // decides to move the plane item)
   for(int i = 0, end = scene->numberOfEntries(); i < end; ++i) {
     CGAL::Three::Scene_item* item = scene->item(i);
-    Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
-    if ( NULL != poly_item )
-      poly_item->setVisible(false);
 
     Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(item);
     if ( NULL != sm_item )
@@ -1394,21 +1285,12 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
   //fills the tree maps
   for(int i = 0, end = scene->numberOfEntries(); i < end; ++i) {
     CGAL::Three::Scene_item* item = scene->item(i);
-    Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
     Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(item);
-    if(!poly_item)
+    if(sm_item)
     {
-      if(sm_item)
-      {
-        apply<Scene_surface_mesh_item, SMesh, Facet_sm_traits, Facet_sm_tree, Edge_sm_tree>(sm_item,facet_sm_trees, edge_sm_trees);
-      }
+      apply<Scene_surface_mesh_item, SMesh, Facet_sm_traits, Facet_sm_tree, Edge_sm_tree>(sm_item,facet_sm_trees, edge_sm_trees);
     }
-    else
-        apply<Scene_polyhedron_item, Polyhedron, Facet_traits, Facet_tree, Edge_tree>(poly_item, facet_trees, edge_trees);
   }
-
-  plane_item->set_facet_trees(&facet_trees);
-  plane_item->set_edge_trees(&edge_trees);
 
   plane_item->set_facet_sm_trees(&facet_sm_trees);
   plane_item->set_edge_sm_trees(&edge_sm_trees);
@@ -1491,24 +1373,6 @@ void Polyhedron_demo_cut_plugin::computeIntersection()
   QTime time;
   time.start();
   bool does_intersect = false;
-  for(Facet_trees::iterator it = facet_trees.begin(); it != facet_trees.end(); ++it)
-  {
-    if(!CGAL::do_intersect(plane, it.value()->bbox()))
-      continue;
-    does_intersect = true;
-    std::vector<Facet_tree::Object_and_primitive_id> intersections;
-    it.value()->all_intersections(plane, std::back_inserter(intersections));
-
-    for ( std::vector<Facet_tree::Object_and_primitive_id>::iterator it = intersections.begin(),
-          end = intersections.end() ; it != end ; ++it )
-    {
-      const Simple_kernel::Segment_3* inter_seg =
-          CGAL::object_cast<Simple_kernel::Segment_3>(&(it->first));
-
-      if ( NULL != inter_seg )
-        edges_item->edges.push_back(*inter_seg);
-    }
-  }
   for(Facet_sm_trees::iterator it = facet_sm_trees.begin(); it != facet_sm_trees.end(); ++it)
   {
     if(!CGAL::do_intersect(plane, it.value()->bbox()))
@@ -1528,7 +1392,7 @@ void Polyhedron_demo_cut_plugin::computeIntersection()
     }
   }
   if(does_intersect)
-    messages->information(QString("cut (%1 ms). %2 edges.").arg(time.elapsed()).arg(edges_item->edges.size()));
+    CGAL::Three::Three::information(QString("cut (%1 ms). %2 edges.").arg(time.elapsed()).arg(edges_item->edges.size()));
   edges_item->invalidateOpenGLBuffers();
   edges_item->itemChanged();
   ready_to_cut = false;

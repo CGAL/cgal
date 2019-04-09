@@ -70,18 +70,12 @@ Scene_polyhedron_item_decorator::select(double orig_x,
                                    double dir_y,
                                    double dir_z)
 {
-  Scene_item::select(orig_x,
-                     orig_y,
-                     orig_z,
-                     dir_x,
-                     dir_y,
-                     dir_z);
   poly_item->select(orig_x,
-                       orig_y,
-                       orig_z,
-                       dir_x,
-                       dir_y,
-                       dir_z);
+                    orig_y,
+                    orig_z,
+                    dir_x,
+                    dir_y,
+                    dir_z);
 }
 
 Scene_face_graph_item* Scene_polyhedron_item_decorator::polyhedron_item() const {

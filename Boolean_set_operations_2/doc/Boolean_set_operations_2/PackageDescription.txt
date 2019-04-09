@@ -1,24 +1,24 @@
-/// \defgroup PkgBooleanSetOperations2 2D Regularized Boolean Set-Operations Reference
+/// \defgroup PkgBooleanSetOperations2Ref 2D Regularized Boolean Set-Operations Reference
 /// \defgroup PkgBooleanSetOperations2Concepts Concepts
-/// \ingroup PkgBooleanSetOperations2
+/// \ingroup PkgBooleanSetOperations2Ref
 
 /// \cgalConceptNamespace
 /// The namespace containing concepts specific to 2D Boolean Set Operations.
 namespace ArrDirectionalTraits {}
 
 /*!
-\addtogroup PkgBooleanSetOperations2
+\addtogroup PkgBooleanSetOperations2Ref
 \todo check generated documentation
-\cgalPkgDescriptionBegin{2D Regularized Boolean Set-Operations,PkgBooleanSetOperations2Summary}
+\cgalPkgDescriptionBegin{2D Regularized Boolean Set-Operations,PkgBooleanSetOperations2}
 \cgalPkgPicture{Boolean_set_operations_2.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Efi Fogel, Ophir Setter, Ron Wein, Guy Zucker, Baruch Zukerman, and Dan Halperin}
 \cgalPkgDesc{This package consists of the implementation of Boolean set-operations on point sets bounded by weakly x-monotone curves in 2-dimensional Euclidean space. In particular, it contains the implementation of regularized Boolean set-operations, intersection predicates, and point containment predicates.}
-\cgalPkgManuals{Chapter_2D_Regularized_Boolean_Set-Operations,PkgBooleanSetOperations2}
+\cgalPkgManuals{Chapter_2D_Regularized_Boolean_Set-Operations,PkgBooleanSetOperations2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.2}
-\cgalPkgDependsOn{\ref PkgArrangement2Summary}
+\cgalPkgDependsOn{\ref PkgArrangementOnSurface2}
 \cgalPkgBib{cgal:fwzh-rbso2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Boolean operations,boolean_operations_2.zip}
@@ -33,7 +33,7 @@ containment predicates.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `GpsTraitsGeneralPolygon_2`
 - `GpsTraitsGeneralPolygonWithHoles_2`
 - `GeneralPolygon_2`
@@ -43,7 +43,7 @@ containment predicates.
 - `GeneralPolygonSetDcelFace`
 - `GeneralPolygonSetDcelHalfedge`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Polygon_set_2<Kernel,Container,Dcel>`
 - `CGAL::General_polygon_set_2<Traits,Dcel>`
 - `CGAL::General_polygon_2<ArrTraits>`
@@ -53,7 +53,7 @@ containment predicates.
 - `CGAL::Gps_traits_2<ArrTraits,GeneralPolygon>`
 - `CGAL::Gps_default_dcel<Traits>`
 
-## Functions ##
+\cgalCRPSection{Functions}
 - \link boolean_complement `CGAL::complement()` \endlink
 - \link boolean_do_intersect `CGAL::do_intersect()` \endlink
 - \link boolean_intersection `CGAL::intersection()` \endlink

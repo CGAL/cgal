@@ -318,7 +318,7 @@ public:
 
     //return 1.0;
     double voronoi_area = 0.0;
-    BOOST_FOREACH(halfedge_descriptor he,
+    for(halfedge_descriptor he :
                   halfedges_around_target( halfedge(v0,pmesh()), pmesh()) )
     {
       if( is_border(he,pmesh()) ) { continue; }

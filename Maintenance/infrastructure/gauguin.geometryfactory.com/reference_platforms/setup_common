@@ -64,7 +64,10 @@ export CMAKE_PREFIX_PATH="$ZLIB_ROOT;$CMAKE_PREFIX_PATH"
 
 
 #TBB
-export TBB_ARCH_PLATFORM="${TBB_ARCH}/vc${VC_VERSION}"
+if [ "${VC_VERSION}" != "14.1" ]; then
+  export TBB_ARCH_PLATFORM="${TBB_ARCH}/vc${VC_VERSION}"
+  #else it is defined in the platform setup
+fi
 export TBBROOT="C:/3rdPartyLibs/tbb2018_20170919oss"
 export PATH="`cygpath ${TBBROOT}/bin/${TBB_ARCH_PLATFORM}`":$PATH
 
@@ -86,4 +89,5 @@ if [ -d/cygdrive/c/3rdPartyLibs/opencv/build_vs${VC_VERSION_YEAR}-${ARCH} ]; the
   export OpenCV_DIR="C:/3rdPartyLibs/opencv/build_vs${VC_VERSION_YEAR}-${ARCH}"
   export PATH="`cygpath ${OpenCV_DIR}/bin/Release`":$PATH
   export PATH="`cygpath ${OpenCV_DIR}/bin/Debug`":$PATH
+  export PATH="`cygpath ${OpenCV_DIR}/3rdparty/ffmpeg/`":$PATH
 fi

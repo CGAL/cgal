@@ -16,7 +16,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 
-typedef CGAL::cpp11::array<double,6> Covariance;
+typedef std::array<double,6> Covariance;
 
 
 bool test_fandisk()

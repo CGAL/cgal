@@ -2,17 +2,12 @@
 #define SCENE_POLYHEDRON_ITEM_DECORATOR_H
 #include "Scene_polyhedron_item_decorator_config.h"
 
-#ifdef USE_SURFACE_MESH
 #include "Scene_surface_mesh_item.h"
 typedef Scene_surface_mesh_item Scene_face_graph_item;
-#else
-#include "Scene_polyhedron_item.h"
-typedef Scene_polyhedron_item Scene_face_graph_item;
-#endif
 
 typedef Scene_face_graph_item::Face_graph Face_graph;
 
-// This class is a decorator for Scene_polyhedron_item yet it does not inherit it but Scene_item
+// This class is a decorator for Scene_surface_mesh_item yet it does not inherit it but Scene_item
 class SCENE_POLYHEDRON_ITEM_DECORATOR_EXPORT Scene_polyhedron_item_decorator 
   : public CGAL::Three::Scene_item {
   Q_OBJECT

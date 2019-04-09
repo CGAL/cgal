@@ -20,7 +20,7 @@ if(EIGEN3_FOUND)
 
   if (Boost_SERIALIZATION_FOUND AND Boost_IOSTREAMS_FOUND AND (NOT WIN32 OR Boost_ZLIB_FOUND))
     qt5_wrap_ui( classificationUI_FILES Classification_widget.ui Classification_advanced_widget.ui )
-    polyhedron_demo_plugin(classification_plugin Classification_plugin Point_set_item_classification Cluster_classification Surface_mesh_item_classification ${classificationUI_FILES})
+    polyhedron_demo_plugin(classification_plugin Classification_plugin Point_set_item_classification Cluster_classification Surface_mesh_item_classification ${classificationUI_FILES} KEYWORDS Classification)
     
     set(classification_linked_libraries ${classification_linked_libraries}
       ${Boost_SERIALIZATION_LIBRARY}
@@ -37,9 +37,22 @@ if(EIGEN3_FOUND)
     else()
       message(STATUS "NOTICE: OpenCV was not found. OpenCV random forest predicate for classification won't be available.")
     endif()
+
+    find_package(TensorFlow QUIET)
+    if (TensorFlow_FOUND)
+      message(STATUS "Found TensorFlow")
+      set(classification_linked_libraries ${classification_linked_libraries}
+        ${TensorFlow_LIBRARY})
+      set(classification_compile_definitions ${classification_compile_definitions}
+        "-DCGAL_LINKED_WITH_TENSORFLOW")
+      include_directories( ${TensorFlow_INCLUDE_DIR} )
+    else()
+      message(STATUS "NOTICE: TensorFlow not found, Neural Network predicate for classification won't be available.")
+    endif()
     
     target_link_libraries(classification_plugin PUBLIC scene_points_with_normal_item
-      scene_polylines_item scene_polygon_soup_item scene_surface_mesh_item scene_surface_mesh_selection_item scene_color_ramp ${classification_linked_libraries})
+      scene_polylines_item scene_polygon_soup_item scene_surface_mesh_item scene_selection_item scene_color_ramp ${classification_linked_libraries})
+    add_dependencies(classification_plugin point_set_selection_plugin selection_plugin)
     target_compile_definitions(classification_plugin PUBLIC ${classification_compile_definitions})
   else()
     message(STATUS "NOTICE: Boost Serialization or IO Streams or ZLIB not found. Classification plugin won't be available.")

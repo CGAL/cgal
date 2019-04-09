@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 #include <fstream>
 #include <QMessageBox>
 #include <QMenu>
@@ -14,7 +15,7 @@ class Polyhedron_demo_xyz_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0" FILE "xyz_io_plugin.json")
 
 public:
 
@@ -42,6 +43,15 @@ Polyhedron_demo_xyz_plugin::load(QFileInfo fileinfo)
     return NULL;
   }
 
+  
+  if(fileinfo.size() == 0)
+  {
+    CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
+    Scene_points_with_normal_item* item =
+        new Scene_points_with_normal_item();
+    item->setName(fileinfo.completeBaseName());
+    return item;
+  }
   // Read .xyz in a point set
   Scene_points_with_normal_item* point_set_item = new Scene_points_with_normal_item;
   point_set_item->setName(fileinfo.completeBaseName());
@@ -49,6 +59,9 @@ Polyhedron_demo_xyz_plugin::load(QFileInfo fileinfo)
     delete point_set_item;
     return NULL;
   }
+  if(point_set_item->has_normals())
+    point_set_item->setRenderingMode(CGAL::Three::Three::defaultPointSetRenderingMode());
+    
   return point_set_item;
 }
 

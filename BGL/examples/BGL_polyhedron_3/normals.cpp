@@ -1,17 +1,13 @@
 #include <fstream>
 
 #include <boost/graph/graph_traits.hpp>
-#include <CGAL/property_map.h>
 
-#include <CGAL/basic.h>
-#include <CGAL/Kernel/global_functions.h>
-
-// Polyhedron
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
+#include <CGAL/property_map.h>
 
-typedef CGAL::Cartesian<double>                                      Kernel;
+typedef CGAL::Simple_cartesian<double>                               Kernel;
 typedef Kernel::Point_3                                              Point;
 typedef Kernel::Vector_3                                             Vector;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron;
@@ -63,14 +59,14 @@ void calculate_face_normals(const HalfedgeGraph& g,
   }
 }
 
-int main(int, char** argv)
+int main(int argc, char** argv)
 {
   typedef boost::property_map< 
     Polyhedron,
     CGAL::face_index_t 
     >::const_type Face_index_map;
 
-  std::ifstream in(argv[1]);
+  std::ifstream in((argc>1)?argv[1]:"cube.off");
   Polyhedron P;
   in >> P ;
   

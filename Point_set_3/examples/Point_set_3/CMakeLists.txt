@@ -4,7 +4,7 @@
 project( Point_set_3_Examples )
 
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS  )
@@ -15,10 +15,6 @@ if ( NOT CGAL_FOUND )
   return()  
 
 endif()
-
-# include helper file
-include( ${CGAL_USE_FILE} )
-
 
 # Boost and its components
 find_package( Boost REQUIRED )
@@ -31,17 +27,9 @@ if ( NOT Boost_FOUND )
 
 endif()
 
-# include for local directory
-include_directories( BEFORE include )
-
-# include for local package
-include_directories( BEFORE ../../include )
-
 
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
-
-include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "point_set.cpp" )
 create_single_source_cgal_program( "point_set_property.cpp" )

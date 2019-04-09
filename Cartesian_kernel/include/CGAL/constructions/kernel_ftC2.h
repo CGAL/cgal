@@ -28,6 +28,7 @@
 
 #include <CGAL/determinant.h>
 #include <CGAL/number_utils.h>
+#include <boost/type_traits/is_integral.hpp>
 
 namespace CGAL {
 
@@ -284,7 +285,16 @@ line_get_pointC2(const FT &a, const FT &b, const FT &c, int i,
 {
   if (CGAL_NTS is_zero(b))
     {
-      x = (-b-c)/a + i * b;
+      // Laurent Rineau, 2018/12/07: I add this CGAL_assume to calm
+      // down a warning from MSVC 2017:
+      // > include\cgal\constructions\kernel_ftc2.h(287) :
+      // >   warning C4723: potential divide by 0
+      // The test `!boost::is_integral<FT>::value` is there to avoid
+      // that `a != 0` is tested on anything but integral types, for
+      // performance reasons.
+      CGAL_assume(!boost::is_integral<FT>::value || a != FT(0));
+
+      x = -c/a;
       y = 1 - i * a;
     }
   else
@@ -313,34 +323,24 @@ line_project_pointC2(const FT &la, const FT &lb, const FT &lc,
 		     const FT &px, const FT &py,
 		     FT &x, FT &y)
 {
-#if 1 // FIXME
-  // Original old version
-  if (CGAL_NTS is_zero(la)) // horizontal line
+  if (certainly(is_zero(la))) // horizontal line
   {
     x = px;
     y = -lc/lb;
   }
-  else if (CGAL_NTS is_zero(lb)) // vertical line
+  else if (certainly(is_zero(lb))) // vertical line
   {
     x = -lc/la;
     y = py;
   }
   else
   {
-    FT ab = la/lb, ba = lb/la, ca = lc/la;
-    y = ( -px + ab*py - ca ) / ( ba + ab );
-    x = -ba * y - ca;
+    FT a2 = CGAL_NTS square(la);
+    FT b2 = CGAL_NTS square(lb);
+    FT d = a2 + b2;
+    x = (b2*px - la*lb*py  - la*lc) / d;
+    y = (-la*lb*px + a2*py - lb*lc) / d;
   }
-#else
-  // New version, with more multiplications, but less divisions and tests.
-  // Let's compare the results of the 2, benchmark them, as well as check
-  // the precision with the intervals.
-  FT a2 = CGAL_NTS square(la);
-  FT b2 = CGAL_NTS square(lb);
-  FT d = a2 + b2;
-  x = (la * (lb * py - lc) - px * b2) / d;
-  y = (lb * (lc - la * px) + py * a2) / d;
-#endif
 }
 
 template < class FT >

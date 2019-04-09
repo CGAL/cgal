@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3Domains
+\ingroup PkgMesh3Domains
 
 The class `Mesh_polyhedron_3` provides a customized `Polyhedron_3` type. This type uses 
 as `PolyhedronItems_3` a customized type which adds data to the Vertex, Face and 

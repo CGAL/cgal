@@ -31,7 +31,7 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/double.h>
 #include <CGAL/function_objects.h>
-#include <CGAL/function.h>
+#include <functional>
 #include <CGAL/Origin.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Random.h>
@@ -288,7 +288,7 @@ void _test_interpolation_functions_2_Delaunay_without_OutputFunctor(const Dt&, c
 
   // Create n+m-4 points within a disc of radius 2
   CGAL::Random_points_in_square_2<Point> g(r);
-  CGAL::cpp11::copy_n(g, n+m, std::back_inserter(points));
+  std::copy_n(g, n+m, std::back_inserter(points));
 
   CGAL::Random random;
 
@@ -467,7 +467,7 @@ void _test_interpolation_functions_2_Delaunay_with_OutputFunctor(const Dt&, cons
 
   // Create n+m-4 points within a disc of radius 2
   CGAL::Random_points_in_square_2<Point> g(r);
-  CGAL::cpp11::copy_n(g, n+m, std::back_inserter(points));
+  std::copy_n(g, n+m, std::back_inserter(points));
 
   CGAL::Random random;
 
@@ -553,7 +553,7 @@ void _test_interpolation_functions_2_Delaunay_with_OutputFunctor(const Dt&, cons
 
 
       // wrapping the lambda in a std function
-      CGAL::cpp11::function<std::pair<Coord_type, bool>(const Vertex_handle)> value_function_1 =
+      std::function<std::pair<Coord_type, bool>(const Vertex_handle)> value_function_1 =
         [](const Vertex_handle vh) -> std::pair<Coord_type, bool> { return std::make_pair(vh->info()[1].value, true); };
 
       std::function<std::pair<Vector, bool>(const Vertex_handle)> gradient_function_1 =
@@ -679,7 +679,7 @@ void _test_interpolation_functions_2_Delaunay_with_OutputFunctor(const Dt&, cons
                             Traits(), 0, tolerance));
 
   // wrapping the lambda in a std function
-  CGAL::cpp11::function<std::pair<Coord_type, bool>(const Vertex_handle)> value_function_1 =
+  std::function<std::pair<Coord_type, bool>(const Vertex_handle)> value_function_1 =
       [](const Vertex_handle vh) -> std::pair<Coord_type, bool> { return std::make_pair(vh->info()[1].value, true); };
 
   std::function<std::pair<Vector, bool>(const Vertex_handle)> gradient_function_1 =

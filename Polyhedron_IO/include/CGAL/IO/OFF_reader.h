@@ -21,6 +21,7 @@
 #define CGAL_IO_OFF_READER_H
 
 #include <CGAL/IO/File_scanner_OFF.h>
+#include <CGAL/IO/reader_helpers.h>
 
 #include <vector>
 #include <iostream>
@@ -28,33 +29,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>
 
-namespace CGAL{
-
-  namespace read_OFF_internal{
-    template <class Point_3>
-    void fill_point(double x, double y, double z, Point_3& pt)
-    {
-      pt = Point_3(x, y, z);
-    }
-
-    void fill_point(double x, double y, double z, CGAL::cpp11::array<double,3>& p)
-    {
-      p = CGAL::make_array(x,y,z);
-    }
-
-    template <class Polygon_3>
-    void resize(Polygon_3& p, std::size_t size)
-    {
-      p.resize(size);
-    }
-
-    template <std::size_t N, class INT>
-    void resize(CGAL::cpp11::array<INT, N>&, std::size_t size)
-    {
-      CGAL_USE(size);
-      CGAL_assertion( size>=N );
-    }
-  }
+namespace CGAL {
 
   template <class Point_3, class Polygon_3>
   bool
@@ -71,7 +46,7 @@ namespace CGAL{
       double x, y, z, w;
       scanner.scan_vertex( x, y, z, w);
       CGAL_assertion(w!=0);
-      read_OFF_internal::fill_point( x/w, y/w, z/w, points[i] );
+      IO::internal::fill_point( x/w, y/w, z/w, points[i] );
       scanner.skip_to_next_vertex( i);
     }
     if(!in)
@@ -81,7 +56,7 @@ namespace CGAL{
       std::size_t no;
 
       scanner.scan_facet( no, i);
-      read_OFF_internal::resize(polygons[i], no);
+      IO::internal::resize(polygons[i], no);
       for(std::size_t j = 0; j < no; ++j) {
         std::size_t id;
         scanner.scan_facet_vertex_index(id, i);
@@ -114,7 +89,7 @@ namespace CGAL{
         double x, y, z, w;
         scanner.scan_vertex( x, y, z, w);
         CGAL_assertion(w!=0);
-        read_OFF_internal::fill_point( x/w, y/w, z/w, points[i] );
+        IO::internal::fill_point( x/w, y/w, z/w, points[i] );
         if(scanner.has_colors())
         {
             unsigned char r=0, g=0, b=0;
@@ -123,15 +98,16 @@ namespace CGAL{
         }
         else
             scanner.skip_to_next_vertex(i);
+        if(!in)
+          return false;
     }
-    if(!in)
-      return false;
     bool has_fcolors = false;
     for (std::size_t i = 0; i < scanner.size_of_facets(); ++i) {
       std::size_t no;
       scanner.scan_facet( no, i);
-
-      read_OFF_internal::resize(polygons[i], no);
+      if(!in)
+        return false;
+      IO::internal::resize(polygons[i], no);
       for(std::size_t j = 0; j < no; ++j) {
         std::size_t id;
         scanner.scan_facet_vertex_index(id, i);

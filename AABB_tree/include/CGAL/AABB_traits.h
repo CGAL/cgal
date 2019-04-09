@@ -60,41 +60,10 @@ template <class Primitive>
 struct AABB_traits_base<Primitive,true>{
   typename  Primitive::Shared_data m_primitive_data;
 
-  #if !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)
   template <typename ... T>
   void set_shared_data(T&& ... t){
     m_primitive_data=Primitive::construct_shared_data(std::forward<T>(t)...);
   }
-  #else
-  void set_shared_data(){
-    m_primitive_data=Primitive::construct_shared_data();
-  }
-
-  template <class T1>
-  void set_shared_data(T1& t1){
-    m_primitive_data=Primitive::construct_shared_data(t1);
-  }
-
-  template <class T1,class T2>
-  void set_shared_data(T1& t1, T2& t2){
-    m_primitive_data=Primitive::construct_shared_data(t1,t2);
-  }
-
-  template <class T1,class T2,class T3>
-  void set_shared_data(T1& t1,T2& t2,T3& t3){
-    m_primitive_data=Primitive::construct_shared_data(t1,t2,t3);
-  }
-
-  template <class T1,class T2,class T3,class T4>
-  void set_shared_data(T1& t1,T2& t2,T3& t3,T4& t4){
-    m_primitive_data=Primitive::construct_shared_data(t1,t2,t3,t4);
-  }
-
-  template <class T1,class T2,class T3,class T4,class T5>
-  void set_shared_data(T1& t1,T2& t2,T3& t3,T4& t4,T5& t5){
-    m_primitive_data=Primitive::construct_shared_data(t1,t2,t3,t4,t5);
-  }
-  #endif
   const typename Primitive::Shared_data& shared_data() const {return m_primitive_data;}
 };
 
@@ -173,8 +142,12 @@ struct AABB_traits_base_2<GeomTraits,true>{
 
 } } //end of namespace internal::AABB_tree
 
-/// \addtogroup PkgAABB_tree
+/// \addtogroup PkgAABBTreeRef
 /// @{
+
+// forward declaration
+template< typename AABBTraits>
+class AABB_tree;
 
 /// This traits class handles any type of 3D geometric
 /// primitives provided that the proper intersection tests and
@@ -289,14 +262,15 @@ public:
    * Sorts the range defined by [first,beyond[. Sort is achieved on bbox longuest
    * axis, using the comparison function `<dim>_less_than` (dim in {x,y,z})
    */
-  class Sort_primitives
+  class Split_primitives
   {
     typedef AABB_traits<GeomTraits,AABBPrimitive,BboxMap> Traits;
     const Traits& m_traits;
   public:
-    Sort_primitives(const AABB_traits<GeomTraits,AABBPrimitive,BboxMap>& traits)
+    Split_primitives(const AABB_traits<GeomTraits,AABBPrimitive,BboxMap>& traits)
       : m_traits(traits) {}
 
+    typedef void result_type;
     template<typename PrimitiveIterator>
     void operator()(PrimitiveIterator first,
                     PrimitiveIterator beyond,
@@ -320,7 +294,7 @@ public:
       }
   };
 
-  Sort_primitives sort_primitives_object() const {return Sort_primitives(*this);}
+  Split_primitives split_primitives_object() const {return Split_primitives(*this);}
 
 
   /*
@@ -369,6 +343,19 @@ public:
     {
       return GeomTraits().do_intersect_3_object()(q, internal::Primitive_helper<AT>::get_datum(pr,m_traits));
     }
+
+    // intersection with AABB-tree
+    template<typename AABBTraits>
+    bool operator()(const CGAL::AABB_tree<AABBTraits>& other_tree, const Primitive& pr) const
+    {
+      return other_tree.do_intersect( internal::Primitive_helper<AT>::get_datum(pr,m_traits) );
+    }
+
+    template<typename AABBTraits>
+    bool operator()(const CGAL::AABB_tree<AABBTraits>& other_tree, const Bounding_box& bbox) const
+    {
+      return other_tree.do_intersect(bbox);
+    }
   };
 
   Do_intersect do_intersect_object() const {return Do_intersect(*this);}
@@ -378,20 +365,6 @@ public:
   public:
     Intersection(const AABB_traits<GeomTraits,AABBPrimitive,BboxMap>& traits)
       :m_traits(traits) {}
-    #if CGAL_INTERSECTION_VERSION < 2
-    template<typename Query>
-    boost::optional<typename AT::Object_and_primitive_id>
-    operator()(const Query& query, const typename AT::Primitive& primitive) const
-    {
-      typedef boost::optional<Object_and_primitive_id> Intersection;
-
-      CGAL::Object object = GeomTraits().intersect_3_object()(internal::Primitive_helper<AT>::get_datum(primitive,m_traits),query);
-      if ( object.empty() )
-        return Intersection();
-      else
-        return Intersection(Object_and_primitive_id(object,primitive.id()));
-    }
-    #else
     template<typename Query>
     boost::optional< typename Intersection_and_primitive_id<Query>::Type >
     operator()(const Query& query, const typename AT::Primitive& primitive) const {
@@ -401,7 +374,6 @@ public:
         return boost::none;
       return boost::make_optional( std::make_pair(*inter_res, primitive.id()) );
     }
-    #endif
   };
 
   Intersection intersection_object() const {return Intersection(*this);}

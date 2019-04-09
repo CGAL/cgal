@@ -32,14 +32,13 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
-#include <boost/foreach.hpp>
 
 namespace CGAL {
 
   namespace Polygon_mesh_processing {
 
     /*!
-    * \ingroup PkgPolygonMeshProcessing
+    * \ingroup PkgPolygonMeshProcessingRef
     *  computes a bounding box of a polygon mesh.
     *
     * @tparam PolygonMesh a model of `HalfedgeListGraph`
@@ -76,19 +75,18 @@ namespace CGAL {
       GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
       typename GT::Construct_bbox_3 get_bbox = gt.construct_bbox_3_object();
 
-      typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+      typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
-      halfedge_descriptor h0 = *(halfedges(pmesh).first);
-      CGAL::Bbox_3 bb = get(vpm, target(h0, pmesh)).bbox();
-      BOOST_FOREACH(halfedge_descriptor h, halfedges(pmesh))
+      CGAL::Bbox_3 bb;
+      for(vertex_descriptor v : vertices(pmesh))
       {
-        bb += get_bbox( get(vpm, target(h, pmesh)) );
+        bb += get_bbox( get(vpm, v) );
       }
       return bb;
     }
 
     /*!
-    * \ingroup PkgPolygonMeshProcessing
+    * \ingroup PkgPolygonMeshProcessingRef
     *  computes a bounding box of a vertex of a polygon mesh.
     *
     * @tparam PolygonMesh a model of `HalfedgeGraph`
@@ -131,7 +129,7 @@ namespace CGAL {
     }
 
     /*!
-    * \ingroup PkgPolygonMeshProcessing
+    * \ingroup PkgPolygonMeshProcessingRef
     *  computes a bounding box of an edge of a polygon mesh.
     *
     * @tparam PolygonMesh a model of `HalfedgeGraph`
@@ -175,7 +173,7 @@ namespace CGAL {
     }
 
     /*!
-    * \ingroup PkgPolygonMeshProcessing
+    * \ingroup PkgPolygonMeshProcessingRef
     *  computes a bounding box of a face of a polygon mesh.
     *
     * @tparam PolygonMesh a model of `HalfedgeGraph`
@@ -217,7 +215,7 @@ namespace CGAL {
       typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
       CGAL::Bbox_3 bb;
-      BOOST_FOREACH(halfedge_descriptor h,
+      for(halfedge_descriptor h :
                     halfedges_around_face(halfedge(fd, pmesh), pmesh))
       {
         bb += get_bbox( get(vpm, target(h, pmesh)) );
@@ -257,7 +255,7 @@ namespace CGAL {
     // deprecated function
     #ifndef CGAL_NO_DEPRECATED_CODE
     /*!
-    * \ingroup PkgPolygonMeshProcessing
+    * \ingroup PkgPolygonMeshProcessingRef
     * \deprecated This function is deprecated since \cgal 4.10, `CGAL::Polygon_mesh_processing::bbox()` should be used instead.
     */
     template<typename PolygonMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>

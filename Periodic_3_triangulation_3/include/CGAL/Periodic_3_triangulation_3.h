@@ -131,7 +131,7 @@ public:
 
   typedef typename GT::Periodic_3_offset_3     Offset;
   typedef typename GT::Iso_cuboid_3            Iso_cuboid;
-  typedef CGAL::cpp11::array<int, 3>           Covering_sheets;
+  typedef std::array<int, 3>           Covering_sheets;
 
   // point types
   typedef typename TDS::Vertex::Point          Point;
@@ -143,13 +143,13 @@ public:
   typedef typename GT::Triangle_3              Triangle;
   typedef typename GT::Tetrahedron_3           Tetrahedron;
 
-  typedef CGAL::cpp11::array<Periodic_point, 2> Periodic_segment;
-  typedef CGAL::cpp11::array<Periodic_point, 3> Periodic_triangle;
-  typedef CGAL::cpp11::array<Periodic_point, 4> Periodic_tetrahedron;
+  typedef std::array<Periodic_point, 2> Periodic_segment;
+  typedef std::array<Periodic_point, 3> Periodic_triangle;
+  typedef std::array<Periodic_point, 4> Periodic_tetrahedron;
 
-  typedef CGAL::cpp11::array<Periodic_point_3, 2> Periodic_segment_3;
-  typedef CGAL::cpp11::array<Periodic_point_3, 3> Periodic_triangle_3;
-  typedef CGAL::cpp11::array<Periodic_point_3, 4> Periodic_tetrahedron_3;
+  typedef std::array<Periodic_point_3, 2> Periodic_segment_3;
+  typedef std::array<Periodic_point_3, 3> Periodic_triangle_3;
+  typedef std::array<Periodic_point_3, 4> Periodic_tetrahedron_3;
 
   typedef typename TDS::Vertex                 Vertex;
   typedef typename TDS::Cell                   Cell;
@@ -2063,11 +2063,11 @@ inline void
 Periodic_3_triangulation_3<GT,TDS>::
 make_canonical(Vertex_triple& t) const
 {
-  int i = (&*(t.first) < &*(t.second))? 0 : 1;
+  int i = (t.first < t.second) ? 0 : 1;
   if(i==0) {
-    i = (&*(t.first) < &*(t.third))? 0 : 2;
+    i = (t.first < t.third) ? 0 : 2;
   } else {
-    i = (&*(t.second) < &*(t.third))? 1 : 2;
+    i = (t.second < t.third) ? 1 : 2;
   }
   Vertex_handle tmp;
   switch(i) {
@@ -3640,10 +3640,10 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_27_sheeted_covering()
   }
 
   // Store neighboring offsets in a separate data structure
-  std::list<CGAL::cpp11::array<Offset,4> > off_nb;
+  std::list<std::array<Offset,4> > off_nb;
   for(typename std::list<Cell_handle>::iterator cit = original_cells.begin();
        cit != original_cells.end(); ++cit) {
-    CGAL::cpp11::array<Offset,4> off_nb_c;
+    std::array<Offset,4> off_nb_c;
     for(int i=0; i<4; i++) {
       Cell_handle ccc = *cit;
       Cell_handle nnn = ccc->neighbor(i);
@@ -3703,7 +3703,7 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_27_sheeted_covering()
   }
 
   // Set neighboring relations of cell copies
-  typename std::list<CGAL::cpp11::array<Offset,4> >::iterator oit = off_nb.begin();
+  typename std::list<std::array<Offset,4> >::iterator oit = off_nb.begin();
   for(typename std::list<Cell_handle>::iterator cit = original_cells.begin();
        cit != original_cells.end(); ++cit, ++oit) {
     CGAL_triangulation_assertion( oit != off_nb.end() );

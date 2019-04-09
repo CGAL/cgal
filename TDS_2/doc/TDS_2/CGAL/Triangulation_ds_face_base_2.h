@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTDS2
+\ingroup PkgTDS2Ref
 
 The class `Triangulation_ds_face_base_2` is a model for the concept 
 `TriangulationDSFaceBase_2` to be used by 

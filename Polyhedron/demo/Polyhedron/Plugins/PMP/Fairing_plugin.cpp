@@ -3,18 +3,12 @@
 
 #include "Messages_interface.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 #include "Scene_polyhedron_selection_item.h"
 #include "ui_Fairing_widget.h"
 
-#ifdef USE_SURFACE_MESH
 #include "SMesh_type.h"
 typedef Scene_surface_mesh_item Scene_facegraph_item;
-
-#else
-#include "Polyhedron_type.h"
-typedef Scene_polyhedron_item Scene_facegraph_item;
-#endif
-
 
 #include <CGAL/iterator.h>
 #include <CGAL/Polygon_mesh_processing/fair.h>
@@ -49,7 +43,7 @@ public:
     return qobject_cast<Scene_facegraph_item*>(scene->item(scene->mainSelectionIndex()))
     || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));  
   }
-  void print_message(QString message) { messages->information(message);}
+  void print_message(QString message) { CGAL::Three::Three::information(message);}
   QList<QAction*> actions() const { return QList<QAction*>() << actionFairing; }
 
 
@@ -58,35 +52,23 @@ public:
     scene = scene_interface;
     messages = m;
     actionFairing = new QAction(tr(
-                              #ifdef USE_SURFACE_MESH
-                                  "Refinement and Fairing for Surface Mesh"
-                              #else
-                                  "Refinement and Fairing for Polyhedron"
-                              #endif
+                                  "Refinement and Fairing"
                                   ), mw);
     actionFairing->setProperty("subMenuName", "Polygon Mesh Processing");
 
     connect(actionFairing, SIGNAL(triggered()), this, SLOT(fairing_action()));
 
     dock_widget = new QDockWidget(
-      #ifdef USE_SURFACE_MESH
-          "Refinement and Fairing for Surface Mesh"
-      #else
-          "Refinement and Fairing for Polyhedron"
-      #endif
+          "Refinement and Fairing"
                                   , mw);
     dock_widget->setVisible(false);
 
     ui_widget.setupUi(dock_widget);
     addDockWidget(dock_widget);
     dock_widget->setWindowTitle(tr(
-                              #ifdef USE_SURFACE_MESH
-                                  "Fairing for Surface Mesh"
-                              #else
-                                  "Fairing for Polyhedron"
-                              #endif
+                                  "Fairing "
                                   ));
-
+    
     connect(ui_widget.Fair_button,  SIGNAL(clicked()), this, SLOT(on_Fair_button_clicked()));  
     connect(ui_widget.Refine_button,  SIGNAL(clicked()), this, SLOT(on_Refine_button_clicked()));
   }
@@ -121,6 +103,7 @@ public Q_SLOTS:
       CGAL::Polygon_mesh_processing::fair(*selection_item->polyhedron(),
         selection_item->selected_vertices,
         CGAL::Polygon_mesh_processing::parameters::fairing_continuity(continuity));
+    selection_item->polyhedron_item()->resetColors();
     selection_item->changed_with_poly_item();
     selection_item->invalidateOpenGLBuffers();
     QApplication::restoreOverrideCursor();
@@ -146,6 +129,7 @@ public Q_SLOTS:
     for(std::vector<boost::graph_traits<FaceGraph>::face_descriptor>::iterator it = new_facets.begin(); it != new_facets.end(); ++it) {
       selection_item->selected_facets.insert(*it);
     }
+    selection_item->polyhedron_item()->resetColors();
     selection_item->changed_with_poly_item();
     selection_item->invalidateOpenGLBuffers();
     QApplication::restoreOverrideCursor();

@@ -7,27 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>292</width>
-    <height>432</height>
+    <height>489</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Property Displaying</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
-   <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0,0">
-    <item>
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
+   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0">
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0">
       <item>
@@ -52,6 +39,59 @@
             <widget class="QDoubleSpinBox" name="maxBox">
              <property name="value">
               <double>2.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0">
+             <item>
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="resetButton">
+               <property name="toolTip">
+                <string>Compute Ramp Extremas</string>
+               </property>
+               <property name="text">
+                <string>Reset</string>
+               </property>
+               <property name="autoRepeat">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="title">
+           <string>Ramp Colors</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="QPushButton" name="minColorButton">
+             <property name="text">
+              <string>Color Min...</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="maxColorButton">
+             <property name="text">
+              <string>Color Max...</string>
              </property>
             </widget>
            </item>
@@ -81,13 +121,6 @@
           </layout>
          </widget>
         </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
         <item row="4" column="0">
          <widget class="QLabel" name="label_3">
           <property name="text">
@@ -95,40 +128,27 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
-         <widget class="QGroupBox" name="groupBox_2">
-          <property name="title">
-           <string>Ramp Colors</string>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string/>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
-           <item>
-            <widget class="QPushButton" name="minColorButton">
-             <property name="text">
-              <string>Color Min...</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="maxColorButton">
-             <property name="text">
-              <string>Color Max...</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
          </widget>
         </item>
         <item row="4" column="1">
-         <widget class="QPushButton" name="rampButton">
-          <property name="text">
-           <string>Replace Ramp</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="1">
          <widget class="QPushButton" name="colorizeButton">
           <property name="text">
            <string>Colorize</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QPushButton" name="sourcePointsButton">
+          <property name="text">
+           <string>Select Source Points</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -137,7 +157,20 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
       <item>
        <widget class="QComboBox" name="propertyBox">
         <item>
@@ -150,9 +183,32 @@
           <string>Scaled Jacobian</string>
          </property>
         </item>
+        <item>
+         <property name="text">
+          <string>Heat Intensity</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Heat Intensity (Intrinsic Delaunay)</string>
+         </property>
+        </item>
        </widget>
       </item>
      </layout>
+    </item>
+    <item>
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
     </item>
    </layout>
   </widget>

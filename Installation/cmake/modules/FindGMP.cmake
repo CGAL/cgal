@@ -4,7 +4,6 @@
 #  GMP_INCLUDE_DIR       - the GMP include directory
 #  GMP_LIBRARIES_DIR     - directory where the GMP libraries are located
 #  GMP_LIBRARIES         - Link these to use GMP
-#  GMP_IN_CGAL_AUXILIARY - TRUE if the GMP found is the one distributed with CGAL in the auxiliary folder
 
 # TODO: support MacOSX
 
@@ -52,8 +51,3 @@ if( NOT GMP_in_cache )
 endif()
 
 find_package_handle_standard_args(GMP "DEFAULT_MSG" GMP_LIBRARIES GMP_INCLUDE_DIR)
-
-if ( GMP_INCLUDE_DIR STREQUAL "${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/include" )
-  cache_set( GMP_IN_CGAL_AUXILIARY TRUE )
-endif()
-

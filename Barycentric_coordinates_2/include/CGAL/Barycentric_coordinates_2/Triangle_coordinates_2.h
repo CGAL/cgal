@@ -49,7 +49,7 @@ namespace Barycentric_coordinates {
 // [1] Reference: Weisstein, Eric W. "Barycentric Coordinates." From MathWorld--A Wolfram Web Resource. http://mathworld.wolfram.com/BarycentricCoordinates.html.
 
 /*!
- * \ingroup PkgBarycentric_coordinates_2
+ * \ingroup PkgBarycentricCoordinates2Ref
  * The class `Triangle_coordinates_2` implements barycentric coordinates ( <a href="http://mathworld.wolfram.com/BarycentricCoordinates.html" target=blanc>[1]</a>,
  * <a href="http://en.wikipedia.org/wiki/Barycentric_coordinate_system" target=blanc>[2]</a> ) with respect to an arbitrary non-degenerate triangle in the plane.
  * This class is parameterized by a traits class `Traits`.
@@ -237,7 +237,7 @@ private:
 */
 
 template<class Traits>
-    inline CGAL::cpp11::array<typename Traits::FT,3> compute_triangle_coordinates_2(const typename Traits::Point_2 &first_vertex, const typename Traits::Point_2 &second_vertex, const typename Traits::Point_2 &third_vertex, const typename Traits::Point_2 &query_point, const Traits &barycentric_traits = Traits())
+    inline std::array<typename Traits::FT,3> compute_triangle_coordinates_2(const typename Traits::Point_2 &first_vertex, const typename Traits::Point_2 &second_vertex, const typename Traits::Point_2 &third_vertex, const typename Traits::Point_2 &query_point, const Traits &barycentric_traits = Traits())
 {
     // Some predefined functions.
     typename Traits::Compute_area_2 area_2 = barycentric_traits.compute_area_2_object();
@@ -256,7 +256,7 @@ template<class Traits>
     const FT b_first  = area_second * inverted_total_area;
     const FT b_second = area_third  * inverted_total_area;
 
-    // Return the CGAL::cpp11::array<FT,3> type of coordinates.
+    // Return the std::array<FT,3> type of coordinates.
     return CGAL::make_array(b_first, b_second, FT(1) - b_first - b_second);
 }
 

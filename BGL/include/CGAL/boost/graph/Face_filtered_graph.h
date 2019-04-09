@@ -28,11 +28,9 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/assertions.h>
-#include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
-#include <boost/foreach.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/dynamic_bitset.hpp>
 #include <boost/range/has_range_iterator.hpp>
@@ -129,7 +127,7 @@ struct Face_filtered_graph
    *     a property map containing an index for each face initialized from 0 to `num_vertices(graph)`
    *   \cgalParamEnd
    *   \cgalParamBegin{vertex_index_map}
-   *     a property map containing an index for each vertex initialized 0 to `num_vertices(vertex)`
+   *     a property map containing an index for each vertex initialized 0 to `num_vertices(graph)`
    *   \cgalParamEnd
    *   \cgalParamBegin{halfedge_index_map}
    *     a property map containing an index for each halfedge initialized 0 to `num_halfedges(graph)`
@@ -189,7 +187,7 @@ struct Face_filtered_graph
    *     a property map containing an index for each face initialized from 0 to `num_vertices(graph)`
    *   \cgalParamEnd
    *   \cgalParamBegin{vertex_index_map}
-   *     a property map containing an index for each vertex initialized 0 to `num_vertices(vertex)`
+   *     a property map containing an index for each vertex initialized 0 to `num_vertices(graph)`
    *   \cgalParamEnd
    *   \cgalParamBegin{halfedge_index_map}
    *     a property map containing an index for each halfedge initialized 0 to `num_halfedges(graph)`
@@ -236,7 +234,7 @@ struct Face_filtered_graph
    *     a property map containing an index for each face initialized from 0 to `num_vertices(graph)`
    *   \cgalParamEnd
    *   \cgalParamBegin{vertex_index_map}
-   *     a property map containing an index for each vertex initialized 0 to `num_vertices(vertex)`
+   *     a property map containing an index for each vertex initialized 0 to `num_vertices(graph)`
    *   \cgalParamEnd
    *   \cgalParamBegin{halfedge_index_map}
    *     a property map containing an index for each halfedge initialized 0 to `num_halfedges(graph)`
@@ -286,12 +284,12 @@ struct Face_filtered_graph
     selected_faces.reset();
     selected_vertices.reset();
     selected_halfedges.reset();
-    BOOST_FOREACH(face_descriptor fd, faces(_graph) )
+    for(face_descriptor fd : faces(_graph) )
     {
       if(get(face_patch_index_map, fd) == face_patch_id)
       {
         selected_faces.set(get(fimap, fd));
-        BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, _graph), _graph))
+        for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, _graph), _graph))
         {
           selected_halfedges.set(get(himap, hd));
           selected_halfedges.set(get(himap, opposite(hd, _graph)));
@@ -325,12 +323,12 @@ struct Face_filtered_graph
     boost::unordered_set<Patch_index> pids(boost::begin(selected_face_patch_indices),
                                            boost::end(selected_face_patch_indices));
 
-    BOOST_FOREACH(face_descriptor fd, faces(_graph) )
+    for(face_descriptor fd : faces(_graph) )
     {
       if(pids.count(get(face_patch_index_map, fd)) != 0)
       {
         selected_faces.set(get(fimap, fd));
-        BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, _graph), _graph))
+        for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, _graph), _graph))
         {
           selected_halfedges.set(get(himap, hd));
           selected_halfedges.set(get(himap, opposite(hd, _graph)));
@@ -353,10 +351,10 @@ struct Face_filtered_graph
     selected_faces.reset();
     selected_vertices.reset();
     selected_halfedges.reset();
-    BOOST_FOREACH(face_descriptor fd, selection)
+    for(face_descriptor fd : selection)
     {
       selected_faces.set(get(fimap, fd));
-      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, _graph), _graph))
+      for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, _graph), _graph))
       {
         selected_halfedges.set(get(himap, hd));
         selected_halfedges.set(get(himap, opposite(hd, _graph)));
@@ -467,7 +465,7 @@ struct Face_filtered_graph
   /// there is at most one connected set of selected faces.
   bool is_selection_valid()
   {
-    BOOST_FOREACH(vertex_descriptor vd, vertices(*this) )
+    for(vertex_descriptor vd : vertices(*this) )
     {
       face_descriptor first_selected = boost::graph_traits<Graph>::null_face();
       bool first_unselected_found(false),
@@ -648,6 +646,17 @@ degree(typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIM
     hcirc = opposite(next(hcirc, w.graph()), w.graph());
   }while(hcirc != h);
   return v_deg;
+}
+
+template<typename Graph,
+         typename FIMap,
+         typename VIMap,
+         typename HIMap>
+typename boost::graph_traits<Graph>::degree_size_type
+degree(typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::face_descriptor f,
+       const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
+{
+  return degree(f, w.graph());
 }
 
 template<typename Graph,
@@ -944,8 +953,7 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-std::pair<typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_iterator,
-typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_iterator>
+Iterator_range<typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_iterator>
 halfedges(const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
   typedef typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_iterator halfedge_iterator;

@@ -22,6 +22,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Timer.h>
+#include <CGAL/IO/write_vtu.h>
 
 // Qt headers
 #include <QtGui>
@@ -84,12 +85,12 @@ discoverInfiniteComponent(const CDT & ct)
     Face_handle fh = queue.front();
     queue.pop_front();
     fh->set_in_domain(false);
-	
+    
     for(int i = 0; i < 3; i++)
     {
       Face_handle fi = fh->neighbor(i);
       if(fi->is_in_domain()
-        && !ct.is_constrained(CDT::Edge(fh,i)))
+         && !ct.is_constrained(CDT::Edge(fh,i)))
         queue.push_back(fi);
     }
   }
@@ -269,7 +270,7 @@ MainWindow::MainWindow()
   dgi->setFacesInDomainBrush(facesColor);
     
   QObject::connect(this, SIGNAL(changed()),
-		   dgi, SLOT(modelChanged()));
+                   dgi, SLOT(modelChanged()));
   dgi->setVerticesPen(
     QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   dgi->setVoronoiPen(
@@ -285,8 +286,8 @@ MainWindow::MainWindow()
   // the signal/slot mechanism    
   pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 0, true); // inputs polylines which are not closed
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
-		   this, SLOT(processInput(CGAL::Object)));
-    
+                   this, SLOT(processInput(CGAL::Object)));
+  
   tcc = new CGAL::Qt::TriangulationCircumcircle<CDT>(&scene, &cdt, this);
   tcc->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   
@@ -298,8 +299,8 @@ MainWindow::MainWindow()
   // Manual handling of actions
   //
   QObject::connect(this->actionQuit, SIGNAL(triggered()), 
-		   this, SLOT(close()));
-
+                   this, SLOT(close()));
+  
   // We put mutually exclusive actions in an QActionGroup
   QActionGroup* ag = new QActionGroup(this);
   ag->addAction(this->actionInsertPolyline);
@@ -338,7 +339,7 @@ MainWindow::MainWindow()
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
-	  this, SLOT(open(QString)));
+          this, SLOT(open(QString)));
 }
 
 
@@ -534,11 +535,11 @@ void
 MainWindow::on_actionLoadConstraints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
-						  tr("Open Constraint File"),
-						  ".",
-						  tr("Edge files (*.edg);;"
+                                                  tr("Open Constraint File"),
+                                                  ".",
+                                                  tr("Edge files (*.edg);;"
                                                      "Plg files (*.plg);;"
-						     "Poly files (*.poly)"));
+                                                     "Poly files (*.poly)"));
   open(fileName);
 }
 
@@ -655,12 +656,13 @@ void
 MainWindow::on_actionSaveConstraints_triggered()
 {
   QString fileName = QFileDialog::getSaveFileName(this,
-						  tr("Save Constraints"),
-						  ".",
-						  tr("Poly files (*.poly)\n"
-						     "Edge files (*.edg)"));
+                                                  tr("Save Constraints"),
+                                                  ".",
+                                                  tr("Poly files (*.poly)\n"
+                                                     "Edge files (*.edg)\n"
+                                                     "VTU files (*.vtu)"));
   if(! fileName.isEmpty()){
-    saveConstraints(fileName);
+      saveConstraints(fileName);
   }
 }
 
@@ -669,7 +671,13 @@ void
 MainWindow::saveConstraints(QString fileName)
 {
   std::ofstream output(qPrintable(fileName));
-  if (output) output << cdt;
+  
+  if(!fileName.endsWith("vtu") && output)
+    output << cdt;
+  else if (output)
+  {
+    CGAL::write_vtu(output, cdt);
+  }
 }
 
 
@@ -796,15 +804,15 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   bool ok = false;
 
   const int number_of_points = 
-    QInputDialog::getInt(this, 
-                             tr("Number of random points"),
-                             tr("Enter number of random points"),
-			     100,
-			     0,
-			     (std::numeric_limits<int>::max)(),
-			     1,
-			     &ok);
-
+      QInputDialog::getInt(this, 
+                           tr("Number of random points"),
+                           tr("Enter number of random points"),
+                           100,
+                           0,
+                           (std::numeric_limits<int>::max)(),
+                           1,
+                           &ok);
+  
   if(!ok) {
     return;
   }

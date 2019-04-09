@@ -29,7 +29,6 @@
 #include <CGAL/circulator.h>
 #include <CGAL/Unique_hash_map.h>
 
-#include <boost/foreach.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/unordered_set.hpp>
 
@@ -53,10 +52,6 @@ public:
 
   Seam_mesh_halfedge_descriptor()
     : tmhd(), seam(false)
-  { }
-
-  Seam_mesh_halfedge_descriptor(const Seam_mesh_halfedge_descriptor& other)
-    : tmhd(other.tmhd), seam(other.seam)
   { }
 
   Seam_mesh_halfedge_descriptor(TM_halfedge_descriptor tmhd, bool seam = false)
@@ -301,10 +296,6 @@ public:
 
     vertex_descriptor(const halfedge_descriptor& h)
       : hd(h)
-    { }
-
-    vertex_descriptor(const vertex_descriptor& other)
-      : hd(other.hd)
     { }
 
     bool operator==(const vertex_descriptor& other) const
@@ -1017,7 +1008,7 @@ public:
   /// of a vertex of the underlying mesh is given by its position
   /// in the container `tm_vds`.
   ///
-  /// \tparam VdContainer must be a model of <a href="http://en.cppreference.com/w/cpp/concept/SequenceContainer"><tt>SequenceContainer</tt></a> (that is, provide
+  /// \tparam VdContainer must be a model of `SequenceContainer` (that is, provide
   ///         the functions: `operator[]` and `at()`).
   ///
   /// \returns one of the halfedges of the seam mesh that is on a seam.
@@ -1062,11 +1053,11 @@ public:
   ///
   /// \returns one of the halfedges of the seam mesh that is on a seam.
   ///
-  /// \tparam VdContainer must be a model of <a href="http://en.cppreference.com/w/cpp/concept/SequenceContainer"><tt>SequenceContainer</tt></a> (that is, provide
+  /// \tparam VdContainer must be a model of `SequenceContainer` (that is, provide
   ///         the functions: `operator[]` and `at()`).
   ///
-  /// \pre filename should be the name of a CGAL selection file: edges are
-  ///      described by pairs of integers, on the third line of the file.
+  /// \pre filename should be the name of a \cgal selection file with file extension "*.selection.txt":
+  ///      edges are described by pairs of integers, on the third line of the file.
   template<typename VdContainer>
   TM_halfedge_descriptor add_seams(const char* filename,
                                    const VdContainer& tm_vds)
@@ -1075,7 +1066,7 @@ public:
 
     // Check the file type
     std::string str = filename;
-    if(str.substr(str.length() - 14) != ".selection.txt") {
+    if( (str.length()) < 14 || (str.substr(str.length() - 14) != ".selection.txt") ) {
       std::cerr << "Error: seams must be given by a *.selection.txt file" << std::endl;
       return tmhd;
     }
@@ -1107,8 +1098,8 @@ public:
   ///
   /// \returns one of the halfedges of the seam mesh that is on a seam.
   ///
-  /// \pre filename should be the name of a CGAL selection file: edges are
-  ///      described by pairs of integers, on the third line of the file.
+  /// \pre filename should be the name of a \cgal selection file with file extension "*.selection.txt":
+  ///      edges are described by pairs of integers, on the third line of the file.
   TM_halfedge_descriptor add_seams(const char* filename)
   {
     std::vector<TM_vertex_descriptor> tm_vds;

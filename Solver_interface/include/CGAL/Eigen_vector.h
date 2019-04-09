@@ -26,7 +26,7 @@
 
 namespace CGAL {
 /*!
-\ingroup PkgSolver
+\ingroup PkgSolverInterfaceRef
 
 The class `Eigen_vector` is a wrapper around \ref thirdpartyEigen "Eigen" vector
 type <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1Matrix.html"> </a>,
@@ -67,7 +67,10 @@ public:
   {
     return static_cast<Eigen_vector<T>&>(static_cast<EigenType&>(*this) = other);
   }
-
+  Eigen_vector()
+    : EigenType()
+  {}
+  
   /// Create a vector initialized with zeros.
   Eigen_vector(std::size_t dimension)
     : EigenType(static_cast<int>(dimension))

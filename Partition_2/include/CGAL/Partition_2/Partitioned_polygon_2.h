@@ -329,6 +329,8 @@ class Partition_vertex : public Traits_::Point_2
     current_diag = diag_endpoint_refs.end() ; 
   }
 
+    Partition_vertex& operator=(const Partition_vertex&)=default;
+
     void insert_diagonal(Circulator v_ref) 
     {
        diag_endpoint_refs.push_back(v_ref);

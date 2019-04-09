@@ -1,7 +1,6 @@
 #include "config.h"
 #include "Scene_points_with_normal_item.h"
 #include "Scene_polygon_soup_item.h"
-#include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 #include <CGAL/Three/Scene_group_item.h>
 
@@ -35,7 +34,6 @@
 #include <QtPlugin>
 #include <QMessageBox>
 
-#include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
 
 #include "run_with_qprogressdialog.h"
@@ -297,7 +295,7 @@ private:
     std::map<Kernel::Point_3, QColor> color_map;
     
     int index = 0;
-    BOOST_FOREACH(boost::shared_ptr<typename Shape_detection::Shape> shape, shape_detection.shapes())
+    for(boost::shared_ptr<typename Shape_detection::Shape> shape : shape_detection.shapes())
     {
       CGAL::Shape_detection_3::Cylinder<Traits> *cyl;
       cyl = dynamic_cast<CGAL::Shape_detection_3::Cylinder<Traits> *>(shape.get());
@@ -334,7 +332,7 @@ private:
         
       Scene_points_with_normal_item *point_item = new Scene_points_with_normal_item;
       
-      BOOST_FOREACH(std::size_t i, shape->indices_of_assigned_points())
+      for(std::size_t i : shape->indices_of_assigned_points())
       {
         point_item->point_set()->insert(points->point(*(points->begin()+i)));
         if (dialog.add_property())
@@ -347,12 +345,12 @@ private:
       g = static_cast<unsigned char>(64 + rand.get_int(0, 192));
       b = static_cast<unsigned char>(64 + rand.get_int(0, 192));
 
-      point_item->setRbgColor(r, g, b);
+      point_item->setRgbColor(r, g, b);
 
       std::size_t nb_colored_pts = 0;
       if (dialog.generate_colored_point_set())
       {
-        BOOST_FOREACH(std::size_t i, shape->indices_of_assigned_points())
+        for(std::size_t i : shape->indices_of_assigned_points())
         {
           Point_set::iterator it = colored_item->point_set()->insert(points->point(*(points->begin()+i)));
           ++ nb_colored_pts;
@@ -403,34 +401,19 @@ private:
           if (dialog.generate_alpha ())
             {
               // If plane, build alpha shape
-              Scene_polyhedron_item* poly_item = NULL;
               Scene_surface_mesh_item* sm_item = NULL;
-              if(mw->property("is_polyhedron_mode").toBool()){
-                poly_item = new Scene_polyhedron_item;
-              } else {
-                sm_item = new Scene_surface_mesh_item;
-              }
+              sm_item = new Scene_surface_mesh_item;
+              
 
               build_alpha_shape (*(point_item->point_set()), pshape,
-                                 poly_item, sm_item, dialog.cluster_epsilon());
-          
-              if(poly_item){
-                poly_item->setColor(point_item->color ());
-                poly_item->setName(QString("%1%2_alpha_shape").arg(QString::fromStdString(ss.str()))
-                                   .arg (QString::number (shape->indices_of_assigned_points().size())));
-                poly_item->setRenderingMode (Flat);
-                poly_item->invalidateOpenGLBuffers();
-                scene->addItem(poly_item);
-                if(scene->item_id(groups[0]) == -1)
-                  scene->addItem(groups[0]);
-                scene->changeGroup(poly_item, groups[0]);
-              }
+                                  sm_item, dialog.cluster_epsilon());
               if(sm_item){
                 sm_item->setColor(point_item->color ());
                 sm_item->setName(QString("%1%2_alpha_shape").arg(QString::fromStdString(ss.str()))
                                    .arg (QString::number (shape->indices_of_assigned_points().size())));
                 sm_item->setRenderingMode (Flat);
                 
+                sm_item->invalidateOpenGLBuffers();
                 scene->addItem(sm_item);
                 if(scene->item_id(groups[0]) == -1)
                   scene->addItem(groups[0]);
@@ -558,7 +541,7 @@ private:
   }
 
   void build_alpha_shape (Point_set& points, boost::shared_ptr<CGAL::Shape_detection_3::Plane<Traits> > plane,
-                          Scene_polyhedron_item* item, Scene_surface_mesh_item* sm_item, double epsilon);
+                          Scene_surface_mesh_item* sm_item, double epsilon);
 
 }; // end Polyhedron_demo_point_set_shape_detection_plugin
 
@@ -623,8 +606,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 }
 
 void Polyhedron_demo_point_set_shape_detection_plugin::build_alpha_shape
-(Point_set& points,  boost::shared_ptr<CGAL::Shape_detection_3::Plane<Traits> > plane,
- Scene_polyhedron_item* item, Scene_surface_mesh_item* sm_item, double epsilon)
+(Point_set& points,  boost::shared_ptr<CGAL::Shape_detection_3::Plane<Traits> > plane, Scene_surface_mesh_item* sm_item, double epsilon)
 {
   typedef Kernel::Point_2  Point_2;
   typedef CGAL::Alpha_shape_vertex_base_2<Kernel> Vb;
@@ -670,9 +652,6 @@ void Polyhedron_demo_point_set_shape_detection_plugin::build_alpha_shape
     }
 
   soup_item->orient();
-  if(item){
-    soup_item->exportAsPolyhedron (item->polyhedron());
-  }
   if(sm_item){
     soup_item->exportAsSurfaceMesh (sm_item->polyhedron());
   }

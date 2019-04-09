@@ -19,6 +19,7 @@ Convex_hull_d dD Convex Hulls and Delaunay Triangulations
 Envelope_2 2D Envelopes
 Envelope_3 3D Envelopes
 GraphicsView CGAL and the Qt Graphics View Framework
+Hyperbolic_triangulation_2 2D Hyperbolic Delaunay Triangulations
 Inscribed_areas Inscribed Areas
 Interpolation 2D and Surface Function Interpolation
 Interval_skip_list Interval Skip List
@@ -36,6 +37,7 @@ Partition_2 2D Polygon Partitioning
 Periodic_2_triangulation_2 2D Periodic Triangulations
 Periodic_3_mesh_3 3D Periodic Mesh Generation
 Periodic_3_triangulation_3 3D Periodic Triangulations
+Periodic_4_hyperbolic_triangulation_2 2D Periodic Hyperbolic Triangulations
 Point_set_2 2D Range and Neighbor Search
 Point_set_3 3D Point Set
 Point_set_processing_3 Point Set Processing
@@ -54,6 +56,7 @@ Polygon_mesh_processing/predicate Polygon Mesh Processing - Predicate
 Polygon_mesh_processing/repair Polygon Mesh Processing - Repair
 Polygon_mesh_processing/miscellaneous Polygon Mesh Processing - Miscellaneous
 Polygon_mesh_processing/detect_features Polygon Mesh Processing - Feature Detection
+Polygon_mesh_processing/collision_detection Polygon Mesh Processing - Collision Detection
 Polyhedron 3D Polyhedral Surface
 Polyline_simplification_2 2D Polyline Simplification
 Polytope_distance_d Optimal Distances
@@ -73,6 +76,7 @@ Stream_lines_2 2D Placement of Streamlines
 Surface_mesh_deformation Triangulated Surface Mesh Deformation
 Surface_mesher 3D Surface Mesh Generation
 Surface_mesh Surface Mesh
+Surface_mesh_approximation Triangulated Surface Mesh Approximation
 Surface_mesh_parameterization Triangulated Surface Mesh Parameterization
 Surface_mesh_segmentation Triangulated Surface Mesh Segmentation
 Surface_mesh_shortest_path Triangulated Surface Mesh Shortest Paths

@@ -14,21 +14,17 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s) : Andreas Fabri
 //
 // Warning: this file is generated, see include/CGAL/licence/README.md
-
 
 #ifndef CGAL_LICENSE_GRAPHICSVIEW_H
 #define CGAL_LICENSE_GRAPHICSVIEW_H
 
 #include <CGAL/config.h>
 #include <CGAL/license.h>
-
-
-
 
 #ifdef CGAL_GRAPHICSVIEW_COMMERCIAL_LICENSE
 
@@ -42,8 +38,8 @@
 
 #    ifdef CGAL_LICENSE_ERROR
 #      error "Your commercial license for CGAL does not cover this release \
-of the CGAL and the Qt Graphics View Framework package. \
-You get this error, as you defined CGAL_LICENSE_ERROR."
+              of the CGAL and the Qt Graphics View Framework package. \
+              You get this error, as you defined CGAL_LICENSE_ERROR."
 #    endif // CGAL_LICENSE_ERROR
 
 #  endif // CGAL_GRAPHICSVIEW_COMMERCIAL_LICENSE < CGAL_RELEASE_DATE
@@ -58,10 +54,10 @@ You get this error, as you defined CGAL_LICENSE_ERROR."
 
 #  ifdef CGAL_LICENSE_ERROR
 #    error "The macro CGAL_GRAPHICSVIEW_COMMERCIAL_LICENSE is not defined.\
- You use the CGAL CGAL and the Qt Graphics View Framework package under the terms of \
-the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
+            You use the CGAL CGAL and the Qt Graphics View Framework package under the terms of \
+            the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
 #  endif // CGAL_LICENSE_ERROR
 
 #endif // no CGAL_GRAPHICSVIEW_COMMERCIAL_LICENSE
 
-#endif // CGAL_LICENSE_CHECK_GRAPHICSVIEW_H
+#endif // CGAL_LICENSE_GRAPHICSVIEW_H

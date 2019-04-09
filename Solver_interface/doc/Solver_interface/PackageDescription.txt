@@ -1,17 +1,17 @@
-/// \defgroup PkgSolver CGAL and Solvers Reference
+/// \defgroup PkgSolverInterfaceRef CGAL and Solvers Reference
 
-/// \defgroup PkgSolverConcepts Concepts
-/// \ingroup PkgSolver
+/// \defgroup PkgSolverInterfaceConcepts Concepts
+/// \ingroup PkgSolverInterfaceRef
 ///
 
 /*!
-\addtogroup PkgSolver
-\cgalPkgDescriptionBegin{CGAL and Solvers,PkgSolverSummary}
+\addtogroup PkgSolverInterfaceRef
+\cgalPkgDescriptionBegin{CGAL and Solvers,PkgSolverInterface}
 \cgalPkgPicture{solver.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Simon Giraudot, Pierre Alliez, Frédéric Cazals, Gaël Guennebaud, Bruno Lévy, Marc Pouget, and Laurent Saboret}
 \cgalPkgDesc{This package provides concepts and models for solving linear systems with dense or sparse matrices.}
-\cgalPkgManuals{Chapter_CGAL_and_Solvers,PkgSolver}
+\cgalPkgManuals{Chapter_CGAL_and_Solvers,PkgSolverInterfaceRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.8}
@@ -22,14 +22,15 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `DiagonalizeTraits`
+- `NormalEquationSparseLinearAlgebraTraits_d`
 - `SparseLinearAlgebraTraits_d`
 - `SparseLinearAlgebraWithFactorTraits_d`
 - `SvdTraits`
 
-## Classes ##
+\cgalCRPSection{Classes}
 
 - `CGAL::Eigen_solver_traits`
 - `CGAL::Eigen_diagonalize_traits`

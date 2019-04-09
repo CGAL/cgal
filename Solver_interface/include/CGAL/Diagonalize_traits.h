@@ -26,15 +26,19 @@
 #include <CGAL/number_type_config.h>
 #include <CGAL/double.h>
 
+#ifndef CGAL_I_WANT_TO_USE_DIAGONALIZE_TRAITS
 #define CGAL_WARNING_DIAGONALIZE_TRAITS \
   CGAL_DEPRECATED_MSG("CGAL::Diagonalize_traits is a deprecated class that can \
 lead to precision issues, please use CGAL::Eigen_diagonalize_traits")
+#else
+#define CGAL_WARNING_DIAGONALIZE_TRAITS
+#endif
 
 /// \cond SKIP_IN_MANUAL
 
 namespace CGAL {
 
-/// \ingroup PkgSolver
+/// \ingroup PkgSolverInterfaceRef
 ///
 /// The class `Diagonalize_traits` provides an internal
 /// implementation for the diagonalization of Variance-Covariance
@@ -52,9 +56,9 @@ template <typename FT, unsigned int dim = 3>
 class Diagonalize_traits
 {
 public:
-  typedef cpp11::array<FT, dim>                         Vector;
-  typedef cpp11::array<FT, dim*dim>                     Matrix;
-  typedef cpp11::array<FT, (dim * (dim+1) / 2)>         Covariance_matrix;
+  typedef std::array<FT, dim>                         Vector;
+  typedef std::array<FT, dim*dim>                     Matrix;
+  typedef std::array<FT, (dim * (dim+1) / 2)>         Covariance_matrix;
 
   /// Fill `eigenvalues` with the eigenvalues of the covariance matrix represented by `cov`.
   /// Eigenvalues are sorted by increasing order.

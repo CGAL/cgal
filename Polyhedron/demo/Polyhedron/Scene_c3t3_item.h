@@ -19,6 +19,7 @@
 
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Scene_group_item.h>
+#include <Scene_polygon_soup_item.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
 #include <CGAL/Three/Scene_item_with_properties.h>
 

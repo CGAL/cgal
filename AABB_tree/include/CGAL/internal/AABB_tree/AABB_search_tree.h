@@ -65,6 +65,7 @@ namespace CGAL
                           m_id = rhs.m_id;
                     }
 
+                  Decorated_point& operator=(const Decorated_point&)=default;
                 private:
                     Id m_id;
 

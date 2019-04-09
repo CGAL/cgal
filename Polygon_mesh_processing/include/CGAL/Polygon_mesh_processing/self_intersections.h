@@ -38,7 +38,6 @@
 
 #include <vector>
 #include <exception>
-#include <boost/foreach.hpp>
 #include <boost/range.hpp>
 
 #include <boost/function_output_iterator.hpp>
@@ -235,7 +234,7 @@ self_intersections( const FaceRange& face_range,
 /**
  * \ingroup PMP_intersection_grp
  * detects and records self-intersections of a triangulated surface mesh.
- * This function depends on the package \ref PkgBoxIntersectionDSummary
+ * This function depends on the package \ref PkgBoxIntersectionD
  * @pre `CGAL::is_triangle_mesh(tmesh)`
  *
  * @tparam TriangleMesh a model of `FaceListGraph`
@@ -344,7 +343,7 @@ self_intersections( const FaceRange& face_range,
   VertexPointMap vpmap = boost::choose_param(get_param(np, internal_np::vertex_point),
                                              get_const_property_map(boost::vertex_point, tmesh));
 
-  BOOST_FOREACH(face_descriptor f, face_range)
+  for(face_descriptor f : face_range)
   {
     typename boost::property_traits<VertexPointMap>::reference
       p = get(vpmap, target(halfedge(f,tmesh),tmesh)),
@@ -360,7 +359,7 @@ self_intersections( const FaceRange& face_range,
   std::vector<const Box*> box_ptr;
   box_ptr.reserve(num_faces(tmesh));
 
-  BOOST_FOREACH(Box& b, boxes)
+  for(Box& b : boxes)
     box_ptr.push_back(&b);
 
   // compute self-intersections filtered out by boxes
@@ -391,7 +390,7 @@ OutputIterator self_intersections(const FaceRange& face_range,
 /**
  * \ingroup PMP_intersection_grp
  * tests if a triangulated surface mesh self-intersects.
- * This function depends on the package \ref PkgBoxIntersectionDSummary
+ * This function depends on the package \ref PkgBoxIntersectionD
  * @pre `CGAL::is_triangle_mesh(tmesh)`
  *
  * @tparam TriangleMesh a model of `FaceListGraph`
@@ -431,7 +430,7 @@ bool does_self_intersect(const TriangleMesh& tmesh
 /**
  * \ingroup PMP_intersection_grp
  * tests if a set of faces of a triangulated surface mesh self-intersects.
- * This function depends on the package \ref PkgBoxIntersectionDSummary
+ * This function depends on the package \ref PkgBoxIntersectionD
  * @pre `CGAL::is_triangle_mesh(tmesh)`
  *
  * @tparam FaceRange a range of `face_descriptor`

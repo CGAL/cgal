@@ -16,6 +16,7 @@ struct Tri_d{
   float shrink_factor;
   QVector4D plane;
   float alpha;
+  QMatrix4x4 f_matrix;
 };
 
 Triangle_container::Triangle_container(int program, bool indexed)
@@ -56,8 +57,17 @@ void Triangle_container::initGL( Viewer_interface* viewer)
       setVbo(VColors,
              new Vbo("colors",
                      Vbo::COLORS,
-                     QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 4));
+                     QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 3));
     getVao(viewer)->addVbo(getVbo(VColors));
+    if(viewer->getShaderProgram(getProgram())->property("hasDistanceValues").toBool())
+    {
+      if(!getVbo(Distances))
+        setVbo(Distances,
+               new Vbo("distance",
+                       Vbo::COLORS,
+                       QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1));
+      getVao(viewer)->addVbo(getVbo(Distances));
+    }
   }
   else
   {
@@ -117,6 +127,8 @@ QOpenGLFramebufferObject* fbo = viewer->depthPeelingFbo();
     getVao(viewer)->bind();
     if(is_color_uniform)
       getVao(viewer)->program->setAttributeValue("colors", getColor());
+    if(getVao(viewer)->program->property("hasFMatrix").toBool())
+      getVao(viewer)->program->setUniformValue("f_matrix", getFrameMatrix());
     getVbo(Vertex_indices)->bind();
     if(getVao(viewer)->program->property("hasTransparency").toBool())
     {
@@ -142,6 +154,8 @@ QOpenGLFramebufferObject* fbo = viewer->depthPeelingFbo();
       getVao(viewer)->program->setUniformValue("cutplane", d->plane);
     if(is_color_uniform)
       getVao(viewer)->program->setAttributeValue("colors", getColor());
+    if(getVao(viewer)->program->property("hasFMatrix").toBool())
+      getVao(viewer)->program->setUniformValue("f_matrix", getFrameMatrix());
     if(getVao(viewer)->program->property("hasTransparency").toBool())
     {
       getVao(viewer)->program->setUniformValue("comparing", viewer->currentPass() > 0);
@@ -189,6 +203,8 @@ void Triangle_container::initializeBuffers(Viewer_interface *viewer)
 float     Triangle_container::getShrinkFactor() { return d->shrink_factor ; }
 QVector4D Triangle_container::getPlane()        { return d->plane; }
 float     Triangle_container::getAlpha()        { return d->alpha; }
+QMatrix4x4 Triangle_container::getFrameMatrix() const { return d->f_matrix; }
 
 void Triangle_container::setShrinkFactor(const float& f) { d->shrink_factor = f; }
 void Triangle_container::setAlpha       (const float& f)        { d->alpha = f ; }
+void Triangle_container::setFrameMatrix(const QMatrix4x4& m) { d->f_matrix = m; }

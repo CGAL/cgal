@@ -21,7 +21,7 @@
 //
 
 /**
- * \ingroup PkgPointSetShapeDetection3
+ * \ingroup PkgPointSetShapeDetection3Ref
  * \file CGAL/regularize_planes.h
  *
  */
@@ -37,7 +37,6 @@
 #include <CGAL/centroid.h>
 #include <CGAL/squared_distance_3.h>
 
-#include <boost/foreach.hpp>
 
 
 namespace CGAL {
@@ -540,7 +539,7 @@ void subgraph_mutually_orthogonal_clusters (std::vector<Plane_cluster<Traits> >&
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetShapeDetection3
+/// \ingroup PkgPointSetShapeDetection3Ref
   
   /*! 
 

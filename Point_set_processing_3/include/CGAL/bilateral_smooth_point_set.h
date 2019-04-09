@@ -31,7 +31,7 @@
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/squared_distance_3.h>
-#include <CGAL/function.h>
+#include <functional>
 
 #include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -92,6 +92,8 @@ public:
   Kd_tree_element(const Kd_tree_element& other)
     : Base(other), index(other.index)
   {}
+  
+  Kd_tree_element& operator=(const Kd_tree_element&)=default;
 };
 
 
@@ -387,7 +389,7 @@ public:
 
 
 /**
-   \ingroup PkgPointSetProcessingAlgorithms
+   \ingroup PkgPointSetProcessing3Algorithms
  
    This function smooths an input point set by iteratively projecting each 
    point onto the implicit surface patch fitted over its k nearest neighbors.
@@ -422,7 +424,7 @@ public:
      `geom_traits::Vector_3`.\cgalParamEnd
      \cgalParamBegin{sharpness_angle} controls the sharpness of the result.\cgalParamEnd
      \cgalParamBegin{callback} an instance of
-      `cpp11::function<bool(double)>`. It is called regularly when the
+      `std::function<bool(double)>`. It is called regularly when the
       algorithm is running: the current advancement (between 0. and
       1.) is passed as parameter. If it returns `true`, then the
       algorithm continues its execution normally; if it returns
@@ -460,8 +462,8 @@ bilateral_smooth_point_set(
   typedef typename Kernel::FT FT;
   
   double sharpness_angle = choose_param(get_param(np, internal_np::sharpness_angle), 30.);
-  const cpp11::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
-                                                               cpp11::function<bool(double)>());
+  const std::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+                                                               std::function<bool(double)>());
   
   CGAL_point_set_processing_precondition(points.begin() != points.end());
   CGAL_point_set_processing_precondition(k > 1);

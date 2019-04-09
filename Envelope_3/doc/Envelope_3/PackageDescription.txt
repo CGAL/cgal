@@ -1,19 +1,19 @@
-/// \defgroup PkgEnvelope3 3D Envelopes Reference
+/// \defgroup PkgEnvelope3Ref 3D Envelopes Reference
 /// \defgroup PkgEnvelope3Concepts Concepts
-/// \ingroup PkgEnvelope3
+/// \ingroup PkgEnvelope3Ref
 /*!
-\addtogroup PkgEnvelope3
+\addtogroup PkgEnvelope3Ref
 \todo check generated documentation
-\cgalPkgDescriptionBegin{3D Envelopes,PkgEnvelope3Summary}
+\cgalPkgDescriptionBegin{3D Envelopes,PkgEnvelope3}
 \cgalPkgPicture{Envelope_3/fig/Envelope_3.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Dan Halperin, Michal Meyerovitch, Ron Wein, and Baruch Zukerman}
 \cgalPkgDesc{This package consits of functions that compute the lower (or upper) envelope of a set of arbitrary surfaces in 3D. The output is represented as an 2D envelope diagram, namely a planar subdivision such that the identity of the surfaces that induce the envelope over each diagram cell is unique.}
-\cgalPkgManuals{Chapter_Envelopes_of_Surfaces_in_3D,PkgEnvelope3}
+\cgalPkgManuals{Chapter_Envelopes_of_Surfaces_in_3D,PkgEnvelope3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.3}
-\cgalPkgDependsOn{\ref PkgArrangement2Summary}
+\cgalPkgDependsOn{\ref PkgArrangementOnSurface2}
 \cgalPkgBib{cgal:mwz-e3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{3D Envelopes,envelope_3.zip,L1 Voronoi Diagram,l1_voronoi_diagram_2.zip}
@@ -28,16 +28,16 @@ diagram cell is unique.
 
 \cgalClassifedRefPages
 
-## Functions ##
+\cgalCRPSection{Functions}
 - `CGAL::lower_envelope_3`
 - `CGAL::upper_envelope_3`
 - `CGAL::lower_envelope_xy_monotone_3`
 - `CGAL::upper_envelope_xy_monotone_3`
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `EnvelopeTraits_3`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Envelope_diagram_2<EnvTraits>`
 
 - `CGAL::Env_triangle_traits_3<Kernel>`

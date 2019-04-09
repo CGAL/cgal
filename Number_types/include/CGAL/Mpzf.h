@@ -356,8 +356,7 @@ struct Mpzf {
     exp=x.exp;
     if(size!=0) mpn_copyi(data(),x.data(),asize);
   }
-#if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) \
-    && !defined(CGAL_MPZF_USE_CACHE)
+#if !defined(CGAL_MPZF_USE_CACHE)
   Mpzf(Mpzf&& x):data_(x.data()),size(x.size),exp(x.exp){
     x.init(); // yes, that's a shame...
     x.size = 0;
@@ -944,9 +943,7 @@ struct Mpzf {
   }
 
 #ifdef CGAL_USE_GMPXX
-#ifndef CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS
   explicit
-#endif
   operator mpq_class () const {
     mpq_class q;
     export_to_mpq_t(q.get_mpq_t());
@@ -954,9 +951,7 @@ struct Mpzf {
   }
 #endif
 
-#ifndef CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS
   explicit
-#endif
   operator Gmpq () const {
     Gmpq q;
     export_to_mpq_t(q.mpq());
@@ -983,9 +978,7 @@ struct Mpzf {
     }
   }
 #if 0
-#ifndef CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS
   explicit
-#endif
 // This makes Mpzf==int ambiguous
   operator Gmpzf () const {
     mpz_t z;

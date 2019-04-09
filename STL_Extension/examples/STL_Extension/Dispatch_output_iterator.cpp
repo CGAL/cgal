@@ -10,11 +10,11 @@ int main()
   std::vector<char> c;
 
   typedef CGAL::Dispatch_output_iterator< 
-    CGAL::cpp0x::tuple<int, double, char>,
-    CGAL::cpp0x::tuple<std::back_insert_iterator< std::vector<int> >,
-                       std::back_insert_iterator< std::vector<double> >,
-                       std::back_insert_iterator< std::vector<char> > 
-                       > > Dispatch;
+    std::tuple<int, double, char>,
+    std::tuple<std::back_insert_iterator< std::vector<int> >,
+               std::back_insert_iterator< std::vector<double> >,
+               std::back_insert_iterator< std::vector<char> > 
+               > > Dispatch;
 
   Dispatch disp = CGAL::dispatch_output<int, double, char>(
     std::back_inserter(a),

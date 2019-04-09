@@ -22,7 +22,6 @@
 #define CGAL_BOOST_GRAPH_HELPERS_H
 
 
-#include <boost/foreach.hpp>
 #include <boost/range/empty.hpp>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/properties.h>
@@ -104,7 +103,7 @@ template <typename FaceGraph>
 bool is_closed(const FaceGraph& g)
 {
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
-  BOOST_FOREACH(halfedge_descriptor hd, halfedges(g)){
+  for(halfedge_descriptor hd : halfedges(g)){
     if(is_border(hd,g)){
       return false;
     }
@@ -131,7 +130,7 @@ template <typename FaceGraph>
 {
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
-  BOOST_FOREACH(vertex_descriptor vd, vertices(g)){
+  for(vertex_descriptor vd : vertices(g)){
     halfedge_descriptor hd = halfedge(vd,g);
     if((hd == boost::graph_traits<FaceGraph>::null_halfedge()) ||
        (! is_bivalent(hd,g))){
@@ -161,7 +160,7 @@ template <typename FaceGraph>
 {
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
-  BOOST_FOREACH(vertex_descriptor vd, vertices(g)){
+  for(vertex_descriptor vd : vertices(g)){
     halfedge_descriptor hd = halfedge(vd,g);
     if((hd == boost::graph_traits<FaceGraph>::null_halfedge()) ||
        (! is_trivalent(halfedge(hd,g),g))){
@@ -207,7 +206,7 @@ template <typename FaceGraph>
   bool is_triangle_mesh(const FaceGraph& g)  
 {
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
-  BOOST_FOREACH(face_descriptor fd, faces(g)){
+  for(face_descriptor fd : faces(g)){
     if(! is_triangle(halfedge(fd,g),g)){
       return false;
     }
@@ -251,7 +250,7 @@ template <typename FaceGraph>
   bool is_quad_mesh(const FaceGraph& g)  
 {
     typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
-  BOOST_FOREACH(face_descriptor fd, faces(g)){
+  for(face_descriptor fd : faces(g)){
     if(! is_quad(halfedge(fd,g),g)){
       return false;
     }
@@ -388,7 +387,7 @@ bool is_valid_halfedge_graph(const Graph& g, bool verb = false)
   // All halfedges.
 
   halfedges_size_type  n = 0;
-  BOOST_FOREACH(halfedge_descriptor begin, halfedges(g)) {
+  for(halfedge_descriptor begin : halfedges(g)) {
     if(!valid)
       break;
     verr << "halfedge " << n << std::endl;
@@ -440,7 +439,7 @@ bool is_valid_halfedge_graph(const Graph& g, bool verb = false)
   // All vertices.
   vertex_size_type v = 0;
   n = 0;
-  BOOST_FOREACH(vertex_descriptor vbegin, vertices(g)){
+  for(vertex_descriptor vbegin : vertices(g)){
     if(!valid)
       break;
     verr << "vertex " << v << std::endl;
@@ -480,7 +479,7 @@ bool is_valid_halfedge_graph(const Graph& g, bool verb = false)
 
   // All halfedges.
   n = 0;
-  BOOST_FOREACH(halfedge_descriptor i, halfedges(g)){
+  for(halfedge_descriptor i : halfedges(g)){
       verr << "halfedge " << n << std::endl;
   // At least triangular facets and distinct geometry.
   valid = valid && ( next(i, g) != i);
@@ -538,7 +537,7 @@ bool is_valid_face_graph(const Graph& g, bool verb = false)
   faces_size_type f = 0;
   std::size_t n = 0;
   halfedges_size_type nb = 0;
-  BOOST_FOREACH(face_descriptor fbegin, faces(g)){
+  for(face_descriptor fbegin : faces(g)){
     if(!valid)
       break;
     verr << "face " << f << std::endl;
@@ -571,7 +570,7 @@ bool is_valid_face_graph(const Graph& g, bool verb = false)
   if ( valid && f != num_f)
     verr << "counting faces failed." << std::endl;
   
-  BOOST_FOREACH(halfedge_descriptor i, halfedges(g)){
+  for(halfedge_descriptor i : halfedges(g)){
     //counting borders
     if ( is_border(i, g))
       ++nb;
@@ -619,7 +618,7 @@ bool is_valid_polygon_mesh(const Mesh& g, bool verb = false)
  bool valid=is_valid_face_graph(g, verb);
  //test for 2-manifoldness
  // Distinct facets on each side of an halfedge.
- BOOST_FOREACH(halfedge_descriptor i, halfedges(g)){
+ for(halfedge_descriptor i : halfedges(g)){
    valid = valid && (face(i, g) != face(opposite(i, g), g));
    if ( ! valid) {
      verr << "    both incident facets are equal." << std::endl;
@@ -794,6 +793,16 @@ make_quad(typename boost::graph_traits<Graph>::vertex_descriptor v0,
   return opposite(h3,g);
 }
 
+//default Functor for make_grid
+template<typename Size_type, typename Point>
+struct Default_grid_maker
+    : public CGAL::Creator_uniform_3<Size_type, Point>
+{
+  Point operator()(const Size_type& i, const Size_type& j)const 
+  {
+    return CGAL::Creator_uniform_3<Size_type, Point>::operator ()(i,j,0);
+  }
+};
 } // namespace internal
 
 /** 
@@ -827,6 +836,8 @@ make_quad(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
  * \ingroup PkgBGLHelperFct
  * \brief Creates an isolated hexahedron
  * with its vertices initialized to `p0`, `p1`, ...\ , and `p7`, and adds it to the graph `g`.
+ * \image html hexahedron.png
+ * \image latex hexahedron.png
  * \returns the halfedge that has the target vertex associated with `p0`, in the face with the vertices with the points `p0`, `p1`, `p2`, and `p3`.
  **/ 
 template<typename Graph, typename P>
@@ -858,16 +869,16 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
   ppmap[v6] = p6;
   ppmap[v7] = p7;
 
-  halfedge_descriptor ht = internal::make_quad(v7, v4, v5, v6, g);
-  halfedge_descriptor hb = prev(internal::make_quad(v1, v0, v3, v2, g),g);
+  halfedge_descriptor ht = internal::make_quad(v4, v5, v6, v7, g);
+  halfedge_descriptor hb = prev(internal::make_quad(v0, v3, v2, v1, g),g);
   for(int i=0; i <4; i++){
     halfedge_descriptor h = halfedge(add_edge(g),g);
     set_target(h,target(hb,g),g);
     set_next(h,opposite(hb,g),g);
-    set_next(opposite(next(ht,g),g),h,g);
+    set_next(opposite(prev(ht,g),g),h,g);
     h = opposite(h,g);
-    set_target(h,target(ht,g),g);
-    set_next(h,opposite(ht,g),g);
+    set_target(h,source(prev(ht,g),g),g);
+    set_next(h,opposite(next(next(ht,g),g),g),g);
     set_next(opposite(next(hb,g),g),h,g);
     hb = next(hb,g);
     ht = prev(ht,g);
@@ -882,6 +893,8 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
  * \ingroup PkgBGLHelperFct
  * \brief Creates an isolated tetrahedron
  * with its vertices initialized to `p0`, `p1`, `p2`, and `p3`, and adds it to the graph `g`.
+ * \image html tetrahedron.png
+ * \image latex tetrahedron.png
  * \returns the halfedge that has the target vertex associated with `p0`, in the face with the vertices with the points `p0`, `p1`, and `p2`.
  **/ 
 template<typename Graph, typename P>
@@ -1071,7 +1084,7 @@ make_regular_prism(
  * \ingroup PkgBGLHelperFct
  * \brief Creates a pyramid, outward oriented, having `nb_vertices` vertices in its base and adds it to the graph `g`.
  *
- * If `center` is (0, 0, 0), then the first point of the base is (`radius`, 0`, 0)
+ * If `center` is `(0, 0, 0)`, then the first point of the base is `(radius, 0, 0)`
  * \param nb_vertices the number of vertices in the base. It must be greater than or equal to 3.
  * \param g the graph in which the pyramid will be created
  * \param base_center the center of the circle in which the base is inscribed.
@@ -1249,6 +1262,7 @@ make_icosahedron(
  *
  * \brief Creates a row major ordered grid with `i` cells along the width and `j` cells
  * along the height and adds it to the graph `g`.
+ * An internal property map for `CGAL::vertex_point_t` must be available in `Graph`.
  *
  * \param i the number of cells along the width.
  * \param j the number of cells along the height.
@@ -1257,19 +1271,14 @@ make_icosahedron(
  * \param triangulated decides if a cell is composed of one quad or two triangles.
  * If `triangulated` is `true`, the diagonal of each cell is oriented from (0,0) to (1,1)
  * in the cell coordinates.
- *
- * \tparam CoordinateFunctor that takes two `boost::graph_traits<Graph>::%vertices_size_type`
+ *\tparam CoordinateFunctor a function object providing `Point_3 operator()(size_type I, size_type J)` with `Point_3` being 
+ * the value_type of the internal property_map for `CGAL::vertex_point_t`.
  * and outputs a `boost::property_traits<boost::property_map<Graph,CGAL::vertex_point_t>::%type>::%value_type`.
+ *  It will be called with arguments (`w`, `h`), with `w` in [0..`i`] and `h` in [0..`j`].
  * <p>%Default: a point with positive integer coordinates (`w`, `h`, 0), with `w` in [0..`i`] and `h` in [0..`j`]
  * \returns the non-border non-diagonal halfedge that has the target vertex associated with the first point of the grid (default is (0,0,0) ).
  */
-#ifndef DOXYGEN_RUNNING
 template<class Graph, class CoordinateFunctor>
-#else
-template<class Graph, class CoordinateFunctor = CGAL::Creator_uniform_3<
-           typename boost::graph_traits<Graph>::vertices_size_type,
-           typename boost::property_traits<typename boost::property_map<Graph, vertex_point_t>::type>::value_type> >
-#endif
 typename boost::graph_traits<Graph>::halfedge_descriptor
 make_grid(typename boost::graph_traits<Graph>::vertices_size_type i,
           typename boost::graph_traits<Graph>::vertices_size_type j,
@@ -1281,7 +1290,6 @@ make_grid(typename boost::graph_traits<Graph>::vertices_size_type i,
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
   typename boost::graph_traits<Graph>::vertices_size_type w(i+1), h(j+1);
   Point_property_map vpmap = get(CGAL::vertex_point, g);
-  // create the initial icosahedron
   //create the vertices
   std::vector<vertex_descriptor> v_vertices;
   v_vertices.resize(static_cast<std::size_t>(w*h));
@@ -1292,7 +1300,7 @@ make_grid(typename boost::graph_traits<Graph>::vertices_size_type i,
   {
     for(typename boost::graph_traits<Graph>::vertices_size_type b=0; b<h; ++b)
     {
-      put(vpmap, v_vertices[a+w*b], calculator(a,b,0));
+      put(vpmap, v_vertices[a+w*b], calculator(a,b));
     }
   }
 
@@ -1330,7 +1338,7 @@ make_grid(typename boost::graph_traits<Graph>::vertices_size_type i,
   return halfedge(v_vertices[1], v_vertices[0], g).first;
 }
 
-//default Functor
+
 template<class Graph>
 typename boost::graph_traits<Graph>::halfedge_descriptor
 make_grid(typename boost::graph_traits<Graph>::vertices_size_type w,
@@ -1340,7 +1348,7 @@ make_grid(typename boost::graph_traits<Graph>::vertices_size_type w,
 {
   typedef typename boost::graph_traits<Graph>::vertices_size_type Size_type;
   typedef typename boost::property_traits<typename boost::property_map<Graph, vertex_point_t>::type>::value_type Point;
-  return make_grid(w, h, g, CGAL::Creator_uniform_3<Size_type, Point>(), triangulated);
+  return make_grid(w, h, g, internal::Default_grid_maker<Size_type, Point>(), triangulated);
 }
 
 namespace internal {
@@ -1374,9 +1382,9 @@ void swap_vertices(
 
   halfedge_descriptor hq=halfedge(q, g);
   halfedge_descriptor hp=halfedge(p, g);
-  BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(hq, g))
+  for(halfedge_descriptor h : halfedges_around_target(hq, g))
     set_target(h, p, g);
-  BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(hp, g))
+  for(halfedge_descriptor h : halfedges_around_target(hp, g))
     set_target(h, q, g);
   set_halfedge(p, hq, g);
   set_halfedge(q, hp, g);

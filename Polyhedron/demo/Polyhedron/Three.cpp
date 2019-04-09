@@ -3,12 +3,19 @@
 #include <QMetaMethod>
 #include <QAction>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include "Messages_interface.h"
+
 using namespace CGAL::Three;
 
 QMainWindow* Three::s_mainwindow = NULL;
 Scene_interface* Three::s_scene = NULL;
 QObject* Three::s_connectable_scene = NULL;
 Three* Three::s_three = NULL;
+RenderingMode Three::s_defaultSMRM;
+RenderingMode Three::s_defaultPSRM;
+int Three::default_point_size;
+int Three::default_normal_length;
+int Three::default_lines_width;
 
 QMainWindow* Three::mainWindow()
 {
@@ -25,10 +32,6 @@ QObject* Three::connectableScene()
   return s_connectable_scene;
 }
 
-Three* Three::messages()
-{
-  return s_three;
-}
 
 Three::Three()
 {
@@ -129,4 +132,82 @@ void Three::autoConnectActions(Polyhedron_demo_plugin_interface *plugin)
       qDebug("ERROR: Failed to autoconnect the action \"%s\"!",
              action->objectName().toUtf8().data());
   } // end foreach action of actions()
+}
+
+void Three::information(QString s)
+{
+  qobject_cast<Messages_interface*>(mainWindow())->message_information(s);
+}
+void Three::warning(QString s)
+{
+  qobject_cast<Messages_interface*>(mainWindow())->message_warning(s);
+}
+void Three::error(QString s)
+{
+  qobject_cast<Messages_interface*>(mainWindow())->message_error(s);
+}
+RenderingMode Three::defaultSurfaceMeshRenderingMode()
+{
+  return s_defaultSMRM;
+}
+RenderingMode Three::defaultPointSetRenderingMode()
+{
+  return s_defaultPSRM;
+}
+
+QString Three::modeName(RenderingMode mode) {
+  switch(mode)
+  {
+  case Points:
+    return QObject::tr("points");
+  case ShadedPoints:
+    return QObject::tr("shaded points");
+  case Wireframe:
+    return QObject::tr("wire");
+  case Flat:
+    return QObject::tr("flat");
+  case FlatPlusEdges:
+    return QObject::tr("flat+edges");
+  case Gouraud:
+    return QObject::tr("Gouraud");
+  case PointsPlusNormals:
+    return QObject::tr("pts+normals");
+  default:
+    Q_ASSERT(false);
+    return QObject::tr("unknown");
+  }
+}
+
+RenderingMode Three::modeFromName(QString name) {
+  if(name == "points")
+    return Points;
+  if(name == "shaded points")
+    return ShadedPoints;
+  if(name == "wire")
+    return Wireframe;
+  if(name == "flat")
+    return Flat;
+  if(name == "flat+edges")
+    return FlatPlusEdges;
+  if(name == "Gouraud")
+    return Gouraud;
+  if(name == "pts+normals")
+    return PointsPlusNormals;
+  Q_ASSERT(false);
+  return Points;
+}
+
+int Three::getDefaultPointSize()
+{
+  return default_point_size;
+}
+
+int Three::getDefaultNormalLength()
+{
+  return default_normal_length;
+}
+
+int Three::getDefaultLinesWidth()
+{
+  return default_lines_width;
 }

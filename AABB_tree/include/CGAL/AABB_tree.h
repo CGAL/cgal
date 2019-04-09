@@ -44,7 +44,7 @@
 
 namespace CGAL {
 
-/// \addtogroup PkgAABB_tree
+/// \addtogroup PkgAABBTreeRef
 /// @{
 
 	/**
@@ -126,27 +126,10 @@ namespace CGAL {
      * @param beyond past-the-end iterator
      *
      * It is equivalent to constructing an empty tree and calling `insert(first,last,t...)`.
-     * For compilers that do not support variadic templates, overloads up to 
-     * 5 template arguments are provided.
      * The tree stays empty if the memory allocation is not successful.
      */
-    #if !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)
 		template<typename InputIterator,typename ... T>
 		AABB_tree(InputIterator first, InputIterator beyond,T&& ...);  
-    #else
-		template<typename InputIterator>
-		AABB_tree(InputIterator first, InputIterator beyond);
-    template<typename InputIterator, typename T1>
-		AABB_tree(InputIterator first, InputIterator beyond, T1&);
-    template<typename InputIterator, typename T1, typename T2>
-    AABB_tree(InputIterator first, InputIterator beyond,T1&,T2&);
-    template<typename InputIterator, typename T1, typename T2, typename T3>
-		AABB_tree(InputIterator first, InputIterator beyond,T1&,T2&,T3&);
-    template<typename InputIterator, typename T1, typename T2, typename T3, typename T4>
-		AABB_tree(InputIterator first, InputIterator beyond,T1&,T2&,T3&,T4&);
-    template<typename InputIterator, typename T1, typename T2, typename T3, typename T4, typename T5>
-		AABB_tree(InputIterator first, InputIterator beyond,T1&,T2&,T3&,T4&,T5&);
-    #endif
 
     /// After one or more calls to `insert()` the internal data
     /// structure of the tree must be reconstructed. This procedure
@@ -156,32 +139,21 @@ namespace CGAL {
     /// `build()` explicitly to ensure that the next call to
     /// query functions will not trigger the reconstruction of the
     /// data structure.
+    /// A call to `AABBTraits::set_shared_data(t...)`
+    /// is made using the internally stored traits.
+    template<typename ... T>
+    void build(T&& ...);
+#ifndef DOXYGEN_RUNNING
     void build();
+#endif
     ///@}
 
 		/// \name Operations
 		///@{
 
     /// Equivalent to calling `clear()` and then `insert(first,last,t...)`.
-    /// For compilers that do not support variadic templates, overloads up
-    /// to 5 template arguments are provided.
-    #if !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)
 		template<typename ConstPrimitiveIterator,typename ... T>
 		void rebuild(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond,T&& ...);
-    #else
-		template<typename ConstPrimitiveIterator>
-		void rebuild(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond);
-    template<typename ConstPrimitiveIterator, typename T1>
-		void rebuild(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond, T1&);
-    template<typename ConstPrimitiveIterator, typename T1, typename T2>
-		void rebuild(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond,T1&,T2&);
-    template<typename ConstPrimitiveIterator, typename T1, typename T2, typename T3>
-		void rebuild(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond,T1&,T2&,T3&);
-    template<typename ConstPrimitiveIterator, typename T1, typename T2, typename T3, typename T4>
-		void rebuild(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond,T1&,T2&,T3&,T4&);
-    template<typename ConstPrimitiveIterator, typename T1, typename T2, typename T3, typename T4, typename T5>
-		void rebuild(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond,T1&,T2&,T3&,T4&,T5&);
-    #endif
 
 
     /// Add a sequence of primitives to the set of primitives of the AABB tree.
@@ -190,25 +162,8 @@ namespace CGAL {
     /// `Primitive(%InputIterator, T...)`. If `Primitive` is a model of the concept
     /// `AABBPrimitiveWithSharedData`, a call to `AABBTraits::set_shared_data(t...)`
     /// is made using the internally stored traits.
-    /// For compilers that do not support variadic templates,
-    /// overloads up to 5 template arguments are provided.
-    #if !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)
 		template<typename InputIterator,typename ... T>
 		void insert(InputIterator first, InputIterator beyond,T&& ...);
-    #else
-		template<typename InputIterator>
-		void insert(InputIterator first, InputIterator beyond);
-    template<typename InputIterator, typename T1>
-		void insert(InputIterator first, InputIterator beyond,T1&);
-    template<typename InputIterator, typename T1, typename T2>
-		void insert(InputIterator first, InputIterator beyond,T1&, T2&);
-    template<typename InputIterator, typename T1, typename T2, typename T3>
-		void insert(InputIterator first, InputIterator beyond,T1&,T2&,T3&);
-    template<typename InputIterator, typename T1, typename T2, typename T3, typename T4>
-		void insert(InputIterator first, InputIterator beyond,T1&,T2&,T3&,T4&);
-    template<typename InputIterator, typename T1, typename T2, typename T3, typename T4, typename T5>
-		void insert(InputIterator first, InputIterator beyond,T1&,T2&,T3&,T4&,T5&);
-    #endif
 
     /// Adds a primitive to the set of primitives of the tree.
     inline void insert(const Primitive& p);
@@ -252,7 +207,6 @@ namespace CGAL {
 		///@}
 
 	private:
-    #if !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)
     template <typename ... T>
     void set_primitive_data_impl(CGAL::Boolean_tag<false>,T ... ){}
     template <typename ... T>
@@ -263,64 +217,6 @@ namespace CGAL {
     void set_shared_data(T&& ...t){
       set_primitive_data_impl(CGAL::Boolean_tag<internal::Has_nested_type_Shared_data<Primitive>::value>(),std::forward<T>(t)...);
     }
-    #else
-    void set_primitive_data_impl(CGAL::Boolean_tag<false>){}
-    void set_primitive_data_impl(CGAL::Boolean_tag<true>)
-    {m_traits.set_shared_data();}
-    void set_shared_data(){
-      set_primitive_data_impl(CGAL::Boolean_tag<internal::Has_nested_type_Shared_data<Primitive>::value>());
-    }
-    
-    template <typename T1>
-    void set_primitive_data_impl(CGAL::Boolean_tag<false>,T1){}
-    template <typename T1>
-    void set_primitive_data_impl(CGAL::Boolean_tag<true>,T1& t1)
-    {m_traits.set_shared_data(t1);}
-    template <typename T1>
-    void set_shared_data(T1& t1){
-      set_primitive_data_impl(Boolean_tag<internal::Has_nested_type_Shared_data<Primitive>::value>(),t1);
-    }
-    
-    template <typename T1, typename T2>
-    void set_primitive_data_impl(CGAL::Boolean_tag<false>,T1,T2){}
-    template <typename T1, typename T2>
-    void set_primitive_data_impl(CGAL::Boolean_tag<true>,T1& t1,T2& t2)
-    {m_traits.set_shared_data(t1,t2);}
-    template <typename T1, typename T2>
-    void set_shared_data(const T1& t1,const T2& t2){
-      set_primitive_data_impl(Boolean_tag<internal::Has_nested_type_Shared_data<Primitive>::value>(),t1,t2);
-    }
-    
-    template <typename T1, typename T2, typename T3>
-    void set_primitive_data_impl(CGAL::Boolean_tag<false>,T1,T2,T3){}
-    template <typename T1, typename T2, typename T3>
-    void set_primitive_data_impl(CGAL::Boolean_tag<true>,T1& t1,T2& t2,T3& t3)
-    {m_traits.set_shared_data(t1,t2,t3);}
-    template <typename T1, typename T2, typename T3>
-    void set_shared_data(T1& t1,T2& t2,T3& t3){
-      set_primitive_data_impl(Boolean_tag<internal::Has_nested_type_Shared_data<Primitive>::value>(),t1,t2,t3);
-    }
-    
-    template <typename T1, typename T2, typename T3, typename T4>
-    void set_primitive_data_impl(CGAL::Boolean_tag<false>,T1,T2,T3,T4){}
-    template <typename T1, typename T2, typename T3, typename T4>
-    void set_primitive_data_impl(CGAL::Boolean_tag<true>,T1& t1,T2& t2,T3& t3,T4& t4)
-    {m_traits.set_shared_data(t1,t2,t3,t4);}
-    template <typename T1, typename T2, typename T3, typename T4>
-    void set_shared_data(T1& t1,T2& t2,T3& t3,T4& t4){
-      set_primitive_data_impl(Boolean_tag<internal::Has_nested_type_Shared_data<Primitive>::value>(),t1,t2,t3,t4);
-    }
-    
-    template <typename T1, typename T2, typename T3, typename T4, typename T5>
-    void set_primitive_data_impl(CGAL::Boolean_tag<false>,T1,T2,T3,T4,T5){}
-    template <typename T1, typename T2, typename T3, typename T4, typename T5>
-    void set_primitive_data_impl(CGAL::Boolean_tag<true>,T1& t1,T2& t2,T3& t3,T4& t4,T5& t5)
-    {m_traits.set_shared_data(t1,t2,t3,t4,t5);}
-    template <typename T1, typename T2, typename T3, typename T4, typename T5>
-    void set_shared_data(T1& t1,T2& t2,T3& t3,T4& t4,T5& t5){
-      set_primitive_data_impl(Boolean_tag<internal::Has_nested_type_Shared_data<Primitive>::value>(),t1,t2,t3,t4,t5);
-    }
-    #endif
 
 		bool build_kd_tree() const;
 		template<typename ConstPointIterator>
@@ -388,11 +284,7 @@ public:
     /// for which `do_intersect` predicates
     /// and intersections are defined in the traits class AABBTraits.
 		template <typename Query>
-    #if CGAL_INTERSECTION_VERSION < 2 && !defined(DOXYGEN_RUNNING)
-		boost::optional<Object_and_primitive_id> 
-    #else
     boost::optional< typename Intersection_and_primitive_id<Query>::Type >
-    #endif
     any_intersection(const Query& query) const;
 
 
@@ -406,6 +298,12 @@ public:
     /// `bool operator()(const Primitive_id& id) const`
     /// that returns `true` in order to skip the primitive.
     /// Defaults to a functor that always returns `false`.
+    ///
+    /// \note `skip` might be given some primitives that are not intersected by `query`
+    ///       because the intersection test is done after the skip test. Also note that
+    ///       the order the primitives are given to `skip` is not necessarily the
+    ///       intersection order with `query`.
+    ///
     ///
     /// `AABBTraits` must be a model of `AABBRayIntersectionTraits` to
     /// call this member function.
@@ -646,6 +544,18 @@ public:
 			else
 				return this->any_reference_point_and_id();
 		}
+		
+		//! Returns the datum (geometric object) represented `p`. 
+#ifndef DOXYGEN_RUNNING
+		typename internal::Primitive_helper<AABBTraits>::Datum_type 
+#else
+		typename AABBTraits::Primitive::Datum_reference 
+#endif
+		datum(Primitive& p)const
+		{
+		  return internal::Primitive_helper<AABBTraits>::
+		      get_datum(p, this->traits());
+		}
 
 	private:
     //Traits class
@@ -704,7 +614,6 @@ public:
     , m_need_build(false)
   {}
 
-  #if !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) 
  	template<typename Tr>
 	template<typename ConstPrimitiveIterator, typename ... T>
 	AABB_tree<Tr>::AABB_tree(ConstPrimitiveIterator first,
@@ -728,7 +637,7 @@ public:
                              ConstPrimitiveIterator beyond,
                              T&& ... t)
 	{
-    set_shared_data(std::forward<T>(t)...);
+		set_shared_data(std::forward<T>(t)...);
 		while(first != beyond)
 		{
 			m_primitives.push_back(Primitive(first,std::forward<T>(t)...));
@@ -752,288 +661,14 @@ public:
 
     build();
 	}  
-  #else
-  //=============constructor======================
-	template<typename Tr>
-	template<typename ConstPrimitiveIterator>
-	AABB_tree<Tr>::AABB_tree(ConstPrimitiveIterator first,
-                           ConstPrimitiveIterator beyond)
-		: m_traits()
-    , m_primitives()
-		, m_p_root_node(NULL)
-		, m_p_search_tree(NULL)
-		, m_search_tree_constructed(false)
-    , m_default_search_tree_constructed(false)
-    , m_need_build(false)
-	{
-		// Insert each primitive into tree
-    insert(first, beyond);
- 	}
-
-	template<typename Tr>
-	template<typename ConstPrimitiveIterator, typename T1>
-	AABB_tree<Tr>::AABB_tree(ConstPrimitiveIterator first,
-                           ConstPrimitiveIterator beyond,
-                           T1& t1)
-		: m_traits()
-    , m_primitives()
-		, m_p_root_node(NULL)
-		, m_p_search_tree(NULL)
-		, m_search_tree_constructed(false)
-    , m_default_search_tree_constructed(false)
-    , m_need_build(false)
-	{
-		// Insert each primitive into tree
-    insert(first, beyond,t1);
- 	}
-
-	template<typename Tr>
-	template<typename ConstPrimitiveIterator, typename T1, typename T2>
-	AABB_tree<Tr>::AABB_tree(ConstPrimitiveIterator first,
-                           ConstPrimitiveIterator beyond,
-                           T1& t1,T2& t2)
-		: m_traits()
-    , m_primitives()
-		, m_p_root_node(NULL)
-		, m_p_search_tree(NULL)
-		, m_search_tree_constructed(false)
-    , m_default_search_tree_constructed(false)
-    , m_need_build(false)
-	{
-		// Insert each primitive into tree
-    insert(first, beyond,t1,t2);
- 	}
-
-	template<typename Tr>
-	template<typename ConstPrimitiveIterator, typename T1, typename T2, typename T3>
-	AABB_tree<Tr>::AABB_tree(ConstPrimitiveIterator first,
-                           ConstPrimitiveIterator beyond,
-                           T1& t1,T2& t2,T3& t3)
-		: m_traits()
-    , m_primitives()
-		, m_p_root_node(NULL)
-		, m_p_search_tree(NULL)
-		, m_search_tree_constructed(false)
-    , m_default_search_tree_constructed(false)
-    , m_need_build(false)
-	{
-		// Insert each primitive into tree
-    insert(first, beyond,t1,t2,t3);
- 	}
-
-	template<typename Tr>
-	template<typename ConstPrimitiveIterator, typename T1, typename T2, typename T3, typename T4>
-	AABB_tree<Tr>::AABB_tree(ConstPrimitiveIterator first,
-                           ConstPrimitiveIterator beyond,
-                           T1& t1,T2& t2,T3& t3,T4& t4)
-		: m_traits()
-    , m_primitives()
-		, m_p_root_node(NULL)
-		, m_p_search_tree(NULL)
-		, m_search_tree_constructed(false)
-    , m_default_search_tree_constructed(false)
-    , m_need_build(false)
-	{
-		// Insert each primitive into tree
-    insert(first, beyond,t1,t2,t3,t4);
- 	}
-
-  template<typename Tr>
-	template<typename ConstPrimitiveIterator, typename T1, typename T2, typename T3, typename T4, typename T5>
-	AABB_tree<Tr>::AABB_tree(ConstPrimitiveIterator first,
-                           ConstPrimitiveIterator beyond,
-                           T1& t1,T2& t2,T3& t3,T4& t4,T5& t5)
-		: m_traits()
-    , m_primitives()
-		, m_p_root_node(NULL)
-		, m_p_search_tree(NULL)
-		, m_search_tree_constructed(false)
-    , m_default_search_tree_constructed(false)
-    , m_need_build(false)
-	{
-		// Insert each primitive into tree
-    insert(first, beyond,t1,t2,t3,t4,t5);
- 	}
-  //=============insert======================
-	template<typename Tr>
-	template<typename ConstPrimitiveIterator>
-	void AABB_tree<Tr>::insert(ConstPrimitiveIterator first,
-                             ConstPrimitiveIterator beyond)
-	{
-    set_shared_data();
-		while(first != beyond)
-		{
-			m_primitives.push_back(Primitive(first));
-			++first;
-		}
-    m_need_build = true;
-  }
-
-	template<typename Tr>
-	template<typename ConstPrimitiveIterator, typename T1>
-	void AABB_tree<Tr>::insert(ConstPrimitiveIterator first,
-                             ConstPrimitiveIterator beyond,
-                             T1& t1)
-	{
-    set_shared_data(t1);
-		while(first != beyond)
-		{
-			m_primitives.push_back(Primitive(first,t1));
-			++first;
-		}
-    m_need_build = true;
-  }
-  
-	template<typename Tr>
-	template<typename ConstPrimitiveIterator, typename T1, typename T2>
-	void AABB_tree<Tr>::insert(ConstPrimitiveIterator first,
-                             ConstPrimitiveIterator beyond,
-                             T1& t1, T2& t2)
-	{
-    set_shared_data(t1,t2);
-		while(first != beyond)
-		{
-			m_primitives.push_back(Primitive(first,t1,t2));
-			++first;
-		}
-    m_need_build = true;
-  }
-
-  template<typename Tr>
-	template<typename ConstPrimitiveIterator, typename T1, typename T2, typename T3>
-	void AABB_tree<Tr>::insert(ConstPrimitiveIterator first,
-                             ConstPrimitiveIterator beyond,
-                             T1& t1,T2& t2,T3& t3)
-	{
-    set_shared_data(t1,t2,t3);
-		while(first != beyond)
-		{
-			m_primitives.push_back(Primitive(first,t1,t2,t3));
-			++first;
-		}
-    m_need_build = true;
-  }
-
-  template<typename Tr>
-	template<typename ConstPrimitiveIterator, typename T1, typename T2, typename T3, typename T4>
-	void AABB_tree<Tr>::insert(ConstPrimitiveIterator first,
-                             ConstPrimitiveIterator beyond,
-                             T1& t1,T2& t2,T3& t3,T4& t4)
-	{
-    set_shared_data(t1,t2,t3,t4);
-		while(first != beyond)
-		{
-			m_primitives.push_back(Primitive(first,t1,t2,t3,t4));
-			++first;
-		}
-    m_need_build = true;
-  }
-
-  template<typename Tr>
-	template<typename ConstPrimitiveIterator, typename T1, typename T2, typename T3, typename T4, typename T5>
-	void AABB_tree<Tr>::insert(ConstPrimitiveIterator first,
-                             ConstPrimitiveIterator beyond,
-                             T1& t1,T2& t2,T3& t3,T4& t4,T5& t5)
-	{
-    set_shared_data(t1,t2,t3,t4,t5);
-		while(first != beyond)
-		{
-			m_primitives.push_back(Primitive(first,t1,t2,t3,t4,t5));
-			++first;
-		}
-    m_need_build = true;
-  }
-
-  //=============rebuild======================
-	template<typename Tr>
-	template<typename ConstPrimitiveIterator>
-	void AABB_tree<Tr>::rebuild(ConstPrimitiveIterator first,
-                              ConstPrimitiveIterator beyond)
-	{
-		// cleanup current tree and internal KD tree
-		clear();
-
-		// inserts primitives
-    insert(first, beyond);
-
-    build();
-	}
-
-	template<typename Tr>
-	template<typename ConstPrimitiveIterator, typename T1>
-	void AABB_tree<Tr>::rebuild(ConstPrimitiveIterator first,
-                              ConstPrimitiveIterator beyond,
-                              T1& t1)
-	{
-		// cleanup current tree and internal KD tree
-		clear();
-
-		// inserts primitives
-    insert(first, beyond,t1);
-
-    build();
-	}
-  
-	template<typename Tr>
-	template<typename ConstPrimitiveIterator, typename T1, typename T2>
-	void AABB_tree<Tr>::rebuild(ConstPrimitiveIterator first,
-                              ConstPrimitiveIterator beyond,
-                              T1& t1, T2& t2)
-	{
-		// cleanup current tree and internal KD tree
-		clear();
-
-		// inserts primitives
-    insert(first, beyond,t1,t2);
-
-    build();
-	}
-
-  template<typename Tr>
-	template<typename ConstPrimitiveIterator, typename T1, typename T2, typename T3>
-	void AABB_tree<Tr>::rebuild(ConstPrimitiveIterator first,
-                              ConstPrimitiveIterator beyond,
-                              T1& t1,T2& t2,T3& t3)
-	{
-		// cleanup current tree and internal KD tree
-		clear();
-
-		// inserts primitives
-    insert(first, beyond,t1,t2,t3);
-
-    build();
-	}
-
-  template<typename Tr>
-	template<typename ConstPrimitiveIterator, typename T1, typename T2, typename T3, typename T4>
-	void AABB_tree<Tr>::rebuild(ConstPrimitiveIterator first,
-                              ConstPrimitiveIterator beyond,
-                              T1& t1,T2& t2,T3& t3,T4& t4)
-	{
-		// cleanup current tree and internal KD tree
-		clear();
-
-		// inserts primitives
-    insert(first, beyond,t1,t2,t3,t4);
-
-    build();
-	}
-
-  template<typename Tr>
-	template<typename ConstPrimitiveIterator, typename T1, typename T2, typename T3, typename T4, typename T5>
-	void AABB_tree<Tr>::rebuild(ConstPrimitiveIterator first,
-                              ConstPrimitiveIterator beyond,
-                              T1& t1,T2& t2,T3& t3,T4& t4,T5& t5)
-	{
-		// cleanup current tree and internal KD tree
-		clear();
-
-		// inserts primitives
-    insert(first, beyond,t1,t2,t3,t4,t5);
-
-    build();
-	}
-  #endif
+        
+        template<typename Tr>
+        template<typename ... T>
+        void AABB_tree<Tr>::build(T&& ... t)
+        {
+          set_shared_data(std::forward<T>(t)...);
+          build();
+        }
 
 	template<typename Tr>
 	void AABB_tree<Tr>::insert(const Primitive& p)
@@ -1062,7 +697,7 @@ public:
 
 			// constructs the tree
 			m_p_root_node->expand(m_primitives.begin(), m_primitives.end(),
-														m_primitives.size(), m_traits);
+					      m_primitives.size(), m_traits);
 		}
 
 
@@ -1207,11 +842,7 @@ public:
 
 	template <typename Tr>
 	template <typename Query>
-  #if CGAL_INTERSECTION_VERSION < 2
-	boost::optional<typename AABB_tree<Tr>::Object_and_primitive_id>
-  #else
   boost::optional< typename AABB_tree<Tr>::template Intersection_and_primitive_id<Query>::Type >
-  #endif
 		AABB_tree<Tr>::any_intersection(const Query& query) const
 	{
     using namespace CGAL::internal::AABB_tree;

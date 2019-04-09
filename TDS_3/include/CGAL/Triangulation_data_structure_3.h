@@ -61,7 +61,6 @@
 #  include <tbb/scalable_allocator.h>
 #endif
 
-#include <boost/foreach.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 
 namespace CGAL {
@@ -78,8 +77,12 @@ class Triangulation_data_structure_3
   typedef Triangulation_data_structure_3<Vb, Cb, Concurrency_tag_> Tds;
 
 public:
-
   typedef Concurrency_tag_            Concurrency_tag;
+
+  // This tag is used in the parallel operations of RT_3 to access some functions
+  // of the TDS (tds.vertices().is_used(Vertex_handle)) that are much more efficient
+  // than what is exposed by the TDS concept (tds.is_vertex(Vertex_handle)).
+  typedef CGAL::Tag_true              Is_CGAL_TDS_3;
 
   // Tools to change the Vertex and Cell types of the TDS.
   template < typename Vb2 >
@@ -827,7 +830,8 @@ public:
         output = f.output;
         filter = f.filter;
         return *this;
-      }
+      }  
+      Facet_it(const Facet_it&)=default;
     };
     Facet_it facet_it() {
       return Facet_it(output, filter);

@@ -180,6 +180,7 @@ public Q_SLOTS:
     if(dock_widget->isVisible()) { dock_widget->hide(); }
     else {
       dock_widget->show();
+      dock_widget->raise();
       Scene_points_with_normal_item* sel_item =
           qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
       if(sel_item)
@@ -224,11 +225,11 @@ public Q_SLOTS:
     as_item->createPolygonSoup(points, polys);
     Scene_polygon_soup_item* new_item = new Scene_polygon_soup_item();
     new_item->init_polygon_soup(points.size(), polys.size());
-    BOOST_FOREACH(const Kernel::Point_3& p, points)
+    for(const Kernel::Point_3& p : points)
     {
       new_item->new_vertex(p.x(), p.y(), p.z());
     }
-    BOOST_FOREACH(const std::vector<std::size_t>& poly, polys)
+    for(const std::vector<std::size_t>& poly : polys)
     {
       new_item->new_triangle(poly[0], poly[1], poly[2]);
     }
@@ -341,7 +342,7 @@ Scene_alpha_shape_item::Scene_alpha_shape_item(Scene_points_with_normal_item *po
   {
     facet_program.addShaderFromSourceCode(QOpenGLShader::Vertex, vertex_source_comp);
   }
-  facet_program.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_old_flat.f");
+  facet_program.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_old_flat.frag");
   facet_program.link();
   invalidateOpenGLBuffers();
   alpha_changed(alpha);

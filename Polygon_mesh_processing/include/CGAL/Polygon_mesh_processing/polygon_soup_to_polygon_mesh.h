@@ -157,14 +157,14 @@ public:
     //check there is no polygon with twice the same vertex
     std::set< std::pair<V_ID, V_ID> > edge_set;
     V_ID max_id=0;
-    BOOST_FOREACH(const Polygon& polygon, polygons)
+    for(const Polygon& polygon : polygons)
     {
       std::size_t nb_edges = boost::size(polygon);
       if (nb_edges<3) return false;
 
       std::set<V_ID> polygon_vertices;
-      V_ID prev= *cpp11::prev(boost::end(polygon));
-      BOOST_FOREACH(V_ID id, polygon)
+      V_ID prev= *std::prev(boost::end(polygon));
+      for(V_ID id : polygon)
       {
         if (max_id<id) max_id=id;
         if (! edge_set.insert(std::pair<V_ID, V_ID>(prev,id)).second )
@@ -204,7 +204,8 @@ public:
   * @param polygons each element in the vector describes a polygon using the index of the points in `points`
   * @param out the polygon mesh to be built
   *
-  * @pre `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons)`
+  * @pre \link CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()
+  *            CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons) \endlink
   *
   * \sa `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
   * \sa `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()`

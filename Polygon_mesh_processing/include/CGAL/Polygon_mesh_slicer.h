@@ -33,7 +33,6 @@
 #include <vector>
 #include <set>
 
-#include <boost/foreach.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/Polygon_mesh_processing/internal/Polygon_mesh_slicer/Traversal_traits.h>
 #include <CGAL/Polygon_mesh_processing/internal/Polygon_mesh_slicer/Axis_parallel_plane_traits.h>
@@ -44,7 +43,7 @@
 
 namespace CGAL {
 
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 /// Function object that computes the intersection of a plane with
 /// a triangulated surface mesh.
 ///
@@ -63,7 +62,7 @@ namespace CGAL {
 ///         orthogonal to a frame axis, the non-null coefficient being 1 or -1.
 ///         The default is `true`.
 ///
-/// The implemenation of this class depends on the package \ref PkgAABB_treeSummary.
+/// The implemenation of this class depends on the package \ref PkgAABBTree.
 /// \todo Shall we document more in details what is required?
 ///       `Traits` must provide:
 ///        - `Plane_3`
@@ -240,7 +239,7 @@ class Polygon_mesh_slicer
 
       if (face(hd, m_tmesh)!=graph_traits::null_face())
       {
-        cpp11::tie(itm, new_insertion) =
+        std::tie(itm, new_insertion) =
           al_edge_map.insert( std::pair< halfedge_descriptor, AL_vertex_pair >
             (hd, AL_vertex_pair(vd, AL_graph::null_vertex())) );
         if (!new_insertion)
@@ -256,7 +255,7 @@ class Polygon_mesh_slicer
       hd=opposite(hd, m_tmesh);
       if (face(hd, m_tmesh)!=graph_traits::null_face())
       {
-        cpp11::tie(itm, new_insertion) =
+        std::tie(itm, new_insertion) =
           al_edge_map.insert( std::pair< halfedge_descriptor, AL_vertex_pair >
             (hd, AL_vertex_pair(vd, AL_graph::null_vertex())) );
         if (!new_insertion)
@@ -437,7 +436,7 @@ public:
     AL_graph al_graph;
 
     // add nodes for each vertex in the plane
-    BOOST_FOREACH(Vertex_pair& vdp, vertices)
+    for(Vertex_pair& vdp : vertices)
     {
       vdp.second=add_vertex(al_graph);
       al_graph[vdp.second]=vdp.first;
@@ -449,7 +448,7 @@ public:
     // Filter coplanar edges: we consider only coplanar edges incident to one non-coplanar facet
     //   for each such edge, add the corresponding nodes in the adjacency-list graph as well as
     //   the edge
-    BOOST_FOREACH(const edge_descriptor ed, all_coplanar_edges)
+    for(const edge_descriptor ed : all_coplanar_edges)
     {
       if (  face(halfedge(ed, m_tmesh), m_tmesh)==graph_traits::null_face() ||
             opposite_face(ed)==graph_traits::null_face()  ||
@@ -461,7 +460,7 @@ public:
 
         // Each coplanar edge is connecting two nodes
         //  handle source
-        cpp11::tie(it_insert1, is_new) =
+        std::tie(it_insert1, is_new) =
           vertices.insert(
               Vertex_pair(
                 source(ed,m_tmesh), AL_graph::null_vertex()
@@ -473,7 +472,7 @@ public:
           al_graph[it_insert1->second]=it_insert1->first;
         }
         //  handle target
-        cpp11::tie(it_insert2, is_new) =
+        std::tie(it_insert2, is_new) =
           vertices.insert(
               Vertex_pair(
                 target(ed,m_tmesh), AL_graph::null_vertex()
@@ -494,7 +493,7 @@ public:
     // for each edge intersected in its interior, creates a node in
     // an adjacency-list graph and put an edge between two such nodes
     // when the corresponding edges shares a common face
-    BOOST_FOREACH(edge_descriptor ed, iedges)
+    for(edge_descriptor ed : iedges)
     {
       AL_vertex_descriptor vd=add_vertex(al_graph);
       al_graph[vd]=ed;
@@ -505,7 +504,7 @@ public:
     // then it must be connected to a vertex (including those in the set
     // of coplanar edges)
     typedef std::pair<halfedge_descriptor, AL_vertex_pair> Halfedge_and_vertices;
-    BOOST_FOREACH(Halfedge_and_vertices hnv,al_edge_map)
+    for(Halfedge_and_vertices hnv :al_edge_map)
     {
       if (hnv.second.second==AL_graph::null_vertex())
       {

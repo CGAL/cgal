@@ -17,7 +17,7 @@ struct My_items
   struct Dart_wrapper
   {
     typedef CGAL::Dart< 3, Refs > Dart;
-    typedef CGAL::cpp11::tuple<> Attributes;
+    typedef std::tuple<> Attributes;
   };
 };
 

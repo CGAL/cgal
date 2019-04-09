@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3Domains
+\ingroup PkgMesh3Domains
 
 \brief The class `Labeled_mesh_domain_3` implements indexed domains.
 
@@ -66,7 +66,7 @@ public:
 typedef int Subdomain_index;
 
 /// The type of object that stores the function using type-erasure
-typedef CGAL::cpp11::function<Subdomain_index(const Point_3&)> Labeling_function;
+typedef std::function<Subdomain_index(const Point_3&)> Labeling_function;
 
 ///@}
 /// \name Types imported from the geometric traits class

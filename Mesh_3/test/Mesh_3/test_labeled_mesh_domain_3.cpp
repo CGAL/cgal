@@ -212,52 +212,52 @@ private:
 	  {
 		  Segment_3 s(Point_3(CGAL::ORIGIN), Point_3(1.5, 0., 0.));
 		  Intersection i = construct_intersection(s);
-		  assert(CGAL::cpp11::get<0>(i) != Point_3(1., 0., 0.));
-		  Index ii = CGAL::cpp11::get<1>(i);
+		  assert(std::get<0>(i) != Point_3(1., 0., 0.));
+		  Index ii = std::get<1>(i);
 		  assert(boost::get<Surface_patch_index>(&ii));
-		  assert(CGAL::cpp11::get<2>(i) == 2);
+		  assert(std::get<2>(i) == 2);
 	  }
 
 	  {
 		  Segment_3 s(Point_3(1.5, 1.5, 0.), Point_3(1.5, 0., 0.));
 		  Intersection i = construct_intersection(s);
-		  Index ii = CGAL::cpp11::get<1>(i);
+		  Index ii = std::get<1>(i);
 		  assert(boost::get<Subdomain_index>(&ii));
-		  assert(CGAL::cpp11::get<2>(i) == 0);
+		  assert(std::get<2>(i) == 0);
 	  }
 
 	  {
 		  Ray_3 r(Point_3(CGAL::ORIGIN), Vector_3(1., 0., 0.));
 		  Intersection i = construct_intersection(r);
-		  assert(CGAL::cpp11::get<0>(i) != Point_3(1., 0., 0.));
-		  Index ii = CGAL::cpp11::get<1>(i);
+		  assert(std::get<0>(i) != Point_3(1., 0., 0.));
+		  Index ii = std::get<1>(i);
 		  assert(boost::get<Surface_patch_index>(&ii));
-		  assert(CGAL::cpp11::get<2>(i) == 2);
+		  assert(std::get<2>(i) == 2);
 	  }
 
 	  {
 		  Ray_3 r(Point_3(1.5, 0., 0.), Vector_3(0., 1., 0.));
 		  Intersection i = construct_intersection(r);
-		  Index ii = CGAL::cpp11::get<1>(i);
+		  Index ii = std::get<1>(i);
 		  assert(boost::get<Subdomain_index>(&ii));
-		  assert(CGAL::cpp11::get<2>(i) == 0);
+		  assert(std::get<2>(i) == 0);
 	  }
 
 	  {
 		  Line_3 l(Point_3(CGAL::ORIGIN), Point_3(1.5, 0., 0.));
 		  Intersection i = construct_intersection(l);
-		  assert(CGAL::cpp11::get<0>(i) != Point_3(1., 0., 0.));
-		  Index ii = CGAL::cpp11::get<1>(i);
+		  assert(std::get<0>(i) != Point_3(1., 0., 0.));
+		  Index ii = std::get<1>(i);
 		  assert(boost::get<Surface_patch_index>(&ii));
-		  assert(CGAL::cpp11::get<2>(i) == 2);
+		  assert(std::get<2>(i) == 2);
 	  }
 
 	  {
 		  Line_3 l(Point_3(1.5, 0., 0.), Point_3(1.5, 0.5, 0.));
 		  Intersection i = construct_intersection(l);
-		  Index ii = CGAL::cpp11::get<1>(i);
+		  Index ii = std::get<1>(i);
 		  assert(boost::get<Subdomain_index>(&ii));
-		  assert(CGAL::cpp11::get<2>(i) == 0);
+		  assert(std::get<2>(i) == 0);
 	  }
   }
 };

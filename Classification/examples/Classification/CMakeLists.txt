@@ -4,7 +4,7 @@
 project( Classification_Examples )
 
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS  )
@@ -13,10 +13,6 @@ if ( NOT CGAL_FOUND )
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
   return()  
 endif()
-
-# include helper file
-include( ${CGAL_USE_FILE} )
-
 
 # Boost and its components
 find_package( Boost REQUIRED )
@@ -49,17 +45,8 @@ else()
 endif()
 
 
-# include for local directory
-include_directories( BEFORE include )
-
-# include for local package
-include_directories( BEFORE ../../include )
-
-
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
-
-include( CGAL_CreateSingleSourceCGALProgram )
 
 # Classification examples
 set(targets
@@ -77,15 +64,6 @@ set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)
 set(classification_linked_libraries)
 set(classification_compile_definitions)
 
-
-# Use Eigen or BLAS and LAPACK (optional)
-find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-if (EIGEN3_FOUND)
-  include( ${EIGEN3_USE_FILE} )
-else()
-  message(STATUS "NOTICE: This project requires the Eigen library, and will not be compiled.")
-  return()
-endif()
 
 if (Boost_SERIALIZATION_FOUND AND Boost_IOSTREAMS_FOUND)
   set(classification_linked_libraries ${classification_linked_libraries}
@@ -111,7 +89,6 @@ if( WIN32 )
   endif()
 endif()
 
-find_package(OpenCV QUIET)
 if (OpenCV_FOUND)
   message(STATUS "Found OpenCV ${OpenCV_VERSION}")
   include_directories(${OpenCV_INCLUDE_DIRS})
@@ -124,6 +101,21 @@ if (OpenCV_FOUND)
 else()
   message(STATUS "NOTICE: OpenCV was not found. OpenCV random forest predicate for classification won't be available.")
 endif()
+
+find_package(TensorFlow QUIET)
+if (TensorFlow_FOUND)
+  message(STATUS "Found TensorFlow")
+  include_directories( ${TensorFlow_INCLUDE_DIR} )
+  set(classification_linked_libraries ${classification_linked_libraries}
+    ${TensorFlow_LIBRARY})
+  set(classification_compile_definitions ${classification_compile_definitions}
+    "-DCGAL_LINKED_WITH_TENSORFLOW")
+  
+  set(targets ${targets} example_tensorflow_neural_network)
+else()
+  message(STATUS "NOTICE: TensorFlow not found, Neural Network predicate for classification won't be available.")
+endif()
+
 
 # Creating targets with correct libraries and flags
 foreach(target ${targets})

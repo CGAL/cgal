@@ -69,7 +69,7 @@ structure: the points and attributes are then accessed through ranges
 and property maps. The `CGAL::Point_set_3` class is a range that
 provides property maps: applying \cgal algorithms is straightforward.
 
-As the \ref PkgPointSetProcessing "Point Set Processing" algorithms
+As the \ref PkgPointSetProcessing3Ref "Point Set Processing" algorithms
 use \ref BGLNamedParameters to handle property maps, a method
 `CGAL::Point_set_3::parameters()` is provided: it returns a named
 parameter object with the right point and normal maps to read and
@@ -129,7 +129,7 @@ color is given with integer red, green and blue values, 3 integer
 properties `red`, `green` and `blue` will be created. A
 user-defined interpreter must be implemented if such properties should
 be stored all together (a unique property `color` of type
-`CGAL::cpp11::array` for example).
+`std::array` for example).
 
 The following example shows how to use this interpreter and how to
 access a specific property afterwards:

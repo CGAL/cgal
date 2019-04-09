@@ -4,10 +4,10 @@
 #include <QAction>
 #include <QVector>
 #include "Scene_surface_mesh_item.h"
-#include "Scene_polyhedron_item.h"
 #include "Scene_plane_item.h"
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 #include <CGAL/Polygon_mesh_processing/clip.h>
 
 #include "ui_Clip_polyhedron_plugin.h"
@@ -122,8 +122,7 @@ public :
   {
     Q_FOREACH(int id, scene->selectionIndices())
     {
-      if(qobject_cast<Scene_surface_mesh_item*>(scene->item(id))
-         || qobject_cast<Scene_polyhedron_item*>(scene->item(id)))
+      if(qobject_cast<Scene_surface_mesh_item*>(scene->item(id)))
         return true;
     }
     return false;
@@ -170,7 +169,7 @@ public :
     }
     catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
     {
-      messages->warning(tr("The requested operation is not possible due to the presence of self-intersections in the region handled."));
+      CGAL::Three::Three::warning(tr("The requested operation is not possible due to the presence of self-intersections in the region handled."));
     }
   }
 public Q_SLOTS:
@@ -182,7 +181,7 @@ public Q_SLOTS:
   void pop_widget()
   {
     if(dock_widget->isVisible()) { dock_widget->hide(); }
-    else                         { dock_widget->show(); }
+    else                         { dock_widget->show(); dock_widget->raise();}
 
     //creates a new  cutting_plane;
     if(!plane)
@@ -224,20 +223,11 @@ public Q_SLOTS:
         {
           polyhedra << sm_item;
         }
-        else
-        {
-          Scene_polyhedron_item *poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(id));
-          if(poly_item && CGAL::is_triangle_mesh(*poly_item->polyhedron()))
-          {
-            polyhedra << poly_item;
-          }
-        }
       }
       //apply the clipping function
       Q_FOREACH(Scene_item* item, polyhedra)
       {
         Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item*>(item);
-        Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
 
         if (ui_widget.clip_radioButton->isChecked())
         {
@@ -250,19 +240,10 @@ public Q_SLOTS:
                                                     ui_widget.close_checkBox->isChecked()).
                                                   throw_on_self_intersection(true));
             }
-            else
-            {
-              CGAL::Polygon_mesh_processing::clip(*(poly_item->face_graph()),
-                                                  plane->plane(),
-                                                  CGAL::Polygon_mesh_processing::parameters::clip_volume(
-                                                    ui_widget.close_checkBox->isChecked()).
-                                                  throw_on_self_intersection(true));
-
-            }
           }
           catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
           {
-            messages->warning(tr("The requested operation is not possible due to the presence of self-intersections in the region handled."));
+            CGAL::Three::Three::warning(tr("The requested operation is not possible due to the presence of self-intersections in the region handled."));
           }
           item->invalidateOpenGLBuffers();
           viewer->update();
@@ -273,10 +254,6 @@ public Q_SLOTS:
           if(sm_item)
           {
             apply<SMesh>(sm_item);
-          }
-          else
-          {
-            apply<Polyhedron>(poly_item);
           }
         }
       }

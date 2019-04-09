@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStlExtensionUtilities
+\ingroup PkgSTLExtensionUtilities
 
 The `Sixtuple` class stores a homogeneous (same type) 
 sixtuple of objects of type `T`. A `Sixtuple` is much like a 
@@ -11,7 +11,7 @@ container, though, because it does not support the standard methods (such as
 iterators) for accessing the elements of a container. 
 
 \deprecated This class is deprecated, and will be removed in some future \cgal release. 
-Please use CGAL::cpp11::array instead. 
+Please use std::array instead. 
 
 \tparam `T` must be `Assignable`.
 */

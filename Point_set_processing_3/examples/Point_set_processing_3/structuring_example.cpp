@@ -68,6 +68,7 @@ int main (int argc, char** argv)
             << " structured point(s) generated." << std::endl;
 
   std::ofstream out ("out.pwn");
+  out.precision(17);
   CGAL::write_xyz_points (out, structured_pts,
                           CGAL::parameters::point_map(Point_map()).normal_map(Normal_map()));
   out.close();

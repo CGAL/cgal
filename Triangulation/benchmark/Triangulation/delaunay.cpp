@@ -47,7 +47,7 @@ std::size_t compute_triangulation(std::size_t N)
   std::vector<Point> points;
   CGAL::Random rng;
   Random_points_iterator rand_it(D, 2.0, rng);
-  CGAL::cpp11::copy_n(rand_it, N, std::back_inserter(points));
+  std::copy_n(rand_it, N, std::back_inserter(points));
 
 #ifdef EXPORT_POINTS_TO_A_FILE
   std::ofstream os("points.txt");

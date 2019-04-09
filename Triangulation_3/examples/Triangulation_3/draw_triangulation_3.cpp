@@ -11,7 +11,7 @@ int main()
 {
   std::vector<K::Point_3> points;
   CGAL::Random_points_in_sphere_3<K::Point_3,Creator> g(1.0);
-  CGAL::cpp11::copy_n(g, 50, std::back_inserter(points));
+  std::copy_n(g, 50, std::back_inserter(points));
 
   DT3 dt3(points.begin(), points.end());
 

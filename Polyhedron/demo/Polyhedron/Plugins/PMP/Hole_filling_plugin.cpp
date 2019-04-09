@@ -3,15 +3,14 @@
 #include <QtCore/qglobal.h>
 
 #include "Messages_interface.h"
-#include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polylines_item.h"
 #include "Scene_polyhedron_selection_item.h"
 #include "Scene.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 #include "ui_Hole_filling_widget.h"
-#include "Polyhedron_type.h"
 
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Timer.h>
@@ -42,21 +41,10 @@
 #include <QMap>
 #include <QVector>
 
-#ifdef USE_SURFACE_MESH
 typedef Scene_surface_mesh_item Scene_face_graph_item;
 
 void normalize_border(Scene_face_graph_item::Face_graph&)
 {}
-
-#else
-typedef Scene_polyhedron_item Scene_face_graph_item;
-
-void normalize_border(Scene_face_graph_item::Face_graph& polyhedron)
-{
-  polyhedron.normalize_border(); 
-}
-
-#endif
 
 typedef Scene_face_graph_item::Face_graph Face_graph;
 
@@ -138,9 +126,9 @@ public:
       else                  { it->polyline->setWidth(3); }
 
       if(selected_holes.find(it) != selected_holes.end())
-      { it->polyline->setRbgColor(255, 0, 0); }
+      { it->polyline->setRgbColor(255, 0, 0); }
       else
-      { it->polyline->setRbgColor(0, 0, 255); }
+      { it->polyline->setRgbColor(0, 0, 255); }
 
       it->polyline->drawEdges(viewer);
     }
@@ -218,7 +206,7 @@ private:
     boost::unordered_set<fg_halfedge_descriptor> visited;
     boost::property_map<Face_graph,CGAL::vertex_point_t>::type vpm = get(CGAL::vertex_point,poly);
 
-    BOOST_FOREACH(fg_halfedge_descriptor hd, halfedges(poly)){
+    for(fg_halfedge_descriptor hd : halfedges(poly)){
       if(is_border(hd, poly) && visited.find(hd) == visited.end()){
         polyline_data_list.push_back(Polyline_data());
         Polyline_data& polyline_data = polyline_data_list.back();
@@ -228,8 +216,7 @@ private:
 
         CGAL::qglviewer::Vec center;
         int counter = 0;
-        fg_halfedge_descriptor hf_around_facet;
-        BOOST_FOREACH(hf_around_facet, halfedges_around_face(hd,poly)){
+        for(fg_halfedge_descriptor hf_around_facet : halfedges_around_face(hd,poly)){
           CGAL_assertion(visited.find(hf_around_facet) == visited.end());
           visited.insert(hf_around_facet);
           const Point_3& p = get(vpm,target(hf_around_facet, poly));
@@ -237,7 +224,7 @@ private:
           center += CGAL::qglviewer::Vec(p.x(), p.y(), p.z());
           ++counter;
         }
-        hf_around_facet = *halfedges_around_face(hd,poly).first;
+        fg_halfedge_descriptor hf_around_facet = *halfedges_around_face(hd,poly).first;
         polyline_data.polyline->polylines.front().push_back(get(vpm,target(hf_around_facet,poly)));
         polyline_data.position = center / counter;
       }
@@ -276,7 +263,7 @@ private:
 #else
       boost::property_map<Face_graph,CGAL::vertex_point_t>::type vpm = get(CGAL::vertex_point,poly);
       /* use polyline points to measure distance - might hurt performance for large holes */
-      BOOST_FOREACH(fg_halfedge_descriptor hf_around_facet, halfedges_around_face(it->halfedge,poly)){
+      for(fg_halfedge_descriptor hf_around_facet : halfedges_around_face(it->halfedge,poly)){
         const Point_3& p_1 = get(vpm,target(hf_around_facet,poly));
         const CGAL::qglviewer::Vec& pos_it_1 = camera->projectedCoordinatesOf(CGAL::qglviewer::Vec(p_1.x(), p_1.y(), p_1.z()));
         const Point_3& p_2 = get(vpm,target(opposite(hf_around_facet,poly),poly));
@@ -336,7 +323,7 @@ class Polyhedron_demo_hole_filling_plugin :
 public:
   bool applicable(QAction*) const { return qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex())) ||
         qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex())); }
-  void print_message(QString message) { messages->information(message); }
+  void print_message(QString message) { CGAL::Three::Three::information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionHoleFilling; }
 
 
@@ -378,6 +365,7 @@ protected:
 
   void change_poly_item_by_blocking(Scene_face_graph_item* poly_item, Scene_hole_visualizer* collection) {
     if(collection) collection->block_poly_item_changed = true;
+    poly_item->resetColors();
     poly_item->invalidateOpenGLBuffers();
     poly_item->redraw();
     if(collection) collection->block_poly_item_changed = false;
@@ -436,21 +424,13 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
   messages = m;
 
   actionHoleFilling = new QAction(tr(
-                                  #ifdef USE_SURFACE_MESH
-                                      "Hole Filling for Surface Mesh"
-                                  #else
-                                      "Hole Filling for Polyhedron"
-                                  #endif
+                                      "Hole Filling"
                                     ), mw);
   actionHoleFilling->setProperty("subMenuName", "Polygon Mesh Processing");
   connect(actionHoleFilling, SIGNAL(triggered()), this, SLOT(hole_filling_action()));
 
   dock_widget = new QDockWidget(
-      #ifdef USE_SURFACE_MESH
-          "Hole Filling for Surface Mesh"
-      #else
-          "Hole Filling for Polyhedron"
-      #endif
+          "Hole Filling"
         , mw);
   dock_widget->setVisible(false);
   dock_widget->installEventFilter(this);
@@ -461,11 +441,7 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
 
   addDockWidget(dock_widget);
   dock_widget->setWindowTitle(tr(
-                              #ifdef USE_SURFACE_MESH
-                                  "Hole Filling for Surface Mesh"
-                              #else
-                                  "Hole Filling for Polyhedron"
-                              #endif
+                                  "Hole Filling"
                                 ));
   
   connect(ui_widget.Fill_from_selection_button,  SIGNAL(clicked()), this, SLOT(on_Fill_from_selection_button()));
@@ -691,7 +667,7 @@ bool Polyhedron_demo_hole_filling_plugin::fill
 
     bool success;
     if(weight_index == 0) {
-      success = CGAL::cpp11::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
+      success = std::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
               it, std::back_inserter(patch), CGAL::Emptyset_iterator(),
               CGAL::Polygon_mesh_processing::parameters::weight_calculator
                 (CGAL::internal::Uniform_weight_fairing<Face_graph>(poly)).
@@ -700,7 +676,7 @@ bool Polyhedron_demo_hole_filling_plugin::fill
               use_delaunay_triangulation(use_DT)));
     }
     else {
-      success = CGAL::cpp11::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
+      success = std::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
               it, std::back_inserter(patch), CGAL::Emptyset_iterator(),
               CGAL::Polygon_mesh_processing::parameters::weight_calculator(CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Face_graph>(poly)).
               density_control_factor(alpha).
@@ -776,7 +752,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
   boost::unordered_set<fg_halfedge_descriptor> buffer;
   //check if all selected edges are boder
   //to do check that the seection is closed
-  BOOST_FOREACH(fg_edge_descriptor ed, edge_selection->selected_edges)
+  for(fg_edge_descriptor ed : edge_selection->selected_edges)
   {
     fg_halfedge_descriptor h(halfedge(ed, *poly));
     if(! is_border(h,*poly))
@@ -800,7 +776,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
   while(!buffer.empty())
   {
     bool found = false;
-    BOOST_FOREACH(fg_halfedge_descriptor h, buffer)
+    for(fg_halfedge_descriptor h : buffer)
     {
       //if h and c_e share a point
       if(target(h, *poly) == target(c_e,*poly) ||
@@ -884,7 +860,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
     last_active_item = edge_selection->polyhedron_item();
     accept_reject_toggle(true);
   }
-
+  edge_selection->polyhedron_item()->resetColors();
   edge_selection->polyhedron_item()->invalidateOpenGLBuffers();
   edge_selection->polyhedron_item()->itemChanged();
 }

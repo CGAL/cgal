@@ -10,9 +10,12 @@ if(NOT POLICY CMP0070 AND POLICY CMP0053)
   cmake_policy(SET CMP0053 OLD)
 endif()
 
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
+
 # Find CGAL
 find_package(CGAL COMPONENTS Qt5)
-include( ${CGAL_USE_FILE} )
 
 # Find Qt5 itself
 find_package(Qt5 QUIET COMPONENTS Xml OpenGL Help Core)
@@ -20,9 +23,16 @@ find_package(Qt5 QUIET COMPONENTS Xml OpenGL Help Core)
 
 if(Qt5_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
 endif(Qt5_FOUND)
 
-if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND TARGET Qt5::qcollectiongenerator)
+if( Qt5Help_VERSION VERSION_LESS 5.12 )
+  set(CGAL_QCOLLECTIONGENERATOR_TARGET Qt5::qcollectiongenerator)
+else()
+  set(CGAL_QCOLLECTIONGENERATOR_TARGET Qt5::qhelpgenerator)
+endif()
+
+if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND TARGET ${CGAL_QCOLLECTIONGENERATOR_TARGET})
 
   # UI files (Qt Designer files)
   qt5_wrap_ui ( UI_FILES MainWindow.ui )
@@ -35,15 +45,10 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND TARGET Qt5::qcollectiongener
   qt5_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_MainWindow.cpp" )
   qt5_generate_moc( "Viewer.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_Viewer.cpp" )
 
-  if(DEFINED QT_QCOLLECTIONGENERATOR_EXECUTABLE)
-  else()
-    set(QT_QCOLLECTIONGENERATOR_EXECUTABLE qcollectiongenerator)
-  endif()
-
   # generate QtAssistant collection file
   add_custom_command ( OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/Periodic_3_triangulation_3.qhc
       DEPENDS Periodic_3_triangulation_3.qhp Periodic_3_triangulation_3.qhcp
-      COMMAND Qt5::qcollectiongenerator
+      COMMAND ${CGAL_QCOLLECTIONGENERATOR_TARGET}
                  ${CMAKE_CURRENT_SOURCE_DIR}/Periodic_3_triangulation_3.qhcp
                  -o ${CMAKE_CURRENT_BINARY_DIR}/Periodic_3_triangulation_3.qhc
   )
@@ -51,7 +56,6 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND TARGET Qt5::qcollectiongener
   # Make sure the compiler can find generated .moc files
   include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
   include_directories( ${QT_INCLUDE_DIR} )
-  include_directories( ../../include .)
 
   # The executable itself
   add_executable  ( periodic_3_triangulation_3_demo
@@ -80,8 +84,8 @@ else ()
     set(PERIODIC_TRIANGULATION_MISSING_DEPS "Qt5, ${PERIODIC_TRIANGULATION_MISSING_DEPS}")
   endif()
 
-  if (NOT TARGET Qt5::qcollectiongenerator)
-    set(PERIODIC_TRIANGULATION_MISSING_DEPS "qcollectiongenerator, ${PERIODIC_TRIANGULATION_MISSING_DEPS}")
+  if (NOT TARGET ${CGAL_QCOLLECTIONGENERATOR_TARGET})
+    set(PERIODIC_TRIANGULATION_MISSING_DEPS "${CGAL_QCOLLECTIONGENERATOR_TARGET}, ${PERIODIC_TRIANGULATION_MISSING_DEPS}")
   endif()
 
   message(STATUS "NOTICE: This demo requires ${PERIODIC_TRIANGULATION_MISSING_DEPS}and will not be compiled.")

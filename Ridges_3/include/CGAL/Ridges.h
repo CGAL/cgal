@@ -32,7 +32,6 @@
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/assertions.h>
 #include <boost/type_traits/is_same.hpp>
-#include <boost/foreach.hpp>
 #include <CGAL/Bbox_3.h>
 
 namespace CGAL {
@@ -352,7 +351,7 @@ Ridge_approximation(const TriangleMesh &p,
   CGAL_precondition( is_triangle_mesh(p) );
 
   std::vector<Point_3> points;
-  BOOST_FOREACH(vertex_descriptor v, vertices(p)){
+  for(vertex_descriptor v : vertices(p)){
     points.push_back(get(vpm,v));
   }
 

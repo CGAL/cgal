@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlphaShape2Concepts
+\ingroup PkgAlphaShapes2Concepts
 \cgalConcept
 
 The concept `WeightedAlphaShapeTraits_2` describes the requirements

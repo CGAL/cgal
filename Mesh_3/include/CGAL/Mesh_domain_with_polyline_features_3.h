@@ -38,6 +38,7 @@
 #include <CGAL/is_streamable.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/property_map.h>
+#include <CGAL/internal/Mesh_3/indices_management.h>
 
 #include <vector>
 #include <set>
@@ -46,7 +47,6 @@
 
 #include <boost/next_prior.hpp> // for boost::prior and boost::next
 #include <boost/variant.hpp>
-#include <boost/foreach.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/shared_ptr.hpp>
@@ -517,7 +517,7 @@ struct Display_incidences_to_curves_aux<MDwPF, false> {
 /// @endcond
 
 /*!
-\ingroup PkgMesh_3Domains
+\ingroup PkgMesh3Domains
 
 The class `Mesh_domain_with_polyline_features_3` is designed to allow the user
 to add some 0- and 1-dimensional
@@ -546,15 +546,19 @@ class Mesh_domain_with_polyline_features_3
 public:
 /// \name Types
 /// @{
-  typedef typename MeshDomain_3::Index    Index;
+  typedef typename MeshDomain_3::Surface_patch_index Surface_patch_index;
+  typedef typename MeshDomain_3::Subdomain_index     Subdomain_index;
+  typedef int                                        Curve_index;
+  typedef int                                        Corner_index;
 
-  typedef typename MeshDomain_3::Surface_patch_index
-                                  Surface_patch_index;
+  typedef typename Mesh_3::internal::Index_generator_with_features<
+    typename MeshDomain_3::Subdomain_index,
+    Surface_patch_index,
+    Curve_index,
+    Corner_index>::type                              Index;
 
-  typedef int                     Curve_index;
-  typedef int                     Corner_index;
-  typedef CGAL::Tag_true           Has_features;
-  typedef typename MeshDomain_3::R::FT          FT;
+  typedef CGAL::Tag_true                             Has_features;
+  typedef typename MeshDomain_3::R::FT               FT;
 /// @}
 
 #ifndef DOXYGEN_RUNNING
@@ -588,7 +592,6 @@ public:
     , current_curve_index_(1)
     , curves_aabb_tree_is_built(false) {}
 
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   template <typename T1, typename T2, typename ... T>
   Mesh_domain_with_polyline_features_3(const T1& o1, const T2& o2, const T& ...o)
     : MeshDomain_3(o1, o2, o...)
@@ -596,32 +599,6 @@ public:
     , current_curve_index_(1)
     , curves_aabb_tree_is_built(false) {}
 /// @}
-#else
-  /// Constructors
-  /// Call the base class constructor
-  template <typename T1, typename T2>
-  Mesh_domain_with_polyline_features_3(const T1& o1, const T2& o2)
-    : MeshDomain_3(o1, o2)
-    , current_corner_index_(1)
-    , current_curve_index_(1)
-    , curves_aabb_tree_is_built(false) {}
-
-  template <typename T1, typename T2, typename T3>
-  Mesh_domain_with_polyline_features_3(const T1& o1, const T2& o2,
-                                       const T3& o3)
-    : MeshDomain_3(o1, o2, o3)
-    , current_corner_index_(1)
-    , current_curve_index_(1)
-    , curves_aabb_tree_is_built(false) {}
-
-  template <typename T1, typename T2, typename T3, typename T4>
-  Mesh_domain_with_polyline_features_3(const T1& o1, const T2& o2,
-                                       const T3& o3, const T4& o4)
-    : MeshDomain_3(o1, o2, o3, o4)
-    , current_corner_index_(1)
-    , current_curve_index_(1)
-    , curves_aabb_tree_is_built(false) {}
-#endif
 
 /// \name Operations
 /// @{
@@ -740,7 +717,7 @@ public:
   OutputIterator get_corners(OutputIterator out) const;
 
   /// Implements `MeshDomainWithFeatures_3::get_curves()`.
-  /// OutputIterator value type is CGAL::cpp11::tuple<Curve_index,
+  /// OutputIterator value type is std::tuple<Curve_index,
   /// std::pair<Point_3,Index>, std::pair<Point_3,Index> >
   template <typename OutputIterator>
   OutputIterator get_curves(OutputIterator out) const;
@@ -777,17 +754,46 @@ public:
                                 const Point_3& c1, const Point_3& c2,
                                 const FT sq_r1, const FT sq_r2) const;
 
+
+  /**
+   * Returns the index to be stored in a vertex lying on the surface identified
+   * by \c index.
+   */
+  Index index_from_surface_patch_index(const Surface_patch_index& index) const
+  { return Index(index); }
+
+  /**
+   * Returns the index to be stored in a vertex lying in the subdomain
+   * identified by \c index.
+   */
+  Index index_from_subdomain_index(const Subdomain_index& index) const
+  { return Index(index); }
+
   /// Returns an `Index` from a `Curve_index`
   Index index_from_curve_index(const Curve_index& index) const
   { return Index(index); }
 
-  /// Returns a `Curve_index` from an `Index`
-  Curve_index curve_index(const Index& index) const
-  { return boost::get<Curve_index>(index); }
-
   /// Returns an `Index` from a `Corner_index`
   Index index_from_corner_index(const Corner_index& index) const
   { return Index(index); }
+
+  /**
+   * Returns the \c Surface_patch_index of the surface patch
+   * where lies a vertex with dimension 2 and index \c index.
+   */
+  Surface_patch_index surface_patch_index(const Index& index) const
+  { return boost::get<Surface_patch_index>(index); }
+
+  /**
+   * Returns the index of the subdomain containing a vertex
+   *  with dimension 3 and index \c index.
+   */
+  Subdomain_index subdomain_index(const Index& index) const
+  { return boost::get<Subdomain_index>(index); }
+
+  /// Returns a `Curve_index` from an `Index`
+  Curve_index curve_index(const Index& index) const
+  { return boost::get<Curve_index>(index); }
 
   /// Returns a `Corner_index` from an `Index`
   Corner_index corner_index(const Index& index) const
@@ -965,7 +971,7 @@ get_curves(OutputIterator out) const
       q_index = p_index;
     }
 
-    *out++ = CGAL::cpp11::make_tuple(eit->first,
+    *out++ = std::make_tuple(eit->first,
                                      std::make_pair(p,p_index),
                                      std::make_pair(q,q_index));
   }
@@ -1210,7 +1216,7 @@ Mesh_domain_with_polyline_features_3<MD_>::
 reindex_patches(const std::vector<Surf_p_index>& map,
                 IncidenceMap& incidence_map)
 {
-  BOOST_FOREACH(typename IncidenceMap::value_type& pair,
+  for(typename IncidenceMap::value_type& pair :
                 incidence_map)
   {
     Surface_patch_index_set& patch_index_set = pair.second;
@@ -1298,7 +1304,7 @@ operator()(std::ostream& os, Point p, typename MDwPF_::Curve_index id,
 {
   os << "Corner #" << id << " (" << p
      << ") is incident to the following curves: {";
-  BOOST_FOREACH(typename MDwPF_::Curve_index curve_index,
+  for(typename MDwPF_::Curve_index curve_index :
                 corners_tmp_incidences_of_id)
   {
     os << " " << curve_index;
@@ -1330,7 +1336,7 @@ operator()(std::ostream& os, Point p, typename MDwPF_::Curve_index id,
 {
   os << "Corner #" << id << " (" << p
      << ") is incident to the following patches: {";
-  BOOST_FOREACH(typename MDwPF_::Surface_patch_index i,
+  for(typename MDwPF_::Surface_patch_index i :
                 corners_incidences_of_id)
   {
     os << " " << i;
@@ -1404,7 +1410,7 @@ compute_corners_incidences()
 
     Surface_patch_index_set& incidences = corners_incidences_[id];
 
-    BOOST_FOREACH(Curve_index curve_index, corner_tmp_incidences)
+    for(Curve_index curve_index : corner_tmp_incidences)
     {
       get_incidences(curve_index,
                      std::inserter(incidences,

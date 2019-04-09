@@ -153,8 +153,9 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
   ~SNC_sphere_map() { if(destruct) delete this->sncp(); }
 
   SNC_sphere_map(const Base& v) : Base(v), destruct(false) {}
-  SNC_sphere_map(const Self& M) : Base((Base) M), destruct(M.destruct) {}
 
+  SNC_sphere_map(const SNC_sphere_map&)=default;
+  
   Self& operator=(const Self& M) {
     destruct = M.destruct;
     Base* b(this);
@@ -216,7 +217,7 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
   public:
     SFace_cycle_iterator() : Ibase() {}
     SFace_cycle_iterator(const Ibase& b) : Ibase(b) {}
-    SFace_cycle_iterator(const SFace_cycle_iterator& i) : Ibase(i) {}  
+
     bool is_svertex() const 
     { SVertex_handle v; return CGAL::assign(v,Ibase::operator*()); }
     bool is_shalfedge() const
@@ -243,8 +244,7 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
   public:
     SFace_cycle_const_iterator() : Ibase() {}
     SFace_cycle_const_iterator(const Ibase& b) : Ibase(b) {}
-    SFace_cycle_const_iterator(const SFace_cycle_const_iterator& i) 
-      : Ibase(i) {}  
+
     bool is_svertex() const 
     { SVertex_handle v; return CGAL::assign(v,Ibase::operator*()); }
     bool is_shalfedge() const

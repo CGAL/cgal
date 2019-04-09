@@ -56,6 +56,7 @@
 #ifdef CGAL_LINKED_WITH_TBB
 # include <CGAL/point_generators_3.h>
 # include <tbb/parallel_for.h>
+# include <tbb/task_scheduler_init.h>
 # include <tbb/enumerable_thread_specific.h>
 # include <tbb/concurrent_vector.h>
 #endif
@@ -250,13 +251,6 @@ public:
     : Tr_Base(p0, p1, p2, p3, gt, lock_ds)
   {}
 
-  // copy constructor duplicates vertices and cells
-  Delaunay_triangulation_3(const Delaunay_triangulation_3& tr)
-    : Tr_Base(tr)
-  {
-    CGAL_triangulation_postcondition(is_valid());
-  }
-
   template < typename InputIterator >
   Delaunay_triangulation_3(InputIterator first, InputIterator last,
                            const Gt& gt = Gt(), Lock_data_structure *lock_ds = NULL)
@@ -274,6 +268,7 @@ public:
     insert(first, last);
   }
 
+  
 private:
   #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
   std::vector<Vertex_handle>

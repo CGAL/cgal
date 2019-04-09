@@ -77,6 +77,7 @@ public:
    PROGRAM_FLAT,                /** Used to render flat shading without pre computing normals*/
    PROGRAM_OLD_FLAT,            /** Used to render flat shading without pre computing normals without geometry shader*/
    PROGRAM_SOLID_WIREFRAME,     //! Used to render edges with width superior to 1.
+   PROGRAM_HEAT_INTENSITY,      //! Used to render special item in Display_property_plugin
    NB_OF_PROGRAMS               //! Holds the number of different programs in this enum.
   };
 
@@ -253,6 +254,10 @@ public Q_SLOTS:
 //! \param animation_duration is the duration of the animation of the movement.
   virtual bool moveCameraToCoordinates(QString target,
                                        float animation_duration = 0.5f) = 0;
+  //!
+  //! Setter for the orthogonal projection of the viewer.
+  //!
+  virtual void SetOrthoProjection( bool b) =0;
 public:
   
   //! Gives acces to recent openGL(4.3) features, allowing use of things like
@@ -271,6 +276,8 @@ public:
   virtual int currentPass()const = 0;
   virtual bool isDepthWriting()const = 0;
   virtual QOpenGLFramebufferObject* depthPeelingFbo() = 0;
+  virtual QVector4D* clipBox() const =0;
+  virtual bool isClipping() const = 0;
 }; // end class Viewer_interface
 }
 }

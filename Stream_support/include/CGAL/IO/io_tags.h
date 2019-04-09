@@ -53,10 +53,8 @@ template<> struct Io_traits<unsigned short> { typedef io_Read_write Io_tag; };
 template<> struct Io_traits<unsigned int> { typedef io_Read_write Io_tag; };
 template<> struct Io_traits<unsigned long> { typedef io_Read_write Io_tag; };
 
-#ifndef CGAL_CFG_NO_CPP0X_LONG_LONG
 template<> struct Io_traits<long long> { typedef io_Read_write Io_tag; };
 template<> struct Io_traits<unsigned long long> { typedef io_Read_write Io_tag; };
-#endif
 
 template<> struct Io_traits<float> { typedef io_Read_write Io_tag; };
 template<> struct Io_traits<double> { typedef io_Read_write Io_tag; };
