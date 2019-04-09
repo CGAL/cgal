@@ -41,7 +41,7 @@ class Iso_cuboidH3
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef cpp11::array<Point_3, 2>          Rep;
+  typedef std::array<Point_3, 2>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;

@@ -449,7 +449,7 @@ public:
      \cgalParamBegin{require_uniform_sampling} an optional preprocessing, which will give better result if the
      distribution of the input points is highly non-uniform. The default value is `false`. \cgalParamEnd
      \cgalParamBegin{callback} an instance of
-      `cpp11::function<bool(double)>`. It is called regularly when the
+      `std::function<bool(double)>`. It is called regularly when the
       algorithm is running: the current advancement (between 0. and
       1.) is passed as parameter. If it returns `true`, then the
       algorithm continues its execution normally; if it returns
@@ -481,8 +481,8 @@ wlop_simplify_and_regularize_point_set(
   double radius = choose_param(get_param(np, internal_np::neighbor_radius), -1);
   unsigned int iter_number = choose_param(get_param(np, internal_np::number_of_iterations), 35);
   bool require_uniform_sampling = choose_param(get_param(np, internal_np::require_uniform_sampling), false);
-  const cpp11::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
-                                                               cpp11::function<bool(double)>());
+  const std::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+                                                               std::function<bool(double)>());
 
   typedef typename Kernel::Point_3   Point;
   typedef typename Kernel::FT        FT;

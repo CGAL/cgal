@@ -47,7 +47,7 @@ private:
     boost::tie(vcolors, created) = smesh->add_property_map<SMesh::Vertex_index,CGAL::Color>("v:color",CGAL::Color(0,0,0));
     assert(colors.size()==smesh->number_of_vertices());
     int color_id = 0;
-    BOOST_FOREACH(vertex_descriptor vd, vertices(*smesh))
+    for(vertex_descriptor vd : vertices(*smesh))
       vcolors[vd] = colors[color_id++];
   }
 
@@ -61,7 +61,7 @@ private:
     boost::tie(fcolors, created) = smesh->add_property_map<SMesh::Face_index,CGAL::Color>("f:color",CGAL::Color(0,0,0));
     assert(colors.size()==smesh->number_of_faces());
     int color_id = 0;
-    BOOST_FOREACH(face_descriptor fd, faces(*smesh))
+    for(face_descriptor fd : faces(*smesh))
       fcolors[fd] = colors[color_id++];
   }
 };

@@ -10,7 +10,6 @@
 
 #include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>
-#include <boost/foreach.hpp>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Gt;
 
@@ -73,7 +72,7 @@ int main()
   as.get_alpha_shape_facets(std::back_inserter( regular_facets ), Alpha_shape_3::REGULAR );
 
   std::vector<Alpha_shape_3::Facet> filtered_regular_facets;
-  BOOST_FOREACH(Alpha_shape_3::Facet f, regular_facets)
+  for(Alpha_shape_3::Facet f : regular_facets)
   {
     if ( marked_cells.count(f.first)==1 )
       filtered_regular_facets.push_back(f);
@@ -90,7 +89,7 @@ int main()
   boost::unordered_map< Alpha_shape_3::Vertex_handle, std::size_t> vids;
   points.clear();
 
-  BOOST_FOREACH(Alpha_shape_3::Facet f, filtered_regular_facets)
+  for(Alpha_shape_3::Facet f : filtered_regular_facets)
   {
     for (int i=1;i<4; ++i)
     {
@@ -104,7 +103,7 @@ int main()
   std::ofstream output("out.off");
   output << "OFF\n " << points.size() << " " << filtered_regular_facets.size() << " 0\n";
   std::copy(points.begin(), points.end(), std::ostream_iterator<Point>(output, "\n"));
-  BOOST_FOREACH(const Alpha_shape_3::Facet& f, filtered_regular_facets)
+  for(const Alpha_shape_3::Facet& f : filtered_regular_facets)
   {
     output << 3;
 

@@ -151,15 +151,6 @@ private:
   typedef typename R::Hyperplane_d Hyperplane_d;
 
 public:
-  // Solely to make the lazy kernel work
-#if CGAL_INTERSECTION_VERSION < 2
-  typedef CGAL::Object result_type;
-
-  template <class T1, class T2>
-  result_type
-  operator()(const T1& t1, const T2& t2) const
-  { return internal::intersection(t1, t2, R()); }
-#else
   template <typename> 
   struct result;
 
@@ -223,7 +214,6 @@ public:
   typename result<Intersect(T1,T2)>::type
   operator()(const T1& t1, const T2& t2) const
   { return Intersections::internal::intersection(t1, t2, R()); }
-#endif
 };
 
 template<class R>

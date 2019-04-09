@@ -339,9 +339,8 @@ private:
     return point;
   }
   
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
+
     Partition_vertex& operator=(const Partition_vertex&)=default;
-#endif
 
     void insert_diagonal(Circulator v_ref) 
     {

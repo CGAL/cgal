@@ -24,7 +24,6 @@
 #include <CGAL/Qt/qglviewer.h>
 
 #include <boost/function_output_iterator.hpp>
-#include <boost/foreach.hpp>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -2151,6 +2150,11 @@ void Scene_c3t3_item::setAlpha(int alpha)
   redraw();
 }
 
-QSlider* Scene_c3t3_item::alphaSlider() { return d->alphaSlider; }
+QSlider* Scene_c3t3_item::alphaSlider() {
+  if(!d->alphaSlider)
+    d->computeElements();
+  return d->alphaSlider;
+}
+
 
 #include "Scene_c3t3_item.moc"

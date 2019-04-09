@@ -15,7 +15,7 @@
 #include <CGAL/Intersections_2/Bbox_2_Point_2.h>
 #include <CGAL/Intersections_2/Circle_2_Iso_rectangle_2.h>
 #include <CGAL/Intersections_2/Circle_2_Point_2.h>
-
+#include <CGAL/Intersections_2/Point_2_Point_2.h>
 
 #include <vector>
 #include <iostream>
@@ -292,6 +292,13 @@ check_no_intersection  (L(p(0, 0), p(10,10)), L(p(8,7), p(1, 0)));
     check_intersection<S>  (S(p(-10, -10), p(  0,  10)), T(p(   -9,   9), p(  14,   8), p(-2,-16)));
   }
 
+  void P_P()
+  {
+    std::cout << "Point - Point\n";
+    check_no_intersection<P>  (p(  8, 4), p(-4,  8));
+    check_intersection<P>     (p(  8, 4), p( 8,  4));
+  }
+
   void P_T()
   {
     std::cout << "Point - Triangle\n";
@@ -353,6 +360,7 @@ check_no_intersection  (L(p(0, 0), p(10,10)), L(p(8,7), p(1, 0)));
     R_T();
     S_T();
     P_T();
+    P_P();
     L_Rec();
     R_Rec();
     S_Rec();

@@ -33,7 +33,7 @@ namespace CGAL {
 // TODO :
 // - comparison operators should be global, but it causes problems...
 // - Have a look at Boost's concept_checking and archetypes :
-//   http://www.boost.org/libs/concept_check/concept_check.htm
+//   https://www.boost.org/libs/concept_check/concept_check.htm
 
 class Trivial_iterator_tag{};
 

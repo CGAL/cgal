@@ -75,9 +75,9 @@ public:
   typedef typename GT::Hyperbolic_segment_2                       Hyperbolic_segment;
   typedef typename GT::Hyperbolic_triangle_2                      Hyperbolic_triangle;
 
-  typedef std::pair<Point, Hyperbolic_translation>                Periodic_point;
-  typedef array< std::pair<Point, Hyperbolic_translation>, 2 >    Periodic_segment;
-  typedef array< std::pair<Point, Hyperbolic_translation>, 3 >    Periodic_triangle;
+  typedef std::pair<Point, Hyperbolic_translation>                     Periodic_point;
+  typedef std::array< std::pair<Point, Hyperbolic_translation>, 2 >    Periodic_segment;
+  typedef std::array< std::pair<Point, Hyperbolic_translation>, 3 >    Periodic_triangle;
 
   typedef typename TDS::Vertex                                    Vertex;
   typedef typename TDS::Edge                                      Edge;

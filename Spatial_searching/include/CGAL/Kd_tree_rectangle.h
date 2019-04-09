@@ -68,8 +68,8 @@ namespace CGAL {
   private:
     
     //int dim;
-    CGAL::cpp11::array<T,D::value> lower_;
-    CGAL::cpp11::array<T,D::value> upper_;
+    std::array<T,D::value> lower_;
+    std::array<T,D::value> upper_;
     int max_span_coord_;
     
   public:

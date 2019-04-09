@@ -320,11 +320,7 @@ ts_intersection(const typename K::Triangle_3 &t,
               && orientation(p,q,c,a) != POSITIVE )
           {
             // The intersection is a point
-#if CGAL_INTERSECTION_VERSION > 1
             return result_type( lp_intersection(p, q, a, b, c, k) );
-#else
-            return make_object( lp_intersection(p, q, a, b, c, k) );
-#endif
           }
           else
             return result_type();
@@ -336,11 +332,7 @@ ts_intersection(const typename K::Triangle_3 &t,
              && orientation(p,q,b,c) != POSITIVE
              && orientation(p,q,c,a) != POSITIVE)
           {
-#if CGAL_INTERSECTION_VERSION > 1
             return result_type(q);
-#else
-            return make_object(q);
-#endif
           }
           else return result_type();
       }
@@ -353,11 +345,7 @@ ts_intersection(const typename K::Triangle_3 &t,
             && orientation(q,p,c,a) != POSITIVE )
           {
             // The intersection is a point
-#if CGAL_INTERSECTION_VERSION > 1
             return result_type( lp_intersection(p, q, a, b, c, k) );
-#else
-            return make_object( lp_intersection(p, q, a, b, c, k) );
-#endif
           }
           else
             return result_type();
@@ -374,11 +362,7 @@ ts_intersection(const typename K::Triangle_3 &t,
              && orientation(q,p,b,c) != POSITIVE
              && orientation(q,p,c,a) != POSITIVE)
           {
-#if CGAL_INTERSECTION_VERSION > 1
             return result_type(q);
-#else
-            return make_object(q);
-#endif
           }
           else return result_type();
       }
@@ -390,11 +374,7 @@ ts_intersection(const typename K::Triangle_3 &t,
            && orientation(q,p,b,c) != POSITIVE
            && orientation(q,p,c,a) != POSITIVE)
         {
-#if CGAL_INTERSECTION_VERSION > 1
           return result_type(p);
-#else
-          return make_object(p);
-#endif
         } else
           return result_type();
       case NEGATIVE:
@@ -403,11 +383,7 @@ ts_intersection(const typename K::Triangle_3 &t,
            && orientation(p,q,b,c) != POSITIVE
            && orientation(p,q,c,a) != POSITIVE)
         {
-#if CGAL_INTERSECTION_VERSION > 1
           return result_type(p);
-#else
-          return make_object(p);
-#endif
         } else
           return result_type();
       case COPLANAR:
@@ -487,11 +463,7 @@ tr_intersection(const typename K::Triangle_3  &t,
   if ( orientation(p,q,a,b) != abcp
        && orientation(p,q,b,c) != abcp
        && orientation(p,q,c,a) != abcp )
-#if CGAL_INTERSECTION_VERSION > 1
     return result_type(lp_intersection(p, q, a, b, c, k));
-#else
-    return make_object(lp_intersection(p, q, a, b, c, k));
-#endif
   else
     return result_type();
 }

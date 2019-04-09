@@ -78,11 +78,7 @@ class First_intersection_traits
 
 public:
   typedef
-  #if CGAL_INTERSECTION_VERSION < 2
-  boost::optional<Object_and_primitive_id> 
-  #else
   boost::optional< typename AABBTraits::template Intersection_and_primitive_id<Query>::Type >
-  #endif
   Result;
 public:
   First_intersection_traits(const AABBTraits& traits)
@@ -137,11 +133,7 @@ public:
 
   void intersection(const Query& query, const Primitive& primitive)
   {
-    #if CGAL_INTERSECTION_VERSION < 2
-    boost::optional<Object_and_primitive_id>
-    #else
     boost::optional< typename AABBTraits::template Intersection_and_primitive_id<Query>::Type >
-    #endif
     intersection = m_traits.intersection_object()(query, primitive);
 
     if(intersection)

@@ -50,7 +50,7 @@ void test_interpolation_functions()
   typedef typename Kernel::Vector_2                                Vector;
 
   typedef CGAL::Triangulation_vertex_base_with_info_2<
-                  CGAL::cpp11::array<
+                  std::array<
                     Value_and_gradient<Coord_type, Vector>, 3>,
                   Kernel>                                          Vb;
   typedef CGAL::Triangulation_data_structure_2<Vb>                 Tds;

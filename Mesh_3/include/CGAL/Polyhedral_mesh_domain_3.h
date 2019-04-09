@@ -138,7 +138,7 @@ class Get_face_index_pmap<Polyhedron_type, false> {
 public:
   Get_face_index_pmap(const Polyhedron_type& polyhedron) {
     int id = 0;
-    BOOST_FOREACH(face_descriptor f, faces(polyhedron))
+    for(face_descriptor f : faces(polyhedron))
     {
       face_ids[f] = id++;
     }
@@ -201,7 +201,7 @@ public:
   typedef typename Mesh_3::internal::Index_generator<
     Subdomain_index, Surface_patch_index>::type           Index;
 
-  typedef CGAL::cpp11::tuple<Point_3,Index,int> Intersection;
+  typedef std::tuple<Point_3,Index,int> Intersection;
 
 
   typedef typename IGT::FT         FT;
@@ -582,26 +582,16 @@ public:
         AABB_primitive_id primitive_id = intersection->second;
 
         // intersection may be either a point or a segment
-#if CGAL_INTERSECTION_VERSION > 1
         if ( const Bare_point* p_intersect_pt =
              boost::get<Bare_point>( &(intersection->first) ) )
-#else
-        if ( const Bare_point* p_intersect_pt =
-             object_cast<Bare_point>( &(intersection->first) ) )
-#endif
         {
           return Intersection(*p_intersect_pt,
                               r_domain_.index_from_surface_patch_index(
                                 r_domain_.make_surface_index(primitive_id)),
                               2);
         }
-#if CGAL_INTERSECTION_VERSION > 1
         else if ( const Segment_3* p_intersect_seg =
                   boost::get<Segment_3>(&(intersection->first)))
-#else
-        else if ( const Segment_3* p_intersect_seg =
-                  object_cast<Segment_3>(&(intersection->first)))
-#endif
         {
           CGAL_MESH_3_PROFILER("Mesh_3 profiler: Intersection is a segment");
 
@@ -845,13 +835,13 @@ Construct_initial_points::operator()(OutputIterator pts,
 
 #ifdef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
     Intersection intersection = r_domain_.construct_intersection_object()(ray_shot);
-    if(CGAL::cpp0x::get<2>(intersection) != 0) {
+    if(std::get<2>(intersection) != 0) {
 #else
     if(r_domain_.do_intersect_surface_object()(ray_shot)) {
       Intersection intersection = r_domain_.construct_intersection_object()(ray_shot);
 #endif
-      *pts++ = std::make_pair(CGAL::cpp0x::get<0>(intersection),
-                              CGAL::cpp0x::get<1>(intersection));
+      *pts++ = std::make_pair(std::get<0>(intersection),
+                              std::get<1>(intersection));
 
       --i;
 

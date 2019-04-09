@@ -46,7 +46,7 @@ public:
 
   typedef K R;
   typedef K::Point_3 Point_3;
-  typedef CGAL::cpp11::tuple<Point_3, Index, int> Intersection;
+  typedef std::tuple<Point_3, Index, int> Intersection;
 
   CGAL::Bbox_3 bbox() const {
     return implicit_domain.bbox() + polyhedron_domain.bbox();

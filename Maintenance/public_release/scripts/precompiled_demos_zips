@@ -61,6 +61,9 @@ pushd Segment_Delaunay_graph_Linf_2_Demo; zip ../segment_voronoi_diagram_2.zip *
 
 # CGAL-4.8
 pushd Optimal_transportation_reconstruction_2_Demo; zip ../otr2.zip *;               popd
+#missing demos
+pushd Polygon_Demo; zip ../polygon.zip *;               popd
+pushd Principal_component_analysis_Demo; zip ../pca.zip *;               popd
 
 # check
 echo CHECK now. The following lines should be empty.

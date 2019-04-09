@@ -65,9 +65,7 @@ namespace CGAL
                           m_id = rhs.m_id;
                     }
 
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
                   Decorated_point& operator=(const Decorated_point&)=default;
-#endif
                 private:
                     Id m_id;
 

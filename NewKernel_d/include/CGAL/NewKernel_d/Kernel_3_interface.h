@@ -43,8 +43,8 @@ template <class Base_> struct Kernel_3_interface : public Base_ {
 	typedef typename Get_type<Base, Point_tag>::type	Point_3;
 	typedef typename Get_type<Base, Vector_tag>::type	Vector_3;
 	typedef typename Get_type<Base, Segment_tag>::type	Segment_3;
-	typedef cpp0x::tuple<Point_3,Point_3,Point_3>		Triangle_3; // placeholder
-	typedef cpp0x::tuple<Point_3,Point_3,Point_3,Point_3>	Tetrahedron_3; // placeholder
+	typedef std::tuple<Point_3,Point_3,Point_3>		Triangle_3; // placeholder
+	typedef std::tuple<Point_3,Point_3,Point_3,Point_3>	Tetrahedron_3; // placeholder
 	struct Compare_xyz_3 {
 		typedef typename Get_functor<Base, Compare_lexicographically_tag>::type CL;
 		typedef typename CL::result_type result_type;

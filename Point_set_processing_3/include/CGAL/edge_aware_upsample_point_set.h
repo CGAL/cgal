@@ -297,7 +297,7 @@ update_new_point(
    The type of the objects put in it is 
    `std::pair<geom_traits::Point_3, geom_traits::Vector_3>`.
    Note that the user may use a 
-   <A HREF="http://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
+   <A HREF="https://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
    to match specific needs.
 
    \param points input point range.

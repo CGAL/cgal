@@ -23,7 +23,7 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
-#include <CGAL/function.h>
+#include <functional>
 
 #include <CGAL/thread.h>
 
@@ -33,7 +33,7 @@ namespace Point_set_processing_3 {
   
 class Parallel_callback
 {
-  const cpp11::function<bool(double)>& m_callback;
+  const std::function<bool(double)>& m_callback;
   cpp11::atomic<std::size_t>* m_advancement;
   cpp11::atomic<bool>* m_interrupted;
   std::size_t m_size;
@@ -47,7 +47,7 @@ class Parallel_callback
   }
   
 public:
-  Parallel_callback (const cpp11::function<bool(double)>& callback,
+  Parallel_callback (const std::function<bool(double)>& callback,
                      std::size_t size,
                      std::size_t advancement = 0,
                      bool interrupted = false)

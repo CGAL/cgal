@@ -62,7 +62,7 @@ void compute(Poly* pMesh,
 
   typename boost::property_map<Poly, CGAL::vertex_point_t>::type vpmap = get(CGAL::vertex_point, *pMesh);
 
-  BOOST_FOREACH(typename boost::graph_traits<Poly>::vertex_descriptor v, vertices(*pMesh))
+  for(typename boost::graph_traits<Poly>::vertex_descriptor v : vertices(*pMesh))
   {
     std::vector<Point> points;
 
@@ -76,7 +76,7 @@ void compute(Poly* pMesh,
     typedef EPICK::FT FT;
 
     FT min_edge_len = std::numeric_limits<FT>::infinity();
-    BOOST_FOREACH(typename boost::graph_traits<Poly>::halfedge_descriptor he, halfedges_around_target(v, *pMesh))
+    for(typename boost::graph_traits<Poly>::halfedge_descriptor he : halfedges_around_target(v, *pMesh))
     {
       const Point& p = get( vpmap, target(opposite(he, *pMesh ), *pMesh));
       points.push_back(p);

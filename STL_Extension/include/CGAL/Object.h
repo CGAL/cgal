@@ -68,13 +68,8 @@ class Object
 
     Object() : obj() { }
 
-#ifndef CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
     template <class T>
     Object(T && t, private_tag) : obj(new boost::any(std::forward<T>(t))) { }
-#else
-    template <class T>
-    Object(const T&t, private_tag) : obj(new boost::any(t)) { }
-#endif
 
     // implicit constructor from optionals containing variants
     template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
@@ -155,7 +150,6 @@ class Object
 };
 
 
-#ifndef CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
 template <class T>
 inline
 Object
@@ -163,15 +157,6 @@ make_object(T && t)
 {
     return Object(std::forward<T>(t), Object::private_tag());
 }
-#else
-template <class T>
-inline
-Object
-make_object(const T& t)
-{
-    return Object(t, Object::private_tag());
-}
-#endif
 
 template <class T>
 inline

@@ -13,7 +13,6 @@
 #include <CGAL/boost/graph/graph_traits_Triangulation_2.h>
 #include <map>
 #include <boost/unordered_map.hpp>
-#include <boost/foreach.hpp>
 #include <CGAL/boost/graph/helpers.h>
 
 
@@ -93,7 +92,7 @@ void test_edge_hash_and_null(const P& p)
   typedef typename GT::vertex_descriptor vertex_descriptor;
   typedef typename GT::face_descriptor face_descriptor;
 
-  BOOST_FOREACH(halfedge_descriptor h, halfedges(p))
+  for(halfedge_descriptor h : halfedges(p))
   {
     assert(
       hash_value( edge(h,p) ) ==

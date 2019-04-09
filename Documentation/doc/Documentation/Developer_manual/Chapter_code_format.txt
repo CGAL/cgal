@@ -259,7 +259,7 @@ The first list of items are meant as rules, <I>i.e.</I>, you should follow them.
   #endif // CGAL_THIS_IS_AN_EXAMPLE_H
   \endcode
 - Support the
-  <A HREF="http://www.boost.org/doc/libs/release/libs/utility/utility.htm#result_of">result_of</A>
+  <A HREF="https://www.boost.org/doc/libs/release/libs/utility/utility.htm#result_of">result_of</A>
   protocol whenever your functors have more than one return type
   otherwise provide a `result_type` member typedef.
   An example for this is a C++03 style `identity` functor:

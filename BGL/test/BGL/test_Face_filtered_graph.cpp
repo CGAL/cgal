@@ -3,7 +3,6 @@
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include "test_Prefix.h"
 #include <boost/numeric/conversion/cast.hpp>
-#include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>
 #include <CGAL/use.h>
@@ -279,7 +278,7 @@ template <typename Graph>
 void
 test(const std::vector<Graph>& graphs)
 {
-  BOOST_FOREACH(Graph p, graphs){
+  for(Graph p : graphs){
     test_read(p);
     test_vertex_iterators(p);
     test_out_edges(p);

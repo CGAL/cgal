@@ -123,7 +123,7 @@ int main()
   std::vector<vertex_descriptor> anchor_vtx;
   approx.anchor_vertices(std::back_inserter(anchor_vtx));
 
-  std::vector<CGAL::cpp11::array<std::size_t, 3> > tris;
+  std::vector<std::array<std::size_t, 3> > tris;
   approx.indexed_triangles(std::back_inserter(tris));
 
   std::vector<std::vector<std::size_t> > boundary;

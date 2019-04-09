@@ -109,9 +109,7 @@ public:
     Point_handle (p)
   {}
 
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
   _One_root_point_2& operator=(const _One_root_point_2&)=default;
-#endif
   
   /*! Constructor of a point with one-root coefficients.
      This constructor of a point can also be used with rational coefficients
