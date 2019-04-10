@@ -581,7 +581,6 @@ centroid(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
   typedef typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type Kernel;
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Vector_3 Vector_3;
-  typedef typename Kernel::Tetrahedron_3 Tetrahedron_3;
   typedef typename Kernel::Construct_translated_point_3 Construct_translated_point_3;
   typedef typename Kernel::Construct_vector_3 Construct_vector_3;
   typedef typename Kernel::Construct_normal_3 Construct_normal_3;
