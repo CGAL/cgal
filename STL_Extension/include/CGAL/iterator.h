@@ -1416,7 +1416,7 @@ public:
   
   const std::tuple<O...>& to_tuple() const
   {
-    return static_cast<std::tuple<const O...>&> (*this);
+    return static_cast<const std::tuple<const O...>&> (*this);
   }
 };
 
@@ -1459,7 +1459,7 @@ public:
 
   template <class T>
   Self& operator=(const T&) { return *this; }
-  
+
 };
 
 
