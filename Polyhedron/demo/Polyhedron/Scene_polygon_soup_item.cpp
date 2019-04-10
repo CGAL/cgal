@@ -25,6 +25,7 @@
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 
 #include <CGAL/Polygon_2.h>
 
@@ -829,5 +830,14 @@ void Scene_polygon_soup_item::computeElements() const
   d->nb_lines = d->positions_lines.size();
   
   setBuffersFilled(true);
+  QApplication::restoreOverrideCursor();
+}
+
+void Scene_polygon_soup_item::repair()
+{
+  QApplication::setOverrideCursor(Qt::BusyCursor);
+  CGAL::Polygon_mesh_processing::repair_polygon_soup(d->soup->points,
+                                                     d->soup->polygons,
+                                                     CGAL::parameters::all_default());
   QApplication::restoreOverrideCursor();
 }

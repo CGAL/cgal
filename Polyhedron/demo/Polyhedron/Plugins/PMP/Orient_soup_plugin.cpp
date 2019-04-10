@@ -13,6 +13,7 @@
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+
 #include <CGAL/array.h>
 #include <CGAL/Three/Three.h>
 #include "Messages_interface.h"
@@ -49,6 +50,7 @@ public Q_SLOTS:
   void shuffle();
   void displayNonManifoldEdges();
   void createPointsAndPolyline();
+  void cleanSoup();
 
 private:
   template<class Item>
@@ -64,6 +66,7 @@ private:
   QAction* actionShuffle;
   QAction* actionNMToPolyline;
   QAction* actionDisplayNonManifoldEdges;
+  QAction* actionClean;
 
 }; // end Polyhedron_demo_orient_soup_plugin
 
@@ -94,6 +97,10 @@ void Polyhedron_demo_orient_soup_plugin::init(QMainWindow* mainWindow,
   actionNMToPolyline->setProperty("subMenuName", "Polygon Mesh Processing");
   connect(actionNMToPolyline, &QAction::triggered,
           this, &Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline);
+  actionClean = new QAction(tr("Clean Polygon Soup"), mainWindow);
+  actionClean->setProperty("subMenuName", "Polygon Mesh Processing");
+  connect(actionClean, &QAction::triggered,
+          this, &Polyhedron_demo_orient_soup_plugin::cleanSoup);
 }
 
 QList<QAction*> Polyhedron_demo_orient_soup_plugin::actions() const {
@@ -101,7 +108,8 @@ QList<QAction*> Polyhedron_demo_orient_soup_plugin::actions() const {
       << actionOrientSM
       << actionShuffle
       << actionNMToPolyline
-      << actionDisplayNonManifoldEdges;
+      << actionDisplayNonManifoldEdges
+      << actionClean;
 }
 
 void set_vcolors(SMesh* smesh, std::vector<CGAL::Color> colors)
@@ -378,6 +386,20 @@ void Polyhedron_demo_orient_soup_plugin::getNMPoints(
     vertices_to_duplicate.erase(edge[0]);
     vertices_to_duplicate.erase(edge[1]);
   }
+}
+
+void Polyhedron_demo_orient_soup_plugin::cleanSoup()
+{
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
+  
+  Scene_polygon_soup_item* item =
+      qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
+  
+  if(!item)
+    return;
+  item->repair();
+  item->invalidateOpenGLBuffers();
+  item->redraw();
 }
 #include "Orient_soup_plugin.moc"
 

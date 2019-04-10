@@ -157,6 +157,7 @@ public Q_SLOTS:
     bool orient();
     bool exportAsSurfaceMesh(SMesh*);
     void inside_out();
+    void repair();
 
     void setDisplayNonManifoldEdges(const bool);
     bool displayNonManifoldEdges() const;
