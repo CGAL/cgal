@@ -83,7 +83,7 @@ public:
    
       // front() is the point with the largest x coordinate
 
-      Point_2 p;
+      Point_2 p = Point_2();
       // push the point p_minus_infinity; the coordinates should never be used
       push_back(p);
 
