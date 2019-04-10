@@ -71,6 +71,10 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
 
   tm_face_descriptor tm_null_face = boost::graph_traits<TargetMesh>::null_face();
 
+  reserve(tm, static_cast<typename boost::graph_traits<TargetMesh>::vertices_size_type>(vertices(sm).size()),
+              static_cast<typename boost::graph_traits<TargetMesh>::edges_size_type>(edges(sm).size()),
+              static_cast<typename boost::graph_traits<TargetMesh>::faces_size_type>(faces(sm).size()) );
+
   //insert halfedges and create each vertex when encountering its halfedge
   BOOST_FOREACH(sm_edge_descriptor sm_e, edges(sm))
   {
@@ -373,7 +377,6 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
                      V2V v2v, H2H h2h, F2F f2f,
                      Src_vpm sm_vpm, Tgt_vpm tm_vpm )
 {
-  reserve(tm, vertices(sm).size(), edges(sm).size(), faces(sm).size());
   internal::copy_face_graph(sm, tm,
                             CGAL::graph_has_property<SourceMesh,boost::halfedge_index_t>(),
                             v2v, h2h, f2f,
