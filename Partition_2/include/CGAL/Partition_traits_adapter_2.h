@@ -139,13 +139,9 @@ public:
   typedef typename Kernel::Is_horizontal_2                                   Is_horizontal_2;
   
   // needed by visibility graph and thus by optimal convex
-  typedef typename Kernel::Ray_2                                             Ray_2; 
   typedef Pmap_collinear_are_ordered_along_line_2<PointPropertyMap,Kernel>   Collinear_are_ordered_along_line_2;
   typedef Pmap_fct<typename Kernel::Are_strictly_ordered_along_line_2>
                                                                              Are_strictly_ordered_along_line_2;
-  typedef typename Kernel::Intersect_2                                       Intersect_2;
-  typedef typename Kernel::Assign_2                                          Assign_2;
-  typedef typename Kernel::Object_2                                          Object_2;
 
   // needed by approx_convex (for constrained triangulation)
   // and optimal convex (for vis. graph)
@@ -154,7 +150,6 @@ public:
 
   // needed by optimal convex (for vis. graph)
   typedef Pmap_fct<typename Kernel::Construct_segment_2>        Construct_segment_2;
-  typedef Pmap_fct<typename Kernel::Construct_ray_2>            Construct_ray_2;
 
   Equal_2
   equal_2_object() const
@@ -198,10 +193,6 @@ public:
   construct_segment_2_object() const
   { return Construct_segment_2(); }
 
-  Construct_ray_2
-  construct_ray_2_object() const
-  { return Construct_ray_2(); }
-
   Collinear_are_ordered_along_line_2
   collinear_are_ordered_along_line_2_object() const
   { return Collinear_are_ordered_along_line_2(ppmap,static_cast<const Base_traits*>(this)->collinear_are_ordered_along_line_2_object()); }
@@ -224,13 +215,6 @@ public:
   {  return Is_y_monotone_2(traits); }
 
 
-  Intersect_2
-  intersect_2_object() const
-  {  return Intersect_2(); }
-
-  Assign_2
-  assign_2_object() const
-  {  return Assign_2(); }
 
 };
 

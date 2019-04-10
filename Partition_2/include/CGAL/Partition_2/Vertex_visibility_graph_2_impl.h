@@ -523,36 +523,6 @@ void Vertex_visibility_graph_2<Traits>::update_visibility(
       // if it were closer to p than q when looking from p to q, q would
       // not be visible.
 
- #if 0     
-      Segment_2 next_seg = construct_segment_2(*(*p_it).second.second, 
-                                               *next_v_p);
-      Ray_2 ray = construct_ray_2((*p_it).first, (*q_it).first);
-      Segment_2 i_seg;
-      Point_2 i_point;
-         
-      Object_2 next_result = intersect_2(next_seg, ray);
-         
-      if (assign_2(i_point, next_result)) 
-      {
-         if (collinear_ordered_2((*p_it).first, (*q_it).first, i_point))
-         {
-            (*p_it).second.second = (*q_it).second.first;
-         }
-      }
-      else if (assign_2(i_seg, next_result))
-      {
-         if (collinear_ordered_2((*p_it).first,(*q_it).first,i_seg.source()) &&
-             collinear_ordered_2((*p_it).first,(*q_it).first,i_seg.target()))
-         {
-            (*p_it).second.second = (*q_it).second.first;
-         }
- 
-      }
-      else
-      {
-         (*p_it).second.second = (*q_it).second.first;
-      }
-#else
       // Segment ab  and Ray pq
       Point_2 a = *(*p_it).second.second;
       Point_2 b =  *next_v_p;
@@ -595,7 +565,6 @@ void Vertex_visibility_graph_2<Traits>::update_visibility(
       if(change){
         (*p_it).second.second = (*q_it).second.first;
       }
-#endif      
    }
    else // p sees what q sees
    {

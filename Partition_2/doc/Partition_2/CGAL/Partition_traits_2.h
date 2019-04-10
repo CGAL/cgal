@@ -36,15 +36,6 @@ public:
 */ 
 typedef R::Line_2 Line_2; 
 
-/*!
-
-*/ 
-typedef R::Segment_2 Segment_2; 
-
-/*!
-
-*/ 
-typedef R::Ray_2 Ray_2; 
 
 /*!
 
@@ -81,15 +72,6 @@ typedef R::Compare_x_2 Compare_x_2;
 */ 
 typedef R::Construct_line_2 Construct_line_2; 
 
-/*!
-
-*/ 
-typedef R::Construct_ray_2 Construct_ray_2; 
-
-/*!
-
-*/ 
-typedef R::Construct_segment_2 Construct_segment_2; 
 
 /*!
 

@@ -45,7 +45,7 @@ class Partition_traits_2  : public Partition_traits_2_base<Kernel_>
     typedef CGAL::Polygon_2<Kernel, Container>          Polygon_2;
     typedef typename Kernel::Less_yx_2                  Less_yx_2;
     typedef typename Kernel::Less_xy_2                  Less_xy_2;
-    typedef typename Kernel::Left_turn_2                 Left_turn_2;
+    typedef typename Kernel::Left_turn_2                Left_turn_2;
     typedef typename Kernel::Orientation_2              Orientation_2;
     typedef typename Kernel::Compare_y_2                Compare_y_2;
     typedef typename Kernel::Compare_x_2                Compare_x_2;
@@ -59,14 +59,10 @@ class Partition_traits_2  : public Partition_traits_2_base<Kernel_>
     typedef typename Kernel::Is_horizontal_2            Is_horizontal_2;
 
     // needed by visibility graph and thus by optimal convex
-    typedef typename Kernel::Ray_2                      Ray_2; 
     typedef typename Kernel::Collinear_are_ordered_along_line_2
                                             Collinear_are_ordered_along_line_2;
     typedef typename Kernel::Are_strictly_ordered_along_line_2
                                             Are_strictly_ordered_along_line_2;
-    typedef typename Kernel::Intersect_2                Intersect_2;
-    typedef typename Kernel::Assign_2                   Assign_2;
-    typedef typename Kernel::Object_2                   Object_2;
 
     // needed by approx_convex (for constrained triangulation)
     // and optimal convex (for vis. graph)
@@ -112,13 +108,6 @@ class Partition_traits_2  : public Partition_traits_2_base<Kernel_>
     is_y_monotone_2_object(const Self& traits) const
     {  return Is_y_monotone_2(traits); }
 
-    Intersect_2
-    intersect_2_object() const
-    {  return Intersect_2(); }
-
-    Assign_2
-    assign_2_object() const
-    {  return Assign_2(); }
 };
 
 }
