@@ -32,6 +32,7 @@
 #include <CGAL/assertions.h>
 #include <boost/foreach.hpp>
 #include <boost/container/flat_set.hpp>
+#include <boost/container/flat_map.hpp>
 
 #include <set>
 #include <map>
