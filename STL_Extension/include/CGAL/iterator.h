@@ -1408,6 +1408,16 @@ public:
     tuple_dispatch(t);
     return *this;
   }
+  
+  std::tuple<O...>& to_tuple()
+  {
+    return static_cast<std::tuple<O...>&>(*this);
+  }
+  
+  const std::tuple<O...>& to_tuple() const
+  {
+    return static_cast<std::tuple<const O...>&> (*this);
+  }
 };
 
 template < typename... V, typename... O>
@@ -1449,6 +1459,7 @@ public:
 
   template <class T>
   Self& operator=(const T&) { return *this; }
+  
 };
 
 
