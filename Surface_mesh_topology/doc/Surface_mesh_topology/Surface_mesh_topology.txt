@@ -43,7 +43,11 @@ A `Path_on_surface` behaves as a list. This list is initially empty and the dart
 
 In the two first cases, the source vertex of the added dart  should coincide with the target vertex of the last dart in the path. The user is responsible for ensuring this condition. The member functions \ref Path_on_surface::can_be_pushed "can_be_pushed" and \ref Path_on_surface::can_be_pushed_by_index "can_be_pushed_by_index()" return `true` if and only if the condition is satisfied.
 
-In addition to these functionalities, we provide an intuitive mesh builder `Combinatorial_map_2_incremental_builder`. The user can add facets to the mesh one at a time. Each facet is specified by the sequence of its oriented edge labels given as a string where the labels are words separated by blank spaces. The label of the opposite of an oriented edge is preceded by a minus. For example, the opposite of 'a1' is '-a1'. See \ref SMTopology_Example_II "examples below". Note that all the facets should be oriented the same way to form an oriented surface. This builder includes a path creator where the sequence of darts of the path is given as a string of oriented edge labels, similarly to the facets.
+In addition to these functionalities, we provide an intuitive mesh builder `Combinatorial_map_2_incremental_builder`. The user can add facets to the mesh one at a time. Each facet is specified by the sequence of its oriented edge labels given as a string where the labels are words separated by blank spaces. The label of the opposite of an oriented edge is preceded by a minus. For example, the opposite of 'a1' is '-a1'. In the next figure we see three examples of combinatorial maps described by a collection of facets with label edges.
+\cgalFigureBegin{fig_sm_incremental-builder, incremental-builder.svg}
+ Left, a surface described by a single facet with eight edges pairwise identified. The resulting (topological) surface is shown in Figure \cgalFigureRef{fig_cut-open}. Middle, a surface described by three labeled quadrilaterals. Right, a single labeled facet. The corresponding surface is topologically equivalent to the middle example.
+\cgalFigureEnd
+The code for creating the above left and middle examples appear in the \ref SMTopology_Example_II "mesh builder examples" below. Note that all the facets should be oriented the same way to form an oriented surface. This builder includes a path creator where the sequence of darts of the path is given as a string of oriented edge labels, similarly to the facets.
 
 \subsection SMTopology_DS Data Structure Presentation
 
@@ -73,10 +77,10 @@ The following example shows how to load an off file and how to create three clos
 
 \subsection SMTopology_Example_II Mesh Builder Examples
 Here, we show with two examples how to create a surface from a list of faces specified by edge label sequences.
-In this first example, we build a genus two torus surface from a single face, also called a polygonal schema. Two closed paths are then created. The paths are freely homotopic but not homotopic with fixed endpoint. 
+In this first example, we build a genus two torus surface from a single face, also called a polygonal schema. See left Figure \cgalFigureRef{fig_sm_incremental-builder} for an illustration. Two closed paths are then created. The paths are freely homotopic but not homotopic with fixed endpoint. 
 \cgalExample{Surface_mesh_topology/path_homotopy_with_symbols.cpp}
 
-In this second example, we build a genus two torus surface from a set of three squares. The first two faces are added each with a single call to the member function add_facet(). The third face is build incrementally by adding its edge labels one at a time. We then create a contractible closed path.
+In this second example, we build a genus two torus surface from a set of three squares. See middle Figure \cgalFigureRef{fig_sm_incremental-builder} for an illustration. The first two faces are added each with a single call to the member function add_facet(). The third face is build incrementally by adding its edge labels one at a time. We then create a contractible closed path.
 \cgalExample{Surface_mesh_topology/path_homotopy_with_symbols_2.cpp}
 
 \subsection SMTopology_Example_III Open Path Example
