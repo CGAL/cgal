@@ -70,6 +70,13 @@ public:
       }
    };
 
+   struct Equal {
+      bool operator()(const Point_2& p, const Point_2& q) const
+      {
+         return p == q;
+      }
+   };
+   
    // constructor
    template<class ForwardIterator>
    Rotation_tree_2(ForwardIterator first, ForwardIterator beyond, const Traits& traits)
@@ -78,8 +85,9 @@ public:
          push_back(*it);
 
       Greater greater (traits.less_xy_2_object());
+      Equal equal;
       std::sort(this->begin(), this->end(), greater);
-      std::unique(this->begin(), this->end());
+      std::unique(this->begin(), this->end(),equal);
    
       // front() is the point with the largest x coordinate
 
