@@ -5,5 +5,5 @@
 int main()
 {
   volatile const CGAL::Random* r = &CGAL::get_default_random();
-  return int(r != 0);
+  return (r != 0) ? 0 : 1;
 }
