@@ -833,11 +833,14 @@ void Scene_polygon_soup_item::computeElements() const
   QApplication::restoreOverrideCursor();
 }
 
-void Scene_polygon_soup_item::repair()
+void Scene_polygon_soup_item::repair(bool erase_dup, bool req_same_orientation)
 {
   QApplication::setOverrideCursor(Qt::BusyCursor);
-  CGAL::Polygon_mesh_processing::repair_polygon_soup(d->soup->points,
-                                                     d->soup->polygons,
-                                                     CGAL::parameters::all_default());
+  CGAL::Polygon_mesh_processing::repair_polygon_soup(
+        d->soup->points,
+        d->soup->polygons,
+        CGAL::Polygon_mesh_processing::parameters::
+        erase_all_duplicates(erase_dup)
+        .require_same_orientation(req_same_orientation));
   QApplication::restoreOverrideCursor();
 }

@@ -17,6 +17,7 @@
 #include <CGAL/array.h>
 #include <CGAL/Three/Three.h>
 #include "Messages_interface.h"
+#include "ui_Repair_soup.h"
 using namespace CGAL::Three;
 class Polyhedron_demo_orient_soup_plugin : 
   public QObject,
@@ -388,6 +389,19 @@ void Polyhedron_demo_orient_soup_plugin::getNMPoints(
   }
 }
 
+
+class RepairDialog :
+    public QDialog,
+    public Ui::Dialog
+{
+  Q_OBJECT
+public:
+  RepairDialog(QWidget* =0)
+  {
+    setupUi(this);
+  }
+};
+
 void Polyhedron_demo_orient_soup_plugin::cleanSoup()
 {
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
@@ -397,7 +411,12 @@ void Polyhedron_demo_orient_soup_plugin::cleanSoup()
   
   if(!item)
     return;
-  item->repair();
+  RepairDialog dlg;
+  if(!dlg.exec())
+    return;
+  bool b1 = dlg.eadCheckbox->isChecked(), b2 = dlg.rsoCheckBox->isChecked();
+  item->repair(b1, b2);
+  
   item->invalidateOpenGLBuffers();
   item->redraw();
 }
