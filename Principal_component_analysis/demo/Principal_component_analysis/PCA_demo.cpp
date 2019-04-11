@@ -36,7 +36,7 @@ int main(int argc, char **argv)
   app.setApplicationName("PCA demo");
 
   // Import resources from libCGALQt.
-  // See http://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE
+  // See https://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE
 
   CGAL_QT_INIT_RESOURCES;
 

@@ -903,7 +903,7 @@ QMenu* Scene_points_with_normal_item::contextMenu()
 
     //add a slider to modify the normals length
     // Use dynamic properties:
-    // http://doc.qt.io/qt-5/qobject.html#property
+    // https://doc.qt.io/qt-5/qobject.html#property
     bool menuChanged = menu->property(prop_name).toBool();
 
     if(!menuChanged) {

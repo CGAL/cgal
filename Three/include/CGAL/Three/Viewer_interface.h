@@ -86,7 +86,7 @@ public:
  //! The painter is the element that draws everything on screen,
  //! but you should only need this if you want to draw 2D things
  //! on top of the scene, like a selection rectangle.
- //! See <a href="http://doc.qt.io/qt-5/qpainter.html">QPainter's documentation </a> for details.
+ //! See <a href="https://doc.qt.io/qt-5/qpainter.html">QPainter's documentation </a> for details.
  virtual QPainter *getPainter() =0;
 
 
