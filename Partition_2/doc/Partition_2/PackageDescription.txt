@@ -75,7 +75,6 @@ original polygon).
 - `PartitionTraits_2`
 - `PartitionIsValidTraits_2`
 - `YMonotonePartitionIsValidTraits_2`
-- `YMonotonePartitionTraits_2`
 
 \cgalCRPSection{Function Object Concepts}
 - `PolygonIsValid`

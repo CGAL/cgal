@@ -52,41 +52,12 @@ class Partition_traits_2  : public Partition_traits_2_base<Kernel_>
     typedef CGAL::Is_convex_2<Self>                     Is_convex_2;
     typedef CGAL::Is_y_monotone_2<Self>                 Is_y_monotone_2;
 
-    // needed by Indirect_edge_compare, used in y_monotone and greene_approx
-    typedef typename Kernel::Line_2                     Line_2;
-    typedef typename Kernel::Construct_line_2           Construct_line_2;
-    typedef typename Kernel::Compare_x_at_y_2           Compare_x_at_y_2;
-    typedef typename Kernel::Is_horizontal_2            Is_horizontal_2;
 
     // needed by visibility graph and thus by optimal convex
     typedef typename Kernel::Collinear_are_ordered_along_line_2
                                             Collinear_are_ordered_along_line_2;
     typedef typename Kernel::Are_strictly_ordered_along_line_2
                                             Are_strictly_ordered_along_line_2;
-
-    // needed by approx_convex (for constrained triangulation)
-    // and optimal convex (for vis. graph)
-    typedef typename Kernel::Segment_2                  Segment_2;
-    // needed by optimal convex (for vis. graph)
-    typedef typename Kernel::Construct_segment_2        Construct_segment_2;
-    typedef typename Kernel::Construct_ray_2            Construct_ray_2;
-
- 
-    Construct_line_2
-    construct_line_2_object() const
-    {  return Construct_line_2(); }
-
-    Compare_x_at_y_2
-    compare_x_at_y_2_object() const
-    { return Compare_x_at_y_2(); }
-
-    Construct_segment_2
-    construct_segment_2_object() const
-    { return Construct_segment_2(); }
-
-    Construct_ray_2
-    construct_ray_2_object() const
-    { return Construct_ray_2(); }
 
     Collinear_are_ordered_along_line_2
     collinear_are_ordered_along_line_2_object() const
@@ -95,10 +66,6 @@ class Partition_traits_2  : public Partition_traits_2_base<Kernel_>
     Are_strictly_ordered_along_line_2
     are_strictly_ordered_along_line_2_object() const
     { return Are_strictly_ordered_along_line_2(); }
-
-    Is_horizontal_2
-    is_horizontal_2_object() const
-    {  return Is_horizontal_2(); }
 
     Is_convex_2
     is_convex_2_object(const Self& traits) const

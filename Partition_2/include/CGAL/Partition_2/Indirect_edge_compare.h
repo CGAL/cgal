@@ -40,16 +40,16 @@ class Indirect_edge_compare
   typedef typename Traits::Orientation_2       Orientation_2;
      typedef typename Traits::Compare_y_2        Compare_y_2;
      typedef typename Traits::Compare_x_2        Compare_x_2;
-     typedef typename Traits::Construct_line_2   Construct_line_2;
-     typedef typename Traits::Compare_x_at_y_2   Compare_x_at_y_2;
-     typedef typename Traits::Line_2             Line_2;
+  //     typedef typename Traits::Construct_line_2   Construct_line_2;
+  //  typedef typename Traits::Compare_x_at_y_2   Compare_x_at_y_2;
+  // typedef typename Traits::Line_2             Line_2;
      typedef typename Traits::Point_2            Point_2;
 
      Indirect_edge_compare(const Traits& traits) : 
           _compare_y_2(traits.compare_y_2_object()),
-          _compare_x_2(traits.compare_x_2_object()),
-          _construct_line_2(traits.construct_line_2_object()),
-          _compare_x_at_y_2(traits.compare_x_at_y_2_object())
+          _compare_x_2(traits.compare_x_2_object())
+          // _construct_line_2(traits.construct_line_2_object()),
+          //_compare_x_at_y_2(traits.compare_x_at_y_2_object())
      { }
      
      // determines if the edge (edge_vtx_1, edge_vtx_1++) has a larger
@@ -72,7 +72,7 @@ class Indirect_edge_compare
         else 
         { 
            // construct supporting line for edge
-          Line_2  line = _construct_line_2(Point_2(*edge_vtx_1), Point_2(*edge_vtx_2));
+          //          Line_2  line = _construct_line_2(Point_2(*edge_vtx_1), Point_2(*edge_vtx_2));
            return compare_x_at_y(Point_2(*vertex), Point_2(*edge_vtx_1), Point_2(*edge_vtx_2)) == SMALLER;
         }
      }               
@@ -120,11 +120,11 @@ class Indirect_edge_compare
 
         // else neither endpoint is shared
         // construct supporting line
-        Line_2  l_p = _construct_line_2(Point_2(*p), Point_2(*after_p));
+        //        Line_2  l_p = _construct_line_2(Point_2(*p), Point_2(*after_p));
         //if (_is_horizontal_2(l_p))
         if(_compare_y_2(Point_2(*p), Point_2(*after_p)) == EQUAL)
         {
-          Line_2  l_q = _construct_line_2(Point_2(*q), Point_2(*after_q));
+          //          Line_2  l_q = _construct_line_2(Point_2(*q), Point_2(*after_q));
 
           //if (_is_horizontal_2(l_q))
           if(_compare_y_2(Point_2(*q), Point_2(*after_q)) == EQUAL)
@@ -156,7 +156,7 @@ class Indirect_edge_compare
             return q_larger_x;
         // else one smaller and one larger
         // construct the other line
-        Line_2 l_q = _construct_line_2(Point_2(*q), Point_2(*after_q)); 
+        //        Line_2 l_q = _construct_line_2(Point_2(*q), Point_2(*after_q)); 
         //if (_is_horizontal_2(l_q))     // p is not horizontal
         if(_compare_y_2(Point_2(*q), Point_2(*after_q)) == EQUAL)
         {
@@ -169,8 +169,8 @@ class Indirect_edge_compare
      Orientation_2    _orientation_2;
      Compare_y_2      _compare_y_2;
      Compare_x_2      _compare_x_2;
-     Construct_line_2 _construct_line_2;
-     Compare_x_at_y_2 _compare_x_at_y_2;
+  //     Construct_line_2 _construct_line_2;
+  //     Compare_x_at_y_2 _compare_x_at_y_2;
 };
 
 }

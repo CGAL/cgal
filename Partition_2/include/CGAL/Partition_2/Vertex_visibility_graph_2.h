@@ -61,8 +61,6 @@
 
 #include <CGAL/license/Partition_2.h>
 
-
-#include <CGAL/Segment_2.h>
 #include <CGAL/Partition_2/Rotation_tree_2.h>
 #include <CGAL/Partition_2/Indirect_less_xy_2.h>
 #include <CGAL/Partition_2/Iterator_list.h>
@@ -85,7 +83,6 @@ class Vertex_visibility_graph_2
 private:
    typedef Vertex_visibility_graph_2<Traits>  Self;
    typedef typename Traits::Point_2           Point_2;
-   typedef typename Traits::Segment_2         Segment_2;
    typedef typename Traits::Left_turn_2        Left_turn_2;
    typedef typename Traits::Less_xy_2         Less_xy_2;
    typedef typename Traits::Orientation_2     Orientation_2;
