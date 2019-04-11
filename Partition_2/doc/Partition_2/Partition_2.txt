@@ -95,9 +95,29 @@ as the algorithm of Hertel and Mehlhorn implemented with
 `approx_convex_partition_2()` but can sometimes produce better
 results (i.e., convex partitions with fewer pieces).
 
+\section secpartition_2_examples Example
+
 Examples of the uses of all of these functions are provided with the
 corresponding reference pages.
 
-*/ 
+In the following we illustrate how to use an adapter trais class that enables to
+deal with polygons where the vertices are not points. In the example the points
+are in a vector and the polygons are sequences of indices.
+
+The class `Partition_traits_adapter_2` has two template parameters, namely
+a geometric traits class, and a property map.  This traits class uses the
+property map to obtain points, in the example by accessing `points[i]` for
+the polygon vertex `i`, and it then performs the predicates required by
+the concept `PartitionTraits_2` on these points.
+
+\cgalExample{Partition_2/y_monotone_partition_indices_2.cpp}
+*/
+
+\section secpartition_2_history Implementation History
+
+This package has originally be written by Susan Hert while working at the Max-Planck Institute for Infomatics in Germany.
+The algorithms have been made free of constructions, and the traits adapter has been added by GeometryFactory
+for \cgal 5.0.
+
 } /* namespace CGAL */
 
