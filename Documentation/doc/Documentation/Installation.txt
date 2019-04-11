@@ -549,7 +549,7 @@ and the \ref PkgSurfaceMeshParameterizationRef packages.
 In addition, \sc{Eigen} also provides singular value decomposition for the \ref PkgJetFitting3Ref
 and the \ref PkgRidges3Ref packages.
 
-The \sc{Eigen} web site is <A HREF="http://eigen.tuxfamily.org/index.php?title=Main_Page">`http://eigen.tuxfamily.org/index.php?title=Main_Page`</A>.
+The \sc{Eigen} web site is <A HREF="http://eigen.tuxfamily.org/index.php?title=Main_Page">`http://eigen.tuxfamily.org`</A>.
 
 \subsection thirdpartyESBTL ESBTL
 
