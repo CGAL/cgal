@@ -14,7 +14,7 @@ cmake_minimum_required(VERSION 3.1)
 cmake_policy(VERSION 3.1)
 
 if(POLICY CMP0056)
-  # http://www.cmake.org/cmake/help/v3.2/policy/CMP0056.html
+  # https://cmake.org/cmake/help/v3.2/policy/CMP0056.html
   #
   # Fix a bug: `try_compile` should use `CMAKE_EXE_LINKER_FLAGS`.
   # That variable can contain important flags like

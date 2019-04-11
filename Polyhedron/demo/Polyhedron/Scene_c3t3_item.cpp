@@ -1289,7 +1289,7 @@ QMenu* Scene_c3t3_item::contextMenu()
   QMenu* menu = Scene_item::contextMenu();
 
   // Use dynamic properties:
-  // http://doc.qt.io/qt-5/qobject.html#property
+  // https://doc.qt.io/qt-5/qobject.html#property
   bool menuChanged = menu->property(prop_name).toBool();
 
   if (!menuChanged) {

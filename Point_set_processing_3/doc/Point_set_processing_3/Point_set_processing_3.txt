@@ -430,9 +430,9 @@ Comparison between different sizes of neighbor radius.
 
 \subsubsection Point_set_processing_3WLOP_parallel_performance Parallel Performance
 A parallel version of WLOP is provided and requires the executable to be linked against the 
-<a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+<a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
 To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
 for more details. We provide below a speed-up chart generated using the parallel version of the WLOP algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ@2.40GHz CPU with 8GB of RAM.
 
 \cgalFigureBegin{Point_set_processing_3figWLOP_parallel_performance, parallel_WLOP_performance.jpg}
@@ -472,9 +472,9 @@ Comparison for two smoothing methods: Left: Input, 250K points, normal-color map
 
 Performance: 
 A parallel version of bilateral smoothing is provided and requires the executable to be linked against the 
-<a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+<a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
 The number of threads used is controlled through the tbb::task_scheduler_init class.
-See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> for more details. We provide below a speed-up chart generated using the parallel version of the bilateral smoothing algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ@2.40GHz CPU with 8GB of RAM.
+See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a> for more details. We provide below a speed-up chart generated using the parallel version of the bilateral smoothing algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ@2.40GHz CPU with 8GB of RAM.
 
 \cgalFigureBegin{Point_set_processing_3Bilateral_smoothing_parallel_performance, parallel_bilateral_smooth_point_set_performance.jpg}
 Parallel bilateral smoothing speed-up, compared to the sequential version of the algorithm. 

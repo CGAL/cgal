@@ -52,7 +52,7 @@ namespace CGAL {
 ///
 /// \cgalModels `DiagonalizeTraits`
 ///
-/// \sa http://eigen.tuxfamily.org
+/// \sa http://eigen.tuxfamily.org/index.php?title=Main_Page
 template <typename FT, unsigned int dim = 3>
 class Eigen_diagonalize_traits
 {
