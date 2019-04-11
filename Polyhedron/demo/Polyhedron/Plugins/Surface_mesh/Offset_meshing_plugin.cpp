@@ -15,6 +15,7 @@
 #include <QInputDialog>
 #include <QStringList>
 #include <QMessageBox>
+#include <QAbstractButton>
 
 #include "C3t3_type.h"
 
