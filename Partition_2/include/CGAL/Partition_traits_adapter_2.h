@@ -77,7 +77,7 @@ public:
     }
   };
 
-    template <typename PointPropertyMap, typename K>
+  template <typename K>
   struct Pmap_compare_x_at_y_2 {
     
     PointPropertyMap ppmap;
@@ -96,7 +96,7 @@ public:
 
 
   
-  template <typename PointPropertyMap, typename K>
+  template <typename K>
   struct Pmap_collinear_are_ordered_along_line_2 {
 
     PointPropertyMap ppmap;
@@ -129,24 +129,24 @@ public:
   typedef Pmap_fct<typename Kernel::Orientation_2>              Orientation_2;
   typedef Pmap_fct<typename Kernel::Compare_y_2>                Compare_y_2;
   typedef Pmap_fct<typename Kernel::Compare_x_2>                Compare_x_2;
-  typedef CGAL::Is_convex_2<Self>                                            Is_convex_2;
-  typedef CGAL::Is_y_monotone_2<Self>                                        Is_y_monotone_2;
+  typedef CGAL::Is_convex_2<Self>                               Is_convex_2;
+  typedef CGAL::Is_y_monotone_2<Self>                           Is_y_monotone_2;
 
   // needed by Indirect_edge_compare, used in y_monotone and greene_approx
-  typedef typename Kernel::Line_2                                            Line_2;
+  typedef typename Kernel::Line_2                               Line_2;
   typedef Pmap_fct<typename Kernel::Construct_line_2>           Construct_line_2;
-  typedef Pmap_compare_x_at_y_2<PointPropertyMap,Kernel>                              Compare_x_at_y_2;
-  typedef typename Kernel::Is_horizontal_2                                   Is_horizontal_2;
+  typedef Pmap_compare_x_at_y_2<Kernel>                         Compare_x_at_y_2;
+  typedef typename Kernel::Is_horizontal_2                      Is_horizontal_2;
   
   // needed by visibility graph and thus by optimal convex
-  typedef Pmap_collinear_are_ordered_along_line_2<PointPropertyMap,Kernel>   Collinear_are_ordered_along_line_2;
+  typedef Pmap_collinear_are_ordered_along_line_2<Kernel>       Collinear_are_ordered_along_line_2;
   typedef Pmap_fct<typename Kernel::Are_strictly_ordered_along_line_2>
-                                                                             Are_strictly_ordered_along_line_2;
+                                                                Are_strictly_ordered_along_line_2;
 
   // needed by approx_convex (for constrained triangulation)
   // and optimal convex (for vis. graph)
 
-  typedef typename Kernel::Segment_2                                        Segment_2;
+  typedef typename Kernel::Segment_2                           Segment_2;
 
   // needed by optimal convex (for vis. graph)
   typedef Pmap_fct<typename Kernel::Construct_segment_2>        Construct_segment_2;
