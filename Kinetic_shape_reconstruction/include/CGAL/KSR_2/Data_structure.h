@@ -110,7 +110,9 @@ public:
       }
     }
   }
-   
+
+  Event_queue& queue() { return m_queue; }
+  
   const FT& current_time() const { return m_current_time; }
 
   const Support_lines& support_lines() const { return m_support_lines; }
@@ -138,6 +140,7 @@ public:
   
   void remove_vertex(KSR::size_t vertex_idx)
   {
+    CGAL_assertion (!has_meta_vertex(vertex_idx));
     // Hack: save first available vertex and save next one is segment_idx()
     vertex(vertex_idx).segment_idx() = m_first_available_vertex_idx;
     vertex(vertex_idx).meta_vertex_idx() = KSR::invalid();
@@ -195,6 +198,8 @@ public:
   std::string segment_str (std::size_t segment_idx) const
   {
     return "Segment[" + std::to_string(segment_idx)
+      + " from " + (segment(segment_idx).input_idx() == KSR::no_element() ?
+                    "bbox" : std::to_string(segment(segment_idx).input_idx()))
       + "](v" + std::to_string(segment(segment_idx).source_idx())
       + "->v" + std::to_string(segment(segment_idx).target_idx())
       + ")";
@@ -205,10 +210,14 @@ public:
   }
 
   // Vertex/idx -> Point_2
+  inline Point_2 point_of_vertex (const Vertex& vertex, FT time) const
+  { return support_line_of_vertex(vertex).to_2d(vertex.point(time)); }
+  inline Point_2 point_of_vertex (std::size_t vertex_idx, FT time) const
+  { return point_of_vertex (m_vertices[vertex_idx], time); }
   inline Point_2 point_of_vertex (const Vertex& vertex) const
-  { return support_line_of_vertex(vertex).to_2d(vertex.point(m_current_time)); }
+  { return point_of_vertex (vertex, m_current_time); }
   inline Point_2 point_of_vertex (std::size_t vertex_idx) const
-  { return point_of_vertex (m_vertices[vertex_idx]); }
+  { return point_of_vertex (vertex_idx, m_current_time); }
 
   // Vertex/idx -> Vector_2
   inline Vector_2 direction_of_vertex (const Vertex& vertex) const
@@ -295,7 +304,12 @@ public:
   { return meta_vertex_of_vertex(m_vertices[vertex_idx]); }
   inline Meta_vertex& meta_vertex_of_vertex (std::size_t vertex_idx)
   { return meta_vertex_of_vertex(m_vertices[vertex_idx]); }
-
+  
+  bool has_meta_vertex (const Vertex& vertex) const
+  { return vertex.meta_vertex_idx() != KSR::no_element(); }
+  bool has_meta_vertex (KSR::size_t vertex_idx) const
+  { return has_meta_vertex (m_vertices[vertex_idx]); }
+   
   inline bool meta_vertex_exists (const Point_2& point) const
   { return m_meta_map.find(point) != m_meta_map.end(); }
 
@@ -351,7 +365,7 @@ public:
     return KSR::size_t(m_support_lines.size() - 1);
   }
 
-  Segment& add_segment (const Segment_2 segment)
+  Segment& add_segment (const Segment_2 segment, KSR::size_t input_idx = KSR::no_element())
   {
     // Check if support line exists first
     Support_line new_support_line (segment);
@@ -369,7 +383,7 @@ public:
       m_support_lines.push_back (new_support_line);
     }
 
-    KSR::size_t segment_idx = add_segment (Segment(support_line_idx));
+    KSR::size_t segment_idx = add_segment (Segment(input_idx, support_line_idx));
     m_support_lines[support_line_idx].segments_idx().push_back (segment_idx);
 
     KSR::size_t source_idx = add_vertex (Vertex (m_support_lines[support_line_idx].to_1d (segment.source()),
@@ -399,26 +413,48 @@ public:
     return iter->second;
   }
 
-  void add_meta_vertex (std::size_t vertex_idx)
-  {
-    add_meta_vertex (point_of_vertex(vertex_idx), vertex_idx);
-  }
-
   void cut_segment (KSR::size_t segment_idx)
   {
     std::vector<Point_2> vec;
     cut_segment (segment_idx, vec);
   }
     
-  void cut_segment (KSR::size_t segment_idx, const Point_2& point)
+  KSR::size_t cut_segment (KSR::size_t segment_idx, const Point_2& point)
   {
-    std::vector<Point_2> vec (1, point);
-    cut_segment (segment_idx, vec);
+    CGAL_KSR_CERR_3 << "** Cutting " << segment_str(segment_idx) << std::endl;
+    KSR::size_t support_line_idx = segment(segment_idx).support_line_idx();
+    
+    KSR::size_t new_segment_idx = add_segment(Segment(segment(segment_idx).input_idx(), support_line_idx));
+    support_line(support_line_idx).segments_idx().push_back (new_segment_idx);
+
+    KSR::size_t source_1_idx = segment(segment_idx).source_idx();
+    KSR::size_t target_2_idx = segment(segment_idx).target_idx();
+
+    KSR::size_t target_1_idx = add_vertex(Vertex (m_support_lines[support_line_idx].to_1d(point)));
+    segment(segment_idx).target_idx() = target_1_idx;
+    vertex(target_1_idx).segment_idx() = segment_idx;
+    add_meta_vertex (point, target_1_idx);
+    
+    KSR::size_t source_2_idx = add_vertex(Vertex (m_support_lines[support_line_idx].to_1d(point)));
+    segment(new_segment_idx).source_idx() = source_2_idx;
+    vertex(source_2_idx).segment_idx() = new_segment_idx;
+    add_meta_vertex (point, source_2_idx);
+
+    segment(new_segment_idx).target_idx() = target_2_idx;
+    vertex(target_2_idx).segment_idx() = new_segment_idx;
+    
+    CGAL_KSR_CERR_3 << "*** new vertices: " << vertex_str(target_1_idx)
+                  << " " << vertex_str(source_2_idx) << std::endl;
+    
+    CGAL_KSR_CERR_3 << "*** new segments: " << segment_str(segment_idx)
+                  << " " << segment_str(new_segment_idx) << std::endl;
+
+    return new_segment_idx;
   }
     
   void cut_segment (KSR::size_t segment_idx, std::vector<Point_2>& points)
   {
-    CGAL_KSR_CERR << "*** Cutting " << segment_str(segment_idx) << std::endl;
+    CGAL_KSR_CERR_3 << "** Cutting " << segment_str(segment_idx) << std::endl;
 
     Segment& segment = m_segments[segment_idx];
     KSR::size_t source_idx = segment.source_idx();
@@ -447,7 +483,7 @@ public:
       KSR::size_t sidx = segment_idx;
       if (i != 0)
       {
-        sidx = add_segment (Segment (segment.support_line_idx()));
+        sidx = add_segment (Segment (segment.input_idx(), segment.support_line_idx()));
         support_line.segments_idx().push_back (sidx);
       }
 
@@ -473,15 +509,15 @@ public:
       }
     }
 
-    CGAL_KSR_CERR << "**** new vertices:";
+    CGAL_KSR_CERR_3 << "*** new vertices:";
     for (std::size_t i = nb_vertices_before; i < m_vertices.size(); ++ i)
-      CGAL_KSR_CERR << " " << vertex_str(i);
-    CGAL_KSR_CERR << std::endl;
+      CGAL_KSR_CERR_3 << " " << vertex_str(i);
+    CGAL_KSR_CERR_3 << std::endl;
     
-    CGAL_KSR_CERR << "**** new segments: " << segment_str(segment_idx);
+    CGAL_KSR_CERR_3 << "*** new segments: " << segment_str(segment_idx);
     for (std::size_t i = nb_segments_before; i < m_segments.size(); ++ i)
-      CGAL_KSR_CERR << " " << segment_str(i);
-    CGAL_KSR_CERR << std::endl;
+      CGAL_KSR_CERR_3 << " " << segment_str(i);
+    CGAL_KSR_CERR_3 << std::endl;
   }
 
   void connect_vertices (KSR::size_t vertex_1_idx, KSR::size_t vertex_2_idx, const Point_2& point)
@@ -548,7 +584,7 @@ public:
     if (vertex(source_idx).point(m_current_time) > vertex(target_idx).point(m_current_time))
       std::swap (source_idx, target_idx);
     
-    std::cerr << "*** New source/target of remaining segment: " << source_idx << "->" << target_idx << std::endl;
+    CGAL_KSR_CERR_3 << "*** New source/target of remaining segment: " << source_idx << "->" << target_idx << std::endl;
 
     // Segment 1 is the result of the merge
     segment_1.source_idx() = source_idx;
@@ -564,21 +600,18 @@ public:
     remove_vertex (vertex_2_idx);
   }
 
-  Segment& propagate_segment (std::size_t vertex_idx)
+  KSR::size_t propagate_segment (std::size_t vertex_idx)
   {
-    CGAL_KSR_CERR << "*** Propagating " << vertex_str(vertex_idx) << std::endl;
+    CGAL_KSR_CERR_3 << "** Propagating " << vertex_str(vertex_idx) << std::endl;
 
     // Create a new segment
-    KSR::size_t segment_idx = add_segment (Segment(segment_of_vertex(vertex_idx).support_line_idx()));
+    KSR::size_t segment_idx = add_segment (Segment(segment_of_vertex(vertex_idx).input_idx(),
+                                                   segment_of_vertex(vertex_idx).support_line_idx()));
     support_line_of_vertex(vertex_idx).segments_idx().push_back (segment_idx);
 
     // Create new vertices
     KSR::size_t source_idx = add_vertex (Vertex (m_vertices[vertex_idx]));
     KSR::size_t target_idx = add_vertex (Vertex (m_vertices[vertex_idx]));
-
-    // Keep segment ordered
-    if (m_vertices[vertex_idx].direction() < 0)
-      std::swap (source_idx, target_idx);
 
     // Connect segments and vertices
     m_segments[segment_idx].source_idx() = source_idx;
@@ -586,6 +619,10 @@ public:
     m_vertices[source_idx].segment_idx() = segment_idx;
     m_vertices[target_idx].segment_idx() = segment_idx;
 
+    CGAL_assertion (m_vertices[vertex_idx].direction() != 0);
+    if (m_vertices[vertex_idx].direction() < 0)
+      std::swap (source_idx, target_idx);
+    
     // Freeze one end
     meta_vertex_of_vertex(vertex_idx).vertices_idx().push_back (source_idx);
     m_vertices[source_idx].freeze(m_current_time);
@@ -593,23 +630,13 @@ public:
     // Release other end
     m_vertices[target_idx].meta_vertex_idx() = KSR::no_element();
     
-    CGAL_KSR_CERR << "**** new vertices: " << vertex_str (source_idx)
-                  << " " << vertex_str (target_idx) << std::endl;
-    CGAL_KSR_CERR << "**** new segment: " << segment_str(segment_idx) << std::endl;
-    return m_segments[segment_idx];
-  }
 
-  void push_to_queue (const Event& ev) { m_queue.push(ev); }
-  bool queue_is_empty() const { return m_queue.empty(); }
-  Event queue_pop() { return m_queue.pop(); }
-  void transfer_events (std::size_t old_vertex, std::size_t new_vertex)
-  { m_queue.transfer_vertex_events (old_vertex, new_vertex); }
-  void remove_events (std::size_t vertex_idx) { m_queue.remove_vertex_events (vertex_idx); };
-  void remove_event (std::size_t vertex_idx, std::size_t intersected_line)
-  {
-    m_queue.remove_vertex_event (vertex_idx, intersected_line);
+    CGAL_KSR_CERR_3 << "*** new vertices: " << vertex_str (source_idx)
+                  << " " << vertex_str (target_idx) << std::endl;
+    CGAL_KSR_CERR_3 << "*** new segment: " << segment_str(segment_idx) << std::endl;
+
+    return target_idx;
   }
-  void print_queue() const { m_queue.print(); }
 
   void update_positions (FT time)
   {

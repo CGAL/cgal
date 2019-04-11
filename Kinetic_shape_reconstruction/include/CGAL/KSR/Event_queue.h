@@ -47,11 +47,7 @@ private:
   typedef typename Queue::iterator iterator;
   typedef typename Queue::const_iterator const_iterator;
   
-  typedef std::map<KSR::size_t, std::vector<iterator> > Map;
-  typedef typename Map::iterator Map_iterator;
-
   Queue m_queue;
-  Map m_map_vertices;
 
 public:
 
@@ -64,21 +60,15 @@ public:
   const_iterator begin() const { return m_queue.begin(); }
   const_iterator end() const { return m_queue.end(); }
 
-  void push (const Event& ev)
+  void push (Event& ev)
   {
-    iterator iter;
-    bool inserted;
-    std::tie (iter, inserted) = m_queue.insert (ev);
-    if (inserted)
-      save_vertex_event(iter);
+    m_queue.insert (ev);
   }
 
   Event pop ()
   {
     Event out = *(m_queue.begin());
-    remove_vertex_event (out.vertex_idx(), m_queue.begin());
     m_queue.erase (m_queue.begin());
-//    remove_vertex_events(out.vertex());
     return out;
   }
 
@@ -88,60 +78,37 @@ public:
       std::cerr << e << std::endl;
   }
 
-  void remove_vertex_events (KSR::size_t vertex)
+  void erase_vertex_events (KSR::size_t vertex_idx, std::vector<Event>& events)
   {
-    Map_iterator mit = m_map_vertices.find (vertex);
-    if (mit == m_map_vertices.end())
-      return;
-
-    for (const iterator& it : mit->second)
-      m_queue.erase(it);
-
-    m_map_vertices.erase(mit);
-  }
-
-  void remove_vertex_event (KSR::size_t vertex, KSR::size_t intersected)
-  {
-    Map_iterator mit = m_map_vertices.find (vertex);
-    if (mit == m_map_vertices.end())
-      return;
-
-    for (const iterator& it : mit->second)
-      if (it->intersection_line_idx() == intersected)
+    iterator it = begin();
+    while (it != end())
+    {
+      iterator current = it ++;
+      if (current->vertex_idx() == vertex_idx
+          || (current->is_vertex_to_vertex_event() && current->other_vertex_idx() == vertex_idx))
       {
-        remove_vertex_event (vertex, it);
-        m_queue.erase(it);
-        break;
+        events.push_back (*current);
+        CGAL_KSR_CERR_4 << "****   - Erasing " << *current << std::endl;
+        m_queue.erase(current);
       }
+    }
   }
 
-  void transfer_vertex_events (KSR::size_t old_vertex, KSR::size_t new_vertex)
+  void erase_segment_events (KSR::size_t segment_idx, std::vector<Event>& events)
   {
-    CGAL_assertion (m_map_vertices.find(old_vertex) != m_map_vertices.end());
-
-    std::vector<iterator>& vec = m_map_vertices[old_vertex];
-    for (iterator iter : vec)
-      push (Event (new_vertex, iter->intersection_line_idx(), iter->time()));
-
-    remove_vertex_events (old_vertex);
+    iterator it = begin();
+    while (it != end())
+    {
+      iterator current = it ++;
+      if (!current->is_vertex_to_vertex_event() && current->segment_idx() == segment_idx)
+      {
+        events.push_back (*current);
+        CGAL_KSR_CERR_4 << "****   - Erasing " << *current << std::endl;
+        m_queue.erase(current);
+      }
+    }
   }
   
-private:
-
-  void remove_vertex_event (KSR::size_t vertex, iterator it)
-  {
-    std::vector<iterator>& vec = m_map_vertices[vertex];
-    vec.erase (std::find(vec.begin(), vec.end(), it));
-  }
-
-  void save_vertex_event (iterator it)
-  {
-    KSR::size_t vertex = it->vertex_idx();
-    Map_iterator mit = m_map_vertices.insert (std::make_pair (vertex, std::vector<iterator>())).first;
-    mit->second.push_back(it);
-  }
-
-
 };
 
 

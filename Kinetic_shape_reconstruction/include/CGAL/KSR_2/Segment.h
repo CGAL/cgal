@@ -33,16 +33,20 @@ class Segment
 {
 private:
 
+  KSR::size_t m_input_idx;
   KSR::size_t m_source_idx;
   KSR::size_t m_target_idx;
   KSR::size_t m_support_line_idx;
 
 public:
 
-  Segment (KSR::size_t support_line_idx) : m_support_line_idx (support_line_idx) { }
+  Segment (KSR::size_t input_idx, KSR::size_t support_line_idx)
+    : m_input_idx (input_idx), m_support_line_idx (support_line_idx) { }
 
   bool is_active() const { return m_source_idx != KSR::invalid(); }
-  
+
+  const KSR::size_t& input_idx() const { return m_input_idx; }
+  KSR::size_t& input_idx() { return m_input_idx; }
   const KSR::size_t& source_idx() const { return m_source_idx; }
   KSR::size_t& source_idx() { return m_source_idx; }
   const KSR::size_t& target_idx() const { return m_target_idx; }

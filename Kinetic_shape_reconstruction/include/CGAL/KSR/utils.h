@@ -21,6 +21,13 @@
 #ifndef CGAL_KSR_UTILS_H
 #define CGAL_KSR_UTILS_H
 
+#include <sstream>
+
+#define CGAL_KSR_ASSERT_POINTS_ALMOST_EQUAL(a,b) \
+  CGAL_assertion_msg (CGAL::approximate_sqrt(CGAL::squared_distance((a), (b))) < 1e-15, \
+                      std::string("Points " + CGAL::KSR::to_string(a) + " and " \
+                                  + CGAL::KSR::to_string(b) + " should be almost equal").c_str())
+
 namespace CGAL
 {
 namespace KSR
@@ -99,8 +106,15 @@ inline ResultType intersection_3 (const Type1& t1, const Type2& t2)
   CGAL_assertion_msg (okay, "Intersection not found");
   return out;
 }
-  
 
+template <typename Point>
+std::string to_string (const Point& p)
+{
+  std::ostringstream oss;
+  oss.precision(18);
+  oss << p;
+  return oss.str();
+}
 
 }
 } 

@@ -1,6 +1,6 @@
 #include <fstream>
 
-#define CGAL_KSR_VERBOSE 
+#define CGAL_KSR_VERBOSE_LEVEL 4
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/IO/PLY_writer.h>
 #include <CGAL/Kinetic_shape_reconstruction_2.h>
@@ -82,7 +82,7 @@ int main (int argc, char** argv)
   Reconstruction reconstruction;
 
 
-  reconstruction.partition (segments, CGAL::Identity_property_map<Segment_2>(), k);
+  reconstruction.partition (segments, CGAL::Identity_property_map<Segment_2>(), k, 2);
 
   segments.clear();
   
