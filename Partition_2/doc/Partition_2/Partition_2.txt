@@ -95,9 +95,9 @@ as the algorithm of Hertel and Mehlhorn implemented with
 `approx_convex_partition_2()` but can sometimes produce better
 results (i.e., convex partitions with fewer pieces).
 
-\section secpartition_2_examples Example
+\section secpartition_2_examples Examples
 
-Examples of the uses of all of these functions are provided with the
+Examples of the uses of all of the above partition functions are provided with the
 corresponding reference pages.
 
 In the following we illustrate how to use an adapter trais class that enables to
@@ -112,8 +112,8 @@ the concept `PartitionTraits_2` on these points.
 
 \cgalExample{Partition_2/y_monotone_partition_indices_2.cpp}
 
-The traits adapter enables to partition faces of a polygonal mesh, or to access
-points which are a component of a `std::tuple`.
+In a similar way, the traits adapter enables to partition faces of a polygonal mesh,
+or to access points which are a component of a `std::tuple`.
 
 \section secpartition_2_history Implementation History
 
