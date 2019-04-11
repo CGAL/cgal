@@ -687,14 +687,14 @@ void Basic_generator_plugin::generateLines()
   double coord[3];
   bool ok = true;
   if (list.isEmpty()) return;
-  if(!dock_widget->polygon_checkBox->isChecked()&& !list.size()%3!=0){
+  if(!dock_widget->polygon_checkBox->isChecked() && list.size()%3!=0){
     QMessageBox *msgBox = new QMessageBox;
     msgBox->setWindowTitle("Error");
     msgBox->setText("ERROR : Input should consists of triplets.");
     msgBox->exec();
     return;
   }
-  else if(dock_widget->polygon_checkBox->isChecked()&& !list.size()%2!=0){
+  else if(dock_widget->polygon_checkBox->isChecked()&& list.size()%2!=0){
     QMessageBox *msgBox = new QMessageBox;
     msgBox->setWindowTitle("Error");
     msgBox->setText("ERROR : Input should consists of pairs.");
