@@ -111,13 +111,17 @@ the polygon vertex `i`, and it then performs the predicates required by
 the concept `PartitionTraits_2` on these points.
 
 \cgalExample{Partition_2/y_monotone_partition_indices_2.cpp}
-*/
+
+The traits adapter enables to partition faces of a polygonal mesh, or to access
+points which are a component of a `std::tuple`.
 
 \section secpartition_2_history Implementation History
 
 This package has originally be written by Susan Hert while working at the Max-Planck Institute for Infomatics in Germany.
 The algorithms have been made free of constructions, and the traits adapter has been added by GeometryFactory
 for \cgal 5.0.
+
+*/
 
 } /* namespace CGAL */
 

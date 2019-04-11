@@ -100,8 +100,8 @@ class Partition_vertex;
 //
 
 template <class Traits_>
-class Partitioned_polygon_2 : 
-                            public std::vector< Partition_vertex< Traits_ > >
+class Partitioned_polygon_2
+  : public std::vector< Partition_vertex< Traits_ > >
 {
 public:
    typedef Traits_                                      Traits;
@@ -294,8 +294,7 @@ private:
 };
 
 template <class Traits_>
-class Partition_vertex //: public Traits_::Point_2
-{
+class Partition_vertex {
 private:
   typename Traits_::Point_2 point;
   public:
