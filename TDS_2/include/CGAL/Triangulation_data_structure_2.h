@@ -2068,6 +2068,112 @@ copy_tds(const TDS_src &src, typename TDS_src::Vertex_handle vh)
   return copy_tds(src,vh,setv,setf);
 }
 
+
+CGAL_GENERATE_MEMBER_DETECTOR(read_data);
+
+//if write_data() exists
+template <class T>
+bool has_extra_data(const T& , typename boost::enable_if<has_read_data<T> >::type* = NULL)
+{
+  return true;
+}
+
+template <class Face, class Vertex>
+std::istream& read_face_extra_data(std::istream& is,
+                                   Face &f ,
+                                   std::vector<typename Face::Face_handle>& F,
+                                   std::vector<Vertex>& V,
+                                   typename boost::enable_if<has_read_data<Face> >::type* = NULL)
+{
+  f.read_data(is, F, V);
+  return is;
+}
+
+template <class Face_handle, class Vertex>
+std::istream& read_vertex_extra_data(std::istream& is,
+                                     Vertex &v ,
+                                     std::vector<Face_handle>& F,
+                                     std::vector<typename Vertex::Vertex_handle>& V,
+                                     typename boost::enable_if<has_read_data<Vertex> >::type* = NULL)
+{
+  v.read_data(is, F, V);
+  return is;
+}
+//otherwise
+template <class T>
+bool has_extra_data(const T& , typename boost::enable_if<boost::mpl::not_<has_read_data<T> > >::type* = NULL)
+{
+  return false;
+}
+
+template <class Face, class Vertex_handle>
+std::istream& read_face_extra_data(std::istream& is,
+                                   Face&,
+                                   std::vector<typename Face::Face_handle>&,
+                                   std::vector<Vertex_handle>&,
+                                   typename boost::enable_if<boost::mpl::not_<has_read_data<Face> > >::type* = NULL)
+{
+  //don't do anything
+  return is;
+}
+
+template <class Face, class Vertex>
+std::istream& read_vertex_extra_data(std::istream& is,
+                                     Vertex&,
+                                     std::vector<Face>&,
+                                     std::vector< typename Vertex::Vertex_handle>&,
+                                     typename boost::enable_if<boost::mpl::not_<has_read_data<Vertex> > >::type* = NULL)
+{
+  //don't do anything
+  return is;
+}
+
+CGAL_GENERATE_MEMBER_DETECTOR(write_data);
+
+//if write_data() exists
+template <class Face, class Vertex>
+std::ostream& write_face_extra_data(std::ostream& os,
+                                    const Face &f,
+                                    Unique_hash_map<Vertex, int > &V,
+                                    typename boost::enable_if<has_write_data<Face> >::type* = NULL)
+{
+  f.write_data(os, V);
+  return os;
+}
+
+template <class Vertex>
+std::ostream& write_vertex_extra_data(std::ostream& os,
+                                      const Vertex &v ,
+                                      const Unique_hash_map<typename Vertex::Vertex_handle, int > &V,
+                                      typename boost::enable_if<has_write_data<Vertex> >::type* = NULL)
+{
+  v.write_data(os, V);
+  return os;
+}
+
+//otherwise
+
+template <class Face, class Vertex>
+std::ostream& write_face_extra_data(std::ostream& os,
+                                    const Face&,
+                                    const Unique_hash_map<Vertex, int > &,
+                                    typename boost::enable_if<boost::mpl::not_<has_write_data<Face> > >::type* = NULL)
+{
+  //don't do anything
+  return os;
+}
+
+template < class Vertex>
+std::ostream& write_vertex_extra_data(std::ostream& os,
+                                      const Vertex&,
+                                      const Unique_hash_map<typename Vertex::Vertex_handle, int > &,
+                                      typename boost::enable_if<boost::mpl::not_<has_write_data<Vertex> > >::type* = NULL)
+{
+  //don't do anything
+  return os;
+}
+
+
 template < class Vb, class Fb>
 void
 Triangulation_data_structure_2<Vb,Fb>::
@@ -2135,10 +2241,41 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
     if(is_ascii(os)) os << "\n";
   }
 
+  if(number_of_vertices() > 0 && has_extra_data(*vertices_begin()))
+  {
+    if(is_ascii(os)) os << "\n";
+    
+    for( Vertex_iterator vit= vertices_begin(); vit != vertices_end() ; ++vit) 
+    {
+      if ( v != vit ) 
+        write_vertex_extra_data(os, *vit, V);
+    }
+  }
+
+  if(number_of_faces() >0 && has_extra_data(*face_iterator_base_begin()))
+  {
+    if(is_ascii(os)) os << "\n";
+    for(Face_iterator it = face_iterator_base_begin(), end = face_iterator_base_end(); it != end; ++it)
+    {
+      write_face_extra_data(os, *it, V);
+    }
+  }
   return ;
 }
 
-
+void skip_empty(std::istream& is)
+{
+  //move to next non empty
+  std::string s;
+  std::istream::pos_type pos=is.tellg();
+  do{
+    pos = is.tellg();
+    std::getline(is, s);
+    if(!is)
+      break;
+  }while(s == "");
+  is.seekg(pos);
+}
 template < class Vb, class Fb>
 typename Triangulation_data_structure_2<Vb,Fb>::Vertex_handle
 Triangulation_data_structure_2<Vb,Fb>::
@@ -2197,6 +2334,28 @@ file_input( std::istream& is, bool skip_first)
 	is >> index;
 	F[i]->set_neighbor(j, F[index]);
       }
+    }
+  }
+
+  if(! V.empty() && has_extra_data(*V.front()))
+  {
+    skip_empty(is);
+    std::size_t i=0;
+    if(skip_first){
+      ++i;
+    }
+    for(; i < n; i++)
+    {
+      read_vertex_extra_data(is, *V[i], F, V);
+    }
+  }
+  
+  if(!F.empty() && has_extra_data(*F.front()))
+  {
+    skip_empty(is);
+    for(std::size_t j=0 ; j < m; ++j)
+    {
+      read_face_extra_data(is, *F[j], F, V);
     }
   }
   
