@@ -117,7 +117,7 @@ or to access points which are a component of a `std::tuple`.
 
 \section secpartition_2_history Implementation History
 
-This package has originally be written by Susan Hert while working at the Max-Planck Institute for Infomatics in Germany.
+This package has originally been written by Susan Hert while working at the Max-Planck Institute for Infomatics in Germany.
 The algorithms have been made free of constructions, and the traits adapter has been added by GeometryFactory
 for \cgal 5.0.
 
