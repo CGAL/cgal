@@ -41,6 +41,14 @@ with open(report_file, "rt") as test_report:
           name="{str}_Demo".format(str=name)
         elif rx_examples.match(myline):
           name="{str}_Examples".format(str=name)
+        elif name == "libCGAL":
+          name="libCGAL_shared"
+        elif name == "libCGAL_Core":
+          name="libCGALCore_shared"
+        elif name == "libCGAL_ImageIO":
+          name="libCGALimageIO_shared"
+        elif name == "libCGAL_Qt5":
+          name="libCGALQt5_shared"
 
         if not os.path.isdir(name):
           is_ignored=True
