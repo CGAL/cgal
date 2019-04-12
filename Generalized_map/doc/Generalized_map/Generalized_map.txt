@@ -220,7 +220,7 @@ struct Example_items_3
   {
     typedef double Dart_info;
     typedef CGAL::Cell_attribute<GMap, int> Edge_attrib;
-    typedef CGAL::cpp11::tuple<void,Edge_attrib> Attributes;
+    typedef std::tuple<void,Edge_attrib> Attributes;
   };
 };
 typedef CGAL::Generalized_map<3, Example_items_3> Example_custom_gmap3;

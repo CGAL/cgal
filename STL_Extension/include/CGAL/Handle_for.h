@@ -87,7 +87,6 @@ public:
         ptr_ = p;
     }
 
-#ifndef CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
     Handle_for(element_type && t)
     {
         pointer p = allocator.allocate(1);
@@ -95,7 +94,6 @@ public:
         p->count = 1;
         ptr_ = p;
     }
-#endif
 
 /* I comment this one for now, since it's preventing the automatic conversions
    to take place.  We'll see if it's a problem later.
@@ -109,7 +107,6 @@ public:
     }
 */
 
-#if !defined CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES && !defined CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
     template < typename T1, typename T2, typename... Args >
     Handle_for(T1 && t1, T2 && t2, Args && ... args)
     {
@@ -118,34 +115,6 @@ public:
         p->count = 1;
         ptr_ = p;
     }
-#else
-    template < typename T1, typename T2 >
-    Handle_for(const T1& t1, const T2& t2)
-    {
-        pointer p = allocator.allocate(1);
-        new (&(p->t)) element_type(t1, t2);
-        p->count = 1;
-        ptr_ = p;
-    }
-
-    template < typename T1, typename T2, typename T3 >
-    Handle_for(const T1& t1, const T2& t2, const T3& t3)
-    {
-        pointer p = allocator.allocate(1);
-        new (&(p->t)) element_type(t1, t2, t3);
-        p->count = 1;
-        ptr_ = p;
-    }
-
-    template < typename T1, typename T2, typename T3, typename T4 >
-    Handle_for(const T1& t1, const T2& t2, const T3& t3, const T4& t4)
-    {
-        pointer p = allocator.allocate(1);
-        new (&(p->t)) element_type(t1, t2, t3, t4);
-        p->count = 1;
-        ptr_ = p;
-    }
-#endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
     Handle_for(const Handle_for& h)
       : ptr_(h.ptr_)
@@ -173,7 +142,6 @@ public:
         return *this;
     }
 
-#ifndef CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
     // Note : I don't see a way to make a useful move constructor, apart
     //        from e.g. using NULL as a ptr value, but this is drastic.
 
@@ -194,17 +162,12 @@ public:
 
         return *this;
     }
-#endif
 
     ~Handle_for()
     {
       if (--(ptr_->count) == 0) {
-#ifdef CGAL_CXX11
         Allocator_traits::destroy(allocator, ptr_);
-#else
-          allocator.destroy( ptr_);
-#endif
-          allocator.deallocate( ptr_, 1);
+        allocator.deallocate( ptr_, 1);
       }
     }
 

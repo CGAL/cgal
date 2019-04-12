@@ -1198,14 +1198,10 @@ template < class SK > \
     //only ternary from the linear kernel
     template<typename F>
     struct result<F(Plane_3, Plane_3, Plane_3)> {
-      #if CGAL_INTERSECTION_VERSION < 2
-      typedef CGAL::Object type;
-      #else
       typedef boost::optional< 
         boost::variant< Point_3, 
                         Line_3, 
                         Plane_3 > > type;
-      #endif
     };
 
     //using SK::Linear_kernel::Intersect_3::operator();

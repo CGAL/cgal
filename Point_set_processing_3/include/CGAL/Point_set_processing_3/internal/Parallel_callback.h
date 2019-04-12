@@ -18,22 +18,22 @@
 //
 // Author(s) : Simon Giraudot
 
-#ifndef CGAL_INTERNAL_PSP_PARALLEL_CALLBACK_H
-#define CGAL_INTERNAL_PSP_PARALLEL_CALLBACK_H
+#ifndef CGAL_PSP_INTERNAL_PARALLEL_CALLBACK_H
+#define CGAL_PSP_INTERNAL_PARALLEL_CALLBACK_H
 
 #include <CGAL/license/Point_set_processing_3.h>
 
-#include <CGAL/function.h>
+#include <functional>
 
 #include <CGAL/thread.h>
 
 namespace CGAL {
-namespace internal {
 namespace Point_set_processing_3 {
+namespace internal {
   
 class Parallel_callback
 {
-  const cpp11::function<bool(double)>& m_callback;
+  const std::function<bool(double)>& m_callback;
   cpp11::atomic<std::size_t>* m_advancement;
   cpp11::atomic<bool>* m_interrupted;
   std::size_t m_size;
@@ -47,7 +47,7 @@ class Parallel_callback
   }
   
 public:
-  Parallel_callback (const cpp11::function<bool(double)>& callback,
+  Parallel_callback (const std::function<bool(double)>& callback,
                      std::size_t size,
                      std::size_t advancement = 0,
                      bool interrupted = false)
@@ -110,8 +110,8 @@ public:
   }
 };
 
-} // namespace Point_set_processing_3
 } // namespace internal
+} // namespace Point_set_processing_3
 } // namespace CGAL
 
-#endif // CGAL_INTERNAL_PSP_PARALLEL_CALLBACK_H
+#endif // CGAL_PSP_INTERNAL_PARALLEL_CALLBACK_H

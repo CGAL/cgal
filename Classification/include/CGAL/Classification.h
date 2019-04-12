@@ -36,7 +36,6 @@
 #endif
 
 #include <CGAL/Classification/Cluster.h>
-#include <CGAL/Classification/Color.h>
 #include <CGAL/Classification/Evaluation.h>
 #include <CGAL/Classification/Feature_base.h>
 #include <CGAL/Classification/Feature_set.h>

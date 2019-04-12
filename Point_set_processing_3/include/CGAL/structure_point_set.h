@@ -119,7 +119,7 @@ private:
 
   struct Edge
   {
-    CGAL::cpp11::array<std::size_t, 2> planes;
+    std::array<std::size_t, 2> planes;
     std::vector<std::size_t> indices; // Points belonging to intersection
     Line support;
     bool active;
@@ -330,7 +330,7 @@ public:
     `f` with respect to the underlying structure.
 
    */
-  Coherence_type facet_coherence (const CGAL::cpp11::array<std::size_t, 3>& f) const
+  Coherence_type facet_coherence (const std::array<std::size_t, 3>& f) const
   {
     // O- FREEFORM CASE
     if (m_status[f[0]] == POINT &&
@@ -1516,7 +1516,7 @@ private:
    \tparam OutputIterator Type of the output iterator. The type of the
    objects put in it is `std::pair<Kernel::Point_3, Kernel::Vector_3>`.
    Note that the user may use a
-   <A HREF="http://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
+   <A HREF="https://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
    to match specific needs.
 
    \param points input point range.

@@ -118,7 +118,7 @@ struct Shell_polygons_visitor
 
     typename Nef_polyhedron::Halffacet_const_handle f = opposite_facet->twin();
 
-    if (cpp11::next(f->facet_cycles_begin())==f->facet_cycles_end())
+    if (std::next(f->facet_cycles_begin())==f->facet_cycles_end())
     {
       std::size_t cycle_length = 3;
       if (triangulate_all_faces)

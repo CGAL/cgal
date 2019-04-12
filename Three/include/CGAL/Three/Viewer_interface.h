@@ -86,7 +86,7 @@ public:
  //! The painter is the element that draws everything on screen,
  //! but you should only need this if you want to draw 2D things
  //! on top of the scene, like a selection rectangle.
- //! See <a href="http://doc.qt.io/qt-5/qpainter.html">QPainter's documentation </a> for details.
+ //! See <a href="https://doc.qt.io/qt-5/qpainter.html">QPainter's documentation </a> for details.
  virtual QPainter *getPainter() =0;
 
 
@@ -276,6 +276,8 @@ public:
   virtual int currentPass()const = 0;
   virtual bool isDepthWriting()const = 0;
   virtual QOpenGLFramebufferObject* depthPeelingFbo() = 0;
+  virtual QVector4D* clipBox() const =0;
+  virtual bool isClipping() const = 0;
 }; // end class Viewer_interface
 }
 }

@@ -29,7 +29,6 @@
 
 #include <CGAL/boost/graph/properties.h>
 
-#include <boost/foreach.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/unordered_set.hpp>
 
@@ -233,7 +232,7 @@ bool check_cone_validity(const SeamMesh& mesh,
   // count how many times vertices on a seam appear
   boost::unordered_map<TM_vertex_descriptor, int> seam_vertices_counter;
 
-  BOOST_FOREACH(halfedge_descriptor hdaf, halfedges_around_face(bhd, mesh)) {
+  for(halfedge_descriptor hdaf : halfedges_around_face(bhd, mesh)) {
     CGAL_precondition(mesh.has_on_seam(hdaf));
     TM_vertex_descriptor tm_vds = source(hdaf, mesh.mesh());
     TM_vertex_descriptor tm_vdt = target(hdaf, mesh.mesh());

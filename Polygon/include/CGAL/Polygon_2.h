@@ -165,10 +165,8 @@ class Polygon_2 {
       std::copy(first, last, std::back_inserter(d_container));
     }
   
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
 #ifndef DOXYGEN_RUNNING
   Polygon_2& operator=(const Polygon_2&)=default;
-#endif
 #endif
   
     /// @}
@@ -440,7 +438,7 @@ class Polygon_2 {
     const Point_2& vertex(std::size_t i) const
       {
         CGAL_precondition( i < d_container.size() );
-        return *(cpp11::next(d_container.begin(), i));
+        return *(std::next(d_container.begin(), i));
       }
 
 
@@ -450,7 +448,7 @@ class Polygon_2 {
 
     /// Returns the `i`-th edge.
     Segment_2 edge(std::size_t i) const
-      { return *(cpp11::next(edges_begin(), i)); }
+      { return *(std::next(edges_begin(), i)); }
 
     /// @}
 

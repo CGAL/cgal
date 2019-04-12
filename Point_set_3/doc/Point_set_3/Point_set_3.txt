@@ -129,7 +129,7 @@ color is given with integer red, green and blue values, 3 integer
 properties `red`, `green` and `blue` will be created. A
 user-defined interpreter must be implemented if such properties should
 be stored all together (a unique property `color` of type
-`CGAL::cpp11::array` for example).
+`std::array` for example).
 
 The following example shows how to use this interpreter and how to
 access a specific property afterwards:

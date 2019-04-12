@@ -570,7 +570,6 @@ void Scene_points_with_normal_item::selectDuplicates()
   Q_EMIT itemChanged();
 }
 
-#if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
 #ifdef CGAL_LINKED_WITH_LASLIB
 // Loads point set from .LAS file
 bool Scene_points_with_normal_item::read_las_point_set(std::istream& stream)
@@ -658,8 +657,6 @@ bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream, bo
 
   return true;
 }
-
-#endif // CXX11
 
 // Loads point set from .OFF file
 bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)
@@ -903,7 +900,7 @@ QMenu* Scene_points_with_normal_item::contextMenu()
 
     //add a slider to modify the normals length
     // Use dynamic properties:
-    // http://doc.qt.io/qt-5/qobject.html#property
+    // https://doc.qt.io/qt-5/qobject.html#property
     bool menuChanged = menu->property(prop_name).toBool();
 
     if(!menuChanged) {

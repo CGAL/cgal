@@ -3,7 +3,6 @@
 
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 
-#include <boost/foreach.hpp>
 
 #include <fstream>
 
@@ -27,7 +26,7 @@ int main(int argc, char* argv[])
   CGAL::Polygon_mesh_processing::triangulate_faces(mesh);
 
   // Confirm that all faces are triangles.
-  BOOST_FOREACH(boost::graph_traits<Surface_mesh>::face_descriptor fit, faces(mesh))
+  for(boost::graph_traits<Surface_mesh>::face_descriptor fit : faces(mesh))
     if (next(next(halfedge(fit, mesh), mesh), mesh)
         !=   prev(halfedge(fit, mesh), mesh))
       std::cerr << "Error: non-triangular face left in mesh." << std::endl;

@@ -10,7 +10,7 @@ include_directories( ${CMAKE_BINARY_DIR} )
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON) 
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.1...3.13)
 
 if(POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
@@ -37,16 +37,16 @@ if(CGAL_FOUND AND (CGAL_Core_FOUND OR LEDA_FOUND) AND Qt5_FOUND AND CGAL_Qt5_FOU
 
   # cpp files
 
-  add_executable ( P4HDT2_demo
+  add_executable ( P4HDT2
   P4HDT2.cpp ${RESOURCE_FILES} ${UIS})
 
   #add_executable ( Periodic_4_hyperbolic_billiards_demo
   #Periodic_4_hyperbolic_billiards_demo.cpp ${RESOURCE_FILES} )
 
-  qt5_use_modules( P4HDT2_demo Widgets )
+  qt5_use_modules( P4HDT2 Widgets )
   #qt5_use_modules( Periodic_4_hyperbolic_billiards_demo Widgets )
 
-  target_link_libraries( P4HDT2_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${Boost_LIBRARIES} )
+  target_link_libraries( P4HDT2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${Boost_LIBRARIES} )
 
   #target_link_libraries( Periodic_4_hyperbolic_billiards_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${Boost_LIBRARIES} )
 else()

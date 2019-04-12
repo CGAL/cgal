@@ -33,11 +33,13 @@
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/Iterator_range.h>
+#include <CGAL/Iterator_range.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/Heat_method_3/internal/V2V.h>
 
-#include <boost/foreach.hpp>
+
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/unordered_map.hpp>
 
@@ -373,7 +375,7 @@ private:
     Index edge_i = 0;
     VertexPointMap vpm_intrinsic_tm = get(boost::vertex_point,m_intrinsic_tm);
 
-    BOOST_FOREACH(edge_descriptor ed, edges(m_intrinsic_tm)) {
+    for(edge_descriptor ed : edges(m_intrinsic_tm)) {
       edge_lengths[edge_i] = CGAL::sqrt(to_double(squared_distance(get(vpm_intrinsic_tm, source(ed,m_intrinsic_tm)),
                                                                    get(vpm_intrinsic_tm, target(ed,m_intrinsic_tm)))));
         //  Polygon_mesh_processing::edge_length(halfedge(ed,m_intrinsic_tm),m_intrinsic_tm);
@@ -383,7 +385,7 @@ private:
     loop_over_edges(stack, mark_edges);
     //now that edges are calculated, go through and for each face, calculate the vertex positions around it
 
-    BOOST_FOREACH(face_descriptor f, faces(m_intrinsic_tm)) {
+    for(face_descriptor f : faces(m_intrinsic_tm)) {
       CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
 
       boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,m_intrinsic_tm),m_intrinsic_tm);
@@ -538,8 +540,7 @@ num_faces(const Intrinsic_Delaunay_triangulation_3<TM,T>& idt)
 
 template <typename TM,
           typename T>
-typename std::pair<typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T> >::vertex_iterator,
-                   typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T> >::vertex_iterator>
+Iterator_range<typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T> >::vertex_iterator>
 vertices(const Intrinsic_Delaunay_triangulation_3<TM,T>& idt)
  {
    std::pair<typename boost::graph_traits<TM>::vertex_iterator,
@@ -547,38 +548,35 @@ vertices(const Intrinsic_Delaunay_triangulation_3<TM,T>& idt)
 
   typedef typename Intrinsic_Delaunay_triangulation_3<TM,T>::Vertex_iterator_functor Fct;
   Fct fct(idt.triangle_mesh());
-  return std::make_pair(boost::make_transform_iterator(p.first, fct),
-                        boost::make_transform_iterator(p.second,fct));
+  return make_range(boost::make_transform_iterator(p.first, fct),
+                    boost::make_transform_iterator(p.second,fct));
  }
 
 
 template <typename TM,
           typename T>
-typename std::pair<typename boost::graph_traits<TM>::halfedge_iterator,
-                   typename boost::graph_traits<TM>::halfedge_iterator>
+Iterator_range<typename boost::graph_traits<TM>::halfedge_iterator>
 halfedges(const Intrinsic_Delaunay_triangulation_3<TM,T>& idt)
- {
-   return halfedges(idt.triangle_mesh());
- }
+{
+  return make_range( halfedges(idt.triangle_mesh()) );
+}
 
 
 template <typename TM,
           typename T>
-typename std::pair<typename boost::graph_traits<TM>::edge_iterator,
-                   typename boost::graph_traits<TM>::edge_iterator>
+Iterator_range<typename boost::graph_traits<TM>::edge_iterator>
 edges(const Intrinsic_Delaunay_triangulation_3<TM,T>& idt)
- {
-   return edges(idt.triangle_mesh());
- }
+{
+  return make_range( edges(idt.triangle_mesh()) );
+}
 
 
 template <typename TM,
           typename T>
-typename std::pair<typename boost::graph_traits<TM>::face_iterator,
-                   typename boost::graph_traits<TM>::face_iterator>
+Iterator_range<typename boost::graph_traits<TM>::face_iterator>
 faces(const Intrinsic_Delaunay_triangulation_3<TM,T>& idt)
  {
-   return faces(idt.triangle_mesh());
+   return make_range( faces(idt.triangle_mesh()) );
  }
 
 template <typename TM,

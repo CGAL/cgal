@@ -6,7 +6,7 @@ find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core )
 include( ${CGAL_USE_FILE} )
 find_package(LEDA QUIET)
 
-if ( CGAL_Core_FOUND OR LEDA_FOUND )
+if ( CGAL_FOUND AND (CGAL_Core_FOUND OR LEDA_FOUND) )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 

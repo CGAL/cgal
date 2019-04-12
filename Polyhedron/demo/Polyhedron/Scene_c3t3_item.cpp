@@ -24,7 +24,6 @@
 #include <CGAL/Qt/qglviewer.h>
 
 #include <boost/function_output_iterator.hpp>
-#include <boost/foreach.hpp>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -1290,7 +1289,7 @@ QMenu* Scene_c3t3_item::contextMenu()
   QMenu* menu = Scene_item::contextMenu();
 
   // Use dynamic properties:
-  // http://doc.qt.io/qt-5/qobject.html#property
+  // https://doc.qt.io/qt-5/qobject.html#property
   bool menuChanged = menu->property(prop_name).toBool();
 
   if (!menuChanged) {
@@ -2151,6 +2150,11 @@ void Scene_c3t3_item::setAlpha(int alpha)
   redraw();
 }
 
-QSlider* Scene_c3t3_item::alphaSlider() { return d->alphaSlider; }
+QSlider* Scene_c3t3_item::alphaSlider() {
+  if(!d->alphaSlider)
+    d->computeElements();
+  return d->alphaSlider;
+}
+
 
 #include "Scene_c3t3_item.moc"

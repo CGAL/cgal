@@ -615,6 +615,45 @@ using std::max;
 #  define CGAL_PRAGMA_DIAG_POP
 #endif
 
+//
+// Compatibility with CGAL-4.14.
+//
+// That is temporary, and will be replaced by a namespace alias, as
+// soon as we can remove cpp11::result_of, and <CGAL/atomic.h> and
+// <CGAL/thread.h>.
+//
+#  include <iterator>
+#  include <array>
+#  include <utility>
+#  include <type_traits>
+#  include <unordered_set>
+#  include <unordered_map>
+#  include <functional>
+//
+namespace CGAL {
+//
+  namespace cpp11 {
+    using std::next;
+    using std::prev;
+    using std::copy_n;
+    using std::array;
+    using std::function;
+    using std::tuple;
+    using std::make_tuple;
+    using std::tie;
+    using std::get;
+    using std::tuple_size;
+    using std::tuple_element;
+    using std::is_enum;
+    using std::unordered_set;
+    using std::unordered_map;
+  }
+//
+  namespace cpp0x = cpp11;
+  using cpp11::array;
+  using cpp11::copy_n;
+} // end of the temporary compatibility with CGAL-4.14
+
 namespace CGAL {
 
 // Typedef for the type of NULL.

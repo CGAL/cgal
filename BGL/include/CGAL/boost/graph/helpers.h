@@ -22,7 +22,6 @@
 #define CGAL_BOOST_GRAPH_HELPERS_H
 
 
-#include <boost/foreach.hpp>
 #include <boost/range/empty.hpp>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/properties.h>
@@ -104,7 +103,7 @@ template <typename FaceGraph>
 bool is_closed(const FaceGraph& g)
 {
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
-  BOOST_FOREACH(halfedge_descriptor hd, halfedges(g)){
+  for(halfedge_descriptor hd : halfedges(g)){
     if(is_border(hd,g)){
       return false;
     }
@@ -131,7 +130,7 @@ template <typename FaceGraph>
 {
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
-  BOOST_FOREACH(vertex_descriptor vd, vertices(g)){
+  for(vertex_descriptor vd : vertices(g)){
     halfedge_descriptor hd = halfedge(vd,g);
     if((hd == boost::graph_traits<FaceGraph>::null_halfedge()) ||
        (! is_bivalent(hd,g))){
@@ -161,7 +160,7 @@ template <typename FaceGraph>
 {
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
-  BOOST_FOREACH(vertex_descriptor vd, vertices(g)){
+  for(vertex_descriptor vd : vertices(g)){
     halfedge_descriptor hd = halfedge(vd,g);
     if((hd == boost::graph_traits<FaceGraph>::null_halfedge()) ||
        (! is_trivalent(halfedge(hd,g),g))){
@@ -207,7 +206,7 @@ template <typename FaceGraph>
   bool is_triangle_mesh(const FaceGraph& g)  
 {
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
-  BOOST_FOREACH(face_descriptor fd, faces(g)){
+  for(face_descriptor fd : faces(g)){
     if(! is_triangle(halfedge(fd,g),g)){
       return false;
     }
@@ -251,7 +250,7 @@ template <typename FaceGraph>
   bool is_quad_mesh(const FaceGraph& g)  
 {
     typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
-  BOOST_FOREACH(face_descriptor fd, faces(g)){
+  for(face_descriptor fd : faces(g)){
     if(! is_quad(halfedge(fd,g),g)){
       return false;
     }
@@ -388,7 +387,7 @@ bool is_valid_halfedge_graph(const Graph& g, bool verb = false)
   // All halfedges.
 
   halfedges_size_type  n = 0;
-  BOOST_FOREACH(halfedge_descriptor begin, halfedges(g)) {
+  for(halfedge_descriptor begin : halfedges(g)) {
     if(!valid)
       break;
     verr << "halfedge " << n << std::endl;
@@ -440,7 +439,7 @@ bool is_valid_halfedge_graph(const Graph& g, bool verb = false)
   // All vertices.
   vertex_size_type v = 0;
   n = 0;
-  BOOST_FOREACH(vertex_descriptor vbegin, vertices(g)){
+  for(vertex_descriptor vbegin : vertices(g)){
     if(!valid)
       break;
     verr << "vertex " << v << std::endl;
@@ -480,7 +479,7 @@ bool is_valid_halfedge_graph(const Graph& g, bool verb = false)
 
   // All halfedges.
   n = 0;
-  BOOST_FOREACH(halfedge_descriptor i, halfedges(g)){
+  for(halfedge_descriptor i : halfedges(g)){
       verr << "halfedge " << n << std::endl;
   // At least triangular facets and distinct geometry.
   valid = valid && ( next(i, g) != i);
@@ -538,7 +537,7 @@ bool is_valid_face_graph(const Graph& g, bool verb = false)
   faces_size_type f = 0;
   std::size_t n = 0;
   halfedges_size_type nb = 0;
-  BOOST_FOREACH(face_descriptor fbegin, faces(g)){
+  for(face_descriptor fbegin : faces(g)){
     if(!valid)
       break;
     verr << "face " << f << std::endl;
@@ -571,7 +570,7 @@ bool is_valid_face_graph(const Graph& g, bool verb = false)
   if ( valid && f != num_f)
     verr << "counting faces failed." << std::endl;
   
-  BOOST_FOREACH(halfedge_descriptor i, halfedges(g)){
+  for(halfedge_descriptor i : halfedges(g)){
     //counting borders
     if ( is_border(i, g))
       ++nb;
@@ -619,7 +618,7 @@ bool is_valid_polygon_mesh(const Mesh& g, bool verb = false)
  bool valid=is_valid_face_graph(g, verb);
  //test for 2-manifoldness
  // Distinct facets on each side of an halfedge.
- BOOST_FOREACH(halfedge_descriptor i, halfedges(g)){
+ for(halfedge_descriptor i : halfedges(g)){
    valid = valid && (face(i, g) != face(opposite(i, g), g));
    if ( ! valid) {
      verr << "    both incident facets are equal." << std::endl;
@@ -1383,9 +1382,9 @@ void swap_vertices(
 
   halfedge_descriptor hq=halfedge(q, g);
   halfedge_descriptor hp=halfedge(p, g);
-  BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(hq, g))
+  for(halfedge_descriptor h : halfedges_around_target(hq, g))
     set_target(h, p, g);
-  BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(hp, g))
+  for(halfedge_descriptor h : halfedges_around_target(hp, g))
     set_target(h, q, g);
   set_halfedge(p, hq, g);
   set_halfedge(q, hp, g);

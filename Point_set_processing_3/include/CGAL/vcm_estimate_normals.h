@@ -260,7 +260,7 @@ template <typename PointRange,
           typename NamedParameters>
 void
 compute_vcm (const PointRange& points,
-             std::vector< cpp11::array<double, 6> > &ccov,
+             std::vector< std::array<double, 6> > &ccov,
              double offset_radius,
              double convolution_radius,
              const NamedParameters& np)
@@ -274,7 +274,7 @@ compute_vcm (const PointRange& points,
     Kernel kernel;
     
     // First, compute the VCM for each point
-    std::vector< cpp11::array<double, 6> > cov;
+    std::vector< std::array<double, 6> > cov;
     std::size_t N = 20;
     internal::vcm_offset (points.begin(), points.end(),
                           point_map,
@@ -301,7 +301,7 @@ compute_vcm (const PointRange& points,
 template <typename PointRange>
 void
 compute_vcm (const PointRange& points,
-             std::vector< cpp11::array<double, 6> > &ccov,
+             std::vector< std::array<double, 6> > &ccov,
              double offset_radius,
              double convolution_radius)
 {
@@ -320,7 +320,7 @@ void
 compute_vcm (ForwardIterator first,
              ForwardIterator beyond,
              PointMap point_map,
-             std::vector< cpp11::array<double, 6> > &ccov,
+             std::vector< std::array<double, 6> > &ccov,
              double offset_radius,
              double convolution_radius,
              const Kernel & kernel)
@@ -359,7 +359,7 @@ vcm_estimate_normals_internal (PointRange& points,
     PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
     NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
     
-    typedef cpp11::array<double, 6> Covariance;
+    typedef std::array<double, 6> Covariance;
     
     // Compute the VCM and convolve it
     std::vector<Covariance> cov;
@@ -396,7 +396,7 @@ vcm_estimate_normals_internal (PointRange& points,
     // And finally, compute the normals
     int i = 0;
     for (typename PointRange::iterator it = points.begin(); it != points.end(); ++it) {
-        cpp11::array<double, 3> enormal = {{ 0,0,0 }};
+        std::array<double, 3> enormal = {{ 0,0,0 }};
         DiagonalizeTraits::extract_largest_eigenvector_of_covariance_matrix
           (cov[i], enormal);
 

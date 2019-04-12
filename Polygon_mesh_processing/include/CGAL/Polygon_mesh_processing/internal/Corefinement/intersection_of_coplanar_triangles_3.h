@@ -242,7 +242,7 @@ struct Intersect_coplanar_faces_3{
     typedef typename std::list<Inter_pt_info>::iterator Iterator;
 
     std::map<Inter_pt_info*,Orientation> orientations;
-    BOOST_FOREACH(Inter_pt_info& ipt, inter_pts)
+    for(Inter_pt_info& ipt : inter_pts)
       orientations[ &ipt ]=get_orientation_and_update_info_2(h2,ipt);
 
     CGAL_assertion_code(int pt_added=0;)

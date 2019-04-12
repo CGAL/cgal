@@ -25,10 +25,10 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/trace.h>
+#include <CGAL/IO/trace.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
-#include <CGAL/Search_traits_vertex_handle_3.h>
+#include <CGAL/Point_set_processing_3/internal/Search_traits_vertex_handle_3.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Index_property_map.h>
 #include <CGAL/Memory_sizer.h>
@@ -327,7 +327,7 @@ create_riemannian_graph(
 
     // Types for K nearest neighbors search structure
     typedef Point_vertex_handle_3<ForwardIterator> Point_vertex_handle_3;
-    typedef Search_traits_vertex_handle_3<ForwardIterator> Traits;
+    typedef internal::Search_traits_vertex_handle_3<ForwardIterator> Traits;
     typedef Euclidean_distance_vertex_handle_3<ForwardIterator> KDistance;
     typedef Orthogonal_k_neighbor_search<Traits,KDistance> Neighbor_search;
     typedef typename Neighbor_search::Tree Tree;

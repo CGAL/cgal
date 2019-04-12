@@ -232,24 +232,29 @@ function(cgal_add_test exe_name)
 #  message("Add test ${test_name}")
   set(cin_file "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cin")
   if(NOT ARGS AND EXISTS ${cin_file})
-    if(ANDROID OR CGAL_RUN_TESTS_THROUGH_SSH)
-      set(cmd ${exe_name})
+    if(CGAL_RUN_TESTS_THROUGH_SSH)
+      add_test(NAME ${test_name} COMMAND bash -c "${TIME_COMMAND} ${ssh_executable}  ${SSH_HOST} \"cd ${CGAL_REMOTE_TEST_DIR_PREFIX}${PROJECT_NAME} && ${CGAL_REMOTE_TEST_DIR_PREFIX}${PROJECT_NAME}/${exe_name} 3< <(cat; kill -INT 0) < ${exe_name}.cin\" <&1")
     else()
-      set(cmd $<TARGET_FILE:${exe_name}>)
+      if(ANDROID)
+        set(cmd ${exe_name})
+      else()
+        set(cmd $<TARGET_FILE:${exe_name}>)
+      endif()
+      add_test(NAME ${test_name}
+        COMMAND ${TIME_COMMAND} ${CMAKE_COMMAND}
+        -DCMD:STRING=${cmd}
+        -DCIN:STRING=${cin_file}
+        -DCGAL_REMOTE_TEST_DIR_PREFIX=${CGAL_REMOTE_TEST_DIR_PREFIX}
+        -DCGAL_RUN_TESTS_THROUGH_SSH=${CGAL_RUN_TESTS_THROUGH_SSH}
+        -DSSH_HOST=${SSH_HOST}
+        -Dssh_executable=${ssh_executable}
+        -DCGAL_REMOTE_TEST_DIR_PREFIX=${CGAL_REMOTE_TEST_DIR_PREFIX}
+        -DPROJECT_NAME=${PROJECT_NAME}
+        -P "${CGAL_MODULES_DIR}/run_test_with_cin.cmake")
+      set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${cin_file})
+      #	message(STATUS "add test: ${exe_name} < ${cin_file}")
     endif()
-    add_test(NAME ${test_name}
-      COMMAND ${TIME_COMMAND} ${CMAKE_COMMAND}
-      -DCMD:STRING=${cmd}
-      -DCIN:STRING=${cin_file}
-      -DCGAL_REMOTE_TEST_DIR_PREFIX=${CGAL_REMOTE_TEST_DIR_PREFIX}
-      -DSSH=${SSH}
-      -DSSH_HOST=${SSH_HOST}
-      -DCGAL_REMOTE_TEST_DIR_PREFIX=${CGAL_REMOTE_TEST_DIR_PREFIX}
-      -DPROJECT_NAME=${PROJECT_NAME}
-      -P "${CGAL_MODULES_DIR}/run_test_with_cin.cmake")
-    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-      APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${cin_file})
-    #	message(STATUS "add test: ${exe_name} < ${cin_file}")
   else()
     if(NOT ARGS AND NOT cgal_add_test_TEST_NAME)
       if(ARGC GREATER 2 AND ARGV2)

@@ -25,7 +25,7 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/trace.h>
+#include <CGAL/IO/trace.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
@@ -33,7 +33,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Memory_sizer.h>
-#include <CGAL/function.h>
+#include <functional>
 
 #include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -42,7 +42,7 @@
 #include <list>
 
 #ifdef CGAL_LINKED_WITH_TBB
-#include <CGAL/internal/Parallel_callback.h>
+#include <CGAL/Point_set_processing_3/internal/Parallel_callback.h>
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>  
@@ -180,7 +180,7 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
      \cgalParamBegin{normal_map} a model of `WritablePropertyMap` with value type
      `geom_traits::Vector_3`.\cgalParamEnd
      \cgalParamBegin{callback} an instance of
-      `cpp11::function<bool(double)>`. It is called regularly when the
+      `std::function<bool(double)>`. It is called regularly when the
       algorithm is running: the current advancement (between 0. and
       1.) is passed as parameter. If it returns `true`, then the
       algorithm continues its execution normally; if it returns
@@ -213,8 +213,8 @@ pca_estimate_normals(
 
   PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
   NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
-  const cpp11::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
-                                                               cpp11::function<bool(double)>());
+  const std::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+                                                               std::function<bool(double)>());
 
   typedef typename Kernel::Point_3 Point;
 
@@ -257,7 +257,7 @@ pca_estimate_normals(
 #else
   if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
     {
-      internal::Point_set_processing_3::Parallel_callback
+      Point_set_processing_3::internal::Parallel_callback
         parallel_callback (callback, kd_tree_points.size());
      
       std::vector<Vector> normals (kd_tree_points.size (),

@@ -21,7 +21,6 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/property_map.h>
 
-#include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
 #include <boost/unordered_map.hpp>
 #include "Color_map.h"
@@ -178,7 +177,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
       
       Scene_group_item *group = new Scene_group_item("CC");
        scene->addItem(group);
-      BOOST_FOREACH(FaceGraph* polyhedron_ptr, new_polyhedra)
+      for(FaceGraph* polyhedron_ptr : new_polyhedra)
       {
         Scene_facegraph_item* new_item=new Scene_facegraph_item(polyhedron_ptr);
         new_item->setName(tr("%1 - CC %2").arg(item->name()).arg(cc));
@@ -263,7 +262,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
                                                      , PMP::parameters::edge_is_constrained_map(selection_item->constrained_edges_pmap())
                                                      .face_index_map(fim));
 
-        BOOST_FOREACH(face_descriptor f, faces(pmesh))
+        for(face_descriptor f : faces(pmesh))
         {
           put(pid, f, fccmap[f]);
         }
