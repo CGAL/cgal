@@ -158,6 +158,91 @@ for (e = E.halfedges_begin(); e != E.halfedges_end(); ++e)
 
 \endcode
 
+Let's have a look at a full example where we explore four different
+Nef polyhedra, namely the complete plane, a halfplane, a triangle, and a
+triangle with two triangular holes.
+
+\cgalExample{Nef_2/nef_2_exploration.cpp}
+
+Let's start with the Nef polyhedron that consists of the complete 2D plane.
+This plane is "bounded" by the infimaximal frame with vertices at infinity,
+and the Nef polyhedron `N0` has two faces. Face `f0` is outside
+of the infimaximal frame without an outer boundary and the infimaximal frame as hole.
+Face `f1` is inside the infimaximal frame which is its outer boundary.
+
+With the function `Nef_polyhedron_2::Topological_explorer::mark()` we can check whether
+a face is part of `N0`.
+
+With the function `Nef_polyhedron_2::Explorer::is_frame_edge()`
+we can distinguish between "standard" edges and infimaximal frame edges.
+For `N0` they are all infimaximal.
+
+With the function `Nef_polyhedron_2::Explorer::is_standard()` we
+can distinguish between vertices that are on or inside the infimaximal frame.
+For `N0` they are all non standard, and they are at infinity in the
+direction you get with `Nef_polyhedron_2::Explorer::ray()`.
+
+\cgalFigureBegin{nef_exploration_complete,exploration_complete.svg}
+The full plane.
+\cgalFigureEnd
+
+The Nef polyhedron `N1` consists of a halfplane. It has three faces,
+namely `f0` outside and the other two faces inside of the infimaximal frame.
+Face `f1` is marked and the two others are not. The hole of `f0` has
+six infimaximal edges.  The faces `f1` and `f2` have three infimaximal
+and one standard edge, the one between them.
+All vertices are non-standard. The source of the rays of `v4` and `v5`
+sits on the line and they are directed to the left and to the right.
+
+\cgalFigureBegin{nef_exploration_half_plane,exploration_half_plane.svg}
+A halfplane.
+\cgalFigureEnd
+
+The Nef polyhedron `N2` consists of a triangle. It has three faces,
+namely `f0` outside and the other two faces inside of the infimaximal frame.
+As always `f0` has no outer boundary but only one hole, namely
+the infimaximal frame.
+Face `f1` has the infimaximal frame as outer boundary, and the triangle
+as hole, and it is not marked. The outer boundary edges are all
+frame edges with rays at the vertices `v0`, `v1`, `v2`, and `v3`.
+The hole edges are all standard edges with points at the vertices `v4`, `v5`, and `v6`.
+Face `f2` is the only marked face, with the triangle as outer boundary
+and without a hole.
+
+\cgalFigureBegin{nef_exploration_triangle,exploration_triangle.svg}
+A triangle.
+\cgalFigureEnd
+
+When we subtract two small triangles from `N2`, the situation is similar to
+what we described above.  Face `f2` has now two holes, and there are two
+more faces, `f3` and `f4`, which are not marked and with only outer boundaries.
+
+\cgalFigureBegin{nef_exploration_triangle_with_holes,exploration_triangle_with_holes.svg}
+A triangle with holes.
+\cgalFigureEnd
+
+
+As we can see in the figure below not only faces are marked as being
+part of the Nef polyhedron, but edges and vertices as well.
+Just as it is possible to have half open intervals in math, with
+the endpoint not being part of an interval, the triangle
+has an edge from `v5` to `v6` that is not part of the Nef polyhedron.
+The same holds for the vertices `v8`, `v9`, and `v16`.
+
+Faces may have isolated points.  If the face is marked, a vertex like `v9`
+forms a 0-dimensional hole. If the face is not marked, a vertex like `v7`
+forms a connected component of what is marked in the Nef polyhedron.
+
+Finally, note that the boundary of a hole is not always at the same
+time the outer boundary of another face.
+Face `f1` has three holes, namely the one with the vertices `v4-v8-v6-v5`,
+the one with the vertices `v10-11-v12-v11`, and the one with the
+vertices `13-17-15-16-15-14`.
+
+\cgalFigureBegin{nef_exploration_isolated,exploration_isolated.svg}
+A triangle with holes.
+\cgalFigureEnd
+
 \section Nef_2Traits Traits Classes
 
 Now finally we clarify what the template parameter of class
@@ -185,7 +270,7 @@ CGAL::Nef_polyhedron_2< CGAL::Filtered_extended_homogeneous<RT> >::Point == CGAL
 Similar equations hold for the types `Line` and `Direction` in
 the local scope of `Nef_polyhedron_2`.
 
-For its notions and requirements see the desciption of the
+For its notions and requirements see the description of the
 concept `ExtendedKernelTraits_2` in the reference manual.
 
 \section Nef_2Implementation Implementation
