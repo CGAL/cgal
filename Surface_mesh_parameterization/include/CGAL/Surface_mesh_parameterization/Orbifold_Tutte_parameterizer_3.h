@@ -40,6 +40,7 @@
 #include <CGAL/circulator.h>
 #include <CGAL/Default.h>
 #include <CGAL/Timer.h>
+#include <CGAL/use.h>
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>
@@ -110,7 +111,7 @@ Error_code read_cones(const TriangleMesh& tm, std::ifstream& in, VertexIndexMap 
   while(in >> cone_index)
     cones.push_back(cone_index);
 
-#ifdef CGAL_PARAMETERIZATION_ORBIFOLD_CONE_VERBOSE
+#ifdef CGAL_SMP_ORBIFOLD_DEBUG
   std::cout << "Input cones: ";
   for(std::size_t i=0; i<cones.size(); ++i)
     std::cout << cones[i] << " ";
@@ -878,7 +879,7 @@ private:
       X[i] = Xf[i];
     }
 
-#ifdef CGAL_SMP_OUTPUT_ORBIFOLD_MATRICES
+#ifdef CGAL_SMP_ORBIFOLD_DEBUG
     std::ofstream outf("matrices/X.txt");
     for(std::size_t i=0; i<n; ++i) {
       outf << X[i] << " ";
@@ -939,6 +940,8 @@ public:
                           VertexUVMap uvmap,
                           VertexIndexMap vimap) const
   {
+    CGAL_USE(bhd);
+
     Error_code status;
 
     status = check_cones(cmap);
@@ -981,7 +984,7 @@ public:
     else // weight_type == Mean_value
       mean_value_laplacian(mesh, vimap, M);
 
-#ifdef CGAL_SMP_OUTPUT_ORBIFOLD_MATRICES
+#ifdef CGAL_SMP_ORBIFOLD_DEBUG
     std::ofstream outM("matrices/M.txt");
     outM.precision(20);
     outM << total_size << " " << total_size << std::endl;
@@ -1003,7 +1006,7 @@ public:
     outB.precision(20);
     outB << total_size << std::endl;
     outB << B << std::endl;
-#endif // CGAL_SMP_OUTPUT_ORBIFOLD_MATRICES
+#endif // CGAL_SMP_ORBIFOLD_DEBUG
 
     // compute the flattening by solving the boundary conditions
     // while satisfying the convex combination property with L
@@ -1011,8 +1014,10 @@ public:
     if(status != OK)
       return status;
 
+#ifdef CGAL_SMP_ORBIFOLD_DEBUG
     std::ofstream out("orbifold_result.off");
     IO::output_uvmap_to_off(mesh, bhd, uvmap, out);
+#endif
 
     return OK;
   }
