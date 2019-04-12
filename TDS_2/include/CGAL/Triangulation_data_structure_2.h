@@ -48,6 +48,7 @@
 
 #include <CGAL/IO/File_header_OFF.h>
 #include <CGAL/IO/File_scanner_OFF.h>
+#include <CGAL/IO/has_data.h>
 
 namespace CGAL { 
 
@@ -2069,8 +2070,6 @@ copy_tds(const TDS_src &src, typename TDS_src::Vertex_handle vh)
 }
 
 
-CGAL_GENERATE_MEMBER_DETECTOR(read_data);
-
 //if write_data() exists
 template <class T>
 bool has_extra_data(const T& , typename boost::enable_if<has_read_data<T> >::type* = NULL)
@@ -2127,8 +2126,6 @@ std::istream& read_vertex_extra_data(std::istream& is,
   //don't do anything
   return is;
 }
-
-CGAL_GENERATE_MEMBER_DETECTOR(write_data);
 
 //if write_data() exists
 template <class Face, class Vertex>

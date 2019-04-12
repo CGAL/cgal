@@ -27,6 +27,7 @@
 
 #include <CGAL/disable_warnings.h>
 #include <CGAL/basic.h>
+#include <CGAL/IO/has_data.h>
 
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
 # define CGAL_PROFILE
@@ -2054,7 +2055,6 @@ public:
   bool is_valid_finite(Cell_handle c, bool verbose = false, int level=0) const;
 };
 
-CGAL_GENERATE_MEMBER_DETECTOR(read_data);
 
 //if write_data() exists
 template <class T>
@@ -2198,8 +2198,6 @@ std::istream& operator>> (std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
   CGAL_triangulation_assertion(tr.is_valid(false));
   return is;
 }
-
-CGAL_GENERATE_MEMBER_DETECTOR(write_data);
 
 //if write_data() exists
 template <class Cell, class Vertex>
