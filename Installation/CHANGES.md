@@ -1,6 +1,15 @@
 Release History
 ===============
 
+Release 5.0
+-----------
+
+Release date: September 2019
+
+### Polygon Mesh Processing package
+-   Added the function `CGAL::Polygon_mesh_processing::centroid()` which computes
+    the centroid of a closed triangle mesh.
+
 Release 4.14
 ------------
 
