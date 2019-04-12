@@ -286,7 +286,7 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
 
     Mesh& mesh = output[i];
 
-    PMP::internal::Polygon_soup_to_polygon_mesh<Mesh, Point_3, Triangle_ind>
+    PMP::internal::Polygon_soup_to_polygon_mesh<Mesh, std::vector<Point_3>, std::vector<Triangle_ind>>
       converter(points, polygons);
     converter(mesh, false/*insert_isolated_vertices*/);
 
