@@ -58,6 +58,7 @@ class Selection_test {
   const CGAL::qglviewer::Vec offset;
   Scene_edit_box_item* edit_box;
   Selection_visualizer* visualizer;
+  QVector4D* clipbox;
   const Ui::PointSetSelection& ui_widget;
 
   
@@ -69,6 +70,7 @@ public:
                  const CGAL::qglviewer::Vec offset,
                  Scene_edit_box_item* edit_box,
                  Selection_visualizer* visualizer,
+                 QVector4D* clipbox,
                  const Ui::PointSetSelection& ui_widget)
     : point_set (point_set)
     , selected (selected)
@@ -76,6 +78,7 @@ public:
     , offset (offset)
     , edit_box (edit_box)
     , visualizer (visualizer)
+    , clipbox (clipbox)
     , ui_widget (ui_widget)
   {
   }
@@ -91,8 +94,15 @@ public:
   void apply (std::size_t i) const
   {
     Point_set::Index idx = *(point_set->begin() + i);
-
     const Kernel::Point_3& p = point_set->point (idx);
+
+    // Points outside clipbox are not affected
+    if (!is_inside_clipbox (p))
+    {
+      selected[idx] = point_set->is_selected (point_set->begin() + i);
+      return;
+    }
+
     CGAL::qglviewer::Vec vp (p.x (), p.y (), p.z ());
     bool now_selected = false;
     if(!ui_widget.box->isChecked())
@@ -118,7 +128,7 @@ public:
       selected[idx] = now_selected;
     else
     {
-      bool already_selected = point_set->is_selected (idx);
+      bool already_selected = point_set->is_selected (point_set->begin() + i);
       if (ui_widget.union_selection->isChecked())
         selected[idx] = (already_selected || now_selected);
       else if (ui_widget.intersection->isChecked())
@@ -127,6 +137,22 @@ public:
         selected[idx] = (already_selected && !now_selected);
     }
   }
+  
+  bool is_inside_clipbox (const Kernel::Point_3& p) const
+  {
+    if(!static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->isClipping())
+      return true;
+
+    double x = p.x(), y = p.y(), z = p.z();
+
+    return !(clipbox[0][0]*x+clipbox[0][1]*y+clipbox[0][2]*z+clipbox[0][3]>0 ||
+             clipbox[1][0]*x+clipbox[1][1]*y+clipbox[1][2]*z+clipbox[1][3]>0 ||
+             clipbox[2][0]*x+clipbox[2][1]*y+clipbox[2][2]*z+clipbox[2][3]>0 ||
+             clipbox[3][0]*x+clipbox[3][1]*y+clipbox[3][2]*z+clipbox[3][3]>0 ||
+             clipbox[4][0]*x+clipbox[4][1]*y+clipbox[4][2]*z+clipbox[4][3]>0 ||
+             clipbox[5][0]*x+clipbox[5][1]*y+clipbox[5][2]*z+clipbox[5][3]>0);
+  }
+  
 };
 
 
@@ -187,14 +213,10 @@ public:
         selected_bitmap[nit->first] = true;
     }
 
-    Point_set::iterator it = points_item->point_set()->begin ();
-    while (it != points_item->point_set()->first_selected())
-    {
-      if (selected_bitmap[*it])
-        points_item->point_set()->select(*it);
-      else
-        ++ it;
-    }
+    points_item->point_set()->set_first_selected
+      (std::partition (points_item->point_set()->begin(), points_item->point_set()->end(),
+                       [&] (const Point_set::Index& idx) -> bool
+                       { return !selected_bitmap[idx]; }));
 
     points_item->invalidateOpenGLBuffers();
     points_item->itemChanged();
@@ -205,36 +227,10 @@ public:
     if (points_item->point_set()->nb_selected_points() == 0)
       return;
 
-    Distance tr_dist(points_item->point_set()->point_map());
+    points_item->invertSelection();
+    expand();
+    points_item->invertSelection();
     
-    std::set<Point_set::Index> selection;
-    for (Point_set::iterator it = points_item->point_set()->first_selected();
-         it != points_item->point_set()->end(); ++ it)
-      selection.insert (*it);
-
-    std::vector<bool> selected_bitmap (points_item->point_set()->size(), true);
-      
-    for (Point_set::iterator it = points_item->point_set()->first_selected();
-         it != points_item->point_set()->end(); ++ it)
-    {
-      Neighbor_search search(*tree, points_item->point_set()->point(*it), 6, 0, true, tr_dist);
-      for (Neighbor_search::iterator nit = search.begin(); nit != search.end(); ++ nit)
-        if (selection.find(nit->first) == selection.end())
-        {
-          selected_bitmap[*it] = false;
-          break;
-        }
-    }
-
-    Point_set::iterator it = points_item->point_set()->first_selected ();
-    while (it != points_item->point_set()->end())
-    {
-      if (!selected_bitmap[*it])
-        points_item->point_set()->unselect(*it);
-
-      ++ it;
-    }
-
     points_item->invalidateOpenGLBuffers();
     points_item->itemChanged();
   }
@@ -598,6 +594,7 @@ protected:
   }
 
 protected Q_SLOTS:
+
   void select_points()
   {
     Scene_points_with_normal_item* point_set_item = getSelectedItem<Scene_points_with_normal_item>();
@@ -620,7 +617,9 @@ protected Q_SLOTS:
     bool* selected_bitmap = new bool[points->size()]; // std::vector<bool> is not thread safe
 
     Selection_test selection_test (points, selected_bitmap,
-                                   camera, offset, edit_box, visualizer, ui_widget);
+                                   camera, offset, edit_box, visualizer,
+                                   static_cast<CGAL::Three::Viewer_interface*>(viewer)->clipBox(),
+                                   ui_widget);
 #ifdef CGAL_LINKED_WITH_TBB
     tbb::parallel_for(tbb::blocked_range<size_t>(0, points->size()),
                       selection_test);
@@ -629,25 +628,11 @@ protected Q_SLOTS:
       selection_test.apply(i);
 #endif
 
-    Point_set::iterator it = points->begin ();
-    Point_set::iterator first_selected = points->first_selected ();
-    while (it != points->first_selected())
-    {
-      if (selected_bitmap[*it])
-        points->select(*it);
-      else
-        ++ it;
-    }
-
-    it = first_selected;
-    while (it != points->end())
-    {
-      if (!selected_bitmap[*it])
-        points->unselect(*it);
-
-      ++ it;
-    }
-
+    points->set_first_selected
+      (std::partition (points->begin(), points->end(),
+                       [&] (const Point_set::Index& idx) -> bool
+                       { return !selected_bitmap[idx]; }));
+    
     point_set_item->invalidateOpenGLBuffers();
     point_set_item->itemChanged();
   }

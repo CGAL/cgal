@@ -31,7 +31,7 @@
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/squared_distance_3.h>
-#include <CGAL/function.h>
+#include <functional>
 
 #include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -46,7 +46,7 @@
 #include <CGAL/property_map.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
-#include <CGAL/internal/Parallel_callback.h>
+#include <CGAL/Point_set_processing_3/internal/Parallel_callback.h>
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>  
@@ -93,9 +93,7 @@ public:
     : Base(other), index(other.index)
   {}
   
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
   Kd_tree_element& operator=(const Kd_tree_element&)=default;
-#endif  
 };
 
 
@@ -400,9 +398,9 @@ public:
    For more details, please see section 4 in \cgalCite{ear-2013}.  
 
    A parallel version of this function is provided and requires the executable to be 
-   linked against the <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+   linked against the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
    To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-   See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+   See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
    for more details.
 
    \pre Normals must be unit vectors
@@ -426,7 +424,7 @@ public:
      `geom_traits::Vector_3`.\cgalParamEnd
      \cgalParamBegin{sharpness_angle} controls the sharpness of the result.\cgalParamEnd
      \cgalParamBegin{callback} an instance of
-      `cpp11::function<bool(double)>`. It is called regularly when the
+      `std::function<bool(double)>`. It is called regularly when the
       algorithm is running: the current advancement (between 0. and
       1.) is passed as parameter. If it returns `true`, then the
       algorithm continues its execution normally; if it returns
@@ -464,8 +462,8 @@ bilateral_smooth_point_set(
   typedef typename Kernel::FT FT;
   
   double sharpness_angle = choose_param(get_param(np, internal_np::sharpness_angle), 30.);
-  const cpp11::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
-                                                               cpp11::function<bool(double)>());
+  const std::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+                                                               std::function<bool(double)>());
   
   CGAL_point_set_processing_precondition(points.begin() != points.end());
   CGAL_point_set_processing_precondition(k > 1);
@@ -545,7 +543,7 @@ bilateral_smooth_point_set(
 #else
    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
    {
-     internal::Point_set_processing_3::Parallel_callback
+     Point_set_processing_3::internal::Parallel_callback
        parallel_callback (callback, 2 * nb_points);
 
      Compute_pwns_neighbors<Kernel, Tree> f(k, tree, pwns, pwns_neighbors,
@@ -595,7 +593,7 @@ bilateral_smooth_point_set(
 #ifdef CGAL_LINKED_WITH_TBB
    if(boost::is_convertible<ConcurrencyTag, CGAL::Parallel_tag>::value)
    {
-     internal::Point_set_processing_3::Parallel_callback
+     Point_set_processing_3::internal::Parallel_callback
        parallel_callback (callback, 2 * nb_points, nb_points);
      
      //tbb::task_scheduler_init init(4);

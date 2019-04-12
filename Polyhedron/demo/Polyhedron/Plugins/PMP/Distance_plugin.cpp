@@ -209,7 +209,7 @@ private:
       PMP::compute_normals(*poly, nv_pmap, nf_pmap);
       std::vector<Kernel::Point_3> total_points(0);
 
-      BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor f, faces(*poly)) {
+      for(boost::graph_traits<Face_graph>::face_descriptor f : faces(*poly)) {
         Vector nf = get(nf_pmap, f);
         typedef FacetTriangulator<Face_graph, Kernel, boost::graph_traits<Face_graph>::vertex_descriptor> FT;
         
@@ -222,7 +222,7 @@ private:
         Kernel::Point_3 &q = get(vpmap,target(next(halfedge(f,*poly),*poly),*poly));
         Kernel::Point_3 &r = get(vpmap,target(next(next(halfedge(f,*poly),*poly),*poly),*poly));
         CGAL::Random_points_in_triangle_3<Kernel::Point_3> g(p, q, r);
-        CGAL::cpp11::copy_n(g, nb_points, std::back_inserter(sampled_points));
+        std::copy_n(g, nb_points, std::back_inserter(sampled_points));
         sampled_points.push_back(p);
         sampled_points.push_back(q);
         sampled_points.push_back(r);
@@ -302,7 +302,7 @@ private:
       typedef Kernel::Point_3		Point;
       typedef boost::graph_traits<Face_graph>::edge_descriptor	edge_descriptor;
 
-      BOOST_FOREACH(edge_descriptor he, edges(*poly)){
+      for(edge_descriptor he : edges(*poly)){
         const Point& a = get(vpmap,target(he,*poly));
         const Point& b = get(vpmap,source(he,*poly));
         {

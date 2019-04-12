@@ -136,7 +136,7 @@ int main()
 
   std::cout <<"          Locating point (1,1,1) :" << std::endl;
   Point p(1,1,1);
-  gv.set_vertex_color(CGAL::ORANGE);
+  gv.set_vertex_color(CGAL::orange());
   gv << p;
   Locate_type lt;
   int li, lj;
@@ -144,7 +144,7 @@ int main()
 
   sleep(3);
 
-  gv << CGAL::VIOLET;
+  gv << CGAL::violet();
   if ( lt == Triangulation::CELL ) {
     std::cout <<"                     CELL" << std::endl;
     visu_cell(gv,T,c);

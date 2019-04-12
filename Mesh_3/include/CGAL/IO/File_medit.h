@@ -818,8 +818,12 @@ output_to_medit(std::ostream& os,
     typename C3T3::Facet f = (*fit);
     
     // Apply priority among subdomains, to get consistent facet orientation per subdomain-pair interface.
-    if (f.first->subdomain_index() < f.first->neighbor(f.second)->subdomain_index())
-      f = tr.mirror_facet(f);
+    if ( print_each_facet_twice )
+    {
+      // NOTE: We mirror a facet when needed to make it consistent with No_patch_facet_pmap_first/second.
+      if (f.first->subdomain_index() > f.first->neighbor(f.second)->subdomain_index())
+        f = tr.mirror_facet(f);
+    }
     
     // Get facet vertices in CCW order.
     Vertex_handle vh1 = f.first->vertex((f.second + 1) % 4);
@@ -833,10 +837,10 @@ output_to_medit(std::ostream& os,
     os << V[vh1] << ' ' << V[vh2] << ' ' << V[vh3] << ' '; 
     os << get(facet_pmap, *fit) << '\n';
     
-    // Print triangle again if needed
+    // Print triangle again if needed, with opposite orientation
     if ( print_each_facet_twice )
     {
-      os << V[vh1] << ' ' << V[vh2] << ' ' << V[vh3] << ' '; 
+      os << V[vh3] << ' ' << V[vh2] << ' ' << V[vh1] << ' '; 
       os << get(facet_twice_pmap, *fit) << '\n';
     }
   }

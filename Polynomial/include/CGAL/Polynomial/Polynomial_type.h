@@ -362,10 +362,8 @@ public:
       { reduce(); simplify_coefficients(); }
 #endif // defined(CGAL_USE_LEDA) || defined(DOXYGEN_RUNNING)
     
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
      Polynomial&
      operator=(const Polynomial& p)=default;
-#endif
   
 //
 // Public member functions

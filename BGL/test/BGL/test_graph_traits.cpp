@@ -2,7 +2,6 @@
 
 #include "test_Prefix.h"
 #include <boost/numeric/conversion/cast.hpp>
-#include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
 #include <CGAL/use.h>
 
@@ -262,7 +261,7 @@ template <typename Graph>
 void
 test(const std::vector<Graph>& graphs)
 {
-  BOOST_FOREACH(const Graph& p, graphs){
+  for(const Graph& p : graphs){
     test_edge_iterators(p);
     test_read(p);
     test_vertex_iterators(p);

@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
 
   //dump polylines
   std::ofstream output("intersection_polylines.cgal");
-  BOOST_FOREACH(const std::vector<K::Point_3>& polyline, polylines)
+  for(const std::vector<K::Point_3>& polyline : polylines)
   {
     output << polyline.size() << " ";
     std::copy(polyline.begin(), polyline.end(),std::ostream_iterator<K::Point_3>(output," "));

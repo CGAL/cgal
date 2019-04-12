@@ -176,8 +176,6 @@ struct C3t3_initializer<C3T3, MeshDomain, MeshCriteria, true, CGAL::Tag_true>
 
 // Manual redirections
 // boost::parameter can't handle make_periodic_3_mesh_3 return_type alone...
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-
 template <typename C3T3, typename MD, typename MC, typename ... T>
 C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc, const T& ...t)
 {
@@ -185,65 +183,6 @@ C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc, const T& ...t)
   make_periodic_3_mesh_3_bp(c3t3,md,mc,t...);
   return c3t3;
 }
-
-#else
-
-template <typename C3T3, typename MD, typename MC>
-C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc)
-{
-  C3T3 c3t3;
-  make_periodic_3_mesh_3_bp(c3t3,md,mc);
-  return c3t3;
-}
-
-template <typename C3T3, typename MD, typename MC, typename Arg1>
-C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc, const Arg1& a1)
-{
-  C3T3 c3t3;
-  make_periodic_3_mesh_3_bp(c3t3,md,mc,a1);
-  return c3t3;
-}
-
-template <typename C3T3, typename MD, typename MC, typename Arg1, typename Arg2>
-C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc, const Arg1& a1, const Arg2& a2)
-{
-  C3T3 c3t3;
-  make_periodic_3_mesh_3_bp(c3t3,md,mc,a1,a2);
-  return c3t3;
-}
-
-template <typename C3T3, typename MD, typename MC,
-          typename Arg1, typename Arg2, typename Arg3>
-C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc, const Arg1& a1, const Arg2& a2,
-                            const Arg3& a3)
-{
-  C3T3 c3t3;
-  make_periodic_3_mesh_3_bp(c3t3,md,mc,a1,a2,a3);
-  return c3t3;
-}
-
-template <typename C3T3, typename MD, typename MC,
-          typename Arg1, typename Arg2, typename Arg3, typename Arg4>
-C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc, const Arg1& a1, const Arg2& a2,
-                            const Arg3& a3, const Arg4& a4)
-{
-  C3T3 c3t3;
-  make_periodic_3_mesh_3_bp(c3t3,md,mc,a1,a2,a3,a4);
-  return c3t3;
-}
-
-template <typename C3T3, typename MD, typename MC,
-          typename Arg1, typename Arg2, typename Arg3,
-          typename Arg4, typename Arg5>
-C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc,
-                            const Arg1& a1, const Arg2& a2, const Arg3& a3,
-                            const Arg4& a4, const Arg5& a5)
-{
-  C3T3 c3t3;
-  make_periodic_3_mesh_3_bp(c3t3,md,mc,a1,a2,a3,a4,a5);
-  return c3t3;
-}
-#endif
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)

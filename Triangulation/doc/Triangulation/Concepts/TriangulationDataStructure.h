@@ -431,6 +431,7 @@ Inserts a vertex in the triangulation data structure by subdividing the
 Vertex_handle insert_in_facet(const Facet & ft);
 
 /*!
+\cgalAdvancedFunction
 \cgalAdvancedBegin
 Removes the full cells in the range \f$ C=\f$`[s, e)`, inserts a vertex 
 at position `p` and fills the hole by connecting
@@ -449,6 +450,7 @@ All vertices of cells of \f$ C\f$ are on \f$ \partial H\f$.
 \cgalFigureBegin{triangulationfiginserthole,insert-in-hole.png}
 Insertion in a hole, \f$ d=2\f$
 \cgalFigureEnd
+\cgalAdvancedEnd
 */
 template< class ForwardIterator > Vertex_handle
 insert_in_hole(ForwardIterator start, ForwardIterator end, Facet f);

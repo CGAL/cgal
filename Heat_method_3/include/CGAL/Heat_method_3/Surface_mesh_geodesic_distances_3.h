@@ -38,7 +38,6 @@
 #include <CGAL/Eigen_solver_traits.h>
 #endif
 
-#include <boost/foreach.hpp>
 #include <boost/range/has_range_iterator.hpp>
 
 #include <vector>
@@ -179,7 +178,7 @@ public:
   {
     typedef typename std::iterator_traits<typename VertexConstRange::const_iterator>::value_type value_type;
     m_source_change_flag = true;
-    BOOST_FOREACH(value_type vd, vrange){
+    for(value_type vd : vrange){
       m_sources.insert(v2v(vd));
     }
   }
@@ -226,7 +225,7 @@ private:
     typename Traits::Compute_squared_distance_3 squared_distance = Traits().compute_squared_distance_3_object();
     double edge_sum = 0;
     CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
-    BOOST_FOREACH(face_descriptor f, faces(tm)) {
+    for(face_descriptor f : faces(tm)) {
       halfedge_descriptor hd = halfedge(f,tm);
 
       vertex_descriptor neighbor_one = target(hd,tm);
@@ -263,7 +262,7 @@ private:
       i = 0;
       K.set_coef(i,0, 1, true);
     } else {
-      BOOST_FOREACH(vertex_descriptor vd, sources()){
+      for(vertex_descriptor vd : sources()){
         i = get(vertex_id_map, vd);
         K.set_coef(i,0, 1, true);
       }
@@ -314,7 +313,7 @@ private:
       m_X.resize(num_faces(tm));
     }
     CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
-    BOOST_FOREACH(face_descriptor f, faces(tm)) {
+    for(face_descriptor f : faces(tm)) {
       boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
       vertex_descriptor current = *(vbegin);
       vertex_descriptor neighbor_one = *(++vbegin);
@@ -369,7 +368,7 @@ private:
     typename Traits::Construct_vector_3 construct_vector = Traits().construct_vector_3_object();
     Matrix indexD(dimension,1);
     CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
-    BOOST_FOREACH(face_descriptor f, faces(tm)) {
+    for(face_descriptor f : faces(tm)) {
       boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
       vertex_descriptor current = *(vbegin);
       vertex_descriptor neighbor_one = *(++vbegin);
@@ -431,7 +430,7 @@ private:
         double min_val = (std::numeric_limits<double>::max)();
         Index vd_index;
         //go through the distances to the sources and leave the minimum distance;
-        BOOST_FOREACH(vertex_descriptor vd, sources()){
+        for(vertex_descriptor vd : sources()){
           vd_index = get(vertex_id_map, vd);
           double new_d = CGAL::abs(-phi.coeff(vd_index,0)+phi.coeff(i,0));
           if(phi.coeff(vd_index,0)==phi.coeff(i,0)) {
@@ -501,7 +500,7 @@ public:
       solve_phi();              // depends on m_index_divergence
       m_source_change_flag = false;
     }
-    BOOST_FOREACH(vertex_descriptor vd, vertices(tm)){
+    for(vertex_descriptor vd : vertices(tm)){
       Index i_d = get(vertex_id_map, vd);
       d = m_solved_phi(i_d,0);
       put(vdm,vd,d);
@@ -524,11 +523,11 @@ private:
 
     CGAL_precondition(is_triangle_mesh(tm));
     Index i = 0;
-    BOOST_FOREACH(vertex_descriptor vd, vertices(tm)){
+    for(vertex_descriptor vd : vertices(tm)){
       put(vertex_id_map, vd, i++);
     }
     Index face_i = 0;
-    BOOST_FOREACH(face_descriptor fd, faces(tm)){
+    for(face_descriptor fd : faces(tm)){
       put(face_id_map, fd, face_i++);
     }
     dimension = static_cast<int>(num_vertices(tm));
@@ -542,7 +541,7 @@ private:
     }
     CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
 
-    BOOST_FOREACH(face_descriptor f, faces(tm)) {
+    for(face_descriptor f : faces(tm)) {
       boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
       vertex_descriptor current = *(vbegin);
       vertex_descriptor neighbor_one = *(++vbegin);

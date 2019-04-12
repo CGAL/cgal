@@ -30,7 +30,6 @@
 #include "Get_curve_index.h"
 #include <CGAL/Mesh_3/Protect_edges_sizing_field.h> // for weight_modifier
 
-#include <boost/foreach.hpp>
 #include <boost/container/flat_set.hpp>
 #if defined(CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY) || defined(CGAL_NO_ASSERTIONS) == 0
 #  include <sstream>
@@ -98,7 +97,7 @@ struct Sizing_field_with_aabb_tree
       typedef std::pair<Corner_index, Point_3> Corner_index_and_point;
       std::vector<Corner_index_and_point > corners_tmp;
       domain.get_corners(std::back_inserter(corners_tmp));
-      BOOST_FOREACH(const Corner_index_and_point& pair, corners_tmp)
+      for(const Corner_index_and_point& pair : corners_tmp)
       {
         // Fill `corners_indices`
         if(pair.first > maximal_corner_index) maximal_corner_index = pair.first;
@@ -106,7 +105,7 @@ struct Sizing_field_with_aabb_tree
           insert(typename Corners_indices::value_type(pair.second, pair.first));
       }
       corners.resize(maximal_corner_index+1);
-      BOOST_FOREACH(const Corner_index_and_point& pair, corners_tmp)
+      for(const Corner_index_and_point& pair : corners_tmp)
       {
         // Fill `corners`
         corners[pair.first] = pair.second;
@@ -115,7 +114,7 @@ struct Sizing_field_with_aabb_tree
 
     //fill incidences of corners with curves
     corners_incident_curves.resize(corners.size());
-    BOOST_FOREACH(const typename Corners_indices::value_type& pair,
+    for(const typename Corners_indices::value_type& pair :
       corners_indices)
     {
       dt.insert(pair.first);
@@ -127,7 +126,7 @@ struct Sizing_field_with_aabb_tree
                                                       incident_curves.end()));
       // For each incident loops, insert a point on the loop, as far as
       // possible.
-      BOOST_FOREACH(Curve_index curve_index, incident_curves) {
+      for(Curve_index curve_index : incident_curves) {
         if(domain.is_loop(curve_index)) {
           FT curve_lenght = domain.curve_length(curve_index);
           Point_3 other_point =
@@ -157,7 +156,7 @@ struct Sizing_field_with_aabb_tree
         insert(boost::container::ordered_unique_range,
                incident_patches.begin(), incident_patches.end());
     }
-    BOOST_FOREACH(const typename Corners_indices::value_type& pair,
+    for(const typename Corners_indices::value_type& pair :
                   corners_indices)
     {
       // Get `corners_incident_curves[corner_id]`
@@ -165,7 +164,7 @@ struct Sizing_field_with_aabb_tree
 
       // Fill `corners_incident_patches[corner_id]`
       Patches_ids& incident_patches = corners_incident_patches[pair.second];
-      BOOST_FOREACH(Curve_index curve_index, incident_curves) {
+      for(Curve_index curve_index : incident_curves) {
         const Patches_ids& curve_incident_patches =
           curves_incident_patches[curve_index];
         incident_patches.insert(boost::container::ordered_unique_range,
@@ -271,7 +270,7 @@ struct Sizing_field_with_aabb_tree
                                   projection_traits.closest_point_and_primitive().second))
               % group(setprecision(17),
                       projection_traits.closest_point_and_primitive().first);
-            BOOST_FOREACH(Patch_index i, ids) {
+            for(Patch_index i : ids) {
               s << CGAL::oformat(i) << " ";
             }
             s << "}\n";
@@ -338,7 +337,7 @@ struct Sizing_field_with_aabb_tree
             % result % p % curve_id
             % CGAL::oformat(get(get_facet_patch_id,
                                 projection_traits.closest_point_and_primitive().second));
-          BOOST_FOREACH(Patch_index i, ids) {
+          for(Patch_index i : ids) {
             s << CGAL::oformat(i) << " ";
           }
           s << "}\n";
@@ -357,7 +356,7 @@ struct Sizing_field_with_aabb_tree
             % result % p % curve_id
             % CGAL::oformat(get(get_facet_patch_id,
                                 projection_traits.closest_point_and_primitive().second));
-          BOOST_FOREACH(Patch_index i, ids) {
+          for(Patch_index i : ids) {
             s << CGAL::oformat(i) << " ";
           }
           s << "}\n";
@@ -372,7 +371,7 @@ struct Sizing_field_with_aabb_tree
                              "Ids are { ")
             % result % p % curve_id
             % projection_traits.closest_point_and_primitive().second->patch_id();
-          BOOST_FOREACH(Patch_index i, ids) {
+          for(Patch_index i : ids) {
             s << CGAL::oformat(i) << " ";
           }
           s << "}\n";
@@ -418,7 +417,7 @@ struct Sizing_field_with_aabb_tree
       Point_3 closest_intersection;
       Input_curves_AABB_tree_primitive_ closest_primitive = prims[0];
       FT sqd_intersection = -1;
-      BOOST_FOREACH(Input_curves_AABB_tree_primitive_ prim, prims)
+      for(Input_curves_AABB_tree_primitive_ prim : prims)
       {
         if (prim.id() == curr_prim.id())
           continue;//curr_prim is the closest primitive
@@ -511,7 +510,7 @@ struct Sizing_field_with_aabb_tree
                              "Ids are { ")
             % result % p % curve_id
             % closest_primitive.id().first->first;
-          BOOST_FOREACH(int i, ids) {
+          for(int i : ids) {
             s << i << " ";
           }
           s << "}\n";

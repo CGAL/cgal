@@ -17,7 +17,7 @@ library. Wrappers for the Eigen classes `Eigen_matrix` and
 
 It is straightforward to develop equivalent models for
 other solvers, for example those found in the <a
-href="https://software.intel.com/en-us/intel-mkl">Intel Math Kernel
+href="https://software.intel.com/en-us/mkl">Intel Math Kernel
 Library (MKL)</a>.
 
 

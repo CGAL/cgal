@@ -57,7 +57,7 @@ class Advancing_front_mesher
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Point_3                        Point;          ///< defines the point type.
   
-  typedef CGAL::cpp11::array< unsigned int, 3 >       Facet;
+  typedef std::array< unsigned int, 3 >       Facet;
 private:
 
   class Priority

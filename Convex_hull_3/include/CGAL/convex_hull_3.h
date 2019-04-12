@@ -99,7 +99,7 @@ template <class Point_3, class OutputIterator>
 void copy_ch2_to_face_graph(const std::list<Point_3>& CH_2,
                             internal::Convex_hull_3::Output_iterator_wrapper<OutputIterator>& w)
 {
-  BOOST_FOREACH(const Point_3& p, CH_2)
+  for(const Point_3& p : CH_2)
     *w.out++ = p;
 }
 
@@ -110,7 +110,7 @@ void copy_face_graph(const TDS& tds, internal::Convex_hull_3::Output_iterator_wr
 {
   typedef typename boost::graph_traits<TDS>::vertex_descriptor vertex_descriptor;
   typename boost::property_map<TDS, boost::vertex_point_t >::const_type vpm = get(boost::vertex_point, tds);
-  BOOST_FOREACH(vertex_descriptor vh, vertices(tds))
+  for(vertex_descriptor vh : vertices(tds))
   {
     *wrapper.out++ = get(vpm, vh);
   }
@@ -397,7 +397,7 @@ void copy_ch2_to_face_graph(const std::list<Point_3>& CH_2, Polyhedron_3& P)
   typedef typename Graph_traits::face_descriptor face_descriptor;
   std::vector<vertex_descriptor> vertices;
   vertices.reserve(CH_2.size());
-  BOOST_FOREACH(const Point_3& p, CH_2){
+  for(const Point_3& p : CH_2){
     vertices.push_back(add_vertex(P));
     put(vpm, vertices.back(),p);
   }

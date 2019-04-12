@@ -145,7 +145,7 @@ public:
 
     std::map<vertex_descriptor, std::size_t> vertex_id_map;
     std::size_t id = 0;
-    BOOST_FOREACH(vertex_descriptor vd, interior_vertices)
+    for(vertex_descriptor vd : interior_vertices)
     {
       if( !vertex_id_map.insert(std::make_pair(vd, id)).second ) {
         CGAL_warning(!"Duplicate vertex is found!");
@@ -156,7 +156,7 @@ public:
 
     Solver_matrix A(nb_vertices);
 
-    BOOST_FOREACH(vertex_descriptor vd, interior_vertices)
+    for(vertex_descriptor vd : interior_vertices)
     {
       int v_id = static_cast<int>(vertex_id_map[vd]);
       compute_row(vd, v_id, A, Bx[v_id], By[v_id], Bz[v_id], 1, vertex_id_map, depth);
@@ -199,7 +199,7 @@ public:
 
     // update 
     id = 0;
-    BOOST_FOREACH(vertex_descriptor vd, interior_vertices)
+    for(vertex_descriptor vd : interior_vertices)
     {
       put(ppmap, vd, Point_3(X[id], Y[id], Z[id]));
       ++id;

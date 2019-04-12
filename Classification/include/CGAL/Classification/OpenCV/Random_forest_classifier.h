@@ -72,7 +72,7 @@ public:
 /*!
   \brief Instantiates the classifier using the sets of `labels` and `features`.
 
-  Parameters documentation is copy-pasted from [the official documentation of OpenCV](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html). For more details on this method, please refer to it.
+  Parameters documentation is copy-pasted from [the official documentation of OpenCV](https://docs.opencv.org/2.4/modules/ml/doc/random_trees.html). For more details on this method, please refer to it.
 
   \param labels label set used.
   \param features feature set used.

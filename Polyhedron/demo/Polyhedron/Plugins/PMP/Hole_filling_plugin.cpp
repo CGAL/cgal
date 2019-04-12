@@ -206,7 +206,7 @@ private:
     boost::unordered_set<fg_halfedge_descriptor> visited;
     boost::property_map<Face_graph,CGAL::vertex_point_t>::type vpm = get(CGAL::vertex_point,poly);
 
-    BOOST_FOREACH(fg_halfedge_descriptor hd, halfedges(poly)){
+    for(fg_halfedge_descriptor hd : halfedges(poly)){
       if(is_border(hd, poly) && visited.find(hd) == visited.end()){
         polyline_data_list.push_back(Polyline_data());
         Polyline_data& polyline_data = polyline_data_list.back();
@@ -216,8 +216,7 @@ private:
 
         CGAL::qglviewer::Vec center;
         int counter = 0;
-        fg_halfedge_descriptor hf_around_facet;
-        BOOST_FOREACH(hf_around_facet, halfedges_around_face(hd,poly)){
+        for(fg_halfedge_descriptor hf_around_facet : halfedges_around_face(hd,poly)){
           CGAL_assertion(visited.find(hf_around_facet) == visited.end());
           visited.insert(hf_around_facet);
           const Point_3& p = get(vpm,target(hf_around_facet, poly));
@@ -225,7 +224,7 @@ private:
           center += CGAL::qglviewer::Vec(p.x(), p.y(), p.z());
           ++counter;
         }
-        hf_around_facet = *halfedges_around_face(hd,poly).first;
+        fg_halfedge_descriptor hf_around_facet = *halfedges_around_face(hd,poly).first;
         polyline_data.polyline->polylines.front().push_back(get(vpm,target(hf_around_facet,poly)));
         polyline_data.position = center / counter;
       }
@@ -264,7 +263,7 @@ private:
 #else
       boost::property_map<Face_graph,CGAL::vertex_point_t>::type vpm = get(CGAL::vertex_point,poly);
       /* use polyline points to measure distance - might hurt performance for large holes */
-      BOOST_FOREACH(fg_halfedge_descriptor hf_around_facet, halfedges_around_face(it->halfedge,poly)){
+      for(fg_halfedge_descriptor hf_around_facet : halfedges_around_face(it->halfedge,poly)){
         const Point_3& p_1 = get(vpm,target(hf_around_facet,poly));
         const CGAL::qglviewer::Vec& pos_it_1 = camera->projectedCoordinatesOf(CGAL::qglviewer::Vec(p_1.x(), p_1.y(), p_1.z()));
         const Point_3& p_2 = get(vpm,target(opposite(hf_around_facet,poly),poly));
@@ -668,7 +667,7 @@ bool Polyhedron_demo_hole_filling_plugin::fill
 
     bool success;
     if(weight_index == 0) {
-      success = CGAL::cpp11::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
+      success = std::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
               it, std::back_inserter(patch), CGAL::Emptyset_iterator(),
               CGAL::Polygon_mesh_processing::parameters::weight_calculator
                 (CGAL::internal::Uniform_weight_fairing<Face_graph>(poly)).
@@ -677,7 +676,7 @@ bool Polyhedron_demo_hole_filling_plugin::fill
               use_delaunay_triangulation(use_DT)));
     }
     else {
-      success = CGAL::cpp11::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
+      success = std::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
               it, std::back_inserter(patch), CGAL::Emptyset_iterator(),
               CGAL::Polygon_mesh_processing::parameters::weight_calculator(CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Face_graph>(poly)).
               density_control_factor(alpha).
@@ -753,7 +752,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
   boost::unordered_set<fg_halfedge_descriptor> buffer;
   //check if all selected edges are boder
   //to do check that the seection is closed
-  BOOST_FOREACH(fg_edge_descriptor ed, edge_selection->selected_edges)
+  for(fg_edge_descriptor ed : edge_selection->selected_edges)
   {
     fg_halfedge_descriptor h(halfedge(ed, *poly));
     if(! is_border(h,*poly))
@@ -777,7 +776,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
   while(!buffer.empty())
   {
     bool found = false;
-    BOOST_FOREACH(fg_halfedge_descriptor h, buffer)
+    for(fg_halfedge_descriptor h : buffer)
     {
       //if h and c_e share a point
       if(target(h, *poly) == target(c_e,*poly) ||

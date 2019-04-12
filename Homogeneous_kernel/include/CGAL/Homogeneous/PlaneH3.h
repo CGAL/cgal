@@ -45,7 +45,7 @@ class PlaneH3
    typedef typename R_::Plane_3              Plane_3;
    typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-   typedef cpp11::array<RT, 4>               Rep;
+   typedef std::array<RT, 4>               Rep;
    typedef typename R_::template Handle<Rep>::type  Base;
 
    Base base;
@@ -120,7 +120,7 @@ protected:
 //      |  q.hx()   q.hy()  q.hz()  q.hw()  |
 //      |  r.hx()   r.hy()  r.hz()  r.hw()  |
 //
-//  cpp11::array<RT, 4> ( a(), b(), c(), d() )
+//  std::array<RT, 4> ( a(), b(), c(), d() )
 
 template < class R >
 inline

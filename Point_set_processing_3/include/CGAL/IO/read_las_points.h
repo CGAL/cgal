@@ -24,9 +24,6 @@
 #include <CGAL/license/Point_set_processing_3.h>
 
 #include <CGAL/config.h>
-#if defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) || defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
-#error CGAL LAS reader requires a C++11 compiler
-#endif
 
 #include <tuple>
 
@@ -344,7 +341,7 @@ namespace internal {
    LAS_property::Tag...>` if the user wants to use one or several
    %LAS properties to construct a complex object (for example,
    storing 4 `unsigned short` %LAS properties into a %Color object
-   that can for example be a `CGAL::cpp11::array<unsigned short,
+   that can for example be a `std::array<unsigned short,
    4>`). In that case, the second element of the tuple should be a
    functor that constructs the value type of `PropertyMap` from N
    objects of of type `LAS_property::Tag::type`.

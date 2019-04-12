@@ -48,10 +48,10 @@ namespace CGAL {
       typedef typename K::FT                    FT;
       typedef typename K::Comparison_result     Comparison_result;
 
-      typedef CGAL::cpp11::tuple<const bool, const bool,
+      typedef std::tuple<const bool, const bool,
                  const bool, const bool, const size_t> SmallerEqTuple;
 
-      typedef CGAL::cpp11::tuple<FT const *, FT const *,
+      typedef std::tuple<FT const *, FT const *,
                    const bool, const bool, const bool,
                    Point_2 const *, Point_2 const *> MinMaxTuple;
 
@@ -164,7 +164,7 @@ namespace CGAL {
           (max_p == &p)? &pt_p : (max_p == &q)? &pt_q : &pt_r;
         CGAL_SDG_DEBUG(std::cout << "debug minmax cmppq=" << cmppq
             << " cmppr=" << cmppr << " cmpqr=" << cmpqr << std::endl; );
-        return CGAL::cpp11::make_tuple(
+        return std::make_tuple(
             min_p, max_p, samepq, samepr, sameqr, pt_min_p, pt_max_p);
       }
 
@@ -197,7 +197,7 @@ namespace CGAL {
           at_bot = cymint == EQUAL;
           if (at_bot) { ++count_eq; }
         }
-        return CGAL::cpp11::make_tuple(
+        return std::make_tuple(
             at_rgt, at_top, at_lft, at_bot, count_eq);
       }
 
@@ -214,22 +214,22 @@ namespace CGAL {
         //compute the minimum x and maximum x
         const FT px (p.x()), qx (q.x()), rx (r.x());
         MinMaxTuple tupx = minmax(px, qx, rx, p, q, r);
-        FT const * lft_p = CGAL::cpp11::get<0>(tupx);
-        FT const * rgt_p = CGAL::cpp11::get<1>(tupx);
-        const bool samex_pq = CGAL::cpp11::get<2>(tupx);
-        const bool samex_pr = CGAL::cpp11::get<3>(tupx);
-        const bool samex_qr = CGAL::cpp11::get<4>(tupx);
+        FT const * lft_p = std::get<0>(tupx);
+        FT const * rgt_p = std::get<1>(tupx);
+        const bool samex_pq = std::get<2>(tupx);
+        const bool samex_pr = std::get<3>(tupx);
+        const bool samex_qr = std::get<4>(tupx);
         CGAL_assertion(lft_p != NULL);
         CGAL_assertion(rgt_p != NULL);
 
         //compute the minimum y and maximum y
         const FT py (p.y()), qy (q.y()), ry (r.y());
         MinMaxTuple tupy = minmax(py, qy, ry, p, q, r);
-        FT const * bot_p = CGAL::cpp11::get<0>(tupy);
-        FT const * top_p = CGAL::cpp11::get<1>(tupy);
-        const bool samey_pq = CGAL::cpp11::get<2>(tupy);
-        const bool samey_pr = CGAL::cpp11::get<3>(tupy);
-        const bool samey_qr = CGAL::cpp11::get<4>(tupy);
+        FT const * bot_p = std::get<0>(tupy);
+        FT const * top_p = std::get<1>(tupy);
+        const bool samey_pq = std::get<2>(tupy);
+        const bool samey_pr = std::get<3>(tupy);
+        const bool samey_qr = std::get<4>(tupy);
         CGAL_assertion(bot_p != NULL);
         CGAL_assertion(top_p != NULL);
 
@@ -373,10 +373,10 @@ namespace CGAL {
           else {
             CGAL_assertion( is_bot_input && is_top_input );
             Point_2 const * const pt_lft_p =
-              (is_lft_input)? CGAL::cpp11::get<5>(tupx) : NULL;
+              (is_lft_input)? std::get<5>(tupx) : NULL;
             Point_2 const * const pt_rgt_p =
-              (is_rgt_input)? CGAL::cpp11::get<6>(tupx) : NULL;
-            Point_2 const * const pt_top_p = CGAL::cpp11::get<6>(tupy);
+              (is_rgt_input)? std::get<6>(tupx) : NULL;
+            Point_2 const * const pt_top_p = std::get<6>(tupy);
             if ((pt_top_p != pt_lft_p) && (pt_top_p != pt_rgt_p)) {
               // lower the bottom side
               fix1 = *top_p - *rgt_p + *lft_p;
@@ -385,7 +385,7 @@ namespace CGAL {
             }
             else {
               CGAL_assertion_code(
-              Point_2 const * const pt_bot_p = CGAL::cpp11::get<5>(tupy);)
+              Point_2 const * const pt_bot_p = std::get<5>(tupy);)
               CGAL_assertion(
                   (pt_bot_p != pt_lft_p) && (pt_bot_p != pt_rgt_p) );
               // augment the top side
@@ -420,11 +420,11 @@ namespace CGAL {
           }
           else {
             CGAL_assertion( is_lft_input && is_rgt_input );
-            Point_2 const * const pt_lft_p = CGAL::cpp11::get<5>(tupx);
+            Point_2 const * const pt_lft_p = std::get<5>(tupx);
             Point_2 const * const pt_bot_p =
-              (is_bot_input) ? CGAL::cpp11::get<5>(tupy) : NULL;
+              (is_bot_input) ? std::get<5>(tupy) : NULL;
             Point_2 const * const pt_top_p =
-              (is_top_input) ? CGAL::cpp11::get<6>(tupy) : NULL;
+              (is_top_input) ? std::get<6>(tupy) : NULL;
             // find the movable side or sides of the rectangle
             if ((pt_lft_p != pt_bot_p) && (pt_lft_p != pt_top_p)) {
               // augment the right side
@@ -433,7 +433,7 @@ namespace CGAL {
               is_rgt_input = false;
             } else {
               CGAL_assertion_code(
-              Point_2 const * const pt_rgt_p = CGAL::cpp11::get<6>(tupx);)
+              Point_2 const * const pt_rgt_p = std::get<6>(tupx);)
               CGAL_assertion(
                   (pt_rgt_p != pt_bot_p) && (pt_rgt_p != pt_top_p) );
               // diminish from the left side
@@ -469,7 +469,7 @@ namespace CGAL {
         // here, each comparison value is either SMALLER or EQUAL
         const SmallerEqTuple tup =
           analyze_smalleq(cxtmax, cytmax, cxmint, cymint);
-        const size_t count_eq = CGAL::cpp11::get<4>(tup);
+        const size_t count_eq = std::get<4>(tup);
         CGAL_assertion( count_eq <= 2 );
         if (count_eq == 0) {
           CGAL_assertion( cxmint == SMALLER && cxtmax == SMALLER &&
@@ -498,7 +498,7 @@ namespace CGAL {
             return ON_BOUNDED_SIDE;
           }
 
-          const bool at_lft = CGAL::cpp11::get<2>(tup);
+          const bool at_lft = std::get<2>(tup);
           if (is_lft_input && at_lft) {
             CGAL_assertion(cxmint == EQUAL);
             CGAL_SDG_DEBUG(std::cout
@@ -512,7 +512,7 @@ namespace CGAL {
             }
           }
 
-          const bool at_rgt = CGAL::cpp11::get<0>(tup);
+          const bool at_rgt = std::get<0>(tup);
           if (is_rgt_input && at_rgt) {
             CGAL_assertion(cxtmax == EQUAL);
             CGAL_SDG_DEBUG(std::cout
@@ -526,7 +526,7 @@ namespace CGAL {
             }
           }
 
-          const bool at_bot = CGAL::cpp11::get<3>(tup);
+          const bool at_bot = std::get<3>(tup);
           if (is_bot_input && at_bot) {
             CGAL_assertion(cymint == EQUAL);
             CGAL_SDG_DEBUG(std::cout
@@ -540,7 +540,7 @@ namespace CGAL {
             }
           }
 
-          const bool at_top = CGAL::cpp11::get<1>(tup);
+          const bool at_top = std::get<1>(tup);
           if (is_top_input && at_top) {
             CGAL_assertion(cytmax == EQUAL);
             CGAL_SDG_DEBUG(std::cout

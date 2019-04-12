@@ -173,6 +173,7 @@ and provides a list of the parameters that are used in this package.
 - \link measure_grp `CGAL::Polygon_mesh_processing::volume()` \endlink
 - \link measure_grp `CGAL::Polygon_mesh_processing::edge_length()` \endlink
 - \link measure_grp `CGAL::Polygon_mesh_processing::face_border_length()` \endlink
+- \link measure_grp `CGAL::Polygon_mesh_processing::centroid()` \endlink
 
 \cgalCRPSection{Distance Functions}
 - `CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance()`

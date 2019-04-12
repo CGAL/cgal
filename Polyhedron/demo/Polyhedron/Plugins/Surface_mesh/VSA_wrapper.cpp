@@ -8,7 +8,7 @@ VSA_wrapper::VSA_wrapper(const SMesh &mesh) :
 {
   Vertex_point_map vpm = get(boost::vertex_point, const_cast<SMesh &>(mesh));
 
-  BOOST_FOREACH(face_descriptor f, faces(mesh)) {
+  for(face_descriptor f : faces(mesh)) {
     const halfedge_descriptor he = halfedge(f, mesh);
     const Point_3 &p0 = vpm[source(he, mesh)];
     const Point_3 &p1 = vpm[target(he, mesh)];

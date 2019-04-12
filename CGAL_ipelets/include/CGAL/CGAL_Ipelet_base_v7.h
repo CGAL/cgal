@@ -103,7 +103,7 @@ namespace CGAL{
     typedef CGAL::Polygon_2<Kernel>                                           Polygon_2;
   
     typedef typename Kernel::Circle_2                                         Circle_2;
-    typedef CGAL::cpp11::tuple<Circle_2,Point_2,Point_2,CGAL::Sign>           Circular_arc_2;
+    typedef std::tuple<Circle_2,Point_2,Point_2,CGAL::Sign>           Circular_arc_2;
   
   
     Ipelet_base(const std::string NameS,const std::string SubLabS[],const std::string HMsgS[])
@@ -422,15 +422,15 @@ public:
     draw_in_ipe(const Circular_arc_2& arc,bool deselect_all=false) const 
     {
       ipe::Curve* SSP_ipe = new ipe::Curve;
-      ipe::Vector ipeS=ipe::Vector( CGAL::to_double(CGAL::cpp11::get<1>(arc).x()),
-                                CGAL::to_double(CGAL::cpp11::get<1>(arc).y()));//convert ot ipe format
-      ipe::Vector ipeT=ipe::Vector( CGAL::to_double(CGAL::cpp11::get<2>(arc).x()),
-                                CGAL::to_double(CGAL::cpp11::get<2>(arc).y()));//convert ot ipe format
-      SSP_ipe->appendArc(ipe::Matrix(sqrt(CGAL::to_double(CGAL::cpp11::get<0>(arc).squared_radius())),0,
-                                   0,(CGAL::cpp11::get<3>(arc)==CGAL::COUNTERCLOCKWISE?1:-1)*
-                                     sqrt(CGAL::to_double(CGAL::cpp11::get<0>(arc).squared_radius())),
-                                   CGAL::to_double(CGAL::cpp11::get<0>(arc).center().x()),
-                                   CGAL::to_double(CGAL::cpp11::get<0>(arc).center().y())),
+      ipe::Vector ipeS=ipe::Vector( CGAL::to_double(std::get<1>(arc).x()),
+                                CGAL::to_double(std::get<1>(arc).y()));//convert ot ipe format
+      ipe::Vector ipeT=ipe::Vector( CGAL::to_double(std::get<2>(arc).x()),
+                                CGAL::to_double(std::get<2>(arc).y()));//convert ot ipe format
+      SSP_ipe->appendArc(ipe::Matrix(sqrt(CGAL::to_double(std::get<0>(arc).squared_radius())),0,
+                                   0,(std::get<3>(arc)==CGAL::COUNTERCLOCKWISE?1:-1)*
+                                     sqrt(CGAL::to_double(std::get<0>(arc).squared_radius())),
+                                   CGAL::to_double(std::get<0>(arc).center().x()),
+                                   CGAL::to_double(std::get<0>(arc).center().y())),
                                    ipeS,ipeT);
       ipe::Shape shape;
       shape.appendSubPath(SSP_ipe);
@@ -490,17 +490,17 @@ public:
     draw_in_ipe(const Circular_arc_2& object,const Iso_rectangle_2& bbox,bool deselect_all=false) const 
     {
       std::vector<Circular_arc_2> arc_list;
-      const Circle_2& circle=CGAL::cpp11::get<0>(object);
+      const Circle_2& circle=std::get<0>(object);
       restrict_circle_to_bbox(circle,bbox,std::back_inserter(arc_list));
       if (arc_list.empty() && bbox.has_on_bounded_side(circle.center()) ){
         draw_in_ipe(object,deselect_all);
         return;
       }
       
-      const Point_2* source=(CGAL::cpp11::get<3>(object)==CGAL::COUNTERCLOCKWISE)?
-                            &CGAL::cpp11::get<1>(object):&CGAL::cpp11::get<2>(object);
-      const Point_2* target=(CGAL::cpp11::get<3>(object)==CGAL::COUNTERCLOCKWISE)?
-                            &CGAL::cpp11::get<2>(object):&CGAL::cpp11::get<1>(object);
+      const Point_2* source=(std::get<3>(object)==CGAL::COUNTERCLOCKWISE)?
+                            &std::get<1>(object):&std::get<2>(object);
+      const Point_2* target=(std::get<3>(object)==CGAL::COUNTERCLOCKWISE)?
+                            &std::get<2>(object):&std::get<1>(object);
       std::multimap<double,std::pair<Type_circ_arc,const Point_2*> > map_theta;
       typedef  typename std::multimap<double,std::pair<Type_circ_arc,const Point_2*> >::iterator Map_theta_iterator;
       Map_theta_iterator s_it=map_theta.insert(
@@ -510,10 +510,10 @@ public:
                                 std::make_pair(get_theta(*target,circle),std::make_pair(OTRG,target)));
       
       for (typename std::vector<Circular_arc_2>::iterator it_arc=arc_list.begin();it_arc!=arc_list.end();++it_arc){
-        const Point_2* arc_s=(CGAL::cpp11::get<3>(*it_arc)==CGAL::COUNTERCLOCKWISE)?
-                             &CGAL::cpp11::get<1>(*it_arc):&CGAL::cpp11::get<2>(*it_arc);
-        const Point_2* arc_t=(CGAL::cpp11::get<3>(*it_arc)==CGAL::COUNTERCLOCKWISE)?
-                             &CGAL::cpp11::get<2>(*it_arc):&CGAL::cpp11::get<1>(*it_arc);        
+        const Point_2* arc_s=(std::get<3>(*it_arc)==CGAL::COUNTERCLOCKWISE)?
+                             &std::get<1>(*it_arc):&std::get<2>(*it_arc);
+        const Point_2* arc_t=(std::get<3>(*it_arc)==CGAL::COUNTERCLOCKWISE)?
+                             &std::get<2>(*it_arc):&std::get<1>(*it_arc);        
         map_theta.insert( std::make_pair(get_theta(*arc_s,circle),std::make_pair(SRC,arc_s) ) );
         map_theta.insert( std::make_pair(get_theta(*arc_t,circle),std::make_pair(TRG,arc_t) ) );
       }
@@ -779,9 +779,9 @@ public:
       Circle_2 approx_circle=conv(exact_circle);  
       if (!sign_known){
         CGAL::Sign sign = (CGAL::orientation(sd,td,center)==CGAL::LEFT_TURN)?CGAL::POSITIVE:CGAL::NEGATIVE;
-        return CGAL::cpp11::make_tuple(approx_circle,sd,td,sign);
+        return std::make_tuple(approx_circle,sd,td,sign);
       }
-      return CGAL::cpp11::make_tuple(approx_circle,sd,td,CGAL::POSITIVE);
+      return std::make_tuple(approx_circle,sd,td,CGAL::POSITIVE);
     }
 
     void 

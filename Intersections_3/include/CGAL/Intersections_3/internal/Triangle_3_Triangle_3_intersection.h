@@ -206,25 +206,7 @@ intersection(
       // one of the intersection is empty
       return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>();
     }
-    #if CGAL_INTERSECTION_VERSION < 2
-    // apply the binary visitor manually
-    Triangle_Line_visitor<K> vis;
-    if(const typename K::Point_3* p1 = intersect_get<typename K::Point_3>(inter1)) {
-      if(const typename K::Point_3* p2 = intersect_get<typename K::Point_3>(inter2)) {
-        return vis(*p1, *p2);
-      } else if(const typename K::Segment_3* s2 = intersect_get<typename K::Segment_3>(inter2)) {
-        return vis(*p1, *s2);
-      }
-    } else if(const typename K::Segment_3* s1 = intersect_get<typename K::Segment_3>(inter1)) {
-      if(const typename K::Point_3* p2 = intersect_get<typename K::Point_3>(inter2)) {
-        return vis(*s1, *p2);
-      } else if(const typename K::Segment_3* s2 = intersect_get<typename K::Segment_3>(inter2)) {
-        return vis(*s1, *s2);
-      }
-    }
-    #else
     return boost::apply_visitor(Triangle_Line_visitor<K>(), *inter1, *inter2);
-    #endif
   }
   return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>();
 }

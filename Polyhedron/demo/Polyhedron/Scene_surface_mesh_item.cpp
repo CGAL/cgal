@@ -125,6 +125,7 @@ struct Scene_surface_mesh_item_priv{
     alphaSlider = NULL;
     has_vcolors = false;
     has_fcolors = false;
+    item->setProperty("classname", QString("surface_mesh"));
   }
 
   Scene_surface_mesh_item_priv(SMesh* sm, Scene_surface_mesh_item *parent):
@@ -151,6 +152,7 @@ struct Scene_surface_mesh_item_priv{
     alphaSlider = NULL;
     has_vcolors = false;
     has_fcolors = false;
+    item->setProperty("classname", QString("surface_mesh"));
   }
 
   ~Scene_surface_mesh_item_priv()
@@ -407,11 +409,11 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
   
   if(name.testFlag(Scene_item_rendering_helper::GEOMETRY))
   {
-    BOOST_FOREACH(face_descriptor fd, faces(*smesh_))
+    for(face_descriptor fd : faces(*smesh_))
     {
       if(is_triangle(halfedge(fd,*smesh_),*smesh_))
       {
-        BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, *smesh_),*smesh_))
+        for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, *smesh_),*smesh_))
         {
           idx_data_.push_back(source(hd, *smesh_));
         }
@@ -419,7 +421,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
       else
       {
         std::vector<Point> facet_points;
-        BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, *smesh_),*smesh_))
+        for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, *smesh_),*smesh_))
         {
           facet_points.push_back(positions[target(hd, *smesh_)]);
         }
@@ -462,7 +464,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
     idx_edge_data_.clear();
     idx_edge_data_.shrink_to_fit();
     idx_edge_data_.reserve(num_edges(*smesh_) * 2);
-    BOOST_FOREACH(edge_descriptor ed, edges(*smesh_))
+    for(edge_descriptor ed : edges(*smesh_))
     {
       idx_edge_data_.push_back(source(ed, *smesh_));
       idx_edge_data_.push_back(target(ed, *smesh_));
@@ -488,11 +490,11 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
   flat_normals.clear();
   f_colors.clear();
   
-  BOOST_FOREACH(face_descriptor fd, faces(*smesh_))
+  for(face_descriptor fd : faces(*smesh_))
   {
     if(is_triangle(halfedge(fd,*smesh_),*smesh_))
     {
-      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, *smesh_),*smesh_))
+      for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, *smesh_),*smesh_))
       {
         if(name.testFlag(Scene_item_rendering_helper::GEOMETRY))
         {
@@ -525,7 +527,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
     else
     {
       std::vector<Point> facet_points;
-      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, *smesh_),*smesh_))
+      for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, *smesh_),*smesh_))
       {
         facet_points.push_back(positions[target(hd, *smesh_)]);
       }
@@ -593,7 +595,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
   
   if(has_vcolors && name.testFlag(Scene_item_rendering_helper::COLORS))
   {
-    BOOST_FOREACH(vertex_descriptor vd, vertices(*smesh_))
+    for(vertex_descriptor vd : vertices(*smesh_))
     {
       CGAL::Color c = vcolors[vd];
       v_colors.push_back((float)c.red()/255);
@@ -605,7 +607,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
   if(floated &&
      (name.testFlag(Scene_item_rendering_helper::GEOMETRY)|| name.testFlag(Scene_item_rendering_helper::NORMALS)))
   {
-    BOOST_FOREACH(vertex_descriptor vd, vertices(*smesh_))
+    for(vertex_descriptor vd : vertices(*smesh_))
     {
       if(name.testFlag(Scene_item_rendering_helper::GEOMETRY))
       {
@@ -677,7 +679,7 @@ void Scene_surface_mesh_item_priv::initialize_colors() const
   // Fill indices map and get max subdomain value
   int max = 0;
   min_patch_id = (std::numeric_limits<int>::max)();
-  BOOST_FOREACH(face_descriptor fd, faces(*smesh_)){
+  for(face_descriptor fd : faces(*smesh_)){
     max = (std::max)(max, fpatch_id_map[fd]);
     min_patch_id = (std::min)(min_patch_id, fpatch_id_map[fd]);
   }
@@ -1018,7 +1020,7 @@ Scene_surface_mesh_item::~Scene_surface_mesh_item()
     //Clears the targeted Id
     if(d)
     {
-      BOOST_FOREACH(TextItem* item, d->targeted_id)
+      for(TextItem* item : d->targeted_id)
           v->textRenderer()->removeText(item);
     }
     //Remove vertices textitems
@@ -1053,7 +1055,7 @@ void Scene_surface_mesh_item::compute_bbox()const
   SMesh::Property_map<vertex_descriptor, Point_3> pprop = d->smesh_->points();
   CGAL::Bbox_3 bbox;
 
-  BOOST_FOREACH(vertex_descriptor vd,vertices(*d->smesh_))
+  for(vertex_descriptor vd :vertices(*d->smesh_))
   {
     bbox = bbox + pprop[vd].bbox();
   }
@@ -1087,7 +1089,7 @@ void* Scene_surface_mesh_item_priv::get_aabb_tree()
       Input_facets_AABB_tree* tree =
           new Input_facets_AABB_tree();
       int index =0;
-      BOOST_FOREACH( face_descriptor f, faces(*sm))
+      for(face_descriptor f : faces(*sm))
       {
         //if face is degenerate, skip it
         if (CGAL::is_triangle(halfedge(f, *sm), *sm) 
@@ -1510,7 +1512,7 @@ QString Scene_surface_mesh_item::computeStats(int type)
     edges_length(d->smesh_, minl, maxl, meanl, midl, d->number_of_null_length_edges);
   }
 
-  double mini, maxi, ave;
+  double mini(0), maxi(0), ave(0);
   switch (type)
   {
   case MIN_ANGLE:
@@ -1563,7 +1565,7 @@ QString Scene_surface_mesh_item::computeStats(int type)
   case NB_BORDER_EDGES:
   {
     int i=0;
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges(*d->smesh_))
+    for(halfedge_descriptor hd : halfedges(*d->smesh_))
     {
       if(is_border(hd, *d->smesh_))
         ++i;
@@ -1808,7 +1810,7 @@ void Scene_surface_mesh_item::zoomToPosition(const QPoint &point, CGAL::Three::V
             xmin(std::numeric_limits<double>::infinity()), ymin(std::numeric_limits<double>::infinity()), zmin(std::numeric_limits<double>::infinity()),
             xmax(-std::numeric_limits<double>::infinity()), ymax(-std::numeric_limits<double>::infinity()), zmax(-std::numeric_limits<double>::infinity());
         int total(0);
-        BOOST_FOREACH(vertex_descriptor vh, vertices_around_face(halfedge(selected_fh, *d->smesh_), *d->smesh_))
+        for(vertex_descriptor vh : vertices_around_face(halfedge(selected_fh, *d->smesh_), *d->smesh_))
         {
           x+=positions[vh].x();
           y+=positions[vh].y();
@@ -1864,7 +1866,7 @@ void Scene_surface_mesh_item::resetColors()
 {
   setItemIsMulticolor(false);
   if(d->has_feature_edges){
-    BOOST_FOREACH(boost::graph_traits<SMesh>::edge_descriptor e, edges(*d->smesh_)){
+    for(boost::graph_traits<SMesh>::edge_descriptor e : edges(*d->smesh_)){
       put(d->e_is_feature_map, e, false);
     }
     d->has_feature_edges = false;

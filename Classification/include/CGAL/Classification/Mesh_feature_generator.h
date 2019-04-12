@@ -45,7 +45,6 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
@@ -153,8 +152,6 @@ public:
   typedef Classification::Feature::Verticality
   <GeomTraits>                                          Verticality;
   typedef Classification::Feature::Eigenvalue           Eigenvalue;
-
-  typedef typename Classification::RGB_Color RGB_Color;
   /// \endcond
     
 private:

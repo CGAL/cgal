@@ -1,7 +1,7 @@
 // Author: Dmitry Anisimov.
 // We use a simple segment of length 2 and inexact data type
 // in order to test coordinates computed for the center point of the segment.
-// We test the function compute_segment_coordinates_2() and return CGAL::cpp11::array set of coordinates.
+// We test the function compute_segment_coordinates_2() and return std::array set of coordinates.
 
 // It also works with exact kernel.
 
@@ -14,7 +14,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT      Scalar;
 typedef Kernel::Point_2 Point;
 
-typedef CGAL::cpp11::array<Scalar,2> Pair;
+typedef std::array<Scalar,2> Pair;
 
 using std::cout; using std::endl; using std::string;
  

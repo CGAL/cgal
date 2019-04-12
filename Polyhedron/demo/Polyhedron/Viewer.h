@@ -154,6 +154,8 @@ public:
    float total_pass()Q_DECL_OVERRIDE;
    const GLfloat& getGlPointSize()const Q_DECL_OVERRIDE;
    void setGlPointSize(const GLfloat& p) Q_DECL_OVERRIDE;
+   QVector4D* clipBox() const Q_DECL_OVERRIDE;
+   bool isClipping() const Q_DECL_OVERRIDE;
 }; // end class Viewer
 
 

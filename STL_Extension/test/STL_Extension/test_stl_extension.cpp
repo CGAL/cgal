@@ -8109,19 +8109,19 @@ void test_Quadruple()
 }
 
 void test_tuple(){
-  typedef CGAL::cpp11::tuple<> T0;
-  typedef CGAL::cpp11::tuple<int,int> T1;
-  typedef CGAL::cpp11::tuple<int,My_to_int,int,int> T2;
+  typedef std::tuple<> T0;
+  typedef std::tuple<int,int> T1;
+  typedef std::tuple<int,My_to_int,int,int> T2;
   
   CGAL_USE_TYPE(T0);
   CGAL_USE_TYPE(T2);
-  CGAL_static_assertion( CGAL::cpp11::tuple_size<T0>::value == 0 );
-  CGAL_static_assertion( CGAL::cpp11::tuple_size<T1>::value == 2 );
-  CGAL_static_assertion( CGAL::cpp11::tuple_size<T2>::value == 4 );
-  CGAL_static_assertion( (boost::is_same<CGAL::cpp11::tuple_element<1,T2>::type,My_to_int>::value) );  
+  CGAL_static_assertion( std::tuple_size<T0>::value == 0 );
+  CGAL_static_assertion( std::tuple_size<T1>::value == 2 );
+  CGAL_static_assertion( std::tuple_size<T2>::value == 4 );
+  CGAL_static_assertion( (boost::is_same<std::tuple_element<1,T2>::type,My_to_int>::value) );  
   
-  T1 t1=CGAL::cpp11::make_tuple(1,2);
-  T1 t1_2=CGAL::cpp11::make_tuple(1,2);
+  T1 t1=std::make_tuple(1,2);
+  T1 t1_2=std::make_tuple(1,2);
 
   assert(t1==t1_2); // test the equality operator
 
@@ -8132,21 +8132,21 @@ void test_tuple(){
   // GNU/g++ version 4.1.2 does not default-initialize correctly
   // std::tr1::tuple.
 
-  // Test CGAL::cpp11::tie
+  // Test std::tie
   int i1=-1,i2=-1;
-  CGAL::cpp11::tie(i1,i2)=t1;
-  assert( CGAL::cpp11::get<0>(t1)==i1 );
-  assert( CGAL::cpp11::get<1>(t1)==i2 );
+  std::tie(i1,i2)=t1;
+  assert( std::get<0>(t1)==i1 );
+  assert( std::get<1>(t1)==i2 );
 
-  // Test CGAL::cpp11::get for a pair
+  // Test std::get for a pair
   double d = 1;
   std::pair<int, double *> pair(-3, &d);
   const std::pair<int, double *> const_pair(2, &d);
 
-  assert(CGAL::cpp11::get<0>(pair) == -3);
-  assert(CGAL::cpp11::get<1>(pair) == &d);
-  assert(CGAL::cpp11::get<0>(const_pair) == 2);
-  assert(CGAL::cpp11::get<1>(const_pair) == &d);
+  assert(std::get<0>(pair) == -3);
+  assert(std::get<1>(pair) == &d);
+  assert(std::get<0>(const_pair) == 2);
+  assert(std::get<1>(const_pair) == &d);
 }
 
 void test_prev_next()
@@ -8156,7 +8156,7 @@ void test_prev_next()
   V.push_back(2);
   V.push_back(3);
 
-  assert(cpp11::next(cpp11::next(V.begin())) == cpp11::prev(V.end()));
+  assert(std::next(std::next(V.begin())) == std::prev(V.end()));
 }
 
 void test_copy_n() {
@@ -8165,7 +8165,7 @@ void test_copy_n() {
     V.push_back(i);
 
   std::vector<int> V2(5);
-  cpp11::copy_n(V.begin(), 5, V2.begin());
+  std::copy_n(V.begin(), 5, V2.begin());
   
   assert(std::equal(V2.begin(), V2.end(), V.begin()));
 }

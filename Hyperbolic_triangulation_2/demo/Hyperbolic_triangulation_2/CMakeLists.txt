@@ -8,6 +8,10 @@ set(CMAKE_AUTOMOC ON)
 
 cmake_minimum_required(VERSION 3.1...3.13)
 
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
+
 find_package(CGAL QUIET COMPONENTS Core Qt5)
 
 find_package(Qt5 QUIET COMPONENTS Widgets)
@@ -19,11 +23,11 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
   qt5_wrap_ui( UIS HDT2.ui )
   
   # qrc files (resources files, that contain icons, at least)
-  qt5_add_resources ( RESOURCE_FILES resources/File.qrc resources/Input.qrc resources/Delaunay_triangulation_2.qrc )
+  qt5_add_resources ( RESOURCE_FILES resources/Delaunay_triangulation_2.qrc )
   
   # cpp files
-  add_executable ( HDT2_demo HDT2.cpp ${RESOURCE_FILES} ${UIS})
-  target_link_libraries ( HDT2_demo CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_Core Qt5::Widgets)
+  add_executable ( HDT2 HDT2.cpp ${CGAL_Qt5_RESOURCE_FILES} ${RESOURCE_FILES} ${UIS})
+  target_link_libraries ( HDT2 CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_Core Qt5::Widgets)
 else()
-  message(STATUS "NOTICE: This demo requires CGAL, Boost and Qt5 and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires CGAL, CGAL_Core, and Qt5 and will not be compiled.")
 endif()

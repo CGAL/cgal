@@ -74,7 +74,7 @@ OutputForwardIterator filter_collinear_points(InputForwardIterator first,
   typedef typename K::FT                              FT;
   typedef typename K::Point_2                         Point;
 
-  InputForwardIterator last = cpp11::prev(beyond);
+  InputForwardIterator last = std::prev(beyond);
 
   InputForwardIterator vit = first, vit_next = vit, vit_next_2 = vit, vend = vit;
   ++vit_next;

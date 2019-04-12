@@ -4,7 +4,6 @@
 #include <fstream>
 #include <iostream>
 
-#include <boost/foreach.hpp>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point_3;
@@ -40,7 +39,7 @@ int main(int argc, char* argv[])
   vertex_descriptor far;
   double sdistance = 0;
   
-  BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
+  for(vertex_descriptor vd : vertices(sm)){
     if(get(vertex_distance,vd) > sdistance){
       far = vd;
       sdistance = get(vertex_distance,vd);
@@ -54,7 +53,7 @@ int main(int argc, char* argv[])
   hm.estimate_geodesic_distances(vertex_distance);
 
   sdistance = 0;
-  BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
+  for(vertex_descriptor vd : vertices(sm)){
     if(get(vertex_distance,vd) > sdistance){
       sdistance = get(vertex_distance,vd);
     }
@@ -76,7 +75,7 @@ int main(int argc, char* argv[])
   assert(hm.sources().size() == 2);
   hm.estimate_geodesic_distances(vertex_distance);
   sdistance = 0;
-  BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
+  for(vertex_descriptor vd : vertices(sm)){
     if(get(vertex_distance,vd) > sdistance){
       sdistance = get(vertex_distance,vd);
     }
@@ -91,7 +90,7 @@ int main(int argc, char* argv[])
   assert(hm.sources().size() == 0);
   hm.add_source(source);
   hm.estimate_geodesic_distances(vertex_distance);
-   BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
+   for(vertex_descriptor vd : vertices(sm)){
     if(get(vertex_distance,vd) > sdistance){
       sdistance = get(vertex_distance,vd);
     }
@@ -102,7 +101,7 @@ int main(int argc, char* argv[])
   
   CGAL::Heat_method_3::estimate_geodesic_distances(sm, vertex_distance, source, CGAL::Heat_method_3::Direct());
   sdistance = 0;
-  BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
+  for(vertex_descriptor vd : vertices(sm)){
     if(get(vertex_distance,vd) > sdistance){
       sdistance = get(vertex_distance,vd);
     }
