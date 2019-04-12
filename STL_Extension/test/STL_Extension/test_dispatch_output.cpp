@@ -76,8 +76,8 @@ void complete_test(std::vector<T1> data1,std::list<T2> data2){
   
   T1* d;
 
-  std::tie(d, bck_ins) = disp.to_tuple();
-  std::tie(d, bck_ins) = drop.to_tuple();
+  std::tie(d, bck_ins) = disp;
+  std::tie(d, bck_ins) = drop;
 
   //testing putting the tuple directly
   std::tuple<T1,T2> tuple =
