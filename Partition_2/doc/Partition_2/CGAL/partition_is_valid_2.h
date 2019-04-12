@@ -76,7 +76,7 @@ same as the original polygon.
 Each polygon must also satisfy the property 
 tested by `Traits::Is_valid()`. 
 
-\pre Points in the range [`point_first`, `point_beyond`) define a simple, counterclockwise-oriented polygon.
+\pre The points in the range [`point_first`, `point_beyond`) define a simple, counterclockwise-oriented polygon.
 
 \cgalHeading{Requires}
 
@@ -134,7 +134,6 @@ A valid partition is one in
 which the polygons are nonoverlapping and the union of the polygons is the 
 same as the original polygon and each polygon is \f$ y\f$-monotone 
 
-\pre
 The function returns `true` iff the partition is valid and otherwise
 returns ` false`.
 
