@@ -378,7 +378,6 @@ template <class Nef_polyhedron, class Polygon_mesh>
 void convert_nef_polyhedron_to_polygon_mesh(const Nef_polyhedron& nef, Polygon_mesh& pm, bool triangulate_all_faces = false)
 {
   typedef typename boost::property_traits<typename boost::property_map<Polygon_mesh, vertex_point_t>::type>::value_type PM_Point;
-  typedef typename Kernel_traits<PM_Point>::Kernel PM_Kernel;
 
   std::vector<PM_Point> points;
   std::vector<std::vector<std::size_t> > polygons;
