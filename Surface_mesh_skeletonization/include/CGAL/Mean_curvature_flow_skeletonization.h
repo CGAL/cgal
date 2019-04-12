@@ -24,7 +24,7 @@
 #include <CGAL/license/Surface_mesh_skeletonization.h>
 
 
-#include <CGAL/trace.h>
+#include <CGAL/IO/trace.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Default.h>
 

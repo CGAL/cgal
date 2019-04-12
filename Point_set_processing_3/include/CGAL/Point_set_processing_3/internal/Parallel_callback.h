@@ -18,8 +18,8 @@
 //
 // Author(s) : Simon Giraudot
 
-#ifndef CGAL_INTERNAL_PSP_PARALLEL_CALLBACK_H
-#define CGAL_INTERNAL_PSP_PARALLEL_CALLBACK_H
+#ifndef CGAL_PSP_INTERNAL_PARALLEL_CALLBACK_H
+#define CGAL_PSP_INTERNAL_PARALLEL_CALLBACK_H
 
 #include <CGAL/license/Point_set_processing_3.h>
 
@@ -28,8 +28,8 @@
 #include <CGAL/thread.h>
 
 namespace CGAL {
-namespace internal {
 namespace Point_set_processing_3 {
+namespace internal {
   
 class Parallel_callback
 {
@@ -110,8 +110,8 @@ public:
   }
 };
 
-} // namespace Point_set_processing_3
 } // namespace internal
+} // namespace Point_set_processing_3
 } // namespace CGAL
 
-#endif // CGAL_INTERNAL_PSP_PARALLEL_CALLBACK_H
+#endif // CGAL_PSP_INTERNAL_PARALLEL_CALLBACK_H

@@ -32,6 +32,8 @@
 
 namespace CGAL {
 
+  namespace internal {
+
 /// \cond SKIP_IN_MANUAL
 
 /// A Point_vertex_handle_3 objects wraps either
@@ -89,24 +91,25 @@ public:
 
 }; // end of class Point_vertex_handle_3
 
-
+} // namespace internal
 
 /// Kernel traits specialization for Point_vertex_handle_3.
 template <class Vertex_handle>
-struct Kernel_traits< Point_vertex_handle_3<Vertex_handle> > {
+struct Kernel_traits< internal::Point_vertex_handle_3<Vertex_handle> > {
   struct Kernel {
     typedef double FT;
     typedef double RT;
   };
 };
 
+  namespace internal {  
 
 /// Functor with two function operators, which return the begin and
 /// past the end iterator for the Cartesian coordinates.
 template <class Vertex_handle>
 struct Construct_cartesian_const_iterator_vertex_handle_3
 {
-  typedef CGAL::Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
+  typedef CGAL::internal::Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
   typedef const double* result_type;
   const double* operator()(const Point_vertex_handle_3& p) const
   { return static_cast<const double*>(p.m_coord); }
@@ -123,7 +126,7 @@ struct Construct_cartesian_const_iterator_vertex_handle_3
 template <class Vertex_handle>
 struct Euclidean_distance_vertex_handle_3
 {
-  typedef CGAL::Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
+  typedef CGAL::internal::Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
   typedef Point_vertex_handle_3 Query_item;
 
   double transformed_distance(const Point_vertex_handle_3& p1, const Point_vertex_handle_3& p2) const {
@@ -232,7 +235,7 @@ struct Euclidean_distance_vertex_handle_3
 
   double transformed_distance(double d) const { return d*d; }
 
-  double inverse_of_transformed_distance(double d) { return sqrt(d); }
+  double inverse_of_transformed_distance(double d) { return CGAL::sqrt(d); }
 
 }; // end of struct Euclidean_distance_vertex_handle_3
 
@@ -252,6 +255,7 @@ class Search_traits_vertex_handle_3
                           >
 {};
 
+  } // namespace internal 
 /// \endcond
 
 } //namespace CGAL

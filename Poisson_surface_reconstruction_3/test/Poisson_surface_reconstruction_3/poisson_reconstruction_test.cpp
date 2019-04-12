@@ -10,7 +10,6 @@
 // CGAL
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Timer.h>
-#include <CGAL/trace.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
@@ -254,7 +253,7 @@ int main(int argc, char * argv[])
                                                         sm_radius*average_spacing,  // Max triangle size
                                                         sm_distance*average_spacing); // Approximation error
 
-    CGAL_TRACE_STREAM << "  make_surface_mesh(sphere center=("<<inner_point << "),\n"
+    std::cerr         << "  make_surface_mesh(sphere center=("<<inner_point << "),\n"
                       << "                    sphere radius="<<sm_sphere_radius<<",\n"
                       << "                    angle="<<sm_angle << " degrees,\n"
                       << "                    triangle size="<<sm_radius<<" * average spacing="<<sm_radius*average_spacing<<",\n"

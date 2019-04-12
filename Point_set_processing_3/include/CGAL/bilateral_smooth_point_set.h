@@ -46,7 +46,7 @@
 #include <CGAL/property_map.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
-#include <CGAL/internal/Parallel_callback.h>
+#include <CGAL/Point_set_processing_3/internal/Parallel_callback.h>
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>  
@@ -543,7 +543,7 @@ bilateral_smooth_point_set(
 #else
    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
    {
-     internal::Point_set_processing_3::Parallel_callback
+     Point_set_processing_3::internal::Parallel_callback
        parallel_callback (callback, 2 * nb_points);
 
      Compute_pwns_neighbors<Kernel, Tree> f(k, tree, pwns, pwns_neighbors,
@@ -593,7 +593,7 @@ bilateral_smooth_point_set(
 #ifdef CGAL_LINKED_WITH_TBB
    if(boost::is_convertible<ConcurrencyTag, CGAL::Parallel_tag>::value)
    {
-     internal::Point_set_processing_3::Parallel_callback
+     Point_set_processing_3::internal::Parallel_callback
        parallel_callback (callback, 2 * nb_points, nb_points);
      
      //tbb::task_scheduler_init init(4);
