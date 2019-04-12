@@ -39,46 +39,22 @@ public:
   typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_2 Point_2;
 
-  enum Type
-  {
-    REGULAR,
-    BORDER,
-    PARALLEL
-  };
-
 private:
 
-  Type m_type;
-  std::pair<KSR::size_t, KSR::size_t> m_indices;
-  Point_2 m_intersection;
-
+  KSR::size_t m_vertex_idx;
+  KSR::size_t m_meta_vertex_idx;
   FT m_time;
 
 public:
 
-  Event() { }
+  Event (KSR::size_t vertex_idx, KSR::size_t meta_vertex_idx, FT time)
+    : m_vertex_idx (vertex_idx), m_meta_vertex_idx (meta_vertex_idx), m_time (time)
+  { }
 
-  Event (const Type& type, KSR::size_t index_0, KSR::size_t index_1, const Point_2& intersection, FT time)
-    : m_type (type), m_indices(index_0, index_1), m_intersection (intersection), m_time (time)
-  {
-    // Avoid entering twice the same border event
-    if (m_type == BORDER && m_indices.first > m_indices.second)
-      std::swap (m_indices.first, m_indices.second);
-  }
-
-
-  const Type& type() const { return m_type; }
-
-  const KSR::size_t& vertex_idx() const { return m_indices.first; }
-  KSR::size_t& vertex_idx() { return m_indices.first; }
-  const KSR::size_t& segment_idx() const { return m_indices.second; }
-  KSR::size_t& segment_idx() { return m_indices.second; }
-  const KSR::size_t& other_vertex_idx() const { return m_indices.second; }
-  KSR::size_t& other_vertex_idx() { return m_indices.second; }
-
-  bool is_vertex_to_vertex_event() const { return (m_type != REGULAR); }
-
-  const Point_2& intersection() const { return m_intersection; }
+  const KSR::size_t& vertex_idx() const { return m_vertex_idx; }
+  KSR::size_t& vertex_idx() { return m_vertex_idx; }
+  const KSR::size_t& meta_vertex_idx() const { return m_meta_vertex_idx; }
+  KSR::size_t& meta_vertex_idx() { return m_meta_vertex_idx; }
 
   FT time() const { return m_time; }
   
@@ -86,22 +62,14 @@ public:
   bool operator< (const Event& other) const
   {
     // Use lexicographic comparison of tuples
-    return (std::make_tuple (this->m_time, this->m_type, this->m_indices)
-            < std::make_tuple (other.m_time, other.m_type, other.m_indices));
+    return (std::make_tuple (this->m_time, this->m_vertex_idx, this->m_meta_vertex_idx)
+            < std::make_tuple (other.m_time, other.m_vertex_idx, other.m_meta_vertex_idx));
   }
 
   friend std::ostream& operator<< (std::ostream& os, const Event& ev)
   {
-    if (ev.m_type == REGULAR)
-      os << "Regular ";
-    else if (ev.m_type == BORDER)
-      os << "Border ";
-    else
-      os << "Parallel ";
-    
-    os << "event at t=" << ev.m_time << " between vertex " << ev.m_indices.first << " and "
-       << (ev.m_type == REGULAR ? "segment " : "vertex ")
-       << ev.m_indices.second << " at point " << ev.m_intersection;
+    os << "Event at t=" << ev.m_time << " between vertex " << ev.m_vertex_idx
+       << " and meta vertex " << ev.m_meta_vertex_idx;
     return os;
   }
 

@@ -48,6 +48,7 @@ private:
   Point_2 m_origin;
   Vector_2 m_vector;
   std::vector<KSR::size_t> m_segments_idx;
+  std::vector<KSR::size_t> m_meta_vertices_idx;
 
 public:
 
@@ -61,6 +62,9 @@ public:
 
   const std::vector<KSR::size_t>& segments_idx() const { return m_segments_idx; }
   std::vector<KSR::size_t>& segments_idx() { return m_segments_idx; }
+
+  const std::vector<KSR::size_t>& meta_vertices_idx() const { return m_meta_vertices_idx; }
+  std::vector<KSR::size_t>& meta_vertices_idx() { return m_meta_vertices_idx; }
 
   FT to_1d (const Point_2& point) const
   {

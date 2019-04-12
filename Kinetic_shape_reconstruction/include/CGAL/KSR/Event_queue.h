@@ -60,7 +60,7 @@ public:
   const_iterator begin() const { return m_queue.begin(); }
   const_iterator end() const { return m_queue.end(); }
 
-  void push (Event& ev)
+  void push (const Event& ev)
   {
     m_queue.insert (ev);
   }
@@ -80,35 +80,18 @@ public:
 
   void erase_vertex_events (KSR::size_t vertex_idx, std::vector<Event>& events)
   {
-    iterator it = begin();
-    while (it != end())
+    iterator it = m_queue.begin();
+    while (it != m_queue.end())
     {
       iterator current = it ++;
-      if (current->vertex_idx() == vertex_idx
-          || (current->is_vertex_to_vertex_event() && current->other_vertex_idx() == vertex_idx))
+      if (current->vertex_idx() == vertex_idx)
       {
         events.push_back (*current);
-        CGAL_KSR_CERR_4 << "****   - Erasing " << *current << std::endl;
         m_queue.erase(current);
       }
     }
   }
-
-  void erase_segment_events (KSR::size_t segment_idx, std::vector<Event>& events)
-  {
-    iterator it = begin();
-    while (it != end())
-    {
-      iterator current = it ++;
-      if (!current->is_vertex_to_vertex_event() && current->segment_idx() == segment_idx)
-      {
-        events.push_back (*current);
-        CGAL_KSR_CERR_4 << "****   - Erasing " << *current << std::endl;
-        m_queue.erase(current);
-      }
-    }
-  }
-  
+     
 };
 
 

@@ -1,6 +1,6 @@
 #include <fstream>
 
-#define CGAL_KSR_VERBOSE_LEVEL 4
+#define CGAL_KSR_VERBOSE_LEVEL 0
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/IO/PLY_writer.h>
@@ -190,6 +190,7 @@ int main (int argc, char** argv)
 {
   CGAL::Real_timer t;
   t.start();
+
 #if 0
   stress_test ("01_30_random_lines", 30, 0, 0, 0, 2);
   stress_test ("02_300_random_lines", 300, 0, 0, 0, 2);
@@ -201,9 +202,11 @@ int main (int argc, char** argv)
   stress_test ("06_regular_case", 0, 1, 0, 0, 2);
   stress_test ("07_multi_regular_case", 0, 5, 0, 0, 2);
   stress_test ("08_multi_regular_case_and_random_lines", 30, 5, 0, 0, 2);
+#if 0
   stress_test ("09_big_multi_regular_case_and_random_lines", 100, 30, 0, 0, 4);
+#endif
 
-  stress_test ("10_cross", 0, 0, 1, 2, 2);
+  stress_test ("10_cross", 0, 0, 1, 4, 2);
   stress_test ("11_star", 0, 0, 1, 6, 2);
   stress_test ("12_multiple_stars", 0, 0, 5, 6, 2);
   stress_test ("13_everything", 100, 30, 5, 6, 2);

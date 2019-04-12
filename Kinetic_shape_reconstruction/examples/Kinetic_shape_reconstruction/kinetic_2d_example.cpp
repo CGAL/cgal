@@ -85,12 +85,17 @@ int main (int argc, char** argv)
   reconstruction.partition (segments, CGAL::Identity_property_map<Segment_2>(), k, 2);
 
   segments.clear();
-  
-  reconstruction.output_partition_edges_to_segment_soup (std::back_inserter (segments));
+  reconstruction.output_raw_partition_edges_to_segment_soup (std::back_inserter (segments));
+  std::ofstream raw_output_file ("output_raw.polylines.txt");
+  for (const Segment_2& s : segments)
+    raw_output_file << "2 " << s.source() << " 0 " << s.target() << " 0" << std::endl;
 
+  segments.clear();
+  reconstruction.output_partition_edges_to_segment_soup (std::back_inserter (segments));
   std::ofstream output_file ("output.polylines.txt");
   for (const Segment_2& s : segments)
     output_file << "2 " << s.source() << " 0 " << s.target() << " 0" << std::endl;
+
 
   if (!reconstruction.check_integrity(true))
   {

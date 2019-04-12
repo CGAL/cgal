@@ -55,8 +55,6 @@ public:
   {
   }
 
-  bool is_active() const { return m_meta_vertex_idx != KSR::invalid(); }
-
   const KSR::size_t& segment_idx() const { return m_segment_idx; }
   KSR::size_t& segment_idx() { return m_segment_idx; }
 
@@ -90,7 +88,7 @@ public:
 };
 
 
-}} // namespace CGAL::KSR_3
+}} // namespace CGAL::KSR_2
 
 
-#endif // CGAL_KSR_2_POLYGON_H
+#endif // CGAL_KSR_2_VERTEX_H
