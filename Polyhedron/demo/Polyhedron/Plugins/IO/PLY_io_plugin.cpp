@@ -36,34 +36,6 @@ public:
   bool canSave(const CGAL::Three::Scene_item*);
   bool save(const CGAL::Three::Scene_item*, QFileInfo fileinfo);
 
-private:
-  void set_vcolors(SMesh* smesh, const std::vector<CGAL::Color>& colors)
-  {
-    typedef SMesh SMesh;
-    typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
-    SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
-      smesh->property_map<vertex_descriptor, CGAL::Color >("v:color").first;
-    bool created;
-    boost::tie(vcolors, created) = smesh->add_property_map<SMesh::Vertex_index,CGAL::Color>("v:color",CGAL::Color(0,0,0));
-    assert(colors.size()==smesh->number_of_vertices());
-    int color_id = 0;
-    for(vertex_descriptor vd : vertices(*smesh))
-      vcolors[vd] = colors[color_id++];
-  }
-
-  void set_fcolors(SMesh* smesh, const std::vector<CGAL::Color>& colors)
-  {
-    typedef SMesh SMesh;
-    typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
-    SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
-      smesh->property_map<face_descriptor, CGAL::Color >("f:color").first;
-    bool created;
-    boost::tie(fcolors, created) = smesh->add_property_map<SMesh::Face_index,CGAL::Color>("f:color",CGAL::Color(0,0,0));
-    assert(colors.size()==smesh->number_of_faces());
-    int color_id = 0;
-    for(face_descriptor fd : faces(*smesh))
-      fcolors[fd] = colors[color_id++];
-  }
 };
 
 bool Polyhedron_demo_ply_plugin::canLoad() const {
@@ -116,6 +88,23 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
 
   if (input_is_mesh) // Open mesh or polygon soup
   {
+    // First try mesh
+    SMesh *surface_mesh = new SMesh();
+    std::string comments;
+    
+    if (CGAL::read_ply (in, *surface_mesh, comments))
+    {
+      Scene_surface_mesh_item* sm_item = new Scene_surface_mesh_item(surface_mesh);
+      sm_item->setName(fileinfo.completeBaseName());
+      sm_item->comments() = comments;
+      QApplication::restoreOverrideCursor();
+      return sm_item;
+    }
+
+    in.clear();
+    in.seekg(0);
+
+    // else try polygon soup
     std::vector<Kernel::Point_3> points;
     std::vector<std::vector<std::size_t> > polygons;
     std::vector<CGAL::Color> fcolors;
@@ -127,29 +116,11 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
       return NULL;
     }
 
-    if (CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh (polygons))
-    {
-      SMesh *surface_mesh = new SMesh();
-      CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh (points, polygons,
-                                                                   *surface_mesh);
-      if(!(vcolors.empty()))
-        set_vcolors(surface_mesh, vcolors);
-      if(!(fcolors.empty()))
-        set_fcolors(surface_mesh, fcolors);
-      
-      Scene_surface_mesh_item* sm_item = new Scene_surface_mesh_item(surface_mesh);
-      sm_item->setName(fileinfo.completeBaseName());
-      QApplication::restoreOverrideCursor();
-      return sm_item;
-    }
-    else
-    {
-      Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item;
-      soup_item->setName(fileinfo.completeBaseName());
-      soup_item->load (points, polygons, fcolors, vcolors);
-      QApplication::restoreOverrideCursor();
-      return soup_item;
-    }
+    Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item;
+    soup_item->setName(fileinfo.completeBaseName());
+    soup_item->load (points, polygons, fcolors, vcolors);
+    QApplication::restoreOverrideCursor();
+    return soup_item;
   }
   else // Open point set
   {
@@ -212,10 +183,11 @@ bool Polyhedron_demo_ply_plugin::save(const CGAL::Three::Scene_item* item, QFile
     return CGAL::write_PLY (out, soup_item->points(), soup_item->polygons());
 
   // This plugin supports surface meshes
-  const Scene_surface_mesh_item* sm_item =
-    qobject_cast<const Scene_surface_mesh_item*>(item);
+  Scene_surface_mesh_item* sm_item =
+    const_cast<Scene_surface_mesh_item*>(qobject_cast<const Scene_surface_mesh_item*>(item));
   if (sm_item)
-    return CGAL::write_PLY (out, *(sm_item->polyhedron()));
+    return CGAL::write_ply (out, *(sm_item->polyhedron()), sm_item->comments());
+
   return false;
 }
 
