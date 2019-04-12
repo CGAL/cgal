@@ -34,7 +34,12 @@ int main( )
   Partition_traits_2 traits(CGAL::make_property_map(points));
 
 
-  Polygon_2 polygon{0,1,2,3,4};
+  Polygon_2 polygon;
+  polygon.push_back(0);
+  polygon.push_back(1);
+  polygon.push_back(2);
+  polygon.push_back(3);
+  polygon.push_back(4);
 
   Polygon_list partition_polys;
 
