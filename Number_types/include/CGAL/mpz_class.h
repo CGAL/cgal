@@ -304,6 +304,10 @@ public:
  *  \brief a model of concept ModularTraits, 
  *  specialization of NiX::Modular_traits. 
  */
+ 
+template <typename T>
+class Modular_traits;
+  
 template<>
 class Modular_traits< mpz_class > {
 public:
