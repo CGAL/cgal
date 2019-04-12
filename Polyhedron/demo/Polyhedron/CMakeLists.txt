@@ -373,8 +373,6 @@ add_to_cached_list( CGAL_EXECUTABLE_TARGETS CGAL_Classification )
 #
   if(TARGET CGAL_Qt5)
     export(TARGETS CGAL CGAL_Qt5 CGAL_ImageIO FILE polyhedron_demo_targets.cmake NAMESPACE Polyhedron_)
-  else()
-    export(TARGETS FILE polyhedron_demo_targets.cmake NAMESPACE Polyhedron_)
   endif()
   if(TARGET CGAL_Qt5_moc_and_resources)
     export(
@@ -397,10 +395,6 @@ add_to_cached_list( CGAL_EXECUTABLE_TARGETS CGAL_Classification )
     NAMESPACE Polyhedron_
     APPEND FILE polyhedron_demo_targets.cmake)
 
-  export(
-    TARGETS
-    NAMESPACE Polyhedron_
-    APPEND FILE polyhedron_demo_targets.cmake)
   configure_file(CGAL_polyhedron_demoConfig.cmake.in  CGAL_polyhedron_demoConfig.cmake)
 #TO DO script the activation of all the plugins.
 
