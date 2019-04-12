@@ -939,7 +939,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_d
         else
         {
           SMesh* mesh = polyhedron();
-          fg_halfedge_descriptor h, h_1(h1), h_2(h2);
+          fg_halfedge_descriptor h;
           h = CGAL::Euler::split_face(h1,h2, *mesh);
           d->stack.push(new EulerOperation(//the stack takes ownership of the cmd, so no worries
           [h, mesh](){

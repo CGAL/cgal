@@ -50,14 +50,14 @@ public:
                                                    true));
     setRenderingMode(Gouraud);
   }
-  Scene_item* clone() const{return nullptr;}
-  QString toolTip() const{return QString(); }\
+  Scene_item* clone() const Q_DECL_OVERRIDE {return nullptr;}
+  QString toolTip() const Q_DECL_OVERRIDE{return QString(); }
   void select(double orig_x,
              double orig_y,
              double orig_z,
              double dir_x,
              double dir_y,
-             double dir_z)
+             double dir_z) Q_DECL_OVERRIDE
   {
     parent->select( orig_x, orig_y, orig_z, 
                     dir_x, dir_y, dir_z);
@@ -77,7 +77,7 @@ public:
     normals.shrink_to_fit();
   }
   
-  void draw(CGAL::Three::Viewer_interface *viewer) const
+  void draw(CGAL::Three::Viewer_interface *viewer) const Q_DECL_OVERRIDE
   {
     if(!visible())
       return;
@@ -98,7 +98,7 @@ public:
     getTriangleContainer(0)->setAlpha(1.0f);
     getTriangleContainer(0)->draw(viewer, false);
   }
-  void compute_bbox() const
+  void compute_bbox() const Q_DECL_OVERRIDE
   {
     SMesh::Property_map<vertex_descriptor, Point_3> pprop = sm->points();
     CGAL::Bbox_3 bbox ;
@@ -111,7 +111,7 @@ public:
                  bbox.xmax(),bbox.ymax(),bbox.zmax());
     is_bbox_computed = true;
   }
-  Scene_item::Bbox bbox() const {
+  Scene_item::Bbox bbox() const Q_DECL_OVERRIDE {
     if(!is_bbox_computed)
       compute_bbox();
     is_bbox_computed = true;
@@ -119,8 +119,8 @@ public:
   }
 
   ~Scene_heat_item(){}
-  virtual bool supportsRenderingMode(RenderingMode m) const { return m==Gouraud; }
-  virtual void invalidateOpenGLBuffers()
+  virtual bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE { return m==Gouraud; }
+  virtual void invalidateOpenGLBuffers() Q_DECL_OVERRIDE
   {
     
     setBuffersFilled(false);
@@ -187,7 +187,7 @@ public:
     }
   }
   
-  void computeElements() const
+  void computeElements() const Q_DECL_OVERRIDE
   {
     typedef EPICK::Point_3 Point;
     QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -287,7 +287,7 @@ public:
      QApplication::restoreOverrideCursor();
   }
   
-  bool isEmpty() const {return false;}
+  bool isEmpty() const Q_DECL_OVERRIDE {return false;}
   SMesh *face_graph() { return sm;}
   Scene_surface_mesh_item* getParent() { return parent; }
 

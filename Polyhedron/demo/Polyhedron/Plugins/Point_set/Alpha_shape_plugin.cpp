@@ -99,8 +99,6 @@ public Q_SLOTS:
 private:
   mutable std::vector<float> vertices;
   mutable std::vector<unsigned int> indices;
-  mutable QOpenGLShaderProgram *program;
-  mutable QOpenGLShaderProgram facet_program;
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const Q_DECL_OVERRIDE;
   Point_set point_set;
 }; //end of class Scene_alpha_shape_item

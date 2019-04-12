@@ -273,7 +273,6 @@ private:
   double tick;
   double R;
   bool ctrl_pressing;
-  mutable QOpenGLShaderProgram *program;
   Scene_item::ManipulatedFrame* frame;
 }; //end of class Scene_arrow_item
 

@@ -25,13 +25,13 @@ public:
   Scene_lcc_item(const LCC &lcc);
   ~Scene_lcc_item();
   
-  bool isEmpty()const;
-  bool isFinite() const { return true; }
+  bool isEmpty()const Q_DECL_OVERRIDE;
+  bool isFinite() const Q_DECL_OVERRIDE { return true; }
   
   Scene_lcc_item* clone() const Q_DECL_OVERRIDE ;
   bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE ;
   QString toolTip() const Q_DECL_OVERRIDE ;
-  void compute_bbox()const;
+  void compute_bbox()const Q_DECL_OVERRIDE;
   
   
   void draw(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE ;

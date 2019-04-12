@@ -619,7 +619,6 @@ private:
   mutable int m_grid_size;
   mutable bool m_fast_distance;
   mutable Point_distance m_distance_function[100][100];
-  mutable GLuint textureId;
   mutable ::Texture *texture;
   // An aabb_tree indexing surface_mesh facets/segments
   mutable Color_ramp m_red_ramp;

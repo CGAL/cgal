@@ -113,7 +113,6 @@ public:
 private:
   Face_graph* poly;
   Face_graph* poly_B;
-  mutable bool are_buffers_filled;
   QString other_poly;
   mutable std::vector<float> m_vertices;
   mutable std::vector<float> edge_vertices;

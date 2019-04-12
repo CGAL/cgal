@@ -128,7 +128,7 @@ public:
     void copyProperties(Scene_item *) Q_DECL_OVERRIDE;
     float getShrinkFactor() const;
     bool keyPressEvent(QKeyEvent *) Q_DECL_OVERRIDE;
-    bool eventFilter(QObject *, QEvent *);
+    bool eventFilter(QObject *, QEvent *) Q_DECL_OVERRIDE;
   public Q_SLOTS:
 
   void on_spheres_color_changed();
