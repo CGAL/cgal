@@ -230,11 +230,13 @@ private:
                                         get(uvmap, target(hd_1, mesh))),
                               Segment_2(get(uvmap, source(hd_2, mesh)),
                                         get(uvmap, target(hd_2, mesh))))) {
+#ifdef CGAL_SMP_ARAP_DEBUG
           std::ofstream out("non-simple.txt"); // polygon lines
           out << "2 " << get(uvmap, source(hd_1, mesh)) << " 0 "
                       << get(uvmap, target(hd_1, mesh)) << " 0" << std::endl;
           out << "2 " << get(uvmap, source(hd_2, mesh)) << " 0 "
                       << get(uvmap, target(hd_2, mesh)) << " 0" << std::endl;
+#endif
           return false;
         }
       }
@@ -307,8 +309,10 @@ private:
       ct.insert_constraint(sp, tp);
     }
 
+#ifdef CGAL_SMP_ARAP_DEBUG
     std::ofstream out("constrained_triangulation.cgal");
     out << ct;
+#endif
 
     return OK;
   }
@@ -348,8 +352,10 @@ private:
       }
     } while(++fc != done);
 
+#ifdef CGAL_SMP_ARAP_DEBUG
     // Output the exterior faces of the constrained triangulation
     output_ct_exterior_faces(ct);
+#endif
 
     return OK;
   }
