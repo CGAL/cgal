@@ -31,7 +31,6 @@
 
 namespace CGAL{
   
-using ::get;
 
 template<class Base_traits,class PointPropertyMap>
 class Convex_hull_traits_adapter_2:public Base_traits{
