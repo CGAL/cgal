@@ -370,7 +370,8 @@ public:
 
    template <class InputIterator>
    Partition_vertex_map(InputIterator first_poly, InputIterator last_poly, const Traits& traits)
-     : m_map(traits), traits(traits)
+     : traits(traits)
+     , m_map(traits)
    {  _build(first_poly, last_poly); }
   
    Self_const_iterator begin() const { return m_map.begin() ; }
