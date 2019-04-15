@@ -20,9 +20,17 @@ endif()
 find_package( CGAL QUIET)
 if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
-  include( CGAL_CreateSingleSourceCGALProgram )
-  
-    include_directories (BEFORE "../../include")
+
+  find_package( Boost REQUIRED )
+
+  if ( NOT Boost_FOUND )
+
+    message(STATUS "This project requires the Boost library, and will not be compiled.")
+
+    return()  
+
+  endif()
+
     create_single_source_cgal_program( "Point_WKT.cpp" )
     create_single_source_cgal_program( "Polygon_WKT.cpp" )
     create_single_source_cgal_program( "Linestring_WKT.cpp" )
