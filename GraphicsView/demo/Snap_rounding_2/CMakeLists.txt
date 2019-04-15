@@ -16,7 +16,6 @@ endif()
 find_package(CGAL COMPONENTS Qt5)
 
 find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
-include_directories (BEFORE ../../../Snap_rounding_2/include)
 
 
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
