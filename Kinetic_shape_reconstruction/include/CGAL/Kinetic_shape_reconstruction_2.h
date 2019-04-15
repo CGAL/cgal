@@ -239,7 +239,8 @@ public:
           std::cerr << "ERROR: Segment[" << i
                     << "] joins Vertex[" << segment.source_idx()
                     << "] to Vertex[" << segment.target_idx()
-                    << "] which represent the same point" << std::endl;
+                    << "] which represent the same point "
+                    << m_data.point_of_vertex(m_data.source_of_segment(segment)) << std::endl;
         return false;
       }
       if (m_data.source_of_segment(segment).point(m_data.current_time())
@@ -839,7 +840,10 @@ private:
 
     //  -> special case for parallel lines, if deadend is reached, we don't propagate
     if (m_data.is_meta_vertex_deadend_of_vertex (ev.meta_vertex_idx(), ev.vertex_idx()))
+    {
+      CGAL_KSR_CERR_3 << "*** Deadend reached" << std::endl;
       m_data.vertex(ev.vertex_idx()).remaining_intersections() = 0;
+    }
 
     //  -> if the number of K intersections is reached, we don't propagate
     if (is_meta_vertex_active && m_data.vertex(ev.vertex_idx()).remaining_intersections() != 0)
@@ -877,7 +881,10 @@ private:
     else
       for (Event& ev : events)
         if (m_data.is_meta_vertex_deadend_of_vertex (ev.meta_vertex_idx(), ev.vertex_idx()))
+        {
+          CGAL_KSR_CERR_3 << "*** Remove deadend" << std::endl;
           m_data.make_meta_vertex_no_longer_deadend_of_vertex (ev.meta_vertex_idx(), ev.vertex_idx());
+        }
   }
 
   void get_meta_edges (std::vector<std::pair<KSR::size_t, KSR::size_t> >& meta_edges) const

@@ -22,6 +22,11 @@
 #define CGAL_KSR_UTILS_H
 
 #include <sstream>
+#include <cmath>
+
+// Line discretization
+#define CGAL_KSR_SAME_VECTOR_TOLERANCE 0.99999
+#define CGAL_KSR_SAME_POINT_TOLERANCE 1e-10
 
 #define CGAL_KSR_ASSERT_POINTS_ALMOST_EQUAL(a,b) \
   CGAL_assertion_msg (CGAL::approximate_sqrt(CGAL::squared_distance((a), (b))) < 1e-15, \

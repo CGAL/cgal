@@ -239,7 +239,7 @@ void stress_test (std::string test_name,
   else
     std::cerr << " -> skipping exact test to avoid overly long running time (too many segments)" << std::endl;
 
-#if 0
+#if 1
   test_segments<Epick> (test_name, exact_segments, k);
 #endif
 }
@@ -250,10 +250,10 @@ int main (int argc, char** argv)
   CGAL::Real_timer t;
   t.start();
 
-#if 0
   stress_test ("01_30_random_lines", 30, 0, 0, 0, 2);
   stress_test ("02_300_random_lines", 300, 0, 0, 0, 2);
   stress_test ("03_300_random_lines_k_10", 300, 0, 0, 0, 10);
+#if 0
   stress_test ("04_3000_random_lines", 3000, 0, 0, 0, 2);
   stress_test ("05_3000_random_lines_k_3", 3000, 0, 0, 0, 3);
 #endif
@@ -261,16 +261,16 @@ int main (int argc, char** argv)
   stress_test ("06_regular_case", 0, 1, 0, 0, 2);
   stress_test ("07_multi_regular_case", 0, 5, 0, 0, 2);
   stress_test ("08_multi_regular_case_and_random_lines", 30, 5, 0, 0, 2);
-#if 1
   stress_test ("09_big_multi_regular_case_and_random_lines", 100, 30, 0, 0, 4);
-#endif
 
   stress_test ("10_cross", 0, 0, 1, 4, 2);
   stress_test ("11_star", 0, 0, 1, 6, 2);
   stress_test ("12_multiple_stars", 0, 0, 5, 12, 2);
   stress_test ("13_stars_and_regular", 0, 5, 5, 12, 3);
   stress_test ("14_everything", 100, 30, 5, 12, 2);
+#if 0
   stress_test ("15_mayhem", 3000, 100, 10, 20, 4);
+#endif
 
   t.stop();
 

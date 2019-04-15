@@ -408,7 +408,7 @@ public:
     Support_line new_support_line (segment);
     KSR::size_t support_line_idx = KSR::no_element();
     for (std::size_t i = 0; i < m_support_lines.size(); ++ i)
-      if (new_support_line.line() == m_support_lines[i].line())
+      if (new_support_line == m_support_lines[i])
       {
         support_line_idx = i;
         break;
@@ -432,19 +432,27 @@ public:
     m_vertices.push_back (Vertex (m_support_lines[support_line_idx].to_1d (segment.target()),
                                   segment_idx, m_support_lines.size() - 1));
 
+    // Keep segment ordered
+    if (m_vertices[source_idx].point(0) > m_vertices[target_idx].point(0))
+      std::swap (source_idx, target_idx);
+    
     m_segments[segment_idx].source_idx() = source_idx;
     m_segments[segment_idx].target_idx() = target_idx;
     return m_segments.back();
   }
 
-  KSR::size_t add_meta_vertex (const Point_2& p,
+  KSR::size_t add_meta_vertex (const Point_2& point,
                                KSR::size_t support_line_idx_0,
                                KSR::size_t support_line_idx_1 = KSR::no_element())
   {
+    // Avoid several points almost equal
+    Point_2 p (CGAL_KSR_SAME_POINT_TOLERANCE * std::floor(CGAL::to_double(point.x()) / CGAL_KSR_SAME_POINT_TOLERANCE),
+               CGAL_KSR_SAME_POINT_TOLERANCE * std::floor(CGAL::to_double(point.y()) / CGAL_KSR_SAME_POINT_TOLERANCE));
+      
     CGAL_KSR_CERR_3 << "** Adding meta vertex between "
                     << support_line_idx_0 << " and " << support_line_idx_1
                     << " at point " << p << std::endl;
-      
+
     typename std::map<Point_2, KSR::size_t>::iterator iter;
     bool inserted = false;
     std::tie (iter, inserted) = m_meta_map.insert (std::make_pair (p, KSR::size_t(m_meta_vertices.size())));

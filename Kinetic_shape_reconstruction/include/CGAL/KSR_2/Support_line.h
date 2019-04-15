@@ -60,6 +60,9 @@ public:
 
   Line_2 line() const { return Line_2 (m_origin, m_vector); }
 
+  const Point_2& origin() const { return m_origin; }
+  const Vector_2& vector() const { return m_vector; }
+
   const std::vector<KSR::size_t>& segments_idx() const { return m_segments_idx; }
   std::vector<KSR::size_t>& segments_idx() { return m_segments_idx; }
 
@@ -72,8 +75,31 @@ public:
   }
   
   Point_2 to_2d (const FT& point) const { return m_origin + point * m_vector; }
+
 };
 
+template <typename Kernel>
+bool operator== (const Support_line<Kernel>& a, const Support_line<Kernel>& b)
+{
+  const typename Kernel::Vector_2& va = a.vector();
+  const typename Kernel::Vector_2& vb = b.vector();
+
+  if (CGAL::abs(va * vb) < CGAL_KSR_SAME_VECTOR_TOLERANCE)
+    return false;
+
+  return (CGAL::approximate_sqrt(CGAL::squared_distance (b.origin(), a.line())) < CGAL_KSR_SAME_POINT_TOLERANCE);
+}
+
+
+#if 0
+template <>
+bool operator==<CGAL::Exact_predicates_exact_constructions_kernel>
+(const Support_line<CGAL::Exact_predicates_exact_constructions_kernel>& a,
+ const Support_line<CGAL::Exact_predicates_exact_constructions_kernel>& b)
+{
+  return (a.line() == b.line());
+}
+#endif
 
 }} // namespace CGAL::KSR_2
 
