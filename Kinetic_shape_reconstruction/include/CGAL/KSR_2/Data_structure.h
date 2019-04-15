@@ -418,6 +418,36 @@ public:
     {
       support_line_idx = m_support_lines.size();
       m_support_lines.push_back (new_support_line);
+
+      if (input_idx == KSR::no_element())
+      {
+        m_support_lines.back().minimum() = m_support_lines.back().to_1d (segment.source());
+        m_support_lines.back().maximum() = m_support_lines.back().to_1d (segment.target());
+      }
+      else
+      {
+        FT max_negative = -std::numeric_limits<FT>::max();
+        FT min_positive = std::numeric_limits<FT>::max();
+
+        for (std::size_t i = 0; i < 4; ++ i)
+        {
+          Point_2 point;
+          if (!KSR::intersection_2 (m_support_lines[i].line(), m_support_lines.back().line(), point))
+            continue;
+
+          FT position = m_support_lines.back().to_1d (point);
+          if (position < 0 && position > max_negative)
+            max_negative = position;
+          if (position > 0 && position < min_positive)
+            min_positive = position;
+        }
+
+        CGAL_assertion (max_negative != -std::numeric_limits<FT>::max()
+                        && min_positive != -std::numeric_limits<FT>::min());
+
+        m_support_lines.back().minimum() = max_negative;
+        m_support_lines.back().maximum() = min_positive;
+      }
     }
 
     

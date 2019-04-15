@@ -656,9 +656,15 @@ private:
 
     bool still_running = false;
 
+    std::vector<CGAL::Bbox_2> bboxes;
+    bboxes.reserve (m_data.number_of_support_lines());
+    for (std::size_t j = 0; j < m_data.number_of_support_lines(); ++ j)
+      bboxes.push_back (m_data.support_line(j).bbox());
+
     // First, create all new meta vertices at line-line intersections
     // that happened between min_time and max_time
     std::vector<KSR::size_t> new_meta_vertices;
+
     for (std::size_t i = 0; i < m_data.number_of_vertices(); ++ i)
     {
       const Vertex& vertex = m_data.vertex(i);
@@ -678,11 +684,21 @@ private:
         if (m_data.segment_of_vertex(vertex).support_line_idx() == j)
           continue;
 
+        if (j > 3 && !CGAL::do_overlap (si_bbox, bboxes[j]))
+          continue;
+
+        // if (!CGAL::do_overlap (si_bbox, bboxes[j]))
+        //   continue;
+
         Point_2 point;
-        if (KSR::intersection_2 (si, m_data.support_line(j).line(), point)
-            && !m_data.are_support_lines_connected (m_data.segment_of_vertex(vertex).support_line_idx(), j))
-          new_meta_vertices.push_back (m_data.add_meta_vertex
-                                       (point, m_data.segment_of_vertex(vertex).support_line_idx(), j));
+        Line_2 line = m_data.support_line(j).line();
+        if (line.oriented_side (si.source()) != line.oriented_side (si.target()))
+        {
+          if (KSR::intersection_2 (si, line, point)
+              && !m_data.are_support_lines_connected (m_data.segment_of_vertex(vertex).support_line_idx(), j))
+            new_meta_vertices.push_back (m_data.add_meta_vertex
+                                         (point, m_data.segment_of_vertex(vertex).support_line_idx(), j));
+        }
       }
     }
 

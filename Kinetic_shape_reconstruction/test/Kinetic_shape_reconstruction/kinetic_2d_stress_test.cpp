@@ -1,9 +1,13 @@
 #include <fstream>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 typedef CGAL::Exact_predicates_exact_constructions_kernel Epeck;
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epick;
+
+// #include <CGAL/Simple_cartesian.h>
+// typedef CGAL::Simple_cartesian<double> Epick;
 
 #include <CGAL/Cartesian_converter.h>
 typedef CGAL::Cartesian_converter<Epeck, Epick> Epeck_to_epick;
@@ -16,6 +20,9 @@ typedef CGAL::Cartesian_converter<Epeck, Epick> Epeck_to_epick;
 #include <CGAL/Random.h>
 #include <CGAL/Aff_transformation_2.h>
 #include <CGAL/Real_timer.h>
+
+//#define TEST_EPECK
+//#define OUTPUT_FILES
 
 
 typedef Epeck::FT FT;
@@ -140,11 +147,13 @@ void test_segments (std::string test_name, const std::vector<Segment_2>& exact_s
   segments.clear();
   reconstruction.output_partition_edges_to_segment_soup (std::back_inserter (segments));
 
+#ifdef OUTPUT_FILES
   std::ofstream output_file (test_name +
                              (std::is_same<Kernel, Epeck>::value ? "_exact" : "_inexact") +
                              "_output.polylines.txt");
   for (const typename Kernel::Segment_2& s : segments)
     output_file << "2 " << s.source() << " 0 " << s.target() << " 0" << std::endl;
+#endif
 
   if (!reconstruction.check_integrity(true))
   {
@@ -156,6 +165,7 @@ void test_segments (std::string test_name, const std::vector<Segment_2>& exact_s
 
   if (reconstruction.output_partition_cells_to_face_graph(mesh))
   {
+#ifdef OUTPUT_FILES
     std::ofstream output_shapes_file (test_name +
                                       (std::is_same<Kernel, Epeck>::value ? "_exact" : "_inexact") +
                                       "_faces.ply");
@@ -182,6 +192,7 @@ void test_segments (std::string test_name, const std::vector<Segment_2>& exact_s
                          << " " << cgal_rand.get_int(64,192)
                          << " " << cgal_rand.get_int(64,192) << std::endl;
     }
+#endif
   }
   else
     std::cerr << "Invalid face graph" << std::endl;
@@ -230,14 +241,18 @@ void stress_test (std::string test_name,
     exact_segments.push_back (Segment_2(source, target));
   }
 
+#ifdef OUTPUT_FILES
   std::ofstream input_file (test_name + "_input.polylines.txt");
   for (const Segment_2& s : exact_segments)
     input_file << "2 " << s.source() << " 0 " << s.target() << " 0" << std::endl;
+#endif
 
+#ifdef TEST_EPECK
   if (exact_segments.size() < 500)
     test_segments<Epeck> (test_name, exact_segments, k);
   else
     std::cerr << " -> skipping exact test to avoid overly long running time (too many segments)" << std::endl;
+#endif
 
 #if 1
   test_segments<Epick> (test_name, exact_segments, k);
