@@ -79,6 +79,11 @@ public:
     return pmin.bbox() + pmax.bbox();
   }
 
+  Segment_2 segment_2() const
+  {
+    return Segment_2 (to_2d (m_minimum), to_2d (m_maximum));
+  }
+
   const std::vector<KSR::size_t>& segments_idx() const { return m_segments_idx; }
   std::vector<KSR::size_t>& segments_idx() { return m_segments_idx; }
 

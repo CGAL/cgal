@@ -43,8 +43,8 @@ include( CGAL_CreateSingleSourceCGALProgram )
 set(project_linked_libraries)
 set(project_compilation_definitions)
 
-# Use C++11
-set(CMAKE_CXX_STANDARD 11)
+# Use C++14
+set(CMAKE_CXX_STANDARD 14)
 
 # Creating targets with correct libraries and flags
 foreach(target ${targets})

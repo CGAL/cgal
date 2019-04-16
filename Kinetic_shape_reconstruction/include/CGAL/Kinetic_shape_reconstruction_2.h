@@ -90,16 +90,21 @@ public:
       ++ segment_idx;
     }
 
+    FT time_step = CGAL::approximate_sqrt(CGAL::squared_distance(Point_2 (bbox.xmin(), bbox.ymin()),
+                                                                 Point_2 (bbox.xmax(), bbox.ymax())));
+    
+    time_step /= 1000;
+    
+    m_data.initialize_search_structure (time_step);
+    
     CGAL_KSR_CERR_1 << "Making input segments intersection free" << std::endl;
     make_segments_intersection_free();
 
     CGAL_assertion(check_integrity(true));
 
-    FT time_step = CGAL::approximate_sqrt(CGAL::squared_distance(Point_2 (bbox.xmin(), bbox.ymin()),
-                                                                 Point_2 (bbox.xmax(), bbox.ymax())));
-    time_step /= 50;
 
 //    m_data.print();
+
     
     FT min_time = 0;
     while (initialize_queue(min_time, min_time + time_step))
@@ -590,36 +595,39 @@ private:
   {
     std::vector<std::tuple<Point_2, KSR::size_t, KSR::size_t> > todo;
 
+    std::vector<std::pair<KSR::size_t, Point_2> > intersected_lines;
+    
     std::size_t nb_inter = 0;
     for (std::size_t i = 4; i < m_data.number_of_segments() - 1; ++ i)
     {
       Segment_2 si_2 = m_data.segment_2(i);
 
-      for (std::size_t j = i+1; j < m_data.number_of_segments(); ++ j)
+      intersected_lines.clear();
+      m_data.compute_intersected_lines (si_2, intersected_lines);
+      
+      for (std::pair<KSR::size_t, Point_2> inter : intersected_lines)
       {
-        Segment_2 sj_2 = m_data.segment_2(j);
-
-        if (!CGAL::do_overlap (si_2.bbox(), sj_2.bbox()))
+        if (inter.first == m_data.segment(i).support_line_idx())
           continue;
 
-        Point_2 point;
-        if (!KSR::intersection_2 (si_2, sj_2, point))
-          continue;
-
-        if (m_data.are_support_lines_connected (m_data.segment(i).support_line_idx(),
-                                                m_data.segment(j).support_line_idx()))
+        for (KSR::size_t segment_idx : m_data.support_line(inter.first).segments_idx())
         {
-          std::cerr << "Support lines " << m_data.segment(i).support_line_idx()
-                    << " and " << m_data.segment(j).support_line_idx() << " already connected" << std::endl;
-          exit(0);
-          continue;
-        }
+          Segment_2 sj_2 = m_data.segment_2(segment_idx);
 
-        todo.push_back (std::make_tuple (point,
-                                         m_data.segment(i).support_line_idx(),
-                                         m_data.segment(j).support_line_idx()));
+          if (!CGAL::do_overlap (si_2.bbox(), sj_2.bbox()))
+            continue;
+
+          Point_2 point;
+          if (!KSR::intersection_2 (si_2, sj_2, point))
+            continue;
+
+          todo.push_back (std::make_tuple (point, 
+                                           m_data.segment(i).support_line_idx(),
+                                           inter.first));
         
-        ++ nb_inter;
+          ++ nb_inter;
+          break;
+        }
       }
     }
 
@@ -665,6 +673,7 @@ private:
     // that happened between min_time and max_time
     std::vector<KSR::size_t> new_meta_vertices;
 
+    std::vector<std::pair<KSR::size_t, Point_2> > intersected_lines;
     for (std::size_t i = 0; i < m_data.number_of_vertices(); ++ i)
     {
       const Vertex& vertex = m_data.vertex(i);
@@ -677,28 +686,24 @@ private:
 
       Segment_2 si (m_data.support_line_of_vertex(vertex).to_2d(vertex.point(min_time)),
                     m_data.point_of_vertex(vertex));
-      CGAL::Bbox_2 si_bbox = si.bbox();
 
-      for (std::size_t j = 0; j < m_data.number_of_support_lines(); ++ j)
+      intersected_lines.clear();
+
+      m_data.compute_intersected_lines (si, intersected_lines);
+
+      for (std::pair<KSR::size_t, Point_2> inter : intersected_lines)
       {
-        if (m_data.segment_of_vertex(vertex).support_line_idx() == j)
+        if (inter.first == m_data.segment_of_vertex(vertex).support_line_idx())
           continue;
-
-        if (j > 3 && !CGAL::do_overlap (si_bbox, bboxes[j]))
+        
+        if (m_data.are_support_lines_connected (m_data.segment_of_vertex(vertex).support_line_idx(),
+                                                inter.first))
           continue;
-
-        // if (!CGAL::do_overlap (si_bbox, bboxes[j]))
-        //   continue;
-
-        Point_2 point;
-        Line_2 line = m_data.support_line(j).line();
-        if (line.oriented_side (si.source()) != line.oriented_side (si.target()))
-        {
-          if (KSR::intersection_2 (si, line, point)
-              && !m_data.are_support_lines_connected (m_data.segment_of_vertex(vertex).support_line_idx(), j))
-            new_meta_vertices.push_back (m_data.add_meta_vertex
-                                         (point, m_data.segment_of_vertex(vertex).support_line_idx(), j));
-        }
+        
+        new_meta_vertices.push_back (m_data.add_meta_vertex
+                                     (inter.second,
+                                      m_data.segment_of_vertex(vertex).support_line_idx(),
+                                      inter.first));
       }
     }
 
