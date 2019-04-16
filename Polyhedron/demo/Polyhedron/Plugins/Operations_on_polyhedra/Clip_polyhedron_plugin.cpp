@@ -106,7 +106,7 @@ public :
       connect(actionClipPolyhedra , SIGNAL(triggered()),
               this, SLOT(pop_widget()));
       connect(ui_widget.clipButton, SIGNAL(clicked()),
-              this, SLOT(clip_polyhedron()));
+              this, SLOT(clip_with_plane()));
     }
   }
   bool applicable(QAction*) const
@@ -196,7 +196,7 @@ public Q_SLOTS:
     }
   }
 
-  void clip_polyhedron()
+  void clip_with_plane()
   {
     if(!plane)
       return;
@@ -229,7 +229,9 @@ public Q_SLOTS:
                                                   plane->plane(),
                                                   CGAL::Polygon_mesh_processing::parameters::clip_volume(
                                                     ui_widget.close_checkBox->isChecked()).
-                                                  throw_on_self_intersection(true));
+                                                  throw_on_self_intersection(true).
+                                                  use_compact_clipper(
+                                                    !ui_widget.coplanarCheckBox->isChecked()));
             }
           }
           catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
@@ -250,6 +252,76 @@ public Q_SLOTS:
       }
       viewer->update();
     }
+    QApplication::restoreOverrideCursor();
+  }
+  
+  
+  void clip_with_poly()
+  {
+    Scene_surface_mesh_item* clipper_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+    if(!clipper_item)
+      return;
+    
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    CGAL::QGLViewer* viewer = Three::mainViewer();
+    QList<Scene_item*> polyhedra;
+    
+    //Fills the list of target polyhedra and the cutting plane
+    Q_FOREACH(int id, scene->selectionIndices())
+    {
+      Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(id));
+      if(sm_item && CGAL::is_triangle_mesh(*sm_item->polyhedron()))
+      {
+        polyhedra << sm_item;
+      }
+    }
+    //apply the clipping function
+    if(!CGAL::Polygon_mesh_processing::does_self_intersect(*clipper_item->polyhedron())
+       || ! CGAL::Polygon_mesh_processing::does_bound_a_volume(*clipper_item->polyhedron()))
+    {
+      CGAL::Three::Three::warning(tr("The clipper must not self intersect, and it must bound a volume."));
+      return;
+    }
+    Q_FOREACH(Scene_item* item, polyhedra)
+    {
+      Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item*>(item);
+      
+      if (ui_widget.clip_radioButton->isChecked())
+      {
+        if(CGAL::Polygon_mesh_processing::does_self_intersect(*sm_item->face_graph()))
+        {
+          CGAL::Three::Three::warning(tr("%1 has not been clipped because it has self intersections.").arg(sm_item->name()));
+          continue;
+        }
+        try{
+          if(sm_item)
+          {
+            CGAL::Polygon_mesh_processing::clip(*(sm_item->face_graph()),
+                                                *clipper_item->polyhedron(),
+                                                CGAL::Polygon_mesh_processing::parameters::clip_volume(
+                                                  ui_widget.close_checkBox->isChecked()).
+                                                throw_on_self_intersection(true).
+                                                use_compact_clipper(
+                                                  !ui_widget.coplanarCheckBox->isChecked()));
+          }
+        }
+        catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
+        {
+          CGAL::Three::Three::warning(tr("The requested operation is not possible due to the presence of self-intersections in the region handled."));
+        }
+        item->invalidateOpenGLBuffers();
+        viewer->update();
+      }
+      else
+      {
+        //part on the negative side
+        if(sm_item)
+        {
+          apply<SMesh>(sm_item);
+        }
+      }
+    }
+    viewer->update();
     QApplication::restoreOverrideCursor();
   }
 private:
