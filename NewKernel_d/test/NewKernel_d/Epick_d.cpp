@@ -437,6 +437,7 @@ void test2i(){
   assert(!ed(psp0,psp1));
   assert(!ed(psp0,psp2));
   assert(!ed(psp2,psp1));
+  using std::abs;
   assert(abs(sd(cent0,psp0)-25)<.0001);
   assert(abs(sd(cent0,psp1)-25)<.0001);
   assert(abs(sd(cent0,psp2)-25)<.0001);
