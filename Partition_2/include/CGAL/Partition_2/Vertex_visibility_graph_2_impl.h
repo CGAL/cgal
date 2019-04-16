@@ -548,6 +548,7 @@ void Vertex_visibility_graph_2<Traits>::update_visibility(
         }
       }else if(pqa == pqb){
         // no intersection as the segment is completely to the left or to the right of the ray
+        change = true;
       }else if((abp == COLLINEAR) || (abq == COLLINEAR) ){
         // do nothing because when a ray point lies on the segment collinear_ordered_2 will be false
       } else if (abp != abq){
