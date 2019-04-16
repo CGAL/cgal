@@ -22,7 +22,7 @@ typedef CGAL::Cartesian_converter<Epeck, Epick> Epeck_to_epick;
 #include <CGAL/Real_timer.h>
 
 //#define TEST_EPECK
-//#define OUTPUT_FILES
+#define OUTPUT_FILES
 
 
 typedef Epeck::FT FT;
@@ -268,7 +268,7 @@ int main (int argc, char** argv)
   stress_test ("01_30_random_lines", 30, 0, 0, 0, 2);
   stress_test ("02_300_random_lines", 300, 0, 0, 0, 2);
   stress_test ("03_300_random_lines_k_10", 300, 0, 0, 0, 10);
-#if 0
+#if 1
   stress_test ("04_3000_random_lines", 3000, 0, 0, 0, 2);
   stress_test ("05_3000_random_lines_k_3", 3000, 0, 0, 0, 3);
 #endif
@@ -283,7 +283,7 @@ int main (int argc, char** argv)
   stress_test ("12_multiple_stars", 0, 0, 5, 12, 2);
   stress_test ("13_stars_and_regular", 0, 5, 5, 12, 3);
   stress_test ("14_everything", 100, 30, 5, 12, 2);
-#if 0
+#if 1
   stress_test ("15_mayhem", 3000, 100, 10, 20, 4);
 #endif
 

@@ -93,7 +93,7 @@ public:
     FT time_step = CGAL::approximate_sqrt(CGAL::squared_distance(Point_2 (bbox.xmin(), bbox.ymin()),
                                                                  Point_2 (bbox.xmax(), bbox.ymax())));
     
-    time_step /= 1000;
+    time_step /= 50;
     
     m_data.initialize_search_structure (time_step);
     
@@ -664,15 +664,12 @@ private:
 
     bool still_running = false;
 
-    std::vector<CGAL::Bbox_2> bboxes;
-    bboxes.reserve (m_data.number_of_support_lines());
-    for (std::size_t j = 0; j < m_data.number_of_support_lines(); ++ j)
-      bboxes.push_back (m_data.support_line(j).bbox());
-
     // First, create all new meta vertices at line-line intersections
     // that happened between min_time and max_time
     std::vector<KSR::size_t> new_meta_vertices;
 
+//#define USE_AABB_TREE
+#ifdef USE_AABB_TREE
     std::vector<std::pair<KSR::size_t, Point_2> > intersected_lines;
     for (std::size_t i = 0; i < m_data.number_of_vertices(); ++ i)
     {
@@ -699,13 +696,87 @@ private:
         if (m_data.are_support_lines_connected (m_data.segment_of_vertex(vertex).support_line_idx(),
                                                 inter.first))
           continue;
-        
+
         new_meta_vertices.push_back (m_data.add_meta_vertex
                                      (inter.second,
                                       m_data.segment_of_vertex(vertex).support_line_idx(),
                                       inter.first));
       }
     }
+#else
+   // Precompute segments and bboxes
+    std::vector<Segment_2> segments_2;
+    segments_2.reserve (m_data.number_of_segments());
+    std::vector<CGAL::Bbox_2> segment_bboxes;
+    segment_bboxes.reserve (m_data.number_of_segments());
+    for (std::size_t i = 0; i < m_data.number_of_segments(); ++ i)
+    {
+      segments_2.push_back (m_data.segment_2(i));
+      segment_bboxes.push_back (segments_2.back().bbox());
+    }
+    std::vector<CGAL::Bbox_2> support_line_bboxes;
+    support_line_bboxes.reserve (m_data.number_of_support_lines());
+    for (std::size_t i = 0; i < m_data.number_of_support_lines(); ++ i)
+      support_line_bboxes.push_back
+        (std::accumulate (m_data.support_line(i).segments_idx().begin(),
+                          m_data.support_line(i).segments_idx().end(),
+                          CGAL::Bbox_2(),
+                          [&](const CGAL::Bbox_2& b, const KSR::size_t& segment_idx) -> CGAL::Bbox_2
+                          {
+                            return b + segment_bboxes[segment_idx];
+                          }));
+      
+    
+    for (std::size_t i = 0; i < m_data.number_of_vertices(); ++ i)
+    {
+      const Vertex& vertex = m_data.vertex(i);
+      if (vertex.is_frozen())
+        continue;
+      
+      still_running = true;
+
+      Segment_2 si (m_data.support_line_of_vertex(vertex).to_2d(vertex.point(min_time)),
+                    m_data.point_of_vertex(vertex));
+      CGAL::Bbox_2 si_bbox = si.bbox();
+
+      for (std::size_t j = 0; j < m_data.number_of_support_lines(); ++ j)
+      {
+        if (m_data.segment_of_vertex(vertex).support_line_idx() == j)
+          continue;
+
+        if (m_data.are_support_lines_connected (m_data.segment_of_vertex(vertex).support_line_idx(),
+                                                j))
+          continue;
+        
+        const Support_line& support_line = m_data.support_line(j);
+
+        if (!CGAL::do_overlap(si_bbox, support_line_bboxes[j]))
+          continue;
+
+        for (KSR::size_t segment_idx : support_line.segments_idx())
+        {
+          if (!CGAL::do_overlap(si_bbox, segment_bboxes[segment_idx]))
+            continue;
+          
+          Point_2 point;
+          if (!KSR::intersection_2 (si, segments_2[segment_idx], point))
+            continue;
+
+          Support_line& sli = m_data.support_line_of_vertex(vertex);
+          FT dist = CGAL::approximate_sqrt (CGAL::squared_distance (sli.to_2d(vertex.point(0)), point));
+          FT time = dist / vertex.speed();
+
+          if (time > min_time)
+          {
+            new_meta_vertices.push_back (m_data.add_meta_vertex
+                                         (point, j,
+                                          m_data.segment_of_vertex(vertex).support_line_idx()));
+            break;
+          }
+        }
+      }
+    }
+#endif
 
     // Make sure structure stays correct
     m_data.update_positions(min_time);
@@ -717,7 +788,9 @@ private:
         for (KSR::size_t segment_idx : m_data.support_line(support_line_idx).segments_idx())
         {
           if (m_data.source_of_segment(segment_idx).point(min_time) < position
-              && position < m_data.target_of_segment(segment_idx).point(min_time))
+              && position < m_data.target_of_segment(segment_idx).point(min_time)
+              && !(m_data.source_of_segment(segment_idx).meta_vertex_idx() == meta_vertex_idx
+                   || m_data.target_of_segment(segment_idx).meta_vertex_idx() == meta_vertex_idx))
           {
             m_data.cut_segment (segment_idx, meta_vertex_idx);
             break;

@@ -485,10 +485,6 @@ public:
     Point_2 p (CGAL_KSR_SAME_POINT_TOLERANCE * std::floor(CGAL::to_double(point.x()) / CGAL_KSR_SAME_POINT_TOLERANCE),
                CGAL_KSR_SAME_POINT_TOLERANCE * std::floor(CGAL::to_double(point.y()) / CGAL_KSR_SAME_POINT_TOLERANCE));
       
-    CGAL_KSR_CERR_3 << "** Adding meta vertex between "
-                    << support_line_idx_0 << " and " << support_line_idx_1
-                    << " at point " << p << std::endl;
-
     typename std::map<Point_2, KSR::size_t>::iterator iter;
     bool inserted = false;
     std::tie (iter, inserted) = m_meta_map.insert (std::make_pair (p, KSR::size_t(m_meta_vertices.size())));
@@ -496,6 +492,10 @@ public:
       m_meta_vertices.push_back (Meta_vertex(p));
 
     KSR::size_t meta_vertex_idx = iter->second;
+
+    CGAL_KSR_CERR_3 << "** Adding meta vertex " << meta_vertex_idx << " between "
+                    << support_line_idx_0 << " and " << support_line_idx_1
+                    << " at point " << p << std::endl;
 
     for (KSR::size_t support_line_idx : { support_line_idx_0, support_line_idx_1 })
     {
