@@ -384,7 +384,7 @@ struct L_p_visitor : public boost::static_visitor<
   result_type
   operator()(const typename K::Point_3& p) const {
     typename K::Collinear_are_ordered_along_line_3 cln_order=K().collinear_are_ordered_along_line_3_object();
-    if ( cln_order(s1[0],p,s1[1]) && cln_order(s2[0],p,s2[1]) )
+    if (CGAL::Is_valid<typename K::FT>()(p.x()) && cln_order(s1[0],p,s1[1]) && cln_order(s2[0],p,s2[1]) )
       return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Segment_3>(p);
     else
       return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Segment_3>();
