@@ -66,6 +66,7 @@ public:
   void compute_bbox() const Q_DECL_OVERRIDE { _bbox = Bbox(); }
   bool manipulatable() const Q_DECL_OVERRIDE;
   ManipulatedFrame* manipulatedFrame() Q_DECL_OVERRIDE;
+  QMenu* contextMenu() Q_DECL_OVERRIDE;
 
   Scene_plane_item* clone() const Q_DECL_OVERRIDE ;
 
@@ -93,6 +94,7 @@ public Q_SLOTS:
   void setClonable(bool b = true);
 
   void setManipulatable(bool b = true);
+  void setPlaneOrientation();
 protected:
 
   const CGAL::Three::Scene_interface* scene;

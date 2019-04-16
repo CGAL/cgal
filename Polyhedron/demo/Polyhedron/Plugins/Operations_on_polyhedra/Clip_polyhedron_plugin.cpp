@@ -97,6 +97,10 @@ public :
     dock_widget->setVisible(false); // do not show at the beginning
     ui_widget.setupUi(dock_widget);
     mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
+    connect(ui_widget.clip_radioButton, &QRadioButton::toggled,
+            [this](bool b){
+      ui_widget.coplanarCheckBox->setEnabled(!b);
+    });
 
     if(actionClipPolyhedra ) {
       connect(actionClipPolyhedra , SIGNAL(triggered()),
