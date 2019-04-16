@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>184</width>
+    <width>201</width>
     <height>98</height>
    </rect>
   </property>
@@ -18,6 +18,9 @@
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QCheckBox" name="eadCheckbox">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Indicate, when multiple polygons are duplicates, whether all the duplicate polygons should be removed or if one (arbitrarily chosen) face should be kept.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>Erase All Duplicates</string>
        </property>
@@ -25,6 +28,9 @@
      </item>
      <item>
       <widget class="QCheckBox" name="rsoCheckBox">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Roboto,sans-serif'; font-size:14px; color:#000000; background-color:#ffffff;&quot;&gt;Indicate if polygon orientation should be taken into account when determining whether two polygons are duplicates, that is, whether e.g. the triangles &lt;/span&gt;&lt;span style=&quot; font-size:14px; color:#000000; background-color:#ffffff;&quot;&gt;0,1,2&lt;/span&gt;&lt;span style=&quot; font-family:'Roboto,sans-serif'; font-size:14px; color:#000000; background-color:#ffffff;&quot;&gt; and &lt;/span&gt;&lt;span style=&quot; font-size:14px; color:#000000; background-color:#ffffff;&quot;&gt;0,2,1&lt;/span&gt;&lt;span style=&quot; font-family:'Roboto,sans-serif'; font-size:14px; color:#000000; background-color:#ffffff;&quot;&gt; are duplicates.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>Require Same Orientation</string>
        </property>

@@ -418,7 +418,7 @@ void Polyhedron_demo_orient_soup_plugin::cleanSoup()
   item->repair(b1, b2);
   
   item->invalidateOpenGLBuffers();
-  item->redraw();
+  item->itemChanged();
 }
 #include "Orient_soup_plugin.moc"
 
