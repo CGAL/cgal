@@ -2056,13 +2056,6 @@ public:
 };
 
 
-//if write_data() exists
-template <class T>
-bool has_extra_data(const T& , typename boost::enable_if<has_read_data<T> >::type* = NULL)
-{
-  return true;
-}
-
 template <class Cell, class Vertex>
 std::istream& read_cell_extra_data(std::istream& is,
                                    Cell &c ,
@@ -2084,13 +2077,6 @@ std::istream& read_vertex_extra_data(std::istream& is,
   v.read_data(is, C, V);
   return is;
 }
-//otherwise
-template <class T>
-bool has_extra_data(const T& , typename boost::enable_if<boost::mpl::not_<has_read_data<T> > >::type* = NULL)
-{
-  return false;
-}
-
 template <class Cell, class Vertex>
 std::istream& read_cell_extra_data(std::istream& is,
                                    Cell&,

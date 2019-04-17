@@ -2071,12 +2071,6 @@ copy_tds(const TDS_src &src, typename TDS_src::Vertex_handle vh)
 
 
 //if write_data() exists
-template <class T>
-bool has_extra_data(const T& , typename boost::enable_if<has_read_data<T> >::type* = NULL)
-{
-  return true;
-}
-
 template <class Face, class Vertex>
 std::istream& read_face_extra_data(std::istream& is,
                                    Face &f ,
@@ -2099,11 +2093,6 @@ std::istream& read_vertex_extra_data(std::istream& is,
   return is;
 }
 //otherwise
-template <class T>
-bool has_extra_data(const T& , typename boost::enable_if<boost::mpl::not_<has_read_data<T> > >::type* = NULL)
-{
-  return false;
-}
 
 template <class Face, class Vertex_handle>
 std::istream& read_face_extra_data(std::istream& is,
