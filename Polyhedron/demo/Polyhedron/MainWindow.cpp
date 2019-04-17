@@ -2267,6 +2267,10 @@ void MainWindow::on_actionPreferences_triggered()
     settings.setValue("lines_width", this->default_lines_width);
     
   }
+  else
+  {
+    readSettings();
+  }
 }
 
 void MainWindow::setBackgroundColor()
