@@ -14,6 +14,7 @@ _test_cls_const_triang_plus_2( const TrP & )
   typedef typename TrP::Context                Context;
   typedef typename TrP::Context_iterator       Context_iterator;
   typedef typename TrP::Vertices_in_constraint Vertices_in_constraint;
+  typedef typename TrP::Constraint_id          Constraint_id;
 
   CGAL_USE_TYPE(Hierarchy);
   CGAL_USE_TYPE(Context);
@@ -34,8 +35,9 @@ _test_cls_const_triang_plus_2( const TrP & )
   for(int i=0; i<12; i++){
     vh[i] = trp.insert(pt[i]);
   }
+  Constraint_id cid;
   for(int j=0; j<11; j+=2){
-     trp.insert_constraint(vh[j],vh[j+1]);
+     cid = trp.insert_constraint(vh[j],vh[j+1]);
   }
 
   trp.insert(Point(4,4), Point(4,5));
@@ -44,12 +46,12 @@ _test_cls_const_triang_plus_2( const TrP & )
 
   // test access to the hierarchy
   std::cout << " test acces to the constraint hierarchy" << std::endl;
-  Vertices_in_constraint vit = trp.vertices_in_constraint_begin(vh[10],vh[11]);
+  Vertices_in_constraint vit = trp.vertices_in_constraint_begin(cid);
   assert (*vit == vh[10] || *vit == vh[11] );
   Vertex_handle va = *++vit;
   Vertex_handle vb = *++vit;
   assert (*++vit == vh[11] || *vit == vh[10]);
-  assert (++vit == trp.vertices_in_constraint_end(vh[10],vh[11]));
+  assert (++vit == trp.vertices_in_constraint_end(cid));
   assert(trp.number_of_enclosing_constraints(va,vb) == 2);
   Context_iterator cit1 = trp.contexts_begin(va,vb);
   Context_iterator cit2 = cit1++;

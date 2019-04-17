@@ -722,8 +722,6 @@ public:
 
   Vertices_in_constraint_iterator vertices_in_constraint_begin(Constraint_id cid) const;
   Vertices_in_constraint_iterator vertices_in_constraint_end(Constraint_id cid) const ;  
-  Vertices_in_constraint_iterator vertices_in_constraint_begin(Vertex_handle va, Vertex_handle vb) const;
-  Vertices_in_constraint_iterator vertices_in_constraint_end(Vertex_handle va, Vertex_handle vb) const ;
   Points_in_constraint_iterator points_in_constraint_begin(Constraint_id cid) const;
   Points_in_constraint_iterator points_in_constraint_end(Constraint_id cid) const ;
 
@@ -1205,23 +1203,6 @@ Constrained_triangulation_plus_2<Tr>::
 vertices_in_constraint_end(Constraint_id cid) const
 {
   return  hierarchy.vertices_in_constraint_end(cid);
-}
-template <class Tr>
-inline
-typename Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator
-Constrained_triangulation_plus_2<Tr>::
-vertices_in_constraint_begin(Vertex_handle va, Vertex_handle vb) const
-{
-  return  hierarchy.vertices_in_constraint_begin(va,vb);
-}
-
-template <class Tr>
-inline
-typename Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator
-Constrained_triangulation_plus_2<Tr>::
-vertices_in_constraint_end(Vertex_handle va, Vertex_handle vb) const
-{
-  return  hierarchy.vertices_in_constraint_end(va,vb);
 }
 
 template <class Tr>

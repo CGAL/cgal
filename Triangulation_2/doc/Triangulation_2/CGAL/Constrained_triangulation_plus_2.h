@@ -356,22 +356,6 @@ Returns an iterator past the last vertex on the constraint `cid`.
 Vertices_in_constraint_iterator 
 vertices_in_constraint_end(Constraint_id cid) const; 
 
-/*!
-\deprecated Returns an iterator on the first vertex on the constraint `cid`.
-\attention This function only works for constraints that were inserted
-as a pair of points or pair of vertex handles.
-*/
-Vertices_in_constraint_iterator
-vertices_in_constraint_begin(Vertex_handle va, Vertex_handle vb) const; 
-
-/*!
-\deprecated Returns an iterator past the last vertex on the constraint `cid`.
-\attention This function only works for constraints that were inserted
-as a pair of points or pair of vertex handles.
-*/
-Vertices_in_constraint_iterator
-vertices_in_constraint_end(Vertex_handle va, Vertex_handle vb) const; 
-
 /// @}
 
 
