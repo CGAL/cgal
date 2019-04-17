@@ -22,7 +22,7 @@ typedef CGAL::Cartesian_converter<Epeck, Epick> Epeck_to_epick;
 #include <CGAL/Real_timer.h>
 
 //#define TEST_EPECK
-#define OUTPUT_FILES
+//#define OUTPUT_FILES
 
 
 typedef Epeck::FT FT;

@@ -320,9 +320,8 @@ public:
     KSR::size_t common_line_idx = KSR::no_element();
     
     for (KSR::size_t support_line_idx : meta_vertex(source_idx).support_lines_idx())
-      if (std::find(m_meta_vertices[target_idx].support_lines_idx().begin(),
-                    m_meta_vertices[target_idx].support_lines_idx().end(),
-                    support_line_idx) != m_meta_vertices[target_idx].support_lines_idx().end())
+      if (m_meta_vertices[target_idx].support_lines_idx().find(support_line_idx)
+          != m_meta_vertices[target_idx].support_lines_idx().end())
       {
         common_line_idx = support_line_idx;
         break;
@@ -389,9 +388,8 @@ public:
                                     KSR::size_t support_line_1) const
   {
     for (KSR::size_t meta_vertex_idx : support_line(support_line_0).meta_vertices_idx())
-      if (std::find(m_meta_vertices[meta_vertex_idx].support_lines_idx().begin(),
-                    m_meta_vertices[meta_vertex_idx].support_lines_idx().end(),
-                    support_line_1) != m_meta_vertices[meta_vertex_idx].support_lines_idx().end())
+      if (m_meta_vertices[meta_vertex_idx].support_lines_idx().find(support_line_1)
+          != m_meta_vertices[meta_vertex_idx].support_lines_idx().end())
         return true;
     return false;
   }
@@ -497,10 +495,7 @@ public:
     {
       if (support_line_idx != KSR::no_element())
       {
-        if (std::find(m_meta_vertices[meta_vertex_idx].support_lines_idx().begin(),
-                      m_meta_vertices[meta_vertex_idx].support_lines_idx().end(),
-                      support_line_idx) == m_meta_vertices[meta_vertex_idx].support_lines_idx().end())
-          m_meta_vertices[meta_vertex_idx].support_lines_idx().push_back (support_line_idx);
+        m_meta_vertices[meta_vertex_idx].support_lines_idx().insert (support_line_idx);
 
         if (std::find(m_support_lines[support_line_idx].meta_vertices_idx().begin(),
                                  m_support_lines[support_line_idx].meta_vertices_idx().end(),
@@ -531,9 +526,8 @@ public:
   void attach_vertex_to_meta_vertex (KSR::size_t vertex_idx, KSR::size_t meta_vertex_idx)
   {
     CGAL_assertion (!has_meta_vertex(vertex_idx));
-    CGAL_assertion_msg (std::find(m_meta_vertices[meta_vertex_idx].support_lines_idx().begin(),
-                                  m_meta_vertices[meta_vertex_idx].support_lines_idx().end(),
-                                  segment_of_vertex(vertex_idx).support_line_idx())
+    CGAL_assertion_msg (m_meta_vertices[meta_vertex_idx].support_lines_idx().find
+                        (segment_of_vertex(vertex_idx).support_line_idx())
                         != m_meta_vertices[meta_vertex_idx].support_lines_idx().end(),
                         "Trying to attach a vertex to a meta vertex not on its support line");
     m_vertices[vertex_idx].meta_vertex_idx() = meta_vertex_idx;
