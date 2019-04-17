@@ -74,7 +74,7 @@ template<class Traits_>
 class Vertex_info_less
 {
 public:
-  Vertex_info_less(const Traits_ traits)
+  Vertex_info_less(const Traits_& traits)
     : traits(traits)
   {}
 

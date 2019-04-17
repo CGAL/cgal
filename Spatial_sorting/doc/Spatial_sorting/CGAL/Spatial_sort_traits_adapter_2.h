@@ -25,7 +25,7 @@ public:
 /*!
 
 */ 
-typdef boost::property_traits<PointPropertyMap>::key_type Point_2; 
+typedef boost::property_traits<PointPropertyMap>::key_type Point_2; 
 
 /// @} 
 

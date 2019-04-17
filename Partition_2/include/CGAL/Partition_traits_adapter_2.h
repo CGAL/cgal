@@ -44,11 +44,12 @@ private:
   PointPropertyMap ppmap;
 public:
 
-  Partition_traits_adapter_2(Base_traits base=Base_traits())
+  Partition_traits_adapter_2(const Base_traits& base=Base_traits())
     : Base_traits(base)
   {}
   
-  Partition_traits_adapter_2(const PointPropertyMap& ppmap,Base_traits base=Base_traits())
+  Partition_traits_adapter_2(const PointPropertyMap& ppmap,
+                             const Base_traits& base=Base_traits())
   : Base_traits(base),ppmap(ppmap)
   {}
   
@@ -58,7 +59,6 @@ public:
 
   typedef ::std::list<Point_2>                      Container;
   typedef CGAL::Polygon_2<Self, Container>          Polygon_2;
-
   
   template <typename BaseFct>
   struct Pmap_fct : public BaseFct {

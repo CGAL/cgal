@@ -37,7 +37,7 @@ template <class ForwardCirculator, class Traits>
 class Indirect_edge_compare 
 {
    public:
-  typedef typename Traits::Orientation_2       Orientation_2;
+     typedef typename Traits::Orientation_2       Orientation_2;
      typedef typename Traits::Compare_y_2        Compare_y_2;
      typedef typename Traits::Compare_x_2        Compare_x_2;
      typedef typename Traits::Point_2            Point_2;
@@ -74,11 +74,6 @@ class Indirect_edge_compare
 
      Comparison_result compare_x_at_y(const Point_2& p, const Point_2& a, const Point_2& b) const
      {
-       Comparison_result cr = _compare_x_2(a, b);
-       if(cr == EQUAL){
-         // line ab is vertical
-         return _compare_x_2(p,a);
-       }
        Orientation ori =  _orientation_2(a, b, p);
        if(ori == COLLINEAR){
          return EQUAL;
@@ -119,7 +114,7 @@ class Indirect_edge_compare
         {
           if(_compare_y_2(Point_2(*q), Point_2(*after_q)) == EQUAL)
             {                         
-              Point_2 p_max;
+                 Point_2 p_max;
                  Point_2 q_max;
                  if (_compare_x_2(Point_2(*p), Point_2(*after_p)) == SMALLER)
                     p_max = *after_p;
