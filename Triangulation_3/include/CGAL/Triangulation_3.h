@@ -2057,7 +2057,7 @@ public:
 
 
 template <class Cell, class Vertex>
-std::istream& read_cell_extra_data(std::istream& is,
+std::istream& read_cell_extra_data_3(std::istream& is,
                                    Cell &c ,
                                    std::vector<typename Cell::Cell_handle>& C,
                                    std::vector<Vertex>& V,
@@ -2068,7 +2068,7 @@ std::istream& read_cell_extra_data(std::istream& is,
 }
 
 template <class Cell, class Vertex>
-std::istream& read_vertex_extra_data(std::istream& is,
+std::istream& read_vertex_extra_data_3(std::istream& is,
                                      Vertex &v ,
                                      std::vector< Cell>& C,
                                      std::vector<typename Vertex::Vertex_handle>& V,
@@ -2078,7 +2078,7 @@ std::istream& read_vertex_extra_data(std::istream& is,
   return is;
 }
 template <class Cell, class Vertex>
-std::istream& read_cell_extra_data(std::istream& is,
+std::istream& read_cell_extra_data_3(std::istream& is,
                                    Cell&,
                                    std::vector<typename Cell::Cell_handle>&,
                                    std::vector<Vertex>&,
@@ -2089,7 +2089,7 @@ std::istream& read_cell_extra_data(std::istream& is,
 }
 
 template <class Cell, class Vertex>
-std::istream& read_vertex_extra_data(std::istream& is,
+std::istream& read_vertex_extra_data_3(std::istream& is,
                                      Vertex&,
                                      std::vector<Cell>&,
                                      std::vector< typename Vertex::Vertex_handle>&,
@@ -2170,7 +2170,7 @@ std::istream& operator>> (std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
   {
     for(std::size_t i=1; i <= n; i++)
     {
-      read_vertex_extra_data(is, *V[i], C, V);
+      read_vertex_extra_data_3(is, *V[i], C, V);
     }
   }
   
@@ -2178,7 +2178,7 @@ std::istream& operator>> (std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
   {
     for(std::size_t j=0 ; j < m; j++)
     {
-      read_cell_extra_data(is, *C[j], C, V);
+      read_cell_extra_data_3(is, *C[j], C, V);
     }
   }
   CGAL_triangulation_assertion(tr.is_valid(false));
@@ -2187,7 +2187,7 @@ std::istream& operator>> (std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
 
 //if write_data() exists
 template <class Cell, class Vertex>
-std::ostream& write_cell_extra_data(std::ostream& os,
+std::ostream& write_cell_extra_data_3(std::ostream& os,
                                     const Cell &c ,
                                     Unique_hash_map<Vertex, std::size_t > &V,
                                     typename boost::enable_if<has_write_data<Cell> >::type* = NULL)
@@ -2197,7 +2197,7 @@ std::ostream& write_cell_extra_data(std::ostream& os,
 }
 
 template <class Vertex>
-std::ostream& write_vertex_extra_data(std::ostream& os,
+std::ostream& write_vertex_extra_data_3(std::ostream& os,
                                       const Vertex &v ,
                                       const Unique_hash_map<typename Vertex::Vertex_handle, std::size_t > &V,
                                       typename boost::enable_if<has_write_data<Vertex> >::type* = NULL)
@@ -2209,7 +2209,7 @@ std::ostream& write_vertex_extra_data(std::ostream& os,
 //otherwise
 
 template <class Cell, class Vertex>
-std::ostream& write_cell_extra_data(std::ostream& os,
+std::ostream& write_cell_extra_data_3(std::ostream& os,
                                     const Cell&,
                                     const Unique_hash_map<Vertex, std::size_t > &,
                                     typename boost::enable_if<boost::mpl::not_<has_write_data<Cell> > >::type* = NULL)
@@ -2219,7 +2219,7 @@ std::ostream& write_cell_extra_data(std::ostream& os,
 }
 
 template < class Vertex>
-std::ostream& write_vertex_extra_data(std::ostream& os,
+std::ostream& write_vertex_extra_data_3(std::ostream& os,
                                       const Vertex&,
                                       const Unique_hash_map<typename Vertex::Vertex_handle, std::size_t > &,
                                       typename boost::enable_if<boost::mpl::not_<has_write_data<Vertex> > >::type* = NULL)
@@ -2330,7 +2330,7 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
   {
     for(i=1; i <= n; i++)
     {
-      write_vertex_extra_data(os, *TV[i], V);
+      write_vertex_extra_data_3(os, *TV[i], V);
     }
   }
   
@@ -2339,7 +2339,7 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
   {
     for(Cell_iterator it = tr.cells_begin(), end = tr.cells_end(); it != end; ++it)
     {
-      write_cell_extra_data(os, *it, V);
+      write_cell_extra_data_3(os, *it, V);
     }
   }
   return os ;

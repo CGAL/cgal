@@ -2072,7 +2072,7 @@ copy_tds(const TDS_src &src, typename TDS_src::Vertex_handle vh)
 
 //if write_data() exists
 template <class Face, class Vertex>
-std::istream& read_face_extra_data(std::istream& is,
+std::istream& read_face_extra_data_2(std::istream& is,
                                    Face &f ,
                                    std::vector<typename Face::Face_handle>& F,
                                    std::vector<Vertex>& V,
@@ -2083,7 +2083,7 @@ std::istream& read_face_extra_data(std::istream& is,
 }
 
 template <class Face_handle, class Vertex>
-std::istream& read_vertex_extra_data(std::istream& is,
+std::istream& read_vertex_extra_data_2(std::istream& is,
                                      Vertex &v ,
                                      std::vector<Face_handle>& F,
                                      std::vector<typename Vertex::Vertex_handle>& V,
@@ -2095,7 +2095,7 @@ std::istream& read_vertex_extra_data(std::istream& is,
 //otherwise
 
 template <class Face, class Vertex_handle>
-std::istream& read_face_extra_data(std::istream& is,
+std::istream& read_face_extra_data_2(std::istream& is,
                                    Face&,
                                    std::vector<typename Face::Face_handle>&,
                                    std::vector<Vertex_handle>&,
@@ -2106,7 +2106,7 @@ std::istream& read_face_extra_data(std::istream& is,
 }
 
 template <class Face, class Vertex>
-std::istream& read_vertex_extra_data(std::istream& is,
+std::istream& read_vertex_extra_data_2(std::istream& is,
                                      Vertex&,
                                      std::vector<Face>&,
                                      std::vector< typename Vertex::Vertex_handle>&,
@@ -2118,7 +2118,7 @@ std::istream& read_vertex_extra_data(std::istream& is,
 
 //if write_data() exists
 template <class Face, class Vertex>
-std::ostream& write_face_extra_data(std::ostream& os,
+std::ostream& write_face_extra_data_2(std::ostream& os,
                                     const Face &f,
                                     Unique_hash_map<Vertex, int > &V,
                                     typename boost::enable_if<has_write_data<Face> >::type* = NULL)
@@ -2128,7 +2128,7 @@ std::ostream& write_face_extra_data(std::ostream& os,
 }
 
 template <class Vertex>
-std::ostream& write_vertex_extra_data(std::ostream& os,
+std::ostream& write_vertex_extra_data_2(std::ostream& os,
                                       const Vertex &v ,
                                       const Unique_hash_map<typename Vertex::Vertex_handle, int > &V,
                                       typename boost::enable_if<has_write_data<Vertex> >::type* = NULL)
@@ -2140,7 +2140,7 @@ std::ostream& write_vertex_extra_data(std::ostream& os,
 //otherwise
 
 template <class Face, class Vertex>
-std::ostream& write_face_extra_data(std::ostream& os,
+std::ostream& write_face_extra_data_2(std::ostream& os,
                                     const Face&,
                                     const Unique_hash_map<Vertex, int > &,
                                     typename boost::enable_if<boost::mpl::not_<has_write_data<Face> > >::type* = NULL)
@@ -2150,7 +2150,7 @@ std::ostream& write_face_extra_data(std::ostream& os,
 }
 
 template < class Vertex>
-std::ostream& write_vertex_extra_data(std::ostream& os,
+std::ostream& write_vertex_extra_data_2(std::ostream& os,
                                       const Vertex&,
                                       const Unique_hash_map<typename Vertex::Vertex_handle, int > &,
                                       typename boost::enable_if<boost::mpl::not_<has_write_data<Vertex> > >::type* = NULL)
@@ -2234,7 +2234,7 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
     for( Vertex_iterator vit= vertices_begin(); vit != vertices_end() ; ++vit) 
     {
       if ( v != vit ) 
-        write_vertex_extra_data(os, *vit, V);
+        write_vertex_extra_data_2(os, *vit, V);
     }
   }
 
@@ -2243,7 +2243,7 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
     if(is_ascii(os)) os << "\n";
     for(Face_iterator it = face_iterator_base_begin(), end = face_iterator_base_end(); it != end; ++it)
     {
-      write_face_extra_data(os, *it, V);
+      write_face_extra_data_2(os, *it, V);
     }
   }
   return ;
@@ -2332,7 +2332,7 @@ file_input( std::istream& is, bool skip_first)
     }
     for(; i < n; i++)
     {
-      read_vertex_extra_data(is, *V[i], F, V);
+      read_vertex_extra_data_2(is, *V[i], F, V);
     }
   }
   
@@ -2341,7 +2341,7 @@ file_input( std::istream& is, bool skip_first)
     skip_empty(is);
     for(std::size_t j=0 ; j < m; ++j)
     {
-      read_face_extra_data(is, *F[j], F, V);
+      read_face_extra_data_2(is, *F[j], F, V);
     }
   }
   
