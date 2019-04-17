@@ -29,55 +29,7 @@
 #define CGAL_KSR_VERBOSE_LEVEL 0
 #endif
 
-namespace CGAL
-{
-namespace KSR
-{
-
-struct Null_stream : public std::basic_ostream<char> { };
-
-template <typename Type>
-Null_stream& operator<< (Null_stream& null_stream, const Type&)
-{
-  return null_stream;
-}
-
-Null_stream& null_stream()
-{
-  static Null_stream null_stream;
-  return null_stream;
-}
-
-} // namespace KSR
-
-} // namespace CGAL
-
-#define CGAL_KSR_NULL_STREAM CGAL::KSR::null_stream()
-#define CGAL_KSR_CERR_STREAM std::cerr
-
-#if CGAL_KSR_VERBOSE_LEVEL > 0
-#  define CGAL_KSR_CERR_1 CGAL_KSR_CERR_STREAM
-#else
-#  define CGAL_KSR_CERR_1 CGAL_KSR_NULL_STREAM
-#endif
-
-#if CGAL_KSR_VERBOSE_LEVEL > 1
-#  define CGAL_KSR_CERR_2 CGAL_KSR_CERR_STREAM
-#else
-#  define CGAL_KSR_CERR_2 CGAL_KSR_NULL_STREAM
-#endif
-
-#if CGAL_KSR_VERBOSE_LEVEL > 2
-#  define CGAL_KSR_CERR_3 CGAL_KSR_CERR_STREAM
-#else
-#  define CGAL_KSR_CERR_3 CGAL_KSR_NULL_STREAM
-#endif
-
-#if CGAL_KSR_VERBOSE_LEVEL > 3
-#  define CGAL_KSR_CERR_4 CGAL_KSR_CERR_STREAM
-#else
-#  define CGAL_KSR_CERR_4 CGAL_KSR_NULL_STREAM
-#endif
+#define CGAL_KSR_CERR(level) if(level <= CGAL_KSR_VERBOSE_LEVEL) std::cerr
 
 
 #endif // CGAL_KSR_SILENT

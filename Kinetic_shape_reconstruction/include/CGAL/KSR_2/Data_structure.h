@@ -487,7 +487,7 @@ public:
 
     KSR::size_t meta_vertex_idx = iter->second;
 
-    CGAL_KSR_CERR_3 << "** Adding meta vertex " << meta_vertex_idx << " between "
+    CGAL_KSR_CERR(3) << "** Adding meta vertex " << meta_vertex_idx << " between "
                     << support_line_idx_0 << " and " << support_line_idx_1
                     << " at point " << p << std::endl;
 
@@ -508,7 +508,7 @@ public:
     if (support_line_idx_1 == KSR::no_element())
     {
       meta_vertex(meta_vertex_idx).make_deadend_of (support_line_idx_0);
-      CGAL_KSR_CERR_3 << "*** Meta_vertex[" << meta_vertex_idx
+      CGAL_KSR_CERR(3) << "*** Meta_vertex[" << meta_vertex_idx
                       << "] is deadend of Support_line[" << support_line_idx_0 << "]" << std::endl;
     }
 
@@ -541,7 +541,7 @@ public:
 
   void cut_segment (KSR::size_t segment_idx, std::vector<KSR::size_t>& meta_vertices_idx)
   {
-    CGAL_KSR_CERR_3 << "** Cutting " << segment_str(segment_idx) << std::endl;
+    CGAL_KSR_CERR(3) << "** Cutting " << segment_str(segment_idx) << std::endl;
 
     Segment& segment = m_segments[segment_idx];
     KSR::size_t input_idx = segment.input_idx();
@@ -607,15 +607,15 @@ public:
     m_vertices[target_idx].segment_idx() = sidx;
     m_segments[sidx].target_idx() = target_idx;
 
-    CGAL_KSR_CERR_3 << "*** new vertices:";
+    CGAL_KSR_CERR(3) << "*** new vertices:";
     for (std::size_t i = nb_vertices_before; i < m_vertices.size(); ++ i)
-      CGAL_KSR_CERR_3 << " " << vertex_str(i);
-    CGAL_KSR_CERR_3 << std::endl;
+      CGAL_KSR_CERR(3) << " " << vertex_str(i);
+    CGAL_KSR_CERR(3) << std::endl;
     
-    CGAL_KSR_CERR_3 << "*** new segments: " << segment_str(segment_idx);
+    CGAL_KSR_CERR(3) << "*** new segments: " << segment_str(segment_idx);
     for (std::size_t i = nb_segments_before; i < m_segments.size(); ++ i)
-      CGAL_KSR_CERR_3 << " " << segment_str(i);
-    CGAL_KSR_CERR_3 << std::endl;
+      CGAL_KSR_CERR(3) << " " << segment_str(i);
+    CGAL_KSR_CERR(3) << std::endl;
   }
 
   void connect_vertices (KSR::size_t vertex_1_idx, KSR::size_t vertex_2_idx, const Point_2& point)
@@ -649,7 +649,7 @@ public:
 
   KSR::size_t propagate_segment (std::size_t vertex_idx)
   {
-    CGAL_KSR_CERR_3 << "** Propagating " << vertex_str(vertex_idx) << std::endl;
+    CGAL_KSR_CERR(3) << "** Propagating " << vertex_str(vertex_idx) << std::endl;
 
     // Create a new segment
     KSR::size_t segment_idx = m_segments.size();
@@ -681,9 +681,9 @@ public:
     // Release other end
     m_vertices[target_idx].meta_vertex_idx() = KSR::no_element();
 
-    CGAL_KSR_CERR_3 << "*** new vertices: " << vertex_str (source_idx)
+    CGAL_KSR_CERR(3) << "*** new vertices: " << vertex_str (source_idx)
                   << " " << vertex_str (target_idx) << std::endl;
-    CGAL_KSR_CERR_3 << "*** new segment: " << segment_str(segment_idx) << std::endl;
+    CGAL_KSR_CERR(3) << "*** new segment: " << segment_str(segment_idx) << std::endl;
 
     return target_idx;
   }
