@@ -24,6 +24,7 @@
 //#include <CGAL/license/Kinetic_shape_reconstruction.h>
 
 #include <CGAL/KSR/utils.h>
+#include <set>
 
 namespace CGAL
 {
