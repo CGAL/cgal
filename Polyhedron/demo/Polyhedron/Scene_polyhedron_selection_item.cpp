@@ -1113,10 +1113,9 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
           SMesh* mesh = polyhedron();
           vertex_descriptor v1(source(ed, *mesh)),
               v2(target(ed, *mesh));
-          halfedge_descriptor hd = CGAL::Euler::join_face(halfedge(ed, *mesh), *mesh);
           d->stack.clear();
           d->stack.push(new EulerOperation(
-                          [v1,v2,hd,mesh](){
+                          [v1,v2,mesh](){
             CGAL::Euler::split_face(
                   halfedge(v1, *mesh),
                   halfedge(v2, *mesh),

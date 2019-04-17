@@ -498,7 +498,7 @@ if(sm_item)
                                tag_index);
   connect(worker, &QThread::finished, worker, &QObject::deleteLater);
   connect(worker, &Mesher_thread::resultReady, this, 
-          [this, item, angle, sizing, approx, offset_value, index]
+          [item, angle, sizing, approx, offset_value, index]
           (SMesh *new_mesh){
     QApplication::restoreOverrideCursor();
     if(!new_mesh){

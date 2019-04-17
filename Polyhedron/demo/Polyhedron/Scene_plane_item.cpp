@@ -335,7 +335,7 @@ void Scene_plane_item::setPlaneOrientation()
   }while(!does_match);
   double a(rx.cap(1).toDouble()), b(rx.cap(2).toDouble()), c(rx.cap(3).toDouble()), d(rx.cap(4).toDouble());
   
-  Kernel_epic::Point_3 sure_point;
+  Kernel_epic::Point_3 sure_point(0,0,0);
   if(c != 0)
     sure_point = Kernel_epic::Point_3(offset.x, offset.y, offset.z-d/c);
   else if (b !=0)
