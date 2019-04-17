@@ -544,6 +544,8 @@ public:
     CGAL_KSR_CERR_3 << "** Cutting " << segment_str(segment_idx) << std::endl;
 
     Segment& segment = m_segments[segment_idx];
+    KSR::size_t input_idx = segment.input_idx();
+    KSR::size_t support_line_idx = segment.support_line_idx();
     KSR::size_t source_idx = segment.source_idx();
     KSR::size_t target_idx = segment.target_idx();
     
@@ -553,8 +555,8 @@ public:
                [&](const KSR::size_t& a,
                    const KSR::size_t& b) -> bool
                {
-                 return (position_of_meta_vertex_on_support_line(a, segment.support_line_idx())
-                         < position_of_meta_vertex_on_support_line(b, segment.support_line_idx()));
+                 return (position_of_meta_vertex_on_support_line(a, support_line_idx)
+                         < position_of_meta_vertex_on_support_line(b, support_line_idx));
                });
 
     std::size_t nb_segments_before = m_segments.size();
@@ -563,7 +565,7 @@ public:
     // Attach to existing endpoint
     KSR::size_t new_target_idx = m_vertices.size();
     m_vertices.push_back (Vertex (position_of_meta_vertex_on_support_line(meta_vertices_idx.front(),
-                                                                          segment.support_line_idx())));
+                                                                          support_line_idx)));
     m_vertices[new_target_idx].segment_idx() = segment_idx;
     segment.target_idx() = new_target_idx;
     attach_vertex_to_meta_vertex (new_target_idx, meta_vertices_idx.front());
@@ -572,19 +574,19 @@ public:
     for (std::size_t i = 0; i < meta_vertices_idx.size() - 1; ++ i)
     {
       KSR::size_t sidx = m_segments.size();
-      m_segments.push_back (Segment (segment.input_idx(), segment.support_line_idx()));
+      m_segments.push_back (Segment (input_idx, support_line_idx));
       support_line.segments_idx().push_back (sidx);
 
       KSR::size_t source_idx = m_vertices.size();
       m_vertices.push_back (Vertex (position_of_meta_vertex_on_support_line(meta_vertices_idx[i],
-                                                                            segment.support_line_idx())));
+                                                                            support_line_idx)));
       m_vertices[source_idx].segment_idx() = sidx;
       m_segments[sidx].source_idx() = source_idx;
       attach_vertex_to_meta_vertex (source_idx, meta_vertices_idx[i]);
       
       KSR::size_t target_idx = m_vertices.size();
       m_vertices.push_back (Vertex (position_of_meta_vertex_on_support_line(meta_vertices_idx[i+1],
-                                                                            segment.support_line_idx())));
+                                                                            support_line_idx)));
       m_vertices[target_idx].segment_idx() = sidx;
       m_segments[sidx].target_idx() = target_idx;
       attach_vertex_to_meta_vertex (source_idx, meta_vertices_idx[i+1]);
@@ -592,12 +594,12 @@ public:
 
     // Create final segment and attach to existing endpoint
     KSR::size_t sidx = m_segments.size();
-    m_segments.push_back (Segment (segment.input_idx(), segment.support_line_idx()));
+    m_segments.push_back (Segment (input_idx, support_line_idx));
     support_line.segments_idx().push_back (sidx);
 
     KSR::size_t new_source_idx = m_vertices.size();
     m_vertices.push_back (Vertex (position_of_meta_vertex_on_support_line(meta_vertices_idx.back(),
-                                                                            segment.support_line_idx())));
+                                                                            support_line_idx)));
     m_vertices[new_source_idx].segment_idx() = sidx;
     m_segments[sidx].source_idx() = new_source_idx;
     attach_vertex_to_meta_vertex (new_source_idx, meta_vertices_idx.back());
