@@ -100,20 +100,19 @@ _test_cls_const_triang_plus_2( const TrP & )
 
   //test remove_constraint
   std::cout << " test removal of constraint" << std::endl;
-  trp.remove_constraint(vh[10],vh[11]);
-  trp.remove_constraint(vh[6],vh[7]);
+  trp.remove_constraint(cid);
 
   std::cerr << " test a special configuration" << std::endl;
   trp.clear();
   Vertex_handle v1 = trp.insert(Point(0, 0));
   Vertex_handle v2 = trp.insert(Point(-1, 0));
   Vertex_handle v3 = trp.insert(Point(1, 0));
-  trp.insert_constraint(v1, v2);
-  trp.insert_constraint(v2, v3);
-  trp.insert_constraint(v3, v1);
-  trp.remove_constraint(v1, v2);
-  trp.remove_constraint(v2, v3);
-  trp.remove_constraint(v3, v1);
+  Constraint_id cid1 = trp.insert_constraint(v1, v2);
+  Constraint_id cid2 = trp.insert_constraint(v2, v3);
+  Constraint_id cid3 = trp.insert_constraint(v3, v1);
+  trp.remove_constraint(cid1);
+  trp.remove_constraint(cid2);
+  trp.remove_constraint(cid3);
 
   std::cerr << " test the configuration of bug #2999" << std::endl;
   trp.clear();

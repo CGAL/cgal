@@ -661,11 +661,7 @@ public:
     remove_constraint(cid, Emptyset_iterator());
   }
 
-  void remove_constraint(Vertex_handle va, Vertex_handle vb)
-  {
-    hierarchy.remove_constraint(va,vb);
-  }
-
+ 
   void simplify(Vertices_in_constraint_iterator v)
   {
     Vertices_in_constraint_iterator u = boost::prior(v);

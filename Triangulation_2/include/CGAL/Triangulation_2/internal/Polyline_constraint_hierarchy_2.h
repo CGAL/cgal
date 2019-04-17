@@ -192,16 +192,11 @@ private:
   Compare          comp;
   Constraint_set   constraint_set;
   Sc_to_c_map      sc_to_c_map;
-  typedef std::map<std::pair<Vertex_handle, Vertex_handle>,
-		   Constraint_id,
-		   Pair_compare> Constraint_map;
-  Constraint_map constraint_map;
   
 public:
   Polyline_constraint_hierarchy_2(const Compare& comp)
     : comp(comp)
     , sc_to_c_map(Pair_compare(comp))
-    , constraint_map(Pair_compare(comp))
   { }
   Polyline_constraint_hierarchy_2(const Polyline_constraint_hierarchy_2& ch); 
   ~Polyline_constraint_hierarchy_2(){ clear();}
@@ -218,13 +213,6 @@ public:
   Vertex_it vertices_in_constraint_end(Constraint_id cid) const
   { return cid.vl_ptr()->skip_end(); }
 
-  Vertex_it vertices_in_constraint_begin(Vertex_handle va, Vertex_handle vb) const
-  { Constraint_id cid = constraint_map.find(make_edge(va,vb))->second;
-    return cid.vl_ptr()->skip_begin(); }
-
-  Vertex_it vertices_in_constraint_end(Vertex_handle va, Vertex_handle vb) const
-  { Constraint_id cid = constraint_map.find(make_edge(va,vb))->second;
-    return cid.vl_ptr()->skip_end(); }
 
   Point_it points_in_constraint_begin(Constraint_id cid) const
   { return cid.vl_ptr()->all_begin(); }
@@ -252,11 +240,6 @@ public:
   void append_constraint(Constraint_id cid, T va, T vb);
   void swap(Constraint_id first, Constraint_id second);
   void remove_constraint(Constraint_id cid);
-
-  void remove_constraint(Vertex_handle va, Vertex_handle vb)
-  {
-    remove_constraint(constraint_map[make_edge(va,vb)]);
-  }
 
   void split_constraint(T va, T vb, T vc);
 
@@ -315,7 +298,6 @@ Polyline_constraint_hierarchy_2<T,Compare,Data>::
 Polyline_constraint_hierarchy_2(const Polyline_constraint_hierarchy_2& ch)
   : comp(ch.comp)
   , sc_to_c_map(Pair_compare(comp))
-  , constraint_map(Pair_compare(comp))
 {
   copy(ch);
 }
@@ -898,13 +880,6 @@ Polyline_constraint_hierarchy_2<T,Compare,Data>::
 insert_constraint_old_API(T va, T vb){
   Edge        he = make_edge(va, vb);
 
-  // First, check if the constraint was already inserted.
-  // If it was not, then the iterator to the lower bound will serve as
-  // the hint of the insertion.
-  typename Constraint_map::iterator c_map_it = constraint_map.lower_bound(he);
-  if(c_map_it != constraint_map.end() && he == c_map_it->first)
-    return 0;
-
   Vertex_list*  children = new Vertex_list; 
   Context_list* fathers;
 
@@ -924,8 +899,6 @@ insert_constraint_old_API(T va, T vb){
   ctxt.pos     = children->skip_begin();
   fathers->push_front(ctxt);
 
-  constraint_map.insert(c_map_it,
-			typename Constraint_map::value_type(he, children));
   return children;
 }
 
@@ -973,7 +946,6 @@ clear()
   }
   sc_to_c_map.clear();
   constraint_set.clear();
-  constraint_map.clear();
 }
 
 
