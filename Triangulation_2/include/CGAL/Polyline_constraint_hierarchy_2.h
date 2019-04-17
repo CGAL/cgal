@@ -247,7 +247,8 @@ public:
 
   // insert/remove
   void add_Steiner(T va, T vb, T vx);
-  Vertex_list* insert_constraint(T va, T vb);
+  Vertex_list* insert_constraint_old_API(T va, T vb);
+    Vertex_list* insert_constraint(T va, T vb);
   void append_constraint(Constraint_id cid, T va, T vb);
   void swap(Constraint_id first, Constraint_id second);
   void remove_constraint(Constraint_id cid);
@@ -867,6 +868,34 @@ template <class T, class Compare, class Data>
 typename Polyline_constraint_hierarchy_2<T,Compare,Data>::Vertex_list*
 Polyline_constraint_hierarchy_2<T,Compare,Data>::
 insert_constraint(T va, T vb){
+  Edge        he = make_edge(va, vb);
+  Vertex_list*  children = new Vertex_list; 
+  Context_list* fathers;
+
+  typename Sc_to_c_map::iterator scit = sc_to_c_map.find(he);
+  if(scit == sc_to_c_map.end()){
+    fathers = new Context_list;
+    sc_to_c_map.insert(std::make_pair(he,fathers));
+  } else {
+    fathers = scit->second;
+  }
+
+  children->push_front(Node(va, true));  // was he.first
+  children->push_back(Node(vb, true));   // was he.second
+  constraint_set.insert(children);
+  Context ctxt;
+  ctxt.enclosing = children;
+  ctxt.pos     = children->skip_begin();
+  fathers->push_front(ctxt);
+
+  return children;
+}
+
+  
+template <class T, class Compare, class Data>
+typename Polyline_constraint_hierarchy_2<T,Compare,Data>::Vertex_list*
+Polyline_constraint_hierarchy_2<T,Compare,Data>::
+insert_constraint_old_API(T va, T vb){
   Edge        he = make_edge(va, vb);
 
   // First, check if the constraint was already inserted.
