@@ -51,12 +51,14 @@ private:
   std::vector<KSR::size_t> m_meta_vertices_idx;
   FT m_minimum;
   FT m_maximum;
+  KSR::size_t m_connected_components;
 
 public:
 
   Support_line (const Segment_2& segment)
     : m_minimum ((std::numeric_limits<FT>::max)())
     , m_maximum (-(std::numeric_limits<FT>::max)())
+    , m_connected_components(1)
   {
     m_origin = CGAL::midpoint (segment.source(), segment.target());
     m_vector = KSR::normalize (Vector_2 (segment.source(), segment.target()));
@@ -71,6 +73,9 @@ public:
   FT& minimum() { return m_minimum; }
   const FT& maximum() const { return m_maximum; }
   FT& maximum() { return m_maximum; }
+
+  const KSR::size_t& connected_components() const { return m_connected_components; }
+  KSR::size_t& connected_components() { return m_connected_components; }
 
   CGAL::Bbox_2 bbox() const
   {

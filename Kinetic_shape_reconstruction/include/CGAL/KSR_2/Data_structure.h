@@ -36,9 +36,6 @@
 #include <CGAL/KSR/Event.h>
 #include <CGAL/KSR/Event_queue.h>
 
-#include <CGAL/KSR_2/Line_search.h>
-
-
 namespace CGAL
 {
 
@@ -73,8 +70,6 @@ public:
   typedef KSR::Event<Kernel> Event;
   typedef KSR::Event_queue<Kernel> Event_queue;
 
-  typedef KSR_2::Line_search<Kernel> Line_search;
-
 private:
 
   // Main data structure
@@ -88,7 +83,6 @@ private:
 
   // Helping data structures
   std::map<Point_2, KSR::size_t> m_meta_map;
-  Line_search m_line_search;
   
   FT m_current_time;
   
@@ -455,6 +449,8 @@ public:
         m_support_lines.back().maximum() = min_positive;
       }
     }
+    else
+      m_support_lines[support_line_idx].connected_components() ++;
 
     
     KSR::size_t segment_idx = m_segments.size();
@@ -694,18 +690,6 @@ public:
     CGAL_KSR_CERR_3 << "*** new segment: " << segment_str(segment_idx) << std::endl;
 
     return target_idx;
-  }
-
-  void initialize_search_structure (FT step)
-  {
-    for (std::size_t i = 0; i < m_support_lines.size(); ++ i)
-      m_line_search.add_line (i, m_support_lines[i].segment_2(), step);
-    m_line_search.build();
-  }
-
-  void compute_intersected_lines (const Segment_2& segment, std::vector<std::pair<KSR::size_t, Point_2> >& intersected_lines)
-  {
-    m_line_search.compute_intersected_lines(segment, intersected_lines);
   }
 
   void update_positions (FT time)

@@ -23,6 +23,8 @@
 
 //#include <CGAL/license/Kinetic_shape_reconstruction.h>
 
+#include <CGAL/box_intersection_d.h>
+
 #include <CGAL/KSR_2/Data_structure.h>
 
 #include <unordered_set>
@@ -94,8 +96,6 @@ public:
                                                                  Point_2 (bbox.xmax(), bbox.ymax())));
     
     time_step /= 50;
-    
-    m_data.initialize_search_structure (time_step);
     
     CGAL_KSR_CERR_1 << "Making input segments intersection free" << std::endl;
     make_segments_intersection_free();
@@ -591,45 +591,54 @@ private:
     }
   }
 
+  struct Box_with_idx : public CGAL::Box_intersection_d::Box_d<FT,2>
+  {
+    typedef CGAL::Box_intersection_d::Box_d<FT,2> Base;
+    KSR::size_t idx;
+
+    Box_with_idx (const Bbox_2& bbox, KSR::size_t idx)
+      : Base(bbox), idx(idx)
+    { }
+  };
+
   void make_segments_intersection_free()
   {
     std::vector<std::tuple<Point_2, KSR::size_t, KSR::size_t> > todo;
-
-    std::vector<std::pair<KSR::size_t, Point_2> > intersected_lines;
-    
     std::size_t nb_inter = 0;
-    for (std::size_t i = 4; i < m_data.number_of_segments() - 1; ++ i)
+
+    std::vector<Segment_2> segments_2;
+    segments_2.reserve (m_data.number_of_segments());
+    std::vector<Box_with_idx> boxes;
+    boxes.reserve (m_data.number_of_segments());
+    for (std::size_t i = 0; i < m_data.number_of_segments(); ++ i)
     {
-      Segment_2 si_2 = m_data.segment_2(i);
-
-      intersected_lines.clear();
-      m_data.compute_intersected_lines (si_2, intersected_lines);
-      
-      for (std::pair<KSR::size_t, Point_2> inter : intersected_lines)
-      {
-        if (inter.first == m_data.segment(i).support_line_idx())
-          continue;
-
-        for (KSR::size_t segment_idx : m_data.support_line(inter.first).segments_idx())
-        {
-          Segment_2 sj_2 = m_data.segment_2(segment_idx);
-
-          if (!CGAL::do_overlap (si_2.bbox(), sj_2.bbox()))
-            continue;
-
-          Point_2 point;
-          if (!KSR::intersection_2 (si_2, sj_2, point))
-            continue;
-
-          todo.push_back (std::make_tuple (point, 
-                                           m_data.segment(i).support_line_idx(),
-                                           inter.first));
-        
-          ++ nb_inter;
-          break;
-        }
-      }
+      segments_2.push_back (m_data.segment_2(i));
+      boxes.push_back (Box_with_idx (segments_2.back().bbox(), i));
     }
+    
+    CGAL::box_self_intersection_d
+      (boxes.begin() + 4, boxes.end(),
+       [&](const Box_with_idx& a, const Box_with_idx& b) -> void
+       {
+         KSR::size_t segment_idx_a = a.idx;
+         KSR::size_t segment_idx_b = b.idx;
+         
+         CGAL_assertion (segment_idx_a != segment_idx_b);
+         
+         CGAL_assertion (m_data.segment(segment_idx_a).support_line_idx()
+                         != m_data.segment(segment_idx_b).support_line_idx());
+
+         Point_2 point;
+         if (!KSR::intersection_2 (segments_2[segment_idx_a], segments_2[segment_idx_b], point))
+           return;
+
+         todo.push_back (std::make_tuple (point, 
+                                          m_data.segment(segment_idx_a).support_line_idx(),
+                                          m_data.segment(segment_idx_b).support_line_idx()));
+        
+         ++ nb_inter;
+       });
+
 
     CGAL_KSR_CERR_2 << "* Found " << nb_inter << " intersection(s) at initialization" << std::endl;
 
@@ -668,42 +677,6 @@ private:
     // that happened between min_time and max_time
     std::vector<KSR::size_t> new_meta_vertices;
 
-//#define USE_AABB_TREE
-#ifdef USE_AABB_TREE
-    std::vector<std::pair<KSR::size_t, Point_2> > intersected_lines;
-    for (std::size_t i = 0; i < m_data.number_of_vertices(); ++ i)
-    {
-      const Vertex& vertex = m_data.vertex(i);
-      if (vertex.is_frozen())
-        continue;
-
-      CGAL_assertion (!m_data.has_meta_vertex(vertex));
-      
-      still_running = true;
-
-      Segment_2 si (m_data.support_line_of_vertex(vertex).to_2d(vertex.point(min_time)),
-                    m_data.point_of_vertex(vertex));
-
-      intersected_lines.clear();
-
-      m_data.compute_intersected_lines (si, intersected_lines);
-
-      for (std::pair<KSR::size_t, Point_2> inter : intersected_lines)
-      {
-        if (inter.first == m_data.segment_of_vertex(vertex).support_line_idx())
-          continue;
-        
-        if (m_data.are_support_lines_connected (m_data.segment_of_vertex(vertex).support_line_idx(),
-                                                inter.first))
-          continue;
-
-        new_meta_vertices.push_back (m_data.add_meta_vertex
-                                     (inter.second,
-                                      m_data.segment_of_vertex(vertex).support_line_idx(),
-                                      inter.first));
-      }
-    }
-#else
    // Precompute segments and bboxes
     std::vector<Segment_2> segments_2;
     segments_2.reserve (m_data.number_of_segments());
@@ -751,7 +724,7 @@ private:
         const Support_line& support_line = m_data.support_line(j);
 
         if (!CGAL::do_overlap(si_bbox, support_line_bboxes[j]))
-          continue;
+         continue;
 
         for (KSR::size_t segment_idx : support_line.segments_idx())
         {
@@ -776,7 +749,6 @@ private:
         }
       }
     }
-#endif
 
     // Make sure structure stays correct
     m_data.update_positions(min_time);
@@ -803,16 +775,29 @@ private:
     // intersection between two colinear segments
     for (std::size_t i = 0; i < m_data.number_of_support_lines(); ++ i)
     {
-      const Support_line& support_line = m_data.support_line(i);
-      if (support_line.segments_idx().size() < 2)
+      Support_line& support_line = m_data.support_line(i);
+      if (support_line.connected_components() < 2)
         continue;
 
+      bool active_vertices = false;
+      
       std::vector<KSR::size_t> vertices_idx;
       vertices_idx.reserve (support_line.segments_idx().size() * 2);
       for (KSR::size_t segment_idx : support_line.segments_idx())
       {
-        vertices_idx.push_back (m_data.segment(segment_idx).source_idx());
-        vertices_idx.push_back (m_data.segment(segment_idx).target_idx());
+        for (KSR::size_t vertex_idx : { m_data.segment(segment_idx).source_idx(),
+                                        m_data.segment(segment_idx).target_idx() })
+        {
+          vertices_idx.push_back (vertex_idx);
+          if (!m_data.vertex(vertex_idx).is_frozen())
+            active_vertices = true;
+        }
+      }
+
+      if (!active_vertices)
+      {
+        support_line.connected_components() = 1;
+        continue;
       }
 
       std::sort (vertices_idx.begin(), vertices_idx.end(),
