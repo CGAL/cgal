@@ -28,6 +28,7 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>
+#include <cstring> // std::memcpy
 
 #ifndef __INTEL_COMPILER
 #include <cmath> // for HUGE_VAL
@@ -255,7 +256,8 @@ inline __m128d IA_opacify128(__m128d x)
 #  ifdef _MSC_VER
   // With VS, __m128d is a union, where volatile doesn't disappear automatically
   // However, this version generates wrong code with clang, check before enabling it for more compilers.
-  return _mm_load_pd((double*)&e);
+  std::memcpy(&x, (void*)&e, 16);
+  return x;
 #  else
   return e;
 #  endif
