@@ -26,6 +26,11 @@
 #include <CGAL/KSR/utils.h>
 #include <CGAL/KSR/Event.h>
 
+#include <boost/multi_index_container.hpp>
+#include <boost/multi_index/ordered_index.hpp>
+#include <boost/multi_index/identity.hpp>
+#include <boost/multi_index/member.hpp>
+
 namespace CGAL
 {
 
@@ -43,9 +48,21 @@ public:
 
 private:
 
-  typedef std::set<Event> Queue;
-  typedef typename Queue::iterator iterator;
-  typedef typename Queue::const_iterator const_iterator;
+  typedef boost::multi_index_container
+  <Event,
+   boost::multi_index::indexed_by<
+     boost::multi_index::ordered_non_unique
+     <boost::multi_index::member<Event, FT, &Event::m_time> >,
+     boost::multi_index::ordered_non_unique
+     <boost::multi_index::member<Event, KSR::size_t, &Event::m_vertex_idx> >
+     > 
+   > Queue;
+
+  typedef typename Queue::iterator Queue_iterator;
+  typedef typename Queue::template nth_index<0>::type Queue_by_time;
+  typedef typename Queue_by_time::iterator Queue_by_time_iterator;
+  typedef typename Queue::template nth_index<1>::type Queue_by_event_idx;
+  typedef typename Queue_by_event_idx::iterator Queue_by_event_idx_iterator;
   
   Queue m_queue;
 
@@ -55,20 +72,22 @@ public:
 
   bool empty() const { return m_queue.empty(); }
   std::size_t size() const { return m_queue.size(); }
-  iterator begin() { return m_queue.begin(); }
-  iterator end() { return m_queue.end(); }
-  const_iterator begin() const { return m_queue.begin(); }
-  const_iterator end() const { return m_queue.end(); }
 
   void push (const Event& ev)
   {
     m_queue.insert (ev);
   }
 
+  const Queue_by_time& queue_by_time() const { return m_queue.template get<0>(); }
+  const Queue_by_event_idx& queue_by_event_idx() const { return m_queue.template get<1>(); }
+  Queue_by_time& queue_by_time() { return m_queue.template get<0>(); }
+  Queue_by_event_idx& queue_by_event_idx() { return m_queue.template get<1>(); }
+
   Event pop ()
   {
-    Event out = *(m_queue.begin());
-    m_queue.erase (m_queue.begin());
+    Queue_iterator iter = queue_by_time().begin();
+    Event out = *iter;
+    m_queue.erase(iter);
     return out;
   }
 
@@ -80,16 +99,11 @@ public:
 
   void erase_vertex_events (KSR::size_t vertex_idx, std::vector<Event>& events)
   {
-    iterator it = m_queue.begin();
-    while (it != m_queue.end())
-    {
-      iterator current = it ++;
-      if (current->vertex_idx() == vertex_idx)
-      {
-        events.push_back (*current);
-        m_queue.erase(current);
-      }
-    }
+    std::pair<Queue_by_event_idx_iterator, Queue_by_event_idx_iterator>
+      range = queue_by_event_idx().equal_range(vertex_idx);
+
+    std::copy (range.first, range.second, std::back_inserter (events));
+    queue_by_event_idx().erase (range.first, range.second);
   }
      
 };

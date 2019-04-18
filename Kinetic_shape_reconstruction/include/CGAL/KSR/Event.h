@@ -32,12 +32,18 @@ namespace KSR
 {
 
 template <typename GeomTraits>
+class Event_queue;
+
+template <typename GeomTraits>
 class Event
 {
 public:
   typedef GeomTraits Kernel;
   typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_2 Point_2;
+
+  typedef Event_queue<GeomTraits> Queue;
+  friend Queue;
 
 private:
 
@@ -58,14 +64,6 @@ public:
 
   FT time() const { return m_time; }
   
-  // Compare two events
-  bool operator< (const Event& other) const
-  {
-    // Use lexicographic comparison of tuples
-    return (std::make_tuple (this->m_time, this->m_vertex_idx, this->m_meta_vertex_idx)
-            < std::make_tuple (other.m_time, other.m_vertex_idx, other.m_meta_vertex_idx));
-  }
-
   friend std::ostream& operator<< (std::ostream& os, const Event& ev)
   {
     os << "Event at t=" << ev.m_time << " between vertex " << ev.m_vertex_idx
