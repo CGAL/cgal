@@ -529,22 +529,32 @@ void stitch_borders_impl(PM& pmesh,
     run_stitch_borders(pmesh, to_stitch, uf_vertices, uf_handles);
 }
 
-// \ingroup PMP_repairing_grp
-//
-// Stitches together, whenever possible, two halfedges of the border incident to halfedge `h`.
-//
-// \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
-//
-// \param pm the polygon mesh to be modified by stitching
-// \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
-//
-// \cgalNamedParamsBegin
-//   \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-//     If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in `PolygonMesh`.
-//   \cgalParamEnd
-// \cgalNamedParamsEnd
-//
+} //end of namespace internal
+
+/// \ingroup PMP_repairing_grp
+///
+/// Stitches together, whenever possible, two halfedges of the border incident to halfedge `h`.
+/// Two border halfedges `h1` and `h2` can be stitched
+/// if the points associated to the source and target vertices of `h1` are
+/// the same as those of the target and source vertices of `h2` respectively.
+///
+/// \tparam PolygonMesh a model of `MutableFaceGraph`
+/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+///
+/// \param pm the polygon mesh to be stitched
+/// \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+///
+/// \cgalNamedParamsBegin
+///   \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+///     If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in `PolygonMesh`.
+///   \cgalParamEnd
+/// \cgalNamedParamsEnd
+///
+/// \returns the number of pairs of halfedges that were stitched.
+///
+/// \sa `stitch_boundary_cycles()`
+/// \sa `stitch_borders()`
+///
 template <typename PolygonMesh, typename NamedParameters>
 std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
                                   PolygonMesh& pm,
@@ -639,22 +649,30 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
   return stitch_boundary_cycle(h, pm, CGAL::parameters::all_default());
 }
 
-// \ingroup PMP_repairing_grp
-//
-// Stitches together, whenever possible, two halfedges of the same border.
-//
-// \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
-//
-// \param pm the polygon mesh to be modified by stitching
-// \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
-//
-// \cgalNamedParamsBegin
-//   \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-//     If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in `PolygonMesh`.
-//   \cgalParamEnd
-// \cgalNamedParamsEnd
-//
+/// \ingroup PMP_repairing_grp
+///
+/// Stitches together, whenever possible, two halfedges living on the same border.
+/// Two border halfedges `h1` and `h2` can be stitched
+/// if the points associated to the source and target vertices of `h1` are
+/// the same as those of the target and source vertices of `h2` respectively.
+///
+/// \tparam PolygonMesh a model of `MutableFaceGraph`
+/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+///
+/// \param pm the polygon mesh to be stitched
+/// \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+///
+/// \cgalNamedParamsBegin
+///   \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+///     If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in `PolygonMesh`.
+///   \cgalParamEnd
+/// \cgalNamedParamsEnd
+///
+/// \returns the number of pairs of halfedges that were stitched.
+///
+/// \sa `stitch_boundary_cycle()`
+/// \sa `stitch_borders()`
+///
 template <typename PolygonMesh, typename NamedParameters>
 std::size_t stitch_boundary_cycles(PolygonMesh& pm,
                                    const NamedParameters& np)
@@ -678,8 +696,6 @@ std::size_t stitch_boundary_cycles(PolygonMesh& pm)
   return stitch_boundary_cycles(pm, CGAL::parameters::all_default());
 }
 
-} //end of namespace internal
-
 /*!
 * \ingroup PMP_repairing_grp
 * Stitches together border halfedges in a polygon mesh.
@@ -687,7 +703,7 @@ std::size_t stitch_boundary_cycles(PolygonMesh& pm)
 * For each pair `p` in this vector, `p.second` and its opposite will be removed
 * from `pmesh`.
 *
-* @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
+* @tparam PolygonMesh a model of `MutableFaceGraph`
 * @tparam HalfedgePairsRange a range of
 *         `std::pair<boost::graph_traits<PolygonMesh>::%halfedge_descriptor,
 *         boost::graph_traits<PolygonMesh>::%halfedge_descriptor>`,
@@ -734,7 +750,10 @@ void stitch_borders(PolygonMesh& pmesh,
 /// Default value is `false`.\cgalParamEnd
 /// \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
 /// \cgalNamedParamsEnd
-
+///
+/// @sa `stitch_boundary_cycle()`
+/// @sa `stitch_boundary_cycles()`
+///
 template <typename PolygonMesh, class CGAL_PMP_NP_TEMPLATE_PARAMETERS>
 void stitch_borders(PolygonMesh& pmesh, const CGAL_PMP_NP_CLASS& np)
 {
@@ -749,7 +768,7 @@ void stitch_borders(PolygonMesh& pmesh, const CGAL_PMP_NP_CLASS& np)
   VPMap vpm = choose_param(get_param(np, internal_np::vertex_point),
                            get_const_property_map(vertex_point, pmesh));
 
-  internal::stitch_boundary_cycles(pmesh, np);
+  stitch_boundary_cycles(pmesh, np);
 
   internal::collect_duplicated_stitchable_boundary_edges(pmesh,
                                                          std::back_inserter(hedge_pairs_to_stitch),
@@ -757,7 +776,7 @@ void stitch_borders(PolygonMesh& pmesh, const CGAL_PMP_NP_CLASS& np)
                                                          vpm, np);
   
   stitch_borders(pmesh, hedge_pairs_to_stitch);
-  internal::stitch_boundary_cycles(pmesh, np);
+  stitch_boundary_cycles(pmesh, np);
 }
 
 

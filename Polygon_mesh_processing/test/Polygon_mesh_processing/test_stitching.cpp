@@ -30,7 +30,7 @@ void test_stitch_boundary_cycles(const char* fname,
     return;
   }
 
-  std::size_t res = PMP::internal::stitch_boundary_cycles(mesh);
+  std::size_t res = PMP::stitch_boundary_cycles(mesh);
   assert(res == expected_n);
   assert(is_valid(mesh));
 }
