@@ -28,7 +28,7 @@
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/Polyline_constraint_hierarchy_2.h>
+#include <CGAL/Triangulation_2/internal/Polyline_constraint_hierarchy_2.h>
 #include <boost/tuple/tuple.hpp>
 
 #include <CGAL/Default.h>
