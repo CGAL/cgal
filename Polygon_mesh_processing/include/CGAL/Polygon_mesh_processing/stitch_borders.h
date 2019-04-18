@@ -533,7 +533,7 @@ void stitch_borders_impl(PM& pmesh,
 
 /// \ingroup PMP_repairing_grp
 ///
-/// Stitches together, whenever possible, two halfedges of the border incident to halfedge `h`.
+/// Stitches together, whenever possible, two halfedges belonging to the boundary cycle described by the halfedge `h`.
 /// Two border halfedges `h1` and `h2` can be stitched
 /// if the points associated to the source and target vertices of `h1` are
 /// the same as those of the target and source vertices of `h2` respectively.
@@ -651,7 +651,7 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
 
 /// \ingroup PMP_repairing_grp
 ///
-/// Stitches together, whenever possible, two halfedges living on the same border.
+/// Stitches together, whenever possible, two halfedges belonging to the same boundary cycle.
 /// Two border halfedges `h1` and `h2` can be stitched
 /// if the points associated to the source and target vertices of `h1` are
 /// the same as those of the target and source vertices of `h2` respectively.
