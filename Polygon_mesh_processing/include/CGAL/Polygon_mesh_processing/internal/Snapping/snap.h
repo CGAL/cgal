@@ -43,22 +43,19 @@
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/unordered.h>
 
-#include <boost/foreach.hpp>
-#include <boost/function.hpp>
-#include <boost/functional.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/member.hpp>
 
+#include <functional>
 #include <iostream>
 #include <iterator>
-#include <fstream>
 #include <limits>
 #include <map>
+#include <type_traits>
 #include <utility>
+#include <unordered_set>
 #include <vector>
 
 namespace CGAL {
@@ -311,7 +308,7 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
      is_empty_range(target_hrange.begin(), target_hrange.end()))
     return 0;
 
-  CGAL_static_assertion((boost::is_same<Point, typename GT::Point_3>::value));
+  CGAL_static_assertion((std::is_same<Point, typename GT::Point_3>::value));
 
   GT gt = choose_param(get_param(snp, internal_np::geom_traits), GT());
 
@@ -331,7 +328,7 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
 
   // Try to snap vertices
   std::vector<Box> boxes;
-  CGAL::cpp11::unordered_set<vertex_descriptor> unique_vertices;
+  std::unordered_set<vertex_descriptor> unique_vertices;
   for(halfedge_descriptor hd : source_hrange)
   {
     const vertex_descriptor vd = target(hd, smesh);
@@ -378,7 +375,7 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
   Reporter vpr(snapping_pairs, svpm, smesh, tvpm, tmesh, tol_pmap, gt);
 
   // Shenanigans to pass a reference as callback (which is copied by value by 'box_intersection_d')
-  boost::function<void(const Box&, const Box&)> callback(boost::ref(vpr));
+  std::function<void(const Box&, const Box&)> callback(std::ref(vpr));
 
   CGAL::box_intersection_d(boxes.begin(), boxes.end(),
                            target_boxes.begin(), target_boxes.end(),
@@ -731,7 +728,7 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
 
   // Collect border points that can be projected onto a border edge
   std::vector<std::pair<Point, halfedge_descriptor> > edges_to_split;
-  CGAL::cpp11::unordered_set<vertex_descriptor> unique_vertices;
+  std::unordered_set<vertex_descriptor> unique_vertices;
   for(halfedge_descriptor hd : source_hrange)
   {
     const vertex_descriptor vd = target(hd, pms);
@@ -927,14 +924,13 @@ template <typename TriangleMesh>
 std::size_t snap_border_vertices_non_conforming(TriangleMesh& pm1,
                                                 TriangleMesh& pm2)
 {
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor          vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
 
   typedef typename GetGeomTraits<TriangleMesh>::type                             GT;
   typedef typename GT::FT                                                        FT;
 
-  typedef CGAL::cpp11::unordered_map<vertex_descriptor, FT>                      Tolerance_map;
-  typedef boost::associative_property_map<Tolerance_map>                         Tmap;
+  typedef CGAL::dynamic_vertex_property_t<FT>                                    Vertex_property_tag;
+  typedef typename boost::property_map<TriangleMesh, Vertex_property_tag>::type  Tolerance_map;
 
   std::vector<halfedge_descriptor> border_vertices1;
   border_halfedges(pm1, std::back_inserter(border_vertices1));
@@ -945,8 +941,7 @@ std::size_t snap_border_vertices_non_conforming(TriangleMesh& pm1,
   else
     border_halfedges(pm2, std::back_inserter(border_vertices2));
 
-  Tolerance_map tol_map;
-  Tmap tol_pmap(tol_map);
+  Tolerance_map tol_pmap = get(Vertex_property_tag(), pm1);
   const FT tol_mx(std::numeric_limits<double>::max());
   assign_tolerance_with_local_edge_length_bound(border_vertices1, tol_pmap, tol_mx, pm1);
 
