@@ -42,6 +42,7 @@ private:
   typedef Partition_traits_adapter_2<Base_traits,PointPropertyMap>       Self;
   
   PointPropertyMap ppmap;
+  
 public:
 
   Partition_traits_adapter_2(const Base_traits& base=Base_traits())
@@ -68,11 +69,11 @@ public:
     
     const PointPropertyMap& ppmap;
 
-    typename BaseFct::result_type operator()(Arg_type p, Arg_type q) const {
+    typename BaseFct::result_type operator()(const Arg_type& p, const Arg_type& q) const {
       return static_cast<const BaseFct*>(this)->operator()(get(ppmap,p),get(ppmap,q));
     }
     
-    typename BaseFct::result_type operator()(Arg_type p, Arg_type q, Arg_type r) const {
+    typename BaseFct::result_type operator()(const Arg_type& p, const Arg_type& q, const Arg_type& r) const {
       return static_cast<const BaseFct*>(this)->operator()(get(ppmap,p),get(ppmap,q),get(ppmap,r));
     }
   };
@@ -90,12 +91,6 @@ public:
     {}
     
     
-    
-    typename K::Collinear_are_ordered_along_line_2::result_type
-    operator()(Arg_type p, Arg_type q, const typename K::Point_2& r) const
-    {
-      return fct(p.first, q.first, r);
-    }
     
     typename K::Collinear_are_ordered_along_line_2::result_type
     operator()(Arg_type p, Arg_type q, Arg_type r) const

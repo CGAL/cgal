@@ -83,15 +83,11 @@ typedef R::Collinear_are_ordered_along_line_2 Collinear_are_ordered_along_line_2
 */ 
 typedef R::Are_strictly_ordered_along_line_2 Are_strictly_ordered_along_line_2; 
 
-/*!
-
-*/ 
-typedef CGAL::Polygon_traits_2<R> Poly_Traits; 
 
 /*!
 
 */ 
-typedef Poly_Traits::Point_2 Point_2; 
+typedef R::Point_2 Point_2; 
 
 /*!
 
@@ -101,7 +97,7 @@ typedef std::list<Point_2> Container;
 /*!
 
 */ 
-typedef CGAL::Polygon_2<Poly_Traits, Container> Polygon_2; 
+typedef CGAL::Polygon_2<R, Container> Polygon_2; 
 
 /*!
 

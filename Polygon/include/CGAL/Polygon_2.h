@@ -147,7 +147,9 @@ class Polygon_2 {
     /// @{
 
     /// Creates an empty polygon.
-    Polygon_2(const Traits & p_traits = Traits()) : traits(p_traits) {}
+    Polygon_2() : traits() {}
+  
+    Polygon_2(const Traits & p_traits) : traits(p_traits) {}
 
     /// Copy constructor.
     Polygon_2(const Polygon_2<Traits_P,Container_P>& polygon)

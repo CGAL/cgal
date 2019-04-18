@@ -290,7 +290,7 @@ private:
    }
 
   Left_turn_2 _left_turn;
-  Traits traits;
+  const Traits& traits;
 };
 
 template <class Traits_>

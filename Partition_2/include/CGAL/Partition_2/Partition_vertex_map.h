@@ -84,7 +84,7 @@ public:
   }
   
 private:
-  Traits_ traits;
+  const Traits_& traits;
 };
   
 template <class Traits_>
@@ -321,7 +321,7 @@ public:
   }
 
 private :
-  Traits traits;
+  const Traits& traits;
   List m_list ;
 };
 
@@ -532,7 +532,7 @@ private :
    }
 
 private :
-  Traits traits;
+  const Traits& traits;
   Map m_map ;
 };
 

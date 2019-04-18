@@ -54,12 +54,11 @@ int main( )
       }
      std::cout << std::endl;
    }
-   
+
    assert(CGAL::partition_is_valid_2(polygon.vertices_begin(),
                                      polygon.vertices_end(),
                                      partition_polys.begin(),
                                      partition_polys.end(),
                                      traits));
-   
    return 0;
 }

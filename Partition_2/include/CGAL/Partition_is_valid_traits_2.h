@@ -41,11 +41,11 @@ public:
 
   Partition_is_valid_traits_2()
   {}
-  
+
   Partition_is_valid_traits_2(const Traits& traits)
     : Traits(traits)
   {}
-  
+public:   
    Is_valid
    is_valid_object(const Traits& traits) const
    {  return Is_valid(traits); }
