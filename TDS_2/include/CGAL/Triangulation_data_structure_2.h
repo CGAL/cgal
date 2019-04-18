@@ -2248,6 +2248,7 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
   }
   return ;
 }
+namespace tds_io_internal {
 
 void skip_empty(std::istream& is)
 {
@@ -2262,6 +2263,7 @@ void skip_empty(std::istream& is)
   }while(s == "");
   is.seekg(pos);
 }
+}//end tds_io_internal
 template < class Vb, class Fb>
 typename Triangulation_data_structure_2<Vb,Fb>::Vertex_handle
 Triangulation_data_structure_2<Vb,Fb>::
@@ -2325,7 +2327,7 @@ file_input( std::istream& is, bool skip_first)
 
   if(! V.empty() && has_extra_data(*V.front()))
   {
-    skip_empty(is);
+    tds_io_internal::skip_empty(is);
     std::size_t i=0;
     if(skip_first){
       ++i;
@@ -2338,7 +2340,7 @@ file_input( std::istream& is, bool skip_first)
   
   if(!F.empty() && has_extra_data(*F.front()))
   {
-    skip_empty(is);
+    tds_io_internal::skip_empty(is);
     for(std::size_t j=0 ; j < m; ++j)
     {
       read_face_extra_data_2(is, *F[j], F, V);
