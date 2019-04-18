@@ -625,7 +625,7 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
     if(!hedges_to_stitch.empty())
     {
       internal::stitch_borders_impl(pm, hedges_to_stitch);
-      ++stitched_boundary_cycles_n;
+      stitched_boundary_cycles_n += hedges_to_stitch.size();
     }
   }
 

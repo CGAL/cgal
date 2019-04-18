@@ -18,7 +18,8 @@ namespace params = CGAL::parameters;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     EPICK;
 typedef CGAL::Exact_predicates_exact_constructions_kernel       EPECK;
 
-void test_stitch_boundary_cycles(const char* fname)
+void test_stitch_boundary_cycles(const char* fname,
+                                 const std::size_t expected_n)
 {
   typedef CGAL::Surface_mesh<EPICK::Point_3>                    Mesh;
 
@@ -30,7 +31,7 @@ void test_stitch_boundary_cycles(const char* fname)
   }
 
   std::size_t res = PMP::internal::stitch_boundary_cycles(mesh);
-  assert(res > 0);
+  assert(res == expected_n);
   assert(is_valid(mesh));
 }
 
@@ -134,8 +135,8 @@ void bug_test()
 
 int main()
 {
-  test_stitch_boundary_cycles("data_stitching/boundary_cycle.off");
-  test_stitch_boundary_cycles("data_stitching/boundary_cycle_2.off");
+  test_stitch_boundary_cycles("data_stitching/boundary_cycle.off", 5);
+  test_stitch_boundary_cycles("data_stitching/boundary_cycle_2.off", 2);
 
   test_polyhedron<EPECK>("data_stitching/full_border.off");
   test_polyhedron<EPICK>("data_stitching/full_border.off");
