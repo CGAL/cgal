@@ -17,7 +17,7 @@ namespace CGAL {
     typedef unspecified_type Dart_const_handle;
 
     /// Constructor. Creates an empty path object which lies on amesh.
-    Path_on_surface(const Mesh& aesh);
+    Path_on_surface(const Mesh& amesh);
 
     /// @return `true` iff the path is empty
     bool is_empty() const;
@@ -32,7 +32,7 @@ namespace CGAL {
   /// clear the path.
     void clear();
     
-    /// @return `true` iff df can be added at the end of the path.
+    /// @return `true` iff dh can be added at the end of the path.
     bool can_be_pushed(Dart_const_handle dh) const;
   
     /// Add the given dart/half-edge at the end of this path.
