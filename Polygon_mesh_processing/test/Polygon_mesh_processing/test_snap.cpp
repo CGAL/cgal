@@ -1,5 +1,3 @@
-#define CGAL_PMP_SNAP_DEBUG
-
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -25,7 +23,9 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel           EPICK;
 
 typedef CGAL::Polyhedron_3<EPECK, CGAL::Polyhedron_items_with_id_3>   Exact_polyhedron;
 typedef CGAL::Polyhedron_3<EPICK, CGAL::Polyhedron_items_with_id_3>   Polyhedron;
+
 typedef CGAL::Surface_mesh<EPICK::Point_3>                            Surface_mesh;
+typedef CGAL::Surface_mesh<EPECK::Point_3>                            Exact_surface_mesh;
 
 template <typename Kernel, typename Mesh>
 void test_1()
@@ -126,7 +126,6 @@ void test_2()
 {
   typedef typename Kernel::FT                                         FT;
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor       vertex_descriptor;
-  typedef typename boost::graph_traits<Mesh>::halfedge_descriptor     halfedge_descriptor;
 
   Mesh fg_source, fg_target;
 
@@ -153,19 +152,26 @@ void test_2()
   assert(res == 3);
 }
 
+template <typename K, typename Mesh>
+void test()
+{
+  test_1<K, Mesh>();
+  test_2<K, Mesh>();
+}
+
 int main(int, char**)
 {
-//  std::cout << "TEST EPECK POLYHEDRON" << std::endl;
-//  test_1<EPECK, Exact_polyhedron>();
+  std::cout << std::endl << "TEST EPICK SURFACE MESH" << std::endl;
+  test<EPICK, Surface_mesh>();
 
-//  std::cout << std::endl << "TEST EPICK POLYHEDRON" << std::endl;
-//  test_1<EPICK, Polyhedron>();
+  std::cout << std::endl << "TEST EPICK POLYHEDRON" << std::endl;
+  test<EPICK, Polyhedron>();
 
-//  std::cout << std::endl << "TEST EPICK SURFACE MESH" << std::endl;
-//  test_1<EPICK, Surface_mesh>();
+  std::cout << std::endl << "TEST EPECK SURFACE MESH" << std::endl;
+  test<EPECK, Exact_surface_mesh>();
 
   std::cout << "TEST EPECK POLYHEDRON" << std::endl;
-  test_2<EPECK, Exact_polyhedron>();
+  test<EPECK, Exact_polyhedron>();
 
   return EXIT_SUCCESS;
 }
