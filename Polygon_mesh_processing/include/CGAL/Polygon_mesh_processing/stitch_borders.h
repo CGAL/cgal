@@ -566,7 +566,7 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
   //                         |          |
   //                        v3 ------- v4
   // so we mark which edges have been stitched
-  cpp11::unordered_set<halfedge_descriptor> stitched_hedges;
+  std::unordered_set<halfedge_descriptor> stitched_hedges;
 
   std::vector<halfedge_descriptor> stitching_starting_points;
   halfedge_descriptor hn = next(h, pm);
