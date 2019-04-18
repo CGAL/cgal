@@ -550,6 +550,9 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
                                   PolygonMesh& pm,
                                   const NamedParameters& np)
 {
+  using boost::choose_param;
+  using boost::get_param;
+
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor           halfedge_descriptor;
 
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type     VPMap;
@@ -656,9 +659,6 @@ template <typename PolygonMesh, typename NamedParameters>
 std::size_t stitch_boundary_cycles(PolygonMesh& pm,
                                    const NamedParameters& np)
 {
-  using boost::choose_param;
-  using boost::get_param;
-
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor           halfedge_descriptor;
 
   std::vector<halfedge_descriptor> boundary_cycles;
