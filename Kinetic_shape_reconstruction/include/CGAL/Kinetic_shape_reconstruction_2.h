@@ -328,12 +328,14 @@ public:
   template <typename OutputIterator>
   OutputIterator output_partition_edges_to_segment_soup (OutputIterator output) const
   {
-    std::vector<std::pair<KSR::size_t, KSR::size_t> > meta_edges;
-    get_meta_edges (meta_edges);
+    std::vector<std::vector<KSR::size_t> > neighbors
+      (m_data.number_of_meta_vertices());
+    get_meta_neighbors (neighbors);
 
-    for (std::pair<KSR::size_t, KSR::size_t> meta_edge : meta_edges)
-      *(output ++) = Segment_2 (m_data.meta_vertex(meta_edge.first).point(),
-                                m_data.meta_vertex(meta_edge.second).point());
+    for (std::size_t i = 0; i < m_data.number_of_meta_vertices(); ++ i)
+      for (std::size_t j = 0; j < neighbors[i].size(); ++ j)
+        *(output ++) = Segment_2 (m_data.meta_vertex(i).point(),
+                                  m_data.meta_vertex(neighbors[i][j]).point());
     
     return output;
   }
@@ -367,69 +369,67 @@ public:
     typedef typename property_map_selector<MutableFaceGraph, CGAL::vertex_point_t>::type VPMap;
     VPMap vpm = get_property_map(boost::vertex_point, mesh);
 
-    std::vector<std::pair<KSR::size_t, KSR::size_t> > meta_edges;
-    get_meta_edges (meta_edges);
+    std::vector<std::vector<KSR::size_t> > neighbors (m_data.number_of_meta_vertices());
+    get_meta_neighbors (neighbors);
 
     CGAL_KSR_CERR(1) << "Creating vertices and edges" << std::endl;
-    std::map<KSR::size_t, vertex_descriptor> map_v2v;
+    std::vector<vertex_descriptor> map_v2v (m_data.number_of_meta_vertices(),
+                                            boost::graph_traits<MutableFaceGraph>::null_vertex());
+    
     std::map<std::pair<KSR::size_t, KSR::size_t>, halfedge_descriptor> hdesc;
     std::set<halfedge_descriptor> is_border_halfedge;
-    for (std::pair<KSR::size_t, KSR::size_t>& meta_edge : meta_edges)
-    {
-      KSR::size_t source = meta_edge.first;
-      KSR::size_t target = meta_edge.second;
-
-      typename std::map<KSR::size_t, vertex_descriptor>::iterator iter;
-      bool inserted = false;
-      std::tie (iter, inserted) = map_v2v.insert(std::make_pair(source, vertex_descriptor()));
-      if (inserted)
+    for (std::size_t i = 0; i < m_data.number_of_meta_vertices(); ++ i)
+      for (std::size_t j = 0; j < neighbors[i].size(); ++ j)
       {
-        iter->second = add_vertex(mesh);
-        put (vpm, iter->second, m_data.meta_vertex(source).point());
-      }
-      vertex_descriptor v0 = iter->second;
-      std::tie (iter, inserted) = map_v2v.insert(std::make_pair(target, vertex_descriptor()));
-      if (inserted)
-      {
-        iter->second = add_vertex(mesh);
-        put (vpm, iter->second, m_data.meta_vertex(target).point());
-      }
-      vertex_descriptor v1 = iter->second;
+        KSR::size_t source = i;
+        KSR::size_t target = neighbors[i][j];
+        if (source > target)
+          continue;
 
-      edge_descriptor ed = add_edge(mesh);
+        if (map_v2v[source] == boost::graph_traits<MutableFaceGraph>::null_vertex())
+        {
+          map_v2v[source] = add_vertex(mesh);
+          put (vpm, map_v2v[source], m_data.meta_vertex(source).point());
+        }
+        vertex_descriptor v0 = map_v2v[source];
       
-      halfedge_descriptor hd = halfedge(ed, mesh);
-      set_target(hd, v1, mesh);
-      halfedge_descriptor opp_hd = opposite(hd, mesh);
-      set_target(opp_hd, v0, mesh);
-      set_halfedge(v1, hd, mesh);
-      set_halfedge(v0, opp_hd, mesh);
+        if (map_v2v[target] == boost::graph_traits<MutableFaceGraph>::null_vertex())
+        {
+          map_v2v[target] = add_vertex(mesh);
+          put (vpm, map_v2v[target], m_data.meta_vertex(target).point());
+        }
+        vertex_descriptor v1 = map_v2v[target];
 
-      if (m_data.is_bbox_meta_edge(source, target))
-      {
-        is_border_halfedge.insert(hd);
-        is_border_halfedge.insert(opp_hd);
-      }
+        edge_descriptor ed = add_edge(mesh);
       
-      hdesc.insert (std::make_pair (std::make_pair (source, target), hd));
-      hdesc.insert (std::make_pair (std::make_pair (target, source), opp_hd));
-    }
+        halfedge_descriptor hd = halfedge(ed, mesh);
+        set_target(hd, v1, mesh);
+        halfedge_descriptor opp_hd = opposite(hd, mesh);
+        set_target(opp_hd, v0, mesh);
+        set_halfedge(v1, hd, mesh);
+        set_halfedge(v0, opp_hd, mesh);
 
+        if (m_data.is_bbox_meta_edge(source, target))
+        {
+          is_border_halfedge.insert(hd);
+          is_border_halfedge.insert(opp_hd);
+        }
+      
+        hdesc.insert (std::make_pair (std::make_pair (source, target), hd));
+        hdesc.insert (std::make_pair (std::make_pair (target, source), opp_hd));
+      }
+    
     CGAL_KSR_CERR(2) << "* Found " << is_border_halfedge.size() << " border halfedges" << std::endl;
     
     CGAL_KSR_CERR(1) << "Ordering halfedges" << std::endl;
-    for (const std::pair<KSR::size_t, vertex_descriptor> vertex : map_v2v)
+    for (std::size_t i = 0; i < m_data.number_of_meta_vertices(); ++ i)
     {
-      const Meta_vertex& meta_vertex = m_data.meta_vertex(vertex.first);
+      if (map_v2v[i] == boost::graph_traits<MutableFaceGraph>::null_vertex())
+        continue;
       
-      std::vector<KSR::size_t> incident_meta_vertices;
-      for (const std::pair<KSR::size_t, KSR::size_t>& meta_edge : meta_edges)
-      {
-        if (meta_edge.first == vertex.first)
-          incident_meta_vertices.push_back (meta_edge.second);
-        else if (meta_edge.second == vertex.first)
-          incident_meta_vertices.push_back (meta_edge.first);
-      }
+      const Meta_vertex& meta_vertex = m_data.meta_vertex(i);
+      
+      std::vector<KSR::size_t>& incident_meta_vertices = neighbors[i];
 
       std::sort (incident_meta_vertices.begin(), incident_meta_vertices.end(),
                  [&](const KSR::size_t& a, const KSR::size_t& b) -> bool
@@ -441,9 +441,9 @@ public:
       for (std::size_t j = 0; j < incident_meta_vertices.size(); ++ j)
       {
         std::pair<KSR::size_t, KSR::size_t> key0
-          = std::make_pair (incident_meta_vertices[j], vertex.first);
+          = std::make_pair (incident_meta_vertices[j], i);
         std::pair<KSR::size_t, KSR::size_t> key1
-          = std::make_pair (incident_meta_vertices[(j+1)%incident_meta_vertices.size()], vertex.first);
+          = std::make_pair (incident_meta_vertices[(j+1)%incident_meta_vertices.size()], i);
 
         CGAL_assertion (hdesc.find(key0) != hdesc.end());
         CGAL_assertion (hdesc.find(key1) != hdesc.end());
@@ -966,7 +966,7 @@ private:
         }
   }
 
-  void get_meta_edges (std::vector<std::pair<KSR::size_t, KSR::size_t> >& meta_edges) const
+  void get_meta_neighbors (std::vector<std::vector<KSR::size_t> >& neighbors) const
   {
     for (std::size_t i = 0; i < m_data.number_of_support_lines(); ++ i)
     {
@@ -995,13 +995,15 @@ private:
           // Otherwise, add a vertex and output the segment
           else
           {
-            meta_edges.push_back (std::make_pair (beginning, end));
+            neighbors[beginning].push_back (end);
+            neighbors[end].push_back (beginning);
             beginning = m_data.source_of_segment(segment_idx).meta_vertex_idx();
             end = m_data.target_of_segment(segment_idx).meta_vertex_idx();
           }
         }
       }
-      meta_edges.push_back (std::make_pair (beginning, end));
+      neighbors[beginning].push_back (end);
+      neighbors[end].push_back (beginning);
     }
   }
 
