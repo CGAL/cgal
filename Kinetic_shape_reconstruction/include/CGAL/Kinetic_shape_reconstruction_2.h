@@ -717,10 +717,6 @@ private:
         if (m_data.segment_of_vertex(vertex).support_line_idx() == j)
           continue;
 
-        if (m_data.are_support_lines_connected (m_data.segment_of_vertex(vertex).support_line_idx(),
-                                                j))
-          continue;
-        
         const Support_line& support_line = m_data.support_line(j);
 
         if (!CGAL::do_overlap(si_bbox, support_line_bboxes[j]))

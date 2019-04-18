@@ -384,16 +384,6 @@ public:
     meta_vertex(meta_vertex_idx).make_no_longer_deadend_of (segment_of_vertex(vertex_idx).support_line_idx());
   }
 
-  bool are_support_lines_connected (KSR::size_t support_line_0,
-                                    KSR::size_t support_line_1) const
-  {
-    for (KSR::size_t meta_vertex_idx : support_line(support_line_0).meta_vertices_idx())
-      if (m_meta_vertices[meta_vertex_idx].support_lines_idx().find(support_line_1)
-          != m_meta_vertices[meta_vertex_idx].support_lines_idx().end())
-        return true;
-    return false;
-  }
-
   KSR::size_t add_support_line (const Segment_2& segment)
   {
     m_support_lines.push_back (Support_line(segment));
