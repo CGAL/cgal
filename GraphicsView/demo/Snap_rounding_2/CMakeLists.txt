@@ -19,7 +19,7 @@ find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
 
 
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
-
+set(CMAKE_AUTOMOC ON)
 add_definitions(-DQT_NO_KEYWORDS)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -30,11 +30,8 @@ qt5_wrap_ui( DT_UI_FILES Snap_rounding_2.ui )
 # qrc files (resources files, that contain icons, at least)
 qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES ./Snap_rounding_2.qrc )
 
-# use the Qt MOC preprocessor on classes that derives from QObject
-qt5_generate_moc( Snap_rounding_2.cpp Snap_rounding_2.moc )
-
 # The executable itself.
-add_executable  ( Snap_rounding_2 Snap_rounding_2.cpp Snap_rounding_2.moc ${DT_UI_FILES}  ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES} )
+add_executable  ( Snap_rounding_2 Snap_rounding_2.cpp ${DT_UI_FILES}  ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES} )
 
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS Snap_rounding_2 )
 
