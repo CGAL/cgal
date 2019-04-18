@@ -94,12 +94,12 @@ The machine used is a PC running Ubuntu 18.04 with an Intel CPU Core i7-4790 CPU
 
 \subsection SMTopology_bench1 Surface Mesh Topology Computation Time
 
-When we create a `Surface_mesh_topology` object, given a surface, we build a special quadrangulation of the surface as internal representation (as explained in Section \ref SMTopology_Theory "Implementation Details"). The complexity of this operation is linear in the number of darts of the input surface, as we can see in \cgalFigureRef{fig_sm_topology_bench1}.
+When we create a `Surface_mesh_curve_topology` object, given a surface, we build a special quadrangulation of the surface as internal representation (as explained in Section \ref SMTopology_Theory "Implementation Details"). The complexity of this operation is linear in the number of darts of the input surface, as we can see in \cgalFigureRef{fig_sm_topology_bench1}.
 
-For this benchmark, we computed 22 `Surface_mesh_topology` objects for different input surfaces with different number of darts (between 9,000 and 30,000,000) and show in the figure the computation time of the quadrangulation according to the number of darts of the input surface. We remind that this computation needs be done only once if you want to perform several path homotopy tests on the same surface. 
+For this benchmark, we computed 22 `Surface_mesh_curve_topology` objects for different input surfaces with different number of darts (between 9,000 and 30,000,000) and show in the figure the computation time of the quadrangulation according to the number of darts of the input surface. We remind that this computation needs be done only once if you want to perform several path homotopy tests on the same surface. 
 
 \cgalFigureBegin{fig_sm_topology_bench1, computation-time-reduce-surface.svg}
- Computation time of `Surface_mesh_topology` constructions, according to the number of darts or the input surface.
+ Computation time of `Surface_mesh_curve_topology` constructions, according to the number of darts or the input surface.
 \cgalFigureEnd
 
 \subsection SMTopology_bench2 Path Homotopy Tests
