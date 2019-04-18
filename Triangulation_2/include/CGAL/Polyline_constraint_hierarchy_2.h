@@ -248,7 +248,7 @@ public:
   // insert/remove
   void add_Steiner(T va, T vb, T vx);
   Vertex_list* insert_constraint_old_API(T va, T vb);
-    Vertex_list* insert_constraint(T va, T vb);
+  Vertex_list* insert_constraint(T va, T vb);
   void append_constraint(Constraint_id cid, T va, T vb);
   void swap(Constraint_id first, Constraint_id second);
   void remove_constraint(Constraint_id cid);
