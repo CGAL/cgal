@@ -32,16 +32,16 @@ namespace CGAL {
     /// @pre A facet is under creation.
     Dart_handle end_facet();
 
-    /// adds one edge to the current facet, given by its label `s` (any string, using minus sign for orientation)
+    /// adds one edge to the current facet, given by its label `l` (any string containing no space, using minus sign for orientation)
     /// @pre A facet is under creation.
-    void add_edge_to_facet(const std::string& s);
+    void add_edge_to_facet(const std::string& l);
     
     /// adds the given edges to the current facet.
-    /// `s` is a sequence of labels, add all the corresponding edges into the current facet.
+    /// `s` is a sequence of labels, separated by spaces. All the corresponding edges are added into the current facet.
     /// @pre A facet is under creation.
     void add_edges_to_facet(const std::string& s);
     
-    /// adds directly one facet giving the sequence of labels `s` of all its edges.
+    /// adds directly one facet giving the sequence of labels `s` of all its edges (labels are separated by spaces).
     /// @pre A surface is under creation.
     void add_facet(const std::string& s);
       
@@ -52,11 +52,11 @@ namespace CGAL {
     /// @pre A path is under creation.
     CGAL::Path_on_surface<CMap> end_path();
 
-    /// adds edge labeled `e` at the end of the current path.
+    /// adds edge labeled `l` at the end of the current path.
     /// @pre A path is under creation.
-    void add_edge_to_path(const std::string& e);
+    void add_edge_to_path(const std::string& l);
     
-    /// create a path directly from a sequence of edge labels `s`. Returns the path created.
+    /// create a path directly from a sequence of edge labels `s` (labels are separated by spaces). Returns the path created.
     CGAL::Path_on_surface<CMap> create_path(const std::string& s);
   };
 }
