@@ -40,6 +40,8 @@ private:
 
 public:
 
+  Segment () { }
+
   Segment (KSR::size_t input_idx, KSR::size_t support_line_idx)
     : m_input_idx (input_idx), m_support_line_idx (support_line_idx) { }
 

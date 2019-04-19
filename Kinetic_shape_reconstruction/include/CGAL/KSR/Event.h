@@ -53,6 +53,8 @@ private:
 
 public:
 
+  Event () { }
+
   Event (KSR::size_t vertex_idx, KSR::size_t meta_vertex_idx, FT time)
     : m_vertex_idx (vertex_idx), m_meta_vertex_idx (meta_vertex_idx), m_time (time)
   { }

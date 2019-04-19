@@ -44,6 +44,8 @@ private:
 
 public:
 
+  Meta_vertex () { }
+
   Meta_vertex (const Point_2& point) : m_point (point) { }
 
   const Point_2& point() const { return m_point; }

@@ -28,13 +28,11 @@
 #include <CGAL/KSR/utils.h>
 #include <CGAL/KSR_3/Support_plane.h>
 #include <CGAL/KSR_3/Support_line.h>
-#include <CGAL/KSR_3/Vertex.h>
 #include <CGAL/KSR_3/Polygon.h>
+#include <CGAL/KSR_3/Vertex.h>
+
 #include <CGAL/KSR/Event.h>
 #include <CGAL/KSR/Event_queue.h>
-
-#include <CGAL/convex_hull_2.h>
-#include <CGAL/centroid.h>
 
 namespace CGAL
 {

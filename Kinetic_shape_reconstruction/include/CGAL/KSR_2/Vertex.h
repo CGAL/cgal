@@ -44,6 +44,8 @@ private:
 
 public:
 
+  Vertex () { }
+
   Vertex (FT point,
           KSR::size_t segment_idx = KSR::no_element(),
           unsigned int remaining_intersections = 0)

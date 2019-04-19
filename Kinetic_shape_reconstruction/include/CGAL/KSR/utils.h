@@ -41,8 +41,50 @@ namespace KSR
 // Size type
 #ifdef CGAL_KSR_USE_STD_SIZE_T_AS_SIZE_TYPE
 typedef std::size_t size_t;
+using std::vector;
 #else
+
 typedef boost::uint32_t size_t;
+
+template <typename ValueType>
+class vector
+{
+public:
+  typedef ValueType value_type;
+  typedef std::vector<ValueType> Base;
+  typedef typename Base::const_iterator const_iterator;
+  typedef typename Base::iterator iterator;
+private:
+  std::vector<ValueType> m_data;
+public:
+
+  vector (KSR::size_t size = 0)
+    : m_data (size) { }
+  vector (KSR::size_t size, const ValueType& def)
+    : m_data (size, def) { }
+
+  const_iterator begin() const { return m_data.begin(); }
+  const_iterator end() const { return m_data.end(); }
+  iterator begin() { return m_data.begin(); }
+  iterator end() { return m_data.end(); }
+
+  KSR::size_t size() const { return static_cast<KSR::size_t>(m_data.size()); }
+  bool empty() const { return m_data.empty(); }
+
+  void reserve (const KSR::size_t& size) { m_data.reserve(std::size_t(size)); }
+  void resize (const KSR::size_t& size) { m_data.resize(std::size_t(size)); }
+
+  const ValueType& operator[] (const KSR::size_t& idx) const { return m_data[std::size_t(idx)]; }
+  ValueType& operator[] (const KSR::size_t& idx) { return m_data[std::size_t(idx)]; }
+
+  const ValueType& front() const { return m_data.front(); }
+  ValueType& front() { return m_data.front(); }
+  const ValueType& back() const { return m_data.back(); }
+  ValueType& back() { return m_data.back(); }
+
+  void push_back (const ValueType& v) { m_data.push_back (v); }
+};
+
 #endif
 
 // Use -1 as no element identifier
@@ -50,6 +92,8 @@ inline size_t no_element() { return size_t(-1); }
 
 // Use -2 as special invalid identifier
 inline size_t invalid() { return size_t(-2); }
+
+
 
 // Vector normalization
 template <typename Vector>
