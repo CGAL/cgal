@@ -163,7 +163,7 @@ public:
 // Parallel version (specialization)
 //
 template<class MD, class K_,
-         class Vertex_base_, class Cell_base_>
+         class Vertex_base_, class Cell_base_, class CurveIndex = int>
 struct Mesh_triangulation_3<MD, K_, Parallel_tag, Vertex_base_, Cell_base_>
 {
 private:
@@ -176,7 +176,7 @@ private:
     Mesh_vertex_base_3<Geom_traits, MD> >::type                       Vertex_base;
   typedef typename Default::Get<
     Cell_base_,
-    Compact_mesh_cell_base_3<Geom_traits, MD> >::type                 Cell_base;
+    Compact_mesh_cell_base_3<Geom_traits, MD, CurveIndex> >::type                 Cell_base;
 
   typedef Triangulation_data_structure_3<
     Vertex_base, Cell_base, Parallel_tag>                             Tds;

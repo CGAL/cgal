@@ -782,14 +782,6 @@ operator<< (std::ostream& os,
   typedef typename Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>::Concurrency_tag Concurrency_tag;
   return os << static_cast<
     const Mesh_3::Mesh_complex_3_in_triangulation_3_base<Tr, Concurrency_tag>&>(c3t3);
-  for ( typename C3t3::Edge_map::const_iterator it = c3t3.edges_in_complex_begin();
-        it != c3t3.edges_in_complex_end() ; ++it )
-  {
-    if(c3t3.is_in_complex(*it))
-    {
-      
-    }
-  }
 }
 
 

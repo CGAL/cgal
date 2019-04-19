@@ -63,7 +63,7 @@ protected:
     : bits_(0)
     , weighted_circumcenter_(NULL)
   {}
-
+  
 public:
 #if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
  || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
@@ -113,7 +113,7 @@ public:
 
 private:
   char bits_;
-
+  
 #if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
  || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
 
@@ -200,7 +200,6 @@ private:
   Erase_counter_type                m_erase_counter;
   /// Stores visited facets (4 first bits)
   tbb::atomic<char> bits_;
-
 protected:
   mutable tbb::atomic<Point_3*> weighted_circumcenter_;
 };
@@ -213,6 +212,7 @@ protected:
 // Adds information to Cb about the cell of the input complex containing it
 template< class GT,
           class MD,
+          typename CurveIndex=int,
           class TDS = void >
 class Compact_mesh_cell_base_3
   : public Compact_mesh_cell_base_3_base<GT, typename TDS::Concurrency_tag>
@@ -629,6 +629,61 @@ public:
   }
   ///@}
 
+  /// Store the curve index of the edges inside the cell for I/O
+  /// @{
+  //indices in cis:
+  //i\j 0 1 2 3
+  // |---------
+  //0|  - 0 1 2
+  //1|  0 - 3 4
+  //2|  1 3 - 5
+  //3|  2 4 5 -
+  //
+  void set_curve_index(std::size_t i, std::size_t j, CurveIndex c)
+  {
+    CGAL_assertion(i != j);
+    if(i<j)
+      cis[i==0 ? j-1 : j+i] = c;
+    else 
+      cis[j==0 ? i-1 : i+j] = c;
+  }
+
+  CurveIndex get_curve_index(std::size_t i, std::size_t j)
+  {
+    CGAL_assertion(i != j);
+    if(i<j)
+      return cis[i==0 ? j-1 : j+i];
+    else                         
+      return cis[j==0 ? i-1 : i+j];
+  }
+
+  ///save extra data per cell 
+  std::ostream& write_data(std::ostream& os,
+                           const CGAL::Unique_hash_map<Vertex_handle, std::size_t > &
+                           )const
+  {
+    for (std::size_t i =0; i< 3; ++i)
+      for (std::size_t j =i+1; j< 4; ++j)
+      {
+        os << get_curve_index(i,j);
+        if(j == 3 )
+          os<<"\n";
+        else
+          os<<" ";
+      }
+    return os;
+  }
+
+  ///load extra data per cell 
+  std::istream& read_data(std::istream& is,
+                          std::vector<Cell_handle>&,
+                          std::vector<Vertex_handle>&)
+  {
+    is >> this->info();
+    return is;
+  }
+  
+  ///@}
 private:
 
 
@@ -658,6 +713,7 @@ private:
 
   TDS_data      _tds_data;
   mutable bool sliver_cache_validity_;
+  CurveIndex cis[6];
 
 
 };  // end class Compact_mesh_cell_base_3
