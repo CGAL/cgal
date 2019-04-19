@@ -419,11 +419,9 @@ CMap_for_surface_mesh_curve_topology;
       if (p1.is_empty() && p2.is_empty()) { return true; }
       if (p1.is_empty() || p2.is_empty()) { return false; }
 
-      if (!CGAL::template belong_to_same_cell<Map,0>(m_original_map,
-                                                     p1.front(), p2.front()) ||
-          !CGAL::template belong_to_same_cell<Map,0>(m_original_map,
-                                                     m_original_map.other_extremity(p1.back()),
-                                                     m_original_map.other_extremity(p2.back())))
+      if (!m_original_map.template belong_to_same_cell<0>(p1.front(), p2.front()) ||
+          !m_original_map.template belong_to_same_cell<0>(m_original_map.other_extremity(p1.back()),
+                                                 m_original_map.other_extremity(p2.back())))
       {
         std::cerr<<"Error: are_base_point_homotopic requires two paths that"
                  <<" share the same vertices as extremities."<<std::endl;
@@ -437,8 +435,8 @@ CMap_for_surface_mesh_curve_topology;
       if (display_time)
       { t.start(); }
 
-      Path_on_surface<Map> path=p1;
-      Path_on_surface<Map> path2=p2; path2.reverse();
+      Path_on_surface<Mesh> path=p1;
+      Path_on_surface<Mesh> path2=p2; path2.reverse();
       path+=path2;
 
       bool res=is_contractible(path);

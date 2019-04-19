@@ -184,7 +184,7 @@ public:
 
   /// @return true iff the ith dart can be added at the end of the path.
   bool can_be_pushed_by_index(std::size_t i) const
-  { return can_be_pushed(get_map().darts().iterator_to(get_map().darts()[i])); }
+  { return can_be_pushed(get_map().dart_handle(i)); }
   
   /// Add the given dart at the end of this path.
   /// @pre can_be_pushed(dh)
@@ -200,7 +200,7 @@ public:
 
   /// Add the given ith dart at the end of this path. 
   void push_back_by_index(std::size_t i)
-  { push_back(get_map().darts().iterator_to(get_map().darts()[i])); }
+  { push_back(get_map().dart_handle(i)); }
   
   
   Self& operator+=(const Self& other)

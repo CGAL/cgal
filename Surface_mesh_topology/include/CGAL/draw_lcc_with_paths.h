@@ -227,7 +227,7 @@ protected:
   {
     Point p1 = get_point(dh);
     Dart_const_handle d2 = lcc.other_extremity(dh);
-    if (d2!=NULL)
+    if (d2!=LCC::null_handle)
     {
       if (m_draw_marked_darts && m_amark!=LCC::INVALID_MARK &&
           (lcc.is_marked(dh, m_amark) || lcc.is_marked(lcc.beta(dh, 2), m_amark)))
@@ -241,7 +241,7 @@ protected:
   {
     Point p1 = get_point(dh);
     Dart_const_handle d2 = lcc.other_extremity(dh);
-    if (d2!=NULL)
+    if (d2!=LCC::null_handle)
     { add_segment(p1, get_point(d2), color); }
   }
 
