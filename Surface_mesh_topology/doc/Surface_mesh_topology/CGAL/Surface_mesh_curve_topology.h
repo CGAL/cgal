@@ -3,7 +3,7 @@ namespace CGAL {
   /*!
     \ingroup PkgSurfaceMeshTopologyClasses
     
-    The class `Surface_mesh_curve_topology` provides methods to test homotopy on paths. Each object of this class is constructed from an external mesh, either a 2D combinatorial map or a model of a FaceGraph. It maintains a correspondence between this mesh and an internal representation.
+    The class `Surface_mesh_curve_topology` provides methods to test homotopy on paths. Each object of this class is constructed from an external mesh, either a 2D combinatorial map or a model of a FaceGraph. It maintains a correspondence between this mesh and an internal representation. The user must not modify the input surface as long as homotopy tests are performed with this `Surface_mesh_curve_topology`.
     
     \tparam Mesh a model of `CombinatorialMap` or of `FaceGraph`
   */

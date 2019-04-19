@@ -60,10 +60,10 @@ namespace CGAL {
     /// reverses this path (i.e. negate its orientation).
     void reverse();
 
-    /// creates a random open path with lenght darts/halfedges.
-    void generate_random_path(std::size_t lenght, Random& random=get_default_random());
+    /// creates a random open path with `length` darts/halfedges.
+    void generate_random_path(std::size_t length, Random& random=get_default_random());
 
-    /// creates a random closed path with at least lenght darts/halfedges.
+    /// creates a random closed path with at least `length` darts/halfedges.
     void generate_random_closed_path(std::size_t length, Random& random=get_default_random());
     
    };
