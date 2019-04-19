@@ -63,7 +63,7 @@ protected:
     : bits_(0)
     , weighted_circumcenter_(NULL)
   {}
-  
+
 public:
 #if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
  || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
@@ -113,7 +113,7 @@ public:
 
 private:
   char bits_;
-  
+
 #if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
  || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
 
@@ -200,6 +200,7 @@ private:
   Erase_counter_type                m_erase_counter;
   /// Stores visited facets (4 first bits)
   tbb::atomic<char> bits_;
+
 protected:
   mutable tbb::atomic<Point_3*> weighted_circumcenter_;
 };
@@ -212,7 +213,7 @@ protected:
 // Adds information to Cb about the cell of the input complex containing it
 template< class GT,
           class MD,
-          typename CurveIndex=int,
+          class CurveIndex = int,
           class TDS = void >
 class Compact_mesh_cell_base_3
   : public Compact_mesh_cell_base_3_base<GT, typename TDS::Concurrency_tag>
@@ -232,7 +233,7 @@ public:
 
   template <typename TDS2>
   struct Rebind_TDS {
-    typedef Compact_mesh_cell_base_3<GT, MD, TDS2> Other;
+    typedef Compact_mesh_cell_base_3<GT, MD, CurveIndex, TDS2> Other;
   };
 
 
@@ -766,16 +767,17 @@ operator<<(std::ostream &os,
 
 
 // Specialization for void.
-template <typename GT, typename MD>
-class Compact_mesh_cell_base_3<GT, MD, void>
+template <typename GT, typename MD, typename CurveIndex>
+class Compact_mesh_cell_base_3<GT, MD, CurveIndex, void>
 {
 public:
   typedef internal::Dummy_tds_3                         Triangulation_data_structure;
   typedef Triangulation_data_structure::Vertex_handle   Vertex_handle;
   typedef Triangulation_data_structure::Cell_handle     Cell_handle;
   template <typename TDS2>
-  struct Rebind_TDS { typedef Compact_mesh_cell_base_3<GT, MD, TDS2> Other; };
+  struct Rebind_TDS { typedef Compact_mesh_cell_base_3<GT, MD, CurveIndex, TDS2> Other; };
 };
+
 
 }  // end namespace CGAL
 

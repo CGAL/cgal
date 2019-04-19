@@ -442,6 +442,13 @@ struct Test_c3t3_io {
     v5->set_index(Mesh_domain::get_surface_patch_index_1());
     v6->set_dimension(3);
     v6->set_index(Mesh_domain::get_sub_domain_index_1());
+    for (auto cit = c3t3.triangulation().cells_begin();
+         cit != c3t3.triangulation().cells_end(); ++cit)
+    {
+      for(std::size_t i =0; i<3; ++i)
+        for(std::size_t j =i+1; j<4; ++j)
+          cit->set_curve_index(i,j,c3t3.curve_index(cit->vertex(i), cit->vertex(j)));
+    }
 
     // then test I/O
     return test_io(c3t3, prefix, false) && test_io(c3t3, prefix, true);
