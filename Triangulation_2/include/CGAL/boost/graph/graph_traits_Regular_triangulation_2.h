@@ -280,6 +280,16 @@ namespace CGAL {
     };
   };
 
+  template <class Gt, class Tds>
+  struct graph_has_property<Regular_triangulation_2<Gt,Tds>, CGAL::vertex_point_t>
+    : CGAL::Tag_true {};
+
+  template <class Gt, class Tds>
+  inline RT2_vertex_point_map<Gt,Tds>
+  get(boost::vertex_point_t, const Regular_triangulation_2<Gt,Tds>&) {
+    RT2_vertex_point_map<Gt,Tds> m;
+    return m;
+  }
 
 } // namespace CGAL
 
