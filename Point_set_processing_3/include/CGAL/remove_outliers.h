@@ -27,6 +27,7 @@
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/Point_set_processing_3/internal/neighbor_query.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <functional>
@@ -63,33 +64,16 @@ typename Kernel::FT
 compute_avg_knn_sq_distance_3(
     const typename Kernel::Point_3& query, ///< 3D point to project
     Tree& tree,                            ///< KD-tree
-    unsigned int k)                        ///< number of neighbors
+    unsigned int k,                        ///< number of neighbors
+    typename Kernel::FT neighbor_radius)
 {
     // geometric types
     typedef typename Kernel::FT FT;
     typedef typename Kernel::Point_3 Point;
 
-    // types for K nearest neighbors search
-    typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
-    typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
-    typedef typename Neighbor_search::iterator Search_iterator;
-
-    // Gather set of (k+1) neighboring points.
-    // Perform k+1 queries (if in point set, the query point is
-    // output first). Search may be aborted if k is greater
-    // than number of input points.
-    std::vector<Point> points; points.reserve(k+1);
-    Neighbor_search search(tree,query,k+1);
-    Search_iterator search_iterator = search.begin();
-    unsigned int i;
-    for(i=0;i<(k+1);i++)
-    {
-        if(search_iterator == search.end())
-            break; // premature ending
-        points.push_back(search_iterator->first);
-        search_iterator++;
-    }
-    CGAL_point_set_processing_precondition(points.size() >= 1);
+    std::vector<Point> points;
+    CGAL::Point_set_processing_3::internal::neighbor_query
+      (query, tree, k, neighbor_radius, points);
 
     // compute average squared distance
     typename Kernel::Compute_squared_distance_3 sqd;
@@ -169,6 +153,8 @@ remove_outliers(
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 
   PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
+  typename Kernel::FT neighbor_radius = choose_param(get_param(np, internal_np::neighbor_radius),
+                                                     typename Kernel::FT(0));
   double threshold_percent = choose_param(get_param(np, internal_np::threshold_percent), 10.);
   double threshold_distance = choose_param(get_param(np, internal_np::threshold_distance), 0.);
   const std::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
@@ -213,7 +199,7 @@ remove_outliers(
   {
     FT sq_distance = internal::compute_avg_knn_sq_distance_3<Kernel>(
       get(point_map,*it),
-      tree, k);
+      tree, k, neighbor_radius);
     sorted_points.insert( std::make_pair(sq_distance, *it) );
     if (callback && !callback ((nb+1) / double(kd_tree_points.size())))
       return points.end();
