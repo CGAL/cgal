@@ -2250,7 +2250,7 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
 }
 namespace tds_io_internal {
 
-void skip_empty(std::istream& is)
+inline void skip_empty(std::istream& is)
 {
   //move to next non empty
   std::string s;
