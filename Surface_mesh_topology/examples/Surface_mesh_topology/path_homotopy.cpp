@@ -76,7 +76,8 @@ void process_command_line(int argc, char** argv,
     {
       if (i==argc-1)
       { error_command_line(argc, argv, "Error: no number after -seed option."); }
-      random=CGAL::Random(static_cast<unsigned int>(std::stoi(std::string(argv[++i])))); // initialize the random generator with the given seed
+      random=CGAL::Random(static_cast<unsigned int>(std::stoi(std::string(argv[++i]))));
+      // initialize the random generator with the given seed
     }
     else if (arg=="-time")
     { time=true; }
@@ -127,10 +128,6 @@ int main(int argc, char** argv)
   
   for (unsigned int i=0; i<N; ++i)
   {
-    // TEMPO POUR DEBUG
-    //random=CGAL::Random(461974893);
-    // END TEMPO POUR DEBUG
-
     if (i!=0)
     {
       random=CGAL::Random(random.get_int(0, std::numeric_limits<int>::max()));
@@ -146,7 +143,6 @@ int main(int argc, char** argv)
     CGAL::Path_on_surface<LCC_3_cmap> path1(lcc);
     path1.generate_random_closed_path(length, random);
 
-    //if (path1.length()<100000) { // TEMPO FOR DEBUG
     std::cout<<"Path1 size: "<<path1.length()<<" (from "<<length<<" darts); ";
     paths.push_back(path1);
 
@@ -161,21 +157,12 @@ int main(int argc, char** argv)
 
     bool res=smct.are_freely_homotopic(path1, path2, time);
     if (!res)
-    {
-      /* std::cout<<"ERROR: paths are not homotopic while they should be."
-               <<std::endl; */
-      errors_seeds.push_back(random.get_seed());
-    }
-    /* else
-    { std::cout<<"TEST OK: paths are homotopic."<<std::endl; } */
+    { errors_seeds.push_back(random.get_seed()); }
 
 #ifdef CGAL_USE_BASIC_VIEWER
     if (draw)
     { CGAL::draw(lcc, paths); }
 #endif
-     // END TEMPO POUR DEBUG}
-
-   //  { if (!res) { i=0; errors_seeds.clear();} } // TEMPO POUR DEBUG
   }
 
   if (errors_seeds.empty())

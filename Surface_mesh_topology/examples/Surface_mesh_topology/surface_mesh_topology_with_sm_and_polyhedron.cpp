@@ -23,9 +23,6 @@ template<class FaceGraph>
 void test(const FaceGraph& mesh)
 {
   CGAL::Random random(seed);
-  //typedef CGAL::Face_graph_wrapper<FaceGraph> LCC_3_cmap;
-  //LCC_3_cmap mesh(initialmesh);
-
   CGAL::Surface_mesh_curve_topology<FaceGraph> smct(mesh);
 
   CGAL::Path_on_surface<FaceGraph> p1(mesh); // A first path
@@ -41,9 +38,7 @@ void test(const FaceGraph& mesh)
   std::cout<<"Path p1 "<<(res2?"IS":"IS NOT")<<" homotopic with path p2."<<std::endl;
 
 #ifdef CGAL_USE_BASIC_VIEWER
-    std::vector<CGAL::Path_on_surface<FaceGraph> > paths;
-    paths.push_back(p1);
-    paths.push_back(p2);
+  std::vector<CGAL::Path_on_surface<FaceGraph> > paths={p1, p2};
     CGAL::draw(mesh, paths); // Enable only if CGAL was compiled with Qt5 */
 #endif // CGAL_USE_BASIC_VIEWER
 }

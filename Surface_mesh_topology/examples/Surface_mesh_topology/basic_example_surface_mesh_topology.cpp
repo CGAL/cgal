@@ -15,11 +15,9 @@ void create_path_1(CGAL::Path_on_surface<LCC_3_cmap>& p)
 }
 ///////////////////////////////////////////////////////////////////////////////
 void create_path_2(CGAL::Path_on_surface<LCC_3_cmap>& p)
-{
-  // All the indices of the darts
-  std::vector<std::size_t> indices={202, 206, 335, 317, 322, 69, 62, 414};
-  for (std::size_t i=0; i<indices.size(); ++i)
-  { p.push_back_by_index(indices[i]); }
+{ 
+  for (std::size_t index : {202, 206, 335, 317, 322, 69, 62, 414})
+  { p.push_back_by_index(index); }
 }
 ///////////////////////////////////////////////////////////////////////////////
 void create_path_3(CGAL::Path_on_surface<LCC_3_cmap>& p)
@@ -57,10 +55,7 @@ int main()
            <<" homotopic with path p3 (orange)."<<std::endl;
 
 #ifdef CGAL_USE_BASIC_VIEWER
-  std::vector<CGAL::Path_on_surface<LCC_3_cmap> > paths;
-  paths.push_back(p1);
-  paths.push_back(p2);  
-  paths.push_back(p3);  
+  std::vector<CGAL::Path_on_surface<LCC_3_cmap> > paths={p1, p2, p3};
   CGAL::draw(lcc, paths); // Enable only if CGAL was compiled with Qt5
 #endif // CGAL_USE_BASIC_VIEWER
   

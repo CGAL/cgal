@@ -58,10 +58,7 @@ int main()
            <<" base point homotopic with path p3 (orange)."<<std::endl;
 
 #ifdef CGAL_USE_BASIC_VIEWER
-  std::vector<CGAL::Path_on_surface<SM> > paths;
-  paths.push_back(p1);
-  paths.push_back(p2);  
-  paths.push_back(p3);  
+  std::vector<CGAL::Path_on_surface<SM> > paths={p1, p2, p3};
   CGAL::draw(sm, paths); // Enable only if CGAL was compiled with Qt5
 #endif // CGAL_USE_BASIC_VIEWER
   
