@@ -53,7 +53,7 @@ The code for creating the above left and middle examples appear in the \ref SMTo
 
 \subsubsection SMTopology_Build Building the Internal Surface Representation
 
-A common first step in the homotopy test algorithms is to build a simplified mesh from the input surface mesh. This preprocessing step is done once for all for a given mesh. The simplified surface is a quadrangulation, every face of which is a quadrilateral, stored in a `Surface_mesh_curve_topology`.
+A common first step in the homotopy test algorithms is to build a simplified mesh from the input surface mesh. This preprocessing step is done once and for all for a given mesh. The simplified surface is a quadrangulation, every face of which is a quadrilateral, stored in a `Surface_mesh_curve_topology`.
 \note The user must not modify the input surface as long as homotopy tests are performed with this `Surface_mesh_curve_topology`.
 
 Each time a `Path_on_surface` is provided for a homotopy test, it is first transformed to an equivalent path in the quadrangulation stored by the `Surface_mesh_curve_topology`. This transformation is transparent to the user who has never access to the quadrangulation.
