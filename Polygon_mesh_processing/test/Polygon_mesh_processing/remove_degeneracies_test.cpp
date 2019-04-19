@@ -239,10 +239,10 @@ void test()
 
 int main()
 {
-  std::cout << "EPICK TESTS" << std::endl;
+  std::cout << "EPICK SM TESTS" << std::endl;
   test<EPICK, Surface_mesh>();
 
-  std::cout << "EPECK TESTS" << std::endl;
+  std::cout << "EPICK POLYHEDRON TESTS" << std::endl;
   test<EPICK, Polyhedron>();
 
   return EXIT_SUCCESS;
