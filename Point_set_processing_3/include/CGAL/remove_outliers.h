@@ -95,7 +95,7 @@ compute_avg_knn_sq_distance_3(
 /**
    \ingroup PkgPointSetProcessing3Algorithms
    Removes outliers:
-   - computes average squared distance to the K nearest neighbors,
+   - computes average squared distance to the nearest neighbors,
    - and sorts the points in increasing order of average distance.
 
    This method modifies the order of input points so as to pack all remaining points first,
@@ -114,6 +114,13 @@ compute_avg_knn_sq_distance_3(
    \cgalNamedParamsBegin
      \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
      If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{neighbor_radius} spherical neighborhood
+     radius. If provided, the neighborhood of a query point is
+     computed with a fixed spherical radius instead of a fixed number
+     of neighbors. In that case, the parameter `k` is used as a limit
+     on the number of points returned by each spherical query (to
+     avoid overly large number of points in high density areas). If no
+     limit is wanted, use `k=0`.\cgalParamEnd
      \cgalParamBegin{threshold_percent} maximum percentage of points to remove.\cgalParamEnd
      \cgalParamBegin{threshold_distance} minimum distance for a point to be considered as outlier
      (distance here is the square root of the average squared distance to K nearest neighbors).\cgalParamEnd

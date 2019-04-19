@@ -156,7 +156,7 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 /**
    \ingroup PkgPointSetProcessing3Algorithms
    Estimates normal directions of the range of `points`
-   using jet fitting on the k nearest neighbors.
+   using jet fitting on the nearest neighbors.
    The output normals are randomly oriented.
 
    \pre `k >= 2`
@@ -176,6 +176,12 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
      If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
      \cgalParamBegin{normal_map} a model of `ReadWritePropertyMap` with value type
      `geom_traits::Vector_3`.\cgalParamEnd
+     \cgalParamBegin{neighbor_radius} spherical neighborhood radius. If
+     provided, the neighborhood of a query point is computed with a fixed spherical
+     radius instead of a fixed number of neighbors. In that case, the parameter
+     `k` is used as a limit on the number of points returned by each spherical
+     query (to avoid overly large number of points in high density areas). If no
+     limit is wanted, use `k=0`.\cgalParamEnd
      \cgalParamBegin{degree_fitting} degree of jet fitting.\cgalParamEnd
      \cgalParamBegin{svd_traits} template parameter for the class `Monge_via_jet_fitting`. If
      \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined,

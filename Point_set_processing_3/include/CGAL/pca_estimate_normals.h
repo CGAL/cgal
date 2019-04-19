@@ -146,7 +146,7 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 /**
    \ingroup PkgPointSetProcessing3Algorithms
    Estimates normal directions of the range of `points`
-   by linear least squares fitting of a plane over the k nearest neighbors.
+   by linear least squares fitting of a plane over the nearest neighbors.
    The output normals are randomly oriented.
 
    \pre `k >= 2`
@@ -161,20 +161,29 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
    \param k number of neighbors
    \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
 
-   \cgalNamedParamsBegin
-     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
-     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
-     \cgalParamBegin{normal_map} a model of `WritablePropertyMap` with value type
+   \cgalNamedParamsBegin \cgalParamBegin{point_map} a model of
+     `ReadablePropertyMap` with value type `geom_traits::Point_3`.  If
+     this parameter is omitted,
+     `CGAL::Identity_property_map<geom_traits::Point_3>` is
+     used.\cgalParamEnd \cgalParamBegin{normal_map} a model of
+     `WritablePropertyMap` with value type
      `geom_traits::Vector_3`.\cgalParamEnd
+     \cgalParamBegin{neighbor_radius} spherical neighborhood
+     radius. If provided, the neighborhood of a query point is
+     computed with a fixed spherical radius instead of a fixed number
+     of neighbors. In that case, the parameter `k` is used as a limit
+     on the number of points returned by each spherical query (to
+     avoid overly large number of points in high density areas). If no
+     limit is wanted, use `k=0`.\cgalParamEnd
      \cgalParamBegin{callback} an instance of
-      `std::function<bool(double)>`. It is called regularly when the
-      algorithm is running: the current advancement (between 0. and
-      1.) is passed as parameter. If it returns `true`, then the
-      algorithm continues its execution normally; if it returns
-      `false`, the algorithm is stopped and the remaining normals are
-      left unchanged.\cgalParamEnd
-     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
-   \cgalNamedParamsEnd
+     `std::function<bool(double)>`. It is called regularly when the
+     algorithm is running: the current advancement (between 0. and 1.)
+     is passed as parameter. If it returns `true`, then the algorithm
+     continues its execution normally; if it returns `false`, the
+     algorithm is stopped and the remaining normals are left
+     unchanged.\cgalParamEnd \cgalParamBegin{geom_traits} an instance
+     of a geometric traits class, model of `Kernel`\cgalParamEnd
+     \cgalNamedParamsEnd
 */
 template <typename ConcurrencyTag,
 	  typename PointRange,

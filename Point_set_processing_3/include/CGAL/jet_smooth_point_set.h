@@ -158,7 +158,7 @@ jet_smooth_point(
 
 /**
    \ingroup PkgPointSetProcessing3Algorithms
-   Smoothes the range of `points` using jet fitting on the k
+   Smoothes the range of `points` using jet fitting on the
    nearest neighbors and reprojection onto the jet.
    As this method relocates the points, it
    should not be called on containers sorted w.r.t. point locations.
@@ -178,6 +178,12 @@ jet_smooth_point(
    \cgalNamedParamsBegin
      \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
      If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{neighbor_radius} spherical neighborhood radius. If
+     provided, the neighborhood of a query point is computed with a fixed spherical
+     radius instead of a fixed number of neighbors. In that case, the parameter
+     `k` is used as a limit on the number of points returned by each spherical
+     query (to avoid overly large number of points in high density areas). If no
+     limit is wanted, use `k=0`.\cgalParamEnd
      \cgalParamBegin{degree_fitting} degree of jet fitting.\cgalParamEnd
      \cgalParamBegin{degree_monge} Monge degree.\cgalParamEnd
      \cgalParamBegin{svd_traits} template parameter for the class `Monge_via_jet_fitting`. If

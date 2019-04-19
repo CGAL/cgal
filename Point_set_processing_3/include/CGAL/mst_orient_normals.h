@@ -589,6 +589,12 @@ create_mst_graph(
      If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
      \cgalParamBegin{normal_map} a model of `ReadWritePropertyMap` with value type
      `geom_traits::Vector_3`.\cgalParamEnd
+     \cgalParamBegin{neighbor_radius} spherical neighborhood radius. If
+     provided, the neighborhood of a query point is computed with a fixed spherical
+     radius instead of a fixed number of neighbors. In that case, the parameter
+     `k` is used as a limit on the number of points returned by each spherical
+     query (to avoid overly large number of points in high density areas). If no
+     limit is wanted, use `k=0`.\cgalParamEnd
      \cgalParamBegin{point_is_constrained_map} a model of `ReadablePropertyMap` with value type
      `bool`. Points with a `true` value will be used as seed points: their normal will be considered as already
      oriented, it won't be altered and it will be propagated to its neighbors. If this parameter is omitted, 

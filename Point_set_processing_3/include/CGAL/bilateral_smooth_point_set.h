@@ -344,7 +344,7 @@ public:
    \ingroup PkgPointSetProcessing3Algorithms
  
    This function smooths an input point set by iteratively projecting each 
-   point onto the implicit surface patch fitted over its k nearest neighbors.
+   point onto the implicit surface patch fitted over its nearest neighbors.
    Bilateral projection preserves sharp features according to the normal
    (gradient) information. Both point positions and normals will be modified.  
    For more details, please see section 4 in \cgalCite{ear-2013}.  
@@ -374,6 +374,12 @@ public:
      If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
      \cgalParamBegin{normal_map} a model of `ReadWritePropertyMap` with value type
      `geom_traits::Vector_3`.\cgalParamEnd
+     \cgalParamBegin{neighbor_radius} spherical neighborhood radius. If
+     provided, the neighborhood of a query point is computed with a fixed spherical
+     radius instead of a fixed number of neighbors. In that case, the parameter
+     `k` is used as a limit on the number of points returned by each spherical
+     query (to avoid overly large number of points in high density areas). If no
+     limit is wanted, use `k=0`.\cgalParamEnd
      \cgalParamBegin{sharpness_angle} controls the sharpness of the result.\cgalParamEnd
      \cgalParamBegin{callback} an instance of
       `std::function<bool(double)>`. It is called regularly when the
