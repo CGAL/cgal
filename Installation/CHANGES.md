@@ -13,6 +13,9 @@ Release date: September 2019
 ### IO Streams
  -   **Breaking change:** The API of `CGAL::Color` has been cleaned up.
 
+### Shape Detection
+ -   Added a new generic implementation of region growing.
+ -   New region growing can be launched on points in 2D and 3D and on a face graph.
 
 Release 4.14
 ------------

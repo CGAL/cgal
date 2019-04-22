@@ -8,7 +8,7 @@ namespace CGAL {
 
 
 \cgal provides several algorithms for processing point sets, ranging from
-\ref Chapter_Point_Set_Shape_Detection "Shape Detection" to
+\ref Chapter_Shape_Detection "Shape Detection" to
 \ref Chapter_Advancing_Front_Surface_Reconstruction "Surface Reconstruction"
 through standard \ref Chapter_Point_Set_Processing "Point Set Processing" tools.
 
@@ -91,7 +91,7 @@ The following example shows how to apply some algorithms from the
 
 - simplifying the point set with `CGAL::grid_simplify_point_set()`
 
-- detecting the sphere shape with `CGAL::Shape_detection_3::Efficient_RANSAC`
+- detecting the sphere shape with `CGAL::Shape_detection::Efficient_RANSAC`
 
 \cgalExample{Point_set_3/point_set_algo.cpp}
 

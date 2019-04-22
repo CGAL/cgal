@@ -583,9 +583,8 @@ points that are on sharp edges:
 
 The function `structure_point_set()` generates a structured version of
 the input point set assigned to a set of planes. Such an input can be
-produced by a shape detection algorithm (see \ref
-PkgPointSetShapeDetection3). Point set structuring is based on
-the article \cgalCite{cgal:la-srpss-13}.
+produced by a shape detection algorithm (see \ref PkgShapeDetectionRef). 
+Point set structuring is based on the article \cgalCite{cgal:la-srpss-13}.
 
 - __Planes__: inliers of each detected plane are replaced by sets of
 noise-free points sampled at the vertices of a regular grid: this is
