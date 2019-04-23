@@ -4,8 +4,11 @@ namespace CGAL {
 \ingroup PkgPartition2Ref
 
 Traits class that can be used with all the 
-2-dimensional polygon partitioning algorithms. It is parameterized by 
-a representation class `R`. 
+2-dimensional polygon partitioning algorithms. 
+
+
+\tparam R  a representation class
+\tparam PointPropertyMap a property map that maps to points of type `R::Point_2`
 
 \cgalModels `ConvexPartitionIsValidTraits_2`
 \cgalModels `IsYMonotoneTraits_2`
@@ -24,7 +27,7 @@ a representation class `R`.
 \sa `CGAL::y_monotone_partition_is_valid_2()` 
 
 */
-template< typename R >
+  template< typename R, typename PointPropertyMap = Identity_property_map<R::Point_2> >
 class Partition_traits_2 {
 public:
 
@@ -34,61 +37,15 @@ public:
 /*!
 
 */ 
-typedef R::Line_2 Line_2; 
+typedef R::FT FT; 
 
 
 /*!
 
 */ 
-typedef R::Less_yx_2 Less_yx_2; 
+typedef boost::property_traits<PointPropertyMap>::key_type Point_2; 
 
-/*!
-
-*/ 
-typedef R::Less_xy_2 Less_xy_2; 
-
-/*!
-
-*/ 
-typedef R::Left_turn_2 Left_turn_2; 
-
-/*!
-
-*/ 
-typedef R::Orientation_2 Orientation_2; 
-
-/*!
-
-*/ 
-typedef R::Compare_y_2 Compare_y_2; 
-
-/*!
-
-*/ 
-typedef R::Compare_x_2 Compare_x_2; 
-
-/*!
-
-*/ 
-typedef R::Construct_line_2 Construct_line_2; 
-
-
-/*!
-
-*/ 
-typedef R::Collinear_are_ordered_along_line_2 Collinear_are_ordered_along_line_2; 
-
-/*!
-
-*/ 
-typedef R::Are_strictly_ordered_along_line_2 Are_strictly_ordered_along_line_2; 
-
-
-/*!
-
-*/ 
-typedef R::Point_2 Point_2; 
-
+    
 /*!
 
 */ 
@@ -99,28 +56,60 @@ typedef std::list<Point_2> Container;
 */ 
 typedef CGAL::Polygon_2<R, Container> Polygon_2; 
 
-/*!
-
-*/ 
-typedef R::Less_xy_2 Less_xy; 
 
 /*!
 
 */ 
-typedef Poly_Traits::Vector_2 Vector_2; 
+    typedef Partition_traits_2<R,PMap> Self; 
+
+
+
+
+    
+/*!
+A functor with an operator which first obtains points of type `R::Point_2` 
+with the function `get()` applied on the point property map, and 
+then applies the functor of `R::Less_yx_2` to these points.
+*/ 
+typedef unspecified_type Less_yx_2; 
 
 /*!
 
 */ 
-typedef R::FT FT; 
+typedef unspecified_type Less_xy_2; 
 
 /*!
 
 */ 
-typedef Partition_traits_2<R> Self; 
+typedef unspecified_type Left_turn_2; 
 
 /*!
 
+*/ 
+typedef unspecified_type Orientation_2; 
+
+/*!
+
+*/ 
+typedef unspecified_type Compare_y_2; 
+
+/*!
+
+*/ 
+typedef unspecified_type Compare_x_2; 
+
+
+/*!
+
+*/ 
+typedef unspecified_type Collinear_are_ordered_along_line_2; 
+
+/*!
+
+*/ 
+    typedef unspecified_type Are_strictly_ordered_along_line_2; 
+
+/*!
 */ 
 typedef CGAL::Is_convex_2<Self> Is_convex_2; 
 
@@ -143,15 +132,24 @@ Partition_traits_2();
 /*!
 
 */ 
-Partition_traits_2(Partition_traits_2& tr); 
+Partition_traits_2(Partition_traits_2& tr);
+    
+/*!
 
+*/ 
+Partition_traits_2(const R& rep); 
+
+/*!
+
+*/ 
+    Partition_traits_2(const R& rep, PointPropertyMap pmap); 
+    
 /// @} 
 
 /// \name Operations 
 /// For each predicate object type `Pred_object_type` listed above
 /// (i.e., `Less_yx_2`, `Less_xy_2`, `Left_turn_2`,
-/// `Orientation_2`, `Compare_y_2`, `Compare_x_2`, `Construct_line_2`,
-/// `Construct_ray_2`, `Construct_segment_2`,
+/// `Orientation_2`, `Compare_y_2`, `Compare_x_2`,
 /// `Collinear_are_ordered_along_line_2`,
 /// `Are_strictly_ordered_along_line_2`, `Is_convex_2`,
 /// `Is_y_monotone_2`) there is a corresponding function of the

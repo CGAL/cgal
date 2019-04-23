@@ -100,25 +100,24 @@ results (i.e., convex partitions with fewer pieces).
 Examples of the uses of all of the above partition functions are provided with the
 corresponding reference pages.
 
-In the following we illustrate how to use an adapter trais class that enables to
+In the following we illustrate how to use a property map to enable the  trais class to
 deal with polygons where the vertices are not points. In the example the points
 are in a vector and the polygons are sequences of indices.
 
-The class `Partition_traits_adapter_2` has two template parameters, namely
-a geometric traits class, and a property map.  This traits class uses the
-property map to obtain points, in the example by accessing `points[i]` for
+The class `Partition_2` has two template parameters, namely
+a geometric traits class, and a property map to obtain points, in the example by accessing `points[i]` for
 the polygon vertex `i`, and it then performs the predicates required by
 the concept `PartitionTraits_2` on these points.
 
 \cgalExample{Partition_2/y_monotone_partition_indices_2.cpp}
 
-In a similar way, the traits adapter enables to partition faces of a polygonal mesh,
+In a similar way, the use of an appropriate property map enables to partition faces of a polygonal mesh,
 or to access points which are a component of a `std::tuple`.
 
 \section secpartition_2_history Implementation History
 
 This package has originally been written by Susan Hert while working at the Max-Planck Institute for Infomatics in Germany.
-The algorithms have been made free of constructions, and the traits adapter has been added by GeometryFactory
+The algorithms have been made free of constructions, and the property map has been added by GeometryFactory
 for \cgal 5.0.
 
 */

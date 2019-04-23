@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/partition_2.h>
-#include <CGAL/Partition_traits_adapter_2.h>
+#include <CGAL/Partition_traits_2.h>
 #include <CGAL/property_map.h>
 #include <vector>
 #include <cassert>
@@ -9,8 +9,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
-typedef CGAL::Partition_traits_adapter_2<K,
-                                         CGAL::Pointer_property_map<K::Point_2>::type > Partition_traits_2;
+typedef CGAL::Partition_traits_2<K, CGAL::Pointer_property_map<K::Point_2>::type > Partition_traits_2;
 
 typedef Partition_traits_2::Point_2                         Point_2;
 
