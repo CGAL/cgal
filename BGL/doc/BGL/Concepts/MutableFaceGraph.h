@@ -47,4 +47,4 @@ Indicates the expected size of vertices (`nv`), edges (`ed`) and faces (`nf`).
  */
 template <typename MutableFaceGraph>
 void
-reserve(MutableFaceGraph& g, boost::graph_traits<MutableFaceGraph>::vertices_size_type nv, boost::graph_traits<MutableFaceGraph>::vertices_size_type ne, boost::graph_traits<MutableFaceGraph>::vertices_size_type nf);
+reserve(MutableFaceGraph& g, boost::graph_traits<MutableFaceGraph>::vertices_size_type nv, boost::graph_traits<MutableFaceGraph>::edges_size_type ne, boost::graph_traits<MutableFaceGraph>::faces_size_type nf);
