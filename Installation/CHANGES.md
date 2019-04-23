@@ -14,8 +14,13 @@ Release date: September 2019
  -   **Breaking change:** The API of `CGAL::Color` has been cleaned up.
 
 ###3D Boolean Operations on Nef Polyhedra
--   Added a function to convert a Nef_polyhedron_3 to a polygon soup:
-    - `CGAL::convert_nef_to_polygon_soup()`
+ -   Added a function to convert a Nef_polyhedron_3 to a polygon soup: `CGAL::convert_nef_to_polygon_soup()`
+
+### 2D and 3D Linear Geometry Kernel
+ - Add `ComputeApproximateAngle_3` in the 2D/3D Kernel concept to compute
+   the approximate dihedral angle between 2 vectors. Corresponding functors
+   in the model (`Compute_approximate_angle_3`) and free function (`approximate_angle`)
+   are also added.
 
 Release 4.14
 ------------
