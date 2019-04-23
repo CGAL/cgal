@@ -64,7 +64,7 @@ namespace Polygon_mesh_processing {
 
 namespace internal {
 
-// Assigns at each vertex the length of its shortest incident edge as 'epsilon' value
+// Assigns at each vertex the 'tolerance' value as tolerance, but bounded by a percentage of the length of its shortest incident edge
 template <typename HalfedgeRange,
           typename ToleranceMap,
           typename PolygonMesh,
@@ -399,7 +399,6 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
 
   std::size_t counter = 0;
 
-  // Now, move the source vertices when the mapping is surjective
   CGAL_assertion_code(FT prev = -1;)
   while(!container_by_dist.empty())
   {
