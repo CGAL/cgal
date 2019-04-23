@@ -43,7 +43,7 @@ each cell (see below).
 \cgalRefines `RegularTriangulationCellBaseWithWeightedCircumcenter_3`
 \cgalRefines `CopyConstructible`
 
-\cgalHasModel `CGAL::Compact_mesh_cell_base_3<Gt,MD,Tds>`
+\cgalHasModel `CGAL::Compact_mesh_cell_base_3<Gt,MD,CurveIndex,Tds>`
 \cgalHasModel `CGAL::Mesh_cell_base_3<Gt,MD,Cb>`
 
 \sa `CGAL::make_mesh_3()` 

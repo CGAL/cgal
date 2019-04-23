@@ -131,12 +131,13 @@ template<class MD,
          class K_ = Default,
          class Concurrency_tag = Sequential_tag,
          class Vertex_base_ = Default,
-         class Cell_base_   = Default>
+         class Cell_base_   = Default,
+         class CurveIndex = int>
 struct Mesh_triangulation_3;
 
 // Sequential version (default)
 template<class MD, class K_, class Concurrency_tag,
-         class Vertex_base_, class Cell_base_>
+         class Vertex_base_, class Cell_base_, class CurveIndex>
 struct Mesh_triangulation_3
 {
 private:
@@ -149,7 +150,7 @@ private:
     Mesh_vertex_base_3<Geom_traits, MD> >::type                    Vertex_base;
   typedef typename Default::Get<
     Cell_base_,
-    Compact_mesh_cell_base_3<Geom_traits, MD> >::type              Cell_base;
+    Compact_mesh_cell_base_3<Geom_traits, MD, CurveIndex> >::type              Cell_base;
 
   typedef Triangulation_data_structure_3<Vertex_base,Cell_base>    Tds;
   typedef Mesh_3_regular_triangulation_3_wrapper<Geom_traits, Tds> Triangulation;
@@ -163,8 +164,8 @@ public:
 // Parallel version (specialization)
 //
 template<class MD, class K_,
-         class Vertex_base_, class Cell_base_, class CurveIndex = int>
-struct Mesh_triangulation_3<MD, K_, Parallel_tag, Vertex_base_, Cell_base_>
+         class Vertex_base_, class Cell_base_, class CurveIndex>
+struct Mesh_triangulation_3<MD, K_, Parallel_tag, Vertex_base_, Cell_base_, CurveIndex>
 {
 private:
   typedef typename Default::Get<K_, typename Kernel_traits<MD>::Kernel>::type K;

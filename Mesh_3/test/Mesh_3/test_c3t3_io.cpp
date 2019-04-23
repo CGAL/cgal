@@ -224,6 +224,7 @@ struct Test_c3t3_io {
     const Tr& t1 = c1.triangulation();
     const Tr& t2 = c2.triangulation();
     if(t1.number_of_vertices() != t2.number_of_vertices()) {
+      std::cout<<t1.number_of_vertices()<<" != "<<t2.number_of_vertices()<<std::endl;
       assert(false);
       return false;
     }
@@ -342,13 +343,17 @@ struct Test_c3t3_io {
                 << "\n******end******" << std::endl;
     }
     stream.seekg(0);
+    
     assert(stream);
     C3t3 c3t3_bis;
     stream >> c3t3_bis;
-    std::cout << "Content of c3t3_bis:\n"
-              << "*****begin*****\n"
-              << c3t3_bis
-              << "\n******end******" << std::endl;
+    
+    if(!binary) {
+      std::cout << "Content of c3t3_bis:\n"
+                << "*****begin*****\n"
+                << c3t3_bis
+                << "\n******end******" << std::endl;
+    }
     assert(stream);
 
     {
@@ -373,7 +378,6 @@ struct Test_c3t3_io {
       assert(ss);
     }
     if(!check_equality(c3t3, c3t3_bis)) return false;
-
 #ifndef CGAL_LITTLE_ENDIAN
     // skip binary I/O with the existing file for big endian
     return true;
@@ -383,7 +387,6 @@ struct Test_c3t3_io {
       // skip 32bits architectures as well
       return true;
     }
-
     c3t3_bis.clear();
     {
       std::ifstream input(filename.c_str(),

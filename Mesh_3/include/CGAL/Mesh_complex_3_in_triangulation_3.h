@@ -769,6 +769,17 @@ rescan_after_load_of_triangulation() {
       add_to_complex(vit, Corner_index(1));
     }
   }
+  for(typename Tr::Cell_iterator
+      cit = this->triangulation().cells_begin(),
+      end = this->triangulation().cells_end();
+      cit != end; ++cit)
+  {
+    for (std::size_t i =0; i< 3; ++i)
+      for (std::size_t j =i+1; j< 4; ++j)
+      {
+        this->add_to_complex(cit->vertex(i), cit->vertex(j), cit->get_curve_index(i,j));
+      }
+  }
   Base::rescan_after_load_of_triangulation();
 }
 

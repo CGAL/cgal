@@ -2156,16 +2156,19 @@ std::istream& operator>> (std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
     if(!(is >> *(C[j])))
       return is;
   //move to next non empty
-  std::string s;
-  std::istream::pos_type pos=is.tellg();
-  do{
-    pos = is.tellg();
-    std::getline(is, s);
-    if(!is)
-      return is;
-  }while(s == "");
-  is.seekg(pos);
-  
+  if(is_ascii(is))
+  {
+    std::string s;
+    std::istream::pos_type pos=is.tellg();
+    do{
+      pos = is.tellg();
+      std::getline(is, s);
+      if(!is){
+        return is;
+      }
+    }while(s == "");
+    is.seekg(pos);
+  }
   if(! V.empty() && has_extra_data(*V.front()))
   {
     for(std::size_t i=1; i <= n; i++)

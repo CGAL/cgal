@@ -649,7 +649,7 @@ public:
       cis[j==0 ? i-1 : i+j] = c;
   }
 
-  CurveIndex get_curve_index(std::size_t i, std::size_t j)
+  CurveIndex get_curve_index(std::size_t i, std::size_t j)const
   {
     CGAL_assertion(i != j);
     if(i<j)
@@ -666,11 +666,18 @@ public:
     for (std::size_t i =0; i< 3; ++i)
       for (std::size_t j =i+1; j< 4; ++j)
       {
-        os << get_curve_index(i,j);
-        if(j == 3 )
-          os<<"\n";
+        if(is_ascii(os))
+        {
+          os << get_curve_index(i,j);
+          if(i == 2 && j == 3 )
+            os<<"\n";
+          else
+            os<<" ";
+        }
         else
-          os<<" ";
+        {
+          write(os, get_curve_index(i,j));
+        }
       }
     return os;
   }
@@ -680,7 +687,16 @@ public:
                           std::vector<Cell_handle>&,
                           std::vector<Vertex_handle>&)
   {
-    is >> this->info();
+    int c =0;
+    for (std::size_t i =0; i< 3; ++i)
+      for (std::size_t j =i+1; j< 4; ++j)
+      {
+        if(is_ascii(is))
+          is >> c;
+        else
+          read(is, c);
+        set_curve_index(i,j,c);
+      }
     return is;
   }
   
@@ -719,12 +735,12 @@ private:
 
 };  // end class Compact_mesh_cell_base_3
 
-template < class GT, class MT, class Cb >
+template < class GT, class MT, class Ci, class Cb >
 std::istream&
 operator>>(std::istream &is,
-           Compact_mesh_cell_base_3<GT, MT, Cb> &c)
+           Compact_mesh_cell_base_3<GT, MT, Ci, Cb> &c)
 {
-  typename Compact_mesh_cell_base_3<GT, MT, Cb>::Subdomain_index index;
+  typename Compact_mesh_cell_base_3<GT, MT, Ci, Cb>::Subdomain_index index;
   if(is_ascii(is))
     is >> index;
   else
@@ -733,7 +749,7 @@ operator>>(std::istream &is,
     c.set_subdomain_index(index);
     for(int i = 0; i < 4; ++i)
     {
-      typename Compact_mesh_cell_base_3<GT, MT, Cb>::Surface_patch_index i2;
+      typename Compact_mesh_cell_base_3<GT, MT, Ci, Cb>::Surface_patch_index i2;
       if(is_ascii(is))
         is >> iformat(i2);
       else
@@ -746,10 +762,10 @@ operator>>(std::istream &is,
   return is;
 }
 
-template < class GT, class MT, class Cb >
+template < class GT, class MT, class Ci, class Cb >
 std::ostream&
 operator<<(std::ostream &os,
-           const Compact_mesh_cell_base_3<GT, MT, Cb> &c)
+           const Compact_mesh_cell_base_3<GT, MT, Ci, Cb> &c)
 {
   if(is_ascii(os))
      os << c.subdomain_index();
