@@ -300,10 +300,10 @@ void Polyhedron_demo_orient_soup_plugin::getNMPoints(
     Scene_polygon_soup_item* item)
 {
   typedef std::pair<std::size_t, std::size_t>                              V_ID_pair;
-  typedef std::map<V_ID_pair, boost::container::flat_set<std::size_t> >    Edge_map;
-  typedef std::set<V_ID_pair>                                              Marked_edges;
   typedef CGAL::Polygon_mesh_processing::internal::Polygon_soup_orienter<Polygon_soup::Points, 
       Polygon_soup::Polygons> PSO;
+  typedef PSO::Edge_map Edge_map;
+  typedef std::set<V_ID_pair>                                              Marked_edges;
       
   Edge_map edges;
   Marked_edges m_edges;
