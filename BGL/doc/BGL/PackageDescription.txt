@@ -593,6 +593,7 @@ user might encounter.
 
 \cgalCRPSection{Helper Classes}
 - `CGAL::Triangulation_vertex_base_with_id_2`
+- `CGAL::Triangulation_face_base_with_id_2`
 - `CGAL::Arr_vertex_index_map`
 - `CGAL::Arr_face_index_map`
 - `CGAL::HalfedgeDS_vertex_max_base_with_id`

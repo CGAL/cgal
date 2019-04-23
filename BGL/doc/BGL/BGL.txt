@@ -291,7 +291,7 @@ use the property map returned by the call `get(boost::vertex_index,ft)`.
 This property map assumes that the vertex has a
 member function `id()` that returns a reference to an int.
 Therefore \cgal offers a class `Triangulation_vertex_base_with_id_2`.
-It is in the users responsibility to set the indices properly.
+It is in the user's responsibility to set the indices properly.
 
 The example further illustrates that the graph traits also works
 for the Delaunay triangulation.
