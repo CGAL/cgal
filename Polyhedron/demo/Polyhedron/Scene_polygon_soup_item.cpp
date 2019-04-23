@@ -33,6 +33,13 @@
 #include "triangulate_primitive.h"
 #include <CGAL/array.h>
 
+#include <boost/accumulators/accumulators.hpp>
+#include <boost/accumulators/statistics/stats.hpp>
+#include <boost/accumulators/statistics/mean.hpp>
+#include <boost/accumulators/statistics/min.hpp>
+#include <boost/accumulators/statistics/max.hpp>
+#include <boost/accumulators/statistics/median.hpp>
+
 #include <map>
 using namespace CGAL::Three;
 typedef Viewer_interface Vi;
@@ -52,6 +59,7 @@ struct Scene_polygon_soup_item_priv{
     nb_polys = 0;
     nb_lines = 0;
     nb_nm_edges = 0;
+    invalidate_stats();
   }
   ~Scene_polygon_soup_item_priv()
   {
@@ -63,6 +71,8 @@ struct Scene_polygon_soup_item_priv{
   }
   void compute_normals_and_vertices(void) const;
   void triangulate_polygon(Polygons_iterator, int ) const;
+  void invalidate_stats();
+  void compute_stats();
   mutable QOpenGLShaderProgram *program;
 
 
@@ -86,6 +96,10 @@ struct Scene_polygon_soup_item_priv{
   mutable std::size_t nb_nm_edges;
   mutable std::size_t nb_polys;
   mutable std::size_t nb_lines;
+  bool is_triangle, is_quad, stats_computed;
+  double minl, maxl, meanl, midl, mini, maxi, ave;
+  std::size_t nb_null_edges, nb_degen_faces;
+  
   Scene_polygon_soup_item* item;
 
 };
@@ -624,6 +638,7 @@ Scene_polygon_soup_item::invalidateOpenGLBuffers()
     }
     getPointContainer(0)->reset_vbos(ALL);
     setBuffersFilled(false);
+    d->invalidate_stats();
 }
 
 void Scene_polygon_soup_item::compute_bbox() const {
@@ -843,4 +858,157 @@ void Scene_polygon_soup_item::repair(bool erase_dup, bool req_same_orientation)
         erase_all_duplicates(erase_dup)
         .require_same_orientation(req_same_orientation));
   QApplication::restoreOverrideCursor();
+}
+
+CGAL::Three::Scene_item::Header_data Scene_polygon_soup_item::header() const
+{
+  CGAL::Three::Scene_item::Header_data data;
+  //categories
+
+  data.categories.append(std::pair<QString,int>(QString("Vertices"),1));
+  data.categories.append(std::pair<QString,int>(QString("Polygons"),4));
+  data.categories.append(std::pair<QString,int>(QString("Edges"),6));
+  data.categories.append(std::pair<QString,int>(QString("Angles"),3));
+
+
+  //titles
+  data.titles.append(QString("#Points"));
+  
+  data.titles.append(QString("#Polygons"));
+  data.titles.append(QString("Pure Triangle"));
+  data.titles.append(QString("Pure Quad"));
+  data.titles.append(QString("#Degenerate Polygons"));
+  
+  data.titles.append(QString("#Edges"));
+  data.titles.append(QString("Minimum Length"));
+  data.titles.append(QString("Maximum Length"));
+  data.titles.append(QString("Median Length"));
+  data.titles.append(QString("Mean Length"));
+  data.titles.append(QString("#Degenerate Edges"));
+  
+  data.titles.append(QString("Minimum"));
+  data.titles.append(QString("Maximum"));
+  data.titles.append(QString("Average"));
+  return data;
+}
+
+QString Scene_polygon_soup_item::computeStats(int type)
+{
+  if(!d->stats_computed)
+    d->compute_stats();
+        
+  switch(type)
+  {
+  case NB_VERTICES:
+    return QString::number(d->soup->points.size());
+  case NB_FACETS:
+    return QString::number(d->soup->polygons.size());
+  case NB_EDGES:
+    return QString::number(d->nb_lines/6);
+    
+  case NB_DEGENERATED_FACES:
+  {
+    if(d->is_triangle)
+    {
+      return QString::number(d->nb_degen_faces);
+    }
+    else
+      return QString("n/a");
+  }
+    
+  case MIN_LENGTH:
+    return QString::number(d->minl);
+  case MAX_LENGTH:
+    return QString::number(d->maxl);
+  case MID_LENGTH:
+    return QString::number(d->midl);
+  case MEAN_LENGTH:
+    return QString::number(d->meanl);
+  case NB_NULL_LENGTH:
+    return QString::number(d->nb_null_edges);
+    
+  case MIN_ANGLE:
+    return QString::number(d->mini);
+  case MAX_ANGLE:
+    return QString::number(d->maxi);
+  case MEAN_ANGLE:
+    return QString::number(d->ave);
+    
+  case IS_PURE_TRIANGLE:
+    if(d->is_triangle)
+      return QString("yes");
+    else
+      return QString("no");
+  case IS_PURE_QUAD:
+    if (d->is_quad)
+      return QString("yes");
+    else
+      return QString("no");
+  }
+  return QString();
+}
+
+void
+Scene_polygon_soup_item_priv::
+invalidate_stats()
+{
+  is_triangle = true;
+  is_quad = true;
+  minl=0;
+  maxl=0;
+  meanl=0;
+  midl=0;
+  mini=0;
+  maxi=0;
+  ave=0;
+  nb_null_edges=0;
+  nb_degen_faces=0;
+  stats_computed = false;
+}
+
+
+void
+Scene_polygon_soup_item_priv::compute_stats()
+{
+  using namespace boost::accumulators;
+  accumulator_set< double,
+    features< tag::min, tag::max, tag::mean , tag::median> > edges_acc;
+  accumulator_set< double,
+    features< tag::min, tag::max, tag::mean > > angles_acc;
+  double rad_to_deg = 180. / CGAL_PI;
+  
+  
+  for(auto poly : soup->polygons)
+  {
+    if(poly.size() != 3)
+      is_triangle = false;
+    if(poly.size() != 4)
+      is_quad = false;
+    for(std::size_t i = 0; i< poly.size(); ++i)
+    {
+      Polygon_soup::Point_3 a(soup->points[poly[i]]),
+          b(soup->points[poly[(i+1)%poly.size()]]),
+          c(soup->points[poly[(i+2)%poly.size()]]);
+      if (a == b) 
+        ++nb_null_edges;
+      edges_acc(CGAL::sqrt(CGAL::squared_distance(a, b)));
+      typename Traits::Vector_3 ba(b, a);
+      typename Traits::Vector_3 bc(b, c);
+      double cos_angle = (ba * bc)
+        / std::sqrt(ba.squared_length() * bc.squared_length());
+      if(cos_angle == CGAL_PI || cos_angle == 0)
+        ++nb_degen_faces;
+      angles_acc(std::acos(cos_angle) * rad_to_deg);
+    }
+  }
+
+  minl = extract_result< tag::min >(edges_acc);
+  maxl = extract_result< tag::max >(edges_acc);
+  meanl = extract_result< tag::mean >(edges_acc);
+  midl =  extract_result< tag::median >(edges_acc);
+  mini = extract_result< tag::min >(angles_acc);
+  maxi = extract_result< tag::max >(angles_acc);
+  ave = extract_result< tag::mean >(angles_acc);
+  
+  stats_computed = true;
 }

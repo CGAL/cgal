@@ -298,7 +298,7 @@ public:
    * |             |_______|_____|
    * |General Info | #Edges|12   |
    * |_____________|_______|_____|
-   * compute stats(0) should return "Cube" and computeStats(1) should return QString::number(12);
+   * ComputeStats(0) should return "Cube" and computeStats(1) should return QString::number(12);
    * The numbers must be coherent with the order of declaration of the titles in the header.
    * \endverbatim
    *
