@@ -1,24 +1,5 @@
 Release History
 ===============
-Release 4.14
-------------
-
-### IO Streams
-
--   Added new functions to support some parts of the WKT file format:
-    - `CGAL::read_point_WKT()`
-    - `GCAL::read_multi_point_WKT()`
-    - `GCAL::read_linestring_WKT()`
-    - `GCAL::read_multi_linestring_WKT()`
-    - `GCAL::read_polygon_WKT()`
-    - `GCAL::read_multi_polygon_WKT()`
-    - `CGAL::write_point_WKT()`
-    - `CGAL::write_polygon_WKT()`
-    - `CGAL::write_linestring_WKT()`
-    - `CGAL::write_multi_point_WKT()`
-    - `CGAL::write_multi_polygon_WKT()`
-    - `CGAL::write_multi_linestring_WKT()`
-    - `CGAL:read_WKT()`
 
 Release 5.0
 -----------
@@ -40,6 +21,23 @@ Release date: September 2019
    the approximate dihedral angle between 2 vectors. Corresponding functors
    in the model (`Compute_approximate_angle_3`) and free function (`approximate_angle`)
    are also added.
+
+### IO Streams
+
+-   Added new functions to support some parts of the WKT file format:
+    - `CGAL::read_point_WKT()`
+    - `GCAL::read_multi_point_WKT()`
+    - `GCAL::read_linestring_WKT()`
+    - `GCAL::read_multi_linestring_WKT()`
+    - `GCAL::read_polygon_WKT()`
+    - `GCAL::read_multi_polygon_WKT()`
+    - `CGAL::write_point_WKT()`
+    - `CGAL::write_polygon_WKT()`
+    - `CGAL::write_linestring_WKT()`
+    - `CGAL::write_multi_point_WKT()`
+    - `CGAL::write_multi_polygon_WKT()`
+    - `CGAL::write_multi_linestring_WKT()`
+    - `CGAL:read_WKT()`
 
 Release 4.14
 ------------
