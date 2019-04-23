@@ -333,7 +333,6 @@ create_riemannian_graph(
     typedef Euclidean_distance_vertex_handle_3<ForwardIterator> KDistance;
     typedef Orthogonal_k_neighbor_search<Traits,KDistance> Neighbor_search;
     typedef typename Neighbor_search::Tree Tree;
-    typedef typename Neighbor_search::iterator Search_iterator;
 
     // Riemannian_graph types
     typedef internal::Riemannian_graph<ForwardIterator> Riemannian_graph;

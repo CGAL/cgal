@@ -58,7 +58,7 @@ void neighbor_query (const Point& query,
 
     // if k=0, no limit on the number of neighbors returned
     if (k == 0)
-      k = std::numeric_limits<unsigned int>::max();
+      k = (std::numeric_limits<unsigned int>::max)();
     
     try
     {
