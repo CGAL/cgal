@@ -33,7 +33,6 @@ class Triangulation_face_base_with_id_2
 public:
   typedef typename Fb::Vertex_handle                 Vertex_handle;
   typedef typename Fb::Face_handle                   Face_handle;
-  typedef typename Fb::Point                         Point;
 
   template < typename TDS2 >
   struct Rebind_TDS {
