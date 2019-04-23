@@ -54,7 +54,7 @@ read_OBJ( std::istream& input,
     }
     else
     {
-      std::cerr<<"ERROR : Cannnot read line beginning with "<<line[0]<<std::endl;
+      //std::cerr<<"ERROR : Cannnot read line beginning with "<<line[0]<<std::endl;
       return false;
     }
   }
