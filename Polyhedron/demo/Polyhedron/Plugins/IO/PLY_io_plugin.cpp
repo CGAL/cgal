@@ -1,6 +1,5 @@
 #include "Scene_polygon_soup_item.h"
 #include "Scene_surface_mesh_item.h"
-#include "Scene_textured_surface_mesh_item.h"
 #include "Scene_points_with_normal_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
@@ -12,7 +11,6 @@
 #include <CGAL/IO/PLY_reader.h>
 #include <CGAL/IO/PLY_writer.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
-#include <QTime>
 #include <QMessageBox>
 
 class Polyhedron_demo_ply_plugin :
@@ -38,62 +36,6 @@ public:
   bool canSave(const CGAL::Three::Scene_item*);
   bool save(const CGAL::Three::Scene_item*, QFileInfo fileinfo);
 
-private:
-  void set_vcolors(SMesh* smesh, const std::vector<CGAL::Color>& colors)
-  {
-    typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
-    SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
-      smesh->property_map<vertex_descriptor, CGAL::Color >("v:color").first;
-    bool created;
-    boost::tie(vcolors, created) = smesh->add_property_map<SMesh::Vertex_index,CGAL::Color>("v:color",CGAL::Color(0,0,0));
-    assert(colors.size()==smesh->number_of_vertices());
-    int color_id = 0;
-    for(vertex_descriptor vd : vertices(*smesh))
-      vcolors[vd] = colors[color_id++];
-  }
-
-  void set_fcolors(SMesh* smesh, const std::vector<CGAL::Color>& colors)
-  {
-    typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
-    SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
-      smesh->property_map<face_descriptor, CGAL::Color >("f:color").first;
-    bool created;
-    boost::tie(fcolors, created) = smesh->add_property_map<SMesh::Face_index,CGAL::Color>("f:color",CGAL::Color(0,0,0));
-    assert(colors.size()==smesh->number_of_faces());
-    int color_id = 0;
-    for(face_descriptor fd : faces(*smesh))
-      fcolors[fd] = colors[color_id++];
-  }
-  
-  bool set_huvs(SMesh* smesh,
-                std::vector<std::pair<unsigned int, unsigned int> > & hedges,
-                std::vector<std::pair<float, float> >& uvs)
-  {
-    QTime timer;
-    timer.start();
-    typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
-    typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
-    SMesh::Property_map<halfedge_descriptor,std::pair<float, float> > uv =
-      smesh->property_map<halfedge_descriptor,std::pair<float, float> >("h:uv").first;
-    bool created;
-    boost::tie(uv, created) = smesh->add_property_map<halfedge_descriptor,
-        std::pair<float, float> >("h:uv",std::make_pair(0.0f,0.0f));
-    assert(hedges.size()==smesh->number_of_halfedges());
-    assert(uvs.size()==smesh->number_of_halfedges());
-    for(std::size_t id = 0; id < hedges.size(); ++id)
-    {
-      bool exists = false;
-      halfedge_descriptor hd;
-      boost::tie(hd, exists) = halfedge(
-            vertex_descriptor(hedges[id].first),
-            vertex_descriptor(hedges[id].second),
-            *smesh);
-      if(!exists)
-        return false;
-      uv[hd] = uvs[id];
-    }
-    return true;
-  }
 };
 
 bool Polyhedron_demo_ply_plugin::canLoad() const {
@@ -146,57 +88,39 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
 
   if (input_is_mesh) // Open mesh or polygon soup
   {
+    // First try mesh
+    SMesh *surface_mesh = new SMesh();
+    std::string comments;
+    
+    if (CGAL::read_ply (in, *surface_mesh, comments))
+    {
+      Scene_surface_mesh_item* sm_item = new Scene_surface_mesh_item(surface_mesh);
+      sm_item->setName(fileinfo.completeBaseName());
+      sm_item->comments() = comments;
+      QApplication::restoreOverrideCursor();
+      return sm_item;
+    }
+
+    in.clear();
+    in.seekg(0);
+
+    // else try polygon soup
     std::vector<Kernel::Point_3> points;
     std::vector<std::vector<std::size_t> > polygons;
-    std::vector<std::pair<unsigned int, unsigned int> > hedges;
     std::vector<CGAL::Color> fcolors;
     std::vector<CGAL::Color> vcolors;
-    std::vector<std::pair<float, float> > huvs;
-    QTime timer;
-    timer.start();
-    if (!(CGAL::read_PLY (in, points, polygons, hedges, fcolors, vcolors, huvs)))
+
+    if (!(CGAL::read_PLY (in, points, polygons, fcolors, vcolors)))
     {
       QApplication::restoreOverrideCursor();
       return NULL;
     }
-    if (CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh (polygons))
-    {
-      CGAL::Three::Scene_item* item = nullptr;
-      SMesh *surface_mesh = new SMesh();
-      CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh (points, polygons,
-                                                                   *surface_mesh);
-      if(!(vcolors.empty()))
-        set_vcolors(surface_mesh, vcolors);
-      if(!(fcolors.empty()))
-        set_fcolors(surface_mesh, fcolors);
-      if(!huvs.empty())
-      {
-        if(!set_huvs(surface_mesh, hedges, huvs))
-        {
-          std::cerr<<"halfedge not found."<<std::endl;
-          return nullptr;
-        }
-        item = new Scene_textured_surface_mesh_item(surface_mesh);
-        item->invalidateOpenGLBuffers();
-        item->itemChanged();
-      }
-      else
-      {
-        item = new Scene_surface_mesh_item(surface_mesh);
-      }
-      
-      item->setName(fileinfo.completeBaseName());
-      QApplication::restoreOverrideCursor();
-      return item;
-    }
-    else
-    {
-      Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item;
-      soup_item->setName(fileinfo.completeBaseName());
-      soup_item->load (points, polygons, fcolors, vcolors);
-      QApplication::restoreOverrideCursor();
-      return soup_item;
-    }
+
+    Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item;
+    soup_item->setName(fileinfo.completeBaseName());
+    soup_item->load (points, polygons, fcolors, vcolors);
+    QApplication::restoreOverrideCursor();
+    return soup_item;
   }
   else // Open point set
   {
@@ -223,8 +147,7 @@ bool Polyhedron_demo_ply_plugin::canSave(const CGAL::Three::Scene_item* item)
   // This plugin supports point sets and any type of surface
   return (qobject_cast<const Scene_points_with_normal_item*>(item)
           || qobject_cast<const Scene_polygon_soup_item*>(item)
-          || qobject_cast<const Scene_surface_mesh_item*>(item)
-          || qobject_cast<const Scene_textured_surface_mesh_item*>(item));
+          || qobject_cast<const Scene_surface_mesh_item*>(item));
 }
 
 bool Polyhedron_demo_ply_plugin::save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
@@ -260,16 +183,11 @@ bool Polyhedron_demo_ply_plugin::save(const CGAL::Three::Scene_item* item, QFile
     return CGAL::write_PLY (out, soup_item->points(), soup_item->polygons());
 
   // This plugin supports surface meshes
-  const Scene_surface_mesh_item* sm_item =
-    qobject_cast<const Scene_surface_mesh_item*>(item);
+  Scene_surface_mesh_item* sm_item =
+    const_cast<Scene_surface_mesh_item*>(qobject_cast<const Scene_surface_mesh_item*>(item));
   if (sm_item)
-    return CGAL::write_PLY (out, *(sm_item->polyhedron()));
-  
-  // This plugin supports textured surface meshes
-  const Scene_textured_surface_mesh_item* stm_item =
-    qobject_cast<const Scene_textured_surface_mesh_item*>(item);
-  if (stm_item)
-    return CGAL::write_PLY (out, *(stm_item->textured_face_graph()));
+    return CGAL::write_ply (out, *(sm_item->polyhedron()), sm_item->comments());
+
   return false;
 }
 
