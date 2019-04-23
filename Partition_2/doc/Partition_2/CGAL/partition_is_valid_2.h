@@ -35,7 +35,7 @@ with the representation type determined by `std::iterator_traits<InputIterator>:
 \sa `CGAL::greene_approx_convex_partition_2()` 
 \sa `CGAL::optimal_convex_partition_2()` 
 \sa `CGAL::partition_is_valid_2()` 
-\sa `CGAL::is_convex_2()` 
+\sa `CGAL::Is_convex_2()` 
 
 \cgalHeading{Implementation}
 
@@ -99,7 +99,7 @@ with the representation type determined by `std::iterator_traits<InputIterator>:
 \sa `CGAL::optimal_convex_partition_2()` 
 \sa `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>` 
 \sa `CGAL::y_monotone_partition_2()` 
-\sa `CGAL::is_convex_2()` 
+\sa `CGAL::Is_convex_2()` 
 
 \cgalHeading{Implementation}
 
