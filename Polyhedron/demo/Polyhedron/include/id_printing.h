@@ -3,6 +3,7 @@
 #include <CGAL/boost/graph/selection.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/TextRenderer.h>
+#include <CGAL/Three/Three.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <vector>
@@ -401,8 +402,7 @@ void compute_displayed_ids(Mesh& mesh,
 
 template<class Mesh>
 bool printVertexIds(const Mesh& mesh,
-                    TextListItem* vitems,
-                    CGAL::Three::Viewer_interface *viewer)
+                    TextListItem* vitems)
 {
   typedef typename boost::property_map<Mesh, boost::vertex_point_t>::const_type Ppmap;
   typedef typename boost::property_traits<Ppmap>::value_type Point;
@@ -410,8 +410,7 @@ bool printVertexIds(const Mesh& mesh,
 
   Ppmap ppmap = get(boost::vertex_point, mesh);
   IDmap idmap = get(boost::vertex_index, mesh);
-  TextRenderer *renderer = viewer->textRenderer();
-  const CGAL::qglviewer::Vec offset = viewer->offset();
+  const CGAL::qglviewer::Vec offset = CGAL::Three::Three::mainViewer()->offset();
   QFont font;
   font.setBold(true);
   font.setPointSize(POINT_SIZE);
@@ -427,18 +426,23 @@ bool printVertexIds(const Mesh& mesh,
 
   }
   //add the QList to the render's pool
-  renderer->addTextList(vitems);
-  if(vitems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
+  bool res = true;
+  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
   {
-    return false;
+    TextRenderer *renderer = static_cast<CGAL::Three::Viewer_interface*>(v)->textRenderer();
+    renderer->addTextList(vitems);
+    v->update();
+    if(vitems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
+    {
+      res = false;
+    }
   }
-  return true;
+  return res;
 }
 
 template<class Mesh>
 bool printEdgeIds(const Mesh& mesh,
-                  TextListItem* eitems,
-                  CGAL::Three::Viewer_interface *viewer)
+                  TextListItem* eitems)
 {
   typedef typename boost::property_map<Mesh, boost::vertex_point_t>::const_type Ppmap;
   typedef typename boost::property_traits<Ppmap>::value_type Point;
@@ -446,8 +450,7 @@ bool printEdgeIds(const Mesh& mesh,
 
   Ppmap ppmap = get(boost::vertex_point, mesh);
   IDmap idmap = get(boost::halfedge_index, mesh);
-  TextRenderer *renderer = viewer->textRenderer();
-  const CGAL::qglviewer::Vec offset = viewer->offset();
+  const CGAL::qglviewer::Vec offset = CGAL::Three::Three::mainViewer()->offset();
   QFont font;
   font.setBold(true);
   font.setPointSize(POINT_SIZE);
@@ -462,26 +465,30 @@ bool printEdgeIds(const Mesh& mesh,
                                 QString("%1").arg(get(idmap, halfedge(e, mesh)) / 2), true, font, Qt::green));
   }
   //add the QList to the render's pool
-  renderer->addTextList(eitems);
-  if(eitems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
+  bool res = true;
+  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
   {
-    return false;
+    TextRenderer *renderer = static_cast<CGAL::Three::Viewer_interface*>(v)->textRenderer();
+    renderer->addTextList(eitems);
+    v->update();
+    if(eitems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
+    {
+      res = false;
+    }
   }
-  return true;
+  return res;
 }
 
 template<class Mesh>
 bool printFaceIds(const Mesh& mesh,
-                  TextListItem* fitems,
-                  CGAL::Three::Viewer_interface *viewer)
+                  TextListItem* fitems)
 {
   typedef typename boost::property_map<Mesh, boost::vertex_point_t>::const_type Ppmap;
   typedef typename boost::property_map<Mesh, boost::face_index_t>::type IDmap;
 
   Ppmap ppmap = get(boost::vertex_point, mesh);
   IDmap idmap = get(boost::face_index, mesh);
-  TextRenderer *renderer = viewer->textRenderer();
-  const CGAL::qglviewer::Vec offset = viewer->offset();
+  const CGAL::qglviewer::Vec offset = CGAL::Three::Three::mainViewer()->offset();
   QFont font;
   font.setBold(true);
   font.setPointSize(POINT_SIZE);
@@ -503,12 +510,18 @@ bool printFaceIds(const Mesh& mesh,
                                 QString("%1").arg(get(idmap, fh)), true, font, Qt::blue));
   }
   //add the QList to the render's pool
-  renderer->addTextList(fitems);
-  if(fitems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
+  bool res = true;
+  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
   {
-    return false;
+    TextRenderer *renderer = static_cast<CGAL::Three::Viewer_interface*>(v)->textRenderer();
+    renderer->addTextList(fitems);
+    v->update();
+    if(fitems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
+    {
+      res = false;
+    }
   }
-  return true;
+  return res;
 }
 
 template<class Mesh, typename Point>

@@ -91,14 +91,9 @@ See the project main page for details on the project and installation steps. */
 
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::defaultConstructor() {
-  
-  int poolIndex = CGAL::QGLViewer::QGLViewerPool().indexOf(NULL);
   setFocusPolicy(::Qt::StrongFocus);
 
-  if (poolIndex >= 0)
-    CGAL::QGLViewer::QGLViewerPool().replace(poolIndex, this);
-  else
-    CGAL::QGLViewer::QGLViewerPool().append(this);
+  CGAL::QGLViewer::QGLViewerPool().append(this);
   camera_ = new qglviewer::Camera(this);
   setCamera(camera());
 
@@ -164,6 +159,9 @@ void CGAL::QGLViewer::defaultConstructor() {
 
   _offset = CGAL::qglviewer::Vec(0,0,0);
   stored_fbo = NULL;
+  is_sharing = false;
+  is_linked = false;
+  shared_context = NULL;
 }
 
 CGAL_INLINE_FUNCTION
@@ -171,6 +169,14 @@ CGAL::QGLViewer::QGLViewer(QWidget *parent,
                      ::Qt::WindowFlags flags)
     : QOpenGLWidget(parent, flags) {
   defaultConstructor();
+}
+CGAL_INLINE_FUNCTION
+CGAL::QGLViewer::QGLViewer(QOpenGLContext* context, QWidget *parent,
+                   ::Qt::WindowFlags flags)
+  : QOpenGLWidget(parent, flags) {
+  defaultConstructor();
+  shared_context = context;
+  is_sharing = true;
 }
 
 /*! Virtual destructor.
@@ -185,8 +191,7 @@ CGAL::QGLViewer::~QGLViewer() {
   // if virtual domElement() has been overloaded ! if (parent())
   // saveStateToFileForAllViewers();
 
-  CGAL::QGLViewer::QGLViewerPool().replace(CGAL::QGLViewer::QGLViewerPool().indexOf(this),
-                                    NULL);
+  CGAL::QGLViewer::QGLViewerPool().removeAll(this);
 
   camera()->deleteLater();
   delete[] selectBuffer_;
@@ -209,35 +214,47 @@ If a 4.3 context could not be set, a ES 2.0 context will be used instead.
 */
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::initializeGL() {
-  QSurfaceFormat format = context()->format();
-  context()->format().setOption(QSurfaceFormat::DebugContext);
-  if ( !context()->isValid()
-    || format.majorVersion() != 4
-    || QCoreApplication::arguments().contains(QStringLiteral("--old")))
-
+  if(!is_sharing)
   {
-    format.setDepthBufferSize(24);
-    format.setStencilBufferSize(8);
-    format.setVersion(2,0);
-    format.setRenderableType(QSurfaceFormat::OpenGLES);
-    format.setSamples(0);
-    format.setOption(QSurfaceFormat::DebugContext);
-    QSurfaceFormat::setDefaultFormat(format);
-              
-    needNewContext();
-    qDebug()<<"GL 4.3 context initialization failed. ";
-    is_ogl_4_3 = false;
+    QSurfaceFormat format = context()->format();
+    context()->format().setOption(QSurfaceFormat::DebugContext);
+    if ( !context()->isValid()
+         || format.majorVersion() != 4
+         || QCoreApplication::arguments().contains(QStringLiteral("--old")))
+      
+    {
+      format.setDepthBufferSize(24);
+      format.setStencilBufferSize(8);
+      format.setVersion(2,0);
+      format.setRenderableType(QSurfaceFormat::OpenGLES);
+      format.setSamples(0);
+      format.setOption(QSurfaceFormat::DebugContext);
+      QSurfaceFormat::setDefaultFormat(format);
+      
+      needNewContext();
+      qDebug()<<"GL 4.3 context initialization failed. ";
+      is_ogl_4_3 = false;
+    }
+    else
+    {
+      is_ogl_4_3 = true;
+    }
+    
+    QSurfaceFormat cur_f = QOpenGLContext::currentContext()->format();
+    const char* rt =(cur_f.renderableType() == QSurfaceFormat::OpenGLES) ? "GLES" : "GL";
+    qDebug()<<"Using context "
+           <<cur_f.majorVersion()<<"."<<cur_f.minorVersion()
+          << rt;
   }
   else
   {
-    is_ogl_4_3 = true;
+    context()->setFormat(shared_context->format());
+    context()->setShareContext(shared_context);
+    context()->create();
+    makeCurrent();
   }
-
-  QSurfaceFormat cur_f = QOpenGLContext::currentContext()->format();
-  const char* rt =(cur_f.renderableType() == QSurfaceFormat::OpenGLES) ? "GLES" : "GL";
-  qDebug()<<"Using context "
-         <<cur_f.majorVersion()<<"."<<cur_f.minorVersion()
-        << rt;
+  connect(context(), &QOpenGLContext::aboutToBeDestroyed,
+          this, &CGAL::QGLViewer::contextIsDestroyed);
   QOpenGLFunctions::initializeOpenGLFunctions();
   glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
   // Default colors
@@ -259,7 +276,7 @@ void CGAL::QGLViewer::initializeGL() {
   {
     vbos[i].create();
   }
-  //program without light
+  if(!is_linked)
   {
     //Vertex source code
     const char v_s[] =
@@ -345,9 +362,6 @@ void CGAL::QGLViewer::initializeGL() {
     {
       qDebug() << rendering_program.log();
     }
-  }
-  //program with light
-  {
     //Vertex source code
     const char vertex_source[] =
     {
@@ -460,8 +474,6 @@ void CGAL::QGLViewer::initializeGL() {
     //It is said in the doc that a QOpenGLShader is 
     // only destroyed with the QOpenGLShaderProgram 
     //it has been linked with.
-    QOpenGLShader vertex_shader(QOpenGLShader::Vertex);
-    QOpenGLShader fragment_shader(QOpenGLShader::Fragment);
     if(is_ogl_4_3)
     {
       if(!vertex_shader.compileSourceCode(vertex_source))
@@ -500,7 +512,7 @@ void CGAL::QGLViewer::initializeGL() {
       qDebug() << rendering_program_light.log();
     }
   }
-
+  is_linked = true;
   // Give time to glInit to finish and then call setFullScreen().
   if (isFullScreen())
     QTimer::singleShot(100, this, SLOT(delayedFullScreen()));
@@ -4083,9 +4095,15 @@ QImage* CGAL::QGLViewer::takeSnapshot( CGAL::qglviewer::SnapShotBackground  back
 }
 
 CGAL_INLINE_FUNCTION
-QOpenGLFramebufferObject* CGAL::QGLViewer::getStoredFrameBuffer()
+QOpenGLFramebufferObject* CGAL::QGLViewer::getStoredFrameBuffer() const
 {
   return stored_fbo;
+}
+
+CGAL_INLINE_FUNCTION
+void CGAL::QGLViewer::setStoredFrameBuffer(QOpenGLFramebufferObject *fbo)
+{
+  stored_fbo = fbo;
 }
 
 CGAL_INLINE_FUNCTION
@@ -4119,4 +4137,10 @@ void CGAL::QGLViewer::saveSnapshot()
   }
 }
 
+}
+
+CGAL_INLINE_FUNCTION
+bool CGAL::QGLViewer::isSharing() const
+{
+  return is_sharing;
 }

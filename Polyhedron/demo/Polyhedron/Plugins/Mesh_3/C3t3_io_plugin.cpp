@@ -77,7 +77,6 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
     if(fileinfo.suffix().toLower() == "cgal")
     {
         item->setName(fileinfo.baseName());
-        item->setScene(scene);
 
 
         if(item->load_binary(in)) {
@@ -110,7 +109,6 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
 
       Scene_c3t3_item* item = new Scene_c3t3_item();
       item->setName(fileinfo.baseName());
-      item->setScene(scene);
       item->set_valid(false);
 
       if(CGAL::build_triangulation_from_file<C3t3::Triangulation, true>(in, item->c3t3().triangulation()))

@@ -3,22 +3,22 @@ in vec4 color;
 in vec4 fP;
 in vec3 fN;
 in float dist[6];
-uniform highp vec4 light_pos;
-uniform highp vec4 light_diff;
-uniform highp vec4 light_spec;
-uniform highp vec4 light_amb;
-uniform highp float spec_power;
+uniform vec4 light_pos;
+uniform vec4 light_diff;
+uniform vec4 light_spec;
+uniform vec4 light_amb;
+uniform float spec_power;
 uniform int is_two_side;
 uniform bool is_selected;
 uniform bool is_clipbox_on;
-uniform highp float near;
-uniform highp float far;
-uniform highp float width;
-uniform highp float height;
+uniform float near;
+uniform float far;
+uniform float width;
+uniform float height;
 uniform bool comparing;
 uniform bool writing;
 uniform sampler2D sampler;
-uniform highp float alpha;
+uniform float alpha;
 out vec4 out_color;
 
 float depth(float z)
@@ -49,8 +49,8 @@ void main(void) {
     vec3 L = light_pos.xyz - fP.xyz;
     vec3 V = -fP.xyz;
     vec3 N;
-    if(fN == highp vec3(0.0,0.0,0.0))
-      N = highp vec3(0.0,0.0,0.0);
+    if(fN ==  vec3(0.0,0.0,0.0))
+      N =  vec3(0.0,0.0,0.0);
     else
       N = normalize(fN);
     L = normalize(L);

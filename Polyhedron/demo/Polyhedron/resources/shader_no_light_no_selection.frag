@@ -2,6 +2,7 @@
 in vec4 color;
 in float dist[6];
 uniform bool is_clipbox_on;
+uniform float alpha;
 out vec4 out_color;
 void main(void) 
 {
@@ -13,5 +14,5 @@ if(is_clipbox_on)
      dist[4]>0.0 ||
      dist[5]>0.0)
     discard;
-  out_color = color; 
+  out_color = vec4(color.xyz, alpha); 
 }  
