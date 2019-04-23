@@ -1,5 +1,7 @@
 #include <fstream>
 #include <cmath>
+#include <boost/config.hpp>
+#include <boost/version.hpp>
 
 // CGAL headers
 #include <CGAL/Cartesian.h>
@@ -13,6 +15,9 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/min_quadrilateral_2.h>
 #include <CGAL/rectangular_p_center_2.h>
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+#include <CGAL/IO/WKT.h>
+#endif
 
 // Qt headers
 #include <QtGui>
@@ -472,7 +477,12 @@ MainWindow::on_actionLoadPoints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
 						  tr("Open Points file"),
-						  ".");
+                                                  ".",
+                                                  tr("CGAL files (*.pts.cgal);;"
+                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+                                                     "WKT files (*.WKT *.wkt);;"
+                                                   #endif
+                                                     "All files (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
   }
@@ -485,12 +495,25 @@ MainWindow::open(QString fileName)
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
   std::ifstream ifs(qPrintable(fileName));
-  
-  K::Point_2 p;
-  while(ifs >> p) {
-    mc.insert(p);
-    me.insert(p);
-    points.push_back(p);
+  if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
+  {
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+    CGAL::read_multi_point_WKT(ifs, points);
+    BOOST_FOREACH(K::Point_2 p, points)
+    {
+      mc.insert(p);
+      me.insert(p);
+    }
+#endif
+  }
+  else
+  {
+    K::Point_2 p;
+    while(ifs >> p) {
+      mc.insert(p);
+      me.insert(p);
+      points.push_back(p);
+    }
   }
   update_from_points();
 
@@ -507,15 +530,35 @@ MainWindow::on_actionSavePoints_triggered()
 {
   QString fileName = QFileDialog::getSaveFileName(this,
 						  tr("Save points"),
-						  ".");
+                                                  ".",
+                                                  tr("CGAL files (*.pts.cgal);;"
+                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+                                                     "WKT files (*.WKT *.wkt);;"
+                                                   #endif
+                                                     "All files (*)"));
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
-    for(Min_circle::Point_iterator  
+    if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
+    {
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+      std::vector<K::Point_2> out_pts;
+      out_pts.reserve(std::distance(mc.points_begin(),
+                                    mc.points_end()));
+      for(Min_circle::Point_iterator pit = mc.points_begin();
+          pit != mc.points_end(); ++pit)
+        out_pts.push_back(*pit);
+      CGAL::write_multi_point_WKT(ofs, out_pts);
+#endif
+    }
+    else
+    {
+      for(Min_circle::Point_iterator  
           vit = mc.points_begin(),
           end = mc.points_end();
-        vit!= end; ++vit)
-    {
-      ofs << *vit << std::endl;
+          vit!= end; ++vit)
+      {
+        ofs << *vit << std::endl;
+      }
     }
   }
 }

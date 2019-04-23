@@ -1,5 +1,24 @@
 Release History
 ===============
+Release 4.14
+------------
+
+### IO Streams
+
+-   Added new functions to support some parts of the WKT file format:
+    - `CGAL::read_point_WKT()`
+    - `GCAL::read_multi_point_WKT()`
+    - `GCAL::read_linestring_WKT()`
+    - `GCAL::read_multi_linestring_WKT()`
+    - `GCAL::read_polygon_WKT()`
+    - `GCAL::read_multi_polygon_WKT()`
+    - `CGAL::write_point_WKT()`
+    - `CGAL::write_polygon_WKT()`
+    - `CGAL::write_linestring_WKT()`
+    - `CGAL::write_multi_point_WKT()`
+    - `CGAL::write_multi_polygon_WKT()`
+    - `CGAL::write_multi_linestring_WKT()`
+    - `CGAL:read_WKT()`
 
 Release 5.0
 -----------
