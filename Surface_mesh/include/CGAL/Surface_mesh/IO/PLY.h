@@ -37,7 +37,7 @@ class Surface_mesh_filler
 public:
   typedef typename Kernel_traits<Point>::Kernel Kernel;
   typedef typename Kernel::Vector_3 Vector;
-  typedef Surface_mesh<Point> Surface_mesh;
+  typedef CGAL::Surface_mesh<Point> Surface_mesh;
   typedef typename Surface_mesh::Vertex_index Vertex_index;
   typedef typename Surface_mesh::Face_index Face_index;
   typedef typename Surface_mesh::Edge_index Edge_index;
