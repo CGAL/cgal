@@ -356,7 +356,7 @@ header-only.
 
 \subsubsection subsection_headeronly_pbonwindows Possible Problem on Windows
 
-There is one possible problem when using \cgal in header-only mode on a Windows operating system when compiling a program using several modules (executable programs or dynamic-link libraries DLL). If two different modules use the same static variable, this variable is defined independently in each of these modules. If one module modifies the value of this variable, it will not be modified in the other module, which could induce an unexpected behavior. In \cgal, this concerns only a few specific variables: the <A HREF="https://doc.cgal.org/latest/Generator/classCGAL_1_1Random.html">default random</A>, the <A HREF="https://doc.cgal.org/latest/STL_Extension/group__PkgSTLExtensionAssertions.html">failure behavior</A>, <A HREF="https://doc.cgal.org/latest/Stream_support/group__PkgStreamSupport.html">IO mode</A>. One example is the following: if you change the default random in one DLL, then if you use the default random in another DLL, you will not obtain the modified default random but the original one.
+There is one possible problem when using \cgal in header-only mode on a Windows operating system when compiling a program using several modules (executable programs or dynamic-link libraries DLL). If two different modules use the same static variable, this variable is defined independently in each of these modules. If one module modifies the value of this variable, it will not be modified in the other module, which could induce an unexpected behavior. In \cgal, this concerns only a few specific variables: the <A HREF="https://doc.cgal.org/latest/Generator/classCGAL_1_1Random.html">default random</A>, the <A HREF="https://doc.cgal.org/latest/STL_Extension/group__PkgSTLExtensionAssertions.html">failure behavior</A>, `CGAL::IO::Mode`. One example is the following: if you change the default random in one DLL, then if you use the default random in another DLL, you will not obtain the modified default random but the original one.
 
 \section secessential3rdpartysoftware Essential Third Party Libraries 
 
@@ -502,7 +502,7 @@ algorithms. Like \sc{Core}, \leda offers a real number data type.
 In \cgal this library is optional, and its number types can 
 be used as an alternative to \sc{Gmp}, \sc{Mpfr}, and \sc{Core}.
 
-Free and commercial editions of \leda are available from <A HREF="https://www.algorithmic-solutions.com/leda/index.html">`https://www.algorithmic-solutions.com/leda/index.html`</A>.
+Free and commercial editions of \leda are available from <A HREF="https://www.algorithmic-solutions.com">`https://www.algorithmic-solutions.com`</A>.
 
 \subsection thirdpartyMPFI MPFI
 

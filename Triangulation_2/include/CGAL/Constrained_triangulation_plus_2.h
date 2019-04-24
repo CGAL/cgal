@@ -28,7 +28,7 @@
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/Polyline_constraint_hierarchy_2.h>
+#include <CGAL/Triangulation_2/internal/Polyline_constraint_hierarchy_2.h>
 #include <boost/tuple/tuple.hpp>
 
 #include <CGAL/Default.h>
@@ -271,7 +271,7 @@ public:
       return Constraint_id(NULL);
     }
     // protects against inserting twice the same constraint
-    Constraint_id cid = hierarchy.insert_constraint(va, vb);
+    Constraint_id cid = hierarchy.insert_constraint_old_API(va, vb);
     if (va != vb && (cid != Constraint_id(NULL)) )  insert_subconstraint(va,vb); 
 
     return cid;

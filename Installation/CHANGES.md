@@ -17,6 +17,31 @@ Release date: September 2019
  -   Added a new generic implementation of region growing.
  -   New region growing can be launched on points in 2D and 3D and on a face graph.
 
+### 3D Boolean Operations on Nef Polyhedra
+ -   Added a function to convert a Nef_polyhedron_3 to a polygon soup: `CGAL::convert_nef_to_polygon_soup()`
+
+### 2D and 3D Linear Geometry Kernel
+ - Add `ComputeApproximateAngle_3` in the 2D/3D Kernel concept to compute
+   the approximate dihedral angle between 2 vectors. Corresponding functors
+   in the model (`Compute_approximate_angle_3`) and free function (`approximate_angle`)
+   are also added.
+
+### IO Streams
+-   Added new functions to support some parts of the WKT file format:
+    - `CGAL::read_point_WKT()`
+    - `GCAL::read_multi_point_WKT()`
+    - `GCAL::read_linestring_WKT()`
+    - `GCAL::read_multi_linestring_WKT()`
+    - `GCAL::read_polygon_WKT()`
+    - `GCAL::read_multi_polygon_WKT()`
+    - `CGAL::write_point_WKT()`
+    - `CGAL::write_polygon_WKT()`
+    - `CGAL::write_linestring_WKT()`
+    - `CGAL::write_multi_point_WKT()`
+    - `CGAL::write_multi_polygon_WKT()`
+    - `CGAL::write_multi_linestring_WKT()`
+    - `CGAL:read_WKT()`
+
 Release 4.14
 ------------
 

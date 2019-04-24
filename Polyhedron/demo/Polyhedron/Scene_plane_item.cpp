@@ -1,20 +1,29 @@
 #include "Scene_plane_item.h"
+#include <CGAL/Three/Triangle_container.h>
+#include <CGAL/Three/Edge_container.h>
 #include <QApplication>
 #include <CGAL/Three/Three.h>
-
+#include <QInputDialog>
+#include <QMessageBox>
+#include <QRegExp>
+#include <QMenu>
 using namespace CGAL::Three;
-
+typedef Triangle_container Tc;
+typedef Edge_container Ec;
+typedef Viewer_interface VI;
 
 
 Scene_plane_item::Scene_plane_item(const CGAL::Three::Scene_interface* scene_interface)
-      :CGAL::Three::Scene_item(NbOfVbos,NbOfVaos),
-      scene(scene_interface),
-      manipulable(false),
-      can_clone(true),
-      frame(new ManipulatedFrame())
+  :scene(scene_interface),
+    manipulable(false),
+    can_clone(true),
+    frame(new ManipulatedFrame())
   {
     setNormal(0., 0., 1.);
-
+    setTriangleContainer(0, new Tc(VI::PROGRAM_NO_SELECTION,
+                                                 false));
+    setEdgeContainer(0, new Ec(VI::PROGRAM_NO_SELECTION,
+                                                 false));
     //Generates an integer which will be used as ID for each buffer
     invalidateOpenGLBuffers();
   }
@@ -24,34 +33,17 @@ Scene_plane_item::~Scene_plane_item() {
 
 void Scene_plane_item::initializeBuffers(Viewer_interface *viewer) const
 {
-    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
-    program->bind();
-    vaos[Facets]->bind();
-
-    buffers[Facets_vertices].bind();
-    buffers[Facets_vertices].allocate(positions_quad.data(),
-                        static_cast<int>(positions_quad.size()*sizeof(float)));
-    program->enableAttributeArray("vertex");
-    program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    buffers[Facets_vertices].release();
-    vaos[Facets]->release();
-
-
-    vaos[Edges]->bind();
-    buffers[Edges_vertices].bind();
-    buffers[Edges_vertices].allocate(positions_lines.data(),
-                        static_cast<int>(positions_lines.size()*sizeof(float)));
-    program->enableAttributeArray("vertex");
-    program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    buffers[Edges_vertices].release();
-    vaos[Edges]->release();
-
-    program->release();
-    are_buffers_filled = true;
-
+  getTriangleContainer(0)->initializeBuffers(viewer);
+  getTriangleContainer(0)->setFlatDataSize(nb_quads);
+  positions_quad.resize(0);
+  positions_quad.shrink_to_fit();
+  getEdgeContainer(0)->initializeBuffers(viewer);
+  getEdgeContainer(0)->setFlatDataSize(nb_lines);
+  positions_lines.resize(0);
+  positions_lines.shrink_to_fit();
 }
 
-void Scene_plane_item::compute_normals_and_vertices(void) const
+void Scene_plane_item::computeElements() const
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
     positions_quad.resize(0);
@@ -81,7 +73,10 @@ void Scene_plane_item::compute_normals_and_vertices(void) const
     positions_quad.push_back(diag );
     positions_quad.push_back(0.0  );
 
-}
+    getTriangleContainer(0)->allocate(Tc::Flat_vertices, positions_quad.data(),
+                                      static_cast<int>(positions_quad.size() 
+                                                       * sizeof(float)));
+    }
     //The grid
     float x = (2*diag)/10.0;
     float y = (2*diag)/10.0;
@@ -108,47 +103,62 @@ void Scene_plane_item::compute_normals_and_vertices(void) const
             positions_lines.push_back(-diag + v * y);
             positions_lines.push_back(0.0          );
         }
-
+        getEdgeContainer(0)->allocate(Ec::Vertices, positions_lines.data(),
+                                          static_cast<int>(positions_lines.size() 
+                                                           * sizeof(float)));
     }
+    nb_quads = positions_quad.size();
+    nb_lines = positions_lines.size();
+    setBuffersFilled(true);
     QApplication::restoreOverrideCursor();
 }
 
 void Scene_plane_item::draw(Viewer_interface* viewer)const
 {
-    if(!are_buffers_filled)
-        initializeBuffers(viewer);
-    vaos[Facets]->bind();
-    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
-    QMatrix4x4 f_matrix;
-    for(int i=0; i<16; i++)
-        f_matrix.data()[i] = (float)frame->matrix()[i];
-    program->bind();
-    program->setUniformValue("f_matrix", f_matrix);
-    program->setAttributeValue("colors",this->color());
-    program->setUniformValue("is_selected", false);
-    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_quad.size()/3));
-    program->release();
-    vaos[Facets]->release();
-
+  if(!isInit(viewer))
+    initGL(viewer);
+  if ( getBuffersFilled() &&
+       ! getBuffersInit(viewer))
+  {
+    initializeBuffers(viewer);
+    setBuffersInit(viewer, true);
+  }
+  if(!getBuffersFilled())
+  {
+    computeElements();
+    initializeBuffers(viewer);
+  }
+  
+  QMatrix4x4 f_matrix;
+  for(int i=0; i<16; i++)
+    f_matrix.data()[i] = (float)frame->matrix()[i];
+  
+  getTriangleContainer(0)->setFrameMatrix(f_matrix);
+  getTriangleContainer(0)->setColor(this->color());
+  getTriangleContainer(0)->draw(viewer, true);
 }
 
 void Scene_plane_item::drawEdges(CGAL::Three::Viewer_interface* viewer)const
 {
-    if(!are_buffers_filled)
-        initializeBuffers(viewer);
-    vaos[Edges]->bind();
-    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
+  if(!isInit(viewer))
+    initGL(viewer);
+  if ( getBuffersFilled() &&
+       ! getBuffersInit(viewer))
+  {
+    initializeBuffers(viewer);
+    setBuffersInit(viewer, true);
+  }
+  if(!getBuffersFilled())
+  {
+    computeElements();
+    initializeBuffers(viewer);
+  }
     QMatrix4x4 f_matrix;
     for(int i=0; i<16; i++)
         f_matrix.data()[i] = (float)frame->matrix()[i];
-    program->bind();
-    program->setUniformValue("f_matrix", f_matrix);
-    program->setAttributeValue("colors",QVector3D(0,0,0));
-    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
-    program->release();
-    vaos[Edges]->release();
+    getEdgeContainer(0)->setFrameMatrix(f_matrix);
+    getEdgeContainer(0)->setColor(QColor(0,0,0));
+    getEdgeContainer(0)->draw(viewer, true);
 }
 
 void Scene_plane_item::flipPlane()
@@ -223,9 +233,9 @@ Plane_3 Scene_plane_item::plane(CGAL::qglviewer::Vec offset) const {
 
 void Scene_plane_item::invalidateOpenGLBuffers()
 {
-    compute_normals_and_vertices();
-    are_buffers_filled = false;
-    compute_bbox();
+    setBuffersFilled(false);
+    getTriangleContainer(0)->reset_vbos(ALL);
+    getEdgeContainer(0)->reset_vbos(ALL);
 }
 
 void Scene_plane_item::setPosition(float x, float y, float z) {
@@ -272,3 +282,81 @@ void Scene_plane_item::setClonable(bool b) {
 void Scene_plane_item::setManipulatable(bool b) {
   manipulable = b;
 }
+
+QMenu* Scene_plane_item::contextMenu()
+{
+  QMenu* menu = Scene_item::contextMenu();
+  
+  const char* prop_name = "Menu modified by Scene_plane_item.";
+  bool menuChanged = menu->property(prop_name).toBool();
+  
+  if(!menuChanged) {
+    menu->addSeparator();
+    QAction* actionOrientPlane=
+        menu->addAction(tr("Set Plane Orientation"));
+    actionOrientPlane->setObjectName("actionOrientPlane");
+    connect(actionOrientPlane, &QAction::triggered,
+            this, &Scene_plane_item::setPlaneOrientation);
+    setProperty("menu_changed", true);
+    menu->setProperty(prop_name, true);
+  }
+  return menu;
+}
+
+void Scene_plane_item::setPlaneOrientation()
+{
+  bool does_match = true;
+  //check that the result is of the form %1*x + %2*y + %3*z + %4 = 0, modulo the whitespaces.
+  QRegExp rx(
+        "(\\-?\\s*\\d*\\.?\\d*(?:e\\-?\\d*)?)\\s*\\*\\s*x\\s*\\+?\\s*(\\-?\\s*\\d*\\.?\\d*(?:e\\-?\\d*)?)\\s*\\*\\s*y\\s*\\+?\\s*(\\-?\\s*\\d*\\.?\\d*(?:e\\-?\\d*)?)\\s*\\*\\s*z\\s*\\+?\\s*(\\-?\\s*\\d*\\.?\\d*(?:e\\-?\\d*)?)\\s*=\\s*0"
+        );
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+  QVector3D qoffset(offset.x, offset.y, offset.z);
+  const CGAL::qglviewer::Vec& pos = frame->position();
+  const CGAL::qglviewer::Vec& n = frame->inverseTransformOf(CGAL::qglviewer::Vec(0.f, 0.f, 1.f));
+  do{
+    bool ok;
+    
+    QString placeHolder = tr("%1*x + %2*y + %3*z + %4 = 0")
+        .arg(n[0]).arg(n[1]).arg(n[2]).arg( - (pos -offset)* n);
+    QString eq = QInputDialog::getText(CGAL::Three::Three::mainWindow(),
+                                       "Set Plane Equation",
+                                       "Equation",
+                                       QLineEdit::Normal,
+                                       placeHolder,
+                                       &ok);
+    if(!ok)
+      return;
+    does_match = rx.exactMatch(eq);
+    if(!does_match)
+    {
+      QMessageBox::warning(CGAL::Three::Three::mainWindow(),"Error","The input must be of the form a*x+b*y+c*z+d=0");
+    }
+  }while(!does_match);
+  double a(rx.cap(1).toDouble()), b(rx.cap(2).toDouble()), c(rx.cap(3).toDouble()), d(rx.cap(4).toDouble());
+  
+  Kernel_epic::Point_3 sure_point(0,0,0);
+  if(c != 0)
+    sure_point = Kernel_epic::Point_3(offset.x, offset.y, offset.z-d/c);
+  else if (b !=0)
+    sure_point = Kernel_epic::Point_3(offset.x, offset.y-d/b, offset.z);
+  else if (a !=0)
+    sure_point = Kernel_epic::Point_3(offset.x-d/a, offset.y, offset.z);
+  
+  Kernel_epic::Plane_3 pl(sure_point, Kernel_epic::Vector_3(a,b,c));
+  
+  QVector3D normal(a,b,c);
+  normal.normalize();
+  setNormal(normal.x(), normal.y(), normal.z());
+  Kernel_epic::Point_3 bbox_center(
+        (scene->bbox().xmin() + scene->bbox().xmax()) /2.0 +offset.x,
+        (scene->bbox().ymin() + scene->bbox().ymax()) /2.0   +offset.y,
+      (scene->bbox().zmin() + scene->bbox().zmax()) /2.0   +offset.z );
+  bbox_center = pl.projection(bbox_center);
+  QVector3D new_pos = 
+      QVector3D(bbox_center.x(), bbox_center.y(), bbox_center.z());
+  setPosition(new_pos.x(), new_pos.y(), new_pos.z());
+  invalidateOpenGLBuffers();
+  itemChanged();
+}
+

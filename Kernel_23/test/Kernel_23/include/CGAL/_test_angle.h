@@ -57,6 +57,7 @@ _test_angle(const R&)
   assert( CGAL::angle( e0, org, e1) == CGAL::RIGHT );
 
   Point_3 sx( RT1, RT0, RT0);
+  Point_3 msx( - RT1, RT0, RT0);
   Point_3 sy( RT0, RT1, RT0);
   Point_3 sz( RT0, RT0, RT1);
   Point_3 org3( RT0, RT0, RT0);
@@ -75,6 +76,12 @@ _test_angle(const R&)
   assert( CGAL::angle( org3, sx, sy, vz) ==  CGAL::ACUTE );
   assert( CGAL::angle( org3, sx, sy, vcoplanar) ==  CGAL::RIGHT );
   assert( CGAL::angle( org3, sx, sy, vmz) ==  CGAL::OBTUSE );
+  assert( CGAL::approximate_angle( sx, org3, sy ) > RT(89) );
+  assert( CGAL::approximate_angle( sx-org3, sy-org3 ) > RT(89) );
+  assert( CGAL::approximate_angle( sx, org3, sy ) < RT(91) );
+  assert( CGAL::approximate_angle( sx, org3, sx ) == RT(0) );
+  assert( CGAL::approximate_angle( sx, org3, msx ) > RT(179) );
+  assert( CGAL::approximate_angle( sx, org3, msx ) < RT(181) );
   return true;
 }
 

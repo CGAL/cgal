@@ -53,6 +53,7 @@ struct DEMO_FRAMEWORK_EXPORT Point_container :public Primitive_container
     Vertices = 0, //!< Designates the buffer that contains the vertex coordinates.
     Indices,      //!< Designates the buffer that contains the vertex indices.
     Colors,       //!< Designates the buffer that contains the color components.
+    Normals,      //!<  Designates the buffer that contains the normals components (for shaded points).
     NbOfVbos      //!< Designates the size of the VBOs vector for `Point_container`s
   };
 
@@ -94,6 +95,10 @@ struct DEMO_FRAMEWORK_EXPORT Point_container :public Primitive_container
   QMatrix4x4 getFrameMatrix()const;
 //! setter for the "f_matrix" parameter
   void setFrameMatrix(const QMatrix4x4&);
+  //! setter for the "plane" parameter
+  void setPlane(const QVector4D&);
+  //! setter for the "is_surface" attribute. Used in PROGRAM_C3T3_EDGES
+  void setIsSurface  (const bool);
   ///@}
 
 private:

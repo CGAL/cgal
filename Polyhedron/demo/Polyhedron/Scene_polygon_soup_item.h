@@ -1,7 +1,7 @@
 #ifndef SCENE_POLYGON_SOUP_ITEM_H
 #define SCENE_POLYGON_SOUP_ITEM_H
 #include "Scene_polygon_soup_item_config.h"
-#include  <CGAL/Three/Scene_item.h>
+#include  <CGAL/Three/Scene_item_rendering_helper.h>
 #include "SMesh_type.h"
 
 #include <boost/array.hpp>
@@ -98,7 +98,7 @@ struct Polygon_soup
 class Scene_surface_mesh_item;
 
 class SCENE_POLYGON_SOUP_ITEM_EXPORT Scene_polygon_soup_item 
-        : public CGAL::Three::Scene_item
+        : public CGAL::Three::Scene_item_rendering_helper
 {
     Q_OBJECT
 public:  
@@ -150,12 +150,14 @@ public:
     const Points& points() const;
     const Polygons& polygons() const;
     const Edges& non_manifold_edges() const;
-
+    void initializeBuffers(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
+    void computeElements() const Q_DECL_OVERRIDE;
 public Q_SLOTS:
     void shuffle_orientations();
     bool orient();
     bool exportAsSurfaceMesh(SMesh*);
     void inside_out();
+    void repair(bool erase_dup, bool req_same_orientation);
 
     void setDisplayNonManifoldEdges(const bool);
     bool displayNonManifoldEdges() const;

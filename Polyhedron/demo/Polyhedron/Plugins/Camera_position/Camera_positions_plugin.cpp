@@ -38,8 +38,6 @@ void Polyhedron_demo_camera_positions_plugin::init(QMainWindow* mainWindow, Scen
 {
 
   cpl = new Camera_positions_list(mainWindow);
-  Viewer_interface* viewer = mainWindow->findChild<Viewer_interface*>("viewer");
-  cpl->setViewer(viewer);
   mainWindow->addDockWidget(Qt::LeftDockWidgetArea, cpl);
 }
 
