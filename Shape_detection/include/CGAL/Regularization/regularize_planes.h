@@ -29,8 +29,6 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Shape_detection/Efficient_RANSAC.h>
 
-#include <boost/foreach.hpp>
-
 namespace CGAL {
   
 // ----------------------------------------------------------------------------

@@ -36,7 +36,7 @@ using Region_growing = CGAL::Shape_detection::Region_growing<Input_range, Neighb
 using Region  = std::vector<std::size_t>;
 using Regions = std::vector<Region>;
 
-using Color            = CGAL::cpp11::array<unsigned char, 3>;
+using Color            = std::array<unsigned char, 3>;
 using Point_with_color = std::pair<Point_3, Color>;
 using Pwc_vector       = std::vector<Point_with_color>;
 using PLY_Point_map    = CGAL::First_of_pair_property_map<Point_with_color>;

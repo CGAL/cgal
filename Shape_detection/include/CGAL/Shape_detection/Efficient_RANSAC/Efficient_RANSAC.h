@@ -438,8 +438,8 @@ namespace CGAL {
               input data has been set. Otherwise, `false` is returned.
     */ 
     bool detect(const Parameters &options = Parameters(),
-                const cpp11::function<bool(double)>& callback
-                = cpp11::function<bool(double)>())
+                const std::function<bool(double)>& callback
+                = std::function<bool(double)>())
     {
       m_options = options;
 
