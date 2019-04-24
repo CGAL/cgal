@@ -34,7 +34,6 @@ public:
   }
   bool isDefaultLoader(const QString& name) const 
   { 
-    qDebug()<<name;
     if(name == QString("off")) 
       return true; 
     return false;
