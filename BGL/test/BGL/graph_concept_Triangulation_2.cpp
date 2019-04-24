@@ -1,4 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
+
 #include <CGAL/boost/graph/graph_traits_Triangulation_2.h>
 #include <CGAL/boost/graph/graph_traits_Constrained_triangulation_2.h>
 #include <CGAL/boost/graph/graph_traits_Delaunay_triangulation_2.h>
