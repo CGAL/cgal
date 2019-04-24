@@ -32,7 +32,8 @@ when it is built for Delaunay triangulations.
 However it can be used as well for other triangulations. 
 
 
-\tparam Tr may be any of the \cgal triangulation classes. 
+\tparam Tr may be any of the \cgal triangulation classes. The vertex of the triangulation must
+           be a model of the concept `TriangulationHierarchyVertexBase_2`.
 
 \cgalHeading{Types}
 
