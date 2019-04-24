@@ -1000,7 +1000,8 @@ void MainWindow::reloadItem() {
     QFileInfo fileinfo(filename);
 
     CGAL::Three::Scene_item* new_item = loadItem(fileinfo, fileloader);
-
+    if(!new_item)
+      return;
     new_item->setName(item->name());
     new_item->setColor(item->color());
     new_item->setRenderingMode(item->renderingMode());
@@ -2347,14 +2348,8 @@ void MainWindow::on_actionRecenterScene_triggered()
   bbox_need_update = true;
   CGAL::qglviewer::Vec min, max;
   computeViewerBBox(min, max);
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
-  {
-    if(v == NULL)
-      continue;
-    updateViewerBbox(static_cast<Viewer*>(v), true, min, max);
-    v->camera()->interpolateToFitScene();
-  }
-  viewer->camera()->showEntireScene();
+  updateViewerBbox(static_cast<Viewer*>(activeViewer()), true, min, max);
+  activeViewer()->camera()->interpolateToFitScene();
 }
 
 void MainWindow::on_actionLoadPlugin_triggered()
