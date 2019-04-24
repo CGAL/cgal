@@ -1107,7 +1107,12 @@ void MainWindow::open(QString filename)
       if ( !io_plugin->canLoad() ) continue;
       all_items << io_plugin->name();
       if ( file_matches_filter(io_plugin->loadNameFilters(), filename.toLower()) )
-        selected_items << io_plugin->name();
+      {
+        if(io_plugin->isDefaultLoader(fileinfo.completeSuffix()))
+          selected_items.prepend(io_plugin->name());
+        else
+          selected_items << io_plugin->name();
+      }
     }
   }
   else

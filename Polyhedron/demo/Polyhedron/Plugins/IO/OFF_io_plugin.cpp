@@ -32,6 +32,13 @@ public:
       return true; 
     return false;
   }
+  bool isDefaultLoader(const QString& name) const 
+  { 
+    qDebug()<<name;
+    if(name == QString("off")) 
+      return true; 
+    return false;
+  }
   QString name() const { return "off_plugin"; }
   QString nameFilters() const { return "OFF files (*.off);;Wavefront OBJ (*.obj)"; }
   bool canLoad() const;
