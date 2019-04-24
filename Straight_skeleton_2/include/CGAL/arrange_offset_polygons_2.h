@@ -39,7 +39,7 @@ namespace CGAL {
 //  Every hole is contained in one and only one outer polygon
 //
 template<class K, class InputPolygonPtrIterator, class OutputPolygonWithHolesPtrIterator>
-void arrange_offset_polygons_2 ( InputPolygonPtrIterator           aBegin
+bool arrange_offset_polygons_2 ( InputPolygonPtrIterator           aBegin
                                , InputPolygonPtrIterator           aEnd
                                , OutputPolygonWithHolesPtrIterator rOut
                                , K const&
@@ -95,23 +95,34 @@ void arrange_offset_polygons_2 ( InputPolygonPtrIterator           aBegin
               lParent = lOuter ;
       }
       
-      CGAL_assertion(lParent != NULL);
+      if (lParent == NULL)
+        return false;
       
       lParent->add_hole(*lPoly);
     }
   }  
+  return true;
 }
 
 template<class K, class C>
 std::vector< boost::shared_ptr< Polygon_with_holes_2<K,C> > >
 inline
-arrange_offset_polygons_2 ( std::vector< boost::shared_ptr< Polygon_2<K,C> > > const& aPolygons )
+arrange_offset_polygons_2 ( std::vector< boost::shared_ptr< Polygon_2<K,C> > > const& aPolygons, bool& no_error)
 {
   std::vector< boost::shared_ptr< Polygon_with_holes_2<K,C> > > rResult ;
   
-  arrange_offset_polygons_2(aPolygons.begin(), aPolygons.end(), std::back_inserter(rResult), K() ) ;
+  no_error = arrange_offset_polygons_2(aPolygons.begin(), aPolygons.end(), std::back_inserter(rResult), K() ) ;
   
   return rResult ;
+}
+
+template<class K, class C>
+std::vector< boost::shared_ptr< Polygon_with_holes_2<K,C> > >
+inline
+arrange_offset_polygons_2 ( std::vector< boost::shared_ptr< Polygon_2<K,C> > > const& aPolygons)
+{
+  bool no_error;
+  return arrange_offset_polygons_2(aPolygons, no_error);
 }
 
 } // end namespace CGAL
