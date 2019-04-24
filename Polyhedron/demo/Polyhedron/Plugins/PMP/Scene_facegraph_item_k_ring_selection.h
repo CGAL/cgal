@@ -581,10 +581,14 @@ protected:
         viewer->setFocus();
         return false;
       }
+      
       if(!is_lasso_active)
       {
         is_ready_to_paint_select = true;
         QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
+        hl_pos = mouse_event->pos();
+        is_ready_to_highlight = !cut_highlighting;
+        QTimer::singleShot(0, this, SLOT(highlight()));
         paint_pos = mouse_event->pos();
         if(!is_edit_mode || event->type() == QEvent::MouseButtonPress)
         {
