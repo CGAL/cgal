@@ -42,8 +42,8 @@ int main( )
 
   Polygon_list partition_polys;
 
-  CGAL::y_monotone_partition_2(polygon.begin(),
-                               polygon.end(),
+  CGAL::y_monotone_partition_2(polygon.vertices_begin(),
+                               polygon.vertices_end(),
                                std::back_inserter(partition_polys),
                                traits);
 
