@@ -33,4 +33,4 @@
 
 #include <CGAL/boost/graph/graph_traits_2D_triangulation.h>
 
-#endif // CGAL_GRAPH_TRAITS_REGULAR_TRIANGULATION_2_H
+#endif // CGAL_GRAPH_TRAITS_DELAUNAY_TRIANGULATION_2_H
