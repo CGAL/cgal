@@ -32,12 +32,16 @@ public:
 
 /// \name Types 
 /// @{
+    
+/*!
+
+*/ 
+    typedef Partition_traits_2<R,PMap> Self; 
 
 /*!
 
 */ 
 typedef R::FT FT; 
-
 
 /*!
 
@@ -53,15 +57,7 @@ typedef std::list<Point_2> Container;
 /*!
 
 */ 
-typedef CGAL::Polygon_2<R, Container> Polygon_2; 
-
-
-/*!
-
-*/ 
-    typedef Partition_traits_2<R,PMap> Self; 
-
-
+typedef CGAL::Polygon_2<Self, Container> Polygon_2; 
 
 
     
@@ -141,7 +137,7 @@ Partition_traits_2(const R& rep);
 /*!
 
 */ 
-    Partition_traits_2(const R& rep, PointPropertyMap pmap); 
+Partition_traits_2(const R& rep, PointPropertyMap pmap); 
     
 /// @} 
 

@@ -34,8 +34,20 @@
 
 namespace CGAL {
 
+  template <class Base_traits, class PointPropertyMap = Identity_property_map<typename Base_traits::Point_2> >
+class Partition_traits_2;
+
+  template <typename BT, typename PM>
+  struct Polygon_traits_getter{
+    typedef Partition_traits_2<BT,PM> type;
+  };
   
-template <class Base_traits, class PointPropertyMap = Identity_property_map<typename Base_traits::Point_2> >
+  template <typename BT>
+  struct Polygon_traits_getter<BT,Identity_property_map<typename BT::Point_2> > {
+    typedef BT type;
+  };
+  
+template <class Base_traits, class PointPropertyMap>
 class Partition_traits_2 : public Base_traits
 {
 private:
@@ -60,7 +72,8 @@ public:
   typedef typename boost::call_traits<Point_2>::param_type Arg_type;
 
   typedef ::std::list<Point_2>                      Container;
-  typedef CGAL::Polygon_2<Self, Container>          Polygon_2;
+  typedef typename Polygon_traits_getter<Base_traits,PointPropertyMap>::type PolygonTraits;
+  typedef CGAL::Polygon_2<PolygonTraits, Container>          Polygon_2;
   
   template <typename BaseFct>
   struct Pmap_fct : public BaseFct {

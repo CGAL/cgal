@@ -42,8 +42,8 @@ int main( )
 
   Polygon_list partition_polys;
 
-  CGAL::y_monotone_partition_2(polygon.vertices_begin(),
-                               polygon.vertices_end(),
+  CGAL::y_monotone_partition_2(polygon.begin(),
+                               polygon.end(),
                                std::back_inserter(partition_polys),
                                traits);
 
@@ -53,11 +53,12 @@ int main( )
       }
      std::cout << std::endl;
    }
-
+   
    assert(CGAL::partition_is_valid_2(polygon.vertices_begin(),
                                      polygon.vertices_end(),
                                      partition_polys.begin(),
                                      partition_polys.end(),
                                      traits));
+   
    return 0;
 }
