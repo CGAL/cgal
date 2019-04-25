@@ -8,7 +8,8 @@
 #include <QColor>
 
 #include "SMesh_type.h"
-#include "Color_cheat_sheet.h"
+//#include "Color_cheat_sheet.h"
+#include "Color_map.h"
 
 #ifdef surface_mesh_approximation_plugin_EXPORTS
 #define VSA_WRAPPER_EXPORT Q_DECL_EXPORT
@@ -96,9 +97,15 @@ class VSA_WRAPPER_EXPORT VSA_wrapper {
     Compact_metric, EPICK> Compact_approx;
 #endif
 
-  std::size_t rand_0_255() {
-    return static_cast<std::size_t>(std::rand() % 255);
+  std::size_t rand_0_310() {
+    return static_cast<std::size_t>(std::rand() % 310);
   }
+  
+  std::size_t rand_70_255() {
+    return static_cast<std::size_t>(std::rand() % 185 + 70);
+  }
+  
+  
 
 public:
   enum Metric { L21, L2, Compact };
@@ -155,10 +162,11 @@ public:
 
     // generate proxy colors
     m_proxy_colors.clear();
+    m_proxy_colors.reserve(number_of_proxies());
+    
     for (std::size_t i = 0; i < number_of_proxies(); ++i) {
-      const std::size_t c = rand_0_255();
-      m_proxy_colors.push_back(QColor::fromRgb(
-        Color_cheat_sheet::r(c), Color_cheat_sheet::g(c), Color_cheat_sheet::b(c)));
+      const std::size_t h = (rand_0_310()+ 340)%360,s=rand_70_255();
+      m_proxy_colors.push_back(QColor::fromHsvF(h/359.0,s/255.0,1.0));
     }
 
     m_initialized = true;
