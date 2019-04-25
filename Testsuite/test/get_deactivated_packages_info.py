@@ -54,6 +54,9 @@ with open(report_file, "rt") as test_report:
           is_ignored=True
           os.mkdir(name)
           test_report=open("{dir}/{file}".format(dir=name, file=report_name), "w+")
+          print("""
+{scm_branch}
+"""       .format(scm_branch=open("{}/../../../../../.scm-branch".format(os.getcwd()), 'r').read()),file=test_report)
         else:
           is_ignored=False
           test_report=open("{dir}/{file}".format(dir=name, file=report_name), "a+")
