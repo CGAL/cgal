@@ -376,6 +376,8 @@ remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor
       }
     }
 
+  CGAL_assertion(common_incident_edges.size() >=2 );
+
   // in the following loop, we visit define a connected component of
   // faces bounded by edges in common_incident_edges and h. We look
   // for the maximal one. This set of faces is the one that will
@@ -405,7 +407,22 @@ remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor
         continue;
 
       queue.push_back( opposite(next(back,tm), tm) );
+      if ( is_border(queue.back(), tm) )
+      {
+#ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+        std::cout << "Boundary reached during exploration, the region to be removed is not a topological disk, not handled for now.\n";
+#endif
+        return GT::null_vertex();
+      }
+
       queue.push_back( opposite(prev(back,tm), tm) );
+      if ( is_border(queue.back(), tm) )
+      {
+#ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+        std::cout << "Boundary reached during exploration, the region to be removed is not a topological disk, not handled for now.\n";
+#endif
+        return GT::null_vertex();
+      }
     }
 
     CGAL_assertion( boundary.size() == 2 );
