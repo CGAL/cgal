@@ -2349,7 +2349,7 @@ void MainWindow::on_actionRecenterScene_triggered()
   CGAL::qglviewer::Vec min, max;
   computeViewerBBox(min, max);
   updateViewerBbox(static_cast<Viewer*>(activeViewer()), true, min, max);
-  activeViewer()->camera()->interpolateToFitScene();
+  activeViewer()->showEntireScene();
 }
 
 void MainWindow::on_actionLoadPlugin_triggered()
