@@ -95,10 +95,10 @@ int main(int argc, char *argv[]) {
   << std::endl;
 
   // Default parameter values for the data file point_set_2.xyz.
-  const FT     search_sphere_radius = FT(5);
-  const FT     max_distance_to_line = FT(45) / FT(10);
-  const FT     max_accepted_angle   = FT(45);
-  const size_t min_region_size      = 5;
+  const FT          search_sphere_radius = FT(5);
+  const FT          max_distance_to_line = FT(45) / FT(10);
+  const FT          max_accepted_angle   = FT(45);
+  const std::size_t min_region_size      = 5;
 
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query(

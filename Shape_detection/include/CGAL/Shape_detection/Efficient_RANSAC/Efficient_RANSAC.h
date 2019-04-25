@@ -26,7 +26,6 @@
 #include <CGAL/license/Shape_detection.h>
 
 #include <CGAL/Random.h>
-#include <CGAL/function.h>
 
 #include <CGAL/Shape_detection/Efficient_RANSAC/Octree.h>
 #include <CGAL/Shape_detection/Efficient_RANSAC/Shape_base.h>
@@ -43,6 +42,7 @@
 #include <limits>
 #include <fstream>
 #include <sstream>
+#include <functional>
 
 // boost --------------
 #include <CGAL/boost/iterator/counting_iterator.hpp>
