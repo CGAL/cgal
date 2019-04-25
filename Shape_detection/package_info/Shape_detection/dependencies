@@ -8,7 +8,7 @@ Kernel_23
 Kernel_d
 Modular_arithmetic
 Number_types
-Point_set_processing_3
+Shape_detection
 Principal_component_analysis
 Principal_component_analysis_LGPL
 Profiling_tools
@@ -18,4 +18,15 @@ STL_Extension
 Solver_interface
 Spatial_searching
 Stream_support
-BGL
+Arithmetic_kernel
+Cartesian_kernel
+Filtered_kernel
+HalfedgeDS
+Hash_map
+Homogeneous_kernel
+Intersections_2
+Intersections_3
+Modifier
+Polyhedron
+Polyhedron_IO
+Surface_mesh
