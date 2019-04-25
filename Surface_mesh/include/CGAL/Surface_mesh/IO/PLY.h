@@ -148,9 +148,10 @@ public:
     const std::string& name = property->name();
     if (name == "vertex_indices" || name == "vertex_index")
     {
+      CGAL_assertion (dynamic_cast<PLY_read_typed_list<boost::int32_t>*>(property)
+                      || dynamic_cast<PLY_read_typed_list<boost::uint32_t>*>(property));
       m_index_tag  = name;
       m_use_int32_t = dynamic_cast<PLY_read_typed_list<boost::int32_t>*>(property);
-      CGAL_assertion (dynamic_cast<PLY_read_typed_list<boost::uint32_t>*>(property));
       return true;
     }
     if (name == "red" ||
