@@ -60,8 +60,7 @@ std::size_t VSA_wrapper::add_one_proxy() {
       break;
   }
   if (nb_added == 1) {
-    const std::size_t h = (rand_0_310()+ 340)%359, s = rand_70_255();
-    m_proxy_colors.push_back(QColor::fromHsvF(h/359.0,s/255.0,1.0));
+    m_proxy_colors.push_back(generate_random_color());
   }
 
   return nb_added;
@@ -94,8 +93,7 @@ bool VSA_wrapper::split(const std::size_t px_idx, const std::size_t n, const std
   }
   if (splitted) {
     for (std::size_t i = m_proxy_colors.size(); i < number_of_proxies(); ++i) {
-      const std::size_t h = (rand_0_310()+ 340)%359,s=rand_70_255();
-      m_proxy_colors.push_back(QColor::fromHsvF(h/359.0,s/255.0,1.0));
+      m_proxy_colors.push_back(generate_random_color());
     }
   }
 

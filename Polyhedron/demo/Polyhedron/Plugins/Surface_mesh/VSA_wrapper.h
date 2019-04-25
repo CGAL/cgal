@@ -96,15 +96,6 @@ class VSA_WRAPPER_EXPORT VSA_wrapper {
   typedef CGAL::Variational_shape_approximation<SMesh, Vertex_point_map,
     Compact_metric, EPICK> Compact_approx;
 #endif
-
-  std::size_t rand_0_310() {
-    return static_cast<std::size_t>(std::rand() % 310);
-  }
-  
-  std::size_t rand_70_255() {
-    return static_cast<std::size_t>(std::rand() % 185 + 70);
-  }
-  
   
 
 public:
@@ -165,8 +156,7 @@ public:
     m_proxy_colors.reserve(number_of_proxies());
     
     for (std::size_t i = 0; i < number_of_proxies(); ++i) {
-      const std::size_t h = (rand_0_310()+ 340)%360,s=rand_70_255();
-      m_proxy_colors.push_back(QColor::fromHsvF(h/359.0,s/255.0,1.0));
+      m_proxy_colors.push_back(generate_random_color());
     }
 
     m_initialized = true;
