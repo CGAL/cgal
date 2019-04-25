@@ -27,7 +27,6 @@
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/array.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Default.h>
@@ -38,13 +37,16 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/mpl/if.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/variant.hpp>
 
+#include <array>
 #include <iostream>
 #include <iterator>
 #include <limits>
+#include <set>
+#include <type_traits>
 #include <utility>
+#include <vector>
 
 // Everywhere in this file:
 // If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
@@ -72,20 +74,20 @@ struct Locate_types
                          halfedge_descriptor,
                          face_descriptor>                                  descriptor_variant;
 
-  typedef typename boost::mpl::if_<
-                     boost::is_same<
-                       NamedParameters, Default>,
+  typedef typename std::conditional<
+                     std::is_same<
+                       NamedParameters, Default>::value,
                        typename boost::property_map<TriangleMesh,
-                                                    CGAL::vertex_point_t>::const_type,
+                                                    boost::vertex_point_t>::const_type,
                        typename GetVertexPointMap<TriangleMesh,
                                                   NamedParameters>::const_type
-                     >::type                                               VertexPointMap;
-  typedef typename boost::property_traits<VertexPointMap>::value_type      Point;
+                     >::type                                               VPM;
+  typedef typename boost::property_traits<VPM>::value_type                 Point;
 
   typedef typename CGAL::Kernel_traits<Point>::type                        Kernel;
   typedef typename Kernel::FT                                              FT;
 
-  typedef CGAL::cpp11::array<FT, 3>                                        Barycentric_coordinates;
+  typedef std::array<FT, 3>                                                Barycentric_coordinates;
   typedef std::pair<face_descriptor, Barycentric_coordinates>              Face_location;
 };
 
@@ -156,10 +158,11 @@ snap_coordinates_to_border(typename Locate_types<TriangleMesh>::Barycentric_coor
 {
   typedef typename internal::Locate_types<TriangleMesh>::FT            FT;
 
-  // @tmp clean that or protect it with a macro/variable
-//  std::cout << "Pre-snapping: " << coords[0] << " " << coords[1] << " " << coords[2] << std::endl;
-//  std::cout << "Sum: " << coords[0] + coords[1] + coords[2] << std::endl;
-//  std::cout << "tolerance: " << tolerance << std::endl;
+#ifdef CGAL_PMP_LOCATE_DEBUG
+  std::cout << "Pre-snapping: " << coords[0] << " " << coords[1] << " " << coords[2] << std::endl;
+  std::cout << "Sum: " << coords[0] + coords[1] + coords[2] << std::endl;
+  std::cout << "tolerance: " << tolerance << std::endl;
+#endif
 
   // To still keep a sum roughly equals to 1, keep in memory the small changes
   FT residue = 0.;
@@ -191,11 +194,12 @@ snap_coordinates_to_border(typename Locate_types<TriangleMesh>::Barycentric_coor
     }
   }
 
-  // @tmp clean that or protect it with a macro/variable
-//  std::cout << "Post-snapping: " << coords[0] << " "
-//                                 << coords[1] << " "
-//                                 << coords[2] << std::endl;
-//  std::cout << "Sum: " << coords[0] + coords[1] + coords[2] << std::endl;
+#ifdef CGAL_PMP_LOCATE_DEBUG
+  std::cout << "Post-snapping: " << coords[0] << " "
+                                 << coords[1] << " "
+                                 << coords[2] << std::endl;
+  std::cout << "Sum: " << coords[0] + coords[1] + coords[2] << std::endl;
+#endif
 
   return snapped;
 }
@@ -229,6 +233,114 @@ random_entity_in_range(const CGAL::Iterator_range<InputIterator>& range,
 {
   return random_entity_in_range(range.begin(), range.end(), rnd);
 }
+
+template <typename K, typename P, int = P::Ambient_dimension::value>
+struct Barycentric_coordinate_calculator // 2D version
+{
+  CGAL::array<typename K::FT, 3>
+  operator()(const P& ip, const P& iq, const P& ir, const P& iquery, const K& k) const
+  {
+    typedef typename K::FT                        FT;
+    typedef typename K::Vector_2                  Vector_2;
+
+    typename K::Construct_point_2 cp2 = k.construct_point_2_object();
+    typename K::Construct_vector_2 cv2 = k.construct_vector_2_object();
+    typename K::Compute_scalar_product_2 csp2 = k.compute_scalar_product_2_object();
+
+    const typename K::Point_2& p = cp2(ip);
+    const typename K::Point_2& q = cp2(iq);
+    const typename K::Point_2& r = cp2(ir);
+    const typename K::Point_2& query = cp2(iquery);
+
+    Vector_2 v0 = cv2(p, q);
+    Vector_2 v1 = cv2(p, r);
+    Vector_2 v2 = cv2(p, query);
+
+    FT d00 = csp2(v0, v0);
+    FT d01 = csp2(v0, v1);
+    FT d11 = csp2(v1, v1);
+    FT d20 = csp2(v2, v0);
+    FT d21 = csp2(v2, v1);
+
+    FT denom = d00 * d11 - d01 * d01;
+
+    FT v = (d11 * d20 - d01 * d21) / denom;
+    FT w = (d00 * d21 - d01 * d20) / denom;
+
+    return CGAL::make_array(FT(FT(1) - v - w), v, w);
+  }
+};
+
+template <typename K, typename P>
+struct Barycentric_coordinate_calculator<K, P, 3 /*3D specialization*/>
+{
+  CGAL::array<typename K::FT, 3>
+  operator()(const P& ip, const P& iq, const P& ir, const P& iquery, const K& k) const
+  {
+    typedef typename K::FT                        FT;
+    typedef typename K::Vector_3                  Vector_3;
+
+    typename K::Construct_point_3 cp3 = k.construct_point_3_object();
+    typename K::Construct_vector_3 cv3 = k.construct_vector_3_object();
+    typename K::Compute_scalar_product_3 csp3 = k.compute_scalar_product_3_object();
+
+    const typename K::Point_3& p = cp3(ip);
+    const typename K::Point_3& q = cp3(iq);
+    const typename K::Point_3& r = cp3(ir);
+    const typename K::Point_3& query = cp3(iquery);
+
+    Vector_3 v0 = cv3(p, q);
+    Vector_3 v1 = cv3(p, r);
+    Vector_3 v2 = cv3(p, query);
+
+    FT d00 = csp3(v0, v0);
+    FT d01 = csp3(v0, v1);
+    FT d11 = csp3(v1, v1);
+    FT d20 = csp3(v2, v0);
+    FT d21 = csp3(v2, v1);
+
+    CGAL_assertion((d00 * d11 - d01 * d01) != FT(0)); // denom != 0.
+    FT denom_inv = 1. / (d00 * d11 - d01 * d01);
+
+    FT v = (d11 * d20 - d01 * d21) * denom_inv;
+    FT w = (d00 * d21 - d01 * d20) * denom_inv;
+
+    return CGAL::make_array(FT(FT(1) - v - w), v, w);
+  }
+};
+
+template <typename K, typename P, int = P::Ambient_dimension::value>
+struct Barycentric_point_constructor // 2D version
+{
+  typedef typename K::FT                            FT;
+
+  P operator()(const P& p, const FT wp, const P& q, const FT wq, const P& r, const FT wr) const
+  {
+    FT sum = wp + wq + wr;
+    CGAL_assertion(sum != 0);
+    FT x = (wp * p.x() + wq * q.x() + wr * r.x()) / sum;
+    FT y = (wp * p.y() + wq * q.y() + wr * r.y()) / sum;
+
+    return P(x, y);
+  }
+};
+
+template <typename K, typename P>
+struct Barycentric_point_constructor<K, P, 3> // 3D version
+{
+  typedef typename K::FT                            FT;
+
+  P operator()(const P& p, const FT wp, const P& q, const FT wq, const P& r, const FT wr) const
+  {
+    FT sum = wp + wq + wr;
+    CGAL_assertion(sum != 0);
+    FT x = (wp * p.x() + wq * q.x() + wr * r.x()) / sum;
+    FT y = (wp * p.y() + wq * q.y() + wr * r.y()) / sum;
+    FT z = (wp * p.z() + wq * q.z() + wr * r.z()) / sum;
+
+    return P(x, y, z);
+  }
+};
 
 } // namespace internal
 
@@ -323,8 +435,11 @@ int vertex_index_in_face(const typename boost::graph_traits<PolygonMesh>::vertex
   halfedge_descriptor current = start;
   int counter = 0;
 
+  std::cout << "vd to find: " << &*vd << " pt: " << vd->point() << std::endl;
+
   do
   {
+    std::cout << "current source: " << &*source(current, pm) << " pt: " << source(current, pm)->point() << std::endl;
     if(source(current, pm) == vd)
       break;
 
@@ -370,81 +485,6 @@ int halfedge_index_in_face(typename boost::graph_traits<PolygonMesh>::halfedge_d
   return count;
 }
 
-template <typename K, typename P, int>
-struct Barycentric_coordinate_calculator // 2D version
-{
-  CGAL::array<typename K::FT, 3>
-  operator()(const P& ip, const P& iq, const P& ir, const P& iquery, const K& k) const
-  {
-    typedef typename K::FT                        FT;
-    typedef typename K::Vector_2                  Vector_2;
-
-    typename K::Construct_point_2 cp2 = k.construct_point_2_object();
-    typename K::Construct_vector_2 cv2 = k.construct_vector_2_object();
-    typename K::Compute_scalar_product_2 csp2 = k.compute_scalar_product_2_object();
-
-    const typename K::Point_2& p = cp2(ip);
-    const typename K::Point_2& q = cp2(iq);
-    const typename K::Point_2& r = cp2(ir);
-    const typename K::Point_2& query = cp2(iquery);
-
-    Vector_2 v0 = cv2(p, q);
-    Vector_2 v1 = cv2(p, r);
-    Vector_2 v2 = cv2(p, query);
-
-    FT d00 = csp2(v0, v0);
-    FT d01 = csp2(v0, v1);
-    FT d11 = csp2(v1, v1);
-    FT d20 = csp2(v2, v0);
-    FT d21 = csp2(v2, v1);
-
-    FT denom = d00 * d11 - d01 * d01;
-
-    FT v = (d11 * d20 - d01 * d21) / denom;
-    FT w = (d00 * d21 - d01 * d20) / denom;
-
-    return CGAL::make_array(FT(1) - v - w, v, w);
-  }
-};
-
-template <typename K, typename P>
-struct Barycentric_coordinate_calculator<K, P, 3 /*3D specialization*/>
-{
-  CGAL::array<typename K::FT, 3>
-  operator()(const P& ip, const P& iq, const P& ir, const P& iquery, const K& k) const
-  {
-    typedef typename K::FT                        FT;
-    typedef typename K::Vector_3                  Vector_3;
-
-    typename K::Construct_point_3 cp3 = k.construct_point_3_object();
-    typename K::Construct_vector_3 cv3 = k.construct_vector_3_object();
-    typename K::Compute_scalar_product_3 csp3 = k.compute_scalar_product_3_object();
-
-    const typename K::Point_3& p = cp3(ip);
-    const typename K::Point_3& q = cp3(iq);
-    const typename K::Point_3& r = cp3(ir);
-    const typename K::Point_3& query = cp3(iquery);
-
-    Vector_3 v0 = cv3(p, q);
-    Vector_3 v1 = cv3(p, r);
-    Vector_3 v2 = cv3(p, query);
-
-    FT d00 = csp3(v0, v0);
-    FT d01 = csp3(v0, v1);
-    FT d11 = csp3(v1, v1);
-    FT d20 = csp3(v2, v0);
-    FT d21 = csp3(v2, v1);
-
-    CGAL_assertion((d00 * d11 - d01 * d01) != FT(0)); // denom != 0.
-    FT denom_inv = 1. / (d00 * d11 - d01 * d01);
-
-    FT v = (d11 * d20 - d01 * d21) * denom_inv;
-    FT w = (d00 * d21 - d01 * d20) * denom_inv;
-
-    return CGAL::make_array(FT(1) - v - w, v, w);
-  }
-};
-
 /// \brief Given a set of three points and a query point, computes the barycentric
 ///        coordinates of the query point with respect to the first three points.
 ///
@@ -453,15 +493,21 @@ struct Barycentric_coordinate_calculator<K, P, 3 /*3D specialization*/>
 ///      (this is the case for all standard %CGAL point types).
 /// \pre `query` lies on the plane defined by `p`, `q`, and `r`.
 ///
+template <typename K, typename P>
+CGAL::array<typename K::FT, 3>
+barycentric_coordinates(const P& p, const P& q, const P& r, const P& query, const K& k)
+{
+  internal::Barycentric_coordinate_calculator<K, P> calculator;
+  return calculator(p, q, r, query, k);
+}
+
 template <typename P>
 CGAL::array<typename CGAL::Kernel_traits<P>::type::FT, 3>
 barycentric_coordinates(const P& p, const P& q, const P& r, const P& query)
 {
   typedef typename CGAL::Kernel_traits<P>::type                     Kernel;
 
-  Barycentric_coordinate_calculator<Kernel, P, P::Ambient_dimension::value> calculator;
-
-  return calculator(p, q, r, query, Kernel());
+  return barycentric_coordinates<Kernel, P>(p, q, r, query, Kernel());
 }
 
 // Random locations
@@ -487,7 +533,7 @@ random_location_on_halfedge(typename boost::graph_traits<TriangleMesh>::halfedge
 
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
 
-  FT t = rnd.uniform_real(FT(0), FT(1));
+  FT t(rnd.uniform_real(0., 1.));
   return locate_in_face(hd, t, tm);
 }
 
@@ -513,8 +559,10 @@ random_location_on_face(typename boost::graph_traits<TriangleMesh>::face_descrip
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
   CGAL_precondition(fd != boost::graph_traits<TriangleMesh>::null_face());
 
-  FT u = rnd.uniform_real(FT(0), FT(1));
-  FT v = rnd.uniform_real(FT(0), FT(FT(1) - u));
+  // calling 'rnd.uniform real' with double in case FT comes from an EPECK kernel (which doesn't seem to work too well)
+  FT u(rnd.uniform_real(0., 1.));
+  FT v(rnd.uniform_real(0., double(FT(1) - u)));
+
   return std::make_pair(fd, CGAL::make_array(u, v, FT(FT(1) - u - v)));
 }
 
@@ -613,7 +661,7 @@ get_descriptor_from_location(const typename internal::Locate_types<TriangleMesh>
 ///   \cgalParamBegin{vertex_point_map}
 ///     the property map with the points associated to the vertices of `tm`.
 ///     If this parameter is omitted, an internal property map for
-///     `CGAL::vertex_point_t` should be available in `TriangleMesh`.
+///     `boost::vertex_point_t` should be available in `TriangleMesh`.
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
@@ -630,24 +678,24 @@ location_to_point(const typename internal::Locate_types<TriangleMesh>::Face_loca
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type  VertexPointMap;
   typedef typename boost::property_traits<VertexPointMap>::value_type            Point;
 
-  using boost::choose_param;
-  using boost::get_param;
+  typedef typename internal::Locate_types<TriangleMesh>::Kernel                  Kernel;
 
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
 
-  VertexPointMap vpm = choose_param(get_param(np, internal_np::vertex_point),
-                                    get_const_property_map(boost::vertex_point, tm));
+  VertexPointMap vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
+                                           get_const_property_map(boost::vertex_point, tm));
 
   halfedge_descriptor hd = halfedge(loc.first, tm);
-  const Point p0 = get(vpm, source(hd, tm));
-  const Point p1 = get(vpm, target(hd, tm));
-  const Point p2 = get(vpm, target(next(hd, tm), tm));
+  const Point& p0 = get(vpm, source(hd, tm));
+  const Point& p1 = get(vpm, target(hd, tm));
+  const Point& p2 = get(vpm, target(next(hd, tm), tm));
 
-  return CGAL::barycenter(p0, loc.second[0], p1, loc.second[1], p2, loc.second[2]);
+  internal::Barycentric_point_constructor<Kernel, Point> bp_constructor;
+  return bp_constructor(p0, loc.second[0], p1, loc.second[1], p2, loc.second[2]);
 }
 
 template <typename TriangleMesh>
-typename property_map_value<TriangleMesh, CGAL::vertex_point_t>::type
+typename property_map_value<TriangleMesh, boost::vertex_point_t>::type
 location_to_point(const typename internal::Locate_types<TriangleMesh>::Face_location& loc,
                   const TriangleMesh& tm)
 {
@@ -1069,12 +1117,12 @@ locate_in_face(const typename boost::graph_traits<TriangleMesh>::halfedge_descri
 ///   \cgalParamBegin{vertex_point_map}
 ///     the property map with the points associated to the vertices of `tm`.
 ///     If this parameter is omitted, an internal property map for
-///     `CGAL::vertex_point_t` should be available in `TriangleMesh`.
+///     `boost::vertex_point_t` should be available in `TriangleMesh`.
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
 template <typename TriangleMesh, typename NamedParameters>
-typename internal::Locate_types<TriangleMesh, NamedParameters>::Face_location
+typename internal::Locate_types<TriangleMesh>::Face_location
 locate_in_face(const typename internal::Locate_types<TriangleMesh, NamedParameters>::Point& query,
                const typename boost::graph_traits<TriangleMesh>::face_descriptor fd,
                const TriangleMesh& tm,
@@ -1089,11 +1137,8 @@ locate_in_face(const typename internal::Locate_types<TriangleMesh, NamedParamete
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
   typedef typename boost::property_traits<VertexPointMap>::value_type           Point;
 
-  using boost::choose_param;
-  using boost::get_param;
-
-  VertexPointMap vpm = choose_param(get_param(np, internal_np::vertex_point),
-                                    get_const_property_map(boost::vertex_point, tm));
+  VertexPointMap vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
+                                           get_const_property_map(boost::vertex_point, tm));
 
   vertex_descriptor vd0 = source(halfedge(fd, tm), tm);
   vertex_descriptor vd1 = target(halfedge(fd, tm), tm);
@@ -1103,7 +1148,7 @@ locate_in_face(const typename internal::Locate_types<TriangleMesh, NamedParamete
   const Point& p1 = get(vpm, vd1);
   const Point& p2 = get(vpm, vd2);
 
-  CGAL::cpp11::array<FT, 3> coords = barycentric_coordinates<Point>(p0, p1, p2, query);
+  std::array<FT, 3> coords = barycentric_coordinates<Point>(p0, p1, p2, query);
 
   if(!is_in_face(coords, tm))
   {
@@ -1120,7 +1165,7 @@ locate_in_face(const typename internal::Locate_types<TriangleMesh, NamedParamete
 
 template <typename TriangleMesh>
 typename internal::Locate_types<TriangleMesh>::Face_location
-locate_in_face(const typename property_map_value<TriangleMesh, CGAL::vertex_point_t>::type& query,
+locate_in_face(const typename property_map_value<TriangleMesh, boost::vertex_point_t>::type& query,
                const typename boost::graph_traits<TriangleMesh>::face_descriptor f,
                const TriangleMesh& tm)
 {
@@ -1247,7 +1292,7 @@ locate_in_common_face(typename internal::Locate_types<TriangleMesh>::Face_locati
       if(fd == boost::graph_traits<TriangleMesh>::null_face())
         continue;
 
-      // check if query can be found in that face
+      // check if 'query' can be found in that face
       query_location = locate_in_face(query, fd, tm);
       internal::snap_location_to_border<TriangleMesh>(query_location, tolerance); // @tmp keep or not ?
 
@@ -1367,32 +1412,55 @@ namespace internal {
 template<typename PolygonMesh,
          typename Point,
          int dim = CGAL::Ambient_dimension<Point>::value>
-struct Point_to_Point_3
+struct Point_to_Point_3 // 2D case
 {
-  typedef typename CGAL::Kernel_traits<
-            typename property_map_value<PolygonMesh,
-                                        CGAL::vertex_point_t>::type>::Kernel   K;
-  typedef typename K::Point_3                                                  Point_3;
+  typedef typename internal::Locate_types<PolygonMesh>::Kernel             K;
+  typedef typename K::Point_3                                              Point_3;
 
-  Point_3 operator()(const Point& p) const { return Point_3(p.x(), p.y(), 0.); }
+  Point_3 operator()(const Point& p) const { return Point_3(p.x(), p.y(), 0); }
+};
+
+template<typename PolygonMesh>
+struct Point_to_Point_3<PolygonMesh,
+                        typename internal::Locate_types<PolygonMesh>::Kernel::Point_3,
+                        3> // 3D case with nothing to do
+{
+  typedef typename internal::Locate_types<PolygonMesh>::Kernel             K;
+  typedef typename K::Point_3                                              Point_3;
+
+  const Point_3& operator()(const Point_3& p) const { return p; }
 };
 
 template<typename PolygonMesh, typename Point>
-struct Point_to_Point_3<PolygonMesh, Point, 3>
+struct Point_to_Point_3<PolygonMesh, Point, 3> // Generic 3D case
 {
-  typedef typename CGAL::Kernel_traits<
-            typename property_map_value<PolygonMesh,
-              CGAL::vertex_point_t>::type>::Kernel                        K;
-  typedef typename K::Point_3                                             Point_3;
+  typedef typename internal::Locate_types<PolygonMesh>::Kernel             K;
+  typedef typename K::Point_3                                              Point_3;
 
-  const Point_3& operator()(const Point_3& p) const { return p; }
-  Point_3 operator()(const Point& p) { return Point_3(p.x(), p.y(), p.z()); }
+  Point_3 operator()(const Point& p) const { return Point_3(p.x(), p.y(), p.z()); }
+};
+
+template<typename PolygonMesh>
+struct Ray_to_Ray_3 // 2D case
+{
+  typedef typename internal::Locate_types<PolygonMesh>::Kernel             K;
+  typedef typename K::Ray_2                                                Ray_2;
+  typedef typename K::Ray_3                                                Ray_3;
+  typedef Point_to_Point_3<PolygonMesh, typename K::Point_2>               P2_to_P3;
+
+  Ray_3 operator()(const Ray_2& r) const
+  {
+    P2_to_P3 to_p3;
+    return Ray_3(to_p3(r.source()), to_p3(r.second_point()));
+  }
+
+  const Ray_3& operator()(const Ray_3& r) const { return r; }
 };
 
 /// Readable property map that converts the output of a given vertex point map to a 3D point
 template<typename PolygonMesh,
          typename VertexPointMap = typename property_map_selector<PolygonMesh,
-                                                                  CGAL::vertex_point_t>::const_type>
+                                                                  boost::vertex_point_t>::const_type>
 struct Point_to_Point_3_VPM
 {
 private:
@@ -1408,13 +1476,10 @@ public:
   typedef typename K::Point_3                                             Point_3;
 
   // required typedefs
-  typedef vertex_descriptor                                               key_type;
+  typedef typename boost::property_traits<VertexPointMap>::key_type       key_type;
   typedef Point_3                                                         value_type;
   typedef value_type                                                      reference;
   typedef boost::readable_property_map_tag                                category;
-
-  CGAL_static_assertion((boost::is_same<typename boost::property_traits<VertexPointMap>::key_type,
-                                        vertex_descriptor>::value));
 
   // Constructors
   Point_to_Point_3_VPM() : conv_(), vpm_() { } // required for compilation by AABBtraits
@@ -1438,6 +1503,38 @@ private:
   VertexPointMap vpm_;
 };
 
+// Two different functions, because the AABB's traits' VPM must match the passed VPM (that is,
+// the original VPM wrapped with P_to_P3_VPM if the VPM's value_type was not Point_3)
+template <typename TriangleMesh, typename AABBTraits, typename VPM>
+void build_AABB_tree(const TriangleMesh& tm,
+                     AABB_tree<AABBTraits>& outTree,
+                     const VPM& wrapped_vpm,
+                     typename std::enable_if<
+                       std::is_same<
+                         typename AABBTraits::Point_3, typename boost::property_traits<VPM>::value_type
+                       >::value>::type* = 0)
+{
+  typename boost::graph_traits<TriangleMesh>::face_iterator ffirst, fbeyond;
+  boost::tie(ffirst, fbeyond) = faces(tm);
+  outTree.rebuild(ffirst, fbeyond, tm, wrapped_vpm);
+  outTree.build();
+}
+
+template <typename TriangleMesh, typename AABBTraits, typename VPM>
+void build_AABB_tree(const TriangleMesh& tm,
+                     AABB_tree<AABBTraits>& outTree,
+                     const VPM& vpm,
+                     typename std::enable_if<
+                       !std::is_same<
+                         typename AABBTraits::Point_3, typename boost::property_traits<VPM>::value_type
+                       >::value>::type* = 0)
+{
+  typedef internal::Point_to_Point_3_VPM<TriangleMesh, VPM>              Wrapped_VPM;
+  const Wrapped_VPM wrapped_vpm(vpm);
+
+  return internal::build_AABB_tree(tm, outTree, wrapped_vpm);
+}
+
 } // namespace internal
 
 /// \name Nearest Face Location Queries
@@ -1460,7 +1557,7 @@ private:
 ///   \cgalParamBegin{vertex_point_map}
 ///     the property map with the points associated to the vertices of `tm`.
 ///     If this parameter is omitted, an internal property map for
-///     `CGAL::vertex_point_t` should be available in `TriangleMesh`.
+///     `boost::vertex_point_t` should be available in `TriangleMesh`.
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
@@ -1469,18 +1566,12 @@ void build_AABB_tree(const TriangleMesh& tm,
                      AABB_tree<AABBTraits>& outTree,
                      const NamedParameters& np)
 {
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type     VertexPointMap;
 
-  using boost::choose_param;
-  using boost::get_param;
+  const VertexPointMap vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
+                                                 get_const_property_map(boost::vertex_point, tm));
 
-  VertexPointMap vpm = choose_param(get_param(np, internal_np::vertex_point),
-                                    get_const_property_map(boost::vertex_point, tm));
-
-  typename boost::graph_traits<TriangleMesh>::face_iterator facesStart, facesEnd;
-  boost::tie(facesStart, facesEnd) = faces(tm);
-  outTree.rebuild(facesStart, facesEnd, tm, vpm);
-  outTree.build();
+  return internal::build_AABB_tree(tm, outTree, vpm);
 }
 
 template <typename TriangleMesh, typename AABBTraits>
@@ -1505,25 +1596,46 @@ void build_AABB_tree(const TriangleMesh& tm,
 ///   \cgalParamBegin{vertex_point_map}
 ///     the property map with the points associated to the vertices of `tm`.
 ///     If this parameter is omitted, an internal property map for
-///     `CGAL::vertex_point_t` should be available in `TriangleMesh`.
+///     `boost::vertex_point_t` should be available in `TriangleMesh`.
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
 template <typename TriangleMesh, typename AABBTraits, typename NamedParameters>
-typename internal::Locate_types<TriangleMesh, NamedParameters>::Face_location
-locate_with_AABB_tree(const typename AABBTraits::Point_3& p,
+typename internal::Locate_types<TriangleMesh>::Face_location
+locate_with_AABB_tree(const typename internal::Locate_types<TriangleMesh, NamedParameters>::Point& p,
                       const AABB_tree<AABBTraits>& tree,
                       const TriangleMesh& tm,
                       const NamedParameters& np)
 {
-  typename AABB_tree<AABBTraits>::Point_and_primitive_id result = tree.closest_point_and_primitive(p);
+  typedef typename internal::Locate_types<TriangleMesh, NamedParameters>::Point   Point;
+  typedef internal::Point_to_Point_3<TriangleMesh, Point>                         P_to_P3;
+  typedef typename AABBTraits::Point_3                                            Point_3;
+  CGAL_static_assertion((std::is_same<Point_3, typename P_to_P3::Point_3>::value));
 
-  return locate_in_face(result.first, result.second, tm, np);
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type   VertexPointMap;
+  typedef internal::Point_to_Point_3_VPM<TriangleMesh, VertexPointMap>            WrappedVPM;
+
+  const Point_3& p3 = P_to_P3()(p);
+  typename AABB_tree<AABBTraits>::Point_and_primitive_id result = tree.closest_point_and_primitive(p3);
+
+  // The VPM might return a point of any dimension, but the AABB tree necessarily returns
+  // a Point_3. So, wrap the VPM (again) to give a Point_3. Even if it's already wrapped, we're just
+  // forwarding a const& anyway.
+  const VertexPointMap vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
+                                                 get_const_property_map(boost::vertex_point, tm));
+  const WrappedVPM wrapped_vpm(vpm);
+
+  std::cout << "Result: " << result.first << std::endl;
+  std::cout << "in face: " << result.second->vertex(0)->point() << std::endl;
+  std::cout << "in face: " << result.second->vertex(1)->point() << std::endl;
+  std::cout << "in face: " << result.second->vertex(2)->point() << std::endl;
+
+  return locate_in_face(result.first, result.second, tm, CGAL::parameters::vertex_point_map(wrapped_vpm));
 }
 
 template <typename TriangleMesh, typename AABBTraits>
 typename internal::Locate_types<TriangleMesh>::Face_location
-locate_with_AABB_tree(const typename AABBTraits::Point_3& p,
+locate_with_AABB_tree(const typename internal::Locate_types<TriangleMesh>::Point& p,
                       const AABB_tree<AABBTraits>& tree,
                       const TriangleMesh& tm)
 {
@@ -1549,42 +1661,47 @@ locate_with_AABB_tree(const typename AABBTraits::Point_3& p,
 ///   \cgalParamBegin{vertex_point_map}
 ///     the property map with the points associated to the vertices of `tm`.
 ///     If this parameter is omitted, an internal property map for
-///     `CGAL::vertex_point_t` should be available in `TriangleMesh`.
+///     `boost::vertex_point_t` should be available in `TriangleMesh`.
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
 template <typename TriangleMesh, typename NamedParameters>
-typename internal::Locate_types<TriangleMesh, NamedParameters>::Face_location
-locate(const typename internal::Locate_types<TriangleMesh>::Point& p,
+typename internal::Locate_types<TriangleMesh>::Face_location
+locate(const typename internal::Locate_types<TriangleMesh, NamedParameters>::Point& p,
        const TriangleMesh& tm,
        const NamedParameters& np)
 {
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type     VertexPointMap;
-
   // Wrap the input VPM with a one converting to 3D (costs nothing if the input VPM
   // already has value type Kernel::Point_3)
-  typedef internal::Point_to_Point_3_VPM<TriangleMesh, VertexPointMap>              VPM;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type   VertexPointMap;
+  typedef internal::Point_to_Point_3_VPM<TriangleMesh, VertexPointMap>            WrappedVPM;
+  typedef typename internal::Locate_types<TriangleMesh, NamedParameters>::Point   Intrinsic_point;
 
-  typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM>                     AABB_face_graph_primitive;
-  typedef CGAL::AABB_traits<typename internal::Locate_types<TriangleMesh>::Kernel,
-                            AABB_face_graph_primitive>                              AABB_face_graph_traits;
+  typedef AABB_face_graph_triangle_primitive<TriangleMesh, WrappedVPM>            AABB_face_graph_primitive;
+  typedef CGAL::AABB_traits<
+            typename internal::Locate_types<TriangleMesh>::Kernel,
+            AABB_face_graph_primitive>                                            AABB_face_graph_traits;
 
-  using boost::get_param;
-  using boost::choose_param;
+  typedef internal::Point_to_Point_3<TriangleMesh, Intrinsic_point>               P_to_P3;
+  typedef typename AABB_face_graph_traits::Point_3                                Point_3;
 
-  const VertexPointMap vpm = choose_param(get_param(np, internal_np::vertex_point),
-                                          get_const_property_map(boost::vertex_point, tm));
-  const VPM wrapped_vpm(vpm);
+  CGAL_static_assertion((std::is_same<Point_3, typename P_to_P3::Point_3>::value));
+
+  const VertexPointMap vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
+                                                 get_const_property_map(boost::vertex_point, tm));
+  const WrappedVPM wrapped_vpm(vpm);
 
   AABB_tree<AABB_face_graph_traits> tree;
   build_AABB_tree(tm, tree, parameters::vertex_point_map(wrapped_vpm));
 
-  return locate_with_AABB_tree(p, tree, tm, parameters::vertex_point_map(wrapped_vpm));
+  const Point_3& p3 = P_to_P3()(p);
+
+  return locate_with_AABB_tree(p3, tree, tm, parameters::vertex_point_map(wrapped_vpm));
 }
 
 template <typename TriangleMesh>
 typename internal::Locate_types<TriangleMesh>::Face_location
-locate(const typename property_map_value<TriangleMesh, CGAL::vertex_point_t>::type& p,
+locate(const typename property_map_value<TriangleMesh, boost::vertex_point_t>::type& p,
        const TriangleMesh& tm)
 {
   return locate(p, tm, parameters::all_default());
@@ -1592,7 +1709,7 @@ locate(const typename property_map_value<TriangleMesh, CGAL::vertex_point_t>::ty
 
 namespace internal {
 
-// The Ray must have the same ambient dimension as the property map's value type (point type)
+// The Ray must have the same ambient dimension as the property map's value type (aka, the point type)
 
 template <typename Point,
           int dim = CGAL::Ambient_dimension<Point>::value>
@@ -1626,32 +1743,39 @@ struct Ray_type_selector<Point, 3>
 ///   \cgalParamBegin{vertex_point_map}
 ///     the property map with the points associated to the vertices of `tm`.
 ///     If this parameter is omitted, an internal property map for
-///     `CGAL::vertex_point_t` should be available in `TriangleMesh`.
+///     `boost::vertex_point_t` should be available in `TriangleMesh`.
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
 template <typename TriangleMesh, typename AABBTraits, typename NamedParameters>
 typename internal::Locate_types<TriangleMesh>::Face_location
-locate_with_AABB_tree(const typename CGAL::Kernel_traits<typename AABBTraits::Point_3>::type::Ray_3& ray,
+locate_with_AABB_tree(const typename internal::Ray_type_selector<
+                        typename internal::Locate_types<TriangleMesh, NamedParameters>::Point>::type& ray,
                       const AABB_tree<AABBTraits>& tree,
                       const TriangleMesh& tm,
                       const NamedParameters& np)
 {
-  typedef typename CGAL::Kernel_traits<typename AABBTraits::Point_3>::type  Kernel;
+  typedef typename internal::Locate_types<TriangleMesh>::Kernel                   Kernel;
 
-  typedef typename Kernel::FT                                               FT;
-  typedef typename Kernel::Point_3                                          Point_3;
-  typedef typename Kernel::Ray_3                                            Ray_3;
+  typedef typename Kernel::FT                                                     FT;
+  typedef typename Kernel::Point_3                                                Point_3;
+  typedef typename Kernel::Ray_3                                                  Ray_3;
 
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor       face_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor             face_descriptor;
 
-  typedef AABB_tree<AABBTraits>                                             AABB_face_graph_tree;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type   VertexPointMap;
+  typedef internal::Point_to_Point_3_VPM<TriangleMesh, VertexPointMap>            WrappedVPM;
+  typedef internal::Ray_to_Ray_3<TriangleMesh>                                    R_to_R3;
 
+  typedef AABB_tree<AABBTraits>                                                   AABB_face_graph_tree;
   typedef typename AABB_face_graph_tree::template Intersection_and_primitive_id<Ray_3>::Type Intersection_type;
-  typedef boost::optional<Intersection_type>                                Ray_intersection;
+  typedef boost::optional<Intersection_type>                                      Ray_intersection;
+
+  // First, transform the ray into a 3D ray if needed
+  Ray_3 ray_3 = R_to_R3()(ray);
 
   std::vector<Ray_intersection> intersections;
-  tree.all_intersections(ray, std::back_inserter(intersections));
+  tree.all_intersections(ray_3, std::back_inserter(intersections));
 
   bool found = false;
   FT nearest_distance = 0;
@@ -1666,7 +1790,7 @@ locate_with_AABB_tree(const typename CGAL::Kernel_traits<typename AABBTraits::Po
 
       if(intersection_point)
       {
-        FT distance = CGAL::squared_distance(*intersection_point, ray.source());
+        FT distance = CGAL::squared_distance(*intersection_point, ray_3.source());
 
         if(!found || distance < nearest_distance)
         {
@@ -1680,7 +1804,14 @@ locate_with_AABB_tree(const typename CGAL::Kernel_traits<typename AABBTraits::Po
   }
 
   if(found)
-    return locate_in_face(nearest_point, nearest_face, tm, np);
+  {
+    // wrap the VPM to make sure it is producing 3D points
+    const VertexPointMap vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
+                                                   get_const_property_map(boost::vertex_point, tm));
+    WrappedVPM wrapped_vpm(vpm);
+
+    return locate_in_face(nearest_point, nearest_face, tm, CGAL::parameters::vertex_point_map(wrapped_vpm));
+  }
   else
     return std::make_pair(boost::graph_traits<TriangleMesh>::null_face(),
                           CGAL::make_array(FT(0), FT(0), FT(0)));
@@ -1688,7 +1819,8 @@ locate_with_AABB_tree(const typename CGAL::Kernel_traits<typename AABBTraits::Po
 
 template <typename TriangleMesh, typename AABBTraits>
 typename internal::Locate_types<TriangleMesh>::Face_location
-locate_with_AABB_tree(const typename CGAL::Kernel_traits<typename AABBTraits::Point_3>::type::Ray_3& ray,
+locate_with_AABB_tree(const typename internal::Ray_type_selector<
+                        typename internal::Locate_types<TriangleMesh>::Point>::type& ray,
                       const AABB_tree<AABBTraits>& tree,
                       const TriangleMesh& tm)
 {
@@ -1714,12 +1846,12 @@ locate_with_AABB_tree(const typename CGAL::Kernel_traits<typename AABBTraits::Po
 ///   \cgalParamBegin{vertex_point_map}
 ///     the property map with the points associated to the vertices of `tm`.
 ///     If this parameter is omitted, an internal property map for
-///     `CGAL::vertex_point_t` should be available in `TriangleMesh`.
+///     `boost::vertex_point_t` should be available in `TriangleMesh`.
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
 template <typename TriangleMesh, typename NamedParameters>
-typename internal::Locate_types<TriangleMesh, NamedParameters>::Face_location
+typename internal::Locate_types<TriangleMesh>::Face_location
 locate(const typename internal::Ray_type_selector<
                typename internal::Locate_types<TriangleMesh, NamedParameters>::Point>::type& ray,
        const TriangleMesh& tm,
@@ -1735,11 +1867,8 @@ locate(const typename internal::Ray_type_selector<
   typedef CGAL::AABB_traits<typename internal::Locate_types<TriangleMesh>::Kernel,
                             AABB_face_graph_primitive>                              AABB_face_graph_traits;
 
-  using boost::get_param;
-  using boost::choose_param;
-
-  const VertexPointMap vpm = choose_param(get_param(np, internal_np::vertex_point),
-                                          get_const_property_map(boost::vertex_point, tm));
+  const VertexPointMap vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
+                                                 get_const_property_map(boost::vertex_point, tm));
   const VPM wrapped_vpm(vpm);
 
   AABB_tree<AABB_face_graph_traits> tree;
