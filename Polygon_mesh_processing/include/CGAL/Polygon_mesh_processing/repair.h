@@ -599,6 +599,8 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
   bool all_removed=false;
   bool some_removed=true;
 
+  bool preserve_genus = boost::choose_param(boost::get_param(np, internal_np::preserve_genus), true);
+
   // collect edges of length 0
   while(some_removed && !all_removed)
   {
@@ -693,9 +695,15 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
 
           if (is_triangle(hd, tmesh))
           {
-            Euler::fill_hole(hd, tmesh);
-            degenerate_edges_to_remove.insert(ed);
-            face_set.erase(face(opposite(hd, tmesh), tmesh));
+            if (!preserve_genus)
+            {
+              Euler::fill_hole(hd, tmesh);
+              degenerate_edges_to_remove.insert(ed);
+            }
+            else
+            {
+              all_removed=false;
+            }
             continue;
           }
 
