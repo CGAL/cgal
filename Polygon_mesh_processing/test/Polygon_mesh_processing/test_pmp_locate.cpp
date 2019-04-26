@@ -864,9 +864,9 @@ template <typename K>
 void test(CGAL::Random& rnd)
 {
   test_2D_triangulation<K>("data/stair.xy", rnd);
-//  test_2D_surface_mesh<K>("data/blobby_2D.off", rnd);
-//  test_3D_surface_mesh<K>("data/mech-holes-shark.off", rnd);
-//  test_polyhedron<K>("data-coref/elephant_split_2.off", rnd);
+  test_2D_surface_mesh<K>("data/blobby_2D.off", rnd);
+  test_3D_surface_mesh<K>("data/mech-holes-shark.off", rnd);
+  test_polyhedron<K>("data-coref/elephant_split_2.off", rnd);
 }
 
 int main()
@@ -874,8 +874,8 @@ int main()
   std::cout.precision(17);
   std::cout << std::fixed;
 
-  CGAL::Random rnd(1556198743); // if needed to debug with a fixed seed
-//  CGAL::Random rnd(CGAL::get_default_random());
+//  CGAL::Random rnd(1556198743); // if needed to debug with a fixed seed
+  CGAL::Random rnd(CGAL::get_default_random());
 
   std::cout << "The seed is " << rnd.get_seed() << std::endl;
 
