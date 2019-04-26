@@ -50,7 +50,7 @@ else()
   find_package( Boost 1.48 REQUIRED )
 endif()
 
-if(Boost_FOUND)
+if(Boost_FOUND AND Boost_VERSION VERSION_LESS 1.70)
   if(DEFINED Boost_DIR AND NOT Boost_DIR)
     # Unset that cache variable that is set in the cache by FindBoost
     # (while it was searching for boost-cmake).
