@@ -1097,37 +1097,44 @@ bool remove_degenerate_faces(const FaceRange& face_range,
   std::set<face_descriptor> degenerate_face_set;
   degenerate_faces(face_range, tmesh, std::inserter(degenerate_face_set, degenerate_face_set.begin()), np);
 
+  const std::size_t faces_size = faces(tmesh).size();
+
   if(degenerate_face_set.empty())
     return true;
 
-  if(degenerate_face_set.size() == static_cast<std::size_t>(std::distance(faces(tmesh).begin(), faces(tmesh).end())))
+  if(degenerate_face_set.size() == faces_size)
   {
     clear(tmesh);
     return true;
   }
 
   // Sanitize the face range by adding adjacent degenerate faces
-  std::list<face_descriptor> faces_to_visit(degenerate_face_set.begin(), degenerate_face_set.end());
-
-  while(!faces_to_visit.empty())
+  const std::size_t range_size = face_range.size();
+  bool is_range_full_mesh = (range_size == faces_size);
+  if(!is_range_full_mesh)
   {
-    face_descriptor fd = faces_to_visit.front();
-    faces_to_visit.pop_front();
+    std::list<face_descriptor> faces_to_visit(degenerate_face_set.begin(), degenerate_face_set.end());
 
-    for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, tmesh), tmesh))
+    while(!faces_to_visit.empty())
     {
-      for(halfedge_descriptor inc_hd : halfedges_around_target(hd, tmesh))
-      {
-        face_descriptor adj_fd = face(inc_hd, tmesh);
-        if(adj_fd == GT::null_face() || adj_fd == fd)
-          continue;
+      face_descriptor fd = faces_to_visit.front();
+      faces_to_visit.pop_front();
 
-        if(is_degenerate_triangle_face(adj_fd, tmesh))
+      for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, tmesh), tmesh))
+      {
+        for(halfedge_descriptor inc_hd : halfedges_around_target(hd, tmesh))
         {
-          if(degenerate_face_set.insert(adj_fd).second)
+          face_descriptor adj_fd = face(inc_hd, tmesh);
+          if(adj_fd == GT::null_face() || adj_fd == fd)
+            continue;
+
+          if(is_degenerate_triangle_face(adj_fd, tmesh))
           {
-            // successful insertion means we did not know about this face before
-            faces_to_visit.push_back(adj_fd);
+            if(degenerate_face_set.insert(adj_fd).second)
+            {
+              // successful insertion means we did not know about this face before
+              faces_to_visit.push_back(adj_fd);
+            }
           }
         }
       }
