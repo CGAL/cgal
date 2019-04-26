@@ -584,8 +584,6 @@ struct Locate_with_AABB_tree_Tester // 2D case
     VertexPointMap vpm_a = CGAL::get_const_property_map(boost::vertex_point, g);
     typename boost::property_traits<VertexPointMap>::value_type p_a = get(vpm_a, v);
     const Point_3& p3_a = to_p3(p_a);
-    std::cout << v->point() << std::endl;
-    std::cout << "pa3: " << p_a << " ~~~~~~ " << p3_a << std::endl;
     assert(p_a == v->point());
 
     CGAL::AABB_tree<AABB_face_graph_traits> tree_b;
@@ -599,7 +597,6 @@ struct Locate_with_AABB_tree_Tester // 2D case
     assert(tree_b.size() == num_faces(g));
 
     Face_location loc = PMP::locate_with_AABB_tree(p_a, tree_a, g);
-    std::cout << "LOC: " << loc.second[0] << " " << loc.second[1] << " " << loc.second[2] << std::endl;
     assert(PMP::is_on_vertex(loc, v, g));
     assert(is_equal(loc.second[PMP::vertex_index_in_face(v, loc.first, g)], FT(1)));
     assert(is_equal(loc.second[(PMP::vertex_index_in_face(v, loc.first, g)+1)%3], FT(0)));

@@ -435,11 +435,8 @@ int vertex_index_in_face(const typename boost::graph_traits<PolygonMesh>::vertex
   halfedge_descriptor current = start;
   int counter = 0;
 
-  std::cout << "vd to find: " << &*vd << " pt: " << vd->point() << std::endl;
-
   do
   {
-    std::cout << "current source: " << &*source(current, pm) << " pt: " << source(current, pm)->point() << std::endl;
     if(source(current, pm) == vd)
       break;
 
@@ -1624,11 +1621,6 @@ locate_with_AABB_tree(const typename internal::Locate_types<TriangleMesh, NamedP
   const VertexPointMap vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
                                                  get_const_property_map(boost::vertex_point, tm));
   const WrappedVPM wrapped_vpm(vpm);
-
-  std::cout << "Result: " << result.first << std::endl;
-  std::cout << "in face: " << result.second->vertex(0)->point() << std::endl;
-  std::cout << "in face: " << result.second->vertex(1)->point() << std::endl;
-  std::cout << "in face: " << result.second->vertex(2)->point() << std::endl;
 
   return locate_in_face(result.first, result.second, tm, CGAL::parameters::vertex_point_map(wrapped_vpm));
 }
