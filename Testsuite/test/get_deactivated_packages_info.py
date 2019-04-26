@@ -24,7 +24,7 @@ global_report=open(global_report_name, "a+")
 with open(report_file, "rt") as test_report:
   for myline in test_report:
     m=rx.match(myline)
-    
+
     if is_writing:
       if m:
         is_writing=False
@@ -49,19 +49,23 @@ with open(report_file, "rt") as test_report:
           name="libCGALimageIO_shared"
         elif name == "libCGAL_Qt5":
           name="libCGALQt5_shared"
-
-        if not os.path.isdir(name):
-          is_ignored=True
-          os.mkdir(name)
-          test_report=open("{dir}/{file}".format(dir=name, file=report_name), "w+")
-          print("""
+        if name=="incomplete":
+          is_writing=False
+          is_ignored=False
+          continue
+        else:
+          if not os.path.isdir(name):
+            is_ignored=True
+            os.mkdir(name)
+            test_report=open("{dir}/{file}".format(dir=name, file=report_name), "w+")
+            print("""
 {scm_branch}
 """       .format(scm_branch=open("{}/../../../../../.scm-branch".format(os.getcwd()), 'r').read()),file=test_report)
-        else:
-          is_ignored=False
-          test_report=open("{dir}/{file}".format(dir=name, file=report_name), "a+")
-          test_report.write(" --- CMake Results: --- \n\n")
-        is_writing=True
+          else:
+            is_ignored=False
+            test_report=open("{dir}/{file}".format(dir=name, file=report_name), "a+")
+            test_report.write(" --- CMake Results: --- \n\n")
+          is_writing=True
 if is_writing:
     is_writing=False
     test_report.close()
