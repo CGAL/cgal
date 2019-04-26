@@ -556,8 +556,8 @@ remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor
 template <typename EdgeRange, typename TriangleMesh, typename NamedParameters, typename FaceSet>
 bool remove_degenerate_edges(const EdgeRange& edge_range,
                              TriangleMesh& tmesh,
-                             const NamedParameters& np,
-                             FaceSet& face_set)
+                             FaceSet& face_set,
+                             const NamedParameters& np)
 {
   CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
   CGAL_assertion(CGAL::is_valid_polygon_mesh(tmesh));
@@ -1008,7 +1008,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
                              const CGAL_PMP_NP_CLASS& np)
 {
   std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor> face_set;
-  return remove_degenerate_edges(edge_range, tmesh, np, face_set);
+  return remove_degenerate_edges(edge_range, tmesh, face_set, np);
 }
 
 template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
@@ -1016,7 +1016,7 @@ bool remove_degenerate_edges(TriangleMesh& tmesh,
                              const CGAL_PMP_NP_CLASS& np)
 {
   std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor> face_set;
-  return remove_degenerate_edges(edges(tmesh), tmesh, np, face_set);
+  return remove_degenerate_edges(edges(tmesh), tmesh, face_set, np);
 }
 
 template <class EdgeRange, class TriangleMesh>
@@ -1024,14 +1024,14 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
                              TriangleMesh& tmesh)
 {
   std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor> face_set;
-  return remove_degenerate_edges(edge_range, tmesh, parameters::all_default(), face_set);
+  return remove_degenerate_edges(edge_range, tmesh, face_set, parameters::all_default());
 }
 
 template <class TriangleMesh>
 bool remove_degenerate_edges(TriangleMesh& tmesh)
 {
   std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor> face_set;
-  return remove_degenerate_edges(edges(tmesh), tmesh, parameters::all_default(), face_set);
+  return remove_degenerate_edges(edges(tmesh), tmesh, face_set, parameters::all_default());
 }
 
 // \ingroup PMP_repairing_grp
@@ -1143,7 +1143,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
       edge_range.insert(edge(hd, tmesh));
 
   // First remove edges of length 0
-  bool all_removed = remove_degenerate_edges(edges(tmesh), tmesh, np, degenerate_face_set);
+  bool all_removed = remove_degenerate_edges(edge_range, tmesh, degenerate_face_set, np);
 
   CGAL_assertion_code(for(face_descriptor fd : degenerate_face_set) {)
     CGAL_assertion(is_degenerate_triangle_face(fd, tmesh));
