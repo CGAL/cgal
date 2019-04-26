@@ -2,7 +2,7 @@
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
 
-#include <CGAL/Shape_detection_3.h>
+#include <CGAL/Shape_detection.h>
 #include <CGAL/structure_point_set.h>
 
 #include <CGAL/Random.h>
