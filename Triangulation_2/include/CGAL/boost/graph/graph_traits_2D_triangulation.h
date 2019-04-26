@@ -33,6 +33,7 @@
 
 #include <CGAL/Iterator_range.h>
 #include <CGAL/iterator.h>
+#include <CGAL/use.h>
 
 #include <boost/config.hpp>
 #include <boost/iterator_adaptors.hpp>
@@ -47,90 +48,98 @@
 namespace CGAL {
 namespace detail {
 
-template <typename Tr>
-struct T2_halfedge_descriptor
-{
-  typedef typename Tr::Face_handle                              face_descriptor;
-
-  T2_halfedge_descriptor() : first(), second(0) { }
-  explicit T2_halfedge_descriptor(const typename Tr::Edge& e) : first(e.first), second(e.second) { }
-  T2_halfedge_descriptor(face_descriptor fd, int i) : first(fd), second(i) { }
-
-  operator std::pair<face_descriptor, int>() { return std::make_pair(first, second); }
-
-  friend std::size_t hash_value(const T2_halfedge_descriptor& h)
-  {
-    return hash_value(h.first);
-  }
-
-  bool operator==(const T2_halfedge_descriptor& other) const
-  {
-    return (first == other.first) && (second == other.second);
-  }
-
-  bool operator!=(const T2_halfedge_descriptor& other) const
-  {
-    return (first != other.first) || (second != other.second);
-  }
-
-  bool operator<(const T2_halfedge_descriptor& other) const
-  {
-    if(first < other.first) return true;
-    if(first > other.first) return false;
-    return second  < other.second;
-  }
-
-  face_descriptor first;
-  int second;
-};
-
+// A triangulation edge is a face handle + an int, and is thus actually a halfedge...
 template <class Tr>
-struct T2_edge_descriptor
+struct T2_halfedge_descriptor
   : public Tr::Edge
 {
   typedef typename Tr::Edge                                   Base;
   typedef typename Tr::Face_handle                            Face_handle;
 
-  T2_edge_descriptor() {}
-  T2_edge_descriptor(Face_handle fh, int i) : Base(fh, i) { }
-  explicit T2_edge_descriptor(const Base& e) : Base(e) { }
-  T2_edge_descriptor(const T2_edge_descriptor& e) : Base(e) { }
+  T2_halfedge_descriptor() {}
+  T2_halfedge_descriptor(Face_handle fh, int i) : Base(fh, i) { }
+  explicit T2_halfedge_descriptor(const Base& e) : Base(e) { }
+  T2_halfedge_descriptor(const T2_halfedge_descriptor& h) : Base(h) { }
 
-  T2_edge_descriptor& operator=(const T2_edge_descriptor& e)
+  const Base& base() const { return static_cast<const Base&>(*this); }
+
+  T2_halfedge_descriptor& operator=(const T2_halfedge_descriptor& h)
   {
-    this->first = e.first;
-    this->second = e.second;
+    this->first = h.first;
+    this->second = h.second;
     return *this;
   }
 
-  friend std::size_t hash_value(const T2_edge_descriptor& e)
+  friend std::size_t hash_value(const T2_halfedge_descriptor& e) {
+    return hash_value(e.first);
+  }
+
+  bool operator==(const T2_halfedge_descriptor& other) const {
+    return (this->first == other.first) && (this->second == other.second);
+  }
+  bool operator!=(const T2_halfedge_descriptor& other) const {
+    return (this->first != other.first) || (this->second != other.second);
+  }
+
+  bool operator<(const T2_halfedge_descriptor& other) const
   {
-    if (e.first==Face_handle()) return 0;
-    return hash_value(e.first<e.first->neighbor(e.second)?
-                      e.first:e.first->neighbor(e.second));
+    if(this->first < other.first) return true;
+    if(this->first > other.first) return false;
+    return this->second  < other.second;
+  }
+};
+
+// An edge is just a halfedge, but we give it a complete structure to distinguish it from Tr::Edge
+template <typename Tr>
+struct T2_edge_descriptor
+{
+  typedef typename Tr::Face_handle                              Face_handle;
+
+  T2_edge_descriptor() : first(), second(0) { }
+  explicit T2_edge_descriptor(const typename Tr::Edge& e) : first(e.first), second(e.second) { }
+  T2_edge_descriptor(Face_handle fd, int i) : first(fd), second(i) { }
+
+  // so that we can still do stuff like tr.is_finite(edge_descriptor) without any hassle
+  operator std::pair<Face_handle, int>() { return std::make_pair(first, second); }
+
+  friend std::size_t hash_value(const T2_edge_descriptor& h)
+  {
+    if(h.first == Face_handle())
+      return 0;
+
+    return hash_value(h.first < h.first->neighbor(h.second) ? h.first
+                                                            : h.first->neighbor(h.second));
   }
 
   bool operator==(const T2_edge_descriptor& other) const
   {
-    if((this->first == other.first)&&(this->second == other.second)) return true;
-    Face_handle fh = this->first->neighbor(this->second);
-    if(other.first != fh) return false;
-    int i = fh->index(this->first);
+    if((first == other.first) && (second == other.second))
+      return true;
+
+    Face_handle fh = first->neighbor(second);
+    if(other.first != fh)
+      return false;
+
+    int i = fh->index(first);
     return (other.second == i);
   }
+  bool operator!=(T2_edge_descriptor& other) const { return ! (*this == other); }
 
-  bool operator!=(T2_edge_descriptor& other) const
-  {
-    return ! (*this == other);
-  }
+  Face_handle first;
+  int second;
 };
 
-template <typename Tr, typename Triangulation_iterator, typename Descriptor>
-struct T2_iterator
+// A halfedge iterator is just an edge iterator that duplicates everything twice,
+// to see the edge from either side.
+// Could probably be factorized with T2_edge_iterator, but it's clearer this way.
+template <typename Tr>
+struct T2_halfedge_iterator
 {
 private:
-  typedef T2_iterator<Tr, Triangulation_iterator, Descriptor>   Self;
-  typedef typename Tr::Triangulation_data_structure             Tds;
+  typedef T2_halfedge_iterator<Tr>                              Self;
+  typedef typename Tr::Finite_edges_iterator                    Finite_edges_iterator;
+  typedef T2_halfedge_descriptor<Tr>                            Descriptor;
+  typedef typename Tr::Face_handle                              Face_handle;
 
 public:
   typedef Descriptor                                            value_type;
@@ -140,86 +149,222 @@ public:
   typedef std::ptrdiff_t                                        difference_type;
   typedef std::bidirectional_iterator_tag                       iterator_category;
 
-  T2_iterator() { }
-  T2_iterator(const Triangulation_iterator& it) : it(it) { }
+  T2_halfedge_iterator() { }
+  T2_halfedge_iterator(const Finite_edges_iterator& feit) : it(feit), on_adjacent_face(false) { }
+
+  Self& operator++()
+  {
+    // If we are on the first face, move to the opposite face. If we are already on the opposite face,
+    // then it's time to move on the next edge
+    if(on_adjacent_face) {
+      ++it;
+      on_adjacent_face = false;
+    } else {
+      on_adjacent_face = true;
+    }
+
+    return *this;
+  }
+
+  Self& operator--()
+  {
+    // Note that while decreasing, we start from the opposite face
+    if(on_adjacent_face) {
+      on_adjacent_face = false;
+    } else {
+      --it;
+      on_adjacent_face = true;
+    }
+
+    return *this;
+  }
+
+  Self operator++(int) { Self tmp = *this; operator++(); return tmp; }
+  Self operator--(int) { Self tmp = *this; operator--(); return tmp; }
 
   bool operator==(const Self& other) const { return it == other.it; }
-  bool operator!=(const Self& other) const { return !(*this == other);}
+  bool operator!=(const Self& other) const { return !(*this == other); }
+
+  value_type operator*() const
+  {
+    if(on_adjacent_face) {
+      Face_handle neigh_f = it->first->neighbor(it->second);
+      return value_type(neigh_f, neigh_f->index(it->first));
+     } else {
+      return value_type(*it);
+    }
+  }
+
+private:
+  Finite_edges_iterator it;
+  bool on_adjacent_face;
+};
+
+template <typename Tr>
+struct T2_edge_iterator
+{
+private:
+  typedef T2_edge_iterator<Tr>                                  Self;
+  typedef typename Tr::Finite_edges_iterator                    Finite_edges_iterator;
+  typedef T2_edge_descriptor<Tr>                                Descriptor;
+
+public:
+  typedef Descriptor                                            value_type;
+  typedef value_type*                                           pointer;
+  typedef value_type&                                           reference;
+  typedef std::size_t                                           size_type;
+  typedef std::ptrdiff_t                                        difference_type;
+  typedef std::bidirectional_iterator_tag                       iterator_category;
+
+  T2_edge_iterator() { }
+  T2_edge_iterator(const Finite_edges_iterator& feit) : it(feit) { }
+
+  bool operator==(const Self& other) const { return it == other.it; }
+  bool operator!=(const Self& other) const { return !(*this == other); }
   Self& operator++() { ++it; return *this; }
   Self& operator--() { --it; return *this; }
   Self operator++(int) { Self tmp = *this; operator++(); return tmp; }
   Self operator--(int) { Self tmp = *this; operator--(); return tmp; }
   value_type operator*() const { return value_type(*it); }
 
-  Triangulation_iterator it;
+private:
+  Finite_edges_iterator it;
 };
 
-template <class Circ, class E>
-struct Out_edge_circulator
-  : public Circ
+template <typename Tr>
+struct T2_edge_circulator
+  : public Tr::Edge_circulator
 {
 private:
-  mutable E e;
+  typedef T2_edge_circulator<Tr>                                Self;
+  typedef typename Tr::Edge                                     Edge;
+  typedef typename Tr::Edge_circulator                          Base;
 
 public:
-  typedef E value_type;
-  typedef E* pointer;
-  typedef E& reference;
+  typedef T2_edge_descriptor<Tr>                                value_type;
+  typedef value_type*                                           pointer;
+  typedef value_type&                                           reference;
 
-  Out_edge_circulator() : Circ() { }
-  Out_edge_circulator(Circ c) : Circ(c) { }
+  T2_edge_circulator() : Base() { }
+  T2_edge_circulator(const Base& c, const Tr& tr) : Base(c), tr(&tr), e() { }
 
-  const E& operator*() const
-  {
-    E ed(static_cast<const Circ*>(this)->operator*());
-    e = E(ed.first->neighbor(ed.second), ed.first->neighbor(ed.second)->index(ed.first));
-    return e;
+  // Note that the inf check is on the edge in the circulator, not on 'e', which isn't built yet
+  Self& operator++() {
+    do { this->Base::operator++(); } while(tr->is_infinite(this->Base::operator*()));
+    return *this;
   }
+  Self& operator--() {
+    do { this->Base::operator--(); } while(tr->is_infinite(this->Base::operator*()));
+    return *this;
+  }
+  Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
+  Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
+
+protected:
+  const Tr* tr;
+  mutable value_type e;
 };
 
-template <class Circ, class E>
+template <typename Tr>
 struct In_edge_circulator
-  : public Circ
+  : public T2_edge_circulator<Tr>
 {
 private:
-  mutable E e;
+  typedef T2_edge_circulator<Tr>                                Base;
+  typedef typename Tr::Edge                                     Edge;
+  typedef typename Tr::Edge_circulator                          Edge_circulator;
 
 public:
-  typedef E value_type;
-  typedef E* pointer;
-  typedef E& reference;
+  typedef T2_edge_descriptor<Tr>                                value_type;
+  typedef value_type*                                           pointer;
+  typedef value_type&                                           reference;
 
-  In_edge_circulator() : Circ() { }
-  In_edge_circulator(Circ c) : Circ(c) { }
+  In_edge_circulator() : Base() { }
+  In_edge_circulator(const Edge_circulator& c, const Tr& tr) : Base(c, tr) { }
 
-  const E& operator*() const
+  const value_type& operator*() const
   {
-    e = E(static_cast<const Circ*>(this)->operator*());
-    return e;
+    this->e = value_type(this->Base::operator*());
+    return this->e;
   }
 };
 
 template <typename Tr>
-struct Dereference_to_vertex_handle_enforcer
+struct Out_edge_circulator
+  : public T2_edge_circulator<Tr>
+{
+private:
+  typedef T2_edge_circulator<Tr>                                Base;
+  typedef typename Tr::Edge                                     Edge;
+  typedef typename Tr::Edge_circulator                          Edge_circulator;
+
+public:
+  typedef T2_edge_descriptor<Tr>                                value_type;
+  typedef value_type*                                           pointer;
+  typedef value_type&                                           reference;
+
+  Out_edge_circulator() : Base() { }
+  Out_edge_circulator(const Edge_circulator& c, const Tr& tr) : Base(c, tr) { }
+
+  const value_type& operator*() const
+  {
+    Edge ed(this->Base::operator*());
+    this->e = value_type(ed.first->neighbor(ed.second),
+                         ed.first->neighbor(ed.second)->index(ed.first));
+    return this->e;
+  }
+};
+
+template <typename Tr>
+struct T2_vertex_circulator
+  : public In_edge_circulator<Tr>
+{
+private:
+  typedef In_edge_circulator<Tr>                                Base;
+  typedef T2_edge_descriptor<Tr>                                edge_descriptor;
+  typedef typename Tr::Edge_circulator                          Edge_circulator;
+  typedef typename Tr::Vertex_handle                            Vertex_handle;
+
+public:
+  typedef Vertex_handle                                         value_type;
+  typedef value_type&                                           reference;
+
+  T2_vertex_circulator() : Base() { }
+  T2_vertex_circulator(const Edge_circulator& c, const Tr& tr) : Base(c, tr) { }
+
+  const value_type& operator*() const
+  {
+    const edge_descriptor& edge = this->Base::operator*();
+    v = edge.first->vertex(this->tr->ccw(edge.second));
+    return v;
+  }
+
+private:
+  // Because we wrap the iterator with a Counting_iterator, which returns a ref in its operator*()
+  mutable Vertex_handle v;
+};
+
+template <typename Tr, typename Iterator, typename Handle>
+struct Dereference_to_handle_enforcer
   : public boost::iterator_adaptor<
-      Dereference_to_vertex_handle_enforcer<Tr>,
-      typename Tr::All_vertices_iterator /*base*/,
-      typename Tr::Vertex_handle /*value*/,
+      Dereference_to_handle_enforcer<Tr, Iterator, Handle>,
+      Iterator /*base*/,
+      Handle /*value*/,
       boost::use_default,
-      typename Tr::Vertex_handle /*reference*/
+      Handle /*reference*/
     >
 {
 public:
-  typedef typename Tr::Vertex_handle                                                   value_type;
+  typedef Handle                                                                       value_type;
 
 private:
-  typedef Dereference_to_vertex_handle_enforcer<Tr>                                    Self;
-  typedef typename Tr::All_vertices_iterator                                           I;
+  typedef Dereference_to_handle_enforcer<Tr, Iterator, Handle>                         Self;
+  typedef Iterator                                                                     I;
   typedef boost::iterator_adaptor<Self, I, value_type, boost::use_default, value_type> Base;
 
 public:
-  Dereference_to_vertex_handle_enforcer() { }
-  explicit Dereference_to_vertex_handle_enforcer(const I& i) : Base(i) { }
+  Dereference_to_handle_enforcer() { }
+  explicit Dereference_to_handle_enforcer(const I& i) : Base(i) { }
 
 private:
   friend class boost::iterator_core_access;
@@ -276,34 +421,25 @@ struct graph_traits< CGAL_2D_TRIANGULATION >
   typedef CGAL::detail::T2_edge_descriptor<Triangulation>                     edge_descriptor;
   typedef typename Triangulation::Face_handle                                 face_descriptor;
 
-  // Regular_triangulation_2 unfortunately overrides the type 'All_vertices_iterator' due to hidden
-  // points, so we can't simply use 'CGAL::Prevent_deref' since 'typeid(*vertex_iterator)' would
-  // not be the vertex_descripor type, which creates all types (!) of problems.
-  typedef CGAL::detail::Dereference_to_vertex_handle_enforcer<Triangulation>  vertex_iterator;
+    // We need to go from 'Finite_vertex_iterator' to 'Vertex_handle' (and even more
+    // in the case of RT2, since it has also a hidden filter)
+  typedef CGAL::detail::Dereference_to_handle_enforcer<
+            Triangulation,
+            typename Triangulation::Finite_vertices_iterator,
+            vertex_descriptor>                                                vertex_iterator;
+  typedef CGAL::detail::Dereference_to_handle_enforcer<
+            Triangulation,
+            typename Triangulation::Finite_faces_iterator,
+            face_descriptor>                                                  face_iterator;
+  typedef CGAL::detail::T2_halfedge_iterator<Triangulation>                   halfedge_iterator;
+  typedef CGAL::detail::T2_edge_iterator<Triangulation>                       edge_iterator;
 
-  // Since 'All_halfedges_...' and 'All_edges_...' have the same value type, we have to wrap them
-  // around to enforce the value_type being the correct descriptor
-  typedef CGAL::detail::T2_iterator<Triangulation,
-                                    typename Triangulation::All_halfedges_iterator,
-                                    halfedge_descriptor>                      halfedge_iterator;
-  typedef CGAL::detail::T2_iterator<Triangulation,
-                                    typename Triangulation::All_edges_iterator,
-                                    edge_descriptor>                          edge_iterator;
-  typedef CGAL::Prevent_deref<typename Triangulation::All_faces_iterator>     face_iterator;
-
-  typedef CGAL::Counting_iterator<
-            CGAL::detail::In_edge_circulator<
-              typename Triangulation::Edge_circulator,
-              edge_descriptor>,
-            edge_descriptor>                                                  in_edge_iterator;
-  typedef CGAL::Counting_iterator<
-            CGAL::detail::Out_edge_circulator<
-              typename Triangulation::Edge_circulator,
-              edge_descriptor>,
-            edge_descriptor>                                                  out_edge_iterator;
-
-  typedef CGAL::Counting_iterator<typename Triangulation::Vertex_circulator>  Incident_vertices_iterator;
-  typedef Incident_vertices_iterator                                          adjacency_iterator;
+  typedef CGAL::detail::T2_vertex_circulator<Triangulation>                   Vertex_circulator;
+  typedef CGAL::Counting_iterator<Vertex_circulator>                          adjacency_iterator;
+  typedef CGAL::detail::In_edge_circulator<Triangulation>                     In_edge_circ;
+  typedef CGAL::Counting_iterator<In_edge_circ>                               in_edge_iterator;
+  typedef CGAL::detail::Out_edge_circulator<Triangulation>                    Out_edge_circ;
+  typedef CGAL::Counting_iterator<Out_edge_circ>                              out_edge_iterator;
 
   typedef undirected_tag                                                      directed_category;
   typedef disallow_parallel_edge_tag                                          edge_parallel_category;
@@ -336,6 +472,7 @@ typename boost::graph_traits< CGAL_2D_TRIANGULATION >::vertex_descriptor
 source(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::edge_descriptor e,
        const CGAL_2D_TRIANGULATION& g)
 {
+  CGAL_precondition(!g.is_infinite(e));
   return e.first->vertex(g.ccw(e.second));
 }
 
@@ -344,6 +481,7 @@ typename boost::graph_traits< CGAL_2D_TRIANGULATION >::vertex_descriptor
 source(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::halfedge_descriptor h,
        const CGAL_2D_TRIANGULATION& g)
 {
+  CGAL_precondition(!g.is_infinite(std::make_pair(h.first, h.second)));
   return h.first->vertex(g.ccw(h.second));
 }
 
@@ -352,6 +490,7 @@ typename boost::graph_traits< CGAL_2D_TRIANGULATION >::vertex_descriptor
 target(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::edge_descriptor e,
        const CGAL_2D_TRIANGULATION& g)
 {
+  CGAL_precondition(!g.is_infinite(e));
   return e.first->vertex(g.cw(e.second));
 }
 
@@ -360,6 +499,7 @@ typename boost::graph_traits< CGAL_2D_TRIANGULATION >::vertex_descriptor
 target(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::halfedge_descriptor h,
        const CGAL_2D_TRIANGULATION& g)
 {
+  CGAL_precondition(!g.is_infinite(std::make_pair(h.first, h.second)));
   return h.first->vertex(g.cw(h.second));
 }
 
@@ -369,7 +509,18 @@ next(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::halfedge_descriptor 
      const CGAL_2D_TRIANGULATION& g)
 {
   typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::halfedge_descriptor halfedge_descriptor;
-  return halfedge_descriptor(h.first, g.ccw(h.second));
+  typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::face_descriptor     face_descriptor;
+
+  CGAL_precondition(!g.is_infinite(std::make_pair(h.first, h.second)));
+
+  face_descriptor f = h.first;
+  int i = h.second;
+  if(!g.is_infinite(f))
+    return halfedge_descriptor(f, g.ccw(i));
+
+  // Now, 'h' is border halfedge, move on to the adjacent infinite face
+  face_descriptor neigh_f = f->neighbor(g.ccw(i));
+  return halfedge_descriptor(neigh_f, g.ccw(neigh_f->index(f)));
 }
 
 template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
@@ -378,7 +529,18 @@ prev(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::halfedge_descriptor 
      const CGAL_2D_TRIANGULATION& g)
 {
   typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::halfedge_descriptor halfedge_descriptor;
-  return halfedge_descriptor(h.first, g.cw(h.second));
+  typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::face_descriptor     face_descriptor;
+
+  CGAL_precondition(!g.is_infinite(std::make_pair(h.first, h.second)));
+
+  face_descriptor f = h.first;
+  int i = h.second;
+  if(!g.is_infinite(f))
+    return halfedge_descriptor(f, g.cw(i));
+
+  // Now, 'h' is border halfedge, move on to the adjacent infinite face
+  face_descriptor neigh_f = f->neighbor(g.cw(i));
+  return halfedge_descriptor(neigh_f, g.cw(neigh_f->index(f)));
 }
 
 template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
@@ -387,26 +549,32 @@ opposite(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::halfedge_descrip
          const CGAL_2D_TRIANGULATION& g)
 {
   typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::edge_descriptor     edge_descriptor;
 
-  return halfedge_descriptor(g.mirror_edge(edge_descriptor(h.first, h.second)));
+  CGAL_precondition(!g.is_infinite(std::make_pair(h.first, h.second)));
+  return halfedge_descriptor(g.mirror_edge(typename CGAL_2D_TRIANGULATION::Edge(h.first, h.second)));
 }
 
 template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
 typename boost::graph_traits< CGAL_2D_TRIANGULATION >::face_descriptor
 face(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::halfedge_descriptor h,
-     const CGAL_2D_TRIANGULATION&)
+     const CGAL_2D_TRIANGULATION& g)
 {
-  return h.first;
+  if(g.is_infinite(h.first))
+    return boost::graph_traits< CGAL_2D_TRIANGULATION >::null_face();
+  else
+    return h.first;
 }
 
 template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
 typename boost::graph_traits< CGAL_2D_TRIANGULATION >::halfedge_descriptor
 halfedge(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::face_descriptor f,
-         const CGAL_2D_TRIANGULATION&)
+         const CGAL_2D_TRIANGULATION& g)
 {
   typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::halfedge_descriptor halfedge_descriptor;
-  return halfedge_descriptor(f,0);
+
+  CGAL_USE(g);
+  CGAL_precondition(!g.is_infinite(f));
+  return halfedge_descriptor(f, 0);
 }
 
 template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
@@ -416,26 +584,42 @@ halfedge(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::vertex_descripto
 {
   typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::face_descriptor face_descriptor;
-  face_descriptor fd = v->face();
-  int i = fd->index(v);
-  return halfedge_descriptor(fd, g.ccw(i));
+
+  CGAL_precondition(!g.is_infinite(v));
+
+  face_descriptor f = v->face();
+  int i = f->index(v);
+
+  while(g.is_infinite(f))
+  {
+    f = f->neighbor(g.cw(i));
+    i = f->index(v);
+  }
+
+  return halfedge_descriptor(f, g.ccw(i));
 }
 
 template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
 typename boost::graph_traits< CGAL_2D_TRIANGULATION >::halfedge_descriptor
 halfedge(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::edge_descriptor e,
-         const CGAL_2D_TRIANGULATION&)
+         const CGAL_2D_TRIANGULATION& g)
 {
   typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::halfedge_descriptor halfedge_descriptor;
+
+  CGAL_USE(g);
+  CGAL_precondition(!g.is_infinite(e));
   return halfedge_descriptor(e.first, e.second);
 }
 
 template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
 typename boost::graph_traits< CGAL_2D_TRIANGULATION >::edge_descriptor
 edge(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::halfedge_descriptor h,
-     const CGAL_2D_TRIANGULATION&)
+     const CGAL_2D_TRIANGULATION& g)
 {
   typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::edge_descriptor edge_descriptor;
+
+  CGAL_USE(g);
+  CGAL_precondition(!g.is_infinite(std::make_pair(h.first, h.second)));
   return edge_descriptor(h.first, h.second);
 }
 
@@ -448,13 +632,21 @@ edge(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::vertex_descriptor u,
 {
   typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::edge_descriptor edge_descriptor;
 
+  CGAL_precondition(!g.is_infinite(u));
+  CGAL_precondition(!g.is_infinite(v));
+
   typename CGAL_2D_TRIANGULATION::Edge_circulator c = g.incident_edges(u), done(c);
-  if(c != 0) {
-    do {
-      // find the index of the other vertex of *c
-      int indv = 3 - c->first->index(u) - c->second;
-      if(c->first->vertex(indv) == v)
-        return std::make_pair(edge_descriptor(c->first, c->second), true);
+  if(c != 0)
+  {
+    do
+    {
+      if(!g.is_infinite(*c))
+      {
+        // find the index of the other vertex of *c
+        int indv = 3 - c->first->index(u) - c->second;
+        if(c->first->vertex(indv) == v)
+          return std::make_pair(edge_descriptor(c->first, c->second), true);
+      }
     } while (++c != done);
   }
 
@@ -471,6 +663,9 @@ halfedge(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::vertex_descripto
   typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::edge_descriptor edge_descriptor;
   typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::face_descriptor face_descriptor;
+
+  CGAL_precondition(!g.is_infinite(u));
+  CGAL_precondition(!g.is_infinite(v));
 
   std::pair<edge_descriptor, bool> eb = edge(u, v, g);
 
@@ -496,7 +691,7 @@ inline Iterator_range<typename boost::graph_traits< CGAL_2D_TRIANGULATION >::ver
 vertices(const CGAL_2D_TRIANGULATION& g)
 {
   typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::vertex_iterator Iter;
-  return make_range( Iter(g.all_vertices_begin()), Iter(g.all_vertices_end()) );
+  return make_range( Iter(g.finite_vertices_begin()), Iter(g.finite_vertices_end()) );
 }
 
 template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
@@ -504,7 +699,7 @@ inline Iterator_range<typename boost::graph_traits< CGAL_2D_TRIANGULATION >::hal
 halfedges(const CGAL_2D_TRIANGULATION& g)
 {
   typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::halfedge_iterator Iter;
-  return make_range(Iter(g.all_halfedges_begin()), Iter(g.all_halfedges_end()));
+  return make_range(Iter(g.finite_edges_begin()), Iter(g.finite_edges_end()));
 }
 
 template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
@@ -512,7 +707,7 @@ inline Iterator_range<typename boost::graph_traits< CGAL_2D_TRIANGULATION >::edg
 edges(const CGAL_2D_TRIANGULATION& g)
 {
   typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::edge_iterator Iter;
-  return make_range(Iter(g.all_edges_begin()), Iter(g.all_edges_end()));
+  return make_range(Iter(g.finite_edges_begin()), Iter(g.finite_edges_end()));
 }
 
 template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
@@ -520,103 +715,105 @@ inline Iterator_range<typename boost::graph_traits< CGAL_2D_TRIANGULATION >::fac
 faces(const CGAL_2D_TRIANGULATION& g)
 {
   typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::face_iterator Iter;
-  return make_range(Iter(g.all_faces_begin()), Iter(g.all_faces_end()));
+  return make_range(Iter(g.finite_faces_begin()), Iter(g.finite_faces_end()));
 }
 
 template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
 typename boost::graph_traits< CGAL_2D_TRIANGULATION >::degree_size_type
-in_degree(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::vertex_descriptor u,
-          const CGAL_2D_TRIANGULATION& g)
+degree(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::vertex_descriptor v,
+       const CGAL_2D_TRIANGULATION& g)
 {
   typename boost::graph_traits< CGAL_2D_TRIANGULATION >::degree_size_type deg = 0;
-  typename CGAL_2D_TRIANGULATION::Edge_circulator c = g.incident_edges(u), done(c);
+  typename CGAL_2D_TRIANGULATION::Edge_circulator c = g.incident_edges(v), done(c);
   if(c != 0)
   {
     do {
-      ++deg;
+      if(!g.is_infinite(*c))
+        ++deg;
     } while (++c != done);
   }
+
   return deg;
+}
+
+template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
+typename boost::graph_traits< CGAL_2D_TRIANGULATION >::degree_size_type
+in_degree(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::vertex_descriptor v,
+          const CGAL_2D_TRIANGULATION& g)
+{
+  return degree(v, g);
+}
+
+template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
+typename boost::graph_traits< CGAL_2D_TRIANGULATION >::degree_size_type
+out_degree(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::vertex_descriptor v,
+           const CGAL_2D_TRIANGULATION& g)
+{
+  return degree(v, g);
 }
 
 template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
 inline Iterator_range<typename boost::graph_traits< CGAL_2D_TRIANGULATION >::in_edge_iterator >
-in_edges(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::vertex_descriptor u,
+in_edges(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::vertex_descriptor v,
          const CGAL_2D_TRIANGULATION& g)
 {
-  typename CGAL_2D_TRIANGULATION::Edge_circulator ec(u, u->face());
-  typename boost::graph_traits< CGAL_2D_TRIANGULATION >::degree_size_type out_deg = out_degree(u, g);
+  typedef CGAL::detail::In_edge_circulator< CGAL_2D_TRIANGULATION >                   Circ;
   typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::in_edge_iterator     Iter;
-  return make_range(Iter(ec), Iter(ec,out_deg));
-}
 
-template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
-typename boost::graph_traits< CGAL_2D_TRIANGULATION >::degree_size_type
-out_degree(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::vertex_descriptor u,
-           const CGAL_2D_TRIANGULATION& g)
-{
-  typename boost::graph_traits< CGAL_2D_TRIANGULATION >::degree_size_type deg = 0;
-  typename CGAL_2D_TRIANGULATION::Edge_circulator c = g.incident_edges(u), done(c);
-  if(c != 0)
-  {
-    do {
-      ++deg;
-    } while (++c != done);
-  }
-  return deg;
+  typename CGAL_2D_TRIANGULATION::Edge_circulator ec(v, v->face());
+  typename boost::graph_traits< CGAL_2D_TRIANGULATION >::degree_size_type deg = degree(v, g);
+
+  return make_range(Iter(Circ(ec, g)), Iter(Circ(ec, g), deg));
 }
 
 template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
 inline Iterator_range<typename boost::graph_traits< CGAL_2D_TRIANGULATION >::out_edge_iterator >
-out_edges(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::vertex_descriptor u,
+out_edges(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::vertex_descriptor v,
           const CGAL_2D_TRIANGULATION& g)
 {
-  typename CGAL_2D_TRIANGULATION::Edge_circulator ec(u, u->face());
-  typename boost::graph_traits< CGAL_2D_TRIANGULATION >::degree_size_type out_deg = out_degree(u, g);
-  typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::out_edge_iterator Iter;
+  typedef CGAL::detail::Out_edge_circulator< CGAL_2D_TRIANGULATION >                  Circ;
+  typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::out_edge_iterator    Iter;
 
-  return make_range(Iter(ec), Iter(ec, out_deg));
-}
+  typename CGAL_2D_TRIANGULATION::Edge_circulator ec(v, v->face());
+  typename boost::graph_traits< CGAL_2D_TRIANGULATION >::degree_size_type deg = degree(v, g);
 
-template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
-typename boost::graph_traits< CGAL_2D_TRIANGULATION >::degree_size_type
-degree(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::vertex_descriptor u,
-       const CGAL_2D_TRIANGULATION& g)
-{
-  typename boost::graph_traits< CGAL_2D_TRIANGULATION >::degree_size_type deg = 0;
-  typename CGAL_2D_TRIANGULATION::Edge_circulator c = g.incident_edges(u), done(c);
-  if(c != 0)
-  {
-    do {
-      ++deg;
-    } while (++c != done);
-  }
-  return deg;
+  return make_range(Iter(Circ(ec, g)), Iter(Circ(ec, g), deg));
 }
 
 template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
 inline Iterator_range<typename boost::graph_traits< CGAL_2D_TRIANGULATION >::adjacency_iterator>
-adjacent_vertices(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::vertex_descriptor u,
+adjacent_vertices(typename boost::graph_traits< CGAL_2D_TRIANGULATION >::vertex_descriptor v,
                   const CGAL_2D_TRIANGULATION& g)
 {
-  typename CGAL_2D_TRIANGULATION::Vertex_circulator vc = out_edge_iterator(u, u.face());
-  typename boost::graph_traits< CGAL_2D_TRIANGULATION >::degree_size_type out_deg = out_degree(u, g);
-  typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::adjacency_iterator Iter;
-  return make_range( Iter(vc), Iter(vc,out_deg) );
+  typedef CGAL::detail::T2_vertex_circulator< CGAL_2D_TRIANGULATION >                  Circ;
+  typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::adjacency_iterator    Iter;
+
+  typename CGAL_2D_TRIANGULATION::Edge_circulator ec(v, v->face());
+  typename boost::graph_traits< CGAL_2D_TRIANGULATION >::degree_size_type deg = degree(v, g);
+
+  return make_range(Iter(Circ(ec, g)), Iter(Circ(ec, g), deg));
 }
 
 template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
 typename boost::graph_traits< CGAL_2D_TRIANGULATION >::vertices_size_type
 num_vertices(const CGAL_2D_TRIANGULATION& g)
 {
-  return g.tds().number_of_vertices();
+  return g.number_of_vertices();
+}
+
+template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
+typename boost::graph_traits< CGAL_2D_TRIANGULATION >::faces_size_type
+num_faces(const CGAL_2D_TRIANGULATION& g)
+{
+  return g.number_of_faces();
 }
 
 template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
 typename boost::graph_traits< CGAL_2D_TRIANGULATION >::edges_size_type
 num_edges(const CGAL_2D_TRIANGULATION& g)
 {
-  return g.tds().number_of_vertices() + g.tds().number_of_faces() - 2;
+  // Euler characteristic for a triangulated topological disk is V-E+F=1
+  return num_vertices(g) + num_faces(g) - 1;
 }
 
 template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
@@ -624,13 +821,6 @@ typename boost::graph_traits< CGAL_2D_TRIANGULATION >::halfedges_size_type
 num_halfedges(const CGAL_2D_TRIANGULATION& g)
 {
   return num_edges(g) * 2;
-}
-
-template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
-typename boost::graph_traits< CGAL_2D_TRIANGULATION >::faces_size_type
-num_faces(const CGAL_2D_TRIANGULATION& g)
-{
-  return g.tds().number_of_faces();
 }
 
 } // namespace CGAL
