@@ -698,7 +698,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
             if (!preserve_genus)
             {
               Euler::fill_hole(hd, tmesh);
-              degenerate_edges_to_remove.insert(ed);
+              degenerate_edges_to_remove.insert(ed); // reinsert the edge for future processing
             }
             else
             {
@@ -713,7 +713,14 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
 
           vertex_descriptor vd = remove_a_border_edge(ed, tmesh, degenerate_edges_to_remove, face_set);
           if (vd == GT::null_vertex())
+          {
+            // TODO: if some border edges are later removed, the edge might be processable later
+            // for example if it belongs to  boundary cycle of edges where the number of non-degenerate
+            // edges is 2. That's what happen with fused_vertices.off in the testsuite where the edges
+            // are not processed the same way with Polyhedron and Surface_mesh. In the case of Polyhedron
+            // more degenerate edges could be removed.
             all_removed=false;
+          }
           else
             some_removed=true;
 
