@@ -36,9 +36,12 @@ if( NOT CGAL_TweakFindBoost )
     # different setting for Boost libraries.
     set(CGAL_Boost_USE_STATIC_LIBS_DEFAULT ${CGAL_Boost_USE_STATIC_LIBS})
   else()
-    # Else the option is OFF by default. That means the use of shared Boost
-    # libraries is the default.
-    set(CGAL_Boost_USE_STATIC_LIBS_DEFAULT OFF)
+    # Else the option default is related to BUILD_SHARED_LIBS.
+    if(BUILD_SHARED_LIBS)
+      set(CGAL_Boost_USE_STATIC_LIBS_DEFAULT OFF)
+    else()
+      set(CGAL_Boost_USE_STATIC_LIBS_DEFAULT ON)
+    endif()
   endif()
 
   option(Boost_DEBUG "Activate the debug messages of the script FindBoost" OFF)
