@@ -2548,6 +2548,8 @@ private: //------------------------------------------------------- private data
   template <typename P>
   bool read_ply(std::istream& is, Surface_mesh<P>& sm, std::string& comments)
   {
+    typedef typename Surface_mesh<P>::size_type size_type;
+    
     if(!is)
     {
       std::cerr << "Error: cannot open file" << std::endl;
@@ -2575,7 +2577,7 @@ private: //------------------------------------------------------- private data
       bool is_halfedge = false;
       if (is_vertex)
       {
-        sm.reserve(sm.number_of_vertices() + element.number_of_items(),
+        sm.reserve(sm.number_of_vertices() + size_type(element.number_of_items()),
                    sm.number_of_edges(),
                    sm.number_of_faces());
         filler.instantiate_vertex_properties (element);
@@ -2587,7 +2589,7 @@ private: //------------------------------------------------------- private data
       {
         sm.reserve(sm.number_of_vertices(),
                    sm.number_of_edges(),
-                   sm.number_of_faces() + element.number_of_items());
+                   sm.number_of_faces() + size_type(element.number_of_items()));
         filler.instantiate_face_properties (element);
       }
       else

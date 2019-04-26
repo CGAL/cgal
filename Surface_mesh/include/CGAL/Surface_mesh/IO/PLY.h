@@ -38,6 +38,7 @@ public:
   typedef typename Kernel_traits<Point>::Kernel Kernel;
   typedef typename Kernel::Vector_3 Vector;
   typedef CGAL::Surface_mesh<Point> Surface_mesh;
+  typedef typename Surface_mesh::size_type size_type;
   typedef typename Surface_mesh::Vertex_index Vertex_index;
   typedef typename Surface_mesh::Face_index Face_index;
   typedef typename Surface_mesh::Edge_index Edge_index;
@@ -48,7 +49,7 @@ private:
   struct Abstract_ply_property_to_surface_mesh_property
   {
     virtual ~Abstract_ply_property_to_surface_mesh_property() { }
-    virtual void assign (PLY_element& element, std::size_t index) = 0;
+    virtual void assign (PLY_element& element, size_type index) = 0;
   };
 
   template <typename Simplex, typename Type>
@@ -63,8 +64,8 @@ private:
     {
       m_map = sm.template add_property_map<Simplex, Type>(prefix(Simplex()) + name).first;
     }
-    
-    virtual void assign (PLY_element& element, std::size_t index)
+
+    virtual void assign (PLY_element& element, size_type index)
     {
       Type t{};
       element.assign (t, m_name.c_str());
