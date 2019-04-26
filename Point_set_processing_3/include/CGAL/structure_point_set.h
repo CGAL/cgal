@@ -65,7 +65,7 @@ set. Each output point is assigned to one, two or more primitives
 (depending wether it belongs to a planar section, an edge or a if it
 is a vertex). The implementation follow \cgalCite{cgal:la-srpss-13}.
 
-\tparam Kernel a model of `ShapeDetectionTraits` that must provide in
+\tparam Kernel a model of `EfficientRANSACTraits` that must provide in
 addition a function `Intersect_3 intersection_3_object() const` and a
 functor `Intersect_3` with:
 - `boost::optional< boost::variant< Traits::Plane_3, Traits::Line_3 > > operator()(typename Traits::Plane_3, typename Traits::Plane_3)`
@@ -1585,7 +1585,7 @@ structure_point_set (const PointRange& points, ///< range of points.
 #ifndef CGAL_NO_DEPRECATED_CODE
 /// \cond SKIP_IN_MANUAL
 
-namespace Shape_detection_3{
+namespace Shape_detection{
 //Forward declarations
 template <class Traits>
 class Efficient_RANSAC;
@@ -1593,7 +1593,7 @@ template <typename Traits>
 class Plane_map;
 template <typename Traits>
 class Point_to_shape_index_map;
-} // end of namespace Shape_detection_3
+} // end of namespace Shape_detection
 
 // deprecated API
 template <typename Traits,
@@ -1606,20 +1606,20 @@ structure_point_set (typename Traits::Input_range::iterator first,  ///< iterato
                      typename Traits::Point_map point_map, ///< property map: value_type of InputIterator -> Point_3.
                      typename Traits::Normal_map normal_map, ///< property map: value_type of InputIterator -> Vector_3.
                      OutputIterator output, ///< output iterator where output points are written
-                     Shape_detection_3::Efficient_RANSAC<Traits>&
+                     Shape_detection::Efficient_RANSAC<Traits>&
                      shape_detection, ///< shape detection object
                      double epsilon, ///< size parameter
                      double attraction_factor = 3.) ///< attraction factor
 {
-  typename Shape_detection_3::Efficient_RANSAC<Traits>::Plane_range planes = shape_detection.planes();
+  typename Shape_detection::Efficient_RANSAC<Traits>::Plane_range planes = shape_detection.planes();
   return structure_point_set (CGAL::make_range(first, beyond),
                               planes,
                               output,
                               epsilon, // epsilon for structuring points
                               CGAL::parameters::point_map (point_map).
                               normal_map (normal_map).
-                              plane_map (CGAL::Shape_detection_3::Plane_map<Traits>()).
-                              plane_index_map (Shape_detection_3::Point_to_shape_index_map<Traits>(CGAL::make_range(first, beyond), planes)).
+                              plane_map (CGAL::Shape_detection::Plane_map<Traits>()).
+                              plane_index_map (Shape_detection::Point_to_shape_index_map<Traits>(CGAL::make_range(first, beyond), planes)).
                               attraction_factor(attraction_factor));
 }
 
@@ -1632,7 +1632,7 @@ OutputIterator
 structure_point_set (typename Traits::Input_range::iterator first,  ///< iterator over the first input point.
                      typename Traits::Input_range::iterator beyond, ///< past-the-end iterator over the input points.
                      OutputIterator output, ///< output iterator where output points are written
-                     Shape_detection_3::Efficient_RANSAC<Traits>&
+                     Shape_detection::Efficient_RANSAC<Traits>&
                      shape_detection, ///< shape detection object
                      double epsilon, ///< size parameter
                      double attraction_factor = 3.) ///< attraction factor

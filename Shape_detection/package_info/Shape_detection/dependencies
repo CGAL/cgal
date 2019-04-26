@@ -18,6 +18,7 @@ STL_Extension
 Solver_interface
 Spatial_searching
 Stream_support
+BGL
 Arithmetic_kernel
 Cartesian_kernel
 Filtered_kernel
