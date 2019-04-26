@@ -226,6 +226,41 @@ void test_in_out_edges(const G& g)
   }
 }
 
+template<typename G>
+void test_adjacent_vertices(const G& g)
+{
+  typedef boost::graph_traits< G > Traits;
+  typedef typename Traits::vertex_descriptor vertex_descriptor;
+  typedef typename Traits::edge_descriptor edge_descriptor;
+  typedef typename Traits::in_edge_iterator in_edge_iterator;
+  typedef typename Traits::out_edge_iterator out_edge_iterator;
+  typedef typename Traits::adjacency_iterator adjacency_iterator;
+  typedef std::pair<edge_descriptor, bool>   ret;
+
+  vertex_descriptor v = *(vertices(g).begin());
+
+  adjacency_iterator vb, ve;
+  boost::tie(vb, ve) = adjacent_vertices(v, g);
+
+  in_edge_iterator ieb, iee;
+  boost::tie(ieb, iee) = in_edges(v, g);
+
+  out_edge_iterator oeb, oee;
+  boost::tie(oeb, oee) = out_edges(v, g);
+
+  assert(std::distance(vb, ve) == std::distance(ieb, iee));
+  assert(std::distance(vb, ve) == std::distance(oeb, oee));
+
+  for(; vb != ve; ++vb)
+  {
+    vertex_descriptor s = *vb;
+    assert(s != v);
+    assert(s != Traits::null_vertex());
+    ret found = edge(s, v, g);
+    assert(found.second);
+  }
+}
+
 // check that every edge can be found through edge(u, v, g)
 template<typename G>
 void test_edge_find(const G& g)
@@ -289,6 +324,7 @@ void test_const_graph(const Graph& g)
   test_out_edges(g);
   test_in_edges(g);
   test_in_out_edges(g);
+//  test_adjacent_vertices(g);
   test_edge_find(g);
   test_faces(g);
   test_halfedge_around_vertex_iterator(g);
