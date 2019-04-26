@@ -29,7 +29,7 @@ if( NOT CGAL_TweakFindBoost )
     cmake_policy(SET CMP0077 NEW)
   endif()
   if(DEFINED CGAL_Boost_USE_STATIC_LIBS)
-    # If the option is loaded from CGALConfig.h, use its value as default
+    # If the option is loaded from CGALConfig.cmake, use its value as default
     # value.  But the user will still have the choice to change the
     # value. That means that we can build the CGAL libraries using static
     # or shared Boost libraries, and after build programs using CGAL with a
