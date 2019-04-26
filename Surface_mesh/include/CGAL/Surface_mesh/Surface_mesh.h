@@ -2180,7 +2180,6 @@ private: //------------------------------------------------------- private data
   /// the header of the PLY stream (each line will be precedeed by
   /// "comment ").
   ///
-  /// \relates Surface_mesh
   template <typename P>
   bool write_ply(std::ostream& os, const Surface_mesh<P>& sm, const std::string& comments = std::string())
   {
