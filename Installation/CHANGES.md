@@ -26,11 +26,11 @@ Release date: September 2019
 
 -   Added new functions to support some parts of the WKT file format:
     - `CGAL::read_point_WKT()`
-    - `GCAL::read_multi_point_WKT()`
-    - `GCAL::read_linestring_WKT()`
-    - `GCAL::read_multi_linestring_WKT()`
-    - `GCAL::read_polygon_WKT()`
-    - `GCAL::read_multi_polygon_WKT()`
+    - `CGAL::read_multi_point_WKT()`
+    - `CGAL::read_linestring_WKT()`
+    - `CGAL::read_multi_linestring_WKT()`
+    - `CGAL::read_polygon_WKT()`
+    - `CGAL::read_multi_polygon_WKT()`
     - `CGAL::write_point_WKT()`
     - `CGAL::write_polygon_WKT()`
     - `CGAL::write_linestring_WKT()`
