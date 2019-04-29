@@ -584,7 +584,6 @@ struct Locate_with_AABB_tree_Tester // 2D case
     VertexPointMap vpm_a = CGAL::get_const_property_map(boost::vertex_point, g);
     typename boost::property_traits<VertexPointMap>::value_type p_a = get(vpm_a, v);
     const Point_3& p3_a = to_p3(p_a);
-    assert(p_a == v->point());
 
     CGAL::AABB_tree<AABB_face_graph_traits> tree_b;
     WrappedVertexPointMap vpm_b(g);
