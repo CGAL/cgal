@@ -75,7 +75,7 @@ public:
   typedef boost::readable_property_map_tag                        category;
   typedef typename Tr::Geom_traits::FT                            value_type;
   typedef value_type                                              reference;
-  typedef typename Tr::Edge                                       key_type;
+  typedef CGAL::internal::T2_edge_descriptor<Tr>                  key_type;
 
   T2_edge_weight_map(const Tr& tr_) : tr(tr_) { }
 
