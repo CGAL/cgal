@@ -34,6 +34,7 @@
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/Random.h>
+#include <CGAL/number_utils.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/mpl/if.hpp>
@@ -561,7 +562,7 @@ random_location_on_face(typename boost::graph_traits<TriangleMesh>::face_descrip
 
   // calling 'rnd.uniform real' with double in case FT comes from an EPECK kernel (which doesn't seem to work too well)
   FT u(rnd.uniform_real(0., 1.));
-  FT v(rnd.uniform_real(0., double(FT(1) - u)));
+  FT v(rnd.uniform_real(0., CGAL::to_double(FT(1) - u)));
 
   return std::make_pair(fd, CGAL::make_array(u, v, FT(FT(1) - u - v)));
 }
