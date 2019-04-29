@@ -58,20 +58,6 @@ struct T2_halfedge_descriptor
   friend std::size_t hash_value(const T2_halfedge_descriptor& e) {
     return hash_value(e.first);
   }
-
-  bool operator==(const T2_halfedge_descriptor& other) const {
-    return (this->first == other.first) && (this->second == other.second);
-  }
-  bool operator!=(const T2_halfedge_descriptor& other) const {
-    return (this->first != other.first) || (this->second != other.second);
-  }
-
-  bool operator<(const T2_halfedge_descriptor& other) const
-  {
-    if(this->first < other.first) return true;
-    if(this->first > other.first) return false;
-    return this->second  < other.second;
-  }
 };
 
 // An edge is just a halfedge, but we give it a complete structure to distinguish it from Tr::Edge
@@ -109,6 +95,35 @@ struct T2_edge_descriptor
     return (other.second == i);
   }
   bool operator!=(T2_edge_descriptor& other) const { return ! (*this == other); }
+
+  void get_canonical_edge_representation(Face_handle& fh, int& i) const
+  {
+    Face_handle neigh_fh = fh->neighbor(i);
+    Face_handle canonical_fh = (fh < neigh_fh) ? fh : neigh_fh;
+
+    int canonical_i = (fh < neigh_fh) ? i : neigh_fh->index(fh);
+
+    fh = canonical_fh;
+    i = canonical_i;
+  }
+
+  bool operator<(const T2_edge_descriptor& other) const
+  {
+    if(*this == other)
+      return false;
+
+    Face_handle tfh = first;
+    int ti = second;
+    get_canonical_edge_representation(tfh, ti);
+
+    Face_handle ofh = other.first;
+    int oi = other.second;
+    get_canonical_edge_representation(ofh, oi);
+
+    if(tfh < ofh) return true;
+    if(tfh > ofh) return false;
+    return ti < oi;
+  }
 
   Face_handle first;
   int second;
