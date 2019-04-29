@@ -22,6 +22,7 @@
 #define CGAL_GRAPH_TRAITS_REGULAR_TRIANGULATION_2_H
 
 #include <CGAL/Regular_triangulation_2.h>
+#include <CGAL/boost/graph/properties_Regular_triangulation_2.h>
 
 // The functions and classes in this file allows the user to
 // treat a CGAL Regular_triangulation_2 object as a boost graph "as is". No

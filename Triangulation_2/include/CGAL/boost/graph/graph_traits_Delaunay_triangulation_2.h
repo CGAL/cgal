@@ -22,6 +22,7 @@
 #define CGAL_GRAPH_TRAITS_DELAUNAY_TRIANGULATION_2_H
 
 #include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/boost/graph/properties_Delaunay_triangulation_2.h>
 
 // The functions and classes in this file allows the user to
 // treat a CGAL Delaunay_triangulation_2 object as a boost graph "as is". No
