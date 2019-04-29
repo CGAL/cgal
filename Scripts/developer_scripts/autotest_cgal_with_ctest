@@ -278,7 +278,7 @@ for HOST in ${BUILD_HOSTS}; do
       docker run --rm  -t -e HOST="${HOST}" -v ${CGAL_HOME}/ssh:/tmp_ssh -v ${DEPS_DIR}:/deps -v ${CGAL_HOME}:/cgal_root -v${CGAL_DIR}:/cgal_root/CGAL-git cgal/testsuite-docker:debian-stable-cross-compilation-for-arm
     fi
   else
-    HOST=$HOST bash -$- ${CGAL_DIR}/${SCRIPTS_DIR}developer_scripts/run_testsuite_with_cmake
+    HOST=$HOST bash -$- ${CGAL_DIR}/${SCRIPTS_DIR}developer_scripts/run_testsuite_with_ctest
   fi
 done
 
