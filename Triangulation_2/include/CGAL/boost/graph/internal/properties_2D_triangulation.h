@@ -35,7 +35,7 @@
 #define CGAL_BOOST_GRAPH_PROPERTIES_2D_TRIANGULATION_H
 
 namespace CGAL {
-namespace detail {
+namespace internal {
 
 template <class Tr>
 struct T2_halfedge_descriptor;
@@ -113,9 +113,9 @@ public:
   typedef boost::readable_property_map_tag                         category;
   typedef int                                                      value_type;
   typedef int                                                      reference;
-  typedef CGAL::detail::T2_halfedge_descriptor<Tr>                 key_type;
+  typedef CGAL::internal::T2_halfedge_descriptor<Tr>               key_type;
 
-  typedef typename Tr::Face_handle                                 face_descriptor;
+  typedef typename Tr::Face_handle                                 Face_handle;
 
   T2_halfedge_id_map(const Tr& tr) : tr(tr) { }
 
@@ -123,8 +123,8 @@ public:
   // h.first is such that h.first < opposite(h).first --> different ids
   value_type operator[](key_type h) const
   {
-    const face_descriptor f1 = h.first;
-    const face_descriptor f2 = f1->neighbor(h.second);
+    const Face_handle f1 = h.first;
+    const Face_handle f2 = f1->neighbor(h.second);
     CGAL_assertion(!tr.is_infinite(f1) || !tr.is_infinite(f2));
 
     if(tr.is_infinite(f1))
@@ -149,15 +149,15 @@ public:
   typedef boost::readable_property_map_tag                         category;
   typedef int                                                      value_type;
   typedef int                                                      reference;
-  typedef CGAL::detail::T2_edge_descriptor<Tr>                     key_type;
-  typedef typename Tr::Face_handle                                 face_descriptor;
+  typedef CGAL::internal::T2_edge_descriptor<Tr>                   key_type;
+  typedef typename Tr::Face_handle                                 Face_handle;
 
   T2_edge_id_map(const Tr& tr) : tr(tr) { }
 
   value_type operator[](key_type e) const
   {
-    const face_descriptor f1 = e.first;
-    const face_descriptor f2 = f1->neighbor(e.second);
+    const Face_handle f1 = e.first;
+    const Face_handle f2 = f1->neighbor(e.second);
     CGAL_assertion(!tr.is_infinite(f1) || !tr.is_infinite(f2));
 
     if(tr.is_infinite(f1))
@@ -201,47 +201,46 @@ struct T2_property_map { };
 template <typename Tr>
 struct T2_property_map<Tr, boost::vertex_point_t>
 {
-  typedef detail::T2_vertex_point_map<Tr> type;
-  typedef detail::T2_vertex_point_map<Tr> const_type;
+  typedef internal::T2_vertex_point_map<Tr> type;
+  typedef internal::T2_vertex_point_map<Tr> const_type;
 };
 
 template <typename Tr>
 struct T2_property_map<Tr, boost::edge_weight_t>
 {
-  typedef detail::T2_edge_weight_map<Tr> type;
-  typedef detail::T2_edge_weight_map<Tr> const_type;
+  typedef internal::T2_edge_weight_map<Tr> type;
+  typedef internal::T2_edge_weight_map<Tr> const_type;
 };
 
 template <typename Tr>
 struct T2_property_map<Tr, boost::vertex_index_t>
 {
-  typedef detail::T2_vertex_id_map<Tr> type;
-  typedef detail::T2_vertex_id_map<Tr> const_type;
+  typedef internal::T2_vertex_id_map<Tr> type;
+  typedef internal::T2_vertex_id_map<Tr> const_type;
 };
 
 template <typename Tr>
 struct T2_property_map<Tr, boost::halfedge_index_t>
 {
-  typedef detail::T2_halfedge_id_map<Tr> type;
-  typedef detail::T2_halfedge_id_map<Tr> const_type;
+  typedef internal::T2_halfedge_id_map<Tr> type;
+  typedef internal::T2_halfedge_id_map<Tr> const_type;
 };
 
 template <typename Tr>
 struct T2_property_map<Tr, boost::edge_index_t>
 {
-  typedef detail::T2_edge_id_map<Tr> type;
-  typedef detail::T2_edge_id_map<Tr> const_type;
+  typedef internal::T2_edge_id_map<Tr> type;
+  typedef internal::T2_edge_id_map<Tr> const_type;
 };
 
 template <typename Tr>
 struct T2_property_map<Tr, boost::face_index_t>
 {
-  typedef detail::T2_face_id_map<Tr> type;
-  typedef detail::T2_face_id_map<Tr> const_type;
+  typedef internal::T2_face_id_map<Tr> type;
+  typedef internal::T2_face_id_map<Tr> const_type;
 };
 
-} // end namespace detail
-
+} // end namespace internal
 } // CGAL
 
 #endif // CGAL_BOOST_GRAPH_PROPERTIES_2D_TRIANGULATION_H
@@ -253,7 +252,7 @@ namespace boost {
 template <CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS, class Tag>
 struct property_map<CGAL_2D_TRIANGULATION, Tag>
 {
-  typedef typename CGAL::detail::T2_property_map<CGAL_2D_TRIANGULATION, Tag>    map_gen;
+  typedef typename CGAL::internal::T2_property_map<CGAL_2D_TRIANGULATION, Tag>  map_gen;
   typedef typename map_gen::type                                                type;
   typedef typename map_gen::const_type                                          const_type;
 };
@@ -262,7 +261,7 @@ struct property_map<CGAL_2D_TRIANGULATION, Tag>
 template <CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS, class Tag>
 struct property_map<const CGAL_2D_TRIANGULATION, Tag>
 {
-  typedef typename CGAL::detail::T2_property_map<CGAL_2D_TRIANGULATION, Tag>    map_gen;
+  typedef typename CGAL::internal::T2_property_map<CGAL_2D_TRIANGULATION, Tag>  map_gen;
   typedef typename map_gen::type                                                type;
   typedef typename map_gen::const_type                                          const_type;
 };
@@ -313,50 +312,50 @@ struct graph_has_property<CGAL_2D_TRIANGULATION, boost::face_index_t>
 
 // property maps
 template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
-inline detail::T2_vertex_point_map< CGAL_2D_TRIANGULATION >
+inline internal::T2_vertex_point_map< CGAL_2D_TRIANGULATION >
 get(boost::vertex_point_t, const CGAL_2D_TRIANGULATION&)
 {
-  detail::T2_vertex_point_map< CGAL_2D_TRIANGULATION > m;
+  internal::T2_vertex_point_map< CGAL_2D_TRIANGULATION > m;
   return m;
 }
 
 template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
-inline detail::T2_edge_weight_map< CGAL_2D_TRIANGULATION >
+inline internal::T2_edge_weight_map< CGAL_2D_TRIANGULATION >
 get(boost::edge_weight_t, const CGAL_2D_TRIANGULATION& g)
 {
-  detail::T2_edge_weight_map< CGAL_2D_TRIANGULATION > m(g);
+  internal::T2_edge_weight_map< CGAL_2D_TRIANGULATION > m(g);
   return m;
 }
 
 template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
-inline detail::T2_vertex_id_map< CGAL_2D_TRIANGULATION >
+inline internal::T2_vertex_id_map< CGAL_2D_TRIANGULATION >
 get(boost::vertex_index_t, const CGAL_2D_TRIANGULATION& g)
 {
-  detail::T2_vertex_id_map< CGAL_2D_TRIANGULATION > m(g);
+  internal::T2_vertex_id_map< CGAL_2D_TRIANGULATION > m(g);
   return m;
 }
 
 template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
-inline detail::T2_halfedge_id_map< CGAL_2D_TRIANGULATION >
+inline internal::T2_halfedge_id_map< CGAL_2D_TRIANGULATION >
 get(boost::halfedge_index_t, const CGAL_2D_TRIANGULATION& g)
 {
-  detail::T2_halfedge_id_map< CGAL_2D_TRIANGULATION > m(g);
+  internal::T2_halfedge_id_map< CGAL_2D_TRIANGULATION > m(g);
   return m;
 }
 
 template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
-inline detail::T2_edge_id_map< CGAL_2D_TRIANGULATION >
+inline internal::T2_edge_id_map< CGAL_2D_TRIANGULATION >
 get(boost::edge_index_t, const CGAL_2D_TRIANGULATION& g)
 {
-  detail::T2_edge_id_map< CGAL_2D_TRIANGULATION > m(g);
+  internal::T2_edge_id_map< CGAL_2D_TRIANGULATION > m(g);
   return m;
 }
 
 template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
-inline detail::T2_face_id_map< CGAL_2D_TRIANGULATION >
+inline internal::T2_face_id_map< CGAL_2D_TRIANGULATION >
 get(boost::face_index_t, const CGAL_2D_TRIANGULATION& g)
 {
-  detail::T2_face_id_map< CGAL_2D_TRIANGULATION > m(g);
+  internal::T2_face_id_map< CGAL_2D_TRIANGULATION > m(g);
   return m;
 }
 
