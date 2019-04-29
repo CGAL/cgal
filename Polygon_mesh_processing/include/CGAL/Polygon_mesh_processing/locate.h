@@ -74,14 +74,8 @@ struct Locate_types
                          halfedge_descriptor,
                          face_descriptor>                                  descriptor_variant;
 
-  typedef typename std::conditional<
-                     std::is_same<
-                       NamedParameters, Default>::value,
-                       typename boost::property_map<TriangleMesh,
-                                                    boost::vertex_point_t>::const_type,
-                       typename GetVertexPointMap<TriangleMesh,
-                                                  NamedParameters>::const_type
-                     >::type                                               VPM;
+  typedef typename GetVertexPointMap<TriangleMesh,
+                                     NamedParameters>::const_type          VPM;
   typedef typename boost::property_traits<VPM>::value_type                 Point;
 
   typedef typename CGAL::Kernel_traits<Point>::type                        Kernel;
@@ -263,6 +257,7 @@ struct Barycentric_coordinate_calculator // 2D version
     FT d21 = csp2(v2, v1);
 
     FT denom = d00 * d11 - d01 * d01;
+    CGAL_assertion((d00 * d11 - d01 * d01) != FT(0)); // denom != 0.
 
     FT v = (d11 * d20 - d01 * d21) / denom;
     FT w = (d00 * d21 - d01 * d20) / denom;
@@ -445,7 +440,11 @@ int vertex_index_in_face(const typename boost::graph_traits<PolygonMesh>::vertex
   }
   while(current != start);
 
-  CGAL_postcondition(counter == 0 || current != start);
+  if(counter != 0 && current == start)
+  {
+    CGAL_assertion_msg(false, "Could not find vertex in face");
+    return -1;
+  }
 
   return counter;
 }
@@ -1017,7 +1016,7 @@ locate_in_face(typename boost::graph_traits<TriangleMesh>::vertex_descriptor vd,
   return std::make_pair(fd, CGAL::make_array(coords[0], coords[1], coords[2]));
 }
 
-/// \brief Returns the location of the given vertex as a `Face_location` in `fd`,
+/// \brief Returns the location of a given vertex as a `Face_location` in `fd`,
 ///        that is an ordered pair composed of `fd` and of the barycentric coordinates
 ///        of the vertex in `fd`.
 ///
@@ -1537,7 +1536,7 @@ void build_AABB_tree(const TriangleMesh& tm,
 /// \name Nearest Face Location Queries
 /// @{
 
-/// \brief Creates an `AABB_tree` suitable for use with `locate_with_AABB_tree()`.
+/// \brief creates an `AABB_tree` suitable for use with `locate_with_AABB_tree()`.
 ///
 /// \details This function should be called to create and cache an AABB tree
 ///          to avoid the AABB tree being rebuilt at every call of `locate_with_AABB_tree()`.
@@ -1578,7 +1577,7 @@ void build_AABB_tree(const TriangleMesh& tm,
   return build_AABB_tree(tm, outTree, parameters::all_default());
 }
 
-/// \brief Returns the face location nearest to the given point, as a `Face_location`.
+/// \brief returns the face location nearest to the given point, as a `Face_location`.
 ///
 /// \tparam TriangleMesh A model of `FaceListGraph`
 /// \tparam AABBTraits A model of `AABBTraits` used to define a \cgal `AABB_tree`.
@@ -1634,7 +1633,7 @@ locate_with_AABB_tree(const typename internal::Locate_types<TriangleMesh>::Point
   return locate_with_AABB_tree(p, tree, tm, parameters::all_default());
 }
 
-/// \brief Returns the nearest face location to the given point.
+/// \brief returns the nearest face location to the given point.
 ///
 /// \details Note that this function will build an `AABB_tree` on each call. If you need
 ///          to call this function more than once, use `build_AABB_tree()` to cache a
