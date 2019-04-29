@@ -25,6 +25,6 @@
 #define CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS typename Tr
 #define CGAL_2D_TRIANGULATION CGAL::Constrained_triangulation_plus_2<Tr>
 
-#include <CGAL/boost/graph/properties_2D_triangulation.h>
+#include <CGAL/boost/graph/internal/properties_2D_triangulation.h>
 
 #endif /* CGAL_PROPERTIES_CONSTRAINED_TRIANGULATION_PLUS_2_H */

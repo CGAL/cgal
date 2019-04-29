@@ -31,6 +31,6 @@
 #define CGAL_2D_TRIANGULATION CGAL::Triangulation_hierarchy_2<Tr>
 #define CGAL_2D_TRIANGULATION_TEMPLATES Tr
 
-#include <CGAL/boost/graph/graph_traits_2D_triangulation.h>
+#include <CGAL/boost/graph/internal/graph_traits_2D_triangulation.h>
 
 #endif // CGAL_GRAPH_TRAITS_TRIANGULATION_HIERARCHY_2_H

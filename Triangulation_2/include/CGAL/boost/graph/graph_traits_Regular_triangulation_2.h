@@ -31,6 +31,6 @@
 #define CGAL_2D_TRIANGULATION CGAL::Regular_triangulation_2<GT, TDS>
 #define CGAL_2D_TRIANGULATION_TEMPLATES GT, TDS
 
-#include <CGAL/boost/graph/graph_traits_2D_triangulation.h>
+#include <CGAL/boost/graph/internal/graph_traits_2D_triangulation.h>
 
 #endif // CGAL_GRAPH_TRAITS_REGULAR_TRIANGULATION_2_H

@@ -25,6 +25,6 @@
 #define CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS typename GT, typename TDS, typename Itag
 #define CGAL_2D_TRIANGULATION CGAL::Constrained_Delaunay_triangulation_2<GT, TDS, Itag>
 
-#include <CGAL/boost/graph/properties_2D_triangulation.h>
+#include <CGAL/boost/graph/internal/properties_2D_triangulation.h>
 
 #endif /* CGAL_PROPERTIES_CONSTRAINED_DELAUNAY_TRIANGULATION_2_H */
