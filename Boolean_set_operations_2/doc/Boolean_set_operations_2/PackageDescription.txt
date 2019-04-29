@@ -21,7 +21,6 @@ namespace ArrDirectionalTraits {}
 \cgalPkgDependsOn{\ref PkgArrangement2Summary}
 \cgalPkgBib{cgal:fwzh-rbso2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Boolean operations,boolean_operations_2.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

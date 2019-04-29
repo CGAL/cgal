@@ -15,7 +15,6 @@
 \cgalPkgSince{2.3}
 \cgalPkgBib{cgal:s-bonp2}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
-\cgalPkgDemo{2D Nef Polygons,nef_2.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
