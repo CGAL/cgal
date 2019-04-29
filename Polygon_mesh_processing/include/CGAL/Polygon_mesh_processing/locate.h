@@ -510,8 +510,10 @@ barycentric_coordinates(const P& p, const P& q, const P& r, const P& query)
 
 /// \brief Returns a random point over the halfedge `hd`, as a `Face_location`.
 ///
-/// \details The point is on the halfedge, meaning that all its barycentric coordinates
-///          are positive.
+/// \details The random point is chosen on the halfedge, meaning that all
+///          its barycentric coordinates are positive. It is constructed by uniformly generating
+///          a value `t` between `0` and `1`  and setting the barycentric coordinates to `t`, `1-t`,
+///          and `0` for respetively the source and target of `hd`, and the third vertex.
 ///
 /// \tparam TriangleMesh A model of `FaceGraph`
 ///
@@ -535,8 +537,10 @@ random_location_on_halfedge(typename boost::graph_traits<TriangleMesh>::halfedge
 
 /// \brief Returns a random point over the face `fd`, as a `Face_location`.
 ///
-/// \details The point is on the face, meaning that all its barycentric coordinates
-///          are positive.
+/// \details The random point is on the face, meaning that all its barycentric coordinates
+///          are positive.  It is constructed by uniformly picking a value `u` between `0` and `1`,
+///          a value `v` between `1-u`, and setting the barycentric coordinates to `u`, `v`, and
+///          `1-u-v` for respectively the source and target of `halfedge(fd, tm)`, and the third point.
 ///
 /// \tparam TriangleMesh A model of `FaceGraph`
 ///
@@ -564,14 +568,16 @@ random_location_on_face(typename boost::graph_traits<TriangleMesh>::face_descrip
 
 /// \brief Returns a random point over the mesh `tm`.
 ///
-/// \details The returned location corresponds to a random point on a random face
-///          of the mesh. The barycentric coordinates of the point in the face
-///          are thus all positive.
+/// \details The returned location is obtained by choosing a random face of the mesh and
+///          a random point on that face. The barycentric coordinates of the point in the face
+///          are thus all positive. Note that all faces have the same probability to be chosen.
 ///
 /// \tparam TriangleMesh A model of `FaceGraph`
 ///
 /// \param tm a triangulated surface mesh
 /// \param rnd optional random number generator
+///
+/// \sa `random_location_on_face()`
 ///
 template <typename TriangleMesh>
 typename internal::Locate_types<TriangleMesh>::Face_location
