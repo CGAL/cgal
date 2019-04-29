@@ -33,9 +33,6 @@
 
 #include <CGAL/KSR_2/Meta_vertex.h>
 
-#include <CGAL/KSR/Event.h>
-#include <CGAL/KSR/Event_queue.h>
-
 namespace CGAL
 {
 
@@ -67,9 +64,6 @@ public:
   
   typedef KSR::vector<Meta_vertex> Meta_vertices;
 
-  typedef KSR::Event<Kernel> Event;
-  typedef KSR::Event_queue<Kernel> Event_queue;
-
 private:
 
   // Main data structure
@@ -79,8 +73,6 @@ private:
   
   Meta_vertices m_meta_vertices;
   
-  Event_queue m_queue;
-
   // Helping data structures
   std::map<Point_2, KSR::size_t> m_meta_map;
   
@@ -107,8 +99,6 @@ public:
     }
   }
 
-  Event_queue& queue() { return m_queue; }
-  
   const FT& current_time() const { return m_current_time; }
 
   KSR::size_t number_of_vertices() const { return m_vertices.size(); }
@@ -260,12 +250,6 @@ public:
       }
     }
   }
-
-  // Event -> Vertex
-  const Vertex& vertex_of_event (const Event& ev) const
-  { return m_vertices[ev.vertex_idx()]; }
-  Vertex& vertex_of_event (const Event& ev)
-  { return m_vertices[ev.vertex_idx()]; }
 
   inline CGAL::Bbox_2 bbox (const Vertex& vertex) const
   {

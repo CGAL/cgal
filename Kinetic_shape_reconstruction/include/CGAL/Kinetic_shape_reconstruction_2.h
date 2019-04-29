@@ -27,6 +27,9 @@
 
 #include <CGAL/KSR_2/Data_structure.h>
 
+#include <CGAL/KSR/Event.h>
+#include <CGAL/KSR/Event_queue.h>
+
 #include <unordered_set>
 
 namespace CGAL
@@ -53,12 +56,13 @@ public:
   
   typedef typename Data::Meta_vertex Meta_vertex;
   
-  typedef typename Data::Event Event;
-  typedef typename Data::Event_queue Event_queue;
+  typedef KSR::Event<Kernel> Event;
+  typedef KSR::Event_queue<Kernel> Event_queue;
 
 private:
 
   Data m_data;
+  Event_queue m_queue;
 
 public:
 
@@ -130,7 +134,7 @@ public:
   template <typename PointRange, typename PointMap, typename VectorMap>
   void reconstruct (const PointRange& points, PointMap point_map, VectorMap normal_map)
   {
-
+    // TODO
   }
 
   bool check_integrity(bool verbose = false) const
@@ -859,17 +863,17 @@ private:
                               });
 
           for (auto it = support_line.meta_vertices_idx().begin(); it != last_element; ++ it)
-            m_data.queue().push (Event (vertex_idx, *it,
-                                        min_time + CGAL::abs(beginning -
-                                                             m_data.position_of_meta_vertex_on_support_line
-                                                             (*it, i))));
+            m_queue.push (Event (vertex_idx, *it,
+                                 min_time + CGAL::abs(beginning -
+                                                      m_data.position_of_meta_vertex_on_support_line
+                                                      (*it, i))));
         }
 
       }
     }
 
     if (CGAL_KSR_VERBOSE_LEVEL > 3)
-      m_data.queue().print();
+      m_queue.print();
 
     return still_running;
   }
@@ -880,13 +884,11 @@ private:
     
     KSR::size_t iterations = 0;
     
-    Event_queue& queue = m_data.queue();
-
     static int iter = 0;
 
-    while (!queue.empty())
+    while (!m_queue.empty())
     {
-      Event ev = queue.pop();
+      Event ev = m_queue.pop();
 
       FT current_time = ev.time();
 
@@ -943,17 +945,16 @@ private:
   void redistribute_vertex_events (KSR::size_t old_vertex, KSR::size_t new_vertex)
   {
     CGAL_KSR_CERR(3) << "** Redistribution events of vertex " << old_vertex << " to " << new_vertex << std::endl;
-    Event_queue& queue = m_data.queue();
 
     KSR::vector<Event> events;
-    queue.erase_vertex_events (old_vertex, events);
+    m_queue.erase_vertex_events (old_vertex, events);
 
     if (new_vertex != KSR::no_element())
       for (Event& ev : events)
       {
         ev.vertex_idx() = new_vertex;
         CGAL_KSR_CERR(4) << "****   - Pushing " << ev << std::endl;
-        queue.push (ev);
+        m_queue.push (ev);
       }
     else
       for (Event& ev : events)
