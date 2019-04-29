@@ -40,7 +40,7 @@
 #include <list>
 
 #ifdef CGAL_LINKED_WITH_TBB
-#include <CGAL/internal/Parallel_callback.h>
+#include <CGAL/Point_set_processing_3/internal/Parallel_callback.h>
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>
@@ -240,7 +240,7 @@ compute_average_spacing(
 #else
    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
    {
-     internal::Point_set_processing_3::Parallel_callback
+     Point_set_processing_3::internal::Parallel_callback
        parallel_callback (callback, kd_tree_points.size());
      
      std::vector<FT> spacings (kd_tree_points.size (), -1);

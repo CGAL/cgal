@@ -30,7 +30,7 @@ int main()
   Delaunay::Finite_vertices_iterator vit;
   for (vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit)
       if (T.degree(vit) == 6)
-          vit->info() = CGAL::RED;
+        vit->info() = CGAL::red();
 
   return 0;
 }

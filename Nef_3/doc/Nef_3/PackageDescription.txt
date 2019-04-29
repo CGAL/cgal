@@ -60,6 +60,7 @@ a simple OpenGL visualization for debugging and illustrations.
 \cgalCRPSection{Functions}
 - `CGAL::OFF_to_nef_3()`
 - `CGAL::convert_nef_polyhedron_to_polygon_mesh()`
+- `CGAL::convert_nef_polyhedron_to_polygon_soup()`
 - \link PkgNef3IOFunctions `CGAL::operator<<()` \endlink
 - \link PkgNef3IOFunctions `CGAL::operator>>()` \endlink
 

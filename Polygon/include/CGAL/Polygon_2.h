@@ -1,9 +1,9 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Geert-Jan Giezeman <geert@cs.uu.nl>
 //                 Wieger Wesselink
@@ -53,7 +53,8 @@ namespace CGAL {
 /// The class Polygon_2 implements polygons. The Polygon_2 is
 /// parameterized by a traits class and a container class.  The latter
 /// can be any class that fulfills the requirements for an STL
-/// container. It defaults to the std::vector class.
+/// container, and has a function `resize()` that takes an std::size_t as argument
+///  . It defaults to the std::vector class.
 ///
 /// \cgalHeading{Implementation}
 ///
@@ -106,13 +107,13 @@ class Polygon_2 {
     /// \name Iterators
     ///
     /// The following types denote iterators that allow to traverse
-    /// the vertices and edges of a polygon.  Since 
+    /// the vertices and edges of a polygon.  Since
     /// a polygon can be viewed as a circular as well as a
     /// linear data structure both circulators and iterators are
-    /// defined.  
+    /// defined.
     ///
     /// \note At least conceptually, the circulators and iterators are
-    /// non-mutable.  The enforcement depends on preprocessor flags. 
+    /// non-mutable.  The enforcement depends on preprocessor flags.
     ///
     /// \note The iterator category is in all cases bidirectional, except
     /// for Vertex_iterator, which has the same iterator category as
@@ -259,7 +260,7 @@ class Polygon_2 {
 
     /// @}
 
-    /// \name Access Functions 
+    /// \name Access Functions
     /// The following methods of the class Polygon_2
     /// return circulators and iterators that allow to traverse the
     /// vertices and edges.
@@ -280,7 +281,7 @@ class Polygon_2 {
     /// Returns a mutable circulator that allows to traverse the
     /// vertices of the polygon.
     Vertex_const_circulator vertices_circulator() const
-      { 
+      {
         Polygon_2& self = const_cast<Polygon_2&>(*this);
         return Vertex_const_circulator(&self.d_container,
                self.d_container.begin());
@@ -327,7 +328,7 @@ class Polygon_2 {
 
     /// Returns `ON_POSITIVE_SIDE`, or `ON_NEGATIVE_SIDE`,
     /// or `ON_ORIENTED_BOUNDARY`, depending on where point
-    /// `q` is. 
+    /// `q` is.
     /// \pre `p.is_simple()`.
     Oriented_side oriented_side(const Point_2& value) const
     {
@@ -349,7 +350,7 @@ class Polygon_2 {
     /// Returns the smallest bounding box containing this polygon.
     Bbox_2 bbox() const
     {
-      return bbox_2(d_container.begin(), d_container.end()); 
+      return bbox_2(d_container.begin(), d_container.end());
     }
 
     /// Returns the signed area of the polygon. This means that the
@@ -446,6 +447,16 @@ class Polygon_2 {
     const Point_2& operator[](std::size_t i) const
       { return vertex(i); }
 
+    /// Returns a reference to the `i`-th vertex.
+    Point_2& vertex(std::size_t i)
+      {
+        CGAL_precondition( i < d_container.size() );
+        return *(cpp11::next(d_container.begin(), i));
+      }
+    /// Returns a reference to the `i`-th vertex.
+    Point_2& operator[](std::size_t i)
+      { return vertex(i); }
+
     /// Returns the `i`-th edge.
     Segment_2 edge(std::size_t i) const
       { return *(std::next(edges_begin(), i)); }
@@ -466,6 +477,39 @@ class Polygon_2 {
     /// Returns a const reference to the sequence of vertices of the polygon.
     const Container_P& container() const
       { return d_container; }
+
+    /// Returns a reference to the sequence of vertices of the polygon.
+    Container_P& container()
+      { return d_container; }
+
+    /// Returns an iterator to the first vertex of the polygon.
+    typename Container_P::iterator begin()
+    {
+       return container().begin();
+    }
+    /// Returns an iterator to the element after the last vertex of the polygon.
+    typename Container_P::iterator end()
+    {
+       return container().end();
+    }
+
+    /// Returns a const iterator to the first vertex of the polygon.
+    const typename Container_P::const_iterator begin() const
+    {
+       return container().begin();
+    }
+
+    /// Returns a const iterator to the element after the last vertex of the polygon.
+    const typename Container_P::const_iterator end() const
+    {
+       return container().end();
+    }
+
+    /// Resizes the container. Calls `container().resize(s)`.
+    void resize(std::size_t s)
+    {
+     container().resize(s);
+    }
 
     /// @}
 
@@ -493,7 +537,7 @@ template <class Traits_P, class Container1_P, class Container2_P>
 bool operator==( const Polygon_2<Traits_P,Container1_P> &p1,
                  const Polygon_2<Traits_P,Container2_P> &p2 );
 
-/// Test for inequality. 
+/// Test for inequality.
 /// \memberof Polygon_2
 template <class Traits_P, class Container1_P, class Container2_P>
 inline

@@ -881,7 +881,7 @@ private:
       reco_item->setRenderingMode(FlatPlusEdges);
       reco_item->invalidateOpenGLBuffers();
       scene->addItem(reco_item);
-      
+
       if (dialog.generate_structured ())
       {
         structured->setName(tr("%1 (structured)").arg(point_set_item->name()));
@@ -1061,7 +1061,6 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
               scene->addItem(reco_item);
               std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 	    }
-
 	}
       else
 	{
@@ -1069,7 +1068,6 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 	    {
 	      std::cerr << "Advancing front reconstruction... ";
 	      time.restart();
-
               Scene_surface_mesh_item* reco_item = new Scene_surface_mesh_item(SMesh());
               SurfaceReconstruction::advancing_front (*points, reco_item, 10. * (std::max)(noise_size, aniso_size));
               
@@ -1078,7 +1076,6 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
               reco_item->setRenderingMode(FlatPlusEdges);
               reco_item->invalidateOpenGLBuffers();
               scene->addItem(reco_item);
-
 	      std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 	    }
 	  else
@@ -1098,12 +1095,12 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 	      
 	      std::cerr << "Poisson reconstruction... ";
               time.restart();
-              SMesh* smRemesh = NULL;
-              smRemesh = poisson_reconstruct_sm(*points,
-                                                20,
-                                                100 * (std::max)(noise_size, aniso_size),
-                                                (std::max)(noise_size, aniso_size),
-                                                QString ("Eigen - built-in CG"), false, false);
+              SMesh* smRemesh = 
+                  poisson_reconstruct_sm(*points,
+                                         20,
+                                         100 * (std::max)(noise_size, aniso_size),
+                                         (std::max)(noise_size, aniso_size),
+                                         QString ("Eigen - built-in CG"), false, false);
               if(smRemesh)
               {
                 // Add polyhedron to scene

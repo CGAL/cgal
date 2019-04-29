@@ -26,7 +26,7 @@
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4003) // not enough actual parameters for macro 'BOOST_PP_EXPAND_I'
-                                // http://lists.boost.org/boost-users/2014/11/83291.php
+                                // https://lists.boost.org/boost-users/2014/11/83291.php
 #endif                          
 
 #include <type_traits>

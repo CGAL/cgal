@@ -167,6 +167,40 @@ void test_closed_surface_mesh(const char* filename)
   typename K::FT vol = PMP::volume(sm);
   std::cout << "volume = " << vol << std::endl;
   assert(vol > 0);
+
+}
+
+
+template <typename Surface_mesh, typename K>
+void test_centroid(const char* filename)
+{
+  std::cout << "Test Surface_mesh " << filename
+    << " with Kernel " << typeid(K).name() << std::endl;
+  Surface_mesh sm;
+  std::ifstream input(filename);
+  input >> sm;
+ 
+  typename K::Point_3 p = PMP::centroid(sm);
+
+  // For data/elephant.off
+  // compare with centroid of 1.000.000 points inside the mesh:
+  //  0.00772887 -0.134923 0.011703
+  assert (p.x() > 0.007 && p.x() < 0.008);
+  assert (p.y() > -0.14 && p.y() < -0.13);
+  assert (p.z() > 0.01 && p.z() < 0.02);
+
+  typename K::Vector_3 v(10,20,30);
+  for(typename boost::graph_traits<Surface_mesh>::vertex_descriptor vd : vertices(sm)){
+    sm.point(vd) = sm.point(vd) + v;
+  }
+
+  p = PMP::centroid(sm);
+  p = p - v;
+  assert (p.x() > 0.007 && p.x() < 0.008);
+  assert (p.y() > -0.14 && p.y() < -0.13);
+  assert (p.z() > 0.01 && p.z() < 0.02);
+
+
 }
 
 int main(int argc, char* argv[])
@@ -180,6 +214,10 @@ int main(int argc, char* argv[])
     (argc > 1) ? argv[1] : "data/elephant.off";
   test_closed_surface_mesh<CGAL::Surface_mesh<Epic::Point_3>,Epic>(filename_surface_mesh);
   test_closed_surface_mesh<CGAL::Surface_mesh<Epec::Point_3>,Epec>(filename_surface_mesh);
+
+  // It won't work with Epec for large meshes as it builds up a deep DAG
+  // leading to a stackoverflow when the destructor is called.
+  test_centroid<CGAL::Surface_mesh<Epic::Point_3>,Epic>(filename_surface_mesh);
 
   std::cerr << "All done." << std::endl;
   return 0;

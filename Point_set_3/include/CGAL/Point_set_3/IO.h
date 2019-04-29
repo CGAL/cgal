@@ -422,7 +422,7 @@ read_ply_point_set(
     }
   }
 
-  return true;
+  return !stream.bad();
 }
   
 /*!

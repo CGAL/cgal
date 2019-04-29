@@ -3,6 +3,7 @@
 #include <QColorDialog> 
 #include <CGAL/Qt/manipulatedCameraFrame.h>
 #include <CGAL/Qt/manipulatedFrame.h>
+#include <CGAL/Three/Three.h>
 
 #include <fstream>
 
@@ -1261,9 +1262,9 @@ public Q_SLOTS:
     classif->select_random_region();
     item_changed(classif->item());
 
-    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
+    CGAL::Three::Viewer_interface* viewer = CGAL::Three::Three::activeViewer();
     CGAL::Bbox_3 bbox = classif->bbox();
-    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
+    const CGAL::qglviewer::Vec offset = CGAL::Three::Three::mainViewer()->offset();
     
     viewer->camera()->fitBoundingBox(CGAL::qglviewer::Vec (bbox.xmin(), bbox.ymin(), bbox.zmin()) + offset,
                                      CGAL::qglviewer::Vec (bbox.xmax(), bbox.ymax(), bbox.zmax()) + offset);

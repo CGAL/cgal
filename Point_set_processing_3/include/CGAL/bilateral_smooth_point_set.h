@@ -46,7 +46,7 @@
 #include <CGAL/property_map.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
-#include <CGAL/internal/Parallel_callback.h>
+#include <CGAL/Point_set_processing_3/internal/Parallel_callback.h>
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>  
@@ -398,9 +398,9 @@ public:
    For more details, please see section 4 in \cgalCite{ear-2013}.  
 
    A parallel version of this function is provided and requires the executable to be 
-   linked against the <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+   linked against the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
    To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-   See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+   See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
    for more details.
 
    \pre Normals must be unit vectors
@@ -543,7 +543,7 @@ bilateral_smooth_point_set(
 #else
    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
    {
-     internal::Point_set_processing_3::Parallel_callback
+     Point_set_processing_3::internal::Parallel_callback
        parallel_callback (callback, 2 * nb_points);
 
      Compute_pwns_neighbors<Kernel, Tree> f(k, tree, pwns, pwns_neighbors,
@@ -593,7 +593,7 @@ bilateral_smooth_point_set(
 #ifdef CGAL_LINKED_WITH_TBB
    if(boost::is_convertible<ConcurrencyTag, CGAL::Parallel_tag>::value)
    {
-     internal::Point_set_processing_3::Parallel_callback
+     Point_set_processing_3::internal::Parallel_callback
        parallel_callback (callback, 2 * nb_points, nb_points);
      
      //tbb::task_scheduler_init init(4);

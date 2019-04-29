@@ -42,7 +42,7 @@
 #include <ctime>
 
 #ifdef CGAL_LINKED_WITH_TBB
-#include <CGAL/internal/Parallel_callback.h>
+#include <CGAL/Point_set_processing_3/internal/Parallel_callback.h>
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>  
@@ -415,9 +415,9 @@ public:
    For more details, please refer to \cgalCite{wlop-2009}.
 
    A parallel version of WLOP is provided and requires the executable to be 
-   linked against the <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+   linked against the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
    To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-   See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+   See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
    for more details.
 
    \tparam ConcurrencyTag enables sequential versus parallel algorithm.
@@ -606,7 +606,7 @@ wlop_simplify_and_regularize_point_set(
     //parallel
     if (boost::is_convertible<ConcurrencyTag, Parallel_tag>::value)
     {
-      internal::Point_set_processing_3::Parallel_callback
+      Point_set_processing_3::internal::Parallel_callback
         parallel_callback (callback, iter_number * number_of_sample, iter_n * number_of_sample);
      
       tbb::blocked_range<size_t> block(0, number_of_sample);
