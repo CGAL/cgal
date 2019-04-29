@@ -54,8 +54,8 @@ endif()
 #
 
 # See the release notes of CGAL-4.10: CGAL_Core now requires
-# Boost.Thread, with all compilers but MSVC.
-if (NOT MSVC)
+# Boost.Thread, with GNU G++.
+if (CMAKE_CXX_COMPILER_ID STREQUAL GNU)
   find_package( Boost 1.48 REQUIRED thread system )
 endif()
 
