@@ -21,14 +21,14 @@ namespace CGAL {
     /// starts a new surface
     void begin_surface();
       
-    /// finishs the current surface. Returns one dart of the created surface.
+    /// finishes the current surface. Returns one dart of the created surface.
     /// @pre A surface is under creation.
     Dart_handle end_surface();
 
     /// starts a new facet.
     void begin_facet();
     
-    /// finishs the current facet. Returns the first dart of this facet.
+    /// finishes the current facet. Returns the first dart of this facet.
     /// @pre A facet is under creation.
     Dart_handle end_facet();
 
@@ -48,7 +48,7 @@ namespace CGAL {
    /// starts a path on the surface.
    void begin_path();
     
-    /// finishs the current path. Returns the path created.
+    /// finishes the current path. Returns the path created.
     /// @pre A path is under creation.
     CGAL::Path_on_surface<CMap> end_path();
 
