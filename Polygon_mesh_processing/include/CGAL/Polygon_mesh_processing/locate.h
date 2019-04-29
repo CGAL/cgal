@@ -1,4 +1,4 @@
-// Copyright (c) 2014, 2017, 2018 INRIA (France).
+// Copyright (c) 2014, 2017, 2018 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
