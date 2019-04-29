@@ -282,7 +282,6 @@ MainWindow::on_actionRecenter_triggered()
 }
 
 
-#include "Stream_lines_2.moc"
 #include <CGAL/Qt/resources.h>
 
 int main(int argc, char **argv)
@@ -302,3 +301,5 @@ int main(int argc, char **argv)
   mainWindow.show();
   return app.exec();
 }
+
+#include "Stream_lines_2.moc"
