@@ -55,7 +55,7 @@ void merge_vertices(typename boost::graph_traits<PolygonMesh>::vertex_descriptor
 
   remove_vertex(v_rm, mesh);
 
-  assert(static_cast<std::size_t>(std::distance(vertices(mesh).begin(), vertices(mesh).end())) == ini_nv - 1);
+  assert(vertices(mesh).size() == ini_nv - 1);
 }
 
 template <typename PolygonMesh>
@@ -122,7 +122,7 @@ void test_unpinched_mesh(const Vertices_to_merge_container& all_merges,
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor      vertex_descriptor;
 
-  const std::size_t initial_vertices = num_vertices(mesh);
+  const std::size_t ini_vertices_size = num_vertices(mesh);
 
   // this is a nice, smooth, surface initially
   BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
@@ -136,9 +136,9 @@ void test_unpinched_mesh(const Vertices_to_merge_container& all_merges,
                                                 duplicated_vertices,
                                                 mesh);
 
-  const std::size_t final_vertices_size =
-    static_cast<std::size_t>(std::distance(vertices(mesh).begin(), vertices(mesh).end()));
-  assert(final_vertices_size == initial_vertices);
+  const std::size_t final_vertices_size = vertices(mesh).size();
+  std::cout << "    ini: " << ini_vertices_size << " final: " << final_vertices_size << std::endl;
+  assert(final_vertices_size == ini_vertices_size);
 
   std::size_t expected_nb = 0;
   for(std::size_t i=0, n=all_merges.size(); i<n; ++i)
@@ -217,6 +217,7 @@ void test_pinched_triangles(const char* filename,
   std::size_t new_vertices_nb =
     CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices(mesh,
       CGAL::parameters::output_iterator(std::back_inserter(duplicated_vertices)));
+  std::cout << "    new_vertices_nb: " << new_vertices_nb << " vs expected: " << expected_nb << std::endl;
   assert(new_vertices_nb == expected_nb);
   assert(duplicated_vertices.size() == 1);
   assert(duplicated_vertices[0].size() == 1 + expected_nb);
@@ -242,8 +243,7 @@ void test_many_umbrellas()
   std::size_t nb = test_nm_vertices_duplication(all_merges, duplicated_vertices, mesh);
   assert(nb == 5);
 
-  const std::size_t final_vertices_size =
-    static_cast<std::size_t>(std::distance(vertices(mesh).begin(), vertices(mesh).end()));
+  const std::size_t final_vertices_size = vertices(mesh).size();
 
   assert(duplicated_vertices.size() == 1);
   assert(duplicated_vertices[0].size() == 6);
