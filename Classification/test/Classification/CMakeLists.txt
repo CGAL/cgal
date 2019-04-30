@@ -10,10 +10,8 @@ cmake_minimum_required(VERSION 2.8.11)
 find_package( CGAL QUIET COMPONENTS  )
 
 if ( NOT CGAL_FOUND )
-
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
   return()  
-
 endif()
 
 # include helper file
@@ -28,7 +26,7 @@ if ( NOT Boost_FOUND )
   return()  
 endif()
 
-find_package( Boost OPTIONAL_COMPONENTS serialization iostreams)
+find_package( Boost OPTIONAL_COMPONENTS serialization iostreams )
 
 if( WIN32 )
 # to avoid a warning with old cmake 
