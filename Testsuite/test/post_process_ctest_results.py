@@ -49,6 +49,8 @@ with open(report_file, "rt") as test_report:
           name="libCGALimageIO_shared"
         elif name == "libCGAL_Qt5":
           name="libCGALQt5_shared"
+        elif name == "Mesh_3_implicit_functions":
+          name="Polyhedron_Demo"
         if name=="incomplete":
           is_writing=False
           is_ignored=False
