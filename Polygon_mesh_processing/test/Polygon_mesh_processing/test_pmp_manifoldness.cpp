@@ -42,7 +42,7 @@ void merge_vertices(typename boost::graph_traits<PolygonMesh>::vertex_descriptor
 
   assert(v_keep != v_rm);
 
-  std::size_t ini_nv = static_cast<std::size_t>(std::distance(vertices(mesh).begin(), vertices(mesh).end()));
+  std::size_t ini_nv = static_cast<std::size_t>(vertices(mesh).size());
 
   halfedge_descriptor h = halfedge(v_rm, mesh);
   halfedge_descriptor start = h;
