@@ -607,7 +607,7 @@ public:
     os << static_cast<const Tr&>(*this);
     Unique_hash_map<Vertex_handle,int> V;
     int inum = 0;
-    for(Vertex_iterator vit= vertices_begin(); vit != vertices_end() ; ++vit){
+    for(Vertex_iterator vit= this->vertices_begin(); vit != this->vertices_end() ; ++vit){
       if(! is_infinite(vit)){
         V[vit] = inum++;
       }
@@ -633,7 +633,7 @@ public:
     
     std::vector<Vertex_handle> V;
     V.reserve(this->number_of_vertices());
-    for(Vertex_iterator vit= vertices_begin(); vit != vertices_end() ; ++vit){
+    for(Vertex_iterator vit= this->vertices_begin(); vit != this->vertices_end() ; ++vit){
       if(! is_infinite(vit)){
         V.push_back(vit);
       }
