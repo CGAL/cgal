@@ -468,7 +468,7 @@ The exhaustive list of \sc{Qt}5 components used in demos is:
 `Core`, `Gui`, `Help`, `OpenGL`, `Script`, `ScriptTools`, `Svg`, `Widgets`,
 `qcollectiongenerator` (with `sqlite` driver plugin) and `Xml`.
 
-Having \sc{Qt}5 version 5.3.0 is recommended.
+The minimal version of \sc{Qt}5 is version 5.9.0.
 
 \section installation_examples CGAL Examples and Demos
 
