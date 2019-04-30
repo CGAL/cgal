@@ -26,6 +26,7 @@
 #include <CGAL/license/Polygon_mesh_processing/repair.h>
 
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Union_find.h>
 #include <CGAL/property_map.h>
 #include <CGAL/algorithm.h>
@@ -1672,12 +1673,19 @@ bool is_non_manifold_vertex(typename boost::graph_traits<PolygonMesh>::vertex_de
                             const PolygonMesh& pm)
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  boost::unordered_set<halfedge_descriptor> halfedges_handled;
+
+  typedef CGAL::dynamic_halfedge_property_t<bool>                                       Halfedge_property_tag;
+  typedef typename boost::property_map<PolygonMesh, Halfedge_property_tag>::const_type  Visited_halfedge_map;
+
+  // Dynamic pmaps do not have default initialization values (yet)
+  Visited_halfedge_map visited_halfedges = get(Halfedge_property_tag(), pm);
+  BOOST_FOREACH(halfedge_descriptor h, halfedges(pm))
+    put(visited_halfedges, h, false);
 
   std::size_t incident_null_faces_counter = 0;
   BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, pm))
   {
-    halfedges_handled.insert(h);
+    put(visited_halfedges, h, true);
     if(CGAL::is_border(h, pm))
       ++incident_null_faces_counter;
   }
@@ -1692,8 +1700,8 @@ bool is_non_manifold_vertex(typename boost::graph_traits<PolygonMesh>::vertex_de
   {
     if(v == target(h, pm))
     {
-      // More than one umbrella incident to 'v' --> non-manifold
-      if(halfedges_handled.count(h) == 0)
+      // Haven't seen that halfedge yet ==> more than one umbrella incident to 'v' ==> non-manifold
+      if(!get(visited_halfedges, h))
         return true;
     }
   }
@@ -1922,8 +1930,20 @@ std::size_t duplicate_non_manifold_vertices(PolygonMesh& pm,
                    Emptyset_iterator());
 
   internal::Vertex_collector<PolygonMesh> dmap;
-  boost::unordered_set<vertex_descriptor> vertices_handled;
-  boost::unordered_set<halfedge_descriptor> halfedges_handled;
+
+  typedef CGAL::dynamic_vertex_property_t<bool>                                   Vertex_property_tag;
+  typedef typename boost::property_map<PolygonMesh, Vertex_property_tag>::type    Visited_vertex_map;
+  typedef CGAL::dynamic_halfedge_property_t<bool>                                 Halfedge_property_tag;
+  typedef typename boost::property_map<PolygonMesh, Halfedge_property_tag>::type  Visited_halfedge_map;
+
+  Visited_vertex_map visited_vertices = get(Vertex_property_tag(), pm);
+  Visited_halfedge_map visited_halfedges = get(Halfedge_property_tag(), pm);
+
+  // Dynamic pmaps do not have default initialization values (yet)
+  BOOST_FOREACH(vertex_descriptor v, vertices(pm))
+    put(visited_vertices, v, false);
+  BOOST_FOREACH(halfedge_descriptor h, halfedges(pm))
+    put(visited_halfedges, h, false);
 
   std::size_t nb_new_vertices = 0;
 
@@ -1933,13 +1953,16 @@ std::size_t duplicate_non_manifold_vertices(PolygonMesh& pm,
     // If 'h' is not visited yet, we walk around the target of 'h' and mark these
     // halfedges as visited. Thus, if we are here and the target is already marked as visited,
     // it means that the vertex is non manifold.
-    if(halfedges_handled.insert(h).second)
+    if(!get(visited_halfedges, h))
     {
+      put(visited_halfedges, h, true);
       bool is_non_manifold = false;
 
       vertex_descriptor vd = target(h, pm);
-      if(!vertices_handled.insert(vd).second) // already seen this vertex, but not from this star
+      if(get(visited_vertices, vd)) // already seen this vertex, but not from this star
         is_non_manifold = true;
+
+      put(visited_vertices, vd, true);
 
       // While walking the star of this halfedge, if we meet a border halfedge more than once,
       // it means the mesh is pinched and we are also in the case of a non-manifold situation
@@ -1947,7 +1970,7 @@ std::size_t duplicate_non_manifold_vertices(PolygonMesh& pm,
       int border_counter = 0;
       do
       {
-        halfedges_handled.insert(ih);
+        put(visited_halfedges, ih, true);
         if(is_border(ih, pm))
           ++border_counter;
 
