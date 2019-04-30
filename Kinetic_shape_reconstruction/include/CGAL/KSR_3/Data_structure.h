@@ -382,8 +382,19 @@ public:
     Point_2 inter_0 = KSR::intersection_2<Point_2> (segment_0, intersection_line(intersection_line_idx).line());
     Point_2 inter_1 = KSR::intersection_2<Point_2> (segment_1, intersection_line(intersection_line_idx).line());
 
-    Vector_2 vec_0t1 (inter_0, inter_1);
-    vec_0t1 = KSR::normalize(vec_0t1);
+    // Compute speeds
+    Line_2 future_line_0 (vertex(positive_side.back()).point(m_current_time + 1),
+                          vertex(negative_side.front()).point(m_current_time + 1));
+    Line_2 future_line_1 (vertex(negative_side.back()).point(m_current_time + 1),
+                          vertex(positive_side.front()).point(m_current_time + 1));
+
+    Point_2 future_inter_0 = KSR::intersection_2<Point_2> (future_line_0, intersection_line(intersection_line_idx).line());
+    Point_2 future_inter_1 = KSR::intersection_2<Point_2> (future_line_1, intersection_line(intersection_line_idx).line());
+    
+    Vector_2 direction_0 (inter_0, future_inter_0);
+    Vector_2 direction_1 (inter_1, future_inter_1);
+    // Vector_2 direction_0 = CGAL::NULL_VECTOR;
+    // Vector_2 direction_1 = CGAL::NULL_VECTOR;
 
     KSR::size_t new_polygon_idx = number_of_polygons();
     m_polygons.push_back (Polygon(polygon(polygon_idx).input_idx(), polygon(polygon_idx).support_plane_idx()));
@@ -393,36 +404,38 @@ public:
     for (KSR::size_t vertex_idx : negative_side)
       vertex(vertex_idx).polygon_idx() = new_polygon_idx;
 
-    // TODO compute directions better
-
     positive_side.push_back(number_of_vertices());
     intersection_line(intersection_line_idx).vertices_idx().push_back (number_of_vertices());
     m_vertices.push_back (Vertex (inter_0, polygon_idx));
     m_vertices.back().intersection_line_idx() = intersection_line_idx;
-    m_vertices.back().direction() = -vec_0t1;
+    m_vertices.back().direction() = direction_0;
     
     positive_side.push_back(number_of_vertices());
     intersection_line(intersection_line_idx).vertices_idx().push_back (number_of_vertices());
     m_vertices.push_back (Vertex (inter_1, polygon_idx));
     m_vertices.back().intersection_line_idx() = intersection_line_idx;
-    m_vertices.back().direction() = vec_0t1;
+    m_vertices.back().direction() = direction_1;
 
     negative_side.push_back(number_of_vertices());
     intersection_line(intersection_line_idx).vertices_idx().push_back (number_of_vertices());
     m_vertices.push_back (Vertex (inter_1, new_polygon_idx));
     m_vertices.back().intersection_line_idx() = intersection_line_idx;
-    m_vertices.back().direction() = vec_0t1;
+    m_vertices.back().direction() = direction_1;
     
     negative_side.push_back(number_of_vertices());
     intersection_line(intersection_line_idx).vertices_idx().push_back (number_of_vertices());
     m_vertices.push_back (Vertex (inter_0, new_polygon_idx));
     m_vertices.back().intersection_line_idx() = intersection_line_idx;
-    m_vertices.back().direction() = -vec_0t1;
-
+    m_vertices.back().direction() = direction_0;
+    
     polygon(polygon_idx).vertices_idx().swap (positive_side);
     polygon(new_polygon_idx).vertices_idx().swap (negative_side);
   }
 
+  void update_positions (FT time)
+  {
+    m_current_time = time;
+  }
   
 };
 
