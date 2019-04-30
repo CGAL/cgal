@@ -187,8 +187,8 @@ OutputIterator partition_approx_convex_2(InputIterator first,
        {
           if ((*e_circ).first->is_constrained((*e_circ).second))
           {
-             Segment_2 edge = triangles.segment((*e_circ).first, (*e_circ).second);
 #ifdef CGAL_PARTITION_APPROX_CONVEX_DEBUG
+             Segment_2 edge = triangles.segment((*e_circ).first, (*e_circ).second);
              std::cout << "edge " <<  *edge.source() << " " << *edge.target() 
                        << " is constrained " << std::endl;
 #endif
