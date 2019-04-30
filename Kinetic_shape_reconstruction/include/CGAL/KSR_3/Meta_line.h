@@ -18,12 +18,13 @@
 //
 // Author(s)     : Simon Giraudot
 
-#ifndef CGAL_KSR_3_SUPPORT_LINE_H
-#define CGAL_KSR_3_SUPPORT_LINE_H
+#ifndef CGAL_KSR_3_META_LINE_H
+#define CGAL_KSR_3_META_LINE_H
 
 //#include <CGAL/license/Kinetic_shape_reconstruction.h>
 
 #include <CGAL/KSR/utils.h>
+#include <set>
 
 namespace CGAL
 {
@@ -31,31 +32,26 @@ namespace CGAL
 namespace KSR_3
 {
 
-template <typename GeomTraits>
-class Support_line
+template <typename Line_3>
+class Meta_line
 {
-public:
-  typedef GeomTraits Kernel;
-  typedef typename Kernel::FT FT;
-  typedef typename Kernel::Point_2 Point_2;
-  typedef typename Kernel::Vector_2 Vector_2;
-  typedef typename Kernel::Point_3 Point_3;
-  typedef typename Kernel::Vector_3 Vector_3;
-  typedef typename Kernel::Line_3 Line_3;
-
 private:
 
   Line_3 m_line;
-  std::vector<KSR::size_t> m_vertices;
+  
+  std::set<KSR::size_t> m_support_planes_idx;
+  
 
 public:
 
-  Support_line (const Line_3& line) : m_line (line) { }
+  Meta_line () { }
+
+  Meta_line (const Line_3& line) : m_line (line) { }
 
   const Line_3& line() const { return m_line; }
 
-  const std::vector<KSR::size_t>& vertices() const { return m_vertices; }
-  std::vector<KSR::size_t>& vertices() { return m_vertices; }
+  const std::set<KSR::size_t>& support_planes_idx() const { return m_support_planes_idx; }
+  std::set<KSR::size_t>& support_planes_idx() { return m_support_planes_idx; }
 
 };
 
@@ -63,4 +59,4 @@ public:
 }} // namespace CGAL::KSR_3
 
 
-#endif // CGAL_KSR_3_SUPPORT_LINE_H
+#endif // CGAL_KSR_3_META_LINE_H

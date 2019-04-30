@@ -3,6 +3,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/IO/PLY_reader.h>
 #include <CGAL/IO/PLY_writer.h>
+
+#define CGAL_KSR_VERBOSE_LEVEL 3
 #include <CGAL/Kinetic_shape_reconstruction_3.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;

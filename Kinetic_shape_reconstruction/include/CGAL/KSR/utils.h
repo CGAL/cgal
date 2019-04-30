@@ -83,9 +83,14 @@ public:
   ValueType& back() { return m_data.back(); }
 
   void push_back (const ValueType& v) { m_data.push_back (v); }
+
+  void swap (vector& other) { m_data.swap (other.m_data); }
 };
 
 #endif
+
+typedef vector<KSR::size_t> Idx_vector;
+typedef typename Idx_vector::iterator Idx_iterator;
 
 // Use -1 as no element identifier
 inline size_t no_element() { return size_t(-1); }

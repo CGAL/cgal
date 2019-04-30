@@ -18,10 +18,12 @@
 //
 // Author(s)     : Simon Giraudot
 
-#ifndef CGAL_KSR_3_POLYGON_H
-#define CGAL_KSR_3_POLYGON_H
+#ifndef CGAL_KSR_3_INTERSECTION_LINE_H
+#define CGAL_KSR_3_INTERSECTION_LINE_H
 
 //#include <CGAL/license/Kinetic_shape_reconstruction.h>
+
+#include <CGAL/KSR/utils.h>
 
 namespace CGAL
 {
@@ -29,33 +31,38 @@ namespace CGAL
 namespace KSR_3
 {
 
-class Polygon
+template <typename Line_2>
+class Intersection_line
 {
 private:
 
-  KSR::size_t m_input_idx;
+  Line_2 m_line;
   KSR::size_t m_support_plane_idx;
-  
+  KSR::size_t m_meta_line_idx;
   KSR::Idx_vector m_vertices_idx;
 
 public:
 
-  Polygon () { }
+  Intersection_line () { }
 
-  Polygon (KSR::size_t input_idx, KSR::size_t support_plane_idx)
-    : m_input_idx (input_idx), m_support_plane_idx (support_plane_idx)
+  Intersection_line (const Line_2& line, KSR::size_t support_plane_idx)
+    : m_line (line), m_support_plane_idx (support_plane_idx), m_meta_line_idx (KSR::no_element())
   { }
 
-  const KSR::size_t& input_idx() const { return m_input_idx; }
+  const Line_2& line() const { return m_line; }
+
+  const KSR::size_t& support_plane_idx() const { return m_support_plane_idx; }
+
+  const KSR::size_t& meta_line_idx() const { return m_meta_line_idx; }
+  KSR::size_t& meta_line_idx() { return m_meta_line_idx; }
 
   const KSR::Idx_vector& vertices_idx() const { return m_vertices_idx; }
   KSR::Idx_vector& vertices_idx() { return m_vertices_idx; }
-  
-  const KSR::size_t& support_plane_idx() const { return m_support_plane_idx; }
+
 };
 
 
 }} // namespace CGAL::KSR_3
 
 
-#endif // CGAL_KSR_3_POLYGON_H
+#endif // CGAL_KSR_3_INTERSECTION_LINE_H

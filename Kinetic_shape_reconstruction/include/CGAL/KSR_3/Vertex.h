@@ -31,50 +31,70 @@ namespace CGAL
 namespace KSR_3
 {
 
-template <typename GeomTraits>
+template <typename Kernel>
 class Vertex
 {
-public:
-  typedef GeomTraits Kernel;
+private:
+
   typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_2 Point_2;
   typedef typename Kernel::Vector_2 Vector_2;
-  typedef typename Kernel::Ray_2 Ray_2;
-
-private:
 
   Point_2 m_point;
   Vector_2 m_direction;
-  KSR::size_t m_polygon;
-  KSR::size_t m_support_plane;
-  KSR::size_t m_support_line;
+  KSR::size_t m_polygon_idx;
+  unsigned int m_remaining_intersections;
+  KSR::size_t m_meta_vertex_idx;
+  KSR::size_t m_intersection_line_idx;
 
 public:
 
-  Vertex (const Point_2& point,
-          KSR::size_t polygon = KSR::no_element(),
-          KSR::size_t support_plane = KSR::no_element())
-    : m_point (point), m_direction (NULL_VECTOR)
-    , m_polygon (polygon)
-    , m_support_plane (support_plane)
-    , m_support_line (KSR::no_element())
-  { }
+  Vertex () { }
 
-  KSR::size_t polygon() const { return m_polygon; }
+  Vertex (const Point_2& point,
+          KSR::size_t polygon_idx,
+          unsigned int remaining_intersections = 0)
+    : m_point (point)
+    , m_direction (CGAL::NULL_VECTOR)
+    , m_polygon_idx (polygon_idx)
+    , m_remaining_intersections(remaining_intersections)
+    , m_meta_vertex_idx (KSR::no_element())
+    , m_intersection_line_idx (KSR::no_element())
+  {
+  }
+
+  const KSR::size_t& intersection_line_idx() const { return m_intersection_line_idx; }
+  KSR::size_t& intersection_line_idx() { return m_intersection_line_idx; }
   
-  KSR::size_t support_plane() const { return m_support_plane; }
-  
-  const Point_2& point() const { return m_point; }
-  Point_2& point() { return m_point; }
+  const KSR::size_t& polygon_idx() const { return m_polygon_idx; }
+  KSR::size_t& polygon_idx() { return m_polygon_idx; }
+
+  Point_2 point (FT time) const { return m_point + time * m_direction; }
   const Vector_2& direction() const { return m_direction; }
   Vector_2& direction() { return m_direction; }
+  FT speed() const { return CGAL::approximate_sqrt (m_direction * m_direction); }
 
-  FT speed() const { return CGAL::approximate_sqrt (m_direction.squared_length()); }
+  const unsigned int& remaining_intersections() const { return m_remaining_intersections; }
+  unsigned int& remaining_intersections() { return m_remaining_intersections; }
 
-  Ray_2 ray() { return Ray_2 (m_point, m_direction); }
+  const KSR::size_t& meta_vertex_idx() const { return m_meta_vertex_idx; }
+  KSR::size_t& meta_vertex_idx() { return m_meta_vertex_idx; }
+  
+  bool is_frozen() const { return (m_direction == CGAL::NULL_VECTOR); }
+  void freeze(FT time)
+  {
+    m_point = m_point + time * m_direction;
+    m_direction = CGAL::NULL_VECTOR;
+    m_remaining_intersections = 0;
+  }
 
-  bool is_frozen() const { return (m_direction == NULL_VECTOR); }
-  bool is_constrained() const { return (m_support_line != KSR::no_element()); }
+  friend std::ostream& operator<< (std::ostream& os, const Vertex& vertex)
+  {
+    os << "vertex(" << vertex.m_point << "," << vertex.m_direction << ") on support plane " << vertex.m_support_plane_idx
+       << " and meta vertex " << vertex.meta_vertex_idx() << " with "
+       << vertex.m_remaining_intersections << " remaining intersection(s)";
+    return os;
+  }
 
 };
 
@@ -82,4 +102,4 @@ public:
 }} // namespace CGAL::KSR_3
 
 
-#endif // CGAL_KSR_3_POLYGON_H
+#endif // CGAL_KSR_3_VERTEX_H

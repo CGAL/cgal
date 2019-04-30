@@ -48,9 +48,34 @@ public:
 private:
 
   Plane_3 m_plane;
-  std::vector<KSR::size_t> m_support_lines;
+
+  KSR::Idx_vector m_polygons_idx;
+  KSR::Idx_vector m_meta_vertices_idx;
 
 public:
+
+  Support_plane () { }
+
+  template <typename PointRange>
+  Support_plane (const PointRange& points)
+  {
+    // Compute support plane
+    Vector_3 normal = CGAL::NULL_VECTOR;
+
+    //Newell's method
+    for (std::size_t i = 0; i < points.size(); ++ i)
+    {
+      const Point_3& pa = points[i];
+      const Point_3& pb = points[(i+1) % points.size()];
+      FT x = normal.x() + (pa.y()-pb.y())*(pa.z()+pb.z());
+      FT y = normal.y() + (pa.z()-pb.z())*(pa.x()+pb.x());
+      FT z = normal.z() + (pa.x()-pb.x())*(pa.y()+pb.y());
+      normal = Vector_3 (x,y,z);
+    }
+    CGAL_assertion_msg (normal != CGAL::NULL_VECTOR, "Polygon is flat");
+
+    m_plane = Plane_3 (points[0], KSR::normalize(normal));
+  }
 
   Support_plane (const Point_3& point, const Vector_3& normal)
     : m_plane (point, normal)
@@ -63,6 +88,17 @@ public:
 
   const Plane_3& plane() const { return m_plane; }
 
+  const KSR::Idx_vector& polygons_idx() const { return m_polygons_idx; }
+  KSR::Idx_vector& polygons_idx() { return m_polygons_idx; }
+
+  const KSR::Idx_vector& meta_vertices_idx() const { return m_meta_vertices_idx; }
+  KSR::Idx_vector& meta_vertices_idx() { return m_meta_vertices_idx; }
+
+  Point_2 to_2d (const Point_3& point) const
+  {
+    return m_plane.to_2d (point);
+  }
+
   Line_2 to_2d (const Line_3& line) const
   {
     return Line_2 (m_plane.to_2d(line.point()),
@@ -72,11 +108,19 @@ public:
   Point_3 to_3d (const Point_2& point) const { return m_plane.to_3d (point); }
   
 
-  const std::vector<KSR::size_t>& support_lines() const { return m_support_lines; }
-  std::vector<KSR::size_t>& support_lines() { return m_support_lines; }
-  
-
 };
+
+template <typename Kernel>
+bool operator== (const Support_plane<Kernel>& a, const Support_plane<Kernel>& b)
+{
+  const typename Kernel::Plane_3& va = a.plane();
+  const typename Kernel::Plane_3& vb = b.plane();
+
+  if (CGAL::abs(va.orthogonal_vector() * vb.orthogonal_vector()) < CGAL_KSR_SAME_VECTOR_TOLERANCE)
+    return false;
+
+  return (CGAL::approximate_sqrt(CGAL::squared_distance (vb.point(), va)) < CGAL_KSR_SAME_POINT_TOLERANCE);
+}
 
 
 }} // namespace CGAL::KSR_3

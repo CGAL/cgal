@@ -18,10 +18,13 @@
 //
 // Author(s)     : Simon Giraudot
 
-#ifndef CGAL_KSR_3_POLYGON_H
-#define CGAL_KSR_3_POLYGON_H
+#ifndef CGAL_KSR_3_META_VERTEX_H
+#define CGAL_KSR_3_META_VERTEX_H
 
 //#include <CGAL/license/Kinetic_shape_reconstruction.h>
+
+#include <CGAL/KSR/utils.h>
+#include <set>
 
 namespace CGAL
 {
@@ -29,33 +32,30 @@ namespace CGAL
 namespace KSR_3
 {
 
-class Polygon
+template <typename Point_3>
+class Meta_vertex
 {
 private:
 
-  KSR::size_t m_input_idx;
-  KSR::size_t m_support_plane_idx;
+  Point_3 m_point;
   
-  KSR::Idx_vector m_vertices_idx;
+  std::set<KSR::size_t> m_support_planes_idx;
 
 public:
 
-  Polygon () { }
+  Meta_vertex () { }
 
-  Polygon (KSR::size_t input_idx, KSR::size_t support_plane_idx)
-    : m_input_idx (input_idx), m_support_plane_idx (support_plane_idx)
-  { }
+  Meta_vertex (const Point_3& point) : m_point (point) { }
 
-  const KSR::size_t& input_idx() const { return m_input_idx; }
+  const Point_3& point() const { return m_point; }
 
-  const KSR::Idx_vector& vertices_idx() const { return m_vertices_idx; }
-  KSR::Idx_vector& vertices_idx() { return m_vertices_idx; }
-  
-  const KSR::size_t& support_plane_idx() const { return m_support_plane_idx; }
+  const std::set<KSR::size_t>& support_planes_idx() const { return m_support_planes_idx; }
+  std::set<KSR::size_t>& support_planes_idx() { return m_support_planes_idx; }
+
 };
 
 
 }} // namespace CGAL::KSR_3
 
 
-#endif // CGAL_KSR_3_POLYGON_H
+#endif // CGAL_KSR_3_META_VERTEX_H
