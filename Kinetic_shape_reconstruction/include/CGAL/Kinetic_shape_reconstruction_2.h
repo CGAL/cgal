@@ -548,25 +548,31 @@ private:
           Point_2 (xmin, ymax),
           Point_2 (xmax, ymin),
           Point_2 (xmax, ymax) };
-    
+
+    // line 0                      vertex[0]       vertex[1]
     m_data.add_segment (Segment_2 (bbox_points[0], bbox_points[1]));
+    // line 1                      vertex[2]       vertex[3]
     m_data.add_segment (Segment_2 (bbox_points[1], bbox_points[3]));
+    // line 2                      vertex[4]       vertex[5]
     m_data.add_segment (Segment_2 (bbox_points[3], bbox_points[2]));
+    // line 3                      vertex[6]       vertex[7]
     m_data.add_segment (Segment_2 (bbox_points[2], bbox_points[0]));
 
-    KSR::size_t v0 = m_data.add_meta_vertex (3, 0);
-    KSR::size_t v1 = m_data.add_meta_vertex (0, 1);
-    KSR::size_t v2 = m_data.add_meta_vertex (1, 2);
-    KSR::size_t v3 = m_data.add_meta_vertex (2, 3);
-
+    m_data.add_meta_vertex (bbox_points[0], 0, 3);
     m_data.attach_vertex_to_meta_vertex (0, 0);
+    m_data.attach_vertex_to_meta_vertex (7, 0);
+    
+    m_data.add_meta_vertex (bbox_points[1], 0, 1);
     m_data.attach_vertex_to_meta_vertex (1, 1);
     m_data.attach_vertex_to_meta_vertex (2, 1);
-    m_data.attach_vertex_to_meta_vertex (3, 2);
-    m_data.attach_vertex_to_meta_vertex (4, 2);
-    m_data.attach_vertex_to_meta_vertex (5, 3);
-    m_data.attach_vertex_to_meta_vertex (6, 3);
-    m_data.attach_vertex_to_meta_vertex (7, 0);
+
+    m_data.add_meta_vertex (bbox_points[2], 2, 3);
+    m_data.attach_vertex_to_meta_vertex (5, 2);
+    m_data.attach_vertex_to_meta_vertex (6, 2);
+
+    m_data.add_meta_vertex (bbox_points[3], 1, 2);
+    m_data.attach_vertex_to_meta_vertex (3, 3);
+    m_data.attach_vertex_to_meta_vertex (4, 3);
 
   }
 
