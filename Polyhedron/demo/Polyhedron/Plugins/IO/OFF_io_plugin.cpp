@@ -155,6 +155,8 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
                          tr("%1 isolated vertices found")
                          .arg(item->getNbIsolatedvertices()));
   }
+  if(item->isItemMulticolor())
+    item->computeItemColorVectorAutomatically(true);
   return item;
 }
 
