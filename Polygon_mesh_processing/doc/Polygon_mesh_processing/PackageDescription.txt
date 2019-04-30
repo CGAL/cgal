@@ -54,6 +54,10 @@
 /// Functions to detect sharp edges and surface patches of polygon meshes.
 /// \ingroup PkgPolygonMeshProcessingRef
 
+/// \defgroup PMP_locate_grp Location Functions
+/// Functions to locate points on a mesh, and manipulate such locations.
+/// \ingroup PkgPolygonMeshProcessingRef
+
 /// \defgroup PMP_predicates_grp Intersection Detection Functions
 /// Functions to detect intersections.
 /// Note that those functions will be exact as long as the underlying do-intersect predicates used are exact.
@@ -120,6 +124,14 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::degenerate_faces()`
 - `CGAL::Polygon_mesh_processing::is_needle_triangle_face()`
 - `CGAL::Polygon_mesh_processing::is_cap_triangle_face()`
+
+\cgalCRPSection{Location Functions}
+- \link PMP_locate_grp Point Location \endlink
+- \link PMP_locate_grp Random Simplex Generation \endlink
+- \link PMP_locate_grp Simplex Index \endlink
+- \link PMP_locate_grp Location Predicates \endlink
+- \link PMP_locate_grp Nearest Face Location Queries \endlink
+- \link PMP_locate_grp Random Location Generation \endlink
 
 \cgalCRPSection{Orientation Functions}
 - `CGAL::Polygon_mesh_processing::orient_polygon_soup()`

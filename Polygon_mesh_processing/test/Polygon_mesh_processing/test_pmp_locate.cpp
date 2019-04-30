@@ -97,10 +97,10 @@ void test_snappers(const G& g)
 {
   std::cout << "  test snappers..." << std::endl;
 
-  typedef typename PMP::internal::Locate_types<G>::FT                        FT;
+  typedef typename PMP::Locate_types<G>::FT                        FT;
 
-  typename PMP::internal::Locate_types<G>::Barycentric_coordinates coords = CGAL::make_array(FT(1e-11), FT(0.99999999999999999), FT(1e-12));
-  typename PMP::internal::Locate_types<G>::Face_location loc = std::make_pair(*(faces(g).first), coords);
+  typename PMP::Locate_types<G>::Barycentric_coordinates coords = CGAL::make_array(FT(1e-11), FT(0.99999999999999999), FT(1e-12));
+  typename PMP::Locate_types<G>::Face_location loc = std::make_pair(*(faces(g).first), coords);
 
   // ---------------------------------------------------------------------------
   PMP::internal::snap_coordinates_to_border<G>(coords); // uses numeric_limits' epsilon()
@@ -138,15 +138,15 @@ void test_constructions(const G& g, CGAL::Random& rnd)
   typedef typename boost::graph_traits<G>::vertex_descriptor                 vertex_descriptor;
   typedef typename boost::graph_traits<G>::halfedge_descriptor               halfedge_descriptor;
   typedef typename boost::graph_traits<G>::face_descriptor                   face_descriptor;
-  typedef typename PMP::internal::Locate_types<G>::descriptor_variant        descriptor_variant;
+  typedef typename PMP::Locate_types<G>::descriptor_variant                  descriptor_variant;
 
   typedef typename boost::property_map_value<G, CGAL::vertex_point_t>::type  Point;
   typedef typename CGAL::Kernel_traits<Point>::type                          Kernel;
   typedef typename Kernel::FT                                                FT;
   typedef typename Point_to_bare_point<Kernel, Point::Ambient_dimension::value>::type Bare_point;
 
-  typedef typename PMP::internal::Locate_types<G>::Barycentric_coordinates   Barycentric_coordinates;
-  typedef typename PMP::internal::Locate_types<G>::Face_location             Face_location;
+  typedef typename PMP::Locate_types<G>::Barycentric_coordinates             Barycentric_coordinates;
+  typedef typename PMP::Locate_types<G>::Face_location                       Face_location;
 
   typedef typename boost::property_map<G, CGAL::vertex_point_t>::const_type  VPM;
   VPM vpm = CGAL::get_const_property_map(boost::vertex_point, g);
@@ -226,7 +226,7 @@ void test_random_entities(const G& g, CGAL::Random& rnd)
   typedef typename boost::graph_traits<G>::edge_descriptor                   edge_descriptor;
   typedef typename boost::graph_traits<G>::face_descriptor                   face_descriptor;
 
-  typedef typename PMP::internal::Locate_types<G>::Face_location             Face_location;
+  typedef typename PMP::Locate_types<G>::Face_location                       Face_location;
 
   typedef typename boost::property_map_value<G, CGAL::vertex_point_t>::type  Point;
   typedef typename CGAL::Kernel_traits<Point>::type                          Kernel;
@@ -312,7 +312,7 @@ void test_helpers(const G& g, CGAL::Random& rnd)
   typedef typename boost::graph_traits<G>::halfedge_descriptor               halfedge_descriptor;
   typedef typename boost::graph_traits<G>::face_descriptor                   face_descriptor;
 
-  typedef typename PMP::internal::Locate_types<G>::Face_location             Face_location;
+  typedef typename PMP::Locate_types<G>::Face_location                       Face_location;
 
   face_descriptor f = CGAL::Polygon_mesh_processing::random_face_in_mesh(g, rnd);
   halfedge_descriptor h = halfedge(f, g);
@@ -390,7 +390,7 @@ void test_predicates(const G& g, CGAL::Random& rnd)
   typedef typename boost::graph_traits<G>::halfedge_descriptor               halfedge_descriptor;
   typedef typename boost::graph_traits<G>::face_descriptor                   face_descriptor;
 
-  typedef typename PMP::internal::Locate_types<G>::Face_location             Face_location;
+  typedef typename PMP::Locate_types<G>::Face_location                       Face_location;
 
   face_descriptor f = CGAL::Polygon_mesh_processing::random_face_in_mesh(g, rnd);
   halfedge_descriptor h = halfedge(f, g);
@@ -482,7 +482,7 @@ void test_locate_in_face(const G& g, CGAL::Random& rnd)
   typedef typename boost::graph_traits<G>::halfedge_descriptor               halfedge_descriptor;
   typedef typename boost::graph_traits<G>::face_descriptor                   face_descriptor;
 
-  typedef typename PMP::internal::Locate_types<G>::Face_location             Face_location;
+  typedef typename PMP::Locate_types<G>::Face_location                       Face_location;
 
   typedef typename boost::property_map<G, CGAL::vertex_point_t>::const_type  VertexPointMap;
   VertexPointMap vpm = CGAL::get_const_property_map(boost::vertex_point, g);
@@ -492,7 +492,7 @@ void test_locate_in_face(const G& g, CGAL::Random& rnd)
   const vertex_descriptor v = target(h, g);
 
   Face_location loc;
-  typename PMP::internal::Locate_types<G>::FT a = 0.1;
+  typename PMP::Locate_types<G>::FT a = 0.1;
   Point p = get(vpm, v);
 
   loc = PMP::locate_in_face(v, g);
@@ -563,7 +563,7 @@ struct Locate_with_AABB_tree_Tester // 2D case
     typedef typename boost::graph_traits<G>::halfedge_descriptor               halfedge_descriptor;
     typedef typename boost::graph_traits<G>::face_descriptor                   face_descriptor;
 
-    typedef typename PMP::internal::Locate_types<G>::Face_location             Face_location;
+    typedef typename PMP::Locate_types<G>::Face_location                       Face_location;
 
     face_descriptor f = CGAL::Polygon_mesh_processing::random_face_in_mesh(g, rnd);
     halfedge_descriptor h = halfedge(f, g);
@@ -669,14 +669,14 @@ struct Locate_with_AABB_tree_Tester<3> // 3D
     typedef typename boost::graph_traits<G>::halfedge_descriptor               halfedge_descriptor;
     typedef typename boost::graph_traits<G>::face_descriptor                   face_descriptor;
 
-    typedef typename PMP::internal::Locate_types<G>::Face_location             Face_location;
+    typedef typename PMP::Locate_types<G>::Face_location                       Face_location;
 
     face_descriptor f = CGAL::Polygon_mesh_processing::random_face_in_mesh(g, rnd);
     halfedge_descriptor h = halfedge(f, g);
     vertex_descriptor v = target(h, g);
 
     // ---------------------------------------------------------------------------
-    typedef typename PMP::internal::Locate_types<G>::VPM                       VertexPointMap;
+    typedef typename PMP::Locate_types<G>::VPM                                 VertexPointMap;
     typedef CGAL::AABB_face_graph_triangle_primitive<G, VertexPointMap>        AABB_face_graph_primitive;
     typedef CGAL::AABB_traits<Kernel, AABB_face_graph_primitive>               AABB_face_graph_traits;
 
@@ -754,7 +754,7 @@ void test_locate(const G& g, CGAL::Random& rnd)
 
   // This test has slight syntax changes between 2D and 3D (e.g. testing ray_2 in 3D makes no sense)
   Locate_with_AABB_tree_Tester<
-    CGAL::Ambient_dimension<typename PMP::internal::Locate_types<G>::Point>::value>()(g, rnd);
+    CGAL::Ambient_dimension<typename PMP::Locate_types<G>::Point>::value>()(g, rnd);
 }
 
 template<typename K>
