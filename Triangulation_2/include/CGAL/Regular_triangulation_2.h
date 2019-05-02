@@ -130,6 +130,7 @@ public:
   using Base::test_dim_down;
   using Base::oriented_side;
   using Base::compare_x;
+  using Base::compare_y;
 #endif
 
 private:
