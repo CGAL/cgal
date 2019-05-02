@@ -32,6 +32,7 @@
 #include <algorithm>
 #include <vector>
 #include <cstring>
+#include <cstddef>
 
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
@@ -633,7 +634,8 @@ private:
 
   static char * clean_pointer(char * p)
   {
-    return ((p - (char *) NULL) & ~ (std::ptrdiff_t) START_END) + (char *) NULL;
+    return reinterpret_cast<char*>(reinterpret_cast<std::ptrdiff_t>(p) &
+                                   ~ (std::ptrdiff_t) START_END);
   }
 
   // Returns the pointee, cleaned up from the squatted bits.
@@ -646,20 +648,23 @@ private:
   static Type type(const_pointer ptr)
   {
     char * p = (char *) Traits::pointer(*ptr);
-    return (Type) (p - clean_pointer(p));
+    return (Type) (reinterpret_cast<std::ptrdiff_t>(p) -
+                   reinterpret_cast<std::ptrdiff_t>(clean_pointer(p)));
   }
 
-  static Type type(const_iterator ptr)
+  static Type type(const_iterator it)
   {
-    return type(&*ptr);
+    return type(it.operator->());
   }
 
   // Sets the pointer part and the type of the pointee.
-  static void set_type(pointer p_element, void * pointer, Type t)
+  static void set_type(pointer ptr, void * p, Type t)
   {
-    CGAL_precondition(0 <= t && (int) t < 4);
-    Traits::pointer(*p_element) =
-      (void *) ((clean_pointer((char *) pointer)) + (int) t);
+    // This out of range compare is always true and causes lots of
+    // unnecessary warnings.
+    // CGAL_precondition(0 <= t && t < 4);
+    Traits::pointer(*ptr) = reinterpret_cast<void *>
+      (reinterpret_cast<std::ptrdiff_t>(clean_pointer((char *) p)) + (int) t);
   }
 
   typedef tbb::queuing_mutex Mutex;
