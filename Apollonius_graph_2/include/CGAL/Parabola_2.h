@@ -136,8 +136,8 @@ protected:
 
     std::vector< Point_2 > p;
 
-    if ( l.a() == ZERO ) {
-      FT y = d2 * CGAL::sign(l.b()) - divide(l.c(), l.b());
+    if ( l.a() == FT(0) ) {
+      FT y = d2 * int(CGAL::sign(l.b())) - divide(l.c(), l.b());
 
       FT C = CGAL::square(y) - FT(2) * c.y() * y + 
 	CGAL::square(c.x()) + CGAL::square(c.y()) - d1;
