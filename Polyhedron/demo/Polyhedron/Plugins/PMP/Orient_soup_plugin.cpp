@@ -315,6 +315,7 @@ void Polyhedron_demo_orient_soup_plugin::getNMPoints(
   typedef std::set<V_ID_pair>                                              Marked_edges;
       
   Edge_map edges;
+  edges.resize(item->points().size());
   Marked_edges m_edges;
   PSO::fill_edge_map(edges, m_edges, item->polygons());
   
