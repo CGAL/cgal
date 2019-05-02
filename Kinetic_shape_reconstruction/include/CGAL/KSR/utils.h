@@ -92,6 +92,9 @@ public:
 typedef vector<KSR::size_t> Idx_vector;
 typedef typename Idx_vector::iterator Idx_iterator;
 
+typedef std::set<KSR::size_t> Idx_set;
+typedef typename Idx_set::iterator Idx_set_iterator;
+
 // Use -1 as no element identifier
 inline size_t no_element() { return size_t(-1); }
 

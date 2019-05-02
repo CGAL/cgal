@@ -105,6 +105,12 @@ public:
                    m_plane.to_2d(line.point() + line.to_vector()));
   }
   
+  Vector_3 to_3d (const Vector_2& vec) const
+  {
+    return Vector_3 (m_plane.to_3d (Point_2(0,0)),
+                     m_plane.to_3d (Point_2(0,0) + vec));
+  }
+  
   Point_3 to_3d (const Point_2& point) const { return m_plane.to_3d (point); }
   
 

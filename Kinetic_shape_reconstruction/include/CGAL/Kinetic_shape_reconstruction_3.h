@@ -29,6 +29,7 @@
 
 #include <CGAL/KSR/Event.h>
 #include <CGAL/KSR/Event_queue.h>
+#include <CGAL/KSR/debug.h>
 
 #include <unordered_set>
 
@@ -62,7 +63,6 @@ public:
   typedef typename Data::Vertex Vertex;
   
   typedef typename Data::Meta_vertex Meta_vertex;
-  typedef typename Data::Meta_line Meta_line;
   
   typedef KSR::Event<Kernel> Event;
   typedef KSR::Event_queue<Kernel> Event_queue;
@@ -120,6 +120,7 @@ public:
       min_time += time_step;
     }
 
+    KSR_3::dump (m_data, "dbg");
   }
 
   
@@ -220,20 +221,6 @@ private:
     facet_points = { bbox_points[0], bbox_points[4], bbox_points[6], bbox_points[2] };
     m_data.add_polygon (facet_points);
 
-    //                               Line                                                       Planes
-    m_data.add_meta_line_and_attach (Line_3 (bbox_points[0], bbox_points[1]), 0, 2);
-    m_data.add_meta_line_and_attach (Line_3 (bbox_points[1], bbox_points[3]), 0, 4);
-    m_data.add_meta_line_and_attach (Line_3 (bbox_points[3], bbox_points[2]), 0, 3);
-    m_data.add_meta_line_and_attach (Line_3 (bbox_points[2], bbox_points[0]), 0, 5);
-    m_data.add_meta_line_and_attach (Line_3 (bbox_points[4], bbox_points[5]), 1, 2);
-    m_data.add_meta_line_and_attach (Line_3 (bbox_points[5], bbox_points[7]), 1, 4);
-    m_data.add_meta_line_and_attach (Line_3 (bbox_points[7], bbox_points[6]), 1, 3);
-    m_data.add_meta_line_and_attach (Line_3 (bbox_points[6], bbox_points[4]), 1, 5);
-    m_data.add_meta_line_and_attach (Line_3 (bbox_points[1], bbox_points[5]), 2, 4);
-    m_data.add_meta_line_and_attach (Line_3 (bbox_points[4], bbox_points[0]), 2, 5);
-    m_data.add_meta_line_and_attach (Line_3 (bbox_points[3], bbox_points[7]), 3, 4);
-    m_data.add_meta_line_and_attach (Line_3 (bbox_points[6], bbox_points[2]), 3, 5);
-    
     //                                 Point           Planes   Vertices
     m_data.add_meta_vertex_and_attach (bbox_points[0], 0, 2, 5, 0, 8,  20);
     m_data.add_meta_vertex_and_attach (bbox_points[1], 0, 2, 4, 1, 9,  16);
@@ -243,6 +230,67 @@ private:
     m_data.add_meta_vertex_and_attach (bbox_points[5], 1, 2, 4, 5, 10, 17);
     m_data.add_meta_vertex_and_attach (bbox_points[6], 1, 3, 5, 7, 15, 22);
     m_data.add_meta_vertex_and_attach (bbox_points[7], 1, 3, 4, 6, 14, 18);
+    
+    //                            Line                                     Planes
+    m_data.add_intersection_line (Line_3 (bbox_points[0], bbox_points[1]), 0, 2);
+    m_data.intersection_line(0).meta_vertices_idx().push_back (0);
+    m_data.intersection_line(0).meta_vertices_idx().push_back (1);
+    m_data.add_segment (0, 0, 1);
+    
+    m_data.add_intersection_line (Line_3 (bbox_points[1], bbox_points[3]), 0, 4);
+    m_data.intersection_line(1).meta_vertices_idx().push_back (1);
+    m_data.intersection_line(1).meta_vertices_idx().push_back (3);
+    m_data.add_segment (1, 1, 2);
+    
+    m_data.add_intersection_line (Line_3 (bbox_points[3], bbox_points[2]), 0, 3);
+    m_data.intersection_line(2).meta_vertices_idx().push_back (3);
+    m_data.intersection_line(2).meta_vertices_idx().push_back (2);
+    m_data.add_segment (2, 2, 3);
+    
+    m_data.add_intersection_line (Line_3 (bbox_points[2], bbox_points[0]), 0, 5);
+    m_data.intersection_line(3).meta_vertices_idx().push_back (2);
+    m_data.intersection_line(3).meta_vertices_idx().push_back (0);
+    m_data.add_segment (3, 3, 0);
+    
+    m_data.add_intersection_line (Line_3 (bbox_points[4], bbox_points[5]), 1, 2);
+    m_data.intersection_line(4).meta_vertices_idx().push_back (4);
+    m_data.intersection_line(4).meta_vertices_idx().push_back (5);
+    m_data.add_segment (4, 4, 5);
+    
+    m_data.add_intersection_line (Line_3 (bbox_points[5], bbox_points[7]), 1, 4);
+    m_data.intersection_line(5).meta_vertices_idx().push_back (5);
+    m_data.intersection_line(5).meta_vertices_idx().push_back (7);
+    m_data.add_segment (5, 5, 6);
+    
+    m_data.add_intersection_line (Line_3 (bbox_points[7], bbox_points[6]), 1, 3);
+    m_data.intersection_line(6).meta_vertices_idx().push_back (7);
+    m_data.intersection_line(6).meta_vertices_idx().push_back (6);
+    m_data.add_segment (6, 6, 7);
+    
+    m_data.add_intersection_line (Line_3 (bbox_points[6], bbox_points[4]), 1, 5);
+    m_data.intersection_line(7).meta_vertices_idx().push_back (6);
+    m_data.intersection_line(7).meta_vertices_idx().push_back (4);
+    m_data.add_segment (7, 7, 4);
+    
+    m_data.add_intersection_line (Line_3 (bbox_points[1], bbox_points[5]), 2, 4);
+    m_data.intersection_line(8).meta_vertices_idx().push_back (1);
+    m_data.intersection_line(8).meta_vertices_idx().push_back (5);
+    m_data.add_segment (8, 1, 5);
+    
+    m_data.add_intersection_line (Line_3 (bbox_points[4], bbox_points[0]), 2, 5);
+    m_data.intersection_line(9).meta_vertices_idx().push_back (4);
+    m_data.intersection_line(9).meta_vertices_idx().push_back (0);
+    m_data.add_segment (9, 4, 0);
+    
+    m_data.add_intersection_line (Line_3 (bbox_points[3], bbox_points[7]), 3, 4);
+    m_data.intersection_line(10).meta_vertices_idx().push_back (3);
+    m_data.intersection_line(10).meta_vertices_idx().push_back (7);
+    m_data.add_segment (10, 2, 6);
+    
+    m_data.add_intersection_line (Line_3 (bbox_points[6], bbox_points[2]), 3, 5);
+    m_data.intersection_line(11).meta_vertices_idx().push_back (6);
+    m_data.intersection_line(11).meta_vertices_idx().push_back (2);
+    m_data.add_segment (11, 3, 7);
   }
 
   struct Box_with_idx : public CGAL::Box_intersection_d::Box_d<FT,3>
@@ -305,37 +353,15 @@ private:
     CGAL_KSR_CERR(2) << "* Found " << nb_inter << " intersection(s) at initialization" << std::endl;
 
     KSR::Idx_vector new_intersection_lines;
-    
+
     for (const std::tuple<Line_3, KSR::size_t, KSR::size_t>& t : todo)
-    {
-      const Line_3& line = get<0>(t);
-      KSR::size_t support_plane_idx_0 = get<1>(t);
-      KSR::size_t support_plane_idx_1 = get<2>(t);
-
-      KSR::size_t intersection_line_idx_0 = m_data.add_intersection_line
-        (support_plane_idx_0, m_data.support_plane(support_plane_idx_0).to_2d(line));
-      KSR::size_t intersection_line_idx_1 = m_data.add_intersection_line
-        (support_plane_idx_1, m_data.support_plane(support_plane_idx_1).to_2d(line));
-
-      new_intersection_lines.push_back (intersection_line_idx_0);
-      new_intersection_lines.push_back (intersection_line_idx_1);
-      
-      KSR::size_t meta_line_idx = m_data.add_meta_line (line, support_plane_idx_0, support_plane_idx_1);
-
-      m_data.attach_intersection_line_to_meta_line(intersection_line_idx_0, meta_line_idx);
-      m_data.attach_intersection_line_to_meta_line(intersection_line_idx_1, meta_line_idx);
-    }
+      new_intersection_lines.push_back (m_data.add_intersection_line (get<0>(t), get<1>(t), get<2>(t)));
 
     for (KSR::size_t intersection_line_idx : new_intersection_lines)
-    {
-      KSR::size_t support_plane_idx = m_data.intersection_line(intersection_line_idx).support_plane_idx();
-        
-      for (KSR::size_t polygon_idx : m_data.support_plane(support_plane_idx).polygons_idx())
-      {
-        if (m_data.do_intersect (polygon_idx, m_data.intersection_line(intersection_line_idx).line()))
-          m_data.cut_polygon (polygon_idx, intersection_line_idx);
-      }
-    }
+      for (KSR::size_t support_plane_idx : m_data.intersection_line(intersection_line_idx).support_planes_idx())
+        for (KSR::size_t polygon_idx : m_data.support_plane(support_plane_idx).polygons_idx())
+          if (m_data.do_intersect (polygon_idx, m_data.line_on_support_plane (intersection_line_idx, support_plane_idx)))
+            m_data.cut_polygon (polygon_idx, intersection_line_idx);
   }
 
   bool initialize_queue(FT min_time, FT max_time)

@@ -31,33 +31,36 @@ namespace CGAL
 namespace KSR_3
 {
 
-template <typename Line_2>
+template <typename Line_3>
 class Intersection_line
 {
 private:
 
-  Line_2 m_line;
-  KSR::size_t m_support_plane_idx;
-  KSR::size_t m_meta_line_idx;
-  KSR::Idx_vector m_vertices_idx;
+  Line_3 m_line;
+  
+  KSR::Idx_vector m_support_planes_idx;
+  KSR::Idx_vector m_meta_vertices_idx;
+  KSR::Idx_vector m_segments_idx;
 
 public:
 
   Intersection_line () { }
 
-  Intersection_line (const Line_2& line, KSR::size_t support_plane_idx)
-    : m_line (line), m_support_plane_idx (support_plane_idx), m_meta_line_idx (KSR::no_element())
+  Intersection_line (const Line_3& line)
+    : m_line (line)
   { }
 
-  const Line_2& line() const { return m_line; }
+  const Line_3& line() const { return m_line; }
 
-  const KSR::size_t& support_plane_idx() const { return m_support_plane_idx; }
+  const KSR::Idx_vector& support_planes_idx() const { return m_support_planes_idx; }
+  KSR::Idx_vector& support_planes_idx() { return m_support_planes_idx; }
 
-  const KSR::size_t& meta_line_idx() const { return m_meta_line_idx; }
-  KSR::size_t& meta_line_idx() { return m_meta_line_idx; }
+  const KSR::Idx_vector& meta_vertices_idx() const { return m_meta_vertices_idx; }
+  KSR::Idx_vector& meta_vertices_idx() { return m_meta_vertices_idx; }
 
-  const KSR::Idx_vector& vertices_idx() const { return m_vertices_idx; }
-  KSR::Idx_vector& vertices_idx() { return m_vertices_idx; }
+  const KSR::Idx_vector& segments_idx() const { return m_segments_idx; }
+  KSR::Idx_vector& segments_idx() { return m_segments_idx; }
+
 
 };
 

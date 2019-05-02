@@ -1,11 +1,12 @@
 #include <fstream>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/IO/PLY_reader.h>
-#include <CGAL/IO/PLY_writer.h>
 
 #define CGAL_KSR_VERBOSE_LEVEL 3
 #include <CGAL/Kinetic_shape_reconstruction_3.h>
+
+#include <CGAL/IO/PLY_reader.h>
+#include <CGAL/IO/PLY_writer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point_3;
@@ -60,7 +61,7 @@ int main (int argc, char** argv)
 
   std::ofstream output_shapes_file ("out.ply");
 //  CGAL::set_binary_mode (output_shapes_file);
-  CGAL::write_PLY (output_shapes_file, vertices, facets);
+  CGAL::write_PLY (output_shapes_file, vertices, facets, false);
 
   return EXIT_SUCCESS;
 }
