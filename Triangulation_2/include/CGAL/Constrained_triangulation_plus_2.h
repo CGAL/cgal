@@ -134,6 +134,14 @@ public:
   typedef Constrained_triangulation_plus_2<Tr_> Self;
   typedef Tr                                   Base;
 
+  
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+  using Triangulation::vertices_begin;
+  using Triangulation::vertices_end;
+  using Triangulation::is_infinite;
+  using Triangulation::number_of_vertices;
+#endif
+
   typedef typename Triangulation::Edge             Edge;
   typedef typename Triangulation::Vertex           Vertex;
   typedef typename Triangulation::Vertex_handle    Vertex_handle;
@@ -607,7 +615,7 @@ public:
     os << static_cast<const Tr&>(*this);
     Unique_hash_map<Vertex_handle,int> V;
     int inum = 0;
-    for(Vertex_iterator vit= this->vertices_begin(); vit != this->vertices_end() ; ++vit){
+    for(Vertex_iterator vit = vertices_begin(); vit != vertices_end() ; ++vit){
       if(! is_infinite(vit)){
         V[vit] = inum++;
       }
@@ -632,8 +640,8 @@ public:
     is >> static_cast<Tr&>(*this);
     
     std::vector<Vertex_handle> V;
-    V.reserve(this->number_of_vertices());
-    for(Vertex_iterator vit= this->vertices_begin(); vit != this->vertices_end() ; ++vit){
+    V.reserve(number_of_vertices());
+    for(Vertex_iterator vit = vertices_begin(); vit != vertices_end() ; ++vit){
       if(! is_infinite(vit)){
         V.push_back(vit);
       }

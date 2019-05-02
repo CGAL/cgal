@@ -86,6 +86,8 @@ class Triangulation_hierarchy_2
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Tr_Base::geom_traits;
+  using Tr_Base::number_of_vertices;
+  using Tr_Base::is_infinite;
 #endif
 
  private:
@@ -130,7 +132,7 @@ public:
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last)
   {
-    std::ptrdiff_t n = this->number_of_vertices();
+    std::ptrdiff_t n = number_of_vertices();
 
       std::vector<Point> points (first, last);
 
@@ -168,7 +170,7 @@ public:
               prev = v;
           }
       }
-      std::ptrdiff_t m = this->number_of_vertices();
+      std::ptrdiff_t m = number_of_vertices();
       return m - n;
   }
 
@@ -583,7 +585,7 @@ template <class Tr>
 typename Triangulation_hierarchy_2<Tr>::Vertex_handle
 Triangulation_hierarchy_2<Tr>::
 move(Vertex_handle v, const Point &p) {
-  CGAL_triangulation_precondition(!this->is_infinite(v));
+  CGAL_triangulation_precondition(!is_infinite(v));
   Vertex_handle w = move_if_no_collision(v,p);
   if(w != v) {
     remove(v);
@@ -716,10 +718,10 @@ locate_in_all(const Point& p,
   Vertex_handle nearest;
   int level  = Triangulation_hierarchy_2__maxlevel;
   typename Geom_traits::Compare_distance_2
-    closer = this->geom_traits().compare_distance_2_object();
+    closer = geom_traits().compare_distance_2_object();
 
   typename Geom_traits::Construct_point_2
-    construct_point = this->geom_traits().construct_point_2_object();
+    construct_point = geom_traits().construct_point_2_object();
   
   // find the highest level with enough vertices that is at the same time 2D
   while ( (hierarchy[--level]->number_of_vertices() 
