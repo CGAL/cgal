@@ -298,15 +298,15 @@ class Rational_time
     CORE::Expr assemble() const
     {
       return CORE::Expr( to_BigFloat(mN) ) / (
-        CORE::Expr(to_BigFloat(mD0)) * sqrt(to_BigFloat(mR0)) +
-        CORE::Expr(to_BigFloat(mD1)) * sqrt(to_BigFloat(mR1)) +
-        CORE::Expr(to_BigFloat(mD2)) * sqrt(to_BigFloat(mR2)) );
+        CORE::Expr(to_BigFloat(mD0)) * CORE::sqrt(CORE::Expr(to_BigFloat(mR0))) +
+        CORE::Expr(to_BigFloat(mD1)) * CORE::sqrt(CORE::Expr(to_BigFloat(mR1))) +
+        CORE::Expr(to_BigFloat(mD2)) * CORE::sqrt(CORE::Expr(to_BigFloat(mR2))) );
     }
 
     Comparison_result
     compare(const Rational_time<NT>& other) const
     {
-      return CGAL::sign( assemble() - other.assemble() );
+      return CGAL::compare( assemble(), other.assemble() );
     }
 
     Sign
@@ -340,7 +340,7 @@ class Rational_time< NT, true >
 
     CGAL::Quotient<NT> to_quotient() const { return CGAL::Quotient<NT>(n(),d()) ; }
 
-    NT to_nt() const { return mN / d() ; }
+    NT to_nt() const { return mN / mD ; }
 
     friend std::ostream& operator << ( std::ostream& os, Rational_time<NT> const& rat )
     {
@@ -418,16 +418,16 @@ class Rational_time_4
     CORE::Expr assemble() const
     {
       return CORE::Expr( to_BigFloat(mN) ) / (
-        CORE::Expr(to_BigFloat(mD0)) * sqrt(to_BigFloat(mR0)) +
-        CORE::Expr(to_BigFloat(mD1)) * sqrt(to_BigFloat(mR1)) +
-        CORE::Expr(to_BigFloat(mD2)) * sqrt(to_BigFloat(mR2)) +
-        CORE::Expr(to_BigFloat(mD3)) * sqrt(to_BigFloat(mR3)) );
+        CORE::Expr(to_BigFloat(mD0)) * CORE::sqrt(CORE::Expr(to_BigFloat(mR0))) +
+        CORE::Expr(to_BigFloat(mD1)) * CORE::sqrt(CORE::Expr(to_BigFloat(mR1))) +
+        CORE::Expr(to_BigFloat(mD2)) * CORE::sqrt(CORE::Expr(to_BigFloat(mR2))) +
+        CORE::Expr(to_BigFloat(mD3)) * CORE::sqrt(CORE::Expr(to_BigFloat(mR3))) );
     }
 
     Comparison_result
     compare(const Rational_time<NT>& other) const
     {
-      return CGAL::sign( assemble() - other.assemble() );
+      return CGAL::compare( assemble(), other.assemble() );
     }
 
     Sign
@@ -461,7 +461,7 @@ class Rational_time_4< NT, true >
 
     CGAL::Quotient<NT> to_quotient() const { return CGAL::Quotient<NT>(n(),d()) ; }
 
-    NT to_nt() const { CGAL_assertion(d()!=0); return mN / d() ; }
+    NT to_nt() const { CGAL_assertion(mD!=0); return mN / mD ; }
 
     friend std::ostream& operator << ( std::ostream& os, Rational_time_4<NT> const& rat )
     {

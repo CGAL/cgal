@@ -293,6 +293,7 @@ Uncertain<bool> is_edge_facing_pointC2 ( optional< Point_2<K> > const& aP, Segme
 template<class K>
 inline Uncertain<bool> is_edge_facing_offset_lines_isecC2 ( intrusive_ptr< Trisegment_2<K> > const& tri, Segment_2<K> const& aEdge )
 {
+  // TODO: not a predicate??
   return is_edge_facing_pointC2(construct_offset_lines_isecC2(tri),aEdge);
 }
 
