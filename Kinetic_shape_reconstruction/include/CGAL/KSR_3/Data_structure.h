@@ -193,10 +193,8 @@ public:
   bool has_meta_line (KSR::size_t intersection_line_idx) const
   { return has_meta_line (intersection_line(intersection_line_idx)); }
 
-  template <typename PointRange>
-  Polygon& add_polygon (const PointRange& polygon, KSR::size_t input_idx = KSR::no_element())
+  KSR::size_t add_support_plane (const Support_plane& support_plane)
   {
-    Support_plane new_support_plane (polygon);
     KSR::size_t support_plane_idx = KSR::no_element();
     for (KSR::size_t i = 0; i < number_of_support_planes(); ++ i)
       if (new_support_plane == support_plane(i))
@@ -210,6 +208,23 @@ public:
       support_plane_idx = number_of_support_planes();
       m_support_planes.push_back (new_support_plane);
     }
+
+    if (number_of_meta_lines() >= 12) // Intersect planes with bbox... only after the 12 lines of bbox are here!
+    {
+      for (KSR::size_t i = 0; i < 12; ++ i)
+      {
+        
+
+      }
+    }
+      
+    return support_plane_idx;
+  }
+
+  template <typename PointRange>
+  Polygon& add_polygon (const PointRange& polygon, KSR::size_t input_idx = KSR::no_element())
+  {
+    KSR::size_t support_plane_idx = add_support_plane (Support_plane (polygon));
 
     KSR::size_t polygon_idx = number_of_polygons();
     m_polygons.push_back (Polygon (input_idx, support_plane_idx));
@@ -293,6 +308,23 @@ public:
     vertex(vertex_idx).meta_vertex_idx() = meta_vertex_idx;
   }
 
+  void add_meta_vertex_and_attach (const Point_3& point,
+                                   KSR::size_t support_plane_idx_0,
+                                   KSR::size_t support_plane_idx_1,
+                                   KSR::size_t support_plane_idx_2,
+                                   KSR::size_t vertex_idx_0,
+                                   KSR::size_t vertex_idx_1,
+                                   KSR::size_t vertex_idx_2)
+  {
+    KSR::size_t meta_vertex_idx = add_meta_vertex
+      (point, support_plane_idx_0, support_plane_idx_1, support_plane_idx_2);
+    
+    attach_vertex_to_meta_vertex (vertex_idx_0, meta_vertex_idx);
+    attach_vertex_to_meta_vertex (vertex_idx_1, meta_vertex_idx);
+    attach_vertex_to_meta_vertex (vertex_idx_2, meta_vertex_idx);
+  }
+
+
   KSR::size_t add_meta_line (const Line_3& line, KSR::size_t support_plane_idx_0, KSR::size_t support_plane_idx_1)
   {
     KSR::size_t meta_line_idx = number_of_meta_lines();
@@ -308,6 +340,19 @@ public:
     KSR::size_t intersection_line_idx = number_of_intersection_lines();
     m_intersection_lines.push_back (Intersection_line (line, support_plane_idx));
     return intersection_line_idx;
+  }
+
+  void add_meta_line_and_attach (const Line_3& line, KSR::size_t support_plane_idx_0, KSR::size_t support_plane_idx_1)
+  {
+    KSR::size_t meta_line_idx = add_meta_line (line, support_plane_idx_0, support_plane_idx_1);
+    KSR::size_t intersection_line_idx_0
+      = add_intersection_line (support_plane_idx_0, support_plane(support_plane_idx_0).to_2d(line));
+    KSR::size_t intersection_line_idx_1
+      = add_intersection_line (support_plane_idx_1, support_plane(support_plane_idx_1).to_2d(line));
+    
+    attach_intersection_line_to_meta_line (intersection_line_idx_0, meta_line_idx);
+    attach_intersection_line_to_meta_line (intersection_line_idx_1, meta_line_idx);
+
   }
 
   void attach_intersection_line_to_meta_line (KSR::size_t intersection_line_idx, KSR::size_t meta_line_idx)

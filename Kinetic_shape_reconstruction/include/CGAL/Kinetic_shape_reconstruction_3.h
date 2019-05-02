@@ -142,8 +142,9 @@ public:
 
   template <typename VertexOutputIterator, typename FacetOutputIterator>
   void output_partition_facets_to_polygon_soup (VertexOutputIterator vertices,
-                                                FacetOutputIterator facets) const
+                                                FacetOutputIterator facets) //const
   {
+    m_data.update_positions(0.2); 
     for (KSR::size_t i = 0; i < m_data.number_of_vertices(); ++ i)
       *(vertices ++) = m_data.point_of_vertex(i);
     
@@ -218,47 +219,30 @@ private:
     // plane 5       vertex[20]      vertex[21]      vertex[22]      vertex[23]
     facet_points = { bbox_points[0], bbox_points[4], bbox_points[6], bbox_points[2] };
     m_data.add_polygon (facet_points);
+
+    //                               Line                                                       Planes
+    m_data.add_meta_line_and_attach (Line_3 (bbox_points[0], bbox_points[1]), 0, 2);
+    m_data.add_meta_line_and_attach (Line_3 (bbox_points[1], bbox_points[3]), 0, 4);
+    m_data.add_meta_line_and_attach (Line_3 (bbox_points[3], bbox_points[2]), 0, 3);
+    m_data.add_meta_line_and_attach (Line_3 (bbox_points[2], bbox_points[0]), 0, 5);
+    m_data.add_meta_line_and_attach (Line_3 (bbox_points[4], bbox_points[5]), 1, 2);
+    m_data.add_meta_line_and_attach (Line_3 (bbox_points[5], bbox_points[7]), 1, 4);
+    m_data.add_meta_line_and_attach (Line_3 (bbox_points[7], bbox_points[6]), 1, 3);
+    m_data.add_meta_line_and_attach (Line_3 (bbox_points[6], bbox_points[4]), 1, 5);
+    m_data.add_meta_line_and_attach (Line_3 (bbox_points[1], bbox_points[5]), 2, 4);
+    m_data.add_meta_line_and_attach (Line_3 (bbox_points[4], bbox_points[0]), 2, 5);
+    m_data.add_meta_line_and_attach (Line_3 (bbox_points[3], bbox_points[7]), 3, 4);
+    m_data.add_meta_line_and_attach (Line_3 (bbox_points[6], bbox_points[2]), 3, 5);
     
-    m_data.add_meta_vertex (bbox_points[0], 0, 2, 5);
-    m_data.attach_vertex_to_meta_vertex (0, 0);
-    m_data.attach_vertex_to_meta_vertex (8, 0);
-    m_data.attach_vertex_to_meta_vertex (20, 0);
-    
-    m_data.add_meta_vertex (bbox_points[1], 0, 2, 4);
-    m_data.attach_vertex_to_meta_vertex (1, 1);
-    m_data.attach_vertex_to_meta_vertex (9, 1);
-    m_data.attach_vertex_to_meta_vertex (16, 1);
-
-    m_data.add_meta_vertex (bbox_points[2], 0, 3, 5);
-    m_data.attach_vertex_to_meta_vertex (3, 2);
-    m_data.attach_vertex_to_meta_vertex (12, 2);
-    m_data.attach_vertex_to_meta_vertex (23, 2);
-    
-    m_data.add_meta_vertex (bbox_points[3], 0, 3, 4);
-    m_data.attach_vertex_to_meta_vertex (2, 3);
-    m_data.attach_vertex_to_meta_vertex (13, 3);
-    m_data.attach_vertex_to_meta_vertex (19, 3);
-
-    m_data.add_meta_vertex (bbox_points[4], 1, 2, 5);
-    m_data.attach_vertex_to_meta_vertex (4, 4);
-    m_data.attach_vertex_to_meta_vertex (11, 4);
-    m_data.attach_vertex_to_meta_vertex (21, 4);
-
-    m_data.add_meta_vertex (bbox_points[5], 1, 2, 4);
-    m_data.attach_vertex_to_meta_vertex (5, 5);
-    m_data.attach_vertex_to_meta_vertex (10, 5);
-    m_data.attach_vertex_to_meta_vertex (17, 5);
-
-    m_data.add_meta_vertex (bbox_points[6], 1, 3, 5);
-    m_data.attach_vertex_to_meta_vertex (7, 6);
-    m_data.attach_vertex_to_meta_vertex (15, 6);
-    m_data.attach_vertex_to_meta_vertex (22, 6);
-    
-    m_data.add_meta_vertex (bbox_points[7], 1, 3, 4);
-    m_data.attach_vertex_to_meta_vertex (6, 7);
-    m_data.attach_vertex_to_meta_vertex (14, 7);
-    m_data.attach_vertex_to_meta_vertex (18, 7);
-
+    //                                 Point           Planes   Vertices
+    m_data.add_meta_vertex_and_attach (bbox_points[0], 0, 2, 5, 0, 8,  20);
+    m_data.add_meta_vertex_and_attach (bbox_points[1], 0, 2, 4, 1, 9,  16);
+    m_data.add_meta_vertex_and_attach (bbox_points[2], 0, 3, 5, 3, 12, 23);
+    m_data.add_meta_vertex_and_attach (bbox_points[3], 0, 3, 4, 2, 13, 19);
+    m_data.add_meta_vertex_and_attach (bbox_points[4], 1, 2, 5, 4, 11, 21);
+    m_data.add_meta_vertex_and_attach (bbox_points[5], 1, 2, 4, 5, 10, 17);
+    m_data.add_meta_vertex_and_attach (bbox_points[6], 1, 3, 5, 7, 15, 22);
+    m_data.add_meta_vertex_and_attach (bbox_points[7], 1, 3, 4, 6, 14, 18);
   }
 
   struct Box_with_idx : public CGAL::Box_intersection_d::Box_d<FT,3>
