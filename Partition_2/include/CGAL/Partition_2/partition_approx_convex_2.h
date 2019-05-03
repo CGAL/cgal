@@ -200,8 +200,8 @@ OutputIterator partition_approx_convex_2(InputIterator first,
                 Segment_2 edge = triangles.segment((*e_circ).first, (*e_circ).second);
                 Circulator source = edge.source();
                 Circulator target = edge.target();
-                Circulator before_s = source; before_s--;
-                Circulator after_s = source; after_s++;
+                Circulator before_s = edge.source(); before_s--;
+                Circulator after_s = edge.source(); after_s++;
 #ifdef CGAL_PARTITION_APPROX_CONVEX_DEBUG
                 std::cout << "considering " << *source << " " << *target 
                           << "...";
