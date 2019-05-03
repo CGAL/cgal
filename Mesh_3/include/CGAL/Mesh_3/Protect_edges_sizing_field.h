@@ -1197,6 +1197,7 @@ insert_balls(const Vertex_handle& vp,
                            dim,
                            index,
                            out);
+      if(forced_stop()) return out;
       const Vertex_handle new_vertex = pair.first;
       out = pair.second;
       const FT sn = get_radius(new_vertex);
@@ -1835,6 +1836,7 @@ walk_along_edge(const Vertex_handle& start, const Vertex_handle& next,
   // and current intersects enough
   while ( ! is_sampling_dense_enough(previous, current, curve_index, orientation) )
   {
+    if(forced_stop()) return out;
     *out++ = current;
 
     // Don't go through corners
@@ -1943,6 +1945,7 @@ repopulate(InputIterator begin, InputIterator last,
 #endif // CGAL_MESH_3_PROTECTION_DEBUG
     *out++ = *current;
     c3t3_.triangulation().remove(*current);
+    if(forced_stop()) return out;
   }
 
   // Repopulate edge

@@ -197,7 +197,13 @@ template < typename C3T3, typename MeshDomain, typename MeshCriteria>
 void init_c3t3_with_features(C3T3& c3t3,
                              const MeshDomain& domain,
                              const MeshCriteria& criteria,
-                             bool nonlinear = false)
+                             bool nonlinear = false,
+                             std::size_t maximal_number_of_vertices = 0,
+                             Mesh_error_code* pointer_to_error_code = 0
+#ifndef CGAL_NO_ATOMIC
+                             , CGAL::cpp11::atomic<bool>* pointer_to_stop = 0
+#endif
+                             )
 {
   typedef typename MeshCriteria::Edge_criteria Edge_criteria;
   typedef Edge_criteria_sizing_field_wrapper<Edge_criteria> Sizing_field;
@@ -206,7 +212,12 @@ void init_c3t3_with_features(C3T3& c3t3,
     protect_edges(c3t3,
                   domain,
                   Sizing_field(criteria.edge_criteria_object()),
-                  typename Edge_criteria::FT()
+                  typename Edge_criteria::FT(),
+                  maximal_number_of_vertices,
+                  pointer_to_error_code
+#ifndef CGAL_NO_ATOMIC
+                  , pointer_to_stop
+#endif
                   );
   protect_edges.set_nonlinear_growth_of_balls(nonlinear);
 
@@ -234,7 +245,13 @@ struct C3t3_initializer_base
   {
     return Mesh_3::internal::init_c3t3_with_features
       (c3t3, domain, criteria,
-       mesh_options.nonlinear_growth_of_balls);
+       mesh_options.nonlinear_growth_of_balls,
+       mesh_options.maximal_number_of_vertices,
+       mesh_options.pointer_to_error_code
+#ifndef CGAL_NO_ATOMIC
+       , mesh_options.pointer_to_stop_atomic_boolean
+#endif
+       );
   }
 };
 
