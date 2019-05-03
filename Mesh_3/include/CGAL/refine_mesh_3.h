@@ -209,7 +209,10 @@ struct Mesh_3_options {
 #else
       typedef bool* Pointer_to_stop_atomic_boolean_t;
 #endif
-  Mesh_3_options()
+  Mesh_3_options(bool nonlinear = false)
+    // This parameter `nonlinear` adds a compatibility with previous
+    // API of the constructor of `C3t3_initializer`.
+    // -- Laurent Rineau, 2019/05/03
     : dump_after_init_prefix()
     , dump_after_refine_surface_prefix()
     , dump_after_refine_prefix()
@@ -217,7 +220,7 @@ struct Mesh_3_options {
     , dump_after_perturb_prefix()
     , dump_after_exude_prefix()
     , number_of_initial_points(-1)
-    , nonlinear_growth_of_balls(false)
+    , nonlinear_growth_of_balls(nonlinear)
     , maximal_number_of_vertices(0)
     , pointer_to_error_code(0)
 #ifndef CGAL_NO_ATOMIC
