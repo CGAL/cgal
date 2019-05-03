@@ -55,6 +55,12 @@ public:
   const KSR::Idx_vector& support_planes_idx() const { return m_support_planes_idx; }
   KSR::Idx_vector& support_planes_idx() { return m_support_planes_idx; }
 
+  bool has_support_plane (KSR::size_t support_plane_idx) const
+  {
+    return (std::find (m_support_planes_idx.begin(), m_support_planes_idx.end(), support_plane_idx)
+            != m_support_planes_idx.end());
+  }
+
   const KSR::Idx_vector& meta_vertices_idx() const { return m_meta_vertices_idx; }
   KSR::Idx_vector& meta_vertices_idx() { return m_meta_vertices_idx; }
 

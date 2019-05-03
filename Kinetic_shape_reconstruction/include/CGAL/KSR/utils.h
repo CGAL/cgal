@@ -132,8 +132,8 @@ template <typename ResultType, typename Type1, typename Type2>
 inline ResultType intersection_2 (const Type1& t1, const Type2& t2)
 {
   ResultType out;
-  bool okay = intersection_2 (t1, t2, out);
-  CGAL_assertion_msg (okay, "Intersection not found");
+  bool intersection_found = intersection_2 (t1, t2, out);
+  CGAL_assertion_msg (intersection_found, "Intersection not found");
   return out;
 }
   
@@ -159,9 +159,43 @@ template <typename ResultType, typename Type1, typename Type2>
 inline ResultType intersection_3 (const Type1& t1, const Type2& t2)
 {
   ResultType out;
-  bool okay = intersection_3 (t1, t2, out);
-  CGAL_assertion_msg (okay, "Intersection not found");
+  bool intersection_found = intersection_3 (t1, t2, out);
+  CGAL_assertion_msg (intersection_found, "Intersection not found");
   return out;
+}
+
+template <typename Point_3>
+bool do_intersect (const vector<Point_3>& a, const vector<Point_3>& b)
+{
+  typedef typename Kernel_traits<Point_3>::Kernel::Triangle_3 Triangle_3;
+  
+  for (KSR::size_t i = 1; i < a.size() - 1; ++ i)
+  {
+    Triangle_3 ta (a[0], a[i], a[i+1]);
+    for (KSR::size_t j = 1; j < b.size() - 1; ++ j)
+    {
+      Triangle_3 tb (b[0], b[j], b[j+1]);
+      if (CGAL::do_intersect (ta, tb))
+        return true;
+    }
+  }
+  
+  return false;
+}
+
+template <typename Line_3, typename Point_3>
+inline bool intersection_3 (const Line_3& seg, const vector<Point_3>& polygon, Point_3& result)
+{
+  typedef typename Kernel_traits<Point_3>::Kernel::Triangle_3 Triangle_3;
+
+  for (KSR::size_t i = 1; i < polygon.size() - 1; ++ i)
+  {
+    Triangle_3 triangle (polygon[0], polygon[i], polygon[i+1]);
+    if (intersection_3 (seg, triangle, result))
+      return true;
+  }
+  
+  return false;
 }
 
 template <typename Point>

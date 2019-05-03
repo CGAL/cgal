@@ -50,6 +50,7 @@ private:
   Plane_3 m_plane;
 
   KSR::Idx_vector m_polygons_idx;
+  KSR::Idx_vector m_intersection_lines_idx;
   KSR::Idx_vector m_meta_vertices_idx;
 
 public:
@@ -91,8 +92,29 @@ public:
   const KSR::Idx_vector& polygons_idx() const { return m_polygons_idx; }
   KSR::Idx_vector& polygons_idx() { return m_polygons_idx; }
 
+  bool has_polygon (KSR::size_t polygon_idx) const
+  {
+    return (std::find (m_polygons_idx.begin(), m_polygons_idx.end(), polygon_idx)
+            != m_polygons_idx.end());
+  }
+
+  const KSR::Idx_vector& intersection_lines_idx() const { return m_intersection_lines_idx; }
+  KSR::Idx_vector& intersection_lines_idx() { return m_intersection_lines_idx; }
+
+  bool has_intersection_line (KSR::size_t intersection_line_idx) const
+  {
+    return (std::find (m_intersection_lines_idx.begin(), m_intersection_lines_idx.end(), intersection_line_idx)
+            != m_intersection_lines_idx.end());
+  }
+
   const KSR::Idx_vector& meta_vertices_idx() const { return m_meta_vertices_idx; }
   KSR::Idx_vector& meta_vertices_idx() { return m_meta_vertices_idx; }
+
+  bool has_meta_vertex (KSR::size_t meta_vertex_idx) const
+  {
+    return (std::find (m_meta_vertices_idx.begin(), m_meta_vertices_idx.end(), meta_vertex_idx)
+            != m_meta_vertices_idx.end());
+  }
 
   Point_2 to_2d (const Point_3& point) const
   {

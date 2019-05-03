@@ -51,6 +51,12 @@ public:
   const KSR::Idx_vector& vertices_idx() const { return m_vertices_idx; }
   KSR::Idx_vector& vertices_idx() { return m_vertices_idx; }
   
+  bool has_vertex (KSR::size_t vertex_idx) const
+  {
+    return (std::find (m_vertices_idx.begin(), m_vertices_idx.end(), vertex_idx)
+            != m_vertices_idx.end());
+  }
+
   const KSR::size_t& support_plane_idx() const { return m_support_plane_idx; }
 };
 

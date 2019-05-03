@@ -105,21 +105,43 @@ void dump_polygons (const DS& data, const std::string& tag = std::string())
   Uchar_map green = mesh.template add_property_map<typename Mesh::Face_index, unsigned char>("green", 0).first;
   Uchar_map blue = mesh.template add_property_map<typename Mesh::Face_index, unsigned char>("blue", 0).first;
   
+  Mesh bbox_mesh;
+  Uchar_map bbox_red = bbox_mesh.template add_property_map<typename Mesh::Face_index, unsigned char>("red", 0).first;
+  Uchar_map bbox_green = bbox_mesh.template add_property_map<typename Mesh::Face_index, unsigned char>("green", 0).first;
+  Uchar_map bbox_blue = bbox_mesh.template add_property_map<typename Mesh::Face_index, unsigned char>("blue", 0).first;
+  
   std::vector<typename Mesh::Vertex_index> vertices;
-  for (KSR::size_t i = 6; i < data.number_of_polygons(); ++ i)
+  for (KSR::size_t i = 0; i < data.number_of_polygons(); ++ i)
   {
     vertices.clear();
-    for (KSR::size_t vertex_idx : data.polygon(i).vertices_idx())
-      vertices.push_back (mesh.add_vertex (data.point_of_vertex(vertex_idx)));
-    typename Mesh::Face_index idx = mesh.add_face(vertices);
-    std::tie (red[idx], green[idx], blue[idx])
+
+    if (data.is_bbox_polygon(i))
+    {
+      for (KSR::size_t vertex_idx : data.polygon(i).vertices_idx())
+        vertices.push_back (bbox_mesh.add_vertex (data.point_of_vertex(vertex_idx)));
+      typename Mesh::Face_index idx = bbox_mesh.add_face(vertices);
+      std::tie (bbox_red[idx], bbox_green[idx], bbox_blue[idx])
       = get_idx_color (i);
+    }
+    else
+    {
+      for (KSR::size_t vertex_idx : data.polygon(i).vertices_idx())
+        vertices.push_back (mesh.add_vertex (data.point_of_vertex(vertex_idx)));
+      typename Mesh::Face_index idx = mesh.add_face(vertices);
+      std::tie (red[idx], green[idx], blue[idx])
+        = get_idx_color (i);
+    }
   }
 
   std::string filename = (tag != std::string() ? tag + "_" : "") + "polygons.ply";
   std::ofstream out (filename);
   CGAL::set_binary_mode (out);
   CGAL::write_ply(out, mesh);
+  
+  std::string bbox_filename = (tag != std::string() ? tag + "_" : "") + "bbox_polygons.ply";
+  std::ofstream bbox_out (bbox_filename);
+  CGAL::set_binary_mode (bbox_out);
+  CGAL::write_ply(bbox_out, bbox_mesh);
 
 }
 

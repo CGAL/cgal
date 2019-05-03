@@ -52,6 +52,10 @@ public:
   const std::set<KSR::size_t>& support_planes_idx() const { return m_support_planes_idx; }
   std::set<KSR::size_t>& support_planes_idx() { return m_support_planes_idx; }
 
+  bool has_support_plane (KSR::size_t support_plane_idx) const
+  {
+    return (m_support_planes_idx.find (support_plane_idx) != m_support_planes_idx.end());
+  }
 };
 
 
