@@ -384,6 +384,7 @@ BOOST_PARAMETER_FUNCTION((internal::Mesh_3_options), mesh_3_options, tag,
                           (dump_after_exude_prefix_, (std::string), "" )
                           (number_of_initial_points_, (int), -1)
 			  (maximal_number_of_vertices_, (std::size_t), 0)
+                          (nonlinear_growth_of_balls_, (bool), false)
 			  (pointer_to_error_code_, (Mesh_error_code*), ((Mesh_error_code*)0))
 			  (pointer_to_stop_atomic_boolean_, (internal::Mesh_3_options::Pointer_to_stop_atomic_boolean_t), ((internal::Mesh_3_options::Pointer_to_stop_atomic_boolean_t)0))
                           )
@@ -398,6 +399,7 @@ BOOST_PARAMETER_FUNCTION((internal::Mesh_3_options), mesh_3_options, tag,
   options.dump_after_perturb_prefix=dump_after_perturb_prefix_;
   options.dump_after_exude_prefix=dump_after_exude_prefix_;
   options.number_of_initial_points=number_of_initial_points_;
+  options.nonlinear_growth_of_balls = nonlinear_growth_of_balls_;
   options.maximal_number_of_vertices=maximal_number_of_vertices_;
   options.pointer_to_error_code=pointer_to_error_code_;
 #ifndef CGAL_NO_ATOMIC
