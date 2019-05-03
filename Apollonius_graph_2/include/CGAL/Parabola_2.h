@@ -65,7 +65,7 @@ protected:
   }
   
   inline static
-  FT divide(const FT& x, const FT& y, Field_with_sqrt_tag) {
+  FT divide(const FT& x, const FT& y, Field_tag) {
     return x / y;
   }
   
