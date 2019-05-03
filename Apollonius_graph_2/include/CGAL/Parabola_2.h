@@ -60,9 +60,20 @@ protected:
   //  }
 
   inline static
-  FT divide(const FT& x, const FT& y) {
-      return CGAL::integral_division(x,y);
+  FT divide(const FT& x, const FT& y, Integral_domain_without_division_tag) {
+    return FT(CGAL::to_double(x) / CGAL::to_double(y));
   }
+  
+  inline static
+  FT divide(const FT& x, const FT& y, Field_with_sqrt_tag) {
+    return x / y;
+  }
+  
+  inline static
+  FT divide(const FT& x, const FT& y) {
+    return divide(x,y, AST::Algebraic_category());
+  }
+  
   inline static
   FT sqrt(const FT& x, Integral_domain_without_division_tag) {
     return CGAL::sqrt(CGAL::to_double(x));
@@ -97,7 +108,8 @@ protected:
   {
     return sqrt( distance2(p1, p2) );
   }
-
+  
+ 
   inline static
   FT distance(const Point_2& p, const Line_2& l)
   {
@@ -105,6 +117,8 @@ protected:
 		   sqrt( CGAL::square(l.a()) + CGAL::square(l.b()) ) );
   }
 
+  
+  
   // instance stuff
   Point_2 c;
   Line_2 l;

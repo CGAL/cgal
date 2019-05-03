@@ -74,7 +74,6 @@ private:
       if(p != q){
         wh = svd.insert(*it);
         svd.insert(vh,wh);
-        std::cout << "s " << p << " " << q << std::endl;
         vh = wh;
         p = q;
       } else {
@@ -200,7 +199,6 @@ MainWindow::processInput(CGAL::Object o)
   if(CGAL::assign(points, o)){
     if(points.size() == 1) {
       svd.insert(points.front());
-      std::cout << "p " << points.front() << std::endl;
     }
     else {
       /*
