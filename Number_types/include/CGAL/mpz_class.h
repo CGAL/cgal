@@ -29,6 +29,7 @@
 #include <CGAL/number_type_basic.h>
 #include <CGAL/gmpxx_coercion_traits.h>
 #include <CGAL/Modular_traits.h>
+#include <CGAL/Residue.h>
 
 
 // This file gathers the necessary adaptors so that the following
