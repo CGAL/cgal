@@ -63,7 +63,7 @@ public:
   
   
   bool canSave(const CGAL::Three::Scene_item*){return false;}
-  bool save(const CGAL::Three::Scene_item*, QFileInfo fileinfo){
+  bool save(const CGAL::Three::Scene_item*, QFileInfo){
     return false;
   }
   

@@ -78,7 +78,7 @@ public:
   //! list of available loaders when loading a file, which means it will be the 
   //! first in the list.
   //! @param name is the extension without the dot (e.g. "off" for a .off file)
-  virtual bool isDefaultLoader(const QString& name) const { return false; }
+  virtual bool isDefaultLoader(const QString& name) const { Q_UNUSED(name); return false; }
 };
 }
 }

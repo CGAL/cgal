@@ -16,7 +16,7 @@ inline QColor generate_color(double h, double s_min = 0.35)
 template <typename Output_color_iterator>
 Output_color_iterator
 compute_color_map(QColor base_color,
-                  unsigned nb_of_colors,
+                  std::size_t nb_of_colors,
                   Output_color_iterator out)
 {
   qreal hue = base_color.hueF();
