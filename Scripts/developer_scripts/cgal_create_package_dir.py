@@ -83,7 +83,7 @@ r"""namespace CGAL {
 \anchor Chapter_PACKAGE_NAME
 \anchor chaptermine
 \cgalAutoToc
-\author AUTHOR1, AUTHOR2
+\author AUTHOR1, AUTHOR2, and AUTHOR3
 
 This chapter describes the ...
 
@@ -96,6 +96,12 @@ Section on definitions here ...
 \subsection myFirstExample First Example
 
 The following example shows ...
+
+\cgalExample{ }
+
+\cgalFigureBegin{figPck,bench.png}
+Left: ...
+\cgalFigureEnd
 
 */
 } /* namespace CGAL */
@@ -132,13 +138,11 @@ if re.match("^[A-Za-z_][A-Za-z0-9_]*$", packagename):
     os.makedirs(expath)
     os.mkdir(os.path.join(expath, 'data'))
     os.mkdir(os.path.join(expath, 'include'))
-    open(os.path.join(expath, 'README'), 'w').close()
 
     demopath = os.path.join(packagepath, 'demo', packagename)
     os.makedirs(demopath)
     os.mkdir(os.path.join(demopath, 'data'))
     os.mkdir(os.path.join(demopath, 'include'))
-    open(os.path.join(demopath, 'README'), 'w').close()
 
     benpath = os.path.join(packagepath, 'benchmark', packagename)
     os.makedirs(benpath)
