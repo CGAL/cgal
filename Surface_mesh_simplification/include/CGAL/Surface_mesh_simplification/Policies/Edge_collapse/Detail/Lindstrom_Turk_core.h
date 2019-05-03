@@ -22,180 +22,740 @@
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
-
-#include <vector>
-
 #include <CGAL/Cartesian_converter.h>
 
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_params.h>
 
-namespace CGAL {
+#include <vector>
 
-//
-// This should be in 
+// This should be in
 //
 // Implementation of the collapsing cost and placement strategy from:
 //
 //  "Fast and Memory Efficient Polygonal Symplification"
 //  Peter Lindstrom, Greg Turk
-//
 
-namespace Surface_mesh_simplification
-{
+namespace CGAL {
+namespace Surface_mesh_simplification {
 
-  template<class TM_, class Profile_>
+template<class TM_, class Profile_>
 class LindstromTurkCore
 {
 public:
-    
-  typedef TM_    TM ;
-  typedef Profile_ Profile ;
-  
-  typedef boost::graph_traits<TM> GraphTraits ;
-  
-  typedef typename GraphTraits::vertex_descriptor vertex_descriptor ;
-  typedef typename GraphTraits::halfedge_descriptor   halfedge_descriptor ;
-  
-  typedef LindstromTurk_params Params ;
-  
-  typedef typename Profile::Point Point ;
+  typedef TM_                                                            TM;
+  typedef Profile_                                                       Profile;
 
-  typedef typename Profile::VertexPointMap Vertex_point_pmap;
+  typedef boost::graph_traits<TM>                                        GraphTraits;
+
+  typedef typename GraphTraits::vertex_descriptor                        vertex_descriptor;
+  typedef typename GraphTraits::halfedge_descriptor                      halfedge_descriptor;
+
+  typedef LindstromTurk_params                                           Params;
+
+  typedef typename Profile::Point                                        Point;
+  typedef typename Profile::VertexPointMap                               Vertex_point_pmap;
   typedef typename boost::property_traits<Vertex_point_pmap>::value_type TM_Point;
-  
-  typedef typename Kernel_traits<TM_Point>::Kernel TM_Kernel ;
-  
-  typedef typename Kernel_traits<Point>::Kernel Kernel;
-  typedef typename Kernel::Vector_3 Vector ;
-  typedef typename Kernel::FT       FT ;
- 
-  typedef optional<FT>     Optional_FT ;
-  typedef optional<Point>  Optional_point ;
-  typedef optional<Vector> Optional_vector ;
-  
-  typedef MatrixC33<Kernel> Matrix ;
-  
-  typedef typename Profile::Triangle                 Triangle ;
-  typedef typename Profile::vertex_descriptor_vector vertex_descriptor_vector ;
-  
-  typedef typename Profile::Triangle_vector       ::const_iterator const_triangle_iterator ;
-  typedef typename Profile::halfedge_descriptor_vector::const_iterator const_border_edge_iterator ;
-  
-public:
-  
-  LindstromTurkCore( Params const& aParams, Profile const& aProfile ) ;
-    
-  Optional_point compute_placement() ;
-  Optional_FT    compute_cost( Optional_point const& p ) ;
-  
-private :
 
+  typedef typename Kernel_traits<TM_Point>::Kernel                       TM_Kernel;
+
+  typedef typename Kernel_traits<Point>::Kernel                          Kernel;
+  typedef typename Kernel::Vector_3                                      Vector;
+  typedef typename Kernel::FT                                            FT;
+
+  typedef optional<FT>                                                   Optional_FT;
+  typedef optional<Point>                                                Optional_point;
+  typedef optional<Vector>                                               Optional_vector;
+
+  typedef MatrixC33<Kernel>                                              Matrix;
+
+  typedef typename Profile::Triangle                                     Triangle;
+  typedef typename Profile::vertex_descriptor_vector                     vertex_descriptor_vector;
+
+  typedef typename Profile::Triangle_vector::const_iterator              const_triangle_iterator;
+  typedef typename Profile::halfedge_descriptor_vector::const_iterator   const_border_edge_iterator;
+
+public:
+  LindstromTurkCore(Params const& aParams, const Profile& aProfile);
+
+  Optional_point compute_placement();
+  Optional_FT compute_cost(const Optional_point& p);
+
+private :
   struct Triangle_data
   {
-    Triangle_data( Vector const& aNormalV, FT const& aNormalL ) : NormalV(aNormalV), NormalL(aNormalL) {}
-    
-    Vector NormalV ;
-    FT     NormalL ;
-  } ;
+    Triangle_data(const Vector& aNormalV, const FT& aNormalL)
+      : NormalV(aNormalV), NormalL(aNormalL)
+    {}
+
+    Vector NormalV;
+    FT NormalL;
+  };
+
   struct Boundary_data
   {
-    Boundary_data ( Point s_, Point t_, Vector const& v_, Vector const& n_ ) : s(s_), t(t_), v(v_), n(n_) {}
+    Boundary_data(Point s_, Point t_, const Vector& v_, const Vector& n_)
+      : s(s_), t(t_), v(v_), n(n_) {}
 
-    Point  s, t ;      
-    Vector v, n ;
-  } ;
-  typedef std::vector<Triangle_data> Triangle_data_vector ;
-  typedef std::vector<Boundary_data> Boundary_data_vector ;
-  
+    Point s, t;
+    Vector v, n;
+  };
+
+  typedef std::vector<Triangle_data>                                       Triangle_data_vector;
+  typedef std::vector<Boundary_data>                                       Boundary_data_vector;
+
 private :
-    
-  void Extract_triangle_data();
-  void Extract_boundary_data();
-  
-  void Add_boundary_preservation_constraints( Boundary_data_vector const& aBdry ) ;
-  void Add_volume_preservation_constraints( Triangle_data_vector const& aTriangles );
-  void Add_boundary_and_volume_optimization_constraints( Boundary_data_vector const& aBdry, Triangle_data_vector const& aTriangles ) ;
-  void Add_shape_optimization_constraints( vertex_descriptor_vector const& aLink ) ;
+  void extract_triangle_data();
+  void extract_boundary_data();
 
-  FT Compute_boundary_cost( Vector const& v, Boundary_data_vector const& aBdry ) ;
-  FT Compute_volume_cost  ( Vector const& v, Triangle_data_vector const& aTriangles ) ;
-  FT Compute_shape_cost   ( Point  const& p, vertex_descriptor_vector const& aLink ) ;
+  void add_boundary_preservation_constraints(const Boundary_data_vector& aBdry);
+  void add_volume_preservation_constraints(const Triangle_data_vector& aTriangles);
+  void add_boundary_and_volume_optimization_constraints(const Boundary_data_vector& aBdry, const Triangle_data_vector& aTriangles);
+  void add_shape_optimization_constraints(const vertex_descriptor_vector& aLink);
 
-  Point get_point ( vertex_descriptor const& v ) const
+  FT compute_boundary_cost(const Vector& v, const Boundary_data_vector& aBdry);
+  FT compute_volume_cost(const Vector& v, const Triangle_data_vector& aTriangles);
+  FT compute_shape_cost(Point  const& p, const vertex_descriptor_vector& aLink);
+
+  Point get_point(const vertex_descriptor v) const
   {
-    return convert(get(mProfile.vertex_point_map(),v));
+    return convert(get(mProfile.vertex_point_map(), v));
   }
 
-  static Vector Point_cross_product ( Point const& a, Point const& b ) 
+  static Vector point_cross_product(const Point& a, const Point& b)
   {
-    return cross_product(a-ORIGIN,b-ORIGIN); 
+    return cross_product(a-ORIGIN, b-ORIGIN);
   }
 
   // This is the (uX)(Xu) product described in the Lindstrom-Turk paper
-  static Matrix LT_product( Vector const& u ) 
+  static Matrix LT_product(const Vector& u)
   {
-    FT a00 = ( u.y()*u.y() ) + ( u.z()*u.z() ) ;
+    FT a00 = (u.y()*u.y()) + (u.z()*u.z());
     FT a01 = -u.x()*u.y();
     FT a02 = -u.x()*u.z();
-  
-    FT a10 = a01 ;
-    FT a11 = ( u.x()*u.x() ) + ( u.z()*u.z() ) ;
-    FT a12 = - u.y() * u.z();
-  
-    FT a20 = a02 ;
-    FT a21 = a12 ;
-    FT a22 =  ( u.x()*u.x() ) + ( u.y()*u.y() ) ;
-  
-    return Matrix(a00,a01,a02
-                 ,a10,a11,a12
-                 ,a20,a21,a22
-                 );
-  }
-  
-  static FT big_value() { return static_cast<FT>((std::numeric_limits<double>::max)()) ; }
 
-  static bool is_finite ( FT     const& n ) { return CGAL_NTS is_finite(n) ; }
-  static bool is_finite ( Point  const& p ) { return is_finite(p.x())  && is_finite(p.y())  && is_finite(p.z()) ;  }
-  static bool is_finite ( Vector const& v ) { return is_finite(v.x())  && is_finite(v.y())  && is_finite(v.z()) ;  }
-  static bool is_finite ( Matrix const& m ) { return is_finite(m.r0()) && is_finite(m.r1()) && is_finite(m.r2()) ; }
+    FT a10 = a01;
+    FT a11 = (u.x()*u.x()) + (u.z()*u.z());
+    FT a12 = - u.y() * u.z();
+
+    FT a20 = a02;
+    FT a21 = a12;
+    FT a22 = (u.x()*u.x()) + (u.y()*u.y());
+
+    return Matrix(a00, a01, a02,
+                  a10, a11, a12,
+                  a20, a21, a22);
+  }
+
+  static FT big_value() { return static_cast<FT>((std::numeric_limits<double>::max)()); }
+
+  static bool is_finite(const FT& n) { return CGAL_NTS is_finite(n); }
+  static bool is_finite(const Point& p) { return is_finite(p.x())  && is_finite(p.y())  && is_finite(p.z()); }
+  static bool is_finite(const Vector& v) { return is_finite(v.x())  && is_finite(v.y())  && is_finite(v.z()); }
+  static bool is_finite(const Matrix& m) { return is_finite(m.r0()) && is_finite(m.r1()) && is_finite(m.r2()); }
 
   template<class T>
-  static optional<T> filter_infinity ( T const& n ) { return is_finite(n) ? optional<T>(n) : optional<T>() ; }
+  static optional<T> filter_infinity (T const& n) { return is_finite(n) ? optional<T>(n) : optional<T>(); }
 
-  TM& surface() const { return mProfile.surface() ; }
-  
-private:    
+  TM& surface() const { return mProfile.surface(); }
 
-  Params const&  mParams ; 
-  Profile const& mProfile ;
+private:
+  Params const& mParams;
+  const Profile& mProfile;
 
-    void Add_constraint_if_alpha_compatible( Vector const& Ai, FT const& bi ) ;
-  
-    void Add_constraint_from_gradient ( Matrix const& H, Vector const& c ) ;
+  void add_constraint_if_alpha_compatible(const Vector& Ai, const FT& bi);
+  void add_constraint_from_gradient(const Matrix& H, const Vector& c);
 
-private:    
+private:
+  Triangle_data_vector mTriangle_data;
+  Boundary_data_vector mBdry_data;
 
-  Triangle_data_vector mTriangle_data ;
-  Boundary_data_vector mBdry_data ;
-  
-  int    mConstraints_n ;
-  Matrix mConstraints_A ;
-  Vector mConstraints_b ;
+  int mConstraints_n;
+  Matrix mConstraints_A;
+  Vector mConstraints_b;
 
-  Cartesian_converter<TM_Kernel,Kernel> convert ;
+  Cartesian_converter<TM_Kernel, Kernel> convert;
 
   FT mSquared_cos_alpha;
   FT mSquared_sin_alpha;
 };
 
+template<class TM, class K>
+LindstromTurkCore<TM,K>::
+LindstromTurkCore(Params const& aParams, const Profile& aProfile)
+  :
+    mParams(aParams),
+    mProfile(aProfile),
+    mConstraints_n(0),
+    mConstraints_A(NULL_MATRIX),
+    mConstraints_b(NULL_VECTOR)
+{
+  double alpha = 1.0 * CGAL_PI / 180.0;
+
+  FT cos_alpha = std::cos(alpha);
+  FT sin_alpha = std::sin(alpha);
+
+  mSquared_cos_alpha = cos_alpha * cos_alpha;
+  mSquared_sin_alpha = sin_alpha * sin_alpha;
+
+  extract_triangle_data();
+  extract_boundary_data();
+}
+
+template<class TM, class K>
+void
+LindstromTurkCore<TM,K>::
+extract_boundary_data()
+{
+  mBdry_data.reserve(mProfile.border_edges().size());
+  for(const_border_edge_iterator it = mProfile.border_edges().begin(), eit = mProfile.border_edges().end(); it != eit; ++ it)
+  {
+    halfedge_descriptor border_edge = *it;
+    halfedge_descriptor face_edge = opposite(border_edge,surface());
+
+    vertex_descriptor sv = source(face_edge,surface());
+    vertex_descriptor tv = target(face_edge,surface());
+
+    const Point& sp = get_point(sv);
+    const Point& tp = get_point(tv);
+
+    Vector v = tp - sp;
+    Vector n = point_cross_product(tp,sp);
+
+    CGAL_SMS_LT_TRACE(1, "  Boundary edge. S:" << xyz_to_string(sp) << " T:" << xyz_to_string(tp)
+                          << " V:" << xyz_to_string(v) << " N:" << xyz_to_string(n));
+
+    mBdry_data.push_back(Boundary_data(sp,tp,v,n));
+  }
+}
+
+template<class TM, class K>
+void
+LindstromTurkCore<TM,K>::
+extract_triangle_data()
+{
+  mTriangle_data.reserve(mProfile.triangles().size());
+  for(const_triangle_iterator it = mProfile.triangles().begin(), eit = mProfile.triangles().end(); it != eit; ++ it)
+  {
+    Triangle const& tri = *it;
+
+    const Point& p0 = get_point(tri.v0);
+    const Point& p1 = get_point(tri.v1);
+    const Point& p2 = get_point(tri.v2);
+
+    Vector v01 = p1 - p0;
+    Vector v02 = p2 - p0;
+
+    Vector lNormalV = cross_product(v01,v02);
+    FT lNormalL = point_cross_product(p0,p1) * (p2-ORIGIN);
+
+    CGAL_SMS_LT_TRACE(1, "  Extracting triangle v" << tri.v0 << "->v" << tri.v1 << "->v" << tri.v2
+                           << " N:" << xyz_to_string(lNormalV) << " L:" << n_to_string(lNormalL));
+
+    mTriangle_data.push_back(Triangle_data(lNormalV,lNormalL));
+  }
+}
+
+template<class TM, class K>
+typename LindstromTurkCore<TM,K>::Optional_point
+LindstromTurkCore<TM,K>::
+compute_placement()
+{
+  Optional_point rPlacementP;
+  Optional_vector lPlacementV;
+
+  CGAL_SMS_LT_TRACE(0, "Computing LT placement for E" << mProfile.v0_v1()
+                          << " (V" << mProfile.v0() << "->V" << mProfile.v1() << ")");
+
+  // Each vertex constraint is an equation of the form: Ai * v = bi
+  // Where 'v' is a vector representing the vertex,
+  // 'Ai' is a (row) vector and 'bi' a scalar.
+  //
+  // The vertex is completely determined with 3 such constraints,
+  // so is the solution to the folloing system:
+  //
+  //  A.r0(). * v = b0
+  //  A1 * v = b1
+  //  A2 * v = b2
+  //
+  // Which in matrix form is :  A * v = b
+  //
+  // (with 'A' a 3x3 matrix and 'b' a vector)
+  //
+  // The member variable mConstrinas contains A and b. Indidivual constraints (Ai,bi) can be added to it.
+  // Once 3 such constraints have been added 'v' is directly solved a:
+  //
+  //  v = b*inverse(A)
+  //
+  // A constraint (Ai,bi) must be alpha-compatible with the previously added constraints (see Paper); if it's not, is discarded.
+  //
+  if(mBdry_data.size() > 0)
+    add_boundary_preservation_constraints(mBdry_data);
+
+  if(mConstraints_n < 3)
+    add_volume_preservation_constraints(mTriangle_data);
+
+  if(mConstraints_n < 3)
+    add_boundary_and_volume_optimization_constraints(mBdry_data,mTriangle_data);
+
+  if(mConstraints_n < 3)
+    add_shape_optimization_constraints(mProfile.link());
+
+  // It might happen that there were not enough alpha-compatible constraints.
+  // In that case there is simply no good vertex placement
+  if(mConstraints_n == 3)
+  {
+    // If the matrix is singular it's inverse cannot be computed so an 'absent' value is returned.
+    optional<Matrix> lOptional_Ai = inverse_matrix(mConstraints_A);
+    if(lOptional_Ai)
+    {
+      const Matrix& lAi = *lOptional_Ai;
+
+      CGAL_SMS_LT_TRACE(2,"       b: " << xyz_to_string(mConstraints_b));
+      CGAL_SMS_LT_TRACE(2,"  inv(A): " << matrix_to_string(lAi));
+
+      lPlacementV = filter_infinity(mConstraints_b * lAi);
+
+      CGAL_SMS_LT_TRACE(0,"  New vertex point: " << xyz_to_string(*lPlacementV));
+    }
+    else
+    {
+      CGAL_SMS_LT_TRACE(1,"  Can't solve optimization, singular system.");
+    }
+  }
+  else
+  {
+    CGAL_SMS_LT_TRACE(1,"  Can't solve optimization, not enough alpha-compatible constraints.");
+  }
+
+  if(lPlacementV)
+    rPlacementP = ORIGIN + (*lPlacementV);
+
+  return rPlacementP;
+}
+
+template<class TM, class K>
+typename LindstromTurkCore<TM,K>::Optional_FT
+LindstromTurkCore<TM,K>::
+compute_cost(const Optional_point& aP)
+{
+  Optional_FT rCost;
+
+  if(aP)
+  {
+    CGAL_SMS_LT_TRACE(0,"Computing LT cost for E" << mProfile.v0_v1());
+    Vector lV = (*aP) - ORIGIN;
+
+    FT lSquaredLength = squared_distance(mProfile.p0(),mProfile.p1());
+
+    FT lBdryCost = compute_boundary_cost(lV ,mBdry_data);
+    FT lVolumeCost = compute_volume_cost(lV ,mTriangle_data);
+    FT lShapeCost  = compute_shape_cost(*aP,mProfile.link());
+
+    FT lTotalCost = FT(mParams.VolumeWeight) * lVolumeCost
+                    + FT(mParams.BoundaryWeight) * lBdryCost * lSquaredLength
+                    + FT(mParams.ShapeWeight) * lShapeCost  * lSquaredLength * lSquaredLength;
+
+    rCost = filter_infinity(lTotalCost);
+
+    CGAL_SMS_LT_TRACE(0, "    Squared edge length: " << n_to_string(lSquaredLength)
+                           << "\n    Boundary cost: " << n_to_string(lBdryCost) << " weight: " << mParams.BoundaryWeight
+                           << "\n    Volume cost: " << n_to_string(lVolumeCost) << " weight: " << mParams.VolumeWeight
+                           << "\n    Shape cost: " << n_to_string(lShapeCost)   << " weight: " << mParams.ShapeWeight
+                           << "\n  TOTAL COST: " << n_to_string(lTotalCost));
+
+  }
+
+  return rCost;
+}
+
+template<class TM, class K>
+void
+LindstromTurkCore<TM,K>::
+add_boundary_preservation_constraints(const Boundary_data_vector& aBdry)
+{
+  if(aBdry.size() > 0)
+  {
+    Vector e1 = NULL_VECTOR;
+    Vector e2 = NULL_VECTOR;
+
+    FT e1x = FT(0),
+       e1y = FT(0),
+       e1z = FT(0);
+
+    for(typename Boundary_data_vector::const_iterator it = aBdry.begin(); it != aBdry.end(); ++ it)
+    {
+      e1 = e1 + it->v;
+      e2 = e2 + it->n;
+
+      FT vx = it->v.x();
+      FT vy = it->v.y();
+      FT vz = it->v.z();
+
+      e1x = e1x + vx;
+      e1y = e1y + vy;
+      e1z = e1z + vz;
+
+      CGAL_SMS_LT_TRACE(1,"    vx:" << n_to_string(vx) << " vy:" << n_to_string(vy) << " vz:" << n_to_string(vz) << " e1x:"
+                        << n_to_string(e1x) << " e1y:" << n_to_string(e1y) << " e1z:" << n_to_string(e1z));
+    }
+
+    Matrix H = LT_product(e1);
+    Vector c = cross_product(e1,e2);
+
+    CGAL_SMS_LT_TRACE(1, "  Adding boundary preservation constraint."
+                           << "\n      SumV:" << xyz_to_string(e1)
+                           << "\n      SumN:" << xyz_to_string(e2)
+                           << "\n      H:" << matrix_to_string(H)
+                           << "\n      c:" << xyz_to_string(c));
+
+    add_constraint_from_gradient(H,c);
+  }
+}
+
+template<class TM, class K>
+void
+LindstromTurkCore<TM,K>::
+add_volume_preservation_constraints(const Triangle_data_vector& aTriangles)
+{
+  CGAL_SMS_LT_TRACE(1,"  Adding volume preservation constraint. " << aTriangles.size() << " triangles.");
+
+  Vector lSumV = NULL_VECTOR;
+  FT lSumL(0);
+
+  for(typename Triangle_data_vector::const_iterator it = aTriangles.begin(), eit = aTriangles.end(); it != eit; ++it)
+  {
+    lSumV = lSumV + it->NormalV;
+    lSumL = lSumL + it->NormalL;
+  }
+
+  CGAL_SMS_LT_TRACE(1, "      SumV:" << xyz_to_string(lSumV) << "\n      SumL:" << n_to_string(lSumL));
+
+  add_constraint_if_alpha_compatible(lSumV,lSumL);
+}
+
+template<class TM, class K>
+void
+LindstromTurkCore<TM,K>::
+add_boundary_and_volume_optimization_constraints(const Boundary_data_vector& aBdry,
+                                                 const Triangle_data_vector& aTriangles)
+{
+  CGAL_SMS_LT_TRACE(1,"  Adding boundary and volume optimization constraints. ");
+
+  Matrix H = NULL_MATRIX;
+  Vector c = NULL_VECTOR;
+
+  // Volume optimization
+  for(typename Triangle_data_vector::const_iterator it = aTriangles.begin(), eit = aTriangles.end(); it != eit; ++it)
+  {
+    Triangle_data const& lTri = *it;
+
+    H += direct_product(lTri.NormalV, lTri.NormalV);
+
+    c = c - (lTri.NormalL * lTri.NormalV);
+  }
+
+  CGAL_SMS_LT_TRACE(2,"      Hv:" << matrix_to_string(H) << "\n      cv:" << xyz_to_string(c));
+
+  if(aBdry.size() > 0)
+  {
+    // Boundary optimization
+    Matrix Hb = NULL_MATRIX;
+    Vector cb = NULL_VECTOR;
+
+    for(typename Boundary_data_vector::const_iterator it = aBdry.begin(); it != aBdry.end(); ++ it)
+    {
+      Matrix H = LT_product(it->v);
+      Vector c = cross_product(it->v,it->n);
+
+      Hb += H;
+      cb = cb + c;
+    }
+
+    CGAL_SMS_LT_TRACE(2,"      Hb:" << matrix_to_string(Hb) << "\n      cb:" << xyz_to_string(cb));
+
+    // Weighted average
+    FT lScaledBoundaryWeight = FT(9) * FT(mParams.BoundaryWeight) * squared_distance(mProfile.p0(),mProfile.p1()) ;
+
+    H *= mParams.VolumeWeight;
+    c = c * mParams.VolumeWeight;
+
+    H += lScaledBoundaryWeight * Hb;
+    c = c + (lScaledBoundaryWeight * cb);
+
+    CGAL_SMS_LT_TRACE(2,"      H:" << matrix_to_string(H) << "\n      c:" << xyz_to_string(c));
+    CGAL_SMS_LT_TRACE(2,"      VolW:" << mParams.VolumeWeight << " BdryW:" << mParams.BoundaryWeight << " ScaledBdryW:" << lScaledBoundaryWeight);
+  }
+
+  add_constraint_from_gradient(H,c);
+}
+
+template<class TM, class K>
+void
+LindstromTurkCore<TM,K>::
+add_shape_optimization_constraints(const vertex_descriptor_vector& aLink)
+{
+  FT s(double(aLink.size()));
+
+  Matrix H (s, 0.0, 0.0,
+            0.0, s, 0.0,
+            0.0, 0.0, s);
+
+  Vector c = NULL_VECTOR;
+
+  for(typename vertex_descriptor_vector::const_iterator it = aLink.begin(), eit = aLink.end(); it != eit; ++it)
+    c = c + (ORIGIN - get_point(*it));
+
+  CGAL_SMS_LT_TRACE(1,"  Adding shape optimization constraint. Shape vector: " << xyz_to_string(c));
+
+  add_constraint_from_gradient(H,c);
+}
+
+template<class TM, class K>
+typename LindstromTurkCore<TM,K>::FT
+LindstromTurkCore<TM,K>::
+compute_boundary_cost(const Vector& v,
+                      const Boundary_data_vector& aBdry)
+{
+  FT rCost(0);
+  for(typename Boundary_data_vector::const_iterator it = aBdry.begin(); it != aBdry.end(); ++ it)
+  {
+    Vector u = (it->t - ORIGIN) - v;
+    Vector c = cross_product(it->v,u);
+    rCost += c*c;
+  }
+
+  return rCost / FT(4);
+}
+
+template<class TM, class K>
+typename LindstromTurkCore<TM,K>::FT
+LindstromTurkCore<TM,K>::
+compute_volume_cost(const Vector& v,
+                    const Triangle_data_vector& aTriangles)
+{
+  FT rCost(0);
+
+  for(typename Triangle_data_vector::const_iterator it = aTriangles.begin(), eit = aTriangles.end(); it != eit; ++it)
+  {
+    Triangle_data const& lTri = *it;
+    FT lF = lTri.NormalV * v - lTri.NormalL;
+
+    rCost += (lF * lF);
+  }
+
+  return rCost / FT(36);
+}
+
+template<class TM, class K>
+typename LindstromTurkCore<TM,K>::FT
+LindstromTurkCore<TM,K>::
+compute_shape_cost(const Point& p,
+                   const vertex_descriptor_vector& aLink)
+{
+  FT rCost(0);
+
+  for(typename vertex_descriptor_vector::const_iterator it = aLink.begin(), eit = aLink.end(); it != eit; ++it)
+    rCost += squared_distance(p,get_point(*it));
+
+  return rCost;
+}
+
+template<class TM, class K>
+void
+LindstromTurkCore<TM,K>::
+add_constraint_if_alpha_compatible(const Vector& Ai,
+                                   const FT& bi)
+{
+  CGAL_SMS_LT_TRACE(3, "    Adding new constraints if alpha-compatible.\n      Ai: " << xyz_to_string(Ai) << "\n      bi:" << n_to_string(bi) << ")");
+
+  FT slai = Ai*Ai;
+  CGAL_SMS_LT_TRACE(3, "\n      slai: " << n_to_string(slai) << ")");
+
+  if(is_finite(slai))
+  {
+    FT l = CGAL_NTS sqrt(slai);
+    CGAL_SMS_LT_TRACE(3, "      l: " << n_to_string(l));
+
+    if(!CGAL_NTS is_zero(l))
+    {
+      Vector Ain = Ai / l;
+      FT bin = bi / l;
+      CGAL_SMS_LT_TRACE(3,"      Ain: " << xyz_to_string(Ain) << " bin:" << n_to_string(bin));
+
+      bool lAddIt = true;
+
+      if(mConstraints_n == 1)
+      {
+        FT d01 = mConstraints_A.r0() * Ai ;
+        FT sla0 = mConstraints_A.r0() * mConstraints_A.r0();
+        FT sd01 = d01 * d01;
+        FT max = sla0 * slai * mSquared_cos_alpha;
+
+        CGAL_SMS_LT_TRACE(3,"      Second constraint. d01: " << n_to_string(d01) << " sla0:" << n_to_string(sla0) << " sd01:" << n_to_string(sd01) << " max:" << n_to_string(max));
+
+        if(sd01 > max)
+          lAddIt = false;
+      }
+      else if(mConstraints_n == 2)
+      {
+        Vector N = cross_product(mConstraints_A.r0(),mConstraints_A.r1());
+
+        FT dc012 = N * Ai;
+
+        FT slc01 = N * N;
+        FT sdc012 = dc012 * dc012;
+
+        FT min = slc01 * slai * mSquared_sin_alpha;
+
+        CGAL_SMS_LT_TRACE(3, "      Third constraint. N: " << xyz_to_string(N) << " dc012:" << n_to_string(dc012) << " slc01:" << n_to_string(slc01)
+                               << " sdc012:" << n_to_string(sdc012) << " min:" << n_to_string(min));
+
+        if(sdc012 <= min)
+          lAddIt = false;
+      }
+
+      if(lAddIt)
+      {
+        switch(mConstraints_n)
+        {
+          case 0:
+            mConstraints_A.r0() = Ain;
+            mConstraints_b = Vector(bin,mConstraints_b.y(),mConstraints_b.z());
+            break;
+          case 1:
+            mConstraints_A.r1() = Ain;
+            mConstraints_b = Vector(mConstraints_b.x(),bin,mConstraints_b.z());
+            break;
+          case 2:
+            mConstraints_A.r2() = Ain;
+            mConstraints_b = Vector(mConstraints_b.x(),mConstraints_b.y(),bin);
+            break;
+        }
+
+        CGAL_SMS_LT_TRACE(3,"      Accepting # " << mConstraints_n << " A:" << matrix_to_string(mConstraints_A) << " b:" << xyz_to_string(mConstraints_b));
+
+        ++ mConstraints_n;
+      }
+      else
+      {
+        CGAL_SMS_LT_TRACE(3,"      INCOMPATIBLE. Discarded");
+      }
+    }
+    else
+    {
+      CGAL_SMS_LT_TRACE(3,"        l is ZERO. Discarded");
+    }
+  }
+  else
+  {
+    CGAL_SMS_LT_TRACE(3,"      OVERFLOW. Discarded");
+  }
+}
+
+template<class V>
+int index_of_max_component (V const& v)
+{
+  typedef typename Kernel_traits<V>::Kernel::FT                     FT;
+
+  int i = 0;
+  FT max = v.x();
+
+  if(max < v.y())
+  {
+    max = v.y();
+    i = 1;
+  }
+
+  if(max < v.z())
+  {
+    max = v.z();
+    i = 2;
+  }
+
+  return i;
+}
+
+template<class TM, class K>
+void
+LindstromTurkCore<TM,K>::
+add_constraint_from_gradient(const Matrix& H,
+                             const Vector& c)
+{
+  CGAL_SMS_LT_TRACE(3,"    Adding constraint from gradient. Current n=" << mConstraints_n);
+
+  CGAL_precondition(mConstraints_n >= 0 && mConstraints_n<=2);
+
+  switch(mConstraints_n)
+  {
+    case 0:
+      add_constraint_if_alpha_compatible(H.r0(),-c.x());
+      add_constraint_if_alpha_compatible(H.r1(),-c.y());
+      add_constraint_if_alpha_compatible(H.r2(),-c.z());
+      break;
+    case 1:
+    {
+      const Vector& A0 = mConstraints_A.r0();
+
+      CGAL_assertion(A0 != NULL_VECTOR);
+
+      Vector AbsA0(CGAL::abs(A0.x()),
+                   CGAL::abs(A0.y()),
+                   CGAL::abs(A0.z()));
+
+      Vector Q0;
+      switch(index_of_max_component(AbsA0))
+      {
+        // Since A0 is guaranteed to be non-zero, the denominators here are known to be non-zero too.
+
+        case 0:
+          Q0 = Vector(- A0.z()/A0.x(), 0, 1);
+          break;
+        case 1:
+          Q0 = Vector(0,- A0.z()/A0.y(), 1);
+          break;
+        case 2:
+          Q0 = Vector(1, 0, - A0.x()/A0.z());
+          break;
+        default:
+          Q0 = NULL_VECTOR; // This should never happen!
+      }
+
+      CGAL_SMS_LT_TRACE(3,"      Q0:" << xyz_to_string(Q0));
+
+      CGAL_assertion(Q0 != NULL_VECTOR);
+
+      Vector Q1 = cross_product(A0,Q0);
+
+      Vector A1 = H * Q0;
+      Vector A2 = H * Q1;
+
+      FT b1 = - (Q0 * c);
+      FT b2 = - (Q1 * c);
+
+      CGAL_SMS_LT_TRACE(3, "      Q1:" << xyz_to_string(Q1) << "\n      A1: " << xyz_to_string(A1) << "\n      A2:" << xyz_to_string(A2)
+                            << "\n      b1:" << n_to_string(b1) << "\n      b2:" << n_to_string(b2));
+
+      add_constraint_if_alpha_compatible(A1,b1);
+      add_constraint_if_alpha_compatible(A2,b2);
+    }
+      break;
+
+    case 2:
+    {
+      Vector Q = cross_product(mConstraints_A.r0(),mConstraints_A.r1());
+      Vector A2 = H * Q;
+      FT b2 = - (Q * c);
+      CGAL_SMS_LT_TRACE(3,"      Q:" << xyz_to_string(Q) << "\n      A2: " << xyz_to_string(A2) << "\n      b2:" << n_to_string(b2));
+
+      add_constraint_if_alpha_compatible(A2,b2);
+    }
+      break;
+  }
+}
+
 } // namespace Surface_mesh_simplification
+} // namespace CGAL
 
-} //namespace CGAL
-
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Detail/Lindstrom_Turk_core_impl.h>
-
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_DETAIL_LINDSTROM_TURK_CORE_H //
-// EOF //
- 
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_DETAIL_LINDSTROM_TURK_CORE_H

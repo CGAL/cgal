@@ -18,16 +18,15 @@
 // Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
 //
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_COMMON_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_COMMON_H 1
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_COMMON_H
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
-
-#include <functional>
-#include <utility>
-#include <vector>
-#include <vector>
-#include <set>
+#include <CGAL/algorithm.h>
+#include <CGAL/Cartesian/MatrixC33.h>
+#include <CGAL/Modifiable_priority_queue.h>
+#include <CGAL/boost/graph/properties.h>
+#include <CGAL/boost/graph/iterator.h>
 
 #include <boost/config.hpp>
 #include <boost/shared_ptr.hpp>
@@ -42,144 +41,130 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/adjacency_list.hpp>
 
-#include <CGAL/algorithm.h>
-#include <CGAL/Cartesian/MatrixC33.h>
-#include <CGAL/Modifiable_priority_queue.h>
-#include <CGAL/boost/graph/properties.h>
-#include <CGAL/boost/graph/iterator.h>
+#include <functional>
+#include <utility>
+#include <vector>
+#include <vector>
+#include <set>
 
 namespace CGAL {
+namespace Surface_mesh_simplification {
 
-namespace Surface_mesh_simplification 
-{
+using boost::num_edges;
+using boost::num_vertices;
+using boost::edges;
+using boost::out_edges;
+using boost::in_edges;
+using boost::source;
+using boost::target;
 
-using boost::num_edges ;
-using boost::num_vertices ;
-using boost::edges ;
-using boost::out_edges ;
-using boost::in_edges ;
-using boost::source ;
-using boost::target ;
+using boost::shared_ptr;
+using boost::optional;
+using boost::none;
+using boost::put_get_helper;
+using boost::get;
+using boost::put;
+using boost::addressof;
 
-using boost::shared_ptr ;
-using boost::optional ;
-using boost::none ;
-using boost::put_get_helper ;
-using boost::get ;
-using boost::put ;
-using boost::addressof ;
-
-using namespace boost::tuples ;
+using namespace boost::tuples;
 
 template<class Handle>
-inline bool handle_assigned( Handle h ) { Handle null ; return h != null ; }
+inline bool handle_assigned(Handle h) { Handle null; return h != null; }
 
 template<class Iterator, class Handle>
-bool handle_exists ( Iterator begin, Iterator end, Handle h )
+bool handle_exists(Iterator begin, Iterator end, Handle h)
 {
- if ( handle_assigned(h) )
- {
-   while ( begin != end )
-     if ( begin++ == h )
-       return true ;
- }
- return false ;
+  if(handle_assigned(h))
+  {
+    while(begin != end)
+      if(begin++ == h)
+        return true;
+  }
+
+  return false;
 }
 
 template <class TM>
-struct No_constrained_edge_map{
-  typedef typename boost::graph_traits<TM>::edge_descriptor key_type;
-  typedef bool value_type;
-  typedef value_type reference;
-  typedef boost::readable_property_map_tag category;
-  friend bool get(No_constrained_edge_map, key_type) {
-    return false;
-  }
+struct No_constrained_edge_map
+{
+  typedef typename boost::graph_traits<TM>::edge_descriptor         key_type;
+  typedef bool                                                      value_type;
+  typedef value_type                                                reference;
+  typedef boost::readable_property_map_tag                          category;
+  friend bool get(No_constrained_edge_map, key_type) { return false; }
 };
 
 } // namespace Surface_mesh_simplification
 
 template<class N>
-inline std::string n_to_string( N const& n )
-{
-  return boost::str( boost::format("%|5.19g|") % n ) ;   
+inline std::string n_to_string(const N& n) {
+  return boost::str(boost::format("%|5.19g|") % n);
 }
 
 template<class XYZ>
-inline std::string xyz_to_string( XYZ const& xyz )
-{
-  return boost::str( boost::format("(%|5.19g|,%|5.19g|,%|5.19g|)") % xyz.x() % xyz.y() % xyz.z() ) ;   
+inline std::string xyz_to_string(const XYZ& xyz) {
+  return boost::str(boost::format("(%|5.19g|,%|5.19g|,%|5.19g|)") % xyz.x() % xyz.y() % xyz.z());
 }
 
 template<class Matrix>
-inline std::string matrix_to_string( Matrix const& m )
-{
-  return boost::str( boost::format("[%1%|%2%|%3%]") % xyz_to_string(m.r0()) % xyz_to_string(m.r1()) % xyz_to_string(m.r2()) ) ;
+inline std::string matrix_to_string(const Matrix& m) {
+  return boost::str(boost::format("[%1%|%2%|%3%]") % xyz_to_string(m.r0()) % xyz_to_string(m.r1()) % xyz_to_string(m.r2()));
 }
 
 template<class T>
-inline std::string optional_to_string( boost::optional<T> const& o )
-{
-  if ( o )
-       return boost::str( boost::format("%1%") % *o ) ;   
-  else return std::string("NONE");  
+inline std::string optional_to_string(const boost::optional<T>& o) {
+  if(o)
+    return boost::str(boost::format("%1%") % *o);
+  else return std::string("NONE");
 }
 
+} // namespace CGAL
 
-} //namespace CGAL
-
-#if   defined(CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE)    \
-   || defined(CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE) 
+#if defined(CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE) \
+  || defined(CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE)
 #define CGAL_SMS_ENABLE_TRACE
 #endif
 
 #ifdef CGAL_SMS_ENABLE_TRACE
+  #include<string>
+  #include<iostream>
+  #include<sstream>
 
-#  include<string>
-#  include<iostream>
-#  include<sstream>
-namespace internal { namespace  { bool cgal_enable_sms_trace = true ; } }
-#  define CGAL_SMS_TRACE_IMPL(m) \
-     if ( ::internal::cgal_enable_sms_trace ) { \
-       std::ostringstream ss ; ss << m ; std::string s = ss.str(); \
-       /*Surface_simplification_external_trace(s)*/ std::cerr << s << std::endl; \
-     }
-     
-#  define CGAL_SMS_DEBUG_CODE(code) code     
+  namespace internal { namespace { bool cgal_enable_sms_trace = true; } }
+  #define CGAL_SMS_TRACE_IMPL(m) \
+    if(::internal::cgal_enable_sms_trace) { \
+    std::ostringstream ss; ss << m; std::string s = ss.str(); \
+    /*Surface_simplification_external_trace(s)*/ std::cerr << s << std::endl; \
+    }
 
+  #define CGAL_SMS_DEBUG_CODE(code) code
 #else
-
-#  define CGAL_SMS_DEBUG_CODE(code)
-
+  #define CGAL_SMS_DEBUG_CODE(code)
 #endif
 
 #ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE
-#  define CGAL_SMS_LT_TRACE(l,m) if ( (l) <= CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE ) CGAL_SMS_TRACE_IMPL(m)
+  #define CGAL_SMS_LT_TRACE(l,m) if((l) <= CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE) CGAL_SMS_TRACE_IMPL(m)
 #else
-#  define CGAL_SMS_LT_TRACE(l,m)
+  #define CGAL_SMS_LT_TRACE(l,m)
 #endif
 
 #ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE
-#  define CGAL_SMS_TRACE_IF(c,l,m) if ( (c) && ( (l) <= CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE) ) CGAL_SMS_TRACE_IMPL(m)
-#  define CGAL_SMS_TRACE(l,m)      if ( (l) <= CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE ) CGAL_SMS_TRACE_IMPL(m)
+  #define CGAL_SMS_TRACE_IF(c,l,m) if((c) && ((l) <= CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE)) CGAL_SMS_TRACE_IMPL(m)
+  #define CGAL_SMS_TRACE(l,m)      if((l) <= CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE) CGAL_SMS_TRACE_IMPL(m)
 #else
-#  define CGAL_SMS_TRACE_IF(c,l,m)
-#  define CGAL_SMS_TRACE(l,m)
+  #define CGAL_SMS_TRACE_IF(c,l,m)
+  #define CGAL_SMS_TRACE(l,m)
 #endif
-
 #undef CGAL_SMS_ENABLE_TRACE
 
 #ifdef CGAL_TESTING_SURFACE_MESH_SIMPLIFICATION
-#  define CGAL_SURF_SIMPL_TEST_assertion(EX)         CGAL_assertion(EX)
-#  define CGAL_SURF_SIMPL_TEST_assertion_msg(EX,MSG) CGAL_assertion_msg(EX,MSG) 
-#  define CGAL_SURF_SIMPL_TEST_assertion_code(CODE)  CGAL_assertion_code(CODE)
+  #define CGAL_SURF_SIMPL_TEST_assertion(EX)         CGAL_assertion(EX)
+  #define CGAL_SURF_SIMPL_TEST_assertion_msg(EX,MSG) CGAL_assertion_msg(EX,MSG)
+  #define CGAL_SURF_SIMPL_TEST_assertion_code(CODE)  CGAL_assertion_code(CODE)
 #else
-#  define CGAL_SURF_SIMPL_TEST_assertion(EX) 
-#  define CGAL_SURF_SIMPL_TEST_assertion_msg(EX,MSG) 
-#  define CGAL_SURF_SIMPL_TEST_assertion_code(CODE) 
+  #define CGAL_SURF_SIMPL_TEST_assertion(EX)
+  #define CGAL_SURF_SIMPL_TEST_assertion_msg(EX,MSG)
+  #define CGAL_SURF_SIMPL_TEST_assertion_code(CODE)
 #endif
 
-
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_COMMON_H //
-// EOF //
- 

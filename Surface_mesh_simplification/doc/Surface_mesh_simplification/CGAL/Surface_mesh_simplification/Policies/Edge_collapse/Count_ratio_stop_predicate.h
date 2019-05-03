@@ -26,7 +26,7 @@ public:
 /*!
 Initializes the predicate establishing the `ratio`. 
 */ 
-Count_ratio_stop_predicate<TriangleMesh>( double ratio ); 
+Count_ratio_stop_predicate<TriangleMesh>(double ratio); 
 
 /// @} 
 
@@ -34,14 +34,14 @@ Count_ratio_stop_predicate<TriangleMesh>( double ratio );
 /// @{
 
 /*!
-Returns ` ( ((double)current_count / (double)initial_count) < ratio)`. 
+Returns ` (((double)current_count / (double)initial_count) < ratio)`. 
 All other parameters are ignored (but exist since this is a generic policy). 
 */ 
-bool operator()( FT const& current_cost 
-, Profile const& edge_profile 
+bool operator()(FT const& current_cost 
+, const Profile& edge_profile 
 , size_type initial_count 
 , size_type current_count 
-) const ; 
+) const; 
 
 /// @}
 

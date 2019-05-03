@@ -25,7 +25,7 @@ public:
 /*!
 Initializes the predicate establishing the `threshold` value. 
 */ 
-Count_stop_predicate<TriangleMesh>( size_type threshold ); 
+Count_stop_predicate<TriangleMesh>(size_type threshold); 
 
 /// @} 
 
@@ -35,11 +35,11 @@ Count_stop_predicate<TriangleMesh>( size_type threshold );
 /*!
 Returns `(current_count < threshold)`. All other parameters are ignored (but exist since this is a generic policy). 
 */ 
-bool operator()( FT const& current_cost 
-, Profile const& edge_profile 
+bool operator()(FT const& current_cost 
+, const Profile& edge_profile 
 , size_type initial_count 
 , size_type current_count 
-) const ; 
+) const; 
 
 /// @}
 

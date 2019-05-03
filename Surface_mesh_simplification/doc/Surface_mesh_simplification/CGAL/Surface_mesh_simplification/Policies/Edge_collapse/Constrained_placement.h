@@ -30,7 +30,7 @@ Constructor
 */ 
   Constrained_placement(
     EdgeIsConstrainedMap map=EdgeIsConstrainedMap(),
-    BasePlacement base= BasePlacement() ); 
+    BasePlacement base= BasePlacement()); 
 /// @} 
 
 }; /* end Surface_mesh_simplification::Midpoint_placement */

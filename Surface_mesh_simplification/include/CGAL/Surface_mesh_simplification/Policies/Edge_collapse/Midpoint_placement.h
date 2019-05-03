@@ -42,7 +42,7 @@ public:
   {}
   
   template <typename Profile>
-  optional<typename Profile::Point> operator()( Profile const& aProfile ) const
+  optional<typename Profile::Point> operator()(const Profile& aProfile) const
   {
     return optional<typename Profile::Point> (midpoint(aProfile.p0(),aProfile.p1()));
   }

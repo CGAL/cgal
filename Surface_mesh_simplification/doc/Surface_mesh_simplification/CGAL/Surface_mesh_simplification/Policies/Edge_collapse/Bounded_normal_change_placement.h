@@ -44,7 +44,7 @@ triangle in the profile changes the normal by more than 90 degree.
 */ 
 template <typename Profile>
 optional<typename Profile::Point> 
-operator()( Profile const& profile ) const; 
+operator()(const Profile& profile) const; 
 
 /// @}
 

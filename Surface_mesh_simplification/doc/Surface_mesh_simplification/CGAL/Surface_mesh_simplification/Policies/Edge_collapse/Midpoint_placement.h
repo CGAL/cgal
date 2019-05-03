@@ -37,7 +37,7 @@ the points of the source and target vertices
 */ 
 template <typename Profile>
 optional<typename Profile::Point> 
-operator()( Profile const& profile ) const; 
+operator()(const Profile& profile) const; 
 
 /// @}
 

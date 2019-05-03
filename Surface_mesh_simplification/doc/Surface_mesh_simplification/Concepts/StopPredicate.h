@@ -55,11 +55,11 @@ If the return value is `true` the simplification terminates before processing th
 otherwise it continues normally. 
 
 */ 
-bool operator()( FT const& current_cost 
-, Profile const& profile 
+bool operator()(FT const& current_cost 
+, const Profile& profile 
 , size_type initial_count 
 , size_type current_count 
-) const ; 
+) const; 
 
 /// @}
 

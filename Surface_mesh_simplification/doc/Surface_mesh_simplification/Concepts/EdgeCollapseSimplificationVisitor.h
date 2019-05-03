@@ -49,26 +49,26 @@ typedef unspecified_type size_type;
 /*!
 Called before the algorithm starts. 
 */ 
-void OnStarted( TriangleMesh& surface_mesh ); 
+void OnStarted(TriangleMesh& surface_mesh); 
 
 /*!
 Called after the algorithm finishes. 
 */ 
-void OnFinished ( TriangleMesh& surface_mesh ) ; 
+void OnFinished (TriangleMesh& surface_mesh); 
 
 /*!
 Called when the `StopPredicate` returned `true` 
 (but not if the algorithm terminates because the surface mesh could not be simplified any further). 
 
 */ 
-void OnStopConditionReached( TriangleMesh& surface_mesh ) ; 
+void OnStopConditionReached(TriangleMesh& surface_mesh); 
 
 /*!
 Called during the <I>collecting phase</I> (when a cost is assigned to the edges), 
 for each edge collected. 
 
 */ 
-void OnCollected( Profile const& profile, boost::optional<FT> cost ); 
+void OnCollected(const Profile& profile, boost::optional<FT> cost); 
 
 /*!
 Called during the <I>processing phase</I> (when edges are collapsed), 
@@ -85,7 +85,7 @@ the edge will not be collapsed.
 the number of edges. 
 
 */ 
-void OnSelected( Profile const& profile 
+void OnSelected(const Profile& profile 
 , boost::optional<FT> cost 
 , size_type initial_count 
 , size_type current_count 
@@ -99,14 +99,14 @@ If `placement` is absent (meaning that it could not be computed)
 the edge will not be collapsed. 
 
 */ 
-void OnCollapsing( Profile const& profile 
+void OnCollapsing(const Profile& profile 
 , boost::optional<Point> placement 
 ); 
 
 /*!
 Called when an edge has been collapsed and replaced by the vertex `vd`
 */
-void OnCollapsed( Profile const&, Profile::vertex_descriptor const& vd) {}
+void OnCollapsed(Profile const&, Profile::const vertex_descriptor vd) {}
 
 /*!
 Called for each selected edge which cannot be 
@@ -115,7 +115,7 @@ type of the surface mesh (turn it into a non-manifold
 for instance). 
 
 */ 
-void OnNonCollapsable( Profile const& profile ); 
+void OnNonCollapsable(const Profile& profile); 
 
 /// @}
 

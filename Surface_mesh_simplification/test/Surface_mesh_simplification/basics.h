@@ -16,10 +16,10 @@
 //#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE   4
 //#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE 4 
 
-void Surface_simplification_external_trace( std::string s )
+void Surface_simplification_external_trace(std::string s)
 {
   static std::ofstream out("log.txt");
-  out << s << std::endl ;
+  out << s << std::endl;
 }
 
 #include <CGAL/Real_timer.h>
@@ -39,9 +39,9 @@ void Surface_simplification_external_trace( std::string s )
 
 #include <CGAL/assertions_behaviour.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel ;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
-typedef Kernel::FT FT ;
+typedef Kernel::FT FT;
 
 typedef Kernel::Vector_3     Vector;
 typedef Kernel::Point_3      Point;
@@ -60,11 +60,11 @@ typedef Surface::Facet_const_iterator                    Facet_const_iterator;
 typedef Surface::Facet_const_handle                      Facet_const_handle;
 typedef Surface::Halfedge_around_vertex_const_circulator HV_circulator;
 typedef Surface::Halfedge_around_facet_circulator        HF_circulator;
-typedef Surface::size_type                               size_type ;
+typedef Surface::size_type                               size_type;
 
-using namespace std ;
-using namespace boost ;
-using namespace CGAL ;
+using namespace std;
+using namespace boost;
+using namespace CGAL;
 
 
 

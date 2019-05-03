@@ -28,7 +28,7 @@ public:
 Initializes the policy with the given <I>weighting unit factor</I>. 
 See \ref SurfaceMeshSimplificationLindstromTurkStrategy for details on the meaning of this factor. 
 */ 
-LindstromTurk_placement<TriangleMesh>( FT const& factor = FT(0.5) ); 
+LindstromTurk_placement<TriangleMesh>(FT const& factor = FT(0.5)); 
 
 /// @} 
 
@@ -41,7 +41,7 @@ Returns the new position for the remaining vertex after collapsing the edge
 */   
 template <typename Profile> 
 optional<typename Profile::Point>
-operator()( Profile const& profile ) const; 
+operator()(const Profile& profile) const; 
 
 /// @}
 

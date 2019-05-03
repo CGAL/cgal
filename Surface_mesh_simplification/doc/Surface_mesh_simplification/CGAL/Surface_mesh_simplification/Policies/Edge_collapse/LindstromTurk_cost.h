@@ -26,7 +26,7 @@ public:
 Initializes the policy with the given <I>weighting unit factor</I>. 
 See \ref SurfaceMeshSimplificationLindstromTurkStrategy for details on the meaning of this factor. 
 */ 
-LindstromTurk_cost<TriangleMesh>( FT const& factor = FT(0.5) ); 
+LindstromTurk_cost<TriangleMesh>(FT const& factor = FT(0.5)); 
 
 /// @} 
 
@@ -39,8 +39,8 @@ the new `placement` computed for it.
 */   
 template <typename Profile>
 optional<typename Profile::FT>
-operator()( Profile const& profile 
-            , boost::optional<typename Profile::Point> const& placement ) const; 
+operator()(const Profile& profile 
+            , boost::optional<typename Profile::Point> const& placement) const; 
 
 /// @}
 

@@ -22,51 +22,28 @@
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
-
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 
 namespace CGAL {
+namespace Surface_mesh_simplification {
 
-namespace Surface_mesh_simplification
-{
-
-//
 // Edge-length cost: the squared length of the collapsing edge
-//
-  template<class TM>
+template<class TM>
 class Edge_length_cost
 {
 public:
-  /*  
-  typedef TM_ TM ;
-  
-  typedef Edge_profile<TM> Profile ;
-  typedef typename Profile::Point Point;  
-  typedef typename Kernel_traits<Point>::Kernel Kernel ;
-  typedef typename Kernel::FT FT ;
-  typedef optional<FT> result_type ;
-  */
-public:
+  Edge_length_cost() {}
 
-  Edge_length_cost()
-  {}
-
-  template <typename Profile, typename T> 
-  optional<typename Profile::FT> operator()( Profile const& aProfile, T const& /*aPlacement*/ ) const
+  template <typename Profile, typename T>
+  optional<typename Profile::FT> operator()(const Profile& aProfile, const T& /*aPlacement*/) const
   {
     typedef optional<typename Profile::FT> result_type;
-    return result_type(squared_distance(aProfile.p0(),aProfile.p1()));
+    return result_type(squared_distance(aProfile.p0(), aProfile.p1()));
   }
-  
 };
 
-
 } // namespace Surface_mesh_simplification
-
-
 } //namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_EDGE_LENGHT_COST_H
-// EOF //
- 

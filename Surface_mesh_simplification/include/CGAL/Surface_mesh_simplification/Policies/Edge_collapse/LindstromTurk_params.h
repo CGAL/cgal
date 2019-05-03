@@ -22,37 +22,31 @@
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
-
 namespace CGAL {
-
-namespace Surface_mesh_simplification 
-{
+namespace Surface_mesh_simplification {
 
 struct LindstromTurk_params
 {
   LindstromTurk_params()
     :
-    VolumeWeight  (0.5)
-   ,BoundaryWeight(0.5)
-   ,ShapeWeight   (0)
+      VolumeWeight(0.5),
+      BoundaryWeight(0.5),
+      ShapeWeight(0)
   {}
-  
-  LindstromTurk_params( double aVolumeWeight, double aBoundaryWeight, double aShapeWeight )
-    :
-    VolumeWeight  (aVolumeWeight)
-   ,BoundaryWeight(aBoundaryWeight)
-   ,ShapeWeight   (aShapeWeight)
-  {}
-    
-  double VolumeWeight ;
-  double BoundaryWeight ;
-  double ShapeWeight ;
-};
-  
-} // namespace Surface_mesh_simplification
 
-} //namespace CGAL
+  LindstromTurk_params(double aVolumeWeight, double aBoundaryWeight, double aShapeWeight)
+    :
+      VolumeWeight(aVolumeWeight),
+      BoundaryWeight(aBoundaryWeight),
+      ShapeWeight(aShapeWeight)
+  {}
+
+  double VolumeWeight;
+  double BoundaryWeight;
+  double ShapeWeight;
+};
+
+} // namespace Surface_mesh_simplification
+} // namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_PARAMS_H
-// EOF //
- 

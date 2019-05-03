@@ -32,8 +32,8 @@ using the calculated placement.
 \tparam Profile must be a model of `EdgeProfile`.
 */ 
   template <class Profile>
-  boost::optional<typename Profile::FT> operator()( Profile const& edge_profile 
-                                                    , boost::optional<typename Profile::Point> const& placement ) const; 
+  boost::optional<typename Profile::FT> operator()(const Profile& edge_profile 
+                                                    , boost::optional<typename Profile::Point> const& placement) const; 
 
 /// @}
 

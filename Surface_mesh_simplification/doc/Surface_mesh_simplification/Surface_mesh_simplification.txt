@@ -95,7 +95,7 @@ and geometric conditions.
 
 The algorithm presented in \cgalCite{gh-ssqem-97} contracts (collapses) arbitrary vertex pairs and not 
 only edges by considering certain vertex pairs as forming a pseudo-edge and proceeding to collapse
-both edges and pseudo-edges in the same way as in \cgalCite{cgal:lt-fmeps-98}, \cgalCite{cgal:lt-ems-99} ( 
+both edges and pseudo-edges in the same way as in \cgalCite{cgal:lt-fmeps-98}, \cgalCite{cgal:lt-ems-99} (
 which is the algorithm implemented here). However, contracting an arbitrary vertex-pair may result in a non-manifold surface mesh, but the current state of this package can only deal with manifold surface meshes, thus, it can only collapse edges. That is, this package cannot be used as a framework for vertex contraction.
 
 \section Surface_mesh_simplificationCost Cost Strategy
@@ -249,7 +249,7 @@ int r = edge_collapse(surface_mesh
                        .get_cost(cf)
                        .get_placement(pf)
                        .visitor(vis)
-                     );
+                    );
 
 \endcode
 

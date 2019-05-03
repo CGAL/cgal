@@ -22,14 +22,11 @@
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
-
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 
 namespace CGAL {
-
-namespace Surface_mesh_simplification 
-{
+namespace Surface_mesh_simplification {
 
 //*******************************************************************************************************************
 //                                -= stopping condition predicate =-
@@ -39,42 +36,33 @@ namespace Surface_mesh_simplification
 //
 //*******************************************************************************************************************
 
-// 
 // Stops when the ratio of initial to current vertex pairs is below some value.
-//
-template<class TM_>    
+template<class TM_>
 class Count_ratio_stop_predicate
 {
 public:
+  typedef TM_                                                 TM;
+  typedef Edge_profile<TM>                                    Profile;
 
-  typedef TM_ TM ;
-  
-  typedef Edge_profile<TM> Profile ;
-  
-  typedef typename boost::graph_traits<TM>::edge_descriptor edge_descriptor ;
-  typedef typename boost::graph_traits<TM>::edges_size_type size_type ;
-    
-  Count_ratio_stop_predicate( double aRatio ) : mRatio(aRatio) {}
-  
-  template <typename F> 
-  bool operator()( F const&       // aCurrentCost
-                 , Profile const& // aEdgeProfile
-                 , size_type         aInitialCount
-                 , size_type         aCurrentCount
-                 ) const 
+  typedef typename boost::graph_traits<TM>::edge_descriptor   edge_descriptor;
+  typedef typename boost::graph_traits<TM>::edges_size_type   size_type;
+
+  Count_ratio_stop_predicate(double aRatio) : mRatio(aRatio) {}
+
+  template <typename F>
+  bool operator()(const F&, // aCurrentCost
+                  const Profile&, // aEdgeProfile
+                  size_type aInitialCount,
+                  size_type aCurrentCount) const
   {
-    return ( static_cast<double>(aCurrentCount) / static_cast<double>(aInitialCount) ) < mRatio ;
+    return (static_cast<double>(aCurrentCount) / static_cast<double>(aInitialCount)) < mRatio;
   }
-  
+
 private:
-  
-  double mRatio ;
-};    
+  double mRatio;
+};
 
 } // namespace Surface_mesh_simplification
-
 } //namespace CGAL
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_COUNT_RATIO_STOP_PREDICATE_H //
-// EOF //
- 
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_COUNT_RATIO_STOP_PREDICATE_H

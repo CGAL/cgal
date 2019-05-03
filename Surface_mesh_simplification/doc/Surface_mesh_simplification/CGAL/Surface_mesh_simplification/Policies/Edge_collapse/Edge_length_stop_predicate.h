@@ -24,7 +24,7 @@ public:
 /*!
 Initializes the predicate establishing the `threshold` value.
 */
-Edge_length_stop_predicate<TriangleMesh>( FT threshold );
+Edge_length_stop_predicate<TriangleMesh>(FT threshold);
 
 /// @}
 
@@ -35,11 +35,11 @@ Edge_length_stop_predicate<TriangleMesh>( FT threshold );
 Returns `(CGAL::squared_distance(edge_profile.p0(),edge_profile.p1()) > threshold*threshold)`.
 All other parameters are ignored (but exist since this is a generic policy).
 */
-bool operator()( FT const&
-, Profile const& edge_profile
+bool operator()(FT const&
+, const Profile& edge_profile
 , size_type
 , size_type
-) const ;
+) const;
 
 /// @}
 

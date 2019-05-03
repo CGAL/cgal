@@ -53,18 +53,18 @@ private:
 
 
 
-namespace SMS = CGAL::Surface_mesh_simplification ;
+namespace SMS = CGAL::Surface_mesh_simplification;
 
-int main( int argc, char** argv ) 
+int main(int argc, char** argv) 
 {
   Surface_mesh surface_mesh;
   Constrained_edge_map constraints_map(surface_mesh);
-  if (argc==2)
+  if(argc==2)
     OpenMesh::IO::read_mesh(surface_mesh, argv[1]);
   else
     OpenMesh::IO::read_mesh(surface_mesh, "cube.off");
 
-  if (!CGAL::is_triangle_mesh(surface_mesh)){
+  if(!CGAL::is_triangle_mesh(surface_mesh)){
     std::cerr << "Input geometry is not triangulated." << std::endl;
     return EXIT_FAILURE;
   }
@@ -89,11 +89,11 @@ int main( int argc, char** argv )
              ,CGAL::parameters::halfedge_index_map  (get(CGAL::halfedge_index  ,surface_mesh)) 
                                .vertex_point_map(get(boost::vertex_point, surface_mesh))
                                .edge_is_constrained_map(constraints_map) 
-             );
+            );
   
   surface_mesh.garbage_collection();
   std::cout << "\nFinished...\n" << r << " edges removed.\n" 
-            << num_edges(surface_mesh) << " final edges.\n" ;
+            << num_edges(surface_mesh) << " final edges.\n";
         
    OpenMesh::IO::write_mesh(surface_mesh, "out.off");
   

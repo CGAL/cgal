@@ -34,7 +34,7 @@ which replaces the collapsing edge (represented by its profile).
 \tparam Profile must be a model of `EdgeProfile`.
 */ 
 template <class Profile>
-boost::optional<Point>operator()( Profile const& edge_profile ) const; 
+boost::optional<Point>operator()(const Profile& edge_profile) const; 
 
 /// @}
 

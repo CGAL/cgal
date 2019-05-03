@@ -39,8 +39,8 @@ The `placement` argument is ignored.
 
 */   
 template <typename Profile, typename T> 
-optional<typename Profile::FT> operator()( Profile const& profile 
-, T const& placement ) const; 
+optional<typename Profile::FT> operator()(const Profile& profile 
+, T const& placement) const; 
 
 /// @}
 

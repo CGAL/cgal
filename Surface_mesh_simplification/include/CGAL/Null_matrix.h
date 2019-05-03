@@ -22,19 +22,12 @@
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
-
 namespace CGAL {
 
 class Null_matrix {};
 
-static const Null_matrix NULL_MATRIX = Null_matrix() ;
+static const Null_matrix NULL_MATRIX = Null_matrix();
 
 } //namespace CGAL
 
-#endif // CGAL_NULL_MATRIX_H //
-
-// EOF //
- 
- 
- 
- 
+#endif // CGAL_NULL_MATRIX_H
