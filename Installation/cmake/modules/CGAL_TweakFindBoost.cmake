@@ -37,7 +37,7 @@ if( NOT CGAL_TweakFindBoost )
     set(CGAL_Boost_USE_STATIC_LIBS_DEFAULT ${CGAL_Boost_USE_STATIC_LIBS})
   else()
     # Else the option default is related to BUILD_SHARED_LIBS.
-    if(BUILD_SHARED_LIBS)
+    if(BUILD_SHARED_LIBS OR NOT DEFINED BUILD_SHARED_LIBS)
       set(CGAL_Boost_USE_STATIC_LIBS_DEFAULT OFF)
     else()
       set(CGAL_Boost_USE_STATIC_LIBS_DEFAULT ON)
