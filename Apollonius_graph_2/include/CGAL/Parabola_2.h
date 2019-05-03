@@ -71,7 +71,7 @@ protected:
   
   inline static
   FT divide(const FT& x, const FT& y) {
-    return divide(x,y, AST::Algebraic_category());
+    return divide(x,y, typename AST::Algebraic_category());
   }
   
   inline static
