@@ -13,7 +13,6 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Epick;
 typedef CGAL::Cartesian_converter<Epeck, Epick> Epeck_to_epick;
 
 #define CGAL_KSR_VERBOSE_LEVEL 0
-#include <CGAL/IO/PLY_writer.h>
 #include <CGAL/Kinetic_shape_reconstruction_2.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/iterator.h>

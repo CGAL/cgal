@@ -27,8 +27,9 @@
 
 #include <CGAL/KSR_3/Data_structure.h>
 
-#include <CGAL/KSR/Event.h>
-#include <CGAL/KSR/Event_queue.h>
+#include <CGAL/KSR_3/Event.h>
+#include <CGAL/KSR_3/Event_queue.h>
+
 #include <CGAL/KSR/debug.h>
 
 #include <unordered_set>
@@ -65,8 +66,8 @@ public:
   
   typedef typename Data::Meta_vertex Meta_vertex;
   
-  typedef KSR::Event<Kernel> Event;
-  typedef KSR::Event_queue<Kernel> Event_queue;
+  typedef KSR_3::Event<Kernel> Event;
+  typedef KSR_3::Event_queue<Kernel> Event_queue;
 
 
 private:

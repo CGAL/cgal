@@ -18,13 +18,13 @@
 //
 // Author(s)     : Simon Giraudot
 
-#ifndef CGAL_KSR_EVENT_QUEUE_H
-#define CGAL_KSR_EVENT_QUEUE_H
+#ifndef CGAL_KSR_2_EVENT_QUEUE_H
+#define CGAL_KSR_2_EVENT_QUEUE_H
 
 //#include <CGAL/license/Kinetic_shape_reconstruction.h>
 
 #include <CGAL/KSR/utils.h>
-#include <CGAL/KSR/Event.h>
+#include <CGAL/KSR_2/Event.h>
 
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/ordered_index.hpp>
@@ -34,7 +34,7 @@
 namespace CGAL
 {
 
-namespace KSR
+namespace KSR_2
 {
 
 template <typename GeomTraits>
@@ -44,7 +44,7 @@ public:
   typedef GeomTraits Kernel;
   typedef typename Kernel::FT FT;
 
-  typedef KSR::Event<GeomTraits> Event;
+  typedef KSR_2::Event<GeomTraits> Event;
 
 private:
 
@@ -109,7 +109,7 @@ public:
 };
 
 
-}} // namespace CGAL::KSR
+}} // namespace CGAL::KSR_2
 
 
-#endif // CGAL_KSR_EVENT_QUEUE_H
+#endif // CGAL_KSR_2_EVENT_QUEUE_H

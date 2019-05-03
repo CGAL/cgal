@@ -18,8 +18,8 @@
 //
 // Author(s)     : Simon Giraudot
 
-#ifndef CGAL_KSR_EVENT_H
-#define CGAL_KSR_EVENT_H
+#ifndef CGAL_KSR_2_EVENT_H
+#define CGAL_KSR_2_EVENT_H
 
 //#include <CGAL/license/Kinetic_shape_reconstruction.h>
 
@@ -28,7 +28,7 @@
 namespace CGAL
 {
 
-namespace KSR
+namespace KSR_2
 {
 
 template <typename GeomTraits>
@@ -76,7 +76,7 @@ public:
 };
 
 
-}} // namespace CGAL::KSR
+}} // namespace CGAL::KSR_2
 
 
-#endif // CGAL_KSR_EVENT_H
+#endif // CGAL_KSR_2_EVENT_H
