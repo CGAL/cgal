@@ -1063,7 +1063,7 @@ cmake_install.cmake
 *~
 .#*
 
-# MacOS file http://en.wikipedia.org/wiki/.DS_Store(
+# MacOS file https://en.wikipedia.org/wiki/.DS_Store
 .DS_Store
 
 # Binaries:

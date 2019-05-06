@@ -50,7 +50,7 @@ CGAL packages, some are only needed for demos.
        based on http://fp.gladman.plus.com/computing/gmp4win.htm
 
      - MPFR (>= 2.2.1)
-       http://www.mpfr.org/
+       https://www.mpfr.org/
        or precompiled version that can be downloaded with CGAL-x.y-Setup.exe
        based on http://fp.gladman.plus.com/computing/gmp4win.htm
 
@@ -60,7 +60,7 @@ CGAL packages, some are only needed for demos.
    * Visualization
      Required for most demos
 
-     - Qt5 (>= 5.3)
+     - Qt5 (>= 5.9)
        http://qt-project.org/
 
      - Geomview
@@ -74,7 +74,7 @@ CGAL packages, some are only needed for demos.
        * Approximation of Ridges and Umbilics on Triangulated Surface Meshes
        * Planar Parameterization of Triangulated Surface Meshes
        * Surface Reconstruction from Point Sets
-       http://eigen.tuxfamily.org
+       http://eigen.tuxfamily.org/index.php?title=Main_Page
 
      - BLAS, LAPACK, ATLAS
        Required by the packages (if EIGEN is not available):

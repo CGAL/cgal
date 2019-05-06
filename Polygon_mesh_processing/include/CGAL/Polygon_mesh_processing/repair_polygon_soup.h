@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/repair.h>
 
+#include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 

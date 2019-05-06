@@ -72,6 +72,10 @@ public:
 
   void operator()(PM& pmesh, const bool insert_isolated_vertices = true)
   {
+    reserve(pmesh, static_cast<typename boost::graph_traits<PM>::vertices_size_type>(_points.size()),
+                   static_cast<typename boost::graph_traits<PM>::edges_size_type>(2*_polygons.size()),
+                   static_cast<typename boost::graph_traits<PM>::faces_size_type>(_polygons.size()) );
+
     Vpmap vpmap = get(CGAL::vertex_point, pmesh);
 
     boost::dynamic_bitset<> not_isolated;
@@ -180,7 +184,7 @@ public:
     //check manifoldness
     typedef std::vector<V_ID> PointRange;
     typedef internal::Polygon_soup_orienter<PointRange, PolygonRange> Orienter;
-    typename Orienter::Edge_map edges;
+    typename Orienter::Edge_map edges(max_id+1);
     typename Orienter::Marked_edges marked_edges;
     Orienter::fill_edge_map(edges, marked_edges, polygons);
     //returns false if duplication is necessary

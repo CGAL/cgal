@@ -269,15 +269,17 @@ void test_read(const Graph& g)
   typedef typename boost::graph_traits<Graph>::face_descriptor g_face_descriptor;
   typedef CGAL::Face_filtered_graph<Graph> Adapter;
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
+
   std::map<g_face_descriptor, std::size_t> map;
   CGAL::Polygon_mesh_processing::connected_components(g, boost::make_assoc_property_map(map), CGAL::Polygon_mesh_processing::parameters::all_default());
   Adapter fg(g, 0, boost::make_assoc_property_map(map));
+  assert(fg.is_selection_valid());
   assert(CGAL::is_valid_polygon_mesh(fg));
 }
 
 template <typename Graph>
 void
-test(const std::vector<Graph>& graphs)
+test_graph_range(const std::vector<Graph>& graphs)
 {
   BOOST_FOREACH(Graph p, graphs){
     test_read(p);
@@ -393,14 +395,75 @@ void test_mesh(Adapter fga)
   CGAL::copy_face_graph(fga, copy);
 }
 
-
-int
-main()
+template <typename PolygonMesh>
+void merge_vertices(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v_keep,
+                    typename boost::graph_traits<PolygonMesh>::vertex_descriptor v_rm,
+                    std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor>& incident_faces,
+                    PolygonMesh& mesh)
 {
-  test(sm_data());
-#ifdef CGAL_USE_OPENMESH
-  test(omesh_data());
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+
+  halfedge_descriptor oh = halfedge(v_keep, mesh), done = oh;
+  do
+  {
+    incident_faces.push_back(face(oh, mesh));
+    oh = opposite(next(oh, mesh), mesh);
+  }
+  while(oh != done);
+
+  halfedge_descriptor h = halfedge(v_rm, mesh);
+  halfedge_descriptor start = h;
+  do
+  {
+    set_target(h, v_keep, mesh);
+    incident_faces.push_back(face(h, mesh));
+    h = opposite(next(h, mesh), mesh);
+  }
+  while(h != start);
+
+  remove_vertex(v_rm, mesh);
+}
+
+void test_invalid_selections()
+{
+  // this creates a non-manifold (pinched) vertex
+  SM mesh;
+  read_a_mesh(mesh, "data/7_faces_triangle.off");
+
+  std::vector<SM::Face_index> face_range;
+  face_range.push_back(SM::Face_index(1));
+  face_range.push_back(SM::Face_index(2));
+  face_range.push_back(SM::Face_index(3));
+
+  CGAL::Face_filtered_graph<SM> bad_fg(mesh, face_range);
+  assert(!bad_fg.is_selection_valid());
+
+  // this creates a non-manifold vertex (multiple umbrellas)
+  clear(mesh);
+  read_a_mesh(mesh, "data/genus3.off");
+  assert(is_valid_polygon_mesh(mesh));
+
+  face_range.clear();
+  merge_vertices(SM::Vertex_index(1337), SM::Vertex_index(87), face_range, mesh);
+
+  CGAL::Face_filtered_graph<SM> bad_fg_2(mesh, face_range);
+  assert(!bad_fg_2.is_selection_valid());
+}
+
+int main()
+{
+  test_graph_range(poly_data());
+
+#if defined(CGAL_USE_SURFACE_MESH)
+  test_graph_range(sm_data());
 #endif
+
+#ifdef CGAL_USE_OPENMESH
+  test_graph_range(omesh_data());
+#endif
+
+  test_invalid_selections();
+
   //Make a tetrahedron and test the adapter for a patch that only contains 2 faces
   typedef CGAL::Face_filtered_graph<SM> SM_Adapter;
   typedef SM::Property_map<boost::graph_traits<SM>::face_descriptor , std::size_t> SM_FCCMap;

@@ -415,9 +415,9 @@ public:
    For more details, please refer to \cgalCite{wlop-2009}.
 
    A parallel version of WLOP is provided and requires the executable to be 
-   linked against the <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+   linked against the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
    To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-   See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+   See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
    for more details.
 
    \tparam ConcurrencyTag enables sequential versus parallel algorithm.
