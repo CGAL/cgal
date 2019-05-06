@@ -12,7 +12,8 @@ Release date: September 2019
     vertices_in_constraint_{begin/end}(Vertex_handle va, Vertex_handle vb) const;`,
     and `CGAL::Constrained_triangulation_plus_2::remove_constraint((Vertex_handle va, Vertex_handle vb)`,
     that is a pair of vertex handles is no longer a key for a polyline constraint.
-    Users must use a version prior to 5.0 if they need this functionality. 
+    Users must use a version prior to 5.0 if they need this functionality.
+-   **Breaking change**: Removed the deprecated classes `CGAL::Regular_triangulation_euclidean_traits_2`, `CGAL::Regular_triangulation_filtered_traits_2`.   Users must use a version prior to 5.0 if they need these classes.   
     
 ### Polygon Mesh Processing package
  -   Added the function `CGAL::Polygon_mesh_processing::centroid()` which computes
