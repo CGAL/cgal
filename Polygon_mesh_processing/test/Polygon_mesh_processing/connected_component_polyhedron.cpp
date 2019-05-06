@@ -50,7 +50,9 @@ void mesh_with_id(const char* argv1, const bool save_output)
 
   std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
 
-  PMP::keep_largest_connected_components(sm,2);
+  PMP::keep_largest_connected_components(sm, 2,
+                                         CGAL::parameters::face_size_map(
+                                           CGAL::Constant_property_map<face_descriptor, std::size_t>(1)));
 
   if (!save_output)
     return;

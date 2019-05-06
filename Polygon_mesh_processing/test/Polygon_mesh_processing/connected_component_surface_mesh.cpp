@@ -1,7 +1,11 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Polygon_mesh_processing/connected_components.h>
+
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/property_map.h>
+#include <CGAL/internal/boost/function_property_map.hpp>
+
 #include <iostream>
 #include <fstream>
 #include <cstring>
@@ -43,18 +47,33 @@ struct Constraint : public boost::put_get_helper<bool,Constraint<G> >{
   double bound;
 };
 
-
-int main(int argc, char* argv[])
+template <typename G, typename GT>
+struct Face_descriptor_area_functor
 {
+  typedef typename boost::graph_traits<G>::face_descriptor     face_descriptor;
 
-  typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
-  const double bound = std::cos(0.7* CGAL_PI);
-  const char* filename = (argc > 1) ? argv[1] : "data/blobby_3cc.off";
-  Mesh sm;
-  std::ifstream in(filename);
-  in >> sm;
+  Face_descriptor_area_functor(const G& g, const GT& gt) : g(g), gt(gt) { }
 
-  std::cout << "VEF " << num_vertices(sm) << " " << num_edges(sm) << " " << num_faces(sm) << "\n";
+  double operator()(const face_descriptor f) const
+  {
+    const auto& vpm = get(CGAL::vertex_point, g);
+
+    return gt.compute_area_3_object()(get(vpm, source(halfedge(f, g), g)),
+                                      get(vpm, target(halfedge(f, g), g)),
+                                      get(vpm, target(next(halfedge(f, g), g), g)));
+  }
+
+  const G& g;
+  const GT& gt;
+};
+
+void test_CC_with_default_size_map(Mesh sm)
+{
+  std::cout << " -- test with default size map -- " << std::endl;
+
+  typedef boost::graph_traits<Mesh>::face_descriptor                      face_descriptor;
+
+  const double bound = std::cos(0.7 * CGAL_PI);
 
   std::vector<face_descriptor> cc;
   face_descriptor fd = *faces(sm).first;
@@ -102,8 +121,11 @@ int main(int argc, char* argv[])
   for (std::size_t i=0;i<num;++i)
     if (i!=id_of_cc_to_remove)
       ff.push_back(one_face_per_cc[i]);
+
+  // default face size map, but explicitely passed
   PMP::keep_connected_components(copy1, ff,
-     PMP::parameters::edge_is_constrained_map(Constraint<Mesh>(copy1, bound)));
+     PMP::parameters::edge_is_constrained_map(Constraint<Mesh>(copy1, bound))
+                     .face_size_map(CGAL::Constant_property_map<face_descriptor, std::size_t>(1)));
 
   // remove cc from copy2
   ff.clear();
@@ -130,9 +152,56 @@ int main(int argc, char* argv[])
     CGAL::make_triangle(p,q,r,m);
     CGAL::make_tetrahedron(p,q,r,s,m);
     PMP::keep_large_connected_components(m, 4);
-    m.collect_garbage();
-    assert( num_vertices(m) == 8);
-  }
 
-  return 0;
+    assert(vertices(m).size() == 8);
+  }
+}
+
+void test_CC_with_area_size_map(Mesh sm)
+{
+  std::cout << " -- test with area size map -- " << std::endl;
+
+  typedef boost::graph_traits<Mesh>::face_descriptor                      face_descriptor;
+
+  Kernel k;
+  Face_descriptor_area_functor<Mesh, Kernel> f(sm, k);
+
+  std::cout << "We keep the " << 2 << " largest components" << std::endl;
+  PMP::keep_largest_connected_components(sm, 2,
+                                         PMP::parameters::face_size_map(
+                                           CGAL::internal::boost_::make_function_property_map<face_descriptor>(f)));
+  assert(vertices(sm).size() == 1459);
+
+  {
+    Mesh m;
+
+    Point p(0,0,0), q(1,0,0), r(0,1,0), s(0,0,1);
+    CGAL::make_tetrahedron(p,q,r,s,m);
+    CGAL::make_tetrahedron(p,q,r,s,m);
+
+    Point t(100,100,100);
+    CGAL::make_triangle(p,q,t,m);
+
+    Face_descriptor_area_functor<Mesh, Kernel> f(m, k);
+    PMP::keep_large_connected_components(m, 10,
+                                         CGAL::parameters::face_size_map(
+                                           CGAL::internal::boost_::make_function_property_map<face_descriptor>(f)));
+    assert(vertices(m).size() == 3);
+  }
+}
+
+int main(int /*argc*/, char** /*argv*/)
+{
+  const char* filename = "data/blobby_3cc.off";
+  Mesh sm;
+  std::ifstream in(filename);
+  assert(in.good());
+  in >> sm;
+
+  std::cout << "VEF " << num_vertices(sm) << " " << num_edges(sm) << " " << num_faces(sm) << "\n";
+
+  test_CC_with_default_size_map(sm);
+  test_CC_with_area_size_map(sm);
+
+  return EXIT_SUCCESS;
 }
