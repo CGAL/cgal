@@ -35,7 +35,7 @@ with the representation type determined by `std::iterator_traits<InputIterator>:
 \sa `CGAL::greene_approx_convex_partition_2()` 
 \sa `CGAL::optimal_convex_partition_2()` 
 \sa `CGAL::partition_is_valid_2()` 
-\sa `CGAL::is_convex_2()` 
+\sa `CGAL::Is_convex_2` 
 
 \cgalHeading{Implementation}
 
@@ -76,7 +76,7 @@ same as the original polygon.
 Each polygon must also satisfy the property 
 tested by `Traits::Is_valid()`. 
 
-\pre Points in the range [`point_first`, `point_beyond`) define a simple, counterclockwise-oriented polygon.
+\pre The points in the range [`point_first`, `point_beyond`) define a simple, counterclockwise-oriented polygon.
 
 \cgalHeading{Requires}
 
@@ -99,7 +99,7 @@ with the representation type determined by `std::iterator_traits<InputIterator>:
 \sa `CGAL::optimal_convex_partition_2()` 
 \sa `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>` 
 \sa `CGAL::y_monotone_partition_2()` 
-\sa `CGAL::is_convex_2()` 
+\sa `CGAL::Is_convex_2` 
 
 \cgalHeading{Implementation}
 
@@ -134,9 +134,8 @@ A valid partition is one in
 which the polygons are nonoverlapping and the union of the polygons is the 
 same as the original polygon and each polygon is \f$ y\f$-monotone 
 
-\pre P
 The function returns `true` iff the partition is valid and otherwise
-returns false.
+returns ` false`.
 
 
 
