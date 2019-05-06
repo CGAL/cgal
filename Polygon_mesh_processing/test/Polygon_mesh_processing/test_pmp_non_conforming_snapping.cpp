@@ -84,16 +84,16 @@ void test(const char* filename,
 
   // zero tolerance, just to test the API
   CGAL::Constant_property_map<vertex_descriptor, FT> tol_pmap_zero(0);
-  PMP::internal::snap_border_vertices_non_conforming(sm_cpy, sm_cpy);
-  PMP::internal::snap_border_vertices_non_conforming(sm_cpy, sm_cpy, tol_pmap_zero);
-  PMP::internal::snap_border_vertices_non_conforming(sm_cpy, sm_cpy, tol_pmap_zero,
-                                                     CGAL::parameters::geom_traits(Kernel()),
-                                                     CGAL::parameters::geom_traits(Kernel()));
+  PMP::experimental::snap_border_vertices_non_conforming(sm_cpy, sm_cpy);
+  PMP::experimental::snap_border_vertices_non_conforming(sm_cpy, sm_cpy, tol_pmap_zero);
+  PMP::experimental::snap_border_vertices_non_conforming(sm_cpy, sm_cpy, tol_pmap_zero,
+                                                         CGAL::parameters::geom_traits(Kernel()),
+                                                         CGAL::parameters::geom_traits(Kernel()));
 
   // too big, creates wrong snaps
   sm_cpy = sm;
   CGAL::Constant_property_map<vertex_descriptor, FT> tol_pmap_large(large_tolerance);
-  res = PMP::internal::snap_border_vertices_non_conforming(sm_cpy, tol_pmap_large);
+  res = PMP::experimental::snap_border_vertices_non_conforming(sm_cpy, tol_pmap_large);
   std::cout << "snapped: " << res << std::endl;
 
   std::ofstream out1("out1.off");
@@ -104,8 +104,8 @@ void test(const char* filename,
   // too small
   sm_cpy = sm;
   CGAL::Constant_property_map<vertex_descriptor, FT> tol_pmap_small(small_tolerance);
-  res = PMP::internal::snap_border_vertices_non_conforming(sm_cpy, tol_pmap_small,
-                                                           CGAL::parameters::geom_traits(Kernel()));
+  res = PMP::experimental::snap_border_vertices_non_conforming(sm_cpy, tol_pmap_small,
+                                                               CGAL::parameters::geom_traits(Kernel()));
   std::cout << "snapped: " << res << std::endl;
 
   std::ofstream out2("out2.off");
@@ -115,7 +115,7 @@ void test(const char* filename,
 
   // automatically computed, custom tolerance at each vertex
   sm_cpy = sm;
-  res = PMP::internal::snap_border_vertices_non_conforming(sm_cpy);
+  res = PMP::experimental::snap_border_vertices_non_conforming(sm_cpy);
   std::cout << "snapped: " << res << std::endl;
 
   std::ofstream out3("out3.off");

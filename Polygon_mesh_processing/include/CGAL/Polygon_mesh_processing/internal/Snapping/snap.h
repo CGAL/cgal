@@ -59,9 +59,7 @@
 #include <vector>
 
 namespace CGAL {
-
 namespace Polygon_mesh_processing {
-
 namespace internal {
 
 // Assigns at each vertex the 'tolerance' value as tolerance, but bounded by a percentage of the length of its shortest incident edge
@@ -209,6 +207,10 @@ private:
   const GeomTraits& gt;
 };
 
+} // namespace internal
+
+namespace experimental {
+
 // This is the function if you know what you're doing with the ranges
 //
 // \ingroup PMP_repairing_grp
@@ -355,7 +357,7 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
   // Use a multi index to sort easily by sources, targets, AND distance.
   // Then, look up the distances in increasing order, and snap whenever the source and the target
   // have both not been snapped yet.
-  typedef Snapping_pair<PolygonMesh, GT>                                              Snapping_pair;
+  typedef internal::Snapping_pair<PolygonMesh, GT>                                    Snapping_pair;
   typedef boost::multi_index::multi_index_container<
     Snapping_pair,
     boost::multi_index::indexed_by<
@@ -368,8 +370,8 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
     >
   >                                                                                   Snapping_pair_container;
 
-  typedef Vertex_proximity_report<PolygonMesh, GT, Snapping_pair_container,
-                                  SVPM, TVPM, ToleranceMap, Box>                      Reporter;
+  typedef internal::Vertex_proximity_report<PolygonMesh, GT, Snapping_pair_container,
+                                            SVPM, TVPM, ToleranceMap, Box>            Reporter;
 
   Snapping_pair_container snapping_pairs;
   Reporter vpr(snapping_pairs, svpm, smesh, tvpm, tmesh, tol_pmap, gt);
@@ -441,7 +443,7 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
 
   Tolerance_map tol_pmap = get(Vertex_property_tag(), smesh);
   const FT tol_mx(std::numeric_limits<double>::max());
-  assign_tolerance_with_local_edge_length_bound(source_hrange, tol_pmap, tol_mx, smesh, snp);
+  internal::assign_tolerance_with_local_edge_length_bound(source_hrange, tol_pmap, tol_mx, smesh, snp);
 
   return snap_vertex_range_onto_vertex_range(source_hrange, smesh, target_hrange, tmesh, tol_pmap, snp, tnp);
 }
@@ -559,10 +561,14 @@ std::size_t snap_border_vertices_onto_vertex_range(PolygonMesh& smesh, const Pol
   return snap_border_vertices_onto_vertex_range(smesh, halfedges(tmesh), tmesh);
 }
 
+} // namespace experimental
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+namespace internal {
 
 // Adapted from <CGAL/internal/AABB_tree/AABB_traversal_traits.h>
 template <typename AABBTraits>
@@ -644,6 +650,10 @@ struct Compare_points_along_edge
   Point m_src;
 };
 
+} // namespace internal
+
+namespace experimental {
+
 // Try to merge vertices in 'hrange' (vd = target(hd, pm)) onto the edges in the 'erange',
 // non-conformingly
 template <typename HalfedgeRange, typename TriangleMesh,
@@ -667,7 +677,7 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
   typedef typename GT::Point_3                                              Point;
   typedef typename GT::Vector_3                                             Vector;
 
-  typedef Compare_points_along_edge<TriangleMesh, GT, VPM>                  Point_along_edge_comparer;
+  typedef internal::Compare_points_along_edge<TriangleMesh, GT, VPM>        Point_along_edge_comparer;
 
   typedef CGAL::AABB_halfedge_graph_segment_primitive<TriangleMesh, VPM>    Primitive;
   typedef CGAL::AABB_traits<GT, Primitive>                                  AABB_Traits;
@@ -756,7 +766,7 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
 #endif
 
     // use the current halfedge as hint
-    Projection_traits<AABB_Traits> traversal_traits(aabb_tree.traits());
+    internal::Projection_traits<AABB_Traits> traversal_traits(aabb_tree.traits());
     aabb_tree.traversal(query, traversal_traits);
 
     if(!traversal_traits.closest_point_initialized())
@@ -942,7 +952,7 @@ std::size_t snap_border_vertices_non_conforming(TriangleMesh& pm1,
 
   Tolerance_map tol_pmap = get(Vertex_property_tag(), pm1);
   const FT tol_mx(std::numeric_limits<double>::max());
-  assign_tolerance_with_local_edge_length_bound(border_vertices1, tol_pmap, tol_mx, pm1);
+  internal::assign_tolerance_with_local_edge_length_bound(border_vertices1, tol_pmap, tol_mx, pm1);
 
   return snap_vertex_range_onto_vertex_range_non_conforming(border_vertices1, pm1,
                                                             border_vertices2, pm2, tol_pmap,
@@ -1005,7 +1015,7 @@ std::size_t snap_border_vertices_non_conforming(TriangleMesh& pm,
                                              CGAL::parameters::all_default(), CGAL::parameters::all_default());
 }
 
-} // end namespace internal
+} // end namespace experimental
 
 } // end namespace Polygon_mesh_processing
 
