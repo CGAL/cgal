@@ -396,8 +396,8 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
  *    \cgalParamEnd
  * \cgalNamedParamsEnd
  *
- * \pre If a face weight property map is passed by the user, `ThresholdValueType` must be the same
- *      type as the value type of the property map. Othrewise, `ThresholdValueType` must be `std::size_t`.
+ * \pre If a face size property map is passed by the user, `ThresholdValueType` must be the same
+ *      type as the value type of the property map. Otherwise, `ThresholdValueType` must be `std::size_t`.
  *
  *  \return the number of connected components removed (ignoring isolated vertices).
  */

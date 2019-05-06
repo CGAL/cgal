@@ -710,7 +710,7 @@ Finally, it can be useful to quickly remove some connected components, for examp
 where small connected components should be discarded in favor of major connected components.
 The function `CGAL::Polygon_mesh_processing::keep_largest_connected_components()`
 enables the user to keep only a given number from the largest connected components. The size
-of a connected component is given by the sum of the size of the faces it contains. By default,
+of a connected component is given by the sum of the sizes of the faces it contains; by default,
 the size of a face is `1` and thus the size of a connected component is equal to the number of faces
 it contains. However, it is also possible to pass a face size map, such that the size of the face
 is its area, for example.
