@@ -388,6 +388,18 @@ if orientation should matter when determining whether two faces are duplicates.
 <b>Default:</b> `false`
 \cgalNPEnd
 
+\cgalNPBegin{face_size_map} \anchor PMP_face_size_map
+Parameter used in the functions `keep_large_connected_components()` and
+`keep_largest_connected_components()` to pass a property map that gives the size of a face when
+evaluating the size of a connected component (which is defined as the sum of the sizes of its faces).
+
+\n
+<b>Type:</b> a class model of `ReadablePropertyMap` with
+`boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
+a value type supporting construction from `0`, `operator+=()`, and comparisons operations. \n
+<b>Default:</b> `CGAL::Constant_property_map<face_descriptor, std::size_t>` with value `1`
+\cgalNPEnd
+
 \cgalNPTableEnd
 
 */
