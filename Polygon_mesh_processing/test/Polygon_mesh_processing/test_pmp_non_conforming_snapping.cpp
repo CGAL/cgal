@@ -7,12 +7,17 @@
 
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/internal/Snapping/snap.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
 #include <CGAL/property_map.h>
+#include <CGAL/IO/STL_reader.h>
 
+#include <array>
 #include <iostream>
 #include <fstream>
 #include <set>
+#include <string>
 #include <vector>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
@@ -26,6 +31,41 @@ typedef CGAL::Polyhedron_3<EPICK, CGAL::Polyhedron_items_with_id_3>   Polyhedron
 typedef CGAL::Surface_mesh<EPICK::Point_3>                            Surface_mesh;
 
 template <typename Kernel, typename Mesh>
+void read_mesh(const char* filename,
+               Mesh& sm)
+{
+  typedef typename Kernel::Point_3                                    Point;
+
+  std::ifstream in(filename);
+  if(!in.good())
+  {
+    std::cerr << "Error: can't read file: " << filename << std::endl;
+    std::exit(1);
+  }
+
+  std::string fn(filename);
+  if(fn.substr(fn.find_last_of(".") + 1) == "stl")
+  {
+    std::vector<Point> points;
+    std::vector<std::array<int, 3> > faces;
+    CGAL::read_STL(in, points, faces);
+
+    if(!CGAL::Polygon_mesh_processing::orient_polygon_soup(points, faces))
+      std::cerr << "W: File does not describe a polygon mesh" << std::endl;
+
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, faces, sm);
+  }
+  else // off reading
+  {
+    if(!in || !(in >> sm))
+    {
+      std::cerr << "Error: cannot open mesh\n";
+      return;
+    }
+  }
+}
+
+template <typename Kernel, typename Mesh>
 void test(const char* filename,
           const double large_tolerance,
           const double small_tolerance)
@@ -34,13 +74,7 @@ void test(const char* filename,
   typedef typename Kernel::FT                                         FT;
 
   Mesh sm;
-
-  std::ifstream in(filename);
-  if(!in || !(in >> sm))
-  {
-    std::cerr << "Error: cannot open mesh\n";
-    return;
-  }
+  read_mesh<Kernel>(filename, sm);
 
   std::cout << "------------------" << std::endl;
   std::cout << "num v/f: " << num_vertices(sm) << " " << num_faces(sm) << std::endl;
@@ -95,6 +129,7 @@ void test(const char* filename,
           const double small_tolerance)
 {
   std::cout << "######################## TEST FILE: " << filename << " ################## " << std::endl;
+
   std::cout << "~~~~~~~~~~~ TEST EPECK POLYHEDRON ~~~~~~~~~~~" << std::endl;
   test<EPECK, Exact_polyhedron>(filename, large_tolerance, small_tolerance);
 
@@ -114,6 +149,8 @@ int main(int, char**)
 
   test("data_snapping/real_data.off", 1., 0.05);
   test("data_snapping/real_data_2.off", 2, 0.1);
+
+  test("data_snapping/pig.stl", 20, 0.01);
 
   return EXIT_SUCCESS;
 }
