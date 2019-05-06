@@ -134,6 +134,7 @@ endforeach()
 
 include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
+include(${CGAL_MODULES_DIR}/CGAL_TweakFindBoost.cmake)
 
 # Temporary? Change the CMAKE module path
 cgal_setup_module_path()
