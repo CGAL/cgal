@@ -295,20 +295,20 @@ void keep_connected_components(PolygonMesh& pmesh
  *
  *  \return the number of connected components removed (ignoring isolated vertices).
  */
-template <typename PolygonMesh
-        , typename NamedParameters>
-std::size_t keep_largest_connected_components(PolygonMesh& pmesh
-                                            , std::size_t nb_components_to_keep
-                                            , const NamedParameters& np)
+template <typename PolygonMesh,
+          typename NamedParameters>
+std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
+                                              std::size_t nb_components_to_keep,
+                                              const NamedParameters& np)
 {
-  typedef PolygonMesh PM;
-  typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
+  typedef PolygonMesh                                                   PM;
+  typedef typename boost::graph_traits<PM>::face_descriptor             face_descriptor;
 
   using boost::choose_param;
   using boost::get_param;
 
-  //FaceIndexMap
-  typedef typename GetFaceIndexMap<PM, NamedParameters>::type FaceIndexMap;
+  // FaceIndexMap
+  typedef typename GetFaceIndexMap<PM, NamedParameters>::type            FaceIndexMap;
   FaceIndexMap fimap = choose_param(get_param(np, internal_np::face_index),
                                     get_property_map(boost::face_index, pmesh));
 
@@ -408,14 +408,14 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh,
                                             const ThresholdValueType threshold_value,
                                             const NamedParameters& np)
 {
-  typedef PolygonMesh PM;
-  typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
+  typedef PolygonMesh                                                     PM;
+  typedef typename boost::graph_traits<PM>::face_descriptor               face_descriptor;
 
   using boost::choose_param;
   using boost::get_param;
 
-  //FaceIndexMap
-  typedef typename GetFaceIndexMap<PM, NamedParameters>::type FaceIndexMap;
+  // FaceIndexMap
+  typedef typename GetFaceIndexMap<PM, NamedParameters>::type             FaceIndexMap;
   FaceIndexMap fim = choose_param(get_param(np, internal_np::face_index),
                                   get_property_map(boost::face_index, pmesh));
 

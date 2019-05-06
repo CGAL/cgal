@@ -17,24 +17,21 @@ typedef Kernel::Point_3                    Point;
 typedef Kernel::Compare_dihedral_angle_3   Compare_dihedral_angle_3;
 typedef CGAL::Surface_mesh<Point>          Mesh;
 
-
 template <typename G>
-struct Constraint : public boost::put_get_helper<bool,Constraint<G> >{
+struct Constraint
+  : public boost::put_get_helper<bool, Constraint<G> >
+{
   typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
   typedef boost::readable_property_map_tag      category;
   typedef bool                                  value_type;
   typedef bool                                  reference;
   typedef edge_descriptor                       key_type;
 
-  Constraint()
-    :g(NULL)
-  {}
+  Constraint() :g(NULL) {}
+  Constraint(G & g, double bound) : g(&g), bound(bound) {}
 
-  Constraint(G & g, double bound)
-    : g(&g), bound(bound)
-  {}
-
-  bool operator[](edge_descriptor e) const {
+  bool operator[](edge_descriptor e) const
+  {
     return compare((*g).point(source(e,*g)),
                    (*g).point(target(e,*g)),
                    (*g).point(target(next(halfedge(e,*g),*g),*g)),
@@ -77,41 +74,33 @@ void test_CC_with_default_size_map(Mesh sm)
 
   std::vector<face_descriptor> cc;
   face_descriptor fd = *faces(sm).first;
-  CGAL::Polygon_mesh_processing::connected_component(fd,
-                                                     sm,
-                                                     std::back_inserter(cc));
+  CGAL::Polygon_mesh_processing::connected_component(fd, sm, std::back_inserter(cc));
 
   std::cerr << "connected components without edge constraints" << std::endl;
   std::cerr << cc.size() << " faces in the CC of " << fd << std::endl;
-  if (strcmp(filename, "data/blobby_3cc.off") == 0)
-    assert(cc.size() == 1452);
+  assert(cc.size() == 1452);
 
   std::cerr << "\nconnected components with edge constraints (dihedral angle < 3/4 pi)" << std::endl;
   Mesh::Property_map<face_descriptor,std::size_t> fccmap;
-  fccmap = sm.add_property_map<face_descriptor,std::size_t>("f:CC").first;
-  std::size_t num =
-    PMP::connected_components(sm,
-      fccmap
-    );
+  fccmap = sm.add_property_map<face_descriptor, std::size_t>("f:CC").first;
+  std::size_t num = PMP::connected_components(sm, fccmap);
 
- std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
- if (strcmp(filename, "data/blobby_3cc.off") == 0)
-   assert(num == 3);
+  std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
+  assert(num == 3);
 
- std::vector<face_descriptor> one_face_per_cc(num);
- std::vector<std::size_t> cc_size(num,0);
+  std::vector<face_descriptor> one_face_per_cc(num);
+  std::vector<std::size_t> cc_size(num,0);
 
-
- for(face_descriptor f : faces(sm)){
- //  std::cout  << f << " in connected component " << fccmap[f] << std::endl;
+  for(face_descriptor f : faces(sm))
+  {
+    //    std::cout  << f << " in connected component " << fccmap[f] << std::endl;
     std::size_t ccid=fccmap[f];
     if (++cc_size[ccid]==1)
       one_face_per_cc[ccid]=f;
- }
+  }
 
-  std::size_t id_of_cc_to_remove =
-    std::distance(cc_size.begin(),
-                  std::min_element(cc_size.begin(), cc_size.end()));
+  std::size_t id_of_cc_to_remove = std::distance(cc_size.begin(),
+                                                 std::min_element(cc_size.begin(), cc_size.end()));
 
   Mesh copy1 = sm;
   Mesh copy2 = sm;

@@ -368,7 +368,7 @@ should be considered as part of the clipping volume or not.
 Parameter to pass an output iterator.
 \n
 \b Type : a model of `OutputIterator` \n
-\b Default : `Emptyset_iterator`
+\b Default : `#CGAL::Emptyset_iterator`
 \cgalNPEnd
 
 \cgalNPBegin{erase_all_duplicates} \anchor PMP_erase_all_duplicates
