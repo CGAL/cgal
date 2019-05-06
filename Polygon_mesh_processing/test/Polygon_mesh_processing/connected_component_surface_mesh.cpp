@@ -17,31 +17,36 @@ typedef Kernel::Point_3                    Point;
 typedef Kernel::Compare_dihedral_angle_3   Compare_dihedral_angle_3;
 typedef CGAL::Surface_mesh<Point>          Mesh;
 
-template <typename G>
+template <typename G, typename GT>
 struct Constraint
-  : public boost::put_get_helper<bool, Constraint<G> >
+  : public boost::put_get_helper<bool, Constraint<G, GT> >
 {
+  typedef typename GT::FT                                  FT;
+
   typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
-  typedef boost::readable_property_map_tag      category;
-  typedef bool                                  value_type;
-  typedef bool                                  reference;
-  typedef edge_descriptor                       key_type;
+  typedef boost::readable_property_map_tag                 category;
+  typedef bool                                             value_type;
+  typedef bool                                             reference;
+  typedef edge_descriptor                                  key_type;
 
-  Constraint() :g(NULL) {}
-  Constraint(G & g, double bound) : g(&g), bound(bound) {}
+  Constraint() : g(nullptr), gt(nullptr), bound(0) {}
+  Constraint(const G& g, const GT& gt, const FT bound) : g(&g), gt(&gt), bound(bound) {}
 
-  bool operator[](edge_descriptor e) const
+  bool operator[](const edge_descriptor e) const
   {
-    return compare((*g).point(source(e,*g)),
-                   (*g).point(target(e,*g)),
-                   (*g).point(target(next(halfedge(e,*g),*g),*g)),
-                   (*g).point(target(next(opposite(halfedge(e,*g),*g),*g),*g)),
-                   bound) == CGAL::SMALLER;
+    const Mesh& rg = *g;
+
+    return gt->compare_dihedral_angle_3_object()(
+             rg.point(source(e, rg)),
+             rg.point(target(e, rg)),
+             rg.point(target(next(halfedge(e, rg), rg), rg)),
+             rg.point(target(next(opposite(halfedge(e, rg), rg), rg), rg)),
+          bound) == CGAL::SMALLER;
   }
 
-  G* g;
-  Compare_dihedral_angle_3 compare;
-  double bound;
+  const G* g;
+  const GT* gt;
+  FT bound;
 };
 
 template <typename G, typename GT>
@@ -51,7 +56,7 @@ struct Face_descriptor_area_functor
 
   Face_descriptor_area_functor(const G& g, const GT& gt) : g(g), gt(gt) { }
 
-  double operator()(const face_descriptor f) const
+  typename GT::FT operator()(const face_descriptor f) const
   {
     const auto& vpm = get(CGAL::vertex_point, g);
 
@@ -64,13 +69,15 @@ struct Face_descriptor_area_functor
   const GT& gt;
 };
 
-void test_CC_with_default_size_map(Mesh sm)
+void test_CC_with_default_size_map(Mesh sm,
+                                   const Kernel& k)
 {
   std::cout << " -- test with default size map -- " << std::endl;
 
   typedef boost::graph_traits<Mesh>::face_descriptor                      face_descriptor;
+  typedef Kernel::FT                                                      FT;
 
-  const double bound = std::cos(0.7 * CGAL_PI);
+  const FT bound = std::cos(0.7 * CGAL_PI);
 
   std::vector<face_descriptor> cc;
   face_descriptor fd = *faces(sm).first;
@@ -113,18 +120,18 @@ void test_CC_with_default_size_map(Mesh sm)
 
   // default face size map, but explicitely passed
   PMP::keep_connected_components(copy1, ff,
-     PMP::parameters::edge_is_constrained_map(Constraint<Mesh>(copy1, bound))
+     PMP::parameters::edge_is_constrained_map(Constraint<Mesh, Kernel>(copy1, k, bound))
                      .face_size_map(CGAL::Constant_property_map<face_descriptor, std::size_t>(1)));
 
   // remove cc from copy2
   ff.clear();
   ff.push_back(one_face_per_cc[id_of_cc_to_remove]);
   PMP::remove_connected_components(copy2, ff,
-     PMP::parameters::edge_is_constrained_map(Constraint<Mesh>(copy2, bound)));
+     PMP::parameters::edge_is_constrained_map(Constraint<Mesh, Kernel>(copy2, k, bound)));
 
   std::cerr << "We keep the " << num-1 << " largest components" << std::endl;
   PMP::keep_largest_connected_components(sm, num-1,
-    PMP::parameters::edge_is_constrained_map(Constraint<Mesh>(sm, bound)));
+    PMP::parameters::edge_is_constrained_map(Constraint<Mesh, Kernel>(sm, k, bound)));
 
   sm.collect_garbage();
   copy1.collect_garbage();
@@ -146,13 +153,13 @@ void test_CC_with_default_size_map(Mesh sm)
   }
 }
 
-void test_CC_with_area_size_map(Mesh sm)
+void test_CC_with_area_size_map(Mesh sm,
+                                const Kernel& k)
 {
   std::cout << " -- test with area size map -- " << std::endl;
 
   typedef boost::graph_traits<Mesh>::face_descriptor                      face_descriptor;
 
-  Kernel k;
   Face_descriptor_area_functor<Mesh, Kernel> f(sm, k);
 
   std::cout << "We keep the " << 2 << " largest components" << std::endl;
@@ -187,10 +194,12 @@ int main(int /*argc*/, char** /*argv*/)
   assert(in.good());
   in >> sm;
 
+  Kernel k;
+
   std::cout << "VEF " << num_vertices(sm) << " " << num_edges(sm) << " " << num_faces(sm) << "\n";
 
-  test_CC_with_default_size_map(sm);
-  test_CC_with_area_size_map(sm);
+  test_CC_with_default_size_map(sm, k);
+  test_CC_with_area_size_map(sm, k);
 
   return EXIT_SUCCESS;
 }
