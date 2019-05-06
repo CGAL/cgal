@@ -19,7 +19,6 @@
 \cgalPkgSince{2.3}
 \cgalPkgBib{cgal:h-pp2}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
-\cgalPkgDemo{2D Polygon Partition,partition_2.zip,Operations on Polygons,polygon.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
