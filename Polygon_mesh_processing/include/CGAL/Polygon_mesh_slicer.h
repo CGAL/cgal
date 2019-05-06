@@ -168,6 +168,30 @@ class Polygon_mesh_slicer
     {}
 
     std::vector< Point_3 > current_poly;
+    
+    template<typename ForwardIterator>
+    bool is_polyline_cw_oriented(ForwardIterator first,
+                                 ForwardIterator last)
+    {
+      
+      ForwardIterator i = std::min_element(first, last, typename Traits::Less_xyz_3());
+    
+      ForwardIterator prev = (i == first) ? last : i;
+      --prev;
+    
+      ForwardIterator next = i;
+      ++next;
+      if (next == last)
+        next = first;
+    
+    Point_3 p1(*prev), p2(*i), p3(*next);
+    return typename Traits::Orientation_3()(m_plane.orthogonal_vector(),
+                                   typename Traits::Vector_3(p1, p2),
+                                   typename Traits::Vector_3(p1, p3)) 
+       == CGAL::CLOCKWISE;
+    
+    }
+    
     void start_new_polyline()
     {
       current_poly.clear();
@@ -197,6 +221,10 @@ class Polygon_mesh_slicer
     void end_polyline()
     {
       CGAL_assertion(!current_poly.empty());
+      if(is_polyline_cw_oriented(current_poly.begin(), current_poly.end()))
+      {
+        std::reverse(current_poly.begin(), current_poly.end());
+      }
       *out++=current_poly;
     }
   };

@@ -12,7 +12,7 @@
 #include <CGAL/Polygon_mesh_slicer.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-
+#include <CGAL/Polygon_2.h>
 #include <boost/foreach.hpp>
 
 #include <fstream>
@@ -66,33 +66,76 @@ typedef std::list< Polyline_type > Polylines;
   Polylines polylines;
 
   // test isolated vertex
-  slicer(typename K::Plane_3(0,1,0,0), std::back_inserter(polylines));
+  typename K::Plane_3 plane(0,1,0,0);
+  slicer(plane, std::back_inserter(polylines));
   assert(polylines.size()==2); // two polylines
   assert( (polylines.front().size()==1) != (polylines.back().size()==1)); //only one isolated vertex
-
+  
+  CGAL::Polygon_2<K> polygon;
+  for(auto p : polylines.back())
+  {
+    polygon.push_back(plane.to_2d(p));
+  }
+  
+  assert(polygon.is_counterclockwise_oriented());
 
   //test two nested polylines, one open and one closed
   polylines.clear();
-  slicer(typename K::Plane_3(0,1,0,0.5), std::back_inserter(polylines));
+  polygon.clear();
+  plane = typename K::Plane_3(0,1,0,0.5); 
+  slicer(plane, std::back_inserter(polylines));
   assert(polylines.size()==2);// two polylines
   assert( (polylines.front().front()==polylines.front().back()) !=
           (polylines.back().front()==polylines.back().back()) ); //one open and one closed polyline
 
-  // test only coplanar edges
+  for(auto polyline : polylines)
+  {
+    for(auto p : polyline)
+    {
+      polygon.push_back(plane.to_2d(p));
+    }
+    if(polygon.is_simple())
+      assert(polygon.is_counterclockwise_oriented());
+    polygon.clear();
+  }
   polylines.clear();
-  slicer(typename K::Plane_3(0,0,1,1), std::back_inserter(polylines));
+  
+  // test only coplanar edges
+  plane = typename K::Plane_3(0,0,1,1);
+  slicer(plane, std::back_inserter(polylines));
   assert(polylines.size()==1); // one polyline
   assert(polylines.front().front()==polylines.front().back()); // that is closed
+  
 
-
-  //test only coplanar border edges
+  for(auto polyline : polylines)
+  {
+    for(auto p : polyline)
+    {
+      polygon.push_back(plane.to_2d(p));
+    }
+    if(polygon.is_simple())
+      assert(polygon.is_counterclockwise_oriented());
+    polygon.clear();
+  }
   polylines.clear();
-  slicer(typename K::Plane_3(0,0,1,-1), std::back_inserter(polylines));
+  
+  //test only coplanar border edges
+  plane = typename K::Plane_3(0,0,1,-1);
+  slicer(plane, std::back_inserter(polylines));
   assert(polylines.size()==1); // one polyline
   assert(polylines.front().front()!=polylines.front().back()); // that is closed
 
-  //test no intersection
+  for(auto polyline : polylines)
+  {
+    for(auto p : polyline)
+    {
+      polygon.push_back(plane.to_2d(p));
+    }
+    assert(polygon.is_counterclockwise_oriented());
+    polygon.clear();
+  }
   polylines.clear();
+  //test no intersection
   slicer(typename K::Plane_3(0,0,1,333), std::back_inserter(polylines));
   assert(polylines.empty());
 
