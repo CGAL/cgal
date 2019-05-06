@@ -21,13 +21,13 @@ The set of input polygons are unique and interior disjoint. That is, given disti
 bounded or unbounded side of `Q` (but not both). 
 \tparam OutputPolygonWithHolesPtrIterator must be an output iterator whose `value_type` is a smart pointer 
 (such as `boost::shared_ptr`) whose `element_type` is `Polygon_with_holes_2<K>`.  
-
+\return `true` if no error was encountered, and `false` otherwise.
 \sa `create_exterior_straight_skeleton_2()`
 \sa `Straight_skeleton_builder_2` 
 
 */
 template<class K, class InputPolygonPtrIterator, class OutputPolygonWithHolesPtrIterator>
-void arrange_offset_polygons_2 ( InputPolygonPtrIterator begin
+bool arrange_offset_polygons_2 ( InputPolygonPtrIterator begin
 , InputPolygonPtrIterator end
 , OutputPolygonWithHolesPtrIterator out
 , K const& k 
