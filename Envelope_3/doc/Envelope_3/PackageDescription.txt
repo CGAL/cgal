@@ -16,7 +16,6 @@
 \cgalPkgDependsOn{\ref PkgArrangement2Summary}
 \cgalPkgBib{cgal:mwz-e3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
-\cgalPkgDemo{3D Envelopes,envelope_3.zip,L1 Voronoi Diagram,l1_voronoi_diagram_2.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
