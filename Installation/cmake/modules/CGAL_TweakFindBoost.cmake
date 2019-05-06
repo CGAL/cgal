@@ -101,5 +101,5 @@ if( NOT CGAL_TweakFindBoost )
     )
 
 
-  set(CGAL_TweakFindBoost)
+  set(CGAL_TweakFindBoost ON)
 endif()
