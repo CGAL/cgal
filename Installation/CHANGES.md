@@ -15,7 +15,7 @@ Release date: September 2019
     Users must use a version prior to 5.0 if they need this functionality.
 -   **Breaking change**: Removed the deprecated classes `CGAL::Regular_triangulation_euclidean_traits_2`, `CGAL::Regular_triangulation_filtered_traits_2`.   Users must use a version prior to 5.0 if they need these classes.   
     
-### Polygon Mesh Processing package
+### Polygon Mesh Processing
  -   Added the function `CGAL::Polygon_mesh_processing::centroid()` which computes
      the centroid of a closed triangle mesh.
 
