@@ -322,15 +322,17 @@ Writes the triangulation as for `Triangulation_2<Traits,Tds>` and, for each face
 writes "C" or "N" depending whether edge 
 `(f,i)` is constrained or not. 
 \relates Constrained_triangulation_2 
-*/ 
-ostream & operator<<(ostream& os, const Constrained_triangulation_2<Traits,Tds> &Ct); 
+*/
+template <typename  Traits, typename Tds, typename Itag>
+std::ostream & operator<<(std::ostream& os, const Constrained_triangulation_2<Traits,Tds,Itag> &ct); 
 
 /*!
-Reads a triangulation from stream `is` and assigns it to `t`. Data in the stream must have the same format `operator<<` uses. 
-Note that `t` is first cleared. 
+Reads a triangulation from stream `is` and assigns it to c`t`. Data in the stream must have the same format `operator<<` uses. 
+Note that `ct` is first cleared. 
 \relates Constrained_triangulation_2 
-*/ 
-istream& operator>>(istream& is,Constrained_triangulation_2<Traits,Tds> Ct& t); 
+*/
+template <typename  Traits, typename Tds, typename Itag>
+std::istream& operator>>(std::istream& is,Constrained_triangulation_2<Traits,Tds,Itag> Ct& ct); 
 
 /*! Exception used by constrained triangulations configured with
 the tag `No_intersection_tag`. It is thrown upon insertion of a constraint

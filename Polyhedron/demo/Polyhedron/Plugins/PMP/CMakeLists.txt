@@ -38,8 +38,8 @@ else()
   message(STATUS "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available.")
 endif()
 
-
-polyhedron_demo_plugin(orient_soup_plugin Orient_soup_plugin KEYWORDS Classification)
+qt5_wrap_ui( soupUI_FILES Repair_soup.ui )
+polyhedron_demo_plugin(orient_soup_plugin Orient_soup_plugin ${soupUI_FILES} KEYWORDS Classification )
 target_link_libraries(orient_soup_plugin PUBLIC scene_polygon_soup_item scene_surface_mesh_item scene_polylines_item scene_points_with_normal_item)
 
 

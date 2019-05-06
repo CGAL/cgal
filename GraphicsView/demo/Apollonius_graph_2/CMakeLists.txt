@@ -20,7 +20,7 @@ find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
 add_definitions(-DQT_NO_KEYWORDS)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
+set(CMAKE_AUTOMOC ON)
 #--------------------------------
 # UI files (Qt Designer files)
 qt5_wrap_ui( DT_UI_FILES Apollonius_graph_2.ui )
@@ -29,10 +29,9 @@ qt5_wrap_ui( DT_UI_FILES Apollonius_graph_2.ui )
 qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES ./Apollonius_graph_2.qrc )
 
 # use the Qt MOC preprocessor on classes that derives from QObject
-qt5_generate_moc( Apollonius_graph_2.cpp Apollonius_graph_2.moc )
 
 # The executable itself.
-add_executable  ( Apollonius_graph_2 Apollonius_graph_2.cpp Apollonius_graph_2.moc ${DT_UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
+add_executable  ( Apollonius_graph_2 Apollonius_graph_2.cpp ${DT_UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS Apollonius_graph_2 )
 

@@ -1,5 +1,6 @@
 #include <fstream>
-
+#include <boost/config.hpp>
+#include <boost/version.hpp>
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Stream_lines_2.h>
@@ -20,7 +21,9 @@
 
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
- 
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+#include <CGAL/IO/WKT.h>
+#endif
 // the two base classes
 #include "ui_Stream_lines_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -164,9 +167,15 @@ MainWindow::generate()
 void
 MainWindow::on_actionLoadPoints_triggered()
 {
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+#endif
   QString fileName = QFileDialog::getOpenFileName(this,
 						  tr("Open grid file"),
-						  ".");
+						  "."
+						#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+						,tr("WKT files (*.wkt *.WKT)")
+						#endif
+                                                  );
   if(! fileName.isEmpty()){
     open(fileName);
   }
@@ -179,28 +188,58 @@ MainWindow::open(QString fileName)
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
   std::ifstream ifs(qPrintable(fileName));
-
+  
   runge_kutta_integrator = new Runge_kutta_integrator(integrating);
   double iXSize, iYSize;
   iXSize = iYSize = 512;
-  unsigned int x_samples, y_samples;
-  ifs >> x_samples;
-  ifs >> y_samples;
-  regular_grid = new Regular_grid(x_samples, y_samples, iXSize, iYSize);
-  /*fill the grid with the appropreate values*/
-  for (unsigned int i=0;i<x_samples;i++)
-    for (unsigned int j=0;j<y_samples;j++)
+  if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
+  {
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+    std::vector<std::vector<Point_2> > mp;
+    int size= -1;
+    do
+    {
+      std::vector<Point_2> ps;
+      CGAL::read_multi_point_WKT(ifs, ps);
+      if(size == -1)
+        size = static_cast<int>(ps.size());
+      else if(ps.size() > 0 && size != static_cast<int>(ps.size()))
+        ps.resize(size);
+      else if(ps.size() == 0)
+        continue;
+      mp.push_back(ps);
+    }while(ifs.good() && !ifs.eof());
+    regular_grid = new Regular_grid(size, static_cast<int>(mp.size()), iXSize, iYSize);
+    /*fill the grid with the appropriate values*/
+    for (unsigned int i=0;i<static_cast<unsigned int>(size);++i)
+      for (unsigned int j=0;j<mp.size();++j)
+      {
+        regular_grid->set_field(i, j, Vector(mp[j][i].x(), mp[j][i].y()));
+      }
+#else
+    QApplication::restoreOverrideCursor();
+    return;
+#endif
+  }
+  else{
+    unsigned int x_samples, y_samples;
+    ifs >> x_samples;
+    ifs >> y_samples;
+    regular_grid = new Regular_grid(x_samples, y_samples, iXSize, iYSize);
+    /*fill the grid with the appropriate values*/
+    for (unsigned int i=0;i<x_samples;i++)
+      for (unsigned int j=0;j<y_samples;j++)
       {
         double xval, yval;
         ifs >> xval;
         ifs >> yval;
         regular_grid->set_field(i, j, Vector(xval, yval));
       }
+  }
   ifs.close();
   // default cursor
   QApplication::restoreOverrideCursor();
   this->addToRecentFiles(fileName);
-  //  actionRecenter->trigger();
   generate();
   Q_EMIT( changed());
     
@@ -209,15 +248,29 @@ MainWindow::open(QString fileName)
 void
 MainWindow::on_actionSavePoints_triggered()
 {
-  /*
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
   QString fileName = QFileDialog::getSaveFileName(this,
 						  tr("Save points"),
-						  ".");
+						  ".",
+                                                  tr("WKT files (*.wkt *.WKT)"));
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
-  
+    
+    std::vector<std::vector<Point_2> >mp;
+    mp.resize(regular_grid->get_dimension().second);
+    for (int i=0;i<regular_grid->get_dimension().first;++i)
+    {
+      mp[i].reserve(regular_grid->get_dimension().second);
+      for (int j=0;j<regular_grid->get_dimension().second;++j)
+      {
+        mp[i].push_back(Point_2(regular_grid->get_field(j,i).x(),
+                                regular_grid->get_field(j,i).y()));
+      }
+      CGAL::write_multi_point_WKT(ofs, mp[i]);
+    }
+    ofs.close();
   }
-  */
+#endif
 }
 
 
@@ -229,7 +282,6 @@ MainWindow::on_actionRecenter_triggered()
 }
 
 
-#include "Stream_lines_2.moc"
 #include <CGAL/Qt/resources.h>
 
 int main(int argc, char **argv)
@@ -249,3 +301,5 @@ int main(int argc, char **argv)
   mainWindow.show();
   return app.exec();
 }
+
+#include "Stream_lines_2.moc"

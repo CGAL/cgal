@@ -1,1 +1,1 @@
-data/*.poly
+data/*.polygons.cgal

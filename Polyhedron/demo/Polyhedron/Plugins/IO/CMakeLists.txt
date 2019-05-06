@@ -26,6 +26,8 @@ target_link_libraries(stl_plugin PUBLIC scene_surface_mesh_item scene_polygon_so
 polyhedron_demo_plugin(surf_io_plugin Surf_io_plugin KEYWORDS IO)
 target_link_libraries(surf_io_plugin PUBLIC scene_surface_mesh_item)
 
+polyhedron_demo_plugin(lcc_io_plugin lcc_io_plugin KEYWORDS IO)
+target_link_libraries(lcc_io_plugin PUBLIC scene_lcc_item)
 
 
 find_package(VTK QUIET COMPONENTS
@@ -60,7 +62,7 @@ else()
   set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)
   
   polyhedron_demo_plugin(ply_plugin PLY_io_plugin KEYWORDS IO PointSetProcessing Classification)
-  target_link_libraries(ply_plugin PUBLIC scene_points_with_normal_item scene_polygon_soup_item scene_surface_mesh_item scene_polygon_soup_item)
+  target_link_libraries(ply_plugin PUBLIC scene_points_with_normal_item scene_polygon_soup_item scene_surface_mesh_item scene_textured_item)
   target_compile_features(ply_plugin PRIVATE ${needed_cxx_features})
   
   if (LASLIB_FOUND)

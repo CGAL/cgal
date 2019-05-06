@@ -51,8 +51,7 @@ Meshing_thread* cgal_code_mesh_3_templated(const Mesh* pMesh,
                                  bool protect_borders,
                                  const double sharp_edges_angle,
                                  const int manifold,
-                                 const bool surface_only,
-                                 CGAL::Three::Scene_interface* scene)
+                                 const bool surface_only)
 {
   if(!pMesh) return 0;
 
@@ -98,7 +97,6 @@ Meshing_thread* cgal_code_mesh_3_templated(const Mesh* pMesh,
   std::cerr << " done (" << timer.time() * 1000 << " ms)" << std::endl;
 
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item(surface_only);
-  p_new_item->setScene(scene);
 
   QString tooltip = QString("<div>From \"") + filename +
     QString("\" with the following mesh parameters"
@@ -151,8 +149,7 @@ Meshing_thread* cgal_code_mesh_3(const SMesh* pMesh,
                                  bool protect_borders,
                                  const double sharp_edges_angle,
                                  const int manifold,
-                                 const bool surface_only,
-                                 CGAL::Three::Scene_interface* scene)
+                                 const bool surface_only)
 {
   return cgal_code_mesh_3_templated(pMesh,
                           polylines,
@@ -168,8 +165,7 @@ Meshing_thread* cgal_code_mesh_3(const SMesh* pMesh,
                           protect_borders,
                           sharp_edges_angle,
                           manifold,
-                          surface_only,
-                          scene);
+                          surface_only);
 }
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 
@@ -181,8 +177,7 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
                                  const double edge_size,
                                  const double tet_shape,
                                  const int manifold,
-                                 const bool surface_only,
-                                 CGAL::Three::Scene_interface* scene)
+                                 const bool surface_only)
 {
   if (pfunction == NULL) { return NULL; }
 
@@ -200,7 +195,6 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
                              );
 
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item(surface_only);
-  p_new_item->setScene(scene);
 
   Mesh_parameters param;
   param.protect_features = false;
@@ -238,7 +232,6 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
                                  bool protect_features,
                                  const int manifold,
                                  const bool surface_only,
-                                 CGAL::Three::Scene_interface* scene,
                                  bool detect_connected_components,
                                  bool is_gray,
                                  float iso_value,
@@ -262,7 +255,6 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   param.manifold = manifold;
   param.image_3_ptr = pImage;
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item(surface_only);
-  p_new_item->setScene(scene);
   if(!is_gray)
   {
     namespace p = CGAL::parameters;

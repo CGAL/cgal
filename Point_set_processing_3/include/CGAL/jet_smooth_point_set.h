@@ -28,6 +28,7 @@
 #include <CGAL/IO/trace.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/Point_set_processing_3/internal/neighbor_query.h>
 #include <CGAL/Monge_via_jet_fitting.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
@@ -74,39 +75,22 @@ jet_smooth_point(
   const typename Kernel::Point_3& query, ///< 3D point to project
   Tree& tree, ///< KD-tree
   const unsigned int k, ///< number of neighbors.
+  typename Kernel::FT neighbor_radius,
   const unsigned int degree_fitting,
   const unsigned int degree_monge)
 {
   // basic geometric types
   typedef typename Kernel::Point_3 Point;
 
-  // types for K nearest neighbors search
-  typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
-  typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
-  typedef typename Neighbor_search::iterator Search_iterator;
-
   // types for jet fitting
   typedef Monge_via_jet_fitting< Kernel,
                                  Simple_cartesian<double>,
                                  SvdTraits> Monge_jet_fitting;
   typedef typename Monge_jet_fitting::Monge_form Monge_form;
-
-  // Gather set of (k+1) neighboring points.
-  // Performs k + 1 queries (if unique the query point is
-  // output first). Search may be aborted if k is greater
-  // than number of input points.
-  std::vector<Point> points; points.reserve(k+1);
-  Neighbor_search search(tree,query,k+1);
-  Search_iterator search_iterator = search.begin();
-  unsigned int i;
-  for(i=0;i<(k+1);i++)
-  {
-    if(search_iterator == search.end())
-      break; // premature ending
-    points.push_back(search_iterator->first);
-    search_iterator++;
-  }
-  CGAL_point_set_processing_precondition(points.size() >= 1);
+  
+  std::vector<Point> points; 
+  CGAL::Point_set_processing_3::internal::neighbor_query
+    (query, tree, k, neighbor_radius, points);
 
   // performs jet fitting
   Monge_jet_fitting monge_fit;
@@ -123,6 +107,7 @@ jet_smooth_point(
     typedef typename Kernel::Point_3 Point;
     const Tree& tree;
     const unsigned int k;
+    const typename Kernel::FT neighbor_radius;
     unsigned int degree_fitting;
     unsigned int degree_monge;
     const std::vector<Point>& input;
@@ -131,12 +116,14 @@ jet_smooth_point(
     cpp11::atomic<bool>& interrupted;
 
   public:
-    Jet_smooth_pwns (Tree& tree, unsigned int k, std::vector<Point>& points,
-		     unsigned int degree_fitting, unsigned int degree_monge, std::vector<Point>& output,
+    Jet_smooth_pwns (Tree& tree, unsigned int k, typename Kernel::FT neighbor_radius,
+                     std::vector<Point>& points,
+                     unsigned int degree_fitting, unsigned int degree_monge, std::vector<Point>& output,
                      cpp11::atomic<std::size_t>& advancement,
                      cpp11::atomic<bool>& interrupted)
-      : tree(tree), k (k), degree_fitting (degree_fitting),
-	degree_monge (degree_monge), input (points), output (output)
+      : tree(tree), k (k), neighbor_radius(neighbor_radius)
+      , degree_fitting (degree_fitting)
+      , degree_monge (degree_monge), input (points), output (output)
       , advancement (advancement)
       , interrupted (interrupted)
     { }
@@ -148,6 +135,7 @@ jet_smooth_point(
         if (interrupted)
           break;
 	output[i] = CGAL::internal::jet_smooth_point<Kernel, SvdTraits>(input[i], tree, k,
+                  neighbor_radius,
 									degree_fitting,
 									degree_monge);
         ++ advancement;
@@ -170,7 +158,7 @@ jet_smooth_point(
 
 /**
    \ingroup PkgPointSetProcessing3Algorithms
-   Smoothes the range of `points` using jet fitting on the k
+   Smoothes the range of `points` using jet fitting on the
    nearest neighbors and reprojection onto the jet.
    As this method relocates the points, it
    should not be called on containers sorted w.r.t. point locations.
@@ -190,6 +178,12 @@ jet_smooth_point(
    \cgalNamedParamsBegin
      \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
      If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{neighbor_radius} spherical neighborhood radius. If
+     provided, the neighborhood of a query point is computed with a fixed spherical
+     radius instead of a fixed number of neighbors. In that case, the parameter
+     `k` is used as a limit on the number of points returned by each spherical
+     query (to avoid overly large number of points in high density areas). If no
+     limit is wanted, use `k=0`.\cgalParamEnd
      \cgalParamBegin{degree_fitting} degree of jet fitting.\cgalParamEnd
      \cgalParamBegin{degree_monge} Monge degree.\cgalParamEnd
      \cgalParamBegin{svd_traits} template parameter for the class `Monge_via_jet_fitting`. If
@@ -228,6 +222,8 @@ jet_smooth_point_set(
                             "Error: no SVD traits");
 
   PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
+  typename Kernel::FT neighbor_radius = choose_param(get_param(np, internal_np::neighbor_radius),
+                                                     typename Kernel::FT(0));
   unsigned int degree_fitting = choose_param(get_param(np, internal_np::degree_fitting), 2);
   unsigned int degree_monge = choose_param(get_param(np, internal_np::degree_monge), 2);
   const std::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
@@ -271,8 +267,8 @@ jet_smooth_point_set(
      
      std::vector<Point> mutated_points (kd_tree_points.size (), CGAL::ORIGIN);
      CGAL::internal::Jet_smooth_pwns<Kernel, SvdTraits, Tree>
-       f (tree, k, kd_tree_points, degree_fitting, degree_monge,
-	  mutated_points,
+       f (tree, k, neighbor_radius, kd_tree_points, degree_fitting, degree_monge,
+          mutated_points,
           parallel_callback.advancement(),
           parallel_callback.interrupted());
      tbb::parallel_for(tbb::blocked_range<size_t>(0, kd_tree_points.size ()), f);
@@ -293,7 +289,7 @@ jet_smooth_point_set(
 	   const typename boost::property_traits<PointMap>::reference p = get(point_map, *it);
 	   put(point_map, *it ,
 	       internal::jet_smooth_point<Kernel, SvdTraits>(
-							     p,tree,k,degree_fitting,degree_monge) );
+                   p,tree,k,neighbor_radius,degree_fitting,degree_monge) );
            if (callback && !callback ((nb+1) / double(kd_tree_points.size())))
              break;
 	 }

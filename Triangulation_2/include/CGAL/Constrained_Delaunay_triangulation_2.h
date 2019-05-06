@@ -121,6 +121,7 @@ public:
   using Ctr::update_constraints;
   using Ctr::delete_vertex;
   using Ctr::push_back;
+  using Ctr::mirror_index;
 #endif
 
   typedef typename Geom_traits::Point_2  Point;
@@ -312,7 +313,7 @@ private:
   template <class Tuple_or_pair,class InputIterator>
   std::ptrdiff_t insert_with_info(InputIterator first,InputIterator last)
   {
-    size_type n = this->number_of_vertices();
+    size_type n = number_of_vertices();
     std::vector<std::size_t> indices;
     std::vector<Point> points;
     std::vector<typename Tds::Vertex::Info> infos;
@@ -343,7 +344,7 @@ private:
       }
     }
 
-    return this->number_of_vertices() - n;
+    return number_of_vertices() - n;
   }
 
 public:
@@ -548,7 +549,7 @@ public:
     f=(*itedge).first;
     i=(*itedge).second;
     if (is_flipable(f,i)) {
-      eni=Edge(f->neighbor(i),this->mirror_index(f,i));
+      eni=Edge(f->neighbor(i),mirror_index(f,i));
       if (less_edge(*itedge,eni)) edge_set.insert(*itedge);
       else edge_set.insert(eni);
     }
@@ -565,7 +566,7 @@ public:
     // f->neighbor(indf) that are distinct from the edge to be flipped
 
     ni = f->neighbor(indf); 
-    indn=this->mirror_index(f,indf);
+    indn=mirror_index(f,indf);
     ei= Edge(f,indf);
     edge_set.erase(ei);
     e[0]= Edge(f,cw(indf));
@@ -576,7 +577,7 @@ public:
     for(i=0;i<4;i++) { 
       ff=e[i].first;
       ii=e[i].second;
-      eni=Edge(ff->neighbor(ii),this->mirror_index(ff,ii));
+      eni=Edge(ff->neighbor(ii),mirror_index(ff,ii));
       if (less_edge(e[i],eni)) {edge_set.erase(e[i]);}
       else { edge_set.erase(eni);} 
     } 
@@ -598,7 +599,7 @@ public:
       ff=e[i].first;
       ii=e[i].second;
       if (is_flipable(ff,ii)) {
-	eni=Edge(ff->neighbor(ii),this->mirror_index(ff,ii));
+	eni=Edge(ff->neighbor(ii),mirror_index(ff,ii));
 	if (less_edge(e[i],eni)) { 
 	  edge_set.insert(e[i]);}
 	else {
@@ -643,17 +644,17 @@ Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
 flip (Face_handle& f, int i)
 {
   Face_handle g = f->neighbor(i);
-  int j = this->mirror_index(f,i);
+  int j = mirror_index(f,i);
 
   // save wings neighbors to be able to restore contraint status
   Face_handle f1 = f->neighbor(cw(i));
-  int i1 = this->mirror_index(f,cw(i));
+  int i1 = mirror_index(f,cw(i));
   Face_handle f2 = f->neighbor(ccw(i));
-  int i2 = this->mirror_index(f,ccw(i));
+  int i2 = mirror_index(f,ccw(i));
   Face_handle f3 = g->neighbor(cw(j));
-  int i3 = this->mirror_index(g,cw(j));
+  int i3 = mirror_index(g,cw(j));
   Face_handle f4 = g->neighbor(ccw(j));
-  int i4 = this->mirror_index(g,ccw(j));
+  int i4 = mirror_index(g,ccw(j));
 
   // The following precondition prevents the test suit 
   // of triangulation to work on constrained Delaunay triangulation
@@ -663,13 +664,13 @@ flip (Face_handle& f, int i)
   // restore constraint status
   f->set_constraint(f->index(g), false);
   g->set_constraint(g->index(f), false);
-  f1->neighbor(i1)->set_constraint(this->mirror_index(f1,i1),
+  f1->neighbor(i1)->set_constraint(mirror_index(f1,i1),
 				   f1->is_constrained(i1));
-  f2->neighbor(i2)->set_constraint(this->mirror_index(f2,i2),
+  f2->neighbor(i2)->set_constraint(mirror_index(f2,i2),
 				   f2->is_constrained(i2));
-  f3->neighbor(i3)->set_constraint(this->mirror_index(f3,i3),
+  f3->neighbor(i3)->set_constraint(mirror_index(f3,i3),
 				   f3->is_constrained(i3));
-  f4->neighbor(i4)->set_constraint(this->mirror_index(f4,i4),
+  f4->neighbor(i4)->set_constraint(mirror_index(f4,i4),
 				   f4->is_constrained(i4));
   return;
 }
