@@ -29,6 +29,7 @@
 #include <boost/next_prior.hpp>
 #include <CGAL/Intersection_traits_3.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/utils_classes.h>
 
 namespace CGAL {
 
@@ -424,10 +425,13 @@ intersection(const typename K::Line_3 &l1,
   const Point_3 p4 = p2 + v2;
   if(!K().coplanar_3_object()(p1,p2,p3,p4)) return intersection_return<typename K::Intersect_3, typename K::Line_3, typename K::Line_3>();
   const Vector_3 v3 = p3 - p1;
- const Vector_3 v3v2 = cross_product(v3,v2);
+  const Vector_3 v3v2 = cross_product(v3,v2);
   const Vector_3 v1v2 = cross_product(v1,v2);
-  const FT t = ((v3v2.x()*v1v2.x()) + (v3v2.y()*v1v2.y()) + (v3v2.z()*v1v2.z())) /
-               (v1v2.squared_length());
+  const FT sl = v1v2.squared_length();
+  if(certainly(sl == FT(0)))
+    return intersection_return<typename K::Intersect_3, typename K::Line_3, typename K::Line_3>();
+  const FT t = ((v3v2.x()*v1v2.x()) + (v3v2.y()*v1v2.y()) + (v3v2.z()*v1v2.z())) / sl;
+  
   return intersection_return<typename K::Intersect_3, typename K::Line_3, typename K::Line_3>(p1 + (v1 * t));
 }
 
