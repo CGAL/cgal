@@ -264,11 +264,15 @@ void keep_connected_components(PolygonMesh& pmesh
 
 /*!
  * \ingroup keep_connected_components_grp
- *  removes the small connected components and all isolated vertices.
- *  Keep `nb_components_to_keep` largest connected components. 
+ *
+ * removes the small connected components and all isolated vertices.
+ * Keep the `nb_components_to_keep` largest connected components, where the size of a connected
+ * component is computed as the sum of the individual sizes of all the faces of the connected component.
+ * By default, the size of a face is `1` (and thus the size of a connected component is the number
+ * of faces it contains), but it is also possible to pass custom sizes, such as the area of the face.
  *
  * Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
- * must be either available as internal property maps 
+ * must be either available as internal property maps
  * to `pmesh` or provided as \ref pmp_namedparameters "Named Parameters".
  *
  * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
@@ -282,6 +286,11 @@ void keep_connected_components(PolygonMesh& pmesh
  *    \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
  *    \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
  *    \cgalParamBegin{vertex_index_map} a property map containing the index of each vertex of `pmesh` \cgalParamEnd
+ *    \cgalParamBegin{face_size_map}
+ *      a property map containing a size for each face of `pmesh`. The value type of this property map
+ *      is chosen by the user, but must be constructible from `0` and support `operator+=()` and
+ *      comparisons.
+ *    \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  *  \return the number of connected components removed (ignoring isolated vertices).
@@ -317,7 +326,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fimap);
   std::size_t num = connected_components(pmesh, face_cc, np);
 
-  // Even even we do not want to keep anything we need to first
+  // Even if we do not want to keep anything we need to first
   // calculate the number of existing connected_components to get the
   // correct return value.
   if(nb_components_to_keep == 0) {
@@ -358,24 +367,37 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
 
 /*!
  * \ingroup keep_connected_components_grp
- *  removes connected components with less than a given number of faces.
+ * removes connected components whose size is (strictly) smaller than a given threshold value,
+ * where the size of a connected component is computed as the sum of the individual sizes
+ * of all the faces of the connected component. By default, the size of a face is `1` (and thus
+ * the size of a connected component is the number of faces it contains), but it is also possible
+ * to pass custom sizes, such as the area of the face.
  *
  * Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
- * must be either available as internal property maps 
+ * must be either available as internal property maps
  * to `pmesh` or provided as \ref pmp_namedparameters "Named Parameters".
  *
  * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
+ * \tparam ThresholdValueType the type of the threshold value
  * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * \param pmesh the polygon mesh
- * \param threshold_components_to_keep the number of faces a component must have so that it is kept
+ * \param threshold_value any connected component with a size (strictly) smaller than this value will be discarded
  * \param np optional \ref pmp_namedparameters "Named Parameters", amongst those described below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
  *    \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
  *    \cgalParamBegin{vertex_index_map} a property map containing the index of each vertex of `pmesh` \cgalParamEnd
+ *    \cgalParamBegin{face_size_map}
+ *      a property map containing a size for each face of `pmesh`. The value type of this property map
+ *      is chosen by the user, but must be constructible from `0` and support `operator+=()` and
+ *      comparisons.
+ *    \cgalParamEnd
  * \cgalNamedParamsEnd
+ *
+ * \pre If a face weight property map is passed by the user, `ThresholdValueType` must be the same
+ *      type as the value type of the property map. Othrewise, `ThresholdValueType` must be `std::size_t`.
  *
  *  \return the number of connected components removed (ignoring isolated vertices).
  */
