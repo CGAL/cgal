@@ -211,6 +211,8 @@ struct Scene_surface_mesh_item_priv{
   mutable QList<double> text_ids;
   mutable std::vector<TextItem*> targeted_id;
 
+  std::string comments;
+
   mutable bool has_fpatch_id;
   mutable bool has_feature_edges;
   mutable bool floated;
@@ -1050,6 +1052,9 @@ Scene_surface_mesh_item::~Scene_surface_mesh_item()
 }
 SMesh* Scene_surface_mesh_item::polyhedron() { return d->smesh_; }
 const SMesh* Scene_surface_mesh_item::polyhedron() const { return d->smesh_; }
+
+std::string& Scene_surface_mesh_item::comments() { return d->comments; }
+const std::string& Scene_surface_mesh_item::comments() const { return d->comments; }
 
 void Scene_surface_mesh_item::compute_bbox()const
 {

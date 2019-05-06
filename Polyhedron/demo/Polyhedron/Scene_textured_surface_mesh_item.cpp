@@ -21,8 +21,8 @@ struct Scene_textured_surface_mesh_item_priv
   {
     item = parent;
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
-    uv = sm->add_property_map<halfedge_descriptor,std::pair<float, float> >("h:uv",std::make_pair(0.0f,0.0f)).first;
-
+    umap = sm->add_property_map<halfedge_descriptor, float>("h:u", 0.0f).first;
+    vmap = sm->add_property_map<halfedge_descriptor, float>("h:v", 0.0f).first;
   }
   Scene_textured_surface_mesh_item_priv(const SMesh& p, Scene_textured_surface_mesh_item* parent)
     : sm(new SMesh(p))
@@ -30,14 +30,16 @@ struct Scene_textured_surface_mesh_item_priv
   {
     item = parent;
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
-    uv = sm->add_property_map<halfedge_descriptor,std::pair<float, float> >("h:uv",std::make_pair(0.0f,0.0f)).first;
+    umap = sm->add_property_map<halfedge_descriptor, float>("h:u", 0.0f).first;
+    vmap = sm->add_property_map<halfedge_descriptor, float>("h:v", 0.0f).first;
   }
   Scene_textured_surface_mesh_item_priv(SMesh* const p,Scene_textured_surface_mesh_item* parent)
     :sm(p)
   {
     item = parent;
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
-    uv = sm->add_property_map<halfedge_descriptor,std::pair<float, float> >("h:uv",std::make_pair(0.0f,0.0f)).first;
+    umap = sm->add_property_map<halfedge_descriptor, float>("h:u", 0.0f).first;
+    vmap = sm->add_property_map<halfedge_descriptor, float>("h:v", 0.0f).first;
   }
 
   ~Scene_textured_surface_mesh_item_priv()
@@ -49,7 +51,8 @@ struct Scene_textured_surface_mesh_item_priv
 
   SMesh* sm;
   ::Texture texture;
-  SMesh::Property_map<halfedge_descriptor,std::pair<float, float> > uv;
+  SMesh::Property_map<halfedge_descriptor, float> umap;
+  SMesh::Property_map<halfedge_descriptor, float> vmap;
 
   //[Px][Py][Pz][Nx][Ny][Nz][u][v]
   mutable std::vector<float> faces_buffer;
@@ -102,8 +105,8 @@ Scene_textured_surface_mesh_item_priv::compute_normals_and_vertices(void) const
       faces_buffer.push_back(n[1]);
       faces_buffer.push_back(n[2]);
       //uvs [2]
-      const float u = get(uv, *he).first;
-      const float v = get(uv, *he).second;
+      const float u = get(umap, *he);
+      const float v = get(vmap, *he);
       faces_buffer.push_back(u);
       faces_buffer.push_back(v);
     }
@@ -127,8 +130,8 @@ Scene_textured_surface_mesh_item_priv::compute_normals_and_vertices(void) const
       edges_buffer.push_back(a.y() + offset.y);
       edges_buffer.push_back(a.z() + offset.z);
     //uvs [2]
-      float u = get(uv, halfedge(*he, *sm)).first;
-      float v = get(uv, halfedge(*he, *sm)).second;
+      float u = get(umap, halfedge(*he, *sm));
+      float v = get(vmap, halfedge(*he, *sm));
 
       edges_buffer.push_back(u);
       edges_buffer.push_back(v);
@@ -138,8 +141,8 @@ Scene_textured_surface_mesh_item_priv::compute_normals_and_vertices(void) const
       edges_buffer.push_back(b.z() + offset.z);
 
       //uvs [2]
-       u = get(uv, opposite(halfedge(*he, *sm), *sm)).first;
-       v = get(uv, opposite(halfedge(*he, *sm), *sm)).second;
+       u = get(umap, opposite(halfedge(*he, *sm), *sm));
+       v = get(vmap, opposite(halfedge(*he, *sm), *sm));
 
       edges_buffer.push_back(u);
       edges_buffer.push_back(v);
