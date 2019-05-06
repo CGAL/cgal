@@ -423,16 +423,25 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
       qobject_cast<Scene_polygon_soup_item*>(item);
 
   SMesh* sMesh = NULL;
-if(sm_item)
+  double diag = 0;
+  Scene_item::Bbox box;
+  if(sm_item)
   {
     sMesh = sm_item->face_graph();
     if(!sMesh)
       return;
+    box = bbox(sMesh);
+  }
+  else if(soup_item != 0)
+  {
+    box = bbox(soup_item);
   }
   else if(soup_item == 0)
     return;
-
-  double diag = scene->len_diagonal();
+  double X=box.max(0)-box.min(0),
+      Y = box.max(1)-box.min(1),
+      Z = box.max(2)-box.min(2);
+  diag = CGAL::sqrt(X*X+Y*Y+Z*Z);
   double offset_value = QInputDialog::getDouble(mw,
                                                 QString("Choose Offset Value"),
                                                 QString("Offset Value (use negative number for inset)"),
