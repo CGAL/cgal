@@ -28,7 +28,6 @@
 // ============================================================================
 
 
-#include <CGAL/basic.h>
 #include <cstddef>
 #include <cassert>
 #include <iterator>
@@ -184,6 +183,8 @@ struct item : public In_place_list_base<item> {
   item( int i) : key(i) {}
   item( const item& i)
   : In_place_list_base<item>(i), key(i.key) {}
+  
+  item& operator=(const item& rhs)=default;
   bool operator== (const item& i) const { return key == i.key;}
   bool operator!= (const item& i) const { return key != i.key;}
   bool operator== (int i) const         { return key == i;}

@@ -28,14 +28,14 @@
 // implementation: Testing of convex partitioning functions
 // ============================================================================
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/partition_2.h>
 #include <list>
 #include <cassert>
 
 typedef double                        NT;
-typedef CGAL::Cartesian<NT>           K;
+typedef CGAL::Simple_cartesian<NT>           K;
 typedef K::Point_2                    Point_2;
 typedef std::list<Point_2>            Container;
 typedef CGAL::Polygon_2<K, Container> Polygon_2;

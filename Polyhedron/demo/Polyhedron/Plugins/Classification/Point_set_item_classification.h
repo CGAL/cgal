@@ -3,6 +3,7 @@
 
 //#define CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
 #define CGAL_CLASSIFICATION_VERBOSE
+#define CGAL_CLASSTRAINING_VERBOSE
 
 #include <CGAL/Three/Scene_item.h>
 
@@ -29,7 +30,6 @@ class Point_set_item_classification : public Item_classification_base
  public:
   typedef Kernel::Point_3 Point_3;
   typedef Kernel::Vector_3 Vector_3;
-  typedef CGAL::Classification::RGB_Color Color;
   
   typedef Point_set::Point_map Point_map;
   typedef Point_set::Vector_map Vector_map;
@@ -116,7 +116,35 @@ class Point_set_item_classification : public Item_classification_base
                          xcenter + dx, ycenter + dy, zcenter + dz);
   }
 
-  void compute_features (std::size_t nb_scales);
+  void compute_features (std::size_t nb_scales, float voxel_size);
+
+  std::string feature_statistics() const
+  {
+    std::ostringstream oss;
+
+    for (std::size_t i = 0; i < m_features.size(); ++ i)
+    {
+      float vmin = std::numeric_limits<float>::max();
+      float vmax = -std::numeric_limits<float>::max();
+      float vmean = 0.f;
+      std::size_t nb = 0;
+      
+      for (Point_set::const_iterator it = m_points->point_set()->begin_or_selection_begin();
+           it != m_points->point_set()->end(); ++ it)
+      {
+        float v = m_features[i]->value(std::size_t(it - m_points->point_set()->begin()));
+        vmin = (std::min) (vmin, v);
+        vmax = (std::max) (vmax, v);
+        vmean += v;
+        ++ nb;
+      }
+
+      oss << m_features[i]->name() << " in [ " << vmin << " ; " << vmax << " ], mean = " << vmean / nb << std::endl;
+    }
+
+    return oss.str();
+  }
+  
   void add_remaining_point_set_properties_as_features();
   
   void select_random_region();
@@ -129,8 +157,12 @@ class Point_set_item_classification : public Item_classification_base
     Pmap pmap;
     boost::tie (pmap, okay) = m_points->point_set()->template property_map<Type>(name.c_str());
     if (okay)
+    {
+      std::cerr << "Adding property<" << CGAL::demangle(typeid(Type).name()) << ">("
+                << name << ") as feature" << std::endl;
       m_features.template add<CGAL::Classification::Feature::Simple_feature <Point_set, Pmap> >
         (*(m_points->point_set()), pmap, name.c_str());
+    }
 
     return okay;
   }
@@ -186,12 +218,11 @@ class Point_set_item_classification : public Item_classification_base
     if (m_index_color == 1 || m_index_color == 2)
       change_color (m_index_color);
   }
-  void train(int classifier, unsigned int nb_trials,
-             std::size_t num_trees, std::size_t max_depth);
+  void train(int classifier, const QMultipleInputDialog& dialog);
   bool run (int method, int classifier, std::size_t subdivisions, double smoothing);
 
   void update_color () { change_color (m_index_color); }
-  void change_color (int index);
+  void change_color (int index, float* vmin = NULL, float* vmax = NULL);
   CGAL::Three::Scene_item* generate_one_item (const char* name,
                                               int label) const
   {
@@ -231,8 +262,6 @@ class Point_set_item_classification : public Item_classification_base
       }
   }
   
-  bool write_output(std::ostream& out);
-
   QColor add_new_label (const char* name)
   {
     QColor out = Item_classification_base::add_new_label (name);
@@ -301,10 +330,11 @@ class Point_set_item_classification : public Item_classification_base
   {
     std::vector<int> indices (m_points->point_set()->size(), -1);
 
+    m_label_probabilities.clear();
     if (method == 0)
       CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
                                                        m_labels, classifier,
-                                                       indices);
+                                                       indices, m_label_probabilities);
     else if (method == 1)
     {
       if (m_clusters.empty()) // Use real local smoothing
@@ -370,13 +400,17 @@ class Point_set_item_classification : public Item_classification_base
   Point_set::Property_map<unsigned char> m_red;
   Point_set::Property_map<unsigned char> m_green;
   Point_set::Property_map<unsigned char> m_blue;
-  Point_set::Property_map<Color> m_color;
+  Point_set::Property_map<CGAL::Color> m_color;
+  std::vector<std::vector<float> > m_label_probabilities;
+
   Point_set::Property_map<int> m_training;
   Point_set::Property_map<int> m_classif;
 
   Generator* m_generator;
   
   int m_index_color;
+
+  bool m_input_is_las;
   
 }; // end class Point_set_item_classification
 

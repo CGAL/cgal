@@ -14,7 +14,7 @@ cmake_minimum_required(VERSION 3.1)
 cmake_policy(VERSION 3.1)
 
 if(POLICY CMP0056)
-  # http://www.cmake.org/cmake/help/v3.2/policy/CMP0056.html
+  # https://cmake.org/cmake/help/v3.2/policy/CMP0056.html
   #
   # Fix a bug: `try_compile` should use `CMAKE_EXE_LINKER_FLAGS`.
   # That variable can contain important flags like
@@ -108,10 +108,12 @@ else ( CGAL_BRANCH_BUILD )
 
   # Enable testing with BUILD_TESTING
   option(BUILD_TESTING "Build the testing tree." OFF)
-  include(CTest)
   if(BUILD_TESTING AND NOT POLICY CMP0064)
     message(FATAL_ERROR "CGAL support of CTest requires CMake version 3.4 or later.
 The variable BUILD_TESTING must be set of OFF.")
+  endif()
+  if(BUILD_TESTING)
+    enable_testing()
   endif()
 endif (CGAL_BRANCH_BUILD )
 
@@ -364,10 +366,17 @@ endif()
 #   CGAL-4.10  : 13.0.0 (Change the API/ABI in CGAL_ImageIO.)
 #   CGAL-4.11  : 13.0.1 (Nothing different in CGAL compiled libraries.)
 #   CGAL-4.12  : 13.0.2 (Nothing different in CGAL compiled libraries.)
+#   CGAL-4.14  : 14.0.0 , but only for CGAL_ImageIO (ABI broken in CGAL::Image_3.)
+#                              and for CGAL_Qt5 (ABI broken in DemoMainWindow)
+#   CGAL-4.14  : 13.0.3 , for other libraries
 # ¹) According to http://upstream-tracker.org/versions/cgal.html
 
-set( CGAL_SONAME_VERSION "13" )
-set( CGAL_SOVERSION      "13.0.2" )
+set( CGAL_SONAME_VERSION         "13"     )
+set( CGAL_SOVERSION              "13.0.3" )
+set( CGAL_ImageIO_SONAME_VERSION "14"     )
+set( CGAL_ImageIO_SOVERSION      "14.0.0" )
+set( CGAL_Qt5_SONAME_VERSION     "14"     )
+set( CGAL_Qt5_SOVERSION          "14.0.0" )
 
 message( STATUS "CGAL_SONAME_VERSION=${CGAL_SONAME_VERSION}" )
 message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )
@@ -901,7 +910,7 @@ install(PROGRAMS ${scripts} DESTINATION ${CGAL_INSTALL_BIN_DIR})
 install(DIRECTORY ${CGAL_MODULES_REL_DIR}/                DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 install(FILES     ${CGAL_MODULES_REL_DIR}/UseCGAL.cmake   DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 
-if ( GMP_IN_CGAL_AUXILIARY OR MPFR_IN_CGAL_AUXILIARY )
+if ( IS_DIRECTORY auxiliary/gmp/include AND IS_DIRECTORY auxiliary/gmp/lib )
   install(DIRECTORY auxiliary/gmp/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
   install(DIRECTORY auxiliary/gmp/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
 endif()

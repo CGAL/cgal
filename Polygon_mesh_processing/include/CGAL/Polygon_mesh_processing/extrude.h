@@ -66,7 +66,7 @@ void create_strip(const BorderHalfedgesRange& input_halfedges,
     halfedge_descriptor h = input_halfedges[i];
     face_descriptor nf = add_face(mesh);
 
-    CGAL::cpp11::array<halfedge_descriptor, 4> hedges;
+    std::array<halfedge_descriptor, 4> hedges;
     for (int k=0; k<4; ++k)
     {
       hedges[k]=h;
@@ -137,19 +137,21 @@ struct Identity_functor
  * @param np_in an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map}
- *    the property map that contains the points associated to the vertices of `input`.
- * If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- * should be available for the vertices of `input` \cgalParamEnd
+ * \cgalParamBegin{vertex_point_map}
+ *   the property map that contains the points associated to the vertices of `input`.
+ *   If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *   should be available for the vertices of `input`
+ * \cgalParamEnd
  * \cgalNamedParamsEnd
  *
- * * @param np_out an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np_out an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map}
- *    the property map that will contain the points associated to the vertices of `output`.
- * If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- * should be available for the vertices of `output` \cgalParamEnd
+ * \cgalParamBegin{vertex_point_map}
+ *   the property map that will contain the points associated to the vertices of `output`.
+ *   If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *   should be available for the vertices of `output`
+ * \cgalParamEnd
  * \cgalNamedParamsEnd
  */
 template <class InputMesh,
@@ -240,18 +242,20 @@ void extrude_mesh(const InputMesh& input,
  *
  * \cgalNamedParamsBegin
  * \cgalParamBegin{vertex_point_map}
- * the property map that contains the points associated to the vertices of `input`.
- * If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- * should be available for the vertices of `input` \cgalParamEnd
+ *   the property map that contains the points associated to the vertices of `input`.
+ *   If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *   should be available for the vertices of `input`
+ * \cgalParamEnd
  * \cgalNamedParamsEnd
  *
- * * @param np_out an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np_out an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  * \cgalParamBegin{vertex_point_map}
- * the property map that will contain the points associated to the vertices of `output`.
- * If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- * should be available for the vertices of `output` \cgalParamEnd
+ *   the property map that will contain the points associated to the vertices of `output`.
+ *   If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *   should be available for the vertices of `output`
+ * \cgalParamEnd
  * \cgalNamedParamsEnd
  */
 template <class InputMesh,

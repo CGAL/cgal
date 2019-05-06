@@ -9,6 +9,10 @@ if(NOT POLICY CMP0070 AND POLICY CMP0053)
   cmake_policy(SET CMP0053 OLD)
 endif()
 
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
+
 find_package(CGAL COMPONENTS Qt5)
 
 find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
@@ -19,6 +23,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
 
 add_definitions(-DQT_NO_KEYWORDS)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
 
 #--------------------------------
 # The "L1 Voronoi diagram" demo: L1_voronoi_diagram_2
@@ -29,11 +34,8 @@ qt5_wrap_ui( DT_UI_FILES L1_voronoi_diagram_2.ui )
 # qrc files (resources files, that contain icons, at least)
 qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES ./L1_voronoi_diagram_2.qrc )
 
-# use the Qt MOC preprocessor on classes that derives from QObject
-qt5_generate_moc( L1_voronoi_diagram_2.cpp L1_voronoi_diagram_2.moc )
-
 # The executable itself.
-add_executable  ( L1_voronoi_diagram_2 L1_voronoi_diagram_2.cpp L1_voronoi_diagram_2.moc ${DT_UI_FILES}  ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES} )
+add_executable  ( L1_voronoi_diagram_2 L1_voronoi_diagram_2.cpp ${DT_UI_FILES}  ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES} )
 
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS L1_voronoi_diagram_2 )
 

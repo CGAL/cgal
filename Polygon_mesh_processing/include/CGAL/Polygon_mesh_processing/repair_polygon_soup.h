@@ -23,12 +23,12 @@
 
 #include <CGAL/license/Polygon_mesh_processing/repair.h>
 
+#include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #include <CGAL/iterator.h>
 #include <CGAL/Kernel_traits.h>
-#include <CGAL/unordered.h>
 
 #include <boost/dynamic_bitset.hpp>
 #include <boost/functional/hash.hpp>
@@ -41,6 +41,8 @@
 #include <set>
 #include <vector>
 #include <utility>
+#include <unordered_map>
+#include <unordered_set>
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
   #ifndef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
@@ -641,7 +643,11 @@ Polygon construct_canonical_polygon(const PointRange& points,
                                     const Traits& traits = Traits())
 {
   if(polygon.size() < 2)
+  {
+    reversed = false;
     return polygon;
+  }
+  
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
   std::cout << "Input polygon:";
@@ -750,11 +756,11 @@ struct Duplicate_collector
   void dump(OutputIterator out)
   {
     typedef std::pair<const ValueType, std::vector<ValueType> > Pair_type;
-    BOOST_FOREACH(const Pair_type& p, collections)
+    for(const Pair_type& p : collections)
       *out++ = p.second;
   }
 
-  CGAL::cpp11::unordered_map<ValueType, std::vector<ValueType> > collections;
+  std::unordered_map<ValueType, std::vector<ValueType> > collections;
 };
 
 template <typename ValueType>
@@ -796,7 +802,7 @@ DuplicateOutputIterator collect_duplicate_polygons(const PointRange& points,
   typedef boost::dynamic_bitset<>                                                 Reversed_markers;
   typedef internal::Polygon_equality_tester<PointRange, PolygonRange,
                                             Reversed_markers, Traits>             Equality;
-  typedef CGAL::cpp11::unordered_set<P_ID, Hasher, Equality>                      Unique_polygons;
+  typedef std::unordered_set<P_ID, Hasher, Equality>                      Unique_polygons;
 
   const std::size_t polygons_n = polygons.size();
 

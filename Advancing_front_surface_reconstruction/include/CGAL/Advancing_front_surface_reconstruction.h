@@ -389,10 +389,10 @@ namespace CGAL {
 
     Intern_successors_type* new_border()
     {
-      nbe_pool.push_back(Next_border_elt());
+      nbe_pool.resize(nbe_pool.size()+1);
 
       Next_border_elt* p1 = & nbe_pool.back();
-      nbe_pool.push_back(Next_border_elt());
+      nbe_pool.resize(nbe_pool.size()+1);
       Next_border_elt* p2 = & nbe_pool.back();
 
       Intern_successors_type ist(p1,p2);
@@ -2488,7 +2488,7 @@ namespace CGAL {
   \tparam PointInputIterator must be an input iterator with 3D points as value type.  This point type must
   be convertible to `Exact_predicates_inexact_constructions_kernel::Point_3` with the `Cartesian_converter`.
   \tparam IndicesOutputIterator must be an output iterator to which
-  `CGAL::cpp11::array<std::size_t, 3>` can be assigned.
+  `std::array<std::size_t, 3>` can be assigned.
 
   \param b iterator on the first point of the sequence
   \param e past the end iterator of the point sequence
@@ -2540,7 +2540,7 @@ namespace CGAL {
   \tparam PointInputIterator must be an input iterator with 3D points as value type.  This point type must
   be convertible to `Exact_predicates_inexact_constructions_kernel::Point_3` with the `Cartesian_converter`.
   \tparam IndicesOutputIterator must be an output iterator to which
-  `CGAL::cpp11::array<std::size_t, 3>` can be assigned.
+  `std::array<std::size_t, 3>` can be assigned.
   \tparam Priority must be a functor with `double operator()(AdvancingFront,Cell_handle,int)` returning the
   priority of the facet `(Cell_handle,int)`.
 

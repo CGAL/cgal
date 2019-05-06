@@ -4,16 +4,8 @@
 #undef NDEBUG //this testsuite requires NDEBUG to be not defined
 #endif
 
-#include <CGAL/Object.h>
-#include <CGAL/Line_3.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Segment_3.h>
-#include <CGAL/Ray_3.h>
-#include <CGAL/Triangle_3.h>
-#include <CGAL/Iso_cuboid_3.h>
-
-#include <CGAL/Cartesian.h>
-#include <CGAL/Homogeneous.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Simple_homogeneous.h>
 
 #include <vector>
 #include <iostream>
@@ -253,7 +245,7 @@ struct Test {
 
 int main()
 {
-	Test< CGAL::Cartesian<double>   >().run();
-	Test< CGAL::Homogeneous<double> >().run();
+	Test< CGAL::Simple_cartesian<double>   >().run();
+	Test< CGAL::Simple_homogeneous<double> >().run();
 	// TODO : test more kernels.
 }

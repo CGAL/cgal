@@ -32,6 +32,7 @@
 #include <algorithm>
 #include <vector>
 #include <cstring>
+#include <cstddef>
 
 #include <CGAL/Compact_container.h>
 
@@ -306,7 +307,6 @@ public:
 
   // Special insert methods that construct the objects in place
   // (just forward the arguments to the constructor, to optimize a copy).
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   template < typename... Args >
   iterator
   emplace(const Args&... args)
@@ -316,113 +316,12 @@ public:
     new (ret) value_type(args...);
     return finalize_insert(ret, fl);
   }
-#else
-  // inserts a default constructed item.
-  iterator emplace()
-  {
-    FreeList * fl = get_free_list();
-    pointer ret = init_insert(fl);
-    new (ret) value_type();
-    return finalize_insert(ret, fl);
-  }
-
-  template < typename T1 >
-  iterator
-  emplace(const T1 &t1)
-  {
-    FreeList * fl = get_free_list();
-    pointer ret = init_insert(fl);
-    new (ret) value_type(t1);
-    return finalize_insert(ret, fl);
-  }
-
-  template < typename T1, typename T2 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2)
-  {
-    FreeList * fl = get_free_list();
-    pointer ret = init_insert(fl);
-    new (ret) value_type(t1, t2);
-    return finalize_insert(ret, fl);
-  }
-
-  template < typename T1, typename T2, typename T3 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3)
-  {
-    FreeList * fl = get_free_list();
-    pointer ret = init_insert(fl);
-    new (ret) value_type(t1, t2, t3);
-    return finalize_insert(ret, fl);
-  }
-
-  template < typename T1, typename T2, typename T3, typename T4 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4)
-  {
-    FreeList * fl = get_free_list();
-    pointer ret = init_insert(fl);
-    new (ret) value_type(t1, t2, t3, t4);
-    return finalize_insert(ret, fl);
-  }
-
-  template < typename T1, typename T2, typename T3, typename T4, typename T5 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-    const T5 &t5)
-  {
-    FreeList * fl = get_free_list();
-    pointer ret = init_insert(fl);
-    new (ret) value_type(t1, t2, t3, t4, t5);
-    return finalize_insert(ret, fl);
-  }
-
-  template < typename T1, typename T2, typename T3, typename T4,
-             typename T5, typename T6 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-          const T5 &t5, const T6 &t6)
-  {
-    FreeList * fl = get_free_list();
-    pointer ret = init_insert(fl);
-    new (ret) value_type(t1, t2, t3, t4, t5, t6);
-    return finalize_insert(ret, fl);
-  }
-
-  template < typename T1, typename T2, typename T3, typename T4,
-             typename T5, typename T6, typename T7 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-          const T5 &t5, const T6 &t6, const T7 &t7)
-  {
-    FreeList * fl = get_free_list();
-    pointer ret = init_insert(fl);
-    new (ret) value_type(t1, t2, t3, t4, t5, t6, t7);
-    return finalize_insert(ret, fl);
-  }
-
-  template < typename T1, typename T2, typename T3, typename T4,
-             typename T5, typename T6, typename T7, typename T8 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-          const T5 &t5, const T6 &t6, const T7 &t7, const T8 &t8)
-  {
-    FreeList * fl = get_free_list();
-    pointer ret = init_insert(fl);
-    new (ret) value_type(t1, t2, t3, t4, t5, t6, t7, t8);
-    return finalize_insert(ret, fl);
-  }
-#endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
   iterator insert(const T &t)
   {
     FreeList * fl = get_free_list();
     pointer ret = init_insert(fl);
-#ifdef CGAL_CXX11
     std::allocator_traits<allocator_type>::construct(m_alloc, ret, t);
-#else
-    m_alloc.construct(ret, t);
-#endif
     return finalize_insert(ret, fl);
   }
 
@@ -449,11 +348,7 @@ private:
     CGAL_precondition(type(x) == USED);
     EraseCounterStrategy::increment_erase_counter(*x);
 
-#ifdef CGAL_CXX11
     std::allocator_traits<allocator_type>::destroy(m_alloc, &*x);
-#else
-    m_alloc.destroy(&*x);
-#endif
 
 /* WE DON'T DO THAT BECAUSE OF THE ERASE COUNTER
 #ifndef CGAL_NO_ASSERTIONS
@@ -641,7 +536,8 @@ private:
 
   static char * clean_pointer(char * p)
   {
-    return ((p - (char *) NULL) & ~ (std::ptrdiff_t) START_END) + (char *) NULL;
+    return reinterpret_cast<char*>(reinterpret_cast<std::ptrdiff_t>(p) &
+                                   ~ (std::ptrdiff_t) START_END);
   }
 
   // Returns the pointee, cleaned up from the squatted bits.
@@ -654,20 +550,23 @@ private:
   static Type type(const_pointer ptr)
   {
     char * p = (char *) Traits::pointer(*ptr);
-    return (Type) (p - clean_pointer(p));
+    return (Type) (reinterpret_cast<std::ptrdiff_t>(p) -
+                   reinterpret_cast<std::ptrdiff_t>(clean_pointer(p)));
   }
 
-  static Type type(const_iterator ptr)
+  static Type type(const_iterator it)
   {
-    return type(&*ptr);
+    return type(it.operator->());
   }
 
   // Sets the pointer part and the type of the pointee.
-  static void set_type(pointer p_element, void * pointer, Type t)
+  static void set_type(pointer ptr, void * p, Type t)
   {
-    CGAL_precondition(0 <= t && (int) t < 4);
-    Traits::pointer(*p_element) =
-      (void *) ((clean_pointer((char *) pointer)) + (int) t);
+    // This out of range compare is always true and causes lots of
+    // unnecessary warnings.
+    // CGAL_precondition(0 <= t && t < 4);
+    Traits::pointer(*ptr) = reinterpret_cast<void *>
+      (reinterpret_cast<std::ptrdiff_t>(clean_pointer((char *) p)) + (int) t);
   }
 
   typedef tbb::queuing_mutex Mutex;

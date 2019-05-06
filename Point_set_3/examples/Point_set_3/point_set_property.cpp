@@ -9,7 +9,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
-typedef CGAL::cpp11::array<unsigned char, 3> Color;
+typedef std::array<unsigned char, 3> Color;
 
 typedef CGAL::Point_set_3<Point> Point_set;
 typedef Point_set::Property_map<Color> Color_map;

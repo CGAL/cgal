@@ -25,15 +25,16 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/trace.h>
+#include <CGAL/IO/trace.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/Point_set_processing_3/internal/neighbor_query.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Memory_sizer.h>
-#include <CGAL/function.h>
+#include <functional>
 
 #include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -42,7 +43,7 @@
 #include <list>
 
 #ifdef CGAL_LINKED_WITH_TBB
-#include <CGAL/internal/Parallel_callback.h>
+#include <CGAL/Point_set_processing_3/internal/Parallel_callback.h>
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>  
@@ -56,7 +57,6 @@ namespace CGAL {
 // ----------------------------------------------------------------------------
 /// \cond SKIP_IN_MANUAL
 namespace internal {
-
 
 /// Estimates normal direction using linear least
 /// squares fitting of a plane on the K nearest neighbors.
@@ -73,34 +73,17 @@ template < typename Kernel,
 typename Kernel::Vector_3
 pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute the normal at
                     const Tree& tree, ///< KD-tree
-                    unsigned int k) ///< number of neighbors
+                    unsigned int k, ///< number of neighbors
+                    typename Kernel::FT neighbor_radius)
 {
   // basic geometric types
   typedef typename Kernel::Point_3  Point;
   typedef typename Kernel::Plane_3  Plane;
 
-  // types for K nearest neighbors search
-  typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
-  typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
-  typedef typename Neighbor_search::iterator Search_iterator;
-
-  // Gather set of (k+1) neighboring points.
-  // Perform k+1 queries (as in point set, the query point is
-  // output first). Search may be aborted if k is greater
-  // than number of input points.
-  std::vector<Point> points; points.reserve(k+1);
-  Neighbor_search search(tree,query,k+1);
-  Search_iterator search_iterator = search.begin();
-  unsigned int i;
-  for(i=0;i<(k+1);i++)
-  {
-    if(search_iterator == search.end())
-      break; // premature ending
-    points.push_back(search_iterator->first);
-    search_iterator++;
-  }
-  CGAL_point_set_processing_precondition(points.size() >= 1);
-
+  std::vector<Point> points;
+  CGAL::Point_set_processing_3::internal::neighbor_query
+    (query, tree, k, neighbor_radius, points);
+  
   // performs plane fitting by point-based PCA
   Plane plane;
   linear_least_squares_fitting_3(points.begin(),points.end(),plane,Dimension_tag<0>());
@@ -113,21 +96,25 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 #ifdef CGAL_LINKED_WITH_TBB
   template <typename Kernel, typename Tree>
   class PCA_estimate_normals {
+    typedef typename Kernel::FT FT;
     typedef typename Kernel::Point_3 Point;
     typedef typename Kernel::Vector_3 Vector;
     const Tree& tree;
     const unsigned int k;
+    const FT neighbor_radius;
     const std::vector<Point>& input;
     std::vector<Vector>& output;
     cpp11::atomic<std::size_t>& advancement;
     cpp11::atomic<bool>& interrupted;
 
   public:
-    PCA_estimate_normals(Tree& tree, unsigned int k, std::vector<Point>& points,
-			 std::vector<Vector>& output,
+    PCA_estimate_normals(Tree& tree, unsigned int k, FT neighbor_radius,
+                         std::vector<Point>& points,
+                         std::vector<Vector>& output,
                      cpp11::atomic<std::size_t>& advancement,
                      cpp11::atomic<bool>& interrupted)
-      : tree(tree), k (k), input (points), output (output)
+      : tree(tree), k (k), neighbor_radius (neighbor_radius)
+      , input (points), output (output)
       , advancement (advancement)
       , interrupted (interrupted)
     { }
@@ -138,7 +125,7 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
       {
         if (interrupted)
           break;
-	output[i] = CGAL::internal::pca_estimate_normal<Kernel,Tree>(input[i], tree, k);
+        output[i] = CGAL::internal::pca_estimate_normal<Kernel,Tree>(input[i], tree, k, neighbor_radius);
         ++ advancement;
       }
     }
@@ -159,7 +146,7 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 /**
    \ingroup PkgPointSetProcessing3Algorithms
    Estimates normal directions of the range of `points`
-   by linear least squares fitting of a plane over the k nearest neighbors.
+   by linear least squares fitting of a plane over the nearest neighbors.
    The output normals are randomly oriented.
 
    \pre `k >= 2`
@@ -174,20 +161,29 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
    \param k number of neighbors
    \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
 
-   \cgalNamedParamsBegin
-     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
-     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
-     \cgalParamBegin{normal_map} a model of `WritablePropertyMap` with value type
+   \cgalNamedParamsBegin \cgalParamBegin{point_map} a model of
+     `ReadablePropertyMap` with value type `geom_traits::Point_3`.  If
+     this parameter is omitted,
+     `CGAL::Identity_property_map<geom_traits::Point_3>` is
+     used.\cgalParamEnd \cgalParamBegin{normal_map} a model of
+     `WritablePropertyMap` with value type
      `geom_traits::Vector_3`.\cgalParamEnd
+     \cgalParamBegin{neighbor_radius} spherical neighborhood
+     radius. If provided, the neighborhood of a query point is
+     computed with a fixed spherical radius instead of a fixed number
+     of neighbors. In that case, the parameter `k` is used as a limit
+     on the number of points returned by each spherical query (to
+     avoid overly large number of points in high density areas). If no
+     limit is wanted, use `k=0`.\cgalParamEnd
      \cgalParamBegin{callback} an instance of
-      `cpp11::function<bool(double)>`. It is called regularly when the
-      algorithm is running: the current advancement (between 0. and
-      1.) is passed as parameter. If it returns `true`, then the
-      algorithm continues its execution normally; if it returns
-      `false`, the algorithm is stopped and the remaining normals are
-      left unchanged.\cgalParamEnd
-     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
-   \cgalNamedParamsEnd
+     `std::function<bool(double)>`. It is called regularly when the
+     algorithm is running: the current advancement (between 0. and 1.)
+     is passed as parameter. If it returns `true`, then the algorithm
+     continues its execution normally; if it returns `false`, the
+     algorithm is stopped and the remaining normals are left
+     unchanged.\cgalParamEnd \cgalParamBegin{geom_traits} an instance
+     of a geometric traits class, model of `Kernel`\cgalParamEnd
+     \cgalNamedParamsEnd
 */
 template <typename ConcurrencyTag,
 	  typename PointRange,
@@ -206,6 +202,7 @@ pca_estimate_normals(
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+  typedef typename Kernel::FT FT;
 
   CGAL_static_assertion_msg(!(boost::is_same<NormalMap,
                               typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
@@ -213,8 +210,9 @@ pca_estimate_normals(
 
   PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
   NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
-  const cpp11::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
-                                                               cpp11::function<bool(double)>());
+  FT neighbor_radius = choose_param(get_param(np, internal_np::neighbor_radius), FT(0));
+  const std::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+                                                               std::function<bool(double)>());
 
   typedef typename Kernel::Point_3 Point;
 
@@ -257,13 +255,13 @@ pca_estimate_normals(
 #else
   if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
     {
-      internal::Point_set_processing_3::Parallel_callback
+      Point_set_processing_3::internal::Parallel_callback
         parallel_callback (callback, kd_tree_points.size());
      
       std::vector<Vector> normals (kd_tree_points.size (),
                                    CGAL::NULL_VECTOR);
       CGAL::internal::PCA_estimate_normals<Kernel, Tree>
-	f (tree, k, kd_tree_points, normals,
+        f (tree, k, neighbor_radius, kd_tree_points, normals,
            parallel_callback.advancement(),
            parallel_callback.interrupted());
       tbb::parallel_for(tbb::blocked_range<size_t>(0, kd_tree_points.size ()), f);
@@ -283,7 +281,7 @@ pca_estimate_normals(
 	  Vector normal = internal::pca_estimate_normal<Kernel,Tree>(      
 								     get(point_map,*it),
 								     tree,
-								     k);
+								     k, neighbor_radius);
 
 	  put(normal_map, *it, normal); // normal_map[it] = normal
           if (callback && !callback ((nb+1) / double(kd_tree_points.size())))

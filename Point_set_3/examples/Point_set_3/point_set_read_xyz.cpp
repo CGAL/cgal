@@ -38,6 +38,7 @@ int main (int argc, char** argv)
   
   // Writing result in OFF format
   std::ofstream out("normalized_normals.off");
+  out.precision(17);
   if (!out || !CGAL::write_off_point_set (out, point_set))
     {
       return EXIT_FAILURE;

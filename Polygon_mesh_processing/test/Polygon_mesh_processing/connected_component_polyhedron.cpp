@@ -23,11 +23,11 @@ void mesh_with_id(const char* argv1, const bool save_output)
   in >> sm;
 
   int i=0;
-  BOOST_FOREACH(face_descriptor f, faces(sm)){
+  for(face_descriptor f : faces(sm)){
     f->id() = i++;
   } 
   i=0;
-  BOOST_FOREACH(vertex_descriptor v, vertices(sm)){
+  for(vertex_descriptor v : vertices(sm)){
     v->id() = i++;
   }
 
@@ -95,7 +95,7 @@ void mesh_no_id(const char* argv1, const bool save_output)
     assert(num == 3);
 
   std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
-  //BOOST_FOREACH(face_descriptor f , faces(sm)){
+  //for(face_descriptor f : faces(sm)){
   //  std::cout  << &*f << " in connected component " << fccmap[f] << std::endl;
   //}
 
@@ -123,10 +123,10 @@ void test_border_cases()
   input >> sm;
 
   std::size_t i=0;
-  BOOST_FOREACH(face_descriptor f, faces(sm))
+  for(face_descriptor f : faces(sm))
     f->id() = i++;
   i=0;
-  BOOST_FOREACH(vertex_descriptor v, vertices(sm))
+  for(vertex_descriptor v : vertices(sm))
     v->id() = i++;
 
   boost::vector_property_map<int,
@@ -170,11 +170,11 @@ void keep_nothing(const char* argv1)
     return;
   }
   int i=0;
-  BOOST_FOREACH(face_descriptor f, faces(sm)){
+  for(face_descriptor f : faces(sm)){
     f->id() = i++;
   }
   i=0;
-  BOOST_FOREACH(vertex_descriptor v, vertices(sm)){
+  for(vertex_descriptor v : vertices(sm)){
     v->id() = i++;
   }
 

@@ -52,8 +52,8 @@ two input polygons are convex, their edges are already sorted by the angle
 they form with the \f$ x\f$-axis; see the figure above.
 The Minkowski sum can therefore be computed using an operation similar to the
 merge step of the merge-sort algorithm\cgalFootnote{See, for example,
-<a href="http://en.wikipedia.org/wiki/Merge_sort">
-http://en.wikipedia.org/wiki/Merge_sort</a>.} in \f$ O(m + n)\f$ time,
+<a href="https://en.wikipedia.org/wiki/Merge_sort">
+https://en.wikipedia.org/wiki/Merge_sort</a>.} in \f$ O(m + n)\f$ time,
 starting from the two bottommost vertices in \f$ P\f$ and in \f$ Q\f$ and
 merging the ordered list of edges.
 

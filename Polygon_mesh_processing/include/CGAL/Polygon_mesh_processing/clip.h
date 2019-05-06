@@ -85,7 +85,7 @@ clip_to_bbox(const Plane_3& plane,
   corners[6] = Point_3(bbox.xmax(),bbox.ymax(),bbox.zmax());
   corners[7] = Point_3(bbox.xmax(),bbox.ymin(),bbox.zmax());
 
-  cpp11::array<CGAL::Oriented_side,8> orientations = {{
+  std::array<CGAL::Oriented_side,8> orientations = {{
     plane.oriented_side(corners[0]),
     plane.oriented_side(corners[1]),
     plane.oriented_side(corners[2]),
@@ -97,7 +97,7 @@ clip_to_bbox(const Plane_3& plane,
   }};
 
   // description of faces of the bbox
-  cpp11::array<int, 24> face_indices =
+  std::array<int, 24> face_indices =
     {{ 0, 1, 2, 3,
        2, 1, 5, 6,
        3, 2, 6, 7,
@@ -119,34 +119,47 @@ clip_to_bbox(const Plane_3& plane,
       int current_id = face_indices[4*i + k];
       int next_id = face_indices[4*i + (k+1)%4];
 
-      if ( orientations[ current_id ] != ON_POSITIVE_SIDE )
+      switch(orientations[ current_id ])
       {
-        all_out=false;
-        // point on or on the negative side
-        output_faces[i].push_back( current_id );
-        in_point_ids.insert( output_faces[i].back() );
-        // check for intersection of the edge
-        if (orientations[ current_id ] == ON_NEGATIVE_SIDE &&
-            orientations[ next_id ] == ON_POSITIVE_SIDE)
+        case ON_NEGATIVE_SIDE:
         {
-          output_faces[i].push_back(
-            inter_pt_index<Geom_traits>(current_id, next_id, plane, corners, id_map) );
+          all_out=false;
+          // point on or on the negative side
+          output_faces[i].push_back( current_id );
           in_point_ids.insert( output_faces[i].back() );
+          // check for intersection of the edge
+          if (orientations[ next_id ] == ON_POSITIVE_SIDE)
+          {
+            output_faces[i].push_back(
+              inter_pt_index<Geom_traits>(current_id, next_id, plane, corners, id_map) );
+            in_point_ids.insert( output_faces[i].back() );
+          }
+          break;
         }
-      }
-      else
-      {
-        all_in = false;
-        // check for intersection of the edge
-        if ( orientations[ next_id ] == ON_NEGATIVE_SIDE )
+        case ON_POSITIVE_SIDE:
         {
-          output_faces[i].push_back(
-            inter_pt_index<Geom_traits>(current_id, next_id, plane, corners, id_map) );
+          all_in = false;
+          // check for intersection of the edge
+          if ( orientations[ next_id ] == ON_NEGATIVE_SIDE )
+          {
+            output_faces[i].push_back(
+              inter_pt_index<Geom_traits>(current_id, next_id, plane, corners, id_map) );
+            in_point_ids.insert( output_faces[i].back() );
+          }
+          break;
+        }
+        case ON_ORIENTED_BOUNDARY:
+        {
+          output_faces[i].push_back( current_id );
           in_point_ids.insert( output_faces[i].back() );
         }
       }
     }
-    CGAL_assertion( output_faces[i].empty() || output_faces[i].size() >= 3 );
+    if (output_faces[i].size() < 3){
+      CGAL_assertion(output_faces[i].empty() ||
+                     (output_faces[i].front()<8 && output_faces[i].back()<8) );
+      output_faces[i].clear(); // edge of the bbox included in the plane
+    }
   }
 
   // the intersection is the full bbox
@@ -160,7 +173,7 @@ clip_to_bbox(const Plane_3& plane,
   typedef typename graph_traits::face_descriptor face_descriptor;
 
   std::map<int, vertex_descriptor> out_vertices;
-  BOOST_FOREACH(int i, in_point_ids)
+  for(int i : in_point_ids)
   {
     vertex_descriptor v = add_vertex(tm_out);
     out_vertices.insert( std::make_pair(i, v ) );
@@ -170,7 +183,7 @@ clip_to_bbox(const Plane_3& plane,
   std::map< std::pair<int,int>, halfedge_descriptor> hedge_map;
   const halfedge_descriptor null_hedge = graph_traits::null_halfedge();
   const face_descriptor null_fd = graph_traits::null_face();
-  BOOST_FOREACH( const std::vector<int>& findices, output_faces)
+  for(const std::vector<int>& findices : output_faces)
   {
     if (findices.empty()) continue;
     const face_descriptor fd=add_face(tm_out);
@@ -179,7 +192,7 @@ clip_to_bbox(const Plane_3& plane,
     // create of recover face boundary halfedges
     std::vector<halfedge_descriptor> hedges;
     hedges.reserve(findices.size());
-    BOOST_FOREACH( int current_id, findices)
+    for(int current_id : findices)
     {
       vertex_descriptor src = out_vertices[prev_id], tgt = out_vertices[current_id];
 
@@ -213,7 +226,7 @@ clip_to_bbox(const Plane_3& plane,
 
     // set next/prev relationship
     halfedge_descriptor prev_h=hedges.back();
-    BOOST_FOREACH(halfedge_descriptor h, hedges)
+    for(halfedge_descriptor h : hedges)
     {
       set_next(prev_h, h, tm_out);
       prev_h = h;
@@ -224,7 +237,7 @@ clip_to_bbox(const Plane_3& plane,
   // look for a border halfedge and reconstruct the face of the plane
   // by turning around vertices inside the mesh constructed above
   // until we reach another border halfedge
-  BOOST_FOREACH(halfedge_descriptor h, halfedges(tm_out))
+  for(halfedge_descriptor h : halfedges(tm_out))
   {
     if (face(h, tm_out) == null_fd)
     {

@@ -53,7 +53,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct Array_vector {
 	static const unsigned d_=Max_dim_::value;
 	CGAL_static_assertion(d_ != (unsigned)UNKNOWN_DIMENSION);
 
-	typedef cpp0x::array<NT,d_> Vector;
+	typedef std::array<NT,d_> Vector;
 	struct Construct_vector {
 		struct Dimension {
 			// Initialize with NaN if possible?
@@ -70,6 +70,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct Array_vector {
 					CGAL_assertion(d<=d_);
 					//TODO: optimize for forward iterators
 					Vector a;
+					CGAL_assume(f!=e);
 					std::copy(f,e,a.begin());
 					return a;
 				}

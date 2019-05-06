@@ -9,7 +9,7 @@
 # |  |  |  |  |
 # *  *  *  *  *  command to be executed
 
-PATH=/bin:/usr/bin:/home/lrineau/bin
+PATH=/home/lrineau/bin-cmake3:/bin:/usr/bin:/home/lrineau/bin
 LC_CTYPE=en_US.UTF-8
 
 # Update testsuite result pages
@@ -25,9 +25,11 @@ LC_CTYPE=en_US.UTF-8
 # "master" alone
 0 21  *  *  Sun                      cd $HOME/CGAL/create_internal_release && /usr/bin/time $HOME/bin/create_release $HOME/CGAL/branches/master.git --public --do-it || echo ERROR
 # "integration"
-0 21  *  *  Mon,Tue,Wed,Thu,Fri      cd $HOME/CGAL/create_internal_release && /usr/bin/time $HOME/bin/create_release $HOME/CGAL/branches/integration.git $HOME/CGAL/branches/empty-dir --public --do-it || echo ERROR
+0 21  *  *  Mon,Tue,Wed,Thu,Fri      cd $HOME/CGAL/create_internal_release && /usr/bin/time $HOME/bin/create_release $HOME/CGAL/branches/integration.git $HOME/CGAL/branches/empty-dir --do-it || echo ERROR
+# from branch 4.14
+0 21  *  *  Sat                      cd $HOME/CGAL/create_internal_release-4.14-branch && /usr/bin/time $HOME/bin/create_release $HOME/CGAL/branches/CGAL-4.14-branch.git --public --do-it || echo ERROR
 # from branch 4.13
-0 21  *  *  Sat                      cd $HOME/CGAL/create_internal_release-4.13-branch && /usr/bin/time $HOME/bin/create_release $HOME/CGAL/branches/CGAL-4.13-branch.git --public --do-it || echo ERROR
+#0 21  *  *  Fri                      cd $HOME/CGAL/create_internal_release-4.13-branch && /usr/bin/time $HOME/bin/create_release $HOME/CGAL/branches/CGAL-4.13-branch.git --public --do-it || echo ERROR
 # from branch 4.12
 #0 21  *  *  Sat                      cd $HOME/CGAL/create_internal_release-4.12-branch && /usr/bin/time $HOME/bin/create_release $HOME/CGAL/branches/CGAL-4.12-branch.git --public --do-it || echo ERROR
 # from branch 4.11
@@ -48,7 +50,7 @@ LC_CTYPE=en_US.UTF-8
 # Launch our  Docker testsuite , at 21:36,
 # after a pull of all new images at 20:23.
 06 20 * * * /usr/bin/time docker pull -a docker.io/cgal/testsuite-docker; docker rmi $(docker images | awk '/<none>/ {print $3}')
-36 21 * * * cd /home/lrineau/Git/cgal-testsuite-dockerfiles && /usr/bin/time ./test_cgal.py --use-fedora-selinux-policy --force-rm --max-cpus 12 --container-cpus 4 --jobs 5 --upload-results --images $(cat /home/lrineau/.config/CGAL/test_cgal_docker_images)
+36 21 * * * cd /home/lrineau/Git/cgal-testsuite-dockerfiles && /usr/bin/time ./test_cgal.py --use-fedora-selinux-policy --force-rm --max-cpus 12 --container-cpus 4 --jobs 5 --upload-results --images $($HOME/bin/docker_images_to_test_today)
 
 
 # Dump the crontab to SVN every hour at minute 18

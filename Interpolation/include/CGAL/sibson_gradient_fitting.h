@@ -29,7 +29,7 @@
 #include <CGAL/regular_neighbor_coordinates_2.h>
 
 #include <CGAL/Origin.h>
-#include <CGAL/function.h>
+#include <functional>
 
 #include <boost/any.hpp>
 #include <boost/mpl/if.hpp>

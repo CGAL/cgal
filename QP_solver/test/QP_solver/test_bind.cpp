@@ -1,5 +1,5 @@
 #include <iostream>
-#include <CGAL/basic.h>
+
 #include <CGAL/Quotient.h>
 #include <CGAL/function_objects.h>
 #include <boost/bind.hpp>

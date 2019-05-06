@@ -12,6 +12,8 @@
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
 
+#include <QLineEdit>
+
 #include <CGAL/Three/Viewer_interface.h>
 
 #include <set>
@@ -21,6 +23,7 @@
 
 Cluster_classification::Cluster_classification(Scene_points_with_normal_item* points)
   : m_points (points)
+  , m_input_is_las (false)
 {
   m_index_color = 1;
 
@@ -59,6 +62,7 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
     boost::tie (las_classif, las_found) = m_points->point_set()->property_map<unsigned char>("classification");
     if (las_found)
     {
+      m_input_is_las = true;
       for (Point_set::const_iterator it = m_points->point_set()->begin();
            it != m_points->point_set()->first_selected(); ++ it)
       {
@@ -126,20 +130,26 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
       
       if (training_found)
       {
-        if (las_found && (m_training[*it] == 0 || m_training[*it] == 1)) // Unclassified class in LAS
-          m_training[*it] = -1;
-        else if (m_training[*it] != -1)
-          m_training[*it] = used_indices[std::size_t(m_training[*it])];
-        if (c != -1)
+        if (std::size_t(current_idx) != used_indices.size()) // Empty indices -> reorder indices in point set
+        {
+          if (las_found && (m_training[*it] == 0 || m_training[*it] == 1)) // Unclassified class in LAS
+            m_training[*it] = -1;
+          else if (m_training[*it] != -1)
+            m_training[*it] = used_indices[std::size_t(m_training[*it])];
+        }
+        if (c != -1 && m_training[*it] != -1)
           m_clusters[c].training() = m_training[*it];
       }
       if (classif_found)
       {
-        if (las_found && (m_classif[*it] == 0 || m_classif[*it] == 1)) // Unclassified class in LAS
-          m_classif[*it] = -1;
-        else if (m_classif[*it] != -1)
-          m_classif[*it] = used_indices[std::size_t(m_classif[*it])];
-        if (c != -1)
+        if (std::size_t(current_idx) != used_indices.size()) // Empty indices -> reorder indices in point set
+        {
+          if (las_found && (m_classif[*it] == 0 || m_classif[*it] == 1)) // Unclassified class in LAS
+            m_classif[*it] = -1;
+          else if (m_classif[*it] != -1)
+            m_classif[*it] = used_indices[std::size_t(m_classif[*it])];
+        }
+        if (c != -1 && m_classif[*it] != -1)
           m_clusters[c].label() = m_classif[*it];
       }
     }
@@ -221,9 +231,12 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
   update_comments_of_point_set_item();
 
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
-  m_ethz = new ETHZ_random_forest (m_labels, m_features);
+  m_ethz = NULL;
 #ifdef CGAL_LINKED_WITH_OPENCV
-  m_random_forest = new Random_forest (m_labels, m_features);
+  m_random_forest = NULL;
+#endif
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+  m_neural_network = NULL;
 #endif
 
   // Compute neighborhood
@@ -272,17 +285,6 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
 
 Cluster_classification::~Cluster_classification()
 {
-  for (Point_set::const_iterator it = m_points->point_set()->begin();
-       it != m_points->point_set()->first_selected(); ++ it)
-  {
-    int c = m_cluster_id[*it];
-    if (c != -1)
-    {
-      m_training[*it] = m_clusters[c].training();
-      m_classif[*it] = m_clusters[c].label();
-    }
-  }
-  
   if (m_sowf != NULL)
     delete m_sowf;
   if (m_ethz != NULL)
@@ -291,8 +293,99 @@ Cluster_classification::~Cluster_classification()
   if (m_random_forest != NULL)
     delete m_random_forest;
 #endif
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+  if (m_neural_network != NULL)
+    delete m_neural_network;
+#endif
   if (m_points != NULL)
   {
+    for (Point_set::const_iterator it = m_points->point_set()->begin();
+         it != m_points->point_set()->first_selected(); ++ it)
+    {
+      int c = m_cluster_id[*it];
+      if (c != -1)
+      {
+        m_training[*it] = m_clusters[c].training();
+        m_classif[*it] = m_clusters[c].label();
+      }
+      else
+      {
+        m_training[*it] = -1;
+        m_classif[*it] = -1;
+      }
+    }
+  
+    // For LAS saving, convert classification info in the LAS standard
+//    if (m_input_is_las)
+    {
+      Point_set::Property_map<unsigned char> las_classif
+        = m_points->point_set()->add_property_map<unsigned char>("classification", 0).first;
+    
+      std::vector<unsigned char> label_indices;
+
+      unsigned char custom = 19;
+      for (std::size_t i = 0; i < m_labels.size(); ++ i)
+      {
+        if (m_labels[i]->name() == "ground")
+          label_indices.push_back (2);
+        else if (m_labels[i]->name() == "low_veget")
+          label_indices.push_back (3);
+        else if (m_labels[i]->name() == "med_veget" || m_labels[i]->name() == "vegetation")
+          label_indices.push_back (4);
+        else if (m_labels[i]->name() == "high_veget")
+          label_indices.push_back (5);
+        else if (m_labels[i]->name() == "building" || m_labels[i]->name() == "roof")
+          label_indices.push_back (6);
+        else if (m_labels[i]->name() == "noise")
+          label_indices.push_back (7);
+        else if (m_labels[i]->name() == "reserved" || m_labels[i]->name() == "facade")
+          label_indices.push_back (8);
+        else if (m_labels[i]->name() == "water")
+          label_indices.push_back (9);
+        else if (m_labels[i]->name() == "rail")
+          label_indices.push_back (10);
+        else if (m_labels[i]->name() == "road_surface")
+          label_indices.push_back (11);
+        else if (m_labels[i]->name() == "reserved_2")
+          label_indices.push_back (12);
+        else if (m_labels[i]->name() == "wire_guard")
+          label_indices.push_back (13);
+        else if (m_labels[i]->name() == "wire_conduct")
+          label_indices.push_back (14);
+        else if (m_labels[i]->name() == "trans_tower")
+          label_indices.push_back (15);
+        else if (m_labels[i]->name() == "wire_connect")
+          label_indices.push_back (16);
+        else if (m_labels[i]->name() == "bridge_deck")
+          label_indices.push_back (17);
+        else if (m_labels[i]->name() == "high_noise")
+          label_indices.push_back (18);
+        else
+          label_indices.push_back (custom ++);
+      }
+
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->end(); ++ it)
+      {
+        int c = m_classif[*it];
+        unsigned char lc = 1; // unclassified in LAS standard
+        if (c != -1)
+          lc = label_indices[std::size_t(c)];
+        
+        las_classif[*it] = lc;
+
+        int t = m_training[*it];
+        unsigned char lt = 1; // unclassified in LAS standard
+        if (t != -1)
+          lt = label_indices[std::size_t(t)];
+        
+        m_training[*it] = int(lt);
+      }
+
+      m_points->point_set()->remove_property_map (m_classif);
+    }
+
+
     reset_colors();
     erase_item();
   }
@@ -303,71 +396,34 @@ void Cluster_classification::backup_existing_colors_and_add_new()
 {
   if (m_points->point_set()->has_colors())
   {
-    m_color = m_points->point_set()->add_property_map<Color>("real_color").first;
+    m_color = m_points->point_set()->add_property_map<CGAL::Color>("real_color").first;
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->first_selected(); ++ it)
-      m_color[*it] = {{ (unsigned char)(255 * m_points->point_set()->red(*it)),
-                        (unsigned char)(255 * m_points->point_set()->green(*it)),
-                        (unsigned char)(255 * m_points->point_set()->blue(*it)) }};
+      m_color[*it] = CGAL::Color ((unsigned char)(255 * m_points->point_set()->red(*it)),
+                                  (unsigned char)(255 * m_points->point_set()->green(*it)),
+                                  (unsigned char)(255 * m_points->point_set()->blue(*it)));
 
     m_points->point_set()->remove_colors();
   }
       
-  m_red = m_points->point_set()->add_property_map<unsigned char>("red").first;
-  m_green = m_points->point_set()->add_property_map<unsigned char>("green").first;
-  m_blue = m_points->point_set()->add_property_map<unsigned char>("blue").first;
-  for (Point_set::const_iterator it = m_points->point_set()->begin();
-       it != m_points->point_set()->first_selected(); ++ it)
-  {
-    m_red[*it] = 0;
-    m_green[*it] = 0;
-    m_blue[*it] = 0;
-  }
-  m_points->point_set()->check_colors();
+  m_points->point_set()->add_colors();
 }
 
 void Cluster_classification::reset_colors()
 {
-  if (m_color == Point_set::Property_map<Color>())
+  if (m_color == Point_set::Property_map<CGAL::Color>())
     m_points->point_set()->remove_colors();
   else
   {
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->first_selected(); ++ it)
-    {
-      m_red[*it] = m_color[*it][0];
-      m_green[*it] = m_color[*it][1];
-      m_blue[*it] = m_color[*it][2];
-    }
+      m_points->point_set()->set_color(*it, m_color[*it]);
+    
     m_points->point_set()->remove_property_map(m_color);
   }
 }
 
-// Write point set to .PLY file
-bool Cluster_classification::write_output(std::ostream& stream)
-{
-  if (m_features.size() == 0)
-    return false;
-
-  reset_indices();
-  
-  stream.precision (std::numeric_limits<double>::digits10 + 2);
-
-  // std::vector<Color> colors;
-  // for (std::size_t i = 0; i < m_labels.size(); ++ i)
-  //   {
-  //     Color c = {{ (unsigned char)(m_labels[i].second.red()),
-  //                  (unsigned char)(m_labels[i].second.green()),
-  //                  (unsigned char)(m_labels[i].second.blue()) }};
-  //     colors.push_back (c);
-  //   }
-  
-  //  m_psc->write_classification_to_ply (stream);
-  return true;
-}
-
-
-void Cluster_classification::change_color (int index)
+void Cluster_classification::change_color (int index, float* vmin, float* vmax)
 {
   m_index_color = index;
 
@@ -377,145 +433,180 @@ void Cluster_classification::change_color (int index)
   static Color_ramp ramp;
   ramp.build_rainbow();
   reset_indices();
+  
   if (index_color == -1) // item color
-  {
-    for (Point_set::const_iterator it = m_points->point_set()->begin();
-         it != m_points->point_set()->first_selected(); ++ it)
-    {
-      m_red[*it] = 0;
-      m_green[*it] = 0;
-      m_blue[*it] = 0;
-    }
-  }
-  else if (index_color == 0) // real colors
-  {
-
-    for (Point_set::const_iterator it = m_points->point_set()->begin();
-         it != m_points->point_set()->first_selected(); ++ it)
-    {
-      m_red[*it] = m_color[*it][0];
-      m_green[*it] = m_color[*it][1];
-      m_blue[*it] = m_color[*it][2];
-    }
-  }
-  else if (index_color == 1) // classif
-  {
-    for (Point_set::const_iterator it = m_points->point_set()->begin();
-         it != m_points->point_set()->first_selected(); ++ it)
-    {
-      QColor color (0, 0, 0);
-      int cid = m_cluster_id[*it];
-      if (cid != -1)
-      {
-        std::size_t c = m_clusters[cid].label();
-          
-        if (c != std::size_t(-1))
-          color = m_label_colors[c];
-      }
-      
-      m_red[*it] = color.red();
-      m_green[*it] = color.green();
-      m_blue[*it] = color.blue();
-    }
-  }
-  else if (index_color == 2) // training
-  {
-    for (Point_set::const_iterator it = m_points->point_set()->begin();
-         it != m_points->point_set()->first_selected(); ++ it)
-    {
-      QColor color (0, 0, 0);
-      int cid = m_cluster_id[*it];
-      float div = 1;
-      
-      if (cid != -1)
-      {
-        int c = m_clusters[cid].training();
-        int c2 = m_clusters[cid].label();
-          
-        if (c != -1)
-          color = m_label_colors[std::size_t(c)];
-          
-        if (c != c2)
-          div = 2;
-      }          
-      m_red[*it] = (color.red() / div);
-      m_green[*it] = (color.green() / div);
-      m_blue[*it] = (color.blue() / div);
-    }
-  }
-  else if (index_color == 3) // clusters
-  {
-    for (Point_set::const_iterator it = m_points->point_set()->begin();
-         it != m_points->point_set()->first_selected(); ++ it)
-    {
-      int cid = m_cluster_id[*it];
-      
-      if (cid != -1)
-      {
-        srand(cid);
-        m_red[*it] = 64 + rand() % 192;
-        m_green[*it] = 64 + rand() % 192;
-        m_blue[*it] = 64 + rand() % 192;
-      }
-      else
-      {
-        m_red[*it] = 0;
-        m_green[*it] = 0;
-        m_blue[*it] = 0;
-      }
-    }
-  }
+    m_points->point_set()->remove_colors();
   else
   {
-    Feature_handle feature = m_features[index_color - 4];
-
-    float max = 0.;
-    for (Point_set::const_iterator it = m_points->point_set()->begin();
-         it != m_points->point_set()->first_selected(); ++ it)
+    if (!m_points->point_set()->has_colors())
+      m_points->point_set()->add_colors();
+    
+    if (index_color == 0) // real colors
     {
-      int cid = m_cluster_id[*it];
-      if (cid != -1)
+
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->first_selected(); ++ it)
+        m_points->point_set()->set_color(*it, m_color[*it]);
+    }
+    else if (index_color == 1) // classif
+    {
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->first_selected(); ++ it)
       {
-        if (feature->value(cid) > max)
-          max = feature->value(cid);
+        QColor color (0, 0, 0);
+        int cid = m_cluster_id[*it];
+        if (cid != -1)
+        {
+          std::size_t c = m_clusters[cid].label();
+          
+          if (c != std::size_t(-1))
+            color = m_label_colors[c];
+        }
+      
+        m_points->point_set()->set_color(*it, color);
       }
     }
-
-    for (Point_set::const_iterator it = m_points->point_set()->begin();
-         it != m_points->point_set()->first_selected(); ++ it)
+    else if (index_color == 2) // training
     {
-      int cid = m_cluster_id[*it];
-      if (cid != -1)
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->first_selected(); ++ it)
       {
-        float v = std::max (0.f, feature->value(cid) / max);
-        m_red[*it] = (unsigned char)(ramp.r(v) * 255);
-        m_green[*it] = (unsigned char)(ramp.g(v) * 255);
-        m_blue[*it] = (unsigned char)(ramp.b(v) * 255);
+        QColor color (0, 0, 0);
+        int cid = m_cluster_id[*it];
+        float div = 1;
+      
+        if (cid != -1)
+        {
+          int c = m_clusters[cid].training();
+          int c2 = m_clusters[cid].label();
+          
+          if (c != -1)
+            color = m_label_colors[std::size_t(c)];
+          
+          if (c != c2)
+            div = 2;
+        }          
+        m_points->point_set()->set_color(*it, color.red() / div, color.green() / div, color.blue() / div);
+      }
+    }
+    else if (index_color == 3) // clusters
+    {
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->first_selected(); ++ it)
+      {
+        int cid = m_cluster_id[*it];
+      
+        if (cid != -1)
+        {
+          srand(cid);
+          m_points->point_set()->set_color(*it, 64 + rand() % 192, 64 + rand() % 192, 64 + rand() % 192);
+        }
+        else
+        {
+          m_points->point_set()->set_color(*it);
+        }
+      }
+    }
+    else
+    {
+      std::size_t corrected_index = index_color - 4;
+      if (corrected_index < m_labels.size()) // Display label probabilities
+      {
+        if (m_label_probabilities.size() <= corrected_index ||
+            m_label_probabilities[corrected_index].size() != m_clusters.size())
+        {
+          for (Point_set::const_iterator it = m_points->point_set()->begin();
+               it != m_points->point_set()->first_selected(); ++ it)
+            m_points->point_set()->set_color(*it);
+        }
+        else
+        {
+          for (Point_set::const_iterator it = m_points->point_set()->begin();
+               it != m_points->point_set()->first_selected(); ++ it)
+          {
+            int cid = m_cluster_id[*it];
+            if (cid != -1)
+            {
+              float v = std::max (0.f, std::min(1.f, m_label_probabilities[corrected_index][cid]));
+              m_points->point_set()->set_color(*it, ramp.r(v) * 255, ramp.g(v) * 255, ramp.b(v) * 255);
+            }
+            else
+              m_points->point_set()->set_color(*it);
+          }
+        }
       }
       else
       {
-        m_red[*it] = 0;
-        m_green[*it] = 0;
-        m_blue[*it] = 0;
+        corrected_index -= m_labels.size();
+        if (corrected_index >= m_features.size())
+        {
+          std::cerr << "Error: trying to access feature " << corrected_index << " out of " << m_features.size() << std::endl;
+          return;
+        }
+
+        Feature_handle feature = m_features[corrected_index];
+
+        float min = std::numeric_limits<float>::max();
+        float max = -std::numeric_limits<float>::max();
+      
+        if (vmin != NULL && vmax != NULL
+            && *vmin != std::numeric_limits<float>::infinity()
+            && *vmax != std::numeric_limits<float>::infinity())
+        {
+          min = *vmin;
+          max = *vmax;
+        }
+        else
+        {
+          for (Point_set::const_iterator it = m_points->point_set()->begin();
+               it != m_points->point_set()->first_selected(); ++ it)
+          {
+            int cid = m_cluster_id[*it];
+            if (cid != -1)
+            {
+              if (feature->value(cid) > max)
+                max = feature->value(cid);
+              if (feature->value(cid) < min)
+                min = feature->value(cid);
+            }
+          }
+        }
+        
+        for (Point_set::const_iterator it = m_points->point_set()->begin();
+             it != m_points->point_set()->first_selected(); ++ it)
+        {
+          int cid = m_cluster_id[*it];
+          if (cid != -1)
+          {
+            float v = (feature->value(cid) - min) / (max - min);
+            if (v < 0.f) v = 0.f;
+            if (v > 1.f) v = 1.f;
+            
+            m_points->point_set()->set_color(*it, ramp.r(v) * 255, ramp.g(v) * 255, ramp.b(v) * 255);
+          }
+          else
+            m_points->point_set()->set_color(*it);
+        }
+
+        if (vmin != NULL && vmax != NULL)
+        {
+          *vmin = min;
+          *vmax = max;
+        }
       }
     }
   }
-
+  
   for (Point_set::const_iterator it = m_points->point_set()->first_selected();
        it != m_points->point_set()->end(); ++ it)
-  {
-    m_red[*it] = 255;
-    m_green[*it] = 0;
-    m_blue[*it] = 0;
-  }
-
+    m_points->point_set()->set_color(*it, 255, 0, 0);
 }
 
 int Cluster_classification::real_index_color() const
 {
   int out = m_index_color;
   
-  if (out == 0 && m_color == Point_set::Property_map<Color>())
+  if (out == 0 && m_color == Point_set::Property_map<CGAL::Color>())
     out = -1;
   return out;
 }
@@ -532,13 +623,18 @@ void Cluster_classification::reset_indices ()
     *(indices.begin() + i) = idx ++;
 }
 
-void Cluster_classification::compute_features (std::size_t nb_scales)
+void Cluster_classification::compute_features (std::size_t nb_scales, float voxel_size)
 {
   CGAL_assertion (!(m_points->point_set()->empty()));
 
   reset_indices();
   
-  std::cerr << "Computing pointwise features with " << nb_scales << " scale(s)" << std::endl;
+  std::cerr << "Computing pointwise features with " << nb_scales << " scale(s) and ";
+  if (voxel_size == -1)
+    std::cerr << "automatic voxel size" << std::endl;
+  else
+    std::cerr << "voxel size = " << voxel_size << std::endl;
+
   m_features.clear();
 
   Point_set::Vector_map normal_map;
@@ -546,7 +642,7 @@ void Cluster_classification::compute_features (std::size_t nb_scales)
   if (normals)
     normal_map = m_points->point_set()->normal_map();
   
-  bool colors = (m_color != Point_set::Property_map<Color>());
+  bool colors = (m_color != Point_set::Property_map<CGAL::Color>());
   
   Point_set::Property_map<boost::uint8_t> echo_map;
   bool echo;
@@ -556,7 +652,7 @@ void Cluster_classification::compute_features (std::size_t nb_scales)
 
   Feature_set pointwise_features;
 
-  Generator generator (*(m_points->point_set()), m_points->point_set()->point_map(), nb_scales);
+  Generator generator (*(m_points->point_set()), m_points->point_set()->point_map(), nb_scales, voxel_size);
   
   CGAL::Real_timer t;
   t.start();
@@ -620,11 +716,24 @@ void Cluster_classification::compute_features (std::size_t nb_scales)
   
   delete m_sowf;
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
-  delete m_ethz;
-  m_ethz = new ETHZ_random_forest (m_labels, m_features);
+  if (m_ethz != NULL)
+  {
+    delete m_ethz;
+    m_ethz = NULL;
+  }
 #ifdef CGAL_LINKED_WITH_OPENCV
-  delete m_random_forest;
-  m_random_forest = new Random_forest (m_labels, m_features);
+  if (m_random_forest != NULL)
+  {
+    delete m_random_forest;
+    m_random_forest = NULL;
+  }
+#endif
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+  if (m_neural_network != NULL)
+  {
+    delete m_neural_network;
+    m_neural_network = NULL;
+  }
 #endif
 
   std::cerr << "Features = " << m_features.size() << std::endl;
@@ -696,8 +805,7 @@ void Cluster_classification::add_remaining_point_set_properties_as_features(Feat
   }
 }
 
-void Cluster_classification::train(int classifier, unsigned int nb_trials,
-                                   std::size_t num_trees, std::size_t max_depth)
+void Cluster_classification::train(int classifier, const QMultipleInputDialog& dialog)
 {
   if (m_features.size() == 0)
   {
@@ -705,6 +813,11 @@ void Cluster_classification::train(int classifier, unsigned int nb_trials,
     return;
   }
   reset_indices();
+
+  m_label_probabilities.clear();
+  m_label_probabilities.resize (m_labels.size());
+  for (std::size_t i = 0; i < m_label_probabilities.size(); ++ i)
+    m_label_probabilities[i].resize (m_clusters.size(), -1);
 
   std::vector<std::size_t> nb_label (m_labels.size(), 0);
   std::size_t nb_total = 0;
@@ -730,30 +843,80 @@ void Cluster_classification::train(int classifier, unsigned int nb_trials,
 
   if (classifier == 0)
   {
-    m_sowf->train<Concurrency_tag>(training, nb_trials);
+    m_sowf->train<Concurrency_tag>(training, dialog.get<QSpinBox>("trials")->value());
     CGAL::Classification::classify<Concurrency_tag> (m_clusters,
                                                      m_labels, *m_sowf,
-                                                     indices);
+                                                     indices, m_label_probabilities);
   }
   else if (classifier == 1)
   {
-    m_ethz->train(training, true, num_trees, max_depth);
+    if (m_ethz != NULL)
+      delete m_ethz;
+    m_ethz = new ETHZ_random_forest (m_labels, m_features);
+    m_ethz->train<Concurrency_tag>(training, true,
+                                   dialog.get<QSpinBox>("num_trees")->value(),
+                                   dialog.get<QSpinBox>("max_depth")->value());
     CGAL::Classification::classify<Concurrency_tag> (m_clusters,
                                                      m_labels, *m_ethz,
-                                                     indices);
+                                                     indices, m_label_probabilities);
   }
-  else
+  else if (classifier == 2)
   {
 #ifdef CGAL_LINKED_WITH_OPENCV
     if (m_random_forest != NULL)
       delete m_random_forest;
     m_random_forest = new Random_forest (m_labels, m_features,
-                                         int(max_depth), 5, 15,
-                                         int(num_trees));
+                                         dialog.get<QSpinBox>("max_depth")->value(), 5, 15,
+                                         dialog.get<QSpinBox>("num_trees")->value());
     m_random_forest->train (training);
     CGAL::Classification::classify<Concurrency_tag> (m_clusters,
                                                      m_labels, *m_random_forest,
-                                                     indices);
+                                                     indices, m_label_probabilities);
+#endif
+  }
+  else if (classifier == 3)
+  {
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+    if (m_neural_network != NULL)
+    {
+      if (m_neural_network->initialized())
+      {
+        if (dialog.get<QCheckBox>("restart")->isChecked())
+        {
+          delete m_neural_network;
+          m_neural_network = new Neural_network (m_labels, m_features);
+        }
+      }
+      else
+      {
+        delete m_neural_network;
+        m_neural_network = new Neural_network (m_labels, m_features);
+      }
+    }
+    else
+      m_neural_network = new Neural_network (m_labels, m_features);
+
+    std::vector<std::size_t> hidden_layers;
+
+    std::string hl_input = dialog.get<QLineEdit>("hidden_layers")->text().toStdString();
+    if (hl_input != "")
+    {
+      std::istringstream iss(hl_input);
+      int s;
+      while (iss >> s)
+        hidden_layers.push_back (std::size_t(s));
+    }
+    
+    m_neural_network->train (training,
+                             dialog.get<QCheckBox>("restart")->isChecked(),
+                             dialog.get<QSpinBox>("trials")->value(),
+                             dialog.get<QDoubleSpinBox>("learning_rate")->value(),
+                             dialog.get<QSpinBox>("batch_size")->value(),
+                             hidden_layers);
+      
+    CGAL::Classification::classify<Concurrency_tag> (m_clusters,
+                                                     m_labels, *m_neural_network,
+                                                     indices, m_label_probabilities);
 #endif
   }
 
@@ -778,11 +941,36 @@ bool Cluster_classification::run (int method, int classifier,
   if (classifier == 0)
     run (method, *m_sowf, subdivisions, smoothing);
   else if (classifier == 1)
+  {
+    if (m_ethz == NULL)
+    {
+      std::cerr << "Error: ETHZ Random Forest must be trained or have a configuration loaded first" << std::endl;
+      return false;
+    }
     run (method, *m_ethz, subdivisions, smoothing);
+  }
+  else if (classifier == 2)
+  {
 #ifdef CGAL_LINKED_WITH_OPENCV
-  else
+    if (m_random_forest == NULL)
+    {
+      std::cerr << "Error: OpenCV Random Forest must be trained or have a configuration loaded first" << std::endl;
+      return false;
+    }
     run (method, *m_random_forest, subdivisions, smoothing);
 #endif
+  }
+  else if (classifier == 3)
+  {
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+    if (m_neural_network == NULL)
+    {
+      std::cerr << "Error: TensorFlow Neural Network must be trained or have a configuration loaded first" << std::endl;
+      return false;
+    }
+    run (method, *m_neural_network, subdivisions, smoothing);
+#endif
+  }
   
   return true;
 }

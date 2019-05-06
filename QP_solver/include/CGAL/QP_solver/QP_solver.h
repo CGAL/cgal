@@ -43,6 +43,7 @@
 #include <CGAL/QP_solver/QP_exact_bland_pricing.h>
 
 #include <CGAL/algorithm.h>
+#include <CGAL/NT_converter.h>
 
 #include <CGAL/IO/Verbose_ostream.h>
 
@@ -1599,14 +1600,18 @@ ratio_test_1__q_x_S( Tag_false)
 
   // ( A_S_BxB_O * q_x_O) - A_S_Bxj
   if ( j < qp_n) {
+    typedef typename std::iterator_traits<A_by_index_iterator>::value_type RT;
     std::transform( q_x_S.begin(),
 		    q_x_S.begin()+S_B.size(),
 		    A_by_index_iterator( S_B.begin(),
 					 A_by_index_accessor( *(qp_A + j))),
 		    q_x_S.begin(),
-		    compose2_2( std::minus<ET>(),
-				Identity<ET>(),
-				boost::bind1st( std::multiplies<ET>(), d)));
+		    boost::bind(std::minus<ET>(),
+				_1,
+				boost::bind(std::multiplies<ET>(), d,
+				  boost::bind(
+				    NT_converter<RT,ET>(),
+				    _2))));
   }
 
   // q_x_S = -+ ( A_S_BxB_O * q_x_O - A_S_Bxj)
@@ -1888,9 +1893,11 @@ basis_matrix_stays_regular()
     new_row = slack_A[ i-qp_n].first;
     A_row_by_index_accessor  a_accessor =
       boost::bind (A_accessor( qp_A, 0, qp_n), _1, new_row);
-    std::copy( A_row_by_index_iterator( B_O.begin(), a_accessor),
-	       A_row_by_index_iterator( B_O.end  (), a_accessor),
-	       tmp_x.begin());	   
+    typedef typename std::iterator_traits<A_row_by_index_iterator>::value_type RT;
+    std::transform(A_row_by_index_iterator( B_O.begin(), a_accessor),
+		   A_row_by_index_iterator( B_O.end  (), a_accessor),
+		   tmp_x.begin(),
+		   NT_converter<RT,ET>());
     inv_M_B.multiply( tmp_x.begin(),                        // dummy (not used)
 		      tmp_x.begin(), tmp_l_2.begin(), tmp_x_2.begin(),
 		      Tag_false(),                                 // QP
@@ -1963,7 +1970,18 @@ compute__x_B_S( Tag_false /*has_equalities_only_and_full_rank*/,
        
 }
 
-
+namespace QP_solver_impl {
+// Writing it with 5 boost::bind was becoming unreadable.
+template<class ET, class RT>
+struct submul {
+  ET const& d;
+  submul(ET const&d):d(d) {}
+  ET operator()(RT const&x, ET const&y) const {
+    NT_converter<RT, ET> cast;
+    return cast(x) * d - y;
+  }
+};
+}
 
 template < typename Q, typename ET, typename Tags >  inline             // has inequalities, standard form
 void  QP_solver<Q, ET, Tags>::
@@ -1975,13 +1993,12 @@ compute__x_B_S( Tag_false /*has_equalities_only_and_full_rank*/,
 
   // b_S_B - ( A_S_BxB_O * x_B_O)
   B_by_index_accessor  b_accessor( qp_b);
+  typedef typename std::iterator_traits<B_by_index_iterator>::value_type RT;
   std::transform( B_by_index_iterator( S_B.begin(), b_accessor),
 		  B_by_index_iterator( S_B.end  (), b_accessor),
 		  x_B_S.begin(),
 		  x_B_S.begin(),
-		  compose2_2( std::minus<ET>(),
-			      boost::bind1st( std::multiplies<ET>(), d),
-			      Identity<ET>()));
+		  QP_solver_impl::submul<ET,RT>(d));
 
   // x_B_S = +- ( b_S_B - A_S_BxB_O * x_B_O)
   Value_iterator  x_it = x_B_S.begin();

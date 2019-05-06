@@ -342,13 +342,12 @@ struct Nth_of_tuple_property_map
   /// @}
 };
 
-#ifndef CGAL_CFG_NO_CPP0X_TUPLE
 template <int N, typename ... T>
 struct Nth_of_tuple_property_map<N,std::tuple<T...> >
 {
   typedef std::tuple<T...> Tuple;
   typedef Tuple key_type;
-  typedef typename cpp11::tuple_element<N,Tuple>::type value_type;
+  typedef typename std::tuple_element<N,Tuple>::type value_type;
   typedef const value_type& reference;
   typedef boost::lvalue_property_map_tag category;
 
@@ -358,8 +357,6 @@ struct Nth_of_tuple_property_map<N,std::tuple<T...> >
   friend reference get(const Self&,const key_type& k) {return std::get<N>(k);}
   friend void put(const Self&,key_type& k, const value_type& v) {std::get<N>(k)=v;}
 };
-#endif
-
 
 /// Free function to create a Nth_of_tuple_property_map property map.
 ///

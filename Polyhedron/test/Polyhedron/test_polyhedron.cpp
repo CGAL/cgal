@@ -26,7 +26,7 @@
 // ============================================================================
 
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/HalfedgeDS_vector.h>
 #include <CGAL/HalfedgeDS_list.h>
@@ -276,8 +276,8 @@ struct Test_facet_modifier : public CGAL::Modifier_base<HDS>
 };
 
 void test_Polyhedron() {
-    typedef CGAL::Cartesian<double>                     Kernel;
-    typedef CGAL::Cartesian<int>                        KernelI;
+    typedef CGAL::Simple_cartesian<double>                     Kernel;
+    typedef CGAL::Simple_cartesian<int>                        KernelI;
     typedef CGAL::Point_3<Kernel>                       Point;
     typedef CGAL::Plane_3<Kernel>                       Plane;
     typedef CGAL::Polyhedron_traits_3<Kernel>           Traits;
@@ -1116,7 +1116,7 @@ void test_Polyhedron() {
 }
 
 void test_min_Polyhedron() {
-    typedef CGAL::Cartesian<double>                     Kernel;
+    typedef CGAL::Simple_cartesian<double>              Kernel;
     typedef CGAL::Point_3<Kernel>                       Point;
     typedef CGAL::Polyhedron_traits_3<Kernel>           Traits;
     typedef CGAL::Polyhedron_3<Traits,

@@ -25,13 +25,13 @@ of topological singularities. }
 
 \cgalClassifedRefPages
 
-## Classes ##
+\cgalCRPSection{Classes}
 
 - `CGAL::Advancing_front_surface_reconstruction`
 - `CGAL::Advancing_front_surface_reconstruction_vertex_base_3`
 - `CGAL::Advancing_front_surface_reconstruction_cell_base_3`
 
-## Functions ##
+\cgalCRPSection{Functions}
 
 - `CGAL::advancing_front_surface_reconstruction()`
 

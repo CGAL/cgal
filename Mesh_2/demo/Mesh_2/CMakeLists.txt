@@ -11,8 +11,6 @@ endif()
 
 find_package(CGAL QUIET)
 
-include_directories(BEFORE ../../../Triangulation_2/include)
-
 
 if ( CGAL_FOUND )
   include(${CGAL_USE_FILE})

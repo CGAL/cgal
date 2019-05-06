@@ -16,11 +16,14 @@
 #include <QFileInfo>
 #include <QStringList>
 #include <QSet>
+#include <QMap>
 #include <QModelIndex>
+#include <QMdiSubWindow>
 #include <QLineEdit>
 
 class Scene;
 class Viewer;
+struct SubViewer;
 class QTreeView;
 class QMenu;
 class QWidgetAction;
@@ -29,6 +32,10 @@ namespace Three{
 class Polyhedron_demo_io_plugin_interface;
 class Polyhedron_demo_plugin_interface;
 class Scene_item;
+class Viewer_interface;
+}
+namespace qglviewer{
+class Vec;
 }
 }
 
@@ -36,6 +43,7 @@ class QSortFilterProxyModel;
 
 namespace Ui {
   class MainWindow;
+  class SubViewer;
   class Statistics_on_item_dialog;
 }
 
@@ -71,7 +79,7 @@ public:
    * Then it creates and initializes the scene and do the
    * connexions with the UI. Finally it loads the plugins.*/
 
-  MainWindow(bool verbose = false,QWidget* parent = 0);
+  MainWindow(const QStringList& keywords, bool verbose = false,QWidget* parent = 0);
   ~MainWindow();
 
   /*! Finds an IO plugin.
@@ -84,7 +92,9 @@ public:
    * throws `std::logic_error` if loading does not succeed or
    * `std::invalid_argument` if `fileinfo` specifies an invalid file*/
   CGAL::Three::Scene_item* loadItem(QFileInfo fileinfo, CGAL::Three::Polyhedron_demo_io_plugin_interface*);
-
+  void computeViewerBBox(CGAL::qglviewer::Vec &min, CGAL::qglviewer::Vec &max);
+  void updateViewerBbox(Viewer* vi, bool recenter, CGAL::qglviewer::Vec min, 
+                        CGAL::qglviewer::Vec max);
 Q_SIGNALS:
   //! Is emitted when the Application is closed.
   void on_closure();
@@ -92,6 +102,10 @@ Q_SIGNALS:
   void expanded(QModelIndex);
   //! Is emitted when a group is collapsed.
   void collapsed(QModelIndex);
+  //! Is emitted when a subviewer is created
+  void newViewerCreated(QObject*);
+  //! Is emitted when a subviewer is destroyed
+  void viewerDestroyed(QObject*);
 
 
 public Q_SLOTS:
@@ -99,9 +113,9 @@ public Q_SLOTS:
   void makeNewGroup();
   //! Re-computes the viewer's Bbox
   //! If `b` is true, recenters the scene.
-  void updateViewerBBox(bool b);
+  void updateViewersBboxes(bool recenter);
   //! Opens a script or a file with the default loader if there is.
-  void open(QString);
+  void open(QString) Q_DECL_OVERRIDE;
   //! Is called when the up button is pressed.
   void on_upButton_pressed();
   //! Is called when the down button is pressed.
@@ -142,6 +156,11 @@ public Q_SLOTS:
    * the index i in the Geometric Objects view.
    */
   void selectSceneItem(int i);
+  /*!
+   * Clears the current selection and selects the scene_items with
+   * indices in is in the Geometric Objects view.
+   */
+  void selectSceneItems(QList<int> i);
   /*!
    * Prints coordinates of a point and its distance to the last
    * position printed by this function.
@@ -196,33 +215,33 @@ public Q_SLOTS:
   void addAction(QString actionName,
                  QString actionText,
                  QString menuName);
-  /*!
-   * Sets the scene center to the target position and makes the
-   * scene slide to this new center. Also sets the pivotPoint of
-   * the camera to this position.
-   */
-  void viewerShow(float, float, float);
-  /*!
-   * Sets the scene center to be the center of the target BBox.
-   * Also sets the pivotPoint of the camera to this position.
-   */
-  void viewerShow(float, float, float, float, float, float);
-  /*!
-   * Centers the scene on the target object.
-   */
-  void viewerShowObject();
+  
+  /*! Sets the scene center to the target position and makes the
+  * scene slide to this new center. Also sets the pivotPoint of
+  * the camera to this position.
+  */
+ void viewerShow(CGAL::Three::Viewer_interface *viewer, float, float, float);
+ /*!
+  * Sets the scene center to be the center of the target BBox.
+  * Also sets the pivotPoint of the camera to this position.
+  */
+ void viewerShow(float, float, float, float, float, float);
+ /*!
+  * Centers the scene on the target object.
+  */
+ void viewerShowObject();
   /*!
    * Displays a text preceded by the mention "INFO :".
    */
-  void information(QString);
+  void message_information(QString) Q_DECL_OVERRIDE;
   /*!
    * Displays a blue text preceded by the mention "WARNING :".
    */
-  void warning(QString);
+  void message_warning(QString) Q_DECL_OVERRIDE;
   /*!
    * Displays a red text preceded by the mention "ERROR :".
    */
-  void error(QString);
+  void message_error(QString) Q_DECL_OVERRIDE;
 
     //!Displays a text in the chosen html color with the chosen html font.
 
@@ -321,6 +340,8 @@ protected Q_SLOTS:
   //Preferences edition
   //!Opens the Preferences dialog.
   void on_actionPreferences_triggered();
+  //!Save selected items if able.
+  void on_action_Save_triggered(); 
   // save as...
   //!Opens a dialog to save selected item if able.
   void on_actionSaveAs_triggered(); 
@@ -332,22 +353,8 @@ protected Q_SLOTS:
   void setBackgroundColor();
   //!Opens a Dialog to change the lighting settings
   void setLighting_triggered();
-  /*! Opens a Dialog to enter coordinates of the new center point and sets it
-   * with viewerShow.
-   *@see viewerShow(float, float, float, float, float, float)
-   */
-  void on_actionLookAt_triggered();
   //!Returns the position and orientation of the current camera frame.
-  QString cameraString() const;
-  /*! Prints the position and orientation of the current camera frame.
-   * @see cameraString()
-   */
-  void on_actionDumpCamera_triggered();
-  //!Sets the coordinates of the camera in the clipboard text.
-  void on_actionCopyCamera_triggered();
-  //!Gets coordinates from the clipboard and sets them as the current ones for
-  //!the camera.
-  void on_actionPasteCamera_triggered();
+    QString cameraString(CGAL::Three::Viewer_interface *v) const;
   //!Hides not available operations and show available operations in all the
   //!menus.
   void filterOperations();
@@ -378,7 +385,7 @@ protected:
    * Calls writeSettings() and set the flag accepted for the event.
    * @see writeSettings()
    */
-  void closeEvent(QCloseEvent *event);
+  void closeEvent(QCloseEvent *event)Q_DECL_OVERRIDE;
   /*! Returns the currently selected item in the Geometric Objects view. Returns -1
    * if none is selected.
    */
@@ -386,7 +393,9 @@ protected:
   //! Returns a list of the selected items in the Geometric Objects view.
   QList<int> getSelectedSceneItemIndices() const;
 private:
+  QObject* getDirectChild(QObject* widget);
   void updateMenus();
+  void setupViewer(Viewer* viewer, SubViewer *subviewer);
   bool load_plugin(QString names, bool blacklisted);
   void recurseExpand(QModelIndex index);
   QMap<QString, QMenu*> menu_map;
@@ -395,7 +404,7 @@ private:
   void setMenus(QString, QString, QAction *a);
   /// plugin black-list
   QSet<QString> plugin_blacklist;
-  QMap<QString, std::vector<QString> > PathNames_map; //For each non-empty plugin directory, contains a vector of plugin names
+  QMap<QString, QString > PathNames_map; //For each non-empty plugin directory, contains a vector of plugin names
   QMap<QString, QString > pluginsStatus_map; //For each non-empty plugin directory, contains a vector of plugin names
   Scene* scene;
   Viewer* viewer;
@@ -412,7 +421,7 @@ private:
   QAction* actionAddToGroup;
   QAction* actionResetDefaultLoaders;
   CGAL::Three::Three* three;
-  void print_message(QString message) { messages->information(message); }
+  void print_message(QString message) { messages->message_information(message); }
   Messages_interface* messages;
 
   QDialog *statistics_dlg;
@@ -434,13 +443,52 @@ public:
                              const QString & fileName = QString());
 #endif
 public Q_SLOTS:
+  void on_actionSa_ve_Scene_as_Script_triggered();
   void toggleFullScreen();
   void setDefaultSaveDir();
+  void invalidate_bbox(bool do_recenter);
 private:
+  SubViewer* viewer_window;
   QList<QDockWidget *> visibleDockWidgets;
   QLineEdit operationSearchBar;
   QWidgetAction* searchAction;
   QString def_save_dir;
-};
+  bool bbox_need_update;
+  QMap<QString, QPair<QStringList, QString> >plugin_metadata_map;
+  QMap<QString, bool> ignored_map;
+  const QStringList& accepted_keywords;
 
+private Q_SLOTS:
+  void on_actionAdd_Viewer_triggered();
+  void on_action_Organize_Viewers_triggered();
+  void recenterViewer();
+  
+private:
+  QMap<QAction*, QMenu*> action_menu_map;
+};
+  
+struct SubViewer : public QMdiSubWindow
+{
+  Q_OBJECT
+public:
+  MainWindow* mw;
+  Viewer* viewer;
+  QMenu* viewMenu;
+
+  SubViewer(QWidget *parent, MainWindow* mw, Viewer *mainviewer);
+  ~SubViewer();
+public Q_SLOTS:
+  void recenter();
+  /*! Opens a Dialog to enter coordinates of the new center point and sets it
+   * with viewerShow.
+   *@see viewerShow(float, float, float, float, float, float)
+   */
+  void lookat();
+  void color();
+protected:
+  void closeEvent(QCloseEvent *closeEvent)Q_DECL_OVERRIDE;
+  void changeEvent(QEvent *event) Q_DECL_OVERRIDE;
+private:
+  bool is_main;
+};
 #endif // ifndef MAINWINDOW_H

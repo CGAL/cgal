@@ -38,7 +38,7 @@ const CGAL::Point_2<Kernel>& r,
 const CGAL::Point_2<Kernel>& s);
 
 /*!
-returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending
+returns `CGAL::OBTUSE`, `CGAL::RIGHT` or `CGAL::ACUTE` depending
 on the angle formed by the two vectors `u` and `v`.
 */
 template <typename Kernel>
@@ -57,7 +57,7 @@ const CGAL::Point_3<Kernel>& q,
 const CGAL::Point_3<Kernel>& r);
 
 /*!
-returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending
+returns `CGAL::OBTUSE`, `CGAL::RIGHT` or `CGAL::ACUTE` depending
 on the angle formed by the two vectors `pq`, `rs`. The returned value is
 the same as `angle(q - p, s - r)`.
 */
@@ -68,7 +68,7 @@ Angle angle(const CGAL::Point_3<Kernel>&p,
             const CGAL::Point_3<Kernel>&s);
 
 /*!
-returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending
+returns `CGAL::OBTUSE`, `CGAL::RIGHT` or `CGAL::ACUTE` depending
 on the angle formed by the normal of the triangle `pqr` and the vector `v`.
 */
 
@@ -78,8 +78,39 @@ Angle angle(const CGAL::Point_3<Kernel>&p,
             const CGAL::Point_3<Kernel>&r,
             const CGAL::Vector_3<Kernel>&v);
 
+/// @}
 
 
+
+/// \defgroup approximate_angle_grp CGAL::approximate_angle()
+/// \ingroup kernel_global_function
+/// @{
+
+/*!
+returns an approximation of the angle between `p-q` and `r-q`.
+The angle is given in degrees.
+\pre `p` and `r` are not equal to `q`.
+*/
+template <typename Kernel>
+Kernel::FT approximate_angle(const CGAL::Point_3<Kernel>& p,
+                             const CGAL::Point_3<Kernel>& q,
+                             const CGAL::Point_3<Kernel>& r);
+
+/*!
+returns an approximation of the angle between `u` and `v`.
+The angle is given in degrees.
+\pre `u` and `v` are not equal to the null vector.
+*/
+template <typename Kernel>
+Kernel::FT approximate_angle(const CGAL::Vector_3<Kernel>& u,
+                             const CGAL::Vector_3<Kernel>& v);
+ /// @}
+
+
+
+/// \defgroup approximate_dihedral_angle_grp CGAL::approximate_dihedral_angle()
+/// \ingroup kernel_global_function
+/// @{  
 /*!
 returns an approximation of the signed dihedral angle in the tetrahedron `pqrs` of edge `pq`.
 The sign is negative if `orientation(p,q,r,s)` is `CGAL::NEGATIVE` and positive otherwise.

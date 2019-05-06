@@ -24,12 +24,10 @@
 #include <CGAL/license/Point_set_processing_3.h>
 
 #include <CGAL/config.h>
-#if defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) || defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
-#error CGAL PLY reader requires a C++11 compiler
-#endif
 
 #include <tuple>
 
+#include <CGAL/IO/PLY.h>
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
 #include <CGAL/point_set_processing_assertions.h>
@@ -46,36 +44,9 @@
 #include <sstream>
 #include <string>
 
-#define TRY_TO_GENERATE_PROPERTY(STD_TYPE, T_TYPE, TYPE)          \
-  if (type == STD_TYPE  || type == T_TYPE)                              \
-    m_properties->push_back (new PLY_read_typed_number< TYPE > (name, format))
-
-#define TRY_TO_GENERATE_SIZED_LIST_PROPERTY(STD_SIZE_TYPE, T_SIZE_TYPE, SIZE_TYPE, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE) \
-  if ((size_type == STD_SIZE_TYPE  || size_type == T_SIZE_TYPE) &&      \
-      (index_type == STD_INDEX_TYPE || index_type == T_INDEX_TYPE))     \
-    m_properties->push_back (new PLY_read_typed_list_with_typed_size< SIZE_TYPE , INDEX_TYPE > (name, format))
-
-#define TRY_TO_GENERATE_LIST_PROPERTY(STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE) \
-  TRY_TO_GENERATE_SIZED_LIST_PROPERTY("uchar", "uint8", boost::uint8_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE); \
-  else TRY_TO_GENERATE_SIZED_LIST_PROPERTY("ushort", "uint16", boost::uint16_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE); \
-  else TRY_TO_GENERATE_SIZED_LIST_PROPERTY("uint", "uint32", boost::uint32_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE)
-
-
 namespace CGAL {
 
-
-// PLY types:
-// name        type        number of bytes
-// ---------------------------------------
-// char       character                 1
-// uchar      unsigned character        1
-// short      short integer             2
-// ushort     unsigned short integer    2
-// int        integer                   4
-// uint       unsigned integer          4
-// float      single-precision float    4
-// double     double-precision float    8
-
+#ifdef DOXYGEN_RUNNING // Document some parts from Stream_support here for convenience
   /**
      \ingroup PkgPointSetProcessing3IOPly
      
@@ -91,14 +62,6 @@ namespace CGAL {
     PLY_property (const char* name) : name (name) { }
   };
 
-  /// \cond SKIP_IN_MANUAL
-  template <typename PointOrVectorMap>
-  struct GetFTFromMap
-  {
-    typedef typename Kernel_traits<typename boost::property_traits<PointOrVectorMap>::value_type>::Kernel::FT type;
-  };
-  /// \endcond
-  
   /**
      \ingroup PkgPointSetProcessing3IOPly
      
@@ -112,24 +75,10 @@ namespace CGAL {
      \tparam PointMap the property map used to store points.
   */
   template <typename PointMap>
-#ifdef DOXYGEN_RUNNING
   std::tuple<PointMap,
              typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3,
              PLY_property<FT>, PLY_property<FT>, PLY_property<FT> >
-#else
-  std::tuple<PointMap,
-             typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3,
-             PLY_property<typename GetFTFromMap<PointMap>::type>,
-             PLY_property<typename GetFTFromMap<PointMap>::type>,
-             PLY_property<typename GetFTFromMap<PointMap>::type> >
-#endif
-   make_ply_point_reader(PointMap point_map)
-  {
-    return std::make_tuple (point_map, typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3(),
-                            PLY_property<typename GetFTFromMap<PointMap>::type>("x"),
-                            PLY_property<typename GetFTFromMap<PointMap>::type>("y"),
-                            PLY_property<typename GetFTFromMap<PointMap>::type>("z"));
-  }
+  make_ply_point_reader(PointMap point_map);
 
   /**
      \ingroup PkgPointSetProcessing3IOPly
@@ -145,563 +94,11 @@ namespace CGAL {
      \tparam VectorMap the property map used to store vectors.
   */
   template <typename VectorMap>
-#ifdef DOXYGEN_RUNNING
   std::tuple<VectorMap,
              typename Kernel_traits<typename VectorMap::value_type>::Kernel::Construct_vector_3,
              PLY_property<FT>, PLY_property<FT>, PLY_property<FT> >
-#else
-  std::tuple<VectorMap,
-             typename Kernel_traits<typename VectorMap::value_type>::Kernel::Construct_vector_3,
-             PLY_property<typename GetFTFromMap<VectorMap>::type>,
-             PLY_property<typename GetFTFromMap<VectorMap>::type>,
-             PLY_property<typename GetFTFromMap<VectorMap>::type> >
-#endif
-  make_ply_normal_reader(VectorMap normal_map)
-  {
-    return std::make_tuple (normal_map, typename Kernel_traits<typename VectorMap::value_type>::Kernel::Construct_vector_3(),
-                            PLY_property<typename GetFTFromMap<VectorMap>::type>("nx"),
-                            PLY_property<typename GetFTFromMap<VectorMap>::type>("ny"),
-                            PLY_property<typename GetFTFromMap<VectorMap>::type>("nz"));
-  }
-
-  /// \cond SKIP_IN_MANUAL
-
-namespace internal {
-
-  namespace PLY {
-  
-  class PLY_read_number
-  {
-  protected:
-    std::string m_name;
-    std::size_t m_format;
-    
-  public:
-    PLY_read_number (std::string name, std::size_t format)
-      : m_name (name), m_format (format) { }
-    virtual ~PLY_read_number() { }
-
-    const std::string& name () const { return m_name; }
-
-    virtual void get (std::istream& stream) const = 0;
-
-    // The two following functions prevent the stream to only extract
-    // ONE character (= what the types char imply) by requiring
-    // explicitely an integer object when reading the stream
-    void read_ascii (std::istream& stream, char& c) const
-    {
-      short s;
-      stream >> s;
-      c = static_cast<char>(s);
-    }
-    void read_ascii (std::istream& stream, signed char& c) const
-    {
-      short s;
-      stream >> s;
-      c = static_cast<signed char>(s);
-    }
-    void read_ascii (std::istream& stream, unsigned char& c) const
-    {
-      unsigned short s;
-      stream >> s;
-      c = static_cast<unsigned char>(s);
-    }
-    
-    void read_ascii (std::istream& stream, float& t) const
-    {
-      stream >> iformat(t);
-    }
-
-    void read_ascii (std::istream& stream, double& t) const
-    {
-      stream >> iformat(t);
-    }
-    
-    // Default template when Type is not a char type
-    template <typename Type>
-    void read_ascii (std::istream& stream, Type& t) const
-    {
-      stream >> t;
-    }
-    
-    
-    template <typename Type>
-    Type read (std::istream& stream) const
-    {
-      if (m_format == 0) // Ascii
-        {
-          Type t;
-          read_ascii (stream, t);
-          return t;
-        }
-      else // Binary (2 = little endian)
-        {
-          union
-          {
-            char uChar[sizeof (Type)];
-            Type type;
-          } buffer;
-          
-          std::size_t size = sizeof (Type);
-
-          stream.read(buffer.uChar, size);
-      
-          if (m_format == 2) // Big endian
-            {
-              for (std::size_t i = 0; i < size / 2; ++ i)
-                {
-                  unsigned char tmp = buffer.uChar[i];
-                  buffer.uChar[i] = buffer.uChar[size - 1 - i];
-                  buffer.uChar[size - 1 - i] = tmp;
-                }
-            }
-          return buffer.type;
-        }
-      return Type();
-    }
-  };
-
-  template <typename Type>
-  class PLY_read_typed_number : public PLY_read_number
-  {
-    mutable Type m_buffer;
-  public:
-    PLY_read_typed_number (std::string name, std::size_t format)
-      : PLY_read_number (name, format)
-    {
-    }
-    void get (std::istream& stream) const
-    {
-      m_buffer = (this->read<Type> (stream));
-    }
-    const Type& buffer() const
-    {
-      return m_buffer;
-    }
-  };
-
-  template <typename Type>
-  class PLY_read_typed_list : public PLY_read_number
-  {
-  protected:
-    mutable std::vector<Type> m_buffer;
-  public:
-    PLY_read_typed_list (std::string name, std::size_t format)
-      : PLY_read_number (name, format)
-    {
-    }
-    virtual void get (std::istream& stream) const = 0;
-
-    const std::vector<Type>& buffer() const
-    {
-      return m_buffer;
-    }
-  };
-
-  template <typename SizeType, typename IndexType>
-  class PLY_read_typed_list_with_typed_size
-    : public PLY_read_typed_list<IndexType>
-  {
-
-  public:
-    PLY_read_typed_list_with_typed_size (std::string name, std::size_t format)
-      : PLY_read_typed_list<IndexType> (name, format)
-    {
-    }
-    void get (std::istream& stream) const
-    {
-      std::size_t size = static_cast<std::size_t>(this->template read<SizeType>(stream));
-      this->m_buffer.resize (size);
-      for (std::size_t i = 0; i < size; ++ i)
-        this->m_buffer[i] = this->template read<IndexType> (stream);
-    }
-  };
-
-
-  class PLY_reader
-  {
-    std::vector<PLY_read_number*> m_point_properties;
-    std::vector<PLY_read_number*> m_face_properties;
-    std::vector<PLY_read_number*>* m_properties;
-    std::string m_comments;
-
-  public:
-    std::size_t m_nb_points;
-    std::size_t m_nb_faces;
-
-    PLY_reader () : m_properties (&m_point_properties), m_nb_points (0), m_nb_faces(0)  { }
-
-    const std::vector<PLY_read_number*>& readers() const { return *m_properties; }
-    void read_faces()
-    {
-      m_properties = &m_face_properties;
-    }
-
-    const std::string& comments() const { return m_comments; }
-
-    template <typename Stream>
-    bool init (Stream& stream)
-    {
-      std::size_t lineNumber = 0; // current line number
-      enum Format { ASCII = 0, BINARY_LITTLE_ENDIAN = 1, BINARY_BIG_ENDIAN = 2};
-      Format format = ASCII;
-    
-      std::string line;
-      std::istringstream iss;
-
-      // Check the order of the properties of the point set
-      bool reading_vertices = false, reading_faces = false;
-  
-      while (getline (stream,line))
-        {
-          iss.clear();
-          iss.str (line);
-          ++ lineNumber;
-
-          // Reads file signature on first line
-          if (lineNumber == 1)
-            {
-              std::string signature;
-              if (!(iss >> signature) || (signature != "ply"))
-                {
-                  // if wrong file format
-                  std::cerr << "Error: incorrect file format line " << lineNumber << " of file" << std::endl;
-                  return false;
-                }
-            }
-
-          // Reads format on 2nd line
-          else if (lineNumber == 2)
-            {
-              std::string tag, format_string, version;
-              if ( !(iss >> tag >> format_string >> version) )
-                {
-                  std::cerr << "Error line " << lineNumber << " of file" << std::endl;
-                  return false;
-                }
-              if (format_string == "ascii") format = ASCII;
-              else if (format_string == "binary_little_endian") format = BINARY_LITTLE_ENDIAN;
-              else if (format_string == "binary_big_endian") format = BINARY_BIG_ENDIAN;
-              else
-                {
-                  std::cerr << "Error: unknown file format \"" << format_string << "\" line " << lineNumber << std::endl;
-                  return false;
-                }
-            }
-
-          // Comments and vertex properties
-          else
-            {
-              std::string keyword;
-              if (!(iss >> keyword))
-                {
-                  std::cerr << "Error line " << lineNumber << " of file" << std::endl;
-                  return false;
-                }
-
-              if (keyword == "property")
-                {
-                  if (!reading_vertices && !reading_faces)
-                    continue;
-
-                  std::string type, name;
-                  if (!(iss >> type >> name))
-                    {
-                      std::cerr << "Error line " << lineNumber << " of file" << std::endl;
-                      return false;
-                    }
-
-                  
-                  if (type == "list") // Special case
-                  {
-                    std::string size_type = name;
-                    std::string index_type;
-                    name.clear();
-                    if (!(iss >> index_type >> name))
-                    {
-                      std::cerr << "Error line " << lineNumber << " of file" << std::endl;
-                      return false;
-                    }
-                    
-                    TRY_TO_GENERATE_LIST_PROPERTY ("char", "int8", boost::int8_t);
-                    else TRY_TO_GENERATE_LIST_PROPERTY ("uchar", "uint8", boost::uint8_t);
-                    else TRY_TO_GENERATE_LIST_PROPERTY ("short", "int16", boost::int16_t);
-                    else TRY_TO_GENERATE_LIST_PROPERTY ("ushort", "uint16", boost::uint16_t);
-                    else TRY_TO_GENERATE_LIST_PROPERTY ("int", "int32", boost::int32_t);
-                    else TRY_TO_GENERATE_LIST_PROPERTY ("uint", "uint32", boost::uint32_t);
-                    else TRY_TO_GENERATE_LIST_PROPERTY ("float", "float32", float);
-                    else TRY_TO_GENERATE_LIST_PROPERTY ("double", "float64", double);
-                  }
-                  else
-                  {
-                    TRY_TO_GENERATE_PROPERTY ("char", "int8", boost::int8_t);
-                    else TRY_TO_GENERATE_PROPERTY ("uchar", "uint8", boost::uint8_t);
-                    else TRY_TO_GENERATE_PROPERTY ("short", "int16", boost::int16_t);
-                    else TRY_TO_GENERATE_PROPERTY ("ushort", "uint16", boost::uint16_t);
-                    else TRY_TO_GENERATE_PROPERTY ("int", "int32", boost::int32_t);
-                    else TRY_TO_GENERATE_PROPERTY ("uint", "uint32", boost::uint32_t);
-                    else TRY_TO_GENERATE_PROPERTY ("float", "float32", float);
-                    else TRY_TO_GENERATE_PROPERTY ("double", "float64", double);
-                  }
-                  
-                  continue;
-                }
-              else if (keyword == "comment")
-                {
-                  std::string str = iss.str();
-                  if (str.size() > 8)
-                    {
-                      std::copy (str.begin() + 8, str.end(), std::back_inserter (m_comments));
-                      m_comments += "\n";
-                    }
-                }
-              // When end_header is reached, stop loop and begin reading points
-              else if (keyword == "end_header")
-                break;
-              else if (keyword == "element")
-                {
-                  std::string type;
-                  std::size_t number;
-                  if (!(iss >> type >> number))
-                    {
-                      std::cerr << "Error line " << lineNumber << " of file" << std::endl;
-                      return false;
-                    }
-                
-                  if (type == "vertex")
-                    {
-                      m_nb_points = number;
-                      reading_vertices = true;
-                      reading_faces = false;
-                    }
-                
-                  else if (type == "face")
-                    {
-                      m_nb_faces = number;
-                      reading_faces = true;
-                      reading_vertices = false;
-                      m_properties = &m_face_properties;
-                    }
-                  else
-                    {
-                      reading_faces = false;
-                      reading_vertices = false;
-                      continue;
-                    }
-                }
-            
-            }
-        }
-      m_properties = &m_point_properties;
-      return true;
-    }
-
-    ~PLY_reader ()
-    {
-      for (std::size_t i = 0; i < m_point_properties.size (); ++ i)
-        delete m_point_properties[i];
-      m_point_properties.clear();
-    }
-  
-    template <typename Type>
-    bool does_tag_exist (const char* tag)
-    {
-      return does_tag_exist (tag, Type());
-    }
-
-    template <typename Type>
-    void assign (Type& t, const char* tag)
-    {
-      for (std::size_t i = 0; i < m_properties->size (); ++ i)
-        if ((*m_properties)[i]->name () == tag)
-          {
-            PLY_read_typed_number<Type>*
-              reader = dynamic_cast<PLY_read_typed_number<Type>*>((*m_properties)[i]);
-            CGAL_assertion (reader != NULL);
-            t = reader->buffer();
-            return;
-          }
-    }
-
-    template <typename Type>
-    void assign (std::vector<Type>& t, const char* tag)
-    {
-      for (std::size_t i = 0; i < m_properties->size (); ++ i)
-        if ((*m_properties)[i]->name () == tag)
-          {
-            PLY_read_typed_list<Type>*
-              reader = dynamic_cast<PLY_read_typed_list<Type>*>((*m_properties)[i]);
-            CGAL_assertion (reader != NULL);
-            t = reader->buffer();
-            return;
-          }
-    }
-
-    template <typename Type>
-    bool does_tag_exist (const char* tag, const std::vector<Type>&)
-    {
-      for (std::size_t i = 0; i < m_properties->size (); ++ i)
-        if ((*m_properties)[i]->name () == tag)
-          return (dynamic_cast<PLY_read_typed_list<Type>*>((*m_properties)[i]) != NULL);
-      return false;
-    }
-    
-    template <typename Type>
-    bool does_tag_exist (const char* tag, Type)
-    {
-      for (std::size_t i = 0; i < m_properties->size (); ++ i)
-        if ((*m_properties)[i]->name () == tag)
-          return (dynamic_cast<PLY_read_typed_number<Type>*>((*m_properties)[i]) != NULL);
-      return false;
-    }
-    bool does_tag_exist (const char* tag, double)
-    {
-      for (std::size_t i = 0; i < m_properties->size (); ++ i)
-        if ((*m_properties)[i]->name () == tag)
-          return (dynamic_cast<PLY_read_typed_number<double>*>((*m_properties)[i]) != NULL
-                  || dynamic_cast<PLY_read_typed_number<float>*>((*m_properties)[i]) != NULL);
-
-      return false;
-    }
-    void assign (double& t, const char* tag)
-    {
-      for (std::size_t i = 0; i < m_properties->size (); ++ i)
-        if ((*m_properties)[i]->name () == tag)
-          {
-            PLY_read_typed_number<double>*
-              reader_double = dynamic_cast<PLY_read_typed_number<double>*>((*m_properties)[i]);
-            if (reader_double == NULL)
-              {
-                PLY_read_typed_number<float>*
-                  reader_float = dynamic_cast<PLY_read_typed_number<float>*>((*m_properties)[i]);
-                CGAL_assertion (reader_float != NULL);
-                t = reader_float->buffer();
-              }
-            else
-              t = reader_double->buffer();
-          
-            return;
-          }
-    }
-  
-  };
-
-  template <class Reader, class T>
-  void get_value(Reader& r, T& v, PLY_property<T>& wrapper)
-  {
-    return r.assign(v, wrapper.name);
-  }
-
-  
-  template <std::size_t N>
-  struct Filler
-  {
-    template <class Reader, class Value_tuple, class PLY_property_tuple>
-    static void fill(Reader& r, Value_tuple& values, PLY_property_tuple wrappers)
-    {
-      get_value(r, std::get<N>(values), std::get<N+2>(wrappers));
-      Filler<N-1>::fill(r, values, wrappers);
-    }
-  };
-
-  template<int ...>
-  struct seq { };
-
-  template<int N, int ...S>
-  struct gens : gens<N-1, N-1, S...> { };
-
-  template<int ...S>
-  struct gens<0, S...> {
-    typedef seq<S...> type;
-  };
-
-  template<class ValueType, class Functor, class Tuple, int ...S>
-  ValueType call_functor(Functor f, Tuple t, seq<S...>) {
-    return f(std::get<S>(t) ...);
-  }
-
-  template <class ValueType, class Functor, typename ... T>
-  ValueType call_functor(Functor f, std::tuple<T...>& t)
-  {
-    return call_functor<ValueType>(f, t, typename gens<sizeof...(T)>::type());
-  }
-
-  template<>
-  struct Filler<0>
-  {
-    template <class Reader, class Value_tuple, class PLY_property_tuple>
-    static void fill(Reader& r, Value_tuple& values, PLY_property_tuple wrappers)
-    {
-      get_value(r, std::get<0>(values), std::get<2>(wrappers));
-    }
-  };
-  
-  template <typename OutputValueType,
-            typename PropertyMap,
-            typename Constructor,
-            typename ... T>
-  void process_properties (PLY_reader& reader, OutputValueType& new_element,
-                           std::tuple<PropertyMap, Constructor, PLY_property<T>...>&& current)
-  {
-    typedef typename PropertyMap::value_type PmapValueType;
-    std::tuple<T...> values;
-    Filler<sizeof...(T)-1>::fill(reader, values, current);
-    PmapValueType new_value = call_functor<PmapValueType>(std::get<1>(current), values);
-    put (std::get<0>(current), new_element, new_value);
-  }
-  
-  template <typename OutputValueType,
-            typename PropertyMap,
-            typename Constructor,
-            typename ... T,
-            typename NextPropertyBinder,
-            typename ... PropertyMapBinders>
-  void process_properties (PLY_reader& reader, OutputValueType& new_element,
-                           std::tuple<PropertyMap, Constructor, PLY_property<T>...>&& current,
-                           NextPropertyBinder&& next,
-                           PropertyMapBinders&& ... properties)
-  {
-    typedef typename PropertyMap::value_type PmapValueType;
-    std::tuple<T...> values;
-    Filler<sizeof...(T)-1>::fill(reader, values, current);
-    PmapValueType new_value = call_functor<PmapValueType>(std::get<1>(current), values);
-    put (std::get<0>(current), new_element, new_value);
-  
-    process_properties (reader, new_element, std::forward<NextPropertyBinder>(next),
-                        std::forward<PropertyMapBinders>(properties)...);
-  }
-
-
-  template <typename OutputValueType, typename PropertyMap, typename T>
-  void process_properties (PLY_reader& reader, OutputValueType& new_element,
-                           std::pair<PropertyMap, PLY_property<T> >&& current)
-  {
-    T new_value = T();
-    reader.assign (new_value, current.second.name);
-    put (current.first, new_element, new_value);
-  }
-
-  template <typename OutputValueType, typename PropertyMap, typename T,
-            typename NextPropertyBinder, typename ... PropertyMapBinders>
-  void process_properties (PLY_reader& reader, OutputValueType& new_element,
-                           std::pair<PropertyMap, PLY_property<T> >&& current,
-                           NextPropertyBinder&& next,
-                           PropertyMapBinders&& ... properties)
-  {
-    T new_value = T();
-    reader.assign (new_value, current.second.name);
-    put (current.first, new_element, new_value);
-    process_properties (reader, new_element, std::forward<NextPropertyBinder>(next),
-                        std::forward<PropertyMapBinders>(properties)...);
-  }
-
-  } // namespace PLY
-  
-} // namespace internal
-
-  
-  /// \endcond
-  
+  make_ply_normal_reader(VectorMap normal_map);
+#endif // DOXYGEN_RUNNING
 
 /*
   \ingroup PkgPointSetProcessing3IOPly
@@ -721,7 +118,7 @@ namespace internal {
   PLY_property<T>...>` if the user wants to use one or several PLY
   properties to construct a complex object (for example, storing 3
   `uchar` %PLY properties into a %Color object that can for example
-  be a `CGAL::cpp11::array<unsigned char, 3>`). In that case, the
+  be a `std::array<unsigned char, 3>`). In that case, the
   second element of the tuple should be a functor that constructs
   the value type of `PropertyMap` from N objects of types `T`.
 
@@ -755,26 +152,36 @@ bool read_ply_points_with_properties (std::istream& stream,
   internal::PLY::PLY_reader reader;
   
   if (!(reader.init (stream)))
+  {
+    stream.setstate(std::ios::failbit);
     return false;
+  }
   
-  std::size_t points_read = 0;
-  
-  while (!(stream.eof()) && points_read < reader.m_nb_points)
+  for (std::size_t i = 0; i < reader.number_of_elements(); ++ i)
+  {
+    internal::PLY::PLY_element& element = reader.element(i);
+
+    for (std::size_t j = 0; j < element.number_of_items(); ++ j)
     {
-      for (std::size_t i = 0; i < reader.readers().size (); ++ i)
-        reader.readers()[i]->get (stream);
+      for (std::size_t k = 0; k < element.number_of_properties(); ++ k)
+      {
+        internal::PLY::PLY_read_number* property = element.property(k);
+        property->get (stream);
 
-      OutputValueType new_element;
+        if (stream.fail())
+          return false;
+      }
 
-      internal::PLY::process_properties (reader, new_element, std::forward<PropertyHandler>(properties)...);
-
-      *(output ++) = new_element;
-      
-      ++ points_read;
+      if (element.name() == "vertex" || element.name() == "vertices")
+      {
+        OutputValueType new_element;
+        internal::PLY::process_properties (element, new_element, std::forward<PropertyHandler>(properties)...);
+        *(output ++) = new_element;
+      }
     }
-  // Skip remaining lines
+  }
 
-  return (points_read == reader.m_nb_points);
+  return true;
 }
 
 /// \cond SKIP_IN_MANUAL

@@ -38,17 +38,15 @@
 #include <CGAL/array.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Union_find.h>
-#include <CGAL/unordered.h>
 #include <CGAL/utility.h>
 
 #include <boost/range.hpp>
-#include <boost/foreach.hpp>
-#include <boost/unordered_map.hpp>
 
 #include <iterator>
 #include <map>
 #include <vector>
 #include <utility>
+#include <unordered_set>
 
 #ifdef DOXYGEN_RUNNING
 #define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
@@ -108,20 +106,22 @@ void fill_pairs(const Halfedge& he,
 {
   typename Border_halfedge_map::iterator set_it;
   bool insertion_ok;
-  CGAL::cpp11::tie(set_it, insertion_ok)
+  std::tie(set_it, insertion_ok)
       = border_halfedge_map.insert(std::make_pair(he,std::make_pair(1,0)));
   
   if ( !insertion_ok ){ // we found already a halfedge with the points
     ++set_it->second.first; // increase the multiplicity
     if(set_it->second.first == 2)
     {
+      set_it->second.second = halfedge_pairs.size(); // set the id of the pair in the vector
+      halfedge_pairs.push_back( std::make_pair(set_it->first, he) );
       if ( get(vpmap, source(he,pmesh))==get(vpmap, target(set_it->first,pmesh)) &&
            get(vpmap, target(he,pmesh))==get(vpmap, source(set_it->first,pmesh)) )
       {
-        set_it->second.second = halfedge_pairs.size(); // set the id of the pair in the vector
-        halfedge_pairs.push_back( std::make_pair(set_it->first, he) );
         manifold_halfedge_pairs.push_back(true);
       }
+      else
+        manifold_halfedge_pairs.push_back(false);
     }
     else
       if ( set_it->second.first > 2 )
@@ -154,7 +154,7 @@ std::size_t num_component_wrapper(Mesh& pmesh,
  
    //init the map
    std::size_t i=-1;
-   BOOST_FOREACH(typename boost::graph_traits<Mesh>::face_descriptor f, faces(pmesh))
+   for(typename boost::graph_traits<Mesh>::face_descriptor f : faces(pmesh))
      fim[f]=++i;
  
    return CGAL::Polygon_mesh_processing::connected_components(pmesh,
@@ -193,7 +193,7 @@ collect_duplicated_stitchable_boundary_edges
     border_edges_per_cc.resize(num_component);
   }
   
-  BOOST_FOREACH(halfedge_descriptor he, halfedges(pmesh))
+  for(halfedge_descriptor he : halfedges(pmesh))
   {
     if ( !CGAL::is_border(he, pmesh) )
       continue;
@@ -305,7 +305,7 @@ void run_stitch_borders(PM& pmesh,
   typedef typename std::pair<halfedge_descriptor, halfedge_descriptor> halfedges_pair;
 
   std::vector<vertex_descriptor> vertices_to_delete;
-  BOOST_FOREACH(const halfedges_pair hk, to_stitch)
+  for(const halfedges_pair hk : to_stitch)
   {
     halfedge_descriptor h1 = hk.first;
     halfedge_descriptor h2 = hk.second;
@@ -353,7 +353,7 @@ void run_stitch_borders(PM& pmesh,
   /// In order to avoid having to maintain a set with halfedges to stitch
   /// we do on purpose next-prev linking that might not be useful but that
   /// is harmless and still less expensive than doing queries in a set
-  BOOST_FOREACH(const halfedges_pair hk, to_stitch)
+  for(const halfedges_pair hk : to_stitch)
   {
     halfedge_descriptor h1 = hk.first;
     halfedge_descriptor h2 = hk.second;
@@ -371,7 +371,7 @@ void run_stitch_borders(PM& pmesh,
 
   /// update HDS connectivity, removing the second halfedge
   /// of each the pair and its opposite
-  BOOST_FOREACH(const halfedges_pair hk, to_stitch)
+  for(const halfedges_pair hk : to_stitch)
   {
     halfedge_descriptor h1 = hk.first;
     halfedge_descriptor h2 = hk.second;
@@ -391,7 +391,7 @@ void run_stitch_borders(PM& pmesh,
   }
 
   //remove the extra vertices
-  BOOST_FOREACH(vertex_descriptor vd, vertices_to_delete)
+  for(vertex_descriptor vd : vertices_to_delete)
   {
     remove_vertex(vd, pmesh);
   }
@@ -414,7 +414,7 @@ void stitch_borders_impl(PM& pmesh,
   typedef boost::unordered_map<vertex_descriptor, typename Uf_vertices::handle> Uf_handles;
   Uf_handles uf_handles;
 
-  BOOST_FOREACH(const halfedges_pair hk, to_stitch)
+  for(const halfedges_pair hk : to_stitch)
   {
     halfedge_descriptor h1 = hk.first;
     halfedge_descriptor h2 = hk.second;
@@ -439,11 +439,11 @@ void stitch_borders_impl(PM& pmesh,
   Halfedges_after_stitching halfedges_after_stitching;
 
   typedef std::pair<const vertex_descriptor, typename Uf_vertices::handle> Pair_type;
-  BOOST_FOREACH(const Pair_type p, uf_handles)
+  for(const Pair_type p : uf_handles)
   {
     vertex_descriptor vd=p.first;
     typename Uf_vertices::handle tgt_handle = uf_vertices.find(uf_handles[vd]);
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(vd, pmesh))
+    for(halfedge_descriptor hd : halfedges_around_target(vd, pmesh))
     {
       vertex_descriptor other_vd = source(hd, pmesh);
 
@@ -482,7 +482,7 @@ void stitch_borders_impl(PM& pmesh,
       {
         // this is a bit extreme as maybe some could be stitched
         // (but safer because the master could be one of them)
-        BOOST_FOREACH(halfedge_descriptor hd, it->second)
+        for(halfedge_descriptor hd : it->second)
         {
           unstitchable_vertices.insert(source(hd, pmesh));
           unstitchable_vertices.insert(target(hd, pmesh));
@@ -496,7 +496,7 @@ void stitch_borders_impl(PM& pmesh,
   {
     std::vector<halfedges_pair> to_stitch_filtered;
     to_stitch_filtered.reserve( to_stitch.size());
-    BOOST_FOREACH(const halfedges_pair hk, to_stitch)
+    for(const halfedges_pair hk : to_stitch)
     {
       // We test both halfedges because the previous test
       // might involve only one of the two halfedges
@@ -512,7 +512,7 @@ void stitch_borders_impl(PM& pmesh,
     // redo union find as some "master" vertex might be unstitchable
     uf_vertices.clear();
     uf_handles.clear();
-    BOOST_FOREACH(const halfedges_pair hk, to_stitch_filtered)
+    for(const halfedges_pair hk : to_stitch_filtered)
     {
       halfedge_descriptor h1 = hk.first;
       halfedge_descriptor h2 = hk.second;
@@ -571,9 +571,9 @@ std::size_t stitch_boundary_cycles(PolygonMesh& pm,
   //                         |          |
   //                        v3 ------- v4
   // so we mark which edges have been stitched
-  cpp11::unordered_set<halfedge_descriptor> stitched_hedges;
+  std::unordered_set<halfedge_descriptor> stitched_hedges;
 
-  BOOST_FOREACH(halfedge_descriptor h, boundary_cycles)
+  for(halfedge_descriptor h : boundary_cycles)
   {
     std::vector<halfedge_descriptor> stitching_starting_points;
     halfedge_descriptor hn = next(h, pm);

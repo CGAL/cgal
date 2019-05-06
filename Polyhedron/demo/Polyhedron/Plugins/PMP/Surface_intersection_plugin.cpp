@@ -4,11 +4,11 @@
 #include "Kernel_type.h"
 #include "Scene_surface_mesh_item.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 
 #include "Scene_polylines_item.h"
 #include "Scene_points_with_normal_item.h"
 #include "Messages_interface.h"
-#include <boost/foreach.hpp>
 
 #include <QString>
 #include <QAction>
@@ -124,7 +124,7 @@ void Polyhedron_demo_intersection_plugin::intersectionSurfaces()
       if(!is_triangle_mesh(*itemA->face_graph())
          || !is_triangle_mesh(*itemB->face_graph()))
       {
-        mi->error("The two meshes must be triangle meshes.");
+        CGAL::Three::Three::error("The two meshes must be triangle meshes.");
       }
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -282,7 +282,7 @@ void Polyhedron_demo_intersection_plugin::intersectionSurfacePolyline()
 
   if(!is_triangle_mesh(*itemA->face_graph()))
   {
-    mi->error("The mesh must be a triangle mesh.");
+    CGAL::Three::Three::error("The mesh must be a triangle mesh.");
   }
   QApplication::setOverrideCursor(Qt::WaitCursor);
 

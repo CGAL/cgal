@@ -4,7 +4,6 @@
 #include <CGAL/extract_mean_curvature_flow_skeleton.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
-#include <boost/foreach.hpp>
 
 #include <fstream>
 #include <set>
@@ -36,7 +35,7 @@ bool is_mesh_valid(Polyhedron& pMesh)
     return false;
   }
   std::size_t i=0;
-  BOOST_FOREACH(Polyhedron::Face_handle fh, faces(pMesh))
+  for(Polyhedron::Face_handle fh : faces(pMesh))
     fh->id()=i++;
 
   // the algorithm is only applicable on a mesh
@@ -79,9 +78,9 @@ int main()
 // check all vertices are seen exactly once
 {
   std::set<vertex_descriptor> visited;
-  BOOST_FOREACH(vertex_desc v, vertices(skeleton))
+  for(vertex_desc v : CGAL::make_range(vertices(skeleton)))
   {
-    BOOST_FOREACH(vertex_descriptor vd, skeleton[v].vertices)
+    for(vertex_descriptor vd : skeleton[v].vertices)
       if (!visited.insert(vd).second)
       {
         std::cerr << "A vertex was seen twice!\n";
@@ -89,7 +88,7 @@ int main()
       }
   }
 
-  BOOST_FOREACH(vertex_descriptor vd, vertices(mesh))
+  for(vertex_descriptor vd : vertices(mesh))
   {
     if (!visited.count(vd))
     {
@@ -112,7 +111,7 @@ int main()
     vertex_desc cur = qu.front();
     qu.pop();
 
-    BOOST_FOREACH(edge_desc ed, in_edges(cur, skeleton))
+    for(edge_desc ed : CGAL::make_range(in_edges(cur, skeleton)))
     {
       vertex_desc next = source(ed, skeleton);
       if (visited.insert(next).second)
@@ -120,7 +119,7 @@ int main()
     }
   }
 
-  BOOST_FOREACH(vertex_desc vd, vertices(skeleton))
+  for(vertex_desc vd : CGAL::make_range(vertices(skeleton)))
   {
     if (!visited.count(vd))
     {

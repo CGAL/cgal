@@ -1,6 +1,6 @@
-/*!
-\defgroup PkgPointSet3Ref 3D Point Set Reference
+/// \defgroup PkgPointSet3Ref 3D Point Set Reference
 
+/*!
 \cgalPkgDescriptionBegin{3D Point Set, PkgPointSet3}
 \cgalPkgPicture{point_set_3.png}
 \cgalPkgSummaryBegin
@@ -18,7 +18,7 @@
 
 \cgalClassifedRefPages
 
-## Class ##
+\cgalCRPSection{Class}
 - `CGAL::Point_set_3<Point,Vector>`
 
 \defgroup PkgPointSet3IO Input/Output

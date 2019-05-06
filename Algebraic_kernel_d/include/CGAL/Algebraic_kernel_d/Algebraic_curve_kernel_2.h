@@ -736,7 +736,7 @@ public:
       
     public:
 
-      typedef CGAL::cpp11::array<Bound,4> result_type;
+      typedef std::array<Bound,4> result_type;
 
       Isolate_2(const Algebraic_kernel_d_2* kernel) 
 	: _m_kernel(kernel) {}

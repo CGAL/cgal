@@ -79,7 +79,10 @@ class CGAL_QT_EXPORT QGLViewer : public QOpenGLWidget, public QOpenGLFunctions {
   Q_OBJECT
 
 public:  
+  //todo check if this is used. If not remove it
   explicit QGLViewer(QGLContext* context, QWidget *parent = 0,
+                     ::Qt::WindowFlags flags = 0);
+  explicit QGLViewer(QOpenGLContext* context, QWidget *parent = 0,
                      ::Qt::WindowFlags flags = 0);
   explicit QGLViewer(QWidget *parent = 0,
                      ::Qt::WindowFlags flags = 0);
@@ -123,6 +126,11 @@ public:
   implemented in the future. */
   bool cameraIsEdited() const { return cameraIsEdited_; }
   
+  /*!
+   * \brief isSharing returns true if the viewer was created from an existing one, 
+   * and therefore is sharing its context with it.
+   */
+  bool isSharing() const;
 public Q_SLOTS:
   /*! Sets the state of axisIsDrawn(). Emits the axisIsDrawnChanged() signal.
    * See also toggleAxisIsDrawn(). */
@@ -617,6 +625,8 @@ Q_SIGNALS:
   mouse. */
   void mouseGrabberChanged(qglviewer::MouseGrabber *mouseGrabber);
 
+  //! Signal emitted by the viewer when its OpenGL context is destroyed.
+  void contextIsDestroyed();
   /*! @name Help window */
   //@{
 public:
@@ -983,7 +993,8 @@ public:
 public:
   virtual void setVisualHintsMask(int mask, int delay = 2000);
   virtual void drawVisualHints();
-  QOpenGLFramebufferObject* getStoredFrameBuffer();
+  QOpenGLFramebufferObject* getStoredFrameBuffer() const;
+  void setStoredFrameBuffer(QOpenGLFramebufferObject*);
 
 public Q_SLOTS:
   virtual void resetVisualHints();
@@ -1205,6 +1216,9 @@ protected:
   qglviewer::Vec _offset;
   //C o n t e x t
   bool is_ogl_4_3;
+  bool is_sharing;
+  bool is_linked;
+  QOpenGLContext* shared_context;
 public:
   //! Is used to know if the openGL context is 4.3 or ES 2.0.
   //! @returns `true` if the context is 4.3.

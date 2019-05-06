@@ -38,8 +38,8 @@ else()
   message(STATUS "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available.")
 endif()
 
-
-polyhedron_demo_plugin(orient_soup_plugin Orient_soup_plugin)
+qt5_wrap_ui( soupUI_FILES Repair_soup.ui )
+polyhedron_demo_plugin(orient_soup_plugin Orient_soup_plugin ${soupUI_FILES} KEYWORDS Classification )
 target_link_libraries(orient_soup_plugin PUBLIC scene_polygon_soup_item scene_surface_mesh_item scene_polylines_item scene_points_with_normal_item)
 
 
@@ -64,7 +64,7 @@ polyhedron_demo_plugin(polyhedron_stitching_plugin Polyhedron_stitching_plugin)
 target_link_libraries(polyhedron_stitching_plugin PUBLIC scene_surface_mesh_item scene_polylines_item)
 
 qt5_wrap_ui( selectionUI_FILES Selection_widget.ui)
-add_library(selection_plugin SHARED Selection_plugin.cpp ${selectionUI_FILES})
+polyhedron_demo_plugin(selection_plugin Selection_plugin ${selectionUI_FILES} KEYWORDS PolygonMesh IO Classification)
 target_link_libraries(selection_plugin PUBLIC scene_selection_item scene_points_with_normal_item scene_polylines_item)
 
 polyhedron_demo_plugin(self_intersection_plugin Self_intersection_plugin)
@@ -109,6 +109,9 @@ target_link_libraries(random_perturbation_plugin PUBLIC scene_surface_mesh_item 
 polyhedron_demo_plugin(degenerated_faces_plugin Degenerated_faces_plugin)
 target_link_libraries(degenerated_faces_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
 
+qt5_wrap_ui( engravUI_FILES Engrave_dock_widget.ui )
+polyhedron_demo_plugin(engrave_text_plugin Engrave_text_plugin ${engravUI_FILES})
+target_link_libraries(engrave_text_plugin PUBLIC scene_surface_mesh_item scene_selection_item scene_polylines_item)
 
 polyhedron_demo_plugin(extrude_plugin Extrude_plugin)
 target_link_libraries(extrude_plugin PUBLIC scene_surface_mesh_item scene_selection_item)

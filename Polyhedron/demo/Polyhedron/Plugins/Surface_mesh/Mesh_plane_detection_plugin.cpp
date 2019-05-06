@@ -229,6 +229,7 @@ void Polyhedron_demo_mesh_plane_detection_plugin::colorize_segmentation(
                                                                         std::vector<QColor>& color_vector)
 {
   item->setItemIsMulticolor(true);
+  item->computeItemColorVectorAutomatically(true);
   SMesh* sm = item->face_graph();
   color_vector.clear();
   std::size_t max_segment = 0;

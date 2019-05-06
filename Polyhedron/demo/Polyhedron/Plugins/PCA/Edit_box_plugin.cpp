@@ -5,6 +5,7 @@
 #include "Scene_edit_box_item.h"
 #include "Scene_surface_mesh_item.h"
 #include <CGAL/Three/Viewer_interface.h>
+#include <CGAL/Three/Three.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <QAction>
 #include <QMainWindow>
@@ -49,6 +50,16 @@ public Q_SLOTS:
   void bbox();
   void enableAction();
   void exportToPoly();
+  void connectNewViewer(QObject* o)
+  {
+    for(int i=0; i<scene->numberOfEntries(); ++i)
+    {
+      Scene_edit_box_item* item = qobject_cast<Scene_edit_box_item*>(
+            scene->item(i));
+      if(item)
+        o->installEventFilter(item);
+    }
+  }
 
 private:
   CGAL::Three::Scene_interface* scene;
@@ -69,6 +80,8 @@ void Edit_box_plugin::init(QMainWindow* mainWindow, CGAL::Three::Scene_interface
   actionExport = new QAction(tr("Export to Face_graph item"), mainWindow);
   connect(actionExport, SIGNAL(triggered()),
           this, SLOT(exportToPoly()));
+  connect(mw, SIGNAL(newViewerCreated(QObject*)),
+          this, SLOT(connectNewViewer(QObject*)));
 }
 
 void Edit_box_plugin::bbox()
@@ -85,8 +98,9 @@ void Edit_box_plugin::bbox()
           this, SLOT(enableAction()));
   item->setName("Edit box");
   item->setRenderingMode(FlatPlusEdges);
-  CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
-  viewer->installEventFilter(item);
+  Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
+    viewer->installEventFilter(item);
+  
   scene->addItem(item);
   actionBbox->setEnabled(false);
 
@@ -100,7 +114,7 @@ void Edit_box_plugin::enableAction() {
 void Edit_box_plugin::exportToPoly()
 {
   int id =0;
-  const CGAL::qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec v_offset = Three::mainViewer()->offset();
   EPICK::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
   Scene_edit_box_item* item = NULL;
   for(int i = 0, end = scene->numberOfEntries();

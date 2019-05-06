@@ -4,7 +4,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <boost/foreach.hpp>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3                Point;
@@ -30,14 +29,14 @@ int main()
   assert(hd != nhd);
   assert(hd == prev(nhd,dual));
   assert(face(nhd,dual) == fd);
-  BOOST_FOREACH(halfedge_descriptor lhd, halfedges_around_face(hd,dual)){
+  for(halfedge_descriptor lhd : halfedges_around_face(hd,dual)){
     assert(face(lhd,dual) == fd); 
   }
   
   vertex_descriptor vd = *vertices(dual).first;
   
   assert(target(halfedge(vd,dual),dual) == vd);
-  BOOST_FOREACH(halfedge_descriptor lhd, halfedges_around_target(halfedge(vd,dual),dual)){
+  for(halfedge_descriptor lhd : halfedges_around_target(halfedge(vd,dual),dual)){
     assert(target(lhd,dual) == vd); 
   }
 

@@ -45,7 +45,7 @@
 #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
 #include <CGAL/Timer.h>
 #endif
-#include <CGAL/trace.h>
+#include <CGAL/IO/trace.h>
 
 #include <CGAL/boost/graph/named_function_params.h>
 

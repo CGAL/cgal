@@ -28,6 +28,7 @@ CGAL_add_named_parameter(edge_is_constrained_t, edge_is_constrained, edge_is_con
 CGAL_add_named_parameter(first_index_t, first_index, first_index)
 CGAL_add_named_parameter(number_of_iterations_t, number_of_iterations, number_of_iterations)
 CGAL_add_named_parameter(verbosity_level_t, verbosity_level, verbosity_level)
+CGAL_add_named_parameter(use_binary_mode_t, use_binary_mode, use_binary_mode)
 
 CGAL_add_named_parameter(metis_options_t, METIS_options, METIS_options)
 CGAL_add_named_parameter(vertex_partition_id_t, vertex_partition_id, vertex_partition_id_map)
@@ -118,3 +119,25 @@ CGAL_add_named_parameter(plane_t, plane_map, plane_map)
 CGAL_add_named_parameter(plane_index_t, plane_index_map, plane_index_map)
 CGAL_add_named_parameter(select_percentage_t, select_percentage, select_percentage)
 CGAL_add_named_parameter(require_uniform_sampling_t, require_uniform_sampling, require_uniform_sampling)
+CGAL_add_named_parameter(point_is_constrained_t, point_is_constrained, point_is_constrained_map)
+
+// List of named parameters used in Surface_mesh_approximation package
+CGAL_add_named_parameter(verbose_level_t, verbose_level, verbose_level)
+CGAL_add_named_parameter(seeding_method_t, seeding_method, seeding_method)
+CGAL_add_named_parameter(max_number_of_proxies_t, max_number_of_proxies, max_number_of_proxies)
+CGAL_add_named_parameter(min_error_drop_t, min_error_drop, min_error_drop)
+CGAL_add_named_parameter(number_of_relaxations_t, number_of_relaxations, number_of_relaxations)
+
+// meshing parameters
+CGAL_add_named_parameter(subdivision_ratio_t, subdivision_ratio, subdivision_ratio)
+CGAL_add_named_parameter(relative_to_chord_t, relative_to_chord, relative_to_chord)
+CGAL_add_named_parameter(with_dihedral_angle_t, with_dihedral_angle, with_dihedral_angle)
+CGAL_add_named_parameter(optimize_anchor_location_t, optimize_anchor_location, optimize_anchor_location)
+CGAL_add_named_parameter(pca_plane_t, pca_plane, pca_plane)
+
+// output parameters
+CGAL_add_named_parameter(face_proxy_map_t, face_proxy_map, face_proxy_map)
+CGAL_add_named_parameter(proxies_t, proxies, proxies)
+CGAL_add_named_parameter(anchors_t, anchors, anchors)
+CGAL_add_named_parameter(triangles_t, triangles, triangles)
+

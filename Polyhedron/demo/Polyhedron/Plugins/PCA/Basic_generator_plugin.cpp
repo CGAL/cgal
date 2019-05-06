@@ -34,13 +34,15 @@ typedef Kernel::Point_3 Point;
 
 namespace euler =  CGAL::Euler;
 using namespace CGAL::Three;
+namespace params = CGAL::parameters;
+
 class Q_DECL_EXPORT Basic_generator_plugin :
     public QObject,
     public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "basic_generator_plugin.json")
 public :
   void init(QMainWindow* mainWindow,
             CGAL::Three::Scene_interface* scene_interface,
@@ -548,10 +550,10 @@ void Basic_generator_plugin::generateSphere()
   typedef typename boost::property_map<typename Facegraph_item::Face_graph, CGAL::vertex_point_t>::type VPMap;
   if(precision !=0)
     CGAL::Subdivision_method_3::Sqrt3_subdivision(sphere,
-                                                  precision);
+                                                  params::number_of_iterations(precision));
   VPMap vpmap = get(CGAL::vertex_point, sphere);
   //emplace the points back on the sphere
-  BOOST_FOREACH(typename boost::graph_traits<typename Facegraph_item::Face_graph>::vertex_descriptor vd, vertices(sphere))
+  for(typename boost::graph_traits<typename Facegraph_item::Face_graph>::vertex_descriptor vd : vertices(sphere))
   {
     Kernel::Vector_3 vec(center, get(vpmap, vd));
     vec = radius*vec/CGAL::sqrt(vec.squared_length());
@@ -685,10 +687,17 @@ void Basic_generator_plugin::generateLines()
   double coord[3];
   bool ok = true;
   if (list.isEmpty()) return;
-  if (list.size()%3!=0){
+  if(!dock_widget->polygon_checkBox->isChecked() && list.size()%3!=0){
     QMessageBox *msgBox = new QMessageBox;
     msgBox->setWindowTitle("Error");
     msgBox->setText("ERROR : Input should consists of triplets.");
+    msgBox->exec();
+    return;
+  }
+  else if(dock_widget->polygon_checkBox->isChecked()&& list.size()%2!=0){
+    QMessageBox *msgBox = new QMessageBox;
+    msgBox->setWindowTitle("Error");
+    msgBox->setText("ERROR : Input should consists of pairs.");
     msgBox->exec();
     return;
   }
@@ -711,18 +720,29 @@ void Basic_generator_plugin::generateLines()
             counter++;
           }
       }
-      if(counter == 3)
+      if(!dock_widget->polygon_checkBox->isChecked() && counter == 3)
       {
           Scene_polylines_item::Point_3 p(coord[0], coord[1], coord[2]);
           polyline.push_back(p);
           counter =0;
       }
+      else if(dock_widget->polygon_checkBox->isChecked() && counter == 2)
+      {
+          Scene_polylines_item::Point_3 p(coord[0], coord[1], 0);
+          polyline.push_back(p);
+          counter = 0;
+      }
+  }
+  if(dock_widget->polygon_checkBox->isChecked())
+  {
+    polyline.push_back(polyline.front()); //polygon_2 are not closed.
   }
     if(ok)
     {
         dock_widget->line_textEdit->clear();
-        Scene_polylines_item* item = new Scene_polylines_item;
+        Scene_polylines_item* item = new Scene_polylines_item();
         item->polylines = polylines;
+        item->invalidateOpenGLBuffers();
         item->setName(dock_widget->name_lineEdit->text());
         item->setColor(Qt::black);
         item->setProperty("polylines metadata", polylines_metadata);

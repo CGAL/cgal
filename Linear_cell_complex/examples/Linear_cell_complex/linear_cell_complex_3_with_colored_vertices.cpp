@@ -18,7 +18,7 @@ struct Myitem
                                              Average_functor >
     Vertex_attribute;
     
-    typedef CGAL::cpp11::tuple<Vertex_attribute> Attributes;
+    typedef std::tuple<Vertex_attribute> Attributes;
   };
 };
 

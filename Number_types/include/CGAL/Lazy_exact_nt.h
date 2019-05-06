@@ -370,7 +370,7 @@ public :
   // Also check that ET and AT are constructible from T?
   template<class T>
   Lazy_exact_nt (T i, typename boost::enable_if<boost::mpl::and_<
-      boost::mpl::or_<boost::is_arithmetic<T>, cpp11::is_enum<T> >,
+      boost::mpl::or_<boost::is_arithmetic<T>, std::is_enum<T> >,
       boost::mpl::not_<boost::is_same<T,ET> > >,void*>::type=0)
     : Base(new Lazy_exact_Cst<ET,T>(i)) {}
 
@@ -478,7 +478,7 @@ public:
     return relative_precision_of_to_double_internal();
   }
 
-  static void set_relative_precision_of_to_double(const double & d)
+  static void set_relative_precision_of_to_double(double d)
   {
       CGAL_assertion((0 < d) & (d < 1));
       relative_precision_of_to_double_internal() = d;

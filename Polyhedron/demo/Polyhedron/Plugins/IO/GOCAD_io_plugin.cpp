@@ -8,6 +8,7 @@
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 #include <fstream>
 
 #include <QColor>
@@ -22,8 +23,8 @@ class Polyhedron_demo_gocad_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface CGAL::Three::Polyhedron_demo_io_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "gocad_io_plugin.json")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0" )
 
 public:
   void init(QMainWindow* mainWindow,
@@ -57,19 +58,24 @@ bool Polyhedron_demo_gocad_plugin::canLoad() const {
 
 CGAL::Three::Scene_item*
 Polyhedron_demo_gocad_plugin::load(QFileInfo fileinfo) {
-
+  
   // Open file
   std::ifstream in(fileinfo.filePath().toUtf8());
   if(!in) {
     std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
     return NULL;
   }
-
-
+  
+  
   CGAL::Timer t;
   t.start();
   // Try to read GOCAD file in a surface_mesh
   Scene_surface_mesh_item* item = new Scene_surface_mesh_item(new SMesh());
+  if(fileinfo.size() == 0)
+  {
+    CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
+    return item;
+  }
   SMesh& P = * const_cast<SMesh*>(item->polyhedron());
   
   std::string name, color;
@@ -90,11 +96,9 @@ Polyhedron_demo_gocad_plugin::load(QFileInfo fileinfo) {
   if(qcolor.isValid())
   {
     item->setColor(qcolor);
-    item->invalidateOpenGLBuffers();
   }
+  item->invalidateOpenGLBuffers();
   return item;
-  
-return NULL;
 }
 
 bool Polyhedron_demo_gocad_plugin::canSave(const CGAL::Three::Scene_item* item)

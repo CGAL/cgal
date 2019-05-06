@@ -1,5 +1,3 @@
-// PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
-
 /// \defgroup PkgConeSpanners2Ref Cone-Based Spanners Reference
 
 /*!
@@ -34,15 +32,15 @@ This package also provides options for the Half Yao graph and the Half Theta gra
 \cgalClassifedRefPages
 
 
-## Functors ##
+\cgalCRPSection{Functors}
 - `CGAL::Compute_cone_boundaries_2`
 - `CGAL::Construct_yao_graph_2`
 - `CGAL::Construct_theta_graph_2`
 
-## Functions ##
+\cgalCRPSection{Functions}
 - `CGAL::gnuplot_output_2()`
 
-## Enumerations ##
+\cgalCRPSection{Enumerations}
 - `CGAL::Cones_selected`
 
 */

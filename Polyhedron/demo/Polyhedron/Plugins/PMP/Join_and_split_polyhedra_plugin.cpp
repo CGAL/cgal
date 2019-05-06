@@ -10,6 +10,7 @@
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 
 #include <CGAL/Polyhedron_copy_3.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
@@ -20,7 +21,6 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/property_map.h>
 
-#include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
 #include <boost/unordered_map.hpp>
 #include "Color_map.h"
@@ -81,7 +81,6 @@ public Q_SLOTS:
 
 private :
   CGAL::Three::Scene_interface* scene;
-  std::vector<QColor> colors_;
 }; // end Polyhedron_demo_polyhedron_stitching_plugin
 
 void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionJoinPolyhedra_triggered()
@@ -140,7 +139,6 @@ bool operator()(FaceGraph* mesh1, FaceGraph* mesh2)
 void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_triggered()
 {
   Q_FOREACH(int index, scene->selectionIndices()) {
-    colors_.clear();
     Scene_facegraph_item* item =
       qobject_cast<Scene_facegraph_item*>(scene->item(index));
     if(item)
@@ -170,23 +168,26 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
       if (new_polyhedra.size()==1)
       {
         delete new_polyhedra.front();
-        msg_interface->information( tr("%1 has only one connected component").arg(item->name()) );
+        CGAL::Three::Three::information( tr("%1 has only one connected component").arg(item->name()) );
         QApplication::restoreOverrideCursor();
         continue;
       }
 
       int cc=0;
-
-      compute_color_map(item->color(), item->isItemMulticolor() ? static_cast<unsigned int>(new_polyhedra.size()) : 1,
-                        std::back_inserter(colors_));
-
+      std::vector<QColor> color_map;
+      if(
+//           item->isItemMulticolor() || 
+         item->hasPatchIds())
+        color_map = item->color_vector();
+      else
+        compute_color_map(item->color(), new_polyhedra.size(), std::back_inserter(color_map));
       Scene_group_item *group = new Scene_group_item("CC");
        scene->addItem(group);
-      BOOST_FOREACH(FaceGraph* polyhedron_ptr, new_polyhedra)
+      for(FaceGraph* polyhedron_ptr : new_polyhedra)
       {
         Scene_facegraph_item* new_item=new Scene_facegraph_item(polyhedron_ptr);
         new_item->setName(tr("%1 - CC %2").arg(item->name()).arg(cc));
-        new_item->setColor(colors_[item->isItemMulticolor()? cc : 0]);
+        new_item->setColor(color_map[cc]);
         ++cc;
         scene->addItem(new_item);
         scene->changeGroup(new_item, group);
@@ -230,7 +231,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
       PatchIDMap pidmap = get(CGAL::face_patch_id_t<int>(), *item->face_graph());
       int nb_patch_ids = CGAL::Polygon_mesh_processing::connected_components(*item->face_graph(),
                                                                              pidmap);
-
+      item->computeItemColorVectorAutomatically(true);
       item->invalidateOpenGLBuffers();
       item->setProperty("NbPatchIds", nb_patch_ids);
       scene->itemChanged(item);
@@ -246,6 +247,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
         typedef boost::graph_traits<FaceGraph>::face_descriptor   face_descriptor;
 
         selection_item->polyhedron_item()->setItemIsMulticolor(true);
+        selection_item->polyhedron_item()->computeItemColorVectorAutomatically(true);
         FaceGraph& pmesh = *(selection_item->polyhedron());
 
         boost::property_map<FaceGraph, boost::face_index_t>::type fim
@@ -263,7 +265,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
                                                      , PMP::parameters::edge_is_constrained_map(selection_item->constrained_edges_pmap())
                                                      .face_index_map(fim));
 
-        BOOST_FOREACH(face_descriptor f, faces(pmesh))
+        for(face_descriptor f : faces(pmesh))
         {
           put(pid, f, fccmap[f]);
         }

@@ -52,14 +52,14 @@ namespace CGAL {
 ///
 /// \cgalModels `DiagonalizeTraits`
 ///
-/// \sa http://eigen.tuxfamily.org
+/// \sa http://eigen.tuxfamily.org/index.php?title=Main_Page
 template <typename FT, unsigned int dim = 3>
 class Eigen_diagonalize_traits
 {
 public:
-  typedef cpp11::array<FT, dim>                  Vector;
-  typedef cpp11::array<FT, dim*dim>              Matrix;
-  typedef cpp11::array<FT, (dim * (dim+1) / 2)>  Covariance_matrix;
+  typedef std::array<FT, dim>                  Vector;
+  typedef std::array<FT, dim*dim>              Matrix;
+  typedef std::array<FT, (dim * (dim+1) / 2)>  Covariance_matrix;
 
 private:
   typedef Eigen::Matrix<FT, dim, dim>            EigenMatrix;
@@ -156,6 +156,15 @@ public:
 
         for(std::size_t j=0; j<dim; ++j)
           eigenvectors[dim*i + j] = static_cast<FT>(eigenvectors_(j,i));
+      }
+    }
+    else{
+      for(std::size_t i=0; i<dim; ++i)
+      {
+        eigenvalues[i] = static_cast<FT>(0.);
+
+        for(std::size_t j=0; j<dim; ++j)
+          eigenvectors[dim*i + j] = static_cast<FT>(0.);
       }
     }
 

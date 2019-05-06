@@ -29,7 +29,7 @@ namespace CGAL {
 /*!
 \ingroup PkgSolverInterfaceRef
 
-The class `Eigen_sparse_matrix` is a wrapper around \ref thirdpartyEigen "Eigen" matrix type
+The class `Eigen_sparse_matrix` is a wrapper around `Eigen` matrix type
 <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1SparseMatrix.html">`Eigen::SparseMatrix`</a>
 that represents general matrices, be they symmetric or not.
 
@@ -55,8 +55,16 @@ public:
   typedef T                           NT;
   /// @}
 
+  Eigen_sparse_matrix(const EigenType& et)
+    : m_is_already_built(true), m_matrix(et), m_is_symmetric(false)
+  {}
+
   // Public operations
 public:
+  Eigen_sparse_matrix()  :
+      m_is_already_built(false)
+  {}
+  
   /// Create a square matrix initialized with zeros.
   Eigen_sparse_matrix(std::size_t  dim,           ///< Matrix dimension.
                       bool is_symmetric = false)  ///< Symmetric/hermitian?
@@ -104,6 +112,15 @@ public:
     m_triplets.reserve(rows);
   }
 
+  void swap(Eigen_sparse_matrix& other)
+  {
+    std::swap(m_is_already_built, other.m_is_already_built);
+    std::swap(m_is_symmetric, other.m_is_symmetric);
+    m_matrix.swap(other.m_matrix);
+    m_triplets.swap(other.m_triplets);
+  }
+
+  
   /// Delete this object and the wrapped matrix.
   ~Eigen_sparse_matrix() { }
 
@@ -178,18 +195,20 @@ public:
   ///
   /// \pre 0 <= i < row_dimension().
   /// \pre 0 <= j < column_dimension().
-  void add_coef(int i, int j, T  val)
+  void add_coef(std::size_t i_, std::size_t j_, T  val)
   {
-    CGAL_precondition(i < row_dimension());
-    CGAL_precondition(j < column_dimension());
-
+    int i = static_cast<int>(i_);
+    int j = static_cast<int>(j_);
     if(m_is_symmetric && (j > i))
       return;
 
-    if(m_is_already_built)
+    if(m_is_already_built){      
+      CGAL_precondition(i < row_dimension());
+      CGAL_precondition(j < column_dimension());
       m_matrix.coeffRef(i,j) += val;
-    else
+    }else{
       m_triplets.push_back(Triplet(i,j,val));
+    }
   }
 
   /// Read access to a matrix coefficient.
@@ -201,8 +220,10 @@ public:
   ///
   /// \pre 0 <= i < row_dimension().
   /// \pre 0 <= j < column_dimension().
-  NT get_coef (unsigned int i, unsigned int j) const
+  NT get_coef (std::size_t i_, std::size_t j_) const
   {
+    int i = static_cast<int>(i_);
+    int j = static_cast<int>(j_);
     CGAL_precondition(i < row_dimension());
     CGAL_precondition(j < column_dimension());
 
@@ -246,11 +267,38 @@ public:
     return m_matrix;
   }
 
-private:
-  /// Eigen_sparse_matrix cannot be copied (yet)
-  Eigen_sparse_matrix(const Eigen_sparse_matrix& rhs);
-  Eigen_sparse_matrix& operator=(const Eigen_sparse_matrix& rhs);
+  /// Return the internal matrix, with type `EigenType`.
+  EigenType& eigen_object()
+  {
+    if(!m_is_already_built)
+      assemble_matrix();
 
+    // turns the matrix into compressed mode:
+    //  -> release some memory
+    //  -> required for some external solvers
+    m_matrix.makeCompressed();
+    return m_matrix;
+  }
+  
+
+public:
+
+  /// \cond SKIP_IN_MANUAL
+  friend Eigen_sparse_matrix
+  operator*(const T& c, const Eigen_sparse_matrix& M)
+  {
+    return Eigen_sparse_matrix(c* M.eigen_object());
+  }
+  
+  
+  friend Eigen_sparse_matrix
+  operator+(const Eigen_sparse_matrix& M0, const Eigen_sparse_matrix& M1)
+  {
+    return Eigen_sparse_matrix(M0.eigen_object()+ M1.eigen_object());
+  }
+  /// \endcond
+
+  
   // Fields
 private:
   mutable bool m_is_already_built;
@@ -264,10 +312,11 @@ private:
   bool m_is_symmetric;
 }; // Eigen_sparse_matrix
 
+  
 /*!
 \ingroup PkgSolverInterfaceRef
 
-The class `Eigen_sparse_symmetric_matrix` is a wrapper around \ref thirdpartyEigen "Eigen" matrix type
+The class `Eigen_sparse_symmetric_matrix` is a wrapper around `Eigen` matrix type
 <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1SparseMatrix.html">`Eigen::SparseMatrix` </a>
 
 Since the matrix is symmetric, only the lower triangle part is stored.
@@ -303,7 +352,7 @@ struct Eigen_sparse_symmetric_matrix
 /*!
 \ingroup PkgSolverInterfaceRef
 
-The class `Eigen_matrix` is a wrapper around \ref thirdpartyEigen "Eigen" matrix type
+The class `Eigen_matrix` is a wrapper around `Eigen` matrix type
 <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1Matrix.html">`Eigen::Matrix`</a>.
 
 \cgalModels `SvdTraits::Matrix` 

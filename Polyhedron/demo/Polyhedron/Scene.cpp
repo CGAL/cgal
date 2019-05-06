@@ -5,6 +5,7 @@
 #include <CGAL/Three/Scene_print_item_interface.h>
 #include <CGAL/Three/Scene_transparent_interface.h>
 #include <CGAL/Three/Scene_zoomable_item_interface.h>
+#include <CGAL/Three/Three.h>
 
 #include  <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Scene_print_item_interface.h>
@@ -42,6 +43,7 @@ Scene::Scene(QObject* parent)
               this, SLOT(adjustIds(Scene_interface::Item_id)));
     picked = false;
     gl_init = false;
+    dont_emit_changes = false;
 
 }
 Scene::Item_id
@@ -80,6 +82,11 @@ Scene::addItem(CGAL::Three::Scene_item* item)
             qobject_cast<CGAL::Three::Scene_group_item*>(item);
     if(group)
         addGroup(group);
+    //init the item for the mainViewer to avoid using unexisting 
+    //VAOs if the mainViewer is not the first to be drawn.
+    item->draw(CGAL::Three::Three::mainViewer());
+    item->drawEdges(CGAL::Three::Three::mainViewer());
+    item->drawPoints(CGAL::Three::Three::mainViewer());
     return id;
 }
 
@@ -97,16 +104,15 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
             this, SLOT(callDraw()));
     CGAL::Three::Scene_group_item* group =
             qobject_cast<CGAL::Three::Scene_group_item*>(m_entries[index]);
+    QList<Scene_item*> group_children;
     if(group)
     {
-      QList<int> group_children;
       Q_FOREACH(Item_id id, group->getChildren())
       {
         CGAL::Three::Scene_item* child = group->getChild(id);
         group->unlockChild(child);
-        group_children << item_id(child);
+        group_children << child;
       }
-      erase(group_children);
     }
     CGAL::Three::Scene_group_item* parent = m_entries[index]->parentGroup();
     bool is_locked = false;
@@ -147,6 +153,10 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
     Q_EMIT restoreCollapsedState();
     redraw_model();
     Q_EMIT selectionChanged(index);
+    Q_FOREACH(Scene_item* child, group_children)
+    {
+      erase(item_id(child));
+    }
     return item;
 }
 
@@ -180,9 +190,9 @@ Scene::erase(Scene::Item_id index)
   item->deleteLater();
   selected_item = -1;
   //re-creates the Scene_view
-  Q_FOREACH(Scene_item* item, m_entries)
+  Q_FOREACH(Item_id id, children)
   {
-    organize_items(item, invisibleRootItem(), 0);
+    organize_items(this->item(id), invisibleRootItem(), 0);
   }
   QStandardItemModel::beginResetModel();
   Q_EMIT updated();
@@ -232,9 +242,9 @@ Scene::erase(QList<int> indices)
       continue;
     if(item->parentGroup())
       item->parentGroup()->removeChild(item);
-        children.removeAll(removed_item);
-        indexErased(removed_item);
-        m_entries.removeAll(item);
+    children.removeAll(removed_item);
+    indexErased(removed_item);
+    m_entries.removeAll(item);
     
     Q_EMIT itemAboutToBeDestroyed(item);
     item->aboutToBeDestroyed();
@@ -243,9 +253,9 @@ Scene::erase(QList<int> indices)
   clear();
   index_map.clear();
   selected_item = -1;
-  Q_FOREACH(Scene_item* item, m_entries)
+  Q_FOREACH(Item_id id, children)
   {
-    organize_items(item, invisibleRootItem(), 0);
+    organize_items(item(id), invisibleRootItem(), 0);
   }
   QStandardItemModel::beginResetModel();
   Q_EMIT updated();
@@ -275,12 +285,21 @@ void Scene::remove_item_from_groups(Scene_item* item)
 }
 Scene::~Scene()
 {
-    Q_FOREACH(CGAL::Three::Scene_item* item_ptr, m_entries)
-    {
-         item_ptr->deleteLater();
-    }
-    m_entries.clear();
-
+  Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
+  {
+    removeViewer(static_cast<CGAL::Three::Viewer_interface*>(viewer));
+    viewer->setProperty("is_destroyed", true);
+  }
+  Q_FOREACH(QOpenGLVertexArrayObject* vao, vaos.values())
+  {
+    vao->destroy();
+    delete vao;
+  }
+  Q_FOREACH(CGAL::Three::Scene_item* item_ptr, m_entries)
+  {
+    item_ptr->deleteLater();
+  }
+  m_entries.clear();
 }
 
 CGAL::Three::Scene_item*
@@ -435,10 +454,10 @@ void Scene::initializeGL(CGAL::Three::Viewer_interface* viewer)
   vbo[1].create();
   
   viewer->makeCurrent();
-  vao = new QOpenGLVertexArrayObject();
-  vao->create();
+  vaos[viewer] = new QOpenGLVertexArrayObject();
+  vaos[viewer]->create();
   program.bind();
-  vao->bind();
+  vaos[viewer]->bind();
   vbo[0].bind();
   vbo[0].allocate(points, 18 * sizeof(float));
   program.enableAttributeArray("vertex");
@@ -450,7 +469,7 @@ void Scene::initializeGL(CGAL::Three::Viewer_interface* viewer)
   program.enableAttributeArray("v_texCoord");
   program.setAttributeArray("v_texCoord", GL_FLOAT, 0, 2);
   vbo[1].release();
-  vao->release();
+  vaos[viewer]->release();
   program.release();
   gl_init = true;
 }
@@ -506,7 +525,6 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
                         bool writing_depth,
                         QOpenGLFramebufferObject *fbo)
 {
-
   viewer->setCurrentPass(pass);
   viewer->setDepthWriting(writing_depth);
   viewer->setDepthPeelingFbo(fbo);
@@ -520,11 +538,9 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
       item.selection_changed(true);
     }
     else
-
     {
       item.selection_changed(false);
     }
-
     if(group ||item.visible())
     {
       if( group || item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
@@ -534,7 +550,6 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
           viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
         item.draw(viewer);
-        
         if(with_names) {
           
           //    read depth buffer at pick location;
@@ -682,12 +697,39 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
         transparent_items.push_back(id);
     }
     renderScene(children, viewer, picked_item_IDs, with_names, -1, false, NULL);
+    if(with_names)
+    {
+      //here we get the selected point, before erasing the depth buffer. We store it 
+      //in a dynamic property as a QList<double>. If there is some alpha, the 
+      //depth buffer is altered, and the picking will return true even when it is 
+      // performed in the background, when it should return false. To avoid that,
+      // we distinguish the case were there is no alpha, to let the viewer
+      //perform it, and the case where the pixel is not found. In the first case,
+      //we erase the property, in the latter we return an empty list.
+      //According ot that, in the viewer, either we perform the picking, either we do nothing.
+      if(has_alpha()) {
+        bool found = false;
+        CGAL::qglviewer::Vec point = viewer->camera()->pointUnderPixel(picked_pixel, found) - viewer->offset();
+        if(found){
+          QList<QVariant> picked_point;
+          picked_point <<point.x
+                      <<point.y
+                     <<point.z;
+          viewer->setProperty("picked_point", picked_point);
+        }
+        else{
+          viewer->setProperty("picked_point", QList<QVariant>());
+        }
+      }
+      else {
+        viewer->setProperty("picked_point", {});
+      }
+    }
     if(!with_names && has_alpha())
     {
       std::vector<QOpenGLFramebufferObject*> fbos;
       std::vector<QOpenGLFramebufferObject*> depth_test;
       QColor background = viewer->backgroundColor();
-   
       fbos.resize((int)viewer->total_pass());
       depth_test.resize((int)viewer->total_pass()-1);
       
@@ -778,7 +820,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
    
       //blending
       program.bind();
-      vao->bind();
+      vaos[viewer]->bind();
       viewer->glClearColor(background.redF(),
                            background.greenF(),
                            background.blueF(),
@@ -802,7 +844,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
       }
       viewer->glDisable(GL_BLEND);
       viewer->glEnable(GL_DEPTH_TEST);
-      vao->release();
+      vaos[viewer]->release();
       program.release();
     }
    
@@ -983,10 +1025,13 @@ Scene::setData(const QModelIndex &index,
     {
         RenderingMode rendering_mode = static_cast<RenderingMode>(value.toInt());
         // Find next supported rendering mode
+        int counter = 0;
         while ( ! item->supportsRenderingMode(rendering_mode)
                 )
         {
             rendering_mode = static_cast<RenderingMode>( (rendering_mode+1) % NumberOfRenderingMode );
+            if(counter++ == NumberOfRenderingMode)
+              break;
         }
         item->setRenderingMode(rendering_mode);
         QModelIndex nindex = createIndex(m_entries.size()-1,RenderingModeColumn+1);
@@ -1074,64 +1119,175 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
     return true;
 }
 
-void Scene::moveRowUp()
-{
-  
-  int selected_id = selectionIndices().first();
-  Scene_item* selected_item = item(selected_id);
-  if(!selected_item)
-    return;
-  if(index_map.key(selected_id).row() > 0)
+//todo : if a group is selected, don't treat it's children.
+bool Scene::sort_lists(QVector<QList<int> >&sorted_lists, bool up)
+{  
+  QVector<int> group_found;
+  Q_FOREACH(int i, selectionIndices())
   {
-    if(item(selected_id)->has_group >0)
+    Scene_item* item = this->item(i);
+    if(item->has_group == 0)
     {
-      Scene_group_item* group = selected_item->parentGroup();
-      if(group)
-      {
-        int id = group->getChildren().indexOf(item_id(selected_item));
-        group->moveUp(id);
-      }
+      sorted_lists.first().push_back(i);
     }
     else
+    {
+      int group_id = item_id(item->parentGroup());
+      if(group_found.contains(group_id))
+        sorted_lists[group_id].push_back(i);
+      else
+      {
+        group_found.push_back(group_id);
+        if(sorted_lists.size() < group_id+1)
+          sorted_lists.resize(group_id+1);
+        sorted_lists[group_id].push_back(i);
+      }
+    }
+  }
+  //iterate the first list to find the groups that are selected and remove the corresponding 
+  //sub lists.
+  //todo: do that for each group. (treat subgroups)
+  for(int i = 0; i< sorted_lists.first().size(); ++i)
+  {
+    Scene_group_item* group = qobject_cast<Scene_group_item*>(this->item(sorted_lists.first()[i]));
+    if(group && ! group->getChildren().isEmpty())
+    {
+      sorted_lists[sorted_lists.first()[i]].clear();
+    }
+  }
+  std::sort(sorted_lists.first().begin(), sorted_lists.first().end(),
+            [this](int a, int b) {
+    return children.indexOf(a) < children.indexOf(b);
+});
+  if(!sorted_lists.first().isEmpty())
+  {
+    if(up &&  children.indexOf(sorted_lists.first().first()) == 0)
+      return false;
+    else if(!up &&  children.indexOf(sorted_lists.first().last()) == children.size() -1)
+      return false;
+  }
+  for(int i=1; i<sorted_lists.size(); ++i)
+  {
+    QList<int>& list = sorted_lists[i];
+    if(list.isEmpty())
+      continue;
+    Scene_group_item* group = qobject_cast<Scene_group_item*>(this->item(i));
+    if(!group)
+      continue;
+    std::sort(list.begin(), list.end(),
+              [group](int a, int b) {
+      return group->getChildren().indexOf(a) < group->getChildren().indexOf(b);
+  });
+    if(up && group->getChildren().indexOf(list.first()) == 0)
+      return false;
+    else if(!up && group->getChildren().indexOf(list.last()) == group->getChildren().size()-1)
+      return false;
+  }
+  return true;
+}
+void Scene::moveRowUp()
+{
+  QVector<QList<int> >sorted_lists(1);
+  QList<int> to_select;
+  //sort lists according to the indices of each item in its container (scene or group)
+  //if moving one up would put it out of range, then we stop and do nothing.
+  if(!sort_lists(sorted_lists, true))
+    return;
+  
+  for(int i=0; i<sorted_lists.first().size(); ++i)
+  {
+    Item_id selected_id = sorted_lists.first()[i];
+    Scene_item* selected_item = item(selected_id);
+    if(!selected_item)
+      return;
+    if(index_map.key(selected_id).row() > 0)
     {
       //if not in group
       QModelIndex baseId = index_map.key(selected_id);
       int newId = children.indexOf(
             index_map.value(index(baseId.row()-1, baseId.column(),baseId.parent()))) ;
       children.move(children.indexOf(selected_id), newId);
+      redraw_model();
+      to_select.append(m_entries.indexOf(selected_item));
     }
-    redraw_model();
-    setSelectedItem(m_entries.indexOf(selected_item));
+  }
+  for(int i=1; i<sorted_lists.size(); ++i)
+  {
+    for(int j = 0; j< sorted_lists[i].size(); ++j)
+    {
+      Item_id selected_id = sorted_lists[i][j];
+      Scene_item* selected_item = item(selected_id);
+      if(!selected_item)
+        return;
+      if(index_map.key(selected_id).row() > 0)
+      {
+        Scene_group_item* group = selected_item->parentGroup();
+        if(group)
+        {
+          int id = group->getChildren().indexOf(item_id(selected_item));
+          group->moveUp(id);
+          redraw_model();
+          to_select.append(m_entries.indexOf(selected_item));
+        }
+      }
+    }
+  }
+  if(!to_select.isEmpty()){
+    selectionChanged(to_select);
   }
 }
 void Scene::moveRowDown()
 {
-  int selected_id = selectionIndices().first();
-  Scene_item* selected_item = item(selected_id);
-  if(!selected_item)
+  QVector<QList<int> >sorted_lists(1);
+  QList<int> to_select;
+  //sort lists according to the indices of each item in its container (scene or group)
+  //if moving one up would put it out of range, then we stop and do nothing.
+  if(!sort_lists(sorted_lists, false))
     return;
-  if(index_map.key(selected_id).row() < rowCount(index_map.key(selected_id).parent())-1)
+  for(int i=sorted_lists.first().size()-1; i>=0; --i)
   {
-    if(item(selected_id)->has_group >0)
+    Item_id selected_id = sorted_lists.first()[i];
+    Scene_item* selected_item = item(selected_id);
+    if(!selected_item)
+      return;
+    if(index_map.key(selected_id).row() < rowCount(index_map.key(selected_id).parent())-1)
     {
-      Scene_group_item* group = selected_item->parentGroup();
-      if(group)
+        //if not in group
+        QModelIndex baseId = index_map.key(selected_id);
+        int newId = children.indexOf(
+              index_map.value(index(baseId.row()+1, baseId.column(),baseId.parent()))) ;
+        children.move(children.indexOf(selected_id), newId);
+      
+      redraw_model();
+      to_select.prepend(m_entries.indexOf(selected_item));
+    }
+  }
+  for(int i=1; i<sorted_lists.size(); ++i){
+    if(sorted_lists[i].isEmpty())
+      continue;
+    for(int j = sorted_lists[i].size()-1; j >=0; --j)
+    {
+      Item_id selected_id = sorted_lists[i][j];
+      Scene_item* selected_item = item(selected_id);
+      if(!selected_item)
+        return;
+      if(index_map.key(selected_id).row() < rowCount(index_map.key(selected_id).parent())-1)
       {
-        int id = group->getChildren().indexOf(item_id(selected_item));
-        group->moveDown(id);
+        if(item(selected_id)->has_group >0)
+        {
+          Scene_group_item* group = selected_item->parentGroup();
+          if(group)
+          {
+            int id = group->getChildren().indexOf(item_id(selected_item));
+            group->moveDown(id);
+          }
+        }
+        redraw_model();
+        to_select.prepend(m_entries.indexOf(selected_item));
       }
     }
-    else
-    {
-      //if not in group
-      QModelIndex baseId = index_map.key(selected_id);
-      int newId = children.indexOf(
-            index_map.value(index(baseId.row()+1, baseId.column(),baseId.parent()))) ;
-      children.move(children.indexOf(selected_id), newId);
-    }
-    redraw_model();
-    setSelectedItem(m_entries.indexOf(selected_item));
   }
+  selectionChanged(to_select);
 }
 Scene::Item_id Scene::mainSelectionIndex() const {
     return (selectionIndices().size() == 1) ? selected_item : -1;
@@ -1155,6 +1311,15 @@ QItemSelection Scene::createSelection(int i)
                           index_map.keys(i).at(4));
 }
 
+QItemSelection Scene::createSelection(QList<int> is)
+{
+    QItemSelection sel;
+    Q_FOREACH(int i, is)
+      sel.select(index_map.keys(i).at(0),
+                 index_map.keys(i).at(4));
+    return sel;
+}
+
 QItemSelection Scene::createSelectionAll()
 {
   //it is not possible to directly create a selection with items that have different parents, so 
@@ -1175,14 +1340,23 @@ void Scene::itemChanged()
 
 void Scene::itemChanged(Item_id i)
 {
-    if(i < 0 || i >= m_entries.size())
-        return;
+  if(dont_emit_changes)
+    return;
+  if(i < 0 || i >= m_entries.size())
+    return;
 
   Q_EMIT dataChanged(this->createIndex(i, 0),
                      this->createIndex(i, LastColumn));
 }
 
-void Scene::itemChanged(CGAL::Three::Scene_item*)
+void Scene::itemChanged(CGAL::Three::Scene_item*item )
+{
+  if(dont_emit_changes)
+    return;
+  itemChanged(item_id(item));
+}
+
+void Scene::allItemsChanged()
 {
   Q_EMIT dataChanged(this->createIndex(0, 0),
                      this->createIndex(m_entries.size() - 1, LastColumn));
@@ -1201,7 +1375,10 @@ void Scene::itemVisibilityChanged(CGAL::Three::Scene_item* item)
      && !item->isEmpty())
   {
     //does not recenter
-    Q_EMIT updated_bbox(false);
+    if(visibility_recentering_enabled){
+      Q_EMIT updated_bbox(true);
+      
+    }
   }
 }
 
@@ -1412,7 +1589,6 @@ void Scene::redraw_model()
     index_map.clear();
     //fills the model
     Q_FOREACH(Item_id id, children)
-    
     {
         organize_items(m_entries[id], invisibleRootItem(), 0);
     }
@@ -1450,18 +1626,18 @@ void Scene::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface* viewer
       item->printPrimitiveId(point, viewer);
   }
 }
-void Scene::printVertexIds(CGAL::Three::Viewer_interface* viewer)
+void Scene::printVertexIds()
 {
   Scene_item *it = item(mainSelectionIndex());
   if(it)
   {
     Scene_print_item_interface* item= qobject_cast<Scene_print_item_interface*>(it);
     if(item)
-      item->printVertexIds(viewer);
+      item->printVertexIds();
   }
 }
 
-void Scene::printEdgeIds(CGAL::Three::Viewer_interface* viewer)
+void Scene::printEdgeIds()
 {
   Scene_item *it = item(mainSelectionIndex());
   if(it)
@@ -1469,11 +1645,11 @@ void Scene::printEdgeIds(CGAL::Three::Viewer_interface* viewer)
     //Only call printEdgeIds if the item is a Scene_print_item_interface
     Scene_print_item_interface* item= qobject_cast<Scene_print_item_interface*>(it);
     if(item)
-      item->printEdgeIds(viewer);
+      item->printEdgeIds();
   }
 }
 
-void Scene::printFaceIds(CGAL::Three::Viewer_interface* viewer)
+void Scene::printFaceIds()
 {
   Scene_item *it = item(mainSelectionIndex());
   if(it)
@@ -1481,11 +1657,11 @@ void Scene::printFaceIds(CGAL::Three::Viewer_interface* viewer)
     //Only call printFaceIds if the item is a Scene_print_item_interface
     Scene_print_item_interface* item= qobject_cast<Scene_print_item_interface*>(it);
     if(item)
-      item->printFaceIds(viewer);
+      item->printFaceIds();
   }
 }
 
-void Scene::printAllIds(CGAL::Three::Viewer_interface* viewer)
+void Scene::printAllIds()
 {
   Scene_item *it = item(mainSelectionIndex());
   if(it)
@@ -1493,10 +1669,10 @@ void Scene::printAllIds(CGAL::Three::Viewer_interface* viewer)
     //Only call printFaceIds if the item is a Scene_print_item_interface
     Scene_print_item_interface* item= qobject_cast<Scene_print_item_interface*>(it);
     if(item)
-      item->printAllIds(viewer);
+      item->printAllIds();
   }
 }
-void Scene::updatePrimitiveIds(CGAL::Three::Viewer_interface* viewer, CGAL::Three::Scene_item* it)
+void Scene::updatePrimitiveIds(CGAL::Three::Scene_item* it)
 {
   if(it)
   {
@@ -1505,14 +1681,14 @@ void Scene::updatePrimitiveIds(CGAL::Three::Viewer_interface* viewer, CGAL::Thre
     {
       //As this function works as a toggle, the first call hides the ids and the second one shows them again,
       //thereby triggering their re-computation.
-      item->printVertexIds(viewer);
-      item->printVertexIds(viewer);
+      item->printVertexIds();
+      item->printVertexIds();
 
-      item->printEdgeIds(viewer);
-      item->printEdgeIds(viewer);
+      item->printEdgeIds();
+      item->printEdgeIds();
 
-      item->printFaceIds(viewer);
-      item->printFaceIds(viewer);
+      item->printFaceIds();
+      item->printFaceIds();
     }
   }
 }
@@ -1594,7 +1770,6 @@ void Scene::addGroup(Scene_group_item* group)
     connect(this, SIGNAL(drawFinished()), group, SLOT(resetDraw()));
     connect(this, SIGNAL(indexErased(Scene_interface::Item_id)),
                 group, SLOT(adjustIds(Scene_interface::Item_id)));
-    group->setScene(this);
 }
 
 namespace scene { namespace details {
@@ -1661,4 +1836,90 @@ void Scene::adjustIds(Item_id removed_id)
   {
     m_entries[i]->setId(i-1);//the signal is emitted before m_entries is amputed from the item, so new id is current id -1.
   }
+}
+
+void Scene::computeBbox()
+{
+  if(m_entries.empty())
+  {
+    last_bbox = Bbox(0,0,0,0,0,0);
+    return;
+  }
+
+  bool bbox_initialized = false;
+  Bbox bbox = Bbox(0,0,0,0,0,0);
+  Q_FOREACH(CGAL::Three::Scene_item* item, m_entries)
+  {
+    if(item->isFinite() && !item->isEmpty() ) {
+      if(bbox_initialized) {
+
+        bbox = bbox + item->bbox();
+      }
+      else {
+        bbox = item->bbox();
+        bbox_initialized = true;
+
+      }
+    }
+
+  }
+  last_bbox = bbox;
+}
+
+void Scene::newViewer(Viewer_interface *viewer)
+{
+  initGL(viewer);
+  Q_FOREACH(Scene_item* item, m_entries)
+  {
+    item->newViewer(viewer);
+  }
+}
+
+void Scene::removeViewer(Viewer_interface *viewer)
+{
+ //already destroyed;
+  if(viewer->property("is_destroyed").toBool())
+    return;
+
+  vaos[viewer]->destroy();
+  vaos[viewer]->deleteLater();
+  vaos.remove(viewer);
+  Q_FOREACH(Scene_item* item, m_entries)
+  {
+    item->removeViewer(viewer);
+  }
+}
+
+void Scene::initGL(Viewer_interface *viewer)
+{
+  viewer->makeCurrent();
+  vaos[viewer] = new QOpenGLVertexArrayObject();
+  vaos[viewer]->create();
+  program.bind();
+  vaos[viewer]->bind();
+  vbo[0].bind();
+  vbo[0].allocate(points, 18 * sizeof(float));
+  program.enableAttributeArray("vertex");
+  program.setAttributeArray("vertex", GL_FLOAT, 0, 3);
+  vbo[0].release();
+
+  vbo[1].bind();
+  vbo[1].allocate(uvs, 12 * sizeof(float));
+  program.enableAttributeArray("v_texCoord");
+  program.setAttributeArray("v_texCoord", GL_FLOAT, 0, 2);
+  vbo[1].release();
+  vaos[viewer]->release();
+  program.release();
+}
+
+void Scene::callDraw(){  
+  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  {
+    qobject_cast<Viewer_interface*>(v)->update();
+  }
+}
+
+void Scene::enableVisibilityRecentering(bool b)
+{
+  visibility_recentering_enabled = b;
 }

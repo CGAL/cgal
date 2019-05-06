@@ -52,7 +52,6 @@
 #include <CGAL/Polygon_mesh_processing/detect_features.h>
 #include <CGAL/Random.h>
 
-#include <boost/foreach.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/adjacency_list.hpp>
 
@@ -137,6 +136,7 @@ public:
   {
     stored_polyhedra.resize(1);
     stored_polyhedra[0] = p;
+    get(face_patch_id_t<Patch_id>(), stored_polyhedra[0]);
     this->add_primitives(stored_polyhedra[0]);
     this->build();
   }
@@ -171,6 +171,8 @@ public:
     stored_polyhedra.resize(2);
     stored_polyhedra[0] = p;
     stored_polyhedra[1] = bounding_p;
+    get(face_patch_id_t<Patch_id>(), stored_polyhedra[0]);
+    get(face_patch_id_t<Patch_id>(), stored_polyhedra[1]);
     this->add_primitives(stored_polyhedra[0]);
     this->add_primitives(stored_polyhedra[1]);
     if(CGAL::is_empty(bounding_p)) {
@@ -189,6 +191,7 @@ public:
     stored_polyhedra.reserve(std::distance(begin, end));
     for (; begin != end; ++begin) {
       stored_polyhedra.push_back(**begin);
+      get(face_patch_id_t<Patch_id>(), stored_polyhedra.back());
       this->add_primitives(stored_polyhedra.back());
     }
     this->set_surface_only();
@@ -206,11 +209,13 @@ public:
     if(begin != end) {
       for (; begin != end; ++begin) {
         stored_polyhedra.push_back(**begin);
+        get(face_patch_id_t<Patch_id>(), stored_polyhedra.back());
         this->add_primitives(stored_polyhedra.back());
       }
-      stored_polyhedra.push_back(bounding_polyhedron);
-      this->add_primitives(stored_polyhedra.back());
     }
+    stored_polyhedra.push_back(bounding_polyhedron);
+    get(face_patch_id_t<Patch_id>(), stored_polyhedra.back());
+    this->add_primitives(stored_polyhedra.back());
     if(bounding_polyhedron.empty()) {
       this->set_surface_only();
     } else {
@@ -246,6 +251,7 @@ private:
     std::ifstream input(filename);
     stored_polyhedra.resize(1);
     input >> stored_polyhedra[0];
+    get(face_patch_id_t<Patch_id>(), stored_polyhedra[0]);
     this->add_primitives(stored_polyhedra[0]);
     this->build();
   }
@@ -284,17 +290,17 @@ initialize_ts(Polyhedron& p)
   Ftmap ftm = get(face_time_stamp,p);
 
   std::size_t ts = 0;
-  BOOST_FOREACH(typename boost::graph_traits<Polyhedron>::vertex_descriptor vd, vertices(p))
+  for(typename boost::graph_traits<Polyhedron>::vertex_descriptor vd : vertices(p))
   {
     put(vtm,vd,ts++);
   }
 
-  BOOST_FOREACH(typename boost::graph_traits<Polyhedron>::face_descriptor fd, faces(p))
+  for(typename boost::graph_traits<Polyhedron>::face_descriptor fd : faces(p))
   {
     put(ftm,fd,ts++);
   }
 
-  BOOST_FOREACH(typename boost::graph_traits<Polyhedron>::halfedge_descriptor hd, halfedges(p))
+  for(typename boost::graph_traits<Polyhedron>::halfedge_descriptor hd : halfedges(p))
   {
     put(htm,hd,ts++);
   }
@@ -310,7 +316,7 @@ void dump_graph_edges(std::ostream& out, const Graph& g)
   typedef typename boost::graph_traits<Graph>::edge_descriptor edge_descriptor;
 
   out.precision(17);
-  BOOST_FOREACH(edge_descriptor e, edges(g))
+  for(edge_descriptor e : edges(g))
   {
     vertex_descriptor s = source(e, g);
     vertex_descriptor t = target(e, g);
@@ -345,7 +351,7 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
   P2vmap p2vmap;
   namespace PMP = CGAL::Polygon_mesh_processing;
   std::size_t nb_of_patch_plus_one = 1;
-  BOOST_FOREACH(Polyhedron& p, poly)
+  for(Polyhedron& p : poly)
   {
     initialize_ts(p);
     typedef typename boost::property_map<Polyhedron,CGAL::face_patch_id_t<Tag_> >::type PIDMap;
@@ -411,10 +417,10 @@ add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& g_copy)
   {//DEBUG
     std::ofstream og("polylines_graph.polylines.txt");
     og.precision(17);
-    BOOST_FOREACH(const Polyline_with_context& poly, polylines)
+    for(const Polyline_with_context& poly : polylines)
     {
       og << poly.polyline_content.size() << " ";
-      BOOST_FOREACH(const Point_3& p, poly.polyline_content)
+      for(const Point_3& p : poly.polyline_content)
         og << p << " ";
       og << std::endl;
     }
@@ -449,7 +455,7 @@ add_featured_edges_to_graph(const Polyhedron& p,
 
   typedef typename boost::property_map<Polyhedron,vertex_point_t>::const_type Vpm;
   Vpm vpm = get(vertex_point, p);
-  BOOST_FOREACH(Graph_vertex_descriptor v, vertices(graph)){
+  for(Graph_vertex_descriptor v : make_range(vertices(graph))){
     vertex_descriptor vc;
     typename P2vmap::iterator it = p2vmap.find(get(vpm,v));
     if(it == p2vmap.end()) {
@@ -462,7 +468,7 @@ add_featured_edges_to_graph(const Polyhedron& p,
   typedef typename boost::property_map<Polyhedron,face_patch_id_t<Tag_> >::type Face_patch_id_pmap;
   Face_patch_id_pmap fpm = get(face_patch_id_t<Tag_>(),p);
 
-  BOOST_FOREACH(Graph_edge_descriptor e, edges(graph)){
+  for(Graph_edge_descriptor e : make_range(edges(graph))){
     vertex_descriptor vs = p2vmap[get(vpm,source(e,graph))];
     vertex_descriptor vt = p2vmap[get(vpm,target(e,graph))];
     CGAL_warning_msg(vs != vt, "ignore self loop");

@@ -19,7 +19,7 @@
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_convex_set_2.h>
@@ -29,7 +29,7 @@
 
 typedef double                                    FT;
 
-struct Kernel : public CGAL::Cartesian<FT> {};
+typedef CGAL::Simple_cartesian<FT>                Kernel;
 
 typedef Kernel::Point_2                           Point;
 typedef std::vector<Point>                        Cont;
