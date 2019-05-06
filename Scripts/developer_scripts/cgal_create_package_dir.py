@@ -150,7 +150,7 @@ if re.match("^[A-Za-z_][A-Za-z0-9_]*$", packagename):
 
     infopath = os.path.join(packagepath, 'package_info', packagename)
     os.makedirs(infopath)
-    open(os.path.join(infopath, 'copyright.txt'), 'w').close()
+    open(os.path.join(infopath, 'copyright'), 'w').close()
     open(os.path.join(infopath, 'description.txt'), 'w').close()
     open(os.path.join(infopath, 'license.txt'), 'w').close()
     open(os.path.join(infopath, 'long_description.txt'), 'w').close()
