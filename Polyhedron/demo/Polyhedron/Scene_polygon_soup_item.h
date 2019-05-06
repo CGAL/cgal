@@ -152,6 +152,27 @@ public:
     const Edges& non_manifold_edges() const;
     void initializeBuffers(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
     void computeElements() const Q_DECL_OVERRIDE;
+    //statistics
+    enum STATS {
+      NB_VERTICES = 0,
+      NB_FACETS,
+      IS_PURE_TRIANGLE,
+      IS_PURE_QUAD,
+      NB_DEGENERATED_FACES,
+      NB_EDGES,
+      MIN_LENGTH,
+      MAX_LENGTH,
+      MID_LENGTH,
+      MEAN_LENGTH,
+      NB_NULL_LENGTH,
+      MIN_ANGLE,
+      MAX_ANGLE,
+      MEAN_ANGLE
+    };
+
+    bool has_stats()const Q_DECL_OVERRIDE{return true;}
+    QString computeStats(int type)Q_DECL_OVERRIDE;
+    CGAL::Three::Scene_item::Header_data header() const Q_DECL_OVERRIDE;
 public Q_SLOTS:
     void shuffle_orientations();
     bool orient();
