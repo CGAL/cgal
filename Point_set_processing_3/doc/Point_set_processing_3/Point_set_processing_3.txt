@@ -61,8 +61,8 @@ CGAL::jet_estimate_normals
 \endcode
 
 This API was introduced in \cgal 4.12. Please refer to the
-\ref Point_set_processing_3Deprecated "dedicated section"
-on how to upgrade from the deprecated API.
+\ref Point_set_processing_3Outdated "dedicated section"
+on how to upgrade from the outdated API.
 
 \subsection Point_set_processing_3NamedParameters Named Parameters
 
@@ -102,23 +102,20 @@ a property map.
 
 \cgalExample{Point_set_processing_3/grid_simplify_indices.cpp}
 
-\subsection Point_set_processing_3Deprecated Upgrading from pre-CGAL 4.12 Deprecated API
+\subsection Point_set_processing_3Outdated Upgrading from pre-CGAL 4.12 API
 
 The current API based on ranges and named parameters was introduced in
 \cgal 4.12. The old API that used pairs of iterators along with usual
 \cpp parameters (with some default values and overloads to handle
-optional parameters) is deprecated.
-
-\warning The deprecated API will be removed in \cgal 4.14, so we
-recommend to update your code.
+optional parameters) has been removed in \cgal 5.0.
 
 Translating your pre-\cgal 4.12 code using Point Set Processing to the
-new API is easy. For example, consider this code using the old API:
+current API is easy. For example, consider this code using the old API:
 
 \code
 std::vector<PointVectorPair> points;
 
-// Old pre-CGAL 4.12 deprecated API
+// Old pre-CGAL 4.12 API
 CGAL::jet_estimate_normals<Concurrency_tag>
   (points.begin(), points.end(),
    CGAL::First_of_pair_property_map<PointVectorPair>(),
@@ -129,7 +126,7 @@ CGAL::jet_estimate_normals<Concurrency_tag>
 The pair of iterators is replaced by a range and the optional
 parameters (than can be deduced automatically in simple cases) are
 moved to the end of the function in a single named parameter object
-(see \ref BGLNamedParameters). The code translated to the new API
+(see \ref BGLNamedParameters). The code translated to the current API
 becomes:
    
 \code
