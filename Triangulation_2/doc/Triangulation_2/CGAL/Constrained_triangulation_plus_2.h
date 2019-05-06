@@ -356,22 +356,6 @@ Returns an iterator past the last vertex on the constraint `cid`.
 Vertices_in_constraint_iterator 
 vertices_in_constraint_end(Constraint_id cid) const; 
 
-/*!
-\deprecated Returns an iterator on the first vertex on the constraint `cid`.
-\attention This function only works for constraints that were inserted
-as a pair of points or pair of vertex handles.
-*/
-Vertices_in_constraint_iterator
-vertices_in_constraint_begin(Vertex_handle va, Vertex_handle vb) const; 
-
-/*!
-\deprecated Returns an iterator past the last vertex on the constraint `cid`.
-\attention This function only works for constraints that were inserted
-as a pair of points or pair of vertex handles.
-*/
-Vertices_in_constraint_iterator
-vertices_in_constraint_end(Vertex_handle va, Vertex_handle vb) const; 
-
 /// @}
 
 
@@ -476,11 +460,29 @@ been removed by the `simplify()` function.
 void
 remove_points_without_corresponding_vertex();
 
-
-
-
 /// @}
 
 
 }; /* end Constrained_triangulation_plus_2 */
+
+/*!
+Writes the triangulation as for `Tr`, then writes one constraint per line, starting with the number
+of vertices and the indices of the vertices of the constraint.
+
+\relates Constrained_triangulation_plus_2 
+*/
+  
+template <typename  Tr>
+std::ostream & operator<<(std::ostream& os, const Constrained_triangulation_plus_2<Tr> &ctp);
+
+  
+/*!
+Reads a triangulation from stream `is` and assigns it to the triangulation. 
+
+\relates Constrained_triangulation_plus_2 
+*/
+template <typename  Tr>
+std::istream & operator>>(std::istream& is, Constrained_triangulation_plus_2<Tr> &ctp);
+
+ 
 } /* end namespace CGAL */
