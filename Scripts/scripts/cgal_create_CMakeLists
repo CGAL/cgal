@@ -164,35 +164,15 @@ EOF
   fi
   #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 
-  cat << 'EOF'
+  if [ ! -z "$BOOST_COMPONENTS" ]; then
+    cat << 'EOF'
 
 # Boost and its components
 EOF
-  #---------------------------------------------------------------------------
-
-  if [ ! -z "$BOOST_COMPONENTS" ]; then
-
     echo "find_package( Boost REQUIRED COMPONENTS ${BOOST_COMPONENTS//:/ } )"
 
-  else
-
-    echo "find_package( Boost REQUIRED )"
-
   fi # additional Boost components
-
-  #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-  cat << 'EOF'
-
-if ( NOT Boost_FOUND )
-
-  message(STATUS "This project requires the Boost library, and will not be compiled.")
-
-  return()  
-
-endif()
-EOF
   #---------------------------------------------------------------------------
-
 
   #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
   cat << 'EOF'
@@ -239,7 +219,7 @@ EOF
     for boost_component in $BOOST_COMPONENTS; do
       BOOST_COMPONENT=`echo $boost_component | tr '[:lower:]' '[:upper:]'`
       echo "add_definitions( \"-DCGAL_USE_BOOST_${BOOST_COMPONENT}\" )"
-      echo "list(APPEND CGAL_3RD_PARTY_LIBRARIES \${Boost_${BOOST_COMPONENT}_LIBRARY} )"
+      echo "list(APPEND CGAL_3RD_PARTY_LIBRARIES Boost::${boost_component} )"
     done
     IFS=$OLDIFS
 
