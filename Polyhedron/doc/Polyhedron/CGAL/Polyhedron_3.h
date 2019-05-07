@@ -1473,6 +1473,11 @@ public:
     Returns the number of connected components erased (ignoring isolated vertices). 
 
     The polyhedron type must support vertices, halfedges, and removal operations.
+
+    Note that a stronger version of this function is offered by the package \ref PkgPolygonMeshProcessing :
+    `CGAL::Polygon_mesh_processing::keep_largest_connected_components()`, which can be called
+    since the class `Polyhedron_3` is a model of the requried concepts `FaceListGraph` and `MutableFaceGraph`
+    (see \ref BGLPolyhedral for more information).
   */ 
   unsigned int keep_largest_connected_components(unsigned int nb_components_to_keep); 
 
