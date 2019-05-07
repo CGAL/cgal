@@ -221,7 +221,7 @@ class Polygon_mesh_slicer
     void end_polyline()
     {
       CGAL_assertion(!current_poly.empty());
-      if(current_poly.size()>1
+      if(current_poly.size()> 2
          && is_polyline_cw_oriented(current_poly.begin(), current_poly.end()))
       {
         std::reverse(current_poly.begin(), current_poly.end());
