@@ -477,11 +477,6 @@ Optional 3rd party software can be used by \cgal for various reasons:
 Usually certain optional libraries are required to build examples and
 demos shipped with \cgal or to build your own project using \cgal. 
 Another reason is to speed up basic tasks. 
-In order to support these goals, all optional libraries can be <i>prepared to be
-used with \cgal</I> while configuring \cgal, just in the same way as
-essential libraries are configured. Whenever building an example or a
-demo (or your own executable), these <I>preconfigured</I> libraries
-are available when using \cgal.
 
 \subsection thirdpartyLeda LEDA
 
@@ -831,8 +826,7 @@ If the parameter is not given, the script creates <B>one executable for each giv
 source file</B>.
 <DT><B>`-c com1:com2:...`</B><DD> Lists components ("com1",
 "com2") of \cgal to which the executable(s) should be linked. Valid components are \cgal's
-libraries (i.e.\ "Core", "ImageIO", and "Qt5") and all
-preconfigured 3rd party software, such as "MPFI", "RS3"). An example is `-c Core:GMP:RS3:MPFI`
+libraries (i.e.\ "Core", "ImageIO", and "Qt5"). An example is `-c Core`.
 
 <DT><B>`-b boost1:boost2:...`</B><DD> Lists components ("boost1",
 "boost2") of \sc{Boost} to which the executable(s) should be
