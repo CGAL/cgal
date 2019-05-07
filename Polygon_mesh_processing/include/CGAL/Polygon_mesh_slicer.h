@@ -186,8 +186,8 @@ class Polygon_mesh_slicer
     
     Point_3 p1(*prev), p2(*i), p3(*next);
     return typename Traits::Orientation_3()(m_plane.orthogonal_vector(),
-                                   typename Traits::Vector_3(p1, p2),
-                                   typename Traits::Vector_3(p1, p3)) 
+                                   typename Traits::Vector_3(p2, p1),
+                                   typename Traits::Vector_3(p2, p3)) 
        == CGAL::CLOCKWISE;
     
     }
