@@ -20,6 +20,24 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epec;
 
+template<class K, class Polyline_type>
+bool is_ccw(const typename K::Plane_3& plane,
+    const Polyline_type& polyline)
+{
+  CGAL::Polygon_2<K> polygon;
+  if(polyline.front() == polyline.back())
+  {
+    BOOST_FOREACH(const typename K::Point_3& p, polyline)
+    {
+      polygon.push_back(plane.to_2d(p));
+    }
+    polygon.erase(polygon.vertices_end()-1);
+    if(polygon.size() > 2 &&
+       polygon.is_counterclockwise_oriented())
+      return polygon.is_counterclockwise_oriented();
+  }
+  return true;
+}
 template <typename K>
 int test_slicer()
 {
@@ -71,17 +89,13 @@ int test_slicer()
   assert(polylines.size()==2); // two polylines
   assert( (polylines.front().size()==1) != (polylines.back().size()==1)); //only one isolated vertex
   
-  CGAL::Polygon_2<K> polygon;
-  BOOST_FOREACH(const typename K::Point_3& p, polylines.back())
+  BOOST_FOREACH(const Polyline_type& polyline, polylines)
   {
-    polygon.push_back(plane.to_2d(p));
+    bool ok = is_ccw<K,Polyline_type>( plane,polyline);
+    assert(ok);
   }
-  
-  assert(polygon.is_counterclockwise_oriented());
-  
   //test two nested polylines, one open and one closed
   polylines.clear();
-  polygon.clear();
   plane = typename K::Plane_3(0,1,0,0.5); 
   slicer(plane, std::back_inserter(polylines));
   assert(polylines.size()==2);// two polylines
@@ -91,14 +105,8 @@ int test_slicer()
   
   BOOST_FOREACH(const Polyline_type& polyline, polylines)
   {
-    BOOST_FOREACH(const typename K::Point_3& p, polyline)
-    {
-      polygon.push_back(plane.to_2d(p));
-    }
-    if(polyline.front() == polyline.back())
-      polygon.erase(polygon.vertices_end()-1);
-    assert(polygon.is_counterclockwise_oriented());
-    polygon.clear();
+    bool ok = is_ccw<K,Polyline_type>( plane,polyline);
+    assert(ok);
   }
   polylines.clear();
   
@@ -111,14 +119,8 @@ int test_slicer()
   
   BOOST_FOREACH(const Polyline_type& polyline, polylines)
   {
-    BOOST_FOREACH(const typename K::Point_3& p, polyline)
-    {
-      polygon.push_back(plane.to_2d(p));
-    }
-    if(polyline.front() == polyline.back())
-      polygon.erase(polygon.vertices_end()-1);
-    assert(polygon.is_counterclockwise_oriented());
-    polygon.clear();
+    bool ok = is_ccw<K,Polyline_type>( plane,polyline);
+    assert(ok);
   }
   polylines.clear();
   
@@ -130,12 +132,8 @@ int test_slicer()
   
   BOOST_FOREACH(const Polyline_type& polyline, polylines)
   {
-    BOOST_FOREACH(const typename K::Point_3& p, polyline)
-    {
-      polygon.push_back(plane.to_2d(p));
-    }
-    assert(polygon.is_counterclockwise_oriented());
-    polygon.clear();
+    bool ok = is_ccw<K,Polyline_type>( plane,polyline);
+    assert(ok);
   }
   polylines.clear();
   //test no intersection

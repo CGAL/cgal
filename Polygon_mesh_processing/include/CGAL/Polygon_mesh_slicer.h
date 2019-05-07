@@ -222,6 +222,7 @@ class Polygon_mesh_slicer
     {
       CGAL_assertion(!current_poly.empty());
       if(current_poly.size()> 2
+         && current_poly.back() == current_poly.front() //only if polyline is closed
          && is_polyline_cw_oriented(current_poly.begin(), current_poly.end()))
       {
         std::reverse(current_poly.begin(), current_poly.end());
@@ -414,7 +415,7 @@ public:
 
   /**
    * Constructs the intersecting polylines of `plane` with the input triangulated surface mesh.
-   * The resulting polylines are counterclockwise oriented when seen from the positive side of `plane`.
+   * The resulting polylines, if closed, are counterclockwise oriented when seen from the positive side of `plane`.
    * @tparam OutputIterator an output iterator accepting polylines.
    *              A polyline is provided as `std::vector<Traits::Point_3>`.
    *              A polyline is closed if its first and last point are identical.
