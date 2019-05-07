@@ -413,6 +413,7 @@ public:
 
   /**
    * Constructs the intersecting polylines of `plane` with the input triangulated surface mesh.
+   * The resulting polylines are counterclockwise oriented when seen from the positive side of `plane`.
    * @tparam OutputIterator an output iterator accepting polylines.
    *              A polyline is provided as `std::vector<Traits::Point_3>`.
    *              A polyline is closed if its first and last point are identical.

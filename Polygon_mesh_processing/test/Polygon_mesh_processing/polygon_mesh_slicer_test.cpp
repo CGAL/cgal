@@ -94,8 +94,9 @@ typedef std::list< Polyline_type > Polylines;
     {
       polygon.push_back(plane.to_2d(p));
     }
-    if(polygon.is_simple())
-      assert(polygon.is_counterclockwise_oriented());
+    if(polyline.front() == polyline.back())
+      polygon.erase(polygon.vertices_end()-1);
+    assert(polygon.is_counterclockwise_oriented());
     polygon.clear();
   }
   polylines.clear();
@@ -113,8 +114,9 @@ typedef std::list< Polyline_type > Polylines;
     {
       polygon.push_back(plane.to_2d(p));
     }
-    if(polygon.is_simple())
-      assert(polygon.is_counterclockwise_oriented());
+    if(polyline.front() == polyline.back())
+      polygon.erase(polygon.vertices_end()-1);
+    assert(polygon.is_counterclockwise_oriented());
     polygon.clear();
   }
   polylines.clear();
