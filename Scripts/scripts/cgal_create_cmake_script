@@ -40,8 +40,7 @@ create_cmake_script()
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-
-project( ${PROJECT}_${TYPE} )
+project( ${PROJECT}${TYPE} )
 EOF
   cat <<'EOF'
 
@@ -107,13 +106,13 @@ while [ $1 ]; do
             usage; exit
         ;;
         example) 
-            if [ -z "$TYPE" ]; then TYPE=$1; shift; else usage; exit 1; fi
+            if [ -z "$TYPE" ]; then TYPE=_Examples; shift; else usage; exit 1; fi
         ;;
         demo) 
-            if [ -z "$TYPE" ]; then TYPE=$1; shift; else usage; exit 1; fi
+            if [ -z "$TYPE" ]; then TYPE=_Demo; shift; else usage; exit 1; fi
         ;;
         test) 
-            if [ -z "$TYPE" ]; then TYPE=$1; shift; else usage; exit 1; fi
+            if [ -z "$TYPE" ]; then TYPE=; shift; else usage; exit 1; fi
         ;;
         --source_dir)
             if [ -d "$2" ]; then 
