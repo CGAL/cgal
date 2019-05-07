@@ -174,37 +174,13 @@ EOF
   fi # additional Boost components
   #---------------------------------------------------------------------------
 
-  #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-  cat << 'EOF'
+  if [ -d include ] ; then
+    cat << 'EOF'
 
 # include for local directory
 EOF
-  #---------------------------------------------------------------------------
-
-  if [ -d include ] ; then
     echo 'include_directories( BEFORE include )'
   fi		
-
-  #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-  cat << 'EOF'
-
-# include for local package
-EOF
-  #---------------------------------------------------------------------------
-
-  # includes for local package
-  if [ -d ../include ] ; then
-    echo 'include_directories( BEFORE ../include )'
-  fi
-
-  if [ ! -z "$PACKAGES" ]; then
-    #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-    cat << 'EOF'
-
-# include of additional packages
-EOF
-    #-------------------------------------------------------------------------
-  fi
 
   if [ ! -z "$BOOST_COMPONENTS" ]; then
     #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
@@ -237,16 +213,11 @@ EOF
     #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     cat << 'EOF'
 
-
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
-
 EOF
     #-------------------------------------------------------------------------
 
-
-    # add a new line
-    echo
 
     for file in `ls *.cc *.cp *.cxx *.cpp *.CPP *.c++ *.C 2> /dev/null | sort` ; do
       # Create an executable for each cpp that  contains a function "main()"
@@ -261,8 +232,6 @@ EOF
       if [ $? -eq 0 ]; then
         echo "create_single_source_cgal_program( \"$file\" )"
       fi
-      #add a new line
-      echo 
     done
     
   else #======================================================================
@@ -298,13 +267,6 @@ EOF
     echo "target_link_libraries(${target_name}  $LIBS )"
 
   fi # single source or all files #===========================================
-
-  #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-  cat << 'EOF'
-EOF
-  #---------------------------------------------------------------------------
-
-echo
 
 }
 
