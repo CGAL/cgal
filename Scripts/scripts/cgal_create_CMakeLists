@@ -113,9 +113,6 @@ EOF
 
 # CGAL and its components
 EOF
-if [ -n "$ENABLE_CTEST" ]; then
-  echo "enable_testing()"
-fi
   #---------------------------------------------------------------------------
   # echo "CGAL_COMPONENTS: $CGAL_COMPONENTS"
   if [ ! -z "$CGAL_COMPONENTS" ]; then
@@ -347,24 +344,6 @@ EOF
         else
           echo "create_single_source_cgal_program( \"$file\" )"
         fi
-        if [ -n "$ENABLE_CTEST" ]; then 
-          if [ -f "$BASE.cin" ] ; then
-            CIN=" < $BASE.cin"
-          else
-            CIN=
-          fi
-          cat <<EOF
-add_test( "$BASE" \${CMAKE_CTEST_COMMAND}
-  --build-and-test "\${CMAKE_CURRENT_SOURCE_DIR}"
-                   "\${CMAKE_CURRENT_BINARY_DIR}"
-  --build-generator "\${CMAKE_GENERATOR}"
-  --build-makeprogram "\${CMAKE_MAKE_PROGRAM}"
-  --build-target $BASE
-  --build-no-clean
-  --build-run-dir "\${CMAKE_CURRENT_SOURCE_DIR}"
-  --test-command sh -c "\${CMAKE_CURRENT_BINARY_DIR}/$BASE$CIN" )
-EOF
-        fi
       fi
       #add a new line
       echo 
@@ -574,8 +553,6 @@ while getopts s:c:b:o:phvt OPT; do
           echo "Options-file '$OPTIONS_FILE' does not exist." >&2
           exit 1
         fi
-        ;;
-    t)  ENABLE_CTEST='y'
         ;;
     h)  usage
         exit 0
