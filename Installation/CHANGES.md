@@ -6,6 +6,15 @@ Release 5.0
 
 Release date: September 2019
 
+### Surface Mesh
+ -   New functions to read and write using the PLY format,
+     `CGAL::read_ply()` and `CGAL::write_ply()`, allowing to save and
+     load additional property maps of the surface mesh.
+
+### 3D Point Set
+ -   The PLY IO functions now take an additional optional parameter to
+     read/write comments from/in the PLY header.
+
 ### Polygon Mesh Processing package
  -   Added the function `CGAL::Polygon_mesh_processing::centroid()` which computes
      the centroid of a closed triangle mesh.
