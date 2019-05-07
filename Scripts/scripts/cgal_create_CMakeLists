@@ -157,23 +157,13 @@ EOF
     IFS=$OLDIFS
 
   fi
-
-  echo "find_package( CGAL QUIET COMPONENTS ${CGAL_COMPONENTS//:/ } )"
-
+  if [ -n "${CGAL_COMPONENTS}" ]; then
+    echo "find_package( CGAL REQUIRED OPTIONAL_COMPONENTS ${CGAL_COMPONENTS//:/ } )"
+  else
+    echo "find_package( CGAL REQUIRED )"
+  fi
   #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-  cat << 'EOF'
 
-if ( NOT CGAL_FOUND )
-
-  message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
-
-endif()
-
-EOF
-  #---------------------------------------------------------------------------
-
-  #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
   cat << 'EOF'
 
 # Boost and its components
