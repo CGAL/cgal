@@ -297,8 +297,8 @@ We next list the libraries and essential 3rd party software
 | :-------- | :------------- | :------------ | :----------- |
 | `%CGAL`   | none           | Main library  | \sc{Gmp}, \sc{Mpfr}, \sc{Boost} (headers), Boost.Thread and Boost.System (library) for compilers not supporting the keywords `thread_local` and the class `std::mutex` |
 | `CGAL_Core` | `WITH_CGAL_Core`  | The CORE library for algebraic numbers.\cgalFootnote{CGAL_Core is not part of \cgal, but a custom version of the \sc{Core} library distributed by \cgal for the user convenience and it has it's own license.}  | \sc{Gmp} and \sc{Mpfr} |
-| `CGAL_ImageIO` | `WITH_CGAL_ImageIO` | Utilities to read and write image files  | \sc{OpenGL}, \sc{zlib}, \sc{Vtk}(optional) |
-| `CGAL_Qt5`  | `WITH_CGAL_Qt5` | `QGraphicsView` support for \sc{Qt}5-based demos | \sc{Qt}5 and \sc{OpenGL} |
+| `CGAL_ImageIO` | `WITH_CGAL_ImageIO` | Utilities to read and write image files  | \sc{zlib}, \sc{Vtk}(optional) |
+| `CGAL_Qt5`  | `WITH_CGAL_Qt5` | `QGraphicsView` support for \sc{Qt}5-based demos | \sc{Qt}5 |
 
 \subsection installation_debug Debug vs. Release
 
@@ -444,17 +444,6 @@ In \cgal this library is used in the examples of the \ref PkgSurfaceMesher3Ref p
 If it is not already on your system,
 for instance, on Windows, you can download it from <A HREF="http://www.zlib.net/">`http://www.zlib.net/`</A>.
 
-\subsection thirdpartyOpenGL OpenGL 
-
-\sc{OpenGL} (Open Graphics Library) provides an API for applications that
-produce 2D and 3D computer graphics.
-
-In \cgal the library is essential for the component
-libCGAL_Qt5, as well as libCGAL_ImageIO and for various demos.
-
-Typically, \sc{OpenGL} is preinstalled on systems; if not, it can be
-downloaded from <A HREF="http://www.opengl.org/">`http://www.opengl.org/`</A>.
-
 \subsection thirdpartyQt Qt5
 
 Qt is a cross-platform application and UI framework.
@@ -478,8 +467,8 @@ the \cgal libraries, unless you set the variables `WITH_examples=ON` and/or `WIT
 Nevertheless, even when configured with \cgal, they are not automatically built along with the libraries.
 You must build the `examples` or `demos` targets (or IDE projects) explicitly.
 
-If you do not plan to compile any demos, you might skip some of the essential libraries (as \sc{Qt} or
-\sc{OpenGL}), as the corresponding \cgal-libraries are not linked. But for
+If you do not plan to compile any demos, you might skip some of the essential libraries (as \sc{Qt}),
+as the corresponding \cgal-libraries are not linked. But for
 your own demos you might need these \cgal-libraries.
 
 \section secoptional3rdpartysoftware Optional Third Party Libraries 

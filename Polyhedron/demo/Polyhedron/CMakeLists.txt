@@ -68,9 +68,6 @@ find_package(Qt5
              COMPONENTS            OpenGL Script
              OPTIONAL_COMPONENTS   ScriptTools)
 
-# Find OpenGL
-find_package(OpenGL)
-
 if(Qt5_FOUND)
 
   add_definitions(-DQT_NO_KEYWORDS)
