@@ -40,7 +40,6 @@ class Event
 public:
   typedef GeomTraits Kernel;
   typedef typename Kernel::FT FT;
-  typedef typename Kernel::Point_2 Point_2;
 
   typedef Event_queue<GeomTraits> Queue;
   friend Queue;
@@ -48,28 +47,28 @@ public:
 private:
 
   KSR::size_t m_vertex_idx;
-  KSR::size_t m_meta_vertex_idx;
+  KSR::size_t m_intersection_line_idx;
   FT m_time;
 
 public:
 
   Event () { }
 
-  Event (KSR::size_t vertex_idx, KSR::size_t meta_vertex_idx, FT time)
-    : m_vertex_idx (vertex_idx), m_meta_vertex_idx (meta_vertex_idx), m_time (time)
+  Event (KSR::size_t vertex_idx, KSR::size_t intersection_line_idx, FT time)
+    : m_vertex_idx (vertex_idx), m_intersection_line_idx (intersection_line_idx), m_time (time)
   { }
 
   const KSR::size_t& vertex_idx() const { return m_vertex_idx; }
   KSR::size_t& vertex_idx() { return m_vertex_idx; }
-  const KSR::size_t& meta_vertex_idx() const { return m_meta_vertex_idx; }
-  KSR::size_t& meta_vertex_idx() { return m_meta_vertex_idx; }
+  const KSR::size_t& intersection_line_idx() const { return m_intersection_line_idx; }
+  KSR::size_t& intersection_line_idx() { return m_intersection_line_idx; }
 
   FT time() const { return m_time; }
   
   friend std::ostream& operator<< (std::ostream& os, const Event& ev)
   {
     os << "Event at t=" << ev.m_time << " between vertex " << ev.m_vertex_idx
-       << " and meta vertex " << ev.m_meta_vertex_idx;
+       << " and intersection line " << ev.m_intersection_line_idx;
     return os;
   }
 

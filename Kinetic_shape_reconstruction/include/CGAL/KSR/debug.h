@@ -88,10 +88,21 @@ void dump_segments (const DS& data, const std::string& tag = std::string())
   std::ofstream out (filename);
   out.precision(18);
   
+  std::string bbox_filename = (tag != std::string() ? tag + "_" : "") + "bbox_segments.polylines.txt";
+  std::ofstream bbox_out (bbox_filename);
+  bbox_out.precision(18);
+  
   for (KSR::size_t i = 0; i < data.number_of_segments(); ++ i)
-    out << "2 "
-        << data.point_of_vertex (data.segment(i).source_idx()) << " "
-        << data.point_of_vertex (data.segment(i).target_idx()) << std::endl;
+  {
+    if (data.is_bbox_segment(i))
+      bbox_out << "2 "
+               << data.point_of_vertex (data.segment(i).source_idx()) << " "
+               << data.point_of_vertex (data.segment(i).target_idx()) << std::endl;
+    else
+      out << "2 "
+          << data.point_of_vertex (data.segment(i).source_idx()) << " "
+          << data.point_of_vertex (data.segment(i).target_idx()) << std::endl;
+  }
 }
 
 template <typename DS>
@@ -137,12 +148,14 @@ void dump_polygons (const DS& data, const std::string& tag = std::string())
   std::ofstream out (filename);
   CGAL::set_binary_mode (out);
   CGAL::write_ply(out, mesh);
-  
+
+#if 0
   std::string bbox_filename = (tag != std::string() ? tag + "_" : "") + "bbox_polygons.ply";
   std::ofstream bbox_out (bbox_filename);
   CGAL::set_binary_mode (bbox_out);
   CGAL::write_ply(bbox_out, bbox_mesh);
-
+#endif
+  
 }
 
 template <typename DS>
@@ -159,6 +172,23 @@ void dump_meta_vertices (const DS& data, const std::string& tag = std::string())
   std::ofstream out (filename);
   CGAL::set_binary_mode (out);
   out << points;
+}
+
+template <typename DS, typename Event>
+void dump_event (const DS& data, const Event& ev, const std::string& tag = std::string())
+{
+  std::string lfilename = (tag != std::string() ? tag + "_" : "") + "event_line.polylines.txt";
+  std::ofstream lout (lfilename);
+  lout.precision(18);
+
+  lout << "2 "
+      << data.meta_vertex (data.intersection_line(ev.intersection_line_idx()).meta_vertices_idx()[0]).point() << " "
+      << data.meta_vertex (data.intersection_line(ev.intersection_line_idx()).meta_vertices_idx()[1]).point() << std::endl;
+
+  std::string vfilename = (tag != std::string() ? tag + "_" : "") + "event_vertex.xyz";
+  std::ofstream vout (vfilename);
+  vout.precision(18);
+  vout << data.point_of_vertex(ev.vertex_idx()) << std::endl;
 }
 
 template <typename DS>

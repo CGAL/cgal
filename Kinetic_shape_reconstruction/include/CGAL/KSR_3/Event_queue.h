@@ -97,6 +97,13 @@ public:
       std::cerr << e << std::endl;
   }
 
+  void erase_vertex_events (KSR::size_t vertex_idx)
+  {
+    std::pair<Queue_by_event_idx_iterator, Queue_by_event_idx_iterator>
+      range = queue_by_event_idx().equal_range(vertex_idx);
+    queue_by_event_idx().erase (range.first, range.second);
+  }
+
   void erase_vertex_events (KSR::size_t vertex_idx, KSR::vector<Event>& events)
   {
     std::pair<Queue_by_event_idx_iterator, Queue_by_event_idx_iterator>

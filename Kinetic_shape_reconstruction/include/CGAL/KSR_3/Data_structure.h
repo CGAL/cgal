@@ -250,6 +250,22 @@ public:
   inline Vector_3 direction_of_vertex (KSR::size_t vertex_idx) const
   { return direction_of_vertex (vertex(vertex_idx)); }
 
+  // Vertex/idx -> idx
+  inline KSR::size_t intersection_line_idx_of_vertex (KSR::size_t vertex_idx) const
+  {
+    if (vertex(vertex_idx).segment_idx() == KSR::no_element())
+      return KSR::no_element();
+    return segment(vertex(vertex_idx).segment_idx()).intersection_line_idx();
+  }
+
+  // Vertex/idx -> Point_2
+  inline Point_2 point_on_plane (KSR::size_t vertex_idx, KSR::size_t support_plane_idx) const
+  {
+    if (polygon_of_vertex(vertex_idx).support_plane_idx() == support_plane_idx)
+      return vertex(vertex_idx).point (m_current_time);
+    return support_plane(support_plane_idx).to_2d (point_of_vertex(vertex_idx));
+  }
+
   // Vertex/ix -> Polygon
   inline const Polygon& polygon_of_vertex (const Vertex& vertex) const
   { return m_polygons[vertex.polygon_idx()]; }
@@ -296,12 +312,26 @@ public:
   { return support_plane_of_polygon(vertex(vertex_idx)); }
 
   // Intersection_line/Support_plane -> Line_2
-  inline const Line_2 line_on_support_plane (KSR::size_t intersection_line_idx, KSR::size_t support_plane_idx) const
+  inline Line_2 line_on_support_plane (KSR::size_t intersection_line_idx, KSR::size_t support_plane_idx) const
   { return support_plane(support_plane_idx).to_2d (intersection_line(intersection_line_idx).line()); }
+
+  inline Segment_2 segment_of_intersection_line_on_support_plane
+  (KSR::size_t intersection_line_idx, KSR::size_t support_plane_idx) const
+  {
+    return Segment_2 (support_plane(support_plane_idx).to_2d
+                      (meta_vertex(intersection_line(intersection_line_idx).meta_vertices_idx()[0]).point()),
+                      support_plane(support_plane_idx).to_2d
+                      (meta_vertex(intersection_line(intersection_line_idx).meta_vertices_idx()[1]).point()));
+  }
 
   inline bool is_bbox_polygon (KSR::size_t polygon_idx) const
   { return (polygon(polygon_idx).support_plane_idx() < 6); }
   
+  inline bool is_bbox_segment (KSR::size_t segment_idx) const
+  {
+    return is_bbox_polygon(vertex(segment(segment_idx).source_idx()).polygon_idx());
+  }
+
   inline bool point_is_inside_bbox_section_of_intersection_line
   (const Point_3& point, KSR::size_t intersection_line_idx) const
   {
@@ -316,6 +346,22 @@ public:
     return (position * position) < (ref * ref);
   }
     
+  bool do_intersect (KSR::size_t polygon_idx, const Line_2& line) const
+  {
+    bool positive_side = false, negative_side = false;
+    for (KSR::size_t vertex_idx : polygon(polygon_idx).vertices_idx())
+    {
+      if (line.has_on_positive_side(vertex(vertex_idx).point(m_current_time)))
+        positive_side = true;
+      else
+        negative_side = true;
+      if (positive_side && negative_side)
+        return true;
+    }
+    
+    return false;
+  }
+
   bool has_meta_vertex (const Vertex& vertex) const
   { return vertex.meta_vertex_idx() != KSR::no_element(); }
   bool has_meta_vertex (KSR::size_t vertex_idx) const
@@ -551,9 +597,14 @@ public:
   }
 
   // Add segment on full intersection line, using 2 extrem meta vertices
-  KSR::size_t add_segment (KSR::size_t intersection_line_idx, KSR::size_t source_idx, KSR::size_t target_idx)
+  KSR::size_t add_segment (KSR::size_t intersection_line_idx, KSR::size_t source_idx, KSR::size_t target_idx,
+                           KSR::size_t other_source_idx = KSR::no_element(),
+                           KSR::size_t other_target_idx = KSR::no_element())
   {
-    return add_segment (Segment (intersection_line_idx, source_idx, target_idx));
+    KSR::size_t segment_idx = add_segment (Segment (intersection_line_idx, source_idx, target_idx,
+                                                    other_source_idx, other_target_idx));
+    intersection_line(intersection_line_idx).segments_idx().push_back (segment_idx);
+    return segment_idx;
   }
   
   void partition (KSR::size_t polygon_idx, const Line_2& line,
@@ -590,31 +641,11 @@ public:
     CGAL_assertion (positive_side.size() + negative_side.size() >= 3);
   }
 
-  bool do_intersect (KSR::size_t polygon_idx, const Line_2& line) const
+  std::tuple<Point_2, Vector_2, Point_2, Vector_2>
+  compute_constrained_points_along_line (const Line_2& line_2,
+                                         const KSR::Idx_vector& positive_side,
+                                         const KSR::Idx_vector& negative_side) const
   {
-    bool positive_side = false, negative_side = false;
-    for (KSR::size_t vertex_idx : polygon(polygon_idx).vertices_idx())
-    {
-      if (line.has_on_positive_side(vertex(vertex_idx).point(m_current_time)))
-        positive_side = true;
-      else
-        negative_side = true;
-      if (positive_side && negative_side)
-        return true;
-    }
-    
-    return false;
-  }
-
-  void cut_polygon (KSR::size_t polygon_idx, KSR::size_t intersection_line_idx)
-  {
-    CGAL_KSR_CERR(3) << "** Cutting " << polygon_str(polygon_idx) << std::endl;
-
-    Line_2 line_2 = line_on_support_plane (intersection_line_idx, polygon(polygon_idx).support_plane_idx());
-    
-    KSR::Idx_vector positive_side, negative_side;
-    partition (polygon_idx, line_2, positive_side, negative_side);
-
     Line_2 line_0 (vertex(positive_side.back()).point(m_current_time),
                    vertex(negative_side.front()).point(m_current_time));
     Line_2 line_1 (vertex(negative_side.back()).point(m_current_time),
@@ -635,6 +666,24 @@ public:
     Vector_2 direction_0 (inter_0, future_inter_0);
     Vector_2 direction_1 (inter_1, future_inter_1);
 
+    return std::make_tuple (inter_0, direction_0, inter_1, direction_1);
+  }
+
+  void cut_polygon (KSR::size_t polygon_idx, KSR::size_t intersection_line_idx)
+  {
+    CGAL_KSR_CERR(3) << "** Cutting " << polygon_str(polygon_idx) << std::endl;
+
+    Line_2 line_2 = line_on_support_plane (intersection_line_idx, polygon(polygon_idx).support_plane_idx());
+    // Partition
+    KSR::Idx_vector positive_side, negative_side;
+    partition (polygon_idx, line_2, positive_side, negative_side);
+
+    // Position + Direction of V1 + V2
+    Point_2 point_0, point_1;
+    Vector_2 direction_0, direction_1;
+    std::tie (point_0, direction_0, point_1, direction_1)
+      = compute_constrained_points_along_line (line_2, positive_side, negative_side);
+
     KSR::size_t new_polygon_idx = add_polygon (Polygon(polygon(polygon_idx).input_idx(), polygon(polygon_idx).support_plane_idx()));
     support_plane(polygon(polygon_idx).support_plane_idx()).polygons_idx().push_back (new_polygon_idx);
 
@@ -643,27 +692,29 @@ public:
     for (KSR::size_t vertex_idx : negative_side)
       vertex(vertex_idx).polygon_idx() = new_polygon_idx;
 
-    positive_side.push_back (add_vertex (Vertex (inter_0, polygon_idx)));
-    m_vertices.back().intersection_line_idx() = intersection_line_idx;
+    KSR::size_t segment_idx = add_segment (intersection_line_idx,
+                                           number_of_vertices(), number_of_vertices() + 1,
+                                           number_of_vertices() + 3, number_of_vertices() + 2);
+    
+    positive_side.push_back (add_vertex (Vertex (point_0 - m_current_time * direction_0, polygon_idx)));
+    m_vertices.back().segment_idx() = segment_idx;
     m_vertices.back().direction() = direction_0;
     
-    positive_side.push_back (add_vertex (Vertex (inter_1, polygon_idx)));
-    m_vertices.back().intersection_line_idx() = intersection_line_idx;
+    positive_side.push_back (add_vertex (Vertex (point_1 - m_current_time * direction_1, polygon_idx)));
+    m_vertices.back().segment_idx() = segment_idx;
     m_vertices.back().direction() = direction_1;
 
-    add_segment (intersection_line_idx, number_of_vertices() - 1, number_of_vertices() - 2);
-
-    negative_side.push_back (add_vertex (Vertex (inter_1, new_polygon_idx)));
-    m_vertices.back().intersection_line_idx() = intersection_line_idx;
+    negative_side.push_back (add_vertex (Vertex (point_1 - m_current_time * direction_1, new_polygon_idx)));
+    m_vertices.back().segment_idx() = segment_idx;
     m_vertices.back().direction() = direction_1;
     
-    negative_side.push_back (add_vertex (Vertex (inter_0, new_polygon_idx)));
-    m_vertices.back().intersection_line_idx() = intersection_line_idx;
+    negative_side.push_back (add_vertex (Vertex (point_0 - m_current_time * direction_0, new_polygon_idx)));
+    m_vertices.back().segment_idx() = segment_idx;
     m_vertices.back().direction() = direction_0;
 
     if (direction_0 == CGAL::NULL_VECTOR)
     {
-      KSR::size_t meta_vertex_idx = add_meta_vertex (support_plane_of_polygon(polygon_idx).to_3d (inter_0),
+      KSR::size_t meta_vertex_idx = add_meta_vertex (support_plane_of_polygon(polygon_idx).to_3d (point_0),
                                                      polygon(polygon_idx).support_plane_idx());
       attach_vertex_to_meta_vertex (m_vertices.size() - 4, meta_vertex_idx);
       attach_vertex_to_meta_vertex (m_vertices.size() - 1, meta_vertex_idx);
@@ -671,13 +722,11 @@ public:
     
     if (direction_1 == CGAL::NULL_VECTOR)
     {
-      KSR::size_t meta_vertex_idx = add_meta_vertex (support_plane_of_polygon(polygon_idx).to_3d (inter_1),
+      KSR::size_t meta_vertex_idx = add_meta_vertex (support_plane_of_polygon(polygon_idx).to_3d (point_1),
                                                      polygon(polygon_idx).support_plane_idx());
       attach_vertex_to_meta_vertex (m_vertices.size() - 3, meta_vertex_idx);
       attach_vertex_to_meta_vertex (m_vertices.size() - 2, meta_vertex_idx);
     }
-    
-    add_segment (intersection_line_idx, number_of_vertices() - 1, number_of_vertices() - 2);
     
     polygon(polygon_idx).vertices_idx().swap (positive_side);
     polygon(new_polygon_idx).vertices_idx().swap (negative_side);
@@ -686,6 +735,120 @@ public:
     for (KSR::size_t i : { polygon_idx, new_polygon_idx })
       CGAL_KSR_CERR(3) << " " << polygon_str(i);
     CGAL_KSR_CERR(3) << std::endl;
+  }
+
+  KSR::size_t crop_polygon (KSR::size_t polygon_idx, KSR::size_t intersection_line_idx,
+                            KSR::Idx_vector& vertices,
+                            const Point_2& point_0, const Vector_2& direction_0,
+                            const Point_2& point_1, const Vector_2& direction_1)
+  {
+    m_vertices[vertices.back()] = Vertex (point_1 - m_current_time * direction_1, polygon_idx);
+    m_vertices[vertices.back()].segment_idx() = number_of_segments();
+    m_vertices[vertices.back()].direction() = direction_1;
+    
+    vertices.push_back (add_vertex (Vertex (point_0 - m_current_time * direction_0, polygon_idx)));
+    m_vertices.back().segment_idx() = number_of_segments();
+    m_vertices.back().direction() = direction_0;
+
+    KSR::size_t segment_idx = add_segment (intersection_line_idx,
+                                           vertices[vertices.size() - 2],
+                                           vertices[vertices.size() - 1]);
+
+    polygon(polygon_idx).vertices_idx().swap (vertices);
+
+    return segment_idx;
+  }
+
+  KSR::size_t propagate_polygon (KSR::size_t segment_idx,
+                                 const Point_2& point,
+                                 const Vector_2& direction)
+  {
+    KSR::size_t source_idx = segment(segment_idx).source_idx();
+    KSR::size_t target_idx = segment(segment_idx).target_idx();
+    KSR::size_t polygon_idx = vertex(source_idx).polygon_idx();
+    
+    KSR::size_t new_polygon_idx = add_polygon (Polygon(polygon(polygon_idx).input_idx(), polygon(polygon_idx).support_plane_idx()));
+    support_plane(polygon(polygon_idx).support_plane_idx()).polygons_idx().push_back (new_polygon_idx);
+
+    // Copy segment vertices
+    segment(segment_idx).other_source_idx() = add_vertex (vertex(source_idx));
+    segment(segment_idx).other_target_idx() = add_vertex (vertex(target_idx));
+
+    vertex(segment(segment_idx).other_source_idx()).segment_idx() = segment_idx;
+    vertex(segment(segment_idx).other_target_idx()).segment_idx() = segment_idx;
+
+    vertex(segment(segment_idx).other_source_idx()).polygon_idx() = new_polygon_idx;
+    vertex(segment(segment_idx).other_target_idx()).polygon_idx() = new_polygon_idx;
+
+    KSR::size_t new_vertex_idx = add_vertex (Vertex (point - m_current_time * direction, new_polygon_idx));
+
+    polygon(new_polygon_idx).vertices_idx().push_back (segment(segment_idx).other_target_idx());
+    polygon(new_polygon_idx).vertices_idx().push_back (segment(segment_idx).other_source_idx());
+    polygon(new_polygon_idx).vertices_idx().push_back (new_vertex_idx);
+
+    return new_vertex_idx;
+  }
+
+  std::pair<KSR::size_t, KSR::size_t>
+  transfer_vertex (KSR::size_t vertex_idx, KSR::size_t segment_border_idx,
+                   const Point_2& point, const Vector_2& direction)
+  {
+    KSR::size_t segment_idx = vertex(segment_border_idx).segment_idx();
+    KSR::size_t mirror_segment_border_idx = segment(segment_idx).mirror_vertex (segment_border_idx);
+    KSR::size_t polygon_idx = vertex(vertex_idx).polygon_idx();
+
+    if (mirror_segment_border_idx == KSR::no_element()) // Border reached
+    {
+      vertex(segment_border_idx) = Vertex (point - m_current_time * direction, polygon_idx);
+      vertex(segment_border_idx).segment_idx() = segment_idx;
+      vertex(segment_border_idx).direction() = CGAL::NULL_VECTOR;
+      
+      vertex(vertex_idx) = Vertex (point - m_current_time * direction, polygon_idx);
+      vertex(vertex_idx).direction() = direction;
+      
+      return std::make_pair(vertex_idx, KSR::no_element());
+    }
+    else
+    {
+      KSR::size_t other_polygon_idx = vertex(mirror_segment_border_idx).polygon_idx();
+
+      polygon(polygon_idx).vertices_idx().erase
+        (std::find (polygon(polygon_idx).vertices_idx().begin(), polygon(polygon_idx).vertices_idx().end(), vertex_idx));
+
+      vertex(vertex_idx).polygon_idx() = other_polygon_idx;
+
+      vertex(segment_border_idx) = Vertex (point - m_current_time * direction, polygon_idx);
+      vertex(segment_border_idx).segment_idx() = segment_idx;
+      vertex(segment_border_idx).direction() = direction;
+    
+      vertex(mirror_segment_border_idx) = Vertex (point - m_current_time * direction, other_polygon_idx);
+      vertex(mirror_segment_border_idx).segment_idx() = segment_idx;
+      vertex(mirror_segment_border_idx).direction() = direction;
+
+      for (KSR::size_t i = 0; i < polygon(other_polygon_idx).vertices_idx().size(); ++ i)
+      {
+        KSR::size_t vertex_idx_0 = polygon(other_polygon_idx).vertices_idx()[i];
+        KSR::size_t vertex_idx_1 = polygon(other_polygon_idx).vertices_idx()[(i+1) % polygon(other_polygon_idx).vertices_idx().size()];
+
+        if ((vertex_idx_0 == mirror_segment_border_idx && vertex(vertex_idx_1).segment_idx() != segment_idx)
+            || (vertex_idx_1 == mirror_segment_border_idx && vertex(vertex_idx_0).segment_idx() != segment_idx))
+        {
+          polygon(other_polygon_idx).vertices_idx().insert
+            (polygon(other_polygon_idx).vertices_idx().begin() + i + 1, vertex_idx);
+          return std::make_pair (segment_border_idx, mirror_segment_border_idx);
+        }
+      }
+    }
+    
+    // This should never be reached
+    CGAL_assertion(false);
+    return std::make_pair (KSR::no_element(), KSR::no_element());
+  }
+
+  void cut_segment_of_vertex (KSR::size_t vertex_idx)
+  {
+    KSR::size_t segment_idx = vertex(vertex_idx).segment_idx();
+    
   }
 
   void update_positions (FT time)

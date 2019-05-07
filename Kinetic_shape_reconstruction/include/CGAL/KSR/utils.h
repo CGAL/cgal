@@ -77,6 +77,9 @@ public:
   const ValueType& operator[] (const KSR::size_t& idx) const { return m_data[std::size_t(idx)]; }
   ValueType& operator[] (const KSR::size_t& idx) { return m_data[std::size_t(idx)]; }
 
+  void erase (iterator it) { m_data.erase (it); }
+  void insert (iterator it, const ValueType& v) { m_data.insert (it, v); }
+
   const ValueType& front() const { return m_data.front(); }
   ValueType& front() { return m_data.front(); }
   const ValueType& back() const { return m_data.back(); }

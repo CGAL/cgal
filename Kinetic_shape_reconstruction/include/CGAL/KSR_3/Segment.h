@@ -36,6 +36,8 @@ private:
   KSR::size_t m_intersection_line_idx;
   KSR::size_t m_source_idx;
   KSR::size_t m_target_idx;
+  KSR::size_t m_other_source_idx;
+  KSR::size_t m_other_target_idx;
 
 public:
 
@@ -43,10 +45,14 @@ public:
 
   Segment (KSR::size_t intersection_line_idx,
            KSR::size_t source_idx = KSR::no_element(),
-           KSR::size_t target_idx = KSR::no_element())
+           KSR::size_t target_idx = KSR::no_element(),
+           KSR::size_t other_source_idx = KSR::no_element(),
+           KSR::size_t other_target_idx = KSR::no_element())
     : m_intersection_line_idx (intersection_line_idx)
     , m_source_idx (source_idx)
     , m_target_idx (target_idx)
+    , m_other_source_idx (other_source_idx)
+    , m_other_target_idx (other_target_idx)
   { }
 
   const KSR::size_t& intersection_line_idx() const { return m_intersection_line_idx; }
@@ -56,6 +62,24 @@ public:
   
   const KSR::size_t& target_idx() const { return m_target_idx; }
   KSR::size_t& target_idx() { return m_target_idx; }
+
+  const KSR::size_t& other_source_idx() const { return m_other_source_idx; }
+  KSR::size_t& other_source_idx() { return m_other_source_idx; }
+  
+  const KSR::size_t& other_target_idx() const { return m_other_target_idx; }
+  KSR::size_t& other_target_idx() { return m_other_target_idx; }
+
+  KSR::size_t mirror_vertex (KSR::size_t vertex_idx) const
+  {
+    if (vertex_idx == m_source_idx)
+      return m_other_source_idx;
+    if (vertex_idx == m_other_source_idx)
+      return m_source_idx;
+    if (vertex_idx == m_target_idx)
+      return m_other_target_idx;
+    CGAL_assertion (vertex_idx == m_other_target_idx);
+    return m_target_idx;
+  }
 };
 
 

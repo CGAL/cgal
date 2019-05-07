@@ -45,7 +45,7 @@ private:
   KSR::size_t m_polygon_idx;
   unsigned int m_remaining_intersections;
   KSR::size_t m_meta_vertex_idx;
-  KSR::size_t m_intersection_line_idx;
+  KSR::size_t m_segment_idx;
 
 public:
 
@@ -59,12 +59,12 @@ public:
     , m_polygon_idx (polygon_idx)
     , m_remaining_intersections(remaining_intersections)
     , m_meta_vertex_idx (KSR::no_element())
-    , m_intersection_line_idx (KSR::no_element())
+    , m_segment_idx (KSR::no_element())
   {
   }
 
-  const KSR::size_t& intersection_line_idx() const { return m_intersection_line_idx; }
-  KSR::size_t& intersection_line_idx() { return m_intersection_line_idx; }
+  const KSR::size_t& segment_idx() const { return m_segment_idx; }
+  KSR::size_t& segment_idx() { return m_segment_idx; }
   
   const KSR::size_t& polygon_idx() const { return m_polygon_idx; }
   KSR::size_t& polygon_idx() { return m_polygon_idx; }

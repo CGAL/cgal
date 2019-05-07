@@ -67,7 +67,6 @@ public:
   const KSR::Idx_vector& segments_idx() const { return m_segments_idx; }
   KSR::Idx_vector& segments_idx() { return m_segments_idx; }
 
-
 };
 
 
