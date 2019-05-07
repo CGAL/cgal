@@ -36,7 +36,7 @@ void read_mesh(const char* filename,
 {
   typedef typename Kernel::Point_3                                    Point;
 
-  std::ifstream in(filename);
+  std::ifstream in(filename, std::ios::binary);
   if(!in.good())
   {
     std::cerr << "Error: can't read file: " << filename << std::endl;
