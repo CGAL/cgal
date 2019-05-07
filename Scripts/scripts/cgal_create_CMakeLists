@@ -53,8 +53,6 @@
 
 create_cmake_script_with_options()
 {
-  qt4='n'
-
   # parse options file
   if [ -e "$OPTIONS_FILE" ]; then
 
@@ -118,9 +116,8 @@ EOF
   if [ ! -z "$CGAL_COMPONENTS" ]; then
     # ensure capitalization
 
-    # CGAL: Core, Qt4, PDB, ImageIO
+    # CGAL: Core, PDB, ImageIO
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[c|C][o|O][r|R][e|E]/Core}
-    CGAL_COMPONENTS=${CGAL_COMPONENTS//[q|Q][t|T]4/Qt4}
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[i|I][m|M][a|A][g|G][e|E][i|I][o|O]/ImageIO}
   
     # external libs
@@ -156,12 +153,6 @@ EOF
     IFS=':'
     for cgal_component in $CGAL_COMPONENTS; do
       COMPONENT=`echo $cgal_component | tr '[:upper:]' '[:lower:]'`
-
-      # for qtmoc
-      if [ "$COMPONENT" = "qt4" ]; then
-        qt4='y'
-      fi
-
     done
     IFS=$OLDIFS
 
@@ -245,31 +236,6 @@ EOF
     #-------------------------------------------------------------------------
   fi
 
-  # Qt4
-  if [ "$qt4" = "y" ]; then
-
-    #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-    cat << 'EOF'
-
-# Qt4
-set( QT_USE_QTXML     true )
-set( QT_USE_QTMAIN    true )
-set( QT_USE_QTSCRIPT  true )
-set( QT_USE_QTOPENGL  true )
-
-find_package(Qt4)  
-
-if ( NOT QT_FOUND )
-
-  message(STATUS "This project requires the Qt4 library, and will not be compiled.")
-  return()  
-
-endif()
-EOF
-    #-------------------------------------------------------------------------
-
-  fi #qt4
-
   if [ ! -z "$BOOST_COMPONENTS" ]; then
     #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     cat << 'EOF'
@@ -312,22 +278,6 @@ EOF
     # add a new line
     echo
 
-    # Qt4
-    if [ "$qt4" = "y" ]; then
-      #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-      cat << 'EOF'
-
-if ( CGAL_Qt4_FOUND AND QT_FOUND )
-
-  include( ${QT_USE_FILE} )
-  include_directories( ${QT_INCLUDE_DIR} )  
-
-endif()
-
-EOF
-      #-----------------------------------------------------------------------
-    fi # qt4
-
     for file in `ls *.cc *.cp *.cxx *.cpp *.CPP *.c++ *.C 2> /dev/null | sort` ; do
       # Create an executable for each cpp that  contains a function "main()"
       BASE=`basename $file .cc`
@@ -339,11 +289,7 @@ EOF
       BASE=`basename $BASE .C`
       egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
       if [ $? -eq 0 ]; then
-        if [ "$qt4" = "y" ]; then
-          echo "create_single_source_cgal_program_qt4( \"$file\" )"
-        else
-          echo "create_single_source_cgal_program( \"$file\" )"
-        fi
+        echo "create_single_source_cgal_program( \"$file\" )"
       fi
       #add a new line
       echo 
@@ -370,73 +316,6 @@ EOF
       all="$all $file"
     done
 
-    # Qt4
-    if [ "$qt4" = "y" ]; then
-      #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-      cat << 'EOF'
-
-if ( CGAL_Qt4_FOUND AND QT_FOUND )
-
-  include( ${QT_USE_FILE} )
-  include_directories( ${QT_INCLUDE_DIR} )  
-
-EOF
-      #-----------------------------------------------------------------------
-
-      echo "  # UI files (Qt Designer files)"
-      for file in `ls *.ui 2> /dev/null | sort`; do
-        echo "  qt4_wrap_ui( DT_UI_FILES $file )"
-      done
-      echo
-      echo "  # qrc files (resources files, that contain icons, at least)"
-      for file in `ls *.qrc 2> /dev/null | sort`; do
-        echo "  qt4_add_resources ( DT_RESOURCE_FILES ./$file )"
-      done
-      echo
-      MOC_FILES=""
-      echo "  # use the Qt MOC preprocessor on classes that derives from QObject"
-      for file in `ls include/*.h 2> /dev/null | sort`; do
-        BASE=`basename $file .h`
-        egrep 'Q_OBJECT' $file >/dev/null 2>&1
-        if [ $? -eq 0 ]; then
-          echo "  qt4_generate_moc( include/${BASE}.h ${BASE}.moc )"
-          MOC_FILES="${BASE}.moc $MOC_FILES"
-        fi
-      done
-      for file in `ls *.h 2> /dev/null | sort`; do
-        BASE=`basename $file .h`
-        egrep 'Q_OBJECT' $file >/dev/null 2>&1
-        if [ $? -eq 0 ]; then
-          echo "  qt4_generate_moc( ${BASE}.h ${BASE}.moc )"
-          MOC_FILES="${BASE}.moc $MOC_FILES"
-        fi
-      done
-      for file in `ls *.cc *.cp *.cxx *.cpp *.CPP *.c++ *.C 2> /dev/null | sort` ; do
-        BASE=`basename $file .cc`
-        BASE=`basename $BASE .cp`
-        BASE=`basename $BASE .cxx`
-        BASE=`basename $BASE .cpp`
-        BASE=`basename $BASE .CPP`
-        BASE=`basename $BASE .c++`
-        BASE=`basename $BASE .C`
-        egrep 'Q_OBJECT' $file >/dev/null 2>&1
-        if [ $? -eq 0 ]; then
-          echo "  qt4_generate_moc( ${BASE}.cpp ${BASE}.moc )"
-          MOC_FILES="${BASE}.moc $MOC_FILES"
-        fi
-      done
-
-      #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-      cat << 'EOF'
-
-endif()
-EOF
-      #-----------------------------------------------------------------------
-
-      all="${all} ${MOC_FILES} \${DT_UI_FILES} \${DT_RESOURCE_FILES}"
-
-    fi # qt4
-
     # no 'cat' here, as variable substitution required
     echo
     echo "add_executable( ${target_name} ${all} )"
@@ -445,9 +324,6 @@ EOF
     echo
     echo "# Link the executable to CGAL and third-party libraries"
     LIBS=""
-    if [ "$qt4" = "y" ]; then
-      LIBS="\${QT_LIBRARIES}" 
-    fi
     LIBS=$LIBS" \${CGAL_LIBRARIES} \${CGAL_3RD_PARTY_LIBRARIES}"
     echo "target_link_libraries(${target_name}  $LIBS )"
 
