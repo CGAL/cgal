@@ -10,10 +10,8 @@ cmake_minimum_required(VERSION 2.8.11)
 find_package( CGAL QUIET COMPONENTS  )
 
 if ( NOT CGAL_FOUND )
-
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
   return()  
-
 endif()
 
 # include helper file
@@ -28,13 +26,15 @@ if ( NOT Boost_FOUND )
   return()  
 endif()
 
-find_package( Boost OPTIONAL_COMPONENTS serialization iostreams)
+find_package( Boost OPTIONAL_COMPONENTS serialization iostreams )
 
 if( WIN32 )
 # to avoid a warning with old cmake 
   set(_Boost_BZIP2_HEADERS             "boost/iostreams/filter/bzip2.hpp")
   set(_Boost_ZLIB_HEADERS              "boost/iostreams/filter/zlib.hpp")
   find_package( Boost OPTIONAL_COMPONENTS bzip2 zlib)
+else()
+  find_package(ZLIB QUIET)
 endif()
 
 # Use Eigen
@@ -66,9 +66,13 @@ set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)
 set(classification_linked_libraries)
 
 if (Boost_SERIALIZATION_FOUND AND Boost_IOSTREAMS_FOUND)
-  set(classification_linked_libraries ${classification_linked_libraries}
-    ${Boost_SERIALIZATION_LIBRARY}
-    ${Boost_IOSTREAMS_LIBRARY})
+  if(TARGET Boost::serialization AND TARGET Boost::iostreams)
+    set(classification_linked_libraries Boost::serialization Boost::iostreams)
+  else()
+    set(classification_linked_libraries ${classification_linked_libraries}
+      ${Boost_SERIALIZATION_LIBRARY}
+      ${Boost_IOSTREAMS_LIBRARY})
+  endif()
 else()
   if (NOT Boost_SERIALIZATION_FOUND)
     message(STATUS "NOTICE: This project requires Boost Serialization, and will not be compiled.")
@@ -85,6 +89,13 @@ if( WIN32 )
       ${Boost_ZLIB_LIBRARY} ${Boost_BZIP2_LIBRARY})
   else()
     message(STATUS "NOTICE: This project requires Boost ZLIB and Boost BZIP2, and will not be compiled.")
+    return()
+  endif()
+else()
+  if(ZLIB_FOUND)
+    set(classification_linked_libraries ${classification_linked_libraries} ZLIB::ZLIB)
+  else()
+    message(STATUS "NOTICE: This project requires ZLIB, and will not be compiled.")
     return()
   endif()
 endif()
