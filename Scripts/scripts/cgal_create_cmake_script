@@ -52,8 +52,6 @@ EOF
     cat <<'EOF'
 find_package(CGAL QUIET COMPONENTS Core )
 
-if ( CGAL_FOUND )
-
 EOF
     if [ -d "${SOURCE_DIR}" ] ; then
       echo "  set(CGAL_CURRENT_SOURCE_DIR \"${SOURCE_DIR}\")"
@@ -79,20 +77,10 @@ EOF
       BASE=`basename $BASE .C`
       egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
       if [ $? -eq 0 ]; then
-        echo "  create_single_source_cgal_program( \"$file\" )"
+        echo "create_single_source_cgal_program( \"$file\" )"
         echo "Adding a target ${BASE}..." >&3
       fi
     done
-    
-    cat <<'EOF'
-
-else()
-  
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
-endif()
-EOF
-  
   echo
 
 }
