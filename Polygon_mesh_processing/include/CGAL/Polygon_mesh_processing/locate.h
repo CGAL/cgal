@@ -387,7 +387,7 @@ struct Barycentric_point_constructor<K, P, 3> // 3D version
 ///
 /// \pre `p`, `q`, and `r` are not collinear.
 /// \pre It must be possible to extract a kernel type model of `Kernel`, using `CGAL::Kernel_traits<P>`
-///      (this is the case for all standard %CGAL point types).
+///      (this is the case for all standard %CGAL point types and classes inheriting such point types).
 /// \pre `query` lies on the plane defined by `p`, `q`, and `r`.
 ///
 template <typename K, typename Point>
@@ -1493,7 +1493,8 @@ void build_AABB_tree(const TriangleMesh& tm,
 ///          multiple times, which will build a new AABB tree on every call.
 ///
 /// \tparam TriangleMesh A model of `FaceListGraph`
-/// \tparam AABBTraits A model of `AABBTraits` used to define a \cgal `AABB_tree`.
+/// \tparam Point3VPM a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+///                   as key type and the \cgal 3D point type as value type.
 /// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
 /// \param tm a triangulated surface mesh
@@ -1508,9 +1509,13 @@ void build_AABB_tree(const TriangleMesh& tm,
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
-template <typename TriangleMesh, typename AABBTraits, typename NamedParameters>
+template <typename TriangleMesh, typename Point3VPM, typename NamedParameters>
 void build_AABB_tree(const TriangleMesh& tm,
-                     AABB_tree<AABBTraits>& outTree,
+                     AABB_tree<
+                       CGAL::AABB_traits<
+                         typename Location_traits<TriangleMesh, NamedParameters>::Geom_traits,
+                         CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM>
+                     > >& outTree,
                      const NamedParameters& np)
 {
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type     VertexPointMap;
@@ -1534,8 +1539,13 @@ void build_AABB_tree(const TriangleMesh& tm,
 ///
 /// \brief returns the face location nearest to the given point, as a `Face_location`.
 ///
+/// Note that it is possible for the triangle mesh to have ambiant dimension `2` (e.g. the mesh
+/// is a 2D triangulation, or a CGAL::Surface_mesh<CGAL::Point_2<Kernel> >), as long as an appropriate
+/// vertex point property map is passed in the AABB tree, which will convert from 2D to 3D.
+///
 /// \tparam TriangleMesh A model of `FaceListGraph`
-/// \tparam AABBTraits A model of `AABBTraits` used to define a \cgal `AABB_tree`.
+/// \tparam Point3VPM a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+///                   as key type and the \cgal 3D point type as value type.
 /// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
 /// \param p the point to locate on the input triangulated surface mesh
@@ -1561,23 +1571,31 @@ void build_AABB_tree(const TriangleMesh& tm,
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
-template <typename TriangleMesh, typename AABBTraits, typename NamedParameters>
+template <typename TriangleMesh, typename Point3VPM, typename NamedParameters>
 typename Location_traits<TriangleMesh>::Face_location
 locate_with_AABB_tree(const typename Location_traits<TriangleMesh, NamedParameters>::Point& p,
-                      const AABB_tree<AABBTraits>& tree,
+                      const AABB_tree<
+                        CGAL::AABB_traits<
+                          typename Location_traits<TriangleMesh, NamedParameters>::Geom_traits,
+                          CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM>
+                      > >& tree,
                       const TriangleMesh& tm,
                       const NamedParameters& np)
 {
   typedef typename Location_traits<TriangleMesh, NamedParameters>::Point          Point;
   typedef internal::Point_to_Point_3<TriangleMesh, Point>                         P_to_P3;
-  typedef typename AABBTraits::Point_3                                            Point_3;
+  typedef typename boost::property_traits<Point3VPM>::value_type                  Point_3;
   CGAL_static_assertion((std::is_same<Point_3, typename P_to_P3::Point_3>::value));
+
+  typedef typename Location_traits<TriangleMesh, NamedParameters>::Geom_traits    Geom_traits;
+  typedef typename CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM> Primitive;
+  typedef typename CGAL::AABB_traits<Geom_traits, Primitive>                      AABB_traits;
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type   VertexPointMap;
   typedef internal::Point_to_Point_3_VPM<TriangleMesh, VertexPointMap>            WrappedVPM;
 
   const Point_3& p3 = P_to_P3()(p);
-  typename AABB_tree<AABBTraits>::Point_and_primitive_id result = tree.closest_point_and_primitive(p3);
+  typename AABB_tree<AABB_traits>::Point_and_primitive_id result = tree.closest_point_and_primitive(p3);
 
   // The VPM might return a point of any dimension, but the AABB tree necessarily returns
   // a Point_3. So, wrap the VPM (again) to give a Point_3. Even if it's already wrapped, we're just
@@ -1609,7 +1627,6 @@ locate_with_AABB_tree(const typename Location_traits<TriangleMesh>::Point& p,
 ///          an `AABB_tree` that you can store and use the function `locate_with_AABB_tree()`.
 ///
 /// \tparam TriangleMesh must be a model of `FaceListGraph`.
-/// \tparam AABBTraits must be a model of `AABBTraits` used to define a \cgal `AABB_tree`.
 /// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
 /// \param p the point to locate on the input triangulated surface mesh
@@ -1682,11 +1699,12 @@ locate(const typename property_map_value<TriangleMesh, boost::vertex_point_t>::t
 /// \brief Returns the face location along `ray` nearest to its source point.
 ///
 /// \tparam TriangleMesh must be a model of `FaceListGraph`.
-/// \tparam AABBTraits must be a model of `AABBTraits` used to define a \cgal `AABB_tree`.
+/// \tparam Point3VPM a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+///                   as key type and the \cgal 3D point type as value type.
 /// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
 /// \param ray Ray to intersect with the input triangulated surface mesh
-/// \param tree A `AABB_tree` containing the triangular faces of the input surface mesh to perform the point location with
+/// \param tree An `AABB_tree` containing the triangular faces of the input surface mesh to perform the point location with
 /// \param tm a triangulated surface mesh
 /// \param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below:
 ///
@@ -1699,12 +1717,23 @@ locate(const typename property_map_value<TriangleMesh, boost::vertex_point_t>::t
 ///   \cgalParamBegin{geom_traits}
 ///     a geometric traits class instance, model of `Kernel`.
 ///   \cgalParamEnd
+///   \cgalParamBegin{snapping_tolerance}
+///     a tolerance value used to snap barycentric coordinates. Depending on the geometric traits used,
+///     the computation of the barycentric coordinates might be an inexact construction, thus leading
+///     to sometimes surprising values (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle
+///     of an edge). The coordinates will be snapped towards `0` and `1` if the difference is smaller than the tolerance value, while
+///     still ensuring that the total sum of the coordinates is `1`. By default, the tolerance is `0`.
+///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
-template <typename TriangleMesh, typename AABBTraits, typename NamedParameters>
+template <typename TriangleMesh, typename Point3VPM, typename NamedParameters>
 typename Location_traits<TriangleMesh>::Face_location
 locate_with_AABB_tree(const typename Location_traits<TriangleMesh, NamedParameters>::Ray& ray,
-                      const AABB_tree<AABBTraits>& tree,
+                      const AABB_tree<
+                        CGAL::AABB_traits<
+                          typename Location_traits<TriangleMesh, NamedParameters>::Geom_traits,
+                          CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM>
+                      > >& tree,
                       const TriangleMesh& tm,
                       const NamedParameters& np)
 {
@@ -1720,7 +1749,10 @@ locate_with_AABB_tree(const typename Location_traits<TriangleMesh, NamedParamete
   typedef internal::Point_to_Point_3_VPM<TriangleMesh, VertexPointMap>            WrappedVPM;
   typedef internal::Ray_to_Ray_3<TriangleMesh>                                    R_to_R3;
 
-  typedef AABB_tree<AABBTraits>                                                   AABB_face_graph_tree;
+  typedef typename Location_traits<TriangleMesh, NamedParameters>::Geom_traits    Geom_traits;
+  typedef typename CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM> Primitive;
+  typedef typename CGAL::AABB_traits<Geom_traits, Primitive>                      AABB_traits;
+  typedef AABB_tree<AABB_traits>                                                  AABB_face_graph_tree;
   typedef typename AABB_face_graph_tree::template Intersection_and_primitive_id<Ray_3>::Type Intersection_type;
   typedef boost::optional<Intersection_type>                                      Ray_intersection;
 
