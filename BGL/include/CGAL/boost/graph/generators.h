@@ -18,8 +18,8 @@
 //
 // Author(s) : Maxime Gimeno
 
-#ifndef CGAL_BOOST_GRAPH_POLYHEDRA_H
-#define CGAL_BOOST_GRAPH_POLYHEDRA_H
+#ifndef CGAL_BOOST_GRAPH_GENERATORS_H
+#define CGAL_BOOST_GRAPH_GENERATORS_H
 
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/properties.h>
@@ -733,4 +733,4 @@ make_grid(typename boost::graph_traits<Graph>::vertices_size_type w,
 // Include "Euler_operations.h" at the end, because its implementation requires this header.
 #include <CGAL/boost/graph/Euler_operations.h>
 
-#endif // CGAL_BOOST_GRAPH_POLYHEDRA_H
+#endif // CGAL_BOOST_GRAPH_GENERATORS_H
