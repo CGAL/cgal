@@ -52,8 +52,8 @@
 
 // Everywhere in this file:
 // If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-// such that `bc` is `(w0, w1, w2)`, the correspondance with the weights in `bc`
-// and the vertices of the face `f` is the following:
+// such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+// between the coordinates in `bc` and the vertices of the face `f` is the following:
 // - `w0` corresponds to `source(halfedge(f, tm), tm)`
 // - `w1` corresponds to `target(halfedge(f, tm), tm)`
 // - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
@@ -129,8 +129,8 @@ public:
   typedef std::array<FT, 3>                                                Barycentric_coordinates;
 
   /// If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-  /// such that `bc` is `(w0, w1, w2)`, the correspondance with the weights in `bc`
-  /// and the vertices of the face `f` is the following:
+  /// such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+  /// between the coordinates in `bc` and the vertices of the face `f` is the following:
   ///   - `w0` corresponds to `source(halfedge(f, tm), tm)`
   ///   - `w1` corresponds to `target(halfedge(f, tm), tm)`
   ///   - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
@@ -578,7 +578,7 @@ get_descriptor_from_location(const typename Locate_types<TriangleMesh>::Face_loc
 ///   \cgalParamBegin{vertex_point_map}
 ///     the property map with the points associated to the vertices of `tm`.
 ///     If this parameter is omitted, an internal property map for
-///     `boost::vertex_point_t` should be available in `TriangleMesh`.
+///     `boost::vertex_point_t` must be available in `TriangleMesh`.
 ///   \cgalParamEnd
 ///   \cgalParamBegin{geom_traits}
 ///     a geometric traits class instance, model of `Kernel`.
@@ -634,8 +634,8 @@ construct_point(const typename Locate_types<TriangleMesh>::Face_location& loc,
 ///        on the vertex `vd` or not.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is `(w0, w1, w2)`, the correspondance with the weights in `bc`
-///          and the vertices of the face `f` is the following:
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
 ///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
@@ -673,8 +673,8 @@ is_on_vertex(const typename Locate_types<TriangleMesh>::Face_location& loc,
 ///        on the halfedge `hd` or not.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is `(w0, w1, w2)`, the correspondance with the weights in `bc`
-///          and the vertices of the face `f` is the following:
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
 ///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
@@ -714,8 +714,8 @@ is_on_halfedge(const typename Locate_types<TriangleMesh>::Face_location& loc,
 ///        that is, if all the barycentric coordinates are positive.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is `(w0, w1, w2)`, the correspondance with the weights in `bc`
-///          and the vertices of the face `f` is the following:
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
 ///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
@@ -751,8 +751,8 @@ is_in_face(const typename Locate_types<TriangleMesh>::Barycentric_coordinates& b
 ///        in the face (boundary included) or not.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is `(w0, w1, w2)`, the correspondance with the weights in `bc`
-///          and the vertices of the face `f` is the following:
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
 ///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
@@ -778,8 +778,8 @@ is_in_face(const typename Locate_types<TriangleMesh>::Face_location& loc,
 ///        of the face or not.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is `(w0, w1, w2)`, the correspondance with the weights in `bc`
-///          and the vertices of the face `f` is the following:
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
 ///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
@@ -817,8 +817,8 @@ is_on_face_border(const typename Locate_types<TriangleMesh>::Face_location& loc,
 ///        on the border of the mesh or not.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is `(w0, w1, w2)`, the correspondance with the weights in `bc`
-///          and the vertices of the face `f` is the following:
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
 ///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
@@ -912,8 +912,8 @@ common_halfedge(const typename boost::graph_traits<PolygonMesh>::face_descriptor
 ///        and the barycentric coordinates of the vertex `vd` in that face.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is `(w0, w1, w2)`, the correspondance with the weights in `bc`
-///          and the vertices of the face `f` is the following:
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
 ///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
@@ -967,8 +967,8 @@ locate_in_face(typename boost::graph_traits<TriangleMesh>::vertex_descriptor vd,
 ///        of the vertex in `fd`.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is `(w0, w1, w2)`, the correspondance with the weights in `bc`
-///          and the vertices of the face `f` is the following:
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
 ///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
@@ -1003,8 +1003,8 @@ locate_in_face(const typename boost::graph_traits<TriangleMesh>::vertex_descript
 ///        barycentric coordinates of that location in that face.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is `(w0, w1, w2)`, the correspondance with the weights in `bc`
-///          and the vertices of the face `f` is the following:
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
 ///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
@@ -1045,8 +1045,8 @@ locate_in_face(const typename boost::graph_traits<TriangleMesh>::halfedge_descri
 ///        `query` with respect to the vertices of `fd`.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is `(w0, w1, w2)`, the correspondance with the weights in `bc`
-///          and the vertices of the face `f` is the following:
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
 ///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
@@ -1063,7 +1063,7 @@ locate_in_face(const typename boost::graph_traits<TriangleMesh>::halfedge_descri
 ///   \cgalParamBegin{vertex_point_map}
 ///     the property map with the points associated to the vertices of `tm`.
 ///     If this parameter is omitted, an internal property map for
-///     `boost::vertex_point_t` should be available in `TriangleMesh`.
+///     `boost::vertex_point_t` must be available in `TriangleMesh`.
 ///   \cgalParamEnd
 ///   \cgalParamBegin{geom_traits}
 ///     a geometric traits class instance, model of `Kernel`.
@@ -1132,8 +1132,8 @@ locate_in_face(const typename property_map_value<TriangleMesh, boost::vertex_poi
 ///        return the `Face_location` of the point in the second face.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is `(w0, w1, w2)`, the correspondance with the weights in `bc`
-///          and the vertices of the face `f` is the following:
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
 ///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
@@ -1499,8 +1499,10 @@ void build_AABB_tree(const TriangleMesh& tm,
 ///
 /// \brief creates an `AABB_tree` suitable for use with `locate_with_AABB_tree()`.
 ///
-/// \details This function should be called to create and cache an AABB tree
-///          to avoid the AABB tree being rebuilt at every call of `locate_with_AABB_tree()`.
+/// \details This function should first be called by users who intend to locate multiple points:
+///          in this case, it is better to first build an AABB tree, and use the function
+///          `locate_with_AABB_tree()` that takes as parameter an AABB tree, instead of calling `locate()`
+///          multiple times, which will build a new AABB tree on every call.
 ///
 /// \tparam TriangleMesh A model of `FaceListGraph`
 /// \tparam AABBTraits A model of `AABBTraits` used to define a \cgal `AABB_tree`.
@@ -1514,7 +1516,7 @@ void build_AABB_tree(const TriangleMesh& tm,
 ///   \cgalParamBegin{vertex_point_map}
 ///     the property map with the points associated to the vertices of `tm`.
 ///     If this parameter is omitted, an internal property map for
-///     `boost::vertex_point_t` should be available in `TriangleMesh`.
+///     `boost::vertex_point_t` must be available in `TriangleMesh`.
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
@@ -1557,7 +1559,7 @@ void build_AABB_tree(const TriangleMesh& tm,
 ///   \cgalParamBegin{vertex_point_map}
 ///     the property map with the points associated to the vertices of `tm`.
 ///     If this parameter is omitted, an internal property map for
-///     `boost::vertex_point_t` should be available in `TriangleMesh`.
+///     `boost::vertex_point_t` must be available in `TriangleMesh`.
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
@@ -1605,9 +1607,8 @@ locate_with_AABB_tree(const typename Locate_types<TriangleMesh>::Point& p,
 /// \brief returns the nearest face location to the given point.
 ///
 /// \details Note that this function will build an `AABB_tree` on each call. If you need
-///          to call this function more than once, use `build_AABB_tree()` to cache a
-///          copy of the `AABB_tree`, and use the overloads of this function
-///          that accept a reference to an `AABB_tree` as input.
+///          to call this function more than once, first use `build_AABB_tree()` to create a
+///          an `AABB_tree` that you can store and use the function `locate_with_AABB_tree()`.
 ///
 /// \tparam TriangleMesh must be a model of `FaceListGraph`.
 /// \tparam AABBTraits must be a model of `AABBTraits` used to define a \cgal `AABB_tree`.
@@ -1621,7 +1622,7 @@ locate_with_AABB_tree(const typename Locate_types<TriangleMesh>::Point& p,
 ///   \cgalParamBegin{vertex_point_map}
 ///     the property map with the points associated to the vertices of `tm`.
 ///     If this parameter is omitted, an internal property map for
-///     `boost::vertex_point_t` should be available in `TriangleMesh`.
+///     `boost::vertex_point_t` must be available in `TriangleMesh`.
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
@@ -1685,7 +1686,7 @@ locate(const typename property_map_value<TriangleMesh, boost::vertex_point_t>::t
 ///   \cgalParamBegin{vertex_point_map}
 ///     the property map with the points associated to the vertices of `tm`.
 ///     If this parameter is omitted, an internal property map for
-///     `boost::vertex_point_t` should be available in `TriangleMesh`.
+///     `boost::vertex_point_t` must be available in `TriangleMesh`.
 ///   \cgalParamEnd
 ///   \cgalParamBegin{geom_traits}
 ///     a geometric traits class instance, model of `Kernel`.
@@ -1793,7 +1794,7 @@ locate_with_AABB_tree(const typename Locate_types<TriangleMesh>::Ray& ray,
 ///   \cgalParamBegin{vertex_point_map}
 ///     the property map with the points associated to the vertices of `tm`.
 ///     If this parameter is omitted, an internal property map for
-///     `boost::vertex_point_t` should be available in `TriangleMesh`.
+///     `boost::vertex_point_t` must be available in `TriangleMesh`.
 ///   \cgalParamEnd
 ///   \cgalParamBegin{geom_traits}
 ///     a geometric traits class instance, model of `Kernel`.
