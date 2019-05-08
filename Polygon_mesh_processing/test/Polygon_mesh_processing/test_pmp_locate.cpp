@@ -236,6 +236,8 @@ void test_random_entities(const G& g, CGAL::Random& rnd)
   Face_location loc;
 
   halfedge_descriptor h = CGAL::internal::random_halfedge_in_mesh(g, rnd);
+  if(is_border(h, g))
+    h = opposite(h, g);
   face_descriptor f = CGAL::internal::random_face_in_mesh(g, rnd);
 
   int nn = 1e2;
@@ -803,7 +805,7 @@ int main()
   std::cout.precision(17);
   std::cout << std::fixed;
 
-//  CGAL::Random rnd(1556198743); // if needed to debug with a fixed seed
+//  CGAL::Random rnd(1557332474); // if needed to debug with a fixed seed
   CGAL::Random rnd(CGAL::get_default_random());
 
   std::cout << "The seed is " << rnd.get_seed() << std::endl;
