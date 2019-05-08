@@ -191,7 +191,7 @@ void test_constructions(const G& g, CGAL::Random& rnd)
     assert(is_equal(bar[0], a) && is_equal(bar[1], b) && is_equal(bar[2], c));
 
     loc.second = bar;
-    const FT sq_dist = CGAL::squared_distance(barycentric_pt, Bare_point(PMP::location_to_point(loc, g)));
+    const FT sq_dist = CGAL::squared_distance(barycentric_pt, Bare_point(PMP::construct_point(loc, g)));
     assert(is_equal(sq_dist, FT(0)));
   }
 
@@ -211,8 +211,8 @@ void test_constructions(const G& g, CGAL::Random& rnd)
   assert(bool(boost::get<vertex_descriptor>(&dv)));
   // ---------------------------------------------------------------------------
 
-  Point s = PMP::location_to_point(loc, g, CGAL::parameters::all_default());
-  s = PMP::location_to_point(loc, g);
+  Point s = PMP::construct_point(loc, g, CGAL::parameters::all_default());
+  s = PMP::construct_point(loc, g);
   assert(s == get(vpm, source(halfedge(f, g), g)));
 }
 
@@ -600,14 +600,14 @@ struct Locate_with_AABB_tree_Tester // 2D case
     assert(is_equal(loc.second[PMP::vertex_index_in_face(v, loc.first, g)], FT(1)));
     assert(is_equal(loc.second[(PMP::vertex_index_in_face(v, loc.first, g)+1)%3], FT(0)));
     assert(is_equal(loc.second[(PMP::vertex_index_in_face(v, loc.first, g)+2)%3], FT(0)));
-    assert(is_equal(CGAL::squared_distance(to_p3(PMP::location_to_point(loc, g)), p3_a), FT(0)));
+    assert(is_equal(CGAL::squared_distance(to_p3(PMP::construct_point(loc, g)), p3_a), FT(0)));
 
     loc = PMP::locate_with_AABB_tree(p_a, tree_a, g, CGAL::parameters::vertex_point_map(vpm_a));
-    assert(is_equal(CGAL::squared_distance(to_p3(PMP::location_to_point(loc, g)), p3_a), FT(0)));
+    assert(is_equal(CGAL::squared_distance(to_p3(PMP::construct_point(loc, g)), p3_a), FT(0)));
 
     // ---------------------------------------------------------------------------
     loc = PMP::locate(p_a, g);
-    assert(is_equal(CGAL::squared_distance(to_p3(PMP::location_to_point(loc, g)), p3_a), FT(0)));
+    assert(is_equal(CGAL::squared_distance(to_p3(PMP::construct_point(loc, g)), p3_a), FT(0)));
     assert(PMP::is_in_face(loc, g));
 
     loc = PMP::locate_with_AABB_tree(CGAL::ORIGIN, tree_b, g, CGAL::parameters::vertex_point_map(vpm_b));
@@ -716,14 +716,14 @@ struct Locate_with_AABB_tree_Tester<3> // 3D
     assert(is_equal(loc.second[PMP::vertex_index_in_face(v, loc.first, g)], FT(1)));
     assert(is_equal(loc.second[(PMP::vertex_index_in_face(v, loc.first, g)+1)%3], FT(0)));
     assert(is_equal(loc.second[(PMP::vertex_index_in_face(v, loc.first, g)+2)%3], FT(0)));
-    assert(is_equal(CGAL::squared_distance(PMP::location_to_point(loc, g), p3_a), FT(0)));
+    assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, g), p3_a), FT(0)));
 
     loc = PMP::locate_with_AABB_tree(p3_a, tree_a, g, CGAL::parameters::vertex_point_map(vpm_a));
-    assert(is_equal(CGAL::squared_distance(PMP::location_to_point(loc, g), p3_a), FT(0)));
+    assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, g), p3_a), FT(0)));
 
     // ---------------------------------------------------------------------------
     loc = PMP::locate(p3_a, g);
-    assert(is_equal(CGAL::squared_distance(PMP::location_to_point(loc, g), p3_a), FT(0)));
+    assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, g), p3_a), FT(0)));
     assert(PMP::is_in_face(loc, g));
 
     loc = PMP::locate_with_AABB_tree(CGAL::ORIGIN, tree_b, g, CGAL::parameters::vertex_point_map(vpm_b));

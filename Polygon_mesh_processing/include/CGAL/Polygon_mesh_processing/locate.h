@@ -778,9 +778,9 @@ get_descriptor_from_location(const typename Locate_types<TriangleMesh>::Face_loc
 ///
 template <typename TriangleMesh, typename NamedParameters>
 typename Locate_types<TriangleMesh, NamedParameters>::Point
-location_to_point(const typename Locate_types<TriangleMesh>::Face_location& loc,
-                  const TriangleMesh& tm,
-                  const NamedParameters& np)
+construct_point(const typename Locate_types<TriangleMesh>::Face_location& loc,
+                const TriangleMesh& tm,
+                const NamedParameters& np)
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type  VertexPointMap;
@@ -805,10 +805,10 @@ location_to_point(const typename Locate_types<TriangleMesh>::Face_location& loc,
 
 template <typename TriangleMesh>
 typename property_map_value<TriangleMesh, boost::vertex_point_t>::type
-location_to_point(const typename Locate_types<TriangleMesh>::Face_location& loc,
-                  const TriangleMesh& tm)
+construct_point(const typename Locate_types<TriangleMesh>::Face_location& loc,
+                const TriangleMesh& tm)
 {
-  return location_to_point(loc, tm, parameters::all_default());
+  return construct_point(loc, tm, parameters::all_default());
 }
 
 /// \name Location Predicates
