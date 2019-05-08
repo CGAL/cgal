@@ -1040,6 +1040,13 @@ locate_in_face(const typename boost::graph_traits<TriangleMesh>::halfedge_descri
 ///   \cgalParamBegin{geom_traits}
 ///     a geometric traits class instance, model of `Kernel`.
 ///   \cgalParamEnd
+///   \cgalParamBegin{snapping_tolerance}
+///     a tolerance value used to snap barycentric coordinates. Depending on the geometric traits used,
+///     the computation of the barycentric coordinates might be an inexact construction, thus leading
+///     to sometimes surprising values (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle
+///     of an edge). The coordinates will be snapped towards `0` and `1` if the difference is smaller than the tolerance value, while
+///     still ensuring that the total sum of the coordinates is `1`. By default, the tolerance is `0`.
+///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
 template <typename TriangleMesh, typename NamedParameters>
@@ -1062,6 +1069,8 @@ locate_in_face(const typename Location_traits<TriangleMesh, NamedParameters>::Po
                                            get_const_property_map(boost::vertex_point, tm));
   Geom_traits gt = choose_param(get_param(np, internal_np::geom_traits), Geom_traits());
 
+  FT snap_tolerance = choose_param(get_param(np, internal_np::snapping_tolerance), 0);
+
   vertex_descriptor vd0 = source(halfedge(fd, tm), tm);
   vertex_descriptor vd1 = target(halfedge(fd, tm), tm);
   vertex_descriptor vd2 = target(next(halfedge(fd, tm), tm), tm);
@@ -1072,14 +1081,14 @@ locate_in_face(const typename Location_traits<TriangleMesh, NamedParameters>::Po
 
   std::array<FT, 3> coords = barycentric_coordinates<Geom_traits, Point>(p0, p1, p2, query, gt);
 
-  if(!is_in_face(coords, tm))
+  if(snap_tolerance != FT(0) && !is_in_face(coords, tm))
   {
     std::cerr << "Warning: point " << query << " is not in the input face" << std::endl;
     std::cerr << "Coordinates: " << coords[0] << " " << coords[1] << " " << coords[2] << std::endl;
 
     // Try to to snap the coordinates, hoping the problem is just a -1e-17ish epsilon
     // pushing the coordinates over the edge
-    internal::snap_coordinates_to_border<TriangleMesh>(coords); // @tmp keep or not ?
+    internal::snap_coordinates_to_border<TriangleMesh>(coords);
   }
 
   return std::make_pair(fd, coords);
@@ -1465,6 +1474,13 @@ void build_AABB_tree(const TriangleMesh& tm,
 } // namespace internal
 
 /// \name Nearest Face Location Queries
+/// The following functions can be used to find the closest point on a triangle mesh, given either
+/// a point or a ray. This closest point is computed using a `CGAL::AABB_tree`. Users intending
+/// to call location functions on more than a single point (or ray) should first compute an AABB
+/// tree to store it (otherwise, it will be recomputed every time). Note that since the AABB tree
+/// class is a 3D structure, it might be required to wrap your point property map to convert your
+/// point type to the \cgal 3D point type if you are working with a 2D triangle structure.
+///
 /// @{
 
 /// \ingroup PMP_locate_grp
@@ -1533,6 +1549,16 @@ void build_AABB_tree(const TriangleMesh& tm,
 ///     If this parameter is omitted, an internal property map for
 ///     `boost::vertex_point_t` must be available in `TriangleMesh`.
 ///   \cgalParamEnd
+///   \cgalParamBegin{geom_traits}
+///     a geometric traits class instance, model of `Kernel`.
+///   \cgalParamEnd
+/// \cgalParamBegin{snapping_tolerance}
+///     a tolerance value used to snap barycentric coordinates. Depending on the geometric traits used,
+///     the computation of the barycentric coordinates might be an inexact construction, thus leading
+///     to sometimes surprising values (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle
+///     of an edge). The coordinates will be snapped towards `0` and `1` if the difference is smaller than the tolerance value, while
+///     still ensuring that the total sum of the coordinates is `1`. By default, the tolerance is `0`.
+///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
 template <typename TriangleMesh, typename AABBTraits, typename NamedParameters>
@@ -1595,6 +1621,16 @@ locate_with_AABB_tree(const typename Location_traits<TriangleMesh>::Point& p,
 ///     the property map with the points associated to the vertices of `tm`.
 ///     If this parameter is omitted, an internal property map for
 ///     `boost::vertex_point_t` must be available in `TriangleMesh`.
+///   \cgalParamEnd
+///   \cgalParamBegin{geom_traits}
+///     a geometric traits class instance, model of `Kernel`.
+///   \cgalParamEnd
+///   \cgalParamBegin{snapping_tolerance}
+///     a tolerance value used to snap barycentric coordinates. Depending on the geometric traits used,
+///     the computation of the barycentric coordinates might be an inexact construction, thus leading
+///     to sometimes surprising values (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle
+///     of an edge). The coordinates will be snapped towards `0` and `1` if the difference is smaller than the tolerance value, while
+///     still ensuring that the total sum of the coordinates is `1`. By default, the tolerance is `0`.
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
@@ -1770,6 +1806,13 @@ locate_with_AABB_tree(const typename Location_traits<TriangleMesh>::Ray& ray,
 ///   \cgalParamEnd
 ///   \cgalParamBegin{geom_traits}
 ///     a geometric traits class instance, model of `Kernel`.
+///   \cgalParamEnd
+/// \cgalParamBegin{snapping_tolerance}
+///     a tolerance value used to snap barycentric coordinates. Depending on the geometric traits used,
+///     the computation of the barycentric coordinates might be an inexact construction, thus leading
+///     to sometimes surprising values (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle
+///     of an edge). The coordinates will be snapped towards `0` and `1` if the difference is smaller than the tolerance value, while
+///     still ensuring that the total sum of the coordinates is `1`. By default, the tolerance is `0`.
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
