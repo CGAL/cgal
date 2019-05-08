@@ -127,8 +127,6 @@ and provides a list of the parameters that are used in this package.
 
 \cgalCRPSection{Location Functions}
 - \link PMP_locate_grp Point Location \endlink
-- \link PMP_locate_grp Random Simplex Generation \endlink
-- \link PMP_locate_grp Simplex Index \endlink
 - \link PMP_locate_grp Location Predicates \endlink
 - \link PMP_locate_grp Nearest Face Location Queries \endlink
 - \link PMP_locate_grp Random Location Generation \endlink
