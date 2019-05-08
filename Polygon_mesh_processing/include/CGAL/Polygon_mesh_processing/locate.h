@@ -1088,7 +1088,7 @@ locate_in_face(const typename Location_traits<TriangleMesh, NamedParameters>::Po
 
     // Try to to snap the coordinates, hoping the problem is just a -1e-17ish epsilon
     // pushing the coordinates over the edge
-    internal::snap_coordinates_to_border<TriangleMesh>(coords);
+    internal::snap_coordinates_to_border<TriangleMesh>(coords, snap_tolerance);
   }
 
   return std::make_pair(fd, coords);
