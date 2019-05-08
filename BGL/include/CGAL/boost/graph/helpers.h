@@ -21,7 +21,7 @@
 #ifndef CGAL_BOOST_GRAPH_HELPERS_H
 #define CGAL_BOOST_GRAPH_HELPERS_H
 
-#include <CGAL/boost/graph/polyhedra.h>
+#include <CGAL/boost/graph/generators.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/internal/Has_member_clear.h>
@@ -827,6 +827,82 @@ template<typename FaceGraph>
 bool is_empty(const FaceGraph& g)
 {
   return boost::empty(vertices(g));
+}
+
+/// \ingroup PkgBGLHelperFct
+///
+/// \brief returns the number of calls to `next()` one has to apply to the halfedge `hd`
+///        for `source(hd, mesh) == vd` to be true, starting from `hd = halfedge(fd, tm)`.
+///
+/// \tparam Graph A model of `FaceGraph`
+///
+/// \param vd a vertex of `g` whose index is sought
+/// \param fd a face of `g` in which the index of `vd` is sought
+/// \param g a mesh of type `Graph`
+///
+/// \pre `vd` is a vertex of `fd`.
+template <typename Graph>
+int vertex_index_in_face(const typename boost::graph_traits<Graph>::vertex_descriptor vd,
+                         const typename boost::graph_traits<Graph>::face_descriptor fd,
+                         const Graph& g)
+{
+  typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
+
+  halfedge_descriptor start = halfedge(fd, g);
+  halfedge_descriptor current = start;
+  int counter = 0;
+
+  do
+  {
+    if(source(current, g) == vd)
+      break;
+
+    ++counter;
+    current = next(current, g);
+  }
+  while(current != start);
+
+  if(counter != 0 && current == start)
+  {
+    CGAL_assertion_msg(false, "Could not find vertex in face");
+    return -1;
+  }
+
+  return counter;
+}
+
+/// \ingroup PkgBGLHelperFct
+///
+/// \brief returns the number of calls to `next(hd, tm)` one has to apply to `hd` for `hd == he`
+///        to be true, starting from `hd = halfedge(face(he, tm), tm)`.
+///
+/// \tparam Graph A model of `FaceGraph`.
+///
+/// \param he a halfedge of `g` whose index in `face(he, tm)` is sought
+/// \param g an object of type `Graph`
+///
+template <typename Graph>
+int halfedge_index_in_face(typename boost::graph_traits<Graph>::halfedge_descriptor he,
+                           const Graph& g)
+{
+  typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<Graph>::face_descriptor     face_descriptor;
+
+  CGAL_precondition(he != boost::graph_traits<Graph>::null_halfedge());
+  CGAL_precondition(!is_border(he, g));
+
+  face_descriptor f = face(he, g);
+  halfedge_descriptor start = halfedge(f, g);
+  halfedge_descriptor current = start;
+  int count = 0;
+
+  while(current != he)
+  {
+    current = next(current, g);
+    ++count;
+  }
+
+  return count;
 }
 
 } // namespace CGAL

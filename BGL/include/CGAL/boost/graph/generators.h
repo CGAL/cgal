@@ -16,13 +16,16 @@
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
 //
-// Author(s) : Maxime Gimeno
+// Author(s) : Maxime Gimeno,
+//             Mael Rouxel-Labbé
 
 #ifndef CGAL_BOOST_GRAPH_GENERATORS_H
 #define CGAL_BOOST_GRAPH_GENERATORS_H
 
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/properties.h>
+
+#include <CGAL/Random.h>
 #include <CGAL/function_objects.h>
 
 namespace CGAL {
@@ -37,6 +40,89 @@ typename boost::graph_traits<Graph>::face_descriptor add_face(const VertexRange&
                                                               Graph& g);
 
 } // namespace Euler
+
+namespace internal {
+
+template<typename InputIterator>
+typename std::iterator_traits<InputIterator>::value_type
+random_entity_in_range(InputIterator first, InputIterator beyond,
+                       CGAL::Random& rnd = get_default_random())
+{
+  typedef typename std::iterator_traits<InputIterator>::difference_type  size_type;
+
+  size_type zero = 0, ne = std::distance(first, beyond);
+  std::advance(first, rnd.uniform_int(zero, ne - 1));
+
+  return *first;
+}
+
+template<typename InputIterator>
+typename std::iterator_traits<InputIterator>::value_type
+random_entity_in_range(const CGAL::Iterator_range<InputIterator>& range,
+                       CGAL::Random& rnd = get_default_random())
+{
+  return random_entity_in_range(range.begin(), range.end(), rnd);
+}
+
+// \brief returns a random non-null vertex incident to the face `fd` of the polygon mesh `g`.
+// \tparam Graph A model of `HalfedgeGraph`
+template<typename Graph>
+typename boost::graph_traits<Graph>::vertex_descriptor
+random_vertex_in_face(typename boost::graph_traits<Graph>::face_descriptor fd,
+                      const Graph& g,
+                      CGAL::Random& rnd = get_default_random())
+{
+  return internal::random_entity_in_range(vertices_around_face(halfedge(fd, g), g), rnd);
+}
+
+// \brief returns a random non-null halfedge incident to the face `fd` of the polygon mesh `g`.
+// \tparam Graph A model of `HalfedgeGraph`
+template<typename Graph>
+typename boost::graph_traits<Graph>::halfedge_descriptor
+random_halfedge_in_face(typename boost::graph_traits<Graph>::face_descriptor fd,
+                        const Graph& g,
+                        CGAL::Random& rnd = get_default_random())
+{
+  return internal::random_entity_in_range(halfedges_around_face(halfedge(fd, g), g), rnd);
+}
+
+// \brief returns a random non-null vertex of the polygon mesh `g`.
+// \tparam Graph A model of `VertexListGraph`
+template<typename Graph>
+typename boost::graph_traits<Graph>::vertex_descriptor
+random_vertex_in_mesh(const Graph& g, CGAL::Random& rnd = get_default_random())
+{
+  return internal::random_entity_in_range(vertices(g), rnd);
+}
+
+// \brief returns a random non-null halfedge of the polygon mesh `g`.
+// \tparam Graph A model of `HalfedgeListGraph`
+template<typename Graph>
+typename boost::graph_traits<Graph>::halfedge_descriptor
+random_halfedge_in_mesh(const Graph& g, CGAL::Random& rnd = get_default_random())
+{
+  return internal::random_entity_in_range(halfedges(g), rnd);
+}
+
+// \brief returns a random non-null edge of the polygon mesh `g`.
+// \tparam Graph A model of `EdgeListGraph`
+template<typename Graph>
+typename boost::graph_traits<Graph>::edge_descriptor
+random_edge_in_mesh(const Graph& g, CGAL::Random& rnd = get_default_random())
+{
+  return internal::random_entity_in_range(edges(g), rnd);
+}
+
+// \brief returns a random non-null face of the polygon mesh `g`.
+// \tparam Graph A model of `FaceListGraph`
+template<typename Graph>
+typename boost::graph_traits<Graph>::face_descriptor
+random_face_in_mesh(const Graph& g, CGAL::Random& rnd = get_default_random())
+{
+  return internal::random_entity_in_range(faces(g), rnd);
+}
+
+} // namespace internal
 
 /**
  * \ingroup PkgBGLHelperFct
