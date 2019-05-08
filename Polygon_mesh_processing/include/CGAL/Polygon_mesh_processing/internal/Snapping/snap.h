@@ -761,6 +761,12 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
     if(!is_same_mesh && !occurences.empty())
       continue;
 
+    // Skip the source vertex if its two incident halfedges are geometrically identical (it means that
+    // the two halfedges are already stitchable and we don't want this common vertex to be used
+    // to split a halfedge somewhere else)
+    if(get(vpms, source(hd, pms)) == get(vpms, target(next(hd, pms), pms)))
+      continue;
+
 #ifdef CGAL_PMP_SNAP_DEBUG
     std::cout << "Query: " << vd << " (" << query << ")" << std::endl;
 #endif
