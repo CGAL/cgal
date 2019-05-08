@@ -27,6 +27,7 @@
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_tree.h>
+#include <CGAL/boost/graph/generators.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Default.h>
@@ -377,7 +378,7 @@ struct Barycentric_point_constructor<K, P, 3> // 3D version
 /// \brief Given a set of three points and a query point, computes the barycentric
 ///        coordinates of the query point with respect to the first three points.
 ///
-/// \tparam P the type of a geometric 2D or 3D point
+/// \tparam Point the type of a geometric 2D or 3D point
 /// \tparam K the type of a geometric traits. Must be a model of `Kernel`.
 ///
 /// \param p,q,r three points with respect to whom the barycentric coordinates of `query` will be computed
@@ -389,21 +390,23 @@ struct Barycentric_point_constructor<K, P, 3> // 3D version
 ///      (this is the case for all standard %CGAL point types).
 /// \pre `query` lies on the plane defined by `p`, `q`, and `r`.
 ///
-template <typename K, typename P>
+template <typename K, typename Point>
 CGAL::array<typename K::FT, 3>
-barycentric_coordinates(const P& p, const P& q, const P& r, const P& query, const K& k)
+barycentric_coordinates(const Point& p, const Point& q, const Point& r, const Point& query,
+                        const K& k)
 {
-  internal::Barycentric_coordinate_calculator<K, P> calculator;
+  internal::Barycentric_coordinate_calculator<K, Point> calculator;
   return calculator(p, q, r, query, k);
 }
 
-template <typename P>
-CGAL::array<typename CGAL::Kernel_traits<P>::type::FT, 3>
-barycentric_coordinates(const P& p, const P& q, const P& r, const P& query)
+template <typename Point>
+CGAL::array<typename CGAL::Kernel_traits<Point>::type::FT, 3>
+barycentric_coordinates(const Point& p, const Point& q, const Point& r,
+                        const Point& query)
 {
-  typedef typename CGAL::Kernel_traits<P>::type                     Kernel;
+  typedef typename CGAL::Kernel_traits<Point>::type                     Kernel;
 
-  return barycentric_coordinates<Kernel, P>(p, q, r, query, Kernel());
+  return barycentric_coordinates<Kernel, Point>(p, q, r, query, Kernel());
 }
 
 /// \name Random Location Generation
@@ -495,7 +498,7 @@ random_location_on_mesh(const TriangleMesh& tm, CGAL::Random& rnd = get_default_
 
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
 
-  face_descriptor fd = random_face_in_mesh(tm, rnd);
+  face_descriptor fd = CGAL::internal::random_face_in_mesh(tm, rnd);
   return random_location_on_face(fd, tm, rnd);
 }
 
@@ -870,37 +873,6 @@ is_on_mesh_border(const typename Locate_types<TriangleMesh>::Face_location& loc,
 }
 
 /// @}
-
-/// \ingroup PMP_locate_grp
-///
-/// \brief Given two faces `fd1` and `fd2` of a polygonal mesh `pm`, returns
-///        (if it exists) a common edge. The returned halfedge is incident to `fd1`.
-///
-/// \tparam TriangleMesh A model of `HalfedgeGraph`
-///
-template<typename PolygonMesh>
-boost::optional<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor>
-common_halfedge(const typename boost::graph_traits<PolygonMesh>::face_descriptor fd1,
-                const typename boost::graph_traits<PolygonMesh>::face_descriptor fd2,
-                const PolygonMesh& pm)
-{
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
-
-  if(fd1 == fd2)
-    return halfedge(fd1, pm);
-
-  halfedge_descriptor hd = halfedge(fd1, pm), done = hd;
-  do
-  {
-    if(face(opposite(hd, pm), pm) == fd2)
-      return hd;
-
-    hd = next(hd, pm);
-  }
-  while(hd != done);
-
-  return boost::none;
-}
 
 /// \name Point Location
 /// @{
