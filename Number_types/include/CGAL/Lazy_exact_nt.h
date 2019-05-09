@@ -22,11 +22,6 @@
 #ifndef CGAL_LAZY_EXACT_NT_H
 #define CGAL_LAZY_EXACT_NT_H
 
-#define CGAL_int(T)    typename First_if_different<int,    T>::Type
-#define CGAL_double(T) typename First_if_different<double, T>::Type
-#define CGAL_To_interval(T) To_interval<T>
-
-
 #include <CGAL/number_type_basic.h>
 #include <CGAL/assertions.h>
 
@@ -53,6 +48,9 @@
 
 #include <CGAL/IO/io.h>
 
+#define CGAL_int(T)    typename First_if_different<int,    T>::Type
+#define CGAL_double(T) typename First_if_different<double, T>::Type
+#define CGAL_To_interval(T) To_interval<T>
 
 /*
  * This file contains the definition of the number type Lazy_exact_nt<ET>,

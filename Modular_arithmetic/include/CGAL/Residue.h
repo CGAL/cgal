@@ -28,7 +28,6 @@
 #ifndef CGAL_RESIDUE_H
 #define CGAL_RESIDUE_H 1
 
-#include <CGAL/basic.h>
 #include <CGAL/Modular_arithmetic/Residue_type.h>
 #include <CGAL/Coercion_traits.h>
 

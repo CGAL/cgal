@@ -43,6 +43,8 @@
 #include <boost/variant.hpp>
 #include <CGAL/Arr_tags.h>
 
+#include <vector>
+
 namespace CGAL {
   namespace VariantFunctors{
 

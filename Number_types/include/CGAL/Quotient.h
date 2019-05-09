@@ -32,8 +32,6 @@
 // The include is done before the protect macro on purpose, because
 // of a cyclic dependency.
 
-#include <CGAL/number_type_basic.h>
-
 #ifndef CGAL_QUOTIENT_H
 #define CGAL_QUOTIENT_H
 
