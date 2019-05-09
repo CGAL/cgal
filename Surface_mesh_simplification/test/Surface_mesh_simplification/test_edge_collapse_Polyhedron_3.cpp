@@ -26,6 +26,8 @@
 #include "basics.h"
 #include "test_self_intersection.h"
 
+#include <boost/shared_ptr.hpp>
+
 //#define TEST_TEST_TRACE_ENABLED
 
 template<std::size_t N> struct eat_sizeof {};

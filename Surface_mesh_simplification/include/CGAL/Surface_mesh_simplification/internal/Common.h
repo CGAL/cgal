@@ -23,20 +23,14 @@
 #include <CGAL/license/Surface_mesh_simplification.h>
 
 #include <CGAL/algorithm.h>
-#include <CGAL/Cartesian/MatrixC33.h>
-#include <CGAL/Modifiable_priority_queue.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/iterator.h>
 
 #include <boost/config.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/scoped_ptr.hpp>
 #include <boost/iterator_adaptors.hpp>
 #include <boost/optional/optional.hpp>
-#include <boost/none.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/format.hpp>
-#include <boost/scoped_array.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -49,24 +43,6 @@
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
-
-using boost::num_edges;
-using boost::num_vertices;
-using boost::edges;
-using boost::out_edges;
-using boost::in_edges;
-using boost::source;
-using boost::target;
-
-using boost::shared_ptr;
-using boost::optional;
-using boost::none;
-using boost::put_get_helper;
-using boost::get;
-using boost::put;
-using boost::addressof;
-
-using namespace boost::tuples;
 
 template<class Handle>
 inline bool handle_assigned(Handle h) { Handle null; return h != null; }
@@ -167,4 +143,4 @@ inline std::string optional_to_string(const boost::optional<T>& o) {
   #define CGAL_SURF_SIMPL_TEST_assertion_code(CODE)
 #endif
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_COMMON_H //
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_COMMON_H

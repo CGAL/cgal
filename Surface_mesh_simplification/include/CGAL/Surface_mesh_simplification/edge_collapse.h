@@ -25,8 +25,8 @@
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/named_function_params.h>
 
-#include <CGAL/Surface_mesh_simplification/Detail/Edge_collapse.h>
-#include <CGAL/Surface_mesh_simplification/Detail/Common.h>
+#include <CGAL/Surface_mesh_simplification/internal/Common.h>
+#include <CGAL/Surface_mesh_simplification/internal/Edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk.h>
 
 namespace CGAL {
@@ -97,10 +97,10 @@ int edge_collapse(TM& aSurface,
   internal_np::graph_visitor_t vis = internal_np::graph_visitor_t();
 
   return edge_collapse(aSurface, aShould_stop,
-                       choose_const_pmap(get_param(aParams,internal_np::vertex_index),aSurface,boost::vertex_index),
-                       choose_pmap(get_param(aParams,internal_np::vertex_point),aSurface,boost::vertex_point),
-                       choose_const_pmap(get_param(aParams,internal_np::halfedge_index),aSurface,boost::halfedge_index),
-                       choose_param(get_param(aParams,internal_np::edge_is_constrained),No_constrained_edge_map<TM>()),
+                       choose_const_pmap(get_param(aParams,internal_np::vertex_index), aSurface, boost::vertex_index),
+                       choose_pmap(get_param(aParams,internal_np::vertex_point), aSurface, boost::vertex_point),
+                       choose_const_pmap(get_param(aParams,internal_np::halfedge_index), aSurface, boost::halfedge_index),
+                       choose_param(get_param(aParams,internal_np::edge_is_constrained), No_constrained_edge_map<TM>()),
                        choose_param(get_param(aParams,internal_np::get_cost_policy), LindstromTurk_cost<TM>()),
                        choose_param(get_param(aParams,internal_np::get_placement_policy), LindstromTurk_placement<TM>()),
                        choose_param(get_param(aParams,vis), Dummy_visitor()));
@@ -131,7 +131,7 @@ int edge_collapse(TM& aSurface,
 template<class TM, class ShouldStop>
 int edge_collapse(TM& aSurface, const ShouldStop& aShould_stop)
 {
-  return edge_collapse(aSurface,aShould_stop, CGAL::parameters::halfedge_index_map(get(boost::halfedge_index,aSurface)));
+  return edge_collapse(aSurface, aShould_stop, CGAL::parameters::halfedge_index_map(get(boost::halfedge_index, aSurface)));
 }
 
 template<class TM, class ShouldStop, class GT>

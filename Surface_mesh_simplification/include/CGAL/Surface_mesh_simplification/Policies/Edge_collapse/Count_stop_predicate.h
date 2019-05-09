@@ -22,7 +22,7 @@
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
-#include <CGAL/Surface_mesh_simplification/Detail/Common.h>
+#include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 
 namespace CGAL {

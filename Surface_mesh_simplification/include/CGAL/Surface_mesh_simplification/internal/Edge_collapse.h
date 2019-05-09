@@ -22,10 +22,14 @@
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
-#include <CGAL/Surface_mesh_simplification/Detail/Common.h>
+#include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
+
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/Modifiable_priority_queue.h>
+
+#include <boost/scoped_array.hpp>
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
@@ -79,8 +83,8 @@ public:
   typedef typename Traits::Vector_3                                       Vector;
   typedef typename Traits::FT                                             FT;
 
-  typedef optional<FT>                                                    Cost_type;
-  typedef optional<Point>                                                 Placement_type;
+  typedef boost::optional<FT>                                             Cost_type;
+  typedef boost::optional<Point>                                          Placement_type;
 
   struct Compare_id
   {
@@ -101,7 +105,7 @@ public:
 
     bool operator()(const halfedge_descriptor& a, const halfedge_descriptor& b) const
     {
-      // NOTE: A cost is an optional<> value.
+      // NOTE: A cost is a boost::optional<> value.
       // Absent optionals are ordered first; that is, "none < T" and "T > none" for any defined T != none.
       // In consequence, edges with undefined costs will be promoted to the top of the priority queue and poped out first.
       return mAlgorithm->get_data(a).cost() < mAlgorithm->get_data(b).cost();
@@ -293,9 +297,9 @@ private:
     CGAL_SURF_SIMPL_TEST_assertion(!mPQ->contains(aEdge));
   }
 
-  optional<halfedge_descriptor> pop_from_PQ()
+  boost::optional<halfedge_descriptor> pop_from_PQ()
   {
-    optional<halfedge_descriptor> rEdge = mPQ->extract_top();
+    boost::optional<halfedge_descriptor> rEdge = mPQ->extract_top();
     if(rEdge)
     {
       CGAL_SURF_SIMPL_TEST_assertion(is_primary_edge(*rEdge));
@@ -564,7 +568,7 @@ loop()
 
   // Pops and processes each edge from the PQ
 
-  optional<halfedge_descriptor> lEdge;
+  boost::optional<halfedge_descriptor> lEdge;
 #ifdef CGAL_SURF_SIMPL_INTERMEDIATE_STEPS_PRINTING
   int i_rm=0;
 #endif

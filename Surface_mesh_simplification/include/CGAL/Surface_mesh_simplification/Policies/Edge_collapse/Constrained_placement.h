@@ -22,7 +22,7 @@
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
-#include <CGAL/Surface_mesh_simplification/Detail/Common.h>
+#include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 
 namespace CGAL {
@@ -42,7 +42,7 @@ public:
   {}
 
   template <typename Profile> 
-  optional<typename Profile::Point> operator()(const Profile& aProfile) const
+  boost::optional<typename Profile::Point> operator()(const Profile& aProfile) const
   {
     typedef typename Profile::TM                                    TM;
     typedef typename boost::graph_traits<TM>::halfedge_descriptor   halfedge_descriptor;

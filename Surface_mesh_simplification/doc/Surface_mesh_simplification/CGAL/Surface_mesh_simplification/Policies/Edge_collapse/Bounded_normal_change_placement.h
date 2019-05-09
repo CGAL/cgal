@@ -43,7 +43,7 @@ Returns the placement computed by `place`, if no
 triangle in the profile changes the normal by more than 90 degree.
 */ 
 template <typename Profile>
-optional<typename Profile::Point> 
+boost::optional<typename Profile::Point>
 operator()(const Profile& profile) const; 
 
 /// @}

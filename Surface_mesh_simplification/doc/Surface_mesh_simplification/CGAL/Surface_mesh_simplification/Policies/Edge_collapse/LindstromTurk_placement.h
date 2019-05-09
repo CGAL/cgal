@@ -39,7 +39,7 @@ Returns the new position for the remaining vertex after collapsing the edge
 (represented by its profile).
 */
 template <typename Profile>
-optional<typename Profile::Point>
+boost::optional<typename Profile::Point>
 operator()(const Profile& profile) const;
 
 /// @}

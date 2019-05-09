@@ -22,11 +22,12 @@
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
-#include <CGAL/Cartesian_converter.h>
-
-#include <CGAL/Surface_mesh_simplification/Detail/Common.h>
+#include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_params.h>
+
+#include <CGAL/Cartesian_converter.h>
+#include <CGAL/Cartesian/MatrixC33.h>
 
 #include <limits>
 #include <vector>
@@ -40,6 +41,7 @@
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
+namespace internal {
 
 template<class TM_, class Profile_>
 class LindstromTurkCore
@@ -65,9 +67,9 @@ public:
   typedef typename Kernel::Vector_3                                      Vector;
   typedef typename Kernel::FT                                            FT;
 
-  typedef optional<FT>                                                   Optional_FT;
-  typedef optional<Point>                                                Optional_point;
-  typedef optional<Vector>                                               Optional_vector;
+  typedef boost::optional<FT>                                            Optional_FT;
+  typedef boost::optional<Point>                                         Optional_point;
+  typedef boost::optional<Vector>                                        Optional_vector;
 
   typedef MatrixC33<Kernel>                                              Matrix;
 
@@ -158,7 +160,7 @@ private :
   static bool is_finite(const Matrix& m) { return is_finite(m.r0()) && is_finite(m.r1()) && is_finite(m.r2()); }
 
   template<class T>
-  static optional<T> filter_infinity(const T& n) { return is_finite(n) ? optional<T>(n) : optional<T>(); }
+  static boost::optional<T> filter_infinity(const T& n) { return is_finite(n) ? boost::optional<T>(n) : boost::optional<T>(); }
 
   TM& surface() const { return mProfile.surface(); }
 
@@ -307,7 +309,7 @@ compute_placement()
   if(mConstraints_n == 3)
   {
     // If the matrix is singular it's inverse cannot be computed so an 'absent' value is returned.
-    optional<Matrix> lOptional_Ai = inverse_matrix(mConstraints_A);
+    boost::optional<Matrix> lOptional_Ai = inverse_matrix(mConstraints_A);
     if(lOptional_Ai)
     {
       const Matrix& lAi = *lOptional_Ai;
@@ -748,6 +750,7 @@ add_constraint_from_gradient(const Matrix& H,
   }
 }
 
+} // namespace internal
 } // namespace Surface_mesh_simplification
 } // namespace CGAL
 

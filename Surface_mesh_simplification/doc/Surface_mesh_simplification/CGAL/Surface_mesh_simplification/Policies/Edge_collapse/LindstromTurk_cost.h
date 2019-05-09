@@ -37,7 +37,7 @@ Returns the cost of collapsing the edge (represented by its profile) considering
 the new `placement` computed for it.
 */
 template <typename Profile>
-optional<typename Profile::FT>
+boost::optional<typename Profile::FT>
 operator()(const Profile& profile,
            const boost::optional<typename Profile::Point>& placement) const
 

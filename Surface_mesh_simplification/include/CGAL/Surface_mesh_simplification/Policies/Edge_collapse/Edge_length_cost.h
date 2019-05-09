@@ -22,7 +22,7 @@
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
-#include <CGAL/Surface_mesh_simplification/Detail/Common.h>
+#include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 
 namespace CGAL {
@@ -36,9 +36,9 @@ public:
   Edge_length_cost() {}
 
   template <typename Profile, typename T>
-  optional<typename Profile::FT> operator()(const Profile& aProfile, const T& /*aPlacement*/) const
+  boost::optional<typename Profile::FT> operator()(const Profile& aProfile, const T& /*aPlacement*/) const
   {
-    typedef optional<typename Profile::FT> result_type;
+    typedef boost::optional<typename Profile::FT>                     result_type;
     return result_type(squared_distance(aProfile.p0(), aProfile.p1()));
   }
 };

@@ -22,8 +22,8 @@
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
-#include <CGAL/Surface_mesh_simplification/Detail/Common.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Detail/Lindstrom_Turk_core.h>
+#include <CGAL/Surface_mesh_simplification/internal/Common.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/Lindstrom_Turk_core.h>
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
@@ -39,11 +39,11 @@ public:
   {}
 
   template <typename Profile>
-  optional<typename Profile::FT>
+  boost::optional<typename Profile::FT>
   operator()(const Profile& aProfile,
-             const optional<typename Profile::Point>& aPlacement) const
+             const boost::optional<typename Profile::Point>& aPlacement) const
   {
-    return LindstromTurkCore<TM,Profile>(mParams,aProfile).compute_cost(aPlacement);
+    return internal::LindstromTurkCore<TM,Profile>(mParams,aProfile).compute_cost(aPlacement);
   }
 
 private:
