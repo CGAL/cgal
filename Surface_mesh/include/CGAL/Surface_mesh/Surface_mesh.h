@@ -2110,8 +2110,9 @@ private: //------------------------------------------------------- private data
     reindex.resize(sm.num_vertices());
     int n = 0;
     BOOST_FOREACH(Vertex_index v, sm.vertices()){
-      
-      os << get(vpm, v);
+
+      P p  = get(vpm, v); 
+      os << p.x() << " " << p.y() << " " << p.z();
       if(has_vcolors)
       {
         CGAL::Color color = vcolors[v];
