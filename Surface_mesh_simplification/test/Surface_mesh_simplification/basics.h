@@ -27,11 +27,11 @@ void Surface_simplification_external_trace(std::string s)
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 
-
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Edge_collapse_visitor_base.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_and_length.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_length_cost.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_placement.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
 
 #include <CGAL/Polyhedron_items_with_id_3.h>
