@@ -1,5 +1,6 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/int.h>
+#include <CGAL/number_utils_classes.h>
 #include <boost/functional.hpp>
 #include <functional>
 #include <algorithm>
