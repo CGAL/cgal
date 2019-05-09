@@ -18,10 +18,9 @@
 // Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
 //
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_EDGE_COLLAPSE_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_EDGE_COLLAPSE_H 1
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_EDGE_COLLAPSE_H
 
 #include <CGAL/license/Surface_mesh_simplification.h>
-
 
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
@@ -122,7 +121,7 @@ public:
     edge_id() : mAlgorithm(0) {}
     edge_id(Self const* aAlgorithm) : mAlgorithm(aAlgorithm) {}
 
-    size_type operator[] (const halfedge_descriptor e) const { return mAlgorithm->get_edge_id(e); }
+    size_type operator[](const halfedge_descriptor e) const { return mAlgorithm->get_edge_id(e); }
 
     Self const* mAlgorithm;
   };
@@ -182,15 +181,15 @@ private:
   }
 
   size_type get_halfedge_id(const halfedge_descriptor aEdge) const { return Edge_index_map[aEdge]; }
-  size_type get_edge_id (const halfedge_descriptor aEdge) const { return get_halfedge_id(aEdge) / 2; }
+  size_type get_edge_id(const halfedge_descriptor aEdge) const { return get_halfedge_id(aEdge) / 2; }
 
-  bool is_primary_edge (const halfedge_descriptor aEdge) const { return (get_halfedge_id(aEdge) % 2) == 0; }
-  halfedge_descriptor primary_edge (const halfedge_descriptor aEdge) {
+  bool is_primary_edge(const halfedge_descriptor aEdge) const { return (get_halfedge_id(aEdge) % 2) == 0; }
+  halfedge_descriptor primary_edge(const halfedge_descriptor aEdge) {
     return is_primary_edge(aEdge) ? aEdge : opposite(aEdge, mSurface);
   }
 
   bool is_border(const vertex_descriptor aV) const;
-  bool is_border (const halfedge_descriptor aEdge) const {
+  bool is_border(const halfedge_descriptor aEdge) const {
     return face(aEdge, mSurface) == boost::graph_traits<TM>::null_face();
   }
 
@@ -202,7 +201,7 @@ private:
   bool is_border_or_constrained(const vertex_descriptor aV) const;
   bool is_border_or_constrained(const halfedge_descriptor aEdge) const { return is_border(aEdge) || is_constrained(aEdge); }
 
-  bool is_edge_a_border (const halfedge_descriptor aEdge) const
+  bool is_edge_a_border(const halfedge_descriptor aEdge) const
   {
     return is_border(aEdge) || is_border(opposite(aEdge, mSurface));
   }
@@ -243,13 +242,14 @@ private:
     return boost::str(boost::format("[V%1%:%2%]") % get(Vertex_index_map,v) % xyz_to_string(p));
   }
 
-  std::string edge_to_string (const halfedge_descriptor aEdge) const
+  std::string edge_to_string(const halfedge_descriptor aEdge) const
   {
-    vertex_descriptor p,q; boost::tie(p,q) = get_vertices(aEdge);
+    vertex_descriptor p, q;
+    boost::tie(p,q) = get_vertices(aEdge);
     return boost::str(boost::format("{E%1% %2%->%3%}%4%") % get(Edge_index_map, aEdge) % vertex_to_string(p) % vertex_to_string(q) % (is_border(aEdge) ? " (BORDER)" : (is_border(opposite(aEdge, mSurface)) ? " (~BORDER)": "")));
   }
 
-  Cost_type get_cost (const Profile& aProfile) const {
+  Cost_type get_cost(const Profile& aProfile) const {
     return Get_cost(aProfile, get_placement(aProfile));
   }
 
@@ -361,7 +361,7 @@ private:
 
   FT mcMaxDihedralAngleCos2;
 
-  CGAL_SMS_DEBUG_CODE (unsigned mStep;)
+  CGAL_SMS_DEBUG_CODE(unsigned mStep;)
 };
 
 template<class M, class SP, class VIM, class VPM,class EIM, class ECTM, class CF, class PF, class V>
@@ -400,9 +400,9 @@ EdgeCollapse(TM& aSurface,
     }
   }
 
-  CGAL_SMS_TRACE(0,"EdgeCollapse of TM with " << (num_edges(aSurface)/2) << " edges");
+  CGAL_SMS_TRACE(0, "EdgeCollapse of TM with " << (num_edges(aSurface)/2) << " edges");
 
-  CGAL_SMS_DEBUG_CODE (mStep = 0;)
+  CGAL_SMS_DEBUG_CODE(mStep = 0;)
 
 #ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE
   for(vertex_descriptor vd : vertices(mSurface))
@@ -428,7 +428,7 @@ run()
   // Then proceed to collapse each edge in turn
   loop();
 
-  CGAL_SMS_TRACE(0,"Finished: " << (mInitialEdgeCount - mCurrentEdgeCount) << " edges removed.");
+  CGAL_SMS_TRACE(0, "Finished: " << (mInitialEdgeCount - mCurrentEdgeCount) << " edges removed.");
 
   int r = int(mInitialEdgeCount - mCurrentEdgeCount);
 
@@ -442,7 +442,7 @@ void
 EdgeCollapse<M,SP,VIM,VPM,EIM,ECTM,CF,PF,V>::
 collect()
 {
-  CGAL_SMS_TRACE(0,"collecting edges...");
+  CGAL_SMS_TRACE(0, "collecting edges...");
 
   // loop over all the _undirected_ edges in the surface putting them in the PQ
 
@@ -456,7 +456,7 @@ collect()
 
   mEdgeDataArray.reset(new Edge_data[lSize]);
 
-  mPQ.reset(new PQ (lSize, Compare_cost(this), edge_id(this)));
+  mPQ.reset(new PQ(lSize, Compare_cost(this), edge_id(this)));
 
   std::size_t id = 0;
   CGAL_SURF_SIMPL_TEST_assertion_code(size_type lInserted = 0);
@@ -485,18 +485,18 @@ collect()
 
       Visitor.OnCollected(lProfile, lData.cost());
 
-      CGAL_SURF_SIMPL_TEST_assertion_code (++ lInserted);
+      CGAL_SURF_SIMPL_TEST_assertion_code(++lInserted);
     }
     else
     {
       zero_length_edges.insert(primary_edge(lEdge));
-      CGAL_SURF_SIMPL_TEST_assertion_code (++ lNotInserted);
+      CGAL_SURF_SIMPL_TEST_assertion_code(++lNotInserted);
     }
 
     CGAL_SMS_TRACE(2,edge_to_string(lEdge));
   }
 
-  CGAL_SURF_SIMPL_TEST_assertion (lInserted + lNotInserted == mInitialEdgeCount);
+  CGAL_SURF_SIMPL_TEST_assertion(lInserted + lNotInserted == mInitialEdgeCount);
 
   for(halfedge_descriptor hd : zero_length_edges)
   {
@@ -545,11 +545,11 @@ collect()
     //the placement is trivial, it's always the point itself
     Placement_type lPlacement = lProfile.p0();
     vertex_descriptor rResult = halfedge_collapse_bk_compatibility(lProfile.v0_v1(), Edge_is_constrained_map);
-    put(Vertex_point_map,rResult,*lPlacement);
-    Visitor.OnCollapsed(lProfile,rResult);
+    put(Vertex_point_map, rResult, *lPlacement);
+    Visitor.OnCollapsed(lProfile, rResult);
   }
 
-  CGAL_SMS_TRACE(0,"Initial edge count: " << mInitialEdgeCount);
+  CGAL_SMS_TRACE(0, "Initial edge count: " << mInitialEdgeCount);
 }
 
 template<class M,class SP, class VIM, class VPM,class EIM,class ECTM, class CF,class PF,class V>
@@ -557,10 +557,10 @@ void
 EdgeCollapse<M,SP,VIM,VPM,EIM,ECTM,CF,PF,V>::
 loop()
 {
-  CGAL_SMS_TRACE(0,"Collapsing edges...");
+  CGAL_SMS_TRACE(0, "Collapsing edges...");
 
-  CGAL_SURF_SIMPL_TEST_assertion_code (size_type lloop_watchdog = 0);
-  CGAL_SURF_SIMPL_TEST_assertion_code (size_type lNonCollapsableCount = 0);
+  CGAL_SURF_SIMPL_TEST_assertion_code(size_type lloop_watchdog = 0);
+  CGAL_SURF_SIMPL_TEST_assertion_code(size_type lNonCollapsableCount = 0);
 
   // Pops and processes each edge from the PQ
 
@@ -571,7 +571,7 @@ loop()
 
   while((lEdge = pop_from_PQ()))
   {
-    CGAL_SURF_SIMPL_TEST_assertion(lloop_watchdog ++ < mInitialEdgeCount);
+    CGAL_SURF_SIMPL_TEST_assertion(lloop_watchdog++ < mInitialEdgeCount);
 
     CGAL_SMS_TRACE(1, "Popped " << edge_to_string(*lEdge));
     CGAL_assertion(!is_constrained(*lEdge));
@@ -947,7 +947,6 @@ are_shared_triangles_valid(const Point& p0, const Point& p1, const Point& p2, co
   return rR;
 }
 
-
 // Returns the directed halfedge connecting v0 to v1, if exists.
 template<class M, class SP, class VIM, class VPM, class EIM, class ECTM, class CF, class PF, class V>
 typename EdgeCollapse<M,SP,VIM,VPM,EIM,ECTM,CF,PF,V>::halfedge_descriptor
@@ -1043,10 +1042,10 @@ is_collapse_geometrically_valid(const Profile& aProfile, Placement_type k0)
 
         if(!are_shared_triangles_valid(*k0, get_point(k1), get_point(k2), get_point(k3)))
         {
-          CGAL_SMS_TRACE(3,  "    Triangles VX-V" << get(Vertex_index_map, k1)
-                               << "-V" << get(Vertex_index_map, k2)
-                               << " and VX-V" << get(Vertex_index_map, k3)
-                               << " are not geometrically valid. Collapse rejected");
+          CGAL_SMS_TRACE(3, "    Triangles VX-V" << get(Vertex_index_map, k1)
+                              << "-V" << get(Vertex_index_map, k2)
+                              << " and VX-V" << get(Vertex_index_map, k3)
+                              << " are not geometrically valid. Collapse rejected");
           rR = false;
         }
       }
@@ -1122,7 +1121,7 @@ collapse(const Profile& aProfile,
   if(aProfile.left_face_exists())
   {
     halfedge_descriptor lV0VL = primary_edge(aProfile.vL_v0());
-    if(is_constrained(lV0VL)) //make sure a constrained edge will not disappear
+    if(is_constrained(lV0VL)) // make sure a constrained edge will not disappear
       lV0VL=primary_edge(aProfile.v1_vL());
 
     CGAL_SMS_TRACE(3, "V0VL E" << get(Edge_index_map,lV0VL)
@@ -1197,7 +1196,7 @@ collapse(const Profile& aProfile,
 
   update_neighbors(rResult);
 
-  CGAL_SMS_DEBUG_CODE (++mStep;)
+  CGAL_SMS_DEBUG_CODE(++mStep;)
 }
 
 template<class M, class SP, class VIM, class VPM, class EIM, class ECTM, class CF, class PF, class V>

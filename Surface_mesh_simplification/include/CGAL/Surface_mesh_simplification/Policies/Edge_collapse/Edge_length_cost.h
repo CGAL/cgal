@@ -44,6 +44,6 @@ public:
 };
 
 } // namespace Surface_mesh_simplification
-} //namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_EDGE_LENGHT_COST_H

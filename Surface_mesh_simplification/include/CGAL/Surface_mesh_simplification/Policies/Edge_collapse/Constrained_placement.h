@@ -36,7 +36,7 @@ public:
   EdgeIsConstrainedMap Edge_is_constrained_map;
 
   Constrained_placement(EdgeIsConstrainedMap map=EdgeIsConstrainedMap(),
-                        BasePlacement base=BasePlacement())
+                        BasePlacement base = BasePlacement())
     : BasePlacement(base),
       Edge_is_constrained_map(map)
   {}
@@ -44,24 +44,19 @@ public:
   template <typename Profile> 
   optional<typename Profile::Point> operator()(const Profile& aProfile) const
   {
-    typedef typename Profile::TM                                TM;
-    typedef typename CGAL::Halfedge_around_target_iterator<TM>  in_edge_iterator;
+    typedef typename Profile::TM                                    TM;
+    typedef typename boost::graph_traits<TM>::halfedge_descriptor   halfedge_descriptor;
 
-    in_edge_iterator eb, ee;
-    for(boost::tie(eb,ee) = halfedges_around_target(aProfile.v0(),aProfile.surface_mesh());
-      eb != ee; ++ eb)
+    for(halfedge_descriptor h : halfedges_around_target(aProfile.v0(), aProfile.surface_mesh()))
     {
-      if(get(Edge_is_constrained_map, edge(*eb,aProfile.surface_mesh())))
-        return get(aProfile.vertex_point_map(),
-                   aProfile.v0());
+      if(get(Edge_is_constrained_map, edge(h, aProfile.surface_mesh())))
+        return get(aProfile.vertex_point_map(), aProfile.v0());
     }
 
-    for(boost::tie(eb,ee) = halfedges_around_target(aProfile.v1(),aProfile.surface_mesh());
-      eb != ee; ++ eb)
+    for(halfedge_descriptor h : halfedges_around_target(aProfile.v1(), aProfile.surface_mesh()))
     {
-      if(get(Edge_is_constrained_map, edge(*eb,aProfile.surface_mesh())))
-        return get(aProfile.vertex_point_map(),
-                   aProfile.v1());
+      if(get(Edge_is_constrained_map, edge(h, aProfile.surface_mesh())))
+        return get(aProfile.vertex_point_map(), aProfile.v1());
     }
 
     return static_cast<const BasePlacement*>(this)->operator()(aProfile);
@@ -69,6 +64,6 @@ public:
 };
 
 } // namespace Surface_mesh_simplification
-} //namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_CONSTRAINED_PLACEMENT_H

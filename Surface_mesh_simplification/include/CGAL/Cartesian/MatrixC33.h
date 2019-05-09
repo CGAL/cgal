@@ -163,7 +163,7 @@ private:
 
 template<class R>
 inline
-MatrixC33<R> direct_product(Vector_3<R> const& u, Vector_3<R> const& v)
+MatrixC33<R> direct_product(const Vector_3<R>& u, const Vector_3<R>& v)
 {
   return MatrixC33<R>(v * u.x(),
                       v * u.y(),
@@ -239,7 +239,7 @@ boost::optional< MatrixC33<R> > inverse_matrix(const MatrixC33<R>& m)
   return rInverse;
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_CARTESIAN_MATRIXC33_H //
 // EOF //

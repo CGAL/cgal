@@ -11,9 +11,9 @@ typedef CGAL::Box_intersection_d::Box_with_handle_d<double, 3, Facet_const_handl
 
 std::vector<Triangle> triangles;
 
-struct Intersect_facets 
+struct Intersect_facets
 {
-  void operator()(const Box* b, const Box* c) const 
+  void operator()(const Box* b, const Box* c) const
   {
     Halfedge_const_handle h = b->handle()->halfedge();
     // check for shared egde --> no intersection
@@ -21,6 +21,7 @@ struct Intersect_facets
           || h->next()->opposite()->facet() == c->handle()
           || h->next()->next()->opposite()->facet() == c->handle())
         return;
+
     // check for shared vertex --> maybe intersection, maybe not
     Halfedge_const_handle g = c->handle()->halfedge();
     Halfedge_const_handle v;
@@ -48,6 +49,7 @@ struct Intersect_facets
                 v = g->next()->next();
         }
     }
+
     if(v != Halfedge_const_handle()) {
         // found shared vertex:
         assert(h->vertex() == v->vertex());
@@ -75,6 +77,7 @@ struct Intersect_facets
         }
         return;
     }
+
     // check for geometric intersection
     Triangle t1(h->vertex()->point(),
                   h->next()->vertex()->point(),
@@ -82,6 +85,7 @@ struct Intersect_facets
     Triangle t2(g->vertex()->point(),
                   g->next()->vertex()->point(),
                   g->next()->next()->vertex()->point());
+
     if(CGAL::do_intersect(t1, t2)) {
         //cerr << "Triangles intersect:\n    T1: " << t1 << "\n    T2 :"
         //     << t2 << endl;
@@ -91,8 +95,7 @@ struct Intersect_facets
   }
 };
 
-
-bool Is_self_intersecting(Surface const& s) 
+bool Is_self_intersecting(const Surface& s)
 {
   std::vector<Box> boxes;
   boxes.reserve(s.size_of_facets());
@@ -113,5 +116,5 @@ bool Is_self_intersecting(Surface const& s)
   CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(),
                                   Intersect_facets(), std::ptrdiff_t(2000));
 
-  return triangles.size() > 0;   
+  return triangles.size() > 0;
 }

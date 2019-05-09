@@ -60,6 +60,6 @@ private:
 };
 
 } // namespace Surface_mesh_simplification
-} //namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_COUNT_STOP_PREDICATE_H

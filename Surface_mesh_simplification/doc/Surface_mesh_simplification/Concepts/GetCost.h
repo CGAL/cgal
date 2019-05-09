@@ -1,4 +1,3 @@
-
 /*!
 \ingroup PkgSurfaceMeshSimplificationConcepts
 \cgalConcept
@@ -18,10 +17,9 @@ or can be intentionally returned to prevent the edge from being collapsed.
 \cgalHasModel `CGAL::Surface_mesh_simplification::LindstromTurk_cost<TriangleMesh>`
 
 */
-
-class GetCost {
+class GetCost
+{
 public:
-
 
 /// \name Operations 
 /// @{
@@ -32,8 +30,8 @@ using the calculated placement.
 \tparam Profile must be a model of `EdgeProfile`.
 */ 
   template <class Profile>
-  boost::optional<typename Profile::FT> operator()(const Profile& edge_profile 
-                                                    , boost::optional<typename Profile::Point> const& placement) const; 
+  boost::optional<typename Profile::FT> operator()(const Profile& edge_profile,
+                                                   const boost::optional<typename Profile::Point>& placement) const;
 
 /// @}
 

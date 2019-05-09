@@ -36,11 +36,9 @@ struct Constrained_edge_map
     : mConstraints(aConstraints)
   {}
 
-  reference operator[](key_type const& e) const { return  is_constrained(e); }
+  reference operator[](const key_type& e) const { return  is_constrained(e); }
 
-  bool is_constrained(key_type const& e) const {
-    return mConstraints.is_defined(e);
-  }
+  bool is_constrained(const key_type& e) const { return mConstraints.is_defined(e); }
 
 private:
   const CGAL::Unique_hash_map<key_type,bool>& mConstraints;

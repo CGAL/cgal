@@ -18,7 +18,7 @@
 // Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
 //
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_EDGE_COLLAPSE_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_EDGE_COLLAPSE_H 1
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_EDGE_COLLAPSE_H
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
@@ -73,21 +73,21 @@ struct Dummy_visitor
   template<class Profile>
   void OnStopConditionReached(const Profile&) const {}
   template<class Profile, class OFT>
-  void OnCollected(Profile const&, const OFT&) const {}
+  void OnCollected(const Profile&, const OFT&) const {}
   template<class Profile, class OFT, class Size_type>
-  void OnSelected(Profile const&, const OFT&, Size_type, Size_type) const {}
+  void OnSelected(const Profile&, const OFT&, Size_type, Size_type) const {}
   template<class Profile, class OPoint>
   void OnCollapsing(const Profile&, const OPoint&) const {}
   template<class Profile, class VH>
   void OnCollapsed(const Profile&, VH) const {}
   template<class Profile>
-  void OnNonCollapsable(Profile const&) const {}
+  void OnNonCollapsable(const Profile&) const {}
 };
 
 template<class TM, class ShouldStop, class P, class T, class R>
 int edge_collapse(TM& aSurface,
                   const ShouldStop& aShould_stop,
-                  cgal_bgl_named_params<P,T,R> const& aParams)
+                  const cgal_bgl_named_params<P,T,R>& aParams)
 {
   using boost::choose_param;
   using boost::choose_const_pmap;
@@ -108,8 +108,8 @@ int edge_collapse(TM& aSurface,
 
 template<class TM, class ShouldStop, class GT, class P, class T, class R>
 int edge_collapse(TM& aSurface,
-                  ShouldStop const& aShould_stop,
-                  cgal_bgl_named_params<P,T,R> const& aParams)
+                  const ShouldStop& aShould_stop,
+                  const cgal_bgl_named_params<P,T,R>& aParams)
 {
   using boost::choose_param;
   using boost::choose_const_pmap;

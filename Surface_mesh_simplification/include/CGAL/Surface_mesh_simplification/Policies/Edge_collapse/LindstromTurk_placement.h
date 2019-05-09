@@ -18,7 +18,7 @@
 // Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
 //
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_PLACEMENT_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_PLACEMENT_H 1
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_PLACEMENT_H
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
@@ -34,7 +34,7 @@ class LindstromTurk_placement
 public:
   typedef TM_                                                             TM;
 
-  LindstromTurk_placement(LindstromTurk_params const& aParams = LindstromTurk_params())
+  LindstromTurk_placement(const LindstromTurk_params& aParams = LindstromTurk_params())
     : mParams(aParams)
   {}
 
@@ -49,6 +49,6 @@ private:
 };
 
 } // namespace Surface_mesh_simplification
-} //namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_PLACEMENT_H

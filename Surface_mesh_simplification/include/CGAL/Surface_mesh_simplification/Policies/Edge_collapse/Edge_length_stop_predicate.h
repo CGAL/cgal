@@ -18,7 +18,7 @@
 // Author(s)     : Sebastien Loriot <sebastien.loriot@geometryfactory.com>
 //
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_EDGE_LENGTH_STOP_PREDICATE_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_EDGE_LENGTH_STOP_PREDICATE_H 1
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_EDGE_LENGTH_STOP_PREDICATE_H
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 #include <CGAL/squared_distance_3.h>
@@ -47,6 +47,6 @@ public:
 };
 
 } // namespace Surface_mesh_simplification
-} //namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_EDGE_LENGTH_STOP_PREDICATE_H

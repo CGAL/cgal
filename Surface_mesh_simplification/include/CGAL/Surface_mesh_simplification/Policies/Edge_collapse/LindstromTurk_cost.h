@@ -34,7 +34,7 @@ class LindstromTurk_cost
 public:
   typedef TM_                                                                 TM;
 
-  LindstromTurk_cost(LindstromTurk_params const& aParams = LindstromTurk_params())
+  LindstromTurk_cost(const LindstromTurk_params& aParams = LindstromTurk_params())
     : mParams(aParams)
   {}
 
@@ -51,6 +51,6 @@ private:
 };
 
 } // namespace Surface_mesh_simplification
-} //namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_COST_H

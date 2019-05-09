@@ -75,9 +75,9 @@ public:
 
            Vector n1 = Traits().construct_cross_product_vector_3_object()(eqp,eqr);
            Vector n2 = Traits().construct_cross_product_vector_3_object()(eq2p,eq2r);
-           if(! is_positive(Traits().compute_scalar_product_3_object()(n1, n2))){
+           if(!is_positive(Traits().compute_scalar_product_3_object()(n1, n2)))
              return boost::optional<typename Profile::Point>();
-           }
+
            ++it;
          }
        }
@@ -86,10 +86,10 @@ public:
   }
 
 private:
-  Placement  mPlacement;
+  Placement mPlacement;
 };
 
 } // namespace Surface_mesh_simplification
-} //namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_BOUNDED_NORMAL_CHANGE_PLACEMENT_H

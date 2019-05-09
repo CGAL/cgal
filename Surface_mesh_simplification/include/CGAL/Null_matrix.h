@@ -28,6 +28,6 @@ class Null_matrix {};
 
 static const Null_matrix NULL_MATRIX = Null_matrix();
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_NULL_MATRIX_H

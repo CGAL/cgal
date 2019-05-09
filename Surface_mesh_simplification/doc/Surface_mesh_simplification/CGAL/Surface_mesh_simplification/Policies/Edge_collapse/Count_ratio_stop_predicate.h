@@ -6,42 +6,41 @@ namespace Surface_mesh_simplification {
 \ingroup PkgSurfaceMeshSimplificationRef
 
 The class `Count_ratio_stop_predicate` is a model for the `StopPredicate` concept
-which returns `true` when the relation between the initial and current number of edges drops below a certain ratio.  
+which returns `true` when the relation between the initial and current number of edges drops below a certain ratio.
 
 \tparam TriangleMesh is the type of surface mesh being simplified, and must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 
-
 \cgalModels `StopPredicate`
 
-\sa `CGAL::Surface_mesh_simplification::Count_stop_predicate<TriangleMesh>` 
+\sa `CGAL::Surface_mesh_simplification::Count_stop_predicate<TriangleMesh>`
 
 */
 template< typename TriangleMesh >
-class Count_ratio_stop_predicate {
+class Count_ratio_stop_predicate
+{
 public:
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
-Initializes the predicate establishing the `ratio`. 
-*/ 
-Count_ratio_stop_predicate<TriangleMesh>(double ratio); 
+Initializes the predicate establishing the `ratio`.
+*/
+Count_ratio_stop_predicate<TriangleMesh>(double ratio);
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
-Returns ` (((double)current_count / (double)initial_count) < ratio)`. 
-All other parameters are ignored (but exist since this is a generic policy). 
-*/ 
-bool operator()(FT const& current_cost 
-, const Profile& edge_profile 
-, size_type initial_count 
-, size_type current_count 
-) const; 
+Returns ` (((double)current_count / (double)initial_count) < ratio)`.
+All other parameters are ignored (but exist since this is a generic policy).
+*/
+bool operator()(const FT& current_cost,
+                const Profile& edge_profile,
+                size_type initial_count,
+                size_type current_count) const;
 
 /// @}
 
