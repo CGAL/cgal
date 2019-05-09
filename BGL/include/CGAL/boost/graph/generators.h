@@ -43,6 +43,11 @@ typename boost::graph_traits<Graph>::face_descriptor add_face(const VertexRange&
 
 namespace internal {
 
+template <class FaceGraph>
+void swap_vertices(typename boost::graph_traits<FaceGraph>::vertex_descriptor& p,
+                   typename boost::graph_traits<FaceGraph>::vertex_descriptor& q,
+                   FaceGraph& g);
+
 template<typename InputIterator>
 typename std::iterator_traits<InputIterator>::value_type
 random_entity_in_range(InputIterator first, InputIterator beyond,
