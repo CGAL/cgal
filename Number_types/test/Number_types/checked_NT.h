@@ -1,4 +1,9 @@
 #include <cassert>
+#include <iostream>
+#include <utility>
+#include <CGAL/functional.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/enum.h>
 
 namespace CGAL {
 template <class NT1, class NT2>
