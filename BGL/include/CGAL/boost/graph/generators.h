@@ -25,12 +25,15 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/properties.h>
 
+#include <CGAL/boost/graph/Euler_operations.h>
+
 #include <CGAL/Random.h>
 #include <CGAL/function_objects.h>
 
 namespace CGAL {
 namespace Euler {
 
+// Some forward declaration to break the helpers.h > generators.h > Euler_operations.h cycle
 template< typename Graph>
 void fill_hole(typename boost::graph_traits<Graph>::halfedge_descriptor h,
                Graph& g);
@@ -820,8 +823,5 @@ make_grid(typename boost::graph_traits<Graph>::vertices_size_type w,
 }
 
 } // namespace CGAL
-
-// Include "Euler_operations.h" at the end, because its implementation requires this header.
-#include <CGAL/boost/graph/Euler_operations.h>
 
 #endif // CGAL_BOOST_GRAPH_GENERATORS_H

@@ -35,6 +35,17 @@ namespace CGAL {
 
 /// \cond SKIP_IN_MANUAL
 
+// Some forward declaration to break the helpers.h > generators.h > Euler_operations.h cycle
+template <typename FaceGraph>
+boost::optional<typename boost::graph_traits<FaceGraph>::halfedge_descriptor>
+is_border(typename boost::graph_traits<FaceGraph>::vertex_descriptor vd, const FaceGraph& g);
+template <typename FaceGraph>
+bool is_border(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g);
+template <typename FaceGraph>
+bool is_border(typename boost::graph_traits<FaceGraph>::edge_descriptor ed, const FaceGraph& g);
+template <typename Mesh>
+bool is_valid_polygon_mesh(const Mesh& g, bool verb);
+
 namespace EulerImpl {
 
 template<typename Graph>
