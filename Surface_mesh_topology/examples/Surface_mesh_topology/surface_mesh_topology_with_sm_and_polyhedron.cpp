@@ -5,7 +5,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Surface_mesh/IO.h>
 
-#include <CGAL/Surface_mesh_curve_topology.h>
+#include <CGAL/Homotopy_tester.h>
 #include <CGAL/Path_generators.h>
 #include <CGAL/Path_on_surface.h>
 #include <CGAL/boost/graph/io.h>
@@ -23,7 +23,7 @@ template<class FaceGraph>
 void test(const FaceGraph& mesh)
 {
   CGAL::Random random(seed);
-  CGAL::Surface_mesh_curve_topology<FaceGraph> smct(mesh);
+  CGAL::Homotopy_tester<FaceGraph> smct(mesh);
 
   CGAL::Path_on_surface<FaceGraph> p1(mesh); // A first path
   p1.generate_random_closed_path(10, random);

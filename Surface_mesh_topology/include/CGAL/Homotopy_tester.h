@@ -18,14 +18,14 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-#ifndef CGAL_SURFACE_MESH_CURVE_TOPOLOGY_H
-#define CGAL_SURFACE_MESH_CURVE_TOPOLOGY_H 1
+#ifndef CGAL_HOMOTOPY_TESTER_H
+#define CGAL_HOMOTOPY_TESTER_H 1
 
 // Should be defined before to include Path_on_surface_with_rle.h
 // If nothing is defined, use V1
 // #define CGAL_PWRLE_TURN_V1  // Compute turns by turning (method of CMap)
-// #define CGAL_PWRLE_TURN_V2  // Compute turns by using an id of darts, given by an hash-table (built and given by Surface_mesh_curve_topology)
-#define CGAL_PWRLE_TURN_V3  // Compute turns by using an id of darts, associated in Info of Darts (build by Surface_mesh_curve_topology)
+// #define CGAL_PWRLE_TURN_V2  // Compute turns by using an id of darts, given by an hash-table (built and given by Homotopy_tester)
+#define CGAL_PWRLE_TURN_V3  // Compute turns by using an id of darts, associated in Info of Darts (build by Homotopy_tester)
 
 #include <CGAL/Union_find.h>
 #include <CGAL/Random.h>
@@ -41,7 +41,7 @@
 
 namespace CGAL {
 
-struct CMap_for_surface_mesh_curve_topology_items
+struct CMap_for_homotopy_tester_items
 {
   template <class CMap>
   struct Dart_wrapper
@@ -52,16 +52,16 @@ struct CMap_for_surface_mesh_curve_topology_items
     typedef CGAL::cpp11::tuple<> Attributes;
   };
 };
-typedef CGAL::Combinatorial_map<2, CMap_for_surface_mesh_curve_topology_items>
-CMap_for_surface_mesh_curve_topology;
+typedef CGAL::Combinatorial_map<2, CMap_for_homotopy_tester_items>
+CMap_for_homotopy_tester;
 
   template<typename Mesh>
-  class Surface_mesh_curve_topology
+  class Homotopy_tester
   {
   public:
-    typedef typename CMap_for_surface_mesh_curve_topology::Dart_handle
+    typedef typename CMap_for_homotopy_tester::Dart_handle
                                 Dart_handle;
-    typedef typename CMap_for_surface_mesh_curve_topology::Dart_const_handle
+    typedef typename CMap_for_homotopy_tester::Dart_const_handle
                                 Dart_const_handle;
     typedef CGAL::Union_find<Dart_handle> UFTree;
     typedef typename UFTree::handle UFTree_handle;
@@ -80,7 +80,7 @@ CMap_for_surface_mesh_curve_topology;
     typedef boost::unordered_map<Dart_const_handle, std::size_t> TDartIds;
 #endif //CGAL_PWRLE_TURN_V2
 
-    Surface_mesh_curve_topology(const Mesh& amap, bool display_time=false) :
+    Homotopy_tester(const Mesh& amap, bool display_time=false) :
       m_original_map(amap)
     {
       if (!m_map.is_without_boundary(1))
@@ -286,7 +286,7 @@ CMap_for_surface_mesh_curve_topology;
       CGAL_assertion(m_map.darts().size()==4 || are_paths_valid()); // Because torus is a special case
     }
     
-    ~Surface_mesh_curve_topology()
+    ~Homotopy_tester()
     {
       m_original_map.free_mark(m_mark_T);
       m_original_map.free_mark(m_mark_L);
@@ -315,7 +315,7 @@ CMap_for_surface_mesh_curve_topology;
       bool res=false;
       if (m_map.number_of_darts()==4)
       { // Case of torus
-        Path_on_surface<CMap_for_surface_mesh_curve_topology>
+        Path_on_surface<CMap_for_homotopy_tester>
           pt=transform_original_path_into_quad_surface_for_torus(p);
 
         int a, b;
@@ -324,7 +324,7 @@ CMap_for_surface_mesh_curve_topology;
       }
       else
       {
-        Path_on_surface_with_rle<CMap_for_surface_mesh_curve_topology>
+        Path_on_surface_with_rle<CMap_for_homotopy_tester>
             pt=transform_original_path_into_quad_surface_with_rle(p);
 
         pt.canonize();
@@ -367,9 +367,9 @@ CMap_for_surface_mesh_curve_topology;
       bool res=false;
       if (m_map.number_of_darts()==4)
       { // Case of torus
-        Path_on_surface<CMap_for_surface_mesh_curve_topology>
+        Path_on_surface<CMap_for_homotopy_tester>
           pt1=transform_original_path_into_quad_surface_for_torus(p1);
-        Path_on_surface<CMap_for_surface_mesh_curve_topology>
+        Path_on_surface<CMap_for_homotopy_tester>
           pt2=transform_original_path_into_quad_surface_for_torus(p2);
 
         int a1, a2, b1, b2;
@@ -379,9 +379,9 @@ CMap_for_surface_mesh_curve_topology;
       }
       else
       {
-        Path_on_surface_with_rle<CMap_for_surface_mesh_curve_topology>
+        Path_on_surface_with_rle<CMap_for_homotopy_tester>
           pt1=transform_original_path_into_quad_surface_with_rle(p1);
-        Path_on_surface_with_rle<CMap_for_surface_mesh_curve_topology>
+        Path_on_surface_with_rle<CMap_for_homotopy_tester>
           pt2=transform_original_path_into_quad_surface_with_rle(p2);
         pt1.canonize();
         pt2.canonize();
@@ -392,11 +392,11 @@ CMap_for_surface_mesh_curve_topology;
                  <<pt2.length()<<std::endl;
 #endif
 
-        /* std::cout<<"path1="<<Path_on_surface<CMap_for_surface_mesh_curve_topology>(path1)<<std::endl
-                 <<"path2="<<Path_on_surface<CMap_for_surface_mesh_curve_topology>(path2)<<std::endl;
+        /* std::cout<<"path1="<<Path_on_surface<CMap_for_homotopy_tester>(path1)<<std::endl
+                 <<"path2="<<Path_on_surface<CMap_for_homotopy_tester>(path2)<<std::endl;
 
-        Path_on_surface<CMap_for_surface_mesh_curve_topology>(path1).display_pos_and_neg_turns(); std::cout<<std::endl;
-        Path_on_surface<CMap_for_surface_mesh_curve_topology>(path2).display_pos_and_neg_turns(); std::cout<<std::endl;
+        Path_on_surface<CMap_for_homotopy_tester>(path1).display_pos_and_neg_turns(); std::cout<<std::endl;
+        Path_on_surface<CMap_for_homotopy_tester>(path2).display_pos_and_neg_turns(); std::cout<<std::endl;
 
         path1.display_pos_and_neg_turns(); std::cout<<std::endl;
         path2.display_pos_and_neg_turns(); std::cout<<std::endl; */
@@ -451,12 +451,12 @@ CMap_for_surface_mesh_curve_topology;
       return res;
     }
 
-    const CMap_for_surface_mesh_curve_topology& get_map() const
+    const CMap_for_homotopy_tester& get_map() const
     { return m_map; }
 
   protected:
     void count_edges_of_path_on_torus
-    (const Path_on_surface<CMap_for_surface_mesh_curve_topology>& path,
+    (const Path_on_surface<CMap_for_homotopy_tester>& path,
      int& a, int& b) const
     {
       CGAL_assertion(m_map.number_of_darts()==4);
@@ -474,12 +474,12 @@ CMap_for_surface_mesh_curve_topology;
       }
     }
 
-    Path_on_surface<CMap_for_surface_mesh_curve_topology>
+    Path_on_surface<CMap_for_homotopy_tester>
     transform_original_path_into_quad_surface_for_torus(const Path_on_surface<Mesh>& path) const
     {
       CGAL_assertion(m_map.number_of_darts()==4);
       
-      Path_on_surface<CMap_for_surface_mesh_curve_topology> res(m_map);
+      Path_on_surface<CMap_for_homotopy_tester> res(m_map);
       if (path.is_empty()) return res;
 
       Dart_const_handle cur;
@@ -501,11 +501,11 @@ CMap_for_surface_mesh_curve_topology;
       return res;
     }
 
-    Path_on_surface_with_rle<CMap_for_surface_mesh_curve_topology>
+    Path_on_surface_with_rle<CMap_for_homotopy_tester>
     transform_original_path_into_quad_surface_with_rle
     (const Path_on_surface<Mesh>& path) const
     {
-      Path_on_surface_with_rle<CMap_for_surface_mesh_curve_topology>
+      Path_on_surface_with_rle<CMap_for_homotopy_tester>
           res(m_map
         #ifdef CGAL_PWRLE_TURN_V2
               , m_dart_ids
@@ -566,9 +566,9 @@ CMap_for_surface_mesh_curve_topology;
       uftrees.clear();
       faces.clear();
 
-      typename CMap_for_surface_mesh_curve_topology::size_type
+      typename CMap_for_homotopy_tester::size_type
         treated=m_map.get_new_mark();
-      for (typename CMap_for_surface_mesh_curve_topology::Dart_range::iterator
+      for (typename CMap_for_homotopy_tester::Dart_range::iterator
              it=m_map.darts().begin(), itend=m_map.darts().end(); it!=itend;
            ++it)
       {
@@ -650,7 +650,7 @@ CMap_for_surface_mesh_curve_topology;
 
   /*    m_map.set_automatic_attributes_management(false);
 
-      for (typename CMap_for_surface_mesh_curve_topology::Dart_range::iterator
+      for (typename CMap_for_homotopy_tester::Dart_range::iterator
              it=m_map.darts().begin(), itend=m_map.darts().end();
            it!=itend; ++it)
       {
@@ -779,7 +779,7 @@ CMap_for_surface_mesh_curve_topology;
       typename Map::size_type toremove=m_map.get_new_mark();
       Dart_handle currentdart=NULL, oppositedart=NULL;
       
-      for (typename CMap_for_surface_mesh_curve_topology::Dart_range::iterator
+      for (typename CMap_for_homotopy_tester::Dart_range::iterator
              it=m_map.darts().begin(), itend=m_map.darts().end(); it!=itend;
            ++it)
       {
@@ -824,7 +824,7 @@ CMap_for_surface_mesh_curve_topology;
         update_length_two_paths_before_edge_removals(toremove, copy_to_origin);
 
         // We remove all the edges to remove.
-        for (typename CMap_for_surface_mesh_curve_topology::Dart_range::iterator
+        for (typename CMap_for_homotopy_tester::Dart_range::iterator
                it=m_map.darts().begin(), itend=m_map.darts().end(); it!=itend;
              ++it)
         {
@@ -870,7 +870,7 @@ CMap_for_surface_mesh_curve_topology;
       }
 
       // 3) We remove all the old edges.
-      for (typename CMap_for_surface_mesh_curve_topology::Dart_range::iterator
+      for (typename CMap_for_homotopy_tester::Dart_range::iterator
              it=m_map.darts().begin(), itend=m_map.darts().end(); it!=itend;
            ++it)
       {
@@ -899,7 +899,7 @@ CMap_for_surface_mesh_curve_topology;
           std::pair<Dart_const_handle, Dart_const_handle>& p=paths[it];
 
           Dart_handle initdart=m_map.darts().iterator_to
-            (const_cast<typename CMap_for_surface_mesh_curve_topology::Dart &>
+            (const_cast<typename CMap_for_homotopy_tester::Dart &>
              (*(p.first)));
           Dart_handle initdart2=m_map.template beta<2>(initdart);
           CGAL_assertion(initdart2==p.second);
@@ -1127,7 +1127,7 @@ CMap_for_surface_mesh_curve_topology;
           {
             Dart_const_handle dd1=m_map.other_extremity(d1);
             CGAL_assertion(dd1!=NULL);
-            if (!CGAL::belong_to_same_cell<CMap_for_surface_mesh_curve_topology,0>(m_map, dd1, d2))
+            if (!CGAL::belong_to_same_cell<CMap_for_homotopy_tester,0>(m_map, dd1, d2))
             {
               std::cout<<"ERROR: the two darts in a path are not consecutive."
                       <<std::endl;
@@ -1142,7 +1142,7 @@ CMap_for_surface_mesh_curve_topology;
 
   protected:
     const typename Get_map<Mesh, Mesh>::storage_type m_original_map; // The original map
-    CMap_for_surface_mesh_curve_topology m_map; /// the transformed map
+    CMap_for_homotopy_tester m_map; /// the transformed map
     TPaths paths; /// Pair of edges associated with each edge of m_original_map
                   /// (except the edges that belong to the spanning tree T).
     std::size_t m_mark_T; /// mark each edge of m_original_map that belong to the spanning tree T
@@ -1160,5 +1160,5 @@ CMap_for_surface_mesh_curve_topology;
   
 } // namespace CGAL
 
-#endif // CGAL_SURFACE_MESH_CURVE_TOPOLOGY_H //
+#endif // CGAL_HOMOTOPY_TESTER_H //
 // EOF //

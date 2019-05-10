@@ -1,6 +1,6 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Surface_mesh/IO.h>
-#include <CGAL/Surface_mesh_curve_topology.h>
+#include <CGAL/Homotopy_tester.h>
 #include <CGAL/Path_on_surface.h>
 #include <CGAL/draw_lcc_with_paths.h>
 
@@ -43,7 +43,7 @@ int main()
   }
   in>>sm;
 
-  CGAL::Surface_mesh_curve_topology<SM> smct(sm);
+  CGAL::Homotopy_tester<SM> smct(sm);
   CGAL::Path_on_surface<SM> p1(sm), p2(sm), p3(sm);
   create_path_1(p1);
   create_path_2(p2);

@@ -1,6 +1,6 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
-#include <CGAL/Surface_mesh_curve_topology.h>
+#include <CGAL/Homotopy_tester.h>
 
 /* If you want to use a viewer, you can use qglviewer. */
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -117,7 +117,7 @@ int main(int argc, char** argv)
   lcc.display_characteristics(std::cout) << ", valid="
                                          << lcc.is_valid() << std::endl;
   
-  CGAL::Surface_mesh_curve_topology<LCC_3_cmap> smct(lcc, time);
+  CGAL::Homotopy_tester<LCC_3_cmap> smct(lcc, time);
   std::cout<<"Reduced map: ";
   smct.get_map().display_characteristics(std::cout)
     << ", valid="<< smct.get_map().is_valid() << std::endl;

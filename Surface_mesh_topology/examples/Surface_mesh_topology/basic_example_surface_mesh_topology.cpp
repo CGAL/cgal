@@ -1,6 +1,6 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
-#include <CGAL/Surface_mesh_curve_topology.h>
+#include <CGAL/Homotopy_tester.h>
 #include <CGAL/Path_on_surface.h>
 #include <CGAL/draw_lcc_with_paths.h>
 
@@ -36,7 +36,7 @@ int main()
     exit(EXIT_FAILURE);
   }
 
-  CGAL::Surface_mesh_curve_topology<LCC_3_cmap> smct(lcc);
+  CGAL::Homotopy_tester<LCC_3_cmap> smct(lcc);
   CGAL::Path_on_surface<LCC_3_cmap> p1(lcc), p2(lcc), p3(lcc);
   create_path_1(p1);
   create_path_2(p2);

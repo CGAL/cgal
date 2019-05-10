@@ -1,7 +1,7 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
-#include <CGAL/Surface_mesh_curve_topology.h>
+#include <CGAL/Homotopy_tester.h>
 #include <CGAL/Path_generators.h>
 #include <vector>
 #include <sstream>
@@ -37,7 +37,7 @@ static int nbtests=0;
 static int starting_seed;
 
 ///////////////////////////////////////////////////////////////////////////////
-bool unit_test_canonize(CGAL::Surface_mesh_curve_topology<LCC_3_cmap>& smct,
+bool unit_test_canonize(CGAL::Homotopy_tester<LCC_3_cmap>& smct,
                         std::vector<CGAL::Path_on_surface<LCC_3_cmap> >& paths,
                         const char* msg,
                         bool draw, int testtorun)
@@ -92,7 +92,7 @@ bool test_double_torus_quad(bool draw, int testtorun)
       std::cout<<"PROBLEM reading file ./data/double-torus.off"<<std::endl;
       return false;
     }
-    CGAL::Surface_mesh_curve_topology<LCC_3_cmap> smct(lcc);
+    CGAL::Homotopy_tester<LCC_3_cmap> smct(lcc);
 
     for (unsigned int i=0; i<3; ++i)
     {
@@ -116,7 +116,7 @@ bool test_double_torus_quad(bool draw, int testtorun)
       std::cout<<"PROBLEM reading file ./data/double-torus.off"<<std::endl; // ./data/double-torus-smooth.off"<<std::endl;
       return false;
     }
-    CGAL::Surface_mesh_curve_topology<LCC_3_cmap> smct(lcc);
+    CGAL::Homotopy_tester<LCC_3_cmap> smct(lcc);
 
     if (testtorun==-1 || nbtests==testtorun)
     {
@@ -148,7 +148,7 @@ bool test_double_torus_quad(bool draw, int testtorun)
       std::cout<<"PROBLEM reading file ./data/3torus-smooth.off"<<std::endl; // 3torus.off
       return false;
     }
-    CGAL::Surface_mesh_curve_topology<LCC_3_cmap> smct(lcc);
+    CGAL::Homotopy_tester<LCC_3_cmap> smct(lcc);
 
     if (testtorun==-1 || nbtests==testtorun)
     {

@@ -1,7 +1,7 @@
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/Combinatorial_map_2_incremental_builder.h>
 #include <CGAL/Path_on_surface.h>
-#include <CGAL/Surface_mesh_curve_topology.h>
+#include <CGAL/Homotopy_tester.h>
 #include <iostream>
 #include <cstdlib>
 
@@ -30,7 +30,7 @@ int main()
   cm.display_characteristics(std::cout)<<std::endl;
   
   CGAL::Path_on_surface<CMap> p=b.create_path("a b -a e -b d");  
-  CGAL::Surface_mesh_curve_topology<CMap> smct(cm);
+  CGAL::Homotopy_tester<CMap> smct(cm);
 
   bool res=smct.is_contractible(p);
   std::cout<<"Path "<<(res?"IS":"IS NOT")<<" contractible."<<std::endl;
