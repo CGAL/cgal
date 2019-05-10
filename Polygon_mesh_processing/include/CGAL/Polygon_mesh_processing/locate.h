@@ -1640,7 +1640,7 @@ locate_with_AABB_tree(const typename Location_traits<TriangleMesh>::Point& p,
 ///          to call this function more than once, first use `build_AABB_tree()` to create a
 ///          an AABB tree that you can store and use the function `locate_with_AABB_tree()`.
 ///
-/// \tparam TriangleMesh must be a model of `FaceListGraph`.
+/// \tparam TriangleMesh a model of `FaceListGraph`.
 /// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
 /// \param p the point to locate on the input triangulated surface mesh
@@ -1714,7 +1714,7 @@ locate(const typename property_map_value<TriangleMesh, boost::vertex_point_t>::t
 ///
 /// If the ray does not intersect the mesh, a default constructed location is returned.
 ///
-/// \tparam TriangleMesh must be a model of `FaceListGraph`.
+/// \tparam TriangleMesh a model of `FaceListGraph`.
 /// \tparam Point3VPM a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 ///                   as key type and the \cgal 3D point type (your kernel's `%Point_3`) as value type.
 /// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
@@ -1840,7 +1840,7 @@ locate_with_AABB_tree(const typename Location_traits<TriangleMesh>::Ray& ray,
 ///          copy of the `AABB_tree`, and use the overloads of this function
 ///          that accept a reference to an AABB tree as input.
 ///
-/// \tparam TriangleMesh must be a model of `FaceListGraph`.
+/// \tparam TriangleMesh a model of `FaceListGraph`.
 /// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
 /// \param ray a ray to intersect with the input triangulated surface mesh
