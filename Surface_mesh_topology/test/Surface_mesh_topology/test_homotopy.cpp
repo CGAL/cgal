@@ -10,7 +10,7 @@
 
 /* If you want to use a viewer, you can use qglviewer. */
 #ifdef CGAL_USE_BASIC_VIEWER
-#include <CGAL/draw_lcc_with_paths.h>
+#include <CGAL/draw_face_graph_with_paths.h>
 #endif
 
 struct MyItems

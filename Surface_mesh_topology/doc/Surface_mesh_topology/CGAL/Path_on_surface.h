@@ -1,5 +1,6 @@
 
 namespace CGAL {
+namespace Surface_mesh_topology {
   /*!
     \ingroup PkgSurfaceMeshTopologyClasses
     
@@ -76,4 +77,5 @@ namespace CGAL {
     void generate_random_closed_path(std::size_t length, Random& random=get_default_random());
     
    };
+}
 }

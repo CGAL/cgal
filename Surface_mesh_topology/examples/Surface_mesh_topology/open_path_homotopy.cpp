@@ -2,7 +2,7 @@
 #include <CGAL/Surface_mesh/IO.h>
 #include <CGAL/Homotopy_tester.h>
 #include <CGAL/Path_on_surface.h>
-#include <CGAL/draw_lcc_with_paths.h>
+#include <CGAL/draw_face_graph_with_paths.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3                                     Point_3;
@@ -15,6 +15,7 @@ void create_path_1(CGAL::Path_on_surface<SM>& p)
   for (int i=0; i<3; ++i)
   { p.extend_positive_turn(2); } // Extend the path
 }
+
 ///////////////////////////////////////////////////////////////////////////////
 void create_path_2(CGAL::Path_on_surface<SM>& p)
 {
@@ -22,6 +23,7 @@ void create_path_2(CGAL::Path_on_surface<SM>& p)
   for (int i=0; i<3; ++i)
   { p.extend_negative_turn(2); } // Extend the path
 }
+
 ///////////////////////////////////////////////////////////////////////////////
 void create_path_3(CGAL::Path_on_surface<SM>& p)
 {
@@ -31,6 +33,7 @@ void create_path_3(CGAL::Path_on_surface<SM>& p)
   { p.extend_positive_turn(2); }
   p.extend_positive_turn(1);
 }
+
 ///////////////////////////////////////////////////////////////////////////////
 int main()
 {

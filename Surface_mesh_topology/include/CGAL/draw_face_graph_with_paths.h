@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 CNRS and LIRIS' Establishments (France).
+﻿// Copyright (c) 2019 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -17,8 +17,8 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 
-#ifndef CGAL_DRAW_LCC_WITH_PATHS_H
-#define CGAL_DRAW_LCC_WITH_PATHS_H
+#ifndef CGAL_DRAW_FACE_GRAPH_WITH_PATHS_H
+#define CGAL_DRAW_FACE_GRAPH_WITH_PATHS_H
 
 #include <CGAL/draw_linear_cell_complex.h>
 
@@ -29,7 +29,7 @@
 
 namespace CGAL
 {
-  
+// Specialisation for face graph; otherwise use the LCC_geom_utils of LCC.
 template<class Mesh, class Kernel>
 struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Kernel, 3>
 {
@@ -39,7 +39,7 @@ struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Kernel, 3>
   {
     typename Get_traits<Mesh>::Vector normal(CGAL::NULL_VECTOR);
     const typename Get_traits<Mesh>::Point*
-        curr=&Get_traits<Mesh>::get_point(mesh.get_fg(), dh); // mesh.other_extremity(dh));
+        curr=&Get_traits<Mesh>::get_point(mesh.get_fg(), dh);
     typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_handle adart=dh;
     unsigned int nb=0;
 
@@ -65,7 +65,6 @@ struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Kernel, 3>
     typename Get_traits<Mesh>::Vector normal(CGAL::NULL_VECTOR);
     unsigned int nb = 0;
 
-    // dh=mesh.other_extremity(dh);
     for ( typename CGAL::Face_graph_wrapper<Mesh>::template Dart_of_cell_range<0>::
           const_iterator it=mesh.template darts_of_cell<0>(dh).begin(),
           itend=mesh.template darts_of_cell<0>(dh).end(); it!=itend; ++it )
@@ -81,11 +80,9 @@ struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Kernel, 3>
   }
 };
 
-
-
-// Viewer class for LCC with paths.
+// Viewer class for Face_graph with paths.
 template<class Mesh, class DrawingFunctorLCC>
-class LCC_with_path_viewer : public Basic_viewer_qt
+class Face_graph_with_path_viewer : public Basic_viewer_qt
 {
   typedef Basic_viewer_qt Base;
   typedef typename Get_map<Mesh, Mesh>::type LCC;
@@ -100,12 +97,12 @@ public:
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
   ///        usefull for very big object where this time could be long)
-  LCC_with_path_viewer(QWidget* parent,
-                       const Mesh& amesh,
-                       const std::vector<Path_on_surface<Mesh> >* paths=NULL,
-                       std::size_t amark=LCC::INVALID_MARK,
-                       const char* title="", bool anofaces=false,
-                       const DrawingFunctorLCC& drawing_functor=DrawingFunctorLCC()) :
+  Face_graph_with_path_viewer(QWidget* parent,
+                              const Mesh& amesh,
+                              const std::vector<Path_on_surface<Mesh> >* paths=NULL,
+                              std::size_t amark=LCC::INVALID_MARK,
+                              const char* title="", bool anofaces=false,
+                              const DrawingFunctorLCC& drawing_functor=DrawingFunctorLCC()) :
     Base(parent, title, true, true, true, false, true),
     mesh(amesh),
     lcc(amesh),
@@ -361,10 +358,10 @@ void draw(const Mesh& alcc,
     int argc=1;
     const char* argv[2]={"lccviewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));
-    LCC_with_path_viewer<Mesh, DrawingFunctor> mainwindow(app.activeWindow(),
-                                                          alcc, &paths, amark,
-                                                          title, nofill,
-                                                          drawing_functor);
+    Face_graph_with_path_viewer<Mesh, DrawingFunctor> mainwindow(app.activeWindow(),
+                                                                 alcc, &paths, amark,
+                                                                 title, nofill,
+                                                                 drawing_functor);
     mainwindow.show();
     app.exec();
   }
@@ -386,4 +383,4 @@ void draw(const Mesh& alcc,
 
 #endif // CGAL_USE_BASIC_VIEWER
 
-#endif // CGAL_DRAW_LCC_WITH_PATHS_H
+#endif // CGAL_DRAW_FACE_GRAPH_WITH_PATHS_H

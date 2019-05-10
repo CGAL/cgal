@@ -85,7 +85,7 @@ In this second example, we build a genus two torus surface from a set of three s
 
 \subsection SMTopology_Example_III Open Path Example
 
-In this third example, we create non closed paths on the same mesh as in the first example and perform homotopy tests with fixed endpoints.
+In this third example, we create non closed paths on the same mesh as in the first example and perform homotopy tests with fixed endpoints. Here, a `Surface_mesh` is used as an alternative to a `CombinatorialMap`.
 \cgalExample{Surface_mesh_topology/open_path_homotopy.cpp}
 
 \section SMTopology_Benchmarks Benchmarks
@@ -173,8 +173,6 @@ The canonical form of a curve is obtained by flattening its brackets, removing i
 
 \subsection SMTopology_Homotopy_Test Homotopy Test 
 It can be proven that the canonical form is uniquely defined and only depends on the homotopy class of the curve. Hence, the curves \f$C'\f$ and \f$D'\f$ in \f$\cal{Q}\f$ are homotopic if and only if their canonical forms are equal. Since each curve is defined as a sequence of (oriented) edges up to a cyclic permutation, we resort to the Knuth-Morris-Pratt algorithm to decide in linear time if the canonical forms are the same up to a cyclic permutation.
-
-\section SMTopology_History Implementation History
 
 */
 } /* namespace CGAL */

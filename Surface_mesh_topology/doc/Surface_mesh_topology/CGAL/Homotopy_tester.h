@@ -1,5 +1,6 @@
 
 namespace CGAL {
+namespace Surface_mesh_topology {
   /*!
     \ingroup PkgSurfaceMeshTopologyClasses
     
@@ -34,4 +35,5 @@ namespace CGAL {
     bool is_contractible(const Path_on_surface<Mesh>& p) const;    
   };
 
+}
 }

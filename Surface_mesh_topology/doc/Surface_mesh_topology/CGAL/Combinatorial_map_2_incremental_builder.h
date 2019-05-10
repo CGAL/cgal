@@ -1,5 +1,6 @@
 
 namespace CGAL {
+namespace Surface_mesh_topology {
   /*!
     \ingroup PkgSurfaceMeshTopologyClasses
 
@@ -59,4 +60,5 @@ namespace CGAL {
     /// create a path directly from a sequence of edge labels `s` (labels are separated by spaces). Returns the path created.
     CGAL::Path_on_surface<CMap> create_path(const std::string& s);
   };
+}
 }

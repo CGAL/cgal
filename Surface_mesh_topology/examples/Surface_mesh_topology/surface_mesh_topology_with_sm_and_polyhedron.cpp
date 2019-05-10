@@ -1,6 +1,6 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
-#include <CGAL/draw_lcc_with_paths.h>
+#include <CGAL/draw_face_graph_with_paths.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Surface_mesh/IO.h>
