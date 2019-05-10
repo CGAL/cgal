@@ -80,7 +80,7 @@ Here, we show with two examples how to create a surface from a list of faces spe
 In this first example, we build a genus two torus surface from a single face, also called a polygonal schema. See left Figure \cgalFigureRef{fig_sm_incremental-builder} for an illustration. Two closed paths are then created. The paths are freely homotopic but not homotopic with fixed endpoint. 
 \cgalExample{Surface_mesh_topology/path_homotopy_with_symbols.cpp}
 
-In this second example, we build a genus two torus surface from a set of three squares. See middle Figure \cgalFigureRef{fig_sm_incremental-builder} for an illustration. The first two faces are added each with a single call to the member function `add_facet()`. The third face is build incrementally by adding its edge labels one at a time. We then create a contractible closed path.
+In this second example, we build a genus two torus surface from a set of three squares. See middle Figure \cgalFigureRef{fig_sm_incremental-builder} for an illustration. The first two faces are added each with a single call to the member function `add_facet()`. The third face is built incrementally by adding its edge labels one at a time. We then create a contractible closed path.
 \cgalExample{Surface_mesh_topology/path_homotopy_with_symbols_2.cpp}
 
 \subsection SMTopology_Example_III Open Path Example
