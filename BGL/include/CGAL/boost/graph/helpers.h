@@ -834,7 +834,7 @@ bool is_empty(const FaceGraph& g)
 /// \brief returns the number of calls to `next()` one has to apply to the halfedge `hd`
 ///        for `source(hd, mesh) == vd` to be true, starting from `hd = halfedge(fd, tm)`.
 ///
-/// \tparam Graph A model of `FaceGraph`
+/// \tparam Graph a model of `FaceGraph`
 ///
 /// \param vd a vertex of `g` whose index is sought
 /// \param fd a face of `g` in which the index of `vd` is sought
@@ -876,7 +876,7 @@ int vertex_index_in_face(const typename boost::graph_traits<Graph>::vertex_descr
 /// \brief returns the number of calls to `next(hd, tm)` one has to apply to `hd` for `hd == he`
 ///        to be true, starting from `hd = halfedge(face(he, tm), tm)`.
 ///
-/// \tparam Graph A model of `FaceGraph`.
+/// \tparam Graph a model of `FaceGraph`.
 ///
 /// \param he a halfedge of `g` whose index in `face(he, tm)` is sought
 /// \param g an object of type `Graph`

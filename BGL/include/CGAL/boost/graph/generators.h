@@ -73,7 +73,7 @@ random_entity_in_range(const CGAL::Iterator_range<InputIterator>& range,
 }
 
 // \brief returns a random non-null vertex incident to the face `fd` of the polygon mesh `g`.
-// \tparam Graph A model of `HalfedgeGraph`
+// \tparam Graph a model of `HalfedgeGraph`
 template<typename Graph>
 typename boost::graph_traits<Graph>::vertex_descriptor
 random_vertex_in_face(typename boost::graph_traits<Graph>::face_descriptor fd,
@@ -84,7 +84,7 @@ random_vertex_in_face(typename boost::graph_traits<Graph>::face_descriptor fd,
 }
 
 // \brief returns a random non-null halfedge incident to the face `fd` of the polygon mesh `g`.
-// \tparam Graph A model of `HalfedgeGraph`
+// \tparam Graph a model of `HalfedgeGraph`
 template<typename Graph>
 typename boost::graph_traits<Graph>::halfedge_descriptor
 random_halfedge_in_face(typename boost::graph_traits<Graph>::face_descriptor fd,
@@ -95,7 +95,7 @@ random_halfedge_in_face(typename boost::graph_traits<Graph>::face_descriptor fd,
 }
 
 // \brief returns a random non-null vertex of the polygon mesh `g`.
-// \tparam Graph A model of `VertexListGraph`
+// \tparam Graph a model of `VertexListGraph`
 template<typename Graph>
 typename boost::graph_traits<Graph>::vertex_descriptor
 random_vertex_in_mesh(const Graph& g, CGAL::Random& rnd = get_default_random())
@@ -104,7 +104,7 @@ random_vertex_in_mesh(const Graph& g, CGAL::Random& rnd = get_default_random())
 }
 
 // \brief returns a random non-null halfedge of the polygon mesh `g`.
-// \tparam Graph A model of `HalfedgeListGraph`
+// \tparam Graph a model of `HalfedgeListGraph`
 template<typename Graph>
 typename boost::graph_traits<Graph>::halfedge_descriptor
 random_halfedge_in_mesh(const Graph& g, CGAL::Random& rnd = get_default_random())
@@ -113,7 +113,7 @@ random_halfedge_in_mesh(const Graph& g, CGAL::Random& rnd = get_default_random()
 }
 
 // \brief returns a random non-null edge of the polygon mesh `g`.
-// \tparam Graph A model of `EdgeListGraph`
+// \tparam Graph a model of `EdgeListGraph`
 template<typename Graph>
 typename boost::graph_traits<Graph>::edge_descriptor
 random_edge_in_mesh(const Graph& g, CGAL::Random& rnd = get_default_random())
@@ -122,7 +122,7 @@ random_edge_in_mesh(const Graph& g, CGAL::Random& rnd = get_default_random())
 }
 
 // \brief returns a random non-null face of the polygon mesh `g`.
-// \tparam Graph A model of `FaceListGraph`
+// \tparam Graph a model of `FaceListGraph`
 template<typename Graph>
 typename boost::graph_traits<Graph>::face_descriptor
 random_face_in_mesh(const Graph& g, CGAL::Random& rnd = get_default_random())

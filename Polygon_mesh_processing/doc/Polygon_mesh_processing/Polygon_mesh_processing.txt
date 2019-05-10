@@ -478,9 +478,8 @@ of the surface (i.e. 2) and not on the ambient dimension within which the surfac
 The functions of the group \ref PMP_locate_grp offer the following functionalities:
 location computations (`CGAL::Polygon_mesh_processing::locate()`, and similar) given a point,
 finding the nearest point on a mesh given a point or a ray
-(`CGAL::Polygon_mesh_processing::locate_with_AABB_tree()`, and similar), location-based predicates
-(for example, `CGAL::Polygon_mesh_processing::is_on_face_border()`), and random location generation
-(for example, `CGAL::Polygon_mesh_processing::random_vertex_in_mesh()`).
+(`CGAL::Polygon_mesh_processing::locate_with_AABB_tree()`, and similar), and location-based predicates
+(for example, `CGAL::Polygon_mesh_processing::is_on_face_border()`).
 
 ****************************************
 \section PMPOrientation Orientation
