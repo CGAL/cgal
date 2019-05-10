@@ -28,6 +28,13 @@ namespace CGAL {
     /// returns `true` iff this path does not pass twice through a same edge or a same vertex.
     bool is_simple() const;
 
+    /// @return the length of the path, i.e. its number of elements.
+    std::size_t length() const;
+      
+    /// @return the ith dart of the path.
+    /// @pre i<`length()`.
+    halfedge_descriptor operator[] (std::size_t i) const;
+
     /// clears this path.
     void clear();
     
@@ -38,12 +45,14 @@ namespace CGAL {
     /// @pre `can_be_pushed(hd)`
     void push_back(halfedge_descriptor hd);
 
+    /// returns `true` iff the dart/halfedge with index `i` can be added at the end of this path.
+    /// If Mesh is a Polyhedron_3, the complexity of this method is linear in number of darts.
+    bool can_be_pushed_by_index(std::size_t i) const;
+
     /// adds the dart/halfedge with index `i` at the end of this path.
+    /// If Mesh is a Polyhedron_3, the complexity of this method is linear in number of darts.
     /// @pre `can_be_pushed_by_index(i)`
     void push_back_by_index(std::size_t i);
-
-    /// returns `true` iff the dart/halfedge with index `i` can be added at the end of this path.
-    bool can_be_pushed_by_index(std::size_t i) const;
 
     /// Add the dart/halfedge obtained by turning `nb` times around the target vertex of the last dart/halfedge in this path, in the positive circular order. To extend with a positive 1 turn thus amounts to extend with the `next()` pointer. (A zero turn corresponds to the `opposite()` pointer.)
     /// @pre !`is_empty()`

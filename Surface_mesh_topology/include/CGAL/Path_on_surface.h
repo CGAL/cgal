@@ -108,7 +108,7 @@ public:
     m_path.clear();
     m_is_closed=false;
   }
-  
+
   /// @return true iff the next index exists
   bool next_index_exists(std::size_t i) const
   { return is_closed() || i<(m_path.size()-1); }
