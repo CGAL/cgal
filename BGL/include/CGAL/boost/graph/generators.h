@@ -25,8 +25,6 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/properties.h>
 
-#include <CGAL/boost/graph/Euler_operations.h>
-
 #include <CGAL/Random.h>
 #include <CGAL/function_objects.h>
 
@@ -823,5 +821,9 @@ make_grid(typename boost::graph_traits<Graph>::vertices_size_type w,
 }
 
 } // namespace CGAL
+
+// Here at the bottom because helpers.h must include generators (for backward compatibility reasons),
+// and Euler_operations.h needs helpers.h
+#include <CGAL/boost/graph/Euler_operations.h>
 
 #endif // CGAL_BOOST_GRAPH_GENERATORS_H
