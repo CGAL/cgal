@@ -186,7 +186,7 @@ namespace Point_set {
       Neighbor_search neighbor_search(
         m_tree, 
         get(m_index_to_point_map, query_index), 
-        m_number_of_neighbors, 
+        static_cast<unsigned int>(m_number_of_neighbors), 
         0, 
         true, 
         m_distance);

@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
   in >> polygon_mesh;
     
   in.close();
-  const Face_range face_range = CGAL::faces(polygon_mesh);
+  const Face_range face_range = faces(polygon_mesh);
 
   std::cout << 
     "* polygon mesh with " 

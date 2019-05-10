@@ -166,7 +166,8 @@ namespace Point_set {
     m_squared_length_3(traits.compute_squared_length_3_object()),
     m_squared_distance_3(traits.compute_squared_distance_3_object()),
     m_scalar_product_3(traits.compute_scalar_product_3_object()),
-    m_sqrt(Get_sqrt::sqrt_object(traits)) {
+    m_sqrt(Get_sqrt::sqrt_object(traits)),
+    m_to_local_converter() {
 
       CGAL_precondition(input_range.size() > 0);
 

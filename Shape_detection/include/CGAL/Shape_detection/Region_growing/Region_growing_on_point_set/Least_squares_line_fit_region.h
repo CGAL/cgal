@@ -166,9 +166,10 @@ namespace Point_set {
     m_squared_length_2(traits.compute_squared_length_2_object()),
     m_squared_distance_2(traits.compute_squared_distance_2_object()),
     m_scalar_product_2(traits.compute_scalar_product_2_object()),
-    m_sqrt(Get_sqrt::sqrt_object(traits)) {
+    m_sqrt(Get_sqrt::sqrt_object(traits)),
+    m_to_local_converter() {
 
-      CGAL_precondition(input_range.size() > 0); 
+      CGAL_precondition(input_range.size() > 0);
 
       CGAL_precondition(distance_threshold >= FT(0));
       CGAL_precondition(angle_threshold >= FT(0) && angle_threshold <= FT(90));

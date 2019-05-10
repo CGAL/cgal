@@ -119,7 +119,8 @@ namespace Point_set {
       const PointMap point_map = PointMap()) :
     m_input_range(input_range),
     m_neighbor_query(neighbor_query),
-    m_point_map(point_map) { 
+    m_point_map(point_map),
+    m_to_local_converter() { 
       
       CGAL_precondition(input_range.size() > 0);
       

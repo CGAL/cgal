@@ -25,6 +25,7 @@
 // STL includes.
 #include <map>
 #include <vector>
+#include <memory>
 
 // CGAL includes.
 #include <CGAL/assertions.h>
@@ -155,6 +156,43 @@ namespace internal {
   };
 
 } // namespace internal
+
+namespace RG {
+  
+  class Point_to_shape_index_map {
+    
+  public:
+    using key_type = std::size_t;
+    using value_type = int;
+    using reference = value_type;
+    using category = boost::readable_property_map_tag;
+
+    Point_to_shape_index_map() { }
+
+    template<typename PointRange>
+    Point_to_shape_index_map(
+      const PointRange& points,
+      const std::vector< std::vector<std::size_t> >& regions) : 
+    m_indices(new std::vector<int>(points.size(), -1)) {
+
+      for (std::size_t i = 0; i < regions.size(); ++i)
+        for (const std::size_t idx : regions[i])
+          (*m_indices)[idx] = static_cast<int>(i);
+    }
+
+    inline friend value_type get(
+      const Point_to_shape_index_map& point_to_shape_index_map, 
+      const key_type key) {
+      
+      const auto& indices = *(point_to_shape_index_map.m_indices);
+      return indices[key];
+    }
+
+  private:
+    std::shared_ptr< std::vector<int> > m_indices;
+  };
+
+} // namespace RG
 } // namespace Shape_detection
 } // namespace CGAL
 

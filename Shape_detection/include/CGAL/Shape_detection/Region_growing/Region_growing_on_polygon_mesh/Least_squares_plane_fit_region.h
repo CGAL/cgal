@@ -167,7 +167,8 @@ namespace Polygon_mesh {
     m_squared_length_3(traits.compute_squared_length_3_object()),
     m_squared_distance_3(traits.compute_squared_distance_3_object()),
     m_scalar_product_3(traits.compute_scalar_product_3_object()),
-    m_sqrt(Get_sqrt::sqrt_object(traits)) {
+    m_sqrt(Get_sqrt::sqrt_object(traits)),
+    m_to_local_converter() {
 
       CGAL_precondition(m_face_range.size() > 0);
 
@@ -206,7 +207,7 @@ namespace Polygon_mesh {
       CGAL_precondition(query_index >= 0);
       CGAL_precondition(query_index < m_face_range.size());
 
-      const auto& face = *(m_face_range.begin() + query_index);
+      const auto face = *(m_face_range.begin() + query_index);
                 
       Vector_3 face_normal;
       get_face_normal(face, face_normal);
@@ -256,7 +257,7 @@ namespace Polygon_mesh {
 
         // The best fit plane will be a plane through this face centroid with 
         // its normal being the face's normal.
-        const auto& face = *(m_face_range.begin() + region[0]);
+        const auto face = *(m_face_range.begin() + region[0]);
         Point_3 face_centroid;
 
         get_face_centroid(face, face_centroid);
@@ -273,11 +274,11 @@ namespace Polygon_mesh {
           CGAL_precondition(region[i] >= 0);
           CGAL_precondition(region[i] < m_face_range.size());
 
-          const auto& face = *(m_face_range.begin() + region[i]);
-          const auto& hedge = halfedge(face, m_face_graph);
+          const auto face = *(m_face_range.begin() + region[i]);
+          const auto hedge = halfedge(face, m_face_graph);
 
-          const auto& vertices = vertices_around_face(hedge, m_face_graph);
-          for (const auto& vertex : vertices) {
+          const auto vertices = vertices_around_face(hedge, m_face_graph);
+          for (const auto vertex : vertices) {
                             
             const Point_3& tmp_point = get(m_vertex_to_point_map, vertex);
             points.push_back(m_to_local_converter(tmp_point));
@@ -319,8 +320,8 @@ namespace Polygon_mesh {
       const Face& face, 
       Point_3& face_centroid) const {
 
-      const auto& hedge = halfedge(face, m_face_graph);
-      const auto& vertices = vertices_around_face(hedge, m_face_graph);
+      const auto hedge = halfedge(face, m_face_graph);
+      const auto vertices = vertices_around_face(hedge, m_face_graph);
 
       // Compute centroid.
       FT sum = FT(0);
@@ -329,7 +330,7 @@ namespace Polygon_mesh {
       FT y = FT(0);
       FT z = FT(0);
                 
-      for (const auto& vertex : vertices) {
+      for (const auto vertex : vertices) {
         const Point_3& point = get(m_vertex_to_point_map, vertex);
 
         x += point.x();
@@ -353,8 +354,8 @@ namespace Polygon_mesh {
       Vector_3& face_normal) const {
 
       // Compute normal of the face.
-      const auto& hedge = halfedge(face, m_face_graph);
-      const auto& vertices = vertices_around_face(hedge, m_face_graph);
+      const auto hedge = halfedge(face, m_face_graph);
+      const auto vertices = vertices_around_face(hedge, m_face_graph);
 
       CGAL_precondition(vertices.size() >= 3);
 
@@ -374,11 +375,11 @@ namespace Polygon_mesh {
     template<typename Face>
     FT get_max_face_distance(const Face& face) const {
 
-      const auto& hedge = halfedge(face, m_face_graph);
-      const auto& vertices = vertices_around_face(hedge, m_face_graph);
+      const auto hedge = halfedge(face, m_face_graph);
+      const auto vertices = vertices_around_face(hedge, m_face_graph);
 
       FT max_face_distance = -FT(1);
-      for (const auto& vertex : vertices) {
+      for (const auto vertex : vertices) {
         
         const Point_3& point = 
         get(m_vertex_to_point_map, vertex);

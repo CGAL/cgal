@@ -44,7 +44,7 @@ bool test_region_growing_on_polygon_mesh(int argc, char *argv[]) {
   in >> surface_mesh;
     
   in.close();
-  const Face_range face_range = CGAL::faces(surface_mesh);
+  const Face_range face_range = faces(surface_mesh);
 
   assert(face_range.size() == 32245);
   if (face_range.size() != 32245) 

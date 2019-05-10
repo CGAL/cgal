@@ -24,8 +24,7 @@ namespace SD = CGAL::Shape_detection;
 template<class Kernel>
 bool test_region_growing_on_cube(int argc, char *argv[]) {
 
-  using FT      = typename Kernel::FT;
-  using Point_3 = typename Kernel::Point_3;
+  using FT = typename Kernel::FT;
 
   using Polyhedron = CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_3, CGAL::HalfedgeDS_vector>;
   using Face_range = typename CGAL::Iterator_range<typename boost::graph_traits<Polyhedron>::face_iterator>;
@@ -47,7 +46,7 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
   in >> polyhedron;
     
   in.close();
-  const Face_range face_range = CGAL::faces(polyhedron);
+  const Face_range face_range = faces(polyhedron);
 
   assert(face_range.size() == 6);
   if (face_range.size() != 6) 

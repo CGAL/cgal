@@ -179,8 +179,7 @@ int main(int argc, char *argv[]) {
 
   // Get all unassigned items.
   Indices unassigned_items;
-  const auto uit = region_growing.unassigned_items(
-    std::back_inserter(unassigned_items));
+  region_growing.unassigned_items(std::back_inserter(unassigned_items));
 
   // Print the number of unassigned items.
   std::cout << "* " << unassigned_items.size() << 

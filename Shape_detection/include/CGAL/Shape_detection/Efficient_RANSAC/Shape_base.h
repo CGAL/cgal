@@ -63,8 +63,6 @@ namespace CGAL {
     /// \cond SKIP_IN_MANUAL
     template <class T>
     friend class Efficient_RANSAC;
-    template <class T>
-    friend class Region_growing;
     template<class PointAccessor>
     friend class internal::Octree;
     /// \endcond

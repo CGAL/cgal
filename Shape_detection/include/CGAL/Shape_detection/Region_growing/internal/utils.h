@@ -25,12 +25,18 @@
 
 #include <CGAL/license/Shape_detection.h>
 
+// STL includes.
+#include <vector>
+
 // Boost headers.
 #include <boost/mpl/has_xxx.hpp>
 
 // CGAL includes.
 #include <CGAL/assertions.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/Cartesian_converter.h>
+#include <CGAL/linear_least_squares_fitting_3.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 namespace CGAL {
 namespace Shape_detection {
@@ -96,6 +102,65 @@ namespace internal {
       return m_scores[i] > m_scores[j];
     }
   };
+
+  template<
+  typename InputRange,
+  typename PointMap,
+  typename Plane_3>
+  void create_planes_from_points(
+    const InputRange& input_range,
+    const PointMap point_map,
+    std::vector< std::vector<std::size_t> >& regions,
+    std::vector<Plane_3>& planes) {
+
+    using Traits = typename Kernel_traits<Plane_3>::Kernel;
+    using FT = typename Traits::FT;
+
+    using Local_traits = 
+    CGAL::Exact_predicates_inexact_constructions_kernel;
+    using To_local_converter = 
+    Cartesian_converter<Traits, Local_traits>;
+
+		using Local_point_3 = typename Local_traits::Point_3;
+		using Local_plane_3 = typename Local_traits::Plane_3;
+
+    planes.clear();
+    planes.reserve(regions.size());
+    
+    std::vector<Local_point_3> points;
+    const To_local_converter to_local_converter = To_local_converter();
+
+    for (const auto& region : regions) {
+      CGAL_assertion(region.size() > 0);
+
+      points.clear();
+      for (std::size_t i = 0; i < region.size(); ++i) {
+
+        CGAL_precondition(region[i] >= 0);
+        CGAL_precondition(region[i] < input_range.size());
+
+        const auto& key = *(input_range.begin() + region[i]);
+        points.push_back(to_local_converter(get(point_map, key)));
+      }
+      CGAL_postcondition(points.size() == region.size());
+
+      Local_plane_3 fitted_plane;
+      Local_point_3 fitted_centroid;
+
+		  CGAL::linear_least_squares_fitting_3(
+        points.begin(), points.end(), 
+        fitted_plane, fitted_centroid, 
+        CGAL::Dimension_tag<0>());
+
+		  const Plane_3 plane = Plane_3(
+        static_cast<FT>(fitted_plane.a()), 
+        static_cast<FT>(fitted_plane.b()), 
+        static_cast<FT>(fitted_plane.c()), 
+        static_cast<FT>(fitted_plane.d()));
+      planes.push_back(plane);
+    }
+    CGAL_postcondition(planes.size() == regions.size());
+  }
 
 } // namespace internal
 } // namespace Shape_detection

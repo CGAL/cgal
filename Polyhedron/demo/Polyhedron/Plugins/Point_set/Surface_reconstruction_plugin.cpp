@@ -32,7 +32,7 @@
 #include <CGAL/Scale_space_reconstruction_3/Weighted_PCA_smoother.h>
 
 #include <CGAL/Advancing_front_surface_reconstruction.h>
-#include <CGAL/Shape_detection_3.h>
+#include <CGAL/Shape_detection.h>
 #include <CGAL/structure_point_set.h>
 
 #include "ui_Surface_reconstruction_plugin.h"
@@ -785,9 +785,19 @@ public:
 
 private:
 
-  template <typename Traits, typename Shape_detection>
+  void region_growing_reconstruction_impl (const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog) {
+
+    
+  }
+
   void ransac_reconstruction_impl (const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog)
   {
+
+    typedef Point_set::Point_map PointMap;
+    typedef Point_set::Vector_map NormalMap;
+    typedef CGAL::Shape_detection::Efficient_RANSAC_traits<Kernel, Point_set, PointMap, NormalMap> Traits;
+    typedef CGAL::Shape_detection::Efficient_RANSAC<Traits> Efficient_RANSAC;
+
     const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
     Scene_points_with_normal_item* point_set_item =
@@ -821,34 +831,34 @@ private:
       }
 
       local_timer.start();
-      Shape_detection shape_detection;
-      shape_detection.set_input(*points, points->point_map(), points->normal_map());
+      Efficient_RANSAC ransac;
+      ransac.set_input(*points, points->point_map(), points->normal_map());
 
-      shape_detection.template add_shape_factory<CGAL::Shape_detection_3::Plane<Traits> >();
+      ransac.template add_shape_factory<CGAL::Shape_detection::Plane<Traits> >();
 
-      typename Shape_detection::Parameters op;
+      typename Efficient_RANSAC::Parameters op;
       op.min_points = dialog.min_size_subset();
       op.epsilon = dialog.noise_tolerance();
       op.cluster_epsilon = dialog.connectivity_tolerance();
       op.normal_threshold = 0.7;
 
-      shape_detection.detect(op);
+      ransac.detect(op);
       local_timer.stop();
-      std::cout << shape_detection.shapes().size() << " plane(s) found in "
+      std::cout << ransac.shapes().size() << " plane(s) found in "
                 << local_timer.time() << " second(s)" << std::endl;
       local_timer.reset();
       
       std::cout << "Structuring point set... " << std::endl;
       typedef CGAL::Point_set_with_structure<Kernel> Structuring;
-      typename Shape_detection::Plane_range planes = shape_detection.planes();
+      typename Efficient_RANSAC::Plane_range planes = ransac.planes();
       
       local_timer.start();
       Structuring structuring (*points,
                                planes,
                                op.cluster_epsilon,
                                points->parameters().
-                               plane_map(CGAL::Shape_detection_3::Plane_map<Traits>()).
-                               plane_index_map(CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(*points, planes)));
+                               plane_map(CGAL::Shape_detection::Plane_map<Traits>()).
+                               plane_index_map(CGAL::Shape_detection::Point_to_shape_index_map<Traits>(*points, planes)));
 
 
       Scene_points_with_normal_item *structured = new Scene_points_with_normal_item;
@@ -865,22 +875,22 @@ private:
       local_timer.start();
 
       Priority_with_structure_coherence<Structuring> priority (structuring, 10. * op.cluster_epsilon);
-      Scene_surface_mesh_item* reco_item = new Scene_surface_mesh_item(SMesh());
-      SMesh& P = * const_cast<SMesh*>(reco_item->polyhedron());
-      Construct<SMesh, Traits> construct(P,structured->point_set()->points().begin(),structured->point_set()->points().end());
-      CGAL::advancing_front_surface_reconstruction(structured->point_set()->points().begin(),
-                                                   structured->point_set()->points().end(),
-                                                   construct,
-                                                   priority,
-                                                   5.,
-                                                   0.52);
-      local_timer.stop();
-      std::cerr << "done in " << local_timer.time() << " second(s)" << std::endl;
-      reco_item->setName(tr("%1 (RANSAC-based reconstruction)").arg(scene->item(index)->name()));
-      reco_item->setColor(Qt::magenta);
-      reco_item->setRenderingMode(FlatPlusEdges);
-      reco_item->invalidateOpenGLBuffers();
-      scene->addItem(reco_item);
+        Scene_surface_mesh_item* reco_item = new Scene_surface_mesh_item(SMesh());
+        SMesh& P = * const_cast<SMesh*>(reco_item->polyhedron());
+        Construct<SMesh, Traits> construct(P,structured->point_set()->points().begin(),structured->point_set()->points().end());
+        CGAL::advancing_front_surface_reconstruction(structured->point_set()->points().begin(),
+                                                     structured->point_set()->points().end(),
+                                                     construct,
+                                                     priority,
+                                                     5.,
+                                                     0.52);
+        local_timer.stop();
+        std::cerr << "done in " << local_timer.time() << " second(s)" << std::endl;
+        reco_item->setName(tr("%1 (RANSAC-based reconstruction)").arg(scene->item(index)->name()));
+        reco_item->setColor(Qt::magenta);
+        reco_item->setRenderingMode(FlatPlusEdges);
+        reco_item->invalidateOpenGLBuffers();
+        scene->addItem(reco_item);
 
       if (dialog.generate_structured ())
       {
@@ -1051,15 +1061,15 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 	      std::cerr << "Advancing front reconstruction... ";
 	      time.restart();
 
-              Scene_surface_mesh_item* reco_item = new Scene_surface_mesh_item(SMesh());
-              SurfaceReconstruction::advancing_front (*points, reco_item, 10. * (std::max)(noise_size, aniso_size));
-              
-              reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
-              reco_item->setColor(Qt::lightGray);
-              reco_item->setRenderingMode(FlatPlusEdges);
-              reco_item->invalidateOpenGLBuffers();
-              scene->addItem(reco_item);
-              std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
+                Scene_surface_mesh_item* reco_item = new Scene_surface_mesh_item(SMesh());
+                SurfaceReconstruction::advancing_front (*points, reco_item, 10. * (std::max)(noise_size, aniso_size));
+
+                reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
+                reco_item->setColor(Qt::lightGray);
+                reco_item->setRenderingMode(FlatPlusEdges);
+                reco_item->invalidateOpenGLBuffers();
+                scene->addItem(reco_item);
+	      std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 	    }
 	}
       else
@@ -1068,14 +1078,14 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 	    {
 	      std::cerr << "Advancing front reconstruction... ";
 	      time.restart();
-              Scene_surface_mesh_item* reco_item = new Scene_surface_mesh_item(SMesh());
-              SurfaceReconstruction::advancing_front (*points, reco_item, 10. * (std::max)(noise_size, aniso_size));
-              
-              reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
-              reco_item->setColor(Qt::lightGray);
-              reco_item->setRenderingMode(FlatPlusEdges);
-              reco_item->invalidateOpenGLBuffers();
-              scene->addItem(reco_item);
+                Scene_surface_mesh_item* reco_item = new Scene_surface_mesh_item(SMesh());
+                SurfaceReconstruction::advancing_front (*points, reco_item, 10. * (std::max)(noise_size, aniso_size));
+
+                reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
+                reco_item->setColor(Qt::lightGray);
+                reco_item->setRenderingMode(FlatPlusEdges);
+                reco_item->invalidateOpenGLBuffers();
+                scene->addItem(reco_item);
 	      std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 	    }
 	  else
@@ -1147,17 +1157,17 @@ void Polyhedron_demo_surface_reconstruction_plugin::advancing_front_reconstructi
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
       std::cerr << "Advancing front reconstruction... ";
-      Scene_surface_mesh_item* reco_item = new Scene_surface_mesh_item(SMesh());
-      SurfaceReconstruction::advancing_front (*points, reco_item,
-                                              dialog.longest_edge (),
-                                              dialog.radius_ratio_bound (),
-                                              CGAL_PI * dialog.beta_angle () / 180.);
-      
-      reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
-      reco_item->setColor(Qt::lightGray);
-      reco_item->setRenderingMode(FlatPlusEdges);
-      reco_item->invalidateOpenGLBuffers();
-      scene->addItem(reco_item);
+        Scene_surface_mesh_item* reco_item = new Scene_surface_mesh_item(SMesh());
+        SurfaceReconstruction::advancing_front (*points, reco_item,
+                                                dialog.longest_edge (),
+                                                dialog.radius_ratio_bound (),
+                                                CGAL_PI * dialog.beta_angle () / 180.);
+
+        reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
+        reco_item->setColor(Qt::lightGray);
+        reco_item->setRenderingMode(FlatPlusEdges);
+        reco_item->invalidateOpenGLBuffers();
+        scene->addItem(reco_item);
       QApplication::restoreOverrideCursor();
     }
 }
@@ -1275,8 +1285,8 @@ void Polyhedron_demo_surface_reconstruction_plugin::poisson_reconstruction
 
       // Reconstruct point set as a polyhedron
       SMesh* smRemesh= NULL;
-      smRemesh = poisson_reconstruct_sm(*points, sm_angle, sm_radius, sm_distance, sm_solver, use_two_passes,
-                                        do_not_fill_holes);
+        smRemesh = poisson_reconstruct_sm(*points, sm_angle, sm_radius, sm_distance, sm_solver, use_two_passes,
+                                          do_not_fill_holes);
       if(smRemesh)
       {
         // Add polyhedron to scene
@@ -1302,14 +1312,10 @@ void Polyhedron_demo_surface_reconstruction_plugin::poisson_reconstruction
 void Polyhedron_demo_surface_reconstruction_plugin::ransac_reconstruction
 (const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog)
 {
-  typedef Point_set::Point_map PointMap;
-  typedef Point_set::Vector_map NormalMap;
-  typedef CGAL::Shape_detection_3::Shape_detection_traits<Kernel, Point_set, PointMap, NormalMap> Traits;
-  
   if (dialog.region_growing())
-    ransac_reconstruction_impl<Traits, typename CGAL::Shape_detection_3::Region_growing<Traits> >(dialog);
+    region_growing_reconstruction_impl(dialog);
   else
-    ransac_reconstruction_impl<Traits, typename CGAL::Shape_detection_3::Efficient_RANSAC<Traits> >(dialog);
+    ransac_reconstruction_impl(dialog);
 }
 
 

@@ -125,11 +125,11 @@ namespace Polygon_mesh {
       CGAL_precondition(query_index >= 0);
       CGAL_precondition(query_index < m_face_range.size());
 
-      const auto& query_face = *(m_face_range.begin() + query_index);
-      const auto& query_hedge = halfedge(query_face, m_face_graph);
+      const auto query_face = *(m_face_range.begin() + query_index);
+      const auto query_hedge = halfedge(query_face, m_face_graph);
 
-      const auto& faces = faces_around_face(query_hedge, m_face_graph);
-      for (const auto& face : faces) {
+      const auto faces = faces_around_face(query_hedge, m_face_graph);
+      for (const auto face : faces) {
         const std::size_t face_index = get(m_face_to_index_map, face);
         
         if (face_index != std::size_t(-1)) // not a null face

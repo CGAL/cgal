@@ -134,7 +134,8 @@ namespace Polygon_mesh {
     m_face_graph(pmesh),
     m_neighbor_query(neighbor_query),
     m_face_range(faces(m_face_graph)),
-    m_vertex_to_point_map(vertex_to_point_map) {
+    m_vertex_to_point_map(vertex_to_point_map),
+    m_to_local_converter() {
 
       CGAL_precondition(m_face_range.size() > 0);
 
@@ -204,11 +205,11 @@ namespace Polygon_mesh {
           CGAL_precondition(neighbors[j] >= 0);
           CGAL_precondition(neighbors[j] < m_face_range.size());
 
-          const auto& face = *(m_face_range.begin() + neighbors[j]);
-          const auto& hedge = halfedge(face, m_face_graph);
+          const auto face = *(m_face_range.begin() + neighbors[j]);
+          const auto hedge = halfedge(face, m_face_graph);
 
-          const auto& vertices = vertices_around_face(hedge, m_face_graph);
-          for (const auto& vertex : vertices) {
+          const auto vertices = vertices_around_face(hedge, m_face_graph);
+          for (const auto vertex : vertices) {
                             
             const auto& tmp_point = get(m_vertex_to_point_map, vertex);
             points.push_back(m_to_local_converter(tmp_point));
