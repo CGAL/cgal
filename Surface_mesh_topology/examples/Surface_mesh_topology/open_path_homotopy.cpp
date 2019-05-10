@@ -1,5 +1,4 @@
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Surface_mesh/IO.h>
 #include <CGAL/Homotopy_tester.h>
 #include <CGAL/Path_on_surface.h>
 #include <CGAL/draw_face_graph_with_paths.h>

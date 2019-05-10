@@ -29,10 +29,10 @@ namespace Surface_mesh_topology {
     /// returns `true` iff this path does not pass twice through a same edge or a same vertex.
     bool is_simple() const;
 
-    /// @return the length of the path, i.e. its number of elements.
+    /// returns the length of the path, i.e. its number of elements.
     std::size_t length() const;
       
-    /// @return the ith dart of the path.
+    /// returns the ith dart of the path.
     /// @pre i<`length()`.
     halfedge_descriptor operator[] (std::size_t i) const;
 

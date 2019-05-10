@@ -51,14 +51,14 @@ namespace Surface_mesh_topology {
     
     /// finishes the current path. Returns the path created.
     /// @pre A path is under creation.
-    CGAL::Path_on_surface<CMap> end_path();
+    CGAL::Surface_mesh_topology::Path_on_surface<CMap> end_path();
 
     /// adds edge labeled `l` at the end of the current path.
     /// @pre A path is under creation.
     void add_edge_to_path(const std::string& l);
     
     /// create a path directly from a sequence of edge labels `s` (labels are separated by spaces). Returns the path created.
-    CGAL::Path_on_surface<CMap> create_path(const std::string& s);
+    CGAL::Surface_mesh_topology::Path_on_surface<CMap> create_path(const std::string& s);
   };
 }
 }

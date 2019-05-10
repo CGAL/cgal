@@ -3,7 +3,6 @@
 #include <CGAL/draw_face_graph_with_paths.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Surface_mesh/IO.h>
 
 #include <CGAL/Homotopy_tester.h>
 #include <CGAL/Path_generators.h>
@@ -39,7 +38,7 @@ void test(const FaceGraph& mesh)
 
 #ifdef CGAL_USE_BASIC_VIEWER
   std::vector<CGAL::Path_on_surface<FaceGraph> > paths={p1, p2};
-    CGAL::draw(mesh, paths); // Enable only if CGAL was compiled with Qt5 */
+  CGAL::draw(mesh, paths); // Enable only if CGAL was compiled with Qt5 */
 #endif // CGAL_USE_BASIC_VIEWER
 }
 ///////////////////////////////////////////////////////////////////////////////
