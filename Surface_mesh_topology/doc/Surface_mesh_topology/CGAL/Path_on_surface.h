@@ -45,11 +45,11 @@ namespace CGAL {
     /// returns `true` iff the dart/halfedge with index `i` can be added at the end of this path.
     bool can_be_pushed_by_index(std::size_t i) const;
 
-    /// Add the dart/halfedge obtained by turning `nb` times around the target vertex of the last dart/halfedge in this path, in the positive circular order.
+    /// Add the dart/halfedge obtained by turning `nb` times around the target vertex of the last dart/halfedge in this path, in the positive circular order. To extend with a positive 1 turn thus amounts to extend with the `next()` pointer. (A zero turn corresponds to the `opposite()` pointer.)
     /// @pre !`is_empty()`
     void extend_positive_turn(std::size_t nb); 
 
-    /// Add the dart/halfedge obtained by turning `nb` times around the target vertex of the last dart/halfedge in this path, in the negative circular order.
+    /// Add the dart/halfedge obtained by turning `nb` times around the target vertex of the last dart/halfedge in this path, in the negative circular order. To extend with a negative 1 turn thus amounts to extend with the composite pointer: `opposite().prev().opposite()`.
     /// @pre !`is_empty()`
     void extend_negative_turn(std::size_t nb); 
 
