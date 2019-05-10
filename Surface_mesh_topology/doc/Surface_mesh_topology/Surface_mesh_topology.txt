@@ -1,4 +1,5 @@
 namespace CGAL {
+namespace Surface_mesh_topology {
 /*!
 
 \mainpage User Manual
@@ -32,16 +33,16 @@ The algorithms used are based on a paper by Erickson and Whittlesey \cgalCite{ew
 \subsection SMTopology_Input Specifying the Input Surface and Curves
 
 The homotopy tests are performed on a surface represented as a model of `CombinatorialMap` or any model of `FaceGraph`. Note that combinatorial maps are based on darts and FaceGraphs are based on halfedges. To avoid repetitions we use the terms darts and halfedges interchangeably in the sequel.
-The input surface mesh is supposed to be a connected closed orientable surface. This input surface is provided to construct a `Surface_mesh_topology::Homotopy_tester`. This class computes an internal representation of the surface as described below.
+The input surface mesh is supposed to be a connected closed orientable surface. This input surface is provided to construct a `Homotopy_tester`. This class computes an internal representation of the surface as described below.
 
-Each curve on this surface is contained in an instance of the class `Surface_mesh_topology::Path_on_surface`. An object of this class should be constructed with the same input surface as the  `Surface_mesh_topology::Homotopy_tester` container.
+Each curve on this surface is contained in an instance of the class `Path_on_surface`. An object of this class should be constructed with the same input surface as the  `Homotopy_tester` container.
 
-A `Surface_mesh_topology::Path_on_surface` behaves as a list. This list is initially empty and the darts corresponding to the sequence of consecutive oriented edges of an input curve should be pushed back in this list. The class provides three ways for extending a nonempty path.
-- Simply push the next dart/halfedge using the \ref Surface_mesh_topology::Path_on_surface::push_back "push_back()" member function.
-- The user may push the index of the next dart instead of the dart itself with the member function \ref Surface_mesh_topology::Path_on_surface::push_back_by_index "push_back_by_index()". This may however be at the cost of an overhead computation mapping the index to the actual dart.
-- The path may be extended with the member function \ref Surface_mesh_topology::Path_on_surface::extend_positive_turn "extend_positive_turn()" by specifying the next dart/halfedge thanks to a number of positive turns with respect to the previous dart/halfedge in the path. Calling this previous halfedge `h`, extending by a positive one turn is thus equivalent to extend the path with `h.next()`. An analogous member function \ref Surface_mesh_topology::Path_on_surface::extend_negative_turn "extend_negative_turn()" is provided for convenience.
+A `Path_on_surface` behaves as a list. This list is initially empty and the darts corresponding to the sequence of consecutive oriented edges of an input curve should be pushed back in this list. The class provides three ways for extending a nonempty path.
+- Simply push the next dart/halfedge using the \ref Path_on_surface::push_back "push_back()" member function.
+- The user may push the index of the next dart instead of the dart itself with the member function \ref Path_on_surface::push_back_by_index "push_back_by_index()". This may however be at the cost of an overhead computation mapping the index to the actual dart.
+- The path may be extended with the member function \ref Path_on_surface::extend_positive_turn "extend_positive_turn()" by specifying the next dart/halfedge thanks to a number of positive turns with respect to the previous dart/halfedge in the path. Calling this previous halfedge `h`, extending by a positive one turn is thus equivalent to extend the path with `h.next()`. An analogous member function \ref Path_on_surface::extend_negative_turn "extend_negative_turn()" is provided for convenience.
 
-In the two first cases, the source vertex of the added dart  should coincide with the target vertex of the last dart in the path. The user is responsible for ensuring this condition. The member functions \ref Surface_mesh_topology::Path_on_surface::can_be_pushed "can_be_pushed()" and \ref Surface_mesh_topology::Path_on_surface::can_be_pushed_by_index "can_be_pushed_by_index()" return `true` if and only if the condition is satisfied.
+In the two first cases, the source vertex of the added dart  should coincide with the target vertex of the last dart in the path. The user is responsible for ensuring this condition. The member functions \ref Path_on_surface::can_be_pushed "can_be_pushed()" and \ref Path_on_surface::can_be_pushed_by_index "can_be_pushed_by_index()" return `true` if and only if the condition is satisfied.
 
 In addition to these functionalities, we provide an intuitive mesh builder `Combinatorial_map_2_incremental_builder`. The user can add facets to the mesh one at a time. Each facet is specified by the sequence of its oriented edge labels given as a string where the labels are words separated by blank spaces. The label of the opposite of an oriented edge is preceded by a minus. For example, the opposite of 'a1' is '-a1'. In the next figure we see three examples of combinatorial maps described by a collection of facets with label edges.
 \cgalFigureBegin{fig_sm_incremental-builder, incremental-builder.svg}
@@ -53,20 +54,20 @@ The code for creating the above left and middle examples appear in the \ref SMTo
 
 \subsubsection SMTopology_Build Building the Internal Surface Representation
 
-A common first step in the homotopy test algorithms is to build a simplified mesh from the input surface mesh. This preprocessing step is done once and for all for a given mesh. The simplified surface is a quadrangulation, every face of which is a quadrilateral, stored in a `Surface_mesh_topology::Homotopy_tester`.
-\note The user must not modify the input surface as long as homotopy tests are performed with this `Surface_mesh_topology::Homotopy_tester`.
+A common first step in the homotopy test algorithms is to build a simplified mesh from the input surface mesh. This preprocessing step is done once and for all for a given mesh. The simplified surface is a quadrangulation, every face of which is a quadrilateral, stored in a `Homotopy_tester`.
+\note The user must not modify the input surface as long as homotopy tests are performed with this `Homotopy_tester`.
 
-Each time a `Surface_mesh_topology::Path_on_surface` is provided for a homotopy test, it is first transformed to an equivalent path in the quadrangulation stored by the `Surface_mesh_topology::Homotopy_tester`. This transformation is transparent to the user who has never access to the quadrangulation.
+Each time a `Path_on_surface` is provided for a homotopy test, it is first transformed to an equivalent path in the quadrangulation stored by the `Homotopy_tester`. This transformation is transparent to the user who has never access to the quadrangulation.
 
 \subsection SMTopology_Queries Testing Homotopy
 
-Given two `Surface_mesh_topology::Path_on_surface` \f$p_1\f$ and \f$p_2\f$, the class `Surface_mesh_topology::Homotopy_tester` provides the following three functions:
+Given two `Path_on_surface` \f$p_1\f$ and \f$p_2\f$, the class `Homotopy_tester` provides the following three functions:
 
-- \ref Surface_mesh_topology::Homotopy_tester::is_contractible "is_contractible"(\f$p_1\f$) returns `true` if the closed curve \f$p_1\f$ is contractible.
+- \ref Homotopy_tester::is_contractible "is_contractible"(\f$p_1\f$) returns `true` if the closed curve \f$p_1\f$ is contractible.
 
-- \ref Surface_mesh_topology::Homotopy_tester::are_freely_homotopic "are_freely_homotopic"(\f$p_1\f$, \f$p_2\f$) returns `true` if the closed curves \f$p_1\f$ and \f$p_2\f$ are freely homotopic.
+- \ref Homotopy_tester::are_freely_homotopic "are_freely_homotopic"(\f$p_1\f$, \f$p_2\f$) returns `true` if the closed curves \f$p_1\f$ and \f$p_2\f$ are freely homotopic.
 
-- \ref Surface_mesh_topology::Homotopy_tester::are_base_point_homotopic "are_base_point_homotopic"(\f$p_1\f$, \f$p_2\f$) returns `true` if the paths \f$p_1\f$ and \f$p_2\f$ are homotopic with fixed endpoints. This call is equivalent to \ref Surface_mesh_topology::Homotopy_tester::is_contractible "is_contractible"(\f$p_1\cdot \overline{p_2}\f$), where \f$p_1\cdot \overline{p_2}\f$ is the concatenation of \f$p_1\f$ and the reverse of \f$p_2\f$.
+- \ref Homotopy_tester::are_base_point_homotopic "are_base_point_homotopic"(\f$p_1\f$, \f$p_2\f$) returns `true` if the paths \f$p_1\f$ and \f$p_2\f$ are homotopic with fixed endpoints. This call is equivalent to \ref Homotopy_tester::is_contractible "is_contractible"(\f$p_1\cdot \overline{p_2}\f$), where \f$p_1\cdot \overline{p_2}\f$ is the concatenation of \f$p_1\f$ and the reverse of \f$p_2\f$.
 
 
 
@@ -94,12 +95,12 @@ The machine used is a PC running Ubuntu 18.04 with an Intel CPU Core i7-4790 CPU
 
 \subsection SMTopology_bench1 Surface Mesh Topology Computation Time
 
-When we create a `Surface_mesh_topology::Homotopy_tester` object, given a surface, we build a special quadrangulation of the surface as internal representation (as explained in Section \ref SMTopology_Theory "Implementation Details"). The complexity of this operation is linear in the number of darts of the input surface, as we can see in \cgalFigureRef{fig_sm_topology_bench1}.
+When we create a `Homotopy_tester` object, given a surface, we build a special quadrangulation of the surface as internal representation (as explained in Section \ref SMTopology_Theory "Implementation Details"). The complexity of this operation is linear in the number of darts of the input surface, as we can see in \cgalFigureRef{fig_sm_topology_bench1}.
 
-For this benchmark, we computed 22 `Surface_mesh_topology::Homotopy_tester` objects for different input surfaces with different number of darts (between 9,000 and 30,000,000) and show in the figure the computation time of the quadrangulation according to the number of darts of the input surface. We remind that this computation needs be done only once if you want to perform several path homotopy tests on the same surface. 
+For this benchmark, we computed 22 `Homotopy_tester` objects for different input surfaces with different number of darts (between 9,000 and 30,000,000) and show in the figure the computation time of the quadrangulation according to the number of darts of the input surface. We remind that this computation needs be done only once if you want to perform several path homotopy tests on the same surface. 
 
 \cgalFigureBegin{fig_sm_topology_bench1, computation-time-reduce-surface.svg}
- Computation time of `Surface_mesh_topology::Homotopy_tester` constructions, according to the number of darts or the input surface.
+ Computation time of `Homotopy_tester` constructions, according to the number of darts or the input surface.
 \cgalFigureEnd
 
 \subsection SMTopology_bench2 Path Homotopy Tests
@@ -149,7 +150,7 @@ Cutting through the graph of the reduced surface, we obtain a face that can be f
  Triangles of the same color are merged into quadrilaterals. All the light blue vertices correspond to a same vertex on the glued surface.
     \cgalFigureEnd
 
-This quadrangulation \f$\cal{Q}\f$ is stored in a `Surface_mesh_topology::Homotopy_tester`. In order to perform a homotopy test, each input curve \f$C\f$ is transformed into a (closed) path in \f$\cal{Q}\f$ as follows. If an edge of \f$C\f$ is part of the contracted spanning tree, we simply ignore that edge. Otherwise the edge can be replaced by two consecutive edges of \f$\cal{Q}\f$ to obtain a new path \f$C'\f$ in the vertex-edge graph of \f$\cal{Q}\f$ so that \f$C'\f$ is a continuous deformation of \f$C\f$. Hence, deciding if \f$C\f$ is contractible in \f$\cal{M}\f$ is equivalent to test if \f$C'\f$ is contractible in \f$\cal{Q}\f$.
+This quadrangulation \f$\cal{Q}\f$ is stored in a `Homotopy_tester`. In order to perform a homotopy test, each input curve \f$C\f$ is transformed into a (closed) path in \f$\cal{Q}\f$ as follows. If an edge of \f$C\f$ is part of the contracted spanning tree, we simply ignore that edge. Otherwise the edge can be replaced by two consecutive edges of \f$\cal{Q}\f$ to obtain a new path \f$C'\f$ in the vertex-edge graph of \f$\cal{Q}\f$ so that \f$C'\f$ is a continuous deformation of \f$C\f$. Hence, deciding if \f$C\f$ is contractible in \f$\cal{M}\f$ is equivalent to test if \f$C'\f$ is contractible in \f$\cal{Q}\f$.
 
 \subsection SMTopology_Canonical Canonical Form
 
@@ -175,4 +176,5 @@ The canonical form of a curve is obtained by flattening its brackets, removing i
 It can be proven that the canonical form is uniquely defined and only depends on the homotopy class of the curve. Hence, the curves \f$C'\f$ and \f$D'\f$ in \f$\cal{Q}\f$ are homotopic if and only if their canonical forms are equal. Since each curve is defined as a sequence of (oriented) edges up to a cyclic permutation, we resort to the Knuth-Morris-Pratt algorithm to decide in linear time if the canonical forms are the same up to a cyclic permutation.
 
 */
+}
 } /* namespace CGAL */
