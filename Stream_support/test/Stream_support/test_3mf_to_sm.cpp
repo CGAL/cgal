@@ -26,7 +26,7 @@ typedef std::vector<Polygon> PolygonRange;
 
 int main(int argc, char** argv)
 {
-/*  if( argc != 2)
+  if( argc != 2)
   {
     std::cerr<<"please give an input 3mf file.";
     return 1;
@@ -34,7 +34,8 @@ int main(int argc, char** argv)
   std::vector<PointRange> all_points;
   std::vector<PolygonRange> all_polygons;
   std::vector<std::string> names;
-  std::size_t nb_meshes = 
+  //testing reading functions.
+  int nb_meshes =
       CGAL::read_soups_from_3mf(argv[1], all_points, all_polygons, names);
   if(nb_meshes <0)
     return 1;
@@ -61,17 +62,44 @@ int main(int argc, char** argv)
       ofs << mesh;
       ofs.close();
     }
-  }*/
+  }
+  all_points.clear();
+  int nb_polylines =
+      CGAL::read_polylines_from_3mf(argv[1], all_points, names);
+
+  if(nb_polylines == 0)
+    std::cout<<"No polyline found."<<std::endl;
+  else
+  {
+    std::cout<<nb_polylines<<" polylines found, of ";
+    for(std::size_t i = 0; i< nb_polylines-1; ++i){
+      std::cout<<all_points[i].size()<<", ";
+    }
+    std::cout<<all_points.back().size()<<" points."<<std::endl;
+  }
+  all_points.clear();
+  int nb_point_sets =
+      CGAL::read_point_clouds_from_3mf(argv[1], all_points, names);
+  if(nb_point_sets == 0)
+    std::cout<<"No point cloud found."<<std::endl;
+  else
+  {
+    std::cout<<nb_point_sets<<" point clouds found, of ";
+    for(std::size_t i = 0; i< nb_point_sets-1; ++i){
+      std::cout<<all_points[i].size()<<", ";
+    }
+    std::cout<<all_points.back().size()<<" points."<<std::endl;
+  }
+
+  // testing writing functions
   Mesh sphere, tube;
   CGAL::make_icosahedron<Mesh, Point_3>(sphere);
   CGAL::make_regular_prism(10, tube, Point_3(0,-10,0), 10);
-  /*
   all_points.clear();
   all_polygons.clear();
   names.clear();
-  */
   PointRange points;
-  //PolygonRange triangles;
+  PolygonRange triangles;
   typedef boost::property_map<Mesh, boost::vertex_point_t>::type VPMap;
   VPMap vpm = get(boost::vertex_point, sphere);
   std::unordered_map<boost::graph_traits<Mesh>::vertex_descriptor,
@@ -82,8 +110,8 @@ int main(int argc, char** argv)
     points.push_back(get(vpm, v));
     vertex_id_map[v] = i++;
   }
-  //all_points.push_back(points);
-  /*for(auto f : sphere.faces())
+  all_points.push_back(points);
+  for(auto f : sphere.faces())
   {
     Polygon triangle;
     for(auto vert : CGAL::vertices_around_face(halfedge(f, sphere), sphere))
@@ -117,30 +145,30 @@ int main(int argc, char** argv)
   all_polygons.push_back(triangles);
   names.push_back(std::string("sphere"));
   names.push_back(std::string("tube"));
-  if(!CGAL::write_soups_to_3mf("micro.3mf", all_points, all_polygons, names)){
-    std::cerr<<"an error has occured in final writing."<<std::endl;
-    return 1;
-  }
-  */
+
+
+  //testing of point clouds
   DWORD nErrorMessage;
   LPCSTR pszErrorMessage;
   HRESULT hResult;
   NMR::PLib3MFModel * pModel;
   hResult = NMR::lib3mf_createmodel(&pModel);
+  NMR::PLib3MFModelMeshObject* pMeshObject;
   if (hResult != LIB3MF_OK) {
     std::cout << "could not create model: " << std::hex << hResult << std::endl;
     return false;
   }
-  NMR::PLib3MFModelMeshObject* pMeshObject;
-  
-  DWORD nv;
-  CGAL::write_point_cloud_to_model(points,"point_set", &pMeshObject, pModel);
-  hResult = lib3mf_meshobject_getvertexcount(pMeshObject, &nv);
-  std::cout<<nv<<" vertices."<<std::endl;
-  lib3mf_release(pMeshObject);
-  CGAL::write_polyline_to_model(points,"polyline", &pMeshObject, pModel);
-  hResult = lib3mf_meshobject_getvertexcount(pMeshObject, &nv);
-  std::cout<<nv<<" vertices."<<std::endl;
+  for(int i=0; i< names.size(); ++i)
+  {
+    CGAL::write_mesh_to_model(all_points[i], all_polygons[i], names[i], &pMeshObject, pModel);
+  }
+
+  CGAL::write_point_cloud_to_model(all_points.front(), names.front(), &pMeshObject, pModel);
+  CGAL::export_model_to_file("micro.3mf", pModel);
+  //testing of polylines
+  CGAL::write_polyline_to_model(all_points.back(), names.back(), &pMeshObject, pModel);
+  CGAL::export_model_to_file("micro.3mf", pModel);
+
   std::cout<<"OK."<<std::endl;
   return 0;
 }
