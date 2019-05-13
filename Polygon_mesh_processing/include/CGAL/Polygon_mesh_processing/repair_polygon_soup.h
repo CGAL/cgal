@@ -935,8 +935,11 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
     {
       const P_ID polygon_to_remove = duplicate_polygons[i];
       CGAL_assertion(swap_position < init_polygons_n);
-      std::swap(polygons[swap_position], polygons[polygon_to_remove]);
-      --swap_position;
+      if(polygon_to_remove < swap_position)
+      {
+        std::swap(polygons[swap_position], polygons[polygon_to_remove]);
+        --swap_position;
+      }
     }
 
     all_duplicate_polygons.pop_back();
