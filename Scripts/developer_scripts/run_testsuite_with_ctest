@@ -7,8 +7,8 @@
 
 source "${CGAL_DIR}/${SCRIPTS_DIR}developer_scripts/log.sh"
 # Load settings
-if [ -f "$CGAL_ROOT/.autocgalrc" ]; then
-  . "$CGAL_ROOT/.autocgalrc"
+if [ -f "${CGAL_HOME}/.autocgalrc" ]; then
+  . "${CGAL_HOME}/.autocgalrc"
 else
   echo "CONFIGURATION FILE  .autocgalrc NOT FOUND" >&2;
   exit 1
@@ -255,7 +255,7 @@ run_test_on_platform()
   CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
   cd "${CGAL_BINARY_DIR}"
   log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "Testing on host ${HOST} and platform ${PLATFORM}"
-  INIT_FILE="${CGAL_ROOT}/${REFERENCE_PLATFORMS_DIR}/${PLATFORM}.cmake"
+  INIT_FILE="${CGAL_HOME}/${REFERENCE_PLATFORMS_DIR}/${PLATFORM}.cmake"
   if [ ! -f "${INIT_FILE}" ]; then
     echo "error NEED A INIT FILE !"
   fi
@@ -266,11 +266,11 @@ run_test_on_platform()
     CMAKE_OPTS="${CMAKE_OPTS} -DWITH_examples=ON -DWITH_demos=ON"
   fi
   if [ -z "${SHOW_PROGRESS}" ]; then
-    cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR  2>&1 >package_installation.log
+    cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR  >package_installation.log 2>&1 
   else
     cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}'  -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR 2>&1 |tee package_installation.log
   fi
-  LIST_TEST_FILE="${CGAL_ROOT}/list_test_packages"
+  LIST_TEST_FILE="${CGAL_HOME}/list_test_packages"
   if [ -f ${LIST_TEST_FILE} ]; then
     LIST_TEST_PACKAGES=$(source ${LIST_TEST_FILE})
   fi
@@ -283,11 +283,13 @@ run_test_on_platform()
       TO_TEST="${TO_TEST}|$pkg"
     fi
   done
+  #unsets the limit of 1024 bits for the logs through ssh
+  echo "SET(CTEST_CUSTOM_MAXIMUM_PASSED_TEST_OUTPUT_SIZE 1000000000)" > CTestCustom.cmake
+  echo "SET(CTEST_CUSTOM_MAXIMUM_FAILED_TEST_OUTPUT_SIZE 1000000000)" >> CTestCustom.cmake
   CTEST_OPTS="-T Start -T Test -j${NUMBER_OF_PROCESSORS} ${DO_NOT_TEST:+-E execution___of__} --timeout 1200"
   if [ -z "${SHOW_PROGRESS}" ]; then
     ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} ${KEEP_TESTS:+-FC .}> tmp.txt
   else
-    echo "ctest ${CTEST_OPTS} ${TO_TEST:+-L ${TO_TEST}} ${KEEP_TESTS:+-FC .}|tee tmp.txt"
     ctest ${CTEST_OPTS} ${TO_TEST:+-L ${TO_TEST}} ${KEEP_TESTS:+-FC .}|tee tmp.txt
   fi
   #####################
@@ -310,6 +312,10 @@ run_test_on_platform()
   echo "CGAL_TEST_PLATFORM ${PLATFORM}" >> "$RESULT_FILE"
   grep -e "^-- USING " "${CGAL_BINARY_DIR}/installation.log" >> $RESULT_FILE 
   echo "------------" >> "$RESULT_FILE"
+  #if git branch, create empty scm file for python script
+  if [ -n "${SCRIPTS_DIR}" ]; then
+    touch ../../../../../.scm-branch
+  fi
   python3 ${CGAL_DIR}/${TESTSUITE_DIR}test/parse-ctest-dashboard-xml.py $CGAL_TESTER $PLATFORM
   
   for file in $(ls|grep _Tests); do
@@ -319,9 +325,14 @@ run_test_on_platform()
   TEST_REPORT="TestReport_${CGAL_TESTER}_${PLATFORM}"
   mkdir -p Installation
   chmod 777 Installation
-  cp "${CGAL_BINARY_DIR}/package_installation.log" "Installation/${TEST_REPORT}"
+  cat "${CGAL_BINARY_DIR}/package_installation.log" >> "Installation/${TEST_REPORT}"
   
+  #call the python script to complete the results report.
+  python3 ${CGAL_DIR}/${TESTSUITE_DIR}test/post_process_ctest_results.py Installation/${TEST_REPORT} ${TEST_REPORT} results_${CGAL_TESTER}_${PLATFORM}.txt
   rm -f $OUTPUT_FILE $OUTPUT_FILE.gz
+  if [ -n "${SCRIPTS_DIR}" ]; then
+    rm ../../../../../.scm-branch
+  fi
   tar cf $OUTPUT_FILE results_${CGAL_TESTER}_${PLATFORM}.txt */"$TEST_REPORT"
   echo
   gzip -9f $OUTPUT_FILE

@@ -10,6 +10,7 @@ _test_cls_const_triang_plus_2( const TrP & )
 
   typedef typename TrP::Vertex_handle          Vertex_handle;
   typedef typename TrP::Constraint             Constraint;
+  typedef typename TrP::Constraint_iterator    Constraint_iterator;
   typedef typename TrP::Constraint_hierarchy   Hierarchy;
   typedef typename TrP::Context                Context;
   typedef typename TrP::Context_iterator       Context_iterator;
@@ -129,6 +130,31 @@ _test_cls_const_triang_plus_2( const TrP & )
   }
 
   std::cout << std::endl;
+  std::cout << "test IO" << std::endl;
+
+  trp.clear();
+  {
+    Point c1[2] = { Point(0,0), Point(1,0) };
+    Point c2[3] = { Point(0,1), Point(1,1), Point(2,1) };
+    Point c3[4] = { Point(0,0), Point(1,0), Point(1,1), Point(0,1) };
+
+    trp.insert_constraint(c1, c1 + 2);
+    trp.insert_constraint(c2, c2 + 3);
+    trp.insert_constraint(c3, c3 + 4);
+    std::ofstream out("cdtplus.txt");
+    out << trp;
+    out.close();
+    trp.clear();
+    std::ifstream in("cdtplus.txt");
+    in >> trp;
+    assert(trp.number_of_constraints() == 3);
+    std::size_t n = 0;
+    for(Constraint_iterator cit = trp.constraints_begin(); cit != trp.constraints_end(); ++cit){
+      Constraint_id  cid = *cit;
+      n += cid.second->all_size();
+    }
+    assert( n == 9);
+  }
   return;
 }
 

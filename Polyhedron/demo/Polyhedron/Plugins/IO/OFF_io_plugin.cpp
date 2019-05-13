@@ -32,6 +32,12 @@ public:
       return true; 
     return false;
   }
+  bool isDefaultLoader(const QString& name) const 
+  { 
+    if(name == QString("off")) 
+      return true; 
+    return false;
+  }
   QString name() const { return "off_plugin"; }
   QString nameFilters() const { return "OFF files (*.off);;Wavefront OBJ (*.obj)"; }
   bool canLoad() const;
@@ -149,6 +155,8 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
                          tr("%1 isolated vertices found")
                          .arg(item->getNbIsolatedvertices()));
   }
+  if(item->isItemMulticolor())
+    item->computeItemColorVectorAutomatically(true);
   return item;
 }
 

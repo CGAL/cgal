@@ -26,6 +26,7 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <CGAL/Unique_hash_map.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Triangulation_2/internal/Polyline_constraint_hierarchy_2.h>
@@ -132,6 +133,14 @@ public:
   typedef typename Tr::Intersection_tag        Intersection_tag;
   typedef Constrained_triangulation_plus_2<Tr_> Self;
   typedef Tr                                   Base;
+
+  
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+  using Triangulation::vertices_begin;
+  using Triangulation::vertices_end;
+  using Triangulation::is_infinite;
+  using Triangulation::number_of_vertices;
+#endif
 
   typedef typename Triangulation::Edge             Edge;
   typedef typename Triangulation::Vertex           Vertex;
@@ -597,7 +606,62 @@ private:
 
     return ca;
   }
+  
 public:
+  
+  void
+  file_output(std::ostream& os) const
+  {
+    os << static_cast<const Tr&>(*this);
+    Unique_hash_map<Vertex_handle,int> V;
+    int inum = 0;
+    for(Vertex_iterator vit = vertices_begin(); vit != vertices_end() ; ++vit){
+      if(! is_infinite(vit)){
+        V[vit] = inum++;
+      }
+    }
+
+    for(Constraint_iterator cit = constraints_begin(); cit != constraints_end(); ++cit){
+      os << (*cit).second->all_size();
+       for(Vertices_in_constraint it = vertices_in_constraint_begin(*cit);
+           it != vertices_in_constraint_end(*cit);
+           it++){
+         Vertex_handle vh = *it;
+         os << " " << V[vh];
+       }
+       os << std::endl;
+    }
+  }
+
+
+  void file_input(std::istream& is)
+  {
+    
+    is >> static_cast<Tr&>(*this);
+    
+    std::vector<Vertex_handle> V;
+    V.reserve(number_of_vertices());
+    for(Vertex_iterator vit = vertices_begin(); vit != vertices_end() ; ++vit){
+      if(! is_infinite(vit)){
+        V.push_back(vit);
+      }
+    }
+    Constraint_id cid;
+    int n, i0, i1;
+    while(is >> n){
+      is >> i0 >> i1;
+      cid = insert_constraint(V[i0],V[i1]);
+    
+      for(int i = 2; i < n; i++){
+        i0 = i1;
+        is >> i1;
+        Constraint_id cid2 = insert_constraint(V[i0],V[i1]);
+        cid = concatenate(cid, cid2);
+      }
+    }
+  }
+
+  
   template <class OutputIterator>
   typename Constrained_triangulation_plus_2<Tr>::Constraint_id
   insert_constraint(Vertex_handle va, Vertex_handle vb, OutputIterator out)
@@ -1091,6 +1155,15 @@ operator<<(std::ostream& os,
 {
   ct.file_output(os);
   return os ;
+}
+
+template <class Tr>
+std::istream &
+operator>>(std::istream& is, 
+	   Constrained_triangulation_plus_2<Tr> &ct)
+{
+  ct.file_input(is);
+  return is ;
 }
 
 // Constraint Hierarchy Queries

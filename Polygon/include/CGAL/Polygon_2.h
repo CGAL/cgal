@@ -148,13 +148,16 @@ class Polygon_2 {
     /// @{
 
     /// Creates an empty polygon.
-    Polygon_2(const Traits & p_traits = Traits()) : traits(p_traits) {}
+    Polygon_2() : traits() {}
+  
+    /// Creates an empty polygon.
+    Polygon_2(const Traits & p_traits) : traits(p_traits) {}
 
     /// Copy constructor.
     Polygon_2(const Polygon_2<Traits_P,Container_P>& polygon)
       : d_container(polygon.d_container), traits(polygon.traits) {}
 
-    /// Introduces a polygon with vertices from the sequence
+    /// Creates a polygon with vertices from the sequence
     /// defined by the range \c [first,last).
     /// The value type of \c InputIterator must be \c Point_2.
     template <class InputIterator>
