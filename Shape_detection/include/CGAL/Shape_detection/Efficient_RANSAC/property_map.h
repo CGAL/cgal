@@ -24,8 +24,8 @@
 #include <CGAL/Shape_detection/Efficient_RANSAC/Shape_base.h>
 #include <CGAL/Shape_detection/Efficient_RANSAC.h>
 
-#ifndef CGAL_SHAPE_DETECTION_EFFICIENT_RANSAC_PROPERTY_MAPS_H
-#define CGAL_SHAPE_DETECTION_EFFICIENT_RANSAC_PROPERTY_MAPS_H
+#ifndef CGAL_SHAPE_DETECTION_EFFICIENT_RANSAC_PROPERTY_MAP_H
+#define CGAL_SHAPE_DETECTION_EFFICIENT_RANSAC_PROPERTY_MAP_H
 
 namespace CGAL {
 namespace Shape_detection {
@@ -114,4 +114,4 @@ namespace Shape_detection {
 } // namespace Shape_detection
 } // namespace CGAL
 
-#endif // CGAL_SHAPE_DETECTION_EFFICIENT_RANSAC_PROPERTY_MAPS_H
+#endif // CGAL_SHAPE_DETECTION_EFFICIENT_RANSAC_PROPERTY_MAP_H

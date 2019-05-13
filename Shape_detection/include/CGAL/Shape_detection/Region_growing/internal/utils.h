@@ -35,6 +35,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Cartesian_converter.h>
+#include <CGAL/Eigen_diagonalize_traits.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -121,7 +122,8 @@ namespace internal {
     using To_local_converter = 
     Cartesian_converter<Traits, Local_traits>;
 
-		using Local_point_3 = typename Local_traits::Point_3;
+		using Local_FT = typename Local_traits::FT;
+    using Local_point_3 = typename Local_traits::Point_3;
 		using Local_plane_3 = typename Local_traits::Plane_3;
 
     planes.clear();
@@ -147,10 +149,12 @@ namespace internal {
       Local_plane_3 fitted_plane;
       Local_point_3 fitted_centroid;
 
-		  CGAL::linear_least_squares_fitting_3(
+      CGAL::linear_least_squares_fitting_3(
         points.begin(), points.end(), 
         fitted_plane, fitted_centroid, 
-        CGAL::Dimension_tag<0>());
+        CGAL::Dimension_tag<0>(), 
+        Local_traits(), 
+        CGAL::Eigen_diagonalize_traits<Local_FT, 3>());
 
 		  const Plane_3 plane = Plane_3(
         static_cast<FT>(fitted_plane.a()), 
@@ -163,6 +167,62 @@ namespace internal {
   }
 
 } // namespace internal
+
+namespace RG {
+
+  template<typename GeomTraits>
+  class Plane {
+
+  public:
+    using Traits = GeomTraits;
+    using FT = typename Traits::FT;
+    using Point_2 = typename Traits::Point_2;
+    using Point_3 = typename Traits::Point_3;
+    using Plane_3 = typename Traits::Plane_3;
+    using Vector_3 = typename Traits::Vector_3;
+
+    template<
+    typename Input_range, 
+    typename Point_map>
+    Plane(
+      const Input_range& input_range,
+      const Point_map point_map,
+      const std::vector<std::size_t>& region,
+      const Plane_3& plane) { 
+
+      FT x = FT(0), y = FT(0), z = FT(0);
+      for (const std::size_t idx : region) {
+        const auto& p = get(point_map, *(input_range.begin() + idx));
+        x += p.x();
+        y += p.y();
+        z += p.z();
+      }
+      x /= static_cast<FT>(region.size());
+      y /= static_cast<FT>(region.size());
+      z /= static_cast<FT>(region.size());
+      
+      m_centroid = Point_3(x, y, z);
+      m_base1 = plane.base1() / static_cast<FT>(CGAL::sqrt(
+        CGAL::to_double(plane.base1() * plane.base1())));
+      m_base2 = plane.base2() / static_cast<FT>(CGAL::sqrt(
+        CGAL::to_double(plane.base2() * plane.base2())));
+    }
+
+    Point_2 to_2d(const Point_3& query) const {
+      const Vector_3 v(m_centroid, query);
+      return Point_2(v * m_base1, v * m_base2);
+    }
+
+    Point_3 to_3d(const Point_2& query) const {
+      return m_centroid + query.x() * m_base1 + query.y() * m_base2;
+    }
+  
+  private:
+    Point_3 m_centroid;
+    Vector_3 m_base1, m_base2;
+  };
+
+} // namespace RG
 } // namespace Shape_detection
 } // namespace CGAL
 

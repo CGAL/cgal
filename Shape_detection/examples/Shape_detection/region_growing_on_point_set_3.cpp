@@ -75,7 +75,7 @@ struct Insert_point_colored_by_region_index {
 
   result_type operator()(const argument_type& region) {
 
-    CGAL::Random rand(m_number_of_regions);
+    CGAL::Random rand(static_cast<unsigned int>(m_number_of_regions));
     const unsigned char r = 
     static_cast<unsigned char>(64 + rand.get_int(0, 192));
     const unsigned char g = 
@@ -155,7 +155,7 @@ int main(int argc, char *argv[]) {
   CGAL::Timer timer;
 
   timer.start();
-  const auto rit = region_growing.detect(
+  region_growing.detect(
     boost::make_function_output_iterator(inserter));
   timer.stop();
 

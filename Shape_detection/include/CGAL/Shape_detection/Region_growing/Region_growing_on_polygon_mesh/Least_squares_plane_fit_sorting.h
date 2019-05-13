@@ -40,6 +40,7 @@
 // CGAL includes.
 #include <CGAL/assertions.h>
 #include <CGAL/Cartesian_converter.h>
+#include <CGAL/Eigen_diagonalize_traits.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -223,7 +224,9 @@ namespace Polygon_mesh {
         m_scores[i] = CGAL::linear_least_squares_fitting_3(
           points.begin(), points.end(), 
           fitted_plane, fitted_centroid, 
-          CGAL::Dimension_tag<0>());
+          CGAL::Dimension_tag<0>(), 
+          Local_traits(), 
+          CGAL::Eigen_diagonalize_traits<Local_FT, 3>());
       }
     }
 

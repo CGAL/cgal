@@ -12,10 +12,16 @@ if(CGAL_FOUND)
   include(${CGAL_USE_FILE})
   include(CGAL_CreateSingleSourceCGALProgram)
 
-  create_single_source_cgal_program(
-    "benchmark_region_growing_on_point_set_2.cpp")
-  create_single_source_cgal_program(
-    "benchmark_region_growing_on_point_set_3.cpp")
+  # Use Eigen.
+  find_package(Eigen3 3.1.0 QUIET) # (3.1.0 or greater)
+  if(EIGEN3_FOUND)
+    include(${EIGEN3_USE_FILE})
+
+    create_single_source_cgal_program(
+      "benchmark_region_growing_on_point_set_2.cpp")
+    create_single_source_cgal_program(
+      "benchmark_region_growing_on_point_set_3.cpp")
+  endif()
 
 else()
   message(WARNING 

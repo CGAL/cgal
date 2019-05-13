@@ -36,6 +36,6 @@
 #include <CGAL/Shape_detection/Efficient_RANSAC/Shape_base.h>
 
 #include <CGAL/Shape_detection/Efficient_RANSAC/Octree.h>
-#include <CGAL/Shape_detection/Efficient_RANSAC/property_maps.h>
+#include <CGAL/Shape_detection/Efficient_RANSAC/property_map.h>
 
 #endif // CGAL_SHAPE_DETECTION_EFFICIENT_RANSAC_HEADERS_H

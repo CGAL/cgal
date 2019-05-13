@@ -16,12 +16,22 @@ if(CGAL_FOUND)
   find_package(Eigen3 3.1.0 QUIET) # (3.1.0 or greater)
   if(EIGEN3_FOUND)
     include(${EIGEN3_USE_FILE})
+
     create_single_source_cgal_program(
       "efficient_RANSAC_basic.cpp")
     create_single_source_cgal_program(
       "efficient_RANSAC_with_callback.cpp")
     create_single_source_cgal_program(
       "efficient_RANSAC_and_plane_regularization.cpp")
+
+    create_single_source_cgal_program(
+      "region_growing_on_point_set_2.cpp")
+    create_single_source_cgal_program(
+      "region_growing_on_point_set_3.cpp")
+    create_single_source_cgal_program(
+      "region_growing_on_polygon_mesh.cpp")
+    create_single_source_cgal_program(
+      "region_growing_with_custom_classes.cpp")
   endif()
 
   create_single_source_cgal_program(
@@ -30,15 +40,6 @@ if(CGAL_FOUND)
     "efficient_RANSAC_with_parameters.cpp")
   create_single_source_cgal_program(
     "efficient_RANSAC_with_point_access.cpp")
-
-  create_single_source_cgal_program(
-    "region_growing_on_point_set_2.cpp")
-  create_single_source_cgal_program(
-    "region_growing_on_point_set_3.cpp")
-  create_single_source_cgal_program(
-    "region_growing_on_polygon_mesh.cpp")
-  create_single_source_cgal_program(
-    "region_growing_with_custom_classes.cpp")
 
 else()
   message(WARNING 

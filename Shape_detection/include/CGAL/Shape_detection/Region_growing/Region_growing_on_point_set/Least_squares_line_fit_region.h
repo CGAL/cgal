@@ -32,6 +32,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Cartesian_converter.h>
+#include <CGAL/Eigen_diagonalize_traits.h>
 #include <CGAL/linear_least_squares_fitting_2.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -96,6 +97,7 @@ namespace Point_set {
     using Line_2 = typename Traits::Line_2;
 
     using Local_traits = Exact_predicates_inexact_constructions_kernel;
+    using Local_FT = typename Local_traits::FT;
     using Local_point_2 = typename Local_traits::Point_2;
     using Local_line_2 = typename Local_traits::Line_2;
     using To_local_converter = Cartesian_converter<Traits, Local_traits>;
@@ -295,7 +297,9 @@ namespace Point_set {
         CGAL::linear_least_squares_fitting_2(
           points.begin(), points.end(), 
           fitted_line, fitted_centroid, 
-          CGAL::Dimension_tag<0>());
+          CGAL::Dimension_tag<0>(), 
+          Local_traits(), 
+          CGAL::Eigen_diagonalize_traits<Local_FT, 2>());
                     
         m_line_of_best_fit = 
         Line_2(
