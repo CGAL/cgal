@@ -169,7 +169,7 @@ EOF
 
 # Boost and its components
 EOF
-    echo "find_package( Boost REQUIRED COMPONENTS ${BOOST_COMPONENTS//:/ } )"
+    echo "find_package( Boost REQUIRED OPTIONAL_COMPONENTS ${BOOST_COMPONENTS//:/ } )"
 
   fi # additional Boost components
   #---------------------------------------------------------------------------
