@@ -173,6 +173,8 @@ CGAL_Kernel_cons(Compute_c_3,
 		 compute_c_3_object)
 CGAL_Kernel_cons(Compute_d_3,
 		 compute_d_3_object)
+CGAL_Kernel_cons(Compute_approximate_angle_3,
+		 compute_approximate_angle_3_object)
 CGAL_Kernel_cons(Compute_approximate_dihedral_angle_3,
 		 compute_approximate_dihedral_angle_3_object)
 CGAL_Kernel_cons(Compute_approximate_area_3,

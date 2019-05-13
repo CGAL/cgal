@@ -6,13 +6,56 @@ Release 5.0
 
 Release date: September 2019
 
-### Polygon Mesh Processing package
+### 2D Triangulations
+
+-   **Breaking change**: Removed the functions `CGAL::Constrained_triangulation_plus_2::
+    vertices_in_constraint_{begin/end}(Vertex_handle va, Vertex_handle vb) const;`,
+    and `CGAL::Constrained_triangulation_plus_2::remove_constraint((Vertex_handle va, Vertex_handle vb)`,
+    that is a pair of vertex handles is no longer a key for a polyline constraint.
+    Users must use a version prior to 5.0 if they need this functionality.
+-   **Breaking change**: Removed the deprecated classes `CGAL::Regular_triangulation_euclidean_traits_2`, `CGAL::Regular_triangulation_filtered_traits_2`.   Users must use a version prior to 5.0 if they need these classes.   
+    
+### Surface Mesh
+ -   New functions to read and write using the PLY format,
+     `CGAL::read_ply()` and `CGAL::write_ply()`, allowing to save and
+     load additional property maps of the surface mesh.
+
+### 3D Point Set
+ -   The PLY IO functions now take an additional optional parameter to
+     read/write comments from/in the PLY header.
+
+### Polygon Mesh Processing
  -   Added the function `CGAL::Polygon_mesh_processing::centroid()` which computes
      the centroid of a closed triangle mesh.
 
 ### IO Streams
  -   **Breaking change:** The API of `CGAL::Color` has been cleaned up.
 
+###3D Boolean Operations on Nef Polyhedra
+ -   Added a function to convert a Nef_polyhedron_3 to a polygon soup: `CGAL::convert_nef_to_polygon_soup()`
+
+### 2D and 3D Linear Geometry Kernel
+ - Add `ComputeApproximateAngle_3` in the 2D/3D Kernel concept to compute
+   the approximate dihedral angle between 2 vectors. Corresponding functors
+   in the model (`Compute_approximate_angle_3`) and free function (`approximate_angle`)
+   are also added.
+
+### IO Streams
+
+-   Added new functions to support some parts of the WKT file format:
+    - `CGAL::read_point_WKT()`
+    - `CGAL::read_multi_point_WKT()`
+    - `CGAL::read_linestring_WKT()`
+    - `CGAL::read_multi_linestring_WKT()`
+    - `CGAL::read_polygon_WKT()`
+    - `CGAL::read_multi_polygon_WKT()`
+    - `CGAL::write_point_WKT()`
+    - `CGAL::write_polygon_WKT()`
+    - `CGAL::write_linestring_WKT()`
+    - `CGAL::write_multi_point_WKT()`
+    - `CGAL::write_multi_polygon_WKT()`
+    - `CGAL::write_multi_linestring_WKT()`
+    - `CGAL:read_WKT()`
 
 Release 4.14
 ------------

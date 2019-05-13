@@ -28,6 +28,7 @@
 #include <CGAL/IO/trace.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/Point_set_processing_3/internal/neighbor_query.h>
 #include <CGAL/Monge_via_jet_fitting.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
@@ -74,15 +75,11 @@ typename Kernel::Vector_3
 jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute the normal at
                     Tree& tree, ///< KD-tree
                     unsigned int k, ///< number of neighbors
+                    typename Kernel::FT neighbor_radius,
                     unsigned int degree_fitting)
 {
   // basic geometric types
   typedef typename Kernel::Point_3  Point;
-
-  // types for K nearest neighbors search
-  typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
-  typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
-  typedef typename Neighbor_search::iterator Search_iterator;
 
   // types for jet fitting
   typedef Monge_via_jet_fitting< Kernel,
@@ -90,23 +87,10 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
                                  SvdTraits> Monge_jet_fitting;
   typedef typename Monge_jet_fitting::Monge_form Monge_form;
 
-  // Gather set of (k+1) neighboring points.
-  // Perform k+1 queries (as in point set, the query point is
-  // output first). Search may be aborted if k is greater
-  // than number of input points.
-  std::vector<Point> points; points.reserve(k+1);
-  Neighbor_search search(tree,query,k+1);
-  Search_iterator search_iterator = search.begin();
-  unsigned int i;
-  for(i=0;i<(k+1);i++)
-  {
-    if(search_iterator == search.end())
-      break; // premature ending
-    points.push_back(search_iterator->first);
-    search_iterator++;
-  }
-  CGAL_point_set_processing_precondition(points.size() >= 1);
-
+  std::vector<Point> points;
+  CGAL::Point_set_processing_3::internal::neighbor_query
+    (query, tree, k, neighbor_radius, points);
+  
   // performs jet fitting
   Monge_jet_fitting monge_fit;
   const unsigned int degree_monge = 1; // we seek for normal and not more.
@@ -120,10 +104,12 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 #ifdef CGAL_LINKED_WITH_TBB
   template <typename Kernel, typename SvdTraits, typename Tree>
   class Jet_estimate_normals {
+    typedef typename Kernel::FT FT;
     typedef typename Kernel::Point_3 Point;
     typedef typename Kernel::Vector_3 Vector;
     const Tree& tree;
     const unsigned int k;
+    const FT neighbor_radius;
     const unsigned int degree_fitting;
     const std::vector<Point>& input;
     std::vector<Vector>& output;
@@ -131,11 +117,13 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
     cpp11::atomic<bool>& interrupted;
 
   public:
-    Jet_estimate_normals(Tree& tree, unsigned int k, std::vector<Point>& points,
+    Jet_estimate_normals(Tree& tree, unsigned int k, FT neighbor_radius,
+                         std::vector<Point>& points,
                          unsigned int degree_fitting, std::vector<Vector>& output,
                          cpp11::atomic<std::size_t>& advancement,
                          cpp11::atomic<bool>& interrupted)
-      : tree(tree), k (k), degree_fitting (degree_fitting), input (points), output (output)
+      : tree(tree), k (k), neighbor_radius (neighbor_radius)
+      , degree_fitting (degree_fitting), input (points), output (output)
       , advancement (advancement)
       , interrupted (interrupted)
     { }
@@ -146,7 +134,7 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
       {
         if (interrupted)
           break;
-	output[i] = CGAL::internal::jet_estimate_normal<Kernel,SvdTraits>(input[i], tree, k, degree_fitting);
+        output[i] = CGAL::internal::jet_estimate_normal<Kernel,SvdTraits>(input[i], tree, k, neighbor_radius, degree_fitting);
         ++ advancement;
       }
     }
@@ -168,7 +156,7 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 /**
    \ingroup PkgPointSetProcessing3Algorithms
    Estimates normal directions of the range of `points`
-   using jet fitting on the k nearest neighbors.
+   using jet fitting on the nearest neighbors.
    The output normals are randomly oriented.
 
    \pre `k >= 2`
@@ -188,6 +176,12 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
      If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
      \cgalParamBegin{normal_map} a model of `ReadWritePropertyMap` with value type
      `geom_traits::Vector_3`.\cgalParamEnd
+     \cgalParamBegin{neighbor_radius} spherical neighborhood radius. If
+     provided, the neighborhood of a query point is computed with a fixed spherical
+     radius instead of a fixed number of neighbors. In that case, the parameter
+     `k` is used as a limit on the number of points returned by each spherical
+     query (to avoid overly large number of points in high density areas). If no
+     limit is wanted, use `k=0`.\cgalParamEnd
      \cgalParamBegin{degree_fitting} degree of jet fitting.\cgalParamEnd
      \cgalParamBegin{svd_traits} template parameter for the class `Monge_via_jet_fitting`. If
      \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined,
@@ -220,6 +214,7 @@ jet_estimate_normals(
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+  typedef typename Kernel::FT FT;
   typedef typename GetSvdTraits<NamedParameters>::type SvdTraits;
 
   CGAL_static_assertion_msg(!(boost::is_same<NormalMap,
@@ -232,6 +227,8 @@ jet_estimate_normals(
   PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
   NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
   unsigned int degree_fitting = choose_param(get_param(np, internal_np::degree_fitting), 2);
+  FT neighbor_radius = choose_param(get_param(np, internal_np::neighbor_radius), FT(0));
+  
   const std::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
                                                                std::function<bool(double)>());
 
@@ -251,7 +248,7 @@ jet_estimate_normals(
   CGAL_point_set_processing_precondition(points.begin() != points.end());
 
   // precondition: at least 2 nearest neighbors
-  CGAL_point_set_processing_precondition(k >= 2);
+  CGAL_point_set_processing_precondition(k >= 2 || neighbor_radius > FT(0));
 
   std::size_t memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("  Creates KD-tree\n");
@@ -282,7 +279,8 @@ jet_estimate_normals(
      std::vector<Vector> normals (kd_tree_points.size (),
                                   CGAL::NULL_VECTOR);
      CGAL::internal::Jet_estimate_normals<Kernel, SvdTraits, Tree>
-       f (tree, k, kd_tree_points, degree_fitting, normals,
+       f (tree, k, neighbor_radius,
+          kd_tree_points, degree_fitting, normals,
           parallel_callback.advancement(),
           parallel_callback.interrupted());
      tbb::parallel_for(tbb::blocked_range<size_t>(0, kd_tree_points.size ()), f);
@@ -301,7 +299,7 @@ jet_estimate_normals(
 	 {
 	   Vector normal = internal::jet_estimate_normal<Kernel,SvdTraits,Tree>(
 										get(point_map,*it), 
-										tree, k, degree_fitting);
+										tree, k, neighbor_radius, degree_fitting);
 
 	   put(normal_map, *it, normal); // normal_map[it] = normal
            if (callback && !callback ((nb+1) / double(kd_tree_points.size())))

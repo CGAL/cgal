@@ -29,7 +29,6 @@
 #define CGAL_INLINE_FUNCTION
 #endif
 
-#include <CGAL/basic.h>
 #include <CGAL/assertions.h>
 
 #include <sstream>

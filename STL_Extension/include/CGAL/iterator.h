@@ -43,6 +43,7 @@
 
 #include <vector>
 #include <map>
+#include <utility>
 
 namespace CGAL {
 
@@ -1324,6 +1325,14 @@ struct Derivator<D, std::tuple<V1, V...>, std::tuple<O1, O...> >
 
 } // internal
 
+namespace tuple_internal {
+template <typename ...Args, std::size_t ...Is>
+auto to_tuple(std::tuple<Args...> &t, std::index_sequence<Is...>)
+{
+  return std::tuple<Args&...>(std::get<Is>(t)...);
+}
+
+}//end namespace  tuple_internal
 
 // OutputIterator which accepts several types in *o++= and dispatches,
 // wraps several other output iterators, and dispatches accordingly.
@@ -1408,6 +1417,16 @@ public:
     tuple_dispatch(t);
     return *this;
   }
+  
+  operator std::tuple<O&...>()
+  {
+    return tuple_internal::to_tuple(*this, std::index_sequence_for<O...>{});
+  }
+  
+  operator std::tuple<const O&...>()const
+  {
+    return tuple_internal::to_tuple(*this, std::index_sequence_for<O...>{});
+  }
 };
 
 template < typename... V, typename... O>
@@ -1449,6 +1468,7 @@ public:
 
   template <class T>
   Self& operator=(const T&) { return *this; }
+
 };
 
 

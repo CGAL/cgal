@@ -25,7 +25,6 @@ find_package(Qt5 QUIET COMPONENTS Widgets)
 if(CGAL_FOUND AND (CGAL_Core_FOUND OR LEDA_FOUND) AND Qt5_FOUND AND CGAL_Qt5_FOUND)
 
   find_package( Boost REQUIRED )
-  include_directories(${Boost_INCLUDE_DIRS})
 
   include_directories (BEFORE include )
 

@@ -37,7 +37,8 @@
 
 #include <CGAL/config.h>
 #include <CGAL/tss.h>
-#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST || (defined(CGAL_HAS_THREADS)&&__GNUC__)
+#include <boost/config.hpp>
+#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST || (defined(CGAL_HAS_THREADS) && BOOST_GCC)
 // Force the use of Boost.Thread with g++ and C++11, because of the PR66944
 //   https://gcc.gnu.org/bugzilla/show_bug.cgi?id=66944
 // See also CGAL PR #1888
@@ -91,7 +92,7 @@ public:
 
   // Access the corresponding static global allocator.
   static MemoryPool<T,nObjects>& global_allocator() {
-#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST || (defined(CGAL_HAS_THREADS)&&__GNUC__)
+#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST || (defined(CGAL_HAS_THREADS) && BOOST_GCC)
     if(memPool_ptr.get() == NULL) {memPool_ptr.reset(new Self());}
     Self& memPool =  * memPool_ptr.get();
 #endif
@@ -102,7 +103,7 @@ private:
    Thunk* head; // next available block in the pool
   std::vector<void*> blocks;
 
-#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST || (defined(CGAL_HAS_THREADS)&&__GNUC__)
+#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST || (defined(CGAL_HAS_THREADS) && BOOST_GCC)
   static boost::thread_specific_ptr<Self> memPool_ptr;
 #elif defined(CGAL_HAS_THREADS) // use the C++11 implementation
   static thread_local Self memPool;
@@ -111,7 +112,7 @@ private:
 #endif // not CGAL_HAS_THREADS
 };
 
-#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST || (defined(CGAL_HAS_THREADS)&&__GNUC__)
+#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST || (defined(CGAL_HAS_THREADS) && BOOST_GCC)
 template <class T, int nObjects >
 boost::thread_specific_ptr<MemoryPool<T, nObjects> >
 MemoryPool<T, nObjects>::memPool_ptr;

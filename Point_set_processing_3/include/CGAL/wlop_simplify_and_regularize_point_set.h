@@ -442,8 +442,8 @@ public:
      \cgalParamBegin{neighbor_radius} spherical neighborhood radius. This is a key parameter that needs to be
      finely tuned. The result will be irregular if too small, but a larger value will impact the runtime. In 
      practice, choosing a radius such that the neighborhood of each sample point includes at least two rings 
-     of neighboring sample points gives satisfactory result. The default value is set to 8 times the average 
-     spacing of the point set.\cgalParamEnd
+     of neighboring sample points gives satisfactory result. If this parameter is not provided, it is
+     automatically set to 8 times the average spacing of the point set.\cgalParamEnd
      \cgalParamBegin{number_of_iterations} number of iterations to solve the optimsation problem. The default
      value is 35. More iterations give a more regular result but increase the runtime.\cgalParamEnd
      \cgalParamBegin{require_uniform_sampling} an optional preprocessing, which will give better result if the
