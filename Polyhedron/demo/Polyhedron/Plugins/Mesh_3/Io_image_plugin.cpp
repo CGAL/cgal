@@ -282,15 +282,18 @@ public:
   Io_image_plugin() : planeSwitch(NULL) {}
 
   QString nameFilters() const;
-  bool canLoad() const;
-  CGAL::Three::Scene_item* load(QFileInfo fileinfo);
+  bool canLoad(QFileInfo) const;
+  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true);
 
   bool canSave(const CGAL::Three::Scene_item*);
-  bool save(const CGAL::Three::Scene_item* item, QFileInfo fi) {
+  bool save(QFileInfo fileinfo, QList<CGAL::Three::Scene_item*>& items ) {
+    Scene_item* item = items.front();
     const Scene_image_item* im_item = qobject_cast<const Scene_image_item*>(item);
 
     point_image p_im = *im_item->image()->image();
-    return _writeImage(&p_im, fi.filePath().toUtf8()) == 0;
+    bool ok = _writeImage(&p_im, fileinfo.filePath().toUtf8()) == 0;
+    items.pop_front();
+    return ok;
   }
   QString name() const { return "segmented images"; }
 
@@ -965,7 +968,7 @@ QString Io_image_plugin::nameFilters() const {
 }
 
 
-bool Io_image_plugin::canLoad() const {
+bool Io_image_plugin::canLoad(QFileInfo) const {
   return true;
 }
 
@@ -987,8 +990,11 @@ void convert(Image* image)
   image->image()->wdim = 4;
   image->image()->wordKind = WK_FLOAT;
 }
-CGAL::Three::Scene_item*
-Io_image_plugin::load(QFileInfo fileinfo) {
+
+QList<Scene_item*>
+Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
+{
+  ok = true;
   QApplication::restoreOverrideCursor();
   Image* image = new Image;
   if(fileinfo.suffix() != "H" && fileinfo.suffix() != "HH" &&
@@ -1075,8 +1081,9 @@ Io_image_plugin::load(QFileInfo fileinfo) {
         success = false;
       }
       if(!success){
+        ok = false;
         delete image;
-        return NULL;
+        return QList<Scene_item*>();
       }
     }
   //read a sep file
@@ -1117,7 +1124,8 @@ Io_image_plugin::load(QFileInfo fileinfo) {
     if(return_code != QDialog::Accepted)
     {
       delete image;
-      return NULL;
+      ok = false;
+      return QList<Scene_item*>();
     }
 
     // Get selected precision
@@ -1145,7 +1153,9 @@ Io_image_plugin::load(QFileInfo fileinfo) {
   else
     image_item = new Scene_image_item(image,voxel_scale, false);
   image_item->setName(fileinfo.baseName());
-  return image_item;
+  if(add_to_scene)
+    CGAL::Three::Three::scene()->addItem(image_item);
+  return QList<Scene_item*>() << image_item;
 }
 
 bool Io_image_plugin::canSave(const CGAL::Three::Scene_item* item)

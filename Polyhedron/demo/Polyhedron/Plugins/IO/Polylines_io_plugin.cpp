@@ -45,11 +45,11 @@ public:
     }
   QString name() const { return "polylines_io_plugin"; }
   QString nameFilters() const { return "Polylines files (*.polylines.txt *.cgal)"; }
-  bool canLoad() const;
-  CGAL::Three::Scene_item* load(QFileInfo fileinfo);
+  bool canLoad(QFileInfo fileinfo) const;
+  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true);
 
   bool canSave(const CGAL::Three::Scene_item*);
-  bool save(const CGAL::Three::Scene_item*, QFileInfo fileinfo);
+  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>&);
   bool applicable(QAction* a) const {
     bool all_polylines_selected = true;
     Q_FOREACH(int index, scene->selectionIndices())
@@ -85,19 +85,21 @@ private:
   QAction* actionJoin_polylines;
 };
 
-bool Polyhedron_demo_polylines_io_plugin::canLoad() const {
+bool Polyhedron_demo_polylines_io_plugin::canLoad(QFileInfo fileinfo) const{
   return true;
 }
 
 
-CGAL::Three::Scene_item*
-Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo) {
+QList<Scene_item*>
+Polyhedron_demo_polylines_io_plugin::
+load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
 
   // Open file
   std::ifstream ifs(fileinfo.filePath().toUtf8());
   if(!ifs) {
     std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
-    return NULL;
+    ok = false;
+    return QList<Scene_item*>();
   }
 
   if(fileinfo.size() == 0)
@@ -105,7 +107,10 @@ Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo) {
     CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
     Scene_polylines_item* item = new Scene_polylines_item;
     item->setName(fileinfo.completeBaseName());
-    return item;
+    ok = true;
+    if(add_to_scene)
+      CGAL::Three::Three::scene()->addItem(item);
+    return QList<Scene_item*>()<<item;
   }
   
   std::list<std::vector<Scene_polylines_item::Point_3> > polylines;
@@ -123,7 +128,11 @@ Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo) {
       Scene_polylines_item::Point_3 p;
       ifs >> p;
       polyline.push_back(p);
-      if(!ifs.good()) return 0;
+      if(!ifs.good())
+      {
+        ok = false;
+        return QList<Scene_item*>();
+      }
     }
     std::string line_remainder;
     std::getline(ifs, line_remainder);
@@ -136,9 +145,17 @@ Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo) {
       std::cerr << " (metadata: \"" << qPrintable(metadata) << "\")\n";
     } else {
     }
-    if(ifs.bad() || ifs.fail()) return 0;
+    if(ifs.bad() || ifs.fail())
+    {
+      ok = false;
+      return QList<Scene_item*>();
+    }
   }
-  if(counter == 0) return 0;
+  if(counter == 0)
+  {
+    ok = false;
+    return QList<Scene_item*>();
+  }
   Scene_polylines_item* item = new Scene_polylines_item;
   item->polylines = polylines;
   item->setName(fileinfo.baseName());
@@ -146,7 +163,10 @@ Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo) {
   item->setProperty("polylines metadata", polylines_metadata);
   std::cerr << "Number of polylines in item: " << item->polylines.size() << std::endl;
   item->invalidateOpenGLBuffers();
-  return item;
+  ok = true;
+  if(add_to_scene)
+    CGAL::Three::Three::scene()->addItem(item);
+  return QList<Scene_item*>()<<item;
 }
 
 bool Polyhedron_demo_polylines_io_plugin::canSave(const CGAL::Three::Scene_item* item)
@@ -154,8 +174,10 @@ bool Polyhedron_demo_polylines_io_plugin::canSave(const CGAL::Three::Scene_item*
   return qobject_cast<const Scene_polylines_item*>(item) != 0;
 }
 
-bool Polyhedron_demo_polylines_io_plugin::save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
+bool Polyhedron_demo_polylines_io_plugin::
+save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
 {
+  Scene_item* item = items.front();
   const Scene_polylines_item* poly_item =
     qobject_cast<const Scene_polylines_item*>(item);
 
@@ -188,7 +210,10 @@ bool Polyhedron_demo_polylines_io_plugin::save(const CGAL::Three::Scene_item* it
     }
     out << std::endl;
   }
-  return (bool) out;
+  bool res = (bool) out;
+  if(res)
+    items.pop_front();
+  return res;
 }
 
 void Polyhedron_demo_polylines_io_plugin::split()

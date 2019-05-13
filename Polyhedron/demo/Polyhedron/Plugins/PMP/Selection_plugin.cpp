@@ -78,7 +78,7 @@ public:
   QString nameFilters() const { return "Selection files(*.selection.txt)"; }
   QString name() const { return "selection_sm_plugin"; }
   
-  bool canLoad() const {
+  bool canLoad(QFileInfo) const {
     Scene_item * item = CGAL::Three::Three::scene()->item(
           CGAL::Three::Three::scene()->mainSelectionIndex());
     Scene_facegraph_item* fg_item = qobject_cast<Scene_facegraph_item*>(item);
@@ -91,26 +91,38 @@ public:
     return false;
   }
 
-  CGAL::Three::Scene_item* load(QFileInfo fileinfo) {
-      if(fileinfo.suffix().toLower() != "txt") return 0;
+  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) {
+      if(fileinfo.suffix().toLower() != "txt")
+      {
+        ok = false;
+        return QList<Scene_item*>();
+      }
       // There will be no actual loading at this step.
       Scene_polyhedron_selection_item* item = new Scene_polyhedron_selection_item();
       if(!item->load(fileinfo.filePath().toStdString())) {
           delete item;
-          return NULL;
+        ok = false;
+        return QList<Scene_item*>();
       }
       item->setName(fileinfo.baseName());
-      return item;
+      ok = true;
+      if(add_to_scene)
+        CGAL::Three::Three::scene()->addItem(item);
+      return QList<Scene_item*>()<<item;
   }
 
   bool canSave(const CGAL::Three::Scene_item* scene_item) {
       return qobject_cast<const Scene_polyhedron_selection_item*>(scene_item);
   }
-  bool save(const CGAL::Three::Scene_item* scene_item, QFileInfo fileinfo) {
+  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items) {
+    Scene_item* scene_item = items.front();
       const Scene_polyhedron_selection_item* item = qobject_cast<const Scene_polyhedron_selection_item*>(scene_item);
       if(item == NULL) { return false; }
 
-      return item->save(fileinfo.filePath().toStdString());
+      bool res = item->save(fileinfo.filePath().toStdString());
+      if(res)
+        items.pop_front();
+      return res;
   }
   
   bool applicable(QAction*) const { 

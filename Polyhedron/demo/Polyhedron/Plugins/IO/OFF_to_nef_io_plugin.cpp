@@ -16,19 +16,19 @@ class Polyhedron_demo_off_to_nef_plugin :
 public:
   QString name() const { return "off_to_nef_plugin"; }
   QString nameFilters() const { return "OFF files, into nef (*.off)"; }
-  bool canLoad() const;
-  CGAL::Three::Scene_item* load(QFileInfo fileinfo);
+  bool canLoad(QFileInfo) const;
+  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true);
 
   bool canSave(const CGAL::Three::Scene_item*);
-  bool save(const CGAL::Three::Scene_item*, QFileInfo fileinfo);
+  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& );
 };
 
-bool Polyhedron_demo_off_to_nef_plugin::canLoad() const {
+bool Polyhedron_demo_off_to_nef_plugin::canLoad(QFileInfo) const {
   return true;
 }
 
-CGAL::Three::Scene_item*
-Polyhedron_demo_off_to_nef_plugin::load(QFileInfo fileinfo) {
+QList<Scene_item*> Polyhedron_demo_off_to_nef_plugin::
+load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
   std::ifstream in(fileinfo.filePath().toUtf8());
 
   if(!in)
@@ -38,16 +38,23 @@ Polyhedron_demo_off_to_nef_plugin::load(QFileInfo fileinfo) {
   {
     CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
     item->setName(fileinfo.completeBaseName());
-    return item;
+    ok = true;
+    if(add_to_scene)
+      CGAL::Three::Three::scene()->addItem(item);
+    return QList<Scene_item*>()<<item;
   }
   if(!item->load_from_off(in))
   {
     delete item;
-    return 0;
+    ok = false;
+    return QList<Scene_item*>()<<item;
   }
 
   item->setName(fileinfo.baseName());
-  return item;
+  ok = true;
+  if(add_to_scene)
+    CGAL::Three::Three::scene()->addItem(item);
+  return QList<Scene_item*>()<<item;
 }
 
 bool Polyhedron_demo_off_to_nef_plugin::canSave(const CGAL::Three::Scene_item*)
@@ -55,7 +62,8 @@ bool Polyhedron_demo_off_to_nef_plugin::canSave(const CGAL::Three::Scene_item*)
   return false;
 }
 
-bool Polyhedron_demo_off_to_nef_plugin::save(const CGAL::Three::Scene_item*, QFileInfo)
+bool Polyhedron_demo_off_to_nef_plugin::
+save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
 {
   return false;
 }

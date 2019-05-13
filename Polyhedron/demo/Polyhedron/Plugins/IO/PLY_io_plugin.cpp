@@ -13,7 +13,7 @@
 #include <CGAL/IO/PLY_writer.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <QMessageBox>
-
+using namespace CGAL::Three;
 class Polyhedron_demo_ply_plugin :
   public QObject,
   public CGAL::Three::Polyhedron_demo_io_plugin_interface
@@ -31,20 +31,22 @@ public:
   }
   QString name() const { return "ply_plugin"; }
   QString nameFilters() const { return "PLY files (*.ply)"; }
-  bool canLoad() const;
-  CGAL::Three::Scene_item* load(QFileInfo fileinfo);
+  bool canLoad(QFileInfo fileinfo) const;
+  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true);
 
   bool canSave(const CGAL::Three::Scene_item*);
-  bool save(const CGAL::Three::Scene_item*, QFileInfo fileinfo);
+  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>&);
 
 };
 
-bool Polyhedron_demo_ply_plugin::canLoad() const {
+bool Polyhedron_demo_ply_plugin::
+canLoad(QFileInfo) const {
   return true;
 }
 
-CGAL::Three::Scene_item*
-Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
+QList<Scene_item*>
+Polyhedron_demo_ply_plugin::
+load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
   std::ifstream in(fileinfo.filePath().toUtf8(), std::ios_base::binary);
 
   if(!in)
@@ -55,7 +57,8 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
   if(fileinfo.size() == 0)
   {
     CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
-    return 0;
+    ok = false;
+    return QList<Scene_item*>();
   }
   
   // Test if input is mesh or point set
@@ -99,7 +102,10 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
       sm_item->setName(fileinfo.completeBaseName());
       sm_item->comments() = comments;
       QApplication::restoreOverrideCursor();
-      return sm_item;
+      ok = true;
+      if(add_to_scene)
+        CGAL::Three::Three::scene()->addItem(sm_item);
+      return QList<Scene_item*>()<<sm_item;
     }
 
     in.clear();
@@ -114,14 +120,18 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
     if (!(CGAL::read_PLY (in, points, polygons, fcolors, vcolors)))
     {
       QApplication::restoreOverrideCursor();
-      return NULL;
+      ok = false;
+      return QList<Scene_item*>();
     }
 
     Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item;
     soup_item->setName(fileinfo.completeBaseName());
     soup_item->load (points, polygons, fcolors, vcolors);
     QApplication::restoreOverrideCursor();
-    return soup_item;
+    ok = true;
+    if(add_to_scene)
+      CGAL::Three::Three::scene()->addItem(soup_item);
+    return QList<Scene_item*>()<<soup_item;
   }
   else // Open point set
   {
@@ -131,16 +141,21 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
     {
       delete item;
       QApplication::restoreOverrideCursor();
-      return NULL;
+      ok = false;
+      return QList<Scene_item*>();
     }
     if(item->has_normals())
       item->setRenderingMode(CGAL::Three::Three::defaultPointSetRenderingMode());
     item->setName(fileinfo.completeBaseName());
     QApplication::restoreOverrideCursor();
-    return item;
+    ok = true;
+    if(add_to_scene)
+      CGAL::Three::Three::scene()->addItem(item);
+    return QList<Scene_item*>()<<item;
   }
   QApplication::restoreOverrideCursor();
-  return NULL;
+  ok = true;
+  return QList<Scene_item*>();
 }
 
 bool Polyhedron_demo_ply_plugin::canSave(const CGAL::Three::Scene_item* item)
@@ -152,8 +167,10 @@ bool Polyhedron_demo_ply_plugin::canSave(const CGAL::Three::Scene_item* item)
           || qobject_cast<const Scene_textured_surface_mesh_item*>(item));
 }
 
-bool Polyhedron_demo_ply_plugin::save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
+bool Polyhedron_demo_ply_plugin::
+save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
 {
+  Scene_item* item = items.front();
   // Check extension (quietly)
   std::string extension = fileinfo.suffix().toUtf8().data();
   if (extension != "ply" && extension != "PLY")
@@ -179,25 +196,49 @@ bool Polyhedron_demo_ply_plugin::save(const CGAL::Three::Scene_item* item, QFile
   const Scene_points_with_normal_item* point_set_item =
     qobject_cast<const Scene_points_with_normal_item*>(item);
   if (point_set_item)
-    return point_set_item->write_ply_point_set(out, (choice == tr("Binary")));
+  {
+    bool res =
+        point_set_item->write_ply_point_set(out, (choice == tr("Binary")));
+    if(res)
+      items.pop_front();
+    return res;
+  }
 
   // This plugin supports polygon soups
   const Scene_polygon_soup_item* soup_item =
     qobject_cast<const Scene_polygon_soup_item*>(item);
   if (soup_item)
-    return CGAL::write_PLY (out, soup_item->points(), soup_item->polygons());
+  {
+    bool res =
+        CGAL::write_PLY (out, soup_item->points(), soup_item->polygons());
+    if(res)
+      items.pop_front();
+    return res;
+  }
 
   // This plugin supports surface meshes
   const Scene_surface_mesh_item* sm_item =
     qobject_cast<const Scene_surface_mesh_item*>(item);
   if (sm_item)
-    return CGAL::write_ply (out, *(sm_item->polyhedron()), sm_item->comments());
+  {
+    bool res =
+        CGAL::write_ply (out, *(sm_item->polyhedron()), sm_item->comments());
+    if(res)
+      items.pop_front();
+    return res;
+  }
   
   // This plugin supports textured surface meshes
   const Scene_textured_surface_mesh_item* stm_item =
     qobject_cast<const Scene_textured_surface_mesh_item*>(item);
   if (stm_item)
-    return CGAL::write_ply (out, *(stm_item->textured_face_graph()));
+  {
+    bool res =
+        CGAL::write_ply (out, *(stm_item->textured_face_graph()));
+    if(res)
+      items.pop_front();
+    return res;
+  }
   return false;
 }
 

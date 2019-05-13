@@ -42,19 +42,34 @@ public:
   bool applicable(QAction*) const { return false;}
   QString name() const { return "surf_io_plugin"; }
   QString nameFilters() const { return "Amira files (*.surf)"; }
-  bool canLoad() const{ return true; }
+  bool canLoad(QFileInfo) const{ return true; }
   template<class FaceGraphItem>
   CGAL::Three::Scene_item* actual_load(QFileInfo fileinfo);
-  CGAL::Three::Scene_item* load(QFileInfo fileinfo);
+  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true);
 
   bool canSave(const CGAL::Three::Scene_item*) { return false; }
-  bool save(const CGAL::Three::Scene_item*, QFileInfo) { return false; }
+  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& ) { return false; }
 };
 
 
-CGAL::Three::Scene_item* Surf_io_plugin::load(QFileInfo fileinfo)
+QList<Scene_item*>
+Surf_io_plugin::
+load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
 {
-  return actual_load<Scene_surface_mesh_item>(fileinfo);
+  Scene_item* item =
+      actual_load<Scene_surface_mesh_item>(fileinfo);
+  if(item)
+  {
+    ok = true;
+    if(add_to_scene)
+      CGAL::Three::Three::scene()->addItem(item);
+    return QList<Scene_item*>()<<item;
+  }
+  else
+  {
+    ok = false;
+    return QList<Scene_item*>();
+  }
 }
 template< class FaceGraphItem>
 CGAL::Three::Scene_item* Surf_io_plugin::actual_load(QFileInfo fileinfo)
