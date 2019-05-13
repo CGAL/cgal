@@ -24,7 +24,7 @@ Release date: September 2019
  -   The PLY IO functions now take an additional optional parameter to
      read/write comments from/in the PLY header.
 
-### Polygon Mesh Processing package
+### Polygon Mesh Processing
  -   Added the function `CGAL::Polygon_mesh_processing::centroid()` which computes
      the centroid of a closed triangle mesh.
 
