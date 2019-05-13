@@ -15,6 +15,7 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/Polygon_2.h>
 #include <boost/foreach.hpp>
+#include <CGAL/use.h>
 
 #include <fstream>
 
@@ -118,6 +119,7 @@ int test_slicer()
   slicer(typename K::Plane_3(0,1,0,0.5), std::back_inserter(polylines));
   assert(polylines.size()==2); // two polylines
   int closed_id = polylines.front().front()==polylines.front().back() ? 0 : 1;
+  CGAL_USE(closed_id);
   CGAL_assertion( is_ccw<K>(0, 2 , polylines[closed_id]) );
 
   polylines.clear();
