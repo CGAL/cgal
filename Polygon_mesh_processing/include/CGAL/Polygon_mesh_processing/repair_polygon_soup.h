@@ -422,17 +422,26 @@ std::size_t remove_isolated_points_in_polygon_soup(PointRange& points,
 
   // Move all the unused points to the end
   std::size_t swap_position = ini_points_size - 1;
-  for(std::size_t i=0; i<ini_points_size; ++i)
+  for(std::size_t i=0; i<ini_points_size;)
   {
     if(!visited[i])
     {
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
       std::cout << "points[" << i << "] = " << points[i] << " is isolated" << std::endl;
+      std::cout << "  swapping it to pos: " << swap_position << std::endl;
 #endif
       std::swap(points[swap_position], points[i]);
+      std::swap(visited[swap_position], visited[i]);
       id_remapping[swap_position] = i;
       --swap_position;
     }
+    else
+    {
+      ++i;
+    }
+
+    if(i >= swap_position)
+      break;
   }
 
   // Actually remove the unused points
