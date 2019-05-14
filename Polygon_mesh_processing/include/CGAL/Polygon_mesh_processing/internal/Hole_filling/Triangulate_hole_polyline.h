@@ -1106,9 +1106,10 @@ private:
     
     if(W.get(0, n-1) == Weight::NOT_VALID()) {
       #ifndef CGAL_TEST_SUITE
-      CGAL_warning(!"Returning no output. Filling hole with extra triangles is not successful!");
+      CGAL_warning(!"Returning no output using Delaunay triangulation.\n Falling back to the general Triangulation framework.");
       #else
-      std::cerr << "W: Returning no output. Filling hole with extra triangles is not successful!\n";
+      std::cerr << "W: Returning no output using Delaunay triangulation.\n"
+                << "Falling back to the general Triangulation framework.\n";
       #endif
       return Weight::NOT_VALID();
     }
