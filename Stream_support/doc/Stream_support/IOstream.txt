@@ -258,6 +258,24 @@ in those WKT types, namely:
 - `CGAL::Point_3`
 - `CGAL::Polygon_with_holes_2`
 - random access range of the above types.
+
+\section IOstreamXML Reading Adhoc XML
+
+In case you have to read data in a simple xml file with a simple structure, without existing I/O libraries
+the <a href="https://www.boost.org/doc/libs/property_tree">`boost::property_tree`</a> comes in handy.
+The following small example shows how to parse a file
+looking like this:
+
+    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+    <PolySet>
+    	<Polygon>
+		<Point X="-715.8811978465" Y="-2729.9490000000" Z="-534.9000000000"/>
+		<Point X="-718.1905989232" Y="-2729.9490000000" Z="-538.9000000000"/>
+		<Point X="-722.8094010768" Y="-2729.9490000000" Z="-538.9000000000"/>
+        </Polygon>
+    </PolySet>
+
+\cgalExample{Stream_support/read_xml.cpp}
 */ 
 } /* namespace CGAL */
 
