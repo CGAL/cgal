@@ -30,9 +30,9 @@
 #include <CGAL/Real_embeddable_traits.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/double.h>
-#include <CGAL/gmpxx_coercion_traits.h>
 #include <CGAL/IO/io.h>
 #include <mpfr.h>
+#include <gmpxx.h>
 
 // This file gathers the necessary adaptors so that the following
 // C++ number types that come with GMP can be used by CGAL :
@@ -246,6 +246,7 @@ class Real_embeddable_traits< mpq_class >
 
 } // namespace CGAL
 
+#include <CGAL/gmpxx_coercion_traits.h>
 #include <CGAL/mpz_class.h> // for GCD in Type traits
 #include <CGAL/Fraction_traits.h>
 

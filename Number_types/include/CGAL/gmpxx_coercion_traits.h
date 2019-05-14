@@ -28,7 +28,6 @@
 #ifndef CGAL_GMPXX_COERCION_TRAITS_H
 #define CGAL_GMPXX_COERCION_TRAITS_H 1
 
-#include <CGAL/gmpxx.h>
 #include <CGAL/Coercion_traits.h>
 
 #include <cstring> // needed by GMP 4.1.4 since <gmpxx.h> misses it.
