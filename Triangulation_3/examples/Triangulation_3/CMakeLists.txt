@@ -13,6 +13,8 @@ if(CGAL_Qt5_FOUND)
     add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
 endif()
 
+include_directories(BEFORE "../../include")
+
 if ( CGAL_FOUND )
   create_single_source_cgal_program( "adding_handles_3.cpp" )
   create_single_source_cgal_program( "color.cpp" )
