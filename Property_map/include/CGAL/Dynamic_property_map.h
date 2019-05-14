@@ -27,6 +27,9 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 
+#include <boost/type_traits/is_same.hpp>
+#include <boost/mpl/if.hpp>
+
 namespace CGAL {
 
 namespace internal {
@@ -131,8 +134,12 @@ struct Dynamic_with_index
 {
   typedef Key key_type;
   typedef Value value_type;
-  typedef value_type& reference;
-  typedef boost::lvalue_property_map_tag category;
+  typedef typename boost::mpl::if_<  boost::is_same<bool, Value>,
+                                     value_type,
+                                     value_type&>::type  reference;
+  typedef typename boost::mpl::if_<  boost::is_same<bool, Value>,
+                                     boost::read_write_property_map_tag,
+                                     boost::lvalue_property_map_tag>::type  category;
 
   Dynamic_with_index()
     : m_values()
