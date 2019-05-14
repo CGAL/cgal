@@ -925,6 +925,18 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
   const std::size_t init_polygons_n = polygons.size();
   std::size_t swap_position = init_polygons_n - 1;
 
+  std::vector<bool> treated(init_polygons_n, false);
+
+  // PID to pos is to go from a polygon ID to its position in the polygons vector, and pos_to_PID
+  // is to move the other way
+  std::vector<std::size_t> PID_to_pos(init_polygons_n);
+  std::vector<std::size_t> pos_to_PID(init_polygons_n);
+  for(std::size_t i=0, ps=polygons.size(); i<ps; ++i)
+  {
+    PID_to_pos[i] = i;
+    pos_to_PID[i] = i;
+  }
+
   while(!all_duplicate_polygons.empty())
   {
     const std::vector<P_ID>& duplicate_polygons = all_duplicate_polygons.back();
@@ -933,13 +945,30 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
     std::size_t i = erase_all_duplicates ? 0 : 1;
     for(; i<duplicate_polygons.size(); ++i)
     {
-      const P_ID polygon_to_remove = duplicate_polygons[i];
+      const P_ID polygon_to_remove_id = duplicate_polygons[i];
+      if(treated[polygon_to_remove_id])
+        continue;
+
+      const P_ID polygon_pos = PID_to_pos[polygon_to_remove_id];
       CGAL_assertion(swap_position < init_polygons_n);
-      if(polygon_to_remove < swap_position)
-      {
-        std::swap(polygons[swap_position], polygons[polygon_to_remove]);
-        --swap_position;
-      }
+      const P_ID polygon_at_swap_position_ID = pos_to_PID[swap_position];
+
+#ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
+      std::cout << "Removing duplicate, PID: " << polygon_to_remove_id << " at position: " << polygon_pos << std::endl;
+      std::cout << "  swap position: " << swap_position << ", position of PID: " << polygon_at_swap_position_ID << std::endl;
+#endif
+
+      // Need to keep track of who goes where
+      PID_to_pos[polygon_at_swap_position_ID] = polygon_pos;
+      PID_to_pos[polygon_to_remove_id] = swap_position;
+      pos_to_PID[polygon_pos] = polygon_at_swap_position_ID;
+      pos_to_PID[swap_position] = polygon_to_remove_id;
+
+      CGAL_assertion(polygon_pos <= swap_position);
+      std::swap(polygons[swap_position], polygons[polygon_pos]);
+      --swap_position;
+
+      treated[polygon_to_remove_id] = true;
     }
 
     all_duplicate_polygons.pop_back();
@@ -947,7 +976,10 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
 
   ++swap_position; // so that it points to the first removed polygon
   const std::size_t removed_polygons_n = init_polygons_n - swap_position;
-  polygons.erase(polygons.begin() + swap_position, polygons.end());
+
+  typename PolygonRange::iterator first = polygons.begin();
+  std::advance(first, swap_position);
+  polygons.erase(first, polygons.end());
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
   std::cout << "Removed " << removed_polygons_n << " duplicate polygon(s)" << std::endl;
