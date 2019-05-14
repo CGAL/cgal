@@ -927,7 +927,7 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
 
   std::vector<bool> treated(init_polygons_n, false);
 
-  // PID to pos is to go from a polygon ID to its position in the polygons vector, and pos_to_PID
+  // PID_to_pos is to go from a polygon ID to its position in the polygons vector, and pos_to_PID
   // is to move the other way
   std::vector<std::size_t> PID_to_pos(init_polygons_n);
   std::vector<std::size_t> pos_to_PID(init_polygons_n);
