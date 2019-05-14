@@ -1,8 +1,7 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
-#include "Scene_polyhedron_item.h"
-#include "Polyhedron_type.h"
+#include "Scene_surface_mesh_item.h"
 #include "Scene.h"
 #include "Color_map.h"
 
@@ -14,7 +13,6 @@
 #include <QAction>
 #include <QDebug>
 #include <QObject>
-#include <QDockWidget>
 //#include <QtConcurrentRun>
 #include <map>
 #include <algorithm>
@@ -44,7 +42,7 @@ class Polyhedron_demo_mesh_plane_detection_plugin :
 
   bool applicable(QAction*) const {
     return 
-      qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
+      qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
   }    
     
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
@@ -66,9 +64,9 @@ class Polyhedron_demo_mesh_plane_detection_plugin :
   }
     
   template<class SegmentPropertyMap> 
-  void colorize_segmentation(Scene_polyhedron_item* item, SegmentPropertyMap& segment_ids, std::vector<QColor>& color_vector);
+  void colorize_segmentation(Scene_surface_mesh_item* item, SegmentPropertyMap& segment_ids, std::vector<QColor>& color_vector);
   
-  void check_and_set_ids(Polyhedron* polyhedron);
+  void check_and_set_ids(SMesh *sm);
 
 public Q_SLOTS:
   void on_actionPlaneDetection_triggered();
@@ -78,38 +76,37 @@ private:
 
 
   template <typename OutputIterator>
-  void detect_planes_in_mesh (Polyhedron& mesh, const double area_min,
+  void detect_planes_in_mesh (SMesh& mesh, const double area_min,
                               const double angle_max,
                               OutputIterator output)
   {
+    typedef SMesh::size_type size_type;
+    
     std::cerr << "Detecting planes with:" << std::endl
               << " * Area min = " << area_min << std::endl
               << " * Min cos angle = " << angle_max << std::endl;
-    std::vector<int> label_region(mesh.size_of_facets(), 0);
+    std::vector<int> label_region(mesh.number_of_faces(), 0);
     int class_index = 0;
 
-    std::vector<typename Polyhedron::Facet_handle> facets (mesh.size_of_facets());
-    for (typename Polyhedron::Facet_iterator f = mesh.facets_begin(); f != mesh.facets_end(); ++f)
-      facets[f->id()] = f;
     
-    for (typename Polyhedron::Facet_iterator f = mesh.facets_begin(); f != mesh.facets_end(); ++f)
+    for (typename SMesh::Face_iterator f = mesh.faces_begin(); f != mesh.faces_end(); ++f)
       {
-        if (label_region[f->id()] != 0)
+        if (label_region[*f] != 0)
           continue;
         class_index++;
-        label_region[f->id()] = class_index;
-        double area = PMP::face_area (f, mesh, PMP::parameters::geom_traits(Kernel()));
+        label_region[*f] = class_index;
+        double area = PMP::face_area (*f, mesh, PMP::parameters::geom_traits(EPICK()));
             
         //characteristics of the seed
-        Kernel::Vector_3 normal_seed = PMP::compute_face_normal (f, mesh, PMP::parameters::geom_traits(Kernel()));
-        Kernel::Point_3 pt_seed = f->halfedge()->vertex()->point();
-        Kernel::Plane_3 optimal_plane(pt_seed, normal_seed);
+        EPICK::Vector_3 normal_seed = PMP::compute_face_normal (*f, mesh, PMP::parameters::geom_traits(EPICK()));
+        EPICK::Point_3 pt_seed = mesh.point(target(halfedge(*f, mesh), mesh));
+        EPICK::Plane_3 optimal_plane(pt_seed, normal_seed);
                    //        Kernel::Plane_3 optimal_plane = f->plane();
               
         //initialization containers
-        std::vector<std::size_t> index_container (1, f->id());
-        std::vector<std::size_t> index_container_former_ring (1, f->id());
-        std::list<std::size_t> index_container_current_ring;
+        std::vector<size_type> index_container (1,*f);
+        std::vector<size_type> index_container_former_ring (1, *f);
+        std::list<size_type> index_container_current_ring;
 
         //propagation
         bool propagation = true;
@@ -117,30 +114,31 @@ private:
 
           propagation = false;
 
-          for (std::size_t k = 0; k < index_container_former_ring.size(); k++)
+          for (size_type k = 0; k < index_container_former_ring.size(); k++)
             {
-              typename Polyhedron::Halfedge_around_facet_circulator
-                circ = facets[index_container_former_ring[k]]->facet_begin(), start = circ;
+              typename SMesh::Halfedge_around_face_circulator
+                circ( mesh.halfedge(SMesh::Face_index(index_container_former_ring[k])), mesh)
+                , start = circ;
 
               do
                 {
-                  if (circ->is_border_edge())
+                  if (is_border(*circ, mesh))
                     continue;
                   
-                  typename Polyhedron::Facet_handle
-                    neighbor = circ->opposite()->facet();
-                  std::size_t neighbor_index = neighbor->id();
+                  typename SMesh::Face_index
+                    neighbor = mesh.face(opposite(*circ, mesh));
+                  size_type neighbor_index = neighbor;
                   if (label_region[neighbor_index] == 0)
                     {
-                      Kernel::Vector_3 normal
-                        = PMP::compute_face_normal (neighbor, mesh, PMP::parameters::geom_traits(Kernel()));
+                      EPICK::Vector_3 normal
+                        = PMP::compute_face_normal (neighbor, mesh, PMP::parameters::geom_traits(EPICK()));
 
                       if (std::fabs(normal * optimal_plane.orthogonal_vector()) > angle_max)
                         {
                           label_region[neighbor_index] = class_index;
                           propagation = true;
                           index_container_current_ring.push_back(neighbor_index);
-                          area += PMP::face_area (neighbor, mesh, PMP::parameters::geom_traits(Kernel()));
+                          area += PMP::face_area (neighbor, mesh, PMP::parameters::geom_traits(EPICK()));
                         }
                     }
                 }
@@ -149,7 +147,7 @@ private:
 			
           //update containers
           index_container_former_ring.clear();
-          for (std::list<std::size_t>::iterator it = index_container_current_ring.begin();
+          for (std::list<size_type>::iterator it = index_container_current_ring.begin();
                it != index_container_current_ring.end(); ++it)
             {
               index_container_former_ring.push_back(*it);
@@ -163,8 +161,8 @@ private:
         if (area < area_min)
           {
             class_index--;
-            label_region[f->id()] = 0;
-            for (std::size_t k = 0; k < index_container.size(); k++)
+            label_region[*f] = 0;
+            for (size_type k = 0; k < index_container.size(); k++)
               label_region[index_container[k]] = 0;
           }
       }
@@ -183,12 +181,12 @@ void Polyhedron_demo_mesh_plane_detection_plugin::on_actionPlaneDetection_trigge
 {
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   
-  Scene_polyhedron_item* poly_item = 
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Scene_surface_mesh_item* poly_item = 
+    qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
 
   if (poly_item)
     {
-      Polyhedron& pmesh =*poly_item->polyhedron();
+      SMesh& pmesh =*poly_item->polyhedron();
 
       QDialog dialog(mw);
       Ui::Mesh_plane_detection_dialog ui;
@@ -204,18 +202,18 @@ void Polyhedron_demo_mesh_plane_detection_plugin::on_actionPlaneDetection_trigge
       QApplication::setOverrideCursor(Qt::WaitCursor);
       QApplication::processEvents();
 
-      check_and_set_ids (&pmesh);
+      //check_and_set_ids (&pmesh);
       std::vector<int> indices;
       detect_planes_in_mesh (pmesh,
                              ui.minimumAreaDoubleSpinBox->value(),
                              std::fabs(std::cos (CGAL_PI * ui.maximumDeviationFromNormalSpinBox->value() / 180.)),
                              std::back_inserter (indices));
 
-      poly_item->set_color_vector_read_only(true);
+      //poly_item->set_color_vector_read_only(true);
       colorize_segmentation (poly_item, indices, poly_item->color_vector());
       
       std::cerr << "ok (" << time.elapsed() << " ms, " 
-                << pmesh.size_of_halfedges() / 2 << " edges)" << std::endl;
+                << pmesh.number_of_halfedges() / 2 << " edges)" << std::endl;
 
       poly_item->invalidateOpenGLBuffers();
       scene->itemChanged(index);
@@ -224,30 +222,22 @@ void Polyhedron_demo_mesh_plane_detection_plugin::on_actionPlaneDetection_trigge
   
 }
 
-
-void Polyhedron_demo_mesh_plane_detection_plugin::check_and_set_ids(Polyhedron* polyhedron)
-{
-  std::size_t facet_id = 0;
-  for(Polyhedron::Facet_iterator facet_it = polyhedron->facets_begin();
-      facet_it != polyhedron->facets_end(); ++facet_it, ++facet_id)
-    facet_it->id() = facet_id;
-}
-
 template<class SegmentPropertyMap>
 void Polyhedron_demo_mesh_plane_detection_plugin::colorize_segmentation(
-                                                                        Scene_polyhedron_item* item,
+                                                                        Scene_surface_mesh_item* item,
                                                                         SegmentPropertyMap& segment_ids,
                                                                         std::vector<QColor>& color_vector)
 {
   item->setItemIsMulticolor(true);
-  Polyhedron* polyhedron = item->polyhedron();
+  item->computeItemColorVectorAutomatically(true);
+  SMesh* sm = item->face_graph();
   color_vector.clear();
   std::size_t max_segment = 0;
-  for(Polyhedron::Facet_iterator facet_it = polyhedron->facets_begin(); 
-      facet_it != polyhedron->facets_end(); ++facet_it)   
+  for(SMesh::Face_iterator facet_it = sm->faces_begin(); 
+      facet_it != sm->faces_end(); ++facet_it)   
     {
-      std::size_t segment_id = segment_ids[facet_it->id()];
-      facet_it->set_patch_id(static_cast<int>(segment_id));
+      std::size_t segment_id = segment_ids[static_cast<std::size_t>(*facet_it)];
+      sm->property_map<face_descriptor, int>("f:patch_id").first[*facet_it] = static_cast<int>(segment_id);
       max_segment = (std::max)(max_segment, segment_id);      
     }
   color_vector.push_back(QColor(0, 0, 0));

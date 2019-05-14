@@ -10,14 +10,11 @@ namespace CGAL
 The class `Periodic_2_triangulation_2` represents a 2-dimensional
 triangulation of a point set in \f$ \mathbb T_c^2\f$.
 
-\cgalHeading{Parameters}
-
-The class `Periodic_2_triangulation_2` has two template
-parameters. The first one \tparam Traits is the geometric traits, it
+\tparam Traits is the geometric traits, it
 is to be instantiated by a model of the concept
 `Periodic_2TriangulationTraits_2`.
 
-The second parameter \tparam TDS is the triangulation data structure,
+\tparam TDS is the triangulation data structure,
 it has to be instantiated by a model of the concept
 `TriangulationDataStructure_2` with some additional
 functionality in faces.

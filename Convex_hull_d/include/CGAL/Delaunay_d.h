@@ -228,7 +228,6 @@ public:
       }
     }
 
-    Simplex_iterator(const Simplex_iterator& it) : Base_iterator(it) {}
 
     Simplex_iterator& operator++()
     /* here we get a new candidate from the stack

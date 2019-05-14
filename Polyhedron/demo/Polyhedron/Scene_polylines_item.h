@@ -80,7 +80,7 @@ public Q_SLOTS:
 public:
     Polylines_container polylines;
 protected:
-    // http://en.wikipedia.org/wiki/D-pointer
+    // https://en.wikipedia.org/wiki/D-pointer
     friend struct Scene_polylines_item_private;
     Scene_polylines_item_private* d;
 

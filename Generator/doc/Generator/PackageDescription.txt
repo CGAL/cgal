@@ -1,14 +1,14 @@
-/// \defgroup PkgGenerators Geometric Object Generators Reference
+/// \defgroup PkgGeneratorsRef Geometric Object Generators Reference
 /// \defgroup PkgGeneratorsConcepts Concepts
-/// \ingroup PkgGenerators
+/// \ingroup PkgGeneratorsRef
 /*!
-\addtogroup PkgGenerators
-\cgalPkgDescriptionBegin{Geometric Object Generators,PkgGeneratorsSummary}
+\addtogroup PkgGeneratorsRef
+\cgalPkgDescriptionBegin{Geometric Object Generators,PkgGenerators}
 \cgalPkgPicture{dice.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Pedro M. M. de Castro, Olivier Devillers, Susan Hert, Michael Hoffmann, Lutz Kettner, Sven Schönherr, Alexandru Tifrea, and Maxime Gimeno}
 \cgalPkgDesc{This package provides a variety of generators for geometric objects. They are useful as synthetic test data sets, e.g. for testing algorithms on degenerate object sets and for performance analysis. }
-\cgalPkgManuals{Chapter_Geometric_Object_Generators,PkgGenerators}
+\cgalPkgManuals{Chapter_Geometric_Object_Generators,PkgGeneratorsRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{1.0}
@@ -31,14 +31,14 @@ achieve random permutations for otherwise regular generators (
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `PointGenerator`
 - `RandomConvexSetTraits_2`
 - `RandomPolygonTraits_2`
 - `RandomConvexHullTraits_2`
 
-## Functions ##
+\cgalCRPSection{Functions}
 
 - `CGAL::perturb_points_2()` 
 - `CGAL::points_on_segment_2()` 
@@ -52,7 +52,7 @@ achieve random permutations for otherwise regular generators (
 - `CGAL::random_convex_hull_in_disc_2()`
 - `CGAL::get_default_random()` 
 
-## Classes ##
+\cgalCRPSection{Classes}
 
 - `CGAL::Random` 
 - `CGAL::Points_on_segment_2<Point_2>` 
@@ -75,7 +75,7 @@ achieve random permutations for otherwise regular generators (
 - `CGAL::Random_points_on_sphere_d<Point_d>` 
 - `CGAL::Random_points_on_square_2<Point_2, Creator>` 
 
-## Traits Class ##
+\cgalCRPSection{Traits Class}
 
 - `CGAL::Random_convex_set_traits_2<Kernel>` 
 

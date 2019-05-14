@@ -2,18 +2,15 @@
 #include <QMessageBox>
 #include <QMainWindow>
 #include "Kernel_type.h"
-#ifdef USE_SURFACE_MESH
+
 #include "Scene_surface_mesh_item.h"
-#else
-#include "Polyhedron_type.h"
-#include "Scene_polyhedron_item.h"
-#endif
 #include "Scene_polyhedron_selection_item.h"
 #include "Scene_polylines_item.h"
 #include "Messages_interface.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 
 #include <CGAL/Polyhedron_copy_3.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
@@ -29,11 +26,7 @@
 #include <boost/unordered_map.hpp>
 #include "Color_map.h"
 
-#ifdef USE_SURFACE_MESH
 typedef Scene_surface_mesh_item Scene_facegraph_item;
-#else
-typedef Scene_polyhedron_item Scene_facegraph_item;
-#endif
 typedef Scene_facegraph_item::Face_graph FaceGraph;
 using namespace CGAL::Three;
 class Polyhedron_demo_join_and_split_polyhedra_plugin:
@@ -89,7 +82,6 @@ public Q_SLOTS:
 
 private :
   CGAL::Three::Scene_interface* scene;
-  std::vector<QColor> colors_;
 }; // end Polyhedron_demo_polyhedron_stitching_plugin
 
 void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionJoinPolyhedra_triggered()
@@ -148,7 +140,6 @@ bool operator()(FaceGraph* mesh1, FaceGraph* mesh2)
 void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_triggered()
 {
   Q_FOREACH(int index, scene->selectionIndices()) {
-    colors_.clear();
     Scene_facegraph_item* item =
       qobject_cast<Scene_facegraph_item*>(scene->item(index));
     if(item)
@@ -178,23 +169,23 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
       if (new_polyhedra.size()==1)
       {
         delete new_polyhedra.front();
-        msg_interface->information( tr("%1 has only one connected component").arg(item->name()) );
+        CGAL::Three::Three::information( tr("%1 has only one connected component").arg(item->name()) );
         QApplication::restoreOverrideCursor();
         continue;
       }
 
       int cc=0;
-
-      compute_color_map(item->color(), item->isItemMulticolor() ? static_cast<unsigned int>(new_polyhedra.size()) : 1,
-                        std::back_inserter(colors_));
-
+      
       Scene_group_item *group = new Scene_group_item("CC");
        scene->addItem(group);
       BOOST_FOREACH(FaceGraph* polyhedron_ptr, new_polyhedra)
       {
         Scene_facegraph_item* new_item=new Scene_facegraph_item(polyhedron_ptr);
         new_item->setName(tr("%1 - CC %2").arg(item->name()).arg(cc));
-        new_item->setColor(colors_[item->isItemMulticolor()? cc : 0]);
+        if(item->isItemMulticolor() || item->hasPatchIds())
+          new_item->setColor(item->color_vector()[cc]);
+        else
+          new_item->setColor(item->color());
         ++cc;
         scene->addItem(new_item);
         scene->changeGroup(new_item, group);
@@ -238,7 +229,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
       PatchIDMap pidmap = get(CGAL::face_patch_id_t<int>(), *item->face_graph());
       int nb_patch_ids = CGAL::Polygon_mesh_processing::connected_components(*item->face_graph(),
                                                                              pidmap);
-
+      item->computeItemColorVectorAutomatically(true);
       item->invalidateOpenGLBuffers();
       item->setProperty("NbPatchIds", nb_patch_ids);
       scene->itemChanged(item);
@@ -254,9 +245,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
         typedef boost::graph_traits<FaceGraph>::face_descriptor   face_descriptor;
 
         selection_item->polyhedron_item()->setItemIsMulticolor(true);
-#ifndef USE_SURFACE_MESH
-        selection_item->polyhedron_item()->set_color_vector_read_only(false);
-#endif
+        selection_item->polyhedron_item()->computeItemColorVectorAutomatically(true);
         FaceGraph& pmesh = *(selection_item->polyhedron());
 
         boost::property_map<FaceGraph, boost::face_index_t>::type fim

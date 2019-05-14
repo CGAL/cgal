@@ -34,9 +34,12 @@
 #include <cstring>
 #include <cstddef>
 
+#include <CGAL/Compact_container.h>
+
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
 #include <CGAL/CC_safe_handle.h>
+#include <CGAL/Time_stamper.h>
 #include <CGAL/atomic.h>
 
 #include <tbb/enumerable_thread_specific.h>
@@ -76,9 +79,6 @@ struct Concurrent_compact_container_traits {
 };
 
 namespace CCC_internal {
-  template < class CCC, bool Const >
-  class CCC_iterator;
-  
   CGAL_GENERATE_MEMBER_DETECTOR(increment_erase_counter);
   
   // A basic "no erase counter" strategy
@@ -177,6 +177,8 @@ class Concurrent_compact_container
   typedef Concurrent_compact_container_traits <T>                   Traits;
 
 public:
+  typedef CGAL::Time_stamper_impl<T>                Time_stamper_impl;
+
   typedef T                                         value_type;
   typedef Allocator                                 allocator_type;
 
@@ -195,8 +197,8 @@ public:
   typedef typename Allocator::difference_type       difference_type;
 #endif
 
-  typedef CCC_internal::CCC_iterator<Self, false>   iterator;
-  typedef CCC_internal::CCC_iterator<Self, true>    const_iterator;
+  typedef internal::CC_iterator<Self, false>        iterator;
+  typedef internal::CC_iterator<Self, true>         const_iterator;
   typedef std::reverse_iterator<iterator>           reverse_iterator;
   typedef std::reverse_iterator<const_iterator>     const_reverse_iterator;
 
@@ -208,11 +210,12 @@ private:
   friend class Free_list<pointer, size_type, Self>;
 
 public:
-  friend class CCC_internal::CCC_iterator<Self, false>;
-  friend class CCC_internal::CCC_iterator<Self, true>;
+  friend class internal::CC_iterator<Self, false>;
+  friend class internal::CC_iterator<Self, true>;
 
   explicit Concurrent_compact_container(const Allocator &a = Allocator())
   : m_alloc(a)
+  , m_time_stamper(new Time_stamper_impl())
   {
     init ();
   }
@@ -221,6 +224,7 @@ public:
   Concurrent_compact_container(InputIterator first, InputIterator last,
                     const Allocator & a = Allocator())
   : m_alloc(a)
+  , m_time_stamper(new Time_stamper_impl())
   {
     init();
     std::copy(first, last, CGAL::inserter(*this));
@@ -229,6 +233,7 @@ public:
   // The copy constructor and assignment operator preserve the iterator order
   Concurrent_compact_container(const Concurrent_compact_container &c)
   : m_alloc(c.get_allocator())
+  , m_time_stamper(new Time_stamper_impl())
   {
     init();
     m_block_size = c.m_block_size;
@@ -247,6 +252,7 @@ public:
   ~Concurrent_compact_container()
   {
     clear();
+    delete m_time_stamper;
   }
 
   bool is_used(const_iterator ptr) const
@@ -268,6 +274,7 @@ public:
     std::swap(m_last_item, c.m_last_item);
     std::swap(m_free_lists, c.m_free_lists);
     m_all_items.swap(c.m_all_items);
+    std::swap(m_time_stamper, c.m_time_stamper);
   }
 
   iterator begin() { return iterator(m_first_item, 0, 0); }
@@ -602,6 +609,7 @@ private:
     CGAL_assertion(type(ret) == USED);
     fl->dec_size();
     ++m_size;
+    m_time_stamper->set_time_stamp(ret);
     return iterator(ret, 0);
   }
 
@@ -694,6 +702,7 @@ private:
     m_last_item  = NULL;
     m_all_items  = All_items();
     m_size = 0;
+    m_time_stamper->reset();
   }
 
   allocator_type    m_alloc;
@@ -709,6 +718,10 @@ private:
 #else
   CGAL::cpp11::atomic<size_type> m_size;
 #endif
+
+  // This is a pointer, so that the definition of Compact_container does
+  // not require a complete type `T`.
+  Time_stamper_impl* m_time_stamper;
 };
 
 template < class T, class Allocator >
@@ -817,6 +830,7 @@ void Concurrent_compact_container<T, Allocator>::
   for (size_type i = old_block_size; i >= 1; --i)
   {
     EraseCounterStrategy::set_erase_counter(*(new_block + i), 0);
+    m_time_stamper->initialize_time_stamp(new_block + i);
     put_on_free_list(new_block + i, fl);
   }
 }
@@ -871,243 +885,7 @@ bool operator>=(const Concurrent_compact_container<T, Allocator> &lhs,
   return ! (lhs < rhs);
 }
 
-namespace CCC_internal {
-
-  template < class CCC, bool Const >
-  class CCC_iterator
-  {
-    typedef typename CCC::iterator                    iterator;
-    typedef CCC_iterator<CCC, Const>                   Self;
-  public:
-    typedef typename CCC::value_type                  value_type;
-    typedef typename CCC::size_type                   size_type;
-    typedef typename CCC::difference_type             difference_type;
-    typedef typename boost::mpl::if_c< Const, const value_type*,
-                                       value_type*>::type pointer;
-    typedef typename boost::mpl::if_c< Const, const value_type&,
-                                       value_type&>::type reference;
-    typedef std::bidirectional_iterator_tag           iterator_category;
-
-    // the initialization with NULL is required by our Handle concept.
-    CCC_iterator()
-    {
-      m_ptr.p = NULL;
-    }
-
-    // Either a harmless copy-ctor,
-    // or a conversion from iterator to const_iterator.
-    CCC_iterator (const iterator &it)
-    {
-      m_ptr.p = &(*it);
-    }
-
-    // Same for assignment operator (otherwise MipsPro warns)
-    CCC_iterator & operator= (const iterator &it)
-    {
-      m_ptr.p = &(*it);
-      return *this;
-    }
-
-    // Construction from NULL
-    CCC_iterator (Nullptr_t CGAL_assertion_code(n))
-    {
-      CGAL_assertion (n == NULL);
-      m_ptr.p = NULL;
-    }
-
-  private:
-
-    union {
-      pointer      p;
-      void        *vp;
-    } m_ptr;
-
-    // Only Concurrent_compact_container should access these constructors.
-    friend class Concurrent_compact_container<value_type, typename CCC::Al>;
-
-    // For begin()
-    CCC_iterator(pointer ptr, int, int)
-    {
-      m_ptr.p = ptr;
-      if (m_ptr.p == NULL) // empty container.
-        return;
-
-      ++(m_ptr.p); // if not empty, p = start
-      if (CCC::type(m_ptr.p) == CCC::FREE)
-        increment();
-    }
-
-    // Construction from raw pointer and for end().
-    CCC_iterator(pointer ptr, int)
-    {
-      m_ptr.p = ptr;
-    }
-
-    // NB : in case empty container, begin == end == NULL.
-    void increment()
-    {
-      // It's either pointing to end(), or valid.
-      CGAL_assertion_msg(m_ptr.p != NULL,
-        "Incrementing a singular iterator or an empty container iterator ?");
-      CGAL_assertion_msg(CCC::type(m_ptr.p) != CCC::START_END,
-        "Incrementing end() ?");
-
-      // If it's not end(), then it's valid, we can do ++.
-      do {
-        ++(m_ptr.p);
-        if (CCC::type(m_ptr.p) == CCC::USED ||
-            CCC::type(m_ptr.p) == CCC::START_END)
-          return;
-
-        if (CCC::type(m_ptr.p) == CCC::BLOCK_BOUNDARY)
-          m_ptr.p = CCC::clean_pointee(m_ptr.p);
-      } while (true);
-    }
-
-    void decrement()
-    {
-      // It's either pointing to end(), or valid.
-      CGAL_assertion_msg(m_ptr.p != NULL,
-        "Decrementing a singular iterator or an empty container iterator ?");
-      CGAL_assertion_msg(CCC::type(m_ptr.p - 1) != CCC::START_END,
-        "Decrementing begin() ?");
-
-      // If it's not begin(), then it's valid, we can do --.
-      do {
-        --m_ptr.p;
-        if (CCC::type(m_ptr.p) == CCC::USED ||
-            CCC::type(m_ptr.p) == CCC::START_END)
-          return;
-
-        if (CCC::type(m_ptr.p) == CCC::BLOCK_BOUNDARY)
-          m_ptr.p = CCC::clean_pointee(m_ptr.p);
-      } while (true);
-    }
-
-  public:
-
-    Self & operator++()
-    {
-      CGAL_assertion_msg(m_ptr.p != NULL,
-   "Incrementing a singular iterator or an empty container iterator ?");
-      /* CGAL_assertion_msg(CCC::type(m_ptr.p) == CCC::USED,
-         "Incrementing an invalid iterator."); */
-      increment();
-      return *this;
-    }
-
-    Self & operator--()
-    {
-      CGAL_assertion_msg(m_ptr.p != NULL,
-   "Decrementing a singular iterator or an empty container iterator ?");
-      /* CGAL_assertion_msg(CCC::type(m_ptr.p) == CCC::USED
-          || CCC::type(m_ptr.p) == CCC::START_END,
-          "Decrementing an invalid iterator."); */
-      decrement();
-      return *this;
-    }
-
-    Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
-    Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-
-    reference operator*() const { return *(m_ptr.p); }
-
-    pointer   operator->() const { return (m_ptr.p); }
-
-    // For std::less...
-    bool operator<(const CCC_iterator& other) const
-    {
-      return (m_ptr.p < other.m_ptr.p);
-    }
-
-    bool operator>(const CCC_iterator& other) const
-    {
-      return (m_ptr.p > other.m_ptr.p);
-    }
-
-    bool operator<=(const CCC_iterator& other) const
-    {
-      return (m_ptr.p <= other.m_ptr.p);
-    }
-
-    bool operator>=(const CCC_iterator& other) const
-    {
-      return (m_ptr.p >= other.m_ptr.p);
-    }
-
-    // Can itself be used for bit-squatting.
-    void *   for_compact_container() const { return (m_ptr.vp); }
-    void * & for_compact_container()       { return (m_ptr.vp); }
-  };
-
-  template < class CCC, bool Const1, bool Const2 >
-  inline
-  bool operator==(const CCC_iterator<CCC, Const1> &rhs,
-                  const CCC_iterator<CCC, Const2> &lhs)
-  {
-    return rhs.operator->() == lhs.operator->();
-  }
-
-  template < class CCC, bool Const1, bool Const2 >
-  inline
-  bool operator!=(const CCC_iterator<CCC, Const1> &rhs,
-                  const CCC_iterator<CCC, Const2> &lhs)
-  {
-    return rhs.operator->() != lhs.operator->();
-  }
-
-  // Comparisons with NULL are part of CGAL's Handle concept...
-  template < class CCC, bool Const >
-  inline
-  bool operator==(const CCC_iterator<CCC, Const> &rhs,
-                  Nullptr_t CGAL_assertion_code(n))
-  {
-    CGAL_assertion( n == NULL);
-    return rhs.operator->() == NULL;
-  }
-
-  template < class CCC, bool Const >
-  inline
-  bool operator!=(const CCC_iterator<CCC, Const> &rhs,
-      Nullptr_t CGAL_assertion_code(n))
-  {
-    CGAL_assertion( n == NULL);
-    return rhs.operator->() != NULL;
-  }
-
-  template <class CCC, bool Const>
-  std::size_t hash_value(const CCC_iterator<CCC, Const>&  i)
-  {
-    return reinterpret_cast<std::size_t>(&*i) / sizeof(typename CCC::value_type);
-  }
-} // namespace CCC_internal
-
 } //namespace CGAL
-namespace std {
-
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4099) // For VC10 it is class hash 
-#endif
-
-#ifndef CGAL_CFG_NO_STD_HASH
-  
-  template < class CCC, bool Const >
-  struct hash<CGAL::CCC_internal::CCC_iterator<CCC, Const> >
-    : public CGAL::cpp98::unary_function<CGAL::CCC_internal::CCC_iterator<CCC, Const>, std::size_t> {
-
-    std::size_t operator()(const CGAL::CCC_internal::CCC_iterator<CCC, Const>& i) const
-    {
-      return reinterpret_cast<std::size_t>(&*i) / sizeof(typename CCC::value_type);
-    }
-  };
-#endif // CGAL_CFG_NO_STD_HASH
-
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
-
-} // namespace std
 
 #include <CGAL/enable_warnings.h>
 

@@ -9,8 +9,8 @@ namespace CGAL {
 This component implements the algorithm described in \cgalCite{cgal:lm-clscm-12} (section 2), generalized to handle different types of data, multiple features and multiple labels. It classifies a data set into a user-defined set of labels, such as _ground_, _vegetation_ and _buildings_. A flexible API is provided so that users can classify any type of data which they can index and for which they can compute relevant features, compute their own local features on the input data set and define their own labels.
 
 \note This component requires C++11 and depends on the Boost libraries
-[Serialization](http://www.boost.org/libs/serialization) and
-[IO Streams](http://www.boost.org/libs/iostreams) (compiled with the GZIP dependency).
+[Serialization](https://www.boost.org/libs/serialization) and
+[IO Streams](https://www.boost.org/libs/iostreams) (compiled with the GZIP dependency).
 
 \section Classification_Organization Package Organization
 
@@ -87,7 +87,10 @@ The following code snippet shows how to instantiate such data structures from an
 - [Distance_to_plane](@ref CGAL::Classification::Feature::Distance_to_plane) measures how far away a point is from a locally estimated plane;
 - [Eigenvalue](@ref CGAL::Classification::Feature::Eigenvalue) measures one of the three local eigenvalues;
 - [Elevation](@ref CGAL::Classification::Feature::Elevation) computes the local distance to an estimation of the ground;
+- [Height_above](@ref CGAL::Classification::Feature::Elevation) computes the distance between the local highest point and the point;
+- [Height_below](@ref CGAL::Classification::Feature::Elevation) computes the distance between the point and the local lowest point;
 - [Vertical_dispersion](@ref CGAL::Classification::Feature::Vertical_dispersion) computes how noisy the point set is on a local Z-cylinder;
+- [Vertical_range](@ref CGAL::Classification::Feature::Elevation) computes the distance between the local highest and lowest points;
 - [Verticality](@ref CGAL::Classification::Feature::Verticality) compares the local normal vector to the vertical vector.
 
 These features are designed for point sets but can easily be used with surface meshes as well (see \ref Classification_meshes). For more details about how these different features can help to identify one label or the other, please refer to their associated reference manual pages.
@@ -107,6 +110,8 @@ Users commonly want to use all predefined features to get the best result possib
 Multiple scales that are sequentially larger can be used to increase the quality of the results \cgalCite{cgal:hws-fsso3-16}. 
 
 Note that using this class in order to generate features is not mandatory, as features and data structures can all be handled by hand. It is mainly provided to make the specific case of point sets simpler to handle. Users can still add their own features within their feature set.
+
+Some data structure instantiated by the generator will be used by feature: for this reason, the generator should be instantiated _within the same scope_ as the feature set and should not be deleted before the feature set.
 
 The following snippet shows how to use the point set feature generator:
 
@@ -196,22 +201,23 @@ Example of cluster classification mesh (left: input, middle: clusters computed f
 
 %Classification relies on a classifier: this classifier is an object that, from the set of values taken by the features at an input item, computes the probability that an input item belongs to one label or another. A model of the concept `CGAL::Classification::Classifier` must take the index of an input item and store the probability associated to each label in a vector. If a classifier returns the value 1 for a pair of label and input item, it means that this item belongs to this label with certainty; values close to 0 mean that this item is not likely to belong to this label.
 
-\cgal provides three models for this concept, [ETHZ_random_forest_classifier](@ref CGAL::Classification::ETHZ_random_forest_classifier), [OpenCV_random_forest_classifier](@ref CGAL::Classification::OpenCV_random_forest_classifier) and [Sum_of_weighted_features_classifier](@ref CGAL::Classification::Sum_of_weighted_features_classifier).
+\cgal provides four models for this concept, [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier), [OpenCV::Random_forest_classifier](@ref CGAL::Classification::OpenCV::Random_forest_classifier), [TensorFlow::Neural_network_classifier](@ref CGAL::Classification::TensorFlow::Neural_network_classifier) and [Sum_of_weighted_features_classifier](@ref CGAL::Classification::Sum_of_weighted_features_classifier).
 
-To perform classification based on these classifiers, please refer to \ref Classification_classification_functions.
+\note Currently, [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier)
+is the best classifier available in \cgal and we strongly advise users
+to use it.
+
+To perform classification based on four classifiers, please refer to \ref Classification_classification_functions.
 
 \subsection Classification_ETHZ_random_forest ETHZ Random Forest
 
-\cgal provides [ETHZ_random_forest_classifier](@ref CGAL::Classification::ETHZ_random_forest_classifier),
+\cgal provides [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier),
 a classifier based on the Random Forest Template Library developed by
 Stefan Walk at ETH Zurich \cgalCite{cgal:w-erftl-14} (the library is
 distributed under the MIT license and is included with the \cgal release,
 the user does not have to install anything more). This classifier uses
 a ground truth training set to construct several decision trees that
 are then used to assign a label to each input item.
-
-__This classifier is currently the best available in \cgal and we
-strongly advise users to use it.__
 
 This classifier cannot be set up by hand and requires a ground truth
 training set. The training algorithm is fast but usually requires a
@@ -227,22 +233,46 @@ to README provided in the [ETH Zurich's code archive](https://www.ethz.ch/conten
 
 \subsection Classification_OpenCV_random_forest OpenCV Random Forest
 
-The second classifier is [OpenCV_random_forest_classifier](@ref CGAL::Classification::OpenCV_random_forest_classifier).
+The second classifier is [OpenCV::Random_forest_classifier](@ref CGAL::Classification::OpenCV::Random_forest_classifier).
 It uses the \ref thirdpartyOpenCV library, more specifically the
-[Random Trees](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
+[Random Trees](https://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
 package.
 
 Note that this classifier usually produces results with a lower
-quality than [ETHZ_random_forest_classifier](@ref CGAL::Classification::ETHZ_random_forest_classifier).
-
+quality than [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier).
 It is provided for the sake of completeness and for testing purposes,
 but if you are not sure what to use, we advise using the ETHZ Random
 Forest instead.
 
 An [example](\ref Classification_example_opencv_random_forest) shows how to
 use this classifier. For more details about the algorithm, please refer
-to [the official documentation](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
+to [the official documentation](https://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
 of OpenCV.
+
+\subsection Classification_TensorFlow_neural_network TensorFlow Neural Network
+
+\cgal provides [TensorFlow::Neural_network_classifier](@ref CGAL::Classification::TensorFlow::Neural_network_classifier).
+
+It uses the C++ API of the \ref thirdpartyTensorFlow library.
+
+\warning This feature is still experimental: it may not be stable
+and is likely to undergo substantial changes in future releases of
+\cgal. The API changes will be announced in the release notes.
+
+The provided interface is a feature-based neural network: a set of
+features is used as an input layer followed by a user-specified number
+of hidden layers with a user-specified activation function. The output
+layer is a softmax layer providing, for each label, the probability
+that an input item belongs to it.
+
+This classifier cannot be set up by hand and requires a ground truth
+training set. The training algorithm usually requires a higher number
+of inliers than random forest. The quality of the results, so far, is
+comparable to random forest.
+
+An [example](\ref Classification_example_tensorflow_neural_network) shows how to
+use this classifier. For more details about the algorithm, please refer
+to [the TensorFlow tutorials](https://www.tensorflow.org/tutorials/).
 
 \subsection Classification_sowf Sum of Weighted Features
 
@@ -334,7 +364,7 @@ Top-Left: input point set. Top-Right: raw output classification represented by a
 
 Mathematical details are provided hereafter.
 
-\subsection Classification_classify Raw classification
+\subsection Classification_classify Raw Classification
 
 - `CGAL::Classification::classify()`: this is the fastest method
 that provides acceptable but usually noisy results (see Figure
@@ -478,15 +508,23 @@ The following example:
 
 \subsection Classification_example_ethz_random_forest ETHZ Random Forest
 
-The following example shows how to use the classifier [ETHZ_random_forest_classifier](@ref CGAL::Classification::ETHZ_random_forest_classifier) using an input training set.
+The following example shows how to use the classifier [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier) using an input training set.
 
 \cgalExample{Classification/example_ethz_random_forest.cpp}
 
 \subsection Classification_example_opencv_random_forest OpenCV Random Forest
 
-The following example shows how to use the classifier [OpenCV_random_forest_classifier](@ref CGAL::Classification::OpenCV_random_forest_classifier) using an input training set.
+The following example shows how to use the classifier [OpenCV::Random_forest_classifier](@ref CGAL::Classification::OpenCV::Random_forest_classifier) using an input training set.
 
 \cgalExample{Classification/example_opencv_random_forest.cpp}
+
+\subsection Classification_example_tensorflow_neural_network TensorFlow Neural Network
+
+The following example shows how to use the classifier
+[TensorFlow::Neural_network_classifier](@ref CGAL::Classification::TensorFlow::Neural_network_classifier)
+using an input training set.
+
+\cgalExample{Classification/example_tensorflow_neural_network.cpp}
 
 \subsection Classification_example_mesh Mesh Classification
 
@@ -494,7 +532,7 @@ The following example:
 
 - reads a mesh in OFF format;
 - automatically generates features on 5 scales;
-- loads a configuration file for classifier [ETHZ_random_forest_classifier](@ref CGAL::Classification::ETHZ_random_forest_classifier);
+- loads a configuration file for classifier [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier);
 - runs the algorithm using the graphcut regularization.
 
 \cgalExample{Classification/example_mesh_classification.cpp}
@@ -509,7 +547,7 @@ The following example:
 - detects plane using the algorithm `CGAL::Shape_detection_3::Region_growing`;
 - creates [Cluster](@ref CGAL::Classification::Cluster) objects from these detected planes;
 - computes cluster features from the pointwise features;
-- loads a configuration file for classifier [ETHZ_random_forest_classifier](@ref CGAL::Classification::ETHZ_random_forest_classifier);
+- loads a configuration file for classifier [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier);
 - runs the algorithm using the raw algorithm.
 
 \cgalExample{Classification/example_cluster_classification.cpp}
@@ -517,7 +555,7 @@ The following example:
 
 \section Classification_history History
 
-This package is based on a research code by [Florent Lafarge](https://www-sop.inria.fr/members/Florent.Lafarge/) that was generalized, extended and packaged by [Simon Giraudot](http://geometryfactory.com/who-we-are/) in \cgal 4.12. %Classification of surface meshes and of clusters were introduced in \cgal 4.13.
+This package is based on a research code by [Florent Lafarge](https://www-sop.inria.fr/members/Florent.Lafarge/) that was generalized, extended and packaged by [Simon Giraudot](http://geometryfactory.com/who-we-are/) in \cgal 4.12. %Classification of surface meshes and of clusters were introduced in \cgal 4.13. The Neural Network classifier was introduced in \cgal 4.14.
 
 
 

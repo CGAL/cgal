@@ -1,5 +1,8 @@
 #ifdef _MSC_VER
 #  pragma warning(disable:4244) // conversion with loss of data
+#  pragma warning(disable:4996) // boost_1_65_1\boost/iostreams/positioning.hpp(96):
+                                // warning C4996: 'std::fpos<_Mbstatet>::seekpos': warning STL4019:
+                                // The member std::fpos::seekpos() is non-Standard
 #endif
 
 #include "Volume_plane.h"
@@ -55,12 +58,14 @@
 #ifdef CGAL_USE_VTK
 #include <CGAL/read_vtk_image_data.h>
 
+#include <vtkNew.h>
 #include <vtkImageData.h>
 #include <vtkDICOMImageReader.h>
 #include <vtkImageReader.h>
 #include <vtkImageGaussianSmooth.h>
 #include <vtkDemandDrivenPipeline.h>
 #endif
+#include <CGAL/Three/Three.h>
 
 // Covariant return types don't work for scalar types and we cannot
 // have templates here, hence this unfortunate hack.
@@ -202,7 +207,7 @@ class Io_image_plugin :
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0" FILE "io_image_plugin.json")
 
 public:
 
@@ -221,7 +226,7 @@ public:
     z_control = NULL;
     current_control = NULL;
     planeSwitch = new QAction("Add Volume Planes", mw);
-    QAction *actionLoadDCM = new QAction("Open directory", mw);
+    QAction *actionLoadDCM = new QAction("Open Directory (for DCM files)", mw);
     connect(actionLoadDCM, SIGNAL(triggered()), this, SLOT(on_actionLoadDCM_triggered()));
     if(planeSwitch) {
       planeSwitch->setProperty("subMenuName", "3D Mesh Generation");
@@ -362,7 +367,7 @@ public Q_SLOTS:
       }
     }
     if(group_map.keys().contains(seg_img))
-      this->message_interface->warning("This item already has volume planes.");
+      CGAL::Three::Three::warning("This item already has volume planes.");
     else
     {
       // Opens a modal Dialog to prevent the user from manipulating things that could mess with the planes creation and cause a segfault.
@@ -486,12 +491,6 @@ public Q_SLOTS:
   }
 private:
   CGAL::qglviewer::Vec first_offset;
-#ifdef CGAL_USE_VTK
-  vtkImageData* vtk_image;
-  vtkDICOMImageReader* dicom_reader;
-  vtkDemandDrivenPipeline* executive;
-  vtkImageGaussianSmooth* smoother;
-#endif // CGAL_USE_VTK
   bool is_gray;
   Messages_interface* message_interface;
   QMessageBox msgBox;
@@ -552,6 +551,7 @@ private:
     } else {
       layout = controlDockWidget->findChild<QLayout*>("vpSliderLayout");
       controlDockWidget->show();
+      controlDockWidget->raise();
     }
 
     return layout;
@@ -1149,7 +1149,7 @@ bool Io_image_plugin::loadDCM(QString dirname)
   {
     QMessageBox::warning(mw, mw->windowTitle(),
                          tr("Cannot read directory <tt>%1</tt>!").arg(dirname));
-    message_interface->warning(tr("Opening of directory %1 failed!").arg(dirname));
+    CGAL::Three::Three::warning(tr("Opening of directory %1 failed!").arg(dirname));
     result = false;
   }
   else
@@ -1200,12 +1200,12 @@ bool Io_image_plugin::loadDCM(QString dirname)
       {
         QMessageBox::warning(mw, mw->windowTitle(),
                              tr("Error with file <tt>%1/</tt>:\nunknown file format!").arg(dirname));
-        message_interface->warning(tr("Opening of file %1/ failed!").arg(dirname));
+        CGAL::Three::Three::warning(tr("Opening of file %1/ failed!").arg(dirname));
         result = false;
       }
       else
       {
-        message_interface->information(tr("File %1/ successfully opened.").arg(dirname));
+        CGAL::Three::Three::information(tr("File %1/ successfully opened.").arg(dirname));
       }
       if(result)
       {
@@ -1226,12 +1226,12 @@ bool Io_image_plugin::loadDCM(QString dirname)
       {
         QMessageBox::warning(mw, mw->windowTitle(),
                              tr("Error with file <tt>%1/</tt>:\nunknown file format!").arg(dirname));
-        message_interface->warning(tr("Opening of file %1/ failed!").arg(dirname));
+        CGAL::Three::Three::warning(tr("Opening of file %1/ failed!").arg(dirname));
         result = false;
       }
       else
       {
-        message_interface->information(tr("File %1/ successfully opened.").arg(dirname));
+        CGAL::Three::Three::information(tr("File %1/ successfully opened.").arg(dirname));
       }
       if(result)
       {
@@ -1243,7 +1243,7 @@ bool Io_image_plugin::loadDCM(QString dirname)
   }
   return result;
 #else
-  message_interface->warning("You need VTK to read a DCM file");
+  CGAL::Three::Three::warning("You need VTK to read a DCM file");
   CGAL_USE(dirname);
   return false;
 #endif
@@ -1252,26 +1252,26 @@ Image* Io_image_plugin::createDCMImage(QString dirname)
 {
   Image* image = NULL;
 #ifdef CGAL_USE_VTK
-  dicom_reader = vtkDICOMImageReader::New();
+  vtkNew<vtkDICOMImageReader> dicom_reader;
   dicom_reader->SetDirectoryName(dirname.toUtf8());
 
-  executive =
+  auto executive =
     vtkDemandDrivenPipeline::SafeDownCast(dicom_reader->GetExecutive());
   if (executive)
   {
     executive->SetReleaseDataFlag(0, 0); // where 0 is the port index
   }
 
-  smoother = vtkImageGaussianSmooth::New();
+  vtkNew<vtkImageGaussianSmooth> smoother;
   smoother->SetStandardDeviations(1., 1., 1.);
   smoother->SetInputConnection(dicom_reader->GetOutputPort());
   smoother->Update();
-  vtk_image = smoother->GetOutput();
+  auto vtk_image = smoother->GetOutput();
   vtk_image->Print(std::cerr);
   image = new Image;
-  *image = CGAL::read_vtk_image_data(vtk_image);
+  *image = CGAL::read_vtk_image_data(vtk_image); // copy the image data
 #else
-  message_interface->warning("You need VTK to read a DCM file");
+  CGAL::Three::Three::warning("You need VTK to read a DCM file");
   CGAL_USE(dirname);
 #endif
   return image;

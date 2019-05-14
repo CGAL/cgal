@@ -59,7 +59,8 @@ struct PRIV{
 };
 
 Scene_item_rendering_helper::Scene_item_rendering_helper()
-  :priv(new PRIV(this)){}
+  :Scene_item(0,0),
+    priv(new PRIV(this)){}
 
 Scene_item_rendering_helper::~Scene_item_rendering_helper()
 {
@@ -134,7 +135,6 @@ void Scene_item_rendering_helper::initGL() const
 void Scene_item_rendering_helper::processData(Gl_data_names )const
 {
   computeElements();
-  //redraw();
 }
 
 

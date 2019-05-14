@@ -2,7 +2,7 @@
 // the LP below is the first linear program example in the user manual
 #include <iostream>
 #include <fstream>
-#include <CGAL/basic.h>
+
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
 

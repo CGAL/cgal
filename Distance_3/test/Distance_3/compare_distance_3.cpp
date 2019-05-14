@@ -1,5 +1,5 @@
 
-#include <CGAL/Homogeneous.h>
+#include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 
@@ -19,7 +19,7 @@ void cmp(const K& k)
 int main()
 {
   CGAL::Exact_predicates_inexact_constructions_kernel epic;
-  CGAL::Homogeneous<int> hk;
+  CGAL::Simple_homogeneous<int> hk;
   cmp(epic);
   cmp(hk);
   return 0;

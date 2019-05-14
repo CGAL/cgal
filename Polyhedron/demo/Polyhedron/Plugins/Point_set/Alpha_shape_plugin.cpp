@@ -180,6 +180,7 @@ public Q_SLOTS:
     if(dock_widget->isVisible()) { dock_widget->hide(); }
     else {
       dock_widget->show();
+      dock_widget->raise();
       Scene_points_with_normal_item* sel_item =
           qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
       if(sel_item)
@@ -341,7 +342,7 @@ Scene_alpha_shape_item::Scene_alpha_shape_item(Scene_points_with_normal_item *po
   {
     facet_program.addShaderFromSourceCode(QOpenGLShader::Vertex, vertex_source_comp);
   }
-  facet_program.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_old_flat.f");
+  facet_program.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_old_flat.frag");
   facet_program.link();
   invalidateOpenGLBuffers();
   alpha_changed(alpha);

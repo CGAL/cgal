@@ -5,7 +5,6 @@
 #include <C3t3_type.h>
 #include <CGAL/Mesh_3/polylines_to_protect.h>
 #include <CGAL/Bbox_3.h>
-#include <Polyhedron_type.h>
 
 #include <Scene_c3t3_item.h>
 
@@ -36,12 +35,6 @@ template<typename Mesh>
 struct Polyhedral_mesh_domain_selector
 {
   typedef Polyhedral_mesh_domain type;
-};
-
-template<>
-struct Polyhedral_mesh_domain_selector<SMesh>
-{
-  typedef Polyhedral_mesh_domain_sm type;
 };
 template<class Mesh>
 Meshing_thread* cgal_code_mesh_3_templated(const Mesh* pMesh,
@@ -143,40 +136,6 @@ Meshing_thread* cgal_code_mesh_3_templated(const Mesh* pMesh,
 }
 
 
-Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
-                                 const Polylines_container& polylines,
-                                 const Polyhedron* pBoundingMesh,
-                                 QString filename,
-                                 const double facet_angle,
-                                 const double facet_sizing,
-                                 const double facet_approx,
-                                 const double tet_sizing,
-                                 const double edge_size,
-                                 const double tet_shape,
-                                 bool protect_features,
-                                 bool protect_borders,
-                                 const double sharp_edges_angle,
-                                 const int manifold,
-                                 const bool surface_only,
-                                 CGAL::Three::Scene_interface* scene)
-{
-  return cgal_code_mesh_3_templated(pMesh,
-                          polylines,
-                          pBoundingMesh,
-                          filename,
-                          facet_angle,
-                          facet_sizing,
-                          facet_approx,
-                          tet_sizing,
-                          edge_size,
-                          tet_shape,
-                          protect_features,
-                          protect_borders,
-                          sharp_edges_angle,
-                          manifold,
-                          surface_only,
-                          scene);
-}
 
 Meshing_thread* cgal_code_mesh_3(const SMesh* pMesh,
                                  const Polylines_container& polylines,
@@ -222,6 +181,7 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
                                  const double edge_size,
                                  const double tet_shape,
                                  const int manifold,
+                                 const bool surface_only,
                                  CGAL::Three::Scene_interface* scene)
 {
   if (pfunction == NULL) { return NULL; }
@@ -239,7 +199,7 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
                                [](int i, int j) { return (i * 1000 + j); }
                              );
 
-  Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
+  Scene_c3t3_item* p_new_item = new Scene_c3t3_item(surface_only);
   p_new_item->setScene(scene);
 
   Mesh_parameters param;
@@ -277,6 +237,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
                                  const double tet_shape,
                                  bool protect_features,
                                  const int manifold,
+                                 const bool surface_only,
                                  CGAL::Three::Scene_interface* scene,
                                  bool detect_connected_components,
                                  bool is_gray,
@@ -300,7 +261,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   param.tet_shape = tet_shape;
   param.manifold = manifold;
   param.image_3_ptr = pImage;
-  Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
+  Scene_c3t3_item* p_new_item = new Scene_c3t3_item(surface_only);
   p_new_item->setScene(scene);
   if(!is_gray)
   {

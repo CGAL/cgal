@@ -72,6 +72,10 @@ public:
 
   void operator()(PM& pmesh, const bool insert_isolated_vertices = true)
   {
+    reserve(pmesh, static_cast<typename boost::graph_traits<PM>::vertices_size_type>(_points.size()),
+                   static_cast<typename boost::graph_traits<PM>::edges_size_type>(2*_polygons.size()),
+                   static_cast<typename boost::graph_traits<PM>::faces_size_type>(_polygons.size()) );
+
     Vpmap vpmap = get(CGAL::vertex_point, pmesh);
 
     boost::dynamic_bitset<> not_isolated;
@@ -180,7 +184,7 @@ public:
     //check manifoldness
     typedef std::vector<V_ID> PointRange;
     typedef internal::Polygon_soup_orienter<PointRange, PolygonRange> Orienter;
-    typename Orienter::Edge_map edges;
+    typename Orienter::Edge_map edges(max_id+1);
     typename Orienter::Marked_edges marked_edges;
     Orienter::fill_edge_map(edges, marked_edges, polygons);
     //returns false if duplication is necessary
@@ -204,7 +208,8 @@ public:
   * @param polygons each element in the vector describes a polygon using the index of the points in `points`
   * @param out the polygon mesh to be built
   *
-  * @pre `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons)`
+  * @pre \link CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()
+  *            CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons) \endlink
   *
   * \sa `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
   * \sa `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()`

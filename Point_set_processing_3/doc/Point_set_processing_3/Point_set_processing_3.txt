@@ -80,7 +80,7 @@ as, e.g., a class derived from the \cgal 3D point, or as a
 `std::pair<Point_3<K>, Vector_3<K>>`, or as a
 `boost::tuple<..,Point_3<K>, ..., Vector_3<K> >`.
 
-The following classes described in Chapter \ref PkgProperty_mapSummary
+The following classes described in Chapter \ref PkgPropertyMap
 provide property maps for the implementations of points with normals
 listed above:
 
@@ -143,7 +143,7 @@ CGAL::jet_estimate_normals<Concurrency_tag>
    normal_map (CGAL::Second_of_pair_property_map<PointVectorPair>()));
 \endcode
 
-Please refer to the [Reference Manual](@ref PkgPointSetProcessing) for
+Please refer to the [Reference Manual](@ref PkgPointSetProcessing3Ref) for
 the detailed API of the Point Set Processing functions.
 
 
@@ -430,9 +430,9 @@ Comparison between different sizes of neighbor radius.
 
 \subsubsection Point_set_processing_3WLOP_parallel_performance Parallel Performance
 A parallel version of WLOP is provided and requires the executable to be linked against the 
-<a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+<a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
 To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
 for more details. We provide below a speed-up chart generated using the parallel version of the WLOP algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ@2.40GHz CPU with 8GB of RAM.
 
 \cgalFigureBegin{Point_set_processing_3figWLOP_parallel_performance, parallel_WLOP_performance.jpg}
@@ -472,9 +472,9 @@ Comparison for two smoothing methods: Left: Input, 250K points, normal-color map
 
 Performance: 
 A parallel version of bilateral smoothing is provided and requires the executable to be linked against the 
-<a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+<a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
 The number of threads used is controlled through the tbb::task_scheduler_init class.
-See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> for more details. We provide below a speed-up chart generated using the parallel version of the bilateral smoothing algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ@2.40GHz CPU with 8GB of RAM.
+See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a> for more details. We provide below a speed-up chart generated using the parallel version of the bilateral smoothing algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ@2.40GHz CPU with 8GB of RAM.
 
 \cgalFigureBegin{Point_set_processing_3Bilateral_smoothing_parallel_performance, parallel_bilateral_smooth_point_set_performance.jpg}
 Parallel bilateral smoothing speed-up, compared to the sequential version of the algorithm. 
@@ -584,7 +584,7 @@ points that are on sharp edges:
 The function `structure_point_set()` generates a structured version of
 the input point set assigned to a set of planes. Such an input can be
 produced by a shape detection algorithm (see \ref
-PkgPointSetShapeDetection3Summary). Point set structuring is based on
+PkgPointSetShapeDetection3). Point set structuring is based on
 the article \cgalCite{cgal:la-srpss-13}.
 
 - __Planes__: inliers of each detected plane are replaced by sets of
@@ -636,7 +636,7 @@ point set:
 
 Several functions of this package provide a callback mechanism that enables the user to track the progress of the algorithms and to interrupt them if needed. A callback, in this package, is an instance of `CGAL::cpp11::function<bool(double)>` that takes the advancement as a parameter (between 0. when the algorithm begins to 1. when the algorithm is completed) and that returns `true` if the algorithm should carry on, `false` otherwise. It is passed as a named parameter with an empty function as default.
 
-Algorithms that support this mechanism are detailed in the [Reference Manual](@ref PkgPointSetProcessing), along with the effect that an early interruption has on the output.
+Algorithms that support this mechanism are detailed in the [Reference Manual](@ref PkgPointSetProcessing3Ref), along with the effect that an early interruption has on the output.
 
 \subsection Point_set_processing_3Example_callbacks Example
 

@@ -78,12 +78,6 @@ public:
 #endif
   Q_DECLARE_FLAGS(Gl_data_names, Gl_data_name)
 
-#ifdef DOXYGEN_RUNNING
-  //! \brief Flag interface for Scene_item::Gl_data_name.
-  //! \todo Review Laurent Rineau:  Should be explained better. Points to `QFlags`...
-  enum Gl_data_names{};
-#endif
-  
   QMenu* contextMenu() Q_DECL_OVERRIDE;
 
   /*!

@@ -4,7 +4,7 @@
 project( BGL_Tests )
 
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
 
 
@@ -17,10 +17,6 @@ if ( NOT CGAL_FOUND )
   return()  
 
 endif()
-
-# include helper file
-include( ${CGAL_USE_FILE} )
-
 
 # Boost and its components
 find_package( Boost )
@@ -42,12 +38,9 @@ endif()
 
 
 # include for local package
-include_directories( BEFORE ../../include )
 
 # Creating entries for all .cpp/.C files with "main" routine
 # ##########################################################
-
-include( CGAL_CreateSingleSourceCGALProgram )
 
 if(OpenMesh_FOUND)
   create_single_source_cgal_program( "graph_concept_OpenMesh.cpp" )
@@ -103,6 +96,8 @@ create_single_source_cgal_program( "test_Collapse_edge.cpp" )
 create_single_source_cgal_program( "test_graph_traits.cpp" )
 
 create_single_source_cgal_program( "test_Properties.cpp" )
+
+create_single_source_cgal_program( "test_wrl.cpp" )
 
 if(OpenMesh_FOUND)
   target_link_libraries( test_clear PRIVATE ${OPENMESH_LIBRARIES})

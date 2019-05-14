@@ -8,7 +8,6 @@
 
 #include "Scene_points_with_normal_item.h"
 #include "Item_classification_base.h"
-#include "Polyhedron_type_fwd.h"
 #include "Kernel_type.h"
 #include "Point_set_3.h"
 
@@ -98,7 +97,7 @@ class Cluster_classification : public Item_classification_base
                          xcenter + dx, ycenter + dy, zcenter + dz);
   }
 
-  void compute_features (std::size_t nb_scales);
+  void compute_features (std::size_t nb_scales, float voxel_size);
   void add_remaining_point_set_properties_as_features(Feature_set& feature_set);
   
   void select_random_region();
@@ -203,12 +202,11 @@ class Cluster_classification : public Item_classification_base
     if (m_index_color == 1 || m_index_color == 2)
       change_color (m_index_color);
   }
-  void train(int classifier, unsigned int nb_trials,
-             std::size_t num_trees, std::size_t max_depth);
+  void train(int classifier, const QMultipleInputDialog& dialog);
   bool run (int method, int classifier, std::size_t subdivisions, double smoothing);
 
   void update_color () { change_color (m_index_color); }
-  void change_color (int index);
+  void change_color (int index, float* vmin = NULL, float* vmax = NULL);
   CGAL::Three::Scene_item* generate_one_item (const char* name,
                                               int label) const
   {
@@ -256,8 +254,6 @@ class Cluster_classification : public Item_classification_base
 
   }
   
-  bool write_output(std::ostream& out);
-
   QColor add_new_label (const char* name)
   {
     QColor out = Item_classification_base::add_new_label (name);
@@ -288,13 +284,7 @@ class Cluster_classification : public Item_classification_base
   void fill_display_combo_box (QComboBox* cb, QComboBox* cb1) const
   {
     cb->addItem ("Clusters");
-    for (std::size_t i = 0; i < m_features.size(); ++ i)
-      {
-        std::ostringstream oss;
-        oss << "Feature " << m_features[i]->name();
-        cb->addItem (oss.str().c_str());
-        cb1->addItem (oss.str().c_str());
-      }
+    Item_classification_base::fill_display_combo_box(cb, cb1);
   }
 
   int real_index_color() const;
@@ -392,17 +382,18 @@ class Cluster_classification : public Item_classification_base
 
   std::vector<Cluster> m_clusters;
 
-  Point_set::Property_map<unsigned char> m_red;
-  Point_set::Property_map<unsigned char> m_green;
-  Point_set::Property_map<unsigned char> m_blue;
   Point_set::Property_map<Color> m_color;
   Point_set::Property_map<int> m_cluster_id;
   Point_set::Property_map<int> m_training;
   Point_set::Property_map<int> m_classif;
   
+  std::vector<std::vector<float> > m_label_probabilities;
+  
   int m_index_color;
 
   boost::shared_ptr<Local_eigen_analysis> m_eigen;
+
+  bool m_input_is_las;
   
 }; // end class Cluster_classification
 

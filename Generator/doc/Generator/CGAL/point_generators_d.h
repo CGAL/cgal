@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgGenerators
+\ingroup PkgGeneratorsRef
 
 generates a given number of points on a cubic grid in any dimension
 whose size is determined by the number of points to be generated.

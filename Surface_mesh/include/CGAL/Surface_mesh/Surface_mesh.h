@@ -73,7 +73,7 @@ namespace CGAL {
     public:
     typedef boost::uint32_t size_type;
         /// Constructor. %Default construction creates an invalid index.
-        /// We write -1, which is <a href="http://en.cppreference.com/w/cpp/concept/numeric_limits">
+        /// We write -1, which is <a href="https://en.cppreference.com/w/cpp/types/numeric_limits">
         /// <tt>std::numeric_limits<size_type>::max()</tt></a>
         /// as `size_type` is an unsigned type. 
         explicit SM_Index(size_type _idx=(std::numeric_limits<size_type>::max)()) : idx_(_idx) {}
@@ -103,6 +103,11 @@ namespace CGAL {
         /// Comparison by index.
         bool operator<(const T& _rhs) const {
             return idx_ < _rhs.idx_;
+        }
+
+        // Compatibility with OpenMesh handle
+        size_type idx() const {
+          return idx_;
         }
 
         /// increments the internal index. This operation does not
@@ -214,6 +219,9 @@ namespace CGAL {
         // returns the underlying index of this index.
         operator size_type() const { return (size_type)halfedge_ / 2; }
 
+        // compatibility with OpenMesh handles
+        size_type idx() const { return (size_type)halfedge_ / 2; }
+
         // resets index to be invalid (index=std::numeric_limits<size_type>::max())
         void reset() { halfedge_.reset(); }
 
@@ -269,7 +277,7 @@ namespace CGAL {
   /// \ingroup PkgSurface_mesh
   /// This class is a data structure that can be used as halfedge data structure or polyhedral
   /// surface. It is an alternative to the classes `HalfedgeDS` and `Polyhedron_3`
-  /// defined in the packages  \ref PkgHDSSummary and \ref PkgPolyhedronSummary. 
+  /// defined in the packages  \ref PkgHalfedgeDS and \ref PkgPolyhedron. 
   /// The main difference is that it is indexed based and not pointer based,
   /// and that the mechanism for adding information to vertices, halfedges, edges,
   /// and faces is much simpler and done at runtime and not at compile time.
@@ -2086,6 +2094,9 @@ private: //------------------------------------------------------- private data
   /// If an alternative vertex_point map is given through `np`, 
   /// then it  will be used instead of the default one.
   /// \pre `operator<<(std::ostream&,const P&)` must be defined.
+  /// \note The <A HREF="https://en.cppreference.com/w/cpp/io/ios_base/precision">`precision()`</A> 
+  ///       of the output stream might not be sufficient depending on the data to be written.
+   
   template <typename P, typename NamedParameters>
   bool write_off(std::ostream& os, const Surface_mesh<P>& sm, const NamedParameters& np) {
     typedef Surface_mesh<P> Mesh;

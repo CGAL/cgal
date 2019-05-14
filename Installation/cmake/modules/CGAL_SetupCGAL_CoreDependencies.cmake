@@ -57,7 +57,7 @@ endif()
 # Boost.Thread, with GNU G++.
 if (CMAKE_CXX_COMPILER_ID STREQUAL GNU)
   include(${CMAKE_CURRENT_LIST_DIR}/CGAL_TweakFindBoost.cmake)
-  find_package( Boost 1.48 REQUIRED thread system )
+  find_package( Boost 1.48 REQUIRED COMPONENTS thread system )
 endif()
 
 function(CGAL_setup_CGAL_Core_dependencies target)

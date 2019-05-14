@@ -2,14 +2,10 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Scene_group_item.h>
 #include "ui_Mean_curvature_flow_skeleton_plugin.h"
-#ifdef USE_SURFACE_MESH
+
 #include "Kernel_type.h"
 #include "Scene_surface_mesh_item.h"
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
-#else
-#include "Scene_polyhedron_item.h"
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#endif
 
 #include "Scene_mcf_item.h"
 #include "Scene_points_with_normal_item.h"
@@ -41,7 +37,6 @@
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-#ifdef USE_SURFACE_MESH
 typedef Scene_surface_mesh_item Scene_face_graph_item;
 namespace CGAL {
 
@@ -50,10 +45,6 @@ void set_halfedgeds_items_id (Scene_face_graph_item::Face_graph&)
 {}
 
 } // namespace CGAL
-
-#else
-typedef Scene_polyhedron_item Scene_face_graph_item;
-#endif
 
 typedef Scene_face_graph_item::Face_graph Face_graph;
 
@@ -107,6 +98,11 @@ class Polyhedron_demo_mean_curvature_flow_skeleton_plugin :
 
 public:
 
+  ~Polyhedron_demo_mean_curvature_flow_skeleton_plugin()
+  {
+    delete ui;
+  }
+  
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
 
     this->mw = mainWindow;
@@ -116,11 +112,7 @@ public:
     ui = NULL;
 
     actionMCFSkeleton = new QAction(tr(
-                                  #ifdef USE_SURFACE_MESH
-                                      "Mean Curvature Skeleton (Advanced) for Surface Mesh"
-                                  #else
-                                      "Mean Curvature Skeleton (Advanced) for Polyhedron"
-                                  #endif
+                                      "Mean Curvature Skeleton (Advanced)"
                                       ), mainWindow);
     actionMCFSkeleton->setProperty("subMenuName", "Triangulated Surface Mesh Skeletonization");
     actionMCFSkeleton->setObjectName("actionMCFSkeleton");
@@ -130,11 +122,7 @@ public:
     actionConvert_to_medial_skeleton->setObjectName("actionConvert_to_medial_skeleton");
 
     dockWidget = new QDockWidget(tr(
-                               #ifdef USE_SURFACE_MESH
-                                   "Mean Curvature Skeleton for Surface Mesh"
-                               #else
-                                   "Mean Curvature Skeleton for Polyhedron"
-                               #endif
+                                   "Mean Curvature Skeleton"
                                    ),mw);
     dockWidget->setVisible(false);
     ui = new Ui::Mean_curvature_flow_skeleton_plugin();
@@ -143,11 +131,7 @@ public:
                           | QDockWidget::DockWidgetFloatable
                           | QDockWidget::DockWidgetClosable);
     dockWidget->setWindowTitle(tr(
-                             #ifdef USE_SURFACE_MESH
-                               "Mean Curvature Skeleton for Surface Mesh"
-                           #else
-                               "Mean Curvature Skeleton for Polyhedron"
-                           #endif
+                               "Mean Curvature Skeleton"
                                  ));
     addDockWidget(dockWidget);
 
@@ -450,6 +434,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
     
   }
   item_segmentation->setItemIsMulticolor(true);
+  item_segmentation->computeItemColorVectorAutomatically(true);
   item_segmentation->setProperty("NbPatchIds", nb_segment); //for join_and_split plugin
   item_segmentation->invalidateOpenGLBuffers();
   scene->addItem(item_segmentation);
@@ -892,7 +877,7 @@ Polyhedron_demo_mean_curvature_flow_skeleton_plugin::createContractedItem(Scene_
 {
   if(!item)
     return;
-  if(item->mcs == NULL)
+  if(item->mcs != NULL)
     delete item->mcs;
   double omega_H = ui->omega_H->value();
   double omega_P = ui->omega_P->value();

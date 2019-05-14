@@ -35,6 +35,7 @@ using namespace CGAL::Three;
 #  define DEMO_FRAMEWORK_EXPORT Q_DECL_IMPORT
 #endif
 struct Tri_d;
+class QMatrix4x4;
 namespace CGAL {
 namespace Three {
 
@@ -56,6 +57,7 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
     Radius,             //!< Designates the buffer that contains the radius of the spheres.
     VColors,            //!< Designates the buffer that contains the colors of the smooth vertices.
     FColors,            //!< Designates the buffer that contains the colors of the flat vertices.
+    Distances,
     NbOfVbos            //!< Designates the size of the VBOs vector for `Triangle_container`s
   };
 
@@ -89,19 +91,23 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
   /// If the shaders of this program doesn't need one, you can ignore it.
   /// The others should be filled at each `draw()` from the item.
   ///@{
-  
+
   //! getter for the "shrink_factor" parameter
   float getShrinkFactor();
   //! getter for the "plane" parameter
   QVector4D getPlane();
   //! getter for the "alpha" parameter
   float getAlpha();
+  //! getter for the "f_matrix" parameter
+  QMatrix4x4 getFrameMatrix()const;
 //! setter for the "shrink_factor" parameter
   void setShrinkFactor(const float&);
   //! setter for the "plane" parameter
   void setPlane       (const QVector4D&);
   //! setter for the "alpha" parameter
   void setAlpha       (const float&);
+  //! setter for the "f_matrix" parameter
+  void setFrameMatrix(const QMatrix4x4&);
   ///@}
 
   //drawing variables

@@ -359,7 +359,7 @@ struct Throw_at_first_output {
 // Note this is not officially documented
 /*
  * reports all the pairs of faces intersecting between two triangulated surface meshes.
- * This function depends on the package \ref PkgBoxIntersectionDSummary.
+ * This function depends on the package \ref PkgBoxIntersectionD.
  *
  * \pre `CGAL::is_triangle_mesh(tm1)`
  * \pre `CGAL::is_triangle_mesh(tm2)`
@@ -411,6 +411,14 @@ compute_face_face_intersection(const FaceRange& face_range1,
   typedef TriangleMesh TM;
   typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
   typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, face_descriptor> Box;
+  
+  CGAL::Bbox_3 b1 = CGAL::Polygon_mesh_processing::bbox(tm1, np1),
+               b2 = CGAL::Polygon_mesh_processing::bbox(tm2, np2);
+  
+  if(!CGAL::do_overlap(b1, b2))
+  {
+    return out;
+  }
 
   // make one box per facet
   std::vector<Box> boxes1;
@@ -478,7 +486,7 @@ compute_face_face_intersection(const FaceRange& face_range1,
  * a triangulated surface mesh and a polyline.
  * \attention If a polyline vertex intersects a face, the intersection will
  * be reported twice (even more if it is on a vertex, edge, or point).
- * This function depends on the package \ref PkgBoxIntersectionDSummary.
+ * This function depends on the package \ref PkgBoxIntersectionD.
  *
  * \pre `CGAL::is_triangle_mesh(tm)`
  *
@@ -525,6 +533,11 @@ compute_face_polyline_intersection( const FaceRange& face_range,
 
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
 
+  CGAL::Bbox_3 b1 = CGAL::Polygon_mesh_processing::bbox(tm, np),
+               b2 = CGAL::bbox_3(polyline.begin(), polyline.end());
+
+  if(!CGAL::do_overlap(b1,b2))
+    return out;
   typedef TriangleMesh TM;
   typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
   typedef typename GetVertexPointMap<TM, NamedParameters>::const_type VertexPointMap;
@@ -603,7 +616,7 @@ compute_face_polyline_intersection( const FaceRange& face_range,
  * a triangulated surface mesh and a range of polylines.
  * \attention If a polyline vertex intersects a face, the intersection will
  * be reported twice (even more if it is on a vertex, edge, or point).
- * This function depends on the package \ref PkgBoxIntersectionDSummary.
+ * This function depends on the package \ref PkgBoxIntersectionD.
  *
  * \pre `CGAL::is_triangle_mesh(tm)`
  *
@@ -648,7 +661,18 @@ compute_face_polylines_intersection(const FaceRange& face_range,
   using boost::get_param;
 
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
-
+  
+  CGAL::Bbox_3 b1,b2;
+  b1 = CGAL::Polygon_mesh_processing::bbox(tm, np);
+  for(std::size_t i =0; i< polyline_range.size(); ++i)
+  {
+    b2 += CGAL::bbox_3(polyline_range[i].begin(),
+                       polyline_range[i].end());
+  }
+  
+  if(!CGAL::do_overlap(b1,b2))
+    return out;
+  
   typedef TriangleMesh TM;
   typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
   typedef typename GetVertexPointMap<TM, NamedParameters>::const_type VertexPointMap;
@@ -732,7 +756,7 @@ compute_face_polylines_intersection(const FaceRange& face_range,
 // Note this is not officially documented
 /*
  * detects and records intersections between two polylines.
- * This function depends on the package \ref PkgBoxIntersectionDSummary.
+ * This function depends on the package \ref PkgBoxIntersectionD.
  * \attention If a polyline vertex intersects another polyline, the intersection will
  * be reported twice (even more if it is on a vertex).
  * \tparam Polyline a `RandomAccessRange` of points.
@@ -815,7 +839,7 @@ compute_polyline_polyline_intersection(const Polyline& polyline1,
  * detects and records intersections between two ranges of polylines.
  *  \attention If a polyline vertex intersects another polyline, the intersection will
  * be reported twice (even more if it is on a vertex).
- * This function depends on the package \ref PkgBoxIntersectionDSummary.
+ * This function depends on the package \ref PkgBoxIntersectionD.
  *
  * \tparam PolylineRange a `RandomAccessRange` of `RandomAccessRange` of points.
  * \tparam OutputIterator a model of `OutputIterator` holding objects of type
@@ -849,18 +873,23 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
   std::vector<Box> boxes1;
   std::vector<Box> boxes2;
   std::size_t polylines_size = 0;
+  CGAL::Bbox_3 b1, b2;
   BOOST_FOREACH(Polyline poly, polylines1)
   {
     polylines_size += std::distance( boost::begin(poly), boost::end(poly) ) -1;
+    b1 += CGAL::bbox_3(poly.begin(), poly.end());
   }
   boxes1.reserve( polylines_size );
   polylines_size = 0;
   BOOST_FOREACH(Polyline poly, polylines2)
   {
     polylines_size += std::distance( boost::begin(poly), boost::end(poly) ) -1;
+    b2 += CGAL::bbox_3(poly.begin(), poly.end());
   }
   boxes2.reserve(polylines_size);
-
+  
+  if(!CGAL::do_overlap(b1,b2))
+    return out;
   std::size_t range_size = std::distance( boost::begin(polylines1), boost::end(polylines1) );
   for(std::size_t j = 0; j < range_size; ++j)
   {
@@ -915,7 +944,7 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
 // Note this is not officially documented
 /*
  * reports all the pairs of faces intersecting between two triangulated surface meshes.
- * This function depends on the package \ref PkgBoxIntersectionDSummary.
+ * This function depends on the package \ref PkgBoxIntersectionD.
  *
  * @pre `CGAL::is_triangle_mesh(tm1)`
  * @pre `CGAL::is_triangle_mesh(tm2)`
@@ -960,7 +989,7 @@ compute_face_face_intersection(const TriangleMesh& tm1,
  * and a polyline.
  *  \attention If a polyline vertex intersects a face or another polyline, the intersection will
  * be reported twice (even more if it is on a vertex, edge, or point).
- * This function depends on the package \ref PkgBoxIntersectionDSummary.
+ * This function depends on the package \ref PkgBoxIntersectionD.
  *
  * \pre `CGAL::is_triangle_mesh(tm)`
  *
@@ -1079,9 +1108,9 @@ bool is_mesh2_in_mesh1(const TriangleMesh& tm1,
 
 /**
  * \ingroup PMP_predicates_grp
- * returns `true` if any segment of any polyline of `polylines1` intersects
- * any segment of any polyline of `polylines2`, and `false` otherwise.
- * This function depends on the package \ref PkgBoxIntersectionDSummary.
+ * returns `true` if there exists a segment of a polyline of `polylines1`
+ * and a segment of a polyline of `polylines2` which intersect, and `false` otherwise.
+ * This function depends on the package \ref PkgBoxIntersectionD.
  *
  * \tparam PolylineRange a `RandomAccessRange` of `RandomAccessRange` of points.
  *         The point type must be from a 3D point from a \cgal Kernel.
@@ -1122,8 +1151,9 @@ bool do_intersect(const PolylineRange& polylines1,
 
 /**
  * \ingroup PMP_predicates_grp
- * returns `true` if any segment of `polyline1` intersects any segment of `polyline2`, and `false` otherwise.
- * This function depends on the package \ref PkgBoxIntersectionDSummary.
+ * returns `true` if there exists a segment of `polyline1` and a segment of `polyline2` which intersect,
+ * and `false` otherwise.
+ * This function depends on the package \ref PkgBoxIntersectionD.
  *
  * \tparam Polyline a `RandomAccessRange` of points.
  *         The point type must be from a 3D point type from \cgal Kernel.
@@ -1167,9 +1197,9 @@ bool do_intersect(const Polyline& polyline1,
 
 /**
  * \ingroup PMP_predicates_grp
- * returns `true` if any face of `tm1` intersects any face of `tm2`, and `false` otherwise.
+ * returns `true` if there exists a face of `tm1` and a face of `tm2` which intersect, and `false` otherwise.
  * If `do_overlap_test_of_bounded_sides` is set to `true`, the overlap of bounded sides are tested as well. In that case, the meshes must be closed.
- * This function depends on the package \ref PkgBoxIntersectionDSummary.
+ * This function depends on the package \ref PkgBoxIntersectionD.
  *
  * @pre `CGAL::is_triangle_mesh(tm1)`
  * @pre `CGAL::is_triangle_mesh(tm2)`
@@ -1186,8 +1216,9 @@ bool do_intersect(const Polyline& polyline1,
  * @param np2 optional sequence of \ref pmp_namedparameters for `tm2`, among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm1` (tm2`).
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm1` (`tm2`).
  *   \attention The two property maps must have the same `value_type`.
+ *
  *   If this parameter is omitted, an internal property map for
  *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
@@ -1207,7 +1238,6 @@ bool do_intersect(const TriangleMesh& tm1,
 {
   using boost::choose_param;
   using boost::get_param;
-
   bool test_overlap =  choose_param(get_param(np1, internal_np::overlap_test),false) ||
                        choose_param(get_param(np2, internal_np::overlap_test),false);
 
@@ -1256,8 +1286,9 @@ bool do_intersect(const TriangleMesh& tm1,
 
 /**
  * \ingroup PMP_predicates_grp
- * returns `true` if any face of `tm` and any segment of any polyline of `polylines` intersects, and `false` otherwise.
- * This function depends on the package \ref PkgBoxIntersectionDSummary.
+ * returns `true` if there exists a face of `tm` and a segment of a polyline of `polylines` which intersect,
+ * and `false` otherwise.
+ * This function depends on the package \ref PkgBoxIntersectionD.
  * @pre `CGAL::is_triangle_mesh(tm)`
  *
  * \tparam TriangleMesh a model of `FaceListGraph`
@@ -1298,7 +1329,6 @@ bool do_intersect(const TriangleMesh& tm,
                  )
 {
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
-
   try
   {
     typedef boost::function_output_iterator<internal::Throw_at_first_output> OutputIterator;
@@ -1312,8 +1342,8 @@ bool do_intersect(const TriangleMesh& tm,
 
 /**
  * \ingroup PMP_predicates_grp
- * returns `true` if any face of `tm` and any segment of `polyline` intersects, and `false` otherwise.
- * This function depends on the package \ref PkgBoxIntersectionDSummary.
+ * returns `true` if there exists a face of `tm` and a segment of `polyline` which intersect, and `false` otherwise.
+ * This function depends on the package \ref PkgBoxIntersectionD.
  * @pre `CGAL::is_triangle_mesh(tm)`
  *
  * \tparam TriangleMesh a model of `FaceListGraph`
@@ -1354,7 +1384,6 @@ bool do_intersect(const TriangleMesh& tm,
                  )
 {
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
-
   try
   {
     typedef boost::function_output_iterator<internal::Throw_at_first_output> OutputIterator;
@@ -1381,7 +1410,6 @@ bool do_intersect(const TriangleMesh& tm,
                   >::type* = 0)
 {
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
-
   return CGAL::Polygon_mesh_processing::do_intersect(tm, polylines, parameters::all_default());
 }
 
@@ -1404,7 +1432,6 @@ bool do_intersect(const TriangleMesh& tm,
                   >::type* = 0)
 {
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
-
   return CGAL::Polygon_mesh_processing::do_intersect(tm, polyline, parameters::all_default());
 }
 
@@ -1529,7 +1556,7 @@ struct Mesh_callback
  * A pair of meshes intersecting is put in the output iterator `out` as a `std::pair<std::size_t, std::size_t>`,
  * each index refering to the index of the triangle mesh in the input range.
  * If `do_overlap_test_of_bounded_sides` is `true`, the overlap of bounded sides are tested as well. In that case, the meshes must be closed.
- * This function depends on the package \ref PkgBoxIntersectionDSummary.
+ * This function depends on the package \ref PkgBoxIntersectionD.
  *
  * \tparam TriangleMeshRange a model of `RandomAccessRange` of triangulated surface meshes model of `FaceListGraph`.
  * \tparam OutputIterator an output iterator in which `std::pair<std::size_t, std::size_t>` can be put.

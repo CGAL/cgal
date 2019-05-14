@@ -6,7 +6,7 @@
 #include <iostream>
 #include "texture.h"
 
-#ifdef scene_textured_surface_mesh_item_EXPORTS
+#ifdef scene_textured_item_EXPORTS
 #  define SCENE_TEXTURED_SURFACE_MESH_ITEM_EXPORT Q_DECL_EXPORT
 #else
 #  define SCENE_TEXTURED_SURFACE_MESH_ITEM_EXPORT Q_DECL_IMPORT

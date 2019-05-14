@@ -2,7 +2,7 @@
 #define _DUALIZER_
 
 #include <CGAL/Polyhedron_incremental_builder_3.h>
-
+#include <CGAL/Modifier_base.h>
 template <class Face_handle>
 struct Facet_cmp
 {

@@ -4,8 +4,11 @@
 
 project( Mesh_3_Tests )
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
+if(POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW)
+endif()
 
 find_package(CGAL QUIET COMPONENTS ImageIO)
 
@@ -13,11 +16,6 @@ if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
 
   find_package( TBB QUIET )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
-  include_directories (BEFORE ../../include)
-  include_directories (BEFORE ../../../AABB_tree/include)
 
   # Use Eigen
   find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
@@ -39,6 +37,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_labeled_mesh_domain_3.cpp" )
   create_single_source_cgal_program( "test_mesh_criteria_creation.cpp" )
   create_single_source_cgal_program( "test_c3t3_into_facegraph.cpp" )
+  create_single_source_cgal_program( "test_without_detect_features.cpp" )
   if(CGAL_ImageIO_USE_ZLIB)
     create_single_source_cgal_program( "test_meshing_3D_image.cpp" )
     create_single_source_cgal_program( "test_meshing_3D_image_deprecated.cpp" )

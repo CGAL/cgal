@@ -49,7 +49,7 @@
 
 namespace CGAL {
 
-/// \ingroup PkgPolygon2
+/// \ingroup PkgPolygon2Ref
 /// The class Polygon_2 implements polygons. The Polygon_2 is
 /// parameterized by a traits class and a container class.  The latter
 /// can be any class that fulfills the requirements for an STL
@@ -164,7 +164,13 @@ class Polygon_2 {
       // Sun STL switches off member templates for binary backward compat.
       std::copy(first, last, std::back_inserter(d_container));
     }
-
+  
+#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
+#ifndef DOXYGEN_RUNNING
+  Polygon_2& operator=(const Polygon_2&)=default;
+#endif
+#endif
+  
     /// @}
 
     /// \name Modifiers
@@ -483,7 +489,7 @@ class Polygon_2 {
 /// Test for equality: two polygons are equal iff there exists a
 /// cyclic permutation of the vertices of `p2` such that they are
 /// equal to the vertices of `p1`. Note that the template argument
-/// `Container` of `p1` and `p2` may be different.
+/// `%Container` of `p1` and `p2` may be different.
 /// \memberof Polygon_2
 template <class Traits_P, class Container1_P, class Container2_P>
 bool operator==( const Polygon_2<Traits_P,Container1_P> &p1,
@@ -510,18 +516,17 @@ transform(const Transformation& t, const Polygon_2<Traits_P,Container_P>& p);
 /// followed by the output of the coordinates of the vertices.
 /// @{
 
-/// Inserts the polygon `p` into the stream `os`. \pre The insert
-/// operator must be defined for `Point_2`.
+/// Reads a polygon from stream `is` and assigns it to `p`.
+/// \pre The extract operator must be defined for `Point_2`.
 /// \memberof Polygon_2
 template <class Traits_P, class Container_P>
 std::istream &operator>>(std::istream &is, Polygon_2<Traits_P,Container_P>& p);
 
-/// Reads a polygon from stream `is` and assigns it
-/// to `p`. \pre The extract operator must be defined for `Point_2`.
+/// Inserts the polygon `p` into the stream `os`.
+/// \pre The insert operator must be defined for `Point_2`.
 /// \memberof Polygon_2
 template <class Traits_P, class Container_P>
-std::ostream
-&operator<<(std::ostream &os, const Polygon_2<Traits_P,Container_P>& p);
+std::ostream &operator<<(std::ostream &os, const Polygon_2<Traits_P,Container_P>& p);
 
 /// @} // IO
 

@@ -58,7 +58,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3Domains
+\ingroup PkgMesh3Domains
 
 The class `Polyhedral_complex_mesh_domain_3` implements a domain
 defined by a collection of polyhedral surfaces, forming a complex.
@@ -431,9 +431,9 @@ public:
       needed_vertices_on_patch[i] = (std::min)(nb_of_extra_vertices_per_patch,
                                                needed_vertices_on_patch[i]);
     }
+
     // Then a second path to fill `several_vertices_on_patch`...
-    // The algorithm is adapted from SGI `random_sample_n`:
-    //   https://www.sgi.com/tech/stl/random_sample_n.html
+    // The algorithm is adapted from SGI `random_sample_n`
     BOOST_FOREACH(const Polyhedron& p, this->stored_polyhedra)
     {
       for (typename Polyhedron::Vertex_const_iterator

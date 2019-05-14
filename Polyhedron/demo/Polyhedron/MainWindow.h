@@ -16,11 +16,15 @@
 #include <QFileInfo>
 #include <QStringList>
 #include <QSet>
+#include <QMap>
 #include <QModelIndex>
+#include <QLineEdit>
+
 class Scene;
 class Viewer;
 class QTreeView;
 class QMenu;
+class QWidgetAction;
 namespace CGAL {
 namespace Three{
 class Polyhedron_demo_io_plugin_interface;
@@ -35,8 +39,6 @@ namespace Ui {
   class MainWindow;
   class Statistics_on_item_dialog;
 }
-
-#include "Polyhedron_type_fwd.h"
 
 #include "Messages_interface.h"
 
@@ -70,7 +72,7 @@ public:
    * Then it creates and initializes the scene and do the
    * connexions with the UI. Finally it loads the plugins.*/
 
-  MainWindow(bool verbose = false,QWidget* parent = 0);
+  MainWindow(const QStringList& keywords, bool verbose = false,QWidget* parent = 0);
   ~MainWindow();
 
   /*! Finds an IO plugin.
@@ -100,7 +102,7 @@ public Q_SLOTS:
   //! If `b` is true, recenters the scene.
   void updateViewerBBox(bool b);
   //! Opens a script or a file with the default loader if there is.
-  void open(QString);
+  void open(QString) Q_DECL_OVERRIDE;
   //! Is called when the up button is pressed.
   void on_upButton_pressed();
   //! Is called when the down button is pressed.
@@ -141,6 +143,11 @@ public Q_SLOTS:
    * the index i in the Geometric Objects view.
    */
   void selectSceneItem(int i);
+  /*!
+   * Clears the current selection and selects the scene_items with
+   * indices in is in the Geometric Objects view.
+   */
+  void selectSceneItems(QList<int> i);
   /*!
    * Prints coordinates of a point and its distance to the last
    * position printed by this function.
@@ -213,15 +220,15 @@ public Q_SLOTS:
   /*!
    * Displays a text preceded by the mention "INFO :".
    */
-  void information(QString);
+  void message_information(QString) Q_DECL_OVERRIDE;
   /*!
    * Displays a blue text preceded by the mention "WARNING :".
    */
-  void warning(QString);
+  void message_warning(QString) Q_DECL_OVERRIDE;
   /*!
    * Displays a red text preceded by the mention "ERROR :".
    */
-  void error(QString);
+  void message_error(QString) Q_DECL_OVERRIDE;
 
     //!Displays a text in the chosen html color with the chosen html font.
 
@@ -237,11 +244,6 @@ public Q_SLOTS:
 
   /// This slot is used to test exception handling in Qt Scripts.
   void throw_exception();
-
-  /*!
-   * set_face_graph_default_type sets the global state of the application to `Polyhedron mode` or `Surface_mesh mode`.
-   */
-  void set_face_graph_default_type(MainWindow::Face_graph_mode m);
 
   /*!
    * Writes the statistics dialog content in a text file.
@@ -314,7 +316,8 @@ protected Q_SLOTS:
   //!Swap the visibility of the selected item(s).
   void on_actionShowHide_triggered();
   //!Pops a dialog to change the max TextItems
-  void on_actionMaxTextItemsDisplayed_triggered();
+  void setMaxTextItemsDisplayed(int val);
+  void setTransparencyPasses(int val);
   // Select A/B
   //!Sets the selected item as item_A.
   void on_actionSetPolyhedronA_triggered();
@@ -324,6 +327,8 @@ protected Q_SLOTS:
   //Preferences edition
   //!Opens the Preferences dialog.
   void on_actionPreferences_triggered();
+  //!Save selected items if able.
+  void on_action_Save_triggered(); 
   // save as...
   //!Opens a dialog to save selected item if able.
   void on_actionSaveAs_triggered(); 
@@ -332,10 +337,9 @@ protected Q_SLOTS:
   //!Calls the function saveSnapShot of the viewer.
   void on_actionSaveSnapshot_triggered();
   //!Opens a Dialog to choose a color and make it the background color.
-  void on_actionSetBackgroundColor_triggered();
+  void setBackgroundColor();
   //!Opens a Dialog to change the lighting settings
-  void on_actionSetLighting_triggered();
-  
+  void setLighting_triggered();
   /*! Opens a Dialog to enter coordinates of the new center point and sets it
    * with viewerShow.
    *@see viewerShow(float, float, float, float, float, float)
@@ -382,7 +386,7 @@ protected:
    * Calls writeSettings() and set the flag accepted for the event.
    * @see writeSettings()
    */
-  void closeEvent(QCloseEvent *event);
+  void closeEvent(QCloseEvent *event)Q_DECL_OVERRIDE;
   /*! Returns the currently selected item in the Geometric Objects view. Returns -1
    * if none is selected.
    */
@@ -399,7 +403,7 @@ private:
   void setMenus(QString, QString, QAction *a);
   /// plugin black-list
   QSet<QString> plugin_blacklist;
-  QMap<QString, std::vector<QString> > PathNames_map; //For each non-empty plugin directory, contains a vector of plugin names
+  QMap<QString, QString > PathNames_map; //For each non-empty plugin directory, contains a vector of plugin names
   QMap<QString, QString > pluginsStatus_map; //For each non-empty plugin directory, contains a vector of plugin names
   Scene* scene;
   Viewer* viewer;
@@ -416,7 +420,7 @@ private:
   QAction* actionAddToGroup;
   QAction* actionResetDefaultLoaders;
   CGAL::Three::Three* three;
-  void print_message(QString message) { messages->information(message); }
+  void print_message(QString message) { messages->message_information(message); }
   Messages_interface* messages;
 
   QDialog *statistics_dlg;
@@ -437,8 +441,23 @@ public:
   void evaluate_script_quiet(QString script, 
                              const QString & fileName = QString());
 #endif
-private Q_SLOTS:
-  void set_facegraph_mode_adapter(bool is_polyhedron);
+public Q_SLOTS:
+  void on_actionSa_ve_Scene_as_Script_triggered();
+  void toggleFullScreen();
+  void setDefaultSaveDir();
+  void invalidate_bbox(bool do_recenter);
+private:
+  QList<QDockWidget *> visibleDockWidgets;
+  QLineEdit operationSearchBar;
+  QWidgetAction* searchAction;
+  QString def_save_dir;
+  bool bbox_need_update;
+  QMap<QString, QPair<QStringList, QString> >plugin_metadata_map;
+  QMap<QString, bool> ignored_map;
+  const QStringList& accepted_keywords;
+
+private:
+  QMap<QAction*, QMenu*> action_menu_map;
 };
 
 #endif // ifndef MAINWINDOW_H

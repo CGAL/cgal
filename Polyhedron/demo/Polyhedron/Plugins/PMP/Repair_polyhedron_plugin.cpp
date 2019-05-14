@@ -1,11 +1,10 @@
 #include <QtCore/qglobal.h>
 
-#include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 #include <CGAL/Three/Scene_interface.h>
-#include "Polyhedron_type.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 #include "Messages_interface.h"
 
 #include <QAction>
@@ -58,7 +57,7 @@ public:
     actionStitchCloseBorderHalfedges->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionRemoveSelfIntersections->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionRemoveIsolatedVertices->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
-    actionDuplicateNMVertices->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
+    actionDuplicateNMVertices->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
     actionAutorefine->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionAutorefineAndRMSelfIntersections->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
 
@@ -79,8 +78,7 @@ public:
   bool applicable(QAction*) const
   {
     int item_id = scene->mainSelectionIndex();
-    return qobject_cast<Scene_polyhedron_item*>(scene->item(item_id)) ||
-           qobject_cast<Scene_surface_mesh_item*>(scene->item(item_id));
+    return qobject_cast<Scene_surface_mesh_item*>(scene->item(item_id));
   }
   template <typename Item>
   void on_actionRemoveIsolatedVertices_triggered(Scene_interface::Item_id index);
@@ -128,7 +126,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveIsolatedVertices_t
     std::size_t nbv =
       CGAL::Polygon_mesh_processing::remove_isolated_vertices(
         *poly_item->polyhedron());
-    messages->information(tr(" %1 isolated vertices have been removed.")
+    CGAL::Three::Three::information(tr(" %1 isolated vertices have been removed.")
       .arg(nbv));
     poly_item->invalidateOpenGLBuffers();
     Q_EMIT poly_item->itemChanged();
@@ -139,7 +137,6 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveIsolatedVertices_t
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  on_actionRemoveIsolatedVertices_triggered<Scene_polyhedron_item>(index);
   on_actionRemoveIsolatedVertices_triggered<Scene_surface_mesh_item>(index);
   QApplication::restoreOverrideCursor();
 }
@@ -151,10 +148,11 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveDegenerateFaces_tr
     qobject_cast<Item*>(scene->item(index));
   if (poly_item)
   {
-    std::size_t nbv =
+    std::size_t nbv = num_faces(*poly_item->polyhedron());
       CGAL::Polygon_mesh_processing::remove_degenerate_faces(
       *poly_item->polyhedron());
-    messages->information(tr(" %1 degenerate faces have been removed.")
+    nbv -= num_faces(*poly_item->polyhedron());
+    CGAL::Three::Three::information(tr(" %1 degenerate faces have been removed.")
       .arg(nbv));
     poly_item->invalidateOpenGLBuffers();
     Q_EMIT poly_item->itemChanged();
@@ -165,7 +163,6 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveDegenerateFaces_tr
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  on_actionRemoveDegenerateFaces_triggered<Scene_polyhedron_item>(index);
   on_actionRemoveDegenerateFaces_triggered<Scene_surface_mesh_item>(index);
   QApplication::restoreOverrideCursor();
 }
@@ -181,7 +178,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveSelfIntersections_
       CGAL::Polygon_mesh_processing::remove_self_intersections(
       *poly_item->polyhedron());
     if (!solved)
-      messages->information(tr("Some self-intersection could not be fixed"));
+      CGAL::Three::Three::information(tr("Some self-intersection could not be fixed"));
     poly_item->invalidateOpenGLBuffers();
     Q_EMIT poly_item->itemChanged();
   }
@@ -191,7 +188,6 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveSelfIntersections_
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  on_actionRemoveSelfIntersections_triggered<Scene_polyhedron_item>(index);
   on_actionRemoveSelfIntersections_triggered<Scene_surface_mesh_item>(index);
   QApplication::restoreOverrideCursor();
 }
@@ -208,7 +204,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionAutorefine_triggered(Sce
     }
     catch(CGAL::Polygon_mesh_processing::Corefinement::Triple_intersection_exception)
     {
-      messages->warning(tr("The result of the requested operation is not handled (triple intersection)."));
+      CGAL::Three::Three::warning(tr("The result of the requested operation is not handled (triple intersection)."));
     }
     poly_item->invalidateOpenGLBuffers();
     Q_EMIT poly_item->itemChanged();
@@ -219,7 +215,6 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionAutorefine_triggered()
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  on_actionAutorefine_triggered<Scene_polyhedron_item>(index);
   on_actionAutorefine_triggered<Scene_surface_mesh_item>(index);
   QApplication::restoreOverrideCursor();
 }
@@ -236,11 +231,11 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionAutorefineAndRMSelfInter
         CGAL::Polygon_mesh_processing::experimental::
           autorefine_and_remove_self_intersections(*poly_item->polyhedron());
       if (!solved)
-        messages->information(tr("Self-intersection could not be removed due to non-manifold edges in the output"));
+        CGAL::Three::Three::information(tr("Self-intersection could not be removed due to non-manifold edges in the output"));
     }
     catch(CGAL::Polygon_mesh_processing::Corefinement::Triple_intersection_exception)
     {
-      messages->warning(tr("The result of the requested operation is not handled (triple intersection)."));
+      CGAL::Three::Three::warning(tr("The result of the requested operation is not handled (triple intersection)."));
     }
     poly_item->invalidateOpenGLBuffers();
     Q_EMIT poly_item->itemChanged();
@@ -251,7 +246,6 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionAutorefineAndRMSelfInter
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  on_actionAutorefineAndRMSelfIntersections_triggered<Scene_polyhedron_item>(index);
   on_actionAutorefineAndRMSelfIntersections_triggered<Scene_surface_mesh_item>(index);
   QApplication::restoreOverrideCursor();
 }
@@ -276,7 +270,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionStitchCloseBorderHalfedg
                                                  get(boost::vertex_point, *poly_item->polyhedron()),
                                                  halfedges_to_stitch);
     PMP::stitch_borders(*poly_item->polyhedron(), halfedges_to_stitch);
-    messages->information(tr(" %1 pairs of halfedges stitched.").arg(halfedges_to_stitch.size()));
+    CGAL::Three::Three::information(tr(" %1 pairs of halfedges stitched.").arg(halfedges_to_stitch.size()));
     poly_item->invalidateOpenGLBuffers();
     Q_EMIT poly_item->itemChanged();
   }
@@ -286,7 +280,6 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionStitchCloseBorderHalfedg
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  on_actionStitchCloseBorderHalfedges_triggered<Scene_polyhedron_item>(index);
   on_actionStitchCloseBorderHalfedges_triggered<Scene_surface_mesh_item>(index);
   QApplication::restoreOverrideCursor();
 }
@@ -299,7 +292,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionDuplicateNMVertices_trig
   if (Item* poly_item = qobject_cast<Item*>(scene->item(index)))
   {
     std::size_t nb_vd = PMP::duplicate_non_manifold_vertices(*poly_item->polyhedron());
-    messages->information(tr(" %1 vertices created").arg(nb_vd));
+    CGAL::Three::Three::information(tr(" %1 vertices created").arg(nb_vd));
     if (nb_vd)
     {
       poly_item->invalidateOpenGLBuffers();
@@ -312,7 +305,6 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionDuplicateNMVertices_trig
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  on_actionDuplicateNMVertices_triggered<Scene_polyhedron_item>(index);
   on_actionDuplicateNMVertices_triggered<Scene_surface_mesh_item>(index);
   QApplication::restoreOverrideCursor();
 }

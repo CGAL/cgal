@@ -129,7 +129,7 @@ struct Face_filtered_graph
    *     a property map containing an index for each face initialized from 0 to `num_vertices(graph)`
    *   \cgalParamEnd
    *   \cgalParamBegin{vertex_index_map}
-   *     a property map containing an index for each vertex initialized 0 to `num_vertices(vertex)`
+   *     a property map containing an index for each vertex initialized 0 to `num_vertices(graph)`
    *   \cgalParamEnd
    *   \cgalParamBegin{halfedge_index_map}
    *     a property map containing an index for each halfedge initialized 0 to `num_halfedges(graph)`
@@ -189,7 +189,7 @@ struct Face_filtered_graph
    *     a property map containing an index for each face initialized from 0 to `num_vertices(graph)`
    *   \cgalParamEnd
    *   \cgalParamBegin{vertex_index_map}
-   *     a property map containing an index for each vertex initialized 0 to `num_vertices(vertex)`
+   *     a property map containing an index for each vertex initialized 0 to `num_vertices(graph)`
    *   \cgalParamEnd
    *   \cgalParamBegin{halfedge_index_map}
    *     a property map containing an index for each halfedge initialized 0 to `num_halfedges(graph)`
@@ -236,7 +236,7 @@ struct Face_filtered_graph
    *     a property map containing an index for each face initialized from 0 to `num_vertices(graph)`
    *   \cgalParamEnd
    *   \cgalParamBegin{vertex_index_map}
-   *     a property map containing an index for each vertex initialized 0 to `num_vertices(vertex)`
+   *     a property map containing an index for each vertex initialized 0 to `num_vertices(graph)`
    *   \cgalParamEnd
    *   \cgalParamBegin{halfedge_index_map}
    *     a property map containing an index for each halfedge initialized 0 to `num_halfedges(graph)`
@@ -948,8 +948,7 @@ template<typename Graph,
          typename FIMap,
          typename VIMap,
          typename HIMap>
-std::pair<typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_iterator,
-typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_iterator>
+Iterator_range<typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_iterator>
 halfedges(const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
   typedef typename boost::graph_traits<Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_iterator halfedge_iterator;

@@ -1,14 +1,10 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/intersection.h>
 
-#ifdef USE_SURFACE_MESH
 #include "Kernel_type.h"
 #include "Scene_surface_mesh_item.h"
-#else
-#include "Scene_polyhedron_item.h"
-#include "Polyhedron_type.h"
-#endif
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 
 #include "Scene_polylines_item.h"
 #include "Scene_points_with_normal_item.h"
@@ -23,11 +19,7 @@
 #include <QTime>
 #include <QMessageBox>
 
-#ifdef USE_SURFACE_MESH
 typedef Scene_surface_mesh_item Scene_face_graph_item;
-#else
-typedef Scene_polyhedron_item Scene_face_graph_item;
-#endif
 
 typedef Scene_polylines_item::Polyline Polyline_3;
 typedef boost::graph_traits<Scene_face_graph_item::Face_graph>::face_descriptor face_descriptor;
@@ -78,9 +70,7 @@ public:
   QList<QAction*> actions() const {
     return QList<QAction*>() << actionPolyhedronIntersection_3
                              << actionSurfacePolylineIntersection
-#ifdef USE_SURFACE_MESH
                              << actionPolylinesIntersection
-#endif
                                 ;
   }
 
@@ -135,7 +125,7 @@ void Polyhedron_demo_intersection_plugin::intersectionSurfaces()
       if(!is_triangle_mesh(*itemA->face_graph())
          || !is_triangle_mesh(*itemB->face_graph()))
       {
-        mi->error("The two meshes must be triangle meshes.");
+        CGAL::Three::Three::error("The two meshes must be triangle meshes.");
       }
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -293,7 +283,7 @@ void Polyhedron_demo_intersection_plugin::intersectionSurfacePolyline()
 
   if(!is_triangle_mesh(*itemA->face_graph()))
   {
-    mi->error("The mesh must be a triangle mesh.");
+    CGAL::Three::Three::error("The mesh must be a triangle mesh.");
   }
   QApplication::setOverrideCursor(Qt::WaitCursor);
 

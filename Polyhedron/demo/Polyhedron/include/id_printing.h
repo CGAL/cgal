@@ -7,7 +7,7 @@
 #include <boost/foreach.hpp>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <vector>
-
+#define POINT_SIZE 11
 template<class Mesh>
 struct VKRingPMAP{
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor key_type;
@@ -206,6 +206,7 @@ void compute_displayed_ids(Mesh& mesh,
 
   QFont font;
   font.setBold(true);
+  font.setPointSize(POINT_SIZE);
   std::vector<vertex_descriptor> displayed_vertices;
   std::vector<edge_descriptor> displayed_edges;
   std::vector<face_descriptor> displayed_faces;
@@ -414,6 +415,7 @@ bool printVertexIds(const Mesh& mesh,
   const CGAL::qglviewer::Vec offset = viewer->offset();
   QFont font;
   font.setBold(true);
+  font.setPointSize(POINT_SIZE);
 
   //fills textItems
   BOOST_FOREACH(typename boost::graph_traits<Mesh>::vertex_descriptor vh, vertices(mesh))
@@ -449,7 +451,8 @@ bool printEdgeIds(const Mesh& mesh,
   const CGAL::qglviewer::Vec offset = viewer->offset();
   QFont font;
   font.setBold(true);
-
+  font.setPointSize(POINT_SIZE);
+  
   BOOST_FOREACH(typename boost::graph_traits<Mesh>::edge_descriptor e, edges(mesh))
   {
     const Point& p1 = get(ppmap, source(e, mesh));
@@ -482,6 +485,7 @@ bool printFaceIds(const Mesh& mesh,
   const CGAL::qglviewer::Vec offset = viewer->offset();
   QFont font;
   font.setBold(true);
+  font.setPointSize(POINT_SIZE);
   BOOST_FOREACH(typename boost::graph_traits<Mesh>::face_descriptor fh, faces(mesh))
   {
     double x(0), y(0), z(0);
@@ -546,12 +550,18 @@ int zoomToId(const Mesh& mesh,
     bool found = false;
     BOOST_FOREACH(vertex_descriptor vh, vertices(mesh))
     {
-      if(get(vidmap, vh) == id)
+      std::size_t cur_id = get(vidmap, vh);
+      if( cur_id == id)
       {
         p = Point(get(ppmap, vh).x() + offset.x,
                   get(ppmap, vh).y() + offset.y,
                   get(ppmap, vh).z() + offset.z);
-        selected_fh = face(halfedge(vh, mesh), mesh);
+        typename boost::graph_traits<Mesh>::halfedge_descriptor hf = halfedge(vh, mesh);
+        if(CGAL::is_border_edge(hf, mesh))
+        {
+          hf = opposite(hf, mesh);
+        }
+        selected_fh = face(hf, mesh);
         normal = CGAL::Polygon_mesh_processing::compute_vertex_normal(vh, mesh);
         found = true;
         break;
@@ -569,17 +579,27 @@ int zoomToId(const Mesh& mesh,
     {
       if(get(eidmap, halfedge(e, mesh))/2 == id)
       {
+        typename boost::graph_traits<Mesh>::halfedge_descriptor hf = halfedge(e, mesh);
         const Point& p1 = get(ppmap, source(e, mesh));
         const Point& p2 = get(ppmap, target(e, mesh));
         p = Point((float)(p1.x() + p2.x()) / 2 + offset.x,
                   (float)(p1.y() + p2.y()) / 2 + offset.y,
                   (float)(p1.z() + p2.z()) / 2 + offset.z );
-        typename Traits::Vector_3 normal1 = CGAL::Polygon_mesh_processing::compute_face_normal(face(halfedge(e, mesh),mesh),
-                                                                                               mesh);
-        typename Traits::Vector_3 normal2 = CGAL::Polygon_mesh_processing::compute_face_normal(face(opposite(halfedge(e, mesh), mesh), mesh),
-                                                                                               mesh);
+        typename Traits::Vector_3 normal1(0,0,0);
+        if(!is_border(hf, mesh))
+        {
+          normal1= CGAL::Polygon_mesh_processing::compute_face_normal(face(hf,mesh),
+                                                                      mesh);
+          selected_fh = face(hf, mesh);
+        }
+        typename Traits::Vector_3 normal2(0,0,0);
+        if(!is_border(opposite(hf, mesh), mesh))
+        {
+          normal2 = CGAL::Polygon_mesh_processing::compute_face_normal(face(opposite(hf, mesh), mesh),
+                                                                       mesh);
+          selected_fh = face(hf, mesh);
+        }
         normal = 0.5*normal1+0.5*normal2;
-        selected_fh = face(halfedge(e, mesh), mesh);
         found = true;
         break;
       }
@@ -623,10 +643,10 @@ int zoomToId(const Mesh& mesh,
   CGAL::qglviewer::Quaternion new_orientation(CGAL::qglviewer::Vec(0,0,-1),
                                         CGAL::qglviewer::Vec(-normal.x(), -normal.y(), -normal.z()));
   Point new_pos = p +
-      CGAL::qglviewer::Vec(
-        viewer->camera()->position().x - viewer->camera()->sceneCenter().x,
-        viewer->camera()->position().y - viewer->camera()->sceneCenter().y,
-        viewer->camera()->position().z - viewer->camera()->sceneCenter().z)
+      0.25*CGAL::qglviewer::Vec(
+        viewer->camera()->position().x - viewer->camera()->pivotPoint().x,
+        viewer->camera()->position().y - viewer->camera()->pivotPoint().y,
+        viewer->camera()->position().z - viewer->camera()->pivotPoint().z)
       .norm() * normal ;
 
   viewer->camera()->setPivotPoint(CGAL::qglviewer::Vec(p.x(),

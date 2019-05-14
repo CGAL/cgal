@@ -73,7 +73,7 @@ or if Qt5 are desired
 sudo port install cgal +qt5 +universal +demos
 </PRE>
 
-The setup is similar for <a href="http://mxcl.github.com/homebrew/"><tt>homebrew</tt></a> .
+The setup is similar for <a href="https://brew.sh/"><tt>homebrew</tt></a> .
 
 \subsection sseccgaldebian CGAL on Linux 
 
@@ -100,7 +100,7 @@ It is a self extracting executable that installs the \cgal source, and that allo
 to select and download some precompiled third party libraries. However, you will need to compile
 the library using your favorite compiler.
 
-A <a href="https://www.cgal.org/windows_installation.html">tutorial</a> is provided on how to proceed with Microsoft Visual Studio.
+A <a href="https://www.cgal.org/download/windows.html">tutorial</a> is provided on how to proceed with Microsoft Visual Studio.
 
 
 
@@ -136,7 +136,7 @@ contains the following subdirectories:
 
 
 The directories `include/CGAL/CORE` and `src/CGALCore` contain a
-distribution of the \sc{Core} library\cgalFootnote{<A HREF="http://www.cs.nyu.edu/exact/">`http://www.cs.nyu.edu/exact/`</A>} version 1.7 for
+distribution of the \sc{Core} library\cgalFootnote{<A HREF="https://cs.nyu.edu/exact/">`https://cs.nyu.edu/exact/`</A>} version 1.7 for
 dealing with algebraic numbers. \sc{Core} is not part of \cgal and has its
 own license.
 
@@ -159,8 +159,8 @@ In order to build the \cgal libraries, you need a \cpp compiler.
 | :------- | :--------------- |
 |\sc{Gnu} `g++` 4.1 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} | Linux / MacOS X |
 |          | \sc{MS} Windows | 
-|\sc{MS} Visual `C++` 12.0, 14.0, 15.7 (\sc{Visual Studio} 2013, 2015, and 2017)\cgalFootnote{<A HREF="http://msdn.microsoft.com/en-us/vstudio/">`http://msdn.microsoft.com/en-us/vstudio/`</A>} | \sc{MS} Windows |
-| `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">`http://clang.llvm.org/`</A>} compiler version 6.0.0 | Linux  |
+|\sc{MS} Visual `C++` 12.0, 14.0, 15.9 (\sc{Visual Studio} 2013, 2015, and 2017)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">`https://visualstudio.microsoft.com/`</A>} | \sc{MS} Windows |
+| `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">`http://clang.llvm.org/`</A>} compiler version 7.0.1 | Linux  |
 | Apple `Clang` compiler version 7.0.2 | MacOS X |
 
 It may work for older versions of the above listed compilers.
@@ -170,11 +170,11 @@ It may work for older versions of the above listed compilers.
 
 In order to configure, build, and install the \cgal libraries, examples and
 demos, you need CMake, a cross-platform "makefile generator".
-If CMake is not installed already you can obtain it from <A HREF="http://www.cmake.org/">`http://www.cmake.org/`</A>.
+If CMake is not installed already you can obtain it from <A HREF="https://cmake.org/">`https://cmake.org/`</A>.
 CMake version 3.1 or higher is required.
 This manual explains only those features of
 CMake which are needed in order to build \cgal. Please refer to the 
-CMake documentation at <A HREF="http://www.cmake.org/">`http://www.cmake.org/`</A> for further details.
+CMake documentation at <A HREF="https://cmake.org/">`https://cmake.org/`</A> for further details.
 
 Before building \cgal you have to choose the compiler/linker, 
 set compiler and linker flags, specify which
@@ -356,7 +356,7 @@ header-only.
 
 \subsubsection subsection_headeronly_pbonwindows Possible Problem on Windows
 
-There is one possible problem when using \cgal in header-only mode on a Windows operating system when compiling a program using several modules (executable programs or dynamic-link libraries DLL). If two different modules use the same static variable, this variable is defined independently in each of these modules. If one module modifies the value of this variable, it will not be modified in the other module, which could induce an unexpected behavior. In \cgal, this concerns only a few specific variables: the <A HREF="https://doc.cgal.org/latest/Generator/classCGAL_1_1Random.html">default random</A>, the <A HREF="https://doc.cgal.org/latest/STL_Extension/group__PkgStlExtensionAssertions.html">failure behavior</A>, <A HREF="https://doc.cgal.org/latest/Stream_support/group__PkgIOstreams.html">IO mode</A>. One example is the following: if you change the default random in one DLL, then if you use the default random in another DLL, you will not obtain the modified default random but the original one.
+There is one possible problem when using \cgal in header-only mode on a Windows operating system when compiling a program using several modules (executable programs or dynamic-link libraries DLL). If two different modules use the same static variable, this variable is defined independently in each of these modules. If one module modifies the value of this variable, it will not be modified in the other module, which could induce an unexpected behavior. In \cgal, this concerns only a few specific variables: the <A HREF="https://doc.cgal.org/latest/Generator/classCGAL_1_1Random.html">default random</A>, the <A HREF="https://doc.cgal.org/latest/STL_Extension/group__PkgSTLExtensionAssertions.html">failure behavior</A>, <A HREF="https://doc.cgal.org/latest/Stream_support/group__PkgStreamSupport.html">IO mode</A>. One example is the following: if you change the default random in one DLL, then if you use the default random in another DLL, you will not obtain the modified default random but the original one.
 
 \section secessential3rdpartysoftware Essential Third Party Libraries 
 
@@ -405,8 +405,8 @@ not depend on the DLL's of those two libraries.
 In \cgal some demos and examples depend on `Boost.Program_options`.
 
 In case the \sc{Boost} libraries are not installed on your system already, you
-can obtain them from <A HREF="http://www.boost.org/">`http://www.boost.org/`</A>. For Visual C++ you can download precompiled libraries
-from <A HREF="http://sourceforge.net/projects/boost/files/boost-binaries/">`http://sourceforge.net/projects/boost/files/boost-binaries/`</A>.
+can obtain them from <A HREF="https://www.boost.org/">`https://www.boost.org/`</A>. For Visual C++ you can download precompiled libraries
+from <A HREF="https://sourceforge.net/projects/boost/files/boost-binaries/">`https://sourceforge.net/projects/boost/files/boost-binaries/`</A>.
 For Visual C++ versions prior to 2015  `Boost.Thread` is required, so make sure to either install the precompiled 
 libraries for your compiler or build `libboost-thread` and `libboost-system`.
 
@@ -428,7 +428,7 @@ solution, and we recommend to use them.
 
 Having \sc{Gmp} version 4.2 or higher and \sc{Mpfr} version 2.2.1 or higher
 installed is recommended. These libraries can be obtained from
-<A HREF="http://gmplib.org/">`http://gmplib.org/`</A> and <A HREF="http://www.mpfr.org/">`http://www.mpfr.org/`</A>, respectively.
+<A HREF="https://gmplib.org/">`https://gmplib.org/`</A> and <A HREF="https://www.mpfr.org/">`https://www.mpfr.org/`</A>, respectively.
 
 As Visual \cpp is not properly
 supported by the \sc{Gmp} and \sc{Mpfr} projects, we provide precompiled versions
@@ -439,7 +439,7 @@ of \sc{Gmp} and \sc{Mpfr}, which can be downloaded with the installer
 
 \sc{zlib} is a data compression library, and is essential for the component libCGAL_ImageIO.
 
-In \cgal this library is used in the examples of the \ref PkgSurfaceMesher3 package.
+In \cgal this library is used in the examples of the \ref PkgSurfaceMesher3Ref package.
 
 If it is not already on your system,
 for instance, on Windows, you can download it from <A HREF="http://www.zlib.net/">`http://www.zlib.net/`</A>.
@@ -461,7 +461,7 @@ Qt is a cross-platform application and UI framework.
 
 The component libCGAL_Qt5 requires \sc{Qt}5 installed on your system. 
 In case \sc{Qt} is not yet installed on your system, you can download 
-it from <A HREF="http://qt-project.org/">`http://qt-project.org/`</A>.
+it from <A HREF="http://www.qt-project.org/">`http://www.qt-project.org/`</A>.
 
 
 The exhaustive list of \sc{Qt}5 components used in demos is:
@@ -502,7 +502,7 @@ algorithms. Like \sc{Core}, \leda offers a real number data type.
 In \cgal this library is optional, and its number types can 
 be used as an alternative to \sc{Gmp}, \sc{Mpfr}, and \sc{Core}.
 
-Free and commercial editions of \leda are available from <A HREF="http://www.algorithmic-solutions.com/leda/index.html">`http://www.algorithmic-solutions.com/leda/index.html`</A>.
+Free and commercial editions of \leda are available from <A HREF="https://www.algorithmic-solutions.com/leda/index.html">`https://www.algorithmic-solutions.com/leda/index.html`</A>.
 
 \subsection thirdpartyMPFI MPFI
 
@@ -511,7 +511,7 @@ represented using \sc{Mpfr} reliable floating-point numbers.
 It is based on the libraries \sc{Gmp} and \sc{Mpfr}.
 In the setting of \cgal, this library is
 optional: it is used by some models of the
-\ref PkgAlgebraicKerneld "Algebraic Kernel".
+\ref PkgAlgebraicKernelDRef "Algebraic Kernel".
 
 \sc{Mpfi} can be downloaded from <A HREF="http://mpfi.gforge.inria.fr/">`http://mpfi.gforge.inria.fr/`</A>. Version 1.4 or higher is recommended.
 
@@ -520,7 +520,7 @@ optional: it is used by some models of the
 \sc{Rs} (Real Solutions) is devoted to the study of the real roots of
 polynomial systems with a finite number of complex roots (including
 univariate polynomials). In \cgal, \sc{Rs} is used by one model of the
-\ref PkgAlgebraicKerneld "Algebraic Kernel".
+\ref PkgAlgebraicKernelDRef "Algebraic Kernel".
 
 \sc{Rs} is freely distributable for non-commercial use. You can download it
 from <a href="http://vegas.loria.fr/rs/">`http://vegas.loria.fr/rs/`</a>. Actually, the \sc{Rs} package also includes \sc{Rs3}, the
@@ -543,13 +543,13 @@ to speed up operations of the Polynomial package, such as GCDs. It is recommende
 \sc{Eigen} is a `C++` template library for linear algebra. \sc{Eigen} supports all
 matrix sizes, various matrix decomposition methods and sparse linear solvers.
 
-In \cgal, \sc{Eigen} provides sparse linear solvers in the \ref PkgPoissonSurfaceReconstruction
-and the \ref PkgSurfaceParameterization packages. 
+In \cgal, \sc{Eigen} provides sparse linear solvers in the \ref PkgPoissonSurfaceReconstruction3Ref
+and the \ref PkgSurfaceMeshParameterizationRef packages. 
 
-In addition, \sc{Eigen} also provides singular value decomposition for the \ref PkgJet_fitting_3
-and the \ref PkgRidges_3 packages.
+In addition, \sc{Eigen} also provides singular value decomposition for the \ref PkgJetFitting3Ref
+and the \ref PkgRidges3Ref packages.
 
-The \sc{Eigen} web site is <A HREF="http://eigen.tuxfamily.org">`http://eigen.tuxfamily.org`</A>.
+The \sc{Eigen} web site is <A HREF="http://eigen.tuxfamily.org/index.php?title=Main_Page">`http://eigen.tuxfamily.org`</A>.
 
 \subsection thirdpartyESBTL ESBTL
 
@@ -557,7 +557,7 @@ The \sc{Esbtl} (Easy Structural Biology Template Library) is a library that allo
 the handling of \sc{Pdb} data.
 
 In \cgal the \sc{Esbtl} is used in an example of the
-\ref PkgSkinSurface3 package.
+\ref PkgSkinSurface3Ref package.
 
 It can be downloaded from <A HREF="http://esbtl.sourceforge.net/">`http://esbtl.sourceforge.net/`</A>.
 
@@ -568,7 +568,7 @@ programs that take advantage of multi-core processors.
 
 In \cgal, \sc{Tbb} is used by the packages that offer parallel code.
 
-The \sc{Tbb} web site is <A HREF="http://www.threadingbuildingblocks.org">`http://www.threadingbuildingblocks.org`</A>.
+The \sc{Tbb} web site is <A HREF="https://www.threadingbuildingblocks.org">`https://www.threadingbuildingblocks.org`</A>.
 
 \subsection thirdpartyLASlib LASlib
 
@@ -576,7 +576,7 @@ The \sc{Tbb} web site is <A HREF="http://www.threadingbuildingblocks.org">`http:
 the LAS format (or the compressed LAZ format).
 
 In \cgal, \sc{LASlib} is used to provide input and output functions in
-the \ref PkgPointSetProcessing package.
+the \ref PkgPointSetProcessing3Ref package.
 
 The \sc{LASlib} web site is <a
 href="https://rapidlasso.com/lastools/">`https://rapidlasso.com/lastools/`</a>. \sc{LASlib}
@@ -589,9 +589,25 @@ CMake based install procedure</a>.
 \sc{OpenCV} (Open Computer Vision) is a library designed for computer
 vision, computer graphics and machine learning.
 
-In \cgal, \sc{OpenCV} is used by the \ref PkgClassification package.
+In \cgal, \sc{OpenCV} is used by the \ref PkgClassificationRef package.
 
-The \sc{OpenCV} web site is <A HREF="http://opencv.org/">`http://opencv.org/`</A>.
+The \sc{OpenCV} web site is <A HREF="https://opencv.org/">`https://opencv.org/`</A>.
+
+\subsection thirdpartyTensorFlow TensorFlow
+
+\sc{TensorFlow} is a library designed for machine learning and deep learning.
+
+In \cgal, the C++ API of \sc{TensorFlow} is used by the \ref
+PkgClassificationRef package for neural network. The C++ API can be
+compiled using CMake: it is distributed as part of the official
+package and is located in `tensorflow/contrib/cmake`. Be sure to
+enable and compile the following targets:
+
+- `tensorflow_BUILD_ALL_KERNELS`
+- `tensorflow_BUILD_PYTHON_BINDINGS`
+- `tensorflow_BUILD_SHARED_LIB`.
+
+The \sc{TensorFlow} web site is <A HREF="https://www.tensorflow.org/">`https://www.tensorflow.org/`</A>.
 
 \subsection thirdpartyMETIS METIS
 
@@ -600,8 +616,8 @@ and designed to partition graphs and produce fill-reducing matrix orderings.
 
 \cgal offers wrappers around some of the methods of the \sc{METIS} library
 to allow the partitioning of graphs that are models of the concepts of the
-<A HREF="http://www.boost.org/libs/graph/doc/index.html">Boost Graph Library</A>,
-and, by extension, of surface meshes (see Section \ref BGLPartitioning of the package \ref PkgBGLSummary).
+<A HREF="https://www.boost.org/libs/graph/doc/index.html">Boost Graph Library</A>,
+and, by extension, of surface meshes (see Section \ref BGLPartitioning of the package \ref PkgBGL).
 
 More information is available on the METIS library
 at <A HREF="http://glaros.dtc.umn.edu/gkhome/metis/metis/overview">`http://glaros.dtc.umn.edu/gkhome/metis/metis/overview`</A>.

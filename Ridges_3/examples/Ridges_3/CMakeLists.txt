@@ -1,15 +1,12 @@
 # This is the CMake script for compiling a CGAL application.
 project( Ridges_3_Examples )
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
 
 find_package(CGAL QUIET )
 
 if ( CGAL_FOUND )
-
-  include( ${CGAL_USE_FILE} )
-  include( CGAL_CreateSingleSourceCGALProgram )
 
   # use either Eigen or BLAS/LAPACK
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)

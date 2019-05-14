@@ -166,6 +166,7 @@ namespace CGAL {
     inline FT 
     min_coord(int i) const 
     {
+      CGAL_assume(i<D::value);
       CGAL_assertion(lower_.size() != 0);
       return lower_[i];
     }
@@ -173,6 +174,7 @@ namespace CGAL {
     inline FT 
     max_coord(int i) const 
     {
+      CGAL_assume(i<D::value);
       return upper_[i];
     }
     

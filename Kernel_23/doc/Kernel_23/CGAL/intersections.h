@@ -63,6 +63,7 @@ Also, `Type1` and `Type2` can be both of type
 In three-dimensional space, the types `Type1` and
 `Type2` can be any of the following:
 
+- `Point_3<Kernel>`
 - `Plane_3<Kernel>`
 - `Line_3<Kernel>`
 - `Ray_3<Kernel>`
@@ -220,6 +221,9 @@ It is equivalent to `boost::optional< boost::variant< T... > >`, the last column
 </TABLE>
 </DIV>
 
+Additional overloads are provided for the type `Point_2` combined with any other type with the result type being 
+`boost::optional< boost::variant< Point_2 > >`.
+
 \cgalHeading{3D Intersections}
 
 The return type can be obtained through `CGAL::cpp11::result_of<Kernel::Intersect_3(A, B)>::%type`.
@@ -319,6 +323,10 @@ p    <TD>Point_3, or Segment_3</TD>
 </TABLE>
 </DIV>
 
+Additional overloads are provided for the type `Point_3` combined with any other type with the result type being 
+`boost::optional< boost::variant< Point_3 > >`.
+
+
 \cgalHeading{Examples}
 
 The following examples demonstrate the most common use of
@@ -329,11 +337,11 @@ The result type can be obtained with `CGAL::cpp11::result_of`. It looks simpler
 if you use a C++ compiler which supports `auto`,
 but you must anyways know that the result type is a `boost::optional<boost::variant<..> >`, in order to unpack the point or segment.
 
-<A HREF="http://www.boost.org/libs/optional/">`boost::optional`</A> comes in
-as there might be no intersection. <A HREF="http://www.boost.org/libs/variant/">`boost::variant`</A> comes in
+<A HREF="https://www.boost.org/libs/optional/">`boost::optional`</A> comes in
+as there might be no intersection. <A HREF="https://www.boost.org/libs/variant/">`boost::variant`</A> comes in
 as, if there is an intersection, it is either a point or a segment.
 
-As explained in the boost manual pages for <A HREF="http://www.boost.org/libs/variant/">`boost::variant`</A>, there are two ways to access the variants. The first examples uses `boost::get`.
+As explained in the boost manual pages for <A HREF="https://www.boost.org/libs/variant/">`boost::variant`</A>, there are two ways to access the variants. The first examples uses `boost::get`.
 
 \cgalExample{Kernel_23/intersection_get.cpp}
 

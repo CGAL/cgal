@@ -52,7 +52,6 @@ public:
   FacetTriangulator(typename boost::graph_traits<Mesh>::face_descriptor fd,
                     const Vector& normal,
                     Mesh *poly,
-                    const double item_diag,
                     Vector offset = Vector(0,0,0))
   {
     std::vector<PointAndId> idPoints;
@@ -64,14 +63,13 @@ public:
       idPoints.push_back(idPoint);
 
     }
-    if(!triangulate(idPoints, normal, item_diag))
+    if(!triangulate(idPoints, normal))
       std::cerr<<"Facet not displayed"<<std::endl;
   }
   FacetTriangulator(typename boost::graph_traits<Mesh>::face_descriptor fd,
                     const std::vector<typename Kernel::Point_3>& more_points,
                     const Vector& normal,
                     Mesh *poly,
-                    const double item_diag,
                     Vector offset = Vector(0,0,0))
   {
    std::vector<PointAndId> idPoints;
@@ -83,23 +81,21 @@ public:
     idPoints.push_back(idPoint);
 
    }
-   if(!triangulate_with_points(idPoints,more_points, normal, item_diag))
+   if(!triangulate_with_points(idPoints,more_points, normal))
      std::cerr<<"Facet not displayed"<<std::endl;
   }
 
   FacetTriangulator(std::vector<PointAndId > &idPoints,
-                  const Vector& normal,
-                  const double item_diag)
+                  const Vector& normal)
   {
-    if(!triangulate(idPoints, normal, item_diag))
+    if(!triangulate(idPoints, normal))
       std::cerr<<"Facet not displayed"<<std::endl;
   }
   FacetTriangulator(std::vector<PointAndId > &idPoints,
                     const std::vector<typename Kernel::Point_3>& more_points,
-                    const Vector& normal,
-                    const double item_diag)
+                    const Vector& normal)
   {
-   if(!triangulate_with_points(idPoints, more_points, normal, item_diag))
+   if(!triangulate_with_points(idPoints, more_points, normal))
      std::cerr<<"Facet not displayed"<<std::endl;
 
   }
@@ -111,29 +107,25 @@ public:
 
 private:
   bool triangulate( std::vector<PointAndId > &idPoints,
-              const Vector& normal,
-              const double item_diag )
+              const Vector& normal )
   {
     P_traits cdt_traits(normal);
     cdt = new CDT(cdt_traits);
     typename CDT::Vertex_handle previous, first, last_inserted;
-    //Compute a reasonable precision level used to decide
-    //if two consecutive points in a facet can be estimated
-    //equal.
-
-    double min_sq_dist = CGAL::square(0.0001*item_diag);
+    
     // Iterate the points of the facet and decide if they must be inserted in the CDT
     typename Kernel::FT x(0), y(0), z(0);
 
     BOOST_FOREACH(PointAndId idPoint, idPoints)
     {
-     x += idPoint.point.x();
+     
+      x += idPoint.point.x();
      y += idPoint.point.y();
      z += idPoint.point.z();
      typename CDT::Vertex_handle vh;
      //Always insert the first point, then only insert
      // if the distance with the previous is reasonable.
-     if(first == typename CDT::Vertex_handle() || CGAL::squared_distance(idPoint.point, previous->point()) > min_sq_dist)
+     if(first == typename CDT::Vertex_handle() || idPoint.point != previous->point())
      {
        vh = cdt->insert(idPoint.point);
        v2v[vh] = idPoint.id;
@@ -141,32 +133,16 @@ private:
          first = vh;
        }
        if(previous != 0 && previous != vh) {
-         double sq_dist = CGAL::squared_distance(previous->point(), vh->point());
-         if(sq_dist > min_sq_dist)
-         {
-           cdt->insert_constraint(previous, vh);
-           sq_dist = CGAL::squared_distance(previous->point(), first->point());
-           if(sq_dist > min_sq_dist)
-           {
-             last_inserted = previous;
-           }
-         }
+         cdt->insert_constraint(previous, vh);
+         last_inserted = previous;
        }
-     previous = vh;
+       previous = vh;
      }
     }
     if(last_inserted == typename CDT::Vertex_handle())
       return false;
-    double sq_dist = CGAL::squared_distance(previous->point(), first->point());
-
-    if(sq_dist > min_sq_dist)
-    {
+    if(previous != first)
       cdt->insert_constraint(previous, first);
-    }
-    else
-    {
-      cdt->insert_constraint(last_inserted, first);
-    }
     // sets mark is_external
     for(typename CDT::All_faces_iterator
         fit2 = cdt->all_faces_begin(),
@@ -195,24 +171,18 @@ private:
 
   bool triangulate_with_points( std::vector<PointAndId > &idPoints,
                const std::vector<typename Kernel::Point_3>& more_points,
-               const Vector& normal,
-               const double item_diag )
+               const Vector& normal)
    {
      P_traits cdt_traits(normal);
      cdt = new CDT(cdt_traits);
      typename CDT::Vertex_handle previous, first, last_inserted;
-     //Compute a reasonable precision level used to decide
-     //if two consecutive points in a facet can be estimated
-     //equal.
-
-     double min_sq_dist = CGAL::square(0.0001*item_diag);
      // Iterate the points of the facet and decide if they must be inserted in the CDT
      BOOST_FOREACH(PointAndId idPoint, idPoints)
      {
       typename CDT::Vertex_handle vh;
       //Always insert the first point, then only insert
       // if the distance with the previous is reasonable.
-      if(first == typename CDT::Vertex_handle() || CGAL::squared_distance(idPoint.point, previous->point()) > min_sq_dist)
+      if(first == typename CDT::Vertex_handle() || idPoint.point != previous->point())
       {
         vh = cdt->insert(idPoint.point);
         v2v[vh] = idPoint.id;
@@ -220,32 +190,15 @@ private:
           first = vh;
         }
         if(previous != 0 && previous != vh) {
-          double sq_dist = CGAL::squared_distance(previous->point(), vh->point());
-          if(sq_dist > min_sq_dist)
-          {
-            cdt->insert_constraint(previous, vh);
-            sq_dist = CGAL::squared_distance(previous->point(), first->point());
-            if(sq_dist > min_sq_dist)
-            {
-              last_inserted = previous;
-            }
-          }
+          cdt->insert_constraint(previous, vh);
+          last_inserted = previous;
         }
       previous = vh;
       }
      }
      if(last_inserted == typename CDT::Vertex_handle())
        return false;
-     double sq_dist = CGAL::squared_distance(previous->point(), first->point());
-
-     if(sq_dist > min_sq_dist)
-     {
-       cdt->insert_constraint(previous, first);
-     }
-     else
-     {
-       cdt->insert_constraint(last_inserted, first);
-     }
+     cdt->insert_constraint(previous, first);
      BOOST_FOREACH(typename Kernel::Point_3 point, more_points)
      {
        cdt->insert(point);

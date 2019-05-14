@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgApolloniusGraph2
+\ingroup PkgApolloniusGraph2Ref
 
 The class `Apollonius_graph_2` represents the 
 Apollonius graph. It supports insertions and deletions of sites. 

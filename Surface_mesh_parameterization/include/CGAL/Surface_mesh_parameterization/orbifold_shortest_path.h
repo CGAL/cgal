@@ -111,7 +111,7 @@ public:
 
 } // namespace internal
 
-/// \ingroup PkgSurfaceParameterizationOrbifoldHelperFunctions
+/// \ingroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
 /// Compute the shortest path between `source` and `target` over `mesh`, using
 /// <a href="https://www.boost.org/doc/libs/release/libs/graph/doc/dijkstra_shortest_paths.html">
@@ -170,7 +170,7 @@ void compute_shortest_paths_between_two_cones(const TriangleMesh& mesh,
   } while (s != source);
 }
 
-/// \ingroup PkgSurfaceParameterizationOrbifoldHelperFunctions
+/// \ingroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
 /// Given a range `[first; beyond[` of cones (described as vertex descriptors),
 /// compute the shortest path for all pairs of consecutive entries in the range
@@ -179,8 +179,8 @@ void compute_shortest_paths_between_two_cones(const TriangleMesh& mesh,
 /// \tparam TriangleMesh A triangle mesh, model of `FaceListGraph` and `HalfedgeListGraph`.
 /// \tparam InputConesForwardIterator A model of `ForwardIterator` with value type
 ///                                   `boost::graph_traits<TriangleMesh>::%vertex_descriptor`.
-/// \tparam SeamContainer A model of <a href="http://en.cppreference.com/w/cpp/concept/SequenceContainer"><tt>SequenceContainer</tt></a>
-///                       with value type `boost::graph_traits<TriangleMesh>::%edge_descriptor`.
+/// \tparam SeamContainer A model of `SequenceContainer` with value type
+///                       `boost::graph_traits<TriangleMesh>::%edge_descriptor`.
 ///
 /// \param mesh the triangular mesh on which paths are computed
 /// \param first, beyond a range of cones

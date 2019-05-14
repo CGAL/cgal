@@ -9,7 +9,6 @@
 #include <QMenu>
 #include <QApplication>
 #include <QtPlugin>
-#include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polygon_soup_item.h"
 #include <QInputDialog>
@@ -23,6 +22,7 @@
 
 #include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
+#include <CGAL/Polygon_mesh_processing/orientation.h>
 
 #include <CGAL/Timer.h>
 #include <CGAL/make_mesh_3.h>
@@ -89,7 +89,7 @@ class Polygon_soup_offset_function {
     const Points* points_vector_ptr;
   public:
     typedef Polygon_iterator key_type;
-    typedef Kernel::Point_3 value_type;
+    typedef EPICK::Point_3 value_type;
     typedef value_type reference;
     typedef boost::readable_property_map_tag category;
 
@@ -110,7 +110,7 @@ class Polygon_soup_offset_function {
     const Points* points_vector_ptr;
   public:
     typedef Polygon_iterator key_type;
-    typedef Kernel::Triangle_3 value_type;
+    typedef EPICK::Triangle_3 value_type;
     typedef value_type reference;
     typedef boost::readable_property_map_tag category;
 
@@ -164,7 +164,7 @@ class Polygon_soup_offset_function {
   }; // end struct template AABB_primitive
 
 
-  typedef CGAL::AABB_traits<Kernel, AABB_primitive> AABB_traits;
+  typedef CGAL::AABB_traits<EPICK, AABB_primitive> AABB_traits;
   typedef CGAL::AABB_tree<AABB_traits> AABB_tree;
 
   std::shared_ptr<AABB_tree> m_tree_ptr;
@@ -187,11 +187,11 @@ public:
     m_tree_ptr->accelerate_distance_queries();
   }
 
-  double operator()(const Kernel::Point_3& p) const
+  double operator()(const EPICK::Point_3& p) const
   {
     using CGAL::sqrt;
 
-    Kernel::Point_3 closest_point = m_tree_ptr->closest_point(p);
+    EPICK::Point_3 closest_point = m_tree_ptr->closest_point(p);
     double distance = sqrt(squared_distance(p, closest_point));
 
     return m_offset_distance - distance;
@@ -202,24 +202,14 @@ public:
 } //end of CGAL namespace
 
 
-Scene_polyhedron_item* make_item(Polyhedron* poly)
-{
-  return new Scene_polyhedron_item(poly);
-}
-
 Scene_surface_mesh_item* make_item(SMesh* sm)
 {
   return new Scene_surface_mesh_item(sm);
 }
 
-CGAL::Offset_function<SMesh, Kernel>
+CGAL::Offset_function<SMesh, EPICK>
 offset_function(SMesh* surface_mesh_ptr, double offset_value) {
   return { *surface_mesh_ptr, offset_value };
-}
-
-CGAL::Offset_function<Polyhedron, Kernel>
-offset_function(Polyhedron* polyhedron_ptr, double offset_value) {
-  return { *polyhedron_ptr, offset_value };
 }
 
 CGAL::Polygon_soup_offset_function
@@ -256,7 +246,7 @@ CGAL::Three::Scene_item* cgal_off_meshing(QWidget*,
                                           const double approx,
                                           int tag)
 {
-  typedef Kernel GT;
+  typedef EPICK GT;
   typedef CGAL::Labeled_mesh_domain_3<GT, int, int> Mesh_domain;
   typedef C3t3::Triangulation Tr;
   typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
@@ -308,7 +298,13 @@ CGAL::Three::Scene_item* cgal_off_meshing(QWidget*,
     // add remesh as new polyhedron
     Result_mesh *pRemesh = new Result_mesh;
     CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, *pRemesh);
-      return make_item(pRemesh);
+    if(CGAL::is_closed(*pRemesh)
+       && ! CGAL::Polygon_mesh_processing::is_outward_oriented(*pRemesh))
+    {
+      CGAL::Polygon_mesh_processing::reverse_face_orientations(*pRemesh);
+    }
+    
+    return make_item(pRemesh);
   }
   else
     return 0;
@@ -327,7 +323,7 @@ public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     this->scene = scene_interface;
     this->mw = mainWindow;
-    actionOffsetMeshing = new QAction(tr("Offset meshing"), mw);
+    actionOffsetMeshing = new QAction(tr("Offset Meshing"), mw);
     actionOffsetMeshing->setProperty("subMenuName", "3D Surface Mesh Generation");
     if(actionOffsetMeshing) {
       connect(actionOffsetMeshing, SIGNAL(triggered()),
@@ -338,7 +334,6 @@ public:
   bool applicable(QAction*) const {
     Scene_item* item = scene->item(scene->mainSelectionIndex());
     return
-      qobject_cast<Scene_polyhedron_item*>(item)   ||
       qobject_cast<Scene_surface_mesh_item*>(item) ||
       qobject_cast<Scene_polygon_soup_item*>(item);
   }
@@ -359,24 +354,13 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
 {
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   Scene_item* item = scene->item(index);
-
-  Scene_polyhedron_item* poly_item =
-      qobject_cast<Scene_polyhedron_item*>(item);
   Scene_surface_mesh_item* sm_item =
       qobject_cast<Scene_surface_mesh_item*>(item);
   Scene_polygon_soup_item* soup_item =
       qobject_cast<Scene_polygon_soup_item*>(item);
 
-  Polyhedron* pMesh = NULL;
   SMesh* sMesh = NULL;
-  if(poly_item)
-  {
-    pMesh = poly_item->polyhedron();
-
-    if(!pMesh)
-      return;
-  }
-  else if(sm_item)
+if(sm_item)
   {
     sMesh = sm_item->face_graph();
     if(!sMesh)
@@ -441,14 +425,6 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
                                 sizing,
                                 approx,
                                 tag_index);
-  else if(pMesh)
-    new_item = cgal_off_meshing(mw,
-                                pMesh,
-                                offset_value,
-                                angle,
-                                sizing,
-                                approx,
-                                tag_index);
   else
     new_item = cgal_off_meshing(mw,
                                 sMesh,
@@ -457,7 +433,6 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
                                 sizing,
                                 approx,
                                 tag_index);
-
   if(new_item)
   {
     new_item->setName(tr("%1 offset %5 (%2 %3 %4)")
@@ -468,11 +443,12 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
                       .arg(offset_value));
     new_item->setColor(Qt::magenta);
     new_item->setRenderingMode(item->renderingMode());
+    
     scene->addItem(new_item);
     item->setVisible(false);
     scene->itemChanged(index);
   }
-
+  
   QApplication::restoreOverrideCursor();
 }
 

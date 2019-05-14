@@ -1,5 +1,6 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Scene_interface.h>
+#include <CGAL/Three/Three.h>
 #include <QApplication>
 #include <QObject>
 #include <QAction>
@@ -8,13 +9,8 @@
 #include <QMessageBox>
 #include <QMap>
 #include "Messages_interface.h"
-#ifdef USE_SURFACE_MESH
 #include "Kernel_type.h"
 #include "Scene_surface_mesh_item.h"
-#else
-#include "Scene_polyhedron_item.h"
-#include "Polyhedron_type.h"
-#endif
 #include "Color_ramp.h"
 #include "triangulate_primitive.h"
 #include <CGAL/Polygon_mesh_processing/bbox.h>
@@ -25,16 +21,10 @@
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
 #include <CGAL/property_map.h>
 #include <boost/container/flat_map.hpp>
-
 using namespace CGAL::Three;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-#ifdef USE_SURFACE_MESH
 typedef Scene_surface_mesh_item Scene_face_graph_item;
-#else
-typedef Scene_polyhedron_item Scene_face_graph_item;
-#endif
-
 typedef Scene_face_graph_item::Face_graph Face_graph;
 
 #if defined(CGAL_LINKED_WITH_TBB)
@@ -42,19 +32,16 @@ template <class AABB_tree, class Point_3>
 struct Distance_computation{
   const AABB_tree& tree;
   const std::vector<Point_3>& sample_points;
-  Point_3 initial_hint;
-  tbb::atomic<double>* distance;
+  const Point_3 initial_hint;
   std::vector<double>& output;
 
   Distance_computation(const AABB_tree& tree,
                        const Point_3 p,
                        const std::vector<Point_3>& sample_points,
-                       tbb::atomic<double>* d,
                        std::vector<double>& out )
     : tree(tree)
     , sample_points(sample_points)
     , initial_hint(p)
-    , distance(d)
     , output(out)
   {
   }
@@ -62,18 +49,13 @@ struct Distance_computation{
   operator()(const tbb::blocked_range<std::size_t>& range) const
   {
     Point_3 hint = initial_hint;
-    double hdist = 0;
     for( std::size_t i = range.begin(); i != range.end(); ++i)
     {
       hint = tree.closest_point(sample_points[i], hint);
       Kernel::FT dist = squared_distance(hint,sample_points[i]);
       double d = CGAL::sqrt(dist);
       output[i] = d;
-      if (d>hdist) hdist=d;
     }
-
-    if (hdist > distance->load())
-      distance->store(hdist);
   }
 };
 #endif
@@ -175,7 +157,7 @@ private:
     tree.accelerate_distance_queries();
     tree.build();
     boost::graph_traits<Face_graph>::vertex_descriptor vd = *(vertices(m).first);
-    Traits::Point_3 hint = get(CGAL::vertex_point,*poly, vd);
+    Traits::Point_3 hint = get(CGAL::vertex_point,m, vd);
 
 #if !defined(CGAL_LINKED_WITH_TBB)
     double hdist = 0;
@@ -189,10 +171,13 @@ private:
     }
       return hdist;
 #else
-    tbb::atomic<double> distance;
-    distance.store(0);
-    Distance_computation<Tree, Kernel::Point_3> f(tree, hint, sample_points, &distance, out);
+    double distance=0;
+    Distance_computation<Tree, Kernel::Point_3> f(tree, hint, sample_points, out);
     tbb::parallel_for(tbb::blocked_range<std::size_t>(0, sample_points.size()), f);
+    for(std::size_t i = 0; i< out.size(); ++i){
+      if(out[i] > distance)
+        distance = out[i];
+    }
     return distance;
 #endif
   }
@@ -227,12 +212,7 @@ private:
       BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor f, faces(*poly)) {
         Vector nf = get(nf_pmap, f);
         typedef FacetTriangulator<Face_graph, Kernel, boost::graph_traits<Face_graph>::vertex_descriptor> FT;
-        double diagonal;
-        if(this->diagonalBbox() != std::numeric_limits<double>::infinity())
-          diagonal = this->diagonalBbox();
-        else
-          diagonal = 0.0;
-
+        
         //compute distance with other polyhedron
         //sample facet
         std::vector<Kernel::Point_3> sampled_points;
@@ -248,7 +228,7 @@ private:
         sampled_points.push_back(r);
 
         //triangle facets with sample points for color display
-        FT triangulation(f,sampled_points,nf,poly,diagonal);
+        FT triangulation(f,sampled_points,nf,poly);
 
         if(triangulation.cdt->dimension() != 2 )
         {
@@ -447,7 +427,7 @@ public Q_SLOTS:
     Scene_face_graph_item* itemB = qobject_cast<Scene_face_graph_item*>(scene->item(scene->selectionIndices().last()));
     if(! CGAL::is_triangle_mesh(*itemA->polyhedron()) ||
        !CGAL::is_triangle_mesh(*itemB->polyhedron()) ){
-      messageInterface->error(QString("Distance not computed. (Both polyhedra must be triangulated)"));
+      CGAL::Three::Three::error(QString("Distance not computed. (Both polyhedra must be triangulated)"));
       return;
     }
     QApplication::setOverrideCursor(Qt::WaitCursor);

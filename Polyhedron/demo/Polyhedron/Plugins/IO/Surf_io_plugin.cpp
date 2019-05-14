@@ -1,5 +1,3 @@
-#include "Scene_polyhedron_item.h"
-#include "Polyhedron_type.h"
 #include "Scene_surface_mesh_item.h"
 
 #include <QMainWindow>
@@ -8,6 +6,7 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Scene_group_item.h>
+#include <CGAL/Three/Three.h>
 
 #include <CGAL/IO/read_surf_trianglemesh.h>
 
@@ -26,7 +25,7 @@ class Surf_io_plugin:
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface CGAL::Three::Polyhedron_demo_io_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "surf_io_plugin.json")
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
 
 public:
@@ -55,10 +54,7 @@ public:
 
 CGAL::Three::Scene_item* Surf_io_plugin::load(QFileInfo fileinfo)
 {
-  if(mw->property("is_polyhedron_mode").toBool())
-    return actual_load<Scene_polyhedron_item>(fileinfo);
-  else
-    return actual_load<Scene_surface_mesh_item>(fileinfo);
+  return actual_load<Scene_surface_mesh_item>(fileinfo);
 }
 template< class FaceGraphItem>
 CGAL::Three::Scene_item* Surf_io_plugin::actual_load(QFileInfo fileinfo)
@@ -74,6 +70,13 @@ CGAL::Three::Scene_item* Surf_io_plugin::actual_load(QFileInfo fileinfo)
     return NULL;
   }
 
+  if(fileinfo.size() == 0)
+  {
+    CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
+    Scene_group_item* item =
+        new Scene_group_item(fileinfo.completeBaseName());
+    return item;
+  }
   std::vector<FaceGraph> patches;
   std::vector<MaterialData> material_data;
   CGAL::Bbox_3 grid_box;
@@ -95,6 +98,7 @@ CGAL::Three::Scene_item* Surf_io_plugin::actual_load(QFileInfo fileinfo)
   compute_color_map(QColor(100, 100, 255), static_cast<unsigned>(patches.size()),
                     std::back_inserter(colors_));
   Scene_group_item* group = new Scene_group_item(fileinfo.completeBaseName());
+  group->setScene(scene);
   for(std::size_t i=0; i<patches.size(); ++i)
   {
     FaceGraphItem *patch = new FaceGraphItem(patches[i]);

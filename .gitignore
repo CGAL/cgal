@@ -1063,7 +1063,7 @@ cmake_install.cmake
 *~
 .#*
 
-# MacOS file http://en.wikipedia.org/wiki/.DS_Store(
+# MacOS file https://en.wikipedia.org/wiki/.DS_Store
 .DS_Store
 
 # Binaries:
@@ -1206,5 +1206,3 @@ gmon.*
 /Stream_support/test/Stream_support/cgal_test_with_cmake
 /*.html
 /Snap_rounding_2/test/Snap_rounding_2/data/out
-/Operations_on_polyhedra/examples/Operations_on_polyhedra/cgal_test_with_cmake
-/Operations_on_polyhedra/test/Operations_on_polyhedra/cgal_test_with_cmake

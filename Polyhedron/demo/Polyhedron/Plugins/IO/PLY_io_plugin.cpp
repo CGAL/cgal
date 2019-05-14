@@ -1,9 +1,9 @@
 #include "Scene_polygon_soup_item.h"
 #include "Scene_surface_mesh_item.h"
-#include "Scene_polyhedron_item.h"
 #include "Scene_points_with_normal_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 #include <QInputDialog>
 #include <QApplication>
 #include <fstream>
@@ -19,7 +19,7 @@ class Polyhedron_demo_ply_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0" FILE "ply_io_plugin.json")
 
 public:
   bool isDefaultLoader(const CGAL::Three::Scene_item *item) const 
@@ -79,6 +79,12 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
+  if(fileinfo.size() == 0)
+  {
+    CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
+    return 0;
+  }
+  
   // Test if input is mesh or point set
   bool input_is_mesh = false;
   std::string line;
@@ -155,7 +161,8 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
       QApplication::restoreOverrideCursor();
       return NULL;
     }
-
+    if(item->has_normals())
+      item->setRenderingMode(CGAL::Three::Three::defaultPointSetRenderingMode());
     item->setName(fileinfo.completeBaseName());
     QApplication::restoreOverrideCursor();
     return item;
@@ -169,8 +176,7 @@ bool Polyhedron_demo_ply_plugin::canSave(const CGAL::Three::Scene_item* item)
   // This plugin supports point sets and any type of surface
   return (qobject_cast<const Scene_points_with_normal_item*>(item)
           || qobject_cast<const Scene_polygon_soup_item*>(item)
-          || qobject_cast<const Scene_surface_mesh_item*>(item)
-          || qobject_cast<const Scene_polyhedron_item*>(item));
+          || qobject_cast<const Scene_surface_mesh_item*>(item));
 }
 
 bool Polyhedron_demo_ply_plugin::save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
@@ -210,13 +216,6 @@ bool Polyhedron_demo_ply_plugin::save(const CGAL::Three::Scene_item* item, QFile
     qobject_cast<const Scene_surface_mesh_item*>(item);
   if (sm_item)
     return CGAL::write_PLY (out, *(sm_item->polyhedron()));
-
-  // This plugin supports polyhedrons
-  const Scene_polyhedron_item* poly_item =
-    qobject_cast<const Scene_polyhedron_item*>(item);
-  if (poly_item)
-    return CGAL::write_PLY (out, *(poly_item->polyhedron()));
-
   return false;
 }
 

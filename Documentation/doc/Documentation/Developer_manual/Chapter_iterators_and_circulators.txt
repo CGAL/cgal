@@ -19,15 +19,15 @@ Iterators are widely used in \cgal too.
 \cgal extends the idea of the iterator, which works for linear data
 structures, to circular data structures by defining the concept of
 a circulator.
-\ref PkgHandlesAndCirculatorsSummary "Circulators" are quite similar to iterators, with the
+\ref PkgHandlesAndCirculators "Circulators" are quite similar to iterators, with the
 major difference being the absence of a past-the-end position in a sequence.
 Note that circulators are NOT part of the \stl, but of \cgal.
 
-In \cgal, we also define the concept of \ref PkgHandlesAndCirculatorsSummary "handle",
+In \cgal, we also define the concept of \ref PkgHandlesAndCirculators "handle",
 which behaves roughly
 like a pointer to an object without an increment or decrement operation.
 More details about handles and their requirements can be found in 
-the \ref PkgHandlesAndCirculatorsSummary "chapter Circulators and Handles"
+the \ref PkgHandlesAndCirculators "chapter Circulators and Handles"
 of the Support Library part of \cgal manual. 
 Section  \ref sechandle_vs_it_vs_circ  below discusses when handles
 should be used in your code.
@@ -35,7 +35,7 @@ should be used in your code.
 The concepts of iterators is relatively well described in textbooks such as 
 Stroustrup's book (<I>The C++ Programming Language</I> \cgalCite{cgal:s-cpl-97})
 and Austern's book (<I>Generic Programming and the \stl</I> \cgalCite{cgal:a-gps-98})
-and in chapter \ref PkgHandlesAndCirculatorsSummary "Handles and Circulators"
+and in chapter \ref PkgHandlesAndCirculators "Handles and Circulators"
 of the <I>Support Library</I> part of the \cgal manual.
 which also presents the concepts of handles and circulators.
 Thus we will not give a full description of these concept here
@@ -325,7 +325,7 @@ over either a linear or circular sequence:
 - `CGAL_For_all( ic1, ic2)`
 - `CGAL_For_all_backwards( ic1, ic2)`.
 
-See the chapter \ref PkgHandlesAndCirculatorsSummary "Handles and Circulators"
+See the chapter \ref PkgHandlesAndCirculators "Handles and Circulators"
  in the <I>Support Library</I> part of \cgal manual 
 for more information and examples.
 

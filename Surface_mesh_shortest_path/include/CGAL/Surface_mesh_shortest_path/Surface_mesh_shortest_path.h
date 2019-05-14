@@ -54,7 +54,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSurfaceMeshShortestPath
+\ingroup PkgSurfaceMeshShortestPathRef
 
 \brief Computes shortest surface paths from one or more source points on a surface mesh.
 
@@ -512,7 +512,7 @@ private:
 
   /*
     Filtering algorithm described in Xin and Wang (2009) "Improving chen and han's algorithm on the discrete geodesic problem."
-    http://doi.acm.org/10.1145/1559755.1559761
+    https://dl.acm.org/citation.cfm?doid=1559755.1559761
   */
   bool window_distance_filter(Cone_tree_node* cone, Segment_2 windowSegment, bool reversed)
   {

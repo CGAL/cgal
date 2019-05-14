@@ -6,7 +6,7 @@
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
+// https://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 // Copyright (c) 2007-2015  GeometryFactory (France).  All rights reserved.
 //
@@ -325,11 +325,17 @@ namespace CGAL {
     template<typename PointRange, typename NamedParameters>
     class GetK
     {
-      typedef typename boost::property_traits<
-        typename GetPointMap<PointRange, NamedParameters>::type
-        >::value_type Point;
+      typedef typename GetPointMap<PointRange, NamedParameters>::type Vpm;
+      typedef typename Kernel_traits<
+        typename boost::property_traits<Vpm>::value_type
+      >::Kernel Default_kernel;
+
     public:
-      typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
+      typedef typename boost::lookup_named_param_def <
+        internal_np::geom_traits_t,
+        NamedParameters,
+        Default_kernel
+      > ::type  Kernel;
     };
 
     template<typename PointRange, typename NamedParameters>
@@ -396,6 +402,29 @@ namespace CGAL {
         internal_np::plane_index_t,
         NamedParameters,
         DummyPlaneIndexMap//default
+        > ::type  type;
+    };
+
+    template<typename PointRange, typename NamedParameters>
+    class GetIsConstrainedMap
+    {
+      struct DummyConstrainedMap
+      {
+        typedef typename std::iterator_traits<typename PointRange::iterator>::value_type key_type;
+        typedef bool value_type;
+        typedef value_type reference;
+        typedef boost::readable_property_map_tag category;
+
+        typedef DummyConstrainedMap Self;
+        friend reference get(const Self&, const key_type&) { return false; }
+      };
+
+    public:
+      typedef DummyConstrainedMap NoMap;
+      typedef typename boost::lookup_named_param_def <
+        internal_np::point_is_constrained_t,
+        NamedParameters,
+        DummyConstrainedMap //default
         > ::type  type;
     };
 

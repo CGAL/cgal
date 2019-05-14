@@ -277,7 +277,7 @@ triangle (2D and 3D) and in tetrahedra (3D). Basically, in order to generate
 a random point in a \f$N\f$-simplex (a triangle for \f$N = 2\f$, and tetrahedron 
 for \f$N = 3\f$), we generate numbers \f$a_1,a_2,\ldots,a_N\f$ identically and independently 
 uniformly distributed in \f$(0,1)\f$, we sort them, we let \f$a_0 = 0\f$ and \f$a_{N+1} = 1\f$, 
-and then \f$a_{i+1}−a_i\f$, for \f$i = 1,\ldots,N\f$ becomes its 
+and then \f$a_{i+1}-a_i\f$, for \f$i = 1,\ldots,N\f$ becomes its
 barycentric coordinates with respect to the simplex.
 
 Maxime Gimemo introduced the random generators on 2D and 3D triangle meshes.

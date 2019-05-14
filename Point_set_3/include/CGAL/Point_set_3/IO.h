@@ -156,7 +156,7 @@ private:
     
     virtual void assign (PLY_element& element, typename Point_set::Index index)
     {
-      Type t;
+      Type t{};
       element.assign (t, m_name.c_str());
       put(m_pmap, index, t);
     }
@@ -473,9 +473,18 @@ write_ply_point_set(
 
       if (prop[i] == "point")
         {
-          stream << "property double x" << std::endl
-                 << "property double y" << std::endl
-                 << "property double z" << std::endl;
+          if (boost::is_same<typename GetFTFromMap<typename Point_set::Point_map>::type, float>::value)
+          {
+            stream << "property float x" << std::endl
+                   << "property float y" << std::endl
+                   << "property float z" << std::endl;
+          }
+          else
+          {
+            stream << "property double x" << std::endl
+                   << "property double y" << std::endl
+                   << "property double z" << std::endl;
+          }
           printers.push_back (new internal::Property_printer<Point,Vector,Point>(point_set.point_map()));
           continue;
         }

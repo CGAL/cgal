@@ -2209,10 +2209,10 @@ representing line segments.
 
 A polyline can be constructed given one of the following inputs:
 
-- <b>A range of \a points</b>, where two succeeding points in the
+- <b>A range of <em>points</em></b>, where two succeeding points in the
   range represent the endpoints of a segment of the polyline.
 
-- <b>A range of \a segments</b>. Note that , if the types
+- <b>A range of <em>segments</em></b>. Note that , if the types
 `SubcurveTraits_2::Curve_2` and `SubcurveTraits_2::X_monotone_curve_2` are
 not the same, then when `Make_x_monotone_2` is invoked the segments
 that compose the polyline will be broken into \f$x\f$-monotone
@@ -2681,7 +2681,7 @@ manner whenever possible. Thus, it resorts to exact computations only when
 the approximate computation fails to produce an unambiguous result.
 Note that most arrangement vertices are therefore associated with approximated
 points. You cannot access the coordinates of such points and obtain them as
-algebraic numbers, and only access to the approximate coordinates in possible.
+algebraic numbers, and only access to the approximate coordinates is possible.
 See the Reference Manual for the exact interface of the `Point_2`,
 `Curve_2` and `X_monotone_curve_2` defined by the traits class.
 

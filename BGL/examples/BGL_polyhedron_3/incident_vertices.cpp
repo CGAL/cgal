@@ -1,9 +1,9 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/iterator.h>
+
 #include <iostream>
 #include <fstream>
-
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Polyhedron_3<Kernel>     Polyhedron;
@@ -44,9 +44,9 @@ adjacent_vertices_V2(const Polyhedron& g,
 }
 
 
-int main(int, char** argv)
+int main(int argc, char** argv)
 { 
-  std::ifstream in(argv[1]);
+  std::ifstream in((argc>1)?argv[1]:"cube.off");
   Polyhedron P;
   in >> P;
   GraphTraits::vertex_iterator vi = vertices(P).first;

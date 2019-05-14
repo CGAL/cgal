@@ -1,10 +1,10 @@
 /*!
 \defgroup PkgBGLTraits Specializations of boost::graph_traits
 
-\ingroup PkgBGL
+\ingroup PkgBGLRef
 
 The \sc{Bgl} defines the class template
-<A HREF="http://www.boost.org/libs/graph/doc/graph_traits.html">`boost::graph_traits`</A>
+<A HREF="https://www.boost.org/libs/graph/doc/graph_traits.html">`boost::graph_traits`</A>
 as a uniform interface to the properties and types of %graph types.
 
 We provide specializations of this class template for several \cgal data structures.
@@ -162,7 +162,7 @@ with the default property map of \sc{Bgl} algorithms (obtained with
 `get(t, boost::edge_weight)`) is the length of the edge,
 the edge weight is not well defined for infinite edges. For algorithms
 that make use of the edge weight, the user must therefore
-define a <A HREF="http://www.boost.org/libs/graph/doc/filtered_graph.html">`boost::filtered_graph`</A> or pass a property map to the
+define a <A HREF="https://www.boost.org/libs/graph/doc/filtered_graph.html">`boost::filtered_graph`</A> or pass a property map to the
 algorithm that returns "infinity" for infinite edges.
 
 | Member                   | Value  | Description |

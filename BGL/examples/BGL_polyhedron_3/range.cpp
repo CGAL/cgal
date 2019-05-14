@@ -1,8 +1,8 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Iterator_range.h>
-#include <boost/foreach.hpp>
 
+#include <boost/foreach.hpp>
 
 #include <iostream>
 #include <fstream>
@@ -55,10 +55,10 @@ void fct(const Polyhedron& p)
   std::for_each(vb,ve, Fct());
 }
 
-int main(int, char** argv)
+int main(int argc, char** argv)
 {
   Polyhedron P;  
-  std::ifstream in(argv[1]);
+  std::ifstream in((argc>1)?argv[1]:"cube.off");
   in >> P ;
 
   fct(P);

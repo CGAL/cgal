@@ -54,7 +54,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPointSetProcessingAlgorithms
+\ingroup PkgPointSetProcessing3Algorithms
 
 \brief A 3D point set with structure information based on a set of
 detected planes.
@@ -1497,7 +1497,7 @@ private:
 // ----------------------------------------------------------------------------
 
 /** 
-   \ingroup PkgPointSetProcessingAlgorithms
+   \ingroup PkgPointSetProcessing3Algorithms
 
    This is an implementation of the Point Set Structuring algorithm. This
    algorithm takes advantage of a set of detected planes: it detects adjacency
@@ -1516,7 +1516,7 @@ private:
    \tparam OutputIterator Type of the output iterator. The type of the
    objects put in it is `std::pair<Kernel::Point_3, Kernel::Vector_3>`.
    Note that the user may use a
-   <A HREF="http://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
+   <A HREF="https://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
    to match specific needs.
 
    \param points input point range.

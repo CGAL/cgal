@@ -25,13 +25,14 @@
 #include <CGAL/Iterator_range.h>
 #include <CGAL/HalfedgeDS_decorator.h>
 #include <CGAL/HalfedgeDS_default.h>
+#include <CGAL/boost/graph/properties.h>
 
 namespace CGAL {
 
 template <class Traits_, class HalfedgeDSItems, 
           class Alloc>
 class HalfedgeDS_default;
-}; // namespace CGAL
+} // namespace CGAL
 
 namespace boost {
 
@@ -446,21 +447,6 @@ num_faces(const HalfedgeDS_default<T,I,A>& p)
 {
   return p.size_of_faces();
 }
-namespace internal {
-
-template<typename Handle, typename ValueType, typename Reference>
-struct HDS_Point_accessor
-  : boost::put_get_helper< Reference, HDS_Point_accessor<Handle, ValueType, Reference> >
-{
-  typedef boost::lvalue_property_map_tag category;
-  typedef Reference                      reference;
-  typedef ValueType                      value_type;
-  typedef Handle                         key_type;
-
-  reference operator[](Handle h) const { return h->point(); }
-};
-
-} // namespace internal
 
 template <class T>
 struct HDS_property_map;
@@ -471,20 +457,29 @@ struct HDS_property_map<vertex_point_t>
   template<class T, class I, class A>
   struct bind_
   {
-    typedef internal::HDS_Point_accessor<
+    typedef internal::Point_accessor<
       typename boost::graph_traits<
         HalfedgeDS_default<T, I, A>
         >::vertex_descriptor,
       typename T::Point_3, typename T::Point_3&> type;
 
-    typedef internal::HDS_Point_accessor<
+    typedef internal::Point_accessor<
       typename boost::graph_traits<
         HalfedgeDS_default<T, I, A>
         >::vertex_descriptor,
       typename T::Point_3, const typename T::Point_3&> const_type;
   };
 };
-  
+
+template<class T, class I, class A>
+void reserve(HalfedgeDS_default<T,I,A>& p,
+             typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::vertices_size_type nv,
+             typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::edges_size_type ne,
+             typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::faces_size_type nf)
+{
+  p.reserve(nv, 2*ne, nf);
+}
+
 }// namespace CGAL
 namespace boost {
 

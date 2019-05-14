@@ -3,19 +3,18 @@
 
 #include "Messages_interface.h"
 #include "Scene_plane_item.h"
-#include "Scene_polyhedron_item.h"
+
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polylines_item.h"
 #include "Scene.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 #include "ui_Polyhedron_slicer_widget.h"
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/bounding_box.h> 
 #include <CGAL/Polygon_mesh_slicer.h>
-
-#include "Polyhedron_type.h"
 
 #include <QTime>
 #include <QAction>
@@ -39,11 +38,10 @@ class Polyhedron_demo_polyhedron_slicer_plugin :
 public:
   bool applicable(QAction*) const
   { 
-    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())) ||
-           qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex())); 
+    return qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex())); 
   }
 
-  void print_message(QString message) { messages->information(message);}
+  void print_message(QString message) { CGAL::Three::Three::information(message);}
 
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m);
   virtual void closure()
@@ -219,13 +217,12 @@ bool Polyhedron_demo_polyhedron_slicer_plugin::on_Update_plane_button_clicked() 
 // generate multiple cuts, until any cut does not intersect with bbox
 void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
 {
-  Scene_polyhedron_item* item = getSelectedItem<Scene_polyhedron_item>();
   Scene_surface_mesh_item* sm_item = getSelectedItem<Scene_surface_mesh_item>();
-  if(!item && ! sm_item) { 
-    print_message("Error: There is no selected Scene_polyhedron_item!");
+  if(! sm_item) { 
+    print_message("Error: There is no selected Scene_surface_mesh_item!");
     return; 
   }
-  QString item_name = (item)?item->name() : sm_item->name();
+  QString item_name = sm_item->name();
 
   if(!on_Update_plane_button_clicked()) { return; }
   const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
@@ -255,11 +252,10 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
   }
 
   // construct a bbox for selected polyhedron
-  const CGAL::Three::Scene_interface::Bbox& bbox = (item)?item->bbox(): sm_item->bbox();
+  const CGAL::Three::Scene_interface::Bbox& bbox = sm_item->bbox();
   CGAL::Bbox_3 cgal_bbox(bbox.xmin(), bbox.ymin(), bbox.zmin(),
     bbox.xmax(), bbox.ymax(), bbox.zmax());
-  Polyhedron* poly = (item)?item->polyhedron():NULL;
-  SMesh* smesh = (sm_item)?sm_item->polyhedron():NULL;
+  SMesh* smesh = sm_item->polyhedron();
 
   // continue generating planes while inside bbox
   std::vector<Epic_kernel::Plane_3> planes;
@@ -293,11 +289,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
     Scene_polylines_item* new_polylines_item = new Scene_polylines_item();
     QTime time; time.start();
     // call algorithm and fill polylines in polylines_item
-    if(item){
-      intersection_of_plane_Polyhedra_3_using_AABB_wrapper(*poly, planes, plane_positions, new_polylines_item->polylines);
-    }else{
-      intersection_of_plane_Polyhedra_3_using_AABB_wrapper(*smesh, planes, plane_positions, new_polylines_item->polylines);
-    }
+    intersection_of_plane_Polyhedra_3_using_AABB_wrapper(*smesh, planes, plane_positions, new_polylines_item->polylines);
     // set names etc and print timing
     print_message( QString("Done: processed %1 cuts - generated %2 polylines in %3 ms!").
       arg(planes.size()).arg(new_polylines_item->polylines.size()).arg(time.elapsed()) );
@@ -312,7 +304,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
     QTime time; time.start();
     std::list<std::vector<Epic_kernel::Point_3> > polylines;
     // call algorithm and fill polylines in polylines_item
-    intersection_of_plane_Polyhedra_3_using_AABB_wrapper(*poly, planes, plane_positions, polylines);
+    intersection_of_plane_Polyhedra_3_using_AABB_wrapper(*smesh, planes, plane_positions, polylines);
     // set names etc and print timing
     print_message( QString("Done: processed %1 cuts - generated %2 polylines in %3 ms!").
       arg(planes.size()).arg(polylines.size()).arg(time.elapsed()) );

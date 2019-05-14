@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 
 #ifndef CGAL_SDG_VERBOSE
 #define CGAL_SDG_DEBUG(a)
@@ -31,8 +30,8 @@ typedef exact_field_t  field_number_t;
 #include <CGAL/Segment_Delaunay_graph_Linf_hierarchy_2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_traits_2.h>
 
-struct K_ring  : public CGAL::Simple_cartesian<ring_number_t> {};
-struct K_field : public CGAL::Simple_cartesian<field_number_t> {};
+typedef CGAL::Simple_cartesian<ring_number_t> K_ring;
+typedef CGAL::Simple_cartesian<field_number_t> K_field;
 
 typedef CGAL::Field_tag  MTag;
 typedef CGAL::Integral_domain_without_division_tag   MTag_wi;

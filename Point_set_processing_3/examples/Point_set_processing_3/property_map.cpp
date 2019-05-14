@@ -118,12 +118,12 @@ int main()
 
 
   // Here we run it on tuples. To see the interest I made up my own
-  // data type = index, followed by the point, followed by a boolean
+  // data type = index, followed by the point, followed by a Boolean
   // that tells us whether the normal is oriented or not, followed by the normal vector.
   // As the point is the second element of the tuple (that is with index 1)
   // we use a property map that accesses the 1st element of the tuple.
   {
-    // Data type = index, followed by the point, followed by a boolean
+    // Data type = index, followed by the point, followed by a Boolean
     // that tells us whether the normal is oriented or not, followed by the normal vector.
     typedef boost::tuple<int, Point_3, bool, Vector_3> IndexedPointWithOrientableNormalTuple;
     std::vector<IndexedPointWithOrientableNormalTuple> points;

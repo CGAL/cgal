@@ -4,16 +4,12 @@
 
 project( Jet_fitting_3_Tests )
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
 
 find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
-
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
 
   # use either Eigen or BLAS/LAPACK
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
@@ -28,8 +24,6 @@ if ( CGAL_FOUND )
     
 
   if(EIGEN3_FOUND OR LAPACK_FOUND)
-
-    include_directories (BEFORE ../../include)
 
     create_single_source_cgal_program( "blind_1pt.cpp" )
 

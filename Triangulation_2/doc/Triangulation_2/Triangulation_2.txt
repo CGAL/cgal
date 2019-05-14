@@ -379,12 +379,12 @@ Flip.
 
 \subsection Triangulation_2Implementation Implementation
 
-Locate is implemented by a line walk. The walk
-begins at a vertex of the face which
+Locate is implemented by a stochastic walk \cgalCite{cgal:dpt-wt-02}.
+The walk begins at a vertex of the face which
 is given
 as an optional argument or at an arbitrary vertex of the triangulation
 if no optional argument is given. It takes
-time \f$ O(n)\f$ in the worst case, but only \f$ O(\sqrt{n})\f$
+time \f$ O(n)\f$ in the worst case for Delaunay Triangulations, but only \f$ O(\sqrt{n})\f$
 on average if the vertices are distributed uniformly at random.
 The class `Triangulation_hierarchy_2<Traits,Tds>`,
 described in section \ref Section_2D_Triangulations_Hierarchy, 
@@ -1294,14 +1294,14 @@ the `insert` function of the triangulation with a range of such pairs.
 \subsection Triangulation_2UsingtheBoostZipIterator Using the Boost Zip Iterator
 
 Information and points are in separate containers. We use
-<A HREF="http://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::zip_iterator`</A> to provide an iterator gathering them.
+<A HREF="https://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::zip_iterator`</A> to provide an iterator gathering them.
 
 \cgalExample{Triangulation_2/info_insert_with_zip_iterator_2.cpp}
 
 \subsection Triangulation_2UsingtheBoostTransformIterator Using the Boost Transform Iterator
 
 We define a functor `Auto_count` used together with
-<A HREF="http://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::transform_iterator`</A> to set the order of each point
+<A HREF="https://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::transform_iterator`</A> to set the order of each point
 in the range. Note that this is correct because the iterator
 is dereferenced only once per point during the insertion.
 \cgalExample{Triangulation_2/info_insert_with_transform_iterator_2.cpp}

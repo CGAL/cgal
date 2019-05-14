@@ -3,15 +3,14 @@
 #include <QtCore/qglobal.h>
 
 #include "Messages_interface.h"
-#include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polylines_item.h"
 #include "Scene_polyhedron_selection_item.h"
 #include "Scene.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 #include "ui_Hole_filling_widget.h"
-#include "Polyhedron_type.h"
 
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Timer.h>
@@ -42,21 +41,10 @@
 #include <QMap>
 #include <QVector>
 
-#ifdef USE_SURFACE_MESH
 typedef Scene_surface_mesh_item Scene_face_graph_item;
 
 void normalize_border(Scene_face_graph_item::Face_graph&)
 {}
-
-#else
-typedef Scene_polyhedron_item Scene_face_graph_item;
-
-void normalize_border(Scene_face_graph_item::Face_graph& polyhedron)
-{
-  polyhedron.normalize_border(); 
-}
-
-#endif
 
 typedef Scene_face_graph_item::Face_graph Face_graph;
 
@@ -138,9 +126,9 @@ public:
       else                  { it->polyline->setWidth(3); }
 
       if(selected_holes.find(it) != selected_holes.end())
-      { it->polyline->setRbgColor(255, 0, 0); }
+      { it->polyline->setRgbColor(255, 0, 0); }
       else
-      { it->polyline->setRbgColor(0, 0, 255); }
+      { it->polyline->setRgbColor(0, 0, 255); }
 
       it->polyline->drawEdges(viewer);
     }
@@ -336,7 +324,7 @@ class Polyhedron_demo_hole_filling_plugin :
 public:
   bool applicable(QAction*) const { return qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex())) ||
         qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex())); }
-  void print_message(QString message) { messages->information(message); }
+  void print_message(QString message) { CGAL::Three::Three::information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionHoleFilling; }
 
 
@@ -378,6 +366,7 @@ protected:
 
   void change_poly_item_by_blocking(Scene_face_graph_item* poly_item, Scene_hole_visualizer* collection) {
     if(collection) collection->block_poly_item_changed = true;
+    poly_item->resetColors();
     poly_item->invalidateOpenGLBuffers();
     poly_item->redraw();
     if(collection) collection->block_poly_item_changed = false;
@@ -436,21 +425,13 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
   messages = m;
 
   actionHoleFilling = new QAction(tr(
-                                  #ifdef USE_SURFACE_MESH
-                                      "Hole Filling for Surface Mesh"
-                                  #else
-                                      "Hole Filling for Polyhedron"
-                                  #endif
+                                      "Hole Filling"
                                     ), mw);
   actionHoleFilling->setProperty("subMenuName", "Polygon Mesh Processing");
   connect(actionHoleFilling, SIGNAL(triggered()), this, SLOT(hole_filling_action()));
 
   dock_widget = new QDockWidget(
-      #ifdef USE_SURFACE_MESH
-          "Hole Filling for Surface Mesh"
-      #else
-          "Hole Filling for Polyhedron"
-      #endif
+          "Hole Filling"
         , mw);
   dock_widget->setVisible(false);
   dock_widget->installEventFilter(this);
@@ -461,11 +442,7 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
 
   addDockWidget(dock_widget);
   dock_widget->setWindowTitle(tr(
-                              #ifdef USE_SURFACE_MESH
-                                  "Hole Filling for Surface Mesh"
-                              #else
-                                  "Hole Filling for Polyhedron"
-                              #endif
+                                  "Hole Filling"
                                 ));
   
   connect(ui_widget.Fill_from_selection_button,  SIGNAL(clicked()), this, SLOT(on_Fill_from_selection_button()));
@@ -884,7 +861,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
     last_active_item = edge_selection->polyhedron_item();
     accept_reject_toggle(true);
   }
-
+  edge_selection->polyhedron_item()->resetColors();
   edge_selection->polyhedron_item()->invalidateOpenGLBuffers();
   edge_selection->polyhedron_item()->itemChanged();
 }

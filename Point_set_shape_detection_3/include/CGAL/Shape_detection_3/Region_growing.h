@@ -44,7 +44,7 @@ namespace Shape_detection_3 {
 
 
 /*!
-\ingroup PkgPointSetShapeDetection3
+\ingroup PkgPointSetShapeDetection3Ref
 \brief A shape detection algorithm using a region growing method.
 
 Given a point set in 3D space with unoriented normals, sampled on surfaces,

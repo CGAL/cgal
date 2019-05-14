@@ -92,6 +92,10 @@ public:
   Kd_tree_element(const Kd_tree_element& other)
     : Base(other), index(other.index)
   {}
+  
+#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
+  Kd_tree_element& operator=(const Kd_tree_element&)=default;
+#endif  
 };
 
 
@@ -387,7 +391,7 @@ public:
 
 
 /**
-   \ingroup PkgPointSetProcessingAlgorithms
+   \ingroup PkgPointSetProcessing3Algorithms
  
    This function smooths an input point set by iteratively projecting each 
    point onto the implicit surface patch fitted over its k nearest neighbors.
@@ -396,9 +400,9 @@ public:
    For more details, please see section 4 in \cgalCite{ear-2013}.  
 
    A parallel version of this function is provided and requires the executable to be 
-   linked against the <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+   linked against the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
    To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-   See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+   See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
    for more details.
 
    \pre Normals must be unit vectors

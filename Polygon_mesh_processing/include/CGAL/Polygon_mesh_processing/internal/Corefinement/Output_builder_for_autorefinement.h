@@ -110,6 +110,7 @@ class Output_builder_for_autorefinement
   const VertexPointMap &vpm;
   const FaceIdMap &fids;
   Ecm& ecm;
+  Node_id_map vertex_to_node_id;
   // input meshes closed ?
   bool is_tm_closed;
   // orientation of input surface mesh
@@ -208,6 +209,13 @@ public:
     all_intersection_edges_map[indices].add(hedge);
   }
 
+  void set_vertex_id(vertex_descriptor v, Node_id node_id, const TriangleMesh& tm_)
+  {
+    CGAL_USE(tm_);
+    CGAL_assertion(&tm_==&tm);
+    vertex_to_node_id.insert( std::make_pair(v, node_id) );
+  }
+
   template <class Nodes_vector, class Mesh_to_map_node>
   void operator()(
     const Nodes_vector& nodes,
@@ -220,7 +228,6 @@ public:
 
     // first build an unordered_map mapping a vertex to its node id + a set
     // of all intersection edges
-    Node_id_map vertex_to_node_id;
     typedef boost::unordered_set<edge_descriptor> Intersection_edge_map;
     Intersection_edge_map intersection_edges;
 
@@ -233,10 +240,10 @@ public:
     // and will be discarded later
       if (p.second.h2==boost::graph_traits<TriangleMesh>::null_halfedge())
         continue;
-      vertex_to_node_id[source(p.second.h1, tm)] = p.first.first;
-      vertex_to_node_id[target(p.second.h1, tm)] = p.first.second;
-      vertex_to_node_id[source(p.second.h2, tm)] = p.first.first;
-      vertex_to_node_id[target(p.second.h2, tm)] = p.first.second;
+      CGAL_assertion( vertex_to_node_id[source(p.second.h1, tm)] == p.first.first);
+      CGAL_assertion( vertex_to_node_id[target(p.second.h1, tm)] == p.first.second);
+      CGAL_assertion( vertex_to_node_id[source(p.second.h2, tm)] == p.first.first);
+      CGAL_assertion( vertex_to_node_id[target(p.second.h2, tm)] == p.first.second);
       intersection_edges.insert(edge(p.second.h1, tm));
       intersection_edges.insert(edge(p.second.h2, tm));
     }
@@ -990,7 +997,8 @@ public:
     // Merge patches to keep only 2: one we keep (1) and one we remove (0)
     const std::size_t PATCH_ID_KEPT = 1;
     BOOST_FOREACH(std::size_t& patch_id, patch_ids)
-      patch_id = patches_to_keep.test(patch_id) ? 1 : 0;
+      if (patch_id != NID)
+        patch_id = patches_to_keep.test(patch_id) ? 1 : 0;
     nb_patches=2;
     patches_to_keep=boost::dynamic_bitset<>(2,0);
     patches_to_keep.set(PATCH_ID_KEPT);

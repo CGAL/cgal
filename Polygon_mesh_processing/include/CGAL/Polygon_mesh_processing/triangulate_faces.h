@@ -408,7 +408,7 @@ public:
 
 /**
 * \ingroup PMP_meshing_grp
-* triangulates a single face of a polygon mesh. This function depends on the package \ref PkgTriangulation2Summary
+* triangulates a single face of a polygon mesh. This function depends on the package \ref PkgTriangulation2
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 *
@@ -459,7 +459,7 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 
 /**
 * \ingroup PMP_meshing_grp
-* triangulates given faces of a polygon mesh. This function depends on the package \ref PkgTriangulation2Summary
+* triangulates given faces of a polygon mesh. This function depends on the package \ref PkgTriangulation2
 *
 * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
           model of `Range`.
@@ -513,7 +513,7 @@ bool triangulate_faces(FaceRange face_range, PolygonMesh& pmesh)
 
 /**
 * \ingroup PMP_meshing_grp
-* triangulates all faces of a polygon mesh. This function depends on the package \ref PkgTriangulation2Summary
+* triangulates all faces of a polygon mesh. This function depends on the package \ref PkgTriangulation2
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 *

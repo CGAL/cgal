@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>613</width>
-    <height>342</height>
+    <height>336</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,7 +26,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Create Selection Item</string>
+         <string>Create Selection</string>
         </property>
        </widget>
       </item>
@@ -36,24 +36,11 @@
          <string extracomment="Clear selection for All Types"/>
         </property>
         <property name="text">
-         <string>Clear Selection Item</string>
+         <string>Clear Selection</string>
         </property>
        </widget>
       </item>
      </layout>
-    </item>
-    <item>
-     <spacer name="verticalSpacer_3">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
-      </property>
-     </spacer>
     </item>
     <item>
      <widget class="QTabWidget" name="selectionOrEuler">
@@ -416,7 +403,7 @@
                <string extracomment="Clear selection for Selection Type"/>
               </property>
               <property name="text">
-               <string>&amp;Clear</string>
+               <string>&amp;Clear Current Type</string>
               </property>
              </widget>
             </item>
@@ -463,22 +450,22 @@
            <widget class="QComboBox" name="operationsBox">
             <item>
              <property name="text">
-              <string>Create Point Set Item from Selected Vertices</string>
+              <string>Create Point Set from Selected Vertices</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Create Polyline Item from Selected Edges</string>
+              <string>Create Polyline from Selected Edges</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Create Polyhedron Item from Selected Facets</string>
+              <string>Create Facegraph from Selected Facets</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Erase Selected Facets from Polyhedron Item</string>
+              <string>Erase Selected Facets</string>
              </property>
             </item>
             <item>
@@ -564,7 +551,7 @@
                </item>
                <item>
                 <property name="text">
-                 <string>Split edges</string>
+                 <string>Split edge</string>
                 </property>
                </item>
                <item>

@@ -34,23 +34,23 @@
     </qresource>
     <qresource prefix="/cgal/Polyhedron_3">
         <file alias="about.html">resources/about.html</file>
-        <file>resources/shader_with_light.v</file>
-        <file>resources/shader_with_light.f</file>
-        <file>resources/shader_without_light.f</file>
-        <file>resources/shader_without_light.v</file>
-        <file>resources/shader_with_texture.f</file>
-        <file>resources/shader_with_textured_edges.f</file>
-        <file>resources/shader_with_textured_edges.v</file>
-        <file>resources/shader_with_texture.v</file>
-        <file>resources/shader_instanced.v</file>
-        <file>resources/shader_no_light_no_selection.f</file>
-        <file>resources/shader_c3t3_spheres.v</file>
-        <file>resources/shader_c3t3_edges.v</file>
-        <file>resources/shader_c3t3_edges.f</file>
-        <file>resources/shader_c3t3.v</file>
-        <file>resources/shader_c3t3.f</file>
-        <file>resources/shader_plane_two_faces.f</file>
-        <file>resources/shader_spheres.v</file>
+        <file>resources/shader_with_light.vert</file>
+        <file>resources/shader_with_light.frag</file>
+        <file>resources/shader_without_light.frag</file>
+        <file>resources/shader_without_light.vert</file>
+        <file>resources/shader_with_texture.frag</file>
+        <file>resources/shader_with_textured_edges.frag</file>
+        <file>resources/shader_with_textured_edges.vert</file>
+        <file>resources/shader_with_texture.vert</file>
+        <file>resources/shader_instanced.vert</file>
+        <file>resources/shader_no_light_no_selection.frag</file>
+        <file>resources/shader_c3t3_spheres.vert</file>
+        <file>resources/shader_c3t3_edges.vert</file>
+        <file>resources/shader_c3t3_edges.frag</file>
+        <file>resources/shader_c3t3.vert</file>
+        <file>resources/shader_c3t3.frag</file>
+        <file>resources/shader_plane_two_faces.frag</file>
+        <file>resources/shader_spheres.vert</file>
         <file>resources/general_collapse.png</file>
         <file>resources/add_facet1.png</file>
         <file>resources/add_facet2.png</file>
@@ -58,7 +58,7 @@
         <file>resources/euler_facet.png</file>
         <file>resources/euler_vertex.png</file>
         <file>javascript/lib.js</file>
-        <file>resources/shader_flat.f</file>
+        <file>resources/shader_flat.frag</file>
         <file>resources/hexahedron.png</file>
         <file>resources/icosphere.png</file>
         <file>resources/tetrahedron.png</file>
@@ -67,33 +67,37 @@
         <file>resources/prism-open.png</file>
         <file>resources/pyramid.png</file>
         <file>resources/pyramid-open.png</file>
-        <file>resources/no_interpolation_shader.f</file>
-        <file>resources/no_interpolation_shader.g</file>
-        <file>resources/no_interpolation_shader.v</file>
-        <file>resources/shader_flat.g</file>
-        <file>resources/shader_flat.v</file>
-        <file>resources/shader_old_flat.f</file>
-        <file>resources/solid_wireframe_shader.v</file>
-        <file>resources/solid_wireframe_shader.f</file>
-        <file>resources/solid_wireframe_shader.g</file>
-        <file>resources/compatibility_shaders/shader_c3t3_edges.f</file>
-        <file>resources/compatibility_shaders/shader_c3t3_edges.v</file>
-        <file>resources/compatibility_shaders/shader_c3t3_spheres.v</file>
-        <file>resources/compatibility_shaders/shader_c3t3.f</file>
-        <file>resources/compatibility_shaders/shader_c3t3.v</file>
-        <file>resources/compatibility_shaders/shader_instanced.v</file>
-        <file>resources/compatibility_shaders/shader_no_light_no_selection.f</file>
-        <file>resources/compatibility_shaders/shader_old_flat.f</file>
-        <file>resources/compatibility_shaders/shader_plane_two_faces.f</file>
-        <file>resources/compatibility_shaders/shader_spheres.v</file>
-        <file>resources/compatibility_shaders/shader_with_light.f</file>
-        <file>resources/compatibility_shaders/shader_with_light.v</file>
-        <file>resources/compatibility_shaders/shader_with_texture.f</file>
-        <file>resources/compatibility_shaders/shader_with_texture.v</file>
-        <file>resources/compatibility_shaders/shader_with_textured_edges.f</file>
-        <file>resources/compatibility_shaders/shader_with_textured_edges.v</file>
-        <file>resources/compatibility_shaders/shader_without_light.f</file>
-        <file>resources/compatibility_shaders/shader_without_light.v</file>
+        <file>resources/no_interpolation_shader.frag</file>
+        <file>resources/no_interpolation_shader.geom</file>
+        <file>resources/no_interpolation_shader.vert</file>
+        <file>resources/shader_flat.geom</file>
+        <file>resources/shader_flat.vert</file>
+        <file>resources/shader_old_flat.frag</file>
+        <file>resources/solid_wireframe_shader.vert</file>
+        <file>resources/solid_wireframe_shader.frag</file>
+        <file>resources/solid_wireframe_shader.geom</file>
+        <file>resources/compatibility_shaders/shader_c3t3_edges.frag</file>
+        <file>resources/compatibility_shaders/shader_c3t3_edges.vert</file>
+        <file>resources/compatibility_shaders/shader_c3t3_spheres.vert</file>
+        <file>resources/compatibility_shaders/shader_c3t3.frag</file>
+        <file>resources/compatibility_shaders/shader_c3t3.vert</file>
+        <file>resources/compatibility_shaders/shader_instanced.vert</file>
+        <file>resources/compatibility_shaders/shader_no_light_no_selection.frag</file>
+        <file>resources/compatibility_shaders/shader_old_flat.frag</file>
+        <file>resources/compatibility_shaders/shader_plane_two_faces.frag</file>
+        <file>resources/compatibility_shaders/shader_spheres.vert</file>
+        <file>resources/compatibility_shaders/shader_with_light.frag</file>
+        <file>resources/compatibility_shaders/shader_with_light.vert</file>
+        <file>resources/compatibility_shaders/shader_with_texture.frag</file>
+        <file>resources/compatibility_shaders/shader_with_texture.vert</file>
+        <file>resources/compatibility_shaders/shader_with_textured_edges.frag</file>
+        <file>resources/compatibility_shaders/shader_with_textured_edges.vert</file>
+        <file>resources/compatibility_shaders/shader_without_light.frag</file>
+        <file>resources/compatibility_shaders/shader_without_light.vert</file>
+        <file>resources/heat_intensity_shader.frag</file>
+        <file>resources/heat_intensity_shader.vert</file>
+        <file>resources/compatibility_shaders/heat_intensity_shader.frag</file>
+        <file>resources/compatibility_shaders/heat_intensity_shader.vert</file>
     </qresource>
     <qresource prefix="/cgal/cursors">
         <file>resources/rotate_around_cursor.png</file>

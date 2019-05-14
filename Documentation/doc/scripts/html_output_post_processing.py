@@ -62,7 +62,7 @@ def conceptify_ns(d):
 def write_out_html(d, fn):
     f = codecs.open(fn, 'w', encoding='utf-8')
     # this is the normal doxygen doctype, which is thrown away by pyquery
-    f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n')
+    f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n')
     f.write('<html xmlns=\"http://www.w3.org/1999/xhtml\">')
     f.write(d.html())
     f.write('\n')

@@ -55,10 +55,6 @@ public:
     : tmhd(), seam(false)
   { }
 
-  Seam_mesh_halfedge_descriptor(const Seam_mesh_halfedge_descriptor& other)
-    : tmhd(other.tmhd), seam(other.seam)
-  { }
-
   Seam_mesh_halfedge_descriptor(TM_halfedge_descriptor tmhd, bool seam = false)
     : tmhd(tmhd), seam(seam)
   { }
@@ -301,10 +297,6 @@ public:
 
     vertex_descriptor(const halfedge_descriptor& h)
       : hd(h)
-    { }
-
-    vertex_descriptor(const vertex_descriptor& other)
-      : hd(other.hd)
     { }
 
     bool operator==(const vertex_descriptor& other) const
@@ -1017,7 +1009,7 @@ public:
   /// of a vertex of the underlying mesh is given by its position
   /// in the container `tm_vds`.
   ///
-  /// \tparam VdContainer must be a model of <a href="http://en.cppreference.com/w/cpp/concept/SequenceContainer"><tt>SequenceContainer</tt></a> (that is, provide
+  /// \tparam VdContainer must be a model of `SequenceContainer` (that is, provide
   ///         the functions: `operator[]` and `at()`).
   ///
   /// \returns one of the halfedges of the seam mesh that is on a seam.
@@ -1062,7 +1054,7 @@ public:
   ///
   /// \returns one of the halfedges of the seam mesh that is on a seam.
   ///
-  /// \tparam VdContainer must be a model of <a href="http://en.cppreference.com/w/cpp/concept/SequenceContainer"><tt>SequenceContainer</tt></a> (that is, provide
+  /// \tparam VdContainer must be a model of `SequenceContainer` (that is, provide
   ///         the functions: `operator[]` and `at()`).
   ///
   /// \pre filename should be the name of a \cgal selection file with file extension "*.selection.txt":

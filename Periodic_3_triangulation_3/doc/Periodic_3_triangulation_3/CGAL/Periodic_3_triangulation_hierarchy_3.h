@@ -8,8 +8,6 @@ The class `Periodic_3_triangulation_hierarchy_3` implements a
 triangulation augmented with a data structure which allows fast point 
 location queries. 
 
-\cgalHeading{Template Parameters}
-
 \tparam PTr must be one of the \cgal periodic triangulation classes. <I>In the current
 implementation, only `Periodic_3_Delaunay_triangulation_3` is supported for.</I>
 
