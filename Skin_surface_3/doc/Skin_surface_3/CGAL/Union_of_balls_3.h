@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSkinSurface3Ref
+\ingroup PkgSkinSurface3
 
 The `Union_of_balls_3` is used to represent a skin surface with shrink 
 factor equal to one, which is the boundary of the union of the input 

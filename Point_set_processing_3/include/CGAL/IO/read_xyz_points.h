@@ -40,7 +40,7 @@
 namespace CGAL {
 
 /** 
-   \ingroup PkgPointSetProcessing3IO
+   \ingroup PkgPointSetProcessingIO
    Reads points (positions + normals, if available) from a .xyz ASCII stream.
    The function expects for each point a line with the x y z position,
    optionally followed by the nx ny nz normal.

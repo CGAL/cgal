@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangementOnSurface2TraitsClasses
+\ingroup PkgArrangement2TraitsClasses
 
 The class `Arr_curve_data_traits_2` is a model of the `ArrangementTraits_2` concept 
 and serves as a decorator class that allows the extension of the curves 

@@ -1,4 +1,0 @@
-/*!
-\example Hyperbolic_triangulation_2/ht2_example.cpp
-\example Hyperbolic_triangulation_2/ht2_example_color.cpp
-*/

@@ -110,6 +110,9 @@ public:
     Homogeneous_point_2(const Point_2& p)
       : hx_(p.x()), hy_(p.y()), hw_(1) {}
 
+    Homogeneous_point_2(const Homogeneous_point_2& other)
+      : hx_(other.hx_), hy_(other.hy_), hw_(other.hw_) {}
+
     RT hx() const { return hx_; }
     RT hy() const { return hy_; }
     RT hw() const { return hw_; }

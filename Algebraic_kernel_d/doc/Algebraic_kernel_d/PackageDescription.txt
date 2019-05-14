@@ -1,28 +1,28 @@
-/// \defgroup PkgAlgebraicKernelDRef Algebraic Kernel Reference
+/// \defgroup PkgAlgebraicKerneld Algebraic Kernel Reference
 
-/// \defgroup PkgAlgebraicKernelDConcepts Concepts
-/// \ingroup PkgAlgebraicKernelDRef
+/// \defgroup PkgAlgebraicKerneldConcepts Concepts
+/// \ingroup PkgAlgebraicKerneld
 
-/// \defgroup PkgAlgebraicKernelDConceptsUni Univariate Algebraic Kernel 
-/// \ingroup PkgAlgebraicKernelDConcepts
+/// \defgroup PkgAlgebraicKerneldConceptsUni Univariate Algebraic Kernel 
+/// \ingroup PkgAlgebraicKerneldConcepts
 
-/// \defgroup PkgAlgebraicKernelDConceptsBi Bivariate Algebraic Kernel 
-/// \ingroup PkgAlgebraicKernelDConcepts
+/// \defgroup PkgAlgebraicKerneldConceptsBi Bivariate Algebraic Kernel 
+/// \ingroup PkgAlgebraicKerneldConcepts
 
 
-/// \defgroup PkgAlgebraicKernelDModels Models
-/// \ingroup PkgAlgebraicKernelDRef
+/// \defgroup PkgAlgebraicKerneldModels Models
+/// \ingroup PkgAlgebraicKerneld
 
 
 /*!
-\addtogroup PkgAlgebraicKernelDRef
+\addtogroup PkgAlgebraicKerneld
 \todo check generated documentation
-\cgalPkgDescriptionBegin{Algebraic Kernel,PkgAlgebraicKernelD}
+\cgalPkgDescriptionBegin{Algebraic Kernel,PkgAlgebraicKerneldSummary}
 \cgalPkgPicture{Algebraic_kernel_d.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Eric Berberich, Michael Hemmer, Michael Kerber, Sylvain Lazard, Luis Peñaranda, and Monique Teillaud}
 \cgalPkgDesc{Real solving of polynomials is a fundamental problem with a wide application range.  This package is targeted to provide black-box implementations of state-of-the-art  algorithms to determine, compare and approximate real roots of univariate polynomials and bivariate polynomial systems. Such a black-box is called an *Algebraic %Kernel*.  So far the package only provides models for the univariate kernel. Nevertheless,  it already defines concepts for the bivariate kernel, since this settles the interface for upcoming implementations.}
-\cgalPkgManuals{Chapter_Algebraic_Kernel,PkgAlgebraicKernelDRef}
+\cgalPkgManuals{Chapter_Algebraic_Kernel,PkgAlgebraicKerneld}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.6}
@@ -34,9 +34,9 @@
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 
-\cgalCRPSubsection{Univariate Algebraic %Kernel}
+### Univariate Algebraic %Kernel ###
 
 - `AlgebraicKernel_d_1`
 
@@ -58,7 +58,7 @@
 - `AlgebraicKernel_d_1::ApproximateAbsolute_1`
 - `AlgebraicKernel_d_1::ApproximateRelative_1`
 
-\cgalCRPSubsection{Bivariate Algebraic %Kernel}
+### Bivariate Algebraic %Kernel ###
 
 - `AlgebraicKernel_d_2`
 
@@ -95,7 +95,7 @@
 - `AlgebraicKernel_d_2::BoundBetweenX_2`
 - `AlgebraicKernel_d_2::BoundBetweenY_2`
 
-\cgalCRPSection{Models}
+## Models ##
 
 - `CGAL::Algebraic_kernel_d_1<Coeff>`
 - `CGAL::Algebraic_kernel_d_2<Coeff>`

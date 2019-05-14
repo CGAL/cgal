@@ -98,7 +98,7 @@ The class `Concurrent_compact_container<T, Allocator>`
 provides the same features, but enables concurrency-safe
 `insert` and `erase` operations. Other operations are not concurrency-safe.
 It requires the program to be linked against 
-the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
+the <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
 
 \section stl_multi Multiset with Extended Functionality
 

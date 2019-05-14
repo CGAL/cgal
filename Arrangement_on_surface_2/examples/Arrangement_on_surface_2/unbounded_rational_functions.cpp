@@ -1,7 +1,7 @@
 //! \file examples/Arrangement_2/unbounded_rational_functions.cpp
 // Constructing an arrangement of unbounded portions of rational functions.
 
-#include <CGAL/config.h>
+#include <CGAL/basic.h>
 
 #ifndef CGAL_USE_CORE
 #include <iostream>

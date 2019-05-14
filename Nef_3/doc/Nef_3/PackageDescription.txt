@@ -1,22 +1,22 @@
-/// \defgroup PkgNef3Ref 3D Boolean Operations on  Nef Polyhedra Reference
+/// \defgroup PkgNef3 3D Boolean Operations on  Nef Polyhedra Reference
 ///
 /// \defgroup PkgNef3IOFunctions I/O Functions
-/// \ingroup PkgNef3Ref
+/// \ingroup PkgNef3
 
 
 /*!
-\addtogroup PkgNef3Ref
+\addtogroup PkgNef3
 \todo check generated documentation
-\cgalPkgDescriptionBegin{3D Boolean Operations on Nef Polyhedra,PkgNef3}
+\cgalPkgDescriptionBegin{3D Boolean Operations on Nef Polyhedra,PkgNef3Summary}
 \cgalPkgPicture{Nef_3-teaser.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Peter Hachenberger and Lutz Kettner}
 \cgalPkgDesc{3D Nef polyhedra, are a boundary representation for cell-complexes bounded by halfspaces that supports Boolean operations and topological operations in full generality including unbounded cells, mixed dimensional cells (e.g., isolated vertices and antennas). Nef polyhedra distinguish between open and closed sets and can represent non-manifold geometry.}
-\cgalPkgManuals{Chapter_3D_Boolean_Operations_on_Nef_Polyhedra,PkgNef3Ref}
+\cgalPkgManuals{Chapter_3D_Boolean_Operations_on_Nef_Polyhedra,PkgNef3}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.1}
-\cgalPkgDependsOn{\ref PkgNef2\, \ref PkgNefS2}
+\cgalPkgDependsOn{\ref PkgNef2Summary\, \ref PkgNefS2Summary}
 \cgalPkgBib{cgal:hk-bonp3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
@@ -46,7 +46,7 @@ a simple OpenGL visualization for debugging and illustrations.
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Classes}
+## Classes ##
 - `CGAL::Nef_polyhedron_3<Traits>`
 - \link CGAL::Nef_polyhedron_3::Vertex `CGAL::Nef_polyhedron_3<Traits>::Vertex` \endlink
 - \link CGAL::Nef_polyhedron_3::Halfedge `CGAL::Nef_polyhedron_3<Traits>::Halfedge` \endlink
@@ -57,7 +57,7 @@ a simple OpenGL visualization for debugging and illustrations.
 - \link CGAL::Nef_polyhedron_3::SFace `CGAL::Nef_polyhedron_3<Traits>::SFace` \endlink
 - \link CGAL::Nef_polyhedron_3::SFace_cycle_iterator `CGAL::Nef_polyhedron_3<Traits>::SFace_cycle_iterator` \endlink
 
-\cgalCRPSection{Functions}
+## Functions ##
 - `CGAL::OFF_to_nef_3()`
 - `CGAL::convert_nef_polyhedron_to_polygon_mesh()`
 - \link PkgNef3IOFunctions `CGAL::operator<<()` \endlink

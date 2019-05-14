@@ -9,7 +9,6 @@
 #ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
-#include <CGAL/Three/Three.h>
 
 #include "Messages_interface.h"
 #include "ui_Smoother_dialog.h"
@@ -80,7 +79,7 @@ class Mesh_3_optimization_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "optimization_plugin.json")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
   typedef Polyhedron_demo_plugin_interface Base;
 public:
@@ -563,7 +562,7 @@ optimization_done(Optimizer_thread* thread)
     str.append(QString("( %1 )<br>").arg(param));
   }
   
-  CGAL::Three::Three::information(qPrintable(str));
+  msg->information(qPrintable(str));
   
   // Treat new c3t3 item
   Scene_c3t3_item* result_item = thread->item();

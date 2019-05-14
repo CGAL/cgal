@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStreamLines2Ref
+\ingroup PkgPlacementOfStreamlines2
 
 
 This class provides a 2D vector field specified by a set of sample 

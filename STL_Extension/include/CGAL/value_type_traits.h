@@ -26,7 +26,7 @@
 
 namespace CGAL {
 
-/// \ingroup  PkgSTLExtensionRef
+/// \ingroup  PkgStlExtension
 /// Class providing the value type of an iterator, and
 /// in the case of an output iterator, a type of objects that can be put in it.
 ///

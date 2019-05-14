@@ -1,3 +1,5 @@
+// file: multi_info.cpp
+#include <CGAL/basic.h>
 
 #ifndef CGAL_SDG_VERBOSE
 #define CGAL_SDG_DEBUG(a)
@@ -24,7 +26,7 @@ typedef
 CGAL::Segment_Delaunay_graph_Linf_filtered_traits_2<Rep>
 Traits_x;
 
-typedef Traits_x Gt;
+struct Gt : public Traits_x {};
 
 #include "Multi_info.h"
 

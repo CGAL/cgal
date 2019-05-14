@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSTLExtensionUtilities
+\ingroup PkgStlExtensionUtilities
 
 A typedef to `Location_policy<Compact>`. 
 
@@ -18,7 +18,7 @@ A typedef to `Location_policy<Compact>`.
 namespace CGAL {
 
 /*!
-\ingroup PkgSTLExtensionUtilities
+\ingroup PkgStlExtensionUtilities
 
 A typedef to `Location_policy<Fast>`. 
 
@@ -35,7 +35,7 @@ A typedef to `Location_policy<Fast>`.
 namespace CGAL {
 
 /*!
-\ingroup PkgSTLExtensionUtilities
+\ingroup PkgStlExtensionUtilities
 
 
 

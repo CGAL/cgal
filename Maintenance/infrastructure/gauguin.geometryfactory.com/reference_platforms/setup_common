@@ -86,5 +86,4 @@ if [ -d/cygdrive/c/3rdPartyLibs/opencv/build_vs${VC_VERSION_YEAR}-${ARCH} ]; the
   export OpenCV_DIR="C:/3rdPartyLibs/opencv/build_vs${VC_VERSION_YEAR}-${ARCH}"
   export PATH="`cygpath ${OpenCV_DIR}/bin/Release`":$PATH
   export PATH="`cygpath ${OpenCV_DIR}/bin/Debug`":$PATH
-  export PATH="`cygpath ${OpenCV_DIR}/3rdparty/ffmpeg/`":$PATH
 fi

@@ -43,7 +43,7 @@ namespace CGAL {
 
 namespace Surface_mesh_parameterization {
 
-/// \ingroup  PkgSurfaceMeshParameterizationMethods
+/// \ingroup  PkgSurfaceParameterizationMethods
 ///
 /// The class `Discrete_authalic_parameterizer_3`
 /// implements the *Discrete Authalic Parameterization* algorithm. This method

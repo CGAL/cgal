@@ -46,11 +46,6 @@ public:
     HalfedgeDS_in_place_list_vertex() {}
     HalfedgeDS_in_place_list_vertex( const VertexBase& v)   // down cast
         : VertexBase(v) {}
-  
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
-  HalfedgeDS_in_place_list_vertex(const HalfedgeDS_in_place_list_vertex&)=default;
-#endif
-  
     Self& operator=( const Self& v) {
         // This self written assignment avoids that assigning vertices will
         // overwrite the list linking of the target vertex.
@@ -71,11 +66,6 @@ public:
     HalfedgeDS_in_place_list_halfedge() {}                   // down cast
     HalfedgeDS_in_place_list_halfedge( const HalfedgeBase& h)
         : HalfedgeBase(h) {}
-  
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
-  HalfedgeDS_in_place_list_halfedge(const HalfedgeDS_in_place_list_halfedge&)=default;
-#endif
-  
     Self& operator=( const Self& h) {
         // This self written assignment avoids that assigning halfedges will
         // overwrite the list linking of the target halfedge.
@@ -94,11 +84,6 @@ public:
     typedef typename FaceBase::Face_const_handle Face_const_handle;
     HalfedgeDS_in_place_list_face() {}                   // down cast
     HalfedgeDS_in_place_list_face( const FaceBase& f) : FaceBase(f) {}
-  
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
-  HalfedgeDS_in_place_list_face(const HalfedgeDS_in_place_list_face&)=default;
-#endif
-  
     Self& operator=( const Self& f) {
         // This self written assignment avoids that assigning faces will
         // overwrite the list linking of the target face.

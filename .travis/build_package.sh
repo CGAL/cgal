@@ -2,17 +2,13 @@
 set -e
 [ -n "$CGAL_DEBUG_TRAVIS" ] && set -x
 
-CXX_FLAGS="-DCGAL_NDEBUG -ftemplate-backtrace-limit=0"
-
-function mytime {
-  /usr/bin/time -f "Spend time of %C: %E (real)" "$@"
-}
+CXX_FLAGS="-DCGAL_NDEBUG"
 
 function build_examples {
   mkdir -p build-travis
   cd build-travis
-  mytime cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DCMAKE_CXX_FLAGS="${CXX_FLAGS}" ..
-  mytime make -j2 VERBOSE=1
+  cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS}" ..
+  make -j2 VERBOSE=1
 }
 
 function build_tests {
@@ -22,18 +18,40 @@ function build_tests {
 function build_demo {
   mkdir -p build-travis
   cd build-travis
+  if [ $NEED_3D = 1 ]; then
+    #install libqglviewer
+    git clone --depth=4 -b v2.6.3 --single-branch https://github.com/GillesDebunne/libQGLViewer.git ./qglviewer
+    pushd ./qglviewer/QGLViewer
+    #use qt5 instead of qt4
+#    export QT_SELECT=5
+    qmake NO_QT_VERSION_SUFFIX=yes
+    make -j2
+    if [ ! -f libQGLViewer.so ]; then
+        echo "libQGLViewer.so not made"
+        exit 1
+    else
+      echo "QGLViewer built successfully"
+    fi
+    #end install qglviewer
+    popd
+  fi
   EXTRA_CXX_FLAGS=
   case "$CC" in
     clang*)
       EXTRA_CXX_FLAGS="-Werror=inconsistent-missing-override"
       ;;
   esac
-  mytime cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" ..
-  mytime make -j2 VERBOSE=1
+  if [ $NEED_3D = 1 ]; then
+    QGLVIEWERROOT=$PWD/qglviewer
+    export QGLVIEWERROOT
+  fi
+  cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" -DQt5Svg_DIR="/opt/qt55/lib/cmake/Qt5Svg" -DQt5OpenGL_DIR="/opt/qt55/lib/cmake/Qt5OpenGL" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" ..
+  make -j2 VERBOSE=1
 }
 old_IFS=$IFS
 IFS=$' '
 ROOT="$PWD/.."
+NEED_3D=0
 for ARG in $(echo "$@")
 do
 #skip package maintenance
@@ -46,20 +64,20 @@ cd $ROOT
      [ "$ARG" = Polygon_mesh_processing ] || [ "$ARG" = Property_map ] ||\
      [ "$ARG" = Surface_mesh_deformation ] || [ "$ARG" = Surface_mesh_shortest_path ] ||\
      [ "$ARG" = Surface_mesh_simplification ]; then
-    mytime sudo bash .travis/install_openmesh.sh
+    sudo bash .travis/install_openmesh.sh
   fi
 
 
   if [ "$ARG" = "CHECK" ]
   then
     cd .travis
-    mytime ./generate_travis.sh --check
+    ./generate_travis.sh --check
     cd ..
     IFS=$old_IFS
-    mytime zsh $ROOT/Scripts/developer_scripts/test_merge_of_branch HEAD
+    zsh $ROOT/Scripts/developer_scripts/test_merge_of_branch HEAD
     #test dependencies 
     cd $ROOT
-    mytime bash Scripts/developer_scripts/cgal_check_dependencies.sh --check_headers /usr/bin/doxygen
+    bash Scripts/developer_scripts/cgal_check_dependencies.sh --check_headers /usr/bin/doxygen
 
     cd .travis
   	#parse current matrix and check that no package has been forgotten
@@ -96,8 +114,8 @@ cd $ROOT
     cd $ROOT
     mkdir build_test
     cd build_test
-    mytime cmake -DCMAKE_INSTALL_PREFIX=install/ ..
-    mytime make install
+    cmake -DCMAKE_INSTALL_PREFIX=install/ ..
+    make install
     # test install with minimal downstream example
     mkdir installtest
     cd installtest
@@ -110,7 +128,7 @@ cd $ROOT
     echo 'target_link_libraries(${PROJECT_NAME} CGAL::CGAL)' >> CMakeLists.txt
     echo '#include "CGAL/remove_outliers.h"' >> main.cpp
     cd build
-    mytime cmake -DCMAKE_INSTALL_PREFIX=../../install ..
+    cmake -DCMAKE_INSTALL_PREFIX=../../install ..
     cd ..
     exit 0
   fi
@@ -128,6 +146,12 @@ cd $ROOT
   EXAMPLES="$ARG/examples/$ARG"
   TEST="$ARG/test/$ARG" 
   DEMOS=$ROOT/$ARG/demo/*
+  if [ "$ARG" = AABB_tree ] || [ "$ARG" = Alpha_shapes_3 ] ||\
+     [ "$ARG" = Circular_kernel_3 ] || [ "$ARG" = Linear_cell_complex ] ||\
+     [ "$ARG" = Periodic_3_triangulation_3 ] || [ "$ARG" = Principal_component_analysis ] ||\
+     [ "$ARG" = Surface_mesher ] || [ "$ARG" = Triangulation_3 ]; then
+    NEED_3D=1
+  fi
 
   if [ -d "$ROOT/$EXAMPLES" ]
   then
@@ -182,9 +206,10 @@ cd $ROOT
   done
   if [ "$ARG" = Polyhedron_demo ]; then
     DEMO=Polyhedron/demo/Polyhedron
+    NEED_3D=1
     cd "$ROOT/$DEMO"
     build_demo
-  fi
+  fi  
 done
 IFS=$old_IFS
 # Local Variables:

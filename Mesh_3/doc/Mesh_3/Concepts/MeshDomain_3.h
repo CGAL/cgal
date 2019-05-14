@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMesh3Concepts
+\ingroup PkgMesh_3Concepts
 \cgalConcept
 
 The concept `MeshDomain_3` describes the knowledge required on the

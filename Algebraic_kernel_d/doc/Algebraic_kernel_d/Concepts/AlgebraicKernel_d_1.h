@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicKernelDConceptsUni
+\ingroup PkgAlgebraicKerneldConceptsUni
 \cgalConcept
 
 A model of the `AlgebraicKernel_d_1` concept is meant to provide the 

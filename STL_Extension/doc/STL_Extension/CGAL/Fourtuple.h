@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSTLExtensionUtilities
+\ingroup PkgStlExtensionUtilities
 
 
 The `Fourtuple` class stores a homogeneous (same type) 

@@ -152,10 +152,7 @@ public:
   {
     insert(first, last);
   }
-  
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
-  Periodic_2_Delaunay_triangulation_2& operator=(const Periodic_2_Delaunay_triangulation_2&)=default;
-#endif
+
   // \}
 
   /// \name Methods regarding the covering

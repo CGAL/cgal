@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSnapRounding2Ref
+\ingroup PkgSnapRounding2
 
 The class `Snap_rounding_traits_2<Kernel>` is a model of the 
 `SnapRoundingTraits_2` concept, and is the only traits class supplied 

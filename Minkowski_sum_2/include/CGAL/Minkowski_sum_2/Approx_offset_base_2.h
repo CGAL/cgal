@@ -252,8 +252,8 @@ protected:
       }
       else
       {
-        abs_delta_x = (sign_delta_x == POSITIVE) ? delta_x : NT(-delta_x);
-        abs_delta_y = (sign_delta_y == POSITIVE) ? delta_y : NT(-delta_y);
+        abs_delta_x = (sign_delta_x == POSITIVE) ? delta_x : -delta_x;
+        abs_delta_y = (sign_delta_y == POSITIVE) ? delta_y : -delta_y;
 
         // In this general case, the length d of the current edge is usually
         // an irrational number.

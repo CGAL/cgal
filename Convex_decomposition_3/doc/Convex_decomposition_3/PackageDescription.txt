@@ -1,13 +1,13 @@
-/// \defgroup PkgConvexDecomposition3Ref Convex Decomposition of Polyhedra Reference
+/// \defgroup PkgConvexDecomposition3 Convex Decomposition of Polyhedra Reference
 
 /*!
-\addtogroup PkgConvexDecomposition3Ref
-\cgalPkgDescriptionBegin{Convex Decomposition of Polyhedra,PkgConvexDecomposition3}
+\addtogroup PkgConvexDecomposition3
+\cgalPkgDescriptionBegin{Convex Decomposition of Polyhedra,PkgConvexDecomposition3Summary}
 \cgalPkgPicture{Convex_decomposition_3/fig/Convex_decomposition_3-teaser.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Peter Hachenberger}
 \cgalPkgDesc{This packages provides a function for decomposing a bounded polyhedron into convex sub-polyhedra. The decomposition yields \f$ O(r^2)\f$ convex pieces, where \f$ r\f$ is the number of edges, whose adjacent facets form an angle of more than 180 degrees with respect to the polyhedron's interior. This bound is worst-case optimal. }
-\cgalPkgManuals{Chapter_Convex_Decomposition_of_Polyhedra,PkgConvexDecomposition3Ref}
+\cgalPkgManuals{Chapter_Convex_Decomposition_of_Polyhedra,PkgConvexDecomposition3}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.5}
@@ -19,7 +19,7 @@
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Functions}
+## Functions ##
 - `CGAL::convex_decomposition_3(Nef_polyhedron_3& N)`
 
 */

@@ -1,22 +1,22 @@
-/// \defgroup PkgSearchStructuresRef dD Range and Segment Trees Reference
-/// \defgroup PkgSearchStructuresConcepts Concepts
-/// \ingroup PkgSearchStructuresRef
+/// \defgroup PkgRangeSegmentTreesD dD Range and Segment Trees Reference
+/// \defgroup PkgRangeSegmentTreesDConcepts Concepts
+/// \ingroup PkgRangeSegmentTreesD
 
-/// \defgroup PkgSearchStructuresTraitsClasses Traits Classes
-/// \ingroup PkgSearchStructuresRef
+/// \defgroup PkgRangeSegmentTreesDTraitsClasses Traits Classes
+/// \ingroup PkgRangeSegmentTreesD
 
-/// \defgroup PkgSearchStructuresSearchStructure Search Structures
-/// \ingroup PkgSearchStructuresRef
+/// \defgroup PkgRangeSegmentTreesDSearchStructure Search Structures
+/// \ingroup PkgRangeSegmentTreesD
 
 /*!
-\addtogroup PkgSearchStructuresRef
+\addtogroup PkgRangeSegmentTreesD
 \todo check generated documentation
-\cgalPkgDescriptionBegin{dD Range and Segment Trees,PkgSearchStructures}
+\cgalPkgDescriptionBegin{dD Range and Segment Trees,PkgRangeSegmentTreesDSummary}
 \cgalPkgPicture{segment_tree.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Gabriele Neyer}
 \cgalPkgDesc{%Range and segment trees allow to perform window queries on point sets, and to enumerate all ranges enclosing a query point. The provided data structures  are static and they are optimized for fast queries.}
-\cgalPkgManuals{Chapter_dD_Range_and_Segment_Trees,PkgSearchStructuresRef}
+\cgalPkgManuals{Chapter_dD_Range_and_Segment_Trees,PkgRangeSegmentTreesD}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{0.9}
@@ -35,23 +35,23 @@ and segment trees in the same data structure.
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 
 - `RangeSegmentTreeTraits_k`
 - `Sublayer`
 
-\cgalCRPSection{Traits Classes}
+## Traits Classes ##
 
-- `CGAL::Range_segment_tree_set_traits_2<R>`
-- `CGAL::Range_segment_tree_set_traits_3<R>`
-- `CGAL::Range_tree_map_traits_2<R,T>`
-- `CGAL::Range_tree_map_traits_3<R,T>`
-- `CGAL::Segment_tree_map_traits_2<R,T>`
-- `CGAL::Segment_tree_map_traits_3<R,T>`
+- `CGAL::Range_segment_tree_traits_set_2<R>`
+- `CGAL::Range_segment_tree_traits_set_3<R>`
+- `CGAL::Range_tree_traits_map_2<R,T>`
+- `CGAL::Range_tree_traits_map_3<R,T>`
+- `CGAL::Segment_tree_traits_map_2<R,T>`
+- `CGAL::Segment_tree_traits_map_3<R,T>`
 - `CGAL::tree_interval_traits`
 - `CGAL::tree_point_traits`
 
-\cgalCRPSection{Search Structure Classes}
+## Search Structure Classes ##
 
 - `CGAL::Range_tree_d<Data, Window, Traits>`
 - `CGAL::Range_tree_k<Traits>`

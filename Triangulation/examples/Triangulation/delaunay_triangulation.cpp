@@ -1,5 +1,4 @@
-#include <CGAL/config.h>
-#if defined(BOOST_GCC) && (__GNUC__ <= 4) && (__GNUC_MINOR__ < 4)
+#if defined(__GNUC__) && defined(__GNUC_MINOR__) && (__GNUC__ <= 4) && (__GNUC_MINOR__ < 4)
 
 #include <iostream>
 int main()
@@ -25,7 +24,7 @@ int main()
     { 100, 100, 100, 100, 100, 100, 100 }
   };
 
-  typedef CGAL::Delaunay_triangulation<CGAL::Epick_d< CGAL::Dimension_tag<7> > >      T;
+  typedef CGAL::Triangulation<CGAL::Epick_d< CGAL::Dimension_tag<7> > >      T;
   T dt(7);
 
   std::vector<T::Point> points;

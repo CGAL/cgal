@@ -32,7 +32,7 @@
 namespace CGAL {
 
 /*
-#include <CGAL/Intersections_2/Segment_2_Segment_2.h>
+#include <CGAL/Segment_2_Segment_2_intersection.h>
 template <class ForwardIterator, class OutputIterator, class R>
 OutputIterator
 si_brute_force(ForwardIterator first, ForwardIterator last,

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPartition2Ref
+\ingroup PkgPolygonPartitioning2
 
 \brief computes a partition of the polygon defined by the points in
 the range [`first`, `beyond`) into convex polygons. The
@@ -70,7 +70,7 @@ const Traits& traits = Default_traits);
 namespace CGAL {
 
 /*!
-\ingroup PkgPartition2Ref
+\ingroup PkgPolygonPartitioning2
 
 \brief computes a partition of the polygon defined 
 by the points in the range [`first`, `beyond`) into convex 
@@ -144,7 +144,7 @@ const Traits& traits = Default_traits);
 namespace CGAL {
 
 /*!
-\ingroup PkgPartition2Ref
+\ingroup PkgPolygonPartitioning2
 
 \brief computes a partition of the polygon defined
 by the points in the range [`first`, `beyond`) into convex
@@ -218,7 +218,7 @@ const Traits& traits = Default_traits);
 namespace CGAL {
 
 /*!
-\ingroup PkgPartition2Ref
+\ingroup PkgPolygonPartitioning2
 
 \brief computes a partition of the polygon defined 
 by the points in the range [`first`, `beyond`) into \f$ y\f$-monotone 

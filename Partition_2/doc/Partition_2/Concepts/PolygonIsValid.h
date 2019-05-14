@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgPartition2FunctionObjectConcepts
+\ingroup PkgPolygonPartitioning2FunctionObjectConcepts
 \cgalConcept
 
 Function object that determines if a sequence of points represents a 

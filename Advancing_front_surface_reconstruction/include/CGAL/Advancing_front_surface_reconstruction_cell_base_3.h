@@ -28,7 +28,7 @@
 namespace CGAL {
 
   /*!
-  \ingroup PkgAdvancingFrontSurfaceReconstructionRef
+  \ingroup PkgAdvancingFrontSurfaceReconstruction
 
   The class `Advancing_front_surface_reconstruction_cell_base_3` is the default
   cell type for the class  `Advancing_front_surface_reconstruction`.

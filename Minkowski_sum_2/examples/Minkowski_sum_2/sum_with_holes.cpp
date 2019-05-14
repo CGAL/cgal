@@ -3,6 +3,7 @@
 
 #include <fstream>
 
+#include <CGAL/basic.h>
 #include <CGAL/minkowski_sum_2.h>
 
 #include "bops_linear.h"

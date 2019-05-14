@@ -11,20 +11,20 @@ the geometric primitives used in the triangulation and some function
 object types for the required predicates on those primitives.
 
 It refines the concept
-`TriangulationTraits_2` from the \cgal \ref PkgTriangulation2Ref package. It redefines the
+`TriangulationTraits_2` from the \cgal \ref PkgTriangulation2 package. It redefines the
 geometric objects, predicates and constructions to work with
 point-offset pairs. In most cases the offsets will be (0,0) and the
 predicates from `TriangulationTraits_2` can be used
 directly. For efficiency reasons we maintain for each functor the
 version without offsets.
 
-\cgalRefines `TriangulationTraits_2`
+\cgalRefines ::TriangulationTraits_2
 In addition to the requirements described for the traits class
-`TriangulationTraits_2`, the geometric traits class of a
+::TriangulationTraits_2, the geometric traits class of a
 Periodic triangulation must fulfill the following
 requirements:
 
-\cgalHasModel `CGAL::Periodic_2_triangulation_traits_2`
+\cgalHasModel CGAL::Periodic_2_triangulation_traits_2
 
 \sa `TriangulationTraits_2`
 \sa `CGAL::Periodic_2_triangulation_2<Traits,Tds>`

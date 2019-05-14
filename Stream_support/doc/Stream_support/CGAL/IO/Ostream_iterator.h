@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStreamSupportRef
+\ingroup PkgIOstreams
 
 The class `Ostream_iterator` is an output iterator adaptor for the 
 output stream class `Stream` and value type `T`. 

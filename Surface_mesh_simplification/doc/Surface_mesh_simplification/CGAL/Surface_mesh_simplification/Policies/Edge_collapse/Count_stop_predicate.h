@@ -3,7 +3,7 @@ namespace CGAL {
 namespace Surface_mesh_simplification {
 
 /*!
-\ingroup PkgSurfaceMeshSimplificationRef
+\ingroup PkgSurfaceMeshSimplification
 
 The class `Count_stop_predicate` is a model for the `StopPredicate` concept,
 which returns `true` when the number of current edges drops below a certain threshold. 

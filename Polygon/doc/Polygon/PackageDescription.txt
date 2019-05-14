@@ -1,20 +1,20 @@
-/// \defgroup PkgPolygon2Ref 2D Polygon Reference
+/// \defgroup PkgPolygon2 2D Polygon Reference
 
 /// \defgroup PkgPolygon2Concepts Concepts
-/// \ingroup PkgPolygon2Ref
+/// \ingroup PkgPolygon2
 
 /// \defgroup PkgPolygon2Functions Global Functions
-/// \ingroup PkgPolygon2Ref
+/// \ingroup PkgPolygon2
 
 /*!
-\addtogroup PkgPolygon2Ref
+\addtogroup PkgPolygon2
 
-\cgalPkgDescriptionBegin{2D Polygons,PkgPolygon2}
+\cgalPkgDescriptionBegin{2D Polygons,PkgPolygon2Summary}
 \cgalPkgPicture{polygon.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Geert-Jan Giezeman and Wieger Wesselink}
 \cgalPkgDesc{This package provides a 2D polygon class and operations on sequences of points, like bounding box, extremal points, signed area, simplicity and convexity test, orientation, and point location.  The demo includes operations on polygons, such as computing a convex  partition, and the straight skeleton.}
-\cgalPkgManuals{Chapter_2D_Polygon,PkgPolygon2Ref}
+\cgalPkgManuals{Chapter_2D_Polygon,PkgPolygon2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{0.9}
@@ -24,23 +24,23 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-\cgalCRPSection{Assertions}
+## Assertions ##
 
 The assertion flags for the polygons and polygon operations use 
 `POLYGON` in their names (<I>e.g.</I>, `CGAL_POLYGON_NO_ASSERTIONS`).
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 - `PolygonTraits_2`
 - `GeneralPolygonWithHoles_2`
 
-\cgalCRPSection{Classes}
+## Classes ##
 - `CGAL::Polygon_2<PolygonTraits_2, Container>`
 - `CGAL::Polygon_with_holes_2<PolygonTraits_2,Container>`
 - `CGAL::General_polygon_with_holes_2<General_polygon>`
 
-\cgalCRPSection{Global Functions}
+## Global Functions ##
 - `CGAL::area_2()`
 - `CGAL::bottom_vertex_2()`
 - `CGAL::bounded_side_2()`

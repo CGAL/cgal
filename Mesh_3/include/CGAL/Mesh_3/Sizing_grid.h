@@ -301,7 +301,7 @@ private:
 
   
   // trilinear interpolation of size
-  // https://en.wikipedia.org/wiki/Trilinear_interpolation
+  // http://en.wikipedia.org/wiki/Trilinear_interpolation
   FT size_trilinear(const Point& query) const
   {
     FT px = query.x();

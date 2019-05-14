@@ -181,7 +181,7 @@ MainWindow::processInput(CGAL::Object o)
 
 /* 
  *  Qt Automatic Connections
- *  https://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
+ *  http://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
  * 
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"

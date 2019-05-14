@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgCircularKernel3AlgebraicConcepts
+\ingroup PkgSphericalKernel3AlgebraicConcepts
 \cgalConcept
 
 The `AlgebraicKernelForSpheres` concept is meant to provide the 

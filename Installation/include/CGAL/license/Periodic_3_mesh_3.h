@@ -48,8 +48,8 @@
 
 #  if defined(CGAL_LICENSE_WARNING)
      CGAL_pragma_warning("\nThe macro CGAL_PERIODIC_3_MESH_3_COMMERCIAL_LICENSE is not defined."
-                          "\nYou use the CGAL 3D Periodic Mesh Generation package under "
-                          "the terms of the GPLv3+.")
+                         "\nYou use the CGAL 3D Periodic Mesh Generation package under "
+                         "the terms of the GPLv3+.")
 #  endif // CGAL_LICENSE_WARNING
 
 #  ifdef CGAL_LICENSE_ERROR

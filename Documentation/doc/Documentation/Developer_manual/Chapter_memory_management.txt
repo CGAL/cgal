@@ -20,7 +20,7 @@ We adopted the definition of the Standard \cpp
 allocator \cgalCite{cgal:ansi-is14882-98}. The `std::allocator` is the
 only predefined and required allocator imposed by [\cpp] on all \cpp
 compiler implementations. The exact specification can also be found at
-<A HREF="https://en.wikipedia.org/wiki/Allocator_(C++)"><TT>https://en.wikipedia.org/wiki/Allocator_(C++)</TT></A>.
+<A HREF="http://en.wikipedia.org/wiki/Allocator_(C++)"><TT>http://en.wikipedia.org/wiki/Allocator_(C++)</TT></A>.
 
 Objects of type `std::allocator<T>` can be used to obtain small, typed 
 chunks of memory to be used, for example, as static members of a class. 

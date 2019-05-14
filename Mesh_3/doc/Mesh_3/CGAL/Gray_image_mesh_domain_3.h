@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh3Domains
+\ingroup PkgMesh_3Domains
 
 \deprecated The class template `Gray_image_mesh_domain_3` is deprecated
 since CGAL-4.13, in favor of the class template `Labeled_mesh_domain_3` and

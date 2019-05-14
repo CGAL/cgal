@@ -26,7 +26,7 @@ analysis. Based on the results of the article
 different parts of this singular ridge curve as well as umbilics on a
 surface given as a triangulated surface mesh. Differential quantities
 associated to the mesh vertices are assumed to be given for these
-algorithms; such quantities may be computed by the package \ref PkgJetFitting3.
+algorithms; such quantities may be computed by the package \ref PkgJet_fitting_3Summary.
 
 
 Note that this package needs the third party library \ref thirdpartyEigen for linear algebra operations.
@@ -57,7 +57,7 @@ induced by the ambient Euclidean space, and \f$ dk_1\f$, \f$ dk_2\f$ the
 gradients of the principal curvatures. Ridges, illustrated in
 \cgalFigureRef{ellipsoidridges} for the standard ellipsoid, are defined by:
 
-<B>Definition.</B> \anchor defridgeextrema
+<B>Definition.</B> <EM>\anchor defridgeextrema
 A non umbilical point is called
 <UL>
 <LI>a max ridge point, if the <I>extremality coefficient</I> \f$ b_0=\langle
@@ -67,6 +67,7 @@ dk_1,d_1 \rangle\f$ vanishes, i.e.\ \f$ b_0=0\f$.
 \f$ b_3=\langle dk_2,d_2 \rangle\f$ vanishes, i.e.\ \f$ b_3=0\f$
 \cgalFootnote{Notations \f$ b_0, b_3\f$ comes from Equation \ref eqmonge }.
 </UL>
+</EM>
 
 The previous characterization of ridges involves third-order
 differential properties. Using fourth-order differential quantities, a
@@ -112,16 +113,20 @@ The Taylor expansion of \f$ k_1\f$ (resp. \f$ k_2\f$) along the max
 by \f$ x\f$ (resp. \f$ y\f$) are:
 
 \anchor eqtaylor_along_line
-\f{equation}{
+\f[
+\begin{equation}
 k_1(x) = k_1 + b_0x + \frac{P_1}{2(k_1-k_2)}x^2 + ... , \quad \quad \quad
 P_1= 3b_1^2+(k_1-k_2)(c_0-3k_1^3).
-\f}
+\end{equation}
+\f]
 
 \anchor eqtaylor_along_red_line
-\f{equation}{
+\f[
+\begin{equation}
 k_2(y) = k_2 + b_3y + \frac{P_2}{2(k_2-k_1)}y^2 + ... , \quad \quad \quad
 P_2= 3b_2^2+(k_2-k_1)(c_4-3k_2^3).
-\f}
+\end{equation}
+\f]
 
 Notice also that switching from one to the other of the two
 afore-mentioned coordinate systems reverts the sign of all the odd
@@ -399,7 +404,7 @@ neighborhood.
 \subsection Ridges_3Exampleprogram Example Program
 
 The following program computes ridges and umbilics from an off
-file.\cgalFootnote{Model data may be downloaded via ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/Ridges_3_datafiles.tgz . The mechanical part model has been provided courtesy of Dassault System to produce \cgalFigureRef{figmechanical_crest_filteredintro}, due to copyright issues the available model is not the same, it is provided by the AIM\@SHAPE Shape Repository.} It uses the package \ref PkgJetFitting3 to estimate the differential
+file.\cgalFootnote{Model data may be downloaded via ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/Ridges_3_datafiles.tgz . The mechanical part model has been provided courtesy of Dassault System to produce \cgalFigureRef{figmechanical_crest_filteredintro}, due to copyright issues the available model is not the same, it is provided by the AIM\@SHAPE Shape Repository.} It uses the package \ref PkgJet_fitting_3Summary to estimate the differential
 quantities. 
 The default output file gives rough data for visualization purpose, a
 verbose output file may also be asked for. Parameters are

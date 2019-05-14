@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMinkowskiSum2Ref
+\ingroup PkgMinkowskiSum2
 
 The `Polygon_nop_decomposition_2` class implements a convex
 decomposition of a polygon, which merely passes the input polygon to

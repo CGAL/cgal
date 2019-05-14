@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgSurfaceMeshSegmentationConcepts
+\ingroup PkgSurfaceSegmentationConcepts
 \cgalConcept
 
 The concept `SegmentationGeomTraits` describes the set of requirements

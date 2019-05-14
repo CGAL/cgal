@@ -4,15 +4,20 @@
 
 project( Surface_mesh_shortest_path_Tests )
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 2.8.11)
 
 
 find_package(CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
 
-  include(${CGAL_USE_FILE})
-  include_directories (BEFORE "include")
+  include( ${CGAL_USE_FILE} )
+
+  include( CGAL_CreateSingleSourceCGALProgram )
+
+  include_directories (BEFORE "../../include")
+
+    include_directories (BEFORE "include")
 
   create_single_source_cgal_program( "Surface_mesh_shortest_path_test_1.cpp" )
   create_single_source_cgal_program( "Surface_mesh_shortest_path_test_2.cpp" )

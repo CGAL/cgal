@@ -61,7 +61,7 @@ public:
       const Point_3& p = segment.source();
       const Point_3& q = segment.target();
 
-      return Intersections::internal::do_intersect_bbox_segment_aux
+      return internal::do_intersect_bbox_segment_aux
              <double,
              true, // bounded at t=0
              true, // bounded at t=1
@@ -79,7 +79,7 @@ public:
       const Point_3& p = ray.source();
       const Point_3& q = ray.second_point();
 
-      return Intersections::internal::do_intersect_bbox_segment_aux
+      return internal::do_intersect_bbox_segment_aux
              <double,
              true, // bounded at t=0
              false,// not bounded at t=1

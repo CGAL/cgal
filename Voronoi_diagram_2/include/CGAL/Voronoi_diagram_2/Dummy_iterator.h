@@ -48,6 +48,9 @@ class Dummy_iterator : public Emptyset_iterator
   typedef std::ptrdiff_t                  difference_type;
   typedef std::bidirectional_iterator_tag iterator_category;
 
+  Dummy_iterator() {}
+  Dummy_iterator(const Dummy_iterator&) {}
+
   template< class T >
   Self& operator=(const T&) { return *this; }
 

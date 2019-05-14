@@ -114,9 +114,9 @@ struct Tester {
 };
 
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K_e_i;
+struct K_e_i : public CGAL::Exact_predicates_inexact_constructions_kernel {};
 #if CGAL_USE_CORE || CGAL_USE_LEDA
-typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt K_e_e;
+struct K_e_e : public CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt {};
 #endif
 
 int main()

@@ -8,5 +8,4 @@
 \example Surface_mesh_simplification/edge_collapse_surface_mesh.cpp
 \example Surface_mesh_simplification/edge_collapse_all_short_edges.cpp
 \example Surface_mesh_simplification/edge_collapse_bounded_normal_change.cpp
-\example Surface_mesh_simplification/edge_collapse_visitor_surface_mesh.cpp
 */

@@ -488,10 +488,10 @@ namespace CircularFunctors {
     }
 
     typename Intersection_traits<CK, typename CK::Line_2, typename CK::Line_2>::result_type
-      v = CGAL::Intersections::internal::intersection(a1.supporting_line(), a2.supporting_line(), CK());
+      v = CGAL::internal::intersection(a1.supporting_line(), a2.supporting_line(), CK());
     if(!v) return res;
 
-    const Point_2 *pt = CGAL::Intersections::internal::intersect_get<Point_2>(v);
+    const Point_2 *pt = CGAL::internal::intersect_get<Point_2>(v);
     if(pt == NULL) return res;
     Circular_arc_point_2 intersect_point = Circular_arc_point_2(*pt);
     //      (Root_for_circles_2_2(Root_of_2(pt->x()),Root_of_2(pt->y())));

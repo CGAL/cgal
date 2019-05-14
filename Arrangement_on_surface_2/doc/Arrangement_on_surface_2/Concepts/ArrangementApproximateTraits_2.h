@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgArrangementOnSurface2ConceptsTraits
+\ingroup PkgArrangement2ConceptsTraits
 \cgalConcept
 
 The concept `ArrangementApproximateTraits_2` refines the basic traits concept

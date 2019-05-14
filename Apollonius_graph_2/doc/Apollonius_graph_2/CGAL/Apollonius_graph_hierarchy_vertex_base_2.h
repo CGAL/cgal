@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgApolloniusGraph2Ref
+\ingroup PkgApolloniusGraph2
 
 The class `Apollonius_graph_hierarchy_vertex_base_2` provides a model for the 
 `ApolloniusGraphHierarchyVertexBase_2` concept, which is the 

@@ -20,11 +20,15 @@
 //
 // Warning: this file is generated, see include/CGAL/licence/README.md
 
+
 #ifndef CGAL_LICENSE_INTERVAL_SKIP_LIST_H
 #define CGAL_LICENSE_INTERVAL_SKIP_LIST_H
 
 #include <CGAL/config.h>
 #include <CGAL/license.h>
+
+
+
 
 #ifdef CGAL_INTERVAL_SKIP_LIST_COMMERCIAL_LICENSE
 
@@ -38,8 +42,8 @@
 
 #    ifdef CGAL_LICENSE_ERROR
 #      error "Your commercial license for CGAL does not cover this release \
-              of the Interval Skip List package. \
-              You get this error, as you defined CGAL_LICENSE_ERROR."
+of the Interval Skip List package. \
+You get this error, as you defined CGAL_LICENSE_ERROR."
 #    endif // CGAL_LICENSE_ERROR
 
 #  endif // CGAL_INTERVAL_SKIP_LIST_COMMERCIAL_LICENSE < CGAL_RELEASE_DATE
@@ -54,10 +58,10 @@
 
 #  ifdef CGAL_LICENSE_ERROR
 #    error "The macro CGAL_INTERVAL_SKIP_LIST_COMMERCIAL_LICENSE is not defined.\
-            You use the CGAL Interval Skip List package under the terms of \
-            the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
+ You use the CGAL Interval Skip List package under the terms of \
+the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
 #  endif // CGAL_LICENSE_ERROR
 
 #endif // no CGAL_INTERVAL_SKIP_LIST_COMMERCIAL_LICENSE
 
-#endif // CGAL_LICENSE_INTERVAL_SKIP_LIST_H
+#endif // CGAL_LICENSE_CHECK_INTERVAL_SKIP_LIST_H

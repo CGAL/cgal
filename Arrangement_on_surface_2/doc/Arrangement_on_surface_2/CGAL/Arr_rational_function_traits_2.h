@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-  \ingroup PkgArrangementOnSurface2TraitsClasses
+  \ingroup PkgArrangement2TraitsClasses
 
   The traits class `Arr_rational_function_traits_2` is a model of the `ArrangementTraits_2` 
   concept. It handles bounded and unbounded arcs of rational functions, 

@@ -4,7 +4,7 @@
 
 project( Surface_mesh_Examples )
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 2.8.11)
 
 if(POLICY CMP0053)
   # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
@@ -25,6 +25,12 @@ if(CGAL_Qt5_FOUND)
 endif()
 
 if ( CGAL_FOUND )
+
+  include( ${CGAL_USE_FILE} )
+
+  include( CGAL_CreateSingleSourceCGALProgram )
+
+  include_directories (BEFORE "../../include")
 
   create_single_source_cgal_program( "sm_derivation.cpp" )
   create_single_source_cgal_program( "sm_join.cpp" )

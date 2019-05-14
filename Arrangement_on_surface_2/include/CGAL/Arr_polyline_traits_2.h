@@ -106,7 +106,6 @@ public:
   typedef typename Base::Parameter_space_in_y_2       Parameter_space_in_y_2;
   typedef typename Base::Compare_x_on_boundary_2      Compare_x_on_boundary_2;
   typedef typename Base::Compare_x_at_limit_2         Compare_x_at_limit_2;
-  typedef typename Base::Compare_x_near_boundary_2    Compare_x_near_boundary_2;
   typedef typename Base::Compare_x_near_limit_2       Compare_x_near_limit_2;
   typedef typename Base::Compare_y_on_boundary_2      Compare_y_on_boundary_2;
   typedef typename Base::Compare_y_near_boundary_2    Compare_y_near_boundary_2;

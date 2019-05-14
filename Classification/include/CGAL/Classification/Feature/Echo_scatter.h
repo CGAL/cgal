@@ -85,8 +85,6 @@ public:
     : grid (grid)
   {
     this->set_name ("echo_scatter");
-    if (radius_neighbors < 0.)
-      radius_neighbors = 3.f * grid.resolution();
 
     if (grid.width() * grid.height() > input.size())
       echo_scatter.resize(input.size(), compressed_float(0));

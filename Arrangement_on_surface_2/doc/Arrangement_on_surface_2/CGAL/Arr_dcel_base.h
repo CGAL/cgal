@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangementOnSurface2DCEL
+\ingroup PkgArrangement2DCEL
 
 \anchor arr_refarr_dcel_base 
 

@@ -52,7 +52,7 @@
 
 namespace CGAL {
 
-/// \ingroup PkgSurfaceMeshDeformationRef
+/// \ingroup PkgSurfaceMeshDeformation
 ///@brief Deformation algorithm type
 enum Deformation_algorithm_tag
 {
@@ -173,7 +173,7 @@ struct SC_on_the_fly_pmap: public Vertex_point_map{
 /// @endcond
 
  ///
- /// \ingroup PkgSurfaceMeshDeformationRef
+ /// \ingroup PkgSurfaceMeshDeformation
  /// @brief Class providing the functionalities for deforming a triangulated surface mesh
  ///
  /// @tparam TM a model of `HalfedgeGraph`

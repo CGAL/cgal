@@ -252,7 +252,7 @@ inline int square_free_factorize_for_regular_polynomial_
        year = {1976},
        pages = {26--35},
        location = {Yorktown Heights, New York, United States},
-       doi = {https://dl.acm.org/citation.cfm?doid=800205.806320},
+       doi = {http://doi.acm.org/10.1145/800205.806320},
        publisher = {ACM Press},
        address = {New York, NY, USA},
        }

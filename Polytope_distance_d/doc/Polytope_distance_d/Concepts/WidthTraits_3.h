@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgPolytopeDistanceDConcepts
+\ingroup PkgOptimalDistancesConcepts
 \cgalConcept
 
 This concept defines the requirements for traits classes of 

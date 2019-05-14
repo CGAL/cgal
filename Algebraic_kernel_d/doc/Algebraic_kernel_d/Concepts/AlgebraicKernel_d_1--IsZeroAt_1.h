@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicKernelDConceptsUni
+\ingroup PkgAlgebraicKerneldConceptsUni
 \cgalConcept
 
 Computes whether an `AlgebraicKernel_d_1::Polynomial_1` 

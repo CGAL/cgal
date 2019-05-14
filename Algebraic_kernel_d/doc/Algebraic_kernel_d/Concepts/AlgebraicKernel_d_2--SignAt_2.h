@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicKernelDConceptsBi
+\ingroup PkgAlgebraicKerneldConceptsBi
 \cgalConcept
 
 Computes the sign of a bivariate polynomial 

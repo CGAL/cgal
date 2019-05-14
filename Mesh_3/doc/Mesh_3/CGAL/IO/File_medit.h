@@ -1,6 +1,6 @@
 namespace CGAL {
 
-/// \ingroup PkgMesh3IOFunctions
+/// \ingroup PkgMesh_3IOFunctions
 ///
 /// \brief Outputs a mesh complex to the medit (`.mesh`) file format.
 ///        See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.

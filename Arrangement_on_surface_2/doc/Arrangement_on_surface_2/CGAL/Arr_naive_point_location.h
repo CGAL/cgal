@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangementOnSurface2PointLocation
+\ingroup PkgArrangement2PointLocation
 
 \anchor arr_refnaive_pl 
 

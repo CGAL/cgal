@@ -65,6 +65,11 @@ public:
     CGAL_exactness_precondition( !(CGAL::is_negative(B_)) );
   }
 
+  Sqrt_extension_2(const Sqrt_extension_2<NT>& other)
+    : a0_(other.a0_), a1_(other.a1_), a2_(other.a2_),
+      a3_(other.a3_), A_(other.A_), B_(other.B_) {}
+
+
   NT a() const { return a0_; }
   NT b() const { return a1_; }
   NT c() const { return a2_; }

@@ -41,8 +41,6 @@ class Image
   
   std::size_t m_width;
   std::size_t m_height;
-  std::size_t m_depth;
-  
   boost::shared_ptr<Vector> m_raw;
   boost::shared_ptr<Map> m_sparse;
   Type m_default;
@@ -54,19 +52,18 @@ class Image
   
 public:
 
-  Image () : m_width(0), m_height(0), m_depth(0), m_raw (NULL)
+  Image () : m_width(0), m_height(0), m_raw (NULL)
   {
   }
   
-  Image (std::size_t width, std::size_t height, std::size_t depth = 1)
-    : m_width (width)
-    , m_height (height)
-    , m_depth (depth)
+  Image (std::size_t width, std::size_t height)
+    : m_width (width),
+      m_height (height)
   {
-    if (m_width * m_height * m_depth > 0)
+    if (m_width * m_height > 0)
     {
-      if (m_width * m_height * m_depth < CGAL_CLASSIFICATION_IMAGE_SIZE_LIMIT)
-        m_raw = boost::shared_ptr<Vector> (new Vector(m_width * m_height * m_depth));
+      if (m_width * m_height < CGAL_CLASSIFICATION_IMAGE_SIZE_LIMIT)
+        m_raw = boost::shared_ptr<Vector> (new Vector(m_width * m_height));
       else
         m_sparse = boost::shared_ptr<Map> (new Map());
     }
@@ -88,41 +85,33 @@ public:
     m_sparse = other.m_sparse;
     m_width = other.width();
     m_height = other.height();
-    m_depth = other.depth();
     return *this;
   }
   
   std::size_t width() const { return m_width; }
   std::size_t height() const { return m_height; }
-  std::size_t depth() const { return m_depth; }
 
-  inline std::size_t coord (const std::size_t& x, const std::size_t& y, const std::size_t& z) const
-  {
-    return z + (m_depth * y) + (m_depth * m_height * x);
-  }
-
-  Type& operator() (const std::size_t& x, const std::size_t& y, const std::size_t& z = 0)
+  Type& operator() (const std::size_t& x, const std::size_t& y)
   {
     if (m_raw == boost::shared_ptr<Vector>()) // sparse case
     {
-      typename Map::iterator inserted = m_sparse->insert
-        (std::make_pair (coord(x,y,z), Type())).first;
+      typename Map::iterator inserted = m_sparse->insert (std::make_pair (x * m_height + y, Type())).first;
       return inserted->second;
     }
 
-    return (*m_raw)[coord(x,y,z)];
+    return (*m_raw)[x * m_height + y];
   }
-  const Type& operator() (const std::size_t& x, const std::size_t& y, const std::size_t& z = 0) const
+  const Type& operator() (const std::size_t& x, const std::size_t& y) const
   {
     if (m_raw == boost::shared_ptr<Vector>()) // sparse case
     {
-      typename Map::iterator found = m_sparse->find (coord(x,y,z));
+      typename Map::iterator found = m_sparse->find (x * m_height + y);
       if (found != m_sparse->end())
         return found->second;
       return m_default;
     }
 
-    return (*m_raw)[coord(x,y,z)];
+    return (*m_raw)[x * m_height + y];
   }
   
 

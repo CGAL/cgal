@@ -58,10 +58,6 @@ public:
 template < class T >
 class In_place_list_base {
 public:
-  In_place_list_base()
-    : next_link(NULL), prev_link(NULL)
-  {}
-
   T* next_link;        // forward pointer
   T* prev_link;        // backwards pointer
   //friend  class internal::In_place_list_iterator<T, Alloc>;

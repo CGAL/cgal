@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicKernelDConceptsBi
+\ingroup PkgAlgebraicKerneldConceptsBi
 \cgalConcept
 
 Computes the real zero-dimensional solutions of a bivariate polynomial system. 

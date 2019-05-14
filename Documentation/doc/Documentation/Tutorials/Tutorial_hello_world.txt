@@ -318,7 +318,7 @@ This function only compiles if the `operator<(..)` is defined for the type used 
 and we say that the type must be a model of `LessThanComparable`.
 
 An example for a concept with required free functions is the `HalfedgeListGraph` in the
-\cgal package \ref PkgBGL. In order to be a model of `HalfedgeListGraph` a class `G` 
+\cgal package \ref PkgBGLSummary. In order to be a model of `HalfedgeListGraph` a class `G` 
 there must be a global function `halfedges(const G&)`, etc.
 
 An example for a concept with a required traits class is `InputIterator`.

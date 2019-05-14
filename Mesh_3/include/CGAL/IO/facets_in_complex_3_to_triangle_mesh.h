@@ -54,7 +54,7 @@ void resize(Polygon& p, std::size_t size)
 template <std::size_t N, class INT>
 void resize(CGAL::cpp11::array<INT, N>&, std::size_t CGAL_assertion_code(size))
 {
-  CGAL_assertion(size == N);
+  CGAL_assertion(size >= N);
 }
 
 template<class C3T3, class PointContainer, class FaceContainer>
@@ -153,7 +153,7 @@ void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
 
 } // end namespace Mesh_3
 
-//! \ingroup PkgMesh3Functions
+//! \ingroup PkgMesh_3Functions
 //!
 //! \brief builds a `TriangleMesh` from the surface facets, with a consistent orientation
 //!        at the interface of two subdomains.

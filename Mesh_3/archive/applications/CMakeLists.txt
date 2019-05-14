@@ -4,7 +4,7 @@
 
 project( Mesh_3_applications )
 
-CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
 
 include_directories(../include)
 
@@ -12,6 +12,8 @@ include_directories(../include)
 find_package(CGAL COMPONENTS ImageIO)
 
 if ( CGAL_FOUND )
+  include( ${CGAL_USE_FILE} )
+
   find_package( Boost COMPONENTS program_options filesystem system)
 
   if ( Boost_FOUND AND Boost_VERSION GREATER 103400)
@@ -24,6 +26,8 @@ if ( CGAL_FOUND )
   else()
     message(FATAL_ERROR "This program requires Boost >= 1.34.1")
   endif()
+
+  include( CGAL_CreateSingleSourceCGALProgram )
 
 # Compilable examples
   create_single_source_cgal_program( "mesh_implicit_domains.cpp" "../examples/Mesh_3/implicit_functions.cpp" )

@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSegmentDelaunayGraphLinf2Ref
+\ingroup PkgSDGLinf
 
 This class is equivalent to the `Segment_Delaunay_graph_hierarchy_2` class,
 but it uses `Segment_Delaunay_graph_Linf_2<Gt,DS>`

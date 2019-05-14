@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgCGALIpeletsRef
+\ingroup PkgCGALIpelets
 The registration of a new ipelet can be done using the macro command `CGAL_IPELET`.
 Taking as a parameter the name of the class defining the new ipelet, that macro must be placed in the source
 file after the class definition. 
@@ -9,7 +9,7 @@ file after the class definition.
 namespace CGAL {
 
 /*!
-\ingroup PkgCGALIpeletsRef
+\ingroup PkgCGALIpelets
 
 `Ipelet_base` is an abstract base class for defining an ipelet. 
 The only function that needs to be defined in a derived class is 
@@ -198,7 +198,7 @@ The returned output iterator will accept assignments from objects of types
 `Polygon_2` or `Segment_2` or `Point_2`, it decomposes them in 
 objects of type `Point_2` and assigns them to `it`. 
 For more details on the returned output iterator refer to the Boost library 
-<A HREF="https://www.boost.org/doc/libs/1_39_0/libs/iterator/doc/function_output_iterator.html">documentation</A>. 
+<A HREF="http://www.boost.org/doc/libs/1_39_0/libs/iterator/doc/function_output_iterator.html">documentation</A>. 
 
 */ 
 template<class OutputIterator> 
@@ -211,7 +211,7 @@ The returned output iterator will accept assignments from objects of types
 `Polygon_2` or `Segment_2`, it decomposes them in objects of type `Segment_2` 
 and assigns them to `it`. 
 For more details on the returned output iterator refer to the Boost library 
-<A HREF="https://www.boost.org/doc/libs/1_39_0/libs/iterator/doc/function_output_iterator.html">documentation</A>. 
+<A HREF="http://www.boost.org/doc/libs/1_39_0/libs/iterator/doc/function_output_iterator.html">documentation</A>. 
 
 */ 
 template<class OutputIterator> 

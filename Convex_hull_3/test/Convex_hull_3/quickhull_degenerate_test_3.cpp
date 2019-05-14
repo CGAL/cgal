@@ -1,5 +1,5 @@
 #include <CGAL/Exact_rational.h>
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 
 #include <fstream>
@@ -12,7 +12,7 @@
 
 
 typedef CGAL::Exact_rational Exact_rational;
-typedef CGAL::Simple_cartesian<Exact_rational>  R;
+typedef CGAL::Cartesian< Exact_rational >     R;
 typedef CGAL::Convex_hull_traits_3<R>           Traits;
 typedef Traits::Polygon_mesh                    Polyhedron_3;
 

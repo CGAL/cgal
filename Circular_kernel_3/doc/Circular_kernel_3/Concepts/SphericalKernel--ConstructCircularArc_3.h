@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgCircularKernel3GeometricConcepts
+\ingroup PkgSphericalKernel3GeometricConcepts
 \cgalConcept
 
 The circular arc constructed from a circle, a source, and a target, is 

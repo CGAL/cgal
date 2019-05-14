@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh3Functions
+\ingroup PkgMesh_3Functions
 
 The function `refine_mesh_3()` is a 3D
 mesh generator. It produces simplicial meshes which discretize
@@ -161,7 +161,7 @@ void refine_mesh_3(C3T3& c3t3,
 namespace parameters {
 
   /*!
-  \ingroup PkgMesh3Parameters
+  \ingroup PkgMesh_3Parameters
 
   The function `parameters::manifold()` is used to drive the
   meshing algorithm for surfaces.
@@ -181,7 +181,7 @@ namespace parameters {
   parameters::internal::Manifold_options manifold();
 
   /*!
-  \ingroup PkgMesh3Parameters
+  \ingroup PkgMesh_3Parameters
 
   The function `parameters::non_manifold()` is used to drive the
   meshing algorithm for surfaces.
@@ -196,7 +196,7 @@ namespace parameters {
   parameters::internal::Manifold_options non_manifold();
 
   /*!
-  \ingroup PkgMesh3Parameters
+  \ingroup PkgMesh_3Parameters
 
   The function `parameters::manifold_with_boundary()` is used to drive the
   meshing algorithm for surfaces.
@@ -216,7 +216,7 @@ namespace parameters {
   parameters::internal::Manifold_options manifold_with_boundary();
 
 /*!
-\ingroup PkgMesh3Parameters
+\ingroup PkgMesh_3Parameters
 
 The function `parameters::exude()` allows the user to trigger a call to `exude_mesh_3()` in the
 `make_mesh_3()` and `refine_mesh_3()` mesh generation functions.
@@ -254,7 +254,7 @@ parameters::internal::Exude_options exude(
   double parameters::sliver_bound = 0);
 
 /*!
-\ingroup PkgMesh3Parameters
+\ingroup PkgMesh_3Parameters
 
 The function `parameters::features()` provides a value of internal type `Features`
 to specify if 0 and 1-dimensional features have to be taken into account.
@@ -274,7 +274,7 @@ if domain is a model of the refined concept `MeshDomainWithFeatures_3`.
 parameters::internal::Features_options features();
 
 /*!
-\ingroup PkgMesh3Parameters
+\ingroup PkgMesh_3Parameters
 
 The function `parameters::lloyd()` allows the user to trigger a call of
 `lloyd_optimize_mesh_3()` in the mesh generation functions
@@ -317,7 +317,7 @@ double parameters::freeze_bound = 0.01,
 bool parameters::do_freeze=true);
 
 /*!
-\ingroup PkgMesh3Parameters
+\ingroup PkgMesh_3Parameters
 
 The function `parameters::no_exude()` allows the user to tell the mesh generation functions
 `make_mesh_3()` and `refine_mesh_3()` that no exudation must be done.
@@ -340,7 +340,7 @@ C3t3 c3t3 = make_mesh_3<c3t3>(domain,
 parameters::internal::Exude_options no_exude();
 
 /*!
-\ingroup PkgMesh3Parameters
+\ingroup PkgMesh_3Parameters
 
 The function `parameters::no_features()` allows the user to prevent the handling
 of 0 and 1-dimensional features. This is useful when the
@@ -360,7 +360,7 @@ to take into account 0 and 1-dimensional input features.
 parameters::internal::Features_options no_features();
 
 /*!
-\ingroup PkgMesh3Parameters
+\ingroup PkgMesh_3Parameters
 
 The function `parameters::no_lloyd()` allows the user to tell the mesh generation functions
 `make_mesh_3()` and `refine_mesh_3()` that no lloyd optimization must be done.
@@ -383,7 +383,7 @@ C3t3 c3t3 = make_mesh_3<c3t3>(domain,
 parameters::internal::Lloyd_options no_lloyd();
 
 /*!
-\ingroup PkgMesh3Parameters
+\ingroup PkgMesh_3Parameters
 
 The function `parameters::no_odt()` allows the user to tell the mesh generation functions
 `make_mesh_3()` and `refine_mesh_3()` that no odt optimization must be done.
@@ -406,7 +406,7 @@ C3t3 c3t3 = make_mesh_3<c3t3>(domain,
 parameters::internal::Odt_options no_odt();
 
 /*!
-\ingroup PkgMesh3Parameters
+\ingroup PkgMesh_3Parameters
 
 The function `parameters::no_perturb()` allows the user to tell mesh generation global functions
 `make_mesh_3()` and `refine_mesh_3()` that no perturbation must be done.
@@ -429,7 +429,7 @@ C3t3 c3t3 = make_mesh_3<c3t3>(domain,
 parameters::internal::Perturb_options no_perturb();
 
 /*!
-\ingroup PkgMesh3Parameters
+\ingroup PkgMesh_3Parameters
 
 The function `parameters::odt()` allows the user to trigger a call to
 `CGAL::odt_optimize_mesh_3()` in
@@ -471,7 +471,7 @@ double parameters::freeze_bound = 0.01,
 bool parameters::do_freeze=true);
 
 /*!
-\ingroup PkgMesh3Parameters
+\ingroup PkgMesh_3Parameters
 
 The function `parameters::perturb()` allows the user to trigger a call to
 `perturb_mesh_3()` in

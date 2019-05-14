@@ -163,7 +163,6 @@ void isotropic_remeshing(const FaceRange& faces
     boost::is_default_param(get_param(np, internal_np::projection_functor));
 
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
-  GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
 
   typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
   VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
@@ -176,18 +175,18 @@ void isotropic_remeshing(const FaceRange& faces
   typedef typename boost::lookup_named_param_def <
       internal_np::edge_is_constrained_t,
       NamedParameters,
-      Constant_property_map<edge_descriptor, bool> // default (no constraint pmap)
+      internal::No_constraint_pmap<edge_descriptor>//default
     > ::type ECMap;
-  ECMap ecmap = choose_param(get_param(np, internal_np::edge_is_constrained),
-                             Constant_property_map<edge_descriptor, bool>(false));
+  ECMap ecmap = choose_param(get_param(np, internal_np::edge_is_constrained)
+                            , internal::No_constraint_pmap<edge_descriptor>());
 
   typedef typename boost::lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
       NamedParameters,
-      Constant_property_map<vertex_descriptor, bool> // default (no constraint pmap)
+      internal::No_constraint_pmap<vertex_descriptor>//default
     > ::type VCMap;
   VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
-                             Constant_property_map<vertex_descriptor, bool>(false));
+                             internal::No_constraint_pmap<vertex_descriptor>());
 
   bool protect = choose_param(get_param(np, internal_np::protect_constraints), false);
   typedef typename boost::lookup_named_param_def <
@@ -228,7 +227,7 @@ void isotropic_remeshing(const FaceRange& faces
 #endif
 
   typename internal::Incremental_remesher<PM, VPMap, GT, ECMap, VCMap, FPMap, FIMap>
-    remesher(pmesh, vpmap, gt, protect, ecmap, vcmap, fpmap, fimap, need_aabb_tree);
+    remesher(pmesh, vpmap, protect, ecmap, vcmap, fpmap, fimap, need_aabb_tree);
   remesher.init_remeshing(faces);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -309,7 +308,7 @@ void isotropic_remeshing(
 * @param edges the range of edges to be split if they are longer than given threshold
 * @param max_length the edge length above which an edge from `edges` is split
 *        into to sub-edges
-* @param np optional \ref pmp_namedparameters "Named Parameters", amongst those described below
+* @param np optional \ref pmp_namedparameters "Named Parameters" described below
 
 * \cgalNamedParamsBegin
 *  \cgalParamBegin{vertex_point_map} the property map with the points associated
@@ -341,8 +340,6 @@ void split_long_edges(const EdgeRange& edges
   using boost::get_param;
 
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
-  GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
-
   typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
   VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                              get_property_map(vertex_point, pmesh));
@@ -354,21 +351,22 @@ void split_long_edges(const EdgeRange& edges
   typedef typename boost::lookup_named_param_def <
         internal_np::edge_is_constrained_t,
         NamedParameters,
-        Constant_property_map<edge_descriptor, bool> // default (no constraint pmap)
+        internal::No_constraint_pmap<edge_descriptor>//default
       > ::type ECMap;
   ECMap ecmap = choose_param(get_param(np, internal_np::edge_is_constrained),
-                             Constant_property_map<edge_descriptor, bool>(false));
+                             internal::No_constraint_pmap<edge_descriptor>());
   
   typename internal::Incremental_remesher<PM, VPMap, GT, ECMap,
-    Constant_property_map<vertex_descriptor, bool>, // no constraint pmap
+    internal::No_constraint_pmap<vertex_descriptor>,
     internal::Connected_components_pmap<PM, FIMap>,
     FIMap
   >
-    remesher(pmesh, vpmap, gt, false/*protect constraints*/, ecmap,
-             Constant_property_map<vertex_descriptor, bool>(false),
-             internal::Connected_components_pmap<PM, FIMap>(faces(pmesh), pmesh, ecmap, fimap, false),
-             fimap,
-             false/*need aabb_tree*/);
+    remesher(pmesh, vpmap, false/*protect constraints*/
+           , ecmap
+           , internal::No_constraint_pmap<vertex_descriptor>()
+           , internal::Connected_components_pmap<PM, FIMap>(faces(pmesh), pmesh, ecmap, fimap, false)
+           , fimap
+           , false/*need aabb_tree*/);
 
   remesher.split_long_edges(edges, max_length);
 }

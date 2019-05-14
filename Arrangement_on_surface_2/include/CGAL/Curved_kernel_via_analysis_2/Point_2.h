@@ -256,11 +256,10 @@ public:
     /*!\brief
      * copy constructor
      */
-#ifdef DOXYGEN_RUNNING  
     Point_2(const Self& p) : 
             Base(static_cast<const Base&>(p)) {  
     }
-#endif
+
     //!@}
 
 public:

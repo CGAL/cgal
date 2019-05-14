@@ -19,9 +19,17 @@
 //
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
+#include <CGAL/basic.h>
 #include <iostream>
 
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/_test_types.h>
+#include <CGAL/Cartesian.h>
+
+#include <CGAL/Point_2.h>
+#include <CGAL/Segment_2.h>
+#include <CGAL/Triangle_2.h>
+#include <CGAL/Line_2.h>
+#include <CGAL/Ray_2.h>
 
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -29,7 +37,7 @@
 #include <CGAL/_test_cls_delaunay_hierarchy_2.h>
 
 typedef double                      Coord_type;
-typedef CGAL::Simple_cartesian<Coord_type> Gt;
+typedef CGAL::Cartesian<Coord_type> Gt;
 typedef CGAL::Triangulation_vertex_base_2<Gt> Vbb;
 typedef CGAL::Triangulation_hierarchy_vertex_base_2<Vbb> Vb;
 typedef CGAL::Triangulation_face_base_2<Gt>  Fb;

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgEnvelope2Ref
+\ingroup PkgEnvelope2
 
 This class is the default envelope-diagram class used by envelope functions 
 to represent the minimization or the maximization diagram of a set of curves. 

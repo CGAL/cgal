@@ -1,6 +1,6 @@
 /*!
 \defgroup psp_namedparameters Named Parameters for Point Set Processing
-\ingroup PkgPointSetProcessing3Ref
+\ingroup PkgPointSetProcessing
 
 In this package, all functions optional parameters are implemented as BGL optional named parameters (see \ref BGLNamedParameters for more information on how to use them).
 
@@ -31,17 +31,17 @@ typename CGAL::Kernel_traits<point_map::value_type>::Kernel
 \cgalNPEnd
 
 \cgalNPBegin{point_map} \anchor PSP_point_map
- is the property map containing the points associated to the elements of the point range `points`.\n
+ is the property map containing the points associated to the iterators of the point range `points`.\n
 \b Type: a class model of `ReadablePropertyMap` with
-`PointRange::iterator::value_type` as key type and
+`PointRange::iterator` as key type and
 `geom_traits::Point_3` as value type. \n
 <b>Default value</b>: \code CGAL::Identity_property_map<geom_traits::Point_3>\endcode
 \cgalNPEnd
 
 \cgalNPBegin{normal_map} \anchor PSP_normal_map
- is the property map containing the normal vectors associated to the elements of the point range `points`.\n
+ is the property map containing the normal vectors associated to the iterators of the point range `points`.\n
 \b Type: a class model of `ReadablePropertyMap` with
-`PointRange::iterator::value_type` as key type and
+`PointRange::iterator` as key type and
 `geom_traits::Vector_3` as value type. \n
 No default value.
 \cgalNPEnd
@@ -67,9 +67,9 @@ Note that when a callback is run on a parallelized algorithm with `CGAL::Paralle
 \cgalNPEnd
 
 \cgalNPBegin{query_point_map} \anchor PSP_query_point_map
- is the property map containing the points associated to the elements of the point range `queries`.\n
+ is the property map containing the points associated to the iterators of the point range `queries`.\n
 \b Type: a class model of `ReadablePropertyMap` with
-`PointRange::iterator::value_type` as key type and
+`PointRange::iterator` as key type and
 `geom_traits::Point_3` as value type. \n
 <b>Default value</b>: \code CGAL::Identity_property_map<geom_traits::Point_3>\endcode
 \cgalNPEnd
@@ -146,9 +146,9 @@ multiple of a tolerance `epsilon` used to connect simplices.
 \cgalNPEnd
 
 \cgalNPBegin{plane_map} \anchor PSP_plane_map
- is the property map containing the planes associated to the elements of the plane range `planes`.\n
+ is the property map containing the planes associated to the iterators of the plane range `planes`.\n
 \b Type: a class model of `ReadablePropertyMap` with
-`PlaneRange::iterator::value_type` as key type and
+`PlaneRange::iterator` as key type and
 `geom_traits::Plane_3` as value type. \n
 <b>Default value</b>: \code CGAL::Identity_property_map<geom_traits::Plane_3>\endcode
 \cgalNPEnd
@@ -180,15 +180,6 @@ turn on or off an optional preprocessing of `wlop_simplify_and_regularize_point_
 give better result if the distribution of the input points is highly non-uniform.\n
 \b Type: `bool`\n
 <b>Default value</b>: `false`
-\cgalNPEnd
-
-\cgalNPBegin{point_is_constrained_map} \anchor PSP_point_is_constrained_map
-is the property map containing information about points being constrained or not.
-Constrained points are left unaltered and are used as seeds in `mst_orient_normals()`.\n
-\b Type: a class model of `ReadablePropertyMap` with
-`PointRange::iterator::value_type` as key type and
-`bool` as value type. \n
-<b>Default value</b>: a property map with only the highest point constrained.
 \cgalNPEnd
 
 \cgalNPTableEnd

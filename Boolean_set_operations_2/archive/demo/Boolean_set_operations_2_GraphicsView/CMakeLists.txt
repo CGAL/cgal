@@ -11,10 +11,13 @@ endif()
 
 find_package(CGAL COMPONENTS Qt5 Core )
 
+include(${CGAL_USE_FILE})
+
 set( QT_USE_QTMAIN   TRUE )
 
 find_package(Qt5 QUIET COMPONENTS Widgets Script Svg)
 
+include_directories (BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/../../include )
 include_directories (BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 include_directories (BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/include )
 

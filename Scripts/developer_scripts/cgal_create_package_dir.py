@@ -51,7 +51,7 @@ r"""// PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
 \addtogroup PkgPACKAGE
 \todo check generated documentation
 
-\cgalPkgDescriptionBegin{PACKAGE NAME,PkgPACKAGE}
+\cgalPkgDescriptionBegin{PACKAGE NAME,PkgPACKAGESummary}
 \cgalPkgPicture{pkg-small.png}
 
 \cgalPkgSummaryBegin

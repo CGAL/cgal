@@ -1,4 +1,4 @@
-/// \ingroup PkgArrangementOnSurface2Macros
+/// \ingroup PkgArrangement2Macros
 /// @{
 /*!
  * If the macro is set to one, then \f$x\f$-monotone curves are always
@@ -8,7 +8,7 @@
 /// @}
 
 namespace CGAL {
-  /*! \ingroup PkgArrangementOnSurface2TraitsClasses
+  /*! \ingroup PkgArrangement2TraitsClasses
    *
    * The traits class `Arr_polyline_traits_2` handles piecewise linear
    * curves, commonly referred to as polylines. Each polyline is a

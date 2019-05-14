@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgArrangementOnSurface2Concepts
+\ingroup PkgArrangement2Concepts
 \cgalConcept
 
 A model for the `ArrangementWithHistoryOutputFormatter` concept supports a set of functions that enable 

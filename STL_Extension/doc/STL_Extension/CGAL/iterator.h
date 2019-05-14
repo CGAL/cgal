@@ -1,5 +1,5 @@
 /// \defgroup STLIterators Iterators and Iterator/Circulator Adaptors
-/// \ingroup PkgSTLExtensionRef
+/// \ingroup PkgStlExtension
 
 namespace CGAL {
 

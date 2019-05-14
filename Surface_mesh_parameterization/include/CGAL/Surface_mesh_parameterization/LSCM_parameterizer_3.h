@@ -56,7 +56,7 @@ namespace Surface_mesh_parameterization {
 // Declaration
 // ------------------------------------------------------------------------------------
 
-/// \ingroup  PkgSurfaceMeshParameterizationMethods
+/// \ingroup  PkgSurfaceParameterizationMethods
 ///
 /// The class `LSCM_parameterizer_3` implements the
 /// *Least Squares Conformal Maps (LSCM)* parameterization \cgalCite{cgal:lprm-lscm-02}.

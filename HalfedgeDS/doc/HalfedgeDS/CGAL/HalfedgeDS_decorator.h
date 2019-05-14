@@ -1,6 +1,6 @@
 namespace CGAL {
 /*!
-\ingroup PkgHalfedgeDS_Decorators
+\ingroup PkgHDS_Decorators
 
 The class 
 `CGAL::HalfedgeDS_items_decorator<HDS>` provides additional functions 

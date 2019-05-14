@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgBarycentricCoordinates2Concepts
+\ingroup PkgBarycentric_coordinates_2Concepts
 \cgalConcept
 
 Requirements of the template parameter `Traits` for all the classes with two-dimensional barycentric coordinates from the namespace `CGAL::Barycentric_coordinates`. 

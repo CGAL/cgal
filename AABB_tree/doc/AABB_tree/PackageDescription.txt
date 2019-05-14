@@ -1,16 +1,16 @@
-/// \defgroup PkgAABBTreeRef AABB Tree Reference
+/// \defgroup PkgAABB_tree AABB Tree Reference
 
-/// \defgroup PkgAABBTreeConcepts Concepts
-/// \ingroup PkgAABBTreeRef
+/// \defgroup PkgAABB_treeConcepts Concepts
+/// \ingroup PkgAABB_tree
 
 /*!
-\addtogroup PkgAABBTreeRef
-\cgalPkgDescriptionBegin{3D Fast Intersection and Distance Computation,PkgAABBTree}
+\addtogroup PkgAABB_tree
+\cgalPkgDescriptionBegin{3D Fast Intersection and Distance Computation,PkgAABB_treeSummary}
 \cgalPkgPicture{aabb-teaser-thumb.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Pierre Alliez, Stéphane Tayeb, Camille Wormser}
 \cgalPkgDesc{The AABB (axis-aligned bounding box) tree component offers a static data structure and algorithms to perform efficient intersection and distance queries on sets of finite 3D geometric objects.}
-\cgalPkgManuals{Chapter_3D_Fast_Intersection_and_Distance_Computation,PkgAABBTreeRef}
+\cgalPkgManuals{Chapter_3D_Fast_Intersection_and_Distance_Computation,PkgAABB_tree}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.5}
@@ -22,17 +22,17 @@
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 - `AABBPrimitive`
 - `AABBPrimitiveWithSharedData`
 - `AABBTraits`
 - `AABBGeomTraits`
 
-\cgalCRPSection{Classes}
+## Classes ##
 - `CGAL::AABB_traits<GeomTraits,Primitive>`
 - `CGAL::AABB_tree<AT>`
 
-\cgalCRPSection{Primitives}
+## Primitives ##
 - `CGAL::AABB_triangle_primitive<GeomTraits, Iterator, CacheDatum>`
 - `CGAL::AABB_segment_primitive<GeomTraits, Iterator, CacheDatum>`
 - `CGAL::AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,CacheDatum>`

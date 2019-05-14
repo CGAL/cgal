@@ -55,7 +55,7 @@ static const VTK_to_ImageIO_type_mapper VTK_to_ImageIO_type[VTK_ID_TYPE] =
 
 inline 
 Image_3
-read_vtk_image_data(vtkImageData* vtk_image, Image_3::Own owning = Image_3::OWN_THE_DATA)
+read_vtk_image_data(vtkImageData* vtk_image)
 {
   if(!vtk_image)
     return Image_3();
@@ -85,21 +85,16 @@ read_vtk_image_data(vtkImageData* vtk_image, Image_3::Own owning = Image_3::OWN_
   image->wdim = imageio_type.wdim;
   image->wordKind = imageio_type.wordKind;
   image->sign = imageio_type.sign;
+  image->data = ::ImageIO_alloc(dims[0]*dims[1]*dims[2]*image->wdim);
+  std::cerr << "GetNumberOfTuples()=" << vtk_image->GetPointData()->GetScalars()->GetNumberOfTuples()
+            << "\nimage->size()=" << dims[0]*dims[1]*dims[2]
+            << "\nwdim=" << image->wdim << '\n';
   CGAL_assertion(vtk_image->GetPointData()->GetScalars()->GetNumberOfTuples() == dims[0]*dims[1]*dims[2]);
-  if(owning == Image_3::OWN_THE_DATA) {
-    image->data = ::ImageIO_alloc(dims[0]*dims[1]*dims[2]*image->wdim);
-    // std::cerr << "GetNumberOfTuples()=" << vtk_image->GetPointData()->GetScalars()->GetNumberOfTuples()
-    //           << "\nimage->size()=" << dims[0]*dims[1]*dims[2]
-    //           << "\nwdim=" << image->wdim << '\n';
-    vtk_image->GetPointData()->GetScalars()->ExportToVoidPointer(image->data);
-  } else {
-    image->data = vtk_image->GetPointData()->GetScalars()->GetVoidPointer(0);
-  }
+  vtk_image->GetPointData()->GetScalars()->ExportToVoidPointer(image->data);
 
-  return Image_3(image, owning);
+  return Image_3(image);
 }
 
 } // namespace CGAL
-
 
 #endif // CGAL_READ_VTK_IMAGE_DATA_H

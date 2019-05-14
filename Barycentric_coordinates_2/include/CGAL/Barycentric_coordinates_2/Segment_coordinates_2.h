@@ -48,7 +48,7 @@ namespace Barycentric_coordinates {
 // Examples: see the User Manual - https://doc.cgal.org/latest/Manual/index.html.
 
 /*!
- * \ingroup PkgBarycentricCoordinates2Ref
+ * \ingroup PkgBarycentric_coordinates_2
  * The class `Segment_coordinates_2` implements barycentric coordinates with respect to an arbitrary non-degenerate segment along an arbitrary line in the plane.
  * This class is parameterized by a traits class `Traits`.
 

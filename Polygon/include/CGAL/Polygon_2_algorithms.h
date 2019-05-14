@@ -236,7 +236,7 @@ bool is_convex_2(ForwardIterator first,
 ///   - `orientation_2_object()`
 /// \tparam ForwardIterator must have `PolygonTraits::Point_2` as value type.
 /// 
-/// \cgalHeading{Implementation}
+/// ### Implementation##
 /// 
 /// The simplicity test is implemented by means of a plane sweep algorithm.
 /// The algorithm is quite robust when used with inexact number types.
@@ -299,7 +299,7 @@ Oriented_side oriented_side_2(ForwardIterator first,
 ///   - `orientation_2_object()`
 /// \tparam ForwardIterator must have `Traits::Point_2` as value type.
 /// 
-/// \cgalHeading{Implementation}
+/// ### Implementation ###
 /// 
 /// The running time is linear in the number of vertices of the polygon.
 /// A horizontal ray is taken to count the number of intersections.

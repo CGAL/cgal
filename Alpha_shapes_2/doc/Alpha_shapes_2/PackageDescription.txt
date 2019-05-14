@@ -1,20 +1,20 @@
-/// \defgroup PkgAlphaShapes2Ref 2D Alpha Shapes Reference
-/// \defgroup PkgAlphaShapes2Concepts Concepts
-/// \ingroup PkgAlphaShapes2Ref
+/// \defgroup PkgAlphaShape2 2D Alpha Shapes Reference
+/// \defgroup PkgAlphaShape2Concepts Concepts
+/// \ingroup PkgAlphaShape2
 
 /*!
-\addtogroup PkgAlphaShapes2Ref
+\addtogroup PkgAlphaShape2
 
-\cgalPkgDescriptionBegin{2D Alpha Shapes,PkgAlphaShapes2}
+\cgalPkgDescriptionBegin{2D Alpha Shapes,PkgAlphaShape2Summary}
 \cgalPkgPicture{alpha-detail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Tran Kai Frank Da}
 \cgalPkgDesc{This package offers  a data structure encoding the whole family of alpha-complexes related to a given 2D Delaunay or regular triangulation. In particular, the data structure allows to retrieve   the alpha-complex for any alpha value, the whole spectrum of critical alpha values and a filtration on the triangulation faces (this filtration is based on the first  alpha value for which each face is included on the alpha-complex).}
-\cgalPkgManuals{Chapter_2D_Alpha_Shapes,PkgAlphaShapes2Ref}
+\cgalPkgManuals{Chapter_2D_Alpha_Shapes,PkgAlphaShape2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{2.1}
-\cgalPkgDependsOn{\ref PkgTriangulation2}
+\cgalPkgDependsOn{\ref PkgTriangulation2Summary}
 \cgalPkgBib{cgal:d-as2}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{2D Alpha Shapes,alpha_shapes_2.zip}
@@ -68,12 +68,12 @@ finite number of different \f$ \alpha\f$-shapes and corresponding
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 - `AlphaShapeTraits_2`
 - `AlphaShapeFace_2`
 - `AlphaShapeVertex_2`
 
-\cgalCRPSection{Classes}
+## Classes ##
 - `CGAL::Alpha_shape_2<Dt>`
 - `CGAL::Weighted_alpha_shape_euclidean_traits_2<K>`
 - `CGAL::Alpha_shape_vertex_base_2<AlphaShapeTraits_2>`

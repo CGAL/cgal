@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicKernelDConceptsUni
+\ingroup PkgAlgebraicKerneldConceptsUni
 \cgalConcept
 
 Computes the number of real solutions of the given univariate polynomial. 

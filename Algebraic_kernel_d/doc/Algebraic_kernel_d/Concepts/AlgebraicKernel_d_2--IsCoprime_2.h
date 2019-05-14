@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicKernelDConceptsBi
+\ingroup PkgAlgebraicKerneldConceptsBi
 \cgalConcept
 
 Computes whether a given pair of bivariate polynomials is coprime. 

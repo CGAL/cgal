@@ -316,7 +316,8 @@ public:
   public:
     Halffacet_cycle_iterator() : Ibase() {}
     Halffacet_cycle_iterator(const Ibase& b) : Ibase(b) {}
-   
+    Halffacet_cycle_iterator(const Halffacet_cycle_iterator& i) 
+      : Ibase(i) {}
     bool is_shalfedge() const
     { SHalfedge_handle e; return CGAL::assign(e,Ibase::operator*()); }
     bool is_shalfloop() const
@@ -340,7 +341,8 @@ public:
   public:
     Halffacet_cycle_const_iterator() : Ibase() {}
     Halffacet_cycle_const_iterator(const Ibase& b) : Ibase(b) {}
-   
+    Halffacet_cycle_const_iterator(const Halffacet_cycle_const_iterator& i) 
+      : Ibase(i) {}  
     bool is_shalfedge() const
     { SHalfedge_handle e; return CGAL::assign(e,Ibase::operator*()); }
     bool is_shalfloop() const
@@ -366,7 +368,7 @@ public:
   public:
     SFace_cycle_iterator() : Ibase() {}
     SFace_cycle_iterator(const Ibase& b) : Ibase(b) {}
-    
+    SFace_cycle_iterator(const SFace_cycle_iterator& i) : Ibase(i) {}  
     bool is_svertex() const 
     { SVertex_handle v; return CGAL::assign(v,Ibase::operator*()); }
     bool is_shalfedge() const
@@ -393,7 +395,8 @@ public:
   public:
     SFace_cycle_const_iterator() : Ibase() {}
     SFace_cycle_const_iterator(const Ibase& b) : Ibase(b) {}
- 
+    SFace_cycle_const_iterator(const SFace_cycle_const_iterator& i) 
+      : Ibase(i) {}  
     bool is_svertex() const 
     { SVertex_handle v; return CGAL::assign(v,Ibase::operator*()); }
     bool is_shalfedge() const
@@ -424,7 +427,8 @@ public:
   public:
     Shell_entry_iterator() : Ibase() {}
     Shell_entry_iterator(const Ibase& b) : Ibase(b) {}
-   
+    Shell_entry_iterator(const Shell_entry_iterator& i) : Ibase(i) {}  
+
     operator SFace_handle() const 
     { SFace_handle f; 
       CGAL_assertion( CGAL::assign(f,Ibase::operator*()) );
@@ -441,7 +445,9 @@ public:
   public:
     Shell_entry_const_iterator() : Ibase() {}
     Shell_entry_const_iterator(const Ibase& b) : Ibase(b) {}
-   
+    Shell_entry_const_iterator(const Shell_entry_const_iterator& i) :
+      Ibase(i) {}  
+
     operator SFace_const_handle() const 
     { SFace_handle f; 
       CGAL_assertion( CGAL::assign(f,Ibase::operator*()) );

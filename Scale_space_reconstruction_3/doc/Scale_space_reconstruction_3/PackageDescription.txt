@@ -1,46 +1,46 @@
-/// \defgroup PkgScaleSpaceReconstruction3Ref Scale-Space Surface Reconstruction Reference
+/// \defgroup PkgScaleSpaceReconstruction3 Scale-Space Surface Reconstruction Reference
 
 /// \defgroup PkgScaleSpaceReconstruction3Concepts Concepts
-/// \ingroup PkgScaleSpaceReconstruction3Ref
+/// \ingroup PkgScaleSpaceReconstruction3
 
 /// \defgroup PkgScaleSpaceReconstruction3Classes Classes
-/// \ingroup PkgScaleSpaceReconstruction3Ref
+/// \ingroup PkgScaleSpaceReconstruction3
 
 
 /*!
-\addtogroup PkgScaleSpaceReconstruction3Ref
-\cgalPkgDescriptionBegin{Scale-Space Surface Reconstruction,PkgScaleSpaceReconstruction3}
+\addtogroup PkgScaleSpaceReconstruction3
+\cgalPkgDescriptionBegin{Scale-Space Surface Reconstruction,PkgScaleSpaceReconstruction3Summary}
 \cgalPkgPicture{knot_thumb.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Thijs van Lankveld}
 \cgalPkgDesc{This method allows to reconstruct a surface that interpolates a set of 3D points using either and alpha shape or the advancing front surface reconstruction method. The output interpolates the point set (as opposed to approximating the point set). How the surface connects the points depends on a scale variable, which can be estimated semi-automatically.}
-\cgalPkgManuals{Chapter_Scale_space_reconstruction,PkgScaleSpaceReconstruction3Ref}
+\cgalPkgManuals{Chapter_Scale_space_reconstruction,PkgScaleSpaceReconstruction3}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.6}
 \cgalPkgBib{cgal:ssr3}
 \cgalPkgLicense{\ref licensesGPL "GPL" }
-\cgalPkgDependsOn{\ref PkgAlphaShapes3, \ref PkgSpatialSearchingD, \ref PkgSolverInterface}
+\cgalPkgDependsOn{\ref PkgAlphaShapes3Summary, \ref PkgSpatialSearchingDSummary, \ref PkgSolverSummary}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 
 - `CGAL::Scale_space_reconstruction_3::Smoother`
 - `CGAL::Scale_space_reconstruction_3::Mesher`
 
-\cgalCRPSection{Main Class}
+## Main Class ##
 
 - `CGAL::Scale_space_surface_reconstruction_3<Geom_traits>`
 
-\cgalCRPSection{Smoothers}
+## Smoothers ##
 
 - `CGAL::Scale_space_reconstruction_3::Weighted_PCA_smoother<Geom_traits, DiagonalizeTraits, ConcurrencyTag>`
 - `CGAL::Scale_space_reconstruction_3::Jet_smoother<Geom_traits, ConcurrencyTag>`
 
-\cgalCRPSection{Meshers}
+## Meshers ##
 
 - `CGAL::Scale_space_reconstruction_3::Alpha_shape_mesher<Geom_traits, FixedSurface>`
 - `CGAL::Scale_space_reconstruction_3::Advancing_front_mesher<Geom_traits>`

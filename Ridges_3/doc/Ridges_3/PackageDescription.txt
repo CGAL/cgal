@@ -1,21 +1,21 @@
-/// \defgroup PkgRidges3Ref Approximation of Ridges and Umbilics on Triangulated Surface Meshes Reference
+/// \defgroup PkgRidges_3 Approximation of Ridges and Umbilics on Triangulated Surface Meshes Reference
 
-/// \defgroup PkgRidges3Enums Enums
-/// \ingroup PkgRidges3Ref
+/// \defgroup PkgRidges_3Enums Enums
+/// \ingroup PkgRidges_3
 
 /*!
-\addtogroup PkgRidges3Ref
+\addtogroup PkgRidges_3
 \todo check generated documentation
-\cgalPkgDescriptionBegin{Approximation of Ridges and Umbilics on Triangulated Surface Meshes,PkgRidges3}
+\cgalPkgDescriptionBegin{Approximation of Ridges and Umbilics on Triangulated Surface Meshes,PkgRidges_3Summary}
 \cgalPkgPicture{RidgesMechPartDetail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Marc Pouget and Frédéric Cazals}
 \cgalPkgDesc{Global features related to curvature extrema encode important informations used in segmentation, registration, matching and surface analysis. Given pointwise estimations of local differential quantities, this package allows the approximation of differential features on a triangulated surface mesh. Such curvature related features are curves: ridges or crests, and points: umbilics.}
-\cgalPkgManuals{Chapter_Approximation_of_Ridges_and_Umbilics_on_Triangulated_Surface_Meshes,PkgRidges3Ref}
+\cgalPkgManuals{Chapter_Approximation_of_Ridges_and_Umbilics_on_Triangulated_Surface_Meshes,PkgRidges_3}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.3}
-\cgalPkgDependsOn{\ref PkgSolverInterface} 
+\cgalPkgDependsOn{\ref PkgSolverSummary} 
 \cgalPkgBib{cgal:cp-arutsm}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
@@ -23,18 +23,18 @@
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Enums}
+## Enums ##
 - `CGAL::Ridge_type`
 - `CGAL::Ridge_order`
 - `CGAL::Umbilic_type`
 
-\cgalCRPSection{Classes}
+## Classes ##
 - `CGAL::Ridge_line<TriangleMesh>`
 - `CGAL::Umbilic<TriangleMesh>`
 - `CGAL::Ridge_approximation<TriangleMesh,VertexFTMap,VertexVectorMap>`
 - `CGAL::Umbilic_approximation<TriangleMesh,VertexFTMap,VertexVectorMap>`
 
-\cgalCRPSection{Global Functions}
+## Global Functions ##
 - `CGAL::compute_max_ridges()`
 - `CGAL::compute_min_ridges()`
 - `CGAL::compute_crest_ridges()`

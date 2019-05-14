@@ -242,7 +242,7 @@ before the insertions (it may be negative due to hidden points).
 Note that this function is not guaranteed to insert the weighted points 
 following the order of `InputIterator`, as `spatial_sort()` 
 is used to improve efficiency. 
-\tparam InputIterator must be an input iterator with the value type \link Regular_triangulation_2::Weighted_point `Weighted_point` \endlink.
+\tparam InputIterator must be an input iterator with the value type `Weighted_point`. 
 */ 
 template < class InputIterator > 
 std::ptrdiff_t 
@@ -260,8 +260,8 @@ Given a pair `(p,i)`, the vertex `v` storing `p` also stores `i`, that is
 only one vertex is created, one of the objects of type `Vertex::Info` will be stored in the vertex. 
 \pre `Vertex` must be model of the concept `TriangulationVertexBaseWithInfo_2`. 
 
-\tparam WeightedPointWithInfoInputIterator must be an input iterator with value type
-`std::pair<%Weighted_point,Vertex::Info>`.
+\tparam WeightedPointWithInfoInputIterator must be an input iterator with value type `std::pair<Weighted_point,Vertex::Info>`. 
+
 */ 
 template < class WeightedPointWithInfoInputIterator > 
 std::ptrdiff_t 

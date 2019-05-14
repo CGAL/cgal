@@ -1,26 +1,26 @@
-/// \defgroup PkgVoronoiDiagram2Ref 2D Voronoi Diagram Adaptor Reference
-/// \defgroup PkgVoronoiDiagram2Concepts Concepts
-/// \ingroup PkgVoronoiDiagram2Ref
+/// \defgroup PkgVoronoiDiagramAdaptor2 2D Voronoi Diagram Adaptor Reference
+/// \defgroup PkgVoronoiDiagramAdaptor2Concepts Concepts
+/// \ingroup PkgVoronoiDiagramAdaptor2
 
-/// \defgroup PkgVoronoiDiagram2Points Voronoi Diagram of Points 
-/// \ingroup PkgVoronoiDiagram2Ref
+/// \defgroup PkgVoronoiDiagramAdaptor2Points Voronoi Diagram of Points 
+/// \ingroup PkgVoronoiDiagramAdaptor2
 
 
-/// \defgroup PkgVoronoiDiagram2Segments Voronoi Diagram of Segments
-/// \ingroup PkgVoronoiDiagram2Ref
+/// \defgroup PkgVoronoiDiagramAdaptor2Segments Voronoi Diagram of Segments
+/// \ingroup PkgVoronoiDiagramAdaptor2
 
-/// \defgroup PkgVoronoiDiagram2Disks Voronoi Diagram of Disks
-/// \ingroup PkgVoronoiDiagram2Ref
+/// \defgroup PkgVoronoiDiagramAdaptor2Disks Voronoi Diagram of Disks
+/// \ingroup PkgVoronoiDiagramAdaptor2
 
 /*!
-\addtogroup PkgVoronoiDiagram2Ref
+\addtogroup PkgVoronoiDiagramAdaptor2
 \todo check generated documentation
-\cgalPkgDescriptionBegin{2D Voronoi Diagram Adaptor,PkgVoronoiDiagram2}
+\cgalPkgDescriptionBegin{2D Voronoi Diagram Adaptor,PkgVoronoiDiagramAdaptor2Summary}
 \cgalPkgPicture{voronoi.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Menelaos Karavelas}
 \cgalPkgDesc{The 2D Voronoi diagram adaptor package provides an adaptor that adapts a 2-dimensional triangulated Delaunay graph to the corresponding Voronoi diagram, represented as a doubly connected edge list (DCEL) data structure. The adaptor has the ability to automatically eliminate, in a consistent manner, degenerate features of the Voronoi diagram, that are artifacts of the requirement that Delaunay graphs should be triangulated even in degenerate configurations. Depending on the type of operations that the underlying Delaunay graph supports, the adaptor allows for the incremental or dynamic construction of Voronoi diagrams and can support point location queries. }
-\cgalPkgManuals{Chapter_2D_Voronoi_Diagram_Adaptor,PkgVoronoiDiagram2Ref}
+\cgalPkgManuals{Chapter_2D_Voronoi_Diagram_Adaptor,PkgVoronoiDiagramAdaptor2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.2}
@@ -55,13 +55,13 @@ performing this adaptation.
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 
 - `DelaunayGraph_2`
 - `AdaptationTraits_2`
 - `AdaptationPolicy_2`
 
-\cgalCRPSection{Classes}
+## Classes ##
 
 - `CGAL::Voronoi_diagram_2<DG,AT,AP>`
 - \link CGAL::Voronoi_diagram_2::Halfedge `CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge` \endlink

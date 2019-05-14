@@ -38,16 +38,16 @@ num_edges(const EdgeListGraph& g);
 
 
 /*! \relates EdgeListGraph
-returns the source vertex of `e`.
+returns the source vertex of `h`.
  */
 template <typename EdgeListGraph>
 boost::graph_traits<EdgeListGraph>::vertex_descriptor
-source(boost::graph_traits<EdgeListGraph>::edge_descriptor e, const EdgeListGraph& g);
+source(boost::graph_traits<EdgeListGraph>::halfedge_descriptor h, const EdgeListGraph& g);
 
 
 /*! \relates EdgeListGraph
-returns the target vertex of `e`.
+returns the target vertex of `h`.
  */
 template <typename EdgeListGraph>
 boost::graph_traits<EdgeListGraph>::vertex_descriptor
-target(boost::graph_traits<EdgeListGraph>::edge_descriptor e, const EdgeListGraph& g);
+target(boost::graph_traits<EdgeListGraph>::halfedge_descriptor h, const EdgeListGraph& g);

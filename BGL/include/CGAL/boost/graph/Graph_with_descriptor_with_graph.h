@@ -118,7 +118,8 @@ The class `Graph_with_descriptor_with_graph` wraps a graph into another graph in
 For example, calling `source(edge, graph)` will trigger an assertion if `edge` does not belong to `graph`.
 It is mainly used for debugging purposes.
 
-\cgalHeading{Property Forwarding}
+Property forwarding
+-------------------
 All internal properties of the underlying graph are forwarded.
 
 Property maps can be wrapped with `Graph_with_descriptor_with_graph_property_map`.

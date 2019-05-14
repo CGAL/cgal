@@ -38,7 +38,7 @@ namespace CGAL {
   template <class B, class C> class Advancing_front_surface_reconstruction;
 
   /*!
-  \ingroup PkgAdvancingFrontSurfaceReconstructionRef
+  \ingroup PkgAdvancingFrontSurfaceReconstruction
 
   The class `Advancing_front_surface_reconstruction_vertex_base_3` is the default
   vertex type for the class  `Advancing_front_surface_reconstruction`.

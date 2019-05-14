@@ -12,11 +12,11 @@ predicates and constructions on these objects.
 
 \cgalHasModel `CGAL::Exact_predicates_inexact_constructions_kernel` (recommended) 
 \cgalHasModel `CGAL::Exact_predicates_exact_constructions_kernel` (recommended for Voronoi) 
-\cgalHasModel `CGAL::Filtered_kernel` 
-\cgalHasModel `CGAL::Cartesian` 
-\cgalHasModel `CGAL::Simple_cartesian` 
-\cgalHasModel `CGAL::Homogeneous` 
-\cgalHasModel `CGAL::Simple_homogeneous` 
+\cgalHasModel CGAL::Filtered_kernel 
+\cgalHasModel CGAL::Cartesian 
+\cgalHasModel CGAL::Simple_cartesian 
+\cgalHasModel CGAL::Homogeneous 
+\cgalHasModel CGAL::Simple_homogeneous 
 
 In addition to the requirements described for the traits class of 
 `CGAL::Triangulation_3`, the geometric traits class of a 

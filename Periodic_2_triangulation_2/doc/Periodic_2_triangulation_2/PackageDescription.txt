@@ -1,35 +1,35 @@
-/// \defgroup PkgPeriodic2Triangulation2Ref 2D Periodic Triangulations Reference
+/// \defgroup PkgPeriodic2Triangulation2 2D Periodic Triangulations Reference
 
 /// \defgroup PkgPeriodic2Triangulation2Concepts Concepts
-/// \ingroup PkgPeriodic2Triangulation2Ref
+/// \ingroup PkgPeriodic2Triangulation2
 
 /// \defgroup PkgPeriodic2Triangulation2MainClasses Main Classes
-/// \ingroup PkgPeriodic2Triangulation2Ref
+/// \ingroup PkgPeriodic2Triangulation2
 
 /// \defgroup PkgPeriodic2Triangulation2TraitsClasses Traits Classes
-/// \ingroup PkgPeriodic2Triangulation2Ref
+/// \ingroup PkgPeriodic2Triangulation2
 
 /// \defgroup PkgPeriodic2Triangulation2VertexFaceClasses Vertex and Face Classes
-/// \ingroup PkgPeriodic2Triangulation2Ref
+/// \ingroup PkgPeriodic2Triangulation2
 
 /// \defgroup PkgPeriodic2Triangulation2Enums Enums
-/// \ingroup PkgPeriodic2Triangulation2Ref
+/// \ingroup PkgPeriodic2Triangulation2
 
 /*!
-\addtogroup PkgPeriodic2Triangulation2Ref
+\addtogroup PkgPeriodic2Triangulation2
  
-\cgalPkgDescriptionBegin{2D Periodic Triangulations,PkgPeriodic2Triangulation2}
+\cgalPkgDescriptionBegin{2D Periodic Triangulations,PkgPeriodic2Triangulation2Summary}
 \cgalPkgPicture{Periodic_2_triangulation_2/fig/p2Delaunay2_thumb.png}
  
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Nico Kruithof}
 \cgalPkgDesc{This package allows to build and handle triangulations of point sets in the two dimensional flat torus. Triangulations are built incrementally and can be modified by insertion or removal of vertices. They offer point location facilities.  The package provides Delaunay triangulations and offers nearest neighbor queries and primitives to build the dual Voronoi diagrams.}
-\cgalPkgManuals{Chapter_2D_Periodic_Triangulations,PkgPeriodic2Triangulation2Ref}
+\cgalPkgManuals{Chapter_2D_Periodic_Triangulations,PkgPeriodic2Triangulation2}
 \cgalPkgSummaryEnd
  
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.3}
-\cgalPkgDependsOn{\ref PkgTriangulation2}
+\cgalPkgDependsOn{\ref PkgTriangulation2Summary}
 \cgalPkgBib{cgal:k-pt2-13}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Periodic Delaunay Triangulation,Periodic_2_Delaunay_triangulation_2.zip}
@@ -72,9 +72,8 @@ both inside and outside the original domain we store additional
 offset information for each vertex of a face. These offsets are models
 of the concept `Periodic_2Offset_2`.
 
-\cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 
 - `Periodic_2TriangulationTraits_2`
 - `Periodic_2DelaunayTriangulationTraits_2`
@@ -82,9 +81,9 @@ of the concept `Periodic_2Offset_2`.
 - `Periodic_2TriangulationVertexBase_2`
 - `Periodic_2Offset_2`
 
-\cgalCRPSection{Classes}
+## Classes ##
 
-\cgalCRPSubsection{Main Classes}
+### Main Classes ###
 
 - `CGAL::Periodic_2_triangulation_2<PT,TDS>`
 - `CGAL::Periodic_2_Delaunay_triangulation_2<PT,TDS>`
@@ -93,12 +92,12 @@ of the concept `Periodic_2Offset_2`.
 - `CGAL::Periodic_2_triangulation_vertex_base_2<>`
 - `CGAL::Periodic_2_offset_2`
 
-\cgalCRPSubsection{Traits Classes}
+### Traits Classes ###
 
 - `CGAL::Periodic_2_triangulation_traits_2<Traits,Periodic_2Offset_2>`
 - `CGAL::Periodic_2_Delaunay_triangulation_traits_2<Traits,Periodic_2Offset_2>`
 
-\cgalCRPSection{Enums}
+## Enums ##
 
 - `CGAL::Periodic_2_triangulation_2::Iterator_type`
 - `CGAL::Periodic_2_triangulation_2::Locate_type`

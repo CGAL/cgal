@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh3Enum
+\ingroup PkgMesh_3Enum
 
 The enum `Mesh_facet_topology` is designed to tell which constraints have to
 be checked on each surface facet during the mesh refinement process.

@@ -186,8 +186,6 @@ Inserts the line segment between the points `c.first` and `c.second` as  a const
 /*!
 Inserts the line segment whose endpoints are the vertices `va` and 
 `vb` as a constraint in the triangulation. 
-\pre `va` != `vb`.
-
 */ 
 void insert_constraint(Vertex_handle va, Vertex_handle vb); 
 

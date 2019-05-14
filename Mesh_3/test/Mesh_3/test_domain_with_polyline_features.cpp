@@ -38,7 +38,6 @@ struct Dummy_domain
   typedef typename K::FT FT;
   typedef int Index;
   typedef int Surface_patch_index;
-  typedef unsigned short Subdomain_index;
 };
 
 typedef Dummy_domain<K_e_i> Smooth_domain;

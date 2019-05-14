@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgCircularKernel3GeometricConcepts
+\ingroup PkgSphericalKernel3GeometricConcepts
 \cgalConcept
 
 \brief Testing whether two curves or surfaces intersect. 

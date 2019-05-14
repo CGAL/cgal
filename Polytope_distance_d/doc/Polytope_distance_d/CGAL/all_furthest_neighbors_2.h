@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPolytopeDistanceDRef
+\ingroup PkgOptimalDistances
 
 \brief computes all furthest neighbors for the vertices of the convex
 polygon described by the range [`points_begin`, `points_end`), writes

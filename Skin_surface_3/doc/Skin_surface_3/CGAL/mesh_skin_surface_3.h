@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSkinSurface3Ref
+\ingroup PkgSkinSurface3
 
 constructs a mesh of the `skin_surface` in `p`.
 

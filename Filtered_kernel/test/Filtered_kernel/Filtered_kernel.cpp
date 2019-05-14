@@ -25,7 +25,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #if 1
-typedef CGAL::Filtered_kernel<CGAL::Cartesian<double> > K;
+struct K : public CGAL::Filtered_kernel<CGAL::Cartesian<double> > {};
 #else
 typedef CGAL::Homogeneous<int> K1;
 typedef CGAL::Homogeneous<CGAL::MP_Float> K2;

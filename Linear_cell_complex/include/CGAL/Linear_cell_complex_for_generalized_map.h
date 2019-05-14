@@ -105,11 +105,9 @@ namespace CGAL {
        *  @param alcc the linear cell complex to copy.
        *  @post *this is valid.
        */
-#ifdef DOXYGEN_RUNNING      
       Linear_cell_complex_for_generalized_map(const Self & alcc) : Base(alcc)
       {}
-#endif
-      
+
       template < class LCC2 >
       Linear_cell_complex_for_generalized_map(const LCC2& alcc) : Base(alcc)
       {}

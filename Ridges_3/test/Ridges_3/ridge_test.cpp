@@ -1,3 +1,4 @@
+#include <CGAL/Cartesian.h>
 #include <cassert>
 #include <fstream>
 #include <vector>

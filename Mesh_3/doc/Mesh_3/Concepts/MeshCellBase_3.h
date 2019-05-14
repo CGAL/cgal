@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMesh3SecondaryConcepts
+\ingroup PkgMesh_3SecondaryConcepts
 \cgalConcept
 
 The concept `MeshCellBase_3` describes the requirements 

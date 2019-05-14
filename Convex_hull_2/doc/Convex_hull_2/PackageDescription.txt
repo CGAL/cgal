@@ -1,32 +1,32 @@
-/// \defgroup PkgConvexHull2Ref 2D Convex Hulls and Extreme Points Reference
+/// \defgroup PkgConvexHull2 2D Convex Hulls and Extreme Points Reference
 
 /// \defgroup PkgConvexHull2Concepts Concepts
-/// \ingroup PkgConvexHull2Ref
+/// \ingroup PkgConvexHull2
 
 /// \defgroup PkgConvexHull2Traits Traits Classes
-/// \ingroup PkgConvexHull2Ref
+/// \ingroup PkgConvexHull2
 
 /// \defgroup PkgConvexHull2Functions Convex Hull Functions
-/// \ingroup PkgConvexHull2Ref
+/// \ingroup PkgConvexHull2
 
 /// \defgroup PkgConvexHull2Convexity Convexity Checking
-/// \ingroup PkgConvexHull2Ref
+/// \ingroup PkgConvexHull2
 
 /// \defgroup PkgConvexHull2Subsequence Hull Subsequence Functions
-/// \ingroup PkgConvexHull2Ref
+/// \ingroup PkgConvexHull2
 
 /// \defgroup PkgConvexHull2Extreme Extreme Point Functions
-/// \ingroup PkgConvexHull2Ref
+/// \ingroup PkgConvexHull2
 
 /*!
-\addtogroup PkgConvexHull2Ref
+\addtogroup PkgConvexHull2
 
-\cgalPkgDescriptionBegin{2D Convex Hulls and Extreme Points,PkgConvexHull2}
+\cgalPkgDescriptionBegin{2D Convex Hulls and Extreme Points,PkgConvexHull2Summary}
 \cgalPkgPicture{Convex_hull_2/fig/convex_hull.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Susan Hert and Stefan Schirra}
 \cgalPkgDesc{This package provides functions for computing convex hulls in two dimensions as well as functions for checking if sets of points are strongly convex are not. There are also a number of functions described for computing particular extreme points and subsequences of hull points, such as the lower and upper hull of a set of points.}
-\cgalPkgManuals{Chapter_2D_Convex_Hulls_and_Extreme_Points,PkgConvexHull2Ref}
+\cgalPkgManuals{Chapter_2D_Convex_Hulls_and_Extreme_Points,PkgConvexHull2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{1.0}
@@ -51,7 +51,7 @@ upper hull of a set of points.
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Assertions}
+## Assertions ##
 
 The assertion flags for the convex hull and extreme point algorithms
 use `CH` in their names (<I>e.g.</I>, `CGAL_CH_NO_POSTCONDITIONS`).
@@ -61,16 +61,16 @@ input points in the polygon or polyhedron defined by the output points.
 The latter is considered an expensive checking and can be enabled by
 defining `CGAL_CH_CHECK_EXPENSIVE`.
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 
 - `ConvexHullTraits_2`
 
-\cgalCRPSection{Traits Classes}
+## Traits Classes ##
 
 - `CGAL::Convex_hull_constructive_traits_2<R>`
 - `CGAL::Convex_hull_traits_2<R>`
 
-\cgalCRPSection{Convex Hull Functions}
+## Convex Hull Functions ##
 
 - `CGAL::ch_akl_toussaint()`
 - `CGAL::ch_bykat()`
@@ -80,19 +80,19 @@ defining `CGAL_CH_CHECK_EXPENSIVE`.
 - `CGAL::ch_melkman()`
 - `CGAL::convex_hull_2()`
 
-\cgalCRPSection{Convexity Checking Functions}
+## Convexity Checking Functions ##
 
 - `CGAL::is_ccw_strongly_convex_2()`
 - `CGAL::is_cw_strongly_convex_2()`
 
-\cgalCRPSection{Hull Subsequence Functions}
+## Hull Subsequence Functions ##
 
 - `CGAL::ch_graham_andrew_scan()`
 - `CGAL::ch_jarvis_march()`
 - `CGAL::lower_hull_points_2()`
 - `CGAL::upper_hull_points_2()`
 
-\cgalCRPSection{Extreme Point Functions}
+## Extreme Point Functions ##
 
 - `CGAL::ch_e_point()`
 - `CGAL::ch_nswe_point()`

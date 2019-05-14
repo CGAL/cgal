@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangementOnSurface2TraitsClasses
+\ingroup PkgArrangement2TraitsClasses
 
 This class is a traits class for \cgal arrangements, built on top of a model of 
 concept `CircularKernel`. 

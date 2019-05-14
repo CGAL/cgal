@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgStreamLines2Concepts
+\ingroup PkgPlacementOfStreamlines2Concepts
 \cgalConcept
 
 The concept `VectorField_2` describes the set of requirements for

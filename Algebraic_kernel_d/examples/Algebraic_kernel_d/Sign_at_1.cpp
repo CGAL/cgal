@@ -1,7 +1,7 @@
 // $URL$
 // $Id$
 
-#include <CGAL/config.h>
+#include <CGAL/basic.h>
 #ifdef CGAL_USE_MPFI 
 #include <CGAL/Algebraic_kernel_d_1.h>
 #include <CGAL/Gmpz.h>

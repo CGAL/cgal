@@ -169,7 +169,7 @@ reference manual.
 
 For a new package you will first have to create a suitable header file
 with all macro definitions.  This is done with the shell script
-<TT>cgal_create_assertions.sh</TT>, to be found in the 
+<TT>cgal_create_assertions.sh</TT>, to be found in the in the
 <TT>scripts</TT> directory.
 
 The following command will create a file <TT>optimisation_assertions.h</TT>:
@@ -240,7 +240,7 @@ target exception safety, as much as possible.  Good references on exception
 safety are: Appendix E of \cgalCite{cgal:s-cpl-97} (also available at
 <A HREF="http://www.research.att.com/~bs/3rd_safe0.html"><TT>http://www.research.att.com/~bs/3rd_safe0.html</TT></A>),
 and \cgalCite{cgal:a-esgc-98} (also available at
-<A HREF="https://www.boost.org/community/exception_safety.html"><TT>https://www.boost.org/community/exception_safety.html</TT></A>).
+<A HREF="http://www.boost.org/more/generic_exception_safety.html"><TT>http://www.boost.org/more/generic_exception_safety.html</TT></A>).
 Any destructor which might throw an exception, including a destructor which
 uses the `CGAL_destructor_assertion` macro, should be marked with the
 `CGAL_NOEXCEPT(false)` macro. This macro provides future compatibility with

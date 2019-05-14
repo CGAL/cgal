@@ -3,7 +3,7 @@ namespace CGAL {
 namespace Surface_mesh_simplification {
 
 /*!
-\ingroup PkgSurfaceMeshSimplificationRef
+\ingroup PkgSurfaceMeshSimplification
 
 The class `Count_ratio_stop_predicate` is a model for the `StopPredicate` concept
 which returns `true` when the relation between the initial and current number of edges drops below a certain ratio.  

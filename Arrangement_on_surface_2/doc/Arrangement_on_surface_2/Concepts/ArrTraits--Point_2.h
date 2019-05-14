@@ -1,6 +1,6 @@
 namespace ArrTraits {
 /*!
-\ingroup PkgArrangementOnSurface2ConceptsGeometricObjects
+\ingroup PkgArrangement2ConceptsGeometricObjects
 \cgalConcept
 
 Represents a point in the plane. 

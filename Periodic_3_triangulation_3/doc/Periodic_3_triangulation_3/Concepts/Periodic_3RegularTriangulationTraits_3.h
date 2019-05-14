@@ -13,10 +13,10 @@ work with point-offset pairs. In most cases the offsets will be
 can be used directly. For efficiency reasons we maintain for each
 functor the version without offsets.
 
-\cgalRefines `Periodic_3TriangulationTraits_3`
-\cgalRefines `RegularTriangulationTraits_3`
+\cgalRefines Periodic_3TriangulationTraits_3
+\cgalRefines RegularTriangulationTraits_3
 
-\cgalHasModel `CGAL::Periodic_3_regular_triangulation_traits_3`
+\cgalHasModel CGAL::Periodic_3_regular_triangulation_traits_3
 
 In addition to the requirements described for the traits class
 RegularTriangulationTraits_3, the geometric traits class of a

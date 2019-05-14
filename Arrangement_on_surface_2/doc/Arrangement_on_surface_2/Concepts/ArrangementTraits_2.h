@@ -1,11 +1,11 @@
 
 /*!
-\ingroup PkgArrangementOnSurface2ConceptsTraits
+\ingroup PkgArrangement2ConceptsTraits
 \cgalConcept
 
 The concept `ArrangementTraits_2` allows the construction of arrangement 
 of <I>general</I> planar curves. Models of this concept are used 
-by the free \link PkgArrangementOnSurface2Insert `CGAL::insert()` \endlink functions of the arrangement package and 
+by the free \link PkgArrangement2Insert `CGAL::insert()` \endlink functions of the arrangement package and 
 by the `CGAL::Arrangement_with_history_2` class. 
 
 A model of this concept must define the nested `Curve_2` type, which 

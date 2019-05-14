@@ -1,3 +1,4 @@
+#include <CGAL/basic.h>
 
 #ifndef CGAL_SDG_VERBOSE
 #define CGAL_SDG_DEBUG(a)
@@ -10,10 +11,8 @@
 #include <cassert>
 #include <vector>
 
-#include <CGAL/basic.h>
-#include <CGAL/Interval_nt.h>
+#include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Simple_cartesian.h>
-
 #include <CGAL/Segment_Delaunay_graph_Linf_traits_2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_filtered_traits_2.h>
 

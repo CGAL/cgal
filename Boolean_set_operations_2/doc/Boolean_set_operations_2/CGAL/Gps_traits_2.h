@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBooleanSetOperations2Ref
+\ingroup PkgBooleanSetOperations2
 
 The traits class `Gps_traits_2` models the concept 
 `GeneralPolygonSetTraits_2`. It inherits from the instantiated 

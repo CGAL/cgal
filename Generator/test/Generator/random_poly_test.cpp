@@ -22,14 +22,14 @@
 // Random Simple Polygons: Test Program
 // ============================================================================
 
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_polygon_2.h>
 #include <CGAL/Polygon_2.h>
 #include <list>
 
-typedef CGAL::Simple_cartesian< double >                    CR;
+typedef CGAL::Cartesian< double >                           CR;
 typedef CGAL::Point_2< CR >                                 CPoint_2;
 typedef std::list<CPoint_2>                                 CContainer;
 typedef CGAL::Polygon_2<CR, CContainer>                     CPolygon_2;

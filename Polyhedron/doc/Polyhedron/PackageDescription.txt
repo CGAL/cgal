@@ -1,9 +1,9 @@
-/// \defgroup PkgPolyhedronRef 3D Polyhedral Surface  Reference
+/// \defgroup PkgPolyhedron 3D Polyhedral Surface  Reference
 /// \defgroup PkgPolyhedronConcepts Concepts
-/// \ingroup PkgPolyhedronRef
+/// \ingroup PkgPolyhedron
 
 /// \defgroup PkgPolyhedronIOFunc I/O Functions
-/// \ingroup PkgPolyhedronRef
+/// \ingroup PkgPolyhedron
 
 /*! Draw.
   \code
@@ -11,21 +11,21 @@
   \endcode
 */
 /// \defgroup PkgDrawPolyhedron Draw a Polyhedron 3
-/// \ingroup PkgPolyhedronRef
+/// \ingroup PkgPolyhedron
 
 /*!
-\addtogroup PkgPolyhedronRef
+\addtogroup PkgPolyhedron
 \todo check generated documentation
-\cgalPkgDescriptionBegin{3D Polyhedral Surface,PkgPolyhedron}
+\cgalPkgDescriptionBegin{3D Polyhedral Surface,PkgPolyhedronSummary}
 \cgalPkgPicture{Polyhedron-teaser-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Lutz Kettner}
 \cgalPkgDesc{Polyhedral surfaces in three dimensions are composed of vertices, edges, facets and an incidence relationship on them. The organization beneath is a halfedge data structure, which restricts the class of representable surfaces to orientable 2-manifolds - with and without boundary. If the surface is closed we call it a polyhedron.}
-\cgalPkgManuals{Chapter_3D_Polyhedral_Surfaces,PkgPolyhedronRef}
+\cgalPkgManuals{Chapter_3D_Polyhedral_Surfaces,PkgPolyhedron}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{1.0}
-\cgalPkgDependsOn{\ref PkgHalfedgeDS}
+\cgalPkgDependsOn{\ref PkgHDSSummary}
 \cgalPkgBib{cgal:k-ps}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
@@ -51,11 +51,11 @@ surface can be used without knowing the halfedge data structure.
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 - `PolyhedronTraits_3`
 - `PolyhedronItems_3`
 
-\cgalCRPSection{Classes}
+## Classes ##
 - `CGAL::Polyhedron_3<Traits>`
 - \link CGAL::Polyhedron_3::Vertex `CGAL::Polyhedron_3<Traits>::Vertex` \endlink
 - \link CGAL::Polyhedron_3::Halfedge `CGAL::Polyhedron_3<Traits>::Halfedge` \endlink
@@ -66,13 +66,13 @@ surface can be used without knowing the halfedge data structure.
 - `CGAL::Polyhedron_min_items_3`
 - `CGAL::Polyhedron_incremental_builder_3<HDS>`
 
-\cgalCRPSection{Functions}
+## Functions ##
 - \link PkgPolyhedronIOFunc `CGAL::operator<<()` \endlink
 - \link PkgPolyhedronIOFunc `CGAL::operator>>()` \endlink
 - \link PkgPolyhedronIOFunc `write_off()` \endlink   
 - \link PkgPolyhedronIOFunc `read_off()` \endlink
 
-\cgalCRPSection{Draw a Polyhedron 3}
+### Draw a Polyhedron 3 ###
 - `CGAL::draw<POLY>`
 
 */

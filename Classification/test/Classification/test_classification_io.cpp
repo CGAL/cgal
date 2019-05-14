@@ -28,7 +28,7 @@ typedef Classification::Feature_handle                                          
 typedef Classification::Label_set                                               Label_set;
 typedef Classification::Feature_set                                             Feature_set;
 
-typedef Classification::ETHZ::Random_forest_classifier                           Classifier;
+typedef Classification::ETHZ_random_forest_classifier                           Classifier;
 
 typedef Classification::Planimetric_grid<Kernel, Point_set, Point_map>        Planimetric_grid;
 typedef Classification::Point_set_neighborhood<Kernel, Point_set, Point_map>  Neighborhood;
@@ -87,18 +87,13 @@ int main (int, char**)
   std::ifstream inf ("output_config.gz", std::ios::binary);
   classifier2.load_configuration(inf);
 
-  Classifier classifier3 (classifier, features);
-
-  std::vector<std::size_t> label_indices (points.size());
-  std::vector<std::size_t> label_indices_2 (points.size());
-  std::vector<std::size_t> label_indices_3 (points.size());
+  std::vector<std::size_t> label_indices;
+  std::vector<std::size_t> label_indices_2;
     
   Classification::classify<CGAL::Sequential_tag> (points, labels, classifier, label_indices);
   Classification::classify<CGAL::Sequential_tag> (points, labels, classifier2, label_indices_2);
-  Classification::classify<CGAL::Sequential_tag> (points, labels, classifier3, label_indices_3);
 
   assert (label_indices == label_indices_2);
-  assert (label_indices == label_indices_3);
-
+  
   return EXIT_SUCCESS;
 }

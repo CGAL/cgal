@@ -25,8 +25,10 @@
 
 #include <iostream>
 #include <fstream>
+#include <CGAL/Timer.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/AABB_tree.h>

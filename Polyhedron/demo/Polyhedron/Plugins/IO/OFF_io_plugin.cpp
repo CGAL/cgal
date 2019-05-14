@@ -1,13 +1,11 @@
-#include "Scene_surface_mesh_item.h"
+#include "Scene_polyhedron_item.h"
 #include "Scene_polygon_soup_item.h"
 #include "Scene_points_with_normal_item.h"
-#include <CGAL/Three/Three.h>
-
+#include "Polyhedron_type.h"
 
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
-#include <CGAL/Three/Three.h>
 #include <fstream>
 
 #include <CGAL/IO/File_scanner_OFF.h>
@@ -22,12 +20,12 @@ class Polyhedron_demo_off_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0" FILE "off_io_plugin.json")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
 
 public:
   bool isDefaultLoader(const Scene_item *item) const 
   { 
-    if(qobject_cast<const Scene_surface_mesh_item*>(item)
+    if(qobject_cast<const Scene_polyhedron_item*>(item)
        || qobject_cast<const Scene_polygon_soup_item*>(item)) 
       return true; 
     return false;
@@ -50,15 +48,6 @@ bool Polyhedron_demo_off_plugin::canLoad() const {
 
 CGAL::Three::Scene_item*
 Polyhedron_demo_off_plugin::load(QFileInfo fileinfo) {
-  
-  if(fileinfo.size() == 0)
-  {
-    CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
-    Scene_surface_mesh_item* item =
-        new Scene_surface_mesh_item(SMesh());
-    item->setName(fileinfo.completeBaseName());
-    return item;
-  }
   if(fileinfo.suffix().toLower() == "off"){
     return load_off(fileinfo);
   } else if(fileinfo.suffix().toLower() == "obj"){
@@ -76,78 +65,68 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
     std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
     return NULL;
   }
-  
-  
+
+
   CGAL::File_scanner_OFF scanner( in, false);
-  
+
   // Try to read .off in a point set
   if (scanner.size_of_facets() == 0)
-  {
-    in.seekg(0);
-    Scene_points_with_normal_item* item = new Scene_points_with_normal_item();
-    item->setName(fileinfo.completeBaseName());
-    if (scanner.size_of_vertices()==0) return item;
-    if(!item->read_off_point_set(in))
     {
-      delete item;
-      return 0;
+      in.seekg(0);
+      Scene_points_with_normal_item* item = new Scene_points_with_normal_item();
+      item->setName(fileinfo.completeBaseName());
+      if (scanner.size_of_vertices()==0) return item;
+      if(!item->read_off_point_set(in))
+        {
+          delete item;
+          return 0;
+        }
+
+      return item;
     }
-    
-    return item;
-  }
   
+  // to detect isolated vertices
+  std::size_t total_nb_of_vertices = scanner.size_of_vertices();
   in.seekg(0);
-  // Try to read .off in a surface_mesh
-  SMesh *surface_mesh = new SMesh();
-  try{
-    in >> *surface_mesh;
-  } catch(...)
+
+  // Try to read .off in a polyhedron
+  Scene_polyhedron_item* item = new Scene_polyhedron_item();
+  item->setName(fileinfo.completeBaseName());
+  if(!item->load(in))
   {
-    surface_mesh->clear();
-  }
-  if(!in || surface_mesh->is_empty())
-  {
-    delete surface_mesh;
-    in.close();
+    delete item;
+
     // Try to read .off in a polygon soup
-    Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item();
+    Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item;
     soup_item->setName(fileinfo.completeBaseName());
+    in.close();
     std::ifstream in2(fileinfo.filePath().toUtf8());
     if(!soup_item->load(in2)) {
-      QMessageBox::warning(
-            CGAL::Three::Three::mainWindow(),
-            "Cannot Open File",
-            QString("Cannot open file %1").arg((const char*)fileinfo.filePath().toUtf8()));
       delete soup_item;
       return 0;
     }
-    QApplication::restoreOverrideCursor();
-    QMessageBox::information(
-          CGAL::Three::Three::mainWindow(),
-          "Cannot Open File",
-          "The facets don't seem to be oriented. Loading a Soup of polygons instead."
-          "To convert it to a Surface_mesh, use Polygon Mesh Processing -> Orient polygon soup");
     return soup_item;
   }
-  Scene_surface_mesh_item* item = new Scene_surface_mesh_item(surface_mesh);
-  item->setName(fileinfo.completeBaseName());
-  std::size_t isolated_v = 0;
-  BOOST_FOREACH(vertex_descriptor v, vertices(*surface_mesh))
-  {
-    if(surface_mesh->is_isolated(v))
+  else
+    if( total_nb_of_vertices!= item->polyhedron()->size_of_vertices())
     {
-      ++isolated_v;
+      item->setNbIsolatedvertices(total_nb_of_vertices - item->polyhedron()->size_of_vertices());
+      //needs two restore, it's not a typo
+      QApplication::restoreOverrideCursor();
+      QMessageBox::warning((QWidget*)NULL,
+                     tr("Isolated vertices found"),
+                     tr("%1 isolated vertices ignored")
+                     .arg(item->getNbIsolatedvertices()));
     }
-  }
-  if(isolated_v >0)
+
+  //if file > 100 MB, assume it is a very big file and disable flat shading to gain memory.
+  if(fileinfo.size() > 100000000)//100 MB
   {
-    item->setNbIsolatedvertices(isolated_v);
-    //needs two restore, it's not a typo
+    item->set_flat_disabled(true);
     QApplication::restoreOverrideCursor();
     QMessageBox::warning((QWidget*)NULL,
-                         tr("Isolated vertices"),
-                         tr("%1 isolated vertices found")
-                         .arg(item->getNbIsolatedvertices()));
+                   tr("The file seems to be very big."),
+                   tr("Flat shading has been disabled to gain memory. You can force it in the context menu of the item."));
   }
   return item;
 }
@@ -160,44 +139,62 @@ Polyhedron_demo_off_plugin::load_obj(QFileInfo fileinfo) {
     std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
     return NULL;
   }
-  Scene_surface_mesh_item* item = new Scene_surface_mesh_item();
-  item->setName(fileinfo.baseName());
-  if(item->load_obj(in))
-    return item;
-  return 0;
+  typedef Polyhedron::Vertex::Point Point;
+  std::vector<Point> points;
+  std::vector<std::vector<std::size_t> > faces;
+  if(!CGAL::read_OBJ(in,points,faces)) return 0;
+
+  Scene_item* item = 0;
+
+  namespace pmp = CGAL::Polygon_mesh_processing;
+  if(pmp::is_polygon_soup_a_polygon_mesh(faces)) {
+    Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
+    pmp::polygon_soup_to_polygon_mesh(std::move(points),
+                                      std::move(faces),
+                                      *(poly_item->polyhedron()));
+    item = poly_item;
+    item->invalidateOpenGLBuffers();
+  } else {
+    Scene_polygon_soup_item* polygon_soup_item = new Scene_polygon_soup_item();
+    polygon_soup_item->load(std::move(points), std::move(faces));
+    item = polygon_soup_item;
+  }
+  // Try to read .obj in a polyhedron
+  item->setName(fileinfo.completeBaseName());
+  return item;
 }
 
 bool Polyhedron_demo_off_plugin::canSave(const CGAL::Three::Scene_item* item)
 {
-  // This plugin supports surface_meshes and polygon soups
-  return qobject_cast<const Scene_surface_mesh_item*>(item) ||
+  // This plugin supports polyhedrons and polygon soups
+  return qobject_cast<const Scene_polyhedron_item*>(item) ||
     qobject_cast<const Scene_polygon_soup_item*>(item) ||
     qobject_cast<const Scene_points_with_normal_item*>(item);
 }
 
 bool Polyhedron_demo_off_plugin::save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
 {
-  // This plugin supports point sets, surface_meshes and polygon soups
+  // This plugin supports point sets, polyhedrons and polygon soups
   const Scene_points_with_normal_item* points_item =
     qobject_cast<const Scene_points_with_normal_item*>(item);
-  const Scene_surface_mesh_item* sm_item = 
-    qobject_cast<const Scene_surface_mesh_item*>(item);
+  const Scene_polyhedron_item* poly_item = 
+    qobject_cast<const Scene_polyhedron_item*>(item);
   const Scene_polygon_soup_item* soup_item = 
     qobject_cast<const Scene_polygon_soup_item*>(item);
 
-  if(!sm_item && !soup_item && !points_item)
+  if(!poly_item && !soup_item && !points_item)
     return false;
 
   std::ofstream out(fileinfo.filePath().toUtf8());
   out.precision (std::numeric_limits<double>::digits10 + 2);
 
   if(fileinfo.suffix().toLower() == "off"){
-    return (sm_item && sm_item->save(out)) || 
+    return (poly_item && poly_item->save(out)) || 
       (soup_item && soup_item->save(out)) ||
       (points_item && points_item->write_off_point_set(out));
   }
   if(fileinfo.suffix().toLower() == "obj"){
-    return (sm_item && sm_item->save_obj(out));
+    return (poly_item && poly_item->save_obj(out));
   }
   return false;
 }

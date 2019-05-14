@@ -1,4 +1,6 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include "Polyhedron_type.h"
+#include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polylines_item.h"
 
@@ -38,7 +40,8 @@ public:
   }
 
   bool applicable(QAction*) const { 
-    return qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())) ||
+      qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
 public Q_SLOTS:
@@ -55,10 +58,10 @@ void compute(Poly* pMesh,
              Scene_polylines_item* max_curv)
 {
 
-  typedef CGAL::Monge_via_jet_fitting<EPICK> Fitting;
+  typedef CGAL::Monge_via_jet_fitting<Kernel> Fitting;
   typedef Fitting::Monge_form Monge_form;
 
-  typedef EPICK::Point_3 Point;
+  typedef Kernel::Point_3 Point;
 
   typename boost::property_map<Poly, CGAL::vertex_point_t>::type vpmap = get(CGAL::vertex_point, *pMesh);
 
@@ -73,7 +76,7 @@ void compute(Poly* pMesh,
     // compute min edge len around central vertex
     // to scale the ribbons used to display the directions
 
-    typedef EPICK::FT FT;
+    typedef Kernel::FT FT;
 
     FT min_edge_len = std::numeric_limits<FT>::infinity();
     BOOST_FOREACH(typename boost::graph_traits<Poly>::halfedge_descriptor he, halfedges_around_target(v, *pMesh))
@@ -94,7 +97,7 @@ void compute(Poly* pMesh,
 
       // make monge form comply with vertex normal (to get correct
       // orientation)
-      typedef EPICK::Vector_3 Vector;
+      typedef Kernel::Vector_3 Vector;
       Vector n = CGAL::Polygon_mesh_processing::compute_vertex_normal(v, *pMesh);
       monge_form.comply_wrt_given_normal(n);
 
@@ -122,9 +125,11 @@ void Polyhedron_demo_jet_fitting_plugin::on_actionEstimateCurvature_triggered()
   // get active polyhedron
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   QString name = scene->item(index)->name();
+  Scene_polyhedron_item* poly_item = 
+    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Scene_surface_mesh_item* sm_item = 
     qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
-  if(! sm_item){
+  if((!poly_item) && (! sm_item)){
     return;
   }
   // wait cursor
@@ -138,9 +143,14 @@ void Polyhedron_demo_jet_fitting_plugin::on_actionEstimateCurvature_triggered()
   min_curv->setColor(Qt::green);
   min_curv->setName(tr("%1 (min curvatures)").arg(name));
 
-  SMesh* pMesh = sm_item->polyhedron();
-  compute(pMesh, min_curv, max_curv);
-  
+  if(poly_item){
+    Polyhedron* pMesh = poly_item->polyhedron();
+    compute(pMesh, min_curv, max_curv);
+  } else {
+    
+    SMesh* pMesh = sm_item->polyhedron();
+    compute(pMesh, min_curv, max_curv);
+  }
   scene->addItem(max_curv);
   scene->addItem(min_curv);
   max_curv->invalidateOpenGLBuffers();

@@ -1,4 +1,5 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Filtered_kernel.h>
 #include <CGAL/algorithm.h>
 #include <cstdio>
 #include <cstring>
@@ -14,7 +15,8 @@
 
 typedef double coord_type;
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Simple_cartesian<coord_type>  SC;
+typedef CGAL::Filtered_kernel<SC> K;
 
 typedef K::Point_2  Point;
 typedef K::Segment_2  Segment;

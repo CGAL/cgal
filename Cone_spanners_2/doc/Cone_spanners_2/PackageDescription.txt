@@ -1,9 +1,11 @@
-/// \defgroup PkgConeSpanners2Ref Cone-Based Spanners Reference
+// PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
+
+/// \defgroup PkgConeBasedSpanners Cone-Based Spanners Reference
 
 /*!
-\addtogroup PkgConeSpanners2Ref
+\addtogroup PkgConeBasedSpanners
 
-\cgalPkgDescriptionBegin{Cone-Based Spanners,PkgConeSpanners2}
+\cgalPkgDescriptionBegin{Cone-Based Spanners,PkgConeBasedSpannersSummary}
 \cgalPkgPicture{Logo-ConeSpanners.png}
 
 \cgalPkgSummaryBegin
@@ -18,7 +20,7 @@ value defined in \cgal, which is still accurate enough for most applications.
 Moreover, for visualization purpose, this package provides a global function to
 generate the data and script files used by Gnuplot to plot the constructed graphs.
 This package also provides options for the Half Yao graph and the Half Theta graph.}
-\cgalPkgManuals{Chapter_ConeBasedSpanners,PkgConeSpanners2Ref}
+\cgalPkgManuals{Chapter_ConeBasedSpanners,PkgConeBasedSpanners}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
@@ -32,15 +34,15 @@ This package also provides options for the Half Yao graph and the Half Theta gra
 \cgalClassifedRefPages
 
 
-\cgalCRPSection{Functors}
+## Functors ##
 - `CGAL::Compute_cone_boundaries_2`
 - `CGAL::Construct_yao_graph_2`
 - `CGAL::Construct_theta_graph_2`
 
-\cgalCRPSection{Functions}
+## Functions ##
 - `CGAL::gnuplot_output_2()`
 
-\cgalCRPSection{Enumerations}
+## Enumerations ##
 - `CGAL::Cones_selected`
 
 */

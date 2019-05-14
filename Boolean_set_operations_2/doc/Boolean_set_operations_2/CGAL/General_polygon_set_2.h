@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBooleanSetOperations2Ref
+\ingroup PkgBooleanSetOperations2
 
 An object of the `General_polygon_set_2` class-template represents a 
 point set in the plane bounded by \f$ x\f$ monotone curves. Points in the set 

@@ -1,4 +1,5 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Filtered_kernel.h>
 #include <CGAL/Cartesian_converter.h>
 
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -15,8 +16,9 @@
 
 typedef double                                coord_type;
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
-typedef CGAL::Projection_traits_xy_3<Epic>      K;
+typedef CGAL::Simple_cartesian<coord_type>    SC;
+typedef CGAL::Filtered_kernel<SC>             FK;
+typedef CGAL::Projection_traits_xy_3<FK>      K;
 
 typedef K::Point_2                            Point;
 typedef K::Segment_2                          Segment;
@@ -32,10 +34,10 @@ typedef K::Segment_2                          Segment;
 namespace CGAL {
 
 template < class K2, class C >
-class Cartesian_converter<Epic, K2, C>
+class Cartesian_converter<FK, K2, C>
 {
 public:
-  typedef CGAL::Projection_traits_xy_3<Epic> Source_kernel;
+  typedef CGAL::Projection_traits_xy_3<FK>   Source_kernel;
   typedef K2                                 Target_kernel;
   typedef C                                  Number_type_converter;
 

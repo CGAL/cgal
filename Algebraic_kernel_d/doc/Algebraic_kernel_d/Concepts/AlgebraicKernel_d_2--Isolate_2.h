@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicKernelDConceptsBi
+\ingroup PkgAlgebraicKerneldConceptsBi
 \cgalConcept
 
 Computes an isolating box for a given `AlgebraicKernel_d_2::Algebraic_real_2`.

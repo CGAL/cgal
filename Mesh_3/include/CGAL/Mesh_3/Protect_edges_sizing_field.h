@@ -44,7 +44,6 @@
 #include <CGAL/Mesh_3/utilities.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
 #include <CGAL/iterator.h>
-#include <CGAL/Mesh_error_code.h>
 #if CGAL_MESH_3_PROTECTION_DEBUG
 #  include <CGAL/Mesh_3/Dump_c3t3.h>
 #endif
@@ -56,7 +55,6 @@
 #include <CGAL/iterator.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/atomic.h>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
@@ -150,39 +148,12 @@ public:
   Protect_edges_sizing_field(C3T3& c3t3,
                              const MeshDomain& domain,
                              SizingFunction size=SizingFunction(),
-                             const FT minimal_size = FT(),
-                             std::size_t maximal_number_of_vertices = 0,
-                             Mesh_error_code* error_code = 0
-#ifndef CGAL_NO_ATOMIC
-                             , CGAL::cpp11::atomic<bool>* stop_ptr = 0
-#endif
-                             );
+                             const FT minimal_size = FT());
 
   void operator()(const bool refine = true);
 
   void set_nonlinear_growth_of_balls(bool b = true) {
     nonlinear_growth_of_balls = b;
-  }
-
-  bool forced_stop() const {
-#ifndef CGAL_NO_ATOMIC
-    if(stop_ptr_ != 0 &&
-       stop_ptr_->load(CGAL::cpp11::memory_order_acquire) == true)
-    {
-      if(error_code_ != 0) *error_code_ = CGAL_MESH_3_STOPPED;
-      return true;
-    }
-#endif // not defined CGAL_NO_ATOMIC
-    if(maximal_number_of_vertices_ != 0 &&
-       c3t3_.triangulation().number_of_vertices() >=
-       maximal_number_of_vertices_)
-    {
-      if(error_code_ != 0) {
-        *error_code_ = CGAL_MESH_3_MAXIMAL_NUMBER_OF_VERTICES_REACHED;
-      }
-      return true;
-    }
-    return false;
   }
 
 private:
@@ -469,25 +440,13 @@ private:
   Vertex_set unchecked_vertices_;
   int refine_balls_iteration_nb;
   bool nonlinear_growth_of_balls;
-  std::size_t maximal_number_of_vertices_;
-  Mesh_error_code* const error_code_;
-#ifndef CGAL_NO_ATOMIC
-  /// Pointer to the atomic Boolean that can stop the process
-  CGAL::cpp11::atomic<bool>* const stop_ptr_;
-#endif
 };
 
 
 template <typename C3T3, typename MD, typename Sf>
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 Protect_edges_sizing_field(C3T3& c3t3, const MD& domain,
-                           Sf size, const FT minimal_size,
-                           std::size_t maximal_number_of_vertices,
-                           Mesh_error_code* error_code
-#ifndef CGAL_NO_ATOMIC
-                           , CGAL::cpp11::atomic<bool>* stop_ptr
-#endif
-                           )
+                           Sf size, const FT minimal_size)
   : c3t3_(c3t3)
   , domain_(domain)
   , size_(size)
@@ -495,11 +454,6 @@ Protect_edges_sizing_field(C3T3& c3t3, const MD& domain,
   , minimal_weight_(CGAL::square(minimal_size))
   , refine_balls_iteration_nb(0)
   , nonlinear_growth_of_balls(false)
-  , maximal_number_of_vertices_(maximal_number_of_vertices)
-  , error_code_(error_code)
-#ifndef CGAL_NO_ATOMIC
-  , stop_ptr_(stop_ptr)
-#endif
 {
 #ifndef CGAL_MESH_3_NO_PROTECTION_NON_LINEAR
   set_nonlinear_growth_of_balls();
@@ -537,7 +491,7 @@ operator()(const bool refine)
 #endif
 
   // Solve problems
-  if ( refine && !forced_stop())
+  if ( refine )
   {
     refine_balls();
 #ifdef CGAL_MESH_3_VERBOSE
@@ -569,7 +523,6 @@ insert_corners()
   for ( typename Initial_corners::iterator it = corners.begin(),
        end = corners.end() ; it != end ; ++it )
   {
-    if(forced_stop()) break;
     const Bare_point& p = it->second;
     dt.insert(p);
   }
@@ -577,7 +530,6 @@ insert_corners()
   for ( typename Initial_corners::iterator cit = corners.begin(),
           end = corners.end() ; cit != end ; ++cit )
   {
-    if(forced_stop()) break;
     const Bare_point& p = cit->second;
     Index p_index = domain_.index_from_corner_index(cit->first);
 
@@ -955,7 +907,6 @@ insert_balls_on_edges()
   for ( typename Input_features::iterator fit = input_features.begin(),
        end = input_features.end() ; fit != end ; ++fit )
   {
-    if(forced_stop()) break;
     const Curve_index& curve_index = CGAL::cpp11::get<0>(*fit);
     if ( ! is_treated(curve_index) )
     {
@@ -1197,7 +1148,6 @@ insert_balls(const Vertex_handle& vp,
                            dim,
                            index,
                            out);
-      if(forced_stop()) return out;
       const Vertex_handle new_vertex = pair.first;
       out = pair.second;
       const FT sn = get_radius(new_vertex);
@@ -1327,7 +1277,6 @@ refine_balls()
   while ( (!unchecked_vertices_.empty() || restart) &&
           this->refine_balls_iteration_nb < refine_balls_max_nb_of_loops)
   {
-    if(forced_stop()) break;
 #ifdef CGAL_MESH_3_DUMP_FEATURES_PROTECTION_ITERATIONS
     std::ostringstream oss;
     oss << "dump_protecting_balls_" << refine_balls_iteration_nb << ".cgal";
@@ -1347,7 +1296,6 @@ refine_balls()
     for(typename Tr::Finite_edges_iterator eit = tr.finite_edges_begin(),
         end = tr.finite_edges_end(); eit != end; ++eit)
     {
-      if(forced_stop()) break;
       const Vertex_handle& va = eit->first->vertex(eit->second);
       const Vertex_handle& vb = eit->first->vertex(eit->third);
 
@@ -1394,7 +1342,6 @@ refine_balls()
         }
       }
     }
-    if(forced_stop()) new_sizes.clear();
 
     // The std::map with Vertex_handle as the key is not robust, because
     // the time stamp of vertices can change during the following loop. The
@@ -1409,7 +1356,6 @@ refine_balls()
           end = new_sizes_copy.end();
           it != end ; ++it )
     {
-      if(forced_stop()) break;
       const Vertex_handle v = it->first;
       const FT new_size = it->second;
       // Set size of the ball to new value
@@ -1433,9 +1379,7 @@ refine_balls()
     dump_c3t3_edges(c3t3_, "dump-before-check_and_repopulate_edges");
 #endif
     // Check edges
-    if(!forced_stop()) {
-      check_and_repopulate_edges();
-    }
+    check_and_repopulate_edges();
   }
 
   if(this->refine_balls_iteration_nb == refine_balls_max_nb_of_loops)
@@ -1609,7 +1553,6 @@ check_and_repopulate_edges()
   // Fix edges
   while ( !vertices.empty() )
   {
-    if(forced_stop()) break;
     Vertex_handle v = *vertices.begin();
     vertices.erase(vertices.begin());
 
@@ -1836,7 +1779,6 @@ walk_along_edge(const Vertex_handle& start, const Vertex_handle& next,
   // and current intersects enough
   while ( ! is_sampling_dense_enough(previous, current, curve_index, orientation) )
   {
-    if(forced_stop()) return out;
     *out++ = current;
 
     // Don't go through corners
@@ -1945,7 +1887,6 @@ repopulate(InputIterator begin, InputIterator last,
 #endif // CGAL_MESH_3_PROTECTION_DEBUG
     *out++ = *current;
     c3t3_.triangulation().remove(*current);
-    if(forced_stop()) return out;
   }
 
   // Repopulate edge

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh3Domains
+\ingroup PkgMesh_3Domains
 
 The class `Triangle_accessor_3` is a model for the concept `TriangleAccessor_3`. It is 
 designed to serve as accessor for objects of type `Polyhedron_3<K>`. 

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-  \ingroup PkgNef3Ref
+  \ingroup PkgNef3
 
   A 3D Nef polyhedron is a subset of the 3-dimensional space that is the 
   result of forming complements and intersections starting from a finite 
@@ -59,7 +59,7 @@ public:
 /// @{
 
 /*!
-  \ingroup PkgNef3Ref
+  \ingroup PkgNef3
 
   A Halfedge has a double meaning. In the global incidence structure of a 
   `Nef_polyhedron_3` it is an oriented edge going from one vertex to another. 
@@ -185,7 +185,7 @@ public:
   }; /* end Halfedge */
 
 /*!
-  \ingroup PkgNef3Ref
+  \ingroup PkgNef3
 
   The type `Halffacet_cycle_iterator` iterates over a list of 
   `Object_handles`. Each item of that list can either be assigned 
@@ -255,7 +255,7 @@ public:
 
 
 /*!
-  \ingroup PkgNef3Ref
+  \ingroup PkgNef3
 
   A halffacet is an oriented, rectilinear bounded part of a plane. The following 
   figure depicts the incidences to halfedges, vertices and the notion of facet 
@@ -361,7 +361,7 @@ public:
   }; /* end Halffacet */
 
 /*!
-  \ingroup PkgNef3Ref
+  \ingroup PkgNef3
 
   The type `SFace_cycle_iterator` iterates over a list of 
   `Object_handles`. Each item of that list can either be assigned 
@@ -447,7 +447,7 @@ public:
   }; /* end SFace_cycle_iterator */
 
 /*!
-  \ingroup PkgNef3Ref
+  \ingroup PkgNef3
 
   An sface is described by its boundaries.
  Figures \ref figureNef3HalfedgeIncidences 
@@ -542,7 +542,7 @@ public:
   }; /* end SFace */
 
 /*!
-  \ingroup PkgNef3Ref
+  \ingroup PkgNef3
 
   A shalfedge is a great arc on a sphere map. 
   Figure \ref figureNef3HalfedgeIncidences 
@@ -728,7 +728,7 @@ public:
   }; /* end SHalfedge */
 
 /*!
-  \ingroup PkgNef3Ref
+  \ingroup PkgNef3
 
   A shalfloop is a great circle on a sphere map. 
   Figure \ref figureNef3HalfloopIncidences 
@@ -825,7 +825,7 @@ public:
   }; /* end SHalfloop */
 
 /*!
-  \ingroup PkgNef3Ref
+  \ingroup PkgNef3
 
   A vertex is a point in the 3-dimensional space. Its incidence 
   structure can be accessed creating a sphere map of the vertex. 
@@ -877,7 +877,7 @@ public:
   }; /* end Vertex */
 
 /*!
-  \ingroup PkgNef3Ref
+  \ingroup PkgNef3
 
   A volume is a full-dimensional connected point set in \f$ \mathbb{R}^3\f$. It is 
   bounded by several shells, i.e.\ a connected part of the boundary incident 

@@ -97,16 +97,14 @@ template <typename PatchIdMap, typename Handle_type, typename Int>
 typename PatchIdMapWrapper<PatchIdMap, Int>::value_type
 get(PatchIdMapWrapper<PatchIdMap, Int>& map, Handle_type h)
 {
-  typedef typename PatchIdMapWrapper<PatchIdMap, Int>::value_type value_type;
-  return value_type(get(map.map, h) - map.offset);
+  return get(map.map, h) - map.offset;
 }
 
 template <typename PatchIdMap, typename Handle_type, typename Int>
 void put(PatchIdMapWrapper<PatchIdMap, Int>& map, Handle_type h,
          typename PatchIdMapWrapper<PatchIdMap, Int>::value_type pid)
 {
-  typedef typename PatchIdMapWrapper<PatchIdMap, Int>::value_type value_type;
-  put(map.map, h, value_type(pid + map.offset));
+  put(map.map, h, pid + map.offset);
 }
 
 
@@ -129,14 +127,14 @@ template <typename PatchIdMap, typename Handle_type, typename Int>
 typename PatchIdMapWrapper<PatchIdMap, std::pair<Int, Int> >::value_type
 get(PatchIdMapWrapper<PatchIdMap, std::pair<Int, Int> >& map, Handle_type h)
 {
-  return Int(get(map.map, h).first - map.offset);
+  return get(map.map, h).first - map.offset;
 }
 
 template <typename PatchIdMap, typename Handle_type, typename Int>
 void put(PatchIdMapWrapper<PatchIdMap, std::pair<Int, Int> >& map, Handle_type h,
          typename PatchIdMapWrapper<PatchIdMap, std::pair<Int, Int> >::value_type pid)
 {
-  put(map.map, h, std::pair<Int, Int>(Int(pid+map.offset), 0));
+  put(map.map, h, std::pair<Int, Int>(pid+map.offset, 0));
 }
 
 template <typename PolygonMesh, typename PatchIdMap,
@@ -260,7 +258,7 @@ template<typename GT,
  * \param pmesh the polygon mesh
  * \param angle_in_deg the dihedral angle bound
  * \param edge_is_feature_map the property map that will contain the sharp-or-not status of each edge of `pmesh`
- * \param np optional \ref pmp_namedparameters "Named Parameters", amongst those described below
+ * \param np optional \ref pmp_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
@@ -400,7 +398,7 @@ namespace internal
  * \param angle_in_deg the dihedral angle bound
  * \param edge_is_feature_map the property map that will contain the sharp-or-not status of each edge of `pmesh`
  * \param patch_id_map the property map that will contain the surface patch ids for the faces of `pmesh`.
- * \param np optional \ref pmp_namedparameters "Named Parameters", amongst those described below
+ * \param np optional \ref pmp_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd

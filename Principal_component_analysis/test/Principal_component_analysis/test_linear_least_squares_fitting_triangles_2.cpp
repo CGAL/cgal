@@ -1,7 +1,7 @@
 #include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
 
 // test for the linear_least_square_fitting() functions.
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/linear_least_squares_fitting_2.h>
 #include <CGAL/point_generators_2.h>
@@ -12,8 +12,8 @@
 
 #define THRESHOLD 0.001
 
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef Kernel::FT              FT;
+typedef CGAL::Cartesian<double> Kernel;
+typedef Kernel::FT FT;
 typedef Kernel::Line_2          Line_2;
 typedef Kernel::Point_2         Point_2;
 typedef Kernel::Vector_2        Vector_2;

@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMesh3Concepts
+\ingroup PkgMesh_3Concepts
 \cgalConcept
 
 The function object concept `MeshEdgeCriteria_3` is designed to drive the process which samples 

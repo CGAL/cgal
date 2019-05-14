@@ -1,24 +1,19 @@
-/// \defgroup PkgMesh2Ref 2D Conforming Triangulations and Meshes Reference
+/// \defgroup PkgMesh2 2D Conforming Triangulations and Meshes Reference
 
 /// \defgroup PkgMesh2Concepts Concepts
-/// \ingroup PkgMesh2Ref
+/// \ingroup PkgMesh2
 
 /// \defgroup PkgMesh2Functions Mesh Generation Functions
-/// \ingroup PkgMesh2Ref
+/// \ingroup PkgMesh2
 /// The main function to generate a mesh is `refine_Delaunay_mesh_2()`. 
 /// The function `lloyd_optimize_mesh_2()` allows to optimize an existing mesh.
 
 /// \defgroup PkgMesh2Enum Enumerations
-/// \ingroup PkgMesh2Ref
-
-/// \defgroup PkgMesh2IO I/O Functions
-/// \ingroup PkgMesh2Ref
-/// In addition to the stream extraction and insertion operators for
-/// %CGAL 2D triangulations, the following functions can be used.
+/// \ingroup PkgMesh2
 
 /*!
-\addtogroup PkgMesh2Ref
-\cgalPkgDescriptionBegin{2D Conforming Triangulations and Meshes,PkgMesh2}
+\addtogroup PkgMesh2
+\cgalPkgDescriptionBegin{2D Conforming Triangulations and Meshes,PkgMesh2Summary}
 \cgalPkgPicture{Mesh_2/fig/delaunaymesh-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Laurent Rineau}
@@ -28,11 +23,11 @@ Conforming Gabriel triangulations  are obtained by further refining constrained 
 The package provides also a 2D mesh generator that refines triangles and constrained edges until user defined size and shape criteria on triangles are satisfied.
 The generated meshes can be optimized using the Lloyd algorithm, also provided in this package.
 The package can handle intersecting input constraints  and set no restriction on the angle formed  by two constraints sharing an endpoint.}
-\cgalPkgManuals{Chapter_2D_Conforming_Triangulations_and_Meshes,PkgMesh2Ref}
+\cgalPkgManuals{Chapter_2D_Conforming_Triangulations_and_Meshes,PkgMesh2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.1}
-\cgalPkgDependsOn{\ref PkgTriangulation2}
+\cgalPkgDependsOn{\ref PkgTriangulation2Summary}
 \cgalPkgBib{cgal:r-ctm2}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{2D Mesh Generator,constrained_delaunay_triangulation_2.zip}
@@ -41,14 +36,14 @@ The package can handle intersecting input constraints  and set no restriction on
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 - `ConformingDelaunayTriangulationTraits_2`
 - `DelaunayMeshTraits_2`
 - `MeshingCriteria_2`
 - `DelaunayMeshFaceBase_2`
 - `DelaunayMeshVertexBase_2`
 
-\cgalCRPSection{Classes}
+## Classes##
 - `CGAL::Triangulation_conformer_2<CDT>`
 - `CGAL::Delaunay_mesher_2<CDT, Criteria>`
 - `CGAL::Delaunay_mesh_face_base_2<Traits, Fb>`
@@ -57,16 +52,13 @@ The package can handle intersecting input constraints  and set no restriction on
 - `CGAL::Delaunay_mesh_size_criteria_2<CDT>`
 - `CGAL::Mesh_2::Face_badness`
 
-\cgalCRPSection{Global Functions}
+## Global functions ##
 - `CGAL::make_conforming_Delaunay_2`
 - `CGAL::make_conforming_Gabriel_2`
 - `CGAL::refine_Delaunay_mesh_2`
 - `CGAL::lloyd_optimize_mesh_2`
 
-\cgalCRPSection{I/O Functions}
-- `CGAL::write_vtu()`
-
-\cgalCRPSection{Enumerations}
+## Enumerations ##
 - `CGAL::Mesh_optimization_return_code`
 
 */

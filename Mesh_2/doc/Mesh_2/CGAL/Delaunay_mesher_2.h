@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh2Ref
+\ingroup PkgMesh2
 
 
 This class implements a 2D mesh generator. 

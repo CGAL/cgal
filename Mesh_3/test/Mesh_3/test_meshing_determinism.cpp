@@ -14,15 +14,23 @@
 #include <sstream>
 #include <cstring>
 
-#ifdef CGAL_LINKED_WITH_TBB
-#  include <tbb/task_scheduler_init.h>
-#endif
+// Domain
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
+typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
+
+// Triangulation
+typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+typedef CGAL::Mesh_complex_3_in_triangulation_3<
+  Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_index> C3t3;
+
+// Mesh Criteria
+typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
-template <typename Concurrency_tag>
-void test()
+int main(int, char*[])
 {
   // Collect options
   std::size_t nb_runs   = 2;
@@ -30,19 +38,6 @@ void test()
   unsigned int nb_odt   = 2;
   double perturb_bound  = 10.;
   double exude_bound    = 15.;
-
-  // Domain
-  typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-  typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
-  typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
-
-  // Triangulation
-  typedef typename CGAL::Mesh_triangulation_3<Mesh_domain, K, Concurrency_tag>::type Tr;
-  typedef CGAL::Mesh_complex_3_in_triangulation_3<
-    Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_index> C3t3;
-
-  // Mesh Criteria
-  typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
   // Domain
   std::cout << "\tSeed is\t 0" << std::endl;
@@ -113,13 +108,6 @@ void test()
       }
     }
   }
-}
 
-int main(int, char*[])
-{
-  test<CGAL::Sequential_tag>();
-#ifdef CGAL_LINKED_WITH_TBB
-  tbb::task_scheduler_init init(1);
-  test<CGAL::Parallel_tag>();
-#endif
+  return 0;
 }

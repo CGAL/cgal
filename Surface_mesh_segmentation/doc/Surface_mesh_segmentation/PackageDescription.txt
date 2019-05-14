@@ -1,13 +1,13 @@
-/// \defgroup PkgSurfaceMeshSegmentationRef Triangulated Surface Mesh Segmentation Reference
+/// \defgroup PkgSurfaceSegmentation Triangulated Surface Mesh Segmentation Reference
 
-/// \defgroup PkgSurfaceMeshSegmentationConcepts Concepts
-/// \ingroup PkgSurfaceMeshSegmentationRef
+/// \defgroup PkgSurfaceSegmentationConcepts Concepts
+/// \ingroup PkgSurfaceSegmentation
 
 
 /*!
-\addtogroup PkgSurfaceMeshSegmentationRef
+\addtogroup PkgSurfaceSegmentation
 
-\cgalPkgDescriptionBegin{Triangulated Surface Mesh Segmentation,PkgSurfaceMeshSegmentation}
+\cgalPkgDescriptionBegin{Triangulated Surface Mesh Segmentation,PkgSurfaceSegmentationSummary}
 \cgalPkgPicture{segmentation_ico.png}
 
 \cgalPkgSummaryBegin
@@ -17,12 +17,12 @@
               <em>Shape Diameter Function</em> (SDF) for all facets and applies a
               graph-cut based algorithm over these values. Low level functions are
               provided to replace any intermediate step by a custom one. }
-\cgalPkgManuals{Chapter_3D_SurfaceSegmentation,PkgSurfaceMeshSegmentationRef}
+\cgalPkgManuals{Chapter_3D_SurfaceSegmentation,PkgSurfaceSegmentation}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.4}
-\cgalPkgDependsOn{\ref PkgAABBTree}
+\cgalPkgDependsOn{\ref PkgAABB_treeSummary}
 \cgalPkgBib{cgal:y-smsimpl}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
@@ -32,10 +32,10 @@
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 - `#SegmentationGeomTraits`
 
-\cgalCRPSection{Main Functions}
+## Main Functions ##
 - `#CGAL::sdf_values()`
 - `#CGAL::sdf_values_postprocessing()`
 - `#CGAL::segmentation_from_sdf_values()`

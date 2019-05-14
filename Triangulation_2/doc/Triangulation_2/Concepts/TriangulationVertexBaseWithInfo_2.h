@@ -29,13 +29,13 @@ typedef unspecified_type Info;
 /// @{
 
 /*!
-returns a const reference to the object of type `Info` stored in the 
+Returns a const reference to the object of type `Info` stored in the 
 vertex. 
 */ 
 const Info& info() const; 
 
 /*!
-returns a reference to the object of type `Info` stored in the vertex. 
+Returns a reference to the object of type `Info` stored in the vertex. 
 */ 
 Info& info(); 
 

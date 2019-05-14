@@ -3,7 +3,6 @@ namespace CGAL {
 namespace Scale_space_reconstruction_3 {
 
 /** \ingroup PkgScaleSpaceReconstruction3Concepts
- * \cgalConcept
  *
  * Concept describing a smoothing algorithm used to construct the
  * scales of the scale space reconstruction algorithm.

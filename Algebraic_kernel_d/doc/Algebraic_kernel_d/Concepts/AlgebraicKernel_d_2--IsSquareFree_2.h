@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicKernelDConceptsBi
+\ingroup PkgAlgebraicKerneldConceptsBi
 \cgalConcept
 
 Computes whether the given bivariate polynomial is square free. 

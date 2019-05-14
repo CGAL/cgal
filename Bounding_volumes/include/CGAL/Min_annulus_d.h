@@ -42,7 +42,6 @@
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/functional.hpp>
-#include <CGAL/NT_converter.h>
 
 // here is how it works. We have d+2 variables: 
 // R (big radius), r (small radius), c (center). The problem is
@@ -467,8 +466,7 @@ public:
   { CGAL_optimisation_precondition(
 				   is_empty() || tco.access_dimension_d_object()( p) == d);
   ET sqr_d = sqr_dist( p);
-  ET h_p_sqr(da_coord(p)[d]);
-  h_p_sqr *= h_p_sqr;
+  ET h_p_sqr = da_coord(p)[d] * da_coord(p)[d];
   return ( ( sqr_d < h_p_sqr * sqr_i_rad_numer) || 
 	   ( h_p_sqr * sqr_o_rad_numer < sqr_d)); }
     
@@ -625,10 +623,9 @@ private:
       inner_indices.push_back( 0);
       outer_indices.push_back( 0);
       center_coords.resize( d+1);
-      std::transform( da_coord( points[ 0]),
-		      da_coord( points[ 0])+d+1,
-		      center_coords.begin(),
-		      NT_converter<RT,ET>());
+      std::copy( da_coord( points[ 0]),
+		 da_coord( points[ 0])+d+1,
+		 center_coords.begin());
       sqr_i_rad_numer = ET( 0);
       sqr_o_rad_numer = ET( 0);
       sqr_rad_denom   = ET( 1);
@@ -751,8 +748,7 @@ is_valid( bool verbose, int level) const
   // all inner support points on inner boundary?
   Inner_support_point_iterator  i_pt_it = inner_support_points_begin();
   for ( ; i_pt_it != inner_support_points_end(); ++i_pt_it) {
-    ET h_p_sqr(da_coord (*i_pt_it)[d]);
-    h_p_sqr *= h_p_sqr;
+    ET h_p_sqr = da_coord (*i_pt_it)[d] * da_coord (*i_pt_it)[d];
     if ( sqr_dist( *i_pt_it) != h_p_sqr * sqr_i_rad_numer)
       return CGAL::_optimisation_is_valid_fail( verr,
 						"annulus does not have all inner support points on its inner boundary");
@@ -761,8 +757,7 @@ is_valid( bool verbose, int level) const
   // all outer support points on outer boundary?
   Outer_support_point_iterator  o_pt_it = outer_support_points_begin();
   for ( ; o_pt_it != outer_support_points_end(); ++o_pt_it) {
-    ET h_p_sqr(da_coord (*o_pt_it)[d]);
-    h_p_sqr *= h_p_sqr;
+    ET h_p_sqr = da_coord (*o_pt_it)[d] * da_coord (*o_pt_it)[d];
     if ( sqr_dist( *o_pt_it) != h_p_sqr * sqr_o_rad_numer)
       return CGAL::_optimisation_is_valid_fail( verr,
 						"annulus does not have all outer support points on its outer boundary");

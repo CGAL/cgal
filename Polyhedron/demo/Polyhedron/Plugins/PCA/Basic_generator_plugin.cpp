@@ -10,6 +10,7 @@
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_points_with_normal_item.h"
 #include "Scene_polylines_item.h"
@@ -34,15 +35,13 @@ typedef Kernel::Point_3 Point;
 
 namespace euler =  CGAL::Euler;
 using namespace CGAL::Three;
-namespace params = CGAL::parameters;
-
 class Q_DECL_EXPORT Basic_generator_plugin :
     public QObject,
     public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "basic_generator_plugin.json")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public :
   void init(QMainWindow* mainWindow,
             CGAL::Three::Scene_interface* scene_interface,
@@ -50,19 +49,13 @@ public :
   {
     this->scene = scene_interface;
     this->mw = mainWindow;
-    for(int i=0; i<=POLYLINE; ++i)
+    for(int i=0; i<POLYLINE; ++i)
       nbs[i]=0;
 
 
     QMenu* menuFile = mw->findChild<QMenu*>("menuFile");
-    
-    QMenu* menu = menuFile->findChild<QMenu*>("menuGenerateObject");
-    if(!menu){
-      QAction* actionLoad = mw->findChild<QAction*>("actionLoadPlugin");
-      menu = new QMenu(tr("Generate &Objet"), menuFile);
-      menu->setObjectName("menuGenerateObject");
-      menuFile->insertMenu(actionLoad, menu);
-    }
+    QMenu* menu = new QMenu(tr("&Objet Generator Widget"), menuFile);
+    QAction* actionLoad = mw->findChild<QAction*>("actionLoadPlugin");
 
 
     QAction* actionPrism       = new QAction("P&rism", mw);
@@ -109,10 +102,12 @@ public :
             this, SLOT(on_actionPolyline_triggered()));
     _actions << actionPolyline;
 
+    menu->clear();
     Q_FOREACH(QAction* action, _actions)
     {
       menu->addAction(action);
     }
+    menuFile->insertMenu(actionLoad, menu);
     dock_widget = new GeneratorWidget("Basic Objets", mw);
     dock_widget->setVisible(false); // do not show at the beginning
     addDockWidget(dock_widget);
@@ -184,42 +179,42 @@ private:
 //show the widget
 void Basic_generator_plugin::on_actionPrism_triggered()
 {
-  dock_widget->show(); dock_widget->raise();
+  dock_widget->show();
   dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(PRISM);
 }
 void Basic_generator_plugin::on_actionSphere_triggered()
 {
-  dock_widget->show(); dock_widget->raise();
+  dock_widget->show();
   dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(SPHERE);
 }
 void Basic_generator_plugin::on_actionPyramid_triggered()
 {
-  dock_widget->show(); dock_widget->raise();
+  dock_widget->show();
   dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(PYRAMID);
 }
 void Basic_generator_plugin::on_actionHexahedron_triggered()
 {
-  dock_widget->show(); dock_widget->raise();
+  dock_widget->show();
   dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(HEXAHEDRON);
 }
 void Basic_generator_plugin::on_actionTetrahedron_triggered()
 {
-  dock_widget->show(); dock_widget->raise();
+  dock_widget->show();
   dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(TETRAHEDRON);
 }
 void Basic_generator_plugin::on_actionGrid_triggered()
 {
-  dock_widget->show(); dock_widget->raise();
+  dock_widget->show();
   dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(GRID);
 }
 void Basic_generator_plugin::on_actionPointSet_triggered()
 {
-  dock_widget->show(); dock_widget->raise();
+  dock_widget->show();
   dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(POINT_SET);
 }
 void Basic_generator_plugin::on_actionPolyline_triggered()
 {
-  dock_widget->show(); dock_widget->raise();
+  dock_widget->show();
   dock_widget->selector_tabWidget->tabBar()->setCurrentIndex(POLYLINE);
 }
 void Basic_generator_plugin::on_tab_changed()
@@ -290,34 +285,53 @@ void Basic_generator_plugin::on_tab_changed()
 //generate
 void Basic_generator_plugin::on_generate_clicked()
 {
+  bool is_polyhedron = mw->property("is_polyhedron_mode").toBool();
   switch(dock_widget->selector_tabWidget->currentIndex())
   {
   case PRISM:
-    generatePrism<Scene_surface_mesh_item>();
+    if(is_polyhedron)
+      generatePrism<Scene_polyhedron_item>();
+    else
+      generatePrism<Scene_surface_mesh_item>();
     ++nbs[PRISM];
     break;
 
   case SPHERE:
-    generateSphere<Scene_surface_mesh_item>();
+    if(is_polyhedron)
+      generateSphere<Scene_polyhedron_item>();
+    else
+      generateSphere<Scene_surface_mesh_item>();
     ++nbs[SPHERE];
     break;
 
   case PYRAMID:
-    generatePyramid<Scene_surface_mesh_item>();
+    if(is_polyhedron)
+      generatePyramid<Scene_polyhedron_item>();
+    else
+      generatePyramid<Scene_surface_mesh_item>();
     ++nbs[PYRAMID];
     break;
 
   case HEXAHEDRON:
-    generateCube<Scene_surface_mesh_item>();
+    if(is_polyhedron)
+      generateCube<Scene_polyhedron_item>();
+    else
+      generateCube<Scene_surface_mesh_item>();
     ++nbs[HEXAHEDRON];
     break;
 
   case TETRAHEDRON:
-    generateTetrahedron<Scene_surface_mesh_item>();
+    if(is_polyhedron)
+      generateTetrahedron<Scene_polyhedron_item>();
+    else
+      generateTetrahedron<Scene_surface_mesh_item>();
     ++nbs[TETRAHEDRON];
     break;
   case GRID:
-    generateGrid<Scene_surface_mesh_item>();
+    if(is_polyhedron)
+      generateGrid<Scene_polyhedron_item>();
+    else
+      generateGrid<Scene_surface_mesh_item>();
     ++nbs[GRID];
     break;
   case POINT_SET:
@@ -550,12 +564,12 @@ void Basic_generator_plugin::generateSphere()
   typedef typename boost::property_map<typename Facegraph_item::Face_graph, CGAL::vertex_point_t>::type VPMap;
   if(precision !=0)
     CGAL::Subdivision_method_3::Sqrt3_subdivision(sphere,
-                                                  params::number_of_iterations(precision));
+                                                  precision);
   VPMap vpmap = get(CGAL::vertex_point, sphere);
   //emplace the points back on the sphere
   BOOST_FOREACH(typename boost::graph_traits<typename Facegraph_item::Face_graph>::vertex_descriptor vd, vertices(sphere))
   {
-    Kernel::Vector_3 vec(center, get(vpmap, vd));
+    Kernel::Vector_3 vec(get(vpmap, vd), center);
     vec = radius*vec/CGAL::sqrt(vec.squared_length());
     put(vpmap, vd, Kernel::Point_3(center.x() + vec.x(),
                                    center.y() + vec.y(),
@@ -744,11 +758,11 @@ struct Point_generator
                   const Point& ur)
     :w(w), h(h), bl(bl), ur(ur)
   {}
-  Point operator()(std::size_t i, std::size_t j) const
+  Point operator()(std::size_t i, std::size_t j, std::size_t k) const
   {
     return Point(bl.x() + i*(ur.x()-bl.x())/(w-1),
                  bl.y() + j*(ur.y()-bl.y())/(h-1),
-                 0);
+                 k);
   }
 };
 template<class Facegraph_item>

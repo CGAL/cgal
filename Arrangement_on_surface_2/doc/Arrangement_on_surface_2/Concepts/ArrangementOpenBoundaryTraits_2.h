@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgArrangementOnSurface2ConceptsTraits
+\ingroup PkgArrangement2ConceptsTraits
 \cgalConcept
 
 Several predicates are required to handle \f$ x\f$-monotone curves that 

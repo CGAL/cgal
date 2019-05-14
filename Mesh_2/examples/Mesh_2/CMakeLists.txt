@@ -1,6 +1,6 @@
 project( Mesh_2_Examples )
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 2.8.12)
 
 find_package(CGAL QUIET)
 

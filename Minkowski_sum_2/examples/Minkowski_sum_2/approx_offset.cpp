@@ -4,6 +4,7 @@
 #include <fstream>
 #include <boost/timer.hpp>
 
+#include <CGAL/basic.h>
 #include <CGAL/approximated_offset_2.h>
 
 #include "bops_circular.h"

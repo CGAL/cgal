@@ -35,7 +35,7 @@
 namespace CGAL{
 
 #if defined(DOXYGEN_RUNNING) || defined(CGAL_EIGEN3_ENABLED)
-/// \ingroup PkgSurfaceMeshSkeletonizationRef
+/// \ingroup PkgMeanCurvatureSkeleton3
 /// @brief extracts a medially centered curve skeleton for the triangle mesh `tmesh`.
 /// This function uses the class CGAL::Mean_curvature_flow_skeletonization with the default parameters.
 /// This function is provided only if \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined.

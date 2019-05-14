@@ -10,7 +10,6 @@
 #include <CGAL/Lazy_exact_nt.h> 
 #include <CGAL/Interval_nt.h> 
 #include <CGAL/Sqrt_extension.h> 
-#include <CGAL/boost_mp.h>
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
@@ -83,12 +82,6 @@ int main()
   TESTIT(CGAL::Lazy_exact_nt<QMPF>, "Lazy_exact_nt<Quotient<MP_Float> >")
   TESTIT(CGAL::Interval_nt<>, "Interval_nt<>")
 
-  // Boost.Multiprecision
-#ifdef CGAL_USE_BOOST_MP
-  TESTIT(boost::multiprecision::cpp_int, "cpp_int")
-  TESTIT(boost::multiprecision::cpp_rational, "cpp_rational")
-#endif
-
   // GMP based NTs
 #ifdef CGAL_USE_GMP
   TESTIT(CGAL::Gmpz, "Gmpz")
@@ -97,10 +90,6 @@ int main()
   TESTIT(CGAL::Mpzf, "Mpzf")
 # endif
   TESTIT(CGAL::Gmpq, "Gmpq")
-# ifdef CGAL_USE_BOOST_MP
-  TESTIT(boost::multiprecision::mpz_int, "mpz_int")
-  TESTIT(boost::multiprecision::mpq_rational, "mpq_rational")
-# endif
 #endif // CGAL_USE_GMP
 #ifdef CGAL_USE_GMPXX
   TESTIT(mpz_class, "mpz_class")

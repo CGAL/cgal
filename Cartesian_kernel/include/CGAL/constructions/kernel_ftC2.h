@@ -28,7 +28,6 @@
 
 #include <CGAL/determinant.h>
 #include <CGAL/number_utils.h>
-#include <boost/type_traits/is_integral.hpp>
 
 namespace CGAL {
 
@@ -285,16 +284,7 @@ line_get_pointC2(const FT &a, const FT &b, const FT &c, int i,
 {
   if (CGAL_NTS is_zero(b))
     {
-      // Laurent Rineau, 2018/12/07: I add this CGAL_assume to calm
-      // down a warning from MSVC 2017:
-      // > include\cgal\constructions\kernel_ftc2.h(287) :
-      // >   warning C4723: potential divide by 0
-      // The test `!boost::is_integral<FT>::value` is there to avoid
-      // that `a != 0` is tested on anything but integral types, for
-      // performance reasons.
-      CGAL_assume(!boost::is_integral<FT>::value || a != FT(0));
-
-      x = -c/a;
+      x = (-b-c)/a + i * b;
       y = 1 - i * a;
     }
   else

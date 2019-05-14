@@ -47,11 +47,11 @@ struct DefaultColorFunctorT2
 template<class T2, class ColorFunctor>
 class SimpleTriangulation2ViewerQt : public Basic_viewer_qt
 {
-  typedef Basic_viewer_qt                    Base;
-  typedef typename T2::Vertex_handle         Vertex_const_handle;
+  typedef Basic_viewer_qt                     Base;
+  typedef typename T2::Vertex_handle          Vertex_const_handle;
   typedef typename T2::Finite_edges_iterator Edge_const_handle;
   typedef typename T2::Finite_faces_iterator Facet_const_handle;
-  typedef typename T2::Point                 Point;
+  typedef typename T2::Point                  Point;
  
 public:
   /// Construct the viewer.

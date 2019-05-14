@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgEnvelope3Ref
+\ingroup PkgEnvelope3
 
 The class `Env_surface_data_traits_3` is a model of the `EnvelopeTraits_3` concept 
 and serves as a decorator class that allows the extension of the surfaces 

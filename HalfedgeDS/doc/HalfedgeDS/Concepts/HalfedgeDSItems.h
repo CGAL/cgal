@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgHalfedgeDSConcepts
+\ingroup PkgHDSConcepts
 \cgalConcept
 
 The concept `HalfedgeDSItems` wraps the three item types - vertex, 

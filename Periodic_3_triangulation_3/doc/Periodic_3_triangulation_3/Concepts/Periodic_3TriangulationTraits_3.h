@@ -12,15 +12,15 @@ work with point-offset pairs. In most cases the offsets will be
 can be used directly. For efficiency reasons we maintain for each
 functor the version without offsets.
 
-\cgalRefines `TriangulationTraits_3`
+\cgalRefines TriangulationTraits_3
 
-\cgalHasModel `CGAL::Periodic_3_triangulation_traits_3`
+\cgalHasModel CGAL::Periodic_3_triangulation_traits_3
 
-\sa `Periodic_3DelaunayTriangulationTraits_3`
-\sa `Periodic_3RegularTriangulationTraits_3`
+\sa Periodic_3DelaunayTriangulationTraits_3
+\sa Periodic_3RegularTriangulationTraits_3
 
 In addition to the requirements described for the traits class
-`TriangulationTraits_3`, the geometric traits class of a
+TriangulationTraits_3, the geometric traits class of a
 Periodic triangulation must fulfill the following
 requirements.
 */

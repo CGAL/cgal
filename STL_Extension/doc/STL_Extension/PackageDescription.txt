@@ -1,23 +1,23 @@
-/// \defgroup PkgSTLExtensionRef STL Extensions for CGAL Reference
+/// \defgroup PkgStlExtension STL Extensions for CGAL Reference
 
-/// \defgroup PkgSTLExtensionConcepts Concepts
-/// \ingroup PkgSTLExtensionRef
+/// \defgroup PkgStlExtensionConcepts Concepts
+/// \ingroup PkgStlExtension
 
 
-/// \defgroup PkgSTLExtensionUtilities Utilities
-/// \ingroup PkgSTLExtensionRef
+/// \defgroup PkgStlExtensionUtilities Utilities
+/// \ingroup PkgStlExtension
 
-/// \defgroup PkgSTLExtensionAssertions Assertions and Failure Behaviour
-/// \ingroup PkgSTLExtensionRef
+/// \defgroup PkgStlExtensionAssertions Assertions and Failure Behaviour
+/// \ingroup PkgStlExtension
 
 /*!
-\addtogroup PkgSTLExtensionRef
-\cgalPkgDescriptionBegin{STL Extensions for CGAL,PkgSTLExtension}
+\addtogroup PkgStlExtension
+\cgalPkgDescriptionBegin{STL Extensions for CGAL,PkgStlExtensionSummary}
 \cgalPkgPicture{plusplus.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Ron Wein}
 \cgalPkgDesc{\cgal is designed in the spirit of the generic programming paradigm to work together with the Standard Template Library (\stl). This package provides  non-geometric \stl-like algorithms and datastructures that are not in the \stl standard, as well as functions to change the failure behaviour of assertions.}
-\cgalPkgManuals{Chapter_STL_Extensions_for_CGAL,PkgSTLExtensionRef}
+\cgalPkgManuals{Chapter_STL_Extensions_for_CGAL,PkgStlExtension}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{1.0}
@@ -28,19 +28,19 @@
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Doubly-Connected List Managing Items in Place}
+## Doubly-Connected List Managing Items in Place ##
 - `CGAL::In_place_list<T,bool>`
 - `CGAL::In_place_list_base<T>`
 
-\cgalCRPSection{Compact Container}
+## Compact Container ##
 - `CGAL::Compact_container<T, Allocator>`
 - `CGAL::Compact_container_traits<T>`
 - `CGAL::Compact_container_base`
 
-\cgalCRPSection{Multiset with Extended Functionality}
+## Multiset with Extended Functionality ##
 - `CGAL::Multiset<Type,Compare,Allocator>`
 
-\cgalCRPSection{Generic Algorithms}
+## Generic Algorithms ##
 - `CGAL::cpp11::copy_n`
 - `CGAL::copy_n`
 - `CGAL::min_max_element`
@@ -49,7 +49,7 @@
 - `CGAL::predecessor`
 - `CGAL::successor`
 
-\cgalCRPSection{Iterators and Iterator/Circulator Adaptors}
+## Iterators and Iterator/Circulator Adaptors ##
 - `CGAL::Dispatch_output_iterator<V,O>`
 - `CGAL::Dispatch_or_drop_output_iterator<V,O>`
 - `CGAL::Emptyset_iterator`
@@ -63,10 +63,10 @@
 - `CGAL::Random_access_adaptor<IC>`
 - `CGAL::Random_access_value_adaptor<IC,T>`
 
-\cgalCRPSection{Ranges}
+## Ranges ##
 - `CGAL::Iterator_range`
 
-\cgalCRPSection{Projection Function Objects}
+## Projection Function Objects ##
 - `CGAL::Identity<Value>`
 - `CGAL::Dereference<Value>`
 - `CGAL::Get_address<Value>`
@@ -81,7 +81,7 @@
 - `CGAL::Project_next_opposite<Node>`
 - `CGAL::Project_opposite_prev<Node>`
 
-\cgalCRPSection{Creator Function Objects}
+## Creator Function Objects ##
 - `CGAL::Creator_1<Arg, Result>`
 - `CGAL::Creator_2<Arg1, Arg2, Result>`
 - `CGAL::Creator_3<Arg1, Arg2, Arg3, Result>`
@@ -97,7 +97,7 @@
 - `CGAL::Creator_uniform_9<Arg, Result>`
 - `CGAL::Creator_uniform_d<Arg, Result>`
 
-\cgalCRPSection{Utilities}
+## Utilities ##
 - `CGAL::Twotuple<T>`
 - `CGAL::Threetuple<T>`
 - `CGAL::Fourtuple<T>`

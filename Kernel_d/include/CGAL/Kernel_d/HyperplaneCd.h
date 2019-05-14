@@ -144,6 +144,7 @@ HyperplaneCd(const FT& a, const FT& b, const FT& c, const FT& d) :
 HyperplaneCd(int a, int b, int c, int d) : 
   Base( Tuple(FT(a),FT(b),FT(c),FT(d)) ) {} 
 
+HyperplaneCd(const HyperplaneCd<FT,LA>& h) : Base(h) {}
 ~HyperplaneCd()  {}    
 
 int dimension() const { return ptr()->size()-1; }

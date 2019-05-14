@@ -15,6 +15,7 @@
 
 #define CGAL_HANDLE_WITH_POLICY_INTERNAL_TEST
 
+#include <CGAL/basic.h>
 #include <CGAL/memory.h>
 #include <cassert>
 

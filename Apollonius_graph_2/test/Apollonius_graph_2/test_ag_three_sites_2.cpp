@@ -10,11 +10,11 @@
 
 typedef CGAL::Exact_rational exact_nt;
 
-typedef CGAL::Simple_cartesian<exact_nt> Rep;
+struct Rep : public CGAL::Simple_cartesian<exact_nt> {};
 
 typedef CGAL::Integral_domain_without_division_tag Method_tag;
 
-typedef CGAL::Apollonius_graph_traits_2<Rep,Method_tag> Gt;
+struct Gt : public CGAL::Apollonius_graph_traits_2<Rep,Method_tag> {};
 
 typedef CGAL::Apollonius_graph_2<Gt>  AG2;
 typedef AG2::Point_2                  Point_2;

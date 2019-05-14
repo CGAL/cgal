@@ -1,7 +1,7 @@
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
 
-typedef CGAL::Simple_cartesian<double> K;
+typedef CGAL::Cartesian<double> K;
 typedef K::Point_2 Point;
 typedef K::Segment_2 Segment;
 

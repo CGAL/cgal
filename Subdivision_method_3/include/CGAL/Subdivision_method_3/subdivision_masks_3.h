@@ -136,7 +136,7 @@ public:
 
 // ======================================================================
 /*!
-\ingroup PkgSurfaceSubdivisionMethod3Ref
+\ingroup PkgSurfaceSubdivisionMethods3
 
 The geometry mask of Catmull-Clark subdivision.
 
@@ -260,7 +260,7 @@ public:
 
 // ======================================================================
 /*!
-\ingroup PkgSurfaceSubdivisionMethod3Ref
+\ingroup PkgSurfaceSubdivisionMethods3
 
 The geometry mask of Loop subdivision.
 
@@ -422,7 +422,7 @@ public:
 
 // ======================================================================
 /*!
-\ingroup PkgSurfaceSubdivisionMethod3Ref
+\ingroup PkgSurfaceSubdivisionMethods3
 
 The geometry mask of Doo-Sabin subdivision.
 
@@ -517,7 +517,7 @@ public:
 
 // ======================================================================
 /*!
-\ingroup PkgSurfaceSubdivisionMethod3Ref
+\ingroup PkgSurfaceSubdivisionMethods3
 
 The geometry mask of Sqrt(3) subdivision.
 

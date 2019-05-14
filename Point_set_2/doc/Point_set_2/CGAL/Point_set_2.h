@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPointSet2Ref
+\ingroup PkgPointSet2
 
 An instance `PS` of the data type `Point_set_2` is a <I>Delaunay Triangulation</I> 
 of its vertex set. The class `Point_set_2` is inherited from the \cgal Delaunay triangulation, 

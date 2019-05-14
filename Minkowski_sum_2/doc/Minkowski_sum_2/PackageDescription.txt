@@ -1,20 +1,20 @@
-/// \defgroup PkgMinkowskiSum2Ref 2D Minkowski Sums Reference
+/// \defgroup PkgMinkowskiSum2 2D Minkowski Sums Reference
 /// \defgroup PkgMinkowskiSum2Concepts Concepts
-/// \ingroup PkgMinkowskiSum2Ref
+/// \ingroup PkgMinkowskiSum2
 
 
 /*!
-\addtogroup PkgMinkowskiSum2Ref
-\cgalPkgDescriptionBegin{2D Minkowski Sums,PkgMinkowskiSum2}
+\addtogroup PkgMinkowskiSum2
+\cgalPkgDescriptionBegin{2D Minkowski Sums,PkgMinkowskiSum2Summary}
 \cgalPkgPicture{Minkowski_sum_2/fig/Minkowski_sum_2.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Ron Wein, Alon Baram, Eyal Flato, Efi Fogel, Michael Hemmer, Sebastian Morr}
 \cgalPkgDesc{This package consists of functions that compute the Minkowski sum of two simple straight-edge polygons in the plane. It also contains functions for computing the Minkowski sum of a polygon and a disc, an operation known as <I>offsetting</I> or <I>dilating</I> a polygon. The package can compute the exact representation of the offset polygon, or provide a guaranteed approximation of the offset.}
-\cgalPkgManuals{Chapter_2D_Minkowski_Sums,PkgMinkowskiSum2Ref}
+\cgalPkgManuals{Chapter_2D_Minkowski_Sums,PkgMinkowskiSum2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.3}
-\cgalPkgDependsOn{\ref PkgArrangementOnSurface2, \ref PkgAABBTree, \ref PkgTriangulation2}
+\cgalPkgDependsOn{\ref PkgArrangement2Summary, \ref PkgAABB_treeSummary, \ref PkgTriangulation2Summary}
 \cgalPkgBib{cgal:w-rms2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
@@ -34,7 +34,7 @@ bounds, in order to speed up the computation time.
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Functions}
+## Functions ##
 - `CGAL::minkowski_sum_2()`
 - `CGAL::minkowski_sum_by_decomposition_2()`
 - `CGAL::minkowski_sum_by_full_convolution_2()`
@@ -44,11 +44,11 @@ bounds, in order to speed up the computation time.
 - `CGAL::offset_polygon_2()`
 - `CGAL::inset_polygon_2()`
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 - `PolygonConvexDecomposition_2`
 - `PolygonWithHolesConvexDecomposition_2`
 
-\cgalCRPSection{Classes}
+## Classes ##
 - `CGAL::Small_side_angle_bisector_decomposition_2<Kernel,Container>`
 - `CGAL::Optimal_convex_decomposition_2<Kernel,Container>`
 - `CGAL::Hertel_Mehlhorn_convex_decomposition_2<Kernel,Container>`

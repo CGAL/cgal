@@ -3,7 +3,6 @@ namespace CGAL {
 namespace Scale_space_reconstruction_3 {
 
 /** \ingroup PkgScaleSpaceReconstruction3Concepts
- * \cgalConcept
  *
  * Concept describing a meshing algorithm used to produce the output
  * mesh of the scale space reconstruction algorithm.

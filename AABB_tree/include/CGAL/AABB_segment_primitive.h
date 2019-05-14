@@ -56,7 +56,7 @@ namespace internal {
 
 
 /*!
- * \ingroup PkgAABBTreeRef
+ * \ingroup PkgAABB_tree
  * Primitive type that uses as identifier an iterator with a 3D segment as `value_type`.
  * The iterator from which the primitive is built should not be invalided
  * while the AABB tree holding the primitive is in use.

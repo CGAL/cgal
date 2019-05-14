@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSkinSurface3Ref
+\ingroup PkgSkinSurface3
 
 The class `Skin_surface_traits_3` is designed as a default traits class for the 
 class `Skin_surface_3<SkinSurfaceTraits_3>`. It is a model of 

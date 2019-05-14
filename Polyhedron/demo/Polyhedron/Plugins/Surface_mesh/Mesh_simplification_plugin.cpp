@@ -1,6 +1,12 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
+#ifdef USE_SURFACE_MESH
 #include "Scene_surface_mesh_item.h"
+#else
+#include "Scene_polyhedron_item.h"
+#include "Polyhedron_type.h"
+#endif
+
 #include "Scene_polyhedron_selection_item.h"
 
 #include <QApplication>
@@ -19,7 +25,11 @@
 
 #include "ui_Mesh_simplification_dialog.h"
 
+#ifdef USE_SURFACE_MESH
 typedef Scene_surface_mesh_item Scene_facegraph_item;
+#else
+typedef Scene_facegraph_item Scene_facegraph_item;
+#endif
 typedef Scene_facegraph_item::Face_graph FaceGraph;
 
 class Custom_stop_predicate
@@ -185,14 +195,18 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
     if (poly_item != NULL)
     {
       poly_item->invalidateOpenGLBuffers();
+#ifdef USE_SURFACE_MESH
       poly_item->polyhedron()->collect_garbage();
+#endif
     }
     else
       {
+#ifdef USE_SURFACE_MESH
       selection_item->polyhedron_item()->polyhedron()->collect_garbage();
-      selection_item->poly_item_changed();
-      selection_item->changed_with_poly_item();
-      selection_item->invalidateOpenGLBuffers();
+#endif
+        selection_item->poly_item_changed();
+        selection_item->changed_with_poly_item();
+        selection_item->invalidateOpenGLBuffers();
       }
 
     scene->itemChanged(index);

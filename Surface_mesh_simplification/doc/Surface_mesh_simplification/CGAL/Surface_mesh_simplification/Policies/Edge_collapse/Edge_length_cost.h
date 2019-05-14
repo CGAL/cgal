@@ -3,7 +3,7 @@ namespace CGAL {
 namespace Surface_mesh_simplification {
 
 /*!
-\ingroup PkgSurfaceMeshSimplificationRef
+\ingroup PkgSurfaceMeshSimplification
 
 The class `Edge_length_cost` is a model for the `GetCost` concept,
 which computes the collapse cost as the squared length of the edge. 

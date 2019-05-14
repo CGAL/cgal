@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgGeneratorsRef
+\ingroup PkgGenerators
 
 
 \brief Computes a random convex polygon as the convex hull of \f$ n \f$ random points in a disc centered at the origin with radius `radius`. 

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh3Functions
+\ingroup PkgMesh_3Functions
 
 The function `lloyd_optimize_mesh_3()` is a mesh optimization process
 based on the minimization of a global energy function.

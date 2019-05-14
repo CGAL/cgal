@@ -188,7 +188,7 @@ void MainWindow::alphaChanged(int i)
 
 /* 
  *  Qt Automatic Connections
- *  https://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
+ *  http://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
  * 
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"

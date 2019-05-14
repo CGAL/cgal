@@ -30,7 +30,6 @@
 #include <CGAL/Intersection_traits.h>
 
 namespace CGAL {
-namespace Intersections {
 namespace internal {
 
 template <class R>
@@ -359,7 +358,6 @@ inline bool do_intersect(const typename R::Hyperplane_d& h, const typename R::Se
 { return do_intersect(s,h,r); }
 
 } //namespace internal
-} // namespace Intersections
 
 template<typename T>
 class Hyperplane_d;

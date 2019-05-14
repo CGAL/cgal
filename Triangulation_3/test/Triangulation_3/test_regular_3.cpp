@@ -339,7 +339,6 @@ void test_RT()
   Point pp6(0.0, 1.0, 1.0);
   Point pp7(1.0, 0.0, 1.0);
   Point pp8(1.0, 1.0, 1.0);
-  Point pp9(0.5, 0.5, 0.5);
 
   Weighted_point wpp1(pp1, 1.0);
   Weighted_point wpp2(pp2, 2.0);
@@ -349,7 +348,6 @@ void test_RT()
   Weighted_point wpp6(pp6, 1.0);
   Weighted_point wpp7(pp7, 1.0);
   Weighted_point wpp8(pp8, 8.0);
-  Weighted_point wpp9(pp9, -8.0);
 
   Cls T3;
 
@@ -364,15 +362,15 @@ void test_RT()
   T3.insert(wpp5);
   T3.insert(wpp6);
   T3.insert(wpp7);
-
+  // Avoid inserting the same point twice, now that hidden points are handled,
+  // insert (existing_point) returns Vertex_handle().
+  // T3.insert(wpp8);
   Vertex_handle v8 = T3.insert(wpp8);
   Point query(0.5,0.5,0.5);
   assert(T3.nearest_power_vertex(query) == v8);
+
   assert(T3.nearest_power_vertex_in_cell(query ,v8->cell()) == v8); 
-
-  Vertex_handle v9 = T3.insert(wpp9);
-  assert(v9 == Vertex_handle()); // hidden point
-
+  
   // test dual
   std::cout << " test dual member functions" << std::endl;
   Finite_cells_iterator fcit = T3.finite_cells_begin();

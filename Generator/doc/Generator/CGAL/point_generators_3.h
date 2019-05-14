@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgGeneratorsRef
+\ingroup PkgGenerators
 \brief generates a given number of points on a cubic
 grid whose size is determined by the number of points to be generated.
 

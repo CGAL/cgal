@@ -23,7 +23,6 @@
 #ifndef CGAL_PRECISE_NUMBERS_H
 #define CGAL_PRECISE_NUMBERS_H
 
-#include <CGAL/config.h>
 #if defined CGAL_USE_GMPXX
 #  include <CGAL/gmpxx.h>
 typedef mpz_class                       Precise_integer;

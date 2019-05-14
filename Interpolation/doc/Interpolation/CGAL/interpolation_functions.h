@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgInterpolation2Ref
+\ingroup PkgInterpolation2
 
 The struct `Data_access` implements a functor that allows to retrieve
 data from an associative container. The functor keeps a reference to
@@ -72,8 +72,8 @@ types of a triangulation, to a (non-normalized) barycentric coordinate.
 \tparam ValueFunctor must be a functor where `ValueFunctor::argument_type` must be equivalent to
 `std::iterator_traits<CoordinateInputIterator>::%value_type::first_type` and
 `ValueFunctor::result_type` is a pair of the function value type and a Boolean.
-The function value type `VT` must provide an addition operator, and a multiplication operator with the type
-`Traits::FT`.
+The function value type must provide a multiplication and addition operation with the type
+`Traits::FT` as well as a constructor with argument `0`.
 
 A model of the functor `ValueFunctor` is provided by the struct `CGAL::Data_access` instantiated
 with an associative container (e.g. `std::map`) and having:
@@ -99,7 +99,6 @@ the interpolated function value as the weighted sum of the values
 corresponding to each entry of the entity/coordinate pairs in the range `[first, beyond)`.
 
 \pre `norm` \f$ \neq0\f$.
-\pre `first != beyond`.
 \pre `value_function(p.first).second == true` for all pairs `p` in the range `[first, beyond)`.
 
 \sa `CGAL::quadratic_interpolation()`
@@ -164,7 +163,6 @@ the function returns a pair where the Boolean is set to `false`.
 \param traits is an instance of the traits class.
 
 \pre `norm` \f$ \neq0\f$.
-\pre `first != beyond`.
 \pre `value_function(p.first).second == true` for pairs `p` in the range `[first, beyond)`
 
 \sa `CGAL::linear_interpolation()`
@@ -231,7 +229,6 @@ the function returns a pair where the Boolean is set to `false`.
 \param traits is an instance of the traits class.
 
 \pre `norm` \f$ \neq0\f$.
-\pre `first != beyond`.
 \pre `value_function(q).second == true` for all points `q` of the point/coordinate pairs in the range `[first, beyond)`
 
 \sa `CGAL::Interpolation_traits_2<K>`

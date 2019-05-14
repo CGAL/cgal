@@ -1,5 +1,5 @@
 /// \defgroup inplacelist Doubly-Connected List Managing Items in Place
-/// \ingroup PkgSTLExtensionRef
+/// \ingroup PkgStlExtension
 
 
 namespace CGAL {

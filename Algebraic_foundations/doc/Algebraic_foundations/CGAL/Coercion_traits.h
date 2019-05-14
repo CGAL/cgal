@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundationsRef
+\ingroup PkgAlgebraicFoundations
 
 An instance of `Coercion_traits` reflects the type coercion of the types 
 <span class="textsc">A</span> and <span class="textsc">B</span>, it is symmetric in the two template arguments. 

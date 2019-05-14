@@ -364,20 +364,6 @@ public:
   RT
   hm(int i, int j) const
   { return this->Ptr()->homogeneous(i,j); }
-  
-  bool operator==(const Aff_transformationH3 &t)const
-  {
-    for(int i=0; i<3; ++i)
-      for(int j = 0; j< 4; ++j)
-        if(homogeneous(i,j)!=t.homogeneous(i,j))
-          return false;
-    return true;
-  }
-  
-  bool operator!=(const Aff_transformationH3 &t)const
-  {
-    return !(*this == t);
-  }
 };
 
 template < class R >

@@ -2,7 +2,7 @@
 namespace CGAL {
 namespace Surface_mesh_simplification {
 /*!
-\ingroup PkgSurfaceMeshSimplificationRef
+\ingroup PkgSurfaceMeshSimplification
 
 The class `Surface_mesh_simplification::Edge_collapse_visitor_base` provides a base class for models of the `EdgeCollapseSimplificationVisitor` concept. 
 

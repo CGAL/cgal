@@ -3,7 +3,7 @@ namespace CGAL {
 
 
 /*!
-\ingroup PkgMesh3MeshClasses
+\ingroup PkgMesh_3MeshClasses
 <!-- Meta-comment: this class cannot be deprecated by
 Compact_mesh_cell_base_3, because the later has a different API.
 -- Laurent Rineau, 2013/10/16

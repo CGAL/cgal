@@ -28,7 +28,7 @@
 namespace CGAL {
 
   /*!
-\ingroup PkgSTLExtensionRef
+\ingroup PkgStlExtension
   /// `CGAL::Iterator_range` is a...
   */
   template <typename I>

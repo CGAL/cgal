@@ -1,29 +1,29 @@
-/// \defgroup PkgSpatialSortingRef Spatial Sorting Reference
+/// \defgroup PkgSpatialSorting Spatial Sorting Reference
 
 /// \defgroup PkgSpatialSortingConcepts Concepts
-/// \ingroup PkgSpatialSortingRef
+/// \ingroup PkgSpatialSorting
 
 /// \defgroup PkgSpatialSortingTraits Traits Classes
-/// \ingroup PkgSpatialSortingRef
+/// \ingroup PkgSpatialSorting
 
 /// \defgroup PkgSpatialSortingUtils Utilities
-/// \ingroup PkgSpatialSortingRef
+/// \ingroup PkgSpatialSorting
 
 /// \defgroup PkgSpatialSortingFunctions Functions
-/// \ingroup PkgSpatialSortingRef
+/// \ingroup PkgSpatialSorting
 
 /// \defgroup PkgSpatialSortingFunctionObjects Function Objects
-/// \ingroup PkgSpatialSortingRef
+/// \ingroup PkgSpatialSorting
 
 
 /*!
-\addtogroup PkgSpatialSortingRef
-\cgalPkgDescriptionBegin{Spatial Sorting,PkgSpatialSorting}
+\addtogroup PkgSpatialSorting
+\cgalPkgDescriptionBegin{Spatial Sorting,PkgSpatialSortingSummary}
 \cgalPkgPicture{hilbert.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Christophe Delage and Olivier Devillers}
 \cgalPkgDesc{This package provides functions for sorting geometric objects in two, three and higher dimensions, including on a sphere, in order to improve efficiency of incremental geometric algorithms.}
-\cgalPkgManuals{Chapter_Spatial_Sorting,PkgSpatialSortingRef}
+\cgalPkgManuals{Chapter_Spatial_Sorting,PkgSpatialSorting}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.3}
@@ -34,30 +34,30 @@
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Functions}
+## Functions ##
 - `CGAL::spatial_sort()`
 - `CGAL::spatial_sort_on_sphere()`
 - `CGAL::hilbert_sort()`
 - `CGAL::hilbert_sort_on_sphere()`
 
-\cgalCRPSection{Function Objects}
+## Function Objects ##
 - `CGAL::Multiscale_sort<Sort>`
 - `CGAL::Hilbert_sort_2<Traits, PolicyTag>`
 - `CGAL::Hilbert_sort_3<Traits, PolicyTag>`
 - `CGAL::Hilbert_sort_on_sphere_3<Traits, PolicyTag>`
 - `CGAL::Hilbert_sort_d<Traits, PolicyTag>`
 
-\cgalCRPSection{Traits classes}
+## Traits classes ##
 - `CGAL::Spatial_sort_traits_adapter_2<Base_traits,PointPropertyMap>`
 - `CGAL::Spatial_sort_traits_adapter_3<Base_traits,PointPropertyMap>`
 - `CGAL::Spatial_sort_traits_adapter_d<Base_traits,PointPropertyMap>`
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 - `SpatialSortingTraits_2`
 - `SpatialSortingTraits_3`
 - `SpatialSortingTraits_d`
 
-\cgalCRPSection{Utilities}
+## Utilities ##
 - `CGAL::Median`
 - `CGAL::Middle`
 - `CGAL::Hilbert_policy<Tag>`

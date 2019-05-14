@@ -3,7 +3,7 @@
 #
 # target "doc" allows building the documentation with doxygen/dot on WIN32 and Linux
 # Creates .chm windows help file if MS HTML help workshop
-# (available from https://www.microsoft.com/en-us/download/details.aspx?id=21138)
+# (available from http://msdn.microsoft.com/workshop/author/htmlhelp)
 # is installed with its DLLs in PATH.
 #
 #

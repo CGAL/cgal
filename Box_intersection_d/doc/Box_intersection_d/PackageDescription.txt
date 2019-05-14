@@ -1,33 +1,33 @@
-/// \defgroup PkgBoxIntersectionDRef Intersecting Sequences of dD Iso-oriented Boxes Reference
+/// \defgroup PkgBoxIntersectionD Intersecting Sequences of dD Iso-oriented Boxes Reference
 /// \defgroup PkgBoxIntersectionDConcepts Concepts
-/// \ingroup PkgBoxIntersectionDRef
+/// \ingroup PkgBoxIntersectionD
 
 /// \defgroup PkgBoxIntersectionDClasses Classes
-/// \ingroup PkgBoxIntersectionDRef
+/// \ingroup PkgBoxIntersectionD
 
 /// \defgroup PkgBoxIntersectionD_box_intersection_d CGAL::box_intersection_d()
-/// \ingroup PkgBoxIntersectionDRef
+/// \ingroup PkgBoxIntersectionD
 
 
 /// \defgroup PkgBoxIntersectionD_box_intersection_all_pairs_d CGAL::box_intersection_all_pairs_d()
-/// \ingroup PkgBoxIntersectionDRef
+/// \ingroup PkgBoxIntersectionD
 
 /// \defgroup PkgBoxIntersectionD_box_self_intersection_d CGAL::box_self_intersection_d()
-/// \ingroup PkgBoxIntersectionDRef
+/// \ingroup PkgBoxIntersectionD
 
 /// \defgroup PkgBoxIntersectionD_box_self_intersection_all_pairs_d CGAL::box_self_intersection_all_pairs_d()
-/// \ingroup PkgBoxIntersectionDRef
+/// \ingroup PkgBoxIntersectionD
 /*!
-\addtogroup PkgBoxIntersectionDRef
+\addtogroup PkgBoxIntersectionD
 
 \todo de-math and change D to d for the dimension
 
-\cgalPkgDescriptionBegin{Intersecting Sequences of dD Iso-oriented Boxes,PkgBoxIntersectionD}
+\cgalPkgDescriptionBegin{Intersecting Sequences of dD Iso-oriented Boxes,PkgBoxIntersectionDSummary}
 \cgalPkgPicture{box_inters-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Lutz Kettner, Andreas Meyer, and Afra Zomorodian}
 \cgalPkgDesc{An efficient algorithm for finding all intersecting pairs for large numbers of iso-oriented boxes, in order to apply a user defined callback on them.  Typically these boxes will be bounding boxes of more complicated geometries. The algorithm is useful for (self-) intersection tests of surfaces etc. }
-\cgalPkgManuals{Chapter_Intersecting_Sequences_of_dD_Iso-oriented_Boxes,PkgBoxIntersectionDRef}
+\cgalPkgManuals{Chapter_Intersecting_Sequences_of_dD_Iso-oriented_Boxes,PkgBoxIntersectionD}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.1}
@@ -39,16 +39,16 @@
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 - `BoxIntersectionBox_d`
 - `BoxIntersectionTraits_d`
 
-\cgalCRPSection{Classes}
+## Classes ##
 - `CGAL::Box_intersection_d::Box_d<NT,int D,IdPolicy>`
 - `CGAL::Box_intersection_d::Box_with_handle_d<NT, int D, Handle, IdPolicy>`
 - `CGAL::Box_intersection_d::Box_traits_d<BoxHandle>`
 
-\cgalCRPSection{Functions}
+## Functions ##
 - `CGAL::box_intersection_d`
 - `CGAL::box_self_intersection_d`
 

@@ -1,7 +1,7 @@
 #include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
 
 // test for the linear_least_square_fitting() functions.
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/linear_least_squares_fitting_2.h>
 #include <CGAL/point_generators_2.h>
@@ -93,11 +93,11 @@ int main()
 {
   std::cout << "Test 2D linear least squares fitting of points"  << std::endl;
 
-	typedef CGAL::Simple_cartesian<double> Kernel_double;
+	typedef CGAL::Cartesian<double> Kernel_double;
   test_2D<Kernel_double>();
   test_2D_point_set<Kernel_double>(100);
 
-	typedef CGAL::Simple_cartesian<float> Kernel_float;
+	typedef CGAL::Cartesian<float> Kernel_float;
   test_2D<Kernel_float>();
   test_2D_point_set<Kernel_float>(100);
 

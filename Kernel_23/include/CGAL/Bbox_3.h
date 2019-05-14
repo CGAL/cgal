@@ -77,9 +77,6 @@ public:
   inline double min BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
   inline double max BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
 
-  inline double min_coord(int i) const { return (min)(i); }
-  inline double max_coord(int i) const { return (max)(i); }
-  
   Bbox_3  operator+(const Bbox_3& b) const;
   Bbox_3& operator+=(const Bbox_3& b);
 

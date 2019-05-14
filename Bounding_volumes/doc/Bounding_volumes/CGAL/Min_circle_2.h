@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBoundingVolumesRef
+\ingroup PkgBoundingVolumes
 
 An object of the class `Min_circle_2` is the unique circle of smallest area 
 enclosing a finite (multi)set of points in two-dimensional Euclidean 

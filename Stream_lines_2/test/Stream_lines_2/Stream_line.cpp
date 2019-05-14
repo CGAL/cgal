@@ -1,4 +1,5 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Filtered_kernel.h>
 #include <CGAL/Stream_lines_2.h>
 #include <CGAL/Euler_integrator_2.h>
 #include <CGAL/Runge_kutta_integrator_2.h>
@@ -9,7 +10,8 @@
 #include <sstream>
 
 typedef double coord_type;
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Cartesian<coord_type> CK;
+typedef CGAL::Filtered_kernel<CK> K;
 typedef CGAL::Regular_grid_2<K> Field;
 typedef CGAL::Runge_kutta_integrator_2<Field> Runge_kutta_integrator;
 typedef CGAL::Euler_integrator_2<Field> Euler_integrator;

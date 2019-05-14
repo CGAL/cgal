@@ -30,7 +30,6 @@
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Timer.h>
 
 #include <CGAL/disable_warnings.h>
 

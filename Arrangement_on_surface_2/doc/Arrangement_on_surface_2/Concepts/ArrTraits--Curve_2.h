@@ -1,6 +1,6 @@
 namespace ArrTraits {
 /*!
-\ingroup PkgArrangementOnSurface2ConceptsGeometricObjects
+\ingroup PkgArrangement2ConceptsGeometricObjects
 \cgalConcept
 
 represents a general planar curve. 

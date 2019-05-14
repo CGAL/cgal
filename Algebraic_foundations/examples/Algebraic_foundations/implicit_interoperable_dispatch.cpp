@@ -1,3 +1,4 @@
+#include <CGAL/basic.h>
 #include <CGAL/Coercion_traits.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Sqrt_extension.h>

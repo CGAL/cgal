@@ -48,9 +48,7 @@
     <addaction name="actionErase"/>
     <addaction name="actionEraseAll"/>
     <addaction name="actionDuplicate"/>
-    <addaction name="action_Save"/>
     <addaction name="actionSaveAs"/>
-    <addaction name="actionSa_ve_Scene_as_Script"/>
     <addaction name="actionSaveSnapshot"/>
     <addaction name="separator"/>
     <addaction name="actionLoadScript"/>
@@ -95,11 +93,17 @@
     </widget>
     <addaction name="actionRecenterScene"/>
     <addaction name="actionLookAt"/>
+    <addaction name="actionAntiAliasing"/>
     <addaction name="actionDrawTwoSides"/>
+    <addaction name="actionQuickCameraMode"/>
     <addaction name="actionSwitchProjection"/>
+    <addaction name="actionMaxTextItemsDisplayed"/>
+    <addaction name="actionSetBackgroundColor"/>
+    <addaction name="actionSetLighting"/>
     <addaction name="menuDockWindows"/>
     <addaction name="menuCamera"/>
     <addaction name="separator"/>
+    <addaction name="actionSet_Transparency_Pass_Number"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -381,6 +385,14 @@
     <string>Ctrl+D</string>
    </property>
   </action>
+  <action name="actionAntiAliasing">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Antialiasing</string>
+   </property>
+  </action>
   <action name="dummyAction">
    <property name="text">
     <string>n/a</string>
@@ -406,12 +418,12 @@
   </action>
   <action name="actionSetPolyhedronA">
    <property name="text">
-    <string>Set Facegraph A</string>
+    <string>Set Polyhedron A</string>
    </property>
   </action>
   <action name="actionSetPolyhedronB">
    <property name="text">
-    <string>Set Facegraph B</string>
+    <string>Set Polyhedron B</string>
    </property>
   </action>
   <action name="actionDrawTwoSides">
@@ -431,6 +443,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionSetBackgroundColor">
+   <property name="text">
+    <string>Change &amp;Background Color...</string>
    </property>
   </action>
   <action name="actionLookAt">
@@ -481,6 +498,22 @@
     <string>Load Plugin</string>
    </property>
   </action>
+  <action name="actionQuickCameraMode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Quick Camera Mode</string>
+   </property>
+  </action>
+  <action name="actionMaxTextItemsDisplayed">
+   <property name="text">
+    <string>Set Maximum  Text Items Displayed :</string>
+   </property>
+  </action>
   <action name="actionSwitchProjection">
    <property name="checkable">
     <bool>true</bool>
@@ -494,14 +527,28 @@
     <string>Set Different Colors for Selected Items</string>
    </property>
   </action>
-  <action name="actionSa_ve_Scene_as_Script">
+  <action name="actionPolyhedron_Mode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
-    <string>Sa&amp;ve the Scene as a Script File...</string>
+    <string>Polyhedron Mode</string>
+   </property>
+   <property name="toolTip">
+    <string>In Polyhedron Mode, the default type for facegraphs is Polyhedron, by opposition to Surface_mesh.</string>
    </property>
   </action>
-  <action name="action_Save">
+  <action name="actionSetLighting">
    <property name="text">
-    <string>&amp;Save</string>
+    <string>Change Lighting &amp;Settings...</string>
+   </property>
+  </action>
+  <action name="actionSet_Transparency_Pass_Number">
+   <property name="text">
+    <string>Set Transparency &amp;Pass Number</string>
    </property>
   </action>
  </widget>

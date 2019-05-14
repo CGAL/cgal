@@ -2,7 +2,7 @@
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Mean_curvature_flow_skeletonization.h>
-#include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/internal/corefinement/connected_components.h>
 
 #include <fstream>
 
@@ -34,16 +34,12 @@ bool is_mesh_valid(Polyhedron& pMesh)
     return false;
   }
 
-  std::size_t i = 0;
-  BOOST_FOREACH(Polyhedron::Face_handle fh, faces(pMesh))
-    fh->id()=i++;
-
   // the algorithm is only applicable on a mesh
   // that has only one connected component
-  std::size_t num_component =
-  CGAL::Polygon_mesh_processing::connected_components(
-    pMesh, get(CGAL::dynamic_face_property_t<std::size_t>(), pMesh));
-
+  std::size_t num_component;
+  CGAL::Counting_output_iterator output_it(&num_component);
+  CGAL::internal::corefinement::extract_connected_components(pMesh, output_it);
+  ++output_it;
   if (num_component != 1)
   {
     std::cerr << "The mesh is not a single closed mesh. It has "

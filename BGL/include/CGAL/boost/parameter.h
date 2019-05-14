@@ -111,7 +111,6 @@ BOOST_PARAMETER_NAME( (dump_after_perturb_prefix, tag ) dump_after_perturb_prefi
 BOOST_PARAMETER_NAME( (dump_after_exude_prefix, tag ) dump_after_exude_prefix_)
 BOOST_PARAMETER_NAME( (number_of_initial_points, tag) number_of_initial_points_)
 BOOST_PARAMETER_NAME( (maximal_number_of_vertices, tag ) maximal_number_of_vertices_)
-BOOST_PARAMETER_NAME( (nonlinear_growth_of_balls, tag ) nonlinear_growth_of_balls_)
 BOOST_PARAMETER_NAME( (pointer_to_error_code, tag ) pointer_to_error_code_)
 BOOST_PARAMETER_NAME( (pointer_to_stop_atomic_boolean, tag ) pointer_to_stop_atomic_boolean_)
 

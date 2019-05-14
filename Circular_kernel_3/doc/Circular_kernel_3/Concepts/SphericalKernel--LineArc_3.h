@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgCircularKernel3GeometricConcepts
+\ingroup PkgSphericalKernel3GeometricConcepts
 \cgalConcept
 
 Concept for line segments supported by a line that is a model of 

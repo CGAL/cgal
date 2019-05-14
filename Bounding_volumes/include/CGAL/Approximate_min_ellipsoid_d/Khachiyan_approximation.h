@@ -250,7 +250,7 @@ namespace CGAL {
       // Complexity: O((n-start) d^2)
       //
       // Todo: maybe use something like Kahan Summation here? See
-      // <https://en.wikipedia.org/wiki/Kahan_Summation_Algorithm>.
+      // <http://en.wikipedia.org/wiki/Kahan_Summation_Algorithm>.
     {
       for (int k=start; k<n; ++k) {
 	C_it pi = tco.cartesian_begin(*P[k]);

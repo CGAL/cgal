@@ -42,7 +42,6 @@ int main (int argc, char** argv)
     }
 
   std::ofstream out ("out.ply");
-  out.precision(17);
   CGAL::write_ply_point_set (out, point_set);
   
   return 0;

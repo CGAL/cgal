@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh3Domains
+\ingroup PkgMesh_3Domains
 
 The class `Implicit_multi_domain_to_labeling_function_wrapper` is a helping class to get a function with integer values
 labeling the components of a multi-domain. The multidomain is described through a set of functions {fi(p), i=1, ...n}.

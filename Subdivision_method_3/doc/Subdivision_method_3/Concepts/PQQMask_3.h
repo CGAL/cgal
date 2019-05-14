@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgSurfaceSubdivisionMethod3Concepts
+\ingroup PkgSurfaceSubdivisionMethods3Concepts
 \cgalConcept
 
 Required member functions for the `PQQMask_3` concept. This

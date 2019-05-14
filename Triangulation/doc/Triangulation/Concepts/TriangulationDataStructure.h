@@ -47,7 +47,8 @@ We call a \f$ 0\f$-simplex a <I>vertex</I>, a \f$ (d-1)\f$-simplex a <I>facet</I
 Two full cells are <I>neighbors</I> if they share a facet. Two faces are
 <I>incident</I> if one is included in the other.
 
-\cgalHeading{Input/Output}
+Input/Output
+--------------
 
 The information stored in the `iostream` is:
 
@@ -450,7 +451,6 @@ All vertices of cells of \f$ C\f$ are on \f$ \partial H\f$.
 \cgalFigureBegin{triangulationfiginserthole,insert-in-hole.png}
 Insertion in a hole, \f$ d=2\f$
 \cgalFigureEnd
-\cgalAdvancedEnd
 */
 template< class ForwardIterator > Vertex_handle
 insert_in_hole(ForwardIterator start, ForwardIterator end, Facet f);

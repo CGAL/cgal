@@ -17,6 +17,7 @@ if(POLICY CMP0071)
 endif()
 
 find_package(CGAL COMPONENTS Qt5)
+include(${CGAL_USE_FILE})
 
 find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
 
@@ -25,7 +26,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
   add_definitions(-DQT_NO_KEYWORDS)
 
  # include(${QT_USE_FILE})
-  include_directories (BEFORE ./ )
+  include_directories (BEFORE ../../include ./ )
 
   # ui file, created wih Qt Designer
   qt5_wrap_ui( uis MainWindow.ui )

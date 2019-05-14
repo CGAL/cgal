@@ -5,7 +5,7 @@
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
 
 typedef bool Vertex_info;
 typedef bool Face_info;

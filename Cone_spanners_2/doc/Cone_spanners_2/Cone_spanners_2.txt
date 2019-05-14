@@ -275,7 +275,7 @@ does not need `CGAL::sqrt()`.
 
 Also note that when using g++ or clang++ compilers with the c++11 standard,
 using a directed graph will cause a compilation error due to a
-<a href="https://lists.boost.org/Archives/boost/2016/05/229458.php">bug</a> in the boost library.
+<a href="http://lists.boost.org/Archives/boost/2016/05/229458.php">bug</a> in the boost library.
 As a workaround you can use a undirected graph instead.
 
 After compiling `theta_io.cpp`, execute the executable `theta_io` to construct a Theta graph with 4 cones

@@ -23,4 +23,4 @@ if ! [ -e "./$to" ]; then
   exit 1
 fi
 
-for f in ${from}/results*txt; do diff -U0 ${1+"$@"} $f ${f/$from/$to}; done |& less -p '^\+[^\+].* [^y]|CGAL-.*|diff'
+for f in ${from}/results*txt; do diff -U0 ${1+"$@"} $f ${f/$from/$to}; done |& less

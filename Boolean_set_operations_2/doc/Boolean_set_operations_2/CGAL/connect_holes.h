@@ -2,7 +2,7 @@ namespace CGAL {
 
 /*!
 \addtogroup boolean_connect_holes Functions on Polygon with Holes
-\ingroup PkgBooleanSetOperations2Ref
+\ingroup PkgBooleanSetOperations2
 \anchor ref_bso_connect_holes 
 
 

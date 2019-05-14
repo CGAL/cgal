@@ -52,7 +52,7 @@ if(NOT CGAL_Qt5_MISSING_DEPS)
 
   include(${CMAKE_CURRENT_LIST_DIR}/CGAL_Qt5_moc_and_resource_files.cmake)
 
-  if(CGAL_HEADER_ONLY AND (WITH_demos OR WITH_examples OR WITH_tests OR NOT CGAL_BUILDING_LIBS) AND NOT TARGET CGAL_Qt5_moc_and_resources)
+  if(CGAL_HEADER_ONLY AND (WITH_demos OR WITH_examples OR NOT CGAL_BUILDING_LIBS) AND NOT TARGET CGAL_Qt5_moc_and_resources)
     add_library(CGAL_Qt5_moc_and_resources STATIC 
       ${_CGAL_Qt5_MOC_FILES_private} 
         ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/GraphicsViewNavigation.h
@@ -118,13 +118,5 @@ function(CGAL_setup_CGAL_Qt5_dependencies target)
     target_link_libraries( ${target} ${keyword} CGAL::Qt5_moc_and_resources)
   endif()
   target_link_libraries( ${target} ${keyword} Qt5::OpenGL Qt5::Svg Qt5::Xml)
-
-  # Remove -Wdeprecated-copy, for g++ >= 9.0, because Qt5, as of
-  # version 5.12, has a lot of [-Wdeprecated-copy] warnings.
-  if( CMAKE_CXX_COMPILER_ID STREQUAL "GNU"
-      AND NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS "9" )
-    target_compile_options( ${target} ${keyword} "-Wno-deprecated-copy" "-Wno-cast-function-type" )
-  endif()
-
 endfunction()
 

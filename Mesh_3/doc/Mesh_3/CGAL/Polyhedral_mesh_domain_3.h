@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh3Domains
+\ingroup PkgMesh_3Domains
 
 The class `Polyhedral_mesh_domain_3` implements 
 a domain defined by a simplicial polyhedral surface.

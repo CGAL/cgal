@@ -1,6 +1,6 @@
 // Testing the do_equal function
 
-#include <CGAL/config.h>
+#include <CGAL/basic.h>
 
 #ifndef CGAL_USE_CORE
 

@@ -296,11 +296,9 @@ public:
 // 		  FaceIt face_begin,
 // 		  FaceIt face_end);
   
-  Vertex_handle create_vertex();
-  Vertex_handle create_vertex(const Vertex &v);
+  Vertex_handle create_vertex(const Vertex &v = Vertex());
   Vertex_handle create_vertex(Vertex_handle v); //calls copy constructor 
-  Face_handle create_face();
-  Face_handle create_face(const Face& f);
+  Face_handle create_face(const Face& f = Face());
   Face_handle create_face(Face_handle f); //calls copy constructor 
 
  Face_handle create_face(Face_handle f1, int i1, 
@@ -1354,14 +1352,6 @@ make_hole(Vertex_handle v, List_edges& hole)
   return;
 }
 
-template <class Vb, class Fb>
-inline
-typename Triangulation_data_structure_2<Vb,Fb>::Vertex_handle
-Triangulation_data_structure_2<Vb,Fb>::
-create_vertex()
-{
-  return vertices().emplace();
-}
 
 template <class Vb, class Fb>
 inline
@@ -1379,14 +1369,6 @@ Triangulation_data_structure_2<Vb,Fb>::
 create_vertex(Vertex_handle vh)
 {
   return vertices().insert(*vh);
-}
-
-template <class Vb, class Fb>
-typename Triangulation_data_structure_2<Vb,Fb>::Face_handle
-Triangulation_data_structure_2<Vb,Fb>::
-create_face()
-{
-  return faces().emplace();
 }
 
 template <class Vb, class Fb>

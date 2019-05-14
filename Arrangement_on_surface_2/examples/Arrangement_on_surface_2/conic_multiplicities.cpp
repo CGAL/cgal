@@ -1,7 +1,7 @@
 //! \file examples/Arrangement_on_surface_2/conic_multiplicities.cpp
 // Handling intersection points with multiplicity between conic arcs.
 
-#include <CGAL/config.h>
+#include <CGAL/basic.h>
 
 #ifndef CGAL_USE_CORE
 #include <iostream>

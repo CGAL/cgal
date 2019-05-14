@@ -1,21 +1,21 @@
-/// \defgroup PkgPolynomialRef Polynomial Reference
+/// \defgroup PkgPolynomial Polynomial Reference
 /// \defgroup PkgPolynomialConcepts Concepts
-/// \ingroup PkgPolynomialRef
+/// \ingroup PkgPolynomial
 
 /// \defgroup PkgPolynomialClasses Classes
-/// \ingroup PkgPolynomialRef
+/// \ingroup PkgPolynomial
 
 /// \defgroup PkgPolynomialFunctions Functions
-/// \ingroup PkgPolynomialRef
+/// \ingroup PkgPolynomial
 /*!
-\addtogroup PkgPolynomialRef
+\addtogroup PkgPolynomial
 \todo check generated documentation
-\cgalPkgDescriptionBegin{Polynomial,PkgPolynomial}
+\cgalPkgDescriptionBegin{Polynomial,PkgPolynomialSummary}
 \cgalPkgPicture{Polynomial.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Michael Hemmer}
 \cgalPkgDesc{This package introduces a concept for univariate and multivariate  polynomials in \f$ d\f$ variables. Though the concept is written for an arbitrary  number of variables, the number of variables is considered as fixed for a  particular model of this concept.}
-\cgalPkgManuals{Chapter_Polynomial,PkgPolynomialRef}
+\cgalPkgManuals{Chapter_Polynomial,PkgPolynomial}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.3}
@@ -26,7 +26,7 @@
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 
 - `Polynomial_d`
 - `PolynomialTraits_d`
@@ -95,14 +95,14 @@
 - `PolynomialTraits_d::SturmHabichtSequenceWithCofactors`
 - `PolynomialTraits_d::PrincipalSturmHabichtSequence`
 
-\cgalCRPSection{Classes}
+## Classes ##
 
 - `CGAL::Polynomial<Coeff>`
 - `CGAL::Polynomial_traits_d<Polynomial_d>`
 - `CGAL::Exponent_vector`
 - `CGAL::Polynomial_type_generator<T,d>`
 
-\cgalCRPSection{Functions}
+## Functions ##
 
 - `CGAL::get_coefficient()`
 - `CGAL::get_innermost_coefficient()`

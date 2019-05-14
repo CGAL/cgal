@@ -1,19 +1,19 @@
-/// \defgroup PkgJetFitting3Ref Estimation of Local Differential Properties  of Point-Sampled Surfaces Reference
-/// \defgroup PkgJetFitting3Concepts Concepts
-/// \ingroup PkgJetFitting3Ref
+/// \defgroup PkgJet_fitting_3 Estimation of Local Differential Properties  of Point-Sampled Surfaces Reference
+/// \defgroup PkgJet_fitting_3Concepts Concepts
+/// \ingroup PkgJet_fitting_3
 /*!
-\addtogroup PkgJetFitting3Ref
+\addtogroup PkgJet_fitting_3
 \todo check generated documentation
-\cgalPkgDescriptionBegin{Estimation of Local Differential Properties of Point-Sampled Surfaces,PkgJetFitting3}
+\cgalPkgDescriptionBegin{Estimation of Local Differential Properties of Point-Sampled Surfaces,PkgJet_fitting_3Summary}
 \cgalPkgPicture{DavidDetail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Marc Pouget  and Frédéric Cazals}
 \cgalPkgDesc{For a surface discretized as a point cloud or a mesh, it is desirable to estimate pointwise differential quantities. More precisely, first order properties correspond to the normal or the tangent plane; second order properties provide the principal curvatures and directions, third order properties provide the directional derivatives of the principal curvatures along the curvature lines, etc. This package allows the estimation of local differential quantities of a surface from a point sample.}
-\cgalPkgManuals{Chapter_Estimation_of_Local_Differential_Properties_of_Point-Sampled_Surfaces,PkgJetFitting3Ref}
+\cgalPkgManuals{Chapter_Estimation_of_Local_Differential_Properties_of_Point-Sampled_Surfaces,PkgJet_fitting_3}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.3}
-\cgalPkgDependsOn{\ref PkgSolverInterface and \ref thirdpartyEigen}
+\cgalPkgDependsOn{\ref PkgSolverSummary and \ref thirdpartyEigen}
 \cgalPkgBib{cgal:pc-eldp}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
@@ -22,17 +22,17 @@
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 - `DataKernel`
 - `LocalKernel`
 
 
-\cgalCRPSection{Classes}
+## Classes ##
 - \link CGAL::Monge_via_jet_fitting::Monge_form `CGAL::Monge_via_jet_fitting< DataKernel, LocalKernel, SvdTraits>::Monge_form` \endlink
 - `CGAL::Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>`
 
 
-\cgalCRPSection{Global Functions}
+## Global Functions ##
 The insert operator (operator<< ) is overloaded for the class \link CGAL::Monge_via_jet_fitting::Monge_form `Monge_form` \endlink. 
 
 */

@@ -1,4 +1,4 @@
-#include <CGAL/config.h>
+#include <CGAL/basic.h>
 
 // standard includes
 #include <iostream>

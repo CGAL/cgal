@@ -115,7 +115,7 @@ namespace Surface_mesh_parameterization {
 // Declaration
 // ------------------------------------------------------------------------------------
 
-/// \ingroup PkgSurfaceMeshParameterizationMethods
+/// \ingroup PkgSurfaceParameterizationMethods
 ///
 /// The class `ARAP_parameterizer_3` implements the
 /// *Local/Global Approach to Mesh Parameterization* \cgalCite{liu2008local}.

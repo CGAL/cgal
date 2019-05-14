@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSTLExtensionUtilities
+\ingroup PkgStlExtensionUtilities
 
 
 \deprecated This class is deprecated, and will be removed in some future \cgal release.

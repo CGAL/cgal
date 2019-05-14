@@ -96,8 +96,6 @@ struct No_extra_output_from_corefinement
   void set_edge_per_polyline(G& /*tm*/,
                              Node_id_pair /*indices*/,
                              halfedge_descriptor /*hedge*/){}
-  template <class vertex_descriptor, class Node_id>
-  void set_vertex_id(vertex_descriptor, Node_id, const G&){}
   template <class Node_vector,
             class Mesh_to_map_node>
   void operator()(
@@ -210,8 +208,7 @@ private:
 public:
   Surface_intersection_visitor_for_corefinement(
     UserVisitor& uv, OutputBuilder& o, const EdgeMarkMapBind& emm)
-    : number_coplanar_vertices(0)
-    , user_visitor(uv)
+    : user_visitor(uv)
     , output_builder(o)
     , marks_on_edges(emm)
     , input_with_coplanar_faces(false)
@@ -362,7 +359,6 @@ public:
         node_id_to_vertex[node_id]=target(h_2,tm2);
         all_incident_faces_got_a_node_as_vertex(h_2,node_id,*tm2_ptr);
       //   check_node_on_non_manifold_vertex(node_id,h_2,tm2);
-        output_builder.set_vertex_id(target(h_2, tm2), node_id, tm2);
       }
       break;
       default:
@@ -380,8 +376,6 @@ public:
         node_id_to_vertex.resize(node_id+1,Graph_traits::null_vertex());
       node_id_to_vertex[node_id]=target(h_1,tm1);
       all_incident_faces_got_a_node_as_vertex(h_1,node_id, *tm1_ptr);
-      // register the vertex in the output builder
-      output_builder.set_vertex_id(target(h_1, tm1), node_id, tm1);
       // check_node_on_non_manifold_vertex(node_id,h_1,tm1);
     }
     else{
@@ -394,8 +388,6 @@ public:
           node_id_to_vertex.resize(node_id+1,Graph_traits::null_vertex());
         node_id_to_vertex[node_id]=source(h_1,tm1);
         all_incident_faces_got_a_node_as_vertex(h_1_opp,node_id, *tm1_ptr);
-        // register the vertex in the output builder
-        output_builder.set_vertex_id(source(h_1, tm1), node_id, tm1);
       //   check_node_on_non_manifold_vertex(node_id,h_1_opp,tm1);
       }
       else{
@@ -760,8 +752,7 @@ public:
           vertex_descriptor vnew=target(hnew,tm);
 //          user_visitor.new_vertex_added(node_id, vnew, tm); // NODE_VISITOR_TAG
           nodes.call_put(vpm, vnew, node_id, tm);
-          // register the new vertex in the output builder
-          output_builder.set_vertex_id(vnew, node_id, tm);
+
           node_id_to_vertex[node_id]=vnew;
           if (first){
             first=false;
@@ -1005,7 +996,7 @@ public:
 
         // import the triangle in `cdt` in the face `f` of `tm`
         triangulate_a_face(f, tm, nodes, node_ids, node_id_to_vertex,
-          edge_to_hedge, cdt, vpm, output_builder, user_visitor);
+          edge_to_hedge, cdt, vpm, user_visitor);
 
         // TODO Here we do the update only for internal edges.
         // Update for border halfedges could be done during the split

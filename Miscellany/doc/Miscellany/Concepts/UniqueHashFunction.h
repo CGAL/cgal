@@ -1,6 +1,6 @@
 
 /*!
-\ingroup MiscellanyConcepts
+\ingroup PkgProfilingToolsConcepts
 \cgalConcept
 
 `UniqueHashFunction` is a concept for a hash function with unique hash values. 

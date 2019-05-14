@@ -22,7 +22,7 @@
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
-#include <CGAL/config.h>
+#include <CGAL/basic.h>
 
 #ifndef CGAL_USE_GMP
 #include <CGAL/MP_Float.h>

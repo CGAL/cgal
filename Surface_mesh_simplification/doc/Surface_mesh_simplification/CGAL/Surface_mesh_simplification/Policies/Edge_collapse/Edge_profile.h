@@ -3,7 +3,7 @@ namespace CGAL {
 namespace Surface_mesh_simplification {
 
 /*!
-\ingroup PkgSurfaceMeshSimplificationRef
+\ingroup PkgSurfaceMeshSimplification
 
 The class `Edge_profile` provides a model for the `EdgeProfile` concept. 
 

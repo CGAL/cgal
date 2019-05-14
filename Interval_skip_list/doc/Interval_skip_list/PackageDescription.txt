@@ -1,15 +1,15 @@
-/// \defgroup PkgIntervalSkipListRef Interval Skip List Reference
+/// \defgroup PkgIntervalSkipList Interval Skip List Reference
 /// \defgroup PkgIntervalSkipListConcepts Concepts
-/// \ingroup PkgIntervalSkipListRef
+/// \ingroup PkgIntervalSkipList
 /*!
-\addtogroup PkgIntervalSkipListRef
+\addtogroup PkgIntervalSkipList
 
-\cgalPkgDescriptionBegin{Interval Skip List,PkgIntervalSkipList}
+\cgalPkgDescriptionBegin{Interval Skip List,PkgIntervalSkipListSummary}
 \cgalPkgPicture{Interval_skip_list/fig/query.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Andreas Fabri}
 \cgalPkgDesc{An interval skip list is a data structure for finding all intervals that contain a point, and for stabbing queries, that is for answering the question whether a given point is contained in an interval or not. For a triangulated terrain, this allows to quickly identify the triangles which intersect an iso line. }
-\cgalPkgManuals{Chapter_Interval_Skip_List,PkgIntervalSkipListRef}
+\cgalPkgManuals{Chapter_Interval_Skip_List,PkgIntervalSkipList}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.0}
@@ -39,10 +39,10 @@ the interval skip list class is parameterized.
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 - `Interval`
 
-\cgalCRPSection{Classes}
+## Classes ##
 - `CGAL::Interval_skip_list<Interval>`
 - `CGAL::Interval_skip_list_interval<Value>`
 - `CGAL::Level_interval<FaceHandle>`

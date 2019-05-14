@@ -52,7 +52,7 @@ namespace CGAL {
       typedef typename SK::template Handle<Rep>::type Base;
 
       Base base;
-      bool _full;
+      mutable bool _full;
       // It is the sign of the cross product 
       // of the vector (Center -> S) x (Center -> T)
       // it saves execution time for the has_on functor
@@ -141,7 +141,7 @@ namespace CGAL {
       // This is the one of the two cases we want that s == t
       // that makes the is_full() correct and complete
       Circular_arc_3(const Circle_3 &c)
-        : _full(true), _sign_cross_product(CGAL::ZERO)
+      : _full(true)
       {
         const Plane_3 &p = c.supporting_plane();
         if(is_zero(p.b()) && is_zero(p.c())) {
@@ -153,12 +153,15 @@ namespace CGAL {
 	    SphericalFunctors::x_extremal_point<SK>(c,true);
           base = Rep(c,v,v);
         }
+        /* don't matter
+        _sign_cross_product = 0;
+        */
       }
 
       // This is the second case where we want that s == t
       // that makes the is_full() correct and complete
       Circular_arc_3(const Circle_3 &c,const Circular_arc_point_3& point)
-      : base(Rep(c,point,point)),_full(true), _sign_cross_product(CGAL::ZERO)
+      : base(Rep(c,point,point)),_full(true)
       {CGAL_kernel_precondition(SK().has_on_3_object()(c,point));}
       
       Circular_arc_3(const Circle_3 &c, 
@@ -218,7 +221,6 @@ namespace CGAL {
       Circular_arc_3(const Point_3 &begin,
 		     const Point_3 &middle,
 		     const Point_3 &end)
-        : _full(false)
       {
 	CGAL_kernel_precondition(!typename SK::Collinear_3()(begin, middle, end));
 	const Circle_3 c = Circle_3(begin, middle, end);
@@ -280,15 +282,7 @@ namespace CGAL {
         const double dz = z2-z1;
         const double d_sq = dx*dx + dy*dy + dz*dz;
         const double r_sq = to_double(squared_radius());
-        const double s = 0.5 * std::sqrt(d_sq / r_sq);
-        double ap_ang;
-        if(std::abs(s)<=1) {
-          ap_ang = 2.0 * std::asin(s);
-        } else {
-          // We only allow a small rounding error
-          CGAL_assertion(std::abs(s)<=1.0001);
-          ap_ang = (s < 0) ? -CGAL_PI : CGAL_PI;
-        }
+        const double ap_ang = 2.0 * std::asin(0.5 * std::sqrt(d_sq / r_sq));
         if(sign_cross_product() == NEGATIVE) return 2.0 * CGAL_PI - ap_ang;
         else return ap_ang;
       }

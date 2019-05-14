@@ -173,12 +173,8 @@ struct AABB_traits_base_2<GeomTraits,true>{
 
 } } //end of namespace internal::AABB_tree
 
-/// \addtogroup PkgAABBTreeRef
+/// \addtogroup PkgAABB_tree
 /// @{
-
-// forward declaration
-template< typename AABBTraits>
-class AABB_tree;
 
 /// This traits class handles any type of 3D geometric
 /// primitives provided that the proper intersection tests and
@@ -293,15 +289,14 @@ public:
    * Sorts the range defined by [first,beyond[. Sort is achieved on bbox longuest
    * axis, using the comparison function `<dim>_less_than` (dim in {x,y,z})
    */
-  class Split_primitives
+  class Sort_primitives
   {
     typedef AABB_traits<GeomTraits,AABBPrimitive,BboxMap> Traits;
     const Traits& m_traits;
   public:
-    Split_primitives(const AABB_traits<GeomTraits,AABBPrimitive,BboxMap>& traits)
+    Sort_primitives(const AABB_traits<GeomTraits,AABBPrimitive,BboxMap>& traits)
       : m_traits(traits) {}
 
-    typedef void result_type;
     template<typename PrimitiveIterator>
     void operator()(PrimitiveIterator first,
                     PrimitiveIterator beyond,
@@ -325,7 +320,7 @@ public:
       }
   };
 
-  Split_primitives split_primitives_object() const {return Split_primitives(*this);}
+  Sort_primitives sort_primitives_object() const {return Sort_primitives(*this);}
 
 
   /*
@@ -373,19 +368,6 @@ public:
     bool operator()(const Query& q, const Primitive& pr) const
     {
       return GeomTraits().do_intersect_3_object()(q, internal::Primitive_helper<AT>::get_datum(pr,m_traits));
-    }
-
-    // intersection with AABB-tree
-    template<typename AABBTraits>
-    bool operator()(const CGAL::AABB_tree<AABBTraits>& other_tree, const Primitive& pr) const
-    {
-      return other_tree.do_intersect( internal::Primitive_helper<AT>::get_datum(pr,m_traits) );
-    }
-
-    template<typename AABBTraits>
-    bool operator()(const CGAL::AABB_tree<AABBTraits>& other_tree, const Bounding_box& bbox) const
-    {
-      return other_tree.do_intersect(bbox);
     }
   };
 

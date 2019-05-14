@@ -12,8 +12,8 @@
 //
 // ============================================================================
 
+#include <CGAL/basic.h>
 #include <cassert>
-#include <CGAL/IO/io.h>
 #include <CGAL/algorithm.h>
 #include <cstdlib>
 #include <sstream>

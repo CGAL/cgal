@@ -30,7 +30,7 @@
 
 namespace CGAL {
 
-/// \ingroup PkgPointSetProcessing3Algorithms
+/// \ingroup PkgPointSetProcessingAlgorithms
 /// determines if a point is on a sharp feature edge from a point set
 /// for which the Voronoi covariance Measures have been computed.
 ///

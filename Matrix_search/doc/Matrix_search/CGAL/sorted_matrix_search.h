@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMatrixSearchRef
+\ingroup PkgMatrixSearch
 
 \brief returns the element `x` in one of the sorted matrices from the 
 range `[f, l)`, for which `t.is_feasible(x)` 

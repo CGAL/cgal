@@ -49,12 +49,7 @@ namespace internal {
   {
     typename GT::FT norm = CGAL::approximate_sqrt(
         traits.compute_squared_length_3_object()(v));
-    //If the vector is small enough, approx_sqrt might return 0, and then we get nan values. 
-    //To avoid that, we check the resulted norm. If it is 0, we don't normalize.
-    if(norm != 0)
-    {
-      v = traits.construct_divided_vector_3_object()(v, norm );
-    }
+    v = traits.construct_divided_vector_3_object()(v, norm);
   }
 
   template<typename Point

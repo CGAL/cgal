@@ -352,7 +352,7 @@ wrapper for all our defined types. The searching itself works exactly as for \cg
 
 The following four example programs illustrate how to use the classes `Search_traits_adapter<Key,PointPropertyMap,BaseTraits>` and
 `Distance_adapter<Key,PointPropertyMap,Base_distance>` to store in the kd-tree objects of an arbitrary key type. Points are
-accessed through a point <A HREF="https://www.boost.org/doc/libs/release/libs/property_map/index.html">property map</A>.
+accessed through a point <A HREF="http://www.boost.org/doc/libs/release/libs/property_map/index.html">property map</A>.
 This enables to associate information to a point or to reduce the size of the search structure.
 
 \subsubsection Spatial_searchingUsingaPointandanInteger Using a Point and an Integer as Key Type

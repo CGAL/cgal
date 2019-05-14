@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgNef2Ref
+\ingroup PkgNef2
 
 The class `Filtered_extended_homogeneous` serves as a traits class for the class 
 `Nef_polyhedron_2<T>`. It uses a polynomial component 

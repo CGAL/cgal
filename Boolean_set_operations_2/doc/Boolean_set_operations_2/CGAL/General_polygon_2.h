@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBooleanSetOperations2Ref
+\ingroup PkgBooleanSetOperations2
 
 The class `General_polygon_2` models the concept `GeneralPolygon_2`. 
 It represents a simple general-polygon. It is parameterized with the type 

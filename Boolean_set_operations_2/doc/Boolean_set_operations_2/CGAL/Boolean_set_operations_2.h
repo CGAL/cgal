@@ -2,7 +2,7 @@ namespace CGAL {
 
 /*!
 \addtogroup boolean_complement Complement Functions
-\ingroup PkgBooleanSetOperations2Ref
+\ingroup PkgBooleanSetOperations2
 \anchor ref_bso_complement 
 
 The `complement` function is overloaded. Depending on the
@@ -58,7 +58,7 @@ namespace CGAL {
 
 /*!
 \addtogroup boolean_difference Difference Functions
-\ingroup PkgBooleanSetOperations2Ref
+\ingroup PkgBooleanSetOperations2
 \anchor ref_bso_difference 
 
 Each one of these functions computes the difference between two given 
@@ -181,7 +181,7 @@ namespace CGAL {
 
 /*!
 \addtogroup boolean_do_intersect Intersection Testing Functions
-\ingroup PkgBooleanSetOperations2Ref
+\ingroup PkgBooleanSetOperations2
 \anchor ref_bso_do_intersect 
 
 Each one of these functions computes if the interior of two given 
@@ -305,7 +305,7 @@ namespace CGAL {
 
 /*!
 \addtogroup boolean_intersection Intersection Functions
-\ingroup PkgBooleanSetOperations2Ref
+\ingroup PkgBooleanSetOperations2
 \anchor ref_bso_intersection
 
 Each one of these functions computes the intersection of two given 
@@ -467,7 +467,7 @@ namespace CGAL {
 
 /*!
 \addtogroup boolean_join Union Functions
-\ingroup PkgBooleanSetOperations2Ref
+\ingroup PkgBooleanSetOperations2
 \anchor ref_bso_union
 
 Each one of these functions computes the union of two given polygons 
@@ -621,7 +621,7 @@ OutputIterator oi);
 namespace CGAL {
 /*!
 \addtogroup boolean_oriented_side Oriented Side Functions
-\ingroup PkgBooleanSetOperations2Ref
+\ingroup PkgBooleanSetOperations2
 \anchor ref_bso_oriented_side
 
 Each one of these functions returns `ON_POSITIVE_SIDE` if the two 
@@ -706,7 +706,7 @@ namespace CGAL {
 
 /*!
 \addtogroup boolean_symmetric_difference Symmetric Difference Functions
-\ingroup PkgBooleanSetOperations2Ref
+\ingroup PkgBooleanSetOperations2
 \anchor ref_bso_symmetric_difference 
 
 Each one of these functions computes the symmetric difference between 

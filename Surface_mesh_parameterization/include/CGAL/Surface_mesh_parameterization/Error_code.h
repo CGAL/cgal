@@ -29,7 +29,7 @@ namespace CGAL {
 
 namespace Surface_mesh_parameterization {
 
-/// \ingroup PkgSurfaceMeshParameterizationEnums
+/// \ingroup PkgSurfaceParameterizationEnums
 ///
 /// List of errors detected by this package
 enum Error_code
@@ -46,7 +46,7 @@ enum Error_code
   ERROR_WRONG_PARAMETER           ///< A method received an unexpected parameter
 };
 
-/// \ingroup PkgSurfaceMeshParameterizationEnums
+/// \ingroup PkgSurfaceParameterizationEnums
 /// \brief Get the message corresponding to an error code.
 /// \param error_code The code returned by `parameterize()`
 /// \return The string describing the error code.

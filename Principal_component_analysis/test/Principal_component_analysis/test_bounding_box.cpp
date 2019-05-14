@@ -4,15 +4,15 @@
 #include <vector>
 #include <cassert>
 
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/bounding_box.h>
 
-typedef double                      FT;
-typedef CGAL::Simple_cartesian<FT>  K;
-typedef K::Point_2                  Point_2;
-typedef K::Point_3                  Point_3;
-typedef K::Segment_2                Segment_2;
-typedef K::Triangle_3               Triangle_3;
+typedef double               FT;
+typedef CGAL::Cartesian<FT>  K;
+typedef K::Point_2           Point_2;
+typedef K::Point_3           Point_3;
+typedef K::Segment_2         Segment_2;
+typedef K::Triangle_3        Triangle_3;
 
 void test_2()
 {

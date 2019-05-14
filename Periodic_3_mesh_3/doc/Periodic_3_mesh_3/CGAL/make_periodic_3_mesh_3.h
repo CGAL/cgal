@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPeriodic3Mesh3Functions
+\ingroup PkgPeriodic_3_mesh_3Functions
 
 The function `make_periodic_3_mesh_3()` is a 3D periodic mesh generator.
 It produces simplicial meshes which discretize 3D periodic domains.

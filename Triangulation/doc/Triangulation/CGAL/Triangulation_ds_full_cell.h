@@ -43,7 +43,8 @@ See the user manual for how to choose the second option.
 
 \cgalModels `TriangulationDSFullCell`
 
-\cgalHeading{Rebind mechanism}
+Rebind mechanism 
+-------------- 
 
 In case of derivation from that class, the nested class 
 `Rebind_TDS` need to be provided in the derived class. 

@@ -428,6 +428,7 @@ corefine_and_compute_boolean_operations(
                         *(*output[Corefinement::INTERSECTION]),
                         parameters::vertex_point_map(vpm1),
                         parameters::vertex_point_map(*cpp11::get<Corefinement::INTERSECTION>(vpm_out_tuple)));
+                        
 
     if (output[Corefinement::TM1_MINUS_TM2] != boost::none)
       if (&tm1 == *output[Corefinement::TM1_MINUS_TM2])
@@ -562,20 +563,6 @@ corefine_and_compute_boolean_operations(
   Edge_mark_map_tuple ecms_out(ecm_out_0, ecm_out_1, ecm_out_2, ecm_out_3);
   Ob ob(tm1, tm2, vpm1, vpm2, fid_map1, fid_map2, ecm_in,
         vpm_out_tuple, ecms_out, uv, output);
-
-  // special case used for clipping open meshes
-  if (  boost::choose_param( boost::get_param(np1, internal_np::use_bool_op_to_clip_surface),
-                             false) )
-  {
-    CGAL_assertion(output[Corefinement::INTERSECTION] != boost::none);
-    CGAL_assertion(output[Corefinement::UNION] == boost::none);
-    CGAL_assertion(output[Corefinement::TM1_MINUS_TM2] == boost::none);
-    CGAL_assertion(output[Corefinement::TM2_MINUS_TM1] == boost::none);
-    const bool use_compact_clipper =
-      boost::choose_param( boost::get_param(np1, internal_np::use_compact_clipper),
-                           true);
-    ob.setup_for_clipping_a_surface(use_compact_clipper);
-  }
 
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, Vpm, Algo_visitor >
     functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm_in));

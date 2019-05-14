@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgJetFitting3Concepts
+\ingroup PkgJet_fitting_3Concepts
 \cgalConcept
 
 The concept `DataKernel` describes the set of requirements to be 

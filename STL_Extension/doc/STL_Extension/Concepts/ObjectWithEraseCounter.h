@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgSTLExtensionConcepts
+\ingroup PkgStlExtensionConcepts
 \cgalConcept
 
 The concept `ObjectWithEraseCounter` describes the functionalities 

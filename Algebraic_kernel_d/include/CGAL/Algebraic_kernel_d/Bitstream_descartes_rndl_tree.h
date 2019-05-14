@@ -566,10 +566,8 @@ private:
         log_eps_       = n.log_eps_;
         log_C_eps_     = n.log_C_eps_;
     }
-  
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
-    Self& operator= (const Self&)=delete;
-#endif  
+
+    // const Self& operator= (const Self&); // assignment is forbidden
 }; // struct Bitstream_descartes_rndl_node
 
 
@@ -933,11 +931,9 @@ public:
     Bitstream_descartes_rndl_tree() : Base(Rep()) { }
 
     //! copy constructor
-#ifdef DOXYGEN_RUNNING
     Bitstream_descartes_rndl_tree(const Self& p)
         : Base(static_cast<const Base&>(p))
     { }
-#endif
 
     //! Internal function called by constructor. Avoids code duplication
     void init_tree() {

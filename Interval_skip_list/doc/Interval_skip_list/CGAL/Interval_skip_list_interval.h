@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgIntervalSkipListRef
+\ingroup PkgIntervalSkipList
 
 The class `Interval_skip_list_interval` represents intervals with lower and upper 
 bound of type `Value`. These intervals 

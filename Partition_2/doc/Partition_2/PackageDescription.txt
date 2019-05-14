@@ -1,19 +1,19 @@
-/// \defgroup PkgPartition2Ref 2D Polygon Partitioning Reference
-/// \defgroup PkgPartition2Concepts Concepts
-/// \ingroup PkgPartition2Ref
-/// \defgroup PkgPartition2FunctionObjectConcepts Function Object Concepts
-/// \ingroup PkgPartition2Ref
-/// \defgroup PkgPartition2FunctionObjectClasses Function Object Classes
-/// \ingroup PkgPartition2Ref
+/// \defgroup PkgPolygonPartitioning2 2D Polygon Partitioning Reference
+/// \defgroup PkgPolygonPartitioning2Concepts Concepts
+/// \ingroup PkgPolygonPartitioning2
+/// \defgroup PkgPolygonPartitioning2FunctionObjectConcepts Function Object Concepts
+/// \ingroup PkgPolygonPartitioning2
+/// \defgroup PkgPolygonPartitioning2FunctionObjectClasses Function Object Classes
+/// \ingroup PkgPolygonPartitioning2
 /*!
-\addtogroup PkgPartition2Ref
+\addtogroup PkgPolygonPartitioning2
 \todo check generated documentation
-\cgalPkgDescriptionBegin{2D Polygon Partitioning,PkgPartition2}
+\cgalPkgDescriptionBegin{2D Polygon Partitioning,PkgPolygonPartitioning2Summary}
 \cgalPkgPicture{Partition_2/fig/Partition_2-teaser-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Susan Hert}
 \cgalPkgDesc{This package provides functions for partitioning polygons in monotone or convex polygons. The algorithms can produce results with the minimal number of polygons, as well as approximations which have no more than four  times the optimal number of convex pieces but they differ in  their runtime complexities.}
-\cgalPkgManuals{Chapter_2D_Polygon_Partitioning,PkgPartition2Ref}
+\cgalPkgManuals{Chapter_2D_Polygon_Partitioning,PkgPolygonPartitioning2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{2.3}
@@ -22,7 +22,7 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-\cgalCRPSection{Definitions}
+## Definitions ##
 
 A <i>partition</i> of a polygon is a set 
 of polygons such that the interiors of the polygons do not intersect and
@@ -51,7 +51,7 @@ a convex partitioning from a triangulation of a polygon.
 Each of the partitioning functions uses a traits class to supply the
 primitive types and predicates used by the algorithms.
 
-\cgalCRPSection{Assertions}
+## Assertions ##
 
 The assertion flags for this package use `PARTITION` in their names
 (<I>e.g.</I>, `CGAL_PARTITION_NO_POSTCONDITIONS`).
@@ -67,7 +67,7 @@ original polygon).
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 - `ConvexPartitionIsValidTraits_2`
 - `IsYMonotoneTraits_2`
 - `OptimalConvexPartitionTraits_2`
@@ -76,20 +76,20 @@ original polygon).
 - `YMonotonePartitionIsValidTraits_2`
 - `YMonotonePartitionTraits_2`
 
-\cgalCRPSection{Function Object Concepts}
+## Function Object Concepts ##
 - `PolygonIsValid`
 
-\cgalCRPSection{Classes}
+## Classes ##
 - `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>`
 - `CGAL::Partition_traits_2<R>`
 
 
-\cgalCRPSection{Function Object Classes}
+## Function Object Classes ##
 - `CGAL::Is_convex_2<Traits>`
 - `CGAL::Is_vacuously_valid<Traits>`
 - `CGAL::Is_y_monotone_2<Traits>`
 
-\cgalCRPSection{Functions}
+## Functions ##
 - `CGAL::approx_convex_partition_2()`
 - `CGAL::convex_partition_is_valid_2()`
 - `CGAL::greene_approx_convex_partition_2()`

@@ -271,7 +271,7 @@ public:
     public:
         Hole_iterator() : Ibase() {}
         Hole_iterator(const Ibase& b) : Ibase(b) {}
-
+        Hole_iterator(const Hole_iterator& i) : Ibase(i) {}  
         operator Halfedge_handle() const { return Ibase::operator*(); }
         Halfedge& operator*() { return *(Ibase::operator*()); }
         Halfedge_handle operator->() { return Ibase::operator*(); }
@@ -284,7 +284,7 @@ public:
     public:
         Hole_const_iterator() : Ibase() {}
         Hole_const_iterator(const Ibase& b) : Ibase(b) {}
-
+        Hole_const_iterator(const Hole_const_iterator& i) : Ibase(i) {}  
         operator Halfedge_const_handle() const { return Ibase::operator*(); }
         const Halfedge& operator*() { return *(Ibase::operator*()); }
         Halfedge_const_handle operator->() { return Ibase::operator*(); }
@@ -299,7 +299,8 @@ public:
     public:
         Isolated_vertex_iterator() : Ibase() {}
         Isolated_vertex_iterator(const Ibase& b) : Ibase(b) {}
-
+        Isolated_vertex_iterator(const Isolated_vertex_iterator& i) 
+            : Ibase(i) {}  
         operator Vertex_handle() const { return Ibase::operator*(); }
         Vertex& operator*() { return *(Ibase::operator*()); }
         Vertex_handle operator->() { return Ibase::operator*(); }
@@ -312,7 +313,8 @@ public:
     public:
         Isolated_vertex_const_iterator() : Ibase() {}
         Isolated_vertex_const_iterator(const Ibase& b) : Ibase(b) {}
-
+        Isolated_vertex_const_iterator(
+            const Isolated_vertex_const_iterator& i) : Ibase(i) {}  
         operator Vertex_const_handle() const { return Ibase::operator*(); }
         const Vertex& operator*() { return *(Ibase::operator*()); }
         Vertex_const_handle operator->() { return Ibase::operator*(); }

@@ -19,7 +19,7 @@
 #include <fstream>
 #include <string>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
 typedef CGAL::Point_with_surface_index_geom_traits<K> My_traits;
 // Multi_surface_traits<Regular_traits> ?
 typedef CGAL::Complex_2_in_triangulation_vertex_base_3<My_traits> Vb;

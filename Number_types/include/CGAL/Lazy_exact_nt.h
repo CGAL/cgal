@@ -478,7 +478,7 @@ public:
     return relative_precision_of_to_double_internal();
   }
 
-  static void set_relative_precision_of_to_double(double d)
+  static void set_relative_precision_of_to_double(const double & d)
   {
       CGAL_assertion((0 < d) & (d < 1));
       relative_precision_of_to_double_internal() = d;

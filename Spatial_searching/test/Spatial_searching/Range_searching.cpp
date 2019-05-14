@@ -1,4 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
+#include <cassert>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Search_traits_adapter.h>
@@ -6,7 +7,6 @@
 #include <CGAL/Fuzzy_iso_box.h>
 #include "Point_with_info.h"
 
-#include <cassert>
 #include <vector>
 #include <iostream>
 

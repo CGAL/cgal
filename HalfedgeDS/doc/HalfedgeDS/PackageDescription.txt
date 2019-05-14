@@ -1,31 +1,31 @@
-/// \defgroup PkgHalfedgeDSRef Halfedge Data Structures Reference
-/// \defgroup PkgHalfedgeDSConcepts Concepts
-/// \ingroup PkgHalfedgeDSRef
+/// \defgroup PkgHDS Halfedge Data Structures Reference
+/// \defgroup PkgHDSConcepts Concepts
+/// \ingroup PkgHDS
 
-/// \defgroup  PkgHalfedgeDS_HDS Halfedge Data Structures
-/// \ingroup PkgHalfedgeDSRef
+/// \defgroup  PkgHDS_HDS Halfedge Data Structures
+/// \ingroup PkgHDS
 
-/// \defgroup  PkgHalfedgeDS_Items Item Classes
-/// \ingroup PkgHalfedgeDSRef
+/// \defgroup  PkgHDS_Items Item Classes
+/// \ingroup PkgHDS
 
-/// \defgroup  PkgHalfedgeDS_VHF Vertices, Halfedges, Faces
-/// \ingroup PkgHalfedgeDSRef
+/// \defgroup  PkgHDS_VHF Vertices, Halfedges, Faces
+/// \ingroup PkgHDS
 
-/// \defgroup  PkgHalfedgeDS_Decorators Decorators
-/// \ingroup PkgHalfedgeDSRef
+/// \defgroup  PkgHDS_Decorators Decorators
+/// \ingroup PkgHDS
 /// Classes that provide additional functions 
 /// to examine and to modify a halfedge data structure.
 
 
 /*!
-\addtogroup PkgHalfedgeDSRef
+\addtogroup PkgHDS
 \todo check generated documentation
-\cgalPkgDescriptionBegin{Halfedge Data Structures,PkgHalfedgeDS}
+\cgalPkgDescriptionBegin{Halfedge Data Structures,PkgHDSSummary}
 \cgalPkgPicture{HalfedgeDS/fig/HalfedgeDS-teaser-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Lutz Kettner}
 \cgalPkgDesc{A halfedge data structure is an edge-centered data structure capable of maintaining incidence information of vertices, edges and faces, for example for planar maps, polyhedra, or other orientable, two-dimensional surfaces embedded in arbitrary dimension. Each edge is decomposed into two halfedges with opposite orientations. One incident face and one incident vertex are stored in each halfedge. For each face and each vertex, one incident halfedge is stored. Reduced variants of the halfedge data structure can omit some of these information, for example the halfedge pointers in faces or the storage of faces at all.}
-\cgalPkgManuals{Chapter_Halfedge_Data_Structures,PkgHalfedgeDSRef}
+\cgalPkgManuals{Chapter_Halfedge_Data_Structures,PkgHDS}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{1.0}
@@ -60,14 +60,14 @@ found in \cgalCite{k-ugpdd-99}.
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 - `HalfedgeDS<Traits,Items,Alloc>`
 - `HalfedgeDSItems`
 - `HalfedgeDSVertex`
 - `HalfedgeDSHalfedge`
 - `HalfedgeDSFace`
 
-\cgalCRPSection{Classes}
+## Classes ##
 - `CGAL::HalfedgeDS_default<Traits,HalfedgeDSItems,Alloc>`
 - `CGAL::HalfedgeDS_list<Traits,HalfedgeDSItems,Alloc>`
 - `CGAL::HalfedgeDS_vector<Traits,HalfedgeDSItems,Alloc>`

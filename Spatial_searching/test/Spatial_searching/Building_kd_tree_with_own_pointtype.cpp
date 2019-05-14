@@ -1,5 +1,6 @@
 //file: test/Spatial_searching/Building_kd_tree_with_own_pointtype.C
 
+#include <CGAL/basic.h>
 #include <CGAL/Search_traits.h>
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/point_generators_3.h>

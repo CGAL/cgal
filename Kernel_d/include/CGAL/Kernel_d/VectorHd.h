@@ -177,6 +177,7 @@ VectorHd(int a, int b, int c, int d) :
   if (d < 0) invert_rep();
 }
 
+VectorHd(const VectorHd<RT,LA>& p) : Base(p)  {}
 ~VectorHd() {}     
 
 /*{\Moperations 5 3 }*/

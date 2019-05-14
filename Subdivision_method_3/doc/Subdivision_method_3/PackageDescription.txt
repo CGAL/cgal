@@ -1,20 +1,20 @@
-/// \defgroup PkgSurfaceSubdivisionMethod3Ref 3D Surface Subdivision Methods Reference
+/// \defgroup PkgSurfaceSubdivisionMethods3 3D Surface Subdivision Methods
 
-/// \defgroup PkgSurfaceSubdivisionMethod3Concepts Concepts
-/// \ingroup PkgSurfaceSubdivisionMethod3Ref
+/// \defgroup PkgSurfaceSubdivisionMethods3Concepts Concepts
+/// \ingroup PkgSurfaceSubdivisionMethods3
 
-/// \defgroup PkgSurfaceSubdivisionMethod3Functions Subdivision Methods
-/// \ingroup PkgSurfaceSubdivisionMethod3Ref
+/// \defgroup PkgSurfaceSubdivisionMethods3Functions Subdivision Methods
+/// \ingroup PkgSurfaceSubdivisionMethods3
 
 /*!
-\addtogroup PkgSurfaceSubdivisionMethod3Ref
+\addtogroup PkgSurfaceSubdivisionMethods3
 
-\cgalPkgDescriptionBegin{3D Surface Subdivision Methods,PkgSurfaceSubdivisionMethod3}
+\cgalPkgDescriptionBegin{3D Surface Subdivision Methods,PkgSurfaceSubdivisionMethods3Summary}
 \cgalPkgPicture{twoheads-detail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Le-Jeng Andy Shiue}
 \cgalPkgDesc{Subdivision methods recursively refine a control mesh and generate points approximating the limit surface. This package consists of four popular subdivision methods and their refinement hosts. Supported subdivision methods include Catmull-Clark, Loop, Doo-Sabin and \f$ \sqrt{3}\f$ subdivisions. Their respective refinement hosts are <span class="textsc">Pqq</span>, <span class="textsc">Ptq</span>, <span class="textsc">Dqq</span> and \f$ \sqrt{3}\f$ refinements. Variations of those methods can be easily extended by substituting the geometry computation of the refinement host.}
-\cgalPkgManuals{Chapter_3D_Surface_Subdivision_Methods,PkgSurfaceSubdivisionMethod3Ref}
+\cgalPkgManuals{Chapter_3D_Surface_Subdivision_Methods,PkgSurfaceSubdivisionMethods3}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.11}
@@ -26,21 +26,21 @@
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Parameters}
+## Parameters ##
 
 Optional parameters of the functions of this package
 are implemented as \ref BGLNamedParameters.
 The page \ref sm_namedparameters describes their usage
 and provides a list of the parameters that are used in this package.
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 - `SubdivisionMask_3`
 - `PQQMask_3`
 - `PTQMask_3`
 - `DQQMask_3`
 - `Sqrt3Mask_3`
 
-\cgalCRPSection{Classes}
+## Classes ##
 - `CGAL::Subdivision_method_3`
 - `CGAL::CatmullClark_mask_3<PolygonMesh>`
 - `CGAL::Loop_mask_3<PolygonMesh>`

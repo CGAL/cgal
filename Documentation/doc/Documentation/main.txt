@@ -47,7 +47,7 @@ For releases X.Y, with 3.1 <= X.Y <= 4.1 visit
 
 
 
-\htmlonly[block]
+\htmlonly
 <div style="display:none">
 \endhtmlonly
 
@@ -56,7 +56,7 @@ For releases X.Y, with 3.1 <= X.Y <= 4.1 visit
 \subpage packages
 \subpage dev_manual
 
-\htmlonly[block]
+\htmlonly
 </div>
 \endhtmlonly
 

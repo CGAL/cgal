@@ -1,10 +1,11 @@
 project( Scale_space_reconstruction_3_Examples )
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 2.8.11)
 
 find_package( CGAL QUIET)
 
 if ( CGAL_FOUND )
+  include( ${CGAL_USE_FILE} )
 
   # Activate concurrency?
   option(ACTIVATE_CONCURRENCY
@@ -17,6 +18,8 @@ if ( CGAL_FOUND )
       message( STATUS "NOTICE: Intel TBB NOT found! The example is faster if TBB is linked." )
     endif()
   endif()
+
+  include( CGAL_CreateSingleSourceCGALProgram )
 
   find_package( Eigen3 3.1.0 )
   if( EIGEN3_FOUND )

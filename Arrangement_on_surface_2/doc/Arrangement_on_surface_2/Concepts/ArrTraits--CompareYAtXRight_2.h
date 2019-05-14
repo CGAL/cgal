@@ -1,6 +1,6 @@
 namespace ArrTraits {
 /*!
-\ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
+\ingroup PkgArrangement2ConceptsFunctionObjects
 \cgalConcept
 
 \cgalRefines AdaptableTernaryFunction 

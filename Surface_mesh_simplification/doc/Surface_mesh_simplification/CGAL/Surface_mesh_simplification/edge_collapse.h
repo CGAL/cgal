@@ -2,7 +2,7 @@ namespace CGAL {
 namespace Surface_mesh_simplification {
 
 /*!
-\ingroup PkgSurfaceMeshSimplificationRef
+\ingroup PkgSurfaceMeshSimplification
 
 Simplifies `surface_mesh` in-place by collapsing edges, and returns
 the number of edges effectively removed.

@@ -148,42 +148,41 @@ protected:
   }
 
 protected:
-  Local_vector get_face_normal(Halfedge_const_handle he)
+  typename Kernel::Vector_3 get_face_normal(Halfedge_const_handle he)
   {
-    Local_vector normal=CGAL::NULL_VECTOR;
+    typename Kernel::Vector_3 normal=CGAL::NULL_VECTOR;
     Halfedge_const_handle end=he;
     unsigned int nb=0;
     do
     {
-      internal::newell_single_step_3
-        (internal::Geom_utils<Kernel>::get_local_point(he->vertex()->point()),
-         internal::Geom_utils<Kernel>::get_local_point(he->next()->vertex()->point()),
-         normal);
+      internal::newell_single_step_3(he->vertex()->point(),
+                                     he->next()->vertex()->point(),
+                                     normal);
       ++nb;
       he=he->next();
     }
     while (he!=end);
     assert(nb>0);
-    return (typename Local_kernel::Construct_scaled_vector_3()(normal, 1.0/nb));
+    return (typename Kernel::Construct_scaled_vector_3()(normal, 1.0/nb));
   }
   
-  Local_vector get_vertex_normal(Halfedge_const_handle he)
+  typename Kernel::Vector_3 get_vertex_normal(Halfedge_const_handle he)
   {
-    Local_vector normal=CGAL::NULL_VECTOR;
+    typename Kernel::Vector_3 normal=CGAL::NULL_VECTOR;
     Halfedge_const_handle end=he;
     do
     {
       if (!he->is_border())
       {
-        Local_vector n=get_face_normal(he);
-        normal=typename Local_kernel::Construct_sum_of_vectors_3()(normal, n);
+        typename Kernel::Vector_3 n=get_face_normal(he);
+        normal=typename Kernel::Construct_sum_of_vectors_3()(normal, n);
       }
       he=he->next()->opposite();
     }
     while (he!=end);
     
-    if (!typename Local_kernel::Equal_3()(normal, CGAL::NULL_VECTOR))
-    { normal=(typename Local_kernel::Construct_scaled_vector_3()
+    if (!typename Kernel::Equal_3()(normal, CGAL::NULL_VECTOR))
+    { normal=(typename Kernel::Construct_scaled_vector_3()
               (normal, 1.0/CGAL::sqrt(normal.squared_length()))); }
     
     return normal;

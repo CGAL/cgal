@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23Ref
+\ingroup PkgKernel23
 
 \cgal defines a symbolic constant 
 `NULL_VECTOR` to construct zero length vectors. 
@@ -21,7 +21,7 @@ public:
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23Ref
+\ingroup PkgKernel23
 
 \cgal defines a symbolic constant 
 `ORIGIN` which denotes the point at the origin. 

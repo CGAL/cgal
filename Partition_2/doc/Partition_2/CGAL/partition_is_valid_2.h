@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPartition2Ref
+\ingroup PkgPolygonPartitioning2
 
 \brief determines if the polygons in the range [`poly_first`, `poly_beyond`)
 define a valid convex partition of the polygon defined by the points in the 
@@ -65,7 +65,7 @@ const Traits& traits = Default_traits);
 namespace CGAL {
 
 /*!
-\ingroup PkgPartition2Ref
+\ingroup PkgPolygonPartitioning2
 
 \brief returns `true` iff the polygons in the range [`poly_first`, 
 `poly_beyond`) define a valid partition of the polygon defined by the 
@@ -125,7 +125,7 @@ const Traits& traits = Default_traits);
 namespace CGAL {
 
 /*!
-\ingroup PkgPartition2Ref
+\ingroup PkgPolygonPartitioning2
 
 \brief determines if the polygons in the range [`poly_first`, `poly_beyond`)
 define a valid \f$ y\f$-monotone partition of the simple, counterclockwise-oriented polygon represented by the points 

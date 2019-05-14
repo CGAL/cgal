@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBoundingVolumesRef
+\ingroup PkgBoundingVolumes
 
 An object of the class `Min_sphere_d` is the unique sphere of 
 smallest volume enclosing a finite (multi)set of points in \f$ d\f$-dimensional 

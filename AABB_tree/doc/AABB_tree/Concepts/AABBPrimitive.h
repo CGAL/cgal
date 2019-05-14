@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAABBTreeConcepts
+\ingroup PkgAABB_treeConcepts
 \cgalConcept
 
 The concept `AABBPrimitive` describes the requirements for the primitives stored in the AABB tree data structure. The concept encapsulates a type for the input datum (a geometric object) and an identifier (id) type through which those primitives are referred to. The concept `AABBPrimitive` also refines the concepts DefaultConstructible and Assignable. 

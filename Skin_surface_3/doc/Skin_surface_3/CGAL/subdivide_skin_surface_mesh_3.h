@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSkinSurface3Ref
+\ingroup PkgSkinSurface3
 
 
 subdivides a skin surface mesh constructed 

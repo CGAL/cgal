@@ -27,7 +27,7 @@
 #include <CGAL/Profile_counter.h>
 
 namespace CGAL {
-  /// \ingroup PkgSurfaceMeshDeformationRef
+  /// \ingroup PkgSurfaceMeshDeformation
   /// A class to compute the closest rotation in Frobenius norm to a 3x3 Matrix using the \link thirdpartyEigen `Eigen` library \endlink.
   /// The internal computation relies on a hybrid system using the solvers `Eigen::SelfAdjointEigenSolver<>`
   /// and `Eigen::JacobiSVD<>` (polar decomposition).

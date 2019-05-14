@@ -3,7 +3,7 @@
 // test for the linear_least_square_fitting() functions.
 
 
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/Default_diagonalize_traits.h>
 
@@ -13,7 +13,7 @@
 #include <list>
 
 // types
-typedef CGAL::Simple_cartesian<float> Kernel;
+typedef CGAL::Cartesian<float> Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Line_3 Line;
 typedef Kernel::Point_3 Point;

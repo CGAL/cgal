@@ -54,7 +54,7 @@ circle_intersect( const typename CK::Circle_2 & c1,
   // the circles intersect
   
   const std::pair<typename CK::Circular_arc_point_2, unsigned>*
-    result = Intersections::internal::intersect_get<std::pair<typename CK::Circular_arc_point_2, unsigned> > (*it);
+    result = internal::intersect_get<std::pair<typename CK::Circular_arc_point_2, unsigned> > (*it);
   
   if ( result->second == 2 ) // double solution
     return result->first;
@@ -63,7 +63,7 @@ circle_intersect( const typename CK::Circle_2 & c1,
     return result->first;
   
   ++it;
-  result = Intersections::internal::intersect_get<std::pair<typename CK::Circular_arc_point_2, unsigned> > (*it);
+  result = internal::intersect_get<std::pair<typename CK::Circular_arc_point_2, unsigned> > (*it);
   
   return result->first;
 }

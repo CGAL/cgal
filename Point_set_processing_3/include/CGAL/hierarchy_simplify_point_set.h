@@ -115,7 +115,7 @@ namespace CGAL {
   /// \endcond
 
   /**
-     \ingroup PkgPointSetProcessing3Algorithms
+     \ingroup PkgPointSetProcessingAlgorithms
   
      Recursively split the point set in smaller clusters until the
      clusters have less than `size` elements or until their variation

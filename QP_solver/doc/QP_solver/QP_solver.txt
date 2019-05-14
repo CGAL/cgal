@@ -528,7 +528,7 @@ when we use the homogeneous representations of the points: if
 \f$ q_1,\ldots,q_n,q\in\mathbb{R}^{d+1}\f$ are homogeneous coordinates for
 \f$ p_1,\ldots,p_n,p\f$ with positive homogenizing coordinates 
 \f$ h_1,\ldots,h_n,h\f$, we have
-\f[q_j = h_j \cdot (p_j \mid 1) \mbox{~for all $j$, and~} q = h \cdot
+\f[$q_j = h_j \cdot (p_j \mid 1) \mbox{~for all $j$, and~} q = h \cdot
 (p\mid 1).\f] Now, nonnegative \f$\lambda_1,\ldots,\lambda_n\f$ are
 suitable coefficients for a convex combination if and only if
 \f[\ccSum{j=1}{n}{~ \lambda_j(p_j \mid 1)} = (p\mid 1), \f]

@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSTLExtensionUtilities
+\ingroup PkgStlExtensionUtilities
 
 
 The Quadruple class is an extension of
@@ -225,7 +225,7 @@ y);
 namespace CGAL {
 
 /*!
-\ingroup PkgSTLExtensionUtilities
+\ingroup PkgStlExtensionUtilities
 
 
 
@@ -428,7 +428,7 @@ Quadruple<T1, T2, T3, T4> make_tuple(T1 x, T2 y, T3 z, T4 w);
 
 #ifndef DOXYGEN_RUNNING
 /*!
-\ingroup PkgSTLExtensionUtilities
+\ingroup PkgStlExtensionUtilities
 Creates a pair `(t1,t2)` if `comp(t1,t2)==true` and `(t2,t1)` otherwise.
 `comp` is a binary function taking two elements of type T that returns
 a value convertible to `bool`.

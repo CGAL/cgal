@@ -21,8 +21,8 @@
 #ifndef CGAL_IO_STL_READER_H
 #define CGAL_IO_STL_READER_H
 
+#include <CGAL/array.h>
 #include <CGAL/IO/io.h>
-#include <CGAL/IO/reader_helpers.h>
 
 #include <boost/cstdint.hpp> 
 
@@ -34,12 +34,11 @@
 
 namespace CGAL {
 
-template <class Point, class Triangle>
 bool read_ASCII_facet(std::istream& input,
-                      std::vector<Point>& points,
-                      std::vector<Triangle>& facets,
+                      std::vector<cpp11::array<double,3> >& points,
+                      std::vector<cpp11::array<int,3> >& facets,
                       int& index,
-                      std::map<Point, int >& index_map,
+                      std::map<cpp11::array<double, 3>, int >& index_map,
                       bool verbose = false)
 {
   // Here, we have already read the word 'facet' and are looking to read till 'endfacet'
@@ -49,10 +48,8 @@ bool read_ASCII_facet(std::istream& input,
               endfacet("endfacet");
 
   int count = 0;
-  double x,y,z;
-  Point p;
-  Triangle ijk;
-  IO::internal::resize(ijk, 3);
+  cpp11::array<double, 3> p;
+  cpp11::array<int, 3> ijk;
 
   while(input >> s)
   {
@@ -79,7 +76,7 @@ bool read_ASCII_facet(std::istream& input,
         return false;
       }
 
-      if(!(input >> iformat(x) >> iformat(y) >> iformat(z)))
+      if(!(input >> iformat(p[0]) >> iformat(p[1]) >> iformat(p[2])))
       {
         if(verbose)
           std::cerr << "Error while reading point coordinates (premature end of file)" << std::endl;
@@ -88,8 +85,8 @@ bool read_ASCII_facet(std::istream& input,
       }
       else
       {
-        IO::internal::fill_point(x, y, z, p);
-        typename std::map<Point, int>::iterator iti = index_map.insert(std::make_pair(p, -1)).first;
+        std::map<cpp11::array<double, 3>, int>::iterator iti=
+            index_map.insert(std::make_pair(p, -1)).first;
 
         if(iti->second == -1)
         {
@@ -113,10 +110,9 @@ bool read_ASCII_facet(std::istream& input,
   return false;
 }
 
-template <class Point, class Triangle>
 bool parse_ASCII_STL(std::istream& input,
-                     std::vector<Point>& points,
-                     std::vector<Triangle>& facets,
+                     std::vector<cpp11::array<double,3> >& points,
+                     std::vector<cpp11::array<int,3> >& facets,
                      bool verbose = false)
 {
   if(verbose)
@@ -128,9 +124,11 @@ bool parse_ASCII_STL(std::istream& input,
   // Here, we have already read the word 'solid'
 
   int index = 0;
-  std::map<Point, int> index_map;
+  std::map<cpp11::array<double, 3>, int> index_map;
 
-  std::string s, facet("facet"), endsolid("endsolid");
+  std::string s;
+  std::string facet("facet"),
+              endsolid("endsolid");
 
   while(input >> s)
   {
@@ -151,10 +149,9 @@ bool parse_ASCII_STL(std::istream& input,
   return false;
 }
 
-template <typename Point, typename Triangle>
 bool parse_binary_STL(std::istream& input,
-                      std::vector<Point>& points,
-                      std::vector<Triangle>& facets,
+                      std::vector<cpp11::array<double,3> >& points,
+                      std::vector<cpp11::array<int,3> >& facets,
                       bool verbose = false)
 {
   if(verbose)
@@ -193,7 +190,7 @@ bool parse_binary_STL(std::istream& input,
     return true; // empty file
 
   int index = 0;
-  std::map<Point, int> index_map;
+  std::map<cpp11::array<double, 3>, int> index_map;
 
   boost::uint32_t N32;
   if(!(input.read(reinterpret_cast<char*>(&N32), sizeof(N32))))
@@ -221,8 +218,7 @@ bool parse_binary_STL(std::istream& input,
       return false;
     }
 
-    Triangle ijk;
-    IO::internal::resize(ijk, 3);
+    cpp11::array<int, 3> ijk;
 
     for(int j=0; j<3; ++j)
     {
@@ -237,10 +233,11 @@ bool parse_binary_STL(std::istream& input,
         return false;
       }
 
-      Point p;
-      IO::internal::fill_point(x, y, z, p);
+      cpp11::array<double, 3> p;
+      p[0] = x; p[1] = y; p[2] = z;
 
-      typename std::map<Point, int>::iterator iti = index_map.insert(std::make_pair(p, -1)).first;
+      std::map<cpp11::array<double, 3>, int>::iterator iti =
+        index_map.insert(std::make_pair(p, -1)).first;
 
       if(iti->second == -1)
       {
@@ -271,29 +268,9 @@ bool parse_binary_STL(std::istream& input,
   return true;
 }
 
-//
-// Read a file with `.stl` format.
-//
-// \tparam Point must be a model of the concept `RandomAccessContainer` or a %CGAL point type
-// \tparam Triangle must be a model of the concept `RandomAccessContainer`
-//
-// \param input the input stream
-// \param points a container that will contain the points used in the .stl file
-// \param polygons a container that will contain the triangles used in the .stl file
-// \param verbose whether to enable or not a sanity log
-//
-// \returns `true` if the reading process went well, `false` otherwise
-//
-// \warning `points` and `facets` are not cleared: new points and triangles are added to the back
-//          of the containers.
-//
-// Although the STL file format uses triangles, it is convenient to be able to use vectors
-// and other models of the `SequenceContainer` (instead of arrays) for the face type,
-// to avoid having to convert the to apply polygon soup reparation algorithms.
-template <class Point, class Triangle>
 bool read_STL(std::istream& input,
-              std::vector<Point>& points,
-              std::vector<Triangle>& facets,
+              std::vector<cpp11::array<double,3> >& points,
+              std::vector<cpp11::array<int,3> >& facets,
               bool verbose = false)
 {
   int pos = 0;

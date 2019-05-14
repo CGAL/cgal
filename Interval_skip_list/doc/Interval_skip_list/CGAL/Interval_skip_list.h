@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgIntervalSkipListRef
+\ingroup PkgIntervalSkipList
 
 The class `Interval_skip_list` is a dynamic data structure that 
 allows to find all members of a set of intervals that overlap a point. 

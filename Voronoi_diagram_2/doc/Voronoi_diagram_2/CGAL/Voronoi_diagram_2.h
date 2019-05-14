@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgVoronoiDiagram2Ref
+\ingroup PkgVoronoiDiagramAdaptor2
 
 The class `Voronoi_diagram_2` provides an adaptor that enables us 
 to view a triangulated Delaunay graph as their dual subdivision, the 
@@ -34,7 +34,7 @@ public:
 
 
   /*!
-    \ingroup PkgVoronoiDiagram2Ref
+    \ingroup PkgVoronoiDiagramAdaptor2
 
     The class `Face` is the class provided by the 
     `Voronoi_diagram_2<DG,AT,AP>` class for Voronoi faces. Below we 
@@ -162,7 +162,7 @@ public:
 
 
   /*!
-    \ingroup PkgVoronoiDiagram2Ref
+    \ingroup PkgVoronoiDiagramAdaptor2
 
     The class `Halfedge` is the class provided by the 
     `Voronoi_diagram_2<DG,AT,AP>` class for Voronoi halfedges. 
@@ -403,7 +403,7 @@ public:
 
 
   /*!
-    \ingroup PkgVoronoiDiagram2Ref
+    \ingroup PkgVoronoiDiagramAdaptor2
 
     The class `Vertex` is the Voronoi vertex class provided by the class 
     `Voronoi_diagram_2<DG,AT,AP>` class. Below we present its interface. 

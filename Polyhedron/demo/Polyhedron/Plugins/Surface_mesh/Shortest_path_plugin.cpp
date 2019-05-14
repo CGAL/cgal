@@ -1,11 +1,16 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Scene_group_item.h>
-#include <CGAL/Three/Three.h>
 
+#ifdef USE_SURFACE_MESH
 #include "Scene_surface_mesh_item.h"
+#else
+#include "Scene_polyhedron_item.h"
+#endif
+
 #include "Scene_polyhedron_shortest_path_item.h"
 #include "Messages_interface.h"
+#include "Polyhedron_type.h"
 #include "Scene.h"
 #include "ui_Shortest_path_widget.h"
 
@@ -22,7 +27,11 @@
 #include <algorithm>
 #include <vector>
 
+#ifdef USE_SURFACE_MESH
 typedef Scene_surface_mesh_item Scene_facegraph_item;
+#else
+typedef Scene_polyhedron_item Scene_facegraph_item;
+#endif
 typedef Scene_facegraph_item::Face_graph FaceGraph;
 
 using namespace CGAL::Three;
@@ -81,14 +90,22 @@ public:
     this->m_messages = messages;
 
     dock_widget = new QDockWidget(
-          "Shortest Path"
+      #ifdef USE_SURFACE_MESH
+          "Shortest Path for Surface Mesh"
+      #else
+          "Shortest Path for Polyhedron"
+      #endif
           , mw);
 
     dock_widget->setVisible(false);
 
     ui_widget.setupUi(dock_widget);
     dock_widget->setWindowTitle(tr(
-                                  "Shortest Path "
+                              #ifdef USE_SURFACE_MESH
+                                  "Shortest Path for Surface Mesh"
+                              #else
+                                  "Shortest Path for Polyhedron"
+                              #endif
                                   ));
     addDockWidget(dock_widget);
 
@@ -96,7 +113,11 @@ public:
     connect(ui_widget.Primitives_type_combo_box, SIGNAL(currentIndexChanged(int)), this, SLOT(on_Primitives_type_combo_box_changed(int)));
 
     actionMakeShortestPaths = new QAction(
-          "Make Shortest Path"
+      #ifdef USE_SURFACE_MESH
+          "Make Shortest Path for Surface Mesh"
+      #else
+          "Make Shortest Path for Polyhedron"
+      #endif
           , this->mw);
     actionMakeShortestPaths->setProperty("subMenuName", "Triangulated Surface Mesh Shortest Paths");
     actionMakeShortestPaths->setObjectName("actionMakeShortestPaths");
@@ -193,14 +214,14 @@ void Polyhedron_demo_shortest_path_plugin::new_item(int itemIndex)
     if(!polyhedronItem)
     {
       CGAL_assertion(item->polyhedron_item() == NULL); // which means it is coming from selection_io loader
-      CGAL::Three::Three::information(tr("Error: please select corresponding polyhedron item from Geometric Objects list."));
+      this->m_messages->information(tr("Error: please select corresponding polyhedron item from Geometric Objects list."));
       scene->erase(itemIndex);
       return;
     }
 
     if(!item->deferred_load(polyhedronItem, this->scene, this->m_messages, this->mw))
     {
-      CGAL::Three::Three::information("Error: loading selection item is not successful!");
+      this->m_messages->information("Error: loading selection item is not successful!");
       scene->erase(itemIndex);
       return;
     }
@@ -249,12 +270,12 @@ void Polyhedron_demo_shortest_path_plugin::on_actionMakeShortestPaths_triggered(
     }
     else
     {
-      CGAL::Three::Three::warning(tr("A shortest path item for this polyhedron already exists (only one allowed per for now)"));
+      this->m_messages->warning(tr("A shortest path item for this polyhedron already exists (only one allowed per for now)"));
     }
   }
   else
   {
-    CGAL::Three::Three::warning("No polyhedron selected.");
+    this->m_messages->warning("No polyhedron selected.");
   }
 }
 
@@ -291,7 +312,16 @@ void Polyhedron_demo_shortest_path_plugin::check_and_set_ids(FaceGraph* polyhedr
   vertex_iterator testVertex2 = ++vertices(*polyhedron).begin();
   if(get(vimap, *testVertex1) == get(vimap, *testVertex2))
   {
+#ifdef USE_SURFACE_MESH
     polyhedron->collect_garbage();
+#else
+    std::size_t vertexId = 0;
+    for(Polyhedron::Vertex_iterator currentVertex = polyhedron->vertices_begin();
+        currentVertex != polyhedron->vertices_end(); ++currentVertex, ++vertexId)
+    {
+        currentVertex->id() = vertexId;
+    }
+#endif
   }
   boost::property_map<Face_graph, boost::halfedge_index_t>::type himap
       = get(boost::halfedge_index, *polyhedron);
@@ -301,7 +331,16 @@ void Polyhedron_demo_shortest_path_plugin::check_and_set_ids(FaceGraph* polyhedr
 
   if (get(himap, *testHalfedge1) == get(himap, *testHalfedge2))
   {
+#ifdef USE_SURFACE_MESH
     polyhedron->collect_garbage();
+#else
+    std::size_t halfedgeId = 0;
+    for(Polyhedron::Halfedge_iterator currentHalfedge = polyhedron->halfedges_begin();
+        currentHalfedge != polyhedron->halfedges_end(); ++currentHalfedge, ++halfedgeId)
+    {
+        currentHalfedge->id() = halfedgeId;
+    }
+#endif
   }
 
   face_iterator testFacet1 = faces(*polyhedron).begin();
@@ -311,7 +350,16 @@ void Polyhedron_demo_shortest_path_plugin::check_and_set_ids(FaceGraph* polyhedr
 
   if (get(fimap, *testFacet1) == get(fimap, *testFacet2))
   {
+#ifdef USE_SURFACE_MESH
     polyhedron->collect_garbage();
+#else
+    std::size_t facetId = 0;
+    for(Polyhedron::Facet_iterator currentFacet = polyhedron->facets_begin();
+        currentFacet != polyhedron->facets_end(); ++currentFacet, ++facetId)
+    {
+        currentFacet->id() = facetId;
+    }
+#endif
   }
 }
 

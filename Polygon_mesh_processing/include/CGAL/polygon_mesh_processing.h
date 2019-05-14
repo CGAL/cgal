@@ -20,7 +20,7 @@
 // Author(s)     : Jane Tournois
 
 /**
-* \ingroup PkgPolygonMeshProcessingRef
+* \ingroup PkgPolygonMeshProcessing
 * \file CGAL/polygon_mesh_processing.h
 * Convenience header file including the headers for all
 * the free functions of this package.
@@ -49,9 +49,6 @@
 #include <CGAL/Polygon_mesh_processing/distance.h>
 #include <CGAL/Polygon_mesh_processing/intersection.h>
 #include <CGAL/Polygon_mesh_processing/transform.h>
-#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
-#include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
-#include <CGAL/Polygon_mesh_processing/merge_border_vertices.h>
 
 // the named parameter header being not documented the doc is put here for now
 #ifdef DOXYGEN_RUNNING

@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgSolverInterfaceConcepts
+\ingroup PkgSolverConcepts
 
 \cgalConcept
 

@@ -6,8 +6,6 @@
 #include <CGAL/grid_simplify_point_set.h>
 #include <CGAL/jet_smooth_point_set.h>
 
-#include <boost/lexical_cast.hpp>
-
 #include <vector>
 #include <fstream>
 
@@ -23,7 +21,6 @@ typedef CGAL::Parallel_tag Concurrency_tag;
 #else
 typedef CGAL::Sequential_tag Concurrency_tag;
 #endif
-
 
 // instance of CGAL::cpp11::function<bool(double)>
 struct Progress_to_std_cerr_callback
@@ -47,7 +44,7 @@ struct Progress_to_std_cerr_callback
     // Avoid calling time() at every single iteration, which could
     // impact performances very badly
     ++ nb;
-    if (advancement != 1 && nb % 100 != 0)
+    if (advancement != 1 && nb % 10000 != 0)
       return true;
 
     double t = timer.time();
@@ -66,15 +63,13 @@ struct Progress_to_std_cerr_callback
 };
 
 
-int main (int argc, char* argv[])
+int main ()
 {
-  int N = (argc > 1) ? boost::lexical_cast<int>(argv[1]) : 1000;
-  
-  // Generate N points on a sphere of radius 100.
+  // Generate 1000000 points on a sphere of radius 100.
   std::vector<Point> points;
-  points.reserve (N);
+  points.reserve (1000000);
   Generator generator(100.);
-  CGAL::cpp11::copy_n (generator, N, std::back_inserter(points));
+  CGAL::cpp11::copy_n (generator, 1000000, std::back_inserter(points));
 
   // Compute average spacing
   FT average_spacing = CGAL::compute_average_spacing<Concurrency_tag>

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMatrixSearchRef
+\ingroup PkgMatrixSearch
 
 \brief computes the maximum (as specified by `compare_strictly`) 
 entry for each row of `m` and writes the corresponding column 

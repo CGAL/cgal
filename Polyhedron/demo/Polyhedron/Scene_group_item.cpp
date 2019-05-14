@@ -214,10 +214,6 @@ void Scene_group_item::renderChildren(Viewer_interface *viewer,
         picked_item_IDs[depth] = id;
       }
     }
-    CGAL::Three::Scene_group_item* group =
-        qobject_cast<CGAL::Three::Scene_group_item*>(getChild(id));
-    if(group)
-      group->renderChildren(viewer, picked_item_IDs, picked_pixel, with_names);
   }
 }
 

@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSTLExtensionUtilities
+\ingroup PkgStlExtensionUtilities
 
 An object of the class `Uncertain` represents an uncertainty on the 
 value of type `T`. This uncertainty is represented by a non-empty range of 

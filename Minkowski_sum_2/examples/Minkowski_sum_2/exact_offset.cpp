@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include <CGAL/config.h>
+#include <CGAL/basic.h>
 
 #ifndef CGAL_USE_CORE
 int main()

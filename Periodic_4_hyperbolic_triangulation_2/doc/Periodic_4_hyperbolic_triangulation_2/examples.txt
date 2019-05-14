@@ -1,3 +1,0 @@
-/*!
-\example Periodic_4_hyperbolic_triangulation_2/p4ht2_example_insertion.cpp
-*/

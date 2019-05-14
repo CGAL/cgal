@@ -5,11 +5,13 @@
 The concept `SpatialSeparator` defines the requirements for
 a separator.
 
+\cgalAdvancedBegin
 A separator is a `d-1`-dimensional subspace that
 separates a `d`-dimensional space into two parts.  One part of
 space is said to be on the negative side of the separator and the
 other part of space is said to be on the positive side of the
 separator.
+\cgalAdvancedEnd
 
 \cgalHasModel `CGAL::Plane_separator<FT>`
 

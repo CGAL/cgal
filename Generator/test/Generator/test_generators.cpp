@@ -29,8 +29,10 @@
 #include <cstddef>
 #include <vector>
 #include <algorithm>
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/Cartesian_d.h>
+#include <CGAL/Point_2.h>
+#include <CGAL/Point_3.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/point_generators_d.h>
@@ -40,7 +42,7 @@
 
 using namespace CGAL;
 
-typedef Simple_cartesian<double>         R;
+typedef Cartesian<double>                R;
 typedef CGAL::Cartesian_d<double>        Kd;
 
 

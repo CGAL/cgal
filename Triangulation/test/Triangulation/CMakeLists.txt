@@ -13,10 +13,15 @@ endif()
 find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
+
+  include( ${CGAL_USE_FILE} )
+
+  include( CGAL_CreateSingleSourceCGALProgram )
   
   find_package(Eigen3 3.1.0) 
   if (EIGEN3_FOUND) 
     include( ${EIGEN3_USE_FILE} ) 
+    include_directories (BEFORE "../../include")
     include_directories (BEFORE "include")
 
     create_single_source_cgal_program( "test_triangulation.cpp" )

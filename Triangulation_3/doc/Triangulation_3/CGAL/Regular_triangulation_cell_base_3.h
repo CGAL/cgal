@@ -43,7 +43,7 @@ typedef Point_container::iterator Point_iterator;
 
 /// \name Hidden points-related functions
 /// Not every weighted point inserted in a regular triangulation necessarily
-/// appears in the triangulation. If the weight of a point is too small compared
+/// appears in the trinagulation. If the weight of a point is too small compared
 /// to other points, it might be <I>hidden</I>. These hidden vertices are stored
 /// in a unique corresponding cell (defined through v->cell()). The following
 /// functions provide set and get functionalities.

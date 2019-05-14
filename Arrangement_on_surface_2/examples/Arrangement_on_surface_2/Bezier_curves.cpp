@@ -1,7 +1,7 @@
 //! \file examples/Arrangement_on_surface_2/Bezier_curves.cpp
 // Constructing an arrangement of Bezier curves.
 
-#include <CGAL/config.h>
+#include <CGAL/basic.h>
 
 #ifndef CGAL_USE_CORE
 #include <iostream>

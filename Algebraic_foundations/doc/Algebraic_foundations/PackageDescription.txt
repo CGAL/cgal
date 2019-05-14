@@ -1,18 +1,18 @@
-/// \defgroup PkgAlgebraicFoundationsRef Algebraic Foundations Reference
+/// \defgroup PkgAlgebraicFoundations Algebraic Foundations Reference
 
 /// \defgroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts Concepts
-/// \ingroup PkgAlgebraicFoundationsRef
+/// \ingroup PkgAlgebraicFoundations
 
 /*!
-\addtogroup PkgAlgebraicFoundationsRef
+\addtogroup PkgAlgebraicFoundations
 \todo check generated documentation
 
-\cgalPkgDescriptionBegin{Algebraic Foundations,PkgAlgebraicFoundations}
+\cgalPkgDescriptionBegin{Algebraic Foundations,PkgAlgebraicFoundationsSummary}
 \cgalPkgPicture{Algebraic_foundations2.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Michael Hemmer}
 \cgalPkgDesc{This package defines what algebra means for \cgal, in terms of concepts, classes and functions. The main features are: (i) explicit concepts for interoperability of types  (ii) separation between algebraic types (not necessarily embeddable into the reals), and number types (embeddable into the reals).}
-\cgalPkgManuals{Chapter_Algebraic_Foundations,PkgAlgebraicFoundationsRef}
+\cgalPkgManuals{Chapter_Algebraic_Foundations,PkgAlgebraicFoundations}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.3}
@@ -23,9 +23,9 @@
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Algebraic Structures}
+## Algebraic Structures ##
 
-\cgalCRPSubsection{Concepts}
+### Concepts ###
 
 - `IntegralDomainWithoutDivision`
 - `IntegralDomain`
@@ -54,7 +54,7 @@
 - `AlgebraicStructureTraits_::KthRoot`
 - `AlgebraicStructureTraits_::RootOf`
 
-\cgalCRPSubsection{Classes}
+### Classes ###
 
 - `CGAL::Algebraic_structure_traits<T>`
 - `CGAL::Integral_domain_without_division_tag`
@@ -64,7 +64,7 @@
 - `CGAL::Unique_factorization_domain_tag`
 - `CGAL::Euclidean_ring_tag`
 
-\cgalCRPSubsection{Global Functions}
+### Global Functions ###
 
 - `CGAL::is_zero()`
 - `CGAL::is_one()`
@@ -82,9 +82,9 @@
 - `CGAL::kth_root()`
 - `CGAL::root_of()`
 
-\cgalCRPSection{Real Embeddable}
+## Real Embeddable ##
 
-\cgalCRPSubsection{Concepts}
+### Concepts ###
 
 - `RealEmbeddable`
 
@@ -98,11 +98,11 @@
 - `RealEmbeddableTraits_::ToDouble`
 - `RealEmbeddableTraits_::ToInterval`
 
-\cgalCRPSubsection{Classes}
+### Classes ###
 
 - `CGAL::Real_embeddable_traits<T>`
 
-\cgalCRPSubsection{Global Functions}
+### Global Functions ###
 
 - `CGAL::is_zero()`
 - `CGAL::abs()`
@@ -113,27 +113,27 @@
 - `CGAL::to_double()`
 - `CGAL::to_interval()`
 
-\cgalCRPSection{Real Number Types}
+## Real Number Types ##
 
-\cgalCRPSubsection{Concepts}
+### Concepts ###
 
 - `RingNumberType`
 - `FieldNumberType`
 
-\cgalCRPSection{Interoperability}
+## Interoperability ##
 
-\cgalCRPSubsection{Concepts}
+### Concepts ###
 
 - `ExplicitInteroperable`
 - `ImplicitInteroperable`
 
-\cgalCRPSubsection{Classes}
+### Classes ###
 
 - `CGAL::Coercion_traits<A,B>`
 
-\cgalCRPSection{Fractions}
+## Fractions ##
 
-\cgalCRPSubsection{Concepts}
+### Concepts ###
 
 - `Fraction`
 - `FractionTraits`
@@ -141,13 +141,13 @@
 - `FractionTraits_::Compose`
 - `FractionTraits_::CommonFactor`
 
-\cgalCRPSubsection{Classes}
+### Classes ###
 
 - `CGAL::Fraction_traits<T>`
 
-\cgalCRPSection{Miscellaneous}
+## Miscellaneous ##
 
-\cgalCRPSubsection{Concepts}
+### Concepts ###
 - `FromIntConstructible`
 - `FromDoubleConstructible`
 

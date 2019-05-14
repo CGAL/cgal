@@ -85,7 +85,7 @@ fi
 
 #check cmake scripts of tests, examples are present
 echo '.. Checking if all CMakeLists.txt are present...'
-for i in `ls -d ^build*/examples/*/ ^build*/test/*/ ^build*/demo/^(icons|resources)/`; do
+for i in `ls -d ^build*/examples/*/ ^build*/test/*/`; do
   if ! [ -f $i/CMakeLists.txt ]; then
     echo "Error: $i/CMakeLists.txt does not exist!"
     exit 1
@@ -130,7 +130,7 @@ fi
 echo '.. Checking $Id$ tag presence in header files...'
 file_without_Id_tag=$(for pkg in `find */package_info -name 'license.txt' | awk -F "/" '{print $1}'`; do if [ -e ${pkg}/include ]; then find ${pkg}/include -type f \( -name '*.h' -o -name '*.hpp' \) | xargs -r grep -L '$Id\$'; fi; done)
 if [ -n "${file_without_Id_tag}" ]; then
-    echo 'The following files do not have a $Id$ tag:'
+    echo 'The following files do not have a $URL$ tag:'
     echo ${file_without_Id_tag}
     exit 1
 fi

@@ -3,23 +3,21 @@
 
 project( Periodic_3_mesh_3_Examples )
 
-cmake_minimum_required(VERSION 3.1)
-
-if(POLICY CMP0074)
-  cmake_policy(SET CMP0074 NEW)
-endif()
+cmake_minimum_required( VERSION 2.8.11 )
 
 # CGAL and its components
-find_package( CGAL QUIET  COMPONENTS ImageIO )
+find_package( CGAL QUIET )
 
-if ( CGAL_FOUND )
-  include( ${CGAL_USE_FILE} )
-else()  
+if ( NOT CGAL_FOUND )
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
   return()
 endif()
 
+# include helper file
+include( ${CGAL_USE_FILE} )
+
 # include for local package
+include_directories( BEFORE ../../include )
 
 # Use Eigen
 find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
@@ -40,6 +38,8 @@ endif()
 
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
+
+include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "mesh_implicit_shape.cpp" )
 create_single_source_cgal_program( "mesh_implicit_multi_domain.cpp" )

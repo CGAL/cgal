@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgVoronoiDiagram2Segments
+\ingroup PkgVoronoiDiagramAdaptor2Segments
 
 The class `Segment_Delaunay_graph_adaptation_traits_2` provides a model for the `AdaptationTraits_2` 
 concept. The template parameter of the `Segment_Delaunay_graph_adaptation_traits_2` class must be a 

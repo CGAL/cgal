@@ -42,7 +42,7 @@ namespace CGAL {
 namespace Subdivision_method_3 {
 
 /*!
-\addtogroup PkgSurfaceSubdivisionMethod3Functions
+\addtogroup PkgSurfaceSubdivisionMethods3Functions
 */
 /// @{
 

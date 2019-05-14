@@ -93,11 +93,6 @@ public:
   Point_const_iterator hidden_points_end() const
   { return hidden_points_end_internal<Memory_policy>(); }
 
-  const C& hidden_points() const
-  {
-    return _hidden;
-  }
-  
   void hide_point(const Point& p)
   { hide_point_internal<Memory_policy>(p); }
   void unhide_point(const Point_iterator pit)

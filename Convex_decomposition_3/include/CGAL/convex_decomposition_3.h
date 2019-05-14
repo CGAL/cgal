@@ -44,7 +44,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgConvexDecomposition3Ref
+\ingroup PkgConvexDecomposition3
 
 The function `convex_decomposition_3()` inserts additional facets 
 into the given `Nef_polyhedron_3` `N`, such that each bounded 

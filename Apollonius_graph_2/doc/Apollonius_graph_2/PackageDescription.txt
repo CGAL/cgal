@@ -1,19 +1,19 @@
-/// \defgroup PkgApolloniusGraph2Ref 2D Apollonius Graphs (Delaunay Graphs of Disks) Reference
+/// \defgroup PkgApolloniusGraph2 2D Apollonius Graphs (Delaunay Graphs of Disks) Reference
 /// \defgroup PkgApolloniusGraph2Concepts Concepts
-/// \ingroup PkgApolloniusGraph2Ref
+/// \ingroup PkgApolloniusGraph2
 /*!
-\addtogroup PkgApolloniusGraph2Ref
+\addtogroup PkgApolloniusGraph2
 \todo check generated documentation
-\cgalPkgDescriptionBegin{2D Apollonius Graphs (Delaunay Graphs of Disks),PkgApolloniusGraph2}
+\cgalPkgDescriptionBegin{2D Apollonius Graphs (Delaunay Graphs of Disks),PkgApolloniusGraph2Summary}
 \cgalPkgPicture{CircleVoronoi.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Menelaos Karavelas and Mariette Yvinec}
 \cgalPkgDesc{Algorithms for computing the Apollonius graph in two dimensions. The Apollonius graph is the dual of the Apollonius diagram, also known as the <I>additively weighted Voronoi diagram</I>. The latter can be thought of as the Voronoi diagram of a set of disks under the Euclidean metric, and it is a generalization of the standard Voronoi diagram for points. The algorithms provided are dynamic.}
-\cgalPkgManuals{Chapter_2D_Apollonius_Graphs,PkgApolloniusGraph2Ref}
+\cgalPkgManuals{Chapter_2D_Apollonius_Graphs,PkgApolloniusGraph2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.0}
-\cgalPkgDependsOn{\ref PkgTDS2}
+\cgalPkgDependsOn{\ref PkgTDS2Summary}
 \cgalPkgBib{cgal:ky-ag2}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{2D Apollonius Graph,apollonius_graph_2.zip}
@@ -40,7 +40,7 @@ aforementioned concepts.
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 
 - `ApolloniusSite_2`
 - `ApolloniusGraphDataStructure_2`
@@ -48,7 +48,7 @@ aforementioned concepts.
 - `ApolloniusGraphTraits_2`
 - `ApolloniusGraphHierarchyVertexBase_2`
 
-\cgalCRPSection{Classes}
+## Classes ##
 
 - `CGAL::Apollonius_graph_2<Gt,Agds>`
 - `CGAL::Apollonius_site_2<K>`

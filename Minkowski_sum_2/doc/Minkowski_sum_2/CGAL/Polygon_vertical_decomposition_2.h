@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMinkowskiSum2Ref
+\ingroup PkgMinkowskiSum2
 
 The `Polygon_vertical_decomposition_2` class implements a convex
 decompistion of a polygon or a polygon with holes into pseudo trapezoids

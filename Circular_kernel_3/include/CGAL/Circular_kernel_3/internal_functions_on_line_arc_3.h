@@ -101,12 +101,12 @@ namespace CGAL {
       if(!o)
         return res;
 
-      if(const Point_3* inters_p = CGAL::Intersections::internal::intersect_get<Point_3>(o)) {
+      if(const Point_3* inters_p = CGAL::internal::intersect_get<Point_3>(o)) {
           Circular_arc_point_3 p = *inters_p;
         if(!SK().has_on_3_object()(l1,p,true)) return res;
         if(!SK().has_on_3_object()(l2,p,true)) return res;
           *res++ = CGAL::internal::sk3_intersection_return<result_type>(std::make_pair(p,1u));
-      } else if( CGAL::Intersections::internal::intersect_get<Line_3>(o) ) {
+      } else if( CGAL::internal::intersect_get<Line_3>(o) ) {
         if(SK().compare_xyz_3_object()(l1.lower_xyz_extremity(), 
                                        l2.lower_xyz_extremity()) < 0) {
 	  int comparison = 
@@ -167,9 +167,9 @@ namespace CGAL {
       if(!o)
         return res;
 
-      if(const Line_3* inters_l = CGAL::Intersections::internal::intersect_get<Line_3>(o)) {
+      if(const Line_3* inters_l = CGAL::internal::intersect_get<Line_3>(o)) {
         *res++ = CGAL::internal::sk3_intersection_return<result_type>(la);
-      } else if(const Point_3* inters_p = CGAL::Intersections::internal::intersect_get<Point_3>(o)) {
+      } else if(const Point_3* inters_p = CGAL::internal::intersect_get<Point_3>(o)) {
         Circular_arc_point_3 p = *inters_p;
         if(!SK().has_on_3_object()(la,p,true)) return res;
         *res++ = CGAL::internal::sk3_intersection_return<result_type>(std::make_pair(p,1u));
@@ -195,12 +195,12 @@ namespace CGAL {
                                 std::back_inserter(solutions) );
       if(solutions.size() == 0) return res;
       if(solutions.size() == 1) {
-        const Solution* sol = CGAL::Intersections::internal::intersect_get<Solution>(solutions[0]);
+        const Solution* sol = CGAL::internal::intersect_get<Solution>(solutions[0]);
         if(SK().has_on_3_object()(l,(*sol).first,true))
            *res++ = solutions[0];
       } else {
-         const Solution* sol1 = CGAL::Intersections::internal::intersect_get<Solution>(solutions[0]);
-         const Solution* sol2 = CGAL::Intersections::internal::intersect_get<Solution>(solutions[1]);
+         const Solution* sol1 = CGAL::internal::intersect_get<Solution>(solutions[0]);
+         const Solution* sol2 = CGAL::internal::intersect_get<Solution>(solutions[1]);
 
          if(SK().has_on_3_object()(l,(*sol1).first,true))
            *res++ = solutions[0];
@@ -226,12 +226,12 @@ namespace CGAL {
                                 std::back_inserter(solutions) );
       if(solutions.size() == 0) return res;
       if(solutions.size() == 1) {
-        const Solution* sol = CGAL::Intersections::internal::intersect_get<Solution>(solutions[0]);
+        const Solution* sol = CGAL::internal::intersect_get<Solution>(solutions[0]);
         if(SK().has_on_3_object()(l,(*sol).first,true))
            *res++ = solutions[0];
       } else {
-         const Solution* sol1 = CGAL::Intersections::internal::intersect_get<Solution>(solutions[0]);
-         const Solution* sol2 = CGAL::Intersections::internal::intersect_get<Solution>(solutions[1]);
+         const Solution* sol1 = CGAL::internal::intersect_get<Solution>(solutions[0]);
+         const Solution* sol2 = CGAL::internal::intersect_get<Solution>(solutions[1]);
          if(SK().has_on_3_object()(l,(*sol1).first,true))
            *res++ = solutions[0];
          if(SK().has_on_3_object()(l,(*sol2).first,true))
@@ -257,7 +257,7 @@ namespace CGAL {
 
       if(!o)
         return res;
-      if((sol = CGAL::Intersections::internal::intersect_get<Point_3>(o))) {
+      if((sol = CGAL::internal::intersect_get<Point_3>(o))) {
         if(!SK().has_on_3_object()(l,*sol)) return res;
       Circular_arc_point_3 point = sol;
         *res++ = result_type(std::make_pair(point,1u));

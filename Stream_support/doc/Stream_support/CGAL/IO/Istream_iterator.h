@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStreamSupportRef
+\ingroup PkgIOstreams
 
 The class `Istream_iterator` is an input iterator adaptor for the 
 input stream class `Stream` and value type `T`. It is particularly 

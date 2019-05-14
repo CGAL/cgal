@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicKernelDConceptsUni
+\ingroup PkgAlgebraicKerneldConceptsUni
 \cgalConcept
 
 Computes whether the given univariate polynomial is square free. 

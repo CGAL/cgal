@@ -49,7 +49,7 @@ public:
       QMenu* menu = Scene_item::contextMenu();
 
       // Use dynamic properties:
-      // https://doc.qt.io/qt-5/qobject.html#property
+      // http://doc.qt.io/qt-5/qobject.html#property
       bool menuChanged = menu->property(prop_name).toBool();
 
       if (!menuChanged) {

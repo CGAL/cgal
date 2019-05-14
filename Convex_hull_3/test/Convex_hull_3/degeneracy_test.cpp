@@ -20,7 +20,7 @@
 // ============================================================================
  
 
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Convex_hull_2/ch_assertions.h>
 #include <CGAL/convex_hull_3.h>
@@ -28,7 +28,7 @@
 #include <fstream>
 
 typedef double                                     NumberType;
-typedef CGAL::Simple_cartesian<NumberType>         Kernel;
+typedef CGAL::Cartesian<NumberType>                Kernel;
 typedef CGAL::Polyhedron_3<Kernel>                 Polyhedron;
 typedef Kernel::Point_3                            Point_3;
 

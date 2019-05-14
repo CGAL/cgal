@@ -2,7 +2,7 @@
 \ingroup PkgConvexHullDConcepts
 \cgalConcept
 
-\deprecated This package is deprecated since the version 4.6 of \cgal. The package \ref PkgTriangulations should be used instead.
+\deprecated This package is deprecated since the version 4.6 of \cgal. The package \ref PkgTriangulationsSummary should be used instead.
 
 Requirements of the first traits class to be used with the 
 class `CGAL::Delaunay_d`. 

@@ -1,5 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
+
 #include <CGAL/Surface_mesh.h>
+
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/partition.h>
 
@@ -44,12 +46,10 @@ int main(int argc, char** argv)
 
   // Output the mesh extracted from subpart n°0
   std::ofstream out("sm_part_0.off");
-  out.precision(17);
   CGAL::write_off(out, part_sm);
 
   // Output all the vertices that are in the part n°0
   std::ofstream outxyz("out.xyz");
-  outxyz.precision(17);
   boost::graph_traits<SM>::vertex_iterator vit, ve;
   boost::tie(vit, ve) = vertices(sm);
   for(; vit!=ve; ++vit)

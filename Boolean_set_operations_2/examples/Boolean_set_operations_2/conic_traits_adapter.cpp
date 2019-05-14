@@ -2,7 +2,7 @@
  * Using the traits adaptor to generate a traits of conics.
  */
 
-#include <CGAL/config.h>
+#include <CGAL/basic.h>
 
 #ifndef CGAL_USE_CORE
 #include <iostream>

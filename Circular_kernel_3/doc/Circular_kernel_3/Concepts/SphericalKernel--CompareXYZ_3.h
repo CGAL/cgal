@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgCircularKernel3GeometricConcepts
+\ingroup PkgSphericalKernel3GeometricConcepts
 \cgalConcept
 
 \cgalRefines `Kernel::CompareXYZ_3` 

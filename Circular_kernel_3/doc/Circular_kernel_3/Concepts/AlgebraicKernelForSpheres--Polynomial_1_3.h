@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgCircularKernel3AlgebraicConcepts
+\ingroup PkgSphericalKernel3AlgebraicConcepts
 \cgalConcept
 
 Concept to represent trivariate polynomials of degree 1 whose 

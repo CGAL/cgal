@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangementOnSurface2IO
+\ingroup PkgArrangement2IO
 
 `Arr_with_history_text_formatter` defines the format of an arrangement in an input or output stream 
 (typically a file stream), thus enabling reading and writing an 
@@ -18,8 +18,8 @@ relations between these curves and the edges they induce.
 \cgalModels `ArrangementWithHistoryInputFormatter`
 \cgalModels `ArrangementWithHistoryOutputFormatter`
 
-\sa `PkgArrangementOnSurface2Read` 
-\sa `PkgArrangementOnSurface2Write` 
+\sa `PkgArrangement2Read` 
+\sa `PkgArrangement2Write` 
 
 */
 template< typename ArrFormatter >

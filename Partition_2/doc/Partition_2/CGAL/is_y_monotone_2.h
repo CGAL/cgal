@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPartition2Ref
+\ingroup PkgPolygonPartitioning2
 
 determines if the sequence of points in the range 
 [`first`, `beyond`) defines a \f$ y\f$-monotone 

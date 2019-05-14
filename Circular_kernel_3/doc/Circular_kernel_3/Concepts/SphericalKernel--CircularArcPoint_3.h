@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgCircularKernel3GeometricConcepts
+\ingroup PkgSphericalKernel3GeometricConcepts
 \cgalConcept
 
 Concept for points on spheres, circles, circular arcs or line arcs. 

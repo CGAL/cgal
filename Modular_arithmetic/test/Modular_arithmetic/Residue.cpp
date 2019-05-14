@@ -102,7 +102,7 @@ int main()
 
         assert(mod_x == CGAL::modular_image(int_x));
         int_x -= int_x; int_x = CGAL::mod(int_x, prime);
-        mod_x -= (CGAL::Residue&)mod_x; 
+        mod_x -= mod_x; 
     }
     {
         CGAL::Residue::set_current_prime(67111043);

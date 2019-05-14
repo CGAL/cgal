@@ -1,6 +1,11 @@
+#include <CGAL/basic.h>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Filtered_kernel.h>
+
+#include <CGAL/MP_Float.h>
 
 #include <CGAL/make_surface_mesh.h>
 

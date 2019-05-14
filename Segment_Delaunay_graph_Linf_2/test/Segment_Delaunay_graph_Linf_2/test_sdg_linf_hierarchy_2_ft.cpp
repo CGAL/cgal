@@ -1,3 +1,4 @@
+#include <CGAL/basic.h>
 
 #ifndef CGAL_SDG_VERBOSE
 #define CGAL_SDG_DEBUG(a)

@@ -5,17 +5,19 @@
 
 project( Number_types_Tests )
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 2.8.11)
 
 
 find_package( CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
 
-  include(${CGAL_USE_FILE})
+  include( ${CGAL_USE_FILE} )
+  include( CGAL_CreateSingleSourceCGALProgram )
   include( CGAL_VersionUtils )
 
-  include_directories( BEFORE include )
+  include_directories( BEFORE ../../include include )
+  include_directories( BEFORE ../../../Arithmetic_kernel/include)
 
   create_single_source_cgal_program( "bench_interval.cpp" )
   create_single_source_cgal_program( "constant.cpp" )

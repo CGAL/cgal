@@ -93,8 +93,8 @@ template < class Refs, class Point, class ID, class vertex_descriptor>
 struct Skel_HDS_vertex_type : public HalfedgeDS_vertex_max_base_with_id<Refs, Point, ID>
 {
   typedef HalfedgeDS_vertex_max_base_with_id<Refs, Point, ID> Base;
-  Skel_HDS_vertex_type() : Base (), pole(ORIGIN), is_fixed(false)  {}
-  Skel_HDS_vertex_type( Point const& p) : Base(p), pole(ORIGIN), is_fixed(false) {}
+  Skel_HDS_vertex_type() : Base (), is_fixed(false)  {}
+  Skel_HDS_vertex_type( Point const& p) : Base(p), is_fixed(false) {}
   std::vector<vertex_descriptor> vertices;
   Point pole;
   bool is_fixed;
@@ -112,7 +112,7 @@ struct Skel_polyhedron_items_3: CGAL::Polyhedron_items_with_id_3 {
 } //end of namespace internal
 
 
-/// \ingroup PkgSurfaceMeshSkeletonizationRef
+/// \ingroup PkgMeanCurvatureSkeleton3
 /// Function object that enables to extract the mean curvature
 /// flow skeleton of a triangulated surface mesh.
 ///

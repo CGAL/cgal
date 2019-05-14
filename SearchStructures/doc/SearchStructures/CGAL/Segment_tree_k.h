@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSearchStructuresSearchStructure
+\ingroup PkgRangeSegmentTreesDSearchStructure
 
 An object of the class `Segment_tree_k` is a \f$ k\f$-dimensional segment tree 
 that can store k-dimensional intervals of type `Interval`. 

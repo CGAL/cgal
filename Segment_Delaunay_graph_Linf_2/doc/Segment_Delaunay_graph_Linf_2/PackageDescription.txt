@@ -1,12 +1,12 @@
-/// \defgroup PkgSegmentDelaunayGraphLinf2Ref L Infinity Segment Delaunay Graphs Reference
-/// \defgroup PkgSegmentDelaunayGraphLinf2Concepts Concepts
-/// \ingroup PkgSegmentDelaunayGraphLinf2Ref
+/// \defgroup PkgSDGLinf L Infinity Segment Delaunay Graphs Reference
+/// \defgroup PkgSDGLinfConcepts Concepts
+/// \ingroup PkgSDGLinf
 
 /*!
-\addtogroup PkgSegmentDelaunayGraphLinf2Ref
+\addtogroup PkgSDGLinf
 \todo check generated documentation
 
-\cgalPkgDescriptionBegin{L Infinity Segment Delaunay Graphs,PkgSegmentDelaunayGraphLinf2}
+\cgalPkgDescriptionBegin{L Infinity Segment Delaunay Graphs,PkgSDGLinfSummary}
 \cgalPkgPicture{sdglinf-small.png}
 
 \cgalPkgSummaryBegin
@@ -14,12 +14,12 @@
 \cgalPkgDesc{Algorithms and geometric traits for computing the dual of
 the Voronoi diagram of a set of points and segments under the
 \f$L_{\infty}\f$ metric.}
-\cgalPkgManuals{Chapter_L_Infinity_Segment_Delaunay_Graphs,PkgSegmentDelaunayGraphLinf2Ref}
+\cgalPkgManuals{Chapter_L_Infinity_Segment_Delaunay_Graphs,PkgSDGLinf}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.7}
-\cgalPkgDependsOn{\ref PkgSegmentDelaunayGraph2}
+\cgalPkgDependsOn{\ref PkgSegmentDelaunayGraph2Summary}
 \cgalPkgBib{cgal:cdp-sdglinf2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
@@ -44,11 +44,11 @@ are models of the `SegmentDelaunayGraphLinfTraits_2` concept.
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 
 - `SegmentDelaunayGraphLinfTraits_2`
 
-\cgalCRPSection{Classes}
+## Classes ##
 
 - `CGAL::Segment_Delaunay_graph_Linf_2<Gt,DS>`
 - `CGAL::Segment_Delaunay_graph_Linf_hierarchy_2<Gt,STag,DS>`

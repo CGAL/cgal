@@ -89,15 +89,6 @@ public:
     _rational_function(rational_function),
     _x_coordinate(x_coordinate) {}
 
-  Algebraic_point_2_rep(const Algebraic_point_2_rep& other)
-  {
-    if (this != &other) // protect against invalid self-assignment
-    {
-      _rational_function = other._rational_function;
-      _x_coordinate = other._x_coordinate;
-    } 
-  }
-  
   //assignment oparator
   Algebraic_point_2_rep& operator=(const Algebraic_point_2_rep& other)
   {
@@ -382,6 +373,10 @@ public:
   
   Algebraic_point_2() :
     Base(static_cast<const Base &> (get_default_instance())) {}
+
+  // explicit copy-constructor, required by VC9
+  Algebraic_point_2 (const Self & p)
+    : Base(static_cast<const Base &> (p)) {}
 
   Comparison_result compare_xy_2(const Algebraic_point_2& other,
                                  const Cache& cache) const

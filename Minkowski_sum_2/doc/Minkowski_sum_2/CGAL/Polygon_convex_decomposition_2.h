@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMinkowskiSum2Ref
+\ingroup PkgMinkowskiSum2
 
 The `Greene_convex_decomposition_2` class implements the approximation algorithm of
 Greene for the decomposition of an input polygon into convex
@@ -68,7 +68,7 @@ public:
 namespace CGAL {
 
 /*!
-\ingroup PkgMinkowskiSum2Ref
+\ingroup PkgMinkowskiSum2
 
 The `Optimal_convex_decomposition_2` class provides an implementation of Greene's
 dynamic programming algorithm for optimal decomposition of a

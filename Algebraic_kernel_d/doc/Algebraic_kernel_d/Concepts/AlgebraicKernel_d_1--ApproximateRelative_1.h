@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicKernelDConceptsUni
+\ingroup PkgAlgebraicKerneldConceptsUni
 \cgalConcept
 
 A model of `AlgebraicKernel_d_1::ApproximateRelative_1` is an `AdaptableBinaryFunction` that computes an 

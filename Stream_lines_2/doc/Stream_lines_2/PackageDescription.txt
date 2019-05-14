@@ -1,19 +1,19 @@
-/// \defgroup PkgStreamLines2Ref 2D Placement of Streamlines Reference
-/// \defgroup PkgStreamLines2Concepts Concepts
-/// \ingroup PkgStreamLines2Ref
+/// \defgroup PkgPlacementOfStreamlines2 2D Placement of Streamlines Reference
+/// \defgroup PkgPlacementOfStreamlines2Concepts Concepts
+/// \ingroup PkgPlacementOfStreamlines2
 /*!
-\addtogroup PkgStreamLines2Ref
+\addtogroup PkgPlacementOfStreamlines2
 
-\cgalPkgDescriptionBegin{2D Placement of Streamlines,PkgStreamLines2}
+\cgalPkgDescriptionBegin{2D Placement of Streamlines,PkgPlacementOfStreamlines2Summary}
 \cgalPkgPicture{streamlines-small.jpg}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Abdelkrim Mebarki}
 \cgalPkgDesc{Visualizing vector fields is important for many application domains. A good way to do it is to generate streamlines that describe the flow behavior. This package implements the "Farthest Point Seeding" algorithm for placing streamlines in 2D vector fields. It generates a list of streamlines corresponding to an input flow using a specified separating distance. The algorithm uses a Delaunay triangulation to model objects and address different queries, and relies on choosing the centers of the biggest empty circles to start the integration of the streamlines.}
-\cgalPkgManuals{Chapter_2D_Placement_of_Streamlines,PkgStreamLines2Ref}
+\cgalPkgManuals{Chapter_2D_Placement_of_Streamlines,PkgPlacementOfStreamlines2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.2}
-\cgalPkgDependsOn{\ref PkgTriangulation2}
+\cgalPkgDependsOn{\ref PkgTriangulation2Summary}
 \cgalPkgBib{cgal:m-ps}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{2D Stream Lines,streamlines.zip}
@@ -52,12 +52,12 @@ construct the streamlines, and should be instantiated by a model of the concept
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 - `StreamLinesTraits_2`
 - `Integrator_2`
 - `VectorField_2`
 
-\cgalCRPSection{Classes}
+## Classes ##
 - `CGAL::Stream_lines_2<VectorField_2,Integrator_2>`
 - `CGAL::Euler_integrator_2<VectorField_2>`
 - `CGAL::Runge_kutta_integrator_2<VectorField_2>`

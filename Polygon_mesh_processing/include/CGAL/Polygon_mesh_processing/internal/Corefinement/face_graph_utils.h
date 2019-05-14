@@ -263,7 +263,6 @@ template < class TriangleMesh,
            class Node_id,
            class Node_vector,
            class CDT,
-           class OutputBuilder,
            class UserVisitor>
 void
 triangulate_a_face(
@@ -278,7 +277,6 @@ triangulate_a_face(
                 ::halfedge_descriptor>& edge_to_hedge,
   const CDT& cdt,
   const VertexPointMap& vpm,
-  OutputBuilder& output_builder,
   UserVisitor& user_visitor)
 {
   typedef boost::graph_traits<TriangleMesh> GT;
@@ -294,9 +292,6 @@ triangulate_a_face(
     vertex_descriptor v=add_vertex(tm);
 //    user_visitor.new_vertex_added(node_id, v, tm); // NODE_VISITOR_TAG
     nodes.call_put(vpm, v, node_id, tm);
-    // register the new vertex in the output builder
-    output_builder.set_vertex_id(v, node_id, tm);
-
     CGAL_assertion(node_id_to_vertex.size()>node_id);
     node_id_to_vertex[node_id]=v;
   }
@@ -383,10 +378,12 @@ triangulate_a_face(
 
 template <class PolygonMesh>
 class Border_edge_map {
+  typedef std::size_t Node_id;
   typedef boost::graph_traits<PolygonMesh> GT;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
   typedef typename GT::edge_descriptor edge_descriptor;
-  typedef boost::unordered_set<edge_descriptor> Intersection_edge_map;
+  typedef boost::unordered_map<edge_descriptor,
+                               std::pair<Node_id,Node_id> > Intersection_edge_map;
   const Intersection_edge_map* intersection_edges;
   const PolygonMesh* tm;
 public:

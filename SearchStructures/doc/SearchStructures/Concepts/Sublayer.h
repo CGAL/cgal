@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgSearchStructuresConcepts
+\ingroup PkgRangeSegmentTreesDConcepts
 \cgalConcept
 
 Defines the requirements that a 

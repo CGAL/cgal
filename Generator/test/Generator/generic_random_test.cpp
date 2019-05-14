@@ -1,4 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
@@ -287,10 +288,8 @@ int main()
   Polyhedron polyhedron;
 
   // A cube
-  make_hexahedron(
-        Point_3(-0.5,-0.5,-0.5), Point_3(0.5,-0.5,-0.5), Point_3(0.5,0.5,-0.5),
-        Point_3(-0.5,0.5,-0.5), Point_3(-0.5,0.5,0.5), Point_3(-0.5,-0.5,0.5),
-        Point_3(0.5,-0.5,0.5), Point_3(0.5,0.5,0.5),
+  make_hexahedron(Point_3(-0.5,-0.5,-0.5), Point_3(0.5,-0.5,-0.5), Point_3(0.5,0.5,-0.5), Point_3(-0.5,0.5,-0.5),
+                  Point_3(-0.5,0.5,0.5), Point_3(-0.5,-0.5,0.5), Point_3(0.5,-0.5,0.5), Point_3(0.5,0.5,0.5),
                   polyhedron);
 
   boost::graph_traits<Polyhedron>::halfedge_descriptor facets[6];

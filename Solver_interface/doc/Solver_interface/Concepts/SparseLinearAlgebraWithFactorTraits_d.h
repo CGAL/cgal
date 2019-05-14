@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgSolverInterfaceConcepts
+\ingroup PkgSolverConcepts
 \cgalConcept
 
 @brief Concept describing the set of requirements for a direct sparse linear system solver with factorization.
@@ -39,11 +39,6 @@ bool factor(const Matrix& A, NT& D);
 /// provided in `SparseLinearAlgebraWithFactorTraits_d::factor()`.
 /// \return `true` if the solver is successful and `false` otherwise.
 bool linear_solver(const Vector& B, Vector& X);
-
-/// Solve the sparse linear system \f$ A \times X = B\f$, with \f$ A \f$ being the matrix
-/// provided in `SparseLinearAlgebraWithFactorTraits_d::factor()`.
-/// \return `true` if the solver is successful and `false` otherwise.
-bool linear_solver(const Matrix& B, Vector& X);
 
 /// @}
 

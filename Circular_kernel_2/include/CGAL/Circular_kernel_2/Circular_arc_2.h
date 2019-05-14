@@ -191,7 +191,7 @@ namespace internal {
 	// the circles intersect
 	
 	const std::pair<typename CK::Circular_arc_point_2, unsigned>*
-          result = CGAL::Intersections::internal::intersect_get< std::pair<typename CK::Circular_arc_point_2, unsigned> >(*it);
+          result = CGAL::internal::intersect_get< std::pair<typename CK::Circular_arc_point_2, unsigned> >(*it);
 	if ( result->second == 2 ){ // double solution
 	  _begin = result->first;
 	  _end = result->first;
@@ -202,7 +202,7 @@ namespace internal {
 	    _end = result->first;
 	  if (!(b_1 && b_2)) {
 	    ++it;
-	    result = CGAL::Intersections::internal::intersect_get< std::pair<typename CK::Circular_arc_point_2, unsigned> >(*it);
+	    result = CGAL::internal::intersect_get< std::pair<typename CK::Circular_arc_point_2, unsigned> >(*it);
 	    if (!b_1)
 	      _begin = result->first;
 	    if (!b_2)

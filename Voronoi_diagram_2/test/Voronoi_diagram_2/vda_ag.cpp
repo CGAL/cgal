@@ -32,8 +32,8 @@
 #include <CGAL/Apollonius_graph_adaptation_traits_2.h>
 #include <CGAL/Apollonius_graph_adaptation_policies_2.h>
 
-typedef CGAL::Simple_cartesian<double> Rep;
-typedef CGAL::Apollonius_graph_filtered_traits_2<Rep> K;
+struct Rep : public CGAL::Simple_cartesian<double> {};
+struct K : public CGAL::Apollonius_graph_filtered_traits_2<Rep> {};
 
 #if 1 // definitions for hierarchy
 

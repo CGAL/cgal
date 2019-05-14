@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgRidges3Enums
+\ingroup PkgRidges_3Enums
 The enum `Umbilic_type` describes the types for the class `Umbilic`.
 \sa `Umbilic`
 */
@@ -9,7 +9,7 @@ enum Umbilic_type { NON_GENERIC_UMBILIC, ELLIPTIC_UMBILIC, HYPERBOLIC_UMBILIC };
 
 
 /*!
-\ingroup PkgRidges3Ref
+\ingroup PkgRidges_3
 
 The function `compute_umbilics()` is a shortcut to the 
 method `Umbilic_approximation::compute()`.  See `Umbilic_approximation::Umbilic_approximation()` for an explanation of the parameters.
@@ -34,7 +34,7 @@ double size);
 namespace CGAL {
 
 /*!
-\ingroup PkgRidges3Ref
+\ingroup PkgRidges_3
 
 The class `Umbilic_approximation` computes the approximation of 
 umbilics on a triangular polyhedral surface. 
@@ -109,7 +109,7 @@ template <class OutputIterator> OutputIterator compute(OutputIterator it, FT siz
 namespace CGAL {
 
 /*!
-\ingroup PkgRidges3Ref
+\ingroup PkgRidges_3
 
 The class `Umbilic` stores the description of an umbilic. 
 

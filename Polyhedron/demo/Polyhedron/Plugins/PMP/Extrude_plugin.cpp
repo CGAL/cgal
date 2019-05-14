@@ -1,5 +1,4 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
-#include <CGAL/Three/Three.h>
 #include <QApplication>
 #include <QObject>
 #include <QAction>
@@ -20,11 +19,21 @@
 #include <CGAL/number_type_config.h>
 
 #include "Messages_interface.h"
+#ifdef USE_SURFACE_MESH
 #include "Kernel_type.h"
 #include "Scene_surface_mesh_item.h"
+#else
+#include "Scene_polyhedron_item.h"
+#include "Polyhedron_type.h"
+#endif
 #include "Scene_polyhedron_selection_item.h"
 #include "Scene.h"
+#ifdef USE_SURFACE_MESH
 typedef Scene_surface_mesh_item Scene_face_graph_item;
+#else
+typedef Scene_polyhedron_item Scene_face_graph_item;
+#endif
+
 typedef Scene_face_graph_item::Face_graph Face_graph;
 typedef CGAL::qglviewer::Vec Vec;
 using namespace CGAL::Three;
@@ -348,7 +357,7 @@ public:
     this->mw = mainWindow;
     oliver_queen = NULL;
     target = NULL;
-    actionCreateItem = new QAction(QString("Extrude FaceGraph (or selection)"), mw);
+    actionCreateItem = new QAction(QString("Extrude Item"), mw);
     actionCreateItem->setProperty("submenuName", "Polygon Mesh Processing");
     connect(actionCreateItem, SIGNAL(triggered()),
             this, SLOT(createItem()));
@@ -371,7 +380,7 @@ private Q_SLOTS:
       pMesh = new Face_graph();
       if(!sel_item->export_selected_facets_as_polyhedron(pMesh))
       {
-        CGAL::Three::Three::error("Face selection is not valid. Aborting.");
+        messageInterface->error("Face selection is not valid. Aborting.");
         
         return; 
       }
@@ -387,7 +396,7 @@ private Q_SLOTS:
       return;
     if(CGAL::is_closed(*pMesh))
     {
-      CGAL::Three::Three::error("The face graph must be open. Aborting.");
+      messageInterface->error("The face graph must be open. Aborting.");
       return;
     }
     std::vector<Triangle> triangles;
@@ -449,7 +458,6 @@ private Q_SLOTS:
                                                 Kernel::Vector_3(dir.x(), dir.y(), dir.z()));
     scene->erase(scene->item_id(oliver_queen));
     oliver_queen = NULL;
-    target->resetColors();
     target->invalidateOpenGLBuffers();
     target->itemChanged();
     target = NULL;

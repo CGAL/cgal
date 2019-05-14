@@ -508,7 +508,7 @@ namespace CircularFunctors {
     template <class T1, class T2>
     result_type
     operator()(const T1& t1, const T2& t2) const
-    { return Intersections::internal::do_intersect(t1, t2, CK()); }
+    { return internal::do_intersect(t1, t2, CK()); }
   };
   
   template < class CK >

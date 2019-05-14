@@ -110,46 +110,6 @@ struct Get_io_signature<unsigned int>
 };
 
 template <>
-struct Get_io_signature<char>
-{
-  std::string operator()() {
-    return "c";
-  }
-};
-
-template <>
-struct Get_io_signature<unsigned char>
-{
-  std::string operator()() {
-    return "uc";
-  }
-};
-
-template <>
-struct Get_io_signature<signed char>
-{
-  std::string operator()() {
-    return "sc";
-  }
-};
-
-template <>
-struct Get_io_signature<short int>
-{
-  std::string operator()() {
-    return "s";
-  }
-};
-
-template <>
-struct Get_io_signature<unsigned short int>
-{
-  std::string operator()() {
-    return "us";
-  }
-};
-
-template <>
 struct Get_io_signature<double>
 {
   std::string operator()() {

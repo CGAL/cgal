@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSegmentDelaunayGraph2Ref
+\ingroup PkgSegmentDelaunayGraph2
 
 The class `Segment_Delaunay_graph_site_2` is a model for the concept 
 `SegmentDelaunayGraphSite_2`. 

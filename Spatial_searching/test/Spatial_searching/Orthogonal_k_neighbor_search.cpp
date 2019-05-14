@@ -1,6 +1,6 @@
 // file          : test/Spatial_searching/Orthogonal_k_neighbor_search.C
 
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Search_traits_2.h>
 #include <CGAL/Search_traits_adapter.h>
@@ -8,7 +8,7 @@
 #include "Point_with_info.h"
 #include <set>
 
-typedef CGAL::Simple_cartesian<double> K;
+typedef CGAL::Cartesian<double> K;
 typedef K::Point_2 Point;
 typedef CGAL::Random_points_in_square_2<Point>                          Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator>                 N_Random_points_iterator;

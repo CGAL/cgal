@@ -2,6 +2,8 @@
 #include <QMessageBox>
 #include <QMainWindow>
 #include "Kernel_type.h"
+#include "Polyhedron_type.h"
+#include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polylines_item.h"
 
@@ -67,7 +69,8 @@ public:
   bool applicable(QAction*) const {
     Q_FOREACH(int index, scene->selectionIndices())
     {
-      if ( qobject_cast<Scene_surface_mesh_item*>(scene->item(index)) )
+      if ( qobject_cast<Scene_polyhedron_item*>(scene->item(index)) ||
+           qobject_cast<Scene_surface_mesh_item*>(scene->item(index)) )
         return true;
     }
     return false;
@@ -156,6 +159,7 @@ void Polyhedron_demo_polyhedron_stitching_plugin::on_actionDetectBorders_trigger
 void Polyhedron_demo_polyhedron_stitching_plugin::on_actionDetectBorders_triggered()
 {
   Q_FOREACH(int index, scene->selectionIndices()){
+    on_actionDetectBorders_triggered<Scene_polyhedron_item>(index);
     on_actionDetectBorders_triggered<Scene_surface_mesh_item>(index);
   }
 }
@@ -178,6 +182,7 @@ void Polyhedron_demo_polyhedron_stitching_plugin::on_actionStitchBorders_trigger
 void Polyhedron_demo_polyhedron_stitching_plugin::on_actionStitchBorders_triggered()
 {
   Q_FOREACH(int index, scene->selectionIndices()){
+    on_actionStitchBorders_triggered<Scene_polyhedron_item>(index);
     on_actionStitchBorders_triggered<Scene_surface_mesh_item>(index);
   }
 }
@@ -200,6 +205,7 @@ void Polyhedron_demo_polyhedron_stitching_plugin::on_actionStitchByCC_triggered(
 void Polyhedron_demo_polyhedron_stitching_plugin::on_actionStitchByCC_triggered()
 {
   Q_FOREACH(int index, scene->selectionIndices()){
+    on_actionStitchByCC_triggered<Scene_polyhedron_item>(index);
     on_actionStitchByCC_triggered<Scene_surface_mesh_item>(index);
   }
 }

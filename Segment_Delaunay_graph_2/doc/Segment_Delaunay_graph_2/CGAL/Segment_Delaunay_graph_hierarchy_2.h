@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSegmentDelaunayGraph2Ref
+\ingroup PkgSegmentDelaunayGraph2
 
 We provide an alternative to the class 
 `Segment_Delaunay_graph_2<Gt,DS>` for the incremental 

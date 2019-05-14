@@ -131,11 +131,10 @@ public:
     /*!\brief
      * copy constructor
      */
-#ifdef DOXYGEN_RUNNING  
     Generic_point_2(const Self& p) :
             Base(static_cast<const Base&>(p)) {  
     }
-#endif    
+    
     /*!\brief
      * constructs an arc from a given represenation
      */

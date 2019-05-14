@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgArrangementOnSurface2ConceptsDCEL
+\ingroup PkgArrangement2ConceptsDCEL
 \cgalConcept
 
 An isolated vertex-information record in a <span class="textsc">Dcel</span> data structure, which stores 

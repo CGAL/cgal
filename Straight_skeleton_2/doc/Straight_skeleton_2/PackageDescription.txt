@@ -1,28 +1,28 @@
-/// \defgroup PkgStraightSkeleton2Ref 2D Straight Skeleton and Polygon Offsetting Reference
+/// \defgroup PkgStraightSkeleton2 2D Straight Skeleton and Polygon Offsetting Reference
 /// \defgroup PkgStraightSkeleton2Concepts Concepts
-/// \ingroup PkgStraightSkeleton2Ref
+/// \ingroup PkgStraightSkeleton2
 
 /// \defgroup PkgStraightSkeleton2Classes Classes
-/// \ingroup PkgStraightSkeleton2Ref
+/// \ingroup PkgStraightSkeleton2
 
 /// \defgroup PkgStraightSkeleton2Auxiliary Auxiliary Classes
-/// \ingroup PkgStraightSkeleton2Ref
+/// \ingroup PkgStraightSkeleton2
 
 /// \defgroup PkgStraightSkeleton2Functions Functions
-/// \ingroup PkgStraightSkeleton2Ref
+/// \ingroup PkgStraightSkeleton2
 
 /*!
-\addtogroup PkgStraightSkeleton2Ref
-\cgalPkgDescriptionBegin{2D Straight Skeleton and Polygon Offsetting,PkgStraightSkeleton2}
+\addtogroup PkgStraightSkeleton2
+\cgalPkgDescriptionBegin{2D Straight Skeleton and Polygon Offsetting,PkgStraightSkeleton2Summary}
 \cgalPkgPicture{Straight_skeleton_2/fig/StraightSkeletonTeaser.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Fernando Cacciola}
 \cgalPkgDesc{This package implements an algorithm to construct a halfedge data structure representing the straight skeleton in the interior of 2D polygons with holes and an algorithm to construct inward offset polygons at any offset distance given a straight skeleton.}
-\cgalPkgManuals{Chapter_2D_Straight_Skeleton_and_Polygon_Offsetting,PkgStraightSkeleton2Ref}
+\cgalPkgManuals{Chapter_2D_Straight_Skeleton_and_Polygon_Offsetting,PkgStraightSkeleton2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.2}
-\cgalPkgDependsOn{\ref PkgHalfedgeDS}
+\cgalPkgDependsOn{\ref PkgHDSSummary}
 \cgalPkgBib{cgal:c-sspo2}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgShortInfoEnd
@@ -30,7 +30,7 @@
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 - `StraightSkeletonVertex_2`
 - `StraightSkeletonHalfedge_2`
 - `StraightSkeletonFace_2`
@@ -41,7 +41,7 @@
 - `PolygonOffsetBuilderTraits_2`
 - `VertexContainer_2`
 
-\cgalCRPSection{Classes}
+## Classes ##
 - `CGAL::Straight_skeleton_vertex_base_2`
 - `CGAL::Straight_skeleton_halfedge_base_2`
 - `CGAL::Straight_skeleton_face_base_2`
@@ -56,7 +56,7 @@
 - `CGAL::Polygon_offset_builder_2`
 - `CGAL::Dummy_straight_skeleton_builder_2_visitor`
 
-\cgalCRPSection{Functions}
+## Functions ##
 - `CGAL::create_exterior_straight_skeleton_2()`
 - `CGAL::create_interior_straight_skeleton_2()`
 - `CGAL::create_offset_polygons_2()`

@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMesh3Concepts
+\ingroup PkgMesh_3Concepts
 \cgalConcept
 
 The Delaunay refinement process involved in the 

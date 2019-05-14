@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBooleanSetOperations2Ref
+\ingroup PkgBooleanSetOperations2
 
 The class `Polygon_set_2` represents sets of linear polygons with holes. 
 The first two template parameters (`Kernel` and `Container`) 

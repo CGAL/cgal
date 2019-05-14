@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgIntervalSkipListRef
+\ingroup PkgIntervalSkipList
 
 The class `Level_interval` represents intervals for the minimum and 
 maximum value of the `z`-coordinate of a face of a triangulation. 

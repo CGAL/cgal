@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <list>
-#include <boost/iterator/iterator_adaptor.hpp>
+#include <boost/iterator.hpp>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/AABB_tree.h>

@@ -25,7 +25,7 @@
 
 
 /**
- * \ingroup PkgSurfaceMeshShortestPathRef
+ * \ingroup PkgSurfaceMeshShortestPath
  * \file CGAL/Surface_mesh_shortest_path.h
  * Convenience header file only including `CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path.h`
  * and `CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path_traits.h`.

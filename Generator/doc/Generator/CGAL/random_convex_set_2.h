@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgGeneratorsRef
+\ingroup PkgGenerators
 
 \brief computes a random convex planar point set of given size where the 
 points are drawn from a specific domain.

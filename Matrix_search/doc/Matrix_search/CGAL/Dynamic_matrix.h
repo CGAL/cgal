@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMatrixSearchRef
+\ingroup PkgMatrixSearch
 
 The class `Dynamic_matrix` is an adaptor for an arbitrary
 matrix class `M` to provide the dynamic operations needed for monotone

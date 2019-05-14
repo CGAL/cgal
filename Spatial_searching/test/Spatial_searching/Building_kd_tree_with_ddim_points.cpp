@@ -1,5 +1,6 @@
 // file: Building_kd_tree_with_ddim_points.C
 
+#include <CGAL/Cartesian_d.h>
 #include <CGAL/Homogeneous_d.h>
 #include <CGAL/constructions_d.h>
 #include <CGAL/Kd_tree.h>
@@ -14,6 +15,7 @@
 #include <cassert>
 #include <iostream>
 
+//typedef CGAL::Cartesian_d<double> K;
 typedef CGAL::Homogeneous_d<double> Kernel;
 typedef CGAL::Point_d<Kernel> Point;
 

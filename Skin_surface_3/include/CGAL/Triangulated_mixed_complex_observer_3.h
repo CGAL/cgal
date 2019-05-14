@@ -128,7 +128,7 @@ public:
           break;
         }
         case 2: {
-          f = Rt_Facet(s);
+          f = s;
           Surface_weighted_point p0 =
             r2s_converter(f.first->vertex((f.second+1)&3)->point());
           Surface_weighted_point p1 =

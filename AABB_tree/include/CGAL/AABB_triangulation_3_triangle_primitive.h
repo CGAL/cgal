@@ -31,7 +31,7 @@
 #include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
-    // \ingroup PkgAABBTreeRef
+    // \ingroup PkgAABB_tree
     // Primitive type that wraps a facet handle of a CGAL::Triangulation_3,
     // which is used as id, and allows the construction of the datum on
     // the fly. Since only the facet handle is stored in this primitive,

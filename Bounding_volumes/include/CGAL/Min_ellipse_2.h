@@ -360,20 +360,7 @@ class Min_ellipse_2 {
     
     // default constructor
     inline
-    Min_ellipse_2()
-        : n_support_points( 0)
-    {
-        // allocate support points' array
-        support_points = new Point[ 5];
-    
-        // initialize ellipse
-        tco.ellipse.set();
-    
-        CGAL_optimisation_postcondition( is_empty());
-    }
-
-    inline
-    Min_ellipse_2( const Traits& traits )
+    Min_ellipse_2( const Traits& traits = Traits())
         : tco( traits), n_support_points( 0)
     {
         // allocate support points' array

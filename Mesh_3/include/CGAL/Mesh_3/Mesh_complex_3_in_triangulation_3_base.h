@@ -61,6 +61,12 @@ namespace CGAL {
   }
 
 
+  template < class DSC, bool Const >
+  std::size_t tbb_hasher(const CGAL::CCC_internal::CCC_iterator<DSC, Const>& it)
+  {
+    return CGAL::CCC_internal::hash_value(it);
+  }
+
   // As Marc Glisse pointed out the TBB hash of a std::pair is
   // simplistic and leads to the
   // TBB Warning: Performance is not optimal because the hash function
@@ -74,6 +80,14 @@ namespace CGAL {
                                  CGAL::internal::CC_iterator<DSC, Const> > >()(p);
   }
 
+
+  template < class DSC, bool Const >
+  std::size_t tbb_hasher(const std::pair<CGAL::CCC_internal::CCC_iterator<DSC, Const>,
+                                         CGAL::CCC_internal::CCC_iterator<DSC, Const> >& p)
+  {
+    return boost::hash<std::pair<CGAL::CCC_internal::CCC_iterator<DSC, Const>,
+                                 CGAL::CCC_internal::CCC_iterator<DSC, Const> > >()(p);
+  }
 
 }
 #endif

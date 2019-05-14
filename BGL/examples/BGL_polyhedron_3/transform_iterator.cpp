@@ -37,9 +37,9 @@ struct Source {
   }
 };
 
-int main(int argc, char** argv)
+int main(int, char** argv)
 { 
-  std::ifstream in((argc>1)?argv[1]:"cube.off");
+  std::ifstream in(argv[1]);
   Polyhedron P;
   in >> P;
   GraphTraits::vertex_descriptor vd = *(vertices(P).first);

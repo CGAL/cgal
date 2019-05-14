@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangementOnSurface2DCEL
+\ingroup PkgArrangement2DCEL
 
 The default <span class="textsc">Dcel</span> class used by the `Arrangement_2` class-template 
 is parameterized by a traits class, which is a model of the 

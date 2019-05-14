@@ -1,14 +1,15 @@
 #include <cassert>
 
+
+#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Intersections_3/Triangle_3_Triangle_3.h>
-#include <CGAL/Intersections_3/Line_3_Triangle_3.h>
-#include <CGAL/Intersections_3/Plane_3_Triangle_3.h>
-#include <CGAL/Intersections_3/Segment_3_Triangle_3.h>
-#include <CGAL/Intersections_3/Ray_3_Triangle_3.h>
-#include <CGAL/Intersections_3/Triangle_3_Triangle_3.h>
-#include <CGAL/Intersections_3/Tetrahedron_3_Triangle_3.h>
-#include <CGAL/Intersections_3/Plane_3_Tetrahedron_3.h>
+#include <CGAL/Triangle_2_Triangle_2_do_intersect.h>
+#include <CGAL/Triangle_3_Line_3_do_intersect.h>
+#include <CGAL/Triangle_3_Plane_3_do_intersect.h>
+#include <CGAL/Triangle_3_Segment_3_do_intersect.h>
+#include <CGAL/Triangle_3_Ray_3_do_intersect.h>
+#include <CGAL/Triangle_3_Triangle_3_do_intersect.h>
+#include <CGAL/Triangle_3_Tetrahedron_3_do_intersect.h>
 
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Quotient.h>

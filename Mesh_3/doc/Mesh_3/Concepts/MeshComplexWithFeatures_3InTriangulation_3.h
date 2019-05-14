@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMesh3Concepts
+\ingroup PkgMesh_3Concepts
 \cgalConcept
 
 The concept `MeshComplexWithFeatures_3InTriangulation_3` describes a data structure 
@@ -203,7 +203,7 @@ Edges_in_complex_iterator edges_in_complex_begin() const;
 
 Returns the past-the-end iterator for the above iterator. 
 */ 
-Edges_in_complex_iterator edges_in_complex_end() const; 
+Edge_in_complex_iterator edges_in_complex_end() const; 
 
 /*!
 
@@ -216,7 +216,7 @@ Edges_in_complex_iterator edges_in_complex_begin(Curve_index index) const;
 
 Returns the past-the-end iterator for the above iterator. 
 */ 
-Edges_in_complex_iterator edges_in_complex_end(Curve_index index) const;
+Edge_in_complex_iterator edges_in_complex_end(Curve_index index) const;
 
 /*!
 

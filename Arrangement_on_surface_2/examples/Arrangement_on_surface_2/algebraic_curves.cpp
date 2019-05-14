@@ -1,4 +1,4 @@
-#include <CGAL/config.h>
+#include <CGAL/basic.h>
 #include <iostream>
 
 #if (!CGAL_USE_CORE) && (!CGAL_USE_LEDA) && (!(CGAL_USE_GMP && CGAL_USE_MPFI))

@@ -62,15 +62,7 @@ template <class R_> struct Construct_hyperplane : Store_kernel<R_> {
   // Not really needed
   result_type operator()()const{
     typename Get_functor<R_, Construct_ttag<Vector_tag> >::type cv(this->kernel());
-
-#if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
-#  pragma warning(push)
-#  pragma warning(disable: 4309)
-#endif    
     return result_type(cv(),0);
-#if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
-#  pragma warning(pop)
-#endif
   }
 
   template <class Iter>

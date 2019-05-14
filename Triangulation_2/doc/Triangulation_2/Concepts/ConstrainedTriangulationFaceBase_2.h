@@ -34,7 +34,7 @@ public:
 /// @{
 
 /*!
-returns `true` if the edge between the face and its neighbor 
+returns true if the edge between the face and its neighbor 
 `neighbor(i)` is constrained. 
 \pre \f$ 0\leq i \leq2\f$. 
 */ 

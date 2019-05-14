@@ -3,7 +3,7 @@
 // Example program for the linear_least_square_fitting function
 // on a set of tetrahedra in 3D
 
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <list>
 
@@ -11,12 +11,12 @@
 #include <CGAL/Diagonalize_traits.h>
 #endif
 
-typedef double                       FT;
-typedef CGAL::Simple_cartesian<FT>   Kernel;
-typedef Kernel::Line_3               Line;
-typedef Kernel::Plane_3              Plane;
-typedef Kernel::Point_3              Point;
-typedef Kernel::Tetrahedron_3        Tetrahedron;
+typedef double                FT;
+typedef CGAL::Cartesian<FT>   Kernel;
+typedef Kernel::Line_3        Line;
+typedef Kernel::Plane_3       Plane;
+typedef Kernel::Point_3       Point;
+typedef Kernel::Tetrahedron_3 Tetrahedron;
 
 int main()
 {

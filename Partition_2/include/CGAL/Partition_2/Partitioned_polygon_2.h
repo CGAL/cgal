@@ -329,10 +329,6 @@ class Partition_vertex : public Traits_::Point_2
     current_diag = diag_endpoint_refs.end() ; 
   }
 
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
-    Partition_vertex& operator=(const Partition_vertex&)=default;
-#endif
-
     void insert_diagonal(Circulator v_ref) 
     {
        diag_endpoint_refs.push_back(v_ref);

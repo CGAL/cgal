@@ -171,6 +171,9 @@ public:
 
   Constrained_triangulation_2(const Gt& gt = Gt()) : Triangulation(gt) { }
 
+  Constrained_triangulation_2(const Constrained_triangulation_2& ct)
+    : Triangulation(ct) {}
+
   Constrained_triangulation_2(std::list<Constraint>& lc, const Gt& gt=Gt())
       : Triangulation_2<Gt,Tds>(gt)
   {

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh3Domains
+\ingroup PkgMesh_3Domains
 
 The class `Image_3` is a C++ wrapper around the <a
 href="http://inrimage.gforge.inria.fr/">InrImage library</a>. It holds a

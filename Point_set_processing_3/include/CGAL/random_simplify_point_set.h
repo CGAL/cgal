@@ -42,7 +42,7 @@
 namespace CGAL {
 
 /**
-   \ingroup PkgPointSetProcessing3Algorithms
+   \ingroup PkgPointSetProcessingAlgorithms
    Randomly deletes a user-specified fraction of the input points.
 
    This method modifies the order of input points so as to pack all remaining points first,

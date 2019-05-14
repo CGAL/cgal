@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangementOnSurface2Funcs
+\ingroup PkgArrangement2Funcs
 \brief Computes the overlay of two arrangements `arr1` and `arr2`, and sets
 the output arrangement `res` to represent the overlaid arrangement.
 
@@ -35,7 +35,7 @@ void overlay (const Arrangement_2<GeomTraitsA, TopTraitsA>& arr1,
               OverlayTraits& ovl_tr);
 
 /*!
-\ingroup PkgArrangementOnSurface2Funcs
+\ingroup PkgArrangement2Funcs
 \brief Computes the overlay of two arrangements with history `arr1` and
 `arr2`, and sets the output arrangement with history `res` to
 represent the overlaid arrangement. The function also constructs a

@@ -33,7 +33,6 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/Lazy_exact_nt.h>
 
-#include <CGAL/boost_mp.h>
 #ifdef CGAL_USE_GMP
 #  include <CGAL/Gmpz.h>
 #  include <CGAL/Gmpq.h>
@@ -66,17 +65,9 @@ struct Exact_field_selector
 #ifdef CGAL_USE_GMPXX
 { typedef mpq_class Type; };
 #elif defined(CGAL_USE_GMP)
-# if defined(CGAL_USE_BOOST_MP)
-{ typedef boost::multiprecision::mpq_rational Type; };
-# else
 { typedef Gmpq Type; };
-# endif
 #elif defined(CGAL_USE_LEDA)
 { typedef leda_rational Type; };
-#elif 0 && defined(CGAL_USE_BOOST_MP)
-// See the discussion in https://github.com/CGAL/cgal/pull/3614
-// This is disabled for now because cpp_rational is even slower than Quotient<MP_Float>. Quotient<cpp_int> will be a good candidate after some polishing.
-{ typedef BOOST_cpp_arithmetic_kernel::Rational Type; };
 #else
 { typedef Quotient<MP_Float> Type; };
 #endif

@@ -32,7 +32,6 @@
 #include <CGAL/assertions.h>
 #include <boost/foreach.hpp>
 #include <boost/container/flat_set.hpp>
-#include <boost/container/flat_map.hpp>
 
 #include <set>
 #include <map>
@@ -61,11 +60,9 @@ struct Polygon_soup_orienter
 /// Container types
   typedef PointRange                                                     Points;
   typedef PolygonRange                                                 Polygons;
-
+  typedef std::map<V_ID_pair, boost::container::flat_set<P_ID> >       Edge_map;
+  typedef typename Edge_map::iterator                         Edge_map_iterator;
   typedef std::set<V_ID_pair>                                      Marked_edges;
-  typedef boost::container::flat_map< V_ID, boost::container::flat_set<P_ID> >  Internal_map_type;
-  typedef std::vector< Internal_map_type >                             Edge_map;
-  typedef typename Internal_map_type::iterator                Edge_map_iterator;
 
 /// Data members
   Points& points;             //< the set of input points
@@ -111,8 +108,8 @@ struct Polygon_soup_orienter
   {
     typedef std::pair<V_ID,P_ID> VID_and_PID;
     if ( is_edge_marked(src,tgt,marked_edges) ) return VID_and_PID(src,300612);
-    Edge_map_iterator em_it=edges[tgt].find(src);
-    if ( em_it==edges[tgt].end() ) return VID_and_PID(src,300612);// the vertex is on the border
+    Edge_map_iterator em_it=edges.find(V_ID_pair(tgt, src));
+    if ( em_it==edges.end() ) return VID_and_PID(src,300612);// the vertex is on the border
     CGAL_assertion(em_it->second.size()==1);
     P_ID p_id = *(em_it->second.begin());
     return VID_and_PID(get_neighbor_vertices(src, p_id, polygons)[2], p_id);
@@ -123,8 +120,8 @@ struct Polygon_soup_orienter
   {
     typedef std::pair<V_ID,P_ID> VID_and_PID;
     if ( is_edge_marked(src,tgt,marked_edges) ) return VID_and_PID(tgt,300612);
-    Edge_map_iterator em_it=edges[tgt].find(src);
-    if ( em_it==edges[tgt].end() ) return VID_and_PID(tgt,300612);// the vertex is on the border
+    Edge_map_iterator em_it=edges.find(V_ID_pair(tgt, src));
+    if ( em_it==edges.end() ) return VID_and_PID(tgt,300612);// the vertex is on the border
     CGAL_assertion(em_it->second.size()==1);
     P_ID p_id = *(em_it->second.begin());
     return VID_and_PID(get_neighbor_vertices(tgt, p_id, polygons)[0], p_id);
@@ -158,19 +155,20 @@ struct Polygon_soup_orienter
   }
 
   Polygon_soup_orienter(Points& points, Polygons& polygons)
-    : points(points), polygons(polygons), edges(points.size())
+    : points(points), polygons(polygons)
   {}
 
 //filling containers
   static void fill_edge_map(Edge_map& edges, Marked_edges& marked_edges, const Polygons& polygons) {
     // Fill edges
+    edges.clear();
     for (P_ID i = 0; i < polygons.size(); ++i)
     {
       const P_ID size = polygons[i].size();
       for (P_ID j = 0; j < size; ++j) {
         V_ID i0 = polygons[i][j];
         V_ID i1 = polygons[i][(j + 1) % size];
-        edges[i0][i1].insert(i);
+        edges[V_ID_pair(i0, i1)].insert(i);
       }
     }
 
@@ -184,10 +182,10 @@ struct Polygon_soup_orienter
         V_ID i1 = polygons[i][(j + 1) % size];
 
         std::size_t nb_edges = 0;
-        Edge_map_iterator em_it = edges[i0].find(i1);
-        if (em_it != edges[i0].end()) nb_edges += em_it->second.size();
-        em_it = edges[i1].find(i0);
-        if (em_it != edges[i1].end()) nb_edges += em_it->second.size();
+        Edge_map_iterator em_it = edges.find(V_ID_pair(i0, i1));
+        if (em_it != edges.end()) nb_edges += em_it->second.size();
+        em_it = edges.find(V_ID_pair(i1, i0));
+        if (em_it != edges.end()) nb_edges += em_it->second.size();
 
         if (nb_edges > 2) set_edge_marked(i0, i1, marked_edges);
       }
@@ -251,17 +249,17 @@ struct Polygon_soup_orienter
           if( is_edge_marked(i1,i2,marked_edges) ) continue;
 
           // edge (i1,i2)
-          Edge_map_iterator it_same_orient = edges[i1].find(i2);
+          Edge_map_iterator it_same_orient = edges.find(V_ID_pair(i1, i2));
           // edges (i2,i1)
-          Edge_map_iterator it_other_orient = edges[i2].find(i1);
+          Edge_map_iterator it_other_orient = edges.find(V_ID_pair(i2, i1));
 
-          CGAL_assertion(it_same_orient != edges[i1].end());
-          CGAL_assertion(it_other_orient == edges[i2].end() ||
+          CGAL_assertion(it_same_orient != edges.end());
+          CGAL_assertion(it_other_orient == edges.end() ||
                          it_other_orient->second.size()==1);
 
           if (it_same_orient->second.size() > 1)
           {
-            CGAL_assertion(it_other_orient == edges[i2].end());
+            CGAL_assertion(it_other_orient == edges.end());
             // one neighbor but with the same orientation
             P_ID index = *(it_same_orient->second.begin());
             if(index == to_be_oriented_index)
@@ -278,25 +276,25 @@ struct Polygon_soup_orienter
             for(P_ID j = 0; j < size; ++j) {
               V_ID i0 = polygons[index][j];
               V_ID i1 = polygons[index][(j+1)%size];
-              Edge_map_iterator em_it = edges[i0].find(i1);
+              Edge_map_iterator em_it = edges.find(V_ID_pair(i0, i1));
               CGAL_assertion_code(const bool r = )
                 em_it->second.erase(index)
               CGAL_assertion_code(!= 0);
               CGAL_assertion(r);
-              if ( em_it->second.empty() ) edges[i0].erase(em_it);
+              if ( em_it->second.empty() ) edges.erase(em_it);
             }
             inverse_orientation(index);
             for(P_ID j = 0; j < size; ++j) {
               V_ID i0 = polygons[index][j];
               V_ID i1 = polygons[index][(j+1)%size];
-              edges[i0][i1].insert(index);
+              edges[V_ID_pair(i0, i1)].insert(index);
             }
             // "inverse the orientation of polygon #index
             oriented[index] = true;
             stack.push(index);
           }
           else{
-            if( it_other_orient != edges[i2].end() ){
+            if( it_other_orient != edges.end() ){
               CGAL_assertion(it_same_orient->second.size() == 1);
               CGAL_assertion(it_other_orient->second.size() == 1);
               // one polygon, same orientation
@@ -379,7 +377,6 @@ struct Polygon_soup_orienter
 
     /// now duplicate the vertices
     typedef std::pair<V_ID, std::vector<P_ID> > V_ID_and_Polygon_ids;
-    edges.resize(edges.size()+vertices_to_duplicate.size());
     BOOST_FOREACH(const V_ID_and_Polygon_ids& vid_and_pids, vertices_to_duplicate)
     {
       V_ID new_index = static_cast<V_ID>(points.size());
@@ -466,13 +463,13 @@ struct Polygon_soup_orienter
  * The algorithm is described in \cgalCite{gueziec2001cutting}.
  *
  * @tparam PointRange a model of the concepts `RandomAccessContainer`
- * and `BackInsertionSequence` whose value type is the point type.
+ * and `BackInsertionSequence` whose value type is the point type
  * @tparam PolygonRange a model of the concept `RandomAccessContainer`
  * whose value_type is a model of the concept `RandomAccessContainer`
  * whose value_type is `std::size_t`.
  *
- * @param points points of the soup of polygons. Some additional points might be pushed back to resolve
- *               non-manifoldness or non-orientability issues.
+ * @param points points of the soup of polygons. Some points might be pushed back to resolve
+ *               non-manifold or non-orientability issues.
  * @param polygons each element in the vector describes a polygon using the index of the points in `points`.
  *                 If needed the order of the indices of a polygon might be reversed.
  * @return `true`  if the orientation operation succeded.

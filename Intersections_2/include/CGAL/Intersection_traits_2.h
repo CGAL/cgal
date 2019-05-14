@@ -97,11 +97,6 @@ struct Intersection_traits<K, A, typename K::Point_2> {
   typedef boost::optional<variant_type> result_type;
 };
 
-template<typename K>
-struct Intersection_traits<K, typename K::Point_2, typename K::Point_2> {
-  typedef typename boost::variant<typename K::Point_2> variant_type;
-  typedef boost::optional<variant_type> result_type;
-};
 
 template<typename K>
 struct Intersection_traits<K, typename K::Iso_rectangle_2, typename K::Triangle_2>

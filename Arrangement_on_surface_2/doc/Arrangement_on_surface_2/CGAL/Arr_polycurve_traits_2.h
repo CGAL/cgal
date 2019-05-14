@@ -1,5 +1,5 @@
 namespace CGAL {
-  /*! \ingroup PkgArrangementOnSurface2TraitsClasses
+  /*! \ingroup PkgArrangement2TraitsClasses
    *
    * Note: The `SubcurveTraits_2` can comprise of Line_segments, Conic_arcs,
    *       Circular_arc, Bezier_curves, or Linear_curves. A portion or a part
@@ -271,9 +271,9 @@ namespace CGAL {
      *
      * The copy and default constructor as well as the assignment operator are
      * provided for polycurve subcurves. In addition, an \link
-     * PkgArrangementOnSurface2op_left_shift `operator<<` \endlink for the subcurves is
+     * PkgArrangement2op_left_shift `operator<<` \endlink for the subcurves is
      * defined for standard output streams, and an \link
-     * PkgArrangementOnSurface2op_right_shift `operator>>` \endlink for the subcurves is
+     * PkgArrangement2op_right_shift `operator>>` \endlink for the subcurves is
      * defined for standard input streams.
      */
     template <typename SubcurveType_2, typename PointType_2>

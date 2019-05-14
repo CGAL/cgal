@@ -322,6 +322,7 @@ inline bool setRationalReduceFlag(bool f) {
 inline void CORE_init(long d) {
   get_static_defAbsPrec() = CORE_posInfty;
   get_static_defOutputDigits() = d;
+  std::setprecision(get_static_defOutputDigits());
 }
 
 /// change to scientific output format

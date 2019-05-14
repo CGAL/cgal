@@ -4,7 +4,7 @@
 
 project( Surface_sweep_2_Tests )
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 2.8.10)
 
 find_package(CGAL QUIET COMPONENTS Core )
 
@@ -19,7 +19,11 @@ set(WALK 3)
 
 if ( CGAL_FOUND )
 
-  include(${CGAL_USE_FILE})
+  include( ${CGAL_USE_FILE} )
+
+  include( CGAL_CreateSingleSourceCGALProgram )
+
+  include_directories (BEFORE "../../include")
 
   function(compile name source_file point_location traits)
 #    message(compile ${source_file})

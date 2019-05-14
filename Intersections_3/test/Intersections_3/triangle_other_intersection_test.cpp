@@ -21,6 +21,7 @@
 
 #include <string>
 
+#include <CGAL/intersections.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

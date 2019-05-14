@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgVoronoiDiagram2Ref
+\ingroup PkgVoronoiDiagramAdaptor2
 
 The class `Identity_policy_2` provides a model for the `AdaptationPolicy_2` 
 concept. The first template parameter of the `Identity_policy_2` class must be a 

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgHalfedgeDS_HDS
+\ingroup PkgHDS_HDS
 
 The class `HalfedgeDS_default` is a model for the `HalfedgeDS` concept. The 
 second template parameter `HalfedgeDSItems` has a default argument 

@@ -343,44 +343,35 @@ void collect_polygon_mesh_info(
 
 } //end of namespace nef_to_pm
 
-template <class Output_kernel, class Nef_polyhedron>
-void convert_nef_polyhedron_to_polygon_soup(const Nef_polyhedron& nef,
-                                                  std::vector<typename Output_kernel::Point_3>& points,
-                                                  std::vector< std::vector<std::size_t> >& polygons,
-                                                  bool triangulate_all_faces = false)
+
+template <class Nef_polyhedron, class Polygon_mesh>
+void convert_nef_polyhedron_to_polygon_mesh(const Nef_polyhedron& nef, Polygon_mesh& pm, bool triangulate_all_faces = false)
 {
   typedef typename Nef_polyhedron::Point_3 Point_3;
+  typedef typename boost::property_traits<typename boost::property_map<Polygon_mesh, vertex_point_t>::type>::value_type PM_Point;
+  typedef typename Kernel_traits<PM_Point>::Kernel PM_Kernel;
   typedef typename Kernel_traits<Point_3>::Kernel Nef_Kernel;
-  typedef Cartesian_converter<Nef_Kernel, Output_kernel> Converter;
-  typedef typename Output_kernel::Point_3 Out_point;
+  typedef Cartesian_converter<Nef_Kernel, PM_Kernel> Converter;
+
   typename Nef_polyhedron::Volume_const_iterator vol_it = nef.volumes_begin(),
                                                  vol_end = nef.volumes_end();
   if ( Nef_polyhedron::Infi_box::extended_kernel() ) ++vol_it; // skip Infi_box
   CGAL_assertion ( vol_it != vol_end );
   ++vol_it; // skip unbounded volume
 
-  Converter to_output;
-  for (;vol_it!=vol_end;++vol_it)
-    nef_to_pm::collect_polygon_mesh_info<Out_point>(points,
-                                                    polygons,
-                                                    nef,
-                                                    vol_it->shells_begin(),
-                                                    to_output,
-                                                    triangulate_all_faces);
-}
-
-template <class Nef_polyhedron, class Polygon_mesh>
-void convert_nef_polyhedron_to_polygon_mesh(const Nef_polyhedron& nef, Polygon_mesh& pm, bool triangulate_all_faces = false)
-{
-  typedef typename boost::property_traits<typename boost::property_map<Polygon_mesh, vertex_point_t>::type>::value_type PM_Point;
-  typedef typename Kernel_traits<PM_Point>::Kernel PM_Kernel;
-
   std::vector<PM_Point> points;
   std::vector< std::vector<std::size_t> > polygons;
-  convert_nef_polyhedron_to_polygon_soup<PM_Kernel>(nef, points, polygons, triangulate_all_faces);
+  Converter to_inexact;
+  for (;vol_it!=vol_end;++vol_it)
+    nef_to_pm::collect_polygon_mesh_info<PM_Point>(points,
+                                                  polygons,
+                                                  nef,
+                                                  vol_it->shells_begin(),
+                                                  to_inexact,
+                                                  triangulate_all_faces);
+
   Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, pm);
 }
-
 
 } //end of namespace CGAL
 

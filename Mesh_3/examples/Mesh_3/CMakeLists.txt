@@ -4,9 +4,10 @@
 
 project( Mesh_3_Examples )
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 2.8.11)
 
 
+include_directories(../../include)
 add_definitions(-DCGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
                 -DCGAL_MESH_3_NO_DEPRECATED_C3T3_ITERATORS)
 
@@ -14,15 +15,10 @@ if ( MESH_3_VERBOSE )
   add_definitions(-DCGAL_MESH_3_VERBOSE)
 endif()
 
-if(POLICY CMP0074)
-  cmake_policy(SET CMP0074 NEW)
-endif()
-
 find_package(CGAL COMPONENTS ImageIO)
 
 if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
-
   find_package(Boost)
 
   # Activate concurrency ? (turned OFF by default)
@@ -68,6 +64,8 @@ if ( CGAL_FOUND )
 
 
   if ( Boost_FOUND AND Boost_VERSION GREATER 103400 )
+    include( CGAL_CreateSingleSourceCGALProgram )
+
     # Compilable examples
     create_single_source_cgal_program( "mesh_hybrid_mesh_domain.cpp" )
     create_single_source_cgal_program( "mesh_implicit_sphere.cpp" )
@@ -81,9 +79,7 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "mesh_polyhedral_domain_sm.cpp" )
     create_single_source_cgal_program( "mesh_polyhedral_domain_with_surface_inside.cpp" )
     create_single_source_cgal_program( "remesh_polyhedral_surface.cpp" )
-    create_single_source_cgal_program( "remesh_polyhedral_surface_sm.cpp" )
     create_single_source_cgal_program( "mesh_polyhedral_domain_with_features.cpp" )
-    create_single_source_cgal_program( "mesh_polyhedral_domain_with_features_sm.cpp" )
     create_single_source_cgal_program( "mesh_polyhedral_domain_with_lipschitz_sizing.cpp" )
     create_single_source_cgal_program( "mesh_polyhedral_complex.cpp" )
     create_single_source_cgal_program( "mesh_polyhedral_complex_sm.cpp" )

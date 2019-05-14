@@ -22,7 +22,7 @@ documentation of any model of these concepts. For example, in the case of a vect
 and its value type is `Point`</I>. 
 
 Boost also offers the 
-<A HREF="https://www.boost.org/libs/range/">Boost.Range library</A> 
+<A HREF="http://www.boost.org/libs/range/">Boost.Range library</A> 
 which provides good support for ranges. 
 
 Finally, let us note that ranges, in general (especially in template context) 

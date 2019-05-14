@@ -1,6 +1,6 @@
 #define CGAL_POLYGON_DEBUG 1
 
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/Exact_rational.h>
 
 #include <CGAL/Point_2.h>
@@ -18,7 +18,7 @@ bool TestSimplicity(const char* FileName)
 // tests the simplicity of the polygon in the file FileName
 {
   typedef CGAL::Exact_rational NT;
-  typedef CGAL::Simple_cartesian<NT> K;
+  typedef CGAL::Cartesian<NT> K;
   typedef CGAL::Point_2<K> Point;
 
   cout << "-----------------------------------------------" << endl;
@@ -54,7 +54,7 @@ bool TestSimplicity(const char* FileName)
 
 void TestDegenerateCases()
 {
-  typedef CGAL::Simple_cartesian<double> K;
+  typedef CGAL::Cartesian<double> K;
   typedef CGAL::Point_2<K> Point;
   std::vector<Point> polygon;
 

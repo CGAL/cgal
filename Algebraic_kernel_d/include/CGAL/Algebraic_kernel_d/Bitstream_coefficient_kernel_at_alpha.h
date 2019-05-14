@@ -108,11 +108,9 @@ public:
 
     Bitstream_coefficient_kernel_at_alpha() : Base(Rep()) {}
 
-#ifdef DOXYGEN_RUNNING  
     Bitstream_coefficient_kernel_at_alpha(const Self& traits)
       : Base(static_cast<const Base&>(traits)) {}
-#endif
-  
+
     Bitstream_coefficient_kernel_at_alpha(Algebraic_kernel_d_1* kernel,
                                           Algebraic_real_1 alpha) 
       : Base(kernel,alpha) {}

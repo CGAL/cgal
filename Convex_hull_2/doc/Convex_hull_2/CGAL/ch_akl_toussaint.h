@@ -26,7 +26,6 @@ functions that return instances of these types:
 <LI>`Traits::Less_xy_2`, 
 <LI>`Traits::Less_yx_2`, 
 <LI>`Traits::Left_turn_2`, 
-<LI>`Traits::Orientation_2`, 
 <LI>`Traits::Equal_2`. 
 </UL> 
 </OL> 

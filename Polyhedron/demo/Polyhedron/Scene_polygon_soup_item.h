@@ -2,6 +2,7 @@
 #define SCENE_POLYGON_SOUP_ITEM_H
 #include "Scene_polygon_soup_item_config.h"
 #include  <CGAL/Three/Scene_item.h>
+#include "Polyhedron_type.h"
 #include "SMesh_type.h"
 
 #include <boost/foreach.hpp>
@@ -12,7 +13,7 @@
 struct Scene_polygon_soup_item_priv;
 struct Polygon_soup
 {
-    typedef EPICK::Point_3 Point_3;
+    typedef Kernel::Point_3 Point_3;
     typedef std::vector<Point_3> Points;
     //vector containing 3 indices of points in Points
     typedef std::vector<std::size_t> Polygon_3;
@@ -96,6 +97,7 @@ struct Polygon_soup
 };
 
 
+class Scene_polyhedron_item;
 class Scene_surface_mesh_item;
 
 class SCENE_POLYGON_SOUP_ITEM_EXPORT Scene_polygon_soup_item 
@@ -103,7 +105,7 @@ class SCENE_POLYGON_SOUP_ITEM_EXPORT Scene_polygon_soup_item
 {
     Q_OBJECT
 public:  
-    typedef EPICK::Point_3 Point_3;
+    typedef Kernel::Point_3 Point_3;
     typedef Polygon_soup::Points Points;
     typedef Polygon_soup::Polygons Polygons;
     typedef Polygon_soup::Edges Edges;
@@ -123,6 +125,7 @@ public:
               const std::vector<CGAL::Color>& vcolors);
 
     bool load(std::istream& in);
+    void load(Scene_polyhedron_item*);
     void load(Scene_surface_mesh_item*);
     bool isDataColored();
 
@@ -155,6 +158,7 @@ public:
 public Q_SLOTS:
     void shuffle_orientations();
     bool orient();
+    bool exportAsPolyhedron(Polyhedron*);
     bool exportAsSurfaceMesh(SMesh*);
     void inside_out();
 

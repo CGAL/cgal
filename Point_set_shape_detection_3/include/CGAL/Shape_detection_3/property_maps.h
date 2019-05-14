@@ -32,7 +32,7 @@ namespace CGAL {
 namespace Shape_detection_3 {
 
 /*!
-   \ingroup PkgPointSetShapeDetection3Ref
+   \ingroup PkgPointSetShapeDetection3
 
    Property map that associate a point index to its assigned shape
    found by a shape detection algorithm (such as
@@ -87,7 +87,7 @@ namespace Shape_detection_3 {
   };
 
 /*!
-   \ingroup PkgPointSetShapeDetection3Ref
+   \ingroup PkgPointSetShapeDetection3
 
    Property map that associates a detected plane object
    (`CGAL::Shape_detection_3::Plane`) to a `CGAL::Plane_3` object.

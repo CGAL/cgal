@@ -26,14 +26,14 @@
 // ============================================================================
 
 
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/HalfedgeDS_default.h>
 #include <CGAL/Polyhedron_items_3.h>
 #include <CGAL/HalfedgeDS_decorator.h>
 
 #include <cassert>
 
-typedef CGAL::Simple_cartesian<double> Kernel;
+typedef CGAL::Cartesian<double> Kernel;
 struct Dummy_traits_2 {
     typedef Kernel::Point_2 Point_2;
 };

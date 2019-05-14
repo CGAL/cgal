@@ -8,7 +8,7 @@ programs according to the concepts `QuadraticProgram`,
 `LinearProgram`, 
 `NonnegativeQuadraticProgram`, and 
 `NonnegativeLinearProgram`, see also 
-<A HREF="https://en.wikipedia.org/wiki/MPS_(format)"><TT>https://en.wikipedia.org/wiki/MPS_(format)</TT></A>. 
+<A HREF="http://en.wikipedia.org/wiki/MPS_(format)"><TT>http://en.wikipedia.org/wiki/MPS_(format)</TT></A>. 
 
 \cgal supports a large subset of 
 this format, but there are MPS files around that we cannot read (for 

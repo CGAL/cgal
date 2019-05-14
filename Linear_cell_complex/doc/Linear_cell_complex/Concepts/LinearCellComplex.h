@@ -1,7 +1,6 @@
 
 /*!
 \ingroup PkgLinearCellComplexConcepts
-\cgalConcept
 
 The concept `LinearCellComplex` represents a linear cell complex in dimension `d`, in an ambient space of dimension `d2`. This is a model of the concept of `GenericMap` adding a requirement to ensure that each vertex of the map is associated with a model of `CellAttributeWithPoint`.
 

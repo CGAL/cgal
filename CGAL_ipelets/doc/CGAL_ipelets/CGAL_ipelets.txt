@@ -9,7 +9,7 @@ namespace CGAL {
 
 \section CGAL_ipeletsIntroduction Introduction
 
-The Ipe extensible drawing editor (<A HREF="http://ipe.otfried.org">http://ipe.otfried.org</A>) \cgalCite{schwarzkopf1995ede}, \cgalCite{ipe:man-09}
+The Ipe extensible drawing editor (<A HREF="http://tclab.kaist.ac.kr/ipe/">http://tclab.kaist.ac.kr/ipe/</A>) \cgalCite{schwarzkopf1995ede}, \cgalCite{ipe:man-09}
 is a tool used by computational geometry researchers to produce 2D figures for inclusion in articles or presentations.
 The extensible adjective sheds a light on an important feature:
 the possibility for users to write small extensions (called <I>ipelets</I>)

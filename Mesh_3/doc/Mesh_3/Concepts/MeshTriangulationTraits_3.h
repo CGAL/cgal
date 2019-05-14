@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgMesh3Concepts
+\ingroup PkgMesh_3Concepts
 \cgalConcept
 
 The concept `MeshTriangulationTraits_3` describes the requirements for

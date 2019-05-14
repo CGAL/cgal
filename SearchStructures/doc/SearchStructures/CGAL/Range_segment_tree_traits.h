@@ -2,17 +2,15 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSearchStructuresTraitsClasses
+\ingroup PkgRangeSegmentTreesDTraitsClasses
 
-The class `Range_segment_tree_set_traits_2` is a range and segment tree traits class for the 
+The class `Range_segment_tree_traits_set_2` is a range and segment tree traits class for the 
 2-dimensional point class from the \cgal kernel. The class is 
 parameterized with a representation class `R`. 
 
-\cgalModels `RangeSegmentTreeTraits_k`
-
 */
 template< typename R >
-class Range_segment_tree_set_traits_2 {
+class Range_segment_tree_traits_set_2 {
 public:
 
 /// \name Types 
@@ -21,32 +19,30 @@ public:
 /*!
 
 */ 
-  typedef R::Point_2 Key; 
+Point_2<R> Key; 
 
 /*!
 
 */ 
-typedef std::pair<Key, Key> Interval; 
+std::pair<Key, Key> Interval; 
 
 /// @}
 
-}; /* end Range_segment_tree_set_traits_2 */
+}; /* end Range_segment_tree_traits_set_2 */
 } /* end namespace CGAL */
 
 namespace CGAL {
 
 /*!
-\ingroup PkgSearchStructuresTraitsClasses
+\ingroup PkgRangeSegmentTreesDTraitsClasses
 
-The class `Range_segment_tree_set_traits_3` is a range and segment tree traits class for the 3-dimensional 
+The class `Range_segment_tree_traits_set_3` is a range and segment tree traits class for the 3-dimensional 
 point class from the \cgal kernel. 
 The class is parameterized with a representation class `R`. 
 
-\cgalModels `RangeSegmentTreeTraits_k`
-
 */
 template< typename R >
-class Range_segment_tree_set_traits_3 {
+class Range_segment_tree_traits_set_3 {
 public:
 
 /// \name Types 
@@ -55,34 +51,32 @@ public:
 /*!
 
 */ 
-  typedef R::Point_3 Key; 
+Point_3<R> Key; 
 
 /*!
 
 */ 
-typedef std::pair<Key, Key> Interval; 
+std::pair<Key, Key> Interval; 
 
 /// @}
 
-}; /* end Range_segment_tree_set_traits_3 */
+}; /* end Range_segment_tree_traits_set_3 */
 } /* end namespace CGAL */
 
 namespace CGAL {
 
 /*!
-\ingroup PkgSearchStructuresTraitsClasses
+\ingroup PkgRangeSegmentTreesDTraitsClasses
 
-The class `Range_tree_map_traits_2` is a range tree traits class for the 
+The class `Range_tree_traits_map_2` is a range tree traits class for the 
 2-dimensional point class from the \cgal kernel, where data of 
 type `T` is associated to each key. The class is 
 parameterized with a representation class `R` and the type of 
 the associated data `T`. 
 
-\cgalModels `RangeSegmentTreeTraits_k`
-
 */
 template< typename R, typename T >
-class Range_tree_map_traits_2 {
+class Range_tree_traits_map_2 {
 public:
 
 /// \name Types 
@@ -91,34 +85,32 @@ public:
 /*!
 
 */ 
-typedef std::pair<R::Point_2,T> Key; 
+std::pair<R::Point_2,T> Key; 
 
 /*!
 
 */ 
-typedef std::pair<R::Point_2, R::Point_2 > Interval; 
+std::pair<R::Point_2, R::Point_2 > Interval; 
 
 /// @}
 
-}; /* end Range_tree_map_traits_2 */
+}; /* end Range_tree_traits_map_2 */
 } /* end namespace CGAL */
 
 namespace CGAL {
 
 /*!
-\ingroup PkgSearchStructuresTraitsClasses
+\ingroup PkgRangeSegmentTreesDTraitsClasses
 
-The class `Range_tree_map_traits_3` is a range and segment tree traits class for the 3-dimensional 
+The class `Range_tree_traits_map_3` is a range and segment tree traits class for the 3-dimensional 
 point class from the \cgal kernel, where data of 
 type `T` is associated to each key. 
 The class is parameterized with a representation class `R` and the type of 
 the associated data `T`. 
 
-\cgalModels `RangeSegmentTreeTraits_k`
-
 */
 template< typename R, typename T >
-class Range_tree_map_traits_3 {
+class Range_tree_traits_map_3 {
 public:
 
 /// \name Types 
@@ -127,34 +119,32 @@ public:
 /*!
 
 */ 
-typedef std::pair<R::Point_3,T> Key; 
+std::pair<R::Point_3,T> Key; 
 
 /*!
 
 */ 
-typedef std::pair<R::Point_3, R::Point_3> Interval; 
+std::pair<R::Point_3, R::Point_3> Interval; 
 
 /// @}
 
-}; /* end Range_tree_map_traits_3 */
+}; /* end Range_tree_traits_map_3 */
 } /* end namespace CGAL */
 
 namespace CGAL {
 
 /*!
-\ingroup PkgSearchStructuresTraitsClasses
+\ingroup PkgRangeSegmentTreesDTraitsClasses
 
-The class `Segment_tree_map_traits_2` is a segment tree traits class for the 
+The class `Segment_tree_traits_map_2` is a segment tree traits class for the 
 2-dimensional point class from the \cgal kernel, where data of 
 type `T` is associated to each interval. The class is 
 parameterized with a representation class `R` and the type of 
 the associated data `T`. 
 
-\cgalModels `RangeSegmentTreeTraits_k`
-
 */
 template< typename R, typename T >
-class Segment_tree_map_traits_2 {
+class Segment_tree_traits_map_2 {
 public:
 
 /// \name Types 
@@ -163,34 +153,32 @@ public:
 /*!
 
 */ 
-typedef R::Point_2 Key; 
+R::Point_2 Key; 
 
 /*!
 
 */ 
-typedef std::pair<std::pair<Key,Key>,T> Interval; 
+std::pair<std::pair<Key,Key>,T> Interval; 
 
 /// @}
 
-}; /* end Segment_tree_map_traits_2 */
+}; /* end Segment_tree_traits_map_2 */
 } /* end namespace CGAL */
 
 namespace CGAL {
 
 /*!
-\ingroup PkgSearchStructuresTraitsClasses
+\ingroup PkgRangeSegmentTreesDTraitsClasses
 
-The class `Segment_tree_map_traits_3` is a segment tree traits class for the 3-dimensional 
+The class `Segment_tree_traits_map_3` is a segment tree traits class for the 3-dimensional 
 point class from the \cgal kernel, where data of 
 type `T` is associated to each interval. 
 The class is parameterized with a representation class `R` and the type of 
 the associated data `T`. 
 
-\cgalModels `RangeSegmentTreeTraits_k`
-
 */
 template< typename R, typename T >
-class Segment_tree_map_traits_3 {
+class Segment_tree_traits_map_3 {
 public:
 
 /// \name Types 
@@ -199,14 +187,14 @@ public:
 /*!
 
 */ 
-typedef std::pair<R::Point_3 > Key; 
+std::pair<R::Point_3 > Key; 
 
 /*!
 
 */ 
-typedef std::pair<std::pair<Key, Key>,T> Interval; 
+std::pair<std::pair<Key, Key>,T> Interval; 
 
 /// @}
 
-}; /* end Segment_tree_map_traits_3 */
+}; /* end Segment_tree_traits_map_3 */
 } /* end namespace CGAL */

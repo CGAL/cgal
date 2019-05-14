@@ -3,7 +3,7 @@ namespace CGAL {
 namespace Surface_mesh_simplification {
 
 /*!
-\ingroup PkgSurfaceMeshSimplificationRef
+\ingroup PkgSurfaceMeshSimplification
 
 The class `Constrained_placement` is a model for the `GetPlacement` concept
 provided the template parameter `BasePlacement` is such a model.

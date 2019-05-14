@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicKernelDConceptsBi
+\ingroup PkgAlgebraicKerneldConceptsBi
 \cgalConcept
 
 A model of `AlgebraicKernel_d_2::ApproximateAbsoluteY_2` is an `AdaptableBinaryFunction` that computes an 

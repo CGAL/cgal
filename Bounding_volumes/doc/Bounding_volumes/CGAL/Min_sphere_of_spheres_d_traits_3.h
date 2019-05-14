@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBoundingVolumesRef
+\ingroup PkgBoundingVolumes
 
 The class 
 `Min_sphere_of_spheres_d_traits_3<K,FT,UseSqrt,Algorithm>` is a 

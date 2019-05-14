@@ -20,11 +20,15 @@
 //
 // Warning: this file is generated, see include/CGAL/licence/README.md
 
+
 #ifndef CGAL_LICENSE_SKIN_SURFACE_3_H
 #define CGAL_LICENSE_SKIN_SURFACE_3_H
 
 #include <CGAL/config.h>
 #include <CGAL/license.h>
+
+
+
 
 #ifdef CGAL_SKIN_SURFACE_3_COMMERCIAL_LICENSE
 
@@ -38,8 +42,8 @@
 
 #    ifdef CGAL_LICENSE_ERROR
 #      error "Your commercial license for CGAL does not cover this release \
-              of the 3D Skin Surface Meshing package. \
-              You get this error, as you defined CGAL_LICENSE_ERROR."
+of the 3D Skin Surface Meshing package. \
+You get this error, as you defined CGAL_LICENSE_ERROR."
 #    endif // CGAL_LICENSE_ERROR
 
 #  endif // CGAL_SKIN_SURFACE_3_COMMERCIAL_LICENSE < CGAL_RELEASE_DATE
@@ -54,10 +58,10 @@
 
 #  ifdef CGAL_LICENSE_ERROR
 #    error "The macro CGAL_SKIN_SURFACE_3_COMMERCIAL_LICENSE is not defined.\
-            You use the CGAL 3D Skin Surface Meshing package under the terms of \
-            the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
+ You use the CGAL 3D Skin Surface Meshing package under the terms of \
+the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
 #  endif // CGAL_LICENSE_ERROR
 
 #endif // no CGAL_SKIN_SURFACE_3_COMMERCIAL_LICENSE
 
-#endif // CGAL_LICENSE_SKIN_SURFACE_3_H
+#endif // CGAL_LICENSE_CHECK_SKIN_SURFACE_3_H

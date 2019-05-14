@@ -1,5 +1,5 @@
 // file: K_neighbor_search_with_circle.cpp
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Cartesian.h>
 #include <cassert>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Search_traits_2.h>
@@ -11,7 +11,7 @@
 #include <vector>
 #include <algorithm>
 
-typedef CGAL::Simple_cartesian<double> Kernel;
+typedef CGAL::Cartesian<double> Kernel;
 typedef Kernel::Point_2 Point;
 typedef Kernel::Circle_2 Circle;
 typedef Kernel::FT NT;

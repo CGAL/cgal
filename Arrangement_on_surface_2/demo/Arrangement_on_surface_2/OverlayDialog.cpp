@@ -34,7 +34,7 @@ OverlayDialog::OverlayDialog( ArrangementDemoWindow* parent,
   ui( new Ui::OverlayDialog )
 {
   // An extra parenthesis around QColor to avoid the
-  // https://en.wikipedia.org/wiki/Most_vexing_parse
+  // http://en.wikipedia.org/wiki/Most_vexing_parse
   // on clang
   QBrush segColor( ( QColor( ::Qt::red ) ) );
   QBrush polyColor( ( QColor( ::Qt::darkGreen ) ) );

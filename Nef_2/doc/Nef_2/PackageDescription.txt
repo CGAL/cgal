@@ -1,15 +1,15 @@
-/// \defgroup PkgNef2Ref 2D Boolean Operations on Nef Polygons Reference
+/// \defgroup PkgNef2 2D Boolean Operations on Nef Polygons Reference
 /// \defgroup PkgNef2Concepts Concepts
-/// \ingroup PkgNef2Ref
+/// \ingroup PkgNef2
 /*!
-\addtogroup PkgNef2Ref
+\addtogroup PkgNef2
 
-\cgalPkgDescriptionBegin{2D Boolean Operations on Nef Polygons,PkgNef2}
+\cgalPkgDescriptionBegin{2D Boolean Operations on Nef Polygons,PkgNef2Summary}
 \cgalPkgPicture{complex-teaser.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Michael Seel}
 \cgalPkgDesc{A Nef polygon is any set that can be obtained from a finite set of open halfspaces by set complement and set intersection operations. Due to the fact that all other binary set operations like union, difference and symmetric difference can be reduced to intersection and complement calculations, Nef polygons are also closed under those operations. Apart from the set complement operation there are more topological unary set operations that are closed in the domain of Nef polygons interior, boundary, and closure.}
-\cgalPkgManuals{Chapter_2D_Boolean_Operations_on_Nef_Polygons,PkgNef2Ref}
+\cgalPkgManuals{Chapter_2D_Boolean_Operations_on_Nef_Polygons,PkgNef2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{2.3}
@@ -20,10 +20,10 @@
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 - `ExtendedKernelTraits_2`
 
-\cgalCRPSection{Classes}
+## Classes ##
 - `CGAL::Extended_cartesian<FT>`
 - `CGAL::Extended_homogeneous<RT>`
 - `CGAL::Filtered_extended_homogeneous<RT>`

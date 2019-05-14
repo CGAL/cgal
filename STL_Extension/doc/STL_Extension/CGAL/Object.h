@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSTLExtensionRef
+\ingroup PkgStlExtension
 
 Some functions can return different types of objects. A typical 
 \cpp solution to this problem is to derive all possible return 

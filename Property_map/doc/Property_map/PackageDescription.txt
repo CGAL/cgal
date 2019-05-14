@@ -1,14 +1,14 @@
-/// \defgroup PkgPropertyMapRef CGAL and Boost Property Maps Reference
+/// \defgroup PkgProperty_map CGAL and Boost Property Maps Reference
 
 /*!
-\addtogroup PkgPropertyMapRef
+\addtogroup PkgProperty_map
 
-\cgalPkgDescriptionBegin{CGAL and Boost Property Maps,PkgPropertyMap}
+\cgalPkgDescriptionBegin{CGAL and Boost Property Maps,PkgProperty_mapSummary}
 \cgalPkgPicture{property_map.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Andreas Fabri and Laurent Saboret}
 \cgalPkgDesc{This package provides a framework for interfacing \cgal data structures with algorithms expecting Boost Property Maps.}
-\cgalPkgManuals{Chapter_CGAL_and_Boost_Property_Maps,PkgPropertyMapRef}
+\cgalPkgManuals{Chapter_CGAL_and_Boost_Property_Maps,PkgProperty_map}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.5}

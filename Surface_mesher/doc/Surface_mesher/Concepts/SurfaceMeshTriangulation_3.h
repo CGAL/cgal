@@ -239,6 +239,15 @@ OutputIterator
 incident_cells(Vertex_handle v, OutputIterator cells) const; 
 
 /*!
+Copies the `Cell_handle`s of all cells incident to `v` to the output 
+iterator `cells`. If `t.dimension() < 3`, then do nothing. 
+Returns the resulting output iterator. 
+*/ 
+template <class OutputIterator> 
+OutputIterator 
+incident_cells(Vertex_handle v, OutputIterator cells) const; 
+
+/*!
 Tests whether `p` is a vertex of `t` by locating `p` in 
 the triangulation. If `p` is found, the associated vertex `v` 
 is given. 

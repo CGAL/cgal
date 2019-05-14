@@ -6,7 +6,7 @@
 
 #include "Point_with_info.h"
 
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Cartesian.h>
 
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Search_traits_2.h>
@@ -27,7 +27,7 @@
 #include <list>
 #include <vector>
 
-typedef CGAL::Simple_cartesian<double>                                 K;
+typedef CGAL::Cartesian<double>                                        K;
 typedef K::FT                                                          FT;
 typedef K::Point_2                                                     Point;
 typedef K::Vector_2                                                    Vector;

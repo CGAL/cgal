@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPolyhedronRef
+\ingroup PkgPolyhedron
 
 The class `Polyhedron_traits_with_normals_3` is a model of the `PolyhedronTraits_3` 
 concept. It defines the geometric types and primitive operations used 

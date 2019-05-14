@@ -169,9 +169,6 @@ private:
     for (Face_iterator fit = arr.faces_begin(); fit != arr.faces_end(); ++fit) {
       // Check whether the face is on the M-sum's border.
 
-      // The unbounded face cannot contribute to the Minkowski sum
-      if (fit->is_unbounded()) continue;
-
       // If the face contains holes, it can't be on the Minkowski sum's border
       if (0 < fit->number_of_holes()) continue;
 
@@ -180,8 +177,10 @@ private:
 
       // When the reversed polygon 1, translated by a point inside of this face,
       // collides with polygon 2, this cannot be a hole
-      Point_2 inner_point = get_point_in_face(fit);
-      if (collision_detector.check_collision(inner_point)) continue;
+      if (! is_outer_boundary_empty) {
+        Point_2 inner_point = get_point_in_face(fit);
+        if (collision_detector.check_collision(inner_point)) continue;
+      }
 
       add_face(fit, holes);
     }

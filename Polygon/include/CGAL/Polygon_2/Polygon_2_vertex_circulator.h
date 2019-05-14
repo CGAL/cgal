@@ -64,7 +64,12 @@ public:
     Polygon_circulator( const Mutable& c)
         : ctnr( c.container()), i( c.current_iterator()) {}
 
-
+// Gnu-bug workaround: define operator= explicitly.
+    Self& operator=( const Self& c) {
+        ctnr = c.ctnr;
+        i    = c.i;
+        return *this;
+    }
 
 // OPERATIONS
 

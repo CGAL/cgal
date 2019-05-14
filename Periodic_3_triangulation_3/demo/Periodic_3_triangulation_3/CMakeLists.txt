@@ -10,12 +10,9 @@ if(NOT POLICY CMP0070 AND POLICY CMP0053)
   cmake_policy(SET CMP0053 OLD)
 endif()
 
-if(POLICY CMP0071)
-  cmake_policy(SET CMP0071 NEW)
-endif()
-
 # Find CGAL
 find_package(CGAL COMPONENTS Qt5)
+include( ${CGAL_USE_FILE} )
 
 # Find Qt5 itself
 find_package(Qt5 QUIET COMPONENTS Xml OpenGL Help Core)
@@ -23,7 +20,6 @@ find_package(Qt5 QUIET COMPONENTS Xml OpenGL Help Core)
 
 if(Qt5_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
 endif(Qt5_FOUND)
 
 if( Qt5Help_VERSION VERSION_LESS 5.12 )
@@ -56,6 +52,7 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND TARGET ${CGAL_QCOLLECTIONGEN
   # Make sure the compiler can find generated .moc files
   include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
   include_directories( ${QT_INCLUDE_DIR} )
+  include_directories( ../../include .)
 
   # The executable itself
   add_executable  ( periodic_3_triangulation_3_demo

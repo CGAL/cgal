@@ -405,7 +405,6 @@ The simplification algorithm uses the following types and functions.
 /// @{
 
 /*!
-\cgalAdvancedType
 \cgalAdvancedBegin
 An iterator on the points of the original constraint
 before simplification steps are applied. The value type of this iterator is `Point`.

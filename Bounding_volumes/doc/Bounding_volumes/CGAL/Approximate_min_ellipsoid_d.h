@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBoundingVolumesRef
+\ingroup PkgBoundingVolumes
 
 An object of class `Approximate_min_ellipsoid_d` is an approximation to the 
 ellipsoid of smallest volume enclosing a finite multiset of points 

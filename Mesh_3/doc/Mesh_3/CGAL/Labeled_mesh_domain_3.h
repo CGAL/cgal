@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh3Domains
+\ingroup PkgMesh_3Domains
 
 \brief The class `Labeled_mesh_domain_3` implements indexed domains.
 

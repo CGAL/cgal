@@ -1,27 +1,27 @@
-/// \defgroup PkgInterpolation2Ref 2D and Surface Function Interpolation Reference
+/// \defgroup PkgInterpolation2 2D and Surface Function Interpolation Reference
 
 /// \defgroup PkgInterpolation2Concepts Concepts
-/// \ingroup PkgInterpolation2Ref
+/// \ingroup PkgInterpolation2
 
 /// \defgroup PkgInterpolation2Interpolation Interpolation Functions
-/// \ingroup PkgInterpolation2Ref
+/// \ingroup PkgInterpolation2
 
 /// \defgroup PkgInterpolation2NatNeighbor Natural Neighbor Coordinate Computation
-/// \ingroup PkgInterpolation2Ref
+/// \ingroup PkgInterpolation2
 
 /// \defgroup PkgInterpolation2SurfaceNeighbor Surface Neighbor and Surface Neighbor Coordinate Computation
-/// \ingroup PkgInterpolation2Ref
+/// \ingroup PkgInterpolation2
 
 /*!
-\addtogroup PkgInterpolation2Ref
-\cgalPkgDescriptionBegin{2D and Surface Function Interpolation,PkgInterpolation2}
+\addtogroup PkgInterpolation2
+\cgalPkgDescriptionBegin{2D and Surface Function Interpolation,PkgInterpolation2Summary}
 \cgalPkgPicture{interpolation.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Julia Flötotto}
 \cgalPkgDesc{This package implements different methods for scattered data interpolation:
 Given measures of a function on a set of discrete data points, the task is to interpolate
 this function on an arbitrary query point. The package further offers functions for natural neighbor interpolation.}
-\cgalPkgManuals{Chapter_2D_and_Surface_Function_Interpolation,PkgInterpolation2Ref}
+\cgalPkgManuals{Chapter_2D_and_Surface_Function_Interpolation,PkgInterpolation2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.1}
@@ -43,7 +43,7 @@ these interpolation functions depend on the properties of the
 barycentric coordinates. They are provided in this package under the
 names `linear_interpolation()` and `quadratic_interpolation()`.
 
-\cgalCRPSection{Natural Neighbor Interpolation}
+## Natural Neighbor Interpolation ##
 
 Natural neighbor coordinates are defined by Sibson in 1980 and are based on the Voronoi
 diagram of the data points. Interpolation methods based on natural
@@ -74,11 +74,11 @@ User Manual \endlink.
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
+## Concepts ##
 - `InterpolationTraits`
 - `GradientFittingTraits`
 
-\cgalCRPSection{Interpolation Functions}
+## Interpolation Functions ##
 - `CGAL::linear_interpolation()`
 - `CGAL::sibson_c1_interpolation()`
 - `CGAL::farin_c1_interpolation()`
@@ -88,11 +88,11 @@ User Manual \endlink.
 - `CGAL::Interpolation_traits_2<K>`
 - `CGAL::Interpolation_gradient_fitting_traits_2<K>`
 
-\cgalCRPSection{Natural Neighbor Coordinate Computation}
+## Natural neighbor coordinate computation ##
 - `CGAL::natural_neighbor_coordinates_2()`
 - `CGAL::regular_neighbor_coordinates_2()`
 
-\cgalCRPSection{Surface Neighbor and Surface Neighbor Coordinate Computation}
+## Surface neighbor and surface neighbor coordinate computation ##
 - `CGAL::Voronoi_intersection_2_traits_3<K>`
 - `CGAL::surface_neighbor_coordinates_3()`
 - `CGAL::surface_neighbors_3()`

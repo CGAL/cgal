@@ -78,7 +78,9 @@ public:
   Kd_tree_element(const Base& p, unsigned int id=0)
     : Base(p), index(id)
   {}
-
+  Kd_tree_element(const Kd_tree_element& other)
+    : Base(other), index(other.index)
+  {}
 };
 
 // Helper class for the Kd-tree
@@ -405,7 +407,7 @@ public:
 // ----------------------------------------------------------------------------
 
 /**
-   \ingroup PkgPointSetProcessing3Algorithms
+   \ingroup PkgPointSetProcessingAlgorithms
    This is an implementation of the Weighted Locally Optimal Projection (WLOP) simplification algorithm.
    The WLOP simplification algorithm can produce a set of 
    denoised, outlier-free and evenly distributed particles over the original 
@@ -415,9 +417,9 @@ public:
    For more details, please refer to \cgalCite{wlop-2009}.
 
    A parallel version of WLOP is provided and requires the executable to be 
-   linked against the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
+   linked against the <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
    To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-   See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+   See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
    for more details.
 
    \tparam ConcurrencyTag enables sequential versus parallel algorithm.

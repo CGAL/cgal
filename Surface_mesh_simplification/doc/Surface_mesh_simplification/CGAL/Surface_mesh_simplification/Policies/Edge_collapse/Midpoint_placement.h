@@ -3,7 +3,7 @@ namespace CGAL {
 namespace Surface_mesh_simplification {
 
 /*!
-\ingroup PkgSurfaceMeshSimplificationRef
+\ingroup PkgSurfaceMeshSimplification
 
 The class `Midpoint_placement` is a model for the `GetPlacement` concept
 which  computes the placement as the midpoint position along the edge. 

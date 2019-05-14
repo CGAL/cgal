@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPeriodic3Mesh3Functions
+\ingroup PkgPeriodic_3_mesh_3Functions
 
 The function `lloyd_optimize_periodic_3_mesh_3()` is a periodic mesh optimization
 process based on the minimization of a global energy function.
@@ -23,7 +23,7 @@ lloyd_optimize_periodic_3_mesh_3(C3T3& c3t3,
 
 
 /*!
-\ingroup PkgPeriodic3Mesh3Functions
+\ingroup PkgPeriodic_3_mesh_3Functions
 
 The function `odt_optimize_periodic_3_mesh_3()` is a periodic mesh optimization
 process based on the minimization of a global energy function.
@@ -42,7 +42,7 @@ odt_optimize_periodic_3_mesh_3(C3T3& c3t3,
                                bool parameters::do_freeze=true);
 
 /*!
-\ingroup PkgPeriodic3Mesh3Functions
+\ingroup PkgPeriodic_3_mesh_3Functions
 
 The function `perturb_periodic_3_mesh_3()` is a mesh optimizer that
 improves the quality of a Delaunay mesh by changing the positions of some vertices of the mesh.
@@ -58,7 +58,7 @@ perturb_periodic_3_mesh_3(C3T3& c3t3,
                           double parameters::sliver_bound=0);
 
 /*!
-\ingroup PkgPeriodic3Mesh3Functions
+\ingroup PkgPeriodic_3_mesh_3Functions
 
 The function `exude_periodic_3_mesh_3()` performs a sliver exudation process
 on a periodic Delaunay mesh.

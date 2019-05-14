@@ -935,10 +935,6 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
   CGAL_SS_PRINT_CURVE(overlap_sc);
   CGAL_SS_PRINT_EOL();
 
-  // add the overlapping curve of the right of the left end
-  _add_curve_to_right(left_event, overlap_sc);
-  right_event->add_curve_to_left(overlap_sc);
-
   // Remove curves from the left curves of the right end
   // and add them on the right otherwise
   if (c1->is_end_point(right_event))
@@ -950,6 +946,10 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
     right_event->remove_curve_from_left(c2);
   else
     _add_curve_to_right(right_event, c2);
+
+  // add the overlapping curve of the right of the left end
+  _add_curve_to_right(left_event, overlap_sc);
+  right_event->add_curve_to_left(overlap_sc);
 
   this->m_visitor->found_overlap(c1, c2, overlap_sc);
 

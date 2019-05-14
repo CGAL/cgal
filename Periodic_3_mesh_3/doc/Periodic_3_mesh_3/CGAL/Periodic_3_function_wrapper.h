@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPeriodic3Mesh3Domains
+\ingroup PkgPeriodic_3_mesh_3Domains
 
 The class `Periodic_3_function_wrapper` is a helper class designed to wrap
 an (a priori non-periodic) implicit function describing a domain through the relationship

@@ -79,21 +79,6 @@ result_txt_footer=r"""</td>
 */
 """
 
-pre_html=r"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<link rel="icon" type="image/png" href="../Manual/g-196x196-doc.png"/>
-<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=9"/>
-<link href="stylesheet.css" rel="stylesheet" type="text/css" />
-<title>CGAL ${CGAL_CREATED_VERSION_NUM} - Manual: Acknowledging CGAL</title>
-</head>
-<body>
-"""
-post_html=r"""</body>
-</html>
-"""
-
 result_html=r"""<h1>how_to_cite_cgal.bib</h1><a name="cgal:eb-${CGAL_RELEASE_YEAR_ID}"></a><pre>
 @book{<a href="how_to_cite_cgal.html#cgal:eb-${CGAL_RELEASE_YEAR_ID}">cgal:eb-${CGAL_RELEASE_YEAR_ID}</a>,
   title = {{CGAL} User and Reference Manual},
@@ -227,4 +212,4 @@ result_txt+=result_txt_footer
 f = codecs.open(BUILD_DIR+"/how_to_cite_cgal.txt.in", 'w', encoding='utf-8')
 f.write(result_txt)
 f = codecs.open(BUILD_DIR+"/how_to_cite.html.in", 'w', encoding='utf-8')
-f.write(pre_html + result_html + post_html)
+f.write(result_html)

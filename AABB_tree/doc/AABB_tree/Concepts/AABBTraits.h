@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAABBTreeConcepts
+\ingroup PkgAABB_treeConcepts
 \cgalConcept
 
 The concept `AABBTraits` provides the geometric primitive types and methods for the class `CGAL::AABB_tree<AABBTraits>`.
@@ -75,17 +75,25 @@ using Intersection_and_primitive_id = unspecified_type;
 
 /// \name Splitting
 /// During the construction of the AABB tree, the primitives are
-/// splitted according to some comparison functions related to the longest axis:
+/// sorted according to some comparison functions related to the \f$x\f$,
+/// \f$ y\f$ or \f$ z\f$ coordinate axis:
 /// @{
 
 /*!
-A functor object to split a range of primitives into two sub-ranges along the longest axis. Provides the operator:
- `void operator()(InputIterator first, InputIterator beyond);` %Iterator type `InputIterator` must be a model of RandomAccessIterator
- and have `Primitive` as value type. The operator is used for determining the primitives assigned to the two children nodes of a given node,
- assuming that the goal is to split the chosen axis dimension of the bounding box of the node. The primitives assigned to this node are passed as argument
- to the operator. It should modify the iterator range in such a way that its first half and its second half correspond to the two children nodes.
+A functor object to split a range of primitives into two sub-ranges along the X-axis. Provides the operator: 
+`void operator()(InputIterator first, InputIterator beyond);` %Iterator type `InputIterator` must be a model of RandomAccessIterator and have `Primitive` as value type. The operator is used for determining the primitives assigned to the two children nodes of a given node, assuming that the goal is to split the X-dimension of the bounding box of the node. The primitives assigned to this node are passed as argument to the operator. It should modify the iterator range in such a way that its first half and its second half correspond to the two children nodes. 
 */ 
-typedef unspecified_type Split_primitives; 
+typedef unspecified_type Split_primitives_along_x_axis; 
+
+/*!
+A functor object to split a range of primitives into two sub-ranges along the Y-axis. See `Split_primitives_along_x_axis` for the detailed description. 
+*/ 
+typedef unspecified_type Split_primitives_along_y_axis; 
+
+/*!
+A functor object to split a range of primitives into two sub-ranges along the Z-axis. See `Split_primitives_along_x_axis` for the detailed description. 
+*/ 
+typedef unspecified_type Split_primitives_along_z_axis; 
 
 /*!
 A functor object to compute the bounding box of a set of primitives. Provides the operator: 
@@ -124,7 +132,7 @@ A functor object to compute the intersection of a query and a primitive. Provide
 \cgalHeading{Note on Backward Compatibility}
 Before the release 4.3 of \cgal, the return type of this function used to be `boost::optional<Object_and_primitive_id>`.
 */ 
-typedef unspecified_type Intersection; 
+typedef unspecified_type Intersect; 
 
 /// \name Distance Queries
 /// The following predicates are required for each
@@ -162,9 +170,19 @@ typedef unspecified_type Equal_3;
 /// @{
 
 /*!
-Returns the primitive splitting functor. 
+Returns the primitive splitting functor for the X axis. 
 */ 
-Split_primitives split_primitives_object(); 
+Split_primitives_along_x_axis split_primitives_along_x_axis_object(); 
+
+/*!
+Returns the primitive splitting functor for the Y axis. 
+*/ 
+Split_primitives_along_y_axis split_primitives_along_y_axis_object(); 
+
+/*!
+Returns the primitive splitting functor for the Z axis. 
+*/ 
+Split_primitives_along_z_axis split_primitives_along_z_axis_object(); 
 
 /*!
 Returns the bounding box constructor. 
@@ -179,7 +197,7 @@ Do_intersect do_intersect_object();
 /*!
 Returns the intersection constructor. 
 */ 
-Intersection intersection_object(); 
+Intersect intersect_object(); 
 
 /*!
 Returns the distance comparison functor. 

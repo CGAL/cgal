@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBoundingVolumesRef
+\ingroup PkgBoundingVolumes
 
 The class `Min_quadrilateral_default_traits_2` is a traits class for the 
 functions `min_rectangle_2`, `min_parallelogram_2` and 

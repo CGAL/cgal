@@ -46,7 +46,7 @@
 namespace CGAL {
 
   /**
-     \ingroup PkgPointSetProcessing3IOPly
+     \ingroup PkgPointSetProcessingIOPly
      
      Generates a %PLY property handler to write 3D points. Points are
      written as 3 %PLY properties of type `FT` and named `x`, `y` and
@@ -75,7 +75,7 @@ namespace CGAL {
   }
 
   /**
-     \ingroup PkgPointSetProcessing3IOPly
+     \ingroup PkgPointSetProcessingIOPly
      
      Generates a %PLY property handler to write 3D normal
      vectors. Vectors are written as 3 %PLY properties of type `FT`
@@ -331,7 +331,7 @@ namespace internal {
 
 
 /**
-   \ingroup PkgPointSetProcessing3IOPly
+   \ingroup PkgPointSetProcessingIOPly
    Saves the range of `points` with properties to a
    .ply stream. %PLY is either ASCII or binary depending on the value
    of `CGAL::get_mode(stream)`.
@@ -397,7 +397,7 @@ write_ply_points_with_properties(
 }
 
 /**
-   \ingroup PkgPointSetProcessing3IOPly
+   \ingroup PkgPointSetProcessingIOPly
    Saves the range of `points` (positions + normals, if available) to
    a .ply stream. %PLY is either ASCII or binary depending on the
    value of `CGAL::get_mode(stream)`.

@@ -87,7 +87,6 @@ template <typename Vb2>
 using Rebind_vertex = unspecified_type;
 
 /*!
-\cgalAdvancedType
 \cgalAdvancedBegin
 This template class allows to get the type of a triangulation
 data structure that only changes the full cell type. It has to define a type

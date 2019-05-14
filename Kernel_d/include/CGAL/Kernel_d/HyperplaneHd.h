@@ -223,6 +223,7 @@ $3$-dimensional space with equation $ax+by+cz+d=0$. }*/
 HyperplaneHd(int a, int b, int c, int d) : 
   Base( Tuple(RT(a),RT(b),RT(c),RT(d)) ) {} 
 
+HyperplaneHd(const HyperplaneHd<RT,LA>& h) : Base(h) {}
 ~HyperplaneHd()  {}    
 
 /*{\Moperations 4 2}*/

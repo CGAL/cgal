@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgEnvelope3Ref
+\ingroup PkgEnvelope3
 
 The class-template `Envelope_diagram_2` represents the minimization 
 diagram that corresponds to the lower envelope of a set of curves, or the 
@@ -165,7 +165,7 @@ Envelope_diagram_2 (EnvTraits *traits);
 namespace CGAL {
 
 /*!
-\ingroup PkgEnvelope3Ref
+\ingroup PkgEnvelope3
 
 Computes the lower envelope of a set of surfaces in \f$ \mathbb{R}^3\f$,
 as given by the range `[begin, end)`. The lower envelope is
@@ -182,7 +182,7 @@ Envelope_diagram_2<Traits>& diag);
 namespace CGAL {
 
 /*!
-\ingroup PkgEnvelope3Ref
+\ingroup PkgEnvelope3
 
 Computes the lower envelope of a set of \f$ xy\f$-monotone surfaces in
 \f$ \mathbb{R}^3\f$, as given by the range `[begin, end)`. The lower 
@@ -199,7 +199,7 @@ Envelope_diagram_2<Traits>& diag);
 namespace CGAL {
 
 /*!
-\ingroup PkgEnvelope3Ref
+\ingroup PkgEnvelope3
 
 Computes the upper envelope of a set of surfaces in \f$ \mathbb{R}^3\f$,
 as given by the range `[begin, end)`. The upper envelope is
@@ -216,7 +216,7 @@ Envelope_diagram_2<Traits>& diag);
 namespace CGAL {
 
 /*!
-\ingroup PkgEnvelope3Ref
+\ingroup PkgEnvelope3
 
 Computes the upper envelope of a set of \f$ xy\f$-monotone surfaces in 
 \f$ \mathbb{R}^3\f$, as given by the range `[begin, end)`. The lower 

@@ -30,6 +30,7 @@
 #include <CGAL/Algebraic_kernel_for_circles_2_2.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
+#include <CGAL/Circular_kernel_2/function_objects_polynomial_circular.h>
 #include <CGAL/Circular_kernel_2/Circular_arc_2.h>
 #include <CGAL/Circular_kernel_2/Line_arc_2.h>
 #include <CGAL/Exact_circular_kernel_2.h>

@@ -174,12 +174,10 @@ public:
     /*!\brief
      * copy constructor
      */
-#ifdef DOXYGEN_RUNNING
     Status_line_CPA_1(const Self& p) : 
             Base(static_cast<const Base&>(p)) {  
     }
-#endif
-  
+
     /*!\brief
      * constructs undefined status line
      */

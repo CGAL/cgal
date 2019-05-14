@@ -73,23 +73,14 @@ struct Indicator_factory
 
 class CGAL_IMAGEIO_EXPORT Image_3
 {
-  class Image_deleter {
-    const bool own_the_data;
 
-  public:
-    Image_deleter(bool own_the_data) : own_the_data(own_the_data) {}
-
+  struct Image_deleter {
     void operator()(_image* image)
     {
-      if(!own_the_data && image != 0) {
-        image->data = 0;
-      }
       ::_freeImage(image);
     }
   };
 public:
-  enum Own { OWN_THE_DATA, DO_NOT_OWN_THE_DATA };
-
   typedef boost::shared_ptr<_image> Image_shared_ptr;
   typedef Image_shared_ptr Pointer;
 
@@ -97,7 +88,7 @@ protected:
   Image_shared_ptr image_ptr;
 
    // implementation in src/CGAL_ImageIO/Image_3.cpp
-  bool private_read(_image* im, Own own_the_data = OWN_THE_DATA);
+  bool private_read(_image* im);
 
 public:
   Image_3()
@@ -111,9 +102,9 @@ public:
 //     std::cerr << "Image_3::copy_constructor\n";
   }
 
-  Image_3(_image* im, Own own_the_data = OWN_THE_DATA)
+  Image_3(_image* im) 
   {
-    private_read(im, own_the_data);
+    private_read(im);
   }
 
   ~Image_3()

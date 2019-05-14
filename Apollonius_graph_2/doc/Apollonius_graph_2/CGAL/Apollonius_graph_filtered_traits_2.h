@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgApolloniusGraph2Ref
+\ingroup PkgApolloniusGraph2
 
 The class `Apollonius_graph_filtered_traits_2` provides a model for the 
 `ApolloniusGraphTraits_2` concept. 

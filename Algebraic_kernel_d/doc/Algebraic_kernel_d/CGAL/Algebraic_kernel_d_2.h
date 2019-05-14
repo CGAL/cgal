@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicKernelDModels
+\ingroup PkgAlgebraicKerneldModels
 
 This class gathers necessary tools for solving and handling bivariate 
 polynomial systems of general degree \f$ d\f$.

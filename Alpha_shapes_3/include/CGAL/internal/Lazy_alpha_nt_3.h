@@ -177,24 +177,7 @@ class Lazy_alpha_nt_3{
   const Data_vector& data() const{ return input_points;}
   Data_vector& data(){ return input_points;}
 
-  static double & relative_precision_of_to_double_internal()
-  {
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE(double, relative_precision_of_to_double, 0.00001);
-      return relative_precision_of_to_double;
-  }
-
 public:
-
-  static const double & get_relative_precision_of_to_double()
-  {
-    return relative_precision_of_to_double_internal();
-  }
-
-  static void set_relative_precision_of_to_double(double d)
-  {
-      CGAL_assertion((0 < d) & (d < 1));
-      relative_precision_of_to_double_internal() = d;
-  }
 
   typedef NT_exact               Exact_nt;
   typedef NT_approx              Approximate_nt;
@@ -436,17 +419,7 @@ struct Alpha_nt_selector_3
 template<class Input_traits, bool mode, class Weighted_tag>
 double to_double(const internal::Lazy_alpha_nt_3<Input_traits, mode, Weighted_tag>& a)
 {
-  double r;
-  if (fit_in_double(a.approx(), r))
-    return r;
-
-  // If it isn't precise enough,
-  // we trigger the exact computation first,
-  // which will refine the approximation.
-  if (!has_smaller_relative_precision(a.approx(), a.get_relative_precision_of_to_double()))
-    a.exact();
-
-  return CGAL_NTS to_double(a.approx());
+  return to_double(a.approx());
 }
 
 } //namespace CGAL

@@ -77,15 +77,8 @@ template<class R_> struct Construct_segment : Store_kernel<R_> {
 	}
 	// Not really needed, especially since it forces us to store the kernel
 	result_type operator()()const{
-#if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
-#  pragma warning(push)
-#  pragma warning(disable: 4309)
-#endif
 		Point p = typename Get_functor<R_, Construct_ttag<Point_tag> >::type (this->kernel()) ();
 		return result_type (p, p);
-#if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
-#  pragma warning(pop)
-#endif
 	}
 	// T should only be std::piecewise_construct_t, but we shouldn't fail if it doesn't exist.
 	template<class T,class U,class V>

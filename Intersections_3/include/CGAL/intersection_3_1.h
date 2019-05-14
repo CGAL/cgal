@@ -28,7 +28,7 @@
 #ifndef CGAL_INTERSECTION_3_1_H
 #define CGAL_INTERSECTION_3_1_H
 
-#include <CGAL/Intersections_3/internal/bbox_intersection_3.h>
-#include <CGAL/Intersections_3/internal/intersection_3_1_impl.h>
+#include <CGAL/bbox_intersection_3.h>
+#include <CGAL/Intersections_3/intersection_3_1_impl.h>
 
 #endif // CGAL_INTERSECTION_3_1_H

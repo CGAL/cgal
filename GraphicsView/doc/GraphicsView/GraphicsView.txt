@@ -8,17 +8,17 @@ namespace CGAL {
 \cgalAutoToc
 \authors Andreas Fabri and Laurent Rineau
 
-<A HREF="https://doc.qt.io/qt-5/">Qt</A> is a <span class="textsc">Gui</span> toolkit for
+<A HREF="http://qt-project.org/doc/qt-5/">Qt</A> is a <span class="textsc">Gui</span> toolkit for
 cross-platform application development.
 
 \section GraphicsViewIntroduction Introduction
 
 This chapter describes classes that help to visualize two dimensional \cgal objects
-with the <A HREF="https://doc.qt.io/qt-5/graphicsview.html">Qt Graphics View Framework</A>.
+with the <A HREF="http://qt-project.org/doc/qt-5/graphicsview.html">Qt Graphics View Framework</A>.
 
-This framework uses the model view paradigm. <A HREF="https://doc.qt.io/qt-5/qgraphicsitem.html">`QGraphicsItem`</A>s are stored in a 
-<A HREF="https://doc.qt.io/qt-5/qgraphicsscene.html">`QGraphicsScene`</A> 
-and are displayed in a <A HREF="https://doc.qt.io/qt-5/qgraphicsview.html">`QGraphicsView`</A>. The items 
+This framework uses the model view paradigm. <A HREF="http://qt-project.org/doc/qt-5/qgraphicsitem.html">`QGraphicsItem`</A>s are stored in a 
+<A HREF="http://qt-project.org/doc/qt-5/qgraphicsscene.html">`QGraphicsScene`</A> 
+and are displayed in a <A HREF="http://qt-project.org/doc/qt-5/qgraphicsview.html">`QGraphicsView`</A>. The items 
 have a paint method which is called when an item is in the visible area of a view.
 The framework is also responsible for dispatching events from the view
 via the scene to the items. The framework is extensible in the sense
@@ -50,14 +50,14 @@ classes that have to override member functions adhering to this naming scheme.
 \section GraphicsViewOverall Overall Design
 
 In \cgalFigureRef{graphicsviewuml} you see four classes depicted in grey,
-that come from the %Qt Graphics View Framework. The <A HREF="https://doc.qt.io/qt-5/qgraphicsscene.html">`QGraphicsScene`</A>
-contains <A HREF="https://doc.qt.io/qt-5/qgraphicsitem.html">`QGraphicsItem`</A>s, which get displayed in any number
-of <A HREF="https://doc.qt.io/qt-5/qgraphicsview.html">`QGraphicsView`</A>s. The views are widgets, that is they take screen space
+that come from the %Qt Graphics View Framework. The <A HREF="http://qt-project.org/doc/qt-5/qgraphicsscene.html">`QGraphicsScene`</A>
+contains <A HREF="http://qt-project.org/doc/qt-5/qgraphicsitem.html">`QGraphicsItem`</A>s, which get displayed in any number
+of <A HREF="http://qt-project.org/doc/qt-5/qgraphicsview.html">`QGraphicsView`</A>s. The views are widgets, that is they take screen space
 in an application.
 
-The fourth class is the <A HREF="https://doc.qt.io/qt-5/qobject.html">`QObject`</A>. It plays an important role in %Qt for
-event handling and memory management. First, it allows to add <A HREF="https://doc.qt.io/qt-5/signalsandslots.html">signals and
-slots</A>, and to connect them. Second, it allows to install <A HREF="https://doc.qt.io/qt-5/eventsandfilters.html">event filters</A>.
+The fourth class is the <A HREF="http://qt-project.org/doc/qt-5/qobject.html">`QObject`</A>. It plays an important role in %Qt for
+event handling and memory management. First, it allows to add <A HREF="http://qt-project.org/doc/qt-5/signalsandslots.html">signals and
+slots</A>, and to connect them. Second, it allows to install <A HREF="http://qt-project.org/doc/qt-5/eventsandfilters.html">event filters</A>.
 
 \cgalFigureBegin{graphicsviewuml,uml-design.png}
 UML Class Diagram with the %Qt classes (blue), \cgal classes for using the framework (yellow), \cgal data structures (red), and application classes (green).
@@ -68,8 +68,8 @@ UML Class Diagram with the %Qt classes (blue), \cgal classes for using the frame
 In order to visualize for example a `CGAL::Delaunay_triangulation_2`, we
 provide the graphics item class `CGAL::Qt::TriangulationGraphicsItem<T>`.
 It provides a `paint` method that draws the edges and vertices of a triangulation
-using the drawing primitives of the <A HREF="https://doc.qt.io/qt-5/qpainter.html">`QPainter`</A>. The color of vertices and edges, 
-can be chosen by setting a user defined <A HREF="https://doc.qt.io/qt-5/qpen.html">`QPen`</A>.
+using the drawing primitives of the <A HREF="http://qt-project.org/doc/qt-5/qpainter.html">`QPainter`</A>. The color of vertices and edges, 
+can be chosen by setting a user defined <A HREF="http://qt-project.org/doc/qt-5/qpen.html">`QPen`</A>.
 
 As this graphics item only stores a pointer to a triangulation, it
 must be notified about changes like the insertion of points coming from

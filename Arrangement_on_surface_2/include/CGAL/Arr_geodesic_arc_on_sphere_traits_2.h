@@ -2881,14 +2881,12 @@ public:
   /*! Copy constructor
    * \param other the other arc
    */
-#ifdef DOXYGEN_RUNNING  
   Arr_geodesic_arc_on_sphere_3
   (const Arr_geodesic_arc_on_sphere_3& other) : Base(other)
   {
     m_is_x_monotone = other.m_is_x_monotone;
   }
-#endif
-  
+
   /*! Constructor
    * \param src the source point of the arc
    * \param trg the target point of the arc

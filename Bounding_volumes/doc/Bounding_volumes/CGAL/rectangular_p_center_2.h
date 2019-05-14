@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBoundingVolumesRef
+\ingroup PkgBoundingVolumes
 
 The class `Rectangular_p_center_default_traits_2` defines types and operations 
 needed to compute rectilinear \f$ p\f$-centers of a planar point set 
@@ -194,7 +194,7 @@ construct_iso_rectangle_2_above_right_point_2_object() const;
 };
 
 /*!
-\ingroup PkgBoundingVolumesRef
+\ingroup PkgBoundingVolumes
 
 Computes rectilinear 
 \f$ p\f$-centers of a planar point set, i.e.\ a set of \f$ p\f$ points such 

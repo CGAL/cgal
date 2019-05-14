@@ -194,10 +194,24 @@ function(run_test_alt name datafile)
   endif()
   cgal_debug_message(STATUS "#     run_test_alt(${ARGN})")
   cgal_debug_message(STATUS "#       -> ./${name} ${datafile} ${ARGN}")
+  set(command ${name} ${datafile} ${ARGN})
   string(MAKE_C_IDENTIFIER "${name}  ${ARGV4}  ${ARGV5}" test_name)
-  cgal_add_test(${name}
-    TEST_NAME ${test_name}
-    ARGUMENTS ${datafile} ${ARGN})
+  add_test(NAME ${test_name} COMMAND ${command}
+    WORKING_DIRECTORY ${CGAL_CURRENT_SOURCE_DIR})
+  set_property(TEST "${test_name}"
+    APPEND PROPERTY DEPENDS "compilation_of__${name}")
+  if(POLICY CMP0066) # CMake 3.7 or later
+    set_tests_properties("${test_name}"
+      PROPERTIES
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
+      FIXTURES_REQUIRED ${PROJECT_NAME})
+  endif()
+  cgal_debug_message(STATUS "#       .. depends on compilation_of__${name}")
+
+#  message("   successful execution of ${name}  ${ARGV4} ${ARGV5}")
+  set_property(TEST "${test_name}"
+    APPEND PROPERTY LABELS "${PROJECT_NAME}")
+  cgal_debug_message(STATUS "add test \"${test_name}\": ${name} ${datafile} ${ARGN}")
 endfunction()
 
 function(run_trapped_test name datafile)
@@ -465,7 +479,6 @@ function(execute_commands_traits_adaptor data_dir traits_type_name)
 
   set(commands_indicator_PARAMETER_SPACE_X 0)
   set(commands_indicator_PARAMETER_SPACE_Y 0)
-  set(commands_indicator_COMPARE_XY 0)
   set(commands_indicator_COMPARE_X_AT_LIMIT 0)
   set(commands_indicator_COMPARE_X_NEAR_LIMIT 0)
   set(commands_indicator_COMPARE_X_ON_BOUNDARY 0)
@@ -494,11 +507,6 @@ function(execute_commands_traits_adaptor data_dir traits_type_name)
     run_trapped_test(test_traits_adaptor data/test_adaptor/${data_dir}/points
       data/test_adaptor/${data_dir}/xcurves data/test_adaptor/${data_dir}/curves
       data/test_adaptor/${data_dir}/parameter_space_y ${traits_type_name})
-  endif()
-  if(commands_indicator_COMPARE_XY)
-    run_trapped_test(test_traits_adaptor data/test_adaptor/${data_dir}/points
-      data/test_adaptor/${data_dir}/xcurves data/test_adaptor/${data_dir}/curves
-      data/test_adaptor/${data_dir}/compare_xy ${traits_type_name})
   endif()
   if(commands_indicator_COMPARE_X_AT_LIMIT)
     run_trapped_test(test_traits_adaptor data/test_adaptor/${data_dir}/points
@@ -591,7 +599,7 @@ function(test_segment_traits_adaptor)
   compile_test_with_flags(test_traits_adaptor segments "${flags}")
 #  if [ -n "${SUCCESS}" ] ; then
   execute_commands_traits_adaptor( segments segments_traits_adaptor
-    COMPARE_XY COMPARE_Y_POSITION COMPARE_CW_AROUND_POINT COMPARE_Y_AT_X_LEFT
+    COMPARE_Y_POSITION COMPARE_CW_AROUND_POINT COMPARE_Y_AT_X_LEFT
     ARE_MERGEABLE MERGE IS_IN_X_RANGE IS_BETWEEN_CW)
 endfunction()
 
@@ -607,7 +615,7 @@ function(test_linear_traits_adaptor)
   compile_test_with_flags( test_traits_adaptor linear "${flags}")
 
   execute_commands_traits_adaptor( linear linear_traits_adaptor
-    COMPARE_XY COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE
+    COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE
     COMPARE_Y_POSITION IS_BETWEEN_CW COMPARE_CW_AROUND_POINT)
 endfunction()
 
@@ -624,7 +632,7 @@ function(test_spherical_arcs_traits_adaptor)
   compile_test_with_flags( test_traits_adaptor geodesic_arcs_on_sphere "${flags}")
 
   execute_commands_traits_adaptor( spherical_arcs spherical_arcs_traits_adaptor
-    COMPARE_XY COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE
+    COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE
     COMPARE_Y_POSITION IS_BETWEEN_CW COMPARE_CW_AROUND_POINT)
 endfunction()
 

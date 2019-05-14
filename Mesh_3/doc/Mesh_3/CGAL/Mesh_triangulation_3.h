@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh3MeshClasses
+\ingroup PkgMesh_3MeshClasses
 
 The class `Mesh_triangulation_3` is a class template which provides the triangulation
 type to be used for the 3D triangulation embedding the mesh.

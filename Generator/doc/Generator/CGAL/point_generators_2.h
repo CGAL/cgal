@@ -1,6 +1,6 @@
 namespace CGAL {
 
-/// \addtogroup PkgGeneratorsRef
+/// \addtogroup PkgGenerators
 /// @{
 
 /*!

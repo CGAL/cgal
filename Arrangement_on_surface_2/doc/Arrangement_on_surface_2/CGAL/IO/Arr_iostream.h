@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
-  \defgroup PkgArrangementOnSurface2Read CGAL::read()
-  \ingroup PkgArrangementOnSurface2IO
+  \defgroup PkgArrangement2Read CGAL::read()
+  \ingroup PkgArrangement2IO
 
 Reads a given arrangement from a given input stream
 using a specific input format.
@@ -16,11 +16,11 @@ using a specific input format.
 </UL>
 
 
-\sa `PkgArrangementOnSurface2Write`
+\sa `PkgArrangement2Write`
 
   
-\sa `PkgArrangementOnSurface2op_left_shift`
-\sa `PkgArrangementOnSurface2op_right_shift`
+\sa `PkgArrangement2op_left_shift`
+\sa `PkgArrangement2op_right_shift`
 */
 /// @{
 
@@ -37,8 +37,8 @@ std::istream& read (Arrangement_2<Traits,Dcel>& arr,
 /// @}
 
 /*!
-  \defgroup PkgArrangementOnSurface2Write CGAL::write()
-  \ingroup PkgArrangementOnSurface2IO
+  \defgroup PkgArrangement2Write CGAL::write()
+  \ingroup PkgArrangement2IO
 
 Writes a given arrangement into a given output stream
 using a specific output format.
@@ -52,9 +52,9 @@ using a specific output format.
   `ArrangementWithHistoryOutputFormatter` concept.
 </UL>
 
-\sa `PkgArrangementOnSurface2Read`
-\sa `PkgArrangementOnSurface2op_left_shift`
-\sa `PkgArrangementOnSurface2op_right_shift`
+\sa `PkgArrangement2Read`
+\sa `PkgArrangement2op_left_shift`
+\sa `PkgArrangement2op_right_shift`
 */
 /// @{
 
@@ -70,7 +70,7 @@ std::ostream& write (const Arrangement_2<Traits,Dcel>& arr,
 /// @}
 
 /*!
-\ingroup PkgArrangementOnSurface2op_left_shift
+\ingroup PkgArrangement2op_left_shift
 Inserts the arrangement object `arr` into the output stream
 `os` using the output format defined by the
 `Arr_text_formatter` class. Only the basic geometric and
@@ -83,7 +83,7 @@ std::ostream& operator<< (std::ostream& os,
 
 
 /*!
-\ingroup PkgArrangementOnSurface2op_right_shift
+\ingroup PkgArrangement2op_right_shift
 Extracts an arrangement from a given input stream using the input
 format defined by the `Arr_text_formatter` class - that is, only the
 basic geometric and topological features of the arrangement are read

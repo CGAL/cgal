@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgPartition2Concepts
+\ingroup PkgPolygonPartitioning2Concepts
 \cgalConcept
 
 The polygon partitioning functions are each parameterized by a traits class 

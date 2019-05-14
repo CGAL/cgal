@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgHalfedgeDS_VHF
+\ingroup PkgHDS_VHF
 
 The class `HalfedgeDS_halfedge_base` is a model of the `HalfedgeDSHalfedge` 
 concept. `Refs` is an instantiation of a `HalfedgeDS`. 

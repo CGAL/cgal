@@ -3,7 +3,7 @@ namespace CGAL {
 namespace Surface_mesh_simplification {
 
 /*!
-\ingroup PkgSurfaceMeshSimplificationRef
+\ingroup PkgSurfaceMeshSimplification
 
 The class `Bounded_normal_change_placement` is a model for the `GetPlacement` concept
 which serves as a filter for another placement. It rejects the placement if any

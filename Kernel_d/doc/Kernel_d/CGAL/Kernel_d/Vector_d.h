@@ -96,8 +96,8 @@ InputIterator first, InputIterator last);
 introduces a 
 variable `v` of type `Vector_d<Kernel>` in dimension `d` 
 initialized to the vector with homogeneous coordinates as defined by 
-`H = set [first,last)` and `D`: \f$ (\pm H_0, 
-\pm H_1, \ldots, \pm H_{D-1}, \pm H_D)\f$. The sign 
+`H = set [first,last)` and `D`: \f$ (\pmH[0], 
+\pmH[1], \ldots, \pmH[d-1], \pmD)\f$. The sign 
 chosen is the sign of \f$ D\f$.
 
 \pre `D` is non-zero, the iterator range defines a \f$ d\f$-tuple of `RT`. 

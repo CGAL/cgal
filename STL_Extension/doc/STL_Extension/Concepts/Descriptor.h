@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgSTLExtensionConcepts
+\ingroup PkgStlExtensionConcepts
 \cgalConcept
 
 The concept `Descriptor` allows to describe a unique object in an abstract model.

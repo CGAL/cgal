@@ -6,7 +6,6 @@
 
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
-#include <CGAL/IO/output_to_vtu.h>
 
 // Domain 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -63,10 +62,8 @@ int main(int argc, char*argv[])
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
 
   // Output
-  std::ofstream file("out.vtu");
-  CGAL::output_to_vtu(file, c3t3);
-  // Could be replaced by:
-  // c3t3.output_to_medit(file);
+  std::ofstream medit_file("out.mesh");
+  c3t3.output_to_medit(medit_file);
 
   return EXIT_SUCCESS;
 }

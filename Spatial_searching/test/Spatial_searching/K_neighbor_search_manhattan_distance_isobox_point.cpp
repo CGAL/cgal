@@ -1,6 +1,6 @@
 // file: test/Spatial_searching/K_neighbor_search_manhattan_distance_isobox_point.C
 
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Cartesian.h>
 #include <cassert>
 #include <CGAL/Manhattan_distance_iso_box_point.h>
 #include <CGAL/K_neighbor_search.h>
@@ -8,7 +8,7 @@
 #include <CGAL/Search_traits_adapter.h>
 #include "Point_with_info.h"
 
-typedef CGAL::Simple_cartesian<double> Kernel;
+typedef CGAL::Cartesian<double> Kernel;
 typedef Kernel::Point_2 Point_d;
 typedef Kernel::Iso_rectangle_2 Iso_box_d;
 typedef CGAL::Search_traits_2<Kernel> TreeTraits;

@@ -23,8 +23,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 find_package(CGAL QUIET COMPONENTS Core)
 
 if ( CGAL_FOUND )
-
-  include(${CGAL_USE_FILE})
+  include( ${CGAL_USE_FILE} )
 
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
   if (EIGEN3_FOUND)
@@ -128,9 +127,7 @@ if ( CGAL_FOUND )
     set(CGAL_IPELETS ${CGAL_IPELETS} circle_pencils)
     set(CGAL_IPELETS ${CGAL_IPELETS} hyperbolic)
     set(CGAL_IPELETS ${CGAL_IPELETS} distance)
-    if(CGAL_Core_FOUND)
-      set(CGAL_IPELETS ${CGAL_IPELETS} cone_spanners)
-    endif()
+    set(CGAL_IPELETS ${CGAL_IPELETS} cone_spanners)
 
 
     if ( IPELET_INSTALL_DIR )
@@ -151,9 +148,7 @@ if ( CGAL_FOUND )
       endif ()
       cgal_add_compilation_test(CGAL_${IPELET})
     endforeach(IPELET)
-    if(CGAL_Core_FOUND)
-      target_link_libraries(CGAL_cone_spanners PRIVATE CGAL::CGAL_Core)
-    endif()
+    target_link_libraries(CGAL_cone_spanners PRIVATE CGAL::CGAL_Core)
     #example in doc not installed
     add_library(simple_triangulation MODULE simple_triangulation.cpp)
     add_to_cached_list(CGAL_EXECUTABLE_TARGETS simple_triangulation)

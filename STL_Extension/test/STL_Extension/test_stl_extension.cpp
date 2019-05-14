@@ -28,6 +28,7 @@
 // ============================================================================
 
 
+#include <CGAL/basic.h>
 #include <cstddef>
 #include <list>
 #include <vector>

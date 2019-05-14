@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlphaShapes2Concepts
+\ingroup PkgAlphaShape2Concepts
 \cgalConcept
 
 The concept `AlphaShapeFace_2` describes the requirements for the base face of an alpha shape.

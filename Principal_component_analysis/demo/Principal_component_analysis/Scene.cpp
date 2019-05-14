@@ -225,7 +225,7 @@ void Scene::refine_loop()
         return;
     }
     std::cout << "Loop subdivision...";
-    CGAL::Subdivision_method_3::Loop_subdivision(*m_pPolyhedron);
+    CGAL::Subdivision_method_3::Loop_subdivision(*m_pPolyhedron, 1);
     std::cout << "done (" << m_pPolyhedron->size_of_facets() << " facets)" << std::endl;
 }
 

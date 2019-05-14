@@ -40,7 +40,7 @@ template<class CDT> void make_conforming_Gabriel_2 (CDT &t);
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh2Ref
+\ingroup PkgMesh2
 
 
 The class `Triangulation_conformer_2` is an auxiliary class of 

@@ -81,12 +81,14 @@ bool partition_appx_cvx_cuts_nonconvex_angle( Edge_circulator e_circ,
                                               const Traits& traits)
 {
    typedef typename Triangulation::Segment        Segment_2;
-   typedef typename Triangulation::Point          Point;
+
 #ifdef CGAL_PARTITION_APPROX_CONVEX_DEBUG
    Segment_2 edge = triangles.segment((*e_circ).first, (*e_circ).second);
    std::cout << "edge: " << *edge.source() << " " << *edge.target()
              << std::endl;
 #endif
+
+   typename Triangulation::Point next_ccw_pt_ref, prev_ccw_pt_ref;
 
    // the next and previous edges in the ccw ordering of edges around v_ref
    Edge_circulator next_e = e_circ; next_e++;
@@ -107,10 +109,14 @@ bool partition_appx_cvx_cuts_nonconvex_angle( Edge_circulator e_circ,
              << *prev_edge.target() <<std::endl;
 #endif
    // find which endpoint is shared by the two edges
-   Point next_ccw_pt_ref =
-     (next_edge.source() == v_ref) ? next_edge.target() : next_edge.source();
-   Point prev_ccw_pt_ref =
-     (prev_edge.source() == v_ref) ? prev_edge.target() : prev_edge.source();
+   if (next_edge.source() == v_ref)
+      next_ccw_pt_ref = next_edge.target();
+   else
+      next_ccw_pt_ref = next_edge.source();
+   if (prev_edge.source() == v_ref)
+      prev_ccw_pt_ref = prev_edge.target();
+   else
+      prev_ccw_pt_ref = prev_edge.source();
 
 #ifdef CGAL_PARTITION_APPROX_CONVEX_DEBUG
    std::cout << "partition_appx_cvx_cuts_nonconvex_angle: next_ccw_pt " 
@@ -164,6 +170,7 @@ OutputIterator partition_approx_convex_2(InputIterator first,
    } while (++c != first_c);
 
    Segment_2 edge;
+   Circulator source, target, before_s, after_s;
 
 #ifdef CGAL_PARTITION_APPROX_CONVEX_DEBUG
    std::cout << "Inserting diagonals: " << std::endl;
@@ -200,10 +207,10 @@ OutputIterator partition_approx_convex_2(InputIterator first,
              if (!triangles.is_infinite(*e_circ)) 
              {
                 edge = triangles.segment((*e_circ).first, (*e_circ).second);
-                Circulator source = edge.source();
-                Circulator target = edge.target();
-                Circulator before_s = source; before_s--;
-                Circulator after_s = source; after_s++;
+                source = edge.source();
+                target = edge.target();
+                before_s = source; before_s--;
+                after_s = source; after_s++;
 #ifdef CGAL_PARTITION_APPROX_CONVEX_DEBUG
                 std::cout << "considering " << *source << " " << *target 
                           << "...";

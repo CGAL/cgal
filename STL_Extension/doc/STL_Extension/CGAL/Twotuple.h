@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSTLExtensionUtilities
+\ingroup PkgStlExtensionUtilities
 
 The `Twotuple` class stores a homogeneous (same type) pair 
 of objects of type `T`. A `Twotuple` is much like a container, in that 

@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgHalfedgeDSConcepts
+\ingroup PkgHDSConcepts
 \cgalConcept
 
 The concept `HalfedgeDSHalfedge` defines the requirements for the local `Halfedge` 

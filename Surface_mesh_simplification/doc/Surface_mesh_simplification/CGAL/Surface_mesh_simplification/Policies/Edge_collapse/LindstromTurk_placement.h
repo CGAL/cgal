@@ -3,7 +3,7 @@ namespace CGAL {
 namespace Surface_mesh_simplification {
 
 /*!
-\ingroup PkgSurfaceMeshSimplificationRef
+\ingroup PkgSurfaceMeshSimplification
 
 The class `LindstromTurk_placement` provides a model for the `GetPlacement` concept. 
 It computes the placement, that is, the new position for the remaining vertex after 

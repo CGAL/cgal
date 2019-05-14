@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMinkowskiSum2Ref
+\ingroup PkgMinkowskiSum2
 
 Computes the Minkowski sum \f$ P \oplus Q\f$ of two given polygons
 (which may have holes). `PolygonType1` and `PolygonType2` can be any combination of:
@@ -20,7 +20,7 @@ minkowski_sum_2(const PolygonType1<Kernel, Container>& P,
                 const PolygonType2<Kernel, Container>& Q);
 
 /*!
-\ingroup PkgMinkowskiSum2Ref
+\ingroup PkgMinkowskiSum2
 
 Computes the Minkowski sum \f$ P \oplus Q\f$ of the two given polygons. The
 function computes the reduced convolution \cgalCite{cgal:bl-frmsurc-11} of
@@ -42,7 +42,7 @@ minkowski_sum_by_reduced_convolution_2(const PolygonType1<Kernel, Container>& P,
                                        const PolygonType2<Kernel, Container>& Q);
 
 /*!
-\ingroup PkgMinkowskiSum2Ref
+\ingroup PkgMinkowskiSum2
 
 Computes the Minkowski sum \f$ P \oplus Q\f$ of the two given polygons.
 The function computes the (full) convolution cycles of the two polygons and
@@ -61,7 +61,7 @@ minkowski_sum_by_full_convolution_2(const Polygon_2<Kernel, Container>& P,
                                     const Polygon_2<Kernel, Container>& Q);
 
 /*!
-\ingroup PkgMinkowskiSum2Ref
+\ingroup PkgMinkowskiSum2
 
 Computes the Minkowski sum \f$ P \oplus Q\f$ of the two given polygons.
 The function decomposes the summand `P` into convex sub-polygons
@@ -92,7 +92,7 @@ minkowski_sum_2(const PolygonType1<Kernel, Container>& P,
                 const Gps_segment_traits_2& traits = Gps_segment_traits_2<Kernel,Container, Arr_segment_traits>());
 
 /*!
-\ingroup PkgMinkowskiSum2Ref
+\ingroup PkgMinkowskiSum2
 
 Computes the Minkowski sum \f$ P \oplus Q\f$ of the two given polygons.
 The function decomposes the summands `P` and `Q` into convex sub-polygons
@@ -114,7 +114,7 @@ minkowski_sum_2(const PolygonType1<Kernel, Container>& P,
                 const Gps_segment_traits_2& traits = Gps_segment_traits_2<Kernel,Container, Arr_segment_traits>());
 
 /*!
-\ingroup PkgMinkowskiSum2Ref
+\ingroup PkgMinkowskiSum2
 
 Computes the Minkowski sum \f$ P \oplus Q\f$ of the two given polygons
 using the decomposition strategy. It decomposes the summands `P` and `Q`

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgNefS2Ref
+\ingroup PkgNefS2
 
 An instance of data type `Nef_polyhedron_S2<Traits>` is a subset of
 the sphere \f$ S_2\f$ that is the result of forming complements and
@@ -74,7 +74,7 @@ public:
 /// @{
 
 /*!
-\ingroup PkgNefS2Ref
+\ingroup PkgNefS2
 
 An object `c` of type `Sphere_circle` is an oriented great 
 circle on the surface of a unit sphere. Such circles correspond to 
@@ -172,7 +172,7 @@ Sphere_point orthogonal_pole() ;
 
 }; /* end Sphere_circle */
 /*!
-\ingroup PkgNefS2Ref
+\ingroup PkgNefS2
 
 An object `p` of type `Sphere_point<R>` is a point on the 
 surface of a unit sphere. Such points correspond to the nontrivial 
@@ -254,7 +254,7 @@ Sphere_point antipode() ;
 }; /* end Sphere_point */
 
 /*!
-\ingroup PkgNefS2Ref
+\ingroup PkgNefS2
 
 An object `s` of type `Sphere_segment` is a segment in the 
 surface of a unit sphere that is part of a great circle trough the 
@@ -381,7 +381,7 @@ bool has_in_relative_interior(const Sphere_point& p) ;
 
 
 /*!
-\ingroup PkgNefS2Ref
+\ingroup PkgNefS2
 
 The type `SFace_cycle_iterator` iterates over a list of 
 `Object_handles`. Each item of that list can either be assigned 
@@ -467,7 +467,7 @@ operator SHalfloop_handle() const;
 }; /* end SFace_cycle_iterator */
 
 /*!
-\ingroup PkgNefS2Ref
+\ingroup PkgNefS2
 
 Figures \ref figureNefS2SVertexIncidences 
 and \ref figureNefS2SHalfloopIncidences 
@@ -551,7 +551,7 @@ SFace_cycle_const_iterator sface_cycle_end() const;
 }; /* end SFace */
 
 /*!
-\ingroup PkgNefS2Ref
+\ingroup PkgNefS2
 
 A shalfedge is a great arc on a sphere map. 
 The figure below 
@@ -696,7 +696,7 @@ bool in_inner_sface_cycle() const;
 }; /* end SHalfedge */
 
 /*!
-\ingroup PkgNefS2Ref
+\ingroup PkgNefS2
 
 A sloop is a great circle on a sphere. A shalfloop is an oriented sloop. It is always paired with a 
 shalfloop whose supporting `Sphere_circle` is pointing in 
@@ -778,7 +778,7 @@ SFace_const_handle incident_sface() const;
 }; /* end SHalfloop */
 
 /*!
-\ingroup PkgNefS2Ref
+\ingroup PkgNefS2
 
 Figure \ref figureNefS2SVertexIncidences illustrates the incidence of a svertex on a sphere map. 
 

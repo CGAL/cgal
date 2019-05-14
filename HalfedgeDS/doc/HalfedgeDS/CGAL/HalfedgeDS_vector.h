@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgHalfedgeDS_HDS
+\ingroup PkgHDS_HDS
 
 The class `HalfedgeDS_vector` is a model for the `HalfedgeDS` concept. 
 `HalfedgeDS_vector` is a vector-based representation with random 

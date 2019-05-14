@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh3MeshClasses
+\ingroup PkgMesh_3MeshClasses
 
 The class `Mesh_cell_criteria_3` is a model of `MeshCellCriteria_3`. It provides, 
 for the mesh tetrahedra, 

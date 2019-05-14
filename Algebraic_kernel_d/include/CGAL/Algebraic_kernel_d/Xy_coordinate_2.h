@@ -219,11 +219,9 @@ public:
     /*!\brief
      * copy constructor
      */
-#ifdef DOXYGEN_RUNNING  
     Xy_coordinate_2(const Self& p) : 
         Base(static_cast<const Base&>(p)) {  
     }
-#endif  
 
     /*!\brief
      * Point at \c x, on \c curve with \c arcno. Finite points on vertical arcs
