@@ -1227,7 +1227,9 @@ private:
     if(status != OK)
       return status;
 
+#ifdef CGAL_SMP_ARAP_DEBUG
     output_uvmap("ARAP_final_post_processing.off", mesh, vertices, faces, uvmap, vimap);
+#endif
 
     return OK;
   }
@@ -1292,7 +1294,11 @@ public:
 
     // Compute the initial parameterization of the mesh
     status = compute_initial_uv_map(mesh, bhd, uvmap, vimap);
+
+#ifdef CGAL_SMP_ARAP_DEBUG
     output_uvmap("ARAP_initial_param.off", mesh, vertices, faces, uvmap, vimap);
+#endif
+
     if(status != OK)
       return status;
 
@@ -1340,7 +1346,9 @@ public:
                                                uvmap, vimap, vpmap, A);
 
       // Output the current situation
-//      output_uvmap("ARAP_iteration_", ite, mesh, vertices, faces, uvmap, vimap);
+#ifdef CGAL_SMP_ARAP_DEBUG
+      output_uvmap("ARAP_iteration_", ite, mesh, vertices, faces, uvmap vimap);
+#endif
       energy_last = energy_this;
       energy_this = compute_current_energy(mesh, faces, ctmap, lp, lpmap,
                                                         ltmap, uvmap);
@@ -1367,7 +1375,9 @@ public:
       }
     }
 
+#ifdef CGAL_SMP_ARAP_DEBUG
     output_uvmap("ARAP_final_pre_processing.off", mesh, vertices, faces, uvmap, vimap);
+#endif
 
     if(!is_one_to_one_mapping(mesh, faces, uvmap)) {
      // Use post processing to handle flipped elements

@@ -15,7 +15,7 @@ typedef Kernel::Point_2                   Point_2;
 typedef Kernel::Direction_2               Direction_2;
 /* Note: due to a bug in the boost library, using a directed graph
  * will cause a compilation error with g++ and clang++ when using c++11 standard.
- * See http://lists.boost.org/Archives/boost/2016/05/229458.php.
+ * See https://lists.boost.org/Archives/boost/2016/05/229458.php.
  */
 // define the graph type
 typedef boost::adjacency_list<boost::listS,

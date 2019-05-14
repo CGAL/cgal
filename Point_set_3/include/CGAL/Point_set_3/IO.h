@@ -35,87 +35,12 @@
 #include <CGAL/IO/read_las_points.h>
 #include <CGAL/IO/write_las_points.h>
 #endif // LAS
-#include <CGAL/IO/read_ply_points.h>
-#include <CGAL/IO/write_ply_points.h>
+#include <CGAL/IO/PLY.h>
 
 namespace CGAL {
 
 namespace internal
 {
-
-  template <typename Point, typename Vector>
-  class Abstract_property_printer
-  {
-  public:
-    virtual ~Abstract_property_printer() { }
-    virtual void print (std::ostream& stream, const typename CGAL::Point_set_3<Point,Vector>::Index& index) = 0;
-  };
-
-  template <typename Point, typename Vector, typename Type>
-  class Property_printer : public Abstract_property_printer<Point, Vector>
-  {
-    typedef typename CGAL::Point_set_3<Point, Vector> Point_set;
-    typedef typename Point_set::template Property_map<Type> Pmap;
-    Pmap m_pmap;
-  public:
-    Property_printer (const Pmap& pmap) : m_pmap (pmap)
-    {
-
-    }
-    
-    virtual void print(std::ostream& stream, const typename CGAL::Point_set_3<Point,Vector>::Index& index)
-    {
-      stream << get(m_pmap, index);
-    }
-  };
-
-  template <typename Point, typename Vector, typename Type>
-  class Simple_property_printer : public Abstract_property_printer<Point, Vector>
-  {
-    typedef typename CGAL::Point_set_3<Point, Vector> Point_set;
-    typedef typename Point_set::template Property_map<Type> Pmap;
-    Pmap m_pmap;
-  public:
-    Simple_property_printer (const Pmap& pmap) : m_pmap (pmap)
-    {
-
-    }
-    
-    virtual void print(std::ostream& stream, const typename CGAL::Point_set_3<Point,Vector>::Index& index)
-    {
-      if (get_mode(stream) == IO::ASCII)
-        stream << get(m_pmap, index);
-      else
-        {
-          Type t = get (m_pmap, index);
-          stream.write (reinterpret_cast<char*>(&t), sizeof(t));
-        }
-    }
-  };
-
-  template <typename Point, typename Vector, typename Type>
-  class Char_property_printer : public Abstract_property_printer<Point, Vector>
-  {
-    typedef typename CGAL::Point_set_3<Point, Vector> Point_set;
-    typedef typename Point_set::template Property_map<Type> Pmap;
-    Pmap m_pmap;
-  public:
-    Char_property_printer (const Pmap& pmap) : m_pmap (pmap)
-    {
-
-    }
-    
-    virtual void print(std::ostream& stream, const typename CGAL::Point_set_3<Point,Vector>::Index& index)
-    {
-      if (get_mode(stream) == IO::ASCII)
-        stream << int(get(m_pmap, index));
-      else
-        {
-          Type t = get (m_pmap, index);
-          stream.write (reinterpret_cast<char*>(&t), sizeof(t));
-        }
-    }
-  };
   
 namespace PLY
 {
@@ -365,19 +290,42 @@ read_off_point_set(
 }
 
 
+/// \cond SKIP_IN_MANUAL
+template <typename Point, typename Vector>
+bool
+read_ply_point_set(
+  std::istream& stream, ///< input stream.
+  CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
+{
+  std::string dummy;
+  return read_ply_point_set (stream, point_set, dummy);
+}
+
+/// \endcond
+
 /*!
   \ingroup PkgPointSet3IO
+
+  Reads a point set with properties from an input stream in Ascii or
+  Binary PLY format.
+
+  - the operator reads the vertex `point` property;
+  - if three PLY properties `nx`, `ny` and `nz` with type `float`
+     or `double` are found, the normal map is added;
+  - if any other PLY property is found, a "[name]" property map is
+    added, where `[name]` is the name of the PLY property.
+
+  The `comments` parameter can be omitted. If provided, it will be
+  used to store the potential comments found in the PLY
+  header. Each line starting by "comment " in the header is
+  appended to the `comments` string (without the "comment " word).
  */
 template <typename Point, typename Vector>
 bool
 read_ply_point_set(
   std::istream& stream, ///< input stream.
-#ifdef DOXYGEN_RUNNING
-  CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
-#else
   CGAL::Point_set_3<Point, Vector>& point_set, ///< point set
-  std::string* comments = NULL) ///< recover PLY comments
-#endif
+  std::string& comments) ///< PLY comments.
 {
   if(!stream)
     {
@@ -394,14 +342,14 @@ read_ply_point_set(
     return false;
   }
 
-  if (comments != NULL)
-    *comments = reader.comments();
+  comments = reader.comments();
 
   for (std::size_t i = 0; i < reader.number_of_elements(); ++ i)
   {
     internal::PLY::PLY_element& element = reader.element(i);
 
-    if (element.name() == "vertex" || element.name() == "vertices")
+    bool is_vertex = (element.name() == "vertex" || element.name() == "vertices");
+    if (is_vertex)
     {
       point_set.reserve (element.number_of_items());
       filler.instantiate_properties (element);
@@ -417,37 +365,56 @@ read_ply_point_set(
           return false;
       }
 
-      if (element.name() == "vertex" || element.name() == "vertices")
+      if (is_vertex)
         filler.process_line (element);
     }
   }
 
-  return true;
+  return !stream.bad();
 }
   
 /*!
   \ingroup PkgPointSet3IO
+
+  Writes a point set with properties in an output stream in PLY
+  format.
+
+  If found, the normal map is inserted to the stream.  All other
+  properties with simple types are inserted in the stream.
+
+  If provided, the `comments` string is included line by line in
+  the header of the PLY stream (each line will be precedeed by
+  "comment ").
  */
 template <typename Point, typename Vector>
 bool
 write_ply_point_set(
   std::ostream& stream, ///< output stream.
-#ifdef DOXYGEN_RUNNING
-  const CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
-#else
-  const CGAL::Point_set_3<Point, Vector>& point_set,  ///< point set
-  std::string* comments = NULL) ///< write PLY comments
-#endif
+  const CGAL::Point_set_3<Point, Vector>& point_set,  ///< point set.
+  const std::string& comments = std::string()) ///< PLY comments.
 {
   typedef CGAL::Point_set_3<Point, Vector> Point_set;
+  typedef typename Point_set::Index Index;
+  typedef typename Point_set::Point_map Point_map;
+  typedef typename Point_set::Vector_map Vector_map;
+  typedef typename Point_set::template Property_map<boost::int8_t> Int8_map;
+  typedef typename Point_set::template Property_map<boost::uint8_t> Uint8_map;
+  typedef typename Point_set::template Property_map<boost::int16_t> Int16_map;
+  typedef typename Point_set::template Property_map<boost::uint16_t> Uint16_map;
+  typedef typename Point_set::template Property_map<boost::int32_t> Int32_map;
+  typedef typename Point_set::template Property_map<boost::uint32_t> Uint32_map;
+  typedef typename Point_set::template Property_map<boost::int64_t> Int64_map;
+  typedef typename Point_set::template Property_map<boost::uint64_t> Uint64_map;
+  typedef typename Point_set::template Property_map<float> Float_map;
+  typedef typename Point_set::template Property_map<double> Double_map;
     
   stream << "ply" << std::endl
          << ((get_mode(stream) == IO::BINARY) ? "format binary_little_endian 1.0" : "format ascii 1.0") << std::endl
          << "comment Generated by the CGAL library" << std::endl;
 
-  if (comments != NULL)
+  if (comments != std::string())
   {
-    std::istringstream iss (*comments);
+    std::istringstream iss (comments);
     std::string line;
     while (getline(iss, line))
     {
@@ -459,7 +426,7 @@ write_ply_point_set(
   stream << "element vertex " << point_set.number_of_points() << std::endl;
   
   std::vector<std::string> prop = point_set.base().properties();
-  std::vector<internal::Abstract_property_printer<Point, Vector>*> printers;
+  std::vector<internal::PLY::Abstract_property_printer<Index>*> printers;
   
   for (std::size_t i = 0; i < prop.size(); ++ i)
     {
@@ -468,7 +435,7 @@ write_ply_point_set(
 
       if (prop[i] == "point")
         {
-          if (boost::is_same<typename GetFTFromMap<typename Point_set::Point_map>::type, float>::value)
+          if (boost::is_same<typename Get_FT_from_map<typename Point_set::Point_map>::type, float>::value)
           {
             stream << "property float x" << std::endl
                    << "property float y" << std::endl
@@ -480,86 +447,125 @@ write_ply_point_set(
                    << "property double y" << std::endl
                    << "property double z" << std::endl;
           }
-          printers.push_back (new internal::Property_printer<Point,Vector,Point>(point_set.point_map()));
+          printers.push_back (new internal::PLY::Property_printer<Index,Point_map>(point_set.point_map()));
           continue;
         }
       if (prop[i] == "normal")
         {
-          stream << "property double nx" << std::endl
-                 << "property double ny" << std::endl
-                 << "property double nz" << std::endl;
-          printers.push_back (new internal::Property_printer<Point,Vector,Vector>(point_set.normal_map()));
+          if (boost::is_same<typename Get_FT_from_map<typename Point_set::Vector_map>::type, float>::value)
+          {
+            stream << "property float nx" << std::endl
+                   << "property float ny" << std::endl
+                   << "property float nz" << std::endl;
+          }
+          else
+          {
+            stream << "property double nx" << std::endl
+                   << "property double ny" << std::endl
+                   << "property double nz" << std::endl;
+          }
+          printers.push_back (new internal::PLY::Property_printer<Index,Vector_map>(point_set.normal_map()));
           continue;
         }
       
       bool okay = false;
       {
-        typename Point_set::template Property_map<boost::int8_t> pmap;
+        Int8_map pmap;
         boost::tie (pmap, okay) = point_set.template property_map<boost::int8_t>(prop[i]);
         if (okay)
           {
             stream << "property char " << prop[i] << std::endl;
-            printers.push_back (new internal::Char_property_printer<Point,Vector,boost::int8_t>(pmap));
+            printers.push_back (new internal::PLY::Char_property_printer<Index,Int8_map>(pmap));
             continue;
           }
       }
       {
-        typename Point_set::template Property_map<boost::uint8_t> pmap;
+        Uint8_map pmap;
         boost::tie (pmap, okay) = point_set.template property_map<boost::uint8_t>(prop[i]);
         if (okay)
           {
             stream << "property uchar " << prop[i] << std::endl;
-            printers.push_back (new internal::Char_property_printer<Point,Vector,boost::uint8_t>(pmap));
+            printers.push_back (new internal::PLY::Char_property_printer<Index,Uint8_map>(pmap));
             continue;
           }
       }
       {
-        typename Point_set::template Property_map<boost::int16_t> pmap;
+        Int16_map pmap;
         boost::tie (pmap, okay) = point_set.template property_map<boost::int16_t>(prop[i]);
         if (okay)
           {
             stream << "property short " << prop[i] << std::endl;
-            printers.push_back (new internal::Simple_property_printer<Point,Vector,boost::int16_t>(pmap));
+            printers.push_back (new internal::PLY::Simple_property_printer<Index,Int16_map>(pmap));
             continue;
           }
       }
       {
-        typename Point_set::template Property_map<boost::uint16_t> pmap;
+        Uint16_map pmap;
         boost::tie (pmap, okay) = point_set.template property_map<boost::uint16_t>(prop[i]);
         if (okay)
           {
             stream << "property ushort " << prop[i] << std::endl;
-            printers.push_back (new internal::Simple_property_printer<Point,Vector,boost::uint16_t>(pmap));
+            printers.push_back (new internal::PLY::Simple_property_printer<Index,Uint16_map>(pmap));
             continue;
           }
       }
       {
-        typename Point_set::template Property_map<boost::int32_t> pmap;
+        Int32_map pmap;
         boost::tie (pmap, okay) = point_set.template property_map<boost::int32_t>(prop[i]);
         if (okay)
           {
             stream << "property int " << prop[i] << std::endl;
-            printers.push_back (new internal::Simple_property_printer<Point,Vector,boost::int32_t>(pmap));
+            printers.push_back (new internal::PLY::Simple_property_printer<Index,Int32_map>(pmap));
             continue;
           }
       }
       {
-        typename Point_set::template Property_map<float> pmap;
+        Uint32_map pmap;
+        boost::tie (pmap, okay) = point_set.template property_map<boost::uint32_t>(prop[i]);
+        if (okay)
+          {
+            stream << "property uint " << prop[i] << std::endl;
+            printers.push_back (new internal::PLY::Simple_property_printer<Index,Uint32_map>(pmap));
+            continue;
+          }
+      }
+      {
+        Int64_map pmap;
+        boost::tie (pmap, okay) = point_set.template property_map<boost::int64_t>(prop[i]);
+        if (okay)
+          {
+            stream << "property int " << prop[i] << std::endl;
+            printers.push_back (new internal::PLY::Simple_property_printer<Index,Int64_map,boost::int32_t>(pmap));
+            continue;
+          }
+      }
+      {
+        Uint64_map pmap;
+        boost::tie (pmap, okay) = point_set.template property_map<boost::uint64_t>(prop[i]);
+        if (okay)
+          {
+            stream << "property uint " << prop[i] << std::endl;
+            printers.push_back (new internal::PLY::Simple_property_printer<Index,Uint64_map,boost::uint32_t>(pmap));
+            continue;
+          }
+      }
+      {
+        Float_map pmap;
         boost::tie (pmap, okay) = point_set.template property_map<float>(prop[i]);
         if (okay)
           {
             stream << "property float " << prop[i] << std::endl;
-            printers.push_back (new internal::Simple_property_printer<Point,Vector,float>(pmap));
+            printers.push_back (new internal::PLY::Simple_property_printer<Index,Float_map>(pmap));
             continue;
           }
       }
       {
-        typename Point_set::template Property_map<double> pmap;
+        Double_map pmap;
         boost::tie (pmap, okay) = point_set.template property_map<double>(prop[i]);
         if (okay)
           {
             stream << "property double " << prop[i] << std::endl;
-            printers.push_back (new internal::Simple_property_printer<Point,Vector,double>(pmap));
+            printers.push_back (new internal::PLY::Simple_property_printer<Index,Double_map>(pmap));
             continue;
           }
       }

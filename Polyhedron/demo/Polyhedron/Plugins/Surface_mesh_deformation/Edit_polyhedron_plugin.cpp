@@ -566,7 +566,8 @@ void Polyhedron_demo_edit_polyhedron_plugin::importSelection(Scene_polyhedron_se
   }
   edit_item->invalidateOpenGLBuffers();
   selection_item->setVisible(false);
-  (*CGAL::QGLViewer::QGLViewerPool().begin())->update();
+  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+    v->update();
 }
 
 void Polyhedron_demo_edit_polyhedron_plugin::updateSelectionItems(Scene_facegraph_item* target)

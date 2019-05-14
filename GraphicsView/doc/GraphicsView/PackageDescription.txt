@@ -13,7 +13,7 @@
 \cgalPkgPicture{detail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Andreas Fabri and Laurent Rineau}
-\cgalPkgDesc{This package provides classes for displaying \cgal objects  and data structures in the <A HREF="https://qt-project.org/doc/qt-5/graphicsview.html">Qt 5 Graphics View Framework</A>.}
+\cgalPkgDesc{This package provides classes for displaying \cgal objects  and data structures in the <A HREF="https://doc.qt.io/qt-5/graphicsview.html">Qt 5 Graphics View Framework</A>.}
 \cgalPkgManuals{Chapter_CGAL_and_the_Qt_Graphics_View_Framework,PkgGraphicsViewRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -26,7 +26,7 @@
 
 This package provides some classes which allow to use \cgal classes in
 <I>Qt</I> applications which make use of the <A
-HREF="https://qt-project.org/doc/qt-5/graphicsview.html">Qt Graphics
+HREF="https://doc.qt.io/qt-5/graphicsview.html">Qt Graphics
 View Framework</A>.
 
 \cgalClassifedRefPages

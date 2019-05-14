@@ -73,7 +73,7 @@ or if Qt5 are desired
 sudo port install cgal +qt5 +universal +demos
 </PRE>
 
-The setup is similar for <a href="https://mxcl.github.com/homebrew/"><tt>homebrew</tt></a> .
+The setup is similar for <a href="https://brew.sh/"><tt>homebrew</tt></a> .
 
 \subsection sseccgaldebian CGAL on Linux 
 
@@ -100,7 +100,7 @@ It is a self extracting executable that installs the \cgal source, and that allo
 to select and download some precompiled third party libraries. However, you will need to compile
 the library using your favorite compiler.
 
-A <a href="https://www.cgal.org/windows_installation.html">tutorial</a> is provided on how to proceed with Microsoft Visual Studio.
+A <a href="https://www.cgal.org/download/windows.html">tutorial</a> is provided on how to proceed with Microsoft Visual Studio.
 
 
 
@@ -136,7 +136,7 @@ contains the following subdirectories:
 
 
 The directories `include/CGAL/CORE` and `src/CGALCore` contain a
-distribution of the \sc{Core} library\cgalFootnote{<A HREF="https://www.cs.nyu.edu/exact/">`https://www.cs.nyu.edu/exact/`</A>} version 1.7 for
+distribution of the \sc{Core} library\cgalFootnote{<A HREF="https://cs.nyu.edu/exact/">`https://cs.nyu.edu/exact/`</A>} version 1.7 for
 dealing with algebraic numbers. \sc{Core} is not part of \cgal and has its
 own license.
 
@@ -170,11 +170,11 @@ It may work for older versions of the above listed compilers.
 
 In order to configure, build, and install the \cgal libraries, examples and
 demos, you need CMake, a cross-platform "makefile generator".
-If CMake is not installed already you can obtain it from <A HREF="https://www.cmake.org/">`https://www.cmake.org/`</A>.
+If CMake is not installed already you can obtain it from <A HREF="https://cmake.org/">`https://cmake.org/`</A>.
 CMake version 3.1 or higher is required.
 This manual explains only those features of
 CMake which are needed in order to build \cgal. Please refer to the 
-CMake documentation at <A HREF="https://www.cmake.org/">`https://www.cmake.org/`</A> for further details.
+CMake documentation at <A HREF="https://cmake.org/">`https://cmake.org/`</A> for further details.
 
 Before building \cgal you have to choose the compiler/linker, 
 set compiler and linker flags, specify which
@@ -356,7 +356,7 @@ header-only.
 
 \subsubsection subsection_headeronly_pbonwindows Possible Problem on Windows
 
-There is one possible problem when using \cgal in header-only mode on a Windows operating system when compiling a program using several modules (executable programs or dynamic-link libraries DLL). If two different modules use the same static variable, this variable is defined independently in each of these modules. If one module modifies the value of this variable, it will not be modified in the other module, which could induce an unexpected behavior. In \cgal, this concerns only a few specific variables: the <A HREF="https://doc.cgal.org/latest/Generator/classCGAL_1_1Random.html">default random</A>, the <A HREF="https://doc.cgal.org/latest/STL_Extension/group__PkgSTLExtensionAssertions.html">failure behavior</A>, <A HREF="https://doc.cgal.org/latest/Stream_support/group__PkgStreamSupport.html">IO mode</A>. One example is the following: if you change the default random in one DLL, then if you use the default random in another DLL, you will not obtain the modified default random but the original one.
+There is one possible problem when using \cgal in header-only mode on a Windows operating system when compiling a program using several modules (executable programs or dynamic-link libraries DLL). If two different modules use the same static variable, this variable is defined independently in each of these modules. If one module modifies the value of this variable, it will not be modified in the other module, which could induce an unexpected behavior. In \cgal, this concerns only a few specific variables: the <A HREF="https://doc.cgal.org/latest/Generator/classCGAL_1_1Random.html">default random</A>, the <A HREF="https://doc.cgal.org/latest/STL_Extension/group__PkgSTLExtensionAssertions.html">failure behavior</A>, `CGAL::IO::Mode`. One example is the following: if you change the default random in one DLL, then if you use the default random in another DLL, you will not obtain the modified default random but the original one.
 
 \section secessential3rdpartysoftware Essential Third Party Libraries 
 
@@ -468,7 +468,7 @@ The exhaustive list of \sc{Qt}5 components used in demos is:
 `Core`, `Gui`, `Help`, `OpenGL`, `Script`, `ScriptTools`, `Svg`, `Widgets`,
 `qcollectiongenerator` (with `sqlite` driver plugin) and `Xml`.
 
-Having \sc{Qt}5 version 5.3.0 is recommended.
+\sc{Qt} version 5.9.0 or later is required.
 
 \section installation_examples CGAL Examples and Demos
 
@@ -502,7 +502,7 @@ algorithms. Like \sc{Core}, \leda offers a real number data type.
 In \cgal this library is optional, and its number types can 
 be used as an alternative to \sc{Gmp}, \sc{Mpfr}, and \sc{Core}.
 
-Free and commercial editions of \leda are available from <A HREF="https://www.algorithmic-solutions.com/leda/index.html">`https://www.algorithmic-solutions.com/leda/index.html`</A>.
+Free and commercial editions of \leda are available from <A HREF="https://www.algorithmic-solutions.com">`https://www.algorithmic-solutions.com`</A>.
 
 \subsection thirdpartyMPFI MPFI
 
@@ -549,7 +549,7 @@ and the \ref PkgSurfaceMeshParameterizationRef packages.
 In addition, \sc{Eigen} also provides singular value decomposition for the \ref PkgJetFitting3Ref
 and the \ref PkgRidges3Ref packages.
 
-The \sc{Eigen} web site is <A HREF="http://eigen.tuxfamily.org">`http://eigen.tuxfamily.org`</A>.
+The \sc{Eigen} web site is <A HREF="http://eigen.tuxfamily.org/index.php?title=Main_Page">`http://eigen.tuxfamily.org`</A>.
 
 \subsection thirdpartyESBTL ESBTL
 
@@ -568,7 +568,7 @@ programs that take advantage of multi-core processors.
 
 In \cgal, \sc{Tbb} is used by the packages that offer parallel code.
 
-The \sc{Tbb} web site is <A HREF="http://www.threadingbuildingblocks.org">`http://www.threadingbuildingblocks.org`</A>.
+The \sc{Tbb} web site is <A HREF="https://www.threadingbuildingblocks.org">`https://www.threadingbuildingblocks.org`</A>.
 
 \subsection thirdpartyLASlib LASlib
 

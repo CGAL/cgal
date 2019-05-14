@@ -338,7 +338,7 @@ namespace internal {
 namespace algorithm {
 
 // Implementation of the algorithm described here:
-//   http://en.wikipedia.org/w/index.php?title=Selection_algorithm&oldid=480099620#Partition-based_general_selection_algorithm
+//   https://en.wikipedia.org/w/index.php?title=Selection_algorithm&oldid=480099620#Partition-based_general_selection_algorithm
 template <class RandomAccessIterator, class Compare>
 RandomAccessIterator
 partition(RandomAccessIterator left,

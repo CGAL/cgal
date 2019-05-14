@@ -42,7 +42,7 @@
 #include <ctime>
 
 #ifdef CGAL_LINKED_WITH_TBB
-#include <CGAL/internal/Parallel_callback.h>
+#include <CGAL/Point_set_processing_3/internal/Parallel_callback.h>
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>  
@@ -415,9 +415,9 @@ public:
    For more details, please refer to \cgalCite{wlop-2009}.
 
    A parallel version of WLOP is provided and requires the executable to be 
-   linked against the <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+   linked against the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
    To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-   See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+   See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
    for more details.
 
    \tparam ConcurrencyTag enables sequential versus parallel algorithm.
@@ -442,8 +442,8 @@ public:
      \cgalParamBegin{neighbor_radius} spherical neighborhood radius. This is a key parameter that needs to be
      finely tuned. The result will be irregular if too small, but a larger value will impact the runtime. In 
      practice, choosing a radius such that the neighborhood of each sample point includes at least two rings 
-     of neighboring sample points gives satisfactory result. The default value is set to 8 times the average 
-     spacing of the point set.\cgalParamEnd
+     of neighboring sample points gives satisfactory result. If this parameter is not provided, it is
+     automatically set to 8 times the average spacing of the point set.\cgalParamEnd
      \cgalParamBegin{number_of_iterations} number of iterations to solve the optimsation problem. The default
      value is 35. More iterations give a more regular result but increase the runtime.\cgalParamEnd
      \cgalParamBegin{require_uniform_sampling} an optional preprocessing, which will give better result if the
@@ -606,7 +606,7 @@ wlop_simplify_and_regularize_point_set(
     //parallel
     if (boost::is_convertible<ConcurrencyTag, Parallel_tag>::value)
     {
-      internal::Point_set_processing_3::Parallel_callback
+      Point_set_processing_3::internal::Parallel_callback
         parallel_callback (callback, iter_number * number_of_sample, iter_n * number_of_sample);
      
       tbb::blocked_range<size_t> block(0, number_of_sample);

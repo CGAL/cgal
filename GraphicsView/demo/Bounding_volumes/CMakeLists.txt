@@ -17,13 +17,13 @@ find_package(CGAL COMPONENTS Qt5)
 
 find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
 include_directories (BEFORE ./include)
-include_directories (BEFORE ../../../Matrix_search/include)
 
 
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_definitions(-DQT_NO_KEYWORDS)
+set(CMAKE_AUTOMOC ON)
 
 #----------------------------------------------
 # The "Bounding volumes" demo: Bounding_volumes
@@ -35,10 +35,9 @@ qt5_wrap_ui( DT_UI_FILES Bounding_volumes.ui )
 qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES ./Bounding_volumes.qrc )
 
 # use the Qt MOC preprocessor on classes that derives from QObject
-qt5_generate_moc( "Bounding_volumes.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Bounding_volumes.moc" )
 
 # The executable itself.
-add_executable  ( Bounding_volumes Bounding_volumes.cpp Bounding_volumes.moc ${DT_UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
+add_executable  ( Bounding_volumes Bounding_volumes.cpp ${DT_UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS Bounding_volumes )
 

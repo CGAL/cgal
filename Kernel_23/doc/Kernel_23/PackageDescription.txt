@@ -142,6 +142,8 @@
 \cgalCRPSection{Global Functions}
 
 - \link angle_grp `CGAL::angle()` \endlink
+- \link angle_grp `CGAL::approximate_angle()` \endlink
+- \link angle_grp `CGAL::approximate_dihedral_angle()` \endlink
 - \link are_ordered_along_line_grp `CGAL::are_ordered_along_line()` \endlink
 - \link are_strictly_ordered_along_line_grp `CGAL::are_strictly_ordered_along_line()` \endlink
 - \link area_grp `CGAL::area()` \endlink
@@ -298,6 +300,7 @@
 - `Kernel::ComputeB_2`
 - `Kernel::ComputeC_2`
 - `Kernel::ComputeApproximateArea_3`
+- `Kernel::ComputeApproximateAngle_3`
 - `Kernel::ComputeApproximateDihedralAngle_3`
 - `Kernel::ComputeApproximateSquaredLength_3`
 - `Kernel::ComputeArea_2`

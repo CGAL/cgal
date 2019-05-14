@@ -71,6 +71,10 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
 
   tm_face_descriptor tm_null_face = boost::graph_traits<TargetMesh>::null_face();
 
+  reserve(tm, static_cast<typename boost::graph_traits<TargetMesh>::vertices_size_type>(vertices(sm).size()),
+              static_cast<typename boost::graph_traits<TargetMesh>::edges_size_type>(edges(sm).size()),
+              static_cast<typename boost::graph_traits<TargetMesh>::faces_size_type>(faces(sm).size()) );
+
   //insert halfedges and create each vertex when encountering its halfedge
   for(sm_edge_descriptor sm_e : edges(sm))
   {

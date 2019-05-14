@@ -217,21 +217,21 @@ int main()
   }
 
   char ch;
-  gv << CGAL::VIOLET;
+  gv << CGAL::violet();
   visu_points(gv,points);
 
-  gv << CGAL::RED << Segment(p, p+ 0.3*normal);
-  gv << CGAL::ORANGE <<p;
+  gv << CGAL::red() << Segment(p, p+ 0.3*normal);
+  gv << CGAL::orange() <<p;
 
   std::cout << "Visualizing the intersection of "
 	    << "3D Voronoi diagram with tangent plane at "
 	    << p << "." << std::endl;
-  gv << CGAL::BLUE;
+  gv << CGAL::blue();
   T.draw_dual(gv);
   Face_iterator fit = T.finite_faces_begin(),
     fend = T.finite_faces_end();
   for(;fit != fend;fit++)
-    gv <<CGAL::BLACK<<T.dual(fit);
+    gv <<CGAL::black()<<T.dual(fit);
 
   std::cout << "Enter any character to quit" << std::endl;
   std::cin >> ch;

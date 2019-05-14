@@ -39,7 +39,7 @@ namespace CGAL {
 
 // I proposed it for Boost.Array, but it has not been integrated so far.
 // See the thread starting at
-// http://lists.boost.org/Archives/boost/2006/08/109003.php
+// https://lists.boost.org/Archives/boost/2006/08/109003.php
 //
 // C++0x has it under discussion here :
 // http://www.open-std.org/jtc1/sc22/wg21/docs/lwg-active.html#851

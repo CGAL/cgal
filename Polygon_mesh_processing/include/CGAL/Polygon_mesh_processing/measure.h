@@ -532,11 +532,108 @@ volume(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
     CGAL::vertex_point_t>::type>::Kernel::FT
   volume(const TriangleMesh& tmesh)
   {
-
     return volume(tmesh,
       CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
+/**
+  * \ingroup measure_grp
+  * computes the centroid of a volume bounded by
+  * a closed triangulated surface mesh.
+  *
+  * @tparam TriangleMesh a model of `FaceListGraph`
+  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  *
+  * @param tmesh the closed triangulated surface mesh bounding the volume
+  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  *
+  * @pre `tmesh` is closed
+  *
+  * \cgalNamedParamsBegin
+  *  \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+  *   If this parameter is omitted, an internal property map for
+  *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
+  *  \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+  * \cgalNamedParamsEnd
+  *
+  * @return the centroid of the domain bounded by `tmesh`.
+  */
+  template<typename TriangleMesh
+         , typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+#ifdef DOXYGEN_RUNNING
+  Point_3
+#else
+  typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type::Point_3
+#endif
+centroid(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
+{
+  // See: http://www2.imperial.ac.uk/~rn/centroid.pdf
+    
+  CGAL_assertion(is_triangle_mesh(tmesh));
+  CGAL_assertion(is_closed(tmesh));
+
+  using boost::choose_param;
+  using boost::get_param;
+
+  typedef typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type Vpm;
+  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+                         get_const_property_map(CGAL::vertex_point, tmesh));
+  typedef typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type Kernel;
+  typedef typename Kernel::Point_3 Point_3;
+  typedef typename Kernel::Vector_3 Vector_3;
+  typedef typename Kernel::Construct_translated_point_3 Construct_translated_point_3;
+  typedef typename Kernel::Construct_vector_3 Construct_vector_3;
+  typedef typename Kernel::Construct_normal_3 Construct_normal_3;
+  typedef typename Kernel::Compute_scalar_product_3 Scalar_product;
+  typedef typename Kernel::Construct_scaled_vector_3 Scale;
+  typedef typename Kernel::Construct_sum_of_vectors_3 Sum;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+typedef typename Kernel::FT FT;
+  FT volume = 0.;
+
+  Vector_3 centroid(NULL_VECTOR);
+
+  Construct_translated_point_3 point;
+  Construct_vector_3 vector;
+  Construct_normal_3 normal;
+  Scalar_product scalar_product;
+  Scale scale;
+  Sum sum;
+
+  for(face_descriptor fd : faces(tmesh)){
+    const Point_3& p = get(vpm, target(halfedge(fd, tmesh), tmesh));
+    const Point_3& q = get(vpm, target(next(halfedge(fd, tmesh), tmesh), tmesh));
+    const Point_3& r = get(vpm, target(prev(halfedge(fd, tmesh), tmesh), tmesh));
+    Vector_3 vp = vector(ORIGIN, p),
+      vq = vector(ORIGIN, q),
+      vr = vector(ORIGIN, r);
+    Vector_3 n = normal(p, q, r);
+    volume += (scalar_product(n,vp))/FT(6);
+    n = scale(n, FT(1)/FT(24));
+
+    Vector_3 v2 = sum(vp, vq);
+    Vector_3 v3 = Vector_3(square(v2.x()), square(v2.y()), square(v2.z()));
+    v2 = sum(vq, vr);
+    v3 = sum(v3, Vector_3(square(v2.x()), square(v2.y()), square(v2.z())));
+    v2 = sum(vp, vr);
+    v3 = sum(v3, Vector_3(square(v2.x()), square(v2.y()), square(v2.z())));
+              
+    centroid = sum(centroid, Vector_3(n.x() * v3.x(), n.y() * v3.y(), n.z() * v3.z())); 
+  }
+  centroid = scale(centroid, FT(1)/(FT(2)*volume));
+  return point(ORIGIN, centroid);
+  
+}
+
+template<typename TriangleMesh>
+typename CGAL::Kernel_traits<typename property_map_value<TriangleMesh,
+                                                         CGAL::vertex_point_t>::type>::Kernel::Point_3
+centroid(const TriangleMesh& tmesh)
+{
+  return centroid(tmesh,
+                  CGAL::Polygon_mesh_processing::parameters::all_default());
+}
+  
 }
 }
 
