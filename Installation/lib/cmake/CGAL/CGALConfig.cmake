@@ -72,6 +72,7 @@ endif()
 include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_Common.cmake)
+include(${CGAL_MODULES_DIR}/CGAL_TweakFindBoost.cmake)
 
 set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
 

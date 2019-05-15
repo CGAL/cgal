@@ -193,12 +193,6 @@ init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interfa
     actionCreateRib->setProperty("subMenuName", "Tetrahedral Mesh Generation");
     connect(actionCreateRib, SIGNAL(triggered()), this, SLOT(create_rib()));
   }
-  
-  if ( NULL == Three::activeViewer() )
-  {
-    std::cerr << "Can't get CGAL::QGLViewer" << std::endl;
-  }
-  
   init_parameters();
 }
 

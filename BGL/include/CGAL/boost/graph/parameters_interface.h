@@ -92,6 +92,7 @@ CGAL_add_named_parameter(get_placement_policy_t, get_placement_policy, get_place
 CGAL_add_named_parameter(face_normal_t, face_normal, face_normal_map)
 CGAL_add_named_parameter(random_seed_t, random_seed, random_seed)
 CGAL_add_named_parameter(do_project_t, do_project, do_project)
+CGAL_add_named_parameter(tolerance_map_t, tolerance_map, tolerance_map)
 
 //internal
 CGAL_add_named_parameter(weight_calculator_t, weight_calculator, weight_calculator)
