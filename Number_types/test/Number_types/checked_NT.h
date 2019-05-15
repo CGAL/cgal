@@ -6,6 +6,7 @@
 #include <CGAL/Real_embeddable_traits.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/enum.h>
+#include <CGAL/is_convertible.h>
 #include <boost/utility/enable_if.hpp>
 
 namespace CGAL {
