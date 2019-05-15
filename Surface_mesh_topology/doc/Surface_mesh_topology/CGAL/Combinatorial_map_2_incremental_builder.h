@@ -33,7 +33,8 @@ namespace Surface_mesh_topology {
     /// @pre A facet is under creation.
     Dart_handle end_facet();
 
-    /// adds one edge to the current facet, given by its label `l` (any string containing no space, using minus sign for orientation)
+    /// adds one edge to the current facet, given by its label `l` (any string containing no space, using minus sign for orientation).
+    /// Since the surface is oriented, each label can be used only twice with opposite signs. If this method is called with a label already used, with same sign, an error message is given and this label is ignored. 
     /// @pre A facet is under creation.
     void add_edge_to_facet(const std::string& l);
     
