@@ -96,6 +96,9 @@ and provides a list of the parameters that are used in this package.
 \cgalCRPSection{Meshing Functions}
 - `CGAL::Polygon_mesh_processing::fair()`
 - `CGAL::Polygon_mesh_processing::refine()`
+- `CGAL::Polygon_mesh_processing::smooth_angles()`
+- `CGAL::Polygon_mesh_processing::smooth_areas()`
+- `CGAL::Polygon_mesh_processing::smooth_along_curvature_flow()`
 - `CGAL::Polygon_mesh_processing::triangulate_face()`
 - `CGAL::Polygon_mesh_processing::triangulate_faces()`
 - \link PMP_meshing_grp `CGAL::Polygon_mesh_processing::isotropic_remeshing()` \endlink

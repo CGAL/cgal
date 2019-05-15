@@ -39,7 +39,8 @@ and provides a list of the parameters that are used in this package.
 \subsection PMPOutline Outline
 The algorithms described in this manual are organized in sections:
 - \ref PMPMeshing : meshing algorithms, including triangulation of non-triangulated
-meshes, refinement, optimization by fairing, and isotropic remeshing of triangulated surface meshes.
+meshes, refinement, optimization by fairing, isotropic remeshing of triangulated surface meshes
+and smoothing algorithms.
 - \ref Coref_section : methods to corefine triangle meshes and to compute
   boolean operations out of corefined closed triangle meshes.
 - \ref PMPHoleFilling : available hole filling algorithms, which can possibly be combined with refinement and fairing.
@@ -121,6 +122,40 @@ Isotropic remeshing. (a) Triangulated input surface mesh.
 (c) Selection of a range of faces to be remeshed.
 (d) Surface mesh with the selection uniformly remeshed.
 \cgalFigureEnd
+
+\subsubsection Smoothing
+
+Smoothing of a triangulated mesh region can be achieved with algorithms that aim at either mesh smoothing or shape smoothing.
+While mesh smoothing is achieved by improving the quality of triangles based on criteria such as angle and area,
+shape smoothing is designed to be \e intrinsic, depending as little as possible on the discretization
+and smoothing the shape alone without optimizing the shape of the triangles.
+
+- Mesh smoothing: `CGAL::Polygon_mesh_processing::smooth_angles()` moves vertices so that angles between incident edges equalize,
+and `CGAL::Polygon_mesh_processing::smooth_areas()` moves vertices so that areas of adjacent triangles tend to equalize.
+Border vertices are considered constrained and do not move at any step of the procedure.
+Degenerate faces are removed as a first step before smoothing, and no vertices are inserted at any time. Angle and area smoothing algorithms are based on Surazhsky and Gotsman \cgalCite{cgal:sg-hqct-04}.
+Since area smoothing considers only areas as a smoothing criterion, it may result in long and skinny triangles. However, area smoothing is guaranteed to improve the spatial distribution of the vertices over the area that is being smoothed. A simple example can be found in `Polygon_mesh_processing/mesh_smoothing_example.cpp`.
+
+\cgalFigureBegin{smooth_sphere, smooth_sphere.png}
+Mesh smoothing. (a) Input mesh.
+(b) Smoothing based on angles after 10 iterations.
+(c) Smoothing based on areas after 15 iterations.
+(d) Applied twice a sequence of 5 iterations of smoothing based on angles followed by 1 iteration of smoothing based on areas.
+\cgalFigureEnd
+
+- Shape smoothing: `CGAL::Polygon_mesh_processing::smooth_along_curvature_flow()`
+incrementally moves vertices towards a weighted barycenter of their neighbors along the mean curvature flow.
+The curvature flow algorithm for shape smoothing is based on Desbrun et al. \cgalCite{cgal:dmsb-ifamdcf-99} and on Kazhdan et al. \cgalCite{kazhdan2012can}.
+The algorithm uses the mean curvature flow to calculate the translation of vertices along the surface normal with a speed equal
+to the mean curvature of the area that is being smoothed. This means that vertices on sharp corners slide faster.
+If the region around a vertex is flat, this vertex does not move (zero curvature). To avoid the formation of undesirable neck pinches (cylindrical surface areas that form singularities) the algorithm slows down the evolution in cylindrical regions. The smoothed shape converges to a sphere while staying conformally equivalent to its original shape.
+A simple example can be found in `Polygon_mesh_processing/shape_smoothing_example.cpp`.
+
+\cgalFigureBegin{shape_smoothing, shape_smoothing.png}
+(a) Shape smoothing on a dinosaur model using the normalized mean curvature flow. The resulting smoothed shape is colored white.
+(b) Shape smoothing of the devil using the mean curvature flow with a time step equal to 0.5. The result is conformally equivalent to the original mesh.
+\cgalFigureEnd
+
 
 
 \subsection MeshingExamples Meshing Examples

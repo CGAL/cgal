@@ -214,6 +214,7 @@ triangulate_facets_plugin \
 trivial_plugin \
 vtk_plugin \
 xyz_plugin \
+smoothing_plugin \
       all
   do
       if  ${MAKE_CMD} -f Makefile help | grep "$target" > /dev/null; then 

@@ -136,12 +136,15 @@ and C<sup>2</sup> continuity.\n
 \cgalNPEnd
 
 \cgalNPBegin{sparse_linear_solver} \anchor PMP_sparse_linear_solver
-is the solver used in `fair()`.\n
+is the solver used.\n
 <b>Type:</b> a class model of `SparseLinearAlgebraWithFactorTraits_d`.\n
 <b>Default:</b> if \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and
 `CGAL_EIGEN3_ENABLED` is defined, then the following overload of `Eigen_solver_traits`
 is provided as default value:\n
+in `fair()`:\n
 \code CGAL::Eigen_solver_traits<Eigen::SparseLU<CGAL::Eigen_sparse_matrix<double>::EigenType, Eigen::COLAMDOrdering<int> > > \endcode
+in `smooth_along_curvature_flow()`:\n
+\code CGAL::Eigen_solver_traits<Eigen::BiCGSTAB<CGAL::Eigen_sparse_matrix<double>::EigenType, Eigen::IncompleteLUT<double> > > \endcode
 \cgalNPEnd
 
 \cgalNPBegin{number_of_iterations} \anchor PMP_number_of_iterations
@@ -354,6 +357,20 @@ Parameter used in `clip()` functions to clip a volume rather than a surface.
 \n
 <b>Type:</b> `bool` \n
 <b>Default:</b> `false`
+\cgalNPEnd
+
+\cgalNPBegin{gradient_descent_precision} \anchor PMP_gradient_descent_precision
+Parameter used in `smooth_areas()` to define the precision under which the relative energy of each triangle between iterations is minimized. Triangle energy is defined based on its area compared to the average area of all triangles adjacent to the vertex that is being moved. The smaller the value of the parameter, the higher the precision.
+\n
+\b Type : `double` \n
+\b Default is `0.00001`
+\cgalNPEnd
+
+\cgalNPBegin{use_explicit_scheme} \anchor PMP_use_explicit_scheme
+A flag to indicate whether a normalized explicit scheme for smoothing along the curvature flow is used instead of solving a linear system.
+\n
+\b Type : `bool` \n
+\b Default is `false`
 \cgalNPEnd
 
 \cgalNPBegin{use_compact_clipper} \anchor PMP_use_compact_clipper
