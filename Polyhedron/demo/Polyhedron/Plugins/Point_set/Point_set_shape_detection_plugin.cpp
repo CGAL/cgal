@@ -72,7 +72,7 @@ struct build_from_pair
 
 };
 
-class Point_set_demo_point_set_shape_detection_dialog : public QDialog, private Ui::PointSetShapeDetectionDialog
+class Point_set_demo_point_set_shape_detection_dialog : public QDialog, public Ui::PointSetShapeDetectionDialog
 {
   Q_OBJECT
 public:
@@ -114,6 +114,7 @@ class Polyhedron_demo_point_set_shape_detection_plugin :
 
   QAction* actionDetect;
   QAction* actionEstimateParameters;
+  QAction* actionDetectShapesSM;
   
   typedef Point_set_3<Kernel>::Point_map PointPMap;
   typedef Point_set_3<Kernel>::Vector_map NormalPMap;
@@ -128,24 +129,35 @@ public:
     actionDetect->setObjectName("actionDetect");
     actionEstimateParameters = new QAction(tr("Point Set Shape Detection (parameter estimation)"), mainWindow);
     actionEstimateParameters->setObjectName("actionEstimateParameters");
+    actionDetectShapesSM = new QAction(tr("Surface Mesh Shape Detection"), mainWindow);
+    actionDetectShapesSM->setObjectName("actionDetectShapesSM");
     autoConnectActions();
   }
 
-  bool applicable(QAction*) const {
+  bool applicable(QAction* action) const {
+    
     Scene_points_with_normal_item* item =
       qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
-    if (item && item->has_normals())
-      return true;
+    Scene_surface_mesh_item* sm_item =
+      qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+    
+    if (action->objectName() == "actionDetectShapesSM") {
+      if (sm_item)
+        return true;
+      else return false;
+    }
+    if (item && item->has_normals()) return true;
     return false;
   }
 
   QList<QAction*> actions() const {
-    return QList<QAction*>() << actionDetect << actionEstimateParameters;
+    return QList<QAction*>() << actionDetect << actionEstimateParameters << actionDetectShapesSM;
   }
 
   public Q_SLOTS:
     void on_actionDetect_triggered();
     void on_actionEstimateParameters_triggered();
+    void on_actionDetectShapesSM_triggered();
   
 private:
 
@@ -159,6 +171,83 @@ private:
                   const Shape&)
   {
     ransac.template add_shape_factory<Shape>();
+  }
+
+  void detect_shapes_with_region_growing_sm (
+    Scene_surface_mesh_item* sm_item,
+    Point_set_demo_point_set_shape_detection_dialog& dialog) {
+
+    using Face_range = typename SMesh::Face_range;
+
+    using Neighbor_query = 
+    CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<SMesh>;
+    using Region_type = 
+    CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<Kernel, SMesh>;
+    using Sorting = 
+    CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, SMesh, Neighbor_query>;
+
+    using Vertex_to_point_map = typename Region_type::Vertex_to_point_map;
+    using Region_growing = CGAL::Shape_detection::Region_growing<Face_range, Neighbor_query, Region_type>;
+
+    CGAL::Random rand(time(0));
+    const SMesh& mesh = *(sm_item->polyhedron());
+    scene->setSelectedItem(-1);
+    const Face_range face_range = faces(mesh);
+
+    // Set parameters.
+    const double max_distance_to_plane = 
+    dialog.epsilon();
+    const double max_accepted_angle = 
+    (std::acos(dialog.normal_tolerance()) * 180.0) / CGAL_PI;
+    const std::size_t min_region_size = 
+    dialog.min_points();
+
+    // Region growing.
+    Neighbor_query neighbor_query(mesh);
+    const Vertex_to_point_map vertex_to_point_map(get(CGAL::vertex_point, mesh));
+    Region_type region_type(
+      mesh, 
+      max_distance_to_plane, max_accepted_angle, min_region_size, 
+      vertex_to_point_map);
+    
+    Region_growing region_growing(
+      face_range, neighbor_query, region_type);
+
+    std::vector< std::vector<std::size_t> > regions;
+    region_growing.detect(std::back_inserter(regions));
+
+    std::cerr << "* " << regions.size() << 
+    " regions have been found" 
+    << std::endl;
+
+    // Output result as a new colored item.
+    Scene_surface_mesh_item *colored_item = new Scene_surface_mesh_item;
+    colored_item->setName(QString("%1 (region growing)").arg(sm_item->name()));
+    SMesh& fg = *(colored_item->polyhedron());
+
+    fg = mesh;
+    const Face_range fr = faces(fg);
+
+    colored_item->setItemIsMulticolor(true);
+    colored_item->computeItemColorVectorAutomatically(false);
+    auto& color_vector = colored_item->color_vector();
+    color_vector.clear();
+
+    for (std::size_t i = 0; i < regions.size(); ++i) {
+      for (const std::size_t idx : regions[i]) {
+        const auto fit = fr.begin() + idx;
+        fg.property_map<face_descriptor, int>("f:patch_id").first[*fit] = 
+        static_cast<int>(i);
+      }
+      CGAL::Random rnd(static_cast<unsigned int>(i));
+      color_vector.push_back(QColor(
+        64 + rnd.get_int(0, 192),
+        64 + rnd.get_int(0, 192),
+        64 + rnd.get_int(0, 192)));
+    }
+
+    colored_item->invalidateOpenGLBuffers();
+    scene->addItem(colored_item);
   }
 
   void detect_shapes_with_region_growing (
@@ -812,6 +901,48 @@ private:
                           Scene_surface_mesh_item* sm_item, double epsilon);
 
 }; // end Polyhedron_demo_point_set_shape_detection_plugin
+
+void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetectShapesSM_triggered() {
+
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
+
+  Scene_surface_mesh_item* sm_item =
+  qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+
+  if(sm_item) {
+
+    // Get a surface mesh.
+    SMesh* mesh = sm_item->polyhedron();
+    if(mesh == NULL) return;
+
+    Point_set_demo_point_set_shape_detection_dialog dialog;
+
+    dialog.ransac->setEnabled(false);
+    dialog.m_regularize->setEnabled(false);
+    dialog.m_generate_structured->setEnabled(false);
+    dialog.label_4->setEnabled(false);
+    dialog.m_cluster_epsilon_field->setEnabled(false);
+    dialog.groupBox_3->setEnabled(false);
+
+    if(!dialog.exec()) return;
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    if (dialog.region_growing()) {
+      detect_shapes_with_region_growing_sm(sm_item, dialog);
+    }
+
+    dialog.ransac->setEnabled(true);
+    dialog.m_regularize->setEnabled(true);
+    dialog.m_generate_structured->setEnabled(true);
+    dialog.label_4->setEnabled(true);
+    dialog.m_cluster_epsilon_field->setEnabled(true);
+    dialog.groupBox_3->setEnabled(true);
+
+    // Update scene.
+    scene->itemChanged(index);
+    QApplication::restoreOverrideCursor();
+    sm_item->setVisible(false);
+  }
+}
 
 void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered() {
 

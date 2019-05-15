@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
   region_growing.detect(std::back_inserter(regions));
 
   region_growing.release_memory();
-  assert(regions.size() >= 323 && regions.size() <= 327);
+  assert(regions.size() >= 324 && regions.size() <= 328);
 
   const bool exact_exact_test_success = (regions.size() >= 323 && regions.size() <= 327);
   std::cout << "exact_exact_test_success: " << exact_exact_test_success << std::endl;
