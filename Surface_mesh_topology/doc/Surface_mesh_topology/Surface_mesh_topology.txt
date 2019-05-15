@@ -13,12 +13,12 @@ This package provides an algorithm to test if a curve on a surface mesh can be c
 
 \section SMTopology Introduction
 
-Given a curve drawn on a surface one can ask if the curve can be continuously deformed to a point (i.e. a zero length curve). Here, we require that the curve stays on the surface during the deformation. Curves that deform to a point are said <em>contractible</em>. All curves on a sphere are contractible but this is not true for all curves on a torus or on a surface with more complicated topology. One intuitive way to check  that a curve is contractible could be to view the curve as a rope and to try to tighten the rope on the surface as much as possible until it collapses to a point. However, if the surface is not flat but contains peaks or more complicated shapes, the rope may get stuck making the test fail.
+Given a curve drawn on a surface one can ask if the curve can be continuously deformed to a point (i.e. a zero length curve). In other words, does there exist a continuous sequence of curves on the surface that starts with the input curve and ends to a point? Curves that deform to a point are said <em>contractible</em>. Any curve on a sphere is contractible but this is not true for all curves on a torus or on a surface with more complicated topology. One intuitive way to check  that a curve is contractible is to view the curve as a rope and to try to tighten the rope on the surface as much as possible until it collapses to a point. In fact, the algorithms in this package are purely topological and do not assume any geometry on the input surface. In particular, the surface is not necessarily embedded in a Euclidean space.
 
 The algorithm implemented in this package builds a data structure to efficiently answer queries of the following form: 
 - Given a surface mesh \f$\cal{M}\f$ and a closed curve specified as a sequence of edges of \f$\cal{M}\f$, decide if the curve is contractible on \f$\cal{M}\f$,
 - Given a surface mesh \f$\cal{M}\f$ and two closed curves on \f$\cal{M}\f$, decide if the two curves are related by a continuous transformation,
-- Given a surface mesh \f$\cal{M}\f$ and two non-necessarily closed curves on \f$\cal{M}\f$, decide if the two curves are related by a continuous transformation that fixes the curve extremities.
+- Given a surface mesh \f$\cal{M}\f$ and two non-necessarily closed curves on \f$\cal{M}\f$, decide if the two curves are related by a continuous transformation that fixes the curve extremities. The curves should have common endpoints, otherwise the answer to the query is trivially negative.
 
 The second query asks if the curves are <em>freely homotopic</em> while the third one asks if the curves are <em>homotopic with fixed endpoints</em>. The three queries are globally referred to as <em>homotopy tests</em>. Figure \cgalFigureRef{fig_sm_topology_homotopy} below illustrates the three types of queries.
 
@@ -26,7 +26,7 @@ The second query asks if the curves are <em>freely homotopic</em> while the thir
  On the upper left surface the green curve is contractible. The red and blue curves share the same (green) endpoint. (Being closed, their two endpoints coincide.) Although these last two curves are not homotopic with fixed endpoint they are freely homotopic as shown by the suggested continuous transformation of the blue curve.
 \cgalFigureEnd
 
-The algorithms used are based on a paper by Erickson and Whittlesey \cgalCite{ew-tcsr-13}, providing a linear time algorithm for the above homotopy tests. This is a simplified version of the linear time algorithm  by Lazarus and Rivaud \cgalCite{lr-hts-12}. We point out that the algorithms are purely topological and do not assume any geometry on the input surface. In particular, the surface is not necessarily embedded in a Euclidean space.
+The algorithms used are based on a paper by Erickson and Whittlesey \cgalCite{ew-tcsr-13}, providing a linear time algorithm for the above homotopy tests. This is a simplified version of the linear time algorithm  by Lazarus and Rivaud \cgalCite{lr-hts-12}. 
 
 \section SMTopology_HowToUse API Description
 
@@ -54,7 +54,7 @@ The code for creating the above left and middle examples appear in the \ref SMTo
 
 \subsubsection SMTopology_Build Building the Internal Surface Representation
 
-A common first step in the homotopy test algorithms is to build a simplified mesh from the input surface mesh. This preprocessing step is done once and for all for a given mesh. The simplified surface is a quadrangulation, every face of which is a quadrilateral, stored in a `Homotopy_tester`.
+A common first step in the homotopy test algorithms is to build a simplified mesh from the input surface mesh. This preprocessing step is done once and for all for a given mesh. The simplified surface is a quadrangulation, every face of which is a quadrilateral, stored in a `Homotopy_tester`. It has 2 vertices and `\f$2g$\f` quadrilaterals where `\f$g$\f` is the genus of the input surface. This is otherwise independent of the size of input surface, 
 \note The user must not modify the input surface as long as homotopy tests are performed with this `Homotopy_tester`.
 
 Each time a `Path_on_surface` is provided for a homotopy test, it is first transformed to an equivalent path in the quadrangulation stored by the `Homotopy_tester`. This transformation is transparent to the user who has never access to the quadrangulation.
