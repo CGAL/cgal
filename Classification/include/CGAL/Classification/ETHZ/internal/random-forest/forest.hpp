@@ -45,6 +45,8 @@
 #include <cstdio>
 #endif
 
+#include <algorithm>
+
 #include <CGAL/tags.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
