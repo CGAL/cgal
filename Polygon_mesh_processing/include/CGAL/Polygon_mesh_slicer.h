@@ -85,7 +85,7 @@ template<class TriangleMesh,
   class VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::type,
   class AABBTree = AABB_tree<
                        AABB_traits<Traits,
-                         AABB_halfedge_graph_segment_primitive<TriangleMesh> > >,
+                         AABB_halfedge_graph_segment_primitive<TriangleMesh, VertexPointMap> > >,
   bool UseParallelPlaneOptimization=true>
 class Polygon_mesh_slicer
 {
