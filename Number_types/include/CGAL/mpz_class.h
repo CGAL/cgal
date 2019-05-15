@@ -313,6 +313,8 @@ public:
 
 } //namespace CGAL
 
+#include <CGAL/gmpxx.h>
+#include <CGAL/gmpxx_coercion_traits.h>
 #include <CGAL/Residue.h>
 #include <CGAL/Modular_traits.h>
 
@@ -361,8 +363,5 @@ struct Split_double<mpz_class>
 } //namespace CGAL
 
 #undef CGAL_CHECK_GMP_EXPR
-
-#include <CGAL/gmpxx.h>
-#include <CGAL/gmpxx_coercion_traits.h>
 
 #endif // CGAL_MPZ_CLASS_H
