@@ -134,7 +134,7 @@ cd $ROOT
   fi
   IFS=$old_IFS
 
-  if [ -n "$TRAVIS_PULL_REQUEST" ] && [ "$ARG" != Polyhedron_demo ]; then
+  if [ -n "$TRAVIS_PULL_REQUEST_BRANCH" ] && [ "$ARG" != Polyhedron_demo ]; then
     DO_IGNORE=FALSE
     . $ROOT/.travis/test_package.sh "$ROOT" "$ARG"
     echo "DO_IGNORE is $DO_IGNORE"
