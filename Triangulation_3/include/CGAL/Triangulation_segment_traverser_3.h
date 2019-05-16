@@ -505,6 +505,7 @@ public:
   // \{
   typedef typename SCI::Vertex_handle Vertex_handle;//< defines the type of a handle for a vertex in the triangulation
   typedef typename SCI::Cell_handle   Cell_handle;  //< defines the type of a handle for a cell in the triangulation.
+  typedef typename SCI::Cell          Cell;  //< defines the type of a handle for a cell in the triangulation.
   typedef typename SCI::Triangulation::Edge  Edge;  //< defines the type of an edge in the triangulation.
   typedef typename SCI::Triangulation::Facet Facet; //< defines the type of a facet in the triangulation.
   typedef typename SCI::Locate_type   Locate_type;  //< defines the simplex type returned from location.
@@ -812,6 +813,11 @@ public:
   bool is_edge()   const { return _curr_simplex.dimension() == 1; }
   bool is_facet()  const { return _curr_simplex.dimension() == 2; }
   bool is_cell()   const { return _curr_simplex.dimension() == 3; }
+
+  const Cell cell() const
+  {
+    return _cell_iterator.cell();
+  }
 
   const Simplex_type& get_simplex() const { return _curr_simplex; }
   Vertex_handle get_vertex() const
