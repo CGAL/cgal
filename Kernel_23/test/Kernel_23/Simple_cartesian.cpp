@@ -22,6 +22,7 @@
  
 
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Quotient.h>
 #include <cassert>
 
@@ -46,30 +47,26 @@
 
 #include "CGAL/_test_mf_plane_3_to_2d.h"
 
-int
-main()
-{
-  typedef   CGAL::Simple_cartesian<double>     Clsd;
-  std::cout << "Testing IO with Simple_cartesian<double> :" << std::endl;
-  _test_io( Clsd() );
+#include <string>
 
-  typedef   CGAL::Simple_cartesian<CGAL::Quotient<Precise_integer> >     Cls;
-  std::cout << "Testing 2d with Simple_cartesian<Quotient<Precise_integer>> :";
+template <typename Cls>
+void test_kernel(std::string kernel_name, Cls) {
+  std::cout << "Testing 2d with "+kernel_name+" :";
   std::cout << std::endl;
   _test_2( Cls() );
 
-  std::cout << "Testing 3d with Simple_cartesian<Quotient<Precise_integer>> :";
+  std::cout << "Testing 3d with "+kernel_name+" :";
   std::cout << std::endl;
   _test_3( Cls() );
 
-  std::cout << "Testing new 2d with Simple_cartesian<Quotient<Precise_integer>>:";
+  std::cout << "Testing new 2d with "+kernel_name+" :";
   std::cout << std::endl;
   test_new_2( Cls() );
-  std::cout << "Testing new 3d with Simple_cartesian<Quotient<Precise_integer>>:";
+  std::cout << "Testing new 3d with "+kernel_name+" :";
   std::cout << std::endl;
   test_new_3( Cls() );
 
-  std::cout << "Testing new parts with Simple_cartesian<Quotient<Precise_integer>> :";
+  std::cout << "Testing new parts with "+kernel_name+" :";
   std::cout << std::endl;
   _test_orientation_and_bounded_side( Cls() );
   _test_fct_points_implicit_sphere( Cls() );
@@ -80,9 +77,21 @@ main()
   _test_cls_iso_cuboid_3( Cls() );
   _test_angle( Cls() );
 
-  std::cout << "Testing 3d-2d with Simple_cartesian<Quotient<Precise_integer>>:";
+  std::cout << "Testing 3d-2d with "+kernel_name+" :";
   std::cout << std::endl;
   _test_mf_plane_3_to_2d( Cls() );
+}
 
+int
+main()
+{
+  typedef   CGAL::Simple_cartesian<double>     Clsd;
+  std::cout << "Testing IO with Simple_cartesian<double> :" << std::endl;
+  _test_io( Clsd() );
+
+  typedef   CGAL::Simple_cartesian<CGAL::Quotient<Precise_integer> >     Cls;
+  test_kernel("Simple_cartesian<Quotient<Precise_integer>>", Cls());
+  typedef   CGAL::Simple_cartesian<CGAL::Quotient<Precise_integer> >     Cls;
+  test_kernel("Epick_without_intervals", CGAL::Epick_without_intervals());
   return 0;
 }
