@@ -791,12 +791,13 @@ class Polyhedron_demo_cut_plugin :
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90")
 
 public:
   Polyhedron_demo_cut_plugin() : QObject(), edges_item(0) {
   }
 
-  virtual ~Polyhedron_demo_cut_plugin();
+   ~Polyhedron_demo_cut_plugin();
 
   bool applicable(QAction*) const {
     // returns true if one surface_mesh is in the entries
@@ -808,29 +809,30 @@ public:
     return false;
   }
 
-  virtual QString name() const
+  QString name() const
   {
     return "cut-plugin";
   }
 
 
-  virtual QString nameFilters() const
+   QString nameFilters() const
   {
     return "Segment soup file (*.polylines.txt *.cgal)";
   }
 
 
-  bool canLoad() const
+  bool canLoad(QFileInfo) const
   {
     return false;
   }
 
-  virtual CGAL::Three::Scene_item* load(QFileInfo /* fileinfo */)
+  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true)
   {
-    return 0;
+    ok = false;
+    return QList<Scene_item*>();
   }
 
-  virtual bool canSave(const CGAL::Three::Scene_item* item)
+  bool canSave(const CGAL::Three::Scene_item* item)
   {
     // This plugin supports edges items
     bool b = qobject_cast<const Scene_edges_item*>(item) != 0;
@@ -838,8 +840,10 @@ public:
   }
 
 
-  virtual bool save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
-  {  // This plugin supports edges items
+  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
+  {
+    Scene_item* item = items.front();
+    // This plugin supports edges items
     const Scene_edges_item* edges_item =
       qobject_cast<const Scene_edges_item*>(item);
 
@@ -848,8 +852,10 @@ public:
     }
 
     std::ofstream out(fileinfo.filePath().toUtf8());
-
-    return (out && edges_item->save(out));
+    bool ok = (out && edges_item->save(out));
+    if(ok)
+      items.pop_front();
+    return ok;
   }
 
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface,
