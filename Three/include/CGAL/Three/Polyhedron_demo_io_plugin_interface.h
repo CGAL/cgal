@@ -28,16 +28,23 @@
 #include <QFileInfo>
 #include <QStringList>
 #include <QtPlugin>
-
+class QMainWindow;
+class Messages_interface;
 namespace CGAL{
 namespace Three {
 class Scene_item;
+class Scene_interface;
   /*!
    * This class provides a base for creating a new IO plugin.
    */
 class Polyhedron_demo_io_plugin_interface 
 {
 public:
+  //! \brief Initializes the plugin
+  //! This function is called in the constructor of the MainWindow.
+  //! Whatever initialization the plugin needs can be done here. Default
+  //! behavior is to do nothing.
+  virtual void init(){}
   //!Returns the name of the plugin
   //!It is used by the loading system.
   virtual QString name() const = 0;
@@ -89,6 +96,6 @@ public:
 }
 }
 Q_DECLARE_INTERFACE(CGAL::Three::Polyhedron_demo_io_plugin_interface,
-                    "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
+                    "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90")
 
 #endif // POLYHEDRON_DEMO_IO_PLUGIN_INTERFACE_H

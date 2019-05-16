@@ -342,41 +342,6 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
           this, &MainWindow::filterOperations);
   loadPlugins();
 
-  //If 3mf plugin is present, add action to save scene
-  Polyhedron_demo_io_plugin_interface* io_3mf_plugin = nullptr;
-  for(Polyhedron_demo_io_plugin_interface* plugin : io_plugins)
-  {
-    if(plugin->name() == "3mf_io_plugin")
-    {
-      io_3mf_plugin = plugin;
-      break;
-    }
-  }
-  if(io_3mf_plugin )
-  {
-    QAction* actionSaveSceneTo3mf = new QAction("Save the Scene as a 3mf File...");
-    QString dir = QString("%1/scene").arg(def_save_dir);
-    connect(actionSaveSceneTo3mf, &QAction::triggered, this,
-            [this, dir, io_3mf_plugin](){
-
-      QString filename =
-          QFileDialog::getSaveFileName(this,
-                                       tr("Save Scene to File..."),
-                                       dir,
-                                       "*.3mf");
-
-      if(filename.isEmpty())
-        return;
-      if(!filename.endsWith(".3mf"))
-      filename.append(".3mf");
-      QList<Scene_item*> all_items;
-      for(int i = 0; i< scene->numberOfEntries(); ++i)
-        all_items.push_back(scene->item(i));
-            io_3mf_plugin->save(filename, all_items);
-    });
-    ui->menuFile->insertAction(ui->actionSa_ve_Scene_as_Script, actionSaveSceneTo3mf);
-  }
-
   // Setup the submenu of the View menu that can toggle the dockwidgets
   Q_FOREACH(QDockWidget* widget, findChildren<QDockWidget*>()) {
     ui->menuDockWindows->addAction(widget->toggleViewAction());
@@ -824,6 +789,7 @@ bool MainWindow::initIOPlugin(QObject* obj)
   CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin =
       qobject_cast<CGAL::Three::Polyhedron_demo_io_plugin_interface*>(obj);
   if(plugin) {
+    plugin->init();
     io_plugins << plugin;
     return true;
   }
