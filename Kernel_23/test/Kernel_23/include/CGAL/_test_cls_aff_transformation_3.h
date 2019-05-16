@@ -24,6 +24,8 @@
 #ifndef CGAL__TEST_CLS_AFF_TRANSFORMATION_3_H
 #define CGAL__TEST_CLS_AFF_TRANSFORMATION_3_H
 
+#include <CGAL/use.h>
+
 template <class R>
 bool
 _test_cls_aff_transformation_3(const R& )
@@ -56,7 +58,7 @@ _test_cls_aff_transformation_3(const R& )
  CGAL::Vector_3<R> tvec;
  CGAL::Point_3<R>  pnt( n8, n1, n9, n10 );  // ( 6,-5, 3)
  CGAL::Point_3<R>  tpnt;
- CGAL::Point_3<R>  pvec = CGAL::ORIGIN + vec;
+ CGAL::Point_3<R>  pvec = CGAL::ORIGIN + vec; CGAL_USE(pvec);
  CGAL::Vector_3<R> vpnt = pnt - CGAL::ORIGIN;
 
  CGAL::Point_3<R>  p1(-n3, n7, n11, n3 );   // (-1, 2,-3)

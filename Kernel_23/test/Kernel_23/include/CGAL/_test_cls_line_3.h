@@ -24,6 +24,8 @@
 #ifndef CGAL__TEST_CLS_LINE_3_H
 #define CGAL__TEST_CLS_LINE_3_H
 
+#include <CGAL/use.h>
+
 template <class R>
 bool
 _test_cls_line_3(const R& )
@@ -33,8 +35,8 @@ _test_cls_line_3(const R& )
  typedef typename  R::RT    RT;
 
  typename R::Line_3 il;
- CGAL::Line_3<R> l0( il );
- CGAL::Line_3<R> l1;
+ CGAL::Line_3<R> l0( il ); CGAL_USE(l0);
+ CGAL::Line_3<R> l1; CGAL_USE(l1);
 
  RT n1 =  3;
  RT n2 = 53;
