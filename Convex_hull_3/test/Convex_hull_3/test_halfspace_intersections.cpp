@@ -81,4 +81,6 @@ int main()
   test<Epec,CGAL::Polyhedron_3<Epec> >();
   test<Epic,CGAL::Surface_mesh<Epic::Point_3> >();
   test<Epec,CGAL::Surface_mesh<Epec::Point_3> >();
+  test<CGAL::Epick_without_intervals,
+       CGAL::Surface_mesh<CGAL::Epick_without_intervals::Point_3> >();
 }
