@@ -301,12 +301,11 @@ walk_to_next_3()
          &(get<0>(_cur)->vertex(2)->point()),
          &(get<0>(_cur)->vertex(3)->point()) };
 
-#ifdef CGAL_FAST_TRAVERSER    
     Orientation o0, o1, o2;
     int inside=0,outside=0,regular_case=0,degenerate=0;
     Cell_handle nnext;
-    
-      if( get<1>(_cur) == Tr::FACET ) {
+
+    if( get<1>(_cur) == Tr::FACET ) {
         regular_case=1;
         int i = get<2>(_cur);
         int j0 = Tr::vertex_triple_index(i,0);
@@ -390,9 +389,6 @@ walk_to_next_3()
           return;
         }
       }
-
-#endif
-
 
     
     // We check in which direction the target lies
@@ -500,30 +496,19 @@ walk_to_next_3()
                 get<2>(_prev) = li;
                 get<1>(_cur) = Tr::FACET;
                 get<2>(_cur) = get<0>(_cur)->index(get<0>(_prev));
-#ifdef CGAL_FAST_TRAVERSER
-                if(regular_case){
-                if ((get<0>(_cur) != Cell_handle()) && (nnext != Cell_handle()) ){
-                if (get<0>(_cur)!=nnext ){
-                  std::cout<<"nnext "<<nnext->vertex(0)->point();
-                  std::cout<<"  "<<nnext->vertex(1)->point();
-                  std::cout<<"  "<<nnext->vertex(2)->point();
-                  std::cout<<"  "<<nnext->vertex(3)->point()<<std::endl;
-                  std::cout<<" current "<< get<0>(_cur)->vertex(0)->point();
-                  std::cout<<"  "<< get<0>(_cur)->vertex(1)->point();
-                  std::cout<<"  "<< get<0>(_cur)->vertex(2)->point();
-                  std::cout<<"  "<< get<0>(_cur)->vertex(3)->point()<<std::endl;
-                }} else std::cout<<" null pointer on tetra"<<std::endl;
-                CGAL_triangulation_assertion( get<0>(_cur)==nnext );
-                CGAL_triangulation_assertion( li==outside );
-                CGAL_triangulation_assertion( ! inside );
-                }
-#endif                
-                return;
-            case 2:
-#ifdef CGAL_FAST_TRAVERSER
+
                 if(regular_case)
-                CGAL_triangulation_assertion(degenerate );
-#endif
+                {
+                  CGAL_triangulation_assertion( get<0>(_cur)==nnext );
+                  CGAL_triangulation_assertion( li==outside );
+                  CGAL_triangulation_assertion( ! inside );
+                }
+                return;
+
+            case 2:
+                if(regular_case)
+                  CGAL_triangulation_assertion(degenerate );
+
                 get<1>(_prev) = Tr::EDGE;
                 get<1>(_cur) = Tr::EDGE;
                 for( int j = 0; j < 4; ++j ) {
@@ -539,10 +524,9 @@ walk_to_next_3()
                 CGAL_triangulation_assertion( false );
                 return;
             case 1:
-#ifdef CGAL_FAST_TRAVERSER
                 if(regular_case)
-                CGAL_triangulation_assertion(degenerate );
-#endif
+                  CGAL_triangulation_assertion(degenerate );
+
                 get<1>(_prev) = Tr::VERTEX;
                 get<1>(_cur) = Tr::VERTEX;
                 for( int j = 0; j < 4; ++j ) {
@@ -566,10 +550,9 @@ walk_to_next_3()
     case 4:
         CGAL_triangulation_assertion( pos == 6 );
         _prev = Simplex( get<0>(_cur), Tr::CELL, -1, -1 );
-#ifdef CGAL_FAST_TRAVERSER
         CGAL_triangulation_assertion( (! regular_case) || inside );
-#endif
         break;
+
     case 3:
         _prev = Simplex( get<0>(_cur), Tr::FACET, 6-pos, -1 );
         break;
