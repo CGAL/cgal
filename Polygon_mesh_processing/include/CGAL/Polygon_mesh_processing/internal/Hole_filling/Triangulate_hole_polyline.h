@@ -1246,7 +1246,7 @@ triangulate_hole_polyline(const PointRange1& points,
 
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
   if (use_delaunay_triangulation
-      && w == typename WeightCalculator::Weight::NOT_VALID())
+      && w == WeightCalculator::Weight::NOT_VALID())
     w = Fill().operator()(P, Q, tracer, WC);
 #endif
 
