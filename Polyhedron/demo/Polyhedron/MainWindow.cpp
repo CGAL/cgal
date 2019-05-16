@@ -1118,11 +1118,11 @@ void MainWindow::open(QString filename)
   {
     // collect all io_plugins and offer them to load if the file extension match one name filter
     // also collect all available plugin in case of a no extension match
-    Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* io_plugin, io_plugins) {
-      if ( !io_plugin->canLoad(fileinfo) ) continue;
-      all_items << io_plugin->name();
+    for(CGAL::Three::Polyhedron_demo_io_plugin_interface* io_plugin : io_plugins) {
       if ( file_matches_filter(io_plugin->loadNameFilters(), filename.toLower()) )
       {
+        if ( !io_plugin->canLoad(fileinfo) ) continue;
+        all_items << io_plugin->name();
         if(io_plugin->isDefaultLoader(fileinfo.completeSuffix()))
           selected_items.prepend(io_plugin->name());
         else

@@ -3,8 +3,6 @@
 #include <QMainWindow>
 #include <QObject>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
-#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Scene_group_item.h>
 #include <CGAL/Three/Three.h>
 
@@ -20,26 +18,14 @@
 using namespace CGAL::Three;
 class Surf_io_plugin:
     public QObject,
-    public Polyhedron_demo_io_plugin_interface,
-    public Polyhedron_demo_plugin_helper
+    public Polyhedron_demo_io_plugin_interface
 {
   Q_OBJECT
-  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface CGAL::Three::Polyhedron_demo_io_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "surf_io_plugin.json")
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90")
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90" FILE "surf_io_plugin.json")
 
 public:
-  void init(QMainWindow* mainWindow,
-            CGAL::Three::Scene_interface* scene_interface,
-            Messages_interface*) {
-    //get the references
-    this->scene = scene_interface;
-    this->mw = mainWindow;
-  }
-  QList<QAction*> actions() const {
-    return QList<QAction*>();
-  }
-  bool applicable(QAction*) const { return false;}
+
   QString name() const { return "surf_io_plugin"; }
   QString nameFilters() const { return "Amira files (*.surf)"; }
   bool canLoad(QFileInfo) const{ return true; }
@@ -118,8 +104,8 @@ CGAL::Three::Scene_item* Surf_io_plugin::actual_load(QFileInfo fileinfo)
     FaceGraphItem *patch = new FaceGraphItem(patches[i]);
     patch->setName(QString("Patch #%1").arg(i));
     patch->setColor(colors_[i]);
-    scene->addItem(patch);
-    scene->changeGroup(patch, group);
+    CGAL::Three::Three::scene()->addItem(patch);
+    CGAL::Three::Three::scene()->changeGroup(patch, group);
   }
   return group;
 }

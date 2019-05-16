@@ -17,27 +17,15 @@ using namespace CGAL::Three;
 
 class Polyhedron_demo_gocad_plugin :
   public QObject,
-  public Polyhedron_demo_io_plugin_interface,
-  public Polyhedron_demo_plugin_helper
+  public Polyhedron_demo_io_plugin_interface
 
 {
   Q_OBJECT
-  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface CGAL::Three::Polyhedron_demo_io_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "gocad_io_plugin.json")
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90" )
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90" FILE "gocad_io_plugin.json")
 
 public:
-  void init(QMainWindow* mainWindow,
-            CGAL::Three::Scene_interface* scene_interface,
-            Messages_interface*) {
-    //get the references
-    this->scene = scene_interface;
-    this->mw = mainWindow;
-  }
-  QList<QAction*> actions() const {
-    return QList<QAction*>();
-  }
-  bool applicable(QAction*) const { return false;}
+
   QString nameFilters() const;
   QString name() const { return "gocad_plugin"; }
   bool canLoad(QFileInfo) const;

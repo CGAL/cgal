@@ -2,7 +2,6 @@
 #include "Scene_c3t3_item.h"
 #include <CGAL/Mesh_3/tet_soup_to_c3t3.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
-#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Three.h>
 #include <CGAL/IO/File_avizo.h>
 #include <iostream>
@@ -12,31 +11,17 @@
 
 class Polyhedron_demo_c3t3_binary_io_plugin :
   public QObject,
-  public CGAL::Three::Polyhedron_demo_io_plugin_interface,
-  public CGAL::Three::Polyhedron_demo_plugin_interface
+  public CGAL::Three::Polyhedron_demo_io_plugin_interface
 {
     Q_OBJECT
     Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
-    Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "c3t3_io_plugin.json")
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90" FILE "c3t3_io_plugin.json")
 
 public:
-  void init(QMainWindow*, CGAL::Three::Scene_interface* sc, Messages_interface*)
-  {
-    this->scene = sc;
-  }
   QString name() const { return "C3t3_io_plugin"; }
   QString nameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma)"; }
   QString saveNameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma);;avizo (*.am);;OFF files (*.off)"; }
   QString loadNameFilters() const { return "binary files (*.cgal);;ascii (*.mesh)"; }
-  QList<QAction*> actions() const
-  {
-    return QList<QAction*>();
-  }
-  bool applicable(QAction*) const
-  {
-    return false;
-  }
   bool canLoad(QFileInfo) const;
   QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true);
 
@@ -50,8 +35,23 @@ private:
 };
 
 
-bool Polyhedron_demo_c3t3_binary_io_plugin::canLoad(QFileInfo) const {
-  return true;
+bool Polyhedron_demo_c3t3_binary_io_plugin::canLoad(QFileInfo fi) const {
+  std::ifstream in(fi.filePath().toUtf8(),
+                   std::ios_base::in|std::ios_base::binary);
+  if(!in) {
+    std::cerr << "Error! Cannot open file "
+              << (const char*)fi.filePath().toUtf8() << std::endl;
+    return false;
+  }
+  std::string line;
+  std::istringstream iss;
+  std::getline (in,line);
+  iss.str(line);
+  std::string keyword;
+  if (iss >> keyword)
+    if (keyword == "binary")
+      return true;
+  return false;
 }
 
 QList<Scene_item*>
