@@ -27,7 +27,6 @@
 
 #include <CGAL/disable_warnings.h>
 #include <CGAL/basic.h>
-#include <CGAL/Triangulation_segment_traverser_3.h>
 
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
 # define CGAL_PROFILE
@@ -432,8 +431,6 @@ public:
   typedef Edge_iterator                        All_edges_iterator;
   typedef Vertex_iterator                      All_vertices_iterator;
 
-  typedef Triangulation_segment_cell_iterator_3<Self> Segment_cell_iterator;
-
   typedef typename Tds::Simplex                Simplex;
 
 private:
@@ -583,24 +580,9 @@ public:
                                                 construct_point(s));
   }
 
-  // Compute the orientation of a point compared to the oriented plane supporting a half-facet.
-  Orientation orientation( const Facet& f, const Point& p ) const;
-
-  bool
-  coplanar(const Point &p, const Point &q,
-           const Point &r, const Point &s) const
+  bool coplanar(const Point& p, const Point& q, const Point& r, const Point& s) const
   {
     return orientation(p, q, r, s) == COPLANAR;
-  }
-
-  // Check whether the points of facet `f` and point `p` are coplanar.
-  bool coplanar( const Facet& f, const Point& p ) const {
-      return orientation(f, p) == COPLANAR;
-  }
-
-  // Check whether the points of facet `f` and vertex `v` are coplanar.
-  bool coplanar( const Facet& f, Vertex_handle v ) const{
-      return orientation(f, v->point()) == COPLANAR;
   }
 
   template<typename P> // Point or Point_3
@@ -1075,13 +1057,6 @@ public:
   int mirror_index(Cell_handle c, int i) const { return _tds.mirror_index(c, i); }
   Vertex_handle mirror_vertex(Cell_handle c, int i) const { return _tds.mirror_vertex(c, i); }
   Facet mirror_facet(Facet f) const { return _tds.mirror_facet(f);}
-
-  // Gives the edge incident to the same cell that is not incident to any of the input vertices.
-  Edge opposite_edge( Cell_handle c, int li, int lj ) const;
-
-  // Gives the edge incident to the same cell that is not incident to any of the vertices of the input edge.
-  Edge opposite_edge( const Edge& e ) const
-  { return opposite_edge( e.first, e.second, e.third ); }
 
   // MODIFIERS
 
@@ -2057,26 +2032,6 @@ public:
     return _tds.incident_edges(v, edges, Finite_filter(this));
   }
 
-  Segment_cell_iterator
-  segment_walk_begin(Vertex_handle s, Vertex_handle t) const {
-      return Segment_cell_iterator( *this, s, t );
-  }
-
-  Segment_cell_iterator
-  segment_walk_end(Vertex_handle s, Vertex_handle t) const {
-      return Segment_cell_iterator( *this, s, t ).end();
-  }
-
-  Segment_cell_iterator
-  segment_walk_begin(const Point& s, const Point& t, Cell_handle hint = Cell_handle()) const {
-      return Segment_cell_iterator( *this, s, t, hint );
-  }
-
-  Segment_cell_iterator
-  segment_walk_end(const Point& s, const Point& t, Cell_handle hint = Cell_handle()) const {
-      return Segment_cell_iterator( *this, s, t, hint ).end();
-  }
-
   template <class OutputIterator>
   OutputIterator incident_edges_threadsafe(Vertex_handle v, OutputIterator edges) const
   {
@@ -2259,19 +2214,8 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
 }
 
 template < class GT, class Tds, class Lds >
-Orientation
+typename Triangulation_3<GT,Tds,Lds>::size_type
 Triangulation_3<GT,Tds,Lds>::
-orientation(const Facet& f, const Point& p) const
-{
-  return orientation( f.first->vertex( vertex_triple_index(f.second, 0) )->point(),
-                      f.first->vertex( vertex_triple_index(f.second, 1) )->point(),
-                      f.first->vertex( vertex_triple_index(f.second, 2) )->point(),
-                      p );
-}
-
-template < class GT, class Tds, class Lds >
-typename Triangulation_3<GT, Tds, Lds>::size_type
-Triangulation_3<GT,Tds, Lds>::
 number_of_finite_cells() const
 {
   if(dimension() < 3)
@@ -3416,28 +3360,6 @@ side_of_edge(const Point& p,
       return ON_UNBOUNDED_SIDE;
   }
 }
-
-template < class Gt, class Tds, class Lds >
-inline
-typename Triangulation_3<Gt,Tds,Lds>::Edge
-Triangulation_3<Gt,Tds,Lds>::
-opposite_edge( Cell_handle c, int li, int lj ) const {
-    CGAL_triangulation_precondition( li >= 0 && li < 4 );
-    CGAL_triangulation_precondition( lj >= 0 && lj < 4 );
-    CGAL_triangulation_precondition( li != lj );
-
-    switch( 6-li-lj ) { // i + j + missing indices = 6.
-        case 1: return Edge( c, 0, 1 );
-        case 2: return Edge( c, 0, 2 );
-        case 3: return ( li == 0 || lj == 0 ) ? Edge( c, 1, 2 ) : Edge( c, 0, 3 );
-        case 4: return Edge( c, 1, 3 );
-        case 5: return Edge( c, 2, 3 );
-    }
-
-    CGAL_triangulation_assertion( false );
-    return Edge();
-}
-
 
 template < class GT, class Tds, class Lds >
 bool

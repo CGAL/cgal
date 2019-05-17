@@ -20,8 +20,6 @@
 #define CGAL_TRIANGULATION_SEGMENT_TRAVERSER_3_IMPL_H
 
 #include <boost/array.hpp>
-#include <CGAL/Cartesian_converter.h>
-#include <CGAL/Simple_cartesian.h>
 
 namespace CGAL {
 
@@ -100,7 +98,7 @@ Triangulation_segment_cell_iterator_3( const Tr& tr, const Point& s, const Point
     CGAL_triangulation_precondition( s != t );
     CGAL_triangulation_precondition( _tr.dimension() >= 2 );
     CGAL_triangulation_precondition( _tr.dimension() == 3 ||
-                                     _tr.coplanar( *_tr.finite_facets_begin(), _target ) );
+                                     coplanar( *_tr.finite_facets_begin(), _target ) );
 
     _source = s;
     _target = t;
@@ -311,11 +309,11 @@ walk_to_next_3()
         int j0 = Tr::vertex_triple_index(i,0);
         int j1 = Tr::vertex_triple_index(i,1);
         int j2 = Tr::vertex_triple_index(i,2);
-        o0 = orientation(_source, *vert[i], *vert[j0], _target);
+        o0 = _tr.orientation(_source, *vert[i], *vert[j0], _target);
         if (o0==POSITIVE){
-          o1 = orientation(_source, *vert[i], *vert[j1], _target);
+          o1 = _tr.orientation(_source, *vert[i], *vert[j1], _target);
           if(o1!=POSITIVE){
-            if (orientation(*vert[i], *vert[j0], *vert[j1], _target)==POSITIVE){
+            if (_tr.orientation(*vert[i], *vert[j0], *vert[j1], _target)==POSITIVE){
               nnext= get<0>(_cur)->neighbor(j2);
               outside=j2;
               if(o1==ZERO) degenerate=1; //EDGE i j1
@@ -323,7 +321,7 @@ walk_to_next_3()
             else
               inside=1;
           }else{
-            if (orientation(*vert[i], *vert[j1], *vert[j2], _target)==POSITIVE){
+            if (_tr.orientation(*vert[i], *vert[j1], *vert[j2], _target)==POSITIVE){
               nnext= get<0>(_cur)->neighbor(j0);
               outside=j0;
             }
@@ -331,9 +329,9 @@ walk_to_next_3()
               inside=2;
           }
         }else if (o0==ZERO){
-          o1 = orientation(_source, *vert[i], *vert[j1], _target);
+          o1 = _tr.orientation(_source, *vert[i], *vert[j1], _target);
           if(o1==NEGATIVE){
-            if (orientation(*vert[i], *vert[j0], *vert[j1], _target)==POSITIVE){
+            if (_tr.orientation(*vert[i], *vert[j0], *vert[j1], _target)==POSITIVE){
               nnext= get<0>(_cur)->neighbor(j2); //EDGE i j0
               degenerate=2;
               outside=44;
@@ -345,7 +343,7 @@ walk_to_next_3()
               degenerate =3;
               outside=5;
           }else {
-            if (orientation(*vert[i], *vert[j1], *vert[j2], _target)==POSITIVE){
+            if (_tr.orientation(*vert[i], *vert[j1], *vert[j2], _target)==POSITIVE){
               nnext= get<0>(_cur)->neighbor(j0);
               outside=j0;
             }
@@ -353,9 +351,9 @@ walk_to_next_3()
               inside=4;
           }
         }else{
-          o2 = orientation(_source, *vert[i], *vert[j2], _target);
+          o2 = _tr.orientation(_source, *vert[i], *vert[j2], _target);
           if(o2!=NEGATIVE){
-            if (orientation(*vert[i], *vert[j2], *vert[j0], _target)==POSITIVE){
+            if (_tr.orientation(*vert[i], *vert[j2], *vert[j0], _target)==POSITIVE){
               nnext= get<0>(_cur)->neighbor(j1);
               outside=j1;
               if(o2==ZERO) degenerate =4; // EDGE i j2
@@ -363,7 +361,7 @@ walk_to_next_3()
             else
               inside=5;
           }else{
-            if (orientation(*vert[i], *vert[j1], *vert[j2], _target)==POSITIVE){
+            if (_tr.orientation(*vert[i], *vert[j1], *vert[j2], _target)==POSITIVE){
               nnext= get<0>(_cur)->neighbor(j0);
               outside=j0;
             }
@@ -434,7 +432,7 @@ walk_to_next_3()
         vert[li] = &_target;
 
         // Check if the target is on the opposite side of the supporting plane.
-        op[li] = orientation( *vert[0], *vert[1], *vert[2], *vert[3] );
+        op[li] = _tr.orientation( *vert[0], *vert[1], *vert[2], *vert[3] );
         if( op[li] == POSITIVE )
             pos += li;
         if( op[li] != NEGATIVE ) {
@@ -457,7 +455,7 @@ walk_to_next_3()
             if( !calc[oij] ) {
                 Point* backup2 = vert[lj];
                 vert[lj] = &_source;
-                o[oij] = orientation( *vert[0], *vert[1], *vert[2], *vert[3] );
+                o[oij] = _tr.orientation( *vert[0], *vert[1], *vert[2], *vert[3] );
                 vert[lj] = backup2;
                 calc[oij] = true;
             }
@@ -513,7 +511,7 @@ walk_to_next_3()
                 get<1>(_cur) = Tr::EDGE;
                 for( int j = 0; j < 4; ++j ) {
                     if( li != j && o[ 5 - edgeIndex(li, j) ] == COPLANAR) {
-                        Edge opp = _tr.opposite_edge( get<0>(_prev), li, j );
+                        Edge opp = opposite_edge( get<0>(_prev), li, j );
                         get<2>(_prev) = opp.second;
                         get<3>(_prev) = opp.third;
                         get<2>(_cur) = get<0>(_cur)->index( get<0>(_prev)->vertex( get<2>(_prev) ) );
@@ -597,7 +595,7 @@ walk_to_next_3_inf( int inf ) {
     Orientation o[4];
 
     // Check if the target lies outside the convex hull.
-    if( orientation( *vert[0], *vert[1], *vert[2], *vert[3] ) == POSITIVE ) {
+    if( _tr.orientation( *vert[0], *vert[1], *vert[2], *vert[3] ) == POSITIVE ) {
         // The target lies in an infinite cell.
         // Note that we do not traverse to other infinite cells.
         _prev = Simplex( get<0>(_cur), Tr::OUTSIDE_CONVEX_HULL, -1, -1 );
@@ -606,7 +604,7 @@ walk_to_next_3_inf( int inf ) {
     }
 
     vert[inf] = &(_source);
-    CGAL_triangulation_assertion( orientation( *vert[0], *vert[1], *vert[2], *vert[3] ) == POSITIVE );
+    CGAL_triangulation_assertion( _tr.orientation( *vert[0], *vert[1], *vert[2], *vert[3] ) == POSITIVE );
 
     int li = 0;
     // Check if the line enters an adjacent infinite cell.
@@ -627,7 +625,7 @@ walk_to_next_3_inf( int inf ) {
 
         Point* backup = vert[li];
         vert[li] = &(_target);
-        o[li] = orientation( *vert[0], *vert[1], *vert[2], *vert[3] );
+        o[li] = _tr.orientation( *vert[0], *vert[1], *vert[2], *vert[3] );
 
         if( o[li] != NEGATIVE ) {
             vert[li] = backup;
@@ -659,7 +657,7 @@ walk_to_next_3_inf( int inf ) {
             get<1>(_cur) = Tr::EDGE;
             for( int i = 0; i < 4; ++i ) {
                 if( o[i] == COPLANAR && i != inf ) {
-                    Edge opp = _tr.opposite_edge( get<0>(_prev), inf, i );
+                    Edge opp = opposite_edge( get<0>(_prev), inf, i );
                     get<2>(_prev) = opp.second;
                     get<3>(_prev) = opp.third;
                     get<2>(_cur) = get<0>(_cur)->index( get<0>(_prev)->vertex( get<2>(_prev) ) );
@@ -1039,19 +1037,53 @@ walk_to_next_2_inf( int inf ) {
 template < class Tr, class Inc >
 CGAL::Orientation
 Triangulation_segment_cell_iterator_3<Tr, Inc>::orientation(
-  const Point& p, const Point& q, const Point& r, const Point& s) const
+  const Facet& f, const Point& p) const
 {
-#ifdef CGAL_EXPERIMENT_WITH_SIMPLE_CARTESIAN
-  typedef CGAL::Simple_cartesian<double> K2;
-  CGAL::Cartesian_converter<Gt, K2> c;
-
-  return CGAL::orientation(c(p), c(q), c(r), c(s));
-#else
-  return _tr.orientation(p, q, r, s);
-#endif
+  return _tr.orientation(
+    f.first->vertex(Tr::vertex_triple_index(f.second, 0))->point(),
+    f.first->vertex(Tr::vertex_triple_index(f.second, 1))->point(),
+    f.first->vertex(Tr::vertex_triple_index(f.second, 2))->point(),
+    p);
 }
 
-	
+template < class Tr, class Inc >
+bool
+Triangulation_segment_cell_iterator_3<Tr, Inc>::coplanar(
+  const Facet& f, const Point& p) const
+{
+  return orientation(f, p) == COPLANAR;
+}
+
+template < class Tr, class Inc >
+typename Triangulation_segment_cell_iterator_3<Tr, Inc>::Edge
+Triangulation_segment_cell_iterator_3<Tr, Inc>::opposite_edge(
+  Cell_handle c, int li, int lj) const
+{
+  CGAL_triangulation_precondition(li >= 0 && li < 4);
+  CGAL_triangulation_precondition(lj >= 0 && lj < 4);
+  CGAL_triangulation_precondition(li != lj);
+
+  switch (6 - li - lj) { // i + j + missing indices = 6.
+    case 1: return Edge(c, 0, 1);
+    case 2: return Edge(c, 0, 2);
+    case 3: return (li == 0 || lj == 0) ? Edge(c, 1, 2) : Edge(c, 0, 3);
+    case 4: return Edge(c, 1, 3);
+    case 5: return Edge(c, 2, 3);
+  }
+
+  CGAL_triangulation_assertion(false);
+  return Edge();
+}
+
+template < class Tr, class Inc >
+typename Triangulation_segment_cell_iterator_3<Tr, Inc>::Edge
+Triangulation_segment_cell_iterator_3<Tr, Inc>::opposite_edge(
+  const Edge& e) const
+{
+  return opposite_edge(e.first, e.second, e.third);
+}
+
+
 } //end of CGAL namespace
 
 #endif // CGAL_TRIANGULATION_SEGMENT_TRAVERSER_3_IMPL_H

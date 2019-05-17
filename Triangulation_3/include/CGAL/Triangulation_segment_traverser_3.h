@@ -455,8 +455,14 @@ private:
 
     bool have_same_entry(const Simplex& s1, const Simplex& s2) const;
 
-    CGAL::Orientation orientation(const Point& p, const Point& q,
-                                  const Point& r, const Point& s) const;
+    // Compute the orientation of a point compared to the oriented plane supporting a half-facet.
+    CGAL::Orientation orientation(const Facet& f, const Point& p) const;
+
+    bool coplanar(const Facet &f, const Point &p) const;
+
+    // Gives the edge incident to the same cell that is not incident to any of the input vertices.
+    Edge opposite_edge(Cell_handle c, int li, int lj) const;
+    Edge opposite_edge(const Edge& e) const;
 
 }; // class Triangulation_segment_cell_iterator_3
 	
