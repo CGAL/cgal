@@ -1206,8 +1206,7 @@ QList<Scene_item*> MainWindow::loadItem(QFileInfo fileinfo,
   }
   CGAL::Three::Three::CursorScopeGuard guard(QCursor(Qt::WaitCursor));
   QList<Scene_item*> result = loader->load(fileinfo, ok, add_to_scene);
-  selectSceneItem(scene->item_id(result.back()));
-  if(!ok)
+  if(result.empty() || !ok)
   {
     QApplication::restoreOverrideCursor();
       QMessageBox::warning(this, tr("Error"),
@@ -1215,6 +1214,7 @@ QList<Scene_item*> MainWindow::loadItem(QFileInfo fileinfo,
                                                       .arg(fileinfo.absoluteFilePath()).arg(loader->name()));
       return QList<Scene_item*>();
   }
+  selectSceneItem(scene->item_id(result.back()));
   for(Scene_item* item : result)
   {
     CGAL::Three::Scene_group_item* group =

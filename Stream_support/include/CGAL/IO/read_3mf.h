@@ -26,24 +26,42 @@
 #include <algorithm>
 #include <functional>
 #include <CGAL/IO/Color.h>
+#include <CGAL/Kernel_traits.h>
 #include <Model/COM/NMR_DLLInterfaces.h>
 namespace CGAL{
+
+namespace transform_nmr_internal{
+NMR::MODELTRANSFORM initMatrix()
+{
+  NMR::MODELTRANSFORM mMatrix;
+  int i, j;
+  for (i = 0; i < 4; i++) {
+    for (j = 0; j < 3; j++) {
+      mMatrix.m_fFields[j][i] = (i == j) ? 1.0f : 0.0f;
+    }
+  }
+
+  return mMatrix;
+}
+}//end internal
 
 template<typename PointRange,
          typename PolygonRange,
          typename ColorRange>
 bool extract_soups (NMR::PLib3MFModelMeshObject *pMeshObject,
-           PointRange& points,
-           PolygonRange& triangles,
-           ColorRange& colors,
-           std::string& name) {
+                    const NMR::MODELTRANSFORM& transform,
+                    PointRange& points,
+                    PolygonRange& triangles,
+                    ColorRange& colors,
+                    std::string& name) {
   typedef typename PointRange::value_type Point_3;
   typedef typename PolygonRange::value_type Polygon;
   typedef typename ColorRange::value_type _Color;
-
+  typedef typename Kernel_traits<Point_3>::Kernel Kernel;
   HRESULT hResult;
   DWORD nNeededChars;
   std::vector<char> pBuffer;
+
   // Retrieve Mesh Name Length
   hResult = NMR::lib3mf_object_getnameutf8(pMeshObject, NULL, 0, &nNeededChars);
   if (hResult != LIB3MF_OK)
@@ -68,6 +86,12 @@ bool extract_soups (NMR::PLib3MFModelMeshObject *pMeshObject,
   else
     name = std::string("Unknown Mesh");
 
+  typename Kernel::Aff_transformation_3 t(
+        transform.m_fFields[0][0], transform.m_fFields[0][1], transform.m_fFields[0][2], transform.m_fFields[0][3],
+        transform.m_fFields[1][0], transform.m_fFields[1][1], transform.m_fFields[1][2], transform.m_fFields[1][3],
+        transform.m_fFields[2][0], transform.m_fFields[2][1], transform.m_fFields[2][2], transform.m_fFields[2][3]
+      );
+
   NMR::PLib3MFPropertyHandler * pPropertyHandler;
   hResult = NMR::lib3mf_meshobject_createpropertyhandler(pMeshObject, &pPropertyHandler);
   if (hResult != LIB3MF_OK) {
@@ -84,10 +108,10 @@ bool extract_soups (NMR::PLib3MFModelMeshObject *pMeshObject,
   {
     NMR::MODELMESHVERTEX pVertex;
     NMR::lib3mf_meshobject_getvertex(pMeshObject, vid, &pVertex);
-    points[vid] =
-        Point_3(pVertex.m_fPosition[0],
+    Point_3 p(pVertex.m_fPosition[0],
         pVertex.m_fPosition[1],
         pVertex.m_fPosition[2]);
+    points[vid] = t.transform(p);
   }
   for(DWORD pid = 0; pid < triangles.size(); ++pid)
   {
@@ -110,10 +134,11 @@ template<typename PointRange,
          typename PolygonRange,
          typename ColorRange>
 bool extract_polylines (NMR::PLib3MFModelMeshObject *pMeshObject,
-           PointRange& points,
-           PolygonRange&,
-           ColorRange& colors,
-           std::string& name) {
+                        const NMR::MODELTRANSFORM& transform,
+                        PointRange& points,
+                        PolygonRange&,
+                        ColorRange& colors,
+                        std::string& name) {
   typedef typename PointRange::value_type Point_3;
   typedef typename PolygonRange::value_type Polygon;
 
@@ -175,7 +200,7 @@ bool extract_polylines (NMR::PLib3MFModelMeshObject *pMeshObject,
   NMR::lib3mf_propertyhandler_getcolor(pPropertyHandler, 0, &pColor);//get color of the dummy triangle
   NMR::MODELMESHCOLOR_SRGB mColor = pColor.m_Colors[0];
   colors[0]=CGAL::Color(mColor.m_Red, mColor.m_Green,
-                          mColor.m_Blue, mColor.m_Alpha);
+                        mColor.m_Blue, mColor.m_Alpha);
   return true;
 }
 
@@ -183,10 +208,11 @@ template<typename PointRange,
          typename PolygonRange,
          typename ColorRange>
 bool extract_point_clouds (NMR::PLib3MFModelMeshObject *pMeshObject,
-           PointRange& points,
-           PolygonRange&,
-           ColorRange& colors,
-           std::string& name) {
+                           const NMR::MODELTRANSFORM& transform,
+                           PointRange& points,
+                           PolygonRange&,
+                           ColorRange& colors,
+                           std::string& name) {
   typedef typename PointRange::value_type Point_3;
 
   HRESULT hResult;
@@ -246,16 +272,18 @@ bool extract_point_clouds (NMR::PLib3MFModelMeshObject *pMeshObject,
   NMR::lib3mf_propertyhandler_getcolor(pPropertyHandler, 0, &pColor);//get color of the dummy triangle
   NMR::MODELMESHCOLOR_SRGB mColor = pColor.m_Colors[0];
   colors[0]=CGAL::Color(mColor.m_Red, mColor.m_Green,
-                          mColor.m_Blue, mColor.m_Alpha);
+                        mColor.m_Blue, mColor.m_Alpha);
   return true;
 }
+
 
 template<typename PointRanges, typename PolygonRanges, typename ColorRanges,
          typename PointRange, typename PolygonRange, typename ColorRange>
 int read_from_3mf(const std::string& file_name, PointRanges& all_points,
-                        PolygonRanges& all_polygons, ColorRanges& all_colors,
+                  PolygonRanges& all_polygons, ColorRanges& all_colors,
                   std::vector<std::string>& names,
                   std::function<bool(NMR::PLib3MFModelMeshObject*,
+                                     const NMR::MODELTRANSFORM&,
                                      PointRange&,
                                      PolygonRange&,
                                      ColorRange&,
@@ -322,6 +350,11 @@ int read_from_3mf(const std::string& file_name, PointRanges& all_points,
     NMR::lib3mf_release(pModel);
     return -1;
   }
+
+  /**************************************************
+   **** Iterate Resources To Find Meshes ************
+   **************************************************/
+
   while (pbHasNext) {
     NMR::PLib3MFModelResource * pResource;
     NMR::PLib3MFModelMeshObject * pMeshObject;
@@ -349,20 +382,77 @@ int read_from_3mf(const std::string& file_name, PointRanges& all_points,
     // Query mesh interface
     BOOL bIsMeshObject;
     hResult = NMR::lib3mf_object_ismeshobject(pResource, &bIsMeshObject);
-    if ((hResult == LIB3MF_OK) && (bIsMeshObject)) {
-      pMeshObject = pResource;
-      NMR::lib3mf_meshobject_getvertexcount(pMeshObject, &nbVertices);
-      NMR::lib3mf_meshobject_gettrianglecount(pMeshObject, &nbPolygons);
-      PointRange points (nbVertices);
-      PolygonRange triangles(nbPolygons);
-      ColorRange colors(nbPolygons);
-      std::string name;
+    if (hResult == LIB3MF_OK)
+    {
+      if(bIsMeshObject) {
+        //skip it. Only get it through the components and buildItems.
+      }
+      else {
+        BOOL bIsComponentsObject;
+        hResult = NMR::lib3mf_object_iscomponentsobject(pResource, &bIsComponentsObject);
+        if ((hResult == LIB3MF_OK) && (bIsComponentsObject)) {
+          pComponentsObject = (NMR::PLib3MFModelComponentsObject*)pResource;
+          DWORD nComponentCount;
+          hResult = NMR::lib3mf_componentsobject_getcomponentcount(pComponentsObject, &nComponentCount);
+          if (hResult != LIB3MF_OK)
+            return -1;
+          //for each component
+          DWORD nIndex;
+          for (nIndex = 0; nIndex < nComponentCount; ++nIndex) {
+            NMR::PLib3MFModelResource * compResource;
+            NMR::PLib3MFModelComponent * pComponent;
+            hResult = NMR::lib3mf_componentsobject_getcomponent(pComponentsObject, nIndex, &pComponent);
+            if (hResult != LIB3MF_OK) {
+              return -1;
+            }
 
-      if(func(pMeshObject, points, triangles, colors, name)){
-        all_points.push_back(points);
-        all_polygons.push_back(triangles);
-        all_colors.push_back(colors);
-        names.push_back(name);
+            hResult = NMR::lib3mf_component_getobjectresource(pComponent, &compResource);
+            if (hResult != LIB3MF_OK) {
+              NMR::lib3mf_release(pComponent);
+              return -1;
+            }
+            hResult = NMR::lib3mf_object_ismeshobject(compResource, &bIsMeshObject);
+            if (hResult == LIB3MF_OK)
+            {
+              if(bIsMeshObject) {
+                BOOL bHasTransform;
+                NMR::MODELTRANSFORM Transform;
+                hResult = NMR::lib3mf_component_hastransform(pComponent, &bHasTransform);
+                if (hResult != LIB3MF_OK) {
+                  NMR::lib3mf_release(pComponent);
+                  return -1;
+                }
+
+                if (bHasTransform) {
+                  // Retrieve Transform
+                  hResult = NMR::lib3mf_component_gettransform(pComponent, &Transform);
+                  if (hResult != LIB3MF_OK) {
+                    NMR::lib3mf_release(pComponent);
+                    return -1;
+                  }
+                }
+                else {
+                  Transform = transform_nmr_internal::initMatrix();
+                }
+                pMeshObject = compResource;
+                NMR::lib3mf_meshobject_getvertexcount(pMeshObject, &nbVertices);
+                NMR::lib3mf_meshobject_gettrianglecount(pMeshObject, &nbPolygons);
+                PointRange points (nbVertices);
+                PolygonRange triangles(nbPolygons);
+                ColorRange colors(nbPolygons);
+                std::string name;
+
+                if(func(pMeshObject, Transform, points, triangles, colors, name)){
+                  all_points.push_back(points);
+                  all_polygons.push_back(triangles);
+                  all_colors.push_back(colors);
+                  names.push_back(name);
+                }
+              }
+            }
+          }
+          //end component
+        }
       }
     }
     // free instances
@@ -373,6 +463,116 @@ int read_from_3mf(const std::string& file_name, PointRanges& all_points,
       return -1;
     }
   }
+
+
+  /********************************************************
+   **** Iterate Build items To Find Transformed Meshes ****
+   ********************************************************/
+
+  // Iterate through all the Build items
+  NMR::PLib3MFModelBuildItemIterator * pBuildItemIterator;
+  hResult = NMR::lib3mf_model_getbuilditems(pModel, &pBuildItemIterator);
+  if (hResult != LIB3MF_OK) {
+    std::cout << "could not get build items: " << std::hex << hResult << std::endl;
+    NMR::lib3mf_release(pBuildItemIterator);
+    NMR::lib3mf_release(pModel);
+    return -1;
+  }
+
+  hResult = NMR::lib3mf_builditemiterator_movenext(pBuildItemIterator, &pbHasNext);
+  if (hResult != LIB3MF_OK) {
+    std::cout << "could not get next build item: " << std::hex << hResult << std::endl;
+    NMR::lib3mf_release(pBuildItemIterator);
+    NMR::lib3mf_release(pModel);
+    return -1;
+  }
+
+  while (pbHasNext) {
+    NMR::PLib3MFModelMeshObject * pMeshObject;
+    NMR::MODELTRANSFORM Transform;
+    NMR::PLib3MFModelBuildItem * pBuildItem;
+    // Retrieve Build Item
+    hResult = NMR::lib3mf_builditemiterator_getcurrent(pBuildItemIterator, &pBuildItem);
+    if (hResult != LIB3MF_OK) {
+      std::cout << "could not get build item: " << std::hex << hResult << std::endl;
+      NMR::lib3mf_release(pBuildItemIterator);
+      NMR::lib3mf_release(pModel);
+      return -1;
+    }
+
+    // Retrieve Resource
+    NMR::PLib3MFModelObjectResource * pObjectResource;
+    hResult = NMR::lib3mf_builditem_getobjectresource(pBuildItem, &pObjectResource);
+    if (hResult != LIB3MF_OK) {
+      std::cout << "could not get build item resource: " << std::hex << hResult << std::endl;
+      NMR::lib3mf_release(pBuildItem);
+      NMR::lib3mf_release(pBuildItemIterator);
+      NMR::lib3mf_release(pModel);
+      return -1;
+    }
+
+    BOOL bIsMeshObject;
+    hResult = NMR::lib3mf_object_ismeshobject(pObjectResource, &bIsMeshObject);
+    if (hResult == LIB3MF_OK)
+    {
+      if(bIsMeshObject) {
+        pMeshObject = pObjectResource;
+        NMR::lib3mf_meshobject_getvertexcount(pMeshObject, &nbVertices);
+        NMR::lib3mf_meshobject_gettrianglecount(pMeshObject, &nbPolygons);
+        PointRange points (nbVertices);
+        PolygonRange triangles(nbPolygons);
+        ColorRange colors(nbPolygons);
+        std::string name;
+
+
+        // Check Object Transform
+        BOOL bHasTransform;
+        hResult = NMR::lib3mf_builditem_hasobjecttransform(pBuildItem, &bHasTransform);
+        if (hResult != LIB3MF_OK) {
+          NMR::lib3mf_release(pBuildItem);
+          NMR::lib3mf_release(pBuildItemIterator);
+          NMR::lib3mf_release(pModel);
+          std::cerr << "could not check object transform: " << std::hex << hResult << std::endl;
+          return -1;
+        }
+
+        if (bHasTransform) {
+          // Retrieve Transform
+          hResult = NMR::lib3mf_builditem_getobjecttransform(pBuildItem, &Transform);
+          if (hResult != LIB3MF_OK) {
+            NMR::lib3mf_release(pBuildItem);
+            NMR::lib3mf_release(pBuildItemIterator);
+            NMR::lib3mf_release(pModel);
+            std::cerr << "could not get object transform: " << std::hex << hResult << std::endl;
+            return -1;
+          }
+        }
+        else {
+          Transform = transform_nmr_internal::initMatrix();
+        }
+
+        if(func(pMeshObject, Transform, points, triangles, colors, name)){
+          all_points.push_back(points);
+          all_polygons.push_back(triangles);
+          all_colors.push_back(colors);
+          names.push_back(name);
+        }
+      }
+    }
+    // Release Object Resource ID
+    NMR::lib3mf_release(pObjectResource);
+    // Release Build Item
+    NMR::lib3mf_release(pBuildItem);
+
+    // Move to next Item
+    hResult = NMR::lib3mf_builditemiterator_movenext(pBuildItemIterator, &pbHasNext);
+    if (hResult != LIB3MF_OK) {
+      std::cerr << "could not get next build item: " << std::hex << hResult << std::endl;
+      return -1;
+    }
+  }
+  // Release Build Item Iterator
+  NMR::lib3mf_release(pBuildItemIterator);
   return all_points.size();
 }
 
@@ -408,7 +608,7 @@ template<typename PointRanges, typename PolygonRanges, typename ColorRanges>
 int read_soups_from_3mf(const std::string& file_name, PointRanges& all_points,
                         PolygonRanges& all_polygons, ColorRanges& all_colors,
                         std::vector<std::string>& names
-                  )
+                        )
 {
   typedef typename PointRanges::value_type PointRange;
   typedef typename PolygonRanges::value_type PolygonRange;
@@ -425,7 +625,7 @@ int read_polylines_from_3mf(const std::string& file_name,
                             PointRanges& all_points,
                             ColorRanges& all_colors,
                             std::vector<std::string>& names
-                  )
+                            )
 {
   typedef typename PointRanges::value_type PointRange;
   typedef std::vector<std::size_t> Polygon;
@@ -444,7 +644,7 @@ int read_point_clouds_from_3mf(const std::string& file_name,
                                PointRanges& all_points,
                                ColorRanges& all_colors,
                                std::vector<std::string>& names
-                  )
+                               )
 {
   typedef typename PointRanges::value_type PointRange;
   typedef std::vector<std::size_t> Polygon;

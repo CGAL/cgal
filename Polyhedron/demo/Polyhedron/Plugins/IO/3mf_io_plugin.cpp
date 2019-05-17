@@ -80,22 +80,26 @@ class Io_3mf_plugin:
     int nb_polylines =
         CGAL::read_polylines_from_3mf(fileinfo.filePath().toUtf8().toStdString(),
                                       all_points, all_colors, names);
-    if(nb_polylines > 0 )
+    if(nb_polylines < 0 )
     {
-      for(int i=0; i< nb_polylines; ++i)
-      {
-        Scene_polylines_item* pol_item = new Scene_polylines_item();
-        PolylineRange& polylines = pol_item->polylines;
-        polylines.push_back(all_points[i]);
-        pol_item->setName(names[i].data());
-        pol_item->invalidateOpenGLBuffers();
-        CGAL::Color c = all_colors[i].front();
-        pol_item->setColor(QColor(c.red(), c.green(), c.blue()));
-        pol_item->setProperty("already_colord", true);
-        result << pol_item;
-        if(add_to_scene)
-          CGAL::Three::Three::scene()->addItem(pol_item);
-      }
+      ok = false;
+      std::cerr << "Error in reading of meshes."<<std::endl;
+      return result;
+    }
+
+    for(int i=0; i< nb_polylines; ++i)
+    {
+      Scene_polylines_item* pol_item = new Scene_polylines_item();
+      PolylineRange& polylines = pol_item->polylines;
+      polylines.push_back(all_points[i]);
+      pol_item->setName(names[i].data());
+      pol_item->invalidateOpenGLBuffers();
+      CGAL::Color c = all_colors[i].front();
+      pol_item->setColor(QColor(c.red(), c.green(), c.blue()));
+      pol_item->setProperty("already_colord", true);
+      result << pol_item;
+      if(add_to_scene)
+        CGAL::Three::Three::scene()->addItem(pol_item);
     }
     all_points.clear();
     all_colors.clear();
@@ -103,6 +107,12 @@ class Io_3mf_plugin:
     int nb_point_sets =
         CGAL::read_point_clouds_from_3mf(fileinfo.filePath().toUtf8().toStdString(),
                                          all_points, all_colors, names);
+    if(nb_point_sets < 0 )
+    {
+      ok = false;
+      std::cerr << "Error in reading of meshes."<<std::endl;
+      return result;
+    }
     for(int i=0; i< nb_point_sets; ++i)
     {
       Scene_points_with_normal_item* pts_item = new Scene_points_with_normal_item();
@@ -125,6 +135,12 @@ class Io_3mf_plugin:
     int nb_meshes =
         CGAL::read_soups_from_3mf(fileinfo.filePath().toUtf8().toStdString(),
                                   all_points, all_polygons, all_colors, names);
+    if(nb_meshes <0 )
+    {
+      ok = false;
+      std::cerr << "Error in reading of meshes."<<std::endl;
+      return result;
+    }
     for(std::size_t i = 0; i< nb_meshes; ++i)
     {
       PolygonRange triangles = all_polygons[i];
@@ -162,6 +178,8 @@ class Io_3mf_plugin:
           }
         }
         Scene_surface_mesh_item* sm_item = new Scene_surface_mesh_item(mesh);
+        if(first == CGAL::Color(0,0,0,0))
+          first = CGAL::Color(50,80,120,255);
         sm_item->setColor(QColor(first.red(), first.green(), first.blue()));
         sm_item->setProperty("already_colored", true);
         sm_item->setName(names[i].data());

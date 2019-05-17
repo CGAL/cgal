@@ -218,6 +218,9 @@ bool write_mesh_to_model( const PointRange& points,
     NMR::lib3mf_release(pModel);
     return -1;
   }
+
+  //add a builditem to finish
+  add_build_item(pModel, *pMeshObject);
 }
 
 //remember that it adds 3 demmy vertices in the beginning, and a dummy triangle to be ignored.
@@ -314,6 +317,7 @@ bool write_points(const PointRange& points,
     NMR::lib3mf_release(pModel);
     return -1;
   }
+  add_build_item(pModel, *pMeshObject);
 }
 
 template<typename PointRange, typename Color>
@@ -390,6 +394,7 @@ bool write_soups_to_3mf(const std::string& file_name,
     else
       name = std::string("");
     write_mesh_to_model(all_points[id], all_polygons[id], name, &pMeshObject, pModel);
+    add_build_item(pModel, pMeshObject);
     //write_mesh_object_to_model(pModel, pMeshObject);
   }
   return export_model_to_file(file_name, pModel);
