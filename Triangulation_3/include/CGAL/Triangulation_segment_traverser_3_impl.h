@@ -782,7 +782,7 @@ walk_to_next_2()
             if( get<0>(_cur)->neighbor(lk) != get<0>(_prev) ) {
                 // Check the edge itself
                 switch( CGAL::coplanar_orientation( *vert[get<2>(_cur)], *vert[get<3>(_cur)], *vert[lk], _target ) ) {
-                    _prev = _cur;
+                    //_prev = _cur; //code not reached
                     case COLLINEAR:
                         // The target lies in this cell.
                         get<0>(_cur) = Cell_handle();
