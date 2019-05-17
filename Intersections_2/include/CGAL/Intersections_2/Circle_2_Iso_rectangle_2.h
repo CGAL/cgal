@@ -29,7 +29,31 @@
 #include <CGAL/Intersections_2/internal/Bbox_2_Circle_2_do_intersect.h>
 
 namespace CGAL {
-  CGAL_DO_INTERSECT_FUNCTION(Iso_rectangle_2, Circle_2, 2)
+namespace Intersections {
+namespace internal {
+
+template <class K>
+bool do_intersect(const typename K::Iso_rectangle_2& bbox,
+                  const typename K::Circle_2& circle,
+                  const K&)
+{
+  return do_intersect_circle_box_2(circle, bbox, K());
+}
+
+
+template <class K>
+bool do_intersect(const typename K::Circle_2& circle,
+                  const typename K::Iso_rectangle_2& bbox,
+                  const K&)
+{
+  return do_intersect_circle_box_2(circle, bbox, K());
+}
+
+} // namespace internal
+} // namespace Intersections
+
+CGAL_DO_INTERSECT_FUNCTION(Iso_rectangle_2, Circle_2, 2)
+
 }
 
 #endif // CGAL_INTERSECTIONS_2_ISO_RECTANGLE_2_CIRCLE_2_H

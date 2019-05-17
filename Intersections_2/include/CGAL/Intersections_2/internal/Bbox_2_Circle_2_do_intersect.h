@@ -80,16 +80,11 @@ bool do_intersect(const CGAL::Bbox_2& bbox,
 }
 
 
-template <class K>
-bool do_intersect(const typename K::Circle_2& circle,
-                  const CGAL::Bbox_2& bbox,
-                  const K&)
-{
-  return do_intersect_circle_box_2(circle, bbox, K());
+  return (distance >= circle.squared_radius());
 }
 
 template <class K>
-bool do_intersect(const typename K::Iso_rectangle_2& bbox,
+bool do_intersect(const CGAL::Bbox_2& bbox,
                   const typename K::Circle_2& circle,
                   const K&)
 {
@@ -99,7 +94,7 @@ bool do_intersect(const typename K::Iso_rectangle_2& bbox,
 
 template <class K>
 bool do_intersect(const typename K::Circle_2& circle,
-                  const typename K::Iso_rectangle_2& bbox,
+                  const CGAL::Bbox_2& bbox,
                   const K&)
 {
   return do_intersect_circle_box_2(circle, bbox, K());
@@ -107,6 +102,6 @@ bool do_intersect(const typename K::Circle_2& circle,
 
 } // namespace internal
 } // namespace Intersections
-} //namespace CGAL
+} // namespace CGAL
 
 #endif  // CGAL_INTERNAL_INTERSECTIONS_2_BBOX_2_CIRCLE_2_DO_INTERSECT_H
