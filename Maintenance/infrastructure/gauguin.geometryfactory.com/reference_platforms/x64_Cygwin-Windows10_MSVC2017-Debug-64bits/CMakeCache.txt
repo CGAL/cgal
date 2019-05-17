@@ -206,7 +206,7 @@ CMAKE_INSTALL_SHAREDSTATEDIR:PATH=com
 CMAKE_INSTALL_SYSCONFDIR:PATH=etc
 
 //Path to a program.
-CMAKE_LINKER:FILEPATH=C:/Program Files (x86)/Microsoft Visual Studio/2017/Professional/VC/Tools/MSVC/14.16.27023/bin/HostX86/x64/link.exe
+CMAKE_LINKER:FILEPATH=C:/Program Files (x86)/Microsoft Visual Studio/2017/Professional/VC/Tools/MSVC/14.11.25503/bin/HostX86/x64/link.exe
 
 //Flags used by the linker during the creation of modules.
 CMAKE_MODULE_LINKER_FLAGS:STRING=/machine:x64 /DEBUG:NONE /INCREMENTAL:NO
