@@ -1,7 +1,3 @@
-#define CGAL_PROFILE 1
-#define CGAL_FAST_TRAVERSER
-//#define CGAL_TRIANGULATION_3_TRAVERSER_CHECK_INTERSECTION
-//#define CGAL_EXPERIMENT_WITH_SIMPLE_CARTESIAN
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
