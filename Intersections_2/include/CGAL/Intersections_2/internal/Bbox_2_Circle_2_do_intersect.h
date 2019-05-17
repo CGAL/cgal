@@ -30,55 +30,74 @@
 
 
 namespace CGAL {
-
 namespace Intersections {
-
 namespace internal {
 
-template <class K, class Box3>
+// Circle_2 is not a disk, thus if the box is contained within the circle, there is no intersection.
+template <class K, class Box2>
 bool do_intersect_circle_box_2(const typename K::Circle_2& circle,
-                               const Box3& bbox,
+                               const Box2& bbox,
                                const K&)
 {
-  typedef typename K::FT FT;
-  typedef typename K::Point_2 Point;
-  FT d = FT(0);
-  FT distance = FT(0);
+  typedef typename K::FT                                          FT;
+  typedef typename K::Point_2                                     Point;
+
   Point center = circle.center();
 
+  // Check that the minimum distance to the box is smaller than the radius, otherwise there is
+  // no intersection.
+  FT distance = FT(0);
   if(center.x() < FT(bbox.xmin()))
   {
-    d = FT(bbox.xmin()) - center.x();
+    FT d = FT(bbox.xmin()) - center.x();
     distance += d * d;
   }
   else if(center.x() > FT(bbox.xmax()))
   {
-    d = center.x() - FT(bbox.xmax());
+    FT d = center.x() - FT(bbox.xmax());
     distance += d * d;
   }
 
   if(center.y() < FT(bbox.ymin()))
   {
-    d = FT(bbox.ymin()) - center.y();
+    FT d = FT(bbox.ymin()) - center.y();
     distance += d * d;
   }
   else if(center.y() > FT(bbox.ymax()))
   {
-    d = center.y() - FT(bbox.ymax());
+    FT d = center.y() - FT(bbox.ymax());
     distance += d * d;
   }
 
-  return distance <= circle.squared_radius();
-}
+  // Note that with the way the distance above is computed, the distance is '0' if the box strictly
+  // contains the circle. But since we use '>', we don't exit
+  if(distance > circle.squared_radius())
+    return false;
 
-template <class K>
-bool do_intersect(const CGAL::Bbox_2& bbox,
-                  const typename K::Circle_2& circle,
-                  const K&)
-{
-  return do_intersect_circle_box_2(circle, bbox, K());
-}
+  // Check that the maximum distance between the center of the circle and the box is not (strictly)
+  // smaller than the radius of the center, otherwise the box is entirely contained.
+  distance = FT(0);
+  if(center.x() <= FT(bbox.xmin() + bbox.xmax()) / FT(2))
+  {
+    FT d = FT(bbox.xmax()) - center.x();
+    distance += d * d;
+  }
+  else
+  {
+    FT d = center.x() - FT(bbox.xmin());
+    distance += d * d;
+  }
 
+  if(center.y() < FT(bbox.ymin() + bbox.ymax()) / FT(2))
+  {
+    FT d = FT(bbox.ymax()) - center.y();
+    distance += d * d;
+  }
+  else
+  {
+    FT d = center.y() - FT(bbox.ymin());
+    distance += d * d;
+  }
 
   return (distance >= circle.squared_radius());
 }
