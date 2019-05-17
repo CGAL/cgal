@@ -26,6 +26,7 @@
 
 
 #include <CGAL/number_utils.h>
+#include <CGAL/predicates/sign_of_determinant.h>
 
 namespace CGAL {
 
