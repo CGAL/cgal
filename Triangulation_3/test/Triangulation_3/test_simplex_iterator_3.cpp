@@ -19,8 +19,6 @@
 // Author(s)     : Jane Tournois
 
 
-#define CGAL_FAST_TRAVERSER
-
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_segment_traverser_3.h>
@@ -338,7 +336,6 @@ int main(int argc, char* argv[])
 
   // Reads a .xyz point set file in points.
   // As the point is the second element of the tuple (that is with index 1)
-#define CGAL_FAST_TRAVERSER
   // we use a property map that accesses the 1st element of the tuple.
 
   std::vector<Point_3> points;
