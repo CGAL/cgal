@@ -112,7 +112,7 @@ void assign_tolerance_with_local_edge_length_bound(const HalfedgeRange& hrange,
     std::cout << "tolerance at vd: " /*<< vd */ << " [" << get(svpm, vd) << "]: min of "
               << 0.9 * CGAL::approximate_sqrt(min_sq_dist) << " AND " << tolerance << std::endl;
 #endif
-    put(tol_pmap, vd, (std::min)(0.9 * CGAL::approximate_sqrt(min_sq_dist), tolerance));
+    put(tol_pmap, vd, CGAL::min<FT>(0.9 * CGAL::approximate_sqrt(min_sq_dist), tolerance));
   }
 }
 
