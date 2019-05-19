@@ -155,7 +155,7 @@ int main(int argc, char *argv[]) {
 
         // Iterate through all region items.
         for (const auto index : region)
-          face_color[Face_index(index)] = color;
+          face_color[static_cast<Face_index>(index)] = color;
       }
 
       out << polygon_mesh;

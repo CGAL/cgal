@@ -183,8 +183,6 @@ private:
     CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<SMesh>;
     using Region_type = 
     CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<Kernel, SMesh>;
-    using Sorting = 
-    CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, SMesh, Neighbor_query>;
 
     using Vertex_to_point_map = typename Region_type::Vertex_to_point_map;
     using Region_growing = CGAL::Shape_detection::Region_growing<Face_range, Neighbor_query, Region_type>;
@@ -809,8 +807,9 @@ private:
             point_item->point_set()->normal(*it) = plane->plane_normal();
 
           if(scene->item_id(groups[0]) == -1)
-             scene->addItem(groups[0]);
-             point_item->invalidateOpenGLBuffers();
+            scene->addItem(groups[0]);
+          
+          point_item->invalidateOpenGLBuffers();
           scene->changeGroup(point_item, groups[0]);
         }
         else if (dynamic_cast<CGAL::Shape_detection::Cone<Traits> *>(shape.get()))

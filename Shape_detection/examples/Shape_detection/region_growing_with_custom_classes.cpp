@@ -123,7 +123,7 @@ using Regions = std::vector<Region>;
 using Region_growing = 
 CGAL::Shape_detection::Region_growing<Objects, Neighbor_query, Region_type, Seed_map>;
 
-int main(int argc, char *argv[]) { 
+int main() { 
   
   std::cout << std::endl << 
     "region_growing_with_custom_classes example started" 
