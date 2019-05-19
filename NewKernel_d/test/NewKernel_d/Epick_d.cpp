@@ -720,9 +720,11 @@ int main(){
   test2<Ker2>(); test2i<Ker2>();
   test3<Ker3>();
   test3<Kerd>();
+#if !defined _MSC_VER || _MSC_VER >= 1910
   test2<CGAL::Epeck_d<CGAL::Dimension_tag<2>>>();
   test3<CGAL::Epeck_d<CGAL::Dimension_tag<3>>>();
   test3<CGAL::Epeck_d<CGAL::Dynamic_dimension_tag>>();
+#endif
 }
 
 #endif
