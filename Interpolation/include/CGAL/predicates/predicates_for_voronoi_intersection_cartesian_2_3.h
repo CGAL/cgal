@@ -76,7 +76,7 @@ side_of_plane_centered_sphereC3(const RT &ax, const RT &ay, const RT &az,
   //
   //method:
   // - tranlation of p to the origin.
-  // - seperate computation of det and norm of the expression
+  // - separate computation of det and norm of the expression
 
   return side_of_plane_centered_sphere_translateC3(ax-px, ay-py, az-pz,
                                                    nx, ny, nz,
@@ -145,7 +145,7 @@ side_of_plane_centered_sphereC3(const RT &ax, const RT &ay, const RT &az,
   //
   //method:
   // - tranlation of p to the origin.
-  // - seperate computation of det and nom of the expression
+  // - separate computation of det and nom of the expression
 
   return side_of_plane_centered_sphere_translateC3(ax-px, ay-py, az-pz,
                                                    nx, ny, nz,

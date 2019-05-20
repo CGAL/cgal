@@ -1685,7 +1685,7 @@ void Scene_polyhedron_selection_item::selectPath(fg_vertex_descriptor vh)
             end_of_path_is_prio = false;
         //makes the end of the path prioritary over the other points when there is a conflict
         if(it->vertex == first.vertex &&
-           !(it == d->path.begin())&&// makes the begining of the path impossible to move
+           !(it == d->path.begin())&&// makes the beginning of the path impossible to move
            end_of_path_is_prio)
         {
           if(it!=d->path.end()-1 &&! is_same )

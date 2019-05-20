@@ -509,8 +509,8 @@ get_sq_distance_to_closest_vertex(const Tr& tr,
          tr.is_infinite(vn))
         continue;
 
-      std::pair<VC_it, bool> is_insert_succesful = treated_vertices.insert(vn);
-      if(! is_insert_succesful.second) // vertex has already been treated
+      std::pair<VC_it, bool> is_insert_successful = treated_vertices.insert(vn);
+      if(! is_insert_successful.second) // vertex has already been treated
         continue;
 
       const Point& wpvn = tr.point(c, n);

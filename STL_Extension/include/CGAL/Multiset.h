@@ -48,7 +48,7 @@ namespace CGAL {
  *   It has to support the default constructor, the copy constructor and 
  *   the assignment operator (operator=).
  * - Compare is a three-valued functor used to define the order of objects of
- *   class Type: It has to support an operator() that recieves two objects from
+ *   class Type: It has to support an operator() that receives two objects from
  *   the Type class and returns SMALLER, EQUAL or LARGER, depending on the
  *   comparison result.
  *   In case the deafult parameter is supplied, the Type class has to support
@@ -2007,7 +2007,7 @@ Multiset<Type, Compare, Allocator>::insert_after (iterator position,
 
   if (rootP == NULL)
   {
-    // In case the tree is empty, make sure that we did not recieve a valid
+    // In case the tree is empty, make sure that we did not receive a valid
     // iterator.
     CGAL_multiset_precondition (nodeP == NULL);
 
@@ -2105,7 +2105,7 @@ Multiset<Type, Compare, Allocator>::insert_before (iterator position,
 
   if (rootP == NULL)
   {
-    // In case the tree is empty, make sure that we did not recieve a valid
+    // In case the tree is empty, make sure that we did not receive a valid
     // iterator.
     CGAL_multiset_precondition (nodeP == NULL);
 

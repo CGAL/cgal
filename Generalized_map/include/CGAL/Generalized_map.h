@@ -3322,7 +3322,7 @@ namespace CGAL {
 
   /** Test if a 2-cell can be inserted onto a given 3-cell along
    *  a path of edges.
-   *  @param afirst iterator on the begining of the path.
+   *  @param afirst iterator on the beginning of the path.
    *  @param alast  iterator on the end of the path.
    *  @return true iff a 2-cell can be inserted along the path.
    *          the path is a sequence of dartd, one per edge
@@ -3365,7 +3365,7 @@ namespace CGAL {
 
   /** Insert a 2-cell in a given 3-cell along a path of darts.
    * @param amap the used generalized map.
-   * @param afirst iterator on the begining of the path.
+   * @param afirst iterator on the beginning of the path.
    * @param alast  iterator on the end of the path.
    *         the path is a sequence of darts, one per edge
    *         where the face will be inserted.

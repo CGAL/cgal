@@ -139,7 +139,7 @@ compute_avg_knn_sq_distance_3(
    \note There are two thresholds that can be used:
    `threshold_percent` and `threshold_distance`. This function
    returns the smallest number of outliers such that at least one of
-   these threshold is fullfilled. This means that if
+   these threshold is fulfilled. This means that if
    `threshold_percent=100`, only `threshold_distance` is taken into
    account; if `threshold_distance=0` only `threshold_percent` is
    taken into account.

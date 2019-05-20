@@ -1197,7 +1197,7 @@ public:
     //                                        An_edge_per_polyline_map;
 
 #ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
-    #warning add a mechanism to handle the patches independantly \
+    #warning add a mechanism to handle the patches independently \
              (for example calculating the volume without \
                building the polyhedron) \
              This can be done by using a functor to which we give \
@@ -1553,7 +1553,7 @@ public:
         if (used_to_clip_a_surface)
         {
           // The following code is here to handle the case when an intersection polyline
-          // contains some border edges of tm1 that should be considered as an independant polyline.
+          // contains some border edges of tm1 that should be considered as an independent polyline.
           // This polyline removal should be handled by remove_unused_polylines.
           // However, since all nodes are of degree 2 the polyline is not split at
           // the correct point and trouble happen. Here the workaround consists in

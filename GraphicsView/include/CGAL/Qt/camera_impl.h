@@ -162,7 +162,7 @@ Camera &Camera::operator=(const Camera &camera) {
 
 You should not call this method when the Camera is associated with a CGAL::QGLViewer,
 since the latter automatically updates these values when it is resized (hence
-overwritting your values).
+overwriting your values).
 
 Non-positive dimension are silently replaced by a 1 pixel value to ensure
 frustrum coherence.
@@ -260,7 +260,7 @@ void Camera::setFieldOfView(qreal fov) {
 /*! Defines the Camera type().
 
 Changing the camera Type alters the viewport and the objects' sizes can be
-changed. This method garantees that the two frustum match in a plane normal to
+changed. This method guarantees that the two frustum match in a plane normal to
 viewDirection(), passing through the pivotPoint().
 
 Prefix the type with \c Camera if needed, as in:

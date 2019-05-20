@@ -388,7 +388,7 @@ parameter: \f$10\f$, \f$100\f$ and \f$1000\f$. In the 3 cases,
 
 \subsubsection Point_set_processing_3Hierarchy_simplification_parameter_var_max Parameter: var_max
 In addition to the size parameter, a variation parameter allows to
-increase simplification in monotoneous regions. For each cluster, a
+increase simplification in monotonous regions. For each cluster, a
 surface variation measure is computed using the sorted eigenvalues of
 the covariance matrix: \f[ \sigma(p) = \frac{\lambda_0}{\lambda_0 +
     \lambda_1 + \lambda_2}. \f]
@@ -564,7 +564,7 @@ Upsampling for different sharpness_angle parameter values. The input containing 
 \cgalFigureEnd
 
 \subsubsection Point_set_processing_3upsample_neighborhood_size Parameter: neighbor_radius
-Usually, the neighborhood of sample points should include at least one ring of neighboring sample points. Using small neighborhood size may not be able to insert new points. Using big neighborhood size can fill small holes, but points inserted on the edges could be irregular. The function will use a neigbhorhood size estimation if this parameter value is set to default or smaller than zero.
+Usually, the neighborhood of sample points should include at least one ring of neighboring sample points. Using small neighborhood size may not be able to insert new points. Using big neighborhood size can fill small holes, but points inserted on the edges could be irregular. The function will use a neighborhood size estimation if this parameter value is set to default or smaller than zero.
 
 \cgalFigureBegin{Point_set_processing_3figupsample_neighborhood_size, upsample_neighborhood_size.jpg}
 Comparison between different sizes of neighbor radius. 
@@ -665,7 +665,7 @@ Thanks to the carriage return character `\r`, the lines are overwritten and the 
 
 Pierre Alliez and Laurent Saboret contributed the initial component. Nader Salman contributed the grid simplification.
 Started from GSoC'2013, three new algorithms were implemented by Shihao Wu and Clément Jamin: WLOP, bilateral smoothing and upsampling.
-Started from GSoC'2014, Jocelyn Meyron with the help of Quentin Mérigot introduced the computation of the Voronoi covarience measure of a point set,
+Started from GSoC'2014, Jocelyn Meyron with the help of Quentin Mérigot introduced the computation of the Voronoi covariance measure of a point set,
 as well as the normal and feature edge estimation functions based on it.
 Florent Lafarge with the help of Simon Giraudot contributed the point set structuring algorithm.
 

@@ -276,7 +276,7 @@ public:
         edge_creation_time += timer.time();
         #endif
 
-        // initialize vertex indices, it is neccessary since we are using VertexList = listS
+        // initialize vertex indices, it is necessary since we are using VertexList = listS
         Vertex_iterator v_begin, v_end;
         Traits::vertices_size_type index = 0;
         for(boost::tie(v_begin, v_end) = vertices(graph); v_begin != v_end; ++v_begin) {

@@ -62,7 +62,7 @@ detected planes.
 Given a point set in 3D space along with a set of fitted planes, this
 class stores a simplified and structured version of the point
 set. Each output point is assigned to one, two or more primitives
-(depending wether it belongs to a planar section, an edge or a if it
+(depending whether it belongs to a planar section, an edge or a if it
 is a vertex). The implementation follow \cgalCite{cgal:la-srpss-13}.
 
 \tparam Kernel a model of `ShapeDetectionTraits` that must provide in

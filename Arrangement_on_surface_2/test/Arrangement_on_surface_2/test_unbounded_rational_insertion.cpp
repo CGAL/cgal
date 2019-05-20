@@ -106,7 +106,7 @@ int main()
     }
   }
 
-  // If a failure has already occured, abort.
+  // If a failure has already occurred, abort.
   if (result < 0) return result;
   
   std::cout << std::endl;

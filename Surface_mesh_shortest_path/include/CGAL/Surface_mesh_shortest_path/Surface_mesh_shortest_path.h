@@ -851,7 +851,7 @@ private:
 
     // A potential optimization could be made by only expanding in the 'necessary' range (i.e. the range outside of geodesic visibility), but the
     // benefits may be small, since the node filter would prevent more than one-level propagation.
-    // It would also be neccessary to distinguish expanding a root vertex node from a pseudo-source node
+    // It would also be necessary to distinguish expanding a root vertex node from a pseudo-source node
 
     do
     {

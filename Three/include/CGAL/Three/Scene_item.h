@@ -209,7 +209,7 @@ public:
   virtual bool manipulatable() const { return false; }
   //!\brief The manipulatedFrame of the item.
   //!
-  //! A manipulated frame is an independant system that can be
+  //! A manipulated frame is an independent system that can be
   //! translated or rotated using the Ctrl key and the mouse.
   //!@returns the manipulatedFrame of the item.
   virtual ManipulatedFrame* manipulatedFrame() { return 0; }

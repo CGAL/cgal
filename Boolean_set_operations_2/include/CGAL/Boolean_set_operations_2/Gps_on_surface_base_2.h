@@ -51,7 +51,7 @@
   \file   Gps_on_surface_base_2.h
   \brief  A class that allows Boolean set operations.
   This class is the base class for General_polygon_set_on_surface_2 and
-  recieves extra template parameter which allows different validation
+  receives extra template parameter which allows different validation
   policies. If you do not want validation then use the default validation
   policy. A different validation policy example can be found in
   General_polygon_set_on_surface_2.
@@ -75,7 +75,7 @@ namespace Boolean_set_operation_2_internal
 
 //! General_polygon_set_on_surface_2
 /*! This class is the base class for General_polygon_set_on_surface_2 and
-    recieves extra template parameter which allows different validation
+    receives extra template parameter which allows different validation
     policies. If you do not want validation then use the default validation
     policy. A different validation policy example can be found in
     General_polygon_set_on_surface_2.
