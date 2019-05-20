@@ -187,7 +187,7 @@ private:
     using Vertex_to_point_map = typename Region_type::Vertex_to_point_map;
     using Region_growing = CGAL::Shape_detection::Region_growing<Face_range, Neighbor_query, Region_type>;
 
-    CGAL::Random rand(time(0));
+    CGAL::Random rand(static_cast<unsigned int>(time(0)));
     const SMesh& mesh = *(sm_item->polyhedron());
     scene->setSelectedItem(-1);
     const Face_range face_range = faces(mesh);
@@ -273,7 +273,7 @@ private:
     dialog.min_points();
 
     // Get a point set.
-    CGAL::Random rand(time(0));
+    CGAL::Random rand(static_cast<unsigned int>(time(0)));
     Point_set* points = item->point_set();
     
     scene->setSelectedItem(-1);
@@ -538,7 +538,7 @@ private:
     op.cluster_epsilon = dialog.cluster_epsilon();    // maximum euclidean distance between points to be clustered.
     op.normal_threshold = dialog.normal_tolerance();   // normal_threshold < dot(surface_normal, point_normal); 
 
-    CGAL::Random rand(time(0));
+    CGAL::Random rand(static_cast<unsigned int>(time(0)));
     // Gets point set
     Point_set* points = item->point_set();
 
@@ -1049,7 +1049,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::build_alpha_shape
 
 void Polyhedron_demo_point_set_shape_detection_plugin::on_actionEstimateParameters_triggered() {
 
-  CGAL::Random rand(time(0));
+  CGAL::Random rand(static_cast<unsigned int>(time(0)));
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_points_with_normal_item* item =

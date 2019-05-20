@@ -530,7 +530,8 @@ namespace CGAL {
             bool done = false;
             do {
               do 
-              first_sample = get_default_random()(m_num_available_points);
+              first_sample = get_default_random()(
+                static_cast<unsigned int>(m_num_available_points));
               while (m_shape_index[first_sample] != -1);
 
               done = m_global_octree->drawSamplesFromCellContainingPoint(
@@ -876,7 +877,8 @@ namespace CGAL {
 
   private:
     int select_random_octree_level() {
-      return (int) get_default_random()(m_global_octree->maxLevel() + 1);
+      return (int) get_default_random()(
+        static_cast<unsigned int>(m_global_octree->maxLevel() + 1));
     }
 
     Shape* get_best_candidate(std::vector<Shape* >& candidates,

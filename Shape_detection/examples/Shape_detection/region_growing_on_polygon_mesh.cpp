@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
     using Face_index = typename Polygon_mesh::Face_index;
       
     // Save the result to a file in the user-provided path if any.
-    srand(time(NULL));
+    srand(static_cast<unsigned int>(time(NULL)));
     if (argc > 2) {
 
       bool created;
