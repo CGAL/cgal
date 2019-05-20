@@ -30,7 +30,7 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_triangle_primitive.h>
+#include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/property_map.h>
@@ -66,8 +66,11 @@ class Compatible_smoother
   typedef std::pair<halfedge_descriptor, halfedge_descriptor>             He_pair;
   typedef std::vector<halfedge_descriptor>                                Hedges;
 
-  typedef CGAL::AABB_triangle_primitive<GeomTraits,
-                                        typename Triangle_list::iterator> AABB_Primitive;
+  typedef CGAL::AABB_face_graph_triangle_primitive<PolygonMesh,
+                                                   VertexPointMap,
+                                                   CGAL::Tag_true/*single mesh*/,
+                                                   CGAL::Tag_true/*cache data*/>
+                                                                          AABB_Primitive;
   typedef CGAL::AABB_traits<GeomTraits, AABB_Primitive>                   AABB_Traits;
   typedef CGAL::AABB_tree<AABB_Traits>                                    Tree;
 
@@ -87,14 +90,7 @@ public:
   {
     set_vertex_range(face_range);
 
-    for(face_descriptor f : face_range)
-    {
-      Triangle t;
-      construct_triangle(f, mesh_, t);
-      input_triangles_.push_back(t);
-    }
-
-    tree_ptr_ = new Tree(input_triangles_.begin(), input_triangles_.end());
+    tree_ptr_ = new Tree(faces(mesh_).begin(), faces(mesh_).end(), mesh_, vpmap_);
     tree_ptr_->accelerate_distance_queries();
   }
 
