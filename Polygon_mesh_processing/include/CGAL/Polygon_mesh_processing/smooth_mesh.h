@@ -46,12 +46,12 @@ namespace Polygon_mesh_processing {
 * This function improves the angles of triangle faces by iteratively moving non-constrained vertices.
 * Optionally, the points are reprojected to the input surface after each iteration.
 *
-* @tparam PolygonMesh model of `MutableFaceGraph`.
-* @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
+* @tparam TriangleMesh model of `MutableFaceGraph`.
+* @tparam FaceRange range of `boost::graph_traits<TriangleMesh>::%face_descriptor`,
           model of `Range`. Its iterator type is `ForwardIterator`.
 * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters".
 *
-* @param pmesh a polygon mesh with triangulated surface patches to be smoothed.
+* @param tmesh a polygon mesh with triangulated surface patches to be smoothed.
 * @param faces the range of triangular faces defining one or several surface patches to be smoothed.
 * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below.
 *
@@ -60,22 +60,22 @@ namespace Polygon_mesh_processing {
 *    Exact constructions kernels are not supported by this function.
 *  \cgalParamEnd
 *  \cgalParamBegin{vertex_point_map} the property map with the points associated
-*    to the vertices of `pmesh`. Instance of a class model of `ReadWritePropertyMap`.
+*    to the vertices of `tmesh`. Instance of a class model of `ReadWritePropertyMap`.
 *  \cgalParamEnd
 *  \cgalParamBegin{number_of_iterations} the number of iterations for the
 *    sequence of the smoothing iterations performed.
 *  \cgalParamEnd
 *  \cgalParamBegin{vertex_is_constrained_map} a property map containing the
-*    constrained-or-not status of each vertex of `pmesh`. A constrained vertex
+*    constrained-or-not status of each vertex of `tmesh`. A constrained vertex
 *    cannot be modified at all during smoothing.
 *  \cgalParamEnd
 *  \cgalParamBegin{do_project} if `true` (default value), points are projected to the initial surface after each iteration.
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
 */
-template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
+template<typename TriangleMesh, typename FaceRange, typename NamedParameters>
 void smooth_angles(const FaceRange& faces,
-                   PolygonMesh& pmesh,
+                   TriangleMesh& tmesh,
                    const NamedParameters& np)
 {
   if(boost::begin(faces)==boost::end(faces))
@@ -92,16 +92,16 @@ void smooth_angles(const FaceRange& faces,
   #endif
 
   // geom traits
-  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type       GeomTraits;
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type      GeomTraits;
   GeomTraits gt = choose_param(get_param(np, internal_np::geom_traits), GeomTraits());
 
   // vpmap
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type   VertexPointMap;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type  VertexPointMap;
   VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
-                               get_property_map(CGAL::vertex_point, pmesh));
+                               get_property_map(CGAL::vertex_point, tmesh));
 
   // vcmap
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor     vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
   typedef typename boost::lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
       NamedParameters,
@@ -142,7 +142,7 @@ void smooth_angles(const FaceRange& faces,
     smoother.angle_relaxation();
     if(do_project)
     {
-      if(does_self_intersect(pmesh))
+      if(does_self_intersect(tmesh))
       {
         std::cerr << "Can't do re-projection, there are self-intersections in the mesh!\n";
         break;
@@ -158,16 +158,16 @@ void smooth_angles(const FaceRange& faces,
 #endif
 }
 
-template<typename PolygonMesh, typename NamedParameters>
-void smooth_angles(PolygonMesh& pmesh, const NamedParameters& np)
+template<typename TriangleMesh, typename NamedParameters>
+void smooth_angles(TriangleMesh& tmesh, const NamedParameters& np)
 {
-  smooth_angles(faces(pmesh), pmesh, np);
+  smooth_angles(faces(tmesh), tmesh, np);
 }
 
-template<typename PolygonMesh>
-void smooth_angles(PolygonMesh& pmesh)
+template<typename TriangleMesh>
+void smooth_angles(TriangleMesh& tmesh)
 {
-  smooth_angles(faces(pmesh), pmesh, parameters::all_default());
+  smooth_angles(faces(tmesh), tmesh, parameters::all_default());
 }
 
 /*!
@@ -177,12 +177,12 @@ void smooth_angles(PolygonMesh& pmesh)
 * by moving non constrained vertices.
 * Optionally, the points are reprojected after each iteration.
 *
-* @tparam PolygonMesh model of `MutableFaceGraph`.
-* @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
+* @tparam TriangleMesh model of `MutableFaceGraph`.
+* @tparam FaceRange range of `boost::graph_traits<TriangleMesh>::%face_descriptor`,
           model of `Range`. Its iterator type is `ForwardIterator`.
 * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 *
-* @param pmesh a polygon mesh with triangulated surface patches to be smoothed.
+* @param tmesh a polygon mesh with triangulated surface patches to be smoothed.
 * @param faces the range of triangular faces defining one or several surface patches to be smoothed.
 * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below.
 *
@@ -191,13 +191,13 @@ void smooth_angles(PolygonMesh& pmesh)
 *    Exact constructions kernels are not supported by this function.
 *  \cgalParamEnd
 *  \cgalParamBegin{vertex_point_map} the property map with the points associated
-*    to the vertices of `pmesh`. Instance of a class model of `ReadWritePropertyMap`.
+*    to the vertices of `tmesh`. Instance of a class model of `ReadWritePropertyMap`.
 *  \cgalParamEnd
 *  \cgalParamBegin{number_of_iterations} the number of iterations for the
 *    sequence of the smoothing iterations performed.
 *  \cgalParamEnd
 *  \cgalParamBegin{vertex_is_constrained_map} a property map containing the
-*    constrained-or-not status of each vertex of `pmesh`. A constrained vertex
+*    constrained-or-not status of each vertex of `tmesh`. A constrained vertex
 *    cannot be modified at all during smoothing.
 *  \cgalParamEnd
 *  \cgalParamBegin{gradient_descent_precision} precision which is achieved by minimizing
@@ -208,8 +208,10 @@ void smooth_angles(PolygonMesh& pmesh)
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
 */
-template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
-void smooth_areas(const FaceRange& faces, PolygonMesh& pmesh, const NamedParameters& np)
+template<typename TriangleMesh, typename FaceRange, typename NamedParameters>
+void smooth_areas(const FaceRange faces,
+                  TriangleMesh& tmesh,
+                  const NamedParameters& np)
 {
   if(boost::begin(faces)==boost::end(faces))
     return;
@@ -224,14 +226,14 @@ void smooth_areas(const FaceRange& faces, PolygonMesh& pmesh, const NamedParamet
   t.start();
 #endif
 
-  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GeomTraits;
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GeomTraits;
   GeomTraits gt = choose_param(get_param(np, internal_np::geom_traits), GeomTraits());
 
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VertexPointMap;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VertexPointMap;
   VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
-                               get_property_map(CGAL::vertex_point, pmesh));
+                               get_property_map(CGAL::vertex_point, tmesh));
 
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
       NamedParameters,
@@ -272,7 +274,7 @@ void smooth_areas(const FaceRange& faces, PolygonMesh& pmesh, const NamedParamet
     smoother.area_relaxation(gd_precision);
     if(do_project)
     {
-      if(does_self_intersect(pmesh))
+      if(does_self_intersect(tmesh))
       {
         std::cerr << "Can't do re-projection, there are self-intersections in the mesh!\n";
         break;
@@ -288,40 +290,40 @@ void smooth_areas(const FaceRange& faces, PolygonMesh& pmesh, const NamedParamet
 #endif
 }
 
-template<typename PolygonMesh, typename NamedParameters>
-void smooth_areas(PolygonMesh& pmesh, const NamedParameters& np)
+template<typename TriangleMesh, typename NamedParameters>
+void smooth_areas(TriangleMesh& tmesh, const NamedParameters& np)
 {
-  smooth_areas(faces(pmesh), pmesh, np);
+  smooth_areas(faces(tmesh), tmesh, np);
 }
 
-template<typename PolygonMesh>
-void smooth_areas(PolygonMesh& pmesh)
+template<typename TriangleMesh>
+void smooth_areas(TriangleMesh& tmesh)
 {
-  smooth_areas(faces(pmesh), pmesh, parameters::all_default());
+  smooth_areas(faces(tmesh), tmesh, parameters::all_default());
 }
 
 
 ///\cond SKIP_IN_MANUAL
-template<typename PolygonMesh, typename GeomTraits, typename Stream>
-void angles_evaluation(PolygonMesh& pmesh, GeomTraits, Stream& output)
+template<typename TriangleMesh, typename GeomTraits, typename Stream>
+void angles_evaluation(TriangleMesh& tmesh, GeomTraits, Stream& output)
 {
-  internal::Quality_evaluator<PolygonMesh, GeomTraits> evaluator(pmesh);
+  internal::Quality_evaluator<TriangleMesh, GeomTraits> evaluator(tmesh);
   evaluator.gather_angles();
   evaluator.extract_angles(output);
 }
 
-template<typename PolygonMesh, typename GeomTraits, typename Stream>
-void areas_evaluation(PolygonMesh& pmesh, GeomTraits, Stream& output)
+template<typename TriangleMesh, typename GeomTraits, typename Stream>
+void areas_evaluation(TriangleMesh& tmesh, GeomTraits, Stream& output)
 {
-  internal::Quality_evaluator<PolygonMesh, GeomTraits> evaluator(pmesh);
+  internal::Quality_evaluator<TriangleMesh, GeomTraits> evaluator(tmesh);
   evaluator.measure_areas();
   evaluator.extract_areas(output);
 }
 
-template<typename PolygonMesh, typename GeomTraits, typename Stream>
-void aspect_ratio_evaluation(PolygonMesh& pmesh, GeomTraits, Stream& output)
+template<typename TriangleMesh, typename GeomTraits, typename Stream>
+void aspect_ratio_evaluation(TriangleMesh& tmesh, GeomTraits, Stream& output)
 {
-  internal::Quality_evaluator<PolygonMesh, GeomTraits> evaluator(pmesh);
+  internal::Quality_evaluator<TriangleMesh, GeomTraits> evaluator(tmesh);
   evaluator.calc_aspect_ratios();
   evaluator.extract_aspect_ratios(output);
 }
