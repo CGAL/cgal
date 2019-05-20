@@ -26,6 +26,7 @@
 #include <CGAL/box_intersection_d.h>
 
 #include <CGAL/KSR_3/Data_structure.h>
+#include <CGAL/KSR_3/Polygon_splitter.h>
 
 #include <CGAL/KSR_3/Event.h>
 #include <CGAL/KSR_3/Event_queue.h>
@@ -59,13 +60,11 @@ public:
 
   typedef KSR_3::Data_structure<Kernel> Data;
   typedef typename Data::Support_plane Support_plane;
-  typedef typename Data::Intersection_line Intersection_line;
-  typedef typename Data::Polygon Polygon;
-  typedef typename Data::Segment Segment;
-  typedef typename Data::Vertex Vertex;
-  
-  typedef typename Data::Meta_vertex Meta_vertex;
-  
+  typedef typename Support_plane::Mesh Mesh;
+  typedef typename Data::Intersection_graph Intersection_graph;
+  typedef typename Intersection_graph::Vertex_descriptor Intersection_vertex;
+  typedef typename Intersection_graph::Edge_descriptor Intersection_edge;
+
   typedef KSR_3::Event<Kernel> Event;
   typedef KSR_3::Event_queue<Kernel> Event_queue;
 
@@ -96,6 +95,8 @@ public:
       bbox += CGAL::bbox_3 (polygon.begin(), polygon.end());
     }
 
+    m_data.init (polygons.size());
+
     CGAL_KSR_CERR(1) << "Adding bbox as polygons" << std::endl;
     add_bbox_as_polygons (bbox, enlarge_bbox_ratio);
 
@@ -104,7 +105,7 @@ public:
     KSR::size_t polygon_idx = 0;
     for (const typename PolygonRange::const_iterator::value_type& poly : polygons)
     {
-      Polygon& polygon = m_data.add_polygon (get (polygon_map, poly), polygon_idx);
+      m_data.add_polygon (get (polygon_map, poly), polygon_idx);
       ++ polygon_idx;
     }
 
@@ -114,11 +115,14 @@ public:
     time_step /= 50;
     
     CGAL_KSR_CERR(1) << "Making input polygons intersection free" << std::endl;
+    
+    KSR_3::dump (m_data, "init");
+    
     CGAL_assertion(check_integrity(true));
     make_polygons_intersection_free();
     CGAL_assertion(check_integrity(true));
     
-    KSR_3::dump (m_data, "init");
+    KSR_3::dump (m_data, "intersected");
 
     std::size_t iter = 0;
     m_min_time = 0;
@@ -144,196 +148,42 @@ public:
 
   bool check_integrity(bool verbose = false) const
   {
+    // TODO
     for (KSR::size_t i = 0; i < m_data.number_of_support_planes(); ++ i)
     {
-      const Support_plane& support_plane = m_data.support_plane(i);
-      for (KSR::size_t p : support_plane.polygons_idx())
-      {
-        if (p == KSR::no_element())
-        {
-          if (verbose)
-            std::cerr << "ERROR: Support_plane[" << i
-                      << "] supports Polygon[-1]" << std::endl;
-          return false;
-        }
-        const Polygon& polygon = m_data.polygon(p);
-        if (polygon.support_plane_idx() != i)
-        {
-          if (verbose)
-            std::cerr << "ERROR: Support_plane[" << i
-                      << "] supports Polygon[" << p
-                      << "] which claims to be supported by Support_plane[" << polygon.support_plane_idx()
-                      << "]" << std::endl;
-          return false;
-        }
-      }
-      
-      for (KSR::size_t l : support_plane.intersection_lines_idx())
-      {
-        if (l == KSR::no_element())
-        {
-          if (verbose)
-            std::cerr << "ERROR: Support_plane[" << i
-                      << "] supports Intersection_line[-1]" << std::endl;
-          return false;
-        }
-        const Intersection_line& intersection_line = m_data.intersection_line(l);
-        if (!intersection_line.has_support_plane(i))
-        {
-          if (verbose)
-            std::cerr << "ERROR: Support_plane[" << i
-                      << "] supports Intersection_line[" << l
-                      << "] which claims it's not contained by it" << std::endl;
-          return false;
-        }
-      }
-
-      for (KSR::size_t mv : support_plane.meta_vertices_idx())
-      {
-        if (!m_data.meta_vertex(mv).has_support_plane(i))
-        {
-          if (verbose)
-            std::cerr << "ERROR: Support_plane[" << i
-                      << "] contains Meta_vertex[" << mv
-                      << "] which claims it's not contained by it" << std::endl;
-          return false;
-        }
-      }
-    }
-
-    for (KSR::size_t i = 0; i < m_data.number_of_segments(); ++ i)
-    {
-      const Segment& segment = m_data.segment(i);
-
-      for (KSR::size_t vertex_idx : { segment.source_idx(), segment.target_idx(),
-                                      segment.other_source_idx(), segment.other_target_idx() })
-        if (vertex_idx != KSR::no_element()
-            && m_data.vertex(vertex_idx).segment_idx() != i)
-        {
-          if (verbose)
-            std::cerr << "ERROR: Segment[" << i
-                      << "] contains Vertex[" << vertex_idx
-                      << "] which claims it's contained by Segment"
-                      << m_data.vertex(vertex_idx).segment_idx() << std::endl;
-          return false;
-        }
-    }
-    
-    for (KSR::size_t i = 0; i < m_data.number_of_polygons(); ++ i)
-    {
-      const Polygon& polygon = m_data.polygon(i);
-      for (KSR::size_t v : polygon.vertices_idx())
-      {
-        if (v == KSR::no_element())
-        {
-          if (verbose)
-            std::cerr << "ERROR: Polygon[" << i
-                      << "] supports Vertex[-1]" << std::endl;
-          return false;
-        }
-        const Vertex& vertex = m_data.vertex(v);
-        if (vertex.polygon_idx() != i)
-        {
-          if (verbose)
-            std::cerr << "ERROR: Polygon[" << i
-                      << "] supports Vertex[" << v
-                      << "] which claims to be supported by Polygon[" << vertex.polygon_idx()
-                      << "]" << std::endl;
-          return false;
-        }
-      }
-
-      if (!m_data.support_plane(polygon.support_plane_idx()).has_polygon (i))
+      if (!m_data.mesh(i).is_valid())
       {
         if (verbose)
-          std::cerr << "ERROR: Polygon[" << i
-                    << "] is supported by Support_plane[" << polygon.support_plane_idx()
-                    << "] which claims it does not support it" << std::endl;
-        return false;
-      }
-    }
-    
-    for (KSR::size_t i = 0; i < m_data.number_of_intersection_lines(); ++ i)
-    {
-      const Intersection_line& intersection_line = m_data.intersection_line(i);
-
-      for (KSR::size_t p : intersection_line.support_planes_idx())
-      {
-        if (!m_data.support_plane(p).has_intersection_line(i))
-        {
-          if (verbose)
-            std::cerr << "ERROR: Intersection_line[" << i
-                      << "] crossed Support_plane[" << p
-                      << "] which claims it does not contain it" << std::endl;
-          return false;
-        }
-      }
-      
-      for (KSR::size_t s : intersection_line.segments_idx())
-      {
-        if (m_data.segment(s).intersection_line_idx() != i)
-        {
-          if (verbose)
-            std::cerr << "ERROR: Intersection_line[" << i
-                      << "] supports Segment[" << s
-                      << "] which claims it's supported by Intersection_line["
-                      << m_data.segment(s).intersection_line_idx() << std::endl;
-          return false;
-        }
-      }
-    }
-    
-    for (KSR::size_t i = 0; i < m_data.number_of_vertices(); ++ i)
-    {
-      const Vertex& vertex = m_data.vertex(i);
-
-      if (!m_data.polygon(vertex.polygon_idx()).has_vertex(i))
-      {
-        if (verbose)
-          std::cerr << "ERROR: Vertex[" << i
-                    << "] is supported by Polygon[" << vertex.polygon_idx()
-                    << "] which claims it does not contain it" << std::endl;
+          std::cerr << "ERROR: Mesh " << i << "is invalid" << std::endl;
         return false;
       }
 
-      if (vertex.meta_vertex_idx() == KSR::no_element())
-      {
-        KSR::size_t meta_vertex_idx = m_data.meta_vertex_exists(m_data.point_of_vertex(vertex));
-        if (meta_vertex_idx != KSR::no_element())
+      for (const Intersection_edge& intersection_edge : m_data.support_plane(i).intersection_edges())
+        if (m_data.intersected_planes(intersection_edge).find (i)
+            == m_data.intersected_planes(intersection_edge).end())
         {
           if (verbose)
-            std::cerr << "ERROR: Vertex[" << i
-                      << "] has no meta vertex but is located on Meta_vertex[" << meta_vertex_idx
-                      << "]" << std::endl;
+            std::cerr << "ERROR: Support_plane[" << i
+                      << "] is intersected by Intersection_edge[" << intersection_edge
+                      << "] which claims it does not intersect it" << std::endl;
+          for (KSR::size_t spi : m_data.intersected_planes(intersection_edge))
+            std::cerr << spi << " ";
+          std::cerr << std::endl;
           return false;
         }
-      }
-
-      if (vertex.segment_idx() != KSR::no_element()
-          && m_data.segment(vertex.segment_idx()).source_idx() != i
-          && m_data.segment(vertex.segment_idx()).target_idx() != i
-          && m_data.segment(vertex.segment_idx()).other_source_idx() != i
-          && m_data.segment(vertex.segment_idx()).other_target_idx() != i)
-      {
-        if (verbose)
-          std::cerr << "ERROR: Vertex[" << i
-                    << "] has Segment[" << vertex.segment_idx()
-                    << "] which claims it does not contain it" << std::endl;
-        return false;
-      }
     }
-    
-    for (KSR::size_t i = 0; i < m_data.number_of_meta_vertices(); ++ i)
+
+    for (const Intersection_edge intersection_edge : m_data.intersection_edges())
     {
-      const Meta_vertex& meta_vertex = m_data.meta_vertex(i);
-      for (KSR::size_t p : meta_vertex.support_planes_idx())
+      for (KSR::size_t support_plane_idx : m_data.intersected_planes (intersection_edge))
       {
-        if (!m_data.support_plane(p).has_meta_vertex(i))
+        if (m_data.support_plane(support_plane_idx).intersection_edges().find (intersection_edge)
+            == m_data.support_plane(support_plane_idx).intersection_edges().end())
         {
           if (verbose)
-            std::cerr << "ERROR: Meta_vertex[" << i
-                      << "] has Support_plane[" << p
-                      << "] which claims it does not support it" << std::endl;
+            std::cerr << "ERROR: Intersection_edge[" << intersection_edge
+                      << "] intersects Support_plane[" << support_plane_idx
+                      << "] which claims it's not intersected by it" << std::endl;
           return false;
         }
       }
@@ -351,25 +201,6 @@ public:
   void output_partition_facets_to_polygon_soup (VertexOutputIterator vertices,
                                                 FacetOutputIterator facets) //const
   {
-    m_data.update_positions(0.2); 
-    for (KSR::size_t i = 0; i < m_data.number_of_vertices(); ++ i)
-      *(vertices ++) = m_data.point_of_vertex(i);
-    
-    std::vector<std::size_t> facet;
-    for (KSR::size_t i = 0; i < m_data.number_of_polygons(); ++ i)
-    {
-#define SKIP_BBOX_FACETS
-#ifdef SKIP_BBOX_FACETS
-      if (i < 6)
-        continue;
-#endif
-      facet.clear();
-
-      for (KSR::size_t vertex_idx : m_data.polygon(i).vertices_idx())
-        facet.push_back (std::size_t(vertex_idx));
-
-      *(facets ++) = facet;
-    }
   }
 
 
@@ -403,122 +234,26 @@ private:
 
     std::array<Point_3, 4> facet_points;
 
-    // plane 0       vertex[0]       vertex[1]       vertex[2]       vertex[3]
     facet_points = { bbox_points[0], bbox_points[1], bbox_points[3], bbox_points[2] };
-    m_data.add_polygon (facet_points);
+    m_data.add_bbox_polygon (facet_points);
     
-    // plane 1       vertex[4]       vertex[5]       vertex[6]       vertex[7]
     facet_points = { bbox_points[4], bbox_points[5], bbox_points[7], bbox_points[6] };
-    m_data.add_polygon (facet_points);
+    m_data.add_bbox_polygon (facet_points);
 
-    // plane 2       vertex[8]       vertex[9]       vertex[10]      vertex[11]
     facet_points = { bbox_points[0], bbox_points[1], bbox_points[5], bbox_points[4] };
-    m_data.add_polygon (facet_points);
+    m_data.add_bbox_polygon (facet_points);
 
-    // plane 3       vertex[12]      vertex[13]      vertex[14]      vertex[15]
     facet_points = { bbox_points[2], bbox_points[3], bbox_points[7], bbox_points[6] };
-    m_data.add_polygon (facet_points);
+    m_data.add_bbox_polygon (facet_points);
     
-    // plane 4       vertex[16]      vertex[17]      vertex[18]      vertex[19]
     facet_points = { bbox_points[1], bbox_points[5], bbox_points[7], bbox_points[3] };
-    m_data.add_polygon (facet_points);
+    m_data.add_bbox_polygon (facet_points);
     
-    // plane 5       vertex[20]      vertex[21]      vertex[22]      vertex[23]
     facet_points = { bbox_points[0], bbox_points[4], bbox_points[6], bbox_points[2] };
-    m_data.add_polygon (facet_points);
+    m_data.add_bbox_polygon (facet_points);
 
-    //                                 Point           Planes   Vertices
-    m_data.add_meta_vertex_and_attach (bbox_points[0], 0, 2, 5, 0, 8,  20);
-    m_data.add_meta_vertex_and_attach (bbox_points[1], 0, 2, 4, 1, 9,  16);
-    m_data.add_meta_vertex_and_attach (bbox_points[2], 0, 3, 5, 3, 12, 23);
-    m_data.add_meta_vertex_and_attach (bbox_points[3], 0, 3, 4, 2, 13, 19);
-    m_data.add_meta_vertex_and_attach (bbox_points[4], 1, 2, 5, 4, 11, 21);
-    m_data.add_meta_vertex_and_attach (bbox_points[5], 1, 2, 4, 5, 10, 17);
-    m_data.add_meta_vertex_and_attach (bbox_points[6], 1, 3, 5, 7, 15, 22);
-    m_data.add_meta_vertex_and_attach (bbox_points[7], 1, 3, 4, 6, 14, 18);
-
-    // Sort meta vertices
-    for (KSR::size_t i = 0; i < m_data.number_of_support_planes(); ++ i)
-    {
-      Point_3 centroid;
-      KSR::size_t nb = 0;
-      for (KSR::size_t meta_vertex_idx : m_data.support_plane(i).meta_vertices_idx())
-      {
-        centroid = CGAL::barycenter (centroid, nb, m_data.meta_vertex(meta_vertex_idx).point(), 1);
-        ++ nb;
-      }
-      Point_2 centroid_2 = m_data.support_plane(i).to_2d(centroid);
-      
-      std::sort (m_data.support_plane(i).meta_vertices_idx().begin(),
-                 m_data.support_plane(i).meta_vertices_idx().end(),
-                 [&] (const KSR::size_t& a, const KSR::size_t& b) -> bool
-                 {
-                   return (Direction_2 (Segment_2 (centroid_2, m_data.support_plane(i).to_2d(m_data.meta_vertex(a).point())))
-                           < Direction_2 (Segment_2 (centroid_2, m_data.support_plane(i).to_2d(m_data.meta_vertex(b).point()))));
-                 });
-    }
-
-    
-    //                            Line                                     Planes
-    m_data.add_intersection_line (Line_3 (bbox_points[0], bbox_points[1]), 0, 2);
-    m_data.intersection_line(0).meta_vertices_idx().push_back (0);
-    m_data.intersection_line(0).meta_vertices_idx().push_back (1);
-    m_data.add_segment (0, 0, 1);
-    
-    m_data.add_intersection_line (Line_3 (bbox_points[1], bbox_points[3]), 0, 4);
-    m_data.intersection_line(1).meta_vertices_idx().push_back (1);
-    m_data.intersection_line(1).meta_vertices_idx().push_back (3);
-    m_data.add_segment (1, 1, 2);
-    
-    m_data.add_intersection_line (Line_3 (bbox_points[3], bbox_points[2]), 0, 3);
-    m_data.intersection_line(2).meta_vertices_idx().push_back (3);
-    m_data.intersection_line(2).meta_vertices_idx().push_back (2);
-    m_data.add_segment (2, 2, 3);
-    
-    m_data.add_intersection_line (Line_3 (bbox_points[2], bbox_points[0]), 0, 5);
-    m_data.intersection_line(3).meta_vertices_idx().push_back (2);
-    m_data.intersection_line(3).meta_vertices_idx().push_back (0);
-    m_data.add_segment (3, 3, 0);
-    
-    m_data.add_intersection_line (Line_3 (bbox_points[4], bbox_points[5]), 1, 2);
-    m_data.intersection_line(4).meta_vertices_idx().push_back (4);
-    m_data.intersection_line(4).meta_vertices_idx().push_back (5);
-    m_data.add_segment (4, 4, 5);
-    
-    m_data.add_intersection_line (Line_3 (bbox_points[5], bbox_points[7]), 1, 4);
-    m_data.intersection_line(5).meta_vertices_idx().push_back (5);
-    m_data.intersection_line(5).meta_vertices_idx().push_back (7);
-    m_data.add_segment (5, 5, 6);
-    
-    m_data.add_intersection_line (Line_3 (bbox_points[7], bbox_points[6]), 1, 3);
-    m_data.intersection_line(6).meta_vertices_idx().push_back (7);
-    m_data.intersection_line(6).meta_vertices_idx().push_back (6);
-    m_data.add_segment (6, 6, 7);
-    
-    m_data.add_intersection_line (Line_3 (bbox_points[6], bbox_points[4]), 1, 5);
-    m_data.intersection_line(7).meta_vertices_idx().push_back (6);
-    m_data.intersection_line(7).meta_vertices_idx().push_back (4);
-    m_data.add_segment (7, 7, 4);
-    
-    m_data.add_intersection_line (Line_3 (bbox_points[1], bbox_points[5]), 2, 4);
-    m_data.intersection_line(8).meta_vertices_idx().push_back (1);
-    m_data.intersection_line(8).meta_vertices_idx().push_back (5);
-    m_data.add_segment (8, 1, 5);
-    
-    m_data.add_intersection_line (Line_3 (bbox_points[4], bbox_points[0]), 2, 5);
-    m_data.intersection_line(9).meta_vertices_idx().push_back (4);
-    m_data.intersection_line(9).meta_vertices_idx().push_back (0);
-    m_data.add_segment (9, 4, 0);
-    
-    m_data.add_intersection_line (Line_3 (bbox_points[3], bbox_points[7]), 3, 4);
-    m_data.intersection_line(10).meta_vertices_idx().push_back (3);
-    m_data.intersection_line(10).meta_vertices_idx().push_back (7);
-    m_data.add_segment (10, 2, 6);
-    
-    m_data.add_intersection_line (Line_3 (bbox_points[6], bbox_points[2]), 3, 5);
-    m_data.intersection_line(11).meta_vertices_idx().push_back (6);
-    m_data.intersection_line(11).meta_vertices_idx().push_back (2);
-    m_data.add_segment (11, 3, 7);
+    CGAL_assertion (m_data.intersection_vertices().size() == 8);
+    CGAL_assertion (m_data.intersection_edges().size() == 12);
   }
 
   struct Box_with_idx : public CGAL::Box_intersection_d::Box_d<FT,3>
@@ -533,68 +268,98 @@ private:
     { }
   };
 
+  struct Intersection
+  {
+    Line_3 line;
+    KSR::size_t support_plane_idx_0;
+    Intersection_edge source_0;
+    Intersection_edge target_0;
+    KSR::size_t support_plane_idx_1;
+    Intersection_edge source_1;
+    Intersection_edge target_1;
+  };
+
   void make_polygons_intersection_free()
   {
-    KSR::vector<std::tuple<Line_3, KSR::size_t, KSR::size_t> > todo;
-    KSR::size_t nb_inter = 0;
+    // First, generate all transverse intersection lines
+    typedef std::map<KSR::Idx_set, std::pair<Intersection_vertex, Intersection_vertex> > Map;
+    Map map_p2vv;
 
-    KSR::vector<KSR::vector<Point_3> > plane_3;
-    plane_3.reserve (m_data.number_of_support_planes());
-    KSR::vector<Box_with_idx> boxes;
-    boxes.reserve (m_data.number_of_support_planes());
+    for (const Intersection_vertex& intersection_vertex : m_data.intersection_vertices())
+    {
+      KSR::Idx_set key = m_data.intersected_planes (intersection_vertex, false);
+      if (key.size() < 2)
+        continue;
+
+      typename Map::iterator iter;
+      bool inserted;
+      std::tie (iter, inserted) = map_p2vv.insert (std::make_pair (key,
+                                                                   std::make_pair (intersection_vertex,
+                                                                                   Intersection_vertex())));
+      if (!inserted)
+        iter->second.second = intersection_vertex;
+    }
+
+
+    // Then, intersect these lines to find internal intersection vertices
+    KSR::vector<std::pair<KSR::Idx_set, KSR::vector<Intersection_vertex> > > todo;
+    for (typename Map::iterator it_a = map_p2vv.begin(); it_a != map_p2vv.end(); ++ it_a)
+    {
+      const KSR::Idx_set& set_a = it_a->first;
+
+      todo.push_back (std::make_pair (set_a, KSR::vector<Intersection_vertex>()));
+
+      KSR::vector<Intersection_vertex>& crossed_vertices = todo.back().second;
+      crossed_vertices.push_back (it_a->second.first);
+
+      std::set<KSR::Idx_set> done;
+      
+      for (typename Map::iterator it_b = map_p2vv.begin() ; it_b != map_p2vv.end(); ++ it_b)
+      {
+        const KSR::Idx_set& set_b = it_b->first;
+        KSR::size_t common_plane_idx = KSR::no_element();
+        std::set_intersection (set_a.begin(), set_a.end(), set_b.begin(), set_b.end(),
+                               boost::make_function_output_iterator
+                               ([&](const KSR::size_t& idx) -> void { common_plane_idx = idx; }));
+
+        if (common_plane_idx != KSR::no_element())
+        {
+          KSR::Idx_set union_set = set_a;
+          union_set.insert (set_b.begin(), set_b.end());
+          if (!done.insert (union_set).second)
+            continue;
+          
+          Point_2 inter;
+          if (!KSR::intersection_2 (m_data.support_plane(common_plane_idx).to_2d
+                                    (Segment_3 (m_data.point_3 (it_a->second.first),
+                                                m_data.point_3 (it_a->second.second))),
+                                    m_data.support_plane(common_plane_idx).to_2d
+                                    (Segment_3 (m_data.point_3 (it_b->second.first),
+                                                m_data.point_3 (it_b->second.second))),
+                                    inter))
+            continue;
+
+          crossed_vertices.push_back (m_data.add_vertex
+                                      (m_data.support_plane(common_plane_idx).to_3d(inter), union_set));
+        }
+      }
+      crossed_vertices.push_back (it_a->second.second);
+    }
+
+    for (auto& t : todo)
+      m_data.add_intersection_edge (t.first, t.second);
+
+    // Refine polygons
     for (KSR::size_t i = 0; i < m_data.number_of_support_planes(); ++ i)
     {
-      plane_3.push_back (m_data.points_of_support_plane(i));
-      boxes.push_back (Box_with_idx (CGAL::bbox_3 (plane_3.back().begin(), plane_3.back().end()), i));
-    }
-    
-    CGAL::box_self_intersection_d
-      (boxes.begin() + 6, boxes.end(),
-       [&](const Box_with_idx& a, const Box_with_idx& b) -> void
-       {
-         KSR::size_t support_plane_idx_a = a.idx;
-         KSR::size_t support_plane_idx_b = b.idx;
-
-         CGAL_assertion (support_plane_idx_a != support_plane_idx_b);
-         CGAL_assertion (support_plane_idx_a > 5 && support_plane_idx_b > 5);
-         
-         Line_3 line;
-         if (!KSR::intersection_3 (m_data.support_plane(support_plane_idx_a).plane(),
-                                   m_data.support_plane(support_plane_idx_b).plane(),
-                                   line))
-           return;
-
-         if (KSR::do_intersect (plane_3[support_plane_idx_a], plane_3[support_plane_idx_b]))
-         {
-           todo.push_back (std::make_tuple (line, support_plane_idx_a, support_plane_idx_b));
-           ++ nb_inter;
-         }
-       });
-
-
-    CGAL_KSR_CERR(2) << "* Found " << nb_inter << " intersection(s)" << std::endl;
-
-    KSR::Idx_vector new_intersection_lines;
-
-    for (const std::tuple<Line_3, KSR::size_t, KSR::size_t>& t : todo)
-      new_intersection_lines.push_back (m_data.add_intersection_line (get<0>(t), get<1>(t), get<2>(t)));
-
-    for (KSR::size_t intersection_line_idx : new_intersection_lines)
-    {
-      std::cerr << "Intersection_line[" << intersection_line_idx << "]" << std::endl;
-      for (KSR::size_t support_plane_idx : m_data.intersection_line(intersection_line_idx).support_planes_idx())
-      {
-        CGAL_assertion (support_plane_idx > 5);
-        KSR::Idx_vector polygons_idx = m_data.support_plane(support_plane_idx).polygons_idx();
-        for (KSR::size_t polygon_idx : polygons_idx)
-          if (m_data.do_intersect (polygon_idx, m_data.line_on_support_plane (intersection_line_idx, support_plane_idx)))
-            m_data.cut_polygon (polygon_idx, intersection_line_idx);
-      }
+      KSR_3::Polygon_splitter<GeomTraits> splitter (m_data);
+      splitter.split_support_plane (i);
     }
   }
 
   bool initialize_queue()
   {
+#if 0
     CGAL_KSR_CERR(1) << "Initializing queue for events in [" << m_min_time << ";" << m_max_time << "]" << std::endl;
 
     m_data.update_positions(m_max_time);
@@ -657,10 +422,13 @@ private:
     m_data.update_positions(m_min_time);
 
     return still_running;
+#endif
+    return false;
   }
 
   void run()
   {
+#if 0
     CGAL_KSR_CERR(1) << "Unstacking queue" << std::endl;
     
     KSR::size_t iterations = 0;
@@ -695,10 +463,12 @@ private:
               
       ++ iterations;
     }
+#endif
   }
 
   void apply (const Event& ev)
   {
+#if 0
     const Vertex& vertex = m_data.vertex (ev.vertex_idx());
     const Intersection_line& intersection_line = m_data.intersection_line (ev.intersection_line_idx());
     
@@ -814,8 +584,10 @@ private:
         if (vertex_idx != KSR::no_element())
           update_events (vertex_idx);
     }
+#endif
   }
 
+#if 0
   void transfer_events (KSR::size_t old_vertex, KSR::size_t new_vertex)
   {
     CGAL_KSR_CERR(3) << "** Transfering events of vertex " << old_vertex << " to " << new_vertex << std::endl;
@@ -898,7 +670,7 @@ private:
   void get_meta_neighbors (KSR::vector<KSR::vector<KSR::size_t> >& neighbors) const
   {
   }
-
+#endif
 
 };
 

@@ -70,6 +70,7 @@ public:
 
   KSR::size_t size() const { return static_cast<KSR::size_t>(m_data.size()); }
   bool empty() const { return m_data.empty(); }
+  void clear() { m_data.clear(); }
 
   void reserve (const KSR::size_t& size) { m_data.reserve(std::size_t(size)); }
   void resize (const KSR::size_t& size) { m_data.resize(std::size_t(size)); }
@@ -88,6 +89,11 @@ public:
   void push_back (const ValueType& v) { m_data.push_back (v); }
 
   void swap (vector& other) { m_data.swap (other.m_data); }
+
+  bool operator< (const vector& other) const
+  {
+    return (this->m_data < other.m_data);
+  }
 };
 
 #endif
@@ -101,8 +107,8 @@ typedef typename Idx_set::iterator Idx_set_iterator;
 // Use -1 as no element identifier
 inline size_t no_element() { return size_t(-1); }
 
-// Use -2 as special invalid identifier
-inline size_t invalid() { return size_t(-2); }
+// Use -2 as special uninitialized identifier
+inline size_t uninitialized() { return size_t(-2); }
 
 
 
