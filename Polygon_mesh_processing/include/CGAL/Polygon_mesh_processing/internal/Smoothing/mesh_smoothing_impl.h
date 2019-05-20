@@ -112,12 +112,9 @@ public:
         put(n_map, v, vn);
 
         Hedges hedges;
-        typename Hedges::iterator it;
+        hedges.reserve(halfedges_around_source(v, mesh_).size());
         for(halfedge_descriptor hi : halfedges_around_source(v, mesh_))
-        {
-          hedges.reserve(halfedges_around_source(v, mesh_).size());
           hedges.push_back(hi);
-        }
 
         // measure initial angles
         measure_angles(hedges);
