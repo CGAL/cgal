@@ -80,7 +80,7 @@ void smooth_angles(const FaceRange& faces,
                    TriangleMesh& tmesh,
                    const NamedParameters& np)
 {
-  if(boost::begin(faces)==boost::end(faces))
+  if(std::begin(faces) == std::end(faces))
     return;
 
   using boost::choose_param;
@@ -222,7 +222,7 @@ void smooth_areas(const FaceRange faces,
                   TriangleMesh& tmesh,
                   const NamedParameters& np)
 {
-  if(boost::begin(faces)==boost::end(faces))
+  if(std::begin(faces) == std::end(faces))
     return;
 
   using boost::choose_param;
