@@ -96,10 +96,11 @@ public:
 
   void angle_relaxation()
   {
-    std::map<vertex_descriptor, Point_3> barycenters;
     typedef typename boost::property_map<PolygonMesh,
                                          CGAL::dynamic_vertex_property_t<Vector> >::type NormalsMap;
+
     NormalsMap n_map = get(CGAL::dynamic_vertex_property_t<Vector>(), mesh_);
+    std::map<vertex_descriptor, Point_3> barycenters;
 
     for(vertex_descriptor v : vrange_)
     {
@@ -136,7 +137,7 @@ public:
       Point_ref p = get(vpmap_, vp.first);
       Point_3 q = vp.second;
       Vector n = get(n_map, vp.first);
-      new_locations[vp.first] = q + ( n * Vector(q, p) ) * n ;
+      new_locations[vp.first] = q + (n * Vector(q, p)) * n ;
     }
 
     // update location
@@ -146,32 +147,32 @@ public:
       // iff movement impoves all angles
       if(does_it_impove(vp.first, vp.second))
       {
-        moved_points++;
+        ++moved_points;
         put(vpmap_, vp.first, vp.second);
       }
     }
 
 #ifdef CGAL_PMP_SMOOTHING_DEBUG
-    std::cout<<"moved: "<< moved_points <<" points based on angle."<<std::endl;
-    std::cout<<"not improved min angle: "<< vrange_.size() - moved_points <<" times."<<std::endl;
+    std::cout << "moved: " << moved_points << " points based on angle." << std::endl;
+    std::cout << "not improved min angle: " << vrange_.size() - moved_points << " times." << std::endl;
 #endif
   }
 
-  void area_relaxation(const double& precision)
+  void area_relaxation(const double precision)
   {
     std::size_t moved_points = 0;
     for(vertex_descriptor v : vrange_)
     {
        if(!is_border(v, mesh_) && !is_constrained(v))
        {
-         if (gradient_descent(v, precision))
-           moved_points++;
+         if(gradient_descent(v, precision))
+           ++moved_points;
        }
     }
 
 #ifdef CGAL_PMP_SMOOTHING_DEBUG
-    std::cout<<"moved : "<<moved_points<<" points based on area."<<std::endl;
-    std::cout<<"non convex energy found: "<<vrange_.size() - moved_points<<" times."<<std::endl;
+    std::cout << "moved : " << moved_points << " points based on area." << std::endl;
+    std::cout << "non convex energy found: " << vrange_.size() - moved_points << " times." << std::endl;
 #endif
   }
 
@@ -195,11 +196,10 @@ private:
   Vector calc_move(const Hedges& hedges)
   {
     Vector move = CGAL::NULL_VECTOR;
-    double weights_sum = 0;
-    typename Hedges::const_iterator it;
-    for(it = hedges.begin(); it != hedges.end(); ++it)
+    double weights_sum = 0.;
+
+    for(halfedge_descriptor main_he : hedges)
     {
-      halfedge_descriptor main_he = *it;
       He_pair incident_pair = std::make_pair(next(main_he, mesh_), prev(opposite(main_he, mesh_), mesh_));
 
       // avoid zero angles
@@ -223,12 +223,14 @@ private:
        move += weight * rotated_edge;
     }
 
-    if(weights_sum != 0)
+    if(weights_sum != 0.)
      move /= weights_sum;
+
     return move;
   }
 
-  Vector rotate_edge(const halfedge_descriptor& main_he, const He_pair& incd_edges)
+  Vector rotate_edge(const halfedge_descriptor main_he,
+                     const He_pair& incd_edges)
   {
     // get common vertex around which the edge is rotated
     Point_ref pt = get(vpmap_, target(main_he, mesh_));
@@ -247,10 +249,12 @@ private:
     internal::normalize(edge2, traits_);
     bisector = edge1 + edge2;
     correct_bisector(bisector, main_he);
+
     return bisector;
   }
 
-  void correct_bisector(Vector& bisector_vec, const halfedge_descriptor& main_he)
+  void correct_bisector(Vector& bisector_vec,
+                        const halfedge_descriptor main_he)
   {
     // get common vertex around which the edge is rotated
     Point_ref pt = get(vpmap_, target(main_he, mesh_));
@@ -259,7 +263,7 @@ private:
     Segment bisector(pt, pt + bisector_vec);
 
     // scale
-    double scale_factor = CGAL::sqrt(  sqlength(main_he, mesh_) / bisector.squared_length() );
+    double scale_factor = CGAL::sqrt(sqlength(main_he, mesh_) / bisector.squared_length());
     typename GeomTraits::Aff_transformation_3 t_scale(CGAL::SCALING, scale_factor);
     bisector = bisector.transform(t_scale);
 
@@ -273,7 +277,9 @@ private:
     bisector_vec = -Vector(bisector);
   }
 
-  Vector find_perpendicular(const Vector& input_vec, const Point_3& s, const Point_3& pv)
+  Vector find_perpendicular(const Vector& input_vec,
+                            const Point_3& s,
+                            const Point_3& pv)
   {
     Vector s_pv(s, pv);
     Vector aux_normal = CGAL::cross_product(input_vec, s_pv);
@@ -295,7 +301,8 @@ private:
     }
   }
 
-  void calc_angles(const halfedge_descriptor& main_he, const He_pair& incd_edges)
+  void calc_angles(const halfedge_descriptor main_he,
+                   const He_pair& incd_edges)
   {
     // get common vertex around which the edge is rotated
     Point_ref pt = get(vpmap_, target(main_he, mesh_));
@@ -317,10 +324,10 @@ private:
     min_angle_ = std::min(min_angle_, std::min(a1, a2));
   }
 
-  bool does_it_impove(const vertex_descriptor& v, const Point_3& new_location)
+  bool does_it_impove(const vertex_descriptor v,
+                      const Point_3& new_location)
   {
     Hedges hedges;
-    typename Hedges::iterator it;
     for(halfedge_descriptor hi : halfedges_around_source(v, mesh_))
     {
       hedges.reserve(halfedges_around_source(v, mesh_).size());
@@ -330,7 +337,8 @@ private:
     return evaluate_angles(hedges, new_location);
   }
 
-  bool evaluate_angles(const Hedges& hedges, const Point_3& new_location)
+  bool evaluate_angles(const Hedges& hedges,
+                       const Point_3& new_location)
   {
     typename Hedges::const_iterator it;
     for(it = hedges.begin(); it != hedges.end(); ++it)
@@ -340,8 +348,10 @@ private:
 
       // get common vertex around which the edge is rotated
       Point_ref pt = get(vpmap_, target(main_he, mesh_));
+
       // ps is the vertex that is being moved
       Point_3 new_point = new_location;
+
       // get "equidistant" points
       Point_ref equidistant_p1 = get(vpmap_, target(incd_edges.first, mesh_));
       Point_ref equidistant_p2 = get(vpmap_, source(incd_edges.second, mesh_));
@@ -360,18 +370,18 @@ private:
     return true;
   }
 
-  double get_angle(const Vector& e1, const Vector& e2)
+  double get_angle(const Vector& e1,
+                   const Vector& e2)
   {
-    //double rad_to_deg = 180. / CGAL_PI;
-    double cos_angle = (e1 * e2)
-     / CGAL::sqrt(e1.squared_length() * e2.squared_length());
+    double cos_angle = (e1 * e2) / CGAL::sqrt(e1.squared_length() * e2.squared_length());
 
-    return std::acos(cos_angle); //* rad_to_deg;
+    return std::acos(cos_angle);
   }
 
   // gradient descent
   // ----------------
-  bool gradient_descent(const vertex_descriptor& v, const double& precision)
+  bool gradient_descent(const vertex_descriptor v,
+                        const double precision)
   {
     bool move_flag;
     double x, y, z, x_new, y_new, z_new, drdx, drdy, drdz;
@@ -383,7 +393,7 @@ private:
     double energy = measure_energy(v, S_av);
 
     // if the adjacent areas are absolutely equal
-    if(energy == 0)
+    if(energy == 0.)
       return false;
 
     double energy_new = 0;
@@ -396,7 +406,9 @@ private:
 
     while(relative_energy > precision)
     {
-      drdx=0, drdy=0, drdz=0;
+      drdx = 0.;
+      drdy = 0.;
+      drdz = 0.;
       compute_derivatives(drdx, drdy, drdz, v, S_av);
 
       x_new = x - eta * drdx;
@@ -414,14 +426,14 @@ private:
       else
         return false;
 
-      relative_energy = CGAL::to_double( (energy - energy_new) / energy );
+      relative_energy = CGAL::to_double((energy - energy_new) / energy);
 
       // update
       x = x_new;
       y = y_new;
       z = z_new;
       energy = energy_new;
-      t++;
+      ++t;
 
       // could use eta = eta0 / pow(t, power_t);
       eta = eta0 / (1 + t0 * t);
@@ -430,7 +442,9 @@ private:
     return move_flag;
   }
 
-  void compute_derivatives(double& drdx, double& drdy, double& drdz, const vertex_descriptor& v, const double& S_av)
+  void compute_derivatives(double& drdx, double& drdy, double& drdz,
+                           const vertex_descriptor v,
+                           const double S_av)
   {
     for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
     {
@@ -456,31 +470,29 @@ private:
     drdz *= 2;
   }
 
-  double element_area(const vertex_descriptor& p1,
-            const vertex_descriptor& p2,
-            const vertex_descriptor& p3) const
+  double element_area(const vertex_descriptor v1,
+                      const vertex_descriptor v2,
+                      const vertex_descriptor v3) const
   {
-    return to_double(CGAL::approximate_sqrt(
-               traits_.compute_squared_area_3_object()(
-                  get(vpmap_, p1),
-                  get(vpmap_, p2),
-                  get(vpmap_, p3))));
+    return CGAL::to_double(CGAL::approximate_sqrt(
+                       traits_.compute_squared_area_3_object()(get(vpmap_, v1),
+                                                               get(vpmap_, v2),
+                                                               get(vpmap_, v3))));
   }
 
   double element_area(const Point_3& P,
-            const vertex_descriptor& p2,
-            const vertex_descriptor& p3) const
+                      const vertex_descriptor v2,
+                      const vertex_descriptor v3) const
   {
-    return to_double(CGAL::approximate_sqrt(
-               traits_.compute_squared_area_3_object()(
-                  P,
-                  get(vpmap_, p2),
-                  get(vpmap_, p3))));
+    return CGAL::to_double(CGAL::approximate_sqrt(
+                       traits_.compute_squared_area_3_object()(P,
+                                                               get(vpmap_, v2),
+                                                               get(vpmap_, v3))));
   }
 
-  double compute_average_area_around(const vertex_descriptor& v)
+  double compute_average_area_around(const vertex_descriptor v)
   {
-    double sum_areas = 0;
+    double sum_areas = 0.;
     unsigned int number_of_edges = 0;
 
     for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
@@ -491,13 +503,14 @@ private:
 
       double S = element_area(v, pi, pi1);
       sum_areas += S;
-      number_of_edges++;
+      ++number_of_edges;
     }
-    
+
     return sum_areas / number_of_edges;
   }
 
-  double measure_energy(const vertex_descriptor& v, const double& S_av)
+  double measure_energy(const vertex_descriptor v,
+                        const double S_av)
   {
     double energy = 0;
     unsigned int number_of_edges = 0;
@@ -509,13 +522,15 @@ private:
       double S = element_area(v, pi, pi1);
 
       energy += (S - S_av)*(S - S_av);
-      number_of_edges++;
+      ++number_of_edges;
     }
 
-    return to_double( energy / number_of_edges );
+    return to_double(energy / number_of_edges);
   }
 
-  double measure_energy(const vertex_descriptor& v, const double& S_av, const Point_3& new_P)
+  double measure_energy(const vertex_descriptor v,
+                        const double S_av,
+                        const Point_3& new_P)
   {
     double energy = 0;
     unsigned int number_of_edges = 0;
@@ -526,13 +541,13 @@ private:
       double S = element_area(new_P, pi, pi1);
 
       energy += (S - S_av)*(S - S_av);
-      number_of_edges++;
+      ++number_of_edges;
     }
 
-    return to_double( energy / (2 * number_of_edges) );
+    return to_double(energy / (2 * number_of_edges));
   }
 
-  bool is_constrained(const vertex_descriptor& v)
+  bool is_constrained(const vertex_descriptor v)
   {
     return get(vcmap_, v);
   }
@@ -561,7 +576,6 @@ private:
   VertexConstraintMap vcmap_;
   GeomTraits traits_;
 
-  Triangle_list input_triangles_;
   Tree* tree_ptr_;
   std::vector<vertex_descriptor> vrange_;
   double min_angle_;
