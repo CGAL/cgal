@@ -38,9 +38,9 @@ void test_angle_smoothing(const char* filename)
     if(!is_border(v, mesh))
     {
       Point p_c = get(vpmap, v);
-      CGAL_assertion(p_c.x() == 0.7203429230262004);
-      CGAL_assertion(p_c.y() == 0.5);
-      CGAL_assertion(p_c.z() == 0);
+      assert(p_c.x() == 0.7203429230262004);
+      assert(p_c.y() == 0.5);
+      assert(p_c.z() == 0);
       break;
     }
   }
@@ -68,9 +68,9 @@ void test_area_smoothing(const char* filename)
     if(!is_border(v, mesh))
     {
       Point p_c = get(vpmap, v);
-      CGAL_assertion(p_c.x() == 0.6691415930575334);
-      CGAL_assertion(p_c.y() == 0.5);
-      CGAL_assertion(p_c.z() == 0);
+      assert(p_c.x() == 0.6691415930575334);
+      assert(p_c.y() == 0.5);
+      assert(p_c.z() == 0);
       break;
     }
   }
@@ -128,9 +128,9 @@ void test_area_smoothing_without_projection(const char* filename)
     if(!is_border(v, mesh))
     {
       Point p_c = get(vpmap, v);
-      CGAL_assertion(p_c.x() == 0.42183982448892759);
-      CGAL_assertion(p_c.y() == 0.5);
-      CGAL_assertion(p_c.z() == 0.87816017551107273);
+      assert(p_c.x() == 0.42183982448892759);
+      assert(p_c.y() == 0.5);
+      assert(p_c.z() == 0.87816017551107273);
       break;
     }
   }
@@ -176,9 +176,9 @@ void test_constrained_vertices(const char* filename)
   {
     if(!is_border(v, mesh))
     {
-      CGAL_assertion(x_init == get(vpmap, v).x());
-      CGAL_assertion(y_init == get(vpmap, v).y());
-      CGAL_assertion(z_init == get(vpmap, v).z());
+      assert(x_init == get(vpmap, v).x());
+      assert(y_init == get(vpmap, v).y());
+      assert(z_init == get(vpmap, v).z());
     }
   }
 }
