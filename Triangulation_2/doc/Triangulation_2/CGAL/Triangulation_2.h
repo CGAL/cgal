@@ -353,6 +353,12 @@ if `tr` is modified, `*this` is not.
 Triangulation_2( 
 const Triangulation_2& tr); 
 
+  /*!
+Equivalent to constructing an empty triangulation with the optional traits class argument and calling insert(first,last).
+*/
+template < class InputIterator >
+Triangulation_2( InputIterator first, InputIterator last, const Traits& gt = Traits());
+
 /*!
 Assignment. All the vertices and faces are duplicated. 
 After the assignment, `*this` and `tr` 
@@ -685,14 +691,30 @@ Equivalent to `insert(p)`.
 Vertex_handle push_back(const Point& p); 
 
 /*!
-Inserts the points in the range `[first,last)`.
+Inserts the points in the range `[first,last)` in the given order.
 Returns the number of inserted points. 
 \pre The `value_type` of `InputIterator` is `Point`. 
 */ 
 template < class InputIterator > 
 std::ptrdiff_t 
-insert(InputIterator first, InputIterator last); 
+insert(InputIterator first, InputIterator last);
 
+  
+/*!
+inserts the points in the iterator range `[first,last)`. Returns the number of inserted points. 
+
+Given a pair `(p,i)`, the vertex `v` storing `p` also stores `i`, that is 
+`v.point() == p` and `v.info() == i`. If several pairs have the same point, 
+only one vertex is created, and one of the objects of type `Vertex::Info` will be stored in the vertex. 
+\pre `Vertex` must be model of the concept `TriangulationVertexBaseWithInfo_2`. 
+
+\tparam PointWithInfoInputIterator must be an input iterator with the value type `std::pair<Point,Vertex::Info>`. 
+
+*/ 
+template < class PointWithInfoInputIterator > 
+std::ptrdiff_t 
+insert(PointWithInfoInputIterator first, PointWithInfoInputIterator last);
+  
 /*!
 Removes the vertex from the triangulation. The created hole is 
 re-triangulated. 
