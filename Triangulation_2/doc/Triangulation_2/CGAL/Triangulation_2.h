@@ -701,7 +701,7 @@ insert(InputIterator first, InputIterator last);
 
   
 /*!
-inserts the points in the iterator range `[first,last)`. Returns the number of inserted points. 
+inserts the points in the iterator range `[first,last)` in the given order. Returns the number of inserted points. 
 
 Given a pair `(p,i)`, the vertex `v` storing `p` also stores `i`, that is 
 `v.point() == p` and `v.info() == i`. If several pairs have the same point, 
