@@ -94,13 +94,6 @@ public:
     tree_ptr_->accelerate_distance_queries();
   }
 
-  std::size_t remove_degenerate_faces()
-  {
-    std::size_t nb_removed_faces = 0;
-    nb_removed_faces = CGAL::Polygon_mesh_processing::remove_degenerate_faces(mesh_);
-    return nb_removed_faces;
-  }
-
   void angle_relaxation()
   {
     std::map<vertex_descriptor, Point_3> barycenters;

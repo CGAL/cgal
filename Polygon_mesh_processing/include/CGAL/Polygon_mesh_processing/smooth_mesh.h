@@ -114,16 +114,7 @@ void smooth_angles(const FaceRange& faces,
   std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
   bool do_project = choose_param(get_param(np, internal_np::do_project), true);
 
-  internal::Compatible_smoother<PolygonMesh, VertexPointMap, VCMap, GeomTraits>smoother(pmesh, vpmap, vcmap, gt);
-
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  t.stop();
-  std::cout << " done ("<< t.time() <<" sec)." << std::endl;
-  std::cout << "Removing degenerate faces..." << std::endl;
-  t.reset(); t.start();
-#endif
-
-  smoother.remove_degenerate_faces();
+  internal::Compatible_smoother<TriangleMesh, VertexPointMap, VCMap, GeomTraits> smoother(tmesh, vpmap, vcmap, gt);
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   t.stop();
@@ -253,16 +244,7 @@ void smooth_areas(const FaceRange& faces, PolygonMesh& pmesh, const NamedParamet
   const double gd_precision = choose_param(get_param(np, internal_np::gradient_descent_precision), 1e-5);
   bool do_project = choose_param(get_param(np, internal_np::do_project), true);
 
-  internal::Compatible_smoother<PolygonMesh, VertexPointMap, VCMap, GeomTraits> smoother(pmesh, vpmap, vcmap, gt);
-
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  t.stop();
-  std::cout << " done ("<< t.time() <<" sec)." << std::endl;
-  std::cout << "Removing degenerate faces..." << std::endl;
-  t.reset(); t.start();
-#endif
-
-  smoother.remove_degenerate_faces();
+  internal::Compatible_smoother<TriangleMesh, VertexPointMap, VCMap, GeomTraits> smoother(tmesh, vpmap, vcmap, gt);
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   t.stop();
