@@ -7,8 +7,12 @@ Release 5.0
 Release date: September 2019
 
 ### Polygon Mesh Processing package
- -   Added the function `CGAL::Polygon_mesh_processing::centroid()` which computes
+ -   Added the function `CGAL::Polygon_mesh_processing::centroid()`, which computes
      the centroid of a closed triangle mesh.
+-    Added the functions `CGAL::Polygon_mesh_processing::stitch_boundary_cycle()` and
+     `CGAL::Polygon_mesh_processing::stitch_boundary_cycles()`, which can be used
+     to try and merge together geometrically compatible but combinatorially different halfedges
+     that belong to the same boundary cycle.
 
 ### IO Streams
  -   **Breaking change:** The API of `CGAL::Color` has been cleaned up.
