@@ -72,8 +72,12 @@ class Compatible_smoother
   typedef CGAL::AABB_tree<AABB_Traits>                                    Tree;
 
 public:
-  Compatible_smoother(PolygonMesh& pmesh, VertexPointMap& vpmap, VertexConstraintMap& vcmap) :
-    mesh_(pmesh), vpmap_(vpmap), vcmap_(vcmap)
+  Compatible_smoother(PolygonMesh& pmesh,
+                      VertexPointMap& vpmap,
+                      VertexConstraintMap& vcmap,
+                      const GeomTraits& traits)
+    :
+      mesh_(pmesh), vpmap_(vpmap), vcmap_(vcmap), traits_(traits)
   {}
 
   ~Compatible_smoother() { delete tree_ptr_; }
@@ -566,12 +570,12 @@ private:
   PolygonMesh& mesh_;
   VertexPointMap& vpmap_;
   VertexConstraintMap vcmap_;
+  GeomTraits traits_;
+
   Triangle_list input_triangles_;
   Tree* tree_ptr_;
-  GeomTraits traits_;
   std::vector<vertex_descriptor> vrange_;
   double min_angle_;
-
 };
 
 } // namespace internal

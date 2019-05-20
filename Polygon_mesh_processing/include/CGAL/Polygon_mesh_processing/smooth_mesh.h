@@ -92,7 +92,8 @@ void smooth_angles(const FaceRange& faces,
   #endif
 
   // geom traits
-  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GeomTraits;
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type       GeomTraits;
+  GeomTraits gt = choose_param(get_param(np, internal_np::geom_traits), GeomTraits());
 
   // vpmap
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type   VertexPointMap;
@@ -113,8 +114,7 @@ void smooth_angles(const FaceRange& faces,
   std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
   bool do_project = choose_param(get_param(np, internal_np::do_project), true);
 
-  internal::Compatible_smoother<PolygonMesh, VertexPointMap, VCMap, GeomTraits>
-          smoother(pmesh, vpmap, vcmap);
+  internal::Compatible_smoother<PolygonMesh, VertexPointMap, VCMap, GeomTraits>smoother(pmesh, vpmap, vcmap, gt);
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   t.stop();
@@ -220,20 +220,21 @@ void smooth_angles(PolygonMesh& pmesh)
 template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
 void smooth_areas(const FaceRange& faces, PolygonMesh& pmesh, const NamedParameters& np)
 {
-  if (boost::begin(faces)==boost::end(faces))
+  if(boost::begin(faces)==boost::end(faces))
     return;
 
   using boost::choose_param;
   using boost::get_param;
 
-  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
   CGAL::Timer t;
   std::cout << "Smoothing parameters...";
   std::cout.flush();
   t.start();
-  #endif
+#endif
 
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GeomTraits;
+  GeomTraits gt = choose_param(get_param(np, internal_np::geom_traits), GeomTraits());
 
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VertexPointMap;
   VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
@@ -252,8 +253,7 @@ void smooth_areas(const FaceRange& faces, PolygonMesh& pmesh, const NamedParamet
   const double gd_precision = choose_param(get_param(np, internal_np::gradient_descent_precision), 1e-5);
   bool do_project = choose_param(get_param(np, internal_np::do_project), true);
 
-  internal::Compatible_smoother<PolygonMesh, VertexPointMap, VCMap, GeomTraits>
-          smoother(pmesh, vpmap, vcmap);
+  internal::Compatible_smoother<PolygonMesh, VertexPointMap, VCMap, GeomTraits> smoother(pmesh, vpmap, vcmap, gt);
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   t.stop();
