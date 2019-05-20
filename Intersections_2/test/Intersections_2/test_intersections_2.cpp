@@ -191,23 +191,22 @@ struct Test
     check_do_intersect     (p(0, 0).bbox() + p(10, 10).bbox(), C(p( 3, 2), 3));
   }
 
-  // @fixme, bbox_2_line_2.h is all kind of broken
   void B_L()
   {
     std::cout << "Bbox - Line (TODO)" << std::endl;
 
     // no intersection
-//    check_no_do_intersect  (p(0,0).bbox()                , L(p( 1,1), p( 0,1)));
-//    check_no_do_intersect  (p(0,0).bbox() + p(4,5).bbox(), L(p(-1,1), p(-1,5)));
+    check_no_do_intersect  (p(0,0).bbox()                , L(p( 1,1), p( 0,1)));
+    check_no_do_intersect  (p(0,0).bbox() + p(4,5).bbox(), L(p(-1,1), p(-1,5)));
 
     // point intersection
-//    check_do_intersect     (p( 0, 0).bbox()                , L(p(-1,1), p(1,-1)));
-//    check_do_intersect     (p(-1,-1).bbox() + p(4,2).bbox(), L(p( 1,5), p(-3,1)));
+    check_do_intersect     (p( 0, 0).bbox()                , L(p(-1,1), p( 1,-1)));
+    check_do_intersect     (p(-1,-1).bbox() + p(4,2).bbox(), L(p( 1,5), p(-3,-1)));
 
     // segment intersection
-//    check_do_intersect     (p(0,0).bbox() + p(4,5).bbox(), L(p(-1, 5), p(7,5)));
-//    check_do_intersect     (p(0,0).bbox() + p(4,5).bbox(), L(p(-1, 5), p(2,5)));
-//    check_do_intersect     (p(0,0).bbox() + p(4,5).bbox(), L(p( 4,-3), p(4,1)));
+    check_do_intersect     (p(0,0).bbox() + p(4,5).bbox(), L(p(-1, 5), p(7,5)));
+    check_do_intersect     (p(0,0).bbox() + p(4,5).bbox(), L(p(-1, 5), p(2,5)));
+    check_do_intersect     (p(0,0).bbox() + p(4,5).bbox(), L(p( 4,-3), p(4,1)));
   }
 
   void B_P()
@@ -225,23 +224,22 @@ struct Test
     check_intersection     (p(1,2).bbox() + p(4,6).bbox(), p(3,3), p(3,3)); // point is within the bbox
   }
 
-  // @fixme, bbox_2_ray_2.h is all kind of broken
   void B_R()
   {
     std::cout << "Bbox - Ray (TODO)" << std::endl;
 
     // no intersection
-//    check_no_do_intersect  (p(0,0).bbox()                , R(p( 1,1), p( 0,1)));
-//    check_no_do_intersect  (p(0,0).bbox() + p(4,5).bbox(), R(p(-1,1), p(-1,5)));
+    check_no_do_intersect  (p(0,0).bbox()                , R(p( 1,1), p( 0,1)));
+    check_no_do_intersect  (p(0,0).bbox() + p(4,5).bbox(), R(p(-1,1), p(-1,5)));
 
     // point intersection
-//    check_do_intersect     (p( 0, 0).bbox()                , R(p(-1,1), p(1,-1)));
-//    check_do_intersect     (p(-1,-1).bbox() + p(4,2).bbox(), R(p( 1,5), p(-3,1)));
+    check_do_intersect     (p( 0, 0).bbox()                , R(p(-1,1), p( 1,-1)));
+    check_do_intersect     (p(-1,-1).bbox() + p(4,2).bbox(), R(p( 1,5), p(-3,-1)));
 
     // segment intersection
-//    check_do_intersect     (p(0,0).bbox() + p(4,5).bbox(), R(p(-1, 5), p(7,5)));
-//    check_do_intersect     (p(0,0).bbox() + p(4,5).bbox(), R(p(-1, 5), p(2,5)));
-//    check_do_intersect     (p(0,0).bbox() + p(4,5).bbox(), R(p( 4,-3), p(4,1)));
+    check_do_intersect     (p(0,0).bbox() + p(4,5).bbox(), R(p(-1, 5), p(7,5)));
+    check_do_intersect     (p(0,0).bbox() + p(4,5).bbox(), R(p(-1, 5), p(2,5)));
+    check_do_intersect     (p(0,0).bbox() + p(4,5).bbox(), R(p( 4,-3), p(4,1)));
   }
 
   void C_C()
@@ -315,7 +313,7 @@ struct Test
     // point intersection
     check_intersection     (C(p( 3,  4), 16)                , p( 7, 4), p(7, 4));
     check_intersection     (C(p( 0,  5), p(5,  0), p(-5, 0)), p( 0, -5), p(0, -5));
-//    check_intersection     (C(p( 3,  4), p(2,  6), p( 1, 5)), p( 1, 5), p(1, 5)); // homogenous kernel is too imprecise
+//    check_intersection     (C(p( 3,  4), p(2,  6), p( 1, 5)), p( 1, 5), p(1, 5));
     check_intersection<P>  (C(p( 0,  0), 25)                , p( 5, 0));
   }
 
@@ -798,7 +796,7 @@ int main()
 {
   Test< CGAL::Simple_cartesian<typename CGAL::internal::Exact_field_selector<void*>::Type > >().run();
   Test< CGAL::Cartesian<double>   >().run();
-  Test< CGAL::Homogeneous<double> >().run();
+  Test< CGAL::Homogeneous<typename CGAL::internal::Exact_field_selector<void*>::Type > >().run();
   Test< CGAL::Exact_predicates_inexact_constructions_kernel >().run();
   Test< CGAL::Exact_predicates_exact_constructions_kernel >().run();
 }
