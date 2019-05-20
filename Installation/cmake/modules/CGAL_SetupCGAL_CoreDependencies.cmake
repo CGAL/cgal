@@ -54,8 +54,9 @@ endif()
 #
 
 # See the release notes of CGAL-4.10: CGAL_Core now requires
-# Boost.Thread, with all compilers but MSVC.
-if (NOT MSVC)
+# Boost.Thread, with GNU G++.
+if (CMAKE_CXX_COMPILER_ID STREQUAL GNU)
+  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_TweakFindBoost.cmake)
   find_package( Boost 1.48 REQUIRED COMPONENTS thread system )
 endif()
 
@@ -71,8 +72,8 @@ function(CGAL_setup_CGAL_Core_dependencies target)
   target_link_libraries( CGAL_Core ${keyword} CGAL::CGAL )
 
   # See the release notes of CGAL-4.10: CGAL_Core now requires
-  # Boost.Thread, with all compilers but MSVC.
-  if (NOT MSVC)
+  # Boost.Thread, with GNU G++.
+  if (CMAKE_CXX_COMPILER_ID STREQUAL GNU)
     if(TARGET Boost::thread)
       target_link_libraries( CGAL_Core ${keyword} Boost::thread)
     else()

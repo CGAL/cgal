@@ -281,11 +281,10 @@ points has the appearance of a curve in 2D or a surface in 3D
 - `estimate_global_k_neighbor_scale()`
 - `estimate_global_range_scale()`
 
-Functions such as `jet_estimate_normals()` or
-`remove_outliers()` require a K neighbor scale while others such as
-`grid_simplify_point_set()` require a range
-scale. `vcm_estimate_normals()` is an example of a function that
-accepts both.
+Functions such as `grid_simplify_point_set()` require a range scale
+while `jet_estimate_normals()`, `remove_outliers()` or
+`vcm_estimate_normals()` are examples of functions that accepts both a
+K neighbor scale or a range scale.
 
 In some specific cases, the scale of a point set might not be
 homogeneous (for example if the point set contains variable
@@ -325,7 +324,9 @@ points in the domain.
 Function `remove_outliers()` deletes a user-specified fraction
 of outliers from an input point set. More specifically, it sorts the
 input points in increasing order of average squared distances to their
-`k` nearest neighbors and deletes the points with largest value.
+nearest neighbors and deletes the points with largest value. The user
+can either specify a fixed number of nearest neighbors or a fixed
+spherical neighborhood radius.
 
 \subsection Point_set_processing_3Example_outlier_removal Example
 
@@ -446,12 +447,15 @@ Two smoothing functions are devised to smooth an input point set.
 
 Function `jet_smooth_point_set()` smooths the input point set by
 projecting each point onto a smooth parametric surface patch
-(so-called jet surface) fitted over its `k` nearest neighbors.
+(so-called jet surface) fitted over its nearest neighbors. 
 
 Function `bilateral_smooth_point_set()` smooths the input point set by
-iteratively projecting each point onto the implicit surface patch fitted over its `k` nearest neighbors.
+iteratively projecting each point onto the implicit surface patch fitted over its nearest neighbors.
 Bilateral projection preserves sharp features according to the normal (gradient) information. 
 Normals are thus required as input. For more details, see section 4 of \cgalCite{ear-2013}.
+
+For both functions, the user can either specify a fixed number of
+nearest neighbors or a fixed spherical neighborhood radius.
 
 \subsection Point_set_processing_3Example_jet_smoothing Jet Smoothing Example
 
@@ -487,13 +491,13 @@ functions provide an estimate of the normal to \b S at each
 point. The result is an unoriented normal vector for each input point.
 
 Function `jet_estimate_normals()` estimates the normal direction
-at each point from the input set by fitting a jet surface over its `k`
+at each point from the input set by fitting a jet surface over its
 nearest neighbors. The default jet is a quadric surface. This
 algorithm is well suited to point sets scattered over curved surfaces.
 
 Function `pca_estimate_normals()` estimates the normal direction
 at each point from the set by linear least squares fitting of a plane
-over its `k` nearest neighbors. This algorithm is simpler and
+over its nearest neighbors. This algorithm is simpler and
 faster than `jet_estimate_normals()`.
 
 Function `vcm_estimate_normals()` estimates the normal direction
@@ -502,13 +506,16 @@ of the point set. This algorithm is more complex and slower than
 the previous algorithms. It is based on the
 article \cgalCite{cgal:mog-vbcfe-11}.
 
+For these three functions, the user can either specify a fixed number
+of nearest neighbors or a fixed spherical neighborhood radius.
+
 \section Point_set_processing_3NormalOrientation Normal Orientation
 
 Function `mst_orient_normals()` orients the normals of a set of
 points with unoriented normals using the method described by Hoppe et
 al. in <I>Surface reconstruction from unorganized points</I> \cgalCite{cgal:hddms-srup-92}. 
 More specifically, this method constructs a
-Riemannian graph over the input points (the graph of the `k`
+Riemannian graph over the input points (the graph of the 
 nearest neighbor points) and propagates a seed normal orientation
 within a minimum spanning tree computed over this graph. The result is
 an oriented normal vector for each input unoriented normal, except for
@@ -521,8 +528,9 @@ Normal orientation of a sampled cube surface. Left: unoriented normals. Right: o
 \subsection Point_set_processing_3Example_normals Example
 
 The following example reads a point set from a file, estimates the
-normals through PCA over the 6 nearest neighbors and orients the
-normals:
+normals through PCA (either over the 18 nearest neighbors or using a
+spherical neighborhood radius of twice the average spacing) and
+orients the normals:
 \cgalExample{Point_set_processing_3/normals_example.cpp}
 
 

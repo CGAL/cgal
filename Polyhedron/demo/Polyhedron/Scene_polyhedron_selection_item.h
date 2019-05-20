@@ -206,6 +206,7 @@ public:
 
   typedef Scene_facegraph_item_k_ring_selection::Active_handle Active_handle;
 
+  void common_constructor();
   Scene_polyhedron_selection_item() ;
   Scene_polyhedron_selection_item(Scene_face_graph_item* poly_item, QMainWindow* mw);
   ~Scene_polyhedron_selection_item();
@@ -213,10 +214,10 @@ public:
   void setPathSelection(bool b);
   //For ID printing
   void printPrimitiveId(QPoint, CGAL::Three::Viewer_interface*);
-  bool printVertexIds(CGAL::Three::Viewer_interface*) const;
-  bool printEdgeIds(CGAL::Three::Viewer_interface*) const;
-  bool printFaceIds(CGAL::Three::Viewer_interface*) const;
-  void printAllIds(CGAL::Three::Viewer_interface*);
+  bool printVertexIds() const;
+  bool printEdgeIds() const;
+  bool printFaceIds() const;
+  void printAllIds();
   bool testDisplayId(double, double, double, CGAL::Three::Viewer_interface*)const;
   bool shouldDisplayIds(CGAL::Three::Scene_item *current_item) const;
   QString defaultSaveName() const 
@@ -225,6 +226,8 @@ public:
     res.remove(" (selection)");
     return res;      
   }
+  void initializeBuffers(CGAL::Three::Viewer_interface *) const;
+  void computeElements() const;
 
 protected: 
   void init(Scene_face_graph_item* poly_item, QMainWindow* mw);
@@ -311,14 +314,14 @@ public:
     
       }
     }
-
+    
     if(!item_bbox)
     {
-      _bbox = this->poly_item->bbox();
+      setBbox(this->poly_item->bbox());
       return;
     }
-    _bbox = Bbox(item_bbox->xmin(),item_bbox->ymin(),item_bbox->zmin(),
-                item_bbox->xmax(),item_bbox->ymax(),item_bbox->zmax());
+    setBbox(Bbox(item_bbox->xmin(),item_bbox->ymin(),item_bbox->zmin(),
+                 item_bbox->xmax(),item_bbox->ymax(),item_bbox->zmax()));
   }
 
   bool save(const std::string& file_name) const {
@@ -795,7 +798,7 @@ public:
     poly_item->computeItemColorVectorAutomatically(b);
   }
 
-  void selection_changed(bool b);
+  void selection_changed(bool);
 
 Q_SIGNALS:
   void updateInstructions(QString);
@@ -804,13 +807,18 @@ Q_SIGNALS:
   void printMessage(QString);
 
 public Q_SLOTS:
-
+  void connectNewViewer(QObject* o)
+  {
+      o->installEventFilter(this);
+  }
   void update_poly();
   void on_Ctrlz_pressed();
+  void on_Ctrlu_pressed();
   void emitTempInstruct();
   void resetIsTreated();
   void save_handleType();
   void set_operation_mode(int mode);
+  void set_highlighting(bool b);
   void invalidateOpenGLBuffers();
   void validateMoveVertex();
   void compute_normal_maps();
@@ -851,8 +859,20 @@ protected:
             && static_cast<QKeyEvent*>(gen_event)->key()==Qt::Key_Z)
     {
       QKeyEvent *keyEvent = static_cast<QKeyEvent*>(gen_event);
-      if(keyEvent->modifiers().testFlag(Qt::ControlModifier))
+      if(keyEvent->modifiers().testFlag(Qt::ControlModifier)){
         on_Ctrlz_pressed();
+        return true;
+      }
+    }
+    else if(gen_event->type() == QEvent::KeyPress
+            && static_cast<QKeyEvent*>(gen_event)->key()==Qt::Key_U)
+    {
+      QKeyEvent *keyEvent = static_cast<QKeyEvent*>(gen_event);
+      if(keyEvent->modifiers().testFlag(Qt::ControlModifier))
+      {
+        on_Ctrlu_pressed();
+        return true;
+      }
     }
 
     if(!visible() || !k_ring_selector.state.shift_pressing) { return false; }

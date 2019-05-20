@@ -2,12 +2,18 @@
 
 #include <fstream>
 #include <vector>
+#include <deque>
+#include <boost/config.hpp>
+#include <boost/version.hpp>
 
 // CGAL headers
 #include <CGAL/Bbox_2.h>
 #include <CGAL/assertions_behaviour.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Timer.h> 
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+#include <CGAL/IO/WKT.h>
+#endif
 
 //#define CGAL_TESTING_POLYLINE_SIMPLIFICATION
 //#define CGAL_POLYLINE_SIMPLIFICATION_TRACE_LEVEL 15
@@ -106,6 +112,7 @@ private:
 
   void loadPoly(QString);
   void loadOSM (QString);
+  void loadWKT (QString);
 
 protected Q_SLOTS:
 void open(QString);
@@ -333,14 +340,16 @@ void
 MainWindow::open(QString fileName)
 {
   if(! fileName.isEmpty()){
-    if(fileName.endsWith(".poly")){
-      loadPoly(fileName);
-      this->addToRecentFiles(fileName);
-    }  
-    else if(fileName.endsWith(".osm")){
+    if(fileName.endsWith(".osm")){
       loadOSM(fileName);
       this->addToRecentFiles(fileName);
-    }  
+    }
+    else if(fileName.endsWith(".wkt")){
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+      loadWKT(fileName);
+      this->addToRecentFiles(fileName);
+#endif
+    }
   }
 }
 
@@ -348,10 +357,12 @@ void
 MainWindow::on_actionLoadConstraints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
-						                                      tr("Open Constraint File"),
-						                                      "../data",
-						                                      tr("Polylines (*.osm *.poly)")
-						                                      );
+                                                  tr("Open Constraint File"),
+                                                  "../data"
+                                                #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+                                                  ,tr("Polylines (*.osm *.wkt);;")
+                                                #endif
+                                                  );
   open(fileName);
 }
 
@@ -367,90 +378,53 @@ std::string trim_right ( std::string str )
   return std::string("") ;  
 }
 
-enum { POLYGON, POLYLINE, POINT_2 } ;
-
-void MainWindow::loadPoly(QString fileName)
+void MainWindow::loadWKT(QString 
+                         #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+                         fileName
+                         #endif
+                         )
 {
-  m_pct.clear();
-  mGI->modelChanged();
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+    typedef std::vector<Point_2> MultiPoint;
+  
+  typedef std::vector<Point_2> LineString;
+  typedef std::deque<LineString> MultiLineString;
+  
+  typedef CGAL::Polygon_2<K> Polygon_2;
+  typedef CGAL::Polygon_with_holes_2<K> Polygon_with_holes_2;
+  typedef std::deque<Polygon_with_holes_2> MultiPolygon;
   
   std::ifstream ifs(qPrintable(fileName));
-  
-  std::string line ;
-  
-  std::vector<Point_2> poly ;
-  
-  bool lIsClosed = true ;
-  
-  while ( std::getline(ifs,line) )
-  {
-    line = trim_right(line);
-    
-    if ( line.size() > 0 )
-    {
-      int lCode = POINT_2 ;
-      
-      if ( line == "POLYGON" )    
-      {
-        lCode = POLYGON ; 
-        lIsClosed = true ; 
-      }
-      else if ( line == "POLYLINE" )
-      {
-        lCode = POLYLINE ;
-        lIsClosed = false ; 
-      }
-      
-      if ( lCode == POINT_2 )
-      {
-        double x,y ;
-        
-        std::istringstream ss(line);
-        
-        ss >> x >> y ;
-        
-        poly.push_back( Point_2(x,y) );
-      }
-      else
-      {
-        if ( poly.size() > 0 )  
-        {
-          if ( lIsClosed )
-          {
-            if(poly.back() != poly.front()){
-              poly.push_back(poly.front());
-            }
-            m_pct.insert_constraint(poly.begin(), poly.end() ) ;
-          }
-          else
-          {
-            m_pct.insert_constraint(poly.begin(), poly.end() ) ;
-          }
-        }
-        poly.clear();
-      }
+  MultiPoint points;
+  MultiLineString polylines;
+  MultiPolygon polygons;
+  CGAL::read_WKT(ifs, points,polylines,polygons);
+
+  m_pct.clear();
+  mGI->modelChanged();
+
+  if(! points.empty()){
+    std::cout << "Ignore " << points.size() << " isolated points" << std::endl;
+  }
+  BOOST_FOREACH(LineString poly, polylines){
+    if ( poly.size() > 2 ){
+      m_pct.insert_constraint(poly.begin(), poly.end());
     }
   }
-  
-  if ( poly.size() > 0 )  
-  {
-    if ( lIsClosed )
-    {
-      if(poly.back() != poly.front()){
-        poly.push_back(poly.front());
-      }
-      m_pct.insert_constraint(poly.begin(), poly.end() ) ;
+ BOOST_FOREACH(Polygon_with_holes_2 poly, polygons){
+   m_pct.insert_constraint(poly.outer_boundary().vertices_begin(), poly.outer_boundary().vertices_end());
+   for(Polygon_with_holes_2::Hole_const_iterator it = poly.holes_begin(); it != poly.holes_end(); ++it){
+     const Polygon_2& hole = *it;
+      m_pct.insert_constraint(hole);
     }
-    else
-    {
-      m_pct.insert_constraint(poly.begin(), poly.end() ) ;
-    }
-  }
-      
+ }
+   
   Q_EMIT( changed());
   
   actionRecenter->trigger();
+#endif
 }
+
 
 void MainWindow::loadOSM(QString fileName)
 {

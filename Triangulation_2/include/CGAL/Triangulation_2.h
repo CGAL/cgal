@@ -41,7 +41,7 @@
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Triangulation_vertex_base_2.h>
 #include <CGAL/Triangulation_face_base_2.h>
-#include <CGAL/Triangulation_line_face_circulator_2.h>
+#include <CGAL/Triangulation_2/internal/Triangulation_line_face_circulator_2.h>
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 
@@ -2141,7 +2141,7 @@ move_if_no_collision(Vertex_handle v, const Point &p)
   fill_hole(v, hole);
 
   // fixing pointer
-  Face_circulator fc = this->incident_faces(inserted), done(fc);
+  Face_circulator fc = incident_faces(inserted), done(fc);
   std::vector<Face_handle> faces_pt;
   faces_pt.reserve(16);
   do { faces_pt.push_back(fc); } while(++fc != done);
@@ -2280,7 +2280,7 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
   make_hole(v, hole, faces_set);
   fill_hole(v, hole, oif);
 
-  fc = this->incident_faces(inserted), done(fc);
+  fc = incident_faces(inserted), done(fc);
   std::vector<Face_handle> faces_pt;
   faces_pt.reserve(16);
   do { faces_pt.push_back(fc); } while (++fc != done);

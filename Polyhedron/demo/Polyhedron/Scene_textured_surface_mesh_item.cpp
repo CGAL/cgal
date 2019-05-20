@@ -2,35 +2,44 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Three/Triangle_container.h>
+#include <CGAL/Three/Edge_container.h>
+#include <CGAL/Three/Three.h>
 #include <QApplication>
 #include <QObject>
 
 typedef EPICK  ::Point_3 Point;
+using namespace CGAL::Three;
+typedef Viewer_interface Vi;
+typedef Triangle_container Tc;
+typedef Edge_container Ec;
 
 struct Scene_textured_surface_mesh_item_priv
 {
   Scene_textured_surface_mesh_item_priv(Scene_textured_surface_mesh_item* parent)
-    :sm(new SMesh), textureId(-1)
+    :sm(new SMesh)
   {
     item = parent;
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
-    uv = sm->add_property_map<halfedge_descriptor,std::pair<float, float> >("h:uv",std::make_pair(0.0f,0.0f)).first;
-
+    umap = sm->add_property_map<halfedge_descriptor, float>("h:u", 0.0f).first;
+    vmap = sm->add_property_map<halfedge_descriptor, float>("h:v", 0.0f).first;
   }
   Scene_textured_surface_mesh_item_priv(const SMesh& p, Scene_textured_surface_mesh_item* parent)
-    : sm(new SMesh(p)),textureId(-1),smooth_shading(true)
+    : sm(new SMesh(p))
 
   {
     item = parent;
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
-    uv = sm->add_property_map<halfedge_descriptor,std::pair<float, float> >("h:uv",std::make_pair(0.0f,0.0f)).first;
+    umap = sm->add_property_map<halfedge_descriptor, float>("h:u", 0.0f).first;
+    vmap = sm->add_property_map<halfedge_descriptor, float>("h:v", 0.0f).first;
   }
   Scene_textured_surface_mesh_item_priv(SMesh* const p,Scene_textured_surface_mesh_item* parent)
-    :sm(p),textureId(-1),smooth_shading(true)
+    :sm(p)
   {
     item = parent;
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
-    uv = sm->add_property_map<halfedge_descriptor,std::pair<float, float> >("h:uv",std::make_pair(0.0f,0.0f)).first;
+    umap = sm->add_property_map<halfedge_descriptor, float>("h:u", 0.0f).first;
+    vmap = sm->add_property_map<halfedge_descriptor, float>("h:v", 0.0f).first;
   }
 
   ~Scene_textured_surface_mesh_item_priv()
@@ -38,112 +47,32 @@ struct Scene_textured_surface_mesh_item_priv
     delete sm;
   }
 
-  void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_normals_and_vertices(void) const;
 
-  enum VAOs {
-    Facets=0,
-    Edges,
-    Border_edges,
-    NbOfVaos
-  };
-  enum VBOs {
-    B_Facets=0,
-    B_Edges,
-    B_Border_Edges,
-    NbOfVbos
-  };
-
   SMesh* sm;
-  Texture texture;
-  SMesh::Property_map<halfedge_descriptor,std::pair<float, float> > uv;
-  mutable GLuint textureId;
-  mutable QOpenGLShaderProgram* program;
+  ::Texture texture;
+  SMesh::Property_map<halfedge_descriptor, float> umap;
+  SMesh::Property_map<halfedge_descriptor, float> vmap;
+
   //[Px][Py][Pz][Nx][Ny][Nz][u][v]
   mutable std::vector<float> faces_buffer;
   //[Px][Py][Pz][u][v]
   mutable std::vector<float> edges_buffer;
   //[Px][Py][Pz]
   mutable std::vector<float> border_edges_buffer;
-  bool smooth_shading;
+  mutable std::size_t nb_face_verts;
+  mutable std::size_t nb_edge_verts;
+  mutable std::size_t nb_border_verts;
+  bool are_buffers_filled;
+  bool are_border_filled;
 
   Scene_textured_surface_mesh_item* item;
   typedef Scene_textured_surface_mesh_item I;
 };
-void Scene_textured_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *viewer = 0) const
-{
-  if(GLuint(-1) == textureId) {
-    viewer->glGenTextures(1, &textureId);
-  }
-
-  //Faces
-  program = item->getShaderProgram(I::PROGRAM_WITH_TEXTURE, viewer);
-  program->bind();
-  item->vaos[Facets]->bind();
-  item->buffers[B_Facets].bind();
-  item->buffers[B_Facets].allocate(faces_buffer.data(),
-                                   static_cast<int>(faces_buffer.size()*sizeof(float)));
-
-  program->enableAttributeArray("vertex");
-  program->enableAttributeArray("normal");
-  program->enableAttributeArray("v_texCoord");
-
-  program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3, 8 * sizeof(float));
-  program->setAttributeBuffer("normal", GL_FLOAT, 3 * sizeof(float), 3, 8 * sizeof(float));
-  program->setAttributeBuffer("v_texCoord", GL_FLOAT, 6 * sizeof(float), 2, 8 * sizeof(float));
-
-  item->buffers[B_Facets].release();
-  item->vaos[Facets]->release();
-  program->release();
-
-  //Edges
-  program = item->getShaderProgram(I::PROGRAM_WITH_TEXTURED_EDGES, viewer);
-  program->bind();
-  item->vaos[Edges]->bind();
-  item->buffers[B_Edges].bind();
-  item->buffers[B_Edges].allocate(edges_buffer.data(),
-                                   static_cast<int>(edges_buffer.size()*sizeof(float)));
-
-  program->enableAttributeArray("vertex");
-  program->enableAttributeArray("v_texCoord");
-
-  program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3, 5 * sizeof(float));
-  program->setAttributeBuffer("v_texCoord", GL_FLOAT, 3 * sizeof(float), 2, 5 * sizeof(float));
-
-  item->buffers[B_Edges].release();
-  item->vaos[Edges]->release();
-  program->release();
-
-
-
-
-  viewer->glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-  viewer->glActiveTexture(GL_TEXTURE0);
-  viewer->glBindTexture(GL_TEXTURE_2D, textureId);
-  viewer->glTexImage2D(GL_TEXTURE_2D,
-                       0,
-                       GL_RGB,
-                       texture.GetWidth(),
-                       texture.GetHeight(),
-                       0,
-                       GL_RGB,
-                       GL_UNSIGNED_BYTE,
-                       texture.GetData());
-  viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-  item->are_buffers_filled = true;
-}
-
 void
 Scene_textured_surface_mesh_item_priv::compute_normals_and_vertices(void) const
 {
-  QApplication::setOverrideCursor(Qt::WaitCursor);
   faces_buffer.resize(0);
-
 
   typedef boost::graph_traits<SMesh>::face_iterator face_iterator;
   typedef boost::graph_traits<SMesh>::face_iterator face_iterator;
@@ -176,8 +105,8 @@ Scene_textured_surface_mesh_item_priv::compute_normals_and_vertices(void) const
       faces_buffer.push_back(n[1]);
       faces_buffer.push_back(n[2]);
       //uvs [2]
-      const float u = get(uv, *he).first;
-      const float v = get(uv, *he).second;
+      const float u = get(umap, *he);
+      const float v = get(vmap, *he);
       faces_buffer.push_back(u);
       faces_buffer.push_back(v);
     }
@@ -201,8 +130,8 @@ Scene_textured_surface_mesh_item_priv::compute_normals_and_vertices(void) const
       edges_buffer.push_back(a.y() + offset.y);
       edges_buffer.push_back(a.z() + offset.z);
     //uvs [2]
-      float u = get(uv, halfedge(*he, *sm)).first;
-      float v = get(uv, halfedge(*he, *sm)).second;
+      float u = get(umap, halfedge(*he, *sm));
+      float v = get(vmap, halfedge(*he, *sm));
 
       edges_buffer.push_back(u);
       edges_buffer.push_back(v);
@@ -212,43 +141,58 @@ Scene_textured_surface_mesh_item_priv::compute_normals_and_vertices(void) const
       edges_buffer.push_back(b.z() + offset.z);
 
       //uvs [2]
-       u = get(uv, opposite(halfedge(*he, *sm), *sm)).first;
-       v = get(uv, opposite(halfedge(*he, *sm), *sm)).second;
+       u = get(umap, opposite(halfedge(*he, *sm), *sm));
+       v = get(vmap, opposite(halfedge(*he, *sm), *sm));
 
       edges_buffer.push_back(u);
       edges_buffer.push_back(v);
-
   }
-
-
-  QApplication::restoreOverrideCursor();
+  
+  nb_face_verts = faces_buffer.size();
+  nb_edge_verts = edges_buffer.size();
 }
 
-Scene_textured_surface_mesh_item::Scene_textured_surface_mesh_item()
-  : Scene_item(Scene_textured_surface_mesh_item_priv::NbOfVbos,Scene_textured_surface_mesh_item_priv::NbOfVaos)
+void Scene_textured_surface_mesh_item::common_constructor()
 {
   cur_shading=FlatPlusEdges;
   is_selected=false;
+  setTriangleContainer(0, new Tc(Vi::PROGRAM_WITH_TEXTURE,
+                                 false));
+  setEdgeContainer(1, new Ec(Three::mainViewer()->isOpenGL_4_3()
+                             ? Vi::PROGRAM_SOLID_WIREFRAME
+                             : Vi::PROGRAM_NO_SELECTION,
+                             false));//bordures
+  setEdgeContainer(0, new Ec(Vi::PROGRAM_WITH_TEXTURED_EDGES, false));//edges
+  getTriangleContainer(0)->setTextureSize(QSize(d->texture.GetWidth(), d->texture.GetHeight()));
+  getEdgeContainer(0)->setTextureSize(QSize(d->texture.GetWidth(), d->texture.GetHeight()));
+  BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+  {
+    CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
+    initGL(viewer);
+  }
+  d->nb_face_verts = 0; 
+  d->nb_edge_verts = 0; 
+  d->nb_border_verts = 0;
+  d->are_buffers_filled = false;
+  d->are_border_filled = false;
+}
+Scene_textured_surface_mesh_item::Scene_textured_surface_mesh_item()
+{
   d = new Scene_textured_surface_mesh_item_priv(this);
-  invalidateOpenGLBuffers();
+  common_constructor();
+  
 }
 
 Scene_textured_surface_mesh_item::Scene_textured_surface_mesh_item(SMesh* const p)
-  : Scene_item(Scene_textured_surface_mesh_item_priv::NbOfVbos,Scene_textured_surface_mesh_item_priv::NbOfVaos)
 {
-  cur_shading=FlatPlusEdges;
-  is_selected=false;
   d = new Scene_textured_surface_mesh_item_priv(p,this);
-  invalidateOpenGLBuffers();
+  common_constructor();
 }
 
 Scene_textured_surface_mesh_item::Scene_textured_surface_mesh_item(const SMesh& p)
-  : Scene_item(Scene_textured_surface_mesh_item_priv::NbOfVbos,Scene_textured_surface_mesh_item_priv::NbOfVaos)
 {
-  cur_shading=FlatPlusEdges;
-  is_selected=false;
   d = new Scene_textured_surface_mesh_item_priv(p,this);
-  invalidateOpenGLBuffers();
+  common_constructor();
 }
 
 Scene_textured_surface_mesh_item::~Scene_textured_surface_mesh_item()
@@ -300,64 +244,47 @@ Scene_textured_surface_mesh_item::toolTip() const
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
 void Scene_textured_surface_mesh_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 
-  if(!are_buffers_filled)
+  if(!isInit(viewer))
+    initGL(viewer);
+  if ( getBuffersFilled() &&
+       ! getBuffersInit(viewer))
   {
-    d->compute_normals_and_vertices();
-    d->initializeBuffers(viewer);
+    initializeBuffers(viewer);
+    setBuffersInit(viewer, true);
   }
-  vaos[Scene_textured_surface_mesh_item_priv::Facets]->bind();
-  viewer->glActiveTexture(GL_TEXTURE0);
-  viewer->glBindTexture(GL_TEXTURE_2D, d->textureId);
-  attribBuffers(viewer, PROGRAM_WITH_TEXTURE);
-  d->program=getShaderProgram(PROGRAM_WITH_TEXTURE);
-  d->program->bind();
-  
-  viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->faces_buffer.size()/8));
-  //Clean-up
-  d->program->release();
-  vaos[Scene_textured_surface_mesh_item_priv::Facets]->release();
-
+  if(!getBuffersFilled())
+  {
+    computeElements();
+    initializeBuffers(viewer);
+  }
+  getTriangleContainer(0)->draw(viewer, true);
 }
-void Scene_textured_surface_mesh_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
-  if(!are_buffers_filled)
-    d->initializeBuffers(viewer);
-
-  vaos[Scene_textured_surface_mesh_item_priv::Edges]->bind();
-  viewer->glActiveTexture(GL_TEXTURE0);
-  viewer->glBindTexture(GL_TEXTURE_2D, d->textureId);
-  attribBuffers(viewer, PROGRAM_WITH_TEXTURED_EDGES);
-
-  d->program=getShaderProgram(PROGRAM_WITH_TEXTURED_EDGES);
-  d->program->bind();
-  viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->edges_buffer.size()/5));
-
-  vaos[Scene_textured_surface_mesh_item_priv::Edges]->release();
-  d->program->release();
-
-  vaos[Scene_textured_surface_mesh_item_priv::Border_edges]->bind();
+void Scene_textured_surface_mesh_item::drawEdges(
+    CGAL::Three::Viewer_interface* viewer) const {
+  if(!isInit(viewer))
+    initGL(viewer);
+  if ( getBuffersFilled() &&
+       ! getBuffersInit(viewer))
+  {
+    initializeBuffers(viewer);
+    setBuffersInit(viewer, true);
+  }
+  if(!getBuffersFilled())
+  {
+    computeElements();
+    initializeBuffers(viewer);
+  }
+  getEdgeContainer(0)->draw(viewer, true);
   
-  if(!viewer->isOpenGL_4_3())
+  if(viewer->isOpenGL_4_3())
   {
-    attribBuffers(viewer, PROGRAM_NO_SELECTION);
-    d->program=getShaderProgram(PROGRAM_NO_SELECTION);
-    d->program->bind();
-  }
-  else
-  {
-    attribBuffers(viewer, PROGRAM_SOLID_WIREFRAME);
-    d->program=getShaderProgram(PROGRAM_SOLID_WIREFRAME);
-    d->program->bind();
+    
     QVector2D vp(viewer->width(), viewer->height());
-    d->program->setUniformValue("viewport", vp);
-    d->program->setUniformValue("near",(GLfloat)viewer->camera()->zNear());
-    d->program->setUniformValue("far",(GLfloat)viewer->camera()->zFar());
-    d->program->setUniformValue("width", 4.0f);
+    getEdgeContainer(1)->setViewport(vp);
+    getEdgeContainer(1)->setWidth(4.0f);
   }
-  d->program->setAttributeValue("colors", QColor(Qt::blue));
-  viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->border_edges_buffer.size()/3));
-  //Clean-up
-  d->program->release();
-  vaos[Scene_textured_surface_mesh_item_priv::Border_edges]->release();
+  getEdgeContainer(1)->setColor(QColor(Qt::blue));
+  getEdgeContainer(1)->draw(viewer, true);
 }
 
 
@@ -381,14 +308,18 @@ Scene_textured_surface_mesh_item::compute_bbox() const {
       ++it) {
     bbox = bbox + d->sm->point(*it).bbox();
   }
-  _bbox = Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
-               bbox.xmax(),bbox.ymax(),bbox.zmax());
+  setBbox(Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
+               bbox.xmax(),bbox.ymax(),bbox.zmax()));
 }
 void
 Scene_textured_surface_mesh_item::invalidateOpenGLBuffers()
 {
-  are_buffers_filled = false;
   compute_bbox();
+  d->are_buffers_filled = false;
+  setBuffersFilled(false);
+  getTriangleContainer(0)->reset_vbos(ALL);
+  getEdgeContainer(0)->reset_vbos(ALL);
+  getEdgeContainer(1)->reset_vbos(ALL);
 }
 void
 Scene_textured_surface_mesh_item::selection_changed(bool p_is_selected)
@@ -396,7 +327,10 @@ Scene_textured_surface_mesh_item::selection_changed(bool p_is_selected)
   if(p_is_selected != is_selected)
   {
     is_selected = p_is_selected;
-    initializeBuffers();
+    Q_FOREACH(CGAL::QGLViewer*v, CGAL::QGLViewer::QGLViewerPool())
+    {
+      setBuffersInit(qobject_cast<Vi*>(v), false);
+    }
     //to be replaced by a functor in the d-pointer when the merging is done
     if(p_is_selected)
       Q_EMIT selectionChanged();
@@ -404,25 +338,88 @@ Scene_textured_surface_mesh_item::selection_changed(bool p_is_selected)
   else
     is_selected = p_is_selected;
 }
-void Scene_textured_surface_mesh_item::add_border_edges(std::vector<float> border_edges,
-                                                        bool is_opengl_4_3)
+void Scene_textured_surface_mesh_item::add_border_edges(std::vector<float> border_edges)
 {
   d->border_edges_buffer = border_edges;
-  d->program=is_opengl_4_3 
-      ? getShaderProgram(PROGRAM_SOLID_WIREFRAME)
-      : getShaderProgram(PROGRAM_NO_SELECTION);
-  d->program->bind();
-  vaos[Scene_textured_surface_mesh_item_priv::Border_edges]->bind();
-  buffers[Scene_textured_surface_mesh_item_priv::B_Border_Edges].bind();
-  buffers[Scene_textured_surface_mesh_item_priv::B_Border_Edges].allocate(d->border_edges_buffer.data(),
-                      static_cast<int>(d->border_edges_buffer.size()*sizeof(float)));
-  d->program->enableAttributeArray("vertex");
-  d->program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-  d->program->disableAttributeArray("colors");
-  buffers[Scene_textured_surface_mesh_item_priv::B_Border_Edges].release();
-  vaos[Scene_textured_surface_mesh_item_priv::Border_edges]->release();
-
-  d->program->release();
+  d->are_border_filled = false;
+  setBuffersFilled(false);
   itemChanged();
-
 }
+
+void Scene_textured_surface_mesh_item::initializeBuffers(Viewer_interface *v) const
+{
+    getTriangleContainer(0)->initializeBuffers(v);
+    getEdgeContainer(0)->initializeBuffers(v);
+    getTriangleContainer(0)->setFlatDataSize(d->nb_face_verts);
+    getEdgeContainer(0)->setFlatDataSize(d->nb_edge_verts);
+    d->edges_buffer.clear();
+    d->edges_buffer.shrink_to_fit();
+    d->faces_buffer.clear();
+    d->faces_buffer.shrink_to_fit();
+    
+    getEdgeContainer(1)->initializeBuffers(v);
+    getEdgeContainer(1)->setFlatDataSize(d->nb_border_verts);
+    
+    d->border_edges_buffer.clear();
+    d->border_edges_buffer.shrink_to_fit();
+  
+}
+
+void Scene_textured_surface_mesh_item::computeElements() const
+{
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  if(!d->are_buffers_filled)
+  {
+    d->compute_normals_and_vertices();
+    
+    getTriangleContainer(0)->setTupleSize(8);
+    getTriangleContainer(0)->getVbo(Tc::Flat_vertices)->stride = 8 * sizeof(float);
+    getTriangleContainer(0)->allocate(
+          Tc::Flat_vertices,
+          d->faces_buffer.data(),
+          static_cast<int>(d->faces_buffer.size()*sizeof(float)));
+    
+    getTriangleContainer(0)->getVbo(Tc::Flat_normals)->offset = 3 * sizeof(float);
+    getTriangleContainer(0)->getVbo(Tc::Flat_normals)->stride = 8 * sizeof(float);
+    getTriangleContainer(0)->allocate(
+          Tc::Flat_normals,
+          d->faces_buffer.data(),
+          static_cast<int>(d->faces_buffer.size()*sizeof(float)));
+    
+    getTriangleContainer(0)->getVbo(Tc::Texture_map)->offset = 6 * sizeof(float);
+    getTriangleContainer(0)->getVbo(Tc::Texture_map)->stride = 8 * sizeof(float);
+    getTriangleContainer(0)->allocate(
+          Tc::Texture_map,
+          d->faces_buffer.data(),
+          static_cast<int>(d->faces_buffer.size()*sizeof(float)));
+    
+    
+    //Edges
+    getEdgeContainer(0)->setTupleSize(5);
+    getEdgeContainer(0)->getVbo(Ec::Vertices)->stride = 5 * sizeof(float);
+    getEdgeContainer(0)->allocate(Ec::Vertices,
+                                  d->edges_buffer.data(),
+                                  static_cast<int>(d->edges_buffer.size()*sizeof(float)));
+    getEdgeContainer(0)->getVbo(Ec::Texture_map)->offset =  3 * sizeof(float);
+    getEdgeContainer(0)->getVbo(Ec::Texture_map)->stride = 5 * sizeof(float);
+    getEdgeContainer(0)->allocate(Ec::Texture_map,
+                                  d->edges_buffer.data(),
+                                  static_cast<int>(d->edges_buffer.size()*sizeof(float)));
+    
+    getTriangleContainer(0)->getTexture()->setData(d->texture.GetData());
+    getEdgeContainer(0)->getTexture()->setData(d->texture.GetData());
+    d->are_buffers_filled = true;
+  }
+  if(!d->are_border_filled)
+  {
+    getEdgeContainer(1)->allocate(
+          Ec::Vertices,
+          d->border_edges_buffer.data(),
+          static_cast<int>(d->border_edges_buffer.size()*sizeof(float)));
+    d->nb_border_verts = d->border_edges_buffer.size();
+    d->are_border_filled = true;
+  }
+  setBuffersFilled(true);
+  QApplication::restoreOverrideCursor();  
+}
+

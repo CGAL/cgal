@@ -1,11 +1,16 @@
 #include <fstream>
 
+#include <boost/config.hpp>
+#include <boost/version.hpp>
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Periodic_2_triangulation_2.h>
 #include <CGAL/Periodic_2_Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_2_Delaunay_triangulation_traits_2.h>
 #include <CGAL/point_generators_2.h>
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+#include <CGAL/IO/WKT.h>
+#endif
 
 // Qt headers
 #include <QtGui>
@@ -348,7 +353,12 @@ MainWindow::on_actionLoadPoints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
 						  tr("Open Points file"),
-						  ".");
+                                                  ".",
+                                                  tr("CGAL files (*.pts.cgal);;"
+                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+                                                     "WKT files (*.wkt *.WKT);;"
+                                                   #endif
+                                                     "All files (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
   }
@@ -364,8 +374,17 @@ MainWindow::open(QString fileName)
   
   Point_2 p;
   std::vector<Point_2> points;
-  while(ifs >> p) {
-    points.push_back(p);
+  if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
+  {
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+    CGAL::read_multi_point_WKT(ifs, points);
+#endif
+  }
+  else
+  {
+    while(ifs >> p) {
+      points.push_back(p);
+    }
   }
   triang.clear();
   triang.insert(points.begin(), points.end());
@@ -383,15 +402,39 @@ MainWindow::on_actionSavePoints_triggered()
 {
   QString fileName = QFileDialog::getSaveFileName(this,
 						  tr("Save points"),
-						  ".");
+                                                  ".",
+                                                  tr("CGAL files (*.pts.cgal);;"
+                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+                                                     "WKT files (*.wkt *.WKT);;"
+                                                   #endif
+                                                     "All files (*)"));
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
-    for(Periodic_DT::Unique_vertex_iterator 
+    if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
+    {
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+      std::vector<Point_2> points;
+      points.reserve(std::distance(triang.unique_vertices_begin(),
+                                   triang.unique_vertices_end()));
+      for(Periodic_DT::Unique_vertex_iterator 
           vit = triang.unique_vertices_begin(),
           end = triang.unique_vertices_end();
-        vit!= end; ++vit)
+          vit!= end; ++vit)
+      {
+        points.push_back(vit->point());
+      }
+      CGAL::write_multi_point_WKT(ofs, points);
+#endif
+    }
+    else
     {
-      ofs << vit->point() << std::endl;
+      for(Periodic_DT::Unique_vertex_iterator 
+          vit = triang.unique_vertices_begin(),
+          end = triang.unique_vertices_end();
+          vit!= end; ++vit)
+      {
+        ofs << vit->point() << std::endl;
+      }
     }
   }
 }
@@ -432,7 +475,7 @@ void MainWindow::on_actionStoredCoverDomainSimplicesEmphasized_triggered(bool)
 }
 
 
-#include "Periodic_2_triangulation_2.moc"
+#include "Periodic_2_Delaunay_triangulation_2.moc"
 #include <CGAL/Qt/resources.h>
 
 int main(int argc, char **argv)

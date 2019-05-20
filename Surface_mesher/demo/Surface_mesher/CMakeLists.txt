@@ -29,11 +29,7 @@ set(PACKAGE_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../..)
 
 # Add several CGAL packages to the include and link paths,
 # if they lie in ${PACKAGE_ROOT}/.
-foreach(INC_DIR ${PACKAGE_ROOT}/include ${PACKAGE_ROOT}/../Mesh_2/include ${PACKAGE_ROOT}/../Data_structure_for_queries_3/include ${PACKAGE_ROOT}/../Marching_cube/include ${PACKAGE_ROOT}/../CGAL_ImageIO/include ${PACKAGE_ROOT}/../GraphicsView/include)
-  if (EXISTS ${INC_DIR})
-    include_directories (BEFORE ${INC_DIR})
-  endif()
-endforeach()
+
 foreach(LIB_DIR ${PACKAGE_ROOT}/../CGAL_ImageIO/src/CGAL_ImageIO ${PACKAGE_ROOT}/../GraphicsView/src/CGALQt5)
   if (EXISTS ${LIB_DIR})
     link_directories (${LIB_DIR})

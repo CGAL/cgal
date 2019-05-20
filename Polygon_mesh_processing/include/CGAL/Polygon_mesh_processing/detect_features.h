@@ -299,7 +299,7 @@ void detect_sharp_edges(PolygonMesh& pmesh,
  * collects the surface patches of the faces incident to each vertex of the input polygon mesh.
  *
  * \tparam PolygonMesh a model of `HalfedgeListGraph`
- * \tparam PatchIdMap a model of `ReadPropertyMap` with
+ * \tparam PatchIdMap a model of `ReadablePropertyMap` with
    `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type
    and the desired patch id, model of `CopyConstructible` as value type.
  * \tparam VertexIncidentPatchesMap a model of mutable `LvaluePropertyMap` with
@@ -307,7 +307,7 @@ void detect_sharp_edges(PolygonMesh& pmesh,
    must be a container of `boost::property_traits<PatchIdMap>::%value_type` and have a function `insert()`.
    A `std::set` or a `boost::unordered_set` are recommended, as a patch index may be
    inserted several times.
- * \tparam EdgeIsFeatureMap a model of `ReadPropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
+ * \tparam EdgeIsFeatureMap a model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
  *  as key type and `bool` as value type.
  * \param pmesh the polygon mesh
  * \param patch_id_map the property map containing the surface patch ids for the faces of `pmesh`. It must be already filled.

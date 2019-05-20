@@ -8,7 +8,8 @@
 #include <QColor>
 
 #include "SMesh_type.h"
-#include "Color_cheat_sheet.h"
+//#include "Color_cheat_sheet.h"
+#include "Color_map.h"
 
 #ifdef surface_mesh_approximation_plugin_EXPORTS
 #define VSA_WRAPPER_EXPORT Q_DECL_EXPORT
@@ -95,10 +96,7 @@ class VSA_WRAPPER_EXPORT VSA_wrapper {
   typedef CGAL::Variational_shape_approximation<SMesh, Vertex_point_map,
     Compact_metric, EPICK> Compact_approx;
 #endif
-
-  std::size_t rand_0_255() {
-    return static_cast<std::size_t>(std::rand() % 255);
-  }
+  
 
 public:
   enum Metric { L21, L2, Compact };
@@ -155,10 +153,10 @@ public:
 
     // generate proxy colors
     m_proxy_colors.clear();
+    m_proxy_colors.reserve(number_of_proxies());
+    
     for (std::size_t i = 0; i < number_of_proxies(); ++i) {
-      const std::size_t c = rand_0_255();
-      m_proxy_colors.push_back(QColor::fromRgb(
-        Color_cheat_sheet::r(c), Color_cheat_sheet::g(c), Color_cheat_sheet::b(c)));
+      m_proxy_colors.push_back(generate_random_color());
     }
 
     m_initialized = true;

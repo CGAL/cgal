@@ -4,6 +4,7 @@ attribute highp vec3 normals;
 attribute highp vec4 colors;
 uniform highp mat4 mvp_matrix;
 uniform highp mat4 mv_matrix; 
+uniform highp mat4 f_matrix; 
 varying highp vec4 fP; 
 varying highp vec3 fN; 
 varying highp vec4 color;
@@ -44,5 +45,5 @@ void main(void)
    mv_matrix_3[1] = mv_matrix[1].xyz;
    mv_matrix_3[2] = mv_matrix[2].xyz;
    fN = mv_matrix_3* normals; 
-   gl_Position = mvp_matrix * vertex;
+   gl_Position = mvp_matrix * f_matrix * vertex;
 }

@@ -27,6 +27,7 @@
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/Point_set_processing_3/internal/neighbor_query.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Point_with_normal_3.h>
@@ -185,58 +186,6 @@ compute_denoise_projection(
   return Pwn(update_point, update_normal);
 }
 
-/// Computes neighbors from kdtree.
-///
-/// \pre `k >= 2`.
-///
-/// @tparam Kernel Geometric traits class.
-/// @tparam Tree KD-tree.
-///
-/// @return neighbors pwn of query point.
-template < typename Kernel,
-           typename Tree>
-std::vector<CGAL::Point_with_normal_3<Kernel>,
-            CGAL_PSP3_DEFAULT_ALLOCATOR<CGAL::Point_with_normal_3<Kernel> > >
-compute_kdtree_neighbors(
-  const CGAL::Point_with_normal_3<Kernel>& query, ///< 3D point
-  const Tree& tree,                               ///< KD-tree
-  unsigned int k                                  ///< number of neighbors         
-)                       
-{
-  // basic geometric types
-  typedef CGAL::Point_with_normal_3<Kernel> Pwn;
-
-  // types for K nearest neighbors search
-  typedef bilateral_smooth_point_set_internal::Kd_tree_traits<Kernel> Tree_traits;
-  typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
-  typedef typename Neighbor_search::iterator Search_iterator;
-
-  // performs k + 1 queries (if unique the query point is
-  // output first). search may be aborted when k is greater
-  // than number of input points
-  Neighbor_search search(tree, query, k+1);
-  Search_iterator search_iterator = search.begin();
-  ++search_iterator;
-  unsigned int i;
-  std::vector<CGAL::Point_with_normal_3<Kernel>
-    , CGAL_PSP3_DEFAULT_ALLOCATOR<CGAL::Point_with_normal_3<Kernel> > 
-    > neighbor_pwns;
-
-  for(i = 0; i < (k+1); ++i)
-  {
-    if(search_iterator == search.end())
-      break; // premature ending
-
-    Pwn pwn = search_iterator->first;
-    neighbor_pwns.push_back(pwn);
-    ++search_iterator;
-  }
-
-  // output 
-  return neighbor_pwns;
-}
-
-
 /// Computes max-spacing of one query point from K nearest neighbors.
 ///
 /// \pre `k >= 2`.
@@ -302,6 +251,7 @@ class Compute_pwns_neighbors
   typedef typename Kernel::FT FT;
 
   unsigned int                                              m_k;
+  FT                                                        m_neighbor_radius;
   const Tree                                              & m_tree;
   const Pwns                                              & m_pwns;
   Pwns_neighbors                                          & m_pwns_neighbors;
@@ -309,11 +259,12 @@ class Compute_pwns_neighbors
   cpp11::atomic<bool>& interrupted;
 
 public:
-  Compute_pwns_neighbors(unsigned int k, const Tree &tree,
+  Compute_pwns_neighbors(unsigned int k, FT neighbor_radius, const Tree &tree,
                          const Pwns &pwns, Pwns_neighbors &neighbors,
                          cpp11::atomic<std::size_t>& advancement,
                          cpp11::atomic<bool>& interrupted)
-    : m_k(k), m_tree(tree), m_pwns(pwns), m_pwns_neighbors(neighbors)
+    : m_k(k), m_neighbor_radius (neighbor_radius), m_tree(tree)
+    , m_pwns(pwns), m_pwns_neighbors(neighbors)
     , advancement (advancement), interrupted (interrupted) {} 
 
   void operator() ( const tbb::blocked_range<size_t>& r ) const 
@@ -322,9 +273,10 @@ public:
     {
       if (interrupted)
         break;
+
+      CGAL::Point_set_processing_3::internal::neighbor_query
+        (m_pwns[i], m_tree, m_k, m_neighbor_radius, m_pwns_neighbors[i]);
       
-      m_pwns_neighbors[i] = bilateral_smooth_point_set_internal::
-        compute_kdtree_neighbors<Kernel, Tree>(m_pwns[i], m_tree, m_k);
       ++ advancement;
     }
   }
@@ -392,7 +344,7 @@ public:
    \ingroup PkgPointSetProcessing3Algorithms
  
    This function smooths an input point set by iteratively projecting each 
-   point onto the implicit surface patch fitted over its k nearest neighbors.
+   point onto the implicit surface patch fitted over its nearest neighbors.
    Bilateral projection preserves sharp features according to the normal
    (gradient) information. Both point positions and normals will be modified.  
    For more details, please see section 4 in \cgalCite{ear-2013}.  
@@ -422,6 +374,12 @@ public:
      If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
      \cgalParamBegin{normal_map} a model of `ReadWritePropertyMap` with value type
      `geom_traits::Vector_3`.\cgalParamEnd
+     \cgalParamBegin{neighbor_radius} spherical neighborhood radius. If
+     provided, the neighborhood of a query point is computed with a fixed spherical
+     radius instead of a fixed number of neighbors. In that case, the parameter
+     `k` is used as a limit on the number of points returned by each spherical
+     query (to avoid overly large number of points in high density areas). If no
+     limit is wanted, use `k=0`.\cgalParamEnd
      \cgalParamBegin{sharpness_angle} controls the sharpness of the result.\cgalParamEnd
      \cgalParamBegin{callback} an instance of
       `std::function<bool(double)>`. It is called regularly when the
@@ -477,7 +435,8 @@ bilateral_smooth_point_set(
 
   PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
   NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
-
+  FT neighbor_radius = choose_param(get_param(np, internal_np::neighbor_radius), FT(0));
+  
   // copy points and normals
   Pwns pwns;
   for(typename PointRange::iterator it = points.begin(); it != points.end(); ++it)
@@ -546,7 +505,7 @@ bilateral_smooth_point_set(
      Point_set_processing_3::internal::Parallel_callback
        parallel_callback (callback, 2 * nb_points);
 
-     Compute_pwns_neighbors<Kernel, Tree> f(k, tree, pwns, pwns_neighbors,
+     Compute_pwns_neighbors<Kernel, Tree> f(k, neighbor_radius, tree, pwns, pwns_neighbors,
                                             parallel_callback.advancement(),
                                             parallel_callback.interrupted());
      tbb::parallel_for(tbb::blocked_range<size_t>(0, nb_points), f);
@@ -570,8 +529,9 @@ bilateral_smooth_point_set(
      std::size_t nb = 0;
      for(pwn_iter = pwns.begin(); pwn_iter != pwns.end(); ++pwn_iter, ++pwns_iter, ++ nb)
      {
-       *pwns_iter = bilateral_smooth_point_set_internal::
-         compute_kdtree_neighbors<Kernel, Tree>(*pwn_iter, tree, k);
+       CGAL::Point_set_processing_3::internal::neighbor_query
+         (*pwn_iter, tree, k, neighbor_radius, *pwns_iter);
+
        if (callback && !callback ((nb+1) / double(2. * nb_points)))
          return std::numeric_limits<double>::quiet_NaN();
      }

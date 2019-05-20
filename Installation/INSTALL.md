@@ -60,7 +60,7 @@ CGAL packages, some are only needed for demos.
    * Visualization
      Required for most demos
 
-     - Qt5 (>= 5.3)
+     - Qt5 (>= 5.9)
        http://qt-project.org/
 
      - Geomview

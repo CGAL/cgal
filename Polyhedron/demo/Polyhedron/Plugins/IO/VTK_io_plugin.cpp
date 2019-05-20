@@ -475,7 +475,6 @@ public:
        || (is_c3t3 && is_polyline) )
     {
       group = new Scene_group_item(fileinfo.baseName());
-      group->setScene(CGAL::Three::Three::scene());
     }
   
     if(is_polygon_mesh)

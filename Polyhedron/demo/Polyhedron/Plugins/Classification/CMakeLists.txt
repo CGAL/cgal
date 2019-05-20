@@ -11,21 +11,31 @@ if(EIGEN3_FOUND)
 # to avoid a warning with old cmake
     set(_Boost_BZIP2_HEADERS             "boost/iostreams/filter/bzip2.hpp")
     set(_Boost_ZLIB_HEADERS              "boost/iostreams/filter/zlib.hpp")
-    find_package( Boost OPTIONAL_COMPONENTS bzip2 zlib)
+    find_package( Boost OPTIONAL_COMPONENTS serialization iostreams bzip2 zlib)
     if( Boost_ZLIB_FOUND AND Boost_BZIP2_FOUND)
-      set(classification_linked_libraries ${classification_linked_libraries}
-        ${Boost_ZLIB_LIBRARY} ${Boost_BZIP2_LIBRARY})
+      if(TARGET Boost::bzip2 AND TARGET Boost::zlib)
+        set(classification_linked_libraries ${classification_linked_libraries}
+          Boost::bzip2 Boost::zlib)
+      else()
+        set(classification_linked_libraries ${classification_linked_libraries}
+          ${Boost_ZLIB_LIBRARY} ${Boost_BZIP2_LIBRARY})
+      endif()
     endif()
   endif()
 
   if (Boost_SERIALIZATION_FOUND AND Boost_IOSTREAMS_FOUND AND (NOT WIN32 OR Boost_ZLIB_FOUND))
     qt5_wrap_ui( classificationUI_FILES Classification_widget.ui Classification_advanced_widget.ui )
     polyhedron_demo_plugin(classification_plugin Classification_plugin Point_set_item_classification Cluster_classification Surface_mesh_item_classification ${classificationUI_FILES} KEYWORDS Classification)
-    
-    set(classification_linked_libraries ${classification_linked_libraries}
-      ${Boost_SERIALIZATION_LIBRARY}
-      ${Boost_IOSTREAMS_LIBRARY})
-    
+
+    if(TARGET Boost::serialization AND TARGET Boost::iostreams)
+      set(classification_linked_libraries ${classification_linked_libraries}
+        Boost::serialization Boost::iostreams)
+    else()
+      set(classification_linked_libraries ${classification_linked_libraries}
+        ${Boost_SERIALIZATION_LIBRARY}
+        ${Boost_IOSTREAMS_LIBRARY})
+    endif()
+
     find_package(OpenCV QUIET COMPONENTS core ml) # Need core + machine learning
     if (OpenCV_FOUND)
       message(STATUS "Found OpenCV ${OpenCV_VERSION}")
