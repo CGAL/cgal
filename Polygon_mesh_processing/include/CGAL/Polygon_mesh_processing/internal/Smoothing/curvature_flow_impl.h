@@ -29,14 +29,19 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/smoothing_helpers.h>
-#include <boost/graph/graph_traits.hpp>
-#include <boost/property_map/property_map.hpp>
 #include <CGAL/utility.h>
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>
 #endif
 
+#include <boost/graph/graph_traits.hpp>
+#include <boost/property_map/property_map.hpp>
+
+#include <algorithm>
+#include <iostream>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -47,29 +52,28 @@ template<typename PolygonMesh,
          typename VertexConstraintMap,
          typename SparseLinearSolver,
          typename GeomTraits>
-class Shape_smoother{
+class Shape_smoother
+{
+  typedef typename GeomTraits::FT                                                 NT;
+  typedef typename GeomTraits::Point_3                                            Point;
+  typedef typename boost::property_traits<VertexPointMap>::reference              Point_ref;
+  typedef CGAL::Triple<int, int, double>                                          Triplet;
 
-private:
-
-  typedef typename GeomTraits::FT NT;
-  typedef typename GeomTraits::Point_3 Point;
-  typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
-  typedef CGAL::Triple<int, int, double> Triplet;
-
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
-  typedef typename boost::property_map<PolygonMesh, boost::vertex_index_t>::type IndexMap;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor            vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor          halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor              edge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor              face_descriptor;
+  typedef typename boost::property_map<PolygonMesh, boost::vertex_index_t>::type  IndexMap;
 
   // linear system
-  typedef typename SparseLinearSolver::Matrix Eigen_matrix;
-  typedef typename SparseLinearSolver::Vector Eigen_vector;
+  typedef typename SparseLinearSolver::Matrix                                     Eigen_matrix;
+  typedef typename SparseLinearSolver::Vector                                     Eigen_vector;
 
 public:
   Shape_smoother(PolygonMesh& mesh,
                  VertexPointMap& vpmap,
-                 VertexConstraintMap& vcmap) :
+                 VertexConstraintMap& vcmap)
+    :
       mesh_(mesh),
       vpmap_(vpmap),
       vcmap_(vcmap),
@@ -298,7 +302,6 @@ private:
   std::vector<vertex_descriptor> vrange_;
   Edge_cotangent_weight<PolygonMesh, VertexPointMap> weight_calculator_;
 };
-
 
 } // internal
 } // PMP

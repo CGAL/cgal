@@ -30,6 +30,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/distance.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
+
 #include <CGAL/property_map.h>
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
@@ -41,10 +42,9 @@ namespace Polygon_mesh_processing {
 
 /*!
 * \ingroup PMP_meshing_grp
-* smoothes a triangulated region of a polygon mesh using angle based criteria.
-* This function improves the angles of triangle faces by iteratively moving non
-* constrained vertices. Optionally, the points are reprojected to the input surface
-* after each iteration.
+* smoothes a triangulated region of a polygon mesh using angle-based criteria.
+* This function improves the angles of triangle faces by iteratively moving non-constrained vertices.
+* Optionally, the points are reprojected to the input surface after each iteration.
 *
 * @tparam PolygonMesh model of `MutableFaceGraph`.
 * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
@@ -74,9 +74,11 @@ namespace Polygon_mesh_processing {
 * \cgalNamedParamsEnd
 */
 template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
-void smooth_angles(const FaceRange& faces, PolygonMesh& pmesh, const NamedParameters& np)
+void smooth_angles(const FaceRange& faces,
+                   PolygonMesh& pmesh,
+                   const NamedParameters& np)
 {
-  if (boost::begin(faces)==boost::end(faces))
+  if(boost::begin(faces)==boost::end(faces))
     return;
 
   using boost::choose_param;
@@ -93,59 +95,58 @@ void smooth_angles(const FaceRange& faces, PolygonMesh& pmesh, const NamedParame
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GeomTraits;
 
   // vpmap
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VertexPointMap;
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type   VertexPointMap;
   VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                get_property_map(CGAL::vertex_point, pmesh));
 
   // vcmap
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor     vertex_descriptor;
   typedef typename boost::lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
       NamedParameters,
-      Constant_property_map<vertex_descriptor, bool>
-    > ::type VCMap;
+      Constant_property_map<vertex_descriptor, bool> // default
+    > ::type                                                               VCMap;
   VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
                              Constant_property_map<vertex_descriptor, bool>());
 
   // nb_iterations
   std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
-
   bool do_project = choose_param(get_param(np, internal_np::do_project), true);
 
   internal::Compatible_smoother<PolygonMesh, VertexPointMap, VCMap, GeomTraits>
           smoother(pmesh, vpmap, vcmap);
 
-  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
   t.stop();
   std::cout << " done ("<< t.time() <<" sec)." << std::endl;
   std::cout << "Removing degenerate faces..." << std::endl;
   t.reset(); t.start();
-  #endif
+#endif
 
   smoother.remove_degenerate_faces();
 
-  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
   t.stop();
   std::cout << " done ("<< t.time() <<" sec)." << std::endl;
   std::cout << "Initializing..." << std::endl;
   t.reset(); t.start();
-  #endif
+#endif
 
   smoother.init_smoothing(faces);
 
-  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
   t.stop();
   std::cout << " done ("<< t.time() <<" sec)." << std::endl;
   std::cout << "#iter = " << nb_iterations << std::endl;
   std::cout << "Smoothing ..." << std::endl;
   t.reset(); t.start();
-  #endif
+#endif
 
   for(std::size_t i=0; i<nb_iterations; ++i)
   {
-    #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
-    #endif
+#endif
 
     smoother.angle_relaxation();
     if(do_project)
@@ -159,12 +160,11 @@ void smooth_angles(const FaceRange& faces, PolygonMesh& pmesh, const NamedParame
     }
   }
 
-  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
   t.stop();
   std::cout << "Smoothing done in ";
   std::cout << t.time() << " sec." << std::endl;
-  #endif
-
+#endif
 }
 
 template<typename PolygonMesh, typename NamedParameters>
@@ -249,45 +249,43 @@ void smooth_areas(const FaceRange& faces, PolygonMesh& pmesh, const NamedParamet
                              Constant_property_map<vertex_descriptor, bool>());
 
   std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
-
   const double gd_precision = choose_param(get_param(np, internal_np::gradient_descent_precision), 1e-5);
-
   bool do_project = choose_param(get_param(np, internal_np::do_project), true);
 
   internal::Compatible_smoother<PolygonMesh, VertexPointMap, VCMap, GeomTraits>
           smoother(pmesh, vpmap, vcmap);
 
-  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
   t.stop();
   std::cout << " done ("<< t.time() <<" sec)." << std::endl;
   std::cout << "Removing degenerate faces..." << std::endl;
   t.reset(); t.start();
-  #endif
+#endif
 
   smoother.remove_degenerate_faces();
 
-  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
   t.stop();
   std::cout << " done ("<< t.time() <<" sec)." << std::endl;
   std::cout << "Initializing..." << std::endl;
   t.reset(); t.start();
-  #endif
+#endif
 
   smoother.init_smoothing(faces);
 
-  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
   t.stop();
   std::cout << " done ("<< t.time() <<" sec)." << std::endl;
   std::cout << "#iter = " << nb_iterations << std::endl;
   std::cout << "Smoothing ..." << std::endl;
   t.reset(); t.start();
-  #endif
+#endif
 
   for(std::size_t i=0; i<nb_iterations; ++i)
   {
-    #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
-    #endif
+#endif
 
     smoother.area_relaxation(gd_precision);
     if(do_project)
@@ -301,12 +299,11 @@ void smooth_areas(const FaceRange& faces, PolygonMesh& pmesh, const NamedParamet
     }
   }
 
-  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
   t.stop();
   std::cout << "Smoothing done in ";
   std::cout << t.time() << " sec." << std::endl;
-  #endif
-
+#endif
 }
 
 template<typename PolygonMesh, typename NamedParameters>
@@ -347,7 +344,6 @@ void aspect_ratio_evaluation(PolygonMesh& pmesh, GeomTraits, Stream& output)
   evaluator.extract_aspect_ratios(output);
 }
 ///\cond SKIP_IN_MANUAL
-
 
 } // namespace Polygon_mesh_processing
 } // namespace CGAL

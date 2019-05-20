@@ -1,16 +1,20 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
-#include <boost/graph/graph_traits.hpp>
+
 #include <CGAL/property_map.h>
+
+#include <boost/graph/graph_traits.hpp>
+
 #include <fstream>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::Point_3 Point;
-typedef CGAL::Surface_mesh<Point> SurfaceMesh;
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;
+typedef Kernel::Point_3                                       Point;
 
+typedef CGAL::Surface_mesh<Point>                             SurfaceMesh;
+typedef CGAL::Polyhedron_3<Kernel>                            Polyhedron;
 
 template <typename Mesh>
 void test_angle_smoothing(const char* filename)
@@ -137,7 +141,8 @@ void test_constrained_vertices(const char* filename)
 {
   std::ifstream input(filename);
   Mesh mesh;
-  if (!input || !(input >> mesh)){
+  if (!input || !(input >> mesh))
+  {
     std::cerr << "Error: can not read file.";
     return;
   }
@@ -159,6 +164,7 @@ void test_constrained_vertices(const char* filename)
       z_init = get(vpmap, v).z();
     }
   }
+
   CGAL::Boolean_property_map<std::set<vertex_descriptor> > vcmap(selected_vertices);
 
   CGAL::Polygon_mesh_processing::smooth_angles(mesh,
@@ -177,22 +183,24 @@ void test_constrained_vertices(const char* filename)
   }
 }
 
-int main(){
-
+int main(int /*argc*/, char** /*argv*/)
+{
   const char* filename_polygon = "data/simple_polygon.off";
   const char* filename_pyramid = "data/simple_pyramid.off";
-// test with Surface_mesh
+
+  // test with Surface_mesh
   test_angle_smoothing<SurfaceMesh>(filename_polygon);
   test_area_smoothing<SurfaceMesh>(filename_polygon);
   test_constrained_vertices<SurfaceMesh>(filename_polygon);
   test_angle_smoothing_without_projection<SurfaceMesh>(filename_pyramid);
   test_area_smoothing_without_projection<SurfaceMesh>(filename_pyramid);
-// test with Polyhedron
+
+  // test with Polyhedron
   test_angle_smoothing<Polyhedron>(filename_polygon);
   test_area_smoothing<Polyhedron>(filename_polygon);
   test_constrained_vertices<Polyhedron>(filename_polygon);
   test_angle_smoothing_without_projection<Polyhedron>(filename_pyramid);
   test_area_smoothing_without_projection<Polyhedron>(filename_pyramid);
 
-  return 0;
+  return EXIT_SUCCESS;
 }

@@ -24,12 +24,13 @@
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
-#include <vector>
-#include <set>
-#include <boost/graph/graph_traits.hpp>
-#include <boost/foreach.hpp>
-#include <boost/property_map/property_map.hpp>
 #include <CGAL/Polygon_mesh_processing/measure.h>
+
+#include <boost/graph/graph_traits.hpp>
+#include <boost/property_map/property_map.hpp>
+
+#include <set>
+#include <vector>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -70,9 +71,9 @@ public:
         / CGAL::approximate_sqrt(ba.squared_length() * bc.squared_length());
       angles_.push_back(std::acos(cos_angle) * rad_to_deg);
     }
-    #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     std::cout<<"angles_ size= "<<angles_.size()<<std::endl;
-    #endif
+#endif
   }
 
   template <typename Stream>
@@ -88,9 +89,9 @@ public:
     BOOST_FOREACH(face_descriptor f, faces(mesh_))
       areas_.push_back(face_area(f, mesh_));
 
-    #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     std::cout<<"areas_ size= "<<areas_.size()<<std::endl;
-    #endif
+#endif
   }
 
   template <typename Stream>
@@ -123,9 +124,10 @@ public:
       }
       aspect_ratios_.push_back(longest_edge / min_alt);
     }
-    #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
     std::cout<<"aspect_ratios_ size= "<<aspect_ratios_.size()<<std::endl;
-    #endif
+#endif
   }
 
   template <typename Stream>
@@ -142,12 +144,10 @@ private:
   std::vector<double> angles_;
   std::vector<double> areas_;
   std::vector<double> aspect_ratios_;
-
 };
 
-} //namespaces
-}
-}
-
+} // namespace internal
+} // namespace Polygon_mesh_processing
+} // namespace CGAL
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_INTERNAL_SMOOTHING_EVALUATION_H

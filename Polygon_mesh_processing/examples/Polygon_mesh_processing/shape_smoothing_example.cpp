@@ -1,33 +1,35 @@
-#include <iostream>
-#include <fstream>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/smooth_shape.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Surface_mesh<K::Point_3> Mesh;
+#include <iostream>
+#include <fstream>
 
-int main(int argc, char* argv[]){
+typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
+typedef CGAL::Surface_mesh<K::Point_3>                        Mesh;
 
-    namespace PMP = CGAL::Polygon_mesh_processing;
-    const char* filename = argc > 1 ? argv[1] : "data/pig.off";
-    std::ifstream input(filename);
+namespace PMP = CGAL::Polygon_mesh_processing;
 
-    Mesh mesh;
-    if (!input || !(input >> mesh) || mesh.is_empty()) {
-        std::cerr << "Not a valid .off file." << std::endl;
-        return 1;
-    }
+int main(int argc, char* argv[])
+{
+  const char* filename = argc > 1 ? argv[1] : "data/pig.off";
+  std::ifstream input(filename);
 
-    const double time = 0.1;
-    const unsigned int nb_iterations = 2;
+  Mesh mesh;
+  if (!input || !(input >> mesh) || mesh.is_empty())
+  {
+    std::cerr << "Not a valid .off file." << std::endl;
+    return EXIT_FAILURE;
+  }
 
-    PMP::smooth_along_curvature_flow(mesh, time,
-        PMP::parameters::number_of_iterations(nb_iterations));
+  const double time = 0.1;
+  const unsigned int nb_iterations = 2;
 
-    std::ofstream output("mesh_shape_smoothed.off");
-    output << mesh;
-    output.close();
+  PMP::smooth_along_curvature_flow(mesh, time, PMP::parameters::number_of_iterations(nb_iterations));
 
-    return 0;
+  std::ofstream output("mesh_shape_smoothed.off");
+  output << mesh;
+
+  return EXIT_SUCCESS;
 }

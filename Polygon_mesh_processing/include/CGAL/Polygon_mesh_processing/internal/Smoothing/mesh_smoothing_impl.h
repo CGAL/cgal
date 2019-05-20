@@ -24,24 +24,25 @@
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
-#include <math.h>
-#include <utility>
-#include <iterator>
-
-#include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/smoothing_helpers.h>
+
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangle_primitive.h>
-
+#include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/property_map.h>
 #include <CGAL/iterator.h>
-#include <CGAL/boost/graph/Euler_operations.h>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/foreach.hpp>
 
+#include <algorithm>
+#include <cmath>
+#include <iterator>
+#include <map>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -50,33 +51,32 @@ namespace internal {
 template<typename PolygonMesh, typename VertexPointMap, typename VertexConstraintMap, typename GeomTraits>
 class Compatible_smoother
 {
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
-  typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
-  typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
-  typedef typename GeomTraits::Vector_3 Vector;
-  typedef typename GeomTraits::Segment_3 Segment;
-  typedef typename GeomTraits::Triangle_3 Triangle;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor      edge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor      face_descriptor;
 
-  typedef std::vector<Triangle> Triangle_list;
-  typedef std::pair<halfedge_descriptor, halfedge_descriptor> He_pair;
-  typedef std::vector<halfedge_descriptor> Hedges;
+  typedef typename boost::property_traits<VertexPointMap>::value_type     Point_3;
+  typedef typename boost::property_traits<VertexPointMap>::reference      Point_ref;
+  typedef typename GeomTraits::Vector_3                                   Vector;
+  typedef typename GeomTraits::Segment_3                                  Segment;
+  typedef typename GeomTraits::Triangle_3                                 Triangle;
 
-  typedef CGAL::AABB_triangle_primitive<GeomTraits, typename Triangle_list::iterator> AABB_Primitive;
-  typedef CGAL::AABB_traits<GeomTraits, AABB_Primitive> AABB_Traits;
-  typedef CGAL::AABB_tree<AABB_Traits> Tree;
+  typedef std::vector<Triangle>                                           Triangle_list;
+  typedef std::pair<halfedge_descriptor, halfedge_descriptor>             He_pair;
+  typedef std::vector<halfedge_descriptor>                                Hedges;
+
+  typedef CGAL::AABB_triangle_primitive<GeomTraits,
+                                        typename Triangle_list::iterator> AABB_Primitive;
+  typedef CGAL::AABB_traits<GeomTraits, AABB_Primitive>                   AABB_Traits;
+  typedef CGAL::AABB_tree<AABB_Traits>                                    Tree;
 
 public:
   Compatible_smoother(PolygonMesh& pmesh, VertexPointMap& vpmap, VertexConstraintMap& vcmap) :
     mesh_(pmesh), vpmap_(vpmap), vcmap_(vcmap)
   {}
 
-  ~Compatible_smoother()
-  {
-    delete tree_ptr_;
-  }
+  ~Compatible_smoother() { delete tree_ptr_; }
 
   template<typename FaceRange>
   void init_smoothing(const FaceRange& face_range)
@@ -104,8 +104,8 @@ public:
   void angle_relaxation()
   {
     std::map<vertex_descriptor, Point_3> barycenters;
-    typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_vertex_property_t<Vector> >::type
-        NormalsMap;
+    typedef typename boost::property_map<PolygonMesh,
+                                         CGAL::dynamic_vertex_property_t<Vector> >::type NormalsMap;
     NormalsMap n_map = get(CGAL::dynamic_vertex_property_t<Vector>(), mesh_);
 
     BOOST_FOREACH(vertex_descriptor v, vrange_)
@@ -113,9 +113,8 @@ public:
       if(!is_border(v, mesh_) && !is_constrained(v))
       {
         // compute normal to v
-        Vector vn = compute_vertex_normal(v, mesh_,
-                         Polygon_mesh_processing::parameters::vertex_point_map(vpmap_)
-                         .geom_traits(traits_));
+        Vector vn = compute_vertex_normal(v, mesh_, CGAL::parameters::vertex_point_map(vpmap_)
+                                                                     .geom_traits(traits_));
         put(n_map, v, vn);
 
         Hedges hedges;
