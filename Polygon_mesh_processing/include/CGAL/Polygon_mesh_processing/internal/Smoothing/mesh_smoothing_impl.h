@@ -325,11 +325,9 @@ private:
                       const Point_3& new_location)
   {
     Hedges hedges;
+    hedges.reserve(halfedges_around_source(v, mesh_).size());
     for(halfedge_descriptor hi : halfedges_around_source(v, mesh_))
-    {
-      hedges.reserve(halfedges_around_source(v, mesh_).size());
       hedges.push_back(hi);
-    }
 
     return evaluate_angles(hedges, new_location);
   }
