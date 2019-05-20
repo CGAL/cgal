@@ -34,7 +34,7 @@ void test_implicit_constrained_devil(Mesh mesh)
 
   // z max is 20 in the devil;
   std::set<vertex_descriptor> selected_vertices;
-  BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
+  for(vertex_descriptor v : vertices(mesh))
   {
     const double z = get(vpmap, v).z();
     if(z  > 19.0)
@@ -87,7 +87,7 @@ void test_implicit_constrained_pyramid(Mesh mesh)
           get(CGAL::vertex_point, mesh);
 
   std::set<vertex_descriptor> selected_vertices;
-  BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
+  for(vertex_descriptor v : vertices(mesh))
   {
     const double z = get(vpmap, v).z();
     if(z  > 0.8)

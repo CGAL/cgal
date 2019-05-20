@@ -83,7 +83,7 @@ public:
   {
     set_vertex_range(face_range);
 
-    BOOST_FOREACH(face_descriptor f, face_range)
+    for(face_descriptor f : face_range)
     {
       Triangle t;
       construct_triangle(f, mesh_, t);
@@ -108,7 +108,7 @@ public:
                                          CGAL::dynamic_vertex_property_t<Vector> >::type NormalsMap;
     NormalsMap n_map = get(CGAL::dynamic_vertex_property_t<Vector>(), mesh_);
 
-    BOOST_FOREACH(vertex_descriptor v, vrange_)
+    for(vertex_descriptor v : vrange_)
     {
       if(!is_border(v, mesh_) && !is_constrained(v))
       {
@@ -119,7 +119,7 @@ public:
 
         Hedges hedges;
         typename Hedges::iterator it;
-        BOOST_FOREACH(halfedge_descriptor hi, halfedges_around_source(v, mesh_))
+        for(halfedge_descriptor hi : halfedges_around_source(v, mesh_))
         {
           hedges.reserve(halfedges_around_source(v, mesh_).size());
           hedges.push_back(hi);
@@ -138,7 +138,7 @@ public:
     // compute locations on tangent plane
     typedef typename std::map<vertex_descriptor, Point_3>::value_type VP;
     std::map<vertex_descriptor, Point_3> new_locations;
-    BOOST_FOREACH(const VP& vp, barycenters)
+    for(const VP& vp : barycenters)
     {
       Point_ref p = get(vpmap_, vp.first);
       Point_3 q = vp.second;
@@ -148,7 +148,7 @@ public:
 
     // update location
     std::size_t moved_points = 0;
-    BOOST_FOREACH(const VP& vp, new_locations)
+    for(const VP& vp : new_locations)
     {
       // iff movement impoves all angles
       if(does_it_impove(vp.first, vp.second))
@@ -167,7 +167,7 @@ public:
   void area_relaxation(const double& precision)
   {
     std::size_t moved_points = 0;
-    BOOST_FOREACH(vertex_descriptor v, vrange_)
+    for(vertex_descriptor v : vrange_)
     {
        if(!is_border(v, mesh_) && !is_constrained(v))
        {
@@ -184,7 +184,7 @@ public:
 
   void project_to_surface()
   {
-    BOOST_FOREACH( vertex_descriptor v, vrange_)
+    for(vertex_descriptor v : vrange_)
     {
       if(!is_border(v, mesh_) && !is_constrained(v))
       {
@@ -328,11 +328,12 @@ private:
   {
     Hedges hedges;
     typename Hedges::iterator it;
-    BOOST_FOREACH(halfedge_descriptor hi, halfedges_around_source(v, mesh_))
+    for(halfedge_descriptor hi : halfedges_around_source(v, mesh_))
     {
       hedges.reserve(halfedges_around_source(v, mesh_).size());
       hedges.push_back(hi);
     }
+
     return evaluate_angles(hedges, new_location);
   }
 
@@ -438,7 +439,7 @@ private:
 
   void compute_derivatives(double& drdx, double& drdy, double& drdz, const vertex_descriptor& v, const double& S_av)
   {
-    BOOST_FOREACH(halfedge_descriptor h, halfedges_around_source(v, mesh_))
+    for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
     {
       vertex_descriptor pi = source(next(h, mesh_), mesh_);
       vertex_descriptor pi1 = target(next(h, mesh_), mesh_);
@@ -489,7 +490,7 @@ private:
     double sum_areas = 0;
     unsigned int number_of_edges = 0;
 
-    BOOST_FOREACH(halfedge_descriptor h, halfedges_around_source(v, mesh_))
+    for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
     {
       // opposite vertices
       vertex_descriptor pi = source(next(h, mesh_), mesh_);
@@ -508,7 +509,7 @@ private:
     double energy = 0;
     unsigned int number_of_edges = 0;
 
-    BOOST_FOREACH(halfedge_descriptor h, halfedges_around_source(v, mesh_))
+    for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
     {
       vertex_descriptor pi = source(next(h, mesh_), mesh_);
       vertex_descriptor pi1 = target(next(h, mesh_), mesh_);
@@ -525,7 +526,7 @@ private:
   {
     double energy = 0;
     unsigned int number_of_edges = 0;
-    BOOST_FOREACH(halfedge_descriptor h, halfedges_around_source(v, mesh_))
+    for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
     {
       vertex_descriptor pi = source(next(h, mesh_), mesh_);
       vertex_descriptor pi1 = target(next(h, mesh_), mesh_);
@@ -548,9 +549,9 @@ private:
   {
     // reserve 3 * #faces space
     vrange_.reserve(3 * face_range.size());
-    BOOST_FOREACH(face_descriptor f, face_range)
+    for(face_descriptor f : face_range)
     {
-     BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f, mesh_), mesh_))
+     for(vertex_descriptor v : vertices_around_face(halfedge(f, mesh_), mesh_))
       vrange_.push_back(v);
     }
     // get rid of duplicate vertices

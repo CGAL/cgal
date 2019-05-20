@@ -60,7 +60,7 @@ public:
   {
     double rad_to_deg = 180. / CGAL_PI;
 
-    BOOST_FOREACH(halfedge_descriptor hi, halfedges(mesh_))
+    for(halfedge_descriptor hi : halfedges(mesh_))
     {
       Point a = get(vpmap_, source(hi, mesh_));
       Point b = get(vpmap_, target(hi, mesh_));
@@ -86,7 +86,7 @@ public:
 
   void measure_areas()
   {
-    BOOST_FOREACH(face_descriptor f, faces(mesh_))
+    for(face_descriptor f : faces(mesh_))
       areas_.push_back(face_area(f, mesh_));
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
@@ -104,7 +104,7 @@ public:
 
   void calc_aspect_ratios()
   {
-    BOOST_FOREACH(face_descriptor f, faces(mesh_))
+    for(face_descriptor f : faces(mesh_))
     {
       halfedge_descriptor h = halfedge(f, mesh_);
       Point points[3];

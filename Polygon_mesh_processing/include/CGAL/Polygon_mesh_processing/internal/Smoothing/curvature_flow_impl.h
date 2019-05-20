@@ -125,9 +125,9 @@ public:
     stiffness_elements.reserve(8 * nb_vert_); //estimation
 
     boost::unordered_map<int, NT> diag_coeff;
-    BOOST_FOREACH(face_descriptor f, frange_)
+    for(face_descriptor f : frange_)
     {
-      BOOST_FOREACH(halfedge_descriptor hi, halfedges_around_face(halfedge(f, mesh_), mesh_))
+      for(halfedge_descriptor hi : halfedges_around_face(halfedge(f, mesh_), mesh_))
       {
         halfedge_descriptor hi_opp = opposite(hi, mesh_);
         if(!is_border(hi_opp, mesh_) && hi > hi_opp) continue;
@@ -158,7 +158,7 @@ public:
 
   void update_mesh(Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz)
   {
-    BOOST_FOREACH(vertex_descriptor v, vrange_)
+    for(vertex_descriptor v : vrange_)
     {
       std::size_t index = get(vimap_, v);
       NT x_new = Xx[index];
@@ -185,7 +185,7 @@ private:
     CGAL_assertion(diagonal_.size() == nb_vert_);
 
     // fill A = D - time * L
-    BOOST_FOREACH(Triplet t, stiffness_elements)
+    for(const Triplet& t : stiffness_elements)
     {
       if (t.get<0>() != t.get<1>())
         A.set_coef(t.get<0>(), t.get<1>(), -time * t.get<2>(), true);
@@ -209,10 +209,10 @@ private:
     diagonal.assign(nb_vert_, 0);
     constrained_flags_.assign(nb_vert_, false);
 
-    BOOST_FOREACH(face_descriptor f, frange_)
+    for(face_descriptor f : frange_)
     {
       double area = face_area(f, mesh_);
-      BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f, mesh_), mesh_))
+      for(vertex_descriptor v : vertices_around_face(halfedge(f, mesh_), mesh_))
       {
         std::size_t idx = vimap_[v];
         if(!is_constrained(v))
@@ -235,7 +235,7 @@ private:
     CGAL_assertion(std::size_t(by.size()) == nb_vert_);
     CGAL_assertion(std::size_t(bz.size()) == nb_vert_);
 
-    BOOST_FOREACH(vertex_descriptor vi, vrange_)
+    for(vertex_descriptor vi : vrange_)
     {
       std::size_t index = vimap_[vi];
       Point_ref p = get(vpmap_, vi);
@@ -275,9 +275,9 @@ private:
   {
     frange_.assign(face_range.begin(), face_range.end());
     vrange_.reserve(3 * face_range.size());
-    BOOST_FOREACH(face_descriptor f, face_range)
+    for(face_descriptor f : face_range)
     {
-      BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f, mesh_), mesh_))
+      for(vertex_descriptor v : vertices_around_face(halfedge(f, mesh_), mesh_))
         vrange_.push_back(v);
     }
     // get rid of duplicate vertices
