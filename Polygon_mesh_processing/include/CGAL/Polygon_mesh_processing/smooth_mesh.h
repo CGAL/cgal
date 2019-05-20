@@ -72,6 +72,8 @@ namespace Polygon_mesh_processing {
 *  \cgalParamBegin{do_project} if `true` (default value), points are projected to the initial surface after each iteration.
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
+*
+* @pre `tmesh` does not contain any degenerate faces
 */
 template<typename TriangleMesh, typename FaceRange, typename NamedParameters>
 void smooth_angles(const FaceRange& faces,
@@ -84,12 +86,17 @@ void smooth_angles(const FaceRange& faces,
   using boost::choose_param;
   using boost::get_param;
 
-  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+  CGAL_precondition(CGAL::is_triangle_mesh(tmesh));
+  CGAL_precondition_code(std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor> degen_faces;)
+  CGAL_precondition_code(CGAL::Polygon_mesh_processing::degenerate_faces(tmesh, std::inserter(degen_faces, degen_faces.begin()), np);)
+  CGAL_precondition(degen_faces.empty());
+
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
   CGAL::Timer t;
-  std::cout << "Smoothing parameters...";
+  std::cout << "Get smoothing parameters...";
   std::cout.flush();
   t.start();
-  #endif
+#endif
 
   // geom traits
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type      GeomTraits;
@@ -207,6 +214,8 @@ void smooth_angles(TriangleMesh& tmesh)
 *  \cgalParamBegin{do_project} if `true` (default value), points are projected to the initial surface after each iteration.
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
+*
+* @pre `tmesh` does not contain any degenerate faces
 */
 template<typename TriangleMesh, typename FaceRange, typename NamedParameters>
 void smooth_areas(const FaceRange faces,
@@ -219,9 +228,14 @@ void smooth_areas(const FaceRange faces,
   using boost::choose_param;
   using boost::get_param;
 
+  CGAL_precondition(CGAL::is_triangle_mesh(tmesh));
+  CGAL_precondition_code(std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor> degen_faces;)
+  CGAL_precondition_code(CGAL::Polygon_mesh_processing::degenerate_faces(tmesh, std::inserter(degen_faces, degen_faces.begin()), np);)
+  CGAL_precondition(degen_faces.empty());
+
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   CGAL::Timer t;
-  std::cout << "Smoothing parameters...";
+  std::cout << "Get smoothing parameters...";
   std::cout.flush();
   t.start();
 #endif
