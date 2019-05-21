@@ -37,14 +37,19 @@ namespace CGAL
 namespace KSR_3
 {
 
-template <typename GeomTraits>
+template <typename Data>
 class Event_queue
 {
 public:
-  typedef GeomTraits Kernel;
+  typedef typename Data::Kernel Kernel;
   typedef typename Kernel::FT FT;
+  typedef typename Data::PVertex PVertex;
+  typedef typename Data::PEdge PEdge;
+  typedef typename Data::PFace PFace;
+  typedef typename Data::IVertex IVertex;
+  typedef typename Data::IEdge IEdge;
 
-  typedef KSR_3::Event<GeomTraits> Event;
+  typedef KSR_3::Event<Data> Event;
 
 private:
 
@@ -54,7 +59,7 @@ private:
      boost::multi_index::ordered_non_unique
      <boost::multi_index::member<Event, FT, &Event::m_time> >,
      boost::multi_index::ordered_non_unique
-     <boost::multi_index::member<Event, KSR::size_t, &Event::m_vertex_idx> >
+     <boost::multi_index::member<Event, PVertex, &Event::m_pvertex> >
      > 
    > Queue;
 
@@ -97,17 +102,18 @@ public:
       std::cerr << e << std::endl;
   }
 
-  void erase_vertex_events (KSR::size_t vertex_idx)
+  void erase_vertex_events (KSR::size_t support_plane_idx, PVertex pvertex)
   {
     std::pair<Queue_by_event_idx_iterator, Queue_by_event_idx_iterator>
-      range = queue_by_event_idx().equal_range(vertex_idx);
+      range = queue_by_event_idx().equal_range(pvertex);
     queue_by_event_idx().erase (range.first, range.second);
   }
 
-  void erase_vertex_events (KSR::size_t vertex_idx, KSR::vector<Event>& events)
+  void erase_vertex_events (KSR::size_t support_plane_idx, PVertex pvertex,
+                            KSR::vector<Event>& events)
   {
     std::pair<Queue_by_event_idx_iterator, Queue_by_event_idx_iterator>
-      range = queue_by_event_idx().equal_range(vertex_idx);
+      range = queue_by_event_idx().equal_range(pvertex);
 
     std::copy (range.first, range.second, std::back_inserter (events));
     queue_by_event_idx().erase (range.first, range.second);

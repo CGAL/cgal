@@ -31,44 +31,57 @@ namespace CGAL
 namespace KSR_3
 {
 
-template <typename GeomTraits>
+template <typename Data>
 class Event_queue;
 
-template <typename GeomTraits>
+template <typename Data>
 class Event
 {
 public:
-  typedef GeomTraits Kernel;
+  typedef typename Data::Kernel Kernel;
   typedef typename Kernel::FT FT;
-
-  typedef Event_queue<GeomTraits> Queue;
+  typedef typename Data::PVertex PVertex;
+  typedef typename Data::PEdge PEdge;
+  typedef typename Data::PFace PFace;
+  typedef typename Data::IVertex IVertex;
+  typedef typename Data::IEdge IEdge;
+  
+  typedef Event_queue<Data> Queue;
   friend Queue;
+
+  enum Type
+  {
+    FREE_VERTEX_TO_INTERSECTION_EDGE,
+    CONSTRAINED_VERTEX_TO_FREE_VERTEX,
+    CONSTRAINED_VERTEX_TO_INTERSECTION_VERTEX,
+    CONSTRAINED_VERTEX_TO_CONSTRAINED_VERTEX,
+    EDGE_TO_INTERSECTION_EDGE
+  };
 
 private:
 
-  KSR::size_t m_vertex_idx;
-  KSR::size_t m_intersection_line_idx;
+  PVertex m_pvertex;
+  IEdge m_iedge;
   FT m_time;
 
 public:
 
   Event () { }
 
-  Event (KSR::size_t vertex_idx, KSR::size_t intersection_line_idx, FT time)
-    : m_vertex_idx (vertex_idx), m_intersection_line_idx (intersection_line_idx), m_time (time)
+  Event (PVertex pvertex, IEdge iedge, FT time)
+    : m_pvertex (pvertex)
+    , m_iedge (iedge), m_time (time)
   { }
 
-  const KSR::size_t& vertex_idx() const { return m_vertex_idx; }
-  KSR::size_t& vertex_idx() { return m_vertex_idx; }
-  const KSR::size_t& intersection_line_idx() const { return m_intersection_line_idx; }
-  KSR::size_t& intersection_line_idx() { return m_intersection_line_idx; }
-
+  PVertex pvertex() const { return m_pvertex; }
+  IEdge iedge() const { return m_iedge; }
   FT time() const { return m_time; }
   
   friend std::ostream& operator<< (std::ostream& os, const Event& ev)
   {
-    os << "Event at t=" << ev.m_time << " between vertex " << ev.m_vertex_idx
-       << " and intersection line " << ev.m_intersection_line_idx;
+    os << "Event at t=" << ev.m_time << " between vertex ("
+       << ev.m_pvertex.first << ":" << ev.m_pvertex.second
+       << ") and intersection edge " << ev.m_iedge;
     return os;
   }
 

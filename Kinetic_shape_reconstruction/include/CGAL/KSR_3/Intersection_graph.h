@@ -86,11 +86,11 @@ public:
 
   Intersection_graph() { }
 
-  static Vertex_descriptor null_vertex()
+  static Vertex_descriptor null_ivertex()
   { return boost::graph_traits<Graph>::null_vertex(); }
     
-  static Edge_descriptor null_edge()
-  { return Edge_descriptor(null_vertex(), null_vertex(), nullptr); }
+  static Edge_descriptor null_iedge()
+  { return Edge_descriptor(null_ivertex(), null_ivertex(), nullptr); }
   
   std::pair<Vertex_descriptor, bool> add_vertex (const Point_3& point)
   {

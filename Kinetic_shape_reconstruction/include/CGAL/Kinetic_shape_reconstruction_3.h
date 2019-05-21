@@ -59,15 +59,14 @@ public:
   typedef typename Kernel::Vector_3 Vector_3;
 
   typedef KSR_3::Data_structure<Kernel> Data;
-  typedef typename Data::Support_plane Support_plane;
-  typedef typename Support_plane::Mesh Mesh;
-  typedef typename Data::Intersection_graph Intersection_graph;
-  typedef typename Intersection_graph::Vertex_descriptor Intersection_vertex;
-  typedef typename Intersection_graph::Edge_descriptor Intersection_edge;
+  typedef typename Data::PVertex PVertex;
+  typedef typename Data::PEdge PEdge;
+  typedef typename Data::PFace PFace;
+  typedef typename Data::IEdge IEdge;
+  typedef typename Data::IVertex IVertex;
 
-  typedef KSR_3::Event<Kernel> Event;
-  typedef KSR_3::Event_queue<Kernel> Event_queue;
-
+  typedef KSR_3::Event<Data> Event;
+  typedef KSR_3::Event_queue<Data> Event_queue;
 
 private:
 
@@ -102,12 +101,9 @@ public:
 
     CGAL_KSR_CERR(1) << "Adding input as polygons" << std::endl;
 
-    KSR::size_t polygon_idx = 0;
+    KSR::size_t input_idx = 0;
     for (const typename PolygonRange::const_iterator::value_type& poly : polygons)
-    {
-      m_data.add_polygon (get (polygon_map, poly), polygon_idx);
-      ++ polygon_idx;
-    }
+      m_data.add_polygon (get (polygon_map, poly), input_idx ++);
 
     FT time_step = CGAL::approximate_sqrt(CGAL::squared_distance(Point_3 (bbox.xmin(), bbox.ymin(), bbox.zmin()),
                                                                  Point_3 (bbox.xmax(), bbox.ymax(), bbox.zmax())));
@@ -123,7 +119,7 @@ public:
     CGAL_assertion(check_integrity(true));
     
     KSR_3::dump (m_data, "intersected");
-
+    
     std::size_t iter = 0;
     m_min_time = 0;
     m_max_time = time_step;
@@ -136,6 +132,7 @@ public:
       CGAL_assertion(check_integrity(true));
       ++ iter;
     }
+    exit(0);
     CGAL_assertion(check_integrity(true));
   }
 
@@ -151,37 +148,34 @@ public:
     // TODO
     for (KSR::size_t i = 0; i < m_data.number_of_support_planes(); ++ i)
     {
-      if (!m_data.mesh(i).is_valid())
+      if (!m_data.mesh_is_valid(i))
       {
         if (verbose)
           std::cerr << "ERROR: Mesh " << i << "is invalid" << std::endl;
         return false;
       }
 
-      for (const Intersection_edge& intersection_edge : m_data.support_plane(i).intersection_edges())
-        if (m_data.intersected_planes(intersection_edge).find (i)
-            == m_data.intersected_planes(intersection_edge).end())
+      for (const IEdge& iedge : m_data.iedges(i))
+        if (m_data.intersected_planes(iedge).find (i)
+            == m_data.intersected_planes(iedge).end())
         {
           if (verbose)
             std::cerr << "ERROR: Support_plane[" << i
-                      << "] is intersected by Intersection_edge[" << intersection_edge
+                      << "] is intersected by IEdge[" << iedge
                       << "] which claims it does not intersect it" << std::endl;
-          for (KSR::size_t spi : m_data.intersected_planes(intersection_edge))
-            std::cerr << spi << " ";
-          std::cerr << std::endl;
           return false;
         }
     }
 
-    for (const Intersection_edge intersection_edge : m_data.intersection_edges())
+    for (const IEdge iedge : m_data.iedges())
     {
-      for (KSR::size_t support_plane_idx : m_data.intersected_planes (intersection_edge))
+      for (KSR::size_t support_plane_idx : m_data.intersected_planes (iedge))
       {
-        if (m_data.support_plane(support_plane_idx).intersection_edges().find (intersection_edge)
-            == m_data.support_plane(support_plane_idx).intersection_edges().end())
+        if (m_data.iedges(support_plane_idx).find (iedge)
+            == m_data.iedges(support_plane_idx).end())
         {
           if (verbose)
-            std::cerr << "ERROR: Intersection_edge[" << intersection_edge
+            std::cerr << "ERROR: IEdge[" << iedge
                       << "] intersects Support_plane[" << support_plane_idx
                       << "] which claims it's not intersected by it" << std::endl;
           return false;
@@ -252,64 +246,41 @@ private:
     facet_points = { bbox_points[0], bbox_points[4], bbox_points[6], bbox_points[2] };
     m_data.add_bbox_polygon (facet_points);
 
-    CGAL_assertion (m_data.intersection_vertices().size() == 8);
-    CGAL_assertion (m_data.intersection_edges().size() == 12);
+    CGAL_assertion (m_data.ivertices().size() == 8);
+    CGAL_assertion (m_data.iedges().size() == 12);
   }
-
-  struct Box_with_idx : public CGAL::Box_intersection_d::Box_d<FT,3>
-  {
-    typedef CGAL::Box_intersection_d::Box_d<FT,3> Base;
-    KSR::size_t idx;
-
-    Box_with_idx () { }
-
-    Box_with_idx (const Bbox_3& bbox, KSR::size_t idx)
-      : Base(bbox), idx(idx)
-    { }
-  };
-
-  struct Intersection
-  {
-    Line_3 line;
-    KSR::size_t support_plane_idx_0;
-    Intersection_edge source_0;
-    Intersection_edge target_0;
-    KSR::size_t support_plane_idx_1;
-    Intersection_edge source_1;
-    Intersection_edge target_1;
-  };
 
   void make_polygons_intersection_free()
   {
     // First, generate all transverse intersection lines
-    typedef std::map<KSR::Idx_set, std::pair<Intersection_vertex, Intersection_vertex> > Map;
+    typedef std::map<KSR::Idx_set, std::pair<IVertex, IVertex> > Map;
     Map map_p2vv;
 
-    for (const Intersection_vertex& intersection_vertex : m_data.intersection_vertices())
+    for (const IVertex& ivertex : m_data.ivertices())
     {
-      KSR::Idx_set key = m_data.intersected_planes (intersection_vertex, false);
+      KSR::Idx_set key = m_data.intersected_planes (ivertex, false);
       if (key.size() < 2)
         continue;
 
       typename Map::iterator iter;
       bool inserted;
       std::tie (iter, inserted) = map_p2vv.insert (std::make_pair (key,
-                                                                   std::make_pair (intersection_vertex,
-                                                                                   Intersection_vertex())));
+                                                                   std::make_pair (ivertex,
+                                                                                   IVertex())));
       if (!inserted)
-        iter->second.second = intersection_vertex;
+        iter->second.second = ivertex;
     }
 
 
     // Then, intersect these lines to find internal intersection vertices
-    KSR::vector<std::pair<KSR::Idx_set, KSR::vector<Intersection_vertex> > > todo;
+    KSR::vector<std::pair<KSR::Idx_set, KSR::vector<IVertex> > > todo;
     for (typename Map::iterator it_a = map_p2vv.begin(); it_a != map_p2vv.end(); ++ it_a)
     {
       const KSR::Idx_set& set_a = it_a->first;
 
-      todo.push_back (std::make_pair (set_a, KSR::vector<Intersection_vertex>()));
+      todo.push_back (std::make_pair (set_a, KSR::vector<IVertex>()));
 
-      KSR::vector<Intersection_vertex>& crossed_vertices = todo.back().second;
+      KSR::vector<IVertex>& crossed_vertices = todo.back().second;
       crossed_vertices.push_back (it_a->second.first);
 
       std::set<KSR::Idx_set> done;
@@ -330,24 +301,24 @@ private:
             continue;
           
           Point_2 inter;
-          if (!KSR::intersection_2 (m_data.support_plane(common_plane_idx).to_2d
-                                    (Segment_3 (m_data.point_3 (it_a->second.first),
-                                                m_data.point_3 (it_a->second.second))),
-                                    m_data.support_plane(common_plane_idx).to_2d
-                                    (Segment_3 (m_data.point_3 (it_b->second.first),
-                                                m_data.point_3 (it_b->second.second))),
+          if (!KSR::intersection_2 (m_data.to_2d(common_plane_idx,
+                                                 Segment_3 (m_data.point_3 (it_a->second.first),
+                                                            m_data.point_3 (it_a->second.second))),
+                                    m_data.to_2d(common_plane_idx,
+                                                 (Segment_3 (m_data.point_3 (it_b->second.first),
+                                                             m_data.point_3 (it_b->second.second)))),
                                     inter))
             continue;
 
-          crossed_vertices.push_back (m_data.add_vertex
-                                      (m_data.support_plane(common_plane_idx).to_3d(inter), union_set));
+          crossed_vertices.push_back (m_data.add_ivertex
+                                      (m_data.to_3d (common_plane_idx, inter), union_set));
         }
       }
       crossed_vertices.push_back (it_a->second.second);
     }
 
     for (auto& t : todo)
-      m_data.add_intersection_edge (t.first, t.second);
+      m_data.add_iedge (t.first, t.second);
 
     // Refine polygons
     for (KSR::size_t i = 0; i < m_data.number_of_support_planes(); ++ i)
@@ -359,7 +330,6 @@ private:
 
   bool initialize_queue()
   {
-#if 0
     CGAL_KSR_CERR(1) << "Initializing queue for events in [" << m_min_time << ";" << m_max_time << "]" << std::endl;
 
     m_data.update_positions(m_max_time);
@@ -368,39 +338,52 @@ private:
 
     for (KSR::size_t i = 0; i < m_data.number_of_support_planes(); ++ i)
     {
-      const Support_plane& support_plane = m_data.support_plane(i);
+      // To get random access, copy in vector (suboptimal to do this
+      // all the time, maybe this should be done once and for all and
+      // replace the set)
+      KSR::vector<IEdge> iedges;
+      iedges.reserve (m_data.iedges(i).size());
+      std::copy (m_data.iedges(i).begin(),
+                 m_data.iedges(i).end(),
+                 std::back_inserter(iedges));
       
       // Precompute segments and bboxes
       KSR::vector<Segment_2> segments_2;
-      segments_2.reserve (support_plane.intersection_lines_idx().size());
+      segments_2.reserve (iedges.size());
       KSR::vector<CGAL::Bbox_2> segment_bboxes;
-      segment_bboxes.reserve (support_plane.intersection_lines_idx().size());
-      for (KSR::size_t intersection_line_idx : support_plane.intersection_lines_idx())
+      segment_bboxes.reserve (iedges.size());
+      for (const IEdge& iedge : iedges)
       {
-        segments_2.push_back (m_data.segment_of_intersection_line_on_support_plane (intersection_line_idx, i));
+        segments_2.push_back (m_data.segment_2 (i, iedge));
         segment_bboxes.push_back (segments_2.back().bbox());
       }
 
-      for (KSR::size_t polygon_idx : support_plane.polygons_idx())
+      for (const PVertex& pvertex : m_data.pvertices(i))
       {
-        const Polygon& polygon = m_data.polygon (polygon_idx);
-        for (KSR::size_t v = 0; v < polygon.vertices_idx().size(); ++ v)
+        if (m_data.is_frozen(pvertex))
+          continue;
+
+        still_running = true;
+        
+        if (m_data.has_iedge(pvertex)) // Constrained vertex
         {
-          KSR::size_t vertex_idx = polygon.vertices_idx()[v];
-          const Vertex& vertex = m_data.vertex (vertex_idx);
-          if (vertex.is_frozen())
-            continue;
+          // Test left and right vertices on mesh face
 
-          still_running = true;
-
-          Segment_2 si (vertex.point (m_min_time), vertex.point (m_max_time));
+          // Test end-vertices of intersection edge
+        }
+        else // Unconstrained vertex
+        {
+          // Test all intersection edges
+          
+          Segment_2 si (m_data.point_2 (pvertex, m_min_time),
+                        m_data.point_2 (pvertex, m_max_time));
           CGAL::Bbox_2 si_bbox = si.bbox();
 
-          for (std::size_t j = 0; j < segments_2.size(); ++ j)
+          for (std::size_t j = 0; j < iedges.size(); ++ j)
           {
-            KSR::size_t intersection_line_idx = support_plane.intersection_lines_idx()[j];
+            const IEdge& iedge = iedges[j];
 
-            if (m_data.intersection_line_idx_of_vertex(vertex_idx) == intersection_line_idx)
+            if (m_data.iedge(pvertex) == iedge)
               continue;
 
             if (!CGAL::do_overlap (si_bbox, segment_bboxes[j]))
@@ -410,10 +393,10 @@ private:
             if (!KSR::intersection_2 (si, segments_2[j], point))
               continue;
 
-            FT dist = CGAL::approximate_sqrt (CGAL::squared_distance (vertex.point (m_min_time), point));
-            FT time = dist / vertex.speed();
+            FT dist = CGAL::approximate_sqrt (CGAL::squared_distance (m_data.point_2 (pvertex, m_min_time), point));
+            FT time = dist / m_data.speed(pvertex);
 
-            m_queue.push (Event (vertex_idx, intersection_line_idx, m_min_time + time));
+            m_queue.push (Event (pvertex, iedge, m_min_time + time));
           }
         }
       }
@@ -422,13 +405,10 @@ private:
     m_data.update_positions(m_min_time);
 
     return still_running;
-#endif
-    return false;
   }
 
   void run()
   {
-#if 0
     CGAL_KSR_CERR(1) << "Unstacking queue" << std::endl;
     
     KSR::size_t iterations = 0;
@@ -455,136 +435,23 @@ private:
         dump (m_data, "iter_" + std::to_string(iter));
         dump_event (m_data, ev, "iter_" + std::to_string(iter));
       }
+      
       ++ iter;
-      if (iter == 30)
+      
+      if (iter == 5)
         exit(0);
       
       apply(ev);
               
       ++ iterations;
     }
-#endif
   }
 
   void apply (const Event& ev)
   {
-#if 0
-    const Vertex& vertex = m_data.vertex (ev.vertex_idx());
-    const Intersection_line& intersection_line = m_data.intersection_line (ev.intersection_line_idx());
-    
-    bool is_vertex_along_line = (vertex.segment_idx() != KSR::no_element());
-    
-    bool is_intersection_occupied = false;
-    bool is_segment_bbox = false;
+    PVertex pvertex = ev.pvertex();
+    IEdge iedge = ev.iedge();
 
-    const Point_2& point = vertex.point(m_data.current_time());
-    for (KSR::size_t segment_idx : intersection_line.segments_idx())
-    {
-      Point_2 psource = m_data.point_on_plane (m_data.segment (segment_idx).source_idx(),
-                                               m_data.polygon_of_vertex(vertex).support_plane_idx());
-      Point_2 ptarget = m_data.point_on_plane (m_data.segment (segment_idx).target_idx(),
-                                               m_data.polygon_of_vertex(vertex).support_plane_idx());
-
-      Vector_2 ref (psource, ptarget);
-      Vector_2 vec (psource, point);
-
-      if (ref * vec < 0)
-        continue;
-      if (vec * vec < ref * ref)
-      {
-        is_intersection_occupied = true;
-
-        if (m_data.is_bbox_segment (segment_idx))
-          is_segment_bbox = true;
-        
-        break;
-      }
-    }
-    
-
-    CGAL_KSR_CERR(3) << "** Vertex " << ev.vertex_idx()
-                     << (is_vertex_along_line ? " (constrained on " + std::to_string(vertex.segment_idx()) + ")" : " (not constrained)")
-                     << (is_intersection_occupied ? " reaching intersection " : " reaching free line ")
-                     << ev.intersection_line_idx() << std::endl;
-
-
-    KSR::size_t polygon_idx = m_data.vertex(ev.vertex_idx()).polygon_idx();
-    
-    KSR::Idx_vector positive_side (1, ev.vertex_idx()), negative_side;
-    negative_side.reserve (m_data.polygon(polygon_idx).vertices_idx().size() - 1);
-
-    KSR::size_t idx = 0;
-    bool inside = false;
-    while (negative_side.size() < m_data.polygon(polygon_idx).vertices_idx().size() - 1)
-    {
-      KSR::size_t current_vertex_idx = m_data.polygon(polygon_idx).vertices_idx()[idx];
-
-      if (inside)
-        negative_side.push_back (current_vertex_idx);
-      else if (current_vertex_idx == ev.vertex_idx())
-        inside = true;
-
-      idx = (idx + 1) % m_data.polygon(polygon_idx).vertices_idx().size();
-    }
-
-    Line_2 line_2 = m_data.line_on_support_plane (ev.intersection_line_idx(), m_data.polygon(polygon_idx).support_plane_idx());
-      
-    Point_2 new_point_0, new_point_1;
-    Vector_2 new_direction_0, new_direction_1;
-    std::tie (new_point_0, new_direction_0, new_point_1, new_direction_1)
-      = m_data.compute_constrained_points_along_line (line_2, positive_side, negative_side);
-    
-    // If one of the neighbor vertices is already on line, then we
-    // have to transfer the vertex to the other polygon
-    if (m_data.intersection_line_idx_of_vertex(negative_side.front()) == ev.intersection_line_idx()
-        || m_data.intersection_line_idx_of_vertex(negative_side.back()) == ev.intersection_line_idx())
-    {
-      CGAL_KSR_CERR(3) << "** Transfering to the other side" << std::endl;
-
-      KSR::size_t changed_vertex_idx_0, changed_vertex_idx_1;
-      if (m_data.intersection_line_idx_of_vertex(negative_side.front()) == ev.intersection_line_idx())
-        std::tie (changed_vertex_idx_0, changed_vertex_idx_1)
-          = m_data.transfer_vertex (ev.vertex_idx(), negative_side.front(), new_point_1, new_direction_1);
-      else
-        std::tie (changed_vertex_idx_0, changed_vertex_idx_1)
-          = m_data.transfer_vertex (ev.vertex_idx(), negative_side.back(), new_point_0, new_direction_0);
-
-      for (KSR::size_t changed_vertex_idx : { changed_vertex_idx_0, changed_vertex_idx_1 })
-        if (changed_vertex_idx != KSR::no_element())
-          update_events (changed_vertex_idx);
-    }
-    else
-    {
-      CGAL_KSR_CERR(3) << "** Cropping" << std::endl;
-
-      // Remember position/Direction of point
-      Point_2 point = m_data.vertex(ev.vertex_idx()).point(m_data.current_time());
-      Vector_2 direction = m_data.vertex(ev.vertex_idx()).direction();
-      
-      negative_side.push_back (positive_side.front());
-      KSR::size_t segment_idx
-        = m_data.crop_polygon (polygon_idx, ev.intersection_line_idx(),
-                               negative_side,
-                               new_point_0, new_direction_0, new_point_1, new_direction_1);
-      
-      if (!is_intersection_occupied)
-      {
-        CGAL_KSR_CERR(3) << "** Propagating" << std::endl;
-
-        KSR::size_t new_vertex_idx
-          = m_data.propagate_polygon (segment_idx, point, direction);
-
-        transfer_events (ev.vertex_idx(), new_vertex_idx);
-      }
-
-      for (KSR::size_t vertex_idx : { m_data.segment(segment_idx).source_idx(),
-                                      m_data.segment(segment_idx).target_idx(),
-                                      m_data.segment(segment_idx).other_source_idx(),
-                                      m_data.segment(segment_idx).other_target_idx() })
-        if (vertex_idx != KSR::no_element())
-          update_events (vertex_idx);
-    }
-#endif
   }
 
 #if 0

@@ -45,26 +45,25 @@ class Polygon_splitter
 {
   typedef typename GeomTraits::Point_2 Point_2;
   typedef typename GeomTraits::Point_3 Point_3;
+  typedef typename GeomTraits::Segment_2 Segment_2;
+  typedef typename GeomTraits::Line_2 Line_2;
+  typedef typename GeomTraits::Vector_2 Vector_2;
   
   typedef KSR_3::Data_structure<GeomTraits> Data;
-  typedef typename Data::Support_plane Support_plane;
-  typedef typename Support_plane::Mesh Mesh;
-  typedef typename Mesh::Vertex_index Vertex_index;
-  typedef typename Mesh::Edge_index Edge_index;
-  typedef typename Mesh::Halfedge_index Halfedge_index;
-  typedef typename Mesh::Face_index Face_index;
-  typedef typename Data::Intersection_graph Intersection_graph;
-  typedef typename Intersection_graph::Vertex_descriptor Intersection_vertex;
-  typedef typename Intersection_graph::Edge_descriptor Intersection_edge;
+  typedef typename Data::PVertex PVertex;
+  typedef typename Data::PEdge PEdge;
+  typedef typename Data::PFace PFace;
+  typedef typename Data::IEdge IEdge;
+  typedef typename Data::IVertex IVertex;
 
   struct Vertex_info
   {
-    Vertex_index index;
-    Intersection_vertex intersection;
+    PVertex pvertex;
+    IVertex ivertex;
 
     Vertex_info()
-      : index (Vertex_index())
-      , intersection (Intersection_graph::null_vertex())
+      : pvertex (Data::null_pvertex())
+      , ivertex (Data::null_ivertex())
     { }
   };
 
@@ -96,7 +95,7 @@ class Polygon_splitter
   
   Data& m_data;
   CDTP m_cdt;
-  std::map<Cid, Intersection_edge> m_map_intersections;
+  std::map<Cid, IEdge> m_map_intersections;
   
 public:
 
@@ -104,39 +103,46 @@ public:
 
   void split_support_plane (KSR::size_t support_plane_idx)
   {
-    const Support_plane& support_plane = m_data.support_plane(support_plane_idx);
-    Mesh& mesh = m_data.mesh (support_plane_idx);
-
     // First, insert polygons
-    for (Vertex_index vi : mesh.vertices())
+    for (PVertex pvertex : m_data.pvertices(support_plane_idx))
     {
-      Vertex_handle vh = m_cdt.insert (mesh.point(vi));
-      vh->info().index = vi;
+      Vertex_handle vh = m_cdt.insert (m_data.point_2 (pvertex));
+      vh->info().pvertex = pvertex;
     }
 
-    for (Face_index fi : mesh.faces())
+    std::vector<std::vector<Point_2> > original_faces;
+    std::vector<KSR::size_t> original_input;
+    std::vector<Point_2> original_centroids;
+
+    for (PFace pface : m_data.pfaces(support_plane_idx))
     {
       std::vector<Point_2> points;
-      for (Halfedge_index hi : halfedges_around_face (halfedge(fi, mesh), mesh))
-        points.push_back (mesh.point(mesh.target(hi)));
+      for (PVertex pvertex : m_data.pvertices_of_pface (pface))
+        points.push_back (m_data.point_2(pvertex));
+      
+      original_faces.push_back (points);
+      original_input.push_back (m_data.input(pface));
+      original_centroids.push_back
+        (CGAL::centroid (points.begin(), points.end()));
+      
       points.push_back (points.front());
       Cid cid = m_cdt.insert_constraint (points.begin(), points.end());
-      m_map_intersections.insert (std::make_pair (cid, Intersection_graph::null_edge()));
+      m_map_intersections.insert (std::make_pair (cid, Data::null_iedge()));
     }
 
     // Then, add intersection vertices + constraints
-    for (const Intersection_edge& intersection_edge : support_plane.intersection_edges())
+    for (const IEdge& iedge : m_data.iedges(support_plane_idx))
     {
-      Intersection_vertex source = m_data.source(intersection_edge);
-      Intersection_vertex target = m_data.target(intersection_edge);
+      IVertex source = m_data.source(iedge);
+      IVertex target = m_data.target(iedge);
       
-      Vertex_handle vsource = m_cdt.insert (support_plane.to_2d(m_data.point_3(source)));
-      vsource->info().intersection = source;
-      Vertex_handle vtarget = m_cdt.insert (support_plane.to_2d(m_data.point_3(target)));
-      vtarget->info().intersection = target;
+      Vertex_handle vsource = m_cdt.insert (m_data.to_2d(support_plane_idx, source));
+      vsource->info().ivertex = source;
+      Vertex_handle vtarget = m_cdt.insert (m_data.to_2d(support_plane_idx, target));
+      vtarget->info().ivertex = target;
 
       Cid cid = m_cdt.insert_constraint (vsource, vtarget);
-      m_map_intersections.insert (std::make_pair (cid, intersection_edge));
+      m_map_intersections.insert (std::make_pair (cid, iedge));
     }
 
     // Tag external faces
@@ -195,13 +201,7 @@ public:
 
 //    dump(support_plane_idx);
 
-    // Rebuild mesh
-    for (Face_index fi : mesh.faces())
-      mesh.remove_face(fi);
-    for (Edge_index ei : mesh.edges())
-      mesh.remove_edge(ei);
-    for (Vertex_index vi : mesh.vertices())
-      mesh.set_halfedge(vi, Halfedge_index());
+    m_data.clear_polygon_faces (support_plane_idx);
 
     std::set<KSR::size_t> done;
     for (Finite_faces_iterator it = m_cdt.finite_faces_begin(); it != m_cdt.finite_faces_end(); ++ it)
@@ -225,7 +225,7 @@ public:
       if (!done.insert (edge.first->info().index).second)
         continue;
 
-      std::vector<Vertex_index> new_vertices;
+      std::vector<PVertex> new_vertices;
 
       Edge current = edge;
       do
@@ -235,10 +235,10 @@ public:
         
         Vertex_handle source = face->vertex (m_cdt.ccw(idx));
         Vertex_handle target = face->vertex (m_cdt.cw(idx));
-        if (source->info().index == Vertex_index())
-          source->info().index = mesh.add_vertex (source->point());
+        if (source->info().pvertex == Data::null_pvertex())
+          source->info().pvertex = m_data.add_pvertex (support_plane_idx, source->point());
 
-        new_vertices.push_back (source->info().index);
+        new_vertices.push_back (source->info().pvertex);
 
         Edge next = std::make_pair (face, m_cdt.ccw(idx));
         while (!m_cdt.is_constrained (next))
@@ -254,23 +254,35 @@ public:
       }
       while (current != edge);
 
-      Face_index fi = mesh.add_face (new_vertices);
+      PFace pface = m_data.add_pface (support_plane_idx, new_vertices);
+      CGAL_assertion (pface != PFace());
 
-      CGAL_assertion (fi != Face_index());
+      std::size_t original_idx = 0;
+      if (original_faces.size() != 1)
+      {
+        // TODO: locate centroid of the face among the different
+        // original faces to recover the input index
+        CGAL_assertion_msg(false, "TODO!");
+      }
+
+      m_data.input(pface) = original_input[original_idx];
+      for (PVertex pvertex : new_vertices)
+        m_data.direction(pvertex) = KSR::normalize (Vector_2 (original_centroids[original_idx],
+                                                              m_data.point_2(pvertex)));
     }
 
     // Set intersection adjacencies
     for (Finite_vertices_iterator it = m_cdt.finite_vertices_begin();
          it != m_cdt.finite_vertices_end(); ++ it)
-      if (it->info().index != Vertex_index()
-          && it->info().intersection != Intersection_graph::null_vertex())
+      if (it->info().pvertex != Data::null_pvertex()
+          && it->info().ivertex != Data::null_ivertex())
       {
-        m_data.connect (support_plane_idx, it->info().index, it->info().intersection);
+        m_data.connect (it->info().pvertex, it->info().ivertex);
       }
 
-    for (const std::pair<Cid, Intersection_edge>& m : m_map_intersections)
+    for (const std::pair<Cid, IEdge>& m : m_map_intersections)
     {
-      if (m.second == Intersection_graph::null_edge())
+      if (m.second == Data::null_iedge())
         continue;
       
       Vertices_in_constraint_iterator it = m_cdt.vertices_in_constraint_begin (m.first);
@@ -286,11 +298,69 @@ public:
 
         it = next;
 
-        if (a->info().index == Vertex_index() || b->info().index == Vertex_index())
+        if (a->info().pvertex == Data::null_pvertex() || b->info().pvertex == Data::null_pvertex())
           continue;
 
-        m_data.connect (support_plane_idx, a->info().index, b->info().index, m.second);
+        m_data.connect (a->info().pvertex, b->info().pvertex, m.second);
       }
+    }
+
+
+    for (const PVertex pvertex : m_data.pvertices(support_plane_idx))
+    {
+      bool frozen = false;
+      IEdge iedge = Data::null_iedge();
+
+      std::pair<PVertex, PVertex> neighbors (Data::null_pvertex(), Data::null_pvertex());
+      
+      for (PEdge pedge : m_data.pedges_around_pvertex (pvertex))
+      {
+        if (m_data.has_iedge (pedge))
+        {
+          if (iedge == Data::null_iedge())
+            iedge = m_data.iedge(pedge);
+          else
+          {
+            frozen = true;
+            break;
+          }
+        }
+        else
+        {
+          PVertex opposite = m_data.opposite (pedge, pvertex);
+          if (neighbors.first == Data::null_pvertex())
+            neighbors.first = opposite;
+          else
+          {
+            CGAL_assertion (neighbors.second == Data::null_pvertex());
+            neighbors.second = opposite;
+          }
+        }
+      }
+
+      // Several incident intersections = frozen vertex
+      if (frozen)
+      {
+        m_data.direction(pvertex) = CGAL::NULL_VECTOR;
+        continue;
+      }
+
+      // No intersection incident = keep initial direction
+      if (iedge == Data::null_iedge())
+        continue;
+
+      m_data.connect (pvertex, iedge);
+      
+      CGAL_assertion (neighbors.first != Data::null_pvertex() && neighbors.second != Data::null_pvertex());
+
+      Line_2 future_line (m_data.point_2 (neighbors.first, 1),
+                          m_data.point_2 (neighbors.second, 1));
+
+      Line_2 intersection_line = m_data.segment_2 (support_plane_idx, iedge).supporting_line();
+
+      Point_2 inter = KSR::intersection_2<Point_2> (intersection_line, future_line);
+
+      m_data.direction(pvertex) = Vector_2 (m_data.point_2(pvertex, 0), inter);
     }
   }
 
@@ -308,56 +378,56 @@ private:
          it != m_cdt.contexts_end (edge.first->vertex((edge.second + 1)%3),
                                    edge.first->vertex((edge.second + 2)%3)); ++ it)
     {
-      typename std::map<Cid, Intersection_edge>::const_iterator
+      typename std::map<Cid, IEdge>::const_iterator
         iter = m_map_intersections.find (it->id());
       if (iter == m_map_intersections.end())
         continue;
 
-      if (iter->second == Intersection_graph::null_edge())
+      if (iter->second == Data::null_iedge())
         return true;
     }
     return false;
   }
 
-  void dump(KSR::size_t support_plane_idx)
-  {
-    typedef CGAL::Surface_mesh<Point_3> Mesh_3;
-    typedef typename Mesh_3::template Property_map<typename Mesh_3::Face_index, unsigned char> Uchar_map;
+  // void dump(KSR::size_t support_plane_idx)
+  // {
+  //   typedef CGAL::Surface_mesh<Point_3> Mesh_3;
+  //   typedef typename Mesh_3::template Property_map<typename Mesh_3::Face_index, unsigned char> Uchar_map;
 
-    Mesh_3 mesh;
-    Uchar_map red = mesh.template add_property_map<typename Mesh_3::Face_index, unsigned char>("red", 0).first;
-    Uchar_map green = mesh.template add_property_map<typename Mesh_3::Face_index, unsigned char>("green", 0).first;
-    Uchar_map blue = mesh.template add_property_map<typename Mesh_3::Face_index, unsigned char>("blue", 0).first;
+  //   Mesh_3 mesh;
+  //   Uchar_map red = mesh.template add_property_map<typename Mesh_3::Face_index, unsigned char>("red", 0).first;
+  //   Uchar_map green = mesh.template add_property_map<typename Mesh_3::Face_index, unsigned char>("green", 0).first;
+  //   Uchar_map blue = mesh.template add_property_map<typename Mesh_3::Face_index, unsigned char>("blue", 0).first;
 
-    KSR::size_t bbox_nb_vertices = 0;
-    KSR::size_t nb_vertices = 0;
+  //   KSR::size_t bbox_nb_vertices = 0;
+  //   KSR::size_t nb_vertices = 0;
 
-    std::map<Vertex_handle, typename Mesh_3::Vertex_index> map_v2i;
-    for (Finite_vertices_iterator it = m_cdt.finite_vertices_begin(); it != m_cdt.finite_vertices_end(); ++ it)
-      map_v2i.insert (std::make_pair
-                      (it, mesh.add_vertex (m_data.support_plane(support_plane_idx).to_3d
-                                            (it->point()))));
+  //   std::map<Vertex_handle, typename Mesh_3::Vertex_index> map_v2i;
+  //   for (Finite_vertices_iterator it = m_cdt.finite_vertices_begin(); it != m_cdt.finite_vertices_end(); ++ it)
+  //     map_v2i.insert (std::make_pair
+  //                     (it, mesh.add_vertex (m_data.support_plane(support_plane_idx).to_3d
+  //                                           (it->point()))));
 
-    for (Finite_faces_iterator it = m_cdt.finite_faces_begin(); it != m_cdt.finite_faces_end(); ++ it)
-    {
-      std::array<typename Mesh_3::Vertex_index, 3> vertices;
-      for (int i = 0; i < 3; ++ i)
-        vertices[i] = map_v2i[it->vertex(i)];
-      typename Mesh_3::Face_index face = mesh.add_face (vertices);
-      CGAL::Random rand (it->info().index);
-      if (it->info().index != KSR::no_element())
-      {
-        red[face] = (unsigned char)(rand.get_int(32, 192));
-        green[face] = (unsigned char)(rand.get_int(32, 192));
-        blue[face] = (unsigned char)(rand.get_int(32, 192));
-      }
-    }
+  //   for (Finite_faces_iterator it = m_cdt.finite_faces_begin(); it != m_cdt.finite_faces_end(); ++ it)
+  //   {
+  //     std::array<typename Mesh_3::Vertex_index, 3> vertices;
+  //     for (int i = 0; i < 3; ++ i)
+  //       vertices[i] = map_v2i[it->vertex(i)];
+  //     typename Mesh_3::Face_index face = mesh.add_face (vertices);
+  //     CGAL::Random rand (it->info().index);
+  //     if (it->info().index != KSR::no_element())
+  //     {
+  //       red[face] = (unsigned char)(rand.get_int(32, 192));
+  //       green[face] = (unsigned char)(rand.get_int(32, 192));
+  //       blue[face] = (unsigned char)(rand.get_int(32, 192));
+  //     }
+  //   }
     
-    std::string filename = "face_" + std::to_string(support_plane_idx) + ".ply";
-    std::ofstream out (filename);
-    CGAL::set_binary_mode (out);
-    CGAL::write_ply(out, mesh);
-  }
+  //   std::string filename = "face_" + std::to_string(support_plane_idx) + ".ply";
+  //   std::ofstream out (filename);
+  //   CGAL::set_binary_mode (out);
+  //   CGAL::write_ply(out, mesh);
+  // }
   
   
 };

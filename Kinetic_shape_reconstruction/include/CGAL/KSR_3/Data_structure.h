@@ -47,6 +47,9 @@ class Data_structure
 public:
   
   typedef GeomTraits Kernel;
+  
+private:
+  
   typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_2 Point_2;
   typedef typename Kernel::Vector_2 Vector_2;
@@ -68,13 +71,86 @@ public:
   typedef typename Mesh::Halfedge_index Halfedge_index;
   
   typedef KSR_3::Intersection_graph<Kernel> Intersection_graph;
-  typedef typename Intersection_graph::Vertex_descriptor Intersection_vertex;
-  typedef typename Intersection_graph::Edge_descriptor Intersection_edge;
-  typedef typename Intersection_graph::Vertices Intersection_vertices;
-  typedef typename Intersection_graph::Edges Intersection_edges;
-  typedef typename Intersection_graph::Incident_edges Intersection_incident_edges;
 
   typedef KSR::vector<Support_plane> Support_planes;
+
+public:
+
+  typedef std::pair<KSR::size_t, Vertex_index> PVertex;
+  typedef std::pair<KSR::size_t, Edge_index> PEdge;
+  typedef std::pair<KSR::size_t, Face_index> PFace;
+
+  template <typename PSimplex>
+  struct Make_PSimplex
+  {
+    typedef typename PSimplex::second_type argument_type;
+    typedef PSimplex result_type;
+    KSR::size_t support_plane_idx;
+
+    Make_PSimplex (KSR::size_t support_plane_idx) : support_plane_idx (support_plane_idx) { }
+
+    result_type operator() (const argument_type& arg) const
+    {
+      return result_type(support_plane_idx, arg);
+    }
+  };
+
+  typedef boost::transform_iterator<Make_PSimplex<PVertex>,
+                                    typename Mesh::Vertex_range::iterator> PVertex_iterator;
+  typedef boost::transform_iterator<Make_PSimplex<PEdge>,
+                                    typename Mesh::Edge_range::iterator> PEdge_iterator;
+  typedef boost::transform_iterator<Make_PSimplex<PFace>,
+                                    typename Mesh::Face_range::iterator> PFace_iterator;
+  
+  typedef Iterator_range<PVertex_iterator> PVertices;
+  typedef Iterator_range<PEdge_iterator> PEdges;
+  typedef Iterator_range<PFace_iterator> PFaces;
+
+  struct Halfedge_to_pvertex
+  {
+    typedef Halfedge_index argument_type;
+    typedef PVertex result_type;
+    KSR::size_t support_plane_idx;
+    const Mesh& mesh;
+
+    Halfedge_to_pvertex (KSR::size_t support_plane_idx, const Mesh& mesh)
+      : support_plane_idx (support_plane_idx), mesh (mesh) { }
+
+    result_type operator() (const argument_type& arg) const
+    {
+      return result_type(support_plane_idx, mesh.target(arg));
+    }
+  };
+  
+  typedef boost::transform_iterator<Halfedge_to_pvertex,
+                                    Halfedge_around_face_iterator<Mesh> > PVertex_of_pface_iterator;
+  typedef Iterator_range<PVertex_of_pface_iterator> PVertices_of_pface;
+
+  struct Halfedge_to_pedge
+  {
+    typedef Halfedge_index argument_type;
+    typedef PEdge result_type;
+    KSR::size_t support_plane_idx;
+    const Mesh& mesh;
+
+    Halfedge_to_pedge (KSR::size_t support_plane_idx, const Mesh& mesh)
+      : support_plane_idx (support_plane_idx), mesh (mesh) { }
+
+    result_type operator() (const argument_type& arg) const
+    {
+      return result_type(support_plane_idx, mesh.edge(arg));
+    }
+  };
+  
+  typedef boost::transform_iterator<Halfedge_to_pedge,
+                                    Halfedge_around_target_iterator<Mesh> > PEdge_around_pvertex_iterator;
+  typedef Iterator_range<PEdge_around_pvertex_iterator> PEdges_around_pvertex;
+
+  typedef typename Intersection_graph::Vertex_descriptor IVertex;
+  typedef typename Intersection_graph::Edge_descriptor IEdge;
+  typedef typename Intersection_graph::Vertices IVertices;
+  typedef typename Intersection_graph::Edges IEdges;
+  typedef typename Intersection_graph::Incident_edges Incident_iedges;
 
 private:
 
@@ -105,83 +181,17 @@ public:
   
   const FT& current_time() const { return m_current_time; }
 
-  Intersection_vertices intersection_vertices() const { return m_intersection_graph.vertices(); }
-  Intersection_edges intersection_edges() const { return m_intersection_graph.edges(); }
-
-  Intersection_incident_edges incident_edges (const Intersection_vertex& vertex) const
-  { return m_intersection_graph.incident_edges(vertex); }
+  /*******************************
+   * Support planes
+   *******************************/
   
-  const KSR::Idx_set& intersected_planes (const Intersection_edge& edge) const
-  { return m_intersection_graph.intersected_planes(edge); }
-
-  KSR::Idx_set intersected_planes (const Intersection_vertex& vertex, bool keep_bbox = true) const
-  {
-    KSR::Idx_set out;
-    for (const Intersection_edge& incident_edge : incident_edges (vertex))
-      for (KSR::size_t support_plane_idx : intersected_planes (incident_edge))
-      {
-        if (!keep_bbox && support_plane_idx < 6)
-          continue;
-        out.insert (support_plane_idx);
-      }
-    return out;
-  }
-
-  Point_3 point_3 (const Intersection_vertex& vertex) const
-  { return m_intersection_graph.point_3 (vertex); }
-
-  Segment_3 segment_3 (const Intersection_edge& edge) const
-  { return m_intersection_graph.segment_3 (edge); }
-
-  Intersection_vertex source (const Intersection_edge& edge) const
-  { return m_intersection_graph.source (edge); }
-  Intersection_vertex target (const Intersection_edge& edge) const
-  { return m_intersection_graph.target (edge); }
-
-  Intersection_vertex add_vertex (const Point_3& point, const KSR::Idx_set& support_planes_idx)
-  {
-    KSR::Idx_vector vec_planes;
-    std::copy (support_planes_idx.begin(), support_planes_idx.end(),
-               std::back_inserter (vec_planes));
-    // std::cerr << "Inserting vertex (";
-    // for (KSR::size_t idx : vec_planes)
-    //   std::cerr << " " << idx;
-    // std::cerr << " )";
-
-    Intersection_vertex vertex;
-    bool inserted;
-    std::tie (vertex, inserted) = m_intersection_graph.add_vertex (point, vec_planes);
-
-    // if (inserted)
-    //   std::cerr << " -> created ";
-    // else
-    //   std::cerr << " -> reusing ";
-    // std::cerr << vertex << std::endl;
-    
-    return vertex;
-  }
-
-  void connect (KSR::size_t support_plane_idx,
-                const Vertex_index& vi,
-                const Intersection_vertex& intersection_vertex)
-  {
-    support_plane(support_plane_idx).set_intersection_vertex (vi, intersection_vertex);
-  }
-
-  void connect (KSR::size_t support_plane_idx,
-                const Vertex_index& a, const Vertex_index& b,
-                const Intersection_edge& intersection_edge)
-  {
-    support_plane(support_plane_idx).set_intersection_edge (a, b, intersection_edge);
-  }
-
   KSR::size_t number_of_support_planes() const { return m_support_planes.size(); }
-  const Support_plane& support_plane (KSR::size_t idx) const { return m_support_planes[idx]; }
-  Support_plane& support_plane (KSR::size_t idx) { return m_support_planes[idx]; }
   
-  KSR::size_t number_of_meshes() const { return m_support_planes.size(); }
-  const Mesh& mesh (KSR::size_t idx) const { return m_support_planes[idx].mesh(); }
-  Mesh& mesh (KSR::size_t idx) { return m_support_planes[idx].mesh(); }
+  bool is_bbox_support_plane (KSR::size_t support_plane_idx) const
+  { return (support_plane_idx < 6); }
+
+  bool mesh_is_valid (KSR::size_t support_plane_idx) const
+  { return mesh(support_plane_idx).is_valid(); }
 
   KSR::size_t add_support_plane (const Support_plane& new_support_plane)
   {
@@ -201,10 +211,10 @@ public:
 
     if (support_plane_idx >= 6) // Intersect planes with bbox... 
     {
-      std::vector<std::pair<Intersection_edge, Point_3> > intersections;
+      std::vector<std::pair<IEdge, Point_3> > intersections;
 
       Point_3 centroid;
-      for (const Intersection_edge& edge : m_intersection_graph.edges())
+      for (const IEdge& edge : m_intersection_graph.edges())
       {
         Point_3 point;
         if (!KSR::intersection_3 (support_plane(support_plane_idx).plane(),
@@ -217,20 +227,20 @@ public:
 
       Point_2 centroid_2 = support_plane(support_plane_idx).to_2d (centroid);
       std::sort (intersections.begin(), intersections.end(),
-                 [&] (const std::pair<Intersection_edge, Point_3>& a,
-                      const std::pair<Intersection_edge, Point_3>& b) -> bool
+                 [&] (const std::pair<IEdge, Point_3>& a,
+                      const std::pair<IEdge, Point_3>& b) -> bool
                  {
                    return (Direction_2 (Segment_2 (centroid_2, support_plane(support_plane_idx).to_2d (a.second)))
                            < Direction_2 (Segment_2 (centroid_2, support_plane(support_plane_idx).to_2d (b.second))));
                  });
 
       KSR::vector<KSR::size_t> common_planes_idx;
-      KSR::vector<Intersection_vertex> vertices;
+      KSR::vector<IVertex> vertices;
       vertices.reserve (intersections.size());
       for (std::size_t i = 0; i < intersections.size(); ++ i)
       {
-        const Intersection_edge& e0 = intersections[i].first;
-        const Intersection_edge& e1 = intersections[(i+1)%intersections.size()].first;
+        const IEdge& e0 = intersections[i].first;
+        const IEdge& e1 = intersections[(i+1)%intersections.size()].first;
 
         KSR::size_t common_plane_idx = KSR::no_element();
         std::set_intersection (m_intersection_graph.intersected_planes(e0).begin(),
@@ -255,102 +265,49 @@ public:
       for (std::size_t i = 0; i < intersections.size(); ++ i)
       {
         for (KSR::size_t sp_idx : m_intersection_graph.intersected_planes(intersections[i].first))
-          support_plane(sp_idx).intersection_edges().erase (intersections[i].first);
-        Intersection_edge edge_0, edge_1;
+          support_plane(sp_idx).iedges().erase (intersections[i].first);
+        IEdge edge_0, edge_1;
         std::tie (edge_0, edge_1)
           = m_intersection_graph.split_edge (intersections[i].first, vertices[i]);
-        for (const Intersection_edge& edge : { edge_0, edge_1 })
+        for (const IEdge& edge : { edge_0, edge_1 })
           for (KSR::size_t sp_idx : m_intersection_graph.intersected_planes(edge))
-            support_plane(sp_idx).intersection_edges().insert (edge);
+            support_plane(sp_idx).iedges().insert (edge);
 
-        Intersection_edge new_edge =
+        IEdge new_edge =
           m_intersection_graph.add_edge (vertices[i], vertices[(i+1)%vertices.size()], support_plane_idx).first;
         m_intersection_graph.intersected_planes(new_edge).insert (common_planes_idx[i]);
-        support_plane(support_plane_idx).intersection_edges().insert (new_edge);
-        support_plane(common_planes_idx[i]).intersection_edges().insert (new_edge);
+        support_plane(support_plane_idx).iedges().insert (new_edge);
+        support_plane(common_planes_idx[i]).iedges().insert (new_edge);
       }
     }
       
     return support_plane_idx;
-  }
-
-  bool is_bbox_mesh (KSR::size_t mesh_idx) const
-  { return (mesh_idx < 6); }
-
-  bool is_bbox_edge (const Intersection_edge& edge) const
-  {
-    for (KSR::size_t support_plane_idx : m_intersection_graph.intersected_planes(edge))
-      if (support_plane_idx < 6)
-        return true;
-    return false;              
-  }
-  
-  Point_3 point_of_vertex (KSR::size_t mesh_idx, Vertex_index vertex_idx) const
-  {
-    return support_plane(mesh_idx).point_3 (vertex_idx, m_current_time);
-  }
-
-#if 0
-  inline bool point_is_inside_bbox_section_of_intersection_line
-  (const Point_3& point, KSR::size_t intersection_line_idx) const
-  {
-    Vector_3 ref (meta_vertex(intersection_line(intersection_line_idx).meta_vertices_idx()[0]).point(),
-                  meta_vertex(intersection_line(intersection_line_idx).meta_vertices_idx()[1]).point());
-    Vector_3 position (meta_vertex(intersection_line(intersection_line_idx).meta_vertices_idx()[0]).point(),
-                       point);
-
-    if (ref * position < 0)
-      return false;
-
-    return (position * position) < (ref * ref);
-  }
-#endif
-    
-  bool do_intersect (KSR::size_t support_plane_idx, Face_index fi, const Line_2& line) const
-  {
-    bool positive_side = false, negative_side = false;
-    for (Halfedge_index hi : halfedges_around_face (halfedge(fi, support_plane(support_plane_idx).mesh()),
-                                                    support_plane(support_plane_idx).mesh()))
-    {
-      Point_2 point = support_plane(support_plane_idx).point
-        (support_plane(support_plane_idx).mesh().source(hi),
-         m_current_time);
-      
-      if (line.has_on_positive_side(point))
-        positive_side = true;
-      else
-        negative_side = true;
-      if (positive_side && negative_side)
-        return true;
-    }
-    
-    return false;
   }
   
   void add_bbox_polygon (const std::array<Point_3, 4>& polygon)
   {
     KSR::size_t support_plane_idx = add_support_plane (Support_plane (polygon));
 
-    std::array<Intersection_vertex, 4> intersection_vertices;
+    std::array<IVertex, 4> ivertices;
     std::array<Point_2, 4> points;
     for (std::size_t i = 0; i < 4; ++ i)
     {
       points[i] = support_plane(support_plane_idx).to_2d(polygon[i]);
-      intersection_vertices[i] = m_intersection_graph.add_vertex(polygon[i]).first;
+      ivertices[i] = m_intersection_graph.add_vertex(polygon[i]).first;
     }
 
     std::array<Vertex_index, 4> vertices
-      = support_plane(support_plane_idx).add_bbox_polygon (points, intersection_vertices);
+      = support_plane(support_plane_idx).add_bbox_polygon (points, ivertices);
     
     for (std::size_t i = 0; i < 4; ++ i)
     {
-      Intersection_edge intersection_edge
-        = m_intersection_graph.add_edge (intersection_vertices[i], intersection_vertices[(i+1)%4], support_plane_idx).first;
+      IEdge iedge
+        = m_intersection_graph.add_edge (ivertices[i], ivertices[(i+1)%4], support_plane_idx).first;
       
-      support_plane(support_plane_idx).set_intersection_edge
-        (vertices[i], vertices[(i+1)%4], intersection_edge);
+      support_plane(support_plane_idx).set_iedge
+        (vertices[i], vertices[(i+1)%4], iedge);
       
-      support_plane(support_plane_idx).intersection_edges().insert (intersection_edge);
+      support_plane(support_plane_idx).iedges().insert (iedge);
     }
   }
 
@@ -377,7 +334,288 @@ public:
     support_plane(support_plane_idx).add_polygon (points, centroid, input_idx);
   }
 
+  /*******************************
+   * PSimplices
+   *******************************/
+
+  static PVertex null_pvertex() { return PVertex(KSR::no_element(), Vertex_index()); }
+  static PEdge null_pedge() { return PEdge(KSR::no_element(), Edge_index()); }
+  static PFace null_pface() { return PFace(KSR::no_element(), Face_index()); }
+  
+  PVertices pvertices (KSR::size_t support_plane_idx) const
+  {
+    return PVertices (boost::make_transform_iterator
+                      (mesh(support_plane_idx).vertices().begin(),
+                       Make_PSimplex<PVertex>(support_plane_idx)),
+                      boost::make_transform_iterator
+                      (mesh(support_plane_idx).vertices().end(),
+                       Make_PSimplex<PVertex>(support_plane_idx)));
+                      
+  }
+
+  PEdges pedges (KSR::size_t support_plane_idx) const
+  {
+    return PEdges (boost::make_transform_iterator
+                   (mesh(support_plane_idx).edges().begin(),
+                    Make_PSimplex<PEdge>(support_plane_idx)),
+                   boost::make_transform_iterator
+                   (mesh(support_plane_idx).edges().end(),
+                    Make_PSimplex<PEdge>(support_plane_idx)));
+                      
+  }
+
+  PFaces pfaces (KSR::size_t support_plane_idx) const
+  {
+    return PFaces (boost::make_transform_iterator
+                   (mesh(support_plane_idx).faces().begin(),
+                    Make_PSimplex<PFace>(support_plane_idx)),
+                   boost::make_transform_iterator
+                   (mesh(support_plane_idx).faces().end(),
+                    Make_PSimplex<PFace>(support_plane_idx)));
+                      
+  }
+
+  PVertex add_pvertex (KSR::size_t support_plane_idx, const Point_2& point)
+  {
+    return PVertex (support_plane_idx, mesh(support_plane_idx).add_vertex(point));
+  }
+  PFace add_pface (KSR::size_t support_plane_idx, const std::vector<PVertex>& pvertices)
+  {
+    return PFace (support_plane_idx,
+                  mesh(support_plane_idx).add_face
+                  (CGAL::make_range
+                   (boost::make_transform_iterator
+                    (pvertices.begin(),
+                     CGAL::Property_map_to_unary_function
+                     <CGAL::Second_of_pair_property_map<PVertex> >()),
+                    boost::make_transform_iterator
+                    (pvertices.end(),
+                     CGAL::Property_map_to_unary_function
+                     <CGAL::Second_of_pair_property_map<PVertex> >()))));
+  }
+
+  void clear_polygon_faces (KSR::size_t support_plane_idx)
+  {
+    Mesh& m = mesh(support_plane_idx);
+    for (Face_index fi : m.faces())
+      m.remove_face(fi);
+    for (Edge_index ei : m.edges())
+      m.remove_edge(ei);
+    for (Vertex_index vi : m.vertices())
+      m.set_halfedge(vi, Halfedge_index());
+  }
+
+  PVertex source (const PEdge& pedge) const
+  { return PVertex (pedge.first, mesh(pedge).source(mesh(pedge).halfedge(pedge.second))); }
+  PVertex target (const PEdge& pedge) const
+  { return PVertex (pedge.first, mesh(pedge).target(mesh(pedge).halfedge(pedge.second))); }
+  PVertex opposite (const PEdge& pedge, const PVertex& pvertex) const
+  {
+    if (mesh(pedge).target(mesh(pedge).halfedge(pedge.second)) == pvertex.second)
+      return PVertex (pedge.first, mesh(pedge).source(mesh(pedge).halfedge(pedge.second)));
+
+    CGAL_assertion (mesh(pedge).source(mesh(pedge).halfedge(pedge.second)) == pvertex.second);
+    return PVertex (pedge.first, mesh(pedge).target(mesh(pedge).halfedge(pedge.second)));
+  }
+                            
+
+  PVertices_of_pface pvertices_of_pface (const PFace& pface) const
+  {
+    return PVertices_of_pface (boost::make_transform_iterator
+                               (halfedges_around_face(halfedge(pface.second, mesh(pface)),
+                                                      mesh(pface)).begin(),
+                                Halfedge_to_pvertex(pface.first, mesh(pface))),
+                               boost::make_transform_iterator
+                               (halfedges_around_face(halfedge(pface.second, mesh(pface)),
+                                                      mesh(pface)).end(),
+                                Halfedge_to_pvertex(pface.first, mesh(pface))));
+  }
+
+  PEdges_around_pvertex pedges_around_pvertex (const PVertex& pvertex) const
+  {
+    return PEdges_around_pvertex (boost::make_transform_iterator
+                                  (halfedges_around_target(halfedge(pvertex.second, mesh(pvertex)),
+                                                           mesh(pvertex)).begin(),
+                                   Halfedge_to_pedge(pvertex.first, mesh(pvertex))),
+                                  boost::make_transform_iterator
+                                  (halfedges_around_target(halfedge(pvertex.second, mesh(pvertex)),
+                                                           mesh(pvertex)).end(),
+                                   Halfedge_to_pedge(pvertex.first, mesh(pvertex))));
+  }
+
+  const KSR::size_t& input (const PFace& pface) const
+  { return support_plane(pface).input(pface.second); }
+  KSR::size_t& input (const PFace& pface)
+  { return support_plane(pface).input(pface.second); }
+
+  bool is_frozen (const PVertex& pvertex) const
+  { return support_plane(pvertex).is_frozen (pvertex.second); }
+  const Vector_2& direction (const PVertex& pvertex) const
+  { return support_plane(pvertex).direction (pvertex.second); }
+  Vector_2& direction (const PVertex& pvertex)
+  { return support_plane(pvertex).direction (pvertex.second); }
+  FT speed (const PVertex& pvertex)
+  { return support_plane(pvertex).speed (pvertex.second); }
+
+  /*******************************
+   * ISimplices
+   *******************************/
+
+  static IVertex null_ivertex() { return Intersection_graph::null_ivertex(); }
+  static IEdge null_iedge() { return Intersection_graph::null_iedge(); }
+  
+  IVertices ivertices() const { return m_intersection_graph.vertices(); }
+  IEdges iedges() const { return m_intersection_graph.edges(); }
+
+  IVertex add_ivertex (const Point_3& point, const KSR::Idx_set& support_planes_idx)
+  {
+    KSR::Idx_vector vec_planes;
+    std::copy (support_planes_idx.begin(), support_planes_idx.end(),
+               std::back_inserter (vec_planes));
+
+    IVertex vertex;
+    bool inserted;
+    std::tie (vertex, inserted) = m_intersection_graph.add_vertex (point, vec_planes);
+    return vertex;
+  }
+
+  void add_iedge (const KSR::Idx_set& support_planes_idx,
+                              KSR::vector<IVertex>& vertices)
+  {
+    Point_3 source = m_intersection_graph.point_3 (vertices.front());
+
+    std::sort (vertices.begin(), vertices.end(),
+               [&](const IVertex& a, const IVertex& b) -> bool
+               {
+                 return (CGAL::squared_distance (source, m_intersection_graph.point_3(a))
+                         < CGAL::squared_distance (source, m_intersection_graph.point_3(b)));
+               });
+
+    for (KSR::size_t i = 0; i < vertices.size() - 1; ++ i)
+    {
+      IEdge iedge;
+      bool inserted;
+      std::tie (iedge, inserted)
+        = m_intersection_graph.add_edge (vertices[i],
+                                         vertices[i+1],
+                                         support_planes_idx);
+      CGAL_assertion (inserted);
+      
+      for (KSR::size_t support_plane_idx : support_planes_idx)
+        support_plane(support_plane_idx).iedges().insert (iedge);
+    }
+  }
+
+  IVertex source (const IEdge& edge) const
+  { return m_intersection_graph.source (edge); }
+  IVertex target (const IEdge& edge) const
+  { return m_intersection_graph.target (edge); }
+
+  Incident_iedges incident_iedges (const IVertex& ivertex) const
+  { return m_intersection_graph.incident_edges(ivertex); }
+  
+  const std::set<IEdge>& iedges (KSR::size_t support_plane_idx) const
+  { return support_plane(support_plane_idx).iedges(); }
+
+  const KSR::Idx_set& intersected_planes (const IEdge& iedge) const
+  { return m_intersection_graph.intersected_planes(iedge); }
+
+  KSR::Idx_set intersected_planes (const IVertex& ivertex, bool keep_bbox = true) const
+  {
+    KSR::Idx_set out;
+    for (const IEdge& incident_iedge : incident_iedges (ivertex))
+      for (KSR::size_t support_plane_idx : intersected_planes (incident_iedge))
+      {
+        if (!keep_bbox && support_plane_idx < 6)
+          continue;
+        out.insert (support_plane_idx);
+      }
+    return out;
+  }
+  
+
+  bool is_bbox_iedge (const IEdge& edge) const
+  {
+    for (KSR::size_t support_plane_idx : m_intersection_graph.intersected_planes(edge))
+      if (support_plane_idx < 6)
+        return true;
+    return false;              
+  }
+  
+  /*******************************
+   * Connectivity
+   *******************************/
+
+  bool has_iedge (const PVertex& pvertex) const
+  { return support_plane(pvertex).has_iedge(pvertex.second); }
+  IEdge iedge (const PVertex& pvertex) const
+  { return support_plane(pvertex).iedge(pvertex.second); }
+  
+  bool has_iedge (const PEdge& pedge) const
+  { return support_plane(pedge).has_iedge(pedge.second); }
+  IEdge iedge (const PEdge& pedge) const
+  { return support_plane(pedge).iedge(pedge.second); }
+
+  void connect (const PVertex& pvertex, const IVertex& ivertex)
+  { support_plane(pvertex).set_ivertex (pvertex.second, ivertex); }
+  void connect (const PVertex& pvertex, const IEdge& iedge)
+  { support_plane(pvertex).set_iedge (pvertex.second, iedge); }
+  void connect (const PVertex& a, const PVertex& b, const IEdge& iedge)
+  { support_plane(a).set_iedge (a.second, b.second, iedge); }
+
+  /*******************************
+   * Conversions
+   *******************************/
+
+  Point_2 to_2d (KSR::size_t support_plane_idx, const IVertex& ivertex) const
+  { return support_plane(support_plane_idx).to_2d (point_3(ivertex)); }
+  Segment_2 to_2d (KSR::size_t support_plane_idx, const Segment_3& segment_3) const
+  { return support_plane(support_plane_idx).to_2d (segment_3); }
+  
+  Point_2 point_2 (const PVertex& pvertex, FT time) const
+  { return support_plane(pvertex).point_2 (pvertex.second, time); }
+  Point_2 point_2 (const PVertex& pvertex) const
+  { return point_2 (pvertex, m_current_time); }
+  
+  Segment_2 segment_2 (KSR::size_t support_plane_idx, const IEdge& iedge) const
+  { return support_plane(support_plane_idx).to_2d(segment_3(iedge)); }
+  
+  Point_3 to_3d (KSR::size_t support_plane_idx, const Point_2& point_2) const
+  { return support_plane(support_plane_idx).to_3d (point_2); }
+  
+  Point_3 point_3 (const PVertex& pvertex, FT time) const
+  { return support_plane(pvertex).point_3 (pvertex.second, time); }
+  Point_3 point_3 (const PVertex& pvertex) const
+  { return point_3 (pvertex, m_current_time); }
+  Point_3 point_3 (const IVertex& vertex) const
+  { return m_intersection_graph.point_3 (vertex); }
+
+  Segment_3 segment_3 (const PEdge& pedge, FT time) const
+  { return support_plane(pedge).segment_3 (pedge.second, time); }
+  Segment_3 segment_3 (const PEdge& pedge) const
+  { return segment_3 (pedge, m_current_time); }
+  Segment_3 segment_3 (const IEdge& edge) const
+  { return m_intersection_graph.segment_3 (edge); }
+
+  
+
+
+
 #if 0
+  inline bool point_is_inside_bbox_section_of_intersection_line
+  (const Point_3& point, KSR::size_t intersection_line_idx) const
+  {
+    Vector_3 ref (meta_vertex(intersection_line(intersection_line_idx).meta_vertices_idx()[0]).point(),
+                  meta_vertex(intersection_line(intersection_line_idx).meta_vertices_idx()[1]).point());
+    Vector_3 position (meta_vertex(intersection_line(intersection_line_idx).meta_vertices_idx()[0]).point(),
+                       point);
+
+    if (ref * position < 0)
+      return false;
+
+    return (position * position) < (ref * ref);
+  }
+
   KSR::size_t add_intersection_line (KSR::size_t support_plane_idx,
                                      KSR::size_t meta_vertex_idx_0,
                                      KSR::size_t meta_vertex_idx_1)
@@ -413,36 +651,7 @@ public:
 
     return intersection_line_idx;
   }
-#endif
-  
-  void add_intersection_edge (const KSR::Idx_set& support_planes_idx,
-                              KSR::vector<Intersection_vertex>& vertices)
-  {
-    Point_3 source = m_intersection_graph.point_3 (vertices.front());
 
-    std::sort (vertices.begin(), vertices.end(),
-               [&](const Intersection_vertex& a, const Intersection_vertex& b) -> bool
-               {
-                 return (CGAL::squared_distance (source, m_intersection_graph.point_3(a))
-                         < CGAL::squared_distance (source, m_intersection_graph.point_3(b)));
-               });
-
-    for (KSR::size_t i = 0; i < vertices.size() - 1; ++ i)
-    {
-      Intersection_edge intersection_edge;
-      bool inserted;
-      std::tie (intersection_edge, inserted)
-        = m_intersection_graph.add_edge (vertices[i],
-                                         vertices[i+1],
-                                         support_planes_idx);
-      CGAL_assertion (inserted);
-      
-      for (KSR::size_t support_plane_idx : support_planes_idx)
-        support_plane(support_plane_idx).intersection_edges().insert (intersection_edge);
-    }
-  }
-
-#if 0
   // Add segment on full intersection line, using 2 extrem meta vertices
   KSR::size_t add_segment (KSR::size_t intersection_line_idx, KSR::size_t source_idx, KSR::size_t target_idx,
                            KSR::size_t other_source_idx = KSR::no_element(),
@@ -703,6 +912,24 @@ public:
   {
     m_current_time = time;
   }
+
+private:
+
+  template <typename PSimplex>
+  const Support_plane& support_plane (const PSimplex& psimplex) const { return support_plane(psimplex.first); }
+  const Support_plane& support_plane (KSR::size_t idx) const { return m_support_planes[idx]; }
+  template <typename PSimplex>
+  Support_plane& support_plane (const PSimplex& psimplex) { return support_plane(psimplex.first); }
+  Support_plane& support_plane (KSR::size_t idx) { return m_support_planes[idx]; }
+  
+  template <typename PSimplex>
+  const Mesh& mesh (const PSimplex& psimplex) const { return mesh(psimplex.first); }
+  const Mesh& mesh (KSR::size_t support_plane_idx) const { return support_plane(support_plane_idx).mesh(); }
+  template <typename PSimplex>
+  Mesh& mesh (const PSimplex& psimplex) { return mesh(psimplex.first); }
+  Mesh& mesh (KSR::size_t support_plane_idx) { return support_plane(support_plane_idx).mesh(); }
+  
+
   
 };
 

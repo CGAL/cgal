@@ -51,8 +51,8 @@ public:
   typedef typename Kernel::Plane_3 Plane_3;
 
   typedef KSR_3::Intersection_graph<Kernel> Intersection_graph;
-  typedef typename Intersection_graph::Vertex_descriptor Intersection_vertex;
-  typedef typename Intersection_graph::Edge_descriptor Intersection_edge;
+  typedef typename Intersection_graph::Vertex_descriptor IVertex;
+  typedef typename Intersection_graph::Edge_descriptor IEdge;
 
   typedef CGAL::Surface_mesh<Point_2> Mesh;
   typedef typename Mesh::Vertex_index Vertex_index;
@@ -63,8 +63,9 @@ public:
   typedef std::tuple<Vertex_index, Edge_index, Face_index> Locate_type;
 
   typedef typename Mesh::template Property_map<Vertex_index, Vector_2> V_vector_map;
-  typedef typename Mesh::template Property_map<Vertex_index, Intersection_vertex> V_intersection_map;
-  typedef typename Mesh::template Property_map<Edge_index, Intersection_edge> E_intersection_map;
+  typedef typename Mesh::template Property_map<Vertex_index, IVertex> V_ivertex_map;
+  typedef typename Mesh::template Property_map<Vertex_index, IEdge> V_iedge_map;
+  typedef typename Mesh::template Property_map<Edge_index, IEdge> E_iedge_map;
   typedef typename Mesh::template Property_map<Face_index, KSR::size_t> F_index_map;
 
 
@@ -75,10 +76,11 @@ private:
     Plane_3 plane;
     Mesh mesh;
     V_vector_map direction;
-    V_intersection_map v_intersection;
-    E_intersection_map e_intersection;
+    V_ivertex_map v_ivertex_map;
+    V_iedge_map v_iedge_map;
+    E_iedge_map e_iedge_map;
     F_index_map input;
-    std::set<Intersection_edge> intersection_edges;
+    std::set<IEdge> iedges;
   };
 
   std::shared_ptr<Data> m_data;
@@ -108,10 +110,12 @@ public:
 
     m_data->plane = Plane_3 (points[0], KSR::normalize(normal));
     m_data->direction = m_data->mesh.template add_property_map<Vertex_index, Vector_2>("v:direction", CGAL::NULL_VECTOR).first;
-    m_data->v_intersection = m_data->mesh.template add_property_map<Vertex_index, Intersection_vertex>
-      ("v:intersection", Intersection_graph::null_vertex()).first;
-    m_data->e_intersection = m_data->mesh.template add_property_map<Edge_index, Intersection_edge>
-      ("e:intersection", Intersection_graph::null_edge()).first;
+    m_data->v_ivertex_map = m_data->mesh.template add_property_map<Vertex_index, IVertex>
+      ("v:ivertex", Intersection_graph::null_ivertex()).first;
+    m_data->v_iedge_map = m_data->mesh.template add_property_map<Vertex_index, IEdge>
+      ("v:iedge", Intersection_graph::null_iedge()).first;
+    m_data->e_iedge_map = m_data->mesh.template add_property_map<Edge_index, IEdge>
+      ("e:iedge", Intersection_graph::null_iedge()).first;
 
     bool okay;
     std::tie (m_data->input, okay) = m_data->mesh.template add_property_map<Face_index, KSR::size_t>("f:input", KSR::no_element());
@@ -123,16 +127,16 @@ public:
   const Mesh& mesh() const { return m_data->mesh; }
   Mesh& mesh() { return m_data->mesh; }
 
-  Point_2 point (const Vertex_index& vertex_index, FT time) const
+  Point_2 point_2 (const Vertex_index& vertex_index, FT time) const
   { return m_data->mesh.point(vertex_index) + time * m_data->direction[vertex_index]; }
   
   Point_3 point_3 (const Vertex_index& vertex_index, FT time) const
-  { return to_3d (point (vertex_index, time)); }
+  { return to_3d (point_2 (vertex_index, time)); }
 
   Segment_2 segment_2 (const Edge_index& edge_index, FT time) const
   {
-    return Segment_2 (point (m_data->mesh.source (m_data->mesh.halfedge(edge_index)), time),
-                      point (m_data->mesh.target (m_data->mesh.halfedge(edge_index)), time));
+    return Segment_2 (point_2 (m_data->mesh.source (m_data->mesh.halfedge(edge_index)), time),
+                      point_2 (m_data->mesh.target (m_data->mesh.halfedge(edge_index)), time));
   }
 
   Segment_3 segment_3 (const Edge_index& edge_index, FT time) const
@@ -141,28 +145,61 @@ public:
                       point_3 (m_data->mesh.target (m_data->mesh.halfedge(edge_index)), time));
   }
 
-  void set_intersection_edge (const Vertex_index& a, const Vertex_index& b,
-                              const Intersection_edge& intersection_edge) const
+  void set_iedge (const Vertex_index& a, const Vertex_index& b,
+                              const IEdge& iedge) const
   {
     Halfedge_index hi = m_data->mesh.halfedge (a, b);
     CGAL_assertion (hi != Halfedge_index());
     Edge_index ei = m_data->mesh.edge(hi);
-    m_data->e_intersection[ei] = intersection_edge;
+    m_data->e_iedge_map[ei] = iedge;
   }
 
-  void set_intersection_vertex (const Vertex_index& vertex, 
-                                const Intersection_vertex& intersection_vertex) const
+  void set_ivertex (const Vertex_index& vertex, 
+                    const IVertex& ivertex) const
   {
-    m_data->v_intersection[vertex] = intersection_vertex;
+    m_data->v_ivertex_map[vertex] = ivertex;
   }
 
-  bool has_intersection_edge (const Edge_index& edge_index) const
+  void set_iedge (const Vertex_index& vertex, 
+                              const IEdge& iedge) const
   {
-    return (m_data->e_intersection[edge_index] != Intersection_graph::null_edge());
+    m_data->v_iedge_map[vertex] = iedge;
   }
 
-  const std::set<Intersection_edge>& intersection_edges() const { return m_data->intersection_edges; }
-  std::set<Intersection_edge>& intersection_edges() { return m_data->intersection_edges; }
+  const IEdge& iedge (const Edge_index& edge_index) const
+  {
+    return m_data->e_iedge_map[edge_index];
+  }
+
+  const IEdge& iedge (const Vertex_index& vertex_index) const
+  {
+    return m_data->v_iedge_map[vertex_index];
+  }
+
+  bool has_iedge (const Edge_index& edge_index) const
+  {
+    return (m_data->e_iedge_map[edge_index] != Intersection_graph::null_iedge());
+  }
+  bool has_iedge (const Vertex_index& vertex_index) const
+  {
+    return (m_data->v_iedge_map[vertex_index] != Intersection_graph::null_iedge());
+  }
+
+  const Vector_2& direction (const Vertex_index& vertex_index) const { return m_data->direction[vertex_index]; }
+  Vector_2& direction (const Vertex_index& vertex_index) { return m_data->direction[vertex_index]; }
+  FT speed (const Vertex_index& vertex_index) const
+  { return CGAL::approximate_sqrt (m_data->direction[vertex_index].squared_length()); }
+
+  const KSR::size_t& input (const Face_index& face_index) const { return m_data->input[face_index]; }
+  KSR::size_t& input (const Face_index& face_index) { return m_data->input[face_index]; }
+
+  bool is_frozen (const Vertex_index& vertex_index) const
+  {
+    return (m_data->direction[vertex_index] == CGAL::NULL_VECTOR);
+  }
+
+  const std::set<IEdge>& iedges() const { return m_data->iedges; }
+  std::set<IEdge>& iedges() { return m_data->iedges; }
 
   Point_2 to_2d (const Point_3& point) const
   {
@@ -191,13 +228,13 @@ public:
 
   std::array<Vertex_index, 4>
   add_bbox_polygon (const std::array<Point_2, 4>& points,
-                    const std::array<Intersection_vertex, 4>& intersection_vertices)
+                    const std::array<IVertex, 4>& ivertices)
   {
     std::array<Vertex_index, 4> vertices;
     for (std::size_t i = 0; i < 4; ++ i)
     {
       Vertex_index vi = m_data->mesh.add_vertex(points[i]);
-      m_data->v_intersection[vi] = intersection_vertices[i];
+      m_data->v_ivertex_map[vi] = ivertices[i];
       vertices[i] = vi;
     }
     
@@ -234,10 +271,10 @@ public:
   }
 
   Edge_index add_edge (const Vertex_index& v0, const Vertex_index& v1,
-                       const Intersection_edge& intersection_edge)
+                       const IEdge& iedge)
   {
     Edge_index out = m_data->mesh.edge (m_data->mesh.add_edge(v0,v1));
-    m_data->e_intersection[out] = intersection_edge;
+    m_data->e_iedge_map[out] = iedge;
     return out;
   }
 
@@ -249,19 +286,6 @@ public:
   Vertex_index split_edge (const Edge_index& ei)
   {
     return m_data->mesh.target (CGAL::Euler::split_edge (m_data->mesh.halfedge (ei), m_data->mesh));
-  }
-
-  KSR::vector<Edge_index> intersected_edges (const Segment_2& segment) const
-  {
-    KSR::vector<Edge_index> out;
-    for (Edge_index ei : m_data->mesh.edges())
-    {
-      Segment_2 seg (m_data->mesh.point (m_data->mesh.source (m_data->mesh.halfedge(ei))),
-                     m_data->mesh.point (m_data->mesh.target (m_data->mesh.halfedge(ei))));
-      if (CGAL::do_intersect (segment, seg))
-        out.push_back (ei);
-    }
-    return out;
   }
 
 

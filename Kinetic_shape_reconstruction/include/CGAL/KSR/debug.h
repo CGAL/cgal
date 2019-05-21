@@ -49,21 +49,8 @@ void dump_intersection_edges (const DS& data, const std::string& tag = std::stri
   std::ofstream out (filename);
   out.precision(18);
 
-  for (const typename DS::Intersection_edge& edge : data.intersection_edges())
-  {
-//    out << "2 " << data.segment_3 (edge) << std::endl;
-
-    srand (data.source(edge));
-    out << "2 " << data.segment_3 (edge).source() + typename DS::Vector_3(0.01 * rand() / double(RAND_MAX),
-                                                                          0.01 * rand() / double(RAND_MAX),
-                                                                          0.01 * rand() / double(RAND_MAX));
-    
-    srand (data.target(edge));
-    out << " " << data.segment_3 (edge).target() + typename DS::Vector_3(0.01 * rand() / double(RAND_MAX),
-                                                                         0.01 * rand() / double(RAND_MAX),
-                                                                         0.01 * rand() / double(RAND_MAX))
-        << std::endl;
-  }
+  for (const typename DS::IEdge& iedge : data.iedges())
+    out << "2 " << data.segment_3 (iedge) << std::endl;
 }
 
 template <typename DS>
@@ -73,20 +60,18 @@ void dump_constrained_edges (const DS& data, const std::string& tag = std::strin
   std::ofstream out (filename);
   out.precision(18);
 
-  for (KSR::size_t i = 0; i < data.number_of_meshes(); ++ i)
+  for (KSR::size_t i = 0; i < data.number_of_support_planes(); ++ i)
   {
-    const typename DS::Mesh& m = data.mesh(i);
-
-    for (const typename DS::Edge_index ei : m.edges())
-      if (data.support_plane(i).has_intersection_edge(ei))
-        out << "2 " << data.support_plane(i).segment_3 (ei, 0) << std::endl;
+    for (const typename DS::PEdge pedge : data.pedges(i))
+      if (data.has_iedge(pedge))
+        out << "2 " << data.segment_3 (pedge) << std::endl;
   }
 }
 
 template <typename DS>
 void dump_polygons (const DS& data, const std::string& tag = std::string())
 {
-  typedef CGAL::Surface_mesh<typename DS::Point_3> Mesh;
+  typedef CGAL::Surface_mesh<typename DS::Kernel::Point_3> Mesh;
   typedef typename Mesh::template Property_map<typename Mesh::Face_index, unsigned char> Uchar_map;
 
   Mesh mesh;
@@ -103,49 +88,47 @@ void dump_polygons (const DS& data, const std::string& tag = std::string())
   KSR::size_t nb_vertices = 0;
 
   KSR::vector<typename Mesh::Vertex_index> vertices;
-  for (KSR::size_t i = 0; i < data.number_of_meshes(); ++ i)
+  for (KSR::size_t i = 0; i < data.number_of_support_planes(); ++ i)
   {
-    const typename DS::Mesh& m = data.mesh(i);
-
-    if (data.is_bbox_mesh(i))
+    if (data.is_bbox_support_plane(i))
     {
       KSR::size_t new_vertices = 0;
-      for (typename DS::Vertex_index vi : m.vertices())
+      for (typename DS::PVertex pvertex : data.pvertices(i))
       {
-        bbox_mesh.add_vertex (data.point_of_vertex (i, vi));
+        bbox_mesh.add_vertex (data.point_3(pvertex));
         ++ new_vertices;
       }
       
-      for (typename DS::Face_index fi : m.faces())
+      for (typename DS::PFace pface : data.pfaces(i))
       {
         vertices.clear();
-        for(typename DS::Halfedge_index hi : halfedges_around_face(halfedge(fi, m),m))
-          vertices.push_back (typename Mesh::Vertex_index(KSR::size_t(source(hi, m)) + bbox_nb_vertices));
+        for(typename DS::PVertex pvertex : data.pvertices_of_pface(pface))
+          vertices.push_back (typename Mesh::Vertex_index(KSR::size_t(pvertex.second) + bbox_nb_vertices));
         
         typename Mesh::Face_index face = bbox_mesh.add_face (vertices);
         std::tie (bbox_red[face], bbox_green[face], bbox_blue[face])
-          = get_idx_color ((i+1) * (fi+1));
+          = get_idx_color ((i+1) * (pface.second+1));
       }
       bbox_nb_vertices += new_vertices;
     }
     else
     {
       KSR::size_t new_vertices = 0;
-      for (typename DS::Vertex_index vi : m.vertices())
+      for (typename DS::PVertex pvertex : data.pvertices(i))
       {
-        mesh.add_vertex (data.point_of_vertex (i, vi));
+        mesh.add_vertex (data.point_3 (pvertex));
         ++ new_vertices;
       }
       
-      for (typename DS::Face_index fi : m.faces())
+      for (typename DS::PFace pface : data.pfaces(i))
       {
         vertices.clear();
-        for(typename DS::Halfedge_index hi : halfedges_around_face(halfedge(fi, m),m))
-          vertices.push_back (typename Mesh::Vertex_index(KSR::size_t(source(hi, m)) + nb_vertices));
+        for(typename DS::PVertex pvertex : data.pvertices_of_pface(pface))
+          vertices.push_back (typename Mesh::Vertex_index(KSR::size_t(pvertex.second) + nb_vertices));
         
         typename Mesh::Face_index face = mesh.add_face (vertices);
         std::tie (red[face], green[face], blue[face])
-          = get_idx_color (i * (fi+1));
+          = get_idx_color (i * (pface.second+1));
       }
       nb_vertices += new_vertices;
     }
@@ -177,7 +160,7 @@ void dump_event (const DS& data, const Event& ev, const std::string& tag = std::
   std::string vfilename = (tag != std::string() ? tag + "_" : "") + "event_vertex.xyz";
   std::ofstream vout (vfilename);
   vout.precision(18);
-  vout << data.point_of_vertex(ev.vertex_idx()) << std::endl;
+//  vout << data.point_of_vertex(ev.vertex_idx()) << std::endl;
 }
 
 template <typename DS>
