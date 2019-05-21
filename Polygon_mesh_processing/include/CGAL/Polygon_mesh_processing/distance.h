@@ -49,6 +49,8 @@
 
 #include <boost/unordered_set.hpp>
 
+#include <limits>
+
 namespace CGAL{
 namespace Polygon_mesh_processing {
 namespace internal{
@@ -864,7 +866,7 @@ template <class Concurrency_tag,
 double bounded_error_Hausdorff_impl(
   const TriangleMesh& tm1,
   const TriangleMesh& tm2,
-  const typename Kernel::FT& error_bound,
+  const typename Kernel::FT& squared_error_bound,
   VPM1 vpm1,
   VPM2 vpm2)
 {
@@ -872,12 +874,25 @@ double bounded_error_Hausdorff_impl(
   CGAL_assertion_msg (is_triangle,
         "One of the meshes is not triangulated. Distance computing impossible.");
 
+  typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM2> TM2_primitive;
+  typedef AABB_tree< AABB_traits<Kernel, TM2_primitive> > TM2_tree;
   typedef typename Kernel::Point_3 Point_3;
+
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+
+  typedef std::pair<double, double> Hausdorff_bounds;
   typedef CGAL::Spatial_sort_traits_adapter_3<Kernel,VPM1> Search_traits_3;
   typedef CGAL::dynamic_vertex_property_t<std::pair<double, face_descriptor>> Vertex_property_tag;
+  typedef CGAL::dynamic_face_property_t<Hausdorff_bounds> Face_property_tag;
+
   typedef typename boost::property_map<TriangleMesh, Vertex_property_tag>::const_type Vertex_closest_triangle_map;
+  typedef typename boost::property_map<TriangleMesh, Face_property_tag>::const_type Triangle_hausdorff_bounds;
+
+  typename Kernel::Compute_squared_distance_3 squared_distance;
+  typename Kernel::Construct_projected_point_3 project_point;
+  typename Kernel::FT dist;
 
   std::vector<vertex_descriptor> tm1_vertices;
   tm1_vertices.reserve(num_vertices(tm1));
@@ -888,9 +903,6 @@ double bounded_error_Hausdorff_impl(
                 tm1_vertices.end(),
                 Search_traits_3(vpm1) );
 
-  typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM2> TM2_primitive;
-  typedef AABB_tree< AABB_traits<Kernel, TM2_primitive> > TM2_tree;
-
   // Build an AABB tree on the second mesh
   TM2_tree tm2_tree( faces(tm2).begin(), faces(tm2).end(), tm2, vpm2 );
   tm2_tree.build();
@@ -898,11 +910,13 @@ double bounded_error_Hausdorff_impl(
   std::pair<Point_3, face_descriptor> hint = tm2_tree.any_reference_point_and_id();
 
   Vertex_closest_triangle_map vctm  = get(Vertex_property_tag(), tm1);
+  Triangle_hausdorff_bounds thb = get(Face_property_tag(), tm1);
 
 #if !defined(CGAL_LINKED_WITH_TBB)
   CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
 #else
+  // TODO implement parallelized version of the below here.
   // if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
   // {
   //   tbb::atomic<double> distance;
@@ -915,19 +929,61 @@ double bounded_error_Hausdorff_impl(
   // else
 #endif
   {
+    // For each vertex in the first mesh, find the closest triangle in the
+    // second mesh, store it and also store the distance to this triangle
+    // in a dynamic vertex property
     for(vertex_descriptor vd : tm1_vertices)
     {
       typename boost::property_traits<VPM1>::reference pt = get(vpm1, vd);
       hint = tm2_tree.closest_point_and_primitive(pt, hint);
-      typename Kernel::Compute_squared_distance_3 squared_distance;
-      typename Kernel::FT dist = squared_distance(hint.first, pt);
-      double d = to_double(CGAL::approximate_sqrt(dist));
-
-
+      dist = squared_distance(hint.first, pt);
+      double d = to_double(dist);
       put(vctm, vd, std::make_pair(d, hint.second));
     }
+
+    Triangle_from_face_descriptor_map<TriangleMesh, VPM2> face_to_triangle_map(&tm2, vpm2);
+    double h_lower = 0.;
+    double h_upper = std::numeric_limits<double>::infinity();
+
+    for(face_descriptor fd : faces(tm1))
+    {
+      double h_triangle_lower = 0.;
+      double h_triangle_upper = std::numeric_limits<double>::infinity();
+      halfedge_descriptor hd = halfedge(fd, tm1);
+
+      std::array<vertex_descriptor,3> face_vertices = {source(hd,tm1), target(hd,tm1), target(next(hd, tm1),tm1)};
+
+      std::array<std::pair<double, face_descriptor>,3> vertex_properties = {
+          get(vctm, face_vertices[0]),
+          get(vctm, face_vertices[1]),
+          get(vctm, face_vertices[2])};
+
+      std::array<typename Kernel::Triangle_3,3> triangles_in_B = {
+          get(face_to_triangle_map, vertex_properties[0].second),
+          get(face_to_triangle_map, vertex_properties[1].second),
+          get(face_to_triangle_map, vertex_properties[2].second)};
+
+      for(int i=0; i<3; ++i)
+      {
+        // Iterate over the vertices by i
+        h_triangle_lower = (std::max)(h_triangle_lower, vertex_properties[i].first);
+        // Iterate over the triangles by i
+        double face_distance_1 = vertex_properties[i].second==vertex_properties[(i+1)%3].second
+                               ? vertex_properties[(i+1)%3].first
+                               : squared_distance(project_point(triangles_in_B[i], get(vpm1, face_vertices[(i+1)%3])), get(vpm1, face_vertices[(i+1)%3]));
+        double face_distance_2 = vertex_properties[i].second==vertex_properties[(i+2)%3].second
+                               ? vertex_properties[(i+2)%3].first
+                               : squared_distance(project_point(triangles_in_B[i], get(vpm1, face_vertices[(i+2)%3])), get(vpm1, face_vertices[(i+2)%3]));
+
+        h_triangle_upper = (std::min)((std::max)((std::max)(face_distance_1, face_distance_2), vertex_properties[i].first), h_triangle_upper);
+      }
+      put(thb, fd, Hausdorff_bounds(h_triangle_lower, h_triangle_upper));
+      h_lower = (std::max)(h_lower, h_triangle_lower);
+      h_upper = (std::max)(h_upper, h_triangle_upper);
+    }
+
+    return (h_lower+h_upper)/2.;
   }
-  return 0.;
 }
 
 } //end of namespace internal
@@ -991,7 +1047,7 @@ double bounded_error_Hausdorff_distance( const TriangleMesh& tm1,
    Vpm2 vpm2 = choose_param(get_param(np2, internal_np::vertex_point),
                            get_const_property_map(vertex_point, tm2));
 
-   return internal::bounded_error_Hausdorff_impl<Concurrency_tag, Geom_traits>(tm1, tm2, error_bound, vpm1, vpm2);
+   return internal::bounded_error_Hausdorff_impl<Concurrency_tag, Geom_traits>(tm1, tm2, error_bound*error_bound, vpm1, vpm2);
 }
 
 template< class Concurrency_tag,
