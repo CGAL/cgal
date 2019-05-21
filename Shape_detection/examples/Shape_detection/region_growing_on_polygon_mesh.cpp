@@ -154,8 +154,9 @@ int main(int argc, char *argv[]) {
           static_cast<unsigned char>(rand() % 256));
 
         // Iterate through all region items.
+        using size_type = typename Polygon_mesh::size_type;
         for (const auto index : region)
-          face_color[static_cast<Face_index>(index)] = color;
+          face_color[Face_index(static_cast<size_type>(index))] = color;
       }
 
       out << polygon_mesh;
