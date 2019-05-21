@@ -570,8 +570,8 @@ message("== Detect external libraries ==")
 # Remarks: 
 #  External libs configured when Qt5 lib of cgal are required
 #  Coin is used in KDS, but no FindCoin or FindCOIN exists
-#  There exists FindF2C, FindIPE, FindMKL, but they are only used to support supporting libs
-list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 0 GMP MPFR ZLIB OpenGL LEDA MPFI RS RS3 OpenNL Eigen3 BLAS LAPACK ESBTL Coin3D NTL IPE)
+#  There exists FindIPE, FindMKL, but they are only used to support supporting libs
+list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 0 GMP MPFR ZLIB OpenGL LEDA MPFI RS RS3 OpenNL Eigen3 ESBTL Coin3D NTL IPE)
 if (NOT WIN32)
   # GMPXX is not supported on WIN32 machines
   list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 1 GMPXX)

@@ -309,28 +309,6 @@ compute_vcm (const PointRange& points,
                CGAL::Point_set_processing_3::parameters::all_default (points));
 }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API
-template < class ForwardIterator,
-           class PointMap,
-           class Kernel
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::compute_vcm(), please update your code")
-void
-compute_vcm (ForwardIterator first,
-             ForwardIterator beyond,
-             PointMap point_map,
-             std::vector< std::array<double, 6> > &ccov,
-             double offset_radius,
-             double convolution_radius,
-             const Kernel & kernel)
-{
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  compute_vcm (points, ccov, offset_radius, convolution_radius,
-               CGAL::parameters::point_map (point_map).
-               geom_traits (kernel));
-}
-#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
   
 /// \cond SKIP_IN_MANUAL
@@ -466,33 +444,6 @@ vcm_estimate_normals (PointRange& points,
      CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API
-template < typename ForwardIterator,
-           typename PointMap,
-           typename NormalMap,
-           typename VCMTraits
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::vcm_estimate_normals(), please update your code")
-void
-vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input point.
-                      ForwardIterator beyond, ///< past-the-end iterator over the input points.
-                      PointMap point_map, ///< property map: value_type of ForwardIterator -> Point_3.
-                      NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3.
-                      double offset_radius, ///< offset radius.
-                      double convolution_radius, ///< convolution radius.
-                      VCMTraits
-)
-{
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  vcm_estimate_normals
-    (points,
-     offset_radius, convolution_radius,
-     CGAL::parameters::point_map (point_map).
-     normal_map (normal_map).
-     diagonalize_traits (VCMTraits()));
-}
-#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
 
@@ -551,114 +502,7 @@ vcm_estimate_normals (PointRange& points,
      CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API
-template < typename ForwardIterator,
-           typename PointMap,
-           typename NormalMap,
-           typename VCMTraits
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::vcm_estimate_normals(), please update your code")
-void
-vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input point.
-                      ForwardIterator beyond, ///< past-the-end iterator over the input points.
-                      PointMap point_map, ///< property map: value_type of ForwardIterator -> Point_3.
-                      NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3.
-                      double offset_radius, ///< offset radius.
-                      unsigned int k, ///< number of neighbor points used for the convolution.
-                      VCMTraits
-)
-{
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  vcm_estimate_normals
-    (points,
-     offset_radius, k,
-     CGAL::parameters::point_map (point_map).
-     normal_map (normal_map).
-     diagonalize_traits (VCMTraits()));
-}
 
-// deprecated API  
-template < typename ForwardIterator,
-           typename PointMap,
-           typename NormalMap
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::vcm_estimate_normals(), please update your code")
-void
-vcm_estimate_normals (ForwardIterator first,
-                      ForwardIterator beyond,
-                      PointMap point_map,
-                      NormalMap normal_map,
-                      double offset_radius,
-                      double convolution_radius)
-{
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  vcm_estimate_normals
-    (points,
-     offset_radius, convolution_radius,
-     CGAL::parameters::point_map (point_map).
-     normal_map (normal_map));
-}
-
-// deprecated API  
-template < typename ForwardIterator,
-           typename PointMap,
-           typename NormalMap
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::vcm_estimate_normals(), please update your code")
-void
-vcm_estimate_normals (ForwardIterator first,
-                      ForwardIterator beyond,
-                      PointMap point_map,
-                      NormalMap normal_map,
-                      double offset_radius,
-                      unsigned int nb_neighbors_convolve)
-{
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  vcm_estimate_normals
-    (points,
-     offset_radius, nb_neighbors_convolve,
-     CGAL::parameters::point_map (point_map).
-     normal_map (normal_map));
-}
-
-
-// deprecated API  
-template < typename ForwardIterator,
-           typename NormalMap
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::vcm_estimate_normals(), please update your code")
-void
-vcm_estimate_normals (ForwardIterator first,
-                      ForwardIterator beyond,
-                      NormalMap normal_map,
-                      double offset_radius,
-                      double convolution_radius) {
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  vcm_estimate_normals
-    (points,
-     offset_radius, convolution_radius,
-     CGAL::parameters::normal_map (normal_map));
-}
-
-// deprecated API  
-template < typename ForwardIterator,
-           typename NormalMap
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::vcm_estimate_normals(), please update your code")
-void
-vcm_estimate_normals (ForwardIterator first,
-                      ForwardIterator beyond,
-                      NormalMap normal_map,
-                      double offset_radius,
-                      unsigned int nb_neighbors_convolve) {
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  vcm_estimate_normals
-    (points,
-     offset_radius, nb_neighbors_convolve,
-     CGAL::parameters::normal_map (normal_map));
-}
-#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
 } // namespace CGAL
