@@ -52,12 +52,8 @@ namespace CGAL {
     typedef std::vector<std::size_t> Vertex_indices;
     typedef std::vector<Vertex_handle> Vertices;
 
-    Vertex_indices vertex_indices;
-    vertex_indices.resize(points.size());
-
-    std::copy(boost::counting_iterator<std::ptrdiff_t>(0),
-              boost::counting_iterator<std::ptrdiff_t>(points.size()),
-              std::back_inserter(vertex_indices));
+    Vertex_indices vertex_indices(boost::counting_iterator<std::ptrdiff_t>(0),
+                                  boost::counting_iterator<std::ptrdiff_t>(points.size()));
 
     typename T::size_type n = t.number_of_vertices();
     CGAL::Spatial_sort_traits_adapter_2<
