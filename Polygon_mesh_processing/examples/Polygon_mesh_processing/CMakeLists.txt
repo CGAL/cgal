@@ -20,7 +20,7 @@ find_package( CGAL QUIET COMPONENTS  )
 if ( NOT CGAL_FOUND )
 
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
+  return()
 
 endif()
 
@@ -31,7 +31,7 @@ if ( NOT Boost_FOUND )
 
   message(STATUS "This project requires the Boost library, and will not be compiled.")
 
-  return()  
+  return()
 
 endif()
 
@@ -55,8 +55,10 @@ find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 
 find_package( TBB )
 create_single_source_cgal_program( "hausdorff_distance_remeshing_example.cpp")
+create_single_source_cgal_program( "hausdorff_bounded_error_distance_example.cpp")
 if( TBB_FOUND )
   CGAL_target_use_TBB(hausdorff_distance_remeshing_example)
+  CGAL_target_use_TBB(hausdorff_bounded_error_distance_example)
 else()
   message( STATUS "NOTICE: Intel TBB was not found. hausdorff_distance_example will use sequential code." )
 endif()
@@ -118,6 +120,3 @@ target_link_libraries( stitch_borders_example_OM PRIVATE ${OPENMESH_LIBRARIES} )
 create_single_source_cgal_program( "triangulate_faces_example_OM.cpp")
 target_link_libraries( triangulate_faces_example_OM PRIVATE ${OPENMESH_LIBRARIES} )
 endif(OpenMesh_FOUND)
-
-
-
