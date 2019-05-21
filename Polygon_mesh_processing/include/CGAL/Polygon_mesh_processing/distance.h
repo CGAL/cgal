@@ -874,7 +874,10 @@ double bounded_error_Hausdorff_impl(
 
   typedef typename Kernel::Point_3 Point_3;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
   typedef CGAL::Spatial_sort_traits_adapter_3<Kernel,VPM1> Search_traits_3;
+  typedef CGAL::dynamic_vertex_property_t<std::pair<double, face_descriptor>> Vertex_property_tag;
+  typedef typename boost::property_map<TriangleMesh, Vertex_property_tag>::const_type Vertex_closest_triangle_map;
 
   std::vector<vertex_descriptor> tm1_vertices;
   tm1_vertices.reserve(num_vertices(tm1));
@@ -892,7 +895,9 @@ double bounded_error_Hausdorff_impl(
   TM2_tree tm2_tree( faces(tm2).begin(), faces(tm2).end(), tm2, vpm2 );
   tm2_tree.build();
   tm2_tree.accelerate_distance_queries();
-  Point_3 hint = get(vpm2, *vertices(tm2).begin());
+  std::pair<Point_3, face_descriptor> hint = tm2_tree.any_reference_point_and_id();
+
+  Vertex_closest_triangle_map vctm  = get(Vertex_property_tag(), tm1);
 
 #if !defined(CGAL_LINKED_WITH_TBB)
   CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
@@ -910,17 +915,17 @@ double bounded_error_Hausdorff_impl(
   // else
 #endif
   {
-    double hdist = 0;
-    for(const typename Kernel::Point_3& pt : sample_points)
+    for(vertex_descriptor vd : tm1_vertices)
     {
-      hint = tree.closest_point(pt, hint);
+      typename boost::property_traits<VPM1>::reference pt = get(vpm1, vd);
+      hint = tm2_tree.closest_point_and_primitive(pt, hint);
       typename Kernel::Compute_squared_distance_3 squared_distance;
-      typename Kernel::FT dist = squared_distance(hint,pt);
+      typename Kernel::FT dist = squared_distance(hint.first, pt);
       double d = to_double(CGAL::approximate_sqrt(dist));
-      if(d>hdist)
-        hdist=d;
+
+
+      put(vctm, vd, std::make_pair(d, hint.second));
     }
-    return hdist;
   }
   return 0.;
 }
