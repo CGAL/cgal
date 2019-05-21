@@ -69,18 +69,22 @@ struct Edge_cotangent_weight : CotangentValue
     }
 };
 
-template <typename PolygonMesh, typename Descriptor>
-double sqlength(const Descriptor& v1, const Descriptor& v2, const PolygonMesh& mesh_)
+template <typename PolygonMesh>
+double sqlength(const typename boost::graph_traits<PolygonMesh>::vertex_descriptor v1,
+                const typename boost::graph_traits<PolygonMesh>::vertex_descriptor v2,
+                const PolygonMesh& mesh_)
 {
   typedef typename boost::property_map<PolygonMesh, boost::vertex_point_t>::const_type Vpm;
   Vpm vpmap_ = get(boost::vertex_point, mesh_);
-  return to_double(CGAL::squared_distance(get(vpmap_, v1), get(vpmap_, v2)));
+
+  return CGAL::to_double(CGAL::squared_distance(get(vpmap_, v1), get(vpmap_, v2)));
 }
 
 template <typename PolygonMesh, typename Descriptor>
-double sqlength(const Descriptor& h, const PolygonMesh& mesh_)
+double sqlength(const Descriptor h, const PolygonMesh& mesh_)
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+
   vertex_descriptor v1 = target(h, mesh_);
   vertex_descriptor v2 = source(h, mesh_);
   return sqlength(v1, v2, mesh_);

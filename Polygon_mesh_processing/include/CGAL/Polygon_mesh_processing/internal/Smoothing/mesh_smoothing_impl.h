@@ -121,7 +121,7 @@ public:
 
         // calculate movement
         Vector move = calc_move(hedges);
-        barycenters[v] = (get(vpmap_, v) + move);
+        barycenters[v] = get(vpmap_, v) + move;
 
       } // not on border
     } // for each v
@@ -131,17 +131,17 @@ public:
     std::map<vertex_descriptor, Point_3> new_locations;
     for(const VP& vp : barycenters)
     {
-      Point_ref p = get(vpmap_, vp.first);
-      Point_3 q = vp.second;
+      const Point_ref p = get(vpmap_, vp.first);
+      const Point_3& q = vp.second;
       Vector n = get(n_map, vp.first);
-      new_locations[vp.first] = q + (n * Vector(q, p)) * n ;
+      new_locations[vp.first] = q + (n * Vector(q, p)) * n;
     }
 
     // update location
     std::size_t moved_points = 0;
     for(const VP& vp : new_locations)
     {
-      // iff movement impoves all angles
+      // iff movement improves all angles
       if(does_it_impove(vp.first, vp.second))
       {
         ++moved_points;
@@ -187,7 +187,6 @@ public:
   }
 
 private:
-
   // angle bisecting functions
   // -------------------------
   Vector calc_move(const Hedges& hedges)
@@ -428,6 +427,26 @@ private:
     return move_flag;
   }
 
+  double element_area(const vertex_descriptor v1,
+                      const vertex_descriptor v2,
+                      const vertex_descriptor v3) const
+  {
+    return CGAL::to_double(CGAL::approximate_sqrt(
+                       traits_.compute_squared_area_3_object()(get(vpmap_, v1),
+                                                               get(vpmap_, v2),
+                                                               get(vpmap_, v3))));
+  }
+
+  double element_area(const Point_3& P,
+                      const vertex_descriptor v2,
+                      const vertex_descriptor v3) const
+  {
+    return CGAL::to_double(CGAL::approximate_sqrt(
+                       traits_.compute_squared_area_3_object()(P,
+                                                               get(vpmap_, v2),
+                                                               get(vpmap_, v3))));
+  }
+
   void compute_derivatives(double& drdx, double& drdy, double& drdz,
                            const vertex_descriptor v,
                            const double S_av)
@@ -454,26 +473,6 @@ private:
     drdx *= 2;
     drdy *= 2;
     drdz *= 2;
-  }
-
-  double element_area(const vertex_descriptor v1,
-                      const vertex_descriptor v2,
-                      const vertex_descriptor v3) const
-  {
-    return CGAL::to_double(CGAL::approximate_sqrt(
-                       traits_.compute_squared_area_3_object()(get(vpmap_, v1),
-                                                               get(vpmap_, v2),
-                                                               get(vpmap_, v3))));
-  }
-
-  double element_area(const Point_3& P,
-                      const vertex_descriptor v2,
-                      const vertex_descriptor v3) const
-  {
-    return CGAL::to_double(CGAL::approximate_sqrt(
-                       traits_.compute_squared_area_3_object()(P,
-                                                               get(vpmap_, v2),
-                                                               get(vpmap_, v3))));
   }
 
   double compute_average_area_around(const vertex_descriptor v)
