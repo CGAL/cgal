@@ -3501,10 +3501,10 @@ public:
   //--------------------------------------------------------------------------
 
   inline FT x(Integral_domain_without_division_tag) const {
-    return CGAL::to_double(hx()) / CGAL::to_double(hw());
+    return FT(CGAL::to_double(hx()) / CGAL::to_double(hw()));
   }
   inline FT y(Integral_domain_without_division_tag) const {
-    return CGAL::to_double(hy()) / CGAL::to_double(hw());
+    return FT(CGAL::to_double(hy()) / CGAL::to_double(hw()));
   }
 
   inline FT x(Field_tag) const { return hx() / hw(); }

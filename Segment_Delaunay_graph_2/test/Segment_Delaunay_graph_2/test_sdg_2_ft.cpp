@@ -1,25 +1,14 @@
-#include <CGAL/basic.h>
-
 #include <iostream>
 #include <fstream>
 #include <cassert>
 
-// choose number type
-#ifdef CGAL_USE_GMP
-#  include <CGAL/Gmpq.h>
-typedef CGAL::Gmpq                     exact_ring_t;
-typedef CGAL::Gmpq                     exact_field_t;
-#else
-#  include <CGAL/MP_Float.h>
-#  include <CGAL/Quotient.h>
-typedef CGAL::MP_Float                 exact_ring_t;
-typedef CGAL::Quotient<exact_ring_t>   exact_field_t;
-#endif
-
 #include <CGAL/Simple_cartesian.h>
-
+#include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/Segment_Delaunay_graph_2.h>
 #include <CGAL/Segment_Delaunay_graph_filtered_traits_2.h>
+
+typedef CGAL::internal::Exact_ring_selector<double>::Type   exact_ring_t;
+typedef CGAL::internal::Exact_field_selector<double>::Type  exact_field_t;
 
 typedef CGAL::Simple_cartesian<double>          CK;
 typedef CGAL::Simple_cartesian<exact_ring_t>    EK_ring;

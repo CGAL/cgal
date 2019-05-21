@@ -17,7 +17,7 @@
 // ----------------------------------------------------------------------------
 //
 // Library       : CGAL 
-// File          : test/Chinese_remaminder_test.C
+// File          : test/Chinese_remaminder_traits.cpp
 // CGAL_release   : $Name:  $
 // Revision      : $Revision$
 // Revision_date : $Date$
@@ -170,7 +170,7 @@ int main(){
 
 #ifdef CGAL_USE_CORE  
     test_CR<CGAL::CORE_arithmetic_kernel>();
-#endif // Lis_HAVE_CORE
+#endif // CGAL_USE_CORE
      
     return 0;
 }
