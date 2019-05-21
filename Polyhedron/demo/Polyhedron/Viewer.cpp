@@ -621,11 +621,23 @@ void Viewer::keyPressEvent(QKeyEvent* e)
     }
     else if(e->key() == Qt::Key_M) {
       d->macro_mode = ! d->macro_mode;
-
-      if(d->macro_mode) {
+      switch(camera()->type()){
+      case CGAL::qglviewer::Camera::PERSPECTIVE:
+        if(d->macro_mode) {
           camera()->setZNearCoefficient(0.0005f);
-      } else {
-        camera()->setZNearCoefficient(0.005f);
+        } else {
+          camera()->setZNearCoefficient(0.005f);
+        }
+        break;
+        case CGAL::qglviewer::Camera::ORTHOGRAPHIC:
+        if(d->macro_mode) {
+          camera()->setOrthoZNear(-0.5f);
+        } else {
+          camera()->setOrthoZNear(0.0f);
+        }
+        break;
+        deafult:
+        break;
       }
       this->displayMessage(tr("Macro mode: %1").
                            arg(d->macro_mode ? tr("on") : tr("off")));
@@ -1351,19 +1363,39 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
 
 void Viewer::wheelEvent(QWheelEvent* e)
 {
-    if(e->modifiers().testFlag(Qt::ShiftModifier))
+  if(e->modifiers().testFlag(Qt::ShiftModifier))
+  {
+    double delta = e->delta();
+    if(delta>0)
     {
-        double delta = e->delta();
-        if(delta>0)
-        {
-            camera()->setZNearCoefficient(camera()->zNearCoefficient() * 1.01);
-        }
-        else
-            camera()->setZNearCoefficient(camera()->zNearCoefficient() / 1.01);
-        update();
+      switch(camera()->type())
+      {
+      case CGAL::qglviewer::Camera::ORTHOGRAPHIC:
+        camera()->setOrthoZNear(camera()->orthoZNear() + 0.01);
+        break;
+      case CGAL::qglviewer::Camera::PERSPECTIVE:
+        camera()->setZNearCoefficient(camera()->zNearCoefficient() * 1.01);
+        break;
+      default:
+        break;
+      }
     }
     else
-        CGAL::QGLViewer::wheelEvent(e);
+      switch(camera()->type())
+      {
+      case CGAL::qglviewer::Camera::ORTHOGRAPHIC:
+        camera()->setOrthoZNear(camera()->orthoZNear() - 0.01);
+        break;
+      case CGAL::qglviewer::Camera::PERSPECTIVE:
+        camera()->setZNearCoefficient(camera()->zNearCoefficient() / 1.01);
+        break;
+      default:
+        break;
+      }
+    update();
+  }
+  else
+    CGAL::QGLViewer::wheelEvent(e);
 }
 
 bool Viewer::testDisplayId(double x, double y, double z)

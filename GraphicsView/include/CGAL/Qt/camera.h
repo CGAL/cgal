@@ -299,6 +299,16 @@ public Q_SLOTS:
     zClippingCoef_ = coef;
     projectionMatrixIsUpToDate_ = false;
   }
+  /*! Sets the zNear value in orthographic mode. */
+  void setOrthoZNear(qreal z)
+  {
+    m_zMin = z;
+  }
+  /*! Returns the zNear value in orthographic mode*/
+  qreal orthoZNear()
+  {
+    return m_zMin;
+  }
   //@}
 
   /*! @name Scene radius and center */
@@ -463,6 +473,7 @@ private:
   mutable bool modelViewMatrixIsUpToDate_;
   mutable GLdouble projectionMatrix_[16]; // Buffered projection matrix.
   mutable bool projectionMatrixIsUpToDate_;
+  qreal m_zMin; //USed for near plane in orthographic projection.
 
   // S t e r e o   p a r a m e t e r s
   qreal IODistance_;          // inter-ocular distance, in meters
