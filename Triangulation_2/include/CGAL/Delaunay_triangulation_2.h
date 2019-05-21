@@ -329,8 +329,12 @@ public:
   }
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
+
 private:
  
+  using Triangulation::top_get_first;
+  using Triangulation::top_get_second;
+  
   template <class Tuple_or_pair,class InputIterator>
   std::ptrdiff_t insert_with_info(InputIterator first,InputIterator last)
   {
