@@ -943,8 +943,11 @@ double bounded_error_Hausdorff_impl(
 
     Triangle_from_face_descriptor_map<TriangleMesh, VPM2> face_to_triangle_map(&tm2, vpm2);
     double h_lower = 0.;
-    double h_upper = std::numeric_limits<double>::infinity();
+    double h_upper = 0.;
 
+    // For each triangle in the first mesh, initialize its local upper and
+    // lower bound and store these in a dynamic face property for furture
+    // reference
     for(face_descriptor fd : faces(tm1))
     {
       double h_triangle_lower = 0.;
@@ -982,7 +985,26 @@ double bounded_error_Hausdorff_impl(
       h_upper = (std::max)(h_upper, h_triangle_upper);
     }
 
-    return (h_lower+h_upper)/2.;
+    // Initialize an array of candidate triangles in A to be procesed in the
+    // following
+    std::vector<face_descriptor> candidate_triangles;
+
+    for(face_descriptor fd : faces(tm1))
+    {
+      Hausdorff_bounds triangle_bounds = get(thb, fd);
+      if (triangle_bounds.second > h_lower) {
+
+        // TODO culling on B
+
+        candidate_triangles.push_back(fd);
+      }
+    }
+
+    // TODO Iterate over candidate_triangles and kill those which cannot contribute anymore
+
+    // TODO Send the remaining triangles to the Subdivision
+
+    return (CGAL::approximate_sqrt(h_lower)+CGAL::approximate_sqrt(h_upper))/2.;
   }
 }
 
