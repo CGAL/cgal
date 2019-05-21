@@ -274,15 +274,6 @@ private:
     bisector_vec = -Vector(bisector);
   }
 
-  Vector find_perpendicular(const Vector& input_vec,
-                            const Point_3& s,
-                            const Point_3& pv)
-  {
-    Vector s_pv(s, pv);
-    Vector aux_normal = CGAL::cross_product(input_vec, s_pv);
-    return CGAL::cross_product(aux_normal, input_vec);
-  }
-
   // angle measurement & evaluation
   // ------------------------------
   void measure_angles(const Hedges& hedges)
