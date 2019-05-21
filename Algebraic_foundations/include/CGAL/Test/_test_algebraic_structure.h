@@ -28,10 +28,10 @@
 
 // within this file AS ^= Type
 
-#include <CGAL/basic.h>
 #include <CGAL/Algebraic_structure_traits.h>
 //#include <CGAL/Real_embeddable_traits.h>
 
+#include <CGAL/number_utils.h>
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>
 #include <boost/type_traits.hpp>

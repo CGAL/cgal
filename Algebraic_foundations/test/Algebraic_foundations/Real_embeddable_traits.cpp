@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <CGAL/use.h>
 #include <CGAL/Real_embeddable_traits.h>
 #include <cassert>

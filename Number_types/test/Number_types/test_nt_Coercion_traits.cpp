@@ -12,7 +12,6 @@
 // ============================================================================
 
 
-#include <CGAL/basic.h>
 #include <CGAL/use.h>
 #include <cassert>
 #include <CGAL/Arithmetic_kernel.h>
@@ -22,12 +21,6 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Interval_nt.h>
-
-//#include <NiX/Polynomial.h>
-//#include <NiX/Compactified.h>
-//#include <NiX/Tendency.h>
-//#include <CGAL/Vector_d.h> // TODO: Is this available in CGAL? CGAL/Vector_d?
-//#include <NiX/Matrix_d.h>
 
 #include <CGAL/Test/_test_coercion_traits.h>
 

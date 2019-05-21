@@ -1,7 +1,6 @@
 #include <iostream>
 #include <cassert>
 
-#include <CGAL/basic.h>
 #include <CGAL/Arithmetic_kernel.h>
 
 #ifdef CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL

@@ -27,7 +27,6 @@
 //
 // ============================================================================
 
-#include <CGAL/basic.h>
 #include <CGAL/IO/io.h>
 #include <cassert>
 #include <iostream>

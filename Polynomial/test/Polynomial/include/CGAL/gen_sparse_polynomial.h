@@ -2,7 +2,6 @@
 #ifndef CGAL_GEN_SPARSE_POLYNOMIAL_H
 #define CGAL_GEN_SPARSE_POLYNOMIAL_H
 
-#include <CGAL/basic.h>
 #include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/Random.h>
 #include <cmath>

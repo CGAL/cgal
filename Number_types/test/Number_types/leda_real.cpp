@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_real.h>
 #include <CGAL/Test/_test_algebraic_structure.h>
