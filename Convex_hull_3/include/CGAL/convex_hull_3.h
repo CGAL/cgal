@@ -352,19 +352,22 @@ public:
         ak_plane.vector = cross_product(to_AK(q)-ap, to_AK(r)-ap);
         ak_plane.point = ap;
       }
-      return sign(scalar_product(to_AK(s) - ak_plane.point,
-                                 ak_plane.vector)) == POSITIVE;
-    }
-    catch (Uncertain_conversion_exception&){
-      if (ek_plane_ptr==NULL) {
-        const typename Exact_K::Point_3 ep = to_EK(p);
-        ek_plane_ptr = new Vector_plus_point<Exact_K>;
-        ek_plane_ptr->vector = cross_product(to_EK(q)-ep, to_EK(r)-ep);
-        ek_plane_ptr->point = ep;
+      Uncertain<Sign> res =
+        sign(scalar_product(to_AK(s) - ak_plane.point,
+                            ak_plane.vector));
+      if(is_certain(res)) {
+        return (get_certain(res) == POSITIVE);
       }
-      return sign(scalar_product(to_EK(s) - ek_plane_ptr->point,
-                                 ek_plane_ptr->vector)) == POSITIVE;
     }
+    catch (Uncertain_conversion_exception&){}
+    if (ek_plane_ptr==NULL) {
+      const typename Exact_K::Point_3 ep = to_EK(p);
+      ek_plane_ptr = new Vector_plus_point<Exact_K>;
+      ek_plane_ptr->vector = cross_product(to_EK(q)-ep, to_EK(r)-ep);
+      ek_plane_ptr->point = ep;
+    }
+    return sign(scalar_product(to_EK(s) - ek_plane_ptr->point,
+                               ek_plane_ptr->vector)) == POSITIVE;
   }
 };
 
