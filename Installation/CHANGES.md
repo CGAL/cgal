@@ -24,6 +24,12 @@ Release date: September 2019
  -   The PLY IO functions now take an additional optional parameter to
      read/write comments from/in the PLY header.
 
+### Point Set Processing
+ -   **Breaking change**: the old API using iterators and overloads
+     for optional parameters is now removed (it was deprecated since
+     CGAL 4.12). The current (and now only) API uses ranges and Named
+     Parameters.
+
 ### Polygon Mesh Processing
  -   Added the function `CGAL::Polygon_mesh_processing::centroid()` which computes
      the centroid of a closed triangle mesh.
@@ -31,7 +37,7 @@ Release date: September 2019
 ### IO Streams
  -   **Breaking change:** The API of `CGAL::Color` has been cleaned up.
 
-###3D Boolean Operations on Nef Polyhedra
+### 3D Boolean Operations on Nef Polyhedra
  -   Added a function to convert a Nef_polyhedron_3 to a polygon soup: `CGAL::convert_nef_to_polygon_soup()`
 
 ### 2D and 3D Linear Geometry Kernel
