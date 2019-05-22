@@ -176,7 +176,7 @@ bool write_mesh_to_model( const PointRange& points,
           std::cerr << "error #" << std::hex << nErrorMessage << ": " << pszErrorMessage << std::endl;
           NMR::lib3mf_release(*pMeshObject);
           NMR::lib3mf_release(pModel);
-          return -1;
+          return false;
   }
 
   // define colors
@@ -199,7 +199,7 @@ bool write_mesh_to_model( const PointRange& points,
     std::cerr<< "error #" << std::hex << nErrorMessage << ": " << pszErrorMessage << std::endl;
     NMR::lib3mf_release(*pMeshObject);
     NMR::lib3mf_release(pModel);
-    return -1;
+    return false;
   }
   NMR::MODELMESHCOLOR_SRGB default_color = tmf_internal::fnCreateColor(0,0,0,0);
   NMR::lib3mf_defaultpropertyhandler_setcolor(pDefaultPropertyHandler,
@@ -216,11 +216,11 @@ bool write_mesh_to_model( const PointRange& points,
     std::cerr << "error #" << std::hex << nErrorMessage << ": " << pszErrorMessage << std::endl;
     NMR::lib3mf_release(*pMeshObject);
     NMR::lib3mf_release(pModel);
-    return -1;
+    return false;
   }
 
   //add a builditem to finish
-  add_build_item(pModel, *pMeshObject);
+  return add_build_item(pModel, *pMeshObject);
 }
 
 //remember that it adds 3 demmy vertices in the beginning, and a dummy triangle to be ignored.
@@ -278,7 +278,7 @@ bool write_points(const PointRange& points,
           std::cerr << "error #" << std::hex << nErrorMessage << ": " << pszErrorMessage << std::endl;
           NMR::lib3mf_release(*pMeshObject);
           NMR::lib3mf_release(pModel);
-          return -1;
+          return false;
   }
 
   // define colors
@@ -298,7 +298,7 @@ bool write_points(const PointRange& points,
     std::cerr<< "error #" << std::hex << nErrorMessage << ": " << pszErrorMessage << std::endl;
     NMR::lib3mf_release(*pMeshObject);
     NMR::lib3mf_release(pModel);
-    return -1;
+    return false;
   }
   NMR::MODELMESHCOLOR_SRGB default_color = tmf_internal::fnCreateColor(0,0,0,0);
   NMR::lib3mf_defaultpropertyhandler_setcolor(pDefaultPropertyHandler,
@@ -315,9 +315,9 @@ bool write_points(const PointRange& points,
     std::cerr << "error #" << std::hex << nErrorMessage << ": " << pszErrorMessage << std::endl;
     NMR::lib3mf_release(*pMeshObject);
     NMR::lib3mf_release(pModel);
-    return -1;
+    return false;
   }
-  add_build_item(pModel, *pMeshObject);
+  return add_build_item(pModel, *pMeshObject);
 }
 
 template<typename PointRange, typename Color>
@@ -330,7 +330,7 @@ bool write_point_cloud_to_model(const PointRange& points,
 {
   std::string pc_name = name;
   pc_name.append("_cgal_pc");
-  write_points(points, color, pc_name, pMeshObject, pModel);
+  return write_points(points, color, pc_name, pMeshObject, pModel);
 }
 
 template<typename PointRange, typename Color>
@@ -343,7 +343,7 @@ bool write_polyline_to_model(const PointRange& points,
 {
   std::string pc_name = name;
   pc_name.append("_cgal_pl");
-  write_points(points, color, pc_name, pMeshObject, pModel);
+  return write_points(points, color, pc_name, pMeshObject, pModel);
 }
 
 /*!

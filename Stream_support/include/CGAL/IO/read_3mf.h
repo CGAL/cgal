@@ -101,7 +101,7 @@ bool extract_soups (NMR::PLib3MFModelMeshObject *pMeshObject,
     NMR::lib3mf_getlasterror(pMeshObject, &nErrorMessage, &pszErrorMessage);
     std::cerr << "error #" << std::hex << nErrorMessage << ": " << pszErrorMessage << std::endl;
     NMR::lib3mf_release(pMeshObject);
-    return -1;
+    return false;
   }
 
   for(DWORD vid = 0; vid < points.size(); ++vid)
@@ -182,7 +182,7 @@ bool extract_polylines (NMR::PLib3MFModelMeshObject *pMeshObject,
     NMR::lib3mf_getlasterror(pMeshObject, &nErrorMessage, &pszErrorMessage);
     std::cerr << "error #" << std::hex << nErrorMessage << ": " << pszErrorMessage << std::endl;
     NMR::lib3mf_release(pMeshObject);
-    return -1;
+    return false;
   }
 
   points.resize(points.size()-3);//ignore dummy_vertices
