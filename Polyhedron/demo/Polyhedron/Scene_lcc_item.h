@@ -4,6 +4,8 @@
 #include <CGAL/Three/Scene_item_rendering_helper.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 
+#include <QMenu>
+
 #ifdef scene_lcc_item_EXPORTS
 #  define SCENE_LCC_ITEM_EXPORT Q_DECL_EXPORT
 #else
@@ -40,10 +42,13 @@ public:
   
   void computeElements() const Q_DECL_OVERRIDE;
   void initializeBuffers(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
+
+  QMenu* contextMenu() Q_DECL_OVERRIDE ;
   
 public Q_SLOTS:
     void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
-    
+    void randomFaceColors(bool b);
+    void randomVolumeColors();
 private:
   friend struct lcc_priv;
   lcc_priv* d;

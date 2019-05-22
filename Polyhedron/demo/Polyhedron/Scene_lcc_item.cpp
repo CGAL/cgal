@@ -5,7 +5,10 @@
 #include <CGAL/Three/Three.h>
 #include <CGAL/Buffer_for_vao.h>
 
+#include "Color_map.h"
 #include "Scene_lcc_item.h"
+
+//todo : create a struct for facets containing useful infos for drawing and their volume, and fill it during computeElements().
 using namespace CGAL::Three;
 typedef Triangle_container Tri;
 typedef Edge_container Ec;
@@ -21,11 +24,13 @@ struct lcc_priv{
   std::vector<float> faces;
   std::vector<float> lines;
   std::vector<float> vertices;
+  std::vector<float> colors;
+  bool is_mono_color;
   
   std::size_t nb_lines, nb_vertices, nb_faces;
   
   lcc_priv(const Scene_lcc_item::LCC& lcc)
-    :lcc(lcc){}
+    :lcc(lcc), is_mono_color(true){}
 
   void compute_face(Dart_const_handle dh)
   {
@@ -240,7 +245,6 @@ struct lcc_priv{
     }
       
   }
-
 };
 
 Scene_lcc_item::Scene_lcc_item(const LCC& lcc)
@@ -309,9 +313,9 @@ void Scene_lcc_item::draw(CGAL::Three::Viewer_interface* viewer) const
     computeElements();
     initializeBuffers(viewer);
   }
-  
-  getTriangleContainer(0)->setColor(this->color());
-  getTriangleContainer(0)->draw(viewer, true);
+  if(d->is_mono_color)
+    getTriangleContainer(0)->setColor(this->color());
+  getTriangleContainer(0)->draw(viewer, d->is_mono_color);
 }
 
 void Scene_lcc_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
@@ -383,7 +387,7 @@ void Scene_lcc_item::computeElements() const
   typename LCC::size_type markfaces    = d->lcc.get_new_mark();
   typename LCC::size_type markedges    = d->lcc.get_new_mark();
   typename LCC::size_type markvertices = d->lcc.get_new_mark();
-  
+
   for (typename LCC::Dart_range::const_iterator it=d->lcc.darts().begin(),
        itend=d->lcc.darts().end(); it!=itend; ++it )
   {
@@ -397,7 +401,7 @@ void Scene_lcc_item::computeElements() const
         d->lcc.mark(itv, markvolumes); // To be sure that all darts of the basic iterator will be marked
         if (!d->lcc.is_marked(itv, markfaces))
         {
-          d->compute_face(itv); 
+          d->compute_face(itv);
           for (typename LCC::template Dart_of_cell_basic_range<2>::
                const_iterator itf=d->lcc.template darts_of_cell_basic<2>(itv, markfaces).begin(),
                itfend=d->lcc.template darts_of_cell_basic<2>(itv, markfaces).end();
@@ -457,7 +461,14 @@ void Scene_lcc_item::computeElements() const
   getTriangleContainer(0)->allocate(
         Tri::Flat_vertices, d->faces.data(),
         static_cast<int>(d->faces.size()*sizeof(float)));
-  
+  if(!d->is_mono_color)
+  {
+    getTriangleContainer(0)->allocate(Tri::FColors, d->colors.data(),
+                                            static_cast<int>(d->colors.size()*sizeof(float)));
+  }
+  else
+    getTriangleContainer(0)->allocate(Tri::FColors, 0, 0);
+
   getEdgeContainer(0)->allocate(
         Ec::Vertices, d->lines.data(),
         static_cast<int>(d->lines.size()*sizeof(float)));
@@ -500,4 +511,52 @@ void Scene_lcc_item::invalidateOpenGLBuffers()
 bool Scene_lcc_item::isEmpty() const
 {
   return false;
+}
+
+void Scene_lcc_item::randomFaceColors(bool b)
+{
+  d->is_mono_color = !b;
+  if(b)
+  {
+    d->colors.resize(d->nb_faces);
+    for(int i=0; i< d->colors.size()-3; i+=3)
+    {
+      QColor col = generate_random_color();
+      d->colors[i] = col.redF();
+      d->colors[i+1] = col.greenF();
+      d->colors[i+2] = col.blueF();
+    }
+  }
+  invalidateOpenGLBuffers();
+  redraw();
+}
+
+void Scene_lcc_item::randomVolumeColors()
+{
+  qDebug()<<"coucou !";
+}
+
+QMenu* Scene_lcc_item::contextMenu()
+{
+  const char* prop_name = "Menu modified by Scene_lcc_item.";
+
+  QMenu* menu = Scene_item::contextMenu();
+
+  // Use dynamic properties:
+  // https://doc.qt.io/qt-5/qobject.html#property
+  bool menuChanged = menu->property(prop_name).toBool();
+
+  if(!menuChanged) {
+    menu->addSeparator();
+    QAction* action = menu->addAction(tr("Set Random Colors for faces."));
+    action->setCheckable(true);
+    action->setObjectName("actionRandomFaceColors");
+    connect(action, &QAction::triggered,
+            this, &Scene_lcc_item::randomFaceColors);
+    menu->setProperty(prop_name, true);
+  }
+
+  QAction* action = menu->findChild<QAction*>("actionRandomFaceColors");
+  if(action) action->setChecked(!d->is_mono_color);
+  return menu;
 }
