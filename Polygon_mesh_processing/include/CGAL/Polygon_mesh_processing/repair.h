@@ -2078,6 +2078,9 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
 
+  using boost::get_param;
+  using boost::choose_param;
+
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VertexPointMap;
   VertexPointMap vpm = choose_param(get_param(np, internal_np::vertex_point),
                                     get_property_map(vertex_point, pm));

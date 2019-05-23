@@ -159,7 +159,12 @@ struct GT3_for_CH3 {
 
 
 
-  template <class R_, class Polyhedron = Default, class Has_filtered_predicates_tag = Tag_false>
+  template <class R_, class Polyhedron = Default,
+            class Has_filtered_predicates_tag = Boolean_tag
+            <
+              boost::is_floating_point<typename R_::FT>::type::value &&
+              R_::Has_filtered_predicates_tag::value
+            > >
 class Convex_hull_traits_3 
 {
  public:  
