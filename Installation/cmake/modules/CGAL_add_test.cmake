@@ -114,7 +114,12 @@ function(cgal_setup_test_properties test_name)
       APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
   endif()
 
-  if(POLICY CMP0066) # CMake 3.7 or later
+  get_filename_component(_source_dir_abs ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE)
+  get_filename_component(_binary_dir_abs ${CMAKE_CURRENT_BINARY_DIR} ABSOLUTE)
+  string(FIND "${_binary_dir_abs}" "${_source_dir_abs}" _search_binary_in_source)
+
+  if(_search_binary_in_source EQUAL "-1"
+     AND POLICY CMP0066) # CMake 3.7 or later
     if(NOT TEST ${PROJECT_NAME}_SetupFixture)
       if(ANDROID)
         add_test(NAME ${PROJECT_NAME}_SetupFixture
