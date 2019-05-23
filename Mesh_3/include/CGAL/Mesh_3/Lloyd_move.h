@@ -204,8 +204,8 @@ private:
       {
         const Vertex_handle& v1 = (*cit)->vertex((k+i)&3);
 
-        std::pair<VC_it, bool> is_insert_succesful = treated_vertices.insert(v1);
-        if ( ! is_insert_succesful.second ) // vertex has already been treated
+        std::pair<VC_it, bool> is_insert_successful = treated_vertices.insert(v1);
+        if ( ! is_insert_successful.second ) // vertex has already been treated
           continue;
 
         // Vertex has not been treated: turn around edge(v,v1)

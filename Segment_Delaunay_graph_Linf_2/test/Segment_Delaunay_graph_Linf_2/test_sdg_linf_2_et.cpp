@@ -12,18 +12,8 @@
 #include <CGAL/Exact_rational.h>
 
 // choose number type
-typedef CGAL::Exact_rational exact_ring_t;
-typedef CGAL::Exact_rational exact_field_t;
-
-namespace CGAL {
-// needed for the drawing methods
-exact_ring_t sqrt(const exact_ring_t& x) {
-  return exact_ring_t(  sqrt( to_double(x) )  );
-}
-}
-
-typedef exact_ring_t   ring_number_t;
-typedef exact_field_t  field_number_t;
+typedef CGAL::Exact_rational ring_number_t;
+typedef CGAL::Exact_rational field_number_t;
 
 #include <CGAL/Simple_cartesian.h>
 

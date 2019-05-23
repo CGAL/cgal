@@ -61,14 +61,11 @@
 
 #include <CGAL/license/Partition_2.h>
 
-
-#include <CGAL/Segment_2.h>
 #include <CGAL/Partition_2/Rotation_tree_2.h>
 #include <CGAL/Partition_2/Indirect_less_xy_2.h>
 #include <CGAL/Partition_2/Iterator_list.h>
 #include <CGAL/Partition_2/Turn_reverser.h>
 #include <CGAL/Partition_2/Point_pair_less_xy_2.h>
-#include <CGAL/Intersections_2/Ray_2_Segment_2.h>
 #include <CGAL/Partition_2/Segment_less_yx_2.h>
 #include <cmath>
 #include <list>
@@ -86,9 +83,6 @@ class Vertex_visibility_graph_2
 private:
    typedef Vertex_visibility_graph_2<Traits>  Self;
    typedef typename Traits::Point_2           Point_2;
-   typedef typename Traits::Segment_2         Segment_2;
-   typedef typename Traits::Ray_2             Ray_2;
-   typedef typename Traits::Object_2          Object_2;
    typedef typename Traits::Left_turn_2        Left_turn_2;
    typedef typename Traits::Less_xy_2         Less_xy_2;
    typedef typename Traits::Orientation_2     Orientation_2;
@@ -96,11 +90,6 @@ private:
                                             Collinear_are_ordered_along_line_2;
    typedef typename Traits::Are_strictly_ordered_along_line_2 
                                             Are_strictly_ordered_along_line_2;
-   typedef typename Traits::Construct_segment_2 
-                                            Construct_segment_2; 
-   typedef typename Traits::Construct_ray_2   Construct_ray_2; 
-   typedef typename Traits::Intersect_2       Intersect_2; 
-   typedef typename Traits::Assign_2          Assign_2; 
    typedef CGAL::Segment_less_yx_2<Traits>    Segment_less_yx_2;
 
    typedef Rotation_tree_2<Traits>            Tree;
@@ -133,30 +122,27 @@ public:
    // first and beyond should be iterators over vertices of a polygon
    //
    template <class ForwardIterator>
-   Vertex_visibility_graph_2(ForwardIterator first, ForwardIterator beyond):
-     left_turn_2(Traits().left_turn_2_object()), 
-     orientation_2(Traits().orientation_2_object()), 
-     collinear_ordered_2(Traits().collinear_are_ordered_along_line_2_object()),
+   Vertex_visibility_graph_2(ForwardIterator first, ForwardIterator beyond, const Traits& traits):
+     left_turn_2(traits.left_turn_2_object()), 
+     orientation_2(traits.orientation_2_object()), 
+     collinear_ordered_2(traits.collinear_are_ordered_along_line_2_object()),
      are_strictly_ordered_along_line_2(
-           Traits().are_strictly_ordered_along_line_2_object()),
-     less_xy_2(Traits().less_xy_2_object()),
-     construct_segment_2(Traits().construct_segment_2_object()),
-     construct_ray_2(Traits().construct_ray_2_object()),
-     intersect_2(Traits().intersect_2_object()),
-     assign_2(Traits().assign_2_object())
+           traits.are_strictly_ordered_along_line_2_object()),
+     less_xy_2(traits.less_xy_2_object()),
+     edges(Point_pair_compare(traits))
    {
-       build(first, beyond);
+     build(first, beyond, traits);
    }
 
    // Pre:  ccw order of points; no repeated points
    template <class ForwardIterator>
-   void build(ForwardIterator first, ForwardIterator beyond)
+   void build(ForwardIterator first, ForwardIterator beyond, const Traits& traits)
    {
       Polygon         polygon(first,beyond);
-      Tree            tree(polygon.begin(), polygon.end());
-   
-      Vertex_map  vertex_map;
-      initialize_vertex_map(polygon, vertex_map);
+      Tree            tree(polygon.begin(), polygon.end(),traits);
+
+      Vertex_map  vertex_map(less_xy_2);
+      initialize_vertex_map(polygon, vertex_map, traits);
    
       // NOTE:  use the std::list as the basis here because otherwise the basis
       //        is a deque, which is buggy under MSVC++
@@ -353,7 +339,8 @@ private:
    // immediately below it.  For vertical edges, the segment below is not the
    // one that begins at the other endpoint of the edge.
    void initialize_vertex_map(const Polygon& polygon, 
-                              Vertex_map& vertex_map);
+                              Vertex_map& vertex_map,
+                              const Traits& traits);
 
    // determines if one makes a left turn going from p to q to q's parent.
    // if q's parent is p_infinity, then a left turn is made when p's x value
@@ -419,10 +406,6 @@ private:
    Collinear_are_ordered_along_line_2    collinear_ordered_2;
    Are_strictly_ordered_along_line_2     are_strictly_ordered_along_line_2;
    Less_xy_2                             less_xy_2;
-   Construct_segment_2                   construct_segment_2;
-   Construct_ray_2                       construct_ray_2;
-   Intersect_2                           intersect_2;
-   Assign_2                              assign_2;
    Edge_set                              edges;
 };
 

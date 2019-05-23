@@ -164,7 +164,7 @@ struct Constant_size_policy
 };
 
 // The following base class can be used to easily add a squattable pointer
-// to a class (maybe you loose a bit of compactness though).
+// to a class (maybe you lose a bit of compactness though).
 // TODO : Shouldn't adding these bits be done automatically and transparently,
 //        based on the traits class info ?
 class Compact_container_base

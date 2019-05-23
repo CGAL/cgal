@@ -67,7 +67,7 @@ public:
     }
     if(B.error())
       {
-        std::cerr << "An error occured while creating a Polyhedron" << std::endl;
+        std::cerr << "An error occurred while creating a Polyhedron" << std::endl;
         B.rollback();
       }
 

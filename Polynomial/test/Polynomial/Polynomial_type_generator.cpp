@@ -1,8 +1,9 @@
-#include <CGAL/basic.h>
+
 #include <CGAL/Polynomial.h>
 #include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/Polynomial_type_generator.h>
 #include <CGAL/use.h>
+#include <CGAL/assertions.h>
 
 int main(){
   CGAL_assertion_code(typedef CGAL::Polynomial<int>        Poly_int_1;)

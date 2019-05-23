@@ -686,7 +686,7 @@ public:
   {
     if (m_tolerance == (FT)(-1.))
       return false;
-    FT cost = CGAL::approximate_sqrt (pedge.after() / pedge.total_weight());
+    FT cost = CGAL::approximate_sqrt (FT(pedge.after() / pedge.total_weight()));
     return cost > m_tolerance;
   }
 

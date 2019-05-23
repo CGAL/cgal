@@ -207,7 +207,7 @@ void Clipping_box_plugin::clip(bool b)
 
 void Clipping_box_plugin::tab_change()
 {
-  QAction* action = mw->findChild<QAction*>("actionSwitchProjection");
+  QAction* action = mw->findChild<QAction*>("actionOrtho");
   if(dock_widget->tabWidget->currentIndex() == 1)
   {
     if(item)

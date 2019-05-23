@@ -842,7 +842,7 @@ template <class Interval>
 	update[i]->eqMarkers->insert(m->getInterval());
 
     // Place markers on x for all intervals the cross x.
-    // (Since x is a new node, every marker comming into x must also leave x).
+    // (Since x is a new node, every marker coming into x must also leave x).
     for(i=0; i<x->level(); i++)
       x->eqMarkers->copy(x->markers[i]);
     

@@ -475,7 +475,7 @@ void MainWindow::on_actionStoredCoverDomainSimplicesEmphasized_triggered(bool)
 }
 
 
-#include "Periodic_2_triangulation_2.moc"
+#include "Periodic_2_Delaunay_triangulation_2.moc"
 #include <CGAL/Qt/resources.h>
 
 int main(int argc, char **argv)

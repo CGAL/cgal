@@ -62,7 +62,7 @@ detected planes.
 Given a point set in 3D space along with a set of fitted planes, this
 class stores a simplified and structured version of the point
 set. Each output point is assigned to one, two or more primitives
-(depending wether it belongs to a planar section, an edge or a if it
+(depending whether it belongs to a planar section, an edge or a if it
 is a vertex). The implementation follow \cgalCite{cgal:la-srpss-13}.
 
 \tparam Kernel a model of `EfficientRANSACTraits` that must provide in
@@ -202,30 +202,6 @@ public:
   }
 
   /// \cond SKIP_IN_MANUAL
-  // deprecated
-  template <typename PointRange,
-            typename PointMap,
-            typename NormalMap,
-            typename PlaneRange,
-            typename PlaneMap,
-            typename IndexMap>
-  CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::Point_set_with_structure(), please update your code")
-  Point_set_with_structure (const PointRange& points,
-                            PointMap point_map,
-                            NormalMap normal_map,
-                            const PlaneRange& planes,
-                            PlaneMap plane_map,
-                            IndexMap index_map,
-                            double epsilon,
-                            double attraction_factor = 3.)
-  {
-    init (points, planes, epsilon,
-          CGAL::parameters::point_map (point_map).
-          normal_map (normal_map).
-          plane_map (plane_map).
-          plane_index_map (index_map).
-          attraction_factor (attraction_factor));
-  }
 
   template <typename PointRange,
             typename PlaneRange,

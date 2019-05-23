@@ -209,7 +209,7 @@ public:
   virtual bool manipulatable() const { return false; }
   //!\brief The manipulatedFrame of the item.
   //!
-  //! A manipulated frame is an independant system that can be
+  //! A manipulated frame is an independent system that can be
   //! translated or rotated using the Ctrl key and the mouse.
   //!@returns the manipulatedFrame of the item.
   virtual ManipulatedFrame* manipulatedFrame() { return 0; }
@@ -298,7 +298,7 @@ public:
    * |             |_______|_____|
    * |General Info | #Edges|12   |
    * |_____________|_______|_____|
-   * compute stats(0) should return "Cube" and computeStats(1) should return QString::number(12);
+   * ComputeStats(0) should return "Cube" and computeStats(1) should return QString::number(12);
    * The numbers must be coherent with the order of declaration of the titles in the header.
    * \endverbatim
    *

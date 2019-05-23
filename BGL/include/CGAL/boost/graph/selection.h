@@ -85,7 +85,7 @@ Each new face added in the selection is added exactly once in `out`.
 \param fg the graph containing the selected faces.
 \param k the number of times the expansion procedure is iteratively applied.
 \param is_selected indicates if a face is part of the selection. It is updated by the function
-       to accomodate new faces added to the selection.
+       to accommodate new faces added to the selection.
 \param out new faces added to the selection are added exactly once in `out`.
 */
 template <class FaceRange, class FaceGraph, class IsFaceSelectedPMap, class OutputIterator>
@@ -154,7 +154,7 @@ Each face removed from the selection is added exactly once in `out`.
 \param fg the graph containing the selected faces.
 \param k the number of times the reduction procedure is iteratively applied.
 \param is_selected indicates if a face is part of the selection. It is updated by the function
-       to accomodate faces removed from the selection.
+       to accommodate faces removed from the selection.
 \param out faces removed from the selection are added exactly once in `out`.
 */
 template <class FaceRange, class FaceGraph, class IsFaceSelectedPMap, class OutputIterator>
@@ -271,7 +271,7 @@ Each new edge added in the selection is added exactly once in `out`.
 \param fg the graph containing the selected edges.
 \param k the number of times the expansion procedure is iteratively applied.
 \param is_selected indicates if an edge is part of the selection. It is updated by the function
-       to accomodate new edges added to the selection.
+       to accommodate new edges added to the selection.
 \param out new edges added to the selection are added exactly once in `out`.
 */
 template <class EdgeRange, class HalfedgeGraph, class IsEdgeSelectedPMap, class OutputIterator>
@@ -337,7 +337,7 @@ Each edge removed from the selection is added exactly once in `out`.
 \param fg the graph containing the selected edges.
 \param k the number of times the reduction procedure is iteratively applied.
 \param is_selected indicates if an edge is part of the selection. It is updated by the function
-       to accomodate edges removed from the selection.
+       to accommodate edges removed from the selection.
 \param out edges removed from the selection are added exactly once in `out`.
 */
 template <class EdgeRange, class HalfedgeGraph, class IsEdgeSelectedPMap, class OutputIterator>
@@ -424,7 +424,7 @@ Each new vertex added in the selection is added exactly once in `out`.
 \param fg the graph containing the selected vertices.
 \param k the number of times the expansion procedure is iteratively applied.
 \param is_selected indicates if a vertex is part of the selection. It is updated by the function
-       to accomodate new vertices added to the selection.
+       to accommodate new vertices added to the selection.
 \param out new vertices added to the selection are added exactly once in `out`.
 */
 template <class VertexRange, class HalfedgeGraph, class IsVertexSelectedPMap, class OutputIterator>
@@ -478,7 +478,7 @@ Each vertex removed from the selection is added exactly once in `out`.
 \param fg the graph containing the selected vertices.
 \param k the number of times the reduction procedure is iteratively applied.
 \param is_selected indicates if a vertex is part of the selection. It is updated by the function
-       to accomodate vertices removed from the selection.
+       to accommodate vertices removed from the selection.
 \param out vertices removed from the selection are added exactly once in `out`.
 */
 template <class VertexRange, class HalfedgeGraph, class IsVertexSelectedPMap, class OutputIterator>

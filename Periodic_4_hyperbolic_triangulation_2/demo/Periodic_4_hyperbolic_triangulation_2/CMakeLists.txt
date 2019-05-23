@@ -19,11 +19,12 @@ endif()
 find_package(CGAL QUIET COMPONENTS Core Qt5)
 include(${CGAL_USE_FILE})
 
+find_package(LEDA QUIET)
+
 find_package(Qt5 QUIET COMPONENTS Widgets)
-if(CGAL_FOUND AND CGAL_Core_FOUND AND Qt5_FOUND AND CGAL_Qt5_FOUND)
+if(CGAL_FOUND AND (CGAL_Core_FOUND OR LEDA_FOUND) AND Qt5_FOUND AND CGAL_Qt5_FOUND)
 
   find_package( Boost REQUIRED )
-  include_directories(${Boost_INCLUDE_DIRS})
 
   include_directories (BEFORE include )
 

@@ -10,10 +10,12 @@ _test_cls_const_triang_plus_2( const TrP & )
 
   typedef typename TrP::Vertex_handle          Vertex_handle;
   typedef typename TrP::Constraint             Constraint;
+  typedef typename TrP::Constraint_iterator    Constraint_iterator;
   typedef typename TrP::Constraint_hierarchy   Hierarchy;
   typedef typename TrP::Context                Context;
   typedef typename TrP::Context_iterator       Context_iterator;
   typedef typename TrP::Vertices_in_constraint Vertices_in_constraint;
+  typedef typename TrP::Constraint_id          Constraint_id;
 
   CGAL_USE_TYPE(Hierarchy);
   CGAL_USE_TYPE(Context);
@@ -34,8 +36,9 @@ _test_cls_const_triang_plus_2( const TrP & )
   for(int i=0; i<12; i++){
     vh[i] = trp.insert(pt[i]);
   }
+  Constraint_id cid;
   for(int j=0; j<11; j+=2){
-     trp.insert_constraint(vh[j],vh[j+1]);
+     cid = trp.insert_constraint(vh[j],vh[j+1]);
   }
 
   trp.insert(Point(4,4), Point(4,5));
@@ -44,12 +47,12 @@ _test_cls_const_triang_plus_2( const TrP & )
 
   // test access to the hierarchy
   std::cout << " test acces to the constraint hierarchy" << std::endl;
-  Vertices_in_constraint vit = trp.vertices_in_constraint_begin(vh[10],vh[11]);
+  Vertices_in_constraint vit = trp.vertices_in_constraint_begin(cid);
   assert (*vit == vh[10] || *vit == vh[11] );
   Vertex_handle va = *++vit;
   Vertex_handle vb = *++vit;
   assert (*++vit == vh[11] || *vit == vh[10]);
-  assert (++vit == trp.vertices_in_constraint_end(vh[10],vh[11]));
+  assert (++vit == trp.vertices_in_constraint_end(cid));
   assert(trp.number_of_enclosing_constraints(va,vb) == 2);
   Context_iterator cit1 = trp.contexts_begin(va,vb);
   Context_iterator cit2 = cit1++;
@@ -98,20 +101,19 @@ _test_cls_const_triang_plus_2( const TrP & )
 
   //test remove_constraint
   std::cout << " test removal of constraint" << std::endl;
-  trp.remove_constraint(vh[10],vh[11]);
-  trp.remove_constraint(vh[6],vh[7]);
+  trp.remove_constraint(cid);
 
   std::cerr << " test a special configuration" << std::endl;
   trp.clear();
   Vertex_handle v1 = trp.insert(Point(0, 0));
   Vertex_handle v2 = trp.insert(Point(-1, 0));
   Vertex_handle v3 = trp.insert(Point(1, 0));
-  trp.insert_constraint(v1, v2);
-  trp.insert_constraint(v2, v3);
-  trp.insert_constraint(v3, v1);
-  trp.remove_constraint(v1, v2);
-  trp.remove_constraint(v2, v3);
-  trp.remove_constraint(v3, v1);
+  Constraint_id cid1 = trp.insert_constraint(v1, v2);
+  Constraint_id cid2 = trp.insert_constraint(v2, v3);
+  Constraint_id cid3 = trp.insert_constraint(v3, v1);
+  trp.remove_constraint(cid1);
+  trp.remove_constraint(cid2);
+  trp.remove_constraint(cid3);
 
   std::cerr << " test the configuration of bug #2999" << std::endl;
   trp.clear();
@@ -128,6 +130,31 @@ _test_cls_const_triang_plus_2( const TrP & )
   }
 
   std::cout << std::endl;
+  std::cout << "test IO" << std::endl;
+
+  trp.clear();
+  {
+    Point c1[2] = { Point(0,0), Point(1,0) };
+    Point c2[3] = { Point(0,1), Point(1,1), Point(2,1) };
+    Point c3[4] = { Point(0,0), Point(1,0), Point(1,1), Point(0,1) };
+
+    trp.insert_constraint(c1, c1 + 2);
+    trp.insert_constraint(c2, c2 + 3);
+    trp.insert_constraint(c3, c3 + 4);
+    std::ofstream out("cdtplus.txt");
+    out << trp;
+    out.close();
+    trp.clear();
+    std::ifstream in("cdtplus.txt");
+    in >> trp;
+    assert(trp.number_of_constraints() == 3);
+    std::size_t n = 0;
+    for(Constraint_iterator cit = trp.constraints_begin(); cit != trp.constraints_end(); ++cit){
+      Constraint_id  cid = *cit;
+      n += cid.second->all_size();
+    }
+    assert( n == 9);
+  }
   return;
 }
 

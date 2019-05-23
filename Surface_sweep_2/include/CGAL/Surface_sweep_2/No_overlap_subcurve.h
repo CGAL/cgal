@@ -174,7 +174,7 @@ protected:
   // Data members:
   X_monotone_curve_2 m_last_curve;  // The portion of the curve that lies to
                                     // the right of the last event point
-                                    // that occured on the curve.
+                                    // that occurred on the curve.
 
 public:
   /*! Construct default. */

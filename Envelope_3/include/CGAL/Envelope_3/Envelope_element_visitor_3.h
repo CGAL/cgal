@@ -654,7 +654,7 @@ public:
     // remember the envelope decision over the first & last parts, to
     // be able to copy it to the original endpoints
     // TODO: the initial value is only needed to shut up the compiler
-    // TODO: is this realy needed, or we can use the decision made on "edge"
+    // TODO: is this really needed, or we can use the decision made on "edge"
     // (is "edge" always the first part? )
     Comparison_result first_part_res = EQUAL;
     

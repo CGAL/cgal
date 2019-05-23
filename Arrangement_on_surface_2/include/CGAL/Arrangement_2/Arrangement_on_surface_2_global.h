@@ -240,7 +240,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 
 /*! Insert a range of x-monotone curves into an empty arrangement
  * \param arr the resulting arrangement
- * \param begin the begining of the curve range
+ * \param begin the beginning of the curve range
  * \param end past-the-end curve range
  */
 template <typename GeometryTraits_2, typename TopologyTraits,
@@ -292,9 +292,9 @@ insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 /*! Insert a range of x-monotone curves and a range of isolated points into
  * an empty arrangement
  * \param arr the resulting arrangement
- * \param begin_xcurves the begining of the curve range
+ * \param begin_xcurves the beginning of the curve range
  * \param end_xcurves past-the-end curve range
- * \param begin_points the begining of the point range
+ * \param begin_points the beginning of the point range
  * \param end_points past-the-end point range
  */
 template <typename GeometryTraits_2, typename TopologyTraits,
@@ -346,7 +346,7 @@ void insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>&
 
 /*! Insert a range of x-monotone curves into a non-empty arrangement
  * \param arr the resulting arrangement
- * \param begin the begining of the curve range
+ * \param begin the beginning of the curve range
  * \param end past-the-end curve range
  */
 template <typename GeometryTraits_2, typename TopologyTraits,
@@ -837,7 +837,7 @@ insert_non_intersecting_curve
 
 /*! Insert a range of x-monotone curves into an empty arrangement
  * \param arr the resulting arrangement
- * \param begin the begining of the curve range
+ * \param begin the beginning of the curve range
  * \param end past-the-end curve range
  */
 template <typename GeometryTraits_2, typename TopologyTraits,
@@ -886,7 +886,7 @@ void non_intersecting_insert_empty(Arrangement_on_surface_2<GeometryTraits_2,
 
 /*! Insert a range of x-monotone curves into an empty arrangement
  * \param arr the resulting arrangement
- * \param begin the begining of the curve range
+ * \param begin the beginning of the curve range
  * \param end past-the-end curve range
  */
 template <typename GeometryTraits_2, typename TopologyTraits,
@@ -937,7 +937,7 @@ void non_intersecting_insert_empty(Arrangement_on_surface_2<GeometryTraits_2,
 
 /*! Insert a range of x-monotone curves into a non-empty arrangement
  * \param arr the resulting arrangement
- * \param begin the begining of the curve range
+ * \param begin the beginning of the curve range
  * \param end past-the-end curve range
  */
 template <typename GeometryTraits_2, typename TopologyTraits,

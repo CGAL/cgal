@@ -6,22 +6,12 @@ project( Stream_support_Examples)
 
 cmake_minimum_required(VERSION 2.8.11)
 
-# Boost and its components
-find_package( Boost REQUIRED )
-
-if ( NOT Boost_FOUND )
-
-  message(STATUS "This project requires the Boost library, and will not be compiled.")
-
-  return()  
-
-endif()
 # CGAL and its components
 find_package( CGAL QUIET)
 if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
 
-  find_package( Boost REQUIRED )
+  find_package( Boost QUIET )
 
   if ( NOT Boost_FOUND )
 

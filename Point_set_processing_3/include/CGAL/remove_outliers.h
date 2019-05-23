@@ -27,6 +27,7 @@
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/Point_set_processing_3/internal/neighbor_query.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <functional>
@@ -63,33 +64,16 @@ typename Kernel::FT
 compute_avg_knn_sq_distance_3(
     const typename Kernel::Point_3& query, ///< 3D point to project
     Tree& tree,                            ///< KD-tree
-    unsigned int k)                        ///< number of neighbors
+    unsigned int k,                        ///< number of neighbors
+    typename Kernel::FT neighbor_radius)
 {
     // geometric types
     typedef typename Kernel::FT FT;
     typedef typename Kernel::Point_3 Point;
 
-    // types for K nearest neighbors search
-    typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
-    typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
-    typedef typename Neighbor_search::iterator Search_iterator;
-
-    // Gather set of (k+1) neighboring points.
-    // Perform k+1 queries (if in point set, the query point is
-    // output first). Search may be aborted if k is greater
-    // than number of input points.
-    std::vector<Point> points; points.reserve(k+1);
-    Neighbor_search search(tree,query,k+1);
-    Search_iterator search_iterator = search.begin();
-    unsigned int i;
-    for(i=0;i<(k+1);i++)
-    {
-        if(search_iterator == search.end())
-            break; // premature ending
-        points.push_back(search_iterator->first);
-        search_iterator++;
-    }
-    CGAL_point_set_processing_precondition(points.size() >= 1);
+    std::vector<Point> points;
+    CGAL::Point_set_processing_3::internal::neighbor_query
+      (query, tree, k, neighbor_radius, points);
 
     // compute average squared distance
     typename Kernel::Compute_squared_distance_3 sqd;
@@ -111,7 +95,7 @@ compute_avg_knn_sq_distance_3(
 /**
    \ingroup PkgPointSetProcessing3Algorithms
    Removes outliers:
-   - computes average squared distance to the K nearest neighbors,
+   - computes average squared distance to the nearest neighbors,
    - and sorts the points in increasing order of average distance.
 
    This method modifies the order of input points so as to pack all remaining points first,
@@ -130,6 +114,13 @@ compute_avg_knn_sq_distance_3(
    \cgalNamedParamsBegin
      \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
      If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{neighbor_radius} spherical neighborhood
+     radius. If provided, the neighborhood of a query point is
+     computed with a fixed spherical radius instead of a fixed number
+     of neighbors. In that case, the parameter `k` is used as a limit
+     on the number of points returned by each spherical query (to
+     avoid overly large number of points in high density areas). If no
+     limit is wanted, use `k=0`.\cgalParamEnd
      \cgalParamBegin{threshold_percent} maximum percentage of points to remove.\cgalParamEnd
      \cgalParamBegin{threshold_distance} minimum distance for a point to be considered as outlier
      (distance here is the square root of the average squared distance to K nearest neighbors).\cgalParamEnd
@@ -148,7 +139,7 @@ compute_avg_knn_sq_distance_3(
    \note There are two thresholds that can be used:
    `threshold_percent` and `threshold_distance`. This function
    returns the smallest number of outliers such that at least one of
-   these threshold is fullfilled. This means that if
+   these threshold is fulfilled. This means that if
    `threshold_percent=100`, only `threshold_distance` is taken into
    account; if `threshold_distance=0` only `threshold_percent` is
    taken into account.
@@ -169,6 +160,8 @@ remove_outliers(
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 
   PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
+  typename Kernel::FT neighbor_radius = choose_param(get_param(np, internal_np::neighbor_radius),
+                                                     typename Kernel::FT(0));
   double threshold_percent = choose_param(get_param(np, internal_np::threshold_percent), 10.);
   double threshold_distance = choose_param(get_param(np, internal_np::threshold_distance), 0.);
   const std::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
@@ -213,7 +206,7 @@ remove_outliers(
   {
     FT sq_distance = internal::compute_avg_knn_sq_distance_3<Kernel>(
       get(point_map,*it),
-      tree, k);
+      tree, k, neighbor_radius);
     sorted_points.insert( std::make_pair(sq_distance, *it) );
     if (callback && !callback ((nb+1) / double(kd_tree_points.size())))
       return points.end();
@@ -249,82 +242,6 @@ remove_outliers(
 {
   return remove_outliers (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API
-template <typename InputIterator,
-          typename PointMap,
-          typename Kernel
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::remove_outliers(), please update your code")
-InputIterator
-remove_outliers(
-  InputIterator first,  ///< iterator over the first input point.
-  InputIterator beyond, ///< past-the-end iterator over the input points.
-  PointMap point_map, ///< property map: value_type of InputIterator -> Point_3
-  unsigned int k, ///< number of neighbors.
-  double threshold_percent, ///< maximum percentage of points to remove.
-  double threshold_distance, ///< minimum distance for a point to be
-                             ///< considered as outlier (distance here is the square root of the average
-                             ///< squared distance to K nearest
-                             ///< neighbors)
-  const Kernel& /*kernel*/) ///< geometric traits.
-{
-  CGAL::Iterator_range<InputIterator> points (first, beyond);
-  return remove_outliers
-    (points,
-     k,
-     CGAL::parameters::point_map (point_map).
-     threshold_percent (threshold_percent).
-     threshold_distance (threshold_distance). 
-     geom_traits(Kernel()));
-}
-  
-// deprecated API
-template <typename InputIterator,
-          typename PointMap
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::remove_outliers(), please update your code")
-InputIterator
-remove_outliers(
-  InputIterator first, ///< iterator over the first input point
-  InputIterator beyond, ///< past-the-end iterator
-  PointMap point_map, ///< property map: value_type of InputIterator -> Point_3
-  unsigned int k, ///< number of neighbors.
-  double threshold_percent, ///< percentage of points to remove
-  double threshold_distance = 0.0)  ///< minimum average squared distance to K nearest neighbors
-                             ///< for a point to be removed.
-{
-  CGAL::Iterator_range<InputIterator> points (first, beyond);
-  return remove_outliers
-    (points,
-     k,
-     CGAL::parameters::point_map (point_map).
-     threshold_percent (threshold_percent).
-     threshold_distance (threshold_distance));
-}
-
-// deprecated API
-template <typename InputIterator
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::remove_outliers(), please update your code")
-InputIterator
-remove_outliers(
-  InputIterator first, ///< iterator over the first input point
-  InputIterator beyond, ///< past-the-end iterator
-  unsigned int k, ///< number of neighbors.
-  double threshold_percent, ///< percentage of points to remove
-  double threshold_distance = 0.0)  ///< minimum average squared distance to K nearest neighbors
-                             ///< for a point to be removed.
-{
-  CGAL::Iterator_range<InputIterator> points (first, beyond);
-  return remove_outliers
-    (points,
-     k,
-     CGAL::parameters::threshold_percent (threshold_percent).
-     threshold_distance (threshold_distance));
-}
-#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
 

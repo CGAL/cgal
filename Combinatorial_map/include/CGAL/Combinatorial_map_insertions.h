@@ -121,7 +121,7 @@ insert_cell_1_in_cell_2(CMap& amap,
 /** Test if a 2-cell can be inserted onto a given 3-cell along
  * a path of edges.
  * @param amap the used combinatorial map.
- * @param afirst iterator on the begining of the path.
+ * @param afirst iterator on the beginning of the path.
  * @param alast  iterator on the end of the path.
  * @return true iff a 2-cell can be inserted along the path.
  */
@@ -134,7 +134,7 @@ CGAL_DEPRECATED bool is_insertable_cell_2_in_cell_3
 
 /** Insert a 2-cell in a given 3-cell along a path of darts.
  * @param amap the used combinatorial map.
- * @param afirst iterator on the begining of the path.
+ * @param afirst iterator on the beginning of the path.
  * @param alast  iterator on the end of the path.
  * @param update_attributes a boolean to update the enabled attributes
  *        (deprecated, now we use are_attributes_automatically_managed())

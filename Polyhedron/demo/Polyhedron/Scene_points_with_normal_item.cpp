@@ -593,7 +593,7 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
   d->m_points->clear();
 
   bool ok = stream &&
-    CGAL::read_ply_point_set (stream, *(d->m_points), &(d->m_comments)) &&
+    CGAL::read_ply_point_set (stream, *(d->m_points), d->m_comments) &&
             !isEmpty();
     d->point_Slider->setValue(CGAL::Three::Three::getDefaultPointSize());
   std::cerr << d->m_points->info();
@@ -627,7 +627,7 @@ bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream, bo
   if (binary)
     CGAL::set_binary_mode (stream);
 
-  CGAL::write_ply_point_set (stream, *(d->m_points), &(d->m_comments));
+  CGAL::write_ply_point_set (stream, *(d->m_points), d->m_comments);
 
   return true;
 }

@@ -514,7 +514,7 @@ public:
   }
 
   /*!
-   * Get the arrow drawing mode (this mode is relevent when drawing segments,
+   * Get the arrow drawing mode (this mode is relevant when drawing segments,
    * polylines, circular arcs or splines).
    */
   Fig_arrow_mode arrow_mode () const

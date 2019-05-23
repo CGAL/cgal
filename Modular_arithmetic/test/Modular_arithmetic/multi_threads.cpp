@@ -1,6 +1,6 @@
 // Author(s)     : Michael Hemmer <mhemmer@uni-mainz.de>
 
-#include <CGAL/basic.h>
+
 #include <cassert>
 #include <CGAL/Residue.h>
 #include <CGAL/primes.h>

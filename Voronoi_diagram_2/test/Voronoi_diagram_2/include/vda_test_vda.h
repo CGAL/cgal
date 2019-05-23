@@ -22,7 +22,6 @@
 #ifndef VDA_TEST_VDA_H
 #define VDA_TEST_VDA_H 1
 
-#include <CGAL/basic.h>
 #include <CGAL/use.h>
 #include <CGAL/Voronoi_diagram_2/Accessor.h>
 #include <cassert>

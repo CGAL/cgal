@@ -4194,7 +4194,7 @@ namespace CGAL {
 
     /** Test if a 2-cell can be inserted onto a given 3-cell along
      * a path of edges.
-     * @param afirst iterator on the begining of the path.
+     * @param afirst iterator on the beginning of the path.
      * @param alast  iterator on the end of the path.
      * @return true iff a 2-cell can be inserted along the path.
      */
@@ -4239,7 +4239,7 @@ namespace CGAL {
     }
 
     /** Insert a 2-cell in a given 3-cell along a path of darts.
-     * @param afirst iterator on the begining of the path.
+     * @param afirst iterator on the beginning of the path.
      * @param alast  iterator on the end of the path.
      * @param update_attributes a boolean to update the enabled attributes
      * @return a dart of the new 2-cell.

@@ -12,7 +12,7 @@ function build_examples {
   mkdir -p build-travis
   cd build-travis
   mytime cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DCMAKE_CXX_FLAGS="${CXX_FLAGS}" ..
-  mytime make -j2
+  mytime make -j2 VERBOSE=1
 }
 
 function build_tests {
@@ -29,7 +29,7 @@ function build_demo {
       ;;
   esac
   mytime cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" ..
-  mytime make -j2
+  mytime make -j2 VERBOSE=1
 }
 old_IFS=$IFS
 IFS=$' '
@@ -116,7 +116,7 @@ cd $ROOT
   fi
   IFS=$old_IFS
 
-  if [ -n "$TRAVIS_PULL_REQUEST" ] && [ "$ARG" != Polyhedron_demo ]; then
+  if [ -n "$TRAVIS_PULL_REQUEST_BRANCH" ] && [ "$ARG" != Polyhedron_demo ]; then
     DO_IGNORE=FALSE
     . $ROOT/.travis/test_package.sh "$ROOT" "$ARG"
     echo "DO_IGNORE is $DO_IGNORE"
