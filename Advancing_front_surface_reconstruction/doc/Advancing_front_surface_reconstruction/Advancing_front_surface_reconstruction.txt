@@ -130,7 +130,7 @@ We define the *plausibility* grade \f$ p(t) \f$ as \f$ 1/r_t \f$, if
 
 Let's have a look at the figure below.
 \cgalFigureBegin{figAFSRplausible,wedges.png}
-Plausibility. Triangle `t'` and incidident triangles sharing edge `e` seen from the side.
+Plausibility. Triangle `t'` and incident triangles sharing edge `e` seen from the side.
 \cgalFigureEnd
 
  \f$ \alpha_\mathrm{sliver}\f$ corresponds to the red wedge. The algorithm will never select triangle `t1`

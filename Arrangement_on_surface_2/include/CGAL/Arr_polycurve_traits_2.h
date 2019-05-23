@@ -878,7 +878,7 @@ public:
           // The left point of the current subcurve of one polycurve
           // coincides with the current subcurve of the other polycurve.
           if (left_overlap) {
-            // An overlap occured at the previous iteration:
+            // An overlap occurred at the previous iteration:
             // Output the overlapping polycurve.
             CGAL_assertion(ocv.number_of_subcurves() > 0);
             *oi++ = make_object(ocv);
@@ -887,7 +887,7 @@ public:
           else {
             // The left point of the current subcurve of one
             // polycurve coincides with the current subcurve of the
-            // other polycurve, and no overlap occured at the
+            // other polycurve, and no overlap occurred at the
             // previous iteration: Output the intersection
             // point. The derivative of at least one of the
             // polycurves is not defined at this point, so we give

@@ -276,7 +276,7 @@ or segmentation algorithms work for `Surface_mesh` and `Polyhedron_3`.
 BGL algorithms use property maps in order to associate information
 to vertices and edges. One important property is the index, an integer
 between `0` and `num_vertices(g)` for the vertices of a graph `g`.
-This allows algorithms to create a vector of the approriate size
+This allows algorithms to create a vector of the appropriate size
 in order to store per vertex information. For example a Boolean
 for storing if a vertex has already been visited during a graph traversal.
 
@@ -303,7 +303,7 @@ this boils down to an identity function as vertices \em are indices.
 \cgalExample{Surface_mesh/sm_bgl.cpp}
 
 
-\section sectionSurfaceMesh_memory Memory Managment
+\section sectionSurfaceMesh_memory Memory Management
 
 Memory management is semi-automatic. Memory grows as more elements are
 added to the structure but does not shrink when elements are
@@ -363,7 +363,7 @@ Result of the run of the draw_surface_mesh program. A window shows the surface m
 As integer type for the indices we have chosen `boost::uint32_t`. On 64 bit operating systems they
 take only half the size of a pointer. They still allow to have meshes with 2 billion elements.
 
-We use `std::vector` for storing properties. So by accessing the adress 
+We use `std::vector` for storing properties. So by accessing the address 
 of the 0th element of a property map you can access the underlying 
 raw array. This may be useful, for example for passing an array
 of points to OpenGL.

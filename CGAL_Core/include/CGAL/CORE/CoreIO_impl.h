@@ -217,7 +217,7 @@ void read_base_number(std::istream& in, BigInt& m, long length, long maxBits) {
     core_io_error_handler("CoreIO::read_from_file()","bad big number format.");
   delete[] buffer;
 
-  // shift left if neccessary
+  // shift left if necessary
   if (offset > 0 && base != 10) {
     m <<= offset;
   }

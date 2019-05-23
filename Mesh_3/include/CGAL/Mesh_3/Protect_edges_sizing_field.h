@@ -310,7 +310,7 @@ private:
                       Curve_index curve_index) const;
 
   /// Walk along the edge from \c start, following the direction \c start to
-  /// \c next, and fills \c out with the vertices which do not fullfill
+  /// \c next, and fills \c out with the vertices which do not fulfill
   /// the sampling conditions.
   ///
   /// \param orientation Orientation of the curve segment between \c v1 and

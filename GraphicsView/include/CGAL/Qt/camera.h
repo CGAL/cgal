@@ -230,7 +230,7 @@ public:
 
   The near (resp. far) clipping plane is positioned at a distance equal to
   zClippingCoefficient() * sceneRadius() in front of (resp. behind) the
-  sceneCenter(). This garantees an optimal use of the z-buffer range and
+  sceneCenter(). This guarantees an optimal use of the z-buffer range and
   minimizes aliasing. See the zNear() and zFar() documentations.
 
   Default value is square root of 3.0 (so that a cube of size sceneRadius() is

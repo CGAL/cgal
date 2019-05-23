@@ -708,8 +708,8 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
             << std::distance(target_hrange.begin(), target_hrange.end()) << std::endl;
 #endif
 
-  typedef std::map<Point, std::set<vertex_descriptor /*target vd*/> >     Occurence_map;
-  Occurence_map occurrences_as_target;
+  typedef std::map<Point, std::set<vertex_descriptor /*target vd*/> >     Occurrence_map;
+  Occurrence_map occurrences_as_target;
   for(halfedge_descriptor hd : target_hrange)
   {
     vertex_descriptor vd = target(hd, pmt);
@@ -717,7 +717,7 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
     std::set<vertex_descriptor> corresponding_vd;
     corresponding_vd.insert(vd);
 
-    std::pair<typename Occurence_map::iterator, bool> is_insert_successful =
+    std::pair<typename Occurrence_map::iterator, bool> is_insert_successful =
       occurrences_as_target.insert(std::make_pair(get(vpmt, vd), corresponding_vd));
     if(!is_insert_successful.second) // point already existed in the map
       is_insert_successful.first->second.insert(vd);
@@ -748,17 +748,17 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
     }
 
     const Point& query = get(vpms, vd);
-    const std::set<vertex_descriptor>& occurences = occurrences_as_target[query];
+    const std::set<vertex_descriptor>& occurrences = occurrences_as_target[query];
 
     // Skip points that are already attached to another border. Keeping it in two 'continue' for clarity.
 
     // If we are working with a single mesh, the vertex is only blocked if another vertex has the same
-    // position (that is, if occurences.size() > 1)
-    if(is_same_mesh && occurences.size() > 1)
+    // position (that is, if occurrences.size() > 1)
+    if(is_same_mesh && occurrences.size() > 1)
       continue;
 
     // If it's not the same mesh, then block as soon as a vertex in the target range has already that position
-    if(!is_same_mesh && !occurences.empty())
+    if(!is_same_mesh && !occurrences.empty())
       continue;
 
     // Skip the source vertex if its two incident halfedges are geometrically identical (it means that

@@ -1791,7 +1791,7 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::
 remove_edge(Halfedge_handle e, bool remove_source, bool remove_target)
 {
   // Comment EBEB 2012-08-06: this has become a simple forwarding function
-  // the intelligence of wether to swap he with he->opposite()
+  // the intelligence of whether to swap he with he->opposite()
   // has been moved to _remove_edge itself, as additional computed
   // data is reused there
 
@@ -2495,7 +2495,7 @@ _insert_at_vertices(DHalfedge* he_to,
     DInner_ccb* hole2 = (prev2->is_on_inner_ccb()) ? prev2->inner_ccb() : NULL;
 
     if ((hole1 == hole2) && (hole1 != NULL)) {
-      // .. only in this special case, we have to check wether swapping should
+      // .. only in this special case, we have to check whether swapping should
       // take place
 
       // EBEB 2012-07-26 the following code enables optimizations:
@@ -4245,7 +4245,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   }
   else {
     // If f1 == f2 (same_face-case), then we consider two loops that occur when
-    // he1 and he2 get removed; if f1 != f2, then he1 and he2 seperates the two
+    // he1 and he2 get removed; if f1 != f2, then he1 and he2 separates the two
     // faces that will be merged upon their removal---here both he1 and he2
     // belong to a full cycle, and THAT IS WHY we give the f1 == f2 test to
     // determine whether end of loop should be he1->opposite() and
@@ -4753,7 +4753,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
         // As the outer CCB of f1 may be represented by any of the
         // halfedges in between he1 -> ... -> he2 (the halfedges in between
         // are on the new outer CCB we have just created), we represent the
-        // former outer CCB by prev1, which definately stays on it.
+        // former outer CCB by prev1, which definitely stays on it.
         oc1->set_halfedge(prev1);
 
         // Notify the observers that a new outer CCB has been formed.

@@ -900,14 +900,14 @@ lockfile -r 1 "$LOCK_FILE";
 if [ ${?} != 0 ]; then
   PID=`cat "$LOCK_FILE"`
   if kill -0 "$PID"; then 
-    log "${ACTUAL_LOGFILE}" "COULD NOT AQUIRE LOCK! LOCKING PROCESS PID=$PID";
+    log "${ACTUAL_LOGFILE}" "COULD NOT ACQUIRE LOCK! LOCKING PROCESS PID=$PID";
     exit 1;
   else
     # The locking process has died without erasing the lock file
     rm -f "$LOCK_FILE"
     lockfile -r 1 "$LOCK_FILE";
     if [ ${?} != 0 ]; then
-      log "${ACTUAL_LOGFILE}" "COULD NOT AQUIRE LOCK!";
+      log "${ACTUAL_LOGFILE}" "COULD NOT ACQUIRE LOCK!";
       exit 1
     fi
   fi

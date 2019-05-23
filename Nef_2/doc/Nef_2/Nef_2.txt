@@ -21,7 +21,7 @@ of a nonempty finite set of points. Convex polytopes are
 compact closed and manifold sets. 
 <LI><I>elementary polyhedra</I> normally defined as the union
 of a finite number of convex polytopes. 
-<LI><I>polyhedral sets</I> nomally defined as the intersection
+<LI><I>polyhedral sets</I> normally defined as the intersection
 of a finite number of closed halfspaces. Such sets are closed and
 convex but need not to be compact. 
 <LI><I>linear polyhedra</I> normally defined as the set of all
@@ -61,7 +61,7 @@ the corresponding reference pages.
 
 \cgalExample{Nef_2/nef_2_construction.cpp}
 
-Planar halfspaces (as used in the definition) are modelled by oriented
+Planar halfspaces (as used in the definition) are modeled by oriented
 lines. In the previous example `N1` is the Nef polyhedron
 representing the full plane, `N2` is the closed halfspace left of
 the oriented line with equation \f$ 2x + 4y + 2 = 0\f$ including the line,

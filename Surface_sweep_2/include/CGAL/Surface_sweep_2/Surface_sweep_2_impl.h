@@ -347,7 +347,7 @@ bool Surface_sweep_2<Vis>::_add_curve_to_right(Event* event, Subcurve* curve)
   //          that the overlapping curve will be added to the right of
   //          `event` because of an adjacency in the status line.
 
-  // Indicate that an overlap has occured:
+  // Indicate that an overlap has occurred:
   CGAL_SS_PRINT_END_EOL("adding a Curve to the right (overlap)");
   return true;
 }
@@ -570,7 +570,7 @@ template <typename Vis>
 
   // If the two subcurves have a common right-event, and the last intersection
   // object is a point, we can ignore last intersection (note that in case of
-  // an overlap that ends at the common endpoint, we definately want to keep
+  // an overlap that ends at the common endpoint, we definitely want to keep
   // the intersection object).
   if (c1->right_event() == c2->right_event()) {
     vector_inserter vi_last = vi_end;

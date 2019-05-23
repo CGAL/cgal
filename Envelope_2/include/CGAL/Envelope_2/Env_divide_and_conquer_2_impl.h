@@ -830,7 +830,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1,
         Vertex_handle new_v = _append_vertex(out_d, p_right, e1);
         new_v->left()->add_curves(e2->curves_begin(), e2->curves_end());
 
-        // We are not at v becuase p_right is smaller than v.
+        // We are not at v because p_right is smaller than v.
         // The special case that we are at v is handled in the next
         // condition.
         // If we were at v, then this was a special case that is handled

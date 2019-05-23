@@ -3797,7 +3797,7 @@ static runtime (/ML).
     algorithm for placing streamlines in 2D vector fields. It generates
     a list of streamlines corresponding to an input flow using a
     specified separating distance. The algorithm uses a Delaunay
-    triangulation to model objects and adress different queries, and
+    triangulation to model objects and address different queries, and
     relies on choosing the centers of the biggest empty circles to start
     the integration of the streamlines.
 -   Kinetic Data Structures (new package)

@@ -145,7 +145,7 @@ template <class T, class = void> struct pool1 {
 template <class T, class D> std::vector<T> pool1<T,D>::data;
 
 // Use an intrusive single-linked list instead (allocate one more limb and use
-// it to store the pointer to next), the difference isn't that noticable (still
+// it to store the pointer to next), the difference isn't that noticeable (still
 // the list wins).  Neither is thread-safe (both can be with threadlocal, and
 // the list can be with an atomic compare-exchange (never tried)).  With gcc,
 // TLS has a large effect on classes with constructor/destructor, but is free

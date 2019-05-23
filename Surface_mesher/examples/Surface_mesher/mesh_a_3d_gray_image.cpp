@@ -24,7 +24,7 @@ int main() {
   // the 'function' is a 3D gray level image
   Gray_level_image image("data/skull_2.9.inr", 2.9f);
 
-  // Carefully choosen bounding sphere: the center must be inside the
+  // Carefully chosen bounding sphere: the center must be inside the
   // surface defined by 'image' and the radius must be high enough so that
   // the sphere actually bounds the whole image.
   GT::Point_3 bounding_sphere_center(122., 102., 117.);
