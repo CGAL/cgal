@@ -241,6 +241,7 @@ public:
   template <class InputIterator>
   Triangulation_2(InputIterator first, InputIterator last,
                   const Geom_traits& geom_traits=Geom_traits())
+    : _gt(geom_traits)
   {
     insert(first,last);
   }
@@ -643,7 +644,6 @@ std::ptrdiff_t insert(InputIterator first, InputIterator last,
 
     std::vector<Point> points;
     std::vector<typename Tds::Vertex::Info> infos;
-    std::size_t index=0;
     for (InputIterator it=first;it!=last;++it) {
       Tuple_or_pair value=*it;
       points.push_back(top_get_first(value));
