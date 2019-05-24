@@ -133,12 +133,12 @@ public:
       }
       else
       {
-        std::cout << "move rejected!!" << std::endl;
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
+        std::cout << "move rejected!" << std::endl;
+#endif
         put(new_positions, v, pos);
       }
     }
-
-    std::cout << moved_points << " moves" << std::endl;
 
     // update locations
     for(vertex_descriptor v : vrange_)
@@ -267,13 +267,9 @@ private:
   bool does_improve(const vertex_descriptor v,
                     const Point_3& new_pos) const
   {
-    std::cout << "DOES IMPROVE AT V " << v << std::endl;
-
     // check for null faces and face inversions
     for(halfedge_descriptor main_he : halfedges_around_source(v, mesh_))
     {
-      const Point_ref old_pos = get(vpmap_, v);
-
       const halfedge_descriptor prev_he = prev(main_he, mesh_);
       const Point_ref lpt = get(vpmap_, target(main_he, mesh_));
       const Point_ref rpt = get(vpmap_, source(prev_he, mesh_));
@@ -281,6 +277,7 @@ private:
       if(traits_.collinear_3_object()(lpt, rpt, new_pos))
         return false;
 
+      const Point_ref old_pos = get(vpmap_, v);
       Vector ov_1 = traits_.construct_vector_3_object()(old_pos, lpt);
       Vector ov_2 = traits_.construct_vector_3_object()(old_pos, rpt);
       Vector old_n = traits_.construct_cross_product_vector_3_object()(ov_1, ov_2);
@@ -289,7 +286,12 @@ private:
       Vector new_n = traits_.construct_cross_product_vector_3_object()(nv_1, nv_2);
 
       if(!is_positive(traits_.compute_scalar_product_3_object()(old_n, new_n)))
+      {
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
+      std::cout << "Moving vertex would result in the inversion of a face normal!" << std::endl;
+#endif
         return false;
+      }
     }
 
     // check if the minimum angle of the star has not deteriorated
@@ -307,7 +309,6 @@ private:
                                             (std::min)(get_angle(Vector(lpt, rpt), Vector(lpt, old_pos)),
                                                        get_angle(Vector(rpt, old_pos), Vector(rpt, lpt)))));
     }
-    std::cout << "old min angle: " << old_min_angle << std::endl;
 
     for(halfedge_descriptor main_he : halfedges_around_source(v, mesh_))
     {
@@ -315,17 +316,23 @@ private:
       const Point_ref lpt = get(vpmap_, target(main_he, mesh_));
       const Point_ref rpt = get(vpmap_, source(prev_he, mesh_));
 
-      std::cout << "new angles: " << std::endl;
-      std::cout << get_angle(Vector(new_pos, lpt), Vector(new_pos, rpt)) << " ";
-      std::cout << get_angle(Vector(lpt, rpt), Vector(lpt, new_pos)) << " ";
-      std::cout << get_angle(Vector(rpt, new_pos), Vector(rpt, lpt)) << std::endl;
+      if(get_angle(Vector(new_pos, lpt), Vector(new_pos, rpt)) < old_min_angle ||
+         get_angle(Vector(lpt, rpt), Vector(lpt, new_pos)) < old_min_angle ||
+         get_angle(Vector(rpt, new_pos), Vector(rpt, lpt)) < old_min_angle)
+      {
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
+        const Point_ref old_pos = get(vpmap_, v);
 
-      if(get_angle(Vector(new_pos, lpt), Vector(new_pos, rpt)) < old_min_angle)
+        std::cout << "deterioration of min angle in the star!" << std::endl;
+        std::cout << "old/new positions: " << old_pos << " " << new_pos << std::endl;;
+        std::cout << "old min angle: " << old_min_angle << std::endl;
+        std::cout << "new angles: " << std::endl;
+        std::cout << get_angle(Vector(new_pos, lpt), Vector(new_pos, rpt)) << " ";
+        std::cout << get_angle(Vector(lpt, rpt), Vector(lpt, new_pos)) << " ";
+        std::cout << get_angle(Vector(rpt, new_pos), Vector(rpt, lpt)) << std::endl;
+#endif
         return false;
-      if(get_angle(Vector(lpt, rpt), Vector(lpt, new_pos)) < old_min_angle)
-        return false;
-      if(get_angle(Vector(rpt, new_pos), Vector(rpt, lpt)) < old_min_angle)
-        return false;
+      }
     }
 
     return true;
