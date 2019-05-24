@@ -405,6 +405,17 @@ if orientation should matter when determining whether two faces are duplicates.
 <b>Default:</b> `false`
 \cgalNPEnd
 
+\cgalNPBegin{use_safety_constraints} \anchor PMP_use_safety_constraints
+Parameter used in the functions `smooth_angles()` and `smooth_areas()` to indicate
+if some sanity checks should be used to decide if the move of a vertex should be applied or rejected.
+These sanity checks consists of checking that no face incident to the vertex becomes inverted
+and that the minimum angle of the incident faces is not decreased by the move.
+
+\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `true`
+\cgalNPEnd
+
 \cgalNPTableEnd
 
 */

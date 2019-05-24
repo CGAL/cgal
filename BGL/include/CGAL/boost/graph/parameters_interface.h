@@ -84,6 +84,7 @@ CGAL_add_named_parameter(use_compact_clipper_t, use_compact_clipper, use_compact
 CGAL_add_named_parameter(output_iterator_t, output_iterator, output_iterator)
 CGAL_add_named_parameter(erase_all_duplicates_t, erase_all_duplicates, erase_all_duplicates)
 CGAL_add_named_parameter(require_same_orientation_t, require_same_orientation, require_same_orientation)
+CGAL_add_named_parameter(use_safety_constraints_t, use_safety_constraints, use_safety_constraints)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
