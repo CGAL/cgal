@@ -55,7 +55,7 @@ optional argument for the traits class.
 
 If input points from a kernel with exact predicates 
 and non-exact constructions are used, and a certified result is expected,
-the traits `Convex_hull_traits_3<R>` should be used 
+the class `Convex_hull_traits_3<R>` should be used 
 (`R` being the input kernel).
 If the constructions from a kernel are exact this kernel can be used
 directly as a traits class.
