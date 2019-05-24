@@ -243,6 +243,7 @@ public:
                   const Geom_traits& geom_traits=Geom_traits())
     : _gt(geom_traits)
   {
+    _infinite_vertex = _tds.insert_first();
     insert(first,last);
   }
   
