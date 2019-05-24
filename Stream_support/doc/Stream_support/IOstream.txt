@@ -262,7 +262,7 @@ in those WKT types, namely:
 \section IOstreamXML Reading Adhoc XML
 
 In case you have to read data in a simple xml file with a simple structure, without existing I/O libraries
-the <a href="https://www.boost.org/doc/libs/property_tree">`boost::property_tree`</a> comes in handy.
+the <a href="https://www.boost.org/doc/libs/release/libs/property_tree/">`boost::property_tree`</a> comes in handy.
 The following small example shows how to parse a file
 looking like this:
 
