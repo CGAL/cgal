@@ -49,11 +49,19 @@ computing the hull.
 
 The function `convex_hull_3()` is parameterized by a traits class,
 which specifies the types and geometric primitives to be used in the
-computation. If input points from a kernel with exact predicates 
+computation.   As the function constructs 3D planes from three input
+points, we cannot simply pass a kernel with inexact constructions as
+optional argument for the traits class.
+
+If input points from a kernel with exact predicates 
 and non-exact constructions are used, and a certified result is expected,
 the traits `Convex_hull_traits_3<R>` should be used 
-(`R` being the input kernel). Note that the default traits class takes this into
-account.
+(`R` being the input kernel).
+If the constructions from a kernel are exact this kernel can be used
+directly as a traits class.
+
+Note that the default traits class takes this into account, that is the
+above considerations are only important for custom traits classes.
 
 \subsubsection Convex_hull_3Example Example
 
