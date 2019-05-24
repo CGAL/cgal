@@ -273,7 +273,7 @@ namespace internal {
       typename std::vector<Point>::iterator last = std::unique(result.begin(),result.end());
       result.erase(last,result.end());
 
-      while(result.back() == result.front() && result.size() > 1)
+      while(result.size() > 1 && result.back() == result.front())
         result.pop_back();
 
       switch(result.size()){
