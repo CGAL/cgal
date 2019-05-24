@@ -236,7 +236,9 @@ private:
 
       // rotate
       double angle = get_angle(right_v, left_v);
-      CGAL_assertion(angle > 0.); // no degenerate faces is a precondition
+      CGAL_warning(angle != 0.); // no degenerate faces is a precondition
+      if(angle == 0.)
+        continue;
 
       Vector bisector = rotate_edge(main_he, incident_pair);
       bisector = traits_.construct_scaled_vector_3_object()(bisector,
