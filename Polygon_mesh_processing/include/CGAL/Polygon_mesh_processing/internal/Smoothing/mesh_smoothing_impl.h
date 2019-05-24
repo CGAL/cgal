@@ -35,8 +35,10 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Kernel/global_functions_3.h>
-#include <CGAL/property_map.h>
 #include <CGAL/iterator.h>
+#include <CGAL/property_map.h>
+#include <CGAL/utils.h>
+
 #include <boost/graph/graph_traits.hpp>
 
 #include <algorithm>
@@ -67,7 +69,6 @@ class Compatible_smoother
 
   typedef std::vector<Triangle>                                           Triangle_list;
   typedef std::pair<halfedge_descriptor, halfedge_descriptor>             He_pair;
-  typedef std::vector<halfedge_descriptor>                                Hedges;
 
   typedef CGAL::AABB_face_graph_triangle_primitive<PolygonMesh,
                                                    VertexPointMap,
@@ -115,14 +116,9 @@ public:
       Vector vn = compute_vertex_normal(v, mesh_, CGAL::parameters::vertex_point_map(vpmap_)
                                         .geom_traits(traits_));
 
-      Hedges hedges;
-      hedges.reserve(halfedges_around_source(v, mesh_).size());
-      for(halfedge_descriptor hi : halfedges_around_source(v, mesh_))
-        hedges.push_back(hi);
-
       // calculate movement
       const Point_ref pos = get(vpmap_, v);
-      Vector move = compute_move(hedges);
+      Vector move = compute_move(v);
 
       // Gram Schmidt so that the new location is on the tangent plane of v (i.e. mv -= (mv*n)*n)
       const FT sp = traits_.compute_scalar_product_3_object()(vn, move);
@@ -130,16 +126,19 @@ public:
                traits_.construct_scaled_vector_3_object()(vn, - sp));
 
       Point_3 new_pos = pos + move;
-      if(does_it_improve(hedges, new_pos))
+      if(does_improve(v, new_pos))
       {
         ++moved_points;
         put(new_positions, v, new_pos);
       }
       else
       {
+        std::cout << "move rejected!!" << std::endl;
         put(new_positions, v, pos);
       }
     }
+
+    std::cout << moved_points << " moves" << std::endl;
 
     // update locations
     for(vertex_descriptor v : vrange_)
@@ -191,12 +190,11 @@ private:
   // angle bisecting functions
   // -------------------------
   Vector rotate_edge(const halfedge_descriptor main_he,
-                     const He_pair& incident_pair)
+                     const He_pair& incident_pair) const
   {
     // get common vertex around which the edge is rotated
     Point_ref pt = get(vpmap_, target(main_he, mesh_));
 
-    // get "equidistant" points - in fact they are at equal angles
     Point_ref left_pt = get(vpmap_, source(incident_pair.first, mesh_));
     Point_ref right_pt = get(vpmap_, target(incident_pair.second, mesh_));
     CGAL_assertion(target(incident_pair.first, mesh_) == source(incident_pair.second, mesh_));
@@ -214,13 +212,14 @@ private:
     return bisector;
   }
 
-  Vector compute_move(const Hedges& hedges)
+  // If it's ever allowed to move vertices on the border, the min angle computations will be missing
+  // some values (angles incident to the border)
+  Vector compute_move(const vertex_descriptor v) const
   {
     Vector move = CGAL::NULL_VECTOR;
     double weights_sum = 0.;
 
-    min_angle_ = CGAL_PI;
-    for(halfedge_descriptor main_he : hedges)
+    for(halfedge_descriptor main_he : halfedges_around_source(v, mesh_))
     {
       He_pair incident_pair = std::make_pair(prev(opposite(main_he, mesh_), mesh_),
                                              next(main_he, mesh_));
@@ -232,18 +231,11 @@ private:
       Point_ref right_pt = get(vpmap_, target(incident_pair.second, mesh_));
       CGAL_assertion(target(incident_pair.first, mesh_) == source(incident_pair.second, mesh_));
 
-      Vector e1(pt, left_pt);
-      Vector e2(pt, right_pt);
-
-      // keep in memory the current angles
-      Vector vec_main_he(pt, ps);
-      double a1 = get_angle(vec_main_he, e1);
-      double a2 = get_angle(e2, vec_main_he);
-      min_angle_ = std::min(min_angle_, std::min(a1, a2));
+      Vector left_v(pt, left_pt);
+      Vector right_v(pt, right_pt);
 
       // rotate
-      double angle = get_angle(e2, e1);
-      std::cout << "angle: " << angle << std::endl;
+      double angle = get_angle(right_v, left_v);
       CGAL_assertion(angle > 0.); // no degenerate faces is a precondition
 
       Vector bisector = rotate_edge(main_he, incident_pair);
@@ -267,41 +259,75 @@ private:
   // angle measurement & evaluation
   // ------------------------------
 
-  double get_angle(const Vector& e1,
-                   const Vector& e2)
+  double get_angle(const Vector& e1, const Vector& e2) const
   {
     return traits_.compute_approximate_angle_3_object()(e1, e2) * CGAL_PI / 180.;
   }
 
-  bool does_it_improve(const Hedges& hedges,
-                      const Point_3& new_location)
+  bool does_improve(const vertex_descriptor v,
+                    const Point_3& new_pos) const
   {
-    for(halfedge_descriptor main_he : hedges)
+    std::cout << "DOES IMPROVE AT V " << v << std::endl;
+
+    // check for null faces and face inversions
+    for(halfedge_descriptor main_he : halfedges_around_source(v, mesh_))
     {
-      He_pair incd_edges = std::make_pair(prev(opposite(main_he, mesh_), mesh_),
-                                          next(main_he, mesh_));
+      const Point_ref old_pos = get(vpmap_, v);
 
-      // get common vertex around which the edge is rotated
-      Point_ref pt = get(vpmap_, target(main_he, mesh_));
+      const halfedge_descriptor prev_he = prev(main_he, mesh_);
+      const Point_ref lpt = get(vpmap_, target(main_he, mesh_));
+      const Point_ref rpt = get(vpmap_, source(prev_he, mesh_));
 
-      // ps is the vertex that is being moved
-      Point_3 new_point = new_location;
+      if(traits_.collinear_3_object()(lpt, rpt, new_pos))
+        return false;
 
-      // get "equidistant" points
-      Point_ref left_pt = get(vpmap_, source(incd_edges.first, mesh_));
-      Point_ref right_pt = get(vpmap_, target(incd_edges.second, mesh_));
-      CGAL_assertion(target(incd_edges.first, mesh_) == source(incd_edges.second, mesh_));
+      Vector ov_1 = traits_.construct_vector_3_object()(old_pos, lpt);
+      Vector ov_2 = traits_.construct_vector_3_object()(old_pos, rpt);
+      Vector old_n = traits_.construct_cross_product_vector_3_object()(ov_1, ov_2);
+      Vector nv_1 = traits_.construct_vector_3_object()(new_pos, lpt);
+      Vector nv_2 = traits_.construct_vector_3_object()(new_pos, rpt);
+      Vector new_n = traits_.construct_cross_product_vector_3_object()(nv_1, nv_2);
 
-      Vector edge1(pt, left_pt);
-      Vector edge2(pt, right_pt);
-      Vector vec_main_he(pt, new_point);
-
-      double a1 = get_angle(vec_main_he, edge1);
-      double a2 = get_angle(edge2, vec_main_he);
-
-      if(a1 < min_angle_ || a2 < min_angle_)
+      if(!is_positive(traits_.compute_scalar_product_3_object()(old_n, new_n)))
         return false;
     }
+
+    // check if the minimum angle of the star has not deteriorated
+    double old_min_angle = CGAL_PI;
+    for(halfedge_descriptor main_he : halfedges_around_source(v, mesh_))
+    {
+      const Point_ref old_pos = get(vpmap_, v);
+
+      const halfedge_descriptor prev_he = prev(main_he, mesh_);
+      const Point_ref lpt = get(vpmap_, target(main_he, mesh_));
+      const Point_ref rpt = get(vpmap_, source(prev_he, mesh_));
+
+      old_min_angle = (std::min)(old_min_angle,
+                                 (std::min)(get_angle(Vector(old_pos, lpt), Vector(old_pos, rpt)),
+                                            (std::min)(get_angle(Vector(lpt, rpt), Vector(lpt, old_pos)),
+                                                       get_angle(Vector(rpt, old_pos), Vector(rpt, lpt)))));
+    }
+    std::cout << "old min angle: " << old_min_angle << std::endl;
+
+    for(halfedge_descriptor main_he : halfedges_around_source(v, mesh_))
+    {
+      const halfedge_descriptor prev_he = prev(main_he, mesh_);
+      const Point_ref lpt = get(vpmap_, target(main_he, mesh_));
+      const Point_ref rpt = get(vpmap_, source(prev_he, mesh_));
+
+      std::cout << "new angles: " << std::endl;
+      std::cout << get_angle(Vector(new_pos, lpt), Vector(new_pos, rpt)) << " ";
+      std::cout << get_angle(Vector(lpt, rpt), Vector(lpt, new_pos)) << " ";
+      std::cout << get_angle(Vector(rpt, new_pos), Vector(rpt, lpt)) << std::endl;
+
+      if(get_angle(Vector(new_pos, lpt), Vector(new_pos, rpt)) < old_min_angle)
+        return false;
+      if(get_angle(Vector(lpt, rpt), Vector(lpt, new_pos)) < old_min_angle)
+        return false;
+      if(get_angle(Vector(rpt, new_pos), Vector(rpt, lpt)) < old_min_angle)
+        return false;
+    }
+
     return true;
   }
 
@@ -505,7 +531,6 @@ private:
 
   Tree* tree_ptr_;
   std::vector<vertex_descriptor> vrange_;
-  double min_angle_;
 };
 
 } // namespace internal
