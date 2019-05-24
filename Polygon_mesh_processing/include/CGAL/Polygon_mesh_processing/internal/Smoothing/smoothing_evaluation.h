@@ -39,15 +39,18 @@ namespace internal {
 template<typename PolygonMesh, typename GeomTraits>
 class Quality_evaluator
 {
-  typedef typename GeomTraits::Point_3 Point;
-  typedef typename GeomTraits::Vector_3 Vector;
-  typedef typename GeomTraits::Line_3 Line;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+  typedef typename GeomTraits::Point_3                                          Point;
+  typedef typename GeomTraits::Vector_3                                         Vector;
+  typedef typename GeomTraits::Line_3                                           Line;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor        halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor            face_descriptor;
   typedef typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type VertexPointMap;
+  typedef typename boost::property_traits<VertexPointMap>::reference            Point_ref;
 
 public:
-  Quality_evaluator(PolygonMesh& pmesh) : mesh_(pmesh)
+  Quality_evaluator(PolygonMesh& pmesh,
+                    const GeomTraits& traits)
+    : mesh_(pmesh), traits_(traits)
   {
     std::size_t number_of_triangles = faces(mesh_).size();
     angles_.reserve(number_of_triangles * 3);
@@ -58,21 +61,17 @@ public:
 
   void gather_angles()
   {
-    double rad_to_deg = 180. / CGAL_PI;
-
     for(halfedge_descriptor hi : halfedges(mesh_))
     {
-      Point a = get(vpmap_, source(hi, mesh_));
-      Point b = get(vpmap_, target(hi, mesh_));
-      Point c = get(vpmap_, target(next(hi, mesh_), mesh_));
-      Vector ba(b, a);
-      Vector bc(b, c);
-      double cos_angle = CGAL::to_double((ba * bc))
-        / CGAL::approximate_sqrt(ba.squared_length() * bc.squared_length());
-      angles_.push_back(std::acos(cos_angle) * rad_to_deg);
+      const Point_ref a = get(vpmap_, source(hi, mesh_));
+      const Point_ref b = get(vpmap_, target(hi, mesh_));
+      const Point_ref c = get(vpmap_, target(next(hi, mesh_), mesh_));
+
+      angles_.push_back(traits_.compute_approximate_angle_3_object()(a, b, c));
     }
+
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
-    std::cout<<"angles_ size= "<<angles_.size()<<std::endl;
+    std::cout << "angles_ size = " << angles_.size() << std::endl;
 #endif
   }
 
@@ -90,7 +89,7 @@ public:
       areas_.push_back(face_area(f, mesh_));
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
-    std::cout<<"areas_ size= "<<areas_.size()<<std::endl;
+    std::cout << "areas_ size = " << areas_.size() << std::endl;
 #endif
   }
 
@@ -105,28 +104,10 @@ public:
   void calc_aspect_ratios()
   {
     for(face_descriptor f : faces(mesh_))
-    {
-      halfedge_descriptor h = halfedge(f, mesh_);
-      Point points[3];
-      points[0] = get(vpmap_, target(h, mesh_));
-      points[1] = get(vpmap_, target(next(h, mesh_), mesh_));
-      points[2] = get(vpmap_, target(next(next(h, mesh_), mesh_), mesh_));
-
-      double min_alt = std::numeric_limits<double>::infinity();
-      double longest_edge = 0;
-
-      for(int i=0; i<3; ++i)
-      {
-        double alt = CGAL::approximate_sqrt(CGAL::squared_distance(points[(0+i)%3], Line(points[(1+i)%3], points[(2+i)%3])));
-        double edge =  CGAL::approximate_sqrt(CGAL::squared_distance(points[(1+i)%3], points[(2+i)%3]));
-        if(alt < min_alt) { min_alt = alt; }
-        if(edge > longest_edge) { longest_edge = edge; }
-      }
-      aspect_ratios_.push_back(longest_edge / min_alt);
-    }
+      aspect_ratios_.push_back(CGAL::Polygon_mesh_processing::face_aspect_ratio(f, mesh_));
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
-    std::cout<<"aspect_ratios_ size= "<<aspect_ratios_.size()<<std::endl;
+    std::cout << "aspect_ratios_ size = " << aspect_ratios_.size() << std::endl;
 #endif
   }
 
@@ -140,7 +121,9 @@ public:
 
 private:
   PolygonMesh& mesh_;
+  const GeomTraits& traits_;
   VertexPointMap vpmap_;
+
   std::vector<double> angles_;
   std::vector<double> areas_;
   std::vector<double> aspect_ratios_;
