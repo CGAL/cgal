@@ -722,6 +722,7 @@ struct Test
 
     // no intersection
     check_no_intersection  (Rec(p( 10,  12), p(30, 40)), T(p(    4,   0), p(  12,   4), p(-4,  8)));
+    check_no_intersection  (Rec(p(  2,   0), p( 3,  1)), T(p(    0,   3), p(   3,   3), p( 0,  0)));
 
     // point intersection
     check_intersection<P>  (Rec(p( 0,  0), p(1, 1)), T(p(  -1,  0), p(  0,  0), p( 0,  -1))); // intersection at a vertex
