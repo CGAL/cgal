@@ -563,6 +563,19 @@ which are subgroups of axis-symmetric and orthogonal clusters) as described by V
 \cgalExample{Shape_detection/efficient_RANSAC_and_plane_regularization.cpp}
 
 
+\section Shape_detection_DeprecatedComponents Deprecated Components
+
+The new version (see all examples above) of the class `CGAL::Shape_detection::Region_growing` 
+is not compatible with the old API. For the old API, see an example below.
+
+\cgalExample{Shape_detection/shape_detection_basic_deprecated.cpp}
+
+The old API is still supported, but will be removed in the next releases.
+In particular, the classes `CGAL::Shape_detection::deprecated::Region_growing` and
+`CGAL::Shape_detection::deprecated::Shape_detection_traits` will be removed.
+Please update your code.
+
+
 \section Shape_detection_History History
 
 The Efficient RANSAC component was developed by Sven Oesau based on the prototype version created by Yannick Verdie, 
@@ -572,6 +585,11 @@ based on the prototype version developed by Florent Lafarge.
 The region growing algorithm on a 3D point set was first implemented by Simon Giraudot based on the prototype version developed by Florent Lafarge 
 and then generalized to arbitrary items including versions for a 2D point set, a 3D point set, and a polygon mesh by Thien Hoang during the 
 Google Summer of Code 2018 under the supervision of Dmitry Anisimov.
+
+
+\section Shape_detection_Acknowledgments Acknowledgments
+The authors wish to thank our reviewers Andreas Fabri, Sébastien Loriot, and Simon Giraudot
+for helpful comments and discussions.
 
 */ 
 } /* namespace CGAL */

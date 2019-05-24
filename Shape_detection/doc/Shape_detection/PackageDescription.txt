@@ -47,6 +47,11 @@ Property maps that can be used with the `CGAL::Shape_detection::Efficient_RANSAC
 
 \addtogroup PkgShapeDetectionRANSAC
 
+\defgroup PkgShapeDetectionDEPR Deprecated
+\ingroup PkgShapeDetectionRef
+
+Deprecated components.
+
 \addtogroup PkgShapeDetectionRef
 
 \cgalPkgDescriptionBegin{Shape Detection, PkgShapeDetection}
@@ -120,6 +125,10 @@ on a polygon mesh.}
 - `CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<PolygonMesh, FaceRange>`
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<GeomTraits, PolygonMesh, FaceRange, VertexToPointMap>`
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<GeomTraits, PolygonMesh, NeighborQuery, FaceRange, VertexToPointMap>`
+
+## Deprecated Components ##
+- `CGAL::Shape_detection::deprecated::Shape_detection_traits<GeomTraits, InputRange, PointMap, NormalMap>`
+- `CGAL::Shape_detection::deprecated::Region_growing<Traits>`
 
 ## Functions ##
 - `CGAL::regularize_planes()`

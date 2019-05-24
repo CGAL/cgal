@@ -4,3 +4,4 @@ PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Shape Detection"
 EXTRACT_ALL                =  NO
 HIDE_UNDOC_CLASSES         =  YES
 WARN_IF_UNDOCUMENTED       =  NO
+PREDEFINED                 =  DOXYGEN_NS

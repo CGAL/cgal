@@ -32,6 +32,9 @@ if(CGAL_FOUND)
       "region_growing_on_polygon_mesh.cpp")
     create_single_source_cgal_program(
       "region_growing_with_custom_classes.cpp")
+
+    create_single_source_cgal_program(
+      "shape_detection_basic_deprecated.cpp")
   endif()
 
   create_single_source_cgal_program(
