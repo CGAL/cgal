@@ -26,10 +26,10 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <CGAL/assertions.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/properties.h>
-
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/squared_distance_3.h>
@@ -536,6 +536,118 @@ CGAL::vertex_point_t>::type>::Kernel::FT
 volume(const TriangleMesh& tmesh)
 {
   return volume(tmesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+}
+
+/**
+  * \ingroup measure_grp
+  * computes the aspect ratio of a face of a given triangulated surface mesh.
+  *
+  * @tparam TriangleMesh a model of `HalfedgeGraph`
+  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  *
+  * @param f the face of which the aspect ratio is computed
+  * @param tmesh the triangulated surface mesh to which `f` belongs
+  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  *
+  * \cgalNamedParamsBegin
+  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+  *   If this parameter is omitted, an internal property map for
+  *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
+  *  \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+  * \cgalNamedParamsEnd
+  *
+  * @pre `f != boost::graph_traits<TriangleMesh>::%null_face()`
+  *
+  * @return the aspect ratio of `f`. The return type `FT` is a number type. It is
+  * either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+  * or the geometric traits class deduced from the point property map of `tmesh`.
+  *
+  * @warning
+  *
+  */
+template<typename TriangleMesh,
+         typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+#ifdef DOXYGEN_RUNNING
+FT
+#else
+typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type::FT
+#endif
+face_aspect_ratio(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
+                  const TriangleMesh& tmesh,
+                  const CGAL_PMP_NP_CLASS& np)
+{
+  CGAL_precondition(is_triangle(f, tmesh));
+
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor           halfedge_descriptor;
+
+  typedef typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type             Geom_traits;
+  typedef typename Geom_traits::FT                                                  FT;
+
+  using boost::choose_param;
+  using boost::get_param;
+
+  typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type
+      vpm = choose_param(get_param(np, internal_np::vertex_point),
+                         get_const_property_map(CGAL::vertex_point, tmesh));
+
+  halfedge_descriptor h = halfedge(f, tmesh);
+
+  Geom_traits gt = choose_param(get_param(np, internal_np::geom_traits), Geom_traits());
+
+#if 0
+  const FT sq_triangle_area = gt.compute_squared_area_3_object()(get(vpm, source(h, tmesh)),
+                                                                 get(vpm, target(h, tmesh)),
+                                                                 get(vpm, target(next(h, tmesh), tmesh)));
+  const FT sq_d12 = gt.compute_squared_distance_2_object()(get(vpm, source(h, tmesh)),
+                                                           get(vpm, target(h, tmesh)));
+  const FT sq_d13 = gt.compute_squared_distance_2_object()(get(vpm, source(h, tmesh)),
+                                                           get(vpm, target(next(h, tmesh), tmesh)));
+  const FT sq_d23 = gt.compute_squared_distance_2_object()(get(vpm, target(h, tmesh)),
+                                                           get(vpm, target(next(h, tmesh), tmesh)));
+
+  const FT min_sq_d123 = (std::min)(sq_d12, (std::min)(sq_d13, sq_d23));
+
+  const FT aspect_ratio = 4*sq_triangle_area*min_sq_d123 / (sq_d12*sq_d13*sq_d23);
+#else // below requires SQRT
+  typedef typename Geom_traits::Line_3                                              Line_3;
+
+  FT sq_max_edge_length = gt.compute_squared_distance_3_object()(get(vpm, source(h, tmesh)),
+                                                                 get(vpm, target(h, tmesh)));
+  FT sq_min_alt = gt.compute_squared_distance_3_object()(get(vpm, target(next(h, tmesh), tmesh)),
+                                                         Line_3(get(vpm, source(h, tmesh)),
+                                                                get(vpm, target(h, tmesh))));
+  h = next(h, tmesh);
+
+  for(int i=1; i<3; ++i)
+  {
+    FT sq_edge_length = gt.compute_squared_distance_3_object()(get(vpm, source(h, tmesh)),
+                                                               get(vpm, target(h, tmesh)));
+    FT sq_alt = gt.compute_squared_distance_3_object()(get(vpm, target(next(h, tmesh), tmesh)),
+                                                       Line_3(get(vpm, source(h, tmesh)),
+                                                              get(vpm, target(h, tmesh))));
+
+    if(sq_alt < sq_min_alt)
+      sq_min_alt = sq_alt;
+    if(sq_edge_length > sq_max_edge_length)
+      sq_max_edge_length = sq_edge_length;
+
+    h = next(h, tmesh);
+  }
+
+  CGAL_assertion(sq_min_alt > 0);
+  const FT aspect_ratio = CGAL::approximate_sqrt(sq_max_edge_length / sq_min_alt);
+#endif
+
+  return aspect_ratio;
+}
+
+template<typename TriangleMesh>
+typename CGAL::Kernel_traits<typename property_map_value<TriangleMesh,
+CGAL::vertex_point_t>::type>::Kernel::FT
+face_aspect_ratio(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
+             const TriangleMesh& tmesh)
+{
+  return face_aspect_ratio(f, tmesh, CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
 /**
