@@ -98,7 +98,7 @@ public:
     tree_ptr_->accelerate_distance_queries();
   }
 
-  void angle_relaxation()
+  void angle_relaxation(const bool use_safety_constraints)
   {
     typedef CGAL::dynamic_vertex_property_t<Point_3>                    Vertex_property_tag;
     typedef typename boost::property_map<PolygonMesh,
@@ -126,7 +126,7 @@ public:
                traits_.construct_scaled_vector_3_object()(vn, - sp));
 
       Point_3 new_pos = pos + move;
-      if(does_improve(v, new_pos))
+      if(!use_safety_constraints || does_improve(v, new_pos))
       {
         ++moved_points;
         put(new_positions, v, new_pos);

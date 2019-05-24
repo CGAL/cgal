@@ -119,9 +119,9 @@ void smooth_angles(const FaceRange& faces,
   VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
                              Constant_property_map<vertex_descriptor, bool>());
 
-  // nb_iterations
   std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
-  bool do_project = choose_param(get_param(np, internal_np::do_project), true);
+  const bool do_project = choose_param(get_param(np, internal_np::do_project), true);
+  const bool use_safety_constraints = choose_param(get_param(np, internal_np::use_safety_constraints), true);
 
   internal::Compatible_smoother<TriangleMesh, VertexPointMap, VCMap, GeomTraits> smoother(tmesh, vpmap, vcmap, gt);
 
@@ -148,10 +148,10 @@ void smooth_angles(const FaceRange& faces,
     std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
 #endif
 
-    smoother.angle_relaxation();
+    smoother.angle_relaxation(use_safety_constraints);
     if(do_project)
     {
-      if(does_self_intersect(tmesh))
+      if(use_safety_constraints && does_self_intersect(tmesh))
       {
         std::cerr << "Can't do re-projection, there are self-intersections in the mesh!\n";
         break;
