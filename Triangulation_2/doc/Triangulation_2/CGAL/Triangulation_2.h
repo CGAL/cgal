@@ -691,17 +691,19 @@ Equivalent to `insert(p)`.
 Vertex_handle push_back(const Point& p); 
 
 /*!
-Inserts the points in the range `[first,last)` in the given order.
-Returns the number of inserted points. 
-\pre The `value_type` of `InputIterator` is `Point`. 
+Inserts the points in the range `[first,last)` in the given order,
+and returns the number of inserted points. 
+
+\tparam PointInputIterator must be an input iterator with value type `Point`. 
 */ 
-template < class InputIterator > 
+template < class PointInputIterator > 
 std::ptrdiff_t 
-insert(InputIterator first, InputIterator last);
+insert(PointInputIterator first, PointInputIterator last);
 
   
 /*!
-inserts the points in the iterator range `[first,last)` in the given order. Returns the number of inserted points. 
+inserts the points in the iterator range `[first,last)` in the given order,
+and returns the number of inserted points. 
 
 Given a pair `(p,i)`, the vertex `v` storing `p` also stores `i`, that is 
 `v.point() == p` and `v.info() == i`. If several pairs have the same point, 

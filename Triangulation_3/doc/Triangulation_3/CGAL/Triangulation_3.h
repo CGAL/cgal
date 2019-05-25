@@ -905,10 +905,9 @@ Vertex_handle insert(const Point & p, Locate_type lt,
 Cell_handle loc, int li, int lj); 
 
 /*!
-Inserts the points in the range `[first,last)`. Returns the number of inserted points. 
-Note that this function is not guaranteed to insert the points 
-following the order of `InputIterator`. 
-\tparam PointInputIterator must be an input iterator with value type `Point`. 
+Inserts the points in the range `[first,last)` in the given order,
+and returns the number of inserted points. 
+
 */ 
 template < class PointInputIterator > 
 std::ptrdiff_t 
@@ -916,9 +915,8 @@ insert(PointInputIterator first, PointInputIterator last);
 
 
 /*!
-Inserts the points in the iterator range  `[first,last)`. 
-Returns the number of inserted points. 
-Inserts the points following the order of `PointWithInfoInputIterator`. 
+Inserts the points in the iterator range  `[first,last)` in the given order,
+and returns the number of inserted points. 
 
 Given a pair `(p,i)`, the vertex `v` storing `p` also stores `i`, that is 
 `v.point() == p` and `v.info() == i`. If several pairs have the same point, 
