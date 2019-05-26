@@ -518,8 +518,8 @@ site-related quantities.
 
 If you have a rather large input, you better use an insertion function that uses
 the spatial sorting of your input (end) points. Note that the functions
-\link CGAL::Segment_Delaunay_graph_2::insert_points `insert_points` \endlink or
-\link CGAL::Segment_Delaunay_graph_2::insert_segments `insert_segments` \endlink
+\link CGAL::Segment_Delaunay_graph_2::insert_points `insert_points()` \endlink or
+\link CGAL::Segment_Delaunay_graph_2::insert_segments `insert_segments()` \endlink
 can be used if your input is only composed of points or segments.
 
 \cgalExample{Segment_Delaunay_graph_2/sdg-fast-sp.cpp}

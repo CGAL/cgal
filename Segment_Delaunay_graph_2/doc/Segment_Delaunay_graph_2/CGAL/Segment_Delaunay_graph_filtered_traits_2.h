@@ -20,13 +20,13 @@ This class has six template parameters.
 \tparam CK is the construction kernel and it is the kernel 
 that will be used for constructions.
 \tparam CM must be `Field_with_sqrt_tag` or `Field_tag`
+\tparam EK is the exact kernel; this kernel will be used for computing the predicates if 
+the filtering kernel fails to produce an answer. 
+\tparam EM must be `Field_with_sqrt_tag` or `Field_tag`
 \tparam FK is the  filtering kernel; this kernel will be used for performing the 
 arithmetic filtering for the predicates involved in the computation of 
 the segment Delaunay graph. 
 \tparam FM must be `Field_with_sqrt_tag` or `Field_tag`
-\tparam EK is the exact kernel; this kernel will be used for computing the predicates if 
-the filtering kernel fails to produce an answer. 
-\tparam EM must be `Field_with_sqrt_tag` or `Field_tag`
 
 The first, third and fifth template parameters must be models of the `Kernel` concept.
 The second, fourth and sixth template parameters correspond to how 
@@ -170,14 +170,14 @@ This class has six template parameters.
 \tparam CK is the construction kernel and it is the kernel 
 that will be used for constructions.
 \tparam CM must be `Field_with_sqrt_tag` or `Field_tag`
+\tparam EK is the exact kernel; this kernel will be used for computing the predicates if 
+the filtering kernel fails to produce an answer. 
+\tparam EM must be `Field_with_sqrt_tag` or `Field_tag`
 \tparam FK is the 
 filtering kernel; this kernel will be used for performing the 
 arithmetic filtering for the predicates involved in the computation of 
 the segment Delaunay graph. 
 \tparam FM must be `Field_with_sqrt_tag` or `Field_tag`
-\tparam EK is the exact kernel; this kernel will be used for computing the predicates if 
-the filtering kernel fails to produce an answer. 
-\tparam EM must be `Field_with_sqrt_tag` or `Field_tag`
 
 The first, third and fifth 
 template parameters must be a models of the `Kernel` concept.
