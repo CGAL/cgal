@@ -75,7 +75,7 @@ namespace Shape_detection {
   \tparam Traits a model of `EfficientRANSACTraits`
   */
   template<class Traits>
-  class Region_growing {
+  class Region_growing_depr {
     
   public:
     
@@ -331,7 +331,7 @@ namespace Shape_detection {
     /*! 
       Constructs an empty shape detection object.
     */ 
-    Region_growing (Traits t = Traits())
+    Region_growing_depr (Traits t = Traits())
       : m_traits(t)
       , m_num_available_points(0)
       , m_num_total_points(0)
@@ -342,7 +342,7 @@ namespace Shape_detection {
     /*! 
       Releases all memory allocated by this instances including shapes.
     */ 
-    ~Region_growing() {
+    ~Region_growing_depr() {
       clear();
     }
 

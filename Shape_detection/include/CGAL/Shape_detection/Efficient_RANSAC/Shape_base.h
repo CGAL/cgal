@@ -64,7 +64,7 @@ namespace CGAL {
     template <class T>
     friend class Efficient_RANSAC;
     template <class T>
-    friend class Region_growing;
+    friend class Region_growing_depr;
     template<class PointAccessor>
     friend class internal::Octree;
     /// \endcond
