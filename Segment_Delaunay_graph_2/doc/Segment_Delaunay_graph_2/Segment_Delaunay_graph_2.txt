@@ -412,7 +412,7 @@ segment Delaunay graphs:
 <LI>The user can define his/her kernel using as number type, a
 number type of the form `Filtered_exact<CT,ET>`. Then this
 kernel can be entered as the first template parameter in the
-`Segment_Delaunay_graph_2<K,MTag>`.
+`Segment_Delaunay_graph_traits_2<K,MTag>`.
 <LI>The user can define up to three different kernels `CK`,
 `FK` and `EK` (default values are provided for most
 parameters). The first kernel `CK` is used only for
@@ -431,7 +431,7 @@ values of the template parameters, the second method for arithmetic
 filtering is more efficient among the two.
 
 Let's consider once more the class
-`Segment_Delaunay_graph_2<K,MTag>`.
+`Segment_Delaunay_graph_traits_2<K,MTag>`.
 The template parameter `MTag` provides another degree of freedom
 to the user, who can indicate the type of arithmetic operations to
 be used in the evaluation of the predicates. More specifically,

@@ -191,7 +191,7 @@ whereas the second requires the exact evaluation of signs of ring-type
 expressions, i.e., expressions involving only additions, subtractions 
 and multiplications. Finally, in order to get exact constructions 
 `CM` must be set to `Field_with_sqrt_tag` and the number type 
-in `CK` must support operations involing divisions and square 
+in `CK` must support operations involving divisions and square 
 roots (as well as the other three basic operations of course). 
 The way the predicates are evaluated is discussed in 
 \cgalCite{b-ecvdl-96} and \cgalCite{cgal:k-reisv-04} (the geometric filtering 
