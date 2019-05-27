@@ -180,22 +180,51 @@ public:
     std::cout << "moved : " << moved_points << " points based on area." << std::endl;
     std::cout << "non convex energy found: " << vrange_.size() - moved_points << " times." << std::endl;
 #endif
+
+    // @todo according to the paper, we're supposed to Delauany-based edge flips!
   }
 
   void project_to_surface()
   {
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
+    std::cout << "Projecting back to the surface" << std::endl;
+#endif
+
     for(vertex_descriptor v : vrange_)
     {
-      if(!is_border(v, mesh_) && !is_constrained(v))
-      {
-        Point_ref p_query = get(vpmap_, v);
-        Point_3 projected = tree_ptr_->closest_point(p_query);
-        put(vpmap_, v, projected);
-      }
-    }
+      if(is_border(v, mesh_) || is_constrained(v))
+        continue;
+
+      Point_ref p_query = get(vpmap_, v);
+      Point_3 projected = tree_ptr_->closest_point(p_query);
+      std::cout << "projected to: " << projected << std::endl;
+      put(vpmap_, v, projected);
+     }
   }
 
 private:
+  // helper functions
+  // ----------------
+  bool is_constrained(const vertex_descriptor v)
+  {
+    return get(vcmap_, v);
+  }
+
+  template<typename FaceRange>
+  void set_vertex_range(const FaceRange& face_range)
+  {
+    // reserve 3 * #faces space
+    vrange_.reserve(3 * face_range.size());
+    for(face_descriptor f : face_range)
+    {
+     for(vertex_descriptor v : vertices_around_face(halfedge(f, mesh_), mesh_))
+      vrange_.push_back(v);
+    }
+    // get rid of duplicate vertices
+    std::sort(vrange_.begin(), vrange_.end());
+    vrange_.erase(std::unique(vrange_.begin(), vrange_.end()), vrange_.end());
+  }
+
   // angle bisecting functions
   // -------------------------
   Vector rotate_edge(const halfedge_descriptor main_he,
@@ -269,7 +298,6 @@ private:
 
   // angle measurement & evaluation
   // ------------------------------
-
   double get_angle(const Vector& e1, const Vector& e2) const
   {
     return traits_.compute_approximate_angle_3_object()(e1, e2) * CGAL_PI / 180.;
@@ -349,8 +377,109 @@ private:
     return true;
   }
 
-  // gradient descent
-  // ----------------
+  double element_area(const vertex_descriptor v1,
+                      const vertex_descriptor v2,
+                      const vertex_descriptor v3) const
+  {
+    return CGAL::to_double(CGAL::approximate_sqrt(traits_.compute_squared_area_3_object()(get(vpmap_, v1),
+                                                                                          get(vpmap_, v2),
+                                                                                          get(vpmap_, v3))));
+  }
+
+  double element_area(const Point_3& P,
+                      const vertex_descriptor v2,
+                      const vertex_descriptor v3) const
+  {
+    return CGAL::to_double(CGAL::approximate_sqrt(traits_.compute_squared_area_3_object()(P,
+                                                                                          get(vpmap_, v2),
+                                                                                          get(vpmap_, v3))));
+  }
+
+  void compute_derivatives(double& drdx, double& drdy, double& drdz,
+                           const vertex_descriptor v,
+                           const double S_av)
+  {
+    for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
+    {
+      vertex_descriptor v_i = source(next(h, mesh_), mesh_);
+      vertex_descriptor v_ip1 = target(next(h, mesh_), mesh_);
+      double S = element_area(v, v_i, v_ip1);
+
+      Vector vec(get(vpmap_, v_i), get(vpmap_, v_ip1));
+
+      // minimize r:
+      // r = Σ(S-S_av)^2
+      // dr/dx = 2 Σ(S - S_av) dS/dx
+      // area of triangle with respect to (x_a, y_a, z_a) =
+      // (1/2) [(v_z - v_y)x_a + (v_x - v_z)y_a + (v_y - v_x)z_a + constants]
+      // vector v is (x_c - x_b, y_c - y_b, z_c - z_b)
+      drdx += (S - S_av) * 0.5 * (vec.z() - vec.y());
+      drdy += (S - S_av) * 0.5 * (vec.x() - vec.z());
+      drdz += (S - S_av) * 0.5 * (vec.y() - vec.x());
+    }
+
+    drdx *= 2;
+    drdy *= 2;
+    drdz *= 2;
+  }
+
+  double compute_average_area_around(const vertex_descriptor v)
+  {
+    double sum_areas = 0.;
+    unsigned int number_of_edges = 0;
+
+    for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
+    {
+      // opposite vertices
+      vertex_descriptor v_i = source(next(h, mesh_), mesh_);
+      vertex_descriptor v_ip1 = target(next(h, mesh_), mesh_);
+
+      double S = element_area(v, v_i, v_ip1);
+      sum_areas += S;
+      ++number_of_edges;
+    }
+
+    return sum_areas / number_of_edges;
+  }
+
+  double measure_energy(const vertex_descriptor v,
+                        const double S_av)
+  {
+    double energy = 0;
+    unsigned int number_of_edges = 0;
+
+    for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
+    {
+      vertex_descriptor pi = source(next(h, mesh_), mesh_);
+      vertex_descriptor v_ip1 = target(next(h, mesh_), mesh_);
+      double S = element_area(v, pi, v_ip1);
+
+      energy += (S - S_av)*(S - S_av);
+      ++number_of_edges;
+    }
+
+    return to_double(energy / number_of_edges);
+  }
+
+  double measure_energy(const vertex_descriptor v,
+                        const double S_av,
+                        const Point_3& new_P)
+  {
+    double energy = 0;
+    unsigned int number_of_edges = 0;
+    for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
+    {
+      vertex_descriptor v_i = source(next(h, mesh_), mesh_);
+      vertex_descriptor v_ip1 = target(next(h, mesh_), mesh_);
+      double S = element_area(new_P, v_i, v_ip1);
+
+      energy += (S - S_av)*(S - S_av);
+      ++number_of_edges;
+    }
+
+    return to_double(energy / (2 * number_of_edges));
+  }
+
   bool gradient_descent(const vertex_descriptor v,
                         const double precision)
   {
@@ -395,9 +524,11 @@ private:
         move_flag = true;
       }
       else
+      {
         return false;
+      }
 
-      relative_energy = CGAL::to_double((energy - energy_new) / energy);
+      relative_energy = (energy - energy_new) / energy;
 
       // update
       x = x_new;
@@ -411,131 +542,6 @@ private:
     }
 
     return move_flag;
-  }
-
-  double element_area(const vertex_descriptor v1,
-                      const vertex_descriptor v2,
-                      const vertex_descriptor v3) const
-  {
-    return CGAL::to_double(CGAL::approximate_sqrt(
-                       traits_.compute_squared_area_3_object()(get(vpmap_, v1),
-                                                               get(vpmap_, v2),
-                                                               get(vpmap_, v3))));
-  }
-
-  double element_area(const Point_3& P,
-                      const vertex_descriptor v2,
-                      const vertex_descriptor v3) const
-  {
-    return CGAL::to_double(CGAL::approximate_sqrt(
-                       traits_.compute_squared_area_3_object()(P,
-                                                               get(vpmap_, v2),
-                                                               get(vpmap_, v3))));
-  }
-
-  void compute_derivatives(double& drdx, double& drdy, double& drdz,
-                           const vertex_descriptor v,
-                           const double S_av)
-  {
-    for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
-    {
-      vertex_descriptor pi = source(next(h, mesh_), mesh_);
-      vertex_descriptor pi1 = target(next(h, mesh_), mesh_);
-      double S = element_area(v, pi, pi1);
-
-      Vector vec(get(vpmap_, pi), get(vpmap_, pi1));
-
-      // minimize r:
-      // r = Σ(S-S_av)^2
-      // dr/dx = 2 Σ(S - S_av) dS/dx
-      // area of triangle with respect to (x_a, y_a, z_a) =
-      // (1/2) [(v_z - v_y)x_a + (v_x - v_z)y_a + (v_y - v_x)z_a + constants]
-      // vector v is (x_c - x_b, y_c - y_b, z_c - z_b)
-      drdx += (S - S_av) * 0.5 * (vec.z() - vec.y());
-      drdy += (S - S_av) * 0.5 * (vec.x() - vec.z());
-      drdz += (S - S_av) * 0.5 * (vec.y() - vec.x());
-    }
-
-    drdx *= 2;
-    drdy *= 2;
-    drdz *= 2;
-  }
-
-  double compute_average_area_around(const vertex_descriptor v)
-  {
-    double sum_areas = 0.;
-    unsigned int number_of_edges = 0;
-
-    for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
-    {
-      // opposite vertices
-      vertex_descriptor pi = source(next(h, mesh_), mesh_);
-      vertex_descriptor pi1 = target(next(h, mesh_), mesh_);
-
-      double S = element_area(v, pi, pi1);
-      sum_areas += S;
-      ++number_of_edges;
-    }
-
-    return sum_areas / number_of_edges;
-  }
-
-  double measure_energy(const vertex_descriptor v,
-                        const double S_av)
-  {
-    double energy = 0;
-    unsigned int number_of_edges = 0;
-
-    for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
-    {
-      vertex_descriptor pi = source(next(h, mesh_), mesh_);
-      vertex_descriptor pi1 = target(next(h, mesh_), mesh_);
-      double S = element_area(v, pi, pi1);
-
-      energy += (S - S_av)*(S - S_av);
-      ++number_of_edges;
-    }
-
-    return to_double(energy / number_of_edges);
-  }
-
-  double measure_energy(const vertex_descriptor v,
-                        const double S_av,
-                        const Point_3& new_P)
-  {
-    double energy = 0;
-    unsigned int number_of_edges = 0;
-    for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
-    {
-      vertex_descriptor pi = source(next(h, mesh_), mesh_);
-      vertex_descriptor pi1 = target(next(h, mesh_), mesh_);
-      double S = element_area(new_P, pi, pi1);
-
-      energy += (S - S_av)*(S - S_av);
-      ++number_of_edges;
-    }
-
-    return to_double(energy / (2 * number_of_edges));
-  }
-
-  bool is_constrained(const vertex_descriptor v)
-  {
-    return get(vcmap_, v);
-  }
-
-  template<typename FaceRange>
-  void set_vertex_range(const FaceRange& face_range)
-  {
-    // reserve 3 * #faces space
-    vrange_.reserve(3 * face_range.size());
-    for(face_descriptor f : face_range)
-    {
-     for(vertex_descriptor v : vertices_around_face(halfedge(f, mesh_), mesh_))
-      vrange_.push_back(v);
-    }
-    // get rid of duplicate vertices
-    std::sort(vrange_.begin(), vrange_.end());
-    vrange_.erase(std::unique(vrange_.begin(), vrange_.end()), vrange_.end());
   }
 
 private:

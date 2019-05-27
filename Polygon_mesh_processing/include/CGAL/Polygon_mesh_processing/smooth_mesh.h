@@ -149,6 +149,7 @@ void smooth_angles(const FaceRange& faces,
 #endif
 
     smoother.angle_relaxation(use_safety_constraints);
+
     if(do_project)
     {
       if(use_safety_constraints && does_self_intersect(tmesh))
