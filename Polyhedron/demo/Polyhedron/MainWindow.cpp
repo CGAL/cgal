@@ -1204,7 +1204,8 @@ QList<Scene_item*> MainWindow::loadItem(QFileInfo fileinfo,
                          QString("File %1 is not a readable file.")
                          .arg(fileinfo.absoluteFilePath()));
   }
-  CGAL::Three::Three::CursorScopeGuard guard(QCursor(Qt::WaitCursor));
+  QCursor tmp_cursor(Qt::WaitCursor);
+  CGAL::Three::Three::CursorScopeGuard guard(tmp_cursor);
   QList<Scene_item*> result = loader->load(fileinfo, ok, add_to_scene);
   if(result.empty() || !ok)
   {

@@ -636,7 +636,7 @@ void Viewer::keyPressEvent(QKeyEvent* e)
           camera()->setOrthoZNear(0.0f);
         }
         break;
-        deafult:
+        default:
         break;
       }
       this->displayMessage(tr("Macro mode: %1").
