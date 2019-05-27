@@ -23,10 +23,26 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QColorDialog>
+#include <QInputDialog>
+#include <QString>
 
 #include <CGAL/IO/Arr_with_history_iostream.h>
 #include <CGAL/IO/Arr_text_formatter.h>
 #include <CGAL/IO/Arr_with_history_text_formatter.h>
+
+#include "ui_AlgebraicCurveInputDialog.h"
+
+ArrangementDemoWindow *ArrangementDemoWindow::instance_ = NULL;
+
+Ui::ArrangementDemoWindow* getCurrentDemoWindowUi()
+{
+  return ArrangementDemoWindow::getInstance()->getUi();
+}
+
+ArrangementDemoGraphicsView* getCurrentView()
+{
+  return ArrangementDemoWindow::getInstance()->getCurrentTab()->getView();
+}
 
 ArrangementDemoWindow::ArrangementDemoWindow(QWidget* parent) :
   CGAL::Qt::DemosMainWindow( parent ),
@@ -72,6 +88,7 @@ ArrangementDemoTabBase* ArrangementDemoWindow::makeTab( TraitsType tt )
 
   Lin_arr* lin_arr;
   Arc_arr* arc_arr;
+  Alg_seg_arr* alg_seg_arr;
   // Alg_seg_arr* alg_seg_arr;
   CGAL::Object arr;
 
@@ -112,12 +129,12 @@ ArrangementDemoTabBase* ArrangementDemoWindow::makeTab( TraitsType tt )
     arr = CGAL::make_object( arc_arr );
     tabLabel = QString( "%1 - Circular Arc" ).arg( tabLabelCounter++ );
     break;
-   // case ALGEBRAIC_TRAITS:
-   //  alg_seg_arr = new Alg_seg_arr;
-   //  demoTab = new ArrangementDemoTab< Alg_seg_arr >( alg_seg_arr, 0 );
-   //  arr = CGAL::make_object( alg_seg_arr );
-   //  tabLabel = QString( "%1 - Algebraic" ).arg( tabLabelCounter++ );
-   //  break;
+   case ALGEBRAIC_TRAITS:
+    alg_seg_arr = new Alg_seg_arr;
+    demoTab = new ArrangementDemoTab< Alg_seg_arr >( alg_seg_arr, 0 );
+    arr = CGAL::make_object( alg_seg_arr );
+    tabLabel = QString( "%1 - Algebraic" ).arg( tabLabelCounter++ );
+    break;
   }
 
   this->arrangements.push_back( arr );
@@ -640,6 +657,7 @@ void ArrangementDemoWindow::updateSnapping( QAction* newMode )
       this->ui->actionGridSnapMode->setEnabled( false );
       activeTab->getCurveInputCallback( )->setSnapToGridEnabled( false );
       activeTab->getSplitEdgeCallback( )->setSnapToGridEnabled( false );
+      activeTab->setShowGrid( enabled );
     }
     else
     {
@@ -673,6 +691,11 @@ void ArrangementDemoWindow::updateConicType( QAction* newType )
   bool isLinearArr =
     CGAL::assign( lin_arr,
                   this->arrangements[ this->ui->tabWidget->currentIndex( ) ] );
+
+  Alg_seg_arr* alg_seg_arr;
+    bool isAlgSegArr =
+      CGAL::assign( alg_seg_arr,
+                    this->arrangements[ this->ui->tabWidget->currentIndex( ) ] );
 
   if ( isLinearArr )
   {
@@ -728,6 +751,28 @@ void ArrangementDemoWindow::updateConicType( QAction* newType )
     }
   }
 #endif
+  if (isAlgSegArr && (newType == this->ui->actionConicSegment))
+  {
+    if (this->ui->actionInsert->isChecked())
+    {
+      typedef Alg_seg_arr::Geometry_traits_2       Alg_seg_geom_traits;
+      typedef CGAL::Qt::GraphicsViewCurveInput<Alg_seg_geom_traits>
+        AlgSegCurveInputCallback;
+      AlgSegCurveInputCallback* algCurveInputCallback =
+        ( AlgSegCurveInputCallback* ) activeTab->getCurveInputCallback( );
+      
+      AlgebraicCurveInputDialog* newDialog = new AlgebraicCurveInputDialog;
+      newDialog->getUi()->lineEdit->setFocus();
+
+      if ( newDialog->exec( ) == QDialog::Accepted )
+      {
+        std::string poly_expr = newDialog->getLineEditText();
+        algCurveInputCallback->addNewAlgebraicCurve(poly_expr);
+      }
+
+      delete newDialog;
+    }
+  }
 }
 
 void ArrangementDemoWindow::on_actionSaveAs_triggered( )
@@ -904,10 +949,10 @@ void ArrangementDemoWindow::on_actionNewTab_triggered( )
     {
       this->makeTab( CIRCULAR_ARC_TRAITS );
     }
-    // else if ( id == ALGEBRAIC_TRAITS )
-    // {
-    //   this->makeTab( ALGEBRAIC_TRAITS );
-    // }
+    else if ( id == ALGEBRAIC_TRAITS )
+    {
+      this->makeTab( ALGEBRAIC_TRAITS );
+    }
     else
     {
       std::cout << "Sorry, this trait is not yet supported" << std::endl;
@@ -969,7 +1014,7 @@ void ArrangementDemoWindow::on_tabWidget_currentChanged( )
   }
 #endif
 
-  else { // segment or polyline
+  else { // segment or polyline or algebraic
     this->ui->actionConicSegment->setChecked( true );
 
     this->ui->actionCurveRay->setVisible( false );
@@ -982,6 +1027,12 @@ void ArrangementDemoWindow::on_tabWidget_currentChanged( )
 
     this->conicTypeGroup->setEnabled( true );
   }
+
+  activeTab->getVerticalRayShootCallback()->reset();
+  activeTab->getPointLocationCallback()->reset();
+  this->ui->actionInsert->setChecked(true);
+  this->updateMode(this->ui->actionInsert);
+  
 }
 
 void ArrangementDemoWindow::on_actionOverlay_triggered( )

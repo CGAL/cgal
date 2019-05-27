@@ -52,8 +52,8 @@ class ArrangementDemoWindow : public CGAL::Qt::DemosMainWindow
     POLYLINE_TRAITS,
     CONIC_TRAITS,
     LINEAR_TRAITS,
-    CIRCULAR_ARC_TRAITS
-    // ALGEBRAIC_TRAITS
+    CIRCULAR_ARC_TRAITS,
+    ALGEBRAIC_TRAITS
   } TraitsType;
 
   ArrangementDemoWindow(QWidget* parent = 0);
@@ -68,6 +68,18 @@ class ArrangementDemoWindow : public CGAL::Qt::DemosMainWindow
 
   template < class ArrType >
   void makeOverlayTab( ArrType* arr1, ArrType* arr2 );
+
+public:
+  static ArrangementDemoWindow* getInstance()
+  {
+    if (instance_ == NULL)
+    {
+        instance_ = new ArrangementDemoWindow;
+    }
+    return instance_;
+  }
+private:
+  static ArrangementDemoWindow* instance_;
 
 public Q_SLOTS:
   void updateMode( QAction* a );

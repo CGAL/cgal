@@ -37,7 +37,11 @@ ArrangementDemoTabBase::~ArrangementDemoTabBase( )
 
 void ArrangementDemoTabBase::setupUi( )
 {
-  this->layout->addWidget( this->graphicsView, 0, 0, 1, 1 );
+  double viewWidth = 0.0001;
+  double viewHeight = 0.0001;
+
+  this->layout->addWidget( this->graphicsView, 0, 0, viewWidth, viewHeight );
+  this->layout->addWidget( this->graphicsView, 0, 0 );
   this->graphicsView->setScene( this->scene );
   this->graphicsView->setMouseTracking( true );
 }

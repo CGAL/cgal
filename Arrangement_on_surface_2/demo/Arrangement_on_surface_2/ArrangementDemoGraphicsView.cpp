@@ -14,6 +14,8 @@
 #include <iostream>
 #include <QVarLengthArray>
 #include <QPen>
+#include <QCoreApplication>
+#include <QKeyEvent>
 
 ArrangementDemoGraphicsView::ArrangementDemoGraphicsView( QWidget* parent ) :
   QGraphicsView( parent ),
@@ -25,6 +27,15 @@ ArrangementDemoGraphicsView::ArrangementDemoGraphicsView( QWidget* parent ) :
   QTransform m( 1.0, 0.0, 0.0, -1.0, 0.0, 0.0 );
   this->setTransform( m );
   this->setBackgroundBrush( QBrush( backgroundColor ) );
+  this->setResizeAnchor(QGraphicsView::AnchorUnderMouse);
+
+}
+
+
+void ArrangementDemoGraphicsView::wheelEvent(QWheelEvent* event)
+{
+  // std::cout<<"In ArrangementDemoGraphicsView wheelEvent\n";
+  // this->centerOn(this->mapToScene(event->pos()));
 }
 
 void ArrangementDemoGraphicsView::setShowGrid( bool b )
