@@ -56,7 +56,6 @@ bool extract_soups (NMR::PLib3MFModelMeshObject *pMeshObject,
                     std::string& name) {
   typedef typename PointRange::value_type Point_3;
   typedef typename PolygonRange::value_type Polygon;
-  typedef typename ColorRange::value_type _Color;
   typedef typename Kernel_traits<Point_3>::Kernel Kernel;
   HRESULT hResult;
   DWORD nNeededChars;
@@ -134,13 +133,12 @@ template<typename PointRange,
          typename PolygonRange,
          typename ColorRange>
 bool extract_polylines (NMR::PLib3MFModelMeshObject *pMeshObject,
-                        const NMR::MODELTRANSFORM& transform,
+                        const NMR::MODELTRANSFORM& ,
                         PointRange& points,
                         PolygonRange&,
                         ColorRange& colors,
                         std::string& name) {
   typedef typename PointRange::value_type Point_3;
-  typedef typename PolygonRange::value_type Polygon;
 
   HRESULT hResult;
   DWORD nNeededChars;
@@ -208,7 +206,7 @@ template<typename PointRange,
          typename PolygonRange,
          typename ColorRange>
 bool extract_point_clouds (NMR::PLib3MFModelMeshObject *pMeshObject,
-                           const NMR::MODELTRANSFORM& transform,
+                           const NMR::MODELTRANSFORM&,
                            PointRange& points,
                            PolygonRange&,
                            ColorRange& colors,
@@ -290,8 +288,6 @@ int read_from_3mf(const std::string& file_name, PointRanges& all_points,
                                      std::string&)> func
                   )
 {
-  typedef typename PointRange::value_type Point_3;
-  typedef typename PolygonRange::value_type Polygon;
   DWORD nInterfaceVersionMajor, nInterfaceVersionMinor, nInterfaceVersionMicro, nbVertices, nbPolygons;
   HRESULT hResult;
   NMR::PLib3MFModel * pModel;

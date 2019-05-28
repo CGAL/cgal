@@ -141,7 +141,7 @@ class Io_3mf_plugin:
       std::cerr << "Error in reading of meshes."<<std::endl;
       return result;
     }
-    for(std::size_t i = 0; i< nb_meshes; ++i)
+    for(int i = 0; i< nb_meshes; ++i)
     {
       PolygonRange triangles = all_polygons[i];
       PointRange points = all_points[i];

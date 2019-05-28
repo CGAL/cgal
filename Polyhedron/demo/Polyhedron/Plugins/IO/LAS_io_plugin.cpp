@@ -22,7 +22,7 @@ public:
   bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& );
 };
 
-bool Polyhedron_demo_las_plugin::canLoad(QFileInfo fileinfo) const {
+bool Polyhedron_demo_las_plugin::canLoad(QFileInfo ) const {
   return true;
 }
 

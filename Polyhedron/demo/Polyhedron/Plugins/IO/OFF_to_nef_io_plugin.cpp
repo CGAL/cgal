@@ -63,7 +63,7 @@ bool Polyhedron_demo_off_to_nef_plugin::canSave(const CGAL::Three::Scene_item*)
 }
 
 bool Polyhedron_demo_off_to_nef_plugin::
-save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
+save(QFileInfo ,QList<CGAL::Three::Scene_item*>&)
 {
   return false;
 }

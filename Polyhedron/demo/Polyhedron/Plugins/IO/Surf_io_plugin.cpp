@@ -34,7 +34,7 @@ public:
   QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true);
 
   bool canSave(const CGAL::Three::Scene_item*) { return false; }
-  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& ) { return false; }
+  bool save(QFileInfo ,QList<CGAL::Three::Scene_item*>& ) { return false; }
 };
 
 

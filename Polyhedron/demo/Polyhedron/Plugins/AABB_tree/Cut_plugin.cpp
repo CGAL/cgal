@@ -826,9 +826,10 @@ public:
     return false;
   }
 
-  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) Q_DECL_OVERRIDE
+  QList<Scene_item*> load(QFileInfo , bool& ok, bool add_to_scene=true) Q_DECL_OVERRIDE
 
   {
+    CGAL_UNUSED(add_to_scene);
     ok = false;
     return QList<Scene_item*>();
   }

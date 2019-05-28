@@ -23,7 +23,13 @@ public:
   QString name() const { return "camera_positions_plugin"; }
   QString nameFilters() const { return "Camera positions (*.camera.txt)"; }
   bool canLoad(QFileInfo) const { return true; }
-  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) { ok = true; cpl->load(fileinfo.filePath()); return QList<Scene_item*>(); }
+  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true)
+  {
+    Q_UNUSED(add_to_scene);
+    ok = true;
+    cpl->load(fileinfo.filePath());
+    return QList<Scene_item*>();
+  }
 
   bool canSave(const Scene_item*) { return false; }
   bool save(QFileInfo,QList<CGAL::Three::Scene_item*>& ) {return false; }
