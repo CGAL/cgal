@@ -36,6 +36,8 @@ private:
 
 
 bool Polyhedron_demo_c3t3_binary_io_plugin::canLoad(QFileInfo fi) const {
+  if(!fi.suffix().contains("cgal"))
+    return true;
   std::ifstream in(fi.filePath().toUtf8(),
                    std::ios_base::in|std::ios_base::binary);
   if(!in) {

@@ -86,6 +86,16 @@ private:
 };
 
 bool Polyhedron_demo_polylines_io_plugin::canLoad(QFileInfo fileinfo) const{
+  if(!fileinfo.suffix().contains("cgal"))
+    return true;
+  std::ifstream in(fileinfo.filePath().toUtf8());
+  if(!in) {
+    return false;
+  }
+  int first;
+  if(!(in >> first)
+     || first <= 0)
+    return false;
   return true;
 }
 
