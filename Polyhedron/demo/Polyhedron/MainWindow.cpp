@@ -1173,7 +1173,6 @@ void MainWindow::open(QString filename)
 bool MainWindow::open(QString filename, QString loader_name) {
   QFileInfo fileinfo(filename);
   boost::optional<bool> item_opt;
-  CGAL::Three::Scene_item* item = 0;
   try {
     item_opt = wrap_a_call_to_cpp
         ([this, fileinfo, loader_name]()
@@ -1185,7 +1184,6 @@ bool MainWindow::open(QString filename, QString loader_name) {
     this, __FILE__, __LINE__
     );
     if(!item_opt) return false;
-    //else item = *item_opt;
   }
   catch(std::logic_error& e) {
     std::cerr << e.what() << std::endl;

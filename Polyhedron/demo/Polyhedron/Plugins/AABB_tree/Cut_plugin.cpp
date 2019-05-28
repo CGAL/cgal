@@ -860,7 +860,7 @@ public:
   }
 
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface,
-            Messages_interface* m) Q_DECL_OVERRIDE;
+            Messages_interface* m) override;
   QList<QAction*> actions() const Q_DECL_OVERRIDE;
 
   bool eventFilter(QObject *, QEvent *event) Q_DECL_OVERRIDE

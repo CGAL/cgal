@@ -27,7 +27,7 @@ public:
     //! Configures the widget
     void init(QMainWindow* mainWindow,
               CGAL::Three::Scene_interface* scene_interface,
-              Messages_interface*) {
+              Messages_interface*) override{
       //get the references
       this->scene = scene_interface;
       this->mw = mainWindow;

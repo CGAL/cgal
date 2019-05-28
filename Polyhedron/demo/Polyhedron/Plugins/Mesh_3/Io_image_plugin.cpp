@@ -216,7 +216,7 @@ public:
   }
 
 
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface *mi) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface *mi) override {
     this->message_interface = mi;
     this->scene = scene_interface;
     this->mw = mainWindow;
