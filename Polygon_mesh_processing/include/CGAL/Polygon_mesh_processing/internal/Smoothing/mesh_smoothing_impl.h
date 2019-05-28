@@ -41,6 +41,8 @@
 
 #include <boost/graph/graph_traits.hpp>
 
+#include "ceres/ceres.h"
+
 #include <algorithm>
 #include <cmath>
 #include <iterator>
@@ -52,6 +54,261 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
 
+template<typename PolygonMesh, typename VertexPointMap, typename GeomTraits>
+class Angle_smoother
+{
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
+
+  typedef typename boost::property_traits<VertexPointMap>::reference      Point_ref;
+  typedef typename GeomTraits::Vector_3                                   Vector;
+
+  typedef std::pair<halfedge_descriptor, halfedge_descriptor>             He_pair;
+
+public:
+  Angle_smoother(const PolygonMesh& mesh,
+                 const VertexPointMap vpmap,
+                 const GeomTraits& traits)
+    : mesh_(mesh), vpmap_(vpmap), traits_(traits)
+  { }
+
+private:
+  Vector rotate_edge(const halfedge_descriptor main_he,
+                     const He_pair& incident_pair) const
+  {
+    // get common vertex around which the edge is rotated
+    Point_ref pt = get(vpmap_, target(main_he, mesh_));
+
+    Point_ref left_pt = get(vpmap_, source(incident_pair.first, mesh_));
+    Point_ref right_pt = get(vpmap_, target(incident_pair.second, mesh_));
+    CGAL_assertion(target(incident_pair.first, mesh_) == source(incident_pair.second, mesh_));
+
+    Vector edge1(pt, left_pt);
+    Vector edge2(pt, right_pt);
+
+    // find bisector
+    internal::normalize(edge1, traits_);
+    internal::normalize(edge2, traits_);
+
+    Vector bisector = traits_.construct_sum_of_vectors_3_object()(edge1, edge2);
+    internal::normalize(bisector, traits_);
+
+    return bisector;
+  }
+
+public:
+  // If it's ever allowed to move vertices on the border, the min angle computations will be missing
+  // some values (angles incident to the border)
+  Vector operator()(const vertex_descriptor v) const
+  {
+    Vector move = CGAL::NULL_VECTOR;
+    double weights_sum = 0.;
+
+    for(halfedge_descriptor main_he : halfedges_around_source(v, mesh_))
+    {
+      He_pair incident_pair = std::make_pair(prev(opposite(main_he, mesh_), mesh_),
+                                             next(main_he, mesh_));
+
+      // avoid zero angles
+      Point_ref ps = get(vpmap_, source(main_he, mesh_));
+      Point_ref pt = get(vpmap_, target(main_he, mesh_));
+      Point_ref left_pt = get(vpmap_, source(incident_pair.first, mesh_));
+      Point_ref right_pt = get(vpmap_, target(incident_pair.second, mesh_));
+      CGAL_assertion(target(incident_pair.first, mesh_) == source(incident_pair.second, mesh_));
+
+      Vector left_v(pt, left_pt);
+      Vector right_v(pt, right_pt);
+
+      // rotate
+      double angle = get_radian_angle(right_v, left_v);
+      CGAL_warning(angle != 0.); // no degenerate faces is a precondition
+      if(angle == 0.)
+        continue;
+
+      Vector bisector = rotate_edge(main_he, incident_pair);
+      bisector = traits_.construct_scaled_vector_3_object()(
+                   bisector, CGAL::approximate_sqrt(sqlength(main_he, mesh_)));
+      Vector ps_psi(ps, traits_.construct_translated_point_3_object()(pt, bisector));
+
+      // small angles carry more weight
+      double weight = 1. / (angle*angle);
+      weights_sum += weight;
+
+      move += weight * ps_psi;
+    }
+
+    if(weights_sum != 0.)
+     move /= weights_sum;
+
+    return move;
+  }
+
+private:
+  const PolygonMesh& mesh_;
+  const VertexPointMap vpmap_;
+  const GeomTraits& traits_;
+};
+
+template<typename PolygonMesh, typename VertexPointMap, typename GeomTraits>
+class Area_smoother
+{
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
+
+  typedef typename boost::property_traits<VertexPointMap>::value_type     Point;
+  typedef typename boost::property_traits<VertexPointMap>::reference      Point_ref;
+  typedef typename GeomTraits::Vector_3                                   Vector;
+
+public:
+  Area_smoother(const PolygonMesh& mesh,
+                const VertexPointMap vpmap,
+                const GeomTraits& traits)
+    : mesh_(mesh), vpmap_(vpmap), traits_(traits)
+  { }
+
+private:
+  double element_area(const vertex_descriptor v1,
+                      const vertex_descriptor v2,
+                      const vertex_descriptor v3) const
+  {
+    return CGAL::to_double(CGAL::approximate_sqrt(traits_.compute_squared_area_3_object()(get(vpmap_, v1),
+                                                                                          get(vpmap_, v2),
+                                                                                          get(vpmap_, v3))));
+  }
+
+  double element_area(const Point& P,
+                      const vertex_descriptor v2,
+                      const vertex_descriptor v3) const
+  {
+    return CGAL::to_double(CGAL::approximate_sqrt(traits_.compute_squared_area_3_object()(P,
+                                                                                          get(vpmap_, v2),
+                                                                                          get(vpmap_, v3))));
+  }
+
+  double compute_average_area_around(const vertex_descriptor v) const
+  {
+    double sum_areas = 0.;
+    unsigned int number_of_edges = 0;
+
+    for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
+    {
+      // opposite vertices
+      vertex_descriptor vi = source(next(h, mesh_), mesh_);
+      vertex_descriptor vj = target(next(h, mesh_), mesh_);
+
+      double S = element_area(v, vi, vj);
+      sum_areas += S;
+      ++number_of_edges;
+    }
+
+    return sum_areas / number_of_edges;
+  }
+
+  struct Face_energy
+  {
+    Face_energy(const Point& pi, const Point& pj, const double s_av)
+      :
+        qx(pi.x()), qy(pi.y()), qz(pi.z()),
+        rx(pj.x()), ry(pj.y()), rz(pj.z()),
+        s_av(s_av)
+    { }
+
+    // just for convencience
+    template <typename T>
+    double area(const T x, const T y, const T z) const {
+      return CGAL::approximate_sqrt(CGAL::squared_area(Point(x, y, z),
+                                                       Point(qx, qy, qz),
+                                                       Point(rx, ry, rz)));
+    }
+
+    template <typename T>
+    double evaluate(const T x, const T y, const T z) const { return area(x, y, z) - s_av; }
+
+    template <typename T>
+    bool operator()(const T* const x, const T* const y, const T* const z,
+                    T* residual) const
+    {
+#define CGAL_CERES_USE_NUMERIC_DIFFERENCIATION
+#ifdef CGAL_CERES_USE_NUMERIC_DIFFERENCIATION
+      residual[0] = evaluate(x[0], y[0], z[0]);
+#else
+      // Computations must be explicit so automatic differenciation can be used
+      T dqx = qx - x[0];
+      T dqy = qy - y[0];
+      T dqz = qz - z[0];
+      T drx = rx - x[0];
+      T dry = ry - y[0];
+      T drz = rz - z[0];
+
+      T vx = dqy*drz - dqz*dry;
+      T vy = dqz*drx - dqx*drz;
+      T vz = dqx*dry - dqy*drx;
+
+      T squared_area = 0.25 * (vx*vx + vy*vy + vz*vz);
+      T area = sqrt(squared_area);
+
+      residual[0] = area - s_av;
+#endif
+      return true;
+    }
+
+  private:
+    const double qx, qy, qz;
+    const double rx, ry, rz;
+    const double s_av;
+  };
+
+public:
+  Vector operator()(const vertex_descriptor v) const
+  {
+    const Point_ref vp = get(vpmap_, v);
+
+    const double S_av = compute_average_area_around(v);
+
+    const double initial_x = vp.x();
+    const double initial_y = vp.y();
+    const double initial_z = vp.z();
+    double x = initial_x, y = initial_y, z = initial_z;
+
+    ceres::Problem problem;
+
+    for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
+    {
+      CGAL_assertion(!is_border(h, mesh_));
+
+      vertex_descriptor vi = source(next(h, mesh_), mesh_);
+      vertex_descriptor vj = target(next(h, mesh_), mesh_);
+      const Point_ref vip = get(vpmap_, vi);
+      const Point_ref vjp = get(vpmap_, vj);
+
+#ifdef CGAL_CERES_USE_NUMERIC_DIFFERENCIATION
+      ceres::CostFunction* cost_function =
+        new ceres::NumericDiffCostFunction<Face_energy, ceres::CENTRAL, 1, 1, 1, 1>(new Face_energy(vip, vjp, S_av));
+#else
+      ceres::CostFunction* cost_function =
+        new ceres::AutoDiffCostFunction<Face_energy, 1, 1, 1, 1>(new Face_energy(vip, vjp, S_av));
+#endif
+      problem.AddResidualBlock(cost_function, NULL, &x, &y, &z);
+    }
+
+    ceres::Solver::Options options;
+    options.minimizer_progress_to_stdout = true;
+    ceres::Solver::Summary summary;
+    ceres::Solve(options, &problem, &summary);
+    std::cout << summary.BriefReport() << "\n";
+    std::cout << "x : " << initial_x << " -> " << x << "\n";
+    std::cout << "y : " << initial_y << " -> " << y << "\n";
+    std::cout << "z : " << initial_z << " -> " << z << "\n";
+
+    return Vector(x - initial_x, y - initial_y, z - initial_z);
+  }
+
+private:
+  const PolygonMesh& mesh_;
+  const VertexPointMap vpmap_;
+  const GeomTraits& traits_;
+};
+
 template<typename PolygonMesh, typename VertexPointMap, typename VertexConstraintMap, typename GeomTraits>
 class Compatible_smoother
 {
@@ -60,7 +317,7 @@ class Compatible_smoother
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor      face_descriptor;
 
-  typedef typename boost::property_traits<VertexPointMap>::value_type     Point_3;
+  typedef typename boost::property_traits<VertexPointMap>::value_type     Point;
   typedef typename boost::property_traits<VertexPointMap>::reference      Point_ref;
   typedef typename GeomTraits::FT                                         FT;
   typedef typename GeomTraits::Vector_3                                   Vector;
@@ -88,6 +345,21 @@ public:
 
 public:
   template<typename FaceRange>
+  void set_vertex_range(const FaceRange& face_range)
+  {
+    vrange_.reserve(3 * face_range.size());
+    for(face_descriptor f : face_range)
+    {
+     for(vertex_descriptor v : vertices_around_face(halfedge(f, mesh_), mesh_))
+      vrange_.push_back(v);
+    }
+
+    // get rid of duplicate vertices
+    std::sort(vrange_.begin(), vrange_.end());
+    vrange_.erase(std::unique(vrange_.begin(), vrange_.end()), vrange_.end());
+  }
+
+  template<typename FaceRange>
   void init_smoothing(const FaceRange& face_range)
   {
     set_vertex_range(face_range);
@@ -107,13 +379,19 @@ public:
     tree_ptr_->accelerate_distance_queries();
   }
 
-  void angle_relaxation(const bool use_safety_constraints)
+  // generic optimizer, the move is computed by 'Optimizer'
+  template <typename Optimizer>
+  std::size_t optimize(const bool use_sanity_checks = false, // @tmp
+                       const bool enforce_no_min_angle_regression = false,
+                       const bool project_move_on_tangent_plane = false) // @tmp
   {
-    typedef CGAL::dynamic_vertex_property_t<Point_3>                    Vertex_property_tag;
+    typedef CGAL::dynamic_vertex_property_t<Point>                      Vertex_property_tag;
     typedef typename boost::property_map<PolygonMesh,
                                          Vertex_property_tag>::type     Position_map;
 
     Position_map new_positions = get(Vertex_property_tag(), mesh_);
+
+    Optimizer compute_move(mesh_, vpmap_, traits_);
 
     std::size_t moved_points = 0;
     for(vertex_descriptor v : vrange_)
@@ -123,19 +401,27 @@ public:
 
       // compute normal to v
       Vector vn = compute_vertex_normal(v, mesh_, CGAL::parameters::vertex_point_map(vpmap_)
-                                        .geom_traits(traits_));
+                                                                   .geom_traits(traits_));
 
       // calculate movement
       const Point_ref pos = get(vpmap_, v);
       Vector move = compute_move(v);
 
-      // Gram Schmidt so that the new location is on the tangent plane of v (i.e. mv -= (mv*n)*n)
-      const FT sp = traits_.compute_scalar_product_3_object()(vn, move);
-      move = traits_.construct_sum_of_vectors_3_object()(move,
-               traits_.construct_scaled_vector_3_object()(vn, - sp));
+      if(project_move_on_tangent_plane)
+      {
+        // Gram Schmidt so that the new location is on the tangent plane of v (i.e. mv -= (mv*n)*n)
+        const FT sp = traits_.compute_scalar_product_3_object()(vn, move);
+        move = traits_.construct_sum_of_vectors_3_object()(move,
+                 traits_.construct_scaled_vector_3_object()(vn, - sp));
+      }
 
-      Point_3 new_pos = pos + move;
-      if(!use_safety_constraints || does_improve(v, new_pos))
+      Point new_pos = pos + move;
+
+      std::cout << "sanity check? " << use_sanity_checks << " test: " << does_move_create_bad_faces(v, new_pos) << std::endl;
+      std::cout << "min check? " << enforce_no_min_angle_regression << " test: " << does_improve_min_angle_in_star(v, new_pos) << std::endl;
+
+      if((!use_sanity_checks || !does_move_create_bad_faces(v, new_pos)) &&
+         (!enforce_no_min_angle_regression || does_improve_min_angle_in_star(v, new_pos)))
       {
         ++moved_points;
         put(new_positions, v, new_pos);
@@ -143,12 +429,18 @@ public:
       else
       {
 #ifdef CGAL_PMP_SMOOTHING_DEBUG
-        std::cout << "move rejected!" << std::endl;
+        std::cout << "move is rejected!" << std::endl;
 #endif
         put(new_positions, v, pos);
       }
+
+//#define CGAL_SMOOTHING_MOVE_POINTS_IMMEDIATELY
+#ifdef CGAL_SMOOTHING_MOVE_POINTS_IMMEDIATELY
+      put(vpmap_, v, get(new_positions, v));
+#endif
     }
 
+#ifndef CGAL_SMOOTHING_MOVE_POINTS_IMMEDIATELY
     // update locations
     for(vertex_descriptor v : vrange_)
     {
@@ -157,31 +449,31 @@ public:
 
       put(vpmap_, v, get(new_positions, v));
     }
+#endif
 
 #ifdef CGAL_PMP_SMOOTHING_DEBUG
     std::cout << "moved: " << moved_points << " points based on angle." << std::endl;
     std::cout << "not improved min angle: " << vrange_.size() - moved_points << " times." << std::endl;
 #endif
+
+    return moved_points;
   }
 
-  void area_relaxation(const double precision)
+  std::size_t angle_relaxation(const bool use_safety_constraints)
   {
-    std::size_t moved_points = 0;
-    for(vertex_descriptor v : vrange_)
-    {
-       if(!is_border(v, mesh_) && !is_constrained(v))
-       {
-         if(gradient_descent(v, precision))
-           ++moved_points;
-       }
-    }
+    typedef Angle_smoother<PolygonMesh, VertexPointMap, GeomTraits>           Angle_optimizer;
 
-#ifdef CGAL_PMP_SMOOTHING_DEBUG
-    std::cout << "moved : " << moved_points << " points based on area." << std::endl;
-    std::cout << "non convex energy found: " << vrange_.size() - moved_points << " times." << std::endl;
-#endif
+    return optimize<Angle_optimizer>(use_safety_constraints /*checks for bad faces*/,
+                                     use_safety_constraints /*checks if the min angle is improved*/);
 
-    // @todo according to the paper, we're supposed to Delauany-based edge flips!
+    // @todo according to the paper, we're supposed to Delaunay-based edge flips!
+  }
+
+  std::size_t area_relaxation(const bool use_safety_constraints)
+  {
+    typedef Area_smoother<PolygonMesh, VertexPointMap, GeomTraits>            Area_optimizer;
+
+    return optimize<Area_optimizer>(use_safety_constraints /*check for bad faces*/);
   }
 
   void project_to_surface()
@@ -196,10 +488,10 @@ public:
         continue;
 
       Point_ref p_query = get(vpmap_, v);
-      Point_3 projected = tree_ptr_->closest_point(p_query);
-      std::cout << "projected to: " << projected << std::endl;
+      Point projected = tree_ptr_->closest_point(p_query);
+      std::cout << p_query << " is projected to: " << projected << std::endl;
       put(vpmap_, v, projected);
-     }
+    }
   }
 
 private:
@@ -210,101 +502,16 @@ private:
     return get(vcmap_, v);
   }
 
-  template<typename FaceRange>
-  void set_vertex_range(const FaceRange& face_range)
-  {
-    // reserve 3 * #faces space
-    vrange_.reserve(3 * face_range.size());
-    for(face_descriptor f : face_range)
-    {
-     for(vertex_descriptor v : vertices_around_face(halfedge(f, mesh_), mesh_))
-      vrange_.push_back(v);
-    }
-    // get rid of duplicate vertices
-    std::sort(vrange_.begin(), vrange_.end());
-    vrange_.erase(std::unique(vrange_.begin(), vrange_.end()), vrange_.end());
-  }
-
-  // angle bisecting functions
-  // -------------------------
-  Vector rotate_edge(const halfedge_descriptor main_he,
-                     const He_pair& incident_pair) const
-  {
-    // get common vertex around which the edge is rotated
-    Point_ref pt = get(vpmap_, target(main_he, mesh_));
-
-    Point_ref left_pt = get(vpmap_, source(incident_pair.first, mesh_));
-    Point_ref right_pt = get(vpmap_, target(incident_pair.second, mesh_));
-    CGAL_assertion(target(incident_pair.first, mesh_) == source(incident_pair.second, mesh_));
-
-    Vector edge1(pt, left_pt);
-    Vector edge2(pt, right_pt);
-
-    // find bisector
-    internal::normalize(edge1, traits_);
-    internal::normalize(edge2, traits_);
-
-    Vector bisector = traits_.construct_sum_of_vectors_3_object()(edge1, edge2);
-    internal::normalize(bisector, traits_);
-
-    return bisector;
-  }
-
-  // If it's ever allowed to move vertices on the border, the min angle computations will be missing
-  // some values (angles incident to the border)
-  Vector compute_move(const vertex_descriptor v) const
-  {
-    Vector move = CGAL::NULL_VECTOR;
-    double weights_sum = 0.;
-
-    for(halfedge_descriptor main_he : halfedges_around_source(v, mesh_))
-    {
-      He_pair incident_pair = std::make_pair(prev(opposite(main_he, mesh_), mesh_),
-                                             next(main_he, mesh_));
-
-      // avoid zero angles
-      Point_ref ps = get(vpmap_, source(main_he, mesh_));
-      Point_ref pt = get(vpmap_, target(main_he, mesh_));
-      Point_ref left_pt = get(vpmap_, source(incident_pair.first, mesh_));
-      Point_ref right_pt = get(vpmap_, target(incident_pair.second, mesh_));
-      CGAL_assertion(target(incident_pair.first, mesh_) == source(incident_pair.second, mesh_));
-
-      Vector left_v(pt, left_pt);
-      Vector right_v(pt, right_pt);
-
-      // rotate
-      double angle = get_angle(right_v, left_v);
-      CGAL_warning(angle != 0.); // no degenerate faces is a precondition
-      if(angle == 0.)
-        continue;
-
-      Vector bisector = rotate_edge(main_he, incident_pair);
-      bisector = traits_.construct_scaled_vector_3_object()(bisector,
-                                                            CGAL::approximate_sqrt(sqlength(main_he, mesh_)));
-      Vector ps_psi(ps, traits_.construct_translated_point_3_object()(pt, bisector));
-
-      // small angles carry more weight
-      double weight = 1. / (angle*angle);
-      weights_sum += weight;
-
-      move += weight * ps_psi;
-    }
-
-    if(weights_sum != 0.)
-     move /= weights_sum;
-
-    return move;
-  }
-
   // angle measurement & evaluation
   // ------------------------------
-  double get_angle(const Vector& e1, const Vector& e2) const
+  double get_radian_angle(const Vector& e1, const Vector& e2) const
   {
     return traits_.compute_approximate_angle_3_object()(e1, e2) * CGAL_PI / 180.;
   }
 
-  bool does_improve(const vertex_descriptor v,
-                    const Point_3& new_pos) const
+  // check for degenerate or inversed faces
+  bool does_move_create_bad_faces(const vertex_descriptor v,
+                                  const Point& new_pos) const
   {
     // check for null faces and face inversions
     for(halfedge_descriptor main_he : halfedges_around_source(v, mesh_))
@@ -314,7 +521,7 @@ private:
       const Point_ref rpt = get(vpmap_, source(prev_he, mesh_));
 
       if(traits_.collinear_3_object()(lpt, rpt, new_pos))
-        return false;
+        return true;
 
       const Point_ref old_pos = get(vpmap_, v);
       Vector ov_1 = traits_.construct_vector_3_object()(old_pos, lpt);
@@ -329,10 +536,16 @@ private:
 #ifdef CGAL_PMP_SMOOTHING_DEBUG
       std::cout << "Moving vertex would result in the inversion of a face normal!" << std::endl;
 #endif
-        return false;
+        return true;
       }
     }
 
+    return false;
+  }
+
+  bool does_improve_min_angle_in_star(const vertex_descriptor v,
+                                      const Point& new_pos) const
+  {
     // check if the minimum angle of the star has not deteriorated
     double old_min_angle = CGAL_PI;
     for(halfedge_descriptor main_he : halfedges_around_source(v, mesh_))
@@ -344,9 +557,9 @@ private:
       const Point_ref rpt = get(vpmap_, source(prev_he, mesh_));
 
       old_min_angle = (std::min)(old_min_angle,
-                                 (std::min)(get_angle(Vector(old_pos, lpt), Vector(old_pos, rpt)),
-                                            (std::min)(get_angle(Vector(lpt, rpt), Vector(lpt, old_pos)),
-                                                       get_angle(Vector(rpt, old_pos), Vector(rpt, lpt)))));
+                                 (std::min)(get_radian_angle(Vector(old_pos, lpt), Vector(old_pos, rpt)),
+                                            (std::min)(get_radian_angle(Vector(lpt, rpt), Vector(lpt, old_pos)),
+                                                       get_radian_angle(Vector(rpt, old_pos), Vector(rpt, lpt)))));
     }
 
     for(halfedge_descriptor main_he : halfedges_around_source(v, mesh_))
@@ -355,9 +568,9 @@ private:
       const Point_ref lpt = get(vpmap_, target(main_he, mesh_));
       const Point_ref rpt = get(vpmap_, source(prev_he, mesh_));
 
-      if(get_angle(Vector(new_pos, lpt), Vector(new_pos, rpt)) < old_min_angle ||
-         get_angle(Vector(lpt, rpt), Vector(lpt, new_pos)) < old_min_angle ||
-         get_angle(Vector(rpt, new_pos), Vector(rpt, lpt)) < old_min_angle)
+      if(get_radian_angle(Vector(new_pos, lpt), Vector(new_pos, rpt)) < old_min_angle ||
+         get_radian_angle(Vector(lpt, rpt), Vector(lpt, new_pos)) < old_min_angle ||
+         get_radian_angle(Vector(rpt, new_pos), Vector(rpt, lpt)) < old_min_angle)
       {
 #ifdef CGAL_PMP_SMOOTHING_DEBUG
         const Point_ref old_pos = get(vpmap_, v);
@@ -366,9 +579,9 @@ private:
         std::cout << "old/new positions: " << old_pos << " " << new_pos << std::endl;;
         std::cout << "old min angle: " << old_min_angle << std::endl;
         std::cout << "new angles: " << std::endl;
-        std::cout << get_angle(Vector(new_pos, lpt), Vector(new_pos, rpt)) << " ";
-        std::cout << get_angle(Vector(lpt, rpt), Vector(lpt, new_pos)) << " ";
-        std::cout << get_angle(Vector(rpt, new_pos), Vector(rpt, lpt)) << std::endl;
+        std::cout << get_radian_angle(Vector(new_pos, lpt), Vector(new_pos, rpt)) << " ";
+        std::cout << get_radian_angle(Vector(lpt, rpt), Vector(lpt, new_pos)) << " ";
+        std::cout << get_radian_angle(Vector(rpt, new_pos), Vector(rpt, lpt)) << std::endl;
 #endif
         return false;
       }
@@ -377,177 +590,7 @@ private:
     return true;
   }
 
-  double element_area(const vertex_descriptor v1,
-                      const vertex_descriptor v2,
-                      const vertex_descriptor v3) const
-  {
-    return CGAL::to_double(CGAL::approximate_sqrt(traits_.compute_squared_area_3_object()(get(vpmap_, v1),
-                                                                                          get(vpmap_, v2),
-                                                                                          get(vpmap_, v3))));
-  }
-
-  double element_area(const Point_3& P,
-                      const vertex_descriptor v2,
-                      const vertex_descriptor v3) const
-  {
-    return CGAL::to_double(CGAL::approximate_sqrt(traits_.compute_squared_area_3_object()(P,
-                                                                                          get(vpmap_, v2),
-                                                                                          get(vpmap_, v3))));
-  }
-
-  void compute_derivatives(double& drdx, double& drdy, double& drdz,
-                           const vertex_descriptor v,
-                           const double S_av)
-  {
-    for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
-    {
-      vertex_descriptor v_i = source(next(h, mesh_), mesh_);
-      vertex_descriptor v_ip1 = target(next(h, mesh_), mesh_);
-      double S = element_area(v, v_i, v_ip1);
-
-      Vector vec(get(vpmap_, v_i), get(vpmap_, v_ip1));
-
-      // minimize r:
-      // r = Σ(S-S_av)^2
-      // dr/dx = 2 Σ(S - S_av) dS/dx
-      // area of triangle with respect to (x_a, y_a, z_a) =
-      // (1/2) [(v_z - v_y)x_a + (v_x - v_z)y_a + (v_y - v_x)z_a + constants]
-      // vector v is (x_c - x_b, y_c - y_b, z_c - z_b)
-      drdx += (S - S_av) * 0.5 * (vec.z() - vec.y());
-      drdy += (S - S_av) * 0.5 * (vec.x() - vec.z());
-      drdz += (S - S_av) * 0.5 * (vec.y() - vec.x());
-    }
-
-    drdx *= 2;
-    drdy *= 2;
-    drdz *= 2;
-  }
-
-  double compute_average_area_around(const vertex_descriptor v)
-  {
-    double sum_areas = 0.;
-    unsigned int number_of_edges = 0;
-
-    for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
-    {
-      // opposite vertices
-      vertex_descriptor v_i = source(next(h, mesh_), mesh_);
-      vertex_descriptor v_ip1 = target(next(h, mesh_), mesh_);
-
-      double S = element_area(v, v_i, v_ip1);
-      sum_areas += S;
-      ++number_of_edges;
-    }
-
-    return sum_areas / number_of_edges;
-  }
-
-  double measure_energy(const vertex_descriptor v,
-                        const double S_av)
-  {
-    double energy = 0;
-    unsigned int number_of_edges = 0;
-
-    for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
-    {
-      vertex_descriptor pi = source(next(h, mesh_), mesh_);
-      vertex_descriptor v_ip1 = target(next(h, mesh_), mesh_);
-      double S = element_area(v, pi, v_ip1);
-
-      energy += (S - S_av)*(S - S_av);
-      ++number_of_edges;
-    }
-
-    return to_double(energy / number_of_edges);
-  }
-
-  double measure_energy(const vertex_descriptor v,
-                        const double S_av,
-                        const Point_3& new_P)
-  {
-    double energy = 0;
-    unsigned int number_of_edges = 0;
-    for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
-    {
-      vertex_descriptor v_i = source(next(h, mesh_), mesh_);
-      vertex_descriptor v_ip1 = target(next(h, mesh_), mesh_);
-      double S = element_area(new_P, v_i, v_ip1);
-
-      energy += (S - S_av)*(S - S_av);
-      ++number_of_edges;
-    }
-
-    return to_double(energy / (2 * number_of_edges));
-  }
-
-  bool gradient_descent(const vertex_descriptor v,
-                        const double precision)
-  {
-    bool move_flag;
-    double x, y, z, x_new, y_new, z_new, drdx, drdy, drdz;
-    x = get(vpmap_, v).x();
-    y = get(vpmap_, v).y();
-    z = get(vpmap_, v).z();
-
-    double S_av = compute_average_area_around(v);
-    double energy = measure_energy(v, S_av);
-
-    // if the adjacent areas are absolutely equal
-    if(energy == 0.)
-      return false;
-
-    double energy_new = 0;
-    double relative_energy = 1;
-    unsigned int t = 1;
-    double eta0 = 0.01;
-    //double power_t = 0.25;
-    double t0 = 0.001;
-    double eta = eta0 / (1 + t0*t);
-
-    while(relative_energy > precision)
-    {
-      drdx = 0.;
-      drdy = 0.;
-      drdz = 0.;
-      compute_derivatives(drdx, drdy, drdz, v, S_av);
-
-      x_new = x - eta * drdx;
-      y_new = y - eta * drdy;
-      z_new = z - eta * drdz;
-
-      Point_3 moved(x_new, y_new, z_new);
-      energy_new = measure_energy(v, S_av, moved);
-
-      if(energy_new < energy)
-      {
-        put(vpmap_, v, moved);
-        move_flag = true;
-      }
-      else
-      {
-        return false;
-      }
-
-      relative_energy = (energy - energy_new) / energy;
-
-      // update
-      x = x_new;
-      y = y_new;
-      z = z_new;
-      energy = energy_new;
-      ++t;
-
-      // could use eta = eta0 / pow(t, power_t);
-      eta = eta0 / (1 + t0 * t);
-    }
-
-    return move_flag;
-  }
-
 private:
-
-  // data members
-  // ------------
   PolygonMesh& mesh_;
   VertexPointMap& vpmap_;
   VertexConstraintMap vcmap_;
