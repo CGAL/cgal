@@ -88,7 +88,6 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::erase_all_duplicates).v == 48);
   assert(get_param(np, CGAL::internal_np::require_same_orientation).v == 49);
   assert(get_param(np, CGAL::internal_np::use_bool_op_to_clip_surface).v == 50);
-  assert(get_param(np, CGAL::internal_np::gradient_descent_precision).v == 54);
   assert(get_param(np, CGAL::internal_np::use_explicit_scheme).v == 55);
   assert(get_param(np, CGAL::internal_np::use_safety_constraints).v == 56);
 
@@ -173,7 +172,6 @@ void test(const NamedParameters& np)
   check_same_type<48>(get_param(np, CGAL::internal_np::erase_all_duplicates));
   check_same_type<49>(get_param(np, CGAL::internal_np::require_same_orientation));
   check_same_type<50>(get_param(np, CGAL::internal_np::use_bool_op_to_clip_surface));
-  check_same_type<54>(get_param(np, CGAL::internal_np::gradient_descent_precision));
   check_same_type<55>(get_param(np, CGAL::internal_np::use_explicit_scheme));
   check_same_type<56>(get_param(np, CGAL::internal_np::use_safety_constraints));
 
@@ -259,7 +257,6 @@ int main()
                          .apply_per_connected_component(A<46>(46))
                          .output_iterator(A<47>(47))
                          .erase_all_duplicates(A<48>(48))
-                         .gradient_descent_precision(A<54>(54))
                          .use_explicit_scheme(A<55>(55))
                          .require_same_orientation(A<52>(52))
                          .use_safety_constraints(A<56>(56))

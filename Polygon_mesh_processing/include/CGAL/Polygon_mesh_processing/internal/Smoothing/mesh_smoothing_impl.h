@@ -26,8 +26,8 @@
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/smoothing_helpers.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -36,6 +36,8 @@
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/iterator.h>
+#include <CGAL/number_type_config.h>
+#include <CGAL/Origin.h>
 #include <CGAL/property_map.h>
 #include <CGAL/utils.h>
 
@@ -54,19 +56,154 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
 
-template<typename PolygonMesh, typename VertexPointMap, typename GeomTraits>
-class Angle_smoother
+template <typename V, typename GT>
+double get_radian_angle(const V& v1, const V& v2, const GT& gt)
 {
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
+  return gt.compute_approximate_angle_3_object()(v1, v2) * CGAL_PI / 180.;
+}
 
-  typedef typename boost::property_traits<VertexPointMap>::reference      Point_ref;
-  typedef typename GeomTraits::Vector_3                                   Vector;
+// super naive for now. Not sure it even makes sense to do something like that for surfaces
+template<typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
+class Delaunay_edge_flipper
+{
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor      edge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor      face_descriptor;
 
-  typedef std::pair<halfedge_descriptor, halfedge_descriptor>             He_pair;
+  typedef typename boost::property_traits<VertexPointMap>::reference       Point_ref;
+  typedef typename GeomTraits::Vector_3                                    Vector;
 
 public:
-  Angle_smoother(const PolygonMesh& mesh,
+  Delaunay_edge_flipper(TriangleMesh& mesh,
+                        const VertexPointMap vpmap,
+                        const GeomTraits& traits)
+    : mesh_(mesh), vpmap_(vpmap), traits_(traits)
+  { }
+
+  bool should_be_flipped(const edge_descriptor e) const
+  {
+    if(is_border(e, mesh_))
+      return false;
+
+    const halfedge_descriptor h = halfedge(e, mesh_);
+    const halfedge_descriptor opp_h = opposite(h, mesh_);
+
+    vertex_descriptor v0 = source(h, mesh_);
+    vertex_descriptor v1 = target(h, mesh_);
+    vertex_descriptor v2 = target(next(h, mesh_), mesh_);
+    vertex_descriptor v3 = target(next(opp_h, mesh_), mesh_);
+    const Point_ref p0 = get(vpmap_, v0);
+    const Point_ref p1 = get(vpmap_, v1);
+    const Point_ref p2 = get(vpmap_, v2);
+    const Point_ref p3 = get(vpmap_, v3);
+
+    double alpha = get_radian_angle(Vector(p0 - p2), Vector(p1 - p2), traits_);
+    double beta = get_radian_angle(Vector(p1 - p3), Vector(p0 - p3), traits_);
+
+    // not local Delaunay if the sum of the angles is greater than pi
+    if(alpha + beta <= CGAL_PI)
+      return false;
+
+    // Don't want to flip if the other diagonal already exists
+    // @todo remeshing can be used to still flip those
+    std::pair<edge_descriptor, bool> other_hd_already_exists = edge(v2, v3, mesh_);
+    if(other_hd_already_exists.second)
+      return false;
+
+    return true;
+  }
+
+  template <typename Marked_edges_map, typename EdgeRange>
+  void add_to_stack_if_unmarked(const edge_descriptor e,
+                                const Marked_edges_map marks,
+                                EdgeRange& edge_range)
+  {
+    if(!get(marks, e))
+    {
+      put(marks, e, true);
+      edge_range.push_back(e);
+    }
+  }
+
+public:
+  template <typename FaceRange>
+  void operator()(const FaceRange& face_range)
+  {
+    std::cout << " we be flippin'" << std::endl;
+
+    // edges to consider
+    std::vector<edge_descriptor> edge_range;
+    edge_range.reserve(3 * face_range.size());
+    for(face_descriptor f : face_range)
+    {
+      for(halfedge_descriptor h : halfedges_around_face(halfedge(f, mesh_), mesh_))
+        edge_range.push_back(edge(h, mesh_));
+    }
+
+    // keep unique elements
+    std::sort(edge_range.begin(), edge_range.end());
+    edge_range.erase(std::unique(edge_range.begin(), edge_range.end()), edge_range.end());
+
+    std::cout << "unique range of size: " << edge_range.size() << std::endl;
+
+    // Mark edges that are in the stack
+    typedef CGAL::dynamic_edge_property_t<bool>                         Edge_property_tag;
+    typedef typename boost::property_map<TriangleMesh,
+                                         Edge_property_tag>::type       Marked_edges_map;
+
+    Marked_edges_map marks = get(Edge_property_tag(), mesh_);
+
+    // dynamic pmaps do not have default values...
+    for(edge_descriptor e : edges(mesh_))
+      put(marks, e, false);
+    for(edge_descriptor e : edge_range)
+      put(marks, e, true);
+
+    int flipped_n = 0;
+    while(!edge_range.empty())
+    {
+      edge_descriptor e = edge_range.back();
+
+      edge_range.pop_back();
+      put(marks, e, false);
+
+      if(should_be_flipped(e))
+      {
+        ++flipped_n;
+
+        halfedge_descriptor h = halfedge(e, mesh_);
+        Euler::flip_edge(h, mesh_);
+
+        add_to_stack_if_unmarked(edge(next(h, mesh_), mesh_), marks, edge_range);
+        add_to_stack_if_unmarked(edge(prev(h, mesh_), mesh_), marks, edge_range);
+        add_to_stack_if_unmarked(edge(next(opposite(h, mesh_), mesh_), mesh_), marks, edge_range);
+        add_to_stack_if_unmarked(edge(prev(opposite(h, mesh_), mesh_), mesh_), marks, edge_range);
+      }
+    }
+
+    std::cout << "Flipped " << flipped_n << " times" << std::endl;
+  }
+
+private:
+  TriangleMesh& mesh_;
+  const VertexPointMap vpmap_;
+  const GeomTraits& traits_;
+};
+
+template<typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
+class Angle_smoother
+{
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
+
+  typedef typename boost::property_traits<VertexPointMap>::reference       Point_ref;
+  typedef typename GeomTraits::Vector_3                                    Vector;
+
+  typedef std::pair<halfedge_descriptor, halfedge_descriptor>              He_pair;
+
+public:
+  Angle_smoother(const TriangleMesh& mesh,
                  const VertexPointMap vpmap,
                  const GeomTraits& traits)
     : mesh_(mesh), vpmap_(vpmap), traits_(traits)
@@ -120,7 +257,7 @@ public:
       Vector right_v(pt, right_pt);
 
       // rotate
-      double angle = get_radian_angle(right_v, left_v);
+      double angle = get_radian_angle(right_v, left_v, traits_);
       CGAL_warning(angle != 0.); // no degenerate faces is a precondition
       if(angle == 0.)
         continue;
@@ -144,23 +281,23 @@ public:
   }
 
 private:
-  const PolygonMesh& mesh_;
+  const TriangleMesh& mesh_;
   const VertexPointMap vpmap_;
   const GeomTraits& traits_;
 };
 
-template<typename PolygonMesh, typename VertexPointMap, typename GeomTraits>
+template<typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
 class Area_smoother
 {
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
 
-  typedef typename boost::property_traits<VertexPointMap>::value_type     Point;
-  typedef typename boost::property_traits<VertexPointMap>::reference      Point_ref;
-  typedef typename GeomTraits::Vector_3                                   Vector;
+  typedef typename boost::property_traits<VertexPointMap>::value_type      Point;
+  typedef typename boost::property_traits<VertexPointMap>::reference       Point_ref;
+  typedef typename GeomTraits::Vector_3                                    Vector;
 
 public:
-  Area_smoother(const PolygonMesh& mesh,
+  Area_smoother(const TriangleMesh& mesh,
                 const VertexPointMap vpmap,
                 const GeomTraits& traits)
     : mesh_(mesh), vpmap_(vpmap), traits_(traits)
@@ -304,44 +441,46 @@ public:
   }
 
 private:
-  const PolygonMesh& mesh_;
+  const TriangleMesh& mesh_;
   const VertexPointMap vpmap_;
   const GeomTraits& traits_;
 };
 
-template<typename PolygonMesh, typename VertexPointMap, typename VertexConstraintMap, typename GeomTraits>
-class Compatible_smoother
+template<typename Optimizer, typename TriangleMesh,
+         typename VertexPointMap, typename VertexConstraintMap,
+         typename GeomTraits>
+class Mesh_smoother
 {
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor      edge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor      face_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor      edge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor      face_descriptor;
 
-  typedef typename boost::property_traits<VertexPointMap>::value_type     Point;
-  typedef typename boost::property_traits<VertexPointMap>::reference      Point_ref;
-  typedef typename GeomTraits::FT                                         FT;
-  typedef typename GeomTraits::Vector_3                                   Vector;
-  typedef typename GeomTraits::Segment_3                                  Segment;
-  typedef typename GeomTraits::Triangle_3                                 Triangle;
+  typedef typename boost::property_traits<VertexPointMap>::value_type      Point;
+  typedef typename boost::property_traits<VertexPointMap>::reference       Point_ref;
+  typedef typename GeomTraits::FT                                          FT;
+  typedef typename GeomTraits::Vector_3                                    Vector;
+  typedef typename GeomTraits::Segment_3                                   Segment;
+  typedef typename GeomTraits::Triangle_3                                  Triangle;
 
-  typedef std::vector<Triangle>                                           Triangle_list;
-  typedef std::pair<halfedge_descriptor, halfedge_descriptor>             He_pair;
+  typedef std::vector<Triangle>                                            Triangle_list;
+  typedef std::pair<halfedge_descriptor, halfedge_descriptor>              He_pair;
 
-  typedef std::vector<Triangle>                                           Triangle_container;
+  typedef std::vector<Triangle>                                            Triangle_container;
   typedef CGAL::AABB_triangle_primitive<GeomTraits, typename Triangle_container::iterator> AABB_Primitive;
-  typedef CGAL::AABB_traits<GeomTraits, AABB_Primitive>                   AABB_Traits;
-  typedef CGAL::AABB_tree<AABB_Traits>                                    Tree;
+  typedef CGAL::AABB_traits<GeomTraits, AABB_Primitive>                    AABB_Traits;
+  typedef CGAL::AABB_tree<AABB_Traits>                                     Tree;
 
 public:
-  Compatible_smoother(PolygonMesh& pmesh,
-                      VertexPointMap& vpmap,
-                      VertexConstraintMap& vcmap,
-                      const GeomTraits& traits)
+  Mesh_smoother(TriangleMesh& pmesh,
+                VertexPointMap& vpmap,
+                VertexConstraintMap& vcmap,
+                const GeomTraits& traits)
     :
       mesh_(pmesh), vpmap_(vpmap), vcmap_(vcmap), traits_(traits)
   {}
 
-  ~Compatible_smoother() { delete tree_ptr_; }
+  ~Mesh_smoother() { delete tree_ptr_; }
 
 public:
   template<typename FaceRange>
@@ -362,6 +501,13 @@ public:
   template<typename FaceRange>
   void init_smoothing(const FaceRange& face_range)
   {
+    CGAL_precondition(CGAL::is_triangle_mesh(mesh_));
+    CGAL_precondition_code(std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor> degen_faces;)
+    CGAL_precondition_code(CGAL::Polygon_mesh_processing::degenerate_faces(
+                            mesh_, std::inserter(degen_faces, degen_faces.begin()),
+                            CGAL::parameters::vertex_point_map(vpmap_).geom_traits(traits_));)
+    CGAL_precondition(degen_faces.empty());
+
     set_vertex_range(face_range);
 
     input_triangles_.clear();
@@ -380,18 +526,21 @@ public:
   }
 
   // generic optimizer, the move is computed by 'Optimizer'
-  template <typename Optimizer>
-  std::size_t optimize(const bool use_sanity_checks = false, // @tmp
-                       const bool enforce_no_min_angle_regression = false,
-                       const bool project_move_on_tangent_plane = false) // @tmp
+  std::size_t optimize(const bool use_sanity_checks = true,
+                       const bool apply_moves_in_single_batch = false,
+                       const bool enforce_no_min_angle_regression = false)
   {
     typedef CGAL::dynamic_vertex_property_t<Point>                      Vertex_property_tag;
-    typedef typename boost::property_map<PolygonMesh,
+    typedef typename boost::property_map<TriangleMesh,
                                          Vertex_property_tag>::type     Position_map;
 
     Position_map new_positions = get(Vertex_property_tag(), mesh_);
 
     Optimizer compute_move(mesh_, vpmap_, traits_);
+
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
+    double total_displacement = 0;
+#endif
 
     std::size_t moved_points = 0;
     for(vertex_descriptor v : vrange_)
@@ -407,9 +556,10 @@ public:
       const Point_ref pos = get(vpmap_, v);
       Vector move = compute_move(v);
 
-      if(project_move_on_tangent_plane)
+      // @test the effect of this and whether it should be a parameter or not
+      if(true/*project_move_on_tangent_plane*/)
       {
-        // Gram Schmidt so that the new location is on the tangent plane of v (i.e. mv -= (mv*n)*n)
+        // Gram Schmidt so that the new location is on the tangent plane of v (i.e. do mv -= (mv*n)*n)
         const FT sp = traits_.compute_scalar_product_3_object()(vn, move);
         move = traits_.construct_sum_of_vectors_3_object()(move,
                  traits_.construct_scaled_vector_3_object()(vn, - sp));
@@ -417,63 +567,54 @@ public:
 
       Point new_pos = pos + move;
 
-      std::cout << "sanity check? " << use_sanity_checks << " test: " << does_move_create_bad_faces(v, new_pos) << std::endl;
-      std::cout << "min check? " << enforce_no_min_angle_regression << " test: " << does_improve_min_angle_in_star(v, new_pos) << std::endl;
+      // @tmp
+//      std::cout << "sanity check? " << use_sanity_checks << " test: " << does_move_create_bad_faces(v, new_pos) << std::endl;
+//      std::cout << "min check? " << enforce_no_min_angle_regression << " test: " << does_improve_min_angle_in_star(v, new_pos) << std::endl;
 
       if((!use_sanity_checks || !does_move_create_bad_faces(v, new_pos)) &&
          (!enforce_no_min_angle_regression || does_improve_min_angle_in_star(v, new_pos)))
       {
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
+        std::cout << "moving " << get(vpmap_, v) << " to " << new_pos << std::endl;
+        total_displacement += CGAL::approximate_sqrt(traits_.compute_squared_length_3_object()(move));
+#endif
+
+        if(apply_moves_in_single_batch)
+          put(new_positions, v, new_pos);
+        else
+          put(vpmap_, v, new_pos);
+
         ++moved_points;
-        put(new_positions, v, new_pos);
       }
-      else
+      else // some sanity check failed
       {
 #ifdef CGAL_PMP_SMOOTHING_DEBUG
         std::cout << "move is rejected!" << std::endl;
 #endif
-        put(new_positions, v, pos);
+        if(apply_moves_in_single_batch)
+          put(new_positions, v, pos);
       }
-
-//#define CGAL_SMOOTHING_MOVE_POINTS_IMMEDIATELY
-#ifdef CGAL_SMOOTHING_MOVE_POINTS_IMMEDIATELY
-      put(vpmap_, v, get(new_positions, v));
-#endif
     }
 
-#ifndef CGAL_SMOOTHING_MOVE_POINTS_IMMEDIATELY
     // update locations
-    for(vertex_descriptor v : vrange_)
+    if(apply_moves_in_single_batch)
     {
-      if(is_border(v, mesh_) || is_constrained(v))
-        continue;
+      for(vertex_descriptor v : vrange_)
+      {
+        if(is_border(v, mesh_) || is_constrained(v))
+          continue;
 
-      put(vpmap_, v, get(new_positions, v));
+        put(vpmap_, v, get(new_positions, v));
+      }
     }
-#endif
 
 #ifdef CGAL_PMP_SMOOTHING_DEBUG
     std::cout << "moved: " << moved_points << " points based on angle." << std::endl;
+    std::cout << "total displacement: " << total_displacement << std::endl;
     std::cout << "not improved min angle: " << vrange_.size() - moved_points << " times." << std::endl;
 #endif
 
     return moved_points;
-  }
-
-  std::size_t angle_relaxation(const bool use_safety_constraints)
-  {
-    typedef Angle_smoother<PolygonMesh, VertexPointMap, GeomTraits>           Angle_optimizer;
-
-    return optimize<Angle_optimizer>(use_safety_constraints /*checks for bad faces*/,
-                                     use_safety_constraints /*checks if the min angle is improved*/);
-
-    // @todo according to the paper, we're supposed to Delaunay-based edge flips!
-  }
-
-  std::size_t area_relaxation(const bool use_safety_constraints)
-  {
-    typedef Area_smoother<PolygonMesh, VertexPointMap, GeomTraits>            Area_optimizer;
-
-    return optimize<Area_optimizer>(use_safety_constraints /*check for bad faces*/);
   }
 
   void project_to_surface()
@@ -495,18 +636,9 @@ public:
   }
 
 private:
-  // helper functions
-  // ----------------
   bool is_constrained(const vertex_descriptor v)
   {
     return get(vcmap_, v);
-  }
-
-  // angle measurement & evaluation
-  // ------------------------------
-  double get_radian_angle(const Vector& e1, const Vector& e2) const
-  {
-    return traits_.compute_approximate_angle_3_object()(e1, e2) * CGAL_PI / 180.;
   }
 
   // check for degenerate or inversed faces
@@ -557,9 +689,12 @@ private:
       const Point_ref rpt = get(vpmap_, source(prev_he, mesh_));
 
       old_min_angle = (std::min)(old_min_angle,
-                                 (std::min)(get_radian_angle(Vector(old_pos, lpt), Vector(old_pos, rpt)),
-                                            (std::min)(get_radian_angle(Vector(lpt, rpt), Vector(lpt, old_pos)),
-                                                       get_radian_angle(Vector(rpt, old_pos), Vector(rpt, lpt)))));
+                                 (std::min)(get_radian_angle(Vector(old_pos, lpt),
+                                                             Vector(old_pos, rpt), traits_),
+                                            (std::min)(get_radian_angle(Vector(lpt, rpt),
+                                                                        Vector(lpt, old_pos), traits_),
+                                                       get_radian_angle(Vector(rpt, old_pos),
+                                                                        Vector(rpt, lpt), traits_))));
     }
 
     for(halfedge_descriptor main_he : halfedges_around_source(v, mesh_))
@@ -568,9 +703,9 @@ private:
       const Point_ref lpt = get(vpmap_, target(main_he, mesh_));
       const Point_ref rpt = get(vpmap_, source(prev_he, mesh_));
 
-      if(get_radian_angle(Vector(new_pos, lpt), Vector(new_pos, rpt)) < old_min_angle ||
-         get_radian_angle(Vector(lpt, rpt), Vector(lpt, new_pos)) < old_min_angle ||
-         get_radian_angle(Vector(rpt, new_pos), Vector(rpt, lpt)) < old_min_angle)
+      if(get_radian_angle(Vector(new_pos, lpt), Vector(new_pos, rpt), traits_) < old_min_angle ||
+         get_radian_angle(Vector(lpt, rpt), Vector(lpt, new_pos), traits_) < old_min_angle ||
+         get_radian_angle(Vector(rpt, new_pos), Vector(rpt, lpt), traits_) < old_min_angle)
       {
 #ifdef CGAL_PMP_SMOOTHING_DEBUG
         const Point_ref old_pos = get(vpmap_, v);
@@ -579,9 +714,9 @@ private:
         std::cout << "old/new positions: " << old_pos << " " << new_pos << std::endl;;
         std::cout << "old min angle: " << old_min_angle << std::endl;
         std::cout << "new angles: " << std::endl;
-        std::cout << get_radian_angle(Vector(new_pos, lpt), Vector(new_pos, rpt)) << " ";
-        std::cout << get_radian_angle(Vector(lpt, rpt), Vector(lpt, new_pos)) << " ";
-        std::cout << get_radian_angle(Vector(rpt, new_pos), Vector(rpt, lpt)) << std::endl;
+        std::cout << get_radian_angle(Vector(new_pos, lpt), Vector(new_pos, rpt), traits_) << " ";
+        std::cout << get_radian_angle(Vector(lpt, rpt), Vector(lpt, new_pos), traits_) << " ";
+        std::cout << get_radian_angle(Vector(rpt, new_pos), Vector(rpt, lpt), traits_) << std::endl;
 #endif
         return false;
       }
@@ -591,7 +726,7 @@ private:
   }
 
 private:
-  PolygonMesh& mesh_;
+  TriangleMesh& mesh_;
   VertexPointMap& vpmap_;
   VertexConstraintMap vcmap_;
   GeomTraits traits_;

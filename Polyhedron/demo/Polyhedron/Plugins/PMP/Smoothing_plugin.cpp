@@ -187,8 +187,7 @@ public Q_SLOTS:
     if(poly_item)
     {
       smooth_areas(pmesh, parameters::number_of_iterations(nb_iter)
-                                      .do_project(projection)
-                                      .gradient_descent_precision(precision));
+                                      .do_project(projection));
       poly_item->invalidateOpenGLBuffers();
       poly_item->itemChanged();
     }
@@ -196,8 +195,7 @@ public Q_SLOTS:
     else if(selection_item)
     {
       smooth_areas(selection_item->selected_facets, pmesh, parameters::number_of_iterations(nb_iter)
-                                                          .do_project(projection)
-                                                          .gradient_descent_precision(precision));
+                                                          .do_project(projection));
       selection_item->poly_item_changed();
       selection_item->changed_with_poly_item();
     }

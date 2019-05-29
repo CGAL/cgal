@@ -18,6 +18,7 @@
 //
 //
 // Author(s)     : Konstantinos Katrioplas (konst.katrioplas@gmail.com)
+//                 Mael Rouxel-Labbé
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_SMOOTH_MESH_H
 #define CGAL_POLYGON_MESH_PROCESSING_SMOOTH_MESH_H
@@ -26,16 +27,12 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/mesh_smoothing_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/smoothing_evaluation.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
-#include <CGAL/Polygon_mesh_processing/distance.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 
-#include <CGAL/property_map.h>
+#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-#include <CGAL/Timer.h>
-#endif
+#include <CGAL/property_map.h>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -81,41 +78,31 @@ void smooth_angles(const FaceRange& faces,
                    TriangleMesh& tmesh,
                    const NamedParameters& np)
 {
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor               vertex_descriptor;
+
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type                 GeomTraits;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type             VertexPointMap;
+  typedef typename boost::lookup_named_param_def<internal_np::vertex_is_constrained_t,
+                                                 NamedParameters,
+                                                 Constant_property_map<vertex_descriptor, bool> // default
+                                                 > ::type                             VCMap;
+
+  typedef internal::Angle_smoother<TriangleMesh, VertexPointMap, GeomTraits>          Angle_optimizer;
+  typedef internal::Mesh_smoother<Angle_optimizer, TriangleMesh,
+                                  VertexPointMap, VCMap, GeomTraits>                  Angle_smoother;
+  typedef internal::Delaunay_edge_flipper<TriangleMesh, VertexPointMap, GeomTraits>   Delaunay_flipper;
+
   if(std::begin(faces) == std::end(faces))
     return;
 
   using boost::choose_param;
   using boost::get_param;
 
-  CGAL_precondition(CGAL::is_triangle_mesh(tmesh));
-  CGAL_precondition_code(std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor> degen_faces;)
-  CGAL_precondition_code(CGAL::Polygon_mesh_processing::degenerate_faces(tmesh, std::inserter(degen_faces, degen_faces.begin()), np);)
-  CGAL_precondition(degen_faces.empty());
-
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  CGAL::Timer t;
-  std::cout << "Get smoothing parameters...";
-  std::cout.flush();
-  t.start();
-#endif
-
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
-
-  // geom traits
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type      GeomTraits;
+  // named parameters
   GeomTraits gt = choose_param(get_param(np, internal_np::geom_traits),
                                GeomTraits());
-
-  // vpmap
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type  VertexPointMap;
   VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                get_property_map(CGAL::vertex_point, tmesh));
-
-  // vcmap
-  typedef typename boost::lookup_named_param_def<internal_np::vertex_is_constrained_t,
-                                                 NamedParameters,
-                                                 Constant_property_map<vertex_descriptor, bool> // default
-                                                 > ::type                  VCMap;
   VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
                              Constant_property_map<vertex_descriptor, bool>());
 
@@ -123,32 +110,15 @@ void smooth_angles(const FaceRange& faces,
   const bool do_project = choose_param(get_param(np, internal_np::do_project), true);
   const bool use_safety_constraints = choose_param(get_param(np, internal_np::use_safety_constraints), true);
 
-  internal::Compatible_smoother<TriangleMesh, VertexPointMap, VCMap, GeomTraits> smoother(tmesh, vpmap, vcmap, gt);
-
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  t.stop();
-  std::cout << " done ("<< t.time() <<" sec)." << std::endl;
-  std::cout << "Initializing..." << std::endl;
-  t.reset(); t.start();
-#endif
+  Angle_smoother smoother(tmesh, vpmap, vcmap, gt);
 
   smoother.init_smoothing(faces);
 
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  t.stop();
-  std::cout << " done ("<< t.time() <<" sec)." << std::endl;
-  std::cout << "#iter = " << nb_iterations << std::endl;
-  std::cout << "Smoothing ..." << std::endl;
-  t.reset(); t.start();
-#endif
-
   for(std::size_t i=0; i<nb_iterations; ++i)
   {
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-    std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
-#endif
-
-    smoother.angle_relaxation(use_safety_constraints);
+    smoother.optimize(use_safety_constraints /*check for bad faces*/,
+                      true /*apply all moves at once*/,
+                      use_safety_constraints /*check if the min angle is improved*/);
 
     if(do_project)
     {
@@ -157,19 +127,24 @@ void smooth_angles(const FaceRange& faces,
         std::cerr << "Can't do re-projection, there are self-intersections in the mesh!\n";
         break;
       }
+
       smoother.project_to_surface();
     }
-  }
 
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  t.stop();
-  std::cout << "Smoothing done in ";
-  std::cout << t.time() << " sec." << std::endl;
-#endif
+    // according to the paper, we're supposed to Delaunay-based edge flips!
+    Delaunay_flipper delaunay_flipper(tmesh, vpmap, gt);
+    delaunay_flipper(faces);
+  }
 }
 
-template<typename TriangleMesh, typename NamedParameters>
-void smooth_angles(TriangleMesh& tmesh, const NamedParameters& np)
+template <typename FaceRange, typename TriangleMesh>
+void smooth_angles(const FaceRange& face_range, TriangleMesh& tmesh)
+{
+  smooth_angles(face_range, tmesh, parameters::all_default());
+}
+
+template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+void smooth_angles(TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
 {
   smooth_angles(faces(tmesh), tmesh, np);
 }
@@ -210,10 +185,6 @@ void smooth_angles(TriangleMesh& tmesh)
 *    constrained-or-not status of each vertex of `tmesh`. A constrained vertex
 *    cannot be modified at all during smoothing.
 *  \cgalParamEnd
-*  \cgalParamBegin{gradient_descent_precision} precision which is achieved by minimizing
-*    the energy of each triangle. The energy is defined based on the triangle area.
-*    A smaller value corresponds to higher precision.
-*  \cgalParamEnd
 *  \cgalParamBegin{do_project} if `true` (default value), points are projected to the initial surface after each iteration.
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
@@ -225,91 +196,68 @@ void smooth_areas(const FaceRange faces,
                   TriangleMesh& tmesh,
                   const NamedParameters& np)
 {
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor               vertex_descriptor;
+
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type                 GeomTraits;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type             VertexPointMap;
+  typedef typename boost::lookup_named_param_def<internal_np::vertex_is_constrained_t,
+                                                 NamedParameters,
+                                                 Constant_property_map<vertex_descriptor, bool> // default
+                                                 > ::type                             VCMap;
+
+  typedef internal::Area_smoother<TriangleMesh, VertexPointMap, GeomTraits>           Area_optimizer;
+  typedef internal::Mesh_smoother<Area_optimizer, TriangleMesh,
+                                  VertexPointMap, VCMap, GeomTraits>                  Area_smoother;
+
   if(std::begin(faces) == std::end(faces))
     return;
 
   using boost::choose_param;
   using boost::get_param;
 
-  CGAL_precondition(CGAL::is_triangle_mesh(tmesh));
-  CGAL_precondition_code(std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor> degen_faces;)
-  CGAL_precondition_code(CGAL::Polygon_mesh_processing::degenerate_faces(tmesh, std::inserter(degen_faces, degen_faces.begin()), np);)
-  CGAL_precondition(degen_faces.empty());
-
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  CGAL::Timer t;
-  std::cout << "Get smoothing parameters...";
-  std::cout.flush();
-  t.start();
-#endif
-
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
-
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type      GeomTraits;
+  // named parameters
   GeomTraits gt = choose_param(get_param(np, internal_np::geom_traits),
                                GeomTraits());
-
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VertexPointMap;
   VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                get_property_map(CGAL::vertex_point, tmesh));
-
-  typedef typename boost::lookup_named_param_def<internal_np::vertex_is_constrained_t,
-                                                 NamedParameters,
-                                                 Constant_property_map<vertex_descriptor, bool>
-                                                > ::type                  VCMap;
   VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
                              Constant_property_map<vertex_descriptor, bool>());
 
   std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
-  const double gd_precision = choose_param(get_param(np, internal_np::gradient_descent_precision), 1e-5);
-  bool do_project = choose_param(get_param(np, internal_np::do_project), true);
+  const bool do_project = choose_param(get_param(np, internal_np::do_project), true);
+  const bool use_safety_constraints = choose_param(get_param(np, internal_np::use_safety_constraints), true);
 
-  internal::Compatible_smoother<TriangleMesh, VertexPointMap, VCMap, GeomTraits> smoother(tmesh, vpmap, vcmap, gt);
-
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  t.stop();
-  std::cout << " done ("<< t.time() <<" sec)." << std::endl;
-  std::cout << "Initializing..." << std::endl;
-  t.reset(); t.start();
-#endif
+  Area_smoother smoother(tmesh, vpmap, vcmap, gt);
 
   smoother.init_smoothing(faces);
 
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  t.stop();
-  std::cout << " done ("<< t.time() <<" sec)." << std::endl;
-  std::cout << "#iter = " << nb_iterations << std::endl;
-  std::cout << "Smoothing ..." << std::endl;
-  t.reset(); t.start();
-#endif
-
   for(std::size_t i=0; i<nb_iterations; ++i)
   {
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-    std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
-#endif
+    smoother.optimize(use_safety_constraints /*check for bad faces*/,
+                      false /*apply moves as soon as they're calculated*/,
+                      false /*do not enforce a minimum angle improvement*/);
 
-    smoother.area_relaxation(gd_precision);
     if(do_project)
     {
-      if(does_self_intersect(tmesh))
+      if(use_safety_constraints && does_self_intersect(tmesh))
       {
         std::cerr << "Can't do re-projection, there are self-intersections in the mesh!\n";
         break;
       }
+
       smoother.project_to_surface();
     }
   }
-
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  t.stop();
-  std::cout << "Smoothing done in ";
-  std::cout << t.time() << " sec." << std::endl;
-#endif
 }
 
-template<typename TriangleMesh, typename NamedParameters>
-void smooth_areas(TriangleMesh& tmesh, const NamedParameters& np)
+template <typename FaceRange, typename TriangleMesh>
+void smooth_areas(const FaceRange& face_range, TriangleMesh& tmesh)
+{
+  smooth_areas(face_range, tmesh, parameters::all_default());
+}
+
+template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+void smooth_areas(TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
 {
   smooth_areas(faces(tmesh), tmesh, np);
 }
@@ -318,6 +266,120 @@ template<typename TriangleMesh>
 void smooth_areas(TriangleMesh& tmesh)
 {
   smooth_areas(faces(tmesh), tmesh, parameters::all_default());
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///
+///
+///
+///
+///
+///
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+// do both
+template<typename TriangleMesh, typename FaceRange, typename NamedParameters>
+void smooth(const FaceRange& faces,
+            TriangleMesh& tmesh,
+            const NamedParameters& np)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor               vertex_descriptor;
+
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type                 GeomTraits;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type             VertexPointMap;
+  typedef typename boost::lookup_named_param_def<internal_np::vertex_is_constrained_t,
+                                                 NamedParameters,
+                                                 Constant_property_map<vertex_descriptor, bool> // default
+                                                 > ::type                             VCMap;
+
+  typedef internal::Area_smoother<TriangleMesh, VertexPointMap, GeomTraits>           Area_optimizer;
+  typedef internal::Mesh_smoother<Area_optimizer, TriangleMesh,
+                                  VertexPointMap, VCMap, GeomTraits>                  Area_smoother;
+  typedef internal::Angle_smoother<TriangleMesh, VertexPointMap, GeomTraits>          Angle_optimizer;
+  typedef internal::Mesh_smoother<Angle_optimizer, TriangleMesh,
+                                  VertexPointMap, VCMap, GeomTraits>                  Angle_smoother;
+  typedef internal::Delaunay_edge_flipper<TriangleMesh, VertexPointMap, GeomTraits>   Delaunay_flipper;
+
+  if(std::begin(faces) == std::end(faces))
+    return;
+
+  using boost::choose_param;
+  using boost::get_param;
+
+  // named parameters
+  GeomTraits gt = choose_param(get_param(np, internal_np::geom_traits),
+                               GeomTraits());
+  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
+                               get_property_map(CGAL::vertex_point, tmesh));
+  VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
+                             Constant_property_map<vertex_descriptor, bool>());
+
+  std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+  const bool do_project = choose_param(get_param(np, internal_np::do_project), true);
+  const bool use_safety_constraints = choose_param(get_param(np, internal_np::use_safety_constraints), true);
+
+  Area_smoother area_smoother(tmesh, vpmap, vcmap, gt);
+  Angle_smoother angle_smoother(tmesh, vpmap, vcmap, gt);
+
+  area_smoother.init_smoothing(faces);
+  angle_smoother.init_smoothing(faces);
+
+  for(std::size_t i=0; i<nb_iterations; ++i)
+  {
+    // First apply area smoothing...
+    area_smoother.optimize(use_safety_constraints /*check for bad faces*/,
+                           false /*apply moves as soon as they're calculated*/,
+                           false /*do not enforce a minimum angle improvement*/);
+    if(do_project)
+    {
+      if(use_safety_constraints && does_self_intersect(tmesh))
+      {
+        std::cerr << "Can't do re-projection, there are self-intersections in the mesh!\n";
+        break;
+      }
+
+      area_smoother.project_to_surface();
+    }
+
+    // ... then angle smoothing + Delaunay flip
+    angle_smoother.optimize(use_safety_constraints /*check for bad faces*/,
+                            true /*apply all moves at once*/,
+                            use_safety_constraints /*check if the min angle is improved*/);
+
+    if(do_project)
+    {
+      if(use_safety_constraints && does_self_intersect(tmesh))
+      {
+        std::cerr << "Can't do re-projection, there are self-intersections in the mesh!\n";
+        break;
+      }
+
+      angle_smoother.project_to_surface();
+    }
+
+    // according to the paper, we're supposed to Delaunay-based edge flips!
+    Delaunay_flipper delaunay_flipper(tmesh, vpmap, gt);
+    delaunay_flipper(faces);
+  }
+}
+
+
+template <typename FaceRange, typename TriangleMesh>
+void smooth(const FaceRange& face_range, TriangleMesh& tmesh)
+{
+  smooth(face_range, tmesh, parameters::all_default());
+}
+
+template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+void smooth(TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
+{
+  smooth(faces(tmesh), tmesh, np);
+}
+
+template<typename TriangleMesh>
+void smooth(TriangleMesh& tmesh)
+{
+  smooth(faces(tmesh), tmesh, parameters::all_default());
 }
 
 
