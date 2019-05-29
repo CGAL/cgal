@@ -79,6 +79,8 @@ else()
     )
   if(IS_DIRECTORY "${3MF_INCLUDE_DIR}/Common")
     set(3MF_FOUND true)
+  else()
+    set(3MF_FOUND false)
   endif()
   find_library(3MF_LIBRARIES NAMES 3MF DOC "Path to the lib3MF library")
 
