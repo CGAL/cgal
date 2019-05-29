@@ -3,6 +3,8 @@
                               // converts 64 to 32 bits integers
 #endif
 
+#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+
 #include <fstream>
 #include <iostream>
 

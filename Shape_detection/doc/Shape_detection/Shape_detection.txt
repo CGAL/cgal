@@ -566,12 +566,13 @@ which are subgroups of axis-symmetric and orthogonal clusters) as described by V
 \section Shape_detection_DeprecatedComponents Deprecated Components
 
 The new version (see all examples above) of the class `CGAL::Shape_detection::Region_growing` 
-is not compatible with the old API. For the old API, see an example below.
+is not compatible with the old API. For the old API, see an example below and use 
+`CGAL::Shape_detection::deprecated::Region_growing_depr` instead.
 
 \cgalExample{Shape_detection/shape_detection_basic_deprecated.cpp}
 
 The old API is still supported, but will be removed in the next releases.
-In particular, the classes `CGAL::Shape_detection::deprecated::Region_growing` and
+In particular, the classes `CGAL::Shape_detection::deprecated::Region_growing_depr` and
 `CGAL::Shape_detection::deprecated::Shape_detection_traits` will be removed.
 Please update your code.
 

@@ -128,7 +128,7 @@ on a polygon mesh.}
 
 ## Deprecated Components ##
 - `CGAL::Shape_detection::deprecated::Shape_detection_traits<GeomTraits, InputRange, PointMap, NormalMap>`
-- `CGAL::Shape_detection::deprecated::Region_growing<Traits>`
+- `CGAL::Shape_detection::deprecated::Region_growing_depr<Traits>`
 
 ## Functions ##
 - `CGAL::regularize_planes()`
