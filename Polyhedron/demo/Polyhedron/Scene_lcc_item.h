@@ -47,8 +47,9 @@ public:
   
 public Q_SLOTS:
     void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
-    void randomFaceColors(bool b);
+    void randomFaceColors();
     void randomVolumeColors();
+    void resetColors();
 private:
   friend struct lcc_priv;
   lcc_priv* d;
