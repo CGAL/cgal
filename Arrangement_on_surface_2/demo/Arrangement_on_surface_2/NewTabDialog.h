@@ -23,11 +23,11 @@ namespace Ui
 class NewTabDialog : public QDialog
 {
 public:
-  NewTabDialog( QWidget* parent = 0, Qt::WindowFlags f = Qt::WindowType(0)  );
-  int checkedId( ) const;
+  NewTabDialog( QWidget* parent = 0, Qt::WindowFlags f = 0 );	
+  int checkedId( ) const;					//!< returns ID of the the radio button
 
-protected:
-  Ui::NewTabDialog* ui;
-  QButtonGroup* buttonGroup;
+protected:	
+  Ui::NewTabDialog* ui;						/*!< reference to the ui_NewTabDialog for displaying the dialogue */
+  QButtonGroup* buttonGroup;				/*!< radio button group */
 };
 #endif // NEW_TAB_DIALOG_H

@@ -8,79 +8,89 @@ if(NOT POLICY CMP0070 AND POLICY CMP0053)
   cmake_policy(SET CMP0053 OLD)
 endif()
 
-if(POLICY CMP0071)
-  cmake_policy(SET CMP0071 NEW)
-endif()
-
 find_package(CGAL COMPONENTS Core Qt5 )
+set(CMAKE_CXX_STANDARD 11)
+set(CGAL_EXPLICIT_INSTANTIATION 1 CACHE BOOL "")
 
 find_package( Qt5 QUIET COMPONENTS Gui Widgets)
 
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
+  # What is this?
   include(${CGAL_USE_FILE})
-
   include_directories( ./ )
   # Arrangement package includes
+  include_directories(BEFORE ../../include)
+
   add_definitions(-DQT_NO_KEYWORDS)
 
-  qt5_wrap_ui( arrangement_2_uis
-    ArrangementDemoWindow.ui
-    NewTabDialog.ui
-    OverlayDialog.ui
-    ArrangementDemoPropertiesDialog.ui
-    AlgebraicCurveInputDialog.ui
-  )
-  qt5_wrap_cpp( CGAL_Qt5_MOC_FILES
-    ArrangementDemoWindow.h
-    ArrangementDemoTab.h
-    Callback.h
-#    NewTabDialog.h
-    OverlayDialog.h
-    ArrangementDemoPropertiesDialog.h
-    AlgebraicCurveInputDialog.h
-    ColorItemEditor.h
-    DeleteCurveModeItemEditor.h
-    PropertyValueDelegate.h
-    #PropertyValueDelegate.cpp
-  )
-  qt5_add_resources( CGAL_Qt5_RESOURCE_FILES
-    ArrangementDemoWindow.qrc
-  )
-  add_executable( arrangement_2
-    arrangement_2.cpp
-    ArrangementGraphicsItem.cpp
-    ArrangementDemoWindow.cpp
-    ArrangementDemoTab.cpp
-    ArrangementDemoGraphicsView.cpp
-    Callback.cpp
-    VerticalRayShootCallback.cpp
-    EnvelopeCallback.cpp
-    SplitEdgeCallback.cpp
-    FillFaceCallback.cpp
-    GraphicsViewSegmentInput.cpp
-    GraphicsViewCurveInput.cpp
-    Utils.cpp
-    AlgebraicCurveExpressionParser.cpp
-    AlgebraicCurveInputDialog.cpp
-    NewTabDialog.cpp
-    OverlayDialog.cpp
-    ArrangementDemoPropertiesDialog.cpp
-    ColorItemEditor.cpp
-    PropertyValueDelegate.cpp
-    DeleteCurveMode.cpp
-    DeleteCurveModeItemEditor.cpp
-    PointsGraphicsItem.cpp
-    VerticalRayGraphicsItem.cpp
-   ${CGAL_Qt5_MOC_FILES}
-   ${arrangement_2_uis}
-   ${CGAL_Qt5_RESOURCE_FILES}
-  )
-  target_link_libraries( arrangement_2 PRIVATE
-    CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_Core
-    Qt5::Gui
-  )
+  qt5_wrap_ui(arrangement_2_uis
+              ArrangementDemoWindow.ui
+              NewTabDialog.ui
+              OverlayDialog.ui
+              ArrangementDemoPropertiesDialog.ui
+              AlgebraicCurveInputDialog.ui)
 
-  add_to_cached_list( CGAL_EXECUTABLE_TARGETS arrangement_2 )
+  qt5_wrap_cpp(CGAL_Qt5_MOC_FILES
+               ArrangementDemoWindow.h
+               ArrangementDemoTab.h
+               Callback.h
+               # NewTabDialog.h
+               OverlayDialog.h
+               ArrangementDemoPropertiesDialog.h
+               AlgebraicCurveInputDialog.h
+               ColorItemEditor.h
+               DeleteCurveModeItemEditor.h
+	       # PropertyValueDelegate.h
+               PropertyValueDelegate.h)
+
+  qt5_add_resources(CGAL_Qt5_RESOURCE_FILES ArrangementDemoWindow.qrc)
+
+  set(EXPLICIT_INSTANTIATION_SRCS)
+  if (CGAL_EXPLICIT_INSTANTIATION)
+    set(EXPLICIT_INSTANTIATION_SRCS
+        ArrangementPainterOstreamExplicitInstantiation.cpp
+        # ArrangementGraphicsItemExplicitInstantiation.cpp
+        GraphicsViewCurveInputExplicitInstantiation.cpp
+        ArrangementPainterOstream.cpp
+        # ArrangementGraphicsItem.cpp
+        GraphicsViewCurveInput.cpp)
+  endif()
+
+
+  add_executable(arrangement_2
+                 arrangement_2.cpp
+                 # ArrangementGraphicsItem.cpp
+                 ArrangementDemoWindow.cpp
+                 ArrangementDemoTab.cpp
+                 ArrangementDemoGraphicsView.cpp
+                 Callback.cpp
+                 VerticalRayShootCallback.cpp
+                 EnvelopeCallback.cpp
+                 SplitEdgeCallback.cpp
+                 FillFaceCallback.cpp
+                 GraphicsViewSegmentInput.cpp
+                 # GraphicsViewCurveInput.cpp
+                 Utils.cpp
+                 AlgebraicCurveExpressionParser.cpp
+                 NewTabDialog.cpp
+                 OverlayDialog.cpp
+                 ArrangementDemoPropertiesDialog.cpp
+                 AlgebraicCurveInputDialog.cpp
+                 ColorItemEditor.cpp
+                 PropertyValueDelegate.cpp
+                 DeleteCurveMode.cpp
+                 DeleteCurveModeItemEditor.cpp
+                 PointsGraphicsItem.cpp
+                 VerticalRayGraphicsItem.cpp
+                 ${EXPLICIT_INSTANTIATION_SRCS}
+                 ${CGAL_Qt5_MOC_FILES}
+                 ${arrangement_2_uis}
+                 ${CGAL_Qt5_RESOURCE_FILES})
+
+  qt5_use_modules(arrangement_2 Core Gui Widgets Script)
+  target_link_libraries(arrangement_2 CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_Core)
+
+  add_to_cached_list(CGAL_EXECUTABLE_TARGETS arrangement_2)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(arrangement_2)
@@ -89,5 +99,3 @@ else()
   message(STATUS "NOTICE: This demo requires CGAL, CGAL-Core and Qt5, and will not be compiled.")
 
 endif()
-
-# add_subdirectory( tests )

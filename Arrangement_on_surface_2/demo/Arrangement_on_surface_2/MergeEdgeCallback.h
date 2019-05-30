@@ -89,6 +89,8 @@ void MergeEdgeCallback< Arr_ >::setScene( QGraphicsScene* scene_ )
   this->scene = scene_;
   this->highlightedCurve->setScene( scene_ );
   this->highlightedCurve2->setScene( scene_ );
+  this->squaredDistance.setScene( scene_ );
+
   if ( this->scene )
   {
     this->scene->addItem( this->highlightedCurve );
@@ -154,9 +156,13 @@ void MergeEdgeCallback<Arr_>::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
   {
     Halfedge_handle nextHalfedge =
       this->getNearestMergeableCurve( this->mergeableHalfedge, event );
-    this->highlightedCurve2->clear( );
-    this->highlightedCurve2->insert( nextHalfedge->curve( ) );
-    Q_EMIT modelChanged( );
+
+    if (nextHalfedge != Halfedge_handle())
+    {
+      this->highlightedCurve2->clear( );
+      this->highlightedCurve2->insert( nextHalfedge->curve( ) );
+      Q_EMIT modelChanged( );
+    } 
   }
 }
 
@@ -168,9 +174,9 @@ getNearestMergeableCurve( QGraphicsSceneMouseEvent* event )
   // find the nearest curve to the cursor that is adjacent to a curve that
   // can be merged with it
   Kernel_point_2 p = this->convert( event->scenePos( ) );
-  double minDist = 0.0;
-  bool noneFound = true;
+  double minDist = std::numeric_limits<double>::max();
   Halfedge_iterator nearestHei;
+  bool found = false;
 
   for ( Halfedge_iterator hei = this->arr->halfedges_begin( );
         hei != this->arr->halfedges_end( );
@@ -192,15 +198,15 @@ getNearestMergeableCurve( QGraphicsSceneMouseEvent* event )
 
     X_monotone_curve_2 curve = hei->curve( );
     double dist = CGAL::to_double( this->squaredDistance( p, curve ) );
-    if ( noneFound || dist < minDist )
+    if ( !found || dist < minDist )
     {
-      noneFound = false;
+      found = true;
       minDist = dist;
       nearestHei = hei;
     }
   }
 
-  if ( noneFound )
+  if ( !found )
   { // then we did not find a mergeable halfedge
     return Halfedge_handle( );
   }
@@ -219,6 +225,7 @@ getNearestMergeableCurve( Halfedge_handle h, QGraphicsSceneMouseEvent* event )
   Halfedge_handle h2 = h->next( );
   Vertex_iterator source = h->source( );
   Vertex_iterator target = h->target( );
+
   if ( source->degree( ) != 2 && target->degree( ) != 2 )
   {
     return Halfedge_handle( );
@@ -231,13 +238,27 @@ getNearestMergeableCurve( Halfedge_handle h, QGraphicsSceneMouseEvent* event )
   {
     return h1;
   }
-  else
+  else if (this->arr->are_mergeable(h, h1)
+      && this->arr->are_mergeable(h, h2))
   {
     X_monotone_curve_2 c1 = h1->curve( );
     X_monotone_curve_2 c2 = h2->curve( );
     double d1 = CGAL::to_double( this->squaredDistance( p, c1 ) );
     double d2 = CGAL::to_double( this->squaredDistance( p, c2 ) );
+
     return ( d1 < d2 ) ? h1 : h2;
+  }
+  else if (this->arr->are_mergeable(h, h2))
+  {
+    return h2;
+  }
+  else if (this->arr->are_mergeable(h, h1))
+  {
+    return h1;
+  }
+  else
+  {
+    return Halfedge_handle();
   }
 }
 #endif // MERGE_EDGE_CALLBACK_H

@@ -27,19 +27,19 @@ class ArrangementDemoPropertiesDialog : public QDialog
   public:
   // keep this in order with the ui layout
   enum PropertyKey {
-    EDGE_COLOR_KEY,
-    EDGE_WIDTH_KEY,
-    VERTEX_COLOR_KEY,
-    VERTEX_RADIUS_KEY,
-    ENVELOPE_EDGE_COLOR_KEY,
-    ENVELOPE_EDGE_WIDTH_KEY,
-    ENVELOPE_VERTEX_COLOR_KEY,
-    ENVELOPE_VERTEX_RADIUS_KEY,
-    VERTICAL_RAY_EDGE_COLOR_KEY,
-    VERTICAL_RAY_EDGE_WIDTH_KEY,
-    DELETE_CURVE_MODE_KEY,
-    GRID_SIZE_KEY,
-    GRID_COLOR_KEY
+    EDGE_COLOR_KEY,               /*!< color key  */  
+    EDGE_WIDTH_KEY,               /*!< width key  */
+    VERTEX_COLOR_KEY,             /*!< vertex color  */
+    VERTEX_RADIUS_KEY,            /*!< vertex radius  */
+    ENVELOPE_EDGE_COLOR_KEY,      /*!< envelope color  */
+    ENVELOPE_EDGE_WIDTH_KEY,      /*!< envelope size  */
+    ENVELOPE_VERTEX_COLOR_KEY,    /*!< envelope vertex color  */
+    ENVELOPE_VERTEX_RADIUS_KEY,   /*!< color key  */
+    VERTICAL_RAY_EDGE_COLOR_KEY,  /*!< shooting ray color  */
+    VERTICAL_RAY_EDGE_WIDTH_KEY,  /*!< shooting ray size  */
+    DELETE_CURVE_MODE_KEY,        /*!< deletion of the curve  */
+    GRID_SIZE_KEY,                /*!< size of the gri  */
+    GRID_COLOR_KEY                /*!< color of the grid  */
   };
 
   ArrangementDemoPropertiesDialog( ArrangementDemoWindow* parent_ = 0,

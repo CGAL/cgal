@@ -23,7 +23,10 @@ class DeleteCurveModeItemEditor : public QComboBox
   Q_PROPERTY( DeleteCurveMode mode READ mode WRITE setMode USER true )
 
 public:
-  DeleteCurveModeItemEditor( QWidget* parent = 0 );
+	//! option to delete either a curve or an edge
+	/*!
+	*/
+	DeleteCurveModeItemEditor( QWidget* parent = 0 );
 
 public:
   DeleteCurveMode mode( ) const;

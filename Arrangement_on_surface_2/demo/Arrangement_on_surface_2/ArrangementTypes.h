@@ -69,7 +69,7 @@ class Face_with_color : public CGAL::Arr_face_base
   bool      m_visited;
 
 public:
-  Face_with_color() : CGAL::Arr_face_base(), m_color(), m_visited(false) { }
+  Face_with_color() : CGAL::Arr_face_base(), m_color(::Qt::white), m_visited(false) { }
 
   QColor color() const { return m_color; }
   void set_color(const QColor& c) { m_color = c; }
@@ -222,6 +222,8 @@ typedef CGAL::Arr_algebraic_segment_traits_2<Coefficient> Alg_seg_traits;
 typedef Dcel< Alg_seg_traits >                            Alg_seg_dcel;
 typedef CGAL::Arrangement_with_history_2< Alg_seg_traits, Alg_seg_dcel >
                                                           Alg_seg_arr;
+typedef Alg_seg_traits::Point_2                           Alg_seg_point_2;
+
 
 #endif
 

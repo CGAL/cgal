@@ -10,112 +10,67 @@
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
 #include "GraphicsViewCurveInput.h"
+#include "AlgebraicCurveExpressionParser.h"
 
 #include <QGraphicsView>
 
 namespace CGAL {
 namespace Qt {
 
-void GraphicsViewCurveInputBase::setScene( QGraphicsScene* scene_ )
-{
-  this->QGraphicsSceneMixin::setScene( scene_ );
-  if ( this->scene != NULL )
-  {
-    this->scene->addItem( &this->pointsGraphicsItem );
-  }
-}
 
-#if 0
-QGraphicsScene* GraphicsViewCurveInputBase::getScene( ) const
-{
-  return this->scene;
-}
-#endif
 
-void GraphicsViewCurveInputBase::setSnappingEnabled( bool b )
-{
-  this->snappingEnabled = b;
-}
-
-void GraphicsViewCurveInputBase::setSnapToGridEnabled( bool b )
-{
-  this->snapToGridEnabled = b;
-}
-
-/*! Constructor */
-GraphicsViewCurveInputBase::GraphicsViewCurveInputBase( QObject* parent ) :
-    GraphicsViewInput( parent ),
-//    scene( NULL ),
-    snappingEnabled( false ),
-    snapToGridEnabled( false ),
-    color( ::Qt::blue )
-{
-    this->pointsGraphicsItem.setZValue( 100 );
-    this->pointsGraphicsItem.setColor( this->color );
-}
-
+template < typename Coefficient_ >
 void
-GraphicsViewCurveInputBase::mouseMoveEvent(QGraphicsSceneMouseEvent* /* event */)
-{ }
-
-void GraphicsViewCurveInputBase::
-mousePressEvent(QGraphicsSceneMouseEvent* /* event */)
+GraphicsViewCurveInput<CGAL::Arr_algebraic_segment_traits_2<
+                               Coefficient_> > ::
+addNewAlgebraicCurve(const std::string& poly_expr_)
 {
-  // std::cout << "GraphicsViewCurveInputBase::mousePressEvent" << std::endl;
-}
+  this->poly_expr = poly_expr_;
 
-bool GraphicsViewCurveInputBase::eventFilter( QObject* obj, QEvent* event )
-{
-  if ( event->type( ) == QEvent::GraphicsSceneMouseMove )
-  {
-    QGraphicsSceneMouseEvent* mouseEvent =
-      static_cast< QGraphicsSceneMouseEvent* >( event );
-    this->mouseMoveEvent( mouseEvent );
-  }
-  else if ( event->type( ) == QEvent::GraphicsSceneMousePress )
-  {
-    QGraphicsSceneMouseEvent* mouseEvent =
-      static_cast< QGraphicsSceneMouseEvent* >( event );
-    this->mousePressEvent( mouseEvent );
-  }
+  AlgebraicCurveExpressionParser parser(this->poly_expr);
+  std::vector<struct term> terms;
 
-  return QObject::eventFilter( obj, event );
-}
+  try {
 
-void GraphicsViewCurveInputBase::setColor( QColor c )
-{
-  this->color = c;
-  this->pointsGraphicsItem.setColor( this->color );
-}
+    if (!parser.extract_poly_terms(terms))
+    {
+      throw std::invalid_argument("Invalid Expression");
+    }
 
-QColor GraphicsViewCurveInputBase::getColor( ) const
-{
-  return this->color;
-}
+  } catch (std::invalid_argument) {
 
-#if 0
-QRectF GraphicsViewCurveInputBase::viewportRect( ) const
-{
-  QRectF res;
-  if ( this->scene == NULL )
-  {
-    return res;
+    QMessageBox msgBox;
+    msgBox.setWindowTitle("Wrong Expression");
+    msgBox.setIcon(QMessageBox::Critical);
+    msgBox.setText(QString::fromStdString(poly_expr_ + " is invalid"));
+    msgBox.setStandardButtons(QMessageBox::Ok);
+
+    msgBox.exec();
+    return;
   }
 
-  QList< QGraphicsView* > views = this->scene->views( );
-  if ( views.size( ) == 0 )
-  {
-    return res;
-  }
-  // assumes the first view is the right one
-  QGraphicsView* viewport = views.first( );
-  QPointF p1 = viewport->mapToScene( 0, 0 );
-  QPointF p2 = viewport->mapToScene( viewport->width( ), viewport->height( ) );
-  res = QRectF( p1, p2 );
+  //To create a curve
+  Traits::Construct_curve_2 construct_curve
+      = traits.construct_curve_2_object();
 
-  return res;
+  Polynomial_2 polynomial;
+  Polynomial_2 x = CGAL::shift(Polynomial_2(1),1,0);
+  Polynomial_2 y = CGAL::shift(Polynomial_2(1),1,1);
+
+  //extracting coefficients and power
+  for (int i=0; i<terms.size(); i++)
+  {
+    polynomial += terms[i].coefficient 
+                *CGAL::ipower(x,terms[i].x_exponent)
+                *CGAL::ipower(y,terms[i].y_exponent);
+  }
+
+  //adding curve to the arrangement
+  Curve_2 cv = construct_curve(polynomial);
+  Q_EMIT generate( CGAL::make_object( cv ) );
 }
-#endif
+
+
 
 } // namespace Qt
 } // namespace CGAL

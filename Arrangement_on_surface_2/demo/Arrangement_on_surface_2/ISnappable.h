@@ -16,8 +16,13 @@ class ISnappable
 {
 public:
   virtual ~ISnappable( ) { }
-  virtual void setSnappingEnabled( bool b ) = 0;
-  virtual void setSnapToGridEnabled( bool b ) = 0;
+
+    //! A pure virtual member to switch on/off the snap grid
+	/*!
+	 	\param b boolean value to toggle its current state
+	*/
+  	virtual void setSnappingEnabled( bool b ) = 0;
+  	virtual void setSnapToGridEnabled( bool b ) = 0;
 }; // class ISnappable
 
 

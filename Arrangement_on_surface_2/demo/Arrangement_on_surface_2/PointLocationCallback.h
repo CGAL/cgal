@@ -128,6 +128,10 @@ reset( )
 {
   this->highlightedCurves->clear( );
   Q_EMIT modelChanged( );
+
+  QGraphicsView* view = this->scene->views( ).first( );
+  view->scale(1.01, 1.01);
+  view->scale(1/1.01, 1/1.01);
 }
 
 template < typename Arr_ >
@@ -136,6 +140,11 @@ PointLocationCallback< Arr_ >::
 mousePressEvent( QGraphicsSceneMouseEvent* event )
 {
   this->highlightPointLocation( event );
+  
+  // This is to make the scene update instantly 
+  QGraphicsView* view = this->scene->views( ).first( );
+  view->scale(1.01, 1.01);
+  view->scale(1/1.01, 1/1.01);
 }
 
 template < typename Arr_ >

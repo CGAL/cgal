@@ -17,6 +17,10 @@
 #include <QCoreApplication>
 #include <QKeyEvent>
 
+//! Member function to setup the viewport of the screen
+/*!
+  \param parent a Qwidget pointer to the class
+*/
 ArrangementDemoGraphicsView::ArrangementDemoGraphicsView( QWidget* parent ) :
   QGraphicsView( parent ),
   showGrid( false ),
@@ -28,9 +32,7 @@ ArrangementDemoGraphicsView::ArrangementDemoGraphicsView( QWidget* parent ) :
   this->setTransform( m );
   this->setBackgroundBrush( QBrush( backgroundColor ) );
   this->setResizeAnchor(QGraphicsView::AnchorUnderMouse);
-
 }
-
 
 void ArrangementDemoGraphicsView::wheelEvent(QWheelEvent* event)
 {
@@ -38,46 +40,82 @@ void ArrangementDemoGraphicsView::wheelEvent(QWheelEvent* event)
   // this->centerOn(this->mapToScene(event->pos()));
 }
 
+//! Member function to display the grid
+/*!
+  \param b boolean value to toggle the grid view
+*/
 void ArrangementDemoGraphicsView::setShowGrid( bool b )
 {
   this->showGrid = b;
 }
 
+//! Member function to get the grid
+/*!
+  \return the grid to be displayed
+*/
 bool ArrangementDemoGraphicsView::getShowGrid( ) const
 {
   return this->showGrid;
 }
 
+//! Member function to set the size of grid
+/*!
+  \param size integer variable 
+*/
 void ArrangementDemoGraphicsView::setGridSize( int size )
 {
   this->gridSize = size;
 }
 
+//! Member function to create the user screen
+/*!
+  \return The screen to be manipulated
+*/
 int ArrangementDemoGraphicsView::getGridSize( ) const
 {
   return this->gridSize;
 }
 
+//! Member function to set the color of grid
+/*!
+  \param color a QColor object 
+*/
 void ArrangementDemoGraphicsView::setGridColor( QColor color )
 {
   this->gridColor = color;
 }
 
+//! Member function to get the color of grid
+/*!
+  \return the grid color being set
+*/
 QColor ArrangementDemoGraphicsView::getGridColor( ) const
 {
   return this->gridColor;
 }
 
+//! Member function to set color of background
+/*!
+  \param color a Qcolor object
+*/
 void ArrangementDemoGraphicsView::setBackgroundColor( QColor color )
 {
   this->backgroundColor = color;
 }
 
+//! Member function to get back the color of background screen
+/*!
+  \return The of the viewport/screen
+*/
 QColor ArrangementDemoGraphicsView::getBackgroundColor( ) const
 {
   return this->backgroundColor;
 }
 
+//! Member function to draw within the size of the viewport even when its changed
+/*!
+  \param painter a Qpainter pointer to its class 
+*/
 void ArrangementDemoGraphicsView::drawForeground( QPainter* painter,
                                                   const QRectF& /* rect */)
 {
@@ -115,6 +153,10 @@ void ArrangementDemoGraphicsView::drawForeground( QPainter* painter,
   }
 }
 
+//! Member function to create the user screen
+/*!
+  \return The screen to be manipulated
+*/
 QRectF ArrangementDemoGraphicsView::getViewportRect( ) const
 {
   QPointF p1 = this->mapToScene( 0, 0 );

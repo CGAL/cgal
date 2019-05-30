@@ -45,7 +45,7 @@ public: // ctors
     m_edgeColor( ::Qt::red ),
     m_edgeWidth( 0 ),
     m_vertexColor( ::Qt::red ),
-    m_vertexRadius( 3 )
+    m_vertexRadius( 1 )
   {
     this->setZValue( 4 );
   }

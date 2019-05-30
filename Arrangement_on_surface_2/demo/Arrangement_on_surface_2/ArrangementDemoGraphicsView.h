@@ -32,13 +32,13 @@ public:
 
 protected:
   void wheelEvent(QWheelEvent* event);
-  void drawForeground( QPainter* painter, const QRectF& rect );
-  QRectF getViewportRect( ) const;
+  void drawForeground( QPainter* painter, const QRectF& rect );     //!< drawing on the screen
+  QRectF getViewportRect( ) const;                                  //!< get current screen size
 
-  bool showGrid;
-  int gridSize;
-  QColor gridColor;
-  QColor backgroundColor;
+  bool showGrid;            /*!< displaying grid toggle */
+  int gridSize;              /*!< an integer value for the grid size */
+  QColor gridColor;           /*!< color for the grid */
+  QColor backgroundColor;     /*!< color for the background */
 };
 
 #endif // ARRANGEMENT_DEMO_GRAPHICS_VIEW_H

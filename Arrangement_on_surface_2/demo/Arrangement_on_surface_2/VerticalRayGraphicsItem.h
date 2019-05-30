@@ -30,21 +30,21 @@ public:
   VerticalRayGraphicsItem( );
 
   virtual void paint( QPainter* painter,
-                      const QStyleOptionGraphicsItem* option,
-                      QWidget* widget );
-  virtual QRectF boundingRect( ) const;
+					  const QStyleOptionGraphicsItem* option,
+					  QWidget* widget );
+  virtual QRectF boundingRect( ) const;				//!< a virtual member function for the bounding box
 
   const QPointF& source( ) const;
   void setSource( const QPointF& src );
   double targetY( ) const;
-  void setTargetY( double y );
-  bool isInfinite( ) const;
-  void setIsInfinite( bool b );
+  void setTargetY( double y );						//!< direction of the arrow.
+  bool isInfinite( ) const;							//!< if it is of infinite length
+  void setIsInfinite( bool b );						//!< indefinite length arrow
 
-  const QColor& color( ) const;
-  void setColor( const QColor& color );
+  const QColor& color( ) const;							
+  void setColor( const QColor& color );				//!< setting the color of the arrow.
   int width( ) const;
-  void setWidth( int width );
+  void setWidth( int width );						//!< setting the thickness of the arrow.
 
   void reset( );
 
@@ -53,12 +53,12 @@ public Q_SLOTS:
 
 protected:
   QRectF viewportRect( ) const;
-  void drawArrowhead( QPainter* painter, double targetY, bool isShootingUp );
+  void drawArrowhead( QPainter* painter, double targetY, bool isShootingUp );		//!< drawing the arrow on the viewport.
 
-  QPointF m_source;
-  double m_targetY;
-  bool m_isInfinite;
-  QColor m_color;
+  QPointF m_source;                   				/*!< position of the arrow */
+  double m_targetY;									
+  bool m_isInfinite;								/*!< if the arrow is set to infinity */
+  QColor m_color;									/*!< color of the arrow */
   int m_width;
 }; // class VerticalRayGraphicsItem
 

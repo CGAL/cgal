@@ -16,12 +16,20 @@ FillFaceCallbackBase::FillFaceCallbackBase( QObject* parent ) :
   fillColor( ::Qt::black )
 { }
 
+//! sets the color of the selected viewport
+/*!
+  \param c A QColor object
+*/
 void FillFaceCallbackBase::setColor( QColor c )
 {
   this->fillColor = c;
   Q_EMIT modelChanged( );
 }
 
+//! gets the color of the fill color option.
+/*!
+  \return the color selected by the user
+*/
 QColor FillFaceCallbackBase::getColor( ) const
 {
   return this->fillColor;

@@ -38,7 +38,7 @@ public:
   QColor getColor( ) const;
 
 protected:
-  QColor fillColor;
+  QColor fillColor;                       				/*!< Qcolor object to fill a selected space */
 };
 
 /**
@@ -58,14 +58,14 @@ public:
   typedef typename Arrangement::Face_const_handle Face_const_handle;
   typedef typename Arrangement::Vertex_const_handle Vertex_const_handle;
   typedef typename Arrangement::Halfedge_around_vertex_const_circulator
-    Halfedge_around_vertex_const_circulator;
+	Halfedge_around_vertex_const_circulator;
   typedef typename Arrangement::Geometry_traits_2 Traits;
   typedef typename Arrangement::Curve_handle Curve_handle;
   typedef typename Arrangement::Originating_curve_iterator
-    Originating_curve_iterator;
+	Originating_curve_iterator;
   typedef typename Arrangement::Induced_edge_iterator Induced_edge_iterator;
   typedef typename Arrangement::Ccb_halfedge_const_circulator
-    Ccb_halfedge_const_circulator;
+	Ccb_halfedge_const_circulator;
   typedef typename Arrangement::Hole_const_iterator Hole_const_iterator;
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
   typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
@@ -73,13 +73,13 @@ public:
   typedef typename Traits::Point_2 Point_2;
   typedef typename Kernel::Segment_2 Segment_2;
   typedef typename CGAL::Arr_trapezoid_ric_point_location< Arrangement >
-    TrapezoidPointLocationStrategy;
+	TrapezoidPointLocationStrategy;
   typedef typename CGAL::Arr_simple_point_location< Arrangement >
-    SimplePointLocationStrategy;
+	SimplePointLocationStrategy;
   typedef typename CGAL::Arr_walk_along_line_point_location< Arrangement >
-    Walk_pl_strategy;
+	Walk_pl_strategy;
   typedef typename Supports_landmarks< Arrangement >::LandmarksType
-    LandmarksPointLocationStrategy;
+	LandmarksPointLocationStrategy;
 
   FillFaceCallback( Arrangement* arr_, QObject* parent_ );
   void reset( );
@@ -94,9 +94,9 @@ protected:
   Face_const_handle getFace( const CGAL::Object& o );
   CGAL::Object locate( const Kernel_point_2& point );
   CGAL::Object locate( const Kernel_point_2& point,
-                       CGAL::Tag_false/*supportsLandmarks*/ );
+					   CGAL::Tag_false/*supportsLandmarks*/ );
   CGAL::Object locate( const Kernel_point_2& point,
-                       CGAL::Tag_true /*doesNotSupportLandmarks*/ );
+					   CGAL::Tag_true /*doesNotSupportLandmarks*/ );
 
   CGAL::Qt::Converter< Kernel > convert;
   CGAL::Object pointLocationStrategy;
@@ -123,6 +123,10 @@ void FillFaceCallback<Arr_>::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
   this->fillFace( event );
   Q_EMIT modelChanged( );
+
+  QGraphicsView* view = this->scene->views( ).first( );
+  view->scale(1.01, 1.01);
+  view->scale(1/1.01, 1/1.01);
 }
 
 template < class Arr_ >
@@ -130,6 +134,11 @@ void
 FillFaceCallback< Arr_ >::mouseMoveEvent(QGraphicsSceneMouseEvent* /* event */)
 { }
 
+//! A Template type
+//! Coloring the closed selected space
+/*!
+ 	\param event A QGrpahicsSceneMouseEvent pointer to the class
+*/
 template < class Arr_ >
 void
 FillFaceCallback< Arr_ >::
@@ -139,33 +148,55 @@ fillFace( QGraphicsSceneMouseEvent* event )
   CGAL::Object pointLocationResult = this->locate( point );
   Face_const_handle face = this->getFace( pointLocationResult );
   Face_handle f = this->arr->non_const_handle( face );
-  if ( this->fillColor.isValid( ) )
+
+  if ( f->color() == ::Qt::white && this->fillColor.isValid() )
   {
-    f->set_color( this->fillColor );
+	f->set_color( this->fillColor );
+  }
+  else
+  {
+	f->set_color( ::Qt::white );
   }
 }
 
+//! A Template type
+//! get the selected face
+/*!
+ 	\param obj A CGAL::Object reference of the face
+*/
 template < class Arr_ >
 typename FillFaceCallback< Arr_ >::Face_const_handle
 FillFaceCallback< Arr_ >::getFace( const CGAL::Object& obj )
 {
   Face_const_handle f;
   if ( CGAL::assign( f, obj ) )
-    return f;
+  {
+	return f;
+  }
 
   Halfedge_const_handle he;
   if (CGAL::assign( he, obj ))
-    return (he->face( ));
+  {
+	return (he->face( ));
+  }
 
   Vertex_const_handle v;
   CGAL_assertion(CGAL::assign( v, obj ));
   CGAL::assign( v, obj );
   if ( v->is_isolated( ) )
-    return v->face( );
+  {
+	return v->face( );
+  }
+
   Halfedge_around_vertex_const_circulator eit = v->incident_halfedges( );
   return  (eit->face( ));
 }
 
+//! A Template type
+//! locating the mouse position
+/*!
+ 	\param point A Kernel_point_2 object
+*/
 template < class Arr_ >
 CGAL::Object FillFaceCallback< Arr_ >::locate( const Kernel_point_2& point )
 {
@@ -173,37 +204,49 @@ CGAL::Object FillFaceCallback< Arr_ >::locate( const Kernel_point_2& point )
   return this->locate( point, supportsLandmarks );
 }
 
+//! A Template type
+//! locating points given a query
+/*!
+ 	\param pt A kernel_point_2 object
+ 	\param Tag_true A CGAL object available in class
+*/
 template < class Arr_ >
 CGAL::Object
 FillFaceCallback< Arr_ >::locate( const Kernel_point_2& pt, CGAL::Tag_true )
 {
-  CGAL::Object pointLocationResult;
-  Walk_pl_strategy* walkStrategy;
-  TrapezoidPointLocationStrategy* trapezoidStrategy;
-  SimplePointLocationStrategy* simpleStrategy;
-  LandmarksPointLocationStrategy* landmarksStrategy;
+  CGAL::Object pointLocationResult;									
+  Walk_pl_strategy* walkStrategy;									
+  TrapezoidPointLocationStrategy* trapezoidStrategy;				/*!< searching of a trapezoid from the given faces */
+  SimplePointLocationStrategy* simpleStrategy;						
+  LandmarksPointLocationStrategy* landmarksStrategy;				/*!< finds the neares neighbor point */
 
   Point_2 point = this->toArrPoint( pt );
 
   if ( CGAL::assign( walkStrategy, this->pointLocationStrategy ) )
   {
-    pointLocationResult = walkStrategy->locate( point );
+	pointLocationResult = walkStrategy->locate( point );
   }
   else if ( CGAL::assign( trapezoidStrategy, this->pointLocationStrategy ) )
   {
-    pointLocationResult = trapezoidStrategy->locate( point );
+	pointLocationResult = trapezoidStrategy->locate( point );
   }
   else if ( CGAL::assign( simpleStrategy, this->pointLocationStrategy ) )
   {
-    pointLocationResult = simpleStrategy->locate( point );
+	pointLocationResult = simpleStrategy->locate( point );
   }
   else if ( CGAL::assign( landmarksStrategy, this->pointLocationStrategy ) )
   {
-    pointLocationResult = landmarksStrategy->locate( point );
+	pointLocationResult = landmarksStrategy->locate( point );
   }
   return pointLocationResult;
 }
 
+//! A Template type
+//! locating points given a query
+/*!
+ 	\param pt A kernel_point_2 object
+ 	\param Tag_false A CGAL object not available
+*/
 template < class Arr_ >
 CGAL::Object
 FillFaceCallback< Arr_ >::locate( const Kernel_point_2& pt, CGAL::Tag_false )
@@ -217,15 +260,15 @@ FillFaceCallback< Arr_ >::locate( const Kernel_point_2& pt, CGAL::Tag_false )
 
   if ( CGAL::assign( walkStrategy, this->pointLocationStrategy ) )
   {
-    pointLocationResult = walkStrategy->locate( point );
+	pointLocationResult = walkStrategy->locate( point );
   }
   else if ( CGAL::assign( trapezoidStrategy, this->pointLocationStrategy ) )
   {
-    pointLocationResult = trapezoidStrategy->locate( point );
+	pointLocationResult = trapezoidStrategy->locate( point );
   }
   else if ( CGAL::assign( simpleStrategy, this->pointLocationStrategy ) )
   {
-    pointLocationResult = simpleStrategy->locate( point );
+	pointLocationResult = simpleStrategy->locate( point );
   }
   return pointLocationResult;
 }

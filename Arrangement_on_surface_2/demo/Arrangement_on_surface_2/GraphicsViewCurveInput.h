@@ -25,10 +25,13 @@
 #include <QEvent>
 #include <QGraphicsLineItem>
 #include <QGraphicsSceneMouseEvent>
+#include <QKeyEvent>
+#include <QMessageBox>
 
 #include "Callback.h"
 #include "ISnappable.h"
 #include "PointsGraphicsItem.h"
+#include "AlgebraicCurveInputDialog.h"
 
 namespace CGAL {
 namespace Qt {
@@ -41,19 +44,64 @@ public:
      Add our helper graphics items to the scene.
      @override
   */
-  virtual void setScene( QGraphicsScene* scene_ );
+  virtual void setScene( QGraphicsScene* scene_ )
+  {
+    this->QGraphicsSceneMixin::setScene( scene_ );
+    if ( this->scene != NULL )
+    {
+      this->scene->addItem( &this->pointsGraphicsItem );
+    }
+  }
   //virtual QGraphicsScene* getScene( ) const;
 
-  void setSnappingEnabled( bool b );
-  void setSnapToGridEnabled( bool b );
-  virtual void setColor( QColor c );
-  QColor getColor( ) const;
+  void setSnappingEnabled( bool b ){this->snappingEnabled = b;}
+  void setSnapToGridEnabled( bool b ){this->snapToGridEnabled = b;}
+  virtual void setColor( QColor c )
+  {
+    this->color = c;
+    this->pointsGraphicsItem.setColor( this->color );
+  }
+  QColor getColor( ) const {return this->color;}
 
 protected:
-  GraphicsViewCurveInputBase( QObject* parent );
-  virtual void mouseMoveEvent( QGraphicsSceneMouseEvent* event );
-  virtual void mousePressEvent( QGraphicsSceneMouseEvent* event );
-  virtual bool eventFilter( QObject* obj, QEvent* event );
+  GraphicsViewCurveInputBase( QObject* parent ):
+    GraphicsViewInput( parent ),
+//    scene( NULL ),
+    snappingEnabled( false ),
+    snapToGridEnabled( false ),
+    color( ::Qt::blue )
+  {
+      this->pointsGraphicsItem.setZValue( 100 );
+      this->pointsGraphicsItem.setColor( this->color );
+  }
+
+  virtual void keyPressEvent( QKeyEvent* event ){}
+  virtual void mouseMoveEvent( QGraphicsSceneMouseEvent* event ){}
+  virtual void mousePressEvent( QGraphicsSceneMouseEvent* event ){}
+  
+  virtual bool eventFilter( QObject* obj, QEvent* event )
+  {
+    if ( event->type( ) == QEvent::GraphicsSceneMouseMove )
+    {
+      QGraphicsSceneMouseEvent* mouseEvent =
+        static_cast< QGraphicsSceneMouseEvent* >( event );
+      this->mouseMoveEvent( mouseEvent );
+    }
+    else if ( event->type( ) == QEvent::GraphicsSceneMousePress )
+    {
+      QGraphicsSceneMouseEvent* mouseEvent =
+        static_cast< QGraphicsSceneMouseEvent* >( event );
+      this->mousePressEvent( mouseEvent );
+    }
+    else if ( event->type( ) == QEvent::KeyPress )
+    {
+      QKeyEvent* keyEvent = 
+        static_cast< QKeyEvent* >( event );
+      this->keyPressEvent( keyEvent );
+    }
+
+    return QObject::eventFilter( obj, event );
+  }
 
   PointsGraphicsItem pointsGraphicsItem; // shows user specified curve points
   bool snappingEnabled;
@@ -98,11 +146,31 @@ public:
   }
 
 protected:
+
+  void keyPressEvent( QKeyEvent* event )
+  {
+    if ( event->key() != ::Qt::Key_Escape )
+    {
+      return;
+    }
+
+    if ( this->second == true && this->scene != NULL )
+    {
+      this->scene->removeItem( &( this->segmentGuide ) );
+    }
+
+    this->second = false;
+    this->pointsGraphicsItem.clear();
+  }
+
   void mouseMoveEvent( QGraphicsSceneMouseEvent* event )
   {
     if ( this->second )
     {
+      // Obtain mouse position
       Point_2 clickedPoint = this->snapPoint( event );
+
+      // The segment will move with mouse
       Segment_2 segment( this->p1, clickedPoint );
       QLineF qSegment = this->convert( segment );
       this->segmentGuide.setLine( qSegment );
@@ -116,25 +184,35 @@ protected:
       this->second = true;
       this->p1 = this->snapPoint( event );
       QPointF pt = this->convert( this->p1 );
+
+      // Add this->p1 to the scene
       this->segmentGuide.setLine( pt.x( ), pt.y( ), pt.x( ), pt.y( ) );
+
       if ( this->scene != NULL )
       {
+        // Update this->scene
         this->scene->addItem( &( this->segmentGuide ) );
       }
+
+      // store the first point
       this->pointsGraphicsItem.insert( pt );
     }
     else
     {
       this->second = false;
       this->p2 = this->snapPoint( event );
+
       if ( this->scene != NULL )
       {
         this->scene->removeItem( &( this->segmentGuide ) );
       }
+
+      // Only draw a segment between two different points
       if ( traits.compare_xy_2_object()( this->p1, this->p2 ) == CGAL::EQUAL )
       {
         return;
       }
+
       this->pointsGraphicsItem.clear( );
       Curve_2 res( this->p1, this->p2 );
       Q_EMIT generate( CGAL::make_object( res ) );
@@ -178,6 +256,28 @@ public:
   { }
 
 protected:
+
+  void keyPressEvent( QKeyEvent* event )
+  {
+    if ( event->key() != ::Qt::Key_Escape || this->points.empty() )
+    {
+      return;
+    }
+
+    for ( unsigned int i = 0; i < this->polylineGuide.size( ); ++i )
+    {
+      if ( this->scene != NULL )
+      {
+        this->scene->removeItem( this->polylineGuide[ i ] );
+      }
+
+      delete this->polylineGuide[ i ];
+    }
+
+    this->polylineGuide.clear( );
+    this->points.clear();
+  }
+
   void mouseMoveEvent( QGraphicsSceneMouseEvent* event )
   {
     if ( ! this->polylineGuide.empty( ) )
@@ -197,7 +297,7 @@ protected:
     Construct_polyline construct_poly = poly_tr.construct_curve_2_object();
 
     Point_2 clickedPoint = this->snapPoint( event );
-    if ( this->points.empty( ) )
+    if ( this->points.empty( ) || event->button( ) != ::Qt::RightButton )
     { // first
       // add clicked point to polyline
       this->points.push_back( clickedPoint );
@@ -209,7 +309,9 @@ protected:
       QPen pen = lineItem->pen( );
       pen.setColor( this->color );
       lineItem->setPen( pen );
+
       this->polylineGuide.push_back( lineItem );
+
       if ( this->scene != NULL )
       {
         this->scene->addItem( this->polylineGuide.back( ) );
@@ -230,27 +332,15 @@ protected:
           }
           delete this->polylineGuide[ i ];
         }
+
         this->polylineGuide.clear( );
         Curve_2 res =
           construct_poly( this->points.begin( ), this->points.end( ) );
+
+        // Delete all points
         this->points.clear( );
 
         Q_EMIT generate( CGAL::make_object( res ) );
-      }
-      else
-      { // start the next segment
-        QPointF pt = this->convert( clickedPoint );
-        QGraphicsLineItem* lineItem =
-          new QGraphicsLineItem( pt.x( ), pt.y( ), pt.x( ), pt.y( ) );
-        lineItem->setZValue( 100 );
-        QPen pen = lineItem->pen( );
-        pen.setColor( this->color );
-        lineItem->setPen( pen );
-        this->polylineGuide.push_back( lineItem );
-        if ( this->scene != NULL )
-        {
-          this->scene->addItem( this->polylineGuide.back( ) );
-        }
       }
     }
   }
@@ -310,6 +400,43 @@ public:
   void setConicType( ConicType conicType_ )
   {
     this->conicType = conicType_;
+
+    if ( this->points.empty() )
+    {
+      return;
+    }
+
+    if ( this->scene != NULL ) 
+    {
+      if ( this->circleItem != NULL )
+      {
+        this->scene->removeItem(this->circleItem);
+      }
+      
+      if ( this->ellipseItem != NULL )
+      {
+        this->scene->removeItem(this->ellipseItem);
+      }
+    }
+
+    delete this->circleItem;
+    this->circleItem = NULL;
+
+    delete this->ellipseItem;
+    this->ellipseItem = NULL;
+
+    for ( unsigned int i = 0; i < this->polylineGuide.size( ); ++i )
+    {
+      if ( this->scene != NULL )
+      {
+        this->scene->removeItem( this->polylineGuide[ i ] );
+      }
+      delete this->polylineGuide[ i ];
+    }
+
+    this->polylineGuide.clear( );
+    this->points.clear( );
+    this->pointsGraphicsItem.clear( );
   }
 
   ConicType getConicType( ) const
@@ -318,6 +445,47 @@ public:
   }
 
 protected:
+
+  void keyPressEvent( QKeyEvent* event )
+  {
+    if ( event->key() != ::Qt::Key_Escape || this->points.empty() )
+    {
+      return;
+    }
+
+    if ( this->scene != NULL ) 
+    {
+      if ( this->circleItem != NULL )
+      {
+        this->scene->removeItem(this->circleItem);
+      }
+      
+      if ( this->ellipseItem != NULL )
+      {
+        this->scene->removeItem(this->ellipseItem);
+      }
+    }
+
+    delete this->circleItem;
+    this->circleItem = NULL;
+
+    delete this->ellipseItem;
+    this->ellipseItem = NULL;
+
+    for ( unsigned int i = 0; i < this->polylineGuide.size( ); ++i )
+    {
+      if ( this->scene != NULL )
+      {
+        this->scene->removeItem( this->polylineGuide[ i ] );
+      }
+      delete this->polylineGuide[ i ];
+    }
+
+    this->polylineGuide.clear( );
+    this->points.clear( );
+    this->pointsGraphicsItem.clear( );
+  }
+
   void mouseMoveEvent( QGraphicsSceneMouseEvent* event )
   {
     if ( ! this->polylineGuide.empty( ) )
@@ -349,6 +517,7 @@ protected:
       CGAL::Bbox_2 bb = p1.bbox( ) + p2.bbox( );
       double w = bb.xmax( ) - bb.xmin( );
       double h = bb.ymax( ) - bb.ymin( );
+
       this->ellipseItem->setRect( bb.xmin( ), bb.ymin( ), w, h );
     }
   }
@@ -483,6 +652,7 @@ protected:
         Rat_FT v = -2*y0*a_sq;
         Rat_FT ww = x0*x0*b_sq + y0*y0*a_sq - a_sq*b_sq;
 
+        // Construct the ellipse as a conic curve
         Curve_2 res = Curve_2( r, s, t, u, v, ww );
         this->points.clear( );
         this->pointsGraphicsItem.clear( );
@@ -498,9 +668,14 @@ protected:
           Rat_point_2 p1 = Rat_point_2( qp1.x( ), qp1.y( ) );
           Rat_point_2 p2 = Rat_point_2( qp2.x( ), qp2.y( ) );
           Rat_point_2 p3 = Rat_point_2( qp3.x( ), qp3.y( ) );
+
           RatKernel ker;
           if ( ! ker.collinear_2_object()( p1, p2, p3 ) )
           {
+            // Curve_2(source, mid, target)
+            // construct an circular arc 
+            // whose endpoints are source 
+            // and target that passes through mid.
             Curve_2 res( p1, p2, p3 );
             Q_EMIT generate( CGAL::make_object( res ) );
           }
@@ -639,13 +814,33 @@ protected: // methods
     return Superclass::eventFilter( obj, event );
   }
 
+
+  void keyPressEvent( QKeyEvent* event )
+  {
+
+    if ( event->key() != ::Qt::Key_Escape )
+    {
+      return;
+    }
+
+    if ( this->second == true && this->scene != NULL )
+    {
+      this->scene->removeItem( &( this->segmentGuide ) );
+    }
+
+    this->second = false;
+  }
+
   void mouseMoveEvent( QGraphicsSceneMouseEvent* event )
   {
     if ( this->second )
     {
       Point_2 hoverPoint = this->snapPoint( event );
       if ( p1 == hoverPoint )
+      {
         return;
+      }
+
       QLineF qSegment;
       if ( this->curveType == SEGMENT )
       {
@@ -662,6 +857,7 @@ protected: // methods
         Line_2 line( this->p1, hoverPoint );
         qSegment = this->convert( line );
       }
+
       this->segmentGuide.setLine( qSegment );
     }
   }
@@ -674,6 +870,7 @@ protected: // methods
       this->p1 = this->snapPoint( event );
       QPointF pt = this->convert( this->p1 );
       this->segmentGuide.setLine( pt.x( ), pt.y( ), pt.x( ), pt.y( ) );
+
       if ( this->scene != NULL )
       {
         this->scene->addItem( &( this->segmentGuide ) );
@@ -686,7 +883,9 @@ protected: // methods
 
       // skip if degenerate
       if ( this->p1 == this->p2 )
+      {
         return;
+      }
 
       if ( this->scene != NULL )
       {
@@ -751,6 +950,18 @@ public:
   { }
 
 protected:
+
+  void keyPressEvent( QKeyEvent* event )
+  {
+    if ( event->key() != ::Qt::Key_Escape )
+    {
+      return;
+    }
+
+    this->points.clear( );
+    this->pointsGraphicsItem.clear( );
+  }
+
   void mouseMoveEvent(QGraphicsSceneMouseEvent* /* event */) {}
 
   void mousePressEvent( QGraphicsSceneMouseEvent* event )
@@ -825,7 +1036,7 @@ protected:
   std::vector< Point_2 > points;
 }; // class GraphicsViewCurveInput< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > >
 
-#if 0
+
 template < typename Coefficient_ >
 class GraphicsViewCurveInput<CGAL::Arr_algebraic_segment_traits_2<
                                Coefficient_> > :
@@ -839,54 +1050,28 @@ class GraphicsViewCurveInput<CGAL::Arr_algebraic_segment_traits_2<
   typedef Kernel::Point_2                               Kernel_point_2;
   typedef Kernel::Segment_2                             Segment_2;
 
-public:
-  GraphicsViewCurveInput( QObject* parent ):
-    GraphicsViewCurveInputBase( parent ),
-    second( false )
-  { }
+  typedef Traits::Polynomial_2 Polynomial_2;
+  typedef Traits::Curve_2 Curve_2;
 
 public:
+  GraphicsViewCurveInput( QObject* parent ):
+    GraphicsViewCurveInputBase( parent )
+  { }
+
+  void addNewAlgebraicCurve(const std::string& poly_expr_);
+
+protected:
+
+  void keyPressEvent( QKeyEvent* event )
+  {
+  }
+
   void mousePressEvent( QGraphicsSceneMouseEvent* event )
   {
-    if ( ! this->second )
-    {
-      this->second = true;
-      this->p1 = this->snapPoint( event );
-      QPointF pt = event->scenePos( );
-      this->segmentGuide.setLine( pt.x( ), pt.y( ), pt.x( ), pt.y( ) );
-      if ( this->scene != NULL )
-      {
-        this->scene->addItem( &( this->segmentGuide ) );
-      }
-    }
-    else
-    {
-      this->second = false;
-      Point_2 p2 = this->snapPoint( event );
-      if ( this->scene != NULL )
-      {
-        this->scene->removeItem( &( this->segmentGuide ) );
-      }
-      if ( traits.compare_xy_2_object()( this->p1, p2 ) == CGAL::EQUAL )
-      {
-        return;
-      }
-      // std::cout << "Algebraic traits curve insert stub" << std::endl;
-    }
   }
 
   void mouseMoveEvent( QGraphicsSceneMouseEvent* event )
   {
-    if ( this->second )
-    {
-      Kernel_point_2 clickedPoint = this->convert( event->scenePos( ) );
-      std::pair< double, double > pp1 = this->p1.to_double( );
-      QPointF qp1( pp1.first, pp1.second );
-      Kernel_point_2 firstPoint = this->convert( qp1 );
-      Segment_2 segment( firstPoint, clickedPoint );
-      QLineF qSegment = this->convert( segment );
-      this->segmentGuide.setLine( qSegment );
-    }
   }
 
   virtual Point_2 snapPoint( QGraphicsSceneMouseEvent* event )
@@ -900,11 +1085,10 @@ protected:
   Traits traits;
   Converter< Kernel > convert;
   Arr_construct_point_2< Traits > toArrPoint;
-  Point_2 p1;
-  bool second;
   QGraphicsLineItem segmentGuide;
+  std::string poly_expr;
 };
-#endif
+
 
 } // namespace Qt
 } // namespace CGAL

@@ -29,34 +29,37 @@ public:
   PointsGraphicsItem( );
 
   virtual void paint( QPainter* painter,
-                      const QStyleOptionGraphicsItem* option, QWidget* widget );
-  virtual QRectF boundingRect( ) const;
+					  const QStyleOptionGraphicsItem* option, QWidget* widget );
+  virtual QRectF boundingRect( ) const;				//!< virtual function for the bounding box
 
+  /** Template type
+     *  adds the points to the vector
+     */
   template < class Point >
   void insert( const Point& point )
   {
-    this->prepareGeometryChange( );
+	this->prepareGeometryChange( );
 
-    double x = CGAL::to_double( point.x( ) );
-    double y = CGAL::to_double( point.y( ) );
-    this->points.push_back( QPointF( x, y ) );
+	double x = CGAL::to_double( point.x( ) );
+	double y = CGAL::to_double( point.y( ) );
+	this->points.push_back( QPointF( x, y ) );
   }
 
   void clear( );
 
-  void setColor( QColor c );
-  QColor getColor( ) const;
+  void setColor( QColor c );				//!< sets the color of the curve.
+  QColor getColor( ) const;					//!< returns the color of the curve
 
-  void setPointRadius( double d );
-  double getPointRadius( ) const;
+  void setPointRadius( double d );			//!< sets the user defined radius of the curve
+  double getPointRadius( ) const;			//!< returns the radius of the curve
 
 public Q_SLOTS:
   virtual void modelChanged( );
 
 protected:
-  std::vector< QPointF > points;
-  double pointRadius;
-  QColor color;
+  std::vector< QPointF > points;  		/*!< vector of points of the curve */
+  double pointRadius;					/*!< area of the curve draw */
+  QColor color;                       	/*!< QColor object for the curve */
 
 }; // class PointsGraphicsItem
 

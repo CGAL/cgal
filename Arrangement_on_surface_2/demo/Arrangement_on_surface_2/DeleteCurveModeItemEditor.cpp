@@ -11,31 +11,40 @@
 
 #include "DeleteCurveModeItemEditor.h"
 
+//! option to delete either a curve or an edge .
+/*!
+	\param parent A QWdiget pointer to the class
+	\return the string value of the object being deleted
+*/
 DeleteCurveModeItemEditor::DeleteCurveModeItemEditor( QWidget* parent ) :
-  QComboBox( parent )
+	QComboBox( parent )
 {
-  this->setFrame( false );
+	this->setFrame( false );
 
-  QVariant deleteCurveOption = QVariant::fromValue( DeleteCurveMode( ) );
-  QVariant deleteEdgeOption =
-    QVariant::fromValue( DeleteCurveMode( DeleteCurveMode::DELETE_EDGE ) );
-  this->insertItem( 0, "Delete Curve", deleteCurveOption );
-  this->insertItem( 1, "Delete Edge", deleteEdgeOption );
+	QVariant deleteCurveOption = QVariant::fromValue( DeleteCurveMode( ) );
+	QVariant deleteEdgeOption =
+		QVariant::fromValue( DeleteCurveMode( DeleteCurveMode::DELETE_EDGE ) );
+	this->insertItem( 0, "Delete Curve", deleteCurveOption );
+	this->insertItem( 1, "Delete Edge", deleteEdgeOption );
 }
 
 DeleteCurveMode DeleteCurveModeItemEditor::mode( ) const
 {
-  return this->itemData(this->currentIndex( ), Qt::UserRole ).value< DeleteCurveMode >();
+	return this->itemData(this->currentIndex( ), Qt::UserRole ).value< DeleteCurveMode >();
 }
 
+//! setting the mode value after the user selected its option .
+/*!
+	\param m Object of DeleteCurveMode that determines the policy of the arrangement
+*/
 void DeleteCurveModeItemEditor::setMode( DeleteCurveMode m )
 {
-  if ( m.mode( ) == DeleteCurveMode::DELETE_CURVE )
-  {
-    this->setCurrentIndex( 0 );
-  }
-  else
-  {
-    this->setCurrentIndex( 1 );
-  }
+	if ( m.mode( ) == DeleteCurveMode::DELETE_CURVE )
+	{
+		this->setCurrentIndex( 0 );
+	}
+	else
+	{
+		this->setCurrentIndex( 1 );
+	}
 }

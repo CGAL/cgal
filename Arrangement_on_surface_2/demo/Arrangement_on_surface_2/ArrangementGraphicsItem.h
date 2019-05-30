@@ -21,6 +21,8 @@
 #include <CGAL/Arr_algebraic_segment_traits_2.h>
 
 #include <QGraphicsScene>
+#include <QApplication>
+#include <QKeyEvent>
 #include <QPainter>
 //#include <QStyleOption>
 
@@ -32,8 +34,14 @@
 #define _USE_MATH_DEFINES
 #endif
 #include <math.h>
+#include "ui_ArrangementDemoWindow.h"
+#include "ArrangementDemoGraphicsView.h"
 
 class QGraphicsScene;
+class QApplication;
+
+extern Ui::ArrangementDemoWindow* getCurrentDemoWindowUi();
+extern ArrangementDemoGraphicsView* getCurrentView();
 
 namespace CGAL {
 namespace Qt {
@@ -42,21 +50,105 @@ class ArrangementGraphicsItemBase :
     public GraphicsItem, public QGraphicsSceneMixin
 {
 public:
-  ArrangementGraphicsItemBase( );
+  ArrangementGraphicsItemBase( ):
+    bb( 0, 0, 0, 0 ),
+    bb_initialized( false ),
+    verticesPen( QPen( ::Qt::blue, 3. ) ),
+    edgesPen( QPen( ::Qt::blue, 1. ) ),
+    visible_edges( true ),
+    visible_vertices( true ),
+    scene( NULL ),
+    backgroundColor( ::Qt::white ),
+    scalingFactor(1.0)
+  {
+    this->verticesPen.setCosmetic( true );
+    this->verticesPen.setCapStyle( ::Qt::SquareCap );
+    this->edgesPen.setCosmetic( true );
+    this->firstEntry = true;
+  }
 
-  const QPen& getVerticesPen( ) const;
-  const QPen& getEdgesPen( ) const;
-  void setVerticesPen( const QPen& pen );
-  void setEdgesPen( const QPen& pen );
-  bool visibleVertices( ) const;
-  void setVisibleVertices( const bool b );
-  bool visibleEdges( ) const;
-  void setVisibleEdges( const bool b );
-  void setBackgroundColor( QColor color );
-  // void setScene( QGraphicsScene* scene_ );
+  const QPen& getVerticesPen( ) const
+  {
+    return this->verticesPen;
+  }
+
+  const QPen& getEdgesPen( ) const
+  {
+    return this->edgesPen;
+  }
+
+  void setVerticesPen( const QPen& pen )
+  {
+    this->verticesPen = pen;
+  }
+
+  void setEdgesPen( const QPen& pen )
+  {
+    this->edgesPen = pen;
+  }
+
+  bool visibleVertices( ) const
+  {
+    return this->visible_vertices;
+  }
+
+  void setVisibleVertices( const bool b )
+  {
+    this->visible_vertices = b;
+    this->update( );
+  }
+
+  bool visibleEdges( ) const
+  {
+    return this->visible_edges;
+  }
+
+  void setVisibleEdges( const bool b )
+  {
+    this->visible_edges = b;
+    this->update( );
+  }
+
+  void setBackgroundColor( QColor color )
+  {
+    this->backgroundColor = color;
+  }
+
+  void setScene( QGraphicsScene* scene_ )
+  {
+    this->QGraphicsSceneMixin::setScene( scene_ );
+    this->scene = scene_;
+  }
 
 protected:
-  // QRectF getViewportRect( ) const;
+
+  QRectF viewportRect( ) const
+  {
+    QRectF res;
+    if ( this->scene == NULL )
+    {
+      return res;
+    }
+
+    QList< QGraphicsView* > views = this->scene->views( );
+    if ( views.size( ) == 0 )
+    {
+      return res;
+    }
+    // assumes the first view is the right one
+    QGraphicsView* viewport = views.first( );
+    QPointF p1 = viewport->mapToScene( 0, 0 );
+    QPointF p2 = viewport->mapToScene(viewport->width(), viewport->height());
+
+    double xmin = (std::min)(p1.x(), p2.x());
+    double xmax = (std::max)(p1.x(), p2.x());
+    double ymin = (std::min)(p1.y(), p2.y());
+    double ymax = (std::max)(p1.y(), p2.y());
+
+    res = QRectF( QPointF( xmin, ymin ), QPointF( xmax, ymax ) );
+
+    return res;
+  }
 
   CGAL::Bbox_2 bb;
   bool bb_initialized;
@@ -69,8 +161,11 @@ protected:
   QGraphicsScene* scene;
 
   QColor backgroundColor;
+  double scalingFactor;
+  bool firstEntry;
 
 }; // class ArrangementGraphicsItemBase
+
 
 template <typename Arr_, typename ArrTraits = typename Arr_::Geometry_traits_2>
 class ArrangementGraphicsItem : public ArrangementGraphicsItemBase
@@ -84,6 +179,7 @@ class ArrangementGraphicsItem : public ArrangementGraphicsItemBase
   typedef typename Arrangement::Halfedge_handle         Halfedge_handle;
   typedef typename Arrangement::Face_handle             Face_handle;
   typedef typename Arrangement::Face_iterator           Face_iterator;
+  typedef typename Arrangement::Unbounded_face_iterator Unbounded_face_iterator;
   typedef typename Arrangement::Hole_iterator           Holes_iterator;
   typedef typename Arrangement::Ccb_halfedge_circulator Ccb_halfedge_circulator;
 
@@ -95,6 +191,7 @@ class ArrangementGraphicsItem : public ArrangementGraphicsItemBase
 
   typedef ArrangementGraphicsItemBase                   Superclass;
   typedef typename Kernel::Segment_2                    Segment_2;
+  typedef typename Traits::Curve_2                      Curve_2;
 
 public:
   /*! Constructor */
@@ -110,19 +207,41 @@ public:
                      QWidget* widget);
 
 protected:
+
+  template < typename TTraits >
+  void modelChanged(TTraits traits);
+
+  template < typename Coefficient_>
+  void modelChanged(CGAL::Arr_algebraic_segment_traits_2<Coefficient_>
+                         traits);
+
   template < typename TTraits >
   void paint( QPainter* painter, TTraits traits );
-
-  template < typename Kernel_ >
-  void paint( QPainter* painter, CGAL::Arr_linear_traits_2< Kernel_ > traits );
 
   template < typename CircularKernel >
   void paint( QPainter* painter,
               CGAL::Arr_circular_arc_traits_2< CircularKernel > traits );
 
-  // template < typename Coefficient_ >
-  // void paint( QPainter* painter,
-  //             CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits );
+  template < typename Coefficient_ >
+  void paint( QPainter* painter,
+              CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits );
+
+  void updateBoundingBox();
+
+  template < typename TTraits>
+  void updateBoundingBox(TTraits traits );
+
+  template < typename Kernel_>
+  void updateBoundingBox(CGAL::Arr_linear_traits_2<Kernel_> traits);
+
+  template < typename Coefficient_>
+  void updateBoundingBox(CGAL::Arr_algebraic_segment_traits_2<Coefficient_>
+                         traits);
+
+  Arrangement* arr;
+  ArrangementPainterOstream< Traits > painterostream;
+  CGAL::Qt::Converter< Kernel > convert;
+  std::map< Curve_iterator, CGAL::Bbox_2 > curveBboxMap;
 
 
   void paintFaces( QPainter* painter )
@@ -133,30 +252,47 @@ protected:
 
   void paintFaces( QPainter* painter, CGAL::Arr_oblivious_side_tag )
   {
+    // Prepare all faces for painting
+    int Face_iterator_cnt = 0;
     for( Face_iterator fi = this->arr->faces_begin( );
          fi != this->arr->faces_end( ); ++fi )
     {
       fi->set_visited( false );
+      Face_iterator_cnt++;
     }
 
-    Face_handle unboundedFace = this->arr->unbounded_face( );
-    this->paintFace( unboundedFace, painter );
+    Face_iterator_cnt = 0;
+
+    for( Face_iterator fi = this->arr->faces_begin( );
+         fi != this->arr->faces_end( ); ++fi )
+    {
+      Face_iterator_cnt++;
+      Face_handle f_handle = fi;
+      this->paintFace( f_handle, painter );
+    }
   }
 
   void paintFaces( QPainter* painter, CGAL::Arr_open_side_tag )
   {
+    // Prepare all faces for painting
+    int Face_iterator_cnt = 0;
+
     for( Face_iterator fi = this->arr->faces_begin( );
          fi != this->arr->faces_end( ); ++fi )
     {
-      // if ( fi->is_fictitious( ) )
-      // {
-      //     std::cout << "setting fictitious face not visited" << std::endl;
-      // }
+      Face_iterator_cnt++;
       fi->set_visited( false );
     }
 
-    Face_handle fictitiousFace = this->arr->fictitious_face( );
-    this->paintFace( fictitiousFace, painter );
+    Face_iterator_cnt = 0;
+
+    for( Face_iterator fi = this->arr->faces_begin( );
+         fi != this->arr->faces_end( ); ++fi )
+    {
+      Face_iterator_cnt++;
+      Face_handle f_handle = fi;
+      this->paintFace( f_handle, painter );
+    }
   }
 
 #if 0
@@ -183,47 +319,7 @@ protected:
                   CGAL::Arr_algebraic_segment_traits_2<Coefficient_> traits) {}
 #endif
 
-  void paintFace( Face_handle f, QPainter* painter )
-  {
-    if (! f->visited( ) )
-    {
-      int holes = 0;
-      int inner_faces = 0;
-      Holes_iterator hit; // holes iterator
-      this->paintFace( f, painter, Traits( ) );
-      f->set_visited( true );
-      for ( hit = f->holes_begin(); hit != f->holes_end(); ++hit )
-      {
-        Ccb_halfedge_circulator cc = *hit;
-        do {
-          Halfedge_handle he = cc;
-          Halfedge_handle he2 = he->twin();
-          Face_handle inner_face = he2->face();
-          if ( this->antenna( he ) )
-            continue;
-
-          // move on to next hole
-          if ( ! inner_face->visited( ) )
-            inner_faces++;
-          this->visit_ccb_faces( inner_face, painter );
-        } while ( ++cc != *hit );
-        holes++;
-      }// for
-      // if ( f->is_unbounded( ) )
-      // {
-      //   std::cout << "unbounded face has " << holes << " holes" << std::endl;
-      //   std::cout << "unbounded face has " << inner_faces << " inner faces"
-      //             << std::endl;
-      // }
-      // if ( f->is_fictitious( ) )
-      // {
-      //   std::cout << "fictitious face has " << holes << " holes"
-      //             << std::endl;
-      //   std::cout << "fictitious face has " << inner_faces << " inner faces"
-      //             << std::endl;
-      // }
-    }
-  }
+  void paintFace( Face_handle f, QPainter* painter );
 
   void visit_ccb_faces( Face_handle & fh, QPainter* painter )
   {
@@ -253,165 +349,25 @@ protected:
   template < typename Traits >
   void paintFace(Face_handle /* f */, QPainter* /* painter */,
                  Traits /* traits */)
-  { }
-
-  template < typename Kernel_ >
-  void paintFace( Face_handle f, QPainter* painter,
-                  CGAL::Arr_segment_traits_2< Kernel_ > )
   {
-    if (!f->is_unbounded())  // f is not the unbounded face
-    {
-      QVector< QPointF > pts; // holds the points of the polygon
-
-      /* running with around the outer of the face and generate from it
-       * polygon
-       */
-      Ccb_halfedge_circulator cc=f->outer_ccb();
-      do {
-        double x = CGAL::to_double(cc->source()->point().x());
-        double y = CGAL::to_double(cc->source()->point().y());
-        QPointF coord_source(x , y);
-        pts.push_back(coord_source );
-        //created from the outer boundary of the face
-      } while (++cc != f->outer_ccb());
-
-      // make polygon from the outer ccb of the face 'f'
-      QPolygonF pgn (pts);
-
-      // FIXME: get the bg color
-      QColor color = this->backgroundColor;
-      if ( f->color().isValid() )
-      {
-        color = f->color();
-      }
-      QBrush oldBrush = painter->brush( );
-      painter->setBrush( color );
-      painter->drawPolygon( pgn );
-      painter->setBrush( oldBrush );
-    }
-    else
-    {
-      QRectF rect = this->viewportRect( );
-      QColor color = this->backgroundColor;
-      painter->fillRect( rect, color );
-    }
   }
 
   template < typename Kernel_ >
   void paintFace( Face_handle f, QPainter* painter,
-                  CGAL::Arr_polyline_traits_2< Kernel_ > )
-  {
-    if (!f->is_unbounded())  // f is not the unbounded face
-    {
-      typedef typename CGAL::Arr_polyline_traits_2<Kernel_> Arr_poly_traits;
-      typedef typename Arr_poly_traits::Compare_endpoints_xy_2 Comp_end_pts_2;
-      typedef typename Arr_poly_traits::Construct_min_vertex_2 Poly_const_min_v;
-      typedef typename Arr_poly_traits::Construct_max_vertex_2 Poly_const_max_v;
+                  CGAL::Arr_segment_traits_2< Kernel_ > );
 
-      // Obtain a polyline traits class and construct the needed functors
-      Arr_poly_traits poly_tr;
-      Comp_end_pts_2 comp_end_pts = poly_tr.compare_endpoints_xy_2_object();
-      Poly_const_min_v poly_const_min_v=poly_tr.construct_min_vertex_2_object();
-      Poly_const_max_v poly_const_max_v=poly_tr.construct_max_vertex_2_object();
+  template < typename Kernel_ >
+  void paintFace( Face_handle f, QPainter* painter,
+                  CGAL::Arr_polyline_traits_2< Kernel_ > );
 
-      // Construct needed functors from the segment traits
-      typedef typename Arr_poly_traits::Subcurve_traits_2      Subcurve_traits;
-      typedef typename Subcurve_traits::Construct_min_vertex_2 Seg_const_min_v;
-      typedef typename Subcurve_traits::Construct_max_vertex_2 Seg_const_max_v;
-      Seg_const_min_v construct_min_v = poly_tr.subcurve_traits_2()->
-        construct_min_vertex_2_object();
-      Seg_const_max_v construct_max_v = poly_tr.subcurve_traits_2()->
-        construct_max_vertex_2_object();
-
-      // Iterator of the segments of an x-monotone polyline
-      typename X_monotone_curve_2::Subcurve_const_iterator seg_it;
-
-      QVector< QPointF > pts; // holds the points of the polygon
-      X_monotone_curve_2 cv;
-
-      /* running with around the outer of the face and generate from it
-       * polygon
-       */
-      Ccb_halfedge_circulator cc = f->outer_ccb();
-      do {
-        cv = cc->curve();
-
-        // Determine the direction of cv (left-to-right or right-to-left)
-        Comparison_result dir = comp_end_pts(cv);
-
-        for (seg_it = cv.subcurves_begin();
-             seg_it != cv.subcurves_end() ; ++seg_it)
-          {
-            if (dir == SMALLER)
-              {
-                // cv is directed from left-to-right
-                // Adding the left-min vertex of the current segment
-                double x = CGAL::to_double((construct_min_v(*seg_it)).x());
-                double y = CGAL::to_double((construct_min_v(*seg_it)).y());
-                QPointF coord_source(x , y);
-                pts.push_back(coord_source );
-              }
-            else
-              {
-                // cv is directed from right-to-left
-                // Adding the right-max vertex of the current segment
-                double x = CGAL::to_double((construct_max_v(*seg_it)).x());
-                double y = CGAL::to_double((construct_max_v(*seg_it)).y());
-                QPointF coord_source(x , y);
-                pts.push_back(coord_source );
-              }
-          }
-
-        if (dir == SMALLER)
-          {
-            // Add the right-most point of cv
-            double x = CGAL::to_double((poly_const_max_v(cv)).x());
-            double y = CGAL::to_double((poly_const_max_v(cv)).y());
-            QPointF coord_source(x , y);
-            pts.push_back(coord_source );
-          }
-        else
-          {
-            // Add the left-most point of cv
-            double x = CGAL::to_double((poly_const_min_v(cv)).x());
-            double y = CGAL::to_double((poly_const_min_v(cv)).y());
-            QPointF coord_source(x , y);
-            pts.push_back(coord_source );
-          }
-        //created from the outer boundary of the face
-      } while (++cc != f->outer_ccb());
-
-      // make polygon from the outer ccb of the face 'f'
-      QPolygonF pgn( pts );
-
-      // fill the face according to its color (stored at any of her
-      // incidents curves)
-      QBrush oldBrush = painter->brush( );
-      QColor def_bg_color = this->backgroundColor;
-      if (! f->color().isValid())
-      {
-        painter->setBrush( def_bg_color );
-      }
-      else
-      {
-        painter->setBrush( f->color( ) );
-      }
-      painter->drawPolygon( pgn );
-      painter->setBrush( oldBrush );
-    }
-    else
-    {
-      QRectF rect = this->viewportRect( );
-      QColor color = this->backgroundColor;
-      painter->fillRect( rect, color );
-    }
-  }
 
 #ifdef CGAL_USE_CORE
   template < typename RatKernel, typename AlgKernel, typename NtTraits >
-  void paintFace( Face_handle f, QPainter* painter,
+  void 
+  paintFace( Face_handle f, QPainter* painter,
                   CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > )
   {
+
     if (! f->is_unbounded())  // f is not the unbounded face
     {
       QVector< QPointF > pts; // holds the points of the polygon
@@ -422,7 +378,9 @@ protected:
       do
       {
         if (this->antenna(cc))
+        {
           continue;
+        }
 
         Halfedge_handle he = cc;
         X_monotone_curve_2 c = he->curve();
@@ -434,11 +392,16 @@ protected:
 
         QPointF coord_source(sx, sy);
         QPointF coord_target(tx, ty);
+
+        // Transform the point coordinates from general coordinate system to
+        // Qt scene coordinate system
         QPoint coord_source_viewport = this->fromScene( coord_source );
         QPoint coord_target_viewport = this->fromScene( coord_target );
 
         if (c.orientation() == CGAL::COLLINEAR)
+        {
           pts.push_back(coord_source );
+        }
         else
         {
           // If the curve is monotone, than its source and its target has the
@@ -455,20 +418,26 @@ protected:
 
           pts.push_back(coord_source );
 
+          // Draw the curve as pieces of small segments
           const int DRAW_FACTOR = 5;
           if (is_source_left)
           {
-            for (x = x_min + DRAW_FACTOR; x < x_max; x+=DRAW_FACTOR)
+            for ( x = x_min + DRAW_FACTOR; x < x_max; x+=DRAW_FACTOR )
             {
               //= COORD_SCALE)
               curr_x = this->toScene( x );
               Alg_kernel   ker;
               Arr_conic_point_2 curr_p(curr_x, 0);
+
+              // If curr_x > x_max or curr_x < x_min
               if (!(ker.compare_x_2_object()(curr_p, c.left()) !=
                     CGAL::SMALLER &&
                     ker.compare_x_2_object()(curr_p, c.right()) !=
                     CGAL::LARGER))
+              {
                 continue;
+              }
+
               px = c.point_at_x (curr_p);
               curr_y = CGAL::to_double(px.y());
               QPointF curr( curr_x, curr_y );
@@ -477,7 +446,7 @@ protected:
           }
           else
           {
-            for (x = x_max; x > x_min; x-=DRAW_FACTOR)
+            for ( x = x_max; x > x_min; x-=DRAW_FACTOR )
             {
               curr_x = this->toScene( x );
               Alg_kernel   ker;
@@ -486,7 +455,10 @@ protected:
                     CGAL::SMALLER &&
                     ker.compare_x_2_object() (curr_p, c.right()) !=
                     CGAL::LARGER))
+              {
                 continue;
+              }
+
               px = c.point_at_x (curr_p);
               curr_y = CGAL::to_double(px.y());
               QPointF curr( curr_x, curr_y );
@@ -513,109 +485,236 @@ protected:
       {
         painter->setBrush( f->color( ) );
       }
+
+      QPen pen = painter->pen();
+      pen.setCosmetic(true);
+      painter->setPen(pen);
+
       painter->drawPolygon( pgn );
       painter->setBrush( oldBrush );
     }
     else
     {
       QRectF rect = this->viewportRect( );
+
       QColor color = this->backgroundColor;
-      painter->fillRect( rect, color );
+      if ( f->color().isValid() )
+      {
+        color = f->color();
+      }
+      QBrush oldBrush = painter->brush( );
+      QPen pen = painter->pen();
+      pen.setCosmetic(true);
+      painter->setPen(pen);
+      painter->setBrush( color );
+      painter->drawRect(rect);
+      painter->setBrush( oldBrush );
+
     }
   }
+
 #endif
 
   template < typename CircularKernel >
   void paintFace(Face_handle f, QPainter* painter,
-                 CGAL::Arr_circular_arc_traits_2<CircularKernel> /* traits */)
-  {
-    if ( f->is_unbounded( ) )
+                 CGAL::Arr_circular_arc_traits_2<CircularKernel> /* traits */);
+
+  template < typename Coefficient_ >
+  void paintFace(Face_handle f, QPainter* painter,
+                 CGAL::Arr_algebraic_segment_traits_2<
+                                   Coefficient_ > /* traits */)
+ {
+    typedef Coefficient_ Coefficient;
+    typedef CGAL::Arr_algebraic_segment_traits_2< Coefficient > Traits;
+    typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
+    typedef typename Traits::Polynomial_2           Polynomial_2;
+
+    Traits traits;
+    typename Traits::Construct_curve_2 construct_curve
+      = traits.construct_curve_2_object();
+
+    if (f->is_unbounded())
     {
-      QRectF rect = this->viewportRect( );
-      QColor color = this->backgroundColor;
-      if ( f->color().isValid() )
-        color = f->color();
-      painter->fillRect( rect, color );
       return;
     }
-    QPainterPath path;
-    bool isFirstArc = true;
+
+    // Only bounded face is drawn
+    QVector< QPointF > pts; // holds the points of the polygon
+
+    typedef typename CGAL::Arr_algebraic_segment_traits_2< Coefficient_ >
+                                                        Traits;
+    typedef typename Traits::CKvA_2                       CKvA_2;
+    typedef std::pair< double, double > Coord_2;
+    boost::optional < Coord_2 > p1, p2;
+    typedef std::vector< Coord_2 > Coord_vec_2;
+    std::list<Coord_vec_2> points;
+
+    typedef Curve_renderer_facade<CKvA_2> Facade;
+    QGraphicsView* view = this->scene->views( ).first( );
+    int height = view->height();
+    int width = view->width();
+
+    QRectF viewport = this->viewportRect( );
+    CGAL::Bbox_2 bbox = this->convert( viewport ).bbox( );
+    Facade::setup(bbox, view->width(), view->height());    
+    /* running with around the outer of the face and generate from it
+     * polygon
+     */
     Ccb_halfedge_circulator cc=f->outer_ccb();
-    do
-    {
-      if ( this->antenna( cc ) )
+    do {
+      double src_x = CGAL::to_double(cc->source()->point().x());
+      double src_y = CGAL::to_double(cc->source()->point().y());
+      double tgt_x = CGAL::to_double(cc->target()->point().x());
+      double tgt_y = CGAL::to_double(cc->target()->point().y());
+
+
+      X_monotone_curve_2 curve = cc->curve();
+      Facade::instance().draw( curve, points, &p1, &p2 );
+
+      if(points.empty())
+      {
         continue;
+      }
 
-      if ( isFirstArc )
+      QVector< QPointF > face_curve_points;
+      typename std::list<Coord_vec_2>::const_iterator lit = points.begin();
+      while(lit != points.end()) 
       {
-        isFirstArc = false;
-        X_monotone_curve_2 c = cc->curve( );
+        const Coord_vec_2& vec = *lit;
+        QPointF first = view->mapToScene( QPoint(vec[0].first, height-vec[0].second) );
 
-        QPointF source( to_double(c.source().x()), to_double(c.source().y()) );
-        QPointF target( to_double(c.target().x()), to_double(c.target().y()) );
-        if ( ! this->isProperOrientation( cc ) )
+        QPointF last = view->mapToScene( QPoint(vec[vec.size()-1].first, height-vec[vec.size()-1].second) );
+
+        typename Coord_vec_2::const_iterator vit = vec.begin();
+        
+        double sceneRectWidth = this->scene->width();
+        double sceneRectHeight = this->scene->height();
+
+        bool isPushBack = true;
+        while ( vit != vec.end() )
         {
-          std::swap( source, target );
+          QPoint coord( vit->first + sceneRectWidth/2, height - vit->second -sceneRectHeight/2);
+          QPointF qpt = view->mapToScene( coord );
+          if ( src_x < tgt_x )
+          {
+            face_curve_points.push_back( qpt );
+            isPushBack = true;
+          }
+          else if ( src_x > tgt_x )
+          {
+            face_curve_points.push_front( qpt );
+            isPushBack = false;
+          }
+          else // src_x == tgt_x
+          {
+            if (isPushBack)
+            {
+              face_curve_points.push_back( qpt );
+            }
+            else
+            {
+              face_curve_points.push_front( qpt );
+            }
+          }
+
+          vit++;
+          // std::cout << qpt.x() << "\t" << qpt.y() << std::endl;
         }
-
-        QPointF circleCenter( to_double(c.supporting_circle().center().x()),
-                              to_double(c.supporting_circle().center().y()) );
-        //this->drawDiagnosticArc( circleCenter, source, target, painter );
-
-        std::swap( source, target );
-        double asource = atan2( -(source - circleCenter).y(),
-                                (source - circleCenter).x() );
-        double atarget = atan2( -(target - circleCenter).y(),
-                                (target - circleCenter).x() );
-        double aspan = atarget - asource;
-        std::swap( source, target );
-
-        path.moveTo( source );
-        path.arcTo( convert(c.supporting_circle().bbox()), asource * 180/M_PI,
-                    aspan * 180/M_PI );
-        path.lineTo( target );
+        lit++;
       }
-      else
-      {
-        X_monotone_curve_2 c = cc->curve( );
-        QPointF source( to_double(c.source().x()), to_double(c.source().y()) );
-        QPointF target( to_double(c.target().x()), to_double(c.target().y()) );
-        if ( ! this->pathTouchingSource( path, c ) )
-          std::swap( source, target );
-
-        QPointF circleCenter( to_double(c.supporting_circle().center().x()),
-                              to_double(c.supporting_circle().center().y()) );
-        //this->drawDiagnosticArc( circleCenter, source, target, painter );
-
-        std::swap( source, target );
-        double asource = atan2( -(source - circleCenter).y(),
-                                (source - circleCenter).x() );
-        double atarget = atan2( -(target - circleCenter).y(),
-                                (target - circleCenter).x() );
-        double aspan = atarget - asource;
-        std::swap( source, target );
-
-        path.arcTo( convert(c.supporting_circle().bbox()), asource * 180/M_PI,
-                    aspan * 180/M_PI );
-        path.lineTo( target );
-      }
+      pts += face_curve_points;
+      points.clear();
+      face_curve_points.clear();
+      //created from the outer boundary of the face
     } while (++cc != f->outer_ccb());
 
+    // make polygon from the outer ccb of the face 'f'
+    QPolygonF pgn (pts);
+
+    // FIXME: get the bg color
+    QColor color = this->backgroundColor;
     if ( f->color().isValid() )
     {
-      QPen savePen = painter->pen();
-      QBrush saveBrush = painter->brush();
-      QPen pen = painter->pen();
-      pen.setColor( f->color() );
+      color = f->color();
+    }
 
-      painter->setPen( pen );
-      painter->setBrush( f->color() );
-      painter->drawPath( path );
-      painter->setPen( savePen );
-      painter->setBrush( saveBrush );
+    QBrush oldBrush = painter->brush( );
+    QPen oldPen = painter->pen();
+    painter->setBrush( color );
+    painter->setPen( this->edgesPen );
+
+    painter->drawPolygon( pgn );
+
+    painter->setBrush( oldBrush );
+    painter->setPen( oldPen );
+
+ }
+
+  template < typename Kernel_ >
+  void paintFace(Face_handle f, QPainter* painter,
+                 CGAL::Arr_linear_traits_2< Kernel_ > /* traits */)
+  {
+
+    if (!f->is_unbounded())  // f is not the unbounded face
+    {
+      QVector< QPointF > pts; // holds the points of the polygon
+
+      /* running with around the outer of the face and generate from it
+       * polygon
+       */
+      Ccb_halfedge_circulator cc=f->outer_ccb();
+      do {
+        double x = CGAL::to_double(cc->source()->point().x());
+        double y = CGAL::to_double(cc->source()->point().y());
+        QPointF coord_source(x , y);
+        pts.push_back(coord_source );
+        //created from the outer boundary of the face
+      } while (++cc != f->outer_ccb());
+
+      // make polygon from the outer ccb of the face 'f'
+      QPolygonF pgn (pts);
+
+      // FIXME: get the bg color
+      QColor color = this->backgroundColor;
+      if ( f->color().isValid() )
+      {
+        color = f->color();
+      }
+      QPen oldPen = painter->pen( );
+      oldPen.setCosmetic(true);
+      QBrush oldBrush = painter->brush( );
+      painter->setBrush( color );
+      painter->setPen(oldPen);
+      painter->drawPolygon( pgn );
+      painter->setBrush( oldBrush );
+    }
+    else
+    {
+      // QRectF rect = this->viewportRect( );
+      // QColor color = this->backgroundColor;
+      // painter->fillRect( rect, color );
+#if 0
+      QRectF rect = this->viewportRect( );
+      std::cout<<rect.left()<<'\t';
+      std::cout<<rect.right()<<'\t';
+      std::cout<<rect.top()<<'\t';
+      std::cout<<rect.bottom()<<'\n';
+
+      QColor color = this->backgroundColor;
+      if ( f->color().isValid() )
+      {
+        color = f->color();
+      }
+      QBrush oldBrush = painter->brush( );
+      painter->setBrush( color );
+      painter->drawRect(rect);
+      painter->setBrush( oldBrush );
+#endif
+
     }
   }
 
+#if 0
   void drawDiagnosticArc( QPointF c, QPointF s, QPointF t, QPainter* qp )
   {
     QBrush saveBrush = qp->brush( );
@@ -642,43 +741,17 @@ protected:
     qp->setBrush( saveBrush );
 
   }
-
+#endif 
   /**
      Return false if the tip of the given curve doesn't align with either of the
      endpoints of the next curve.
   */
-  bool isProperOrientation( Ccb_halfedge_circulator cc )
-  {
-    Ccb_halfedge_circulator ccnext = cc;
-    Halfedge_handle he = cc;
-    X_monotone_curve_2 thisCurve = he->curve( );
-    ccnext++;
-    while ( this->antenna( ccnext ) ) ccnext++;
-    Halfedge_handle next_he = ccnext;
-    X_monotone_curve_2 nextCurve = next_he->curve( );
+  // template < typename CircularKernel >
+  bool isProperOrientation( Ccb_halfedge_circulator cc );
 
-    QPointF thisTarget( to_double(thisCurve.target().x()),
-                        to_double(thisCurve.target().y()) );
-    QPointF nextSource( to_double(nextCurve.source().x()),
-                        to_double(nextCurve.source().y()) );
-    QPointF nextTarget( to_double(nextCurve.target().x()),
-                        to_double(nextCurve.target().y()) );
-    double dist1 = QLineF( thisTarget, nextSource ).length();
-    double dist2 = QLineF( thisTarget, nextTarget ).length();
-    bool res = ( dist1 < 1e-2 || dist2 < 1e-2 );
+  // template < typename CircularKernel >
+  bool pathTouchingSource( const QPainterPath& path, X_monotone_curve_2 c );
 
-    return res;
-  }
-
-  bool pathTouchingSource( const QPainterPath& path, X_monotone_curve_2 c )
-  {
-    QPointF a = path.currentPosition( );
-    QPointF b( to_double(c.source().x()), to_double(c.source().y()) );
-    // QPointF d( to_double(c.target().x()), to_double(c.target().y()) );
-    bool res = (QLineF( a, b ).length() < 1e-2);
-
-    return res;
-  }
 
 #if 0
   template < typename CircularKernel >
@@ -844,456 +917,942 @@ protected:
 
   //void cacheCurveBoundingRects( );
 
-  void updateBoundingBox();
-
-  template < typename TTraits>
-  void updateBoundingBox(TTraits traits );
-
-  template < typename Kernel_>
-  void updateBoundingBox(CGAL::Arr_linear_traits_2<Kernel_> traits);
-
-  // template < typename Coefficient_>
-  // void updateBoundingBox(CGAL::Arr_algebraic_segment_traits_2<Coefficient_>
-  //                        traits);
-
-  Arrangement* arr;
-  ArrangementPainterOstream< Traits > painterostream;
-  CGAL::Qt::Converter< Kernel > convert;
-  std::map< Curve_iterator, CGAL::Bbox_2 > curveBboxMap;
 }; // class ArrangementGraphicsItem
 
-  template < typename Arr_, class ArrTraits >
-  ArrangementGraphicsItem< Arr_, ArrTraits >::
-  ArrangementGraphicsItem( Arrangement* arr_ ):
-    arr( arr_ ),
-    painterostream( 0 )
+template < typename Arr_, class ArrTraits >
+ArrangementGraphicsItem< Arr_, ArrTraits >::
+ArrangementGraphicsItem( Arrangement* arr_ ):
+  arr( arr_ ),
+  painterostream( 0 )
+{
+  if ( this->arr->number_of_vertices( ) == 0 )
   {
-    if ( this->arr->number_of_vertices( ) == 0 ) {
-      this->hide( );
-    }
-    this->updateBoundingBox( );
-    this->setZValue( 3 );
+    this->hide( );
   }
 
-  template < typename Arr_, typename ArrTraits >
-  QRectF
-  ArrangementGraphicsItem< Arr_, ArrTraits >::
-  boundingRect( ) const
+  this->updateBoundingBox( );
+  this->setZValue( 3 );
+}
+
+template < typename Arr_, typename ArrTraits >
+QRectF
+ArrangementGraphicsItem< Arr_, ArrTraits >::
+boundingRect( ) const
+{
+  QRectF rect = this->convert( this->bb );
+  return rect;
+}
+
+template < typename Arr_, typename ArrTraits >
+void
+ArrangementGraphicsItem< Arr_, ArrTraits >::
+paint(QPainter* painter,
+      const QStyleOptionGraphicsItem* /* option */,
+      QWidget*  /*widget*/)
+{
+  this->paint( painter, ArrTraits( ) );
+}
+
+template < typename Arr_, typename ArrTraits >
+template < typename TTraits >
+void ArrangementGraphicsItem< Arr_, ArrTraits >::
+paint(QPainter* painter, TTraits /* traits */)
+{
+
+  this->paintFaces( painter );
+
+  painter->setPen( this->verticesPen );
+
+  this->painterostream =
+    ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
+  this->painterostream.setScene( this->scene );
+
+  QRectF rect = this->boundingRect( );
+
+  for ( Vertex_iterator it = this->arr->vertices_begin( );
+        it != this->arr->vertices_end( ); ++it )
   {
-    QRectF rect = this->convert( this->bb );
-    return rect;
+    Point_2 p = it->point( );
+    Kernel_point_2 pt( p.x( ), p.y( ) );
+    this->painterostream << pt;
   }
 
-  template < typename Arr_, typename ArrTraits >
-  void
-  ArrangementGraphicsItem< Arr_, ArrTraits >::
-  paint(QPainter* painter,
-        const QStyleOptionGraphicsItem* /* option */,
-        QWidget*  /*widget*/)
+  painter->setPen( this->edgesPen );
+  for ( Edge_iterator it = this->arr->edges_begin( );
+        it != this->arr->edges_end( ); ++it )
   {
-    this->paint( painter, ArrTraits( ) );
+    X_monotone_curve_2 curve = it->curve( );
+
+    Bbox_2 bbox = curve.bbox();
+    this->painterostream << curve;
   }
 
-  template < typename Arr_, typename ArrTraits >
-  template < typename TTraits >
-  void ArrangementGraphicsItem< Arr_, ArrTraits >::
-  paint(QPainter* painter, TTraits /* traits */)
+  if ( this->firstEntry )
   {
-    this->paintFaces( painter );
+    this->firstEntry = false;
+    QEvent *keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Left, ::Qt::NoModifier);
+    QCoreApplication::postEvent(getCurrentView(), 
+      keyEvent);
 
-    painter->setPen( this->verticesPen );
-    this->painterostream =
-      ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
-    this->painterostream.setScene( this->scene );
+    keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Right, ::Qt::NoModifier);
+    QCoreApplication::postEvent(getCurrentView(), keyEvent);
 
-    for ( Vertex_iterator it = this->arr->vertices_begin( );
-          it != this->arr->vertices_end( ); ++it )
-    {
-      Point_2 p = it->point( );
-      Kernel_point_2 pt( p.x( ), p.y( ) );
-      this->painterostream << pt;
-    }
-    painter->setPen( this->edgesPen );
-    for ( Edge_iterator it = this->arr->edges_begin( );
-          it != this->arr->edges_end( ); ++it )
-    {
-      X_monotone_curve_2 curve = it->curve( );
-      this->painterostream << curve;
-    }
+    keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Up, ::Qt::NoModifier);
+    QCoreApplication::postEvent(getCurrentView(), keyEvent);
+
+    keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Down, ::Qt::NoModifier);
+    QCoreApplication::postEvent(getCurrentView(), keyEvent);
+  }
+}
+
+template < typename Arr_, typename ArrTraits >
+template < typename CircularKernel >
+void ArrangementGraphicsItem< Arr_, ArrTraits >::
+paint(QPainter* painter,
+      CGAL::Arr_circular_arc_traits_2< CircularKernel > /* traits */)
+{
+  this->paintFaces( painter );
+
+  typedef Kernel_point_2 Non_arc_point_2;
+  typedef typename Traits::Point_2 Arc_point_2;
+
+  painter->setPen( this->verticesPen );
+  this->painterostream =
+    ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
+  this->painterostream.setScene( this->scene );
+
+  for ( Vertex_iterator it = this->arr->vertices_begin( );
+        it != this->arr->vertices_end( ); ++it )
+  {
+    Arc_point_2 pt = it->point( );
+    Non_arc_point_2 pt2(CGAL::to_double(pt.x( )), CGAL::to_double(pt.y()) );
+    this->painterostream << pt2;
+  }
+  
+  painter->setPen( this->edgesPen );
+  for ( Edge_iterator it = this->arr->edges_begin( );
+        it != this->arr->edges_end( ); ++it )
+  {
+    X_monotone_curve_2 curve = it->curve( );
+    this->painterostream << curve;
   }
 
-  template < typename Arr_, typename ArrTraits >
-  template < typename Kernel_ >
-  void ArrangementGraphicsItem< Arr_, ArrTraits >::
-  paint(QPainter* painter, CGAL::Arr_linear_traits_2< Kernel_ > /* traits */)
+  if ( this->firstEntry )
   {
-    this->updateBoundingBox( );
-    this->paintFaces( painter );
-    painter->setPen( this->verticesPen );
+    this->firstEntry = false;
+    QEvent *keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Left, ::Qt::NoModifier);
+    QCoreApplication::postEvent(getCurrentView(), 
+      keyEvent);
 
-    this->painterostream =
-      ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
-    this->painterostream.setScene( this->scene );
+    keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Right, ::Qt::NoModifier);
+    QCoreApplication::postEvent(getCurrentView(), keyEvent);
 
-    for ( Vertex_iterator it = this->arr->vertices_begin( );
-          it != this->arr->vertices_end( ); ++it )
-    {
-      Point_2 pt = it->point( );
-      this->painterostream << pt;
-    }
-    painter->setPen( this->edgesPen );
-    for ( Edge_iterator it = this->arr->edges_begin( );
-          it != this->arr->edges_end( ); ++it )
-    {
-      X_monotone_curve_2 curve = it->curve( );
-      this->painterostream << curve;
-    }
+    keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Up, ::Qt::NoModifier);
+    QCoreApplication::postEvent(getCurrentView(), keyEvent);
+
+    keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Down, ::Qt::NoModifier);
+    QCoreApplication::postEvent(getCurrentView(), keyEvent);
   }
+}
 
-  template < typename Arr_, typename ArrTraits >
-  template < typename CircularKernel >
-  void ArrangementGraphicsItem< Arr_, ArrTraits >::
-  paint(QPainter* painter,
-        CGAL::Arr_circular_arc_traits_2< CircularKernel > /* traits */)
+
+template < typename Arr_, typename ArrTraits >
+template < typename Coefficient_ >
+void ArrangementGraphicsItem< Arr_, ArrTraits >::
+paint(QPainter* painter,
+      CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > /* traits */)
+{
+
+  QRectF clipRect = this->boundingRect( );
+
+  QList< QGraphicsView* > views = this->scene->views( );
+  QGraphicsView* view = views.first( );
+
+  // view->resetMatrix();
+  if ( !std::isinf(clipRect.left( )) &&
+       !std::isinf(clipRect.right( )) &&
+       !std::isinf(clipRect.top( )) &&
+       !std::isinf(clipRect.bottom( )) )
   {
-    typedef Kernel_point_2 Non_arc_point_2;
-    typedef typename Traits::Point_2 Arc_point_2;
 
-    this->paintFaces( painter );
-
-    painter->setPen( this->verticesPen );
-    this->painterostream =
-      ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
-    this->painterostream.setScene( this->scene );
-
-    for ( Vertex_iterator it = this->arr->vertices_begin( );
-          it != this->arr->vertices_end( ); ++it )
-    {
-      Arc_point_2 pt = it->point( );
-      Non_arc_point_2 pt2(CGAL::to_double(pt.x( )), CGAL::to_double(pt.y()) );
-      this->painterostream << pt2;
-    }
-    painter->setPen( this->edgesPen );
-    for ( Edge_iterator it = this->arr->edges_begin( );
-          it != this->arr->edges_end( ); ++it )
-    {
-      X_monotone_curve_2 curve = it->curve( );
-      this->painterostream << curve;
-    }
-  }
-
+    // view->resetMatrix();
+    // double viewHeight = view->height();
 #if 0
-  template < typename Arr_, typename ArrTraits >
-  template < typename Coefficient_ >
-  void ArrangementGraphicsItem< Arr_, ArrTraits >::
-  paint(QPainter* painter,
-        CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > /* traits */)
+    double viewHeight = 456;
+    std::cout<<"viewHeight: "<<viewHeight<<std::endl;
+
+    double boundingRectHeight = clipRect.bottom() - clipRect.top();
+
+    view->scale(1/this->scalingFactor, 1/this->scalingFactor);
+    this->scalingFactor = (0.5 * viewHeight) / boundingRectHeight;
+    view->scale(scalingFactor, scalingFactor);
+#endif
+
+  }
+  else
   {
-    painter->setPen( this->verticesPen );
-    QRectF clipRect = this->boundingRect( );
-    if ( std::isinf(clipRect.left( )) ||
-         std::isinf(clipRect.right( )) ||
-         std::isinf(clipRect.top( )) ||
-         std::isinf(clipRect.bottom( )) )
+    clipRect = this->viewportRect( );
+  }
+
+
+  // paint the faces for the purpose of brushing
+  this->paintFaces( painter );
+
+  // paint the curve itself
+  painter->setPen( this->verticesPen );
+  this->painterostream =
+    ArrangementPainterOstream< Traits >( painter, clipRect );
+  this->painterostream.setScene( this->scene );
+
+
+  for ( Vertex_iterator it = this->arr->vertices_begin( );
+        it != this->arr->vertices_end( ); ++it )
+  {
+    Point_2 p = it->point( );
+    //std::pair< double, double > approx = p.to_double( );
+    //Kernel_point_2 pt( approx.first, approx.second );
+    //this->painterostream << pt;
+    this->painterostream << p;
+  }
+
+
+  painter->setPen( this->edgesPen );
+  for ( Edge_iterator it = this->arr->edges_begin( );
+        it != this->arr->edges_end( ); ++it )
+  {
+    X_monotone_curve_2 curve = it->curve( );
+    this->painterostream << curve;
+  }
+
+  // To make room for the scene so 
+  // there will be for dragging
+  if ( this->firstEntry )
+  {
+    this->firstEntry = false;
+    QEvent *keyEvent = NULL;
+
+    for (int i=0; i<160; i++)
     {
-      clipRect = this->viewportRect( );
+      keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Left, ::Qt::NoModifier);
+      QCoreApplication::postEvent(getCurrentView(), keyEvent);
     }
 
-    this->painterostream =
-      ArrangementPainterOstream< Traits >( painter, clipRect );
-    this->painterostream.setScene( this->scene );
-
-    for ( Vertex_iterator it = this->arr->vertices_begin( );
-          it != this->arr->vertices_end( ); ++it )
+    for (int i=0; i<160; i++)
     {
-      Point_2 p = it->point( );
-      //std::pair< double, double > approx = p.to_double( );
-      //Kernel_point_2 pt( approx.first, approx.second );
-      //this->painterostream << pt;
-      this->painterostream << p;
+      keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Right, ::Qt::NoModifier);
+      QCoreApplication::postEvent(getCurrentView(), keyEvent);
     }
-    painter->setPen( this->edgesPen );
-    for ( Edge_iterator it = this->arr->edges_begin( );
-          it != this->arr->edges_end( ); ++it )
+
+    for (int i=0; i<160; i++)
     {
-      X_monotone_curve_2 curve = it->curve( );
-      this->painterostream << curve;
+      keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Right, ::Qt::NoModifier);
+      QCoreApplication::postEvent(getCurrentView(), keyEvent);
+    }
+
+    for (int i=0; i<151; i++)
+    {
+      keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Left, ::Qt::NoModifier);
+      QCoreApplication::postEvent(getCurrentView(), keyEvent);
+    }
+
+    for (int i=0; i<80; i++)
+    {
+      keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Up, ::Qt::NoModifier);
+      QCoreApplication::postEvent(getCurrentView(), keyEvent);
+    }
+
+    for (int i=0; i<80; i++)
+    {
+      keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Down, ::Qt::NoModifier);
+      QCoreApplication::postEvent(getCurrentView(), keyEvent);
+    }
+
+    for (int i=0; i<80; i++)
+    {
+      keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Down, ::Qt::NoModifier);
+      QCoreApplication::postEvent(getCurrentView(), keyEvent);
+    }
+
+    for (int i=0; i<77; i++)
+    {
+      keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Up, ::Qt::NoModifier);
+      QCoreApplication::postEvent(getCurrentView(), keyEvent);
+    }
+  } 
+}
+
+// We let the bounding box only grow, so that when vertices get removed
+// the maximal bbox gets refreshed in the GraphicsView
+template < typename Arr_, typename ArrTraits >
+void ArrangementGraphicsItem< Arr_, ArrTraits >::updateBoundingBox( )
+{
+  this->updateBoundingBox( ArrTraits( ) );
+}
+
+template < typename Arr_, typename ArrTraits >
+template < typename TTraits >
+void ArrangementGraphicsItem< Arr_, ArrTraits >::
+updateBoundingBox(TTraits /* traits */)
+{
+  this->prepareGeometryChange( );
+  if ( this->arr->number_of_vertices( ) == 0 )
+  {
+    this->bb = Bbox_2( 0, 0, 0, 0 );
+    this->bb_initialized = false;
+    return;
+  }
+  else
+  {
+    this->bb = this->arr->vertices_begin( )->point( ).bbox( );
+    this->bb_initialized = true;
+  }
+
+  for ( Curve_iterator it = this->arr->curves_begin( );
+        it != this->arr->curves_end( );
+        ++it )
+  {
+    if ( this->curveBboxMap.count( it ) == 0 )
+    {
+      this->curveBboxMap[ it ] = it->bbox( );
+    }
+    this->bb = this->bb + this->curveBboxMap[ it ];
+  }
+}
+
+template < typename Arr_, typename ArrTraits >
+template < typename Kernel_ >
+void
+ArrangementGraphicsItem< Arr_, ArrTraits >::
+updateBoundingBox(CGAL::Arr_linear_traits_2< Kernel_ > /* traits */)
+{
+
+  this->prepareGeometryChange( );
+  QRectF clipRect = this->viewportRect( );
+  this->convert = Converter<Kernel>( clipRect );
+
+  if ( ! clipRect.isValid( ) /*|| this->arr->number_of_vertices( ) == 0*/ )
+  {
+    this->bb = Bbox_2( 0, 0, 0, 0 );
+    this->bb_initialized = false;
+    return;
+  }
+  else
+  {
+    this->bb = this->convert( clipRect ).bbox( );
+    this->bb_initialized = true;
+  }
+
+  for ( Curve_iterator it = this->arr->curves_begin( );
+        it != this->arr->curves_end( );
+        ++it )
+  {
+    if ( it->is_segment( ) )
+    {
+      this->bb = this->bb + it->segment( ).bbox( );
+    }
+    else if ( it->is_ray( ) )
+    {
+      QLineF qclippedRay = this->convert( it->ray( ) );
+      Segment_2 clippedRay = this->convert( qclippedRay );
+      this->bb = this->bb + clippedRay.bbox( );
+    }
+    else // ( it->is_line( ) )
+    {
+      QLineF qclippedLine = this->convert( it->line( ) );
+      Segment_2 clippedLine = this->convert( qclippedLine );
+      this->bb = this->bb + clippedLine.bbox( );
+    }
+  }
+}
+
+template < typename Arr_, typename ArrTraits >
+template < typename Coefficient_ >
+void ArrangementGraphicsItem< Arr_, ArrTraits >::
+updateBoundingBox(CGAL::Arr_algebraic_segment_traits_2<Coefficient_> traits)
+{
+
+  this->prepareGeometryChange( );
+  if ( this->arr->number_of_vertices( ) == 0 )
+  {
+    double inf = std::numeric_limits<double>::infinity();
+    this->bb = Bbox_2( -inf, -inf, inf, inf );
+    this->bb_initialized = false;
+    return;
+  }
+  else
+  {
+    //std::pair< double, double > approx =
+    //  this->arr->vertices_begin( )->point( ).to_double( );
+    //this->bb = CGAL::Bbox_2( approx.first, approx.second,
+    //                         approx.first, approx.second );
+    this->bb = CGAL::Bbox_2( 0, 0, 0, 0 );
+    this->bb_initialized = true;
+  }
+#if 0
+  typename Traits::Make_x_monotone_2 make_x_monotone_2 =
+    traits.make_x_monotone_2_object( );
+  for ( Curve_iterator it = this->arr->curves_begin( );
+        it != this->arr->curves_end( );
+        ++it )
+  {
+    std::vector< CGAL::Object > cvs;
+    make_x_monotone_2( *it, std::back_inserter( cvs ) );
+    for ( unsigned int i = 0 ; i < cvs.size( ); ++i )
+    {
+      X_monotone_curve_2 cv;
+      CGAL::assign( cv, cvs[ i ] );
+      this->bb = this->bb + cv.bbox( );
     }
   }
 #endif
 
-  // We let the bounding box only grow, so that when vertices get removed
-  // the maximal bbox gets refreshed in the GraphicsView
-  template < typename Arr_, typename ArrTraits >
-  void ArrangementGraphicsItem< Arr_, ArrTraits >::updateBoundingBox( )
+  int curve_cnt = 0;
+
+  for ( Edge_iterator it = this->arr->edges_begin( );
+        it != this->arr->edges_end( ); ++it )
   {
-    this->updateBoundingBox( ArrTraits( ) );
+    X_monotone_curve_2 curve = it->curve( );
+    this->bb = this->bb + curve.bbox( );
+
+    curve_cnt++;
+
+  }
+}
+
+template < typename Arr_, typename ArrTraits >
+void ArrangementGraphicsItem< Arr_, ArrTraits >::modelChanged( )
+{
+  this->modelChanged( ArrTraits() );
+}
+
+template < typename Arr_, typename ArrTraits >
+template < typename TTraits >
+void ArrangementGraphicsItem< Arr_, ArrTraits >::modelChanged(TTraits )
+{
+
+  if ( this->arr->is_empty( ) )
+  {
+    this->hide( );
+  }
+  else
+  {
+    this->show( );
   }
 
-  template < typename Arr_, typename ArrTraits >
-  template < typename TTraits >
-  void ArrangementGraphicsItem< Arr_, ArrTraits >::
-  updateBoundingBox(TTraits /* traits */)
+  this->updateBoundingBox( );
+
+  QRectF clipRect = this->boundingRect( );
+
+  QList< QGraphicsView* > views = this->scene->views( );
+  QGraphicsView* view = views.first( );
+
+  // view->resetMatrix();
+  if ( !std::isinf(clipRect.left( )) &&
+       !std::isinf(clipRect.right( )) &&
+       !std::isinf(clipRect.top( )) &&
+       !std::isinf(clipRect.bottom( )) )
   {
-    this->prepareGeometryChange( );
-    if ( this->arr->number_of_vertices( ) == 0 )
+
+    Ui::ArrangementDemoWindow *ui = getCurrentDemoWindowUi();
+
+    if (!ui->actionDelete->isChecked())
     {
-      this->bb = Bbox_2( 0, 0, 0, 0 );
-      this->bb_initialized = false;
-      return;
+      // force the update of the scene
+      view->scale(1.1, 1.1);
+      view->scale(1/1.1, 1/1.1);
+    }
+  }
+
+  this->update( );
+}
+
+template < typename Arr_, typename ArrTraits >
+template < typename Coefficient_ >
+void ArrangementGraphicsItem< Arr_, ArrTraits >::
+modelChanged(CGAL::Arr_algebraic_segment_traits_2<Coefficient_> )
+{
+  if ( this->arr->is_empty( ) )
+  {
+    this->hide( );
+  }
+  else
+  {
+    this->show( );
+  }
+
+  this->updateBoundingBox( );
+
+  QRectF clipRect = this->boundingRect( );
+
+  QList< QGraphicsView* > views = this->scene->views( );
+  QGraphicsView* view = views.first( );
+
+  // view->resetMatrix();
+  if ( !std::isinf(clipRect.left( )) &&
+       !std::isinf(clipRect.right( )) &&
+       !std::isinf(clipRect.top( )) &&
+       !std::isinf(clipRect.bottom( )) )
+  {
+    // view->resetMatrix();
+    // double viewHeight = view->height();
+
+    // QList<QWidget*> qWidgetList = QApplication::topLevelWidgets();
+    // extern class ArrangementDemoWindow;
+
+    Ui::ArrangementDemoWindow *ui = getCurrentDemoWindowUi();
+          // dynamic_cast<Ui::ArrangementDemoWindow>qWidgetList.first();
+    // ArrangementDemoWindow *myWindw;
+    // std::cout<<Ui::ArrangementDemoWindow::SEGMENT_TRAITS;
+    double viewHeight = 456;
+
+    if (!ui->actionDelete->isChecked())
+    {
+      double boundingRectHeight = clipRect.bottom() - clipRect.top();
+
+      view->scale(1/this->scalingFactor, 1/this->scalingFactor);
+      this->scalingFactor = (0.5 * viewHeight) / boundingRectHeight;
+      view->scale(this->scalingFactor, this->scalingFactor);
+    }
+
+  }
+
+  this->update( );
+}
+
+template < typename Arr_, typename ArrTraits >
+void
+ArrangementGraphicsItem< Arr_, ArrTraits >::
+paintFace( Face_handle f, QPainter* painter )
+{
+
+  if ( f->visited( ) )
+  {
+    return;
+  }
+
+  int holes = 0;
+  int inner_faces = 0;
+  Holes_iterator hit; // holes iterator
+  this->paintFace( f, painter, Traits( ) );
+  f->set_visited( true );
+
+  for ( hit = f->holes_begin(); hit != f->holes_end(); ++hit )
+  {
+    // Traverse in clockwise order
+    Ccb_halfedge_circulator cc = *hit;
+    do {
+      Halfedge_handle he = cc;
+      Halfedge_handle he2 = he->twin();
+      Face_handle inner_face = he2->face();
+      if ( this->antenna( he ) )
+      {
+        continue;
+      }
+
+      // move on to next hole
+      if ( ! inner_face->visited( ) )
+      {
+        inner_faces++;
+      }
+
+      this->visit_ccb_faces( inner_face, painter );
+    } while ( ++cc != *hit );
+
+    holes++;
+  }// for
+  // if ( f->is_unbounded( ) )
+  // {
+  //   std::cout << "unbounded face has " << holes << " holes" << std::endl;
+  //   std::cout << "unbounded face has " << inner_faces << " inner faces"
+  //             << std::endl;
+  // }
+  // if ( f->is_fictitious( ) )
+  // {
+  //   std::cout << "fictitious face has " << holes << " holes"
+  //             << std::endl;
+  //   std::cout << "fictitious face has " << inner_faces << " inner faces"
+  //             << std::endl;
+  // }
+
+}
+
+template < typename Arr_, typename ArrTraits >
+bool
+ArrangementGraphicsItem< Arr_, ArrTraits >::
+isProperOrientation( Ccb_halfedge_circulator cc )
+{
+  Ccb_halfedge_circulator ccnext = cc;
+  Halfedge_handle he = cc;
+  X_monotone_curve_2 thisCurve = he->curve( );
+  ccnext++;
+  while ( this->antenna( ccnext ) ) ccnext++;
+  Halfedge_handle next_he = ccnext;
+  X_monotone_curve_2 nextCurve = next_he->curve( );
+
+  QPointF thisTarget( to_double(thisCurve.target().x()),
+                      to_double(thisCurve.target().y()) );
+  QPointF nextSource( to_double(nextCurve.source().x()),
+                      to_double(nextCurve.source().y()) );
+  QPointF nextTarget( to_double(nextCurve.target().x()),
+                      to_double(nextCurve.target().y()) );
+  double dist1 = QLineF( thisTarget, nextSource ).length();
+  double dist2 = QLineF( thisTarget, nextTarget ).length();
+  bool res = ( dist1 < 1e-2 || dist2 < 1e-2 );
+
+  return res;
+}
+
+template < typename Arr_, typename ArrTraits >
+bool 
+ArrangementGraphicsItem< Arr_, ArrTraits >::
+pathTouchingSource( const QPainterPath& path, X_monotone_curve_2 c )
+{
+  QPointF a = path.currentPosition( );
+  QPointF b( to_double(c.source().x()), to_double(c.source().y()) );
+  // QPointF d( to_double(c.target().x()), to_double(c.target().y()) );
+  bool res = (QLineF( a, b ).length() < 1e-2);
+
+  return res;
+}
+
+template < typename Arr_, typename ArrTraits >
+template < typename Kernel_ >
+void 
+ArrangementGraphicsItem< Arr_, ArrTraits >::
+paintFace( Face_handle f, QPainter* painter,
+                CGAL::Arr_segment_traits_2< Kernel_ > )
+{
+
+  if (!f->is_unbounded())  // f is not the unbounded face
+  {
+    QVector< QPointF > pts; // holds the points of the polygon
+
+    /* running with around the outer of the face and generate from it
+     * polygon
+     */
+    Ccb_halfedge_circulator cc=f->outer_ccb();
+    do {
+      double x = CGAL::to_double(cc->source()->point().x());
+      double y = CGAL::to_double(cc->source()->point().y());
+      QPointF coord_source(x , y);
+      pts.push_back(coord_source );
+      //created from the outer boundary of the face
+    } while (++cc != f->outer_ccb());
+
+    // make polygon from the outer ccb of the face 'f'
+    QPolygonF pgn (pts);
+
+    // FIXME: get the bg color
+    QColor color = this->backgroundColor;
+    QBrush oldBrush = painter->brush( );
+    QPen pen = painter->pen();
+    pen.setCosmetic(true);
+    painter->setPen(pen);
+    painter->setBrush( color );
+    painter->drawPolygon( pgn );
+    painter->setBrush( oldBrush );
+  }
+  else
+  {
+    QRectF rect = this->viewportRect( );
+
+    QColor color = this->backgroundColor;
+    if ( f->color().isValid() )
+    {
+      color = f->color();
+    }
+    QBrush oldBrush = painter->brush( );
+    QPen pen = painter->pen();
+    pen.setCosmetic(true);
+    painter->setPen(pen);
+    painter->setBrush( color );
+    painter->drawRect(rect);
+    painter->setBrush( oldBrush );
+
+  }
+}
+
+template < typename Arr_, typename ArrTraits >
+template < typename Kernel_ >
+void 
+ArrangementGraphicsItem< Arr_, ArrTraits >::
+paintFace( Face_handle f, QPainter* painter,
+                CGAL::Arr_polyline_traits_2< Kernel_ > )
+{
+
+
+  if (!f->is_unbounded())  // f is not the unbounded face
+  {
+    typedef typename CGAL::Arr_polyline_traits_2<Kernel_> Arr_poly_traits;
+    typedef typename Arr_poly_traits::Compare_endpoints_xy_2 Comp_end_pts_2;
+    typedef typename Arr_poly_traits::Construct_min_vertex_2 Poly_const_min_v;
+    typedef typename Arr_poly_traits::Construct_max_vertex_2 Poly_const_max_v;
+
+    // Obtain a polyline traits class and construct the needed functors
+    Arr_poly_traits poly_tr;
+    Comp_end_pts_2 comp_end_pts = poly_tr.compare_endpoints_xy_2_object();
+    Poly_const_min_v poly_const_min_v=poly_tr.construct_min_vertex_2_object();
+    Poly_const_max_v poly_const_max_v=poly_tr.construct_max_vertex_2_object();
+
+    // Construct needed functors from the segment traits
+    typedef typename Arr_poly_traits::Subcurve_traits_2      Subcurve_traits;
+    typedef typename Subcurve_traits::Construct_min_vertex_2 Seg_const_min_v;
+    typedef typename Subcurve_traits::Construct_max_vertex_2 Seg_const_max_v;
+    Seg_const_min_v construct_min_v = poly_tr.subcurve_traits_2()->
+      construct_min_vertex_2_object();
+    Seg_const_max_v construct_max_v = poly_tr.subcurve_traits_2()->
+      construct_max_vertex_2_object();
+
+    // Iterator of the segments of an x-monotone polyline
+    typename X_monotone_curve_2::Subcurve_const_iterator seg_it;
+
+    QVector< QPointF > pts; // holds the points of the polygon
+    X_monotone_curve_2 cv;
+
+    /* running with around the outer of the face and generate from it
+     * polygon
+     */
+    Ccb_halfedge_circulator cc = f->outer_ccb();
+    do {
+      // The drawing is actually identical to segment
+      double x = CGAL::to_double(cc->source()->point().x());
+      double y = CGAL::to_double(cc->source()->point().y());
+      QPointF coord_source(x , y);
+      pts.push_back(coord_source );
+
+      // The code below is problematic
+      // cv = cc->curve();
+
+      // // Determine the direction of cv (left-to-right or right-to-left)
+      // Comparison_result dir = comp_end_pts(cv);
+
+      // for (seg_it = cv.subcurves_begin();
+      //      seg_it != cv.subcurves_end() ; ++seg_it)
+      //   {
+      //     if (dir == SMALLER)
+      //       {
+      //         // cv is directed from left-to-right
+      //         // Adding the left-min vertex of the current segment
+      //         double x = CGAL::to_double((construct_min_v(*seg_it)).x());
+      //         double y = CGAL::to_double((construct_min_v(*seg_it)).y());
+      //         QPointF coord_source(x , y);
+      //         pts.push_back(coord_source );
+      //       }
+      //     else
+      //       {
+      //         // cv is directed from right-to-left
+      //         // Adding the right-max vertex of the current segment
+      //         double x = CGAL::to_double((construct_max_v(*seg_it)).x());
+      //         double y = CGAL::to_double((construct_max_v(*seg_it)).y());
+      //         QPointF coord_source(x , y);
+      //         pts.push_back(coord_source );
+      //       }
+      //   }
+
+      // if (dir == SMALLER)
+      //   {
+      //     // Add the right-most point of cv
+      //     double x = CGAL::to_double((poly_const_max_v(cv)).x());
+      //     double y = CGAL::to_double((poly_const_max_v(cv)).y());
+      //     QPointF coord_source(x , y);
+      //     pts.push_back(coord_source );
+      //   }
+      // else
+      //   {
+      //     // Add the left-most point of cv
+      //     double x = CGAL::to_double((poly_const_min_v(cv)).x());
+      //     double y = CGAL::to_double((poly_const_min_v(cv)).y());
+      //     QPointF coord_source(x , y);
+      //     pts.push_back(coord_source );
+      //   }
+      //created from the outer boundary of the face
+    } while (++cc != f->outer_ccb());
+
+    // make polygon from the outer ccb of the face 'f'
+    QPolygonF pgn( pts );
+
+    // fill the face according to its color (stored at any of her
+    // incidents curves)
+    QBrush oldBrush = painter->brush( );
+    QColor def_bg_color = this->backgroundColor;
+    if (! f->color().isValid())
+    {
+      painter->setBrush( def_bg_color );
     }
     else
     {
-      this->bb = this->arr->vertices_begin( )->point( ).bbox( );
-      this->bb_initialized = true;
+      painter->setBrush( f->color( ) );
     }
+    QPen pen = painter->pen();
+    pen.setCosmetic(true);
+    painter->setPen(pen);
 
-    for ( Curve_iterator it = this->arr->curves_begin( );
-          it != this->arr->curves_end( );
-          ++it )
+    painter->drawPolygon( pgn );
+    painter->setBrush( oldBrush );
+  }
+  else
+  {
+    QRectF rect = this->viewportRect( );
+
+    QColor color = this->backgroundColor;
+    if ( f->color().isValid() )
     {
-      if ( this->curveBboxMap.count( it ) == 0 )
-      {
-        this->curveBboxMap[ it ] = it->bbox( );
-      }
-      this->bb = this->bb + this->curveBboxMap[ it ];
+      color = f->color();
     }
+    QBrush oldBrush = painter->brush( );
+    QPen pen = painter->pen();
+    pen.setCosmetic(true);
+    painter->setPen(pen);
+    painter->setBrush( color );
+    painter->drawRect(rect);
+    painter->setBrush( oldBrush );
+
+  }
+}
+
+template < typename Arr_, typename ArrTraits >
+template < typename CircularKernel >
+void 
+ArrangementGraphicsItem< Arr_, ArrTraits >::
+paintFace(Face_handle f, QPainter* painter,
+               CGAL::Arr_circular_arc_traits_2<CircularKernel> /* traits */)
+{
+
+  if ( f->is_unbounded( ) )
+  {
+    QRectF rect = this->viewportRect( );
+
+    QColor color = this->backgroundColor;
+    if ( f->color().isValid() )
+    {
+      color = f->color();
+    }
+    QBrush oldBrush = painter->brush( );
+    QPen pen = painter->pen();
+    pen.setCosmetic(true);
+    painter->setPen(pen);
+    painter->setBrush( color );
+    painter->drawRect(rect);
+    painter->setBrush( oldBrush );
+
+    return;
   }
 
-  template < typename Arr_, typename ArrTraits >
-  template < typename Kernel_ >
-  void
-  ArrangementGraphicsItem< Arr_, ArrTraits >::
-  updateBoundingBox(CGAL::Arr_linear_traits_2< Kernel_ > /* traits */)
-  {
-    this->prepareGeometryChange( );
-    QRectF clipRect = this->viewportRect( );
-    this->convert = Converter<Kernel>( clipRect );
+  QVector< QPointF > pts;
+  QPainterPath path;
+  bool isFirstArc = true;
+  Ccb_halfedge_circulator cc=f->outer_ccb();
+  int curve_cnt = 0;
 
-    if ( ! clipRect.isValid( ) /*|| this->arr->number_of_vertices( ) == 0*/ )
+  typedef CGAL::Arr_circular_arc_traits_2<CircularKernel> Traits;
+  typedef CircularKernel                                Kernel;
+  typedef typename Kernel::Root_of_2                    Root_of_2;
+
+  Arr_compute_y_at_x_2< Traits > compute_y_at_x_2;
+
+  do
+  {
+    if (this->antenna(cc))
     {
-      this->bb = Bbox_2( 0, 0, 0, 0 );
-      this->bb_initialized = false;
-      return;
+      continue;
+    }
+    curve_cnt++;
+
+    Halfedge_handle he = cc;
+    X_monotone_curve_2 c = he->curve();
+    // Get the co-ordinates of the curve's source and target.
+    double sx = CGAL::to_double(he->source()->point().x()),
+      sy = CGAL::to_double(he->source()->point().y()),
+      tx = CGAL::to_double(he->target()->point().x()),
+      ty = CGAL::to_double(he->target()->point().y());
+
+    QPointF coord_source(sx, sy);
+    QPointF coord_target(tx, ty);
+
+    // Transform the point coordinates from general coordinate system to
+    // Qt scene coordinate system
+    QPoint coord_source_viewport = this->fromScene( coord_source );
+    QPoint coord_target_viewport = this->fromScene( coord_target );
+
+    if (false)
+    {
+      pts.push_back(coord_source );
     }
     else
     {
-      this->bb = this->convert( clipRect ).bbox( );
-      this->bb_initialized = true;
-    }
+      // If the curve is monotone, than its source and its target has the
+      // extreme x co-ordinates on this curve.
+      bool is_source_left = (sx < tx);
+      int  x_min = is_source_left ?
+        coord_source_viewport.x( ) : coord_target_viewport.x( );
+      int  x_max = is_source_left ?
+        coord_target_viewport.x( ) : coord_source_viewport.x( );
+      double curr_x, curr_y;
+      int x;
 
-    for ( Curve_iterator it = this->arr->curves_begin( );
-          it != this->arr->curves_end( );
-          ++it )
-    {
-      if ( it->is_segment( ) )
+      pts.push_back(coord_source );
+
+      // Draw the curve as pieces of small segments
+      const int DRAW_FACTOR = 5;
+      if (is_source_left)
       {
-        this->bb = this->bb + it->segment( ).bbox( );
-      }
-      else if ( it->is_ray( ) )
-      {
-        QLineF qclippedRay = this->convert( it->ray( ) );
-        Segment_2 clippedRay = this->convert( qclippedRay );
-        this->bb = this->bb + clippedRay.bbox( );
-      }
-      else // ( it->is_line( ) )
-      {
-        QLineF qclippedLine = this->convert( it->line( ) );
-        Segment_2 clippedLine = this->convert( qclippedLine );
-        this->bb = this->bb + clippedLine.bbox( );
-      }
-    }
-  }
+        for ( x = x_min + DRAW_FACTOR; x < x_max; x+=DRAW_FACTOR )
+        {
+          //= COORD_SCALE)
+          curr_x = this->toScene( x );
 
-#if 0
-  template < typename Arr_, typename ArrTraits >
-  template < typename Coefficient_ >
-  void ArrangementGraphicsItem< Arr_, ArrTraits >::
-  updateBoundingBox(CGAL::Arr_algebraic_segment_traits_2<Coefficient_> traits)
-  {
-    this->prepareGeometryChange( );
-    if ( this->arr->number_of_vertices( ) == 0 )
-    {
-      this->bb = Bbox_2( 0, 0, 0, 0 );
-      this->bb_initialized = false;
-      return;
-    }
-    else
-    {
-      //std::pair< double, double > approx =
-      //  this->arr->vertices_begin( )->point( ).to_double( );
-      //this->bb = CGAL::Bbox_2( approx.first, approx.second,
-      //                         approx.first, approx.second );
-      this->bb = CGAL::Bbox_2( 0, 0, 0, 0 );
-      this->bb_initialized = true;
-    }
-    typename Traits::Make_x_monotone_2 make_x_monotone_2 =
-      traits.make_x_monotone_2_object( );
-    for ( Curve_iterator it = this->arr->curves_begin( );
-          it != this->arr->curves_end( );
-          ++it )
-    {
-      std::vector< CGAL::Object > cvs;
-      make_x_monotone_2( *it, std::back_inserter( cvs ) );
-      for ( unsigned int i = 0 ; i < cvs.size( ); ++i )
-      {
-        X_monotone_curve_2 cv;
-        CGAL::assign( cv, cvs[ i ] );
-        this->bb = this->bb + cv.bbox( );
-      }
-    }
-  }
-#endif
+          // If curr_x > x_max or curr_x < x_min
+          if (curr_x < CGAL::to_double(c.left().x()) || curr_x > CGAL::to_double(c.right().x()))
+          {
+            continue;
+          }
 
-  template < typename Arr_, typename ArrTraits >
-  void ArrangementGraphicsItem< Arr_, ArrTraits >::modelChanged( )
-  {
-    if ( this->arr->is_empty( ) )
-    {
-      this->hide( );
-    }
-    else
-    {
-      this->show( );
-    }
-    this->updateBoundingBox( );
-    this->update( );
-  }
-
-  /**
-     Specialized methods:
-     updateBoundingBox
-  */
-#if 0
-  template < typename Arr_, typename Kernel_ >
-  class ArrangementGraphicsItem< Arr_, CGAL::Arr_linear_traits_2< Kernel_ > > :
-    public ArrangementGraphicsItemBase
-  {
-    typedef Arr_ Arrangement;
-    typedef ArrangementGraphicsItemBase Superclass;
-    typedef typename Arrangement::Geometry_traits_2     Traits;
-    typedef typename Arrangement::Vertex_iterator       Vertex_iterator;
-    typedef typename Arrangement::Curve_iterator        Curve_iterator;
-    typedef typename Arrangement::Edge_iterator         Edge_iterator;
-    typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
-    typedef typename Traits::X_monotone_curve_2         X_monotone_curve_2;
-    typedef typename Kernel::Point_2                    Point_2;
-    typedef typename Kernel::Segment_2                  Segment_2;
-
-  public:
-    ArrangementGraphicsItem( Arrangement* arr_ ):
-      arr( arr_ ),
-      painterostream( 0 )
-    {
-      if ( this->arr->number_of_vertices( ) == 0 ) {
-        this->hide( );
-      }
-      this->updateBoundingBox( );
-      this->setZValue( 3 );
-    }
-
-  public: // methods
-#if 0
-    void modelChanged( )
-    {
-      if ( this->arr->is_empty( ) )
-      {
-        this->hide( );
+          curr_y = compute_y_at_x_2.approx(c, Root_of_2(curr_x));
+          pts.push_back( QPointF( curr_x, curr_y ) );
+        }// for
       }
       else
       {
-        this->show( );
-      }
-      this->updateBoundingBox( );
-      this->update( );
-    }
-
-    // @override QGraphicsItem::boundingRect
-    QRectF boundingRect( ) const
-    {
-      QRectF rect = this->convert( this->bb );
-      return rect;
-    }
-#endif
-
-    // @override QGraphicsItem::paint
-#if 0
-    virtual void paint( QPainter* painter,
-                        const QStyleOptionGraphicsItem* option,
-                        QWidget* widget )
-    {
-      this->updateBoundingBox( );
-      painter->setPen( this->verticesPen );
-      this->painterostream =
-        ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
-      this->painterostream.setScene( this->scene );
-
-      for ( Vertex_iterator it = this->arr->vertices_begin( );
-            it != this->arr->vertices_end( ); ++it )
-      {
-        Point_2 pt = it->point( );
-        this->painterostream << pt;
-      }
-      painter->setPen( this->edgesPen );
-      for ( Edge_iterator it = this->arr->edges_begin( );
-            it != this->arr->edges_end( ); ++it )
-      {
-        X_monotone_curve_2 curve = it->curve( );
-        this->painterostream << curve;
-      }
-    }
-#endif
-
-  protected: // methods
-#if 0
-    void updateBoundingBox( )
-    {
-      this->prepareGeometryChange( );
-      QRectF clipRect = this->viewportRect( );
-      this->convert = Converter<Kernel>( clipRect );
-
-      if ( ! clipRect.isValid( ) /*|| this->arr->number_of_vertices( ) == 0*/ )
-      {
-        this->bb = Bbox_2( 0, 0, 0, 0 );
-        this->bb_initialized = false;
-        return;
-      }
-      else
-      {
-        this->bb = this->convert( clipRect ).bbox( );
-        this->bb_initialized = true;
-      }
-
-      for ( Curve_iterator it = this->arr->curves_begin( );
-            it != this->arr->curves_end( );
-            ++it )
-      {
-        if ( it->is_segment( ) )
+        for ( x = x_max; x > x_min; x-=DRAW_FACTOR )
         {
-          this->bb = this->bb + it->segment( ).bbox( );
-        }
-        else if ( it->is_ray( ) )
-        {
-          QLineF qclippedRay = this->convert( it->ray( ) );
-          Segment_2 clippedRay = this->convert( qclippedRay );
-          this->bb = this->bb + clippedRay.bbox( );
-        }
-        else // ( it->is_line( ) )
-        {
-          QLineF qclippedLine = this->convert( it->line( ) );
-          Segment_2 clippedLine = this->convert( qclippedLine );
-          this->bb = this->bb + clippedLine.bbox( );
-        }
-      }
-    }
-#endif
+          curr_x = this->toScene( x );
+          if (curr_x < CGAL::to_double(c.left().x()) 
+            || curr_x > CGAL::to_double(c.right().x()))
+          {
+            continue;
+          }
 
-  protected: // fields
-    Arrangement* arr;
-    ArrangementPainterOstream< Traits > painterostream;
-    CGAL::Qt::Converter< Kernel > convert;
-  }; // class ArrangementGraphicsItem
-#endif
+          curr_y = compute_y_at_x_2.approx(c, Root_of_2(curr_x));
+          pts.push_back( QPointF( curr_x, curr_y ) );
+        }// for
+      }// else
+      pts.push_back(coord_target );
+    }
+    //created from the outer boundary of the face
+  } while (++cc != f->outer_ccb());
+ 
+  QPolygonF pgn( pts );
+
+  // fill the face according to its color (stored at any of her
+  // incidents curves)
+  QBrush oldBrush = painter->brush( );
+  QColor def_bg_color = this->backgroundColor;
+  if (! f->color().isValid())
+  {
+    painter->setBrush( def_bg_color );
+  }
+  else
+  {
+    painter->setBrush( f->color( ) );
+  }
+
+  QPen pen = painter->pen();
+  pen.setCosmetic(true);
+  painter->setPen(pen);
+  painter->drawPolygon( pgn );
+  painter->setBrush( oldBrush ); 
+
+}
 
 } // namespace Qt
 } // namespace CGAL

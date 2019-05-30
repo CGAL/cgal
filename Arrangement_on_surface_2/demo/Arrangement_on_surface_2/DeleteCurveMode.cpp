@@ -33,6 +33,11 @@ void DeleteCurveMode::setMode( Mode mode )
   this->m_mode = mode;
 }
 
+//! A normal member taking two arguments and returning an integer value.
+/*!
+  \param mode determining which one to remove
+  \return string argument of the curve being deleted
+*/
 QString DeleteCurveMode::ToString( const DeleteCurveMode& mode )
 {
   return ( mode.mode( ) == DELETE_CURVE ) ?

@@ -25,26 +25,26 @@ namespace CGAL {
 namespace Qt {
 
 class GraphicsViewSegmentInputBase :
-    public GraphicsViewInput, public ISnappable
+	public GraphicsViewInput, public ISnappable
 {
 public:
-  virtual void setScene( QGraphicsScene* scene_ );
-  QGraphicsScene* getScene( ) const;
+  virtual void setScene( QGraphicsScene* scene_ );  //!< a virtual member setter function
+  QGraphicsScene* getScene( ) const;                //!< a getter function.
 
-  void setSnappingEnabled( bool b );
-  void setSnapToGridEnabled( bool b );
+  void setSnappingEnabled( bool b );                //!< To enable/disable snap
+  void setSnapToGridEnabled( bool b );              //!< To enable/disable snaptoGrid
 
 protected:
   GraphicsViewSegmentInputBase( QObject* parent_ );
-  virtual void mouseMoveEvent( QGraphicsSceneMouseEvent* event );
-  virtual void mousePressEvent( QGraphicsSceneMouseEvent* event );
-  virtual bool eventFilter( QObject* obj, QEvent* event );
+  virtual void mouseMoveEvent( QGraphicsSceneMouseEvent* event );       //!< a virtual function for mouse movement
+  virtual void mousePressEvent( QGraphicsSceneMouseEvent* event );      //!< a virtual function for mouse actions
+  virtual bool eventFilter( QObject* obj, QEvent* event );              //!< a virtual function to filter the mouse actions
 
-  QRectF viewportRect( ) const;
+  QRectF viewportRect( ) const;                   						//!< returns the bbox of the viewport
 
-  QGraphicsScene* scene;
-  bool snappingEnabled;
-  bool snapToGridEnabled;
+  QGraphicsScene* scene;												//!< denoting the current scene
+  bool snappingEnabled;													//!< boolean value to enable/disable
+  bool snapToGridEnabled;												//!< boolean value to enable/disable
 
 }; // class GraphicsViewSegmentInputBase
 
@@ -66,8 +66,8 @@ protected:
   virtual Point_2 snapPoint( QGraphicsSceneMouseEvent* event );
 
   Converter< Kernel > convert;
-  Point_2 p1;
-  Point_2 p2;
+  Point_2 p1;												//!< CGAL Point_2 
+  Point_2 p2;												//!< CGAL Point_2
   bool second;
 
   QGraphicsLineItem segmentGuide;
@@ -80,6 +80,12 @@ GraphicsViewSegmentInput< K_ >::GraphicsViewSegmentInput( QObject* parent ):
   second( false )
 { }
 
+//! Temple type
+//! overridden function of snap point
+/*!
+  \param event a QGraphicsSceneMouseEvent pointer to the class
+  \return the position of the point snapped
+*/
 template < class K_ >
 typename GraphicsViewSegmentInput< K_ >::Point_2
 GraphicsViewSegmentInput< K_ >::snapPoint( QGraphicsSceneMouseEvent* event )
@@ -88,44 +94,54 @@ GraphicsViewSegmentInput< K_ >::snapPoint( QGraphicsSceneMouseEvent* event )
   return clickedPoint;
 }
 
+//! Temple type
+//! Drawing a line after clicking on the graph scene
+/*!
+  \param event a QGraphicsSceneMouseEvent pointer to the class
+*/
 template < class K_ >
 void
 GraphicsViewSegmentInput< K_ >::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
   if ( this->second )
   {
-    Point_2 clickedPoint = this->snapPoint( event );
-    Segment_2 segment( this->p1, clickedPoint );
-    QLineF qSegment = this->convert( segment );
-    segmentGuide.setLine( qSegment );
+	Point_2 clickedPoint = this->snapPoint( event );
+	Segment_2 segment( this->p1, clickedPoint );
+	QLineF qSegment = this->convert( segment );
+	segmentGuide.setLine( qSegment );
   }
 }
 
+//! Temple type
+//! adding a segment onto the graph scene
+/*!
+  \param event a QGraphicsSceneMouseEvent pointer to the class
+*/
 template < class K_ >
 void
 GraphicsViewSegmentInput<K_>::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
   if ( !this->second )
   {
-    this->second = true;
-    this->p1 = this->snapPoint( event );
-    QPointF pt = this->convert( this->p1 );
-    segmentGuide.setLine( pt.x( ), pt.y( ), pt.x( ), pt.y( ) );
-    if ( this->scene != NULL )
-    {
-      this->scene->addItem( &(segmentGuide ) );
-    }
+	this->second = true;
+	this->p1 = this->snapPoint( event );
+	QPointF pt = this->convert( this->p1 );
+	segmentGuide.setLine( pt.x( ), pt.y( ), pt.x( ), pt.y( ) );
+	if ( this->scene != NULL )
+	{
+	  this->scene->addItem( &(segmentGuide ) );
+	}
   }
   else
   {
-    this->second = false;
-    this->p2 = this->snapPoint( event );
-    if ( this->scene != NULL )
-    {
-      this->scene->removeItem( &(segmentGuide ) );
-    }
-    Segment_2 res( this->p1, this->p2 );
-    Q_EMIT generate( CGAL::make_object( res ) );
+	this->second = false;
+	this->p2 = this->snapPoint( event );
+	if ( this->scene != NULL )
+	{
+	  this->scene->removeItem( &(segmentGuide ) );
+	}
+	Segment_2 res( this->p1, this->p2 );
+	Q_EMIT generate( CGAL::make_object( res ) );
   }
 }
 
