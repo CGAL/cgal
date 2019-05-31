@@ -73,7 +73,7 @@ else()
     message(STATUS "NOTICE : the LAS IO plugin needs LAS libraries and will not be compiled.")
   endif()
 
-  find_path(3MF_INCLUDE_DIR
+  find_path(3MF_INCLUDE_DIR NO_DEFAULT_PATH
     NAMES Common Model
     DOC "Path to lib3MF headers"
     )
