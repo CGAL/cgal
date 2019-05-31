@@ -18,7 +18,7 @@ class Polyhedron_demo_camera_positions_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90")
 
 public:
-  void init();
+  void init() override;
 
   QString name() const { return "camera_positions_plugin"; }
   QString nameFilters() const { return "Camera positions (*.camera.txt)"; }

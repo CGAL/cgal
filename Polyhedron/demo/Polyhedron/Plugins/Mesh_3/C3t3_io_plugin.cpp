@@ -31,7 +31,6 @@ public:
 private:
   bool try_load_other_binary_format(std::istream& in, C3t3& c3t3);
   bool try_load_a_cdt_3(std::istream& in, C3t3& c3t3);
-  CGAL::Three::Scene_interface* scene;
 };
 
 

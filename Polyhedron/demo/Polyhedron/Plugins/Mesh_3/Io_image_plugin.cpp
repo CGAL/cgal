@@ -211,11 +211,11 @@ class Io_image_plugin :
 
 public:
 
-  bool applicable(QAction*) const {
+  bool applicable(QAction*) const override{
     return qobject_cast<Scene_image_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
-
+  using Polyhedron_demo_plugin_interface::init;
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface *mi) override {
     this->message_interface = mi;
     this->scene = scene_interface;
@@ -270,10 +270,10 @@ public:
       }
     }
   }
-  QList<QAction*> actions() const {
+  QList<QAction*> actions() const override{
     return QList<QAction*>() << planeSwitch;
   }
-  virtual void closure()
+  virtual void closure() override
   {
       QDockWidget* controlDockWidget = mw->findChild<QDockWidget*>("volumePlanesControl");
       if(controlDockWidget)
@@ -281,12 +281,12 @@ public:
   }
   Io_image_plugin() : planeSwitch(NULL) {}
 
-  QString nameFilters() const;
-  bool canLoad(QFileInfo) const;
-  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true);
+  QString nameFilters() const override;
+  bool canLoad(QFileInfo) const override;
+  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) override;
 
-  bool canSave(const CGAL::Three::Scene_item*);
-  bool save(QFileInfo fileinfo, QList<CGAL::Three::Scene_item*>& items ) {
+  bool canSave(const CGAL::Three::Scene_item*) override;
+  bool save(QFileInfo fileinfo, QList<CGAL::Three::Scene_item*>& items ) override{
     Scene_item* item = items.front();
     const Scene_image_item* im_item = qobject_cast<const Scene_image_item*>(item);
 
@@ -295,7 +295,7 @@ public:
     items.pop_front();
     return ok;
   }
-  QString name() const { return "segmented images"; }
+  QString name() const override{ return "segmented images"; }
 
 
 public Q_SLOTS:

@@ -24,6 +24,7 @@ public:
     // To silent a warning -Woverloaded-virtual
     // See http://stackoverflow.com/questions/9995421/gcc-woverloaded-virtual-warnings
 
+    using Polyhedron_demo_io_plugin_interface::init;
     //! Configures the widget
     void init(QMainWindow* mainWindow,
               CGAL::Three::Scene_interface* scene_interface,
@@ -43,14 +44,14 @@ public:
       connect(actionJoin_polylines, &QAction::triggered, this, &Polyhedron_demo_polylines_io_plugin::join);
 
     }
-  QString name() const { return "polylines_io_plugin"; }
-  QString nameFilters() const { return "Polylines files (*.polylines.txt *.cgal)"; }
-  bool canLoad(QFileInfo fileinfo) const;
-  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true);
+  QString name() const override{ return "polylines_io_plugin"; }
+  QString nameFilters() const override{ return "Polylines files (*.polylines.txt *.cgal)"; }
+  bool canLoad(QFileInfo fileinfo) const override;
+  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) override;
 
-  bool canSave(const CGAL::Three::Scene_item*);
-  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>&);
-  bool applicable(QAction* a) const {
+  bool canSave(const CGAL::Three::Scene_item*) override;
+  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>&) override;
+  bool applicable(QAction* a) const override{
     bool all_polylines_selected = true;
     Q_FOREACH(int index, scene->selectionIndices())
     {
@@ -69,7 +70,7 @@ public:
     else
       return false;
   }
-  QList<QAction*> actions() const {
+  QList<QAction*> actions() const override{
 
     return QList<QAction*>()<<actionSplit_polylines
                             <<actionJoin_polylines;
