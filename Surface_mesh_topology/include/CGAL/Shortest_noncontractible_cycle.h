@@ -74,7 +74,7 @@ private:
   bool is_degree_one_face(Dart_const_handle dh_face, Dart_const_handle& dh_only_edge, size_type edge_deleted) {
     int degree = 0;
     Dart_const_handle dh_edge = dh_face;
-    for (auto dh = m_gmap.darts_of_cell<2>(dh_face).begin(), dhend = m_gmap.darts_of_cell<2>(dh_face).end(); dh != dhend; ++dh) {
+    for (auto dh = m_gmap.one_dart_per_incident_cell<1,2>(dh_face).begin(), dhend = m_gmap.one_dart_per_incident_cell<1,2>(dh_face).end(); dh != dhend; ++dh) {
       if (m_gmap.is_marked(dh, edge_deleted)) continue;
       dh_edge = dh;
       ++degree;
