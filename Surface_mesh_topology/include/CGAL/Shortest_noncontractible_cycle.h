@@ -13,15 +13,16 @@ public:
   using Dart_handle = typename Gmap::Dart_handle;
   using size_type = typename Gmap::size_type;
   using Dart_const_handle = typename Gmap::Dart_const_handle;
+  using Dart_container = std::vector<Dart_const_handle>;
   using Path = CGAL::Path_on_surface<Gmap>;
 
   Shortest_noncontractible_cycle(Gmap& gmap) :
     m_gmap(gmap) {  }
   
   Path find_cycle(Dart_const_handle root) {
-    m_root = root;
-    BFS();
-    find_noncon_edges();
+    Dart_container spanning_tree, noncon_edges;
+    BFS(root, spanning_tree);
+    find_noncon_edges(spanning_tree, noncon_edges);
   }
 
 private:
@@ -38,7 +39,7 @@ private:
 
   /// Create a spanning tree using BFS
 
-  void BFS() {
+  void BFS(Dart_const_handle root, Dart_container& spanning_tree) {
     size_type vertex_visited;
     try {
       vertex_visited = m_gmap.get_new_mark();
@@ -47,9 +48,9 @@ private:
       exit(-1);
     }
     std::queue<Dart_const_handle> q;
-    q.push(m_root);
-    mark_cell<0>(m_root, vertex_visited);
-    m_spanning_tree.push_back(m_root);
+    q.push(root);
+    mark_cell<0>(root, vertex_visited);
+    spanning_tree.push_back(root);
     while (q.size()) {
       Dart_const_handle u = q.front();
       q.pop();
@@ -60,7 +61,7 @@ private:
         if (!m_gmap.is_marked(v, vertex_visited)) {
           mark_cell<0>(v, vertex_visited);
           q.push(v);
-          m_spanning_tree.push_back(it);
+          spanning_tree.push_back(it);
         }
       }
     }
@@ -74,7 +75,7 @@ private:
   bool is_degree_one_face(Dart_const_handle dh_face, Dart_const_handle& dh_only_edge, size_type edge_deleted) {
     int degree = 0;
     Dart_const_handle dh_edge = dh_face;
-    for (auto dh = m_gmap.one_dart_per_incident_cell<1,2>(dh_face).begin(), dhend = m_gmap.one_dart_per_incident_cell<1,2>(dh_face).end(); dh != dhend; ++dh) {
+    for (auto dh = m_gmap.template one_dart_per_incident_cell<1,2>(dh_face).begin(), dhend = m_gmap.template one_dart_per_incident_cell<1,2>(dh_face).end(); dh != dhend; ++dh) {
       if (m_gmap.is_marked(dh, edge_deleted)) continue;
       dh_edge = dh;
       ++degree;
@@ -89,7 +90,7 @@ private:
 
   /// Find E_nc
 
-  void find_noncon_edges() {
+  void find_noncon_edges(const Dart_container& spanning_tree, Dart_container noncon_edges) {
     size_type face_deleted, edge_deleted;
     try {
       face_deleted = m_gmap.get_new_mark();
@@ -99,7 +100,7 @@ private:
       exit(-1);
     }
     std::queue<Dart_const_handle> degree_one_faces;
-    for (auto dh : m_spanning_tree) {
+    for (auto dh : spanning_tree) {
       mark_cell<1>(dh, edge_deleted);
     }
     for (auto it = m_gmap.template one_dart_per_cell<2>().begin(), itend = m_gmap.template one_dart_per_cell<2>().end(); it != itend; ++it) {
@@ -119,7 +120,7 @@ private:
     }
     for (auto it = m_gmap.template one_dart_per_cell<1>().begin(), itend = m_gmap.template one_dart_per_cell<1>().end(); it != itend; ++it) {
       if (!m_gmap.is_marked(it, edge_deleted)) {
-        m_noncon_edges.push_back(it);
+        noncon_edges.push_back(it);
       }
     }
     m_gmap.free_mark(edge_deleted);
@@ -127,8 +128,6 @@ private:
   }
 
   Gmap m_gmap;
-  Dart_const_handle m_root;
-  std::vector<Dart_const_handle> m_spanning_tree, m_noncon_edges;
 };
 
 }
