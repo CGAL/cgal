@@ -115,6 +115,10 @@ typedef Triangulation_data_structure::Facet Facet;
 */ 
 typedef Triangulation_data_structure::Edge Edge;
 
+/*! 
+Concurrency tag (from the TDS).
+*/ 
+typedef Triangulation_data_structure::Concurrency_tag Concurrency_tag;
 
 /// @}
 
@@ -216,12 +220,28 @@ circulator over all facets incident to a given edge
 */ 
 typedef Triangulation_data_structure::Facet_circulator Facet_circulator;
 
-/*! 
-Concurrency tag (from the TDS).
-*/ 
-typedef Triangulation_data_structure::Concurrency_tag Concurrency_tag;
+/// @}
 
-/// @} 
+/*! \name Ranges
+
+In order to write \cpp 11 `for`-loops we provide range typesxxx.
+
+*/
+/// @{
+
+  
+/*!
+range type for iterating over facets.
+*/
+  typedef Iterator_range<Facet_iterator> All_facets;
+  
+/*!
+range type for iterating over all vertex handles, with a nested type `iterator`
+that has as value type `Vertex_handle`.
+*/ 
+  typedef Iterator_range<unspecified_type> All_vertex_handles;
+  
+/// @}
 
 /// \name Creation 
 /// @{
@@ -1136,6 +1156,31 @@ Point_iterator points_end() const;
 
 /// @} 
 
+/*! \name Ranges
+
+In order to write \cpp 11 `for`-loops we provide a range type and member functions to generate ranges.
+Note that vertex and cell ranges are special.
+
+*/
+
+/// @{
+/*!
+  returns a range of iterators over all vertices (even the infinite one).
+  Returns an empty range when `t.number_of_vertices() == 0`. 
+  \note While the value type of `All_vertices_iterator` is `Vertex`, the value type of 
+  `All_vertex_handles::iterator` is `Vertex_handle`.
+ */
+  All_vertex_handles all_vertex_handles() const;
+
+
+/*!
+  returns a range of iterators starting at an arbitrary facet.
+  Returns an empty range when `t.dimension() < 2`. 
+*/
+All_facets all_facets() const;
+  
+/// @} 
+  
 /*!\name Cell and Facet Circulators 
 The following circulators respectively visit all cells or all facets incident to a given edge. They are non-mutable and bidirectional. They are invalidated by any modification of one of the cells traversed.  
 */
