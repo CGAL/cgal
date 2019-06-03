@@ -55,21 +55,14 @@ public:
     Path cycle(m_gmap);
     if (min_distance < 0) return cycle; // empty cycle;
     // Trace back the path from `a` to root
-    int ind;
-    ind = min_a;
-    do {
+    for (int ind = min_a - 1; ind != -1; ind = trace_index[ind])
       cycle.push_back(m_gmap.alpha<0>(spanning_tree[ind]));
-      ind = trace_index[ind];
-    } while (ind != -1);
     // Reverse: now it is the path from root to `a`
     cycle.reverse();
     cycle.push_back(min_noncon_edge);
     // Trace back the path from `b` to root
-    ind = min_b;
-    do {
+    for (int ind = min_b - 1; ind != -1; ind = trace_index[ind])
       cycle.push_back(m_gmap.alpha<0>(spanning_tree[ind]));
-      ind = trace_index[ind];
-    } while (ind != -1);
 
     CGAL_assertion(cycle.is_closed());
 
