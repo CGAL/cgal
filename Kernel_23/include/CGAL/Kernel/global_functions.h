@@ -31,6 +31,7 @@
 
 #include <CGAL/Kernel/global_functions_2.h>
 #include <CGAL/Kernel/global_functions_3.h>
+#include <CGAL/Kernel/hash_functions.h>
 
 namespace CGAL {
 
