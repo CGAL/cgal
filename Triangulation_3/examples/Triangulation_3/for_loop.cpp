@@ -30,7 +30,7 @@ int main()
 
   std::cout << "Triangulation_3::All_vertex_handles::iterator dereferences to Triangulation_3::Vertex_handle\n";
   All_vertex_handles::iterator b, e;
-  boost::tie(b,e) = T.all_vertex_handles();
+  std::tie(b,e) = T.all_vertex_handles();
   for(; b!=e; ++b){
     Vertex_handle vh = *b; // you must dereference the iterator to get a handle
     std::cout << vh->point() << std::endl;
