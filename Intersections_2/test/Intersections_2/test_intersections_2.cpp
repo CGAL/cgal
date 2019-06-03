@@ -5,8 +5,9 @@
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/internal/Exact_type_selector.h>
 
+#include <CGAL/FPU.h>
+#include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/intersection_2.h>
 
 #include <vector>
@@ -795,6 +796,8 @@ private:
 
 int main()
 {
+  CGAL::Set_ieee_double_precision pfr;
+
   Test< CGAL::Simple_cartesian<typename CGAL::internal::Exact_field_selector<void*>::Type > >().run();
   Test< CGAL::Cartesian<double>   >().run();
   Test< CGAL::Homogeneous<typename CGAL::internal::Exact_field_selector<void*>::Type > >().run();
