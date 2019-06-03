@@ -224,7 +224,7 @@ typedef Triangulation_data_structure::Facet_circulator Facet_circulator;
 
 /*! \name Ranges
 
-In order to write \cpp 11 `for`-loops we provide range typesxxx.
+In order to write \cpp 11 `for`-loops we provide range types.
 
 */
 /// @{
