@@ -49,6 +49,9 @@ public:
       }
     }
 
+    for (int i = 0; i < index_marks.size(); ++i)
+      m_gmap.free_mark(index_marks[i]);
+
     Path cycle(m_gmap);
     if (min_distance < 0) return cycle; // empty cycle;
     // Trace back the path from `a` to root
