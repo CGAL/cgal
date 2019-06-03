@@ -28,7 +28,7 @@ public:
 
     BFS(root, spanning_tree, distance_from_root, trace_index);
     find_noncon_edges(spanning_tree, noncon_edges);
-    mark_vertices_with_indicies(spanning_tree, index_marks);
+    mark_vertices_with_indices(spanning_tree, index_marks);
 
     Distance_type min_distance = -1;
     Dart_const_handle min_noncon_edge;
@@ -192,7 +192,7 @@ private:
     m_gmap.free_mark(face_deleted);
   }
 
-  void mark_vertices_with_indicies(const Dart_container& spanning_tree, std::vector<size_type>& index_marks) {
+  void mark_vertices_with_indices(const Dart_container& spanning_tree, std::vector<size_type>& index_marks) {
     int n = spanning_tree.size()+1, bit_count = 0;
     while (n) ++bit_count, n >> 1;
     index_marks.resize(bit_count);
