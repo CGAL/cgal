@@ -48,9 +48,8 @@ int main()
 
   std::cout << "Testing the barycentric property " << std::endl;
   Point_3 b(0, 0, 0);
-  for(std::vector< std::pair< Point_3, Coord_type > >::const_iterator
-      it = coords.begin(); it!=coords.end(); ++it)
-    b = b + (it->second/norm) * (it->first - CGAL::ORIGIN);
+  for(const std::pair< Point_3, Coord_type >& pc : coords)
+    b = b + (pc.second/norm) * (pc.first - CGAL::ORIGIN);
 
   std::cout << "    weighted barycenter: " << b <<std::endl;
   std::cout << "    squared distance: " << CGAL::squared_distance(p,b) << std::endl;
