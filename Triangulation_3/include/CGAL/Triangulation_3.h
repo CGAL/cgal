@@ -431,8 +431,8 @@ public:
   typedef Edge_iterator                        All_edges_iterator;
   typedef Vertex_iterator                      All_vertices_iterator;
 
-  typedef Iterator_range<Prevent_deref<All_cells_iterator> > All_cells_range;
-  typedef Iterator_range<Prevent_deref<All_vertices_iterator> > All_vertices_range;
+  typedef Iterator_range<Prevent_deref<All_cells_iterator> > All_cell_handles;
+  typedef Iterator_range<Prevent_deref<All_vertices_iterator> > All_vertex_handles;
   
   typedef typename Tds::Simplex                Simplex;
 
@@ -1686,7 +1686,7 @@ public:
   All_cells_iterator all_cells_begin() const { return _tds.cells_begin(); }
   All_cells_iterator all_cells_end() const { return _tds.cells_end(); }
 
-  All_cells_range all_cells() const
+  All_cell_handles all_cell_handles() const
   {
     return make_prevent_deref_range(all_cells_begin(), all_cells_end()); 
   }
@@ -1710,7 +1710,7 @@ public:
   All_vertices_iterator all_vertices_begin() const { return _tds.vertices_begin(); }
   All_vertices_iterator all_vertices_end() const { return _tds.vertices_end(); }
 
-  All_vertices_range all_vertices() const
+  All_vertex_handles all_vertex_handles() const
   {
     return make_prevent_deref_range(all_vertices_begin(), all_vertices_end()); 
   }
