@@ -32,65 +32,64 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
 
-template<typename PolygonMesh, typename VertexPointMap,
-         typename CotangentValue = CGAL::internal::Cotangent_value_Meyer<PolygonMesh, VertexPointMap> >
-struct Edge_cotangent_weight : CotangentValue
+template<typename TriangleMesh,
+         typename VertexPointMap,
+         typename CotangentValue = CGAL::internal::Cotangent_value_Meyer<TriangleMesh, VertexPointMap> >
+struct Edge_cotangent_weight
+  : public CotangentValue
 {
-    Edge_cotangent_weight(PolygonMesh& pmesh_, VertexPointMap vpmap_)
-      : CotangentValue(pmesh_, vpmap_)
-    {}
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor     vertex_descriptor;
 
-    PolygonMesh& pmesh()
+  Edge_cotangent_weight(TriangleMesh& pmesh_, VertexPointMap vpmap_) : CotangentValue(pmesh_, vpmap_) {}
+
+  TriangleMesh& pmesh() { return CotangentValue::pmesh(); }
+
+  double operator()(halfedge_descriptor he)
+  {
+    if(is_border_edge(he, pmesh()))
     {
-      return CotangentValue::pmesh();
+      halfedge_descriptor h1 = next(he, pmesh());
+      vertex_descriptor vs = source(he, pmesh());
+      vertex_descriptor vt = target(he, pmesh());
+      vertex_descriptor v1 = target(h1, pmesh());
+      return (CotangentValue::operator ()(vs, v1, vt));
     }
-
-    typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
-    typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor     vertex_descriptor;
-
-    double operator()(halfedge_descriptor he)
+    else
     {
-      if(is_border_edge(he, pmesh()))
-      {
-        halfedge_descriptor h1 = next(he, pmesh());
-        vertex_descriptor vs = source(he, pmesh());
-        vertex_descriptor vt = target(he, pmesh());
-        vertex_descriptor v1 = target(h1, pmesh());
-        return (CotangentValue::operator ()(vs, v1, vt));
-      }
-      else
-      {
-        halfedge_descriptor h1 = next(he, pmesh());
-        halfedge_descriptor h2 = prev(opposite(he, pmesh()), pmesh());
-        vertex_descriptor vs = source(he, pmesh());
-        vertex_descriptor vt = target(he, pmesh());
-        vertex_descriptor v1 = target(h1, pmesh());
-        vertex_descriptor v2 = source(h2, pmesh());
-        return ( CotangentValue::operator()(vs, v1, vt) + CotangentValue::operator()(vs, v2, vt) ) / 2.0; }
-    }
+      halfedge_descriptor h1 = next(he, pmesh());
+      halfedge_descriptor h2 = prev(opposite(he, pmesh()), pmesh());
+      vertex_descriptor vs = source(he, pmesh());
+      vertex_descriptor vt = target(he, pmesh());
+      vertex_descriptor v1 = target(h1, pmesh());
+      vertex_descriptor v2 = source(h2, pmesh());
+      return ( CotangentValue::operator()(vs, v1, vt) + CotangentValue::operator()(vs, v2, vt) ) / 2.0; }
+  }
 };
 
-template <typename PolygonMesh>
-double sqlength(const typename boost::graph_traits<PolygonMesh>::vertex_descriptor v1,
-                const typename boost::graph_traits<PolygonMesh>::vertex_descriptor v2,
-                const PolygonMesh& mesh_)
+template <typename TriangleMesh>
+double sqlength(const typename boost::graph_traits<TriangleMesh>::vertex_descriptor v1,
+                const typename boost::graph_traits<TriangleMesh>::vertex_descriptor v2,
+                const TriangleMesh& mesh_)
 {
-  typedef typename boost::property_map<PolygonMesh, boost::vertex_point_t>::const_type Vpm;
+  typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::const_type Vpm;
   Vpm vpmap_ = get(boost::vertex_point, mesh_);
 
   return CGAL::to_double(CGAL::squared_distance(get(vpmap_, v1), get(vpmap_, v2)));
 }
 
-template <typename PolygonMesh, typename Descriptor>
-double sqlength(const Descriptor h, const PolygonMesh& mesh_)
+template <typename TriangleMesh, typename Descriptor>
+double sqlength(const Descriptor h, const TriangleMesh& mesh_)
 {
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
 
   vertex_descriptor v1 = target(h, mesh_);
   vertex_descriptor v2 = source(h, mesh_);
   return sqlength(v1, v2, mesh_);
 }
 
-}}}
+} // internal
+} // Polygon_mesh_processing
+} // CGAL
 
 #endif //CGAL_POLYGON_MESH_PROCESSING_INTERNAL_SMOOTHING_HELPERS_H

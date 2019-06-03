@@ -30,38 +30,28 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/curvature_flow_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/curvature_flow_explicit_impl.h>
+
 #include <CGAL/utility.h>
 #include <CGAL/property_map.h>
-
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-#include <CGAL/Timer.h>
-#endif
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
 // normalized explicit scheme, undocumented
-template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
+template<typename TriangleMesh, typename FaceRange, typename NamedParameters>
 void smooth_curvature_flow_explicit(const FaceRange& faces,
-                                    PolygonMesh& pmesh,
+                                    TriangleMesh& tmesh,
                                     const NamedParameters& np)
 {
   using boost::choose_param;
   using boost::get_param;
 
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  CGAL::Timer t;
-  std::cout << "Smoothing parameters...";
-  std::cout.flush();
-  t.start();
-#endif
-
-  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type      GeomTraits;
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type  VertexPointMap;
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type      GeomTraits;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type  VertexPointMap;
   VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
-                                      get_property_map(CGAL::vertex_point, pmesh));
+                                      get_property_map(CGAL::vertex_point, tmesh));
 
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
   typedef typename boost::lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
       NamedParameters,
@@ -72,58 +62,13 @@ void smooth_curvature_flow_explicit(const FaceRange& faces,
 
   std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
 
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  t.stop();
-  std::cout << "\rSmoothing parameters done ("<< t.time() <<" sec)" << std::endl;
-  std::cout << "smoother construction...";
-  std::cout.flush();
-  t.reset(); t.start();
-#endif
-
-  internal::Curvature_flow<PolygonMesh, VertexPointMap, VCMap, GeomTraits>
-          curvature_smoother(pmesh, vpmap, vcmap);
-
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  t.stop();
-  std::cout << " done ("<< t.time() <<" sec)." << std::endl;
-  std::cout << "Removing degenerate faces..." << std::endl;
-  t.reset(); t.start();
-#endif
-
-  curvature_smoother.remove_degenerate_faces();
-
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  t.stop();
-  std::cout << " done ("<< t.time() <<" sec)." << std::endl;
-  std::cout << "Initializing..." << std::endl;
-  t.reset(); t.start();
-#endif
+  internal::Curvature_flow<TriangleMesh, VertexPointMap, VCMap, GeomTraits>
+          curvature_smoother(tmesh, vpmap, vcmap);
 
   curvature_smoother.init_smoothing(faces);
 
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  t.stop();
-  std::cout << " done ("<< t.time() <<" sec)." << std::endl;
-  std::cout << "#iter = " << nb_iterations << std::endl;
-  std::cout << "Shape smoothing..." << std::endl;
-  t.reset(); t.start();
-#endif
-
   for(std::size_t i=0; i<nb_iterations; ++i)
-  {
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-    std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
-#endif
-
     curvature_smoother.curvature_smoothing();
-  }
-
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  t.stop();
-  std::cout << "Shape smoothing done in ";
-  std::cout << t.time() << " sec." << std::endl;
-  std::cout<<std::endl;
-#endif
 }
 
 /*!
@@ -133,12 +78,12 @@ void smooth_curvature_flow_explicit(const FaceRange& faces,
 * represents the amount by which vertices are allowed to move.
 * The result conformally maps the initial surface to a sphere.
 *
-* @tparam PolygonMesh model of `MutableFaceGraph`.
-* @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
+* @tparam TriangleMesh model of `MutableFaceGraph`.
+* @tparam FaceRange range of `boost::graph_traits<TriangleMesh>::%face_descriptor`,
 *         model of `Range`. Its iterator type is `ForwardIterator`.
 * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 *
-* @param pmesh a polygon mesh with triangulated surface patches to be smoothed.
+* @param tmesh a polygon mesh with triangulated surface patches to be smoothed.
 * @param faces the range of triangular faces defining one or several surface patches to be smoothed.
 * @param time a time step that corresponds to the speed by which the surface is smoothed.
 *        A larger time step results in faster convergence but details may be distorted to have a larger extent
@@ -150,10 +95,10 @@ void smooth_curvature_flow_explicit(const FaceRange& faces,
 *    Kernels with exact constructions are not supported by this function.
 *  \cgalParamEnd
 *  \cgalParamBegin{vertex_point_map} the property map with the points associated
-*    to the vertices of `pmesh`. Instance of a class model of `ReadWritePropertyMap`.
+*    to the vertices of `tmesh`. Instance of a class model of `ReadWritePropertyMap`.
 *  \cgalParamEnd
 *  \cgalParamBegin{vertex_is_constrained_map} a property map containing the
-*    constrained-or-not status of each vertex of `pmesh`. A constrained vertex
+*    constrained-or-not status of each vertex of `tmesh`. A constrained vertex
 *    cannot be modified at all during smoothing.
 *  \cgalParamEnd
 *  \cgalParamBegin{number_of_iterations} the number of iterations for the
@@ -170,13 +115,13 @@ void smooth_curvature_flow_explicit(const FaceRange& faces,
 *
 *  @warning This function involves linear algebra, that is computed using a non-exact floating-point arithmetic.
 */
-template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
+template<typename TriangleMesh, typename FaceRange, typename NamedParameters>
 void smooth_along_curvature_flow(const FaceRange& faces,
-                                 PolygonMesh& pmesh,
+                                 TriangleMesh& tmesh,
                                  const double time,
                                  const NamedParameters& np)
 {
-  if(boost::begin(faces)==boost::end(faces))
+  if(std::begin(faces) == std::end(faces))
     return;
 
   using boost::choose_param;
@@ -189,12 +134,12 @@ void smooth_along_curvature_flow(const FaceRange& faces,
   t.start();
 #endif
 
-  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type        GeomTraits;
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type    VertexPointMap;
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type        GeomTraits;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type    VertexPointMap;
   VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
-                                      get_property_map(CGAL::vertex_point, pmesh));
+                                      get_property_map(CGAL::vertex_point, tmesh));
 
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor      vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor      vertex_descriptor;
   typedef typename boost::lookup_named_param_def<
       internal_np::vertex_is_constrained_t,
       NamedParameters,
@@ -205,9 +150,10 @@ void smooth_along_curvature_flow(const FaceRange& faces,
 
   std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
   bool use_explicit_scheme = choose_param(get_param(np, internal_np::use_explicit_scheme), false);
+
   if(use_explicit_scheme)
   {
-    smooth_curvature_flow_explicit(faces, pmesh, parameters::number_of_iterations(nb_iterations));
+    smooth_curvature_flow_explicit(faces, tmesh, parameters::number_of_iterations(nb_iterations));
   }
   else
   {
@@ -241,84 +187,47 @@ void smooth_along_curvature_flow(const FaceRange& faces,
     typedef typename Sparse_solver::Vector Eigen_vector;
     Sparse_solver solver = choose_param(get_param(np, internal_np::sparse_linear_solver), Default_solver());
 
-    std::size_t n = static_cast<int>(vertices(pmesh).size());
+    std::size_t n = static_cast<int>(vertices(tmesh).size());
     Eigen_matrix A(n, n);
     Eigen_vector bx(n), by(n), bz(n), Xx(n), Xy(n), Xz(n);
     std::vector<CGAL::Triple<int, int, double> > stiffness;
 
-    internal::Shape_smoother<PolygonMesh, VertexPointMap, VCMap, Sparse_solver, GeomTraits>
-        smoother(pmesh, vpmap, vcmap);
+    internal::Shape_smoother<TriangleMesh, VertexPointMap, VCMap, Sparse_solver, GeomTraits>
+        smoother(tmesh, vpmap, vcmap);
 
     smoother.init_smoothing(faces);
-
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-    t.stop();
-    std::cout << " done ("<< t.time() <<" sec)." << std::endl;
-    std::cout << "calculate_stiffness_matrix_elements... ";
-    t.reset(); t.start();
-#endif
-
     smoother.calculate_stiffness_matrix_elements(stiffness);
-
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-    t.stop();
-    std::cout << " done ("<< t.time() <<" sec)." << std::endl;
-#endif
 
     for(std::size_t iter = 0; iter < nb_iterations; ++iter)
     {
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-      std::cout << "setup_system... ";
-      t.reset(); t.start();
-#endif
-
       smoother.setup_system(A, bx, by, bz, stiffness, time);
-
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-      t.stop();
-      std::cout << " done ("<< t.time() <<" sec)." << std::endl;
-      std::cout << "solve_system... ";
-      t.reset(); t.start();
-#endif
-
       smoother.solve_system(A, Xx, Xy, Xz, bx, by, bz, solver);
-
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-      t.stop();
-      std::cout << " done ("<< t.time() <<" sec)." << std::endl;
-      std::cout << "update_mesh... ";
-      t.reset(); t.start();
-#endif
-
       smoother.update_mesh(Xx, Xy, Xz);
-
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-      t.stop();
-      std::cout << " done ("<< t.time() <<" sec)." << std::endl;
-#endif
     }
   }
 }
 
-template<typename PolygonMesh, typename NamedParameters>
-void smooth_along_curvature_flow(PolygonMesh& pmesh, const double time,
+template<typename TriangleMesh, typename NamedParameters>
+void smooth_along_curvature_flow(TriangleMesh& tmesh,
+                                 const double time,
                                  const NamedParameters& np)
 {
-  smooth_along_curvature_flow(faces(pmesh), pmesh, time, np);
+  smooth_along_curvature_flow(faces(tmesh), tmesh, time, np);
 }
 
-template<typename PolygonMesh>
-void smooth_along_curvature_flow(PolygonMesh& pmesh, const double time)
+template<typename TriangleMesh>
+void smooth_along_curvature_flow(TriangleMesh& tmesh,
+                                 const double time)
 {
-  smooth_along_curvature_flow(faces(pmesh), pmesh, time, parameters::all_default());
+  smooth_along_curvature_flow(faces(tmesh), tmesh, time, parameters::all_default());
 }
 
 // API for Polyhedron demo plugin
 namespace internal {
 
-template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
+template<typename TriangleMesh, typename FaceRange, typename NamedParameters>
 void solve_mcf(const FaceRange& faces,
-               PolygonMesh& mesh,
+               TriangleMesh& tmesh,
                const double time,
                std::vector<CGAL::Triple<int, int, double> >& stiffness,
                bool compute_stiffness,
@@ -327,13 +236,13 @@ void solve_mcf(const FaceRange& faces,
   using boost::choose_param;
   using boost::get_param;
 
-  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type          GeomTraits;
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type          GeomTraits;
 
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type      VertexPointMap;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type      VertexPointMap;
   VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
-                               get_property_map(CGAL::vertex_point, mesh));
+                               get_property_map(CGAL::vertex_point, tmesh));
 
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor        vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor        vertex_descriptor;
   typedef typename boost::lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
       NamedParameters,
@@ -374,22 +283,22 @@ void solve_mcf(const FaceRange& faces,
   typedef typename Sparse_solver::Vector                                  Eigen_vector;
   Sparse_solver solver = choose_param(get_param(np, internal_np::sparse_linear_solver), Default_solver());
 
-  std::size_t n = static_cast<int>(vertices(mesh).size());
+  std::size_t n = static_cast<int>(vertices(tmesh).size());
 
   Eigen_matrix A(n, n);
   Eigen_vector bx(n), by(n), bz(n), Xx(n), Xy(n), Xz(n);
 
   if(compute_stiffness)
   {
-    internal::Shape_smoother<PolygonMesh, VertexPointMap, VCMap, Sparse_solver, GeomTraits>
-        smoother(mesh, vpmap, vcmap);
+    internal::Shape_smoother<TriangleMesh, VertexPointMap, VCMap, Sparse_solver, GeomTraits>
+        smoother(tmesh, vpmap, vcmap);
     smoother.init_smoothing(faces);
     smoother.calculate_stiffness_matrix_elements(stiffness);
   }
   else
   {
-    internal::Shape_smoother<PolygonMesh, VertexPointMap, VCMap, Default_solver, GeomTraits>
-        smoother(mesh, vpmap, vcmap);
+    internal::Shape_smoother<TriangleMesh, VertexPointMap, VCMap, Default_solver, GeomTraits>
+        smoother(tmesh, vpmap, vcmap);
     smoother.init_smoothing(faces);
 
     for(std::size_t i=0; i<nb_iterations; ++i)

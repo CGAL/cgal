@@ -47,7 +47,7 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
 
-template<typename PolygonMesh,
+template<typename TriangleMesh,
          typename VertexPointMap,
          typename VertexConstraintMap,
          typename SparseLinearSolver,
@@ -59,18 +59,18 @@ class Shape_smoother
   typedef typename boost::property_traits<VertexPointMap>::reference              Point_ref;
   typedef CGAL::Triple<int, int, double>                                          Triplet;
 
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor            vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor          halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor              edge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor              face_descriptor;
-  typedef typename boost::property_map<PolygonMesh, boost::vertex_index_t>::type  IndexMap;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor           vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor         halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor             edge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor             face_descriptor;
+  typedef typename boost::property_map<TriangleMesh, boost::vertex_index_t>::type IndexMap;
 
   // linear system
   typedef typename SparseLinearSolver::Matrix                                     Eigen_matrix;
   typedef typename SparseLinearSolver::Vector                                     Eigen_vector;
 
 public:
-  Shape_smoother(PolygonMesh& mesh,
+  Shape_smoother(TriangleMesh& mesh,
                  VertexPointMap& vpmap,
                  VertexConstraintMap& vcmap)
     :
@@ -289,7 +289,7 @@ private:
   // data members
   // ------------
   std::size_t nb_vert_;
-  PolygonMesh& mesh_;
+  TriangleMesh& mesh_;
   VertexPointMap& vpmap_;
   VertexConstraintMap& vcmap_;
   IndexMap vimap_;
@@ -300,7 +300,7 @@ private:
 
   std::vector<face_descriptor> frange_;
   std::vector<vertex_descriptor> vrange_;
-  Edge_cotangent_weight<PolygonMesh, VertexPointMap> weight_calculator_;
+  Edge_cotangent_weight<TriangleMesh, VertexPointMap> weight_calculator_;
 };
 
 } // internal
