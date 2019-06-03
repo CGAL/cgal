@@ -1252,6 +1252,16 @@ intersection(const Bbox_3 &box,
   return intersection(seg, box, k);
 }
 
+template <class K>
+inline
+typename Intersection_traits<K, Bbox_3, Bbox_3>::result_type
+intersection(const Bbox_3 &a,
+	     const Bbox_3 &b,
+	     const K& k)
+{
+  return CGAL::intersection<K>(a, b);
+}
+
 
 template <class K>
 typename Intersection_traits<K, typename K::Line_3, typename K::Iso_cuboid_3>::result_type
@@ -1576,7 +1586,6 @@ do_intersect(const Iso_cuboid_3<R> &j, const Line_3<R> &l, const R&)
 {
   return bool(CGAL::intersection(l, j));
 }
-
 } // namespace internal
 } // namespace Intersections
 } // namespace CGAL

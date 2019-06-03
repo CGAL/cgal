@@ -25,7 +25,7 @@
 
 
 #include <CGAL/Bbox_3.h>
-
+#include <CGAL/Intersection_traits_3.h>
 namespace CGAL {
 bool
 inline
@@ -33,6 +33,32 @@ do_intersect(const CGAL::Bbox_3& c,
              const CGAL::Bbox_3& bbox)
 {
   return CGAL::do_overlap(c, bbox);
+}
+
+typename boost::optional< typename
+boost::variant< Bbox_3> >
+inline
+intersection(const CGAL::Bbox_3& a,
+             const CGAL::Bbox_3& b) {
+
+  typedef typename
+  boost::variant< Bbox_3> variant_type;
+  typedef typename boost::optional< variant_type > Result_type;
+  if(!do_intersect(a,b))
+  {
+    return Result_type();
+  }
+
+  double xmin, xmax, ymin, ymax, zmin, zmax;
+  xmin = (std::max)(a.xmin(), b.xmin());
+  xmax = (std::min)(a.xmax(), b.xmax());
+
+  ymin = (std::max)(a.ymin(), b.ymin());
+  ymax = (std::min)(a.ymax(), b.ymax());
+
+  zmin = (std::max)(a.zmin(), b.zmin());
+  zmax = (std::min)(a.zmax(), b.zmax());
+  return Result_type(std::forward<Bbox_3>(Bbox_3(xmin, ymin, zmin, xmax, ymax, zmax)));
 }
 
 } //namespace CGAL

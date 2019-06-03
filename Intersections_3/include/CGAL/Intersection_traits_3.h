@@ -280,6 +280,14 @@ struct Intersection_traits<K, typename K::Sphere_3, typename K::Point_3>  {
   boost::variant< typename K::Point_3 > variant_type;
   typedef typename boost::optional< variant_type > result_type;
 };
+
+//// Bbox_3 Bbox_3, variant of 2
+//template<typename K>
+//struct Intersection_traits<K, Bbox_3, Bbox_3>  {
+//  typedef typename
+//  boost::variant< typename K::Point_3 , Bbox_3> variant_type;
+//  typedef typename boost::optional< variant_type > result_type;
+//};
 } // namespace
 
 #endif /* CGAL_INTERSECTION_TRAITS_3_H */

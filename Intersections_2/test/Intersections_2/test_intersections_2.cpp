@@ -67,7 +67,6 @@ struct Test {
   typedef typename K::Circle_2              C;
   typedef std::vector<P>              Pol;
 
-
   template < typename Type >
   bool approx_equal_nt(const Type &t1, const Type &t2)
   {
@@ -370,9 +369,98 @@ check_no_intersection  (L(p(0, 0), p(10,10)), L(p(8,7), p(1, 0)));
 
 };
 
+template<class A, class B>
+void call_intersection(const A& a, const B& b) {
+  typename CGAL::cpp11::result_of<CGAL::Simple_cartesian<double>::Intersect_2(A, B)>::type x = CGAL::intersection(a, b);
+  typename CGAL::cpp11::result_of<CGAL::Simple_cartesian<double>::Intersect_2(A, B)>::type y = CGAL::intersection(b, a);
+  typename CGAL::cpp11::result_of<CGAL::Simple_cartesian<double>::Intersect_2(B, A)>::type z = CGAL::intersection(b, a);
+  CGAL_USE(x);
+  CGAL_USE(y);
+  CGAL_USE(z);
+}
+
+template<class A, class B>
+void call_do_intersect(const A& a, const B& b) {
+  CGAL::do_intersect(a, b);
+  CGAL::do_intersect(b, a);
+}
+
 int main()
 {
 	Test< CGAL::Simple_cartesian<double>   >().run();
 	Test< CGAL::Homogeneous<double> >().run();
+        typedef typename CGAL::Simple_cartesian<double> K;
+        typedef typename K::Point_2               P;
+        typedef typename K::Line_2                L;
+        typedef typename K::Segment_2             S;
+        typedef typename K::Ray_2                 R;
+        typedef typename K::Triangle_2            T;
+        typedef typename K::Iso_rectangle_2       Rec;
+        typedef typename K::Circle_2              C;
+
+        try{
+          call_intersection(P(),  P());
+          call_intersection(P(),  L());
+          call_intersection(P(),  S());
+          call_intersection(P(),  R());
+          call_intersection(P(),  T());
+          call_intersection(P(),  Rec());
+
+          call_intersection(L(), L());
+          call_intersection(L(), S());
+          call_intersection(L(), R());
+          call_intersection(L(), T());
+          call_intersection(L(), Rec());
+
+          call_intersection(S(), S());
+          call_intersection(S(), R());
+          call_intersection(S(), T());
+          call_intersection(S(), Rec());
+
+          call_intersection(R(), R());
+          call_intersection(R(), T());
+          call_intersection(R(), Rec());
+
+          call_intersection(T(), T());
+          call_intersection(T(), Rec());
+
+          call_intersection(Rec(), Rec());
+
+          call_do_intersect(P(),  P());
+          call_do_intersect(P(),  L());
+          call_do_intersect(P(),  S());
+          call_do_intersect(P(),  R());
+          call_do_intersect(P(),  T());
+          call_do_intersect(P(),  Rec());
+          call_do_intersect(P(),  C());
+
+          call_do_intersect(L(), L());
+          call_do_intersect(L(), S());
+          call_do_intersect(L(), R());
+          call_do_intersect(L(), T());
+          call_do_intersect(L(), Rec());
+          call_do_intersect(L(),  C());
+
+          call_do_intersect(S(), S());
+          call_do_intersect(S(), R());
+          call_do_intersect(S(), T());
+          call_do_intersect(S(), Rec());
+//          call_do_intersect(S(),  C());
+
+          call_do_intersect(R(), R());
+          call_do_intersect(R(), T());
+          call_do_intersect(R(), Rec());
+//          call_do_intersect(R(),  C());
+
+          call_do_intersect(T(), T());
+          call_do_intersect(T(), Rec());
+//          call_do_intersect(T(),  C());
+
+          call_do_intersect(Rec(), Rec());
+          call_do_intersect(Rec(),  C());
+
+          call_do_intersect(C(),  C());
+        }
+        catch(...){}
 	// TODO : test more kernels.
 }
