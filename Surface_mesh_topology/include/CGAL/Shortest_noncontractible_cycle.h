@@ -56,8 +56,8 @@ public:
     if (min_distance < 0) return cycle; // empty cycle;
     // Trace back the path from `a` to root
     int ind;
+    ind = min_a;
     do {
-      ind = min_a;
       cycle.push_back(m_gmap.alpha<0>(spanning_tree[ind]));
       ind = trace_index[ind];
     } while (ind != -1);
@@ -65,8 +65,8 @@ public:
     cycle.reverse();
     cycle.push_back(min_noncon_edge);
     // Trace back the path from `b` to root
+    ind = min_b;
     do {
-      ind = min_b;
       cycle.push_back(m_gmap.alpha<0>(spanning_tree[ind]));
       ind = trace_index[ind];
     } while (ind != -1);
