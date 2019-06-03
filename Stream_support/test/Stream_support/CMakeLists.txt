@@ -9,24 +9,21 @@ cmake_minimum_required(VERSION 3.1)
 find_package(CGAL QUIET)
 if ( CGAL_FOUND )
   find_path(3MF_INCLUDE_DIR
-                NAMES Common Model
-                DOC "Path to lib3MF headers"
-               )
-  if(IS_DIRECTORY "${3MF_INCLUDE_DIR}/Common")
-    set(3MF_FOUND true)
-  endif()
+    NAMES Model/COM/NMR_DLLInterfaces.h
+    DOC "Path to lib3MF headers"
+    )
   find_library(3MF_LIBRARIES NAMES 3MF DOC "Path to the lib3MF library")
 
   # create a target per cppfile
   file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
   foreach(cppfile ${cppfiles})
     if ( "${cppfile}" STREQUAL "test_3mf_to_sm.cpp" )
-      if(3MF_FOUND)
+      if(3MF_LIBRARIES AND 3MF_INCLUDE_DIR)
         include_directories(${3MF_INCLUDE_DIR})
         create_single_source_cgal_program( "${cppfile}" )
           target_link_libraries(test_3mf_to_sm PRIVATE ${3MF_LIBRARIES})
       else()
-        message(STATUS "NOTICE: This program requires the lib3MF library, and will not be compiled.")
+        message(STATUS "NOTICE : This program requires the lib3MF library, and will not be compiled.")
       endif()
     else()
       create_single_source_cgal_program( "${cppfile}" )
