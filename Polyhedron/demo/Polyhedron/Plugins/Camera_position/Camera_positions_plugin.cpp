@@ -20,10 +20,10 @@ class Polyhedron_demo_camera_positions_plugin :
 public:
   void init() override;
 
-  QString name() const { return "camera_positions_plugin"; }
-  QString nameFilters() const { return "Camera positions (*.camera.txt)"; }
-  bool canLoad(QFileInfo) const { return true; }
-  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true)
+  QString name() const override { return "camera_positions_plugin"; }
+  QString nameFilters() const override { return "Camera positions (*.camera.txt)"; }
+  bool canLoad(QFileInfo) const override { return true; }
+  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) override
   {
     Q_UNUSED(add_to_scene);
     ok = true;
@@ -31,8 +31,8 @@ public:
     return QList<Scene_item*>();
   }
 
-  bool canSave(const Scene_item*) { return false; }
-  bool save(QFileInfo,QList<CGAL::Three::Scene_item*>& ) {return false; }
+  bool canSave(const Scene_item*) override { return false; }
+  bool save(QFileInfo,QList<CGAL::Three::Scene_item*>& ) override {return false; }
 private:
   Camera_positions_list* cpl;
 };

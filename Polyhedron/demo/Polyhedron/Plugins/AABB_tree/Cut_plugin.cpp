@@ -860,7 +860,7 @@ public:
     return ok;
   }
 
-  using Polyhedron_demo_plugin_interface::init;
+  using Polyhedron_demo_io_plugin_interface::init;
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface,
             Messages_interface* m) override;
   QList<QAction*> actions() const Q_DECL_OVERRIDE;

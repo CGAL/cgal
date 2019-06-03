@@ -215,7 +215,7 @@ public:
     return qobject_cast<Scene_image_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
-  using Polyhedron_demo_plugin_interface::init;
+  using Polyhedron_demo_io_plugin_interface::init;
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface *mi) override {
     this->message_interface = mi;
     this->scene = scene_interface;
