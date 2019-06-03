@@ -30,7 +30,7 @@ else()
   message(STATUS "NOTICE : the DICOM files (.dcm) need VTK libraries to be open and will not be able to.")
 endif()
 
-find_package(Boost REQUIRED OPTIONAL_COMPONENTS filesystem)
+find_package(Boost QUIET OPTIONAL_COMPONENTS filesystem)
 if(Boost_FILESYSTEM_FOUND)
   qt5_wrap_ui( imgUI_FILES Image_res_dialog.ui raw_image.ui)
   polyhedron_demo_plugin(io_image_plugin Io_image_plugin Volume_plane_intersection.cpp Raw_image_dialog.cpp ${imgUI_FILES} ${VOLUME_MOC_OUTFILES})
