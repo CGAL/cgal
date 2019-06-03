@@ -13,6 +13,7 @@ will explicitly state where you can pass this constant as an argument
 instead of a vector initialized with zeros. 
 
 \cgalModels `Kernel::Vector_2`
+\cgalModels `Hashable` if `Kernel::FT` is a floating-point number
 
 */
 template< typename Kernel >

@@ -18,6 +18,7 @@ whereas the coordinate type of an iso-oriented rectangle is chosen by
 the user. 
 
 \cgalModels `Kernel::IsoRectangle_2`
+\cgalModels `Hashable` if `Kernel::FT` is a floating-point number
 
 */
 template< typename Kernel >

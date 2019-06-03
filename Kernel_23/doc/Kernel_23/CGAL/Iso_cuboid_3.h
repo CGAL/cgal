@@ -17,6 +17,7 @@ whereas the coordinate type of an iso-oriented cuboid is chosen by
 the user. 
 
 \cgalModels `Kernel::IsoCuboid_3`
+\cgalModels `Hashable` if `Kernel::FT` is a floating-point number
 
 */
 template< typename Kernel >
