@@ -513,6 +513,10 @@ public:
     operator Vertex_handle() const { return Base::base(); }
   };
 
+
+  typedef Iterator_range<Prevent_deref<Finite_cells_iterator> > Finite_cell_handles;
+  typedef Iterator_range<Prevent_deref<Finite_vertices_iterator> > Finite_vertex_handles;
+  
   typedef Filter_iterator<Edge_iterator, Infinite_tester>     Finite_edges_iterator;
   typedef Filter_iterator<Facet_iterator, Infinite_tester>    Finite_facets_iterator;
 
@@ -1680,6 +1684,13 @@ public:
     return CGAL::filter_iterator(cells_end(), Infinite_tester(this));
   }
 
+  
+  Finite_cell_handles finite_cell_handles() const
+  {
+    return make_prevent_deref_range(finite_cells_begin(), finite_cells_end()); 
+  }
+
+  
   Cell_iterator cells_begin() const { return _tds.cells_begin(); }
   Cell_iterator cells_end() const { return _tds.cells_end(); }
 
@@ -1704,6 +1715,11 @@ public:
     return CGAL::filter_iterator(vertices_end(), Infinite_tester(this));
   }
 
+  Finite_vertex_handles finite_vertex_handles() const
+  {
+    return make_prevent_deref_range(finite_vertices_begin(), finite_vertices_end()); 
+  }
+  
   Vertex_iterator vertices_begin() const { return _tds.vertices_begin(); }
   Vertex_iterator vertices_end() const { return _tds.vertices_end(); }
 
