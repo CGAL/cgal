@@ -193,7 +193,7 @@ struct Test
 
   void B_L()
   {
-    std::cout << "Bbox - Line (TODO)" << std::endl;
+    std::cout << "Bbox - Line" << std::endl;
 
     // no intersection
     check_no_do_intersect  (p(0,0).bbox()                , L(p( 1,1), p( 0,1)));
@@ -226,7 +226,7 @@ struct Test
 
   void B_R()
   {
-    std::cout << "Bbox - Ray (TODO)" << std::endl;
+    std::cout << "Bbox - Ray" << std::endl;
 
     // no intersection
     check_no_do_intersect  (p(0,0).bbox()                , R(p( 1,1), p( 0,1)));
