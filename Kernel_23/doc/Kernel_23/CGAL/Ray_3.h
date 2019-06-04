@@ -8,7 +8,6 @@ straight ray in the three-dimensional Euclidean space \f$ \E^3\f$. It starts
 in a point called the <I>source</I> of `r` and it goes to infinity. 
 
 \cgalModels `Kernel::Ray_3`
-\cgalModels `Hashable` if `Kernel::FT` is a floating-point number
 
 */
 template< typename Kernel >

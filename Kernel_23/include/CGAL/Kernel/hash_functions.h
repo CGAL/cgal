@@ -59,15 +59,6 @@ hash_value (const Circle_2<K>& circle)
 
 template <typename K>
 inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
-hash_value (const Direction_2<K>& direction)
-{
-  std::size_t result = boost::hash_value(direction.dx());
-  boost::hash_combine(result, boost::hash_value(direction.dy()));
-  return result;
-}
-
-template <typename K>
-inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
 hash_value (const Iso_rectangle_2<K>& iso_rectangle)
 {
   std::size_t result = hash_value(iso_rectangle.min());
@@ -81,15 +72,6 @@ hash_value (const Point_2<K>& point)
 {
   std::size_t result = boost::hash_value(point.x());
   boost::hash_combine(result, boost::hash_value(point.y()));
-  return result;
-}
-
-template <typename K>
-inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
-hash_value (const Ray_2<K>& ray)
-{
-  std::size_t result = hash_value(ray.source());
-  boost::hash_combine(result, hash_value(ray.direction()));
   return result;
 }
 
@@ -146,16 +128,6 @@ hash_value (const Bbox_3& bbox)
 
 template <typename K>
 inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
-hash_value (const Direction_3<K>& direction)
-{
-  std::size_t result = boost::hash_value(direction.dx());
-  boost::hash_combine(result, boost::hash_value(direction.dy()));
-  boost::hash_combine(result, boost::hash_value(direction.dz()));
-  return result;
-}
-
-template <typename K>
-inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
 hash_value (const Iso_cuboid_3<K>& iso_cuboid)
 {
   std::size_t result = hash_value(iso_cuboid.min());
@@ -170,15 +142,6 @@ hash_value (const Point_3<K>& point)
   std::size_t result = boost::hash_value(point.x());
   boost::hash_combine(result, boost::hash_value(point.y()));
   boost::hash_combine(result, boost::hash_value(point.z()));
-  return result;
-}
-
-template <typename K>
-inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
-hash_value (const Ray_3<K>& ray)
-{
-  std::size_t result = hash_value(ray.source());
-  boost::hash_combine(result, hash_value(ray.direction()));
   return result;
 }
 
@@ -241,11 +204,6 @@ template <typename K> struct hash<CGAL::Circle_2<K> > {
     return CGAL::hash_value<K> (circle);
   }
 };
-template <typename K> struct hash<CGAL::Direction_2<K> > {
-  std::size_t operator() (const CGAL::Direction_2<K>& direction) const   {
-    return CGAL::hash_value<K> (direction);
-  }
-};
 template <typename K> struct hash<CGAL::Iso_rectangle_2<K> > {
   std::size_t operator() (const CGAL::Iso_rectangle_2<K>& iso_rectangle) const   {
     return CGAL::hash_value<K> (iso_rectangle);
@@ -254,11 +212,6 @@ template <typename K> struct hash<CGAL::Iso_rectangle_2<K> > {
 template <typename K> struct hash<CGAL::Point_2<K> > {
   std::size_t operator() (const CGAL::Point_2<K>& point) const   {
     return CGAL::hash_value<K> (point);
-  }
-};
-template <typename K> struct hash<CGAL::Ray_2<K> > {
-  std::size_t operator() (const CGAL::Ray_2<K>& ray) const   {
-    return CGAL::hash_value<K> (ray);
   }
 };
 template <typename K> struct hash<CGAL::Segment_2<K> > {
@@ -286,11 +239,6 @@ template <> struct hash<CGAL::Bbox_3> {
     return CGAL::hash_value (bbox);
   }
 };
-template <typename K> struct hash<CGAL::Direction_3<K> > {
-  std::size_t operator() (const CGAL::Direction_3<K>& direction) const   {
-    return CGAL::hash_value<K> (direction);
-  }
-};
 template <typename K> struct hash<CGAL::Iso_cuboid_3<K> > {
   std::size_t operator() (const CGAL::Iso_cuboid_3<K>& iso_cuboid) const   {
     return CGAL::hash_value<K> (iso_cuboid);
@@ -299,11 +247,6 @@ template <typename K> struct hash<CGAL::Iso_cuboid_3<K> > {
 template <typename K> struct hash<CGAL::Point_3<K> > {
   std::size_t operator() (const CGAL::Point_3<K>& point) const   {
     return CGAL::hash_value<K> (point);
-  }
-};
-template <typename K> struct hash<CGAL::Ray_3<K> > {
-  std::size_t operator() (const CGAL::Ray_3<K>& ray) const   {
-    return CGAL::hash_value<K> (ray);
   }
 };
 template <typename K> struct hash<CGAL::Segment_3<K> > {

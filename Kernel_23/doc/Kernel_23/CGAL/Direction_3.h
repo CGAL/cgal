@@ -14,7 +14,6 @@ For example, you can ask for the direction
 orthogonal to an oriented plane, or the direction of an oriented line. 
 
 \cgalModels `Kernel::Direction_3`
-\cgalModels `Hashable` if `Kernel::FT` is a floating-point number
 
 */
 template< typename Kernel >

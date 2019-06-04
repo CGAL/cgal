@@ -15,7 +15,6 @@ Further, they can be used to indicate angles. The slope of a direction
 is `dy()`/`dx()`. 
 
 \cgalModels `Kernel::Direction_2`
-\cgalModels `Hashable` if `Kernel::FT` is a floating-point number
 
 */
 template< typename Kernel >

@@ -27,17 +27,11 @@ int main()
   test (SC::Circle_2 (CGAL::ORIGIN, 1));
   test (Epick::Circle_2 (CGAL::ORIGIN, 1));
 
-  test (SC::Direction_2 (1, 2));
-  test (Epick::Direction_2 (1, 2));
-  
   test (SC::Iso_rectangle_2 (1, 2, 3, 4));
   test (Epick::Iso_rectangle_2 (1, 2, 3, 4));
   
   test (SC::Point_2 (1, 2));
   test (Epick::Point_2 (1, 2));
-  
-  test (SC::Ray_2 (SC::Point_2 (1, 2), SC::Vector_2 (3, 4)));
-  test (Epick::Ray_2 (Epick::Point_2 (1, 2), Epick::Vector_2 (3, 4)));
   
   test (SC::Segment_2 (SC::Point_2 (1, 2), SC::Point_2 (3, 4)));
   test (Epick::Segment_2 (Epick::Point_2 (1, 2), Epick::Point_2 (3, 4)));
@@ -53,17 +47,11 @@ int main()
 
   test (CGAL::Bbox_3 ());
   
-  test (SC::Direction_3 (1, 2, 3));
-  test (Epick::Direction_3 (1, 2, 3));
-  
   test (SC::Iso_cuboid_3 (1, 2, 3, 4, 5, 6));
   test (Epick::Iso_cuboid_3 (1, 2, 3, 4, 5, 6));
   
   test (SC::Point_3 (1, 2, 3));
   test (Epick::Point_3 (1, 2, 3));
-  
-  test (SC::Ray_3 (SC::Point_3 (1, 2, 3), SC::Vector_3 (4, 5, 6)));
-  test (Epick::Ray_3 (Epick::Point_3 (1, 2, 3), Epick::Vector_3 (4, 5, 6)));
   
   test (SC::Segment_3 (SC::Point_3 (1, 2, 3), SC::Point_3 (4, 5, 6)));
   test (Epick::Segment_3 (Epick::Point_3 (1, 2, 3), Epick::Point_3 (4, 5, 6)));

@@ -49,12 +49,10 @@ Release date: September 2019
    with `std::unordered_set` and `std::unordered_map`:
    `CGAL::Aff_transformation_2`, `CGAL::Aff_transformation_3`,
    `CGAL::Bbox_2`, `CGAL::Bbox_3`, `CGAL::Circle_2`,
-   `CGAL::Direction_2`, `CGAL::Direction_3`,
-   `CGAL::Iso_cuboid_3`, `CGAL::Iso_rectangle_2`,
-   `CGAL::Point_2`, `CGAL::Point_3`, `CGAL::Ray_2`,
-   `CGAL::Ray_3`, `CGAL::Segment_2`, `CGAL::Segment_3`,
-   `CGAL::Vector_2`, `CGAL::Vector_3`, `CGAL::Weighted_point_2`
-   and `CGAL::Weighted_point_3`.
+   `CGAL::Iso_cuboid_3`, `CGAL::Iso_rectangle_2`, `CGAL::Point_2`,
+   `CGAL::Point_3`, `CGAL::Segment_2`, `CGAL::Segment_3`,
+   `CGAL::Vector_2`, `CGAL::Vector_3`, `CGAL::Weighted_point_2` and
+   `CGAL::Weighted_point_3`.
 
 ### IO Streams
 
