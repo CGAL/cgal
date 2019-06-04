@@ -33,8 +33,6 @@
 
 #include <boost/geometry/io/wkt/read.hpp>
 #include <boost/geometry/io/wkt/write.hpp>
-#include <boost/foreach.hpp>
-
 
 #include <CGAL/IO/traits_point.h>
 #include <CGAL/IO/traits_point_3.h>
@@ -157,7 +155,7 @@ read_multi_linestring_WKT( std::istream& in,
       break;
     }
   }
-  BOOST_FOREACH(LineString& ls, gc)
+  for(LineString& ls : gc)
   {
     mls.push_back(*ls.range);
   }
@@ -312,7 +310,7 @@ write_multi_linestring_WKT( std::ostream& out,
   typedef typename MultiLineString::value_type PointRange;
   typedef internal::Geometry_container<PointRange, boost::geometry::linestring_tag> LineString;
   std::vector<LineString> pr_range;
-  BOOST_FOREACH(PointRange& pr, mls)
+  for(PointRange& pr : mls)
   {
     LineString ls(pr);
     pr_range.push_back(ls);
@@ -374,21 +372,21 @@ read_WKT( std::istream& input,
     {
       MultiPoint mp;
       CGAL::read_multi_point_WKT(input, mp);
-      BOOST_FOREACH(const Point& point, mp)
+      for(const Point& point : mp)
           points.push_back(point);
     }
     else if(type == "MULTILINESTRING")
     {
       MultiLineString mls;
       CGAL::read_multi_linestring_WKT(input, mls);
-      BOOST_FOREACH(const LineString& ls, mls)
+      (const LineString& ls : mls)
           polylines.push_back(ls);
     }
     else if(type == "MULTIPOLYGON")
     {
       MultiPolygon mp;
       CGAL::read_multi_polygon_WKT(input, mp);
-      BOOST_FOREACH(const Polygon& poly, mp)
+      for(const Polygon& poly : mp)
           polygons.push_back(poly);
     }
   }while(input.good() && !input.eof());
