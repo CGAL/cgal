@@ -1,4 +1,22 @@
 #include <QtCore/qglobal.h>
+
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+
+#include <CGAL/iterator.h>
+#include <CGAL/utility.h>
+#include <CGAL/property_map.h>
+#include <CGAL/Surface_mesh.h>
+
+#include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
+#include <CGAL/Polygon_mesh_processing/smooth_shape.h>
+
+#include "Scene.h"
+#include "Scene_surface_mesh_item.h"
+#include "Scene_polyhedron_selection_item.h"
+
+#include "ui_Smoothing_plugin.h"
+
 #include <QTime>
 #include <QAction>
 #include <QMainWindow>
@@ -9,44 +27,14 @@
 #include <QtPlugin>
 #include <QMessageBox>
 
-#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
-
-#include "Scene_polyhedron_selection_item.h"
-#include "Polyhedron_type.h"
-#include "Scene.h"
-
-#include <CGAL/iterator.h>
-#include <CGAL/utility.h>
-#include <boost/graph/graph_traits.hpp>
-#include <CGAL/property_map.h>
-#include <CGAL/Surface_mesh.h>
-#include <CGAL/property_map.h>
-
-#include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
-#include <CGAL/Polygon_mesh_processing/smooth_shape.h>
-
-#include "ui_Smoothing_plugin.h"
-
-#ifdef USE_SURFACE_MESH
-#include "Scene_surface_mesh_item.h"
-typedef Scene_surface_mesh_item Scene_face_graph_item;
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
-#include <CGAL/boost/graph/properties_Surface_mesh.h>
-#else
-#include "Scene_polyhedron_item.h"
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
-typedef Scene_polyhedron_item Scene_face_graph_item;
-#endif
-
-typedef Scene_face_graph_item::Face_graph Face_graph;
+typedef Scene_surface_mesh_item                                     Scene_face_graph_item;
+typedef Scene_face_graph_item::Face_graph                           Face_graph;
 
 using namespace CGAL::Polygon_mesh_processing;
 using namespace CGAL::Three;
-class Polyhedron_demo_smothing_plugin :
-  public QObject,
-  public Polyhedron_demo_plugin_helper
+
+class Polyhedron_demo_smothing_plugin
+  : public QObject, public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
@@ -82,9 +70,9 @@ public:
   bool applicable(QAction*) const
   {
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
-    if (qobject_cast<Scene_face_graph_item*>(scene->item(index)))
+    if(qobject_cast<Scene_face_graph_item*>(scene->item(index)))
       return true;
-    else if (qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index)))
+    else if(qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index)))
       return true;
     else
       return false;
@@ -131,11 +119,11 @@ public Q_SLOTS:
     Scene_face_graph_item* poly_item = qobject_cast<Scene_face_graph_item*>(scene->item(index));
 
     Scene_polyhedron_selection_item* selection_item =
-      qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
+        qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
 
     if(poly_item || selection_item)
     {
-        init_ui();
+      init_ui();
     }
   }
 
@@ -144,7 +132,7 @@ public Q_SLOTS:
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
     Scene_face_graph_item* poly_item = qobject_cast<Scene_face_graph_item*>(scene->item(index));
     Scene_polyhedron_selection_item* selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
-    Face_graph& pmesh = (poly_item != NULL) ? * poly_item->polyhedron() : * selection_item->polyhedron();
+    Face_graph& pmesh = (poly_item != nullptr) ? * poly_item->polyhedron() : * selection_item->polyhedron();
 
     const unsigned int nb_iter = ui_widget.angles_iter_spinBox->value();
     bool projection = ui_widget.projection_checkBox->isChecked();
@@ -170,56 +158,56 @@ public Q_SLOTS:
     }
 
     QApplication::restoreOverrideCursor();
-   }
+  }
 
   void on_area_smoothing_clicked()
   {
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
     Scene_face_graph_item* poly_item = qobject_cast<Scene_face_graph_item*>(scene->item(index));
     Scene_polyhedron_selection_item* selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
-    Face_graph& pmesh = (poly_item != NULL) ? * poly_item->polyhedron() : * selection_item->polyhedron();
+    Face_graph& pmesh = (poly_item != nullptr) ? * poly_item->polyhedron() : * selection_item->polyhedron();
 
     unsigned int nb_iter = ui_widget.areas_iter_spinBox->value();
     bool projection = ui_widget.projection_checkBox->isChecked();
-    const double precision = ui_widget.precision_spinBox->value();
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     if(poly_item)
     {
-      smooth_areas(pmesh, parameters::number_of_iterations(nb_iter)
-                                      .do_project(projection));
+      smooth_areas(pmesh, parameters::number_of_iterations(nb_iter).do_project(projection));
+
       poly_item->invalidateOpenGLBuffers();
       poly_item->itemChanged();
     }
-
     else if(selection_item)
     {
       smooth_areas(selection_item->selected_facets, pmesh, parameters::number_of_iterations(nb_iter)
-                                                          .do_project(projection));
+                                                                      .do_project(projection));
+
       selection_item->poly_item_changed();
       selection_item->changed_with_poly_item();
     }
     else
     {
-      std::cerr<< "Something's gone wrong.\n";
+      std::cerr << "Something's gone wrong.\n";
+      CGAL_assertion(false);
     }
 
     QApplication::restoreOverrideCursor();
-   }
+  }
 
   void on_curvature_flow_clicked()
   {
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
     Scene_face_graph_item* poly_item = qobject_cast<Scene_face_graph_item*>(scene->item(index));
     Scene_polyhedron_selection_item* selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
-    Face_graph& pmesh = (poly_item != NULL) ? * poly_item->polyhedron() : * selection_item->polyhedron();
+    Face_graph& pmesh = (poly_item != nullptr) ? * poly_item->polyhedron() : * selection_item->polyhedron();
 
     int index_id = scene->item_id(poly_item);
+
     const double time_step = ui_widget.time_step_spinBox->value();
     const unsigned int nb_iter = ui_widget.curvature_iter_spinBox->value();
 
-    const bool use_constrained_vertex_map = ui_widget.border_button->isChecked()
-                                            && !CGAL::is_closed(pmesh);
+    const bool use_constrained_vertex_map = ui_widget.border_button->isChecked() && !CGAL::is_closed(pmesh);
     const bool use_explicit = ui_widget.explicit_checkBox->isChecked();
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -227,32 +215,42 @@ public Q_SLOTS:
     if(poly_item)
     {
       if(use_constrained_vertex_map)
+      {
         smooth_along_curvature_flow(pmesh, time_step, parameters::use_explicit_scheme(use_explicit)
-                                                                  .number_of_iterations(nb_iter)
-                                                                  .vertex_is_constrained_map(get_border_constrained_map(pmesh)) );
+                                                                 .number_of_iterations(nb_iter)
+                                                                 .vertex_is_constrained_map(get_border_constrained_map(pmesh)));
+      }
       else
+      {
         smooth_along_curvature_flow(pmesh, time_step, parameters::use_explicit_scheme(use_explicit)
-                                                                  .number_of_iterations(nb_iter));
+                                                                 .number_of_iterations(nb_iter));
+      }
+
       poly_item->invalidateOpenGLBuffers();
       poly_item->itemChanged();
     }
     else if(selection_item)
     {
       if(use_constrained_vertex_map)
+      {
         smooth_along_curvature_flow(selection_item->selected_facets,
                                     pmesh, time_step, parameters::use_explicit_scheme(use_explicit)
-                                                                  .number_of_iterations(nb_iter)
-                                                                  .vertex_is_constrained_map(get_border_constrained_map(pmesh)) );
+                                                                 .number_of_iterations(nb_iter)
+                                                                 .vertex_is_constrained_map(get_border_constrained_map(pmesh)));
+      }
       else
+      {
         smooth_along_curvature_flow(selection_item->selected_facets,
                                     pmesh, time_step, parameters::use_explicit_scheme(use_explicit)
-                                                                  .number_of_iterations(nb_iter));
+                                                                 .number_of_iterations(nb_iter));
+      }
+
       selection_item->poly_item_changed();
       selection_item->changed_with_poly_item();
     }
     else
     {
-      std::cerr<< "Something's gone wrong.\n";
+      std::cerr << "Something's gone wrong.\n";
       CGAL_assertion(false);
     }
 
@@ -269,15 +267,21 @@ private:
   typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<bool> >::type
   get_border_constrained_map(TriangleMesh& tm)
   {
-    typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<bool> >::type vcm =
-      get(CGAL::dynamic_vertex_property_t<bool>(), tm);
-    BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::vertex_descriptor v, vertices(tm))
+    typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor         vertex_descriptor;
+    typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor       halfedge_descriptor;
+
+    typedef CGAL::dynamic_vertex_property_t<bool>                                 Vertex_bool_property;
+    typename boost::property_map<TriangleMesh, Vertex_bool_property>::type vcm = get(Vertex_bool_property(), tm);
+
+    for(vertex_descriptor v : vertices(tm))
       put(vcm, v, false);
-    BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h, halfedges(tm))
+
+    for(halfedge_descriptor h : halfedges(tm))
     {
-      if (CGAL::is_border(h, tm))
+      if(CGAL::is_border(h, tm))
         put(vcm, target(h, tm), true);
     }
+
     return vcm;
   }
 
