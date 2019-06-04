@@ -55,21 +55,19 @@ class Cotangent_weight
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor       vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor     halfedge_descriptor;
 
-  typedef std::pair<halfedge_descriptor, halfedge_descriptor>                 he_pair;
-
 public:
   Cotangent_weight(TriangleMesh& pmesh_, VertexPointMap vpmap_) : CotangentValue(pmesh_, vpmap_) {}
 
   TriangleMesh& pmesh() { return CotangentValue::pmesh(); }
 
-  double operator()(halfedge_descriptor he, he_pair incd_edges)
+  double operator()(halfedge_descriptor he)
   {
     vertex_descriptor vs = source(he, pmesh());
     vertex_descriptor vt = target(he, pmesh());
-    vertex_descriptor v1 = target(incd_edges.first, pmesh());
-    vertex_descriptor v2 = source(incd_edges.second, pmesh());
+    vertex_descriptor v1 = target(next(he, pmesh()), pmesh());
+    vertex_descriptor v2 = source(prev(opposite(he, pmesh()), pmesh()), pmesh());
 
-    return ( CotangentValue::operator()(vs, v1, vt) + CotangentValue::operator()(vs, v2, vt) );
+    return (CotangentValue::operator()(vt, v1, vs) + CotangentValue::operator()(vs, v2, vt));
   }
 };
 
@@ -83,18 +81,19 @@ class Curvature_flow
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor         edge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor         face_descriptor;
 
-  typedef typename GeomTraits::Point_3                                        Point;
+  typedef typename boost::property_traits<VertexPointMap>::value_type         Point;
+  typedef typename boost::property_traits<VertexPointMap>::reference          Point_ref;
+
   typedef typename GeomTraits::Vector_3                                       Vector;
   typedef typename GeomTraits::Triangle_3                                     Triangle;
   typedef std::vector<Triangle>                                               Triangle_list;
 
-  typedef std::pair<halfedge_descriptor, halfedge_descriptor>                 he_pair;
-  typedef std::map<halfedge_descriptor, he_pair>                              Edges_around_map;
-
   typedef Cotangent_weight<TriangleMesh, VertexPointMap>                      Weight_calculator;
 
 public:
-  Curvature_flow(TriangleMesh& pmesh, VertexPointMap& vpmap, VertexConstraintMap& vcmap)
+  Curvature_flow(TriangleMesh& pmesh,
+                 VertexPointMap vpmap,
+                 VertexConstraintMap vcmap)
     :
       mesh_(pmesh),
       vpmap_(vpmap), vcmap_(vcmap),
@@ -112,73 +111,57 @@ public:
         CGAL_precondition(degen_faces.empty());
 
     set_vertex_range(face_range);
-
-    input_triangles_.clear();
-    input_triangles_.reserve(face_range.size());
-
-    for(face_descriptor f : face_range)
-    {
-      Triangle t;
-      construct_triangle(f, mesh_, t);
-      input_triangles_.push_back(t);
-    }
   }
 
+  // @todo should be possible to pass a time step because this is not a very stable process
   void curvature_smoothing()
   {
-    boost::unordered_map<vertex_descriptor, Point> barycenters;
+    // In general, we will smooth whole meshes, so this is better than a map
+    typedef CGAL::dynamic_vertex_property_t<Point>                      Vertex_property_tag;
+    typedef typename boost::property_map<TriangleMesh,
+                                         Vertex_property_tag>::type     Position_map;
+
+    Position_map new_positions = get(Vertex_property_tag(), mesh_);
+
     for(vertex_descriptor v : vrange_)
     {
-      if(!is_border(v, mesh_) && !is_constrained(v))
+      if(is_border(v, mesh_) || is_constrained(v))
+        continue;
+
+      // calculate movement
+      Vector move = CGAL::NULL_VECTOR;
+      double sum_cot_weights = 0;
+      for(halfedge_descriptor hi : halfedges_around_source(v, mesh_))
       {
-        // find incident halfedges
-        Edges_around_map he_map;
-        typename Edges_around_map::iterator it;
-        for(halfedge_descriptor hi : halfedges_around_source(v, mesh_))
-          he_map[hi] = std::make_pair(next(hi, mesh_), prev(opposite(hi, mesh_), mesh_));
+        // weight
+        const double weight = weight_calculator_(hi);
+        sum_cot_weights += weight;
 
-        // calculate movement
-        Vector curvature_normal = CGAL::NULL_VECTOR;
-        double sum_cot_weights = 0;
-        for(it = he_map.begin(); it!= he_map.end(); ++it)
-        {
-          halfedge_descriptor hi = it->first;
-          he_pair incd_edges = it->second;
+        // displacement vector
+        const Point_ref xi = get(vpmap_, source(hi, mesh_));
+        const Point_ref xj = get(vpmap_, target(hi, mesh_));
 
-          // weight
-          double weight = weight_calculator_(hi, incd_edges);;
-          sum_cot_weights += weight;
+        Vector vec = traits_.construct_vector_3_object()(xi, xj);
+        vec = traits_.construct_scaled_vector_3_object()(vec, weight);
 
-          // displacement vector
-          Point xi = get(vpmap_, source(hi, mesh_));
-          Point xj = get(vpmap_, target(hi, mesh_));
-          Vector vec(xj, xi); // towards the vertex that is being moved
+        move = traits_.construct_sum_of_vectors_3_object()(move, vec);
+      }
 
-          // add weight
-          vec *= weight;
+      // divide with total weight
+      if(sum_cot_weights != 0.)
+        move = traits_.construct_scaled_vector_3_object()(move, 1./sum_cot_weights);
 
-          // sum vecs
-          curvature_normal += vec;
-        }
+      Point new_pos = traits_.construct_translated_point_3_object()(get(vpmap_, v), move);
+      put(new_positions, v, new_pos);
+    }
 
-        // divide with total weight
-        if(sum_cot_weights != 0.)
-          curvature_normal /= sum_cot_weights;
-
-        Point weighted_barycenter = get(vpmap_, v) - curvature_normal;
-        barycenters[v] = weighted_barycenter;
-
-      } // not on border
-    } // all vertices
-
-    // update location
-    typedef typename boost::unordered_map<vertex_descriptor, Point>::value_type VP;
-    for(const VP& vp : barycenters)
-      put(vpmap_, vp.first, vp.second);
+    // update locations
+    for(vertex_descriptor v : vrange_)
+      put(vpmap_, v, get(new_positions, v));
   }
 
 private:
-  bool is_constrained(const vertex_descriptor& v)
+  bool is_constrained(const vertex_descriptor v)
   {
     return get(vcmap_, v);
   }
@@ -203,10 +186,9 @@ private:
   // ------------
   TriangleMesh& mesh_;
 
-  VertexPointMap& vpmap_;
+  VertexPointMap vpmap_;
   VertexConstraintMap vcmap_;
 
-  Triangle_list input_triangles_;
   std::vector<vertex_descriptor> vrange_;
 
   Weight_calculator weight_calculator_;
