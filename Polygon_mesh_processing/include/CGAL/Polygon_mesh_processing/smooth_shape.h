@@ -34,10 +34,13 @@
 #include <CGAL/utility.h>
 #include <CGAL/property_map.h>
 
+#include <fstream>
+#include <sstream>
+
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
-// normalized explicit scheme, undocumented
+// normalized explicit scheme
 template<typename TriangleMesh, typename FaceRange, typename NamedParameters>
 void smooth_curvature_flow_explicit(const FaceRange& faces,
                                     TriangleMesh& tmesh,
@@ -68,7 +71,12 @@ void smooth_curvature_flow_explicit(const FaceRange& faces,
   curvature_smoother.init_smoothing(faces);
 
   for(std::size_t i=0; i<nb_iterations; ++i)
+  {
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+    std::cout << "iteration #" << i << std::endl;
+#endif
     curvature_smoother.curvature_smoothing();
+  }
 }
 
 /*!
@@ -127,14 +135,9 @@ void smooth_along_curvature_flow(const FaceRange& faces,
   using boost::choose_param;
   using boost::get_param;
 
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  CGAL::Timer t;
-  std::cout << "Initializing...";
-  std::cout.flush();
-  t.start();
-#endif
-
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type        GeomTraits;
+  GeomTraits gt = choose_param(get_param(np, internal_np::geom_traits), GeomTraits());
+
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type    VertexPointMap;
   VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                       get_property_map(CGAL::vertex_point, tmesh));
@@ -182,35 +185,56 @@ void smooth_along_curvature_flow(const FaceRange& faces,
       "Eigen3 version 3.2 or later is required.");
 #endif
 
-    typedef typename GetSolver<NamedParameters, Default_solver>::type Sparse_solver;
-    typedef typename Sparse_solver::Matrix Eigen_matrix;
-    typedef typename Sparse_solver::Vector Eigen_vector;
+    typedef typename GetSolver<NamedParameters, Default_solver>::type               Sparse_solver;
+    typedef typename Sparse_solver::Matrix                                          Eigen_matrix;
+    typedef typename Sparse_solver::Vector                                          Eigen_vector;
+
     Sparse_solver solver = choose_param(get_param(np, internal_np::sparse_linear_solver), Default_solver());
 
-    std::size_t n = static_cast<int>(vertices(tmesh).size());
+    std::size_t n = vertices(tmesh).size();
     Eigen_matrix A(n, n);
     Eigen_vector bx(n), by(n), bz(n), Xx(n), Xy(n), Xz(n);
-    std::vector<CGAL::Triple<int, int, double> > stiffness;
+    std::vector<CGAL::Triple<std::size_t, std::size_t, double> > stiffness;
 
-    internal::Shape_smoother<TriangleMesh, VertexPointMap, VCMap, Sparse_solver, GeomTraits>
-        smoother(tmesh, vpmap, vcmap);
+    internal::Shape_smoother<TriangleMesh, VertexPointMap, VCMap, Sparse_solver, GeomTraits> smoother(tmesh, vpmap, vcmap, gt);
 
     smoother.init_smoothing(faces);
+
+    // For robustness reasons, the laplacian coefficients are computed only once (only the mass
+    // matrix is updated at every iteration). See Kazdhan et al. "Can Mean-Curvature Flow Be Made Non-Singular?".
     smoother.calculate_stiffness_matrix_elements(stiffness);
 
     for(std::size_t iter = 0; iter < nb_iterations; ++iter)
     {
+      std::cout << "iter: " << iter << std::endl;
+
       smoother.setup_system(A, bx, by, bz, stiffness, time);
       smoother.solve_system(A, Xx, Xy, Xz, bx, by, bz, solver);
       smoother.update_mesh(Xx, Xy, Xz);
+
+      // @tmp (clean fstream sstream includes too)
+      std::stringstream oss;
+      oss << "intermediate_" << iter << ".off" << std::ends;
+      std::ofstream out(oss.str().c_str());
+      out.precision(17);
+      out << tmesh;
+      out.close();
     }
   }
 }
 
-template<typename TriangleMesh, typename NamedParameters>
+template<typename TriangleMesh, typename FaceRange>
+void smooth_along_curvature_flow(const FaceRange& faces,
+                                 TriangleMesh& tmesh,
+                                 const double time)
+{
+  smooth_along_curvature_flow(faces, tmesh, time, parameters::all_default());
+}
+
+template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
 void smooth_along_curvature_flow(TriangleMesh& tmesh,
                                  const double time,
-                                 const NamedParameters& np)
+                                 const CGAL_PMP_NP_CLASS& np)
 {
   smooth_along_curvature_flow(faces(tmesh), tmesh, time, np);
 }
@@ -222,14 +246,14 @@ void smooth_along_curvature_flow(TriangleMesh& tmesh,
   smooth_along_curvature_flow(faces(tmesh), tmesh, time, parameters::all_default());
 }
 
-// API for Polyhedron demo plugin
 namespace internal {
 
+// @todo clean that if it's useless
 template<typename TriangleMesh, typename FaceRange, typename NamedParameters>
 void solve_mcf(const FaceRange& faces,
                TriangleMesh& tmesh,
                const double time,
-               std::vector<CGAL::Triple<int, int, double> >& stiffness,
+               std::vector<CGAL::Triple<std::size_t, std::size_t, double> >& stiffness,
                bool compute_stiffness,
                const NamedParameters& np)
 {
@@ -283,22 +307,22 @@ void solve_mcf(const FaceRange& faces,
   typedef typename Sparse_solver::Vector                                  Eigen_vector;
   Sparse_solver solver = choose_param(get_param(np, internal_np::sparse_linear_solver), Default_solver());
 
-  std::size_t n = static_cast<int>(vertices(tmesh).size());
+  std::size_t n = vertices(tmesh).size();
 
   Eigen_matrix A(n, n);
   Eigen_vector bx(n), by(n), bz(n), Xx(n), Xy(n), Xz(n);
 
   if(compute_stiffness)
   {
-    internal::Shape_smoother<TriangleMesh, VertexPointMap, VCMap, Sparse_solver, GeomTraits>
-        smoother(tmesh, vpmap, vcmap);
+    internal::Shape_smoother<TriangleMesh, VertexPointMap, VCMap, Sparse_solver, GeomTraits> smoother(tmesh, vpmap, vcmap);
+
     smoother.init_smoothing(faces);
     smoother.calculate_stiffness_matrix_elements(stiffness);
   }
   else
   {
-    internal::Shape_smoother<TriangleMesh, VertexPointMap, VCMap, Default_solver, GeomTraits>
-        smoother(tmesh, vpmap, vcmap);
+    internal::Shape_smoother<TriangleMesh, VertexPointMap, VCMap, Default_solver, GeomTraits> smoother(tmesh, vpmap, vcmap);
+
     smoother.init_smoothing(faces);
 
     for(std::size_t i=0; i<nb_iterations; ++i)

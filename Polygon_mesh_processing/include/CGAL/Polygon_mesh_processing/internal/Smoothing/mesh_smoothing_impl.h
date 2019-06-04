@@ -263,8 +263,10 @@ public:
         continue;
 
       Vector bisector = rotate_edge(main_he, incident_pair);
-      bisector = traits_.construct_scaled_vector_3_object()(
-                   bisector, CGAL::approximate_sqrt(sqlength(main_he, mesh_)));
+      double scaling_factor = CGAL::approximate_sqrt(
+                                traits_.compute_squared_distance_3_object()(get(vpmap_, source(main_he, mesh_)),
+                                                                            get(vpmap_, target(main_he, mesh_))));
+      bisector = traits_.construct_scaled_vector_3_object()(bisector, scaling_factor);
       Vector ps_psi(ps, traits_.construct_translated_point_3_object()(pt, bisector));
 
       // small angles carry more weight
@@ -513,7 +515,7 @@ public:
     input_triangles_.clear();
     input_triangles_.reserve(face_range.size());
 
-    BOOST_FOREACH(face_descriptor f, face_range)
+    for(face_descriptor f : face_range)
     {
       halfedge_descriptor h = halfedge(f, mesh_);
       input_triangles_.push_back(traits_.construct_triangle_3_object()(get(vpmap_, source(h, mesh_)),

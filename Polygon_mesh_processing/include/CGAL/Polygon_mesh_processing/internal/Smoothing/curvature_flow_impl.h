@@ -29,6 +29,8 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/smoothing_helpers.h>
+
+#include <CGAL/Dynamic_property_map.h>
 #include <CGAL/utility.h>
 
 #if defined(CGAL_EIGEN3_ENABLED)
@@ -49,21 +51,63 @@ namespace internal {
 
 template<typename TriangleMesh,
          typename VertexPointMap,
+         typename CotangentValue = CGAL::internal::Cotangent_value_Meyer<TriangleMesh, VertexPointMap> >
+struct Edge_cotangent_weight
+    : public CotangentValue
+{
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor     vertex_descriptor;
+
+  Edge_cotangent_weight(TriangleMesh& pmesh_, VertexPointMap vpmap_) : CotangentValue(pmesh_, vpmap_) {}
+
+  TriangleMesh& pmesh() { return CotangentValue::pmesh(); }
+
+  double operator()(halfedge_descriptor he)
+  {
+    if(is_border_edge(he, pmesh()))
+    {
+      halfedge_descriptor h1 = next(he, pmesh());
+      vertex_descriptor vs = source(he, pmesh());
+      vertex_descriptor vt = target(he, pmesh());
+      vertex_descriptor v1 = target(h1, pmesh());
+
+      return CotangentValue::operator()(vs, v1, vt);
+    }
+    else
+    {
+      halfedge_descriptor h1 = next(he, pmesh());
+      halfedge_descriptor h2 = prev(opposite(he, pmesh()), pmesh());
+      vertex_descriptor vs = source(he, pmesh());
+      vertex_descriptor vt = target(he, pmesh());
+      vertex_descriptor v1 = target(h1, pmesh());
+      vertex_descriptor v2 = source(h2, pmesh());
+
+      return CotangentValue::operator()(vs, v1, vt) + CotangentValue::operator()(vs, v2, vt);
+    }
+  }
+};
+
+template<typename TriangleMesh,
+         typename VertexPointMap,
          typename VertexConstraintMap,
          typename SparseLinearSolver,
          typename GeomTraits>
 class Shape_smoother
 {
-  typedef typename GeomTraits::FT                                                 NT;
+  typedef typename GeomTraits::FT                                                 FT;
   typedef typename GeomTraits::Point_3                                            Point;
+  typedef typename GeomTraits::Vector_3                                           Vector;
   typedef typename boost::property_traits<VertexPointMap>::reference              Point_ref;
-  typedef CGAL::Triple<int, int, double>                                          Triplet;
+
+  typedef CGAL::Triple<std::size_t, std::size_t, double>                          Triplet;
 
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor           vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor         halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor             edge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor             face_descriptor;
-  typedef typename boost::property_map<TriangleMesh, boost::vertex_index_t>::type IndexMap;
+
+  typedef CGAL::dynamic_vertex_property_t<std::size_t>                            Vertex_local_index;
+  typedef typename boost::property_map<TriangleMesh, Vertex_local_index>::type    IndexMap;
 
   // linear system
   typedef typename SparseLinearSolver::Matrix                                     Eigen_matrix;
@@ -72,20 +116,43 @@ class Shape_smoother
 public:
   Shape_smoother(TriangleMesh& mesh,
                  VertexPointMap& vpmap,
-                 VertexConstraintMap& vcmap)
+                 VertexConstraintMap& vcmap,
+                 const GeomTraits& traits)
     :
       mesh_(mesh),
       vpmap_(vpmap),
       vcmap_(vcmap),
-      vimap_(get(boost::vertex_index, mesh_)),
+      vimap_(get(Vertex_local_index(), mesh_)),
+      traits_(traits),
       weight_calculator_(mesh, vpmap)
-  {}
+  { }
 
   template<typename FaceRange>
   void init_smoothing(const FaceRange& face_range)
   {
     set_face_range(face_range);
-    nb_vert_ = vrange_.size();
+
+    std::size_t id = 0;
+    for(vertex_descriptor v : vertices(mesh_))
+      put(vimap_, v, id++);
+
+    // vertices that are not in the range or are constrained still need value '1' in D because the RHS is D * X^n
+    diagonal_.assign(vertices(mesh_).size(), 1.);
+    constrained_flags_.assign(vertices(mesh_).size(), false);
+
+    std::size_t counter = 0; // @tmp
+
+    for(vertex_descriptor v : vrange_)
+    {
+      if(is_constrained(v))
+      {
+        ++counter;
+        constrained_flags_[get(vimap_, v)] = true;
+        anchor_point = get(vpmap_, v);
+      }
+    }
+
+    std::cout << counter << " vertices are constrained" << std::endl;
   }
 
   void setup_system(Eigen_matrix& A,
@@ -97,174 +164,125 @@ public:
     compute_rhs(bx, by, bz);
   }
 
-  void solve_system(const Eigen_matrix& A,
+  bool solve_system(const Eigen_matrix& A,
                     Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz,
                     const Eigen_vector& bx, const Eigen_vector& by, const Eigen_vector& bz,
                     SparseLinearSolver& solver)
   {
-    NT D;
+    FT D;
+
     // calls compute once to factorize with the preconditioner
     if(!solver.factor(A, D))
     {
       std::cerr << "Could not factorize linear system with preconditioner." << std::endl;
-      return;
+      return false;
     }
 
     if(!solver.linear_solver(bx, Xx) ||
        !solver.linear_solver(by, Xy) ||
-       !solver.linear_solver(bz, Xz) )
+       !solver.linear_solver(bz, Xz))
     {
       std::cerr << "Could not solve linear system." << std::endl;
-      return;
+      return false;
     }
+
+    return true;
   }
 
   void calculate_stiffness_matrix_elements(std::vector<Triplet>& stiffness_elements)
   {
     CGAL_assertion(stiffness_elements.empty());
-    stiffness_elements.reserve(8 * nb_vert_); //estimation
+    stiffness_elements.reserve(8 * vrange_.size());
 
-    boost::unordered_map<int, NT> diag_coeff;
+    std::unordered_map<std::size_t, double> diag_coeff;
     for(face_descriptor f : frange_)
     {
       for(halfedge_descriptor hi : halfedges_around_face(halfedge(f, mesh_), mesh_))
       {
+        // Get a single canonical non-border halfedge per edge
+        if(is_border(hi, mesh_))
+          continue;
+
         halfedge_descriptor hi_opp = opposite(hi, mesh_);
-        if(!is_border(hi_opp, mesh_) && hi > hi_opp) continue;
+        if(!is_border(hi_opp, mesh_) && hi < hi_opp)
+          continue;
+
         vertex_descriptor v_source = source(hi, mesh_);
         vertex_descriptor v_target = target(hi, mesh_);
 
-        if(!is_constrained(v_source) && !is_constrained(v_target))
+        if(!is_constrained(v_source) && !is_constrained(v_target)) // @fixme this seems wrong
         {
-          int i_source = static_cast<int>(vimap_[v_source]);
-          int i_target = static_cast<int>(vimap_[v_target]);
-          NT Lij = weight_calculator_(hi);
-          if (!is_border(hi_opp, mesh_))
-            Lij+= weight_calculator_(hi_opp);
+          std::size_t i_source = get(vimap_, v_source);
+          std::size_t i_target = get(vimap_, v_target);
+
+          const FT Lij = weight_calculator_(hi);
+
           stiffness_elements.push_back(Triplet(i_source, i_target, Lij));
           stiffness_elements.push_back(Triplet(i_target, i_source, Lij));
-          diag_coeff.insert(std::make_pair(i_source,0)).first->second -= Lij;
-          diag_coeff.insert(std::make_pair(i_target,0)).first->second -= Lij;
+
+          diag_coeff.insert(std::make_pair(i_source, 0)).first->second -= Lij;
+          diag_coeff.insert(std::make_pair(i_target, 0)).first->second -= Lij;
         }
       }
     }
 
-    for(typename boost::unordered_map<int, NT>::iterator p = diag_coeff.begin();
-        p != diag_coeff.end(); ++p)
-    {
-      stiffness_elements.push_back(Triplet(p->first, p->first, p->second));
-    }
+    typename std::unordered_map<std::size_t, double>::iterator it = diag_coeff.begin(),
+                                                               end = diag_coeff.end();
+    for(; it!=end; ++it)
+      stiffness_elements.push_back(Triplet(it->first, it->first, it->second));
   }
 
-  void update_mesh(Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz)
+  void update_mesh(const Eigen_vector& Xx, const Eigen_vector& Xy, const Eigen_vector& Xz)
   {
+    namespace PMP = CGAL::Polygon_mesh_processing;
+
+    const FT old_vol = volume(mesh_, parameters::vertex_point_map(vpmap_).geom_traits(traits_));
+
+    // If no vertex is constrained, then the smoothed mesh will simply share the same centroid as the input mesh
+    Point pre_smooth_anchor_point;
+    if(anchor_point != boost::none)
+      pre_smooth_anchor_point = *anchor_point;
+    else
+      pre_smooth_anchor_point = PMP::centroid(mesh_, parameters::vertex_point_map(vpmap_).geom_traits(traits_));
+
+    std::map<vertex_descriptor, Point> initial_pos; // @tmp for output
+
     for(vertex_descriptor v : vrange_)
     {
       std::size_t index = get(vimap_, v);
-      NT x_new = Xx[index];
-      NT y_new = Xy[index];
-      NT z_new = Xz[index];
-      put(vpmap_, v, Point(x_new, y_new, z_new));
+      FT x_new = Xx[index];
+      FT y_new = Xy[index];
+      FT z_new = Xz[index];
+
+      initial_pos[v] = get(vpmap_, v); // @tmp
+
+      Point new_pos(x_new, y_new, z_new);
+      put(vpmap_, v, new_pos);
     }
+
+    Point post_smooth_anchor_point;
+    if(anchor_point != boost::none)
+      post_smooth_anchor_point = *anchor_point;
+    else
+      post_smooth_anchor_point = PMP::centroid(mesh_, parameters::vertex_point_map(vpmap_).geom_traits(traits_));
+
+    const FT new_vol = volume(mesh_, parameters::vertex_point_map(vpmap_));
+    CGAL_assertion(new_vol != 0);
+    const FT inflating_factor = std::cbrt(CGAL::abs(old_vol / new_vol));
+
+    for(vertex_descriptor v : vertices(mesh_))
+    {
+      Vector d = traits_.construct_vector_3_object()(post_smooth_anchor_point, get(vpmap_, v));
+      Point new_pos = traits_.construct_translated_point_3_object()(pre_smooth_anchor_point,
+                        traits_.construct_scaled_vector_3_object()(d, inflating_factor));
+
+      put(vpmap_, v, new_pos);
+    }
+
+    // @todo check for degenerate faces appearing (?)
   }
 
 private:
-
-  // compute linear system
-  // -----------------------------------
-  void compute_coefficient_matrix(Eigen_matrix& A,
-                                  std::vector<Triplet>& stiffness_elements,
-                                  const double& time)
-  {
-    CGAL_assertion(A.row_dimension() != 0);
-    CGAL_assertion(A.column_dimension() != 0);
-    CGAL_assertion(std::size_t(A.row_dimension()) == nb_vert_);
-    CGAL_assertion(std::size_t(A.column_dimension()) == nb_vert_);
-
-    calculate_D_diagonal(diagonal_);
-    CGAL_assertion(diagonal_.size() == nb_vert_);
-
-    // fill A = D - time * L
-    for(const Triplet& t : stiffness_elements)
-    {
-      if (t.get<0>() != t.get<1>())
-        A.set_coef(t.get<0>(), t.get<1>(), -time * t.get<2>(), true);
-      else
-      {
-        A.set_coef(t.get<0>(), t.get<1>(), diagonal_[t.get<0>()] -time * t.get<2>(), true);
-      }
-    }
-
-    apply_constraints(A);
-    // we do not call A.assemble_matrix here
-    // Eigen's compute during factorization does the building correctly,
-    // and without assemble_matrix the reference A can be used in the next iterations.
-  }
-
-  void calculate_D_diagonal(std::vector<double>& diagonal)
-  {
-    // calculates all elements on the diagonal of D
-    // and marks the entries that correspond to constrained vertices
-
-    diagonal.assign(nb_vert_, 0);
-    constrained_flags_.assign(nb_vert_, false);
-
-    for(face_descriptor f : frange_)
-    {
-      double area = face_area(f, mesh_);
-      for(vertex_descriptor v : vertices_around_face(halfedge(f, mesh_), mesh_))
-      {
-        std::size_t idx = vimap_[v];
-        if(!is_constrained(v))
-        {
-          diagonal[idx] += area / 6.0; // 2*area/12
-        }
-        else
-        {
-          constrained_flags_[idx] = true;
-          diagonal[idx] = 1.0; // needed at multiplication D*b when computing rhs
-        }
-      }
-    }
-  }
-
-  void compute_rhs(Eigen_vector& bx, Eigen_vector& by, Eigen_vector& bz)
-  {
-    CGAL_assertion(diagonal_.size() == nb_vert_);
-    CGAL_assertion(std::size_t(bx.size()) == nb_vert_);
-    CGAL_assertion(std::size_t(by.size()) == nb_vert_);
-    CGAL_assertion(std::size_t(bz.size()) == nb_vert_);
-
-    for(vertex_descriptor vi : vrange_)
-    {
-      std::size_t index = vimap_[vi];
-      Point_ref p = get(vpmap_, vi);
-      bx.set(index, p.x());
-      by.set(index, p.y());
-      bz.set(index, p.z());
-    }
-
-    // multiply D * b
-    for(std::size_t i = 0; i < nb_vert_; ++i)
-    {
-      bx[i] *= diagonal_[i];
-      by[i] *= diagonal_[i];
-      bz[i] *= diagonal_[i];
-    }
-  }
-
-  // handling constrains
-  // -----------------------------------
-  void apply_constraints(Eigen_matrix& A)
-  {
-    CGAL_assertion(constrained_flags_.size() == nb_vert_);
-    for(std::size_t i = 0; i < nb_vert_; ++i)
-    {
-      if(constrained_flags_[i] == true)
-        A.set_coef(i, i, 1.0, true);
-    }
-  }
-
   bool is_constrained(const vertex_descriptor& v)
   {
     return get(vcmap_, v);
@@ -280,26 +298,99 @@ private:
       for(vertex_descriptor v : vertices_around_face(halfedge(f, mesh_), mesh_))
         vrange_.push_back(v);
     }
+
     // get rid of duplicate vertices
     std::sort(vrange_.begin(), vrange_.end());
     vrange_.erase(std::unique(vrange_.begin(), vrange_.end()), vrange_.end());
   }
 
-  private:
-  // data members
-  // ------------
-  std::size_t nb_vert_;
+  void compute_coefficient_matrix(Eigen_matrix& A,
+                                  std::vector<Triplet>& stiffness_elements,
+                                  const double& time)
+  {
+    fill_mass_matrix();
+
+    // fill A = M - time * L
+    for(const Triplet& t : stiffness_elements)
+    {
+      std::size_t i = t.get<0>(), j = t.get<1>();
+      if(i != j)
+      {
+        A.set_coef(i, j, - time * t.get<2>(), true);
+      }
+      else if(!constrained_flags_[i]) // i==j
+      {
+        A.set_coef(i, i, diagonal_[t.get<0>()] - time * t.get<2>(), true);
+      }
+    }
+
+    for(vertex_descriptor v : vrange_)
+    {
+      std::size_t index = get(vimap_, v);
+      if(constrained_flags_[index])
+      {
+        std::cout << "A[" << index <<", " << index << "] = 1 (constrained)" << std::endl;
+        A.set_coef(index, index, 1., true);
+      }
+    }
+
+    // we do not call A.assemble_matrix here
+    // Eigen's compute during factorization does the building correctly,
+    // and without assemble_matrix the reference A can be used in the next iterations.
+  }
+
+  void fill_mass_matrix()
+  {
+    for(vertex_descriptor v : vrange_)
+    {
+      std::size_t index = get(vimap_, v);
+      if(!is_constrained(v))
+        diagonal_[index] = 0.;
+    }
+
+    for(face_descriptor f : frange_)
+    {
+      const double area = face_area(f, mesh_, parameters::vertex_point_map(vpmap_).geom_traits(traits_));
+
+      for(vertex_descriptor v : vertices_around_face(halfedge(f, mesh_), mesh_))
+      {
+        if(!is_constrained(v))
+          diagonal_[get(vimap_, v)] += area / 6.;
+      }
+    }
+  }
+
+  void compute_rhs(Eigen_vector& bx, Eigen_vector& by, Eigen_vector& bz)
+  {
+    for(vertex_descriptor vi : vertices(mesh_))
+    {
+      std::size_t index = get(vimap_, vi);
+      Point_ref p = get(vpmap_, vi);
+      bx.set(index, diagonal_[index] * p.x());
+      by.set(index, diagonal_[index] * p.y());
+      bz.set(index, diagonal_[index] * p.z());
+    }
+  }
+
+private:
+  std::vector<vertex_descriptor> vrange_;
+  std::vector<face_descriptor> frange_;
   TriangleMesh& mesh_;
-  VertexPointMap& vpmap_;
-  VertexConstraintMap& vcmap_;
+
+  VertexPointMap vpmap_;
+  VertexConstraintMap vcmap_;
   IndexMap vimap_;
+
+  // Smoothing has a tendency to reduce volumes, so we scale things back up based on the change
+  // of volume. We also need an anchor point to scale up, either a constrained point or the centroid
+  // of the initial mesh if no vertex is constrained.
+  boost::optional<Point> anchor_point;
 
   // linear system data
   std::vector<double> diagonal_; // index of vector -> index of vimap_
   std::vector<bool> constrained_flags_;
 
-  std::vector<face_descriptor> frange_;
-  std::vector<vertex_descriptor> vrange_;
+  const GeomTraits& traits_;
   Edge_cotangent_weight<TriangleMesh, VertexPointMap> weight_calculator_;
 };
 
