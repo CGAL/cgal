@@ -82,7 +82,7 @@ struct Has_type_different_from <T, No, true>
 		template<class FT>
 		decltype(auto) operator()(FT&& x)const
 		{
-			return scale*std::forward<FT>(x);
+			return (scale*std::forward<FT>(x));
 		}
 	};
 	template<class NT,class T> struct Divide {
