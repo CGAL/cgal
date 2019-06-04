@@ -77,6 +77,12 @@ The value type of this iterator is `Constraint_id`.
 typedef unspecified_type Constraint_iterator; 
 
 /*!
+A range type for iterating over all constraints.
+*/  
+typedef Iterator_range<Constraint_iterator> Constraints;
+
+  
+/*!
 A subconstraint is a pair of vertices that correspond to an `Edge`.
  */
 typedef std::pair<Vertex_handle, Vertex_handle> Subconstraint;
@@ -201,13 +207,13 @@ void swap(Constrained_triangulation_plus_2 tr);
 /// @{
 
 /*! 
-Inserts point `p` as a vertex of the triangulation. 
+inserts point `p` as a vertex of the triangulation. 
 */ 
 Vertex_handle insert(const Point& p, 
 Face_handle start = Face_handle() ); 
 
 /*! 
-Inserts point `p` in the triangulation at the location given by `(lt,loc,i)`. 
+inserts point `p` in the triangulation at the location given by `(lt,loc,i)`. 
 \sa `Triangulation_2::locate()`
 */ 
 Vertex_handle insert(const Point& p, 
@@ -220,7 +226,7 @@ Equivalent to `insert(p)`.
 Vertex_handle push_back(const Point& p); 
 
 /*! 
-Inserts the points in the range `[first,last)`.
+inserts the points in the range `[first,last)`.
 Returns the number of inserted points. 
 \tparam PointIterator must be an `InputIterator` with the value type `Point`. 
 */ 
@@ -229,19 +235,19 @@ size_type
 insert(PointIterator first, PointIterator last); 
 
 /*! 
-Inserts the constraint segment `ab` in the triangulation.
+inserts the constraint segment `ab` in the triangulation.
 If the two points are equal the point is inserted but no constraint,
 and the default constructed `Constraint_id` is returned.
 */ 
 Constraint_id insert_constraint(Point a, Point b);
 
 /*! 
-Inserts the constraint `c`. 
+inserts the constraint `c`. 
 */ 
   void push_back(const std::pair<Point,Point>& c); 
 
 /*! 
-Inserts a constraint whose endpoints are the vertices 
+inserts a constraint whose endpoints are the vertices 
 pointed by `va` and `vb` in the triangulation.
 If the two vertex handles are equal no constraint is inserted,
 and the default constructed `Constraint_id` is returned.
@@ -249,7 +255,7 @@ and the default constructed `Constraint_id` is returned.
 Constraint_id insert_constraint(Vertex_handle va, Vertex_handle vb);
 
 /*!
-Inserts a polyline defined by the points in the range `[first,last)`
+inserts a polyline defined by the points in the range `[first,last)`
 and returns the constraint id.
 The polyline is considered as a closed curve if the first and last point are equal or if  `close == true`. This enables for example passing the vertex range of a `Polygon_2`.
 When traversing the vertices of a closed polyline constraint with a  `Vertices_in_constraint_iterator` the first and last vertex are the same.
@@ -288,7 +294,7 @@ std::size_t insert_constraints(PointIterator points_first, PointIterator points_
 
 
 /*! 
-Removes the constraint `cid`, without removing the points from the triangulation.
+removes the constraint `cid`, without removing the points from the triangulation.
 */ 
 void remove_constraint(Constraint_id cid); 
 
@@ -298,29 +304,39 @@ void remove_constraint(Constraint_id cid);
 /// @{
 
 /*! 
-Returns a `Constraint_iterator` that points at the first 
+returns a `Constraint_iterator` that points at the first 
 constraint of the triangulation. 
 */ 
 Constraint_iterator constraints_begin() const; 
 
 /*! 
-Returns the past-the-end iterator of the constraints of the triangulation. 
+returns the past-the-end iterator of the constraints of the triangulation. 
 */ 
 Constraint_iterator constraints_end() const; 
 
+/*!
+returns a range of constraints.
+*/ 
+Subconstraints constraints() const;  
+  
 /*! 
-Returns a `Subconstraint_iterator` pointing at the first 
+returns a `Subconstraint_iterator` pointing at the first 
 subconstraint of the triangulation. 
 */ 
 Subconstraint_iterator subconstraints_begin() const; 
 
 /*! 
-Returns the past-the-end iterator of the subconstraints of the triangulation. 
+returns the past-the-end iterator of the subconstraints of the triangulation. 
 */ 
 Subconstraint_iterator subconstraints_end() const; 
 
+/*!
+returns a range of subconstraints.
+*/ 
+Subconstraints subconstraints() const;  
+
 /*! 
-Returns the number of constraints enclosing the subconstraint 
+returns the number of constraints enclosing the subconstraint 
 `(va,vb)`. 
 \pre `va` and `vb` refer to the vertices of a constrained edge of the triangulation. 
 */ 
@@ -328,14 +344,14 @@ int number_of_enclosing_constraints(Vertex_handle va,
 Vertex_handle vb) const; 
 
 /*! 
-Returns the `Context` relative to one of the constraints 
+returns the `Context` relative to one of the constraints 
 enclosing the subconstraint `(va,vb)`. 
 \pre `va` and `vb` refer to the vertices of a constrained edge of the triangulation. 
 */ 
 Context context(Vertex_handle va, Vertex_handle vb) const; 
 
 /*! 
-Returns an iterator pointing at the first `Context` 
+returns an iterator pointing at the first `Context` 
 of the sequence of contexts
 corresponding to the constraints enclosing the subconstraint `(va,vb)`. 
 \pre `va` and `vb` refer to the vertices of a constrained edge of the triangulation. 
@@ -344,7 +360,7 @@ Context_iterator contexts_begin(Vertex_handle va,
                                 Vertex_handle vb) const; 
 
 /*!
-Returns an iterator past the end `Context` 
+returns an iterator past the end `Context` 
 of the sequence of contexts
 corresponding to the constraints enclosing the subconstraint `(va,vb)`. 
 \pre `va` and `vb` refer to the vertices of a constrained edge of the triangulation. 
@@ -353,22 +369,28 @@ Context_iterator contexts_end(Vertex_handle va,
                               Vertex_handle vb) const; 
 
 /*!
-Returns a range of contexts.
+returns a range of contexts.
 */
 Contexts contexts((Vertex_handle va, 
                      Vertex_handle vb) const; 
   
 /*!
-Returns an iterator on the first vertex on the constraint `cid`. 
+returns an iterator on the first vertex on the constraint `cid`. 
 */ 
 Vertices_in_constraint_iterator 
 vertices_in_constraint_begin(Constraint_id cid) const; 
 
 /*!
-Returns an iterator past the last vertex on the constraint `cid`. 
+returns an iterator past the last vertex on the constraint `cid`. 
 */ 
 Vertices_in_constraint_iterator 
 vertices_in_constraint_end(Constraint_id cid) const; 
+
+/*!
+returns an range of vertices on the constraint `cid`. 
+*/ 
+Vertices_in_constraint
+vertices_in_constraint(Constraint_id cid) const; 
 
 /// @}
 

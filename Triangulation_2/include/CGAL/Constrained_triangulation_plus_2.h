@@ -191,7 +191,8 @@ public:
   typedef Iterator_range<Context_iterator>                Contexts;
   
   typedef typename Constraint_hierarchy::C_iterator   Constraint_iterator;
-
+  typedef Iterator_range<Constraint_iterator> Cconstraints;
+  
   typedef typename Constraint_hierarchy::Subconstraint_iterator  Subconstraint_iterator;
   typedef Iterator_range<Subconstraint_iterator> Subconstraints;
   
@@ -772,6 +773,11 @@ public:
   // Query of the constraint hierarchy
   Constraint_iterator constraints_begin() const;
   Constraint_iterator constraints_end()   const;
+  Constraints constraints() const
+  {
+    return Constraints(constraints_begin(),constraints_end());
+  }
+  
   Subconstraint_iterator subconstraints_begin() const;
   Subconstraint_iterator subconstraints_end() const;
 
