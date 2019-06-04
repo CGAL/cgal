@@ -21,7 +21,7 @@ Release date: September 2019
 ### 3D Triangulations
 -   **Breaking change**: The constructor and the `insert()` function of `CGAL::Triangulation_3` which takes
     a range of points as argument no longer performs a `spatial_sort()` of the points.
--   Add constructor and`insert` function to `CGAL::Triangulation_3` that takes a range of points with info.  
+-   Add constructor and `insert()` function to `CGAL::Triangulation_3` that takes a range of points with info.  
     
 ### Surface Mesh
  -   New functions to read and write using the PLY format,
