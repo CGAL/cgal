@@ -166,6 +166,12 @@ public:
   typedef internal::Triangulation_ds_cell_circulator_3<Tds>  Cell_circulator;
   typedef internal::Triangulation_ds_facet_circulator_3<Tds> Facet_circulator;
 
+  typedef Iterator_range<Prevent_deref<Cell_iterator> >    Cell_handles;
+  typedef Iterator_range<Prevent_deref<Vertex_iterator> >  Vertex_handles;
+
+  typedef Iterator_range<Facet_iterator> Facets;
+    typedef Iterator_range<Edge_iterator> Edges;
+  
 //private: // In 2D only :
   typedef internal::Triangulation_ds_face_circulator_3<Tds>  Face_circulator;
 
@@ -564,6 +570,11 @@ public:
     return cells().end();
   }
 
+  Cell_handles cell_handles() const
+  {
+    return make_prevent_deref_range(cells_begin(), cells_end()); 
+  }
+  
   Cell_iterator raw_cells_begin() const
   {
     return cells().begin();
@@ -586,6 +597,11 @@ public:
     return Facet_iterator(this, 1);
   }
 
+  Facets facets() const
+  {
+    return Facets(facets_begin(), facets_end());
+  }
+  
   Edge_iterator edges_begin() const
   {
     if ( dimension() < 1 )
@@ -598,6 +614,11 @@ public:
     return Edge_iterator(this,1);
   }
 
+  Edges edges() const
+  {
+    return Edges(edges_begin(), edges_end());
+  }
+  
   Vertex_iterator vertices_begin() const
   {
     return vertices().begin();
@@ -608,6 +629,11 @@ public:
     return vertices().end();
   }
 
+  Vertex_handles vertex_handles() const
+  {
+    return make_prevent_deref_range(vertices_begin(), vertices_end()); 
+  }
+  
   // CIRCULATOR METHODS
 
   // cells around an edge

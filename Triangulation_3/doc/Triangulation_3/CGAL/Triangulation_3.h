@@ -228,19 +228,57 @@ In order to write \cpp 11 `for`-loops we provide range types.
 
 */
 /// @{
-
+  
+/*!
+range type for iterating over all cell handles, with a nested type `iterator`
+that has as value type `Cell_handle`.
+*/ 
+  typedef Iterator_range<unspecified_type> All_cell_handles;
+  
   
 /*!
 range type for iterating over facets.
 */
-  typedef Iterator_range<Facet_iterator> All_facets;
+  typedef Iterator_range<All_facets_iterator> All_facets;
+  
+/*!
+range type for iterating over edges.
+*/
+  typedef Iterator_range<All_edges_iterator> All_edges;
   
 /*!
 range type for iterating over all vertex handles, with a nested type `iterator`
 that has as value type `Vertex_handle`.
 */ 
   typedef Iterator_range<unspecified_type> All_vertex_handles;
+
+  /*!
+range type for iterating over finite cell handles, with a nested type `iterator`
+that has as value type `Cell_handle`.
+*/ 
+  typedef Iterator_range<unspecified_type> Finite_cell_handles;
   
+  
+/*!
+range type for iterating over finite facets.
+*/
+  typedef Iterator_range<Finite_facets_iterator> Finite_facets;
+  
+/*!
+range type for iterating over finite edges.
+*/
+  typedef Iterator_range<Finite_edges_iterator> Finite_edges;
+  
+/*!
+range type for iterating over finite vertex handles, with a nested type `iterator`
+that has as value type `Vertex_handle`.
+*/ 
+  typedef Iterator_range<unspecified_type> Finite_vertex_handles;
+
+/*!
+  range type for iterating over the points of the finite vertices.
+ */
+  typedef Iterator_range<unspecified_type> Points;
 /// @}
 
 /// \name Creation 
@@ -1159,11 +1197,34 @@ Point_iterator points_end() const;
 /*! \name Ranges
 
 In order to write \cpp 11 `for`-loops we provide a range type and member functions to generate ranges.
-Note that vertex and cell ranges are special.
+Note that vertex and cell ranges are special. See Section \ref Triangulation3secRanges in the User Manual.
 
 */
 
 /// @{
+
+/*!
+  returns a range of iterators over all cells (even the infinite one).
+  Returns an empty range when `t.number_of_cells() == 0`. 
+  \note While the value type of `All_cells_iterator` is `Cell`, the value type of 
+  `All_cell_handles::iterator` is `Cell_handle`.
+ */
+  All_cell_handles all_cell_handles() const;
+
+ 
+  
+/*!
+  returns a range of iterators starting at an arbitrary facet.
+  Returns an empty range when `t.dimension() < 2`. 
+*/
+All_facets all_facets() const;
+ 
+/*!
+  returns a range of iterators starting at an arbitrary edge.
+  Returns an empty range when `t.dimension() < 2`. 
+*/
+All_edges all_edges() const;
+ 
 /*!
   returns a range of iterators over all vertices (even the infinite one).
   Returns an empty range when `t.number_of_vertices() == 0`. 
@@ -1172,13 +1233,43 @@ Note that vertex and cell ranges are special.
  */
   All_vertex_handles all_vertex_handles() const;
 
+  
+/*!
+  returns a range of iterators over finite cells.
+  Returns an empty range when `t.number_of_cells() == 0`. 
+  \note While the value type of `Finite_cells_iterator` is `Cell`, the value type of 
+  `Finite_cell_handles::iterator` is `Cell_handle`.
+ */
+  Finite_cell_handles finite_cell_handles() const;
 
+ 
+  
 /*!
   returns a range of iterators starting at an arbitrary facet.
   Returns an empty range when `t.dimension() < 2`. 
 */
-All_facets all_facets() const;
+Finite_facets finite_facets() const;
+ 
+/*!
+  returns a range of iterators starting at an arbitrary edge.
+  Returns an empty range when `t.dimension() < 2`. 
+*/
+Finite_edges finite_edges() const;
+ 
+/*!
+  returns a range of iterators over finite vertices.
+  Returns an empty range when `t.number_of_vertices() == 0`. 
+  \note While the value type of `Finite_vertices_iterator` is `Vertex`, the value type of 
+  `Finite_vertex_handles::iterator` is `Vertex_handle`.
+ */
+  Finite_vertex_handles finite_vertex_handles() const;
+
+  /*!
+    returns a range of iterators over the points of finite vertices.
+   */
+  Points points() const;
   
+ 
 /// @} 
   
 /*!\name Cell and Facet Circulators 
