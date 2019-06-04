@@ -134,6 +134,7 @@ struct Test {
 	Res tmp;
 	assert(CGAL::do_intersect(o1, o2));
 	assert(CGAL::assign(tmp, CGAL::intersection(o1, o2)));
+        std::cout<<tmp<<std::endl;
 	assert(approx_equal(tmp, result));
 	if (do_opposite) {
 	  assert(CGAL::do_intersect(o2, o1));
@@ -569,8 +570,6 @@ struct Test {
   {
     std::cout << "Tetrahedron_3 - Line_3\n";
 
-    //check_intersection     (S(P(-3,0,0),P(3,0,0)),R(P(3,-2,0),P(3,0,0)),P(3,0,0));
-    //check_no_intersection  (S(P(-3,0,0),P(3,0,0)),R(P(0,-1,0),P(0,-2,0)));
     Tet tet(P(0,0,0), P(0,1,0), P(1,0,0), P(0,0,1));
     check_no_intersection (tet, L(P(5,0,0), P(5,1,0)));
     check_intersection (tet, L(P(0,2,0), P(0,3,0)), S(P(0,0,0), P(0,1,0)));
@@ -579,11 +578,27 @@ struct Test {
 
   }
 
+  void Tet_S()
+  {
+    std::cout << "Tetrahedron_3 - Segment_3\n";
+
+    Tet tet(P(0,0,0), P(0,1,0), P(1,0,0), P(0,0,1));
+    check_no_intersection (tet, L(P(5,0,0), P(5,1,0)));
+    check_intersection (tet, S(P(0,2,0), P(0,-2,0)), S(P(0,1,0), P(0,0,0)));
+    check_intersection (tet, S(P(0,1,0), P(0.25,0,0.25)), S(P(0,1,0), P(0.25,0,0.25)));
+    check_intersection (tet, S(P(2,1,0), P(-2,1,0)), P(0,1,0));
+
+    check_intersection (tet, S(P(0.1,0.1,0.1), P(0.2,0.2,0.2)), S(P(0.1,0.1,0.1), P(0.2,0.2,0.2)));
+    typename K::FT coord = 1.0/3.0;
+    check_intersection (tet, S(P(0.25,0.25,0.25), P(2,2,2)), S(P(0.25,0.25,0.25), P(coord, coord, coord)));
+
+  }
+
   void run(bool is_exact = false)
   {
     std::cout << "3D Intersection tests\n";
     P_do_intersect();
-    Cub_Cub();
+   /* Cub_Cub();
     L_Cub();
     Pl_L();
     Pl_Pl();
@@ -596,12 +611,16 @@ struct Test {
     S_L();
     R_L();
     R_S();
-    R_R();
-    if(is_exact)
+    R_R();*/
+    if(is_exact){
       Tet_L();
+      Tet_S();
+    }
+    /*
     Bbox_L();
     Bbox_R();
     Bbox_Tr();
+    */
   }
 
 };
