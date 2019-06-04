@@ -561,6 +561,8 @@ public:
   result_type operator() (vertex_descriptor v, const FaceListGraph& g, VertexPointMap const& pointMap) const
   {
     halfedge_descriptor startEdge = halfedge(v, g);
+    while (face(startEdge, g) == Graph_traits::null_face())
+      startEdge=opposite(next(startEdge, g), g);
 
     Point_3 rootPoint(get(pointMap, v));
     Point_3 prevPoint(get(pointMap, source(startEdge, g)));

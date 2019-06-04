@@ -2545,7 +2545,11 @@ public:
   static Face_location face_location(vertex_descriptor vertex, const Triangle_mesh& tm, const Traits& traits = Traits())
   {
     typename Traits::Construct_barycentric_coordinates construct_barycentric_coordinates(traits.construct_barycentric_coordinates_object());
-    halfedge_descriptor he = next(halfedge(vertex, tm), tm);
+    halfedge_descriptor hinit=halfedge(vertex, tm);
+    while (face(hinit, tm) == Graph_traits::null_face())
+      hinit = opposite(next(hinit, tm), tm);
+
+    halfedge_descriptor he = next(hinit, tm);
     face_descriptor locationFace = face(he, tm);
     std::size_t edgeIndex = CGAL::internal::edge_index(he, tm);
 
