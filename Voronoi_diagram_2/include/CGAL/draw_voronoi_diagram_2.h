@@ -83,11 +83,12 @@ protected:
 //    face_end();
 //  }
 
-//  void compute_edge(Halfedge_const_handle he)
-//  {
-//    add_segment(he->source()->point(),
-//                he->target()->point());
-//  }
+  void compute_edge(Halfedge_const_handle he)
+  {
+      if(he->is_segment())
+          add_segment(he->source()->point(),
+                he->target()->point());
+  }
 
   void compute_vertex(Vertex_const_handle vh)
   { add_point(vh->point()); }
@@ -103,9 +104,9 @@ protected:
 //      { compute_face(it); }
 //    }
     
-//    for (typename V2::Halfedge_iterator it=v2.halfedges_begin();
-//         it!=v2.halfedges_end(); ++it)
-//    { compute_edge(it); }
+    for (typename V2::Halfedge_iterator it=v2.halfedges_begin();
+         it!=v2.halfedges_end(); ++it)
+    { compute_edge(it); }
 
     for (typename V2::Vertex_iterator it=v2.vertices_begin();
          it!=v2.vertices_end(); ++it)
