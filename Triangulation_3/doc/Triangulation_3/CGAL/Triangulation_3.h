@@ -1208,8 +1208,8 @@ Note that vertex and cell ranges are special. See Section \ref Triangulation3sec
   Returns an empty range when `t.number_of_cells() == 0`. 
   \note While the value type of `All_cells_iterator` is `Cell`, the value type of 
   `All_cell_handles::iterator` is `Cell_handle`.
- */
-  All_cell_handles all_cell_handles() const;
+*/
+All_cell_handles all_cell_handles() const;
 
  
   
@@ -1230,8 +1230,8 @@ All_edges all_edges() const;
   Returns an empty range when `t.number_of_vertices() == 0`. 
   \note While the value type of `All_vertices_iterator` is `Vertex`, the value type of 
   `All_vertex_handles::iterator` is `Vertex_handle`.
- */
-  All_vertex_handles all_vertex_handles() const;
+*/
+All_vertex_handles all_vertex_handles() const;
 
   
 /*!
@@ -1239,8 +1239,8 @@ All_edges all_edges() const;
   Returns an empty range when `t.number_of_cells() == 0`. 
   \note While the value type of `Finite_cells_iterator` is `Cell`, the value type of 
   `Finite_cell_handles::iterator` is `Cell_handle`.
- */
-  Finite_cell_handles finite_cell_handles() const;
+*/
+Finite_cell_handles finite_cell_handles() const;
 
  
   
@@ -1261,13 +1261,13 @@ Finite_edges finite_edges() const;
   Returns an empty range when `t.number_of_vertices() == 0`. 
   \note While the value type of `Finite_vertices_iterator` is `Vertex`, the value type of 
   `Finite_vertex_handles::iterator` is `Vertex_handle`.
- */
-  Finite_vertex_handles finite_vertex_handles() const;
+*/
+Finite_vertex_handles finite_vertex_handles() const;
 
-  /*!
-    returns a range of iterators over the points of finite vertices.
-   */
-  Points points() const;
+/*!
+  returns a range of iterators over the points of finite vertices.
+*/
+Points points() const;
   
  
 /// @} 
