@@ -19,6 +19,8 @@ typedef CGAL::Iso_cuboid_3< K >     Cub;
 typedef CGAL::Sphere_3< K >         Sph;
 typedef CGAL::Circle_3< K >         C;
 
+typedef CGAL::Tetrahedron_3< K >    T;
+
 typedef CGAL::Bbox_3                Bbox_3;
 
 template<class A, class B>
@@ -101,11 +103,15 @@ int main()
     // call_intersection_global(Cub(), Tr());
     call_intersection_global(Cub(), R());
     call_intersection_global(Cub(), Cub());
+//    call_intersection_global(Cub(), Bbox_3());
 
     call_intersection_global(Bbox_3(), L());
     call_intersection_global(Bbox_3(), S());
     call_intersection_global(Bbox_3(), R());
+    call_intersection_global(Bbox_3(), Cub());
     CGAL::intersection(Bbox_3(), Bbox_3());
+
+    call_intersection_global(T(), L());
 
 
     // with kernel

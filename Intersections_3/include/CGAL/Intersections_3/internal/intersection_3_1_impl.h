@@ -34,6 +34,7 @@
 #include <CGAL/Intersections_3/Iso_cuboid_3_Iso_cuboid_3.h>
 #include <CGAL/Intersections_3/Iso_cuboid_3_Line_3.h>
 #include <CGAL/utils_classes.h>
+#include <CGAL/squared_distance_3.h>
 
 #include <CGAL/Intersections_3/internal/bbox_intersection_3.h>
 namespace CGAL {
@@ -1260,6 +1261,31 @@ intersection(const Bbox_3 &a,
 	     const K& k)
 {
   return CGAL::intersection<K>(a, b);
+}
+
+
+
+
+
+template <class K>
+typename Intersection_traits<K, CGAL::Bbox_3, typename K::Iso_cuboid_3>::result_type
+intersection(const CGAL::Bbox_3 &box,
+	     const typename K::Iso_cuboid_3 &cub,
+	     const K&)
+{
+  typename K::Iso_cuboid_3 iso_cub(box);
+    return intersection(iso_cub, cub);
+}
+
+
+template <class K>
+inline
+typename Intersection_traits<K, typename K::Iso_cuboid_3, CGAL::Bbox_3>::result_type
+intersection(const typename K::Iso_cuboid_3 &cub,
+	     const CGAL::Bbox_3 &box,
+	     const K& k)
+{
+  return intersection(box,cub, k);
 }
 
 

@@ -39,6 +39,8 @@ CGAL_INTERSECTION_TRAITS_2(Line_3, Segment_3, Point_3, Segment_3)
 CGAL_INTERSECTION_TRAITS_2(Segment_3, Line_3, Point_3, Segment_3)
 
 CGAL_INTERSECTION_TRAITS_2(Line_3, Triangle_3, Point_3, Segment_3)
+CGAL_INTERSECTION_TRAITS_2(Line_3, Tetrahedron_3, Point_3, Segment_3)
+CGAL_INTERSECTION_TRAITS_2(Tetrahedron_3, Line_3, Point_3, Segment_3)
 CGAL_INTERSECTION_TRAITS_2(Triangle_3, Line_3, Point_3, Segment_3)
 
 CGAL_INTERSECTION_TRAITS_2(Plane_3, Plane_3, Line_3, Plane_3)
@@ -156,6 +158,21 @@ struct Intersection_traits<K, typename K::Point_3, Bbox_3>  {
   typedef typename boost::optional< variant_type > result_type;
 };
   
+
+// Bbox_3 Iso_cuboid_3, variant of 1
+template<typename K>
+struct Intersection_traits<K, CGAL::Bbox_3, typename K::Iso_cuboid_3>  {
+  typedef typename
+  boost::variant<  typename K::Iso_cuboid_3 > variant_type;
+  typedef typename boost::optional< variant_type > result_type;
+};
+
+template<typename K>
+struct Intersection_traits<K, typename K::Iso_cuboid_3, CGAL::Bbox_3>
+    : public Intersection_traits<K, CGAL::Bbox_3, typename K::Iso_cuboid_3> {};
+
+
+
 // Iso_cuboid_3 Point_3, variant of one
 template<typename K>
 struct Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Point_3>  {
@@ -281,13 +298,7 @@ struct Intersection_traits<K, typename K::Sphere_3, typename K::Point_3>  {
   typedef typename boost::optional< variant_type > result_type;
 };
 
-//// Bbox_3 Bbox_3, variant of 2
-//template<typename K>
-//struct Intersection_traits<K, Bbox_3, Bbox_3>  {
-//  typedef typename
-//  boost::variant< typename K::Point_3 , Bbox_3> variant_type;
-//  typedef typename boost::optional< variant_type > result_type;
-//};
+
 } // namespace
 
 #endif /* CGAL_INTERSECTION_TRAITS_3_H */

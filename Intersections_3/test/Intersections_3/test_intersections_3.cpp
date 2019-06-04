@@ -3,6 +3,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/MP_Float.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -60,6 +61,7 @@ struct Test {
   typedef CGAL::Ray_3< K >            R;
   typedef CGAL::Iso_cuboid_3< K >     Cub;
   typedef CGAL::Sphere_3< K >         Sph;
+  typedef CGAL::Tetrahedron_3< K >    Tet;
   typedef CGAL::Bbox_3                Bbox;
 
 
@@ -563,7 +565,21 @@ struct Test {
               << do_intersect_counter << "\n";
   } // end function Bbox_Tr
 
-  void run()
+  void Tet_L()
+  {
+    std::cout << "Tetrahedron_3 - Line_3\n";
+
+    //check_intersection     (S(P(-3,0,0),P(3,0,0)),R(P(3,-2,0),P(3,0,0)),P(3,0,0));
+    //check_no_intersection  (S(P(-3,0,0),P(3,0,0)),R(P(0,-1,0),P(0,-2,0)));
+    Tet tet(P(0,0,0), P(0,1,0), P(1,0,0), P(0,0,1));
+    check_no_intersection (tet, L(P(5,0,0), P(5,1,0)));
+    check_intersection (tet, L(P(0,2,0), P(0,3,0)), S(P(0,0,0), P(0,1,0)));
+    check_intersection (tet, L(P(0,1,0), P(0.25,0,0.25)), S(P(0,1,0), P(0.25,0,0.25)));
+    check_intersection (tet, L(P(1,1,0), P(-1,1,0)), P(0,1,0));
+
+  }
+
+  void run(bool is_exact = false)
   {
     std::cout << "3D Intersection tests\n";
     P_do_intersect();
@@ -581,6 +597,8 @@ struct Test {
     R_L();
     R_S();
     R_R();
+    if(is_exact)
+      Tet_L();
     Bbox_L();
     Bbox_R();
     Bbox_Tr();
@@ -590,8 +608,9 @@ struct Test {
 
 int main()
 {
-	Test< CGAL::Simple_cartesian<double>   >().run();
-	Test< CGAL::Homogeneous<CGAL::MP_Float> >().run();
+  Test< CGAL::Simple_cartesian<double>   >().run();
+  Test< CGAL::Homogeneous<CGAL::MP_Float> >().run();
+  Test< CGAL::Epeck >().run(true);
 	// TODO : test more kernels.
 }
 
