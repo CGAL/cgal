@@ -1056,7 +1056,7 @@ The class `Constrained_triangulation_plus_2` additionally provides the means to
 - traverse all the constraints of the triangulation using an iterator of type `Constraint_iterator` the value type of which is `Constraint_id`,
 - obtain all constraints that induce a constrained edge or a subconstraint,
 - traverse the sequence of vertices of a constraint  using an iterator of type `Vertices_in_constraint_iterator`, the value type of which is `Vertex_handle` 
-- traverse the subconstraints in the triangulation  using an iterator of type `Subconstraint_iterator`,the value type of which is `Subconstraint`.
+- traverse the subconstraints in the triangulation  using an iterator of type `Subconstraint_iterator`, the value type of which is `Subconstraint`.
 
 Note that the `Constrained_edges_iterator` and the `Subconstraint_iterator` are quite similar.
 The `Constrained_edges_iterator` traverses all edges and skips those that are \em not constrained,
