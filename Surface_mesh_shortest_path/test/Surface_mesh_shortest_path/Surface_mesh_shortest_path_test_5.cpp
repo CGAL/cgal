@@ -29,11 +29,8 @@ int main(int argc, char* argv[])
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
   typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Polyhedron_3> Traits;
-  typedef Traits::Barycentric_coordinates Barycentric_coordinates;
   typedef Traits::FT FT;
   typedef boost::graph_traits<Polyhedron_3> Graph_traits;
-  typedef Graph_traits::vertex_descriptor vertex_descriptor;
-  typedef Graph_traits::vertex_iterator vertex_iterator;
   typedef Graph_traits::face_descriptor face_descriptor;
   typedef Graph_traits::face_iterator face_iterator;
   typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
@@ -47,7 +44,6 @@ int main(int argc, char* argv[])
   std::string mesh(argv[1]);
 
   int randSeed = 4983304;
-  const size_t numTests = 15;
 
   if (argc > 2)
   {
@@ -97,7 +93,7 @@ int main(int argc, char* argv[])
     shortestPaths.add_source_point(sourcePoints.back().first, sourcePoints.back().second);
   }
 
-  BOOST_CHECK_EQUAL(numInitialLocations, shortestPaths.number_of_source_points());
+  CHECK_EQUAL(numInitialLocations, shortestPaths.number_of_source_points());
 
   size_t checkNumLocations = 0;
 
@@ -107,17 +103,15 @@ int main(int argc, char* argv[])
     ++checkNumLocations;
   }
 
-  BOOST_CHECK_EQUAL(checkNumLocations, shortestPaths.number_of_source_points());
+  CHECK_EQUAL(checkNumLocations, shortestPaths.number_of_source_points());
 
   for (Surface_mesh_shortest_path::Source_point_iterator it = shortestPaths.source_points_begin(); it != shortestPaths.source_points_end(); ++it)
   {
     Surface_mesh_shortest_path::Shortest_path_result result = shortestPaths.shortest_distance_to_source_points(it->first, it->second);
 
-    BOOST_CHECK_CLOSE(FT(0.0), result.first, FT(0.000001));
+    CHECK_CLOSE(FT(0.0), result.first, FT(0.000001));
     assert(result.second == it);
   }
-
-  size_t currentCounter = 0;
 
   // Then, remove half of them
 
@@ -129,7 +123,7 @@ int main(int argc, char* argv[])
     }
   }
 
-  BOOST_CHECK_EQUAL(numInitialLocations / 2, shortestPaths.number_of_source_points());
+  CHECK_EQUAL(numInitialLocations / 2, shortestPaths.number_of_source_points());
 
   // and ensure that they are indeed removed
   for (size_t i = 0; i < sourcePoints.size(); ++i)
@@ -138,12 +132,16 @@ int main(int argc, char* argv[])
 
     if (i % 2 != 0)
     {
-      BOOST_CHECK_CLOSE(FT(0.0), result.first, FT(0.000001));
+      CHECK_CLOSE(FT(0.0), result.first, FT(0.000001));
       assert(handles[i] == result.second);
     }
     else
     {
-      BOOST_CHECK_MESSAGE(result.first < FT(0.0) || result.first > FT(0.00001), "Incorrect resulting distance: " << result.first);
+      if ( !(result.first < FT(0.0) || result.first > FT(0.00001) ) )
+      {
+        std::cerr << "Incorrect resulting distance: " << result.first << "\n";
+        return 1;
+      }
     }
   }
 
@@ -172,12 +170,16 @@ int main(int argc, char* argv[])
 
     if (i % 3 != 0)
     {
-      BOOST_CHECK_CLOSE(FT(0.0), result.first, FT(0.000001));
+      CHECK_CLOSE(FT(0.0), result.first, FT(0.000001));
       assert(handles[i] == result.second);
     }
     else
     {
-      BOOST_CHECK_MESSAGE(result.first < FT(0.0) || result.first > FT(0.00001), "Resulted distance: " << result.first);
+      if( !(result.first < FT(0.0) || result.first > FT(0.00001)) )
+      {
+        std::cerr << "Resulted distance: " << result.first << "\n";
+        return 1;
+      }
     }
   }
    return 0;
