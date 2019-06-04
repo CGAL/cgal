@@ -207,6 +207,20 @@ public:
   typedef Project_point<Vertex>                           Proj_point;
 
   typedef boost::transform_iterator<Proj_point,Finite_vertices_iterator> Point_iterator;
+
+
+  // Range types
+
+  
+  typedef typename Tds::Face_handles           All_face_handles;
+  typedef typename Tds::Vertex_handles         All_vertex_handles;
+  typedef typename Tds::Edges                  All_edges;
+  
+  typedef Iterator_range<Prevent_deref<Finite_faces_iterator> >    Finite_face_handles;
+  typedef Iterator_range<Prevent_deref<Finite_vertices_iterator> > Finite_vertex_handles;
+  typedef Iterator_range<Finite_edges_iterator>                    Finite_edges;
+  typedef Iterator_range<Point_iterator>                           Points;
+  
   typedef Point                value_type; // to have a back_inserter
   typedef const value_type&    const_reference;
   typedef value_type&          reference;
@@ -437,19 +451,32 @@ public:
   //TRAVERSING : ITERATORS AND CIRCULATORS
   Finite_faces_iterator finite_faces_begin() const;
   Finite_faces_iterator finite_faces_end() const;
+  Finite_face_handles finite_face_handles() const;
+  
   Finite_vertices_iterator finite_vertices_begin() const;
   Finite_vertices_iterator finite_vertices_end() const;
+  Finite_vertex_handles finite_vertex_handles() const;
+  
   Finite_edges_iterator finite_edges_begin() const;
   Finite_edges_iterator finite_edges_end() const;
+  Finite_edges finite_edges() const;
+  
   Point_iterator points_begin() const;
   Point_iterator points_end() const;
+  Points points() const;
 
   All_faces_iterator all_faces_begin() const;
   All_faces_iterator all_faces_end() const;
+  All_face_handles all_face_handles() const;
+  
   All_vertices_iterator all_vertices_begin() const;
   All_vertices_iterator all_vertices_end() const;
+  All_vertex_handles all_vertex_handles() const;
+  
   All_edges_iterator all_edges_begin() const;
   All_edges_iterator all_edges_end() const;
+  All_edges all_edges() const;
+  
   All_halfedges_iterator all_halfedges_begin() const;
   All_halfedges_iterator all_halfedges_end() const;
 
@@ -3078,6 +3105,14 @@ finite_faces_end() const
 }
 
 template <class Gt, class Tds >
+typename Triangulation_2<Gt, Tds>::Finite_face_handles
+Triangulation_2<Gt, Tds>::
+finite_face_handles() const
+{
+  return make_prevent_deref_range(finite_faces_begin(),finite_faces_end());
+}
+
+template <class Gt, class Tds >
 typename Triangulation_2<Gt, Tds>::Finite_vertices_iterator
 Triangulation_2<Gt, Tds>::
 finite_vertices_begin() const
@@ -3096,6 +3131,14 @@ finite_vertices_end() const
 {
   return CGAL::filter_iterator(all_vertices_end(),
                                Infinite_tester(this));
+}
+
+template <class Gt, class Tds >
+typename Triangulation_2<Gt, Tds>::Finite_vertex_handles
+Triangulation_2<Gt, Tds>::
+finite_vertex_handles() const
+{
+  return make_prevent_deref_range(finite_vertices_begin(),finite_vertices_end());
 }
 
 template <class Gt, class Tds >
@@ -3119,6 +3162,15 @@ finite_edges_end() const
                                infinite_tester() );
 }
 
+
+template <class Gt, class Tds >
+typename Triangulation_2<Gt, Tds>::Finite_edges
+Triangulation_2<Gt, Tds>::
+finite_edges() const
+{
+  return Finite_edges(finite_edges_begin(), finite_edges_end());
+}
+  
 template <class Gt, class Tds >
 typename Triangulation_2<Gt, Tds>::Point_iterator
 Triangulation_2<Gt, Tds>::
@@ -3136,19 +3188,35 @@ points_end() const
 }
 
 template <class Gt, class Tds >
+typename Triangulation_2<Gt, Tds>::Points
+Triangulation_2<Gt, Tds>::
+points() const
+{
+  return Points(points_begin(), points_end());
+}
+  
+template <class Gt, class Tds >
 typename Triangulation_2<Gt, Tds>::All_faces_iterator
 Triangulation_2<Gt, Tds>::
 all_faces_begin() const
 {
   return _tds.faces_begin();
 }
-
+  
 template <class Gt, class Tds >
 typename Triangulation_2<Gt, Tds>::All_faces_iterator
 Triangulation_2<Gt, Tds>::
 all_faces_end() const
 {
-  return _tds.faces_end();;
+  return _tds.faces_end();
+}
+  
+template <class Gt, class Tds >
+typename Triangulation_2<Gt, Tds>::All_face_handles
+Triangulation_2<Gt, Tds>::
+all_face_handles() const
+{
+  return _tds.face_handles();
 }
 
 template <class Gt, class Tds >
@@ -3165,6 +3233,14 @@ Triangulation_2<Gt, Tds>::
 all_vertices_end() const
 {
   return _tds.vertices_end();
+}
+  
+template <class Gt, class Tds >
+typename Triangulation_2<Gt, Tds>::All_vertex_handles
+Triangulation_2<Gt, Tds>::
+all_vertex_handles() const
+{
+  return _tds.vertex_handles();
 }
 
 template <class Gt, class Tds >

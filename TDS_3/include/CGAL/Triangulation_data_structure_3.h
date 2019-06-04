@@ -170,7 +170,7 @@ public:
   typedef Iterator_range<Prevent_deref<Vertex_iterator> >  Vertex_handles;
 
   typedef Iterator_range<Facet_iterator> Facets;
-    typedef Iterator_range<Edge_iterator> Edges;
+  typedef Iterator_range<Edge_iterator> Edges;
   
 //private: // In 2D only :
   typedef internal::Triangulation_ds_face_circulator_3<Tds>  Face_circulator;
