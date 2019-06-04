@@ -78,7 +78,6 @@ typedef unspecified_type Constraint_iterator;
 
 /*!
 A subconstraint is a pair of vertices that correspond to an `Edge`.
-\todo The documentation does not match the code
  */
 typedef std::pair<Vertex_handle, Vertex_handle> Subconstraint;
 
@@ -92,6 +91,11 @@ subconstraint.
 */ 
 typedef unspecified_type Subconstraint_iterator; 
 
+/*!
+A range type for iterating over all subconstraints.
+*/  
+typedef Iterator_range<Subconstraint_iterator> Subconstraints;
+  
 /*! 
 An iterator on the 
 vertices of the chain of subconstraints representing a 
@@ -137,6 +141,10 @@ is `Context`.
 */ 
 typedef unspecified_type Context_iterator; 
 
+/*!
+range type for iterating over contexts.
+*/
+typedef Iterator_range<Context_iterator> Contexts;  
 /// @} 
 
 /// \name Creation 
@@ -333,7 +341,7 @@ corresponding to the constraints enclosing the subconstraint `(va,vb)`.
 \pre `va` and `vb` refer to the vertices of a constrained edge of the triangulation. 
 */ 
 Context_iterator contexts_begin(Vertex_handle va, 
-Vertex_handle vb) const; 
+                                Vertex_handle vb) const; 
 
 /*!
 Returns an iterator past the end `Context` 
@@ -342,8 +350,14 @@ corresponding to the constraints enclosing the subconstraint `(va,vb)`.
 \pre `va` and `vb` refer to the vertices of a constrained edge of the triangulation. 
 */ 
 Context_iterator contexts_end(Vertex_handle va, 
-Vertex_handle vb) const; 
+                              Vertex_handle vb) const; 
 
+/*!
+Returns a range of contexts.
+*/
+Contexts contexts((Vertex_handle va, 
+                     Vertex_handle vb) const; 
+  
 /*!
 Returns an iterator on the first vertex on the constraint `cid`. 
 */ 
