@@ -647,7 +647,7 @@ insert_streamline(const Vector_field_2 & vector_field_2,
       stl_vertices)
 {
   stl_container.push_back(stl);
-  Vertex_handle m_Vertex_handle = NULL;
+  Vertex_handle m_Vertex_handle = nullptr;
   int i = 1;
   unsigned int size_ = (int) (stl_vertices.size());
   ir = il = 0;

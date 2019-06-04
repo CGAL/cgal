@@ -362,7 +362,7 @@ protected:
     }
 
     size_type find_vertex( Vertex_handle v) {
-        // Returns 0 if v == NULL.
+        // Returns 0 if v == nullptr.
         if ( v == Vertex_handle() )
             return 0;
         size_type n = 0;
@@ -377,7 +377,7 @@ protected:
     }
 
     size_type find_facet( Face_handle f) {
-        // Returns 0 if f == NULL.
+        // Returns 0 if f == nullptr.
         if ( f == Face_handle())
             return 0;
         size_type n = 0;

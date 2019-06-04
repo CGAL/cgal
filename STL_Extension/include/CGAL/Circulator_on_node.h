@@ -62,12 +62,12 @@ public:
 
   Ptr  ptr() const { return nt;}
 
-  bool operator==( Nullptr_t p) const {
+  bool operator==( nullptr_t p) const {
     CGAL_assertion( p == 0);
     CGAL_USE(p);
     return ( nt == 0);
   }
-  bool  operator!=( Nullptr_t p) const { return !(*this == p); }
+  bool  operator!=( nullptr_t p) const { return !(*this == p); }
   bool  operator==( const Self& i) const { return ( nt == i.nt); }
   bool  operator!=( const Self& i) const { return !(*this == i); }
   Ref   operator*()  const { return *nt; }

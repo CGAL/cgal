@@ -185,7 +185,7 @@ public:
     : _separate_shells (separate_shells),
       _force_manifold (force_manifold),
       _border_angle (border_angle),
-      _shape (NULL),
+      _shape (nullptr),
       _squared_radius (squared_radius)
   {
 
@@ -333,10 +333,10 @@ private:
   
   void deinit_shape()
   {
-    if (_shape != NULL)
+    if (_shape != nullptr)
     {
       delete _shape;
-      _shape = NULL;
+      _shape = nullptr;
     }
   }
   

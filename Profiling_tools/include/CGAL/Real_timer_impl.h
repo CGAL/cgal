@@ -66,7 +66,7 @@ double Real_timer::get_real_time() const {
     return double(t.time) + double(t.millitm) / 1000.0;
 #else // ! _MSC_VER && ! __MINGW32__//
     struct timeval t;
-    int ret = gettimeofday( &t, NULL);
+    int ret = gettimeofday( &t, nullptr);
     CGAL_warning_msg( ret == 0, "Call to gettimeofday() in class "
                       "CGAL::Real_timer failed - timings will be 0.");
     if ( ret == 0) {

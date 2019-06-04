@@ -160,7 +160,7 @@ public:
          if (p != tree.end())
             std::cout << "p = " << *p << std::endl;
          else
-            std::cout << "p == NULL" << std::endl;
+            std::cout << "p == nullptr" << std::endl;
 #endif
          stack.pop();
          p_r = tree.right_sibling(p);
@@ -168,14 +168,14 @@ public:
          if (p_r != tree.end())
             std::cout << "p_r = " << *p_r << std::endl;
          else
-            std::cout << "p_r == NULL" << std::endl;
+            std::cout << "p_r == nullptr" << std::endl;
 #endif
          q = tree.parent(p);
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
          if (q != tree.end())
             std::cout << "q = " << *q << std::endl;
          else
-            std::cout << "q == NULL" << std::endl;
+            std::cout << "q == nullptr" << std::endl;
 #endif
          if (!tree.parent_is_p_minus_infinity(p))
          {
@@ -189,7 +189,7 @@ public:
          if (z != tree.end())
             std::cout << "z = " << *z << std::endl;
          else
-            std::cout << "z == NULL" << std::endl;
+            std::cout << "z == nullptr" << std::endl;
          std::cout << "erasing " << *p << " from tree " << std::endl;
 #endif
          tree.erase(p);

@@ -477,7 +477,7 @@ private: //------------------------------------------------------ iterator types
                                         std::random_access_iterator_tag
                                         > Facade;
     public:
-        Index_iterator() : hnd_(), mesh_(NULL) {}
+        Index_iterator() : hnd_(), mesh_(nullptr) {}
         Index_iterator(const Index_& h, const Surface_mesh* m)
           : hnd_(h), mesh_(m) {
           if (mesh_ && mesh_->has_garbage()){
@@ -489,7 +489,7 @@ private: //------------------------------------------------------ iterator types
         void increment()
         {
             ++hnd_;
-            CGAL_assertion(mesh_ != NULL);
+            CGAL_assertion(mesh_ != nullptr);
 
             if(mesh_->has_garbage())
               while ( mesh_->has_valid_index(hnd_) && mesh_->is_removed(hnd_)) ++hnd_;
@@ -498,14 +498,14 @@ private: //------------------------------------------------------ iterator types
         void decrement()
         {
             --hnd_;
-            CGAL_assertion(mesh_ != NULL);
+            CGAL_assertion(mesh_ != nullptr);
             if(mesh_->has_garbage())
                while ( mesh_->has_valid_index(hnd_) && mesh_->is_removed(hnd_)) --hnd_;
         }
 
         void advance(std::ptrdiff_t n)
         {
-            CGAL_assertion(mesh_ != NULL);
+            CGAL_assertion(mesh_ != nullptr);
             
             if (mesh_->has_garbage())
             {

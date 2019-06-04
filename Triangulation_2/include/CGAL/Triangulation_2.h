@@ -1880,7 +1880,7 @@ fill_hole_delaunay(std::list<Edge> & first_hole)
     typename Hole::iterator cut_after(hit);
 
     // if tested vertex is c with respect to the vertex opposite
-    // to NULL neighbor,
+    // to nullptr neighbor,
     // stop at the before last face;
     hdone--;
     while( hit != hdone) {

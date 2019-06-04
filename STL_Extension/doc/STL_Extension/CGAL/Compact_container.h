@@ -92,7 +92,7 @@ The iterators themselves can be used as `T`, they provide the necessary
 functions to be used by `Compact_container_traits<T>`. Moreover, they 
 also provide a default constructor value which is not singular: it is 
 copyable, comparable, and guaranteed to be unique under comparison 
-(like `NULL` for pointers). This makes them suitable for use in 
+(like `nullptr` for pointers). This makes them suitable for use in 
 geometric graphs like handles to vertices in triangulations. 
 
 In addition, in a way inspired from the Boost.Intrusive containers, it is 

@@ -234,7 +234,7 @@ protected:
   }
 
 public:
-  Delaunay_triangulation_3(const Gt& gt = Gt(), Lock_data_structure *lock_ds = NULL)
+  Delaunay_triangulation_3(const Gt& gt = Gt(), Lock_data_structure *lock_ds = nullptr)
     : Tr_Base(gt, lock_ds)
   {}
 
@@ -247,13 +247,13 @@ public:
   Delaunay_triangulation_3(const Point& p0, const Point& p1,
                            const Point& p2, const Point& p3,
                            const Gt& gt = Gt(),
-                           Lock_data_structure *lock_ds = NULL)
+                           Lock_data_structure *lock_ds = nullptr)
     : Tr_Base(p0, p1, p2, p3, gt, lock_ds)
   {}
 
   template < typename InputIterator >
   Delaunay_triangulation_3(InputIterator first, InputIterator last,
-                           const Gt& gt = Gt(), Lock_data_structure *lock_ds = NULL)
+                           const Gt& gt = Gt(), Lock_data_structure *lock_ds = nullptr)
     : Tr_Base(gt, lock_ds)
   {
     insert(first, last);
@@ -348,7 +348,7 @@ public:
                               typename std::iterator_traits<InputIterator>::value_type,
                               Point
                           >
-                        >::type* = NULL)
+                        >::type* = nullptr)
 #else
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last)
@@ -504,7 +504,7 @@ public:
                             typename std::iterator_traits<InputIterator>::value_type,
                             std::pair<Point, typename internal::Info_check<
                                                typename Triangulation_data_structure::Vertex>::type>
-                          > >::type* =NULL)
+                          > >::type* =nullptr)
   {
     return insert_with_info< std::pair<Point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type> >(first,last);
   }
@@ -518,25 +518,25 @@ public:
               boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
               boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
             >
-          >::type* =NULL)
+          >::type* =nullptr)
   {
     return insert_with_info< boost::tuple<Point, typename internal::Info_check<
         typename Triangulation_data_structure::Vertex>::type> >(first,last);
   }
 #endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
-  Vertex_handle insert(const Point& p, Vertex_handle hint, bool *could_lock_zone = NULL)
+  Vertex_handle insert(const Point& p, Vertex_handle hint, bool *could_lock_zone = nullptr)
   {
     return insert(p, hint == Vertex_handle() ? this->infinite_cell() : hint->cell(),
                   could_lock_zone);
   }
 
   Vertex_handle insert(const Point& p, Cell_handle start = Cell_handle(),
-                       bool *could_lock_zone = NULL);
+                       bool *could_lock_zone = nullptr);
 
   Vertex_handle insert(const Point& p, Locate_type lt,
                        Cell_handle c, int li, int,
-                       bool *could_lock_zone = NULL);
+                       bool *could_lock_zone = nullptr);
 
 public: // internal methods
   template <class OutputItCells>
@@ -566,7 +566,7 @@ public:
                  OutputIteratorBoundaryFacets bfit,
                  OutputIteratorCells cit,
                  OutputIteratorInternalFacets ifit,
-                 bool *could_lock_zone = NULL) const
+                 bool *could_lock_zone = nullptr) const
   {
     CGAL_triangulation_precondition(dimension() >= 2);
 
@@ -615,7 +615,7 @@ public:
   find_conflicts(const Point& p, Cell_handle c,
                  OutputIteratorBoundaryFacets bfit,
                  OutputIteratorCells cit,
-                 bool *could_lock_zone = NULL) const
+                 bool *could_lock_zone = nullptr) const
   {
       Triple<OutputIteratorBoundaryFacets,
              OutputIteratorCells,
@@ -1278,15 +1278,15 @@ class Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_remover
   typedef DelaunayTriangulation_3 Delaunay;
 
 public:
-  typedef Nullptr_t Hidden_points_iterator;
+  typedef nullptr_t Hidden_points_iterator;
 
   Vertex_remover(Delaunay &tmp_) : tmp(tmp_) {}
 
   Delaunay &tmp;
 
   void add_hidden_points(Cell_handle) {}
-  Hidden_points_iterator hidden_points_begin() { return NULL; }
-  Hidden_points_iterator hidden_points_end() { return NULL; }
+  Hidden_points_iterator hidden_points_begin() { return nullptr; }
+  Hidden_points_iterator hidden_points_end() { return nullptr; }
 
   Bounded_side side_of_bounded_circle(const Point& p, const Point& q,
                                       const Point& r, const Point& s,
@@ -1303,15 +1303,15 @@ class Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_inserter
   typedef DelaunayTriangulation_3 Delaunay;
 
 public:
-  typedef Nullptr_t Hidden_points_iterator;
+  typedef nullptr_t Hidden_points_iterator;
 
   Vertex_inserter(Delaunay &tmp_) : tmp(tmp_) {}
 
   Delaunay &tmp;
 
   void add_hidden_points(Cell_handle) {}
-  Hidden_points_iterator hidden_points_begin() { return NULL; }
-  Hidden_points_iterator hidden_points_end() { return NULL; }
+  Hidden_points_iterator hidden_points_begin() { return nullptr; }
+  Hidden_points_iterator hidden_points_end() { return nullptr; }
 
   Vertex_handle insert(const Point& p, Locate_type lt, Cell_handle c, int li, int lj)
   {

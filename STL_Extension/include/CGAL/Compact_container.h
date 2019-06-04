@@ -172,7 +172,7 @@ class Compact_container_base
   void * p;
 public:
   Compact_container_base()
-  : p(NULL) {}
+  : p(nullptr) {}
   void *   for_compact_container() const { return p; }
   void * & for_compact_container()       { return p; }
 };
@@ -408,7 +408,7 @@ public:
   iterator
   emplace(const Args&... args)
   {
-    if (free_list == NULL)
+    if (free_list == nullptr)
       allocate_new_block();
 
     pointer ret = free_list;
@@ -422,7 +422,7 @@ public:
 
   iterator insert(const T &t)
   {
-    if (free_list == NULL)
+    if (free_list == nullptr)
       allocate_new_block();
 
     pointer ret = free_list;
@@ -598,11 +598,11 @@ public:
       all_items.push_back(std::make_pair(new_block, block_size + 2));
       capacity_ += block_size;
       // We insert this new block at the end.
-      if (last_item == NULL) // First time
+      if (last_item == nullptr) // First time
       {
         first_item = new_block;
         last_item  = new_block + block_size + 1;
-        set_type(first_item, NULL, START_END);
+        set_type(first_item, nullptr, START_END);
       }
       else
       {
@@ -610,7 +610,7 @@ public:
         set_type(new_block, last_item, BLOCK_BOUNDARY);
         last_item = new_block + block_size + 1;
       }
-      set_type(last_item, NULL, START_END);
+      set_type(last_item, nullptr, START_END);
       // Increase the block_size for the next time.
       Increment_policy::increase_size(*this);
     }
@@ -647,15 +647,15 @@ private:
   //
   //                          value of the last 2 bits as "Type"
   // pointer part     0              1                2              3
-  //         NULL     user elt       unused           free_list end  start/end
-  //      != NULL     user elt       block boundary   free elt       unused
+  //         nullptr     user elt       unused           free_list end  start/end
+  //      != nullptr     user elt       block boundary   free elt       unused
   //
   // meaning of ptr : user stuff     next/prev block  free_list      unused
 
   enum Type { USED = 0, BLOCK_BOUNDARY = 1, FREE = 2, START_END = 3 };
 
   // The bit squatting is implemented by casting pointers to (char *), then
-  // subtracting to NULL, doing bit manipulations on the resulting integer,
+  // subtracting to nullptr, doing bit manipulations on the resulting integer,
   // and converting back.
 
   static char * clean_pointer(char * p)
@@ -708,9 +708,9 @@ public:
     block_size = Increment_policy::first_block_size;
     capacity_  = 0;
     size_      = 0;
-    free_list  = NULL;
-    first_item = NULL;
-    last_item  = NULL;
+    free_list  = nullptr;
+    first_item = nullptr;
+    last_item  = nullptr;
     all_items  = All_items();
     time_stamper->reset();
   }
@@ -738,19 +738,19 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::merge(Self 
   CGAL_precondition(get_allocator() == d.get_allocator());
 
   // Concatenate the free_lists.
-  if (free_list == NULL) {
+  if (free_list == nullptr) {
     free_list = d.free_list;
-  } else if (d.free_list != NULL) {
+  } else if (d.free_list != nullptr) {
     pointer p = free_list;
-    while (clean_pointee(p) != NULL)
+    while (clean_pointee(p) != nullptr)
       p = clean_pointee(p);
     set_type(p, d.free_list, FREE);
   }
   // Concatenate the blocks.
-  if (last_item == NULL) { // empty...
+  if (last_item == nullptr) { // empty...
     first_item = d.first_item;
     last_item  = d.last_item;
-  } else if (d.last_item != NULL) {
+  } else if (d.last_item != nullptr) {
     set_type(last_item, d.first_item, BLOCK_BOUNDARY);
     set_type(d.first_item, last_item, BLOCK_BOUNDARY);
     last_item = d.last_item;
@@ -781,7 +781,7 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::clear()
 #else
         alloc.destroy(pp);
 #endif
-        set_type(pp, NULL, FREE);
+        set_type(pp, nullptr, FREE);
       }
     }
     alloc.deallocate(p, s);
@@ -808,11 +808,11 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::allocate_ne
     put_on_free_list(new_block + i);
   }
   // We insert this new block at the end.
-  if (last_item == NULL) // First time
+  if (last_item == nullptr) // First time
   {
       first_item = new_block;
       last_item  = new_block + block_size + 1;
-      set_type(first_item, NULL, START_END);
+      set_type(first_item, nullptr, START_END);
   }
   else
   {
@@ -820,7 +820,7 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::allocate_ne
       set_type(new_block, last_item, BLOCK_BOUNDARY);
       last_item = new_block + block_size + 1;
   }
-  set_type(last_item, NULL, START_END);
+  set_type(last_item, nullptr, START_END);
   // Increase the block_size for the next time.
   Increment_policy::increase_size(*this);
 }
@@ -897,13 +897,13 @@ namespace internal {
                                        value_type&>::type reference;
     typedef std::bidirectional_iterator_tag           iterator_category;
 
-    // the initialization with NULL is required by our Handle concept.
+    // the initialization with nullptr is required by our Handle concept.
     CC_iterator()
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
       : ts(0)
 #endif
     {
-      m_ptr.p = NULL;
+      m_ptr.p = nullptr;
     }
 
     // Either a harmless copy-ctor,
@@ -926,14 +926,14 @@ namespace internal {
       return *this;
     }
 
-    // Construction from NULL
-    CC_iterator (Nullptr_t CGAL_assertion_code(n))
+    // Construction from nullptr
+    CC_iterator (nullptr_t CGAL_assertion_code(n))
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
       : ts(0)
 #endif
     {
-      CGAL_assertion (n == NULL);
-      m_ptr.p = NULL;
+      CGAL_assertion (n == nullptr);
+      m_ptr.p = nullptr;
     }
 
   private:
@@ -962,7 +962,7 @@ namespace internal {
 #endif
     {
       m_ptr.p = ptr;
-      if (m_ptr.p == NULL) // empty container.
+      if (m_ptr.p == nullptr) // empty container.
         return;
 
       ++(m_ptr.p); // if not empty, p = start
@@ -982,17 +982,17 @@ namespace internal {
     {
       m_ptr.p = ptr;
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
-      if(ptr != NULL){
+      if(ptr != nullptr){
         ts = Time_stamper_impl::time_stamp(m_ptr.p);
       }
 #endif // end CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
     }
 
-    // NB : in case empty container, begin == end == NULL.
+    // NB : in case empty container, begin == end == nullptr.
     void increment()
     {
       // It's either pointing to end(), or valid.
-      CGAL_assertion_msg(m_ptr.p != NULL,
+      CGAL_assertion_msg(m_ptr.p != nullptr,
          "Incrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(DSC::type(m_ptr.p) != DSC::START_END,
          "Incrementing end() ?");
@@ -1016,7 +1016,7 @@ namespace internal {
     void decrement()
     {
       // It's either pointing to end(), or valid.
-      CGAL_assertion_msg(m_ptr.p != NULL,
+      CGAL_assertion_msg(m_ptr.p != nullptr,
          "Decrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(DSC::type(m_ptr.p - 1) != DSC::START_END,
          "Decrementing begin() ?");
@@ -1042,7 +1042,7 @@ namespace internal {
 
     Self & operator++()
     {
-      CGAL_assertion_msg(m_ptr.p != NULL,
+      CGAL_assertion_msg(m_ptr.p != nullptr,
          "Incrementing a singular iterator or an empty container iterator ?");
       /* CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED,
          "Incrementing an invalid iterator."); */
@@ -1052,7 +1052,7 @@ namespace internal {
 
     Self & operator--()
     {
-      CGAL_assertion_msg(m_ptr.p != NULL,
+      CGAL_assertion_msg(m_ptr.p != nullptr,
          "Decrementing a singular iterator or an empty container iterator ?");
       /*CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED
                       || DSC::type(m_ptr.p) == DSC::START_END,
@@ -1131,23 +1131,23 @@ namespace internal {
     return rhs.operator->() != lhs.operator->();
   }
 
-  // Comparisons with NULL are part of CGAL's Handle concept...
+  // Comparisons with nullptr are part of CGAL's Handle concept...
   template < class DSC, bool Const >
   inline
   bool operator==(const CC_iterator<DSC, Const> &rhs,
-                  Nullptr_t CGAL_assertion_code(n))
+                  nullptr_t CGAL_assertion_code(n))
   {
-    CGAL_assertion( n == NULL);
-    return rhs.operator->() == NULL;
+    CGAL_assertion( n == nullptr);
+    return rhs.operator->() == nullptr;
   }
 
   template < class DSC, bool Const >
   inline
   bool operator!=(const CC_iterator<DSC, Const> &rhs,
-                  Nullptr_t CGAL_assertion_code(n))
+                  nullptr_t CGAL_assertion_code(n))
   {
-    CGAL_assertion( n == NULL);
-    return rhs.operator->() != NULL;
+    CGAL_assertion( n == nullptr);
+    return rhs.operator->() != nullptr;
   }
 
   template <class DSC, bool Const>

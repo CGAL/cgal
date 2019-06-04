@@ -141,7 +141,7 @@ class Do_intersect_traversal_traits_with_transformation
 
 public:
   Do_intersect_traversal_traits_with_transformation():
-    m_traits_ptr(NULL)
+    m_traits_ptr(nullptr)
   {}
 
   Do_intersect_traversal_traits_with_transformation(const AABBTraits& traits)

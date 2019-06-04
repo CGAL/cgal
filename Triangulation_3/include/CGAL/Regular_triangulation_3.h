@@ -188,7 +188,7 @@ public:
   using Tr_Base::tds;
   using Tr_Base::vertex_triple_index;
 
-  Regular_triangulation_3(const Gt& gt = Gt(), Lock_data_structure *lock_ds = NULL)
+  Regular_triangulation_3(const Gt& gt = Gt(), Lock_data_structure *lock_ds = nullptr)
     : Tr_Base(gt, lock_ds), hidden_point_visitor(this)
   { }
 
@@ -223,7 +223,7 @@ public:
   //insertion
   template < typename InputIterator >
   Regular_triangulation_3(InputIterator first, InputIterator last,
-                          const Gt& gt = Gt(), Lock_data_structure *lock_ds = NULL)
+                          const Gt& gt = Gt(), Lock_data_structure *lock_ds = nullptr)
     : Tr_Base(gt, lock_ds), hidden_point_visitor(this)
   {
     insert(first, last);
@@ -326,7 +326,7 @@ public:
                         typename boost::enable_if<
                           boost::is_convertible<
                           typename std::iterator_traits<InputIterator>::value_type,
-                          Weighted_point> >::type* = NULL)
+                          Weighted_point> >::type* = nullptr)
 #else
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last)
@@ -566,7 +566,7 @@ public:
                         typename std::iterator_traits<InputIterator>::value_type,
                         std::pair<Weighted_point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type>
                         >
-                        >::type* = NULL)
+                        >::type* = nullptr)
   {
     return insert_with_info<
              std::pair<Weighted_point,
@@ -583,7 +583,7 @@ public:
            boost::mpl::and_<
            typename boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Weighted_point >,
            typename boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
-         > >::type* =NULL)
+         > >::type* =nullptr)
   {
     return insert_with_info<
              boost::tuple<Weighted_point,
@@ -595,7 +595,7 @@ public:
 
 
   Vertex_handle insert(const Weighted_point& p, Vertex_handle hint,
-                       bool *could_lock_zone = NULL)
+                       bool *could_lock_zone = nullptr)
   {
     return insert(p,
                   hint == Vertex_handle() ? this->infinite_cell() : hint->cell(),
@@ -603,10 +603,10 @@ public:
   }
 
   Vertex_handle insert(const Weighted_point& p,
-                       Cell_handle start = Cell_handle(), bool *could_lock_zone = NULL);
+                       Cell_handle start = Cell_handle(), bool *could_lock_zone = nullptr);
 
   Vertex_handle insert(const Weighted_point& p, Locate_type lt,
-                       Cell_handle c, int li, int, bool *could_lock_zone = NULL);
+                       Cell_handle c, int li, int, bool *could_lock_zone = nullptr);
 
   template <class CellIt>
   Vertex_handle insert_in_hole(const Weighted_point& p,
@@ -628,9 +628,9 @@ public:
                  OutputIteratorBoundaryFacets bfit,
                  OutputIteratorCells cit,
                  OutputIteratorInternalFacets ifit,
-                 bool *could_lock_zone = NULL,
-                 const Facet *this_facet_must_be_in_the_cz = NULL,
-                 bool *the_facet_is_in_its_cz = NULL) const
+                 bool *could_lock_zone = nullptr,
+                 const Facet *this_facet_must_be_in_the_cz = nullptr,
+                 bool *the_facet_is_in_its_cz = nullptr) const
   {
     CGAL_triangulation_precondition(dimension() >= 2);
 
@@ -691,7 +691,7 @@ public:
   find_conflicts(const Weighted_point& p, Cell_handle c,
                  OutputIteratorBoundaryFacets bfit,
                  OutputIteratorCells cit,
-                 bool *could_lock_zone = NULL) const
+                 bool *could_lock_zone = nullptr) const
   {
     Triple<OutputIteratorBoundaryFacets,
            OutputIteratorCells,
@@ -2496,15 +2496,15 @@ class Regular_triangulation_3<Gt, Tds, Lds>::Vertex_inserter
   typedef RegularTriangulation_3              Regular;
 
 public:
-  typedef Nullptr_t                           Hidden_points_iterator;
+  typedef nullptr_t                           Hidden_points_iterator;
 
   Vertex_inserter(Regular &tmp_) : tmp(tmp_) {}
 
   Regular& tmp;
 
   void add_hidden_points(Cell_handle) {}
-  Hidden_points_iterator hidden_points_begin() { return NULL; }
-  Hidden_points_iterator hidden_points_end() { return NULL; }
+  Hidden_points_iterator hidden_points_begin() { return nullptr; }
+  Hidden_points_iterator hidden_points_end() { return nullptr; }
 
   Vertex_handle insert(const Weighted_point& p,
                        Locate_type lt, Cell_handle c, int li, int lj)

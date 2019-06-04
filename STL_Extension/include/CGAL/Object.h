@@ -74,7 +74,7 @@ class Object
     // implicit constructor from optionals containing variants
     template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
     Object(const boost::optional< boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) > >& t) 
-      : obj( t ? boost::apply_visitor(Any_from_variant(), *t) : NULL) { }
+      : obj( t ? boost::apply_visitor(Any_from_variant(), *t) : nullptr) { }
   
     // implicit constructor from  variants
     template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
@@ -140,10 +140,10 @@ class Object
     }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-    // The comparisons with NULL are only there for Nef...
-    bool operator==(Nullptr_t CGAL_assertion_code(n)) const
+    // The comparisons with nullptr are only there for Nef...
+    bool operator==(nullptr_t CGAL_assertion_code(n)) const
     { CGAL_assertion(n == 0); return empty(); }
-    bool operator!=(Nullptr_t CGAL_assertion_code(n)) const
+    bool operator!=(nullptr_t CGAL_assertion_code(n)) const
     { CGAL_assertion(n == 0); return !empty(); }
 #endif // CGAL_NO_DEPRECATED_CODE
 
@@ -185,7 +185,7 @@ const T * object_cast(const Object * o)
   if(o->obj)
     return boost::any_cast<T>((o->obj).get());
   else
-    return NULL;
+    return nullptr;
 }
 
 template <class T>

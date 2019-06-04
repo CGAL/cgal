@@ -95,11 +95,11 @@ public:
 //
 // OPERATIONS
 
-    bool operator==( Nullptr_t p) const {
-        CGAL_assertion( p == NULL);
+    bool operator==( nullptr_t p) const {
+        CGAL_assertion( p == nullptr);
         return m_empty;
     }
-    bool operator!=( Nullptr_t p) const { return !(*this == p); }
+    bool operator!=( nullptr_t p) const { return !(*this == p); }
     
     bool operator==( const Self& c) const
     {
