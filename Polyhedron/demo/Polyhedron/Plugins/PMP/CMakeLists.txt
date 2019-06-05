@@ -118,8 +118,4 @@ target_link_libraries(extrude_plugin PUBLIC scene_surface_mesh_item scene_select
 
 qt5_wrap_ui( smoothingUI_FILES Smoothing_plugin.ui)
 polyhedron_demo_plugin(smoothing_plugin Smoothing_plugin ${smoothingUI_FILES})
-target_link_libraries(smoothing_plugin PUBLIC scene_polyhedron_item scene_polyhedron_selection_item)
-
-polyhedron_demo_plugin(smoothing_sm_plugin Smoothing_plugin ${smoothingUI_FILES})
-target_link_libraries(smoothing_sm_plugin PUBLIC scene_surface_mesh_item scene_surface_mesh_selection_item)
-target_compile_definitions(smoothing_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
+target_link_libraries(smoothing_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
