@@ -22,28 +22,33 @@
 #ifndef CGAL_KERNEL_HASH_FUNCTIONS_H
 #define CGAL_KERNEL_HASH_FUNCTIONS_H
 
+#include <boost/functional/hash.hpp>
+#include <type_traits>
+
 namespace CGAL
 {
+
+using boost::hash_value;
 
 template <typename K>
 inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
 hash_value (const Aff_transformation_2<K>& transform)
 {
-  std::size_t result = boost::hash_value(transform.cartesian(0,0));
+  std::size_t result = hash_value(transform.cartesian(0,0));
   for(int i=0; i < 3; ++i)
     for(int j = 0; j < 3; ++j)
       if (!(i == 0 && j == 0))
-        boost::hash_combine(result, boost::hash_value(transform.cartesian(i,j)));
+        boost::hash_combine(result, hash_value(transform.cartesian(i,j)));
   return result;
 }
 
 std::size_t
 hash_value (const Bbox_2& bbox)
 {
-  std::size_t result = boost::hash_value(bbox.xmin());
-  boost::hash_combine(result, boost::hash_value(bbox.xmax()));
-  boost::hash_combine(result, boost::hash_value(bbox.ymin()));
-  boost::hash_combine(result, boost::hash_value(bbox.ymax()));
+  std::size_t result = hash_value(bbox.xmin());
+  boost::hash_combine(result, hash_value(bbox.xmax()));
+  boost::hash_combine(result, hash_value(bbox.ymin()));
+  boost::hash_combine(result, hash_value(bbox.ymax()));
   return result;
 }
 
@@ -52,8 +57,8 @@ inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size
 hash_value (const Circle_2<K>& circle)
 {
   std::size_t result = hash_value(circle.center());
-  boost::hash_combine(result, boost::hash_value(circle.squared_radius()));
-  boost::hash_combine(result, boost::hash_value(circle.orientation()));
+  boost::hash_combine(result, hash_value(circle.squared_radius()));
+  boost::hash_combine(result, hash_value(circle.orientation()));
   return result;
 }
 
@@ -70,8 +75,8 @@ template <typename K>
 inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
 hash_value (const Point_2<K>& point)
 {
-  std::size_t result = boost::hash_value(point.x());
-  boost::hash_combine(result, boost::hash_value(point.y()));
+  std::size_t result = hash_value(point.x());
+  boost::hash_combine(result, hash_value(point.y()));
   return result;
 }
 
@@ -88,8 +93,8 @@ template <typename K>
 inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
 hash_value (const Vector_2<K>& vector)
 {
-  std::size_t result = boost::hash_value(vector.x());
-  boost::hash_combine(result, boost::hash_value(vector.y()));
+  std::size_t result = hash_value(vector.x());
+  boost::hash_combine(result, hash_value(vector.y()));
   return result;
 }
 
@@ -98,7 +103,7 @@ inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size
 hash_value (const Weighted_point_2<K>& weighed_point)
 {
   std::size_t result = hash_value(weighed_point.point());
-  boost::hash_combine(result, boost::hash_value(weighed_point.weight()));
+  boost::hash_combine(result, hash_value(weighed_point.weight()));
   return result;
 }
 
@@ -106,23 +111,23 @@ template <typename K>
 inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
 hash_value (const Aff_transformation_3<K>& transform)
 {
-  std::size_t result = boost::hash_value(transform.cartesian(0,0));
+  std::size_t result = hash_value(transform.cartesian(0,0));
   for(int i = 0; i < 3; ++i)
     for(int j = 0; j < 4; ++j)
       if (!(i == 0 && j == 0))
-        boost::hash_combine(result, boost::hash_value(transform.cartesian(i,j)));
+        boost::hash_combine(result, hash_value(transform.cartesian(i,j)));
   return result;
 }
 
 std::size_t
 hash_value (const Bbox_3& bbox)
 {
-  std::size_t result = boost::hash_value(bbox.xmin());
-  boost::hash_combine(result, boost::hash_value(bbox.xmax()));
-  boost::hash_combine(result, boost::hash_value(bbox.ymin()));
-  boost::hash_combine(result, boost::hash_value(bbox.ymax()));
-  boost::hash_combine(result, boost::hash_value(bbox.zmin()));
-  boost::hash_combine(result, boost::hash_value(bbox.zmax()));
+  std::size_t result = hash_value(bbox.xmin());
+  boost::hash_combine(result, hash_value(bbox.xmax()));
+  boost::hash_combine(result, hash_value(bbox.ymin()));
+  boost::hash_combine(result, hash_value(bbox.ymax()));
+  boost::hash_combine(result, hash_value(bbox.zmin()));
+  boost::hash_combine(result, hash_value(bbox.zmax()));
   return result;
 }
 
@@ -139,9 +144,9 @@ template <typename K>
 inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
 hash_value (const Point_3<K>& point)
 {
-  std::size_t result = boost::hash_value(point.x());
-  boost::hash_combine(result, boost::hash_value(point.y()));
-  boost::hash_combine(result, boost::hash_value(point.z()));
+  std::size_t result = hash_value(point.x());
+  boost::hash_combine(result, hash_value(point.y()));
+  boost::hash_combine(result, hash_value(point.z()));
   return result;
 }
 
@@ -159,8 +164,8 @@ inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size
 hash_value (const Sphere_3<K>& sphere)
 {
   std::size_t result = hash_value(sphere.center());
-  boost::hash_combine(result, boost::hash_value(sphere.squared_radius()));
-  boost::hash_combine(result, boost::hash_value(sphere.orientation()));
+  boost::hash_combine(result, hash_value(sphere.squared_radius()));
+  boost::hash_combine(result, hash_value(sphere.orientation()));
   return result;
 }
 
@@ -168,9 +173,9 @@ template <typename K>
 inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
 hash_value (const Vector_3<K>& vector)
 {
-  std::size_t result = boost::hash_value(vector.x());
-  boost::hash_combine(result, boost::hash_value(vector.y()));
-  boost::hash_combine(result, boost::hash_value(vector.z()));
+  std::size_t result = hash_value(vector.x());
+  boost::hash_combine(result, hash_value(vector.y()));
+  boost::hash_combine(result, hash_value(vector.z()));
   return result;
 }
 
@@ -179,7 +184,7 @@ inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size
 hash_value (const Weighted_point_3<K>& weighed_point)
 {
   std::size_t result = hash_value(weighed_point.point());
-  boost::hash_combine(result, boost::hash_value(weighed_point.weight()));
+  boost::hash_combine(result, hash_value(weighed_point.weight()));
   return result;
 }
 
