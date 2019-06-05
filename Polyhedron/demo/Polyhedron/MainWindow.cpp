@@ -341,6 +341,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   connect(&operationSearchBar, &QLineEdit::textChanged,
           this, &MainWindow::filterOperations);
   loadPlugins();
+  accepted_keywords.clear();
 
   // Setup the submenu of the View menu that can toggle the dockwidgets
   Q_FOREACH(QDockWidget* widget, findChildren<QDockWidget*>()) {
