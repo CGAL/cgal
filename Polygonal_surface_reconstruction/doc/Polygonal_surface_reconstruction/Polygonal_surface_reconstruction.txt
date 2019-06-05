@@ -15,12 +15,12 @@ reconstruction from point clouds \cgalCite{nan2017polyfit}. The method takes as 
 unordered point set sampled from a piecewise planar object. The output is a compact and
 watertight surface mesh interpolating the input point set. The method assumes that
 all necessary major planes are provided (or can be extracted from the input point set using the
-shape detection method described in \ref PkgPointSetShapeDetection3Summary, or any other
+shape detection method described in \ref PkgShapeDetection, or any other
 alternative methods).
 
 The existing surface reconstruction methods available in \cgal (i.e.,
-\ref PkgPoissonSurfaceReconstructionSummary, \ref PkgAdvancingFrontSurfaceReconstructionSummary, and
-\ref PkgScaleSpaceReconstruction3Summary) are
+\ref PkgPoissonSurfaceReconstruction3, \ref PkgAdvancingFrontSurfaceReconstruction, and
+\ref PkgScaleSpaceReconstruction3) are
 suitable for point set representing objects described by smooth surfaces. For man-made objects
 such as buildings, the results are not satisfactory due to the imperfections
 and complexity of the reconstructed models (i.e., gigantic meshes, missing regions, noises, and
@@ -30,7 +30,7 @@ surface meshes. It can recover sharp features of the objects, and it can handle 
 noise and outliers, complementing other surface reconstruction methods.
 
 A mixed integer programming (MIP) solver is required to solve the constrained optimization problem
-formulated by the method (see \ref PkgSolverSummary).
+formulated by the method (see \ref PkgSolverInterface).
 
 \section secAlgo Algorithm
 
@@ -210,7 +210,7 @@ of candidate faces is large (e.g., more than 5,000).
 
 \subsection subsecSolver The Numerical Solver
 The current implementation incorporates two open source solvers: \ref thirdpartyGLPK and \ref thirdpartySCIP
-(see \ref PkgSolverSummary). It should be noted that GLPK only manages to solve small problems, i.e., objects
+(see \ref PkgSolverInterface). It should be noted that GLPK only manages to solve small problems, i.e., objects
 with reasonably simple structure.
 In case you are reconstructing more complex objects, you may need to consider more efficient open source
 solvers (e.g., <a href = "https://projects.coin-or.org/Cbc">CBC</a>) or even commercial solvers (e.g.,

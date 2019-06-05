@@ -1,11 +1,11 @@
 // Polygonal Surface Reconstruction should equal the project title in Doxyfile.in
 
-/// \defgroup PkgPolygonalSurfaceReconstruction Polygonal Surface Reconstruction Reference
+/// \defgroup PkgPolygonalSurfaceReconstructionRef Polygonal Surface Reconstruction Reference
 
 /*!
-\addtogroup PkgPolygonalSurfaceReconstruction
+\addtogroup PkgPolygonalSurfaceReconstructionRef
 
-\cgalPkgDescriptionBegin{Polygonal Surface Reconstruction, PkgPolygonalSurfaceReconstructionSummary}
+\cgalPkgDescriptionBegin{Polygonal Surface Reconstruction, PkgPolygonalSurfaceReconstruction}
 \cgalPkgPicture{polyfit.png}
 
 \cgalPkgSummaryBegin
@@ -15,12 +15,12 @@ The method takes as input an unordered point set (and optionally planar segments
 object and outputs a lightweight and watertight surface mesh interpolating the input point set. The
 method can handle arbitrary piecewise planar objects and is capable of recovering sharp features and is
 robust to noise and outliers.}
-\cgalPkgManuals{Chapter_PolygonalSurfaceReconstruction, PkgPolygonalSurfaceReconstruction}
+\cgalPkgManuals{Chapter_PolygonalSurfaceReconstruction, PkgPolygonalSurfaceReconstructionRef}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.14}
-\cgalPkgDependsOn{\ref PkgAlphaShape2Summary and \ref PkgSolverSummary}
+\cgalPkgDependsOn{\ref PkgAlphaShapes2 and \ref PkgSolverInterface}
 \cgalPkgBib{cgal:x-x}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 

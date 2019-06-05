@@ -1,4 +1,4 @@
-/// \defgroup PkgSolverInterfaceRef CGAL and Solvers Reference
+﻿/// \defgroup PkgSolverInterfaceRef CGAL and Solvers Reference
 
 /// \defgroup PkgSolverInterfaceConcepts Concepts
 /// \ingroup PkgSolverInterfaceRef
@@ -40,9 +40,6 @@
 - `CGAL::Eigen_sparse_matrix`
 - `CGAL::Eigen_sparse_symmetric_matrix`
 - `CGAL::Eigen_svd`
-- `CGAL::Lapack_vector`
-- `CGAL::Lapack_matrix`
-- `CGAL::Lapack_svd`
 - `CGAL::Mixed_integer_program_traits`
 - `CGAL::GLPK_mixed_integer_program_traits`
 - `CGAL::SCIP_mixed_integer_program_traits`

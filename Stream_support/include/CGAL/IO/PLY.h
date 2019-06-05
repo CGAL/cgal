@@ -24,6 +24,8 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/IO/io.h>
 
+#include <boost/property_map/property_map.hpp>
+
 #include <tuple>
 #include <iostream>
 #include <sstream>
