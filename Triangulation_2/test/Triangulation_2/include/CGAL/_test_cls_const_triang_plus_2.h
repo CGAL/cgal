@@ -5,17 +5,17 @@ void
 _test_cls_const_triang_plus_2( const TrP & )
 {
   //typedef TriangPlus                           TrP;
-  typedef typename TrP::Geom_traits            Gt;
-  typedef typename Gt::Point_2                 Point;
+  typedef typename TrP::Geom_traits                     Gt;
+  typedef typename Gt::Point_2                          Point;
 
-  typedef typename TrP::Vertex_handle          Vertex_handle;
-  typedef typename TrP::Constraint             Constraint;
-  typedef typename TrP::Constraint_iterator    Constraint_iterator;
-  typedef typename TrP::Constraint_hierarchy   Hierarchy;
-  typedef typename TrP::Context                Context;
-  typedef typename TrP::Context_iterator       Context_iterator;
-  typedef typename TrP::Vertices_in_constraint Vertices_in_constraint;
-  typedef typename TrP::Constraint_id          Constraint_id;
+  typedef typename TrP::Vertex_handle                   Vertex_handle;
+  typedef typename TrP::Constraint                      Constraint;
+  typedef typename TrP::Constraint_iterator             Constraint_iterator;
+  typedef typename TrP::Constraint_hierarchy            Hierarchy;
+  typedef typename TrP::Context                         Context;
+  typedef typename TrP::Context_iterator                Context_iterator;
+  typedef typename TrP::Vertices_in_constraint_iterator Vertices_in_constraint_iterator;
+  typedef typename TrP::Constraint_id                   Constraint_id;
 
   CGAL_USE_TYPE(Hierarchy);
   CGAL_USE_TYPE(Context);
@@ -47,7 +47,7 @@ _test_cls_const_triang_plus_2( const TrP & )
 
   // test access to the hierarchy
   std::cout << " test acces to the constraint hierarchy" << std::endl;
-  Vertices_in_constraint vit = trp.vertices_in_constraint_begin(cid);
+  Vertices_in_constraint_iterator vit = trp.vertices_in_constraint_begin(cid);
   assert (*vit == vh[10] || *vit == vh[11] );
   Vertex_handle va = *++vit;
   Vertex_handle vb = *++vit;
@@ -58,12 +58,12 @@ _test_cls_const_triang_plus_2( const TrP & )
   Context_iterator cit2 = cit1++;
   //trp.print_hierarchy();
   assert( cit1->number_of_vertices() == 4  || cit1->number_of_vertices() == 7);
-  Vertices_in_constraint firstin1 = cit1->vertices_begin();
-  Vertices_in_constraint lastin1 = --(cit1->vertices_end());
-  Vertices_in_constraint currentin1 = cit1->current();
-  Vertices_in_constraint firstin2 = cit2->vertices_begin();
-  Vertices_in_constraint lastin2 = --(cit2->vertices_end());
-  Vertices_in_constraint currentin2 = cit2->current();
+  Vertices_in_constraint_iterator firstin1 = cit1->vertices_begin();
+  Vertices_in_constraint_iterator lastin1 = --(cit1->vertices_end());
+  Vertices_in_constraint_iterator currentin1 = cit1->current();
+  Vertices_in_constraint_iterator firstin2 = cit2->vertices_begin();
+  Vertices_in_constraint_iterator lastin2 = --(cit2->vertices_end());
+  Vertices_in_constraint_iterator currentin2 = cit2->current();
   if ( cit1->number_of_vertices() == 4) {
     assert( (*firstin1 == vh[10] &&  *lastin1 == vh[11]) ||
 	    (*firstin1 == vh[11] &&  *lastin1 == vh[10]));

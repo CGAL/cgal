@@ -18,8 +18,6 @@ typedef CDTP::Vertex_handle                                               Vertex
 void 
 print(const CDTP& cdtp, Cid cid)
 {
-  typedef CDTP::Vertices_in_constraint Vertices_in_constraint;
-
   std::cout << "Polyline constraint:" << std::endl;
   for(Vertex_handle vh : cdtp.vertices_in_constraint(cid)){
     std::cout << vh->point() << std::endl;

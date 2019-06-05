@@ -191,7 +191,7 @@ public:
   typedef Iterator_range<Context_iterator>                Contexts;
   
   typedef typename Constraint_hierarchy::C_iterator   Constraint_iterator;
-  typedef Iterator_range<Constraint_iterator> Cconstraints;
+  typedef Iterator_range<Constraint_iterator> Constraints;
   
   typedef typename Constraint_hierarchy::Subconstraint_iterator  Subconstraint_iterator;
   typedef Iterator_range<Subconstraint_iterator> Subconstraints;
@@ -629,10 +629,7 @@ public:
 
     for(Constraint_iterator cit = constraints_begin(); cit != constraints_end(); ++cit){
       os << (*cit).second->all_size();
-       for(Vertices_in_constraint it = vertices_in_constraint_begin(*cit);
-           it != vertices_in_constraint_end(*cit);
-           it++){
-         Vertex_handle vh = *it;
+      for(Vertex_handle vh : vertices_in_constraint(*cit)){
          os << " " << V[vh];
        }
        os << std::endl;
