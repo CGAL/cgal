@@ -62,6 +62,7 @@ CGAL_INTERSECTION_TRAITS_2(Ray_3, Segment_3, Point_3, Segment_3)
 CGAL_INTERSECTION_TRAITS_2(Segment_3, Ray_3, Point_3, Segment_3)
 
 CGAL_INTERSECTION_TRAITS_2(Ray_3, Triangle_3, Point_3, Segment_3)
+CGAL_INTERSECTION_TRAITS_2(Ray_3, Tetrahedron_3, Point_3, Segment_3)
 CGAL_INTERSECTION_TRAITS_2(Triangle_3, Ray_3, Point_3, Segment_3)
 
 CGAL_INTERSECTION_TRAITS_2(Segment_3, Segment_3, Point_3, Segment_3)
@@ -75,6 +76,7 @@ CGAL_INTERSECTION_TRAITS_3(Sphere_3, Sphere_3, Point_3, Circle_3, Sphere_3)
 
 CGAL_INTERSECTION_TRAITS_2(Tetrahedron_3, Line_3, Point_3, Segment_3)
 CGAL_INTERSECTION_TRAITS_2(Tetrahedron_3, Segment_3, Point_3, Segment_3)
+CGAL_INTERSECTION_TRAITS_2(Tetrahedron_3, Ray_3, Point_3, Segment_3)
 
 template<typename K>
 struct Intersection_traits<K, typename K::Triangle_3, typename K::Triangle_3>  {

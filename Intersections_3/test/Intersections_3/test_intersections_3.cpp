@@ -594,6 +594,23 @@ struct Test {
 
   }
 
+  void Tet_R()
+  {
+    std::cout << "Tetrahedron_3 - Ray_3\n";
+
+    Tet tet(P(0,0,0), P(0,1,0), P(1,0,0), P(0,0,1));
+    check_no_intersection (tet, L(P(5,0,0), P(5,1,0)));
+    check_intersection (tet, R(P(0,2,0), P(0,-2,0)), S(P(0,1,0), P(0,0,0)));
+    check_intersection (tet, R(P(0,1,0), P(0.25,0,0.25)), S(P(0,1,0), P(0.25,0,0.25)));
+    check_intersection (tet, R(P(2,1,0), P(-2,1,0)), P(0,1,0));
+
+    check_intersection (tet, R(P(0.1,0.1,0.1), P(0.2,0.2,0.2)), S(P(0.1,0.1,0.1), P(0.2,0.2,0.2)));
+    typename K::FT coord = 1.0/3.0;
+    check_intersection (tet, R(P(0.25,0.25,0.25), P(2,2,2)), S(P(0.25,0.25,0.25), P(coord, coord, coord)));
+
+  }
+
+
   void run(bool is_exact = false)
   {
     std::cout << "3D Intersection tests\n";
@@ -615,6 +632,7 @@ struct Test {
     if(is_exact){
       Tet_L();
       Tet_S();
+      Tet_R();
     }
     /*
     Bbox_L();
