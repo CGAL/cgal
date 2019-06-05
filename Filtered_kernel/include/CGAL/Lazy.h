@@ -339,7 +339,7 @@ class Lazy_rep_n :
   Lazy_rep_n(const AC& ac, const EC& ec, LL&&...ll) :
     Lazy_rep<AT, ET, E2A>(ac(CGAL::approx(ll)...)), EC(ec), l(std::forward<LL>(ll)...)
   {
-    this->set_depth(std::max({ -1, (int)CGAL::depth(ll)...}) + 1);
+    this->set_depth((std::max)({ -1, (int)CGAL::depth(ll)...}) + 1);
   }
 #ifdef CGAL_LAZY_KERNEL_DEBUG
   private:
