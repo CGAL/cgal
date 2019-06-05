@@ -583,7 +583,7 @@ struct Test {
     std::cout << "Tetrahedron_3 - Segment_3\n";
 
     Tet tet(P(0,0,0), P(0,1,0), P(1,0,0), P(0,0,1));
-    check_no_intersection (tet, L(P(5,0,0), P(5,1,0)));
+    check_no_intersection (tet, S(P(5,0,0), P(5,1,0)));
     check_intersection (tet, S(P(0,2,0), P(0,-2,0)), S(P(0,1,0), P(0,0,0)));
     check_intersection (tet, S(P(0,1,0), P(0.25,0,0.25)), S(P(0,1,0), P(0.25,0,0.25)));
     check_intersection (tet, S(P(2,1,0), P(-2,1,0)), P(0,1,0));
@@ -599,7 +599,7 @@ struct Test {
     std::cout << "Tetrahedron_3 - Ray_3\n";
 
     Tet tet(P(0,0,0), P(0,1,0), P(1,0,0), P(0,0,1));
-    check_no_intersection (tet, L(P(5,0,0), P(5,1,0)));
+    check_no_intersection (tet, R(P(5,0,0), P(5,1,0)));
 
     check_intersection (tet, R(P(0,2,0), P(0,-2,0)), S(P(0,1,0), P(0,0,0)));
     check_intersection (tet, R(P(0,1,0), P(0.25,0,0.25)), S(P(0,1,0), P(0.25,0,0.25)));
@@ -608,9 +608,37 @@ struct Test {
     typename K::FT coord = 1.0/3.0;
     check_intersection (tet, R(P(0.1,0.1,0.1), P(0.2,0.2,0.2)), S(P(0.1,0.1,0.1), P(coord, coord, coord)));
     check_intersection (tet, R(P(0.25,0.25,0.25), P(2,2,2)), S(P(0.25,0.25,0.25), P(coord, coord, coord)));
-
   }
 
+  void Tet_Pl()
+  {
+    std::cout << "Tetrahedron_3 - Plane_3\n";
+
+    Tet tet(P(0,0,0), P(0,1,0), P(1,0,0), P(0,0,1));
+    check_no_intersection (tet, Pl(P(2,0,0),
+                                   P(2,1,0),
+                                   P(2,0,1)));
+
+    check_intersection (tet, Pl(P(0,2,0), P(0,0,0), P(0,0,1)),
+                        Tr(P(0,0,0), P(0,1,0), P(0,0,1)));
+
+    check_intersection (tet, Pl(P(0,1,0), P(1,0,0), P(0.5,0,-0.5)),
+                        S(P(0,1,0), P(1,0,0)));
+
+    check_intersection (tet, Pl(P(-1,1,12), P(0,1,-50), P(0.5,1,-0.5)),
+                        P(0,1,0));
+
+    check_intersection (tet, Pl(P(0,0.5,0), P(1,0.5,-5), P(0.5,0.5,0.5)),
+                        Tr(P(0.5,0.5,0), P(0,0.5,0), P(0,0.5,0.5)));
+    Pl pl(P(0,0.9,0), P(0.9,0,0), P(0.9,0.01,0.06));
+
+    typedef typename CGAL::Intersection_traits<K,
+        typename K::Tetrahedron_3,
+        typename K::Plane_3>::result_type Res;
+    assert(CGAL::do_intersect(tet, pl));
+    //Don't have the right values to test further.
+
+  }
 
   void run(bool is_exact = false)
   {
@@ -634,6 +662,7 @@ struct Test {
       Tet_L();
       Tet_S();
       Tet_R();
+      Tet_Pl();
     }
     /*
     Bbox_L();
