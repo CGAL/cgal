@@ -2,7 +2,6 @@
 #define CGAL_SHORTEST_NONCONTRACTIBLE_CYCLE_H
 
 #include <queue>
-#include <CGAL/Path_on_surface.h>
 
 namespace CGAL {
 
@@ -14,7 +13,7 @@ public:
   using size_type = typename Gmap::size_type;
   using Dart_const_handle = typename Gmap::Dart_const_handle;
   using Dart_container = std::vector<Dart_const_handle>;
-  using Path = CGAL::Path_on_surface<Gmap>;
+  using Path = Dart_container; // Consider: CGAL::Path_on_surface<Gmap>;
   using Distance_type = int;
 
   Shortest_noncontractible_cycle(Gmap& gmap) :
@@ -27,14 +26,17 @@ public:
     std::vector<int> trace_index;
 
     BFS(root, spanning_tree, distance_from_root, trace_index);
+    std::cerr << "Done BFS. spanning_tree.size() = " << spanning_tree.size() << '\n';
     find_noncon_edges(spanning_tree, noncon_edges);
+    std::cerr << "Done find_noncon_edges. noncon_edges.size() = " << noncon_edges.size() << '\n';
     mark_vertices_with_indices(spanning_tree, index_marks);
+    std::cerr << "Done mark_vertices_with_indices.\n";
 
     Distance_type min_distance = -1;
     Dart_const_handle min_noncon_edge;
     int min_a = -1, min_b = -1;
     for (auto dh : noncon_edges) {
-      Dart_const_handle a = dh, b = m_gmap.alpha<0>(a);
+      Dart_const_handle a = dh, b = m_gmap.template alpha<0>(a);
       int index_a = 0, index_b = 0;
       for (int i = 0; i < index_marks.size(); ++i) {
         if (m_gmap.is_marked(a, index_marks[i])) index_a ^= (1 << i);
@@ -52,19 +54,20 @@ public:
     for (int i = 0; i < index_marks.size(); ++i)
       m_gmap.free_mark(index_marks[i]);
 
-    Path cycle(m_gmap);
+    Path cycle;
     if (min_distance < 0) return cycle; // empty cycle;
     // Trace back the path from `a` to root
     for (int ind = min_a - 1; ind != -1; ind = trace_index[ind])
-      cycle.push_back(m_gmap.alpha<0>(spanning_tree[ind]));
+      cycle.push_back(spanning_tree[ind]);
+      // If use Path_on_surface: cycle.push_back(m_gmap.template alpha<0>(spanning_tree[ind]));
     // Reverse: now it is the path from root to `a`
-    cycle.reverse();
+    std::reverse(cycle.begin(), cycle.end());
     cycle.push_back(min_noncon_edge);
     // Trace back the path from `b` to root
     for (int ind = min_b - 1; ind != -1; ind = trace_index[ind])
-      cycle.push_back(m_gmap.alpha<0>(spanning_tree[ind]));
+      cycle.push_back(m_gmap.template alpha<0>(spanning_tree[ind]));
 
-    CGAL_assertion(cycle.is_closed());
+    // CGAL_assertion(cycle.is_closed());
 
     return cycle;
   }
@@ -75,8 +78,8 @@ private:
 
   template <unsigned int i>
   void mark_cell(Dart_const_handle dh, size_type gmap_mask) {
-    for (auto it = m_gmap.darts_of_cell<i>(dh).begin(), itend = m_gmap.darts_of_cell<i>(dh).end(); it != itend; ++it) {
-      m_gmap.mark(dh, gmap_mask);
+    for (auto it = m_gmap.template darts_of_cell<i>(dh).begin(), itend = m_gmap.template darts_of_cell<i>(dh).end(); it != itend; ++it) {
+      m_gmap.mark(it, gmap_mask);
     }
   }
 
@@ -108,7 +111,7 @@ private:
       for (auto it = m_gmap.template one_dart_per_incident_cell<1,0>(u).begin(), 
                 itend = m_gmap.template one_dart_per_incident_cell<1,0>(u).end();
                 it != itend; ++it) {
-        Dart_const_handle v = m_gmap.alpha<0>(it);
+        Dart_const_handle v = m_gmap.template alpha<0>(it);
         if (!m_gmap.is_marked(v, vertex_visited)) {
           mark_cell<0>(v, vertex_visited);
           if (ind == -1) 
@@ -148,7 +151,7 @@ private:
 
   /// Find E_nc
 
-  void find_noncon_edges(const Dart_container& spanning_tree, Dart_container noncon_edges) {
+  void find_noncon_edges(const Dart_container& spanning_tree, Dart_container& noncon_edges) {
     size_type face_deleted, edge_deleted;
     try {
       face_deleted = m_gmap.get_new_mark();
@@ -164,17 +167,17 @@ private:
     for (auto it = m_gmap.template one_dart_per_cell<2>().begin(), itend = m_gmap.template one_dart_per_cell<2>().end(); it != itend; ++it) {
       Dart_const_handle dh_only_edge = it;
       if (is_degree_one_face(it, dh_only_edge, edge_deleted)) 
-        degree_one_faces.push_back(dh_only_edge);
+        degree_one_faces.push(dh_only_edge);
     }
     while (degree_one_faces.size()) {
       Dart_const_handle dh_face = degree_one_faces.front();
       degree_one_faces.pop();
       mark_cell<2>(dh_face, face_deleted);
       mark_cell<1>(dh_face, edge_deleted);
-      Dart_const_handle dh_adj_face = m_gmap.alpha<2>(dh_face);
+      Dart_const_handle dh_adj_face = m_gmap.template alpha<2>(dh_face);
       Dart_const_handle dh_only_edge = dh_adj_face;
       if (is_degree_one_face(dh_adj_face, dh_only_edge, edge_deleted)) 
-        degree_one_faces.push_back(dh_only_edge);
+        degree_one_faces.push(dh_only_edge);
     }
     for (auto it = m_gmap.template one_dart_per_cell<1>().begin(), itend = m_gmap.template one_dart_per_cell<1>().end(); it != itend; ++it) {
       if (!m_gmap.is_marked(it, edge_deleted)) {
@@ -187,7 +190,7 @@ private:
 
   void mark_vertices_with_indices(const Dart_container& spanning_tree, std::vector<size_type>& index_marks) {
     int n = spanning_tree.size()+1, bit_count = 0;
-    while (n) ++bit_count, n >> 1;
+    while (n) ++bit_count, n /= 2;
     index_marks.resize(bit_count);
     try {
       for (int i = 0; i < index_marks.size(); ++i)
@@ -199,13 +202,13 @@ private:
     n = 0;
     for (auto dh : spanning_tree) {
       ++n;
-      Dart_const_handle v = m_gmap.alpha<0>(dh);
+      Dart_const_handle v = m_gmap.template alpha<0>(dh);
       for (int i = 0; i < index_marks.size(); ++i)
         if (n & (1 << i)) mark_cell<0>(v, index_marks[i]);
     }
   }
 
-  Gmap m_gmap;
+  Gmap& m_gmap;
 };
 
 }
