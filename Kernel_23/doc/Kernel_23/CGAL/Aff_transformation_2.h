@@ -34,7 +34,7 @@ translation vector \f$ (v_0,\,v_1,\,1)\f$ appears in the last column of the
 matrix. The entries \f$ m_{20}\f$ and \f$ m_{21}\f$ are always zero and 
 therefore do not appear in the constructors. 
 
-\cgalModels `Hashable` if `Kernel::FT` is a floating-point number
+\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
 
 \sa `Identity_transformation`
 \sa `Rotation`

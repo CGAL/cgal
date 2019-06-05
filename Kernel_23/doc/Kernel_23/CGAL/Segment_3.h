@@ -15,7 +15,7 @@ perform a square root operation which is not defined for all
 number types, which is expensive, and may not be exact. 
 
 \cgalModels `Kernel::Segment_3`
-\cgalModels `Hashable` if `Kernel::FT` is a floating-point number
+\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
 
 */
 template< typename Kernel >

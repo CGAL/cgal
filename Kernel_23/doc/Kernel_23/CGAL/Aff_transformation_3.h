@@ -29,7 +29,7 @@ In three-dimensional space we have a \f$ 4\times 4\f$ matrix
 \f$ m_{32}\f$ are always zero and therefore do not appear in the 
 constructors. 
 
-\cgalModels `Hashable` if `Kernel::FT` is a floating-point number
+\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
 
 \sa `CGAL::Aff_transformation_2<Kernel>` 
 \sa `CGAL::Identity_transformation` 

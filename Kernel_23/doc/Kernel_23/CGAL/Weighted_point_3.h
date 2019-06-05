@@ -14,7 +14,7 @@ to `NT`, and `Kernel::FT` is equal to `Quotient<NT>`.
 \sa `Point_3<Kernel>`
 
 \cgalModels `Kernel::WeightedPoint_3`
-\cgalModels `Hashable` if `Kernel::FT` is a floating-point number
+\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
 
 */
 template< typename Kernel >

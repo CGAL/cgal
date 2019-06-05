@@ -31,7 +31,7 @@ namespace CGAL
 using boost::hash_value;
 
 template <typename K>
-inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
+inline std::enable_if_t<std::is_same<typename K::Rep_tag, Cartesian_tag>::value, std::size_t>
 hash_value (const Aff_transformation_2<K>& transform)
 {
   std::size_t result = hash_value(transform.cartesian(0,0));
@@ -53,7 +53,7 @@ hash_value (const Bbox_2& bbox)
 }
 
 template <typename K>
-inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
+inline std::enable_if_t<std::is_same<typename K::Rep_tag, Cartesian_tag>::value, std::size_t>
 hash_value (const Circle_2<K>& circle)
 {
   std::size_t result = hash_value(circle.center());
@@ -63,7 +63,7 @@ hash_value (const Circle_2<K>& circle)
 }
 
 template <typename K>
-inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
+inline std::enable_if_t<std::is_same<typename K::Rep_tag, Cartesian_tag>::value, std::size_t>
 hash_value (const Iso_rectangle_2<K>& iso_rectangle)
 {
   std::size_t result = hash_value(iso_rectangle.min());
@@ -72,7 +72,7 @@ hash_value (const Iso_rectangle_2<K>& iso_rectangle)
 }
 
 template <typename K>
-inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
+inline std::enable_if_t<std::is_same<typename K::Rep_tag, Cartesian_tag>::value, std::size_t>
 hash_value (const Point_2<K>& point)
 {
   std::size_t result = hash_value(point.x());
@@ -81,7 +81,7 @@ hash_value (const Point_2<K>& point)
 }
 
 template <typename K>
-inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
+inline std::enable_if_t<std::is_same<typename K::Rep_tag, Cartesian_tag>::value, std::size_t>
 hash_value (const Segment_2<K>& segment)
 {
   std::size_t result = hash_value(segment.source());
@@ -90,7 +90,7 @@ hash_value (const Segment_2<K>& segment)
 }
 
 template <typename K>
-inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
+inline std::enable_if_t<std::is_same<typename K::Rep_tag, Cartesian_tag>::value, std::size_t>
 hash_value (const Vector_2<K>& vector)
 {
   std::size_t result = hash_value(vector.x());
@@ -99,7 +99,7 @@ hash_value (const Vector_2<K>& vector)
 }
 
 template <typename K>
-inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
+inline std::enable_if_t<std::is_same<typename K::Rep_tag, Cartesian_tag>::value, std::size_t>
 hash_value (const Weighted_point_2<K>& weighed_point)
 {
   std::size_t result = hash_value(weighed_point.point());
@@ -108,7 +108,7 @@ hash_value (const Weighted_point_2<K>& weighed_point)
 }
 
 template <typename K>
-inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
+inline std::enable_if_t<std::is_same<typename K::Rep_tag, Cartesian_tag>::value, std::size_t>
 hash_value (const Aff_transformation_3<K>& transform)
 {
   std::size_t result = hash_value(transform.cartesian(0,0));
@@ -132,7 +132,7 @@ hash_value (const Bbox_3& bbox)
 }
 
 template <typename K>
-inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
+inline std::enable_if_t<std::is_same<typename K::Rep_tag, Cartesian_tag>::value, std::size_t>
 hash_value (const Iso_cuboid_3<K>& iso_cuboid)
 {
   std::size_t result = hash_value(iso_cuboid.min());
@@ -141,7 +141,7 @@ hash_value (const Iso_cuboid_3<K>& iso_cuboid)
 }
 
 template <typename K>
-inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
+inline std::enable_if_t<std::is_same<typename K::Rep_tag, Cartesian_tag>::value, std::size_t>
 hash_value (const Point_3<K>& point)
 {
   std::size_t result = hash_value(point.x());
@@ -151,7 +151,7 @@ hash_value (const Point_3<K>& point)
 }
 
 template <typename K>
-inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
+inline std::enable_if_t<std::is_same<typename K::Rep_tag, Cartesian_tag>::value, std::size_t>
 hash_value (const Segment_3<K>& segment)
 {
   std::size_t result = hash_value(segment.source());
@@ -160,7 +160,7 @@ hash_value (const Segment_3<K>& segment)
 }
 
 template <typename K>
-inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
+inline std::enable_if_t<std::is_same<typename K::Rep_tag, Cartesian_tag>::value, std::size_t>
 hash_value (const Sphere_3<K>& sphere)
 {
   std::size_t result = hash_value(sphere.center());
@@ -170,7 +170,7 @@ hash_value (const Sphere_3<K>& sphere)
 }
 
 template <typename K>
-inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
+inline std::enable_if_t<std::is_same<typename K::Rep_tag, Cartesian_tag>::value, std::size_t>
 hash_value (const Vector_3<K>& vector)
 {
   std::size_t result = hash_value(vector.x());
@@ -180,7 +180,7 @@ hash_value (const Vector_3<K>& vector)
 }
 
 template <typename K>
-inline std::enable_if_t<std::is_floating_point<typename K::FT>::value, std::size_t>
+inline std::enable_if_t<std::is_same<typename K::Rep_tag, Cartesian_tag>::value, std::size_t>
 hash_value (const Weighted_point_3<K>& weighed_point)
 {
   std::size_t result = hash_value(weighed_point.point());

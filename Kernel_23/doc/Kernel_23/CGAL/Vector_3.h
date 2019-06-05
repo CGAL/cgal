@@ -13,7 +13,7 @@ will explicitly state where you can pass this constant as an argument
 instead of a vector initialized with zeros. 
 
 \cgalModels `Kernel::Vector_3`
-\cgalModels `Hashable` if `Kernel::FT` is a floating-point number
+\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
 
 \sa `cross_product_grp` 
 \sa `determinant_grp` 
