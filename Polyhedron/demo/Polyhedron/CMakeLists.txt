@@ -131,9 +131,6 @@ endif()
 if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
   include(${CGAL_USE_FILE})
 
-  set(Boost_USE_MULTITHREADED      ON)
-  find_package(Boost COMPONENTS thread system filesystem)
-
   qt5_wrap_ui( MainWindowUI_files MainWindow.ui)
   qt5_wrap_ui( statisticsUI_FILES Statistics_on_item_dialog.ui)
   qt5_wrap_ui( FileLoaderDialogUI_files FileLoaderDialog.ui )
@@ -232,7 +229,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
   macro(add_item item_name)
     add_library(${item_name} SHARED ${ARGN})
     target_link_libraries(${item_name}
-      PUBLIC demo_framework ${CGAL_LIBRARIES} ${Boost_LIBRARIES}
+      PUBLIC demo_framework ${CGAL_LIBRARIES}
       Qt5::OpenGL Qt5::Gui Qt5::Script Qt5::Widgets)
     cgal_add_compilation_test(${item_name})
   endmacro(add_item)
