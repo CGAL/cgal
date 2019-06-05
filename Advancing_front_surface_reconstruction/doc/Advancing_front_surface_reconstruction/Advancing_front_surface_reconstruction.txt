@@ -277,7 +277,7 @@ provide piecewise-planar or hybrid reconstruction as described in
 \cgalCite{cgal:la-srpss-13}. Two other algorithms available in \cgal
 must be applied first as a preprocessing to the point set:
 
-- \ref Chapter_Point_Set_Shape_Detection "Shape detection": detect planar sections of the input.
+- \ref Chapter_Shape_Detection "Shape detection": detect planar sections of the input.
 
 - \ref Point_set_processing_3Structuring "Point set structuring":
 resample the planar sections and edges and corners detected among

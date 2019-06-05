@@ -45,6 +45,12 @@ Release date: September 2019
 ### IO Streams
  -   **Breaking change:** The API of `CGAL::Color` has been cleaned up.
 
+### Shape Detection
+ -   Added a new generic implementation of region growing.
+ -   New region growing can be launched on points in 2D and 3D and on a face graph.
+ -   **Breaking change:** ShapeDetectionTraits is renamed to EfficientRANSACTraits.
+ -   **Breaking change:** Shape_detection_3 namespace is renamed to Shape_detection.
+
 ### 3D Boolean Operations on Nef Polyhedra
  -   Added a function to convert a Nef_polyhedron_3 to a polygon soup: `CGAL::convert_nef_to_polygon_soup()`
 
@@ -55,7 +61,6 @@ Release date: September 2019
    are also added.
 
 ### IO Streams
-
 -   Added new functions to support some parts of the WKT file format:
     - `CGAL::read_point_WKT()`
     - `CGAL::read_multi_point_WKT()`
