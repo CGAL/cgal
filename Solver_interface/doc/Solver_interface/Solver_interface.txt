@@ -1,24 +1,30 @@
-namespace CGAL {
+﻿namespace CGAL {
 /*!
 
 \mainpage User Manual 
 \anchor Chapter_CGAL_and_Solvers
 \anchor chapterSolvers
 \cgalAutoToc
-\authors Simon Giraudot, Pierre Alliez, Frédéric Cazals, Gaël Guennebaud, Bruno Lévy, Marc Pouget, and Laurent Saboret
+\authors Simon Giraudot, Pierre Alliez, Frédéric Cazals, Gaël Guennebaud, Bruno Lévy, Marc Pouget, Laurent Saboret, and Liangliang Nan
 
 Several \cgal packages have to solve linear systems with dense or
-sparse matrices. This package provides concepts and models for that
-purpose.
+sparse matrices, linear integer programs. This package provides 
+concepts and models for that purpose.
 
-We generally provide models using the \ref thirdpartyEigen
-library. Wrappers for the Eigen classes `Eigen_matrix` and
-`Eigen_vector` are also provided when needed.
-
+For linear systems, we generally provide models using the 
+\ref thirdpartyEigen library. Wrappers for the Eigen classes 
+`Eigen_matrix` and `Eigen_vector` are also provided when needed.
 It is straightforward to develop equivalent models for
 other solvers, for example those found in the <a
 href="https://software.intel.com/en-us/mkl">Intel Math Kernel
 Library (MKL)</a>.
+
+For mixed integer programs (either constrained or unconstrained),
+we provide models using \ref thirdpartySCIP and \ref thirdpartyGLPK
+libraries. It is also possible to derive new models from other
+high performance libraries, e.g., 
+<a href = "https://projects.coin-or.org/Cbc"> CBC </a>, 
+<a href = "http://www.gurobi.com/"> Gurobi </a>.
 
 
 \section SectionSolverDiagonalize Matrix Diagonalization
@@ -87,6 +93,26 @@ the solver:
 
 \cgalExample{Solver_interface/sparse_solvers.cpp}
 
+
+
+\section SectionMIPSolver Mixed Integer Program Solvers
+
+The concept `MixedIntegerProgramTraits` defines an interface for 
+formulating and solving (constrained or unconstrained) mixed integer 
+programs. It can also be used for general linear programs. 
+
+The field type is `double`. We provide two models of this concept: 
+`GLPK_mixed_integer_program_traits` using \ref thirdpartyGLPK and 
+`SCIP_mixed_integer_program_traits` using \ref thirdpartySCIP.
+
+Here is an example that shows how to formulate and solve a simple 
+mixed integer programs using this solver.
+
+\cgalExample{Solver_interface/mixed_integer_program.cpp}
+
+
+
+
 \section SolversHistory Implementation History
 This package is the result of the increasing needs for linear solvers
 in \cgal.  The first packages that introduced the solver concepts were
@@ -96,7 +122,10 @@ on \sc{Taucs}, \sc{LAPACK}, \sc{BLAS} and \sc{OpenNL}. Gaël Guennebaud
 then introduced new models using the \ref thirdpartyEigen library that
 became the only supported models by \cgal.  Later on the packages \ref
 PkgSurfaceMeshSkeletonization and \ref PkgSurfaceMeshDeformation
-extended the existing concepts.
+extended the existing concepts. Liangliang Nan introduced the concept
+`MixedIntegerProgramTraits` and two models for solving mixed integer
+programs when implementing the \ref PkgPolygonalSurfaceReconstruction
+package.
 
 Simon Giraudot was responsible for gathering all concepts and classes, and also wrote this user manual
 with the help of Andreas Fabri.

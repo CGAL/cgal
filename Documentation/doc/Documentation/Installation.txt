@@ -622,6 +622,24 @@ and, by extension, of surface meshes (see Section \ref BGLPartitioning of the pa
 More information is available on the METIS library
 at <A HREF="http://glaros.dtc.umn.edu/gkhome/metis/metis/overview">`http://glaros.dtc.umn.edu/gkhome/metis/metis/overview`</A>.
 
+\subsection thirdpartyGLPK GLPK
+
+\sc{GLPK} (GNU Linear Programming Kit) is a library for solving linear programming (LP), mixed integer programming (MIP), and other related problems.
+
+In \cgal, \sc{GLPK} provides an optional linear integer program solver in the \ref PkgPolygonalSurfaceReconstruction package.
+
+The \sc{GLPK} web site is <A HREF="https://www.gnu.org/software/glpk/">`https://www.gnu.org/software/glpk/`</A>.
+
+
+\subsection thirdpartySCIP SCIP 
+
+\sc{SCIP} (Solving Constraint Integer Programs) is currently one of the fastest open source solvers for mixed integer programming (MIP) and mixed integer nonlinear programming (MINLP).
+
+In \cgal, \sc{SCIP} provides an optional linear integer program solver in the \ref PkgPolygonalSurfaceReconstruction package.
+
+The \sc{SCIP} web site is <A HREF="http://scip.zib.de/">`http://scip.zib.de/`</A>.
+
+
 \section secbuilding Building CGAL 
 
 The results of a successful configuration are build files that control the build step.

@@ -21,6 +21,8 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program( "diagonalize_matrix.cpp" )
 
+  create_single_source_cgal_program( "mixed_integer_program.cpp" )
+
 else()
   
     message(STATUS "This program requires the CGAL library, and will not be compiled.")

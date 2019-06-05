@@ -2,4 +2,5 @@
 \example Solver_interface/diagonalize_matrix.cpp	
 \example Solver_interface/singular_value_decomposition.cpp
 \example Solver_interface/sparse_solvers.cpp
+\example Solver_interface/mixed_integer_program.cpp
 */

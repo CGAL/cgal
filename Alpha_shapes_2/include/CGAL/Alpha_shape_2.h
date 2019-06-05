@@ -319,7 +319,7 @@ public:
       return n;
     }
 
-private :
+protected :
 
   //--------------------- INITIALIZATION OF PRIVATE MEMBERS -----------
 
