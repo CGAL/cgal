@@ -1089,8 +1089,7 @@ The following iterators allow the user to visit cells, facets, edges and vertice
 
 /*!
 Starts at an arbitrary finite vertex. Then `++` and `--` will 
-iterate over finite vertices. Returns `finite_vertices_end()` when 
-`t.number_of_vertices() == 0`. 
+iterate over finite vertices.
 */ 
 Finite_vertices_iterator finite_vertices_begin() const; 
 
@@ -1101,8 +1100,7 @@ Finite_vertices_iterator finite_vertices_end() const;
 
 /*!
 Starts at an arbitrary finite edge. Then `++` and `--` will 
-iterate over finite edges. Returns `finite_edges_end()` when 
-`t.dimension() < 1`. 
+iterate over finite edges.
 */ 
 Finite_edges_iterator finite_edges_begin() const; 
 
@@ -1136,9 +1134,7 @@ Past-the-end iterator
 Finite_cells_iterator finite_cells_end() const; 
 
 /*!
-Starts at an arbitrary vertex. Iterates over all vertices (even the infinite 
-one). Returns `vertices_end()` when 
-`t.number_of_vertices() == 0`. 
+Starts at an arbitrary vertex. Iterates over all vertices (even the infinite one). 
 */ 
 All_vertices_iterator all_vertices_begin() const; 
 
@@ -1227,7 +1223,6 @@ All_edges all_edges() const;
  
 /*!
   returns a range of iterators over all vertices (even the infinite one).
-  Returns an empty range when `t.number_of_vertices() == 0`. 
   \note While the value type of `All_vertices_iterator` is `Vertex`, the value type of 
   `All_vertex_handles::iterator` is `Vertex_handle`.
 */
@@ -1258,7 +1253,6 @@ Finite_edges finite_edges() const;
  
 /*!
   returns a range of iterators over finite vertices.
-  Returns an empty range when `t.number_of_vertices() == 0`. 
   \note While the value type of `Finite_vertices_iterator` is `Vertex`, the value type of 
   `Finite_vertex_handles::iterator` is `Vertex_handle`.
 */
