@@ -54,8 +54,8 @@ int main(int argc, char** argv )
 
   std::cout << "Number of segments: " << number_of_segments << std::endl;
   // print segment-ids
-  face_iterator facet_it, fend;
-  for(face_descriptor f faces(mesh)) {
+
+  for(face_descriptor f : faces(mesh)) {
       // ids are between [0, number_of_segments -1]
       std::cout << segment_property_map[f] << " ";
   }
