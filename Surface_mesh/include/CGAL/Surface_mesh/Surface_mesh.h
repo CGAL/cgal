@@ -2110,8 +2110,9 @@ private: //------------------------------------------------------- private data
     reindex.resize(sm.num_vertices());
     int n = 0;
     BOOST_FOREACH(Vertex_index v, sm.vertices()){
-      
-      os << get(vpm, v);
+
+      P p  = get(vpm, v); 
+      os << p.x() << " " << p.y() << " " << p.z();
       if(has_vcolors)
       {
         CGAL::Color color = vcolors[v];
@@ -2210,7 +2211,7 @@ private: //------------------------------------------------------- private data
     }
     sm.reserve(sm.num_vertices()+n, sm.num_faces()+2*f, sm.num_edges()+e);
     std::vector<Vertex_index> vertexmap(n);
-    P p;
+
     Vector_3 v;
     typename Mesh::template Property_map<Vertex_index,CGAL::Color> vcolor;
     typename Mesh::template Property_map<Vertex_index,Vector_3> vnormal;
@@ -2225,10 +2226,11 @@ private: //------------------------------------------------------- private data
 
     for(int i=0; i < n; i++){
       is >> sm_skip_comments;
-      is >> p;
+      double x, y, z;
+      is >> iformat(x) >> iformat(y) >> iformat(z);
       
       Vertex_index vi = sm.add_vertex();
-      put(vpm, vi, p);
+      put(vpm, vi, P(x, y, z));
       
       
       vertexmap[i] = vi;
