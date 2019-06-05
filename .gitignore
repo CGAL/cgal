@@ -1208,3 +1208,4 @@ gmon.*
 /Snap_rounding_2/test/Snap_rounding_2/data/out
 Polygonal_surface_reconstruction/examples/build*
 Polygonal_surface_reconstruction/test/build*
+Solver_interface/examples/build*

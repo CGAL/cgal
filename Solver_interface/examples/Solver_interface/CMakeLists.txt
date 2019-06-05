@@ -21,7 +21,14 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program( "diagonalize_matrix.cpp" )
 
-  create_single_source_cgal_program( "mixed_integer_program.cpp" )
+  find_package( SCIP )
+  if (SCIP_FOUND)
+    include_directories( BEFORE ${SCIP_INCLUDE_DIRS} )
+    create_single_source_cgal_program( "mixed_integer_program.cpp" )
+    target_link_libraries( mixed_integer_program PRIVATE ${SCIP_LIBRARIES} )
+  else()
+    message(STATUS "The MIP example requires the SCIP library, and will not be compiled.")
+  endif()
 
 else()
   
