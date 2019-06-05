@@ -336,7 +336,7 @@ template <typename  Traits, typename Tds, typename Itag>
 std::ostream & operator<<(std::ostream& os, const Constrained_triangulation_2<Traits,Tds,Itag> &ct); 
 
 /*!
-eeads a triangulation from stream `is` and assigns it to c`t`. Data in the stream must have the same format `operator<<` uses. 
+reads a triangulation from stream `is` and assigns it to c`t`. Data in the stream must have the same format `operator<<` uses. 
 Note that `ct` is first cleared. 
 \relates Constrained_triangulation_2 
 */

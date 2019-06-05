@@ -3202,7 +3202,6 @@ all_faces_begin() const
 {
   return _tds.faces_begin();
 }
-  
 template <class Gt, class Tds >
 typename Triangulation_2<Gt, Tds>::All_faces_iterator
 Triangulation_2<Gt, Tds>::

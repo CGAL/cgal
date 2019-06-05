@@ -79,7 +79,6 @@ _test_vertex_iterator( const Triangulation &T )
     }
     assert( n == T.number_of_vertices() );
 
-    
     return n;
 }
 

@@ -304,19 +304,19 @@ typedef unspecified_type Point_iterator;
 
 
 /*!
-range type for iterating over all faces, with a nested
+range type for iterating over all faces (including infinite faces),  with a nested
 type `iterator` that has as value type `Face_handle`
 */
 typedef Iterator_range<unspecified_type> All_face_handles;
 
 
 /*!
-range type for iterating over edges.
+range type for iterating over all edges (including infinite ones).
 */
 typedef Iterator_range<All_edges_iterator> All_edges;
 
 /*!
-range type for iterating over all vertices, with a nested
+range type for iterating over all vertices (including the infinite vertex), with a nested
 type `iterator` that has as value type `Vertex_handle`
 */
 typedef Iterator_range<unspecified_type> All_vertex_handles;
@@ -330,7 +330,7 @@ typedef Iterator_range<unspecified_type> Finite_face_handles;
 
 
 /*!
-range type for iterating over edges.
+range type for iterating over finite edges.
 */
 typedef Iterator_range<Finite_edges_iterator> Finite_edges;
 

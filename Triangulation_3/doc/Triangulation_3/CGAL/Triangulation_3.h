@@ -224,13 +224,13 @@ typedef Triangulation_data_structure::Facet_circulator Facet_circulator;
 
 /*! \name
 
-In order to write \cpp 11 `for`-loops we provide range types.
+In order to write \cpp 11 `for`-loops we provide the following range types.
 
 */
 /// @{
   
 /*!
-range type for iterating over all cell handles, with a nested type `iterator`
+range type for iterating over all cell handles (including infinite cells), with a nested type `iterator`
 that has as value type `Cell_handle`.
 */ 
   typedef Iterator_range<unspecified_type> All_cell_handles;
@@ -1204,7 +1204,7 @@ Note that vertex and cell ranges are special. See Section \ref Triangulation3sec
 /// @{
 
 /*!
-  returns a range of iterators over all cells (even the infinite one).
+  returns a range of iterators over all cells (even the infinite cells).
   Returns an empty range when `t.number_of_cells() == 0`. 
   \note While the value type of `All_cells_iterator` is `Cell`, the value type of 
   `All_cell_handles::iterator` is `Cell_handle`.

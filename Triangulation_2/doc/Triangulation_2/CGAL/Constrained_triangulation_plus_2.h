@@ -387,7 +387,7 @@ Vertices_in_constraint_iterator
 vertices_in_constraint_end(Constraint_id cid) const; 
 
 /*!
-returns an range of vertices on the constraint `cid`. 
+returns a range of the vertices on the constraint `cid`. 
 */ 
 Vertices_in_constraint
 vertices_in_constraint(Constraint_id cid) const; 
