@@ -2,8 +2,8 @@
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/Writer_OFF.h>
 #include <CGAL/property_map.h>
-#include <CGAL/Shape_detection_3.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Shape_detection/Efficient_RANSAC.h>
 #include <CGAL/Polygonal_surface_reconstruction.h>
 #include <CGAL/SCIP_mixed_integer_program_traits.h>
 #include <CGAL/Timer.h>
@@ -23,10 +23,11 @@ typedef CGAL::Nth_of_tuple_property_map<0, PNI>						Point_map;
 typedef CGAL::Nth_of_tuple_property_map<1, PNI>						Normal_map;
 typedef CGAL::Nth_of_tuple_property_map<2, PNI>						Plane_index_map;
 
-typedef CGAL::Shape_detection_3::Shape_detection_traits<Kernel, Point_vector, Point_map, Normal_map>	Traits;
-typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>			Efficient_ransac;
-typedef CGAL::Shape_detection_3::Plane<Traits>						Plane;
-typedef CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>	Point_to_shape_index_map;
+typedef CGAL::Shape_detection::Efficient_RANSAC_traits<Kernel, Point_vector, Point_map, Normal_map>     Traits;
+
+typedef CGAL::Shape_detection::Efficient_RANSAC<Traits>             Efficient_ransac;
+typedef CGAL::Shape_detection::Plane<Traits>						Plane;
+typedef CGAL::Shape_detection::Point_to_shape_index_map<Traits>     Point_to_shape_index_map;
 
 typedef	CGAL::Polygonal_surface_reconstruction<Kernel>				Polygonal_surface_reconstruction;
 typedef CGAL::Surface_mesh<Point>									Surface_mesh;
