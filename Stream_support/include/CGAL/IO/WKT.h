@@ -379,7 +379,7 @@ read_WKT( std::istream& input,
     {
       MultiLineString mls;
       CGAL::read_multi_linestring_WKT(input, mls);
-      (const LineString& ls : mls)
+      for(const LineString& ls : mls)
           polylines.push_back(ls);
     }
     else if(type == "MULTIPOLYGON")
