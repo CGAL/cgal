@@ -7,6 +7,8 @@
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 
+#include <boost/version.hpp>
+
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::FT FT;
@@ -42,7 +44,14 @@ FT capsule_function(const Point& p)
   else if(z < FT(-5)) return base+CGAL::square(z+5);
   else return base;
 }
-
+#if BOOST_VERSION >= 106600
+auto field = [](const Point& p, const int, const Mesh_domain::Index)
+             {
+               if(p.z() > 2) return 0.025;
+               if(p.z() < -3) return 0.01;
+               else return 1.;
+             };
+#else
 struct Field {
   typedef ::FT FT;
   
@@ -52,6 +61,7 @@ struct Field {
     else return 1;
   }
 } field;
+#endif
 
 int main()
 {

@@ -68,6 +68,11 @@
 #include <boost/unordered_map.hpp>
 #include <boost/utility/result_of.hpp>
 
+#ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
+#include <CGAL/internal/info_check.h>
+#include <boost/iterator/zip_iterator.hpp>
+#endif
+
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
 #include <CGAL/internal/Static_filters/tools.h>
 #include <CGAL/Triangulation_structural_filtering_traits.h>
@@ -1115,37 +1120,101 @@ public:
                                           Hidden_points_visitor& hider,
                                           bool *could_lock_zone = nullptr);
 
+  
+#ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
+  template < class InputIterator >
+  std::ptrdiff_t insert(InputIterator first, InputIterator last,
+                        typename boost::enable_if<
+                          boost::is_convertible<
+                              typename std::iterator_traits<InputIterator>::value_type,
+                              Point
+                          >
+                        >::type* = NULL)
+#else
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last)
+#endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   {
     size_type n = number_of_vertices();
 
-    std::vector<Point> points (first, last);
-
-    // The function insert(first, last) is overwritten in Regular_triangulation_3.h,
-    // so we know that, here, `Point` is not a type of Weighted point.
-    // Nevertheless, to make it more generic (that is, allowing the user to pass
-    // a `Point` type that is not GT::Point_3), we still use the spatial sort
-    // adapter traits and Construct_point_3 here.
-    typedef typename Geom_traits::Construct_point_3 Construct_point_3;
-    typedef typename boost::result_of<const Construct_point_3(const Point&)>::type Ret;
-    typedef CGAL::internal::boost_::function_property_map<Construct_point_3, Point, Ret> fpmap;
-    typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
-
-    spatial_sort(points.begin(), points.end(),
-                 Search_traits_3(
-                   CGAL::internal::boost_::make_function_property_map<Point, Ret, Construct_point_3>(
-                     geom_traits().construct_point_3_object()), geom_traits()));
-
     Vertex_handle hint;
-    for(typename std::vector<Point>::const_iterator p = points.begin(),
-                                                    end = points.end();
-        p != end; ++p)
-      hint = insert(*p, hint);
+    for(; first != last; ++first)
+      hint = insert(*first, hint);
 
     return number_of_vertices() - n;
   }
 
+#ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
+protected:
+  //top stands for tuple-or-pair
+  template <class Info>
+  const Point& top_get_first(const std::pair<Point,Info>& pair) const { return pair.first; }
+
+  template <class Info>
+  const Info& top_get_second(const std::pair<Point,Info>& pair) const { return pair.second; }
+
+  template <class Info>
+  const Point& top_get_first(const boost::tuple<Point,Info>& tuple) const { return boost::get<0>(tuple); }
+
+  template <class Info>
+  const Info& top_get_second(const boost::tuple<Point,Info>& tuple) const { return boost::get<1>(tuple); }
+
+  template <class Tuple_or_pair,class InputIterator>
+  std::ptrdiff_t insert_with_info(InputIterator first, InputIterator last)
+  {
+    size_type n = number_of_vertices();
+    std::vector<std::size_t> indices;
+    std::vector<Point> points;
+    std::vector<typename Triangulation_data_structure::Vertex::Info> infos;
+    for(InputIterator it=first;it!=last;++it)
+    {
+      Tuple_or_pair value=*it;
+      points.push_back(top_get_first(value));
+      infos.push_back(top_get_second(value));
+    }
+
+    Vertex_handle hint;
+    for(std::size_t i=0; i < points.size(); ++i)
+      {
+        hint = insert(points[i], hint);
+        if(hint != Vertex_handle())
+          hint->info() = infos[i];
+      }
+
+    return number_of_vertices() - n;
+  }
+
+public:
+  template < class InputIterator >
+  std::ptrdiff_t insert(InputIterator first, InputIterator last,
+                        typename boost::enable_if<
+                          boost::is_convertible<
+                            typename std::iterator_traits<InputIterator>::value_type,
+                            std::pair<Point, typename internal::Info_check<
+                                               typename Triangulation_data_structure::Vertex>::type>
+                          > >::type* =NULL)
+  {
+    return insert_with_info< std::pair<Point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type> >(first,last);
+  }
+
+  template <class  InputIterator_1,class InputIterator_2>
+  std::ptrdiff_t
+  insert(boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
+          boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
+          typename boost::enable_if<
+            boost::mpl::and_<
+              boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
+              boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
+            >
+          >::type* =NULL)
+  {
+    return insert_with_info< boost::tuple<Point, typename internal::Info_check<
+        typename Triangulation_data_structure::Vertex>::type> >(first,last);
+  }
+#endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
+
+  
+  
   Vertex_handle insert_in_cell(const Point& p, Cell_handle c);
   Vertex_handle insert_in_facet(const Point& p, Cell_handle c, int i);
   Vertex_handle insert_in_facet(const Point& p, const Facet& f) {

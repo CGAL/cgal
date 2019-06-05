@@ -81,7 +81,6 @@ Periodic_4_hyperbolic_triangulation_2
 Point_set_2 
 Point_set_3 
 Point_set_processing_3 
-Point_set_shape_detection_3 
 Poisson_surface_reconstruction_3 
 Polygon 
 Polygon_mesh_processing 
@@ -103,6 +102,7 @@ SearchStructures
 Segment_Delaunay_graph_2 
 Segment_Delaunay_graph_Linf_2 
 Set_movable_separability_2 
+Shape_detection 
 Skin_surface_3 
 Snap_rounding_2 
 Solver_interface 
