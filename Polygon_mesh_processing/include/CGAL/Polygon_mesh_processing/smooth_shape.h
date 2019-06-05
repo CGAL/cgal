@@ -1,4 +1,4 @@
-// Copyright (c) 2018 GeometryFactory (France).
+// Copyright (c) 2018-2019 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -17,7 +17,8 @@
 // SPDX-License-Identifier: GPL-3.0+
 //
 //
-// Author(s)     : Konstantinos Katrioplas (konst.katrioplas@gmail.com)
+// Author(s)     : Mael Rouxel-Labbé
+//                 Konstantinos Katrioplas (konst.katrioplas@gmail.com)
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_SMOOTH_SHAPE_H
 #define CGAL_POLYGON_MESH_PROCESSING_SMOOTH_SHAPE_H
@@ -39,45 +40,34 @@
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
+namespace internal {
 
 // normalized explicit scheme
-template<typename TriangleMesh, typename FaceRange, typename NamedParameters>
+template<typename FaceRange, typename TriangleMesh,
+         typename VertexPointMap, typename VertexConstrainMap,
+         typename GeomTraits>
 void smooth_curvature_flow_explicit(const FaceRange& faces,
                                     TriangleMesh& tmesh,
-                                    const NamedParameters& np)
+                                    const VertexPointMap vpmap,
+                                    const VertexConstrainMap vcmap,
+                                    const std::size_t nb_iterations,
+                                    const GeomTraits& traits)
 {
-  using boost::choose_param;
-  using boost::get_param;
+  typedef internal::Curvature_flow<TriangleMesh, VertexPointMap, VertexConstrainMap, GeomTraits>  Curvature_explicit_smoother;
 
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type      GeomTraits;
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type  VertexPointMap;
-  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
-                                      get_property_map(CGAL::vertex_point, tmesh));
-
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
-  typedef typename boost::lookup_named_param_def <
-      internal_np::vertex_is_constrained_t,
-      NamedParameters,
-      Constant_property_map<vertex_descriptor, bool>
-    > ::type VCMap;
-  VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
-                             Constant_property_map<vertex_descriptor, bool>(false));
-
-  std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
-
-  internal::Curvature_flow<TriangleMesh, VertexPointMap, VCMap, GeomTraits>
-          curvature_smoother(tmesh, vpmap, vcmap);
-
-  curvature_smoother.init_smoothing(faces);
+  Curvature_explicit_smoother curvature_smoother(tmesh, vpmap, vcmap, traits);
+  curvature_smoother.initialize(faces);
 
   for(std::size_t i=0; i<nb_iterations; ++i)
   {
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
     std::cout << "iteration #" << i << std::endl;
 #endif
-    curvature_smoother.curvature_smoothing();
+    curvature_smoother.smooth();
   }
 }
+
+} // namespace internal
 
 /*!
 * \ingroup PMP_meshing_grp
@@ -132,94 +122,95 @@ void smooth_along_curvature_flow(const FaceRange& faces,
   if(std::begin(faces) == std::end(faces))
     return;
 
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor      vertex_descriptor;
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type        GeomTraits;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type    VertexPointMap;
+  typedef typename boost::lookup_named_param_def<
+                     internal_np::vertex_is_constrained_t,
+                     NamedParameters,
+                     Constant_property_map<vertex_descriptor, bool> >::type  VCMap;
+
   using boost::choose_param;
   using boost::get_param;
 
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type        GeomTraits;
   GeomTraits gt = choose_param(get_param(np, internal_np::geom_traits), GeomTraits());
-
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type    VertexPointMap;
   VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                       get_property_map(CGAL::vertex_point, tmesh));
-
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor      vertex_descriptor;
-  typedef typename boost::lookup_named_param_def<
-      internal_np::vertex_is_constrained_t,
-      NamedParameters,
-      Constant_property_map<vertex_descriptor, bool>
-    > ::type VCMap;
   VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
                              Constant_property_map<vertex_descriptor, bool>(false));
-
-  std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
-  bool use_explicit_scheme = choose_param(get_param(np, internal_np::use_explicit_scheme), false);
+  const std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+  const bool use_explicit_scheme = choose_param(get_param(np, internal_np::use_explicit_scheme), false);
 
   if(use_explicit_scheme)
-  {
-    smooth_curvature_flow_explicit(faces, tmesh, parameters::number_of_iterations(nb_iterations));
-  }
-  else
-  {
-    // implicit scheme
+    return internal::smooth_curvature_flow_explicit(faces, tmesh, vpmap, vcmap, nb_iterations, gt);
+
+  // from now on, it is the implicit scheme
+
 #if defined(CGAL_EIGEN3_ENABLED)
-  #if EIGEN_VERSION_AT_LEAST(3,2,0)
-    typedef typename Eigen::SparseMatrix<double>                                         Eigen_sparse_matrix;
-    typedef typename Eigen::BiCGSTAB<Eigen_sparse_matrix, Eigen::IncompleteLUT<double> > Eigen_solver;
-    typedef CGAL::Eigen_solver_traits<Eigen_solver>                                      Default_solver;
-  #else
-    typedef bool Default_solver;//compilation should crash
-      //if no solver is provided and Eigen version < 3.2
-  #endif
+#if EIGEN_VERSION_AT_LEAST(3,2,0)
+  typedef typename Eigen::SparseMatrix<double>                                         Eigen_sparse_matrix;
+  typedef typename Eigen::BiCGSTAB<Eigen_sparse_matrix, Eigen::IncompleteLUT<double> > Eigen_solver;
+  typedef CGAL::Eigen_solver_traits<Eigen_solver>                                      Default_solver;
 #else
-    typedef bool Default_solver;//compilation should crash
-      // if no solver is provided and Eigen version < 3.2
+  typedef bool Default_solver;//compilation should crash
+  //if no solver is provided and Eigen version < 3.2
+#endif
+#else
+  typedef bool Default_solver;//compilation should crash
+  // if no solver is provided and Eigen version < 3.2
 #endif
 
 #if defined(CGAL_EIGEN3_ENABLED)
-    CGAL_static_assertion_msg(
+  CGAL_static_assertion_msg(
       (!boost::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value) || EIGEN_VERSION_AT_LEAST(3, 2, 0),
       "Eigen3 version 3.2 or later is required.");
 #else
-    CGAL_static_assertion_msg(
+  CGAL_static_assertion_msg(
       (!boost::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value),
       "Eigen3 version 3.2 or later is required.");
 #endif
 
-    typedef typename GetSolver<NamedParameters, Default_solver>::type               Sparse_solver;
-    typedef typename Sparse_solver::Matrix                                          Eigen_matrix;
-    typedef typename Sparse_solver::Vector                                          Eigen_vector;
+  typedef typename GetSolver<NamedParameters, Default_solver>::type               Sparse_solver;
+  typedef typename Sparse_solver::Matrix                                          Eigen_matrix;
+  typedef typename Sparse_solver::Vector                                          Eigen_vector;
 
-    Sparse_solver solver = choose_param(get_param(np, internal_np::sparse_linear_solver), Default_solver());
+  Sparse_solver solver = choose_param(get_param(np, internal_np::sparse_linear_solver), Default_solver());
 
-    std::size_t n = vertices(tmesh).size();
-    Eigen_matrix A(n, n);
-    Eigen_vector bx(n), by(n), bz(n), Xx(n), Xy(n), Xz(n);
-    std::vector<CGAL::Triple<std::size_t, std::size_t, double> > stiffness;
+  std::size_t n = vertices(tmesh).size();
+  Eigen_matrix A(n, n);
+  Eigen_vector bx(n), by(n), bz(n), Xx(n), Xy(n), Xz(n);
+  std::vector<CGAL::Triple<std::size_t, std::size_t, double> > stiffness;
 
-    internal::Shape_smoother<TriangleMesh, VertexPointMap, VCMap, Sparse_solver, GeomTraits> smoother(tmesh, vpmap, vcmap, gt);
+  internal::Shape_smoother<TriangleMesh, VertexPointMap, VCMap, Sparse_solver, GeomTraits> smoother(tmesh, vpmap, vcmap, gt);
 
-    smoother.init_smoothing(faces);
+  smoother.init_smoothing(faces);
 
-    // For robustness reasons, the laplacian coefficients are computed only once (only the mass
-    // matrix is updated at every iteration). See Kazdhan et al. "Can Mean-Curvature Flow Be Made Non-Singular?".
-    smoother.calculate_stiffness_matrix_elements(stiffness);
+  // For robustness reasons, the laplacian coefficients are computed only once (only the mass
+  // matrix is updated at every iteration). See Kazdhan et al. "Can Mean-Curvature Flow Be Made Non-Singular?".
+  smoother.calculate_stiffness_matrix_elements(stiffness);
 
-    for(std::size_t iter = 0; iter < nb_iterations; ++iter)
-    {
-      std::cout << "iter: " << iter << std::endl;
+  for(std::size_t iter=0; iter<nb_iterations; ++iter)
+  {
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+    std::cout << "iteration #" << i << std::endl;
+#endif
 
-      smoother.setup_system(A, bx, by, bz, stiffness, time);
-      smoother.solve_system(A, Xx, Xy, Xz, bx, by, bz, solver);
+    smoother.setup_system(A, bx, by, bz, stiffness, time);
+
+    if(smoother.solve_system(A, Xx, Xy, Xz, bx, by, bz, solver))
       smoother.update_mesh(Xx, Xy, Xz);
+    else
+      break;
 
-      // @tmp (clean fstream sstream includes too)
-      std::stringstream oss;
-      oss << "intermediate_" << iter << ".off" << std::ends;
-      std::ofstream out(oss.str().c_str());
-      out.precision(17);
-      out << tmesh;
-      out.close();
-    }
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+    // @tmp (clean fstream sstream includes too)
+    std::stringstream oss;
+    oss << "intermediate_" << iter << ".off" << std::ends;
+    std::ofstream out(oss.str().c_str());
+    out.precision(17);
+    out << tmesh;
+    out.close();
+#endif
   }
 }
 

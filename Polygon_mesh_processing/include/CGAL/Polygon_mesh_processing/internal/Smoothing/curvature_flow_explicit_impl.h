@@ -1,4 +1,4 @@
-// Copyright (c) 2018 GeometryFactory (France).
+// Copyright (c) 2018-2019 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -17,7 +17,8 @@
 // SPDX-License-Identifier: GPL-3.0+
 //
 //
-// Author(s)     : Konstantinos Katrioplas (konst.katrioplas@gmail.com)
+// Author(s)     : Mael Rouxel-Labbé
+//                 Konstantinos Katrioplas (konst.katrioplas@gmail.com)
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_INTERNAL_CURVATURE_FLOW_EXPLICIT_IMPL_H
 #define CGAL_POLYGON_MESH_PROCESSING_INTERNAL_CURVATURE_FLOW_EXPLICIT_IMPL_H
@@ -46,6 +47,7 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
 
+// @fixme which cotangent weight should be used?
 template<typename TriangleMesh,
          typename VertexPointMap,
          typename CotangentValue = CGAL::internal::Cotangent_value_Meyer<TriangleMesh, VertexPointMap> >
@@ -93,15 +95,18 @@ class Curvature_flow
 public:
   Curvature_flow(TriangleMesh& pmesh,
                  VertexPointMap vpmap,
-                 VertexConstraintMap vcmap)
+                 VertexConstraintMap vcmap,
+                 const GeomTraits& traits)
     :
       mesh_(pmesh),
       vpmap_(vpmap), vcmap_(vcmap),
-      weight_calculator_(pmesh, vpmap)
+      weight_calculator_(pmesh, vpmap),
+      traits_(traits)
   { }
 
+public:
   template<typename FaceRange>
-  void init_smoothing(const FaceRange& face_range)
+  void initialize(const FaceRange& face_range)
   {
     CGAL_precondition(CGAL::is_triangle_mesh(mesh_));
     CGAL_precondition_code(std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor> degen_faces;)
@@ -114,7 +119,7 @@ public:
   }
 
   // @todo should be possible to pass a time step because this is not a very stable process
-  void curvature_smoothing()
+  void smooth()
   {
     // In general, we will smooth whole meshes, so this is better than a map
     typedef CGAL::dynamic_vertex_property_t<Point>                      Vertex_property_tag;
@@ -182,8 +187,6 @@ private:
   }
 
 private:
-  // data members
-  // ------------
   TriangleMesh& mesh_;
 
   VertexPointMap vpmap_;
@@ -192,7 +195,7 @@ private:
   std::vector<vertex_descriptor> vrange_;
 
   Weight_calculator weight_calculator_;
-  GeomTraits traits_;
+  const GeomTraits& traits_;
 };
 
 } // internal

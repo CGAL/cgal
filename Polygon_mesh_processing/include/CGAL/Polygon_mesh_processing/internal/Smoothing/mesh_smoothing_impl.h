@@ -631,8 +631,7 @@ public:
         continue;
 
       Point_ref p_query = get(vpmap_, v);
-      Point projected = tree_ptr_->closest_point(p_query);
-      std::cout << p_query << " is projected to: " << projected << std::endl;
+      const Point projected = tree_ptr_->closest_point(p_query);
       put(vpmap_, v, projected);
     }
   }

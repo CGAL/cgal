@@ -123,6 +123,7 @@ public:
       vpmap_(vpmap),
       vcmap_(vcmap),
       vimap_(get(Vertex_local_index(), mesh_)),
+      scale_volume_after_smoothing(true),
       traits_(traits),
       weight_calculator_(mesh, vpmap)
   { }
@@ -141,18 +142,22 @@ public:
     constrained_flags_.assign(vertices(mesh_).size(), false);
 
     std::size_t counter = 0; // @tmp
-
-    for(vertex_descriptor v : vrange_)
+    for(vertex_descriptor v : vertices(mesh_))
     {
       if(is_constrained(v))
       {
-        ++counter;
         constrained_flags_[get(vimap_, v)] = true;
-        anchor_point = get(vpmap_, v);
+        ++counter;
+
+        // scaling things cannot preserve the position of more than a single constrained point
+        if(anchor_point == boost::none)
+          anchor_point = get(vpmap_, v);
+        else
+          scale_volume_after_smoothing = false;
       }
     }
 
-    std::cout << counter << " vertices are constrained" << std::endl;
+    std::cout << counter << " constrained vertices" << std::endl;
   }
 
   void setup_system(Eigen_matrix& A,
@@ -242,9 +247,26 @@ public:
       stiffness_elements.push_back(Triplet(it->first, it->first, it->second));
   }
 
+  void update_mesh_no_scaling(const Eigen_vector& Xx, const Eigen_vector& Xy, const Eigen_vector& Xz)
+  {
+    for(vertex_descriptor v : vrange_)
+    {
+      std::size_t index = get(vimap_, v);
+      const FT x_new = Xx[index];
+      const FT y_new = Xy[index];
+      const FT z_new = Xz[index];
+
+      Point new_pos(x_new, y_new, z_new);
+      put(vpmap_, v, new_pos);
+    }
+  }
+
   void update_mesh(const Eigen_vector& Xx, const Eigen_vector& Xy, const Eigen_vector& Xz)
   {
     namespace PMP = CGAL::Polygon_mesh_processing;
+
+    if(!scale_volume_after_smoothing)
+      return update_mesh_no_scaling(Xx, Xy, Xz);
 
     const FT old_vol = volume(mesh_, parameters::vertex_point_map(vpmap_).geom_traits(traits_));
 
@@ -314,28 +336,22 @@ private:
   {
     fill_mass_matrix();
 
-    // fill A = M - time * L
+    // fill A = Mass - time * Laplacian
     for(const Triplet& t : stiffness_elements)
     {
       std::size_t i = t.get<0>(), j = t.get<1>();
+
       if(i != j)
-      {
         A.set_coef(i, j, - time * t.get<2>(), true);
-      }
-      else if(!constrained_flags_[i]) // i==j
-      {
+      else if(!constrained_flags_[i]) // && i==j
         A.set_coef(i, i, diagonal_[t.get<0>()] - time * t.get<2>(), true);
-      }
     }
 
     for(vertex_descriptor v : vrange_)
     {
       std::size_t index = get(vimap_, v);
       if(constrained_flags_[index])
-      {
-        std::cout << "A[" << index <<", " << index << "] = 1 (constrained)" << std::endl;
         A.set_coef(index, index, 1., true);
-      }
     }
 
     // we do not call A.assemble_matrix here
@@ -385,9 +401,11 @@ private:
   VertexConstraintMap vcmap_;
   IndexMap vimap_;
 
-  // Smoothing has a tendency to reduce volumes, so we scale things back up based on the change
-  // of volume. We also need an anchor point to scale up, either a constrained point or the centroid
-  // of the initial mesh if no vertex is constrained.
+  // Smoothing has a tendency to reduce volumes, so we can scale things back up based on the change
+  // of volume. We need an anchor point to scale up, either a constrained point or the centroid
+  // of the initial mesh if no vertex is constrained. If there is more than a constrained vertex,
+  // then no scaling can be done without violating the constraint.
+  bool scale_volume_after_smoothing;
   boost::optional<Point> anchor_point;
 
   // linear system data

@@ -17,8 +17,8 @@
 // SPDX-License-Identifier: GPL-3.0+
 //
 //
-// Author(s)     : Konstantinos Katrioplas (konst.katrioplas@gmail.com)
-//                 Mael Rouxel-Labbé
+// Author(s)     : Mael Rouxel-Labbé
+//                 Konstantinos Katrioplas (konst.katrioplas@gmail.com)
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_SMOOTH_MESH_H
 #define CGAL_POLYGON_MESH_PROCESSING_SMOOTH_MESH_H
@@ -90,7 +90,6 @@ void smooth_angles(const FaceRange& faces,
   typedef internal::Angle_smoother<TriangleMesh, VertexPointMap, GeomTraits>          Angle_optimizer;
   typedef internal::Mesh_smoother<Angle_optimizer, TriangleMesh,
                                   VertexPointMap, VCMap, GeomTraits>                  Angle_smoother;
-  typedef internal::Delaunay_edge_flipper<TriangleMesh, VertexPointMap, GeomTraits>   Delaunay_flipper;
 
   if(std::begin(faces) == std::end(faces))
     return;
@@ -130,10 +129,6 @@ void smooth_angles(const FaceRange& faces,
 
       smoother.project_to_surface();
     }
-
-    // according to the paper, we're supposed to Delaunay-based edge flips!
-    Delaunay_flipper delaunay_flipper(tmesh, vpmap, gt);
-    delaunay_flipper(faces);
   }
 }
 
@@ -209,6 +204,8 @@ void smooth_areas(const FaceRange faces,
   typedef internal::Mesh_smoother<Area_optimizer, TriangleMesh,
                                   VertexPointMap, VCMap, GeomTraits>                  Area_smoother;
 
+  typedef internal::Delaunay_edge_flipper<TriangleMesh, VertexPointMap, GeomTraits>   Delaunay_flipper;
+
   if(std::begin(faces) == std::end(faces))
     return;
 
@@ -248,6 +245,10 @@ void smooth_areas(const FaceRange faces,
       smoother.project_to_surface();
     }
   }
+
+  // according to the paper, we're supposed to Delaunay-based edge flips!
+  Delaunay_flipper delaunay_flipper(tmesh, vpmap, gt);
+  delaunay_flipper(faces);
 }
 
 template <typename FaceRange, typename TriangleMesh>
@@ -267,15 +268,6 @@ void smooth_areas(TriangleMesh& tmesh)
 {
   smooth_areas(faces(tmesh), tmesh, parameters::all_default());
 }
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///
-///
-///
-///
-///
-///
-///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // do both
 template<typename TriangleMesh, typename FaceRange, typename NamedParameters>
@@ -341,7 +333,11 @@ void smooth(const FaceRange& faces,
       area_smoother.project_to_surface();
     }
 
-    // ... then angle smoothing + Delaunay flip
+    // @todo this should be optional
+    Delaunay_flipper delaunay_flipper(tmesh, vpmap, gt);
+    delaunay_flipper(faces);
+
+    // ... then angle smoothing
     angle_smoother.optimize(use_safety_constraints /*check for bad faces*/,
                             true /*apply all moves at once*/,
                             use_safety_constraints /*check if the min angle is improved*/);
@@ -356,10 +352,6 @@ void smooth(const FaceRange& faces,
 
       angle_smoother.project_to_surface();
     }
-
-    // according to the paper, we're supposed to Delaunay-based edge flips!
-    Delaunay_flipper delaunay_flipper(tmesh, vpmap, gt);
-    delaunay_flipper(faces);
   }
 }
 
