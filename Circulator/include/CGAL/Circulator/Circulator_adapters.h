@@ -68,12 +68,12 @@ public:
 
 // OPERATIONS
 
-    bool operator==( nullptr_t p) const {
+    bool operator==( std::nullptr_t p) const {
         CGAL_assertion( p == nullptr);
         CGAL_USE(p);
         return this->_ptr == nullptr;
     }
-    bool operator!=( nullptr_t p) const { return !(*this == p); }
+    bool operator!=( std::nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c)    const { return this->_ptr == c._ptr; }
     bool operator!=( const Self& c)    const { return !(*this == c); }
     reference  operator*()             const { return *(S*)this->_ptr;}
@@ -112,12 +112,12 @@ public:
 
 // OPERATIONS
 
-    bool operator==( nullptr_t p) const {
+    bool operator==( std::nullptr_t p) const {
         CGAL_assertion( p == nullptr);
         CGAL_USE(p);
         return this->_ptr == nullptr;
     }
-    bool operator!=( nullptr_t p) const { return !(*this == p); }
+    bool operator!=( std::nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c)    const { return this->_ptr == c._ptr; }
     bool operator!=( const Self& c)    const { return !(*this == c); }
     reference  operator*()             const { return *(const S*)this->_ptr;}
@@ -160,12 +160,12 @@ public:
 
 // OPERATIONS
 
-    bool operator==( nullptr_t p) const {
+    bool operator==( std::nullptr_t p) const {
         CGAL_assertion( p == nullptr);
         CGAL_USE(p);
         return this->_ptr == nullptr;
     }
-    bool operator!=( nullptr_t p) const { return !(*this == p); }
+    bool operator!=( std::nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c)    const { return this->_ptr == c._ptr; }
     bool operator!=( const Self& c)    const { return !(*this == c); }
     reference  operator*()             const { return *(S*)this->_ptr;}
@@ -213,12 +213,12 @@ public:
 
 // OPERATIONS
 
-    bool operator==( nullptr_t p) const {
+    bool operator==( std::nullptr_t p) const {
         CGAL_assertion( p == nullptr);
         CGAL_USE(p);
         return this->_ptr == nullptr;
     }
-    bool operator!=( nullptr_t p) const { return !(*this == p); }
+    bool operator!=( std::nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c)    const { return this->_ptr == c._ptr; }
     bool operator!=( const Self& c)    const { return !(*this == c); }
     reference  operator*()             const { return *(const S*)this->_ptr;}
@@ -273,12 +273,12 @@ public:
 //
 // OPERATIONS
 
-    bool operator==( nullptr_t p) const {
+    bool operator==( std::nullptr_t p) const {
         CGAL_assertion( p == nullptr);
         CGAL_USE(p);
         return this->_ptr == nullptr;
     }
-    bool operator!=( nullptr_t p) const { return !(*this == p); }
+    bool operator!=( std::nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c)    const { return this->_ptr == c._ptr; }
     bool operator!=( const Self& c)    const { return !(*this == c); }
     C&   operator*()                   const { return *(C*)this->_ptr;}
@@ -312,12 +312,12 @@ public:
 // OPERATIONS
 
 
-    bool operator==( nullptr_t p) const {
+    bool operator==( std::nullptr_t p) const {
         CGAL_assertion( p == nullptr);
         CGAL_USE(p);
         return this->_ptr == nullptr;
     }
-    bool operator!=( nullptr_t p) const { return !(*this == p); }
+    bool operator!=( std::nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c)    const { return this->_ptr == c._ptr; }
     bool operator!=( const Self& c)    const { return !(*this == c); }
     const C&  operator*()              const { return *(C*)this->_ptr;}
@@ -350,12 +350,12 @@ public:
 //
 // OPERATIONS
 
-    bool operator==( nullptr_t p) const {
+    bool operator==( std::nullptr_t p) const {
         CGAL_assertion( p == nullptr);
         CGAL_USE(p);
         return this->_ptr == nullptr;
     }
-    bool operator!=( nullptr_t p) const { return !(*this == p); }
+    bool operator!=( std::nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c)    const { return this->_ptr == c._ptr; }
     bool operator!=( const Self& c)    const { return !(*this == c); }
     C&   operator*()                   const { return *(C*)this->_ptr;}
@@ -400,12 +400,12 @@ public:
 //
 // OPERATIONS
 
-    bool operator==( nullptr_t p) const {
+    bool operator==( std::nullptr_t p) const {
         CGAL_assertion( p == nullptr);
         CGAL_USE(p);
         return this->_ptr == nullptr;
     }
-    bool operator!=( nullptr_t p) const { return !(*this == p); }
+    bool operator!=( std::nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c)    const { return this->_ptr == c._ptr; }
     bool operator!=( const Self& c)    const { return !(*this == c); }
     const C&  operator*()              const { return *(C*)this->_ptr;}
@@ -473,12 +473,12 @@ public:
 
 // OPERATIONS
 
-    bool operator==( nullptr_t p) const {
+    bool operator==( std::nullptr_t p) const {
         CGAL_assertion( p == nullptr);
         CGAL_USE(p);
         return _i >= _size;
     }
-    bool operator!=( nullptr_t p) const { return !(*this == p); }
+    bool operator!=( std::nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c) const {
         CGAL_assertion( this->_ptr  == c._ptr);  // belong to the same array?
         CGAL_assertion( _size == c._size); // same size when instantiated ?
@@ -598,12 +598,12 @@ public:
 //
 // OPERATIONS
 
-    bool operator==( nullptr_t p) const {
+    bool operator==( std::nullptr_t p) const {
         CGAL_assertion( p == nullptr);
         CGAL_USE(p);
         return _i >= _size;
     }
-    bool operator!=( nullptr_t p) const { return !(*this == p); }
+    bool operator!=( std::nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c) const {
         CGAL_assertion( this->_ptr  == c._ptr);  // belong to the same array?
         CGAL_assertion( _size == c._size); // same size when instantiated ?

@@ -68,11 +68,11 @@ public:
 
 // OPERATIONS
 
-  bool operator==( nullptr_t CGAL_assertion_code(p)) const {
+  bool operator==( std::nullptr_t CGAL_assertion_code(p)) const {
         CGAL_assertion( p == nullptr);
         return (ctnr == nullptr) || (ctnr->begin() == ctnr->end());
     }
-    bool operator!=( nullptr_t p) const { return !(*this == p); }
+    bool operator!=( std::nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c) const { return i == c.i; }
     bool operator!=( const Self& c) const { return !(*this == c); }
     reference  operator*() const {

@@ -657,7 +657,7 @@ namespace CGAL {
 namespace CGAL {
 
 // Typedef for the type of NULL.
-typedef const void * Nullptr_t;   // Anticipate C++0x's std::nullptr_t
+typedef const void * Nullptr_t;   // Anticipate C++0x's std::std::nullptr_t
 
 } //namespace CGAL
 

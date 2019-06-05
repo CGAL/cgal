@@ -73,11 +73,11 @@ public:
       CGAL_assertion(is_null || test(*this));
     }
 
-  bool operator==( nullptr_t ) const {
+  bool operator==( std::nullptr_t ) const {
     return is_null;
   }
 
-  bool operator!=( nullptr_t ) const {
+  bool operator!=( std::nullptr_t ) const {
     return !is_null;
   }
 

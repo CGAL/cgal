@@ -927,7 +927,7 @@ namespace internal {
     }
 
     // Construction from nullptr
-    CC_iterator (nullptr_t CGAL_assertion_code(n))
+    CC_iterator (std::nullptr_t CGAL_assertion_code(n))
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
       : ts(0)
 #endif
@@ -1135,7 +1135,7 @@ namespace internal {
   template < class DSC, bool Const >
   inline
   bool operator==(const CC_iterator<DSC, Const> &rhs,
-                  nullptr_t CGAL_assertion_code(n))
+                  std::nullptr_t CGAL_assertion_code(n))
   {
     CGAL_assertion( n == nullptr);
     return rhs.operator->() == nullptr;
@@ -1144,7 +1144,7 @@ namespace internal {
   template < class DSC, bool Const >
   inline
   bool operator!=(const CC_iterator<DSC, Const> &rhs,
-                  nullptr_t CGAL_assertion_code(n))
+                  std::nullptr_t CGAL_assertion_code(n))
   {
     CGAL_assertion( n == nullptr);
     return rhs.operator->() != nullptr;
