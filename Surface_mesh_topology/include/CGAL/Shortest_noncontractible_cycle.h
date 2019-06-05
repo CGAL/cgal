@@ -74,16 +74,6 @@ public:
 
 private:
 
-  /// Mark every dart belonging to a specific cell
-
-  template <unsigned int i>
-  void mark_cell(Dart_const_handle dh, size_type gmap_mask) {
-    for (auto it = m_gmap.template darts_of_cell<i>(dh).begin(), itend = m_gmap.template darts_of_cell<i>(dh).end(); it != itend; ++it) {
-      m_gmap.mark(it, gmap_mask);
-    }
-  }
-
-
   /// Create a spanning tree using BFS
 
   void BFS(Dart_const_handle root, Dart_container& spanning_tree,
@@ -101,19 +91,21 @@ private:
 
     // spanning_tree is empty (so far), so the index is -1
     q.push(std::make_pair(root, -1));
-    mark_cell<0>(root, vertex_visited);
+    m_gmap.template mark_cell<0>(root, vertex_visited);
     distance_from_root.push_back(0);
     // Note: distance_from_root will have n (= #0-cells) elements while spanning_tree only has n-1
     while (q.size()) {
       Dart_const_handle u = q.front().first;
       int ind = q.front().second;
       q.pop();
+      // TODO: This iterator (one_dart_per_incident_cell) can have some overhead for time complexity
+      //       comparing to a direct traversal using next/opposite operator. 
       for (auto it = m_gmap.template one_dart_per_incident_cell<1,0>(u).begin(), 
                 itend = m_gmap.template one_dart_per_incident_cell<1,0>(u).end();
                 it != itend; ++it) {
         Dart_const_handle v = m_gmap.template alpha<0>(it);
         if (!m_gmap.is_marked(v, vertex_visited)) {
-          mark_cell<0>(v, vertex_visited);
+          m_gmap.template mark_cell<0>(v, vertex_visited);
           if (ind == -1) 
             distance_from_root.push_back(1);
           else
@@ -135,17 +127,15 @@ private:
 
   bool is_degree_one_face(Dart_const_handle dh_face, Dart_const_handle& dh_only_edge, size_type edge_deleted) {
     int degree = 0;
-    Dart_const_handle dh_edge = dh_face;
+    Dart_const_handle dh_edge = NULL;
     for (auto dh = m_gmap.template one_dart_per_incident_cell<1,2>(dh_face).begin(), dhend = m_gmap.template one_dart_per_incident_cell<1,2>(dh_face).end(); dh != dhend; ++dh) {
-      if (m_gmap.is_marked(dh, edge_deleted)) continue;
-      dh_edge = dh;
-      ++degree;
+      if (!m_gmap.is_marked(dh, edge_deleted)) {
+        if (dh_edge!=NULL) return false;
+        dh_edge=dh;
+      }
     }
-    if (degree == 1) {
-      dh_only_edge = dh_edge;
-      return true;
-    }
-    return false;
+    dh_only_edge = dh_edge;
+    return true;
   }
 
 
@@ -162,7 +152,7 @@ private:
     }
     std::queue<Dart_const_handle> degree_one_faces;
     for (auto dh : spanning_tree) {
-      mark_cell<1>(dh, edge_deleted);
+      m_gmap.template mark_cell<1>(dh, edge_deleted);
     }
     for (auto it = m_gmap.template one_dart_per_cell<2>().begin(), itend = m_gmap.template one_dart_per_cell<2>().end(); it != itend; ++it) {
       Dart_const_handle dh_only_edge = it;
@@ -172,8 +162,8 @@ private:
     while (degree_one_faces.size()) {
       Dart_const_handle dh_face = degree_one_faces.front();
       degree_one_faces.pop();
-      mark_cell<2>(dh_face, face_deleted);
-      mark_cell<1>(dh_face, edge_deleted);
+      m_gmap.template mark_cell<2>(dh_face, face_deleted);
+      m_gmap.template mark_cell<1>(dh_face, edge_deleted);
       Dart_const_handle dh_adj_face = m_gmap.template alpha<2>(dh_face);
       Dart_const_handle dh_only_edge = dh_adj_face;
       if (is_degree_one_face(dh_adj_face, dh_only_edge, edge_deleted)) 
@@ -204,7 +194,7 @@ private:
       ++n;
       Dart_const_handle v = m_gmap.template alpha<0>(dh);
       for (int i = 0; i < index_marks.size(); ++i)
-        if (n & (1 << i)) mark_cell<0>(v, index_marks[i]);
+        if (n & (1 << i)) m_gmap.template mark_cell<0>(v, index_marks[i]);
     }
   }
 
