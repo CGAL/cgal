@@ -116,7 +116,6 @@ _test_cls_triangulation_3(const Triangulation &)
   typedef typename Cls::Finite_edges_iterator       Finite_edges_iterator;
   typedef typename Cls::Finite_facets_iterator      Finite_facets_iterator;
   typedef typename Cls::Finite_cells_iterator       Finite_cells_iterator;
-  
   CGAL_USE_TYPE(Vertex);
   CGAL_USE_TYPE(Cell);
   CGAL_USE_TYPE(difference_type);
