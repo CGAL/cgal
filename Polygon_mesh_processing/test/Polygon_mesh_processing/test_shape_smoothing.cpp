@@ -164,33 +164,6 @@ void test_curvature_flow(Mesh mesh)
 #endif
 }
 
-template <typename Mesh>
-void test_demo_helpers(Mesh mesh)
-{
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  std::cout << "-- test_demo_helpers --" << std::endl;
-#endif
-
-  const double time_step = 1e-2;
-  std::vector<CGAL::Triple<int, int, double> > stiffness;
-
-  bool compute_stiffness = true;
-  PMP::internal::solve_mcf(faces(mesh), mesh, time_step,
-                           stiffness, compute_stiffness,
-                           CGAL::parameters::all_default());
-
-  compute_stiffness = false;
-  PMP::internal::solve_mcf(faces(mesh), mesh, time_step,
-                           stiffness, compute_stiffness,
-                           CGAL::parameters::all_default());
-
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  std::ofstream out("output_devil_demo_helpers.off");
-  out << mesh;
-  out.close();
-#endif
-}
-
 int main(int, char**)
 {
   const char* filename_devil = "data/mannequin-devil.off";
@@ -214,7 +187,6 @@ int main(int, char**)
   }
   input2.close();
 
-  test_demo_helpers<SurfaceMesh>(mesh_devil);
   test_curvature_flow_time_step<SurfaceMesh>(mesh_devil);
   test_curvature_flow<SurfaceMesh>(mesh_pyramid);
   test_implicit_constrained_pyramid<SurfaceMesh>(mesh_pyramid);

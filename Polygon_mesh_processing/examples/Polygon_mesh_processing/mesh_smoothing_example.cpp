@@ -6,8 +6,6 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
 
-#include "glog/logging.h"
-
 #include <iostream>
 #include <fstream>
 
@@ -18,8 +16,6 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char** argv)
 {
-  google::InitGoogleLogging(argv[0]);
-
   const char* filename = argc > 1 ? argv[1] : "data/grid.off";
   std::ifstream input(filename);
 
