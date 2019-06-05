@@ -371,8 +371,8 @@ Context_iterator contexts_end(Vertex_handle va,
 /*!
 returns a range of contexts.
 */
-Contexts contexts((Vertex_handle va, 
-                     Vertex_handle vb) const; 
+Contexts contexts(Vertex_handle va, 
+                  Vertex_handle vb) const; 
   
 /*!
 returns an iterator on the first vertex on the constraint `cid`. 

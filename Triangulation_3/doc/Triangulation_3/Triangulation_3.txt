@@ -494,12 +494,14 @@ Wherever the API expects a handle the iterator can be passed as well.
 
 In order to write a \cpp 11 `for`-loop the triangulation calls also offers the range type
 `Triangulation_3::All_vertex_handles`, which has a nested type `Triangulation_3::All_vertex_handles::iterator`.
-The value type of this iterator is `Triangulation_3::Vertex_handle`.  Note that you only
-need the iterator type if you combine the pre \cpp 11 `for`-loop with the range class.
+The value type of this iterator is `Triangulation_3::Vertex_handle`.
 It is similar for the various iterators for vertices and cells.
 
 For the range `Triangulation_3::All_facets` it holds that `Triangulation_3::All_facets::iterator` `==`
-`Triangulation_3::All_facets_iterator`. It is similar for the iterators for edges and points.
+`Triangulation_3::All_facets_iterator`. It is similar for the iterators for facets, edges and points.
+
+
+Note that you only need the iterator type if you combine the pre \cpp 11 `for`-loop with the range class.
 
 \cgalExample{Triangulation_3/for_loop.cpp}
 
