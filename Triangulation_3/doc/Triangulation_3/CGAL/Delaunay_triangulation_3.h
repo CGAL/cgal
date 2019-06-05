@@ -209,7 +209,6 @@ std::ptrdiff_t
 insert(PointInputIterator first, PointInputIterator last); 
 
 /*!
-
 Inserts the points in the iterator range  `[first,last)`. 
 Returns the number of inserted points. 
 Note that this function is not guaranteed to insert the points 

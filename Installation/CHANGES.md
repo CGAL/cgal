@@ -13,7 +13,15 @@ Release date: September 2019
     and `CGAL::Constrained_triangulation_plus_2::remove_constraint((Vertex_handle va, Vertex_handle vb)`,
     that is a pair of vertex handles is no longer a key for a polyline constraint.
     Users must use a version prior to 5.0 if they need this functionality.
--   **Breaking change**: Removed the deprecated classes `CGAL::Regular_triangulation_euclidean_traits_2`, `CGAL::Regular_triangulation_filtered_traits_2`.   Users must use a version prior to 5.0 if they need these classes.   
+-   **Breaking change**: Removed the deprecated classes `CGAL::Regular_triangulation_euclidean_traits_2`, `CGAL::Regular_triangulation_filtered_traits_2`.   Users must use a version prior to 5.0 if they need these classes.
+-   **Breaking change**: The constructor and the `insert()` function of `CGAL::Triangulation_2` which takes
+    a range of points as argument no longer performs a `spatial_sort()` of the points.
+-   Add constructor and `insert()` function to `CGAL::Triangulation_2` that takes a range of points with info.  
+    
+### 3D Triangulations
+-   **Breaking change**: The constructor and the `insert()` function of `CGAL::Triangulation_3` which takes
+    a range of points as argument no longer performs a `spatial_sort()` of the points.
+-   Add constructor and `insert()` function to `CGAL::Triangulation_3` that takes a range of points with info.  
     
 ### Surface Mesh
  -   New functions to read and write using the PLY format,
