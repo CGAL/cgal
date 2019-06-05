@@ -26,6 +26,7 @@
 #include<ostream>
 
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
+#include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_traits_2_aux.h>
 
 namespace CGAL {
 
@@ -74,10 +75,12 @@ public:
 
   Triedge const&          triedge   () const { return mTriedge   ; }
   Trisegment_2_ptr const& trisegment() const { return mTrisegment; }
-  Point_2 const&          point     () const { return mP         ; }
-  FT                      time      () const { return mTime      ; }
+  Point_2 const&          point     () const { return mP.pt         ; } // TODO_INEXACT
+  CGAL_SS_i::Rational_point<Point_2, FT> const& exact_point() const { return mP; }
+  FT                      time      () const { return mTime.to_nt()      ; } // TODO_INEXACT
+  CGAL_SS_i::Rational_time<FT> exact_time      () const { return mTime; }
 
-  void SetTimeAndPoint( FT aTime, Point_2 const& aP ) { mTime = aTime ; mP = aP ; }
+  void SetTimeAndPoint( CGAL_SS_i::Rational_time<FT> aTime, CGAL_SS_i::Rational_point<Point_2, FT> const& aP ) { mTime = aTime ; mP = aP ; }
 
   friend std::ostream& operator<< ( std::ostream& ss, Self const& e )
   {
@@ -96,8 +99,8 @@ private :
 
   Triedge          mTriedge ;
   Trisegment_2_ptr mTrisegment ;
-  Point_2          mP ;
-  FT               mTime ;
+  CGAL_SS_i::Rational_point<Point_2, FT> mP ;
+  Rational_time<FT> mTime ;
 } ;
 
 template<class SSkel_, class Traits_>

@@ -198,7 +198,7 @@ Uncertain<bool> exist_offset_lines_isec2 ( intrusive_ptr< Trisegment_2<K> > cons
     Optional_rational t = compute_offset_lines_isec_timeC2(tri) ;
     if ( t )
     {
-      Uncertain<bool> d_is_zero = CGAL_NTS certified_is_zero(t->d()) ;
+      Uncertain<bool> d_is_zero = CGAL_NTS certified_is_zero(t->d()) ; // TODO_INEXACT
       if ( is_certain(d_is_zero) )
       {
         if ( !d_is_zero )
@@ -272,7 +272,25 @@ Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( intrusive_ptr< 
 // Returns true if the point aP is on the positive side of the line supporting the edge
 //
 template<class K>
-Uncertain<bool> is_edge_facing_pointC2 ( optional< Point_2<K> > const& aP, Segment_2<K> const& aEdge )
+Uncertain<bool> is_edge_facing_pointC2 ( optional< Rational_point<typename K::Point_2, typename K::FT> > const& aP, Segment_2<K> const& aEdge )
+{
+  typedef typename K::FT FT ;
+
+  Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
+  if ( aP )
+  {
+    FT a,b,c ;
+    // TODO use a Kernel predicate
+    line_from_pointsC2(aEdge.source().x(),aEdge.source().y(),aEdge.target().x(),aEdge.target().y(),a,b,c);
+    rResult = certified_side_of_oriented_lineC2(a,b,c,aP->pt.x(),aP->pt.y()) == make_uncertain(POSITIVE) ; // TODO_INEXACT
+  }
+  return rResult ;
+}
+
+// Returns true if the point aP is on the positive side of the line supporting the edge
+//
+template<class K>
+Uncertain<bool> is_edge_facing_input_pointC2 ( optional< typename K::Point_2 > const& aP, Segment_2<K> const& aEdge )
 {
   typedef typename K::FT FT ;
   

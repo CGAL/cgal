@@ -179,7 +179,7 @@ Straight_skeleton_builder_2<Gt,Ss,V>::IsPseudoSplitEvent( EventPtr const& aEvent
   }
   
   if ( rPseudoSplitEvent )
-    rPseudoSplitEvent->SetTimeAndPoint(aEvent->time(),aEvent->point());
+    rPseudoSplitEvent->SetTimeAndPoint(aEvent->exact_time(),aEvent->exact_point());
   
   return rPseudoSplitEvent ;
 }

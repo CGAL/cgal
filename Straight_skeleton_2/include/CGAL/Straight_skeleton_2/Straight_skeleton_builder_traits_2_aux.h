@@ -258,6 +258,7 @@ template<class NT, bool has_sqrt = is_same_or_derived<Field_with_sqrt_tag,
 class Rational_time
 {
   public:
+    Rational_time() {}
 
     Rational_time( NT aN, NT aD0, NT aD1, NT aD2, NT aR0, NT aR1, NT aR2 )
       : mN(aN)
@@ -278,6 +279,23 @@ class Rational_time
       , mR1(0)
       , mR2(0)
     {}
+
+    Rational_time( NT aN )
+      : mN(aN)
+      , mD0(1)
+      , mD1(0)
+      , mD2(0)
+      , mR0(1)
+      , mR1(0)
+      , mR2(0)
+    {}
+
+    template <class NT2, class Converter>
+    Rational_time<NT2>
+    convert(const Converter& c) const
+    {
+      return Rational_time<NT2>( c(mN), c(mD0), c(mD1), c(mD2), c(mR0), c(mR1), c(mR2) );
+    }
 
     NT n() const { return mN ; }
     NT d() const { return mD0*CGAL_SS_i::inexact_sqrt(mR0)+
@@ -324,6 +342,7 @@ template <class NT>
 class Rational_time< NT, true >
 {
   public:
+    Rational_time() {}
 
     Rational_time( NT aN, NT aD0, NT aD1, NT aD2, NT aR0, NT aR1, NT aR2 )
       : mN(aN)
@@ -334,6 +353,19 @@ class Rational_time< NT, true >
       : mN(aN)
       , mD(aD)
     {}
+
+    Rational_time( NT aN)
+      : mN(aN)
+      , mD(1)
+    {}
+
+    template <class NT2, class Converter>
+    Rational_time<NT2>
+    convert(const Converter& c) const
+    {
+      return Rational_time<NT2>( c(mN), c(mD) ); // TODO_INEXACT
+    }
+
 
     NT n() const { return mN ; }
     NT d() const { return mD ; }
@@ -485,6 +517,26 @@ class Rational_time_4< NT, true >
   private:
 
     NT mN, mD;
+};
+
+
+template <class Point_2, class FT>
+struct Rational_point
+{
+  Point_2 pt;
+  explicit Rational_point(const Point_2& pt) // TODO: This constructor should indicate that it is a rational point in the end
+    : pt(pt)
+  {}
+
+  Rational_point()
+  {}
+
+  template <class P2, class FT2, class Converter>
+  Rational_point<P2, FT2>
+  convert(const Converter& c) const
+  {
+    return Rational_point<P2, FT2>(c(pt));
+  }
 };
 
 //
@@ -658,9 +710,9 @@ struct SS_converter : Converter
   typedef Trisegment_2<Source_kernel> Source_trisegment_2 ;
   typedef Trisegment_2<Target_kernel> Target_trisegment_2 ;
 
-  typedef boost::tuple<Source_FT,Source_point_2> Source_time_and_point_2 ;
-  typedef boost::tuple<Target_FT,Target_point_2> Target_time_and_point_2 ;
-  
+  typedef boost::tuple<Rational_time<Source_FT>, Rational_point<Source_point_2, Source_FT> > Source_time_and_point_2 ;
+  typedef boost::tuple<Rational_time<Target_FT>, Rational_point<Target_point_2, Target_FT> > Target_time_and_point_2 ;
+
   typedef boost::optional<Source_FT> Source_opt_FT ;
   typedef boost::optional<Target_FT> Target_opt_FT ;
   
@@ -693,10 +745,9 @@ struct SS_converter : Converter
   
   Target_time_and_point_2 cvt_t_p( Source_time_and_point_2 const& v ) const
   {
-    Source_FT      t ;
-    Source_point_2 p ;
-    boost::tie(t,p) = v ;
-    return Target_time_and_point_2(cvt_n(t),cvt_p(p));
+    return Target_time_and_point_2(
+      boost::get<0>(v).template convert<Target_FT>(static_cast<const Converter&>(*this)),
+      boost::get<1>(v).template convert<Target_point_2, Target_FT>(static_cast<const Converter&>(*this)));
   }
   
   Target_trisegment_2_ptr cvt_single_trisegment( Source_trisegment_2_ptr const& tri ) const

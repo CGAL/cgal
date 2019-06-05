@@ -37,99 +37,6 @@ Uncertain<Trisegment_collinearity> certified_trisegment_collinearity ( Segment_2
                                                                      , Segment_2<K> const& e2
                                                                      );
 
-// Given an oriented 2D straight line segment 'e', computes the normalized coefficients (a,b,c) of the
-// supporting line.
-// POSTCONDITION: [a,b] is the leftward normal _unit_ (a�+b�=1) vector.
-// POSTCONDITION: In case of overflow, an empty optional<> is returned.
-template<class K>
-optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2<K> const& e )
-{
-  bool finite = true ;
-  
-  typedef typename K::FT FT ;
-  
-  FT a (0.0),b (0.0) ,c(0.0)  ;
-
-  if(e.source().y() == e.target().y())
-  {
-    a = 0 ;
-    if(e.target().x() > e.source().x())
-    {
-      b = 1;
-      c = -e.source().y();
-    }
-    else if(e.target().x() == e.source().x())
-    {
-      b = 0;
-      c = 0;
-    }
-    else
-    {
-      b = -1;
-      c = e.source().y();
-    }
-
-    CGAL_STSKEL_TRAITS_TRACE("Line coefficients for HORIZONTAL line:\n" 
-                            << s2str(e) 
-                            << "\na="<< n2str(a) << ", b=" << n2str(b) << ", c=" << n2str(c)
-                           ) ;
-  }
-  else if(e.target().x() == e.source().x())
-  {
-    b = 0;
-    if(e.target().y() > e.source().y())
-    {
-      a = -1;
-      c = e.source().x();
-    }
-    else if (e.target().y() == e.source().y())
-    {
-      a = 0;
-      c = 0;
-    }
-    else
-    {
-      a = 1;
-      c = -e.source().x();
-    }
-
-    CGAL_STSKEL_TRAITS_TRACE("Line coefficients for VERTICAL line:\n"
-                            << s2str(e) 
-                            << "\na="<< n2str(a) << ", b=" << n2str(b) << ", c=" << n2str(c)
-                           ) ;
-  }
-  else
-  {
-    FT sa = e.source().y() - e.target().y();
-    FT sb = e.target().x() - e.source().x();
-    FT l2 = (sa*sa) + (sb*sb) ;
-
-    if ( CGAL_NTS is_finite(l2) )
-    {
-      FT l = CGAL_SS_i :: inexact_sqrt(l2);
-  
-      a = sa / l ;
-      b = sb / l ;
-  
-      c = -e.source().x()*a - e.source().y()*b;
-      
-      CGAL_STSKEL_TRAITS_TRACE("Line coefficients for line:\n"
-                               << s2str(e) 
-                               << "\nsa="<< n2str(sa) << "\nsb=" << n2str(sb) << "\nl2=" << n2str(l2) << "\nl=" << n2str(l)
-                               << "\na="<< n2str(a) << "\nb=" << n2str(b) << "\nc=" << n2str(c)
-                               ) ;
-    }
-    else finite = false ;
-    
-  }
-  
-  if ( finite )
-    if ( !CGAL_NTS is_finite(a) || !CGAL_NTS is_finite(b) || !CGAL_NTS is_finite(c) ) 
-      finite = false ;
-
-  return cgal_make_optional( finite, K().construct_line_2_object()(a,b,c) ) ;
-}
-
 template<class K>
 optional< Line_2<K> > compute_line_ceoffC2( Segment_2<K> const& e )
 {
@@ -444,9 +351,11 @@ optional< Point_2<K> > compute_oriented_midpoint ( Segment_2<K> const& e0, Segme
 // If you request the point of such degenerate pseudo seed the oriented midpoint bettwen e0 and e2 is returned.
 //
 template<class K>
-optional< Point_2<K> > compute_seed_pointC2 ( intrusive_ptr< Trisegment_2<K> > const& tri, typename Trisegment_2<K>::SEED_ID sid )
+optional< Rational_point<typename K::Point_2, typename K::FT > >
+compute_seed_pointC2 ( intrusive_ptr< Trisegment_2<K> > const& tri, typename Trisegment_2<K>::SEED_ID sid )
 {
-  optional< Point_2<K> > p ;
+  typedef optional< Rational_point<typename K::Point_2, typename K::FT > > result_type;
+  result_type p ;
 
   typedef Trisegment_2<K> Trisegment_2 ;
     
@@ -455,18 +364,18 @@ optional< Point_2<K> > compute_seed_pointC2 ( intrusive_ptr< Trisegment_2<K> > c
     case Trisegment_2::LEFT :
          
        p = tri->child_l() ? construct_offset_lines_isecC2(tri->child_l())  // this can recurse
-                          : compute_oriented_midpoint(tri->e0(),tri->e1()) ;
+                          : result_type(*compute_oriented_midpoint(tri->e0(),tri->e1())) ;
        break ;                     
              
     case Trisegment_2::RIGHT : 
     
       p = tri->child_r() ? construct_offset_lines_isecC2(tri->child_r()) // this can recurse
-                         : compute_oriented_midpoint(tri->e1(),tri->e2()) ;
+                         : result_type(*compute_oriented_midpoint(tri->e1(),tri->e2())) ;
       break ;        
              
     case Trisegment_2::UNKNOWN : 
     
-      p = compute_oriented_midpoint(tri->e0(),tri->e2());
+      p = result_type(*compute_oriented_midpoint(tri->e0(),tri->e2()));
       
       break ;
   }
@@ -479,7 +388,8 @@ optional< Point_2<K> > compute_seed_pointC2 ( intrusive_ptr< Trisegment_2<K> > c
 // of the degenerate seed.
 // A normal collinearity occurs when e0,e1 or e1,e2 are collinear.
 template<class K>
-optional< Point_2<K> > compute_degenerate_seed_pointC2 ( intrusive_ptr< Trisegment_2<K> > const& tri )
+optional< Rational_point<typename K::Point_2, typename K::FT > >
+compute_degenerate_seed_pointC2 ( intrusive_ptr< Trisegment_2<K> > const& tri )
 {
   return compute_seed_pointC2( tri, tri->degenerate_seed_id() ) ;
 }
@@ -502,6 +412,7 @@ optional< Rational_time< typename K::FT> > compute_degenerate_offset_lines_isec_
   typedef Point_2<K> Point_2 ;
   typedef Line_2 <K> Line_2 ;
   
+  typedef optional<Rational_point<Point_2,FT> > Optional_rational_point_2 ;
   typedef optional<Point_2> Optional_point_2 ;
   typedef optional<Line_2>  Optional_line_2 ;
   
@@ -548,7 +459,8 @@ optional< Rational_time< typename K::FT> > compute_degenerate_offset_lines_isec_
   FT sum_sq_0 = square(l0->a()) + square(l0->b());
   FT sum_sq_2 = square(l2->a()) + square(l2->b());
 
-  Optional_point_2 q = compute_degenerate_seed_pointC2(tri);
+  Optional_rational_point_2 rat_q = compute_degenerate_seed_pointC2(tri);
+  Optional_point_2 q = rat_q->pt; //TODO_INEXACT
 
   if ( l0 && l2 && q )
   {
@@ -671,7 +583,8 @@ optional< Rational_time_4< typename K::FT> > compute_offset_lines_isec_timeC2 ( 
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
 template<class K>
-optional< Point_2<K> > construct_normal_offset_lines_isecC2 ( intrusive_ptr< Trisegment_2<K> > const& tri )
+optional< Rational_point<typename K::Point_2, typename K::FT> >
+construct_normal_offset_lines_isecC2 ( intrusive_ptr< Trisegment_2<K> > const& tri )
 {
   typedef typename K::FT  FT ;
   
@@ -695,9 +608,9 @@ optional< Point_2<K> > construct_normal_offset_lines_isecC2 ( intrusive_ptr< Tri
     FT sum_sq_1 = square(l1->a()) + square(l1->b());
     FT sum_sq_2 = square(l2->a()) + square(l2->b());
 
-    FT r0 = CGAL_SS_i::inexact_sqrt(sum_sq_0);
-    FT r1 = CGAL_SS_i::inexact_sqrt(sum_sq_1);
-    FT r2 = CGAL_SS_i::inexact_sqrt(sum_sq_2);
+    FT r0 = CGAL_SS_i::inexact_sqrt(sum_sq_0); //TODO_INEXACT
+    FT r1 = CGAL_SS_i::inexact_sqrt(sum_sq_1); //TODO_INEXACT
+    FT r2 = CGAL_SS_i::inexact_sqrt(sum_sq_2); //TODO_INEXACT
 
     FT den = r0 * ( l2->a()*l1->b() - l1->a()*l2->b()) +
              r1 * ( l0->a()*l2->b() - l0->b()*l2->a()) +
@@ -727,9 +640,8 @@ optional< Point_2<K> > construct_normal_offset_lines_isecC2 ( intrusive_ptr< Tri
       }
     }
   }
-    
-    
-  return cgal_make_optional(ok,K().construct_point_2_object()(x,y)) ;
+
+  return cgal_make_optional(ok, Rational_point<typename K::Point_2, FT>(K().construct_point_2_object()(x,y)) ) ; //TODO_INEXACT
 }
 
 // Given 3 oriented line segments e0, e1 and e2
@@ -744,13 +656,15 @@ optional< Point_2<K> > construct_normal_offset_lines_isecC2 ( intrusive_ptr< Tri
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
 template<class K>
-optional< Point_2<K> > construct_degenerate_offset_lines_isecC2 ( intrusive_ptr< Trisegment_2<K> > const& tri )
+optional< Rational_point<typename K::Point_2, typename K::FT> >
+construct_degenerate_offset_lines_isecC2 ( intrusive_ptr< Trisegment_2<K> > const& tri )
 {
   typedef typename K::FT FT ;
   
   typedef Point_2<K> Point_2 ;
   typedef Line_2<K>  Line_2 ;
   
+  typedef optional<Rational_point<Point_2,FT> > Optional_rational_point_2 ;
   typedef optional<Point_2> Optional_point_2 ;
   typedef optional<Line_2>  Optional_line_2 ;
   
@@ -758,17 +672,24 @@ optional< Point_2<K> > construct_degenerate_offset_lines_isecC2 ( intrusive_ptr<
   
   FT x(0.0),y(0.0) ;
 
-  Optional_line_2 l0 = compute_normalized_line_ceoffC2(tri->collinear_edge    ()) ;
-  Optional_line_2 l2 = compute_normalized_line_ceoffC2(tri->non_collinear_edge()) ;
+  Optional_line_2 l0 = compute_line_ceoffC2(tri->collinear_edge    ()) ;
+  Optional_line_2 l2 = compute_line_ceoffC2(tri->non_collinear_edge()) ;
   
-  Optional_point_2 q = compute_degenerate_seed_pointC2(tri);
+  Optional_rational_point_2 rat_q = compute_degenerate_seed_pointC2(tri);
+  Optional_point_2 q = rat_q->pt; // TODO_INEXACT
 
   bool ok = false ;
   
   if ( l0 && l2 && q )
   {
+    FT sum_sq_0 = square(l0->a()) + square(l0->b());
+    FT sum_sq_2 = square(l2->a()) + square(l2->b());
+
+    FT r0 = CGAL_SS_i::inexact_sqrt(sum_sq_0); //TODO_INEXACT
+    FT r2 = CGAL_SS_i::inexact_sqrt(sum_sq_2); //TODO_INEXACT
+
     FT num, den ;
-    
+
     FT px, py ;
     line_project_pointC2(l0->a(),l0->b(),l0->c(),q->x(),q->y(),px,py); 
     
@@ -776,13 +697,13 @@ optional< Point_2<K> > construct_degenerate_offset_lines_isecC2 ( intrusive_ptr<
     
     if ( ! CGAL_NTS is_zero(l0->b()) ) // Non-vertical
     {
-      num = (l2->a() * l0->b() - l0->a() * l2->b() ) * px + l0->b() * l2->c() - l2->b() * l0->c() ;
-      den = (l0->a() * l0->a() - 1) * l2->b() + ( 1 - l2->a() * l0->a() ) * l0->b() ;
+      num = ( (l2->a() * l0->b() - l0->a() * l2->b() ) * px + l0->b() * l2->c() - l2->b() * l0->c() ) / r2;
+      den = ( ( l0->a() * l0->a() / sum_sq_0 - 1) * l2->b() ) / r2 + ( 1 - l2->a() * l0->a() / r2 / r0 ) * l0->b() / r0 ;
     }
     else
     {
-      num = (l2->a() * l0->b() - l0->a() * l2->b() ) * py - l0->a() * l2->c() + l2->a() * l0->c() ;
-      den = l0->a() * l0->b() * l2->b() - l0->b() * l0->b() * l2->a() + l2->a() - l0->a() ;
+      num = ( (l2->a() * l0->b() - l0->a() * l2->b() ) * py - l0->a() * l2->c() + l2->a() * l0->c() ) / r2;
+      den = l0->a() * l0->b() / sum_sq_0 * l2->b() / r2 - l0->b() * l0->b() / sum_sq_0 * l2->a() + l2->a() / sum_sq_2 - l0->a() / r0 ;
     }
   
     if ( ! CGAL_NTS certified_is_zero(den) && CGAL_NTS is_finite(den) && CGAL_NTS is_finite(num) )
@@ -797,14 +718,15 @@ optional< Point_2<K> > construct_degenerate_offset_lines_isecC2 ( intrusive_ptr<
 
   CGAL_STSKEL_TRAITS_TRACE("\nDegenerate " << (CGAL_NTS is_zero(l0->b()) ? "(vertical)" : "") << " event point:  x=" << n2str(x) << " y=" << n2str(y) )
 
-  return cgal_make_optional(ok,K().construct_point_2_object()(x,y)) ;
+  return cgal_make_optional(ok, Rational_point<Point_2, FT>(K().construct_point_2_object()(x,y))) ; // TODO_INEXACT
 }
 
 //
 // Calls the appropiate function depending on the collinearity of the edges.
 //
 template<class K>
-optional< Point_2<K> > construct_offset_lines_isecC2 ( intrusive_ptr< Trisegment_2<K> > const& tri )
+optional< Rational_point<typename K::Point_2, typename K::FT> >
+construct_offset_lines_isecC2 ( intrusive_ptr< Trisegment_2<K> > const& tri )
 {
   CGAL_precondition ( tri->collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
   

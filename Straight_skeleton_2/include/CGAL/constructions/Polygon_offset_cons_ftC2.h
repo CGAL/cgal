@@ -30,6 +30,100 @@ namespace CGAL {
 namespace CGAL_SS_i
 {
 
+//TODO: shall we replace it with compute_line_ceoffC2
+// Given an oriented 2D straight line segment 'e', computes the normalized coefficients (a,b,c) of the
+// supporting line.
+// POSTCONDITION: [a,b] is the leftward normal _unit_ (a�+b�=1) vector.
+// POSTCONDITION: In case of overflow, an empty optional<> is returned.
+template<class K>
+optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2<K> const& e )
+{
+  bool finite = true ;
+  
+  typedef typename K::FT FT ;
+  
+  FT a (0.0),b (0.0) ,c(0.0)  ;
+
+  if(e.source().y() == e.target().y())
+  {
+    a = 0 ;
+    if(e.target().x() > e.source().x())
+    {
+      b = 1;
+      c = -e.source().y();
+    }
+    else if(e.target().x() == e.source().x())
+    {
+      b = 0;
+      c = 0;
+    }
+    else
+    {
+      b = -1;
+      c = e.source().y();
+    }
+
+    CGAL_STSKEL_TRAITS_TRACE("Line coefficients for HORIZONTAL line:\n" 
+                            << s2str(e) 
+                            << "\na="<< n2str(a) << ", b=" << n2str(b) << ", c=" << n2str(c)
+                           ) ;
+  }
+  else if(e.target().x() == e.source().x())
+  {
+    b = 0;
+    if(e.target().y() > e.source().y())
+    {
+      a = -1;
+      c = e.source().x();
+    }
+    else if (e.target().y() == e.source().y())
+    {
+      a = 0;
+      c = 0;
+    }
+    else
+    {
+      a = 1;
+      c = -e.source().x();
+    }
+
+    CGAL_STSKEL_TRAITS_TRACE("Line coefficients for VERTICAL line:\n"
+                            << s2str(e) 
+                            << "\na="<< n2str(a) << ", b=" << n2str(b) << ", c=" << n2str(c)
+                           ) ;
+  }
+  else
+  {
+    FT sa = e.source().y() - e.target().y();
+    FT sb = e.target().x() - e.source().x();
+    FT l2 = (sa*sa) + (sb*sb) ;
+
+    if ( CGAL_NTS is_finite(l2) )
+    {
+      FT l = CGAL_SS_i :: inexact_sqrt(l2);
+  
+      a = sa / l ;
+      b = sb / l ;
+  
+      c = -e.source().x()*a - e.source().y()*b;
+      
+      CGAL_STSKEL_TRAITS_TRACE("Line coefficients for line:\n"
+                               << s2str(e) 
+                               << "\nsa="<< n2str(sa) << "\nsb=" << n2str(sb) << "\nl2=" << n2str(l2) << "\nl=" << n2str(l)
+                               << "\na="<< n2str(a) << "\nb=" << n2str(b) << "\nc=" << n2str(c)
+                               ) ;
+    }
+    else finite = false ;
+    
+  }
+  
+  if ( finite )
+    if ( !CGAL_NTS is_finite(a) || !CGAL_NTS is_finite(b) || !CGAL_NTS is_finite(c) ) 
+      finite = false ;
+
+  return cgal_make_optional( finite, K().construct_line_2_object()(a,b,c) ) ;
+}
+
 // Given an offset distance 't' and 2 oriented line segments e0 and e1, returns the coordinates (x,y)
 // of the intersection of their offsets at the given distance.
 //
@@ -83,7 +177,7 @@ optional< Point_2<K> > construct_offset_pointC2 ( typename K::FT const&         
       {
         CGAL_STSKEL_TRAITS_TRACE("  DEGENERATE case: Collinear segments involved. Seed event " << ( !tri ? " ABSENT" : " exists." ) ) ;
 
-        Optional_point_2 q = tri ? construct_offset_lines_isecC2(tri) : compute_oriented_midpoint(e0,e1) ;
+        Optional_point_2 q = tri ? construct_offset_lines_isecC2(tri)->pt : compute_oriented_midpoint(e0,e1) ;
         
         if ( q )
         {

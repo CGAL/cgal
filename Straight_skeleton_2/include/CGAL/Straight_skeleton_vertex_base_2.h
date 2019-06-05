@@ -259,7 +259,7 @@ private:
   int             mID ;
   Halfedge_handle mHE;
   Triedge         mEventTriedge ;
-  Point_2         mP;
+  Point_2         mP; //TODO_INEXACT for non input vertices (i.e. is_contour == false)
   FT              mTime ;
   unsigned char   mFlags ;
 };

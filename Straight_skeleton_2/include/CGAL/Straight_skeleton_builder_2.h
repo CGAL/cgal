@@ -611,17 +611,19 @@ private :
     }
   }
 
-  boost::tuple<FT,Point_2> ConstructEventTimeAndPoint( Trisegment_2_ptr const& aS ) const
+  boost::tuple<CGAL_SS_i::Rational_time<FT>, CGAL_SS_i::Rational_point<Point_2, FT> >
+  ConstructEventTimeAndPoint( Trisegment_2_ptr const& aS ) const
   {
-    boost::optional< boost::tuple<FT,Point_2> > r = Construct_ss_event_time_and_point_2(mTraits)(aS);
+    boost::optional< boost::tuple<CGAL_SS_i::Rational_time<FT>,CGAL_SS_i::Rational_point<Point_2, FT> > > r =
+      Construct_ss_event_time_and_point_2(mTraits)(aS);
     CGAL_postcondition_msg(!!r, "Unable to compute skeleton node coordinates");
     return *r ;  
   }
 
   void SetEventTimeAndPoint( Event& aE )
   {
-    FT      lTime ;
-    Point_2 lP ;
+    CGAL_SS_i::Rational_time<FT>      lTime ;
+    CGAL_SS_i::Rational_point<Point_2, FT> lP ;
     boost::tie(lTime,lP) = ConstructEventTimeAndPoint(aE.trisegment());
     
     aE.SetTimeAndPoint(lTime,lP);
