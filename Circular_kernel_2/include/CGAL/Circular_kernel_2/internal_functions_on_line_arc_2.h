@@ -492,7 +492,7 @@ namespace CircularFunctors {
     if(!v) return res;
 
     const Point_2 *pt = CGAL::Intersections::internal::intersect_get<Point_2>(v);
-    if(pt == NULL) return res;
+    if(pt == nullptr) return res;
     Circular_arc_point_2 intersect_point = Circular_arc_point_2(*pt);
     //      (Root_for_circles_2_2(Root_of_2(pt->x()),Root_of_2(pt->y())));
 
@@ -767,7 +767,7 @@ namespace CircularFunctors {
 
     if(!v) return res;
     const Point_2 *pt = boost::get<Point_2>(&*v);
-    if(pt == NULL) return res;
+    if(pt == nullptr) return res;
 
     Circular_arc_point_2 intersect_point = Circular_arc_point_2(*pt);
 

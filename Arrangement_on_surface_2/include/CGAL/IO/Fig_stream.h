@@ -1128,7 +1128,7 @@ public:
   {
     CGAL_precondition (_ofile.is_open());
 
-    if (text == NULL || strlen(text) == 0)
+    if (text == nullptr || strlen(text) == 0)
       return;
 
     _write_text (pos, 

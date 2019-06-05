@@ -2496,7 +2496,7 @@ class Regular_triangulation_3<Gt, Tds, Lds>::Vertex_inserter
   typedef RegularTriangulation_3              Regular;
 
 public:
-  typedef std::std::nullptr_t                           Hidden_points_iterator;
+  typedef std::nullptr_t                           Hidden_points_iterator;
 
   Vertex_inserter(Regular &tmp_) : tmp(tmp_) {}
 

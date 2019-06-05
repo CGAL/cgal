@@ -311,7 +311,7 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
       , m_num_available_points(0)
       , m_num_total_points(0)
       , m_valid_iterators(false)
-      , m_tree (NULL)
+      , m_tree (nullptr)
     {}
 
     /*! 
@@ -441,10 +441,10 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
       if (!m_valid_iterators)
         return;
 
-      if (m_tree != NULL)
+      if (m_tree != nullptr)
       {
         delete m_tree;
-        m_tree = NULL;
+        m_tree = nullptr;
       }
 
       std::vector<int>().swap(m_shape_index);

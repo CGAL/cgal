@@ -284,7 +284,7 @@ CGAL::Three::Scene_item* load(QFileInfo fileinfo) {
     Scene_trivial_item* item = new Scene_trivial_item();
     if(!item->load(fileinfo.filePath().toStdString())) {
         delete item;
-        return NULL;
+        return nullptr;
     }
     return item;
 }
@@ -299,7 +299,7 @@ bool canSave(const CGAL::Three::Scene_item* scene_item) {
 ~~~~~~~~~~~~~{.cpp}
 bool save(const CGAL::Three::Scene_item* scene_item, QFileInfo fileinfo) {
     const Scene_trivial_item* item = qobject_cast<const Scene_trivial_item*>(scene_item);
-    if(item == NULL) { return false; }
+    if(item == nullptr) { return false; }
 
     return item->save(fileinfo.filePath().toStdString());
 }

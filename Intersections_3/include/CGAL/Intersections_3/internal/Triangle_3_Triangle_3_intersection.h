@@ -75,7 +75,7 @@ void intersection_coplanar_triangles_cutoff(
       // assert "not empty"
       CGAL_kernel_assertion(bool(obj));
       const typename Kernel::Point_3* inter=intersect_get<typename Kernel::Point_3>(obj);
-      CGAL_kernel_assertion(inter!=NULL);
+      CGAL_kernel_assertion(inter!=nullptr);
       prev=&(* inter_pts.insert(it,*inter) );
       orientations[prev]=COLLINEAR;
       ++pt_added;

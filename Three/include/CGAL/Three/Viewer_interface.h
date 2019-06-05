@@ -274,7 +274,7 @@ public:
   //! Gives acces to recent openGL(4.3) features, allowing use of things like
   //! Geometry Shaders or Depth Textures.
   //! @returns a pointer to an initialized  QOpenGLFunctions_4_3_Core if `isOpenGL_4_3()` is `true`
-  //! @returns NULL if `isOpenGL_4_3()` is `false`
+  //! @returns nullptr if `isOpenGL_4_3()` is `false`
   virtual QOpenGLFunctions_4_3_Core* openGL_4_3_functions() = 0;
   //! getter for point size under old openGL context;
   virtual const GLfloat& getGlPointSize()const = 0;

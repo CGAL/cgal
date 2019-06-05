@@ -168,7 +168,7 @@ public:
   //@{
 
   /*! Constructor given Vertex & Halfedge handles. */
-  Td_inactive_edge (boost::shared_ptr<X_monotone_curve_2>& cv, Dag_node* node = NULL)
+  Td_inactive_edge (boost::shared_ptr<X_monotone_curve_2>& cv, Dag_node* node = nullptr)
   {
     PTR = new Data(cv,node);
   }
@@ -230,7 +230,7 @@ public:
   inline X_monotone_curve_2& curve() const  
   {
     X_monotone_curve_2* cv_ptr = (ptr()->cv).get();
-    CGAL_assertion(cv_ptr != NULL);
+    CGAL_assertion(cv_ptr != nullptr);
     return *cv_ptr;
   }
 

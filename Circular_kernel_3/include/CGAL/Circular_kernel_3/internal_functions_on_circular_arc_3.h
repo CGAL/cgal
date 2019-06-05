@@ -480,11 +480,11 @@ namespace CGAL {
 
           //one endpoint is extremal: just split the arc
           if (nb_extrem==1){
-            const std::pair<typename SK::Circular_arc_point_3,unsigned>* pt[2]={NULL,NULL};
+            const std::pair<typename SK::Circular_arc_point_3,unsigned>* pt[2]={nullptr,nullptr};
             pt[0]=CGAL::Intersections::internal::intersect_get<std::pair<typename SK::Circular_arc_point_3,unsigned> >(inters[0]);
             pt[1]=CGAL::Intersections::internal::intersect_get<std::pair<typename SK::Circular_arc_point_3,unsigned> >(inters[1]);
-            CGAL_kernel_precondition(pt[0]!=NULL);
-            CGAL_kernel_precondition(pt[1]!=NULL);
+            CGAL_kernel_precondition(pt[0]!=nullptr);
+            CGAL_kernel_precondition(pt[1]!=nullptr);
             const typename SK::Circular_arc_point_3& midpt=(arc.source()==pt[0]->first || arc.target()==pt[0]->first)?pt[1]->first:pt[0]->first;
             *out_it++=typename SK::Circular_arc_3(arc.supporting_circle(),arc.source(),midpt);
             *out_it++=typename SK::Circular_arc_3(arc.supporting_circle(),midpt,arc.target());
@@ -495,20 +495,20 @@ namespace CGAL {
           
           //only one intersection points
           if (inters.size()==1){
-            const std::pair<typename SK::Circular_arc_point_3,unsigned>* midpt=NULL;
+            const std::pair<typename SK::Circular_arc_point_3,unsigned>* midpt=nullptr;
             midpt=CGAL::Intersections::internal::intersect_get<std::pair<typename SK::Circular_arc_point_3,unsigned> >(inters[0]);
-            CGAL_kernel_precondition(midpt!=NULL);
+            CGAL_kernel_precondition(midpt!=nullptr);
             *out_it++=typename SK::Circular_arc_3(arc.supporting_circle(),arc.source(),midpt->first);
             *out_it++=typename SK::Circular_arc_3(arc.supporting_circle(),midpt->first,arc.target());
             break;
           }
           
           //three arcs are defined by two intersection points
-          const std::pair<typename SK::Circular_arc_point_3,unsigned>* pt[2]={NULL,NULL};
+          const std::pair<typename SK::Circular_arc_point_3,unsigned>* pt[2]={nullptr,nullptr};
           pt[0]=CGAL::Intersections::internal::intersect_get<std::pair<typename SK::Circular_arc_point_3,unsigned> >(inters[0]);
           pt[1]=CGAL::Intersections::internal::intersect_get<std::pair<typename SK::Circular_arc_point_3,unsigned> >(inters[1]);
-          CGAL_kernel_precondition(pt[0]!=NULL);
-          CGAL_kernel_precondition(pt[1]!=NULL);
+          CGAL_kernel_precondition(pt[0]!=nullptr);
+          CGAL_kernel_precondition(pt[1]!=nullptr);
           
           typename SK::Circular_arc_3 arc1=typename SK::Circular_arc_3(arc.supporting_circle(),arc.source(),pt[0]->first);
           typename SK::Circular_arc_3 arc2=typename SK::Circular_arc_3(arc.supporting_circle(),pt[0]->first,arc.target());

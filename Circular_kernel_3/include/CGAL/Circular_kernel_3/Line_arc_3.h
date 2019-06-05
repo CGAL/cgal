@@ -145,8 +145,8 @@ namespace CGAL {
          Intersection i2 = SK().intersect_3_object()(l, p2);
          const typename SK::Point_3* point1=boost::get<typename SK::Point_3>( & *i1 );
          const typename SK::Point_3* point2=boost::get<typename SK::Point_3>( & *i2 );
-         CGAL_assertion(point1!=NULL);
-         CGAL_assertion(point2!=NULL);
+         CGAL_assertion(point1!=nullptr);
+         CGAL_assertion(point2!=nullptr);
          // the source and target must be different
          CGAL_kernel_precondition(*point1 != *point2);
          *this = Line_arc_3(l, *point1, *point2);

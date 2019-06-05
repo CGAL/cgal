@@ -1278,7 +1278,7 @@ class Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_remover
   typedef DelaunayTriangulation_3 Delaunay;
 
 public:
-  typedef std::std::nullptr_t Hidden_points_iterator;
+  typedef std::nullptr_t Hidden_points_iterator;
 
   Vertex_remover(Delaunay &tmp_) : tmp(tmp_) {}
 
@@ -1303,7 +1303,7 @@ class Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_inserter
   typedef DelaunayTriangulation_3 Delaunay;
 
 public:
-  typedef std::std::nullptr_t Hidden_points_iterator;
+  typedef std::nullptr_t Hidden_points_iterator;
 
   Vertex_inserter(Delaunay &tmp_) : tmp(tmp_) {}
 

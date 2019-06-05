@@ -82,7 +82,7 @@ private:
 
 public:
   Lipschitz_sizing(const MeshDomain& domain)
-    : m_ptree(NULL)
+    : m_ptree(nullptr)
     , m_own_ptree()
     , m_domain(domain)
     , m_params(domain)
@@ -150,7 +150,7 @@ private:
     m_params.get_parameters(index, k, size_min, size_max);
 
     FT sqdist = 0.;
-    if(m_ptree == NULL)
+    if(m_ptree == nullptr)
     {
       sqdist = m_own_ptree->squared_distance(p);
     }

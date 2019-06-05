@@ -747,7 +747,7 @@ namespace CGAL {
     }
 
     /** Insert a dangling edge in a given facet.
-     * @param dh a dart of the facet (!=NULL).
+     * @param dh a dart of the facet (!=nullptr).
      * @param p the coordinates of the new vertex.
      * @param update_attributes a boolean to update the enabled attributes
      * @return a dart of the new edge, incident to the new vertex.
@@ -772,8 +772,8 @@ namespace CGAL {
 
     /** Compute the dual of a Linear_cell_complex.
      * @param alcc the lcc in which we build the dual of this lcc.
-     * @param adart a dart of the initial lcc, NULL by default.
-     * @return adart of the dual lcc, the dual of adart if adart!=NULL,
+     * @param adart a dart of the initial lcc, nullptr by default.
+     * @return adart of the dual lcc, the dual of adart if adart!=nullptr,
      *         any dart otherwise.
      * As soon as we don't modify this lcc and alcc lcc, we can iterate
      * simultaneously through all the darts of the two lcc and we have

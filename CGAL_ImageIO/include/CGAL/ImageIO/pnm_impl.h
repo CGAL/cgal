@@ -263,7 +263,7 @@ int writePpmImage( char *name,_image *im )
     */
     unsigned short *buf = (unsigned short *)im->data;
     unsigned char *tmp = (unsigned char *)ImageIO_alloc( im->xdim*im->ydim*3 );
-    if ( tmp == NULL ) {
+    if ( tmp == nullptr ) {
       fprintf( stderr, "writePpmImage: unable to allocate auxiliary buffer\n" );
       return -1; 
     }
@@ -377,12 +377,12 @@ int readPgmAsciiImage(const char *name,_image *im)
       case WK_FIXED :
 	if ( sscanf( tmp, "%d", &iv ) != 1 ) {
 	  fprintf( stderr, "readAsciiPgmImage: error in reading ascii data\n" );
-	  ImageIO_free( im->data ); im->data = NULL;
+	  ImageIO_free( im->data ); im->data = nullptr;
 	  return 0;
 	}
 	break;
       default :
-	ImageIO_free( im->data ); im->data = NULL;
+	ImageIO_free( im->data ); im->data = nullptr;
 	return 0;
       }
 	  
@@ -404,7 +404,7 @@ int readPgmAsciiImage(const char *name,_image *im)
       }
       else {
 	fprintf( stderr, "readAsciiPgmImage: word im not handled\n" );
-	ImageIO_free( im->data ); im->data = NULL;
+	ImageIO_free( im->data ); im->data = nullptr;
 	return 0;
       }
       
@@ -624,7 +624,7 @@ int writePgmImage(char *name,_image *im  )
       */
       unsigned short *buf = (unsigned short *)im->data;
       unsigned char *tmp = (unsigned char *)ImageIO_alloc( im->xdim*im->ydim );
-      if ( tmp == NULL ) {
+      if ( tmp == nullptr ) {
 	fprintf( stderr, "writePgmImage: unable to allocate auxiliary buffer\n" );
 	return -1; 
       }

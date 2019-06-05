@@ -1078,7 +1078,7 @@ intersection(const typename K::Plane_3 &plane,
         else{
           pl_res v = internal::intersection(plane, k.construct_line_3_object()(tri.vertex(1),tri.vertex(2)), k);
           const typename K::Point_3* p = intersect_get<typename K::Point_3>(v);
-          CGAL_kernel_assertion(p!=NULL);
+          CGAL_kernel_assertion(p!=nullptr);
           return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Triangle_3>(k.construct_segment_3_object()
                                                                                      (*p,tri.vertex(0)));
         }
@@ -1095,7 +1095,7 @@ intersection(const typename K::Plane_3 &plane,
     else{
       pl_res v = intersection(plane, k.construct_line_3_object()(tri.vertex(0),tri.vertex(2)), k);
       const typename K::Point_3* p = intersect_get<typename K::Point_3>(v);
-      CGAL_kernel_assertion(p!=NULL);
+      CGAL_kernel_assertion(p!=nullptr);
       return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Triangle_3>(k.construct_segment_3_object()
                                                                                  (*p,tri.vertex(1)));      
     }
@@ -1107,7 +1107,7 @@ intersection(const typename K::Plane_3 &plane,
     else{
       pl_res v = intersection(plane, k.construct_line_3_object()(tri.vertex(0),tri.vertex(1)), k);
       const typename K::Point_3* p = intersect_get<typename K::Point_3>(v);
-      CGAL_kernel_assertion(p!=NULL);
+      CGAL_kernel_assertion(p!=nullptr);
       return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Triangle_3>(k.construct_segment_3_object()
                                                                                  (*p,tri.vertex(2)));      
     }
@@ -1119,19 +1119,19 @@ intersection(const typename K::Plane_3 &plane,
   if (or0!=or1){
     pl_res v = intersection(plane, k.construct_line_3_object()(tri.vertex(0),tri.vertex(1)), k);
     const typename K::Point_3* pt_ptr = intersect_get<typename K::Point_3>(v);
-    CGAL_kernel_assertion( pt_ptr!=NULL );    
+    CGAL_kernel_assertion( pt_ptr!=nullptr );    
     pts.push_back( *pt_ptr );
   }
   if (or0!=or2){
     pl_res v = intersection(plane, k.construct_line_3_object()(tri.vertex(0),tri.vertex(2)), k);
     const typename K::Point_3* pt_ptr = intersect_get<typename K::Point_3>(v);
-    CGAL_kernel_assertion( pt_ptr!=NULL );    
+    CGAL_kernel_assertion( pt_ptr!=nullptr );    
     pts.push_back( *pt_ptr );    
   }
   if (or1!=or2){
     pl_res v = intersection(plane, k.construct_line_3_object()(tri.vertex(1),tri.vertex(2)), k);
     const typename K::Point_3* pt_ptr = intersect_get<typename K::Point_3>(v);
-    CGAL_kernel_assertion( pt_ptr!=NULL );    
+    CGAL_kernel_assertion( pt_ptr!=nullptr );    
     pts.push_back( *pt_ptr );
   }
   

@@ -154,14 +154,14 @@ public:
   FT get_sq_distance_to_closest_vertex(const Tr& tr,
                                        const Vertex_handle& vh,
                                        const Cell_vector& incident_cells,
-                                       typename boost::enable_if_c<Tag::value>::type* = NULL) const;
+                                       typename boost::enable_if_c<Tag::value>::type* = nullptr) const;
 
   // @todo are the two versions really worth it, I can't tell the difference from a time POV...
   template<typename Tag>
   FT get_sq_distance_to_closest_vertex(const Tr& tr,
                                        const Vertex_handle& vh,
                                        const Cell_vector& incident_cells,
-                                       typename boost::disable_if_c<Tag::value>::type* = NULL) const;
+                                       typename boost::disable_if_c<Tag::value>::type* = nullptr) const;
 
 private:
   /**

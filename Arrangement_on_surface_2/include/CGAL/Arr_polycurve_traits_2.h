@@ -849,7 +849,7 @@ public:
           for (size_t i = 0; i < int_seg.size(); ++i) {
             const X_monotone_subcurve_2* x_seg =
               CGAL::object_cast<X_monotone_subcurve_2> (&(int_seg[i]));
-            if (x_seg != NULL) {
+            if (x_seg != nullptr) {
               X_monotone_subcurve_2 seg = *x_seg;
 
               // If for some reason the subcurve intersection
@@ -861,7 +861,7 @@ public:
 
             const Point_2_pair* p_ptr =
               CGAL::object_cast<Point_2_pair>(&(int_seg[i]));
-            if (p_ptr != NULL) {
+            if (p_ptr != nullptr) {
               // Any point that is not equal to the max_vertex of the
               // subcurve should be inserted into oi.
               // The max_vertex of the current subcurve (if intersecting)

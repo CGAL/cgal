@@ -342,7 +342,7 @@ public:
                                 Arr_parameter_space /* ps_y */) const
   {
     CGAL_error();
-    return (NULL);
+    return (nullptr);
   }
 
   /*! Locate a DCEL feature that contains the given unbounded curve end.
@@ -492,7 +492,7 @@ protected:
    * \param ind Output: ARR_MIN_END if the vertex is induced by the minimal end;
    *                    ARR_MAX_END if it is induced by the curve's maximal end.
    * \pre v is a valid (not fictitious) boundary.
-   * \return The curve that induces v, or NULL if v has no incident curves yet.
+   * \return The curve that induces v, or nullptr if v has no incident curves yet.
    */
   const X_monotone_curve_2* _curve(const Vertex* v, Arr_curve_end& ind) const;
 

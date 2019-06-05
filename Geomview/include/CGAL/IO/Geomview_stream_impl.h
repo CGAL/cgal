@@ -100,10 +100,10 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
 	    s += machine;
 	    s += ":0.0";
             execlp("rsh", "rsh", machine, "-l", login, s.data(),
-                   static_cast<void *>(NULL)); // cast to stop gcc warning
+                   static_cast<void *>(nullptr)); // cast to stop gcc warning
         } else {
             execlp("geomview", "geomview", "-c", "-",
-                   static_cast<void *>(NULL)); // cast to stop gcc warning
+                   static_cast<void *>(nullptr)); // cast to stop gcc warning
         }
 
         // if we get to this point something went wrong.
