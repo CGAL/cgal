@@ -27,11 +27,18 @@
 #include <QtPlugin>
 #include <QMessageBox>
 
+using namespace CGAL::Polygon_mesh_processing;
+using namespace CGAL::Three;
+
 typedef Scene_surface_mesh_item                                     Scene_face_graph_item;
 typedef Scene_face_graph_item::Face_graph                           Face_graph;
 
-using namespace CGAL::Polygon_mesh_processing;
-using namespace CGAL::Three;
+typedef boost::graph_traits<Face_graph>::vertex_descriptor          vertex_descriptor;
+typedef boost::graph_traits<Face_graph>::edge_descriptor            edge_descriptor;
+typedef boost::graph_traits<Face_graph>::face_descriptor            face_descriptor;
+
+typedef CGAL::dynamic_vertex_property_t<bool>                       Vertex_bool_property;
+typedef typename boost::property_map<Face_graph, Vertex_bool_property>::type VCMap;
 
 class Polyhedron_demo_smothing_plugin
   : public QObject, public Polyhedron_demo_plugin_helper
@@ -46,7 +53,7 @@ public:
     scene = scene_interface;
     mw = mainWindow;
 
-    actionSmoothing_ = new QAction(tr("Smoothing"), mw);
+    actionSmoothing_ = new QAction(tr("Mesh and Shape Smoothing"), mw);
     actionSmoothing_->setProperty("subMenuName", "Polygon Mesh Processing");
 
     connect(actionSmoothing_, SIGNAL(triggered()), this, SLOT(smoothing_action()));
@@ -57,9 +64,8 @@ public:
     ui_widget.setupUi(dock_widget);
     addDockWidget(dock_widget);
 
-    connect(ui_widget.angle_button,  SIGNAL(clicked()), this, SLOT(on_angle_smoothing_clicked()));
-    connect(ui_widget.area_button,  SIGNAL(clicked()), this, SLOT(on_area_smoothing_clicked()));
-    connect(ui_widget.curvature_flow_button,  SIGNAL(clicked()), this, SLOT(on_curvature_flow_clicked()));
+    connect(ui_widget.mesh_smoothing_button,  SIGNAL(clicked()), this, SLOT(on_mesh_smoothing_clicked()));
+    connect(ui_widget.shape_smoothing_button,  SIGNAL(clicked()), this, SLOT(on_shape_smoothing_clicked()));
   }
 
   QList<QAction*> actions() const
@@ -85,28 +91,46 @@ public:
 
   void init_ui()
   {
-    ui_widget.angles_iter_spinBox ->setValue(1);
-    ui_widget.angles_iter_spinBox->setSingleStep(1);
-    ui_widget.angles_iter_spinBox->setMinimum(1);
-
-    ui_widget.areas_iter_spinBox->setValue(1);
-    ui_widget.areas_iter_spinBox->setSingleStep(1);
-    ui_widget.areas_iter_spinBox->setMinimum(1);
-
     ui_widget.time_step_spinBox->setValue(0.00001);
     ui_widget.time_step_spinBox->setSingleStep(0.00001);
     ui_widget.time_step_spinBox->setMinimum(1e-6);
 
-    // todo: replace this spinbox with a sliding bar
-    ui_widget.precision_spinBox->setValue(0.00001);
-    ui_widget.precision_spinBox->setSingleStep(0.0000001);
-    ui_widget.precision_spinBox->setMinimum(1e-7);
-
+    ui_widget.smooth_iter_spinBox->setValue(1);
     ui_widget.projection_checkBox->setChecked(true);
 
     ui_widget.explicit_checkBox->setChecked(false);
+  }
 
-    ui_widget.curvature_iter_spinBox->setValue(1);
+  void mark_border_vertices(const VCMap vcmap, const Face_graph& pmesh) const
+  {
+    for(vertex_descriptor v : vertices(pmesh))
+      put(vcmap, v, false);
+
+    for(halfedge_descriptor h : halfedges(pmesh))
+    {
+      if(CGAL::is_border(h, pmesh))
+        put(vcmap, target(h, pmesh), true);
+    }
+  }
+
+  void mark_selected_vertices(const VCMap vcmap,
+                              const Face_graph& pmesh,
+                              Scene_polyhedron_selection_item* selection_item) const
+  {
+    for(vertex_descriptor v : selection_item->selected_vertices)
+      put(vcmap, v, true);
+
+    for(edge_descriptor e : selection_item->selected_edges)
+    {
+      put(vcmap, source(e, pmesh), true);
+      put(vcmap, target(e, pmesh), true);
+    }
+
+    for(face_descriptor f : selection_item->selected_facets)
+    {
+      for(vertex_descriptor v : vertices_around_face(halfedge(f, pmesh), pmesh))
+        put(vcmap, v, true);
+    }
   }
 
 public Q_SLOTS:
@@ -127,31 +151,104 @@ public Q_SLOTS:
     }
   }
 
-  void on_angle_smoothing_clicked()
+  void on_mesh_smoothing_clicked()
   {
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
     Scene_face_graph_item* poly_item = qobject_cast<Scene_face_graph_item*>(scene->item(index));
     Scene_polyhedron_selection_item* selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
     Face_graph& pmesh = (poly_item != nullptr) ? * poly_item->polyhedron() : * selection_item->polyhedron();
 
-    const unsigned int nb_iter = ui_widget.angles_iter_spinBox->value();
-    bool projection = ui_widget.projection_checkBox->isChecked();
+    const unsigned int nb_iter = ui_widget.smooth_iter_spinBox->value();
+    const bool projection = ui_widget.projection_checkBox->isChecked();
+    const bool constrain_border_vertices = ui_widget.border_button->isChecked() && !CGAL::is_closed(pmesh);
+    const bool use_angle_smoothing = ui_widget.angle_smoothing_checkBox->isChecked();
+    const bool use_area_smoothing = ui_widget.area_smoothing_checkBox->isChecked();
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    VCMap vcmap = get(Vertex_bool_property(), pmesh);
+    for(vertex_descriptor v : vertices(pmesh))
+      put(vcmap, v, false);
+
+    if(constrain_border_vertices)
+      mark_border_vertices(vcmap, pmesh);
 
     if(poly_item)
     {
-      smooth_angles(pmesh,
-                    parameters::number_of_iterations(nb_iter).do_project(projection));
+      if(use_angle_smoothing)
+      {
+        if(use_area_smoothing)
+        {
+          smooth(pmesh, parameters::number_of_iterations(nb_iter)
+                                   .do_project(projection)
+                                   .vertex_is_constrained_map(vcmap));
+        }
+        else
+        {
+          smooth_angles(pmesh, parameters::number_of_iterations(nb_iter)
+                                          .do_project(projection)
+                                          .vertex_is_constrained_map(vcmap));
+        }
+      }
+      else
+      {
+        smooth_areas(pmesh, parameters::number_of_iterations(nb_iter)
+                                       .do_project(projection)
+                                       .vertex_is_constrained_map(vcmap));
+      }
 
       poly_item->invalidateOpenGLBuffers();
       poly_item->itemChanged();
     }
-
     else if(selection_item)
     {
-      smooth_angles(selection_item->selected_facets, pmesh,
-                    parameters::number_of_iterations(nb_iter)
-                    .do_project(projection));
+      mark_selected_vertices(vcmap, pmesh, selection_item);
+
+      // No faces selected --> use all faces
+      if(std::begin(selection_item->selected_facets) == std::end(selection_item->selected_facets))
+      {
+        if(use_angle_smoothing)
+        {
+          if(use_area_smoothing)
+            smooth(pmesh, parameters::number_of_iterations(nb_iter)
+                                     .do_project(projection)
+                                     .vertex_is_constrained_map(vcmap));
+          else
+            smooth_angles(pmesh, parameters::number_of_iterations(nb_iter)
+                                            .do_project(projection)
+                                            .vertex_is_constrained_map(vcmap));
+        }
+        else
+        {
+          smooth_areas(pmesh, parameters::number_of_iterations(nb_iter)
+                                         .do_project(projection)
+                                         .vertex_is_constrained_map(vcmap));
+        }
+      }
+      else // some faces exist in the selection
+      {
+        if(use_angle_smoothing)
+        {
+          if(use_area_smoothing)
+          {
+            smooth(selection_item->selected_facets, pmesh, parameters::number_of_iterations(nb_iter)
+                                                                      .do_project(projection)
+                                                                      .vertex_is_constrained_map(vcmap));
+          }
+          else
+          {
+            smooth_angles(selection_item->selected_facets, pmesh, parameters::number_of_iterations(nb_iter)
+                                                                             .do_project(projection)
+                                                                             .vertex_is_constrained_map(vcmap));
+          }
+        }
+        else
+        {
+          smooth_areas(selection_item->selected_facets, pmesh, parameters::number_of_iterations(nb_iter)
+                                                              .do_project(projection)
+                                                              .vertex_is_constrained_map(vcmap));
+        }
+      }
 
       selection_item->poly_item_changed();
       selection_item->changed_with_poly_item();
@@ -160,89 +257,55 @@ public Q_SLOTS:
     QApplication::restoreOverrideCursor();
   }
 
-  void on_area_smoothing_clicked()
+  void on_shape_smoothing_clicked()
   {
+    std::cout << "on_shape_smoothing_clicked" << std::endl;
+
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
     Scene_face_graph_item* poly_item = qobject_cast<Scene_face_graph_item*>(scene->item(index));
     Scene_polyhedron_selection_item* selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
     Face_graph& pmesh = (poly_item != nullptr) ? * poly_item->polyhedron() : * selection_item->polyhedron();
-
-    unsigned int nb_iter = ui_widget.areas_iter_spinBox->value();
-    bool projection = ui_widget.projection_checkBox->isChecked();
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-
-    if(poly_item)
-    {
-      smooth_areas(pmesh, parameters::number_of_iterations(nb_iter).do_project(projection));
-
-      poly_item->invalidateOpenGLBuffers();
-      poly_item->itemChanged();
-    }
-    else if(selection_item)
-    {
-      smooth_areas(selection_item->selected_facets, pmesh, parameters::number_of_iterations(nb_iter)
-                                                                      .do_project(projection));
-
-      selection_item->poly_item_changed();
-      selection_item->changed_with_poly_item();
-    }
-    else
-    {
-      std::cerr << "Something's gone wrong.\n";
-      CGAL_assertion(false);
-    }
-
-    QApplication::restoreOverrideCursor();
-  }
-
-  void on_curvature_flow_clicked()
-  {
-    const Scene_interface::Item_id index = scene->mainSelectionIndex();
-    Scene_face_graph_item* poly_item = qobject_cast<Scene_face_graph_item*>(scene->item(index));
-    Scene_polyhedron_selection_item* selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
-    Face_graph& pmesh = (poly_item != nullptr) ? * poly_item->polyhedron() : * selection_item->polyhedron();
-
-    int index_id = scene->item_id(poly_item);
 
     const double time_step = ui_widget.time_step_spinBox->value();
-    const unsigned int nb_iter = ui_widget.curvature_iter_spinBox->value();
+    const unsigned int nb_iter = ui_widget.smooth_iter_spinBox->value();
 
-    const bool use_constrained_vertex_map = ui_widget.border_button->isChecked() && !CGAL::is_closed(pmesh);
+    const bool constrain_border_vertices = ui_widget.border_button->isChecked() && !CGAL::is_closed(pmesh);
     const bool use_explicit = ui_widget.explicit_checkBox->isChecked();
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
+    VCMap vcmap = get(Vertex_bool_property(), pmesh);
+    for(vertex_descriptor v : vertices(pmesh))
+      put(vcmap, v, false);
+
+    if(constrain_border_vertices)
+      mark_border_vertices(vcmap, pmesh);
+
     if(poly_item)
     {
-      if(use_constrained_vertex_map)
-      {
-        smooth_along_curvature_flow(pmesh, time_step, parameters::use_explicit_scheme(use_explicit)
-                                                                 .number_of_iterations(nb_iter)
-                                                                 .vertex_is_constrained_map(get_border_constrained_map(pmesh)));
-      }
-      else
-      {
-        smooth_along_curvature_flow(pmesh, time_step, parameters::use_explicit_scheme(use_explicit)
-                                                                 .number_of_iterations(nb_iter));
-      }
+      smooth_along_curvature_flow(pmesh, time_step, parameters::use_explicit_scheme(use_explicit)
+                                                               .number_of_iterations(nb_iter)
+                                                               .vertex_is_constrained_map(vcmap));
 
       poly_item->invalidateOpenGLBuffers();
       poly_item->itemChanged();
     }
     else if(selection_item)
     {
-      if(use_constrained_vertex_map)
+      mark_selected_vertices(vcmap, pmesh, selection_item);
+
+      if(std::begin(selection_item->selected_facets) == std::end(selection_item->selected_facets))
       {
-        smooth_along_curvature_flow(selection_item->selected_facets,
-                                    pmesh, time_step, parameters::use_explicit_scheme(use_explicit)
+        smooth_along_curvature_flow(pmesh, time_step, parameters::use_explicit_scheme(use_explicit)
                                                                  .number_of_iterations(nb_iter)
-                                                                 .vertex_is_constrained_map(get_border_constrained_map(pmesh)));
+                                                                 .vertex_is_constrained_map(vcmap));
       }
       else
       {
-        smooth_along_curvature_flow(selection_item->selected_facets,
-                                    pmesh, time_step, parameters::use_explicit_scheme(use_explicit)
-                                                                 .number_of_iterations(nb_iter));
+        smooth_along_curvature_flow(selection_item->selected_facets, pmesh, time_step,
+                                    parameters::use_explicit_scheme(use_explicit)
+                                               .number_of_iterations(nb_iter)
+                                               .vertex_is_constrained_map(vcmap));
       }
 
       selection_item->poly_item_changed();
@@ -258,31 +321,6 @@ public Q_SLOTS:
     //poly_item->compute_bbox();
     //static_cast<Scene*>(scene)->updated_bbox(true);
     QApplication::restoreOverrideCursor();
-  }
-
-private:
-  typedef boost::graph_traits<Face_graph>::vertex_descriptor vertex_descriptor;
-
-  template<class TriangleMesh>
-  typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<bool> >::type
-  get_border_constrained_map(TriangleMesh& tm)
-  {
-    typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor         vertex_descriptor;
-    typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor       halfedge_descriptor;
-
-    typedef CGAL::dynamic_vertex_property_t<bool>                                 Vertex_bool_property;
-    typename boost::property_map<TriangleMesh, Vertex_bool_property>::type vcm = get(Vertex_bool_property(), tm);
-
-    for(vertex_descriptor v : vertices(tm))
-      put(vcm, v, false);
-
-    for(halfedge_descriptor h : halfedges(tm))
-    {
-      if(CGAL::is_border(h, tm))
-        put(vcm, target(h, tm), true);
-    }
-
-    return vcm;
   }
 
 private:
