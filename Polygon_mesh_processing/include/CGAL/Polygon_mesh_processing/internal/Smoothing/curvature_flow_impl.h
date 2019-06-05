@@ -203,24 +203,34 @@ public:
         if(is_border(hi, mesh_))
           continue;
 
-        halfedge_descriptor hi_opp = opposite(hi, mesh_);
+        const halfedge_descriptor hi_opp = opposite(hi, mesh_);
         if(!is_border(hi_opp, mesh_) && hi < hi_opp)
           continue;
 
-        vertex_descriptor v_source = source(hi, mesh_);
-        vertex_descriptor v_target = target(hi, mesh_);
+        const vertex_descriptor v_source = source(hi, mesh_);
+        const vertex_descriptor v_target = target(hi, mesh_);
 
-        if(!is_constrained(v_source) && !is_constrained(v_target)) // @fixme this seems wrong
+        const bool is_source_constrained = is_constrained(v_source);
+        const bool is_target_constrained = is_constrained(v_target);
+
+        if(is_source_constrained && is_target_constrained)
+          continue;
+
+        const FT Lij = weight_calculator_(hi);
+
+        const std::size_t i_source = get(vimap_, v_source);
+        const std::size_t i_target = get(vimap_, v_target);
+
+        // note that these constraints create asymmetry in the matrix
+        if(!is_source_constrained)
         {
-          std::size_t i_source = get(vimap_, v_source);
-          std::size_t i_target = get(vimap_, v_target);
-
-          const FT Lij = weight_calculator_(hi);
-
           stiffness_elements.push_back(Triplet(i_source, i_target, Lij));
-          stiffness_elements.push_back(Triplet(i_target, i_source, Lij));
-
           diag_coeff.insert(std::make_pair(i_source, 0)).first->second -= Lij;
+        }
+
+        if(!is_target_constrained)
+        {
+          stiffness_elements.push_back(Triplet(i_target, i_source, Lij));
           diag_coeff.insert(std::make_pair(i_target, 0)).first->second -= Lij;
         }
       }
@@ -245,16 +255,12 @@ public:
     else
       pre_smooth_anchor_point = PMP::centroid(mesh_, parameters::vertex_point_map(vpmap_).geom_traits(traits_));
 
-    std::map<vertex_descriptor, Point> initial_pos; // @tmp for output
-
     for(vertex_descriptor v : vrange_)
     {
       std::size_t index = get(vimap_, v);
-      FT x_new = Xx[index];
-      FT y_new = Xy[index];
-      FT z_new = Xz[index];
-
-      initial_pos[v] = get(vpmap_, v); // @tmp
+      const FT x_new = Xx[index];
+      const FT y_new = Xy[index];
+      const FT z_new = Xz[index];
 
       Point new_pos(x_new, y_new, z_new);
       put(vpmap_, v, new_pos);
@@ -278,8 +284,6 @@ public:
 
       put(vpmap_, v, new_pos);
     }
-
-    // @todo check for degenerate faces appearing (?)
   }
 
 private:
