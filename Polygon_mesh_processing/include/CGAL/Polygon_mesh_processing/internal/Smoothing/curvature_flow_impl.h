@@ -141,13 +141,11 @@ public:
     diagonal_.assign(vertices(mesh_).size(), 1.);
     constrained_flags_.assign(vertices(mesh_).size(), false);
 
-    std::size_t counter = 0; // @tmp
     for(vertex_descriptor v : vertices(mesh_))
     {
       if(is_constrained(v))
       {
         constrained_flags_[get(vimap_, v)] = true;
-        ++counter;
 
         // scaling things cannot preserve the position of more than a single constrained point
         if(anchor_point == boost::none)
@@ -156,8 +154,6 @@ public:
           scale_volume_after_smoothing = false;
       }
     }
-
-    std::cout << counter << " constrained vertices" << std::endl;
   }
 
   void setup_system(Eigen_matrix& A,

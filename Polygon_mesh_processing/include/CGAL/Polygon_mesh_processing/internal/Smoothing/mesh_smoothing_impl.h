@@ -130,8 +130,6 @@ public:
   template <typename FaceRange>
   void operator()(const FaceRange& face_range)
   {
-    std::cout << " we be flippin'" << std::endl;
-
     // edges to consider
     std::vector<edge_descriptor> edge_range;
     edge_range.reserve(3 * face_range.size());
@@ -144,8 +142,6 @@ public:
     // keep unique elements
     std::sort(edge_range.begin(), edge_range.end());
     edge_range.erase(std::unique(edge_range.begin(), edge_range.end()), edge_range.end());
-
-    std::cout << "unique range of size: " << edge_range.size() << std::endl;
 
     // Mark edges that are in the stack
     typedef CGAL::dynamic_edge_property_t<bool>                         Edge_property_tag;
@@ -181,8 +177,6 @@ public:
         add_to_stack_if_unmarked(edge(prev(opposite(h, mesh_), mesh_), mesh_), marks, edge_range);
       }
     }
-
-    std::cout << "Flipped " << flipped_n << " times" << std::endl;
   }
 
 private:
@@ -352,9 +346,10 @@ private:
         s_av(s_av)
     { }
 
-    // just for convencience
+    // next two functions are just for convencience, the only thing ceres cares about is the operator()
     template <typename T>
-    double area(const T x, const T y, const T z) const {
+    double area(const T x, const T y, const T z) const
+    {
       return CGAL::approximate_sqrt(CGAL::squared_area(Point(x, y, z),
                                                        Point(qx, qy, qz),
                                                        Point(rx, ry, rz)));
@@ -367,7 +362,7 @@ private:
     bool operator()(const T* const x, const T* const y, const T* const z,
                     T* residual) const
     {
-#define CGAL_CERES_USE_NUMERIC_DIFFERENCIATION
+#define CGAL_CERES_USE_NUMERIC_DIFFERENCIATION // @todo test this
 #ifdef CGAL_CERES_USE_NUMERIC_DIFFERENCIATION
       residual[0] = evaluate(x[0], y[0], z[0]);
 #else
@@ -434,10 +429,10 @@ public:
     options.minimizer_progress_to_stdout = true;
     ceres::Solver::Summary summary;
     ceres::Solve(options, &problem, &summary);
-    std::cout << summary.BriefReport() << "\n";
-    std::cout << "x : " << initial_x << " -> " << x << "\n";
-    std::cout << "y : " << initial_y << " -> " << y << "\n";
-    std::cout << "z : " << initial_z << " -> " << z << "\n";
+//    std::cout << summary.BriefReport() << "\n";
+//    std::cout << "x : " << initial_x << " -> " << x << "\n";
+//    std::cout << "y : " << initial_y << " -> " << y << "\n";
+//    std::cout << "z : " << initial_z << " -> " << z << "\n";
 
     return Vector(x - initial_x, y - initial_y, z - initial_z);
   }
@@ -568,10 +563,6 @@ public:
       }
 
       Point new_pos = pos + move;
-
-      // @tmp
-//      std::cout << "sanity check? " << use_sanity_checks << " test: " << does_move_create_bad_faces(v, new_pos) << std::endl;
-//      std::cout << "min check? " << enforce_no_min_angle_regression << " test: " << does_improve_min_angle_in_star(v, new_pos) << std::endl;
 
       if((!use_sanity_checks || !does_move_create_bad_faces(v, new_pos)) &&
          (!enforce_no_min_angle_regression || does_improve_min_angle_in_star(v, new_pos)))
@@ -740,6 +731,5 @@ private:
 } // namespace internal
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
-
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_INTERNAL_MESH_SMOOTHING_IMPL_H
