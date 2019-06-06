@@ -6,6 +6,20 @@ Release 5.0
 
 Release date: September 2019
 
+### Polygonal Surface Reconstruction (new package)
+
+-   This package provides a method for piecewise planar object reconstruction from point clouds. 
+    The method takes as input an unordered point set sampled from a piecewise planar object 
+    and outputs a compact and watertight surface mesh interpolating the input point set. 
+    The method assumes that all necessary major planes are provided (or can be extracted from 
+    the input point set using the shape detection method described in Point Set Shape Detection, 
+    or any other alternative methods).The method can handle arbitrary piecewise planar objects 
+    and is capable of recovering sharp features and is robust to noise and outliers.
+    
+### Solver Interface
+
+ - Added concepts and models for solving Mixed Integer Programming (MIP) problems with or without constraints. 
+      
 ### 2D Triangulations
 
 -   **Breaking change**: Removed the functions `CGAL::Constrained_triangulation_plus_2::
