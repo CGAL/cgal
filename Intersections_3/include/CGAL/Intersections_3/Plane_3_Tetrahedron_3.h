@@ -27,7 +27,7 @@
 #include <CGAL/Tetrahedron_3.h>
 
 #include <CGAL/Intersections_3/internal/Tetrahedron_3_Unbounded_3_do_intersect.h>
-#include <CGAL/Intersections_3/internal/Tetrahedron_3_Plane_3_intersections.h>
+#include <CGAL/Intersections_3/internal/Tetrahedron_3_Plane_3_intersection.h>
 
 namespace CGAL {
   CGAL_DO_INTERSECT_FUNCTION(Tetrahedron_3, Plane_3, 3)

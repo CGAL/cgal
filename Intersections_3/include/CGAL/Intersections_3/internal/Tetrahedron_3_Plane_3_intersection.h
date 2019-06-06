@@ -27,12 +27,14 @@
 #include <CGAL/kernel_basic.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Intersections_3/internal/Triangle_3_Plane_3_do_intersect.h>
+#include <CGAL/Intersections_3/internal/tetrahedron_intersection_helpers.h>
 #include <set>
 namespace CGAL {
 
 namespace Intersections {
 
 namespace internal {
+
 
 //Tetrahedron_3 Segment_3
 template <class K>
@@ -123,56 +125,15 @@ intersection(
     }
     else //size = 4
     {
-        Segment_3 edge = segments.back();
-        segments.pop_back();
-        std::vector<typename K::Point_3> result;
-        auto s_it = segments.begin();
-
-        result.push_back(edge.source());
-        result.push_back(edge.target());
-
-        int counter = 0;
-        for(; counter <2; ++counter )//1 or 2 rounds
-        {
-          if(edge.target() == s_it->source())
-          {
-            result.push_back(s_it->target());
-            break;
-          }
-          else if (edge.target() == s_it->target())
-          {
-            result.push_back(s_it->source());
-            break;
-          }
-          else
-            ++s_it;
-        }
-        if(counter > 1) //not exact, won't find the right inter anyway.
-          return Result_type();
-
-        segments.erase(s_it);
-
-        s_it = segments.begin();
-        if(edge.source() == s_it->target())
-        {
-          result.push_back(s_it->source());
-        }
-        else if(edge.source() == s_it->source())
-        {
-          result.push_back(s_it->target());
-        }
-        else
-        {
-          if(result.back() == s_it->target())
-          {
-            result.push_back(s_it->source());
-          }
-          else if(result.back() == s_it->source())
-          {
-            result.push_back(s_it->target());
-          }
-        }
-        return Result_type(std::forward<std::vector<typename K::Point_3> >(result));
+      std::list<Segment_3> segs;
+      for(auto s : segments)
+        segs.push_back(s);
+      std::list<typename K::Point_3> tmp;
+      fill_points_list(segs, tmp);
+      std::vector<typename K::Point_3> res;
+      for( auto p : tmp)
+        res.push_back(p);
+      return Result_type(std::forward<std::vector<typename K::Point_3> >(res));
     }
   }
     break;
