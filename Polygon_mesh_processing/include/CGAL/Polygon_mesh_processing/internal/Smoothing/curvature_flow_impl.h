@@ -53,7 +53,7 @@ template<typename TriangleMesh,
          typename VertexPointMap,
          typename CotangentValue = CGAL::internal::Cotangent_value_Meyer<TriangleMesh, VertexPointMap> >
 struct Edge_cotangent_weight
-    : public CotangentValue
+  : public CotangentValue
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor   halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor     vertex_descriptor;
