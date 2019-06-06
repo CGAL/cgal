@@ -42,7 +42,7 @@ hash_value (const Aff_transformation_2<K>& transform)
   return result;
 }
 
-std::size_t
+inline std::size_t
 hash_value (const Bbox_2& bbox)
 {
   std::size_t result = hash_value(bbox.xmin());
@@ -119,7 +119,7 @@ hash_value (const Aff_transformation_3<K>& transform)
   return result;
 }
 
-std::size_t
+inline std::size_t
 hash_value (const Bbox_3& bbox)
 {
   std::size_t result = hash_value(bbox.xmin());
