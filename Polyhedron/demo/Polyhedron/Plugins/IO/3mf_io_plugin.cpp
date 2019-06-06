@@ -169,7 +169,6 @@ class Io_3mf_plugin:
         }
         if(need_pmap)
         {
-          //todo: check if possibility to store pid as property or not
           SMesh::Property_map<face_descriptor,CGAL::Color> fcolor =
               mesh.add_property_map<face_descriptor,CGAL::Color>("f:color",first).first;
           for(std::size_t pid = 0; pid < colors.size(); ++pid)

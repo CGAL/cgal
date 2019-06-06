@@ -159,6 +159,11 @@ int main(int argc, char** argv)
   names.push_back(std::string("sphere"));
   names.push_back(std::string("tube"));
 
+  std::vector<Mesh> meshes(2);
+  meshes[0] = sphere;
+  meshes[1] = tube;
+  CGAL::write_triangle_meshes_to_3mf("meshes.3mf", meshes, names);
+
 
   //testing of point clouds
   DWORD nErrorMessage;

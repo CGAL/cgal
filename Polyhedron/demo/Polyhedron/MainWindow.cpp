@@ -1004,8 +1004,6 @@ void MainWindow::reloadItem() {
     if(!ok)
       return;
     QVariant varian = item->property("load_mates");
-    if (!varian.canConvert<QVariantList>())
-      qDebug()<<"Well, that's gonna be a problem !";
     QSequentialIterable iterable = varian.value<QSequentialIterable>();
        // Can use foreach:
     int mate_id = 0;
@@ -1013,8 +1011,6 @@ void MainWindow::reloadItem() {
     {
       Scene_item* mate = v.value<Scene_item*>();
       Scene_item* new_item = new_items[mate_id];
-      if(!new_item)
-        qDebug()<<"That too, is gonna be a problem...";
       new_item->setName(mate->name());
       new_item->setColor(mate->color());
       new_item->setRenderingMode(mate->renderingMode());
