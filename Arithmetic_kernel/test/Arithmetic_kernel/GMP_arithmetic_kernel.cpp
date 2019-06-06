@@ -1,5 +1,5 @@
 #include <iostream>
-#include <CGAL/basic.h>
+
 #include <CGAL/GMP_arithmetic_kernel.h>
 
 #ifdef CGAL_HAS_GMP_ARITHMETIC_KERNEL

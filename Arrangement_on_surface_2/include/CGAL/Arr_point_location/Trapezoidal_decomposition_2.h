@@ -1899,7 +1899,7 @@ public:
     return old;
   }
 
-  //This method occasionaly(!) checks the guarantees
+  //This method occasionally(!) checks the guarantees
   // It is currently not in use, since the guarantees are constantly checked in O(1) time
   bool needs_update()
   {

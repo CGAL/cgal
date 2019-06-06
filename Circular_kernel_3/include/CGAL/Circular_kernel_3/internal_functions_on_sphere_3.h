@@ -29,6 +29,7 @@
 
 
 #include <CGAL/Circular_kernel_3/Intersection_traits.h>
+#include <CGAL/number_utils.h>
 #include <utility>
 #include <vector>
 
@@ -140,10 +141,10 @@ namespace CGAL {
     {
       // Should we compare anyway even if they are degenerated?
       CGAL_kernel_assertion(!(p1.is_degenerate() || p2.is_degenerate()));
-      if(is_zero(p1.a())) {
-        if(!is_zero(p2.a())) return false;
-        if(is_zero(p1.b())) {
-          if(!is_zero(p2.b())) return false;
+      if(CGAL::is_zero(p1.a())) {
+        if(!CGAL::is_zero(p2.a())) return false;
+        if(CGAL::is_zero(p1.b())) {
+          if(!CGAL::is_zero(p2.b())) return false;
           return p1.c() * p2.d() == p1.d() * p2.c();
         }
         return (p2.c() * p1.b() == p1.c() * p2.b()) &&

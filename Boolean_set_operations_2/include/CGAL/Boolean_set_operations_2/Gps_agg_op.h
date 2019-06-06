@@ -130,7 +130,7 @@ public:
 
       Edge_iterator  itr = arr->edges_begin();
       for(; itr != arr->edges_end(); ++itr) {
-        // take only relevant edges (which seperate between contained and
+        // take only relevant edges (which separate between contained and
         // non-contained faces.
         Halfedge_iterator he = itr;
         if(he->face()->contained() == he->twin()->face()->contained())

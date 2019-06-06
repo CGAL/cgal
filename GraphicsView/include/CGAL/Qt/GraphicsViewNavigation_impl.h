@@ -302,7 +302,7 @@ namespace Qt {
       v->centerOn(new_center);
 
       // QGraphicsView::centerOn makes rounding errors.
-      // The following two "if" make them unnoticable when dx==0 or dy==0.
+      // The following two "if" make them unnoticeable when dx==0 or dy==0.
       if(dx == 0) {
         v->horizontalScrollBar()->setValue(horizontalScrollBarValue);
       }

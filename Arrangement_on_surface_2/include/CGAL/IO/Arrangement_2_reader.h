@@ -251,7 +251,7 @@ namespace CGAL {
     {
       formatter.read_face_begin();
 
-      // Allocate a new face and determine whether it is unbounded and wether it
+      // Allocate a new face and determine whether it is unbounded and whether it
       // is valid (non-fictitious).
       DFace*      new_f = m_arr_access.new_face();
       const bool  is_unbounded = (formatter.read_vertex_index() != 0);

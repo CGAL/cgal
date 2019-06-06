@@ -18,7 +18,6 @@
 #define CGAL_AK_ENABLE_DEPRECATED_INTERFACE 1
 
 #include <CGAL/Algebraic_kernel_d/flags.h>
-#include <CGAL/basic.h>
 
 #include <CGAL/Arithmetic_kernel.h>
 

@@ -421,6 +421,7 @@ public:
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 private:
+  
   //top stands for tuple-or-pair
   template <class Info>
   const Weighted_point& top_get_first(const std::pair<Weighted_point,Info>& pair) const { return pair.first; }
@@ -433,7 +434,7 @@ private:
 
   template <class Info>
   const Info& top_get_second(const boost::tuple<Weighted_point,Info>& tuple) const { return boost::get<1>(tuple); }
-
+  
   // Functor to go from an index of a container of Weighted_point to
   // the corresponding Bare_point
   template<class Construct_bare_point, class Container>

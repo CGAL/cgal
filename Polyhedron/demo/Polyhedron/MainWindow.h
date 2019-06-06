@@ -456,7 +456,7 @@ private:
   bool bbox_need_update;
   QMap<QString, QPair<QStringList, QString> >plugin_metadata_map;
   QMap<QString, bool> ignored_map;
-  const QStringList& accepted_keywords;
+  QStringList accepted_keywords;
 
 private Q_SLOTS:
   void on_actionAdd_Viewer_triggered();

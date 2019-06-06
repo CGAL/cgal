@@ -30,6 +30,7 @@
 #include <CGAL/circulator_bases.h>
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>
+#include <CGAL/tags.h>
 
 #include <cstddef>
 #include <functional>

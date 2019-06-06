@@ -21,7 +21,6 @@
 
 #define VDA_TEST_RT
 
-#include <CGAL/basic.h>
 
 #include <CGAL/Voronoi_diagram_2.h>
 #include "vda_test.h"

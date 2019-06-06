@@ -484,7 +484,7 @@ described in \cgalCite{gueziec2001cutting}.
 To deal with polygon soups that cannot be converted to a
 combinatorially manifold surface, some points must be duplicated.
 Because a polygon soup does not have any connectivity (each point
-has as many occurences as the number of polygons it belongs to),
+has as many occurrences as the number of polygons it belongs to),
 duplicating one point (or a pair of points)
 amounts to duplicating the polygon to which it belongs.
 The duplicated points are either an endpoint of an edge incident to more

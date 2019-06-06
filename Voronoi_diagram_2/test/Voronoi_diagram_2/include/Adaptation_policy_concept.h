@@ -22,7 +22,6 @@
 #ifndef CGAL_ADAPTATION_POLICY_CONCEPT_H
 #define CGAL_ADAPTATION_POLICY_CONCEPT_H 1
 
-#include <CGAL/basic.h>
 #include <CGAL/Voronoi_diagram_2/Policy_base.h>
 #include <CGAL/Voronoi_diagram_2/Identity_rejectors.h>
 #include <CGAL/Voronoi_diagram_2/Adaptation_traits_functors.h>

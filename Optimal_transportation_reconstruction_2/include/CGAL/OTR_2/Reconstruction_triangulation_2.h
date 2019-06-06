@@ -1075,7 +1075,7 @@ public:
         return false;
       }
 
-      FT value = Dbc <= 0 ? 1 : 2*Dbc; // value used if Dbd or Dac are +infinity
+      FT value = Dbc <= 0 ? FT(1) : 2*Dbc; // value used if Dbd or Dac are +infinity
       if ( !is_infinity(Dac) )
       {
         if ( !is_infinity(Dbd))

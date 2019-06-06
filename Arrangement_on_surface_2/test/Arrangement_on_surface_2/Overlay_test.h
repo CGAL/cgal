@@ -6,7 +6,7 @@
 #include <string>
 #include <algorithm>
 
-#include <CGAL/basic.h>
+
 #include <CGAL/Timer.h>
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_overlay_2.h>

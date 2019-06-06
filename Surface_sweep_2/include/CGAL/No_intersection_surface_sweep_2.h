@@ -452,7 +452,7 @@ protected:
   /*! Add a subcurve to the right of an event point.
    * \param event The event point.
    * \param curve The subcurve to add.
-   * \return (true) if an overlap occured; (false) otherwise.
+   * \return (true) if an overlap occurred; (false) otherwise.
    */
   virtual bool _add_curve_to_right(Event* event, Subcurve* curve);
 

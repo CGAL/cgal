@@ -1200,7 +1200,7 @@ Lexit:
     }  // while(!s_stack.empty())
 
     std::reverse(rev_points.begin(), rev_points.end());
-    // resize rev_points to accomodate the size of points vector
+    // resize rev_points to accommodate the size of points vector
     unsigned rsize = rev_points.size();
     rev_points.resize(rsize + points.size());
     std::copy(points.begin(), points.end(), rev_points.begin() + rsize);

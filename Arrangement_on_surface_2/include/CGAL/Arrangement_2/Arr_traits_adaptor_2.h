@@ -251,7 +251,7 @@ public:
       if (is_vertical(xcv1)) return (is_vertical(xcv2)) ? EQUAL : SMALLER;
       else if (is_vertical(xcv2)) return (LARGER);
 
-      // Perform the comparison based on the existance of bounded left
+      // Perform the comparison based on the existence of bounded left
       // endpoints.
       if (has_left1 && has_left2) {
         // Obtain the left endpoints of xcv1 and xcv2.

@@ -990,7 +990,7 @@ is_valid(bool verbose, int /* level */) const
   // cannot call for is_valid() of Base Triangulation class
   // because 1) number of vertices of base class does not match
   // tds.is_valid calls is_valid for each vertex
-  // and the test is not fullfilled by  hidden vertices ...
+  // and the test is not fulfilled by  hidden vertices ...
   // result = result && Triangulation_2<Gt,Tds>::is_valid(verbose, level);
   bool result = true;
   for(All_faces_iterator fit = all_faces_begin();

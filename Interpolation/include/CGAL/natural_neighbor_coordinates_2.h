@@ -121,7 +121,7 @@ natural_neighbors_2(const Dt& dt,
     *out++ = std::make_pair(v1,coef1);
     *out++ = std::make_pair(v2,coef2);
 
-    return make_triple(out, coef1+coef2, true);
+    return { out, coef1+coef2, true };
   }
 
   if (lt == Dt::VERTEX)

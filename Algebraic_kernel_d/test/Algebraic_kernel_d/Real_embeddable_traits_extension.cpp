@@ -24,7 +24,6 @@
 
 
 
-#include <CGAL/basic.h> 
 #include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
 #include <CGAL/Get_arithmetic_kernel.h>
 
