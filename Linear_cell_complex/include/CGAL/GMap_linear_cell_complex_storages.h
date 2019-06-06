@@ -84,7 +84,7 @@ namespace CGAL {
     typedef typename Dart_container::const_iterator        Dart_const_handle;
     typedef typename Dart_container::size_type             size_type;
 
-    typedef CGAL::Void* Null_handle_type;
+    typedef nullptr_t Null_handle_type;
     static const Null_handle_type null_handle;
 
     typedef Items_ Items;
