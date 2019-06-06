@@ -894,6 +894,7 @@ double bounded_error_Hausdorff_impl(
   typename Kernel::Construct_projected_point_3 project_point;
   typename Kernel::FT dist;
 
+  // Store all vertices of tm1 in a vector
   std::vector<vertex_descriptor> tm1_vertices;
   tm1_vertices.reserve(num_vertices(tm1));
   tm1_vertices.insert(tm1_vertices.end(),vertices(tm1).begin(),vertices(tm1).end());
@@ -903,13 +904,16 @@ double bounded_error_Hausdorff_impl(
                 tm1_vertices.end(),
                 Search_traits_3(vpm1) );
 
-  // Build an AABB tree on the second mesh
+  // Build an AABB tree on tm2
   TM2_tree tm2_tree( faces(tm2).begin(), faces(tm2).end(), tm2, vpm2 );
   tm2_tree.build();
   tm2_tree.accelerate_distance_queries();
   std::pair<Point_3, face_descriptor> hint = tm2_tree.any_reference_point_and_id();
 
+  // For each vertex in tm1, store the distance to the closest triangle of tm2
   Vertex_closest_triangle_map vctm  = get(Vertex_property_tag(), tm1);
+  // For each triangle in tm1, sotre its respective local lower and upper bound
+  // on the Hausdorff measure
   Triangle_hausdorff_bounds thb = get(Face_property_tag(), tm1);
 
 #if !defined(CGAL_LINKED_WITH_TBB)
@@ -929,38 +933,55 @@ double bounded_error_Hausdorff_impl(
   // else
 #endif
   {
-    // For each vertex in the first mesh, find the closest triangle in the
-    // second mesh, store it and also store the distance to this triangle
-    // in a dynamic vertex property
+    /*
+    / For each vertex in the first mesh, find the closest triangle in the
+    / second mesh, store it and also store the distance to this triangle
+    / in a dynamic vertex property
+    */
     for(vertex_descriptor vd : tm1_vertices)
     {
+      // Get the point represented by the vertex
       typename boost::property_traits<VPM1>::reference pt = get(vpm1, vd);
+      // Use the AABB tree to find the closest point and face in tm2
       hint = tm2_tree.closest_point_and_primitive(pt, hint);
+      // Compute the distance of the point to the closest point in tm2
       dist = squared_distance(hint.first, pt);
       double d = to_double(dist);
+      // Store the distance and the closest triangle in the corresponding map
       put(vctm, vd, std::make_pair(d, hint.second));
     }
 
+    // Maps the faces of tm2 to actual triangles
     Triangle_from_face_descriptor_map<TriangleMesh, VPM2> face_to_triangle_map(&tm2, vpm2);
+    // Initialize global bounds on the Hausdorff measure
     double h_lower = 0.;
     double h_upper = 0.;
+    // Initialize an array of candidate triangles in A to be procesed in the
+    // following
+    std::vector<face_descriptor> candidate_triangles;
 
-    // For each triangle in the first mesh, initialize its local upper and
-    // lower bound and store these in a dynamic face property for furture
-    // reference
+    /*
+    / For each triangle in the first mesh, initialize its local upper and
+    / lower bound and store these in a dynamic face property for furture
+    / reference
+    */
     for(face_descriptor fd : faces(tm1))
     {
+      // Initialize the local bounds for the current face fd
       double h_triangle_lower = 0.;
       double h_triangle_upper = std::numeric_limits<double>::infinity();
-      halfedge_descriptor hd = halfedge(fd, tm1);
 
+      // Create a halfedge descriptor for the current face and store the vertices
+      halfedge_descriptor hd = halfedge(fd, tm1);
       std::array<vertex_descriptor,3> face_vertices = {source(hd,tm1), target(hd,tm1), target(next(hd, tm1),tm1)};
 
+      // Get the distance and closest triangle in tm2 for each vertex of fd
       std::array<std::pair<double, face_descriptor>,3> vertex_properties = {
           get(vctm, face_vertices[0]),
           get(vctm, face_vertices[1]),
           get(vctm, face_vertices[2])};
 
+      // Convert the closest faces of tm2 to triangles
       std::array<typename Kernel::Triangle_3,3> triangles_in_B = {
           get(face_to_triangle_map, vertex_properties[0].second),
           get(face_to_triangle_map, vertex_properties[1].second),
@@ -968,9 +989,13 @@ double bounded_error_Hausdorff_impl(
 
       for(int i=0; i<3; ++i)
       {
-        // Iterate over the vertices by i
+        // Iterate over the vertices by i, the distance to the closest point in
+        // tm2 computed above is a lower bound for the local triangle
         h_triangle_lower = (std::max)(h_triangle_lower, vertex_properties[i].first);
-        // Iterate over the triangles by i
+
+        // Iterate over the triangles by i, if the triangles are the same, we do
+        // not need to compute the distance, only compute it if the triangles
+        // differ
         double face_distance_1 = vertex_properties[i].second==vertex_properties[(i+1)%3].second
                                ? vertex_properties[(i+1)%3].first
                                : squared_distance(project_point(triangles_in_B[i], get(vpm1, face_vertices[(i+1)%3])), get(vpm1, face_vertices[(i+1)%3]));
@@ -978,21 +1003,22 @@ double bounded_error_Hausdorff_impl(
                                ? vertex_properties[(i+2)%3].first
                                : squared_distance(project_point(triangles_in_B[i], get(vpm1, face_vertices[(i+2)%3])), get(vpm1, face_vertices[(i+2)%3]));
 
-        h_triangle_upper = (std::min)((std::max)((std::max)(face_distance_1, face_distance_2), vertex_properties[i].first), h_triangle_upper);
+        // Update the local lower bound of the triangle
+        h_triangle_upper = (std::min)(
+          (std::max)(
+            (std::max)(face_distance_1, face_distance_2),
+            vertex_properties[i].first),
+          h_triangle_upper);
       }
+
+      // Store the computed lower and upper bound in a dynamic face property
       put(thb, fd, Hausdorff_bounds(h_triangle_lower, h_triangle_upper));
       h_lower = (std::max)(h_lower, h_triangle_lower);
       h_upper = (std::max)(h_upper, h_triangle_upper);
-    }
 
-    // Initialize an array of candidate triangles in A to be procesed in the
-    // following
-    std::vector<face_descriptor> candidate_triangles;
-
-    for(face_descriptor fd : faces(tm1))
-    {
-      Hausdorff_bounds triangle_bounds = get(thb, fd);
-      if (triangle_bounds.second > h_lower) {
+      // Only process the triangle further if it can still contribute to a
+      // Hausdorff distance
+      if (h_triangle_upper > h_lower) {
 
         // TODO culling on B
 
