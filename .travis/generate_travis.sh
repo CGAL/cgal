@@ -24,7 +24,7 @@ do
   	echo "$f " >> ./tmp.txt
 	fi
 done
-  	LC_COLLATE=C sort ./tmp.txt > ./.travis/packages.txt
+        LC_ALL=C sort ./tmp.txt > ./.travis/packages.txt
   	rm ./tmp.txt
   	while read p; do
   	PACKAGES[$INDEX]+="$p "
@@ -77,7 +77,8 @@ IFS=$' '
 #check if there are differences between the files
 if ! cmp -s ./.travis.yml ./.travis.old;
 then
-    echo ".travis.yml has changed"
+    echo ".travis.yml has changed : "
+    diff ./.travis.yml ./.travis.old
     if [ -n "$CHECK" ]; then
         echo "You should modify the file .travis/template.txt"
         exit 1
