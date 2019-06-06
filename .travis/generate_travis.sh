@@ -21,16 +21,20 @@ for f in *
 do
   if [ -d  "$f/package_info/$f" ]
 	then
-		PACKAGES[$INDEX]+="$f "
+  	echo "$f " >> ./tmp.txt
+	fi
+done
+  	LC_COLLATE=C sort ./tmp.txt > ./.travis/packages.txt
+  	rm ./tmp.txt
+  	while read p; do
+  	PACKAGES[$INDEX]+="$p "
 		i=$[i+1]
 		if [ $i = 3 ]
 		then
 			i=0
  			INDEX=$[INDEX+1]
 		fi
-  	echo "$f " >> ./.travis/packages.txt
-	fi
-done
+done <./.travis/packages.txt
 if [ -f ".travis.yml" ] 
 then
   #copy the current .travis.yml for later check
