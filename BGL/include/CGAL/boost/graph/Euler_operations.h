@@ -1317,6 +1317,72 @@ flip_edge(typename boost::graph_traits<Graph>::halfedge_descriptor h,
   set_halfedge(foh,oh,g);
 }
 
+/// \todo document me
+template <typename Graph>
+void shift_source (typename boost::graph_traits<Graph>::halfedge_descriptor h,
+                   Graph& g)
+{
+  typedef typename boost::graph_traits<Graph>              Traits;
+  typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
+  typedef typename Traits::vertex_descriptor               vertex_descriptor;
+  typedef typename Traits::face_descriptor                 face_descriptor;
+
+
+  halfedge_descriptor hp = prev (h, g);
+  halfedge_descriptor ho = opposite (h, g);
+  halfedge_descriptor hon = next (ho, g);
+  halfedge_descriptor hpp = prev (hp, g);
+  vertex_descriptor vppt = target (hpp, g);
+
+  face_descriptor f = face (h, g);
+  face_descriptor fo = face (ho, g);
+
+  CGAL_assertion (f != Traits::null_face());
+  CGAL_assertion (fo != Traits::null_face());
+  
+  if (halfedge (f, g) == hp)
+    set_halfedge (f, h, g);
+
+  set_next (ho, hp, g);
+  set_next (hp, hon, g);
+  set_next (hpp, h, g);
+  set_target (ho, vppt, g);
+  set_face (hp, fo, g);
+}
+
+/// \todo document me
+template <typename Graph>
+void shift_target (typename boost::graph_traits<Graph>::halfedge_descriptor h,
+                   Graph& g)
+{
+  typedef typename boost::graph_traits<Graph>              Traits;
+  typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
+  typedef typename Traits::vertex_descriptor               vertex_descriptor;
+  typedef typename Traits::face_descriptor                 face_descriptor;
+
+  halfedge_descriptor hn = next (h, g);
+  halfedge_descriptor ho = opposite (h, g);
+  halfedge_descriptor hop = prev (ho, g);
+  halfedge_descriptor hnn = next (hn, g);
+  vertex_descriptor vnt = target (hn, g);
+
+  face_descriptor f = face (h, g);
+  face_descriptor fo = face (ho, g);
+
+  CGAL_assertion (f != Traits::null_face());
+  CGAL_assertion (fo != Traits::null_face());
+  
+  if (halfedge (f, g) == hn)
+    set_halfedge (f, h, g);
+
+  set_next (hop, hn, g);
+  set_next (hn, ho, g);
+  set_next (h, hnn, g);
+  set_target (h, vnt, g);
+  set_face (hn, fo, g);
+}
+
+
 /**
  *  \returns `true` if `e` satisfies the *link condition* \cgalCite{degn-tpec-98}, which guarantees that the surface is also 2-manifold after the edge collapse.
  */

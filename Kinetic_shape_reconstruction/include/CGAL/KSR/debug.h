@@ -54,6 +54,26 @@ void dump_intersection_edges (const DS& data, const std::string& tag = std::stri
 }
 
 template <typename DS>
+void dump_segmented_edges (const DS& data, const std::string& tag = std::string())
+{
+  std::vector<std::ofstream*> out;
+  for (KSR::size_t i = 0; i < data.nb_intersection_lines(); ++ i)
+  {
+    std::string filename = (tag != std::string() ? tag + "_" : "") + "intersection_line_" + std::to_string(i) + ".polylines.txt";
+    out.push_back (new std::ofstream (filename));
+    out.back()->precision(18);
+  }
+  
+  for (const typename DS::IEdge& iedge : data.iedges())
+  {
+    CGAL_assertion (data.line_idx(iedge) != KSR::no_element());
+    *(out[data.line_idx(iedge)]) << "2 " << data.segment_3 (iedge) << std::endl;
+  }
+  for (std::ofstream* o : out)
+    delete o;
+}
+
+template <typename DS>
 void dump_constrained_edges (const DS& data, const std::string& tag = std::string())
 {
   std::string filename = (tag != std::string() ? tag + "_" : "") + "constrained_edges.polylines.txt";
@@ -84,53 +104,53 @@ void dump_polygons (const DS& data, const std::string& tag = std::string())
   Uchar_map bbox_green = bbox_mesh.template add_property_map<typename Mesh::Face_index, unsigned char>("green", 0).first;
   Uchar_map bbox_blue = bbox_mesh.template add_property_map<typename Mesh::Face_index, unsigned char>("blue", 0).first;
 
-  KSR::size_t bbox_nb_vertices = 0;
-  KSR::size_t nb_vertices = 0;
-
   KSR::vector<typename Mesh::Vertex_index> vertices;
+  KSR::vector<typename Mesh::Vertex_index> map_vertices;
+  
   for (KSR::size_t i = 0; i < data.number_of_support_planes(); ++ i)
   {
     if (data.is_bbox_support_plane(i))
     {
-      KSR::size_t new_vertices = 0;
+      map_vertices.clear();
       for (typename DS::PVertex pvertex : data.pvertices(i))
       {
-        bbox_mesh.add_vertex (data.point_3(pvertex));
-        ++ new_vertices;
+        if (map_vertices.size() <= pvertex.second)
+          map_vertices.resize (pvertex.second + 1);
+        map_vertices[pvertex.second] = bbox_mesh.add_vertex (data.point_3(pvertex));
       }
       
       for (typename DS::PFace pface : data.pfaces(i))
       {
         vertices.clear();
         for(typename DS::PVertex pvertex : data.pvertices_of_pface(pface))
-          vertices.push_back (typename Mesh::Vertex_index(KSR::size_t(pvertex.second) + bbox_nb_vertices));
+          vertices.push_back (map_vertices[pvertex.second]);
         
         typename Mesh::Face_index face = bbox_mesh.add_face (vertices);
         std::tie (bbox_red[face], bbox_green[face], bbox_blue[face])
           = get_idx_color ((i+1) * (pface.second+1));
       }
-      bbox_nb_vertices += new_vertices;
     }
     else
     {
-      KSR::size_t new_vertices = 0;
+      map_vertices.clear();
       for (typename DS::PVertex pvertex : data.pvertices(i))
       {
-        mesh.add_vertex (data.point_3 (pvertex));
-        ++ new_vertices;
+        if (map_vertices.size() <= pvertex.second)
+          map_vertices.resize (pvertex.second + 1);
+        map_vertices[pvertex.second] = mesh.add_vertex (data.point_3 (pvertex));
       }
       
       for (typename DS::PFace pface : data.pfaces(i))
       {
         vertices.clear();
+
         for(typename DS::PVertex pvertex : data.pvertices_of_pface(pface))
-          vertices.push_back (typename Mesh::Vertex_index(KSR::size_t(pvertex.second) + nb_vertices));
-        
+          vertices.push_back (map_vertices[pvertex.second]);
+
         typename Mesh::Face_index face = mesh.add_face (vertices);
         std::tie (red[face], green[face], blue[face])
           = get_idx_color (i * (pface.second+1));
       }
-      nb_vertices += new_vertices;
     }
   }
     
@@ -139,7 +159,7 @@ void dump_polygons (const DS& data, const std::string& tag = std::string())
   CGAL::set_binary_mode (out);
   CGAL::write_ply(out, mesh);
 
-#if 1
+#if 0
   std::string bbox_filename = (tag != std::string() ? tag + "_" : "") + "bbox_polygons.ply";
   std::ofstream bbox_out (bbox_filename);
   CGAL::set_binary_mode (bbox_out);
@@ -148,19 +168,57 @@ void dump_polygons (const DS& data, const std::string& tag = std::string())
   
 }
 
+template <typename DS>
+void dump_polygon_borders (const DS& data, const std::string& tag = std::string())
+{
+  std::string filename = (tag != std::string() ? tag + "_" : "") + "polygon_borders.polylines.txt";
+  std::ofstream out (filename);
+  
+  for (KSR::size_t i = 6; i < data.number_of_support_planes(); ++ i)
+    for (const typename DS::PEdge pedge : data.pedges(i))
+      out << "2 " << data.segment_3 (pedge) << std::endl;
+}
+
 template <typename DS, typename Event>
 void dump_event (const DS& data, const Event& ev, const std::string& tag = std::string())
 {
-  std::string lfilename = (tag != std::string() ? tag + "_" : "") + "event_line.polylines.txt";
-  std::ofstream lout (lfilename);
-  lout.precision(18);
+  if (ev.is_pvertex_to_pvertex())
+  {
+    std::string vfilename = (tag != std::string() ? tag + "_" : "") + "event_pvertex.xyz";
+    std::ofstream vout (vfilename);
+    vout.precision(18);
+    vout << data.point_3 (ev.pvertex()) << std::endl;
 
-  // TODO
+    std::string ofilename = (tag != std::string() ? tag + "_" : "") + "event_pother.xyz";
+    std::ofstream oout (ofilename);
+    oout.precision(18);
+    oout << data.point_3 (ev.pother()) << std::endl;
+  }
+  else if (ev.is_pvertex_to_iedge())
+  {
+    std::string lfilename = (tag != std::string() ? tag + "_" : "") + "event_iedge.polylines.txt";
+    std::ofstream lout (lfilename);
+    lout.precision(18);
+    lout << "2 " << data.segment_3 (ev.iedge()) << std::endl;
 
-  std::string vfilename = (tag != std::string() ? tag + "_" : "") + "event_vertex.xyz";
-  std::ofstream vout (vfilename);
-  vout.precision(18);
-//  vout << data.point_of_vertex(ev.vertex_idx()) << std::endl;
+    std::string vfilename = (tag != std::string() ? tag + "_" : "") + "event_pvertex.xyz";
+    std::ofstream vout (vfilename);
+    vout.precision(18);
+    vout << data.point_3 (ev.pvertex());
+  }
+  else if (ev.is_pvertex_to_ivertex())
+  {
+    std::string vfilename = (tag != std::string() ? tag + "_" : "") + "event_pvertex.xyz";
+    std::ofstream vout (vfilename);
+    vout.precision(18);
+    vout << data.point_3 (ev.pvertex()) << std::endl;
+
+    std::string ofilename = (tag != std::string() ? tag + "_" : "") + "event_ivertex.xyz";
+    std::ofstream oout (ofilename);
+    oout.precision(18);
+    oout << data.point_3 (ev.ivertex()) << std::endl;
+  }
+
 }
 
 template <typename DS>
@@ -168,8 +226,10 @@ void dump (const DS& data, const std::string& tag = std::string())
 {
   dump_intersection_edges (data, tag);
   dump_constrained_edges (data, tag);
+  dump_polygon_borders (data, tag);
   dump_polygons (data, tag);
 }
+
 
 
 } // namespace KSR_3

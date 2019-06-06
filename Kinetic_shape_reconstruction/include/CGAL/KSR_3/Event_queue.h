@@ -59,15 +59,19 @@ private:
      boost::multi_index::ordered_non_unique
      <boost::multi_index::member<Event, FT, &Event::m_time> >,
      boost::multi_index::ordered_non_unique
-     <boost::multi_index::member<Event, PVertex, &Event::m_pvertex> >
+     <boost::multi_index::member<Event, PVertex, &Event::m_pvertex> >,
+     boost::multi_index::ordered_non_unique
+     <boost::multi_index::member<Event, PVertex, &Event::m_pother> >
      > 
    > Queue;
 
   typedef typename Queue::iterator Queue_iterator;
   typedef typename Queue::template nth_index<0>::type Queue_by_time;
   typedef typename Queue_by_time::iterator Queue_by_time_iterator;
-  typedef typename Queue::template nth_index<1>::type Queue_by_event_idx;
-  typedef typename Queue_by_event_idx::iterator Queue_by_event_idx_iterator;
+  typedef typename Queue::template nth_index<1>::type Queue_by_pvertex_idx;
+  typedef typename Queue_by_pvertex_idx::iterator Queue_by_pvertex_idx_iterator;
+  typedef typename Queue::template nth_index<2>::type Queue_by_pother_idx;
+  typedef typename Queue_by_pother_idx::iterator Queue_by_pother_idx_iterator;
   
   Queue m_queue;
 
@@ -80,13 +84,16 @@ public:
 
   void push (const Event& ev)
   {
+    CGAL_KSR_CERR(4) << "**** Pushing " << ev << std::endl;
     m_queue.insert (ev);
   }
 
   const Queue_by_time& queue_by_time() const { return m_queue.template get<0>(); }
-  const Queue_by_event_idx& queue_by_event_idx() const { return m_queue.template get<1>(); }
+  const Queue_by_pvertex_idx& queue_by_pvertex_idx() const { return m_queue.template get<1>(); }
+  const Queue_by_pother_idx& queue_by_pother_idx() const { return m_queue.template get<2>(); }
   Queue_by_time& queue_by_time() { return m_queue.template get<0>(); }
-  Queue_by_event_idx& queue_by_event_idx() { return m_queue.template get<1>(); }
+  Queue_by_pvertex_idx& queue_by_pvertex_idx() { return m_queue.template get<1>(); }
+  Queue_by_pother_idx& queue_by_pother_idx() { return m_queue.template get<2>(); }
 
   Event pop ()
   {
@@ -102,23 +109,28 @@ public:
       std::cerr << e << std::endl;
   }
 
-  void erase_vertex_events (KSR::size_t support_plane_idx, PVertex pvertex)
+  void erase_vertex_events (PVertex pvertex)
   {
-    std::pair<Queue_by_event_idx_iterator, Queue_by_event_idx_iterator>
-      range = queue_by_event_idx().equal_range(pvertex);
-    queue_by_event_idx().erase (range.first, range.second);
+    {
+      std::pair<Queue_by_pvertex_idx_iterator, Queue_by_pvertex_idx_iterator>
+        range = queue_by_pvertex_idx().equal_range(pvertex);
+
+      for (const auto& ev : CGAL::make_range(range))
+        CGAL_KSR_CERR(4) << "**** Erasing " << ev << std::endl;
+    
+      queue_by_pvertex_idx().erase (range.first, range.second);
+    }
+    {
+      std::pair<Queue_by_pother_idx_iterator, Queue_by_pother_idx_iterator>
+        range = queue_by_pother_idx().equal_range(pvertex);
+
+      for (const auto& ev : CGAL::make_range(range))
+        CGAL_KSR_CERR(4) << "**** Erasing " << ev << std::endl;
+    
+      queue_by_pother_idx().erase (range.first, range.second);
+    }
   }
 
-  void erase_vertex_events (KSR::size_t support_plane_idx, PVertex pvertex,
-                            KSR::vector<Event>& events)
-  {
-    std::pair<Queue_by_event_idx_iterator, Queue_by_event_idx_iterator>
-      range = queue_by_event_idx().equal_range(pvertex);
-
-    std::copy (range.first, range.second, std::back_inserter (events));
-    queue_by_event_idx().erase (range.first, range.second);
-  }
-     
 };
 
 

@@ -51,14 +51,19 @@ public:
   struct Vertex_property
   {
     Point_3 point;
+    bool active;
 
-    Vertex_property () { }
-    Vertex_property (const Point_3& point) : point (point) { }
+    Vertex_property () : active(true) { }
+    Vertex_property (const Point_3& point) : point (point), active(true) { }
   };
   
   struct Edge_property
   {
+    KSR::size_t line;
     KSR::Idx_set planes;
+    bool active;
+
+    Edge_property() : line (KSR::no_element()), active(true) { }
   };
 
   typedef boost::adjacency_list <boost::setS,
@@ -79,12 +84,13 @@ public:
 private:
 
   Graph m_graph;
+  KSR::size_t m_nb_lines;
   std::map<Point_3, Vertex_descriptor> m_map_points;
   std::map<KSR::Idx_vector, Vertex_descriptor> m_map_vertices;
   
 public:
 
-  Intersection_graph() { }
+  Intersection_graph() : m_nb_lines(0) { }
 
   static Vertex_descriptor null_ivertex()
   { return boost::graph_traits<Graph>::null_vertex(); }
@@ -121,6 +127,9 @@ public:
     return std::make_pair (iter->second, inserted);
   }
 
+  KSR::size_t add_line() { return (m_nb_lines ++); }
+  KSR::size_t nb_lines() const { return m_nb_lines; }
+
   std::pair<Edge_descriptor, bool> add_edge (const Vertex_descriptor& source, const Vertex_descriptor& target,
                                              KSR::size_t support_plane_idx)
   {
@@ -143,6 +152,13 @@ public:
   {
     return add_edge (add_vertex (source).first, add_vertex (target).first);
   }
+
+  void set_line (const Edge_descriptor& edge, KSR::size_t line_idx)
+  {
+    m_graph[edge].line = line_idx;
+  }
+
+  KSR::size_t line (const Edge_descriptor& edge) const { return m_graph[edge].line; }
 
   std::pair<Edge_descriptor, Edge_descriptor>
   split_edge (const Edge_descriptor& edge, const Vertex_descriptor& vertex)
@@ -210,6 +226,11 @@ public:
     return Line_3 (m_graph[source (edge, m_graph)].point,
                    m_graph[target (edge, m_graph)].point);
   }
+
+  bool is_active (const Vertex_descriptor& vertex) const { return m_graph[vertex].active; }
+  bool& is_active (const Vertex_descriptor& vertex) { return m_graph[vertex].active; }
+  bool is_active (const Edge_descriptor& edge) const { return m_graph[edge].active; }
+  bool& is_active (const Edge_descriptor& edge) { return m_graph[edge].active; }
 };
 
 

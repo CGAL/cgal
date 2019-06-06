@@ -48,40 +48,94 @@ public:
   
   typedef Event_queue<Data> Queue;
   friend Queue;
-
-  enum Type
-  {
-    FREE_VERTEX_TO_INTERSECTION_EDGE,
-    CONSTRAINED_VERTEX_TO_FREE_VERTEX,
-    CONSTRAINED_VERTEX_TO_INTERSECTION_VERTEX,
-    CONSTRAINED_VERTEX_TO_CONSTRAINED_VERTEX,
-    EDGE_TO_INTERSECTION_EDGE
-  };
-
+  
 private:
 
   PVertex m_pvertex;
+
+  PVertex m_pother;
   IEdge m_iedge;
+  IVertex m_ivertex;
+
   FT m_time;
 
 public:
 
-  Event () { }
+  Event ()
+    : m_pvertex (Data::null_pvertex())
+    , m_pother (Data::null_pvertex())
+    , m_iedge (Data::null_iedge())
+    , m_ivertex (Data::null_ivertex())
+    , m_time (0)
+  { }
+
+  Event (PVertex pvertex, PVertex pother, FT time)
+    : m_pvertex (pvertex)
+    , m_pother (pother)
+    , m_iedge (Data::null_iedge())
+    , m_ivertex (Data::null_ivertex())
+    , m_time (time)
+  { }
 
   Event (PVertex pvertex, IEdge iedge, FT time)
     : m_pvertex (pvertex)
-    , m_iedge (iedge), m_time (time)
+    , m_pother (Data::null_pvertex())
+    , m_iedge (iedge)
+    , m_ivertex (Data::null_ivertex())
+    , m_time (time)
+  { }
+
+  Event (PVertex pvertex, IVertex ivertex, FT time)
+    : m_pvertex (pvertex)
+    , m_pother (Data::null_pvertex())
+    , m_iedge (Data::null_iedge())
+    , m_ivertex (ivertex)
+    , m_time (time)
+  { }
+
+  Event (PVertex pvertex, PVertex pother, IVertex ivertex, FT time)
+    : m_pvertex (pvertex)
+    , m_pother (pother)
+    , m_iedge (Data::null_iedge())
+    , m_ivertex (ivertex)
+    , m_time (time)
   { }
 
   PVertex pvertex() const { return m_pvertex; }
+  PVertex pother() const { return m_pother; }
   IEdge iedge() const { return m_iedge; }
+  IVertex ivertex() const { return m_ivertex; }
   FT time() const { return m_time; }
+
+  bool is_pvertex_to_pvertex() const { return (m_pother != Data::null_pvertex()); }
+  bool is_pvertex_to_iedge() const { return (m_iedge != Data::null_iedge()); }
+  
+  bool is_pvertex_to_ivertex() const { return (m_pother == Data::null_pvertex()
+                                               && m_ivertex != Data::null_ivertex()); }
+  bool is_pvertices_to_ivertex() const { return (m_pother != Data::null_pvertex()
+                                                 && m_ivertex != Data::null_ivertex()); }
   
   friend std::ostream& operator<< (std::ostream& os, const Event& ev)
   {
-    os << "Event at t=" << ev.m_time << " between vertex ("
-       << ev.m_pvertex.first << ":" << ev.m_pvertex.second
-       << ") and intersection edge " << ev.m_iedge;
+    if (ev.is_pvertex_to_pvertex())
+      os << "Event at t=" << ev.m_time << " between PVertex("
+         << ev.m_pvertex.first << ":" << ev.m_pvertex.second
+         << ") and PVertex(" << ev.m_pother.first << ":" << ev.m_pother.second << ")";
+    else if (ev.is_pvertex_to_iedge())
+      os << "Event at t=" << ev.m_time << " between PVertex("
+         << ev.m_pvertex.first << ":" << ev.m_pvertex.second
+         << ") and IEdge" << ev.m_iedge;
+    else if (ev.is_pvertex_to_ivertex())
+      os << "Event at t=" << ev.m_time << " between PVertex("
+         << ev.m_pvertex.first << ":" << ev.m_pvertex.second
+         << ") and IVertex(" << ev.m_ivertex << ")";
+    else if (ev.is_pvertices_to_ivertex())
+      os << "Event at t=" << ev.m_time << " between PVertex("
+         << ev.m_pvertex.first << ":" << ev.m_pvertex.second
+         << "), PVertex(" << ev.m_pother.first << ":" << ev.m_pother.second
+         << " and IVertex(" << ev.m_ivertex << ")";
+    else
+      os << "Invalid event at t=" << ev.m_time;
     return os;
   }
 

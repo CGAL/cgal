@@ -101,7 +101,7 @@ public:
 
   Polygon_splitter (Data& data) : m_data (data) { }
 
-  void split_support_plane (KSR::size_t support_plane_idx)
+  void split_support_plane (KSR::size_t support_plane_idx, unsigned int k)
   {
     // First, insert polygons
     for (PVertex pvertex : m_data.pvertices(support_plane_idx))
@@ -254,8 +254,10 @@ public:
       }
       while (current != edge);
 
-      PFace pface = m_data.add_pface (support_plane_idx, new_vertices);
+      PFace pface = m_data.add_pface (new_vertices);
       CGAL_assertion (pface != PFace());
+
+      m_data.k(pface) = k;
 
       std::size_t original_idx = 0;
       if (original_faces.size() != 1)

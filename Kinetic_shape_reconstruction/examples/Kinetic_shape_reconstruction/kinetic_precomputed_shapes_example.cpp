@@ -2,7 +2,7 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#define CGAL_KSR_VERBOSE_LEVEL 3
+#define CGAL_KSR_VERBOSE_LEVEL 4
 #include <CGAL/Kinetic_shape_reconstruction_3.h>
 
 #include <CGAL/IO/PLY_reader.h>

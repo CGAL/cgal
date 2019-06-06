@@ -473,7 +473,7 @@ private: //-------------------------------------------------- connectivity types
     /// \sa `Halfedge_connectivity`, `Face_connectivity`
     struct Vertex_connectivity
     {
-        /// an incoming halfedge per vertex (it will be a border halfedge for border vertices)
+        /// an incoming halfedge per vlertex (it will be a border halfedge for border vertices)
         Halfedge_index  halfedge_;
     };
 
