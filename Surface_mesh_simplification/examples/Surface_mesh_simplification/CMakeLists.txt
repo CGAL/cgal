@@ -14,7 +14,7 @@ find_package( CGAL QUIET COMPONENTS  )
 if ( NOT CGAL_FOUND )
 
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
+  return()
 
 endif()
 
@@ -25,7 +25,7 @@ if ( NOT Boost_FOUND )
 
   message(STATUS "This project requires the Boost library, and will not be compiled.")
 
-  return()  
+  return()
 
 endif()
 
@@ -37,6 +37,16 @@ include( UseOpenMesh )
 else()
   message(STATUS "Examples that use OpenMesh will not be compiled.")
 endif()
+
+
+find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
+
+if( NOT Eigen3_FOUND )
+  message(STATUS "This project requires Eigen3 library, and will not be compiled.")
+  return()
+endif()
+
+include( ${EIGEN3_USE_FILE} )
 
 # include for local directory
 
@@ -55,6 +65,8 @@ create_single_source_cgal_program( "edge_collapse_constrained_border_surface_mes
 create_single_source_cgal_program( "edge_collapse_all_short_edges.cpp" )
 create_single_source_cgal_program( "edge_collapse_bounded_normal_change.cpp" )
 create_single_source_cgal_program( "edge_collapse_visitor_surface_mesh.cpp" )
+create_single_source_cgal_program( "edge_collapse_garland_heckbert.cpp" )
+create_single_source_cgal_program( "edge_collapse_surface_mesh_garland_heckbert.cpp" )
 
 if(OpenMesh_FOUND)
   create_single_source_cgal_program( "edge_collapse_OpenMesh.cpp" )
