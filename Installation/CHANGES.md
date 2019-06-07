@@ -25,12 +25,12 @@ Release date: September 2019
      read/write comments from/in the PLY header.
 
 ### Polygon Mesh Processing
- -   Added the function `CGAL::Polygon_mesh_processing::centroid()` which computes
-     the centroid of a closed triangle mesh.
--    Added mesh smoothing functions `smooth_areas()` and `smooth_angles()` improving the quality of triangle elements
-     based on geometric characteristics.
--    Added shape smoothing function `smooth_along_curvature_flow()` smoothing the surface of a triangle mesh
-     using the mean curvature flow to perform noise removal.
+-   Added the function `CGAL::Polygon_mesh_processing::centroid()` which computes
+    the centroid of a closed triangle mesh.
+-   Added the mesh smoothing functions `smooth_areas()` and `smooth_angles()`, which can be used to
+    improve the quality of triangle elements based on geometric characteristics.
+-   Added the shape smoothing function `smooth_along_curvature_flow()`, which can be used to
+    smooth the surface of a triangle mesh, using the mean curvature flow to perform noise removal.
 
 ### IO Streams
  -   **Breaking change:** The API of `CGAL::Color` has been cleaned up.
@@ -39,7 +39,7 @@ Release date: September 2019
  -   Added a function to convert a Nef_polyhedron_3 to a polygon soup: `CGAL::convert_nef_to_polygon_soup()`
 
 ### 2D and 3D Linear Geometry Kernel
- - Add `ComputeApproximateAngle_3` in the 2D/3D Kernel concept to compute
+ - Added `ComputeApproximateAngle_3` in the 2D/3D Kernel concept to compute
    the approximate dihedral angle between 2 vectors. Corresponding functors
    in the model (`Compute_approximate_angle_3`) and free function (`approximate_angle`)
    are also added.
