@@ -97,8 +97,6 @@ public:
 
     ui_widget.smooth_iter_spinBox->setValue(1);
     ui_widget.projection_checkBox->setChecked(true);
-
-    ui_widget.explicit_checkBox->setChecked(false);
   }
 
   void mark_border_vertices(const VCMap vcmap, const Face_graph& pmesh) const
@@ -160,6 +158,7 @@ public Q_SLOTS:
 
     const unsigned int nb_iter = ui_widget.smooth_iter_spinBox->value();
     const bool projection = ui_widget.projection_checkBox->isChecked();
+    const bool ignore_safety_measures = true; //ui_widget.use_safety_measures_checkBox->isChecked(); @fixme
     const bool constrain_border_vertices = ui_widget.border_button->isChecked() && !CGAL::is_closed(pmesh);
     const bool use_angle_smoothing = ui_widget.angle_smoothing_checkBox->isChecked();
     const bool use_area_smoothing = ui_widget.area_smoothing_checkBox->isChecked();
@@ -179,21 +178,24 @@ public Q_SLOTS:
       {
         if(use_area_smoothing)
         {
-          smooth(pmesh, parameters::number_of_iterations(nb_iter)
-                                   .do_project(projection)
+          smooth(pmesh, parameters::do_project(projection)
+                                   .number_of_iterations(nb_iter)
+                                   .use_safety_constraints(!ignore_safety_measures)
                                    .vertex_is_constrained_map(vcmap));
         }
         else
         {
-          smooth_angles(pmesh, parameters::number_of_iterations(nb_iter)
-                                          .do_project(projection)
-                                          .vertex_is_constrained_map(vcmap));
+          smooth_angles(pmesh, parameters::do_project(projection)
+                                           .number_of_iterations(nb_iter)
+                                           .use_safety_constraints(!ignore_safety_measures)
+                                           .vertex_is_constrained_map(vcmap));
         }
       }
-      else
+      else if(use_area_smoothing)
       {
-        smooth_areas(pmesh, parameters::number_of_iterations(nb_iter)
-                                       .do_project(projection)
+        smooth_areas(pmesh, parameters::do_project(projection)
+                                       .number_of_iterations(nb_iter)
+                                       .use_safety_constraints(!ignore_safety_measures)
                                        .vertex_is_constrained_map(vcmap));
       }
 
@@ -210,18 +212,21 @@ public Q_SLOTS:
         if(use_angle_smoothing)
         {
           if(use_area_smoothing)
-            smooth(pmesh, parameters::number_of_iterations(nb_iter)
-                                     .do_project(projection)
+            smooth(pmesh, parameters::do_project(projection)
+                                     .number_of_iterations(nb_iter)
+                                     .use_safety_constraints(!ignore_safety_measures)
                                      .vertex_is_constrained_map(vcmap));
           else
-            smooth_angles(pmesh, parameters::number_of_iterations(nb_iter)
-                                            .do_project(projection)
+            smooth_angles(pmesh, parameters::do_project(projection)
+                                            .number_of_iterations(nb_iter)
+                                            .use_safety_constraints(!ignore_safety_measures)
                                             .vertex_is_constrained_map(vcmap));
         }
         else
         {
-          smooth_areas(pmesh, parameters::number_of_iterations(nb_iter)
-                                         .do_project(projection)
+          smooth_areas(pmesh, parameters::do_project(projection)
+                                         .number_of_iterations(nb_iter)
+                                         .use_safety_constraints(!ignore_safety_measures)
                                          .vertex_is_constrained_map(vcmap));
         }
       }
@@ -231,22 +236,25 @@ public Q_SLOTS:
         {
           if(use_area_smoothing)
           {
-            smooth(selection_item->selected_facets, pmesh, parameters::number_of_iterations(nb_iter)
-                                                                      .do_project(projection)
+            smooth(selection_item->selected_facets, pmesh, parameters::do_project(projection)
+                                                                      .number_of_iterations(nb_iter)
+                                                                      .use_safety_constraints(!ignore_safety_measures)
                                                                       .vertex_is_constrained_map(vcmap));
           }
           else
           {
-            smooth_angles(selection_item->selected_facets, pmesh, parameters::number_of_iterations(nb_iter)
-                                                                             .do_project(projection)
+            smooth_angles(selection_item->selected_facets, pmesh, parameters::do_project(projection)
+                                                                             .number_of_iterations(nb_iter)
+                                                                             .use_safety_constraints(!ignore_safety_measures)
                                                                              .vertex_is_constrained_map(vcmap));
           }
         }
         else
         {
-          smooth_areas(selection_item->selected_facets, pmesh, parameters::number_of_iterations(nb_iter)
-                                                              .do_project(projection)
-                                                              .vertex_is_constrained_map(vcmap));
+          smooth_areas(selection_item->selected_facets, pmesh, parameters::do_project(projection)
+                                                                          .number_of_iterations(nb_iter)
+                                                                          .use_safety_constraints(!ignore_safety_measures)
+                                                                          .vertex_is_constrained_map(vcmap));
         }
       }
 
@@ -283,8 +291,7 @@ public Q_SLOTS:
 
     if(poly_item)
     {
-      smooth_along_curvature_flow(pmesh, time_step, parameters::use_explicit_scheme(use_explicit)
-                                                               .number_of_iterations(nb_iter)
+      smooth_along_curvature_flow(pmesh, time_step, parameters::number_of_iterations(nb_iter)
                                                                .vertex_is_constrained_map(vcmap));
 
       poly_item->invalidateOpenGLBuffers();
@@ -296,15 +303,13 @@ public Q_SLOTS:
 
       if(std::begin(selection_item->selected_facets) == std::end(selection_item->selected_facets))
       {
-        smooth_along_curvature_flow(pmesh, time_step, parameters::use_explicit_scheme(use_explicit)
-                                                                 .number_of_iterations(nb_iter)
+        smooth_along_curvature_flow(pmesh, time_step, parameters::number_of_iterations(nb_iter)
                                                                  .vertex_is_constrained_map(vcmap));
       }
       else
       {
         smooth_along_curvature_flow(selection_item->selected_facets, pmesh, time_step,
-                                    parameters::use_explicit_scheme(use_explicit)
-                                               .number_of_iterations(nb_iter)
+                                    parameters::number_of_iterations(nb_iter)
                                                .vertex_is_constrained_map(vcmap));
       }
 

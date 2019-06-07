@@ -119,9 +119,7 @@ void test_explicit_scheme(Mesh mesh)
 
   const double time_step = 1;
   const unsigned int iterations = 5;
-  PMP::smooth_along_curvature_flow(mesh, time_step,
-                                   CGAL::parameters::use_explicit_scheme(true)
-                                                    .number_of_iterations(iterations));
+  PMP::smooth_along_curvature_flow(mesh, time_step, CGAL::parameters::number_of_iterations(iterations));
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   std::ofstream out("output_explicit.off");

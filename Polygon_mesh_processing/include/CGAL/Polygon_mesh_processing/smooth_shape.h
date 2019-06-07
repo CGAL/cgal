@@ -30,7 +30,6 @@
 #endif
 
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/curvature_flow_impl.h>
-#include <CGAL/Polygon_mesh_processing/internal/Smoothing/curvature_flow_explicit_impl.h>
 
 #include <CGAL/utility.h>
 #include <CGAL/property_map.h>
@@ -40,34 +39,6 @@
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
-namespace internal {
-
-// normalized explicit scheme
-template<typename FaceRange, typename TriangleMesh,
-         typename VertexPointMap, typename VertexConstrainMap,
-         typename GeomTraits>
-void smooth_curvature_flow_explicit(const FaceRange& faces,
-                                    TriangleMesh& tmesh,
-                                    const VertexPointMap vpmap,
-                                    const VertexConstrainMap vcmap,
-                                    const std::size_t nb_iterations,
-                                    const GeomTraits& traits)
-{
-  typedef internal::Curvature_flow<TriangleMesh, VertexPointMap, VertexConstrainMap, GeomTraits>  Curvature_explicit_smoother;
-
-  Curvature_explicit_smoother curvature_smoother(tmesh, vpmap, vcmap, traits);
-  curvature_smoother.initialize(faces);
-
-  for(std::size_t i=0; i<nb_iterations; ++i)
-  {
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-    std::cout << "iteration #" << i << std::endl;
-#endif
-    curvature_smoother.smooth();
-  }
-}
-
-} // namespace internal
 
 /*!
 * \ingroup PMP_meshing_grp
@@ -89,11 +60,11 @@ void smooth_curvature_flow_explicit(const FaceRange& faces,
 * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below.
 *
 * \cgalNamedParamsBegin
-*  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
-*    Kernels with exact constructions are not supported by this function.
-*  \cgalParamEnd
 *  \cgalParamBegin{vertex_point_map} the property map with the points associated
 *    to the vertices of `tmesh`. Instance of a class model of `ReadWritePropertyMap`.
+*  \cgalParamEnd
+*  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
+*    Kernels with exact constructions are not supported by this function.
 *  \cgalParamEnd
 *  \cgalParamBegin{vertex_is_constrained_map} a property map containing the
 *    constrained-or-not status of each vertex of `tmesh`. A constrained vertex
@@ -103,10 +74,6 @@ void smooth_curvature_flow_explicit(const FaceRange& faces,
 *    sequence of the smoothing iterations performed. Each iteration is performed
 *    with the given time step.
 *  \cgalParamEnd
-*  \cgalParamBegin{use_explicit_scheme} a normalized explicit scheme for smoothing along the curvature flow.
-*    It is not dependent on the time step parameter. Each vertex is moved sequentially without solving
-*    a linear system. It can be useful for subtle noise removal and to avoid the result
-*    to converge to a sphere.
 * \cgalParamBegin{sparse_linear_solver} an instance of the sparse linear solver used for smoothing \cgalParamEnd
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
@@ -139,12 +106,6 @@ void smooth_along_curvature_flow(const FaceRange& faces,
   VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
                              Constant_property_map<vertex_descriptor, bool>(false));
   const std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
-  const bool use_explicit_scheme = choose_param(get_param(np, internal_np::use_explicit_scheme), false);
-
-  if(use_explicit_scheme)
-    return internal::smooth_curvature_flow_explicit(faces, tmesh, vpmap, vcmap, nb_iterations, gt);
-
-  // from now on, it is the implicit scheme
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #if EIGEN_VERSION_AT_LEAST(3,2,0)
