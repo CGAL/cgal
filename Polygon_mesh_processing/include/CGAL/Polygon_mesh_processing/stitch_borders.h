@@ -541,6 +541,7 @@ void stitch_borders_impl(PM& pmesh,
 /// \tparam PolygonMesh a model of `MutableFaceGraph`
 /// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
+/// \param h a border halfedge of the polygon mesh `pm`
 /// \param pm the polygon mesh to be stitched
 /// \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 ///
