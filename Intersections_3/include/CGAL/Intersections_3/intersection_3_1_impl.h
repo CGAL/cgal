@@ -556,7 +556,7 @@ do_intersect(const typename K::Segment_3  &s1,
              const K & k)
 {
   CGAL_precondition(! s1.is_degenerate () && ! s2.is_degenerate () );
-  bool b=do_intersect(s1.supporting_line(),s2.supporting_line(),k);
+  bool b=internal::do_intersect(s1.supporting_line(),s2.supporting_line(),k);
   if (b)
   {
     //supporting_line intersects: points are coplanar
