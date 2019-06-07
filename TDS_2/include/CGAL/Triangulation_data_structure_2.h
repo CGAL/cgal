@@ -101,7 +101,6 @@ public:
   typedef Iterator_range<Prevent_deref<Vertex_iterator> > Vertex_handles;
   typedef Iterator_range<Prevent_deref<Face_iterator> >   Face_handles;
   typedef Iterator_range<Edge_iterator>                   Edges;
-  typedef Iterator_range<Halfedge_iterator>               Halfedges;
     
   typedef Vertex_iterator                            Vertex_handle;
   typedef Face_iterator                              Face_handle;
@@ -211,10 +210,6 @@ public:
 
   Halfedge_iterator halfedges_end() const {
     return Halfedge_iterator(this,1);
-  }
-  
-  Halfedges halfedges() const {
-    return Halfedges(halfedges_begin(),halfedges_end());
   }
   
   Face_circulator incident_faces(Vertex_handle v, 
