@@ -359,13 +359,6 @@ Parameter used in `clip()` functions to clip a volume rather than a surface.
 <b>Default:</b> `false`
 \cgalNPEnd
 
-\cgalNPBegin{use_explicit_scheme} \anchor PMP_use_explicit_scheme
-A flag to indicate whether a normalized explicit scheme for smoothing along the curvature flow is used instead of solving a linear system.
-\n
-\b Type : `bool` \n
-\b Default is `false`
-\cgalNPEnd
-
 \cgalNPBegin{use_compact_clipper} \anchor PMP_use_compact_clipper
 Parameter used in `clip()` functions to indicate whether the boundary of the clipper
 should be considered as part of the clipping volume or not.

@@ -158,7 +158,7 @@ public Q_SLOTS:
 
     const unsigned int nb_iter = ui_widget.smooth_iter_spinBox->value();
     const bool projection = ui_widget.projection_checkBox->isChecked();
-    const bool ignore_safety_measures = true; //ui_widget.use_safety_measures_checkBox->isChecked(); @fixme
+    const bool ignore_safety_measures = ui_widget.sanity_checkBox->isChecked();
     const bool constrain_border_vertices = ui_widget.border_button->isChecked() && !CGAL::is_closed(pmesh);
     const bool use_angle_smoothing = ui_widget.angle_smoothing_checkBox->isChecked();
     const bool use_area_smoothing = ui_widget.area_smoothing_checkBox->isChecked();
@@ -278,7 +278,6 @@ public Q_SLOTS:
     const unsigned int nb_iter = ui_widget.smooth_iter_spinBox->value();
 
     const bool constrain_border_vertices = ui_widget.border_button->isChecked() && !CGAL::is_closed(pmesh);
-    const bool use_explicit = ui_widget.explicit_checkBox->isChecked();
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 

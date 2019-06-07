@@ -17,6 +17,9 @@
    <layout class="QGridLayout" name="gridLayout_3">
     <item row="0" column="1">
      <widget class="QSpinBox" name="smooth_iter_spinBox">
+      <property name="minimum">
+       <number>1</number>
+      </property>
       <property name="maximum">
        <number>1000</number>
       </property>
@@ -33,12 +36,8 @@
          <property name="decimals">
           <number>6</number>
          </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QCheckBox" name="explicit_checkBox">
-         <property name="text">
-          <string>Use Explicit Scheme</string>
+         <property name="minimum">
+          <double>0.000001000000000</double>
          </property>
         </widget>
        </item>
@@ -51,6 +50,9 @@
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="time_step_label">
+         <property name="toolTip">
+          <string>The time step should not be too large or the smoothing will be unsatisfactory</string>
+         </property>
          <property name="text">
           <string>Time Step:</string>
          </property>
@@ -61,15 +63,11 @@
     </item>
     <item row="2" column="0">
      <widget class="QCheckBox" name="border_button">
+      <property name="toolTip">
+       <string>If you are using a selection item, this will combine your selected vertices and the border vertices</string>
+      </property>
       <property name="text">
        <string>Constrain Border Vertices</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QCheckBox" name="projection_checkBox">
-      <property name="text">
-       <string> Re-project Vertices</string>
       </property>
      </widget>
     </item>
@@ -99,7 +97,30 @@
        <string>Mesh Smoothing</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="3" column="1">
+       <item row="4" column="1">
+        <widget class="QPushButton" name="mesh_smoothing_button">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="text">
+          <string>Smooth Mesh</string>
+         </property>
+         <property name="checkable">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="sanity_checkBox">
+         <property name="toolTip">
+          <string>By default, a serie of checks are performed when a displacement is computed (e.g. is the minimul angle around the vertex not reduced?). However, sometimes local bad moves are necessary to achieve a better result overall.</string>
+         </property>
+         <property name="text">
+          <string>Do not apply worsening moves</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
         <spacer name="verticalSpacer_2">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -119,23 +140,20 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
-        <widget class="QPushButton" name="mesh_smoothing_button">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="text">
-          <string>Smooth Mesh</string>
-         </property>
-         <property name="checkable">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="0">
         <widget class="QCheckBox" name="angle_smoothing_checkBox">
          <property name="text">
           <string>Use Angle Smoothing</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QCheckBox" name="projection_checkBox">
+         <property name="toolTip">
+          <string>Reprojection on the initial surface will not happen if there are self-intersections in the mesh, except if worsening moves are allowed (the option just above).</string>
+         </property>
+         <property name="text">
+          <string>Re-project Vertices</string>
          </property>
         </widget>
        </item>
