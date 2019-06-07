@@ -123,12 +123,6 @@ public:
       put(vcmap, source(e, pmesh), true);
       put(vcmap, target(e, pmesh), true);
     }
-
-    for(face_descriptor f : selection_item->selected_facets)
-    {
-      for(vertex_descriptor v : vertices_around_face(halfedge(f, pmesh), pmesh))
-        put(vcmap, v, true);
-    }
   }
 
 public Q_SLOTS:
@@ -154,11 +148,15 @@ public Q_SLOTS:
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
     Scene_face_graph_item* poly_item = qobject_cast<Scene_face_graph_item*>(scene->item(index));
     Scene_polyhedron_selection_item* selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
+
+    if(!poly_item && !selection_item)
+      return;
+
     Face_graph& pmesh = (poly_item != nullptr) ? * poly_item->polyhedron() : * selection_item->polyhedron();
 
     const unsigned int nb_iter = ui_widget.smooth_iter_spinBox->value();
     const bool projection = ui_widget.projection_checkBox->isChecked();
-    const bool ignore_safety_measures = ui_widget.sanity_checkBox->isChecked();
+    const bool use_safety_measures = ui_widget.sanity_checkBox->isChecked();
     const bool constrain_border_vertices = ui_widget.border_button->isChecked() && !CGAL::is_closed(pmesh);
     const bool use_angle_smoothing = ui_widget.angle_smoothing_checkBox->isChecked();
     const bool use_area_smoothing = ui_widget.area_smoothing_checkBox->isChecked();
@@ -180,14 +178,14 @@ public Q_SLOTS:
         {
           smooth(pmesh, parameters::do_project(projection)
                                    .number_of_iterations(nb_iter)
-                                   .use_safety_constraints(!ignore_safety_measures)
+                                   .use_safety_constraints(use_safety_measures)
                                    .vertex_is_constrained_map(vcmap));
         }
         else
         {
           smooth_angles(pmesh, parameters::do_project(projection)
                                            .number_of_iterations(nb_iter)
-                                           .use_safety_constraints(!ignore_safety_measures)
+                                           .use_safety_constraints(use_safety_measures)
                                            .vertex_is_constrained_map(vcmap));
         }
       }
@@ -195,7 +193,7 @@ public Q_SLOTS:
       {
         smooth_areas(pmesh, parameters::do_project(projection)
                                        .number_of_iterations(nb_iter)
-                                       .use_safety_constraints(!ignore_safety_measures)
+                                       .use_safety_constraints(use_safety_measures)
                                        .vertex_is_constrained_map(vcmap));
       }
 
@@ -214,19 +212,19 @@ public Q_SLOTS:
           if(use_area_smoothing)
             smooth(pmesh, parameters::do_project(projection)
                                      .number_of_iterations(nb_iter)
-                                     .use_safety_constraints(!ignore_safety_measures)
+                                     .use_safety_constraints(use_safety_measures)
                                      .vertex_is_constrained_map(vcmap));
           else
             smooth_angles(pmesh, parameters::do_project(projection)
                                             .number_of_iterations(nb_iter)
-                                            .use_safety_constraints(!ignore_safety_measures)
+                                            .use_safety_constraints(use_safety_measures)
                                             .vertex_is_constrained_map(vcmap));
         }
         else
         {
           smooth_areas(pmesh, parameters::do_project(projection)
                                          .number_of_iterations(nb_iter)
-                                         .use_safety_constraints(!ignore_safety_measures)
+                                         .use_safety_constraints(use_safety_measures)
                                          .vertex_is_constrained_map(vcmap));
         }
       }
@@ -238,14 +236,14 @@ public Q_SLOTS:
           {
             smooth(selection_item->selected_facets, pmesh, parameters::do_project(projection)
                                                                       .number_of_iterations(nb_iter)
-                                                                      .use_safety_constraints(!ignore_safety_measures)
+                                                                      .use_safety_constraints(use_safety_measures)
                                                                       .vertex_is_constrained_map(vcmap));
           }
           else
           {
             smooth_angles(selection_item->selected_facets, pmesh, parameters::do_project(projection)
                                                                              .number_of_iterations(nb_iter)
-                                                                             .use_safety_constraints(!ignore_safety_measures)
+                                                                             .use_safety_constraints(use_safety_measures)
                                                                              .vertex_is_constrained_map(vcmap));
           }
         }
@@ -253,7 +251,7 @@ public Q_SLOTS:
         {
           smooth_areas(selection_item->selected_facets, pmesh, parameters::do_project(projection)
                                                                           .number_of_iterations(nb_iter)
-                                                                          .use_safety_constraints(!ignore_safety_measures)
+                                                                          .use_safety_constraints(use_safety_measures)
                                                                           .vertex_is_constrained_map(vcmap));
         }
       }
@@ -267,11 +265,13 @@ public Q_SLOTS:
 
   void on_shape_smoothing_clicked()
   {
-    std::cout << "on_shape_smoothing_clicked" << std::endl;
-
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
     Scene_face_graph_item* poly_item = qobject_cast<Scene_face_graph_item*>(scene->item(index));
     Scene_polyhedron_selection_item* selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
+
+    if(!poly_item && !selection_item)
+      return;
+
     Face_graph& pmesh = (poly_item != nullptr) ? * poly_item->polyhedron() : * selection_item->polyhedron();
 
     const double time_step = ui_widget.time_step_spinBox->value();
@@ -321,9 +321,6 @@ public Q_SLOTS:
       CGAL_assertion(false);
     }
 
-    // recenter scene
-    //poly_item->compute_bbox();
-    //static_cast<Scene*>(scene)->updated_bbox(true);
     QApplication::restoreOverrideCursor();
   }
 
