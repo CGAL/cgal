@@ -211,7 +211,6 @@ int main(int, char**)
   set_halfedgeds_items_id(pl_mesh_devil);
   set_halfedgeds_items_id(pl_mesh_pyramid);
 
-  test_demo_helpers<Mesh_with_id>(pl_mesh_devil);
   test_curvature_flow_time_step<Mesh_with_id>(pl_mesh_devil);
   test_curvature_flow<Mesh_with_id>(pl_mesh_pyramid);
   test_implicit_constrained_pyramid<Mesh_with_id>(pl_mesh_pyramid);

@@ -34,8 +34,10 @@
 #include <CGAL/utility.h>
 #include <CGAL/property_map.h>
 
+#ifdef CGAL_PMP_SMOOTHING_OUTPUT_INTERMEDIARY_STEPS
 #include <fstream>
 #include <sstream>
+#endif
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -74,7 +76,7 @@ namespace Polygon_mesh_processing {
 *    sequence of the smoothing iterations performed. Each iteration is performed
 *    with the given time step.
 *  \cgalParamEnd
-* \cgalParamBegin{sparse_linear_solver} an instance of the sparse linear solver used for smoothing \cgalParamEnd
+*  \cgalParamBegin{sparse_linear_solver} an instance of the sparse linear solver used for smoothing \cgalParamEnd
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
 *
@@ -153,7 +155,7 @@ void smooth_along_curvature_flow(const FaceRange& faces,
   for(std::size_t iter=0; iter<nb_iterations; ++iter)
   {
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
-    std::cout << "iteration #" << i << std::endl;
+    std::cout << "iteration #" << iter << std::endl;
 #endif
 
     smoother.setup_system(A, bx, by, bz, stiffness, time);
@@ -163,10 +165,9 @@ void smooth_along_curvature_flow(const FaceRange& faces,
     else
       break;
 
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-    // @tmp (clean fstream sstream includes too)
+#ifdef CGAL_PMP_SMOOTHING_OUTPUT_INTERMEDIARY_STEPS
     std::stringstream oss;
-    oss << "intermediate_" << iter << ".off" << std::ends;
+    oss << "smoothed_mesh_step_" << iter << ".off" << std::ends;
     std::ofstream out(oss.str().c_str());
     out.precision(17);
     out << tmesh;

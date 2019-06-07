@@ -156,8 +156,6 @@ A simple example can be found in `Polygon_mesh_processing/shape_smoothing_exampl
 (b) Shape smoothing of the devil using the mean curvature flow with a time step equal to 0.5. The result is conformally equivalent to the original mesh.
 \cgalFigureEnd
 
-
-
 \subsection MeshingExamples Meshing Examples
 
 \subsubsection MeshingExample_1 Refine and Fair a Region on a Triangle Mesh

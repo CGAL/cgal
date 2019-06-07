@@ -180,7 +180,9 @@ public:
     // calls compute once to factorize with the preconditioner
     if(!solver.factor(A, D))
     {
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
       std::cerr << "Could not factorize linear system with preconditioner." << std::endl;
+#endif
       return false;
     }
 
@@ -188,7 +190,9 @@ public:
        !solver.linear_solver(by, Xy) ||
        !solver.linear_solver(bz, Xz))
     {
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
       std::cerr << "Could not solve linear system." << std::endl;
+#endif
       return false;
     }
 
