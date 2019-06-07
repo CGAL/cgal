@@ -553,14 +553,10 @@ public:
       const Point_ref pos = get(vpmap_, v);
       Vector move = compute_move(v);
 
-      // @test the effect of this and whether it should be a parameter or not
-      if(true/*project_move_on_tangent_plane*/)
-      {
-        // Gram Schmidt so that the new location is on the tangent plane of v (i.e. do mv -= (mv*n)*n)
-        const FT sp = traits_.compute_scalar_product_3_object()(vn, move);
-        move = traits_.construct_sum_of_vectors_3_object()(move,
-                 traits_.construct_scaled_vector_3_object()(vn, - sp));
-      }
+      // Gram Schmidt so that the new location is on the tangent plane of v (i.e. do mv -= (mv*n)*n)
+      const FT sp = traits_.compute_scalar_product_3_object()(vn, move);
+      move = traits_.construct_sum_of_vectors_3_object()(move,
+                                                         traits_.construct_scaled_vector_3_object()(vn, - sp));
 
       Point new_pos = pos + move;
 

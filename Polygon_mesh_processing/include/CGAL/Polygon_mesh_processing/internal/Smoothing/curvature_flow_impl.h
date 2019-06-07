@@ -17,7 +17,8 @@
 // SPDX-License-Identifier: GPL-3.0+
 //
 //
-// Author(s)     : Konstantinos Katrioplas (konst.katrioplas@gmail.com)
+// Author(s)     : Mael Rouxel-Labbé
+//                 Konstantinos Katrioplas (konst.katrioplas@gmail.com)
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_INTERNAL_CURVATURE_FLOW_IMPL_H
 #define CGAL_POLYGON_MESH_PROCESSING_INTERNAL_CURVATURE_FLOW_IMPL_H
@@ -49,6 +50,7 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
 
+// Empirically, _Meyer seems to produce the best results from the various weights available in Weights.h
 template<typename TriangleMesh,
          typename VertexPointMap,
          typename CotangentValue = CGAL::internal::Cotangent_value_Meyer<TriangleMesh, VertexPointMap> >
@@ -154,6 +156,9 @@ public:
           scale_volume_after_smoothing = false;
       }
     }
+
+    if(!CGAL::is_closed(mesh_))
+      scale_volume_after_smoothing = true;
   }
 
   void setup_system(Eigen_matrix& A,
