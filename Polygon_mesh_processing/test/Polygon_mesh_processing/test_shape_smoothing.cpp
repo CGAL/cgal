@@ -1,3 +1,5 @@
+#define CGAL_PMP_SMOOTHING_VERBOSE
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Surface_mesh.h>
@@ -40,7 +42,7 @@ void test_implicit_constrained_devil(Mesh mesh)
   for(vertex_descriptor v : vertices(mesh))
   {
     const double z = get(vpmap, v).z();
-    if(z > 19.0)
+    if(is_border(v, mesh) || z > 19.0)
       selected_vertices.insert(v);
   }
 
@@ -73,10 +75,10 @@ void test_implicit_constrained_devil(Mesh mesh)
 }
 
 template <typename Mesh>
-void test_implicit_constrained_pyramid(Mesh mesh)
+void test_implicit_constrained_elephant(Mesh mesh)
 {
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  std::cout << "-- test_implicit_constrained_pyramid --" << std::endl;
+  std::cout << "-- test_implicit_constrained_elephant --" << std::endl;
 #endif
 
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
@@ -85,8 +87,8 @@ void test_implicit_constrained_pyramid(Mesh mesh)
   std::set<vertex_descriptor> selected_vertices;
   for(vertex_descriptor v : vertices(mesh))
   {
-    const double z = get(vpmap, v).z();
-    if(z  > 0.8)
+    const double y = get(vpmap, v).z();
+    if(y > 0.14)
       selected_vertices.insert(v);
   }
 
@@ -104,25 +106,7 @@ void test_implicit_constrained_pyramid(Mesh mesh)
   CGAL_assertion(equal_doubles(get(vpmap, *selected_vertices.begin()).z(), fixed_point.z(), 1e-14));
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  std::ofstream out("output_implicit_constrained_pyramid.off");
-  out << mesh;
-  out.close();
-#endif
-}
-
-template <typename Mesh>
-void test_explicit_scheme(Mesh mesh)
-{
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  std::cout << "-- test_explicit_scheme --" << std::endl;
-#endif
-
-  const double time_step = 1;
-  const unsigned int iterations = 5;
-  PMP::smooth_along_curvature_flow(mesh, time_step, CGAL::parameters::number_of_iterations(iterations));
-
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  std::ofstream out("output_explicit.off");
+  std::ofstream out("output_implicit_constrained_elephant.off");
   out << mesh;
   out.close();
 #endif
@@ -156,7 +140,7 @@ void test_curvature_flow(Mesh mesh)
   PMP::smooth_along_curvature_flow(mesh, time_step);
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  std::ofstream out("output_precision_pyramid.off");
+  std::ofstream out("output_precision_elephant.off");
   out << mesh;
   out.close();
 #endif
@@ -165,7 +149,7 @@ void test_curvature_flow(Mesh mesh)
 int main(int, char**)
 {
   const char* filename_devil = "data/mannequin-devil.off";
-  const char* filename_pyramid = "data/simple_pyramid.off";
+  const char* filename_elephant = "data/elephant.off";
 
   std::ifstream input1(filename_devil);
   SurfaceMesh mesh_devil;
@@ -176,9 +160,9 @@ int main(int, char**)
   }
   input1.close();
 
-  std::ifstream input2(filename_pyramid);
-  SurfaceMesh mesh_pyramid;
-  if(!input2 || !(input2 >> mesh_pyramid))
+  std::ifstream input2(filename_elephant);
+  SurfaceMesh mesh_elephant;
+  if(!input2 || !(input2 >> mesh_elephant))
   {
     std::cerr << "Error: can not read file.";
     return 1;
@@ -186,10 +170,9 @@ int main(int, char**)
   input2.close();
 
   test_curvature_flow_time_step<SurfaceMesh>(mesh_devil);
-  test_curvature_flow<SurfaceMesh>(mesh_pyramid);
-  test_implicit_constrained_pyramid<SurfaceMesh>(mesh_pyramid);
+  test_curvature_flow<SurfaceMesh>(mesh_elephant);
+  test_implicit_constrained_elephant<SurfaceMesh>(mesh_elephant);
   test_implicit_constrained_devil<SurfaceMesh>(mesh_devil);
-  test_explicit_scheme<SurfaceMesh>(mesh_devil);
 
   input1.open(filename_devil);
   Mesh_with_id pl_mesh_devil;
@@ -199,9 +182,11 @@ int main(int, char**)
   }
   input1.close();
 
-  input2.open(filename_pyramid);
-  Mesh_with_id pl_mesh_pyramid;
-  if(!input2 || !(input2 >> pl_mesh_pyramid))
+  // Polyhedron
+
+  input2.open(filename_elephant);
+  Mesh_with_id pl_mesh_elephant;
+  if(!input2 || !(input2 >> pl_mesh_elephant))
   {
     std::cerr << "Error: can not read file.";
     return EXIT_FAILURE;
@@ -209,13 +194,12 @@ int main(int, char**)
   input2.close();
 
   set_halfedgeds_items_id(pl_mesh_devil);
-  set_halfedgeds_items_id(pl_mesh_pyramid);
+  set_halfedgeds_items_id(pl_mesh_elephant);
 
   test_curvature_flow_time_step<Mesh_with_id>(pl_mesh_devil);
-  test_curvature_flow<Mesh_with_id>(pl_mesh_pyramid);
-  test_implicit_constrained_pyramid<Mesh_with_id>(pl_mesh_pyramid);
+  test_curvature_flow<Mesh_with_id>(pl_mesh_elephant);
+  test_implicit_constrained_elephant<Mesh_with_id>(pl_mesh_elephant);
   test_implicit_constrained_devil<Mesh_with_id>(pl_mesh_devil);
-  test_explicit_scheme<Mesh_with_id>(pl_mesh_devil);
 
   return EXIT_SUCCESS;
 }

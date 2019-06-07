@@ -105,6 +105,34 @@ endif()
   create_single_source_cgal_program("remove_degeneracies_test.cpp")
   create_single_source_cgal_program("test_pmp_manifoldness.cpp")
 
+    set(SuiteSparse_USE_LAPACK_BLAS ON)
+    find_package(SuiteSparse QUIET NO_MODULE)  # 1st: Try to locate the *config.cmake file.
+    if(NOT SuiteSparse_FOUND)
+      set(SuiteSparse_VERBOSE ON)
+      find_package(SuiteSparse QUIET) # 2nd: Use FindSuiteSparse.cmake module
+      if(SuiteSparse_FOUND)
+        include_directories(${SuiteSparse_INCLUDE_DIRS})
+      endif(SuiteSparse_FOUND)
+    else(NOT SuiteSparse_FOUND)
+      include(${USE_SuiteSparse})
+    endif(NOT SuiteSparse_FOUND)
+
+    if(SuiteSparse_FOUND)
+      if (SuiteSparse_UMFPACK_FOUND)
+        message(STATUS "SuiteSparse_LIBS: ${SuiteSparse_LIBRARIES}")
+        message(STATUS "Orbifold Tutte Embeddings will use UmfPackLU")
+        add_definitions(-DEIGEN_DONT_ALIGN_STATICALLY)
+        add_definitions(-DCGAL_SMP_USE_SPARSESUITE_SOLVERS)
+      else()
+        message(STATUS "NOTICE: The example `orbifold.cpp` will be compiled without the Sparsesuite library and UmfPack. Try setting SuiteSparse_UMF_INCLUDE_DIR and at least one of SuiteSparse_UMFPACK_LIBRARY_RELEASE and SuiteSparse_UMFPACK_LIBRARY_DEBUG to you UMFPACK installation.")
+      endif()
+    else(SuiteSparse_FOUND)
+      message(STATUS "NOTICE: The example `orbifold.cpp` will be compiled without the Sparsesuite library.")
+    endif(SuiteSparse_FOUND)
+
+
+  target_link_libraries( test_mesh_smoothing PRIVATE ceres glog ${SuiteSparse_LIBRARIES})
+
   if( TBB_FOUND )
     CGAL_target_use_TBB(test_pmp_distance)
   else()

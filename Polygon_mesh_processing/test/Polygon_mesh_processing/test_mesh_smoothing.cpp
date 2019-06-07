@@ -16,141 +16,77 @@ typedef Kernel::Point_3                                       Point;
 typedef CGAL::Surface_mesh<Point>                             SurfaceMesh;
 typedef CGAL::Polyhedron_3<Kernel>                            Polyhedron;
 
+namespace PMP = CGAL::Polygon_mesh_processing;
+
+template <typename Mesh>
+void read_mesh(const char* filename,
+               Mesh& mesh)
+{
+  std::ifstream input(filename);
+
+  if (!input || !(input >> mesh))
+  {
+    std::cerr << "Error: can not read file.";
+    std::exit(1);
+  }
+}
+
+template <typename Mesh>
+void test_smoothing(const char* filename)
+{
+  Mesh mesh;
+  read_mesh(filename, mesh);
+
+  PMP::smooth(mesh);
+  PMP::smooth(mesh, CGAL::parameters::number_of_iterations(10));
+}
+
 template <typename Mesh>
 void test_angle_smoothing(const char* filename)
 {
-  std::ifstream input(filename);
   Mesh mesh;
-  if (!input || !(input >> mesh)){
-    std::cerr << "Error: can not read file.";
-    return;
-  }
-  input.close();
+  read_mesh(filename, mesh);
 
-  typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
-  typename boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
-          get(CGAL::vertex_point, mesh);
-
-  CGAL::Polygon_mesh_processing::smooth_angles(mesh);
-
-  for(vertex_descriptor v : vertices(mesh))
-  {
-    if(!is_border(v, mesh))
-    {
-      Point p_c = get(vpmap, v);
-      assert(p_c.x() == 0.7203429230262004);
-      assert(p_c.y() == 0.5);
-      assert(p_c.z() == 0);
-      break;
-    }
-  }
+  PMP::smooth_angles(mesh);
+  PMP::smooth_angles(mesh, CGAL::parameters::number_of_iterations(10));
 }
 
 template <typename Mesh>
 void test_area_smoothing(const char* filename)
 {
-  std::ifstream input(filename);
   Mesh mesh;
-  if (!input || !(input >> mesh)){
-    std::cerr << "Error: can not read file.";
-    return;
-  }
-  input.close();
+  read_mesh(filename, mesh);
 
-  typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
-  typename boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
-          get(CGAL::vertex_point, mesh);
-
-  CGAL::Polygon_mesh_processing::smooth_areas(mesh);
-
-  for(vertex_descriptor v : vertices(mesh))
-  {
-    if(!is_border(v, mesh))
-    {
-      Point p_c = get(vpmap, v);
-      assert(p_c.x() == 0.6691415930575334);
-      assert(p_c.y() == 0.5);
-      assert(p_c.z() == 0);
-      break;
-    }
-  }
+  PMP::smooth_areas(mesh);
+  PMP::smooth_areas(mesh, CGAL::parameters::number_of_iterations(10));
 }
 
 template <typename Mesh>
 void test_angle_smoothing_without_projection(const char* filename)
 {
-  std::ifstream input(filename);
   Mesh mesh;
-  if (!input || !(input >> mesh)){
-    std::cerr << "Error: can not read file.";
-    return;
-  }
-  input.close();
+  read_mesh(filename, mesh);
 
-  typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
-  typename boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
-          get(CGAL::vertex_point, mesh);
-
-  CGAL::Polygon_mesh_processing::smooth_angles(mesh, CGAL::Polygon_mesh_processing::parameters::do_project(false));
-
-  for(vertex_descriptor v : vertices(mesh))
-  {
-    if(!is_border(v, mesh))
-    {
-      Point p_c = get(vpmap, v);
-      assert(p_c.x() == 0.59571844622769954);
-      assert(p_c.y() == 0.5);
-      assert(p_c.z() == 1.0652302640732678);
-      break;
-    }
-  }
+  PMP::smooth_angles(mesh, CGAL::parameters::do_project(false));
 }
 
 template <typename Mesh>
 void test_area_smoothing_without_projection(const char* filename)
 {
-  std::ifstream input(filename);
   Mesh mesh;
-  if (!input || !(input >> mesh)){
-    std::cerr << "Error: can not read file.";
-    return;
-  }
-  input.close();
+  read_mesh(filename, mesh);
 
-  typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
-  typename boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
-          get(CGAL::vertex_point, mesh);
-
-  CGAL::Polygon_mesh_processing::smooth_areas(mesh, CGAL::Polygon_mesh_processing::parameters::do_project(false));
-
-  for(vertex_descriptor v : vertices(mesh))
-  {
-    if(!is_border(v, mesh))
-    {
-      Point p_c = get(vpmap, v);
-      assert(p_c.x() == 0.42183982448892759);
-      assert(p_c.y() == 0.5);
-      assert(p_c.z() == 0.87816017551107273);
-      break;
-    }
-  }
+  PMP::smooth_areas(mesh, CGAL::parameters::do_project(false));
 }
 
 template <typename Mesh>
 void test_constrained_vertices(const char* filename)
 {
-  std::ifstream input(filename);
   Mesh mesh;
-  if (!input || !(input >> mesh))
-  {
-    std::cerr << "Error: can not read file.";
-    return;
-  }
-  input.close();
+  read_mesh(filename, mesh);
 
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
-  typename boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
-          get(CGAL::vertex_point, mesh);
+  typename boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap = get(CGAL::vertex_point, mesh);
 
   double x_init, y_init, z_init;
   std::set<vertex_descriptor> selected_vertices;
@@ -167,10 +103,8 @@ void test_constrained_vertices(const char* filename)
 
   CGAL::Boolean_property_map<std::set<vertex_descriptor> > vcmap(selected_vertices);
 
-  CGAL::Polygon_mesh_processing::smooth_angles(mesh,
-        CGAL::Polygon_mesh_processing::parameters::vertex_is_constrained_map(vcmap));
-  CGAL::Polygon_mesh_processing::smooth_areas(mesh,
-        CGAL::Polygon_mesh_processing::parameters::vertex_is_constrained_map(vcmap));
+  PMP::smooth_angles(mesh, CGAL::parameters::vertex_is_constrained_map(vcmap));
+  PMP::smooth_areas(mesh, CGAL::parameters::vertex_is_constrained_map(vcmap));
 
   for(vertex_descriptor v : vertices(mesh))
   {
@@ -185,22 +119,24 @@ void test_constrained_vertices(const char* filename)
 
 int main(int /*argc*/, char** /*argv*/)
 {
-  const char* filename_polygon = "data/simple_polygon.off";
-  const char* filename_pyramid = "data/simple_pyramid.off";
+  const char* filename_elephant = "data/elephant.off";
+  const char* filename_mannequin = "data/mannequin-devil.off";
 
   // test with Surface_mesh
-  test_angle_smoothing<SurfaceMesh>(filename_polygon);
-  test_area_smoothing<SurfaceMesh>(filename_polygon);
-  test_constrained_vertices<SurfaceMesh>(filename_polygon);
-  test_angle_smoothing_without_projection<SurfaceMesh>(filename_pyramid);
-  test_area_smoothing_without_projection<SurfaceMesh>(filename_pyramid);
+  test_smoothing<SurfaceMesh>(filename_elephant);
+  test_angle_smoothing<SurfaceMesh>(filename_elephant);
+  test_area_smoothing<SurfaceMesh>(filename_mannequin);
+  test_angle_smoothing_without_projection<SurfaceMesh>(filename_elephant);
+  test_area_smoothing_without_projection<SurfaceMesh>(filename_mannequin);
+  test_constrained_vertices<SurfaceMesh>(filename_elephant);
 
   // test with Polyhedron
-  test_angle_smoothing<Polyhedron>(filename_polygon);
-  test_area_smoothing<Polyhedron>(filename_polygon);
-  test_constrained_vertices<Polyhedron>(filename_polygon);
-  test_angle_smoothing_without_projection<Polyhedron>(filename_pyramid);
-  test_area_smoothing_without_projection<Polyhedron>(filename_pyramid);
+  test_smoothing<Polyhedron>(filename_elephant);
+  test_angle_smoothing<Polyhedron>(filename_elephant);
+  test_area_smoothing<Polyhedron>(filename_mannequin);
+  test_angle_smoothing_without_projection<Polyhedron>(filename_elephant);
+  test_area_smoothing_without_projection<Polyhedron>(filename_mannequin);
+  test_constrained_vertices<Polyhedron>(filename_mannequin);
 
   return EXIT_SUCCESS;
 }
