@@ -63,7 +63,10 @@ double get_radian_angle(const V& v1, const V& v2, const GT& gt)
 }
 
 // super naive for now. Not sure it even makes sense to do something like that for surfaces
-template<typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
+template<typename TriangleMesh,
+         typename VertexPointMap,
+         typename ECMap,
+         typename GeomTraits>
 class Delaunay_edge_flipper
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
@@ -77,13 +80,14 @@ class Delaunay_edge_flipper
 public:
   Delaunay_edge_flipper(TriangleMesh& mesh,
                         const VertexPointMap vpmap,
+                        const ECMap ecmap,
                         const GeomTraits& traits)
-    : mesh_(mesh), vpmap_(vpmap), traits_(traits)
+    : mesh_(mesh), vpmap_(vpmap), ecmap_(ecmap), traits_(traits)
   { }
 
   bool should_be_flipped(const edge_descriptor e) const
   {
-    if(is_border(e, mesh_))
+    if(is_border(e, mesh_) || get(ecmap_, e))
       return false;
 
     const halfedge_descriptor h = halfedge(e, mesh_);
@@ -182,6 +186,7 @@ public:
 private:
   TriangleMesh& mesh_;
   const VertexPointMap vpmap_;
+  const ECMap ecmap_;
   const GeomTraits& traits_;
 };
 

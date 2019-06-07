@@ -64,6 +64,9 @@ public:
     ui_widget.setupUi(dock_widget);
     addDockWidget(dock_widget);
 
+    connect(ui_widget.area_smoothing_checkBox, SIGNAL(toggled(bool)),
+            ui_widget.flip_checkBox, SLOT(setEnabled(bool)));
+
     connect(ui_widget.mesh_smoothing_button,  SIGNAL(clicked()), this, SLOT(on_mesh_smoothing_clicked()));
     connect(ui_widget.shape_smoothing_button,  SIGNAL(clicked()), this, SLOT(on_shape_smoothing_clicked()));
   }
@@ -97,6 +100,9 @@ public:
 
     ui_widget.smooth_iter_spinBox->setValue(1);
     ui_widget.projection_checkBox->setChecked(true);
+
+    ui_widget.area_smoothing_checkBox->setChecked(false);
+    ui_widget.flip_checkBox->setDisabled(true);
   }
 
   void mark_border_vertices(const VCMap vcmap, const Face_graph& pmesh) const
@@ -160,6 +166,7 @@ public Q_SLOTS:
     const bool constrain_border_vertices = ui_widget.border_button->isChecked() && !CGAL::is_closed(pmesh);
     const bool use_angle_smoothing = ui_widget.angle_smoothing_checkBox->isChecked();
     const bool use_area_smoothing = ui_widget.area_smoothing_checkBox->isChecked();
+    const bool use_Delaunay_flips = ui_widget.flip_checkBox->isChecked();
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -178,6 +185,7 @@ public Q_SLOTS:
         {
           smooth(pmesh, parameters::do_project(projection)
                                    .number_of_iterations(nb_iter)
+                                   .use_delaunay_triangulation(use_Delaunay_flips)
                                    .use_safety_constraints(use_safety_measures)
                                    .vertex_is_constrained_map(vcmap));
         }
@@ -193,6 +201,7 @@ public Q_SLOTS:
       {
         smooth_areas(pmesh, parameters::do_project(projection)
                                        .number_of_iterations(nb_iter)
+                                       .use_delaunay_triangulation(use_Delaunay_flips)
                                        .use_safety_constraints(use_safety_measures)
                                        .vertex_is_constrained_map(vcmap));
       }
