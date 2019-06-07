@@ -158,7 +158,7 @@ public:
     }
 
     if(!CGAL::is_closed(mesh_))
-      scale_volume_after_smoothing = true;
+      scale_volume_after_smoothing = false;
   }
 
   void setup_system(Eigen_matrix& A,
