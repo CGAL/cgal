@@ -27,8 +27,8 @@ public:
   using Dart_handle = typename Gmap::Dart_handle;
   using size_type = typename Gmap::size_type;
   using Dart_const_handle = typename Gmap::Dart_const_handle;
-  using Dart_container = std::vector<Dart_const_handle>;
-  using Path = Dart_container; // Consider: CGAL::Path_on_surface<Gmap>;
+  using Dart_container = std::vector<Dart_handle>;
+  using Path = std::vector<typename Gmap_origin::Dart_const_handle>; // Consider: CGAL::Path_on_surface<Gmap>;
   using Distance_type = int;
   
   Shortest_noncontractible_cycle(const Gmap_origin& gmap) {
@@ -47,10 +47,10 @@ public:
     std::cerr << "Done find_noncon_edges. noncon_edges.size() = " << noncon_edges.size() << '\n';
 
     Distance_type min_distance = -1;
-    Dart_const_handle min_noncon_edge;
+    Dart_handle min_noncon_edge;
     int min_a = -1, min_b = -1;
     for (auto dh : noncon_edges) {
-      Dart_const_handle a = dh, b = m_gmap.template alpha<0>(a);
+      Dart_handle a = dh, b = m_gmap.template alpha<0>(a);
       int index_a = m_gmap.template info<0>(a), index_b = m_gmap.template info<0>(b);
       Distance_type sum_distance = distance_from_root[index_a] + distance_from_root[index_b];
       if (min_distance < 0 || min_distance > sum_distance) {
@@ -65,14 +65,14 @@ public:
     if (min_distance < 0) return cycle; // empty cycle;
     // Trace back the path from `a` to root
     for (int ind = min_a - 1; ind != -1; ind = trace_index[ind])
-      cycle.push_back(spanning_tree[ind]);
+      cycle.push_back(m_copy_to_origin[spanning_tree[ind]]);
       // If use Path_on_surface: cycle.push_back(m_gmap.template alpha<0>(spanning_tree[ind]));
     // Reverse: now it is the path from root to `a`
     std::reverse(cycle.begin(), cycle.end());
-    cycle.push_back(min_noncon_edge);
+    cycle.push_back(m_copy_to_origin[min_noncon_edge]);
     // Trace back the path from `b` to root
     for (int ind = min_b - 1; ind != -1; ind = trace_index[ind])
-      cycle.push_back(m_gmap.template alpha<0>(spanning_tree[ind]));
+      cycle.push_back(m_copy_to_origin[m_gmap.template alpha<0>(spanning_tree[ind])]);
 
     // CGAL_assertion(cycle.is_closed());
 
