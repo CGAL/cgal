@@ -27,18 +27,24 @@
 
 namespace CGAL {
 
+  typedef std::pair<double, double> Hausdorff_bounds;
+
   /**
-   * @class Hausdorff_primitive_traits
+   * @class Hausdorff_primitive_traits_tm1
    */
   template<typename AABBTraits, typename Query>
-  class Hausdorff_primitive_traits
+  class Hausdorff_primitive_traits_tm1
   {
     typedef typename AABBTraits::Primitive Primitive;
     typedef ::CGAL::AABB_node<AABBTraits> Node;
 
   public:
-    Hausdorff_primitive_traits(const AABBTraits& traits)
-      : m_traits(traits) {}
+    Hausdorff_primitive_traits_tm1(const AABBTraits& traits)
+      : m_traits(traits) {
+        // Initialize the global bounds with 0., they will only grow.
+        h_lower = 0.;
+        h_upper = 0.;
+      }
 
     // Explore the whole tree, i.e. always enter children if the methods
     // do_intersect() below determines that it is worthwhile.
@@ -48,7 +54,7 @@ namespace CGAL {
     void intersection(const Query& query, const Primitive& primitive)
     {
       // Have reached a single triangle
-      std::cout << "Reached Triangle " << primitive.id() << '\n';
+      std::cout << "Reached Triangle in TM1: " << primitive.id() << '\n';
 
       /* TODO implement handling of a single triangle
       /  - Call Culling on B (First maybe don't cull, but only consider closest
@@ -58,6 +64,8 @@ namespace CGAL {
       */
     }
 
+    // Determine whether child nodes will still contribute to a larger
+    // Hausdorff distance and thus have to be entered
     bool do_intersect(const Query& query, const Node& node) const
     {
       // Have reached a node, determine whether or not to enter it
@@ -74,6 +82,89 @@ namespace CGAL {
 
   private:
     const AABBTraits& m_traits;
+    // Global Hausdorff bounds to be taken track of during the traversal
+    double h_lower;
+    double h_upper;
+  };
+
+
+  /**
+   * @class Hausdorff_primitive_traits_tm2
+   */
+  template<typename AABBTraits, typename Query>
+  class Hausdorff_primitive_traits_tm2
+  {
+    typedef typename AABBTraits::Primitive Primitive;
+    typedef ::CGAL::AABB_node<AABBTraits> Node;
+
+  public:
+    Hausdorff_primitive_traits_tm2(const AABBTraits& traits)
+      : m_traits(traits) {
+        // Initialize the global bounds with 0., they will only grow.
+        h_local_upper = std::numeric_limits<double>::infinity();
+        h_local_lower_0 = std::numeric_limits<double>::infinity();
+        h_local_lower_1 = std::numeric_limits<double>::infinity();
+        h_local_lower_2 = std::numeric_limits<double>::infinity();
+      }
+
+    // Explore the whole tree, i.e. always enter children if the methods
+    // do_intersect() below determines that it is worthwhile.
+    bool go_further() const { return true; }
+
+    // Compute the explicit Hausdorff distance to the given primitive
+    void intersection(const Query& query, const Primitive& primitive)
+    {
+      // Have reached a single triangle
+      std::cout << "Reached Triangle in TM2:" << primitive.id() << '\n';
+
+      double distance = std::numeric_limits<double>::infinity();
+      /*
+      /  TODO Determine the distance accroding to
+      /       min_{b \in primitive} ( max_{vertex in query} ( d(vertex, b)))
+      */
+
+      // Update local upper bound
+      if ( distance < h_local_upper ) h_local_upper = distance;
+
+      double vertex_distance = std::numeric_limits<double>::infinity();
+      /*
+      /  TODO For all vertices v of the query triangle, determine the distance by
+      /       min_{b \in primitive} ( d(v, b) )
+      /       Update h_local_lower_i accordingly
+      */
+
+      h_local_lower = std::max( std::max (h_local_lower_0, h_local_lower_1), h_local_lower_2 );
+    }
+
+    // Determine whether child nodes will still contribute to a smaller
+    // Hausdorff distance and thus have to be entered
+    bool do_intersect(const Query& query, const Node& node) const
+    {
+      // Have reached a node, determine whether or not to enter it
+      double distance = std::numeric_limits<double>::infinity();
+
+      /* TODO Determine distance of the node's bounding box (node.bbox()) to
+      /       the triangle given by the query object.
+      */
+
+      if (distance <= h_local_upper) return true;
+      else return false;
+    }
+
+    Hausdorff_bounds get_local_bounds()
+    {
+      return Hausdorff_bounds( h_local_lower, h_local_upper );
+    }
+
+  private:
+    const AABBTraits& m_traits;
+    // Local Hausdorff bounds for the query triangle
+    double h_local_upper;
+    double h_local_lower;
+    // Local Hausdorff bounds for the query triangle's vertices
+    double h_local_lower_0;
+    double h_local_lower_1;
+    double h_local_lower_2;
   };
 }
 

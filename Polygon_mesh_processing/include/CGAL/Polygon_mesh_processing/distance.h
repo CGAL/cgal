@@ -882,6 +882,7 @@ double bounded_error_Hausdorff_impl(
   typedef typename AABB_tree< AABB_traits<Kernel, TM2_primitive> >::AABB_traits Tree_traits;
 
   typedef typename Kernel::Point_3 Point_3;
+  typedef typename Kernel::Triangle_3 Triangle_3;
 
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
@@ -914,15 +915,16 @@ double bounded_error_Hausdorff_impl(
   tm1_tree.build();
   tm1_tree.accelerate_distance_queries();
 
-  // Build traversal traits for tm1_tree
-  Hausdorff_primitive_traits<Tree_traits, Point_3> traversal_traits( tm1_tree.traits() );
-  tm1_tree.traversal( Point_3(0,0,0), traversal_traits );
-
   // Build an AABB tree on tm2
   TM2_tree tm2_tree( faces(tm2).begin(), faces(tm2).end(), tm2, vpm2 );
   tm2_tree.build();
   tm2_tree.accelerate_distance_queries();
   std::pair<Point_3, face_descriptor> hint = tm2_tree.any_reference_point_and_id();
+
+  // Build traversal traits for tm1_tree and tm2_tree
+  Hausdorff_primitive_traits_tm1<Tree_traits, Point_3> traversal_traits_tm1( tm1_tree.traits() );
+  Hausdorff_primitive_traits_tm2<Tree_traits, Triangle_3> traversal_traits_tm2( tm2_tree.traits() );
+  tm1_tree.traversal( Point_3(0,0,0), traversal_traits_tm1 );
 
   // For each vertex in tm1, store the distance to the closest triangle of tm2
   Vertex_closest_triangle_map vctm  = get(Vertex_property_tag(), tm1);
