@@ -126,7 +126,7 @@ namespace CGAL {
       // Update local upper bound
       if ( distance < h_local_upper ) h_local_upper = distance;
 
-      double vertex_distance = std::numeric_limits<double>::infinity();
+      double vertex_distance = 0.;
       /*
       /  TODO For all vertices v of the query triangle, determine the distance by
       /       min_{b \in primitive} ( d(v, b) )
@@ -141,7 +141,7 @@ namespace CGAL {
     bool do_intersect(const Query& query, const Node& node) const
     {
       // Have reached a node, determine whether or not to enter it
-      double distance = std::numeric_limits<double>::infinity();
+      double distance = 0.;
 
       /* TODO Determine distance of the node's bounding box (node.bbox()) to
       /       the triangle given by the query object.
