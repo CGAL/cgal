@@ -17,13 +17,12 @@
 // SPDX-License-Identifier: GPL-3.0+
 //
 //
-// Author(s)     : Maxime Gimeno and Sebastien Loriot
+// Author(s)     : Maxime Gimeno, Sebastien Loriot, Martin Skrodzki
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_DISTANCE_H
 #define CGAL_POLYGON_MESH_PROCESSING_DISTANCE_H
 
 #include <CGAL/license/Polygon_mesh_processing/distance.h>
-
 
 #include <algorithm>
 #include <cmath>
@@ -41,6 +40,8 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/mesh_to_point_set_hausdorff_distance.h>
+#include <CGAL/Polygon_mesh_processing/internal/AABB_traversal_traits_with_Hausdorff_distance.h>
+
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
@@ -874,8 +875,12 @@ double bounded_error_Hausdorff_impl(
   CGAL_assertion_msg (is_triangle,
         "One of the meshes is not triangulated. Distance computing impossible.");
 
+  typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM1> TM1_primitive;
   typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM2> TM2_primitive;
+  typedef AABB_tree< AABB_traits<Kernel, TM1_primitive> > TM1_tree;
   typedef AABB_tree< AABB_traits<Kernel, TM2_primitive> > TM2_tree;
+  typedef typename AABB_tree< AABB_traits<Kernel, TM2_primitive> >::AABB_traits Tree_traits;
+
   typedef typename Kernel::Point_3 Point_3;
 
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
@@ -903,6 +908,15 @@ double bounded_error_Hausdorff_impl(
   spatial_sort( tm1_vertices.begin(),
                 tm1_vertices.end(),
                 Search_traits_3(vpm1) );
+
+  // Build an AABB tree on tm1
+  TM1_tree tm1_tree( faces(tm1).begin(), faces(tm1).end(), tm1, vpm1 );
+  tm1_tree.build();
+  tm1_tree.accelerate_distance_queries();
+
+  // Build traversal traits for tm1_tree
+  Hausdorff_primitive_traits<Tree_traits, Point_3> traversal_traits( tm1_tree.traits() );
+  tm1_tree.traversal( Point_3(0,0,0), traversal_traits );
 
   // Build an AABB tree on tm2
   TM2_tree tm2_tree( faces(tm2).begin(), faces(tm2).end(), tm2, vpm2 );
@@ -1025,6 +1039,8 @@ double bounded_error_Hausdorff_impl(
         candidate_triangles.push_back(fd);
       }
     }
+
+
 
     // TODO Iterate over candidate_triangles and kill those which cannot contribute anymore
 
