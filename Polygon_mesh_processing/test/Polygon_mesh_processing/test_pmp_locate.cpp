@@ -590,8 +590,6 @@ struct Locate_with_AABB_tree_Tester<3> // 3D
 
     typedef typename boost::property_map_value<G, CGAL::vertex_point_t>::type  Point;
 
-    typedef typename boost::property_map<G, CGAL::vertex_point_t>::const_type  VertexPointMap;
-
     typedef typename CGAL::Kernel_traits<Point>::type                          Kernel;
     typedef typename Kernel::FT                                                FT;
     typedef typename Kernel::Ray_3                                             Ray_3;

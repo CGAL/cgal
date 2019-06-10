@@ -1753,7 +1753,7 @@ locate_with_AABB_tree(const typename Location_traits<TriangleMesh, NamedParamete
                       const TriangleMesh& tm,
                       const NamedParameters& np)
 {
-  typedef typename Location_traits<TriangleMesh>::Geom_traits                     Geom_traits;
+  typedef typename Location_traits<TriangleMesh, NamedParameters>::Geom_traits    Geom_traits;
 
   typedef typename Geom_traits::FT                                                FT;
   typedef typename Geom_traits::Point_3                                           Point_3;
@@ -1765,7 +1765,6 @@ locate_with_AABB_tree(const typename Location_traits<TriangleMesh, NamedParamete
   typedef internal::Point_to_Point_3_VPM<TriangleMesh, VertexPointMap>            WrappedVPM;
   typedef internal::Ray_to_Ray_3<TriangleMesh>                                    R_to_R3;
 
-  typedef typename Location_traits<TriangleMesh, NamedParameters>::Geom_traits    Geom_traits;
   typedef typename CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM> Primitive;
   typedef typename CGAL::AABB_traits<Geom_traits, Primitive>                      AABB_traits;
   typedef AABB_tree<AABB_traits>                                                  AABB_face_graph_tree;
