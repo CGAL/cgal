@@ -421,11 +421,17 @@ std::size_t remove_isolated_points_in_polygon_soup(PointRange& points,
   }
 
   // Move all the unused points to the end
-  std::size_t swap_position = ini_points_size - 1;
+  std::size_t first_unused_pos = ini_points_size;
   for(std::size_t i=0; i<ini_points_size;)
   {
+    if(i >= first_unused_pos)
+      break;
+
     if(!visited[i])
     {
+      std::size_t swap_position = first_unused_pos - 1;
+      CGAL_assertion(swap_position < ini_points_size);
+
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
       std::cout << "points[" << i << "] = " << points[i] << " is isolated" << std::endl;
       std::cout << "  swapping it to pos: " << swap_position << std::endl;
@@ -433,21 +439,22 @@ std::size_t remove_isolated_points_in_polygon_soup(PointRange& points,
       std::swap(points[swap_position], points[i]);
       std::swap(visited[swap_position], visited[i]);
       id_remapping[swap_position] = i;
-      --swap_position;
+      --first_unused_pos;
     }
     else
     {
       ++i;
     }
-
-    if(i >= swap_position)
-      break;
   }
 
   // Actually remove the unused points
-  ++swap_position; // 'swap_position' points at the first element to remove
-  const std::size_t removed_points_n = ini_points_size - swap_position;
-  points.erase(points.begin() + swap_position, points.end());
+  const std::size_t removed_points_n = ini_points_size - first_unused_pos;
+
+  // Pointless to remap everything if nothing has changed, so early exit
+  if(removed_points_n == 0)
+    return removed_points_n;
+
+  points.erase(points.begin() + first_unused_pos, points.end());
 
   // Renumber the polygons
   for(P_ID polygon_index=0, end=polygons.size(); polygon_index!=end; ++polygon_index)
