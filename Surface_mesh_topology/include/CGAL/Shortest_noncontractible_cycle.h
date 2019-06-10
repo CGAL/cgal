@@ -18,7 +18,7 @@ public:
     struct Dart_wrapper {
       using Vertex_attribute = CGAL::Cell_attribute<GMap, int>;
       using Edge_attribute = void;
-      using Face_attribute = void;
+      using Face_attribute = CGAL::Cell_attribute<GMap, void>;
       using Attributes = CGAL::cpp11::tuple<Vertex_attribute, Edge_attribute, Face_attribute>;
     };
   };
@@ -33,6 +33,12 @@ public:
   
   Shortest_noncontractible_cycle(const Gmap_origin& gmap) {
     m_gmap.copy(gmap, &m_origin_to_copy, &m_copy_to_origin);
+    for (auto it = m_gmap.template one_dart_per_cell<2>().begin(), itend = m_gmap.template one_dart_per_cell<2>().end(); it != itend; ++it) {
+      m_gmap.template set_attribute<2>(it, m_gmap.template create_attribute<2>());
+    }
+    m_gmap.template close<2>();
+    m_gmap.display_characteristics(std::cout);
+    std::cout << '\n';
   }
   
   Path find_cycle(typename Gmap_origin::Dart_const_handle root_vertex) {
@@ -145,6 +151,7 @@ private:
 
   void find_noncon_edges(const Dart_container& spanning_tree, Dart_container& noncon_edges) {
     size_type face_deleted, edge_deleted;
+    // Turn out that face_deleted is a redundant mark. Consider removing it.
     try {
       face_deleted = m_gmap.get_new_mark();
       edge_deleted = m_gmap.get_new_mark();
@@ -152,11 +159,21 @@ private:
       std::cerr << "No more free mark, exit." << std::endl;
       exit(-1);
     }
-    std::queue<Dart_const_handle> degree_one_faces;
+    for (auto it = m_gmap.template one_dart_per_cell<2>().begin(), itend = m_gmap.template one_dart_per_cell<2>().end(); it != itend; ++it) {
+      if (m_gmap.template attribute<2>(it) == NULL) {
+        for (auto dh = m_gmap.template one_dart_per_incident_cell<1,2>(it).begin(), dhend = m_gmap.template one_dart_per_incident_cell<1,2>(it).end(); dh != dhend; ++dh) {
+          m_gmap.template mark_cell<1>(dh, edge_deleted);
+        }
+      }
+      m_gmap.template mark_cell<2>(it, face_deleted);
+    }
     for (auto dh : spanning_tree) {
+      if (m_gmap.is_marked(dh, edge_deleted)) continue;
       m_gmap.template mark_cell<1>(dh, edge_deleted);
     }
+    std::queue<Dart_const_handle> degree_one_faces;
     for (auto it = m_gmap.template one_dart_per_cell<2>().begin(), itend = m_gmap.template one_dart_per_cell<2>().end(); it != itend; ++it) {
+      if (m_gmap.is_marked(it, face_deleted)) continue;
       Dart_const_handle dh_only_edge = it;
       if (is_degree_one_face(it, dh_only_edge, edge_deleted)) 
         degree_one_faces.push(dh_only_edge);
@@ -168,7 +185,7 @@ private:
       m_gmap.template mark_cell<1>(dh_face, edge_deleted);
       Dart_const_handle dh_adj_face = m_gmap.template alpha<2>(dh_face);
       Dart_const_handle dh_only_edge = dh_adj_face;
-      if (is_degree_one_face(dh_adj_face, dh_only_edge, edge_deleted)) 
+      if (is_degree_one_face(dh_adj_face, dh_only_edge, edge_deleted))
         degree_one_faces.push(dh_only_edge);
     }
     for (auto it = m_gmap.template one_dart_per_cell<1>().begin(), itend = m_gmap.template one_dart_per_cell<1>().end(); it != itend; ++it) {
