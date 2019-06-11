@@ -35,16 +35,18 @@ public:
   template <typename Profile>
   boost::optional<typename Profile::Point> operator()(const Profile& aProfile) const
   {
-    Matrix4x4 combinedMatrix = GHC::combine_matrices(
+    const Matrix4x4 combinedMatrix = GHC::combine_matrices(
                   mCostMatrices.at(aProfile.v0()),
                   mCostMatrices.at(aProfile.v1())
                 );
 
-    Col4 opt = GHC::optimal_point(combinedMatrix);
+    const Col4 p0 = std::move(GHC::point_to_homogenous_column(aProfile.p0()));
+    const Col4 p1 = std::move(GHC::point_to_homogenous_column(aProfile.p1()));
+
+    const Col4 opt = GHC::optimal_point(combinedMatrix, p0, p1);
 
     boost::optional<typename Profile::Point> pt;
-
-    pt = typename Profile::Point(opt(0), opt(1), opt(2));
+    pt = typename Profile::Point(opt(0) / opt(3), opt(1) / opt(3), opt(2) / opt(3));
 
     return pt;
   }

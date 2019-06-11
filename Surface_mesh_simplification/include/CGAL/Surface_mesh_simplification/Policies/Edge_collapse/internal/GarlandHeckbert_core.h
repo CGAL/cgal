@@ -42,6 +42,10 @@ struct GarlandHeckbertCore
   typedef std::unordered_map<vertex_descriptor, Matrix4x4> garland_heckbert_map_type;
 
 
+  static Col4 point_to_homogenous_column(const Point& pt) {
+    return Col4(pt.x(), pt.y(), pt.z(), 1);
+  }
+
   /**
   * Combines two Q matrices.
   * It is simply the addition of two matrices
@@ -76,21 +80,58 @@ struct GarlandHeckbertCore
 
 
   /*
-  * Return the point p that minimizes p' Q p
+  * Return the point p that minimizes p' Q p where p is free.
+  * aP0, and aP1 are the points that are being collapsed.
+  * aQuidric is the matrix that is the combination of matrices
+  * of aP0 and aP1.
   */
-  static Col4 optimal_point(const Matrix4x4& quidric) {
+  static Col4 optimal_point(const Matrix4x4& aQuidric, const Col4& aP0, const Col4& aP1) {
     Matrix4x4 X;
-    X.block(0, 0, 3, 4) = quidric.block(0,0,3,4);
+
+    X.block(0, 0, 3, 4) = aQuidric.block(0,0,3,4);
     X.block(3,0,1,3).setZero();
     X(3,3) = 1;
 
-    Col4 rhs;
-    rhs.setZero();
-    rhs(3) = 1;
+    Col4 opt_pt;
 
-    Col4 pt = X.inverse() * rhs;
+    if(X.determinant() == 0) {
+      // not invertible
+      Col4 p1mp0 = std::move(aP1 - aP0);
+      FT a = (p1mp0.transpose() * aQuidric * p1mp0)(0,0);
+      FT b = (p1mp0.transpose() * aQuidric * aP0 + aP0.transpose() * aQuidric * p1mp0)(0,0);
 
-    return pt;
+      if(a == 0) {
+        if(b < 0) {
+          opt_pt = aP1;
+        } else if (b == 0) {
+          opt_pt = (aP0 + aP1) / 2;
+        } else {
+          opt_pt = aP0;
+        }
+      } else {
+        FT ext_t = -b/(2*a);
+        if(ext_t < 0 || ext_t > 1 || a > 0) {
+          // one of endpoints
+          FT aP0_cost = (aP0.transpose() * aQuidric * aP0)(0,0);
+          FT aP1_cost = (aP1.transpose() * aQuidric * aP1)(0,0);
+          if(aP0_cost > aP1_cost) {
+            opt_pt = aP1;
+          } else {
+            opt_pt = aP0;
+          }
+        } else {
+          // extremum of the parabola
+          opt_pt = aP0 + (aP1 - aP0) * ext_t;
+        }
+      }
+    } else {
+      // invertible
+      Col4 rhs;
+      rhs.setZero();
+      rhs(3) = 1;
+      opt_pt = X.inverse() * rhs;
+    }
+    return opt_pt;
   }
 
 };

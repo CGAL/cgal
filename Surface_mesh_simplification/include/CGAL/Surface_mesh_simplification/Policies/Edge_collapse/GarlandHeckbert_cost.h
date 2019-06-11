@@ -40,12 +40,10 @@ public:
                   mCostMatrices.at(aProfile.v1())
                 );
 
-    Col4 pt;
-    pt << (*aPlacement).x(), (*aPlacement).y(), (*aPlacement).z(), 1;
-
+    Col4 pt = std::move(GHC::point_to_homogenous_column(*aPlacement));
 
     Optional_FT cost = (pt.transpose() * combinedMatrix * pt)(0,0);
-
+    
     return cost;
   }
 
