@@ -141,7 +141,7 @@ private:
 		// (though non-root of course!). I haven't tested with non-admin user.
     // -- Samuel Hornus
 
-    task_t task = MACH_PORT_nullptr;
+    task_t task = MACH_PORT_NULL;
 		// The task_for_pid() seems to be time consuming (looking at the source
 		// in xnu-source/bsd/vm/vm_unix.c
 		// TODO: so it may be a good idea to cache the resulting 'task'
