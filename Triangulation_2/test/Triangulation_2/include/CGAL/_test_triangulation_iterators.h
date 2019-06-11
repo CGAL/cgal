@@ -182,7 +182,9 @@ _test_cls_point_iterator( Triangulation &T )
   assert( n == 0 );
 
   Points range = T.points();
-  p = *(range.first);
+  if(! range.empty()){
+    p = *(range.first);
+  }
   return np;  
 }
 
