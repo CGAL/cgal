@@ -409,10 +409,8 @@ mechanisms. Presently, there two ways of performing arithmetic
 filtering for the predicates involved in the computation of
 segment Delaunay graphs:
 <OL>
-<LI>The user can define his/her kernel using as number type, a
-number type of the form `Filtered_exact<CT,ET>`. Then this
-kernel can be entered as the first template parameter in the
-`Segment_Delaunay_graph_traits_2<K,MTag>`.
+<LI>The user can use a kernel with a filtered number type
+as the first template parameter in the `Segment_Delaunay_graph_traits_2<K,MTag>`.
 <LI>The user can define up to three different kernels `CK`,
 `FK` and `EK` (default values are provided for most
 parameters). The first kernel `CK` is used only for
@@ -429,6 +427,7 @@ classes, which have been implemented using the
 Our experience so far has shown that for all reasonable and valid
 values of the template parameters, the second method for arithmetic
 filtering is more efficient among the two.
+This approach is also used in the examples.
 
 Let's consider once more the class
 `Segment_Delaunay_graph_traits_2<K,MTag>`.
