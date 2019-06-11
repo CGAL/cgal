@@ -170,7 +170,7 @@ void test(const NamedParameters& np)
   check_same_type<48>(get_param(np, CGAL::internal_np::erase_all_duplicates));
   check_same_type<49>(get_param(np, CGAL::internal_np::require_same_orientation));
   check_same_type<50>(get_param(np, CGAL::internal_np::use_bool_op_to_clip_surface));
-  check_same_type<49>(get_param(np, CGAL::internal_np::snapping_tolerance));
+  check_same_type<53>(get_param(np, CGAL::internal_np::snapping_tolerance));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<34>(get_param(np, CGAL::internal_np::get_cost_policy));
