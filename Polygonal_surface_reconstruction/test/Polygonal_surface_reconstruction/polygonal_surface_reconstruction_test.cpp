@@ -102,4 +102,6 @@ int main(int argc, char* argv[])
 
     std::cerr << "\t\t---- re-extract planes\n";
 	reconstruct<Epick, SCIP_Solver>(input_file, true);
+    
+    return EXIT_SUCCESS;
 }
