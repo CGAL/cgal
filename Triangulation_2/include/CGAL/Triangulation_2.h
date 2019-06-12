@@ -3259,6 +3259,14 @@ all_edges_end() const
 }
 
 template <class Gt, class Tds >
+typename Triangulation_2<Gt, Tds>::All_edges
+Triangulation_2<Gt, Tds>::
+all_edges() const
+{
+  return _tds.edges();
+}
+  
+template <class Gt, class Tds >
 typename Triangulation_2<Gt, Tds>::All_halfedges_iterator
 Triangulation_2<Gt, Tds>::
 all_halfedges_begin() const
