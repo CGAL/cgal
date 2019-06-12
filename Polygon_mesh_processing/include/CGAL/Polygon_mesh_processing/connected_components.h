@@ -441,10 +441,12 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh,
   for(face_descriptor f : faces(pmesh))
     component_size[face_cc[f]] += get(face_size_pmap, f);
 
+  const Face_size thresh = threshold_value;
+
   std::vector<std::size_t> cc_to_keep;
   for(std::size_t i=0; i<num; ++i)
   {
-    if(component_size[i] >= threshold_value)
+    if(component_size[i] >= thresh)
       cc_to_keep.push_back(i);
   }
 
