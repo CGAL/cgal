@@ -50,10 +50,10 @@ private:
   typedef Cell_iterator                                 T_Cell_iterator;
   typedef typename T_Cell_iterator::value_type          T_Cell;
   typedef typename T_Vertex_iterator::value_type        T_Vertex;
-  typedef typename T_Vertex::Cell_handle               T_Cell_handle;
-  
+
+  typedef typename T_Vertex::Cell_handle                T_Cell_handle;
   typedef typename T_Cell::Vertex_handle                T_Vertex_handle;
-  typedef typename T_Vertex_iterator::value_type        T_Vertex;
+
   typedef typename T_Vertex_iterator::value_type *      T_Vertex_pointer;
   typedef typename T_Cell_iterator::value_type *        T_Cell_pointer;
 
