@@ -159,7 +159,10 @@ private:
         } else {
           int neighbor_vertex = m_gmap.template info<0>(v);
           if (distance_from_root[neighbor_vertex] > distance_from_root[u_index] + w) {
+            CGAL_assertion(neighbor_vertex > 0);
             distance_from_root[neighbor_vertex] = distance_from_root[u_index] + w;
+            spanning_tree[neighbor_vertex - 1] = it;
+            trace_index[neighbor_vertex - 1] = u_index - 1;
             pq.push(std::make_pair(distance_from_root[neighbor_vertex], neighbor_vertex));
           }
         }
