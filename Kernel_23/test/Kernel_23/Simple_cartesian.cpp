@@ -22,7 +22,6 @@
  
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Quotient.h>
 #include <cassert>
 
@@ -91,7 +90,5 @@ main()
 
   typedef   CGAL::Simple_cartesian<CGAL::Quotient<Precise_integer> >     Cls;
   test_kernel("Simple_cartesian<Quotient<Precise_integer>>", Cls());
-  typedef   CGAL::Simple_cartesian<CGAL::Quotient<Precise_integer> >     Cls;
-  test_kernel("Epick_without_intervals", CGAL::Epick_without_intervals());
   return 0;
 }
