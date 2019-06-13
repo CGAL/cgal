@@ -47,23 +47,15 @@ Also, `Type1` and `Type2` can be both of type
 In three-dimensional space, the types `Type1` and
 `Type2` can be any of the following:
 
+- `Bbox_3`.
 - `Point_3<Kernel>`
 - `Plane_3<Kernel>`
 - `Line_3<Kernel>`
 - `Ray_3<Kernel>`
 - `Segment_3<Kernel>`
+- `Sphere_3<Kernel>`
 - `Triangle_3<Kernel>`.
-- `Bbox_3`.
-
-Also, `Type1` and `Type2` can be respectively of types
-
-- `Triangle_3<Kernel>` and `Tetrahedron_3<Kernel>`
-- `Plane_3<Kernel>` and `Sphere_3<Kernel>` (or the contrary)
-- `Sphere_3<Kernel>` and `Sphere_3<Kernel>`
-- `Line_3<Kernel>` and `Iso_cuboid_3<Kernel>`
-- `Ray_3<Kernel>` and `Iso_cuboid_3<Kernel>`
-- `Segment_3<Kernel>` and `Iso_cuboid_3<Kernel>`
-- `Iso_cuboid_3<Kernel>` and `Iso_cuboid_3<Kernel>`.
+- `Tetrahedron_3<Kernel>`.
 */
 bool do_intersect(Type1<Kernel> obj1, Type2<Kernel> obj2);
 /// @}
@@ -231,6 +223,16 @@ It is equivalent to `boost::optional< boost::variant< T... > >`, the last column
     <TD>Point_3, or Segment_3</TD>
 </TR>
 <TR>
+    <TD VALIGN="CENTER" > Line_3 </TD>
+    <TD VALIGN="CENTER" > Tetrahedron_3 </TD>
+    <TD>Point_3, or Segment_3</TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Line_3 </TD>
+    <TD VALIGN="CENTER" > Iso_cuboid_3 </TD>
+    <TD>Point_3, or Segment_3</TD>
+</TR>
+<TR>
     <TD VALIGN="CENTER" > Plane_3 </TD>
     <TD VALIGN="CENTER" > Plane_3 </TD>
     <TD>Line_3, or Plane_3</TD>
@@ -256,6 +258,16 @@ It is equivalent to `boost::optional< boost::variant< T... > >`, the last column
     <TD>Point_3, or Segment_3, or Triangle_3</TD>
 </TR>
 <TR>
+    <TD VALIGN="CENTER" > Plane_3 </TD>
+    <TD VALIGN="CENTER" > Tetrahedron_3 </TD>
+    <TD>Point_3, or Segment_3, or Triangle_3, or std::vector<Point_3></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Plane_3 </TD>
+    <TD VALIGN="CENTER" > Iso_cuboid_3 </TD>
+    <TD>Point_3, or Segment_3, or Triangle_3, or std::vector<Point_3></TD>
+</TR>
+<TR>
     <TD VALIGN="CENTER" > Ray_3 </TD>
     <TD VALIGN="CENTER" > Ray_3 </TD>
     <TD>Point_3, or Ray_3, or Segment_3</TD>
@@ -268,7 +280,17 @@ It is equivalent to `boost::optional< boost::variant< T... > >`, the last column
 <TR>
     <TD VALIGN="CENTER" > Ray_3 </TD>
     <TD VALIGN="CENTER" > Triangle_3 </TD>
-p    <TD>Point_3, or Segment_3</TD>
+    <TD>Point_3, or Segment_3</TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Ray_3 </TD>
+    <TD VALIGN="CENTER" > Tetrahedron_3 </TD>
+    <TD>Point_3, or Segment_3</TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Ray_3 </TD>
+    <TD VALIGN="CENTER" > Iso_cuboid_3 </TD>
+    <TD>Point_3, or Segment_3</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Segment_3 </TD>
@@ -278,6 +300,16 @@ p    <TD>Point_3, or Segment_3</TD>
 <TR>
     <TD VALIGN="CENTER" > Segment_3 </TD>
     <TD VALIGN="CENTER" > Triangle_3 </TD>
+    <TD>Point_3, or Segment_3</TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Segment_3 </TD>
+    <TD VALIGN="CENTER" > Tetrahedron_3 </TD>
+    <TD>Point_3, or Segment_3</TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Segment_3 </TD>
+    <TD VALIGN="CENTER" > Iso_cuboid_3 </TD>
     <TD>Point_3, or Segment_3</TD>
 </TR>
 <TR>
@@ -290,11 +322,22 @@ p    <TD>Point_3, or Segment_3</TD>
     <TD VALIGN="CENTER" > Triangle_3 </TD>
     <TD>Point_3, or Segment_3, or Triangle_3, or std::vector &lt; Point_3  &gt;</TD>
 </TR>
+<TR>
+    <TD VALIGN="CENTER" > Triangle_3 </TD>
+    <TD VALIGN="CENTER" > Tetrahedron_3 </TD>
+    <TD>Point_3, or Segment_3, or Triangle_3, or std::vector &lt; Point_3  &gt;</TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Triangle_3 </TD>
+    <TD VALIGN="CENTER" > Iso_cuboid_3 </TD>
+    <TD>Point_3, or Segment_3, or Triangle_3, or std::vector &lt; Point_3  &gt;</TD>
+</TR>
 </TABLE>
 </DIV>
 
 Additional overloads are provided for the type `Point_3` combined with any other type with the result type being 
-`boost::optional< boost::variant< Point_3 > >`.
+`boost::optional< boost::variant< Point_3 > >`. Overloads are also provided for the type `Bbox_3`, for all
+intersections existing with the type `Iso_cuboid_3`.
 
 
 \cgalHeading{Examples}
