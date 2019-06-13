@@ -75,8 +75,12 @@ main()
   std::cout << "Testing IO with F_k<Cartesian<double>>:" << std::endl;
   _test_io( Clsd() );
 
-  std::cout << "Testing with Epick:\n";
+  std::cout << "Testing with Epeck:\n";
   test<Cls>();
+  std::cout << "Testing with Epick:\n";
+  test<CGAL::Epick>();
+  std::cout << "Testing with Epick_without_intervals:\n";
+  test<CGAL::Epick_without_intervals>();
   return 0;
 }
 
