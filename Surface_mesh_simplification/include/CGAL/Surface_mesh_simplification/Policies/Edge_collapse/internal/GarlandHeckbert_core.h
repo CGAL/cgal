@@ -62,18 +62,20 @@ struct GarlandHeckbertCore
     quidric.setZero();
 
     for(face_descriptor fd: faces_around_target(aHD, aTM)) {
-      halfedge_descriptor incident_hd = halfedge(fd, aTM);
-      std::vector<vertex_descriptor> vds;
-      for(vertex_descriptor vd: vertices_around_face(incident_hd, aTM)) {
-        vds.push_back(vd);
+      if(fd != GraphTraits::null_face()) {
+        halfedge_descriptor incident_hd = halfedge(fd, aTM);
+        std::vector<vertex_descriptor> vds;
+        for(vertex_descriptor vd: vertices_around_face(incident_hd, aTM)) {
+          vds.push_back(vd);
+        }
+        Plane_3 plane(get(boost::vertex_point, aTM, vds[0]),
+                      get(boost::vertex_point, aTM, vds[1]),
+                      get(boost::vertex_point, aTM, vds[2]));
+        Row4 plane_mtr;
+        plane_mtr << plane.a(), plane.b(), plane.c(), plane.d();
+      //  std::cout << plane_mtr << std::endl << std::endl;
+        quidric += plane_mtr.transpose() * plane_mtr;
       }
-      Plane_3 plane(get(boost::vertex_point, aTM, vds[0]),
-                    get(boost::vertex_point, aTM, vds[1]),
-                    get(boost::vertex_point, aTM, vds[2]));
-      Row4 plane_mtr;
-      plane_mtr << plane.a(), plane.b(), plane.c(), plane.d();
-    //  std::cout << plane_mtr << std::endl << std::endl;
-      quidric += plane_mtr.transpose() * plane_mtr;
     }
     return quidric;
   }
