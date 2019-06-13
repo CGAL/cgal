@@ -29,7 +29,7 @@ namespace Surface_mesh_topology {
     /// returns `true` iff this path does not pass twice through a same edge or a same vertex.
     bool is_simple() const;
 
-    /// returns the length of the path, i.e. its number of elements.
+    /// returns the length of the path, i.e. its number of edges.
     std::size_t length() const;
       
     /// returns the ith dart of the path.
@@ -47,27 +47,36 @@ namespace Surface_mesh_topology {
     void push_back(halfedge_descriptor hd);
 
     /// returns `true` iff the dart/halfedge with index `i` can be added at the end of this path.
-    /// If Mesh is a Polyhedron_3, the complexity of this method is linear in number of darts.
+    /// If Mesh is a Polyhedron_3, takes time proportional to the number of darts/halfedges.
     bool can_be_pushed_by_index(std::size_t i) const;
 
     /// adds the dart/halfedge with index `i` at the end of this path.
-    /// If Mesh is a Polyhedron_3, the complexity of this method is linear in number of darts.
+    /// If Mesh is a Polyhedron_3, takes time proportional to the number of halfedges.
     /// @pre `can_be_pushed_by_index(i)`
     void push_back_by_index(std::size_t i);
 
-    /// Add the dart/halfedge obtained by turning `nb` times around the target vertex of the last dart/halfedge in this path, in the positive circular order. To extend with a positive 1 turn thus amounts to extend with the `next()` pointer. (A zero turn corresponds to the `opposite()` pointer.)
+    /// adds the dart/halfedge obtained by turning `nb` times around the target vertex of the last dart/halfedge in this path, in the positive circular order. To extend with a positive 1 turn thus amounts to extend with the `next()` pointer. (A zero turn corresponds to the `opposite()` pointer.)
     /// @pre !`is_empty()`
     void extend_positive_turn(std::size_t nb); 
 
-    /// Add the dart/halfedge obtained by turning `nb` times around the target vertex of the last dart/halfedge in this path, in the negative circular order. To extend with a negative 1 turn thus amounts to extend with the composite pointer: `opposite().prev().opposite()`.
+    /// adds the dart/halfedge obtained by turning `nb` times around the target vertex of the last dart/halfedge in this path, in the negative circular order. To extend with a negative 1 turn thus amounts to extend with the composite pointer: `opposite(prev(opposite()))`.
     /// @pre !`is_empty()`
     void extend_negative_turn(std::size_t nb); 
+
+    /// returns `true` iff the dart/halfedge with index `l` can be added at the end of this path.
+    /// Mesh must be a Polygonal_schema.
+    bool can_be_pushed_by_label(const std::string& l) const;
+
+    /// adds the dart/halfedge with label `l` at the end of this path.
+    /// Mesh must be a Polygonal_schema.
+    /// @pre `can_be_pushed_by_label(l)`
+    void push_back_by_label(const std::string& l);
 
     /// concatenates `other` to this path.
     /// @pre the last vertex of this path should coincide with the first vertex of `other`.
     Self& operator+=(const Self& other);
 
-    /// reverses this path (i.e. negate its orientation).
+    /// reverses this path (i.e. negates its orientation).
     void reverse();
 
     /// creates a random open path with `length` darts/halfedges.
