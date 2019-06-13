@@ -201,7 +201,16 @@ void duplicate_terminal_vertices(Graph& graph,
     
 } // namespace internal
 
-  
+template <typename Graph,
+          typename Visitor,
+          typename IsTerminal,
+          typename LessForVertexDescriptors>
+void
+split_graph_into_polylines(const Graph& graph,
+                           Visitor& polyline_visitor,
+                           IsTerminal is_terminal,
+                           LessForVertexDescriptors less);
+
 /*!
 \ingroup PkgBGL
 splits into polylines the graph `g` at vertices of degree greater than 2
