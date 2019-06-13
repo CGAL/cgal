@@ -1212,6 +1212,7 @@ protected:
     for (Halfedge_iterator itr = arr->halfedges_begin(); itr != arr->halfedges_end(); ++itr)
     {
       Halfedge_handle h = itr;
+      CGAL_assertion(h->face() != Face_handle());
       if (h->face()->id_not_set()) continue;
       CGAL_assertion(h->flag()!=NOT_VISITED);
 
@@ -1250,10 +1251,17 @@ protected:
             inner_ccb_and_new_face_pairs.push_back( std::make_pair(inner_ccb, f) );
         }
         else{
-          // we never create more outer ccb than what was available
-          CGAL_assertion(!outer_ccbs_to_remove.empty());
-          typename Aos_2::Dcel::Outer_ccb* outer_ccb = outer_ccbs_to_remove.back();
-          outer_ccbs_to_remove.pop_back();
+          // create a new outer ccb if none is available
+          typename Aos_2::Dcel::Outer_ccb* outer_ccb;
+          if (!outer_ccbs_to_remove.empty())
+          {
+            outer_ccb = outer_ccbs_to_remove.back();
+            outer_ccbs_to_remove.pop_back();
+          }
+          else{
+            outer_ccb = accessor.new_outer_ccb();
+            outer_ccb->set_face(f);
+          }
           Halfedge_handle hstart=h;
           do{
             _halfedge(h)->set_outer_ccb(outer_ccb);
