@@ -179,6 +179,7 @@ struct Intersection_traits<K, typename K::Iso_cuboid_3, CGAL::Bbox_3>
 
 
 
+
 // Iso_cuboid_3 Point_3, variant of one
 template<typename K>
 struct Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Point_3>  {
@@ -219,6 +220,44 @@ struct Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Triangle_3> 
 
 template<typename K>
 struct Intersection_traits<K, typename K::Triangle_3, typename K::Iso_cuboid_3>  {
+  typedef typename
+  boost::variant< typename K::Point_3, typename K::Segment_3,
+  typename K::Triangle_3, std::vector<typename K::Point_3> > variant_type;
+
+  typedef typename boost::optional< variant_type > result_type;
+};
+
+// Bbox_3 Plane_3, variant of 4
+template<typename K>
+struct Intersection_traits<K, typename CGAL::Bbox_3, typename K::Plane_3>  {
+  typedef typename
+  boost::variant< typename K::Point_3, typename K::Segment_3,
+  typename K::Triangle_3, std::vector<typename K::Point_3> > variant_type;
+
+  typedef typename boost::optional< variant_type > result_type;
+};
+
+template<typename K>
+struct Intersection_traits<K, typename K::Plane_3, typename CGAL::Bbox_3>  {
+  typedef typename
+  boost::variant< typename K::Point_3, typename K::Segment_3,
+  typename K::Triangle_3, std::vector<typename K::Point_3> > variant_type;
+
+  typedef typename boost::optional< variant_type > result_type;
+};
+
+// Bbox_3 Triangle_3, variant of 4
+template<typename K>
+struct Intersection_traits<K, typename CGAL::Bbox_3, typename K::Triangle_3>  {
+  typedef typename
+  boost::variant< typename K::Point_3, typename K::Segment_3,
+  typename K::Triangle_3, std::vector<typename K::Point_3> > variant_type;
+
+  typedef typename boost::optional< variant_type > result_type;
+};
+
+template<typename K>
+struct Intersection_traits<K, typename K::Triangle_3, typename CGAL::Bbox_3>  {
   typedef typename
   boost::variant< typename K::Point_3, typename K::Segment_3,
   typename K::Triangle_3, std::vector<typename K::Point_3> > variant_type;

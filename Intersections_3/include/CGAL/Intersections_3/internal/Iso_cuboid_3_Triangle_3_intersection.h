@@ -162,8 +162,6 @@ intersection(
     Poly clipped;
     clip_poly_halfspace<K>(poly, planes[i], clipped);
     poly = clipped;
-    for(auto p : poly)
-      std::cout<<p<<std::endl;
   }
 
   switch(poly.size())
