@@ -29,10 +29,6 @@ if ( NOT Boost_FOUND )
 endif()
 
 find_package( SCIP )
-if ( NOT SCIP_FOUND )
-  message(STATUS "This project requires the SCIP library, and will not be compiled.")
-  return()  
-endif()
 
 
 # include for local directory
@@ -49,16 +45,32 @@ include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "polygonal_surface_reconstruction_test.cpp" )
 
-target_link_libraries( polygonal_surface_reconstruction_test PRIVATE ${SCIP_LIBRARIES} )
+if ( SCIP_FOUND )
+  target_link_libraries( polygonal_surface_reconstruction_test PRIVATE ${SCIP_LIBRARIES} )
+endif()
 
+find_path(GLPK_INCLUDE_DIR
+  NAMES glpk.h
+  DOC "Path to GLPK headers"
+  )
+find_library(GLPK_LIBRARIES NAMES GLPK DOC "Path to the GLPK library")
 
-find_package( GLPK QUIET)
-if ( NOT GLPK_FOUND )
-  target_compile_definitions(polygonal_surface_reconstruction_test PRIVATE SKIP_TEST_USING_GLPK)
+if(GLPK_LIBRARIES AND GLPK_INCLUDE_DIR)
+  set( GLPK_FOUND TRUE)
+endif()
+
+if ( NOT SCIP_FOUND )
+  if ( NOT GLPK_FOUND )
+    message(STATUS "This project requires the SCIP library or the GLPK library, and will not be compiled.")
+    target_compile_definitions(polygonal_surface_reconstruction_test PRIVATE SKIP_TEST_USING_GLPK)
+    message("NOTICE: SCIP and GLPK not found")
+  return()  
+  endif()
 endif()
 
 
 if ( GLPK_FOUND )
-	include_directories( BEFORE ${GLPK_INCLUDE_DIRS} )
+	include_directories( BEFORE ${GLPK_INCLUDE_DIR} )
 	target_link_libraries( polygonal_surface_reconstruction_test PRIVATE ${GLPK_LIBRARIES} )
+	message("GLPK found and used") 
 endif()

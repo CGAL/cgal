@@ -22,7 +22,7 @@
 
 #include <CGAL/Mixed_integer_program_traits.h>
 
-#include "3rd_glpk/glpk.h"
+#include <glpk.h>
 
 
 namespace CGAL {
