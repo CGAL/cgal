@@ -281,9 +281,33 @@ public:
                    const CGAL::Color& acolor)
   { m_buffer_for_colored_segments.add_segment(p1, p2, acolor); }
 
-  template<typename KPoint>
-  void add_line(const KPoint& p1, const KPoint& p2)
-  { m_buffer_for_mono_lines.add_line(p1, p2); }
+  template<typename KPoint, typename KVector>
+  void add_line(const KPoint& p, const KVector& v)
+  {       CGAL::Bbox_3 bb;
+      if (bb==bounding_box()) // Case of "empty" bounding box
+      {
+      bb=Local_point(CGAL::ORIGIN).bbox();
+          bb=bb + Local_point(200,200,200).bbox(); // To avoid a warning from Qglviewer
+      }
+      else
+      { bb=bounding_box(); }
+      this->camera()->setSceneBoundingBox(CGAL::qglviewer::Vec(bb.xmin(),
+                                                               bb.ymin(),
+                                                               bb.zmin()),
+                                          CGAL::qglviewer::Vec(bb.xmax(),
+                                                               bb.ymax(),
+                                                               bb.zmax()));
+      this->showEntireScene();
+      Local_kernel::Iso_rectangle_2 clipping_rect(bb.xmin(), bb.ymin(),
+                                                  bb.xmax(), bb.ymax());
+      Local_kernel::Ray_2 ray(p, v);
+      Object o = CGAL::intersection(ray, clipping_rect);
+      typedef Local_kernel::Segment_2 Segment_2;
+      typedef Local_kernel::Point_2 Point_2;
+      if(const Segment_2 *s = CGAL::object_cast<Segment_2>(&o)){
+          add_segment(s->source(), s->target());
+      }
+  }
 
   bool is_a_face_started() const
   {
