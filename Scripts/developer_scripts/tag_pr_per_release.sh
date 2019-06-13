@@ -1,9 +1,21 @@
 #!/bin/bash
 
-# example class within a git repo
+# this script requires ghi: https://github.com/stephencelis/ghi
+# example calls within a git repo
 # bash tag_pr_per_release.sh 4.12 4.12.1
 # bash tag_pr_per_release.sh 4.12 4.13
 # bash tag_pr_per_release.sh 4.13 4.13.1
+#
+# After the release of CGAL-5.0 the release manager needs to call:
+# bash tag_pr_per_release.sh 4.14 5.0
+#
+# After the release of CGAL-4.14.1 the release manager needs to call:
+# bash tag_pr_per_release.sh 4.14 4.14.1
+#
+# After the release of CGAL-4.14.2 the release manager needs to call:
+# bash tag_pr_per_release.sh 4.14 4.14.2
+#
+
 
 PREVIOUS_MAJOR_RELEASE=$1
 CURRENT_RELEASE=$2
