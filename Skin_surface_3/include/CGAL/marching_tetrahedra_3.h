@@ -141,7 +141,7 @@ public:
 
 
   bool is_inside(T_Cell_iterator ch, int i) {
-    CGAL_assertion(ch != Cell_handle());
+    CGAL_assertion(ch.operator->() != nullptr);
     //return (traits.sign(ch,i) == POSITIVE);
     T_vertex_map_it it = triang_vertex_signs.find((ch->vertex(i)));
     
@@ -149,7 +149,7 @@ public:
       bool side = (traits.sign(ch,i) == POSITIVE);
       CGAL_assertion(triang_vertex_signs.find((ch->vertex(i))) ==
 		     triang_vertex_signs.end());
-      CGAL_assertion(ch != Cell_handle());
+      CGAL_assertion(ch.operator->() != nullptr);
       triang_vertex_signs[(ch->vertex(i))] = side;
       CGAL_assertion(triang_vertex_signs.find((ch->vertex(i))) !=
 		     triang_vertex_signs.end());
