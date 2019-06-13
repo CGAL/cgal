@@ -32,6 +32,8 @@
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/number_utils.h>
 
+#include <CGAL/Intersections_2/Iso_rectangle_2_Line_2.h>
+
 namespace CGAL {
 
 class Bbox_2_Line_2_pair_impl;
@@ -85,14 +87,39 @@ bool do_intersect_line_2(
         to_double(line->b()), to_double(line->c()));
 }
 
-template <class R>
+
+
+template <class K>
 inline bool do_intersect(
-    const Line_2<R> &line,
+    const Line_2<K> &line,
     const Bbox_2 &box)
 {
-    return do_intersect(box, line);
+  typename K::Iso_rectangle_2 rec(box.xmin(), box.ymin(), box.xmax(), box.ymax());
+  return do_intersect(rec, line);
 }
 
+template <class K>
+inline bool do_intersect(
+    const Bbox_2 &box,
+const Line_2<K> &line)
+{
+  return do_intersect(line, box);
+}
+
+template<typename K>
+typename Intersection_traits<K, typename K::Line_2, Bbox_2>::result_type
+intersection(const CGAL::Bbox_2& box,
+             const Line_2<K>& line) {
+  typename K::Iso_rectangle_2 rec(box.xmin(), box.ymin(), box.xmax(), box.ymax());
+  return intersection(rec, line);
+}
+
+template<typename K>
+typename Intersection_traits<K, typename K::Line_2, Bbox_2>::result_type
+intersection(const Line_2<K>& line,
+             const CGAL::Bbox_2& box) {
+  return intersection(box, line);
+}
 } //namespace CGAL
 
 #ifdef CGAL_HEADER_ONLY

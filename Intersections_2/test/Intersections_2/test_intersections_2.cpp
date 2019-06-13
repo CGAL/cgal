@@ -2,6 +2,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Homogeneous.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Intersection_traits_2.h>
 #include <CGAL/Intersections_2/Segment_2_Segment_2.h>
@@ -16,6 +17,12 @@
 #include <CGAL/Intersections_2/Circle_2_Iso_rectangle_2.h>
 #include <CGAL/Intersections_2/Circle_2_Point_2.h>
 #include <CGAL/Intersections_2/Point_2_Point_2.h>
+#include <CGAL/Intersections_2/Bbox_2_Line_2.h>
+#include <CGAL/Intersections_2/Bbox_2_Ray_2.h>
+#include <CGAL/Intersections_2/Bbox_2_Segment_2.h>
+#include <CGAL/Intersections_2/Bbox_2_Triangle_2.h>
+#include <CGAL/Intersections_2/Bbox_2_Iso_rectangle_2.h>
+#include <CGAL/Intersections_2/Bbox_2_Bbox_2.h>
 
 #include <vector>
 #include <iostream>
@@ -308,26 +315,43 @@ check_no_intersection  (L(p(0, 0), p(10,10)), L(p(8,7), p(1, 0)));
 
   void L_Rec()
   {
+    Rec rec(p(  2,   0), p( 6,  3));
     std::cout << "Line - Iso_rectangle\n";
-    check_intersection<S>  (L(p( 18,   6), p(0, 0)), Rec(p(  2,   0), p( 6,  3)));
+    check_intersection<S>  (L(p( 18,   6), p(0, 0)), rec);
+    std::cout << "Line - Bbox\n";
+    check_intersection<S>  (L(p( 18,   6), p(0, 0)), rec.bbox());
   }
 
   void R_Rec()
   {
+    Rec rec(p(  2,   0), p( 6,  3));
     std::cout << "Ray - Iso_rectangle\n";
-    check_intersection<S>  (R(p( 18,   6), p(0, 0)), Rec(p(  2,   0), p( 6,  3)));
+    check_intersection<S>  (R(p( 18,   6), p(0, 0)), rec);
+
+    std::cout << "Ray - Bbox\n";
+    check_intersection<S>  (R(p( 18,   6), p(0, 0)), rec.bbox());
   }
 
   void S_Rec()
   {
+    Rec rec(p(  2,   0), p( 6,  3));
     std::cout << "Segment - Iso_rectangle\n";
-    check_intersection<S>  (S(p( 18,   6), p(0, 0)), Rec(p(  2,   0), p( 6,  3)));
+    check_intersection<S>  (S(p( 18,   6), p(0, 0)), rec);
+
+    std::cout << "Segment - Bbox\n";
+    check_intersection<S>  (S(p( 18,   6), p(0, 0)), rec.bbox());
   }
 
   void Rec_Rec()
   {
     std::cout << "Iso_rectangle - Iso_rectangle\n";
     check_intersection     (Rec(p( 10,  12), p(30, 40)), Rec(p(  25,   40), p( 26,  103)), Rec(P(25, 40), P(26, 40)));
+
+    std::cout << "Iso_rectangle - Bbox\n";
+    check_intersection     (Rec(p( 10,  12), p(30, 40)), Rec(p(  25,   40), p( 26,  103)).bbox(), Rec(P(25, 40), P(26, 40)));
+
+    std::cout << "Bbox - Bbox\n";
+    check_intersection     (Rec(p( 10,  12), p(30, 40)).bbox(), Rec(p(  25,   40), p( 26,  103)).bbox(), Rec(P(25, 40), P(26, 40)).bbox());
   }
 
   void T_Rec()
@@ -342,29 +366,46 @@ check_no_intersection  (L(p(0, 0), p(10,10)), L(p(8,7), p(1, 0)));
     check_intersection<P>(Rec(p( 0,  0), p(1, 1)), T(p(  -1,   0), p(    0,  0), p(0,  -1)));
     check_intersection<P>(Rec(p( 0,  0), p(1, 1)), T(p(    0,  0), p(  -1,   0), p(0,  -1)));
     check_intersection<Pol>(Rec(p( 100,  100), p(200, 200)), T(p(150, 50), p(250, 170), p(50, 170)));
+
+    std::cout << "Triangle Bbox\n";
+    check_intersection<T>(Rec(p( 0,  0), p(1, 1)).bbox(), T(p(    -1,   0), p(  -1,   2), p(2,  2)));
+    check_intersection<T>(Rec(p( 0,  0), p(1, 1)).bbox(), T(p(    -1,   0), p(2,  2), p(  -1,   2)));
+    check_intersection<Pol>(Rec(p( 0,  0), p(1, 1)).bbox(), T(p(    -1,   -2), p(  -1,   2), p(5,  2)));
+    check_intersection<T>(Rec(p( 0,  0), p(2, 2)).bbox(), T(p(    0,   0), p(  1,   0), p(0,  1)));
+    check_intersection<T>(Rec(p( 0,  0), p(3, 3)).bbox(), T(p(    1,   1), p(  2,   1), p(1,  2)));
+    check_intersection<P>(Rec(p( 0,  0), p(1, 1)).bbox(), T(p(  -1,   0), p(    0,  0), p(0,  -1)));
+    check_intersection<P>(Rec(p( 0,  0), p(1, 1)).bbox(), T(p(    0,  0), p(  -1,   0), p(0,  -1)));
+    check_intersection<Pol>(Rec(p( 100,  100), p(200, 200)).bbox(), T(p(150, 50), p(250, 170), p(50, 170)));
+
+
   }
   
   void run()
   {
     std::cout << "2D Intersection tests\n";
     B_P();
-    L_L();
-    S_S();
-    R_R();
-    S_R();
-    L_R();
-    S_L();
-    T_T();
-    L_T();
-    R_T();
-    S_T();
-    P_T();
     P_P();
+    P_T();
+
+    L_L();
+    L_T();
+    L_R();
     L_Rec();
-    R_Rec();
+
+    S_S();
+    S_L();
+    S_R();
+    S_T();
     S_Rec();
-    Rec_Rec();
+
+    R_R();
+    R_T();
+    R_Rec();
+
+    T_T();
     T_Rec();
+
+    Rec_Rec();
   }
 
 };
@@ -389,6 +430,9 @@ int main()
 {
 	Test< CGAL::Simple_cartesian<double>   >().run();
 	Test< CGAL::Homogeneous<double> >().run();
+        Test< CGAL::Simple_cartesian<CGAL::Epeck_ft>   >().run();
+        Test< CGAL::Homogeneous<CGAL::Epeck_ft> >().run();
+
         typedef typename CGAL::Simple_cartesian<double> K;
         typedef typename K::Point_2               P;
         typedef typename K::Line_2                L;

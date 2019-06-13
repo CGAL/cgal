@@ -114,6 +114,28 @@ template<typename K>
 struct Intersection_traits<K, typename K::Triangle_2, typename K::Iso_rectangle_2>
   : public Intersection_traits<K, typename K::Iso_rectangle_2, typename K::Triangle_2> {};
 
+template<typename K, class B>
+struct Intersection_traits<K, CGAL::Bbox_2, B>  {
+  typedef typename Intersection_traits<K,typename K::Iso_rectangle_2, B>::result_type result_type;
+};
+
+template<typename K, class B>
+struct Intersection_traits<K, B, CGAL::Bbox_2>  {
+  typedef typename Intersection_traits<K,typename K::Iso_rectangle_2, B>::result_type result_type;
+};
+
+template<typename K>
+struct Intersection_traits<K, CGAL::Bbox_2, typename K::Point_2>  {
+  typedef typename boost::variant<typename K::Point_2> variant_type;
+  typedef boost::optional<variant_type> result_type;
+};
+
+template<typename K>
+struct Intersection_traits<K, typename K::Point_2, CGAL::Bbox_2>  {
+  typedef typename boost::variant<typename K::Point_2> variant_type;
+  typedef boost::optional<variant_type> result_type;
+};
+
 } // namespace CGAL
 
 #endif /* CGAL_INTERSECTION_TRAITS_2_H */

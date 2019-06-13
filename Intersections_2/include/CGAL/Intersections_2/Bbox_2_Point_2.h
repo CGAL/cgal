@@ -28,6 +28,7 @@
 
 #include <CGAL/Intersections_2/Iso_rectangle_2_Point_2.h>
 
+
 namespace CGAL {
 
 template<typename K>
