@@ -26,10 +26,17 @@
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#include <CGAL/Voronoi_diagram_2/basic.h>
+#include <CGAL/Voronoi_diagram_2/Handle_adaptor.h>
+#include <CGAL/Voronoi_diagram_2/Face.h>
+#include <CGAL/Voronoi_diagram_2/Vertex.h>
+#include <CGAL/Triangulation_utils_2.h>
+#include <CGAL/Qt/Converter.h>
 #include <CGAL/Random.h>
 
 namespace CGAL
 {
+
 // Default color functor; user can change it to have its own face color
 struct DefaultColorFunctorV2
 {
@@ -46,11 +53,21 @@ struct DefaultColorFunctorV2
 template<class V2, class ColorFunctor>
 class SimpleVoronoiDiagram2ViewerQt : public Basic_viewer_qt
 {
-  typedef Basic_viewer_qt                Base;
-  typedef typename V2::Halfedge_iterator Halfedge_const_handle;
-  typedef typename V2::Face_iterator     Face_const_handle;
-  typedef typename V2::Vertex_iterator   Vertex_const_handle;
-  typedef typename V2::Point_2           Point;
+  typedef Basic_viewer_qt                      Base;
+  typedef typename V2::Halfedge_iterator       Halfedge_const_handle;
+  typedef typename V2::Face_iterator           Face_const_handle;
+  typedef typename V2::Vertex_iterator         Vertex_const_handle;
+  typedef typename V2::Point_2                 Point;
+  typedef typename V2::Delaunay_vertex_handle  Delaunay_vertex_const_handle;
+  typedef typename V2::Ccb_halfedge_circulator Ccb_halfedge_circulator;
+  typedef typename V2::Delaunay_geom_traits         Delaunay_geom_traits;
+
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Face<V2>         Face;
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Handle_adaptor<Face>      Face_handle;
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Vertex<V2> Vertex;
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Handle_adaptor<Vertex>  Vertex_handle;
+  typedef Triangulation_cw_ccw_2                 CW_CCW_2;
 
 public:
   /// Construct the viewer.
@@ -72,22 +89,56 @@ public:
   }
 
 protected:
-//  void compute_face(Face_const_handle fh)
-//  {
+  void compute_face(Face_const_handle fh)
+  {
 //    CGAL::Color c=m_fcolor.run(v2, fh);
 //    face_begin(c);
-//    add_point_in_face(fh->halfedge()->source()->point());
-//    add_point_in_face(fh->halfedge()->source()->point());
-//    add_point_in_face(fh->halfedge()->source()->point());
+//    Ccb_halfedge_circulator ec_start = fh->ccb();
+//    Ccb_halfedge_circulator ec = ec_start;
+
+//    do{
+//        if( ec->has_source() )
+//            add_point_in_face(ec->source()->point());
+//        else if(ec->has_target())
+//            add_point_in_face(ec->target()->point());
+//    } while(++ec != ec_start);
 
 //    face_end();
-//  }
+  }
 
   void compute_edge(Halfedge_const_handle he)
   {
-      if(he->is_segment())
-          add_segment(he->source()->point(),
-                he->target()->point());
+      if(he->is_segment()){
+        add_segment(he->source()->point(),
+                    he->target()->point());
+      } else if(he->is_ray()){
+          Delaunay_vertex_const_handle v1 = he->up();
+          Delaunay_vertex_const_handle v2 = he->down();
+          Kernel::Vector_2 direction(v1->point().y()-v2->point().y(),
+                                     v2->point().x()-v1->point().x());
+          Kernel::Point_2 end_point;
+          if(he->has_source()){
+              end_point = he->source()->point();
+          } else {
+              end_point = he->target()->point();
+          }
+          Kernel::Ray_2 ray(end_point, direction);
+          CGAL::Bbox_3 bb;
+          if (bb==bounding_box()) // Case of "empty" bounding box
+          {   bb=Local_point(CGAL::ORIGIN).bbox();
+              bb=bb + Local_point(500,500,500).bbox(); // To avoid a warning from Qglviewer
+          }
+          else
+          { bb=bounding_box(); }
+          Kernel::Iso_rectangle_2 clipping_rect(bb.xmin(), bb.ymin(),
+                                                bb.xmax(), bb.ymax());
+          Object o = CGAL::intersection(ray, clipping_rect);
+          typedef Kernel::Segment_2 Segment_2;
+          typedef Kernel::Point_2 Point_2;
+          if(const Segment_2 *s = CGAL::object_cast<Segment_2>(&o)){
+              add_segment(s->source(), s->target());
+          }
+      }
   }
 
   void compute_vertex(Vertex_const_handle vh)
@@ -97,13 +148,16 @@ protected:
   {
     clear();
 
-//    if (!m_nofaces)
-//    {
-//      for (typename V2::Face_iterator it=v2.faces_begin();
-//           it!=v2.faces_end(); ++it)
-//      { compute_face(it); }
-//    }
-    
+    if (!m_nofaces)
+    {
+      for (typename V2::Face_iterator it=v2.faces_begin();
+           it!=v2.faces_end(); ++it)
+      { compute_face(it); }
+    }
+//    for(Delaunay_vertex_const_handle it = v2.dual().finite_vertices_begin();
+//        it!=v2.dual().finite_vertices_end(); ++it)
+//    { compute_vertex(it);}
+
     for (typename V2::Halfedge_iterator it=v2.halfedges_begin();
          it!=v2.halfedges_end(); ++it)
     { compute_edge(it); }
@@ -130,6 +184,7 @@ protected:
   }
 
 protected:
+  CGAL::Qt::Converter<Delaunay_geom_traits> convert;
   const V2& v2;
   bool m_nofaces;
   const ColorFunctor& m_fcolor;

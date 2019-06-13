@@ -178,9 +178,11 @@ public:
     m_use_mono_color(use_mono_color),
     m_inverse_normal(inverse_normal),
     m_size_points(7.),
-    m_size_edges(3.1),    
+    m_size_edges(3.1),
+    m_size_lines(3.1),
     m_vertices_mono_color(200, 60, 60),
     m_edges_mono_color(0, 0, 0),
+    m_lines_mono_color(0,100,0),
     m_faces_mono_color(60, 60, 200),
     m_ambient_color(0.6f, 0.5f, 0.5f, 0.5f),
     m_are_buffers_initialized(false),
@@ -202,6 +204,15 @@ public:
                                   &m_bounding_box,
                                   &arrays[COLOR_SEGMENTS],
                                   NULL, NULL),
+    m_buffer_for_mono_lines(&arrays[POS_MONO_LINES],
+                            NULL,
+                            &m_bounding_box,
+                            NULL, NULL),
+    m_buffer_for_colored_lines(&arrays[POS_COLORED_LINES],
+                               NULL,
+                               &m_bounding_box,
+                               &arrays[COLOR_LINES],
+                               NULL, NULL),
     m_buffer_for_mono_faces(&arrays[POS_MONO_FACES],
                             NULL,
                             &m_bounding_box,
@@ -268,7 +279,11 @@ public:
   template<typename KPoint>
   void add_segment(const KPoint& p1, const KPoint& p2,
                    const CGAL::Color& acolor)
-  { m_buffer_for_colored_segments.add_segment(p1, p2, acolor); } 
+  { m_buffer_for_colored_segments.add_segment(p1, p2, acolor); }
+
+  template<typename KPoint>
+  void add_line(const KPoint& p1, const KPoint& p2)
+  { m_buffer_for_mono_lines.add_line(p1, p2); }
 
   bool is_a_face_started() const
   {
@@ -467,6 +482,52 @@ protected:
     
     rendering_program_p_l.release();
     
+    // 3) LINE SHADER
+
+    // 3.1) Mono lines
+    vao[VAO_MONO_LINES].bind();
+
+    ++bufn;
+    assert(bufn<NB_VBO_BUFFERS);
+    buffers[bufn].bind();
+    buffers[bufn].allocate(arrays[POS_MONO_LINES].data(),
+                           static_cast<int>(arrays[POS_MONO_LINES].size()*sizeof(float)));
+    rendering_program_p_l.enableAttributeArray("vertex");
+    rendering_program_p_l.setAttributeArray("vertex",GL_FLOAT,0,3);
+
+    buffers[bufn].release();
+
+    rendering_program_p_l.disableAttributeArray("color");
+
+    vao[VAO_MONO_LINES].release();
+
+    // 3.2) Color lines
+
+    vao[VAO_COLORED_LINES].bind();
+
+    ++bufn;
+    assert(bufn<NB_VBO_BUFFERS);
+    buffers[bufn].bind();
+    buffers[bufn].allocate(arrays[POS_COLORED_LINES].data(),
+                           static_cast<int>(arrays[POS_COLORED_LINES].size()*sizeof(float)));
+    rendering_program_p_l.enableAttributeArray("vertex");
+    rendering_program_p_l.setAttributeBuffer("vertex",GL_FLOAT,0,3);
+
+    buffers[bufn].release();
+
+    ++bufn;
+    assert(bufn<NB_VBO_BUFFERS);
+    buffers[bufn].bind();
+    buffers[bufn].allocate(arrays[COLOR_LINES].data(),
+                           static_cast<int>(arrays[COLOR_LINES].size()*sizeof(float)));
+    rendering_program_p_l.enableAttributeArray("color");
+    rendering_program_p_l.setAttributeBuffer("color",GL_FLOAT,0,3);
+    buffers[bufn].release();
+
+    vao[VAO_COLORED_LINES].release();
+
+    rendering_program_p_l.release();
+
     // 3) FACE SHADER
     rendering_program_face.bind();
 
@@ -700,6 +761,39 @@ protected:
       vao[VAO_COLORED_SEGMENTS].release();
 
       rendering_program_p_l.release();
+    }
+
+    if(m_draw_lines)
+    {
+        rendering_program_p_l.bind();
+
+        vao[VAO_MONO_LINES].bind();
+        color.setRgbF((double)m_lines_mono_color.red()/(double)255,
+                      (double)m_lines_mono_color.green()/(double)255,
+                      (double)m_lines_mono_color.blue()/(double)255);
+        rendering_program_p_l.setAttributeValue("color",color);
+        glLineWidth(m_size_lines);
+        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(arrays[POS_MONO_LINES].size()/3));
+        vao[VAO_MONO_SEGMENTS].release();
+
+        vao[VAO_COLORED_SEGMENTS].bind();
+        if (m_use_mono_color)
+        {
+            color.setRgbF((double)m_lines_mono_color.red()/(double)255,
+                          (double)m_lines_mono_color.green()/(double)255,
+                          (double)m_lines_mono_color.blue()/(double)255);
+            rendering_program_p_l.disableAttributeArray("color");
+            rendering_program_p_l.setAttributeValue("color",color);
+        }
+        else
+        {
+            rendering_program_p_l.enableAttributeArray("color");
+        }
+        glLineWidth(m_size_lines);
+        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(arrays[POS_COLORED_LINES].size()/3));
+        vao[VAO_COLORED_LINES].release();
+
+        rendering_program_p_l.release();
     }
 
     if (m_draw_faces)
@@ -985,6 +1079,7 @@ protected:
 protected:
   bool m_draw_vertices;
   bool m_draw_edges;
+  bool m_draw_lines;
   bool m_draw_faces;
   bool m_flatShading;
   bool m_use_mono_color;
@@ -992,9 +1087,11 @@ protected:
   
   double m_size_points;
   double m_size_edges;
+  double m_size_lines;
 
   CGAL::Color m_vertices_mono_color;
   CGAL::Color m_edges_mono_color;
+  CGAL::Color m_lines_mono_color;
   CGAL::Color m_faces_mono_color;
   QVector4D   m_ambient_color;
 
@@ -1009,12 +1106,15 @@ protected:
     POS_COLORED_POINTS,
     POS_MONO_SEGMENTS,
     POS_COLORED_SEGMENTS,
+    POS_MONO_LINES,
+    POS_COLORED_LINES,
     POS_MONO_FACES,
     POS_COLORED_FACES,
     END_POS,
     BEGIN_COLOR=END_POS,
     COLOR_POINTS=BEGIN_COLOR,
     COLOR_SEGMENTS,
+    COLOR_LINES,
     COLOR_FACES,
     END_COLOR,
     BEGIN_NORMAL=END_COLOR,
@@ -1031,6 +1131,8 @@ protected:
   Buffer_for_vao<float> m_buffer_for_colored_points;
   Buffer_for_vao<float> m_buffer_for_mono_segments;
   Buffer_for_vao<float> m_buffer_for_colored_segments;
+  Buffer_for_vao<float> m_buffer_for_mono_lines;
+  Buffer_for_vao<float> m_buffer_for_colored_lines;
   Buffer_for_vao<float> m_buffer_for_mono_faces;
   Buffer_for_vao<float> m_buffer_for_colored_faces;
   
@@ -1045,6 +1147,8 @@ protected:
       VAO_COLORED_POINTS,
       VAO_MONO_SEGMENTS,
       VAO_COLORED_SEGMENTS,
+      VAO_MONO_LINES,
+      VAO_COLORED_LINES,
       VAO_MONO_FACES,
       VAO_COLORED_FACES,
       NB_VAO_BUFFERS

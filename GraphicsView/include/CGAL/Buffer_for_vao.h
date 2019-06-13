@@ -42,6 +42,7 @@ namespace CGAL
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
   typedef Local_kernel::Point_3  Local_point;
   typedef Local_kernel::Vector_3 Local_vector;
+  typedef Local_kernel::Ray_2    Local_ray;
 
 //------------------------------------------------------------------------------
 namespace internal
@@ -107,6 +108,11 @@ namespace internal
     {
       CGAL::Cartesian_converter<K, Local_kernel> converter;
       return converter(v);
+    }
+    static Local_ray get_local_ray(const typename K::Ray_2& r)
+    {
+      CGAL::Cartesian_converter<K, Local_kernel> converter;
+      return converter(r);
     }
   };
 
@@ -244,6 +250,14 @@ public:
     add_segment(kp1, kp2);
     add_color(c);
     add_color(c);
+  }
+
+  // 2.2+) Add a line, without color. TODO: Modify comment numbering
+  template<typename KPoint>
+  void add_line(const KPoint& kp1, const KPoint& kp2)
+  {
+      add_point(kp1);
+      add_point(kp2);
   }
 
   // 2.3) Add an indexed segment, without color.
