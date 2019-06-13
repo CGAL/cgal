@@ -24,6 +24,8 @@
 #ifndef CGAL__TEST_FURTHER_FCT_POINT_2_H
 #define CGAL__TEST_FURTHER_FCT_POINT_2_H
 
+#include "_approx_equal.h"
+
 template <class R>
 bool
 _test_further_fct_point_2(const R& )
@@ -95,8 +97,10 @@ _test_further_fct_point_2(const R& )
  p4 = p0.transform(rotate4);
  p5 = p0.transform(rotate5);
 
+ using CGAL::testsuite::approx_equal;
+ using CGAL::testsuite::Direction_2_tag;
 
- assert( (p5 - CGAL::ORIGIN).direction() == dir5 );
+ assert( approx_equal((p5 - CGAL::ORIGIN).direction(), dir5, Direction_2_tag()) );
 
  assert( CGAL::side_of_bounded_circle(p1, p2, p3, CGAL::Point_2<R>(CGAL::ORIGIN))\
                                       == CGAL::ON_BOUNDED_SIDE );
