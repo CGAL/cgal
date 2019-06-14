@@ -12,24 +12,7 @@ class Shortest_noncontractible_cycle {
 public:
 
   using Gmap_origin = GeneralizedMap;
-
-  struct Attributes {
-    template <class GMap>
-    struct Dart_wrapper {
-      using Vertex_attribute = CGAL::Cell_attribute<GMap, int>;
-      using Edge_attribute = void;
-      using Face_attribute = CGAL::Cell_attribute<GMap, void>;
-      using Attributes = CGAL::cpp11::tuple<Vertex_attribute, Edge_attribute, Face_attribute>;
-    };
-  };
-
-  using Gmap = CGAL::Generalized_map<2, Attributes>;
-  using Dart_handle = typename Gmap::Dart_handle;
-  using size_type = typename Gmap::size_type;
-  using Dart_const_handle = typename Gmap::Dart_const_handle;
   using Dart_const_handle_orig = typename Gmap_origin::Dart_const_handle;
-  using Dart_container = std::vector<Dart_handle>;
-  using Path = std::vector<Dart_const_handle_orig>; // Consider: CGAL::Path_on_surface<Gmap>;
 
   template <class T>
   struct Weight_functor_selector {
@@ -47,73 +30,55 @@ public:
 
   using Weight = typename Weight_functor_selector<WeightFunctor>::Weight;
   using Distance_type = typename Weight::Weight_t;
+
+  struct Attributes {
+    template <class GMap>
+    struct Dart_wrapper {
+      using Vertex_attribute = CGAL::Cell_attribute<GMap, int>;
+      using Edge_attribute = CGAL::Cell_attribute<GMap, Distance_type>;
+      using Face_attribute = CGAL::Cell_attribute<GMap, void>;
+      using Attributes = CGAL::cpp11::tuple<Vertex_attribute, Edge_attribute, Face_attribute>;
+    };
+  };
+
+  using Gmap = CGAL::Generalized_map<2, Attributes>;
+  using Dart_handle = typename Gmap::Dart_handle;
+  using size_type = typename Gmap::size_type;
+  using Dart_container = std::vector<Dart_handle>;
+  using Path = std::vector<Dart_const_handle_orig>; // Consider: CGAL::Path_on_surface<Gmap>;
   
   Shortest_noncontractible_cycle(const Gmap_origin& gmap, const Weight& wf = Weight())
-    : m_weight(wf)
   {
     m_gmap.copy(gmap, &m_origin_to_copy, &m_copy_to_origin);
+    m_gmap.display_characteristics(std::cerr);
+    std::cerr << '\n';
     // Initialize 2-attributes
     for (auto it = m_gmap.template one_dart_per_cell<2>().begin(), itend = m_gmap.template one_dart_per_cell<2>().end(); it != itend; ++it) {
       m_gmap.template set_attribute<2>(it, m_gmap.template create_attribute<2>());
     }
     // Remove all boundary by adding faces
     m_gmap.template close<2>();
+    // Initialize 1-attributes
+    for (auto it = gmap.template one_dart_per_cell<1>().begin(), itend = gmap.template one_dart_per_cell<1>().end(); it != itend; ++it) {
+      Dart_handle img_dart = m_origin_to_copy[it];
+      m_gmap.template set_attribute<1>(img_dart, m_gmap.template create_attribute<1>());
+      m_gmap.template info<1>(img_dart) = wf(it);
+    }
     // Initialize 0-attributes
     for (auto it = m_gmap.template one_dart_per_cell<0>().begin(), itend = m_gmap.template one_dart_per_cell<0>().end(); it != itend; ++it) {
       m_gmap.template set_attribute<0>(it, m_gmap.template create_attribute<0>());
+      ++m_nb_of_vertices;
     }
-    // m_gmap.display_characteristics(std::cout);
-    // std::cout << '\n';
+    m_spanning_tree.resize(m_nb_of_vertices-1);
+    m_distance_from_root.resize(m_nb_of_vertices);
+    m_trace_index.resize(m_nb_of_vertices-1);
+    m_gmap.display_characteristics(std::cerr);
+    std::cerr << '\n';
   }
   
   bool find_cycle(Dart_const_handle_orig root_vertex, Path& cycle, Distance_type* length = NULL, const Distance_type* max_length = NULL) {
     Dart_handle root = m_origin_to_copy[root_vertex];
-    Dart_container spanning_tree, noncon_edges;
-    std::vector<Distance_type> distance_from_root;
-    std::vector<int> trace_index;
-
-    find_spanning_tree<WeightFunctor>(root, spanning_tree, distance_from_root, trace_index);
-    // std::cerr << "Done find_spanning_tree. spanning_tree.size() = " << spanning_tree.size() << '\n';
-    find_noncon_edges(spanning_tree, noncon_edges);
-    // std::cerr << "Done find_noncon_edges. noncon_edges.size() = " << noncon_edges.size() << '\n';
-
-    bool first_check = true;
-    Distance_type min_distance = 0;
-    Dart_handle min_noncon_edge;
-    int min_a = -1, min_b = -1;
-    for (auto dh : noncon_edges) {
-      Dart_handle a = dh, b = m_gmap.template alpha<0>(a);
-      int index_a = m_gmap.template info<0>(a), index_b = m_gmap.template info<0>(b);
-      Distance_type sum_distance = distance_from_root[index_a] + distance_from_root[index_b] 
-                                   + m_weight(m_copy_to_origin[dh]);
-      if (first_check || min_distance > sum_distance) {
-        min_distance = sum_distance;
-        min_noncon_edge = dh;
-        min_a = index_a;
-        min_b = index_b;
-        first_check = false;
-      }
-    }
-    if (first_check) return false; // no cycle found
-    if (length != NULL) *length = min_distance < 0 ? 0 : min_distance;
-    if (max_length != NULL)
-      if (min_distance >= *max_length) return false; // abort
-
-    cycle.clear();
-    // Trace back the path from `a` to root
-    for (int ind = min_a - 1; ind != -1; ind = trace_index[ind])
-      cycle.push_back(m_copy_to_origin[spanning_tree[ind]]);
-      // If use Path_on_surface: cycle.push_back(m_gmap.template alpha<0>(spanning_tree[ind]));
-    // Reverse: now it is the path from root to `a`
-    std::reverse(cycle.begin(), cycle.end());
-    cycle.push_back(m_copy_to_origin[min_noncon_edge]);
-    // Trace back the path from `b` to root
-    for (int ind = min_b - 1; ind != -1; ind = trace_index[ind])
-      cycle.push_back(m_copy_to_origin[m_gmap.template alpha<0>(spanning_tree[ind])]);
-
-    // CGAL_assertion(cycle.is_closed());
-
-    return true;
+    return this->find_cycle(root, cycle, length, max_length);
   }
 
   void edge_width(Path& cycle, Distance_type* length = NULL) {
@@ -122,98 +87,40 @@ public:
     Distance_type min_length = 0;
     int cnt = 0;
     for (auto it = m_gmap.template one_dart_per_cell<0>().begin(), itend = m_gmap.template one_dart_per_cell<0>().end(); it != itend; ++it) {
-      std::cerr << "Processing vertex #" << ++cnt << ':';
+      // if (cnt % 100 == 0) std::cerr << "Processing vertex #" << cnt + 1 << ": \n";
       Distance_type temp_length;
       if (first_check) {
         find_cycle(it, cycle, &temp_length);
         min_length = temp_length;
-        // std::cerr << min_length << '\n';
         first_check = false;
       } else {
         find_cycle(it, cycle, &temp_length, &min_length);
         if (temp_length < min_length) {
           min_length = temp_length;
-          // std::cerr << min_length << '\n';
         }
       }
-      std::cerr << temp_length << '\n';
+      // if (cnt % 100 == 0) std::cerr << temp_length << '\n';
+      ++cnt;
     }
     if (length != NULL) *length = min_length;
   }
 
 private:
 
+  struct Dijkstra_comparator {
+    Dijkstra_comparator(const std::vector<Distance_type>& distance_from_root) : m_distance(distance_from_root) {}
+    bool operator()(const int x, const int y) const { return m_distance[x] > m_distance[y]; }
+  private:
+    const std::vector<Distance_type>& m_distance;
+  };
+
   /// Create a spanning tree using Dijkstra
-  template <class T>
+  template <class>
   void find_spanning_tree(Dart_handle root, Dart_container& spanning_tree,
                           std::vector<Distance_type>& distance_from_root, std::vector<int>& trace_index) {
-    std::priority_queue<std::pair<Distance_type, int>, std::vector<std::pair<Distance_type, int> >, std::greater<std::pair<Distance_type, int> > > pq;
+    Dijkstra_comparator dc (distance_from_root);
+    std::priority_queue<int, std::vector<int>, Dijkstra_comparator> pq(dc);
     int vertex_index = 0;
-    // (Actually we don't need a separate variable for vertex_index,
-    //  we can use spanning_tree.size() instead,
-    //  but for clarity I will keep it.)
-
-    spanning_tree.clear();
-    distance_from_root.clear();
-    trace_index.clear();
-    pq.push(std::make_pair(0, 0));
-    CGAL_assertion(m_gmap.template attribute<0>(root) == NULL);
-    m_gmap.template set_attribute<0>(root, m_gmap.template create_attribute<0>());
-    m_gmap.template info<0>(root) = vertex_index++;
-    distance_from_root.push_back(0);
-
-    while (pq.size()) {
-      std::pair<Distance_type, int> nearest = pq.top();
-      pq.pop();
-      Distance_type distance = nearest.first;
-      int u_index = nearest.second; // see definition of dart u below
-      CGAL_assertion(u_index < distance_from_root.size());
-      if (distance_from_root[u_index] != distance) continue; // old data, skip
-      if (u_index != 0) CGAL_assertion(u_index - 1 < spanning_tree.size());
-      Dart_handle u = (u_index == 0) ? root : m_gmap.template alpha<0>(spanning_tree[u_index - 1]);
-      CGAL_assertion(u_index == m_gmap.template info<0>(u));
-
-      // TODO: This iterator (one_dart_per_incident_cell) can have some overhead for time complexity
-      //       comparing to a direct traversal using next/opposite operator. 
-      for (auto it = m_gmap.template one_dart_per_incident_cell<1,0>(u).begin(), 
-                itend = m_gmap.template one_dart_per_incident_cell<1,0>(u).end();
-                it != itend; ++it) {
-        Dart_handle v = m_gmap.template alpha<0>(it);
-        Distance_type w = m_weight(m_copy_to_origin[it]);
-        if (m_gmap.template attribute<0>(v) == NULL) {
-          distance_from_root.push_back(distance_from_root[u_index] + w);
-          spanning_tree.push_back(it);
-          trace_index.push_back(u_index - 1);
-          m_gmap.template set_attribute<0>(v, m_gmap.template create_attribute<0>());
-          CGAL_assertion(vertex_index == spanning_tree.size());
-          m_gmap.template info<0>(v) = vertex_index;
-          pq.push(std::make_pair(distance_from_root[vertex_index], vertex_index));
-          vertex_index++;
-        } else {
-          int neighbor_vertex = m_gmap.template info<0>(v);
-          if (distance_from_root[neighbor_vertex] > distance_from_root[u_index] + w) {
-            CGAL_assertion(neighbor_vertex > 0);
-            distance_from_root[neighbor_vertex] = distance_from_root[u_index] + w;
-            spanning_tree[neighbor_vertex - 1] = it;
-            trace_index[neighbor_vertex - 1] = u_index - 1;
-            pq.push(std::make_pair(distance_from_root[neighbor_vertex], neighbor_vertex));
-          }
-        }
-      }
-    }
-  }
-
-  /// Create a spanning tree using BFS
-  template <>
-  void find_spanning_tree<void>(Dart_handle root, Dart_container& spanning_tree,
-                                std::vector<Distance_type>& distance_from_root, std::vector<int>& trace_index) {
-    // The first of pair is a dart of a 0-cell,
-    // the second of pair is the index of the dart leading to this 0-cell in spanning_tree
-    std::queue<std::pair<Dart_handle, int> > q;
-    int vertex_index = 0;
-    // (Actually we don't need a separate variable for vertex_index,
-    //  we can use spanning_tree.size() instead,
-    //  but for clarity I will keep it.)
     size_type vertex_visited;
     try {
       vertex_visited = m_gmap.get_new_mark();
@@ -221,37 +128,94 @@ private:
       std::cerr << "No more free mark, exit." << std::endl;
       exit(-1);
     }
+    CGAL_assertion(spanning_tree.size() == m_nb_of_vertices - 1);
+    CGAL_assertion(distance_from_root.size() == m_nb_of_vertices);
+    CGAL_assertion(trace_index.size() == m_nb_of_vertices - 1);
 
-    spanning_tree.clear();
-    distance_from_root.clear();
-    trace_index.clear();
-    // spanning_tree is empty (so far), so the index is -1
-    q.push(std::make_pair(root, -1));
-    m_gmap.template info<0>(root) = vertex_index++;
+    pq.push(0);
+    m_gmap.template info<0>(root) = vertex_index;
     m_gmap.template mark_cell<0>(root, vertex_visited);
-    distance_from_root.push_back(0);
+    distance_from_root[vertex_index] = 0;
+    // std::cerr << "Begin finding spanning tree\n";
+
+    while (pq.size()) {
+      int u_index = pq.top();
+      // std::cerr << '(' << u_index << ' ';
+      pq.pop();
+      Dart_handle u = (u_index == 0) ? root : m_gmap.template alpha<0>(spanning_tree[u_index - 1]);
+      CGAL_assertion(u_index == m_gmap.template info<0>(u));
+
+      // for (auto it = m_gmap.template one_dart_per_incident_cell<1,0>(u).begin(), itend = m_gmap.template one_dart_per_incident_cell<1,0>(u).end(); it != itend; ++it) {
+      for (auto it = m_gmap.template alpha<2,1>(u); it != u; it = m_gmap.template alpha<2,1>(it)) {
+        Dart_handle v = m_gmap.template alpha<0>(it);
+        // std::cerr << '.';
+        Distance_type w = m_gmap.template info<1>(it);
+        // std::cerr << '-';
+        if (!m_gmap.is_marked(v, vertex_visited)) {
+          int v_index = ++vertex_index;
+          // std::cerr << v_index << ' ';
+          distance_from_root[v_index] = distance_from_root[u_index] + w;
+          spanning_tree[v_index - 1] = it;
+          trace_index[v_index - 1] = u_index - 1;
+          m_gmap.template info<0>(v) = v_index;
+          m_gmap.template mark_cell<0>(v, vertex_visited);
+          pq.push(v_index);
+          // if (pq.size() > m_nb_of_vertices) std::cerr << "Too long queue. Please halt.\n";
+        } else {
+          int v_index = m_gmap.template info<0>(v);
+          // std::cerr << v_index << "* ";
+          if (distance_from_root[v_index] > distance_from_root[u_index] + w) {
+            // std::cerr << "+ ";
+            CGAL_assertion(v_index > 0);
+            distance_from_root[v_index] = distance_from_root[u_index] + w;
+            spanning_tree[v_index - 1] = it;
+            trace_index[v_index - 1] = u_index - 1;
+            pq.push(v_index);
+            // if (pq.size() > m_nb_of_vertices) std::cerr << "Too long queue. Please halt.\n";
+          }
+        }
+      }
+      // std::cerr << ") ";
+    }
+    // std::cerr << "\n";
+    m_gmap.free_mark(vertex_visited);
+  }
+
+  /// Create a spanning tree using BFS
+  template <>
+  void find_spanning_tree<void>(Dart_handle root, Dart_container& spanning_tree,
+                                std::vector<Distance_type>& distance_from_root, std::vector<int>& trace_index) {
+    std::queue<int> q;
+    int vertex_index = 0;
+    size_type vertex_visited;
+    try {
+      vertex_visited = m_gmap.get_new_mark();
+    } catch (typename Gmap::Exception_no_more_available_mark) {
+      std::cerr << "No more free mark, exit." << std::endl;
+      exit(-1);
+    }
+    CGAL_assertion(spanning_tree.size() == m_nb_of_vertices - 1);
+    CGAL_assertion(distance_from_root.size() == m_nb_of_vertices);
+    CGAL_assertion(trace_index.size() == m_nb_of_vertices - 1);
+    q.push(0);
+    m_gmap.template info<0>(root) = vertex_index;
+    m_gmap.template mark_cell<0>(root, vertex_visited);
+    distance_from_root[vertex_index] = 0;
     // Note: distance_from_root will have n (= #0-cells) elements while spanning_tree only has n-1
     while (q.size()) {
-      Dart_handle u = q.front().first;
-      int ind = q.front().second;
+      int u_index = q.front();
       q.pop();
-      // TODO: This iterator (one_dart_per_incident_cell) can have some overhead for time complexity
-      //       comparing to a direct traversal using next/opposite operator. 
-      for (auto it = m_gmap.template one_dart_per_incident_cell<1,0>(u).begin(), 
-                itend = m_gmap.template one_dart_per_incident_cell<1,0>(u).end();
-                it != itend; ++it) {
+      Dart_handle u = (u_index == 0) ? root : m_gmap.template alpha<0>(spanning_tree[u_index-1]);
+      for (auto it = m_gmap.template alpha<2,1>(u); it != u; it = m_gmap.template alpha<2,1>(it)) {
         Dart_handle v = m_gmap.template alpha<0>(it);
         if (!m_gmap.is_marked(v, vertex_visited)) {
-          if (ind == -1) 
-            distance_from_root.push_back(1);
-          else
-            distance_from_root.push_back(1 + distance_from_root[ind+1]);
-          spanning_tree.push_back(it);
+          int v_index = ++vertex_index;
+          distance_from_root[v_index] = 1 + distance_from_root[u_index];
+          spanning_tree[v_index - 1] = it;
           // `it` will lead to v
-          q.push(make_pair(v, spanning_tree.size() - 1));
-          trace_index.push_back(ind);
-          CGAL_assertion(vertex_index == spanning_tree.size());
-          m_gmap.template info<0>(v) = vertex_index++;
+          q.push(v_index);
+          trace_index[v_index-1] = u_index-1;
+          m_gmap.template info<0>(v) = v_index;
           m_gmap.template mark_cell<0>(v, vertex_visited);
         }
       }
@@ -272,6 +236,7 @@ private:
         dh_edge=dh;
       }
     }
+    if (dh_edge == NULL) return false;
     dh_only_edge = dh_edge;
     return true;
   }
@@ -280,6 +245,7 @@ private:
   /// Find E_nc
 
   void find_noncon_edges(const Dart_container& spanning_tree, Dart_container& noncon_edges) {
+    noncon_edges.clear();
     size_type face_deleted, edge_deleted;
     // Turn out that face_deleted is a redundant mark. Consider removing it.
     try {
@@ -328,14 +294,58 @@ private:
     m_gmap.free_mark(face_deleted);
   }
 
-  void find_cycle(Dart_handle root, Path& cycle, Distance_type* length = NULL, Distance_type* max_length = NULL) {
-    return this->find_cycle(m_copy_to_origin[root], cycle, length, max_length);
+  bool find_cycle(Dart_handle root, Path& cycle, Distance_type* length = NULL, Distance_type* max_length = NULL) {
+    find_spanning_tree<WeightFunctor>(root, m_spanning_tree, m_distance_from_root, m_trace_index);
+    // std::cerr << "Done find_spanning_tree. spanning_tree.size() = " << m_spanning_tree.size() << '\n';
+    find_noncon_edges(m_spanning_tree, m_noncon_edges);
+    // std::cerr << "Done find_noncon_edges. noncon_edges.size() = " << m_noncon_edges.size() << '\n';
+
+    bool first_check = true;
+    Distance_type min_distance = 0;
+    Dart_handle min_noncon_edge;
+    int min_a = -1, min_b = -1;
+    for (auto dh : m_noncon_edges) {
+      Dart_handle a = dh, b = m_gmap.template alpha<0>(a);
+      int index_a = m_gmap.template info<0>(a), index_b = m_gmap.template info<0>(b);
+      Distance_type sum_distance = m_distance_from_root[index_a] + m_distance_from_root[index_b] 
+                                   + m_gmap.template info<1>(dh);
+      if (first_check || min_distance > sum_distance) {
+        min_distance = sum_distance;
+        min_noncon_edge = dh;
+        min_a = index_a;
+        min_b = index_b;
+        first_check = false;
+      }
+    }
+    if (first_check) return false; // no cycle found
+    if (length != NULL) *length = min_distance < 0 ? 0 : min_distance;
+    if (max_length != NULL)
+      if (min_distance >= *max_length) return false; // abort
+
+    cycle.clear();
+    // Trace back the path from `a` to root
+    for (int ind = min_a - 1; ind != -1; ind = m_trace_index[ind])
+      cycle.push_back(m_copy_to_origin[m_spanning_tree[ind]]);
+      // If use Path_on_surface: cycle.push_back(m_gmap.template alpha<0>(m_spanning_tree[ind]));
+    // Reverse: now it is the path from root to `a`
+    std::reverse(cycle.begin(), cycle.end());
+    cycle.push_back(m_copy_to_origin[min_noncon_edge]);
+    // Trace back the path from `b` to root
+    for (int ind = min_b - 1; ind != -1; ind = m_trace_index[ind])
+      cycle.push_back(m_copy_to_origin[m_gmap.template alpha<0>(m_spanning_tree[ind])]);
+
+    // CGAL_assertion(cycle.is_closed());
+
+    return true;
   }
 
   Gmap m_gmap;
   boost::unordered_map<Dart_const_handle_orig, Dart_handle> m_origin_to_copy;
   boost::unordered_map<Dart_handle, Dart_const_handle_orig> m_copy_to_origin;
-  Weight m_weight;
+  unsigned int m_nb_of_vertices = 0;
+  Dart_container m_spanning_tree, m_noncon_edges;
+  std::vector<Distance_type> m_distance_from_root;
+  std::vector<int> m_trace_index;
 };
 
 }
