@@ -71,7 +71,7 @@ struct T2_edge_descriptor
   T2_edge_descriptor(Face_handle fd, int i) : first(fd), second(i) { }
 
   // so that we can still do stuff like tr.is_finite(edge_descriptor) without any hassle
-  operator std::pair<Face_handle, int>() { return std::make_pair(first, second); }
+  operator std::pair<Face_handle, int>() const { return std::make_pair(first, second); }
 
   friend std::size_t hash_value(const T2_edge_descriptor& h)
   {
