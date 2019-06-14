@@ -87,7 +87,6 @@ public:
     Distance_type min_length = 0;
     int cnt = 0;
     for (auto it = m_gmap.template one_dart_per_cell<0>().begin(), itend = m_gmap.template one_dart_per_cell<0>().end(); it != itend; ++it) {
-      // if (cnt % 100 == 0) std::cerr << "Processing vertex #" << cnt + 1 << ": \n";
       Distance_type temp_length;
       if (first_check) {
         find_cycle(it, cycle, &temp_length);
@@ -99,7 +98,6 @@ public:
           min_length = temp_length;
         }
       }
-      // if (cnt % 100 == 0) std::cerr << temp_length << '\n';
       ++cnt;
     }
     if (length != NULL) *length = min_length;
@@ -136,48 +134,36 @@ private:
     m_gmap.template info<0>(root) = vertex_index;
     m_gmap.template mark_cell<0>(root, vertex_visited);
     distance_from_root[vertex_index] = 0;
-    // std::cerr << "Begin finding spanning tree\n";
 
     while (pq.size()) {
       int u_index = pq.top();
-      // std::cerr << '(' << u_index << ' ';
       pq.pop();
       Dart_handle u = (u_index == 0) ? root : m_gmap.template alpha<0>(spanning_tree[u_index - 1]);
       CGAL_assertion(u_index == m_gmap.template info<0>(u));
 
-      // for (auto it = m_gmap.template one_dart_per_incident_cell<1,0>(u).begin(), itend = m_gmap.template one_dart_per_incident_cell<1,0>(u).end(); it != itend; ++it) {
       for (auto it = m_gmap.template alpha<2,1>(u); it != u; it = m_gmap.template alpha<2,1>(it)) {
         Dart_handle v = m_gmap.template alpha<0>(it);
-        // std::cerr << '.';
         Distance_type w = m_gmap.template info<1>(it);
-        // std::cerr << '-';
         if (!m_gmap.is_marked(v, vertex_visited)) {
           int v_index = ++vertex_index;
-          // std::cerr << v_index << ' ';
           distance_from_root[v_index] = distance_from_root[u_index] + w;
           spanning_tree[v_index - 1] = it;
           trace_index[v_index - 1] = u_index - 1;
           m_gmap.template info<0>(v) = v_index;
           m_gmap.template mark_cell<0>(v, vertex_visited);
           pq.push(v_index);
-          // if (pq.size() > m_nb_of_vertices) std::cerr << "Too long queue. Please halt.\n";
         } else {
           int v_index = m_gmap.template info<0>(v);
-          // std::cerr << v_index << "* ";
           if (distance_from_root[v_index] > distance_from_root[u_index] + w) {
-            // std::cerr << "+ ";
             CGAL_assertion(v_index > 0);
             distance_from_root[v_index] = distance_from_root[u_index] + w;
             spanning_tree[v_index - 1] = it;
             trace_index[v_index - 1] = u_index - 1;
             pq.push(v_index);
-            // if (pq.size() > m_nb_of_vertices) std::cerr << "Too long queue. Please halt.\n";
           }
         }
       }
-      // std::cerr << ") ";
     }
-    // std::cerr << "\n";
     m_gmap.free_mark(vertex_visited);
   }
 
