@@ -34,7 +34,7 @@ contexts(const CDTP& cdtp)
     if(cdtp.number_of_enclosing_constraints(vp, vq) == 2){
       std::cout << "subconstraint " << vp->point() << " " << vq->point() 
                 << " is on constraints starting at:\n";
-      for(CDTP::Context c : cdtp.contexts(vp,vq)){
+      for(const CDTP::Context& c : cdtp.contexts(vp,vq)){
         std::cout << (*(c.vertices_begin()))->point() << std::endl;
       }
     }

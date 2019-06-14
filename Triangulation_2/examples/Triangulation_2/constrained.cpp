@@ -22,7 +22,7 @@ main( )
 
   assert(cdt.is_valid());
   int count = 0;
-  for (Edge e : cdt.finite_edges())
+  for (const Edge& e : cdt.finite_edges())
     if (cdt.is_constrained(e))
       ++count;
   std::cout << "The number of resulting constrained edges is  ";
