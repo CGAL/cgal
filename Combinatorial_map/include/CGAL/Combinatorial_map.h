@@ -5295,32 +5295,32 @@ namespace CGAL {
     Combinatorial_map(const Self & amap) : Base(amap)
     {}
 
-    template <unsigned int d2, typename Items2, typename Alloc2,
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
               typename Storage2>
-    Combinatorial_map(const Combinatorial_map<d2, Items2, Alloc2, Storage2>&
+    Combinatorial_map(const Combinatorial_map_base<d2, Refs2, Items2, Alloc2, Storage2>&
                       amap) : Base(amap)
     {}
 
-    template <unsigned int d2, typename Items2, typename Alloc2,
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
               typename Storage2, typename Converters>
-    Combinatorial_map(const Combinatorial_map<d2, Items2, Alloc2, Storage2>&
+    Combinatorial_map(const Combinatorial_map_base<d2, Refs2, Items2, Alloc2, Storage2>&
                       amap, const Converters& converters) :
       Base(amap, converters)
     {}
 
-    template <unsigned int d2, typename Items2, typename Alloc2,
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
               typename Storage2, typename Converters,
               typename DartInfoConverter>
-    Combinatorial_map(const Combinatorial_map<d2, Items2, Alloc2, Storage2>&
+    Combinatorial_map(const Combinatorial_map_base<d2, Refs2, Items2, Alloc2, Storage2>&
                       amap, const Converters& converters,
                       const DartInfoConverter& dartinfoconverter) :
       Base(amap, converters, dartinfoconverter)
     {}
 
-    template <unsigned int d2, typename Items2, typename Alloc2,
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
               typename Storage2, typename Converters,
               typename DartInfoConverter, typename PointConverter >
-    Combinatorial_map(const Combinatorial_map<d2, Items2, Alloc2, Storage2>&
+    Combinatorial_map(const Combinatorial_map_base<d2, Refs2, Items2, Alloc2, Storage2>&
                       amap, const Converters& converters,
                       const DartInfoConverter& dartinfoconverter,
                       const PointConverter& pointconverter) :

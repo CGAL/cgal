@@ -4026,14 +4026,14 @@ namespace CGAL {
       if (prec!=null_handle)
       {
         // prec and *it must belong to the same vertex of the same volume
-        if ( !CGAL::belong_to_same_cell<0, 2>(prec, *it) )
+        if ( !belong_to_same_cell<0, 2>(prec, *it) )
           return false;
       }
       prec = this->template alpha<0>(*it);
     }
 
     // The path must be closed.
-    if (!CGAL::belong_to_same_cell<0, 2>(prec, *afirst))
+    if (!belong_to_same_cell<0, 2>(prec, *afirst))
       return false;
 
     return true;
@@ -4274,33 +4274,33 @@ namespace CGAL {
     Generalized_map(const Self & amap) : Base(amap)
     {}
 
-    template <unsigned int d2, typename Items2, typename Alloc2,
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
               typename Storage2>
-    Generalized_map(const Generalized_map<d2, Items2, Alloc2, Storage2>& amap) :
+    Generalized_map(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap) :
       Base(amap)
     {}
 
-    template <unsigned int d2, typename Items2, typename Alloc2,
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
               typename Storage2, typename Converters>
-    Generalized_map(const Generalized_map<d2, Items2, Alloc2, Storage2>& amap,
+    Generalized_map(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap,
                     const Converters& converters) :
       Base(amap, converters)
     {}
 
-    template <unsigned int d2, typename Items2, typename Alloc2,
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
               typename Storage2,
               typename Converters, typename DartInfoConverter>
-    Generalized_map(const Generalized_map<d2, Items2, Alloc2, Storage2>& amap,
+    Generalized_map(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap,
                     const Converters& converters,
                     const DartInfoConverter& dartinfoconverter) :
       Base(amap, converters, dartinfoconverter)
     {}
 
-    template <unsigned int d2, typename Items2, typename Alloc2,
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
               typename Storage2,
               typename Converters, typename DartInfoConverter,
               typename PointConverter >
-    Generalized_map(const Generalized_map<d2, Items2, Alloc2, Storage2>& amap,
+    Generalized_map(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap,
                     const Converters& converters,
                     const DartInfoConverter& dartinfoconverter,
                     const PointConverter& pointconverter) :
