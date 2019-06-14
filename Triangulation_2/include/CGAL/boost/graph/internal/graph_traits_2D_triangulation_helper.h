@@ -185,19 +185,23 @@ public:
   bool operator==(const Self& other) const { return it == other.it; }
   bool operator!=(const Self& other) const { return !(*this == other); }
 
-  value_type operator*() const
+  reference operator*() const
   {
-    if(on_adjacent_face) {
+    if(on_adjacent_face)
+    {
       Face_handle neigh_f = it->first->neighbor(it->second);
-      return value_type(neigh_f, neigh_f->index(it->first));
-     } else {
-      return value_type(*it);
+      hd = Descriptor(neigh_f, neigh_f->index(it->first));
+      return hd;
+    } else {
+      hd = Descriptor(it->first, it->second);
+      return hd;
     }
   }
 
 private:
   Edge_iterator it;
   bool on_adjacent_face;
+  mutable Descriptor hd;
 };
 
 template <typename Tr, typename EdgeIterator>
@@ -225,10 +229,16 @@ public:
   Self& operator--() { --it; return *this; }
   Self operator++(int) { Self tmp = *this; operator++(); return tmp; }
   Self operator--(int) { Self tmp = *this; operator--(); return tmp; }
-  value_type operator*() const { return value_type(*it); }
+
+  reference operator*() const
+  {
+    ed = Descriptor(*it);
+    return ed;
+  }
 
 private:
   Edge_iterator it;
+  mutable Descriptor ed;
 };
 
 // Must distinguish TDS and triangulations circulators (later are filtered)
