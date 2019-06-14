@@ -256,7 +256,7 @@ namespace CGAL {
         for (unsigned int i=0; i<=min_dim; i++)
         {
           if (!amap.is_free(dartmap_iter->first,i) &&
-              (dartmap_iter->first)<(amap.alpha(dartmap_iter->first,i)))
+              is_free(dartmap_iter->second,i))
           {
             basic_link_alpha(dartmap_iter->second,
                             (*origin_to_copy)[amap.alpha(dartmap_iter->first,i)], i);
