@@ -74,6 +74,6 @@ int main()
       found_f5 = true;
   }
   CGAL_assertion(found_f5);
-  CGAL_USE(found);
+  CGAL_USE(found_f5);
   return 0;
 }
