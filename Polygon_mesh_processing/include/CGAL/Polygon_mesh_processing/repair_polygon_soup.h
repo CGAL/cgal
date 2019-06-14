@@ -437,7 +437,13 @@ std::size_t remove_isolated_points_in_polygon_soup(PointRange& points,
       std::cout << "  swapping it to pos: " << swap_position << std::endl;
 #endif
       std::swap(points[swap_position], points[i]);
-      visited.swap(visited[swap_position], visited[i]);
+
+      // Swap manually because MSVC is unhappy with std::swap(v[i], v[j]) and a vector<bool>,
+      // and Apple Clang is unhappy with v.swap(v[i], v[j])...
+      const bool tmp = visited[swap_position];
+      visited[swap_position] = visited[i];
+      visited[i] = tmp;
+
       id_remapping[swap_position] = i;
       --first_unused_pos;
     }
