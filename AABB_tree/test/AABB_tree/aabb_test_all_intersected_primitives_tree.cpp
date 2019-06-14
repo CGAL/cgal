@@ -64,12 +64,16 @@ int main()
   CGAL_assertion(s_primitives.size() == 6);
   CGAL_assertion(tet_tree.do_intersect(cube_tree));
   CGAL_assertion(cube_tree.do_intersect(tet_tree));
-  boost::optional<T_Tree::Primitive::Id> optional_primitive;
-  optional_primitive = cube_tree.any_intersected_primitive(tet_tree);
-  T_Tree::Primitive::Id pid = boost::get<T_Tree::Primitive::Id>(optional_primitive);
-  CGAL_assertion((int)pid.first == 5);
 
-
-
+  std::vector<T_Tree::Primitive::Id> all_primitives;
+  cube_tree.all_intersected_primitives(tet_tree, std::back_inserter(all_primitives));
+  bool found_f5 = false;
+  for(auto prim : all_primitives)
+  {
+    if((int)prim.first == 5)
+      found_f5 = true;
+  }
+  CGAL_assertion(found_f5);
+  CGAL_USE(found);
   return 0;
 }
