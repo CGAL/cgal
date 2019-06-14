@@ -30,6 +30,7 @@
 #include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/Polygonal_schema.h>
 
 namespace CGAL
 {
@@ -791,9 +792,27 @@ protected:
     storage_type m_map;
   };
 
+  template <typename Items, typename Alloc, typename Storage, class Map>
+  struct Get_map<CGAL::Polygonal_schema_with_combinatorial_map<Items, Alloc, Storage>, Map>
+  {
+    typedef Map type;
+    typedef const Map& storage_type;
+    Get_map(const Map& heg): m_map(heg) {}
+    storage_type m_map;
+  };
+
   template <unsigned int d, typename Items, typename Alloc,
             typename Storage, class Map>
   struct Get_map<CGAL::Generalized_map<d, Items, Alloc, Storage>, Map>
+  {
+    typedef Map type;
+    typedef const Map& storage_type;
+    Get_map(const Map& heg): m_map(heg) {}
+    storage_type m_map;
+  };
+
+  template <typename Items, typename Alloc, typename Storage, class Map>
+  struct Get_map<CGAL::Polygonal_schema_with_generalized_map<Items, Alloc, Storage>, Map>
   {
     typedef Map type;
     typedef const Map& storage_type;
