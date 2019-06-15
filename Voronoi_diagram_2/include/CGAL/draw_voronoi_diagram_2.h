@@ -114,12 +114,36 @@ protected:
       } else if(he->is_ray()){
           Delaunay_vertex_const_handle v1 = he->up();
           Delaunay_vertex_const_handle v2 = he->down();
-          Kernel::Vector_2 direction(v1->point().y()-v2->point().y(),
-                                     v2->point().x()-v1->point().x());
+
+          std::cout << "Up vertex of ray: " << std::endl;
+          std::cout << v1->point() << std::endl;
+          std::cout << "Down vertex of ray: " << std::endl;
+          std::cout << v2->point() << std::endl;
+
+          Kernel::Direction_2 direction;
           Kernel::Point_2 end_point;
+
           if(he->has_source()){
+              std::cout << "Left vertex of ray: " << std::endl;
+              std::cout << he->left()->point() << std::endl;
+              std::cout << "Source vertex of ray: " << std::endl;
+              std::cout << he->source()->point() << std::endl;
+              direction = Kernel::Direction_2(v1->point().y()-v2->point().y(),
+                                              v2->point().x()-v1->point().x());
+              std::cout << "Direction of ray: " << std::endl;
+              std::cout << direction.dx() << ' ' << direction.dy() << std::endl
+                        << std::endl;
               end_point = he->source()->point();
           } else {
+              std::cout << "Right vertex of ray: " << std::endl;
+              std::cout << he->right()->point() << std::endl;
+              std::cout << "Target vertex of ray: " << std::endl;
+              std::cout << he->target()->point() << std::endl;
+              direction = Kernel::Direction_2(v1->point().y()-v2->point().y(),
+                                              v2->point().x()-v1->point().x());
+              std::cout << "Direction of ray: " << std::endl;
+              std::cout << direction.dx() << ' ' << direction.dy() << std::endl
+                        << std::endl;
               end_point = he->target()->point();
           }
           add_line(end_point, direction);
