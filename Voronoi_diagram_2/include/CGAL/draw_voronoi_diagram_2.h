@@ -120,7 +120,7 @@ protected:
           std::cout << "Down vertex of ray: " << std::endl;
           std::cout << v2->point() << std::endl;
 
-          Kernel::Direction_2 direction;
+          Kernel::Vector_2 direction;
           Kernel::Point_2 end_point;
 
           if(he->has_source()){
@@ -128,10 +128,10 @@ protected:
               std::cout << he->left()->point() << std::endl;
               std::cout << "Source vertex of ray: " << std::endl;
               std::cout << he->source()->point() << std::endl;
-              direction = Kernel::Direction_2(v1->point().y()-v2->point().y(),
+              direction = Kernel::Vector_2(v1->point().y()-v2->point().y(),
                                               v2->point().x()-v1->point().x());
               std::cout << "Direction of ray: " << std::endl;
-              std::cout << direction.dx() << ' ' << direction.dy() << std::endl
+              std::cout << direction.x() << ' ' << direction.y() << std::endl
                         << std::endl;
               end_point = he->source()->point();
           } else {
@@ -139,10 +139,10 @@ protected:
               std::cout << he->right()->point() << std::endl;
               std::cout << "Target vertex of ray: " << std::endl;
               std::cout << he->target()->point() << std::endl;
-              direction = Kernel::Direction_2(v1->point().y()-v2->point().y(),
+              direction = Kernel::Vector_2(v1->point().y()-v2->point().y(),
                                               v2->point().x()-v1->point().x());
               std::cout << "Direction of ray: " << std::endl;
-              std::cout << direction.dx() << ' ' << direction.dy() << std::endl
+              std::cout << direction.x() << ' ' << direction.y() << std::endl
                         << std::endl;
               end_point = he->target()->point();
           }

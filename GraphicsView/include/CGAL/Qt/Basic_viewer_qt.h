@@ -167,12 +167,14 @@ public:
                   const char* title="",
                   bool draw_vertices=false,
                   bool draw_edges=true,
+                  bool draw_lines=true,
                   bool draw_faces=true,
                   bool use_mono_color=false,
                   bool inverse_normal=false) :
     CGAL::QGLViewer(parent),
     m_draw_vertices(draw_vertices),
     m_draw_edges(draw_edges),
+    m_draw_lines(draw_lines),
     m_draw_faces(draw_faces),
     m_flatShading(true),
     m_use_mono_color(use_mono_color),
@@ -298,16 +300,26 @@ public:
                                                                bb.ymax(),
                                                                bb.zmax()));
       this->showEntireScene();*/
-      Local_kernel::Point_2 p1(-200., -200.);
-      Local_kernel::Point_2 p2(200., 200.);
-      Local_kernel::Iso_rectangle_2 clipping_rect(p1, p2);
-      Local_kernel::Ray_2 ray(p, v);
-      Object o = CGAL::intersection(ray, clipping_rect);
-      typedef Local_kernel::Segment_2 Segment_2;
-      typedef Local_kernel::Point_2 Point_2;
-      if(const Segment_2 *s = CGAL::object_cast<Segment_2>(&o)){
-          m_buffer_for_mono_lines.add_line(s->source(), s->target());
-      }
+//      Local_kernel::Point_2 p1(-200., -200.);
+//      Local_kernel::Point_2 p2(200., 200.);
+//      Local_kernel::Iso_rectangle_2 clipping_rect(p1, p2);
+//      Local_kernel::Ray_2 ray(p, v);
+//      Object o = CGAL::intersection(ray, clipping_rect);
+//      typedef Local_kernel::Segment_2 Segment_2;
+//      typedef Local_kernel::Point_2 Point_2;
+//      if(const Segment_2 *s = CGAL::object_cast<Segment_2>(&o)){
+//          m_buffer_for_mono_lines.add_line(s->source(), s->target());
+//      }
+    Local_kernel::Point_2 moving_point(p);
+    std::cout << "Ray starting from " << p << " with direction " << v << std::endl;
+
+    for(int i =0; i< 5; i++)
+    {
+      m_buffer_for_mono_lines.add_point(moving_point);
+      moving_point += v;
+      std::cout << moving_point << std::endl;
+    }
+    std::cout << std::endl;
   }
 
   bool is_a_face_started() const
