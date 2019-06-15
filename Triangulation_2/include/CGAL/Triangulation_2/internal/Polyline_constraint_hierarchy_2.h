@@ -170,9 +170,9 @@ public:
       : enclosing(hc.enclosing), pos(hc.pos)
     {}
 
-    Vertex_it    vertices_begin() { return enclosing->skip_begin();}
-    Vertex_it    current() {return pos;}
-    Vertex_it    vertices_end() {return enclosing->skip_end();}
+    Vertex_it    vertices_begin()const { return enclosing->skip_begin();}
+    Vertex_it    current()const {return pos;}
+    Vertex_it    vertices_end()const {return enclosing->skip_end();}
     Constraint_id  id() { return enclosing; }
     std::size_t    number_of_vertices() const {return enclosing->skip_size(); }
   };                                           
