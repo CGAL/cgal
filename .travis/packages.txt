@@ -9,15 +9,15 @@ Alpha_shapes_3
 Apollonius_graph_2 
 Arithmetic_kernel 
 Arrangement_on_surface_2 
-Barycentric_coordinates_2 
 BGL 
+Barycentric_coordinates_2 
 Boolean_set_operations_2 
 Bounding_volumes 
 Box_intersection_d 
-Cartesian_kernel 
 CGAL_Core 
 CGAL_ImageIO 
 CGAL_ipelets 
+Cartesian_kernel 
 Circular_kernel_2 
 Circular_kernel_3 
 Circulator 
@@ -97,6 +97,7 @@ Property_map
 QP_solver 
 Random_numbers 
 Ridges_3 
+STL_Extension 
 Scale_space_reconstruction_3 
 Scripts 
 SearchStructures 
@@ -108,7 +109,6 @@ Snap_rounding_2
 Solver_interface 
 Spatial_searching 
 Spatial_sorting 
-STL_Extension 
 Straight_skeleton_2 
 Stream_lines_2 
 Stream_support 
@@ -116,12 +116,12 @@ Subdivision_method_3
 Surface_mesh 
 Surface_mesh_approximation 
 Surface_mesh_deformation 
-Surface_mesher 
 Surface_mesh_parameterization 
 Surface_mesh_segmentation 
 Surface_mesh_shortest_path 
 Surface_mesh_simplification 
 Surface_mesh_skeletonization 
+Surface_mesher 
 Surface_sweep_2 
 TDS_2 
 TDS_3 
