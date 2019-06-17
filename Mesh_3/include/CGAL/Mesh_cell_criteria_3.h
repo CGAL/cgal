@@ -27,6 +27,14 @@
 
 
 #include <CGAL/Mesh_3/mesh_standard_cell_criteria.h>
+#include <CGAL/Mesh_3/Is_mesh_domain_field_3.h>
+
+#include <boost/config.hpp>
+#if BOOST_VERSION >= 106600
+#  include <boost/callable_traits/is_invocable.hpp>
+#endif
+
+#include <type_traits>
 
 namespace CGAL {
   
@@ -65,13 +73,16 @@ public:
       init_radius_edge(radius_edge_bound);
   }
   
-  // Nb: SFINAE (dummy) to avoid wrong matches with built-in numerical types
+  // Nb: SFINAE to avoid wrong matches with built-in numerical types
   // as int.
   template <typename Sizing_field>
   Mesh_cell_criteria_3(const FT& radius_edge_bound,
                        const Sizing_field& radius_bound,
-                       typename Sizing_field::FT /*dummy*/ = 0)
-  { 
+                       typename std::enable_if<
+                         Mesh_3::Is_mesh_domain_field_3<Tr,Sizing_field>::value
+                       >::type* = 0
+                       )
+  {
     init_radius(radius_bound);
 
     if ( FT(0) != radius_edge_bound )

@@ -33,7 +33,6 @@
  */
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/foreach.hpp>
 #include <CGAL/boost/graph/iterator.h>
 #include <cmath>
 #include <queue>
@@ -71,9 +70,9 @@ bool is_vertex_degenerate(TriangleMesh& hg,
   vertices_in_disk.clear();
   search_vertices_in_disk(hg, hg_point_pmap, root, vertices_in_disk, min_edge_length, traits);
 
-  BOOST_FOREACH(vertex_descriptor vd, vertices_in_disk)
+  for(vertex_descriptor vd : vertices_in_disk)
   {
-    BOOST_FOREACH(edge_descriptor ed, out_edges(vd, hg))
+    for(edge_descriptor ed : out_edges(vd, hg))
     {
       halfedge_descriptor hd = halfedge(ed, hg);
       halfedge_descriptor hd_op = opposite(hd, hg);
@@ -85,7 +84,7 @@ bool is_vertex_degenerate(TriangleMesh& hg,
       }
 
       bool in = true;
-      BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(hd, hg))
+      for(halfedge_descriptor h : halfedges_around_face(hd, hg))
       {
         vertex_descriptor v = target(h,hg);
         if (vertices_in_disk.find(v) == vertices_in_disk.end())
@@ -142,7 +141,7 @@ void search_vertices_in_disk(TriangleMesh& hg,
     vertex_descriptor v = Q.front();
     Q.pop();
 
-    BOOST_FOREACH(edge_descriptor ed, out_edges(v, hg))
+    for(edge_descriptor ed : out_edges(v, hg))
     {
       vertex_descriptor new_v = target(ed, hg);
       if (!vertices_in_disk.count(new_v))

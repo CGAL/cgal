@@ -200,8 +200,8 @@ public:
   {
     
     PTR = new Data
-      (Traits::empty_he_handle(), Td_map_item(0), NULL);
-    //m_dag_node = NULL;
+      (Traits::empty_he_handle(), Td_map_item(0), nullptr);
+    //m_dag_node = nullptr;
   }
    /*! Constructor given Vertex & Halfedge handles. */
   Td_active_edge (Halfedge_const_handle he ,

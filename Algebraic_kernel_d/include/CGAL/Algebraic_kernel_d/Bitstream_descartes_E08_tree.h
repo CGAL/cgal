@@ -476,7 +476,7 @@ private:
         log_C_eps_        = n.log_C_eps_;
     }
 
-    // const Self& operator= (const Self&); // assignment is forbidden
+    Self& operator= (const Self&) = delete;
 }; // struct Bitstream_descartes_E08_node
 
 
@@ -575,9 +575,11 @@ public:
     Bitstream_descartes_E08_tree() : Base(Rep()) { }
 
     //! copy constructor
+#ifdef DOXYGEN_RUNNING  
     Bitstream_descartes_E08_tree(const Self& p)
         : Base(static_cast<const Base&>(p))
     { }
+#endif  
 
     /*! \brief construct from initial interval and coefficients
      *

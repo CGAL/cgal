@@ -5,11 +5,9 @@
 #include <string>
 
 // define the kernel
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-typedef CGAL::Simple_cartesian<double>    CK;
-typedef CGAL::Filtered_kernel<CK>         Kernel;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
 // typedefs for the traits and the algorithm
 #include <CGAL/Segment_Delaunay_graph_traits_2.h>

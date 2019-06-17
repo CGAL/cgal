@@ -540,7 +540,7 @@ public:
             while ( new_rep->next != 0)
                 new_rep = static_cast<Rep*>(new_rep->next);
             // path compression: assign new rep to all reps seen on the path
-            // update reference count properly: all reps on the path loose
+            // update reference count properly: all reps on the path lose
             // one reference, and the new_rep gains all of them unless
             // the rep on the path get actually deleted.
             Rep* rep = h.ptr_;

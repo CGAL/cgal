@@ -87,7 +87,6 @@
 #include <CGAL/Kernel/Conic_misc.h> // used to solve conic equations
 #endif
 
-#include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/unordered_set.hpp>
@@ -302,7 +301,7 @@ private:
                        VertexUVMap uvmap,
                        const VertexIndexMap vimap)
   {
-    BOOST_FOREACH(vertex_descriptor vd, vertices) {
+    for(vertex_descriptor vd : vertices) {
       int index = get(vimap, vd);
       NT u = Xu(index);
       NT v = Xv(index);
@@ -428,7 +427,7 @@ private:
                                       const Faces_vector& faces,
                                       Cot_map ctmap) const
   {
-    BOOST_FOREACH(face_descriptor fd, faces) {
+    for(face_descriptor fd : faces) {
       halfedge_descriptor hd = halfedge(fd, mesh), hdb = hd;
 
       vertex_descriptor vi = target(hd, mesh);
@@ -531,7 +530,7 @@ private:
 
     // compute A
     unsigned int count = 0;
-    BOOST_FOREACH(vertex_descriptor vd, vertices) {
+    for(vertex_descriptor vd : vertices) {
       if(!get(vpmap, vd)) { // not yet parameterized
         // Compute the line i of the matrix A
         status = fill_linear_system_matrix(A, mesh, vd, ctmap, vimap);
@@ -740,7 +739,7 @@ private:
   {
     Error_code status = OK;
 
-    BOOST_FOREACH(face_descriptor fd, faces) {
+    for(face_descriptor fd : faces) {
       // Compute the coefficients C1, C2, C3
       NT C1 = 0., C2 = 0., C3 = 0.;
 
@@ -889,7 +888,7 @@ private:
   {
     int global_index = 0;
 
-    BOOST_FOREACH(face_descriptor fd, faces) {
+    for(face_descriptor fd : faces) {
       halfedge_descriptor hd = halfedge(fd, mesh), hdb = hd;
 
       vertex_descriptor vi = target(hd, mesh); // hd is k -- > i
@@ -1050,7 +1049,7 @@ private:
     Error_code status = OK;
 
     unsigned int count = 0;
-    BOOST_FOREACH(vertex_descriptor vd, vertices) {
+    for(vertex_descriptor vd : vertices) {
       if(!get(vpmap, vd)) { // not yet parameterized
         // Compute the lines i of the vectors Bu and Bv
         status = fill_linear_system_rhs(mesh, vd, ctmap, lp, lpmap,
@@ -1113,7 +1112,7 @@ private:
     CGAL_postcondition_code
     (
       // make sure that the constrained vertices have not been moved
-      BOOST_FOREACH(vertex_descriptor vd, vertices) {
+      for(vertex_descriptor vd : vertices) {
         if(get(vpmap, vd)) {
           int index = get(vimap, vd);
           CGAL_postcondition(std::abs(Xu[index] - Bu[index] ) < 1e-10);
@@ -1199,7 +1198,7 @@ private:
   {
     NT E = 0.;
 
-    BOOST_FOREACH(face_descriptor fd, faces) {
+    for(face_descriptor fd : faces) {
       NT Ef = compute_current_face_energy(mesh, fd, ctmap, lp, lpmap,
                                           ltmap, uvmap);
       E += Ef;
@@ -1228,7 +1227,9 @@ private:
     if(status != OK)
       return status;
 
+#ifdef CGAL_SMP_ARAP_DEBUG
     output_uvmap("ARAP_final_post_processing.off", mesh, vertices, faces, uvmap, vimap);
+#endif
 
     return OK;
   }
@@ -1293,7 +1294,11 @@ public:
 
     // Compute the initial parameterization of the mesh
     status = compute_initial_uv_map(mesh, bhd, uvmap, vimap);
+
+#ifdef CGAL_SMP_ARAP_DEBUG
     output_uvmap("ARAP_initial_param.off", mesh, vertices, faces, uvmap, vimap);
+#endif
+
     if(status != OK)
       return status;
 
@@ -1341,7 +1346,9 @@ public:
                                                uvmap, vimap, vpmap, A);
 
       // Output the current situation
-//      output_uvmap("ARAP_iteration_", ite, mesh, vertices, faces, uvmap, vimap);
+#ifdef CGAL_SMP_ARAP_DEBUG
+      output_uvmap("ARAP_iteration_", ite, mesh, vertices, faces, uvmap vimap);
+#endif
       energy_last = energy_this;
       energy_this = compute_current_energy(mesh, faces, ctmap, lp, lpmap,
                                                         ltmap, uvmap);
@@ -1368,7 +1375,9 @@ public:
       }
     }
 
+#ifdef CGAL_SMP_ARAP_DEBUG
     output_uvmap("ARAP_final_pre_processing.off", mesh, vertices, faces, uvmap, vimap);
+#endif
 
     if(!is_one_to_one_mapping(mesh, faces, uvmap)) {
      // Use post processing to handle flipped elements

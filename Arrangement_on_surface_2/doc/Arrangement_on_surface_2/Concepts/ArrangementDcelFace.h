@@ -72,7 +72,7 @@ bool is_unbounded() const;
 
 /*!
 returns an incident halfedge along the outer boundary of the face. 
-If `f` has no outer boundary, the function returns `NULL`. 
+If `f` has no outer boundary, the function returns `nullptr`. 
 */ 
 Halfedge* halfedge(); 
 

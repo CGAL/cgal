@@ -45,8 +45,6 @@
 
 #include <CGAL/Partition_2/Indirect_not_less_yx_2.h>
 #include <CGAL/Partition_2/Indirect_edge_compare.h>
-#include <CGAL/Segment_2_Ray_2_intersection.h>
-#include <CGAL/Object.h>
 #include <CGAL/Partition_2/Partitioned_polygon_2.h>
 #include <CGAL/ch_selected_extreme_points_2.h> 
 #include <CGAL/IO/Tee_for_output_iterator.h>
@@ -436,7 +434,7 @@ OutputIterator partition_y_monotone_2(InputIterator first,
    Tee_for_output_iterator<OutputIterator, Polygon_2>      res(result);
 #endif // no postcondition
 
-   P_Polygon_2 polygon(first, beyond);
+   P_Polygon_2 polygon(first, beyond, traits);
    CGAL_partition_precondition(
     orientation_2(polygon.begin(), polygon.end(), traits) == COUNTERCLOCKWISE);
 
@@ -457,9 +455,10 @@ OutputIterator partition_y_monotone_2(InputIterator first,
    std::cout << std::endl;
 #endif
 
-   typedef std::map<Circulator, Circulator, 
-                    Indirect_edge_compare<Circulator, Traits> > Tree;
-   Tree tree;
+   typedef Indirect_edge_compare<Circulator, Traits> Cmp;
+   typedef std::map<Circulator, Circulator, Cmp> Tree;
+   Cmp cmp(traits);
+   Tree tree(cmp);
 
    typename std::vector<Circulator>::iterator it = circulators.begin();
    for (; it != circulators.end(); it++) {

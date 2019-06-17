@@ -32,19 +32,19 @@ int main(int argc, char* argv[])
   }
 
   Mesh out_union, out_intersection;
-  CGAL::cpp11::array<boost::optional<Mesh*>, 4> output;
+  std::array<boost::optional<Mesh*>, 4> output;
   output[PMP::Corefinement::UNION] = &out_union;
   output[PMP::Corefinement::INTERSECTION] = &out_intersection;
 
   // for the example, we explicit the named parameters, this is identical to
   // PMP::corefine_and_compute_boolean_operations(mesh1, mesh2, output)
-  CGAL::cpp11::array<bool, 4> res =
+  std::array<bool, 4> res =
     PMP::corefine_and_compute_boolean_operations(
       mesh1, mesh2,
       output,
       params::all_default(), // mesh1 named parameters
       params::all_default(), // mesh2 named parameters
-      CGAL::cpp11::make_tuple(
+      std::make_tuple(
         params::vertex_point_map(get(boost::vertex_point, out_union)), // named parameters for out_union
         params::vertex_point_map(get(boost::vertex_point, out_intersection)), // named parameters for out_intersection
         params::all_default(), // named parameters for mesh1-mesh2 not used

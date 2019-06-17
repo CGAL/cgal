@@ -2,16 +2,7 @@
 
 \page packages Package Overview
 
-\htmlonly
-<style type="text/css">
-h1 {
-	font-size: 150%;
-    background-color: #EEEDF2;
-}
-</style>
-\endhtmlonly
-
-\section PartAlgebraicFoundations Arithmetic and Algebra
+\cgalPackageSection{PartAlgebraicFoundations,Arithmetic and Algebra}
 
 \package_listing{Algebraic_foundations}
 \package_listing{Number_types}
@@ -19,25 +10,25 @@ h1 {
 \package_listing{Polynomial}
 \package_listing{Algebraic_kernel_d}
 
-\section PartCombinatorialAlgorithms Combinatorial Algorithms
+\cgalPackageSection{PartCombinatorialAlgorithms,Combinatorial Algorithms}
 
 \package_listing{Matrix_search}
 \package_listing{QP_solver}
 
-\section PartKernels Geometry Kernels
+\cgalPackageSection{PartKernels,Geometry Kernels}
 
 \package_listing{Kernel_23}
 \package_listing{Kernel_d}
 \package_listing{Circular_kernel_2}
 \package_listing{Circular_kernel_3}
 
-\section PartConvexHullAlgorithms Convex Hull Algorithms
+\cgalPackageSection{PartConvexHullAlgorithms,Convex Hull Algorithms}
 
 \package_listing{Convex_hull_2}
 \package_listing{Convex_hull_3}
 \package_listing{Convex_hull_d}
 
-\section PartPolygons Polygons
+\cgalPackageSection{PartPolygons,Polygons}
 
 \package_listing{Polygon}
 \package_listing{Boolean_set_operations_2}
@@ -51,7 +42,7 @@ h1 {
 \package_listing{Set_movable_separability_2}
 
 
-\section PartPolyhedra Cell Complexes and Polyhedra
+\cgalPackageSection{PartPolyhedra,Cell Complexes and Polyhedra}
 
 \package_listing{Polyhedron}
 \package_listing{HalfedgeDS}
@@ -64,7 +55,7 @@ h1 {
 \package_listing{Minkowski_sum_3}
 
 
-\section PartArrangements Arrangements
+\cgalPackageSection{PartArrangements,Arrangements}
 
 \package_listing{Arrangement_on_surface_2}
 \package_listing{Surface_sweep_2}
@@ -72,11 +63,13 @@ h1 {
 \package_listing{Envelope_2}
 \package_listing{Envelope_3}
 
-\section PartTriangulationsAndDelaunayTriangulations Triangulations and Delaunay Triangulations
+\cgalPackageSection{PartTriangulationsAndDelaunayTriangulations,Triangulations and Delaunay Triangulations}
 
 \package_listing{Triangulation_2}
 \package_listing{TDS_2}
 \package_listing{Periodic_2_triangulation_2}
+\package_listing{Hyperbolic_triangulation_2}
+\package_listing{Periodic_4_hyperbolic_triangulation_2}
 \package_listing{Triangulation_3}
 \package_listing{TDS_3}
 \package_listing{Periodic_3_triangulation_3}
@@ -84,14 +77,14 @@ h1 {
 \package_listing{Alpha_shapes_2}
 \package_listing{Alpha_shapes_3}
 
-\section PartVoronoiDiagrams Voronoi Diagrams
+\cgalPackageSection{PartVoronoiDiagrams,Voronoi Diagrams}
 
 \package_listing{Segment_Delaunay_graph_2}
 \package_listing{Segment_Delaunay_graph_Linf_2}
 \package_listing{Apollonius_graph_2}
 \package_listing{Voronoi_diagram_2}
 
-\section PartMeshing Mesh Generation
+\cgalPackageSection{PartMeshing,Mesh Generation}
 
 \package_listing{Mesh_2}
 \package_listing{Surface_mesher}
@@ -99,14 +92,14 @@ h1 {
 \package_listing{Mesh_3}
 \package_listing{Periodic_3_mesh_3}
 
-\section PartReconstruction Shape Reconstruction
+\cgalPackageSection{PartReconstruction,Shape Reconstruction}
 
 \package_listing{Poisson_surface_reconstruction_3}
 \package_listing{Scale_space_reconstruction_3}
 \package_listing{Advancing_front_surface_reconstruction}
 \package_listing{Optimal_transportation_reconstruction_2}
 
-\section PartGeometryProcessing Geometry Processing
+\cgalPackageSection{PartGeometryProcessing,Geometry Processing}
 
 \package_listing{Polygon_mesh_processing}
 \package_listing{Subdivision_method_3}
@@ -116,16 +109,17 @@ h1 {
 \package_listing{Surface_mesh_parameterization}
 \package_listing{Surface_mesh_shortest_path}
 \package_listing{Surface_mesh_skeletonization}
+\package_listing{Surface_mesh_approximation}
 \package_listing{Ridges_3}
 \package_listing{Jet_fitting_3}
 \package_listing{Point_set_3}
 \package_listing{Point_set_processing_3}
-\package_listing{Point_set_shape_detection_3}
+\package_listing{Shape_detection}
 \package_listing{Stream_lines_2}
 \package_listing{Classification}
+\package_listing{Heat_method_3}
 
-
-\section PartSearchStructures Spatial Searching and Sorting
+\cgalPackageSection{PartSearchStructures,Spatial Searching and Sorting}
 
 \package_listing{Point_set_2}
 \package_listing{Interval_skip_list}
@@ -135,19 +129,19 @@ h1 {
 \package_listing{AABB_tree}
 \package_listing{Spatial_sorting}
 
-\section PartGeometricOptimization Geometric Optimization
+\cgalPackageSection{PartGeometricOptimization,Geometric Optimization}
 
 \package_listing{Bounding_volumes}
 \package_listing{Inscribed_areas}
 \package_listing{Polytope_distance_d}
 \package_listing{Principal_component_analysis}
 
-\section PartInterpolation Interpolation
+\cgalPackageSection{PartInterpolation,Interpolation}
 
 \package_listing{Interpolation}
 \package_listing{Barycentric_coordinates_2}
 
-\section PartSupportLibrary Support Library
+\cgalPackageSection{PartSupportLibrary,Support Library}
 
 \package_listing{STL_Extension}
 \package_listing{BGL}
@@ -159,7 +153,7 @@ h1 {
 \package_listing{Miscellany}
 \package_listing{Stream_support}
 
-\section PartVisualization Visualization
+\cgalPackageSection{PartVisualization,Visualization}
 
 \package_listing{Geomview}
 \package_listing{GraphicsView}

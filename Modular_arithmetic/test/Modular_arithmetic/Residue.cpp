@@ -4,10 +4,11 @@
   test for number type modul 
 */
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <cassert>
 #include <CGAL/Residue.h>
 #include <CGAL/FPU.h>
+#include <CGAL/Modular_traits.h>
 
 #include <CGAL/Test/_test_algebraic_structure.h>
 #include <CGAL/number_utils.h>

@@ -6,9 +6,6 @@ project( Surface_mesh_parameterization_Tests )
 cmake_minimum_required(VERSION 3.1)
 
 
-# Include this package's headers first
-include_directories (BEFORE . include)
-
 # Find CGAL
 find_package(CGAL QUIET)
 

@@ -9,7 +9,7 @@
 \cgalPkgPicture{dist.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Kaspar Fischer, Bernd Gärtner, Thomas Herrmann, Michael Hoffmann, and Sven Schönherr}
-\cgalPkgDesc{This package provides algorithms for computing the distance between the convex hulls of two point sets in d-dimensional space, without explicitely constructing the convex hulls.   It further provides an algorithm to compute the width of a point set, and the furthest point for each vertex of a convex polygon. }
+\cgalPkgDesc{This package provides algorithms for computing the distance between the convex hulls of two point sets in d-dimensional space, without explicitly constructing the convex hulls.   It further provides an algorithm to compute the width of a point set, and the furthest point for each vertex of a convex polygon. }
 \cgalPkgManuals{Chapter_Optimal_Distances,PkgPolytopeDistanceDRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -19,7 +19,7 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-## Assertions ##
+\cgalCRPSection{Assertions}
 The optimization code uses infix `OPTIMISATION` in the assertions,
 e.g. defining the compiler flag
 `CGAL_OPTIMISATION_NO_PRECONDITIONS` switches precondition
@@ -27,18 +27,18 @@ checking off, cf. Section  \ref secchecks.
 
 \cgalClassifedRefPages
 
-## All furthest neighbors ##
+\cgalCRPSection{All Furthest Neighbors}
 
 - `CGAL::all_furthest_neighbors_2`
 - `AllFurthestNeighborsTraits_2`
 
-## Width ##
+\cgalCRPSection{Width}
 
 - `CGAL::Width_3<Traits>`
 - `CGAL::Width_default_traits_3<K>`
 - `WidthTraits_3`
 
-## Polytope Distance ##
+\cgalCRPSection{Polytope Distance}
 
 - `CGAL::Polytope_distance_d<Traits>`
 - `CGAL::Polytope_distance_d_traits_2<K,ET,NT>`

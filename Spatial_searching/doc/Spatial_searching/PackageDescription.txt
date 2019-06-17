@@ -56,32 +56,32 @@ classes that are described in the reference pages.
 
 \cgalClassifedRefPages
 
-## Search Classes ##
+\cgalCRPSection{Search Classes}
 - `CGAL::K_neighbor_search<Traits, GeneralDistance, Splitter, SpatialTree>`
 - `CGAL::Incremental_neighbor_search<Traits, GeneralDistance, Splitter, SpatialTree>`
 - `CGAL::Orthogonal_incremental_neighbor_search<Traits, OrthogonalDistance, Splitter, SpatialTree>`
 - `CGAL::Orthogonal_k_neighbor_search<Traits, OrthogonalDistance, Splitter, SpatialTree>`
 - `CGAL::Kd_tree<Traits, Splitter, UseExtendedNode>`
 
-## %Range Query Item Classes ##
+\cgalCRPSection{%Range Query Item Classes}
 - `CGAL::Fuzzy_iso_box<Traits>`
 - `CGAL::Fuzzy_sphere<Traits>`
 
-## Search Traits Classes ##
+\cgalCRPSection{Search Traits Classes}
 - `CGAL::Search_traits_2<Kernel>`
 - `CGAL::Search_traits_3<Kernel>`
 - `CGAL::Search_traits_d<Kernel>`
 - `CGAL::Search_traits<NT,Point,CartesianIterator,ConstructCartesianIterator,ConstructMinVertex,ConstructMaxVertex>`
 - `CGAL::Search_traits_adapter<Key,PointPropertyMap,BaseTraits>`
 
-## Distance Classes ##
+\cgalCRPSection{Distance Classes}
 - `CGAL::Euclidean_distance<Traits>`
 - `CGAL::Euclidean_distance_sphere_point<Traits>`
 - `CGAL::Manhattan_distance_iso_box_point<Traits>`
 - `CGAL::Weighted_Minkowski_distance<Traits>`
 - `CGAL::Distance_adapter<Key,PointPropertyMap,Base_distance>`
 
-## %Splitter Classes ##
+\cgalCRPSection{%Splitter Classes}
 - `CGAL::Sliding_midpoint<Traits, SpatialSeparator>`
 - `CGAL::Sliding_fair<Traits, SpatialSeparator>`
 - `CGAL::Fair<Traits, SpatialSeparator>`
@@ -90,7 +90,7 @@ classes that are described in the reference pages.
 - `CGAL::Midpoint_of_max_spread<Traits, SpatialSeparator>`
 - `CGAL::Midpoint_of_rectangle<Traits, SpatialSeparator>`
 
-## Advanced Classes ##
+\cgalCRPSection{Advanced Classes}
 - `CGAL::Kd_tree_node<Traits, Splitter, UseExtendedNode>`
 - `CGAL::Kd_tree_leaf_node<Traits, Splitter, UseExtendedNode>`
 - `CGAL::Kd_tree_internal_node<Traits, Splitter, UseExtendedNode>`
@@ -98,7 +98,7 @@ classes that are described in the reference pages.
 - `CGAL::Plane_separator<FT>`
 - `CGAL::Point_container<Traits>`
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `FuzzyQueryItem`
 - `GeneralDistance`
 - `OrthogonalDistance`

@@ -116,7 +116,7 @@ template <typename Hlpr, typename Vis>
 bool Arr_insertion_ss_visitor<Hlpr, Vis>::
 is_split_event(Subcurve* sc, Event* event)
 {
-  if (sc->last_curve().halfedge_handle() == Halfedge_handle(NULL)) return false;
+  if (sc->last_curve().halfedge_handle() == Halfedge_handle(nullptr)) return false;
 
   if (! sc->originating_subcurve1())
     return (sc->left_event() != this->current_event());

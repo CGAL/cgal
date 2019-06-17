@@ -38,19 +38,19 @@
 
 \cgalClassifedRefPages
 
-## Linear Algebra Concepts and Classes ##
+\cgalCRPSection{Linear Algebra Concepts and Classes}
 - `LinearAlgebraTraits_d`
 - `Vector`
 - `Matrix`
 - `CGAL::Linear_algebraCd<FT>`
 - `CGAL::Linear_algebraHd<RT>`
 
-## Kernels ##
+\cgalCRPSection{Kernels}
 - `CGAL::Cartesian_d<FieldNumberType>`
 - `CGAL::Homogeneous_d<RingNumberType>`
 - `CGAL::Epick_d<DimensionTag>`
 
-## %Kernel Objects ##
+\cgalCRPSection{%Kernel Objects}
 - `CGAL::Point_d<Kernel>`
 - `CGAL::Vector_d<Kernel>`
 - `CGAL::Direction_d<Kernel>`
@@ -62,7 +62,7 @@
 - `CGAL::Iso_box_d<Kernel>`
 - `CGAL::Aff_transformation_d<Kernel>`
 
-## Global %Kernel Functions ##
+\cgalCRPSection{Global %Kernel Functions}
 - `CGAL::affinely_independent()`
 - `CGAL::affine_rank()`
 - `CGAL::center_of_sphere()`
@@ -85,7 +85,7 @@
 - `CGAL::side_of_oriented_sphere()`
 - `CGAL::squared_distance`
 
-## %Kernel Concept ##
+\cgalCRPSection{%Kernel Concept}
 - `Kernel_d`
 - `Kernel_d::Affinely_independent_d`
 - `Kernel_d::Affine_rank_d`

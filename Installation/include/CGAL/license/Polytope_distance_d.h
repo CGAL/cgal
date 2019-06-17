@@ -20,15 +20,11 @@
 //
 // Warning: this file is generated, see include/CGAL/licence/README.md
 
-
 #ifndef CGAL_LICENSE_POLYTOPE_DISTANCE_D_H
 #define CGAL_LICENSE_POLYTOPE_DISTANCE_D_H
 
 #include <CGAL/config.h>
 #include <CGAL/license.h>
-
-
-
 
 #ifdef CGAL_POLYTOPE_DISTANCE_D_COMMERCIAL_LICENSE
 
@@ -42,8 +38,8 @@
 
 #    ifdef CGAL_LICENSE_ERROR
 #      error "Your commercial license for CGAL does not cover this release \
-of the Optimal Distances package. \
-You get this error, as you defined CGAL_LICENSE_ERROR."
+              of the Optimal Distances package. \
+              You get this error, as you defined CGAL_LICENSE_ERROR."
 #    endif // CGAL_LICENSE_ERROR
 
 #  endif // CGAL_POLYTOPE_DISTANCE_D_COMMERCIAL_LICENSE < CGAL_RELEASE_DATE
@@ -58,10 +54,10 @@ You get this error, as you defined CGAL_LICENSE_ERROR."
 
 #  ifdef CGAL_LICENSE_ERROR
 #    error "The macro CGAL_POLYTOPE_DISTANCE_D_COMMERCIAL_LICENSE is not defined.\
- You use the CGAL Optimal Distances package under the terms of \
-the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
+            You use the CGAL Optimal Distances package under the terms of \
+            the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
 #  endif // CGAL_LICENSE_ERROR
 
 #endif // no CGAL_POLYTOPE_DISTANCE_D_COMMERCIAL_LICENSE
 
-#endif // CGAL_LICENSE_CHECK_POLYTOPE_DISTANCE_D_H
+#endif // CGAL_LICENSE_POLYTOPE_DISTANCE_D_H

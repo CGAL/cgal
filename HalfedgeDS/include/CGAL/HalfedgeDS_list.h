@@ -46,6 +46,9 @@ public:
     HalfedgeDS_in_place_list_vertex() {}
     HalfedgeDS_in_place_list_vertex( const VertexBase& v)   // down cast
         : VertexBase(v) {}
+  
+    HalfedgeDS_in_place_list_vertex(const HalfedgeDS_in_place_list_vertex&)=default;
+  
     Self& operator=( const Self& v) {
         // This self written assignment avoids that assigning vertices will
         // overwrite the list linking of the target vertex.
@@ -66,6 +69,9 @@ public:
     HalfedgeDS_in_place_list_halfedge() {}                   // down cast
     HalfedgeDS_in_place_list_halfedge( const HalfedgeBase& h)
         : HalfedgeBase(h) {}
+  
+    HalfedgeDS_in_place_list_halfedge(const HalfedgeDS_in_place_list_halfedge&)=default;
+  
     Self& operator=( const Self& h) {
         // This self written assignment avoids that assigning halfedges will
         // overwrite the list linking of the target halfedge.
@@ -84,6 +90,9 @@ public:
     typedef typename FaceBase::Face_const_handle Face_const_handle;
     HalfedgeDS_in_place_list_face() {}                   // down cast
     HalfedgeDS_in_place_list_face( const FaceBase& f) : FaceBase(f) {}
+  
+    HalfedgeDS_in_place_list_face(const HalfedgeDS_in_place_list_face&)=default;
+  
     Self& operator=( const Self& f) {
         // This self written assignment avoids that assigning faces will
         // overwrite the list linking of the target face.
@@ -637,7 +646,7 @@ public:
         // number of border halfedges. An edge with no incident face
         // counts as two border halfedges. Precondition: `normalize_border()'
         // has been called and no halfedge insertion or removal and no
-        // change in border status of the halfedges have occured since
+        // change in border status of the halfedges have occurred since
         // then.
 
     size_type size_of_border_edges() const { return nb_border_edges;}
@@ -646,7 +655,7 @@ public:
         // face on one side and to a hole on the other side.
         // Precondition: `normalize_border()' has been called and no
         // halfedge insertion or removal and no change in border status of
-        // the halfedges have occured since then.
+        // the halfedges have occurred since then.
 
     Halfedge_iterator border_halfedges_begin() {
         // halfedge iterator starting with the border edges. The range [
@@ -655,7 +664,7 @@ public:
         // halfedges_end()') denotes all border edges. Precondition:
         // `normalize_border()' has been called and no halfedge insertion
         // or removal and no change in border status of the halfedges have
-        // occured since then.
+        // occurred since then.
         return border_halfedges;
     }
 

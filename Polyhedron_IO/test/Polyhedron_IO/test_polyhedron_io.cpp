@@ -25,7 +25,7 @@
 // ============================================================================
 
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 
 // This is the test file for the new design. Skip new design test for 
@@ -64,10 +64,12 @@ const char* tetra =    "OFF\n"
                        "3  3 2 0\n"
                        "3  2 3 1\n";
 
+const char* empty=    "OFF\n"
+                       "0 0 0\n";
 
 void test_file_IO_OFF() {
-    typedef Cartesian<double>     Kernel;
-    typedef Polyhedron_3<Kernel>  Polyhedron;
+    typedef Simple_cartesian<double> Kernel;
+    typedef Polyhedron_3<Kernel>     Polyhedron;
     {
         Polyhedron P;
         std::istringstream in( triangle);
@@ -115,6 +117,14 @@ void test_file_IO_OFF() {
         P = Polyhedron();
         filein >> P;
         assert( P.is_tetrahedron( P.halfedges_begin()));
+    }
+
+    {
+      Polyhedron P;
+      std::istringstream in( ::empty);
+      read_off(in, P);
+      assert(P.empty());
+      assert(in);
     }
 }
 void test_file_IO_wavefront() {}

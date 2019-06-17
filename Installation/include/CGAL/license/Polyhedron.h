@@ -20,15 +20,11 @@
 //
 // Warning: this file is generated, see include/CGAL/licence/README.md
 
-
 #ifndef CGAL_LICENSE_POLYHEDRON_H
 #define CGAL_LICENSE_POLYHEDRON_H
 
 #include <CGAL/config.h>
 #include <CGAL/license.h>
-
-
-
 
 #ifdef CGAL_POLYHEDRON_COMMERCIAL_LICENSE
 
@@ -42,8 +38,8 @@
 
 #    ifdef CGAL_LICENSE_ERROR
 #      error "Your commercial license for CGAL does not cover this release \
-of the 3D Polyhedral Surface package. \
-You get this error, as you defined CGAL_LICENSE_ERROR."
+              of the 3D Polyhedral Surface package. \
+              You get this error, as you defined CGAL_LICENSE_ERROR."
 #    endif // CGAL_LICENSE_ERROR
 
 #  endif // CGAL_POLYHEDRON_COMMERCIAL_LICENSE < CGAL_RELEASE_DATE
@@ -58,10 +54,10 @@ You get this error, as you defined CGAL_LICENSE_ERROR."
 
 #  ifdef CGAL_LICENSE_ERROR
 #    error "The macro CGAL_POLYHEDRON_COMMERCIAL_LICENSE is not defined.\
- You use the CGAL 3D Polyhedral Surface package under the terms of \
-the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
+            You use the CGAL 3D Polyhedral Surface package under the terms of \
+            the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
 #  endif // CGAL_LICENSE_ERROR
 
 #endif // no CGAL_POLYHEDRON_COMMERCIAL_LICENSE
 
-#endif // CGAL_LICENSE_CHECK_POLYHEDRON_H
+#endif // CGAL_LICENSE_POLYHEDRON_H

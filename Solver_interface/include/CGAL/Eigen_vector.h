@@ -28,8 +28,8 @@ namespace CGAL {
 /*!
 \ingroup PkgSolverInterfaceRef
 
-The class `Eigen_vector` is a wrapper around \ref thirdpartyEigen "Eigen" vector
-type <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1Matrix.html"> </a>,
+The class `Eigen_vector` is a wrapper around `Eigen`
+<a href="http://eigen.tuxfamily.org/dox/classEigen_1_1Matrix.html">vector type</a>,
 which is a simple array of numbers.
 
 \cgalModels `SvdTraits::Vector`
@@ -67,7 +67,10 @@ public:
   {
     return static_cast<Eigen_vector<T>&>(static_cast<EigenType&>(*this) = other);
   }
-
+  Eigen_vector()
+    : EigenType()
+  {}
+  
   /// Create a vector initialized with zeros.
   Eigen_vector(std::size_t dimension)
     : EigenType(static_cast<int>(dimension))

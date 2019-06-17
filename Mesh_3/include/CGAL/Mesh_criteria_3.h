@@ -83,17 +83,17 @@ public:
   typedef CellCriteria      Cell_criteria;
   
   // Constructor
-  Mesh_criteria_3_impl(const Facet_criteria& facet_criteria,
-                       const Cell_criteria& cell_criteria)
+  Mesh_criteria_3_impl(Facet_criteria facet_criteria,
+                       Cell_criteria cell_criteria)
     : edge_criteria_(0)
     , facet_criteria_(facet_criteria)
     , cell_criteria_(cell_criteria)
   { }
   
   // Constructor
-  Mesh_criteria_3_impl(const Edge_criteria& edge_criteria,
-                       const Facet_criteria& facet_criteria,
-                       const Cell_criteria& cell_criteria)
+  Mesh_criteria_3_impl(Edge_criteria edge_criteria,
+                       Facet_criteria facet_criteria,
+                       Cell_criteria cell_criteria)
     : edge_criteria_(edge_criteria)
     , facet_criteria_(facet_criteria)
     , cell_criteria_(cell_criteria)
@@ -182,15 +182,15 @@ public:
   typedef typename Base::Cell_criteria    Cell_criteria;
   
   // Constructor
-  Mesh_criteria_3(const Facet_criteria& facet_criteria,
-                  const Cell_criteria& cell_criteria)
+  Mesh_criteria_3(Facet_criteria facet_criteria,
+                  Cell_criteria cell_criteria)
     : Base(facet_criteria,
            cell_criteria) {}
   
   // Constructor
-  Mesh_criteria_3(const Edge_criteria& edge_criteria,
-                  const Facet_criteria& facet_criteria,
-                  const Cell_criteria& cell_criteria)
+  Mesh_criteria_3(Edge_criteria edge_criteria,
+                  Facet_criteria facet_criteria,
+                  Cell_criteria cell_criteria)
     : Base(edge_criteria,
            facet_criteria,
            cell_criteria) {}

@@ -21,7 +21,9 @@
 // Author(s)     : Stefan Schirra
  
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
+#include <CGAL/float.h>
+#include <CGAL/number_utils.h>
 #include <cassert>
 #include <cmath>
 #include <CGAL/IEEE_754_unions.h>

@@ -65,12 +65,12 @@ MPS-files in test_solver_data/masters/cgal/ and for each of them make sure
 that all its derivatives are present (generating them if need be, see below);
 finally, it collects a list of all these master and derivative filenames and
 stores it in test_solver.cin.  The test_solver.cin file obtained in this way
-is what gets commited to the CGAL repository.
+is what gets committed to the CGAL repository.
 
 In contrast to this, "./create_test_solver_cin all 0" collects all master
 MPS-files (i.e., all MPS-files in test_solver_data/masters/), generates (if
 needed) the derivatives and puts the list of the names of all these files into
-test_solver.cin. The resulting test_solver.cin should usually not be commited
+test_solver.cin. The resulting test_solver.cin should usually not be committed
 to the CGAL repository (it takes too long to run this suite); so you would run
 "./test_solver < test_solver.cin" only locally.
 

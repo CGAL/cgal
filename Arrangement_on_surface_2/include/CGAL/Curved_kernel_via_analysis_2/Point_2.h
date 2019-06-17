@@ -256,10 +256,11 @@ public:
     /*!\brief
      * copy constructor
      */
+#ifdef DOXYGEN_RUNNING  
     Point_2(const Self& p) : 
             Base(static_cast<const Base&>(p)) {  
     }
-
+#endif
     //!@}
 
 public:
@@ -503,7 +504,7 @@ public:
 
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Compare_x_2, compare_x_2)
         CGAL_precondition(Kernel_point_2_equals_Point_2 ||
-                          dynamic_cast< const Kernel_point_2* >(this) != NULL);
+                          dynamic_cast< const Kernel_point_2* >(this) != nullptr);
         return compare_x_2(*dynamic_cast< const Kernel_point_2* >(this), q);
     }
 
@@ -526,7 +527,7 @@ public:
 
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Compare_xy_2, compare_xy_2)
         CGAL_precondition(Kernel_point_2_equals_Point_2 ||
-                          dynamic_cast< const Kernel_point_2* >(this) != NULL);
+                          dynamic_cast< const Kernel_point_2* >(this) != nullptr);
         return compare_xy_2(
                 *dynamic_cast< const Kernel_point_2* >(this), q, equal_x
         );
@@ -546,7 +547,7 @@ public:
 
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Is_on_2, is_on_2)
         CGAL_precondition(Kernel_point_2_equals_Point_2 ||
-                          dynamic_cast< const Kernel_point_2* >(this) != NULL);
+                          dynamic_cast< const Kernel_point_2* >(this) != nullptr);
         return is_on_2(*dynamic_cast< const Kernel_point_2* >(this), curve);
     }
 

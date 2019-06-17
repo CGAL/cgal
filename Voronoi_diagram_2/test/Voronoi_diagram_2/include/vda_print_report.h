@@ -22,7 +22,6 @@
 #ifndef VDA_PRINT_REPORT_H
 #define VDA_PRINT_REPORT_H 1
 
-#include <CGAL/basic.h>
 #include "vda_aux.h"
 #include "helper_functions.h"
 #include <iostream>

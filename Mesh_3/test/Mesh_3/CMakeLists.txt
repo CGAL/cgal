@@ -17,8 +17,6 @@ if ( CGAL_FOUND )
 
   find_package( TBB QUIET )
 
-  include_directories (BEFORE ../../../AABB_tree/include)
-
   # Use Eigen
   find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
   if (NOT EIGEN3_FOUND)
@@ -39,6 +37,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_labeled_mesh_domain_3.cpp" )
   create_single_source_cgal_program( "test_mesh_criteria_creation.cpp" )
   create_single_source_cgal_program( "test_c3t3_into_facegraph.cpp" )
+  create_single_source_cgal_program( "test_without_detect_features.cpp" )
   if(CGAL_ImageIO_USE_ZLIB)
     create_single_source_cgal_program( "test_meshing_3D_image.cpp" )
     create_single_source_cgal_program( "test_meshing_3D_image_deprecated.cpp" )

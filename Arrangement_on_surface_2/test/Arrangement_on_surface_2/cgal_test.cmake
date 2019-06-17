@@ -70,7 +70,11 @@ set(CGAL_GMPZ_NT 14)
 set(CORE_INT_NT 15)
 set(CORE_RAT_NT 16)
 
-if($ENV{CGAL_DISABLE_GMP})
+if(CGAL_DISABLE_GMP)
+  set(CGAL_DISABLE_GMP ON)
+endif()
+
+if(CGAL_DISABLE_GMP)
   message(STATUS "GMP is disable. Try to use LEDA instead.")
   set(GMPZ_NT ${LEDA_INT_NT})
   set(QUOTIENT_CGAL_GMPZ_NT ${LEDA_RAT_NT})
@@ -194,24 +198,10 @@ function(run_test_alt name datafile)
   endif()
   cgal_debug_message(STATUS "#     run_test_alt(${ARGN})")
   cgal_debug_message(STATUS "#       -> ./${name} ${datafile} ${ARGN}")
-  set(command ${name} ${datafile} ${ARGN})
   string(MAKE_C_IDENTIFIER "${name}  ${ARGV4}  ${ARGV5}" test_name)
-  add_test(NAME ${test_name} COMMAND ${command}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-  set_property(TEST "${test_name}"
-    APPEND PROPERTY DEPENDS "compilation_of__${name}")
-  if(POLICY CMP0066) # CMake 3.7 or later
-    set_tests_properties("${test_name}"
-      PROPERTIES
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
-      FIXTURES_REQUIRED ${PROJECT_NAME})
-  endif()
-  cgal_debug_message(STATUS "#       .. depends on compilation_of__${name}")
-
-#  message("   successful execution of ${name}  ${ARGV4} ${ARGV5}")
-  set_property(TEST "${test_name}"
-    APPEND PROPERTY LABELS "${PROJECT_NAME}")
-  cgal_debug_message(STATUS "add test \"${test_name}\": ${name} ${datafile} ${ARGN}")
+  cgal_add_test(${name}
+    TEST_NAME ${test_name}
+    ARGUMENTS ${datafile} ${ARGN})
 endfunction()
 
 function(run_trapped_test name datafile)
@@ -908,7 +898,7 @@ endfunction()
 #---------------------------------------------------------------------#
 function(test_polycurve_conic_traits)
 #  echo polycurve test starting
-  if($ENV{CGAL_DISABLE_GMP})
+  if(CGAL_DISABLE_GMP)
     MESSAGE(STATUS "test_polycurve_conic_traits requires CORE and will not be executed")
     return()
   endif()
@@ -979,7 +969,7 @@ endfunction()
 # polycurve bezier traits
 #---------------------------------------------------------------------#
 function(test_polycurve_bezier_traits)
-  if($ENV{CGAL_DISABLE_GMP})
+  if(CGAL_DISABLE_GMP)
     MESSAGE(STATUS "test_polycurve_bezier_traits requires CORE and will not be executed")
     return()
   endif()
@@ -1088,7 +1078,7 @@ endfunction()
 # conic traits
 #---------------------------------------------------------------------#
 function(test_conic_traits)
-  if($ENV{CGAL_DISABLE_GMP})
+  if(CGAL_DISABLE_GMP)
     MESSAGE(STATUS "test_conic_traits requires CORE and will not be executed")
     return()
   endif()
@@ -1219,7 +1209,7 @@ endfunction()
 # bezier traits
 #---------------------------------------------------------------------#
 function(test_bezier_traits)
-  if($ENV{CGAL_DISABLE_GMP})
+  if(CGAL_DISABLE_GMP)
     MESSAGE(STATUS "test_bezier_traits requires CORE and will not be executed")
     return()
   endif()
@@ -1266,7 +1256,7 @@ endfunction()
 # rational arc traits
 #---------------------------------------------------------------------#
 function(test_rational_arc_traits)
-  if($ENV{CGAL_DISABLE_GMP})
+  if(CGAL_DISABLE_GMP)
     MESSAGE(STATUS "test_rational_arc_traits requires CORE and will not be executed")
     return()
   endif()
@@ -1291,7 +1281,10 @@ endfunction()
 #---------------------------------------------------------------------#
 function(test_algebraic_traits_gmp)
   #TODO: Adapt
-
+  if(CGAL_DISABLE_GMP)
+    MESSAGE(STATUS "test_traits_algebraic_traits_gmp requires GMP and will not be executed")
+    return()
+  endif()
   set(nt ${CGAL_GMPZ_NT})
   set(kernel ${UNIVARIATE_ALGEBRAIC_KERNEL})
   set(geom_traits ${ALGEBRAIC_GEOM_TRAITS})
@@ -1330,7 +1323,7 @@ endfunction()
 #---------------------------------------------------------------------#
 function(test_algebraic_traits_core)
   #TODO: Adapt
-  if($ENV{CGAL_DISABLE_GMP})
+  if(CGAL_DISABLE_GMP)
     MESSAGE(STATUS "test_algebraic_traits_core requires CORE and will not be executed")
     return()
   endif()

@@ -16,7 +16,6 @@
 \cgalPkgDependsOn{\ref PkgArrangementOnSurface2}
 \cgalPkgBib{cgal:mwz-e3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
-\cgalPkgDemo{3D Envelopes,envelope_3.zip,L1 Voronoi Diagram,l1_voronoi_diagram_2.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
@@ -28,16 +27,16 @@ diagram cell is unique.
 
 \cgalClassifedRefPages
 
-## Functions ##
+\cgalCRPSection{Functions}
 - `CGAL::lower_envelope_3`
 - `CGAL::upper_envelope_3`
 - `CGAL::lower_envelope_xy_monotone_3`
 - `CGAL::upper_envelope_xy_monotone_3`
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `EnvelopeTraits_3`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Envelope_diagram_2<EnvTraits>`
 
 - `CGAL::Env_triangle_traits_3<Kernel>`

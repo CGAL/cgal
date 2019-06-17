@@ -11,27 +11,14 @@ find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
 
-  # use either Eigen or BLAS/LAPACK
+  # use Eigen
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-  if (NOT EIGEN3_FOUND)
-    find_package(LAPACK)
-    if(LAPACK_FOUND)
-      include( ${LAPACK_USE_FILE} )
-    endif(LAPACK_FOUND)
-  else()
+  if (EIGEN3_FOUND)
     include( ${EIGEN3_USE_FILE} )
-  endif()
-    
-
-  if(EIGEN3_FOUND OR LAPACK_FOUND)
-
     create_single_source_cgal_program( "blind_1pt.cpp" )
-
-  else(EIGEN3_FOUND OR LAPACK_FOUND)
-
-    message(STATUS "NOTICE: This program requires either Eigen 3.1 (or greater) or LAPACK, and will not be compiled.")
-
-  endif(EIGEN3_FOUND OR LAPACK_FOUND)
+  else()
+    message(STATUS "NOTICE: This program requires Eigen 3.1 (or greater) and will not be compiled.")
+  endif()
 
 else()
 

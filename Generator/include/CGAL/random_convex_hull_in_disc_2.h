@@ -273,7 +273,7 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, Generator& gen,
   typedef typename Traits::Point_2 Points;
   std::list<Points> l;
   internal::random_convex_hull_in_disc_2(n, radius, l, gen, traits, fast);
-  cpp11::copy_n(l.begin(),l.size(),it);
+  std::copy_n(l.begin(),l.size(),it);
 }
 
 }  // namespace CGAL

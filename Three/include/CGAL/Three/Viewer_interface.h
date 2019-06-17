@@ -74,9 +74,12 @@ public:
    PROGRAM_C3T3_EDGES,          //! Used to render the edges of a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Not affected by light.
    PROGRAM_CUTPLANE_SPHERES,    //! Used to render the spheres of an item with a cut plane.
    PROGRAM_SPHERES,             //! Used to render one or several spheres.
+   PROGRAM_DARK_SPHERES,        //! Used to render one or several spheres without light (for picking for example).
    PROGRAM_FLAT,                /** Used to render flat shading without pre computing normals*/
    PROGRAM_OLD_FLAT,            /** Used to render flat shading without pre computing normals without geometry shader*/
    PROGRAM_SOLID_WIREFRAME,     //! Used to render edges with width superior to 1.
+   PROGRAM_NO_INTERPOLATION,   //! Used to render faces without interpolating their color.
+   PROGRAM_HEAT_INTENSITY,      //! Used to render special item in Display_property_plugin
    NB_OF_PROGRAMS               //! Holds the number of different programs in this enum.
   };
 
@@ -85,7 +88,7 @@ public:
  //! The painter is the element that draws everything on screen,
  //! but you should only need this if you want to draw 2D things
  //! on top of the scene, like a selection rectangle.
- //! See <a href="http://doc.qt.io/qt-5/qpainter.html">QPainter's documentation </a> for details.
+ //! See <a href="https://doc.qt.io/qt-5/qpainter.html">QPainter's documentation </a> for details.
  virtual QPainter *getPainter() =0;
 
 
@@ -107,6 +110,15 @@ public:
   //! Creates a valid context for OpenGL ES 2.0.
   //! \param parent the parent widget. It usually is the MainWindow.
   Viewer_interface(QWidget* parent) : CGAL::QGLViewer(parent) {}
+  //!
+  //! \brief Constructor for the secondary viewers.
+  //!
+  //! \param parent the parent widget. It usually is the MainWindow.
+  //! \param shared_widget the main viewer of the Application. This will share the
+  //!  context and allow synchronized rendering of multiple views.
+  //!
+  Viewer_interface(QWidget* parent, QOpenGLWidget* shared_widget) 
+    : QGLViewer(shared_widget->context(),parent){}
   virtual ~Viewer_interface() {}
 
   //! \brief Sets the scene for the viewer.
@@ -262,7 +274,7 @@ public:
   //! Gives acces to recent openGL(4.3) features, allowing use of things like
   //! Geometry Shaders or Depth Textures.
   //! @returns a pointer to an initialized  QOpenGLFunctions_4_3_Core if `isOpenGL_4_3()` is `true`
-  //! @returns NULL if `isOpenGL_4_3()` is `false`
+  //! @returns nullptr if `isOpenGL_4_3()` is `false`
   virtual QOpenGLFunctions_4_3_Core* openGL_4_3_functions() = 0;
   //! getter for point size under old openGL context;
   virtual const GLfloat& getGlPointSize()const = 0;
@@ -275,6 +287,9 @@ public:
   virtual int currentPass()const = 0;
   virtual bool isDepthWriting()const = 0;
   virtual QOpenGLFramebufferObject* depthPeelingFbo() = 0;
+  virtual void makeCurrent() = 0;
+  virtual QVector4D* clipBox() const =0;
+  virtual bool isClipping() const = 0;
 }; // end class Viewer_interface
 }
 }

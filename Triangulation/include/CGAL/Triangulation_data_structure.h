@@ -609,7 +609,6 @@ public:
     OutputIterator incident_full_cells(Vertex_const_handle, OutputIterator) const; /* Concept */
     template< typename OutputIterator >
     OutputIterator star(const Face &, OutputIterator) const; /* Concept */
-#ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
     template< typename OutputIterator, typename Comparator = std::less<Vertex_const_handle> >
     OutputIterator incident_upper_faces(Vertex_const_handle v, int dim, OutputIterator out, Comparator cmp = Comparator())
     {
@@ -617,23 +616,6 @@ public:
     }
     template< typename OutputIterator, typename Comparator = std::less<Vertex_const_handle> >
     OutputIterator incident_faces(Vertex_const_handle, int, OutputIterator, Comparator = Comparator(), bool = false) const;
-#else
-    template< typename OutputIterator, typename Comparator >
-    OutputIterator incident_upper_faces(Vertex_const_handle v, int dim, OutputIterator out, Comparator cmp = Comparator())
-    {
-        return incident_faces(v, dim, out, cmp, true);
-    }
-    template< typename OutputIterator >
-    OutputIterator incident_upper_faces(Vertex_const_handle v, int dim, OutputIterator out)
-    {
-        return incident_faces(v, dim, out, std::less<Vertex_const_handle>(), true);
-    }
-    template< typename OutputIterator, typename Comparator >
-    OutputIterator incident_faces(Vertex_const_handle, int, OutputIterator, Comparator = Comparator(), bool = false) const;
-    template< typename OutputIterator >
-    OutputIterator incident_faces(Vertex_const_handle, int, OutputIterator,
-        std::less<Vertex_const_handle> = std::less<Vertex_const_handle>(), bool = false) const;
-#endif
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - INPUT / OUTPUT
 
@@ -721,18 +703,6 @@ Triangulation_data_structure<Dim, Vb, Fcb>
     clear_visited_marks(start);
     return ft;
 }
-
-#ifdef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
-template< class Dim, class Vb, class Fcb >
-template< typename OutputIterator >
-OutputIterator
-Triangulation_data_structure<Dim, Vb, Fcb>
-::incident_faces(Vertex_const_handle v, int dim, OutputIterator out,
-    std::less<Vertex_const_handle> cmp, bool upper_faces) const
-{
-    return incident_faces<OutputIterator, std::less<Vertex_const_handle> >(v, dim, out, cmp, upper_faces);
-}
-#endif
 
 template< class Dim, class Vb, class Fcb >
 template< typename OutputIterator, typename Comparator >
@@ -1315,7 +1285,7 @@ bool Triangulation_data_structure<Dimen, Vb, Fcb>
             }
             else
             {
-                if( verbose ) CGAL_warning_msg(false, "full_cell has a NULL neighbor");
+                if( verbose ) CGAL_warning_msg(false, "full_cell has a nullptr neighbor");
                 return false;
             }
     }

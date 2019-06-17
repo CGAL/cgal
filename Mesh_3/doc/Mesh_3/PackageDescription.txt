@@ -52,7 +52,7 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 Here are the main concepts of this package:
 
@@ -78,7 +78,7 @@ related to the template parameters of some models of the main concepts:
 - `MeshPolyline_3`
 - `TriangleAccessor_3`
 
-## Classes ##
+\cgalCRPSection{Classes}
 
 - `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
 - `CGAL::Mesh_triangulation_3<MD,Gt,Concurrency_tag,Vertex_base,Cell_base>`
@@ -106,7 +106,7 @@ and their associated classes:
 - `CGAL::Labeled_image_mesh_domain_3<Image,BGT>` (deprecated)
 - `CGAL::Gray_image_mesh_domain_3<Image,BGT,Image_word_type>` (deprecated)
 
-## Function Templates ##
+\cgalCRPSection{Function Templates}
 
 - `CGAL::make_mesh_3()`
 - `CGAL::refine_mesh_3()`
@@ -116,7 +116,7 @@ and their associated classes:
 - `CGAL::odt_optimize_mesh_3()`
 - `CGAL::facets_in_complex_3_to_triangle_mesh()`
 
-## CGAL::parameters Functions ##
+\cgalCRPSection{CGAL::parameters Functions}
 
 - `CGAL::parameters::features()`
 - `CGAL::parameters::no_features()`
@@ -132,13 +132,13 @@ and their associated classes:
 - `CGAL::parameters::manifold_with_boundary()`
 - `CGAL::parameters::non_manifold()`
 
-## Enumerations ##
+\cgalCRPSection{Enumerations}
 
 - `CGAL::Mesh_optimization_return_code`
 - `CGAL::Mesh_facet_topology`
 
-## Input/Output Functions ##
+\cgalCRPSection{Input/Output Functions}
 - `CGAL::output_to_medit()`
-
+- `CGAL::output_to_vtu()`
 */
 

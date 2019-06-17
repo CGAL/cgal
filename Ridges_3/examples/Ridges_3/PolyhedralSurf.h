@@ -10,7 +10,6 @@
 #include <vector>
 #include <list>
 
-#include <boost/foreach.hpp>
 
 //----------------------------------------------------------------
 // A redefined items class for the Polyhedron_3 with

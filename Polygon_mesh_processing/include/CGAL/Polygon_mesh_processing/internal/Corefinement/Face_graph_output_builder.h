@@ -86,7 +86,7 @@ class Face_graph_output_builder
     Ecm_bind<TriangleMesh, No_mark<TriangleMesh> >
       >::type                                          EdgeMarkMapBind;
   typedef typename Default::Get<EdgeMarkMapTuple_,
-    cpp11::tuple< No_mark<TriangleMesh>,
+    std::tuple< No_mark<TriangleMesh>,
                   No_mark<TriangleMesh>,
                   No_mark<TriangleMesh>,
                   No_mark<TriangleMesh> > >::type     EdgeMarkMapTuple;
@@ -130,7 +130,7 @@ class Face_graph_output_builder
   Node_id_map vertex_to_node_id1, vertex_to_node_id2;
 
   // output meshes
-  const cpp11::array<boost::optional<TriangleMesh*>, 4>& requested_output;
+  const std::array<boost::optional<TriangleMesh*>, 4>& requested_output;
   // input meshes closed ?
   /// \todo do we really need this?
   bool is_tm1_closed;
@@ -183,7 +183,7 @@ class Face_graph_output_builder
     if ( is_node_of_degree_one.test(src_id) )
     {
       bool res=true;
-      BOOST_FOREACH(halfedge_descriptor h, halfedges_around_source(hedge, tm))
+      for(halfedge_descriptor h : halfedges_around_source(hedge, tm))
         if (is_border(h, tm))
         {
           res = false;
@@ -193,7 +193,7 @@ class Face_graph_output_builder
     }
     if ( is_node_of_degree_one.test(tgt_id) )
     {
-      BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(hedge, tm))
+      for(halfedge_descriptor h : halfedges_around_target(hedge, tm))
         if (is_border(h, tm))
           return false;
       return true;
@@ -275,7 +275,7 @@ class Face_graph_output_builder
   void mark_edges(const EdgeMarkMap& edge_mark_map,
                   const std::vector<edge_descriptor>& edges)
   {
-    BOOST_FOREACH(edge_descriptor ed, edges)
+    for(edge_descriptor ed : edges)
       put(edge_mark_map, ed, true);
   }
 
@@ -292,16 +292,16 @@ class Face_graph_output_builder
     switch (tuple_id)
     {
     case 0:
-      mark_edges(cpp11::get<0>(edge_mark_maps),edges);
+      mark_edges(std::get<0>(edge_mark_maps),edges);
     break;
     case 1:
-      mark_edges(cpp11::get<1>(edge_mark_maps),edges);
+      mark_edges(std::get<1>(edge_mark_maps),edges);
     break;
     case 2:
-      mark_edges(cpp11::get<2>(edge_mark_maps),edges);
+      mark_edges(std::get<2>(edge_mark_maps),edges);
     break;
     default:
-      mark_edges(cpp11::get<3>(edge_mark_maps),edges);
+      mark_edges(std::get<3>(edge_mark_maps),edges);
     }
   }
 
@@ -312,27 +312,27 @@ class Face_graph_output_builder
   {
     std::vector<edge_descriptor> edges;
     edges.reserve(edge_map.size());
-    BOOST_FOREACH(edge_descriptor ed, edge_map)
+    for(edge_descriptor ed : edge_map)
       edges.push_back(ed);
 
     CGAL_assertion(tuple_id < 4 && tuple_id >= 0);
     switch (tuple_id)
     {
     case 0:
-      mark_edges(cpp11::get<0>(edge_mark_maps),edges);
+      mark_edges(std::get<0>(edge_mark_maps),edges);
     break;
     case 1:
-      mark_edges(cpp11::get<1>(edge_mark_maps),edges);
+      mark_edges(std::get<1>(edge_mark_maps),edges);
     break;
     case 2:
-      mark_edges(cpp11::get<2>(edge_mark_maps),edges);
+      mark_edges(std::get<2>(edge_mark_maps),edges);
     break;
     default:
-      mark_edges(cpp11::get<3>(edge_mark_maps),edges);
+      mark_edges(std::get<3>(edge_mark_maps),edges);
     }
   }
 
-  void mark_edges(const cpp11::tuple<No_mark<TriangleMesh>,
+  void mark_edges(const std::tuple<No_mark<TriangleMesh>,
                                      No_mark<TriangleMesh>,
                                      No_mark<TriangleMesh>,
                                      No_mark<TriangleMesh> >&,
@@ -340,7 +340,7 @@ class Face_graph_output_builder
                  int)
   {} // nothing to do
 
-  void mark_edges(const cpp11::tuple<No_mark<TriangleMesh>,
+  void mark_edges(const std::tuple<No_mark<TriangleMesh>,
                                      No_mark<TriangleMesh>,
                                      No_mark<TriangleMesh>,
                                      No_mark<TriangleMesh> >&,
@@ -360,7 +360,7 @@ public:
                             const VpmOutTuple& output_vpms,
                                   EdgeMarkMapTuple& out_edge_mark_maps,
                                   UserVisitor& user_visitor,
-                            const cpp11::array<
+                            const std::array<
                               boost::optional<TriangleMesh*>, 4 >& requested_output)
     : tm1(tm1), tm2(tm2)
     , vpm1(vpm1), vpm2(vpm2)
@@ -610,9 +610,9 @@ public:
       else
         ++epp_it;
     }
-    BOOST_FOREACH(edge_descriptor ed, inter_edges_to_remove1)
+    for(edge_descriptor ed : inter_edges_to_remove1)
       intersection_edges1.erase(ed);
-    BOOST_FOREACH(edge_descriptor ed, inter_edges_to_remove2)
+    for(edge_descriptor ed : inter_edges_to_remove2)
       intersection_edges2.erase(ed);
 
     // (1) Assign a patch id to each facet indicating in which connected
@@ -628,7 +628,7 @@ public:
                                 .face_index_map(fids1));
 
     std::vector <std::size_t> tm1_patch_sizes(nb_patches_tm1, 0);
-    BOOST_FOREACH(std::size_t i, tm1_patch_ids)
+    for(std::size_t i : tm1_patch_ids)
       if(i!=NID)
         ++tm1_patch_sizes[i];
     // ... for tm2
@@ -642,7 +642,7 @@ public:
                                 .face_index_map(fids2));
 
     std::vector <std::size_t> tm2_patch_sizes(nb_patches_tm2, 0);
-    BOOST_FOREACH(Node_id i, tm2_patch_ids)
+    for(Node_id i : tm2_patch_ids)
       if(i!=NID)
         ++tm2_patch_sizes[i];
 
@@ -1072,7 +1072,7 @@ public:
 
       Inside_poly_test inside_tm2(tm2, vpm2);
 
-      BOOST_FOREACH(face_descriptor f, faces(tm1))
+      for(face_descriptor f : faces(tm1))
       {
         const std::size_t f_id = get(fids1, f);
         const std::size_t patch_id = tm1_patch_ids[ f_id ];
@@ -1132,7 +1132,7 @@ public:
                                 ? ON_UNBOUNDED_SIDE : ON_BOUNDED_SIDE;
 
       Inside_poly_test inside_tm1(tm1, vpm1);
-      BOOST_FOREACH(face_descriptor f, faces(tm2))
+      for(face_descriptor f : faces(tm2))
       {
         const std::size_t f_id = get(fids2, f);
         std::size_t patch_id=tm2_patch_ids[ f_id ];
@@ -1197,7 +1197,7 @@ public:
     //                                        An_edge_per_polyline_map;
 
 #ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
-    #warning add a mechanism to handle the patches independantly \
+    #warning add a mechanism to handle the patches independently \
              (for example calculating the volume without \
                building the polyhedron) \
              This can be done by using a functor to which we give \
@@ -1374,7 +1374,7 @@ public:
     }
 
     /// first handle operations in a mesh that is neither tm1 nor tm2
-    BOOST_FOREACH(Boolean_operation_type operation, out_of_place_operations)
+    for(Boolean_operation_type operation : out_of_place_operations)
     {
       TriangleMesh& output = *(*requested_output[operation]);
       CGAL_assertion(&tm1!=&output && &tm2!=&output);
@@ -1400,10 +1400,10 @@ public:
           BO_type == TM2_MINUS_TM1, BO_type == TM1_MINUS_TM2, \
           polylines, \
           intersection_edges1, intersection_edges2, \
-          vpm1, vpm2, *cpp11::get<BO_type>(output_vpms), \
+          vpm1, vpm2, *std::get<BO_type>(output_vpms), \
           marks_on_input_edges.ecm1, \
           marks_on_input_edges.ecm2, \
-          cpp11::get<BO_type>(out_edge_mark_maps), \
+          std::get<BO_type>(out_edge_mark_maps), \
           shared_edges, \
           user_visitor \
         )
@@ -1486,7 +1486,7 @@ public:
           vpm1, vpm2, \
           marks_on_input_edges.ecm1, \
           marks_on_input_edges.ecm2, \
-          cpp11::get<BO_type>(out_edge_mark_maps), \
+          std::get<BO_type>(out_edge_mark_maps), \
           disconnected_patches_edge_to_tm2_edge, \
           user_visitor)
         CGAL_COREF_FUNCTION_CALL(inplace_operation_tm1)
@@ -1505,7 +1505,7 @@ public:
                                      vpm1, \
                                      marks_on_input_edges.ecm2, \
                                      marks_on_input_edges.ecm1, \
-                                     cpp11::get<BO_type>(out_edge_mark_maps), \
+                                     std::get<BO_type>(out_edge_mark_maps), \
                                      disconnected_patches_edge_to_tm2_edge, \
                                      user_visitor)
         CGAL_COREF_FUNCTION_CALL(inplace_operation_tm2)
@@ -1526,7 +1526,7 @@ public:
         #define CGAL_COREF_FUNCTION_CALL_DEF(BO_type) \
           copy_edge_mark<TriangleMesh>( \
           tm1, marks_on_input_edges.ecm1, \
-          cpp11::get<BO_type>(out_edge_mark_maps))
+          std::get<BO_type>(out_edge_mark_maps))
         CGAL_COREF_FUNCTION_CALL(inplace_operation_tm1)
         #undef CGAL_COREF_FUNCTION_CALL_DEF
 
@@ -1553,7 +1553,7 @@ public:
         if (used_to_clip_a_surface)
         {
           // The following code is here to handle the case when an intersection polyline
-          // contains some border edges of tm1 that should be considered as an independant polyline.
+          // contains some border edges of tm1 that should be considered as an independent polyline.
           // This polyline removal should be handled by remove_unused_polylines.
           // However, since all nodes are of degree 2 the polyline is not split at
           // the correct point and trouble happen. Here the workaround consists in
@@ -1576,22 +1576,22 @@ public:
             if (!to_rm.empty())
             {
               std::reverse(to_rm.begin(), to_rm.end());
-              BOOST_FOREACH(Hedge_iterator it, to_rm)
+              for(Hedge_iterator it : to_rm)
               {
                 patches_of_tm1[i].interior_edges.push_back(*it);
-                if (it!=cpp11::prev(patches_of_tm1[i].shared_edges.end()))
+                if (it!=std::prev(patches_of_tm1[i].shared_edges.end()))
                   std::swap(patches_of_tm1[i].shared_edges.back(), *it);
                 patches_of_tm1[i].shared_edges.pop_back();
               }
               //now update interior vertices
               std::set<vertex_descriptor> border_vertices;
-              BOOST_FOREACH(halfedge_descriptor h, patches_of_tm1[i].shared_edges)
+              for(halfedge_descriptor h : patches_of_tm1[i].shared_edges)
               {
                 border_vertices.insert( target(h,tm1) );
                 border_vertices.insert( source(h,tm1) );
               }
 
-              BOOST_FOREACH(halfedge_descriptor h, patches_of_tm1[i].interior_edges)
+              for(halfedge_descriptor h : patches_of_tm1[i].interior_edges)
               {
                 if ( !border_vertices.count( target(h,tm1) ) )
                   patches_of_tm1[i].interior_vertices.insert( target(h,tm1) );
@@ -1614,7 +1614,7 @@ public:
             vpm2, \
             marks_on_input_edges.ecm1, \
             marks_on_input_edges.ecm2, \
-            cpp11::get<BO_type>(out_edge_mark_maps), \
+            std::get<BO_type>(out_edge_mark_maps), \
             polylines, \
             user_visitor \
           )
@@ -1656,7 +1656,7 @@ public:
                                      vpm1, \
                                      marks_on_input_edges.ecm2, \
                                      marks_on_input_edges.ecm1, \
-                                     cpp11::get<BO_type>(out_edge_mark_maps), \
+                                     std::get<BO_type>(out_edge_mark_maps), \
                                      polylines, \
                                      user_visitor);
         CGAL_COREF_FUNCTION_CALL(inplace_operation_tm2)

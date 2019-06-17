@@ -36,7 +36,7 @@ public:
   ImageInterface(QWidget *parent, qreal ratio)
     : QDialog(parent), ratio(ratio)
   {
-    currentlyFocused = NULL;
+    currentlyFocused = nullptr;
     setupUi(this);
     connect(imgHeight, SIGNAL(valueChanged(int)),
             this, SLOT(imgHeightValueChanged(int)));

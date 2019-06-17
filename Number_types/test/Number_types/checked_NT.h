@@ -1,4 +1,13 @@
 #include <cassert>
+#include <iostream>
+#include <utility>
+#include <CGAL/functional.h>
+#include <CGAL/Algebraic_structure_traits.h>
+#include <CGAL/Real_embeddable_traits.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/enum.h>
+#include <CGAL/is_convertible.h>
+#include <boost/utility/enable_if.hpp>
 
 namespace CGAL {
 template <class NT1, class NT2>

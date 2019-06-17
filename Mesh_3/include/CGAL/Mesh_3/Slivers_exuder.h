@@ -195,7 +195,10 @@ private:
   Tet_priority_queue cells_queue_;
 };
 
-#ifdef CGAL_LINKED_WITH_TBB
+
+  //  The debug version of the VC++ testsuite gets a timeout when using TBB, so let's disable it
+#if defined( CGAL_LINKED_WITH_TBB ) && ( !defined (BOOST_MSVC) || !defined( _DEBUG ) || !defined (CGAL_TEST_SUITE) )
+
 // Parallel
 template <typename Tr>
 class Slivers_exuder_base<Tr, Parallel_tag>
@@ -468,13 +471,13 @@ private:
    */
   template <bool pump_vertices_on_surfaces>
   bool pump_vertex(const Vertex_handle& v,
-                   bool *could_lock_zone = NULL);
+                   bool *could_lock_zone = nullptr);
 
   /**
    * Returns the best_weight of v
    */
   FT get_best_weight(const Vertex_handle& v,
-                     bool *could_lock_zone = NULL) const;
+                     bool *could_lock_zone = nullptr) const;
 
   /**
    * Initializes pre_star and criterion_values
@@ -512,7 +515,7 @@ private:
   template <bool pump_vertices_on_surfaces>
   bool update_mesh(const Weighted_point& new_point,
                    const Vertex_handle& old_vertex,
-                   bool *could_lock_zone = NULL);
+                   bool *could_lock_zone = nullptr);
 
   /**
    * Restores cells and boundary facets of conflict zone of new_vertex in c3t3_
@@ -625,7 +628,7 @@ private:
   template <bool pump_vertices_on_surfaces>
   void add_cell_to_queue(Cell_handle ch, FT criterion_value)
   {
-#ifdef CGAL_LINKED_WITH_TBB
+#if defined( CGAL_LINKED_WITH_TBB ) && ( !defined (BOOST_MSVC) || !defined( _DEBUG ) || !defined (CGAL_TEST_SUITE) )
     // Parallel
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
       enqueue_task<pump_vertices_on_surfaces>(
@@ -691,7 +694,7 @@ private:
   }
 
 
-#ifdef CGAL_LINKED_WITH_TBB
+#if defined( CGAL_LINKED_WITH_TBB ) && ( !defined (BOOST_MSVC) || !defined( _DEBUG ) || !defined (CGAL_TEST_SUITE) )
   // For parallel version
   template <bool pump_vertices_on_surfaces>
   void
@@ -699,7 +702,7 @@ private:
 #endif
 
 private:
-#ifdef CGAL_LINKED_WITH_TBB
+#if defined( CGAL_LINKED_WITH_TBB ) && ( !defined (BOOST_MSVC) || !defined( _DEBUG ) || !defined (CGAL_TEST_SUITE) )
   // Functor for enqueue_task function
   template <typename SE, bool pump_vertices_on_surfaces>
   class Pump_vertex
@@ -922,7 +925,7 @@ pump_vertices(FT sliver_criterion_limit,
   t.reset();
 #endif
 
-#ifdef CGAL_LINKED_WITH_TBB
+#if defined( CGAL_LINKED_WITH_TBB ) && ( !defined (BOOST_MSVC) || !defined( _DEBUG ) || !defined (CGAL_TEST_SUITE) )
   // Parallel
   if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
@@ -1602,7 +1605,7 @@ update_mesh(const Weighted_point& new_point,
 }
 
 
-#ifdef CGAL_LINKED_WITH_TBB
+#if defined( CGAL_LINKED_WITH_TBB ) && ( !defined (BOOST_MSVC) || !defined( _DEBUG ) || !defined (CGAL_TEST_SUITE) )
 // For parallel version
 template <typename C3T3, typename SC, typename V_>
 template <bool pump_vertices_on_surfaces>

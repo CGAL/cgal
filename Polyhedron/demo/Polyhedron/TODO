@@ -42,5 +42,5 @@ Check what can be pulled in from experimental Mesh_3-protecting branch
 related to the MERGE with Point_set_demo:
  - clean up Point_set_3.h and UI_point_3.h
  - we should probably have a points_item
- - Points and normal should be seperated items (pb with select and remove)
+ - Points and normal should be separated items (pb with select and remove)
  

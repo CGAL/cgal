@@ -44,8 +44,8 @@ typedef  CGAL::Quotient< Rt >                 Ft;
 
 
 
-#ifdef CGAL_USE_CORE
-   #include <CGAL/CORE_Expr.h>
+#if defined(CGAL_USE_CORE) || defined(CGAL_USE_LEDA)
+#include <CGAL/Exact_algebraic.h>
 #endif
 
 typedef  CGAL::Cartesian< Ft >                 KerC;
@@ -72,10 +72,10 @@ eps_equal (const Point& p, const Point& q)
            (CGAL::abs(p.y()-q.y()) < eps) );
 } 
 
-#ifdef CGAL_USE_CORE
 
-typedef  CGAL::Cartesian<CORE::Expr>                 KerCCore;
-typedef  CGAL::Homogeneous<CORE::Expr>               KerHCore;
+#if defined(CGAL_USE_CORE) || defined(CGAL_USE_LEDA)
+typedef  CGAL::Cartesian<CGAL::Exact_algebraic>      KerCCore;
+typedef  CGAL::Homogeneous<CGAL::Exact_algebraic>    KerHCore;
 typedef  CGAL::Min_ellipse_2_traits_2< KerCCore >    TraitsCCore;
 typedef  CGAL::Min_ellipse_2_traits_2< KerHCore >    TraitsHCore;
 
@@ -92,11 +92,11 @@ core_test_Min_ellipse_2( bool verbose, const Traits&)
     
     CGAL::Verbose_ostream verr( verbose);
     
-    verr << endl << "CORE tests..." << endl 
+    verr << endl << "Algebraic tests..." << endl 
          << "   3-point case, equilateral triangle...";
     {
       std::vector<Point> P;
-      CORE::Expr sqrt_3(sqrt(CORE::Expr(3)));
+      CGAL::Exact_algebraic sqrt_3(sqrt(CGAL::Exact_algebraic(3)));
       P.push_back(Point(0,0));
       P.push_back(Point(2,0));
       P.push_back(Point(1,sqrt_3));
@@ -615,7 +615,7 @@ main( int argc, char* argv[])
         --argc;
         ++argv; }
 
-#ifdef CGAL_USE_CORE
+#if defined(CGAL_USE_CORE) || defined(CGAL_USE_LEDA)
     // core test
     core_test_Min_ellipse_2( verbose, TraitsCCore());
     core_test_Min_ellipse_2( verbose, TraitsHCore());

@@ -54,7 +54,7 @@ namespace CGAL {
                   or `CGAL::Exact_predicates_inexact_constructions_kernel`.
 
  \tparam Graph_   The graph type to store the constructed cone based spanner.
-                  It must be <A HREF="http://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</A>
+                  It must be <A HREF="https://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</A>
                   with `Traits_::Point_2` as `VertexProperties`.
  */
 template <typename Traits_, typename Graph_>
@@ -223,7 +223,7 @@ protected:
                 it = S.begin(); it != S.end(); ++it) {
             pst.add(*it, *it);
             const typename Graph_::vertex_descriptor *const ri = pst.minAbove(*it);
-            if ( ri != NULL ) {
+            if ( ri != nullptr ) {
                 typename Graph_::edge_descriptor existing_e;
                 bool                    existing;
                 // check whether the edge already exists

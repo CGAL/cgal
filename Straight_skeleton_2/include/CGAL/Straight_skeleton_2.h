@@ -145,13 +145,13 @@ public :
           valid = valid && ( begin->next() != Halfedge_const_handle());
           if ( ! valid) 
           {
-            CGAL_STSKEL_VALIDITY_TRACE("ERROR: he["<<id(begin)<<"]->next() == NULL!");
+            CGAL_STSKEL_VALIDITY_TRACE("ERROR: he["<<id(begin)<<"]->next() == nullptr!");
             break;
           }
           valid = valid && ( begin->opposite() != Halfedge_const_handle());
           if ( ! valid) 
           {
-            CGAL_STSKEL_VALIDITY_TRACE("ERROR: he["<<id(begin)<<"]->opposite() == NULL!");
+            CGAL_STSKEL_VALIDITY_TRACE("ERROR: he["<<id(begin)<<"]->opposite() == nullptr!");
             break;
           }
           // opposite integrity.
@@ -182,7 +182,7 @@ public :
           valid = valid && begin->vertex() != Vertex_const_handle();
           if ( ! valid) 
           {
-              CGAL_STSKEL_VALIDITY_TRACE("ERROR: he["<<id(begin)<<"]->vertex() == NULL!");
+              CGAL_STSKEL_VALIDITY_TRACE("ERROR: he["<<id(begin)<<"]->vertex() == nullptr!");
               break;
           }
           if ( ! begin->vertex()->has_infinite_time() )
@@ -202,7 +202,7 @@ public :
           valid = valid && ( begin->is_border() || begin->face() != Face_const_handle() );
           if ( ! valid) 
           {
-            CGAL_STSKEL_VALIDITY_TRACE("ERROR: he["<<id(begin)<<"]->face() == NULL.");
+            CGAL_STSKEL_VALIDITY_TRACE("ERROR: he["<<id(begin)<<"]->face() == nullptr.");
             break;
           }
           valid = valid && ( begin->face() == begin->next()->face());
@@ -242,7 +242,7 @@ public :
           valid = valid && vbegin->halfedge() != Halfedge_const_handle()  ;
           if ( ! valid) 
           {
-            CGAL_STSKEL_VALIDITY_TRACE("ERROR: v["<< id(vbegin) <<"]->halfedge() == NULL.");
+            CGAL_STSKEL_VALIDITY_TRACE("ERROR: v["<< id(vbegin) <<"]->halfedge() == nullptr.");
             break;
           }
           
@@ -312,7 +312,7 @@ public :
           valid = valid && ( begin->is_border() || fbegin->halfedge() != Halfedge_const_handle()  );
           if ( ! valid)
           {
-            CGAL_STSKEL_VALIDITY_TRACE("ERROR: f["<<id(fbegin)<<"]->halfedge() == NULL." );
+            CGAL_STSKEL_VALIDITY_TRACE("ERROR: f["<<id(fbegin)<<"]->halfedge() == nullptr." );
             break;
           }
           

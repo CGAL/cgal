@@ -32,7 +32,7 @@ namespace CGAL {
 template <class Traits_, class HalfedgeDSItems, 
           class Alloc>
 class HalfedgeDS_default;
-}; // namespace CGAL
+} // namespace CGAL
 
 namespace boost {
 
@@ -470,7 +470,16 @@ struct HDS_property_map<vertex_point_t>
       typename T::Point_3, const typename T::Point_3&> const_type;
   };
 };
-  
+
+template<class T, class I, class A>
+void reserve(HalfedgeDS_default<T,I,A>& p,
+             typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::vertices_size_type nv,
+             typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::edges_size_type ne,
+             typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::faces_size_type nf)
+{
+  p.reserve(nv, 2*ne, nf);
+}
+
 }// namespace CGAL
 namespace boost {
 

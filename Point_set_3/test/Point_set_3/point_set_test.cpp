@@ -13,7 +13,7 @@ typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 
 typedef CGAL::Point_set_3<Point> Point_set;
-typedef CGAL::cpp11::array<unsigned char, 3> Color;
+typedef std::array<unsigned char, 3> Color;
 
 std::size_t nb_test = 0;
 std::size_t nb_success = 0;

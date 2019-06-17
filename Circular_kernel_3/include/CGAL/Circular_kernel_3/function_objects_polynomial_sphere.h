@@ -1198,14 +1198,10 @@ template < class SK > \
     //only ternary from the linear kernel
     template<typename F>
     struct result<F(Plane_3, Plane_3, Plane_3)> {
-      #if CGAL_INTERSECTION_VERSION < 2
-      typedef CGAL::Object type;
-      #else
       typedef boost::optional< 
         boost::variant< Point_3, 
                         Line_3, 
                         Plane_3 > > type;
-      #endif
     };
 
     //using SK::Linear_kernel::Intersect_3::operator();
@@ -1591,13 +1587,35 @@ template < class SK > \
 
   template <class SK>
   class Compute_approximate_angle_3
+#ifndef CGAL_CFG_MATCHING_BUG_6
+    : public SK::Linear_kernel::Compute_approximate_angle_3
+#endif
   {
+    typedef typename SK::Point_3                   Point_3;
+    typedef typename SK::Vector_3                  Vector_3;
     typedef typename SK::Circular_arc_3            Circular_arc_3;
+    typedef typename SK::FT                        FT;
 
   public:
 
     typedef double result_type;
 
+#ifndef CGAL_CFG_MATCHING_BUG_6
+    using SK::Linear_kernel::Compute_approximate_angle_3::operator();
+#else
+    typedef typename SK::Linear_kernel::Compute_approximate_angle_3 LK_Compute_approximate_angle_3;
+    
+    FT operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+    {
+      return LK_Compute_approximate_angle_3()(p,q,r);
+    }
+    
+    FT operator()(const Vector_3& u, const Vector_3& v) const
+    {
+      return LK_Compute_approximate_angle_3()(u,v);
+    }
+    
+#endif    
     result_type operator() (const Circular_arc_3 & c) const
     { return c.rep().approximate_angle(); }
 

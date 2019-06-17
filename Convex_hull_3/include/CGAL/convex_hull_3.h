@@ -99,7 +99,7 @@ template <class Point_3, class OutputIterator>
 void copy_ch2_to_face_graph(const std::list<Point_3>& CH_2,
                             internal::Convex_hull_3::Output_iterator_wrapper<OutputIterator>& w)
 {
-  BOOST_FOREACH(const Point_3& p, CH_2)
+  for(const Point_3& p : CH_2)
     *w.out++ = p;
 }
 
@@ -110,7 +110,7 @@ void copy_face_graph(const TDS& tds, internal::Convex_hull_3::Output_iterator_wr
 {
   typedef typename boost::graph_traits<TDS>::vertex_descriptor vertex_descriptor;
   typename boost::property_map<TDS, boost::vertex_point_t >::const_type vpm = get(boost::vertex_point, tds);
-  BOOST_FOREACH(vertex_descriptor vh, vertices(tds))
+  for(vertex_descriptor vh : vertices(tds))
   {
     *wrapper.out++ = get(vpm, vh);
   }
@@ -292,7 +292,7 @@ public:
   typedef typename Interval_nt_advanced::Protector           Protector;
 
   Is_on_positive_side_of_plane_3(const Traits&,const Point_3& p_,const Point_3& q_,const Point_3& r_)
-  :p(p_),q(q_),r(r_),ck_plane(NULL),pk_plane(NULL)
+  :p(p_),q(q_),r(r_),ck_plane(nullptr),pk_plane(nullptr)
   {
     double pqx = q.x() - p.x();
     double pqy = q.y() - p.y();
@@ -319,8 +319,8 @@ public:
   }
 
   ~Is_on_positive_side_of_plane_3(){
-    if (ck_plane!=NULL) delete ck_plane;
-    if (pk_plane!=NULL) delete pk_plane;
+    if (ck_plane!=nullptr) delete ck_plane;
+    if (pk_plane!=nullptr) delete pk_plane;
   }
 
   bool operator() (const Point_3& s) const
@@ -334,12 +334,12 @@ public:
       return static_res == 1;
 
     try{
-      if (ck_plane==NULL)
+      if (ck_plane==nullptr)
         ck_plane=new typename CK::Plane_3(to_CK(p),to_CK(q),to_CK(r));
       return ck_plane->has_on_positive_side(to_CK(s));
     }
     catch (Uncertain_conversion_exception&){
-      if (pk_plane==NULL)
+      if (pk_plane==nullptr)
         pk_plane=new typename PK::Plane_3(to_PK(p),to_PK(q),to_PK(r));
       return pk_plane->has_on_positive_side(to_PK(s));
     }
@@ -397,7 +397,7 @@ void copy_ch2_to_face_graph(const std::list<Point_3>& CH_2, Polyhedron_3& P)
   typedef typename Graph_traits::face_descriptor face_descriptor;
   std::vector<vertex_descriptor> vertices;
   vertices.reserve(CH_2.size());
-  BOOST_FOREACH(const Point_3& p, CH_2){
+  for(const Point_3& p : CH_2){
     vertices.push_back(add_vertex(P));
     put(vpm, vertices.back(),p);
   }

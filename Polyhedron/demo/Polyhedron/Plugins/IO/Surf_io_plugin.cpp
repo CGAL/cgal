@@ -6,6 +6,7 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Scene_group_item.h>
+#include <CGAL/Three/Three.h>
 
 #include <CGAL/IO/read_surf_trianglemesh.h>
 
@@ -69,10 +70,17 @@ CGAL::Three::Scene_item* Surf_io_plugin::actual_load(QFileInfo fileinfo)
     return NULL;
   }
 
+  if(fileinfo.size() == 0)
+  {
+    CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
+    Scene_group_item* item =
+        new Scene_group_item(fileinfo.completeBaseName());
+    return item;
+  }
   std::vector<FaceGraph> patches;
   std::vector<MaterialData> material_data;
   CGAL::Bbox_3 grid_box;
-  CGAL::cpp11::array<unsigned int, 3> grid_size = {{1, 1, 1}};
+  std::array<unsigned int, 3> grid_size = {{1, 1, 1}};
   boost::container::flat_set<Point_3> duplicated_points;
   read_surf(in, patches, material_data, grid_box, grid_size
           , std::inserter(duplicated_points, duplicated_points.end()));
@@ -90,7 +98,6 @@ CGAL::Three::Scene_item* Surf_io_plugin::actual_load(QFileInfo fileinfo)
   compute_color_map(QColor(100, 100, 255), static_cast<unsigned>(patches.size()),
                     std::back_inserter(colors_));
   Scene_group_item* group = new Scene_group_item(fileinfo.completeBaseName());
-  group->setScene(scene);
   for(std::size_t i=0; i<patches.size(); ++i)
   {
     FaceGraphItem *patch = new FaceGraphItem(patches[i]);
