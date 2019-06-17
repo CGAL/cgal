@@ -834,6 +834,11 @@ namespace CGAL {
     Dart_const_handle next(Dart_const_handle ADart) const
     { return this->template alpha<0, 1>(ADart); }
 
+    Dart_handle opposite2(Dart_handle ADart)
+    { return this->template alpha<0, 2>(ADart); }
+    Dart_const_handle opposite2(Dart_const_handle ADart) const
+    { return this->template alpha<0, 2>(ADart); }
+
     template<unsigned int dim>
     Dart_handle opposite(Dart_handle ADart)
     { return this->template alpha<0, dim>(ADart); }
@@ -2030,6 +2035,58 @@ namespace CGAL {
     }
 
   public:
+    /// @return the positive turn between the two given darts.
+    //  @pre next(d1) and d2 must belong to the same vertex.
+    std::size_t positive_turn(Dart_const_handle d1, Dart_const_handle d2) const
+    {
+      CGAL_assertion((!this->template is_free<1>(d1)));
+      CGAL_assertion((!this->template is_free<2>(d1)));
+      /* CGAL_assertion((belong_to_same_cell<0>(this->next(d1), d2))); */
+      
+      if (d2==opposite2(d1)) { return 0; }
+      
+      Dart_const_handle dd1=d1;
+      std::size_t res=1;
+      while (next(dd1)!=d2)
+      {
+        CGAL_assertion(!this->template is_free<2>(next(dd1)));
+        
+        ++res;
+        dd1=opposite2(next(dd1));
+
+        CGAL_assertion(!this->template is_free<1>(dd1));
+        CGAL_assertion(next(dd1)==d2 || dd1!=d1);
+      }
+      return res;
+    }
+
+    /// @return the negative turn between the two given darts.
+    //  @pre next(d1) and d2 must belong to the same vertex.
+    std::size_t negative_turn(Dart_const_handle d1, Dart_const_handle d2) const
+    {
+      CGAL_assertion((!this->template is_free<1>(d1)));
+      CGAL_assertion((!this->template is_free<2>(d1)));
+      /* CGAL_assertion((belong_to_same_cell<0>(this->next(d1), d2))); */
+      
+      if (d2==opposite2(d1)) { return 0; }
+
+      d1=opposite2(d1);
+      d2=opposite2(d2);
+      Dart_const_handle dd1=d1;
+      std::size_t res=1;
+      while (previous(dd1)!=d2)
+      {
+        CGAL_assertion(!this->template is_free<2>(previous(dd1)));
+        
+        ++res;
+        dd1=opposite2(previous(dd1));
+        
+        CGAL_assertion(!this->template is_free<0>(dd1));
+        CGAL_assertion(previous(dd1)==d2 || dd1!=d1);
+      }
+      return res;
+    }
+
     /** Erase marked darts from the map.
      * Marked darts are unlinked before to be removed, thus surviving darts
      * are correctly linked, but the map is not necessarily valid depending
@@ -2049,7 +2106,7 @@ namespace CGAL {
         if (is_marked(d, amark))
         {
           for ( i = 0; i <= dimension; ++i)
-          { if (!is_free(d, i)) unlink_beta(d, i); }
+          { if (!is_free(d, i)) topo_unsew(d, i); }
           erase_dart(d); ++res;
         }
       }

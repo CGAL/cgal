@@ -31,6 +31,7 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
+#include <initializer_list>
 
 namespace CGAL {
 
@@ -182,10 +183,6 @@ public:
                                                  dh);
   }
 
-  /// @return true iff the ith dart can be added at the end of the path.
-  bool can_be_pushed_by_index(std::size_t i) const
-  { return can_be_pushed(get_map().dart_handle(i)); }
-  
   /// Add the given dart at the end of this path.
   /// @pre can_be_pushed(dh)
   void push_back(Dart_const_handle dh, bool update_isclosed=true)
@@ -198,11 +195,44 @@ public:
     if (update_isclosed) { update_is_closed(); }
   }
 
+  /// @return true iff the ith dart can be added at the end of the path.
+  bool can_be_pushed_by_index(std::size_t i) const
+  { return can_be_pushed(get_map().dart_handle(i)); }
+  
   /// Add the given ith dart at the end of this path. 
   void push_back_by_index(std::size_t i)
   { push_back(get_map().dart_handle(i)); }
   
+  void push_back_by_label(std::initializer_list<std::size_t> l)
+  {
+    for (std::size_t i : l)
+    { push_back_by_index(i); }
+  }
   
+  /// @return true iff the dart labeled e can be added at the end of the path.
+  bool can_be_pushed_by_label(const std::string& e) const
+  {
+    Dart_const_handle dh=get_map().get_dart_labeled(e);
+    if (dh!=NULL) { return false; }
+    return can_be_pushed(dh);
+  }
+  
+  /// Add the dart having this label at the end of this path. 
+  void push_back_by_label(const std::string& e)
+  {
+    Dart_const_handle dh=get_map().get_dart_labeled(e);
+    if (dh!=NULL) { push_back(dh); }    
+  }
+
+  void push_back_by_label(const char* e)
+  { push_back_by_label(std::string(e)); }
+  
+  void push_back_by_label(std::initializer_list<const char*> l)
+  {
+    for (const char* e : l)
+    { push_back_by_label(e); }
+  }
+
   Self& operator+=(const Self& other)
   {
     m_path.reserve(m_path.size()+other.m_path.size());
@@ -252,7 +282,7 @@ public:
     Dart_const_handle d2;
     for (std::size_t i=0; i<nb; ++i)
     {
-      d2=get_map().template beta<1,2,1>(back());
+      d2=get_map().next(get_map().opposite(get_map().next(back()))); // Beta121 for CMaps
       if (d2!=get_map().null_dart_handle)
       { push_back(d2, false); }
     }
@@ -268,7 +298,10 @@ public:
     Dart_const_handle d2;
     for (std::size_t i=0; i<nb; ++i)
     {
-      d2=get_map().template beta<2,0,2,0,2>(back());
+      d2=get_map().opposite2
+        (get_map().previous(get_map().opposite2
+                             (get_map().previous(get_map().opposite2(back())))));
+                             //beta<2,0,2,0,2>(back()) for CMaps
       if (d2!=get_map().null_dart_handle)
       { push_back(d2, false); }
     }
@@ -281,11 +314,11 @@ public:
     if (is_empty() || back()==dend)
     { return; }
 
-    Dart_const_handle d2=get_map().template beta<1,2,1>(back());
+    Dart_const_handle d2=get_map().next(get_map().opposite2(get_map().next(back()))); // Beta121 for CMaps
     while(d2!=dend)
     {
       push_back(d2, false);
-      d2=get_map().template beta<1,2,1>(d2);
+      d2=get_map().next(get_map().opposite2(get_map().next(d2)));
     }
     if (update_isclosed) { update_is_closed(); }
   }
@@ -296,11 +329,16 @@ public:
     if (is_empty() || back()==dend)
     { return; }
 
-    Dart_const_handle d2=get_map().template beta<2,0,2,0,2>(back());
+    Dart_const_handle d2=get_map().opposite2
+        (get_map().previous(get_map().opposite2
+                             (get_map().previous(get_map().opposite2(back())))));
+    //beta<2,0,2,0,2>(back()) for CMaps
     while(d2!=dend)
     {
       push_back(d2, false);
-      d2=get_map().template beta<2,0,2,0,2>(d2);
+      d2=get_map().opposite2
+        (get_map().previous(get_map().opposite2
+                             (get_map().previous(get_map().opposite2(d2)))));
     }
     if (update_isclosed) { update_is_closed(); }
   }
@@ -312,13 +350,13 @@ public:
     if (nb==0)
     {
       if (!get_map().template is_free<2>(back()))
-      { push_back(get_map().template beta<2>(back())); }
+      { push_back(get_map().opposite2(back())); }
       return;
     }
 
-    Dart_const_handle d2=get_map().template beta<1>(back());
+    Dart_const_handle d2=get_map().next(back());
     for (std::size_t i=1; i<nb; ++i)
-    { d2=get_map().template beta<2, 1>(d2); }
+    { d2=get_map().next(get_map().opposite2(d2)); }
 
     if (d2!=get_map().null_dart_handle)
     { push_back(d2, update_isclosed); }
@@ -331,13 +369,13 @@ public:
     if (nb==0)
     {
       if (!get_map().template is_free<2>(back()))
-      { push_back(get_map().template beta<2>(back())); }
+      { push_back(get_map().opposite2(back())); }
       return;
     }
 
-    Dart_const_handle d2=get_map().template beta<2>(back());
+    Dart_const_handle d2=get_map().opposite2(back());
     for (std::size_t i=0; i<nb; ++i)
-    { d2=get_map().template beta<0, 2>(d2); }
+    { d2=get_map().opposite2(get_map().previous(d2)); }
 
     if (d2!=get_map().null_dart_handle)
     { push_back(d2, update_isclosed); }
@@ -351,11 +389,11 @@ public:
 
     Self p2(get_map());
     std::size_t begin=i;
-    Dart_const_handle dh=get_map().template beta<0>(get_ith_dart(begin));
+    Dart_const_handle dh=get_map().previous(get_ith_dart(begin));
     do
     {
-      p2.push_back(get_map().template beta<2>(dh));
-      dh=get_map().template beta<0>(dh);
+      p2.push_back(get_map().opposite2(dh));
+      dh=get_map().previous(dh);
     }
     while(dh!=get_ith_dart(begin));
 
@@ -400,24 +438,31 @@ public:
     if (is_empty())
     { return initialize_random_starting_dart(random, update_isclosed); }
 
-    Dart_const_handle pend=get_map().template beta<2>(back());
+    Dart_const_handle pend=get_map().opposite2(back());
     if (pend==Map::null_handle)
     {
-      if (!get_map().template is_free<1>(back()))
+      if (get_map().is_next_exist(back()))
       { // Here there is no other possibility to extend the path !
-        push_back(get_map().template beta<1>(back()), update_isclosed);
+        push_back(get_map().next(back()), update_isclosed);
         return true;
       }
       else { return false; }
     }
 
-    unsigned int index=random.get_int  //get_int(a,b) returns an int in {a,...,b-1}
-        ((allow_half_turn?0:1),
-         get_map().template darts_of_cell<0>(pend).size());
-
     Dart_const_handle res=pend;
+    unsigned int nbedges=0;
+    do
+    {
+      ++nbedges;
+      res=get_map().next(get_map().opposite2(res));
+    }
+    while (res!=pend);
+
+    //get_int(a,b) returns an int in {a,...,b-1}
+    unsigned int index=random.get_int((allow_half_turn?0:1), nbedges);
+
     for(unsigned int i=0; i<index; ++i)
-    { res=get_map().template beta<2,1>(res); }
+    { res=get_map().next(get_map().opposite2(res)); }
 
     CGAL_assertion(allow_half_turn || res!=pend);
 
@@ -720,14 +765,14 @@ public:
     for (std::size_t i=0; i<m_path.size()/2; ++i)
     {
       m_path[m_path.size()-1-i]=
-          m_map.template beta<2>(m_path[m_path.size()-1-i]);
-      m_path[i]=m_map.template beta<2>(m_path[i]);
+          m_map.opposite2(m_path[m_path.size()-1-i]);
+      m_path[i]=m_map.opposite2(m_path[i]);
       std::swap(m_path[i], m_path[m_path.size()-1-i]);
     }
     if (m_path.size()%2==1)
     {
       m_path[m_path.size()/2+1]=
-          m_map.template beta<2>(m_path[m_path.size()/2+1]);
+          m_map.opposite2(m_path[m_path.size()/2+1]);
     }
   }
 
@@ -738,7 +783,7 @@ public:
     if (!is_closed())
     {
       for (int i=m_path.size()-1; i>=0; --i)
-      { m_path.push_back(m_map.template beta<2>(get_ith_dart(i)), false); }
+      { m_path.push_back(m_map.opposite2(get_ith_dart(i)), false); }
       m_is_closed=true;
     }
   }

@@ -25,8 +25,12 @@
 #include <unordered_map>
 #include <cstddef>
 #include <string>
-//#include <CGAL/Path_on_surface.h>
+#include <CGAL/assertions.h>
+#include <CGAL/memory.h>
 #include <CGAL/Polygonal_schema_min_items.h>
+#include <CGAL/Combinatorial_map.h>
+#include <CGAL/Generalized_map.h>
+#include <initializer_list>
 
 namespace CGAL {
   /// @return opposite label of label s
@@ -45,10 +49,10 @@ namespace CGAL {
   
   template<class Map, class Combinatorial_data_structure=
            typename Map::Combinatorial_data_structure>
-  struct Map_incremental_builder_tools
+  struct Polygonal_schema_tools
   {};
   template<class CMap>
-  struct Map_incremental_builder_tools<CMap, Combinatorial_map_tag>
+  struct Polygonal_schema_tools<CMap, Combinatorial_map_tag>
   {
     typedef typename CMap::Dart_handle Dart_handle;
     
@@ -89,12 +93,20 @@ namespace CGAL {
       
       return res;
     }
+
+    std::string get_label(CMap& cmap, Dart_handle dh) const
+    {
+      CGAL_assertion(cmap.info(dh).m_label!=NULL);
+      return std::string(cmap.info(dh).m_label);
+    }
   };
   template<class GMap>
-  struct Map_incremental_builder_tools<GMap, Generalized_map_tag>
+  struct Polygonal_schema_tools<GMap, Generalized_map_tag>
   {
     typedef typename GMap::Dart_handle Dart_handle;
 
+    // In a GMap, if an edge is 2-free, only one of its two dart has one label.
+    // Otherwise, d has one label and alpha<0,2>(d) the opposite label.
     static Dart_handle
     add_edge_to_face(GMap& gmap, const std::string& s,
                      Dart_handle prev_dart,
@@ -133,10 +145,35 @@ namespace CGAL {
         strncpy(gmap.info(res).m_label, s.c_str(), s.size()+1); // +1 to copy also the \0 char
 
         if (dart_opposite_label!=NULL)
-        { gmap.template sew<2>(dh2, dart_opposite_label); }
+        {
+          std::string s2=opposite_label(s);
+          edge_label_to_dart[s2]=res;
+          gmap.info(res).m_label=new char[s2.size()+1];
+          strncpy(gmap.info(res).m_label, s2.c_str(), s2.size()+1); // +1 to copy also the \0 char
+          
+          gmap.template sew<2>(dh2, dart_opposite_label);
+        }
       }
 
       return res;
+    }
+
+    std::string get_label(GMap& gmap, Dart_handle dh) const
+    {
+      char* label=gmap.info(dh).m_label;
+
+      if (label==NULL)
+      {
+        if (!gmap.is_free<2>(dh))
+        { label=gmap.info(gmap.template alpha<2>(dh)).m_label; }
+        else
+        {
+          return opposite_label
+            (std::string(gmap.info(gmap.template alpha<0>(dh))));
+        }
+      }
+      CGAL_assertion(label!=NULL);
+      return std::string(label);
     }
   };
 
@@ -182,7 +219,6 @@ namespace CGAL {
       first_dart = this->null_handle;
       prev_dart  = this->null_handle;
       facet_started=true;
-      // std::cout<<"Begin facet: "<<std::flush;
     }
 
     /// Add one edge to the current facet, given by its label (any string, using minus sign for orientation)
@@ -196,10 +232,10 @@ namespace CGAL {
         return;
       }
 
-      Dart_handle dart_same_label=find_dart_with_label(s);
-      Dart_handle dart_opposite_label=find_dart_with_label(opposite_label(s));
+      Dart_handle dart_same_label=get_dart_labeled(s);
+      Dart_handle dart_opposite_label=get_dart_labeled(opposite_label(s));
       
-      Dart_handle cur=Map_incremental_builder_tools<Map>::
+      Dart_handle cur=Polygonal_schema_tools<Map>::
         add_edge_to_face(*this, s, prev_dart, dart_same_label, dart_opposite_label,
                          edge_label_to_dart);
 
@@ -240,6 +276,19 @@ namespace CGAL {
       end_facet();
     }
 
+    void add_edges_to_facet(std::initializer_list<const char*> l)
+    {
+      if (!facet_started)
+      {
+        std::cerr<<"Polygonal_schema ERROR: "
+                 <<"you try to add edges to a facet"
+                 <<" but the facet is not yet started."<<std::endl;
+        return;
+      }
+       for (const char* e : l)
+       { add_edge_to_facet(e); }
+    }
+      
     /// End of the facet. Return the first dart of this facet.
     Dart_handle end_facet()
     {
@@ -271,81 +320,8 @@ namespace CGAL {
     Dart_handle end_surface()
     { return first_dart; }
 
-    /// Start a path on the surface
-    void begin_path()
-    {
-      /*      if (path_started)
-      {
-        std::cerr<<"Polygonal_schema ERROR: "
-                 <<"you try to start a path"
-                 <<" but the previous path is not yet ended."<<std::endl;
-        return;
-      }
-      path_started=true;
-      m_first_path_vertex=true;
-      m_cur_path.clear();*/
-    }
-
-    /// Add edge labeled e at the end of the current path
-    void add_edge_to_path(const std::string& e)
-    {
-      /*      if (!path_started)
-      {
-        std::cerr<<"Polygonal_schema ERROR: "
-                 <<"you try to add an edge to a path"
-                 <<" but the path is not yet started."<<std::endl;
-        return;
-      }
-
-      Dart_const_handle dh=find_dart_with_label(e);
-      if (dh==NULL)
-      {
-        std::cerr<<"Polygonal_schema ERROR: "
-                 <<"edge labeled ("<<e<<") does not exists "
-                 <<"and thus cannot be added in the path."<<std::endl;
-        return;
-      }
-
-      if (!m_cur_path.can_be_pushed(dh))
-      {
-        std::cerr<<"Polygonal_schema ERROR: "
-                 <<"edge labeled ("<<e<<") is not adjacent to the previous "
-                 <<"edge of the path and thus cannot be added."<<std::endl;
-        return;
-      }
-      m_cur_path.push_back(dh);*/
-    }
-
-    /// End the current path
-    /*    CGAL::Path_on_surface<Map> end_path()
-    {
-            if (!path_started)
-      {
-        std::cerr<<"Polygonal_schema ERROR: "
-                 <<"you try to end a path"
-                 <<" but the path is not yet started."<<std::endl;
-        return m_cur_path;
-      }
-      path_started=false;
-      return m_cur_path;
-    }
-
-    /// A shortcut allowing to create a path directly with a sequence
-    /// of vertex ids, if the map was built by adding vertices
-    /// or edge labels, if the map was built by adding edges
-    CGAL::Path_on_surface<Map> create_path(const std::string& s)
-    {
-      begin_path();
-
-      std::istringstream iss(s);
-      for (std::string token; std::getline(iss, token, ' '); )
-      { add_edge_to_path(token); }
-
-      return end_path();
-      } */
-
     /// @return dart with the given label, NULL if this dart does not exist.
-    Dart_handle find_dart_with_label(const std::string & s) const
+    Dart_handle get_dart_labeled(const std::string & s) const
     {
       auto ite=edge_label_to_dart.find(s);
       if (ite==edge_label_to_dart.end())
@@ -354,10 +330,8 @@ namespace CGAL {
       return ite->second;
     }
 
-    const char* get_label(Dart_handle dh) const
-    {
-      // TODO
-    }
+    std::string get_label(Dart_handle dh) const
+    { return Polygonal_schema_tools<Map>::get_label(dh); }
     
   protected:
     // For each edge label, its corresponding dart. Stores both association a -a, to allow

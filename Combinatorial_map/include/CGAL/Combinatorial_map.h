@@ -1006,6 +1006,11 @@ namespace CGAL {
     Dart_const_handle next(Dart_const_handle ADart) const
     { return this->template beta<1>(ADart); }
 
+    Dart_handle opposite2(Dart_handle ADart)
+    { return this->template beta<2>(ADart); }
+    Dart_const_handle opposite2(Dart_const_handle ADart) const
+    { return this->template beta<2>(ADart); }
+
     template<unsigned int dim>
     Dart_handle opposite(Dart_handle ADart)
     { return this->template beta<dim>(ADart); }

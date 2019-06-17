@@ -145,6 +145,8 @@ public:
   { return get_beta<1>(ADart); }
   Dart_const_handle opposite(Dart_const_handle dh) const
   { return get_beta<2>(dh); }
+  Dart_const_handle opposite2(Dart_const_handle dh) const
+  { return get_beta<2>(dh); }
   Dart_const_handle other_extremity(Dart_const_handle dh) const
   { return get_beta<1>(dh); }
 
