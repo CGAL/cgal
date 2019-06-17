@@ -214,11 +214,10 @@ test_new_3(const R& rep)
   Sphere_3 sp8 = construct_sphere(p3);
   Sphere_3 sp9 = construct_sphere(p3,CLOCKWISE);
 
-
+  Triangle_3 t0; CGAL_USE(t0); // test the default-construction
   typename R::Construct_triangle_3 construct_triangle
         = rep.construct_triangle_3_object();
-  Triangle_3 t1;
-  Triangle_3 t2 = construct_triangle(p2,p3,p4);
+  Triangle_3 t1 = construct_triangle(p2,p3,p4), t2 = t1;
 
   typename R::Construct_tetrahedron_3 construct_tetrahedron
         = rep.construct_tetrahedron_3_object();
