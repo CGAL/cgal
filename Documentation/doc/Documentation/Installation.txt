@@ -285,7 +285,7 @@ purpose of this file is explained below.
 
 \section seclibraries CGAL Libraries 
 
-\cgal is split into five libraries. During configuration, you can select the libraries that 
+\cgal is split into four libraries. During configuration, you can select the libraries that 
 you would like to build by setting a CMake variable of the form <TT>WITH_<library></TT>. By default all 
 are switched `ON`. All activated libraries are build after
 configuration; see \ref secbuilding
