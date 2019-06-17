@@ -18,15 +18,15 @@
 //
 // Author(s) : Maxime Gimeno
 
-#ifndef WRITE_3MF_H
-#define WRITE_3MF_H
+#ifndef CGAL_IO_WRITE_3MF_H
+#define CGAL_IO_WRITE_3MF_H
 #include <iostream>
 #include <vector>
 #include <string>
 
 #include <CGAL/IO/Color.h>
 
-#include "Model/COM/NMR_DLLInterfaces.h"
+#include <Model/COM/NMR_DLLInterfaces.h>
 
 namespace CGAL{
 namespace tmf_internal{
@@ -465,4 +465,4 @@ bool write_triangle_meshes_to_3mf(const std::string& file_name,
   return write_triangle_soups_to_3mf(file_name, all_points, all_polygons, names);
 }
 }//end CGAL
-#endif // WRITE_3MF_H
+#endif // CGAL_IO_WRITE_3MF_H

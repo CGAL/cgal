@@ -133,7 +133,7 @@ class Io_3mf_plugin:
     names.clear();
     all_colors.clear();
     int nb_meshes =
-        CGAL::read_soups_from_3mf(fileinfo.filePath().toUtf8().toStdString(),
+        CGAL::read_triangle_soups_from_3mf(fileinfo.filePath().toUtf8().toStdString(),
                                   all_points, all_polygons, all_colors, names);
     if(nb_meshes <0 )
     {
@@ -151,42 +151,39 @@ class Io_3mf_plugin:
         ok = PMP::orient_polygon_soup(points, triangles);
       if(!ok)
       {
-        std::cerr<<"Object is not orientable. Skipped."<<std::endl;
+        std::cerr<<"Object was not directly orientable, some vertices have been duplicated."<<std::endl;
       }
-      else
+      SMesh mesh;
+      PMP::polygon_soup_to_polygon_mesh(points, triangles, mesh);
+      CGAL::Color first = colors.front();
+      bool need_pmap = false;
+      for(auto color : colors)
       {
-        SMesh mesh;
-        PMP::polygon_soup_to_polygon_mesh(points, triangles, mesh);
-        CGAL::Color first = colors.front();
-        bool need_pmap = false;
-        for(auto color : colors)
+        if (color != first)
         {
-          if (color != first)
-          {
-            need_pmap = true;
-            break;
-          }
+          need_pmap = true;
+          break;
         }
-        if(need_pmap)
-        {
-          SMesh::Property_map<face_descriptor,CGAL::Color> fcolor =
-              mesh.add_property_map<face_descriptor,CGAL::Color>("f:color",first).first;
-          for(std::size_t pid = 0; pid < colors.size(); ++pid)
-          {
-            put(fcolor, face_descriptor(pid), colors[pid]);//should work bc mesh is just created and shouldn't have any destroyed face. Not so sure bc of orientation though.
-          }
-        }
-        Scene_surface_mesh_item* sm_item = new Scene_surface_mesh_item(mesh);
-        if(first == CGAL::Color(0,0,0,0))
-          first = CGAL::Color(50,80,120,255);
-        sm_item->setColor(QColor(first.red(), first.green(), first.blue()));
-        sm_item->setProperty("already_colored", true);
-        sm_item->setName(names[i].data());
-        sm_item->invalidateOpenGLBuffers();
-        result << sm_item;
-        if(add_to_scene)
-          CGAL::Three::Three::scene()->addItem(sm_item);
       }
+      if(need_pmap)
+      {
+        SMesh::Property_map<face_descriptor,CGAL::Color> fcolor =
+            mesh.add_property_map<face_descriptor,CGAL::Color>("f:color",first).first;
+        for(std::size_t pid = 0; pid < colors.size(); ++pid)
+        {
+          put(fcolor, face_descriptor(pid), colors[pid]);//should work bc mesh is just created and shouldn't have any destroyed face. Not so sure bc of orientation though.
+        }
+      }
+      Scene_surface_mesh_item* sm_item = new Scene_surface_mesh_item(mesh);
+      if(first == CGAL::Color(0,0,0,0))
+        first = CGAL::Color(50,80,120,255);
+      sm_item->setColor(QColor(first.red(), first.green(), first.blue()));
+      sm_item->setProperty("already_colored", true);
+      sm_item->setName(names[i].data());
+      sm_item->invalidateOpenGLBuffers();
+      result << sm_item;
+      if(add_to_scene)
+        CGAL::Three::Three::scene()->addItem(sm_item);
     }
     ok = true;
     return result;
