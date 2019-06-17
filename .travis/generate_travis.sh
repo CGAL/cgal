@@ -21,20 +21,16 @@ for f in *
 do
   if [ -d  "$f/package_info/$f" ]
 	then
-  	echo "$f " >> ./tmp.txt
-	fi
-done
-        LC_ALL=C sort ./tmp.txt > ./.travis/packages.txt
-  	rm ./tmp.txt
-  	while read p; do
-  	PACKAGES[$INDEX]+="$p "
+		PACKAGES[$INDEX]+="$f "
 		i=$[i+1]
 		if [ $i = 3 ]
 		then
 			i=0
  			INDEX=$[INDEX+1]
 		fi
-done <./.travis/packages.txt
+  	echo "$f " >> ./.travis/packages.txt
+	fi
+done
 if [ -f ".travis.yml" ] 
 then
   #copy the current .travis.yml for later check
@@ -77,8 +73,7 @@ IFS=$' '
 #check if there are differences between the files
 if ! cmp -s ./.travis.yml ./.travis.old;
 then
-    echo ".travis.yml has changed : "
-    diff ./.travis.yml ./.travis.old
+    echo ".travis.yml has changed"
     if [ -n "$CHECK" ]; then
         echo "You should modify the file .travis/template.txt"
         exit 1
