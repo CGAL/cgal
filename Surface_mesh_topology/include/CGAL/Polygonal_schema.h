@@ -289,6 +289,20 @@ namespace CGAL {
        { add_edge_to_facet(e); }
     }
       
+    void add_facet(std::initializer_list<const char*> l)
+    {
+      if (facet_started)
+      {
+        std::cerr<<"Polygonal_schema ERROR: "
+                 <<"you try to add a new facet"
+                 <<" but the previous facet is not yet ended."<<std::endl;
+        return;
+      }
+      begin_facet();
+      add_edges_to_facet(l);
+      end_facet();
+    }
+    
     /// End of the facet. Return the first dart of this facet.
     Dart_handle end_facet()
     {
