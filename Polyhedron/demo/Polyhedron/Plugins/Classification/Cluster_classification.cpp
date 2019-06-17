@@ -276,8 +276,8 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
   for (std::set<std::pair<int, int> >::iterator it = adjacencies.begin();
        it != adjacencies.end(); ++ it)
   {
-    m_clusters[std::size_t(it->first)].neighbors.push_back (std::size_t(it->second));
-    m_clusters[std::size_t(it->second)].neighbors.push_back (std::size_t(it->first));
+    m_clusters[std::size_t(it->first)].neighbors->push_back (std::size_t(it->second));
+    m_clusters[std::size_t(it->second)].neighbors->push_back (std::size_t(it->first));
   }
 
 }
