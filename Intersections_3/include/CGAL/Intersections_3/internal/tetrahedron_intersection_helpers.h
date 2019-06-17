@@ -81,7 +81,7 @@ void fill_segments_infos(std::vector<Segment>& segments,
     wrapped_segments.push_back(Wrapped_segment(s));
 
   std::vector<Segment> bis = segments;
-  for(int dummy = 0; dummy < bis.size()-1; ++dummy)
+  while(!bis.empty())
   {
     Segment s = bis.back();
     bis.pop_back();
