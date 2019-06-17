@@ -423,12 +423,17 @@ private:
 #if 1
     CGAL_assertion( p.is_segment() || q.is_segment() );
 
-    Voronoi_vertex_2 vpqr(p, q, r);
-    Voronoi_vertex_2 vqps(q, p, s);
-
-    if ( vpqr.incircle_no_easy(s) == ZERO &&
-	 vqps.incircle_no_easy(r) == ZERO ) {
-      return false;
+    if ( !(r.is_point() && s.is_point() && r.point()==s.point() ) &&
+         !(r.is_segment() && s.is_segment() && r.source_of_supporting_site()==s.source_of_supporting_site()
+                                            && r.target_of_supporting_site()==s.target_of_supporting_site() ) )
+    {
+      Voronoi_vertex_2 vpqr(p, q, r);
+      Voronoi_vertex_2 vqps(q, p, s);
+      //check if the edge is degenerate
+      if ( vpqr.incircle_no_easy(s) == ZERO &&
+           vqps.incircle_no_easy(r) == ZERO ) {
+        return false;
+      }
     }
 
     if ( p.is_segment() && q.is_segment() ) {

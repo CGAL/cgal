@@ -38,6 +38,8 @@
 #include <CGAL/Polygon_mesh_processing/internal/Polygon_mesh_slicer/Axis_parallel_plane_traits.h>
 
 #include <boost/variant.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -85,7 +87,13 @@ template<class TriangleMesh,
   class VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::type,
   class AABBTree = AABB_tree<
                        AABB_traits<Traits,
-                         AABB_halfedge_graph_segment_primitive<TriangleMesh> > >,
+                         AABB_halfedge_graph_segment_primitive<TriangleMesh,
+                                                                typename boost::mpl::if_<
+                                                                  typename boost::is_same<
+                                                                    VertexPointMap,
+                                                                    typename boost::property_map< TriangleMesh, vertex_point_t>::type >::type,
+                                                                  Default,
+                                                                  VertexPointMap>::type> > >,
   bool UseParallelPlaneOptimization=true>
 class Polygon_mesh_slicer
 {
@@ -391,6 +399,9 @@ class Polygon_mesh_slicer
   }
 
 public:
+
+  /// the AABB-tree type used internally
+  typedef AABBTree AABB_tree;
 
   /**
   * Constructor using `edges(tmesh)` to initialize the
