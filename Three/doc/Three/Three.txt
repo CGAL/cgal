@@ -335,6 +335,7 @@ You will probably have to fetch the libraries exported by the Polyhedron_demo, l
     )
     include( ${CGAL_POLYHEDRON_DEMO_USE_FILE} )
 
+Be careful, the polyhedron_demo build directory must contain a build of the demo that comes from the same CGAL version than the one of your CGAL_DIR.
 Finally, you can declare your plugin
 
     polyhedron_demo_plugin(example_plugin Example_plugin)
