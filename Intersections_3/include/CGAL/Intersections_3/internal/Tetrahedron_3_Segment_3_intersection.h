@@ -35,17 +35,18 @@ namespace internal {
 
 template<class K>
 struct Tetrahedron_segment_intersection_3
-    :public Tetrahedron_lines_intersection_3_base<K, typename K::Segment_3>
+    :public Tetrahedron_lines_intersection_3_base<K, typename K::Segment_3,
+    Tetrahedron_segment_intersection_3<K> >
 {
   typedef typename K::Segment_3 O;
-  typedef Tetrahedron_lines_intersection_3_base<K,
-                                                    typename K::Segment_3> Base;
+  typedef Tetrahedron_lines_intersection_3_base<K,typename K::Segment_3,
+    Tetrahedron_segment_intersection_3<K> > Base;
   typedef typename Base::Result_type Result_type;
 
   Tetrahedron_segment_intersection_3(const typename K::Tetrahedron_3& tet,
                                    const O& o):Base(tet,o) {}
 
-  bool all_inside_test() override
+  bool all_inside_test()
   {
     //if both segment extremities are inside tet, return the input segment.
     if(this->tet.has_on_bounded_side(this->o.source())
@@ -57,7 +58,7 @@ struct Tetrahedron_segment_intersection_3
     return false;
   }
 
-  bool are_extremities_inside_test() override
+  bool are_extremities_inside_test()
   {
     //If one extremity is inside tet : return a segment
     if(this->tet.has_on_bounded_side(this->o.source()))

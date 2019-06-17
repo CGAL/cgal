@@ -60,8 +60,9 @@ intersection(
   for(int i = 0; i< 3; ++i)
   {
     if(tet.has_on_bounded_side(tr.vertex(i))
-       || tet.has_on_boundary(tr.vertex(i)))
+       || tet.has_on_boundary(tr.vertex(i))){
       inside_points.push_back(tr.vertex(i));
+    }
   }
   switch(inside_points.size())
   {
@@ -118,8 +119,9 @@ intersection(
       fill_segments_infos(segments,tmp, tr);
       Poly res;
       res.reserve(4);
-      for( auto p : tmp)
+      for( auto p : tmp){
         res.push_back(p);
+      }
       return Result_type(std::forward<Poly>(res));
     }
     //else it must be adjacent to an vertex, so we return the point
@@ -238,8 +240,7 @@ intersection(
     case 3:
     {
       std::list<Segment_3> segs;
-      for(auto s : segments)
-        segs.push_back(s);
+      for(auto s : segments){segs.push_back(s);}
       std::list<Point_3> tmp;
       fill_points_list(segs, tmp);
       if(inside_points.size() == 1)
@@ -247,8 +248,7 @@ intersection(
         Poly res;
         res.reserve(4);
         res.push_back(inside_points.front());
-        for( auto p : tmp)
-          res.push_back(p);
+        for( auto p : tmp){res.push_back(p);}
         return Result_type(std::forward<Poly>(res));
       }
       else //size 2
@@ -257,10 +257,11 @@ intersection(
         res.reserve(5);
         if((inside_points.front() - inside_points.back()) *
            (tmp.front() - tmp.back()) > 0)
-        res.push_back(inside_points.front());
+        {
+          res.push_back(inside_points.front());
+        }
         res.push_back(inside_points.back());
-        for( auto p : tmp)
-          res.push_back(p);
+        for( auto p : tmp){res.push_back(p);}
         return Result_type(std::forward<Poly>(res));
       }
     }

@@ -32,7 +32,7 @@ namespace CGAL {
 namespace Intersections {
 
 namespace internal {
-template<class K, class O>
+template<class K, class O, class T>
 struct Tetrahedron_lines_intersection_3_base
 {
   typedef typename Intersection_traits<K,
@@ -50,21 +50,19 @@ struct Tetrahedron_lines_intersection_3_base
   const O& o;
   std::vector<typename K::Point_3> res_points;
   Result_type output;
-  virtual bool all_inside_test()
+  bool all_inside_test()
   {
     return false;
   }
 
-  virtual bool are_extremities_inside_test()
+  bool are_extremities_inside_test()
   {
     return false;
   }
-  virtual ~Tetrahedron_lines_intersection_3_base()
-  {}
 
   void do_procede()
   {
-    if(all_inside_test())
+    if(static_cast<T*>(this)->all_inside_test())
       return;
 
     int res_id = -1;
@@ -115,7 +113,7 @@ struct Tetrahedron_lines_intersection_3_base
       return;
     if(res_id != -1)
     {
-      if(are_extremities_inside_test())
+      if(static_cast<T*>(this)->are_extremities_inside_test())
         return;
       //else point and segment entirely not inside:
       output = tr_seg[res_id];

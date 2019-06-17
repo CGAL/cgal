@@ -33,7 +33,28 @@ namespace Intersections {
 
 namespace internal {
 
+template<class K>
+struct Tetrahedron_Line_intersection_3
+    :public Tetrahedron_lines_intersection_3_base<K, typename K::Line_3, Tetrahedron_Line_intersection_3<K> >
+{
+  typedef typename K::Line_3 O;
+  typedef Tetrahedron_lines_intersection_3_base<K, typename K::Line_3,
+    Tetrahedron_Line_intersection_3<K> > Base;
+  typedef typename Base::Result_type Result_type;
+  Tetrahedron_Line_intersection_3(const typename K::Tetrahedron_3& tet,
+                                 const O& o):Base(tet,o) {}
 
+  bool all_inside_test()
+  {
+    return false;
+  }
+
+  bool are_extremities_inside_test()
+  {
+    return false;
+  }
+
+};
 
 //Tetrahedron_3 Line_3
 template <class K>
@@ -43,7 +64,7 @@ intersection(
     const typename K::Line_3 &line,
     const K&)
 {
-  Tetrahedron_lines_intersection_3_base<K, typename K::Line_3> solver(tet, line);
+  Tetrahedron_lines_intersection_3_base<K, typename K::Line_3, Tetrahedron_Line_intersection_3<K> > solver(tet, line);
   solver.do_procede();
   return solver.output;
 }

@@ -82,28 +82,28 @@ void fill_segments_infos(std::vector<Segment>& segments,
     wrapped_segments.push_back(Wrapped_segment(s));
 
   std::vector<Segment> bis = segments;
-  for(int plouf = 0; plouf < bis.size()-1; ++plouf)
+  for(int dummy = 0; dummy < bis.size()-1; ++dummy)
   {
     Segment s = bis.back();
     bis.pop_back();
-    Wrapped_segment& super_s = wrapped_segments.back();
-    if(!super_s.s_dangling && ! super_s.t_dangling)
+    Wrapped_segment& w_s = wrapped_segments.back();
+    if(!w_s.s_dangling && ! w_s.t_dangling)
       continue;
     for(std::size_t i = 0; i< bis.size(); ++i)
     {
       const Segment& s2 = bis[i];
       if(s2.target() == s.source())
       {
-        super_s.s_dangling = false;
-        super_s.s_neighbor = i;
+        w_s.s_dangling = false;
+        w_s.s_neighbor = i;
         //same i because we empty from the bottom
         wrapped_segments[i].t_dangling = false;
         wrapped_segments[i].t_neighbor = bis.size();
       }
       else if(s2.target() == s.target())
       {
-        super_s.t_dangling = false;
-        super_s.t_neighbor = i;
+        w_s.t_dangling = false;
+        w_s.t_neighbor = i;
         wrapped_segments[i].s_dangling = false;
         wrapped_segments[i].s_neighbor = bis.size();
         wrapped_segments[i].segment = wrapped_segments[i].segment.opposite(); //also orient the structure
@@ -111,23 +111,23 @@ void fill_segments_infos(std::vector<Segment>& segments,
       }
       else if(s2.source() == s.source())
       {
-        super_s.s_dangling = false;
-        super_s.s_neighbor = i;
+        w_s.s_dangling = false;
+        w_s.s_neighbor = i;
         wrapped_segments[i].t_dangling = false;
         wrapped_segments[i].t_neighbor = bis.size();
         wrapped_segments[i].segment = wrapped_segments[i].segment.opposite();
       }
       else if(s2.source() == s.target())
       {
-        super_s.t_dangling = false;
-        super_s.t_neighbor = i;
+        w_s.t_dangling = false;
+        w_s.t_neighbor = i;
         wrapped_segments[i].s_dangling = false;
         wrapped_segments[i].s_neighbor = bis.size();
       }
     }
 
     //fill dangling extremities using triangle edges
-    if(super_s.s_dangling)
+    if(w_s.s_dangling)
     {
       for(std::size_t e_id = 0; e_id < 3; ++e_id)
       {
@@ -140,8 +140,8 @@ void fill_segments_infos(std::vector<Segment>& segments,
         {
           if(edge.has_on(bis[i].source()))
           {
-            super_s.s_dangling = false;
-            super_s.s_neighbor = i;
+            w_s.s_dangling = false;
+            w_s.s_neighbor = i;
             //same i because we empty from the bottom
             wrapped_segments[i].t_dangling = false;
             wrapped_segments[i].t_neighbor = bis.size();
@@ -149,8 +149,8 @@ void fill_segments_infos(std::vector<Segment>& segments,
           }
           else if(edge.has_on(bis[i].target()))
           {
-            super_s.s_dangling = false;
-            super_s.s_neighbor = i;
+            w_s.s_dangling = false;
+            w_s.s_neighbor = i;
             //same i because we empty from the bottom
             wrapped_segments[i].t_dangling = false;
             wrapped_segments[i].t_neighbor = bis.size();
@@ -158,7 +158,7 @@ void fill_segments_infos(std::vector<Segment>& segments,
         }
       }
     }
-    if(super_s.t_dangling)
+    if(w_s.t_dangling)
     {
       for(std::size_t e_id = 0; e_id < 3; ++e_id)
       {
@@ -171,16 +171,16 @@ void fill_segments_infos(std::vector<Segment>& segments,
         {
           if(edge.has_on(bis[i].source()))
           {
-            super_s.t_dangling = false;
-            super_s.t_neighbor = i;
+            w_s.t_dangling = false;
+            w_s.t_neighbor = i;
             //same i because we empty from the bottom
             wrapped_segments[i].s_dangling = false;
             wrapped_segments[i].s_neighbor = bis.size();
           }
           else if(edge.has_on(bis[i].target()))
           {
-            super_s.t_dangling = false;
-            super_s.t_neighbor = i;
+            w_s.t_dangling = false;
+            w_s.t_neighbor = i;
             //same i because we empty from the bottom
             wrapped_segments[i].s_dangling = false;
             wrapped_segments[i].s_neighbor = bis.size();
@@ -190,7 +190,7 @@ void fill_segments_infos(std::vector<Segment>& segments,
       }
     }
 
-    if(super_s.s_dangling || super_s.t_dangling)
+    if(w_s.s_dangling || w_s.t_dangling)
     {
       std::cerr<<"Error. Kernel must have exact constructions to compute this intersection."<<std::endl;
       return;
@@ -198,15 +198,15 @@ void fill_segments_infos(std::vector<Segment>& segments,
   }
 
   //finally fill points
-  std::size_t voyager = 0;
+  std::size_t n = 0;
   do
   {
-    Wrapped_segment& ws = wrapped_segments[voyager];
+    Wrapped_segment& ws = wrapped_segments[n];
     points.push_back(ws.segment.source());
     if(wrapped_segments[ws.t_neighbor].segment.source() != ws.segment.target())
       points.push_back(ws.segment.target());
-    voyager = ws.t_neighbor;
-  }while(voyager!=0);
+    n = ws.t_neighbor;
+  }while(n!=0);
 }
 
 
