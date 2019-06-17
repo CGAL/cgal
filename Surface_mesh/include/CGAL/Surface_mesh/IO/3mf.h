@@ -52,7 +52,7 @@ int read_3mf(const std::string& file_name,
   std::vector<std::vector<CGAL::Color> > all_colors;
   int result = 0;
   int nb_meshes =
-      CGAL::read_soups_from_3mf(file_name,
+      CGAL::read_triangle_soups_from_3mf(file_name,
                                 all_points, all_polygons, all_colors, names);
   if(nb_meshes < 0 )
   {

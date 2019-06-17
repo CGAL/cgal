@@ -600,7 +600,7 @@ int read_from_3mf(const std::string& file_name, PointRanges& all_points,
  * \return the number of soups read.
  */
 template<typename PointRanges, typename PolygonRanges, typename ColorRanges>
-int read_soups_from_3mf(const std::string& file_name, PointRanges& all_points,
+int read_triangle_soups_from_3mf(const std::string& file_name, PointRanges& all_points,
                         PolygonRanges& all_polygons, ColorRanges& all_colors,
                         std::vector<std::string>& names
                         )
