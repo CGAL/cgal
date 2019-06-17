@@ -106,7 +106,7 @@ protected:
 //    face_end();
   }
 
-  void compute_edge(Halfedge_const_handle he)
+  void compute_ray_points(Halfedge_const_handle he)
   {
       if(he->is_segment()){
         add_segment(he->source()->point(),
@@ -115,40 +115,33 @@ protected:
           Delaunay_vertex_const_handle v1 = he->up();
           Delaunay_vertex_const_handle v2 = he->down();
 
-          std::cout << "Up vertex of ray: " << std::endl;
-          std::cout << v1->point() << std::endl;
-          std::cout << "Down vertex of ray: " << std::endl;
-          std::cout << v2->point() << std::endl;
-
-          Kernel::Vector_2 direction;
+          Kernel::Vector_2 direction(v1->point().y()-v2->point().y(),
+                                     v2->point().x()-v1->point().x());;
           Kernel::Point_2 end_point;
 
           if(he->has_source()){
-              std::cout << "Left vertex of ray: " << std::endl;
-              std::cout << he->left()->point() << std::endl;
-              std::cout << "Source vertex of ray: " << std::endl;
-              std::cout << he->source()->point() << std::endl;
-              direction = Kernel::Vector_2(v1->point().y()-v2->point().y(),
-                                              v2->point().x()-v1->point().x());
-              std::cout << "Direction of ray: " << std::endl;
-              std::cout << direction.x() << ' ' << direction.y() << std::endl
-                        << std::endl;
               end_point = he->source()->point();
-          } else {
-              std::cout << "Right vertex of ray: " << std::endl;
-              std::cout << he->right()->point() << std::endl;
-              std::cout << "Target vertex of ray: " << std::endl;
-              std::cout << he->target()->point() << std::endl;
-              direction = Kernel::Vector_2(v1->point().y()-v2->point().y(),
-                                              v2->point().x()-v1->point().x());
-              std::cout << "Direction of ray: " << std::endl;
-              std::cout << direction.x() << ' ' << direction.y() << std::endl
-                        << std::endl;
-              end_point = he->target()->point();
+              add_ray_points(end_point, direction);
           }
-          add_line(end_point, direction);
       }
   }
+
+  void compute_rays(Halfedge_const_handle he){
+      if(he->is_ray()){
+          Delaunay_vertex_const_handle v1 = he->up();
+          Delaunay_vertex_const_handle v2 = he->down();
+
+          Kernel::Vector_2 direction(v1->point().y()-v2->point().y(),
+                                     v2->point().x()-v1->point().x());;
+          Kernel::Point_2 end_point;
+          if(he->has_source()){
+              end_point = he->source()->point();
+              std::cout << "Bounding_box" << m_bounding_box  << std::endl;
+              add_ray_segment(end_point, direction);
+          }
+      }
+  }
+
 
   void compute_vertex(Vertex_const_handle vh)
   { add_point(vh->point()); }
@@ -169,11 +162,15 @@ protected:
 
     for (typename V2::Halfedge_iterator it=v2.halfedges_begin();
          it!=v2.halfedges_end(); ++it)
-    { compute_edge(it); }
+    { compute_ray_points(it); }
+
+    for (typename V2::Halfedge_iterator it=v2.halfedges_begin();
+         it!=v2.halfedges_end(); ++it)
+    { compute_rays(it); }
 
     for (typename V2::Vertex_iterator it=v2.vertices_begin();
          it!=v2.vertices_end(); ++it)
-    { compute_vertex(it); } 
+    { compute_vertex(it); }
   }
 
   virtual void keyPressEvent(QKeyEvent *e)

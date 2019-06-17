@@ -284,42 +284,78 @@ public:
   { m_buffer_for_colored_segments.add_segment(p1, p2, acolor); }
 
   template<typename KPoint, typename KVector>
-  void add_line(const KPoint& p, const KVector& v)
-  {     /*  CGAL::Bbox_3 bb;
-      if (bb==bounding_box()) // Case of "empty" bounding box
-      {
-      bb=Local_point(CGAL::ORIGIN).bbox();
-          bb=bb + Local_point(200,200,200).bbox(); // To avoid a warning from Qglviewer
-      }
-      else
-      { bb=bounding_box(); }
-      this->camera()->setSceneBoundingBox(CGAL::qglviewer::Vec(bb.xmin(),
-                                                               bb.ymin(),
-                                                               bb.zmin()),
-                                          CGAL::qglviewer::Vec(bb.xmax(),
-                                                               bb.ymax(),
-                                                               bb.zmax()));
-      this->showEntireScene();*/
-//      Local_kernel::Point_2 p1(-200., -200.);
-//      Local_kernel::Point_2 p2(200., 200.);
-//      Local_kernel::Iso_rectangle_2 clipping_rect(p1, p2);
-//      Local_kernel::Ray_2 ray(p, v);
-//      Object o = CGAL::intersection(ray, clipping_rect);
-//      typedef Local_kernel::Segment_2 Segment_2;
-//      typedef Local_kernel::Point_2 Point_2;
-//      if(const Segment_2 *s = CGAL::object_cast<Segment_2>(&o)){
-//          m_buffer_for_mono_lines.add_line(s->source(), s->target());
-//      }
-    Local_kernel::Point_2 moving_point(p);
-    std::cout << "Ray starting from " << p << " with direction " << v << std::endl;
+  void add_ray_points(const KPoint& p, const KVector& v)
+  { std::cout << "Ray starting from " << p << " with direction " << v << std::endl;
+    std::cout << "Bounding_box" << m_bounding_box  << std::endl;
+    m_buffer_for_mono_segments.add_segment(p, p+v);
+    //m_buffer_for_mono_points.add_point(p+v);
+  }
 
-    for(int i =0; i< 5; i++)
-    {
-      m_buffer_for_mono_lines.add_point(moving_point);
-      moving_point += v;
-      std::cout << moving_point << std::endl;
+  template<typename KPoint, typename KVector>
+  void add_ray_segment(const KPoint& p, const KVector& v)
+  {
+    Local_kernel::Vector_2 V(v/CGAL::sqrt(v.squared_length()));
+    std::cout << "v: " << V << std::endl;
+
+    Local_kernel::Vector_2 inV = V/CGAL::sqrt(v.squared_length());
+
+    Local_kernel::Vector_2 boundsMin(m_bounding_box.xmin(), m_bounding_box.zmin());
+    Local_kernel::Vector_2 boundsMax(m_bounding_box.xmax(), m_bounding_box.zmax());
+
+    Local_kernel::Point_3 bb_min(m_bounding_box.xmin(), m_bounding_box.ymin(), m_bounding_box.zmin());
+    Local_kernel::Point_3 bb_max(m_bounding_box.xmax(), m_bounding_box.ymax(), m_bounding_box.zmax());
+
+    CGAL::qglviewer::Vec testPoint2(100,100, 50);
+    CGAL::qglviewer::Vec utestPoint2 = this->camera()->unprojectedCoordinatesOf(testPoint2);
+
+    Local_kernel::Point_3 testPoint1(utestPoint2.x, utestPoint2.y, utestPoint2.z);
+
+    m_buffer_for_mono_points.add_point(testPoint1);
+
+    m_buffer_for_mono_segments.add_segment(bb_min, bb_max);
+
+    std::cout << "bb_min: " << boundsMin << std:: endl;
+    std::cout << "bb_max: " << boundsMax << std::endl;
+    float txmin, txmax, tymin, tymax;
+    if(v.x() >=0 ){
+      txmin = (boundsMin.x() - p.x()) * inV.x();
+      txmax = (boundsMax.x() - p.x()) * inV.x();
+    } else{
+      txmin = (boundsMax.x() - p.x()) * inV.x();
+      txmax = (boundsMin.x() - p.x()) * inV.x();
     }
-    std::cout << std::endl;
+    if(v.y() >=0 ){
+      tymin = (boundsMin.y() - p.y()) * inV.y();
+      tymax = (boundsMax.y() - p.y()) * inV.y();
+    } else{
+      tymin = (boundsMax.y() - p.y()) * inV.y();
+      tymax = (boundsMin.y() - p.y()) * inV.y();
+    }
+    if(txmin > txmax) std::swap(txmin, txmax);
+    if(tymin > tymax ) std::swap(tymin, tymax);
+
+    if(txmax > tymax)
+        txmax = tymax;
+    if(tymin > txmin)
+        txmin = tymin;
+
+    Local_kernel::Point_2 p1(txmin, tymin);
+    Local_kernel::Point_2 p2(txmax, tymax);
+
+    std::cout << "vmin: " << p1 << std::endl;
+    std::cout << "vmax: " << p2 << std::endl;
+
+    CGAL::qglviewer::Vec testPoint(50, 50, 0);
+    int viewport[4];
+    this->camera()->getViewport(viewport);
+    std::cout << "viewport: " << viewport[0] << ' ' << viewport[1] << ' '
+              << viewport[2] << ' ' << viewport[3] << std::endl;
+
+    CGAL::qglviewer::Vec up = this->camera()->unprojectedCoordinatesOf(testPoint);
+    std::cout << "origin: " << up << std::endl;
+
+    m_buffer_for_mono_lines.add_segment(p1,p2);
+    //m_buffer_for_mono_lines.add_segment(p, p+ (10*v));
   }
 
   bool is_a_face_started() const
