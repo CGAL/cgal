@@ -29,11 +29,10 @@
 namespace CGAL{
 /*!
  * Extracts the surface meshes from an input 3mf file and appends it to `output`.
- *\tparam  SurfaceMeshRange a model of the concepts `RandomAccessContainer` and
- *  `BackInsertionSequence` whose `value type` is `CGAL::Surface_mesh`.
+ *\tparam  Point the Point type of the output meshes.
  * \param file_name the path to the 3mf file.
- * \param output the `SurfaceMeshRange` that will be filled by this function.
- * \return the number of extracted surface meshes.
+ * \param output a `std::vector` containing the `CGAL::Surface_mesh`s that will be filled by this function.
+ * \return the number of extracted meshes.
  */
 
 template<typename Point>
