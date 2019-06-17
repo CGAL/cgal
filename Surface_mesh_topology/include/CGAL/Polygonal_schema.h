@@ -33,15 +33,19 @@
 #include <initializer_list>
 
 namespace CGAL {
-  /// @return opposite label of label s
-  ///    (i.e. add/remove - depending if s is positive or negative)
-  inline std::string opposite_label(const std::string & s)
+
+  namespace internal 
   {
-    CGAL_assertion(!s.empty());
-    if (s[0]=='-')
-    { return s.substr(1, std::string::npos); }
-    
-    return std::string("-")+s;
+    /// @return opposite label of label s
+    ///    (i.e. add/remove - depending if s is positive or negative)
+    inline std::string opposite_label(const std::string & s)
+    {
+      CGAL_assertion(!s.empty());
+      if (s[0]=='-')
+      { return s.substr(1, std::string::npos); }
+      
+      return std::string("-")+s;
+    }
   }
 
   struct Combinatorial_map_tag;
@@ -66,7 +70,7 @@ namespace CGAL {
       if (dart_same_label!=NULL && dart_opposite_label!=NULL)
       {
         std::cerr<<"Polygonal_schema ERROR: "<<"both labels "<<s
-                 <<" and "<<opposite_label(s)<<" are already added in the surface."
+                 <<" and "<<internal::opposite_label(s)<<" are already added in the surface."
                  <<" This label can not be use anymore."<<std::endl;
         return NULL;
       }
@@ -117,7 +121,7 @@ namespace CGAL {
        if (dart_same_label!=NULL && dart_opposite_label!=NULL)
       {
         std::cerr<<"Polygonal_schema ERROR: "<<"both labels "<<s
-                 <<" and "<<opposite_label(s)<<" are already added in the surface."
+                 <<" and "<<internal::opposite_label(s)<<" are already added in the surface."
                  <<" This label can not be use anymore."<<std::endl;
         return NULL;
       }
@@ -131,7 +135,7 @@ namespace CGAL {
 
       if (dart_same_label!=NULL)
       { // Here dart_same_label!=NULL
-        std::string s2=opposite_label(s);
+        std::string s2=internal::opposite_label(s);
         edge_label_to_dart[s2]=dh2;
         gmap.info(dh2).m_label=new char[s2.size()+1];
         strncpy(gmap.info(dh2).m_label, s2.c_str(), s2.size()+1); // +1 to copy also the \0 char
@@ -146,7 +150,7 @@ namespace CGAL {
 
         if (dart_opposite_label!=NULL)
         {
-          std::string s2=opposite_label(s);
+          std::string s2=internal::opposite_label(s);
           edge_label_to_dart[s2]=res;
           gmap.info(res).m_label=new char[s2.size()+1];
           strncpy(gmap.info(res).m_label, s2.c_str(), s2.size()+1); // +1 to copy also the \0 char
@@ -168,7 +172,7 @@ namespace CGAL {
         { label=gmap.info(gmap.template alpha<2>(dh)).m_label; }
         else
         {
-          return opposite_label
+          return internal::opposite_label
             (std::string(gmap.info(gmap.template alpha<0>(dh))));
         }
       }
@@ -233,7 +237,7 @@ namespace CGAL {
       }
 
       Dart_handle dart_same_label=get_dart_labeled(s);
-      Dart_handle dart_opposite_label=get_dart_labeled(opposite_label(s));
+      Dart_handle dart_opposite_label=get_dart_labeled(internal::opposite_label(s));
       
       Dart_handle cur=Polygonal_schema_tools<Map>::
         add_edge_to_face(*this, s, prev_dart, dart_same_label, dart_opposite_label,
