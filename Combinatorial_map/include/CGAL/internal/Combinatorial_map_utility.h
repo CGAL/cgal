@@ -72,37 +72,35 @@ namespace CGAL
     { typedef CGAL::Tag_true type; };
 
     // Get the type Attributes defined as inner type of T.
-    // If T::Attributes is not defined, defined CGAL::cpp11::tuple<> as type.
+    // If T::Attributes is not defined, defined std::tuple<> as type.
     BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_attributes_tuple,Attributes,false)
     template<typename T, bool typedefined=Has_attributes_tuple<T>::value >
     struct Get_attributes_tuple
-    { typedef CGAL::cpp11::tuple<> type; };
+    { typedef std::tuple<> type; };
     template<typename T>
     struct Get_attributes_tuple<T, true>
     { typedef typename T::Attributes type; };
 
-#if ! defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) &&  \
-    ! defined(CGAL_CFG_NO_CPP0X_TUPLE)
     // Convert a tuple in a same tuple where each void type was replaced into
     // CGAL::Void.
     template<typename ... Items>
     struct Convert_tuple_with_void;
     template<typename ... Items>
-    struct Convert_tuple_with_void<CGAL::cpp11::tuple<Items...> >
+    struct Convert_tuple_with_void<std::tuple<Items...> >
     {
-      typedef CGAL::cpp11::tuple<typename Convert_void<Items>::type... > type;
+      typedef std::tuple<typename Convert_void<Items>::type... > type;
     };
 
     // Length of a variadic template
     template<typename ... T>
     struct My_length;
     template<typename T1, typename ... T>
-    struct My_length<CGAL::cpp11::tuple<T1, T...> >
+    struct My_length<std::tuple<T1, T...> >
     {
-      static const int value = My_length<CGAL::cpp11::tuple<T...> >::value + 1;
+      static const int value = My_length<std::tuple<T...> >::value + 1;
     };
     template<>
-    struct My_length<CGAL::cpp11::tuple<> >
+    struct My_length<std::tuple<> >
     {
       static const int value = 0;
     };
@@ -111,17 +109,17 @@ namespace CGAL
     template<class Type,class Tuple>
     struct Number_of_type_in_tuple;
     template<class Type,typename ... Items>
-    struct Number_of_type_in_tuple<Type,CGAL::cpp11::tuple<Type,Items...> >{
+    struct Number_of_type_in_tuple<Type,std::tuple<Type,Items...> >{
       static const int value=Number_of_type_in_tuple
-        <Type,CGAL::cpp11::tuple<Items...> >::value+1;
+        <Type,std::tuple<Items...> >::value+1;
     };
     template<class Type,class Other, typename ... Items>
-    struct Number_of_type_in_tuple<Type,CGAL::cpp11::tuple<Other,Items...> >{
+    struct Number_of_type_in_tuple<Type,std::tuple<Other,Items...> >{
       static const int value=Number_of_type_in_tuple
-        <Type,CGAL::cpp11::tuple<Items...> >::value;
+        <Type,std::tuple<Items...> >::value;
     };
     template<class Type>
-    struct Number_of_type_in_tuple<Type,CGAL::cpp11::tuple<> >{
+    struct Number_of_type_in_tuple<Type,std::tuple<> >{
       static const int value=0;
     };
 
@@ -129,21 +127,21 @@ namespace CGAL
     template<class Type, class Tuple>
     struct Number_of_different_type_in_tuple;
     template<class Type, typename Other, typename ... Items>
-    struct Number_of_different_type_in_tuple<Type,CGAL::cpp11::tuple
+    struct Number_of_different_type_in_tuple<Type,std::tuple
                                              <Other, Items...> >
     {
       static const int value=Number_of_different_type_in_tuple
-        <Type,CGAL::cpp11::tuple<Items...> >::value+1;
+        <Type,std::tuple<Items...> >::value+1;
     };
     template<class Type, typename ... Items>
-    struct Number_of_different_type_in_tuple<Type, CGAL::cpp11::tuple
+    struct Number_of_different_type_in_tuple<Type, std::tuple
                                              <Type,Items...> >
     {
       static const int value=Number_of_different_type_in_tuple
-        <Type,CGAL::cpp11::tuple<Items...> >::value;
+        <Type,std::tuple<Items...> >::value;
     };
     template<class Type>
-    struct Number_of_different_type_in_tuple<Type, CGAL::cpp11::tuple<> >
+    struct Number_of_different_type_in_tuple<Type, std::tuple<> >
     {
       static const int value=0;
     };
@@ -156,23 +154,23 @@ namespace CGAL
     struct Nb_type_in_tuple_up_to_k;
 
     template <class Type,int dim,int k,class T1,class ... T>
-    struct Nb_type_in_tuple_up_to_k<Type,k,CGAL::cpp11::tuple<T1,T...>,dim>
+    struct Nb_type_in_tuple_up_to_k<Type,k,std::tuple<T1,T...>,dim>
     {
       static const int pos= Nb_type_in_tuple_up_to_k
-        <Type,k,CGAL::cpp11::tuple<T...>,dim>::pos - 1;
+        <Type,k,std::tuple<T...>,dim>::pos - 1;
 
       static const int value =
         ( pos==k  ) ?  ( boost::is_same<T1,Type>::value ? 0:-dim-1 )
         :  ( ( pos<k ) ? ( ( boost::is_same<T1,Type>::value ? 1:0 )
                            + Nb_type_in_tuple_up_to_k
-                           <Type,k,CGAL::cpp11::tuple
+                           <Type,k,std::tuple
                            <T...>,dim >::value)
              :0
              );
     };
 
     template <class Type,int dim,int k,class T1>
-    struct Nb_type_in_tuple_up_to_k<Type,k,CGAL::cpp11::tuple<T1>,dim >
+    struct Nb_type_in_tuple_up_to_k<Type,k,std::tuple<T1>,dim >
     {
       static const int pos=dim;
       static const int value=(pos==k?
@@ -189,23 +187,23 @@ namespace CGAL
 
     template <class Type,int dim,int k,class T1,class ... T>
     struct Nb_type_different_in_tuple_up_to_k<Type,k,
-                                              CGAL::cpp11::tuple<T1,T...>,dim>
+                                              std::tuple<T1,T...>,dim>
     {
       static const int pos = Nb_type_different_in_tuple_up_to_k
-        <Type,k,CGAL::cpp11::tuple<T...>,dim >::pos - 1;
+        <Type,k,std::tuple<T...>,dim >::pos - 1;
 
       static const int value =
         ( pos==k  ) ?  ( boost::is_same<T1,Type>::value ? -dim-1 : 0 )
         :  ( ( pos<k ) ? ( ( boost::is_same<T1,Type>::value ? 0:1 )
                            + Nb_type_different_in_tuple_up_to_k
-                           <Type,k,CGAL::cpp11::tuple<T...>,dim >::value)
+                           <Type,k,std::tuple<T...>,dim >::value)
              :0
              );
     };
 
     template <class Type,int dim,int k,class T1>
     struct Nb_type_different_in_tuple_up_to_k<Type,k,
-                                              CGAL::cpp11::tuple<T1>,dim >
+                                              std::tuple<T1>,dim >
     {
       static const int pos=dim;
       static const int value=(pos==k?
@@ -217,38 +215,38 @@ namespace CGAL
     template <template <class D> class Functor,class T>
     struct Tuple_converter;
     template <template <class D> class Functor,class ...T>
-    struct Tuple_converter<Functor,CGAL::cpp11::tuple<T...> >{
-      typedef CGAL::cpp11::tuple<typename Functor<T>::type... > type;
+    struct Tuple_converter<Functor,std::tuple<T...> >{
+      typedef std::tuple<typename Functor<T>::type... > type;
     };
 
     // To scan a given tuple, and keep only type different from Type
     // to build the tuple Attribute_type.
-    template <class Type,class Res, class Tuple=CGAL::cpp11::tuple<> >
+    template <class Type,class Res, class Tuple=std::tuple<> >
     struct Keep_type_different_of;
 
     template < class Type,class ... Res >
-    struct Keep_type_different_of<Type,CGAL::cpp11::tuple<>,
-                                  CGAL::cpp11::tuple<Res...> >
+    struct Keep_type_different_of<Type,std::tuple<>,
+                                  std::tuple<Res...> >
     {
-      typedef CGAL::cpp11::tuple<Res...> type;
+      typedef std::tuple<Res...> type;
     };
 
     template < class Type,class ... T, class ... Res >
     struct Keep_type_different_of<Type,
-                                  CGAL::cpp11::tuple<Type,T ...>,
-                                  CGAL::cpp11::tuple<Res...> >
+                                  std::tuple<Type,T ...>,
+                                  std::tuple<Res...> >
     {
       typedef typename Keep_type_different_of
-      <Type,CGAL::cpp11::tuple<T ...>,CGAL::cpp11::tuple<Res...> >::type type;
+      <Type,std::tuple<T ...>,std::tuple<Res...> >::type type;
     };
 
     template < class Type, class Other, class ... T, class ... Res >
-    struct Keep_type_different_of<Type,CGAL::cpp11::tuple<Other,T...>,
-                                  CGAL::cpp11::tuple<Res...> >
+    struct Keep_type_different_of<Type,std::tuple<Other,T...>,
+                                  std::tuple<Res...> >
     {
       typedef typename Keep_type_different_of
-      <Type, CGAL::cpp11::tuple<T...>,
-       CGAL::cpp11::tuple<Res...,Other> >::type type;
+      <Type, std::tuple<T...>,
+       std::tuple<Res...,Other> >::type type;
     };
 
     //Helper class to statically call a functor
@@ -337,18 +335,18 @@ namespace CGAL
 
     template <class Functor,class Head, class ... Items,int n>
     struct Foreach_static_restricted<Functor,
-                                     CGAL::cpp11::tuple<Head,Items...>,n>
+                                     std::tuple<Head,Items...>,n>
     {
       template <class  ... T>
       static void run(T& ... t){
         Conditionnal_run<Functor,n,Head>::run(t...);
         Foreach_static_restricted
-          <Functor,CGAL::cpp11::tuple<Items...>,n+1>::run(t...);
+          <Functor,std::tuple<Items...>,n+1>::run(t...);
       }
     };
 
     template <class Functor,int n>
-    struct Foreach_static_restricted<Functor,CGAL::cpp11::tuple<>,n>{
+    struct Foreach_static_restricted<Functor,std::tuple<>,n>{
       template <class  ... T>
       static void run(T& ... ){}
     };
@@ -361,26 +359,22 @@ namespace CGAL
 
     template <class Functor,int j,class Head, class ... Items,int n>
     struct Foreach_static_restricted_except<Functor, j,
-        CGAL::cpp11::tuple<Head,Items...>,n>
+        std::tuple<Head,Items...>,n>
     {
       template <class  ... T>
       static void run(T& ... t){
         Conditionnal_run_except<Functor,n,j,Head>::run(t...);
         Foreach_static_restricted_except
-          <Functor,j,CGAL::cpp11::tuple<Items...>,n+1>::run(t...);
+          <Functor,j,std::tuple<Items...>,n+1>::run(t...);
       }
     };
 
     template <class Functor,int j,int n>
-    struct Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<>,n>
+    struct Foreach_static_restricted_except<Functor,j,std::tuple<>,n>
     {
       template <class  ... T>
       static void run(T& ... ){}
     };
-#else
-    // Definitions of structs are moved to another file.
-#include <CGAL/internal/Combinatorial_map_utility_novariadic.h>
-#endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
     //Apply a functor to each element of a tuple
     template<class Functor,class Tuple,
@@ -388,7 +382,7 @@ namespace CGAL
     struct Apply_functor_to_each_tuple_element
     {
       static void run(Tuple& t){
-        Functor() ( CGAL::cpp11::get<pos>(t) );
+        Functor() ( std::get<pos>(t) );
         Apply_functor_to_each_tuple_element<Functor,Tuple,pos-1>::run(t);
       }
     };
@@ -524,7 +518,7 @@ namespace CGAL
       template<int d, int in_tuple=(d<CGAL::internal::My_length
                                     <Attributes>::value)>
       struct Attribute_type
-      { typedef typename CGAL::cpp11::tuple_element<d,Attributes>::type type; };
+      { typedef typename std::tuple_element<d,Attributes>::type type; };
 
       template<int d>
       struct Attribute_type<d,0>
@@ -534,7 +528,7 @@ namespace CGAL
       template<int d, class Type=typename Attribute_type<d>::type>
       struct Attribute_handle
       {
-         typedef typename CGAL::cpp11::tuple_element
+         typedef typename std::tuple_element
                <Dimension_index<d>::value,Attribute_handles>::type type;
       };
 
@@ -546,7 +540,7 @@ namespace CGAL
       template<int d, class Type=typename Attribute_type<d>::type>
       struct Attribute_const_handle
       {
-        typedef typename CGAL::cpp11::tuple_element
+        typedef typename std::tuple_element
           <Dimension_index<d>::value, Attribute_const_handles>::type type;
       };
 
@@ -558,7 +552,7 @@ namespace CGAL
       template<int d, class Type=typename Attribute_type<d>::type>
       struct Attribute_iterator
       {
-        typedef typename CGAL::cpp11::tuple_element
+        typedef typename std::tuple_element
            <Dimension_index<d>::value, Attribute_iterators>::type type;
       };
 
@@ -570,7 +564,7 @@ namespace CGAL
       template<int d, class Type=typename Attribute_type<d>::type>
       struct Attribute_const_iterator
       {
-        typedef typename CGAL::cpp11::tuple_element
+        typedef typename std::tuple_element
            <Dimension_index<d>::value, Attribute_const_iterators>::type type;
       };
 
@@ -582,7 +576,7 @@ namespace CGAL
       template<int d, class Type=typename Attribute_type<d>::type>
       struct Attribute_range
       {
-        typedef typename CGAL::cpp11::tuple_element
+        typedef typename std::tuple_element
              <Dimension_index<d>::value, Attribute_ranges>::type type;
       };
 
@@ -594,7 +588,7 @@ namespace CGAL
       template<int d, class Type=typename Attribute_type<d>::type>
       struct Attribute_const_range
       {
-        typedef const typename CGAL::cpp11::tuple_element
+        typedef const typename std::tuple_element
              <Dimension_index<d>::value, Attribute_ranges >::type type;
       };
 
@@ -602,7 +596,6 @@ namespace CGAL
       struct Attribute_const_range<d, CGAL::Void>
       { typedef CGAL::Void type; };
 
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
       // To iterate onto each enabled attributes
       template <class Functor>
       struct Foreach_enabled_attributes
@@ -619,118 +612,6 @@ namespace CGAL
         static void run(Ts& ... t)
         { Foreach_static_restricted_except<Functor, j, Attributes>::run(t...); }
       };
-#else
-    // This one cannot be moved in Combinatorial_map_utility_novariadic.h
-    // because this is an inner struct which uses inner type Attributes.
-    template <class Functor>
-    struct Foreach_enabled_attributes
-    {
-      static void run()
-      {Foreach_static_restricted<Functor,Attributes >::run();}
-
-      template <class T1>
-      static void run(T1& t1)
-      {Foreach_static_restricted<Functor,Attributes >::run(t1);}
-
-      template <class T1,class T2>
-      static void run(T1& t1,T2& t2)
-      {Foreach_static_restricted<Functor,Attributes >::run(t1,t2);}
-
-      template <class T1,class T2,class T3>
-      static void run(T1& t1,T2& t2,T3& t3)
-      {Foreach_static_restricted<Functor,Attributes >::run(t1,t2,t3);}
-
-      template <class T1,class T2,class T3,class T4>
-      static void run(T1& t1,T2& t2,T3& t3,T4& t4)
-      {Foreach_static_restricted<Functor,Attributes >::run(t1,t2,t3,t4);}
-
-      template <class T1,class T2,class T3,class T4,class T5>
-      static void run(T1& t1,T2& t2,T3& t3,T4& t4,
-                      T5& t5)
-      {Foreach_static_restricted<Functor,Attributes >::run(t1,t2,t3,t4,t5);}
-
-      template <class T1,class T2,class T3,class T4,class T5,class T6>
-      static void run(T1& t1,T2& t2,T3& t3,T4& t4,
-                      T5& t5,T6& t6)
-      {Foreach_static_restricted<Functor,Attributes >::run(t1,t2,t3,t4,t5,t6);}
-
-      template <class T1,class T2,class T3,class T4,class T5,class T6,class T7>
-      static void run(T1& t1,T2& t2,T3& t3,T4& t4,
-                      T5& t5,T6& t6,T7& t7)
-      {Foreach_static_restricted<Functor,Attributes >::run(t1,t2,t3,t4,t5,
-                                                           t6,t7);}
-
-      template <class T1,class T2,class T3,class T4,class T5,class T6,
-                class T7,class T8>
-      static void run(T1& t1,T2& t2,T3& t3,T4& t4,
-                      T5& t5,T6& t6,T7& t7,T8& t8)
-      {Foreach_static_restricted<Functor,Attributes >::run(t1,t2,t3,t4,t5,t6,
-                                                           t7,t8);}
-
-      template <class T1,class T2,class T3,class T4,class T5,class T6,
-                class T7,class T8,class T9>
-      static void run(T1& t1,T2& t2,T3& t3,T4& t4,
-                      T5& t5,T6& t6,T7& t7,T8& t8,
-                      T9& t9)
-      {Foreach_static_restricted<Functor,Attributes >::run(t1,t2,t3,t4,
-                                                           t5,t6,t7,t8,t9);}
-    };
-    // This one cannot be moved in Combinatorial_map_utility_novariadic.h
-    // because this is an inner struct which uses inner type Attributes.
-    template <class Functor, unsigned int j>
-    struct Foreach_enabled_attributes_except
-    {
-      static void run()
-      {Foreach_static_restricted_except<Functor,j,Attributes>::run();}
-
-      template <class T1>
-      static void run(T1& t1)
-      {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1);}
-
-      template <class T1,class T2>
-      static void run(T1& t1,T2& t2)
-      {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1,t2);}
-
-      template <class T1,class T2,class T3>
-      static void run(T1& t1,T2& t2,T3& t3)
-      {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1,t2,t3);}
-
-      template <class T1,class T2,class T3,class T4>
-      static void run(T1& t1,T2& t2,T3& t3,T4& t4)
-      {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1,t2,t3,t4);}
-
-      template <class T1,class T2,class T3,class T4,class T5>
-      static void run(T1& t1,T2& t2,T3& t3,T4& t4,
-                      T5& t5)
-      {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1,t2,t3,t4,t5);}
-
-      template <class T1,class T2,class T3,class T4,class T5,class T6>
-      static void run(T1& t1,T2& t2,T3& t3,T4& t4,
-                      T5& t5,T6& t6)
-      {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1,t2,t3,t4,t5,t6);}
-
-      template <class T1,class T2,class T3,class T4,class T5,class T6,class T7>
-      static void run(T1& t1,T2& t2,T3& t3,T4& t4,
-                      T5& t5,T6& t6,T7& t7)
-      {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1,t2,t3,t4,t5,
-                                                           t6,t7);}
-
-      template <class T1,class T2,class T3,class T4,class T5,class T6,
-                class T7,class T8>
-      static void run(T1& t1,T2& t2,T3& t3,T4& t4,
-                      T5& t5,T6& t6,T7& t7,T8& t8)
-      {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1,t2,t3,t4,t5,t6,
-                                                           t7,t8);}
-
-      template <class T1,class T2,class T3,class T4,class T5,class T6,
-                class T7,class T8,class T9>
-      static void run(T1& t1,T2& t2,T3& t3,T4& t4,
-                      T5& t5,T6& t6,T7& t7,T8& t8,
-                      T9& t9)
-      {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1,t2,t3,t4,
-                                                           t5,t6,t7,t8,t9);}
-    };
-#endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   };
 
 } //namespace internal

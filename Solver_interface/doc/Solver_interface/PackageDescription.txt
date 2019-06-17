@@ -22,14 +22,15 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `DiagonalizeTraits`
+- `NormalEquationSparseLinearAlgebraTraits_d`
 - `SparseLinearAlgebraTraits_d`
 - `SparseLinearAlgebraWithFactorTraits_d`
 - `SvdTraits`
 
-## Classes ##
+\cgalCRPSection{Classes}
 
 - `CGAL::Eigen_solver_traits`
 - `CGAL::Eigen_diagonalize_traits`
@@ -38,7 +39,4 @@
 - `CGAL::Eigen_sparse_matrix`
 - `CGAL::Eigen_sparse_symmetric_matrix`
 - `CGAL::Eigen_svd`
-- `CGAL::Lapack_vector`
-- `CGAL::Lapack_matrix`
-- `CGAL::Lapack_svd`
 */

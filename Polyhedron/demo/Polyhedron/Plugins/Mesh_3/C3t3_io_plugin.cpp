@@ -3,6 +3,7 @@
 #include <CGAL/Mesh_3/tet_soup_to_c3t3.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 #include <CGAL/IO/File_avizo.h>
 #include <iostream>
 #include <fstream>
@@ -66,10 +67,16 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
       return NULL;
     }
     Scene_c3t3_item* item = new Scene_c3t3_item();
+    
+    if(fileinfo.size() == 0)
+    {
+      CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
+      item->setName(fileinfo.completeBaseName());
+      return item;
+    }
     if(fileinfo.suffix().toLower() == "cgal")
     {
         item->setName(fileinfo.baseName());
-        item->setScene(scene);
 
 
         if(item->load_binary(in)) {
@@ -102,7 +109,6 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
 
       Scene_c3t3_item* item = new Scene_c3t3_item();
       item->setName(fileinfo.baseName());
-      item->setScene(scene);
       item->set_valid(false);
 
       if(CGAL::build_triangulation_from_file<C3t3::Triangulation, true>(in, item->c3t3().triangulation()))

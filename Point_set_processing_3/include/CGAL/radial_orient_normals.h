@@ -26,7 +26,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Origin.h>
-#include <CGAL/trace.h>
+#include <CGAL/IO/trace.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 

@@ -23,7 +23,6 @@
 #ifndef CGAL_TEST_UTILITIES_H
 #define CGAL_TEST_UTILITIES_H
 
-#include <CGAL/basic.h>
 #include <CGAL/use.h>
 #include <cassert>
 #include <iostream>

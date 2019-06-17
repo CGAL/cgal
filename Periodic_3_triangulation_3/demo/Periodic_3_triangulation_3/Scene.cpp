@@ -814,9 +814,10 @@ void Scene::draw() {
     glEnable(GL_DEPTH_TEST);
     if(!are_buffers_initialized)
         initialize_buffers();
-    gl_draw_location();
-
-    gl_draw_conflict();
+    if(dlocate)
+      gl_draw_location();
+    if(dconflict)
+      gl_draw_conflict();
 
     //// Draw the triangulation itself that is stored in the list.
 
@@ -1410,11 +1411,10 @@ void Scene::gl_draw_location() {
                         ch, off0, off1, off2, off3, offs);
 
             for(int i=0; i < 4; i++){
-                Point p = tet_to_draw.vertex((i+1)&3);
-                Point q = tet_to_draw.vertex((i+2)&3);
-                Point r = tet_to_draw.vertex((i+3)&3);
-                Vector c= (Vector(Point(),p)+Vector(Point(),q)+Vector(Point(),r))/3.;
-                Point cp = Point(c.x(),c.y(),c.z());
+                const Point& p = tet_to_draw.vertex((i+1)&3);
+                const Point& q = tet_to_draw.vertex((i+2)&3);
+                const Point& r = tet_to_draw.vertex((i+3)&3);
+                Point cp = CGAL::centroid(p,q,r);
                 // project facet center
                 double px,py,pz;
                 project(cp.x(),cp.y(),cp.z(),
@@ -1462,8 +1462,11 @@ void Scene::gl_draw_conflict() {
     std::vector<Cell_handle> cic;
     std::vector<Facet> boundary_facets;
     // Find the conflict region
-    Cell_handle c = p3dt.locate(moving_point);
-    p3dt.find_conflicts(moving_point,c,std::back_inserter(boundary_facets),std::back_inserter(cic),CGAL::Emptyset_iterator());
+    P3DT::Locate_type t;
+    int li, lj;
+    Cell_handle c = p3dt.locate(moving_point,t,li,lj);
+    if(t != P3DT::VERTEX)
+      p3dt.find_conflicts(moving_point,c,std::back_inserter(boundary_facets),std::back_inserter(cic),CGAL::Emptyset_iterator());
 
     std::vector<Projected_triangle> bfm;
 
@@ -1521,11 +1524,10 @@ void Scene::gl_draw_conflict() {
             for (int offs=0 ; offs<=diff_off ; offs++) {
                 if ((((~offs)|diff_off)&7)!=7) continue;
                 Triangle tri_to_draw = construct_triangle(ch,j,off0,off1,off2,offs);
-                Point p = tri_to_draw.vertex(0);
-                Point q = tri_to_draw.vertex(1);
-                Point r = tri_to_draw.vertex(2);
-                Vector c= (Vector(Point(),p)+Vector(Point(),q)+Vector(Point(),r))/3.;
-                Point cp = Point(c.x(),c.y(),c.z());
+                const Point& p = tri_to_draw.vertex(0);
+                const Point& q = tri_to_draw.vertex(1);
+                const Point& r = tri_to_draw.vertex(2);
+                Point cp = CGAL::centroid(p,q,r);
                 // project facet center
                 double px,py,pz;
                 project(cp.x(),cp.y(),cp.z(),

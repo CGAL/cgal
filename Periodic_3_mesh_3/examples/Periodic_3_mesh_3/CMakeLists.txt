@@ -5,10 +5,16 @@ project( Periodic_3_mesh_3_Examples )
 
 cmake_minimum_required(VERSION 3.1)
 
-# CGAL and its components
-find_package( CGAL QUIET )
+if(POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW)
+endif()
 
-if ( NOT CGAL_FOUND )
+# CGAL and its components
+find_package( CGAL QUIET  COMPONENTS ImageIO )
+
+if ( CGAL_FOUND )
+  include( ${CGAL_USE_FILE} )
+else()  
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
   return()
 endif()

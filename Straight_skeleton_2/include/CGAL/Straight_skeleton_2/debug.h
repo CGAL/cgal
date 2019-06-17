@@ -68,7 +68,7 @@ inline std::string ptr2str( boost::intrusive_ptr<T> const& ptr )
   std::ostringstream ss ; ss << std::setprecision(19)  ;
   if ( ptr )
        ss << *ptr ;
-  else ss << "·NULL·" ;
+  else ss << "·nullptr·" ;
   return ss.str();
 }
 

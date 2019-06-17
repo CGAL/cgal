@@ -452,7 +452,7 @@ protected:
   /*! Add a subcurve to the right of an event point.
    * \param event The event point.
    * \param curve The subcurve to add.
-   * \return (true) if an overlap occured; (false) otherwise.
+   * \return (true) if an overlap occurred; (false) otherwise.
    */
   virtual bool _add_curve_to_right(Event* event, Subcurve* curve);
 
@@ -500,7 +500,7 @@ protected:
   std::pair<Event*, bool> _push_event(const Point_2& pt, Attribute type,
                                       Arr_parameter_space ps_x,
                                       Arr_parameter_space ps_y,
-                                      Subcurve* sc = NULL);
+                                      Subcurve* sc = nullptr);
 
   /*! Push an event point associated with a curve end into the event queue.
    * \param cv The x-monotone curve.
@@ -518,7 +518,7 @@ protected:
                                       Attribute type,
                                       Arr_parameter_space ps_x,
                                       Arr_parameter_space ps_y,
-                                      Subcurve* sc = NULL);
+                                      Subcurve* sc = nullptr);
 
   void _update_event_at_open_boundary(Event* e,
                                       const X_monotone_curve_2& cv,

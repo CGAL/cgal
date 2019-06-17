@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <CGAL/test_macros.h>
 #include <CGAL/Extended_homogeneous.h>
 #include <CGAL/Filtered_extended_homogeneous.h>
@@ -7,16 +6,8 @@
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Exact_integer.h>
 
-#if defined (CGAL_USE_LEDA) || defined (CGAL_USE_GMP)
-
 typedef CGAL::Exact_integer Integer;
 typedef CGAL::Exact_rational Rational;
-#else
-typedef long Integer;
-typedef double Rational;
-#endif
-
-
 
 int main()
 {

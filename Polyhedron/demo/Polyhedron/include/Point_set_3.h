@@ -138,10 +138,7 @@ public:
 
   void reset_indices()
   {
-    unselect_all();
-    
-    for (std::size_t i = 0; i < this->m_base.size(); ++ i)
-      this->m_indices[i] = i;
+    this->cancel_removals();
   }
   
   bool add_radius()
@@ -268,7 +265,19 @@ public:
   {
     return (m_blue != Byte_map());
   }
+
+  bool add_colors ()
+  {
+    if (has_colors())
+      return false;
     
+    m_red = this->template add_property_map<unsigned char>("red", 0).first;
+    m_green = this->template add_property_map<unsigned char>("green", 0).first;
+    m_blue = this->template add_property_map<unsigned char>("blue", 0).first;
+
+    return true;
+  }
+  
   void remove_colors()
   {
     if (m_blue != Byte_map())
@@ -284,20 +293,35 @@ public:
         this->template remove_property_map<double>(m_fblue);
       }
   }
-  
+
   double red (const Index& index) const
   { return (m_red == Byte_map()) ? m_fred[index]  : double(m_red[index]) / 255.; }
   double green (const Index& index) const
   { return (m_green == Byte_map()) ? m_fgreen[index]  : double(m_green[index]) / 255.; }
   double blue (const Index& index) const
   { return (m_blue == Byte_map()) ? m_fblue[index]  : double(m_blue[index]) / 255.; }
-  void set_color (const Index& index, unsigned char r, unsigned char g, unsigned char b)
+  
+  void set_color (const Index& index, unsigned char r = 0, unsigned char g = 0, unsigned char b = 0)
   {
     m_red[index] = r;
     m_green[index] = g;
     m_blue[index] = b;
   }
 
+  void set_color (const Index& index, const QColor& color)
+  {
+    m_red[index] = color.red();
+    m_green[index] = color.green();
+    m_blue[index] = color.blue();
+  }
+
+  template <typename ColorRange>
+  void set_color (const Index& index, const ColorRange& color)
+  {
+    m_red[index] = color[0];
+    m_green[index] = color[1];
+    m_blue[index] = color[2];
+  }
     
   
   iterator first_selected() { return this->m_indices.end() - this->m_nb_removed; }
@@ -333,6 +357,12 @@ public:
   {
     return this->is_removed (it);
   }
+  
+  // Test if point is selected
+  bool is_selected(const Index& idx) const
+  {
+    return this->is_removed (idx);
+  }
 
   /// Gets the number of selected points.
   std::size_t nb_selected_points() const
@@ -341,21 +371,19 @@ public:
   }
 
   /// Mark a point as selected/not selected.
-  void select(iterator it, bool selected = true)
+  void select(const Index& index)
   {
-    bool currently = is_selected (it);
-    iterator first = this->first_selected();
-    --first;
-    if (currently && !selected)
-      {
-        std::swap (*it, *first);
-        -- this->m_nb_removed;
-      }
-    else if (!currently && selected)
-      {
-        std::swap (*it, *first);
-        ++ this->m_nb_removed;
-      }
+    this->remove(index);
+  }
+
+  /// Mark a point as selected/not selected.
+  void unselect(const Index& index)
+  {
+    iterator it = this->m_indices.begin() + index;
+    while (*it != index)
+      it = this->m_indices.begin() + *it;
+    std::iter_swap (it, first_selected());
+    this->m_nb_removed --;
   }
 
   void select_all()

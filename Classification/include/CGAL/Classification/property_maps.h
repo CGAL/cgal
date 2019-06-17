@@ -69,7 +69,7 @@ private:
 public:
 
   Face_descriptor_to_center_of_mass_map ()
-    : m_mesh (NULL) { }
+    : m_mesh (nullptr) { }
   Face_descriptor_to_center_of_mass_map (const FaceGraph* mesh)
     : m_mesh (mesh), m_vpm (get (vertex_point, *m_mesh)) { }
   Face_descriptor_to_center_of_mass_map (const FaceGraph* mesh, VertexPointMap vpm)
@@ -80,7 +80,7 @@ public:
   {
     std::vector<Point_3> points;
 
-    BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f, *(map.m_mesh)), *(map.m_mesh)))
+    for(vertex_descriptor v : vertices_around_face(halfedge(f, *(map.m_mesh)), *(map.m_mesh)))
       points.push_back (get (map.m_vpm, v));
     
     return CGAL::centroid (points.begin(), points.end());
@@ -141,7 +141,7 @@ private:
 public:
 
   Face_descriptor_to_face_descriptor_with_bbox_map ()
-    : m_mesh (NULL) { }
+    : m_mesh (nullptr) { }
   Face_descriptor_to_face_descriptor_with_bbox_map (const FaceGraph* mesh)
     : m_mesh (mesh), m_vpm (get (vertex_point, *m_mesh)) { }
   Face_descriptor_to_face_descriptor_with_bbox_map (const FaceGraph* mesh, VertexPointMap vpm)
@@ -152,7 +152,7 @@ public:
   {
     CGAL::Bbox_3 bbox;
       
-    BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f, *(map.m_mesh)), *(map.m_mesh)))
+    for(vertex_descriptor v : vertices_around_face(halfedge(f, *(map.m_mesh)), *(map.m_mesh)))
       bbox = bbox + get(map.m_vpm, v).bbox();
 
     return value_type (f, bbox);

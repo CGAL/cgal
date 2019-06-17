@@ -11,7 +11,6 @@ Interval_support
 Kernel_23
 Modular_arithmetic
 Number_types
-Point_set_processing_3
 Profiling_tools
 Property_map
 Random_numbers
@@ -19,3 +18,4 @@ STL_Extension
 Spatial_searching
 Stream_support
 Surface_mesh_segmentation
+Distance_3

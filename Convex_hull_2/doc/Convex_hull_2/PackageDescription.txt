@@ -51,7 +51,7 @@ upper hull of a set of points.
 
 \cgalClassifedRefPages
 
-## Assertions ##
+\cgalCRPSection{Assertions}
 
 The assertion flags for the convex hull and extreme point algorithms
 use `CH` in their names (<I>e.g.</I>, `CGAL_CH_NO_POSTCONDITIONS`).
@@ -61,16 +61,17 @@ input points in the polygon or polyhedron defined by the output points.
 The latter is considered an expensive checking and can be enabled by
 defining `CGAL_CH_CHECK_EXPENSIVE`.
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `ConvexHullTraits_2`
 
-## Traits Classes ##
+\cgalCRPSection{Traits Classes}
 
 - `CGAL::Convex_hull_constructive_traits_2<R>`
 - `CGAL::Convex_hull_traits_2<R>`
+- `CGAL::Convex_hull_traits_adapter_2<R,P>`
 
-## Convex Hull Functions ##
+\cgalCRPSection{Convex Hull Functions}
 
 - `CGAL::ch_akl_toussaint()`
 - `CGAL::ch_bykat()`
@@ -80,19 +81,19 @@ defining `CGAL_CH_CHECK_EXPENSIVE`.
 - `CGAL::ch_melkman()`
 - `CGAL::convex_hull_2()`
 
-## Convexity Checking Functions ##
+\cgalCRPSection{Convexity Checking Functions}
 
 - `CGAL::is_ccw_strongly_convex_2()`
 - `CGAL::is_cw_strongly_convex_2()`
 
-## Hull Subsequence Functions ##
+\cgalCRPSection{Hull Subsequence Functions}
 
 - `CGAL::ch_graham_andrew_scan()`
 - `CGAL::ch_jarvis_march()`
 - `CGAL::lower_hull_points_2()`
 - `CGAL::upper_hull_points_2()`
 
-## Extreme Point Functions ##
+\cgalCRPSection{Extreme Point Functions}
 
 - `CGAL::ch_e_point()`
 - `CGAL::ch_nswe_point()`

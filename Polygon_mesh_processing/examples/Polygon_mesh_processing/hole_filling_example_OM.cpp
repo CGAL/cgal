@@ -10,7 +10,6 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <boost/foreach.hpp>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
@@ -30,13 +29,13 @@ int main(int argc, char* argv[])
 
   // Incrementally fill the holes
   unsigned int nb_holes = 0;
-  BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh))
+  for(halfedge_descriptor h : halfedges(mesh))
   {
     if(CGAL::is_border(h,mesh))
     {
       std::vector<face_descriptor>  patch_facets;
       std::vector<vertex_descriptor> patch_vertices;
-      bool success = CGAL::cpp11::get<0>(
+      bool success = std::get<0>(
         CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(
                   mesh,
                   h,

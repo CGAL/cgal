@@ -1,5 +1,5 @@
 #include <iostream>
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/use.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Quotient.h>

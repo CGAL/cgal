@@ -411,9 +411,9 @@ range of points will be performed in parallel, and the individual
 insert/remove operations will be optionally thread-safe.
 
 Parallel algorithms require the program to be linked against 
-the <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
 To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
 for more details.
 
 \section Triangulation3secexamples Examples 
@@ -474,14 +474,14 @@ with a range of such pairs.
 \subsubsection Triangulation_3UsingtheBoostZipIterator Using the Boost Zip Iterator
 
 Information and points are in separate containers. We use
-<A HREF="http://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::zip_iterator`</A> to provide an iterator gathering them.
+<A HREF="https://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::zip_iterator`</A> to provide an iterator gathering them.
 
 \cgalExample{Triangulation_3/info_insert_with_zip_iterator.cpp}
 
 \subsubsection Triangulation_3UsingtheBoostTransformIterator Using the Boost Transform Iterator
 
 We define a functor `Auto_count` used together with
-<A HREF="http://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::transform_iterator`</A> to set the order of each point
+<A HREF="https://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::transform_iterator`</A> to set the order of each point
 in the range. Note that this is correct because the iterator
 is dereferenced only once per point during the insertion.
 \cgalExample{Triangulation_3/info_insert_with_transform_iterator.cpp}

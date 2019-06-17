@@ -66,7 +66,7 @@ The %CGAL Project.
  <em>%CGAL User and Reference Manual</em>.
  %CGAL Editorial Board, ${CGAL_CREATED_VERSION_NUM} edition, ${CGAL_BUILD_YEAR4}.
 [&nbsp;<a href="how_to_cite.html#cgal:eb-${CGAL_RELEASE_YEAR_ID}">bib</a>&nbsp;| 
-<a href="https://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html">http</a>&nbsp;]
+<a href="packages.html">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -77,6 +77,21 @@ result_txt_footer=r"""</td>
 </tr>
 </table><hr>
 */
+"""
+
+pre_html=r"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="icon" type="image/png" href="../Manual/g-196x196-doc.png"/>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+<title>CGAL ${CGAL_CREATED_VERSION_NUM} - Manual: Acknowledging CGAL</title>
+</head>
+<body>
+"""
+post_html=r"""</body>
+</html>
 """
 
 result_html=r"""<h1>how_to_cite_cgal.bib</h1><a name="cgal:eb-${CGAL_RELEASE_YEAR_ID}"></a><pre>
@@ -118,7 +133,7 @@ def gen_txt_entry(title, authors, bib, anchor,k):
  In <em>%CGAL User and Reference Manual</em>. %CGAL Editorial Board,\n\
   ${CGAL_CREATED_VERSION_NUM} edition, ${CGAL_BUILD_YEAR4}.\n\
 [&nbsp;<a href=\"how_to_cite.html#"+bib+"-${CGAL_RELEASE_YEAR_ID}\">bib</a>&nbsp;| \n\
-<a href=\"https://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#"+anchor+"\">http</a>&nbsp;]\n\
+<a href=\"packages.html#"+anchor+"\">http</a>&nbsp;]\n\
 \n\
 </td>\n\
 </tr>\n\n\n"
@@ -212,4 +227,4 @@ result_txt+=result_txt_footer
 f = codecs.open(BUILD_DIR+"/how_to_cite_cgal.txt.in", 'w', encoding='utf-8')
 f.write(result_txt)
 f = codecs.open(BUILD_DIR+"/how_to_cite.html.in", 'w', encoding='utf-8')
-f.write(result_html)
+f.write(pre_html + result_html + post_html)

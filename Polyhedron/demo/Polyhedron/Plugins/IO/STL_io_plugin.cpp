@@ -7,6 +7,7 @@
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 #include <fstream>
 
 #include <CGAL/IO/Polyhedron_builder_from_STL.h>
@@ -71,9 +72,15 @@ Polyhedron_demo_stl_plugin::load(QFileInfo fileinfo) {
     std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
     return NULL;
   }
-
-  std::vector<CGAL::cpp11::array<double, 3> > points;
-  std::vector<CGAL::cpp11::array<int, 3> > triangles;
+  if(fileinfo.size() == 0)
+  {
+    CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
+    Scene_surface_mesh_item* item = new Scene_surface_mesh_item();
+    item->setName(fileinfo.completeBaseName());
+    return item;
+  }
+  std::vector<std::array<double, 3> > points;
+  std::vector<std::array<int, 3> > triangles;
   if (!CGAL::read_STL(in, points, triangles))
   {
     std::cerr << "Error: invalid STL file" << std::endl;

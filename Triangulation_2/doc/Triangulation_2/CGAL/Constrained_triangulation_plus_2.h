@@ -356,22 +356,6 @@ Returns an iterator past the last vertex on the constraint `cid`.
 Vertices_in_constraint_iterator 
 vertices_in_constraint_end(Constraint_id cid) const; 
 
-/*!
-\deprecated Returns an iterator on the first vertex on the constraint `cid`.
-\attention This function only works for constraints that were inserted
-as a pair of points or pair of vertex handles.
-*/
-Vertices_in_constraint_iterator
-vertices_in_constraint_begin(Vertex_handle va, Vertex_handle vb) const; 
-
-/*!
-\deprecated Returns an iterator past the last vertex on the constraint `cid`.
-\attention This function only works for constraints that were inserted
-as a pair of points or pair of vertex handles.
-*/
-Vertices_in_constraint_iterator
-vertices_in_constraint_end(Vertex_handle va, Vertex_handle vb) const; 
-
 /// @}
 
 
@@ -405,8 +389,9 @@ The simplification algorithm uses the following types and functions.
 /// @{
 
 /*!
+\cgalAdvancedType
 \cgalAdvancedBegin
-An iterator on the points of the of the original constraint
+An iterator on the points of the original constraint
 before simplification steps are applied. The value type of this iterator is `Point`.
 A \link Constrained_triangulation_plus_2::Vertices_in_constraint_iterator `Vertices_in_constraint_iterator`\endlink can be converted into
 a `Points_in_constraint_iterator`, but not the other way around.
@@ -416,6 +401,7 @@ typedef unspecified_type Points_in_constraint_iterator;
 
 
 /*!
+\cgalAdvancedFunction
 \cgalAdvancedBegin
 Returns an iterator to the first point on the constraint before any simplification step.
 \cgalAdvancedEnd
@@ -423,6 +409,7 @@ Returns an iterator to the first point on the constraint before any simplificati
 Points_in_constraint_iterator points_in_constraint_begin(Constraint_id cid) const;
   
 /*!
+\cgalAdvancedFunction
 \cgalAdvancedBegin
 Returns an iterator past the last point on the constraint before any simplification step.
 \cgalAdvancedEnd
@@ -430,6 +417,7 @@ Returns an iterator past the last point on the constraint before any simplificat
 Points_in_constraint_iterator points_in_constraint_end(Constraint_id cid) const ;
 
 /*!
+\cgalAdvancedFunction
 \cgalAdvancedBegin
 Removes the vertex at `vicq` from the constraint and the triangulation.
 The point of that vertex remains stored in the sequence of original points
@@ -452,6 +440,7 @@ void
 simplify(Vertices_in_constraint_iterator vicq);
 
 /*!
+\cgalAdvancedFunction
 \cgalAdvancedBegin
 Removes the original points that correspond to vertices in the constraint `cid` which have
 been removed by the `simplify()` function.
@@ -462,6 +451,7 @@ remove_points_without_corresponding_vertex(Constraint_id cid);
 
 
 /*!
+\cgalAdvancedFunction
 \cgalAdvancedBegin
 Removes all original points that correspond to vertices in the constraints which have
 been removed by the `simplify()` function.
@@ -470,11 +460,29 @@ been removed by the `simplify()` function.
 void
 remove_points_without_corresponding_vertex();
 
-
-
-
 /// @}
 
 
 }; /* end Constrained_triangulation_plus_2 */
+
+/*!
+Writes the triangulation as for `Tr`, then writes one constraint per line, starting with the number
+of vertices and the indices of the vertices of the constraint.
+
+\relates Constrained_triangulation_plus_2 
+*/
+  
+template <typename  Tr>
+std::ostream & operator<<(std::ostream& os, const Constrained_triangulation_plus_2<Tr> &ctp);
+
+  
+/*!
+Reads a triangulation from stream `is` and assigns it to the triangulation. 
+
+\relates Constrained_triangulation_plus_2 
+*/
+template <typename  Tr>
+std::istream & operator>>(std::istream& is, Constrained_triangulation_plus_2<Tr> &ctp);
+
+ 
 } /* end namespace CGAL */

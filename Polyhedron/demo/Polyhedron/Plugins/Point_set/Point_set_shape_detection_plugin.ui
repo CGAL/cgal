@@ -191,7 +191,7 @@
         <item>
          <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>Minimum Number of Points:</string>
+           <string>Minimum Number of Items:</string>
           </property>
          </widget>
         </item>
@@ -317,7 +317,7 @@
       <item>
        <widget class="QCheckBox" name="m_point_subsets">
         <property name="text">
-         <string>Generate N Point subsets</string>
+         <string>Generate N point subsets</string>
         </property>
        </widget>
       </item>

@@ -3,7 +3,7 @@
 
 Scene_polyhedron_item_decorator::Scene_polyhedron_item_decorator
   (Scene_face_graph_item* poly_item, bool delete_item)
-  :CGAL::Three::Scene_item(), poly_item(poly_item), delete_poly_item(delete_item)
+  : poly_item(poly_item), delete_poly_item(delete_item)
 { }
 
 Scene_polyhedron_item_decorator::~Scene_polyhedron_item_decorator()
@@ -49,7 +49,7 @@ Scene_polyhedron_item_decorator::isEmpty() const {
 
 void
 Scene_polyhedron_item_decorator::compute_bbox() const {
-  _bbox = poly_item->bbox();
+  setBbox(poly_item->bbox());
 }
 
 
@@ -70,18 +70,12 @@ Scene_polyhedron_item_decorator::select(double orig_x,
                                    double dir_y,
                                    double dir_z)
 {
-  Scene_item::select(orig_x,
-                     orig_y,
-                     orig_z,
-                     dir_x,
-                     dir_y,
-                     dir_z);
   poly_item->select(orig_x,
-                       orig_y,
-                       orig_z,
-                       dir_x,
-                       dir_y,
-                       dir_z);
+                    orig_y,
+                    orig_z,
+                    dir_x,
+                    dir_y,
+                    dir_z);
 }
 
 Scene_face_graph_item* Scene_polyhedron_item_decorator::polyhedron_item() const {

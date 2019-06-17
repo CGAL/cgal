@@ -361,7 +361,10 @@ public:
       : Base(Rep(c))
       { reduce(); simplify_coefficients(); }
 #endif // defined(CGAL_USE_LEDA) || defined(DOXYGEN_RUNNING)
-                                
+    
+     Polynomial&
+     operator=(const Polynomial& p)=default;
+  
 //
 // Public member functions
 //

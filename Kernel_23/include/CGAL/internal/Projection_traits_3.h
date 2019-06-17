@@ -248,6 +248,8 @@ public:
   typedef typename R::Point_2   Point_2; 
   typedef typename R::Line_3    Line_3; 
   typedef typename R::Line_2    Line_2;
+  typedef typename R::Segment_3 Segment_3;
+  typedef typename R::Segment_2 Segment_2;
   typedef typename R::FT        RT;
   typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
@@ -269,6 +271,13 @@ public:
     Point_2 p2(project(p));
     Line_2 l2(project(l.point(0)), project(l.point(1)));
     return squared_distance(p2, l2);
+  }
+  
+  RT operator()(const Segment_3& s, const Point_3& p) const
+  {
+    Point_2 p2(project(p));
+    Segment_2 s2(project(s.source()), project(s.target()));
+    return squared_distance(p2, s2);
   }
 };
 
@@ -313,9 +322,9 @@ public:
     //We know that none of the segment is degenerate
     Object o = intersection(s1_2,s2_2);
     const Point_2* pi=CGAL::object_cast<Point_2>(&o);
-    if (pi==NULL) { //case of segment or empty
+    if (pi==nullptr) { //case of segment or empty
       const Segment_2* si=CGAL::object_cast<Segment_2>(&o);
-      if (si==NULL) return Object();
+      if (si==nullptr) return Object();
       FT src[3],tgt[3];
       //the third coordinate is the midpoint between the points on s1 and s2
       FT z1 = s1.source()[dim] + ( alpha(si->source(), s1_source, s1_target) * ( s1.target()[dim] - s1.source()[dim] ));

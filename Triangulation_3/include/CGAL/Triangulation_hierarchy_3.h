@@ -163,7 +163,7 @@ public:
                 typename std::iterator_traits<InputIterator>::value_type,
                 Point
             >
-          >::type* = NULL
+          >::type* = nullptr
   )
 #else
   template < class InputIterator >
@@ -299,7 +299,7 @@ public:
             boost::is_convertible<
               typename std::iterator_traits<InputIterator>::value_type,
               std::pair<Point,typename internal::Info_check<Vertex>::type>
-            > >::type* =NULL
+            > >::type* =nullptr
   )
   {
     return insert_with_info< std::pair<Point,typename internal::Info_check<Vertex>::type> >(first,last);
@@ -314,7 +314,7 @@ public:
               boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
               boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<Vertex>::type >
             >
-          >::type* =NULL
+          >::type* =nullptr
   )
   {
     return insert_with_info< boost::tuple<Point,typename internal::Info_check<Vertex>::type> >(first,last);

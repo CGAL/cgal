@@ -154,14 +154,14 @@ public:
   FT get_sq_distance_to_closest_vertex(const Tr& tr,
                                        const Vertex_handle& vh,
                                        const Cell_vector& incident_cells,
-                                       typename boost::enable_if_c<Tag::value>::type* = NULL) const;
+                                       typename boost::enable_if_c<Tag::value>::type* = nullptr) const;
 
   // @todo are the two versions really worth it, I can't tell the difference from a time POV...
   template<typename Tag>
   FT get_sq_distance_to_closest_vertex(const Tr& tr,
                                        const Vertex_handle& vh,
                                        const Cell_vector& incident_cells,
-                                       typename boost::disable_if_c<Tag::value>::type* = NULL) const;
+                                       typename boost::disable_if_c<Tag::value>::type* = nullptr) const;
 
 private:
   /**
@@ -301,21 +301,24 @@ no_topological_change__without_set_point(
       cj->set_facet_visited(mj);
 
       Vertex_handle v1 = c->vertex(j);
+      typedef typename Tr::Triangulation_data_structure TDS;
+      typedef typename TDS::Cell_range Cell_range;
+      typedef typename TDS::Vertex_range Vertex_range;
       if(tr.is_infinite(v1))
       {
         // Build a copy of c, and replace V0 by a temporary vertex (position "p")
         typename Cell_handle::value_type c_copy (*c);
+        Cell_range::Time_stamper_impl::initialize_time_stamp(&c_copy);
         int i_v0;
         typename Vertex_handle::value_type v;
+        Vertex_range::Time_stamper_impl::initialize_time_stamp(&v);
         if (c_copy.has_vertex(v0, i_v0))
         {
           v.set_point(p);
-          c_copy.set_vertex(i_v0,
-            Tr::Triangulation_data_structure::Vertex_range::s_iterator_to(v));
+          c_copy.set_vertex(i_v0, Vertex_range::s_iterator_to(v));
         }
 
-        Cell_handle c_copy_h =
-          Tr::Triangulation_data_structure::Cell_range::s_iterator_to(c_copy);
+        Cell_handle c_copy_h = Cell_range::s_iterator_to(c_copy);
         if(tr.side_of_power_sphere(c_copy_h, pg(cj->vertex(mj)), false)
            != CGAL::ON_UNBOUNDED_SIDE)
         {
@@ -327,17 +330,17 @@ no_topological_change__without_set_point(
       {
         // Build a copy of cj, and replace V0 by a temporary vertex (position "p")
         typename Cell_handle::value_type cj_copy (*cj);
+        Cell_range::Time_stamper_impl::initialize_time_stamp(&cj_copy);
         int i_v0;
         typename Vertex_handle::value_type v;
+        Vertex_range::Time_stamper_impl::initialize_time_stamp(&v);
         if (cj_copy.has_vertex(v0, i_v0))
         {
           v.set_point(p);
-          cj_copy.set_vertex(i_v0,
-            Tr::Triangulation_data_structure::Vertex_range::s_iterator_to(v));
+          cj_copy.set_vertex(i_v0, Vertex_range::s_iterator_to(v));
         }
 
-        Cell_handle cj_copy_h =
-          Tr::Triangulation_data_structure::Cell_range::s_iterator_to(cj_copy);
+        Cell_handle cj_copy_h = Cell_range::s_iterator_to(cj_copy);
         if(tr.side_of_power_sphere(cj_copy_h, pg(v1), false)
            != CGAL::ON_UNBOUNDED_SIDE)
         {
@@ -506,8 +509,8 @@ get_sq_distance_to_closest_vertex(const Tr& tr,
          tr.is_infinite(vn))
         continue;
 
-      std::pair<VC_it, bool> is_insert_succesful = treated_vertices.insert(vn);
-      if(! is_insert_succesful.second) // vertex has already been treated
+      std::pair<VC_it, bool> is_insert_successful = treated_vertices.insert(vn);
+      if(! is_insert_successful.second) // vertex has already been treated
         continue;
 
       const Point& wpvn = tr.point(c, n);

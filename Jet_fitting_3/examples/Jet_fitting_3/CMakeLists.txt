@@ -11,42 +11,35 @@ find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
 
-  # use either Eigen or BLAS/LAPACK
+  # use Eigen
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-  if (NOT EIGEN3_FOUND)
-    find_package(LAPACK)
-    if(LAPACK_FOUND)
-      include( ${LAPACK_USE_FILE} )
-    endif(LAPACK_FOUND)
-  else()
+  if (EIGEN3_FOUND)
     include( ${EIGEN3_USE_FILE} )
-  endif()
-    
-  if(EIGEN3_FOUND OR LAPACK_FOUND)
     # Link with Boost.ProgramOptions (optional)
     find_package(Boost QUIET COMPONENTS program_options)
     if(Boost_PROGRAM_OPTIONS_FOUND)
+      if(TARGET Boost::program_options)
+        set(Boost_PROGRAM_OPTIONS_LIBRARY Boost::program_options)
+      endif()
       if( CGAL_AUTO_LINK_ENABLED )
         message( STATUS "Boost.ProgramOptions library: found" )
       else()
         message( STATUS "Boost.ProgramOptions library: ${Boost_PROGRAM_OPTIONS_LIBRARY}" )
       endif()
       add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
-      list(APPEND CGAL_3RD_PARTY_LIBRARIES ${Boost_LIBRARIES})
+      list(APPEND CGAL_3RD_PARTY_LIBRARIES ${Boost_PROGRAM_OPTIONS_LIBRARY})
    endif()
 
     create_single_source_cgal_program( "Mesh_estimation.cpp" )
     create_single_source_cgal_program( "Single_estimation.cpp" )
-
-  else(EIGEN3_FOUND OR LAPACK_FOUND)
-
-    message(STATUS "NOTICE: This program requires either Eigen 3.1 (or greater) or LAPACK, and will not be compiled.")
-
-  endif(EIGEN3_FOUND OR LAPACK_FOUND)
+    
+  else()
+    message(STATUS "NOTICE: This program requires Eigen 3.1 (or greater) and will not be compiled.")
+  endif()
 
 else()
 
-    message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
+  message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
 
 endif()
 

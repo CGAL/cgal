@@ -79,7 +79,7 @@ Arr_naive_point_location<Arrangement>::locate(const Point_2& p) const
   for (fit = p_arr->faces_begin(); fit != p_arr->faces_end(); ++fit) {
     fh = fit;
   
-    if (top_traits->is_in_face(&(*fh), p, NULL)) {
+    if (top_traits->is_in_face(&(*fh), p, nullptr)) {
       // The current face contains p in its interior.
       if (f_inner == invalid_f ||
           f_inner->is_unbounded() ||
@@ -102,7 +102,7 @@ Arr_naive_point_location<Arrangement>::locate(const Point_2& p) const
           fh->outer_ccbs_begin();
         Vertex_const_handle  v = (*it)->source();
 
-        if (top_traits->is_in_face(&(*f_inner), v->point(), NULL))
+        if (top_traits->is_in_face(&(*f_inner), v->point(), nullptr))
           f_inner = fh;
       }
     }

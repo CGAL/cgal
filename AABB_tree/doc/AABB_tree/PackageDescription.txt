@@ -22,20 +22,20 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `AABBPrimitive`
 - `AABBPrimitiveWithSharedData`
 - `AABBTraits`
 - `AABBGeomTraits`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::AABB_traits<GeomTraits,Primitive>`
 - `CGAL::AABB_tree<AT>`
 
-## Primitives ##
+\cgalCRPSection{Primitives}
 - `CGAL::AABB_triangle_primitive<GeomTraits, Iterator, CacheDatum>`
 - `CGAL::AABB_segment_primitive<GeomTraits, Iterator, CacheDatum>`
 - `CGAL::AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,CacheDatum>`
-- `CGAL::AABB_halfedge_graph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,CacheDatum>`
-- `CGAL::AABB_face_graph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,CacheDatum>`
+- `CGAL::AABB_halfedge_graph_segment_primitive<HalfedgeGraph,Vpm,OneHalfedgeGraphPerTree,CacheDatum>`
+- `CGAL::AABB_face_graph_triangle_primitive<FaceGraph,Vpm,OneFaceGraphPerTree,CacheDatum>`
 */

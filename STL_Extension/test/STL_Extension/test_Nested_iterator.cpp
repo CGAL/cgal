@@ -1,5 +1,3 @@
-#include <CGAL/basic.h>
-
 #include <iostream>
 #include <list>
 #include <vector>

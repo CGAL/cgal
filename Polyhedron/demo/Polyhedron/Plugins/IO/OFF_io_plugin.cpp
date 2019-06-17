@@ -7,6 +7,7 @@
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 #include <fstream>
 
 #include <CGAL/IO/File_scanner_OFF.h>
@@ -31,6 +32,12 @@ public:
       return true; 
     return false;
   }
+  bool isDefaultLoader(const QString& name) const 
+  { 
+    if(name == QString("off")) 
+      return true; 
+    return false;
+  }
   QString name() const { return "off_plugin"; }
   QString nameFilters() const { return "OFF files (*.off);;Wavefront OBJ (*.obj)"; }
   bool canLoad() const;
@@ -49,6 +56,15 @@ bool Polyhedron_demo_off_plugin::canLoad() const {
 
 CGAL::Three::Scene_item*
 Polyhedron_demo_off_plugin::load(QFileInfo fileinfo) {
+  
+  if(fileinfo.size() == 0)
+  {
+    CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
+    Scene_surface_mesh_item* item =
+        new Scene_surface_mesh_item(SMesh());
+    item->setName(fileinfo.completeBaseName());
+    return item;
+  }
   if(fileinfo.suffix().toLower() == "off"){
     return load_off(fileinfo);
   } else if(fileinfo.suffix().toLower() == "obj"){
@@ -122,7 +138,7 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
   Scene_surface_mesh_item* item = new Scene_surface_mesh_item(surface_mesh);
   item->setName(fileinfo.completeBaseName());
   std::size_t isolated_v = 0;
-  BOOST_FOREACH(vertex_descriptor v, vertices(*surface_mesh))
+  for(vertex_descriptor v : vertices(*surface_mesh))
   {
     if(surface_mesh->is_isolated(v))
     {
@@ -139,6 +155,8 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
                          tr("%1 isolated vertices found")
                          .arg(item->getNbIsolatedvertices()));
   }
+  if(item->isItemMulticolor())
+    item->computeItemColorVectorAutomatically(true);
   return item;
 }
 

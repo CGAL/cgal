@@ -514,7 +514,7 @@ public:
   }
 
   /*!
-   * Get the arrow drawing mode (this mode is relevent when drawing segments,
+   * Get the arrow drawing mode (this mode is relevant when drawing segments,
    * polylines, circular arcs or splines).
    */
   Fig_arrow_mode arrow_mode () const
@@ -1128,7 +1128,7 @@ public:
   {
     CGAL_precondition (_ofile.is_open());
 
-    if (text == NULL || strlen(text) == 0)
+    if (text == nullptr || strlen(text) == 0)
       return;
 
     _write_text (pos, 

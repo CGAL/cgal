@@ -65,7 +65,7 @@ namespace Classification {
 class Local_eigen_analysis
 {
 public:
-  typedef CGAL::cpp11::array<float, 3> Eigenvalues; ///< Eigenvalues (sorted in ascending order)
+  typedef std::array<float, 3> Eigenvalues; ///< Eigenvalues (sorted in ascending order)
   
 private:
 
@@ -199,9 +199,9 @@ private:
 
   };
 
-  typedef CGAL::cpp11::array<float, 3> float3;
-  typedef CGAL::cpp11::array<float, 2> float2;
-  typedef CGAL::cpp11::array<compressed_float, 2> cfloat2;
+  typedef std::array<float, 3> float3;
+  typedef std::array<float, 2> float2;
+  typedef std::array<compressed_float, 2> cfloat2;
   
   struct Content
   {
@@ -379,7 +379,7 @@ public:
     else
 #endif
     {
-      BOOST_FOREACH(face_descriptor fd, range)
+      for(face_descriptor fd : range)
       {
         std::vector<face_index> neighbors;
         neighbor_query (fd, std::back_inserter (neighbors));
@@ -522,7 +522,7 @@ private:
     typedef typename boost::graph_traits<FaceListGraph>::halfedge_descriptor halfedge_descriptor;
     
     float out = 0.f;
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, g), g))
+    for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, g), g))
     {
       out = (std::max)(out,
                        float(CGAL::squared_distance (get(get (CGAL::vertex_point, g), source(hd,g)),
@@ -547,7 +547,7 @@ private:
     Point centroid = CGAL::centroid (neighbor_points.begin(), neighbor_points.end());
     m_content->centroids[index] = make_array( float(centroid.x()), float(centroid.y()), float(centroid.z()) );
     
-    CGAL::cpp11::array<float, 6> covariance = make_array( 0.f, 0.f, 0.f, 0.f, 0.f, 0.f );
+    std::array<float, 6> covariance = make_array( 0.f, 0.f, 0.f, 0.f, 0.f, 0.f );
       
     for (std::size_t i = 0; i < neighbor_points.size(); ++ i)
     {
@@ -560,8 +560,8 @@ private:
       covariance[5] += float(d.z () * d.z ());
     }
 
-    CGAL::cpp11::array<float, 3> evalues = make_array( 0.f, 0.f, 0.f );
-    CGAL::cpp11::array<float, 9> evectors = make_array( 0.f, 0.f, 0.f,
+    std::array<float, 3> evalues = make_array( 0.f, 0.f, 0.f );
+    std::array<float, 9> evectors = make_array( 0.f, 0.f, 0.f,
                                                0.f, 0.f, 0.f,
                                                0.f, 0.f, 0.f );
 
@@ -601,7 +601,7 @@ private:
       m_content->eigenvalues[get(get(CGAL::face_index,g), query)]
         = make_array(compressed_float(0), compressed_float(0));
 
-      CGAL::cpp11::array<Triangle,1> tr
+      std::array<Triangle,1> tr
         = {{ Triangle (get(get (CGAL::vertex_point, g), target(halfedge(query, g), g)),
                        get(get (CGAL::vertex_point, g), target(next(halfedge(query, g), g), g)),
                        get(get (CGAL::vertex_point, g), target(next(next(halfedge(query, g), g), g), g))) }};
@@ -627,18 +627,18 @@ private:
                    get(get (CGAL::vertex_point, g), target(next(next(halfedge(fd, g), g), g), g))));
     }
 
-    CGAL::cpp11::array<float, 6> covariance = {{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f }};
+    std::array<float, 6> covariance = {{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f }};
     Point c = CGAL::centroid(triangles.begin(),
                              triangles.end(), Kernel(), CGAL::Dimension_tag<2>());
 
     CGAL::internal::assemble_covariance_matrix_3 (triangles.begin(), triangles.end(), covariance,
-                                                  c, Kernel(), (Triangle*)NULL, CGAL::Dimension_tag<2>(),
+                                                  c, Kernel(), (Triangle*)nullptr, CGAL::Dimension_tag<2>(),
                                                   DiagonalizeTraits());
       
     m_content->centroids[get(get(CGAL::face_index,g), query)] = {{ float(c.x()), float(c.y()), float(c.z()) }};
     
-    CGAL::cpp11::array<float, 3> evalues = {{ 0.f, 0.f, 0.f }};
-    CGAL::cpp11::array<float, 9> evectors = {{ 0.f, 0.f, 0.f,
+    std::array<float, 3> evalues = {{ 0.f, 0.f, 0.f }};
+    std::array<float, 9> evectors = {{ 0.f, 0.f, 0.f,
                                                0.f, 0.f, 0.f,
                                                0.f, 0.f, 0.f }};
 

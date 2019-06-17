@@ -88,7 +88,7 @@ protected:
 
 public:
   /*! Constructor. */
-  Default_visitor_base () : m_surface_sweep(NULL) {}
+  Default_visitor_base () : m_surface_sweep(nullptr) {}
 
   /*! Destructor */
   virtual ~Default_visitor_base() {}

@@ -31,9 +31,9 @@
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
-#include <CGAL/internal/info_check.h>
+
 #include <CGAL/tss.h>
-#include <boost/iterator/zip_iterator.hpp>
+
 #include <boost/mpl/and.hpp>
 
 #endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
@@ -114,7 +114,7 @@ public:
   nearest_vertex(const Point& p, Face_handle f= Face_handle()) const;
 
   bool does_conflict(const Point &p, Face_handle fh) const;// deprecated
-  bool test_conflict(const Point &p, Face_handle fh, bool strict = true) const;
+  bool test_conflict(const Point &p, Face_handle fh) const;
   bool find_conflicts(const Point &p,               //deprecated
                       std::list<Face_handle>& conflicts,
                       Face_handle start= Face_handle()) const;
@@ -309,7 +309,7 @@ public:
          typename std::iterator_traits<InputIterator>::value_type,
          Point
          >
-         >::type* = NULL)
+         >::type* = nullptr)
 #else
   template < class InputIterator >
   std::ptrdiff_t
@@ -329,17 +329,12 @@ public:
   }
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
-private:
-  //top stands for tuple-or-pair
-  template <class Info>
-  const Point& top_get_first(const std::pair<Point,Info>& pair) const { return pair.first; }
-  template <class Info>
-  const Info& top_get_second(const std::pair<Point,Info>& pair) const { return pair.second; }
-  template <class Info>
-  const Point& top_get_first(const boost::tuple<Point,Info>& tuple) const { return boost::get<0>(tuple); }
-  template <class Info>
-  const Info& top_get_second(const boost::tuple<Point,Info>& tuple) const { return boost::get<1>(tuple); }
 
+private:
+ 
+  using Triangulation::top_get_first;
+  using Triangulation::top_get_second;
+  
   template <class Tuple_or_pair,class InputIterator>
   std::ptrdiff_t insert_with_info(InputIterator first,InputIterator last)
   {
@@ -386,7 +381,7 @@ public:
            boost::is_convertible<
              typename std::iterator_traits<InputIterator>::value_type,
              std::pair<Point,typename internal::Info_check<typename Tds::Vertex>::type>
-           > >::type* = NULL)
+           > >::type* = nullptr)
   {
     return insert_with_info< std::pair<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last);
   }
@@ -400,7 +395,7 @@ public:
              boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
              boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
            >
-         >::type* = NULL)
+         >::type* = nullptr)
   {
     return insert_with_info< boost::tuple<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last);
   }
@@ -411,8 +406,7 @@ public:
   get_conflicts_and_boundary(const Point  &p,
                              OutputItFaces fit,
                              OutputItBoundaryEdges eit,
-                             Face_handle start = Face_handle(),
-                             bool strict = true) const
+                             Face_handle start = Face_handle()) const
   {
     CGAL_triangulation_precondition(this->dimension() == 2);
     int li;
@@ -427,9 +421,9 @@ public:
       case Triangulation::OUTSIDE_CONVEX_HULL:
         *fit++ = fh; //put fh in OutputItFaces
         std::pair<OutputItFaces,OutputItBoundaryEdges> pit = std::make_pair(fit,eit);
-        pit = propagate_conflicts(p,fh,0,pit, strict);
-        pit = propagate_conflicts(p,fh,1,pit, strict);
-        pit = propagate_conflicts(p,fh,2,pit, strict);
+        pit = propagate_conflicts(p,fh,0,pit);
+        pit = propagate_conflicts(p,fh,1,pit);
+        pit = propagate_conflicts(p,fh,2,pit);
         return pit;
     }
     CGAL_triangulation_assertion(false);
@@ -440,11 +434,10 @@ public:
   OutputItFaces
   get_conflicts (const Point  &p,
                  OutputItFaces fit,
-                 Face_handle start= Face_handle(),
-                 bool strict = true) const
+                 Face_handle start= Face_handle()) const
   {
     std::pair<OutputItFaces,Emptyset_iterator> pp =
-      get_conflicts_and_boundary(p, fit, Emptyset_iterator(), start, strict);
+      get_conflicts_and_boundary(p, fit, Emptyset_iterator(), start);
     return pp.first;
   }
 
@@ -452,11 +445,10 @@ public:
   OutputItBoundaryEdges
   get_boundary_of_conflicts(const Point  &p,
                             OutputItBoundaryEdges eit,
-                            Face_handle start= Face_handle(),
-                            bool strict = true) const
+                            Face_handle start= Face_handle()) const
   {
     std::pair<Emptyset_iterator, OutputItBoundaryEdges> pp =
-      get_conflicts_and_boundary(p, Emptyset_iterator(), eit, start, strict);
+      get_conflicts_and_boundary(p, Emptyset_iterator(), eit, start);
     return pp.second;
   }
 
@@ -467,18 +459,16 @@ private:
   propagate_conflicts (const Point &p,
                        const Face_handle fh,
                        const int i,
-                       std::pair<OutputItFaces,OutputItBoundaryEdges>
-                       pit,
-                       bool strict = true) const
+                       std::pair<OutputItFaces,OutputItBoundaryEdges> pit) const
   {
     Face_handle fn = fh->neighbor(i);
-    if(! test_conflict(p,fn,strict)) {
+    if(! test_conflict(p,fn)) {
       *(pit.second)++ = Edge(fn, fn->index(fh));
     } else {
       *(pit.first)++ = fn;
       int j = fn->index(fh);
-      pit = propagate_conflicts(p,fn,ccw(j),pit,strict);
-      pit = propagate_conflicts(p,fn,cw(j), pit,strict);
+      pit = propagate_conflicts(p,fn,ccw(j),pit);
+      pit = propagate_conflicts(p,fn,cw(j), pit);
     }
     return pit;
   }
@@ -488,8 +478,7 @@ private:
   non_recursive_propagate_conflicts(const Point  &p,
                                     const Face_handle fh,
                                     const int i,
-                                    std::pair<OutputItFaces,OutputItBoundaryEdges> pit,
-                                    bool strict = true)  const
+                                    std::pair<OutputItFaces,OutputItBoundaryEdges> pit) const
   {
     std::stack<std::pair<Face_handle, int> > stack;
     stack.push(std::make_pair(fh,i));
@@ -499,13 +488,17 @@ private:
       const int i=stack.top().second;
       stack.pop();
       Face_handle fn = fh->neighbor(i);
-      if(! test_conflict(p,fn,strict)) {
+      if(! test_conflict(p,fn))
+      {
         *(pit.second)++ = Edge(fn, fn->index(fh));
       } else {
         *(pit.first)++ = fn;
         int j = fn->index(fh);
-        stack.push(std::make_pair(fn,ccw(j)));
+
+        // In the non-recursive version, we walk via 'ccw(j)' first. Here, we are filling the stack
+        // and the order is thus the opposite (we want the top element of the stack to be 'ccw(j)')
         stack.push(std::make_pair(fn,cw(j)));
+        stack.push(std::make_pair(fn,ccw(j)));
       }
     }
     return pit;
@@ -516,22 +509,20 @@ private:
   propagate_conflicts (const Point  &p,
                        const Face_handle fh,
                        const int i,
-                       std::pair<OutputItFaces,OutputItBoundaryEdges>
-                       pit,
-                       bool strict = true,
+                       std::pair<OutputItFaces,OutputItBoundaryEdges> pit,
                        int depth=0) const
   {
     if(depth == 100)
-      return non_recursive_propagate_conflicts(p, fh, i, pit, strict);
+      return non_recursive_propagate_conflicts(p, fh, i, pit);
 
     Face_handle fn = fh->neighbor(i);
-    if(! test_conflict(p,fn,strict)) {
+    if(! test_conflict(p,fn)) {
       *(pit.second)++ = Edge(fn, fn->index(fh));
     } else {
       *(pit.first)++ = fn;
       int j = fn->index(fh);
-      pit = propagate_conflicts(p,fn,ccw(j),pit, strict, depth+1);
-      pit = propagate_conflicts(p,fn,cw(j), pit, strict, depth+1);
+      pit = propagate_conflicts(p,fn,ccw(j),pit, depth+1);
+      pit = propagate_conflicts(p,fn,cw(j), pit, depth+1);
     }
     return pit;
   }
@@ -636,12 +627,8 @@ protected:
 template < class Gt, class Tds >
 inline bool
 Delaunay_triangulation_2<Gt,Tds>::
-test_conflict(const Point  &p, Face_handle fh, bool strict) const
+test_conflict(const Point  &p, Face_handle fh) const
 {
-  if(! strict) {
-    Oriented_side os = side_of_oriented_circle(fh,p,false);
-    return os == ON_POSITIVE_SIDE;
-  }
   // return true  if P is inside the circumcircle of fh
   // if fh is infinite, return true when p is in the positive
   // halfspace or on the boundary and in the  finite edge of fh

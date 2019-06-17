@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <CGAL/Fraction_traits.h>
 #include <CGAL/IO/io.h>
 

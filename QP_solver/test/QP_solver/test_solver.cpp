@@ -27,7 +27,7 @@
 #include <locale>
 #include <map>
 #include <cstdlib>
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #ifndef CGAL_USE_GMP
 #include <CGAL/MP_Float.h>   // with normalization switched on
@@ -376,7 +376,7 @@ bool process(const std::string& filename,
   // print program (using QMATRIX format), read it back in and check 
   // whether it still agrees with the original program
   std::stringstream inout;
-  // if we have doubles, adjust precision to accomodate high-precision doubles
+  // if we have doubles, adjust precision to accommodate high-precision doubles
   if (is_double(IT())) inout << std::setprecision (12);
   CGAL::QP_functions_detail::print_program 
     (inout, qp, std::string("test_io_mps"),

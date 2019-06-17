@@ -6,9 +6,6 @@
 /// \ingroup PkgTriangulation2Ref
 
 
-/// \defgroup PkgTriangulation2TraitsClasses Traits Classes
-/// \ingroup PkgTriangulation2Ref
-
 /// \defgroup PkgTriangulation2VertexFaceClasses Vertex and Face Classes
 /// \ingroup PkgTriangulation2Ref
 
@@ -70,7 +67,7 @@ are described in Chapter \ref PkgTDS2Ref "2D Triangulation Data Structure".
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `TriangulationTraits_2`
 - `DelaunayTriangulationTraits_2`
 - `RegularTriangulationTraits_2`
@@ -85,7 +82,7 @@ are described in Chapter \ref PkgTDS2Ref "2D Triangulation Data Structure".
 - `TriangulationHierarchyVertexBase_2`
 - `TriangulationVertexBaseWithInfo_2`
 
-## Classes ##
+\cgalCRPSection{Classes}
 
 - `CGAL::Triangulation_2<Traits,Tds>`
 - `CGAL::Delaunay_triangulation_2<Traits,Tds>`
@@ -94,9 +91,6 @@ are described in Chapter \ref PkgTDS2Ref "2D Triangulation Data Structure".
 - `CGAL::Constrained_Delaunay_triangulation_2<Traits,Tds,Itag>`
 - `CGAL::Constrained_triangulation_plus_2<Tr>`
 - `CGAL::Triangulation_hierarchy_2<Tr>`
-
-- `CGAL::Regular_triangulation_euclidean_traits_2<K,Weight>`
-- `CGAL::Regular_triangulation_filtered_traits_2<FK>`
 
 - `CGAL::Triangulation_face_base_2<Traits,Fb>`
 - `CGAL::Triangulation_vertex_base_2<Traits,Vb>`
@@ -109,10 +103,10 @@ are described in Chapter \ref PkgTDS2Ref "2D Triangulation Data Structure".
 
 - `CGAL::Triangulation_cw_ccw_2`
 
-## Enum ##
+\cgalCRPSection{Enum}
 - \link CGAL::Triangulation_2::Locate_type `CGAL::Triangulation_2<Traits,Tds>::Locate_type` \endlink
 
-### Draw a Triangulation 2 ###
+\cgalCRPSection{Draw a Triangulation 2}
 - `CGAL::draw<T2>`
 
 */

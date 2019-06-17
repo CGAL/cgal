@@ -122,9 +122,9 @@ get(const Get_facet_patch_id_sm<MeshDomain>,
        typename MeshDomain::Polyhedron,
        face_patch_id_t<typename MeshDomain::Patch_id> >::type Fpim;
   Fpim fpim = get(face_patch_id_t<typename MeshDomain::Patch_id>(),
-                  *(primitive_id.graph));
+                  *(primitive_id.second));
   typename MeshDomain::Patch_id patch_index = get(fpim,
-                                                  primitive_id.face_descriptor);
+                                                  primitive_id.first);
   return patch_index;
 }
 }} // end namespace CGAL::Mesh_3

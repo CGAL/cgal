@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <iostream>
 #include <cassert>
 

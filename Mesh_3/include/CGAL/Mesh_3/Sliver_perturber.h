@@ -114,7 +114,7 @@ PVertex_()
 , incident_sliver_nb_(0)
 , min_value_((std::numeric_limits<double>::max)())
 , try_nb_(0)
-, p_perturbation_(NULL)
+, p_perturbation_(nullptr)
 , id_()
 { }
 
@@ -123,7 +123,7 @@ PVertex_(const Vertex_handle& vh, id_type id)
 , incident_sliver_nb_(0)
 , min_value_((std::numeric_limits<double>::max)())
 , try_nb_(0)
-, p_perturbation_(NULL)
+, p_perturbation_(nullptr)
 , id_(id)
 { }
 
@@ -143,7 +143,7 @@ void set_perturbation(const Perturbation* p) { p_perturbation_ = p; }
 bool is_perturbable() const
 {
   return (   (vertex_handle_->in_dimension() > 1)
-          && (NULL != perturbation())
+          && (nullptr != perturbation())
           && (sliver_nb() != 0) );
 }
 
@@ -223,7 +223,7 @@ PVertex_()
 , incident_sliver_nb_(0)
 , min_value_((std::numeric_limits<double>::max)())
 , try_nb_(0)
-, p_perturbation_(NULL)
+, p_perturbation_(nullptr)
 , id_()
 { }
 
@@ -234,7 +234,7 @@ PVertex_(const Vertex_handle& vh, id_type id)
 , incident_sliver_nb_(0)
 , min_value_((std::numeric_limits<double>::max)())
 , try_nb_(0)
-, p_perturbation_(NULL)
+, p_perturbation_(nullptr)
 , id_(id)
 { }
 
@@ -264,7 +264,7 @@ void set_perturbation(const Perturbation* p) { p_perturbation_ = p; }
 bool is_perturbable() const
 {
   return (   (vertex_handle_->in_dimension() > 1)
-          && (NULL != perturbation())
+          && (nullptr != perturbation())
           && (sliver_nb() != 0) );
 }
 
@@ -893,7 +893,7 @@ add_perturbation(Perturbation* perturbation)
   if ( !perturbation_vector_.empty() )
     perturbation_vector_.back().set_next(perturbation);
 
-  if ( NULL != perturbation )
+  if ( nullptr != perturbation )
   {
     // Set order
     perturbation->set_order(next_perturbation_order_++);
@@ -1004,8 +1004,8 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
       // Perturb vertex
       Vertex_vector modified_vertices;
 
-      // pv.perturbation() should not be NULL if pv is in pqueue
-      CGAL_assertion(pv.perturbation() != NULL);
+      // pv.perturbation() should not be nullptr if pv is in pqueue
+      CGAL_assertion(pv.perturbation() != nullptr);
 
       std::pair<bool,Vertex_handle> perturbation_ok =
         pv.perturbation()->operator()(pv.vertex(),
@@ -1044,7 +1044,7 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
         // If perturbation fails, try next one
         pv.set_perturbation(pv.perturbation()->next());
 
-        if ( NULL == pv.perturbation() )
+        if ( nullptr == pv.perturbation() )
         {
           bad_vertices.push_back(pv.vertex());
         }
@@ -1341,8 +1341,8 @@ perturb_vertex( PVertex pv
     // Perturb vertex
     Vertex_vector modified_vertices;
 
-    // pv.perturbation() should not be NULL if pv is in pqueue
-    CGAL_assertion(pv.perturbation() != NULL);
+    // pv.perturbation() should not be nullptr if pv is in pqueue
+    CGAL_assertion(pv.perturbation() != nullptr);
 
     std::pair<bool,Vertex_handle> perturbation_ok =
       pv.perturbation()->operator()(pv.vertex(),
@@ -1391,7 +1391,7 @@ perturb_vertex( PVertex pv
         pv.set_perturbation(pv.perturbation()->next());
         pv.update_saved_erase_counter();
 
-        if ( NULL == pv.perturbation() )
+        if ( nullptr == pv.perturbation() )
         {
           bad_vertices.push_back(pv.vertex());
         }

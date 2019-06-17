@@ -1,8 +1,6 @@
 #include <QtCore/qglobal.h>
 #include <QMessageBox>
 
-
-#include "Messages_interface.h"
 #include "Kernel_type.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polyhedron_selection_item.h"
@@ -10,6 +8,7 @@
 #include "Scene_polylines_item.h"
 
 #include <CGAL/Three/Scene_interface.h>
+#include <CGAL/Three/Three.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Three.h>
@@ -118,7 +117,7 @@ public:
     return qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex()))
         || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex())); 
   }
-  void print_message(QString message) { messages->information(message); }
+  void print_message(QString message) { CGAL::Three::Three::information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionSelection; }
 
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m) {
@@ -128,6 +127,7 @@ public:
     actionSelection = new QAction(
           QString("Surface Mesh Selection")
           , mw);
+    actionSelection->setObjectName("actionSelection");
     connect(actionSelection, SIGNAL(triggered()), this, SLOT(selection_action()));
     last_mode = 0;
     dock_widget = new QDockWidget(
@@ -138,9 +138,16 @@ public:
     dock_widget->setWindowTitle(tr(
                                   "Surface Mesh Selection"
                                   ));
+    connect(dock_widget, &QDockWidget::visibilityChanged,
+            this, [this](bool b){
+        this->set_highlighting(b);
+      if(!b)
+        this->set_operation_mode(-1);
+    });
 
     addDockWidget(dock_widget);
 
+    connect(ui_widget.hl_checkBox, SIGNAL(toggled(bool)), this, SIGNAL(set_highlighting(bool)));
     connect(ui_widget.Select_all_button,  SIGNAL(clicked()), this, SLOT(on_Select_all_button_clicked()));
     connect(ui_widget.Select_all_NTButton,  SIGNAL(clicked()), this, SLOT(on_Select_all_NTButton_clicked()));
     connect(ui_widget.Select_boundaryButton,  SIGNAL(clicked()), this, SLOT(on_Select_boundaryButton_clicked()));
@@ -204,6 +211,7 @@ public:
 Q_SIGNALS:
   void save_handleType();
   void set_operation_mode(int);
+  void set_highlighting(bool);
 public Q_SLOTS:
 
 
@@ -212,6 +220,8 @@ public Q_SLOTS:
     connect(this, SIGNAL(save_handleType()),new_item, SLOT(save_handleType()));
     connect(new_item, SIGNAL(updateInstructions(QString)), this, SLOT(setInstructions(QString)));
     connect(this, SIGNAL(set_operation_mode(int)),new_item, SLOT(set_operation_mode(int)));
+    connect(this, SIGNAL(set_highlighting(bool)),new_item, SLOT(set_highlighting(bool)));
+    this->set_highlighting(ui_widget.hl_checkBox->isChecked());
     int item_id = scene->addItem(new_item);
    // QObject* scene_ptr = dynamic_cast<QObject*>(scene);
    // if (scene_ptr)
@@ -400,6 +410,8 @@ public Q_SLOTS:
                     "item!");
       return; 
     }
+    if(selection_item_map.find(poly_item) != selection_item_map.end())
+      return;
     // all other arrangements (putting inside selection_item_map), setting names etc,
     // other params (e.g. k_ring) will be set inside new_item_created
     from_plugin = true;
@@ -624,7 +636,7 @@ public Q_SLOTS:
       }
       boost::unordered_map<fg_face_descriptor, bool> is_selected_map;
       int index = 0;
-      BOOST_FOREACH(fg_face_descriptor fh, faces(*selection_item->polyhedron()))
+      for(fg_face_descriptor fh : faces(*selection_item->polyhedron()))
       {
         if(selection_item->selected_facets.find(fh)
            == selection_item->selected_facets.end())
@@ -639,7 +651,7 @@ public Q_SLOTS:
                                               *selection_item->polyhedron(),
                                         boost::make_assoc_property_map(is_selected_map));
 
-      BOOST_FOREACH(fg_face_descriptor fh, faces(*selection_item->polyhedron()))
+      for(fg_face_descriptor fh : faces(*selection_item->polyhedron()))
       {
         if (is_selected_map[fh])
           selection_item->selected_facets.insert(fh);
@@ -661,7 +673,7 @@ public Q_SLOTS:
         return;
       }
       const Face_graph& poly = *selection_item->polyhedron();
-      BOOST_FOREACH(Scene_polyhedron_selection_item::fg_edge_descriptor ed, selection_item->selected_edges)
+      for(Scene_polyhedron_selection_item::fg_edge_descriptor ed : selection_item->selected_edges)
       {
         if(!is_border(halfedge(ed,poly), poly)){
           selection_item->selected_facets.insert(face(halfedge(ed, poly), poly));
@@ -688,7 +700,7 @@ public Q_SLOTS:
       }
       const Face_graph& poly = *selection_item->polyhedron();
 
-      BOOST_FOREACH(Scene_polyhedron_selection_item::fg_edge_descriptor ed, selection_item->selected_edges)
+      for(Scene_polyhedron_selection_item::fg_edge_descriptor ed : selection_item->selected_edges)
       {
         selection_item->selected_vertices.insert(target(halfedge(ed, poly), poly));
         selection_item->selected_vertices.insert(source(halfedge(ed, poly), poly));
@@ -712,7 +724,7 @@ public Q_SLOTS:
       const Face_graph& poly = *selection_item->polyhedron();
       std::vector<Scene_polyhedron_selection_item::fg_halfedge_descriptor> boundary_edges;
       CGAL::Polygon_mesh_processing::border_halfedges(selection_item->selected_facets, poly, std::back_inserter(boundary_edges));
-      BOOST_FOREACH(Scene_polyhedron_selection_item::fg_halfedge_descriptor h, boundary_edges)
+      for(Scene_polyhedron_selection_item::fg_halfedge_descriptor h : boundary_edges)
       {
         selection_item->selected_edges.insert(edge(h, poly));
       }
@@ -733,9 +745,9 @@ public Q_SLOTS:
         return;
       }
       const Face_graph& poly = *selection_item->polyhedron();
-      BOOST_FOREACH(Scene_polyhedron_selection_item::fg_face_descriptor fh, selection_item->selected_facets)
+      for(Scene_polyhedron_selection_item::fg_face_descriptor fh : selection_item->selected_facets)
       {
-        BOOST_FOREACH(Scene_polyhedron_selection_item::fg_halfedge_descriptor h, CGAL::halfedges_around_face(halfedge(fh,poly), poly) )
+        for(Scene_polyhedron_selection_item::fg_halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(fh,poly), poly) )
         {
           selection_item->selected_vertices.insert(target(h, poly));
         }
@@ -770,9 +782,10 @@ public Q_SLOTS:
     case 1:
     {
       bool is_valid = true;
-      BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor fd, faces(*selection_item->polyhedron()))
+      for(boost::graph_traits<Face_graph>::face_descriptor fd : faces(*selection_item->polyhedron()))
       {
-        if (CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(fd, *selection_item->polyhedron()))
+        if (CGAL::is_triangle(halfedge(fd, *selection_item->polyhedron()), *selection_item->polyhedron())
+            && CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(fd, *selection_item->polyhedron()))
         {
           is_valid = false;
           break;
@@ -783,7 +796,7 @@ public Q_SLOTS:
         QMessageBox::warning(mw,
                              tr("Degenerated Face_graph"),
                              tr("Degenerated faces have been detected. Problems may occur "
-                                "for operations other tha \"Move point\". "));
+                                "for operations other than \"Move point\". "));
       }
       //remove lasso mode
       selection_item->set_lasso_mode(false);
@@ -945,6 +958,8 @@ public Q_SLOTS:
     connect(selection_item, SIGNAL(updateInstructions(QString)), this, SLOT(setInstructions(QString)));
     connect(selection_item, SIGNAL(printMessage(QString)), this, SLOT(printMessage(QString)));
     connect(this, SIGNAL(set_operation_mode(int)),selection_item, SLOT(set_operation_mode(int)));
+    connect(this, SIGNAL(set_highlighting(bool)),selection_item, SLOT(set_highlighting(bool)));
+    this->set_highlighting(ui_widget.hl_checkBox->isChecked());
     //QObject* scene_ptr = dynamic_cast<QObject*>(scene);
     //if (scene_ptr)
     //  connect(selection_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
@@ -1035,7 +1050,7 @@ private:
   Ui::Selection ui_widget;
   std::map<QString, int> operations_map;
   std::vector<QString> operations_strings;
-typedef std::multimap<Scene_face_graph_item*, Scene_polyhedron_selection_item*> Selection_item_map;
+typedef boost::unordered_map<Scene_face_graph_item*, Scene_polyhedron_selection_item*> Selection_item_map;
   Selection_item_map selection_item_map;
   int last_mode;
   bool from_plugin;

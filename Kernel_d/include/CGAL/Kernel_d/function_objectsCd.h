@@ -412,7 +412,7 @@ public:
 
 /* This predicates takes k+1 points defining a k-sphere in d-dim space, and a
  * point |x| (assumed to lie in the same affine subspace spanned by the
- * k-sphere). It tests wether the point |x| lies in the positive or negative
+ * k-sphere). It tests whether the point |x| lies in the positive or negative
  * side of the k-sphere.
  * The parameter |axis| contains the indices of k axis of the canonical base of
  * R^d, on which the affine subspace projects homeomorphically. We can thus

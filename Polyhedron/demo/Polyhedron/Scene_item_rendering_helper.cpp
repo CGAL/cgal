@@ -19,8 +19,7 @@ struct PRIV{
       is_diag_bbox_computed(false),
       _diag_bbox(0),
       alphaSlider(0),
-      are_buffers_filled(false),
-      isinit(false)
+      are_buffers_filled(false)
   {}
 
   ~PRIV()
@@ -49,7 +48,7 @@ struct PRIV{
   double _diag_bbox;
   QSlider* alphaSlider;
   bool are_buffers_filled;
-  bool isinit;
+  std::map<CGAL::Three::Viewer_interface*, bool> isinit;
   QMap<CGAL::Three::Viewer_interface*, bool> buffers_init;
   std::vector<CGAL::Three::Triangle_container*> triangle_containers;
   std::vector<CGAL::Three::Edge_container*> edge_containers;
@@ -59,7 +58,8 @@ struct PRIV{
 };
 
 Scene_item_rendering_helper::Scene_item_rendering_helper()
-  :priv(new PRIV(this)){}
+  :Scene_item(0,0),
+    priv(new PRIV(this)){}
 
 Scene_item_rendering_helper::~Scene_item_rendering_helper()
 {
@@ -91,7 +91,7 @@ float Scene_item_rendering_helper::alpha() const
   return (float)priv->alphaSlider->value() / 255.0f;
 }
 
-void Scene_item_rendering_helper::initGL() const
+void Scene_item_rendering_helper::initGL(CGAL::Three::Viewer_interface* viewer) const
 {
   if(!priv->alphaSlider)
   {
@@ -101,34 +101,28 @@ void Scene_item_rendering_helper::initGL() const
     priv->alphaSlider->setValue(255);
   }
 
-  Q_FOREACH(QGLViewer* v, QGLViewer::QGLViewerPool())
+  Q_FOREACH(Triangle_container* tc, priv->triangle_containers)
   {
-    if(!v)
-      continue;
-    Viewer_interface* viewer = static_cast<Viewer_interface*>(v);
-    Q_FOREACH(Triangle_container* tc, priv->triangle_containers)
-    {
-      if(!tc->isGLInit(viewer))
-        tc->initGL(viewer);
-    }
-    Q_FOREACH(Edge_container* ec, priv->edge_containers)
-    {
-      if(!ec->isGLInit(viewer))
-        ec->initGL(viewer);
-    }
-    Q_FOREACH(Point_container* pc, priv->point_containers)
-    {
-      if(!pc->isGLInit(viewer))
-        pc->initGL(viewer);
-    }
+    if(!tc->isGLInit(viewer))
+      tc->initGL(viewer);
   }
-  if(!priv->isinit)
+  Q_FOREACH(Edge_container* ec, priv->edge_containers)
+  {
+    if(!ec->isGLInit(viewer))
+      ec->initGL(viewer);
+  }
+  Q_FOREACH(Point_container* pc, priv->point_containers)
+  {
+    if(!pc->isGLInit(viewer))
+      pc->initGL(viewer);
+  }
+  if(!isInit(viewer))
   {
     Gl_data_names flags;
     flags = (ALL);
     processData(flags);
   }
-  priv->isinit = true;
+  priv->isinit[viewer] = true;
 }
 
 void Scene_item_rendering_helper::processData(Gl_data_names )const
@@ -157,7 +151,12 @@ QMenu* Scene_item_rendering_helper::contextMenu()
 void Scene_item_rendering_helper::setAlpha(int alpha)
 {
   if(!priv->alphaSlider)
-    initGL();
+  {
+    priv->alphaSlider = new QSlider(::Qt::Horizontal);
+    priv->alphaSlider->setMinimum(0);
+    priv->alphaSlider->setMaximum(255);
+    priv->alphaSlider->setValue(255);
+  }
   priv->alphaSlider->setValue(alpha);
   redraw();
 }
@@ -169,11 +168,16 @@ Scene_item::Bbox Scene_item_rendering_helper::bbox() const {
   return priv->_bbox;
 }
 
-bool Scene_item_rendering_helper::isInit()const { return priv->isinit; }
+bool Scene_item_rendering_helper::isInit(CGAL::Three::Viewer_interface* viewer)const 
+{ 
+  if(priv->isinit.find(viewer) != priv->isinit.end())
+    return priv->isinit[viewer]; 
+  return false;
+}
 
 QSlider* Scene_item_rendering_helper::alphaSlider() { return priv->alphaSlider; }
 
-void Scene_item_rendering_helper::setBbox(Bbox b) { priv->_bbox = b; }
+void Scene_item_rendering_helper::setBbox(Bbox b)const { priv->_bbox = b; }
 
 Triangle_container* Scene_item_rendering_helper::getTriangleContainer(std::size_t id)const
 {
@@ -196,8 +200,10 @@ void Scene_item_rendering_helper::setTriangleContainer(std::size_t id,
 {
   if(priv->triangle_containers.size() <= id)
   {
-    priv->triangle_containers.resize(id+1);
+    priv->triangle_containers.resize(id+1, nullptr);
   }
+  if(priv->triangle_containers[id])
+    delete priv->triangle_containers[id];
   priv->triangle_containers[id] = tc;
 }
 
@@ -206,8 +212,10 @@ void Scene_item_rendering_helper::setEdgeContainer(std::size_t id,
 {
   if(priv->edge_containers.size() <= id)
   {
-    priv->edge_containers.resize(id+1);
+    priv->edge_containers.resize(id+1, nullptr);
   }
+  if(priv->edge_containers[id])
+    delete priv->edge_containers[id];
   priv->edge_containers[id] = ec;
 }
 
@@ -216,8 +224,10 @@ void Scene_item_rendering_helper::setPointContainer(std::size_t id,
 {
   if(priv->point_containers.size() <= id)
   {
-    priv->point_containers.resize(id+1);
+    priv->point_containers.resize(id+1, nullptr);
   }
+  if(priv->point_containers[id])
+    delete priv->point_containers[id];
   priv->point_containers[id] = pc;
 }
 
@@ -240,4 +250,42 @@ bool Scene_item_rendering_helper::getBuffersInit(Viewer_interface* viewer) const
 void Scene_item_rendering_helper::setBuffersInit(Viewer_interface* viewer, bool val)const
 {
   priv->buffers_init[viewer] = val;
+}
+
+void Scene_item_rendering_helper::removeViewer(Viewer_interface *viewer)
+{
+  Q_FOREACH(Triangle_container* tc, priv->triangle_containers)
+  {
+    tc->removeViewer(viewer);
+  }
+  Q_FOREACH(Edge_container* ec, priv->edge_containers)
+  {
+    ec->removeViewer(viewer);
+  }
+  Q_FOREACH(Point_container* pc, priv->point_containers)
+  {
+    pc->removeViewer(viewer);
+  }
+}
+
+void Scene_item_rendering_helper::newViewer(Viewer_interface *viewer)
+{
+  viewer->makeCurrent();
+  Q_FOREACH(Triangle_container* tc, priv->triangle_containers)
+  {
+    if(!tc->isGLInit(viewer))
+      tc->initGL(viewer);
+  }
+  Q_FOREACH(Edge_container* ec, priv->edge_containers)
+  {
+    if(!ec->isGLInit(viewer))
+      ec->initGL(viewer);
+  }
+  Q_FOREACH(Point_container* pc, priv->point_containers)
+  {
+    if(!pc->isGLInit(viewer))
+      pc->initGL(viewer);
+  }
+  //call function that recomputes vao binding
+  initializeBuffers(viewer);
 }

@@ -148,7 +148,7 @@ public:
   typedef typename Base::Plane                        Plane;
 
   /*! Constructor */
-  Arr_polyhedral_sgm_polyhedron_3_face() : m_vertex(NULL), m_marked(false) {}
+  Arr_polyhedral_sgm_polyhedron_3_face() : m_vertex(nullptr), m_marked(false) {}
 
   /*! Obtain the mutable plane. Delegate */
   Plane & plane() { return Base::plane(); }

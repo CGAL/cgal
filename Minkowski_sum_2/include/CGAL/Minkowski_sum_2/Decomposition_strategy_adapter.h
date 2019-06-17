@@ -62,7 +62,7 @@ protected:
 public:
   /*! Default constructor. */
   Polygon_decomposition_strategy_adapter() :
-    m_traits(NULL),
+    m_traits(nullptr),
     m_own_traits(false)
   { init(); }
 
@@ -76,9 +76,9 @@ public:
   ~Polygon_decomposition_strategy_adapter()
   {
     if (m_own_traits) {
-      if (m_traits != NULL) {
+      if (m_traits != nullptr) {
         delete m_traits;
-        m_traits = NULL;
+        m_traits = nullptr;
       }
       m_own_traits = false;
     }
@@ -88,7 +88,7 @@ public:
   void init()
   {
     // Allocate the traits if not provided.
-    if (m_traits == NULL) {
+    if (m_traits == nullptr) {
       m_traits = new Traits_2;
       m_own_traits = true;
     }

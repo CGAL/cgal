@@ -131,9 +131,12 @@ regular_neighbor_coordinates_vertex_2(const Rt& rt,
     *vor_vertices++ = vor[2];
 
     area += polygon_area_2(vor.begin(), vor.end(), rt.geom_traits());
-    *out++= std::make_pair(current, area);
 
-    area_sum += area;
+    if(area > 0)
+    {
+      *out++= std::make_pair(current, area);
+      area_sum += area;
+    }
 
     //update prev and hit:
     prev = current;
@@ -163,8 +166,11 @@ regular_neighbor_coordinates_vertex_2(const Rt& rt,
       ++fc;
     }
 
-    *out++ = std::make_pair((*hidden_vertices_begin), area);
-    area_sum += area;
+    if(area > 0)
+    {
+      *out++ = std::make_pair((*hidden_vertices_begin), area);
+      area_sum += area;
+    }
   }
 
   return make_triple(out, area_sum, true);

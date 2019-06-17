@@ -50,7 +50,7 @@ bool file_input(OutputIterator out)
   int n;
   is >> n;
   std::cout << "Reading " << n << " points from file" << std::endl;
-  CGAL::cpp11::copy_n(std::istream_iterator<Point>(is), n, out);
+  std::copy_n(std::istream_iterator<Point>(is), n, out);
 
   return true;
 }

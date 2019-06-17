@@ -29,6 +29,8 @@ if( WIN32 )
   set(_Boost_BZIP2_HEADERS             "boost/iostreams/filter/bzip2.hpp")
   set(_Boost_ZLIB_HEADERS              "boost/iostreams/filter/zlib.hpp")
   find_package( Boost OPTIONAL_COMPONENTS bzip2 zlib)
+else()
+  find_package(ZLIB QUIET)
 endif()
 
 find_package(TBB QUIET)
@@ -44,11 +46,6 @@ else()
   include( ${EIGEN3_USE_FILE} )
 endif()
 
-
-# include for local directory
-include_directories( BEFORE include )
-
-# include for local package
 
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
@@ -71,9 +68,13 @@ set(classification_compile_definitions)
 
 
 if (Boost_SERIALIZATION_FOUND AND Boost_IOSTREAMS_FOUND)
-  set(classification_linked_libraries ${classification_linked_libraries}
-    ${Boost_SERIALIZATION_LIBRARY}
-    ${Boost_IOSTREAMS_LIBRARY})
+  if(TARGET Boost::serialization AND TARGET Boost::iostreams)
+    set(classification_linked_libraries Boost::serialization Boost::iostreams)
+  else()
+    set(classification_linked_libraries ${classification_linked_libraries}
+      ${Boost_SERIALIZATION_LIBRARY}
+      ${Boost_IOSTREAMS_LIBRARY})
+  endif()
 else()
   if (NOT Boost_SERIALIZATION_FOUND)
     message(STATUS "NOTICE: This project requires Boost Serialization, and will not be compiled.")
@@ -92,9 +93,15 @@ if( WIN32 )
     message(STATUS "NOTICE: This project requires Boost ZLIB and Boost BZIP2, and will not be compiled.")
     return()
   endif()
+else()
+  if(ZLIB_FOUND)
+    set(classification_linked_libraries ${classification_linked_libraries} ZLIB::ZLIB)
+  else()
+    message(STATUS "NOTICE: This project requires ZLIB, and will not be compiled.")
+    return()
+  endif()
 endif()
 
-find_package(OpenCV QUIET)
 if (OpenCV_FOUND)
   message(STATUS "Found OpenCV ${OpenCV_VERSION}")
   include_directories(${OpenCV_INCLUDE_DIRS})
@@ -107,6 +114,21 @@ if (OpenCV_FOUND)
 else()
   message(STATUS "NOTICE: OpenCV was not found. OpenCV random forest predicate for classification won't be available.")
 endif()
+
+find_package(TensorFlow QUIET)
+if (TensorFlow_FOUND)
+  message(STATUS "Found TensorFlow")
+  include_directories( ${TensorFlow_INCLUDE_DIR} )
+  set(classification_linked_libraries ${classification_linked_libraries}
+    ${TensorFlow_LIBRARY})
+  set(classification_compile_definitions ${classification_compile_definitions}
+    "-DCGAL_LINKED_WITH_TENSORFLOW")
+  
+  set(targets ${targets} example_tensorflow_neural_network)
+else()
+  message(STATUS "NOTICE: TensorFlow not found, Neural Network predicate for classification won't be available.")
+endif()
+
 
 # Creating targets with correct libraries and flags
 foreach(target ${targets})

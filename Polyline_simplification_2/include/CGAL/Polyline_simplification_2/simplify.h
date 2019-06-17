@@ -40,6 +40,7 @@
 
 // Needed for Polygon_2
 
+#include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <list>
@@ -346,10 +347,10 @@ class is used for internally using a constrained Delaunay triangulation,
 it should be a kernel with at least exact predicates.
 */
 template <class Traits, class Container, class CostFunction, class StopFunction>
-                  CGAL::Polygon_2<Traits,Container>
-                  simplify(const CGAL::Polygon_2<Traits,Container>& polygon,
-                           CostFunction cost,
-                           StopFunction stop)
+CGAL::Polygon_2<Traits,Container>
+simplify(const CGAL::Polygon_2<Traits,Container>& polygon,
+         CostFunction cost,
+         StopFunction stop)
 {
   typedef Traits K;
   typedef typename K::Point_2 Point_2;
@@ -382,6 +383,76 @@ template <class Traits, class Container, class CostFunction, class StopFunction>
   return result;
 }
 
+  /*!
+\ingroup  PkgPolylineSimplification2Functions
+
+Simplifies a single polygon with holes.
+
+\tparam Traits must be a model of `ConstrainedDelaunayTriangulationTraits_2`
+\tparam CostFunction must be a model of `PolylineSimplificationCostFunction`.
+\tparam StopFunction must be a model of `PolylineSimplificationStopPredicate`
+
+\attention Any \cgal kernel can be used for `Traits`, but as the traits
+class is used for internally using a constrained Delaunay triangulation,
+it should be a kernel with at least exact predicates.
+*/
+template <class Traits, class Container, class CostFunction, class StopFunction>
+CGAL::Polygon_with_holes_2<Traits,Container>
+simplify(const CGAL::Polygon_with_holes_2<Traits,Container>& polygon,
+         CostFunction cost,
+         StopFunction stop)
+{
+  typedef Traits K;
+  typedef typename K::Point_2 Point_2;
+
+  typedef typename CGAL::Polygon_with_holes_2<Traits,Container> Polygon_with_holes_2;
+  typedef typename Polygon_with_holes_2::Polygon_2 Polygon_2;
+
+  typedef Vertex_base_2< K > Vb;
+  typedef CGAL::Constrained_triangulation_face_base_2<K> Fb;
+  typedef CGAL::Triangulation_data_structure_2<Vb,Fb> TDS;
+  typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS,typename internal::Itag<K>::type>  CDT;
+  typedef CGAL::Constrained_triangulation_plus_2<CDT>       PCT;
+  typedef typename PCT::Constraint_id Constraint_id;
+  typedef typename PCT::Vertices_in_constraint_iterator Vertices_in_constraint_iterator;
+
+  PCT pct;
+
+  Constraint_id cid = pct.insert_constraint(polygon.outer_boundary());
+  std::vector<Constraint_id> hole_id;
+  for(typename Polygon_with_holes_2::Hole_const_iterator it = polygon.holes_begin(); it != polygon.holes_end(); ++it){
+     const Polygon_2& hole = *it;
+     hole_id.push_back(pct.insert_constraint(hole));
+    }
+
+  Polyline_simplification_2<PCT, CostFunction, StopFunction> simplifier(pct, cost, stop);
+  while(simplifier()){}
+
+  Polygon_2 result;
+  Vertices_in_constraint_iterator beg = pct.vertices_in_constraint_begin(cid);
+  Vertices_in_constraint_iterator end = pct.vertices_in_constraint_end(cid);
+  for(; beg!=end;){
+    Point_2 p = (*beg)->point();
+    ++beg;
+    if(beg!=end){
+      result.push_back(p);
+    }
+  }
+  std::vector<Polygon_2>holes(hole_id.size());
+  for(std::size_t i=0; i < hole_id.size(); i++){
+    Vertices_in_constraint_iterator beg = pct.vertices_in_constraint_begin(hole_id[i]);
+    Vertices_in_constraint_iterator end = pct.vertices_in_constraint_end(hole_id[i]);
+    for(; beg!=end;){
+      Point_2 p = (*beg)->point();
+      ++beg;
+      if(beg!=end){
+        holes[i].push_back(p);
+      }
+    }
+  }
+  return Polygon_with_holes_2(result, holes.begin(), holes.end()) ;
+}
+  
 /*!
 \ingroup  PkgPolylineSimplification2Functions
 

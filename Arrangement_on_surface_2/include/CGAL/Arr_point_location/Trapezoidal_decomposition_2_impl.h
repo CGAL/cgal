@@ -278,7 +278,7 @@ split_trapezoid_by_halfedge(Dag_node& split_node,
                             Td_map_item& prev_top_tr,
                             Halfedge_const_handle he)
 {
-  CGAL_warning(traits != NULL);
+  CGAL_warning(traits != nullptr);
   CGAL_precondition(traits->is_active(split_node.get_data()));
   CGAL_precondition(traits->is_td_trapezoid(split_node.get_data()));
 
@@ -397,7 +397,7 @@ update_vtx_with_new_edge(Halfedge_const_handle he,
                          const Locate_type&
                          CGAL_precondition_code(lt))
 {
-  CGAL_assertion(traits != NULL);
+  CGAL_assertion(traits != nullptr);
   CGAL_precondition(lt == POINT);
   CGAL_precondition(traits->is_active(vtx_item));
 
@@ -441,7 +441,7 @@ insert_curve_at_vtx_using_dag(Halfedge_const_handle he,
 
   Dag_node* node = boost::apply_visitor(dag_node_visitor(), item);
 
-  CGAL_assertion(node != NULL);
+  CGAL_assertion(node != nullptr);
   CGAL_assertion(he != m_empty_he_handle);
 
 
@@ -998,7 +998,7 @@ search_using_dag(Dag_node& curr_node,
                  Comparison_result up /*=EQUAL*/) const
 {
   if (he == m_empty_he_handle)
-    return search_using_dag_with_cv(curr_node,traits,ce,NULL, up);
+    return search_using_dag_with_cv(curr_node,traits,ce,nullptr, up);
   else
     return search_using_dag_with_cv(curr_node,traits,ce,&he->curve(), up);
 }
@@ -1377,7 +1377,7 @@ typename Trapezoidal_decomposition_2<Td_traits>::Dag_node
 Trapezoidal_decomposition_2<Td_traits>::
 container2dag(Nodes_map& ar, int left, int right, int& num_of_new_nodes) const
 {
-  CGAL_warning(traits != NULL);
+  CGAL_warning(traits != nullptr);
 
   if (right > left) {
     int d = (int)std::floor((double(right+left))/2);
@@ -1414,7 +1414,7 @@ container2dag(Nodes_map& ar, int left, int right, int& num_of_new_nodes) const
     //curr_node.right_child()->set_dag_node(&curr_node.right_child());
     //curr_node->set_dag_node(&curr_node);// fake temporary node
     deactivate_vertex(curr_node); //curr_node->remove(); // mark as deleted
-    boost::apply_visitor(set_dag_node_visitor((Dag_node*)NULL),
+    boost::apply_visitor(set_dag_node_visitor((Dag_node*)nullptr),
                          curr_node.get_data());//curr_node->set_dag_node(0);
 
     return curr_node;
@@ -1462,7 +1462,7 @@ Trapezoidal_decomposition_2<Td_traits>::insert(Halfedge_const_handle he)
 
   // locate the input Halfedge end points in the Td_map_item Dag
 
-  CGAL_assertion(traits != NULL);
+  CGAL_assertion(traits != nullptr);
 
   //get the two vertices of the halfedge
   Vertex_const_handle v1 =
@@ -1565,7 +1565,7 @@ Trapezoidal_decomposition_2<Td_traits>::insert(Halfedge_const_handle he)
     }
     first_time = false;
 
-    CGAL_assertion(node != NULL);
+    CGAL_assertion(node != nullptr);
     split_trapezoid_by_halfedge(*node, old_e, old_bottom_tr, old_top_tr, he);
 
     if (node->is_inner_node()) {
@@ -1644,7 +1644,7 @@ void Trapezoidal_decomposition_2<Td_traits>::remove(Halfedge_const_handle he)
   locate_opt_empty();
 #endif
 
-  CGAL_warning(traits != NULL);
+  CGAL_warning(traits != nullptr);
 
   //calculating leftmost and rightmost curve ends of he
   const Curve_end leftmost(he, ARR_MIN_END);
@@ -1663,8 +1663,8 @@ void Trapezoidal_decomposition_2<Td_traits>::remove(Halfedge_const_handle he)
 
   if (lt1 != POINT || lt2 != POINT) return;
 
-  CGAL_warning(boost::apply_visitor(dag_node_visitor(), p1_item) != NULL);
-  CGAL_warning(boost::apply_visitor(dag_node_visitor(), p2_item) != NULL);
+  CGAL_warning(boost::apply_visitor(dag_node_visitor(), p1_item) != nullptr);
+  CGAL_warning(boost::apply_visitor(dag_node_visitor(), p2_item) != nullptr);
 
   //retrieve the Dag_nodes of the two point-degenerate trapezoid
   Dag_node& p1_node = *(boost::apply_visitor(dag_node_visitor(), p1_item));
@@ -1883,7 +1883,7 @@ void Trapezoidal_decomposition_2<Td_traits>::remove(Halfedge_const_handle he)
     removed_cv_ptr(new X_monotone_curve_2(he->curve()));
   Base_map_item_iterator last_edge_fragment_it = mid_it;
   //Base_trapezoid_iterator last_mid = mid_it;
-  Dag_node* e_node = NULL;
+  Dag_node* e_node = nullptr;
   while (!!++mid_it) {
     e_node = boost::apply_visitor(dag_node_visitor(),*last_edge_fragment_it);
     deactivate_edge(removed_cv_ptr,*e_node); //last_mid->remove();
@@ -2023,7 +2023,7 @@ vertical_ray_shoot(const Point & p,Locate_type & lt,
 //
 //  if (!traits)
 //  {
-//    CGAL_warning(traits != NULL);
+//    CGAL_warning(traits != nullptr);
 //    return;
 //  }
 //  if (!traits->are_mergeable_2_object()(cv1,cv2))
@@ -2040,7 +2040,7 @@ vertical_ray_shoot(const Point & p,Locate_type & lt,
 //    std::cerr << "\ncv1 " << cv1;
 //    std::cerr << "\ncv1 " << cv2 << std::endl;
 //  }
-//  CGAL_precondition(traits != NULL);
+//  CGAL_precondition(traits != nullptr);
 //  CGAL_precondition(traits->are_mergeable_2_object()(cv1,cv2));
 //
 //#endif
@@ -2101,8 +2101,8 @@ vertical_ray_shoot(const Point & p,Locate_type & lt,
 //
 //  CGAL_precondition(lt1==POINT && lt2==POINT);
 //  CGAL_precondition(t1.is_active() && t2.is_active());
-//  CGAL_warning(t1.dag_node() != NULL);
-//  CGAL_warning(t2.dag_node() != NULL);
+//  CGAL_warning(t1.dag_node() != nullptr);
+//  CGAL_warning(t2.dag_node() != nullptr);
 //
 //#endif
 //  m_before_split.m_cv_before_split = cv;
@@ -2221,8 +2221,8 @@ vertical_ray_shoot(const Point & p,Locate_type & lt,
 //
 //  //define the left halfedge and the right halfedge, according
 //  //  to the splitting point
-//  //Halfedge_const_handle* p_left_he  = NULL;
-//  //Halfedge_const_handle* p_right_he = NULL;
+//  //Halfedge_const_handle* p_left_he  = nullptr;
+//  //Halfedge_const_handle* p_right_he = nullptr;
 //  Halfedge_const_handle left_he  = he2;
 //  Halfedge_const_handle right_he = he1;
 //
@@ -2592,7 +2592,7 @@ merge_edge(Halfedge_const_handle he1,
   const X_monotone_curve_2& cv2 = he2->curve();
 
   if (!traits) {
-    CGAL_warning(traits != NULL);
+    CGAL_warning(traits != nullptr);
     return;
   }
   if (!traits->are_mergeable_2_object() (cv1, cv2)) {
@@ -2645,10 +2645,10 @@ merge_edge(Halfedge_const_handle he1,
   Td_map_item rightp_item = locate(rightmost, lt2);
   Td_map_item mrgp_item = locate(ce, lt);
 
-  //varifying that all trapezoids are not NULL and are of type POINT
-  CGAL_warning(boost::apply_visitor(dag_node_visitor(), leftp_item) != NULL);
-  CGAL_warning(boost::apply_visitor(dag_node_visitor(), rightp_item)!= NULL);
-  CGAL_warning(boost::apply_visitor(dag_node_visitor(), mrgp_item)  != NULL);
+  //varifying that all trapezoids are not nullptr and are of type POINT
+  CGAL_warning(boost::apply_visitor(dag_node_visitor(), leftp_item) != nullptr);
+  CGAL_warning(boost::apply_visitor(dag_node_visitor(), rightp_item)!= nullptr);
+  CGAL_warning(boost::apply_visitor(dag_node_visitor(), mrgp_item)  != nullptr);
 
   //define the left curve and the right curve, according
   //  to the common point (that is merged)
@@ -2832,7 +2832,7 @@ longest_query_path_length_rec(bool minus_inf, Dag_node& min_node,
                               bool plus_inf, Dag_node& max_node,
                               Dag_node& node)
 {
-  //if NULL
+  //if nullptr
   if (node.is_null())  return 0;
 
   //if not valid range or empty return 0

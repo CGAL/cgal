@@ -14,7 +14,6 @@
 #include <iterator>
 #include <list>
 
-#include <boost/foreach.hpp>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -34,7 +33,7 @@ void test_pmesh(const Mesh& pmesh)
 
   bool has_border = false;
   halfedge_descriptor border_he;
-  BOOST_FOREACH(halfedge_descriptor h, halfedges(pmesh))
+  for(halfedge_descriptor h : halfedges(pmesh))
   {
     if (is_border(h, pmesh))
     {
@@ -50,7 +49,7 @@ void test_pmesh(const Mesh& pmesh)
 
   face_descriptor valid_patch_face;
   unsigned int count = 0;
-  BOOST_FOREACH(halfedge_descriptor h, halfedges(pmesh))
+  for(halfedge_descriptor h : halfedges(pmesh))
   {
     if (is_border(h, pmesh) || is_border(opposite(h, pmesh), pmesh))
       continue;
@@ -74,7 +73,7 @@ void test_pmesh(const Mesh& pmesh)
   {
     face_descriptor f = patch.front();
     patch.pop_front();
-    BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(f, pmesh), pmesh))
+    for(halfedge_descriptor h : halfedges_around_face(halfedge(f, pmesh), pmesh))
     {
       if (boost::graph_traits<Mesh>::null_halfedge() != opposite(h, pmesh))
         patch.push_back(face(opposite(h, pmesh), pmesh));
@@ -110,15 +109,15 @@ void test_pmesh(const Mesh& pmesh)
   std::cout << "     z[" << bb.zmin() << "; " << bb.zmax() << "]" << std::endl;
 
   CGAL::Bbox_3 bb_v;
-  BOOST_FOREACH(vertex_descriptor vd, vertices(pmesh))
+  for(vertex_descriptor vd : vertices(pmesh))
     bb_v+=PMP::vertex_bbox(vd, pmesh);
 
   CGAL::Bbox_3 bb_f;
-  BOOST_FOREACH(face_descriptor fd, faces(pmesh))
+  for(face_descriptor fd : faces(pmesh))
     bb_f+=PMP::face_bbox(fd, pmesh);
 
   CGAL::Bbox_3 bb_e;
-  BOOST_FOREACH(edge_descriptor ed, edges(pmesh))
+  for(edge_descriptor ed : edges(pmesh))
     bb_e+=PMP::edge_bbox(ed, pmesh);
 
   assert(bb==bb_v);
@@ -168,6 +167,40 @@ void test_closed_surface_mesh(const char* filename)
   typename K::FT vol = PMP::volume(sm);
   std::cout << "volume = " << vol << std::endl;
   assert(vol > 0);
+
+}
+
+
+template <typename Surface_mesh, typename K>
+void test_centroid(const char* filename)
+{
+  std::cout << "Test Surface_mesh " << filename
+    << " with Kernel " << typeid(K).name() << std::endl;
+  Surface_mesh sm;
+  std::ifstream input(filename);
+  input >> sm;
+ 
+  typename K::Point_3 p = PMP::centroid(sm);
+
+  // For data/elephant.off
+  // compare with centroid of 1.000.000 points inside the mesh:
+  //  0.00772887 -0.134923 0.011703
+  assert (p.x() > 0.007 && p.x() < 0.008);
+  assert (p.y() > -0.14 && p.y() < -0.13);
+  assert (p.z() > 0.01 && p.z() < 0.02);
+
+  typename K::Vector_3 v(10,20,30);
+  for(typename boost::graph_traits<Surface_mesh>::vertex_descriptor vd : vertices(sm)){
+    sm.point(vd) = sm.point(vd) + v;
+  }
+
+  p = PMP::centroid(sm);
+  p = p - v;
+  assert (p.x() > 0.007 && p.x() < 0.008);
+  assert (p.y() > -0.14 && p.y() < -0.13);
+  assert (p.z() > 0.01 && p.z() < 0.02);
+
+
 }
 
 int main(int argc, char* argv[])
@@ -181,6 +214,10 @@ int main(int argc, char* argv[])
     (argc > 1) ? argv[1] : "data/elephant.off";
   test_closed_surface_mesh<CGAL::Surface_mesh<Epic::Point_3>,Epic>(filename_surface_mesh);
   test_closed_surface_mesh<CGAL::Surface_mesh<Epec::Point_3>,Epec>(filename_surface_mesh);
+
+  // It won't work with Epec for large meshes as it builds up a deep DAG
+  // leading to a stackoverflow when the destructor is called.
+  test_centroid<CGAL::Surface_mesh<Epic::Point_3>,Epic>(filename_surface_mesh);
 
   std::cerr << "All done." << std::endl;
   return 0;

@@ -2,18 +2,21 @@
 
 #include <CGAL/Periodic_2_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Periodic_2_Delaunay_triangulation_2.h>
+#include <CGAL/Periodic_2_triangulation_face_base_2.h>
+#include <CGAL/Periodic_2_triangulation_vertex_base_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 
 #include <iostream>
 #include <vector>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
-typedef CGAL::Periodic_2_Delaunay_triangulation_traits_2<K>         Gt;
-typedef CGAL::Triangulation_vertex_base_with_info_2<unsigned, Gt>   Vb;
-typedef CGAL::Periodic_2_triangulation_face_base_2<Gt>              Fb;
-typedef CGAL::Triangulation_data_structure_2<Vb, Fb>                 Tds;
-typedef CGAL::Periodic_2_Delaunay_triangulation_2<Gt, Tds>          Delaunay;
-typedef Delaunay::Point                                             Point;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel             K;
+typedef CGAL::Periodic_2_Delaunay_triangulation_traits_2<K>             Gt;
+typedef CGAL::Periodic_2_triangulation_vertex_base_2<Gt>                Vbb;
+typedef CGAL::Triangulation_vertex_base_with_info_2<unsigned, Gt, Vbb>  Vb;
+typedef CGAL::Periodic_2_triangulation_face_base_2<Gt>                  Fb;
+typedef CGAL::Triangulation_data_structure_2<Vb, Fb>                    Tds;
+typedef CGAL::Periodic_2_Delaunay_triangulation_2<Gt, Tds>              Delaunay;
+typedef Delaunay::Point                                                 Point;
 
 int main()
 {

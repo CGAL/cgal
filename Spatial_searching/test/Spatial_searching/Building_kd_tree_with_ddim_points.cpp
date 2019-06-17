@@ -1,6 +1,5 @@
 // file: Building_kd_tree_with_ddim_points.C
 
-#include <CGAL/Cartesian_d.h>
 #include <CGAL/Homogeneous_d.h>
 #include <CGAL/constructions_d.h>
 #include <CGAL/Kd_tree.h>
@@ -15,7 +14,6 @@
 #include <cassert>
 #include <iostream>
 
-//typedef CGAL::Cartesian_d<double> K;
 typedef CGAL::Homogeneous_d<double> Kernel;
 typedef CGAL::Point_d<Kernel> Point;
 
@@ -99,7 +97,7 @@ int main() {
   std::vector<Point> points;
   
   Point_generator g(3);
-  CGAL::cpp11::copy_n( g, N, std::back_inserter(points));
+  std::copy_n( g, N, std::back_inserter(points));
   g++;
   Point query = *g;
 
