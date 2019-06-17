@@ -63,6 +63,14 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
     include/QT5/Piecewise_set_graphics_item.h
     include/QT5/Graphics_view_linear_polygon_input.h
     include/QT5/Linear_polygons.h
+    include/QT5/General_polygon_2.h
+    include/QT5/General_polygon_set_2.h
+    include/QT5/General_polygon_set_on_surface_2.h
+    include/QT5/Gps_circle_segment_traits_2.h
+    include/QT5/Gps_segment_traits_2.h
+    include/QT5/Gps_traits_2.h
+    include/QT5/connect_holes.h
+    include/QT5/Polygon_set_2.h
     ${UI_HEADERS}
     ${CGAL_Qt5_RESOURCE_FILES})
 

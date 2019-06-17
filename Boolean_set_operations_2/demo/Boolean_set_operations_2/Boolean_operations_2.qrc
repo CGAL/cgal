@@ -5,6 +5,9 @@
         <file>resources/boolean-union.png</file>
         <file>resources/kernel.png</file>
 	<file>resources/insert_bezier.bmp</file>
+	<file>resources/insert_circle.xpm</file>
+	<file>resources/demo_conic_circle.xpm</file>
+    <file>resources/insert_bezier.xpm</file>
 	<file>resources/intersection.bmp</file>
 	<file>resources/mink_sum.bmp</file>
 	<file>resources/union.bmp</file>
@@ -13,6 +16,9 @@
 	<file>resources/diff_PQ.bmp</file>
 	<file>resources/del_P.bmp</file>
 	<file>resources/insert_polygon.bmp</file>
+    <file>resources/insert_polygon.xpm</file>
+    <file>resources/insert_circle.xpm</file>
+    <file>resources/fit-page-32.png</file>
         <file>resources/boolean-diff.png</file>
         <file>resources/boolean-intersection.png</file>
         <file alias="convex-hull.png">resources/convex-hull.png</file>

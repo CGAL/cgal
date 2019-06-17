@@ -57,7 +57,10 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/General_polygon_set_2.h>
+#include <CGAL/CORE_algebraic_number_traits.h>
+#include <CGAL/Arr_Bezier_curve_traits_2.h>
 #include <CGAL/Iso_rectangle_2.h>
+#include <CGAL/Gps_traits_2.h>
 #include <CGAL/minkowski_sum_2.h>
 #include <CGAL/approximated_offset_2.h>
 #include <CGAL/Arrangement_2.h>
@@ -81,6 +84,19 @@
 #include "QT5/Linear_polygons.h"
 #include "QT5/Graphics_view_circular_polygon_input.h"
 #include "QT5/Graphics_view_linear_polygon_input.h"
+#include "QT5/Graphics_view_linear_polygon_input.h"
+#include "QT5/General_polygon_2.h"
+#include "QT5/General_polygon_set_2.h"
+#include "QT5/General_polygon_set_on_surface_2.h"
+#include "QT5/Gps_circle_segment_traits_2.h"
+#include "QT5/Gps_segment_traits_2.h"
+#include "QT5/Gps_traits_2.h"
+#include "QT5/connect_holes.h"
+#include "QT5/Polygon_set_2.h"
+#include "QT5/BezierCurves.h"
+#include "QT5/GraphicsViewBezierPolygonInput.h"
+
+
 
 #include "ui_Boolean_set_operations_2.h"
 
@@ -93,13 +109,16 @@ void error(std::string aS);
 void error_handler(char const* what, char const* expr, char const* file,
                    int line, char const* msg);
 
-Circular_polygon linear_2_circ(Circular_Linear_polygon const& pgn);
-Circular_polygon_with_holes
-linear_2_circ(Circular_Linear_polygon_with_holes const& pwh);
-bool read_linear(QString aFileName, Linear_polygon_set& rSet,
-                 Linear_region_source_container& rSources);
-bool read_circular(QString aFileName, Circular_polygon_set& rSet,
-                   Circular_region_source_container& rSources);
+
+//Circular_polygon linearPart_2_circ(Circular_Linear_polygon const& pgn);
+//Circular_polygon_with_holes linearPart_2_circ(Circular_Linear_polygon_with_holes const& pwh);
+//bool read_linear(QString aFileName, Circular_polygon_set& rSet,
+                   //Circular_region_source_container& rSources);
+//bool read_dxf ( QString aFileName, Circular_polygon_set& rSet, 
+                //    Circular_region_source_container& rSources );
+//bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet,
+     //               Bezier_region_source_container& rSources  );
+//Bezier_curve read_bezier_curve ( std::istream& is, bool aDoubleFormat );
 
 // Typedefs
 typedef CGAL::Qt::Circular_set_graphics_item<Circular_polygon_set,
@@ -144,9 +163,9 @@ enum {
   MAGENTA_GROUP, AQUA_GROUP, RESULT_GROUP
 };
 
-//A way to maintain 2 category of polygons namely linear,circular
-//enum genrates errors so, we wil use LINEAR_TYPE=1, CIRCULAR_TYPE=2
-//enum { LINEAR_TYPE, CIRCULAR_TYPE };
+//A way to maintain 3 category of polygons namely linear,circular
+//enum genrates errors so, we wil use LINEAR_TYPE=1, CIRCULAR_TYPE=2and BEZIER_TPYE = 3
+//enum { LINEAR_TYPE, CIRCULAR_TYPE, BEZIER_TPYE};
 
 //dawing tools
 QPen sPens[] = {
@@ -318,6 +337,126 @@ protected:
   Gps_traits m_traits;
 };
 
+
+
+//Implementing Bezier's rep class
+template<class GI_, class Set_>
+class Rep_o : public Rep_base
+{
+public:
+
+  typedef GI_  GI  ;
+  typedef Set_ Set ;
+  
+  typedef Rep_o<GI,Set> Self ;
+  
+  Rep_o() { mGI = new GI(&mSet) ; }
+  
+  Set const& set() const { return mSet ; }
+  Set      & set()       { return mSet ; }
+  
+  virtual CGAL::Qt::GraphicsItem* gi() const { return mGI; }
+  virtual CGAL::Qt::GraphicsItem* gi()       { return mGI; }
+  
+  virtual void set_pen  ( QPen   const& aPen   ) { mGI->setPen  (aPen);   } 
+  virtual void set_brush( QBrush const& aBrush ) { mGI->setBrush(aBrush); }
+      
+  virtual bool is_empty() const { return mSet.is_empty() ; }
+  
+  virtual void clear()                         
+  { 
+    try
+    {
+      mSet.clear() ; 
+    } 
+    catch(...)
+    {
+      show_error("Exception thrown during boolean operation");
+    } 
+  }
+  
+  virtual void complement()                         
+  { 
+    try
+    {
+      mSet.complement(); 
+    } 
+    catch(...)
+    {
+      show_error("Exception thrown during boolean operation");
+    } 
+  }
+  
+  virtual void assign( Rep_base const& aOther ) 
+  { 
+    try
+    {
+      mSet = cast(aOther).mSet; 
+    } 
+    catch(...)
+    {
+      show_error("Exception thrown during boolean operation");
+    } 
+  }
+  
+  virtual void intersect( Rep_base const& aOther ) 
+  { 
+    try
+    {
+      mSet.intersection( cast(aOther).mSet); 
+    } 
+    catch(...)
+    {
+      show_error("Exception thrown during boolean operation");
+    } 
+  }
+  
+  virtual void join( Rep_base const& aOther ) 
+  { 
+    try
+    {
+      mSet.join( cast(aOther).mSet); 
+    } 
+    catch(...)
+    {
+      show_error("Exception thrown during boolean operation");
+    } 
+  }
+  
+  virtual void difference( Rep_base const& aOther ) 
+  { 
+    try
+    {
+      mSet.difference( cast(aOther).mSet); 
+    } 
+    catch(...)
+    {
+      show_error("Exception thrown during boolean operation");
+    } 
+  }
+  
+  virtual void symmetric_difference( Rep_base const& aOther ) 
+  { 
+    try
+    {
+      mSet.symmetric_difference( cast(aOther).mSet); 
+    } 
+    catch(...)
+    {
+      show_error("Exception thrown during boolean operation");
+    } 
+  }
+  
+  static Self const& cast( Rep_base const& aOther ) { return dynamic_cast<Self const&>(aOther); }
+  static Self      & cast( Rep_base      & aOther ) { return dynamic_cast<Self      &>(aOther); }
+  
+private:
+
+  GI* mGI;
+  Set mSet ;
+} ;
+
+
 //A class for connecting GUI and this file
 class Circular_rep : public Rep<Circular_GI, Circular_polygon_set,
                                 Circular_traits>
@@ -329,6 +468,19 @@ public:
 
   virtual int type() const { return 2; }
 };
+
+class Bezier_rep : public Rep_o<Bezier_GI, Bezier_polygon_set>
+{
+  typedef Rep_o<Bezier_GI, Bezier_polygon_set> Base ;
+  
+public:
+  
+  
+  Bezier_rep () : Base() {} 
+  
+  virtual int type() const { return 3; }
+} ;
+
 
 //A class for connecting GUI and this file
 class Linear_rep : public Rep<Linear_GI, Linear_polygon_set, Linear_traits>
@@ -355,7 +507,8 @@ public:
   {
     //setting shared_ptr for repective polygon
     if (aType == 1) m_rep = Rep_ptr(new Linear_rep());
-    else m_rep=Rep_ptr(new Circular_rep());
+    else if(aType == 2) m_rep=Rep_ptr(new Circular_rep());
+    else if(aType == 3) m_rep=Rep_ptr(new Bezier_rep());
     //setting pen and brush
     m_rep->set_pen  (m_pen);
     m_rep->set_brush(m_brush);
@@ -376,35 +529,50 @@ public:
   {
     if (is_circular() && aOther.is_circular())
       get_circular_rep()->assign(*aOther.get_circular_rep());
-    else get_linear_rep()->assign(*aOther.get_linear_rep());
+    else if (is_bezier() && aOther.is_bezier()) 
+      get_bezier_rep()->assign( *aOther.get_bezier_rep()) ;
+    else if (is_linear() && aOther.is_linear())
+      get_linear_rep()->assign(*aOther.get_linear_rep());
   }
 
   void intersect(Curve_set const& aOther)
   {
     if (is_circular() && aOther.is_circular())
       get_circular_rep()->intersect(*aOther.get_circular_rep());
-    else get_linear_rep()->intersect(*aOther.get_linear_rep());
+    else if ( is_bezier() && aOther.is_bezier() )
+      get_bezier_rep()->intersect( *aOther.get_bezier_rep() ) ;
+    else if (is_linear() && aOther.is_linear())
+      get_linear_rep()->intersect(*aOther.get_linear_rep());
   }
 
   void join(Curve_set const& aOther)
   {
     if (is_circular() && aOther.is_circular())
       get_circular_rep()->join(*aOther.get_circular_rep());
-    else get_linear_rep()->join(*aOther.get_linear_rep());
+    else if ( is_bezier() && aOther.is_bezier() )
+      get_bezier_rep()->join( *aOther.get_bezier_rep() ) ;
+    else if (is_linear() && aOther.is_linear())
+      get_linear_rep()->join(*aOther.get_linear_rep());
   }
 
   void difference(Curve_set const& aOther)
   {
     if (is_circular() && aOther.is_circular())
       get_circular_rep()->difference(*aOther.get_circular_rep());
-    else get_linear_rep()->difference(*aOther.get_linear_rep());
+    else if ( is_bezier() && aOther.is_bezier() )
+      get_bezier_rep()->difference( *aOther.get_bezier_rep() ) ;
+    else if (is_linear() && aOther.is_linear())
+      get_linear_rep()->difference(*aOther.get_linear_rep());
   }
 
   void symmetric_difference(Curve_set const& aOther)
   {
     if (is_circular() && aOther.is_circular())
       get_circular_rep()->symmetric_difference(*aOther.get_circular_rep());
-    else get_linear_rep()->symmetric_difference(*aOther.get_linear_rep());
+    else if ( is_bezier() && aOther.is_bezier() )
+      get_bezier_rep()->symmetric_difference( *aOther.get_bezier_rep() ) ;
+    else if (is_linear() && aOther.is_linear())
+      get_linear_rep()->symmetric_difference(*aOther.get_linear_rep());
   }
 
   //see its need keep it for now
@@ -412,6 +580,7 @@ public:
   Rep_base& rep() { return *m_rep; }
 
   bool is_circular() const { return m_rep->type() == 2; }
+  bool is_bezier  () const { return m_rep->type() == 3; }
   bool is_linear() const { return m_rep->type() == 1; }
 
   //to get rep for circualr polygons
@@ -426,6 +595,19 @@ public:
   { return get_circular_rep()->set(); }
 
   Circular_polygon_set& circular() { return get_circular_rep()->set(); }
+
+
+  const Bezier_rep* get_bezier_rep() const 
+  { return dynamic_cast<Bezier_rep   const*>( boost::get_pointer(m_rep) ); }
+
+  Bezier_rep* get_bezier_rep()       
+  { return dynamic_cast<Bezier_rep*  >( boost::get_pointer(m_rep) ); }
+  
+  const Bezier_polygon_set& bezier() const 
+  { return get_bezier_rep()->set(); }
+
+  Bezier_polygon_set& bezier() { return get_bezier_rep ()->set(); }
+
 
    //to get rep for linear polygons
   const Linear_rep* get_linear_rep() const
@@ -462,6 +644,7 @@ private:
   QGraphicsScene m_scene;
   //keep it intact for now check it out
   bool m_circular_active;
+  bool m_bezier_active;
   //which type is currently active now
   //bool m_blue_active;
   size_t m_color_active;
@@ -483,9 +666,18 @@ private:
   Linear_region_source_container m_magenta_linear_sources;
   Linear_region_source_container m_aqua_linear_sources;
 
+  Bezier_region_source_container m_blue_bezier_sources;
+  Bezier_region_source_container m_red_bezier_sources;
+  Bezier_region_source_container m_black_bezier_sources;
+  Bezier_region_source_container m_brown_bezier_sources;
+  Bezier_region_source_container m_yellow_bezier_sources;
+  Bezier_region_source_container m_magenta_bezier_sources;
+  Bezier_region_source_container m_aqua_bezier_sources;
+
   //typedefs of classes used to draw circular and linear polygon
   CGAL::Qt::Graphics_view_linear_polygon_input<Kernel>* m_linear_input;
   CGAL::Qt::Graphics_view_circular_polygon_input<Kernel>* m_circular_input;
+  CGAL::Qt::GraphicsViewBezierPolygonInput<Bezier_traits>* m_bezier_input ;
 
 public:
   MainWindow();
@@ -494,32 +686,31 @@ private:
   void dragEnterEvent(QDragEnterEvent* event);
   void dropEvent(QDropEvent* event);
   void zoomToFit();
+  void ToogleView(size_t aGROUP, bool a_check);
 
 protected slots:
   void open(QString filename);//for file handling
 
 public slots:
   void processInput(CGAL::Object o);
-  //make it better
-  //void on_actionNew_triggered();
-  //make it work
+  void on_actionNew_triggered();
   void on_actionRecenter_triggered();
-
-  //boolean operations
   void on_actionComplement_triggered();
   void on_actionUnion_triggered();
   void on_actionIntersection_triggered();
   void on_actionDifference_triggered();
   void on_actionSymmetric_Difference_triggered();
   void on_actionMinkowski_Sum_triggered();
-
-  //insert polygon operations
   void on_actionInsertLinear_triggered();
   void on_actionInsertCircular_triggered();
-
-  //file handling operations
+  void on_actionInsertBezier_triggered();
+  void on_actionInsertConic_triggered();
+  void on_actionInsertRational_triggered();
+  void on_actionInsertAlgebraic_triggered();
   void on_actionOpenLinear_triggered();
-  void on_actionOpenCircular_triggered();
+  void on_actionOpenDXF_triggered();
+  void on_actionOpenBezier_triggered();
+  void on_actionSaveResult_triggered();
 
   void on_showBlue_toggled  (bool a_check);
   void on_showRed_toggled   (bool a_check);
@@ -634,9 +825,35 @@ private:
   Linear_region_source_container& aqua_linear_sources()
   { return m_aqua_linear_sources; }
 
+//Same for Bezier 
+
+  Bezier_region_source_container& blue_bezier_sources()
+  { return m_blue_bezier_sources; }
+
+  Bezier_region_source_container& red_bezier_sources()
+  { return m_red_bezier_sources; }
+
+  Bezier_region_source_container& black_bezier_sources()
+  { return m_black_bezier_sources; }
+
+  Bezier_region_source_container& brown_bezier_sources()
+  { return m_brown_bezier_sources; }
+
+  Bezier_region_source_container& yellow_bezier_sources()
+  { return m_yellow_bezier_sources; }
+
+  Bezier_region_source_container& magenta_bezier_sources()
+  { return m_magenta_bezier_sources; }
+
+  Bezier_region_source_container& aqua_bezier_sources()
+  { return m_aqua_bezier_sources; }
+
+
   //returns active blue container
   // Circular_region_source_container const& active_circular_sources() const
   // { return m_blue_active ? m_blue_circular_sources : m_red_circular_sources; }
+
+
 
   Circular_region_source_container& active_circular_sources()
   {
@@ -680,6 +897,25 @@ private:
     return m_blue_linear_sources;
   }
 
+  Bezier_region_source_container& active_bezier_sources()
+  {
+    //return m_blue_active ? m_blue_linear_sources : m_red_linear_sources;
+    switch(m_color_active) {
+     case 0: return m_blue_bezier_sources;
+     case 1: return m_red_bezier_sources;
+     case 2: return m_black_bezier_sources;
+     case 3: return m_brown_bezier_sources;
+     case 4: return m_yellow_bezier_sources;
+     case 5: return m_magenta_bezier_sources;
+     case 6: return m_aqua_bezier_sources;
+
+     default: break;
+    }
+
+    CGAL_warning_msg(true, "Should not reach here!");
+    return m_blue_bezier_sources;
+  }
+
   void SetViewBlue(bool a_check) { showBlue->setChecked(a_check); }
   void SetViewRed(bool a_check) { showRed->setChecked(a_check); }
   void SetViewBlack(bool a_check) { showBlack->setChecked(a_check); }
@@ -690,7 +926,7 @@ private:
   void SetViewResult(bool a_check) { showResult->setChecked(a_check); }
 
   //changes the set of polygons of a specific type
-  void ToogleView(size_t aGROUP, bool a_check);
+  //void ToogleView(size_t aGROUP, bool a_check);
 
   void link_GI(CGAL::Qt::GraphicsItem* aGI)
   {
@@ -710,11 +946,14 @@ private:
 
   bool ensure_circular_mode();
 
+  bool ensure_bezier_mode();
+
   bool ensure_linear_mode();//see if it is need
 };
 
 MainWindow::MainWindow() :
   DemosMainWindow(),
+  m_bezier_active(false), //default
   m_circular_active(false), //default
   m_color_active(0)    //default
 {
@@ -724,7 +963,7 @@ MainWindow::MainWindow() :
   setupUi(this);
 
   setAcceptDrops(true);
-  //default setups
+  //default setups with Linear
   m_curve_sets.push_back(Curve_set(1, sPens[BLUE_GROUP], sBrushes[BLUE_GROUP]));
   m_curve_sets.push_back(Curve_set(1, sPens[RED_GROUP], sBrushes[RED_GROUP]));
   m_curve_sets.push_back(Curve_set(1, sPens[BLACK_GROUP],
@@ -769,6 +1008,7 @@ MainWindow::MainWindow() :
   this->addRecentFiles(this->menuFile, this->actionClose);
 
   //initializing classes to draw respective polygons using mouse
+  m_bezier_input = new CGAL::Qt::GraphicsViewBezierPolygonInput<Bezier_traits>(this, &m_scene);
   m_linear_input = new CGAL::Qt::Graphics_view_linear_polygon_input<Kernel>(this, &m_scene);
   m_circular_input = new CGAL::Qt::Graphics_view_circular_polygon_input<Kernel>(this, &m_scene);
 
@@ -777,12 +1017,15 @@ MainWindow::MainWindow() :
                    SLOT(processInput(CGAL::Object)));
   QObject::connect(m_circular_input, SIGNAL(generate(CGAL::Object)), this,
                    SLOT(processInput(CGAL::Object)));
+  QObject::connect(m_bezier_input, SIGNAL(generate(CGAL::Object)), this,
+                   SLOT(processInput(CGAL::Object)));
+  
   m_scene.installEventFilter(m_linear_input);
 
-  QObject::connect(this->actionClose, SIGNAL(triggered()), this,
-                   SLOT(close()));
-  // QObject::connect(this, SIGNAL(openRecentFile(QString)), this,
-  // SLOT(open(QString)));//for file handling
+  QObject::connect(this->actionQuit, SIGNAL(triggered()), this,
+                    SLOT(close()));
+  QObject::connect(this, SIGNAL(openRecentFile(QString)), this,
+                    SLOT(open(QString)));//for file handling
   QObject::connect(drawBlue, SIGNAL(toggled(bool)), this,
                    SLOT(on_drawBlue_toggled (bool)));
   QObject::connect(drawRed , SIGNAL(toggled(bool)), this,
@@ -840,6 +1083,55 @@ void MainWindow::on_showAqua_toggled(bool a_check)
 
 void MainWindow::on_showResult_toggled(bool a_check)
 { ToogleView(RESULT_GROUP, a_check); }
+
+
+//////////////#################################
+void MainWindow::on_actionNew_triggered() 
+{
+  for( Curve_set_iterator si = m_curve_sets.begin(); si != m_curve_sets.end() ; ++ si )
+    si->clear();
+    
+  blue_circular_sources().clear();
+  red_circular_sources().clear();
+  black_circular_sources().clear();
+  brown_circular_sources().clear();
+  yellow_circular_sources().clear();
+  magenta_circular_sources().clear();
+  aqua_circular_sources().clear();
+
+  blue_linear_sources().clear();
+  red_linear_sources().clear();
+  black_linear_sources().clear();
+  brown_linear_sources().clear();
+  yellow_linear_sources().clear();
+  magenta_linear_sources().clear();
+  aqua_linear_sources().clear();
+
+  blue_bezier_sources().clear();
+  red_bezier_sources().clear();
+  black_bezier_sources().clear();
+  brown_bezier_sources().clear();
+  yellow_bezier_sources().clear();
+  magenta_bezier_sources().clear();
+  aqua_bezier_sources().clear();
+    
+  SetViewBlue  (true);
+  SetViewRed   (true);
+  SetViewBlack (true);
+  SetViewBrown (true);
+  SetViewYellow (true);
+  SetViewMagenta (true);
+  SetViewAqua (true);
+  SetViewResult(true);
+  
+  m_circular_active = false ;
+  m_bezier_active = false;
+  
+  m_color_active = 0;
+
+  modelChanged();
+  
+}
 
 void MainWindow::on_actionDelete_triggered()
 {
@@ -915,15 +1207,23 @@ void MainWindow::on_actionOpenLinear_triggered()
                                     tr("Linear Curve files (*.lps)")));
 }
 
-void MainWindow::on_actionOpenCircular_triggered()
+void MainWindow::on_actionOpenDXF_triggered()
 {
   open(QFileDialog::getOpenFileName(this,
                                     tr("Open Circular Polygon"), "../data",
                                     tr("Circular curve files (*.dxf)")));
 }
 
+void MainWindow::on_actionOpenBezier_triggered()
+{
+  open(QFileDialog::getOpenFileName(this, 
+                                    tr("Open Bezier Polygon"), "../data", 
+                                    tr("Bezier Curve files (*.bps)") ));
+}
+
+
 //for converting linear part of circular polygon to circular part
-Circular_polygon linear_2_circ(Circular_Linear_polygon const& pgn)
+/*Circular_polygon linearPart_2_circ(Circular_Linear_polygon const& pgn)
 {
   CGAL::Cartesian_converter<Kernel,Kernel> convert;
 
@@ -940,15 +1240,479 @@ Circular_polygon linear_2_circ(Circular_Linear_polygon const& pgn)
 
 //for converting linear part of circular polygon with holes to circular part
 Circular_polygon_with_holes
-linear_2_circ(Circular_Linear_polygon_with_holes const& pwh)
+linearPart_2_circ(Circular_Linear_polygon_with_holes const& pwh)
 {
-  Circular_polygon_with_holes rCP(linear_2_circ(pwh.outer_boundary()));
+  Circular_polygon_with_holes rCP(linearPart_2_circ(pwh.outer_boundary()));
 
   for (auto hi = pwh.holes_begin(); hi != pwh.holes_end(); ++ hi)
-    rCP.add_hole(linear_2_circ(*hi) );
+    rCP.add_hole(linearPart_2_circ(*hi) );
+
+  return rCP;
+}*/
+
+/*Circular_polygon linear_2_circ( Linear_polygon const& pgn )
+{
+  CGAL::Cartesian_converter<Linear_kernel,Gps_circular_kernel> convert ;
+  
+  Circular_polygon rCP;
+  
+  for( Linear_polygon::Edge_const_iterator ei = pgn.edges_begin(); ei != pgn.edges_end(); ++ei )
+  {
+    if  ( ei->source() != ei->target() )
+      rCP.push_back( Circular_X_monotone_curve( convert(ei->source()), convert(ei->target())) );
+  }  
 
   return rCP;
 }
+
+Circular_polygon_with_holes linear_2_circ( Linear_polygon_with_holes const& pwh )
+{
+  Circular_polygon_with_holes rCP( linear_2_circ(pwh.outer_boundary()) ) ;
+  
+  for( Linear_polygon_with_holes::Hole_const_iterator hi = pwh.holes_begin(); hi != pwh.holes_end(); ++ hi )
+    rCP.add_hole( linear_2_circ(*hi)  );
+
+  return rCP;
+}
+
+
+bool read_linear( QString aFileName, Circular_polygon_set& rSet, Circular_region_source_container& rSources )
+{
+  bool rOK = false ;
+  
+  std::ifstream in_file (qPrintable(aFileName));
+
+  if ( in_file )
+  {
+    unsigned int n_regions ;
+    in_file >> n_regions;
+    
+    for ( unsigned int r = 0 ; r < n_regions ; ++ r )
+    {
+      unsigned int n_boundaries;
+      in_file >> n_boundaries;
+      
+      Circular_polygon outer ;
+      std::vector<Circular_polygon> holes ;
+      
+      for ( unsigned int r = 0 ; r < n_boundaries ; ++ r )
+      {
+        Linear_polygon p ;
+        in_file >> p ;
+        
+        if ( r == 0 )
+             outer = linear_2_circ(p); 
+        else holes.push_back( linear_2_circ(p) );
+      }
+      
+      Circular_polygon_with_holes pwh(outer,holes.begin(),holes.end());
+      rSources.push_back(pwh);
+      rSet.join(pwh) ;    
+      rOK = true ;
+    }
+    
+  }
+  
+  return rOK ;
+}
+
+bool read_dxf ( QString aFileName, Circular_polygon_set& rSet, Circular_region_source_container& rSources )
+{
+  bool rOK = false ;
+  
+  std::ifstream in_file (qPrintable(aFileName));
+
+  if ( in_file )
+  {
+    CGAL::Dxf_bsop_reader<Gps_circular_kernel>   reader;
+    std::vector<Circular_polygon>            circ_polygons;
+    std::vector<Circular_polygon_with_holes> circ_polygons_with_holes;
+    
+    reader(in_file
+          ,std::back_inserter(circ_polygons)
+          ,std::back_inserter(circ_polygons_with_holes)
+          ,false
+          );
+          
+    for ( std::vector<Circular_polygon>::iterator pit = circ_polygons.begin() ; pit != circ_polygons.end() ; ++ pit )
+      circ_polygons_with_holes.push_back( Circular_polygon_with_holes(*pit) ) ;
+
+    rSet.join( circ_polygons_with_holes.begin(), circ_polygons_with_holes.end() ) ;
+
+    std::copy(circ_polygons_with_holes.begin(), circ_polygons_with_holes.end(), std::back_inserter(rSources) );
+
+    rOK = true ;
+  }
+  
+  return rOK ;
+}
+*/
+
+/*bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet, Bezier_region_source_container& rSources  )
+{
+  
+  bool rOK = false ;
+  
+  std::ifstream in_file (qPrintable(aFileName));
+  
+  if ( in_file )
+  {
+    try
+    {
+      
+      std::string format ;
+      std::getline(in_file,format);
+      
+      bool lDoubleFormat = ( format.length() >= 6 && format.substr(0,6) == "DOUBLE") ;
+                              
+      // Red the number of bezier polygon with holes
+      unsigned int n_regions ;
+      in_file >> n_regions;
+      
+      for ( unsigned int r = 0 ; r < n_regions ; ++ r )
+      {
+        Bezier_polygon_vector bezier_polygons ;
+        Bezier_region_source  br_source ;
+
+        // Read the number of bezier curves.
+        unsigned int n_boundaries;
+        in_file >> n_boundaries;
+      
+        for ( unsigned int b = 0 ; b < n_boundaries ; ++ b )
+        {
+          Bezier_boundary_source bb_source ;        
+          
+          // Read the number of bezier curves.
+          unsigned int n_curves;
+          in_file >> n_curves;
+          
+          // Read the curves one by one, and construct the general polygon these
+          // curve form (the outer boundary and the holes inside it).
+          
+          std::list<Bezier_X_monotone_curve> xcvs;
+        
+          for ( unsigned int k = 0; k < n_curves; ++ k ) 
+          {
+            // Read the current curve and subdivide it into x-monotone subcurves.
+            
+            std::list<CGAL::Object>                 x_objs;
+            std::list<CGAL::Object>::const_iterator xoit;
+            Bezier_X_monotone_curve                 xcv;
+            Bezier_traits                           traits;
+            Bezier_traits::Make_x_monotone_2        make_x_monotone = traits.make_x_monotone_2_object();
+        
+            Bezier_curve b = read_bezier_curve(in_file, lDoubleFormat);
+
+            if ( b.number_of_control_points() >= 2 )
+            {
+              bb_source.push_back(b);
+              //TRACE( "region " << r << " boundary " << b << " curve " << k );
+                
+              make_x_monotone (b, std::back_inserter (x_objs));
+              
+              for (xoit = x_objs.begin(); xoit != x_objs.end(); ++xoit) 
+              {
+                if (CGAL::assign (xcv, *xoit))
+                {
+                  //TRACE( " X montonote: " << xcv.source() << " -> " << xcv.target() << ( xcv.is_directed_right() ? " RIGHT":" LEFT") << ( xcv.is_vertical() ? " VERTICAL" : "")) ;
+                  xcvs.push_back (xcv);
+                }  
+              }
+            }
+          }  
+            
+          Bezier_polygon  pgn (xcvs.begin(), xcvs.end());
+          
+          CGAL::Orientation  orient = pgn.orientation();
+          //TRACE( "  Orientation: " << orient ) ;
+            
+          if (( b == 0 && orient == CGAL::CLOCKWISE) || ( b > 0 && orient == CGAL::COUNTERCLOCKWISE))
+          {
+            //TRACE( "Reversing orientation: " ) ;
+            pgn.reverse_orientation();
+          }
+            
+          br_source.push_back(bb_source);
+          bezier_polygons.push_back (pgn);
+        }
+      
+        if ( bezier_polygons.size() > 0 )
+        {
+          Bezier_polygon_with_holes pwh(bezier_polygons.front());
+          
+          if ( bezier_polygons.size() > 1 )
+          {
+            for ( Bezier_polygon_vector::const_iterator it = std::next(bezier_polygons.begin())
+                ; it != bezier_polygons.end()
+                ; ++ it 
+                )
+              pwh.add_hole(*it);    
+          }
+          
+          if ( is_valid_polygon_with_holes(pwh, rSet.traits() ) )
+          {
+            rSet.join(pwh) ;      
+            rSources.push_back(br_source);
+          }
+          else
+          {
+            show_warning( "Bezier polygon is not valid" );
+          }
+        }
+        
+        rOK = true ;
+      }
+      
+    }
+    catch(...)
+    {
+      show_error("Exception ocurred during reading of bezier polygon set.");
+    } 
+  }
+  
+  return rOK ;
+}
+
+Bezier_curve read_bezier_curve ( std::istream& is, bool aDoubleFormat )
+{
+  // Read the number of control points.
+  unsigned int  n;
+
+  is >> n;
+  
+  // Read the control points.
+  std::vector<Bezier_rat_point> ctrl_pts;
+  
+  for ( unsigned int k = 0; k < n; k++)
+  {
+    Bezier_rat_point p ;
+    if ( aDoubleFormat )
+    {
+      double x,y ;
+      is >> x >> y ;
+      Bezier_rational rx(static_cast<int> (1000 * x + 0.5), 1000);
+      Bezier_rational ry(static_cast<int> (1000 * y + 0.5), 1000); 
+      p = Bezier_rat_point(rx,ry);
+    }
+    else
+    {
+      is >> p ;
+    }
+    
+    if ( k == 0 || ctrl_pts[k-1] != p ) 
+    {
+      ctrl_pts.push_back(p) ;
+    }
+  }
+
+  std::vector<Bezier_rat_point> ctrl_pts2;
+
+  typedef std::vector<Bezier_rat_point>::const_iterator cp_const_iterator ;
+
+  cp_const_iterator beg  = ctrl_pts.begin();
+  cp_const_iterator end  = ctrl_pts.end  ();
+  cp_const_iterator last = end - 1 ;
+
+  ctrl_pts2.push_back(*beg);
+
+  if ( ctrl_pts.size() > 2 )
+  {
+    cp_const_iterator curr = beg ;
+    cp_const_iterator next1 = curr  + 1 ;
+    cp_const_iterator next2 = next1 + 1 ;
+
+    do
+    {
+      CGAL::Orientation lOrient = orientation(*curr,*next1,*next2);
+
+      if ( lOrient != CGAL::COLLINEAR )
+        ctrl_pts2.push_back(*next1);
+
+      ++ curr  ;
+      ++ next1 ; 
+      ++ next2 ;
+
+    }
+    while ( next2 != end ) ;
+  }
+
+  ctrl_pts2.push_back(*last);
+
+  return Bezier_curve(ctrl_pts2.begin(),ctrl_pts2.end());
+}*/
+
+
+bool save_linear ( QString aFileName, Linear_polygon_set& rSet )
+{
+  bool rOK = false ;
+  
+  return rOK ;
+}
+
+bool save_circular ( QString aFileName, Circular_polygon_set& rSet )
+{
+  bool rOK = false ;
+  
+  return rOK ;
+}
+
+void save_bezier_polygon( std::ostream& out_file, Bezier_polygon const& aBP )
+{
+  typedef std::vector<Bezier_rat_point> Bezier_rat_point_vector ;
+  
+  int cc = aBP.size() ;
+  int lc = cc - 1 ;
+  
+  out_file << "  " <<  cc << std::endl ;
+  
+  Bezier_rat_point lFirstP, lPrevP ;
+ 
+  int i = 0 ;
+  
+  for ( Bezier_polygon::Curve_const_iterator cit = aBP.curves_begin() ; cit != aBP.curves_end() ; ++ cit, ++ i  )
+  {
+    Bezier_rat_point_vector lQ ;
+
+    CGAL::Qt::Bezier_helper::clip(*cit,lQ);  
+    
+    out_file << "   " << lQ.size() << std::endl ;
+    
+    if ( i == 0 )
+      lFirstP = lQ.front();
+      
+    if ( i == lc )  
+      lQ.back() = lFirstP ;
+      
+    for ( Bezier_rat_point_vector::const_iterator pit = lQ.begin() ; pit != lQ.end() ; ++ pit )
+    {
+      Bezier_rat_point lP = pit == lQ.begin() && i > 0 ? lPrevP : *pit ;
+      
+      out_file << "    " << CGAL::to_double(lP.x()) << " " << CGAL::to_double(lP.y()) << std::endl ;
+      
+      lPrevP = lP ;
+    }
+  }
+}
+
+bool save_bezier_result ( QString aFileName, Bezier_polygon_set const& aSet )
+{
+  bool rOK = false ;
+  
+  std::ofstream out_file( qPrintable(aFileName) ) ;
+  if ( out_file )
+  {
+    out_file << "DOUBLE" << std::endl ;
+    
+    std::vector<Bezier_polygon_with_holes> bpwh_container;
+  
+    aSet.polygons_with_holes( std::back_inserter(bpwh_container) ) ;
+  
+    out_file << bpwh_container.size() << std::endl ;
+
+    for( std::vector<Bezier_polygon_with_holes>::const_iterator rit = bpwh_container.begin(); rit != bpwh_container.end() ; ++ rit )
+    {
+      Bezier_polygon_with_holes bpwh = *rit ;
+      
+      out_file << " " << ( 1 + bpwh.number_of_holes() ) << std::endl ;
+  
+      save_bezier_polygon( out_file, bpwh.outer_boundary() ) ;
+      
+      for ( Bezier_polygon_with_holes::Hole_const_iterator hit = bpwh.holes_begin() ; hit != bpwh.holes_end() ; ++ hit )
+        save_bezier_polygon(out_file, *hit);
+      
+      rOK = true ;
+    }
+  }
+  
+  return rOK ;
+  
+}
+
+bool save_bezier_sources ( QString aFileName, Bezier_region_source_container const& aSources )
+{
+  bool rOK = false ;
+  
+  std::ofstream out_file( qPrintable(aFileName) ) ;
+  if ( out_file )
+  {
+    out_file << std::setprecision(19);
+    
+    out_file << "DOUBLE" << std::endl ;
+    
+    out_file << aSources.size() << std::endl ;
+    
+    for( Bezier_region_source_container::const_iterator rit = aSources.begin(); rit != aSources.end() ; ++ rit )
+    {
+      Bezier_region_source const& br = *rit ;
+      
+      out_file << "  " << br.size() << std::endl ;
+      
+      for( Bezier_region_source::const_iterator bit = br.begin(); bit != br.end() ; ++ bit )
+      {
+        Bezier_boundary_source const& bb = *bit ;
+        
+        out_file << "   " << bb.size() << std::endl ;
+        
+        for ( Bezier_boundary_source::const_iterator cit = bb.begin() ; cit != bb.end() ; ++ cit )
+        {
+          Bezier_curve const& bc = *cit ;
+
+          out_file << "    " << bc.number_of_control_points() << std::endl ;
+          
+          for ( Bezier_curve::Control_point_iterator pit = bc.control_points_begin() ; pit != bc.control_points_end() ; ++ pit )
+          {
+            out_file << "     " << CGAL::to_double(pit->x()) << " " << CGAL::to_double(pit->y()) << std::endl ;
+          }
+        }
+      } 
+    }
+    
+    rOK = true ;
+  }
+  
+  return rOK ;
+  
+}
+
+void MainWindow::on_actionSaveResult_triggered()
+{
+  if ( m_circular_active )
+  {
+    if ( !save_circular(QFileDialog::getSaveFileName(this, tr("Save Result Circular Polygon Set"), "../data", tr("Circular Curve files (*.lps)") ) 
+                       ,result_set().circular()
+                       )
+       )
+    {
+      show_error("Cannot save circular polygon set.");
+    }
+       
+  }
+  else if (m_bezier_active)
+  {
+    if ( !save_bezier_result(QFileDialog::getSaveFileName(this, tr("Save Result Bezier Polygon Set"), "../data", tr("Bezier Curve files (*.bps)") )
+                            ,result_set().bezier() 
+                            )
+       )
+    {
+      show_error("Cannot save bezier polygon set.");
+    }
+  }
+
+  else 
+  {
+    if ( !save_linear(QFileDialog::getSaveFileName(this, tr("Save Result Linear Polygon Set"), "../data", tr("Linear Curve files (*.lps)") ) 
+                       ,result_set().linear()
+                       )
+       )
+    {
+      show_error("Cannot save circular polygon set.");
+    }
+  }
+
+
+}
+
+
 
 //check out
 void MainWindow::switch_set_type(Curve_set& aSet, int aType)
@@ -981,23 +1745,50 @@ bool MainWindow::ensure_circular_mode()
       aqua_set().is_empty();
 
     if (! lProceed)
-      lProceed = ask_user_yesno("Linear/Circular mode switch",
-                                "You are about to load a circular poygon, but there are linear curves already loaded.\n" \
-                                "Both types are not interoperable. In order to proceed, the circular curves must be removed first.\n" \
+      lProceed = ask_user_yesno("Circular mode switch",
+                                "You are about to load a circular poygon, but there are linear or bezier curves already loaded.\n" \
+                                "Both types are not interoperable. In order to proceed, the polygons must be removed first.\n" \
                                 "Yes to remove and proceed?\n"
                               );
 
     if (lProceed) {
       switch_sets_type(2);
       m_circular_active = true;
+      m_bezier_active  = false;
     }
   }
   return m_circular_active;
 }
 
+bool MainWindow::ensure_bezier_mode()
+{
+  if (! m_bezier_active )
+  {
+    bool lProceed = blue_set().is_empty() && red_set().is_empty() &&
+      black_set().is_empty() && brown_set().is_empty() &&
+      yellow_set().is_empty() && magenta_set().is_empty() &&
+      aqua_set().is_empty();
+    
+    if ( ! lProceed )
+      lProceed = ask_user_yesno("Bezier mode switch"
+                               ,"You are about to load a Bezier curve, but there are linear and/or circular polygons already loaded.\n" \
+                                "Both types are not interoperable. In order to proceed, the polygons must be removed first.\n" \
+                                "Yes to remove and proceed?\n"
+                               ) ;
+      
+    if ( lProceed )
+    {
+      switch_sets_type(3);
+      m_bezier_active = true;
+      m_circular_active = false;
+    }
+  }
+  return m_bezier_active ;
+}
+
 bool MainWindow::ensure_linear_mode()
 {
-  if (m_circular_active) {
+  if (m_circular_active || m_bezier_active) {
     bool lProceed = blue_set().is_empty() && red_set().is_empty() &&
       black_set().is_empty() && brown_set().is_empty() &&
       yellow_set().is_empty() && magenta_set().is_empty() &&
@@ -1006,47 +1797,47 @@ bool MainWindow::ensure_linear_mode()
     if (! lProceed)
       lProceed = ask_user_yesno("Linear/Circular mode switch",
                                 "You are about to load a linear poygon, but there are circular curves already loaded.\n" \
-                                "Both types are not interoperable. In order to proceed, the linear curves must be removed first.\n" \
+                                "Both types are not interoperable. In order to proceed, the polygons must be removed first.\n" \
                                 "Yes to remove and proceed?\n"
                               );
 
     if (lProceed) {
       switch_sets_type(1);
       m_circular_active = false;
+      m_bezier_active = false;
     }
   }
   return !m_circular_active;
 }
 
 //check out
-bool read_linear(QString /* aFileName */, Linear_polygon_set& /* rSet */,
-                 Linear_region_source_container& /* rSources */)
-{
-  bool rOK = false;
-  return rOK;
-}
+//bool read_linear(QString /* aFileName */, Linear_polygon_set& /* rSet */,
+//                 Linear_region_source_container& /* rSources */)
+//{
+//  bool rOK = false;
+//  return rOK;
+//}
 
-bool read_circular(QString /* aFileName */, Circular_polygon_set& /* rSet */,
-                   Circular_region_source_container& /* rSources */)
-{
-  bool rOK = false;
-  return rOK;
-}
+//bool read_circular(QString /* aFileName */, Circular_polygon_set& /* rSet */,
+ //                  Circular_region_source_container& /* rSources */)
+//{
+//  bool rOK = false;
+//}
 
 void MainWindow::open(QString fileName)
 {
-  if(! fileName.isEmpty()) {
+  /*if(! fileName.isEmpty()) {
     bool lRead = false;
 
-    if(fileName.endsWith(".lps")) {
-      if (ensure_linear_mode())
-        lRead = read_linear(fileName,active_set().linear(),
-                            active_linear_sources());
+    if(fileName.endsWith(".lps"))
+    {
+      if ( ensure_circular_mode() )
+        lRead = read_linear(fileName,active_set().circular(), active_circular_sources() ) ;
     }
-    else if (fileName.endsWith(".dxf")) {
-      if (ensure_circular_mode())
-        lRead = read_circular(fileName,active_set().circular(),
-                              active_circular_sources());
+    else if (fileName.endsWith(".bps"))
+    {
+      if ( ensure_bezier_mode() )
+        lRead = read_bezier(fileName,active_set().bezier(), active_bezier_sources() ) ;
     }
 
     if (lRead) {
@@ -1054,8 +1845,18 @@ void MainWindow::open(QString fileName)
       zoomToFit();
       this->addToRecentFiles(fileName);
     }
-  }
+  }*/
 }
+
+
+void MainWindow::on_actionInsertAlgebraic_triggered()
+{}
+
+void MainWindow::on_actionInsertRational_triggered()
+{}
+
+void MainWindow::on_actionInsertConic_triggered()
+{}
 
 void MainWindow::on_actionInsertCircular_triggered()
 {
@@ -1064,39 +1865,17 @@ void MainWindow::on_actionInsertCircular_triggered()
   //else
 }
 
+void MainWindow::on_actionInsertBezier_triggered()
+{
+  this->graphicsView->setDragMode(QGraphicsView::NoDrag);
+  if(ensure_bezier_mode()) m_scene.installEventFilter(m_bezier_input);
+  //else
+}
+
 void MainWindow::on_actionInsertLinear_triggered()
 {
   this->graphicsView->setDragMode(QGraphicsView::NoDrag);
   if (ensure_linear_mode()) m_scene.installEventFilter(m_linear_input);
-}
-
-void MainWindow::processInput(CGAL::Object o)
-{
-  //m_blue_active =  true;
-
-  Linear_polygon lLI;
-  Circular_polygon lCI;
-
-  if (CGAL::assign(lLI, o)) {
-    if (ensure_linear_mode()) {
-      CGAL::Orientation orient = lLI.orientation();
-      if (orient == CGAL::CLOCKWISE) lLI.reverse_orientation();
-      Linear_polygon_with_holes lCPWH(lLI);
-      active_set().linear().join(lCPWH);
-      active_linear_sources().push_back(lCPWH);
-    }
-  }
-
-  else if (CGAL::assign(lCI, o)) {
-    if (ensure_circular_mode()) {
-      CGAL::Orientation orient = lCI.orientation();
-      if (orient == CGAL::CLOCKWISE) lCI.reverse_orientation();
-      Circular_polygon_with_holes lCPWH(lCI);
-      active_set().circular().join(lCPWH);
-      active_circular_sources().push_back(lCPWH);
-    }
-  }
-  modelChanged();
 }
 
 void MainWindow::on_actionMinkowski_Sum_triggered()
@@ -1110,6 +1889,8 @@ void MainWindow::on_actionMinkowski_Sum_triggered()
 }
 
 //only blue complement
+
+
 void MainWindow::on_actionComplement_triggered()
 {
   bool lDone = false;
@@ -1214,15 +1995,13 @@ void MainWindow::on_actionSymmetric_Difference_triggered()
   else if (!brown_set().is_empty()) result_set().assign(brown_set());
   else if (!yellow_set().is_empty()) result_set().assign(yellow_set());
   else if (!magenta_set().is_empty()) result_set().assign(magenta_set());
-  else
-    result_set().assign(aqua_set());
+  else result_set().assign(aqua_set());
 
   if (!red_set().is_empty()) result_set().symmetric_difference(red_set());
   if (!black_set().is_empty()) result_set().symmetric_difference(black_set());
   if (!brown_set().is_empty()) result_set().symmetric_difference(brown_set());
   if (!yellow_set().is_empty()) result_set().symmetric_difference(yellow_set());
-  if (!magenta_set().is_empty())
-    result_set().symmetric_difference(magenta_set());
+  if (!magenta_set().is_empty()) result_set().symmetric_difference(magenta_set());
   if (!aqua_set().is_empty()) result_set().symmetric_difference(aqua_set());
   lDone = true;
   this->setCursor(old);
@@ -1281,6 +2060,64 @@ void MainWindow::zoomToFit()
     this->graphicsView->fitInView(*lTotalRect, Qt::KeepAspectRatio);
   }
 }
+
+
+void MainWindow::processInput(CGAL::Object o)
+{
+    std::pair<Bezier_polygon,Bezier_boundary_source>     lBI ;
+    Linear_polygon lLI;
+    Circular_polygon lCI; 
+
+    if(CGAL::assign(lBI, o))
+    {
+      if ( ensure_bezier_mode() )
+      {
+        CGAL::Orientation o = lBI.first.orientation();
+        if ( o == CGAL::CLOCKWISE )
+          lBI.first.reverse_orientation();
+          
+        active_set().bezier().join( Bezier_polygon_with_holes(lBI.first) ) ;  
+        
+        Bezier_region_source br ; br.push_back (lBI.second);
+        
+        active_bezier_sources().push_back(br);
+        
+      }
+    }
+
+    if (CGAL::assign(lLI, o)) 
+    {
+      if (ensure_linear_mode()) {
+        CGAL::Orientation orient = lLI.orientation();
+        if (orient == CGAL::CLOCKWISE) 
+          lLI.reverse_orientation();
+        Linear_polygon_with_holes lCPWH(lLI);
+        active_set().linear().join(lCPWH);
+        active_linear_sources().push_back(lCPWH);
+    }
+  }
+
+
+
+    else if ( CGAL::assign(lCI, o) )
+    {
+      if ( ensure_circular_mode() )
+      {
+        CGAL::Orientation o = lCI.orientation();
+        if ( o == CGAL::CLOCKWISE )
+          lCI.reverse_orientation();
+          
+        Circular_polygon_with_holes lCPWH(lCI);
+        active_set().circular().join(lCPWH) ;  
+        
+        active_circular_sources().push_back(lCPWH);
+      }
+    }
+  modelChanged();  
+
+
+}
+
 
 //Main part
 #include "Boolean_set_operations_2.moc"
