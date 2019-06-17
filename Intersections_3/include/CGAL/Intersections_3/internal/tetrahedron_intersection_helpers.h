@@ -43,8 +43,7 @@ void filter_segments(const std::vector<Segment>& input,
   {
   Segment s = tmp.back();
   tmp.pop_back();
-  auto s_it = tmp.begin();
-  for(; s_it != tmp.end();)
+  for(auto s_it = tmp.begin(); s_it != tmp.end();)
   {
     if(s == *s_it || s == s_it->opposite())
     {

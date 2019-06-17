@@ -60,9 +60,9 @@ intersection(
   std::vector<Segment_3> segments;
   for(std::size_t i = 0; i < 4; ++i)
   {
-   const typename K::Triangle_3 triangle(tet.vertex((i+1)%4),
-                           tet.vertex((i+2)%4),
-                           tet.vertex((i+3)%4));
+    const typename K::Triangle_3 triangle(tet.vertex((i+1)%4),
+                                          tet.vertex((i+2)%4),
+                                          tet.vertex((i+3)%4));
     intersections[i] = typename K::Intersect_3()(pl, triangle);
     if(intersections[i]){
       if(const typename K::Triangle_3* tr = boost::get<typename K::Triangle_3>(&*intersections[i]))
@@ -95,7 +95,7 @@ intersection(
     else
     {
       typename K::Point_3 p
-                    = *boost::get<typename K::Point_3>(&*intersections[p_id]);
+          = *boost::get<typename K::Point_3>(&*intersections[p_id]);
 
       return Result_type(std::forward<typename  K::Point_3>(p));
     }
@@ -125,9 +125,7 @@ intersection(
     }
     else //size = 4
     {
-      std::list<Segment_3> segs;
-      for(auto s : segments)
-        segs.push_back(s);
+      std::list<Segment_3> segs(segments.begin(), segments.end());
       std::list<typename K::Point_3> tmp;
       fill_points_list(segs, tmp);
       std::vector<typename K::Point_3> res;

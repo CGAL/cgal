@@ -37,7 +37,7 @@ namespace internal {
 
 template<typename Point>
 void filter_points(const std::vector<Point>& input,
-                     std::vector<Point>& output)
+                   std::vector<Point>& output)
 {
   std::set<Point> tmp;
   for( auto p : input)
@@ -60,12 +60,10 @@ intersection(
   typedef typename K::Plane_3 Plane_3;
   typedef std::vector<Point_3> Poly;
 
-  typedef typename Intersection_traits<K,
-      CGAL::Iso_cuboid_3<K>,
+  typedef typename Intersection_traits<K, CGAL::Iso_cuboid_3<K>,
       CGAL::Plane_3<K> >::result_type Result_type;
 
-  typedef typename Intersection_traits<K,
-      CGAL::Segment_3<K>,
+  typedef typename Intersection_traits<K, CGAL::Segment_3<K>,
       CGAL::Plane_3<K> >::result_type Inter_type;
 
   std::vector<Segment_3> edges;
