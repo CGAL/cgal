@@ -257,9 +257,9 @@ namespace CGAL {
         // increment.
         SM_Edge_index operator++(int) { SM_Edge_index tmp(*this); halfedge_ = SM_Halfedge_index((size_type)halfedge_ + 2); return tmp; }
 
-        SM_Edge_index operator+=(std::ptrdiff_t n) { halfedge_ = SM_Halfedge_index(std::ptrdiff_t(halfedge_) + 2*n); return *this; }
+        SM_Edge_index operator+=(std::ptrdiff_t n) { halfedge_ = SM_Halfedge_index(size_type(std::ptrdiff_t(halfedge_) + 2*n)); return *this; }
 
-      // prints the index and a short identification string to an ostream.
+        // prints the index and a short identification string to an ostream.
         friend std::ostream& operator<<(std::ostream& os, SM_Edge_index const& e)
         {
           return (os << 'e' << (size_type)e << " on " << e.halfedge());
