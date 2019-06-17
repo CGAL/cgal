@@ -30,9 +30,8 @@ set(CMAKE_AUTOMOC ON)
 
   # The executable itself.
   add_executable  ( boolean_operations_2 ${CMAKE_CURRENT_SOURCE_DIR}/boolean_operations_2.cpp ${CGAL_Qt5_MOC_FILES} ${CDT_UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} )
-  qt5_use_modules(boolean_operations_2 Widgets Script Svg)
   # Link with Qt libraries
-  target_link_libraries( boolean_operations_2 ${QT_LIBRARIES} )
+  target_link_libraries( boolean_operations_2 Qt5::Widgets Qt5::Script Qt5::Svg )
 
   # Link with CGAL
   target_link_libraries( boolean_operations_2 ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
