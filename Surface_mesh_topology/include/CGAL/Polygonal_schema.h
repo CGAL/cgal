@@ -117,17 +117,7 @@ namespace CGAL {
       if (prev_dart!=gmap.null_handle)
       { gmap.template link_alpha<1>(res, gmap.template alpha<0>(prev_dart)); }
 
-      if ((dart_same_label==NULL && dart_opposite_label==NULL) ||
-          dart_opposite_label!=NULL)
-      {
-        edge_label_to_dart[s]=res;
-        gmap.info(res).m_label=new char[s.size()+1];
-        strncpy(gmap.info(res).m_label, s.c_str(), s.size()+1); // +1 to copy also the \0 char
-
-        if (dart_opposite_label!=NULL)
-        { gmap.template sew<2>(dh2, dart_opposite_label); }
-      }
-      else
+      if (dart_same_label!=NULL)
       { // Here dart_same_label!=NULL
         std::string s2=opposite_label(s);
         edge_label_to_dart[s2]=dh2;
@@ -135,6 +125,15 @@ namespace CGAL {
         strncpy(gmap.info(dh2).m_label, s2.c_str(), s2.size()+1); // +1 to copy also the \0 char
 
         gmap.template sew<2>(res, dart_same_label);
+      }
+      else
+      { // Here either dart_opposite_label!=NULL, or both are NULL
+        edge_label_to_dart[s]=res;
+        gmap.info(res).m_label=new char[s.size()+1];
+        strncpy(gmap.info(res).m_label, s.c_str(), s.size()+1); // +1 to copy also the \0 char
+
+        if (dart_opposite_label!=NULL)
+        { gmap.template sew<2>(dh2, dart_opposite_label); }
       }
 
       return res;
